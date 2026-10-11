@@ -3342,7 +3342,7 @@ to the next circle.
   is cold here.*
 
 **Pins.** `test/egplay_law.test.js` (5), `test/egplay_service.test.js` (7), `test/egplay_relay.test.js` (5) and
-`test/egplay_client.test.js` (10 - the client played against the relay's real Room, from the key to the Redoubt, the
+`test/egplay_client.test.js` (11 - the client played against the relay's real Room, from the key to the Redoubt, the
 way home and the next circle). Mutants: `tools/mutants/egplay.json` (20), every one dead. Records of other arcs whose
 quoted lines moved, re-aimed by content: the bound list's (`auditrealm`, `cards8`, `loot9`, `portal1`, `wallet1` - 575
 joins it), the account version's (`br5`, `crafthold`, `fb1004d_knight_house`, `tech1`, `gatekeys` - acct118, acct116 on the branch, renumbered past main's acct116 and acct117 at the merge), the order kinds'

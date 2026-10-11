@@ -415,6 +415,30 @@ test('EG-PLAY THE MADE LEVEL: one circle a location the dungeon arm takes (a mad
   assert.deepEqual(egFromDungeon(spec, p).map((v) => Math.round(v * 1000) / 1000), [4.5, 1, 30]);
 });
 
+test('EG-PLAY THE GATE\'S SEAMS IN A HALL, EXECUTED (scenes/worldModes.js, its own source run): inside an Elite Breach\'s circle the dungeon host\'s six gate seams answer the hall\'s fight and the billboards carry its bodies; in any other dungeon, and outside, each is the gate\'s own as it was (mutant: the seams the gate\'s alone)', () => {
+  const M = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
+  const from = M.indexOf("  for (const [gate, eg] of [['gateBoss', 'egBoss']"), to = M.indexOf('\n', M.indexOf('  { const own = host.extraBillboards;'));
+  assert.ok(from > 0 && to > from, 'the routing found');
+  const stand = new Function('host', 'isEgHall', `let mode = 'exterior', dungeonLoc = null;\n${M.slice(from, to)}\nreturn (m, l) => { mode = m; dungeonLoc = l; };`);
+  const host = {
+    gateBoss: () => 'the gate\'s boss', egBoss: () => 'the hall\'s foe',
+    onBossHit: (h) => `gate hit ${h.d}`, egBossHit: (h) => `hall hit ${h.d}`,
+    gateCrystals: () => ['crystal'], egRifts: () => ['rift'],
+    onCrystalHit: () => 'crystal hit', egRiftHit: () => 'rift hit',
+    gateHost: () => ['add'], egHost: () => ['harrier'],
+    onHostHit: () => 'add hit', egHostHit: () => 'harrier hit',
+    extraBillboards: () => ['peer'], egBatches: () => ['kynreeve'],
+  };
+  const at = stand(host, (l) => !!l?.egBreach);
+  const seen = () => [host.gateBoss(), host.onBossHit({ d: 7 }), host.gateCrystals(), host.onCrystalHit({}), host.gateHost(), host.onHostHit({}), host.extraBillboards()];
+  at('dungeon', { egBreach: B });
+  assert.deepEqual(seen(), ['the hall\'s foe', 'hall hit 7', ['rift'], 'rift hit', ['harrier'], 'harrier hit', ['peer', 'kynreeve']]);
+  at('dungeon', { name: 'a court' });
+  assert.deepEqual(seen(), ['the gate\'s boss', 'gate hit 7', ['crystal'], 'crystal hit', ['add'], 'add hit', ['peer']]);
+  at('exterior', { egBreach: B });
+  assert.deepEqual(seen(), ['the gate\'s boss', 'gate hit 7', ['crystal'], 'crystal hit', ['add'], 'add hit', ['peer']], 'outside, the gate\'s whatever the location says');
+});
+
 test('EG-PLAY THE HOSTS WIRED: the world host builds the client online and hears the breach\'s words on both sockets, keys the breach\'s room, steps it every online frame, routes the death, the Levitate ward, the court\'s law, the companions, Mark and Recall and /unstuck; the mode machine routes the gate\'s seams to the hall\'s fight and stands the level, its light and its way home; the dungeon host refuses saves, maps and rests and rides the spans (mutants: any seam unwired)', () => {
   const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
   const M = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
