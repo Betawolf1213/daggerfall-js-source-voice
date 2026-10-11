@@ -160,8 +160,11 @@ Every route that hands a realm character's value to another player says so - `pr
 })`: a market listing and purchase, a vault deposit, a treasury deposit, a rent, a card table's stake, a disenchant - and
 is refused `trade-held` while held, `record-unjudged` for a record no checkpoint has been judged since INT2 shipped. A
 realm trade refuses a side that gives with its own word. The routes that hand on what a character owns AT the service,
-its record untouched - a crafted piece listed or auctioned, its Stores' units listed or sold into an order - ask the
-same hold (`realm.js` realmHoldOf; the audit: a held character listed its craft for 900,000 gold). A piece listed or
+its record untouched - a crafted piece listed, auctioned, filled to a commission or disenchanted, its Stores' units
+listed, sold into an order, deposited in a guild's Stores or supplied to a guild's writ - ask the same hold (`realm.js`
+realmHoldOf; the audit: a held character listed its craft for 900,000 gold), and a crafted piece's the hold of the realm
+character that MADE it, whatever character the act names (`realm.js` craftHoldOf, CRAFT-HOLD below). A held character with
+pieces of its make at the account is not deleted (its row is where the hold lives). A piece listed or
 vaulted before the law read listings is read as it is bought or taken, and goes to nobody if the law refuses it.
 `test/int2_judge.test.js` sweeps the service's source: no `prepareRealmRecord` that takes goods or gold out without
 `outbound`, the three sinks aside (a home and its decor bought from the realm, a guild founded); `test/int6_review.test.js`
@@ -259,6 +262,21 @@ route's ids. Mutant records `tools/mutants/int_audit.json`; the arc's own record
 
 ### What lane 1 leaves open
 
+- **A crafted piece lists, auctions and fills a commission without its record (the exploit audit, 2026-10-11 - OPEN,
+  its plan below).** The piece route (`server-account/src/market.js` marketList `kind: 'piece'`, marketAuction,
+  `writs.js` fulfilCommission) decides on the `products` row alone - never the seller's lease, its record or the ledger -
+  and the client takes the piece out of its pack only locally (`net/marketBook.js` postPiece). So a tab that lost its
+  seat to a second device (it sends no checkpoint, so it never hears `lease`) lists a piece the live record still holds:
+  the gold is collected (witnessed, so no budget gain) and the piece sold to a shop inside `DUPE_GRACE_S` leaves nobody
+  charged; kept past it, one dupe is counted and nothing held (`DUPES_FOR_HOLD` 3). A piece realm-traded away moves the
+  piece but never `products.owner`, so its maker can still list it, and the honest holder is the one the ledger
+  charges. THE PLAN, the shape `alchemy.js` disenchantPiece already has ("the maker's record says where the piece is,
+  never the products row"): each crafted act asks `realmActFirst`, takes the piece out of the record by provenance
+  (`prepareRealmRecord(..., { outbound: true, escrow: true })`, `mustChange` in the decision's batch), and the client
+  routes it through `realmGoldAct` as `postGood` does; a cancelled, expired or unsold piece comes back as an `item`
+  delivery collected into the record (`collectGood`), never a client mint. CRAFT-HOLD (Progress) shipped the half that
+  needed no client - and carries a cost this plan retires: `products.char_id` stays the maker's for the piece's life, so
+  a piece that comes back to the account (bought back through another player) is held while its maker is.
 - Peer channels - a shared chest, a shop's shelf, a body's grant - still move lawful pieces between clients
   unwitnessed (the wild zone's remains are the account service's own records since INT9, section 5). What enters a realm character's record that way is charged to its budget, and the ledger
   catches a copy that keeps its key; a lawless piece no honest client takes (the wire's door drops it). Container locks
@@ -628,6 +646,16 @@ the clock, and the legacy record held to its own law.
 
 ## Progress
 
+- **CRAFT-HOLD (2026-10-11, the exploit audit; its review the same day): the hold follows the piece.** `realm.js`
+  craftHoldOf - a HOLD (never `record-unjudged`) of the account's realm character a crafted piece's maker record names
+  (`products.char_id`, or the offline character a customs character came in as, `origin_id`) - asked by the list, the
+  auction, the commission fill (which asked no hold at all) and the disenchant (where no record proves the piece the
+  actor's own), whatever character the act names: a held character's craft had listed for Drakes under `char-anything`.
+  Its review added: a held character with pieces of its make at the account is not deleted (its row is where the hold
+  lives; one with none goes, its Stores with it), and the guild Stores deposit and the guild writ supply ask the hold
+  (they asked none). `ACCOUNT_VERSION` acct116 (acct115 on its branch, renumbered past BR5 at the merge).
+  `test/crafthold.test.js` (7); `tools/mutants/crafthold.json` (15, all dead). Record:
+  `01-Overview/Exploit-Audit-2026-10-11.md`.
 - **INT1-INT6 (2026-10-09): lane 1, the economy - built, and audited (4b).** Migration `0096_integrity`;
   `ACCOUNT_VERSION` acct100 (acct99 and migration 0095 on its branch, renumbered past main's CARDS9 and CARDS10 at the merge). Pins: `test/int1_itemlaw.test.js`, `int2_judge.test.js`, `int4_itemids.test.js`,
   `int5_budget.test.js`, `int6_review.test.js`, and `accountdeploy.test.js`'s Worker load; the honest sweep

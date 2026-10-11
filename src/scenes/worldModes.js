@@ -54,7 +54,7 @@ import { tryMobileEnemyActivate } from '../player/mobileEnemyActivate.js';
 import { FOUND_NOTHING_VALUABLE_TEXT_ID } from '../systems/talk.js';
 import { SEARCH_REACH } from '../systems/searchables.js';   // SEARCH1: a headstone's reach, half a door's   // GetRandomText(8999)
 import { LOCK_PICK_DISTANCE } from '../player/lockOn.js';   // AUDIT 62 F16/F28: the tap-to-lock reach, the same the exterior and standalone-dungeon arms use
-import { removeOne, addItem, isEnchanted, carriedWeight, letterOfCredit, LETTER_OF_CREDIT_TEMPLATE, spendAmmoFor, takeOneInto } from '../systems/inventory.js';   // U40: the sell filter, the encumbrance gate and the letter
+import { removeOne, addItem, isEnchanted, carriedWeight, letterOfCredit, LETTER_OF_CREDIT_TEMPLATE, spendAmmoFor, takeOneInto, isSummoned } from '../systems/inventory.js';   // U40: the sell filter, the encumbrance gate and the letter
 import { isEquipped, unequipSlot } from '../systems/equip.js';   // AUDIT 17e F4: worn gear is not merchandise
 import { targetAimPoint, missileAimDirection } from '../characters/enemyTargets.js';   // AUDIT WORLD6b-iii(a) C3: the ONE aim law for an enemy missile (the peer's transform, mine otherwise)
 import { playerEntity, surfacePlayer } from '../characters/playerEntity.js';
@@ -3802,6 +3802,7 @@ export function createWorldModes(host) {
   const loadedWagonHeld = (it) => wagonLoadedHeld(it, playerEntity);   // WAGONS2 (FINAL AUDIT): the pack's own law (systems/tradePack.js)
   function doSell(shelf, it) {
     if (isBound(it) || lockRefuses(it, 'sell')) return 0;   // AUDIT SS: the keyed shelf sells no bound piece (systems/itemBound.js) and no locked one (LOCK1), as neither counter stages one
+    if (isSummoned(it)) return 0;   // CRAFT-WORTH (the exploit audit): nor a conjured piece (Create Item) - the trade windows refuse one (TransferItem's summoned guard)
     if (loadedWagonHeld(it)) return 0;   // WAGONS2 (AUDIT): nor the loaded wagon
     const price = sellPrice(it);
     // AUDIT 17e F4: selling a WORN item left equip.slots pointing at
@@ -3848,13 +3849,17 @@ export function createWorldModes(host) {
   // E3: the sell offer - CalculateCost(value)*stack through the
   // SELLING branch of CalculateTradePrice (DaggerfallTradeWindow's
   // GetTradePrice; DFU's condition parameter is declared-but-unused).
+  // CRAFT-WORTH (2026-10-11, the exploit audit): THE COUNTER'S OWN LAW, as buyPrice's is - the trade window's Sell walk
+  // (a crafted piece at its plain worth, online the condition the world handed it over at) at the counter's own index
+  // (a yard's too). This keyed shelf priced the raw value at the region's index and read no condition, so the art's
+  // absence was a door round every sale law the window keeps.
   function sellPrice(it) {
     const b = interiorBuilding;
-    const cost = calculateCost(itemValue(it), b.quality, regionPriceAdjustment(playerEntity, b.regionIndex ?? 0)) * (it.stackCount ?? 1);
-    return calculateTradePrice(cost, b.quality, {
+    const lot = tradeCost('Sell', [it], { quality: b.quality, priceAdjustment: shopAdjustment(b, 'Sell') });
+    return getTradePrice('Sell', lot.cost, b.quality, {
       mercantile: skillValue(playerEntity, SKILLS.Mercantile),
       personality: playerEntity.stats?.personality == null ? 50 : liveStat(playerEntity, 'personality'),
-    }, true);
+    }, lot.pieces);
   }
   // ── U23: THE STATIC NPC SEAM ────────────────────────────────────
   // PlayerActivate.ActivateStaticNPC/StaticNPCClick (:742-766,
@@ -6774,7 +6779,7 @@ export function createWorldModes(host) {
     showShelfList(shelf, 0);
   }
   function showSellList(shelf, page) {
-    const sellable = (playerEntity.items ?? []).filter((it) => shopBuysItem(interiorBuilding.buildingType, it) && !isEquipped(it) && !isBound(it) && !lockRefuses(it, 'sell'));   // AUDIT 17e F4   // AUDIT SS: nor a bound or a locked piece - the classic counter's own refusals, on the keyed shelf its missing art falls back to
+    const sellable = (playerEntity.items ?? []).filter((it) => shopBuysItem(interiorBuilding.buildingType, it) && !isEquipped(it) && !isBound(it) && !lockRefuses(it, 'sell') && !isSummoned(it));   // CRAFT-WORTH: nor a conjured piece   // AUDIT 17e F4   // AUDIT SS: nor a bound or a locked piece - the classic counter's own refusals, on the keyed shelf its missing art falls back to
     for (let i = sellable.length - 1; i >= 0; i--) if (loadedWagonHeld(sellable[i])) sellable.splice(i, 1);   // WAGONS2 (AUDIT): nor the loaded wagon
     const per = 8;
     const slice = sellable.slice(page * per, (page + 1) * per);
@@ -9450,7 +9455,7 @@ export function createWorldModes(host) {
           gateBoss: () => host.gateBoss?.() ?? null,   // WB4b: the Burning Court's boss as a body my blows meet (none outside the court)
           onBossHit: (hit) => !!host.onBossHit?.(hit),   // WB4b: and the door a blow's number leaves him through
           onBossTrap: (trap) => !!host.onBossTrap?.(trap),   // WBX7: and a soul trap laid on him, kept by the court for his fall
-          bossTrapNow: () => host.bossTrapNow?.() ?? null,   // AUDIT WBX F6: the trap running on him, so a recast stacks onto it
+          bossTrapNow: () => host.bossTrapNow?.() ?? null,   // AUDIT WBX F6: the trap running on him, so a recast renews it (STACK-CAP)
           gateCrystals: () => host.gateCrystals?.() ?? null,   // WB9c: the Reckoning's crystals as bodies my blows meet (none but in a Reckoning)
           onCrystalHit: (hit) => !!host.onCrystalHit?.(hit),   // WB9c: and the door a blow's number on one leaves through
           gateHost: () => host.gateHost?.() ?? null,   // WB11c: the Legion-Lord's host as bodies my blows meet (none but under the trial)
@@ -12070,6 +12075,7 @@ export function createWorldModes(host) {
     // The interior arm used to re-do the mapping itself, which is the
     // duplication F3 was written about.
     get overlayIsNative() { return !!interiorOverlay?.isChoiceWindow; },
+    overlayWindow: () => interiorOverlay,   // DUPE-LOAD: routeKey asks whether it is the death screen, the one window F11 loads from under
     overlayInput(code, e) {
       const w = interiorOverlay;
       if (!w) return;
@@ -13745,6 +13751,17 @@ export function createWorldModes(host) {
     clearDeath() {
       if (mode === 'dungeon') { dungeonCtx?.clearDeathOverlay?.(); return; }
       if (interiorOverlay instanceof DeathScreen) { interiorOverlay.restoreView(); interiorOverlay = null; }
+    },
+    /** AUDIT DUPE-LOAD (the exploit audit): A LOAD'S DRAIN BENEATH THE MODE'S DEATH SCREEN - the building's stack (the
+     *  dungeon's is its context's own): every window waiting under it disposed and gone, none of their close callbacks
+     *  run (townTalk.discardBeneath's law). A load runs forceExitToExterior AFTER its restore, whose clear disposed them
+     *  then - a counter's staged goods handed to the loaded pack. The slot is filled by hand, so the stack learns it first. */
+    discardBeneathDeath() {
+      if (mode === 'dungeon') { dungeonCtx?.discardBeneathDeath?.(); return; }
+      const death = interiorOverlay;
+      if (!(death instanceof DeathScreen)) return;
+      interiorWindows.reconcile(death);
+      interiorWindows.keepOnly(death, (w) => w.dispose?.());
     },
     /** The restore half - and NOT gated on the mode, deliberately.
      *  worldQuickLoad calls forceExitToExterior FIRST (world.js:"else if (forgotten)")

@@ -102,6 +102,52 @@ each piece's world box; a recentre carries the box with the piece; a piece with 
 host's wiring (the frame's own matrices kept before the draw, the yards handed the host's test); the merchant yards by
 the same law. Mutants: `tools/mutants/perfyard.json`, 17, all dead.
 
+## YARD-RANGE — other players' yards drawn as far as the player says, and nothing too small to see
+
+**Found.** A player (2026-10-11, bug-reports: "browser version for me is unplayable nowadays I get like 20-40 fps in
+cities. tbh even the AppImage is struggling"): 19 fps, 52.7 ms a frame, script 61.0 ms (in frame 44.8, before 15.1,
+stream 1.1), 1,523 draws and 1,223 binds, on an RX 9070 XT under ANGLE's GL backend at 2560x1327. Knightstale with no
+yards measures about 950 to 1,124 draws (`Performance-Arena.md`). The owner: "look into limiting and improving
+performance with player's exterior decor items". Read from the code, not measured on that machine:
+
+- a yard's FLATS had no distance cut at all - `homeYards.js batches` answered every standing yard's every flat, the
+  whole streamed grid's, each its own billboard batch (one draw, two binds where its record differs from the last) and a
+  shadow record, where its models stopped at `YARD_DRAW_M` (300 m);
+- a model piece was drawn at any size to 300 m - a cup a draw and a cascade replay at 250 m;
+- `sync`, every `YARD_SYNC_S` (half a second), stringified every home's pieces of every built town (up to
+  DECOR_YARDS_TOWN_MAX, two thousand) to learn whether its answer had changed;
+- no setting reached a yard at all.
+
+**The fix.**
+
+- **A distance of the player's own.** The Other players card has a Yard decorations row beside Draw distance
+  (`ui/enhancedMenu.js`, `yardRange` on the prefs shelf; the law `net/yardRange.js`): Off, 75 m, 150 m or 300 m - the
+  default, the distance every yard was drawn at before. The distance is from the eye to a yard's house on the ground,
+  read every frame (it lands at once). Off stands no stranger's yard at all - taken down where it stood, nothing drawn,
+  solid or lit - and stands it again the moment another choice is made. One's own yard (a home's, a hall's its keeper
+  keeps - homeOutsideKept) is drawn to YARD_DRAW_M whatever the choice, and the yard the owner stands in always.
+- **The flats as the models.** `batches` asks each yard's reach as `draw` does, and refills one list in place every
+  frame (`decorRoom.js batchesSeen`) - it made three arrays a yard a frame.
+- **Nothing too small to see.** A piece is drawn while half its size over its distance is at least `YARD_MIN_ANGLE`
+  (1/300 - `decorRoom.js decorPieceSeen`, `decorBoxSeen` over a model's world box): a metre across to 150 m, a chair's
+  half-metre to 75 m, a cup to 15 m, about five pixels tall on a 1080-line screen. A skipped piece records no shadow.
+  The yard being placed in is never cut.
+- **The sync asks a new answer only.** A town's lists are replaced, never written into (ensure, keep), so a yard keeps
+  the list it last wrote out and its signature: an unchanged town is no longer stringified at all.
+- **The four hosts.** Yards stand in `scenes/world.js` alone (it hands `range: () => getPref('yardRange')`);
+  `scenes/exterior.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js` stand none.
+
+**Left.** A yard's lamps keep AUDIT YARD-LIGHT L2's law (no distance cuts a lamp) at 75 and 150 m; Off takes them with
+the yard. A yard's flats are still one batch a piece - merged batches by record, as a pixel's own flats are, would cut
+the draws again and are the next lever. Whether this player's town is yard-bound is not known: the 15.1 ms before the
+frame is not the game's code (`Performance-Exterior.md` SCRIPT-SPLIT), and `?perf=cpu` against an offline visit to the
+same town (yards stand online only) would say.
+
+Pins: `test/yardrange.test.js` (5) - the law and the shelf's default, the row's wiring and the host's; the size bound;
+over the real yard and pool, the default, 75 m and Off - models and flats alike, my own yard always, Off taking a
+stranger's yard down and standing it again; my own yard 200 m off; six syncs of an unchanged town stringifying nothing.
+Mutants: `tools/mutants/yardrange.json`, 10, all dead.
+
 ## PERF-INST — a mesh's copies are remembered by place
 
 **Found.** The shadow pass remembers every placement of a mesh (AUDIT SC1, AUDIT REACH) to tell a still copy from a

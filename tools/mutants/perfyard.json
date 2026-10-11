@@ -65,8 +65,8 @@
   {
     "name": "PERF-YARD-h-a-yard-handed-no-test",
     "file": "src/scenes/homeYards.js",
-    "old": "        n += y.pool.draw(r, remapOf(y), cull);",
-    "new": "        n += y.pool.draw(r, remapOf(y));",
+    "old": "        n += y.pool.draw(r, remapOf(y), _eye || cull ? seenCull : null);",
+    "new": "        n += y.pool.draw(r, remapOf(y), _eye ? seenCull : null);",
     "tests": [
       "test/perfyard.test.js"
     ]

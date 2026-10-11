@@ -81,7 +81,7 @@ test('X11 Disintegrate: the no-magnitude SAVE is a SECOND gate, and a CasterOnly
 });
 
 // ── Comprehend Languages (44,255) ─────────────────────────────────
-test('X11 Comprehend Languages: an incumbent carrying a frozen chance, stacking rounds on a recast', () => {
+test('X11 Comprehend Languages: an incumbent carrying a frozen chance, renewing rounds on a recast', () => {
   const e = being();
   assert.equal(comprehendLanguagesChance(e), 0, 'nothing live, no bonus');
   // blankEffectSettings puts EVERY spinner at 1 (the editor's own
@@ -93,15 +93,21 @@ test('X11 Comprehend Languages: an incumbent carrying a frozen chance, stacking 
   assert.equal(comprehendLanguagesChance(e), 41, 'ChanceValue is frozen at cast from the CASTER\'s level');
   const rounds = e.activeEffects[0].roundsRemaining;
   // ...and then the INITIAL magic round every effect gets at assignment
-  // (EEM:594) consumes one, so 11 rolled leaves 10 standing. A stacking
+  // (EEM:594) consumes one, so 11 rolled leaves 10 standing. A renewing
   // recast fires no initial round of its own - the joining instance is
-  // never added to liveEffects - so it contributes its full 5.
+  // never added to liveEffects - and tops the incumbent up to what it
+  // would stand at fresh (5 rolled, 4 standing), never past.
   assert.equal(rounds, 10);
-  // a recast with a DIFFERENT chance: AddState stacks rounds and
-  // nothing else (ComprehendLanguages.cs:50-53)
+  // a recast with a DIFFERENT chance: AddState merges rounds and
+  // nothing else (ComprehendLanguages.cs:50-53). PIN MOVED (STACK-CAP):
+  // renewed, never stacked (it added its 5) - and a shorter recast
+  // never shortens the incumbent
   cast(e, 44, 255, { durationBase: 4, chanceBase: 90 });
   assert.equal(e.activeEffects.length, 1, 'one incumbent, not two');
-  assert.equal(e.activeEffects[0].roundsRemaining, rounds + 5, 'the rounds STACK');
+  assert.equal(e.activeEffects[0].roundsRemaining, rounds, 'the shorter recast leaves the 10 be');
+  e.activeEffects[0].roundsRemaining = 2;
+  cast(e, 44, 255, { durationBase: 4, chanceBase: 90 });
+  assert.equal(e.activeEffects[0].roundsRemaining, 4, 'and renews a 2 to its own fresh 4 - never 2 + 5');
   assert.equal(comprehendLanguagesChance(e), 41, 'and the incumbent keeps its own chance');
 });
 
@@ -240,7 +246,7 @@ test('X11 Spell Reflection: the host seam re-targets - the effect module never d
 });
 
 // ── Light (15,255) and its candle ─────────────────────────────────
-test('X11 Light: a duration-only incumbent, stacking rounds like every other buff', () => {
+test('X11 Light: a duration-only incumbent, renewing rounds like every other buff', () => {
   const e = being();
   assert.equal(BUFF_KINDS['15,255'], 'light');
   const out = cast(e, 15, 255, { durationBase: 10 });
@@ -250,7 +256,10 @@ test('X11 Light: a duration-only incumbent, stacking rounds like every other buf
   const rounds = e.activeEffects[0].roundsRemaining;
   cast(e, 15, 255, { durationBase: 6 });
   assert.equal(e.activeEffects.length, 1, 'one incumbent');
-  assert.equal(e.activeEffects[0].roundsRemaining, rounds + 7, 'AddState stacks rounds (LightNormal.cs:57-62)');
+  assert.equal(e.activeEffects[0].roundsRemaining, rounds, 'a shorter recast never shortens it');   // PIN MOVED (STACK-CAP): AddState stacked rounds (LightNormal.cs:57-62)
+  e.activeEffects[0].roundsRemaining = 1;
+  cast(e, 15, 255, { durationBase: 6 });
+  assert.equal(e.activeEffects[0].roundsRemaining, 6, 'renewed to its fresh 6 - never 1 + 7');
 });
 
 test('X11 the magic candle: DFU\'s numbers, and the position it hangs at', () => {

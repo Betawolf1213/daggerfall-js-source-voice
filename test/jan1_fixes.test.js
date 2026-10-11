@@ -98,7 +98,10 @@ test('JAN1 (3): the trade window prices an item with no finite value at its base
   assert.equal(e.wagonItems[0].value, base); assert.equal(e.otherItems[0].value, base);
   const t = rd('src/systems/tradeModes.js');
   assert.equal((t.match(/calculateCost\(item\.value/g) ?? []).length, 0, 'no price arm reads item.value raw');
-  assert.equal((t.match(/itemValueOf\(item\)/g) ?? []).length, 4, 'four arms through the one read: Buy, Sell, SellMagic, Repair');
+  // PIN MOVED (CRAFT-WORTH, 2026-10-11): Sell and SellMagic read it through counterValueOf (a crafted piece at its plain
+  // worth), which reads the one read itself - Buy, Repair and counterValueOf, three; the two selling arms, its two calls
+  assert.equal((t.match(/itemValueOf\(item\)/g) ?? []).length, 3, 'three reads of the one value: Buy, Repair and the counter\'s');
+  assert.equal((t.match(/calculateCost\(counterValueOf\(item\)/g) ?? []).length, 2, 'Sell and SellMagic through the counter\'s');
 });
 
 // (4) "sometimes speaking to people gives this interaction menu ... anyone else i speak to in the same building has the

@@ -10456,8 +10456,8 @@ placed turned in place, never picked up).
   one law (decorYardHighOk): the decorator says why before it asks (`scenes/homeYards.js` yardWhyNot - after the lot's
   own reasons, so a roof is still "the house"), and the service refuses a yard's piece placed or moved past it
   (`server-account/src/decor.js` placeDecor and moveDecor, `yard-high`, worded in `net/accountClient.js`). A room's
-  pieces are never asked. A piece standing from before it stays where it stands, read as ever, until its owner moves it
-  down or removes it; turned or moved, it must stand within the bound. acct86.
+  pieces are never asked. A piece standing from before it was swept (YARD-SWEEP, below: migration 0109, acct117); turned
+  or moved, a piece must stand within the bound. acct86.
 - **DECOR-TURN.** The panel's "In this room" (and "In this yard") view has Turn left and Turn right beside Move
   (`ui/decorPanel.js`): the chosen piece turned DECOR_TURN_STEP (15 degrees) about its upright where it stands - a hung
   one spun on its wall, as its placing turns it - free, the panel staying up (`scenes/decorTool.js` turnPlaced). It is a
@@ -10595,6 +10595,31 @@ The fix, at both ends:
   mint walk the season's rated bouts (the `a = ?2 OR b = ?2`); `/v1/homes/layouts` scans every home on each boot and
   retries every 24 s while unheard, and decorations wait on it; and a Project Legacy save posts its line's record on
   every checkpoint, so an online family's checkpoint is never idle.
+
+### YARD-SWEEP - the towers from before YARD-HEIGHT, taken down (2026-10-11)
+
+The owner: "remove any decor items that currently go above the height limit". YARD-HEIGHT refused a yard's piece
+placed or moved past DECOR_YARD_HIGH (4 m) and left every one standing from before it where it stood - the towers it
+was written against among them.
+
+- **The sweep.** Migration `0109_yard_height_sweep.sql` deletes every `home_decor` row with `yard` 1 whose place's
+  height (`$.pos[1]`, from the building's own origin on the town's ground - the one place decorYardHighOk reads) is
+  above 4 m. A place that is not JSON is passed over (`json_extract` would throw and fail the deploy's migration step;
+  such a row is never served - `pieceOfRow`). A room's pieces (`yard` 0) are never asked: a high shelf indoors is no
+  tower. A yard's piece holds nothing, serves no craft and hires no trader (decorYardPlaceOf), so no other row names
+  one.
+- **Nothing given back.** A yard's gold was paid from the save or the realm record, which no SQL statement can reach,
+  and the pieces stood against the law. Y4's own question (a piece's own height, not where it stands) is still the
+  owner's: the sweep asks only where a piece stands, as the law does.
+- **Never served, never stood.** The service's town read skips one too (`server-account/src/decor.js` yardsOf -
+  decorYardHighOk beside decorYardPieceOf), and so does the client (`scenes/homeYards.js` ensure), so a piece an older
+  isolate or an older service still answers is never drawn - not solid, not lit.
+- **The four hosts.** Yards stand in `scenes/world.js` alone; `scenes/exterior.js`, `scenes/worldModes.js` (interiors)
+  and `scenes/dungeonContext.js` stand none (test/decorlpt.test.js holds them to it).
+- acct117 (with HANDLE-EMAIL, `06-Systems/Accounts-And-Cloud-Saves-Arc.md`).
+- **Pinned**: `test/yardsweep.test.js` (3) - the migration over the real database (a tower gone, the bound and below
+  standing, a room's high shelf kept, a malformed place passed over, a second run nothing more), the town read, the
+  client's yard over the real pool; `tools/mutants/yardsweep.json` (5, all killed).
 
 ### YARD-SHED - a town's yards asked within reach, kept by the service, needing no session (2026-10-06)
 

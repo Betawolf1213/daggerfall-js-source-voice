@@ -43,6 +43,7 @@ import {
   storedSession, keepSession, forgetSession, accountRefusalText, handleShapeOk,
   PASSWORD_MIN_LEN,
 } from '../net/accountClient.js';
+import { handleLooksLikeEmail } from '../net/handleShape.js';   // HANDLE-EMAIL: a new username is never an address
 import { ACCEPTED, TERMS_URL, PRIVACY_URL } from '../net/legalLaw.js';   // TERMS1: the documents a new account agrees to
 import { AURA_TEXT } from './playerBadge.js';   // SHADOW-CLOAK (AUDIT): an aura's name in the card's note
 
@@ -488,6 +489,8 @@ export function AccountFlow({ io, storage, onChange = () => {} }) {
   async function doRegister() {
     const bad = localRefusal(FIELDS.register, AGREEMENTS.register);
     if (bad) return refuse(bad);
+    // HANDLE-EMAIL: a new username is never an address - asked here alone, so one chosen before still signs in
+    if (handleLooksLikeEmail(v('handle'))) return refuse(accountRefusalText('handle-email'));
 
     // TERMS1: both requests carry the versions the player just ticked -
     // the service opens no row, and names none, without them.

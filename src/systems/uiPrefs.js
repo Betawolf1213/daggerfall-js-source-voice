@@ -155,6 +155,10 @@ export const PREF_DEFAULTS = Object.freeze({
   // PEER_RANGE_TIERS; 0 everyone the relay sends). The default 300, past a player's shot (200 m); its PEER_RANGE_DEFAULT, pinned
   // equal by test/peerrange.test.js and not imported, for GATE-CROWD's reason above
   peerRange: 300,
+  // YARD-RANGE (2026-10-11, a player: "20-40 fps in cities"): how far out, in metres on the ground, other players' yards are
+  // drawn - one's own always (scenes/homeYards.js YARD_RANGE_TIERS; 0 none). The default 300, the distance every yard was
+  // drawn at before; its YARD_RANGE_DEFAULT, pinned equal by test/yardrange.test.js and not imported, for GATE-CROWD's reason
+  yardRange: 300,
   nightCrickets: true,   // SNDREP1: the night crickets loop (SoundClips.AmbientCrickets) - on by default; off silences it
   distantHowl: true,     // SNDREP1: the distant howl (SoundClips.AmbientDistantHowl) - on by default; off silences it
   // WS1: `mwSheathing` (Weapon Sheathing on the third-person body) is

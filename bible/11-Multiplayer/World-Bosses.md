@@ -671,7 +671,7 @@ a script. What they found, and what became of it:
 | F3 | at his fall the fold kept where his last word BEGAN - the body, the spoils and the portal home stood up to 30 m back at a leap's or a charge's start | the fold freezes him where he fell (the court's own `bossPlace` at the kill), and the relay settles his place by the beat's rule at the killing blow (`settleAt`) |
 | F4 | a walk's word kept a finished charge in the state, so he was drawn frozen at its lane's end while he walked | the walk ends the attack before it |
 | F5 | a Soul Trap at range or bursting flew through him (the missile's word was a duel spell's) | a missile may meet him when its spell is a duel's or a trap |
-| F6 | a recast was rolled as a new trap against his save, and the trap was forgotten at a cast-out and a walk back in | a trap running on him is his incumbent for the recast (it stacks, no save), and it outlives a walk out and back the same day, rolled once |
+| F6 | a recast was rolled as a new trap against his save, and the trap was forgotten at a cast-out and a walk back in | a trap running on him is his incumbent for the recast (it stacks, no save - renewed since STACK-CAP, 2026-10-11), and it outlives a walk out and back the same day, rolled once |
 | F7 | the charge struck 1.8 m from its line and was drawn at 1.75 | drawn, and judged by the static law, as it strikes |
 | F8 | a frame out of the burning ground each second was never bitten | a step out shorter than a tick keeps the fire's count |
 | F9 | the leap's flight played seven steps on the stone | no step while he is in the air |

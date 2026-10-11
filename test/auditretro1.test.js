@@ -307,13 +307,13 @@ test('AUDIT RETRO1 C1: Shift-F11 under an open window loads nothing - it is the 
   assert.equal(retroToggleKey(ev(true)), true);
   assert.equal(retroToggleKey(ev(false)), false, 'F11 alone is QuickLoad\'s');
   let loads = 0;
-  const ctx = { uiOverlayActive: true, overlayIsNative: false, overlayInput() {}, quickLoad: () => { loads++; } };
+  const ctx = { uiOverlayActive: true, overlayIsNative: false, overlayInput() {}, overlayWindow: () => ({ loadsUnder: true }), quickLoad: () => { loads++; } };   // PIN MOVED (DUPE-LOAD): the death screen, the one window F11 loads from under
   _resetRetroPostprocessing();
   routeKey(ev(true), ctx, null, new Set(['ShiftLeft']));
   assert.equal(loads, 0, 'Shift-F11 under a window: no load');
   assert.equal(retroPostprocessingEnabled(), true, 'and no toggle either - DaggerfallHUD.Update is dead under a window (the second pass, I7)');
   routeKey(ev(false), ctx, null, new Set());
-  assert.equal(loads, 1, 'F11 under a window still loads (the death screen\'s hint)');
+  assert.equal(loads, 1, 'F11 under the death screen still loads (its hint)');
   const w = src('scenes/world.js');
   assert.match(w, /codeMeans\(bindings\(\), e\.code, 'QuickLoad'\) && !retroToggleKey\(e, keys\)\) \{/, 'the exterior ladder\'s own arm (UXB1-S: its key, shared or not)');
   _resetRetroPostprocessing();

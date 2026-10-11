@@ -9273,11 +9273,11 @@ export async function bootWorld(canvas, renderer, params, status) {
     const key = rec?.companion;
     if (isRevenantCompanionKey(key)) return openSwornPack(rec);   // REVENANT-COMPANION: a sworn one's pack - its record's own list
     if (!naval?.companionPack?.(key) || !inventoryDoorReady()) return false;
-    // AUDIT WK-P3: his pack read by his key at every look - a quickload under the window stands a restored party, and a
+    // AUDIT WK-P3: his pack read by his key at every look - a load stands a restored party (one under the window did, before DUPE-LOAD), and a
     // list taken once kept the unloaded pack's items to be taken again (each F9/F11 a duplicate)
     let orphan = null;
     // COMPANION-WEIGHT: and it carries what a person of his strength can - AUDIT ECON C5: his LIVE body's, looked up by
-    // his key at every store as his items are (a quickload under the window stands another, or none); gone from the
+    // his key at every store as his items are (a load stands another, or none); gone from the
     // party, his pack takes nothing (itemTransfer.js packGoneText) - what it took would go into the stand-in list
     const named = naval?.companionPack?.(key)?.name ?? null;
     const capacity = () => {
@@ -12695,6 +12695,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     outside: () => _mode() === 'exterior' && playerSpawned && !player.riding,
     eye: () => cam.pos,
     cull: (box) => yardCull(box),   // PERF-YARD: the pieces culled as the town's own models are
+    range: () => getPref('yardRange'),   // YARD-RANGE: how far other players' yards are drawn (the Other players card)
     collider: () => collider, meshes: { getGpuMesh, cpuModels }, renderer, getTexture, uploadRecord, uploadRecordFrame,
     iconUrl: (a, r) => loadIcon(a, r, { scale: 1 }),
     scanDeps: () => decorScanDeps({ blocks, arch, getTexture }),   // DECOR-DUNGEON: the interior host's own constructor
@@ -14709,6 +14710,19 @@ export async function bootWorld(canvas, renderer, params, status) {
     townTalk.say(RESURRECT_TEXT.raised(rez.name));
     if (spared > 0) townTalk.say(RESURRECT_TEXT.spared(spared));
   }
+  /** DUPE-LOAD: the street's slot down through each window's own close, the top first and then each it was laid over -
+   *  never the death screen (closeDeathScreen's) - and, under ANY death screen (the street's, a building's, a dungeon's),
+   *  every window waiting beneath it disposed uncalled. A building's or a dungeon's windows over the slot are their mode's
+   *  (forceExitToExterior's); a load reaches those only from the pause, which opens over none. Bounded: a close that
+   *  keeps opening a successor stops at 16. */
+  function closeWindowsForLoad() {
+    for (let n = 0; n < 16 && townTalk.overlay && !(townTalk.overlay instanceof DeathScreen); n++) townTalk.closeOverlay();
+    // AUDIT DUPE-LOAD: and what waits BENEATH the death screen - a window a box covered when the death took the top, a
+    // box pushed while it stands (holdsTop) - goes uncalled: closeDeathScreen uncovered it over the loaded game. The
+    // modes drain their own (a building's stack, a dungeon's - worldModes.js discardBeneathDeath)
+    if (townTalk.overlay instanceof DeathScreen) townTalk.discardBeneath(townTalk.overlay);
+    modes?.discardBeneathDeath?.();
+  }
   /** AUDIT RISE-REST F1: CLOSE WHICHEVER DEATH SCREEN IS UP - townTalk's slot (a death outdoors) or the mode's own (a
    *  building's, a dungeon's: modes.clearDeath), the fall's pitch handed back either way. The Resurrect's close and a
    *  respawn that threw share it: the respawn's catch knew townTalk's slot alone, so a death in a building or a
@@ -15744,6 +15758,14 @@ export async function bootWorld(canvas, renderer, params, status) {
       const snap = picked ?? (key != null || mostRecent ? pickedSaveSnap({ key, mostRecent })   // MW-EARLY: the pick the boot's early build read (AUDIT MW-EARLY F3: the boot hands its one parse in)
         : quickLoadSlot(playerEntity.name, undefined, playerEntity.characterId ?? null));   // CHARID1: my own QuickSave, never a namesake's
       if (!snap) { townTalk.say('No saved game.'); return; }
+      // DUPE-LOAD (2026-10-11): THE WINDOWS DOWN BEFORE THE SAVE IS READ (closeWindowsForLoad: the street's slot, and
+      // what waits under any death screen) - and before the first await, where a window left up could still be played.
+      // A window holds what it took off the old game (the pack's drops, a counter's staged goods, a loot window's pile);
+      // its close hands that back, and a close AFTER the restore handed it to the loaded game - the pack the save
+      // restored plus the pile the close minted. Closed here, its close lands on the old game the restore replaces (the
+      // pack is the save's once restored; where the load teleports, a pile it mints is swept with every other -
+      // droppedLoot.restoreWorld). The death screen stays: closeDeathScreen takes it down below, its view handed back.
+      closeWindowsForLoad();
       // MAC-L4: the table this save is READ WITH, before it is read. The
       // boot fires `loadMagicRegistries` and does not await it (every
       // other consumer is a later frame), so a quickload in the first
@@ -15757,6 +15779,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       // before the save is read over the entity it was building for.
       modes?.abortTransition?.();
       await modes?.transitionSettled?.();
+      closeWindowsForLoad();   // AUDIT DUPE-LOAD: and once more after the last await - a window opened while the load waited (a door's build, the spell table) goes too
       if (csaRuntime) csaCall(() => csaRuntime.OnStartLoad());   // CSA-D: ComeSailAway.OnStartLoad - the riders dropped, the helm left; CSA-J (the audit): AHEAD of the save's player (SaveLoadManager.cs:1378, the restore at :1497) - its StopSailing hands a lent ship back, and after restorePlayer it took the loaded character's own
       const extras = restorePlayer(playerEntity, snap, spellsByIndex);
       if (!extras) { townTalk.say('Save version mismatch.'); return; }
@@ -17520,7 +17543,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   let _worldKeysLive = false;
   addEventListener('keydown', (e) => {
     if (peerMenuReader && !isTextEntryTarget(e.target)) peerMenuReader.down(e.code, e.repeat);   // PEERMENU1: hears the key, never eats it (a tap of E still interacts)
-    // FIX-E: QUICKLOAD WORKS FROM UNDER ANY OVERLAY - the death screen's
+    // FIX-E: QUICKLOAD WORKS FROM UNDER THE DEATH SCREEN - its
     // own "F11 load" hint, and the one arm ui/input.js's routeKey lets
     // through its overlay gate (the dungeon and interior hosts). This
     // host runs its own ladder, and its QuickLoad arm stood BELOW the
@@ -17530,7 +17553,10 @@ export async function bootWorld(canvas, renderer, params, status) {
     // filled below the overlay gate (G3), and a key under a window
     // joins none - so no combo, as DFU's Update returns before PollInput.
     // AUDIT RETRO1 C1: but Shift-F11 - the retro toggle's chord on this key - is no load.
-    if (townTalk.overlayActive && !isTextEntryTarget(e.target) && (modes?.mode ?? 'exterior') === 'exterior' && codeMeans(bindings(), e.code, 'QuickLoad') && !retroToggleKey(e, keys)) {   // UXB1-S: its key, shared or not
+    // DUPE-LOAD (2026-10-11): and only from under the death screen (`loadsUnder`) - FIX-E's arm read any window, so F11
+    // under the pack restored the save while the window still held what it had dropped, and its close minted a pile of
+    // it beside the restored pack. Any other window keeps F11, as it keeps every key.
+    if (townTalk.overlayActive && townTalk.overlay?.loadsUnder === true && !isTextEntryTarget(e.target) && (modes?.mode ?? 'exterior') === 'exterior' && codeMeans(bindings(), e.code, 'QuickLoad') && !retroToggleKey(e, keys)) {   // UXB1-S: its key, shared or not
       e.preventDefault();
       if (e.repeat) return;   // AUDIT DISC28 UI-7: one press, one load (or one respawn) - a held F11 under a window repeats nothing
       // D-ONLINE1 (Mac, 2026-09-17: "you should just respawn in this case"): F11 on the death screen used to
@@ -28785,7 +28811,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     gateFloor: () => { _gateFloor.xa = gateLink?.state()?.xa ?? _gateFloor.none; _gateFloor.now = Date.now() + _sharedOffsetMs; return _gateFloor; },   // WB9b: the walkways laid between the courts, on the relay's clock (one object, refilled - AUDIT WB D10's law)
     onBossHit: (hit) => !!gateCourt?.hit(hit),   // WB4b: a blow's number on him, out to the room
     onBossTrap: (trap) => !!gateCourt?.trapped(trap),   // WBX7: a soul trap laid on him - the court rolls it at his fall
-    bossTrapNow: () => gateCourt?.trapNow?.() ?? null,   // AUDIT WBX F6: my trap running on him, for a recast to stack onto
+    bossTrapNow: () => gateCourt?.trapNow?.() ?? null,   // AUDIT WBX F6: my trap running on him, for a recast to renew (STACK-CAP)
     gateCrystals: () => gateCourt?.crystalTargets() ?? null,   // WB9c: the Reckoning's crystals as bodies my blows meet
     onCrystalHit: (hit) => !!gateCourt?.crystalHit(hit),   // WB9c: a blow's number on one, out to the room
     gateHost: () => gateCourt?.hostTargets() ?? null,   // WB11c: his host as bodies my blows meet

@@ -235,7 +235,10 @@ test('FB0929: one law at every counter - the keyed shelf and repair rows price t
   assert.match(fn('buyPrice'), /return getTradePrice\('Buy', lot\.cost, /);
   assert.match(fn('repairPrice'), /const lot = tradeCost\('Repair', \[it\], /, 'the keyed repair list');
   assert.match(fn('repairPrice'), /return getTradePrice\('Repair', lot\.cost, /);
-  for (const f of ['buyPrice', 'repairPrice']) assert.doesNotMatch(fn(f), /calculateTradePrice|calculateCost|calculateItemRepairCost/, `${f} keeps no copy of the haggle`);
+  // CRAFT-WORTH (2026-10-11): and the keyed SALE too - it priced the raw value at the region's index with no condition
+  assert.match(fn('sellPrice'), /const lot = tradeCost\('Sell', \[it\], \{ quality: b\.quality, priceAdjustment: shopAdjustment\(b, 'Sell'\) \}\);/, 'the keyed sale row');
+  assert.match(fn('sellPrice'), /return getTradePrice\('Sell', lot\.cost, /);
+  for (const f of ['buyPrice', 'repairPrice', 'sellPrice']) assert.doesNotMatch(fn(f), /calculateTradePrice|calculateCost|calculateItemRepairCost/, `${f} keeps no copy of the haggle`);
   const calls = [];
   for (const f of readdirSync(new URL('../src/', import.meta.url), { recursive: true })) {
     if (!f.endsWith('.js') || !rd(`src/${f}`).includes('getTradePrice(')) continue;

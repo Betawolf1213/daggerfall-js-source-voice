@@ -22,12 +22,12 @@
   {
     "name": "ACC1b-3-a-handle-is-ignored-for-the-displayed-name",
     "file": "server-account/src/accounts.js",
-    "old": "  if (typeof handle === 'string' && handle.length > 0) return handle;",
+    "old": "  if (typeof handle === 'string' && handle.length > 0 && !handleLooksLikeEmail(handle)) return handle;",
     "new": "  if (false) return handle;",
     "tests": [
       "test/accountworker.test.js"
     ],
-    "note": "A linked player would be shown, and TOKENED, under their guest name."
+    "note": "A linked player would be shown, and TOKENED, under their guest name. Re-aimed by content at YARD-RANGE / HANDLE-EMAIL (2026-10-11)."
   },
   {
     "name": "ACC1b-4-everybody-is-a-guest",

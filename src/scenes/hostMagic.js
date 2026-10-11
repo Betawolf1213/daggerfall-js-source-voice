@@ -698,7 +698,7 @@ export function createPlayerMagic({
     // STRIKE-SHARED (2026-09-29): ANOTHER PLAYER'S strike spell, landed here on the foe I own (`ctx.peerCaster` its id).
     // The trap's line is its caster's and not mine to speak, and a new trap is marked with whose it is - its soul goes
     // to that caster's pack, never mine (mysticism.js peerSoulTrapOf). An incumbent trap keeps its own caster, as it
-    // keeps its own chance (AddState stacks rounds alone).
+    // keeps its own chance (AddState merges rounds alone - renewed, STACK-CAP).
     const peerCaster = typeof ctx?.peerCaster === 'string' ? ctx.peerCaster : null;
     if (r.trapAlert && !peerCaster) say(SOUL_TRAP_TEXT[r.trapAlert]);
     if (peerCaster && r.trapAlert === 'trapActive') {

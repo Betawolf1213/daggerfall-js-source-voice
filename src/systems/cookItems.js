@@ -153,7 +153,7 @@ function dishEntry(a, name) {
 }
 /** AUDIT PROF-541 K3/K4: WHAT A FEAST'S GIFT DOES (world.js online.onCast, before the cast lands): a spell that is no
  *  party dish's passes untouched (true); a feast from a STRANGER is dropped (false - a feast is the party's at the table,
- *  and a stranger's landed beside my party's own, its rounds added to it: effects.js like-kind stacking); a party mate's
+ *  and a stranger's landed beside my party's own, merged into it: effects.js like-kind incumbency); a party mate's
  *  renews mine (renewDish, its rounds the cast's own at `level`) - dropped when mine has as many left. */
 export function takeFeastGift(entity, spell, level, mate) {
   if (!isPartyDishSpell(spell?.name)) return true;

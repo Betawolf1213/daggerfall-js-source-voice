@@ -1220,6 +1220,17 @@ function rareFlavour(list, rolls, fits = null) {
 export const RARE_ENCHANT_WORTH = 600;
 /** LOOT14: a garment's Rare enchantment is worth half (GARMENT_WORTH_SHARE). */
 export const rareEnchantWorth = (item) => Math.round(RARE_ENCHANT_WORTH * (isGarment(item) ? GARMENT_WORTH_SHARE : 1));
+/** CRAFT-WORTH (2026-10-11, the exploit audit; Economy-Arc principle 5, "What an NPC pays for a crafted piece is capped,
+ *  or smithing prints gold"): THE WORTH A CRAFTED PIECE'S QUALITY ROLLED ONTO IT - a Superior's Magic tier, a Masterwork's
+ *  Rare (smithItems.js mintPiece, through applyRarity above: its affixes' worth and a Rare's flavour's). That worth is the
+ *  piece's POWER, never a counter's price: a Masterwork staff of three pine planks sold for ~1,280 gold where the plain
+ *  staff fetches 6, every time, at a shop whose gold never runs out (~79k gold an hour of chopping and sawing at margin
+ *  45, ~320k at the service's own throttle). 0 for a piece no craft made, or one its quality rolled nothing onto. */
+export function craftedRarityWorth(item) {
+  if (typeof item?.provenance !== 'string' || !ROLLED_TIERS.includes(item.rarity)) return 0;
+  // AUDIT CRAFT-WORTH: a record's lines only as a list - a malformed one is worth nothing here, never a throw in the Sell walk
+  return affixesWorth(Array.isArray(item.affixes) ? item.affixes : [], item) + (item.rarity === 'rare' ? rareEnchantWorth(item) : 0);
+}
 
 /** THE HOST DOOR. Roll every eligible item of a freshly generated list
  *  against the source; a no-op with the switch off or no source, so

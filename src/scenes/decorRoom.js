@@ -59,6 +59,21 @@ export const decorIdOfKey = (key) => (typeof key === 'string' && key.startsWith(
 /** PERF-YARD (2026-10-10, the owner: "prob caused by placed objects by players"): a host's verdict on a placed model's box
  *  in the world (`draw`'s `cull`) - drawn, cast into the shadow maps alone, or neither. */
 export const DECOR_DRAW = 0, DECOR_SHADOW = 1, DECOR_SKIP = 2;
+/**
+ * YARD-RANGE (2026-10-11, a player: "browser version for me is unplayable nowadays I get like 20-40 fps in cities"; the
+ * owner: "look into limiting and improving performance with player's exterior decor items"): WHETHER A PIECE IS BIG
+ * ENOUGH TO SEE - its half-size `half` (metres) at the offset (dx, dy, dz) from the eye, no smaller than `minAngle` (half
+ * over distance, radians near enough). A town of full yards is two thousand pieces; past a few pixels a cup or a
+ * flowerpot is a draw call and a shadow record for nothing. Pure.
+ */
+export function decorPieceSeen(half, dx, dy, dz, minAngle) {
+  if (!(minAngle > 0)) return true;
+  const d = Math.hypot(dx, dy, dz);
+  return half >= d * minAngle;
+}
+/** YARD-RANGE: decorPieceSeen of a box in the world ([minX, minY, minZ, maxX, maxY, maxZ]), from its middle. */
+export const decorBoxSeen = (b, eye, minAngle) => decorPieceSeen(Math.hypot(b[3] - b[0], b[4] - b[1], b[5] - b[2]) / 2,
+  (b[0] + b[3]) / 2 - eye[0], (b[1] + b[4]) / 2 - eye[1], (b[2] + b[5]) / 2 - eye[2], minAngle);
 /** PERF-YARD: the pixel walk's law over one box (scenes/world.js - EV3 and SHADOW-REACH): inside the view's `planes`,
  *  drawn; outside them, cast into the maps alone where `reaches(box)` says a shadow reaches it, else neither. */
 export function decorCullVerdict(planes, box, reaches) {
@@ -462,6 +477,19 @@ export function createDecorRoom({
   }
   /** The flats' batches, for the host's billboard pass. */
   const batches = () => [...standing.values()].map((e) => e.batch).filter(Boolean);
+  /** YARD-RANGE: the flats' batches pushed onto `out`, each only while it is no smaller from `eye` than `minAngle`
+   *  (decorPieceSeen) - no eye, every one. A town's yards answer theirs every frame, so nothing is made but the push. */
+  function batchesSeen(out, eye = null, minAngle = 0) {
+    for (const e of standing.values()) {
+      if (!e.batch) continue;
+      if (eye && e.size) {
+        const p = e.piece.pos;
+        if (!decorPieceSeen(Math.max(Math.abs(e.size.w), e.size.h) / 2, e.o[0] + p[0] - eye[0], e.o[1] + p[1] - eye[1], e.o[2] + p[2] - eye[2], minAngle)) continue;
+      }
+      out.push(e.batch);
+    }
+    return out;
+  }
   /** DECOR2c: the mounts, on the host's decal pass (after the room's solid geometry, as the blood marks go). */
   function drawMounts(r = renderer) {
     let n = 0;
@@ -601,7 +629,7 @@ export function createDecorRoom({
   }
 
   return {
-    put, remove, set, restand, destroyAll, draw, batches, drawMounts, lights, pushLights, targets, pieceOf, list, size: () => standing.size,
+    put, remove, set, restand, destroyAll, draw, batches, batchesSeen, drawMounts, lights, pushLights, targets, pieceOf, list, size: () => standing.size,
     itemsOf, holdsAny, itemsSnapshot, setItems, keep, kept: () => kept,
     ownOf, keepOwn, takeOwn, ownSnapshot, setOwn, ownIds, refreshMounts, mountPicture, standPicture, onRefresh,
   };

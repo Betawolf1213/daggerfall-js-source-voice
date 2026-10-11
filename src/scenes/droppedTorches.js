@@ -39,7 +39,7 @@
 // mod's settings assigned on the foe's own manager (CasterOnly - no
 // saving throw, the foe its own caster) - the port's applySpell - and
 // the mod's light effect beside it: an active entry the magic round
-// counts down (AddState stacks a re-hit's rounds), a point light and a
+// counts down (a re-hit renews its rounds - effects.js renewRounds, STACK-CAP), a point light and a
 // looping flame billboard (TEXTURE.375 record 0, the fire missile's
 // flight loop, drawn upside down as the mod scales it) riding the foe
 // while the entry lives. ContinuousDamageHealth declares no
@@ -55,7 +55,7 @@
 import { GLOBAL_SCALE, pickFoeHit, RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
 import { templateByIndex } from '../systems/itemTemplates.js';
 import { TEMPLATES } from '../systems/useItem.js';
-import { applySpell } from '../systems/effects.js';
+import { applySpell, renewRounds } from '../systems/effects.js';
 import { calculateSuccessfulHit, calculateStruckBodyPart } from '../combat/formulas.js';
 import { liveStat } from '../systems/statMods.js';
 import { worldMinutes } from '../systems/worldTick.js';
@@ -309,10 +309,11 @@ export function createDroppedTorches({
     const sinks = foeSinks?.(f) ?? { hurt: (n) => { f.entity.health = Math.max(0, (f.entity.health ?? 0) - n); } };
     applySpell({ effects: [e], element: 0, rangeType: 0 }, level, f.entity, sinks, rolls, { entity: f.entity });
     if (st.fireLight) {
-      // the light effect: duration alone; AddState stacks a re-hit's rounds (0x4426)
+      // the light effect: duration alone; a re-hit renews its rounds, never stacks them (STACK-CAP - the mod's AddState,
+      // 0x4426, adds them up; it takes no initial round, so a fresh one stands at the whole duration)
       const list = (f.entity.activeEffects ??= []);
       const inc = list.find((a) => a.kind === ENEMY_FIRE_KIND);
-      if (inc) inc.roundsRemaining += st.fireDuration;
+      if (inc) renewRounds(inc, st.fireDuration);
       else list.push({ kind: ENEMY_FIRE_KIND, key: ENEMY_LIGHT_EFFECT_KEY, roundsRemaining: st.fireDuration });
     }
   }

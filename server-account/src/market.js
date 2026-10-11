@@ -60,7 +60,7 @@ import { marketHallTitheCap } from '../../src/net/fortLaw.js';
 import { tideNow } from './tides.js';   // SEASON1 part two: a Bandit Summer's couriers (9.3)
 import { tideCourier } from '../../src/net/tideLaw.js';
 import { profOpenFor, spendStatements, spendOrigins, spendableSql, storeOf } from './professions.js';
-import { REALM_ID_RE, realmActFirst, prepareRealmRecord, mustChange, dropIfUnnamed, recordMovedOf, dropObjects, realmHoldOf } from './realm.js';   // GOLD-MARKET
+import { REALM_ID_RE, realmActFirst, prepareRealmRecord, mustChange, dropIfUnnamed, recordMovedOf, dropObjects, realmHoldOf, craftHoldOf } from './realm.js';   // GOLD-MARKET
 import { lawfulItem, itemWorth } from '../../src/systems/itemLaw.js';   // INT1: no piece the law cannot stand behind is listed; LW15: a patron's judge
 import {
   patronHour, patronCands, patronHours, patronWorth, patronTakes, PATRON_HOUR_S, PATRON_TOWN_HOUR, PATRON_SELLER_HOUR, PATRON_SELLER_DAY_GOLD,
@@ -821,6 +821,8 @@ export async function marketList(ctx, player, env, { character, region, kind, ma
   if (units * price > MARKET_WORTH_MAX) return { error: 'bad-price' };   // AUDIT 30 L8: no balance could pay its fee or buy it
   const held = await realmHoldOf(db, me, character);   // INT3 (AUDIT INT): a held character lists nothing - its craft, its Stores
   if (held) return held;
+  const pieceHeld = kind === 'piece' ? await craftHoldOf(db, me, provenance) : null;   // CRAFT-HOLD: nor its craft under another character's name
+  if (pieceHeld) return pieceHeld;
   if (await overRate(ctx, `market-post:${me}`, MARKET_POSTS_MAX, MARKET_WINDOW_S)) return { error: 'market-rate' };
   await settle(ctx, player);
   const fee = listingFee(units * price);
@@ -1613,7 +1615,7 @@ export async function marketAuction(ctx, player, env, { character, region, prove
   const made = await db.prepare('SELECT recipe, quality FROM products WHERE provenance = ?1').bind(provenance).first();
   if (made && !pieceListable(made.recipe)) return { error: 'market-not-listable' };
   if (made && !auctionable(made.recipe, Number(made.quality))) return { error: 'auction-not-masterwork' };
-  const held = await realmHoldOf(db, me, character);   // INT3 (AUDIT INT): a held character auctions nothing
+  const held = (await realmHoldOf(db, me, character)) ?? (await craftHoldOf(db, me, provenance));   // INT3 (AUDIT INT): a held character auctions nothing; CRAFT-HOLD: nor its craft under another's name
   if (held) return held;
   if (await overRate(ctx, `market-post:${me}`, MARKET_POSTS_MAX, MARKET_WINDOW_S)) return { error: 'market-rate' };
   await settle(ctx, player);   // MARKET-AUDIT: as a listing posted - a listing past its hours, unsettled, stood among the thirty

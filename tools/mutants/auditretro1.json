@@ -168,8 +168,8 @@
   {
     "name": "AUDITRETRO1-C1-shift-f11-loads-under-a-window",
     "file": "src/ui/input.js",
-    "old": "if (actionsOf(e, keys).includes('QuickLoad') && !retroToggleKey(e, keys)) {",
-    "new": "if (actionsOf(e, keys).includes('QuickLoad')) {",
+    "old": "&& actionsOf(e, keys).includes('QuickLoad') && !retroToggleKey(e, keys)) {",
+    "new": "&& actionsOf(e, keys).includes('QuickLoad')) {",
     "tests": [
       "test/auditretro1.test.js",
       "test/fixe_deathMenu.test.js"

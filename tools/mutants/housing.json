@@ -612,11 +612,13 @@
   {
     "name": "HOME-YARD-a-yard-drawn-afar",
     "file": "src/scenes/homeYards.js",
-    "old": "        if (eye && y !== cur?.yard && Math.hypot(o[0] - eye[0], o[2] - eye[2]) > YARD_DRAW_M) continue;\n",
+    "old": "        if (!nearEye(y, eye)) continue;   // YARD-RANGE: the player's distance for a stranger's, YARD_DRAW_M for one's own\n",
     "new": "",
     "tests": [
-      "test/homeyard.test.js"
-    ]
+      "test/homeyard.test.js",
+      "test/yardrange.test.js"
+    ],
+    "note": "Re-aimed by content at YARD-RANGE / HANDLE-EMAIL (2026-10-11)."
   },
   {
     "name": "HOME-YARD-the-lot-by-its-middle",

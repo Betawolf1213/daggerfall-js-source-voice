@@ -5408,3 +5408,31 @@ Mac: "online integration with permadeath (Bloodline) or non-permadeath (Enduring
   main's WATCH-FIX and SERPENT3 at the merge) first, then the migration and the service (acct87), then the site - the
   new site founds, tombstones and weds at the service.
 
+## HANDLE-EMAIL - a username is never an email address (2026-10-11, acct117)
+
+The owner: "ban account names as email". The handle is the name the world reads (`server-account/src/accounts.js`
+displayName - the token's `n`, every roster, every home's owner, every board note), so a player who typed their
+address into the Username field published it to everyone they met. HANDLE_RE takes any character but a space, `@`
+among them.
+
+- **The law.** `src/net/handleShape.js` handleLooksLikeEmail: a handle carrying an `@` is an address - none can be
+  written without one. Asked after the shape (a handle still starts with a letter), before the filter.
+- **At registration.** `handleRefusal` answers `email`, so `/v1/auth/register` refuses `handle-email`, worded in
+  `net/accountClient.js` REFUSALS; nothing is written and the guest stays a guest.
+- **At the form.** `ui/accountFlow.js` doRegister refuses it before any request, in the service's own sentence. Asked
+  there alone - never in localRefusal, which the sign-in and the recovery share - so a handle chosen before still signs
+  in and recovers by it.
+- **One chosen before.** It keeps its handle, its `handle_lc`, its sign-in and its roles (the wrangler.toml `*_HANDLES`
+  lists are keyed by handle); displayName reads its guest name in its place, so the token, the login's answer, every
+  roster and every row written from now on carry the guest name. The player's own account card still shows them the
+  handle they sign in with (`handle`, beside `name`).
+- **OPEN - the copies written before.** displayName's answer was written down by value wherever a name is kept (a
+  home's `owner_name`, a guild's roster and ledgers, board notes, letters, seat edicts - forty-odd columns): those still
+  read the address until the row is written again. A migration putting the guest name back in each, matched on the
+  handle exactly, was drafted and held for the owner's word - it rewrites rows across the live database. There is still
+  no rename route (OPEN above), so such a player cannot choose a new handle.
+- acct117 (with YARD-SWEEP, `06-Systems/Online-Arc.md`).
+- **Pinned**: `test/handleemail.test.js` (4) - the law and the refusal's order and sentence; the real route refusing
+  one; an address chosen before signing in, named by its guest name in the login and the token, its card showing its
+  handle; the form refusing before any request and never refusing the sign-in; `tools/mutants/handleemail.json` (6,
+  all killed).

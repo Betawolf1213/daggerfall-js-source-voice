@@ -504,6 +504,21 @@ export async function realmHoldOf(/** @type {any} */ db, /** @type {string} */ p
   return holdRefusal(await db.prepare('SELECT held, judged_seq FROM realm_characters WHERE id = ?1 AND player = ?2').bind(character, playerId).first());
 }
 
+/** CRAFT-HOLD (2026-10-11, the exploit audit): INT3's hold on a crafted piece follows THE PIECE - the hold of the
+ *  account's realm character its maker's record names (`products.char_id` - or, for a piece made before customs, the
+ *  offline character it brought in: `origin_id`), whatever character the act names. realmHoldOf asks the acting character
+ *  alone and answers null for an id that is no realm id, so a held character's craft listed, auctioned, filled a
+ *  commission or was disenchanted under `char-anything` (a raw request: the realm character held for copies, its piece
+ *  open on the boards for Drakes). Null for a piece no realm character of this account made. AUDIT CRAFT-HOLD: a HOLD
+ *  alone, never `record-unjudged` - `char_id` stays the maker's for the piece's life (a sale moves `owner` only), so a
+ *  sibling that bought its own account's piece back was refused for good once its maker lay unplayed or dead. */
+export async function craftHoldOf(/** @type {any} */ db, /** @type {string} */ playerId, /** @type {unknown} */ provenance) {
+  if (typeof provenance !== 'string') return null;
+  const row = await db.prepare(`SELECT r.held FROM products p JOIN realm_characters r ON (r.id = p.char_id OR r.origin_id = p.char_id) AND r.player = ?2
+    WHERE p.provenance = ?1 AND r.held IS NOT NULL`).bind(provenance, playerId).first();
+  return row?.held ? { error: 'trade-held', held: row.held } : null;
+}
+
 /**
  * A CHECKPOINT: the save, under the current lease, at `seq + 1`. The row is asked first (a stale lease or sequence is
  * refused before a byte is written), the object lands at a key of its own, and the row moves to it only if the lease
@@ -794,9 +809,16 @@ export async function leaveRealm({ db }, /** @type {string} */ playerId, /** @ty
  *  would be handed come to this character. The history (the ledger, the crafts, the sales) stays. */
 export async function deleteRealm({ db, bucket, nowS = Math.floor(Date.now() / 1000) }, /** @type {string} */ playerId, /** @type {unknown} */ id) {
   if (typeof id !== 'string' || !REALM_ID_RE.test(id)) return { error: 'body' };
-  const row = await db.prepare('SELECT obj, prev, bytes, origin_id, dead_at FROM realm_characters WHERE id = ? AND player = ?').bind(id, playerId).first();
+  const row = await db.prepare('SELECT obj, prev, bytes, origin_id, dead_at, held FROM realm_characters WHERE id = ? AND player = ?').bind(id, playerId).first();
   if (!row) return { error: 'no-realm-character' };
   if (row.dead_at != null) return { error: 'dead' };   // AUDIT LEGACY III O7
+  // AUDIT CRAFT-HOLD (the exploit audit): A HELD CHARACTER WITH CRAFTS IS NOT DELETED - its row is where its hold lives,
+  // and the hold on the pieces it made (craftHoldOf) went with it: held for copies, deleted, and its pieces listed under
+  // any other name the next minute. Its Stores go with the row (below), so a held character with no piece of its make at
+  // the account goes as any other - a finding can be the law's mistake, and the slot is the player's. Staff lift a hold
+  // (review.js realm-clear); then it goes.
+  if (row.held && await db.prepare('SELECT 1 FROM products WHERE owner = ?1 AND (char_id = ?2 OR char_id = ?3) LIMIT 1')
+    .bind(playerId, id, row.origin_id ?? id).first()) return { error: 'trade-held', held: row.held };
   if (row.origin_id && !(row.bytes > 0)) return undoCustoms({ db, bucket }, playerId, id, row.origin_id);
   const master = await db.prepare(`SELECT (SELECT COUNT(*) FROM guild_members o WHERE o.guild_id = m.guild_id) AS n,
     (SELECT treasury FROM guilds g WHERE g.id = m.guild_id) AS treasury,

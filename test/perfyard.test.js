@@ -113,10 +113,12 @@ test('PERF-YARD: the world host hands the yards its view test - the frame\'s own
   const kept = w.indexOf('    _lastProj = proj; _lastView = view;   // TI1'), drawn = w.indexOf('    yards?.draw(renderer);');
   assert.ok(kept > 0 && w.indexOf('    yards?.draw(renderer);', drawn + 1) < 0, 'the frame\'s keeping, and its one yards draw');
   assert.ok(kept < drawn, 'the matrices kept before the yards draw');
-  assert.ok(y.includes('        n += y.pool.draw(r, remapOf(y), cull);'), 'every yard\'s pool given it');
+  // PIN MOVED: YARD-RANGE (2026-10-11) - the pool is handed `seenCull`, the size's test before the host's own
+  assert.ok(y.includes('        n += y.pool.draw(r, remapOf(y), _eye || cull ? seenCull : null);'), 'every yard\'s pool given it');
   // AUDIT PERF-YARD 1: ...and the test handed on is the HOST's - `cull = null` passed every pin and switched the feature off
-  const yd = y.slice(y.indexOf('    draw(r = deps.renderer) {'), y.indexOf('        n += y.pool.draw(r, remapOf(y), cull);'));
+  const yd = y.slice(y.indexOf('    draw(r = deps.renderer) {'), y.indexOf('        n += y.pool.draw(r, remapOf(y), _eye || cull ? seenCull : null);'));
   assert.ok(/\n {6}const cull = deps\.cull \?\? null;/.test(yd), 'the cull the yards hand on is the one the host gave them');
+  assert.ok(y.includes("const seenCull = (box) => (_eye && !decorBoxSeen(box, _eye, YARD_MIN_ANGLE) ? DECOR_SKIP : deps.cull ? deps.cull(box) : DECOR_DRAW);"), 'YARD-RANGE: and seenCull asks the host\'s own test after the size\'s');
 });
 
 test('PERF-YARD (AUDIT 15): a merchant yard - its timber and its wagons on show - follows the same law under the street\'s test: in view drawn, off screen in a shadow\'s reach cast alone (a wagon part that casts nothing still casting nothing), else neither; its box holds its timber and its wagons and is made again when it moves; through a window, no test (mutants: the yards untested; the cast arm drawn; a no-shadow part cast; the box kept where the yard stood; the street\'s test unwired; a window\'s view culled by the street\'s eye)', async () => {

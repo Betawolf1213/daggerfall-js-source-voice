@@ -21,6 +21,10 @@ const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const { subtle } = globalThis.crypto;
 const MIGRATIONS = readdirSync(new URL('../server-account/migrations', import.meta.url)).filter((f) => f.endsWith('.sql')).sort();
 
+/** SEAT-CAP: D1's bound on one statement's parameters (Cloudflare's D1 limits) - node:sqlite's is 32,766, so a list bound
+ *  whole passed every test here and threw on the live database once it grew past 100 (the seats' Turning, 2026-10-11). */
+export const D1_MAX_BOUND = 100;
+
 /** A fresh database, every migration applied. */
 export function d1() {
   const db = new DatabaseSync(':memory:');
@@ -33,7 +37,10 @@ export function d1() {
       const writes = /^\s*(INSERT|UPDATE|DELETE|REPLACE)\b/i.test(sql);
       let args = [];
       const api = {
-        bind(...a) { args = a; return api; },
+        bind(...a) {
+          if (a.length > D1_MAX_BOUND) throw new Error(`D1_ERROR: too many SQL variables (${a.length} bound, D1 takes ${D1_MAX_BOUND})`);   // SEAT-CAP: as D1 refuses it
+          args = a; return api;
+        },
         async first() { return stmt.get(...args) ?? null; },
         // SCALE4h: an answer's meta says its rows written, as D1's does (a table's rows - D1 counts its indexes' too), so a
         // route's metrics point can be read over this database

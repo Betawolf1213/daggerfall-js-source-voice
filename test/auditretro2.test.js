@@ -225,7 +225,7 @@ test('AUDIT RETRO1 G1: a held modifier the event does not report is stale - Shif
   assert.equal(keyboardModifiers(ev({}), new Set(['ShiftLeft'])), MOD.None);
   assert.equal(keyboardModifiers({ code: 'F11' }, new Set(['ShiftLeft'])), MOD.LeftShift | MOD.Shift, 'an event with no flags leaves the Set its say');
   let loads = 0;
-  const ctx = { uiOverlayActive: true, overlayIsNative: false, overlayInput() {}, quickLoad: () => { loads++; } };
+  const ctx = { uiOverlayActive: true, overlayIsNative: false, overlayInput() {}, overlayWindow: () => ({ loadsUnder: true }), quickLoad: () => { loads++; } };   // PIN MOVED (DUPE-LOAD): the death screen
   _resetRetroPostprocessing();
   assert.equal(retroToggleKey(ev({ shiftKey: true }), new Set(['AltLeft'])), true);
   routeKey(ev({ shiftKey: true }), ctx, null, new Set(['AltLeft', 'ShiftLeft']));

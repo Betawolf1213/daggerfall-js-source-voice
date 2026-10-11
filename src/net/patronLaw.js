@@ -90,10 +90,15 @@ const ownPrice = (item) => {
 };
 /** The marks of a crafted piece (itemLaw.js's own `crafted` findings read these). */
 const CRAFT_MARKS = Object.freeze(['provenance', 'quality', 'hand', 'kitMetal', 'fieldKit', 'potent']);
+/** CRAFT-WORTH (2026-10-11, the exploit audit): and what its quality ROLLED onto it (smithItems.js mintPiece - a
+ *  Superior's Magic tier, a Masterwork's Rare: the tier, its lines, a Rare's flavour), which the marks alone left on the
+ *  piece - so a Masterwork Iron Dagger (a found one worth 3) drew a patron's cap of ~1,200, paid in the service's own
+ *  gold. The piece it was made as carries none of it. */
+const CRAFT_ROLLED = Object.freeze(['rarity', 'affixes', 'enchantments']);
 /**
  * A PIECE'S WORTH TO A PATRON: the service's judge's FLOOR (`worthOf` - itemLaw.js itemWorth - of the piece priced at
  * nothing: what the piece IS, its base and its lines), a crafted piece's no higher than the piece it was made as (its
- * marks off) - "shops are the floor, crafting the ceiling": a patron never pays a crafter more than a found piece fetches.
+ * marks off, and what its quality rolled - CRAFT-WORTH) - "shops are the floor, crafting the ceiling": a patron never pays a crafter more than a found piece fetches.
  * AUDIT LW-II P2: NEVER THE RECORD'S OWN PRICE - `value` is the client's to write, and the judge reads it up to a
  * generous ceiling (itemLaw.js worthCeiling: a found Broadsword written at 1e9 was worth 11,840 - a patron's 7,104, not 36).
  * AUDIT LW-II-2 S1: AND NEVER ABOVE IT - the floor is a template's base, and a book's base is 2500 where its file prices
@@ -108,6 +113,10 @@ export function patronWorth(item, worthOf) {
   if (!item || !CRAFT_MARKS.some((k) => Object.prototype.hasOwnProperty.call(item, k))) return worth;
   const plain = { ...item, value: 0 };
   for (const k of CRAFT_MARKS) delete plain[k];
+  // CRAFT-WORTH: nor what its quality rolled - a CRAFTED piece's alone (its provenance, as lootRarity.js craftedRarityWorth
+  // reads it). AUDIT CRAFT-WORTH: `quality` is a mark a FOUND piece carries too once tempered (smithItems.js temperItem),
+  // and a found Rare tempered to Fine lost its lines to this strip - a patron's worth of 1,863 fell to 3
+  if (typeof item.provenance === 'string') for (const k of CRAFT_ROLLED) delete plain[k];
   return Math.min(worth, worthOf(plain));
 }
 

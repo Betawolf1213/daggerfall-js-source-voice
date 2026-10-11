@@ -202,8 +202,8 @@
   {
     "name": "SEAT1b-homes-new-members",
     "file": "server-account/src/seatInfluence.js",
-    "old": "WHERE h.map_id = ? AND h.guild_id IS NULL AND m.guild_id IN (${qs}) AND m.joined_at <= ?`).bind(seat.key, ...guilds, nowS - SEAT_MEMBER_WAIT_S).all();",
-    "new": "WHERE h.map_id = ? AND h.guild_id IS NULL AND m.guild_id IN (${qs}) AND m.joined_at <= ?`).bind(seat.key, ...guilds, nowS).all();",
+    "old": "AND m.joined_at <= ?`, [seat.key], [nowS - SEAT_MEMBER_WAIT_S]);",
+    "new": "AND m.joined_at <= ?`, [seat.key], [nowS]);",
     "tests": [
       "test/seat1b_service.test.js"
     ]

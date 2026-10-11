@@ -3102,7 +3102,7 @@ its band's art: no slice ships a placeholder. EG8 to EG12 ship behind `EG_OPEN=f
 | **EG0a** | AUDIT EG0 | the bible |
 | **EG0b** | the fragments (sections 11 and 8.8 as first written) | the bible |
 | **EG0c** | AUDIT EG II, the polish pass | the bible |
-| **EG-PLAY** | THE ELITE BREACH, PLAYABLE: the slice the user asked for before the rest - the smallest Elite Breach that plays online end to end, cut through EG2, EG5, EG8, EG9-EG12 and EG14's `w` arm (its record, below, says what each piece took and left) | client, relay (world195), service (acct116) |
+| **EG-PLAY** | THE ELITE BREACH, PLAYABLE: the slice the user asked for before the rest - the smallest Elite Breach that plays online end to end, cut through EG2, EG5, EG8, EG9-EG12 and EG14's `w` arm (its record, below, says what each piece took and left) | client, relay (world195), service (acct118) |
 | **EG1** | THE GATE'S TIERS: `systems/gateTier.js`, `GATE_TIER_TEXT`, the Regular tier's words unchanged; THE REGISTRY: `world/pseudoArchives.js`, every port archive in it, and its collision test | client |
 | **EG2** | THE WEIR KEY: template 575 and its art; the balance (migration); the rolls in `claimGate` (which gains `rand`) and `claimSd`; the pity; `/v1/eg/find`, the killer's ask and the caps; `/v1/eg/keys`; the restack, new; the launch gift (a send migration) | client, service |
 | **EG3** | THE BOSS SEAM: `net/bossSeam.js`; the gate, the Remnant and the serpent re-plugged, frames and pins unchanged; the trails keep y | relay (a version) |
@@ -3261,7 +3261,7 @@ to the next circle.
 **What shipped, by piece.**
 
 - **The key** (EG2's core): template 575 (`systems/weirKey.js`), bound and stacked; its picture DFU's Talisman's
-  (TEXTURE.211 record 50). The count is the account's (`players.eg_keys`, migration 0109) and the pack's stack its face,
+  (TEXTURE.211 record 50). The count is the account's (`players.eg_keys`, migration 0110) and the pack's stack its face,
   restacked by every answer that carries it. Rolled at a recorded gate claim (the first certain, then one in six, one in
   four with the rite broken, the pity after five misses) and an Hour claim (one in three) - `server-account/src/eg.js`
   `rollWeirKey`, answered as `weir` on both claims. `/v1/eg/keys`. The launch gift: one key to every account with a
@@ -3345,6 +3345,6 @@ to the next circle.
 `test/egplay_client.test.js` (10 - the client played against the relay's real Room, from the key to the Redoubt, the
 way home and the next circle). Mutants: `tools/mutants/egplay.json` (20), every one dead. Records of other arcs whose
 quoted lines moved, re-aimed by content: the bound list's (`auditrealm`, `cards8`, `loot9`, `portal1`, `wallet1` - 575
-joins it), the account version's (`br5`, `fb1004d_knight_house`, `tech1`, `gatekeys` - acct116), the order kinds'
+joins it), the account version's (`br5`, `crafthold`, `fb1004d_knight_house`, `tech1`, `gatekeys` - acct118, acct116 on the branch, renumbered past main's acct116 and acct117 at the merge), the order kinds'
 (`guild1c`, `seat2a2`) and the relay version's (`soc1` - world195). The Ledger: section A's ELITE-GATES row
 (`01-Overview/Port-Ledger.md`), naming every file.

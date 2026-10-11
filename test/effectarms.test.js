@@ -50,13 +50,14 @@ test('X1 Climbing: the spell doubles the effective skill, through the seam that 
   assert.equal(climbingDeps(e).inputs().enhanced, false);
 });
 
-test('X1 both buffs stack their rounds like every other incumbent, and the catalog marks them live', () => {
+test('X1 both buffs renew their rounds like every other incumbent, and the catalog marks them live', () => {
   const e = entity();
   castSelf(e, 27);
   const first = e.activeEffects[0].roundsRemaining;
+  e.activeEffects[0].roundsRemaining = 1;
   castSelf(e, 27);
   assert.equal(e.activeEffects.length, 1, 'one incumbent, not two');
-  assert.ok(e.activeEffects[0].roundsRemaining > first, 'a recast STACKS the rounds (the port\'s incumbent law)');
+  assert.equal(e.activeEffects[0].roundsRemaining, first, 'a recast RENEWS the rounds, never stacks them (the port\'s incumbent law)');   // PIN MOVED (STACK-CAP)
   // the spell maker no longer warns about these two
   assert.equal(effectByKey('27,255').ported, true);
   assert.equal(effectByKey('28,255').ported, true);
@@ -202,17 +203,18 @@ test('X1 Elemental Resistance: a successful roll drops the effect WHOLE, per ele
   // for the element resisted. A roll that would NOT save normally.
   assert.equal(savingThrow(0, 8, e, 0, () => 0.99), 0, 'Fire is resisted outright');
   assert.equal(savingThrow(1, 16, e, 0, () => 0.99), 100, 'Frost lands in full');
-  // a like-kind recast (SAME element) merges: AddState stacks ROUNDS
-  // onto the incumbent and touches nothing else, so the incumbent
-  // keeps its OWN chance (ElementalResistance.cs:148-157)
+  // a like-kind recast (SAME element) merges: AddState merges ROUNDS
+  // (renewed, never stacked - STACK-CAP) and touches nothing else, so
+  // the incumbent keeps its OWN chance (ElementalResistance.cs:148-157)
   const s = target();
   const half = buildCustomSpell({ slots: [{ type: 8, subType: 3, settings: { ...blankEffectSettings(), durationBase: 5, chanceBase: 30 } }], rangeType: 0 });
   applySpell(half, 1, s, {}, () => 0.5, null, {});
   const chance1 = elementalResistanceChance(s, 3);
   const rounds1 = s.activeEffects[0].roundsRemaining;
+  s.activeEffects[0].roundsRemaining = 1;
   applySpell(half, 1, s, {}, () => 0.5, null, {});
   assert.equal(s.activeEffects.length, 1, 'like-kind merges into one incumbent');
-  assert.ok(s.activeEffects[0].roundsRemaining > rounds1, 'rounds STACK');
+  assert.equal(s.activeEffects[0].roundsRemaining, rounds1, 'rounds RENEWED, never stacked');   // PIN MOVED (STACK-CAP)
   assert.equal(elementalResistanceChance(s, 3), chance1, 'the chance is the incumbent\'s, unchanged');
   // a DIFFERENT element is not like-kind - its own instance
   applySpell(buildCustomSpell({ slots: [{ type: 8, subType: 1, settings: { ...blankEffectSettings(), durationBase: 5, chanceBase: 30 } }], rangeType: 0 }), 1, s, {}, () => 0.5, null, {});
@@ -310,11 +312,12 @@ test('X1 Shield: a recast tops the pool up, capped at the ORIGINAL starting pool
   hurtPlayer(e, 5);
   assert.equal(a.shieldRemaining, start - 5);
   const rounds = a.roundsRemaining;
+  a.roundsRemaining = 1;
   applySpell(shieldSpell(20), 1, e, {}, () => 0.5, null, {});
   assert.equal(e.activeEffects.filter((x) => x.kind === 'shield').length, 1, 'one incumbent');
   assert.equal(a.shieldRemaining, start, 'topped up to the cap, never above');
   assert.equal(a.startingShield, start, 'and startingShield itself never rises');
-  assert.ok(a.roundsRemaining > rounds, 'rounds stack');
+  assert.equal(a.roundsRemaining, rounds, 'rounds renewed to a fresh cast\'s, never stacked');   // PIN MOVED (STACK-CAP)
 });
 
 test('X1 Shield: the pool sits on the ONE damage door, so every source is covered', () => {

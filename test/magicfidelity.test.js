@@ -33,15 +33,17 @@ test('magicfidelity magic-3: the buff landing gates - silence chance, the full s
   const r3 = applySpell({ rangeType: 2, element: 4, effects: [silence(90)] }, 1, t3, {}, seq(0.1));
   assert.equal(r3.saved, 1, 'the no-magnitude full save (EntityEffectManager :560-579)');
   assert.ok(!hasActiveEffect(t3, 'silenced'));
-  // the AddState quirk: an incumbent re-cast stacks its rounds INSIDE
-  // Start, BEFORE the chance gate - the fail message still fires
+  // the AddState quirk: an incumbent re-cast merges its rounds INSIDE
+  // Start, BEFORE the chance gate - the fail message still fires.
+  // PIN MOVED (STACK-CAP): renewed to a fresh cast's, never stacked
   const t4 = mkTarget();
   applySpell({ rangeType: 0, element: 4, effects: [silence(90)] }, 1, t4, {}, seq(0.1));
   const rounds0 = t4.activeEffects.find((a) => a.kind === 'silenced').roundsRemaining;
+  t4.activeEffects.find((a) => a.kind === 'silenced').roundsRemaining = 1;
   const r4 = applySpell({ rangeType: 0, element: 4, effects: [silence(10)] }, 1, t4, {}, seq(0.99));
   assert.equal(r4.chanceFailed, 1);
-  assert.equal(t4.activeEffects.find((a) => a.kind === 'silenced').roundsRemaining, rounds0 + 5,
-    'the stack landed before the failed chance (verbatim gate order)');
+  assert.equal(t4.activeEffects.find((a) => a.kind === 'silenced').roundsRemaining, rounds0,
+    'the renewal landed before the failed chance (verbatim gate order)');
   // concealments carry NO chance - a terrible roll cannot fail them
   const t5 = mkTarget();
   applySpell({ rangeType: 0, element: 4, effects: [invis()] }, 1, t5, { }, seq(0.999));

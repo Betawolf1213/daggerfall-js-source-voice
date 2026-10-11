@@ -240,9 +240,10 @@ test('AUDIT DISC28 UI-7: the outdoor ladders (world.js, exterior.js) act on a pr
     assert.equal(runIn(fnText, polled.env)('ReadyWeapon', true), false, `${file}: a polled action's repeat is declined, not swallowed`);
     assert.deepEqual(polled.calls, [], `${file}: a polled action is still declined here`);
   }
-  // world.js's F11 under a window (FIX-E): one press, one load
+  // world.js's F11 under the death screen (FIX-E; DUPE-LOAD: that window alone): one press, one load. PIN MOVED (DUPE-LOAD):
+  // the arm's opener reads `loadsUnder` now; only its body runs here, so the fixture's overlay need not be the death screen
   const text = src('src/scenes/world.js');
-  const arm = blockAfter(text, "if (townTalk.overlayActive && !isTextEntryTarget(e.target) && (modes?.mode ?? 'exterior') === 'exterior' && codeMeans(bindings(), e.code, 'QuickLoad') && !retroToggleKey(e, keys)) ");
+  const arm = blockAfter(text, "if (townTalk.overlayActive && townTalk.overlay?.loadsUnder === true && !isTextEntryTarget(e.target) && (modes?.mode ?? 'exterior') === 'exterior' && codeMeans(bindings(), e.code, 'QuickLoad') && !retroToggleKey(e, keys)) ");
   for (const [repeat, want] of [[false, ['hudCtx.quickLoad']], [true, []]]) {
     const h = hostScope(repeat);
     h.env.townTalk = { overlayActive: true, overlay: {} };

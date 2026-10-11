@@ -103,7 +103,8 @@ profile from their machine - whether they play with a controller, and whether it
 Not a port bug. DFU's `IncumbentEffect.AddState` is "Stack my rounds onto incumbent" for Light and the other
 incumbent effects, and the port carries it as audit F12 (`systems/effects.js` header: "re-casts of an incumbent STACK
 rounds onto it"). Classic Daggerfall stacks too. Resetting instead would be a departure from DFU, which is Mac's call
-(Port Doctrine); nothing changed.
+(Port Doctrine); nothing changed. The call came two days later: STACK-CAP (2026-10-11, the owner: "Refresh, never
+stack") - a re-cast renews its incumbent now (`systems/effects.js` renewRounds; Port-Ledger A).
 
 ## SIGN-HOUSE: a tavern's sign on a residence (5)
 

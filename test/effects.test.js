@@ -101,12 +101,12 @@ test('effects: S8 buff families - kinds, incumbent renew, the query', async () =
   assert.equal(t.activeEffects[0].roundsRemaining, 4);       // 3 + 1*2, round 1 consumed at cast (F17)
   tickActiveEffects(t, {});
   assert.equal(t.activeEffects[0].roundsRemaining, 3);
-  // F12: a re-cast STACKS its rounds onto the incumbent (no initial
-  // round for the joining instance): 3 + 5 = 8, still one entry
+  // PIN MOVED (STACK-CAP): a re-cast RENEWS the incumbent - topped up to
+  // a fresh cast's 4, never stacked (F12's 3 + 5 = 8), still one entry
   applySpell({ element: 4, rangeType: 0, effects: [slow] }, 2, t, {}, seq(0));
   assert.equal(t.activeEffects.length, 1);
-  assert.equal(t.activeEffects[0].roundsRemaining, 8);
-  for (let i = 0; i < 8; i++) tickActiveEffects(t, {});
+  assert.equal(t.activeEffects[0].roundsRemaining, 4);
+  for (let i = 0; i < 4; i++) tickActiveEffects(t, {});
   assert.ok(hasActiveEffect(t, 'slowfall'));                 // at 0: Ends NEXT pass (DFU shape)
   tickActiveEffects(t, {});
   assert.ok(!hasActiveEffect(t, 'slowfall'));                // expired
@@ -175,7 +175,7 @@ test('effects: ContinuousDamageSpellPoints (1,2) joins activeEffects and drains 
   assert.equal(t.activeEffects[0].roundsRemaining, 0);
 });
 
-test('effects: FortifyAttribute (type 9) - live mod, like-kind stacks, unlike coexists, DFU expiry', () => {
+test('effects: FortifyAttribute (type 9) - live mod, like-kind renews, unlike coexists, DFU expiry', () => {
   // subType 0 = Strength. Fortify +magnitude for a duration.
   const fort = { type: 9, subType: 0, magnitudeBaseLow: 10, magnitudeBaseHigh: 10, magnitudeLevelBase: 0, magnitudeLevelHigh: 0, magnitudePerLevel: 0, durationBase: 3, durationMod: 0, durationPerLevel: 0 };
   assert.ok(isFortifyAttribute(fort));
@@ -187,11 +187,12 @@ test('effects: FortifyAttribute (type 9) - live mod, like-kind stacks, unlike co
   assert.equal(t.activeEffects[0].roundsRemaining, 2);  // 3, round 1 consumed at cast (F17)
   assert.equal(liveStat(t, 'strength'), 60);            // base 50 + fortify 10
   assert.equal(liveStat(t, 'agility'), 0);              // untouched stat -> base (absent -> 0)
-  // F12: a like-kind re-cast (same stat + SAME settings) STACKS its
-  // rounds onto the incumbent and keeps the incumbent's magnitude
+  // PIN MOVED (STACK-CAP): a like-kind re-cast (same stat + SAME settings)
+  // RENEWS the incumbent's rounds (F12 stacked them) and keeps its magnitude
+  tickActiveEffects(t, {}, seq(0.99));                  // fort: 1
   applySpell({ element: 4, rangeType: 0, effects: [fort] }, 1, t, {}, seq(0.99));
   assert.equal(t.activeEffects.length, 1);
-  assert.equal(t.activeEffects[0].roundsRemaining, 5);  // 2 + 3
+  assert.equal(t.activeEffects[0].roundsRemaining, 2);  // a fresh cast's 2 - never 1 + 3
   assert.equal(liveStat(t, 'strength'), 60);
   // a DIFFERENT-settings fortify of the same stat is NOT like-kind:
   // it coexists as its own instance and the mods SUM (DFU parallel)
@@ -200,12 +201,12 @@ test('effects: FortifyAttribute (type 9) - live mod, like-kind stacks, unlike co
   assert.equal(t.activeEffects.length, 2);
   assert.equal(liveStat(t, 'strength'), 65);            // 50 + 10 + 5
   // tick to expiry: fort2 (1 round left) Ends after the next pass
-  tickActiveEffects(t, {}, seq(0.99));                  // fort: 4, fort2: 0 (kept this pass)
+  tickActiveEffects(t, {}, seq(0.99));                  // fort: 1, fort2: 0 (kept this pass)
   assert.equal(liveStat(t, 'strength'), 65);            // the mod survives the pass it expires in
-  tickActiveEffects(t, {}, seq(0.99));                  // fort2 Ends; fort: 3
+  tickActiveEffects(t, {}, seq(0.99));                  // fort2 Ends; fort: 0
   assert.equal(t.activeEffects.length, 1);
   assert.equal(liveStat(t, 'strength'), 60);
-  for (let i = 0; i < 4; i++) tickActiveEffects(t, {}, seq(0.99));
+  tickActiveEffects(t, {}, seq(0.99));                  // fort Ends
   assert.equal(t.activeEffects.length, 0);
   assert.equal(liveStat(t, 'strength'), 50);
 });
@@ -299,7 +300,7 @@ test('effects: Transfer family (11) - attribute steal, TransferHealth both direc
   assert.equal(fRestored, 3 * 64);
 });
 
-test('effects: Regenerate (18,255) heals per round; settings-keyed incumbent stacks', () => {
+test('effects: Regenerate (18,255) heals per round; settings-keyed incumbent renews', () => {
   const reg = { type: 18, subType: 255, magnitudeBaseLow: 4, magnitudeBaseHigh: 4, magnitudeLevelBase: 0, magnitudeLevelHigh: 0, magnitudePerLevel: 0, durationBase: 3, durationMod: 0, durationPerLevel: 0 };
   assert.ok(isRegenerate(reg));
   const t = T();
@@ -312,10 +313,10 @@ test('effects: Regenerate (18,255) heals per round; settings-keyed incumbent sta
   assert.equal(t.activeEffects[0].roundsRemaining, 2);
   tickActiveEffects(t, sinks, seq(0));                 // magnitude rolls FRESH per round
   assert.equal(healed, 8);
-  // a same-settings re-cast stacks rounds (CompareSettings like-kind)
+  // a same-settings re-cast renews rounds (CompareSettings like-kind; PIN MOVED, STACK-CAP)
   applySpell({ element: 4, rangeType: 0, effects: [reg] }, 1, t, sinks, seq(0));
   assert.equal(t.activeEffects.length, 1);
-  assert.equal(t.activeEffects[0].roundsRemaining, 4); // 1 + 3
+  assert.equal(t.activeEffects[0].roundsRemaining, 2); // a fresh cast's 2 - never 1 + 3
   assert.equal(healed, 8);                             // no initial round for the joiner
   // different settings -> a second instance
   applySpell({ element: 4, rangeType: 0, effects: [{ ...reg, magnitudeBaseLow: 2, magnitudeBaseHigh: 2 }] }, 1, t, sinks, seq(0));
@@ -370,13 +371,15 @@ test('effects: S19 Paralyze (0,255) - chance, the full-save gate, the AddState-f
   applySpell({ element: 4, rangeType: 2, effects: [par] }, 3, t3, {}, seq(0.49, 0.99));
   assert.ok(hasActiveEffect(t3, 'paralyze'));
   assert.equal(t3.activeEffects[0].roundsRemaining, 3);
-  // The AddState-first quirk: AddState stacks rounds INSIDE Start,
+  // The AddState-first quirk: AddState merges rounds INSIDE Start,
   // BEFORE AssignBundle's chance and save gates - a re-cast with a
-  // FAILED chance still stacks (and rolls no save)
+  // FAILED chance still renews (and rolls no save). PIN MOVED (STACK-CAP):
+  // renewed to a fresh cast's 3, never stacked (3 + 4 = 7)
+  t3.activeEffects[0].roundsRemaining = 1;
   rolls = 0;
   const r3 = applySpell({ element: 4, rangeType: 2, effects: [par] }, 3, t3, {}, () => { rolls++; return 0.99; });
   assert.equal(rolls, 1);   // the chance roll alone
-  assert.equal(t3.activeEffects[0].roundsRemaining, 7);   // 3 + 4, no initial round for the joiner
+  assert.equal(t3.activeEffects[0].roundsRemaining, 3);   // renewed, no initial round for the joiner
   assert.equal(r3.paralyzed ?? 0, 0);   // no NEW instance -> no fresh alert
   // Expiry restores the query
   for (let i = 0; i < 8; i++) tickActiveEffects(t3, {});

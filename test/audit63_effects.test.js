@@ -420,10 +420,12 @@ test('AUDIT 63 F16: a Silence LANDING says so - once, and only to the player hos
   // StartSilence (it has none), but because AssignBundle refuses to add
   // an unflagged incumbent (EntityEffectManager.cs:553-558), so the
   // merged instance never reaches liveEffects and DoConstantEffects
-  // never ticks it. The rounds still stack (Silence.cs:74-78 AddState).
+  // never ticks it. The rounds are renewed (Silence.cs:74-78 AddState
+  // stacks them; STACK-CAP renews them - effects.js renewRounds).
+  p.activeEffects.find((a) => a.kind === 'silenced').roundsRemaining = 1;
   castSilence(p, said);
   assert.deepEqual(said, ['You are silenced.'], 'still one line');
-  assert.ok(p.activeEffects.find((a) => a.kind === 'silenced').roundsRemaining > rounds, 'and the rounds stacked');
+  assert.equal(p.activeEffects.find((a) => a.kind === 'silenced').roundsRemaining, rounds, 'and the rounds renewed, never stacked');   // PIN MOVED (STACK-CAP)
 
   // A FOE'S silence lands in silence, and that is the port's whole
   // rendering of `manager.EntityBehaviour == PlayerEntityBehaviour`:

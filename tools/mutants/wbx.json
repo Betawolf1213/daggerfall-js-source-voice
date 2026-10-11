@@ -204,8 +204,8 @@
   {
     "name": "WBX7-the-recast-takes-its-chance",
     "file": "src/scenes/gateCourt.js",
-    "old": "      if (trapMark && t < trapMark.until) trapMark.until += rounds * COURT_ROUND_MS;",
-    "new": "      if (trapMark && t < trapMark.until) trapMark = { chance, until: trapMark.until + rounds * COURT_ROUND_MS };",
+    "old": "      if (trapMark && t < trapMark.until) trapMark.until = Math.max(trapMark.until, t + rounds * COURT_ROUND_MS);",
+    "new": "      if (trapMark && t < trapMark.until) trapMark = { chance, until: Math.max(trapMark.until, t + rounds * COURT_ROUND_MS) };",
     "tests": [
       "test/wbx_gate_fixes.test.js"
     ]

@@ -100,10 +100,11 @@ test('audit26 F072: a NEW soul trap can be saved against; an incumbent STACK sur
   const out2 = applySpell(spellOf(12, 255), 1, wraith, {}, seq(0.99), null, {});
   assert.equal(out2.trapAlert, 'trapActive');
   const rounds0 = liveTrap(wraith).roundsRemaining;
-  // ...then a re-cast with a SAVING roll still stacks its rounds
+  // ...then a re-cast with a SAVING roll still renews its rounds (STACK-CAP: renewed, never stacked)
+  liveTrap(wraith).roundsRemaining = 1;
   const out3 = applySpell(spellOf(12, 255), 1, wraith, {}, seq(0.0), null, {});
-  assert.equal(out3.saved ?? 0, 0, 'the incumbent stack never reaches the save');
-  assert.ok(liveTrap(wraith).roundsRemaining > rounds0, 'the rounds stacked through it');
+  assert.equal(out3.saved ?? 0, 0, 'the incumbent renewal never reaches the save');
+  assert.equal(liveTrap(wraith).roundsRemaining, rounds0, 'the rounds renewed through it - to a fresh cast\'s, never past');   // PIN MOVED (STACK-CAP): DFU's AddState added them
 });
 const liveTrap = (t) => t.activeEffects.find((a) => a.kind === 'soulTrap' && !a.ended) ?? null;
 

@@ -385,8 +385,8 @@
   {
     "name": "SEASON1-tu-masters-rank",
     "file": "server-account/src/seatTurning.js",
-    "old": "SELECT guild_id, player FROM guild_members WHERE rank = ? AND guild_id IN (${guilds.map(() => '?').join(', ')})`).bind(GUILD_RANK_MASTER, ...guilds)",
-    "new": "SELECT guild_id, player FROM guild_members WHERE guild_id IN (${guilds.map(() => '?').join(', ')})`).bind(...guilds)",
+    "old": "`SELECT guild_id, player FROM guild_members WHERE rank = ? AND guild_id IN (${qs})`, [GUILD_RANK_MASTER]);",
+    "new": "`SELECT guild_id, player FROM guild_members WHERE guild_id IN (${qs})`);",
     "tests": [
       "test/season1_service.test.js"
     ]

@@ -137,8 +137,8 @@
   {
     "name": "AUDIT-SS-the-keyed-shelf-lists-a-bound-piece",
     "file": "src/scenes/worldModes.js",
-    "old": "&& !isEquipped(it) && !isBound(it) && !lockRefuses(it, 'sell'));",
-    "new": "&& !isEquipped(it));",
+    "old": "&& !isEquipped(it) && !isBound(it) && !lockRefuses(it, 'sell') && !isSummoned(it));",
+    "new": "&& !isEquipped(it) && !isSummoned(it));",
     "tests": [
       "test/ss1_stones.test.js"
     ]

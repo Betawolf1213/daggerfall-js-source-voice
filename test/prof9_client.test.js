@@ -562,11 +562,12 @@ test('AUDIT PROF-541 K3: a feast is a party mate\'s gift alone - a stranger\'s "
   assert.ok(stranger, 'the stranger\'s list would carry it');
   assert.equal(takeFeastGift(me, stranger, frame.level, false), false, 'a stranger\'s feast dropped');
   assert.deepEqual([liveStat(me, 'strength'), liveBundles(me).length, [...new Set(me.activeEffects.map((a) => a.roundsRemaining))]], [55, 1, [1439]], 'the party\'s day, as it was');
-  // what it did before: laid on beside the ally's feast, its rounds added
+  // what it did before: laid on beside the ally's feast, its rounds added (2,879) - PIN MOVED (STACK-CAP): a like-kind
+  // merge renews now and adds nothing, so the drop stands on the stranger alone
   const was = { items: [], stats: { ...STATS }, activeEffects: [] };
   applySpell(mate, frame.level, was, {}, () => 0.5, null, { allyCast: true });
   applySpell(stranger, frame.level, was, {}, () => 0.5, null, { allyCast: true });
-  assert.ok(was.activeEffects.some((a) => a.roundsRemaining > 2000), 'like-kind stacking (effects.js) - why it is dropped');
+  assert.deepEqual([...new Set(was.activeEffects.map((a) => a.roundsRemaining))], [1439], 'the like-kind merge renews (effects.js renewRounds) - never the 2,879 it once stacked to');
 });
 
 test('AUDIT PROF-541 K4: a dish renewed is never shortened - a standing bundle with as many rounds left keeps them, the incoming skipped (a Chef\'s feast is not cut by a plain one eaten or shared); a shorter one standing is renewed', () => {

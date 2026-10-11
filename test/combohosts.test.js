@@ -126,5 +126,5 @@ test('AUDIT 58 (f3/input): EVERY host that registers a keydown hands its held-ke
   assert.match(inp, /export function actionOf\(e, keys = null\) \{\n {2}return actionsOf\(e, keys\)\[0\] \?\? null;/, 'the one-answer read is the first of them');
   assert.match(inp, /export function routeKey\(e, ctx, setPlayerPos = null, keys = null\) \{/);
   assert.match(inp, /for \(const act of actionsOf\(e, keys\)\) \{\n\s*used = routeKeyAction\(e, act, ctx, setPlayerPos\) \|\| used;/, 'routeKey forwards it (UXB1-S: every action a shared key carries)');
-  assert.match(inp, /if \(actionsOf\(e, keys\)\.includes\('QuickLoad'\) && !retroToggleKey\(e, keys\)\)/, 'including the arm that answers from under a window (AUDIT RETRO1 C1: never on the retro toggle\'s chord)');
+  assert.match(inp, /if \(ctx\.overlayWindow\?\.\(\)\?\.loadsUnder === true && actionsOf\(e, keys\)\.includes\('QuickLoad'\) && !retroToggleKey\(e, keys\)\)/, 'including the arm that answers from under the death screen (AUDIT RETRO1 C1: never on the retro toggle\'s chord; DUPE-LOAD: that window alone)');   // PIN MOVED (DUPE-LOAD): the arm reads `loadsUnder`
 });

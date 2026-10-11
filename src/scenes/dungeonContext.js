@@ -4427,7 +4427,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (trapFx.length) {
       const noSink = () => {};
       // AUDIT WBX F6: a trap of mine already running on him (the court keeps it) is his incumbent for this cast - a recast
-      // stacks its rounds onto it with no new save (effects.js AddState), where the stand-in's forgotten trap made every
+      // renews its rounds with no new save (effects.js renewRounds, STACK-CAP), where the stand-in's forgotten trap made every
       // recast a new one against his save
       const running = opts.bossTrapNow?.() ?? null;
       if (running) boss.entity.activeEffects = [{ kind: 'soulTrap', chance: running.chance, roundsRemaining: 0 }];
@@ -9463,6 +9463,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         Promise.resolve().then(() => opts.worldLoad(k));
         return;
       }
+      this.discardBeneathDeath();   // AUDIT DUPE-LOAD: what waits under the death screen goes before the save is read
       opts.modStartLoad?.();   // CSA-J (the audit): SaveLoadManager.OnStartLoad ahead of the save's player (:1378)
       const extras = restorePlayer(playerEntity, snap, spellsByIndex);
       if (!extras) { hudText.add('Save version mismatch.'); return; }
@@ -9747,6 +9748,15 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     deathTilt(cam) { if (activeOverlay instanceof DeathScreen) activeOverlay.tiltView(cam); },   // DEATH3: the enhanced fall's pitch
     deathUp: () => activeOverlay instanceof DeathScreen,   // AUDIT WORLD B6: the death screen stands in THIS slot underground - world.js's own gate never saw it
     overlayWindow: () => activeOverlay,   // U26 probe surface
+    /** AUDIT DUPE-LOAD (the exploit audit): a load's drain beneath this context's death screen - every window waiting
+     *  under it disposed and gone, none of their close callbacks run (worldModes.js discardBeneathDeath, the law's note):
+     *  the load drops the screen alone (activeOverlay = null) and reconcile uncovered the rest over the loaded game. */
+    discardBeneathDeath() {
+      const death = activeOverlay;
+      if (!(death instanceof DeathScreen)) return;
+      dungeonWindows.reconcile(death);
+      dungeonWindows.keepOnly(death, (w) => w.dispose?.());
+    },
     /** U43-ii: the way IN to that slot. The context has held an
      *  overlay since U3 and exposed only a getter, so the quest
      *  machine's popup - which the outer host raises, not this one -

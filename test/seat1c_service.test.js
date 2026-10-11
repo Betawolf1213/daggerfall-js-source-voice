@@ -6,7 +6,7 @@
 // bible/11-Multiplayer/Seats-Arc.md 5.2, 16; `06-Systems/Online-Arc.md` SEAT1c.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { standService, T0 } from './accountDb.mjs';
+import { standService, T0, d1, D1_MAX_BOUND } from './accountDb.mjs';   // SEAT-CAP: the fake refuses what D1 refuses
 import { webcrypto } from 'node:crypto';
 import { settleWeek } from '../server-account/src/seatTurning.js';
 import { mintWatchReceipt } from '../src/net/watchReceipt.js';
@@ -208,4 +208,27 @@ test('SEAT1c THE LEGACY, RELINQUISHED, AND A GUILD THAT HOLDS ONE: 10% of a guil
   assert.equal((await list(a.gm)).seats.find((x) => x.key === ANTICLERE.key).holder, null, 'unheld at once');
   assert.equal((await standings(a.gm)).chronicle[0].kind, 'relinquish');
   assert.equal((await svc.call('/v1/seats/relinquish', { character: a.gm.character, key: ANTICLERE.key }, a.gm.secret)).body.error, 'seat-not-held');
+});
+
+test('SEAT-CAP PAST A HUNDRED GUILDS (from play, 2026-10-11: "charter seats are broken. Time to take a castle and nothing happens"): 120 guilds pledged at one seat - every guild list the standings and the Turning bind is read IN_CHUNK at a time, so the board reads them and the Turning still claims the Charter; D1 refuses a statement of 101 parameters, and so does this fake (mutants: any one list bound whole - the Turning\'s treasuries and names, the standings\' binds, homes, crowns and names)', async (t) => {
+  assert.throws(() => d1().prepare('SELECT 1').bind(...Array(D1_MAX_BOUND + 1).fill(1)), /too many SQL variables/, 'the fake binds no more than D1 does');
+  let now = T0;
+  t.mock.method(Date, 'now', () => now * 1000);
+  const { raw, guild, treasury, pledge, earn, standings, hold } = await stood();
+  const sh = await guild('Gamal', 'The Silver Hand', 'SH');
+  pledge(sh.gid, ANTICLERE); treasury(sh.gid, 10000);
+  await earn(sh.gid, ANTICLERE, 6000);
+  for (let i = 0; i < 120; i++) {
+    raw.prepare("INSERT INTO guilds (id, name, name_key, tag, ranks, founded_at) VALUES (?, ?, ?, ?, '[]', 1)").run(`gcap${i}`, `Crowd ${i}`, `crowd ${i}`, `C${i}`);
+    pledge(`gcap${i}`, ALCAIRE); pledge(`gcap${i}`, ALCAIRE, W + 1);   // and the next week's board as crowded
+  }
+  const crowd = await standings(sh.gm, ALCAIRE);
+  assert.equal(crowd.error, undefined, 'the crowded seat\'s board reads');
+  assert.equal(crowd.standings.length, 120);
+  now = NEXT_WEEK;
+  const s = await standings(sh.gm);
+  assert.equal(s.error, undefined, 'the board reads after the Turning');
+  assert.equal(s.holder?.guild.id, sh.gid, 'the Turning claimed the Charter');
+  assert.equal(hold(ANTICLERE.key)?.guild_id, sh.gid);
+  assert.equal((await standings(sh.gm, ALCAIRE)).standings.length, 120);
 });

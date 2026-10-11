@@ -74,7 +74,7 @@ test('CURE-ALL: the report - after the vampire\'s turn the Regenerate is still s
   const rounds = before.roundsRemaining;
   applySpell(BIG_REGEN, 10, p, sinks(p), () => 0);
   assert.equal(p.activeEffects.filter((a) => a.kind === 'regenerate').length, 1, 'one entry');
-  assert.ok(regen(p).roundsRemaining > rounds, 'its rounds stacked');
+  assert.equal(regen(p).roundsRemaining, rounds + 1, 'its rounds renewed to a fresh cast\'s, never stacked');   // PIN MOVED (STACK-CAP): `>` held under either law
   assert.equal(shown(p).length, 1, 'shown');
 });
 

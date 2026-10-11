@@ -120,7 +120,7 @@ test('AUDIT DISC28: a world-hosted dungeon\'s own load resets the camera\'s reel
       restorePlayer: () => ({ position: [1, 2, 3], locationKey: 'dungeon:7' }), _locationKey: 'dungeon:7',
       hudText: { add: () => {} }, Promise: { resolve: () => ({ then: () => {} }) },
     };
-    quickLoadOf(env).call({ restoreSaved: (...a) => restored.push(a) }, null);
+    quickLoadOf(env).call({ restoreSaved: (...a) => restored.push(a), discardBeneathDeath() {} }, null);   // PIN MOVED (AUDIT DUPE-LOAD): the load drains what waits under the death screen first
     return { started, restored };
   };
   const same = loads({ locationKey: 'dungeon:7' });

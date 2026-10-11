@@ -365,8 +365,8 @@ export const DECOR_YARD_POS_MAX = 48;
  * lift) - so a model scaled up stands its origin higher on the same ground. The service knows no model's shape, so both
  * ends ask the one place they share. A fence with a lantern on it, a cart, a crate on a crate - never a tower: each piece
  * stood on the one below climbed as far as DECOR_YARD_POS_MAX. A piece placed or moved past it is refused at both ends
- * (decorYardHighOk - scenes/homeYards.js yardWhyNot, server-account/src/decor.js); one standing from before it is read
- * as it stands.
+ * (decorYardHighOk - scenes/homeYards.js yardWhyNot, server-account/src/decor.js); YARD-SWEEP (2026-10-11): one standing
+ * from before it is deleted (migration 0109) and never served or stood (decor.js yardsOf, homeYards.js ensure).
  */
 export const DECOR_YARD_HIGH = 4;
 /** YARD-HEIGHT: whether a yard piece's place stands within DECOR_YARD_HIGH of the ground. */

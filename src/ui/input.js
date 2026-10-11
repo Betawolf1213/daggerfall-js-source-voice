@@ -759,9 +759,12 @@ export function routeKey(e, ctx, setPlayerPos = null, keys = null) {
     if (ctx.overlayIsNative) { ctx.overlayInput(e.code, e); return true; }
     const a = overlayAction(e);
     if (a) { ctx.overlayInput(a); return true; }
-    // Quickload works from ANY overlay (the death screen's F11 hint
-    // must be true); everything else stays gated.
-    if (actionsOf(e, keys).includes('QuickLoad') && !retroToggleKey(e, keys)) { ctx.quickLoad?.(setPlayerPos); return true; }   // AUDIT 58 (f3/input): the Set rides in here too, so a QuickLoad rebound to a COMBO still answers from under a window; AUDIT RETRO1 C1: never Shift-F11, the retro toggle's chord on this key
+    // Quickload works from under the DEATH SCREEN (its F11 hint must be
+    // true); everything else stays gated. DUPE-LOAD (2026-10-11): that
+    // window alone (`loadsUnder`) - a load from under the pack or a
+    // counter left the window holding what it took off the old game,
+    // and its close handed it to the loaded one.
+    if (ctx.overlayWindow?.()?.loadsUnder === true && actionsOf(e, keys).includes('QuickLoad') && !retroToggleKey(e, keys)) { ctx.quickLoad?.(setPlayerPos); return true; }   // AUDIT 58 (f3/input): the Set rides in here too, so a QuickLoad rebound to a COMBO still answers from under the death screen; AUDIT RETRO1 C1: never Shift-F11, the retro toggle's chord on this key
     return false;
   }
   // AUDIT 64 F36/F37 - THE HUD'S OWN SHORTCUTS (DaggerfallHUD.cs

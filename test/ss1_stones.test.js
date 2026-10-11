@@ -771,7 +771,7 @@ test('AUDIT SS nothing bound goes out on the wire: a building\'s container recor
   assert.deepEqual(ctx.containers[0].items, [gem, stones], 'the container itself untouched');
   assert.match(read('src/scenes/dungeonContext.js'), /r: unbound\(held\)\.map\(\(it\) => \(\{ \.\.\.it \}\)\)/, 'the dungeon\'s records');
   const wm = read('src/scenes/worldModes.js');
-  assert.match(wm, /shopBuysItem\(interiorBuilding\.buildingType, it\) && !isEquipped\(it\) && !isBound\(it\) && !lockRefuses\(it, 'sell'\)\);/, 'the keyed shelf lists neither');
+  assert.match(wm, /shopBuysItem\(interiorBuilding\.buildingType, it\) && !isEquipped\(it\) && !isBound\(it\) && !lockRefuses\(it, 'sell'\) && !isSummoned\(it\)\);/, 'the keyed shelf lists neither');   // PIN MOVED (CRAFT-WORTH): nor a conjured piece
   assert.match(wm, /function doSell\(shelf, it\) \{\n    if \(isBound\(it\) \|\| lockRefuses\(it, 'sell'\)\) return 0;/, 'and sells neither');
   assert.match(read('src/ui/enhancedTrade.js'), /const item = selected\.item;\n  if \(isBound\(item\) \|\| lockRefuses\(item, 'sell'\)\) return;/, 'the dead quick sell refuses both');
   assert.match(read('src/scenes/world.js'), /if \(!onlineOn && modes\?\.gateArenaDay\?\.\(\) != null\) \{ ejectFromCourt\(COURT_TEXT\.collapse\); gateCourt\?\.leave\(\);/, 'offline, the floor into the pack on the way out');

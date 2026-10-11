@@ -301,8 +301,8 @@
  {
   "name": "CROWN1-inf-palace",
   "file": "server-account/src/seatInfluence.js",
-  "old": "const { results: crownRows = [] } = seat.tier === 'palace'",
-  "new": "const { results: crownRows = [] } = seat.tier !== 'palace'",
+  "old": "const crownRows = seat.tier === 'palace' ? await allIn(",
+  "new": "const crownRows = seat.tier !== 'palace' ? await allIn(",
   "tests": [
    "test/crown1_service.test.js"
   ]

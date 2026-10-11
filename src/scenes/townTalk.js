@@ -1548,6 +1548,13 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
      *  identity guard is the caller's: pass the window that is
      *  closing, and a slot already holding something else is left
      *  alone. Runs the same drain `frame` does, callback included. */
+    /** DUPE-LOAD (AUDIT): A LOAD'S DRAIN BENEATH `keep` (the death screen the load lands under) - every other window in
+     *  the stack disposed and gone, and NONE of their close callbacks run (the suspended ones are theirs): the game they
+     *  would answer is the one the load replaces. `keep` and its own callback stand, for closeDeathScreen. */
+    discardBeneath(keep) {
+      windows.keepOnly(keep, (w) => w.dispose?.());
+      _suspendedCallbacks.length = 0;
+    },
     closeOverlay(win = null) {
       // The IDENTITY guard is this door's; the EMPTY-SLOT guard is
       // dropOverlay's, and asking twice would leave that one

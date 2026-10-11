@@ -7,7 +7,7 @@
 //
 // ═══ THE BALANCE IS THE ACCOUNT'S ══════════════════════════════════
 //
-// A Weir Key opens a real relay instance, so it is a count on the account's row (`players.eg_keys`, migration 0109) -
+// A Weir Key opens a real relay instance, so it is a count on the account's row (`players.eg_keys`, migration 0110) -
 // the item in the pack is its face, restacked by the client to every answer here that carries the count (`keys`). The
 // service rolls every key with its own die (`rand`), at a claim it already verifies: a recorded Dagon's Breach kill
 // (one in six, one in four for a fighter who broke the rite, the account's first kill certain, and the sixth kill after

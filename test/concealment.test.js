@@ -43,7 +43,7 @@ test('concealment: IsInvisible/IsBlending/IsAShade fold normal + true powers', (
   assert.ok(!isInvisible(en('shadeTrue')) && !isAShade(en('invisNormal')));
 });
 
-test('concealment: cast lands the buff, says the start line ONCE, stacks silently', () => {
+test('concealment: cast lands the buff, says the start line ONCE, renews silently', () => {
   const invis = { type: 13, subType: 0, durationBase: 3, durationMod: 1, durationPerLevel: 1 };
   const t = T();
   const said = [];
@@ -51,11 +51,12 @@ test('concealment: cast lands the buff, says the start line ONCE, stacks silentl
   assert.ok(hasActiveEffect(t, 'invisNormal'));
   assert.equal(t.activeEffects[0].roundsRemaining, 4);       // 3 + 1*2, round 1 consumed at cast (F17)
   assert.deepEqual(said, ['You are invisible.']);
-  // The re-cast STACKS (ConcealmentEffect.AddState) and stays silent:
-  // 4 remaining + the full 5-round joining duration (no tick between)
+  // PIN MOVED (STACK-CAP): the re-cast RENEWS (ConcealmentEffect.AddState stacked it - 4 + 5 = 9) and stays silent:
+  // two rounds gone, the recast puts the incumbent back at a fresh cast's 4 - never 9
+  t.activeEffects[0].roundsRemaining = 2;
   applySpell({ element: 4, rangeType: 0, effects: [invis] }, 2, t, { say: (l) => said.push(l) }, seq(0));
   assert.equal(t.activeEffects.length, 1);
-  assert.equal(t.activeEffects[0].roundsRemaining, 9);
+  assert.equal(t.activeEffects[0].roundsRemaining, 4);
   assert.deepEqual(said, ['You are invisible.']);
   assert.equal(CONCEALMENT_START_TEXT.shadeTrue, 'You are a shade.');
   assert.equal(CONCEALMENT_START_TEXT.chameleonTrue, 'You are blending.');

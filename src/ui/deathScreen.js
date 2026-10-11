@@ -101,6 +101,11 @@ export class DeathScreen {
     // goes - a box pushed while it is up waits beneath (ui/windowStack.js
     // holdsTop), so the rise's replace takes THIS window, not the box.
     this.holdsTop = true;
+    // DUPE-LOAD (2026-10-11): the ONE window a quickload is pressed from under (its "F11 load" hint, FIX-E) - the world
+    // host's arm and routeKey's both ask this, and every other window keeps its keys, as DFU's HUD takes no QuickLoad
+    // under a window. A load from under the pack, a loot window or a counter restored the save while the window still
+    // held what it had taken off the old one, and its close handed it back: a drop doubled the purse every load.
+    this.loadsUnder = true;
     this.hint = hint;   // FIX-E: a host with no quickload (the fixed city) draws no F11 - a hint that is a lie is worse than none
     // MERGE AUDIT: the death clip is the character's OWN race/gender
     // Pain3 whenever CombatVoices is on (it ships on), so the sequence

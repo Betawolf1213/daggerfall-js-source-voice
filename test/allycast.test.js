@@ -430,9 +430,11 @@ test('AUDIT ALLY-CAST C1/C2/C4 receiver: the gift lands as a self-cast (a Heal h
   assert.notEqual(own.bundleId, theirs.bundleId);
   const rounds = theirs.roundsRemaining;
   // a second gift of the same kind merges with the FIRST gift (F12's law among gifts), never with mine
+  theirs.roundsRemaining = 1;   // AUDIT STACK-CAP: run down first, so the pin tells a renewal from nothing done
   magic.applySpellToPlayer(gift, 1, null, { allyCast: true });
   assert.equal(forts().length, 2, 'the mate\'s recast merged into the mate\'s bundle');
-  assert.ok(forts()[1].roundsRemaining > rounds, '...adding its rounds there'); assert.equal(forts()[0].magnitude, 10, 'mine untouched');
+  assert.equal(forts()[1].roundsRemaining, rounds, '...renewing its rounds there, never adding them');   // PIN MOVED (STACK-CAP): a recast renews (effects.js renewRounds)
+  assert.equal(forts()[0].magnitude, 10, 'mine untouched');   // AUDIT STACK-CAP: the move had folded this assertion into the comment above
   // C4: dispelled as my own - no roll (the dungeon's and the surface's dispel picker read `ally`)
   const res = dispelBundle(player, theirs.bundleId, { selfCast: true, roll01: 0.99, chance: 0 });
   assert.equal(res.removed, 1); assert.equal(res.alert, 'dispelMagicSuccess');

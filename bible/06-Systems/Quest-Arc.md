@@ -6337,7 +6337,8 @@ trace found a real weakness beside it:
   (QuestMachine.cs:725), a Dictionary.Add that throws on a UID already live. `startQuestImmediate` used `set` and
   replaced the live quest in silence. It now throws the same words restoreSaveData already threw, after `start()` and
   the topic registration, in C#'s order, and the quest on the table stands.
-- **The door the duplicate came through.** A quickload runs from under any window (FIX-E, for the death screen's F11),
+- **The door the duplicate came through.** A quickload ran from under any window (FIX-E, for the death screen's F11 -
+  the death screen's alone since DUPE-LOAD, 2026-10-11),
   a quest offer popup among them, and the offer flow kept the quest it had parsed in the game being replaced. Yes
   after the load started it in the loaded game, and a restored quest drawing the same UID was overwritten. DFU cannot
   reach this: its load window and quickload key both stand on the HUD. The bridge's `restore` now calls

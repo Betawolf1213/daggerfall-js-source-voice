@@ -85,7 +85,8 @@ export class QuestOfferFlow {
 
   /** QUEST-UID1: a LOAD discards the offer in hand. DFU cannot load under an open offer (the load window and the
    *  quickload key both stand on the HUD), so a pending offer never outlives the game it was parsed in; the port
-   *  quickloads from under any window (FIX-E, the death screen's F11), so the bridge's restore calls this - the
+   *  quickloaded from under any window (FIX-E) until DUPE-LOAD narrowed it to the death screen, and every load still
+   *  replaces the game an offer was parsed in, so the bridge's restore calls this - the
    *  offered quest was parsed in the game being replaced, and answering Yes must not start it in the loaded one. */
   reset() {
     this.offeredQuest = null;

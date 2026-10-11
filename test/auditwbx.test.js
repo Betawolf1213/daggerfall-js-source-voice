@@ -257,7 +257,7 @@ function court({ feet = [0, 0, 5], health = 100 } = {}) {
   return { c, link, clock, sounds, me };
 }
 
-test('AUDIT WBX F6/F9 the court: my trap on him is said while it runs (a recast stacks onto it) and outlives a walk out and back in the same day; no step on the stone while a leap carries him (mutants: the trap forgotten at the door; steps in the air)', () => {
+test('AUDIT WBX F6/F9 the court: my trap on him is said while it runs (a recast renews it - STACK-CAP) and outlives a walk out and back in the same day; no step on the stone while a leap carries him (mutants: the trap forgotten at the door; steps in the air)', () => {
   const h = court();
   const st = { ...GATE_STATE_EMPTY, day: 9, boss: 'ruhn', hp: 900, max: 1000, wrathAt: 1e12 };
   h.link.st = st; h.clock.t = 1000; h.c.frame();

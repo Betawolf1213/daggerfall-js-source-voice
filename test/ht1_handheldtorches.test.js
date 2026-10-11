@@ -772,7 +772,7 @@ test('HT1: the projectile - from the free hand\'s side, the look tilted by the a
   b.p.offsetAll([1, 0, 0]); q.p.offsetAll([1, 0, 0]); near(p.pos[0], 1.35, 1e-9, 'a recenter moves the flight too');
 });
 
-test('HT1: a foe struck - hostile, the to-hit roll with Accuracy, ContinuousDamage-Health with the mod\'s Duration and Magnitude on the foe (no roll of Chance: DFU\'s effect declares none), the light effect stacking a re-hit\'s rounds, the ignite clip; the flame billboard upside down and the light behind and above its feet while the rounds last; Combustion off spends the torch with no fire', async () => {
+test('HT1: a foe struck - hostile, the to-hit roll with Accuracy, ContinuousDamage-Health with the mod\'s Duration and Magnitude on the foe (no roll of Chance: DFU\'s effect declares none), the light effect renewing on a re-hit, the ignite clip; the flame billboard upside down and the light behind and above its feet while the rounds last; Combustion off spends the torch with no fire', async () => {
   setWorldMinutes(9000);
   const foe = { entity: { level: 1, health: 30, maxHealth: 30, activeEffects: [], armorValues: [], stats: { agility: 50, luck: 50 }, skills: {} }, ai: { feet: [0.35, 0, 1], height: 1.8, yaw: 0, isHostile: true }, dead: false };
   const uploads = [];
@@ -791,7 +791,7 @@ test('HT1: a foe struck - hostile, the to-hit roll with Accuracy, ContinuousDama
   assert.deepEqual(fire, { kind: ENEMY_FIRE_KIND, key: ENEMY_LIGHT_EFFECT_KEY, roundsRemaining: 3 }); assert.equal(ENEMY_LIGHT_EFFECT_KEY, 'HandheldTorchesEnemyLight');
   assert.equal(q.p.foeBurning(foe), true);
   assert.deepEqual(q.shots.at(-1)[0], CLIPS.ignite, 'the ignite clip at the point');
-  q.p.igniteFoe(foe); assert.equal(fire.roundsRemaining, 6, 'AddState: a re-hit stacks its rounds');
+  fire.roundsRemaining = 1; q.p.igniteFoe(foe); assert.equal(fire.roundsRemaining, 3, 'a re-hit renews its rounds, never stacks them');   // PIN MOVED (STACK-CAP): AddState stacked them (6)
   await settle(); q.p.tick(0.016);
   assert.deepEqual(uploads.slice(0, 6).map((u) => u.join(':')), ['375:0:0', '375:0:1', '375:0:2', '375:0:3', '375:0:4', '375:0:5']);
   const flame = q.p.batches().find((b) => b.archive === PUFF.archive);

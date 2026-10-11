@@ -57,7 +57,8 @@
 // Online alone - a yard is an online home's. Not a DFU member. Ledger A.
 // ═══════════════════════════════════════════════════════════════════
 
-import { createDecorRoom } from './decorRoom.js';
+import { createDecorRoom, decorBoxSeen, DECOR_DRAW, DECOR_SKIP } from './decorRoom.js';   // YARD-RANGE: a piece too small to see
+import { YARD_RANGE_TIERS, YARD_RANGE_DEFAULT, yardRangeOf, YARD_DRAW_M } from '../net/yardRange.js';   // YARD-RANGE: how far a stranger's yard is drawn
 import { createDecorTool } from './decorTool.js';
 import { decorYardPieceOf, DECOR_YARD_CAP, decorYardHighOk, DECOR_YARD_HIGH_WHY } from '../net/decorLaw.js';   // YARD-HEIGHT: how high a piece stands, and its words
 import { homeLookRecords } from '../world/homeLook.js';   // HOME-LOOK (AUDIT): the styles a roof's or a door's family holds
@@ -128,8 +129,16 @@ export function yardLampRows(lamps, rows, animRanges, color, out) {
   return out;
 }
 
-/** AUDIT: how far from the eye a yard's pieces are drawn, metres (its flats stand in the billboard pass's own cull). */
-export const YARD_DRAW_M = 300;
+/** AUDIT: how far from the eye a yard's pieces are drawn, metres - YARD-RANGE: its flats too (net/yardRange.js, its home). */
+export { YARD_DRAW_M };
+export { YARD_RANGE_TIERS, YARD_RANGE_DEFAULT, yardRangeOf };   // YARD-RANGE: the Other players card's law (net/yardRange.js)
+/**
+ * YARD-RANGE: THE SMALLEST A YARD'S PIECE IS DRAWN - half its size over its distance from the eye (decorRoom.js
+ * decorPieceSeen): a piece a metre across stands to 150 m, a chair's half-metre to 75 m, a cup's ten centimetres to 15
+ * m - about five pixels tall on a 1080-line screen at the default field of view, its draw and its shadow record skipped
+ * past it. The yard the owner stands in is never cut (they are placing in it).
+ */
+export const YARD_MIN_ANGLE = 1 / 300;
 /** How far past the house's footprint its lot runs, metres. */
 export const YARD_MARGIN = 6;
 /** How far outside its lot the owner may still stand and open the yard's decorator. */
@@ -424,12 +433,26 @@ export function yardLotQuads(lot, origin, high = YARD_MARK_HIGH, roads = []) {
  */
 export function createHomeYards(deps) {
   const now = () => deps.now?.() ?? Date.now();
+  /** YARD-RANGE: how far a stranger's yard is drawn, now (the player's choice, read every frame - it lands at once). */
+  const range = () => yardRangeOf(deps.range?.());
+  /** YARD-RANGE: how far yard `y` is drawn - the one the owner stands in always, their own to YARD_DRAW_M. */
+  const reachOf = (y) => (y === cur?.yard ? Infinity : y.kept ? YARD_DRAW_M : range());
+  function nearEye(y, eye) {
+    const reach = reachOf(y);
+    if (!eye || reach === Infinity) return true;
+    const o = originOf(y);
+    return Math.hypot(o[0] - eye[0], o[2] - eye[2]) <= reach;
+  }
+  let _eye = null;
+  /** YARD-RANGE: the host's view test after the size's (a piece too small to see is skipped before the planes are asked). */
+  const seenCull = (box) => (_eye && !decorBoxSeen(box, _eye, YARD_MIN_ANGLE) ? DECOR_SKIP : deps.cull ? deps.cull(box) : DECOR_DRAW);
+  const _batches = [];
   /** @type {Map<number, {at: number, byKey: Map<number, any[]>}>} */
   const towns = new Map();
   const asking = new Map();
   /** @type {Map<number, {at: number, n: number}>} YARD-SHED: each town's last failure and the failures in a row */
   const failed = new Map();
-  /** @type {Map<string, {pool: any, px: number, py: number, mapId: number, bk: number, t: number[], sig: string, lot: any, frame: any, entry: any, trees: Map<string, any>, treeSet: any}>} */
+  /** @type {Map<string, {pool: any, px: number, py: number, mapId: number, bk: number, t: number[], sig: string, src: any[] | null, srcSig: string, kept: boolean, lot: any, frame: any, entry: any, trees: Map<string, any>, treeSet: any}>} */
   const yards = new Map();
   let syncIn = 0;
   /** @type {any} the owner's own yard the decorator stands in, or null */
@@ -454,7 +477,7 @@ export function createHomeYards(deps) {
       const byKey = new Map();
       for (const y of list) {
         if (!Number.isSafeInteger(y?.buildingKey) || !Array.isArray(y.pieces)) continue;
-        byKey.set(y.buildingKey, y.pieces.map(decorYardPieceOf).filter(Boolean));
+        byKey.set(y.buildingKey, y.pieces.map(decorYardPieceOf).filter((p) => p && decorYardHighOk(p)));   // YARD-SWEEP: nor a tower's piece from before YARD-HEIGHT
       }
       for (const [bk, w] of writes.get(mapId) ?? []) if (w.n > asked) byKey.set(bk, w.list);   // YARD-STALE: written since it was asked
       towns.set(mapId, { at: now(), byKey });
@@ -494,7 +517,7 @@ export function createHomeYards(deps) {
     return [t[0] + f.at[0], t[1] + f.at[1], t[2] + f.at[2]];
   };
   function makeYard(key, p, bk, frame) {
-    const y = { key, px: p.px, py: p.py, mapId: p.homeTown, bk, frame, t: [...deps.translation(p.px, p.py)], sig: '', lot: yardLot(frame.at, frame.box, YARD_MARGIN, frame.rects), pool: null, entry: p, trees: new Map(), treeSet: null };
+    const y = { key, px: p.px, py: p.py, mapId: p.homeTown, bk, frame, t: [...deps.translation(p.px, p.py)], sig: '', src: null, srcSig: '', kept: false, lot: yardLot(frame.at, frame.box, YARD_MARGIN, frame.rects), pool: null, entry: p, trees: new Map(), treeSet: null };
     y.pool = createDecorRoom({
       meshes: deps.meshes, renderer: deps.renderer, getTexture: deps.getTexture, uploadRecord: deps.uploadRecord, uploadRecordFrame: deps.uploadRecordFrame,
       collider: () => deps.collider?.() ?? null, origin: () => originOf(y),
@@ -541,12 +564,18 @@ export function createHomeYards(deps) {
         // pieces taken down where they stood, and stood again the moment its votes climb
         const pieces = homeDecorShown(home) ? town?.byKey.get(bk) ?? null : null;
         if (!home || (!pieces?.length && !homeOutsideKept(home))) continue;   // a yard stands for a home with pieces, or for its owner (GUILD-YARD: a hall's keeper)
+        if (!homeOutsideKept(home) && range() === 0) continue;   // YARD-RANGE: none of a stranger's - taken down where it stood
         const key = `${pk}:${bk}`;
         live.add(key);
         const y = yards.get(key) ?? makeYard(key, p, bk, frame);
         const t = deps.translation(p.px, p.py);
         const moved = t[0] !== y.t[0] || t[1] !== y.t[1] || t[2] !== y.t[2];
-        const sig = pieces ? JSON.stringify(pieces) : '';
+        // YARD-RANGE: the town's answer written out again only when it is another answer - every half second, for every
+        // home of every built town, it was two thousand pieces stringified to learn nothing had changed (the town's lists
+        // are replaced, never written into: ensure and keep)
+        if (pieces && pieces !== y.src) { y.src = pieces; y.srcSig = JSON.stringify(pieces); }
+        const sig = pieces ? y.srcSig : '';
+        y.kept = homeOutsideKept(home);
         // DECOR-OUTDOOR: its pixel BUILT AGAIN (a season's turn, an install, a painted home leaving the merge) - every piece
         // stood again in the new pixel's climate table, animator and season, as the town's own flats are
         const rebuilt = y.entry !== p;
@@ -767,15 +796,24 @@ export function createHomeYards(deps) {
       const eye = deps.eye?.() ?? null;
       const cull = deps.cull ?? null;   // PERF-YARD: the host's view test, a piece's box at a time (decorRoom.js draw)
       for (const y of yards.values()) {
-        const o = originOf(y);
-        if (eye && y !== cur?.yard && Math.hypot(o[0] - eye[0], o[2] - eye[2]) > YARD_DRAW_M) continue;
-        n += y.pool.draw(r, remapOf(y), cull);
+        if (!nearEye(y, eye)) continue;   // YARD-RANGE: the player's distance for a stranger's, YARD_DRAW_M for one's own
+        _eye = y === cur?.yard ? null : eye;   // YARD-RANGE: never the yard being placed in
+        n += y.pool.draw(r, remapOf(y), _eye || cull ? seenCull : null);
       }
+      _eye = null;
       tool.draw(r, cur ? remapOf(cur.yard) : null);
       return n;
     },
     /** The yards' flats and the flat being placed, for the world's billboard pass. */
-    batches: () => [...[...yards.values()].flatMap((y) => y.pool.batches()), ...tool.batches()],
+    /** YARD-RANGE: as the models are - within the yard's reach (they had none: every standing yard's every flat, the
+     *  whole streamed grid's), each big enough to see; refilled in place every frame. */
+    batches() {
+      _batches.length = 0;
+      const eye = deps.eye?.() ?? null;
+      for (const y of yards.values()) if (nearEye(y, eye)) y.pool.batchesSeen(_batches, y === cur?.yard ? null : eye, YARD_MIN_ANGLE);
+      for (const b of tool.batches()) _batches.push(b);
+      return _batches;
+    },
     /** DECOR-LPT: the yards' 3D trees, for the world's near set (scenes/world.js lowPolyTreesFrame). */
     treeSets,
     /** YARD-LIGHT: the yards' lamps, for the world's lanterns. */

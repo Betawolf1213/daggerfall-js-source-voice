@@ -145,7 +145,7 @@ test('AUDIT 27h S2: no way back from death comes up running - the Resurrect, the
   const w = rd('src/scenes/world.js');
   const rez = w.slice(w.indexOf('function resurrectInPlace(rez) {'), w.indexOf('function closeDeathScreen() {'));
   assert.match(rez, /^\s*player\.stopAutorun\(\);/m, 'a party member\'s Resurrect');
-  const load = w.slice(w.indexOf('async function worldQuickLoad('), w.indexOf('async function worldQuickLoad(') + 6000);
+  const load = w.slice(w.indexOf('async function worldQuickLoad('), w.indexOf('async function worldQuickLoad(') + 8000);   // PIN MOVED (DUPE-LOAD): 6000 -> 8000, the windows closed before the save is read stand above it now
   assert.match(load, /cameraRecoiler\.reset\(\);\n\s*resetVitalsDetector\(\);[^\n]*\n\s*player\.stopAutorun\(\);/, 'a load (F11 off the death screen) - the incoming character inherits no latch, as it inherits no reel');
   const m = rd('src/scenes/worldModes.js');
   assert.match(m, /player\.spawn\(spawn\[0\], spawn\[1\], spawn\[2\]\);\n\s*player\.stopAutorun\(\);/, 'the Privateer\'s Hold rise');

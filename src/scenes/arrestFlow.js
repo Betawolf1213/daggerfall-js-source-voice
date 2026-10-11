@@ -758,8 +758,8 @@ export function createArrestFlow({
    *
    * DFU never loads under the court: InputManager.Update returns before it reads any action while a window pauses
    * the game - the surrender box and DaggerfallCourtWindow both do - and admits QuickLoad there only while
-   * PlayerDeath.DeathInProgress. The port takes a load from under any window (world.js's FIX-E arm: the death
-   * screen's F11 is every host's), so the flow has to be told. Offline, F11 under the plea box carried the trial into
+   * PlayerDeath.DeathInProgress. The port took a load from under any window (world.js's FIX-E arm) until DUPE-LOAD
+   * (2026-10-11) narrowed it to the death screen's; the flow is still told, as every load still ends the game it was in. Offline, F11 under the plea box carried the trial into
    * the loaded game: `arrested` stood, the old sentence was served on the loaded clock, and its release cleared the
    * loaded save's own crime. Under the surrender box it asked the loaded character the departed guard's question.
    *

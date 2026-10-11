@@ -308,7 +308,7 @@
   {
     "name": "INTA-the-auction-held",
     "file": "server-account/src/market.js",
-    "old": "  const held = await realmHoldOf(db, me, character);   // INT3 (AUDIT INT): a held character auctions nothing\n  if (held) return held;\n",
+    "old": "  const held = (await realmHoldOf(db, me, character)) ?? (await craftHoldOf(db, me, provenance));   // INT3 (AUDIT INT): a held character auctions nothing; CRAFT-HOLD: nor its craft under another's name\n  if (held) return held;\n",
     "new": "",
     "tests": [
       "test/int6_review.test.js"

@@ -51,13 +51,17 @@ test('save: the Q4-v quest envelope rides the extras verbatim (opaque, like worl
   assert.equal(extras.classicMinutes, 0, 'the unset clock defaults to minute ZERO, never a phantom tick');
 });
 
-test('save: F11 pierces overlays (the death hint is true)', () => {
+test('save: F11 pierces the death screen (its hint is true) and no other window (DUPE-LOAD)', () => {
   const calls = [];
-  const ctx = { uiOverlayActive: true, overlayInput: (a) => calls.push('ov:' + a), quickLoad: (fn) => calls.push('load:' + typeof fn) };
+  const ctx = { uiOverlayActive: true, overlayInput: (a) => calls.push('ov:' + a), overlayWindow: () => ({ loadsUnder: true }), quickLoad: (fn) => calls.push('load:' + typeof fn) };
   // AUDIT 18: InputManager.SetupDefaults binds QuickLoad to F11, not F12.
   assert.ok(routeKey({ key: 'F11', code: 'F11' }, ctx, 'APPLIER'));
   assert.ok(!routeKey({ key: 'F9', code: 'F9' }, ctx));      // save stays gated under overlays
   assert.deepEqual(calls, ['load:string']);
+  // DUPE-LOAD (PIN MOVED: it pierced any overlay): under the pack, a loot window or a counter, F11 is the window's
+  ctx.overlayWindow = () => ({});
+  routeKey({ key: 'F11', code: 'F11' }, ctx, 'APPLIER');
+  assert.deepEqual(calls, ['load:string'], 'no load from under any other window');
 });
 
 test('AUDIT 22 F7/F8: the lit light source and the training clock survive a load', () => {

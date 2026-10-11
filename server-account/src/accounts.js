@@ -36,6 +36,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { guestName, isHandleShaped, isGuestShaped } from './guestName.js';
+import { handleLooksLikeEmail } from '../../src/net/handleShape.js';   // HANDLE-EMAIL: a username is never an address
 import { wardrobeOf, equipRefusal, canModerate, auraRefusal, glyphRefusal, glyphsHidden } from './titles.js';   // ACC3: what a player holds, wears and is true of - all four derived; WB9g: and the aura worn
 import { insigniaById, insigniaHeld } from '../../src/net/insignia.js';   // WB9g: the Broker's insignia - one law both ends
 import { ID_RE, nameIsIssuable } from '../../src/net/identityToken.js';
@@ -108,7 +109,7 @@ export async function hashSecret(secret, { subtle }) {
  */
 export function displayName(row) {
   const handle = row?.handle;
-  if (typeof handle === 'string' && handle.length > 0) return handle;
+  if (typeof handle === 'string' && handle.length > 0 && !handleLooksLikeEmail(handle)) return handle;   // HANDLE-EMAIL: an address is never read out
   return String(row?.guest_name ?? '');
 }
 
@@ -496,6 +497,7 @@ export function handleRefusal(handle) {
   if (h !== handle) return 'shape';
   if (!isHandleShaped(h)) return 'shape';
   if (isGuestShaped(h)) return 'shape';         // belt and braces: the two spaces cannot overlap
+  if (handleLooksLikeEmail(h)) return 'email';  // HANDLE-EMAIL: a username is never an email address
   if (!nameIsIssuable(h)) return 'refused';     // NAME-F1/F2, at entry
   return null;
 }

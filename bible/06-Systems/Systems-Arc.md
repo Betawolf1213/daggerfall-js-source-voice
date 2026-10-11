@@ -272,8 +272,10 @@ WaterWalking (31,255), ChameleonNormal (23,0) - so the starting
 spellbooks WORK: incumbent self-effects tracked by kind on
 activeEffects, a re-cast STACKS rounds onto the incumbent (the F12
 correction superseded this record's original 'renews, not stacked'
-claim - AUDIT 23 annotates it here), expiry clears the hasActiveEffect
-query. CONSUMERS THREADED
+claim - AUDIT 23 annotates it here; and STACK-CAP, 2026-10-11, the
+owner's call, renews it again: a re-cast tops the incumbent up to a
+fresh cast's rounds and never stacks - effects.js renewRounds,
+Port-Ledger A), expiry clears the hasActiveEffect query. CONSUMERS THREADED
 (no globals - the first cut's function-property hook was killed for
 the same smell audits keep burying): slowfall scales the player
 motor's gravity (fallScale 0.15, fed per frame by BOTH hosts from a
@@ -645,7 +647,8 @@ classicSub).
   ported: the chance rolls ALWAYS (SetChanceSuccess in Start); an
   incumbent re-cast stacks its rounds INSIDE Start (AddState) BEFORE
   the chance and saving-throw gates - so a re-cast always stacks,
-  chance/save notwithstanding (verbatim quirk, pinned); a NEW
+  chance/save notwithstanding (verbatim quirk, pinned; STACK-CAP,
+  2026-10-11, renews it instead - the gate order stands); a NEW
   instance needs the chance, then non-CasterOnly no-magnitude
   effects save against the ENTIRE effect on a FULL save (flags =
   Paralysis | element). "You are paralyzed." (youAreParalyzed) fires

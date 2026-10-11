@@ -35,7 +35,7 @@
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js.
 // ═════════════════════════════════════════════════════════════════════
 import { confirmedSeats, seatsOpenFor } from './townSeats.js';
-import { gatherStandings, seatGuildsOf, holdsOf, battlesOf, agreedGateRegions } from './seatInfluence.js';
+import { gatherStandings, seatGuildsOf, holdsOf, battlesOf, agreedGateRegions, allIn } from './seatInfluence.js';   // SEAT-CAP: allIn, every guild list read IN_CHUNK at a time
 import { activeIn, edictsOf } from './seatHolding.js';
 import { windowOf } from './seatBattles.js';   // SEAT2a: the holder's window, frozen into its battle
 import { royalTurning } from './seatRoyal.js';   // CROWN1 part two: a Royal Tourney's champion named
@@ -82,7 +82,7 @@ const turningOf = (week) => Math.floor((seatWeekStartMs(week) + SEAT_WEEK_MS) / 
 async function namesOf(db, ids) {
   const list = [...new Set(ids)].filter(Boolean);
   if (!list.length) return new Map();
-  const { results = [] } = await db.prepare(`SELECT id, name, tag FROM guilds WHERE id IN (${list.map(() => '?').join(', ')})`).bind(...list).all();
+  const results = await allIn(db, list, (qs) => `SELECT id, name, tag FROM guilds WHERE id IN (${qs})`);
   return new Map(results.map((g) => [g.id, { name: g.name, tag: g.tag }]));
 }
 
@@ -201,8 +201,7 @@ export async function settleWeek(db, week, nowS, zero = null) {
   const guildIds = [...new Set(seats.flatMap((s) => s.guilds.map((g) => g.guild)))];
   // the holders' treasuries too - a holder nobody else pledged against still pays its upkeep
   const purseIds = [...new Set([...guildIds, ...holdRows.map((h) => h.guild_id)])];
-  const { results: purses = [] } = purseIds.length
-    ? await db.prepare(`SELECT guild_id, balance FROM guild_marks WHERE guild_id IN (${purseIds.map(() => '?').join(', ')})`).bind(...purseIds).all() : { results: [] };
+  const purses = await allIn(db, purseIds, (qs) => `SELECT guild_id, balance FROM guild_marks WHERE guild_id IN (${qs})`);   // SEAT-CAP: every guild pledged anywhere
   const reckonedPlan = turningPlan({ week, seats, treasuries: new Map(purses.map((p) => [p.guild_id, Number(p.balance)])), active: await activeIn(db, week) });
   // SEASON1 (9.1, 18): the Season this Turning ends, if it ends one - Season 0's end settles its own week and sets nothing
   // up for the next (no Charter claimed, no Right, no battle, no Edict, no Legacy), then wipes the seats
@@ -433,7 +432,7 @@ export async function settleWeek(db, week, nowS, zero = null) {
 /** SEASON1: each guild's guildmaster's account, by guild. */
 async function guildmastersOf(db, guilds) {
   if (!guilds.length) return new Map();
-  const { results = [] } = await db.prepare(`SELECT guild_id, player FROM guild_members WHERE rank = ? AND guild_id IN (${guilds.map(() => '?').join(', ')})`).bind(GUILD_RANK_MASTER, ...guilds).all();
+  const results = await allIn(db, guilds, (qs) => `SELECT guild_id, player FROM guild_members WHERE rank = ? AND guild_id IN (${qs})`, [GUILD_RANK_MASTER]);
   return new Map(results.map((r) => [r.guild_id, r.player]));
 }
 

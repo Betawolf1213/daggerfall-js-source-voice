@@ -80,9 +80,13 @@ test('I2: routeKey - overlay precedence, toggles, unconsumed', () => {
   assert.ok(routeKey({ key: 'Backspace', code: 'Backspace' }, ctx), 'overlay wins: backspace edits, not spellbook');
   assert.ok(!routeKey({ key: 'F9', code: 'F9' }, ctx), 'quicksave stays gated under an overlay');
   assert.deepEqual(calls, ['inv', 'book', 'ov:backspace']);
-  // quickLOAD pierces any overlay (the death screen's F11 hint)
+  // quickLOAD pierces the death screen (its F11 hint) - and no other window (DUPE-LOAD, 2026-10-11: PIN MOVED, it pierced any)
   let loaded = 0;
   ctx.quickLoad = () => loaded++;
+  ctx.overlayWindow = () => ({ isPack: true });
+  routeKey({ key: 'F11', code: 'F11' }, ctx);
+  assert.equal(loaded, 0, 'under the pack F11 loads nothing');
+  ctx.overlayWindow = () => ({ loadsUnder: true });
   assert.ok(routeKey({ key: 'F11', code: 'F11' }, ctx));
   assert.equal(loaded, 1);
 });

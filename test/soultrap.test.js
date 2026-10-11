@@ -57,13 +57,14 @@ test('X5 Soul Trap: it refuses HUMANOIDS out loud and everything else in silence
   assert.deepEqual(self.activeEffects, []);
 });
 
-test('X5 Soul Trap: a recast stacks ROUNDS and cannot sharpen a running trap', () => {
+test('X5 Soul Trap: a recast renews ROUNDS and cannot sharpen a running trap', () => {
   const m = foe(15);
   castTrap(m, 20);
   const first = m.activeEffects[0].roundsRemaining;
+  m.activeEffects[0].roundsRemaining = 1;
   const out = castTrap(m, 90);
   assert.equal(m.activeEffects.length, 1, 'one incumbent, not two');
-  assert.ok(m.activeEffects[0].roundsRemaining > first, 'AddState stacks the rounds');
+  assert.equal(m.activeEffects[0].roundsRemaining, first, 'a recast renews the rounds, never stacks them');   // PIN MOVED (STACK-CAP): AddState stacked them
   assert.equal(m.activeEffects[0].chance, 20, 'and the incumbent KEEPS its own chance');
   assert.equal(out.trapAlert, undefined, 'BecomeIncumbent speaks only for a NEW incumbent');
 });

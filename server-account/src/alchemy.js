@@ -28,7 +28,7 @@ import {
   potionById, brewSpends, brewCount, potentChance, potentPct, potentAble, brewXp, brewFirstPays, DISTILLER,
   piecePoints, essenceOf, disenchantXp, DISENCHANTER,
 } from '../../src/net/alchemyLaw.js';
-import { prepareRealmRecord, realmActFirst, recordMovedOf, mustChange, dropObjects, dropIfUnnamed } from './realm.js';   // AUDIT PROF-541 B2: a realm character's piece out of its record
+import { prepareRealmRecord, realmActFirst, recordMovedOf, mustChange, dropObjects, dropIfUnnamed, craftHoldOf } from './realm.js';   // CRAFT-HOLD: a held character's craft   // AUDIT PROF-541 B2: a realm character's piece out of its record
 import { takeTradeGoods, tradeableRecord } from '../../src/net/realmTradeLaw.js';   // AUDIT PROF-541 B2: as MARKET-ANY's listGood takes a record's piece
 import { pieceListable } from '../../src/net/marketLaw.js';   // AUDIT PROF-541 R2-S6: what the market lists is what disenchants
 import { reforgeEssence, REFORGE_RANK } from '../../src/net/temperLaw.js';   // CRAFT4: the Reforge with Essence
@@ -202,6 +202,11 @@ export async function disenchantPiece(ctx, player, env, { character, provenance,
   const p = await db.prepare('SELECT * FROM products WHERE provenance = ?1').bind(provenance).first();
   if (!p) return { error: 'prof-no-piece', ...(await db.prepare('SELECT 1 FROM prof_disenchants WHERE player = ?1 AND provenance = ?2').bind(player.id, provenance).first() ? { why: 'disenchanted' } : {}) };   // AUDIT PROF-541 B2
   if (p.owner !== player.id) return { error: 'prof-not-yours' };
+  // CRAFT-HOLD (the exploit audit): its Essence goes to the Stores the market sells from - a held character's craft is
+  // never turned to goods under another character's name (prepareRealmRecord's outbound hold reads the acting record alone).
+  // AUDIT CRAFT-HOLD: asked only where no record is - a realm actor's own record proves the piece its, below
+  const pieceHeld = side.at ? null : await craftHoldOf(db, player.id, provenance);
+  if (pieceHeld) return pieceHeld;
   const r = recipeById(p.recipe);
   if (!pieceListable(p.recipe)) return { error: 'prof-no-essence' };   // AUDIT PROF-541 R2-S6: arrows (marketLaw pieceListable) - no piece the pack holds by its record
   const points = piecePoints(r, p.hand == null ? null : Number(p.hand));

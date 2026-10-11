@@ -225,7 +225,7 @@ test('PARTY-MAP effect: Shared Cartography is a duration buff (46,255) - in the 
   assert.ok(portEffectDescription(SHARED_CARTOGRAPHY_KEY)?.length > 1, 'the spellbook\'s popup is never empty');
 });
 
-test('PARTY-MAP effect: the ready-made spell lands the buff on its caster for a while, stacks on a recast, and is on the spell shop\'s shelf online at a modest price', () => {
+test('PARTY-MAP effect: the ready-made spell lands the buff on its caster for a while, renews on a recast, and is on the spell shop\'s shelf online at a modest price', () => {
   const sp = sharedCartographySpell();
   assert.equal(sp.name, 'Shared Cartography');
   assert.equal(sp.index, SHARED_CARTOGRAPHY_SPELL_INDEX);
@@ -237,9 +237,10 @@ test('PARTY-MAP effect: the ready-made spell lands the buff on its caster for a 
   assert.equal(hasSharedCartography(me), true);
   const e = me.activeEffects.find((a) => a.kind === SHARED_CARTOGRAPHY_KIND);
   assert.equal(e.roundsRemaining, 21, '20 rounds + 2 at level 1, the first run at once (the DFU shape)');
+  e.roundsRemaining = 5;
   applySpell(sp, 1, me, {}, () => 0.5, { level: 1, entity: me }, {});
-  assert.equal(me.activeEffects.filter((a) => a.kind === SHARED_CARTOGRAPHY_KIND).length, 1, 'a recast stacks onto the incumbent');
-  assert.equal(e.roundsRemaining, 43, 'a recast adds its 22');
+  assert.equal(me.activeEffects.filter((a) => a.kind === SHARED_CARTOGRAPHY_KIND).length, 1, 'a recast merges into the incumbent');
+  assert.equal(e.roundsRemaining, 21, 'a recast renews it to a fresh 21 - never adds its 22');   // PIN MOVED (STACK-CAP)
   const cost = calculateCastCost(sp, me);
   assert.ok(cost.gold > 0 && cost.gold < 1000, `modest: ${cost.gold} gold`);
   assert.ok(cost.sp >= 5 && cost.sp < 60, `and cheap to keep up: ${cost.sp} SP`);

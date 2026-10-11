@@ -256,7 +256,7 @@ export async function yardsOf({ db }, _player, { mapId } = {}) {
   const by = new Map();
   for (const row of results) {
     const p = pieceOfRow(row);
-    if (!p || !decorYardPieceOf(p)) continue;
+    if (!p || !decorYardPieceOf(p) || !decorYardHighOk(p)) continue;   // YARD-SWEEP: a tower's piece from before YARD-HEIGHT never served (migration 0109)
     if (!by.has(row.building_key)) by.set(row.building_key, []);
     by.get(row.building_key).push(p);
   }

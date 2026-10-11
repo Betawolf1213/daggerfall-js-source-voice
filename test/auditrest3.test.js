@@ -50,11 +50,11 @@ test('AUDIT REST III A1: the same dungeon\'s own load (F9, the pause\'s Load und
     restorePlayer: () => extras, spellsByIndex: null, Promise,
   };
   const quickLoad = mount(`return ({ ${methodOf('src/scenes/dungeonContext.js', 'quickLoad')} }).quickLoad;`, state);
-  quickLoad.call({ restoreSaved: () => order.push('restored') }, null);
+  quickLoad.call({ restoreSaved: () => order.push('restored'), discardBeneathDeath() {} }, null);   // PIN MOVED (AUDIT DUPE-LOAD): the load drains what waits under the death screen first
   assert.deepEqual(order, ['restored', ['outerCampsLoad', extras], 'modLoaded'], 'the character first, then the save\'s camps outside, then OnLoad');
   // a save from another dungeon: handed up whole - the world host's load stands them (world.js standOuterCamps)
   order.length = 0; state.snap = { locationKey: 'dungeon:9' };
-  quickLoad.call({ restoreSaved: () => order.push('restored') }, 'slot');
+  quickLoad.call({ restoreSaved: () => order.push('restored'), discardBeneathDeath() {} }, 'slot');
   assert.deepEqual(order, []);
   // the seam, through the mode machine to the world host's one home
   assert.match(rd('src/scenes/worldModes.js'), /outerCampsLoad: \(extras\) => host\.outerCampsLoad\?\.\(extras\),/);

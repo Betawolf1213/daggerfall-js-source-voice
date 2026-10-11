@@ -1291,6 +1291,10 @@ Every law in Home.md's Process section, and what it demands of this arc:
   Turning the carried Right is the challenger's one Right of Siege (5.2 step 4 grants it no other), and the seat is
   granted no other challenge.
 - **The Turning's settle fails.** It is one D1 transaction: it rolls back whole, and the next read settles it again.
+  A read before the batch that throws is not caught, so it fails every seat route until it stops throwing - SEAT-CAP
+  (`01-Overview/Field-Bugs-2026-10-11h.md`, from play: "Time to take a castle and nothing happens") found one: every
+  guild pledged anywhere bound in one statement, past D1's 100 parameters. Every guild list the seats bind is read
+  IN_CHUNK (90) at a time (`seatInfluence.js` allIn), and the tests' fake refuses a statement D1 would.
 - **Clocks.** Every time is the relay's clock; clients read it through their offset (FACT, `online.js`
   `clockOffsetMs`). Daylight saving never touches UTC.
 

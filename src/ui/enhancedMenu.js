@@ -130,7 +130,8 @@ import { getPref, setPref, isOpen, setOpen, PREF_DEFAULTS } from '../systems/uiP
 import { TOUCH_BUTTON_SLOTS, touchButtonSlots, nextTouchButton, touchButtonChoices } from './touchButtons.js';   // TOUCH-BUTTONS: the corner's three slots
 import { DEFAULT_SERVER } from '../net/online.js';   // ONLINE1: the relay this port hosts, the field's placeholder   // R7: the port's own switches; SO1: the folded tiers' memory
 import { GATE_CROWD_TIERS } from '../net/gateCrowd.js';   // GATE-CROWD: how many other players a gate's court draws
-import { PEER_RANGE_TIERS, peerRangeOf } from '../net/peerRange.js';   // PEER-RANGE: how far out other players are drawn, and the distance a stored value stands for
+import { PEER_RANGE_TIERS, peerRangeOf } from '../net/peerRange.js';
+import { YARD_RANGE_TIERS, yardRangeOf } from '../net/yardRange.js';   // YARD-RANGE: how far other players' yards are drawn   // PEER-RANGE: how far out other players are drawn, and the distance a stored value stands for
 import { replacementCount } from '../systems/musicReplacement.js';   // M-EXT: the packs card reports what the pick covers
 import { brandMark } from './brandMark.js';   // INTRO2: Mac's supplied logo, shared with the final splash
 import { soundReplacementCount } from '../systems/soundReplacer.js';   // SNDREP1: the sound pack's count
@@ -2829,6 +2830,11 @@ function peerSpritesCard() {
   c.append(choiceRow('peerRange', 'Draw distance',
     'How far away other players are drawn. Your party and your duel opponent always show. Nearer is faster; 150 m can hide an archer.',
     PEER_RANGE_TIERS.map((m) => [m, m ? `${m} m` : 'Everyone']), { home: true, read: () => peerRangeOf(getPref('peerRange')) }));
+  // YARD-RANGE (2026-10-11, a player: "20-40 fps in cities"): how far their yards' decorations are drawn - none, nearer, or
+  // as far as ever; one's own yard always (scenes/homeYards.js)
+  c.append(choiceRow('yardRange', 'Yard decorations',
+    'How far away other players\u2019 yard decorations are drawn. Your own yard always shows. Nearer is faster in busy towns.',
+    YARD_RANGE_TIERS.map((m) => [m, m ? `${m} m` : 'Off']), { home: true, read: () => yardRangeOf(getPref('yardRange')) }));
   // GATE-CROWD (2026-10-07, Mac: "some type of filter when there are too many people"): a crowded court, thinned
   c.append(choiceRow('gateCrowd', 'Crowd in the Burning Court',
     'How many players the Burning Court draws. Your party always shows.',

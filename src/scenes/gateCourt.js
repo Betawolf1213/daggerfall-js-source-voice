@@ -988,14 +988,15 @@ export function createGateCourt({
     /**
      * WBX7: A SOUL TRAP OF MINE LAID ON HIM (the dungeon context's spell door - scenes/dungeonContext.js spellOnBoss): its
      * chance and its rounds, kept on the relay's clock until his fall rolls it. A trap already running takes the new
-     * rounds and keeps its own chance (AddState, SoulTrap.cs:94-97 - systems/effects.js's own law). Answers whether it
+     * rounds - renewed, never stacked (STACK-CAP, systems/effects.js renewRounds) - and keeps its own chance (AddState,
+     * SoulTrap.cs:94-97). Answers whether it
      * was kept (no fight, a fight over: nothing to keep it for).
      * @param {{ chance?: number, rounds?: number }} [trap]
      */
     trapped({ chance, rounds } = {}) {
       const s = link.state(), t = now();
       if (!s || s.day === null || s.fell || s.wrath != null || !Number.isFinite(chance) || !(rounds > 0)) return false;
-      if (trapMark && t < trapMark.until) trapMark.until += rounds * COURT_ROUND_MS;
+      if (trapMark && t < trapMark.until) trapMark.until = Math.max(trapMark.until, t + rounds * COURT_ROUND_MS);
       else trapMark = { chance, until: t + rounds * COURT_ROUND_MS, day: s.day };
       return true;
     },
@@ -1019,8 +1020,8 @@ export function createGateCourt({
       if (!s || s.day === null || s.fell || s.wrath != null || !s.lg || !Object.values(HIT_KINDS).includes(r) || !fromHisCourt(s, t)) return false;
       return host.hit({ i, d, r }, t);
     },
-    /** AUDIT WBX F6: my soul trap on him while it runs (`{chance}`), or null - a recast stacks onto it as it would on any
-     *  foe (effects.js AddState: its rounds, no new save), where his stand-in forgets every trap between casts. */
+    /** AUDIT WBX F6: my soul trap on him while it runs (`{chance}`), or null - a recast renews it as it would on any
+     *  foe (effects.js renewRounds: its rounds, no new save), where his stand-in forgets every trap between casts. */
     trapNow() { const t = now(); return trapMark && t < trapMark.until ? { chance: trapMark.chance } : null; },
     /** The body and the spoils, for the host's billboard pass (AUDIT WB D10: one list, refilled each frame). */
     batches() {

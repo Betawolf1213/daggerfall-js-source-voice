@@ -106,6 +106,7 @@ export const SERVICE_KEY = 'dagger.account.service';
 export const REFUSALS = Object.freeze({
   'handle-shape': `A username is one word, 3 to ${HANDLE_MAX_LEN} characters, starting with a letter, and no spaces.`,
   'handle-refused': 'That username is not allowed. Pick another.',
+  'handle-email': 'A username is never an email address - everyone you meet reads it. Pick a name.',   // HANDLE-EMAIL
   'handle-taken': 'Somebody already has that username.',
   'password-shape': 'That password cannot be used.',
   'password-short': `A password is at least ${PASSWORD_MIN_LEN} characters.`,

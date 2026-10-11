@@ -462,18 +462,32 @@ test('WBX6 no wear on the blows at him: his stand-in carries spareGear, and dama
 
 // ═══ WBX7 ═══════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-test('WBX7 the soul trap on him: kept on the relay\'s clock for its rounds (a trap running takes new rounds and keeps its chance), rolled once at his fall with his mobile when it was still running then, not when it had run out; nothing kept outside a fight (mutants: the roll at every frame; a spent trap rolled; the recast\'s chance taken)', () => {
+test('WBX7 the soul trap on him: kept on the relay\'s clock for its rounds (a trap running is renewed by a recast, never stacked, and keeps its chance), rolled once at his fall with his mobile when it was still running then, not when it had run out; nothing kept outside a fight (mutants: the roll at every frame; a spent trap rolled; the recast\'s chance taken; STACK-CAP: the recast\'s rounds added)', () => {
   const h = court();
   at(h, 1000, state());
   assert.equal(h.c.trapped({ chance: 40, rounds: 3 }), true);
   assert.equal(COURT_ROUND_MS, 5000, 'a game minute on the shared clock');
   h.clock.t = 1000 + 2 * COURT_ROUND_MS;
   assert.equal(h.c.trapped({ chance: 90, rounds: 2 }), true, 'recast while it runs');
-  // it now runs out at 1000 + 5 rounds
-  at(h, 1000 + 5 * COURT_ROUND_MS - 10, state({ fell: { at: 1000 + 5 * COURT_ROUND_MS - 20, top: [], n: 1 } }));
+  // PIN MOVED (STACK-CAP): renewed, it now runs out at 1000 + 4 rounds - the recast's 2 from its own cast, never added
+  // to the 1 left (a stack ran it to 5)
+  at(h, 1000 + 4 * COURT_ROUND_MS - 10, state({ fell: { at: 1000 + 4 * COURT_ROUND_MS - 20, top: [], n: 1 } }));
   assert.deepEqual(h.traps, [{ chance: 40, mobile: bossLookOf('ruhn').mobile, name: 'Valkynaz Ruhn' }], 'rolled at his fall, the first trap\'s chance');
-  at(h, 1000 + 5 * COURT_ROUND_MS + 500);
+  at(h, 1000 + 4 * COURT_ROUND_MS + 500);
   assert.equal(h.traps.length, 1, 'once');
+  const renewed = court();
+  at(renewed, 1000, state());
+  renewed.c.trapped({ chance: 40, rounds: 3 });
+  renewed.clock.t = 1000 + 2 * COURT_ROUND_MS;
+  renewed.c.trapped({ chance: 90, rounds: 2 });
+  at(renewed, 1000 + 4 * COURT_ROUND_MS + 100, state({ fell: { at: 1000 + 4 * COURT_ROUND_MS + 50, top: [], n: 1 } }));
+  assert.deepEqual(renewed.traps, [], 'renewed, never stacked: run out past 4 rounds, where a stack ran to 5');
+  const longer = court();
+  at(longer, 1000, state());
+  longer.c.trapped({ chance: 40, rounds: 3 });
+  longer.c.trapped({ chance: 90, rounds: 1 });
+  at(longer, 1000 + 3 * COURT_ROUND_MS - 10, state({ fell: { at: 1000 + 3 * COURT_ROUND_MS - 20, top: [], n: 1 } }));
+  assert.equal(longer.traps.length, 1, 'a shorter recast never cuts a longer trap short');
   const late = court();
   at(late, 1000, state());
   late.c.trapped({ chance: 40, rounds: 1 });

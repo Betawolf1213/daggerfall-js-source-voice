@@ -126,7 +126,11 @@ current design "does not work in an enjoyable manner"):
 - **Phase 1 - see failure.** The server-side gold ledger: each checkpoint's
   gold and item deltas read against budgets, every faucet counted. Nothing
   later is tuned blind.
-- **Phase 2 - close the printers.** Cap what an NPC pays for a crafted piece;
+- **Phase 2 - close the printers.** Cap what an NPC pays for a crafted piece
+  (BUILT - CRAFT-WORTH, 2026-10-11, the exploit audit: a counter, the keyed shelf and a patron pay a crafted piece what
+  they pay the plain piece its recipe makes - its quality's Magic or Rare roll is power, never price; a Masterwork staff
+  of three planks had sold for ~1,280 gold, ~79k-320k gold an hour; `systems/tradeModes.js` counterValueOf,
+  `systems/lootRarity.js` craftedRarityWorth, `net/patronLaw.js` patronWorth, `test/craftworth.test.js`);
   customs reads the server's level, not the client's; a defaulted loan stops
   being free gold.
 - **Phase 3 - make the friction fair.** The Vault, Loadouts and secure

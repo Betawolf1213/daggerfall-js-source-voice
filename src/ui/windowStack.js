@@ -296,6 +296,24 @@ export function makeWindowStack({ hud = null, onTop = null, onWindowChange = nul
       publishTop();
     },
 
+    /** DUPE-LOAD (AUDIT, the exploit audit): every window but `keep` (and the HUD) out of the stack, top first - `onDrop`
+     *  on each, then its OnPop, as `clear` takes them - `keep` left where it stands. A LOAD's drain beneath the death
+     *  screen: a window pushed while it holds the top waits under it (holdsTop), and one a box covered when the death
+     *  replaced the top stays there; uncovered after the restore, it stood over the loaded game still holding what it took
+     *  off the old one (a counter's staged goods, handed to the loaded pack on its close). */
+    keepOnly(keep, onDrop = null) {
+      for (let i = windows.length - 1; i >= 0; i--) {
+        const w = windows[i];
+        if (isHud(w) || w === keep) continue;
+        windows.splice(i, 1);
+        onDrop?.(w);
+        w.onPop?.();
+      }
+      if (windows.length <= (hud ? 1 : 0)) gamePaused = false;   // RemoveWindow's latch: down once the HUD alone, or nothing, is left
+      publishTop();
+      onWindowChange?.();
+    },
+
     /** GameManager.IsPlayingGame's window half, inverted
      *  (GameManager.cs:926-942).
      *
