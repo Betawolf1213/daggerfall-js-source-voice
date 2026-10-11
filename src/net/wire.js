@@ -1817,7 +1817,7 @@ export function inRangeOf(roomKey, from) {
   return (to) => !!to && Math.max(Math.abs(fx - Math.floor(to.x / PIXEL_UNITS)), Math.abs(fy - Math.floor(to.z / PIXEL_UNITS))) <= RANGE_PIXELS;
 }
 
-/** One client frame, parsed and checked: {t:'hello'|'pose'|'ping'|'chat'|'roll'|'say'|'narrate'|'stage'|'mute'|'renown'|'guild'|'guildout'|'world'|'foes'|'own'|'hit'|'act'|'who'|'quest'|'social'|'party'|'trade'|'cast'|'card'|'page'|'duel'|'wed'|'park'|'caravan'|'look'|'gate'|'siege'|'arena'|'raid'|'raidtowns'|'rite'|'ow'|'trav'|'amap'|'stp'|'cfg'|'find'|'serpent'|'sd'|'wild'|'wdun'|'holdem'|'iliac', ...}
+/** One client frame, parsed and checked: {t:'hello'|'pose'|'ping'|'chat'|'roll'|'say'|'narrate'|'stage'|'mute'|'renown'|'guild'|'guildout'|'world'|'foes'|'own'|'hit'|'act'|'who'|'quest'|'social'|'party'|'trade'|'cast'|'card'|'page'|'duel'|'wed'|'park'|'caravan'|'look'|'gate'|'siege'|'arena'|'raid'|'raidtowns'|'rite'|'ow'|'trav'|'amap'|'stp'|'cfg'|'find'|'serpent'|'sd'|'eg'|'wild'|'wdun'|'holdem'|'iliac', ...}
  *  or {error} - the caller closes on an error. INSPECT1: every arm below, named - this line had fallen seven behind
  *  (test/auditworld2.test.js derives the list from the arms now, so it cannot fall behind again - the merge with
  *  main's HCC-PARK was its first catch: the park arm, unnamed). */
@@ -1937,6 +1937,11 @@ export function parseClient(text, { hasHello = false } = {}) {
     if (!hasHello) return { error: 'rite before hello' };
     const r = validRiteIn(m);
     return r ? { t: 'rite', ...r } : { error: 'bad rite' };
+  }
+  if (m.t === 'eg') {   // EG-PLAY: a word on an Elite Breach - the open to the hub, a member's admission, door and blows to its room - projected by validEgIn; the hub and the room's director (net/egBrain.js) judge it
+    if (!hasHello) return { error: 'eg before hello' };
+    const r = validEgIn(m);
+    return r ? { t: 'eg', ...r } : { error: 'bad eg' };
   }
   if (m.t === 'sd') {   // SD3: a word on the Super dungeon - `found`, to the cell its Hollow stands in - projected by validSdIn; the cell and the hub judge it (net/sdLaw.js). SD6b: `pz`, a turn in the realm's Orrery (net/sdBrain.js)
     if (!hasHello) return { error: 'sd before hello' };
@@ -5363,4 +5368,135 @@ export function validSdFoundTell(b) {
   if (!b || typeof b !== 'object' || !intIn(b.s, 1, SD_SLOT_MAX) || !intIn(b.px, 0, 999) || !intIn(b.py, 0, 499)) return null;
   if (!Number.isFinite(b.x) || !Number.isFinite(b.z) || typeof b.fb !== 'string') return null;
   return { s: b.s, px: b.px, py: b.py, x: b.x, z: b.z, fb: sanitizeName(b.fb) };
+}
+
+// ═══ EG-PLAY: THE ELITE BREACH (bible/11-Multiplayer/Elite-Gates.md section 23) ══════════════════════════════════
+//
+// ONE FRAME TYPE, `eg`, with a kind. The opener says its signed open order to the HUB (`open` - the service's word,
+// net/identityToken.js `egopen`, and where the company answers from); the hub freezes the company from its party record,
+// opens the breach's room (`eg:<16hex>`, net/egLaw.js) and says the CALL to every member (`call`). Each member enters the
+// room with its own signed admission (`in`); the room's director (net/egBrain.js) runs the halls and says the breach
+// (`st` whole, `sg` a stage, `co` the company, `fall`, `rd` a Redoubt, `end`), each member's receipt (`rcpt` - `e1`,
+// net/egReceipt.js), and the fights in the gate's own words (`fst` a fight's whole state; `mv`, `atk`, `hp`, `fell`, the
+// legion's `ad`/`amv`/`aatk`/`ah`/`adie` and the rifts as `cx`/`cxh`/`cxb` - validGateOut's shapes, every point in the
+// hall's own frame, net/egLaw.js). A member's blows are the gate's (`hit` on the lord or champion, `ahit` on one of the
+// legion, `xhit` on a rift), its step through a door `down`, its way home `home`. Every time is the relay's clock.
+
+/** What a client may say: `open` to the hub; `in`, `down`, `home` and the blows to a breach's room. */
+export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'ahit', 'xhit']);
+/** What the hub and a breach's room say back. */
+export const EG_FIGHT_KINDS = Object.freeze(['mv', 'atk', 'hp', 'fell', 'ad', 'amv', 'aatk', 'ah', 'adie', 'cx', 'cxh', 'cxb']);
+export const EG_OUT_KINDS = Object.freeze(['call', 'st', 'sg', 'co', 'fall', 'rd', 'rcpt', 'end', 'no', 'fst', ...EG_FIGHT_KINDS]);
+/** A hall's stages as the wire says them (section 7): before the first hall (`wait` - the arch rising, sealed, open),
+ *  the arrival and gather, the trial, the closing (its door open), a Redoubt's rest, the end. */
+export const EG_STAGES = Object.freeze(['wait', 'arrive', 'trial', 'closing', 'rest', 'end']);
+/** How a breach ends (the `end` frame's `why`, net/egReceipt.js EG_END_WHYS' room half). */
+export const EG_END_WORDS = Object.freeze(['tear', 'wipe', 'gone', 'last', 'empty', 'rehearsal', 'void']);
+/** The room's refusals, in words. */
+export const EG_NO_WORDS = Object.freeze(['the breach is closed', 'the breach answers only to its company', 'the order is spent', 'you have fallen', 'you went home', 'the order is not yours']);
+/** THE BRAIN'S LAW by number, said on every `in` (`bv`) and refused below EG_BRAIN_MIN (the gate's law). */
+export const EG_BRAIN_V = 1;
+export const EG_BRAIN_MIN = 1;
+/** The breach frames' own bucket: the gate's (a swing through a pack of the legion is a frame a body). */
+export const EG_HZ_MAX = 16;
+export const egGate = (bucket, nowMs) => tokenGate(bucket, nowMs, EG_HZ_MAX);
+/** The first relay that opens an Elite Breach - an older one closes the socket on the frame, so none is sent it. */
+export const EG_RELAY_MIN = 195;
+export const relaySupportsEg = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= EG_RELAY_MIN; };
+/** The door the hub opens a breach's room through (HCC-PARK's doors' law - the public worker forwards /room/<key> alone). */
+export const EG_INTERNAL_OPEN = '/internal/eg/open';
+/** Where a breach's room keeps its breach, and where the hub keeps an account's live call (never a swept prefix). */
+export const EG_KEY = 'egbreach';
+export const egCallKey = (sub) => `egcall:${sub}`;
+/** An order on the wire (net/identityToken.js TOKEN_MAX_CHARS bounds it again where it is opened), a receipt. */
+const EG_ORDER_RE = /^v1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/;
+const EG_ORDER_MAX = 1024;
+const EG_RECEIPT_RE = /^e1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*$/;
+const EG_RECEIPT_WIRE_MAX = 640;
+const EG_B_RE = /^[0-9a-f]{16}$/;
+/** A hall number's bound on the wire, a count's (ms - the last word), a company's size. */
+export const EG_HALL_WIRE_MAX = 99_999;
+const EG_COUNT_WIRE_MAX = 4 * 3600 * 1000;
+const EG_COMPANY_MAX = 8;
+const egOrder = (z) => typeof z === 'string' && z.length <= EG_ORDER_MAX && EG_ORDER_RE.test(z);
+const egMs = (v) => v === 0 || gateMs(v);
+/** Where a member answered from (the landing): its map pixel and its place there, the MapsFile frame. */
+function egSite(s) {
+  if (!s || typeof s !== 'object' || !intIn(s.px, 0, 999) || !intIn(s.py, 0, 499)) return null;
+  if (![s.x, s.y, s.z].every((v) => finite(v) && Math.abs(v) <= 1e7) || !finite(s.yaw) || Math.abs(s.yaw) > 8) return null;
+  return { px: s.px, py: s.py, x: s.x, y: s.y, z: s.z, yaw: s.yaw };
+}
+/** The company as the wire says it: `[sub, name, numeral]`, and in a room's state whether each lives (`al`), went home
+ *  (`hm`) and has entered (`in`). */
+function egCompany(co, full) {
+  if (!Array.isArray(co) || co.length < 1 || co.length > EG_COMPANY_MAX) return null;
+  const out = [];
+  for (const t of co) {
+    if (!Array.isArray(t) || t.length !== (full ? 6 : 3) || typeof t[0] !== 'string' || !ID_RE.test(t[0]) || typeof t[1] !== 'string' || !intIn(t[2], 1, EG_COMPANY_MAX)) return null;
+    if (full && !(t.slice(3).every((v) => v === 0 || v === 1))) return null;
+    out.push(full ? [t[0], sanitizeName(t[1]), t[2], t[3], t[4], t[5]] : [t[0], sanitizeName(t[1]), t[2]]);
+  }
+  return new Set(out.map((t) => t[0])).size === out.length ? out : null;
+}
+/** A stage's word: the hall, the stage, when it began and ends (0 open-ended), the count (`cl` left, `ca` when it last
+ *  began to run - 0 held), the hall's wake and its door (0 none). */
+function egStage(m) {
+  if (!intIn(m.h, 0, EG_HALL_WIRE_MAX) || !EG_STAGES.includes(m.sg) || !egMs(m.sa) || !egMs(m.su)) return null;
+  if (!intIn(m.cl, 0, EG_COUNT_WIRE_MAX) || !egMs(m.ca) || !egMs(m.hw) || !egMs(m.dn)) return null;
+  return { h: m.h, sg: m.sg, sa: m.sa, su: m.su, cl: m.cl, ca: m.ca, hw: m.hw, dn: m.dn };
+}
+
+/**
+ * A client's breach frame, projected: `{k:'open', z, site}` (to the hub), `{k:'in', z, lv, bv?}`, `{k:'down', h}`,
+ * `{k:'home'}` or a blow (the gate's `hit`, `ahit`, `xhit` - validGateIn's own projection), or null.
+ */
+export function validEgIn(m) {
+  if (!m || typeof m !== 'object' || !EG_KINDS.includes(m.k)) return null;
+  if (m.k === 'open') { const site = egSite(m.site); return egOrder(m.z) && site ? { k: 'open', z: m.z, site } : null; }
+  if (m.k === 'in') return egOrder(m.z) && intIn(m.lv, 1, GATE_LV_WIRE_MAX) ? { k: 'in', z: m.z, lv: m.lv, ...(intIn(m.bv, 0, 999) ? { bv: m.bv } : {}) } : null;
+  if (m.k === 'down') return intIn(m.h, 1, EG_HALL_WIRE_MAX) ? { k: 'down', h: m.h } : null;
+  if (m.k === 'home') return { k: 'home' };
+  const g = validGateIn(m);
+  return g && (g.k === 'hit' || g.k === 'ahit' || g.k === 'xhit') ? g : null;
+}
+
+/**
+ * A breach frame from the hub or a breach's room, projected for the client: the kind's own fields, bounded, or null.
+ */
+export function validEgOut(m) {
+  if (!m || typeof m !== 'object' || !EG_OUT_KINDS.includes(m.k)) return null;
+  if (EG_FIGHT_KINDS.includes(m.k)) return validGateOut(m);
+  switch (m.k) {
+    case 'call': {
+      const co = egCompany(m.co, false), site = egSite(m.site);
+      if (typeof m.b !== 'string' || !EG_B_RE.test(m.b) || typeof m.o !== 'string' || typeof m.os !== 'string' || !ID_RE.test(m.os)) return null;
+      if (!intIn(m.seed, 0, 0xffffffff) || !gateMs(m.op) || !(m.rh === 0 || m.rh === 1) || !co || !site) return null;
+      return { k: 'call', b: m.b, o: sanitizeName(m.o), os: m.os, seed: m.seed, op: m.op, rh: m.rh, co, site };
+    }
+    case 'st': {
+      const st = egStage(m), co = egCompany(m.co, true);
+      if (!st || !co || typeof m.b !== 'string' || !EG_B_RE.test(m.b) || !intIn(m.seed, 0, 0xffffffff) || !intIn(m.egv, 1, 999) || !gateMs(m.op) || !egMs(m.wk)) return null;
+      if (!intIn(m.rd, 0, EG_HALL_WIRE_MAX) || !(m.rh === 0 || m.rh === 1) || !intIn(m.dg, 0, 0xffffffff) || (m.end != null && !EG_END_WORDS.includes(m.end))) return null;
+      return { k: 'st', b: m.b, seed: m.seed, egv: m.egv, op: m.op, wk: m.wk, ...st, co, rd: m.rd, rh: m.rh, dg: m.dg, end: m.end ?? null };
+    }
+    case 'sg': { const st = egStage(m); return st ? { k: 'sg', ...st } : null; }
+    case 'co': { const co = egCompany(m.co, true); return co ? { k: 'co', co } : null; }
+    case 'fall': return typeof m.s === 'string' && ID_RE.test(m.s) && typeof m.n === 'string' && gateMs(m.at) ? { k: 'fall', s: m.s, n: sanitizeName(m.n), at: m.at } : null;
+    case 'rd': return intIn(m.w, 1, EG_HALL_WIRE_MAX) && intIn(m.h, 1, EG_HALL_WIRE_MAX) && gateMs(m.at) && intIn(m.cl, 0, EG_COUNT_WIRE_MAX) ? { k: 'rd', w: m.w, h: m.h, at: m.at, cl: m.cl } : null;
+    case 'rcpt': return typeof m.r === 'string' && m.r.length <= EG_RECEIPT_WIRE_MAX && EG_RECEIPT_RE.test(m.r) ? { k: 'rcpt', r: m.r } : null;
+    case 'end': return EG_END_WORDS.includes(m.why) && gateMs(m.at) ? { k: 'end', why: m.why, at: m.at } : null;
+    case 'no': return EG_NO_WORDS.includes(m.m) ? { k: 'no', m: m.m } : null;
+    case 'fst': { const f = m.f && typeof m.f === 'object' ? validGateOut({ ...m.f, k: 'st' }) : null; return f && intIn(m.h, 1, EG_HALL_WIRE_MAX) ? { k: 'fst', h: m.h, f } : null; }
+    default: return null;
+  }
+}
+/** The open as the hub hands it to the breach's room (EG_INTERNAL_OPEN) - the verified order's own fields, the company
+ *  it froze, the seed it drew and the opener's landing - projected, or null. */
+export function validEgOpenTell(v) {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return null;
+  const b = /** @type {any} */ (v), co = egCompany(b.co, false), site = egSite(b.site);
+  if (typeof b.b !== 'string' || !EG_B_RE.test(b.b) || typeof b.ez !== 'string' || !/^[a-z0-9]{16,32}$/.test(b.ez)) return null;
+  if (typeof b.s !== 'string' || !ID_RE.test(b.s) || typeof b.o !== 'string' || !intIn(b.ew, 0, 999) || !(b.rh === 0 || b.rh === 1)) return null;
+  if (!intIn(b.seed, 0, 0xffffffff) || !gateMs(b.op) || !co || !site || !co.some((t) => t[0] === b.s)) return null;
+  return { b: b.b, ez: b.ez, s: b.s, o: sanitizeName(b.o), ew: b.ew, rh: b.rh, seed: b.seed, op: b.op, co, site };
 }

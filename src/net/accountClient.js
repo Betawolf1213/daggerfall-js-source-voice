@@ -122,6 +122,13 @@ export const REFUSALS = Object.freeze({
   rate: 'Too many attempts. Wait a few minutes and try again.',
   auth: 'You have been signed out. Sign in again.',
   'no-signing-key': 'The account service cannot vouch for accounts right now.',
+  // EG-PLAY: an Elite Breach's refusals (server-account/src/eg.js)
+  rq: 'The Spire could not read that request. Try again.',
+  unproven: 'Close a Dagon\'s Breach first - the Spire opens to those who have.',
+  live: 'You hold a breach already.',
+  rehearsed: 'You have rehearsed the Spire today. A Weir Key opens it again.',
+  spent: 'That breach is spent.',
+  breach: 'That breach is not one the Spire knows.',
   body: 'The account service could not read that request.',
   method: 'The account service refused that request.',
   // The two the ROUTER refuses with, before any account is looked at.
@@ -1354,6 +1361,25 @@ export function accountSds({ fetch, storage }) {
     claim: async (receipt) => { const i = io(); return i ? claimSdReceipt(i, receipt) : { ok: false, error: 'no-session' }; },
     /** The signed-in account's id - the receipts this device may offer are its alone (AUDIT WB A9's law). */
     me: () => storedSession(storage)?.id ?? null,
+  };
+}
+
+/**
+ * EG-PLAY: THE ELITE BREACH (server-account/src/eg.js) through the one door - the Weir Keys the account holds and its live
+ * breach (`keys`), the open that stakes one (`open` - idempotent on its request id `rq`; `rh` the day's Rehearsal, no
+ * key), a member's admission (`admit`) and a receipt the relay signed (`claim`). Every answer is `call`'s shape, waited
+ * for ACCOUNT_ACT_WAIT_MS at most; no session is `no-session`, never a throw. `me()` the signed-in account's id - the
+ * receipts this device may offer are its alone (AUDIT WB A9's law); `guest()` whether it is a guest's.
+ */
+export function accountEg({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
+  const post = waitedPost({ fetch, storage }, waitMs);
+  return {
+    keys: () => post('/v1/eg/keys', {}),
+    open: (rq, rh = false) => post('/v1/eg/open', { rq, ...(rh ? { rh: 1 } : {}) }),
+    admit: (b) => post('/v1/eg/admit', { b }),
+    claim: (receipt) => post('/v1/eg/claim', { receipt }),
+    me: () => storedSession(storage)?.id ?? null,
+    guest: () => storedSession(storage)?.kind === 'guest',
   };
 }
 

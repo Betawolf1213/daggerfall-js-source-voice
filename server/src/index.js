@@ -302,6 +302,14 @@ import { sdMarksOf } from '../../src/net/sdMarks.js';   // SD18a: a Hollow's mar
 import { orreryOf, orreryStep, orreryLit, orreryFresh, orreryTurn, orreryShortest, orreryRightsFresh, orreryTurnerOf, orreryMayTurn, orreryTurned, orreryLashed, stoneInReach, dungeonToRealm, SD_STONES, SD_HOURS, SD_FRAY_MAX, SD_STONE_REACH_SLACK, SD_STONE_SETTLE_MS } from '../../src/net/sdBrain.js';   // SD6b: the Orrery's law - the realm judges every turn by it; AUDIT SD II (L7 H2): and who may turn while others turn
 import { newRemnantFight, joinRemnant, applyRemnantHit, applyEchoHit, applyHeartHit, stepRemnant, remnantStateOf, arenaOf, inArena, SD_ARENA_SLACK, SD_LOST_MS, SD_POSE_FRESH_MS } from '../../src/net/sdRemnant.js';   // SD8b: the Brass Remnant's law - the realm runs its fight by it
 import { mintSdReceipt, readSdReceipt, SD_RECEIPT_TTL_S } from '../../src/net/sdReceipt.js';   // SD9a: the Hour's receipt - minted at the Remnant's fall, kept by the hub
+// EG-PLAY (2026-10-11, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): FIVE FILES JOIN THE
+// BUNDLE - net/egLaw.js (the breach's room, clock and hall specs - it imports sdBrain.js), net/egBrain.js (the director),
+// net/egHost.js (the legion - the gate's host kinds), net/egLord.js (the champion's kit - the gate's attacks) and
+// net/egReceipt.js (the `e1` receipt). The hub opens a breach on the service's signed order; its room runs the halls.
+import { isEgRoom, egRoomKey, egBreachOfRoom, EG_SEALED_MS, EG_ADMIT_MAX_MS } from '../../src/net/egLaw.js';
+import { egBreachNew, egEnter, egAdmitWord, egStep, egBlow, egDown, egHome, egStateOf, egFightStateOf, egLive } from '../../src/net/egBrain.js';
+import { mintEgReceipt } from '../../src/net/egReceipt.js';
+import { egGate, EG_INTERNAL_OPEN, EG_KEY, egCallKey, validEgOpenTell, EG_BRAIN_MIN } from './relay.js';
 
 // AUDIT WORLD34 D4: the relay names itself in /health. SLAM13 (AUDIT SLAM A5): the name lives in net/wire.js, so the
 // welcome can carry it; /health reads it through the import above. LOCALDEV1: it is NOT re-exported from this module -
@@ -422,6 +430,9 @@ export default {
     if (isArenaExhibitionRoom(key) && !exhibitionAdmits(arenaExhibitionHourOf(key), sharedClassicMinutes(Date.now()))) return json({ error: 'no such bout' }, 404);
     // SD3: a Super dungeon's realm is `sd:<slot>` and nothing else (the keys the hub mints - net/sdLaw.js sdRoomKey)
     if (key.startsWith('sd:') && !isSdRoom(key)) return json({ error: 'no such room' }, 404);
+    // EG-PLAY: an Elite Breach's room is `eg:<16hex>` and nothing else (net/egLaw.js isEgRoom) - and it admits nobody until
+    // the hub has opened it (the room's own record, below)
+    if (key.startsWith('eg:') && !isEgRoom(key)) return json({ error: 'no such room' }, 404);
     if (String(request.headers.get('Upgrade') ?? '').toLowerCase() !== 'websocket') return json({ error: 'websocket only' }, 426);
     // SD3: and it stands only while the hub's record holds its slot - found, or fallen and collapsing (the gate's law, read
     // from the hub, after the socket's own check so no other request asks it): no object is minted for a slot the hub
@@ -773,6 +784,7 @@ export class Room {
     if (path === SD_INTERNAL_FOUND) return this._sdFoundInternal(request);   // SD3: a cell telling the hub a Hollow found
     if (path === SD_INTERNAL_LIVE) return this._sdLiveInternal();   // SD3: the Worker or a realm asking the hub its record
     if (path === SD_INTERNAL_FELL) return this._sdFellInternal(request);   // SD8b: a realm telling the hub its Remnant fell
+    if (path === EG_INTERNAL_OPEN) return this._egOpenInternal(request);   // EG-PLAY: the hub opening a breach's room
     if (path === HOLDEM_INTERNAL_VOID) return this._holdemVoidInternal(request);   // AUDIT SCALE II R3-3 (c): a layer's void, spent by its place
     const key = roomOf(new URL(request.url).pathname);
     if (!key || (key.startsWith('owned:') && !privateInteriorOf(key))) return json({ error: 'no such private room' }, 404);
@@ -1070,6 +1082,8 @@ export class Room {
     if (sub) { try { await this._gateReceiptTo(ws, sub, now); } catch (e) { console.warn('[hub] gate receipt failed', e?.message ?? e); } }
     // SD9a: and this account's Hour receipt, while it is good (spent, it goes)
     if (sub) { try { await this._sdReceiptTo(ws, sub, now); } catch (e) { console.warn('[hub] sd receipt failed', e?.message ?? e); } }
+    // EG-PLAY: and a breach's call to this account, while its open window stands (a member whose page reloaded hears it again)
+    if (sub) { try { await this._egCallTo(ws, sub, now); } catch (e) { console.warn('[hub] eg call failed', e?.message ?? e); } }
     // WB12d: the faithful's rite broken while this player was away, while its circle still stands
     // BROKER-CAGE: and its faithful every one fallen - the Broker's cage open - until the Wrath's midnight (cageStands: a
     // Warden fallen early takes the circle, never her)
@@ -2253,6 +2267,7 @@ export class Room {
     if (this._dead.size) await this._reap();   // AUDIT CARDS-3 A3: a send the tick failed closed its socket - no close comes for it
     if (held || iheld) return;
     if (await this._sdFightTick()) return;   // SD8b: a realm's alarm is its Remnant's beat while its fight lives
+    if (await this._egTick()) return;   // EG-PLAY: a breach's room's alarm is its director's beat while the breach lives
     // SERPENT1: A CELL WITH A SERPENT'S FIGHT beats it - and its other duties (a rite's tell, its raids' ends) still run,
     // every SERPENT_REST_MS while the fight beats and on every firing once it is over, under one alarm: the soonest of the
     // beat and what they arm
@@ -2552,7 +2567,7 @@ export class Room {
     if (battle && !this._spend(ws, now, poseGate, 'bucket', 'drops', 'too many poses')) return;
     const step = battle ? await this._siegeStep(ws, a, m.p, now) : null;
     if (battle && !step) return;
-    const turned = posed ? { turn: ((a.turn | 0) + 1) & 0xffff, ...(still ? { kept: now } : {}), ...(isSdRoom(a.key) ? { pAt: now } : {}) } : {};   // AUDIT SD III (F3): an Hour's pose, stamped - the fight's census reads its age
+    const turned = posed ? { turn: ((a.turn | 0) + 1) & 0xffff, ...(still ? { kept: now } : {}), ...(isSdRoom(a.key) || isEgRoom(a.key) ? { pAt: now } : {}) } : {};   // AUDIT SD III (F3): an Hour's pose, stamped - the fight's census reads its age
     const met = battle ? this._metered(ws, a, true, { pose: m.p }, turned) : this._meter(ws, a, now, { pose: posed ? m.p : a.pose }, turned, posed && !stopped);   // SCALE2b: a pose's write is lazy - a stop's is not, it is where the player stands
     if (!met) return;   // over the rate: kept as the latest, not relayed
     if (m.t === 'ping') { this._send(ws, '{"t":"pong"}'); return; }   // a ping that reached the object (the runtime answers the exact one in its sleep)
@@ -2720,8 +2735,9 @@ export class Room {
       // every newcomer with her. A realm's gate is spent after the token, by account (`_battleHelloGate`): an account the
       // realm has admitted before waits on itself alone, a newcomer on the room's bucket too
       const realmRoom = isSdRoom(a.key);
+      const egRoom = isEgRoom(a.key);   // EG-PLAY: and an Elite Breach's - its company's door is never a stranger's to shut
       let gate = null;
-      if (!battle && !floor && !realmRoom) {
+      if (!battle && !floor && !realmRoom && !egRoom) {
         // the room's hello gate (A6): a storm is 2N frames a cycle for everyone in a place; a channel's hello costs no roster, so its gate runs deeper - never off (AUDIT CHAT A1)
         gate = tokenGate(this._hellos, now, chat ? CHAT_HELLO_HZ_MAX : HELLO_HZ_MAX);   // SCALE2b: in memory - see `_hellos`
         this._hellos = gate.bucket;
@@ -2754,6 +2770,14 @@ export class Room {
         if (!gate.pass) { this._refuse(ws, 'busy', CLOSE_BUSY); return; }
         const no = await this._sdAdmit(a.key, who.subject, now, who.kind !== 'linked');   // AUDIT SD II (L7 M3): a guest is counted as one
         if (no === SD_NO_BUSY) { this._refuse(ws, 'busy', CLOSE_BUSY); return; }   // AUDIT SD: the hub not answering - busy, tried again
+        if (no) { this._refuse(ws, no); return; }
+      }
+      // EG-PLAY: AN ELITE BREACH'S ROOM ADMITS ITS COMPANY ALONE - a registered member of the company the hub froze, not
+      // fallen, not gone home, inside the open window (or already in it: a reload) - asked before anything is written
+      if (egRoom) {
+        gate = await this._battleHelloGate(who.subject ?? m.id, 'fighter', now);
+        if (!gate.pass) { this._refuse(ws, 'busy', CLOSE_BUSY); return; }
+        const no = await this._egAdmit(a.key, who, now);
         if (no) { this._refuse(ws, no); return; }
       }
       if (floor) {
@@ -2801,7 +2825,7 @@ export class Room {
       // AUDIT WB A1: ONE SEAT AN ACCOUNT in a gate's court. The fight is the account's (net/gateBrain.js - its players by
       // account, the newest socket speaking for it), so a second socket is never a second fighter, only a seat the court
       // cannot give anyone else: the older goes, replaced, its leave said.
-      if ((isGateRoom(a.key) || isBattleRoom(a.key) || isSdRoom(a.key)) && who.subject) for (const [other, b] of [...this._all()]) if (other !== ws && b.id && b.sub === who.subject) this._refuse(other, 'replaced', CLOSE_REPLACED);   // PVP-REF: and a siege's field, one fighter an account; SD3: and a Super dungeon's realm
+      if ((isGateRoom(a.key) || isBattleRoom(a.key) || isSdRoom(a.key) || egRoom) && who.subject) for (const [other, b] of [...this._all()]) if (other !== ws && b.id && b.sub === who.subject) this._refuse(other, 'replaced', CLOSE_REPLACED);   // PVP-REF: and a siege's field, one fighter an account; SD3: and a Super dungeon's realm
       if (isGateRoom(a.key) && !a.ly && who.subject) this._courtReplace(who.subject, null);   // SCALE5d part two: and the court's one seat across its copies
       // ONE-SEAT: A CLAIM TAKES THE SEAT - every other tab of this account in the hub is closed, the reason said first,
       // and its client leaves every room it holds (net/online.js `superseded`). Their leaves are said at the reap, as
@@ -2821,7 +2845,7 @@ export class Room {
       const guild = who.gi ? { gi: who.gi, gt: who.gt, gm: who.gm } : {};   // GUILD1c: the guild the token carried, when it carried one
       const arena = isArenaRoom(a.key) ? { ar: arenaRatingOk(who.ar), lk: who.kind === 'linked' ? 1 : 0, ...(Number.isSafeInteger(who.cl) && who.cl >= ARENA_CL_MIN && who.cl <= ARENA_CL_MAX ? { cl: who.cl } : {}) } : {};   // ARENA4: the hall queues by the signed rating, and a guest is queued for no rated bout   // ARENA4b: and a ladder bout's vitality is the signed character level's (`cl` - absent from a service before it)
       const linked = (isRegionRoom(a.key) || realmRoom) && who.kind === 'linked' ? { lk: 1 } : {};   // SD3: a region's channel marks a registered account - the census counts those alone (a guest is one click); AUDIT SD II (L7 H2): and a realm's - its stones count every guest as one turner
-      const charLv = (isCellRoom(a.key) || realmRoom) && Number.isSafeInteger(who.cl) && who.cl >= 1 ? { cl: who.cl } : {};   // AUDIT SERPENT E4: a cell's serpent fighter's level is never above the token's own character level (`cl` - absent from a service before ARENA4b); AUDIT SD II (L7 M2): and a realm's fighter's level IS it
+      const charLv = (isCellRoom(a.key) || realmRoom || egRoom) && Number.isSafeInteger(who.cl) && who.cl >= 1 ? { cl: who.cl } : {};   // AUDIT SERPENT E4: a cell's serpent fighter's level is never above the token's own character level (`cl` - absent from a service before ARENA4b); AUDIT SD II (L7 M2): and a realm's fighter's level IS it
       // AUDIT PRE-MERGE 1003b R5: A FLOOR'S PLACE MOVES WITH ITS RECONNECT - a replaced socket loses its id before its close,
       // so its leave frees no seat, and the new socket's `in` took another: every blip a seat gone from the stands (a full
       // session's sixty), every fighter's a second body. The place the old socket held is the new one's
@@ -2959,6 +2983,8 @@ export class Room {
       if (isSdRoom(a.key)) { try { if (!this._send(ws, this._sdHallWord(await this._sdHallOf(sdSlotOfRoom(a.key))))) return; } catch (e) { console.warn('[sd] hall word failed', e?.message ?? e); } }
       // SD8b: and its fight, while one lives or has fallen - a soul come in mid-fight sees the Remnant where it stands
       if (isSdRoom(a.key)) { try { if (!(await this._sdHelloFight(ws, who.subject, sdSlotOfRoom(a.key), now))) return; } catch (e) { console.warn('[sd] fight word failed', e?.message ?? e); } }
+      // EG-PLAY: the breach as it stands, its hall's fight and this member's receipts, to a member entering, after the welcome
+      if (egRoom) { try { if (!(await this._egHello(ws, who.subject, now))) return; } catch (e) { console.warn('[eg] hello word failed', e?.message ?? e); } }
       // AUDIT CARDS-6 C7/C1: an interior's Iliac tables - a ranked seat kept for this player's blink is his again, and the
       // ranked results his account is owed here are told again (a game won while his link was down is not lost with it)
       if (String(a.key ?? '').startsWith('interior:') && who.subject) { try { await this._iliacHello(ws, m.id, who.subject, Date.now()); } catch (e) { console.warn('[iliac] hello failed', e?.message ?? e); } }
@@ -3436,6 +3462,20 @@ export class Room {
       if (!this._spend(ws, now, riteRelayGate, 'riteBucket', 'riteDrops', 'too many rite frames')) return;   // AUDIT WB12d (L4): a deeper bucket than the client's
       if (!isCellRoom(a.key)) { this._junk(ws); return; }
       try { await this._riteWord(ws, a, m, now); } catch (e) { console.warn('[rite] word failed', e?.message ?? e); }
+      return;
+    }
+    if (m.t === 'eg') {
+      // EG-PLAY: AN ELITE BREACH - the open, to the hub alone (the service's signed order); a member's admission, door, way
+      // home and blows, to its breach's room alone (anywhere else junk), on the breach's own bucket
+      const now = Date.now();
+      if (!this._spend(ws, now, egGate, 'egBucket', 'egDrops', 'too many breach frames')) return;
+      if (m.k === 'open') {
+        if (!isSocialRoom(a.key) || typeof a.sub !== 'string' || !a.sub) { this._junk(ws); return; }
+        try { await this._egOpen(ws, a, m, now); } catch (e) { console.warn('[hub] eg open failed', e?.message ?? e); }
+        return;
+      }
+      if (!isEgRoom(a.key) || typeof a.sub !== 'string' || !a.sub) { this._junk(ws); return; }
+      try { await this._egFrame(ws, a, m, now); } catch (e) { console.warn('[eg] frame failed', e?.message ?? e); }
       return;
     }
     if (m.t === 'sd') {
@@ -7161,6 +7201,202 @@ export class Room {
   _sdRightsOf(s) {
     if (this._sdRights?.s !== s) this._sdRights = { s, R: orreryRightsFresh() };
     return this._sdRights.R;
+  }
+
+  // ───────────────────────────── EG-PLAY: THE ELITE BREACH ─────────────────────────────
+  // bible/11-Multiplayer/Elite-Gates.md sections 6, 7 and 23. The HUB opens a breach on the account service's signed order
+  // (`egopen`): it freezes the company from the opener's party, draws the breach's seed, opens the breach's room
+  // (EG_INTERNAL_OPEN) and says the call to every member. The ROOM (`eg:<16hex>`) admits its company alone, each member
+  // with its own signed admission (`egadmit`, spent once), and runs the halls by the director's law (net/egBrain.js) on its
+  // alarm: the stages, the count, the legion, the champion and the lord, the falls, the Redoubts, the end - and mints
+  // each receipt the breach owes (`e1`, net/egReceipt.js).
+  /** The breach this room holds - the instance's, else storage's; null for a room the hub never opened. */
+  async _egOf() {
+    if (this._eg === undefined) { const v = await this.state.storage.get(EG_KEY); if (this._eg === undefined) this._eg = v && typeof v === 'object' && typeof v.b === 'string' ? v : null; }
+    return this._eg;
+  }
+  /** The breach to storage - every CHECKPOINT_MS from the beat, at once on a stage, a fall, an admission or the end. */
+  async _egSave(B, now, force) {
+    if (!force && now - (this._egSavedAt ?? 0) < CHECKPOINT_MS) return;
+    this._egSavedAt = now;
+    await this.state.storage.put(EG_KEY, B);
+  }
+  /** The beat armed at `at` unless the alarm is already sooner. */
+  async _egArm(at) {
+    const cur = await this.state.storage.getAlarm();
+    if (cur == null || cur > at) await this.state.storage.setAlarm(at);
+  }
+  /** A pose of the dungeon's frame in the Spire's (net/sdBrain.js dungeonToRealm - the court's frame). */
+  _egPose(p) { const [sx, , z] = dungeonToRealm(p.x, p.y ?? 0, p.z); return { sx, z }; }
+  /** The breach's members in the room now - each one's NEWEST socket speaking for it (the gate's law), a pose older than
+   *  SD_POSE_FRESH_MS speaking for no body (AUDIT SD III F3's law): where it stands, whether it died, when it posed. */
+  _egBodies(B, now) {
+    const newest = new Map();
+    for (const [, b] of this._all()) {
+      if (!b.id || !b.sub || !b.pose || !B.mem[b.sub]) continue;
+      if (now - (b.pAt ?? b.since ?? 0) > SD_POSE_FRESH_MS) continue;
+      const had = newest.get(b.sub);
+      if (!had || (b.since ?? 0) >= (had.since ?? 0)) newest.set(b.sub, b);
+    }
+    return [...newest.values()].map((b) => { const p = this._egPose(b.pose); return { sub: b.sub, sx: p.sx, z: p.z, dead: !!b.pose.dd, at: b.pAt ?? now }; });
+  }
+  /** The breach's frames to everyone in the room, in order. */
+  _egFan(frames) {
+    if (!frames.length) return;
+    this._fanFrames(frames.map((fr) => JSON.stringify({ t: 'eg', ...fr })), (b) => b.id);
+  }
+  /** THE RECEIPTS THE BREACH OWES, minted - each its own seed off the relay's CSPRNG (never the breach's), kept on the
+   *  breach for its member's next hello and handed to its newest socket here now. One owing list taken whole before the
+   *  first await, so a receipt is never minted twice. */
+  async _egMint(B, now) {
+    if (!B.owe?.length) return;
+    const owed = B.owe;
+    B.owe = [];
+    const key = await this._receiptKeyOf(), nowS = Math.floor(now / 1000);
+    B.rc ??= {};
+    for (const o of owed) {
+      try {
+        const r = await mintEgReceipt({ ...o.claims, c: rand32() }, key, { subtle: crypto.subtle, nowS });
+        B.rc[o.sub] = [...(B.rc[o.sub] ?? []), r].slice(-12);
+        const sock = this._siegeSocketOf(o.sub);
+        if (sock) this._send(sock[0], JSON.stringify({ t: 'eg', k: 'rcpt', r }));
+      } catch (e) { console.warn('[eg] receipt refused', e?.message ?? e); }
+    }
+    await this._egSave(B, Date.now(), true);
+  }
+  /** THE HUB OPENS A BREACH'S ROOM (EG_INTERNAL_OPEN): the verified open, the frozen company, the seed and the opener's
+   *  landing - kept as the breach's record and its beat armed. The same order told again (the hub's retry) is answered
+   *  with the record already kept; another order on a room already opened is refused (409). */
+  async _egOpenInternal(request) {
+    let body = null;
+    try { body = await request.json(); } catch { /* refused below */ }
+    const t = validEgOpenTell(body);
+    if (!t) return json({ ok: false }, 400);
+    const had = await this._egOf();
+    if (had) return had.ez === t.ez ? json({ ok: true, seed: had.seed, op: had.op }) : json({ ok: false, error: 'taken' }, 409);
+    const B = egBreachNew(t);
+    this._eg = B;
+    await this._egSave(B, Date.now(), true);
+    await this._egArm(Math.min(B.su, Date.now() + 1000));
+    return json({ ok: true, seed: B.seed, op: B.op });
+  }
+  /** A breach room's own word on a hello: the company's alone (a registered member), by the director's law
+   *  (net/egBrain.js egAdmitWord) - or the refusal's words. */
+  async _egAdmit(key, who, now) {
+    const B = await this._egOf();
+    if (!B || B.b !== egBreachOfRoom(key)) return 'the breach is closed';
+    if (!who.subject || who.kind !== 'linked') return 'the breach answers only to its company';
+    return egAdmitWord(B, who.subject, now);
+  }
+  /** A member entering told the breach, its hall's fight and its receipts - false when its socket is gone. */
+  async _egHello(ws, sub, now) {
+    const B = await this._egOf();
+    if (!B) return true;
+    if (!this._send(ws, JSON.stringify({ t: 'eg', ...egStateOf(B, now) }))) return false;
+    const fst = egFightStateOf(B);
+    if (fst && !this._send(ws, JSON.stringify({ t: 'eg', ...fst }))) return false;
+    for (const r of (sub && B.rc?.[sub]) || []) if (!this._send(ws, JSON.stringify({ t: 'eg', k: 'rcpt', r }))) return false;
+    if (egLive(B, now)) await this._egArm(now + BRAIN_TICK_MS);
+    return true;
+  }
+  /**
+   * A MEMBER'S WORD in its breach's room: `in` (its signed admission - the service's `egadmit` naming this account and
+   * this breach, spent once - and its level, the token's character level where it carries one), `down` (a step through
+   * the door), `home` (the way home at a Redoubt's rest), and its blows - each judged from where the socket's own pose
+   * stands. Re-read after every await (the gate's AUDIT SD II L3 F1 law).
+   */
+  async _egFrame(ws, a, m, now) {
+    let B = await this._egOf();
+    if (!B || B.b !== egBreachOfRoom(a.key)) { this._junk(ws); return; }
+    const pose = a.pose && !a.pose.dd ? this._egPose(a.pose) : null;
+    const no = (w) => { this._send(ws, JSON.stringify({ t: 'eg', k: 'no', m: w })); };
+    if (m.k === 'in') {
+      if (!(m.bv >= EG_BRAIN_MIN)) { no('the breach is closed'); return; }
+      await this._loadKey();
+      if (!this._verifyKey) return;
+      const r = await verifyOrder(m.z, this._verifyKey, { subtle: crypto.subtle, nowS: Math.floor(now / 1000), kind: 'egadmit' });
+      if (!r.ok || r.claims.s !== a.sub || r.claims.eb !== B.b) { no('the order is not yours'); return; }
+      now = Date.now();
+      B = this._eg;
+      const lv = Number.isSafeInteger(a.cl) && a.cl >= 1 ? a.cl : m.lv;
+      const w = egEnter(B, a.sub, r.claims.ez, lv, now);
+      if (w) { no(w); return; }
+      await this._egSave(B, now, true);
+      this._egFan([egStateOf(B, now)]);
+      await this._egArm(now + BRAIN_TICK_MS);
+      return;
+    }
+    if (m.k === 'down') { if (egDown(B, a.sub, m.h, pose, now)) await this._egArm(now + BRAIN_TICK_MS); return; }
+    if (m.k === 'home') {
+      const out = [];
+      if (egHome(B, a.sub, now, out)) { this._egFan(out); await this._egMint(B, now); await this._egSave(B, now, true); }
+      return;
+    }
+    this._egFan(egBlow(B, a.sub, m, pose, now));
+    if (!(this._egBeatArmedTo > now)) { this._egBeatArmedTo = now + BRAIN_TICK_MS; await this._egArm(now + BRAIN_TICK_MS); }
+  }
+  /** ONE BEAT of a breach's alarm while it lives: the director stepped over the members' bodies, its frames fanned, its
+   *  receipts minted, the breach checkpointed - the next beat armed (BRAIN_TICK_MS while anyone is here, a second while
+   *  nobody is: the count, the open window and an absent member's fall run on). False when the room holds no live breach -
+   *  the alarm is the room's other duties' then. */
+  async _egTick() {
+    const B = await this._egOf();
+    if (!B || (B.end && !B.owe?.length)) return false;
+    const now = Date.now();
+    try {
+      const out = egStep(B, now, this._egBodies(B, now), rand01);
+      this._egFan(out);
+      await this._egMint(B, now);
+      await this._egSave(B, now, out.some((f) => f.k === 'sg' || f.k === 'rd' || f.k === 'end' || f.k === 'fall'));
+    } catch (e) { console.warn('[eg] beat failed', e?.message ?? e); }
+    if (B.end) { await this._egSave(B, now, true); return false; }
+    const here = [...this._all()].some(([, b]) => b.id);
+    await this.state.storage.setAlarm(here ? now + BRAIN_TICK_MS : Math.min(now + 1000, B.sg === 'wait' ? Math.max(now + BRAIN_TICK_MS, B.su) : now + 1000));
+    return true;
+  }
+  /** One POST to another object's internal door (ROOM_CALL_MS bounded) - its JSON answer, or null. */
+  async _egPost(key, path, body) {
+    const rooms = this.env?.ROOMS;
+    if (!rooms?.idFromName || !rooms?.get) return null;
+    try {
+      const res = await rooms.get(rooms.idFromName(key)).fetch(new Request(`https://relay.internal${path}`, { method: 'POST', body: JSON.stringify(body), signal: AbortSignal.timeout(ROOM_CALL_MS) }));
+      return res?.ok ? await res.json() : null;
+    } catch (e) { console.warn('[hub] eg post', e?.message ?? e); return null; }
+  }
+  /**
+   * THE OPEN, AT THE HUB (section 23): the service's signed order naming this socket's own verified account, the company
+   * frozen from the opener's party as the hub holds it (the opener alone when it has none; PARTY_MAX at most, each a
+   * numeral in the party's order), the breach's seed drawn here (the relay's CSPRNG), the breach's room opened - and THE
+   * CALL said to every member's sockets, and kept for their hellos until the open window ends.
+   */
+  async _egOpen(ws, a, m, now) {
+    const no = () => { this._send(ws, JSON.stringify({ t: 'eg', k: 'no', m: 'the breach is closed' })); };
+    await this._loadKey();
+    if (!this._verifyKey) { no(); return; }
+    const r = await verifyOrder(m.z, this._verifyKey, { subtle: crypto.subtle, nowS: Math.floor(now / 1000), kind: 'egopen' });
+    if (!r.ok || r.claims.s !== a.sub) { no(); return; }
+    const c = r.claims;
+    const rec = await this._acct(a.sub);
+    let members = [a.sub];
+    if (rec) { const [party] = await this._myParty(a.sub, rec, now); if (party?.members?.length) members = party.members.includes(a.sub) ? party.members.slice(0, 8) : [a.sub]; }
+    if (!members.includes(a.sub)) members = [a.sub, ...members].slice(0, 8);
+    const recs = await this._accts(members);
+    const co = members.map((sub, i) => [sub, sanitizeName(recs.get(sub)?.name ?? (sub === a.sub ? a.name ?? '' : '')), i + 1]);
+    const tell = { b: c.eb, ez: c.ez, s: c.s, o: sanitizeName(a.name ?? rec?.name ?? ''), ew: c.ew, rh: c.rh === 1 ? 1 : 0, seed: rand32(), op: now, co, site: m.site };
+    if (!validEgOpenTell(tell)) { no(); return; }
+    const res = await this._egPost(egRoomKey(c.eb), EG_INTERNAL_OPEN, tell);
+    if (!res?.ok) { no(); return; }
+    const call = { k: 'call', b: c.eb, o: tell.o, os: c.s, seed: res.seed ?? tell.seed, op: res.op ?? tell.op, rh: tell.rh, co, site: m.site };
+    const until = call.op + EG_SEALED_MS + EG_ADMIT_MAX_MS, word = JSON.stringify({ t: 'eg', ...call });
+    await this.state.storage.put(Object.fromEntries(members.map((sub) => [egCallKey(sub), { call, until }])));
+    for (const sub of members) this._sayTo(sub, word);
+  }
+  /** A breach's call kept for an account, said to its socket while the open window stands (and forgotten once past). */
+  async _egCallTo(ws, sub, now) {
+    const v = await this.state.storage.get(egCallKey(sub));
+    if (!v) return;
+    if (!(v.until > now)) { await this.state.storage.delete(egCallKey(sub)); return; }
+    this._send(ws, JSON.stringify({ t: 'eg', ...v.call }));
   }
 
   // ───────────────────────────── SD8b: THE LAST MOMENT'S FIGHT ─────────────────────────────

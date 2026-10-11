@@ -12,9 +12,10 @@
 //
 // THE SPIRE'S FRAME is the gate's court frame (net/gateBrain.js COURT_CENTRE, the made block's middle - the Hour's
 // SD_REALM_ORIGIN too): metres, floors at y 0, the dungeon's own x and z less [25.6, 0, 25.6]. A circle is one made
-// level: its five halls stand side by side, hall slot `s` laid along +z from its arrival plate at x
-// (s - 1) * EG_HALL_PITCH, z 0. Every position a spec says is in this frame, so the gate's own client pieces (the
-// legion's bodies, the blows' verdicts, the telegraph pass) read the Spire's fights unchanged.
+// level: its five halls stand side by side, hall slot `s`'s origin at x `x0` = (s - 1) * EG_HALL_PITCH. Every position a
+// spec says is in its HALL'S OWN FRAME - about that origin, laid along +z from its arrival plate at (0, 0) - so a hall's
+// fight stands inside the gate's wire bounds (net/wire.js GATE_COURT_BOUND) and the gate's own client pieces (the
+// legion's bodies, the blows' verdicts, the telegraph pass) read the Spire's fights about the hall's centre unchanged.
 //
 // What EG-PLAY's law holds, and what it leaves (Elite-Gates.md section 31, EG-PLAY): the Broken Galleries' four hall
 // kinds (the Rift-Yard, the Span, the Proving Walk, the Rampart) and the Court, in their first variants, at every depth;
@@ -195,17 +196,22 @@ const m = (cm) => cm / 100;
 /** The span's pieces, the Steps' sizes and clocks (world/sdSteps.js - pinned equal), in cm and ms. */
 export const EG_STEP = Object.freeze({
   drift: Object.freeze({ w: 300, d: 240 }), beat: Object.freeze({ w: 300, d: 260 }), riser: Object.freeze({ w: 300, d: 260 }),
-  crumble: Object.freeze({ w: 260, d: 260 }), still: Object.freeze({ w: 300, d: 260 }), ledge: Object.freeze({ w: 220, d: 170 }),
+  crumble: Object.freeze({ w: 260, d: 260 }), still: Object.freeze({ w: 300, d: 260 }), ledge: Object.freeze({ w: 240, d: 200 }),
 });
 export const EG_RISER_CM = 230;
 export const EG_BEAT_HALF_MS = 1800;
 export const EG_GAP_MIN_CM = 240;
 export const EG_GAP_MAX_CM = 320;
+/** A step down within a run is under a metre (THE ENVELOPE, section 10.4). */
+export const EG_STEP_DOWN_CM = 95;
+/** No hall runs longer than this (m): its fight's every point stays inside the gate's wire bound (net/wire.js
+ *  GATE_COURT_BOUND, 160 - pinned under it). */
+export const EG_HALL_LEN_MAX = 158;
 /** A plate's radius, an island's, a bridge's half-width (cm). */
 const PLATE_R = 500, ISLE_R = 300, BRIDGE_HALF = 200;
 /** The Oblivion Caverns passage (section 11's first fragment, EG-PLAY's form): its floor's half-width, its length, the
  *  chasm in it and the ledges that cross it, its height (cm). */
-export const EG_CAVE = Object.freeze({ halfW: 300, len: 2600, chasm: 900, height: 520 });
+export const EG_CAVE = Object.freeze({ halfW: 300, len: 2800, chasm: 1000, height: 520 });
 
 /**
  * HALL h's SPEC: its kind, circle, slot, name and objective; its geometry in the Spire's frame (metres) - the plates
@@ -231,12 +237,12 @@ const deepFreeze = (o) => { if (o && typeof o === 'object' && !Object.isFrozen(o
 function layHall(seed, h) {
   const c = egCircleOfHall(h), slot = egSlotOfHall(h), kind = egCircleOf(seed, c)[slot - 1];
   const r = sdRng(egSeed(seed, HALL_SALT + h));
-  const X = (slot - 1) * EG_HALL_PITCH * 100;
+  const X = 0;   // the hall's own frame: its origin is `x0`
   /** the hall's parts in cm, said in metres at the end */
   const P = { discs: [], bands: [], steps: [], islands: [], caves: [], rifts: [], vents: [], fight: null, gate: null, foe: null, arrive: null, end: null, ring: null };
   const disc = (x, z, rad, role, y = 0) => { const d = { x, y, z, r: rad, role }; P.discs.push(d); return d; };
   const band = (z0, z1, half, role, y = 0) => { const b = { x: X, y, z0, z1, halfW: half, role }; P.bands.push(b); return b; };
-  let edge = 0, y = 0, span = 0;
+  let edge = 0, y = 0, span = 0, risen = false;
   /** a step laid `gap` past the edge (its unused fields nought, one shape for every step - the Steps' law) */
   const step = (kind, gap, o = {}) => {
     const S = EG_STEP[kind];
@@ -250,10 +256,10 @@ function layHall(seed, h) {
   const run = (kind, n) => {
     if (kind === 'drift') for (let k = 0; k < n; k++) step('drift', gap(), { amp: between(r, 100, 200), period: between(r, 40, 70) * 100, phase: k * 900 });
     else if (kind === 'beat') {
-      const riserAt = n >= 5 ? between(r, 2, n - 2) : -1;
+      const riserAt = n >= 5 && !risen ? between(r, 2, n - 2) : -1;   // one riser a hall: the climb down after it stays short
       let b = 0;
       for (let k = 0; k < n; k++) {
-        if (k === riserAt) { y += EG_RISER_CM; step('riser', 0); continue; }
+        if (k === riserAt) { y += EG_RISER_CM; risen = true; step('riser', 0); continue; }
         step('beat', gap(), { beat: (b++ % 2) * EG_BEAT_HALF_MS });
       }
     } else if (kind === 'crumble') {
@@ -287,12 +293,12 @@ function layHall(seed, h) {
     edge += 600;
   } else if (kind === 'span') {
     const kinds = c <= 1 ? ['drift', 'beat'] : [['drift', 'beat', 'crumble'][between(r, 0, 2)], ['beat', 'crumble', 'drift'][between(r, 0, 2)]];
-    run(kinds[0], c <= 1 ? 6 : between(r, 5, 7));
+    run(kinds[0], c <= 1 ? 6 : between(r, 4, 5));
     island();
     if (c <= 2) { cave(); island(between(r, 200, 260)); }   // in circles 1 and 2 every span carries a passage (section 7)
-    run(kinds[1], c <= 1 ? 6 : between(r, 5, 7));
-    if (c >= 3) { island(); run(['drift', 'crumble', 'beat'][between(r, 0, 2)], between(r, 4, 6)); }
-    if (y > 0) { island(); run('crumble', Math.max(2, Math.ceil(y / 80))); }   // down to the plate's level, a step at a time
+    run(kinds[1], c <= 1 ? 6 : between(r, 4, 5));
+    if (c >= 3) { island(); run(['drift', 'crumble', 'beat'][between(r, 0, 2)], between(r, 3, 4)); }
+    if (y > 0) { island(); run('crumble', Math.max(2, Math.ceil(y / EG_STEP_DOWN_CM))); }   // down to the plate's level, a step at a time
     edge += gap();
   } else if (kind === 'proving') {
     run(c <= 1 ? 'still' : 'drift', between(r, 5, 7));
@@ -301,7 +307,7 @@ function layHall(seed, h) {
     P.foe = { x: X, z: zc + 400 };
     edge = zc + R;
     run(c <= 1 ? 'drift' : ['drift', 'beat'][between(r, 0, 1)], between(r, 4, 6));
-    if (y > 0) { island(); run('crumble', Math.max(2, Math.ceil(y / 80))); }
+    if (y > 0) { island(); run('crumble', Math.max(2, Math.ceil(y / EG_STEP_DOWN_CM))); }
     edge += gap();
   } else if (kind === 'rampart') {
     const L = between(r, 9, 12) * 1000, half = 250;
@@ -329,7 +335,7 @@ function layHall(seed, h) {
   const pt = (q) => (q ? { ...q, x: m(q.x), y: m(q.y ?? 0), z: m(q.z), ...(q.r != null ? { r: m(q.r) } : {}) } : null);
   return {
     v: EG_SPEC, seed, h, c, slot, kind, band: 0, name: EG_HALL_NAMES[kind], objective: EG_OBJECTIVES[kind],
-    x0: m(X), len: m(edge),
+    x0: (slot - 1) * EG_HALL_PITCH, len: m(edge),
     arrive: pt(P.arrive), end: pt(P.end),
     discs: P.discs.map(pt),
     bands: P.bands.map((b) => ({ x: m(b.x), y: m(b.y), z0: m(b.z0), z1: m(b.z1), halfW: m(b.halfW), role: b.role })),
@@ -356,16 +362,20 @@ export function egSpecDigest(spec) {
 }
 
 // ── where a body stands (the relay's judgements and the motor's edge) ─────────────────────────────────────
-/** Is (x, z) on one of the spec's floors - its discs, its bands, its steps at rest - within `pad` m? */
+/** Is (x, z) (the hall's own frame, as every helper below) on one of the spec's floors - its discs, its bands, its steps
+ *  at rest - within `pad` m? */
 export function egOnFloor(spec, x, z, pad = 0) {
   for (const d of spec.discs) if (Math.hypot(x - d.x, z - d.z) <= d.r + pad) return true;
   for (const b of spec.bands) if (z >= b.z0 - pad && z <= b.z1 + pad && Math.abs(x - b.x) <= b.halfW + pad) return true;
   for (const s of spec.steps) if (Math.abs(z - s.z) <= s.d / 2 + pad && Math.abs(x - s.x) <= s.w / 2 + s.amp + pad) return true;
   return false;
 }
-/** Is (x, z) within hall `spec`'s ground at all (its x strip and its length, `pad` m about) - a member is in a hall when
- *  their pose is. */
-export const egInHall = (spec, x, z, pad = 40) => Math.abs(x - spec.x0) <= 120 + pad && z >= -pad && z <= spec.len + pad;
+/** Is the Spire-frame point (sx, z) within hall `spec`'s ground at all (its x strip about its origin and its length,
+ *  `pad` m about) - a member is in a hall when their pose is. */
+export const egInHall = (spec, sx, z, pad = 40) => Math.abs(sx - spec.x0) <= 120 + pad && z >= -pad && z <= spec.len + pad;
+/** A Spire-frame x in a hall's own frame, and back. */
+export const egLocalX = (spec, sx) => sx - spec.x0;
+export const egSpireX = (spec, x) => x + spec.x0;
 /** Which slot's hall (1-5) of a circle a pose stands in, by its x; 0 none. */
 export function egSlotAt(x) {
   const s = Math.round(x / EG_HALL_PITCH) + 1;
