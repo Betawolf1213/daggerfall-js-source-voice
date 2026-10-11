@@ -93,15 +93,17 @@ export const sdHourShown = (h) => sdHour(h) || SD_HOURS;
 /** The fewest turns that move a stone `t` hours (forward or back). */
 export const sdTurnsFor = (t) => Math.min(sdHour(t), SD_HOURS - sdHour(t));
 
-/** The slot's own seed for a draw (a slot is public; the draw is the law's, the same everywhere). */
-function sdSeed(s, salt) {
+/** The slot's own seed for a draw (a slot is public; the draw is the law's, the same everywhere). EG-PLAY: exported -
+ *  the Elite Breach's halls draw with the same mix (net/egLaw.js egSeed; ONE DFU MEMBER, ONE EXPORT). */
+export function sdSeed(s, salt) {
   let h = (Math.imul(s >>> 0, 0x9e3779b1) ^ salt) >>> 0;
   h = Math.imul(h ^ (h >>> 16), 0x85ebca6b);
   h = Math.imul(h ^ (h >>> 13), 0xc2b2ae35);
   return (h ^ (h >>> 16)) >>> 0;
 }
-/** mulberry32 - the port's seeded die, kept here so the relay's bundle takes this file whole. */
-function sdRng(seed) {
+/** mulberry32 - the port's seeded die, kept here so the relay's bundle takes this file whole. EG-PLAY: exported - the
+ *  Elite Breach's hall law rolls on it. */
+export function sdRng(seed) {
   let a = seed >>> 0;
   return () => {
     a = (a + 0x6d2b79f5) >>> 0;

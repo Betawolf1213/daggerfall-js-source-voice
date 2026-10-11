@@ -571,7 +571,7 @@ async function openSealed(token, publicKey, { subtle, nowS, skewS, valid }) {
  *  second: 'renown', a character's Renown that ROSE while its player was
  *  already in a room, carried in by that player's own client (the token
  *  that let them in said the Renown they had then). */
-export const ORDER_KINDS = Object.freeze(['mute', 'renown', 'guild', 'guildout', 'siege', 'stake', 'deck', 'remains']);   // INT9: a fall's drop, the service's word on what it took   // CARDS10: a ranked seat's deck, vouched for   // GUILD1c: a character's guild now, and a member or a guild gone   // SEAT2a: a battle's pass
+export const ORDER_KINDS = Object.freeze(['mute', 'renown', 'guild', 'guildout', 'siege', 'stake', 'deck', 'remains', 'egopen', 'egadmit']);   // EG-PLAY: an Elite Breach's open and a member's admission   // INT9: a fall's drop, the service's word on what it took   // CARDS10: a ranked seat's deck, vouched for   // GUILD1c: a character's guild now, and a member or a guild gone   // SEAT2a: a battle's pass
 /** An order lives a minute - long enough to be carried to every room
  *  the moderator holds, short enough that a leaked one is stale before
  *  anyone could use it for anything but what it already said. */
@@ -610,6 +610,11 @@ export function orderValid(c) {
   const noRemains = REMAINS_FIELDS.every((f) => c[f] === undefined);
   if (c.o !== 'remains' && !noRemains) return false;
   if (c.o === 'remains' && (!remainsOrderValid(c) || c.mu !== undefined || c.lv !== undefined || c.dh !== undefined || !noGuild || !noSiege || !noStake)) return false;
+  // EG-PLAY: an Elite Breach's orders carry their own fields and no other kind's; no other kind carries a breach's
+  const noEg = EG_ORDER_FIELDS.every((f) => c[f] === undefined);
+  const isEg = c.o === 'egopen' || c.o === 'egadmit';
+  if (!isEg && !noEg) return false;
+  if (isEg && (!egOrderValid(c) || c.mu !== undefined || c.lv !== undefined || c.dh !== undefined || !noGuild || !noSiege || !noStake || !noRemains)) return false;
   if (!Number.isSafeInteger(c.i) || !Number.isSafeInteger(c.e)) return false;
   if (c.e <= c.i || c.e - c.i > ORDER_TTL_S) return false;
   return true;
@@ -698,6 +703,35 @@ export async function mintRemainsOrder({ s, wr, wh, wn, wm, wk = undefined, wi =
 export async function remainsDigest(/** @type {any[]} */ records, { subtle }) {
   const d = new Uint8Array(await subtle.digest('SHA-256', enc.encode(JSON.stringify(records))));
   return [...d].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/* ═══ EG-PLAY: THE ELITE BREACH'S ORDERS (bible/11-Multiplayer/Elite-Gates.md section 23) ══════════════════════════
+ *
+ * A breach is a real relay instance, so its door is the service's word, never the client's: `{o:'egopen', s, eb, ez,
+ * ew, rh?, i, e}` - account `s` has staked a Weir Key (or spent the day's Rehearsal, `rh` 1) for breach `eb` under order
+ * `ez`, starting at Redoubt `ew`; `{o:'egadmit', s, eb, ez, ew, i, e}` - account `s` may enter breach `eb`. The hub
+ * opens the breach on the first; its room spends each `ez` once.
+ */
+/** An Elite Breach order's fields - no other order kind carries one. */
+export const EG_ORDER_FIELDS = Object.freeze(['eb', 'ez', 'ew', 'rh']);
+/** A breach id, an order id, the deepest start Redoubt an order may name. */
+export const EG_ORDER_BREACH_RE = /^[0-9a-f]{16}$/;
+export const EG_ORDER_ZID_RE = /^[a-z0-9]{16,32}$/;
+export const EG_ORDER_START_MAX = 999;
+/** Whether a claim set's breach fields are an Elite Breach order's (`rh` an open's alone). */
+export function egOrderValid(c) {
+  if (typeof c.eb !== 'string' || !EG_ORDER_BREACH_RE.test(c.eb) || typeof c.ez !== 'string' || !EG_ORDER_ZID_RE.test(c.ez)) return false;
+  if (!Number.isSafeInteger(c.ew) || c.ew < 0 || c.ew > EG_ORDER_START_MAX) return false;
+  if (c.rh !== undefined && !(c.o === 'egopen' && c.rh === 1)) return false;
+  return true;
+}
+/** EG-PLAY: MINT AN ELITE BREACH ORDER - `o` 'egopen' (the open: `rh` 1 for a Rehearsal) or 'egadmit' (a member's
+ *  admission). */
+export async function mintEgOrder({ o, s, eb, ez, ew = 0, rh = undefined }, privateKey, { subtle, nowS, ttlS = ORDER_TTL_S }) {
+  if (!Number.isSafeInteger(nowS)) throw new TypeError('mintEgOrder needs an integer epoch-seconds clock');
+  const claims = { o, s, eb, ez, ew, ...(rh === 1 ? { rh } : {}), i: nowS, e: nowS + ttlS };
+  if (!orderValid(claims)) throw new TypeError('mintEgOrder refused an order it could not verify');
+  return sealClaims(claims, privateKey, subtle);
 }
 
 /* ═══ CARDS10: THE DECK ORDER (bible/11-Multiplayer/Tavern-Cards.md section 33) ═════════════════════════════════════
