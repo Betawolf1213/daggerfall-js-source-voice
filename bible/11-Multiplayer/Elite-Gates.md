@@ -3,7 +3,8 @@
 > Design page, written 2026-10-11 before the arc's first slice. The same day it was revised by AUDIT EG0 (five cold
 > lanes on the first draft, 177a3acd6, 105 findings, then a sixth lane on the revision, 28 more:
 > `01-Overview/Audit-EG0.md`), widened by EG0b (the fragments), and polished by AUDIT EG II (six cold lanes on
-> 14b3b172f, 282 findings: `01-Overview/Audit-EG-II.md`). The code's comments will cite this page by section number;
+> 14b3b172f, 282 findings: `01-Overview/Audit-EG-II.md`). EG-PLAY (section 31) then built the first playable Elite
+> Breach - a vertical slice through the slices below, its departures from this page listed in its record. The code's comments cite this page by section number;
 > where the page and a pin disagree, the pin is what runs. Each slice adds its record under section 31. A path that
 > exists today is written from the repository root (`src/net/gateBrain.js`); a path this arc will create is written
 > without `src/` (`net/egLaw.js`).
@@ -2628,7 +2629,7 @@ relay receipt is):
 `players.eg_key_miss`, the launch gift) and 0110-0111 (EG8 and EG14: `eg_stakes`, `players.eg_live`,
 `players.eg_mercy`, `eg_redoubts`, `eg_runs`, `eg_pity`, the depths, `eg_honours`, `players.eg_annals`).
 
-**Versions.** Each slice that moves the relay bundle bumps `RELAY_VERSION` (`world194` when this page was last revised,
+**Versions.** Each slice that moves the relay bundle bumps `RELAY_VERSION` (`world194` when this page was last revised; EG-PLAY's `world195`,
 in `src/net/wire.js`) with its `LAW` row, and a game that does not know it is told to reload. Each that moves the
 service bumps `ACCOUNT_VERSION` (`acct114` then, in `server-account/src/service.js`). The new titles and auras join
 `TITLES` and `AURAS` in `src/net/identityToken.js`.
@@ -3101,6 +3102,7 @@ its band's art: no slice ships a placeholder. EG8 to EG12 ship behind `EG_OPEN=f
 | **EG0a** | AUDIT EG0 | the bible |
 | **EG0b** | the fragments (sections 11 and 8.8 as first written) | the bible |
 | **EG0c** | AUDIT EG II, the polish pass | the bible |
+| **EG-PLAY** | THE ELITE BREACH, PLAYABLE: the slice the user asked for before the rest - the smallest Elite Breach that plays online end to end, cut through EG2, EG5, EG8, EG9-EG12 and EG14's `w` arm (its record, below, says what each piece took and left) | client, relay (world195), service (acct116) |
 | **EG1** | THE GATE'S TIERS: `systems/gateTier.js`, `GATE_TIER_TEXT`, the Regular tier's words unchanged; THE REGISTRY: `world/pseudoArchives.js`, every port archive in it, and its collision test | client |
 | **EG2** | THE WEIR KEY: template 575 and its art; the balance (migration); the rolls in `claimGate` (which gains `rand`) and `claimSd`; the pity; `/v1/eg/find`, the killer's ask and the caps; `/v1/eg/keys`; the restack, new; the launch gift (a send migration) | client, service |
 | **EG3** | THE BOSS SEAM: `net/bossSeam.js`; the gate, the Remnant and the serpent re-plugged, frames and pins unchanged; the trails keep y | relay (a version) |
@@ -3245,3 +3247,104 @@ There were **282 findings**: 25, 37, 44, 46, 90 and 40. Each has its verdict and
   and an INTERIM Court lord so the Redoubt can be reached before EG13.
 
 THE FOUR HOSTS: untouched. A page moves no host.
+
+### EG-PLAY - 2026-10-11 (Mac: "Do not come back until this is done") - THE ELITE BREACH, PLAYABLE
+
+**What this is, said plainly.** EG0 to EG0c wrote the design and built nothing. EG-PLAY is CODE: the smallest Elite
+Breach that plays online end to end, from the key to the claim, cut through the slices above. Where a slice was to
+build a piece whole, EG-PLAY builds the part the loop needs and lists what it leaves; the slices above stay the plan
+for the rest. A player can now turn a Weir Key (or open the day's Rehearsal), call their party, step into the Spire,
+fight down a circle of five halls - a Rift-Yard, a Span through an Oblivion Caverns passage, a Proving Walk, a Rampart
+and a Court - under THE COUNT and one life, take the circle's Redoubt, rest, and walk home with its receipt or descend
+to the next circle.
+
+**What shipped, by piece.**
+
+- **The key** (EG2's core): template 575 (`systems/weirKey.js`), bound and stacked; its picture DFU's Talisman's
+  (TEXTURE.211 record 50). The count is the account's (`players.eg_keys`, migration 0109) and the pack's stack its face,
+  restacked by every answer that carries it. Rolled at a recorded gate claim (the first certain, then one in six, one in
+  four with the rite broken, the pity after five misses) and an Hour claim (one in three) - `server-account/src/eg.js`
+  `rollWeirKey`, answered as `weir` on both claims. `/v1/eg/keys`. The launch gift: one key to every account with a
+  gate kill that was not a rite's.
+- **The open, the stake, the admission, the claim** (EG8a, EG8b, EG14's `w` arm): `/v1/eg/open` stakes a key
+  (idempotent on its request id; one live breach an account; the Rehearsal once a real day with no key);
+  `/v1/eg/admit` signs a member's admission; `/v1/eg/claim` takes the `e1` receipts - a Redoubt (`w`, which fills the
+  INT5 spoils budget), an end (`x`; the opener's own end settles the stake, the first breach's mercy returns it once
+  when no Redoubt was taken), a void (`v`, the stake back). The orders `egopen` and `egadmit` (`net/identityToken.js`);
+  the receipt (`net/egReceipt.js`).
+- **The law** (EG5's core): `net/egLaw.js` - the room key `eg:<16hex>`; the clock (rising 20 s, sealed to five minutes,
+  open five more, the last word); THE COUNT (thirty minutes from the first wake, fifteen more a Redoubt, thirty in hand
+  at most, held through a rest and a pull); the circle's rhythm (the first circle fixed); the hall spec in whole
+  centimetres off the port's seeded die and an integer sine table (`lawSin`), with its digest; the floors' queries; the
+  Rampart's vents.
+- **The room and the director** (EG8a, EG8c): the hub opens a breach on the service's order, freezes the company from
+  the opener's party and says the call; the breach's room admits its company alone, each with its own admission, and
+  runs the halls (`net/egBrain.js`): the gather on the arrival plate, the trial by kind, the door, the closing and the
+  pull, the Redoubt and the rest, the next circle, the end (`tear`, `wipe`, `last`, `empty`, `gone`, `rehearsal`);
+  one life (a death, or three minutes absent in a trial, is a member's fall). The legion (`net/egHost.js` - the gate's
+  Harriers and Ward-Bearers about a hall's own spots); the champion's kit (`net/egLord.js` - the Warden's cleave, slam
+  and charge) for the Proving Walk's champion, *The Kynreeve*, and the INTERIM Court lord, *The Kynreeve Castellan*.
+  The receipts minted with the relay's key and re-handed at a hello. `RELAY_VERSION` `world195`.
+- **The call and the step in** (EG9's core): the call said in chat and on the tracker; `/breach` answers it once the
+  breach opens (and a Weir Key used while one stands does the same), `/breach rehearse` opens the day's Rehearsal,
+  `/breach home` takes a Redoubt's way home.
+- **The halls** (EG10's core): `world/egHall.js` - a circle is one made level, its five halls side by side 500 m apart,
+  dressed in the Hour's art; its plates, discs, bands, the Oblivion Caverns passage (a basalt tunnel over a chasm
+  crossed on ledges, fire channels, a fire-fall at the lip) and a Rampart's portcullis. `scenes/egSpan.js` - the spans'
+  steps (the Unmoored Steps' Drift, Beat, Riser and Crumble, and still slabs and ledges) as moving collider buckets;
+  the void casts a body back to the floor it last stood on for a tenth of its health, never below a quarter. The pull
+  is a teleport to the next hall's plate under the veil's flash; a new circle steps out and in under the veil.
+  `ui/egHud.js` - the tracker: the call, THE COUNT (gold while it holds, red under five minutes), the circle and hall,
+  what the stage asks, the company standing.
+- **The fights** (EG11's core): `scenes/egFight.js` - the gate's own client pieces about the hall's centre: the foe's
+  body (the Warden's sprite at 2.5), its telegraph and the verdict on my feet, its bar and title card; the legion
+  through `scenes/gateHost.js` (which gains a `centre`, the court's by default); a Rift-Yard's rifts as the Reckoning's
+  crystals; a Rampart's vents, told a second before they erupt.
+- **The Redoubt and the ways out** (EG12's core): the Court's fall takes the circle's Redoubt for every earner (a share
+  of its damage, or a part in three of its halls); the company is healed; the way home stands at the Court's heart (the
+  level's exit door, with the Portal Stone's portal) - pressed once it asks, again it walks. The end, a fall, a closed
+  socket and the way home each walk the member out to where it answered from; a death wakes there.
+- **The receipts carried** (`scenes/egClient.js`): kept on the device until the service has counted them.
+
+**Where EG-PLAY departs from this page** (each to be closed by the slice named):
+
+1. No arch: the call and `/breach` are the door (EG9's arch pool, beacon, start window and Wager).
+2. THE SWAP is a circle a level: the five halls stand in one made level and the pull is a teleport under the veil's
+   flash; a new circle is a new level, built as the Hour's is entered (EG10's build during the closing).
+3. The Hour's art dresses the Spire (EG16's white marble and gold).
+4. The key wears DFU's Talisman picture (EG1's registry, EG2's art).
+5. The Court's lord is INTERIM - *The Kynreeve Castellan* on the champion's kit (EG13's lords).
+6. Not built: the recall and the witness view, Vestiges, decrees, twists, caches, Cantrips, lumen and the Sutler, the
+   Gold Run, THE FAIR TRAIL and the body count in `eg:` rooms, THE COVENANT'S PATIENCE, the company's word, THE POTION
+   LAW, the technique refusal and the jump buffer, the score, the recap, the boards and the honours, span Harriers.
+7. The hub keeps no receipts: the breach's room re-hands them at a hello and the client keeps them until counted.
+8. The `e1` receipt's kind rides `q`, not `k`; the order's `wg` is omitted.
+9. A death in the Spire costs the gold any death does (DEATH-PENALTY is not exempted: the respawn's penalty line is
+   another arc's quoted text, and the exemption is EG10's).
+10. A member answers from open ground; indoors the answer is refused (*Answer from open ground.*).
+11. A Redoubt's gold is the INT5 spoils budget's fill, not the week's pay (EG14).
+12. A member the room already counts (a reload, a new circle's room) is never asked to spend its admission again.
+
+**The four hosts.**
+
+- `src/scenes/world.js` - WIRED: the client built online (`createEgClient`), the breach's words on the presence
+  socket and the hub's, the room key, `egFrame` every online frame, the key's opener, `/breach`, the respawn's branch
+  for a death in the Spire, the Levitate ward (a second one beside the one - `characters/playerEntity.js`
+  `registerSpireLevitateWard`), the court's law (no regeneration), the companions kept out, Mark, Recall and `/unstuck`
+  refused, the hosts' `eg*` seams, and a gate or Hour claim's Weir Key restacked.
+- `src/scenes/worldModes.js` - WIRED: `enterEgHall`, `standEgHall`, `egPlace`, `egLeave`, `egHallReturn`,
+  `egHallBreach`, `egHallCircle`; the spans before the motor and the void's cast-back; the Spire's light, haze, lamps and
+  sky; the portcullises; the gate's six combat seams routed to the hall's fight inside a hall; the room identity; the
+  way home's press; arrival facing down the course.
+- `src/scenes/dungeonContext.js` - WIRED: the circle's flag; no veteran placed; no map, rest or save; a detached
+  automap; the spans' set and its ride.
+- `src/scenes/exterior.js` - FLAGGED as section 28 has it: the `?exterior` bench is offline and the key says *The key
+  is cold here.*
+
+**Pins.** `test/egplay_law.test.js` (5), `test/egplay_service.test.js` (7), `test/egplay_relay.test.js` (5) and
+`test/egplay_client.test.js` (10 - the client played against the relay's real Room, from the key to the Redoubt, the
+way home and the next circle). Mutants: `tools/mutants/egplay.json` (20), every one dead. Records of other arcs whose
+quoted lines moved, re-aimed by content: the bound list's (`auditrealm`, `cards8`, `loot9`, `portal1`, `wallet1` - 575
+joins it), the account version's (`br5`, `fb1004d_knight_house`, `tech1`, `gatekeys` - acct116), the order kinds'
+(`guild1c`, `seat2a2`) and the relay version's (`soc1` - world195). The Ledger: section A's ELITE-GATES row
+(`01-Overview/Port-Ledger.md`), naming every file.

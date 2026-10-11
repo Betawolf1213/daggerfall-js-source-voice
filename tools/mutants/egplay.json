@@ -1,0 +1,183 @@
+[
+  {
+    "name": "EGPLAY-a-quarter-turn-wrong",
+    "file": "src/net/egLaw.js",
+    "old": "  if (q <= 36) return SIN_Q[36 - q];",
+    "new": "  if (q <= 36) return SIN_Q[q - 18];",
+    "tests": [
+      "test/egplay_law.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-first-circle-drawn",
+    "file": "src/net/egLaw.js",
+    "old": "  if (c <= 1) return FIRST_CIRCLE;",
+    "new": "  if (c < 1) return FIRST_CIRCLE;",
+    "tests": [
+      "test/egplay_law.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-hall-past-the-wire",
+    "file": "src/net/egLaw.js",
+    "old": "export const EG_HALL_LEN_MAX = 158;",
+    "new": "export const EG_HALL_LEN_MAX = 200;",
+    "tests": [
+      "test/egplay_law.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-a-counted-member-spends-again",
+    "file": "src/net/egBrain.js",
+    "old": "  if (B.mem[sub]?.in) { B.mem[sub].seenAt = now; return null; }",
+    "new": "  if (false) { B.mem[sub].seenAt = now; return null; }",
+    "tests": [
+      "test/egplay_relay.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-a-fall-owes-nothing",
+    "file": "src/net/egBrain.js",
+    "old": "  oweEnd(B, sub, 'fall', now);",
+    "new": "  void oweEnd;",
+    "tests": [
+      "test/egplay_relay.test.js",
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-void-past-a-quarter",
+    "file": "src/scenes/egClient.js",
+    "old": "Math.max(0, entity.health - EG_CAST_BACK_FLOOR * max)",
+    "new": "Math.max(0, entity.health)",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-way-home-at-one-press",
+    "file": "src/scenes/egClient.js",
+    "old": "      if (Date.now() - homeAskAt > EG_HOME_CONFIRM_MS) { homeAskAt = Date.now();",
+    "new": "      if (false) { homeAskAt = Date.now();",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-gate-shut-behind-the-company",
+    "file": "src/scenes/egClient.js",
+    "old": "      return E.h > h || (E.h === h &&",
+    "new": "      return (E.h === h &&",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-redoubt-heals-nobody",
+    "file": "src/scenes/egClient.js",
+    "old": "rdSeen = E.h; fillVitalSigns(entity);",
+    "new": "rdSeen = E.h;",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-pull-never-stood",
+    "file": "src/scenes/egClient.js",
+    "old": "{ if (placeOn(E.h, E)) { placedH = E.h; say(EG_TEXT.pulled); } }",
+    "new": "{ if (false) { placedH = E.h; say(EG_TEXT.pulled); } }",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-a-counted-receipt-kept",
+    "file": "src/scenes/egClient.js",
+    "old": "        if (egClaimDone(a)) drop();",
+    "new": "        void egClaimDone;",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-next-circle-never-built",
+    "file": "src/scenes/egClient.js",
+    "old": "{ if (E.sg === 'arrive') swapTo(E, c); return; }",
+    "new": "{ return; }",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-count-never-red",
+    "file": "src/ui/egHud.js",
+    "old": "(left < EG_HUD_LOW_MS ? 'low' : '')",
+    "new": "('')",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-a-stranger-shown-the-call",
+    "file": "src/ui/egHud.js",
+    "old": "  if (!c || !me || !c.co.some((r) => r[0] === me)) return null;",
+    "new": "  if (!c || !me) return null;",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-void-never-casts-back",
+    "file": "src/scenes/egSpan.js",
+    "old": "      if (safe && body.pos[1] < safeY + EG_VOID_Y) {",
+    "new": "      if (false && safe) {",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-open-stakes-nothing",
+    "file": "server-account/src/eg.js",
+    "old": "      .bind(player.id, b, rh ? 0 : 1, until, day, rh, nowS),",
+    "new": "      .bind(player.id, b, 0, until, day, rh, nowS),",
+    "tests": [
+      "test/egplay_service.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-an-open-with-no-landing",
+    "file": "src/net/wire.js",
+    "old": "return egOrder(m.z) && site ? { k: 'open', z: m.z, site } : null;",
+    "new": "return egOrder(m.z) ? { k: 'open', z: m.z, site } : null;",
+    "tests": [
+      "test/egplay_relay.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-breach-unheard",
+    "file": "src/scenes/world.js",
+    "old": "    online.onEg = (w, room) => egClient?.word(w, room);",
+    "new": "    online.onEg = null;",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-gate-seams-the-gate-s-alone",
+    "file": "src/scenes/worldModes.js",
+    "old": "    host[gate] = (...a) => (mode === 'dungeon' && isEgHall(dungeonLoc) ? host[eg]?.(...a) ?? null : own?.(...a) ?? null);",
+    "new": "    host[gate] = (...a) => (own?.(...a) ?? null);",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  },
+  {
+    "name": "EGPLAY-the-spire-unwarded",
+    "file": "src/characters/playerEntity.js",
+    "old": "export const levitateWarded = () => siegeOrHourWarded() || spireWarded();",
+    "new": "export const levitateWarded = () => siegeOrHourWarded();",
+    "tests": [
+      "test/egplay_client.test.js"
+    ]
+  }
+]

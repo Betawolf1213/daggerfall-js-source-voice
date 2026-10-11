@@ -66,8 +66,8 @@ const props = new Map();
 })(parse(WM, { ecmaVersion: 'latest', sourceType: 'module' }));
 // (PIN MOVED at the merge with the Super Dungeons arc: its identity reads the Shattered Hour's realm and the size the
 // dungeon was BUILT at - SD-ONLINE's `size`, 'full' for a location built whole)
-const roomIdentityIn = (dungeonLoc) => Function('mode', 'dungeonLoc', 'isGateArena', 'isSdRealm', 'isArenaFloor', 'isStartDungeon', 'isTutorialHold', 'builtDungeonSize',
-  `return ({${props.get('roomIdentity')}}).roomIdentity();`)('dungeon', dungeonLoc, () => false, () => false, () => false, isStartDungeon, isTutorialHold, builtDungeonSize);
+const roomIdentityIn = (dungeonLoc) => Function('mode', 'dungeonLoc', 'isGateArena', 'isSdRealm', 'isEgHall', 'isArenaFloor', 'isStartDungeon', 'isTutorialHold', 'builtDungeonSize',
+  `return ({${props.get('roomIdentity')}}).roomIdentity();`)('dungeon', dungeonLoc, () => false, () => false, () => false, () => false, isStartDungeon, isTutorialHold, builtDungeonSize);   // EG-PLAY (PIN MOVED): an Elite Breach's circle beside the Hour
 
 // world.js's key block, executed from its source - the one the frame names its room by
 const W = read('src/scenes/world.js');
@@ -79,6 +79,7 @@ function keyIn(ident) {
     state: { compensation: [0, 0, 0], localFromWorld: (x, z) => [x, z], worldCoords: (p) => ({ x: p[0], z: p[2] }) },
     player: { pos: [1, 2, 3] }, cam: { yaw: 0, pitch: 0 }, worldCoordToMapPixel, roomKeyFor, privateInteriorOf,
     _questLoc: () => null, privateRoomHere: () => assert.fail('a dungeon is never a private room'), siegeSession: null, royalSession: null, campToWire: (p) => p,
+    egRoomKey: (b) => `eg:${b}`,   // EG-PLAY (PIN MOVED): the key block names an Elite Breach's room beside the Hour's
   };
   return new Function(...Object.keys(args), `let onlineToScene, sceneToOnline; ${W.slice(KEY_FROM, KEY_TO)} return key;`)(...Object.values(args));
 }

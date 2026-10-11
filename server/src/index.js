@@ -2567,8 +2567,7 @@ export class Room {
     if (battle && !this._spend(ws, now, poseGate, 'bucket', 'drops', 'too many poses')) return;
     const step = battle ? await this._siegeStep(ws, a, m.p, now) : null;
     if (battle && !step) return;
-    const turned = posed ? { turn: ((a.turn | 0) + 1) & 0xffff, ...(still ? { kept: now } : {}), ...(isSdRoom(a.key) ? { pAt: now } : {}) } : {};   // AUDIT SD III (F3): an Hour's pose, stamped - the fight's census reads its age
-    if (posed && isEgRoom(a.key)) turned.eAt = now;   // EG-PLAY: and a breach's - its director reads each body's age (`_egBodies`)
+    const turned = posed ? { ...(isEgRoom(a.key) ? { eAt: now } : {}), turn: ((a.turn | 0) + 1) & 0xffff, ...(still ? { kept: now } : {}), ...(isSdRoom(a.key) ? { pAt: now } : {}) } : {};   // AUDIT SD III (F3): an Hour's pose, stamped - the fight's census reads its age; EG-PLAY: and a breach's (`eAt`) - its director reads each body's age (`_egBodies`)
     const met = battle ? this._metered(ws, a, true, { pose: m.p }, turned) : this._meter(ws, a, now, { pose: posed ? m.p : a.pose }, turned, posed && !stopped);   // SCALE2b: a pose's write is lazy - a stop's is not, it is where the player stands
     if (!met) return;   // over the rate: kept as the latest, not relayed
     if (m.t === 'ping') { this._send(ws, '{"t":"pong"}'); return; }   // a ping that reached the object (the runtime answers the exact one in its sleep)

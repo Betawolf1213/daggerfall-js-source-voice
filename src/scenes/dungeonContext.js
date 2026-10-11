@@ -1396,7 +1396,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // stands while the ladder does (read at each spawn) - the ladder off, DFU's own foes, as its champions and elites go
   // AUDIT BAL: never the port's own stages that wear a Crypt's type for want of one (the arena's floor, the gate's court,
   // the Shattered Hour - world/arenaFloor.js, gateArena.js, sdRealm.js) - their fights are tuned, and their health the relay's
-  const _placeVeteran = isGateArena(dfLocation) || isArenaFloor(dfLocation) || _sdRealm ? 0 : _egHall ? 0 : placeVeteran(dungeonRarityTier(dfLocation.mapTableData?.dungeonType));
+  const _placeVeteran = isGateArena(dfLocation) || isArenaFloor(dfLocation) || _sdRealm ? 0 : placeVeteran(dungeonRarityTier(dfLocation.mapTableData?.dungeonType));
   /** `puppet`: AUDIT BAL - another client's foe stands at this place too. The place is every client's (its tier, the
    *  ladder forced on online), so a puppet takes it - its blows on me as hard as on its owner; the owner's own standing
    *  (Master Skills) is the owner's, and the puppet's health the owner's record's (`k`, `h`). */
@@ -9017,7 +9017,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         loadingPrevented: () => !!opts.dungeonOnline?.(),
         timers: (o) => opts.timers?.(o) ?? null,   // TIMERS1: the world host's source, through worldModes
         post: () => opts.post?.() ?? null,   // SERVER-POST: the mailbox's box, the world host's through worldModes
-        savingPrevented: () => isGateArena(dfLocation) || isArenaFloor(dfLocation) || _sdRealm || _egHall,   // EG-PLAY: nor in the Spire   // ARENA2: nor on the arena's sand   // WB3b: the pause's Save says why, in the court
+        savingPrevented: () => isGateArena(dfLocation) || isArenaFloor(dfLocation) || _sdRealm,   // ARENA2: nor on the arena's sand   // WB3b: the pause's Save says why, in the court
         // SAV4: the slot window's seams over the same two verbs.
         playerName: () => playerEntity.name, playerId: () => playerEntity.characterId ?? null,
         saveAs: (saveName) => ctx.quickSave?.(saveName),
@@ -9378,8 +9378,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     reportInput(keys, pitch) { _inputState = `keys:${keys} pitch:${pitch.toFixed(2)}`; },
     quickSave(saveName = QUICK_SAVE_NAME, { quiet = false, sink = null } = {}) {   // REALM P0.5: a quiet checkpoint takes no shot and says only a failure; P1.3: a realm character's goes to the service
       // WB3b: a save made in the court would load into a place that no longer stands (the court is the day's alone)
-      if (_sdRealm) { if (!quiet) hudText.add(SD_REALM_TEXT.noSave); return false; }   // SD5a: nor a save
       if (_egHall) { if (!quiet) hudText.add(EG_HALL_TEXT.noSave); return false; }   // EG-PLAY: nor in the Spire
+      if (_sdRealm) { if (!quiet) hudText.add(SD_REALM_TEXT.noSave); return false; }   // SD5a: nor a save
       if (isGateArena(dfLocation)) { if (!quiet) hudText.add(COURT_TEXT.noSave); return false; }
       if (isArenaFloor(dfLocation)) { if (!quiet) hudText.add(ARENA_TEXT.refuse.save); return false; }   // ARENA2: a made level no save re-enters
       const snap = snapshotPlayer(playerEntity, {

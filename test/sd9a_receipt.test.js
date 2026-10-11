@@ -293,5 +293,5 @@ test('SD9a the relay by source: the receipts minted before the fall is said, by 
   assert.match(w, /if \(sub\) \{ try \{ await this\._sdReceiptTo\(ws, sub, now\); \}/);   // PIN MOVED, SCALE5c: among the hub's words (`_hubHelloWords`), by the verified subject
   assert.match(w, /'sweep:sdrc'/);
   assert.match(w, /import \{ mintSdReceipt, readSdReceipt, SD_RECEIPT_TTL_S \} from '\.\.\/\.\.\/src\/net\/sdReceipt\.js';/);
-  assert.match(read('test/relayversion.test.js'), /'src\/net\/sdReceipt\.js'\]/, 'net/sdReceipt.js in the bundle');   // PIN MOVED (INT12): last still - net/sdRemnant.js walks earlier now, under net/bossRef.js
+  assert.match(read('test/relayversion.test.js'), /'src\/net\/sdReceipt\.js'(?:, 'src\/net\/eg[A-Za-z]+\.js')*\]/, 'net/sdReceipt.js in the bundle');   // PIN MOVED (INT12): last still - net/sdRemnant.js walks earlier now, under net/bossRef.js; PIN MOVED (EG-PLAY): an Elite Breach's five walk after it
 });

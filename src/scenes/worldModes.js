@@ -9184,7 +9184,7 @@ export function createWorldModes(host) {
     if (mode !== 'dungeon' || !isEgHall(dungeonLoc) || !Array.isArray(at)) return false;
     player.freezeMotor = TELEPORT_FREEZE_S; player.spawn(at[0], at[1], at[2]);   // the action teleport's settle
     cam.pos = [...player.eye];
-    if (Number.isFinite(yaw)) { cam.yaw = yaw; cam.pitch = 0; }
+    if (Number.isFinite(yaw)) cam.yaw = yaw;   // the pitch is the player's: only a DFU transition levels it (DE2)
     dungeonCtx?.egSpanSafe?.(at);
     return true;
   }
@@ -10653,7 +10653,6 @@ export function createWorldModes(host) {
       renderer.drawBillboards([...dungeonCtx.billboardBatches, ...dungeonCtx.campBatches(), ...dungeonCtx.torchBatches(), ...(host.extraBillboards?.() ?? [])], camRight, UP_Y);   // ONLINE1: the peers on the dungeon's own pass; HT1 the dropped torches; SURV3 the campfires
       host.drawLootLines?.({ proj, view, eye: mwv.eye, finds: () => dungeonCtx.lootFinds?.() ?? [] });   // LOOT11: the lines of light over the dungeon's finds
       if (isGateArena(dungeonLoc)) host.drawGateCourt?.({ proj, view, eye: mwv.eye });
-      if (isEgHall(dungeonLoc)) host.drawEgFight?.({ proj, view, eye: mwv.eye });   // EG-PLAY: a hall's telegraphs, vents and rifts - after the flats, the court's way
       if (dungeonCtx.sdEndLook) host.drawSdRift?.({ proj, view, eye: mwv.eye, end: dungeonCtx });   // SD-LOOK: the Rift's window into the Hour, its floor light and its heart; the Return's window home - after the flats (they composite over what stands behind them)
       // SD8d: the Brass Remnant's blows on the arena's floor, the court's way. AUDIT SD IV (R1): AFTER THE LAST FLAT - the
       // Hour's blows, spoils' lines, motes, sparks and beam write no depth, and a pile, a missile or a portal drawn after
@@ -10661,6 +10660,7 @@ export function createWorldModes(host) {
       // so they are drawn here then, under it
       _sdLate.on = isSdRealm(dungeonLoc); _sdLate.proj = proj; _sdLate.view = view; _sdLate.eye = mwv.eye;
       if (_sdLate.on && dungeonCtx.uiOverlayActive) host.drawSdTelegraph?.(_sdLate);
+      if (isEgHall(dungeonLoc)) host.drawEgFight?.({ proj, view, eye: mwv.eye });   // EG-PLAY: a hall's telegraphs, vents and rifts - after the flats, the court's way
       // AUDIT 17e F1: this MUST return true like every other exit of
       // the dungeon branch. Returning undefined let the host fall
       // through and run its whole exterior frame on top - the town

@@ -14937,13 +14937,13 @@ export async function bootWorld(canvas, renderer, params, status) {
     const px = ohReturn?.pixel ?? playerTravelPixel();
     const courtGate = modes?.gateArenaGate?.() ?? null;   // WB3b: a death in the Burning Court is CAST OUT - before its gate, not at a temple
     Promise.resolve().then(async () => {
-      if (diedInSpire) {   // EG-PLAY: out of the Spire to where I answered from, in its veil and its words
-        modes?.forceExitToExterior();
-        if (spireBack && egLandAt(spireBack)) { gateVeil?.flash('hourCast'); townTalk.showOverlay(new ActionTextBox([EG_TEXT.fallen, deathPenaltyText(goldLost), took?.line].filter((t) => !!t))); return; }
-      }
       if (courtGate) {
         modes?.forceExitToExterior();
         if (landBeforeGate(courtGate)) { gateVeil?.flash(); townTalk.showOverlay(new ActionTextBox([COURT_TEXT.castOut])); return; }   // WB6c: cast out through the fire
+      }
+      if (diedInSpire) {   // EG-PLAY: out of the Spire to where I answered from, in its veil and its words
+        modes?.forceExitToExterior();
+        if (spireBack && egLandAt(spireBack)) { gateVeil?.flash('hourCast'); townTalk.showOverlay(new ActionTextBox([EG_TEXT.fallen, deathPenaltyText(goldLost), took?.line].filter((t) => !!t))); return; }
       }
       // Any mode but the open world is left FIRST - the cemetery
       // transfer's own order - and forceExitToExterior clears the
