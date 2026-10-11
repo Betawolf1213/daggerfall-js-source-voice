@@ -27,7 +27,8 @@ import { setBatchHitFlash } from '../systems/hitFlash.js';
 import { ENEMY_BASICS } from '../characters/enemyBasics.js';
 import { stateAnims, FLY_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED, HURT_ANIM_SPEED } from '../characters/mobileUnit.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';
-import { egHallOf, egCountText, EG_LORDS, EG_BANDS } from '../net/egLaw.js';
+import { egHallOf, egCountText, egVentAt, egInVent, EG_LORDS, EG_BANDS, EG_VENT_PCT, EG_VENT_WARN_MS, EG_VENT_FIRE_MS } from '../net/egLaw.js';
+import { egVentState, egInVentDisc, egPendAt, EG_VENT_R, EG_VENT_TELL_S, EG_PEND_REACH, EG_PEND_HALF, EG_PEND_CLEAR_MIN } from '../net/egSpanLaw.js';
 import { egBodyPlace } from '../net/egLink.js';
 import { egBlowVerdict, egInShape, egShapeOrder, coneInscribed } from '../net/egShape.js';
 import { EG_ROLE, EG_FL } from '../net/egBodies.js';
@@ -51,6 +52,9 @@ const GROUND_COLORS = Object.freeze({ rune: GOLD, gem: [0.65, 0.5, 1.0], haven: 
 const ZONE_COLORS = Object.freeze({ burn: [1.0, 0.42, 0.12], void: [0.35, 0.02, 0.04], soul: [0.6, 0.35, 0.9], haven: GOLD });
 /** A tether's colour (THE FIVE LIGHTS: Dagon red on what binds you). */
 const TETHER_COLOR = Object.freeze([1.0, 0.24, 0.28]);
+/** THE PLACE's colours: a vent's fire, a Pendulum's lane white (SD-LOOK: what moves next is told in white). */
+const VENT_COLOR = Object.freeze([1.0, 0.45, 0.12]);
+const PEND_COLOR = Object.freeze([0.95, 0.95, 1.0]);
 /** A zone's and a drain's tick (ms); a body's fall's length; how long after its landing a blow's shape lingers. */
 export const EG_TICK_MS = 1000;
 const FALL_MS = 1200;
@@ -149,6 +153,8 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   const zoneTick = new Map();
   let drainAt = 0, voidAt = 0;
   const _batches = [], _lights = [], _targets = [], _crystals = [], _shapes = [], _slots = [];
+  /** THE PLACE's eruptions already judged (a Rampart vent's by its instant, a span Vent's by its cycle) */
+  const ventJudged = new Map();
   const crystalSlots = new Map();
 
   const play3 = (cue, at) => { if (!cue || !audio || !at) return; try { if (cue.id != null) audio.play3dId?.(cue.id, at, cue.volume, { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch }); else audio.play3d?.(cue.clip, at, cue.volume, { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch }); } catch { /* a sound is never the fight */ } };
@@ -170,7 +176,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   /** A new hall: its frame, its floor for the telegraph pass. */
   function reset(E) {
     for (const d of drawn.values()) destroy(d);
-    drawn.clear(); judged.clear(); cued.clear(); landedSet.clear(); zoneTick.clear(); fellSeen = new Set(); phaseSeen = new Set(); crystalSlots.clear();
+    drawn.clear(); judged.clear(); cued.clear(); landedSet.clear(); zoneTick.clear(); fellSeen = new Set(); phaseSeen = new Set(); crystalSlots.clear(); ventJudged.clear();
     hall = E.h; spec = egHallOf(E.seed, E.h, E.geo ?? 0); centre = egHallCentre(spec); band = spec.band ?? 0;
     floor = spec.fight ? { r: spec.fight.r + 6, courts: [[spec.fight.x, spec.fight.z]] } : { r: 40, courts: [[0, spec.len / 2]] };
     beat = null; saysSeen = E.fight.says.length; wokeSeen = 0; gustSeen = 0;
@@ -263,6 +269,56 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       if (s[0] === 'h') for (let i = 1; i + 2 < s.length; i += 3) { const hv = (_slots[_shapes.length] ??= slot()); hv.kind = TELEGRAPH_KIND.disc; hv.origin[0] = s[i]; hv.origin[1] = s[i + 1]; hv.r = s[i + 2]; hv.color = GOLD; hv.edge = TELEGRAPH_EDGE_SAFE; hv.pool = TELEGRAPH_POOL.ground; hv.t = 1; hv.flash = 0; hv.alpha = 1; hv.style = TELEGRAPH_STYLE.weight; hv.since = 0; hv.span = 1; hv.after = -1; hv.court = 0; _shapes.push(hv); }
     }
   }
+  /** THE PLACE (sections 8.3 and 10.3), on every screen alike: a Rampart's vents (told EG_VENT_WARN_MS and erupting
+   *  EG_VENT_FIRE_MS on the relay's clock from the hall's wake - net/egLaw.js egVentAt) and a span's Vents and Pendulums
+   *  (the shared clock - net/egSpanLaw.js): each drawn in the telegraph pass, a vent's eruption judged on my feet once. A
+   *  Pendulum's touch is the span's own cast-back (scenes/egSpan.js); its lane here brightens over its last EG_PEND_CLEAR_MIN. */
+  function place(E, t) {
+    if (!spec || (E.sg !== 'trial' && E.sg !== 'closing')) return;
+    const f = myFeet(), d = feet(), e = player(), standing = !!f && !!e && e.health > 0, fy = d && centre ? d[1] - centre[1] : 0;
+    if (spec.vents?.length && E.sg === 'trial' && E.hw > 0) {
+      for (let i = 0; i < spec.vents.length; i++) {
+        const v = spec.vents[i], st = egVentAt(v, E.hw, t);
+        if (st.st === 'quiet') continue;
+        const sh = (_slots[_shapes.length] ??= slot());
+        sh.kind = TELEGRAPH_KIND.lane; sh.origin[0] = v.x - v.halfW; sh.origin[1] = v.z; sh.end[0] = v.x + v.halfW; sh.end[1] = v.z; sh.halfW = v.d / 2; sh.r = 0;
+        sh.t = st.st === 'warn' ? st.k : 1; sh.flash = st.st === 'fire' ? 1 : 0; sh.alpha = 1; sh.color = VENT_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = TELEGRAPH_STYLE.fire;
+        sh.since = st.st === 'warn' ? (st.k * EG_VENT_WARN_MS) / 1000 : EG_VENT_WARN_MS / 1000; sh.span = EG_VENT_WARN_MS / 1000; sh.after = st.st === 'fire' ? (st.k * EG_VENT_FIRE_MS) / 1000 : -1; sh.court = 0;
+        _shapes.push(sh);
+        if (st.st === 'fire' && ventJudged.get(`r${i}`) !== st.at) {
+          ventJudged.set(`r${i}`, st.at);
+          play3(BOSS_CUES.quake, toDungeon(v.x, 1, v.z));
+          if (standing && egInVent(v, f[0], f[1])) landShare(EG_VENT_PCT, 0, 'fire', 'Fire Vent');
+        }
+      }
+    }
+    const ts = t / 1000;
+    for (const s of spec.steps ?? []) {
+      if (s.kind === 'vent') {
+        const st = egVentState(s, ts);
+        if (!(st.tell > 0) && !st.fire) continue;
+        const sh = (_slots[_shapes.length] ??= slot());
+        sh.kind = TELEGRAPH_KIND.disc; sh.origin[0] = s.x; sh.origin[1] = s.z; sh.r = EG_VENT_R;
+        sh.t = st.fire ? 1 : st.tell; sh.flash = st.fire ? 1 : 0; sh.alpha = 1; sh.color = VENT_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = TELEGRAPH_STYLE.fire;
+        sh.since = st.tell * EG_VENT_TELL_S; sh.span = EG_VENT_TELL_S; sh.after = st.fire ? 0 : -1; sh.court = 0;
+        _shapes.push(sh);
+        const cycle = `v${s.i}:${Math.floor((ts + s.phase) / s.period)}`;
+        if (st.fire && !ventJudged.has(cycle)) {
+          ventJudged.set(cycle, 1);
+          if (ventJudged.size > 256) ventJudged.delete(ventJudged.keys().next().value);
+          if (standing && Math.abs(fy - s.y) < 1.5 && egInVentDisc(s, f[0], f[1])) landShare(EG_VENT_PCT, 0, 'fire', 'Vent');
+        }
+      } else if (s.kind === 'pend' && s.period > 0) {
+        const w = egPendAt(s, ts), theta = (2 * Math.PI * ts) / s.period + s.phase;
+        const toCentre = ((Math.PI - (((theta % Math.PI) + Math.PI) % Math.PI)) / (2 * Math.PI)) * s.period;   // until the weight next crosses the course
+        const sh = (_slots[_shapes.length] ??= slot());
+        sh.kind = TELEGRAPH_KIND.lane; sh.origin[0] = s.x - EG_PEND_REACH - EG_PEND_HALF; sh.origin[1] = w.z; sh.end[0] = s.x + EG_PEND_REACH + EG_PEND_HALF; sh.end[1] = w.z; sh.halfW = EG_PEND_HALF; sh.r = 0;
+        sh.t = toCentre < EG_PEND_CLEAR_MIN ? 1 - toCentre / EG_PEND_CLEAR_MIN : 0; sh.flash = 0; sh.alpha = toCentre < EG_PEND_CLEAR_MIN ? 1 : 0.4;
+        sh.color = PEND_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.ground; sh.style = TELEGRAPH_STYLE.weight; sh.since = 0; sh.span = EG_PEND_CLEAR_MIN; sh.after = -1; sh.court = 0;
+        _shapes.push(sh);
+      }
+    }
+  }
   /** The beats' words and cards: a lord's wake (its card), its phases, its fall, the room's beats. */
   function beats(E, t, F) {
     const lords = F.bodies.filter((b) => b.role === EG_ROLE.lord && (b.fl & EG_FL.mirror) === 0);
@@ -288,6 +344,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       if (E.h !== hall) reset(E);
       const F = E.fight.h === E.h ? E.fight : null;
       _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0;
+      place(E, t);
       if (!F) { drawGateTitleCard(titleCardModel(beat, t), { hidden: hudHidden() }); return; }
       const f = myFeet(), e = player(), standing = !!f && !!e && e.health > 0;
       const blowBy = new Map();

@@ -25,9 +25,10 @@
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { sdSeed, sdRng } from './sdBrain.js';
+import { egSpanProof } from './egSpanLaw.js';   // EG-FULL: THE TIMED SOLVER - a course it refuses is laid again
 
 /** The spec law's number - a change to any draw below changes it (and the relay's version with it). */
-export const EG_SPEC = 2;
+export const EG_SPEC = 3;
 /** The most a company holds (the party's own PARTY_MAX, net/wire.js - pinned equal). */
 export const EG_PARTY_MAX = 8;
 
@@ -287,6 +288,8 @@ export const EG_HALL_PITCH = 500;
 export const egSeed = (seed, salt) => sdSeed(seed >>> 0, salt >>> 0);
 const CIRCLE_SALT = 0x0e6c1c;
 const HALL_SALT = 0x0e6a11;
+/** A course laid again (THE TIMED SOLVER's redraw) takes this far a sub-seed per try. */
+const RELAY_SALT = 0x5a1d;
 const LORD_SALT = 0x0e610d;
 
 /**
@@ -465,7 +468,12 @@ export function egHallOf(seed, h, geo = 0) {
   const key = `${seed >>> 0}:${h}:${geo | 0}`;
   const had = _specs.get(key);
   if (had) return had;
-  const spec = deepFreeze(layHall(seed >>> 0, h, geo | 0));
+  // THE TIMED SOLVER (section 10.5, net/egSpanLaw.js): a course it refuses is laid again from the next sub-seed, at most
+  // EG_RELAY_MAX times, then from the band's first two pieces alone
+  let spec = layHall(seed >>> 0, h, geo | 0, 0), tries = 0;
+  while (spec.steps.length && !egSpanProof(spec).ok && tries < EG_RELAY_MAX) spec = layHall(seed >>> 0, h, geo | 0, ++tries);
+  if (spec.steps.length && !egSpanProof(spec).ok) spec = layHall(seed >>> 0, h, geo | 0, EG_RELAY_MAX + 1);
+  spec = deepFreeze({ ...spec, laid: tries });
   if (_specs.size >= 48) _specs.delete(_specs.keys().next().value);
   _specs.set(key, spec);
   return spec;
@@ -473,10 +481,13 @@ export function egHallOf(seed, h, geo = 0) {
 const _specs = new Map();
 const deepFreeze = (o) => { if (o && typeof o === 'object' && !Object.isFrozen(o)) { Object.freeze(o); for (const v of Object.values(o)) deepFreeze(v); } return o; };
 
-function layHall(seed, h, geo) {
+/** How often a course the solver refuses is laid again before the band's first two pieces stand alone (section 10.5). */
+export const EG_RELAY_MAX = 8;
+function layHall(seed, h, geo, attempt = 0) {
   const c = egCircleOfHall(h), slot = egSlotOfHall(h), plan = egCirclePlan(seed, c)[slot - 1];
   const kind = plan.kind, variant = plan.variant, twist = plan.twist, bnd = egBandOfHall(h);
-  const r = sdRng(egSeed(seed, HALL_SALT + h));
+  const r = sdRng(egSeed(seed, HALL_SALT + h + attempt * RELAY_SALT));
+  const plain = attempt > EG_RELAY_MAX;   // the last resort: the band's first two pieces alone
   const gale = geo % 3, crumbling = Math.floor(geo / 3) % 3;
   const X = 0;
   /** the hall's parts in cm, said in metres at the end */
@@ -488,12 +499,12 @@ function layHall(seed, h, geo) {
   const flL = (ax, az, bx, bz, half, y = 0) => P.fl.push({ t: 'l', ax, az, bx, bz, hw: half, y });
   const spot = (role, x, z, extra = {}) => { (P.spots[role] ??= []).push({ x, z, ...extra }); };
   let edge = 0, y = 0, span = 0, risen = false;
-  const pieces = EG_BAND_PIECES[bnd];
+  const pieces = plain ? EG_BAND_PIECES[bnd].slice(0, 2) : EG_BAND_PIECES[bnd];
   /** a step laid `gap` past the edge (its unused fields nought, one shape for every step - the Steps' law) */
   const step = (k, gap, o = {}) => {
     const S = EG_STEP[k];
     const z = edge + gap + S.d / 2;
-    P.steps.push({ i: P.steps.length, kind: k, span, x: X + (o.x ?? 0), y, z, w: S.w, d: S.d, amp: o.amp ?? 0, period: o.period ?? 0, phase: o.phase ?? 0, beat: o.beat ?? 0 });
+    P.steps.push({ i: P.steps.length, kind: k, span, x: X + (o.x ?? 0), y, z, w: S.w, d: S.d, amp: o.amp ?? 0, period: o.period ?? 0, phase: o.phase ?? 0, beat: o.beat ?? 0, gap });
     edge = z + S.d / 2;
   };
   const gap = () => between(r, EG_GAP_MIN_CM, EG_GAP_MAX_CM);
@@ -764,7 +775,7 @@ function layHall(seed, h, geo) {
     discs: P.discs.map(pt),
     bands: P.bands.map((b) => ({ x: m(b.x), y: m(b.y), z0: m(b.z0), z1: m(b.z1), halfW: m(b.halfW), role: b.role })),
     lanes: P.lanes.map((l) => ({ ax: m(l.ax), az: m(l.az), bx: m(l.bx), bz: m(l.bz), hw: m(l.hw), role: l.role, y: m(l.y) })),
-    steps: P.steps.map((s) => ({ i: s.i, kind: s.kind, span: s.span, x: m(s.x), y: m(s.y), z: m(s.z), w: m(s.w), d: m(s.d), amp: m(s.amp), period: s.period / 1000, phase: s.phase / 1000, beat: s.beat / 1000 })),
+    steps: P.steps.map((s) => ({ i: s.i, kind: s.kind, span: s.span, x: m(s.x), y: m(s.y), z: m(s.z), w: m(s.w), d: m(s.d), amp: m(s.amp), period: s.period / 1000, phase: s.phase / 1000, beat: s.beat / 1000, gap: m(s.gap) })),
     islands: P.islands.map(pt),
     caves: P.caves.map((q) => ({ x: m(q.x), y: m(q.y), z0: m(q.z0), z1: m(q.z1), zA: m(q.zA), zB: m(q.zB), halfW: m(q.halfW), height: m(q.height), curtain: m(q.curtain), kit: q.kit })),
     fl: P.fl.map((f) => (f.t === 'd' ? { t: 'd', x: m(f.x), z: m(f.z), r: m(f.r), y: m(f.y) } : { t: 'l', ax: m(f.ax), az: m(f.az), bx: m(f.bx), bz: m(f.bz), hw: m(f.hw), y: m(f.y) })),

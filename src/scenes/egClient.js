@@ -512,6 +512,8 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
     potionAllowed: () => !inSpire() || potions > 0,
     potionUsed() { if (inSpire()) potions = Math.max(0, potions - 1); },
     push: (dx, dz, m) => pushBy(dx, dz, m),
+    /** Iron Footing's share off a push (the spans' Gust and Pendulum read it - systems/spireKit.js spireFooting). */
+    footing: () => (inSpire() ? footing() : 0),
     hold: (ms) => holdFor(ms),
     ring: (x, z, r, inside) => ringKeep(x, z, r, inside),
     useKey,

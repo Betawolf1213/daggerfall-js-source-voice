@@ -32,3 +32,11 @@ export function spirePotionDrunk(item) {
   if (!_law || !isRestoringPotion(item)) return;
   try { _law.used(); } catch { /* the count is not the bottle's problem */ }
 }
+
+/** EG-FULL LAYER TWO: Iron Footing's share off a push on this screen (net/egVestige.js - by: 'client'), registered by the
+ *  world host from the breach's client, read by the spans (scenes/egSpan.js - the Gust's push, the Pendulum's touch). */
+let _footing = null;
+export function registerSpireFooting(fn) { _footing = typeof fn === 'function' ? fn : null; }
+export function spireFooting() {
+  try { const v = Number(_footing?.() ?? 0); return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0; } catch { return 0; }
+}

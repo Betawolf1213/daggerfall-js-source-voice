@@ -3444,3 +3444,47 @@ by content: `egplay`, `sd6a` and `sd18a` (the Orrery widened with defaults equal
 stays `world195`, unshipped, with its hash and graph recomputed. The account Worker bundles `net/egShape.js` through the
 wire, so `account-deploy.yml` lists it. A real defect was found and fixed on the way: the rest's offers were fanned to the
 whole company, so every screen showed the last member's cards.
+
+### EG-FULL, LAYER TWO (first part) - 2026-10-11 - THE PIECES MOVE, THE TIMED SOLVER
+
+Closes layer one's first departure for the pieces.
+
+- **The one law** (`net/egSpanLaw.js`, in the relay bundle, importing nothing). Every piece on the shared clock (the
+  anchored clock's seconds, which the relay's milliseconds equal): `egPieceAt` (a Drift across, a Rail along, a Beat on
+  the Steps' cycle), `egPendAt` and `egPendHits` (a Pendulum's weight over the middle of the gap before its step,
+  `EG_PEND_REACH` 2.6 m either side), and `egVentState` and `egInVentDisc` (a Vent's disc, `EG_VENT_R` 1.5 m, told over
+  its last `EG_VENT_TELL_S` 1.0 s and erupting `EG_VENT_FIRE_S` 0.5 s at the Rampart's `EG_VENT_PCT`). Every step now
+  carries the `gap` before it (`EG_SPEC` 3).
+- **THE TIMED SOLVER** (section 10.5). THE SPAN BUILD's running jump from each piece's far edge to the next, over both
+  pieces' positions at the launch and the landing. A pair must have a window of `EG_WINDOW_MIN` 0.5 s in every 12 s and
+  never wait more than `EG_WAIT_MAX` 4 s. Also checked: a Pendulum's gap clear for `EG_PEND_CLEAR_MIN` 0.8 s, a Crumble
+  left inside its delay, a Rail's travel never closing on its neighbours (`EG_RAIL_CLEAR`), a Vent's platform at least
+  4 m, a Drop's landing at least 6 m. `egHallOf` re-lays a refused course from the next sub-seed, at most
+  `EG_RELAY_MAX` 8 times, then lays it from the band's first two pieces alone; the spec's `laid` says how often. Over 40
+  seeds, 20 circles and three grounds, 271 of 7,560 courses were re-laid and none fell to the last resort.
+- **The reach is measured, never guessed.** The page's span build crosses 3.2 m in SD7b's real-motor run. The motor's
+  closed form at 95%, as SD7a takes it, gave 2.43 m, which would have refused every honest course. So the reach is the
+  closed form plus the capsule over both edges, a drop's gain held to `EG_DROP_GAIN` 0.45 m a metre. That is 3.26 m on
+  the flat, where the real motor clears 3.44 m. `test/egfull_span.test.js` crosses every reach the solver allows (level,
+  a metre down, a Drop's 4.5 m, 0.4 m up) with the real `PlayerMotor`, so the solver can never be generous.
+- **On the screen** (`scenes/egSpan.js`):
+  - a Rail travels along the course and carries its rider;
+  - a Pendulum's brass weight swings on its chain, and a touch is a cast-back unless the member has Iron Footing III
+    (`systems/spireKit.js` `spireFooting`, registered from the breach's client);
+  - a Gust section pushes as the Steps' breath does (`world/sdSteps.js` `gustAt`), Iron Footing taking its share;
+  - a Drop's landing stands walled on its far side and flanks to `EG_DROP_WALL_H` 7.5 m, so a body that carries too
+    far drops onto it.
+- **The place pass** (`scenes/egFight.js`), on every screen alike: a span Vent's ring closing in fire and its eruption
+  judged on the member's feet once a cycle; a Pendulum's lane over its gap, white and brightening over its last
+  0.8 s.
+- **A regression closed.** Layer one's rewrite of the fight had dropped EG-PLAY's Rampart vents, which are told 1.0 s and
+  judged on the member's feet. The place pass draws and judges them again.
+
+**What EG-D still owes**: the fragment kits beyond the Oblivion Caverns passage (the Ossuary, the Gloam Thicket, the
+Forge Gut and the rest of section 11.2) with their signature hazards; the set-piece passages; THE FORK (the High Road and
+the Low Road); the fragment law record (`net/egFragLaw.js`); engines, alcoves and the Annals; Grath's falling isles. Also
+the pieces' remaining tells (the Rail's dashed track, the Gust's streamers, the waystones lit) and the solver's median
+check.
+
+**Pins.** `test/egfull_span.test.js` (5) and `tools/mutants/egspan.json` (15, every one dead). `RELAY_VERSION` stays
+`world195`, unshipped, rehashed with `net/egSpanLaw.js` in its graph.
