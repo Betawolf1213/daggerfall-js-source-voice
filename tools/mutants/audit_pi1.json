@@ -372,8 +372,8 @@
   {
     "name": "AUDIT-PI1-H6-restored-as-a-bag",
     "file": "src/scenes/droppedLoot.js",
-    "old": "inactive: false, ...(s.physical ? { physical: true, settled: true } : {}) };",
-    "new": "inactive: false };",
+    "old": "inactive: false, ...(s.physical ? { physical: true, settled: true } : {}), ...(typeof s.remainsKey",
+    "new": "inactive: false, ...(typeof s.remainsKey",
     "tests": [
       "test/audit_pi1.test.js"
     ]

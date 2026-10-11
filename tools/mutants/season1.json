@@ -430,8 +430,8 @@
   {
     "name": "SEASON1-idx-settle-zero",
     "file": "server-account/src/index.js",
-    "old": "await settleDue(ctx.db, nowS, seasonZeroOf(env.SEASON_ZERO_WEEK));",
-    "new": "await settleDue(ctx.db, nowS);",
+    "old": "await settleDueOnce(ctx.db, nowS, seasonZeroOf(env.SEASON_ZERO_WEEK))",
+    "new": "await settleDueOnce(ctx.db, nowS)",
     "tests": [
       "test/season1_service.test.js",
       "test/seat1c_client.test.js"

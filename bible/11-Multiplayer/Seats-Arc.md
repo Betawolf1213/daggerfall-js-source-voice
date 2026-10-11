@@ -1294,7 +1294,11 @@ Every law in Home.md's Process section, and what it demands of this arc:
   A read before the batch that throws is not caught, so it fails every seat route until it stops throwing - SEAT-CAP
   (`01-Overview/Field-Bugs-2026-10-11h.md`, from play: "Time to take a castle and nothing happens") found one: every
   guild pledged anywhere bound in one statement, past D1's 100 parameters. Every guild list the seats bind is read
-  IN_CHUNK (90) at a time (`seatInfluence.js` allIn), and the tests' fake refuses a statement D1 would.
+  IN_CHUNK (90) at a time (`seatInfluence.js` allIn), and the tests' fake refuses a statement D1 would. And a week due is
+  settled by ONE caller at a time (SEAT-LEASE, the same page): every request had run the whole settle at once, each
+  cancelled with its client before it committed under the load it made; now one takes a 60-second lease
+  (`seatTurning.js` settleDueOnce), every other seat read answers the state as it stands and every other act is told
+  `seats-settling`.
 - **Clocks.** Every time is the relay's clock; clients read it through their offset (FACT, `online.js`
   `clockOffsetMs`). Daylight saving never touches UTC.
 

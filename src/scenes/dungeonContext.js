@@ -6276,6 +6276,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       droppedLoot: droppedLoot._piles.filter((p) => !p.unsaved).map((p) => ({   // STUCK-ARROWS: WOD5's LoadID-0 container rides no save (a stuck shaft)
         pos: [...p.pos], archive: p.archive, record: p.record, items: p.items.map((it) => ({ ...it })), ...(p.owner === 'wild' ? { wild: true } : {}),
         ...(p.physical ? { physical: true } : {}),   // AUDIT PI1 H6: a shift-drop stays one - restorePiles lays it back lying
+        ...(p.remainsKey ? { remainsKey: p.remainsKey } : {}),   // AUDIT LW-III: the deep's remains found again after a load
       })).filter((p) => !p.wild),   // WILD1: a body's remains are the ROOM's (net/wildRemains.js) - never a save's, never the room's memory
       actions: actions.collectSaveData(),
       // AUDIT 63 F30: PlayerEnterExit.PlayerTeleportedIntoDungeon.
@@ -9121,7 +9122,10 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // random enemy markers, each on the floor under it, in the layout's order: every reader the same), a fallen diver's
     // remains laid there as a pile of the dungeon's own (its class's corpse picture), and whether a pile still lies at one
     restingSpots: () => (_restingSpots ??= _layoutEnemies.filter((e) => !e.fixed).map((e) => floorLanding(collider, [e.x, e.y + 0.2, e.z]))),
-    layRemains: (items, feet, icon) => droppedLoot.dropPile(items, feet, null, icon),
+    // AUDIT LW-III: the pile tagged with its remains' key (kept through a save made inside: collectWorld, restorePiles), and
+    // found again by it - a load restored the pile and the remains, never marked till taken from, were laid again beside it
+    layRemains: (items, feet, icon, key = null) => { const p = droppedLoot.dropPile(items, feet, null, icon); if (p && key) p.remainsKey = key; return p; },
+    remainsPile: (key) => droppedLoot._piles.find((p) => p.remainsKey === key && !p.dead) ?? null,
     // LW14: the dive's stops (in a company's order), its entry, a stop's treasure pile (the rival's find), and a stop's floor
     deepStops: () => _deepStops,
     deepEntry: () => dungeon.startMarker ?? null,

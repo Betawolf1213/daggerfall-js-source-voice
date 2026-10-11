@@ -479,6 +479,34 @@ export async function settleDue(db, nowS, zero = null) {
   return n;
 }
 
+/** SEAT-LEASE: how long one settler holds the Turning before another may take it, s - a settle takes seconds; one cut
+ *  off (its client gone, its isolate lost) frees the Turning when this runs out. */
+export const SETTLE_LEASE_S = 60;
+/**
+ * SEAT-LEASE (from play, 2026-10-11: the service swamped an hour after seat week 2's Turning): THE TURNINGS DUE, ONE
+ * SETTLER AT A TIME. settleDue awaited by every seat route ran the whole settle in every request while a week was due -
+ * hundreds of reads each, all at once; under load a settle outlasted its client's wait, the request was cancelled before
+ * its batch committed, and the next began another, so the week never settled and the database drowned with it. Here a
+ * caller that finds a week due takes the one lease (`town_seat_settling`, SETTLE_LEASE_S) and settles, freeing it after;
+ * a caller that finds the lease held settles nothing and is told so - `{ settled, pending }`, `pending` while another
+ * holds the Turning. Nothing due costs the one read it always did.
+ * @param {any} db @param {number} nowS @param {number|null} [zero]
+ */
+export async function settleDueOnce(db, nowS, zero = null) {
+  const last = (await db.prepare('SELECT MAX(week) AS w FROM town_seat_weeks').first())?.w;
+  if (last != null && Number(last) + 1 >= weekAt(nowS)) return { settled: 0, pending: false };
+  const holder = crypto.randomUUID();
+  const took = await db.prepare(`INSERT INTO town_seat_settling (id, holder, until) VALUES (1, ?1, ?2)
+    ON CONFLICT (id) DO UPDATE SET holder = ?1, until = ?2 WHERE until <= ?3`).bind(holder, nowS + SETTLE_LEASE_S, nowS).run();
+  if (!Number(took?.meta?.changes)) return { settled: 0, pending: true };
+  try {
+    return { settled: await settleDue(db, nowS, zero), pending: false };
+  } finally {
+    // a release that fails is the lease's own end, SETTLE_LEASE_S on - never the settle's answer lost
+    try { await db.prepare('DELETE FROM town_seat_settling WHERE id = 1 AND holder = ?').bind(holder).run(); } catch { /* it runs out */ }
+  }
+}
+
 /**
  * RELINQUISH A CHARTER (SEAT0 16: "The Guildmaster first relinquishes each Charter at its board - the seat is unheld at
  * once, its fortifications stay, a history row says so"). The guildmaster's alone, asked in the DELETE.

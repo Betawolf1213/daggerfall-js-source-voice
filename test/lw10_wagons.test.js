@@ -9,13 +9,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   teamOf, cargoOf, trainOf, campTeam, wheelAngleAt, GREAT_HOUSE_BLOCKS, WALK_GAP_N, LEAD_N, HITCH_N, WAGON_TAIL_N, CARGO_FULL, CARGO_SOLD,
-  CARGO_BOUGHT, CARGO_ROBBED, CAMP_PARK_N, CAMP_HORSE_SIDE_N,
+  CARGO_BOUGHT, CARGO_ROBBED, CAMP_PARK_N, CAMP_HORSE_SIDE_N, LANE_N,
 } from '../src/systems/livingWorld/wagons.js';
 import { createRoadTeams, WAGONS_DRAWN, wagonBucket, ROAD_WAGON_KIND } from '../src/world/roadTeams.js';
 import { createHorseCartPool } from '../src/scenes/horseCartPool.js';
-import { wayAt, wayOf, NATIVE_PER_M, NATIVE_PIXEL, partyAt, townTrips, membersAt, CALENDAR_MPM } from '../src/systems/livingWorld/trips.js';
+import { wayAt, laneAt, wayOf, NATIVE_PER_M, NATIVE_PIXEL, partyAt, townTrips, membersAt, CALENDAR_MPM } from '../src/systems/livingWorld/trips.js';
 import { HITCHED_HORSE_LOCAL_Z, wheelRotationDegrees, wrapWheelAngle, NORMAL_GROUND_OFFSET } from '../src/systems/horseCartLaw.js';
-import { createLivingRoads, CAMP_RING_N } from '../src/scenes/livingRoads.js';
+import { createLivingRoads, roadLanes, CAMP_RING_N } from '../src/scenes/livingRoads.js';
 import { synthMap } from './lwRoads.mjs';
 import { createRelations } from '../src/systems/livingWorld/relations.js';
 import { travellerRoster } from '../src/systems/livingWorld/census.js';
@@ -80,7 +80,8 @@ test('LW10 the train in file: the van (the first half of the armed) before the l
   const bt = { ...trip, way: bend, from: { blocks: 4 } };
   for (const s of [10000, 20000, 33000, 40000, 50000, 60000]) {
     const t = trainOf(bt, { phase: 'out', s }, [leader], 0);
-    const w = t.wagons[0], on = wayAt(bend, w.s);
+    // PIN MOVED (AUDIT LW-III): on the way's line - rounded at a corner (trips.js laneAt, LANE_EASE_N either side)
+    const w = t.wagons[0], on = laneAt(bend, w.s, 0);
     assert.ok(Math.hypot(w.x - on.x, w.z - on.z) < 1e-6, `the axle on the way at ${s}`);
   }
   // a pack horse, no wagon
@@ -220,12 +221,18 @@ test('AUDIT LW-II LW10: the wheels turn forward on the way home - the distance w
     const sprites = { sync: (list) => lists.push(list.map((m) => ({ ...m }))), batches: () => [], persons: () => [], bodyOf: () => null, clear: () => {} };
     const roads = createLivingRoads({ world, mpm: CALENDAR_MPM, clock: () => t, baseRate: () => CLASSIC_MINUTES_PER_SECOND, sceneOf: (nx, nz) => [nx / 40, 0, nz / 40], here: () => ({ x: at.x, z: at.z }), sprites: /** @type {any} */ (sprites), relations: () => createRelations(), memo: o.memo, teams: /** @type {any} */ (teams) });
     roads.frame(1 / 30, [at.x / 40, 1.6, at.z / 40]);
-    return { list: lists[lists.length - 1], team: synced[synced.length - 1] };
+    // the parties on the road near, as the layer reads them (AUDIT LW-III: its lanes')
+    const near = [];
+    for (const tn of towns) for (const tr of townTrips(tn, t, world, o) ?? []) { const a = partyAt(tr, t); const m = membersAt(tr, t); if ((a.phase === 'out' || a.phase === 'back') && !a.camp && !a.inn && m.length && Math.hypot(a.x - at.x, a.z - at.z) / 40 <= 400) near.push({ trip: tr, at: a, members: m }); }
+    return { list: lists[lists.length - 1], team: synced[synced.length - 1], walking: [...new Map(near.map((n) => [n.trip.id, n])).values()] };
   };
   const walking = find(12, (at, tr) => !at.camp && tr.party.length > 1);
   assert.ok(walking, 'a caravan on the march');
   const w = lay(walking);
-  const train = trainOf(walking.tr, walking.at, membersAt(walking.tr, walking.t), walking.t);
+  // PIN MOVED (AUDIT LW-III): the train in its lane - the layer's own (roadLanes), right of the road's middle
+  const lanes = roadLanes(w.walking, HITCH_N);
+  assert.ok(lanes.get(walking.tr.id) >= LANE_N, 'in a lane right of the road\'s middle');
+  const train = trainOf(walking.tr, walking.at, membersAt(walking.tr, walking.t), walking.t, HITCH_N, lanes.get(walking.tr.id));
   for (const p of train.people) {
     const body = w.list.find((m) => m.key === p.res.id);
     assert.ok(body, `${p.res.id} drawn`);
@@ -286,6 +293,8 @@ test('WAGONS1 x LW10: the living world\'s wagon is the Small Cart whatever the p
   assert.ok(Math.abs(trainOf(trip, at, [leader], 1).wagons[0].x - wayAt(way, 30000 - LEAD_N - HITCH_N).x) < 1e-6, 'unsaid, the mod\'s');
   assert.equal(campTeam(trip, 0, 0, 100, 1).wagons[0].hitched, false);
   const host = readFileSync(new URL('../src/scenes/livingRoads.js', import.meta.url), 'utf8');
-  assert.match(host, /const train = trainOf\(trip, at, members, t, deps\.teams\?\.hitchN\?\.\(\)\);/);
+  // PIN MOVED (AUDIT LW-III): the drawn wagon's hitch read once a frame, the train in its lane
+  assert.match(host, /const hitchN = deps\.teams\?\.hitchN\?\.\(\);/);
+  assert.match(host, /const train = trainOf\(trip, at, members, t, hitchN, lanes\.get\(p\.trip\.id\) \?\? LANE_N\);/);
   assert.match(host, /tier: w\.tier, s: w\.s, hitched: w\.hitched, distM: near\(w\)/);
 });

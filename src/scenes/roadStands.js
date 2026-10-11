@@ -24,6 +24,7 @@
 // ═══════════════════════════════════════════════════════════════════
 import { membersAt, NATIVE_PER_M } from '../systems/livingWorld/trips.js';
 import { firstNameOf } from '../systems/livingWorld/lines.js';
+import { killed } from './hideouts.js';   // AUDIT LW-III: a body gone from the pool is a death only where it was killed
 
 /** A hostile draws on the player this near (m) - a face known across a field. */
 export const DRAW_M = 45;
@@ -118,6 +119,9 @@ export function createRoadStands(deps) {
         }
       }
       for (const [id, s] of [...stands]) {
+        // AUDIT LW-III: KILLED, NOT GONE - a body the pool let go without a blow (its sweeps, a mode's change) is let go
+        // here too, never a slaying (a crime the caravan reports) nor a death at the player's side
+        if (s.rec?.dead && !killed(s.rec)) { stands.delete(id); continue; }
         if (s.rec?.dead) {
           if (s.kind === 'foe') {
             deps.slay(s.res, t, true);   // struck down before their party

@@ -7,6 +7,7 @@ load." and its Try again. Read on the code as it stands at main's `314ff136`.
 | | Report | What it was | Done |
 |---|---|---|---|
 | 1 | "Time to take a castle and nothing happens"; "The standings did not load." | the Turning's read of every guild pledged anywhere bound them all in one statement; D1 refuses a statement of more than 100 parameters, and every seat route settles the Turning first - so past 100 guilds every seat read answered `server`, and no Charter was claimed | fixed (SEAT-CAP) |
+| 2 | "The server is expericing a bad load right now" - after SEAT-CAP deployed | every seat request ran the whole settle while the week was due, all at once; under load each outlasted its client's wait and was cancelled before its batch committed, so the week never settled and every client's minute retry began another | fixed (SEAT-LEASE) |
 
 ## SEAT-CAP: every guild list the seats bind is read IN_CHUNK at a time (1)
 
@@ -52,3 +53,30 @@ after the Turning, and a guild's 6,000 at Anticlere claiming its Charter at that
 `guildmastersOf` runs at a Season's end alone and no pin crowds one - its list goes through the same `allIn`.
 `tools/mutants/seat_cap.json` (6, all dead: each list bound whole again). Three records re-aimed by content
 (`crown1.json` CROWN1-inf-palace, `season1.json` SEASON1-tu-masters-rank, `seat1b.json` SEAT1b-homes-new-members).
+
+## SEAT-LEASE: one settler at a time (2)
+
+`server-account/src/seatTurning.js` settleDueOnce, SETTLE_LEASE_S; `server-account/src/index.js` SEAT_READS;
+`server-account/src/cron.js`; migration `0110_seat_settling.sql`; `src/net/accountClient.js` (`seats-settling`'s words).
+
+FOUND. SEAT-CAP deployed and the service stayed swamped: a one-row seat read took 7 to 25 seconds, then sign-ins timed
+out (the deploy's own Renown and guest checks, 15 seconds each). Every seat route awaited `settleDue`, and while a week
+was due each of them ran the whole settle - several hundred reads - at once. The clients ask again a minute after a
+failed list read (`SEAT_LIST_RETRY_MS`), and the clock's minute settles too. Under that load a settle outlasted its
+client's 15-second wait; the request was cancelled before its batch committed, the week stayed due, and the next request
+began another. Turning `SEATS_OPEN` off in the dashboard (the routes answer `seats-closed` before any settle, a refusal no
+client retries on the minute) drained it.
+
+THE LAW. `settleDueOnce` - the one door every seat route and the clock's minute settle through. Nothing due costs the one
+read it always did, and writes nothing. A week due: the caller takes the one lease (`town_seat_settling`, one row, for
+SETTLE_LEASE_S, 60 seconds) and settles, freeing it after - and on a throw; a caller that finds the lease held settles
+nothing and answers `pending`. A pending seat READ (the list, the standings, the Hall of Records, the works -
+`SEAT_READS`) answers the state as it stands; a pending ACT is refused `seats-settling` (503), never made on a week half
+turned. A settler cut off (its client gone, its isolate lost) frees the Turning when its lease runs out. `settleDue`
+itself is unchanged - the loop the lease holder runs.
+
+Pinned by `test/seat1c_service.test.js` SEAT-LEASE (1): a lease held by another - the standings and the list answer
+unsettled, a pledge `seats-settling` 503, the clock pending; run out, the next read settles and frees it; nothing due asks
+one read and no lease; a settle that throws frees it. `tools/mutants/seat_lease.json` (5, all dead). acct118 (the
+version pins moved); `seat1c.json` and `season1.json`'s records on the route's settle line re-aimed by content, and
+`seat1c_client.test.js`'s host pin.

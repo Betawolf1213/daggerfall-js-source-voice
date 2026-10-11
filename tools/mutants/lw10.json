@@ -65,8 +65,8 @@
   {
     "name": "LW10-hitch",
     "file": "src/systems/livingWorld/wagons.js",
-    "old": "      const axle = s - dir * hitchN;",
-    "new": "      const axle = s - dir * hitchN * 2;",
+    "old": "      const axle = chordBehind(line, s, dir, hitchN);",
+    "new": "      const axle = chordBehind(line, s, dir, hitchN * 2);",
     "tests": [
       "test/lw10_wagons.test.js"
     ]
@@ -74,7 +74,7 @@
   {
     "name": "LW10-tail",
     "file": "src/systems/livingWorld/wagons.js",
-    "old": "      s = axle - dir * WAGON_TAIL_N;",
+    "old": "      s = chordBehind(line, axle, dir, WAGON_TAIL_N);",
     "new": "      s = axle;",
     "tests": [
       "test/lw10_wagons.test.js"
@@ -101,8 +101,8 @@
   {
     "name": "LW10-park",
     "file": "src/systems/livingWorld/wagons.js",
-    "old": "    const d = r + CAMP_PARK_N;",
-    "new": "    const d = r;",
+    "old": "  const d = Math.max(r + CAMP_PARK_N, slots ?",
+    "new": "  const d = Math.max(r, slots ?",
     "tests": [
       "test/lw10_wagons.test.js"
     ]
@@ -272,8 +272,8 @@
   {
     "name": "LW10-WAGONS1-train-hitch",
     "file": "src/systems/livingWorld/wagons.js",
-    "old": "      const axle = s - dir * hitchN;",
-    "new": "      const axle = s - dir * HITCH_N;",
+    "old": "      const axle = chordBehind(line, s, dir, hitchN);",
+    "new": "      const axle = chordBehind(line, s, dir, HITCH_N);",
     "tests": [
       "test/lw10_wagons.test.js"
     ]
@@ -290,8 +290,8 @@
   {
     "name": "LW10-WAGONS1-roads-hitch",
     "file": "src/scenes/livingRoads.js",
-    "old": "trainOf(trip, at, members, t, deps.teams?.hitchN?.());",
-    "new": "trainOf(trip, at, members, t);",
+    "old": "    const hitchN = deps.teams?.hitchN?.();",
+    "new": "    const hitchN = undefined;",
     "tests": [
       "test/lw10_wagons.test.js"
     ]

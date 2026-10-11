@@ -253,11 +253,18 @@ export function circleStands(spot, circle, street = null) {
     }
     if (places.length === n) got = places;
   }
-  // nowhere about its middle: along the way out to it, a pace apart, each facing the middle (the one on it, the spot)
-  got ??= circle.members.map((_, i) => {
-    const d = Math.max(0, Math.min(hold - STAND_MARGIN_M, rc + (i - (n - 1) / 2) * CIRCLE_APART));
-    return { x: spot.x + Math.sin(b) * d, z: spot.z + Math.cos(b) * d, yaw: d < rc ? b : b + Math.PI };
-  });
+  // nowhere about its middle: along the way out to it, a pace apart, each facing the middle (the one on it, the spot).
+  // AUDIT LW-III: the line laid WHOLE - drawn back from the way's hold, and where the way is shorter than the line,
+  // spread along all of it - each member clamped on their own, two of three stood on one clamp, 0.63 m apart
+  if (!got) {
+    const far = Math.max(0, hold - STAND_MARGIN_M), span = (n - 1) * CIRCLE_APART;
+    let d0 = Math.min(rc - span / 2, far - span), gap = CIRCLE_APART;
+    if (d0 < 0) { d0 = 0; gap = n > 1 ? far / (n - 1) : 0; }
+    got = circle.members.map((_, i) => {
+      const d = d0 + i * gap;
+      return { x: spot.x + Math.sin(b) * d, z: spot.z + Math.cos(b) * d, yaw: d < rc ? b : b + Math.PI };
+    });
+  }
   kept.set(key, got);
   return got;
 }

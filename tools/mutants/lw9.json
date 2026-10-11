@@ -544,8 +544,8 @@
   {
     "name": "LW9-AUDIT-F4-march-fire",
     "file": "src/scenes/livingRoads.js",
-    "old": "        if ((at.phase === 'out' || at.phase === 'back') && at.camp && !at.inn) {",
-    "new": "        if ((at.phase === 'out' || at.phase === 'back') && !at.inn) {",
+    "old": "        (at.camp ? camped : walking).push({ trip: p.trip, at, members });",
+    "new": "        camped.push({ trip: p.trip, at, members });",
     "tests": [
       "test/lw9_traffic.test.js"
     ]

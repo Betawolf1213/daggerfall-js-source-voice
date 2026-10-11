@@ -177,7 +177,7 @@
   {
     "name": "LW6-meet-a-peers",
     "file": "src/scenes/dungeonDivers.js",
-    "old": "        if (companies.has(trip.id) || ended.has(trip.id) || !deps.owner() || !members.some((m) => m.cls != null)) continue;",
+    "old": "        if (companies.has(trip.id) || ended.has(trip.id) || !own || !members.some((m) => m.cls != null)) continue;",
     "new": "        if (companies.has(trip.id) || ended.has(trip.id) || !members.some((m) => m.cls != null)) continue;",
     "tests": [
       "test/lw6_deep.test.js"

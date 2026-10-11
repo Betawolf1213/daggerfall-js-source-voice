@@ -260,6 +260,47 @@ export function wayAt(way, s) {
   return { x: a[0] + (b[0] - a[0]) * k, z: a[1] + (b[1] - a[1]) * k, yaw: Math.atan2(b[0] - a[0], b[1] - a[1]) };
 }
 
+/** AUDIT LW-III (KEEP RIGHT): a lane rounds a way's corner over this far (native - 10 m) either side of it. */
+export const LANE_EASE_N = 400;
+
+/**
+ * AUDIT LW-III (KEEP RIGHT): the point `side` native units to the RIGHT of a way's own direction (+s; a negative side
+ * its left) at `s`, and the way it faces there. Off a corner it is wayAt's point carried across; within LANE_EASE_N of
+ * one the way's line is rounded - the quadratic curve from LANE_EASE_N before the corner to as far past it, the corner
+ * its middle control - and the lane carried off that, so a lane runs on round a corner without a jump or a fold:
+ * wayAt's heading turns at the corner's point, and a point beside it jumped `2 side sin(turn / 2)`, or (inside the
+ * corner) folded back on itself. The curve is tightest at its middle, `LANE_EASE_N / sqrt 2` (7 m) for a right angle:
+ * wider than any lane, so none folds; it cuts the corner by a quarter of `LANE_EASE_N sqrt 2` at most (3.5 m, inside
+ * the road's paint, which squares its corners). Pure: a way and a distance.
+ * @param {Way} way @param {number} s @param {number} side
+ */
+export function laneAt(way, s, side) {
+  const { pts, cum } = way;
+  const p = wayAt(way, s);
+  let x = p.x, z = p.z, fx = Math.sin(p.yaw), fz = Math.cos(p.yaw);
+  if (pts.length >= 3) {
+    const d = Math.max(0, Math.min(way.len, s));
+    let i = 1;
+    while (i < pts.length - 1 && cum[i] < d) i++;
+    // the corner this point rounds, if any: the segment's end (j = i) or its start (j = i - 1)
+    const ease = (/** @type {number} */ j) => Math.min(LANE_EASE_N, (cum[j] - cum[j - 1]) / 2, (cum[j + 1] - cum[j]) / 2);
+    const j = i < pts.length - 1 && cum[i] - d < ease(i) ? i : i > 1 && d - cum[i - 1] < ease(i - 1) ? i - 1 : 0;
+    if (j) {
+      const e = ease(j), v = pts[j];
+      const ia = Math.hypot(v[0] - pts[j - 1][0], v[1] - pts[j - 1][1]) || 1, ib = Math.hypot(pts[j + 1][0] - v[0], pts[j + 1][1] - v[1]) || 1;
+      const ux = (v[0] - pts[j - 1][0]) / ia, uz = (v[1] - pts[j - 1][1]) / ia, wx = (pts[j + 1][0] - v[0]) / ib, wz = (pts[j + 1][1] - v[1]) / ib;
+      const t = (d - (cum[j] - e)) / (2 * e), u = 1 - t;
+      // A = v - e u, B = v + e w: the point A u^2 + 2 v t u + B t^2, the heading (v - A) u + (B - v) t
+      x = v[0] - e * ux * u * u + e * wx * t * t;
+      z = v[1] - e * uz * u * u + e * wz * t * t;
+      fx = ux * u + wx * t; fz = uz * u + wz * t;
+      const n = Math.hypot(fx, fz) || 1;
+      fx /= n; fz /= n;
+    }
+  }
+  return { x: x + fz * side, z: z - fx * side, yaw: Math.atan2(fx, fz) };
+}
+
 /** A town's half-width on the ground (native), for the trim at each end of a way: its blocks' side, halved, and a margin. @param {LwTown} town */
 export const townTrim = (town) => (Math.ceil(Math.sqrt(Math.max(1, town.blocks | 0))) * NATIVE_BLOCK) / 2 + NATIVE_BLOCK / 2;
 
@@ -984,15 +1025,21 @@ export function partyAt(trip, t) {
     if (t < fall) return placed(phase, s);   // its first day's walk
     // the nights up to `t`, each from where the party stands at its fall
     let at = sAt(fall), camp = nightStop(way, at, dir, lo, hi);   // LW9: an inn ahead, else dry ground
+    // AUDIT LW-III: the walk on to the night's stop is the minutes WALKED since dusk - a halt's own minutes out of it (a
+    // trouble met in the day's last hour, held past dusk): clocked from dusk, the party stood its halt and stepped out of
+    // it as far on as it would have walked meanwhile - 167 m in a minute at a pedlar's pace, an inn half a pixel ahead
+    const held = (/** @type {number} */ a, /** @type {number} */ b) => (h && h.leg === phase ? Math.max(0, Math.min(b, h.t1) - Math.max(a, h.t0)) : 0);
     for (let next = lastDusk(fall) + DAY_MIN; next <= t; next += DAY_MIN) {
-      const on = pace * (next - fall) >= Math.abs(camp - at) ? camp : at + dir * pace * (next - fall);
+      const gone = next - fall - held(fall, next);
+      const on = pace * gone >= Math.abs(camp - at) ? camp : at + dir * pace * gone;
       const w = sAt(next);
       at = dir * (w - on) >= 0 ? w : on;
       fall = next;
       camp = nightStop(way, at, dir, lo, hi);
     }
-    const reached = pace * (t - fall) >= Math.abs(camp - at);
-    const there = reached ? camp : at + dir * pace * (t - fall);
+    const gone = t - fall - held(fall, t);
+    const reached = pace * gone >= Math.abs(camp - at);
+    const there = reached ? camp : at + dir * pace * gone;
     if (daylight(t) && dir * (s - there) >= 0) return { ...placed(phase, s), camp: false };   // the day's walk
     const inn = reached ? way.inns?.find((i) => i.s === camp) ?? null : null;   // LW9: lodged at the inn on the road
     return { ...placed(phase, there), camp: reached, ...(inn ? { inn: inn.town } : {}) };   // walking on to the night's camp, or at it

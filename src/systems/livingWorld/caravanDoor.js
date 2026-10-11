@@ -97,11 +97,15 @@ export function yields(trip, t, down = () => false) {
 
 /**
  * THE ROAD OFFERED: a merchant's trip the player may hire on to at minute `t` - from ESCORT_OFFER_MIN before it sets out
- * until it is in.
+ * until it is in. AUDIT LW-III: a caravan that turns home is offered until it turns - its way out ends at its trouble's
+ * minute (trouble.js troubledTrip: `outT1` the turn), and the escort's step reads the turn (caravanHost.js, unpaid). The
+ * door refused a trip `turned` at all: a trip is fated as it is minted, so the caravan the dice would turn never offered
+ * "hire on", a day before its trouble - the one an escort could save (a fight won turns the fate), and its missing row
+ * told the player which caravans the road would meet.
  * @param {any} trip @param {number} t
  */
 export function escortOffer(trip, t) {
-  return trip?.kind === 'merchant' && !trip.turned && !trip.sea && t >= trip.outT0 - ESCORT_OFFER_MIN && t < trip.outT1;
+  return trip?.kind === 'merchant' && !trip.sea && t >= trip.outT0 - ESCORT_OFFER_MIN && t < trip.outT1;
 }
 
 /** THE ESCORT'S PAY at the town: the days of the walk out (each from WALK_FROM_H to WALK_TO_H, a part a whole) at the

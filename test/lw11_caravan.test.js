@@ -125,7 +125,10 @@ test('LW11 the road offered: a merchant\'s caravan, from ESCORT_OFFER_MIN before
   assert.equal(escortOffer(trip, 5000 - ESCORT_OFFER_MIN), true);
   assert.equal(escortOffer(trip, 6999), true);
   assert.equal(escortOffer(trip, 7000), false, 'in');
-  assert.equal(escortOffer({ ...trip, turned: true }, 6000), false);
+  // PIN MOVED (AUDIT LW-III): a caravan the road turns home is offered until it turns (troubledTrip's outT1 the turn's
+  // minute) - never refused for a fate it has not met yet
+  assert.equal(escortOffer({ ...trip, turned: true, outT1: 6500 }, 6000), true, 'fated to turn: offered till it does');
+  assert.equal(escortOffer({ ...trip, turned: true, outT1: 6500 }, 6500), false, 'turned: none');
   assert.equal(escortOffer({ ...trip, sea: true }, 6000), false);
   for (const kind of ['pedlar', 'carter', 'noble', 'adventurer']) assert.equal(escortOffer({ ...trip, kind }, 6000), false, kind);
 });
@@ -328,7 +331,7 @@ test('LW11 the hold-up: the party\'s armed all down, its leader standing - it yi
   const t = walkingOut(raw);
   const trip = handsOn(raw, (m) => (m.cls != null ? t - 1 : null));   // AUDIT LW-II-2 C1: the trip as the host mints it - its guards' hand deaths on it (world.js fate, trips.js handsOn)
   const at = partyAt(trip, t);
-  const { host, log, rel, slain } = hostOver(trip, { now: t, here: { x: at.x, z: at.z } });   // PIN MOVED (AUDIT LW-II C4): there, its armed by the player's hand
+  const { host, log, rel, slain, deps } = hostOver(trip, { now: t, here: { x: at.x, z: at.z } });   // PIN MOVED (AUDIT LW-II C4): there, its armed by the player's hand
   for (const m of trip.party) if (m.cls != null) slain.add(m.id);
   host.step();
   assert.equal(rel.wares(trip.id).robbed, t);
@@ -338,6 +341,14 @@ test('LW11 the hold-up: the party\'s armed all down, its leader standing - it yi
   assert.equal(rel.reports()[0].who, trip.leader.name, 'LW16: the one robbed, for the tale');
   host.step();
   assert.equal(log.said.filter((s) => /Take it/.test(s)).length, 1, 'once');
+  // AUDIT LW-III: and once after a load - a new host (the session's `yielded` gone), the character's records read back: the
+  // robbery they keep holds it (`robbedOf`), no second yield, no second theft reported, its minute never moved on
+  const reports = rel.reports().length;
+  const loaded = createCaravanHost({ ...deps, relations: () => createRelations(JSON.parse(JSON.stringify(rel.snapshot()))) });
+  loaded.step();
+  assert.equal(log.said.filter((s) => /Take it/.test(s)).length, 1, 'never again after a load');
+  assert.equal(rel.reports().length, reports, 'no second report');
+  assert.equal(loaded.robbed(trip.id), t, 'its minute kept');
   host.offers({ living: { res: trip.leader } }, () => {});
   assert.deepEqual(codes(log).slice(0, 1), ['KeyT']);
   log.choices.at(-1).options[0].action();

@@ -155,8 +155,8 @@
   {
     "name": "WATCH-FIX-census-skip",
     "file": "src/systems/livingWorld/livingTown.js",
-    "old": "      if (this._away(res)) { lent.push(res); continue; }   // WATCH-FIX: with the watch - a guard stands for them",
-    "new": "      // WATCH-FIX: with the watch - a guard stands for them",
+    "old": "      const away = this._away(res);",
+    "new": "      const away = false && this._away(res);",
     "tests": [
       "test/watchfix_watch.test.js"
     ]

@@ -335,6 +335,10 @@ export class LivingTown {
     /** @type {Map<string, { circle: any, place: { x: number, z: number, yaw: number }, spot: any }>} this tick's circles, by member - LW-SPACE
      *  `place` where they stand in it (the round's circles laid together, meetups.js circlesStands) */
     this._inCircle = new Map();
+    /** AUDIT LW-III: each spot's places the round's deal lays, all of them (`_spaceAlone`'s taken) @type {Map<string, { x: number, z: number }[]>} */
+    this._circled = new Map();
+    /** AUDIT LW-III: one left of a circle short of two, at their place in it @type {Map<string, any>} */
+    this._holding = new Map();
     /** LW-STIR: this tick's incidents, by each of its two - the round's, the two as the street keeps them whole (`pair`),
      *  the other of them, and the one who keeps their stand (`keeps`: the other comes before them, `_spaceAlone`)
      *  @type {Map<string, { inc: import('./stir.js').Incident, pair: any, spot: any, other: string, keeps: string }>} */
@@ -773,7 +777,11 @@ export class LivingTown {
     for (const res of this.peopleOf(day).concat(this._crewsNow())) {
       if (this._taken.get(res.id) === day || this._away(res) || this._gone(res) || this.o.deadAt?.(res, t)) continue;   // WATCH-FIX: nor one with the watch
       const at = this.entryOf(res, t);
-      const e = at?.e;
+      // AUDIT LW-III: one whose walk in has ended before its planned minute (the plan budgets a walk at more than its
+      // line takes) is in with the stay it walked to - in through the door (`where`), they stood in no street and no room
+      // for the rest of the walk's minutes (657 of 761 walks into a room, 7.9 minutes on average)
+      const early = at?.e?.kind === 'walk' && at.next && !isOutdoor(at.next) && at.next.kind !== 'walk' && at.next.at?.building === key && !this.where(res, t, false);
+      const e = early ? at.next : at?.e;
       if (!e || e.kind === 'walk' || isOutdoor(e) || e.at?.building !== key) continue;
       if (e.kind === 'sleep' || (e.kind === 'work' && !house && res.work === key)) continue;
       if (this.where(res, t, false)) continue;   // still in the street: a walk running late
@@ -1023,7 +1031,8 @@ export class LivingTown {
     const absent = new Set();
     /** LW-TALK: the census's own on this street, each read for where they stand once the beat's circles are dealt */
     const alive = [];
-    /** LW-SPACE: everyone the plans stand in this town now, the struck down too (their place is dealt, and left empty) */
+    /** LW-SPACE: everyone the plans stand in this town now, the struck down too (their place is dealt, and left empty) -
+     *  AUDIT LW-III: and the lent (theirs kept for them) */
     const everyone = [];
     /** AUDIT LW-STIR B2: those with the watch - dealt the day's incidents as everyone is, and left out (`absent`) */
     const lent = [];
@@ -1032,9 +1041,13 @@ export class LivingTown {
     const pending = [];
     if (this.o.harbour && !this.places.dock.length && !this._harbourDock) this.dockSpot();   // LW5: the harbour sounded since
     for (const res of [...this.peopleOf(day), ...this._crewsNow()]) {
-      if (this._away(res)) { lent.push(res); continue; }   // WATCH-FIX: with the watch - a guard stands for them
-      if (this._gone(res)) continue;   // LW5: aboard, or ashore at the far port
-      everyone.push(res);
+      // WATCH-FIX: with the watch - a guard stands for them. AUDIT LW-III: and dealt still where their day stands them
+      // (`presence`; left out as `absent`, as the struck down are) - left out of the deal, every circle after theirs at the
+      // spot was dealt anew in this reader alone, from the lend's minute and again from the guard's going
+      const away = this._away(res);
+      if (!away && this._gone(res)) continue;   // LW5: aboard, or ashore at the far port
+      if (away) lent.push(res);
+      everyone.push(res);   // AUDIT LW-III: the lent too, in the census's order - every reader's
       const plan = this.planOf(res, day);
       for (let i = Math.max(0, entryAt(plan, t)); i >= 0 && plan[i].t1 > t - 2 * roundMin; i--) {
         const e = plan[i];
@@ -1044,6 +1057,7 @@ export class LivingTown {
         presence.set(e.at.key, list);
         spotOf.set(e.at.key, e.at);
       }
+      if (away) continue;
       if (this._taken.get(res.id) === day || this.o.deadAt?.(res, t)) {   // LW7: struck down - dead from that minute
         absent.add(res.id);
         const row = this._rowOf(res);
@@ -1056,6 +1070,8 @@ export class LivingTown {
     // circle's talk waits for its people to gather, from where the last round stood them (their place in it, else their
     // own about the spot) to their place in this one, at the walking pace (`from`)
     this._inCircle.clear();
+    this._circled.clear();
+    this._holding.clear();
     this._inStir.clear();
     this._stirAt.clear();
     this._stirVoice.clear();
@@ -1064,7 +1080,7 @@ export class LivingTown {
     // struck down's): the round's deal and its circles' places are the ones they were. Its two stand the round through
     // with those alone at the spot (`_spaceAlone`), the one who comes before the one who keeps their stand
     for (const res of lent) absent.add(res.id);
-    const stirs = this._stirOf(day, everyone.concat(lent));
+    const stirs = this._stirOf(day, everyone);   // AUDIT LW-III: the lent in their own place in it (concatenated, a lend moved them last)
     for (const key of new Set([...presence.keys(), ...stirs.by.keys()])) {
       const list = presence.get(key) ?? [];
       const round = spotRound(key, t, roundMin);
@@ -1085,18 +1101,25 @@ export class LivingTown {
       circlesStands(spot, before, this._street).forEach((places, ci) => places.forEach((st, i) => stood.set(before[ci].members[i].id, st)));   // LW-SPACE: the round's circles laid together
       const inInc = (/** @type {string} */ id) => !!inc && inc.members.some((m) => m.id === id);
       const laid = circlesStands(spot, now, this._street);
+      // AUDIT LW-III: every place the round's deal lays is taken - the left-out's too (the struck down's, the lent's), so
+      // what this reader alone has never frees a place another reader's alone stand there (`_spaceAlone`)
+      this._circled.set(key, laid.flat());
       for (const [ci, dealt] of now.entries()) {
         const places = laid[ci];
         let far = 0;
         dealt.members.forEach((m, i) => { if (inInc(m.id)) return; const was = stood.get(m.id) ?? aloneStand(spot, m.id, this._street); far = Math.max(far, Math.hypot(places[i].x - was.x, places[i].z - was.z)); });   // LW-STIR: not the incident's two
         const from = dealt.start + (far / PERSON_MOVE_SPEED + GATHER_BEAT_S) * this._baseRate();
         const members = dealt.members.filter((m) => !absent.has(m.id) && !inInc(m.id));   // LW-STIR: nor the incident's two
-        if (members.length < 2) continue;   // left alone on this street: their own counsel
+        // left alone on this street: their own counsel - AUDIT LW-III: at their place in the deal, silent (laid alone, they
+        // took a place among those alone at the spot, and every one after them stood anew in this reader alone)
+        // and the left out (struck down, lent) keep theirs empty, never laid alone - so the alone are laid alike everywhere
+        dealt.members.forEach((m, i) => { if (!inInc(m.id) && (members.length < 2 || !members.includes(m))) this._holding.set(m.id, { spot, ...places[i] }); });
+        if (members.length < 2) continue;
         const circle = { ...dealt, members, from };
         dealt.members.forEach((m, i) => { if (!absent.has(m.id) && !inInc(m.id)) this._inCircle.set(m.id, { circle, place: places[i], spot }); });   // LW-SPACE: their place in the round's laying - the deal's, every reader's
       }
     }
-    this._spaceAlone(everyone, t);
+    this._spaceAlone(everyone, t);   // AUDIT LW-III: the lent's places kept for them, as every reader has them
     // LW-STIR: words shouted at a spot - where its two stand, laid with those alone there (the onlookers turn to it)
     for (const [id, x] of this._inStir) {
       if (x.inc.members[0].id !== id || !stirLoud(x.inc, t)) continue;
@@ -1210,7 +1233,7 @@ export class LivingTown {
       const e = plan[i].kind === 'walk' ? plan[i + 1] : plan[i];   // on their way there: their place kept for them as they come
       if (!e) continue;
       if (e.kind === 'walk' || !isOutdoor(e) || !e.at) continue;
-      if (this._inCircle.get(res.id)?.spot === e.at) continue;
+      if (this._inCircle.get(res.id)?.spot === e.at || this._holding.get(res.id)?.spot === e.at) continue;
       // bound for it since they set out for it (the walk there), through every stay there since (a stall, then the talk)
       let j = i;
       if (plan[j].kind !== 'walk') {
@@ -1222,13 +1245,9 @@ export class LivingTown {
       list.who.push({ id: res.id, t0: since });
       at.set(k, list);
     }
-    /** @type {Map<string, { x: number, z: number }[]>} the circles' places at each spot */
-    const circled = new Map();
-    for (const c of this._inCircle.values()) {
-      const k = c.spot.key, list = circled.get(k) ?? [];
-      list.push(c.place);
-      circled.set(k, list);
-    }
+    /** the circles' places at each spot - AUDIT LW-III: the deal's whole laying (`_circled`), never the circles that
+     *  stood in this reader (a circle short of two was left out, and its places freed) */
+    const circled = this._circled;
     /** LW-STIR: at each spot, the one of an incident who comes before the one who keeps their stand
      *  @type {Map<string, Map<string, string>>} */
     const beside = new Map();
@@ -1239,6 +1258,7 @@ export class LivingTown {
       beside.set(x.spot.key, m);
     }
     this._aloneAt.clear();
+    for (const [id, h] of this._holding) this._aloneAt.set(id, h);   // AUDIT LW-III: a circle's one left, at its place
     for (const [k, { spot, who }] of at) {
       who.sort((a, b) => a.t0 - b.t0 || (a.id < b.id ? -1 : 1));
       const ids = who.map((w) => w.id), taken = circled.get(k) ?? [], by = beside.get(k) ?? null;

@@ -119,7 +119,7 @@
   {
     "name": "LW5-gone-unread",
     "file": "src/systems/livingWorld/livingTown.js",
-    "old": "      if (this._gone(res)) continue;   // LW5: aboard, or ashore at the far port",
+    "old": "      if (!away && this._gone(res)) continue;   // LW5: aboard, or ashore at the far port",
     "new": "      // LW5: aboard, or ashore at the far port",
     "tests": [
       "test/lw5_ports.test.js"

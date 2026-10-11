@@ -155,8 +155,8 @@
   {
     "name": "LW11-offer-turned",
     "file": "src/systems/livingWorld/caravanDoor.js",
-    "old": "trip?.kind === 'merchant' && !trip.turned && !trip.sea",
-    "new": "trip?.kind === 'merchant' && !trip.sea",
+    "old": "t >= trip.outT0 - ESCORT_OFFER_MIN && t < trip.outT1;",
+    "new": "t >= trip.outT0 - ESCORT_OFFER_MIN && (t < trip.outT1 || !!trip.turned);",
     "tests": [
       "test/lw11_caravan.test.js"
     ]

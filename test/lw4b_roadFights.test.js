@@ -92,10 +92,10 @@ test('LW4b the end is what happens: an ally cut down FELL; every foe dead, the f
   rig.fights.frame([{ trip, at }], here, 1001);
   await settle();
   const allies = rig.spawned.filter((r) => r.o.allied), foes = rig.spawned.filter((r) => !r.o.allied);
-  allies[1].dead = true;
+  allies[1].dead = true; allies[1].corpse = true;   // PIN MOVED (AUDIT LW-III): killed as the pool kills - dead, a corpse
   rig.fights.frame([], here, 1005);
   assert.deepEqual(rig.rel.turns().died.get('L9.t5@K'), { t: 1005, seen: false, who: 'Cy Fenn' }, 'cut down beside the player: died at their side, at that minute (AUDIT-C3)');
-  for (const f of foes) f.dead = true;
+  for (const f of foes) { f.dead = true; f.corpse = true; }
   rig.fights.frame([], here, 1010);
   assert.ok(rig.rel.turns().won.has(trip.enc.id), 'won');
   assert.ok(rig.rel.turns().spared.has('L9.t1@K'), 'the fated leader, standing: spared');
@@ -112,7 +112,7 @@ test('LW4b the end is what happens: an ally cut down FELL; every foe dead, the f
   const lost = fightRig();
   lost.fights.frame([{ trip, at }], here, 1001);
   await settle();
-  for (const a of lost.spawned.filter((r) => r.o.allied)) a.dead = true;
+  for (const a of lost.spawned.filter((r) => r.o.allied)) { a.dead = true; a.corpse = true; }
   lost.fights.frame([], here, 1005);
   assert.ok(lost.rel.turns().lost.has(trip.enc.id), 'lost');
   lost.fights.frame([], { x: here.x + 400 * 40, z: here.z }, 1006);
@@ -158,9 +158,38 @@ test('LW4b the end is what happens: an ally cut down FELL; every foe dead, the f
   if (unarmedIds.length) assert.ok(synced.some((x) => unarmedIds.includes(x.key)), 'its unarmed drawn as ever');
   // the host
   const w = rd('src/scenes/world.js');
-  assert.match(w, /spawn: \(type, feet, o\) => exteriorFoes\.spawnFoe\(type, feet, \{ yaw: o\.yaw, gender: o\.gender, level: o\.level, allied: o\.allied, loose: true, transient: true \}\),/);
+  assert.match(w, /spawn: \(type, feet, o\) => exteriorFoes\.spawnFoe\(type, feet, \{ yaw: o\.yaw, gender: o\.gender, level: o\.level, allied: o\.allied, loose: true, transient: true, managed: true \}\),/);   // PIN MOVED (AUDIT LW-III): managed - the fight owns its bodies' lives
   assert.match(w, /owner: \(feet\) => amGroupRollOwner\(online\?\.id \?\? null, player\.feetAt\(\), \(peersNear\(\) \?\? \[\]\)\.filter\(\(p\) => Math\.hypot\(p\.feet\[0\] - feet\[0\], p\.feet\[2\] - feet\[2\]\) <= LIVE_M\), Infinity\),/, 'AUDIT-B5: the fight\'s own election');
   assert.match(w, /ready: \(\) => !!walkMode && !!playerSpawned && !_loading && !modes\?\.transitioning && _mode\(\) === 'exterior' && !playerAfloat\(\),/);
   assert.match(w, /return turnKey\(place, placeCycle\(place, roster, Math\.floor\(trip\.outT0 \/ 1440\), livingScale\(\)\)\);/);
   assert.match(rd('src/scenes/livingRoads.js'), /clear\(\) \{ deps\.sprites\.clear\(\); deps\.teams\?\.clear\(\); deps\.fights\?\.clear\(\);/);   // LW10: PIN MOVED - the teams cleared beside
+});
+
+test('AUDIT LW-III KILLED, NOT GONE: a fight\'s bodies the pool let go without a blow (its relevance cull: dead, no corpse) are neither a fall nor a win - no ally a death at the player\'s side, no fight won, no fated spared; one killed (dead with a corpse, or executed) is (mutants: the ally\'s kill, the foes\' kill, the lost)', async () => {
+  const trip = fightTrip();
+  const at = { x: trip.enc.x, z: trip.enc.z, fight: true };
+  const here = { x: at.x + 50 * 40, z: at.z };
+  const rig = fightRig({ fated: (res) => res.id === 'L9.t1' });
+  rig.fights.frame([{ trip, at }], here, 1001);
+  await settle();
+  // the cull's own mark: dead, no corpse, out of the pool
+  for (const r of rig.spawned) { r.dead = true; rig.pool.delete(r); }
+  rig.fights.frame([], here, 1005);
+  assert.equal(rig.rel.turns().died.size, 0, 'no ally died for a cull');
+  assert.ok(!rig.rel.turns().won.has(trip.enc.id) && !rig.rel.turns().lost.has(trip.enc.id), 'neither won nor lost');
+  assert.equal(rig.rel.turns().spared.size, 0, 'none spared');
+  // its armed culled, its foes standing: not lost either
+  const cut = fightRig();
+  cut.fights.frame([{ trip, at }], here, 1001);
+  await settle();
+  for (const r of cut.spawned.filter((x) => x.o.allied)) { r.dead = true; cut.pool.delete(r); }
+  cut.fights.frame([], here, 1005);
+  assert.ok(!cut.rel.turns().lost.has(trip.enc.id), 'its armed gone without a blow: not lost');
+  // executed is a kill
+  const ex = fightRig();
+  ex.fights.frame([{ trip, at }], here, 1001);
+  await settle();
+  for (const r of ex.spawned.filter((x) => !x.o.allied)) { r.dead = true; r.executed = true; }
+  ex.fights.frame([], here, 1005);
+  assert.ok(ex.rel.turns().won.has(trip.enc.id), 'executed: won');
 });

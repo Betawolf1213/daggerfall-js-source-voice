@@ -45,7 +45,7 @@
 import { closeAuctions, pruneMarketHistory, SETTLE_MAX, reckonPatrons, marketOpenFor, markPatronsShut } from './market.js';
 import { closeGuildWrits } from './writs.js';
 import { closeContracts } from './contracts.js';
-import { settleDue } from './seatTurning.js';
+import { settleDueOnce } from './seatTurning.js';
 import { motherlodesOf } from './motherlodes.js';
 import { sweepBoard } from './board.js';
 import { sweepGuildNotes } from './guildBoard.js';
@@ -116,7 +116,7 @@ export const MINUTE_JOBS = Object.freeze([
   ['guild-writs', (ctx) => rounds(() => closeGuildWrits(ctx), WRIT_SETTLE_MAX, ctx.budget)],
   ['contracts', (ctx) => rounds(() => closeContracts(ctx), WRIT_SETTLE_MAX, ctx.budget)],
   // a seat's Turning while the seats are open to everyone - behind `dev` they are a developer's, settled by their reads
-  ['seats', async (ctx, env) => (seatsSwitchOf(env?.SEATS_OPEN) === 'on' ? settleDue(ctx.db, ctx.nowS, seasonZeroOf(env.SEASON_ZERO_WEEK)) : 0)],
+  ['seats', async (ctx, env) => (seatsSwitchOf(env?.SEATS_OPEN) === 'on' ? (await settleDueOnce(ctx.db, ctx.nowS, seasonZeroOf(env.SEASON_ZERO_WEEK))).settled : 0)],
   // the season's #1, counted before a reader would count it (arena.js championNow, STORM-SHED 2's kept word). AUDIT SCALE
   // A4: COUNTED ONLY WHEN A BOUT HAS COME SINCE - the board moves through a bout alone (claimArena counts it at once; no
   // route deletes an account), so a kept word no bout is newer than is stamped again rather than counted: the count

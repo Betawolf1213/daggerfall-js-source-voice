@@ -8,7 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { standService, T0, d1, D1_MAX_BOUND } from './accountDb.mjs';   // SEAT-CAP: the fake refuses what D1 refuses
 import { webcrypto } from 'node:crypto';
-import { settleWeek } from '../server-account/src/seatTurning.js';
+import { settleWeek, settleDueOnce, SETTLE_LEASE_S } from '../server-account/src/seatTurning.js';   // SEAT-LEASE: the one settler
 import { mintWatchReceipt } from '../src/net/watchReceipt.js';
 import {
   seatReportText, seatWeekOf, seatWeekStartMs, SEAT_MEMBER_WAIT_S, CLAIM_FEE, STANDING_START, STANDING_UNCHALLENGED,
@@ -231,4 +231,41 @@ test('SEAT-CAP PAST A HUNDRED GUILDS (from play, 2026-10-11: "charter seats are 
   assert.equal(s.holder?.guild.id, sh.gid, 'the Turning claimed the Charter');
   assert.equal(hold(ANTICLERE.key)?.guild_id, sh.gid);
   assert.equal((await standings(sh.gm, ALCAIRE)).standings.length, 120);
+});
+
+test('SEAT-LEASE ONE SETTLER (from play, 2026-10-11: the service swamped an hour after seat week 2\'s Turning): while another holds the Turning\'s lease a due week is settled by nobody else - a seat read answers the state as it stands, an act is told `seats-settling` (503), the clock\'s settle answers pending; the lease run out, the next read settles and frees it; a settle that throws frees it too (mutants: the lease\'s WHERE; the pending answer; the reads let through; the release)', async (t) => {
+  let now = T0;
+  t.mock.method(Date, 'now', () => now * 1000);
+  const { svc, raw, guild, treasury, pledge, earn, list, standings, hold } = await stood();
+  const sh = await guild('Gamal', 'The Silver Hand', 'SH');
+  pledge(sh.gid, ANTICLERE); treasury(sh.gid, 10000);
+  await earn(sh.gid, ANTICLERE, 6000);
+  assert.equal((await standings(sh.gm)).holder, null, 'the week still running');   // and the week before settled, by its one settler
+  assert.equal(raw.prepare('SELECT COUNT(*) AS n FROM town_seat_settling').get().n, 0, 'freed after it');
+  now = NEXT_WEEK;
+  raw.prepare("INSERT INTO town_seat_settling (id, holder, until) VALUES (1, 'another', ?)").run(now + 30);
+  const s = await standings(sh.gm);
+  assert.equal(s.error, undefined, 'a read answers while another settles');
+  assert.equal(s.holder, null, 'the state as it stands - nobody else settles it');
+  assert.ok(Array.isArray((await list(sh.gm)).seats), 'the list answers too');
+  assert.equal(raw.prepare('SELECT COUNT(*) AS n FROM town_seat_weeks WHERE week = ?').get(W).n, 0);
+  const act = await svc.call('/v1/seats/pledge', { character: sh.gm.character, key: ALCAIRE.key }, sh.gm.secret);
+  assert.deepEqual([act.status, act.body.error], [503, 'seats-settling'], 'an act asks again in a moment');
+  assert.deepEqual(await settleDueOnce(svc.env.DB, now), { settled: 0, pending: true }, 'the clock\'s settle waits its turn');
+  now += 31;   // the other settler cut off: its lease runs out
+  const after = await standings(sh.gm);
+  assert.equal(after.holder?.guild.id, sh.gid, 'the next read takes the lease and settles');
+  assert.equal(hold(ANTICLERE.key)?.guild_id, sh.gid);
+  assert.equal(raw.prepare('SELECT COUNT(*) AS n FROM town_seat_settling').get().n, 0, 'and frees it');
+  // nothing due: the one read it always cost, and no lease written - every seat request asks
+  const db = svc.env.DB;
+  const asked = [];
+  const watched = { ...db, prepare: (sql) => { asked.push(sql); return db.prepare(sql); }, batch: (l) => db.batch(l) };
+  assert.deepEqual(await settleDueOnce(watched, now), { settled: 0, pending: false });
+  assert.deepEqual(asked, ['SELECT MAX(week) AS w FROM town_seat_weeks'], 'nothing due: no lease asked');
+  // a settle that throws frees the lease on its way out
+  const broken = { ...db, prepare: (sql) => { if (/FROM town_seat_pledges/.test(sql)) throw new Error('D1_ERROR: boom'); return db.prepare(sql); }, batch: (l) => db.batch(l) };
+  await assert.rejects(settleDueOnce(broken, now + 7 * 86400), /boom/);
+  assert.equal(raw.prepare('SELECT COUNT(*) AS n FROM town_seat_settling').get().n, 0, 'freed by a settle that threw');
+  assert.ok(SETTLE_LEASE_S >= 30 && SETTLE_LEASE_S <= 120, 'a lease longer than a settle, shorter than a stall');
 });

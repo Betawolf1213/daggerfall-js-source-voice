@@ -119,8 +119,8 @@
   {
     "name": "AUDIT-LWSTIR-B2-lent-undealt",
     "file": "src/systems/livingWorld/livingTown.js",
-    "old": "const stirs = this._stirOf(day, everyone.concat(lent));",
-    "new": "const stirs = this._stirOf(day, everyone);",
+    "old": "const stirs = this._stirOf(day, everyone);",
+    "new": "const stirs = this._stirOf(day, everyone.filter((r) => !lent.includes(r)));",
     "tests": [
       "test/auditlwstir.test.js"
     ]
@@ -1068,7 +1068,7 @@
   {
     "name": "AUDIT-LWSTIR-D-reader-alive-deal",
     "file": "src/systems/livingWorld/livingTown.js",
-    "old": "const stirs = this._stirOf(day, everyone.concat(lent));",
+    "old": "const stirs = this._stirOf(day, everyone);",
     "new": "const stirs = this._stirOf(day, alive.concat(lent));",
     "tests": [
       "test/auditlwstir.test.js",

@@ -105,10 +105,10 @@ test('LW-FIX4 a fight ENDED here is never stood again (a re-read halt running pa
   rig.fights.frame([{ trip, at }], here, 1001);
   await settle();
   const foes = rig.spawned.filter((r) => !r.o.allied), allies = rig.spawned.filter((r) => r.o.allied);
-  allies[1].dead = true;
+  allies[1].dead = true; allies[1].corpse = true;   // PIN MOVED (AUDIT LW-III): killed as the pool kills - dead, a corpse
   rig.fights.frame([], here, 1004);
   assert.deepEqual(rig.died, [['L9.t5', 1004]], 'died at the player\'s side, at that minute');
-  for (const f of foes) f.dead = true;
+  for (const f of foes) { f.dead = true; f.corpse = true; }
   rig.fights.frame([], here, 1010);
   rig.fights.frame([], here, trip.enc.t1);
   assert.equal(rig.fights.size, 0, 'walked on');
@@ -123,7 +123,7 @@ test('LW-FIX4 a fight ENDED here is never stood again (a re-read halt running pa
   assert.ok(!membersAt(doomed, 1010).some((m) => m.id === 'L9.t4'), 'the road\'s minute for their fall is past');
   fatedRig.fights.frame([{ trip: doomed, at }], here, 1001);
   await settle();
-  for (const f of fatedRig.spawned.filter((r) => !r.o.allied)) f.dead = true;
+  for (const f of fatedRig.spawned.filter((r) => !r.o.allied)) { f.dead = true; f.corpse = true; }
   fatedRig.fights.frame([], here, 1010);
   assert.ok(fatedRig.rel.turns().spared.has('L9.t4@K'), 'standing at the win: spared');
   // the roads: a stood ally's remains not drawn beside them
@@ -171,7 +171,7 @@ test('LW-FIX4 one struck down on the road is never stood again (the roads\' part
   stands.frame(cands, { x: 0, z: 0 }, 5000);
   return Promise.resolve().then(() => {
     assert.equal(spawned, 1, 'drew on the player');
-    stands.stands()[0].rec.dead = true;
+    stands.stands()[0].rec.dead = true; stands.stands()[0].rec.corpse = true;   // PIN MOVED (AUDIT LW-III): killed, a corpse
     stands.frame(cands, { x: 0, z: 0 }, 5001);
     assert.ok(slain.has(res.id), 'struck down');
     stands.frame(cands, { x: 0, z: 0 }, 5001.1);

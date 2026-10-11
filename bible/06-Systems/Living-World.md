@@ -449,10 +449,12 @@ leaves its dead below, and the town says so (DIVE_NEWS); now a player can go dow
 - **Where they lie**: at one of the places the dungeon's own foes stand - its random enemy markers, each on the floor
   under it (`restingSpots`, the layout's order) - the one their key deals (`restAt`): every reader the same.
 - **What lies there**: their body, their class's own corpse picture, as a pile of the dungeon's own (`layRemains`) with
-  what they carried - their class's loot table at their level, a weapon, a piece of armour and their purse. Laid ONCE in
-  the character's world (the relations' `laid` mark, written into the save only once there is one); the dungeon's pile
-  from then - kept while the dungeon stands and in a save made inside it, as any of its piles is (a dungeon keeps no
-  scene cache: left, the pile is gone, and the `laid` mark keeps it from being laid again), the player loots it. On
+  what they carried - their class's loot table at their level, a weapon, a piece of armour and their purse. Laid each
+  visit until the player has taken from them (AUDIT-C5, LW-FIX5: the relations' `laid` mark, spent once taken from); the
+  dungeon's pile from then - kept while the dungeon stands and in a save made inside it, as any of its piles is, and
+  AUDIT LW-III: tagged with the remains' key (`layRemains`, the save's row, `restorePiles`), so the load's pile is
+  theirs, adopted (`pileOf`), never a second laid beside it (each save and load laid another set). A dungeon keeps no
+  scene cache: left, the pile is gone. The player loots it. On
   the way in they are simply there (the dungeon as it
   is); one the deep takes while the player is below lies where the player is not (beyond `DEEP_LAY_M`, 15 m).
 - **Found**: the player coming within `DEEP_NOTICE_M` (4 m) of remains still lying there hears whose they are ("The

@@ -316,7 +316,7 @@ export function createDroppedLoot({ renderer, getTexture, uploadRecordFrame, pic
       // AUDIT 63 F22: a scene-built container keeps its identity and
       // its not-player-owned flag across the cache, so the marker pass
       // can tell a restored pile from one it still owes.
-      const pile = { id: ++_nextId, items: s.items?.map((it) => ({ ...it })) ?? [], pos: [s.pos[0], s.pos[1], s.pos[2]], archive: s.archive ?? RANDOM_TREASURE_ARCHIVE, record: s.record, batch: null, container: !!s.container, containerKey: s.containerKey ?? null, inactive: false, ...(s.physical ? { physical: true, settled: true } : {}) };   // PI1
+      const pile = { id: ++_nextId, items: s.items?.map((it) => ({ ...it })) ?? [], pos: [s.pos[0], s.pos[1], s.pos[2]], archive: s.archive ?? RANDOM_TREASURE_ARCHIVE, record: s.record, batch: null, container: !!s.container, containerKey: s.containerKey ?? null, inactive: false, ...(s.physical ? { physical: true, settled: true } : {}), ...(typeof s.remainsKey === 'string' ? { remainsKey: s.remainsKey } : {}) };   // PI1; AUDIT LW-III: a remains' pile keeps its key
       piles.push(pile);
       // RestoreSaveData:157-160 - `if (loot.Items.Count == 0)
       // RemoveLootContainer(loot)`, which is SetActive(false) for a

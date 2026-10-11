@@ -218,8 +218,8 @@
   {
     "name": "LW4b-host-saved-foes",
     "file": "src/scenes/world.js",
-    "old": "allied: o.allied, loose: true, transient: true }),",
-    "new": "allied: o.allied, loose: true }),",
+    "old": "allied: o.allied, loose: true, transient: true, managed: true }),",
+    "new": "allied: o.allied, loose: true, managed: true }),",
     "tests": [
       "test/lw4b_roadFights.test.js"
     ]

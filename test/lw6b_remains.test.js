@@ -194,13 +194,14 @@ test('LW6b the divers\' word: one of a company stood in the dungeon this time - 
 test('LW6b the dungeon and the streaming host: the dungeon\'s resting places (its random enemy markers, on the floor), its pile for the remains wearing the given picture, whether one lies at a place; the host asks the deep once a second in the dungeon, passing by the fallen beside the player, the spared and any of a company stood there now, lays each with its class\'s corpse picture and what they carried, and lets the layer go with the street (mutants: the places, the pile, the picture, the filters, the step, the street)', () => {
   const dc = rd('src/scenes/dungeonContext.js');
   assert.match(dc, /restingSpots: \(\) => \(_restingSpots \?\?= _layoutEnemies\.filter\(\(e\) => !e\.fixed\)\.map\(\(e\) => floorLanding\(collider, \[e\.x, e\.y \+ 0\.2, e\.z\]\)\)\),/);
-  assert.match(dc, /layRemains: \(items, feet, icon\) => droppedLoot\.dropPile\(items, feet, null, icon\),/);
+  // PIN MOVED (AUDIT LW-III): the pile tagged with its remains' key, found again after a load
+  assert.match(dc, /layRemains: \(items, feet, icon, key = null\) => \{ const p = droppedLoot\.dropPile\(items, feet, null, icon\); if \(p && key\) p\.remainsKey = key; return p; \},/);
   assert.match(dc, /pileNear: \(feet, r\) => droppedLoot\._piles\.some\(\(p\) => Math\.hypot\(p\.pos\[0\] - feet\[0\], p\.pos\[2\] - feet\[2\]\) <= r && Math\.abs\(p\.pos\[1\] - feet\[1\]\) <= 2\),/);
   const w = rd('src/scenes/world.js');
   assert.match(w, /try \{ livingRemainsStep\(now\); \} catch \(e\) \{ console\.warn\('\[remains\] step', e\); \}   \/\/ LW6b/);   // PIN MOVED (AUDIT LW-II-2): wrapped as its neighbours are - a throw never kills the frame loop
   assert.match(w, /return !turns\.fallen\.has\(key\) && !turns\.spared\.has\(key\) && !turns\.slain\.has\(key\) && !turns\.died\.has\(key\) && !livingDivers\?\.stood\(r\.trip\.id, r\.res\.id\);/);   // LW-FIX1: and the player's own dead
   assert.match(w, /laid: \(key\) => livingRelations\.turns\(\)\.laid\.has\(key\),\n\s+mark: \(key\) => livingRelations\.turn\('laid', key\),/);
-  assert.match(w, /return d\.layRemains\(items, feet, \{ archive: corpse\.archive, record: corpse\.record \}\);/);
+  assert.match(w, /return d\.layRemains\(items, feet, \{ archive: corpse\.archive, record: corpse\.record \}, key\);/);   // PIN MOVED (AUDIT LW-III): and its key
   assert.match(w, /const items = generateLootItems\(enemyLootTableKey\(res\.cls, look\.basics\.lootTableKey \?\? '-'\), \{ level, gender: res\.sex \?\? 'male' \}, rolls\);/);
   assert.match(w, /for \(const raw of \[createRandomWeapon\(level, rolls\), createRandomArmor\(level, rolls\)\]\)/);
   assert.match(w, /items\.push\(goldStack\(/);

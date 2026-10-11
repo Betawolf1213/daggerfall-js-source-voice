@@ -22,13 +22,13 @@
 //  - LW4b: THE FIGHT STOOD (scenes/roadFights.js `fights`): a beset party near the player on the ground is fought for
 //    real - its foes and its armed the encounter pool's bodies, which the roads then draw not; a fight a peer stands
 //    (online) shows no foes of the roads' own - the peer's come through the stream.
-import { partiesOfTown, partyAt, wayAt, membersAt, remainsOfTown, NATIVE_PER_M, NATIVE_PIXEL, TRIP_REACH_PX } from '../systems/livingWorld/trips.js';
+import { partiesOfTown, partyAt, wayAt, laneAt, membersAt, remainsOfTown, NATIVE_PER_M, NATIVE_PIXEL, TRIP_REACH_PX } from '../systems/livingWorld/trips.js';
 import { ENEMY_BASICS } from '../characters/enemyBasics.js';
 import { circleLine, lineMinutes, ROUND_S } from '../systems/livingWorld/meetups.js';
 import { ROAD_GREETINGS, ROAD_PASS_SCRIPTS, ROAD_PASS_WARNINGS, BAND_WARNINGS, COMPANY_GREETINGS, fillLine, firstNameOf } from '../systems/livingWorld/lines.js';
 import { byRole, headOf, companiesOf, namedIn } from '../systems/livingWorld/companies.js';   // LW13: a company in file by role, its head's word; AUDIT LW-II-2 R8: a hired one's name
 import { FIRE_FLAT } from '../systems/survival/camp.js';
-import { teamOf, trainOf, campTeam } from '../systems/livingWorld/wagons.js';   // LW10: the wagon trains
+import { teamOf, trainOf, campTeam, campTurn, clearOfTeam, fileSpan, LANE_N } from '../systems/livingWorld/wagons.js';   // LW10: the wagon trains; AUDIT LW-III: their lanes, their park, clear of them
 import { lwSeed, textSeed } from '../systems/livingWorld/seed.js';
 import { DAY_MIN, DAY_START_MIN } from '../systems/livingWorld/dayPlan.js';
 import { LIVING_REFUSAL } from '../systems/livingWorld/livingTown.js';
@@ -71,6 +71,14 @@ export const PASS_N = 1000;
 export const CAMP_RING_STEP_N = 14;
 /** LW10: a wagon's tilt is read off the ground this far before its axle (native - 1.5 m). */
 export const WAGON_FRONT_N = 60;
+/** AUDIT LW-III (ABREAST): a party walking with another one way on one stretch of road keeps this much farther right
+ *  (native - 3 m; with LANE_N, 5 m off the road's middle, its wagon's side still on the road's 6.4 m), the two side by
+ *  side; it is the one that walks faster - or, at one pace, the later trip. */
+export const ABREAST_N = 120;
+/** AUDIT LW-III (ABREAST): two files this near along the road (native - 2 m) walk abreast; past it they ease back into
+ *  one lane over ABREAST_EASE_N (6 m) along, and half that across (wholly 2 m beside another, none past 5 m). */
+export const ABREAST_GAP_N = 80;
+export const ABREAST_EASE_N = 240;
 
 /** A party's mark's label, by what it is (the leader's job) and where it is bound - LW4: or, beset, by what besets it.
  *  @param {any} trip @param {string} [home] @param {string} [beset] */
@@ -96,11 +104,11 @@ const ROAD_LABELS = Object.freeze({
  * camp: the earliest party's (by trip id) its place, every one of them a place in its ring in order. A drawing's law:
  * no party's timeline moves. AUDIT LW-II-2 R4: a party halted at its camp is of it still (`lit`: whether its fire burns -
  * a party of it not halted).
- * @param {{ trip: any, at: any, members?: any[] }[]} camped @returns {Map<string, { x: number, z: number, i0: number, n: number, first: boolean, lit: boolean }>}
+ * @param {{ trip: any, at: any, members?: any[] }[]} camped @returns {Map<string, { x: number, z: number, i0: number, n: number, first: boolean, lit: boolean, k0: number, teams: number, turn: number }>}
  */
 export function campGroups(camped) {
   const list = [...camped].sort((a, b) => (a.trip.id < b.trip.id ? -1 : a.trip.id > b.trip.id ? 1 : 0));
-  /** @type {Map<string, { x: number, z: number, i0: number, n: number, first: boolean, lit: boolean }>} */
+  /** @type {Map<string, { x: number, z: number, i0: number, n: number, first: boolean, lit: boolean, k0: number, teams: number, turn: number }>} */
   const out = new Map();
   const done = new Set();
   for (const p of list) {
@@ -115,13 +123,70 @@ export function campGroups(camped) {
     }
     const n = group.reduce((a, g) => a + (g.members?.length ?? g.trip.party.length), 0);
     const lit = group.some((g) => !g.at.halt);   // AUDIT LW-II-2 R4: its fire burns while a party of it is not halted
-    let i0 = 0;
+    // AUDIT LW-III (ONE CAMP, ONE PARK): the camp's teams one park round its fire, turned the first party's way - each
+    // party's own `k0` of them (wagons.js campTeam's slots)
+    const teams = group.reduce((a, g) => { const k = teamOf(g.trip); return a + k.wagons + k.packs; }, 0);
+    const turn = campTurn(p.trip);
+    let i0 = 0, k0 = 0;
     group.forEach((g, gi) => {
-      out.set(g.trip.id, { x: p.at.x, z: p.at.z, i0, n, first: gi === 0, lit });
+      out.set(g.trip.id, { x: p.at.x, z: p.at.z, i0, n, first: gi === 0, lit, k0, teams, turn });
       i0 += g.members?.length ?? g.trip.party.length;
+      const k = teamOf(g.trip);
+      k0 += k.wagons + k.packs;
     });
   }
   return out;
+}
+
+/**
+ * AUDIT LW-III (KEEP RIGHT, ABREAST): the lane each party on the road walks (native, right of the road's middle the way
+ * it goes) - LANE_N, so parties that meet pass side by side; and a party on one stretch with another walking its way
+ * (their files within ABREAST_GAP_N along the road and one lane across), ABREAST_N more, the two abreast: the faster, at
+ * one pace the later trip, steps out. Two caravans that stayed in one town set out home at one dawn at one pace, and
+ * walked one inside the other for the miles their ways shared. Eased (ABREAST_EASE_N, along and across, its heading the
+ * lane's own), so no party jumps aside. A drawing's law, like the camps': no timeline moves, and every reader near the
+ * two lays them alike. `walking` the parties on the road this minute (out or home, not camped, not lodged), with the
+ * members standing; `hitchN` the train's (trainOf's).
+ * @param {{ trip: any, at: any, members: any[] }[]} walking @param {number} [hitchN] @returns {Map<string, number>}
+ */
+export function roadLanes(walking, hitchN) {
+  const list = walking.map((w) => {
+    const back = w.at.phase === 'back';
+    const p = laneAt(w.trip.way, /** @type {number} */ (w.at.s), 0);
+    const yaw = back ? p.yaw + Math.PI : p.yaw;
+    return { id: w.trip.id, pace: w.trip.pace ?? 0, x: p.x, z: p.z, fx: Math.sin(yaw), fz: Math.cos(yaw), span: fileSpan(w.trip, w.members.length, hitchN, FILE_GAP_N) };
+  });
+  const out = new Map();
+  for (const a of list) {
+    let k = 0;
+    for (const b of list) {
+      if (b === a) continue;
+      const steps = a.pace > b.pace || (a.pace === b.pace && a.id > b.id);   // the one of the two that steps out
+      if (!steps) continue;
+      const same = a.fx * b.fx + a.fz * b.fz;   // one way?
+      if (same <= 0) continue;
+      const dx = b.x - a.x, dz = b.z - a.z;
+      const along = dx * a.fx + dz * a.fz, across = Math.abs(dx * a.fz - dz * a.fx);
+      // the two files' gap along the road: b's from (along - behind) to (along + ahead), a's from -behind to +ahead
+      const gap = Math.max(along - b.span.behind - a.span.ahead, -a.span.behind - (along + b.span.ahead));
+      const wAlong = Math.min(1, Math.max(0, (ABREAST_GAP_N + ABREAST_EASE_N - gap) / ABREAST_EASE_N));
+      const wAcross = Math.min(1, Math.max(0, (ABREAST_GAP_N + ABREAST_EASE_N / 2 - across) / (ABREAST_EASE_N / 2)));
+      k = Math.max(k, wAlong * wAcross * Math.min(1, same * 2));
+    }
+    out.set(a.id, LANE_N + ABREAST_N * k);
+  }
+  return out;
+}
+
+/**
+ * LW10 x AUDIT LW-III: a camped party's team parked - round its camp's fire (`camp`, campGroups' entry: a shared camp's
+ * ring and the camp's one park, its slots), or its own place's with no camp of a group.
+ * @param {any} trip @param {any} at @param {{ x: number, z: number, n: number, k0: number, teams: number, turn: number } | null} camp @param {number} t
+ */
+export function campParkOf(trip, at, camp, t) {
+  const cx = camp ? camp.x : at.x, cz = camp ? camp.z : at.z;
+  const r = camp ? CAMP_RING_N + Math.max(0, camp.n - 4) * CAMP_RING_STEP_N : CAMP_RING_N;
+  return campTeam(trip, cx, cz, r, t, camp ? { k0: camp.k0, n: camp.teams, turn: camp.turn } : null);
 }
 
 /**
@@ -200,25 +265,28 @@ export function fightPlaces(trip, at, members) {
 /**
  * LW4: what besets a party, about it and facing in - each foe a body of its own kind (`res.cls` its mobile type, the
  * sprites' class look), no talk target.
- * @param {any} trip @param {ReturnType<typeof partyAt>} at
+ * AUDIT LW-III: `team`, the party's wagons and horses where they stand - each foe clear of them (wagons.js clearOfTeam).
+ * @param {any} trip @param {ReturnType<typeof partyAt>} at @param {{ wagons: any[], horses: any[] } | null} [team]
  * @returns {{ key: string, res: any, x: number, z: number, yaw: number }[]}
  */
-export function foePlaces(trip, at) {
+export function foePlaces(trip, at, team = null) {
   const foes = trip.enc?.foes ?? [];
   const turn = (lwSeed(textSeed(trip.id), 0x666f6573) % 628) / 100;   // 'foes'
   return foes.map((type, i) => {
     const a = ((i + 0.5) / foes.length) * Math.PI * 2 + turn;
-    const x = /** @type {number} */ (at.x) + Math.sin(a) * FOE_RING_N, z = /** @type {number} */ (at.z) + Math.cos(a) * FOE_RING_N;
+    let x = /** @type {number} */ (at.x) + Math.sin(a) * FOE_RING_N, z = /** @type {number} */ (at.z) + Math.cos(a) * FOE_RING_N;
+    if (team) ({ x, z } = clearOfTeam(x, z, team));
     return { key: `${trip.enc.id}:${i}`, res: { id: `${trip.enc.id}:${i}`, cls: type, sex: 'male', name: '' }, x, z, yaw: Math.atan2(/** @type {number} */ (at.x) - x, /** @type {number} */ (at.z) - z) };
   });
 }
 
 /**
  * Where each member of a party stands at a moment of its trip (native x, z), the way each faces and whether it walks.
- * @param {any} trip @param {ReturnType<typeof partyAt>} at
+ * AUDIT LW-III: `lane` how far right of the road's middle its file walks, the way it goes (`roadLanes`; 0 on the line).
+ * @param {any} trip @param {ReturnType<typeof partyAt>} at @param {any} [ring] @param {number} [lane]
  * @returns {{ res: any, x: number, z: number, yaw: number, moving: boolean }[]}
  */
-export function partyPlaces(trip, at, ring = null) {
+export function partyPlaces(trip, at, ring = null, lane = 0) {
   const out = [];
   const n = trip.party.length;
   // LW9: a camp shared with another party - its people a stretch of the one ring about the first's fire; AUDIT LW-II-2
@@ -248,8 +316,10 @@ export function partyPlaces(trip, at, ring = null) {
     const s = /** @type {number} */ (at.s) + (back ? 1 : -1) * i * FILE_GAP_N;   // behind the leader, the way they walk
     const p = wayAt(trip.way, s);
     const side = i === 0 ? 0 : (i % 2 ? 1 : -1) * FILE_SIDE_N;
-    const yaw = back ? p.yaw + Math.PI : p.yaw;
-    out.push({ res: file[i], x: p.x + Math.cos(p.yaw) * side, z: p.z - Math.sin(p.yaw) * side, yaw, moving: true });
+    // AUDIT LW-III (KEEP RIGHT): in its lane, the way it walks (wagons.js LANE_N, the roads' `roadLanes`)
+    const q = lane ? laneAt(trip.way, s, (back ? -1 : 1) * lane + side) : { x: p.x + Math.cos(p.yaw) * side, z: p.z - Math.sin(p.yaw) * side, yaw: p.yaw };
+    const yaw = back ? q.yaw + Math.PI : q.yaw;
+    out.push({ res: file[i], x: q.x, z: q.z, yaw, moving: true });
   }
   return out;
 }
@@ -349,33 +419,53 @@ export function createLivingRoads(deps) {
     list.length = 0;
     busy.clear();
     const fights = deps.fights ?? null;
-    if (fights) fights.frame(parties.map((p) => ({ trip: p.trip, at: partyAt(p.trip, t) })), here, t, { ground: !overworld });   // LW4b: the fights stood live
     const reach = overworld ? TRAVELLER_FAR_M + 60 : ROADS_PLAY_M;
+    // AUDIT LW-III: THE ROAD'S LANES AND THE NIGHT'S CAMPS read first, of the parties near - a train walks its lane, a
+    // camp's teams stand one park, and a live fight's bodies rise clear of the beset party's team (`teamAt`)
+    const hitchN = deps.teams?.hitchN?.();
+    const ats = new Map(parties.map((p) => [p.trip.id, partyAt(p.trip, t)]));
+    /** @type {{ trip: any, at: any, members: any[] }[]} */
+    const camped = [], walking = [];
+    if (here) {
+      for (const p of parties) {
+        const at = ats.get(p.trip.id);
+        if ((at.phase !== 'out' && at.phase !== 'back') || at.inn) continue;
+        if (!at.camp && Math.hypot(/** @type {number} */ (at.x) - here.x, /** @type {number} */ (at.z) - here.z) / NATIVE_PER_M > reach + 40) continue;
+        const members = membersAt(p.trip, t);
+        // AUDIT LW-II-2 R1: nobody standing, no camp of theirs (nor a lane)
+        if (!members.length) continue;
+        // AUDIT LW-II-2 R4: a party halted at its camp (a camp trouble's fight, its wounds bound) keeps its place in the
+        // ring - before, it left the camp's groups for the halt, and every party of a shared camp took a new place in it
+        // (and the lone one stood a ring turned another way), and took its old one back after
+        (at.camp ? camped : walking).push({ trip: p.trip, at, members });
+      }
+    }
+    const groups = campGroups(camped);
+    const lanes = roadLanes(walking, hitchN);
+    /** A party's team where it stands this minute - its train in its lane, or parked at its camp. @param {any} trip @param {any} at @param {any[]} members */
+    const teamAt = (trip, at, members) => (at.camp ? campParkOf(trip, at, groups.get(trip.id) ?? null, t) : trainOf(trip, at, members, t, hitchN, lanes.get(trip.id) ?? LANE_N));
+    // LW4b: the fights stood live - AUDIT LW-III: a beset party's team handed with it, its bodies stood clear of it
+    if (fights) {
+      fights.frame(parties.map((p) => {
+        const at = ats.get(p.trip.id);
+        const k = teamOf(p.trip);
+        const team = at.fight && k.wagons + k.packs > 0 && (at.phase === 'out' || at.phase === 'back') ? teamAt(p.trip, at, membersAt(p.trip, t)) : null;
+        return { trip: p.trip, at, team };
+      }), here, t, { ground: !overworld });
+    }
     // AUDIT LW-II E3: EACH PARTY NEAR LAID OUT ONCE, AS IT IS DRAWN - its people where the bodies stand (a shared camp's ring,
     // a train's file), its team, its fire - and the armed handed to the stands from there. Before, the stands' places
     // were the party's plain file and its own camp: an armed member drawn at another party's fire, or in its train's
     // van, was stood up to 59 m from their body
-    /** @type {{ p: any, at: any, fight: boolean, live: boolean, allies: any, peerLive: boolean, places: { res: any, x: number, z: number, yaw: number, moving: boolean }[], fire: { x: number, z: number } | null }[]} */
+    /** @type {{ p: any, at: any, fight: boolean, live: boolean, allies: any, peerLive: boolean, places: { res: any, x: number, z: number, yaw: number, moving: boolean }[], fire: { x: number, z: number } | null, stood: { wagons: any[], horses: any[] } | null }[]} */
     const drawn = [];
     /** LW10: the teams this frame - each horse and wagon where its train has it (scene feet) */
     const horses = [], wagons = [];
     if (here) {
-      // LW9: the night's camps near one another one camp, round one fire
-      const camped = [];
-      for (const p of parties) {
-        const at = partyAt(p.trip, t);
-        // AUDIT LW-II-2 R4: a party halted at its camp (a camp trouble's fight, its wounds bound) keeps its place in the
-        // ring - before, it left the camp's groups for the halt, and every party of a shared camp took a new place in it
-        // (and the lone one stood a ring turned another way), and took its old one back after
-        if ((at.phase === 'out' || at.phase === 'back') && at.camp && !at.inn) {
-          const members = membersAt(p.trip, t);
-          if (members.length) camped.push({ trip: p.trip, at, members });   // AUDIT LW-II-2 R1: nobody standing, no camp of theirs
-        }
-      }
-      const groups = campGroups(camped);
+      // LW9: the night's camps near one another one camp, round one fire (`groups`, above)
       const rate = deps.baseRate?.() ?? 0;
       for (const p of parties) {
-        const at = partyAt(p.trip, t);
+        const at = ats.get(p.trip.id);
         if (at.phase !== 'out' && at.phase !== 'back') continue;
         if (at.inn) continue;   // LW9: lodged at the inn on the road - indoors, the inn's own guests
         if (Math.hypot(/** @type {number} */ (at.x) - here.x, /** @type {number} */ (at.z) - here.z) / NATIVE_PER_M > reach + 40) continue;
@@ -398,23 +488,27 @@ export function createLivingRoads(deps) {
         const hasTeam = team.wagons + team.packs > 0;
         const speed = (p.trip.pace / NATIVE_PER_M) * rate;   // a horse's pace (m a real second)
         let places;
+        /** @type {{ wagons: any[], horses: any[] } | null} */
+        let stood = null;
         if (hasTeam && !at.camp) {
-          const train = trainOf(trip, at, members, t, deps.teams?.hitchN?.());   // WAGONS1: the drawn wagon's own hitch
+          const train = trainOf(trip, at, members, t, hitchN, lanes.get(p.trip.id) ?? LANE_N);   // WAGONS1: the drawn wagon's own hitch; AUDIT LW-III: in its lane (teamAt's)
+          stood = train;
           places = fight ? fightPlaces(p.trip, at, members) : train.people;
           for (const h of train.horses) horses.push({ ...h, moving: h.moving && !fight, speed });
           for (const w of train.wagons) wagons.push({ ...w, moving: w.moving && !fight });
         } else {
-          places = fight ? fightPlaces(p.trip, at, members) : partyPlaces(members === p.trip.party ? p.trip : { ...p.trip, party: members }, at, ring);
+          places = fight ? fightPlaces(p.trip, at, members) : partyPlaces(members === p.trip.party ? p.trip : { ...p.trip, party: members }, at, ring, lanes.get(p.trip.id) ?? LANE_N);
           // AUDIT LW-II-2 R4: PARKED WHENEVER IT IS CAMPED, its fight too - a caravan beset at its camp by night lost its
           // wagons and its horses for the fight's minutes, and they stood parked again once it was done
           if (hasTeam && at.camp) {
-            const cx = camp ? camp.x : /** @type {number} */ (at.x), cz = camp ? camp.z : /** @type {number} */ (at.z);
-            const r = camp ? CAMP_RING_N + Math.max(0, camp.n - 4) * CAMP_RING_STEP_N : CAMP_RING_N;
-            const parked = campTeam(trip, cx, cz, r, t);
+            const parked = teamAt(trip, at, members);   // AUDIT LW-III: a shared camp's teams one park
+            stood = parked;
             for (const h of parked.horses) horses.push({ ...h, speed: 0 });
             wagons.push(...parked.wagons);
           }
         }
+        // AUDIT LW-III (CLEAR OF THE TEAM): a fight's ring and its foes stand clear of its own wagons and horses
+        if (fight && stood) places = places.map((m) => ({ ...m, ...clearOfTeam(m.x, m.z, stood) }));
         // LW9: A FIRE AT EVERY CAMP - the camps' own flame (survival/camp.js FIRE_FLAT), one to a shared camp, none on the
         // march (no camp's); AUDIT LW-II-2 R4: the camp's while a party of it is not halted (a lone party's none at its
         // halt, as before) - a shared camp's first halted, its fire went out, or stood at the next party's place
@@ -422,7 +516,7 @@ export function createLivingRoads(deps) {
         if (camp?.lit && camp.first) {
           fire = { x: camp.x, z: camp.z };
         }
-        drawn.push({ p, at, fight, live, allies, peerLive, places, fire });
+        drawn.push({ p, at, fight, live, allies, peerLive, places, fire, stood });
       }
     }
     if (deps.stands) {
@@ -438,7 +532,7 @@ export function createLivingRoads(deps) {
       deps.stands.frame(cands, here, t, { dt, ground: !overworld });
     }
     if (here) {
-      for (const { p, at, fight, live, allies, peerLive, places, fire } of drawn) {
+      for (const { p, at, fight, live, allies, peerLive, places, fire, stood } of drawn) {
         if (fire) {
           const distM = Math.hypot(fire.x - here.x, fire.z - here.z) / NATIVE_PER_M;
           if (distM <= reach) list.push({ key: `fire:${p.trip.id}`, res: { id: `fire:${p.trip.id}`, name: '' }, feet: deps.sceneOf(fire.x, fire.z), yaw: 0, moving: false, distM, talk: false, flat: FIRE_FLAT, body: false });   // CAMP-FIRE: nobody's body
@@ -453,7 +547,7 @@ export function createLivingRoads(deps) {
           list.push({ key: m.res.id, res: m.res, feet: deps.sceneOf(m.x, m.z), yaw: m.yaw, moving: m.moving, distM, striking: fight && m.res.cls != null && strikesNow(m.res.id) });
         }
         if (fight && !live && !peerLive) {
-          for (const f of foePlaces(p.trip, at)) {
+          for (const f of foePlaces(p.trip, at, stood)) {
             const distM = Math.hypot(f.x - here.x, f.z - here.z) / NATIVE_PER_M;
             if (distM > reach) continue;
             list.push({ key: f.key, res: f.res, feet: deps.sceneOf(f.x, f.z), yaw: f.yaw, moving: false, distM, striking: strikesNow(f.key), talk: false });

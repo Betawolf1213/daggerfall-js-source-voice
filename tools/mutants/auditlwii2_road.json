@@ -11,8 +11,8 @@
   {
     "name": "AUDITLWII2-R1-camp",
     "file": "src/scenes/livingRoads.js",
-    "old": "          if (members.length) camped.push({ trip: p.trip, at, members });",
-    "new": "          camped.push({ trip: p.trip, at, members });",
+    "old": "        // AUDIT LW-II-2 R1: nobody standing, no camp of theirs (nor a lane)\n        if (!members.length) continue;",
+    "new": "        // AUDIT LW-II-2 R1: nobody standing, no camp of theirs (nor a lane)\n        if (!members.length && !at.camp) continue;",
     "tests": [
       "test/auditlwii2_road.test.js"
     ]
@@ -29,8 +29,8 @@
   {
     "name": "AUDITLWII2-R4-park-camp",
     "file": "src/scenes/livingRoads.js",
-    "old": "            const cx = camp ? camp.x : /** @type {number} */ (at.x), cz = camp ? camp.z : /** @type {number} */ (at.z);",
-    "new": "            const cx = ring ? ring.x : /** @type {number} */ (at.x), cz = ring ? ring.z : /** @type {number} */ (at.z);",
+    "old": "    const teamAt = (trip, at, members) => (at.camp ? campParkOf(trip, at, groups.get(trip.id) ?? null, t)",
+    "new": "    const teamAt = (trip, at, members) => (at.camp ? campParkOf(trip, at, at.fight ? null : groups.get(trip.id) ?? null, t)",
     "tests": [
       "test/auditlwii2_road.test.js"
     ]
@@ -38,8 +38,8 @@
   {
     "name": "AUDITLWII2-R4-halt-camp",
     "file": "src/scenes/livingRoads.js",
-    "old": "        if ((at.phase === 'out' || at.phase === 'back') && at.camp && !at.inn) {",
-    "new": "        if ((at.phase === 'out' || at.phase === 'back') && at.camp && !at.halt && !at.inn) {",
+    "old": "        (at.camp ? camped : walking).push({ trip: p.trip, at, members });",
+    "new": "        (at.camp ? (at.halt ? [] : camped) : walking).push({ trip: p.trip, at, members });",
     "tests": [
       "test/auditlwii2_road.test.js"
     ]

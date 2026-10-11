@@ -3286,7 +3286,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     if (!stops.length || !trip?.dive) return null;
     if (_deepRoutesPool !== d) { _deepRoutes = new Map(); _deepRoutesPool = d; }
     let r = _deepRoutes.get(trip.id);
-    if (r === undefined) { const e = d.deepEntry?.(); r = deepRouteOf(stops, e ? { x: e.x, z: e.z } : { x: stops[0].x, z: stops[0].z }, trip); _deepRoutes.set(trip.id, r); }
+    if (r === undefined) { const e = d.deepEntry?.(); r = deepRouteOf(stops, e ? { x: e.x, y: e.y, z: e.z } : { x: stops[0].x, z: stops[0].z }, trip); _deepRoutes.set(trip.id, r); }   // AUDIT LW-III: the door's floor too (deepRoute.js yOf)
     return r;
   };
   const livingDeepCleared = (loc, stops, entry) => {
@@ -3303,7 +3303,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     const here = _livingDungeonById.get(loc.mapTableData.mapId >>> 0);
     if (!here) return null;
     const tBuild = skyMinutes();
-    const from = entry ? { x: entry.x, z: entry.z } : { x: stops[0].x, z: stops[0].z };
+    const from = entry ? { x: entry.x, y: entry.y, z: entry.z } : { x: stops[0].x, z: stops[0].z };   // AUDIT LW-III: the way out's last leg at the door's own floor
     const dives = divesIn(here, tBuild - DIVE_CLEAR_MIN, tBuild, livingTripWorld, { mpm: PERSON_MOVE_SPEED / livingBaseRate(), memo: _livingTripMemo }).dives;
     return deepClearedOf(dives.map((tr) => deepRouteOf(stops, from, tr)), tBuild);
   };
@@ -3365,7 +3365,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     for (const raw of [createRandomWeapon(level, rolls), createRandomArmor(level, rolls)]) if (raw && !isAmmunition(raw)) items.push(mintCondition(setItemFields(raw)));
     items.push(goldStack(5 + Math.floor(rolls() * 20 * level)));
     items.push(mintKeepsake(res));   // LW6c: their own keepsake, for their household
-    return d.layRemains(items, feet, { archive: corpse.archive, record: corpse.record });
+    return d.layRemains(items, feet, { archive: corpse.archive, record: corpse.record }, key);   // AUDIT LW-III: tagged with its key
   };
   /** AUDIT LW-II D9: where each of the dungeon's remains lies (placeOf), by its key - this dungeon's. */
   const _livingRemainsPlace = new Map();
@@ -3380,6 +3380,7 @@ export async function bootWorld(canvas, renderer, params, status) {
         laid: (key) => livingRelations.turns().laid.has(key),
         mark: (key) => livingRelations.turn('laid', key),
         lay: (res, feet, key) => livingRemainsLay(d, res, feet, key),
+        pileOf: (key) => d.remainsPile?.(key) ?? null,   // AUDIT LW-III: a pile a load restored, found again
         there: (feet) => d.pileNear(feet, 0.6),
         count: (pile) => pile?.items?.length ?? 0,   // AUDIT-C5: taken from - spent
         feet: () => (playerSpawned ? [player.pos[0], player.pos[1], player.pos[2]] : null),
@@ -3726,7 +3727,9 @@ export async function bootWorld(canvas, renderer, params, status) {
     // LW4b: THE FIGHT STOOD - a beset party near the player on foot, its foes the encounter pool's own and its armed the
     // player's allies, when this player stands it (the camps' election, by the players' own feet)
     fights: createRoadFights({
-      spawn: (type, feet, o) => exteriorFoes.spawnFoe(type, feet, { yaw: o.yaw, gender: o.gender, level: o.level, allied: o.allied, loose: true, transient: true }),
+      // AUDIT LW-III: managed - the fight owns its bodies' lives (its LIVE_KEEP_M lets them go); the pool's relevance cull
+      // (120 m) took them inside the fight's own reach, and the fight read every one of them fallen
+      spawn: (type, feet, o) => exteriorFoes.spawnFoe(type, feet, { yaw: o.yaw, gender: o.gender, level: o.level, allied: o.allied, loose: true, transient: true, managed: true }),
       remove: (f) => exteriorFoes.removeFoe(f),
       inPool: (f) => exteriorFoes.foes.includes(f),
       // AUDIT-B5: the fight's own election - the lowest id of those within LIVE_M of IT (each player near it stands it or
@@ -3744,7 +3747,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // LW7b: THE ARMED BEYOND THE WALLS - a traveller who counts the player hostile draws on them, a friend comes to their
     // fight; each the encounter pool's own body while it stands (loose, transient), this character's alone to stand
     stands: createRoadStands({
-      spawn: (type, feet, o) => exteriorFoes.spawnFoe(type, feet, { allied: o.allied, yaw: o.yaw, gender: o.gender, level: o.level, loose: true, transient: true }),
+      spawn: (type, feet, o) => exteriorFoes.spawnFoe(type, feet, { allied: o.allied, yaw: o.yaw, gender: o.gender, level: o.level, loose: true, transient: true, managed: true }),   // AUDIT LW-III: its KEEP_M lets them go, never the cull
       remove: (f) => exteriorFoes.removeFoe(f),
       inPool: (f) => exteriorFoes.foes.includes(f),
       ready: () => !!walkMode && !!playerSpawned && !_loading && !modes?.transitioning && _mode() === 'exterior' && !playerAfloat(),

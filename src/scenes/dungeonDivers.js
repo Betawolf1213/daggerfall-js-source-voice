@@ -271,9 +271,15 @@ export function createDungeonDivers(deps) {
       const L = deps.leader();
       if (L) drop(L.feet);
       const listed = new Set();
+      // AUDIT LW-III (the outlaws' AUDIT LW-II-2 C13, here): THE ELECTION ASKED EACH FRAME, THE LOSER GIVES ITS COMPANIES
+      // UP - asked only before a meeting, a company met stayed this reader's when a reader of a lower id came near, who
+      // met it again at its stop: two readers stood it, every member twice in the room. One drawing on this player (a
+      // hostile member standing) is this reader's fight, kept
+      const own = deps.owner();
+      if (!own) for (const [id, c] of [...companies]) if (![...c.foes.values()].some((rec) => !rec.dead)) letGo(id);
       for (const { trip, members } of divers) {
         listed.add(trip.id);
-        if (companies.has(trip.id) || ended.has(trip.id) || !deps.owner() || !members.some((m) => m.cls != null)) continue;
+        if (companies.has(trip.id) || ended.has(trip.id) || !own || !members.some((m) => m.cls != null)) continue;
         const route = deps.route?.(trip) ?? null;
         if (!route || !route.legs?.length) { meet(trip, members); continue; }
         // LW14: where its route has it - met near, or seen; else heard at its fight

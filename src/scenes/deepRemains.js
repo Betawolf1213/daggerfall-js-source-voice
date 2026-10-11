@@ -60,9 +60,11 @@ export function apartOf(r) {
  *   say: (text: string) => void,
  *   townName: (res: any) => string,
  *   placeOf?: (r: any) => (number[] | null),
+ *   pileOf?: (key: string) => any,
  * }} deps - `lay(res, feet, key)` the dungeon's pile for them (null: not laid); `there(feet)` whether a pile still lies
  *   there; AUDIT-C5 `count(pile)` what a pile holds now; LW14 `placeOf(r)` the stop the dice's end fell at (the dive's
- *   route - deepRoute.js stopOfMinute), else the resting place its key deals
+ *   route - deepRoute.js stopOfMinute), else the resting place its key deals; AUDIT LW-III `pileOf(key)` the pile the
+ *   dungeon holds for them already (a load's), if any
  */
 export function createDeepRemains(deps) {
   const told = new Set();
@@ -83,6 +85,11 @@ export function createDeepRemains(deps) {
         const at = deps.placeOf?.(r) ?? (spots.length ? spots[restAt(r.key, spots.length)] : null);   // LW14: where it fell, on the dive's route
         if (!at) continue;   // AUDIT LW-II D13: no place at all (a dungeon of treasure stops alone still has the route's)
         const away = !feet || Math.hypot(at[0] - feet[0], at[2] - feet[2]) > DEEP_LAY_M;
+        // AUDIT LW-III: ONE PILE A BODY - a pile the dungeon already holds for them (a save made inside, loaded: the pile
+        // restored with the dungeon, the remains never marked till taken from) is theirs, adopted, never laid again
+        // beside it: each save and load laid another, the same goods and keepsake, for as long as the remains lay
+        const kept = !deps.laid(r.key) && !here.has(r.key) ? deps.pileOf?.(r.key) ?? null : null;
+        if (kept) here.set(r.key, { pile: kept, n: deps.count?.(kept) ?? 0 });
         if (!deps.laid(r.key) && !here.has(r.key)) {
           if (!(arriving || away)) continue;
           const pile = deps.lay(r.res, at, r.key);

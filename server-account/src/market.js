@@ -2136,12 +2136,16 @@ export async function markPatronsShut({ db, nowS }) {
  *  in at the house the trader stood in at the sale - AUDIT LW-II P9: the sale's own, never a piece of the same id's):
  *  within PATRON_TOLD_S, newest first - of the towns `maps`, or of a region's (a trader sold out still tells its last
  *  day's). @param {any} db @param {number[] | { region: number }} of @param {number} nowS */
-async function patronsTold(db, of, nowS) {
+export async function patronsTold(db, of, nowS) {   // AUDIT LW-III: exported for its pin (the read's plan)
   const maps = Array.isArray(of) ? of : null;
   if (maps && !maps.length) return [];
-  const where = maps ? `s.map IN (${maps.map((_, i) => `?${i + 2}`).join(', ')})` : 's.region = ?2';
+  // AUDIT LW-III: a town's read bounded by the HOUR too (a sale's `at` is its hour's, PATRON_HOUR_S on, so the bound
+  // drops none) - idx_patron_sales_town is (map, hour), and the window on `at` alone read every sale the town has kept,
+  // MARKET_KEEP_DAYS of them, on every stall opened, to answer its last day's
+  const where = maps ? `s.map IN (${maps.map((_, i) => `?${i + 2}`).join(', ')}) AND s.hour >= ?${maps.length + 2}` : 's.region = ?2';
+  const since = nowS - PATRON_TOLD_S;
   const { results = [] } = await db.prepare(PATRON_TOLD_SQL(where))
-    .bind(nowS - PATRON_TOLD_S, ...(maps ?? [/** @type {{ region: number }} */ (of).region])).all();
+    .bind(since, ...(maps ? [...maps, Math.floor(since / PATRON_HOUR_S)] : [/** @type {{ region: number }} */ (of).region])).all();
   return results.map((r) => ({ listing: r.listing, map: Number(r.map), vendor: r.vendor_id, buildingKey: r.building_key == null ? null : Number(r.building_key),
     hour: Number(r.hour), minute: Number(r.minute), seed: Number(r.seed), price: Number(r.price), at: Number(r.at), name: String(goodOf(r.item)?.name ?? '') }));
 }

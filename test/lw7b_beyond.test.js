@@ -76,7 +76,7 @@ test('LW7b an armed enemy draws: a member who counts the player HOSTILE within D
   await settle();
   assert.equal(far.spawned.length, 0, 'past DRAW_M, from the sky, nothing able to stand, nowhere');
   // cut down: slain, seen, their party's living turned; the body the pool's own
-  rec.dead = true;
+  rec.dead = true; rec.corpse = true;   // PIN MOVED (AUDIT LW-III): killed as the pool kills - dead, a corpse
   rig.stands.frame([], HERE, T + 2);
   assert.deepEqual(rig.slays, [{ res: BO, t: T + 2, seen: true }]);
   assert.equal(rig.rel.regard(CY.id, DAY), Math.max(-100, EVENTS.struck + EVENTS.slain), 'their party turned against the player');
@@ -85,6 +85,15 @@ test('LW7b an armed enemy draws: a member who counts the player HOSTILE within D
   assert.ok(rig.pool.has(rec) && !rig.removed.includes(rec), 'the dead the pool\'s own');
   rig.stands.frame([], HERE, T + 3);
   assert.equal(rig.slays.length, 1, 'slain once');
+  // AUDIT LW-III: gone from the pool without a blow (the cull's mark: dead, no corpse) - no slaying, nobody's regard moved
+  const cull = standRig();
+  hostile(cull.rel, BO.id);
+  cull.stands.frame([cand(trip, BO, 30)], HERE, T);
+  await settle();
+  cull.spawned[0].dead = true;
+  cull.stands.frame([], HERE, T + 1);
+  assert.deepEqual(cull.slays, [], 'culled: no slaying');
+  assert.ok(!cull.stands.stood(BO.id), 'and the stand over');
   // let go: the player gone past KEEP_M, nothing able to stand
   const go = standRig();
   hostile(go.rel, BO.id);
@@ -125,7 +134,7 @@ test('LW7b an armed enemy draws: a member who counts the player HOSTILE within D
   hostile(cd.rel, BO.id);
   cd.stands.frame([cand(trip, BO, 20)], HERE, T);
   await settle();
-  cd.spawned[0].dead = true;
+  cd.spawned[0].dead = true; cd.spawned[0].corpse = true;
   cd.stands.clear();
   assert.ok(cd.pool.has(cd.spawned[0]), 'a body fallen before the clear stays the pool\'s');
 });
@@ -169,7 +178,7 @@ test('LW7b an armed friend comes: a FRIEND within HELP_M while the player is fig
   friend(d.rel, CY.id);
   d.stands.frame([cand(trip, CY, 20)], HERE, T);
   await settle();
-  d.spawned[0].dead = true;
+  d.spawned[0].dead = true; d.spawned[0].corpse = true;
   d.stands.frame([], HERE, T + 5);
   assert.deepEqual(d.dieds, [{ res: CY, t: T + 5 }]);
   assert.equal(d.slays.length, 0, 'not the player\'s hand');
@@ -298,7 +307,7 @@ test('LW7b a company\'s regard in the deep: one who counts the player HOSTILE dr
 
 test('LW7b the streaming host: the stands on the roads (the pool\'s loose transient body, allied for a friend; the fights\' own gate; the hand turns; the fight a foe on the player within FIGHT_NEAR_M by the threat law; the HUD line); a death at the player\'s side; the divers\' foe stand and the slaying (mutants: each seam)', () => {
   const w = rd('src/scenes/world.js');
-  assert.match(w, /stands: createRoadStands\(\{\n\s*spawn: \(type, feet, o\) => exteriorFoes\.spawnFoe\(type, feet, \{ allied: o\.allied, yaw: o\.yaw, gender: o\.gender, level: o\.level, loose: true, transient: true \}\),/);
+  assert.match(w, /stands: createRoadStands\(\{\n\s*spawn: \(type, feet, o\) => exteriorFoes\.spawnFoe\(type, feet, \{ allied: o\.allied, yaw: o\.yaw, gender: o\.gender, level: o\.level, loose: true, transient: true, managed: true \}\),/);   // PIN MOVED (AUDIT LW-III): managed - its KEEP_M lets them go, never the cull
   // PIN MOVED (LW11): the road's slay - the hand's turn and the road's report of it
   assert.match(w, /slay: livingRoadSlay, died: livingDied,\n\s*deadAt: livingDeadAt,[^\n]*\n\s*fighting: \(\) => hccThreats\(\)\.some\(\(q\) => Math\.hypot\(q\[0\] - player\.pos\[0\], q\[2\] - player\.pos\[2\]\) <= FIGHT_NEAR_M\),\n\s*say: \(text\) => townTalk\.say\(text\),/);
   // PIN MOVED (LEGACY5): a courtship of the fallen's ends first

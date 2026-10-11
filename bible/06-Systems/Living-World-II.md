@@ -292,18 +292,27 @@ Mac: "actual caravans utilizing horses and wagons".
 
 ### 3.2 Where it is (`wagons.js`, pure)
 
-- **THE TRAIN IN FILE** (`trainOf`), every place a distance along the way from the party's own `s` (the way is the
-  road's centre line, so a trailer's law reduces to the way's own curve):
+- **THE TRAIN IN FILE** (`trainOf`), every place a distance along the way from the party's own `s`, in its LANE
+  (AUDIT LW-III, KEEP RIGHT: LANE_N, 2 m right of the road's middle the way it walks - the roads' layer's `roadLanes`,
+  ABREAST_N more beside a party walking its way on one stretch; `trips.js laneAt`, the way's line rounded over
+  LANE_EASE_N either side of a corner):
   - the VAN, the first half of the armed, before the leader, a walker's gap (WALK_GAP_N) apart;
   - the leader at the party's own place, at the head of the first horse, LEAD_N (1 m) before it;
-  - each wagon's axle HITCH_N behind its horse: HITCHED_HORSE_LOCAL_Z, 3.1 m, the mod's own parked-team distance;
-  - a second team WAGON_TAIL_N (2.75 m) behind the first wagon's axle; a pack horse a walker's gap on;
+  - each wagon's axle its hitch STRAIGHT behind its horse, on its lane, facing it (AUDIT LW-III, THE TRAILER'S LAW:
+    `chordBehind`; it faced the road's heading at its axle, and round a corner its horse walked out of its shafts):
+    HITCHED_HORSE_LOCAL_Z, 3.1 m, the mod's own parked-team distance, where Mac's cart is not drawn;
+  - a second team WAGON_TAIL_N (2.75 m) straight behind the first wagon's axle; a pack horse a walker's gap on;
   - the rest behind, in order.
 
   All walk by day. At a halt (a fight, its wounds bound) the train stands where it was. The way out and the way home
   read the way in opposite directions, so the train faces home on the way back.
+  AUDIT LW-III, CLEAR OF THE TEAM (`clearOfTeam`): at a fight its ring and its foes - drawn, or stood live by the
+  pool - stand clear of its wagons and horses (the Small Cart's footprint, the pool's horse box): they stood in them.
 - **AT CAMP** (`campTeam`): each wagon CAMP_PARK_N (3 m) beyond the camp's ring, facing its fire, its horse unhitched
-  CAMP_HORSE_SIDE_N to its side; a pack horse by itself. The ring is the shared camp's (LW9) where there is one. Parked
+  CAMP_HORSE_SIDE_N to its side, tied alongside facing the fire as its wagon does (AUDIT LW-III: it faced out, its body
+  in the bed); a pack horse by itself. The ring is the shared camp's (LW9) where there is one, and AUDIT LW-III, ONE
+  CAMP, ONE PARK: a shared camp's teams stand round one park, each party its slots (`campGroups`' `k0` of its `teams`,
+  turned the first's way), the park grown to CAMP_TEAM_ARC_N (5 m) a team (`livingRoads.js campParkOf`). Parked
   through a fight at the camp too (AUDIT LW-II-2 R4: a caravan beset at its night camp lost its wagons and horses for
   the fight - the minutes LW4b stands it live).
 - **THE WHEELS** (`wheelAngleAt`): Horse Cart and Cargo's turn by travel (`horseCartLaw.js wheelRotationDegrees`) off
@@ -452,8 +461,10 @@ Mac: "caravans ... that can be assaulted, protected or traded with". The law is 
 ### 4.5 The escort (`escortOffer`, `escortPay`)
 
 - **HIRE ON.** A merchant's caravan offers the road from ESCORT_OFFER_MIN (18 hours) before it sets out until it is
-  in; never a caravan turned home, never by sea, never one the character robbed (AUDIT LW-II C5e). One contract at a
-  time (the ESCORT record).
+  in; never by sea, never one the character robbed (AUDIT LW-II C5e). A caravan the road turns home is offered until it
+  turns (AUDIT LW-III: its way out ends at its trouble's minute; the door refused a trip fated to turn, a day before its
+  trouble - the one an escort could save, and its missing row told which caravans the road would meet). One contract
+  at a time (the ESCORT record).
 - **THE PAY**: each day of the walk out (WALK_FROM_H to WALK_TO_H, a part a whole) at ESCORT_GOLD_DAY (60) and
   ESCORT_GOLD_LEVEL (15) a level of the player's, and ESCORT_FIGHT (100) a foe of the trip's fight, if the player won
   it (the character's `won` turn) and it began after the hire (C5e). Paid at the town it was bound for, with `helped`

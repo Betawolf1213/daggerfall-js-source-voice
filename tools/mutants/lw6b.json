@@ -310,8 +310,8 @@
   {
     "name": "LW6b-dc-pile",
     "file": "src/scenes/dungeonContext.js",
-    "old": "    layRemains: (items, feet, icon) => droppedLoot.dropPile(items, feet, null, icon),",
-    "new": "    layRemains: (items, feet) => droppedLoot.dropPile(items, feet),",
+    "old": "    layRemains: (items, feet, icon, key = null) => { const p = droppedLoot.dropPile(items, feet, null, icon);",
+    "new": "    layRemains: (items, feet, icon, key = null) => { const p = droppedLoot.dropPile(items, feet);",
     "tests": [
       "test/lw6b_remains.test.js"
     ]
@@ -373,8 +373,8 @@
   {
     "name": "LW6b-host-picture",
     "file": "src/scenes/world.js",
-    "old": "    return d.layRemains(items, feet, { archive: corpse.archive, record: corpse.record });",
-    "new": "    return d.layRemains(items, feet, null);",
+    "old": "    return d.layRemains(items, feet, { archive: corpse.archive, record: corpse.record }, key);",
+    "new": "    return d.layRemains(items, feet, null, key);",
     "tests": [
       "test/lw6b_remains.test.js"
     ]

@@ -312,6 +312,7 @@ export const REFUSALS = Object.freeze({
   // SEAT1a: the seats' registry (server-account/src/townSeats.js)
   'seats-need-account': 'The seats are witnessed by registered accounts. Add a username to witness one.',
   'seats-closed': 'The seats are not open yet.',
+  'seats-settling': 'The week is turning at the seats. Try again in a moment.',   // SEAT-LEASE: another request settles the Turning
   'bad-seat': 'That seat could not be read.',
   'seats-rate': 'You have reported a great many seats this hour. Try again later.',
   'seat-struck': 'That seat was struck from the registry.',

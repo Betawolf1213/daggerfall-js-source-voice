@@ -19,6 +19,7 @@ import { troubleOf, troubledTrip } from '../src/systems/livingWorld/trouble.js';
 import { HAZARD, ROAD_HAZARD, hazardOf, roadHits } from '../src/systems/livingWorld/lives.js';
 import { DAY_MIN, dayPlan, MARKET_STALL_H, MINSTREL_PLAY_H } from '../src/systems/livingWorld/dayPlan.js';
 import { campGroups, passingPairs, partyPlaces, partyLabel, CAMP_SHARE_N, PASS_N, CAMP_RING_N, CAMP_RING_STEP_N, createLivingRoads } from '../src/scenes/livingRoads.js';
+import { campTurn } from '../src/systems/livingWorld/wagons.js';
 import { createRoadStands } from '../src/scenes/roadStands.js';
 import { fillLine, ROAD_PASS_SCRIPTS, ROAD_PASS_WARNINGS, MINSTREL_SONGS, minstrelLine, MINSTREL_EVERY_MIN, MINSTREL_UP_MIN, PATROL_HALT_LINES } from '../src/systems/livingWorld/lines.js';
 import { MOBILE_TYPES } from '../src/characters/mobileTypes.js';
@@ -323,9 +324,11 @@ test('LW9 the night\'s camps shared round one fire: camps within CAMP_SHARE_N on
   const A = { trip: party('a', 2), at: { x: 0, z: 0, camp: true } }, B = { trip: party('b', 3), at: { x: 1200, z: 0, camp: true } }, C = { trip: party('c', 1), at: { x: 9000, z: 0, camp: true } };
   const g = campGroups([C, B, A]);
   // PIN MOVED (AUDIT LW-II-2 R4): each camp says whether its fire burns (`lit`: a party of it not halted)
-  assert.deepEqual(g.get('a'), { x: 0, z: 0, i0: 0, n: 5, first: true, lit: true });
-  assert.deepEqual(g.get('b'), { x: 0, z: 0, i0: 2, n: 5, first: false, lit: true });
-  assert.deepEqual(g.get('c'), { x: 9000, z: 0, i0: 0, n: 1, first: true, lit: true });
+  // PIN MOVED (AUDIT LW-III): and its teams' one park - each party's first (`k0`), the camp's count, the first's turn
+  const turn = (id) => campTurn({ id });
+  assert.deepEqual(g.get('a'), { x: 0, z: 0, i0: 0, n: 5, first: true, lit: true, k0: 0, teams: 0, turn: turn('a') });
+  assert.deepEqual(g.get('b'), { x: 0, z: 0, i0: 2, n: 5, first: false, lit: true, k0: 0, teams: 0, turn: turn('a') });
+  assert.deepEqual(g.get('c'), { x: 9000, z: 0, i0: 0, n: 1, first: true, lit: true, k0: 0, teams: 0, turn: turn('c') });
   const places = [...partyPlaces(A.trip, A.at, g.get('a')), ...partyPlaces(B.trip, B.at, g.get('b'))];
   const r = CAMP_RING_N + 1 * CAMP_RING_STEP_N;
   for (const p of places) assert.ok(Math.abs(Math.hypot(p.x, p.z) - r) < 1e-6, 'on the one ring');

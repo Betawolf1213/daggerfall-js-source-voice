@@ -292,7 +292,7 @@
   {
     "name": "AUDITLWII2-P10-LW14P-wire-cleared-entry",
     "file": "src/scenes/world.js",
-    "old": "    const from = entry ? { x: entry.x, z: entry.z } : { x: stops[0].x, z: stops[0].z };",
+    "old": "    const from = entry ? { x: entry.x, y: entry.y, z: entry.z } : { x: stops[0].x, z: stops[0].z };",
     "new": "    const from = { x: stops[0].x, z: stops[0].z };",
     "tests": [
       "test/auditlwii2_deep.test.js"

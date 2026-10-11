@@ -119,7 +119,7 @@
   {
     "name": "LW-DRY-walk-on-cut",
     "file": "src/systems/livingWorld/trips.js",
-    "old": "      const on = pace * (next - fall) >= Math.abs(camp - at) ? camp : at + dir * pace * (next - fall);",
+    "old": "      const on = pace * gone >= Math.abs(camp - at) ? camp : at + dir * pace * gone;",
     "new": "      const on = camp;",
     "tests": [
       "test/lwdry_ground.test.js"

@@ -40,8 +40,8 @@
   {
     "name": "LW8-inside-dead",
     "file": "src/systems/livingWorld/livingTown.js",
-    "old": "      if (this._taken.get(res.id) === day || this._away(res) || this._gone(res) || this.o.deadAt?.(res, t)) continue;   // WATCH-FIX: nor one with the watch\n      const at = this.entryOf(res, t);\n      const e = at?.e;",
-    "new": "      if (this._taken.get(res.id) === day || this._away(res) || this._gone(res)) continue;   // WATCH-FIX: nor one with the watch\n      const at = this.entryOf(res, t);\n      const e = at?.e;",
+    "old": "      if (this._taken.get(res.id) === day || this._away(res) || this._gone(res) || this.o.deadAt?.(res, t)) continue;   // WATCH-FIX: nor one with the watch",
+    "new": "      if (this._taken.get(res.id) === day || this._away(res) || this._gone(res)) continue;   // WATCH-FIX: nor one with the watch",
     "tests": [
       "test/lw8_indoors.test.js"
     ],
@@ -50,8 +50,8 @@
   {
     "name": "LW8-inside-taken",
     "file": "src/systems/livingWorld/livingTown.js",
-    "old": "      if (this._taken.get(res.id) === day || this._away(res) || this._gone(res) || this.o.deadAt?.(res, t)) continue;   // WATCH-FIX: nor one with the watch\n      const at = this.entryOf(res, t);\n      const e = at?.e;",
-    "new": "      if (this._away(res) || this._gone(res) || this.o.deadAt?.(res, t)) continue;   // WATCH-FIX: nor one with the watch\n      const at = this.entryOf(res, t);\n      const e = at?.e;",
+    "old": "      if (this._taken.get(res.id) === day || this._away(res) || this._gone(res) || this.o.deadAt?.(res, t)) continue;   // WATCH-FIX: nor one with the watch",
+    "new": "      if (this._away(res) || this._gone(res) || this.o.deadAt?.(res, t)) continue;   // WATCH-FIX: nor one with the watch",
     "tests": [
       "test/lw8_indoors.test.js"
     ],
