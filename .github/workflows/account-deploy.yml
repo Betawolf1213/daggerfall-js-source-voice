@@ -102,6 +102,7 @@ on:
       - "src/net/arenaReceipt.js"
       - "src/net/arenaLaw.js"
       - "src/net/wire.js"
+      - "src/net/egShape.js"
       - "src/net/siegeRef.js"
       - "src/net/siegeReceipt.js"
       - "src/net/duelReceipt.js"

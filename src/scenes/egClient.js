@@ -17,16 +17,23 @@
 //   THE RECEIPTS - every `e1` the room hands me kept on the device (EG_CLAIMS_KEY) and carried to the account service
 //     (`/v1/eg/claim`) until it is recorded, refused for good, or out of date.
 //
-// What EG-PLAY leaves (section 31, EG-PLAY): the arch (the call and `/breach` are the door), the witness view, the recall.
+//   EG-FULL (2026-10-11, Mac: "I said I want everything"): THE WITNESS VIEW (section 16.5) - a death in the Spire is a
+//     fall the death save turns aside (no death screen, no respawn, no DEATH-PENALTY): the body is put away under the hall,
+//     no blow reaches it, and the camera orbits a living member (Q and E to change whom); THE RECALL's word stands me
+//     where it calls me at its share of my health; the room's heals (a rest, a Rally, a Mending, the fray's lash); the
+//     Vestige offer and the company's word on THE PANEL (ui/egHud.js - keys 1-6, Y and N, or `/breach pick`, `/breach
+//     vote`); Cantrips, the Sutler, pings, forsaking and a Surplus in `/breach` words; THE POTION LAW's count; THE RECAP.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { createEgLink, egMemberOf } from '../net/egLink.js';
+import { createEgLink, egMemberOf, egRunOfMember } from '../net/egLink.js';
 import { egHallOf, egCircleOfHall, egSlotOfHall, egSlotAt, egLocalX, egAtDoor, egPhase, egTimes, egCountText, EG_TEXT, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR } from '../net/egLaw.js';
 import { readEgReceipt } from '../net/egReceipt.js';
 import { dungeonToRealm } from '../net/sdBrain.js';
 import { egToDungeon } from '../world/egHall.js';
 import { restackWeirKeys, setWeirKeyOpener } from '../systems/weirKey.js';
-import { egHudModel, drawEgHud } from '../ui/egHud.js';
+import { egHudModel, drawEgHud, egPanelModel, drawEgPanel, egRecapModel, EG_POTIONS_PER_HALL } from '../ui/egHud.js';
+import { EG_CANTRIPS } from '../net/egRun.js';
+import { egVOf } from '../net/egVestige.js';
 import { fillVitalSigns } from '../systems/statMods.js';
 import { createPortalSet } from './portalFx.js';
 
@@ -48,8 +55,22 @@ export const EG_END_TEXT = Object.freeze({
   fall: EG_TEXT.fallen, home: 'You walk home. The Redoubts you took are kept.', tear: EG_TEXT.torn,
   wipe: 'The company has fallen. The breach closes.', last: "The Spire's last word: the breach closes.",
   empty: 'Nobody answered the call. The breach closes.', gone: 'Nobody stayed. The breach closes.',
-  rehearsal: EG_TEXT.rehearsalDone, void: 'The breach failed to hold. Your key is returned.',
+  rehearsal: EG_TEXT.rehearsalDone, void: 'The breach failed to hold. Your key is returned.', forsake: 'You forsake the breach.',
+  seal: 'The way down is sealed. The halls are yours.',
 });
+/** A gift's words (`egot`). */
+export const EG_GOT_TEXT = Object.freeze({ shard: 'You take a Vestige shard.', tonic: 'You take a Spire Tonic.', cant: 'You take a Cantrip.', lumen: 'You take 10 lumen.', rel: 'A Reliquary is sealed for you.', longstep: 'Long Step: your crumbles wait half a second more this span.' });
+/** A hall's glyph on THE RECAP's strip. */
+const KIND_GLYPH = Object.freeze({ yard: 'Y', span: 'S', proving: 'P', rampart: 'R', court: 'C', athenaeum: 'A', deepway: 'D', brink: 'B', scriptorium: 's' });
+/** A push's pace (the Steps' breath's, sdSteps.js SD_GUST_SPEED), the longest frame it is carried for (s), the most one
+ *  push carries (m); a ring's rim kept this far in or out (m). */
+export const EG_PUSH_MPS = 3;
+export const EG_PUSH_DT_MAX = 0.1;
+export const EG_PUSH_MAX_M = 8;
+export const EG_RING_PAD = 0.3;
+/** The witness's camera: behind and over the watched member (m). */
+export const EG_WITNESS_BACK = 4;
+export const EG_WITNESS_UP = 1.5;
 /** The account service's refusals in the Spire's words (net/accountClient.js REFUSALS holds the rest). */
 const REFUSED = Object.freeze({
   short: EG_TEXT.noKeys, guest: EG_TEXT.guest, 'no-session': EG_TEXT.guest, live: EG_TEXT.held, offline: EG_TEXT.shut, server: EG_TEXT.shut,
@@ -78,10 +99,11 @@ function requestId() {
 /**
  * @param {{ modes: () => any, online: () => any, hub: () => any, account: any, now: () => number, entity: any, player: any, cam: any,
  *   say: (text: string) => void, mid?: (text: string) => void, veil?: () => any, site: () => any, wire: () => any, landAt: (l: any) => boolean,
- *   hurt: (n: number) => void, store?: any, saved?: () => void, hudHidden?: () => boolean, fight?: (link: any) => any, renderer?: any, audio?: any }} deps
+ *   hurt: (n: number) => void, store?: any, saved?: () => void, hudHidden?: () => boolean, fight?: (link: any) => any, renderer?: any, audio?: any,
+ *   peers?: () => { sub: string, pos: number[] }[], heal?: ((p: number, why: string) => void) | null }} deps
  */
 export function createEgClient({ modes, online, hub, account, now, entity, player, cam, say, mid = () => {}, veil = () => null, site, wire, landAt, hurt,
-  store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null }) {
+  store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null, peers = () => [], heal = null }) {
   const link = createEgLink({ now, say, onReceipt: (r) => claimAdd(r), onRefused: (w) => refused(w) });
   let fight = null;
   /** an open in flight: its request id, the service's order, whether the hub took it */
@@ -92,6 +114,11 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
   let downAt = -Infinity, downH = 0, placedH = 0, endSeen = null, endAt = 0, homeAskAt = -Infinity;
   let keysAt = -Infinity, claimAt = -Infinity, rdSeen = 0, callSaid = '';
   let door = null, doorH = 0, portal = null;
+  /** THE WITNESS VIEW: my fall's place, whom I watch; THE POTION LAW's count this hall; THE RECAP's log; my answers to
+   *  the company's word; a recap standing; a forsake asked once. */
+  let witness = null, potions = EG_POTIONS_PER_HALL, potionHall = '', recap = null, recapUntil = 0, forsakeAskAt = -Infinity, logH = 0;
+  const log = [];
+  const voted = {};
   const me = () => account?.me?.() ?? null;
   /** the way home's portal (scenes/portalFx.js - the Portal Stone's own) */
   let portalSet = null;
@@ -174,7 +201,7 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
       }
       if (!admit.z) { say(EG_TEXT.shut); return false; }
       placedH = 0; downH = 0; endSeen = null; rdSeen = 0; leaving = false;
-      const went = await modes()?.stepThroughFire?.(() => modes()?.enterEgHall?.({ b: c.b, seed: c.seed, c: 1, site: site() }), 'hourIn');
+      const went = await modes()?.stepThroughFire?.(() => modes()?.enterEgHall?.({ b: c.b, seed: c.seed, c: 1, geo: E.geo ?? 0, site: site() }), 'hourIn');
       if (!went) say(EG_TEXT.shut);
       return !!went;
     } finally { answering = false; }
@@ -225,7 +252,7 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
   }
   /** Stood on hall `h`'s arrival plate, facing down its course. */
   function placeOn(h, E) {
-    const spec = egHallOf(E.seed, h);
+    const spec = egHallOf(E.seed, h, E.geo ?? 0);
     if (!spec.arrive) return false;
     const at = egToDungeon(spec, spec.arrive.x, spec.arrive.y + 0.1, spec.arrive.z);
     veil()?.flash?.('hourIn');
@@ -234,7 +261,7 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
   /** The Redoubt's way home: its door at the Court's heart (an exit door - the dungeon's own press and name). */
   function standDoor(E) {
     if (door && doorH === E.h) return;
-    const spec = egHallOf(E.seed, E.h), f = spec.fight ?? spec.end ?? spec.arrive;
+    const spec = egHallOf(E.seed, E.h, E.geo ?? 0), f = spec.fight ?? spec.end ?? spec.arrive;
     if (!f) return;
     const [x, y, z] = egToDungeon(spec, f.x, f.y ?? 0, f.z);
     door = { matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, x, y, z, 1], centre: { x: 0, y: 1.6, z: 0 }, size: { x: 3.2, y: 3.2, z: 3.2 }, normal: { x: 0, y: 0, z: -1 } };
@@ -266,7 +293,7 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
       await modes()?.stepThroughFire?.(async () => {
         modes()?.forceExitToExterior?.();
         if (back) landAt(back);
-        return modes()?.enterEgHall?.({ b: E.b, seed: E.seed, c, site: site() });
+        return modes()?.enterEgHall?.({ b: E.b, seed: E.seed, c, geo: E.geo ?? 0, site: site() });
       }, 'hourIn');
     } finally { swapping = false; }
   }
@@ -278,19 +305,25 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
     // my admission, once: a member the room already counts is never asked again
     const mine = egMemberOf(E, me());
     if (mine && !mine.in && admit?.b === E.b && admit.z && o?.welcomes !== inFor && o?.sendEg?.('in', { z: admit.z, lv: Math.max(1, entity.level | 0) })) inFor = o.welcomes;
-    if (mine && !mine.alive && !leaving && entity.health > 0 && !M?.deathUp?.()) { walkOut(EG_TEXT.fallen); return; }
-    if (mine && mine.home) { walkOut(null); return; }
+    if (mine && mine.forsaken) { if (!leaving) { witness = null; walkOut(EG_END_TEXT.forsake); } return; }
+    if (mine && !mine.alive && !witness && !leaving) enterWitness(t, false);
+    if (mine && mine.home) { witness = null; walkOut(null); return; }
     if (E.end) {
-      if (endSeen !== E.end) { endSeen = E.end; endAt = t; mid(EG_END_TEXT[E.end] ?? EG_TEXT.ended); }
-      if (t - endAt >= EG_END_WALK_MS) walkOut(null);
+      if (endSeen !== E.end) { endSeen = E.end; endAt = t; mid(EG_END_TEXT[E.end] ?? EG_TEXT.ended); recap = egRecapModel(E, me(), log, t); recapUntil = Date.now() + 30_000; }
+      if (t - endAt >= EG_END_WALK_MS) { if (witness) { witness = null; entity.health = Math.max(1, entity.health); } walkOut(null); }
       return;
     }
     if (!(E.h > 0)) return;
+    // THE RECAP's log: each hall the company stood in, its glyph and its falls
+    if (E.h !== logH) { logH = E.h; const sp = egHallOf(E.seed, E.h, E.geo ?? 0); log.push({ h: E.h, glyph: KIND_GLYPH[sp.kind] ?? '?', lord: sp.lord, fall: false }); if (log.length > 200) log.shift(); }
+    // THE POTION LAW: two restoring potions a hall, refilled at each wake and at the rest
+    if ((E.sg === 'trial' || E.sg === 'rest') && potionHall !== `${E.h}:${E.sg === 'rest' ? 'r' : 't'}`) { potionHall = `${E.h}:${E.sg === 'rest' ? 'r' : 't'}`; potions = EG_POTIONS_PER_HALL; }
     const c = egCircleOfHall(E.h);
     if (c !== M.egHallCircle?.()) { if (E.sg === 'arrive') swapTo(E, c); return; }
+    if (witness) { witnessFrame(E); return; }
     const at = standing();
     if (!at) return;
-    const spec = egHallOf(E.seed, E.h);
+    const spec = egHallOf(E.seed, E.h, E.geo ?? 0);
     // THE PULL: the hall the company stands in is not the one my feet are in - to its plate
     if ((E.sg === 'arrive' || E.sg === 'trial') && placedH !== E.h && at.slot !== egSlotOfHall(E.h)) { if (placeOn(E.h, E)) { placedH = E.h; say(EG_TEXT.pulled); } }
     else if (at.slot === egSlotOfHall(E.h)) placedH = E.h;
@@ -301,8 +334,92 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
     }
     if (E.sg !== 'closing') downAt = -Infinity;
     // THE REDOUBT: the company healed once, the way home stood at the Court's heart through the rest
-    if (E.sg === 'rest') { if (rdSeen !== E.h) { rdSeen = E.h; fillVitalSigns(entity); mid(`${EG_TEXT.redoubt(E.rd)}. ${EG_TEXT.rest}`); say(`${EG_TEXT.redoubt(E.rd)} taken. The way home stands at the Court's heart; the stair down opens when the rest ends.`); } standDoor(E); }
+    if (E.sg === 'rest') { if (rdSeen !== E.h) { rdSeen = E.h; mid(`${EG_TEXT.redoubt(E.rd)}. ${EG_TEXT.rest}`); say(`${EG_TEXT.redoubt(E.rd)} taken. Choose a Vestige; the way home stands at the Court's heart; the stair down opens when the rest ends.`); } standDoor(E); }
     else if (door) dropDoor();
+  }
+
+  // ── the witness (section 16.5) ──────────────────────────────────────────────────────────────────────────
+  /** THE FALL: the body put away under the hall (no blow reaches it, the void never casts it back), the room told, the
+   *  camera handed to a living member. */
+  function enterWitness(t, said) {
+    const E = link.state();
+    if (witness || !inSpire()) return;
+    witness = { at: t, idx: 0, watched: null, hold: null };
+    const mine = egMemberOf(E, me());
+    if (mine?.alive && !said) online()?.sendEg?.('fell');
+    entity.health = Math.max(1, entity.maxHealth ?? 1);
+    const spec = E.h > 0 ? egHallOf(E.seed, E.h, E.geo ?? 0) : null;
+    if (spec?.arrive) { const p = egToDungeon(spec, spec.arrive.x, spec.arrive.y - 60, spec.arrive.z); witness.hold = p; }
+    mid(`FALLEN. ${mine?.recall ? 'The next Redoubt can call you back.' : 'The Spire will not take you back.'}`);
+    for (const h of log.slice(-1)) h.fall = true;
+  }
+  /** A witness's frame: the body held where it is put away; whom it watches kept to a living member. */
+  function witnessFrame(E) {
+    if (witness.hold && player?.pos) { player.pos[0] = witness.hold[0]; player.pos[1] = witness.hold[1]; player.pos[2] = witness.hold[2]; player.velY = 0; player._airVelX = 0; player._airVelZ = 0; player.falling = false; player.fallStart = player.pos[1]; }
+    const living = E.co.filter((c) => c[0] !== me() && c[3] === 1 && c[4] === 0 && c[5] === 1);
+    if (!living.length) { witness.watched = null; return; }
+    if (!living.some((c) => c[0] === witness.watched)) witness.watched = living[witness.idx % living.length][0];
+  }
+  /** THE RECALL's word for me: stood where it calls me, at its share of my health. */
+  function riseAt(w) {
+    const E = link.state();
+    witness = null;
+    const spec = egHallOf(E.seed, w.h, E.geo ?? 0);
+    const at = egToDungeon(spec, w.x, 0.2, w.z);
+    modes()?.egPlace?.(at, 0);
+    entity.health = Math.max(1, Math.round((entity.maxHealth ?? 1) * w.p));
+    mid(w.p >= 1 ? 'The Redoubt calls you back.' : 'A Memento calls you back.');
+  }
+  /** The room's heal (a rest, a Rally, a Mending, the Scriptorium; the fray's lash negative): its share of my health, and
+   *  at a rest my magicka and fatigue too. A lash is a setback through the hurt door, never a death. */
+  function applyHeal(p, why) {
+    if (witness || !(entity.health > 0) || !inSpire()) return;
+    if (why === 'rest' && p >= 1) { fillVitalSigns(entity); return; }
+    if (heal) { heal(p, why); return; }
+    const max = entity.maxHealth ?? 0;
+    if (p < 0) { const cut = Math.min(Math.round(-p * max), entity.health - 1); if (cut > 0) hurt(cut); return; }
+    entity.health = Math.max(1, Math.min(max, Math.round(entity.health + p * max)));
+  }
+
+  // ── THE PUSH, THE CAGE AND THE RING (section 9.3: "applied by the struck client as the Steps' gust is") ────────────
+  /** a push owed: its unit way in the hall's frame (the dungeon's axes - world/egHall.js egToDungeon) and metres left */
+  let pushX = 0, pushZ = 0, pushLeft = 0, pushAt = 0;
+  /** Iron Footing's share off a push (net/egVestige.js - by: 'client'). */
+  const footing = () => egVOf(egRunOfMember(link.state(), me()).vs, 'ironfooting');
+  /** A push of `m` metres along (dx, dz), carried out at the Steps' breath's speed by the collider's own move (scenes/
+   *  sdSteps.js's - no edge stops it: near one it is a cast-back). */
+  function pushBy(dx, dz, m) {
+    if (witness || !inSpire() || !(m > 0) || !Number.isFinite(dx) || !Number.isFinite(dz)) return;
+    const L = Math.hypot(dx, dz);
+    if (!(L > 1e-6)) return;
+    const take = Math.max(0, 1 - footing());
+    pushX = dx / L; pushZ = dz / L; pushLeft = Math.min(EG_PUSH_MAX_M, m * take); pushAt = now();
+  }
+  function pushStep() {
+    if (!(pushLeft > 0) || !player?.collider?.move || !player.pos) { pushLeft = 0; return; }
+    const t = now(), dt = Math.min(EG_PUSH_DT_MAX, Math.max(0, (t - pushAt) / 1000));
+    pushAt = t;
+    const step = Math.min(pushLeft, EG_PUSH_MPS * dt);
+    if (!(step > 0)) return;
+    player.collider.move(player.pos, pushX * step, 0, pushZ * step, player.height, !!player.grounded && !player.jumping);
+    pushLeft -= step;
+  }
+  /** A cage holds me (the motor's own settle - no move, no fall, for `ms`). */
+  function holdFor(ms) {
+    if (witness || !inSpire() || !player) return;
+    player.freezeMotor = Math.max(player.freezeMotor || 0, Math.min(1, ms / 1000));
+  }
+  /** A challenge's ring (the hall's frame): the challenged kept inside its rim, everyone else kept out of it. */
+  function ringKeep(x, z, r, inside) {
+    if (witness || !inSpire() || !player?.pos) return;
+    const E = link.state(), at = standing();
+    if (!at || !(E.h > 0) || !(r > 0)) return;
+    const spec = egHallOf(E.seed, E.h, E.geo ?? 0), lx = egLocalX(spec, at.sx), d = Math.hypot(lx - x, at.z - z);
+    const rim = inside ? r - EG_RING_PAD : r + EG_RING_PAD;
+    if (inside ? d <= rim : d >= rim) return;
+    const ux = d > 1e-6 ? (lx - x) / d : 1, uz = d > 1e-6 ? (at.z - z) / d : 0;
+    const q = egToDungeon(spec, x + ux * rim, 0, z + uz * rim);
+    player.pos[0] = q[0]; player.pos[2] = q[2]; player._airVelX = 0; player._airVelZ = 0;
   }
 
   return {
@@ -319,18 +436,84 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
           say(w.os === me() ? `Your ${w.rh ? 'Rehearsal' : 'Elite Breach'} rises. It opens in ${egCountText(egTimes({ openedAt: w.op }).openAt - now())} - type /breach then to step through.` : `${EG_TEXT.call(w.o || 'Your company')} It opens in ${egCountText(egTimes({ openedAt: w.op }).openAt - now())} - type /breach then to step through.`);
         }
       }
-      if (w.k === 'fall' && w.s !== me()) say(EG_TEXT.falls(w.n || 'A companion'));
-      if (w.k === 'rd') say(`${EG_TEXT.redoubt(w.w)}: the count gains fifteen minutes.`);
+      if (w.k === 'fall' && w.s !== me()) say(`${EG_TEXT.falls(w.n || 'A companion')}${w.fin ? ' The Spire will not take them back.' : ''}`);
+      if (w.k === 'fall' && w.s === me() && !witness) enterWitness(now(), true);
+      if (w.k === 'rise' && w.s === me()) riseAt(w);
+      if (w.k === 'eheal') applyHeal(w.p, w.why);
+      if (w.k === 'egot' && EG_GOT_TEXT[w.w]) say(EG_GOT_TEXT[w.w]);
+      if (w.k === 'rd') say(w.cov ? `${EG_TEXT.redoubt(w.w)}: the Covenant has spoken - this Redoubt is the last.` : `${EG_TEXT.redoubt(w.w)}: the count gains ${egCountText(Math.max(0, w.g ?? 0))}.`);
       void room;
     },
     /** `/breach` (answer the call; `rehearse` - the day's Rehearsal; `home` - the way home at a Redoubt). */
     command(arg = '') {
-      const a = String(arg).trim().toLowerCase();
+      const parts = String(arg).trim().toLowerCase().split(/\s+/).filter(Boolean), a = parts[0] ?? '', b = parts[1] ?? '';
       if (a === 'rehearse' || a === 'rehearsal') { const no = openRefusal(); if (no) { say(no); return; } open(true); say(EG_TEXT.opening); return; }
       if (a === 'home') { this.wayHome(); return; }
-      if (inSpire()) { say('You are in the breach. At a Redoubt, /breach home takes the way home.'); return; }
+      const o = online(), E = link.state();
+      if (inSpire()) {
+        if (a === 'pick') { const n = Number(b) | 0, card = E.offer?.v?.[n - 1]; if (card == null) say('No Vestige waits for that number.'); else o?.sendEg?.('pick', { v: card }); return; }
+        if (a === 'vote') { this.vote(b); return; }
+        if (a === 'cant' || a === 'cantrip') { const run = egRunOfMember(E, me()), n = (Number(b) | 0) - 1; if (n < 0 || n >= run.cant.length) say(run.cant.length ? `Your Cantrips: ${run.cant.map((c, j) => `${j + 1}. ${EG_CANTRIPS[c]?.name}`).join(', ')}.` : 'You hold no Cantrip.'); else o?.sendEg?.('cant', { i: n }); return; }
+        if (a === 'buy') { const i = { cant: 0, cantrip: 0, tonic: 1, shard: 2 }[b]; if (i == null) say('The Sutler sells a Cantrip (20 lumen), a Spire Tonic (15) or a Vestige shard (30): /breach buy cant|tonic|shard.'); else o?.sendEg?.('buy', { i }); return; }
+        if (a === 'surplus') { o?.sendEg?.('surplus', { use: b === 'reroll' ? 1 : 0 }); return; }
+        if (a === 'ping') { const at = standing(); if (at) { const spec = egHallOf(E.seed, E.h, E.geo ?? 0); o?.sendEg?.(witness ? 'ping' : 'lping', { x: Math.round(egLocalX(spec, at.sx) * 100) / 100, z: Math.round(at.z * 100) / 100, w: { danger: 1, mine: 2, cache: 2 }[b] ?? 0 }); } return; }
+        if (a === 'watch') { if (witness) { witness.idx++; witness.watched = null; } return; }
+        if (a === 'forsake') {
+          if (!witness) { say('Only the fallen may forsake the breach.'); return; }
+          if (Date.now() - forsakeAskAt > EG_HOME_CONFIRM_MS) { forsakeAskAt = Date.now(); mid('Forsake the breach? Your recall is lost. /breach forsake again to go.'); return; }
+          forsakeAskAt = -Infinity; o?.sendEg?.('forsake'); return;
+        }
+        if (a === 'bequest') { const run = egRunOfMember(E, me()), n = (Number(b) | 0) - 1, v = run.vs[n]?.[0]; if (!witness || v == null) say('A fallen member names one of their Vestiges: /breach bequest N.'); else o?.sendEg?.('bequest', { v }); return; }
+        say('In the breach: /breach pick N, vote yes|no|N, cant N, buy cant|tonic|shard, ping, watch, forsake, home.');
+        return;
+      }
       answer();
     },
+    /** The company's word answered (`y` yes/no or an option's number): the newest choice open, or the one named. */
+    vote(y) {
+      const E = link.state(), o = online(), open = (E.as ?? []).filter((q) => q[2] > now());
+      if (!open.length) { say('No choice is open.'); return false; }
+      const yn = y === 'yes' || y === 'y' ? 1 : y === 'no' || y === 'n' ? 0 : null;
+      const n = Number(y) | 0;
+      const ask = yn != null ? [...open].reverse().find((q) => !q[0].startsWith('dec:')) ?? open[open.length - 1] : open.find((q) => q[0].startsWith('dec:') && voted[q[0]] == null) ?? open[open.length - 1];
+      const val = yn != null ? yn : Math.max(0, n - 1);
+      voted[ask[0]] = val;
+      return !!o?.sendEg?.('vote', { q: ask[0], y: val });
+    },
+    /** A key while the Spire's panel stands (1-6 a card or an option, Y/N a yes-or-no choice, Enter closes the recap) or
+     *  while I watch (Q and E change whom). Answers whether it took the key. */
+    key(e) {
+      if (!inSpire() && !recap) return false;
+      const code = e?.code ?? '';
+      if (recap && (code === 'Enter' || code === 'Escape')) { recap = null; drawEgPanel(null); return true; }
+      if (!inSpire()) return false;
+      const E = link.state(), o = online(), m = /^Digit([1-6])$/.exec(code);
+      if (witness && (code === 'KeyQ' || code === 'KeyE')) { witness.idx += code === 'KeyE' ? 1 : -1; if (witness.idx < 0) witness.idx += 8; witness.watched = null; return true; }
+      if (m && E.offer?.v?.length) { const card = E.offer.v[Number(m[1]) - 1]; if (card != null) { o?.sendEg?.('pick', { v: card }); return true; } }
+      const open = (E.as ?? []).filter((q) => q[2] > now());
+      if (open.length && (code === 'KeyY' || code === 'KeyN')) return this.vote(code === 'KeyY' ? 'yes' : 'no');
+      if (open.length && m) return this.vote(m[1]);
+      return false;
+    },
+    /** THE DEATH SAVE (characters/playerEntity.js registerPlayerDeathSave): a blow that would kill me in the Spire is a
+     *  fall instead - the witness begins. */
+    fallSave() { if (!inSpire() || witness) return false; enterWitness(now(), false); return true; },
+    /** A witness takes no blow (the damage door's mod). */
+    witnessing: () => !!witness,
+    /** The witness's eye: behind and over the member watched (the camera's override). Answers whether it took the eye. */
+    witnessEye(c, yaw = 0) {
+      if (!witness?.watched) return false;
+      const p = peers().find((q) => q.sub === witness.watched);
+      if (!p?.pos) return false;
+      c.pos = [p.pos[0] - Math.sin(yaw) * EG_WITNESS_BACK, p.pos[1] + EG_WITNESS_UP + 1.6, p.pos[2] - Math.cos(yaw) * EG_WITNESS_BACK];
+      return true;
+    },
+    /** THE POTION LAW: may I drink a restoring potion now (two a hall), and one drunk. */
+    potionAllowed: () => !inSpire() || potions > 0,
+    potionUsed() { if (inSpire()) potions = Math.max(0, potions - 1); },
+    push: (dx, dz, m) => pushBy(dx, dz, m),
+    hold: (ms) => holdFor(ms),
+    ring: (x, z, r, inside) => ringKeep(x, z, r, inside),
     useKey,
     /** One frame (the online frame, every mode). */
     frame() {
@@ -343,6 +526,7 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
       portalSet?.tick(cam?.pos ?? null);
       if (inSpire()) {
         spireFrame(E, t);
+        pushStep();
         fight ??= makeFight(link);
         fight?.frame();
       } else {
@@ -350,7 +534,10 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
         if (leaving || (E.end && E.b)) { leaving = false; link.forget(); }
         if (door || portal) dropDoor();
       }
-      drawEgHud(egHudModel(link.state(), me(), t, { inSpire: inSpire() }), { hidden: hudHidden() });
+      drawEgHud(egHudModel(link.state(), me(), t, { inSpire: inSpire(), witness: !!witness, potions }), { hidden: hudHidden() });
+      if (recap && Date.now() > recapUntil) recap = null;
+      const panelModel = inSpire() ? egPanelModel(link.state(), me(), t, voted) : null;
+      drawEgPanel(panelModel, { hidden: hudHidden() && !recap, recap, onPick: (card) => online()?.sendEg?.('pick', { v: card }), onVote: (q, y) => { voted[q] = y; online()?.sendEg?.('vote', { q, y }); }, onSurplus: (use) => online()?.sendEg?.('surplus', { use }) });
     },
     /** The hall's fight driver (the dungeon host's seams), or null outside the Spire. */
     fight: () => (inSpire() ? fight : null),
@@ -381,7 +568,7 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
     /** The breach as held (tests). */
     state: () => link.state(),
     /** Online gone: every piece put away (the call kept - it is the hub's). */
-    away() { fight?.leave(); dropDoor(); drawEgHud(null); },
+    away() { fight?.leave(); dropDoor(); drawEgHud(null); drawEgPanel(null); witness = null; },
     /** Registered as the key's opener (systems/weirKey.js). */
     claimKeys() { setWeirKeyOpener(() => useKey()); },
     restack,

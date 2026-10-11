@@ -186,6 +186,7 @@ import { readHouse } from './houseLaw.js';   // LEGACY7 part two: a house rides 
 import { validHoldemIn, validHoldemOut } from './holdemTable.js';   // CARDS5: the relay's card table's words both ways - holdemTable.js imports only cardLaw.js, which imports only dice.js (already the bundle's)
 import { validIliacIn, validIliacOut } from './iliacTable.js';   // CARDS10: the relay's Iliac table's words both ways - iliacTable.js imports the rules (iliacHand.js, iliacCards.js) and Hold'em's bounds
 import { validGateMods, GATE_FEEDS_MAX } from './gateMods.js';   // WB8b: the Warden's marks on a gate's state - gateMods.js imports nothing, so the worker's graph stays flat
+import { egStampOk } from './egShape.js';   // EG-FULL: a Spire blow's FULL shape stamp, checked as the wire carries it - egShape.js imports nothing, so the worker's graph stays flat
 export { validRollSpec, validRoll, rollDice, ROLL_DICE_MAX, ROLL_SIDES_MAX, ROLL_MOD_MAX };
 export { validHoldemIn, validHoldemOut };
 export { validIliacIn, validIliacOut };
@@ -1346,7 +1347,7 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world195';   // EG-PLAY (2026-10-11, bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): AN ELITE BREACH'S ROOM - the hub opens a breach on the account service's signed order and calls its company (`eg` `open`, `call`), the breach's room `eg:<16hex>` admits its company alone and runs its halls by the director's law (net/egLaw.js, net/egBrain.js, net/egHost.js, net/egLord.js) and signs its receipts (net/egReceipt.js); the `eg` frame's kinds and bounds here (validEgIn, validEgOut, validEgOpenTell); SLIM-FRAME (2026-10-11, the owner: "I notice some players look like they are walking off the ground"; bible/11-Multiplayer/Scale-Arc.md SLIM-FRAME): THE SECOND WIRE'S PLACE IN ITS OWN UNITS - slimPose rounds a pose's height (the scene's metres in every room) to the centimetre, and a dungeon's, a town's and a building's x and z with it; a native room's x and z keep whole world units (nativePoseRoom, moved here from net/online.js, so the relay's fan rounds by the room it was said in). SCALE5b rounded all three to whole units, so every peer heard on the second wire stood on a whole metre of height. Before it, world193: SERPENT4 (2026-10-11, the players' feature-feedback thread on the Serpent boss fight; bible/11-Multiplayer/Sea-Serpent.md section 16; world192 on its branch, renumbered past main's SCALE5c world192 at the merge; NOT YET DEPLOYED): THE SEA SERPENT REWORKED - its waters open until it dives (serpentLaw.js serpentAdmits), a sixth off its health, its girth SERPENT_GIRTH times (serpentBody.js - the relay judges a blow by it), a part dealt or a quarter of the fight stood earns and the hub gives a dealer's party a stander's receipt (the cell says its kin with the kill), a hand's own weapons on a hand's purse (the `hit` word's `r`); its law version 3 (a game before it is told to reload)
+export const RELAY_VERSION = 'world195';   // EG-PLAY (2026-10-11, bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): AN ELITE BREACH'S ROOM - the hub opens a breach on the account service's signed order and calls its company (`eg` `open`, `call`), the breach's room `eg:<16hex>` admits its company alone and runs its halls by the director's law (net/egLaw.js, net/egBrain.js; EG-FULL: net/egShape.js, net/egBodies.js, net/egLegion.js, net/egLords.js, net/egVestige.js, net/egRun.js) and signs its receipts (net/egReceipt.js); the `eg` frame's kinds and bounds here (validEgIn, validEgOut, validEgOpenTell); SLIM-FRAME (2026-10-11, the owner: "I notice some players look like they are walking off the ground"; bible/11-Multiplayer/Scale-Arc.md SLIM-FRAME): THE SECOND WIRE'S PLACE IN ITS OWN UNITS - slimPose rounds a pose's height (the scene's metres in every room) to the centimetre, and a dungeon's, a town's and a building's x and z with it; a native room's x and z keep whole world units (nativePoseRoom, moved here from net/online.js, so the relay's fan rounds by the room it was said in). SCALE5b rounded all three to whole units, so every peer heard on the second wire stood on a whole metre of height. Before it, world193: SERPENT4 (2026-10-11, the players' feature-feedback thread on the Serpent boss fight; bible/11-Multiplayer/Sea-Serpent.md section 16; world192 on its branch, renumbered past main's SCALE5c world192 at the merge; NOT YET DEPLOYED): THE SEA SERPENT REWORKED - its waters open until it dives (serpentLaw.js serpentAdmits), a sixth off its health, its girth SERPENT_GIRTH times (serpentBody.js - the relay judges a blow by it), a part dealt or a quarter of the fight stood earns and the hub gives a dealer's party a stander's receipt (the cell says its kin with the kill), a hand's own weapons on a hand's purse (the `hit` word's `r`); its law version 3 (a game before it is told to reload)
 // world192:   SCALE5c (2026-10-10, Mac: "I wanna do every single slice"; bible/11-Multiplayer/Scale-Arc.md SCALE5c; NOT YET DEPLOYED - its merge's drop, relay-deploy.yml deploying it as main moves to it (AUDIT SCALE II L1)): THE HUB, SIXTEEN WAYS (net/hubShards.js) - a hub link lands on its account's shard (`chat:world.<k>`), which holds the socket and its roster; `chat:world` is the bus, running every law it ran over a virtual socket for each (server/src/index.js ShardSocket), handed each shard's hellos, frames and closes and handing back what it says, batched both ways; the hub's count (`n`); a search of everyone online by name (`find`/`found`) and the guild online on every shard. A tab from before it still joins `chat:world`, which keeps it as the hub always did. SCALE5b with it (world191 on its branch - main's WARDEN1 took world191 at the merge, so this drop is world192 alone; 2026-10-10, Mac: "lets now tackle the bigger work ... really future proof our archetecture while also increasing performance"; bible/11-Multiplayer/Scale-Arc.md SCALE5b; NOT YET DEPLOYED - its merge's drop, relay-deploy.yml deploying it as main moves to it (AUDIT SCALE II L1)): the second wire, offered by the hello (`w2`) - a room's poses batched a listener every POSE_BATCH_MS and slim (slimPose), a channel's joins and leaves batched a second (ROSTER_BATCH_MS), a boss's beat one frame (wire2Batch); the relay's hygiene (the host kept, directed frames by an id index, the foes fan a method with its budget asked first, the drain's sweep not paid twice); eight more doubles on the metrics point; the relay's settings at run time (net/relayCfg.js, a developer's `cfg`); a cell's word that it judges the poses reaching it (`rf`), which a halo there reads as a reason to send every pose (HALO-THIN thins the rest; AUDIT SCALE II R1-6: SCALE5b's own thinning, HALO_POSE_MS, went at the merge past it). A socket that offers nothing hears every frame byte for byte as world190 said it. World190 before it: AUDIT MW-NPC II (2026-10-10, the MW-NPC arc's second audit, world188, then world189, on its branch - renumbered past main's INT11-INT14 world188 and SCALE5a world189 at the merges; bible/04-Characters/Morrowind-NPCs.md section 23; NOT YET DEPLOYED): a foe record may carry the look its owner stands it in - `ls` its seed and `lw` a person's worn kit (validFoeRecord) - read by the clients alone; the relay forwards foe frames unread, so no frame changes shape and the bundle's bytes move only by wire.js's own. A new version rather than one re-hashed: the one before it is main's INT11-INT14, and may be deployed before this lands.
 // world191:   WARDEN1 (2026-10-10, Mac: "Anytime there are too many carts/wagons in a city or they are parked on the road for a long time. I want a gaurd to navigate, lift the wagon/horse on top of their sprite and yeet it far away"; bible/06-Systems/Wagon-Warden.md; world188, world189 then world190 on its branch - renumbered past main's INT11-INT14 world188 at the rebase onto it, past SCALE5a's world189 at the merge after it and past AUDIT MW-NPC II's world190 at the next; NOT YET DEPLOYED - a deploy drops every player once): THE TOWN WATCH THROWS A PARKED TEAM OUT - a park record keeps where a throw lands (validParkData `ly`, within WARDEN_LAND_REACH of its anchor), its town (`tw`) and its road (`rd`); the cell keeps when each team came to stand where it stands (`since`), throws a road team WARDEN_ROAD_MS on (at the first frame past it, at a hello, at a store - never on the alarm, whose firing is a cell's other duties') and the longest parked past a town's WARDEN_TOWN_CAP (at the store), marks it (`y`, fanned and listed), and tells its owner's sockets (the new frame out, `parkYeet` - wire.js validParkYeet; a socket's `pk` names whose team it last spoke for, and the frame names it, `k`); WARDEN_RELAY_MIN 191 - an older relay drops `ly`, `tw` and `rd`, and nothing is thrown. AUDIT WARDEN1 (re-hashed, never deployed): one account one team a town's crowd, a team's spot by WARDEN_SPOT_NATIVES, a landing a wagon's alone, the round's failure never a frame's. The bundle's files unchanged.
 // world190:   AUDIT MW-NPC II (2026-10-10, the MW-NPC arc's second audit, world188, then world189, on its branch - renumbered past main's INT11-INT14 world188 and SCALE5a world189 at the merges; bible/04-Characters/Morrowind-NPCs.md section 23; NOT YET DEPLOYED): a foe record may carry the look its owner stands it in - `ls` its seed and `lw` a person's worn kit (validFoeRecord) - read by the clients alone; the relay forwards foe frames unread, so no frame changes shape and the bundle's bytes move only by wire.js's own. A new version rather than one re-hashed: the one before it is main's INT11-INT14, and may be deployed before this lands.
@@ -5377,26 +5378,43 @@ export function validSdFoundTell(b) {
 // opens the breach's room (`eg:<16hex>`, net/egLaw.js) and says the CALL to every member (`call`). Each member enters the
 // room with its own signed admission (`in`); the room's director (net/egBrain.js) runs the halls and says the breach
 // (`st` whole, `sg` a stage, `co` the company, `fall`, `rd` a Redoubt, `end`), each member's receipt (`rcpt` - `e1`,
-// net/egReceipt.js), and the fights in the gate's own words (`fst` a fight's whole state; `mv`, `atk`, `hp`, `fell`, the
-// legion's `ad`/`amv`/`aatk`/`ah`/`adie` and the rifts as `cx`/`cxh`/`cxb` - validGateOut's shapes, every point in the
-// hall's own frame, net/egLaw.js). A member's blows are the gate's (`hit` on the lord or champion, `ahit` on one of the
-// legion, `xhit` on a rift), its step through a door `down`, its way home `home`. Every time is the relay's clock.
+// net/egReceipt.js).
+//
+// EG-FULL (2026-10-11, Mac: "I said I want everything"): THE FIGHTS IN THE SPIRE'S OWN WORDS (net/egBodies.js) - `efs` a
+// fight's whole state, `ead`/`emv`/`ehp`/`edie`/`efl` its bodies, `eb` a blow with its FULL shape stamp (net/egShape.js),
+// `ecut` a feint, `etx` tethers, `emk` marks, `eph` a phase, `efell` a lord's fall, `eob` an errand's state, `ez` a zone,
+// `esay` a beat's words, `egust`/`edark`/`erail` the place's own; THE RUN'S - `offer` (a member's Vestiges), `ask`/`asked`/
+// `tally` (the company's word), `egot` and `run` (a member's run), `rise` (a recall), `eping` (a ping), `pz` (an
+// Athenaeum's turn), `eheal` (the room's word on a heal). A member's words: `hit` (a blow on a body by its number),
+// `down`, `home`, `pick`, `surplus`, `vote`, `cant`, `buy`, `lping`, `ping`, `bequest`, `forsake`, `pz`. Every time is the
+// relay's clock; every point the hall's own frame.
 
-/** What a client may say: `open` to the hub; `in`, `down`, `home` and the blows to a breach's room. */
-export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'ahit', 'xhit']);
+/** What a client may say: `open` to the hub; the rest to a breach's room. */
+export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell']);
 /** What the hub and a breach's room say back. */
-export const EG_FIGHT_KINDS = Object.freeze(['mv', 'atk', 'hp', 'fell', 'ad', 'amv', 'aatk', 'ah', 'adie', 'cx', 'cxh', 'cxb']);
-export const EG_OUT_KINDS = Object.freeze(['call', 'st', 'sg', 'co', 'fall', 'rd', 'rcpt', 'end', 'no', 'fst', ...EG_FIGHT_KINDS]);
+export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail']);
+export const EG_RUN_KINDS = Object.freeze(['offer', 'ask', 'asked', 'tally', 'egot', 'run', 'rise', 'eping', 'pz', 'eheal']);
+export const EG_OUT_KINDS = Object.freeze(['call', 'st', 'sg', 'co', 'fall', 'rd', 'rcpt', 'end', 'no', ...EG_FIGHT_KINDS, ...EG_RUN_KINDS]);
 /** A hall's stages as the wire says them (section 7): before the first hall (`wait` - the arch rising, sealed, open),
  *  the arrival and gather, the trial, the closing (its door open), a Redoubt's rest, the end. */
 export const EG_STAGES = Object.freeze(['wait', 'arrive', 'trial', 'closing', 'rest', 'end']);
 /** How a breach ends (the `end` frame's `why`, net/egReceipt.js EG_END_WHYS' room half). */
-export const EG_END_WORDS = Object.freeze(['tear', 'wipe', 'gone', 'last', 'empty', 'rehearsal', 'void']);
+export const EG_END_WORDS = Object.freeze(['tear', 'wipe', 'gone', 'last', 'empty', 'rehearsal', 'void', 'home']);
 /** The room's refusals, in words. */
 export const EG_NO_WORDS = Object.freeze(['the breach is closed', 'the breach answers only to its company', 'the order is spent', 'you have fallen', 'you went home', 'the order is not yours']);
-/** THE BRAIN'S LAW by number, said on every `in` (`bv`) and refused below EG_BRAIN_MIN (the gate's law). */
-export const EG_BRAIN_V = 1;
-export const EG_BRAIN_MIN = 1;
+/** The beats a room names (`esay`'s `w` - the client words each: scenes/egFight.js EG_SAY). */
+export const EG_SAY_KEYS = Object.freeze(['wake', 'fury', 'covenant', 'covenantrest', 'stunned', 'scent', 'scorched', 'phase', 'images', 'examination', 'cage', 'passed', 'failed', 'challenge', 'challengewon',
+  'challengeend', 'conquest', 'muster', 'tithe', 'bare', 'twinfell', 'twinraised', 'crossing', 'chaining', 'grounded', 'anchors', 'vanish', 'tether', 'tetherbroken', 'eclipse', 'mirrors', 'relit', 'landed',
+  'broken', 'stirs', 'raised', 'raisebroken', 'door', 'recalled', 'home', 'goldrun', 'mimic', 'memento', 'relicbroken', 'silenced', 'orrerytrue', 'chamberdone', 'freed', 'desertertook', 'sapperfed',
+  'reopened', 'cantrip', 'bargain', 'respite', 'ready']);
+/** The gifts a member is told of (`egot`'s `w`). */
+export const EG_GOT_WORDS = Object.freeze(['shard', 'tonic', 'cant', 'lumen', 'rel', 'longstep']);
+/** The zones' kinds (`ez`). */
+export const EG_ZONE_KINDS = Object.freeze(['burn', 'void', 'soul', 'haven']);
+/** THE BRAIN'S LAW by number, said on every `in` (`bv`) and refused below EG_BRAIN_MIN (the gate's law). EG-FULL: 2 - the
+ *  Spire's own fight words. */
+export const EG_BRAIN_V = 2;
+export const EG_BRAIN_MIN = 2;
 /** The breach frames' own bucket: the gate's (a swing through a pack of the legion is a frame a body). */
 export const EG_HZ_MAX = 16;
 export const egGate = (bucket, nowMs) => tokenGate(bucket, nowMs, EG_HZ_MAX);
@@ -5414,27 +5432,36 @@ const EG_ORDER_MAX = 1024;
 const EG_RECEIPT_RE = /^e1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*$/;
 const EG_RECEIPT_WIRE_MAX = 640;
 const EG_B_RE = /^[0-9a-f]{16}$/;
-/** A hall number's bound on the wire, a count's (ms - the last word), a company's size. */
+/** A hall number's bound on the wire, a count's (ms - the last word), a company's size, a coordinate's (m), a body's
+ *  health, the most bodies, blows, zones, tethers and marks a word carries. */
 export const EG_HALL_WIRE_MAX = 99_999;
 const EG_COUNT_WIRE_MAX = 4 * 3600 * 1000;
 const EG_COMPANY_MAX = 8;
+const EG_XZ_MAX = 400;
+const EG_HP_MAX = 1e8;
+const EG_WIRE_BODIES_MAX = 64;
+const EG_WIRE_BLOWS_MAX = 40;
+const EG_WIRE_LIST_MAX = 32;
 const egOrder = (z) => typeof z === 'string' && z.length <= EG_ORDER_MAX && EG_ORDER_RE.test(z);
 const egMs = (v) => v === 0 || gateMs(v);
+const egXZ = (v) => finite(v) && Math.abs(v) <= EG_XZ_MAX;
+const egId = (s) => typeof s === 'string' && ID_RE.test(s);
+const egText = (s, max = 64) => (typeof s === 'string' && s.length <= max ? sanitizeName(s) : null);
 /** Where a member answered from (the landing): its map pixel and its place there, the MapsFile frame. */
 function egSite(s) {
   if (!s || typeof s !== 'object' || !intIn(s.px, 0, 999) || !intIn(s.py, 0, 499)) return null;
   if (![s.x, s.y, s.z].every((v) => finite(v) && Math.abs(v) <= 1e7) || !finite(s.yaw) || Math.abs(s.yaw) > 8) return null;
   return { px: s.px, py: s.py, x: s.x, y: s.y, z: s.z, yaw: s.yaw };
 }
-/** The company as the wire says it: `[sub, name, numeral]`, and in a room's state whether each lives (`al`), went home
- *  (`hm`) and has entered (`in`). */
+/** The company as the wire says it: `[sub, name, numeral]`, and in a room's state whether each lives, went home, has
+ *  entered, watches as a witness, forsook it, how often it fell and whether its recall is still in hand. */
 function egCompany(co, full) {
   if (!Array.isArray(co) || co.length < 1 || co.length > EG_COMPANY_MAX) return null;
   const out = [];
   for (const t of co) {
-    if (!Array.isArray(t) || t.length !== (full ? 6 : 3) || typeof t[0] !== 'string' || !ID_RE.test(t[0]) || typeof t[1] !== 'string' || !intIn(t[2], 1, EG_COMPANY_MAX)) return null;
-    if (full && !(t.slice(3).every((v) => v === 0 || v === 1))) return null;
-    out.push(full ? [t[0], sanitizeName(t[1]), t[2], t[3], t[4], t[5]] : [t[0], sanitizeName(t[1]), t[2]]);
+    if (!Array.isArray(t) || t.length !== (full ? 10 : 3) || typeof t[0] !== 'string' || !ID_RE.test(t[0]) || typeof t[1] !== 'string' || !intIn(t[2], 1, EG_COMPANY_MAX)) return null;
+    if (full && !(t.slice(3, 8).every((v) => v === 0 || v === 1) && intIn(t[8], 0, 2) && (t[9] === 0 || t[9] === 1))) return null;
+    out.push(full ? [t[0], sanitizeName(t[1]), ...t.slice(2)] : [t[0], sanitizeName(t[1]), t[2]]);
   }
   return new Set(out.map((t) => t[0])).size === out.length ? out : null;
 }
@@ -5445,19 +5472,79 @@ function egStage(m) {
   if (!intIn(m.cl, 0, EG_COUNT_WIRE_MAX) || !egMs(m.ca) || !egMs(m.hw) || !egMs(m.dn)) return null;
   return { h: m.h, sg: m.sg, sa: m.sa, su: m.su, cl: m.cl, ca: m.ca, hw: m.hw, dn: m.dn };
 }
+/** A body (net/egBodies.js egBodyWire): `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at]`. */
+function egBody(t) {
+  if (!Array.isArray(t) || t.length !== 13 || !intIn(t[0], 1, 1e9) || !intIn(t[1], 0, 2) || !intIn(t[2], 0, 99) || !intIn(t[3], 0, 99)) return null;
+  if (!egXZ(t[4]) || !egXZ(t[5]) || !intIn(t[6], 0, EG_HP_MAX) || !intIn(t[7], 1, EG_HP_MAX) || !intIn(t[8], 0, 0xffff) || !egXZ(t[9]) || !egXZ(t[10]) || !finite(t[11]) || t[11] < 0 || t[11] > 30 || !egMs(t[12])) return null;
+  return [...t];
+}
+const egBodies = (a, max = EG_WIRE_BODIES_MAX) => { if (!Array.isArray(a) || a.length > max) return null; const out = a.map(egBody); return out.every(Boolean) ? out : null; };
+/** A blow (net/egShape.js egBlowOf): its number, thrower, stamps, landing, wind-up, share, points, element, name, CHECK,
+ *  push, span. */
+function egBlowW(m) {
+  if (!m || !intIn(m.i, 1, 1e9) || !intIn(m.o, 0, 1e9) || !Array.isArray(m.s) || m.s.length < 1 || m.s.length > 10 || !m.s.every((s) => egStampOk(s, EG_XZ_MAX))) return null;
+  if (!gateMs(m.at) || !intIn(m.wu, 0, 30_000) || !finite(m.p) || m.p < 0 || m.p > 10 || !finite(m.b) || m.b < 0 || m.b > 999) return null;
+  if (m.el != null && !['fire', 'frost', 'shock', 'poison', 'magic'].includes(m.el)) return null;
+  if (!(m.ch === 0 || m.ch === 1) || !finite(m.pu) || m.pu < 0 || m.pu > 20 || !intIn(m.sp, 0, 60_000)) return null;
+  return { i: m.i, o: m.o, s: m.s.map((s) => [...s]), at: m.at, wu: m.wu, p: m.p, b: m.b, el: m.el ?? null, nm: egText(m.nm ?? '', 48) ?? '', ch: m.ch, pu: m.pu, sp: m.sp };
+}
+/** A zone (net/egLords.js zoneOut). */
+function egZone(m) {
+  if (!m || !intIn(m.i, 1, 1e9) || !EG_ZONE_KINDS.includes(m.kind) || !egStampOk(m.s, EG_XZ_MAX) || !egMs(m.from) || !egMs(m.until)) return null;
+  if (!finite(m.p) || m.p < 0 || m.p > 1 || !finite(m.b) || m.b < 0 || m.b > 99 || (m.el != null && !['fire', 'frost', 'shock', 'poison', 'magic'].includes(m.el))) return null;
+  return { i: m.i, kind: m.kind, s: [...m.s], from: m.from, until: m.until, p: m.p, b: m.b, el: m.el ?? null };
+}
+/** A tether: `[a, b, kind, r]` - a body or a member to a member or a body. */
+const egTether = (t) => Array.isArray(t) && t.length === 4 && (intIn(t[0], 1, 1e9) || egId(t[0])) && (intIn(t[1], 1, 1e9) || egId(t[1])) && intIn(t[2], 0, 9) && intIn(t[3], 0, 99_999) ? [...t] : null;
+/** A mark on a member: `[sub, mark, until, n]`. */
+const egMarkW = (t) => Array.isArray(t) && t.length === 4 && egId(t[0]) && intIn(t[1], 0, 15) && egMs(t[2]) && intIn(t[3], 0, 9) ? [...t] : null;
+const egList = (a, fn, max = EG_WIRE_LIST_MAX) => { if (!Array.isArray(a) || a.length > max) return null; const out = a.map(fn); return out.every(Boolean) ? out : null; };
+/** A fight's progress (`pg` - each errand's own small numbers, the ring, the Orrery's stones). */
+function egProgress(pg) {
+  if (!pg || typeof pg !== 'object' || Array.isArray(pg)) return {};
+  const out = {};
+  for (const [k, v] of Object.entries(pg).slice(0, 16)) {
+    if (!/^[a-z]{1,12}$/.test(k)) continue;
+    if (typeof v === 'string' && v.length <= 16) out[k] = v;
+    else if (finite(v) && Math.abs(v) <= 1e9) out[k] = v;
+    else if (v === null) out[k] = null;
+    else if (Array.isArray(v) && v.length <= 12 && v.every((x) => finite(x) && Math.abs(x) <= 1e9 || (Array.isArray(x) && x.length <= 3 && x.every(finite)))) out[k] = v.map((x) => (Array.isArray(x) ? [...x] : x));
+  }
+  return out;
+}
+/** A member's run: `[sub, reliquaries, lumen, shards, tonics, cantrips, vestiges, mastery]`. */
+function egRunW(t) {
+  if (!Array.isArray(t) || t.length !== 8 || !egId(t[0]) || !intIn(t[1], 0, 999) || !intIn(t[2], 0, 99_999) || !intIn(t[3], 0, 999) || !intIn(t[4], 0, 9)) return null;
+  if (!Array.isArray(t[5]) || t[5].length > 3 || !t[5].every((c) => intIn(c, 0, 9))) return null;
+  if (!Array.isArray(t[6]) || t[6].length > 32 || !t[6].every((p) => Array.isArray(p) && p.length === 2 && intIn(p[0], 0, 99) && intIn(p[1], 1, 3))) return null;
+  if (!intIn(t[7], -1, 199)) return null;
+  return [t[0], t[1], t[2], t[3], t[4], [...t[5]], t[6].map((p) => [...p]), t[7]];
+}
+const egDecreesW = (a) => egList(a, (p) => (Array.isArray(p) && p.length === 2 && intIn(p[0], 0, 31) && intIn(p[1], 1, 2) ? [...p] : null), 9);
 
 /**
- * A client's breach frame, projected: `{k:'open', z, site}` (to the hub), `{k:'in', z, lv, bv?}`, `{k:'down', h}`,
- * `{k:'home'}` or a blow (the gate's `hit`, `ahit`, `xhit` - validGateIn's own projection), or null.
+ * A client's breach frame, projected (every number bounded), or null.
  */
 export function validEgIn(m) {
   if (!m || typeof m !== 'object' || !EG_KINDS.includes(m.k)) return null;
-  if (m.k === 'open') { const site = egSite(m.site); return egOrder(m.z) && site ? { k: 'open', z: m.z, site } : null; }
-  if (m.k === 'in') return egOrder(m.z) && intIn(m.lv, 1, GATE_LV_WIRE_MAX) ? { k: 'in', z: m.z, lv: m.lv, ...(intIn(m.bv, 0, 999) ? { bv: m.bv } : {}) } : null;
-  if (m.k === 'down') return intIn(m.h, 1, EG_HALL_WIRE_MAX) ? { k: 'down', h: m.h } : null;
-  if (m.k === 'home') return { k: 'home' };
-  const g = validGateIn(m);
-  return g && (g.k === 'hit' || g.k === 'ahit' || g.k === 'xhit') ? g : null;
+  switch (m.k) {
+    case 'open': { const site = egSite(m.site); return egOrder(m.z) && site ? { k: 'open', z: m.z, site } : null; }
+    case 'in': return egOrder(m.z) && intIn(m.lv, 1, GATE_LV_WIRE_MAX) ? { k: 'in', z: m.z, lv: m.lv, ...(intIn(m.bv, 0, 999) ? { bv: m.bv } : {}) } : null;
+    case 'down': return intIn(m.h, 1, EG_HALL_WIRE_MAX) ? { k: 'down', h: m.h } : null;
+    case 'home': return { k: 'home' };
+    case 'forsake': return { k: 'forsake' };
+    case 'fell': return { k: 'fell' };
+    case 'hit': return intIn(m.i, 1, 1e9) && intIn(m.q, 0, 0x7fffffff) && finite(m.d) && m.d >= 1 && m.d <= 1e6 && intIn(m.r, 0, 2) ? { k: 'hit', i: m.i, q: m.q, d: m.d, r: m.r } : null;
+    case 'pick': return intIn(m.v, 0, 199) ? { k: 'pick', v: m.v } : null;
+    case 'surplus': return m.use === 0 || m.use === 1 ? { k: 'surplus', use: m.use } : null;
+    case 'vote': return typeof m.q === 'string' && /^[a-z:]{1,24}$/.test(m.q) && intIn(m.y, 0, 9) ? { k: 'vote', q: m.q, y: m.y } : null;
+    case 'cant': return intIn(m.i, 0, 2) ? { k: 'cant', i: m.i } : null;
+    case 'buy': return intIn(m.i, 0, 2) ? { k: 'buy', i: m.i } : null;
+    case 'lping': case 'ping': return egXZ(m.x) && egXZ(m.z) && intIn(m.w, 0, 2) ? { k: m.k, x: m.x, z: m.z, w: m.w } : null;
+    case 'bequest': return intIn(m.v, 0, 99) ? { k: 'bequest', v: m.v } : null;
+    case 'pz': return intIn(m.i, 0, 5) && (m.a === 1 || m.a === -1) ? { k: 'pz', i: m.i, a: m.a } : null;
+    default: return null;
+  }
 }
 
 /**
@@ -5465,7 +5552,6 @@ export function validEgIn(m) {
  */
 export function validEgOut(m) {
   if (!m || typeof m !== 'object' || !EG_OUT_KINDS.includes(m.k)) return null;
-  if (EG_FIGHT_KINDS.includes(m.k)) return validGateOut(m);
   switch (m.k) {
     case 'call': {
       const co = egCompany(m.co, false), site = egSite(m.site);
@@ -5477,16 +5563,61 @@ export function validEgOut(m) {
       const st = egStage(m), co = egCompany(m.co, true);
       if (!st || !co || typeof m.b !== 'string' || !EG_B_RE.test(m.b) || !intIn(m.seed, 0, 0xffffffff) || !intIn(m.egv, 1, 999) || !gateMs(m.op) || !egMs(m.wk)) return null;
       if (!intIn(m.rd, 0, EG_HALL_WIRE_MAX) || !(m.rh === 0 || m.rh === 1) || !intIn(m.dg, 0, 0xffffffff) || (m.end != null && !EG_END_WORDS.includes(m.end))) return null;
-      return { k: 'st', b: m.b, seed: m.seed, egv: m.egv, op: m.op, wk: m.wk, ...st, co, rd: m.rd, rh: m.rh, dg: m.dg, end: m.end ?? null };
+      const dc = egDecreesW(m.dc ?? []), ms = egList(m.ms ?? [], egRunW, EG_COMPANY_MAX);
+      const mm = egList(m.mm ?? [], (q) => (Array.isArray(q) && q.length === 5 && egId(q[0]) && intIn(q[1], 1, EG_HALL_WIRE_MAX) && egXZ(q[2]) && egXZ(q[3]) && (q[4] === '' || egId(q[4])) ? [...q] : null), 8);
+      const as = egList(m.as ?? [], (a) => (Array.isArray(a) && a.length === 3 && typeof a[0] === 'string' && /^[a-z:]{1,24}$/.test(a[0]) && Array.isArray(a[1]) && a[1].length <= 4 && a[1].every((x) => intIn(x, 0, 99)) && gateMs(a[2]) ? [a[0], [...a[1]], a[2]] : null), 8);
+      if (!dc || !ms || !mm || !as || !intIn(m.geo ?? 0, 0, 8) || !intIn(m.rp ?? 0, 0, 1e8) || !intIn(m.sp ?? 0, 0, 9)) return null;
+      const words = (a) => (Array.isArray(a) && a.length <= 8 && a.every((x) => typeof x === 'string' && /^[a-z]{0,16}$/.test(x)) ? [...a] : null);
+      const sr = words(m.sr ?? []);
+      if (!sr || (m.pr != null && !/^[a-z]{0,16}$/.test(m.pr)) || (m.td != null && !/^[a-z]{0,16}$/.test(m.td)) || (m.ca2 != null && !/^[a-z]{0,8}$/.test(m.ca2))) return null;
+      const wg = Array.isArray(m.wg) && m.wg.length <= 3 && m.wg.every((x) => intIn(x, 0, 31)) ? [...m.wg] : [];
+      return { k: 'st', b: m.b, seed: m.seed, egv: m.egv, op: m.op, wk: m.wk, ...st, co, rd: m.rd, rh: m.rh, dg: m.dg, end: m.end ?? null,
+        dc, pr: m.pr ?? '', wg, td: m.td ?? '', sr, geo: m.geo ?? 0, ms, ca2: m.ca2 ?? '', mm, rp: m.rp ?? 0, sp: m.sp ?? 0, as };
     }
     case 'sg': { const st = egStage(m); return st ? { k: 'sg', ...st } : null; }
     case 'co': { const co = egCompany(m.co, true); return co ? { k: 'co', co } : null; }
-    case 'fall': return typeof m.s === 'string' && ID_RE.test(m.s) && typeof m.n === 'string' && gateMs(m.at) ? { k: 'fall', s: m.s, n: sanitizeName(m.n), at: m.at } : null;
-    case 'rd': return intIn(m.w, 1, EG_HALL_WIRE_MAX) && intIn(m.h, 1, EG_HALL_WIRE_MAX) && gateMs(m.at) && intIn(m.cl, 0, EG_COUNT_WIRE_MAX) ? { k: 'rd', w: m.w, h: m.h, at: m.at, cl: m.cl } : null;
+    case 'fall': return egId(m.s) && typeof m.n === 'string' && gateMs(m.at) ? { k: 'fall', s: m.s, n: sanitizeName(m.n), at: m.at, fin: m.fin === 1 ? 1 : 0 } : null;
+    case 'rd': return intIn(m.w, 1, EG_HALL_WIRE_MAX) && intIn(m.h, 1, EG_HALL_WIRE_MAX) && gateMs(m.at) && intIn(m.cl, 0, EG_COUNT_WIRE_MAX) && intIn(m.g ?? 0, -EG_COUNT_WIRE_MAX, EG_COUNT_WIRE_MAX)
+      ? { k: 'rd', w: m.w, h: m.h, at: m.at, cl: m.cl, g: m.g ?? 0, v: m.v === 1 ? 1 : 0, cov: m.cov === 1 ? 1 : 0 } : null;
     case 'rcpt': return typeof m.r === 'string' && m.r.length <= EG_RECEIPT_WIRE_MAX && EG_RECEIPT_RE.test(m.r) ? { k: 'rcpt', r: m.r } : null;
     case 'end': return EG_END_WORDS.includes(m.why) && gateMs(m.at) ? { k: 'end', why: m.why, at: m.at } : null;
     case 'no': return EG_NO_WORDS.includes(m.m) ? { k: 'no', m: m.m } : null;
-    case 'fst': { const f = m.f && typeof m.f === 'object' ? validGateOut({ ...m.f, k: 'st' }) : null; return f && intIn(m.h, 1, EG_HALL_WIRE_MAX) ? { k: 'fst', h: m.h, f } : null; }
+    // ── the fight ──
+    case 'efs': {
+      const b = egBodies(m.b), bl = egList(m.bl ?? [], egBlowW, EG_WIRE_BLOWS_MAX), tx = egList(m.tx ?? [], egTether), mk = egList(m.mk ?? [], egMarkW);
+      return b && bl && tx && mk && intIn(m.h, 1, EG_HALL_WIRE_MAX) && egMs(m.wk) ? { k: 'efs', h: m.h, wk: m.wk, b, bl, tx, mk, pg: egProgress(m.pg) } : null;
+    }
+    case 'ead': { const a = egBodies(m.a, 24); return a && gateMs(m.at) ? { k: 'ead', a, at: m.at } : null; }
+    case 'emv': { const mv = egList(m.m, (t) => (Array.isArray(t) && t.length === 7 && intIn(t[0], 1, 1e9) && egXZ(t[1]) && egXZ(t[2]) && egXZ(t[3]) && egXZ(t[4]) && finite(t[5]) && t[5] >= 0 && t[5] <= 30 && gateMs(t[6]) ? [...t] : null), EG_WIRE_BODIES_MAX); return mv ? { k: 'emv', m: mv } : null; }
+    case 'ehp': { const h = egList(m.h, (t) => (Array.isArray(t) && t.length === 2 && intIn(t[0], 1, 1e9) && intIn(t[1], 0, EG_HP_MAX) ? [...t] : null), EG_WIRE_BODIES_MAX); return h ? { k: 'ehp', h } : null; }
+    case 'edie': return Array.isArray(m.is) && m.is.length >= 1 && m.is.length <= EG_WIRE_BODIES_MAX && m.is.every((i) => intIn(i, 1, 1e9)) && intIn(m.w, 0, 2) && gateMs(m.at) ? { k: 'edie', is: [...m.is], w: m.w, n: egText(m.n ?? '', 48) ?? '', at: m.at } : null;
+    case 'efl': return intIn(m.i, 1, 1e9) && intIn(m.fl, 0, 0xffff) ? { k: 'efl', i: m.i, fl: m.fl } : null;
+    case 'eb': { const b = egBlowW(m); return b ? { k: 'eb', ...b } : null; }
+    case 'ecut': return intIn(m.i, 1, 1e9) ? { k: 'ecut', i: m.i } : null;
+    case 'etx': { const t = egList(m.t, egTether); return t ? { k: 'etx', t } : null; }
+    case 'emk': { const mk = egList(m.m, egMarkW); return mk ? { k: 'emk', m: mk } : null; }
+    case 'eph': return intIn(m.i, 1, 1e9) && intIn(m.ph, 1, 3) ? { k: 'eph', i: m.i, ph: m.ph } : null;
+    case 'efell': return intIn(m.i, 1, 1e9) && gateMs(m.at) ? { k: 'efell', i: m.i, at: m.at, n: egText(m.n ?? '', 48) ?? '' } : null;
+    case 'eob': return intIn(m.i, 1, 1e9) && intIn(m.st, 0, 99) && gateMs(m.at) ? { k: 'eob', i: m.i, st: m.st, at: m.at } : null;
+    case 'ez': { const z = egZone(m); return z ? { k: 'ez', ...z } : null; }
+    case 'esay': {
+      if (!EG_SAY_KEYS.includes(m.w)) return null;
+      const s = Array.isArray(m.s) && m.s.length <= 8 && m.s.every(egId) ? [...m.s] : undefined;
+      return { k: 'esay', w: m.w, n: egText(m.n ?? '', 48) ?? '', t: egText(m.t ?? '', 48) ?? '', ...(s ? { s } : {}) };
+    }
+    case 'egust': return gateMs(m.at) && finite(m.dx) && Math.abs(m.dx) <= 1 && finite(m.dz) && Math.abs(m.dz) <= 1 && finite(m.v) && m.v >= 0 && m.v <= 10 && intIn(m.ms, 0, 5000) ? { k: 'egust', at: m.at, dx: m.dx, dz: m.dz, v: m.v, ms: m.ms } : null;
+    case 'edark': case 'erail': return gateMs(m.until) ? { k: m.k, until: m.until } : null;
+    // ── the run ──
+    case 'offer': return Array.isArray(m.v) && m.v.length <= 6 && m.v.every((c) => intIn(c, 0, 199)) && intIn(m.n ?? 0, 0, 9) ? { k: 'offer', v: [...m.v], n: m.n ?? 0 } : null;
+    case 'ask': return typeof m.q === 'string' && /^[a-z:]{1,24}$/.test(m.q) && Array.isArray(m.o) && m.o.length <= 4 && m.o.every((x) => intIn(x, 0, 99)) && gateMs(m.until) ? { k: 'ask', q: m.q, o: [...m.o], until: m.until } : null;
+    case 'asked': return typeof m.q === 'string' && /^[a-z:]{1,24}$/.test(m.q) && intIn(m.r, -1, 9) ? { k: 'asked', q: m.q, r: m.r } : null;
+    case 'tally': return typeof m.q === 'string' && /^[a-z:]{1,24}$/.test(m.q) && Array.isArray(m.v) && m.v.length <= 8 && m.v.every((x) => intIn(x, 0, 9)) ? { k: 'tally', q: m.q, v: [...m.v] } : null;
+    case 'egot': return EG_GOT_WORDS.includes(m.w) ? { k: 'egot', w: m.w } : null;
+    case 'run': { const r = egRunW(m.r); return r ? { k: 'run', r } : null; }
+    case 'rise': return egId(m.s) && finite(m.p) && m.p > 0 && m.p <= 1 && egXZ(m.x) && egXZ(m.z) && intIn(m.h, 1, EG_HALL_WIRE_MAX) ? { k: 'rise', s: m.s, p: m.p, x: m.x, z: m.z, h: m.h } : null;
+    case 'eping': return egId(m.s) && egXZ(m.x) && egXZ(m.z) && intIn(m.w, 0, 2) ? { k: 'eping', s: m.s, x: m.x, z: m.z, w: m.w, wit: m.wit === 1 ? 1 : 0 } : null;
+    case 'pz': return Array.isArray(m.st) && m.st.length === 6 && m.st.every((h) => intIn(h, 0, 11)) && intIn(m.f, 0, 99) && intIn(m.lit, 0, 6) ? { k: 'pz', st: [...m.st], f: m.f, lit: m.lit, ok: m.ok === 1 ? 1 : 0, x: m.x === 1 ? 1 : 0, by: egText(m.by ?? '', 48) ?? '' } : null;
+    case 'eheal': return finite(m.p) && m.p >= -1 && m.p <= 1 ? { k: 'eheal', p: m.p, why: typeof m.why === 'string' && /^[a-z]{0,12}$/.test(m.why) ? m.why : '' } : null;
     default: return null;
   }
 }
@@ -5498,5 +5629,6 @@ export function validEgOpenTell(v) {
   if (typeof b.b !== 'string' || !EG_B_RE.test(b.b) || typeof b.ez !== 'string' || !/^[a-z0-9]{16,32}$/.test(b.ez)) return null;
   if (typeof b.s !== 'string' || !ID_RE.test(b.s) || typeof b.o !== 'string' || !intIn(b.ew, 0, 999) || !(b.rh === 0 || b.rh === 1)) return null;
   if (!intIn(b.seed, 0, 0xffffffff) || !gateMs(b.op) || !co || !site || !co.some((t) => t[0] === b.s)) return null;
-  return { b: b.b, ez: b.ez, s: b.s, o: sanitizeName(b.o), ew: b.ew, rh: b.rh, seed: b.seed, op: b.op, co, site };
+  const wg = Array.isArray(b.wg) && b.wg.length <= 3 && b.wg.every((x) => intIn(x, 0, 31)) ? [...b.wg] : [];
+  return { b: b.b, ez: b.ez, s: b.s, o: sanitizeName(b.o), ew: b.ew, rh: b.rh, seed: b.seed, op: b.op, co, site, wg };
 }

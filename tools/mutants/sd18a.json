@@ -364,8 +364,8 @@
   {
     "name": "SD18A-the-fray-forty-eight",
     "file": "src/net/sdBrain.js",
-    "old": "fray: sdMarksLaw(sdMarksOf(s)).fray ?? SD_FRAY_MAX });",
-    "new": "fray: SD_FRAY_MAX });",
+    "old": "fray: opts?.fray ?? (opts ? SD_FRAY_MAX : sdMarksLaw(sdMarksOf(s)).fray ?? SD_FRAY_MAX) }",
+    "new": "fray: opts?.fray ?? SD_FRAY_MAX }",
     "tests": [
       "test/sd18a_marks.test.js"
     ]

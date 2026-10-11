@@ -62,10 +62,10 @@ const STEP_MESH_KIND = Object.freeze({ drift: 'drift', beat: 'beat', riser: 'ris
 
 /**
  * A circle's spans.
- * @param {{ renderer?: any, audio?: any, seed: number, c: number }} deps
+ * @param {{ renderer?: any, audio?: any, seed: number, c: number, geo?: number }} deps
  */
-export function createEgSpan({ renderer = null, audio = null, seed, c }) {
-  const specs = egCircleSpecs(seed, c);
+export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }) {
+  const specs = egCircleSpecs(seed, c, geo);
   /** every step of the circle: its spec record (the hall's frame) and its hall, its bucket and place, its draw */
   const steps = [];
   for (const spec of specs) for (const s of spec.steps) steps.push({ s, spec, key: egStepKey(spec.h, s.i), T: [0, EG_STEP_GONE_Y, 0], was: [0, EG_STEP_GONE_Y, 0], solid: false, wasSolid: false, draw: null, touched: null });

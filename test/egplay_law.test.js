@@ -51,16 +51,23 @@ test('EG-PLAY THE HALLS IN THE WIRE\'S BOUNDS: every hall of the first twelve ci
   assert.ok(longest > 60, 'the halls are long enough to cross');
 });
 
-test('EG-PLAY THE CIRCLE\'S RHYTHM: the first circle is fixed - the Rift-Yard, the Span, the Proving Walk, the Rampart, the Court; deeper, slot 1 is the Yard or the Rampart and slot 4 the other, the Court always fifth; halls count circles by five; the breach\'s room key (mutants: the first circle drawn; a circle with two Rampart)', () => {
+test('EG-PLAY THE CIRCLE\'S RHYTHM (EG-FULL, section 7): the first circle is fixed - the Rift-Yard, the Span, the Proving Walk, the Siege-Walk, the Court; deeper, slot 1 is the Yard or the Rampart (a Brink at circles 6, 11 and 16) and slot 4 the Yard or the Rampart, slot 2 the traverse (the Span, or from circle 3 the Deepway), slot 3 the mixed (the Proving Walk, the Athenaeum, or a Scriptorium twist), the Court always fifth; halls count circles by five; the breach\'s room key (mutants: the first circle drawn; a Brink anywhere else; the Court moved)', () => {
   assert.deepEqual([...egCircleOf(5, 1)], ['yard', 'span', 'proving', 'rampart', 'court']);
-  const seen = new Set();
-  for (let c = 2; c < 60; c++) {
-    const k = egCircleOf(77, c);
-    assert.deepEqual([k[1], k[2], k[4]], ['span', 'proving', 'court']);
-    assert.deepEqual([k[0], k[3]].sort(), ['rampart', 'yard']);
-    seen.add(k[0]);
+  const seen = new Set(), deep = new Set(), mixed = new Set();
+  for (const seed of [77, 5, 0xbeef]) {
+    for (let c = 2; c < 40; c++) {
+      const k = egCircleOf(seed, c);
+      assert.equal(k[4], 'court', 'the Court is fifth');
+      if (c === 6 || c === 11 || c === 16) assert.equal(k[0], 'brink', `circle ${c} opens on a Brink`);
+      else assert.ok(['yard', 'rampart'].includes(k[0]), `slot 1 of circle ${c}: ${k[0]}`);
+      assert.ok(['yard', 'rampart'].includes(k[3]), `slot 4 of circle ${c}: ${k[3]}`);
+      assert.ok(c >= 3 ? ['span', 'deepway'].includes(k[1]) : k[1] === 'span', `slot 2 of circle ${c}: ${k[1]}`);
+      assert.ok(['proving', 'athenaeum', 'scriptorium'].includes(k[2]), `slot 3 of circle ${c}: ${k[2]}`);
+      seen.add(k[0]); deep.add(k[1]); mixed.add(k[2]);
+    }
   }
-  assert.deepEqual([...seen].sort(), ['rampart', 'yard'], 'both orders drawn');
+  assert.ok(seen.has('yard') && seen.has('rampart') && seen.has('brink'), 'every opening drawn');
+  assert.ok(deep.has('deepway') && mixed.has('athenaeum'), 'the Deepway and the Athenaeum drawn');
   assert.deepEqual([egCircleOfHall(1), egCircleOfHall(5), egCircleOfHall(6), egSlotOfHall(6), egSlotOfHall(10), egFirstHallOf(3)], [1, 1, 2, 1, 5, 11]);
   assert.equal(egRoomKey('0123456789abcdef'), 'eg:0123456789abcdef');
   assert.equal(isEgRoom('eg:0123456789abcdef'), true);

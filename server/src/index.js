@@ -302,12 +302,15 @@ import { sdMarksOf } from '../../src/net/sdMarks.js';   // SD18a: a Hollow's mar
 import { orreryOf, orreryStep, orreryLit, orreryFresh, orreryTurn, orreryShortest, orreryRightsFresh, orreryTurnerOf, orreryMayTurn, orreryTurned, orreryLashed, stoneInReach, dungeonToRealm, SD_STONES, SD_HOURS, SD_FRAY_MAX, SD_STONE_REACH_SLACK, SD_STONE_SETTLE_MS } from '../../src/net/sdBrain.js';   // SD6b: the Orrery's law - the realm judges every turn by it; AUDIT SD II (L7 H2): and who may turn while others turn
 import { newRemnantFight, joinRemnant, applyRemnantHit, applyEchoHit, applyHeartHit, stepRemnant, remnantStateOf, arenaOf, inArena, SD_ARENA_SLACK, SD_LOST_MS, SD_POSE_FRESH_MS } from '../../src/net/sdRemnant.js';   // SD8b: the Brass Remnant's law - the realm runs its fight by it
 import { mintSdReceipt, readSdReceipt, SD_RECEIPT_TTL_S } from '../../src/net/sdReceipt.js';   // SD9a: the Hour's receipt - minted at the Remnant's fall, kept by the hub
-// EG-PLAY (2026-10-11, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): FIVE FILES JOIN THE
-// BUNDLE - net/egLaw.js (the breach's room, clock and hall specs - it imports sdBrain.js), net/egBrain.js (the director),
-// net/egHost.js (the legion - the gate's host kinds), net/egLord.js (the champion's kit - the gate's attacks) and
-// net/egReceipt.js (the `e1` receipt). The hub opens a breach on the service's signed order; its room runs the halls.
+// EG-PLAY (2026-10-11, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): THE BREACH JOINS THE
+// BUNDLE - net/egLaw.js (the breach's room, clock and hall specs - it imports sdBrain.js), net/egBrain.js (the director)
+// and net/egReceipt.js (the `e1` receipt). The hub opens a breach on the service's signed order; its room runs the halls.
+// EG-FULL (2026-10-11, Mac: "I said I want everything"): the director's own pieces in place of the gate's - net/egShape.js
+// (the FULL shape stamps and their floors), net/egBodies.js (the fight's bodies and blows), net/egLegion.js (the legion's
+// sixteen kinds), net/egLords.js (the thirteen lords and the champions), net/egVestige.js and net/egRun.js (the run: the
+// Vestiges, the company's word, the decrees, the caches, the Sutler).
 import { isEgRoom, egRoomKey, egBreachOfRoom, EG_SEALED_MS, EG_ADMIT_MAX_MS } from '../../src/net/egLaw.js';
-import { egBreachNew, egEnter, egAdmitWord, egStep, egBlow, egDown, egHome, egStateOf, egFightStateOf, egLive } from '../../src/net/egBrain.js';
+import { egBreachNew, egEnter, egAdmitWord, egStep, egBlow, egDown, egHome, egWord, egStateOf, egFightStateOf, egLive } from '../../src/net/egBrain.js';
 import { mintEgReceipt } from '../../src/net/egReceipt.js';
 import { egGate, EG_INTERNAL_OPEN, EG_KEY, egCallKey, validEgOpenTell, EG_BRAIN_MIN } from './relay.js';
 
@@ -7242,10 +7245,17 @@ export class Room {
     }
     return [...newest.values()].map((b) => { const p = this._egPose(b.pose); return { sub: b.sub, sx: p.sx, z: p.z, dead: !!b.pose.dd, at: b.eAt ?? now }; });
   }
-  /** The breach's frames to everyone in the room, in order. */
+  /** The breach's frames to everyone in the room, in order - EG-FULL: a frame carrying `to` (a member's offer, a gift, a
+   *  recall) to that member's sockets alone, its `to` taken off. */
   _egFan(frames) {
     if (!frames.length) return;
-    this._fanFrames(frames.map((fr) => JSON.stringify({ t: 'eg', ...fr })), (b) => b.id);
+    const all = [], mine = new Map();
+    for (const fr of frames) {
+      if (typeof fr.to === 'string') { const { to, ...rest } = fr; mine.set(to, [...(mine.get(to) ?? []), JSON.stringify({ t: 'eg', ...rest })]); }
+      else all.push(JSON.stringify({ t: 'eg', ...fr }));
+    }
+    if (all.length) this._fanFrames(all, (b) => b.id);
+    for (const [sub, words] of mine) for (const [ws, b] of this._all()) if (b.id && b.sub === sub) for (const w of words) this._send(ws, w);
   }
   /** THE RECEIPTS THE BREACH OWES, minted - each its own seed off the relay's CSPRNG (never the breach's), kept on the
    *  breach for its member's next hello and handed to its newest socket here now. One owing list taken whole before the
@@ -7295,9 +7305,12 @@ export class Room {
     const B = await this._egOf();
     if (!B) return true;
     if (!this._send(ws, JSON.stringify({ t: 'eg', ...egStateOf(B, now) }))) return false;
-    const fst = egFightStateOf(B);
+    const fst = egFightStateOf(B, now);
     if (fst && !this._send(ws, JSON.stringify({ t: 'eg', ...fst }))) return false;
     for (const r of (sub && B.rc?.[sub]) || []) if (!this._send(ws, JSON.stringify({ t: 'eg', k: 'rcpt', r }))) return false;
+    const m = sub ? B.mem?.[sub] : null;   // EG-FULL: an offer still open, and the company's word, said again to a member who reloaded
+    if (m?.offer?.length && !this._send(ws, JSON.stringify({ t: 'eg', k: 'offer', v: m.offer, n: m.picks ?? 0 }))) return false;
+    for (const q of B.asks ?? []) if (!this._send(ws, JSON.stringify({ t: 'eg', k: 'ask', q: q.q, o: q.o, until: q.until }))) return false;
     if (egLive(B, now)) await this._egArm(now + BRAIN_TICK_MS);
     return true;
   }
@@ -7334,7 +7347,14 @@ export class Room {
       if (egHome(B, a.sub, now, out)) { this._egFan(out); await this._egMint(B, now); await this._egSave(B, now, true); }
       return;
     }
-    this._egFan(egBlow(B, a.sub, m, pose, now));
+    if (m.k === 'hit') this._egFan(egBlow(B, a.sub, m, pose, now));
+    else {
+      // EG-FULL: a member's other words - a Vestige picked, the company's word, a Cantrip, a purchase, a ping, a bequest,
+      // forsaking, an Athenaeum's turn (net/egBrain.js egWord)
+      const out = egWord(B, a.sub, m, pose, now, rand01);
+      this._egFan(out);
+      if (m.k === 'forsake' || m.k === 'pick' || m.k === 'fell') { await this._egMint(B, now); await this._egSave(B, now, true); }
+    }
     if (!(this._egBeatArmedTo > now)) { this._egBeatArmedTo = now + BRAIN_TICK_MS; await this._egArm(now + BRAIN_TICK_MS); }
   }
   /** ONE BEAT of a breach's alarm while it lives: the director stepped over the members' bodies, its frames fanned, its
@@ -7349,7 +7369,7 @@ export class Room {
       const out = egStep(B, now, this._egBodies(B, now), rand01);
       this._egFan(out);
       await this._egMint(B, now);
-      await this._egSave(B, now, out.some((f) => f.k === 'sg' || f.k === 'rd' || f.k === 'end' || f.k === 'fall'));
+      await this._egSave(B, now, out.some((f) => f.k === 'sg' || f.k === 'rd' || f.k === 'end' || f.k === 'fall' || f.k === 'rise' || f.k === 'offer'));
     } catch (e) { console.warn('[eg] beat failed', e?.message ?? e); }
     if (B.end) { await this._egSave(B, now, true); return false; }
     const here = [...this._all()].some(([, b]) => b.id);

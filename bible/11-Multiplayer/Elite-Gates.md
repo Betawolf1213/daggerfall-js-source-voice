@@ -3348,3 +3348,99 @@ quoted lines moved, re-aimed by content: the bound list's (`auditrealm`, `cards8
 joins it), the account version's (`br5`, `crafthold`, `fb1004d_knight_house`, `tech1`, `gatekeys` - acct119, acct116 then acct118 on the branch, renumbered past main's acct116, acct117 and acct118 at the merges), the order kinds'
 (`guild1c`, `seat2a2`) and the relay version's (`soc1` - world195). The Ledger: section A's ELITE-GATES row
 (`01-Overview/Port-Ledger.md`), naming every file.
+
+### EG-FULL, LAYER ONE - 2026-10-11 (Mac: "I said I want everything") - THE SPIRE'S OWN FIGHT, THE RUN, THE WITNESS
+
+**What this is, said plainly.** EG-PLAY was the smallest breach that plays. EG-FULL builds the rest of the page, in
+layers. Layer one is CODE for EG4's widened Orrery, EG5 and EG7's depth law, EG11 and EG13's fights (the hall kinds,
+variants and twists, the legion's sixteen kinds, all thirteen lords and the champions), EG12's Redoubt systems and the
+run (Vestiges, Masteries, Accords, decrees, the company's word, the recall, the Memento and the witness, caches,
+Cantrips, lumen and the Sutler, Reliquaries, the respite, the Surplus, pings) and THE POTION LAW. It retires the gate's
+borrowed host and attacks for the Spire's own words. What layer one leaves is listed below, and the later layers build it.
+
+**What shipped, by piece.**
+
+- **The law** (`net/egLaw.js`, EG_SPEC 2). The four bands by circle (the Galleries, the Soul Cairn, the Shade
+  Perilous, the Havoc Wellhead) and their Brinks at circles 6, 11 and 16. The full rhythm: a fight, the traverse (the
+  Span, or from circle 3 the Deepway one time in three), the mixed (the Proving Walk or the Athenaeum), a second fight,
+  the Court. The five Yard and five Rampart variants are unlocked by band, and a variant is never one of its kind's last
+  min(2, unlocked - 1) draws. The nine twists fall about one hall in four, never on a Court or a Brink, never two
+  running, and at most one Bargain a circle. The lords are drawn by band (the band's own at weight 2, earlier bands' at
+  1), with Grath first, a Valkynaz every fifth Court, and never one of the last drawn. The nineteen decrees come in five
+  families, with the week's Proclamation. The span decrees fold into the ground as `geo` (Gale-Swept's rank plus three
+  times Crumbling Halls'), and their sections are never dropped for room: the runs before them shorten. Each band's span
+  pieces include the Gust, Rail, Pendulum, Vent and Drop. Every lord's ground is laid: Grath's isles, the discs, the
+  rotunda, the crypt, the twin courts, the soul bridge, the glade, the vault, the forge, the perches and the pit. The
+  generator calls integers alone: `lawIsqrt` replaced the two `Math.hypot` calls it had grown, so the spec stays the same
+  bytes on every machine.
+- **THE SHAPES** (`net/egShape.js`, which imports nothing). The six FULL stamps (disc, lane, cone, ring, the whole floor,
+  outside the havens), bounded on the wire. THE WIND-UP FLOOR at THE ESCAPE BUILD's run (pinned to the motor's
+  `runSpeed(40, 20)`) lengthens a wind-up and never shortens it; a CHECK keeps its own. Also here: THE WIDTH RULE, the
+  verdict on the struck member's screen, THE UNION FLOOR in time (a blow that would leave a member no floor is held)
+  and THE TELEGRAPH BUDGET.
+- **The fight** (`net/egBodies.js`, `net/egLegion.js`, `net/egLords.js`). Generic bodies: role 0 a lord, 1 an add, 2 an
+  object. Blows carry their stamps, tethers and marks; zones are burn, void, soul and haven. The legion has sixteen
+  kinds with their behaviours, affixes and decrees. Every lord and champion has a kit: phases, errands, fury, the
+  Covenant's Patience, and a lord on a borrowed ground keeps its main disc and spots. Health is seconds of reference
+  damage, shared over a team, times the depth.
+- **The run** (`net/egVestige.js`, `net/egRun.js`). Twenty-seven Vestiges in families, five Masteries, the Accords and the
+  capstones, with the declared factor capped. The rest's offer goes to each member alone (`to`), and the Surplus's card
+  or reroll likewise. Also in the run: the company's word (asks, votes and tallies), the next circle's decrees asked by
+  family, the Ready and the respite, the Bargain, caches and gifts, Cantrips, lumen and the Sutler, and the relay's
+  Vestiges on a blow.
+- **The director** (`net/egBrain.js`, brain law 2). Every kind, variant and twist stood and closed, and the doors.
+  A fall is a witness's: final with no recall in hand or at the second fall, a Memento laid otherwise, and the member's
+  own `fell` word counts like the pose's `dd`. The Redoubt sequence: the recalls at 4.5 s, then at 6 s the window with
+  the heal, the offers, the decree asks and the Ready. Forsaking, the way home after the window, and the Gold Run.
+- **The wire and the room** (`net/wire.js`, `server/src/index.js`). A member's words: `hit` (by body number), `pick`,
+  `surplus`, `vote`, `cant`, `buy`, `lping`, `ping`, `bequest`, `forsake`, `pz` and `fell`. The fight's words run from
+  `efs` to `erail`, and the run's from `offer` to `eheal`. A frame with `to` goes to that member's sockets alone. A
+  reloaded member is told any open offer and the company's asks.
+- **The client** (`scenes/egClient.js`, `scenes/egFight.js`, `net/egLink.js`, `ui/egHud.js`, `world/egHall.js`,
+  `systems/spireKit.js`). The fight draws bodies as billboards, struck objects as crystals, and blows, zones and tethers
+  in the telegraph pass. It judges each blow on its own screen and applies the push, the drain, burn ticks and void
+  cast-backs.
+  - THE WITNESS (section 16.5): the death save (`registerPlayerDeathSave`) turns a killing blow into a fall. The room is
+    told once, the damage door's mod answers 0, and the body is put away and held under the hall. The eye rides behind a
+    living companion (Q and E change whom), and the recall's word stands the member back at its share of their health.
+  - THE PANEL: the Vestige cards and the company's word, by key (1-6, Y and N) or by `/breach pick`, `vote`, `cant`,
+    `buy`, `surplus`, `ping`, `watch`, `forsake` and `bequest`.
+  - THE POTION LAW: two restoring potions a hall, through `useItem.js`'s potion arm. The bottle is kept on a refusal, and
+    the count refills at each wake and at the rest.
+  - The push follows the Steps' breath: the collider's own move, no edge stop, Iron Footing taking its share. The cage
+    holds the motor, and a challenge's ring keeps the challenged inside and everyone else out.
+  - The room's heals (a lash never past 1), THE RECAP, the HUD's run line, the decrees, the marks and the potion pip.
+
+**Where layer one departs from this page** (each to be closed by the layer named):
+
+1. The new span pieces (the Gust, the Rail, the Pendulum, the Vent, the Drop) are laid by the law and stand as still
+   slabs on the client. Their motion, and the timed solver that proves a span's timing, are layer two's (EG-D). The
+   fragment kits beyond the Oblivion Caverns passage are named by band but drawn as the passage (EG-D, with the meshKit
+   and the pseudo-archives).
+2. Grath's isles are a fight floor; they do not yet fall (EG-D).
+3. The economy is EG-PLAY's: Redoubt receipts and the INT5 spoils budget. Spoils, the Panoply, the lords' arms and cards,
+   honours and boards, the herald, the week's pay and the Wager are layer three's (EG-E).
+4. There is still no arch: the call and `/breach` are the door (layer four, EG-F).
+5. The score, the mix, the band art (38231-38279), the arrival card, first-time lines, accessibility settings and
+   touch and pad are layer five's (EG-G). The HUD, the panel and the recap are DOM text.
+6. `madeLevelOf` and `MADE_LEVEL_RULES` as one law, the jump buffer, the technique refusal, the slowfall ban,
+   AvoidDeath refused, THE FAIR TRAIL, HOLD and DRAIN, the clock correction and the ridden poses are layer six's (EG-H).
+   THE POTION LAW, the Levitate ward and the witness's saves are wired at their own doors for now.
+7. Nothing here has run in a browser. There is no Daggerfall data in the build container, so every client piece is
+   tested headless against the relay's real Room and the director's own frames. The relay side is tested by an
+   auto-player that walks and fights whole breaches, and none of it is played by hand.
+
+**The four hosts.** `src/scenes/world.js` WIRED: the fight's new deps (the push, the cage, the ring, a void zone's
+cost, companions' poses by account), the witness's eye at the camera override, the panel's keys under KEY-BOOT's latch,
+the death save, the damage mod and THE POTION LAW's registration. `src/scenes/worldModes.js` WIRED: a circle built at
+its `geo`, and the span ride skipped for a witness. `src/scenes/dungeonContext.js` WIRED: the spans built at the
+circle's `geo`. `src/scenes/exterior.js`: unchanged (offline, as section 28 has it).
+
+**Pins.** `test/egfull_law.test.js` (9), `test/egfull_relay.test.js` (5 - six circles played, every lord fought to its
+fall, the fall and the recall, the Redoubt's choices, forsaking) and `test/egfull_client.test.js` (5). The EG-PLAY pins
+were rewritten to the Spire's own words: `test/egplay_law.test.js`, `test/egplay_relay.test.js` and
+`test/egplay_client.test.js`. Mutants: `tools/mutants/egfull.json` (31). Records whose quoted lines moved were re-aimed
+by content: `egplay`, `sd6a` and `sd18a` (the Orrery widened with defaults equal to the Hour's bytes). `RELAY_VERSION`
+stays `world195`, unshipped, with its hash and graph recomputed. The account Worker bundles `net/egShape.js` through the
+wire, so `account-deploy.yml` lists it. A real defect was found and fixed on the way: the rest's offers were fanned to the
+whole company, so every screen showed the last member's cards.

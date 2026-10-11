@@ -166,10 +166,14 @@ const sdWayTurns = (way) => way.reduce((m, t) => m + sdTurnsFor(t), 0);
  * forward; `riddles` the six plaques' clues in the plaques' order, each `{ kind, a, b?, h?, k?, text }`. Null for a slot
  * the law does not know.
  */
-export function orreryOf(s) {
+export function orreryOf(s, opts = null) {
   if (!Number.isSafeInteger(s) || s < 1) return null;
-  const had = orreryCache.get(s);
+  // EG-FULL (Elite-Gates.md section 8.4, EG4): WIDENED - the Spire's Athenaeum asks its own turns range and fray; the
+  // Hour's call (no `opts`) draws byte for byte as it always did, its cache keyed as before
+  const key = opts ? `${s}:${opts.turnsMin}:${opts.turnsMax}:${opts.fray ?? ''}` : s;
+  const had = orreryCache.get(key);
   if (had) return had;
+  const tMin = opts?.turnsMin ?? SD_TRUTH_TURNS_MIN, tMax = opts?.turnsMax ?? SD_TRUTH_TURNS_MAX;
   const r = sdRng(sdSeed(s, SD_ORRERY_SALT));
   const n = SD_STONES.length;
   // THE GEARING: a hidden order; each stone after the first turns one or two stones before it, one or two hours either way
@@ -196,11 +200,11 @@ export function orreryOf(s) {
   // THE START: drawn until the way from it to the truth is SD_TRUTH_TURNS_MIN to SD_TRUTH_TURNS_MAX turns at its shortest
   let start, way;
   do { start = Array.from({ length: n }, () => sdPick(r, SD_HOURS)); way = solveGear(order, gear, start, truth); }
-  while (sdWayTurns(way) < SD_TRUTH_TURNS_MIN || sdWayTurns(way) > SD_TRUTH_TURNS_MAX);
+  while (sdWayTurns(way) < tMin || sdWayTurns(way) > tMax);
   const riddles = sdShuffle(r, clues).map((c) => Object.freeze({ ...c, text: sdRiddleText(c) }));
-  const o = Object.freeze({ s, order: Object.freeze(order), gear: Object.freeze(gear.map((g) => Object.freeze(g))), start: Object.freeze(start), way: Object.freeze(way), truth: Object.freeze(truth), riddles: Object.freeze(riddles) , fray: sdMarksLaw(sdMarksOf(s)).fray ?? SD_FRAY_MAX });   // SD18a: the Fraying's thirty-six
+  const o = Object.freeze({ s, order: Object.freeze(order), gear: Object.freeze(gear.map((g) => Object.freeze(g))), start: Object.freeze(start), way: Object.freeze(way), truth: Object.freeze(truth), riddles: Object.freeze(riddles) , fray: opts?.fray ?? (opts ? SD_FRAY_MAX : sdMarksLaw(sdMarksOf(s)).fray ?? SD_FRAY_MAX) });   // SD18a: the Fraying's thirty-six
   if (orreryCache.size >= 64) orreryCache.delete(orreryCache.keys().next().value);
-  orreryCache.set(s, o);
+  orreryCache.set(key, o);
   return o;
 }
 

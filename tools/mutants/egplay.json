@@ -11,8 +11,8 @@
   {
     "name": "EGPLAY-the-first-circle-drawn",
     "file": "src/net/egLaw.js",
-    "old": "  if (c <= 1) return FIRST_CIRCLE;",
-    "new": "  if (c < 1) return FIRST_CIRCLE;",
+    "old": "  if (!rec) { rec = { plans: [null, FIRST_PLAN],",
+    "new": "  if (!rec) { rec = { plans: [null],",
     "tests": [
       "test/egplay_law.test.js"
     ]
@@ -38,11 +38,10 @@
   {
     "name": "EGPLAY-a-fall-owes-nothing",
     "file": "src/net/egBrain.js",
-    "old": "  oweEnd(B, sub, 'fall', now);",
-    "new": "  void oweEnd;",
+    "old": "  if (final) oweEnd(B, sub, 'fall', now);",
+    "new": "  if (false) oweEnd(B, sub, 'fall', now);",
     "tests": [
-      "test/egplay_relay.test.js",
-      "test/egplay_client.test.js"
+      "test/egfull_relay.test.js"
     ]
   },
   {
@@ -75,10 +74,11 @@
   {
     "name": "EGPLAY-the-redoubt-heals-nobody",
     "file": "src/scenes/egClient.js",
-    "old": "rdSeen = E.h; fillVitalSigns(entity);",
-    "new": "rdSeen = E.h;",
+    "old": "    if (why === 'rest' && p >= 1) { fillVitalSigns(entity); return; }",
+    "new": "    if (why === 'rest' && p >= 1) { return; }",
     "tests": [
-      "test/egplay_client.test.js"
+      "test/egplay_client.test.js",
+      "test/egfull_client.test.js"
     ]
   },
   {
@@ -111,8 +111,8 @@
   {
     "name": "EGPLAY-the-count-never-red",
     "file": "src/ui/egHud.js",
-    "old": "(left < EG_HUD_LOW_MS ? 'low' : '')",
-    "new": "('')",
+    "old": ": shown < EG_HUD_LOW_MS ? 'low' :",
+    "new": ": shown < 0 ? 'low' :",
     "tests": [
       "test/egplay_client.test.js"
     ]

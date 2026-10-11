@@ -51,19 +51,39 @@ async function withBreach(fn, { party = false } = {}) {
   } finally { Date.now = realNow; }
 }
 
-test('EG-PLAY THE WIRE: a breach\'s words each way, projected and bounded - the open (its order and the landing), the admission, the door, the way home and the gate\'s three blows; the call, the state, a stage, the company, a fall, a Redoubt, a receipt, the end, a refusal and the fight in the gate\'s own words; a relay before it is sent nothing (mutants: an open with no landing; a company of nine; a fight word unchecked)', () => {
-  assert.deepEqual([...EG_KINDS], ['open', 'in', 'down', 'home', 'hit', 'ahit', 'xhit']);
-  assert.ok(EG_OUT_KINDS.includes('call') && EG_OUT_KINDS.includes('fst') && EG_OUT_KINDS.includes('adie'));
+test('EG-PLAY THE WIRE (EG-FULL): a breach\'s words each way, projected and bounded - the open (its order and the landing), the admission, the door, the way home, a blow on a body by its number, a Vestige picked, a vote, a Cantrip, the Sutler, a ping, a bequest, forsaking, the Orrery\'s turn, a fall said; the call, the state, a stage, the company of ten fields, a fall, a Redoubt, a receipt, the end, a refusal; the fight in the Spire\'s own words (a body\'s thirteen, a blow\'s FULL shape stamp, a zone, a tether, a mark) and the run\'s; a relay before it is sent nothing (mutants: an open with no landing; a company of nine; a stamp out of bounds; a body\'s row cut short)', () => {
+  assert.deepEqual([...EG_KINDS], ['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell']);
+  for (const k of ['call', 'st', 'efs', 'ead', 'eb', 'ez', 'etx', 'emk', 'offer', 'ask', 'rise', 'eheal']) assert.ok(EG_OUT_KINDS.includes(k), k);
   assert.equal(validEgIn({ k: 'open', z: 'v1.abc.def' }), null, 'an open names where its company answers from');
   assert.deepEqual(validEgIn({ k: 'open', z: 'v1.abc.def', site: SITE, junk: 1 }), { k: 'open', z: 'v1.abc.def', site: SITE });
-  assert.deepEqual(validEgIn({ k: 'in', z: 'v1.a.b', lv: 20, bv: 1 }), { k: 'in', z: 'v1.a.b', lv: 20, bv: 1 });
-  assert.deepEqual(validEgIn({ k: 'xhit', c: 2, q: 1, d: 40, r: 0 }), { k: 'xhit', c: 2, q: 1, d: 40, r: 0 });
-  assert.equal(validEgIn({ k: 'hit', q: 1, d: -1, r: 0 }), null);
+  assert.deepEqual(validEgIn({ k: 'in', z: 'v1.a.b', lv: 20, bv: 2 }), { k: 'in', z: 'v1.a.b', lv: 20, bv: 2 });
+  assert.deepEqual(validEgIn({ k: 'hit', i: 7, q: 1, d: 40, r: 0, x: 1 }), { k: 'hit', i: 7, q: 1, d: 40, r: 0 });
+  assert.equal(validEgIn({ k: 'hit', i: 7, q: 1, d: -1, r: 0 }), null);
+  assert.equal(validEgIn({ k: 'hit', q: 1, d: 40, r: 0 }), null, 'a blow names its body');
+  assert.deepEqual(validEgIn({ k: 'pick', v: 12 }), { k: 'pick', v: 12 });
+  assert.deepEqual(validEgIn({ k: 'vote', q: 'dec:wrath', y: 2 }), { k: 'vote', q: 'dec:wrath', y: 2 });
+  assert.equal(validEgIn({ k: 'vote', q: 'DROP TABLE', y: 0 }), null);
+  assert.deepEqual(validEgIn({ k: 'lping', x: 3, z: 40, w: 1 }), { k: 'lping', x: 3, z: 40, w: 1 });
+  assert.equal(validEgIn({ k: 'lping', x: 3000, z: 40, w: 1 }), null);
+  assert.deepEqual(validEgIn({ k: 'pz', i: 2, a: -1 }), { k: 'pz', i: 2, a: -1 });
+  assert.deepEqual(validEgIn({ k: 'fell' }), { k: 'fell' });
   const co = (n) => Array.from({ length: n }, (_, i) => [`acct-m${i}`, `M${i}`, (i % 8) + 1]);
   assert.ok(validEgOut({ k: 'call', b: B, o: 'Mac', os: 'acct-mac', seed: 7, op: T0, rh: 0, co: co(8), site: SITE }));
   assert.equal(validEgOut({ k: 'call', b: B, o: 'Mac', os: 'acct-mac', seed: 7, op: T0, rh: 0, co: co(9), site: SITE }), null, 'a company of nine');
-  assert.equal(validEgOut({ k: 'ad', w: 0, m: 10, a: [[1, 999, 0]], at: T0 }), null, 'a fight word past the gate\'s bound');
-  assert.ok(validEgOut({ k: 'ad', w: 0, m: 10, a: [[1, 10, 0]], at: T0 }));
+  assert.ok(validEgOut({ k: 'co', co: [['acct-mac', 'Mac', 1, 1, 0, 1, 0, 0, 0, 1]] }));
+  assert.equal(validEgOut({ k: 'co', co: [['acct-mac', 'Mac', 1, 1, 0, 1]] }), null, 'the company\'s full row is ten');
+  const body = [1, 0, 3, 0, 2.5, 40, 900, 1000, 1, 2.5, 40, 0, T0];
+  assert.ok(validEgOut({ k: 'efs', h: 3, wk: T0, b: [body], bl: [], tx: [], mk: [], pg: {} }));
+  assert.equal(validEgOut({ k: 'efs', h: 3, wk: T0, b: [body.slice(0, 12)], bl: [], tx: [], mk: [], pg: {} }), null, 'a body\'s row cut short');
+  const blow = { k: 'eb', i: 4, o: 1, s: [['d', 2, 40, 3]], at: T0 + 1500, wu: 1500, p: 0.2, b: 4, el: 'fire', nm: 'Fire-fall', ch: 0, pu: 0, sp: 0 };
+  assert.ok(validEgOut(blow));
+  assert.equal(validEgOut({ ...blow, s: [['d', 2, 999, 3]] }), null, 'a stamp past the hall\'s bound');
+  assert.equal(validEgOut({ ...blow, s: [['q', 1, 1]] }), null, 'a shape the Spire does not draw');
+  assert.ok(validEgOut({ k: 'ez', i: 2, kind: 'burn', s: ['d', 0, 30, 4], from: T0, until: T0 + 8000, p: 0.04, b: 0, el: 'fire' }));
+  assert.ok(validEgOut({ k: 'etx', t: [[1, 'acct-mac', 0, 8]] }));
+  assert.ok(validEgOut({ k: 'emk', m: [['acct-mac', 6, T0 + 9000, 0]] }));
+  assert.ok(validEgOut({ k: 'offer', v: [0, 5, 12], n: 1 }));
+  assert.ok(validEgOut({ k: 'rise', s: 'acct-mac', p: 0.5, x: 1, z: 20, h: 6 }));
   assert.equal(validEgOut({ k: 'end', why: 'tear', at: T0 }).why, 'tear');
   assert.deepEqual(parseClient(JSON.stringify({ t: 'eg', k: 'home' }), { hasHello: true }), { t: 'eg', k: 'home' });
   assert.equal(relaySupportsEg(`world${EG_RELAY_MIN - 1}`), false);
@@ -109,9 +129,9 @@ test('EG-PLAY THE ROOM: it admits its company alone, inside the open window - a 
     const ws = eg.connect(); await eg.hello(ws, 'peer-mac', at(spec.x0 + spec.arrive.x, spec.arrive.z), { kind: 'linked', tokenSub: 'acct-mac', charLevel: 20 });
     assert.equal(ws.closed, null);
     const z = await admit('acct-mac');
-    await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'in', z, lv: 20, bv: 1 }));
+    await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'in', z, lv: 20, bv: 2 }));
     assert.equal(eg.store.get(EG_KEY).mem['acct-mac'].in, 1);
-    await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'in', z, lv: 20, bv: 1 }));
+    await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'in', z, lv: 20, bv: 2 }));
     assert.equal(eg.store.get(EG_KEY).zs.length, 1, 'a counted member asked again (a reload, a new circle) spends nothing more');
     assert.notEqual(egs(ws).at(-1).m, 'the order is spent', 'and is never refused');
     // the gather
@@ -124,49 +144,57 @@ test('EG-PLAY THE ROOM: it admits its company alone, inside the open window - a 
     assert.equal(rec.sg, 'trial');
     assert.equal(rec.cnt.left, 1_800_000);
     assert.ok(rec.cnt.at > 0, 'the count runs');
-    const fst = egs(ws).find((m) => m.k === 'fst');
-    assert.ok(fst && fst.f.cx, 'the rifts said as the gate\'s crystals');
-    // break the rifts from beside each one (the legion's bodies struck down as they rise)
+    const efs = egs(ws).find((m) => m.k === 'efs');
+    assert.ok(efs && efs.b.some((t) => t[1] === 2), 'the rifts said as the Spire\'s own bodies (role 2, an object)');
+    assert.ok(validEgOut(efs));
+    // strike every body that can be struck from behind it - the rifts and the legion that rises from them
+    /** The breach as the room holds it now (the store is its checkpoint). */
+    const held = () => eg.room._eg ?? eg.store.get(EG_KEY);
     let q = 1;
-    for (let guard = 0; guard < 2000 && eg.store.get(EG_KEY).sg === 'trial'; guard++) {
-      const cur = eg.store.get(EG_KEY);
-      const rifts = cur.F.rifts.c, c = rifts.findIndex((r) => r.h > 0);
-      const add = cur.F.lg.ads[0];
-      if (add) { await eg.pose(ws, at(spec.x0 + add.x, add.z + 1)); await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'ahit', i: add.i, q: q++, d: 60, r: 0 })); }
-      else if (c >= 0) { await eg.pose(ws, at(spec.x0 + rifts[c].x, rifts[c].z + 1.5)); await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'xhit', c, q: q++, d: 60, r: 0 })); }
-      await beat(300);
+    for (let guard = 0; guard < 4000 && held().sg === 'trial'; guard++) {
+      const cur = held();
+      const live = cur.F.bodies.filter((t) => t.hp > 0 && !(t.fl & (2 | 16 | 128)));
+      const tgt = live.find((t) => t.role === 1) ?? live[0];   // the legion first (a Sapper reopens a closed rift), then the rifts
+      if (tgt) {
+        const yw = tgt.yaw ?? 0;
+        await eg.pose(ws, at(spec.x0 + tgt.x - Math.sin(yw) * 1.5, tgt.z - Math.cos(yw) * 1.5));
+        await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'hit', i: tgt.i, q: q++, d: 200, r: 1 }));
+      }
+      await beat(250);
     }
-    assert.equal(eg.store.get(EG_KEY).sg, 'closing', 'the last rift closed opens the door');
-    assert.ok(egs(ws).some((m) => m.k === 'cxb'));
+    assert.equal(held().sg, 'closing', 'the last rift closed opens the door');
+    assert.ok(egs(ws).some((m) => m.k === 'edie'), 'the bodies\' falls said');
+    for (const m of egs(ws)) assert.ok(validEgOut(m), `a room word the wire refuses: ${m.k}`);
     await eg.pose(ws, at(spec.x0 + spec.end.x, spec.end.z));
     await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'down', h: 1 }));
     await beat(500);
-    const after = eg.store.get(EG_KEY);
+    const after = held();
     assert.deepEqual([after.h, after.sg], [2, 'arrive'], 'the step through pulls the company to Hall 2');
     assert.equal(after.cnt.at, 0, 'the pull holds the count');
   });
 });
 
-test('EG-PLAY ONE LIFE: a death in the breach is the member\'s fall - said to all, its end receipt (`e1`, kind x, why fall) minted to its socket; no member living, the breach ends a wipe and its room beats no more (mutants: a death that costs nothing; the end never said)', async () => {
+test('EG-PLAY ONE LIFE (EG-FULL, section 16.5): a death in the breach is the member\'s fall, said by their own word (`fell` - the death save turned it aside) - said to all with whether it is final, the member a witness with its recall in hand; no member living, the breach ends a wipe, the end receipt (`e1`, kind x, why wipe) minted to its socket, and its room beats no more (mutants: a death that costs nothing; the end never said; a fall said final with a recall in hand)', async () => {
   await withBreach(async ({ eg, beat, admit, step }) => {
     const spec = egHallOf(eg.store.get(EG_KEY).seed, 1);
     step(EG_SEALED_MS); await beat(1000);
     const ws = eg.connect(); await eg.hello(ws, 'peer-mac', at(spec.x0, 0), { kind: 'linked', tokenSub: 'acct-mac', charLevel: 20 });
-    await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'in', z: await admit('acct-mac'), lv: 20, bv: 1 }));
+    await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'in', z: await admit('acct-mac'), lv: 20, bv: 2 }));
     await eg.pose(ws, at(spec.x0, 0));
     await beat(EG_GATHER_MS + 1000);
     assert.equal(eg.store.get(EG_KEY).sg, 'trial');
-    await eg.pose(ws, at(spec.x0, 0, { dd: 1 }));
+    await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'fell' }));
     await beat(1000);
     const rec = eg.store.get(EG_KEY);
-    assert.equal(rec.mem['acct-mac'].alive, 0);
+    assert.deepEqual([rec.mem['acct-mac'].alive, rec.mem['acct-mac'].falls, rec.mem['acct-mac'].wit], [0, 1, 1]);
     assert.equal(rec.end, 'wipe');
-    assert.ok(egs(ws).some((m) => m.k === 'fall' && m.s === 'acct-mac'));
+    const fall = egs(ws).find((m) => m.k === 'fall' && m.s === 'acct-mac');
+    assert.ok(fall && fall.fin === 0, 'said - not final: the recall is still in hand');
     assert.ok(egs(ws).some((m) => m.k === 'end' && m.why === 'wipe'));
     const r = egs(ws).find((m) => m.k === 'rcpt');
     assert.ok(r, 'the end receipt minted to its socket');
     const c = readEgReceipt(r.r);
-    assert.deepEqual([c.q, c.why, c.b, c.s, c.z], ['x', 'fall', B, 'acct-mac', 'z'.repeat(20)]);
+    assert.deepEqual([c.q, c.why, c.b, c.s, c.z], ['x', 'wipe', B, 'acct-mac', 'z'.repeat(20)]);
     eg.alarm.at = null;
     assert.equal(await eg.room._egTick(), false, 'an ended breach beats no more');
   });

@@ -10,7 +10,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fakeRooms } from './fakeRoom.mjs';
-import { SOCIAL_ROOM, EG_KEY, validEgOut, validEgIn } from '../src/net/wire.js';
+import { SOCIAL_ROOM, EG_KEY, validEgOut, validEgIn, EG_BRAIN_V } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, egCircleSpecs, egOnArrive, egFirstHallOf, EG_SEALED_MS, EG_GATHER_MS, EG_REST_MS, EG_TEXT, EG_VOID_Y, EG_COUNT_START_MS } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { readEgReceipt } from '../src/net/egReceipt.js';
@@ -21,7 +21,8 @@ import { egHudModel, EG_HUD_LOW_MS } from '../src/ui/egHud.js';
 import { createEgSpan, EG_FLOOR_KEY, egStepKey } from '../src/scenes/egSpan.js';
 import { egHallBlock, egHallLocation, isEgHall, egToDungeon, egFromDungeon, buildEgCircleModel, egCircleColliderTris, egGateParts, EG_HALL_BLOCK } from '../src/world/egHall.js';
 import { isWeirKey, weirKeysHeld } from '../src/systems/weirKey.js';
-import { GATE_STATE_EMPTY } from '../src/net/gateLink.js';
+import { EG_STATE_EMPTY } from '../src/net/egLink.js';
+import { EG_RD_WINDOW_MS } from '../src/net/egBrain.js';
 
 const { subtle } = globalThis.crypto;
 const T0 = 1_800_000_000_000;
@@ -66,7 +67,7 @@ async function withPlay(fn) {
   };
   const send = (room, sock, w) => { pending.push(room.raw(sock, JSON.stringify({ t: 'eg', ...w }))); return true; };
   const hubLink = { get egOk() { return true; }, sendEg: (k, f = {}) => { const w = validEgIn({ ...f, k }); return w && macHub ? send(hub, macHub, w) : false; } };
-  const presence = { welcomes: 1, terminal: false, error: null, sendEg: (k, f = {}) => { const w = validEgIn({ ...f, k, ...(k === 'in' ? { bv: 1 } : {}) }); return w && ws && mode === 'dungeon' ? send(eg, ws, w) : false; } };
+  const presence = { welcomes: 1, terminal: false, error: null, sendEg: (k, f = {}) => { const w = validEgIn({ ...f, k, ...(k === 'in' ? { bv: EG_BRAIN_V } : {}) }); return w && ws && mode === 'dungeon' ? send(eg, ws, w) : false; } };
   // every ask of the service counted while it is out (settle() waits for them - a signature's time is the machine's)
   let inflight = 0;
   const track = (fn) => async (...a) => { inflight++; try { return await fn(...a); } finally { inflight--; } };
@@ -83,7 +84,7 @@ async function withPlay(fn) {
     say: (t) => said.push(t), mid: (t) => mids.push(t), site: () => ({ climateBase: 2, season: 0 }), wire: () => SITE,
     landAt: (l) => { asked.lands.push(l); return true; }, hurt: (n) => { entity.health -= n; }, store,
     fight: (link) => createEgFight({ link, now: () => clock, feet: () => (mode === 'dungeon' ? player.pos : null), player: () => entity,
-      sendHit: (h) => presence.sendEg('hit', h), sendAHit: (h) => presence.sendEg('ahit', h), sendXHit: (h) => presence.sendEg('xhit', h) }),
+      sendHit: (h) => presence.sendEg('hit', h), me: () => ME }),
   });
   const seen = new Map();
   const pump = (room = null, sock = null) => {
@@ -169,18 +170,17 @@ test('EG-PLAY THE CLIENT ON THE RELAY: the Weir Key turned stakes it and hands t
     assert.equal(client.state().sg, 'trial');
     const spec = egHallOf(rec().seed, 1);
     assert.equal(spec.kind, 'yard');
-    // the rifts, through the fight's own seam (the dungeon host's crystal bodies and blows)
-    for (let guard = 0; guard < 3000 && rec().sg === 'trial'; guard++) {
+    // the rifts and the legion, through the fight's own seam (EG-FULL: every one a body by its number - the legion first,
+    // a Sapper opening a closed rift again)
+    for (let guard = 0; guard < 4000 && rec().sg === 'trial'; guard++) {
       const cur = rec();
-      const add = cur.F.lg.ads[0];
-      if (add) { standAt(spec.x0 + add.x, add.z + 1); await frame(0); client.fight().hostHit({ i: add.i, d: 60, r: 0 }); await frame(250); continue; }
-      const c = cur.F.rifts.c.findIndex((q) => q.h > 0);
-      if (c < 0) { await frame(250); continue; }
-      standAt(spec.x0 + cur.F.rifts.c[c].x, cur.F.rifts.c[c].z + 1.5);
+      const live = cur.F.bodies.filter((t) => t.hp > 0 && !(t.fl & (2 | 16 | 128)));
+      const tgt = live.find((t) => t.role === 1) ?? live[0];
+      if (!tgt) { await frame(250); continue; }
+      standAt(spec.x0 + tgt.x - Math.sin(tgt.yaw ?? 0) * 1.5, tgt.z - Math.cos(tgt.yaw ?? 0) * 1.5);
       await frame(0);
-      const t = client.fight().riftTargets().find((q) => q.c === c);
-      assert.ok(t, 'a standing rift is a body my blows meet');
-      client.fight().riftHit({ c, d: 60, r: 0 });
+      if (!client.state().fight.bodies.some((q) => q.i === tgt.i)) { await frame(250); continue; }
+      assert.equal(client.fight().hostHit({ i: tgt.i, d: 200, r: 1 }), true, 'a standing body is one my blows meet');
       await frame(250);
     }
     assert.equal(rec().sg, 'closing', 'the last rift closed opens the door');
@@ -214,30 +214,34 @@ test('EG-PLAY THE REDOUBT AND THE WAY HOME, PLAYED: the Court\'s lord felled is 
     standAt(court.x0 + court.arrive.x, court.arrive.z);
     for (let i = 0; i < 8 && rec().sg !== 'trial'; i++) await frame(EG_GATHER_MS / 3);
     assert.equal(rec().sg, 'trial');
-    standAt(court.x0 + court.fight.x, court.fight.z + 2);
-    for (let i = 0; i < 4 && !eg.room._eg.F.lord.up; i++) await frame(1000);
-    const L = eg.room._eg.F.lord;
-    assert.ok(L.up, 'the lord woke for the company in its ring');
-    L.hp = 1;
-    standAt(court.x0 + L.pos[0], L.pos[1] + 2);
+    standAt(court.x0 + court.ring.x, court.ring.z);
+    const lordOf = () => eg.room._eg.F?.bodies.find((t) => t.role === 0);
+    for (let i = 0; i < 6 && !lordOf()?.up2; i++) await frame(1000);
+    const L = lordOf();
+    assert.ok(L?.up2, 'the lord woke for the company in its ring');
+    L.hp = 1; L.hpFloor = 0;
+    standAt(court.x0 + L.x - Math.sin(L.yaw ?? 0) * 2, L.z - Math.cos(L.yaw ?? 0) * 2);
     await frame(0);
-    assert.ok(client.fight().target(), 'the lord is a body my blows meet');
-    assert.equal(client.fight().hit({ d: 50, r: 0 }), true);
-    for (let i = 0; i < 4 && rec().sg !== 'rest'; i++) await frame(300);
+    assert.ok(client.state().fight.bodies.some((q) => q.i === L.i && q.role === 0), 'the lord is a body my blows meet');
+    assert.equal(client.target?.() ?? null, null);
+    assert.equal(client.fight().hostHit({ i: L.i, d: 50, r: 0 }), true);
+    for (let i = 0; i < 6 && rec().sg !== 'rest'; i++) await frame(300);
     assert.equal(rec().sg, 'rest', 'the Court\'s fall is the Redoubt');
     assert.equal(rec().rd, 1);
-    await frame(300);
+    entity.health = 40;
+    for (let i = 0; i < 30 && entity.health < entity.maxHealth; i++) await frame(300);
     // its receipt claimed, the company healed, the way home stood
     const w = asked.claim.map(readEgReceipt).find((c) => c.q === 'w');
     assert.ok(w, 'the Redoubt\'s receipt carried to the account service');
     assert.deepEqual([w.b, w.s, w.w], [B, ME, 1]);
     assert.ok(said.some((t) => /Redoubt 1 is yours/.test(t)));
-    assert.equal(entity.health, entity.maxHealth, 'the Redoubt heals');
+    assert.equal(entity.health, entity.maxHealth, 'the Redoubt heals (the room\'s `eheal` at the rest\'s window)');
     assert.equal(exitDoors.length, 1, 'the way home stands - the level\'s exit door');
     const door = exitDoors[0];
     const [dsx, , dz] = dungeonToRealm(door.matrix[12], door.matrix[13], door.matrix[14]);
     assert.ok(Math.hypot(dsx - court.x0 - court.fight.x, dz - court.fight.z) < 0.01, 'at the Court\'s heart');
-    // pressed once: asked
+    // pressed once: asked (the way home opens once the rest's window has passed)
+    for (let i = 0; i < 30 && P.now() < rec().rdAt + EG_RD_WINDOW_MS; i++) await frame(300);
     assert.equal(client.wayHome(), false);
     assert.match(mids.at(-1), /Walk home\?/);
     assert.equal(rec().mem[ME].home, 0);
@@ -274,23 +278,32 @@ test('EG-PLAY THE NEXT CIRCLE, PLAYED: the rest over, the room pulls the living 
   });
 });
 
-test('EG-PLAY ONE LIFE AND THE VOID, PLAYED: a death in the breach is the respawn\'s to take (the client says it died here and walks nobody out itself); the room\'s fall is said, my end receipt carried; the void\'s cost is a tenth of my health, never below a quarter (mutants: a death walked out twice; the void killing; the cost uncapped)', async () => {
+test('EG-PLAY ONE LIFE AND THE VOID, PLAYED (EG-FULL, section 16.5): a blow that would kill me in the breach is a fall the death save turns aside - the client tells the room (`fell`), takes no blow while it watches (THE WITNESS) and walks nobody out itself; the room\'s fall is said, the company wiped, my end receipt carried, and the end walks me out at my health; the void\'s cost is a tenth of my health, never below a quarter (mutants: a death walked out twice; the void killing; the cost uncapped; a witness struck)', async () => {
   await withPlay(async (P) => {
-    const { client, asked, entity, frame, rec } = P;
+    const { client, asked, entity, frame, rec, said } = P;
     await intoFirstHall(P);
     // the void: 10% of 100, at 60 -> 50; at 30 -> 25, never below a quarter; at 20 -> nothing
     entity.health = 60; client.castBack(); assert.equal(entity.health, 50);
     entity.health = 30; client.castBack(); assert.equal(entity.health, 25);
     entity.health = 20; client.castBack(); assert.equal(entity.health, 20);
     assert.equal(client.diedHere(), true, 'a death now is the Spire\'s');
-    // the death: my pose says it
-    entity.health = 0;
+    // the killing blow: the death save takes it
+    assert.equal(client.witnessing(), false);
+    assert.equal(client.fallSave(), true, 'the death save turns it aside');
+    assert.equal(client.fallSave(), false, 'once');
+    assert.equal(client.witnessing(), true, 'I watch');
+    assert.ok(entity.health >= 1, 'never a death screen');
     await frame(1000);
     assert.equal(rec().mem[ME].alive, 0);
+    assert.equal(rec().mem[ME].wit, 1);
     assert.equal(rec().end, 'wipe');
-    assert.equal(asked.leave, 0, 'the death screen is up: the respawn walks me out, never the client');
+    assert.equal(asked.leave, 0, 'not walked out while the end\'s words stand');
     const x = asked.claim.map(readEgReceipt).find((c) => c.q === 'x');
-    assert.ok(x && x.why === 'fall', 'my end receipt carried');
+    assert.ok(x && x.why === 'wipe', 'my end receipt carried');
+    for (let i = 0; i < 20 && asked.leave === 0; i++) await frame(500);
+    assert.equal(asked.leave, 1, 'the end walks me out - once');
+    assert.equal(client.witnessing(), false);
+    assert.ok(said.length > 0);
   });
 });
 
@@ -321,7 +334,7 @@ test('EG-PLAY THE KEYS\' FACE: the balance the service says restacks the pack - 
     assert.equal(entity.items.filter(isWeirKey).length, 1);
     client.restack(0);
     assert.equal(weirKeysHeld(entity.items), 0);
-    const st = (h, sg) => { const L = client.link; L.word({ k: 'st', b: B, seed: 1, egv: 1, op: T0, wk: 0, h, sg, sa: 0, su: 0, cl: 0, ca: 0, hw: 0, dn: 0, co: [[ME, 'Mac', 1, 1, 0, 1]], rd: 0, rh: 0, dg: 0, end: null }); };
+    const st = (h, sg) => { const L = client.link; L.word({ k: 'st', b: B, seed: 1, egv: 1, op: T0, wk: 0, h, sg, sa: 0, su: 0, cl: 0, ca: 0, hw: 0, dn: 0, co: [[ME, 'Mac', 1, 1, 0, 1, 0, 0, 0, 1]], rd: 0, rh: 0, dg: 0, end: null }); };
     st(4, 'trial'); assert.equal(client.gateOpen(4), false, 'through the trial, shut');
     st(4, 'arrive'); assert.equal(client.gateOpen(4), false);
     st(4, 'closing'); assert.equal(client.gateOpen(4), true, 'its door open, the gate up');
@@ -332,7 +345,7 @@ test('EG-PLAY THE KEYS\' FACE: the balance the service says restacks the pack - 
 
 test('EG-PLAY THE TRACKER: outside, the call for my company - when it opens, then how long it takes members and the word to answer; inside, THE COUNT (gold while it holds, red under five minutes), the circle and the hall by name, what the stage asks, how many stand; nothing for a stranger or once the call is past (mutants: the count never red; a stranger shown the call)', () => {
   const call = { k: 'call', b: B, o: 'Ann', os: 'acct-ann', seed: 7, op: T0, rh: 0, co: [[ME, 'Mac', 1], ['acct-ann', 'Ann', 2]], site: SITE };
-  const E = { call, b: B, seed: 7, h: 0, sg: 'wait', co: [], fight: GATE_STATE_EMPTY };
+  const E = { ...EG_STATE_EMPTY, call, b: B, seed: 7, h: 0, sg: 'wait', co: [] };
   const sealed = egHudModel(E, ME, T0 + 60_000);
   assert.match(sealed.title, /Ann opens an Elite Breach/);
   assert.equal(sealed.line, 'The breach opens in 4:00.');
@@ -341,13 +354,16 @@ test('EG-PLAY THE TRACKER: outside, the call for my company - when it opens, the
   assert.match(open.sub, /\/breach/);
   assert.equal(egHudModel(E, 'acct-stranger', T0 + 60_000), null, 'a stranger is shown nothing');
   assert.equal(egHudModel(E, ME, T0 + 11 * 60_000), null, 'the call past');
-  const inside = { ...E, h: 3, sg: 'trial', wk: T0, cl: 20 * 60_000, ca: T0 + 1000, co: [[ME, 'Mac', 1, 1, 0, 1], ['acct-ann', 'Ann', 2, 0, 0, 1]], rd: 0, rh: 0 };
+  const inside = { ...E, h: 3, sg: 'trial', wk: T0, cl: 20 * 60_000, ca: T0 + 1000, op: T0, co: [[ME, 'Mac', 1, 1, 0, 1, 0, 0, 0, 1], ['acct-ann', 'Ann', 2, 0, 0, 1, 1, 0, 1, 1]], rd: 0, rh: 0 };
   const m = egHudModel(inside, ME, T0 + 61_000, { inSpire: true });
   assert.equal(m.title, `Circle 1 - Hall 3: ${egHallOf(7, 3).name}`);
   assert.equal(m.count, '19:00');
-  assert.equal(m.countCls, '');
+  assert.equal(m.countCls, 'gold', 'gold while it holds past ten minutes');
   assert.equal(m.line, egHallOf(7, 3).objective);
-  assert.equal(m.company, '1 of 2 standing');
+  assert.match(m.company, /^1 of 2 standing\n/);
+  assert.match(m.company, /Ann.*(watching|witness)/i, 'a fallen companion watches');
+  assert.match(m.run, /potions 2\/2/, 'THE POTION LAW\'s pip');
+  assert.equal(egHudModel({ ...inside, ca: T0 }, ME, T0 + 20 * 60_000 - 9 * 60_000, { inSpire: true }).countCls, '');
   assert.equal(egHudModel({ ...inside, ca: T0 }, ME, T0 + 20 * 60_000 - EG_HUD_LOW_MS + 1000, { inSpire: true }).countCls, 'low');
   assert.equal(egHudModel({ ...inside, ca: 0 }, ME, T0, { inSpire: true }).countCls, 'held');
   assert.equal(egHudModel({ ...inside, wk: 0, sg: 'arrive', su: T0 + 8000 }, ME, T0, { inSpire: true }).count, '30:00', 'thirty minutes before the first wake');

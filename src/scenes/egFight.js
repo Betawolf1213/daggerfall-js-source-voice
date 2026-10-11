@@ -1,56 +1,140 @@
 // @ts-check
-// EG-PLAY (2026-10-11, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md sections 8, 12, 13 and 25): AN ELITE
-// BREACH'S FIGHTS ON THIS SCREEN - the hall's fight as the relay says it (net/egLink.js - the gate's own state, its frame
-// the hall's own): the champion or the lord where it stands, its body (the Warden's sprite at its own size), its blow's
-// telegraph and the verdict on MY OWN FEET at its landing (co-op's law - net/gateStrike.js strikeVerdict), its bar; the
-// legion through the gate's own driver about the hall's centre (scenes/gateHost.js); a Rift-Yard's rifts as the
-// Reckoning's crystals (render/courtCrystals.js), struck as they are; a Rampart's vents, told 1.0 s and erupting on the
-// relay's clock from the hall's wake (net/egLaw.js egVentAt), judged on my feet. Nothing is sent but my blows (`hit` on
-// the foe, `ahit` on one of the legion, `xhit` on a rift - the relay's caps decide what lands).
-//
-// THE GATE'S PIECES, READ UNCHANGED: every shape, verdict, pose and bar is the gate's (world/gateBoss.js,
-// render/gateTelegraph.js, ui/gateBossBar.js); what is the Spire's is the hall it stands in, the vents and the rifts' words.
+// EG-PLAY (2026-10-11, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md sections 8, 12, 13 and 25) and EG-FULL
+// (2026-10-11, Mac: "I said I want everything"): AN ELITE BREACH'S FIGHTS ON THIS SCREEN - the hall's fight as the relay
+// says it in the Spire's own words (net/egLink.js's fold of net/egBodies.js's frames), its frame the hall's own:
+//   THE BODIES - every lord and champion (its own look: world/egLaw.js EG_LORDS, net/egLords.js egBossLook - a Daggerfall
+//     mobile at its scale), every add of the legion (net/egLegion.js egKindLook, by the band), each acting what it does
+//     (rising, walking, winding up, striking, flinching, falling); the errands' objects - the struck ones (rifts, anchors,
+//     banners, hearts, seals, braziers, standards, chains, pillars, sparks) as the Reckoning's crystals in their colours
+//     (render/courtCrystals.js), the stood-on ones (runes with their numerals, soul-gems, havens, the relic, the engine,
+//     the Orrery's stones, umbral discs) on the floor;
+//   THE BLOWS - each FULL shape stamp drawn by the telegraph pass (render/gateTelegraph.js) in THE SPIRE DANGER EDGE,
+//     the TELEGRAPH BUDGET's order (net/egShape.js egShapeOrder), a CHECK's havens gold; each judged against MY OWN FEET at
+//     its landing (co-op's law - net/egShape.js egBlowVerdict), its share of my health through my saving throw, its push;
+//   THE ZONES - burning ground ticking, the floor gone (a cast-back), a Soul-Pool, a haven;
+//   THE TETHERS - a Wraith's drain on me ticking, a Blood Tether, a chain (the stay-close grammar), a challenge's ring;
+//   THE PLACE - a gust's push, the Gutterdark, the Colossus's Rails.
+// Nothing is sent but my blows (`hit` on a body by its number - the relay's caps decide what lands).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { HIT_KINDS, BASE_PROFILE, CRYSTAL_R, CRYSTAL_H, ATTACK_BY_ID } from '../net/gateBrain.js';
-import { strikeVerdict, blowOf, strikeDamage, savedShare } from '../net/gateStrike.js';
-import { bossAct, bossFrame, bossPlace, bossHop, bossStandIn, crystalStandIn, crystalColor, gateHitFlash, BOSS_LOOKS, bossCue, BOSS_CUES } from '../world/gateBoss.js';
-import { GateTelegraphRenderer, telegraphShape, TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_EDGE, TELEGRAPH_POOL } from '../render/gateTelegraph.js';
+import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../net/gateBrain.js';
+import { strikeDamage, savedShare } from '../net/gateStrike.js';
+import { bossFrame, crystalStandIn, gateHitFlash, hostStandIn, hostCue, BOSS_CUES } from '../world/gateBoss.js';
+import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL } from '../render/gateTelegraph.js';
 import { CourtCrystalRenderer } from '../render/courtCrystals.js';
-import { bossBarModel, drawGateBossBar } from '../ui/gateBossBar.js';
 import { titleCardModel, drawGateTitleCard, TITLE_HOLD_MS } from '../ui/gateTitleCard.js';
 import { setBatchHitFlash } from '../systems/hitFlash.js';
 import { ENEMY_BASICS } from '../characters/enemyBasics.js';
+import { stateAnims, FLY_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED, HURT_ANIM_SPEED } from '../characters/mobileUnit.js';
 import { mobileBillboardSize } from '../world/rmbFlats.js';
-import { createGateHost } from './gateHost.js';
-import { egHallOf, egVentAt, egInVent, EG_VENT_PCT, EG_VENT_WARN_MS, EG_VENT_FIRE_MS } from '../net/egLaw.js';
+import { egHallOf, egCountText, EG_LORDS, EG_BANDS } from '../net/egLaw.js';
+import { egBodyPlace } from '../net/egLink.js';
+import { egBlowVerdict, egInShape, egShapeOrder, coneInscribed } from '../net/egShape.js';
+import { EG_ROLE, EG_FL } from '../net/egBodies.js';
+import { egKindLook, EG_LEGION_KINDS } from '../net/egLegion.js';
+import { EG_BOSS_KEYS, EG_OBJ, egBossLook, egBossName } from '../net/egLords.js';
 import { egHallCentre } from '../world/egHall.js';
-import { EG_FOE_NAMES } from '../net/egBrain.js';
 
-/** The champion's body: the Warden's look at 2.5 scale (section 8.5 - Ruhn's 3 is his own). */
-export const EG_FOE_LOOK = Object.freeze({ mobile: BOSS_LOOKS.ruhn.mobile, scale: 2.5 });
-/** The vents' colour, and the lane's danger style. */
-const VENT_COLOR = Object.freeze([1.0, 0.42, 0.1]);
-const RIFT_LIGHT_RANGE = 7;
-/** The foe's card and its title (its epithet) - the champion's, the Court's. */
-const FOE_CARD = Object.freeze({ champion: { name: EG_FOE_NAMES.champion, title: 'The Proving Walk' }, lord: { name: EG_FOE_NAMES.lord, title: 'The Court of the Galleries' } });
+/** The objects' types by number (net/egLords.js EG_OBJ), and which are struck (drawn as crystals) - the rest are stood on. */
+const OBJ_KEY = Object.freeze(Object.fromEntries(Object.entries(EG_OBJ).map(([k, v]) => [v, k])));
+const STRUCK = new Set(['rift', 'anchor', 'banner', 'heart', 'seal', 'brazier', 'standard', 'chain', 'pillar', 'spark']);
+/** The struck objects' colours (display-encoded): the rifts Dagon's, the wards' red-bronze, a heart's storm, a pillar's
+ *  basalt glow. */
+export const EG_OBJ_COLORS = Object.freeze({
+  rift: [1.0, 0.18, 0.34], anchor: [0.95, 0.3, 0.2], banner: [0.9, 0.22, 0.18], heart: [0.4, 0.75, 1.0], seal: [0.75, 0.5, 1.0], brazier: [1.0, 0.5, 0.12],
+  standard: [0.85, 0.3, 0.2], chain: [0.75, 0.7, 0.6], pillar: [1.0, 0.45, 0.1], spark: [1.0, 0.9, 0.4],
+});
+/** The stood-on objects' colours: gold for the way and the havens (THE FIVE LIGHTS), violet for a soul-gem. */
+const GOLD = Object.freeze([1.0, 0.82, 0.38]);
+const GROUND_COLORS = Object.freeze({ rune: GOLD, gem: [0.65, 0.5, 1.0], haven: GOLD, relic: GOLD, engine: [0.7, 0.8, 1.0], stone: GOLD, umbra: [0.25, 0.15, 0.35], isle: [1.0, 0.3, 0.1], vault: GOLD, plate: GOLD });
+/** A zone's colour: burning ground the band's, a fallen floor black-red, a Soul-Pool violet, a haven gold. */
+const ZONE_COLORS = Object.freeze({ burn: [1.0, 0.42, 0.12], void: [0.35, 0.02, 0.04], soul: [0.6, 0.35, 0.9], haven: GOLD });
+/** A tether's colour (THE FIVE LIGHTS: Dagon red on what binds you). */
+const TETHER_COLOR = Object.freeze([1.0, 0.24, 0.28]);
+/** A zone's and a drain's tick (ms); a body's fall's length; how long after its landing a blow's shape lingers. */
+export const EG_TICK_MS = 1000;
+const FALL_MS = 1200;
+const LINGER_MS = 350;
+/** The beats' words (net/wire.js EG_SAY_KEYS), by key - `n` a name, `t` a word the room adds. */
+export const EG_SAY = Object.freeze({
+  wake: () => '', fury: (n) => `${n || 'The lord'} rages!`, covenant: () => 'The Covenant presses.', covenantrest: () => 'The Covenant has spoken. This Redoubt is the last.',
+  stunned: (n) => `${n || 'The lord'} is laid bare!`, scent: () => 'Hunted - run!', scorched: () => 'Grath is scorched!', phase: (n, t) => t, images: () => 'Mirror images! Only one is true.',
+  examination: () => 'The Examination: stand on the runes in order!', cage: () => 'The Final Examination: break the seals!', passed: () => 'The Examination is passed.', failed: () => 'The Examination is failed.',
+  challenge: () => 'A challenge! The ring of fire rises.', challengewon: () => 'The challenge is met.', challengeend: () => 'The ring falls.', conquest: () => 'Banners claim the floor. Break them!',
+  muster: () => 'The Muster-Call! The balconies fill.', tithe: () => 'The Soul Tithe: lay your soul in a gem!', bare: () => 'The gems are full - the Cairn-Keeper is laid bare!',
+  twinfell: (n) => `${n} falls - fell the other within fifteen seconds!`, twinraised: (n) => `${n} rises again.`, crossing: () => 'The Twins cross the walkway!',
+  chaining: () => 'Soul-chains bind you. Stay close!', grounded: () => 'The Mother of Dusk is dragged down!', anchors: () => 'The anchors rise again.', vanish: () => 'The Night-Stalker vanishes.',
+  tether: () => 'Blood Tether! Stand apart.', tetherbroken: () => 'The tether snaps.', eclipse: () => 'The Eclipse comes - stand in the light!', mirrors: () => 'Mirror lords rise. Only the true lord casts a mark.',
+  relit: () => 'A heart relights!', landed: () => 'The Wyrm lands!', broken: (n, t) => `${n || 'Someone'} breaks a ${t || 'ward'}.`, stirs: () => 'Something stirs.', raised: () => 'A Binder raises the fallen.',
+  raisebroken: () => 'The raising is broken.', door: () => 'The way down opens.', recalled: (n) => `${n} is called back.`, home: (n) => `${n} walks home.`, goldrun: () => 'Gold run. +1:00',
+  mimic: () => 'The cache breathes - a Kyn Mimic!', memento: (n, t) => `${n} carries ${t}'s Memento.`, relicbroken: () => 'The relic breaks! The hold falls back.', silenced: () => 'A caster is silenced.',
+  orrerytrue: () => 'The Orrery turns true. A Vestige waits.', chamberdone: () => 'The chamber is cleared. Find the way down.', freed: () => 'The Battlemage is freed - a Cantrip for each of you.',
+  desertertook: () => 'The Deserter takes the cache.', sapperfed: () => 'A Sapper reaches its lord and heals it.', reopened: () => 'A Sapper tears a rift open again!', cantrip: (n, t) => `${n} uses ${t}.`,
+  bargain: (n, t) => `Dagon's Bargain is struck: ${t}.`, respite: (n, t) => `A respite: ${t} seconds.`, ready: () => 'The company is ready.',
+});
 
 /** A shape slot of the telegraph pass's own shape (render/gateTelegraph.js), refilled. */
 const slot = () => ({ kind: 0, origin: [0, 0], yaw: 0, r: 0, halfArc: 0, body: 0, end: [0, 0], halfW: 0, r0: 0, r1: 0, points: [], n: 0,
-  t: 0, flash: 0, alpha: 0, color: VENT_COLOR, edge: TELEGRAPH_EDGE, court: 0, style: TELEGRAPH_STYLE.fire ?? 0, since: 0, span: 1, after: -1, runS: 0, pool: TELEGRAPH_POOL.blow });
+  t: 0, flash: 0, alpha: 0, color: GOLD, edge: TELEGRAPH_EDGE_DAGON, court: 0, style: TELEGRAPH_STYLE.weight, since: 0, span: 1, after: -1, runS: 0, pool: TELEGRAPH_POOL.blow });
+const STYLE_OF = Object.freeze({ fire: TELEGRAPH_STYLE.fire, frost: TELEGRAPH_STYLE.frost, shock: TELEGRAPH_STYLE.shock, poison: TELEGRAPH_STYLE.poison });
+const COLOR_OF = Object.freeze({ fire: [1.0, 0.45, 0.1], frost: [0.62, 0.78, 0.82], shock: [0.6, 0.7, 1.0], poison: [0.55, 0.85, 0.3], null: [1.0, 0.3, 0.2] });
+
+/**
+ * Fill a slot from a stamp (net/egShape.js) - its kind, its numbers; `none` for a stamp the pass does not draw alone
+ * (an outside-the-havens CHECK draws as the whole floor, its havens drawn gold beside it).
+ */
+export function fillStamp(sh, s) {
+  sh.points.length = 0; sh.n = 0;
+  switch (s[0]) {
+    case 'd': sh.kind = TELEGRAPH_KIND.disc; sh.origin[0] = s[1]; sh.origin[1] = s[2]; sh.r = s[3]; return true;
+    case 'l': sh.kind = TELEGRAPH_KIND.lane; sh.origin[0] = s[1]; sh.origin[1] = s[2]; sh.end[0] = s[3]; sh.end[1] = s[4]; sh.halfW = s[5] / 2; return true;
+    case 'c': sh.kind = TELEGRAPH_KIND.cone; sh.origin[0] = s[1]; sh.origin[1] = s[2]; sh.yaw = s[3]; sh.r = s[4]; sh.halfArc = ((s[5] / 2) * Math.PI) / 180; sh.body = Math.min(1, coneInscribed(s[4], s[5])); return true;
+    case 'r': sh.kind = TELEGRAPH_KIND.ring; sh.origin[0] = s[1]; sh.origin[1] = s[2]; sh.r0 = s[3]; sh.r1 = s[4]; return true;
+    case 'a': case 'h': sh.kind = TELEGRAPH_KIND.all; return true;
+    default: return false;
+  }
+}
+
+/** What a body is doing at `now`, as a mobile's animation (the port's own tables - characters/mobileUnit.js stateAnims):
+ *  rising, winding up, striking, flinching, walking, idling, falling. Pure. */
+export function egBodyAct(b, now, mobile, blow, hover = 0) {
+  const winged = mobile === 29 && hover > 0;
+  const tab = (state) => stateAnims(state, mobile, !!ENEMY_BASICS[mobile]?.hasIdle, false, false, true, false, winged);
+  if (b.goneAt) { const since = now - b.goneAt; return since >= FALL_MS ? { act: 'gone', anims: tab('hurt'), frame: 0, loop: false, sink: 0 } : { act: 'fall', anims: tab('hurt'), frame: Math.floor((since / FALL_MS) * 4), loop: false, sink: b.w === 2 ? (since / FALL_MS) * 2 : 0 }; }
+  if (b.fellAt && now >= b.fellAt) return { act: 'fall', anims: tab('hurt'), frame: Math.min(3, Math.floor(((now - b.fellAt) / FALL_MS) * 4)), loop: false, sink: 0 };
+  const since = now - (b.born ?? 0);
+  if (since >= 0 && since < 900 && b.role === EG_ROLE.add) return { act: 'rise', anims: tab('idle'), frame: 0, loop: true, sink: 2 * (1 - since / 900) };
+  if (blow && now < blow.at) { const t = (now - (blow.at - blow.wu)) / Math.max(1, blow.wu); return { act: 'windup', anims: tab('attack'), frame: t >= 0.5 ? 1 : 0, loop: false, sink: 0 }; }
+  if (blow && now - blow.at < 600) return { act: 'strike', anims: tab('attack'), frame: 2 + Math.floor(((now - blow.at) / 1000) * PRIMARY_ATTACK_ANIM_SPEED), loop: winged, sink: 0 };
+  if (b.hurtAt && now - b.hurtAt < 350) return { act: 'flinch', anims: tab('hurt'), frame: Math.floor(((now - b.hurtAt) / 1000) * HURT_ANIM_SPEED), loop: false, sink: 0 };
+  const m = b.mv;
+  if (m && m.v > 0) { const [x, z] = egBodyPlace(b, now); if (Math.hypot(m.tx - x, m.tz - z) > 0.05) { const T = tab('move'); return { act: 'walk', anims: T, frame: Math.floor((now / 1000) * (hover > 0 ? FLY_ANIM_SPEED : T[0].fps ?? 6)), loop: true, sink: 0 }; } }
+  const T = tab('idle');
+  return { act: 'idle', anims: T, frame: Math.floor((now / 1000) * (hover > 0 ? FLY_ANIM_SPEED : T[0].fps ?? 4)), loop: true, sink: 0 };
+}
+/** A body's look: a lord's its own (scaled, flying high), an add's its kind's by the band, an object's none (drawn
+ *  otherwise). */
+export function egLookOf(b, band) {
+  if (b.role === EG_ROLE.lord) {
+    const key = EG_BOSS_KEYS[b.k] ?? 'kynreeve', L = egBossLook(key, b.pt), lord = EG_LORDS[key];
+    const fly = (b.fl & EG_FL.fly) !== 0 && (b.fl & EG_FL.grounded) === 0;
+    return { mobile: L.mobile, scale: L.scale * ((b.fl & EG_FL.mirror) !== 0 ? 0.95 : 1), hover: fly ? 6 : 0, name: egBossName(key, b.pt), lord: true, epithet: lord?.epithet ?? '' };
+  }
+  if (b.role === EG_ROLE.add) { const L = egKindLook(b.k, band); return { ...L, hover: (b.fl & EG_FL.fly) !== 0 ? L.hover : Math.min(L.hover, 0.9) }; }
+  return null;
+}
 
 /**
  * @param {{ renderer?: any, gl?: any, getTexture?: any, uploadRecordFrame?: any, audio?: any, link: any, now: () => number,
- *   cam?: () => number[]|null, feet?: () => number[]|null, player?: () => any, save?: (e: any, el: string) => number,
+ *   cam?: () => number[]|null, feet?: () => number[]|null, player?: () => any, me?: () => string|null, save?: (e: any, el: string) => number,
  *   strike?: (dmg: number, o: { fire?: boolean, el?: string|null, name?: string }) => void, say?: (t: string) => void,
- *   hudHidden?: () => boolean, sendHit?: (f: any) => boolean, sendAHit?: (f: any) => boolean, sendXHit?: (f: any) => boolean }} deps
+ *   hudHidden?: () => boolean, sendHit?: (f: any) => boolean, push?: (dx: number, dz: number, m: number) => void, castBack?: () => void,
+ *   peerAt?: (sub: string) => number[]|null, ring?: (x: number, z: number, r: number, inside: boolean) => void, hold?: (ms: number) => void }} deps
  */
-export function createEgFight({ renderer = null, gl = null, getTexture = null, uploadRecordFrame = null, audio = null, link, now, cam = () => null, feet = () => null, player = () => null,
-  save = () => 100, strike = () => {}, say = () => {}, hudHidden = () => false, sendHit = () => false, sendAHit = () => false, sendXHit = () => false }) {
-  const P = BASE_PROFILE;
-  let hall = 0, spec = null, centre = null, host = null, floor = null;
-  let body = null, loading = null, batch = null, batchShown = false, hurtAt = -Infinity, standIn = null, prevT = -Infinity;
-  let judgedI = -1, cuedI = -1, landedI = -1, beat = null, wokeSeen = -1, fellSeen = -1;
+export function createEgFight({ renderer = null, gl = null, getTexture = null, uploadRecordFrame = null, audio = null, link, now, cam = () => null, feet = () => null, player = () => null, me = () => null,
+  save = () => 100, strike = () => {}, say = () => {}, hudHidden = () => false, sendHit = () => false, push = () => {}, castBack = () => {}, peerAt = () => null, ring = () => {}, hold = () => {} }) {
+  let hall = 0, spec = null, centre = null, floor = null, band = 0;
+  let beat = null, saysSeen = 0, wokeSeen = 0, fellSeen = new Set(), phaseSeen = new Set(), gustSeen = 0;
   let blowSeq = 0;
   const blowMet = new Set();
   /** AUDIT WB11 W3's law: a blow is one sequence over every body it meets in a frame. */
@@ -60,107 +144,139 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     return blowSeq;
   }
   let pass = null, passTried = false, crystalPass = null, crystalTried = false;
-  /** the rifts: the draw slots and the targets my blows meet; the vents' shapes and the eruptions judged */
-  const _crystals = [], _riftTargets = [], _riftIns = [], _riftLights = [], _shapes = [], _batches = [], _lights = [], _ventSlots = [];
-  const ventJudged = new Map();
-  let shape = null, riftFlash = [];
+  const textures = new Map(), drawn = new Map();
+  const judged = new Set(), cued = new Set(), landedSet = new Set();
+  const zoneTick = new Map();
+  let drainAt = 0, voidAt = 0;
+  const _batches = [], _lights = [], _targets = [], _crystals = [], _shapes = [], _slots = [];
+  const crystalSlots = new Map();
 
   const play3 = (cue, at) => { if (!cue || !audio || !at) return; try { if (cue.id != null) audio.play3dId?.(cue.id, at, cue.volume, { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch }); else audio.play3d?.(cue.clip, at, cue.volume, { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch }); } catch { /* a sound is never the fight */ } };
   const toDungeon = (x, y, z) => [centre[0] + x, centre[1] + y, centre[2] + z];
+  const myFeet = () => { const f = feet(); return f && centre ? [f[0] - centre[0], f[2] - centre[2]] : null; };
 
-  /** A new hall: its frame, its floor for the telegraph pass, the legion's driver about its centre. */
+  function texture(mobile) {
+    const archive = ENEMY_BASICS[mobile]?.maleTexture;
+    if (!archive || !getTexture) return null;
+    const had = textures.get(archive);
+    if (had && !(had instanceof Promise)) return had.failed ? null : had;
+    if (!had) {
+      const p = Promise.resolve().then(() => getTexture(archive)).then((tex) => { textures.set(archive, tex ? { tex, archive } : { failed: true }); }, () => { textures.set(archive, { failed: true }); });
+      textures.set(archive, p);
+    }
+    return null;
+  }
+  function destroy(d) { if (d?.batch) { renderer?.destroyBillboardBatch?.(d.batch); d.batch = null; } }
+  /** A new hall: its frame, its floor for the telegraph pass. */
   function reset(E) {
-    host?.leave();
-    hall = E.h; spec = egHallOf(E.seed, E.h); centre = egHallCentre(spec);
-    floor = spec.fight ? { r: spec.fight.r + 3, courts: [[spec.fight.x, spec.fight.z]] } : { r: 10, courts: [[0, 0]] };
-    host = createGateHost({ renderer, getTexture, uploadRecordFrame, audio, cam, feet, player, say, centre,
-      land: (blow) => landShare(blow.pct, blow.base, blow.el, blow.name), send: (h) => sendAHit(h), blowQ: (who) => blowQ(who) });
-    judgedI = -1; cuedI = -1; landedI = -1; beat = null; wokeSeen = -1; fellSeen = -1; ventJudged.clear(); riftFlash = []; standIn = null; prevT = -Infinity;
-    if (batch) { renderer?.destroyBillboardBatch?.(batch); batch = null; }
+    for (const d of drawn.values()) destroy(d);
+    drawn.clear(); judged.clear(); cued.clear(); landedSet.clear(); zoneTick.clear(); fellSeen = new Set(); phaseSeen = new Set(); crystalSlots.clear();
+    hall = E.h; spec = egHallOf(E.seed, E.h, E.geo ?? 0); centre = egHallCentre(spec); band = spec.band ?? 0;
+    floor = spec.fight ? { r: spec.fight.r + 6, courts: [[spec.fight.x, spec.fight.z]] } : { r: 40, courts: [[0, spec.len / 2]] };
+    beat = null; saysSeen = E.fight.says.length; wokeSeen = 0; gustSeen = 0;
   }
   /** A blow on me landed - its share of my health and its base, through my saving throw against its element. */
   function landShare(pct, base, el, name) {
     const e = player();
-    if (!e || !(e.health > 0)) return;
+    if (!e || !(e.health > 0) || !(pct > 0)) return;
     const raw = strikeDamage(pct, e.maxHealth, base), dmg = el ? savedShare(raw, save(e, el)) : raw;
     if (dmg > 0) strike(dmg, { fire: el === 'fire', el, name });
   }
-  function loadBody() {
-    if (body || loading || !getTexture || !uploadRecordFrame || !renderer?.createBillboardBatch) return;
-    const archive = ENEMY_BASICS[EG_FOE_LOOK.mobile]?.maleTexture;
-    if (!archive) return;
-    loading = Promise.resolve().then(() => getTexture(archive)).then((tex) => { body = tex ? { tex, archive } : { failed: true }; }, () => { body = { failed: true }; });
-  }
-  /** The foe's body where the relay says it stands, at the frame its act shows to my eye. */
-  function drawBody(s, t) {
-    loadBody();
-    const act = bossAct(s, t, hurtAt);
-    if (!body?.tex || act.act === 'gone') { batchShown = false; return; }
-    const [x, z] = bossPlace(s, t), at = toDungeon(x, bossHop(s, t) - (act.sink ?? 0), z), eye = cam() ?? at;
-    const fr = bossFrame(act, s.yaw, at, eye, (rec) => body.tex.getFrameCount?.(rec) ?? 1);
+  /** One body drawn: its look's sprite at its act's frame, at its place. */
+  function drawBody(b, t, blow) {
+    const look = egLookOf(b, band);
+    if (!look) return;
+    const d = drawn.get(b.i) ?? { batch: null, look, at: [0, 0, 0] };
+    drawn.set(b.i, d);
+    d.look = look;
+    const T = texture(look.mobile);
+    if (!T || !renderer?.createBillboardBatch) return;
+    const act = egBodyAct(b, t, look.mobile, blow, look.hover);
+    if (act.act === 'gone' || ((b.fl & EG_FL.hidden) !== 0 && b.role === EG_ROLE.lord)) return;
+    const [x, z] = egBodyPlace(b, t);
+    const y = (act.sink > 0 ? -act.sink : 0) + (look.hover > 0 ? look.hover + 0.15 * Math.sin(t / 260 + b.i) : 0);
+    d.at[0] = centre[0] + x; d.at[1] = centre[1] + y; d.at[2] = centre[2] + z;
+    const eye = cam() ?? d.at;
+    const fr = bossFrame(/** @type {any} */ (act), b.yaw ?? (b.mv ? Math.atan2(b.mv.tx - b.mv.x, b.mv.tz - b.mv.z) : Math.PI), d.at, eye, (rec) => T.tex.getFrameCount?.(rec) ?? 1);
     const rkey = `${fr.record}#${fr.frame}`;
-    if (!renderer.textures?.has?.(`${body.archive}_${rkey}`)) uploadRecordFrame(body.archive, fr.record, fr.frame);
-    const sz = mobileBillboardSize(body.tex, fr.record), w = sz.w * EG_FOE_LOOK.scale, h = sz.h * EG_FOE_LOOK.scale;
-    if (!batch) { batch = renderer.createBillboardBatch(body.archive, rkey, { w, h }, [[0, 0, 0]]); batch.origin = [0, 0, 0]; }
-    batchShown = true;
-    setBatchHitFlash(batch, s.fell ? 0 : gateHitFlash(hurtAt, -Infinity, t));
-    batch.record = rkey; batch.size = { w: fr.flip ? -w : w, h };
-    if (batch.bounds) batch.bounds[3] = Math.hypot(w, h) * 0.5;
-    batch.origin[0] = at[0]; batch.origin[1] = at[1]; batch.origin[2] = at[2];
-  }
-  /** The foe's blow: cued at its word and its landing, judged on my feet at its landing (the gate's verdict). */
-  function judge(s, t) {
-    const atk = s.atk, f = feet(), e = player();
-    if (atk && atk.i !== cuedI) { cuedI = atk.i; const A = ATTACK_BY_ID[atk.a]; if (A && t < atk.at) play3(bossCue('windup', A, P), toDungeon(atk.x, 2, atk.z)); }
-    if (atk && atk.i !== landedI && t >= atk.at) { landedI = atk.i; play3(BOSS_CUES.quake, toDungeon(atk.x, 1, atk.z)); }
-    if (!atk || atk.i === judgedI || !f || !e || !(e.health > 0)) return;
-    const v = strikeVerdict(atk, f[0] - centre[0], f[2] - centre[2], t, prevT, P);
-    if (v === 'wait') return;
-    judgedI = atk.i;
-    if (v === 'hit') { const b = blowOf(atk, P); if (b) landShare(b.pct, b.base, b.saved ? b.el : null, b.name); }
-  }
-  /** A Rift-Yard's rifts: the Reckoning's crystals' slots - standing, cracking, flashing as I strike, flying apart once
-   *  broken - and the targets my blows meet. */
-  function rifts(s, t) {
-    _crystals.length = 0; _riftTargets.length = 0; _riftLights.length = 0;
-    const X = s.cx;
-    if (!X || !X.c?.length) return;
-    const color = crystalColor(P);
-    X.c.forEach((q, k) => {
-      const broke = X.broke?.find((e) => e.c === k) ?? null, standing = q[2] > 0;
-      const at = toDungeon(q[0], 0, q[1]);
-      const d = (_crystals[k] ??= { at: null, yaw: 0, seed: 0, grow: 1, broke: -1, hp: 1, flash: 0, color, beam: null });
-      d.at = at; d.seed = ((k * 7919) % 997) / 997; d.yaw = d.seed * Math.PI * 2; d.grow = 1;
-      d.broke = standing ? -1 : broke ? Math.max(0, (t - broke.at) / 1000) : Infinity;
-      d.hp = X.m > 0 ? Math.max(0, q[2] / X.m) : 0; d.flash = Math.max(0, 1 - (t - (riftFlash[k] ?? -Infinity)) / 180); d.color = color;
-      if (d.broke === Infinity) return;
-      _crystals.push(d);
-      if (!standing) return;
-      _riftTargets.push({ c: k, feet: at, height: CRYSTAL_H, radius: CRYSTAL_R, entity: (_riftIns[k] ??= crystalStandIn(EG_FOE_LOOK, k)) });
-      const L = (_riftLights[k] ??= { x: 0, y: 0, z: 0, range: RIFT_LIGHT_RANGE, color: [0, 0, 0] }), kk = 0.9 + 0.3 * Math.sin(t / 240 + d.seed * 6);
-      L.x = at[0]; L.y = at[1] + 2; L.z = at[2]; L.color[0] = color[0] * kk; L.color[1] = color[1] * kk; L.color[2] = color[2] * kk;
-    });
-  }
-  /** A Rampart's vents (section 8.3): each lane told EG_VENT_WARN_MS before it erupts, erupting EG_VENT_FIRE_MS, on the
-   *  relay's clock from the hall's wake; an eruption judged on my feet once. */
-  function vents(E, t) {
-    _ventSlots.length = 0;
-    if (!spec?.vents?.length || E.sg !== 'trial' || !(E.hw > 0)) return;
-    const f = feet(), e = player();
-    for (let i = 0; i < spec.vents.length; i++) {
-      const v = spec.vents[i], st = egVentAt(v, E.hw, t);
-      if (st.st === 'quiet') continue;
-      const sh = (_shapes[i] ??= slot());
-      sh.kind = TELEGRAPH_KIND.lane; sh.origin[0] = v.x - v.halfW; sh.origin[1] = v.z; sh.end[0] = v.x + v.halfW; sh.end[1] = v.z; sh.halfW = v.d / 2; sh.r = 0;
-      sh.t = st.st === 'warn' ? st.k : 1; sh.flash = st.st === 'fire' ? 1 : 0; sh.alpha = 1; sh.since = st.st === 'warn' ? (st.k * EG_VENT_WARN_MS) / 1000 : EG_VENT_WARN_MS / 1000;
-      sh.span = EG_VENT_WARN_MS / 1000; sh.after = st.st === 'fire' ? (st.k * EG_VENT_FIRE_MS) / 1000 : -1;
-      _ventSlots.push(sh);
-      if (st.st === 'fire' && ventJudged.get(i) !== st.at) {
-        ventJudged.set(i, st.at);
-        play3(BOSS_CUES.quake, toDungeon(v.x, 1, v.z));
-        if (f && e && e.health > 0 && egInVent(v, f[0] - centre[0], f[2] - centre[2])) landShare(EG_VENT_PCT, 0, 'fire', 'Fire Vent');
-      }
+    if (!renderer.textures?.has?.(`${T.archive}_${rkey}`)) uploadRecordFrame?.(T.archive, fr.record, fr.frame);
+    const sz = mobileBillboardSize(T.tex, fr.record), w = sz.w * look.scale, h = sz.h * look.scale;
+    if (!d.batch) { d.batch = renderer.createBillboardBatch(T.archive, rkey, { w, h }, [[0, 0, 0]]); d.batch.origin = [0, 0, 0]; }
+    setBatchHitFlash(d.batch, b.fellAt ? 0 : gateHitFlash(b.hurtAt ?? -Infinity, -Infinity, t));
+    d.batch.record = rkey; d.batch.size = { w: fr.flip ? -w : w, h };
+    if (d.batch.bounds) d.batch.bounds[3] = Math.hypot(w, h) * 0.5;
+    d.batch.origin[0] = d.at[0]; d.batch.origin[1] = d.at[1]; d.batch.origin[2] = d.at[2];
+    _batches.push(d.batch);
+    // the body my blows meet (never a friend, a ward's, a vanished lord)
+    if (!b.fellAt && b.hp > 0 && (b.fl & (EG_FL.friend | EG_FL.hidden)) === 0) {
+      d.target ??= { i: b.i, feet: [0, 0, 0], height: 2, radius: 0.6, entity: hostStandIn({ mobile: look.mobile, name: look.name }, b.i), mobile: look.mobile, name: look.name, m: b.max };
+      d.target.feet[0] = d.at[0]; d.target.feet[1] = centre[1] + y; d.target.feet[2] = d.at[2];
+      d.target.height = (look.lord ? 2.2 : EG_LEGION_KINDS[b.k]?.h ?? 2) * (look.lord ? look.scale / 1.2 : 1); d.target.radius = look.lord ? Math.max(0.8, (1.8 * look.scale) / 3) : EG_LEGION_KINDS[b.k]?.r ?? 0.6; d.target.m = b.max;
+      _targets.push(d.target);
     }
+    if (blow && !cued.has(blow.i) && t < blow.at) { cued.add(blow.i); play3(hostCue('windup', look.mobile), d.at); }
+  }
+  /** A struck object: a crystal in its colour, cracking as it falls, and a body my blows meet. */
+  function drawStruck(b, t, key) {
+    const color = EG_OBJ_COLORS[key] ?? EG_OBJ_COLORS.rift;
+    const c = crystalSlots.get(b.i) ?? { at: [0, 0, 0], yaw: 0, seed: ((b.i * 7919) % 997) / 997, grow: 1, broke: -1, hp: 1, flash: 0, color, beam: null };
+    crystalSlots.set(b.i, c);
+    const [x, z] = egBodyPlace(b, t);
+    c.at[0] = centre[0] + x; c.at[1] = centre[1] + (key === 'pillar' ? 3 : 0); c.at[2] = centre[2] + z;
+    c.yaw = c.seed * Math.PI * 2; c.hp = b.max > 0 ? Math.max(0, b.hp / b.max) : 0; c.color = color; c.broke = b.goneAt ? Math.max(0, (t - b.goneAt) / 1000) : -1;
+    c.flash = Math.max(0, 1 - (t - (b.hurtAt ?? -Infinity)) / 180);
+    c.grow = (b.fl & EG_FL.ward) !== 0 ? 0.6 : 1;
+    _crystals.push(c);
+    if (!b.goneAt && (b.fl & EG_FL.ward) === 0) {
+      c.target ??= { i: b.i, feet: [0, 0, 0], height: CRYSTAL_H, radius: CRYSTAL_R, entity: crystalStandIn({ mobile: 31, scale: 1 }, b.i), mobile: 31, name: key, m: b.max };
+      c.target.feet[0] = c.at[0]; c.target.feet[1] = c.at[1]; c.target.feet[2] = c.at[2]; c.target.m = b.max;
+      _targets.push(c.target);
+    }
+    const L = (c.light ??= { x: 0, y: 0, z: 0, range: 6, color: [0, 0, 0] }), k = 0.8 + 0.25 * Math.sin(t / 240 + c.seed * 6);
+    L.x = c.at[0]; L.y = c.at[1] + 2; L.z = c.at[2]; L.color[0] = color[0] * k; L.color[1] = color[1] * k; L.color[2] = color[2] * k;
+    _lights.push(L);
+  }
+  /** A stood-on object on the floor: its disc in its colour (a rune lit, a gem's souls). */
+  function drawGround(b, t, key) {
+    const sh = (_slots[_shapes.length] ??= slot());
+    sh.kind = TELEGRAPH_KIND.disc; sh.origin[0] = b.x; sh.origin[1] = b.z; sh.r = key === 'isle' ? 0 : Math.max(1, b.r ?? 1.5);
+    if (key === 'isle') { if (!b.st) return; sh.r = 11; }
+    sh.color = GROUND_COLORS[key] ?? GOLD; sh.edge = key === 'umbra' || key === 'isle' ? TELEGRAPH_EDGE_DAGON : TELEGRAPH_EDGE_SAFE;
+    sh.pool = TELEGRAPH_POOL.ground; sh.t = 1; sh.flash = 0; sh.alpha = key === 'rune' && !(b.st & 1) ? 0.35 : key === 'isle' ? (b.st === 1 ? 0.9 : 0.6) : 0.85;
+    sh.style = key === 'isle' ? TELEGRAPH_STYLE.fire : TELEGRAPH_STYLE.weight; sh.since = (t % 60_000) / 1000; sh.span = 1; sh.after = -1; sh.court = 0;
+    _shapes.push(sh);
+  }
+  /** A blow's shape, refilled into a slot: its line in THE SPIRE DANGER EDGE, its fill climbing through its wind-up. */
+  function drawBlow(bl, t, aimedAtMe) {
+    const from = bl.at - bl.wu, span = Math.max(1, bl.sp ?? 0);
+    if (t < from || t > bl.at + span + LINGER_MS) return;
+    for (const s of bl.s) {
+      const sh = (_slots[_shapes.length] ??= slot());
+      if (!fillStamp(sh, s)) continue;
+      sh.t = Math.max(0, Math.min(1, (t - from) / Math.max(1, bl.wu))); sh.flash = t >= bl.at ? 1 : 0;
+      sh.alpha = bl.cut ? Math.max(0, 1 - (t - bl.cut) / 150) : t > bl.at + span ? 1 - (t - bl.at - span) / LINGER_MS : aimedAtMe ? 1 : 0.85;
+      sh.color = COLOR_OF[bl.el] ?? COLOR_OF.null; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.court = 0;
+      sh.style = bl.ch ? TELEGRAPH_STYLE.dagon : STYLE_OF[bl.el] ?? TELEGRAPH_STYLE.weight;
+      sh.since = Math.max(0, (t - from) / 1000); sh.span = Math.max(0.001, bl.wu / 1000); sh.after = t >= bl.at ? (t - bl.at) / 1000 : -1; sh.runS = (bl.sp ?? 0) / 1000;
+      _shapes.push(sh);
+      // a CHECK's havens, gold and safe
+      if (s[0] === 'h') for (let i = 1; i + 2 < s.length; i += 3) { const hv = (_slots[_shapes.length] ??= slot()); hv.kind = TELEGRAPH_KIND.disc; hv.origin[0] = s[i]; hv.origin[1] = s[i + 1]; hv.r = s[i + 2]; hv.color = GOLD; hv.edge = TELEGRAPH_EDGE_SAFE; hv.pool = TELEGRAPH_POOL.ground; hv.t = 1; hv.flash = 0; hv.alpha = 1; hv.style = TELEGRAPH_STYLE.weight; hv.since = 0; hv.span = 1; hv.after = -1; hv.court = 0; _shapes.push(hv); }
+    }
+  }
+  /** The beats' words and cards: a lord's wake (its card), its phases, its fall, the room's beats. */
+  function beats(E, t, F) {
+    const lords = F.bodies.filter((b) => b.role === EG_ROLE.lord && (b.fl & EG_FL.mirror) === 0);
+    const L0 = lords[0];
+    if (L0 && wokeSeen !== E.h && (F.says.some((s) => s.w === 'wake') || spec.kind === 'proving')) {
+      wokeSeen = E.h;
+      const look = egLookOf(L0, band);
+      beat = { kind: 'wake', at: t, until: t + TITLE_HOLD_MS, kicker: look.lord ? look.epithet || EG_BANDS[band].name : '', main: look.name, sub: '' };
+      play3(BOSS_CUES.roar, toDungeon(L0.x, 3, L0.z));
+    }
+    for (const f of F.fells) if (!fellSeen.has(f.i)) { fellSeen.add(f.i); const b = F.bodies.find((x) => x.i === f.i) ?? F.gone.find((x) => x.i === f.i); beat = { kind: 'fall', at: t, until: t + TITLE_HOLD_MS, kicker: b ? egLookOf(b, band)?.name ?? '' : '', main: 'FELLED', sub: '' }; }
+    for (const p of F.phases) { const key = `${p.i}:${p.ph}`; if (!phaseSeen.has(key)) { phaseSeen.add(key); play3(BOSS_CUES.growl, L0 ? toDungeon(L0.x, 3, L0.z) : null); } }
+    for (let k = saysSeen; k < F.says.length; k++) { const s = F.says[k], fn = EG_SAY[s.w]; const text = fn ? fn(s.n, s.t) : ''; if (s.w === 'scent' && !s.s?.includes(me())) continue; if (text) say(text); }
+    saysSeen = F.says.length;
   }
 
   return {
@@ -170,82 +286,104 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       const E = link.state(), t = now();
       if (!E.b || !(E.h > 0) || E.end) { if (hall) this.leave(); return; }
       if (E.h !== hall) reset(E);
-      const s = E.fight.day === E.h ? E.fight : null;
-      _batches.length = 0; _lights.length = 0;
-      const foe = !!s && s.max > 0;
-      if (foe) {
-        const kind = spec.kind === 'court' ? 'lord' : 'champion';
-        if (s.atk && !s.fell) judge(s, t);
-        drawBody(s, t);
-        if (batch && batchShown) _batches.push(batch);
-        shape = s.fell ? null : telegraphShape(s.atk, 1, t, P);
-        if (wokeSeen !== E.h && s.hp > 0 && (spec.kind !== 'court' || s.atk || s.move)) { wokeSeen = E.h; beat = { kind: 'wake', at: t, until: t + TITLE_HOLD_MS, kicker: FOE_CARD[kind].title, main: FOE_CARD[kind].name, sub: '' }; play3(BOSS_CUES.roar, toDungeon(s.x, 3, s.z)); }
-        if (s.fell && fellSeen !== E.h) { fellSeen = E.h; beat = { kind: 'fall', at: t, until: t + TITLE_HOLD_MS, kicker: FOE_CARD[kind].name, main: 'FELLED', sub: '' }; }
-        drawGateBossBar(s.fell ? null : bossBarModel(s, t, FOE_CARD[kind]), { hidden: hudHidden() });
-      } else { shape = null; drawGateBossBar(null); }
+      const F = E.fight.h === E.h ? E.fight : null;
+      _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0;
+      if (!F) { drawGateTitleCard(titleCardModel(beat, t), { hidden: hudHidden() }); return; }
+      const f = myFeet(), e = player(), standing = !!f && !!e && e.health > 0;
+      const blowBy = new Map();
+      for (const bl of F.blows) if (bl.o && (!blowBy.has(bl.o) || blowBy.get(bl.o).at < bl.at) && t < bl.at + 700) blowBy.set(bl.o, bl);
+      // THE BODIES
+      const live = new Set();
+      for (const b of [...F.bodies, ...F.gone.filter((g) => t - g.goneAt < FALL_MS)]) {
+        live.add(b.i);
+        if (b.role === EG_ROLE.obj) { const key = OBJ_KEY[b.k] ?? 'rift'; if (STRUCK.has(key)) drawStruck(b, t, key); else drawGround(b, t, key); continue; }
+        drawBody(b, t, blowBy.get(b.i));
+      }
+      for (const [i, d] of drawn) if (!live.has(i)) { destroy(d); drawn.delete(i); }
+      for (const i of crystalSlots.keys()) if (!live.has(i)) crystalSlots.delete(i);
+      // THE BLOWS - drawn in the budget's order, each judged on my feet at its landing
+      const lordIds = new Set(F.bodies.filter((b) => b.role === EG_ROLE.lord).map((b) => b.i));
+      const order = egShapeOrder(F.blows.filter((bl) => !bl.cut || t - bl.cut < 150), f ?? [0, 0], t, { lords: lordIds });
+      for (const bl of order) drawBlow(bl, t, !!f && bl.s.some((s) => egInShape(s, f[0], f[1])));
+      for (const bl of F.blows) {
+        if (!judged.has(bl.i) && !bl.cut && standing) {
+          const v = egBlowVerdict(bl, f[0], f[1], t);
+          if (v !== 'wait') { judged.add(bl.i); if (v === 'hit') { landShare(bl.p, bl.b, bl.el, bl.nm); if (bl.pu > 0) { const s = bl.s[0]; const ox = s[0] === 'l' ? s[3] - s[1] : f[0] - s[1], oz = s[0] === 'l' ? s[4] - s[2] : f[1] - s[2], d = Math.hypot(ox, oz) || 1; push(ox / d, oz / d, bl.pu); } } }
+        }
+        if (!landedSet.has(bl.i) && t >= bl.at && t - bl.at < 1500) { landedSet.add(bl.i); const s = bl.s[0]; if (s && s.length >= 3) play3(BOSS_CUES.quake, toDungeon(s[1], 1, s[2])); }
+      }
+      // THE ZONES - burning ground's tick, the floor gone
+      for (const z of F.zones) {
+        if (!(t >= z.from && t < z.until)) continue;
+        const sh = (_slots[_shapes.length] ??= slot());
+        if (fillStamp(sh, z.s)) { sh.t = 1; sh.flash = 0; sh.alpha = Math.min(1, (t - z.from) / 200, (z.until - t) / 1000); sh.color = ZONE_COLORS[z.kind] ?? ZONE_COLORS.burn; sh.edge = z.kind === 'haven' ? TELEGRAPH_EDGE_SAFE : TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.ground; sh.style = z.kind === 'burn' ? STYLE_OF[z.el] ?? TELEGRAPH_STYLE.fire : TELEGRAPH_STYLE.weight; sh.since = (t - z.from) / 1000; sh.span = 1; sh.after = -1; sh.court = 0; _shapes.push(sh); }
+        if (!standing || !egInShape(z.s, f[0], f[1])) continue;
+        if (z.kind === 'burn' && t - (zoneTick.get(z.i) ?? 0) >= EG_TICK_MS) { zoneTick.set(z.i, t); landShare(z.p, z.b, z.el, 'Burning ground'); }
+        if (z.kind === 'void' && t - voidAt >= 1500) { voidAt = t; castBack(); }
+      }
+      // THE TETHERS - lanes between their ends; a Wraith's drain on me ticks
+      const meSub = me();
+      for (const tx of F.tx) {
+        const endOf = (x) => { if (typeof x === 'string') { if (x === meSub && f) return f; const p = peerAt(x); return p ? [p[0] - centre[0], p[2] - centre[2]] : null; } const b = F.bodies.find((q) => q.i === x); return b ? egBodyPlace(b, t) : null; };
+        const a = endOf(tx[0]), b = endOf(tx[1]);
+        if (!a || !b) continue;
+        const sh = (_slots[_shapes.length] ??= slot());
+        sh.kind = TELEGRAPH_KIND.lane; sh.origin[0] = a[0]; sh.origin[1] = a[1]; sh.end[0] = b[0]; sh.end[1] = b[1]; sh.halfW = tx[2] === 2 ? 0.25 : 0.35;
+        sh.color = TETHER_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.path; sh.t = 1; sh.flash = 0; sh.alpha = 0.55; sh.style = TELEGRAPH_STYLE.dagon; sh.since = (t % 60_000) / 1000; sh.span = 1; sh.after = -1; sh.court = 0;
+        _shapes.push(sh);
+        if (tx[2] === 0 && tx[1] === meSub && standing && t - drainAt >= EG_TICK_MS && Math.hypot(a[0] - b[0], a[1] - b[1]) <= 8) { drainAt = t; landShare(0.03, 0, null, 'Drain'); }
+      }
+      // MY MARKS - a challenge's ring kept, a cage held
+      const mine = F.mk.filter((m) => m[0] === meSub && m[2] > t);
+      const R = F.pg.ring;
+      if (R && f) { const inside = mine.some((m) => m[1] === 6); ring(R[0], R[1], R[2], inside); }
+      if (mine.some((m) => m[1] === 5)) hold(250);
+      // THE PLACE - a gust's push
+      if (F.gust && F.gust.at !== gustSeen && t >= F.gust.at) { gustSeen = F.gust.at; if (standing) push(F.gust.dx, F.gust.dz, F.gust.v * (F.gust.ms / 1000)); }
+      beats(E, t, F);
       drawGateTitleCard(titleCardModel(beat, t), { hidden: hudHidden() });
-      host.frame(s ?? { day: null }, t, P, foe ? (spec.kind === 'court' ? EG_FOE_NAMES.lord : EG_FOE_NAMES.champion) : 'the Spire');
-      for (const b of host.batches()) _batches.push(b);
-      if (s) rifts(s, t); else { _crystals.length = 0; _riftTargets.length = 0; _riftLights.length = 0; }
-      vents(E, t);
-      for (const l of host.lights()) _lights.push(l);
-      for (const l of _riftLights) if (l) _lights.push(l);
-      prevT = t;
     },
-    /** The foe as a body my blows meet, or null. */
-    target() {
-      const E = link.state(), s = E.fight, t = now();
-      if (!spec || s.day !== E.h || !(s.max > 0) || s.fell || E.sg !== 'trial' || bossAct(s, t).act === 'gone') return null;
-      standIn ??= bossStandIn(EG_FOE_LOOK, spec.kind === 'court' ? EG_FOE_NAMES.lord : EG_FOE_NAMES.champion);
-      const [x, z] = bossPlace(s, t);
-      return { feet: toDungeon(x, 0, z), yaw: s.yaw, height: P.bossH * (EG_FOE_LOOK.scale / 3), radius: P.bossR, warded: false, entity: standIn, mobile: EG_FOE_LOOK.mobile };
-    },
-    /** A blow of mine met the foe: out as the wire's `hit`; it flinches. */
-    hit({ d, r }) {
-      const E = link.state(), s = E.fight;
-      if (!spec || s.day !== E.h || s.fell || !(s.max > 0) || !Object.values(HIT_KINDS).includes(r)) return false;
+    /** No one body stands for the gate's boss seam: every body is the legion's seam's (`hostTargets`). */
+    target: () => null,
+    hit: () => false,
+    /** Every body my blows meet - lords, the legion, the struck objects - and a blow of mine on one (`hit` by number). */
+    hostTargets: () => _targets,
+    hostHit({ i, d, r } = /** @type {any} */ ({})) {
       const dmg = Math.round(d);
-      if (!(dmg >= 1)) return false;
-      hurtAt = now();
-      return !!sendHit({ q: blowQ('b'), d: dmg, r });
+      if (!Number.isInteger(i) || !(dmg >= 1) || !Object.values(HIT_KINDS).includes(r)) return false;
+      const E = link.state(), b = E.fight.bodies.find((q) => q.i === i);
+      if (!b) return false;
+      b.hurtAt = now();
+      return !!sendHit({ i, q: blowQ(`e${i}`), d: dmg, r });
     },
-    /** The legion as bodies my blows meet, and a blow of mine on one of them. */
-    hostTargets: () => host?.targets() ?? [],
-    hostHit: (h) => !!host && host.hit(h, now()),
-    /** The rifts as bodies my blows meet, and a blow of mine on one. */
-    riftTargets: () => _riftTargets,
-    riftHit({ c, d, r } = /** @type {any} */ ({})) {
-      const dmg = Math.round(d);
-      if (!Number.isInteger(c) || !(dmg >= 1) || !Object.values(HIT_KINDS).includes(r) || !_riftTargets.some((q) => q.c === c)) return false;
-      riftFlash[c] = now();
-      return !!sendXHit({ c, q: blowQ(`x${c}`), d: dmg, r });
-    },
+    riftTargets: () => [],
+    riftHit: () => false,
     batches: () => _batches,
     lights: () => _lights,
-    /** The telegraphs and the rifts, in the host's world pass. Answers whether anything drew. */
+    /** The telegraphs, the zones, the tethers and the objects, in the host's world pass. Answers whether anything drew. */
     drawPass(proj, view, eye, seconds, fog = null) {
       if (!centre) return false;
       let drew = false;
       if (_crystals.length) {
-        if (!crystalTried && gl) { crystalTried = true; try { crystalPass = new CourtCrystalRenderer(gl); } catch (e) { console.warn('[eg] the rifts would not build', e?.message ?? e); crystalPass = null; } }
+        if (!crystalTried && gl) { crystalTried = true; try { crystalPass = new CourtCrystalRenderer(gl); } catch (e) { console.warn('[eg] the crystals would not build', e?.message ?? e); crystalPass = null; } }
         if (crystalPass) { crystalPass.draw(_crystals, proj, view, eye, seconds, fog); drew = drew || crystalPass.drawn > 0; }
       }
       if (!passTried && gl) { passTried = true; try { pass = new GateTelegraphRenderer(gl); } catch (e) { console.warn('[eg] the telegraphs would not build', e?.message ?? e); pass = null; } }
       if (!pass) return drew;
-      if (shape) { pass.draw(shape, proj, view, eye, seconds, fog, centre, null, floor); drew = true; }
-      for (const hs of host?.shapes() ?? []) { pass.draw(hs, proj, view, eye, seconds, fog, centre, null, floor); drew = true; }
-      for (const vs of _ventSlots) { pass.draw(vs, proj, view, eye, seconds, fog, centre, null, floor); drew = true; }
+      for (const sh of _shapes) { pass.draw(sh, proj, view, eye, seconds, fog, centre, null, floor); drew = true; }
       return drew;
     },
     /** What the driver holds (tests, stats). */
-    state: () => ({ hall, judgedI, rifts: _crystals.length, riftTargets: _riftTargets.length, vents: _ventSlots.length, host: host?.state() ?? null, shape: !!shape }),
+    state: () => ({ hall, bodies: drawn.size, crystals: _crystals.length, shapes: _shapes.length, targets: _targets.length, judged: judged.size }),
+    /** The count's words for a tracker that asks. */
+    countText: (ms) => egCountText(ms),
     /** Out of the breach: everything put away. */
     leave() {
-      host?.leave(); host = null;
-      if (batch) { renderer?.destroyBillboardBatch?.(batch); batch = null; }
-      drawGateBossBar(null); drawGateTitleCard(null);
-      hall = 0; spec = null; centre = null; shape = null; beat = null;
-      _crystals.length = 0; _riftTargets.length = 0; _shapes.length = 0; _ventSlots.length = 0; _batches.length = 0; _lights.length = 0;
+      for (const d of drawn.values()) destroy(d);
+      drawn.clear(); crystalSlots.clear();
+      drawGateTitleCard(null);
+      hall = 0; spec = null; centre = null; beat = null;
+      _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0;
     },
   };
 }

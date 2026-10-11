@@ -339,8 +339,9 @@ import { SD_CAST_OUT_LINE, sdRoomKey, isSdRoom, sdPhase } from '../net/sdLaw.js'
 import { egRoomKey, EG_TEXT } from '../net/egLaw.js';   // EG-PLAY: an Elite Breach's room, and its words
 import { createEgClient } from './egClient.js';   // EG-PLAY: the breach on this screen - the key, the call, the halls, the receipts
 import { createEgFight } from './egFight.js';   // EG-PLAY: a hall's fight
+import { registerSpirePotionLaw } from '../systems/spireKit.js';   // EG-FULL: THE POTION LAW (two restoring potions a hall)
 import { accountEg } from '../net/accountClient.js';   // EG-PLAY: the Weir Keys, the open, the admission, the claims
-import { registerSpireLevitateWard } from '../characters/playerEntity.js';   // EG-PLAY: the Spire's ward on Levitate, beside the one
+import { registerSpireLevitateWard, registerPlayerDeathSave, registerPlayerDamageMod } from '../characters/playerEntity.js';   // EG-PLAY: the Spire's ward on Levitate, beside the one; EG-FULL: the fall's death save and the witness's damage mod
 import { isSdRealm, realmArena, SD_REALM_TEXT, SD_REALM_FOG, SD_REALM_FLOORS, SD_ARENA_FLOORS, arenaHolds } from '../world/sdRealm.js';   // SD5a: the Shattered Hour - its edge, its refusals
 import { SdSkyRenderer, SD_SKY_STEPS } from '../render/sdSky.js';   // SD5b: the Hour's sky
 import { SdArenaGlowRenderer, sdArenaGlowAt, sdHourClockOf } from '../render/sdArenaGlow.js';   // SD-LOOK S7: the arena's floor reads the clock, and the sky's word for the fight
@@ -17645,6 +17646,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // (the chat, the friends panel, the F-menu: they pause nothing, and take keys). The keys are its from there: a key
     // shared by two windows' doors opens the first, not both stacked, and nothing after a door is done behind it.
     if (!_worldKeysLive) return;   // KEY-BOOT: the ladder's arms read bindings the boot has not reached yet
+    if (!e.repeat && !gamePaused() && egClient?.key(e)) { e.preventDefault(); return; }   // EG-FULL: the Spire's panel (a Vestige's card, the company's word) and the witness's Q and E - no window up
     const windowUp = () => gamePaused() || (modes?.modalWindowUp?.() ?? false) || pointerSurfaces.size > 0;
     const upBefore = windowUp();
     const pass = acts.length ? acts : [null];
@@ -24162,9 +24164,27 @@ export async function bootWorld(canvas, renderer, params, status) {
       save: (e, el) => egSave(e, el),   // the throw against a blow's element, the gate's
       strike: (d, how) => modes?.dungeonCtx?.strikePlayer?.(d, how), say: (text) => egMid(text),
       hudHidden: () => gamePaused() || !!townTalk.hudHidden,
-      sendHit: (h) => !!online?.sendEg?.('hit', h), sendAHit: (h) => !!online?.sendEg?.('ahit', h), sendXHit: (h) => !!online?.sendEg?.('xhit', h),
+      sendHit: (h) => !!online?.sendEg?.('hit', h),
+      me: () => _accountEg.me(),   // EG-FULL: whose marks and tethers are mine
+      push: (dx, dz, m) => egClient?.push(dx, dz, m), hold: (ms) => egClient?.hold(ms), ring: (x, z, r, inside) => egClient?.ring(x, z, r, inside),   // EG-FULL: a blow's push, a cage, a challenge's ring
+      castBack: () => egClient?.castBack(),   // EG-FULL: a void zone's cost
+      peerAt: (sub) => egPeers().find((q) => q.sub === sub)?.pos ?? null,   // EG-FULL: a tether's far end on a companion
     }),
+    peers: () => egPeers(),   // EG-FULL: the witness's eye follows a living companion
   }) : null;
+  /** EG-FULL: my company's other members where this screen draws them (the room's poses, by account - net/social.js
+   *  accountOfPeer: the company is my party). */
+  function egPeers() {
+    const out = [];
+    for (const [id, p] of online?.peers ?? []) {
+      const sub = social?.accountOfPeer?.(id) ?? null;
+      if (sub && p?.shown && Number.isFinite(p.shown.x)) out.push({ sub, pos: onlineToScene(p.shown) });
+    }
+    return out;
+  }
+  registerPlayerDeathSave('eg-fall', () => !!egClient?.fallSave());   // EG-FULL (section 16.5): a death in the Spire is a fall - the witness, not the death screen
+  registerPlayerDamageMod('eg-witness', (e, d) => (egClient?.witnessing() ? 0 : d));   // EG-FULL: no blow reaches a witness
+  registerSpirePotionLaw(egClient ? { allowed: () => egClient.potionAllowed(), used: () => egClient.potionUsed() } : null);   // EG-FULL: THE POTION LAW's count
   egClient?.claimKeys();   // the Weir Key's use is this screen's open
   const egFrame = () => { try { egClient?.frame(); } catch (e) { console.warn('[eg] frame', e?.message ?? e); } };
   let _omenClockAt = null;   // AUDIT WB C4: when the relay's clock was first read this session (the omen's fallback wait)
@@ -33357,6 +33377,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       seaReach: csaHelm ? csaSeaReach(csaHelm) : 0,   // #3
     });
     if (yards?.flying()) { const c = { pos: mwv0.eye }; yards.cameraOverride(c); mwv0.eye = c.pos; }   // HOME-YARD: the decorator's free eye, while a piece is placed outside (no travel view is up then)
+    if (egClient?.witnessing()) { const c = { pos: mwv0.eye }; if (egClient.witnessEye(c, cam.yaw)) mwv0.eye = c.pos; }   // EG-FULL: the witness's eye, behind a living companion
     // TV1: THE TRAVEL VIEW'S EYE, when it is up - risen out of the body's own camera (`ownEye`, the one the frame would
     // draw) and blended back into it on the way down. Every reader below that asks where the picture is taken from
     // reads `mwv.eye`; the fog and the sun's cascades measure from the traveller's head (renderer.setFocus - a frame's:

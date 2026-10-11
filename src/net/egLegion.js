@@ -1,0 +1,367 @@
+// @ts-check
+// EG-FULL (2026-10-11, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md sections 8.7, 12 and 14): THE LEGION -
+// the relentless adds, one wave runner for every hall (net/egBodies.js holds their bodies and words): the nine kinds and
+// the hall's own (a Kynval squad's elites, a Battlemage's ghost, the deserter, the Muster's standard-bearer, a slain
+// add's vengeful shade, a Blood Thrall), each read by its silhouette (ROLE READS - the client's looks below), each blow a
+// FULL shape stamp at or above THE WIND-UP FLOOR and at least THE WIDTH RULE's 4 m across.
+//
+//   0 HARRIER     runs at the member farthest from its anchor (in a Court, from the lord), hovering; Bite (disc r 2)
+//   1 SAPPER      walks to its objective - a lord (heals it), a closed rift (reopens it at a third), a broken anchor
+//   2 WARD-BEARER stands and holds a ward on what it guards; Pulse (disc r 3.5) at whoever comes near
+//   3 BREAKER     winds a charge at a member, runs it, pushes 6 m (lane 4 x 14)
+//   4 CASTER      stands off 10-18 m and throws a Bolt at a member's feet, leaving a pool (disc r 3)
+//   5 DIVER       flies, circles, dives a lane at a member on ground at least 6 m wide (lane 4 x 10)
+//   6 LURKER      dormant until a member passes within 6 m, then slow and heavy; Smash (disc r 3)
+//   7 BINDER      stands back and raises the last fallen add of its wave once - a 6 s cast a tenth of its health breaks
+//   8 WRAITH      drifts in and tethers the nearest member on a fight floor: 3% of max health a second within 8 m,
+//                 broken at 10 m
+//   9 DAEDRA LORD the Wellhead's elite add, one wave in six: five times the health, the Warden's Cleave
+//
+// Health is seconds of the company's reference damage (the gate's HARRIER_S law), times the depth; a wave's size counts
+// the living company; the cadence and the cap are the hall's (net/egBrain.js). THE DECREES the legion bears are read
+// here: Chained Blows, Twin Charge, Pyre-Bound, Vengeful Shades, Swarm-Mother, Kyn's Rally, Soul-Pools.
+//
+// Pure: a fight and a beat in, frames out. In the relay bundle (the looks are data the client reads). Not a DFU member.
+// Ledger A (ELITE-GATES).
+import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpMean, egHpTeam, egBodiesOf, egShareX } from './egBodies.js';
+import { shDisc, shLaneAt, shCone } from './egShape.js';
+import { egKeepOnFight, egOnFight } from './egLaw.js';
+import { harrierCountFor } from './gateBrain.js';
+import { wrapAngle } from '../world/mat4.js';   // the one wrap (ONCRASH1 C2) - already in the relay's graph
+
+/** The kinds by name. */
+export const EG_KIND = Object.freeze({ harrier: 0, sapper: 1, bearer: 2, breaker: 3, caster: 4, diver: 5, lurker: 6, binder: 7, wraith: 8, dlord: 9, kynval: 10, ghost: 11, deserter: 12, standard: 13, shade: 14, thrall: 15 });
+/**
+ * THE KINDS (section 12): body (`r`, `h`), speed (m/s), health (`hpS` seconds of the company's mean reference damage;
+ * `team` - of its whole, shared), its blow (a stamp's kind `t`, its numbers, its wind-up `wu` ms, the struck body's share
+ * `p` and points `b`, `el` 'band' for the band's element), its bodies by band (`mob` - Daggerfall's MOBILE_TYPES), its
+ * scale and hover (the client's look), its name and plural (the words).
+ */
+/** @typedef {{ id: number, key: string, name: string, plural: string, r: number, h: number, speed: number, hpS: number, team?: number, mob: number[], scale: number, hover: number, blow: any, fly?: number, friend?: number, wake?: number, raiseMs?: number, drain?: { pct: number, r: number, brk: number } }} EgKindRow */
+/** @type {ReadonlyArray<EgKindRow>} */
+export const EG_LEGION_KINDS = Object.freeze([
+  Object.freeze({ id: 0, key: 'harrier', name: 'Harrier', plural: 'Harriers', r: 0.5, h: 1.5, speed: 5, hpS: 3, mob: [1, 1, 3, 1], scale: 1, hover: 0.9, blow: Object.freeze({ nm: 'Bite', t: 'd', r: 2, wu: 900, rec: 900, p: 0.12, b: 4 }) }),
+  Object.freeze({ id: 1, key: 'sapper', name: 'Sapper', plural: 'Sappers', r: 0.7, h: 2.3, speed: 1.6, hpS: 6, team: 1, mob: [35, 37, 38, 36], scale: 1.1, hover: 0, blow: null }),
+  Object.freeze({ id: 2, key: 'bearer', name: 'Ward-Bearer', plural: 'Ward-Bearers', r: 0.6, h: 2.2, speed: 0, hpS: 6, team: 1, mob: [25, 25, 29, 25], scale: 1.15, hover: 0, blow: Object.freeze({ nm: 'Ward Pulse', t: 'd', r: 3.5, wu: 1400, rec: 0, p: 0.18, b: 6, el: 'band', every: 6000 }) }),
+  Object.freeze({ id: 3, key: 'breaker', name: 'Breaker', plural: 'Breakers', r: 0.8, h: 2.4, speed: 3, hpS: 6, mob: [27, 27, 27, 27], scale: 1, hover: 0, blow: Object.freeze({ nm: 'Charge', t: 'l', w: 4, len: 14, wu: 1100, rec: 1200, p: 0.25, b: 8, pu: 6, run: 12 }) }),
+  Object.freeze({ id: 4, key: 'caster', name: 'Caster', plural: 'Casters', r: 0.6, h: 2.2, speed: 2, hpS: 5, mob: [26, 32, 26, 26], scale: 1, hover: 0, blow: Object.freeze({ nm: 'Bolt', t: 'd', r: 3, wu: 1600, rec: 600, p: 0.2, b: 6, el: 'band', every: 6000, jitter: 3000, pool: 1 }) }),
+  Object.freeze({ id: 5, key: 'diver', name: 'Diver', plural: 'Divers', r: 0.6, h: 1.5, speed: 6, hpS: 4, mob: [13, 13, 13, 34], scale: 1, hover: 7, fly: 1, blow: Object.freeze({ nm: 'Dive', t: 'l', w: 4, len: 10, wu: 1000, rec: 2400, p: 0.18, b: 5, every: 7000 }) }),
+  Object.freeze({ id: 6, key: 'lurker', name: 'Lurker', plural: 'Lurkers', r: 0.9, h: 2.6, speed: 2.2, hpS: 8, mob: [22, 22, 22, 36], scale: 1, hover: 0, wake: 6, blow: Object.freeze({ nm: 'Smash', t: 'd', r: 3, wu: 1300, rec: 1200, p: 0.3, b: 10 }) }),
+  Object.freeze({ id: 7, key: 'binder', name: 'Binder', plural: 'Binders', r: 0.6, h: 2.2, speed: 1.2, hpS: 5, mob: [33, 33, 33, 33], scale: 1, hover: 0, blow: null, raiseMs: 6000 }),
+  Object.freeze({ id: 8, key: 'wraith', name: 'Wraith', plural: 'Wraiths', r: 0.5, h: 1.8, speed: 2.5, hpS: 4, mob: [23, 23, 18, 23], scale: 1, hover: 0.4, blow: null, drain: Object.freeze({ pct: 0.03, r: 8, brk: 10 }) }),
+  Object.freeze({ id: 9, key: 'dlord', name: 'Daedra Lord', plural: 'Daedra Lords', r: 1.2, h: 3, speed: 2, hpS: 15, mob: [31, 31, 31, 31], scale: 1.3, hover: 0, blow: Object.freeze({ nm: 'Cleave', t: 'c', r: 9, arc: 110, wu: 1400, rec: 900, p: 0.45, b: 12 }) }),
+  Object.freeze({ id: 10, key: 'kynval', name: 'Kynval', plural: 'Kynval', r: 0.8, h: 2.4, speed: 3, hpS: 10, mob: [31, 31, 31, 31], scale: 1, hover: 0, blow: Object.freeze({ nm: 'Kynval Strike', t: 'c', r: 5, arc: 100, wu: 1200, rec: 900, p: 0.25, b: 8 }) }),
+  Object.freeze({ id: 11, key: 'ghost', name: "Battlemage's Ghost", plural: 'Ghosts', r: 0.5, h: 1.8, speed: 4, hpS: 999, mob: [18, 18, 18, 18], scale: 1, hover: 0.3, blow: null, friend: 1 }),
+  Object.freeze({ id: 12, key: 'deserter', name: 'The Deserter', plural: 'Deserters', r: 0.6, h: 2.2, speed: 3, hpS: 999, mob: [26, 26, 26, 26], scale: 1, hover: 0, blow: null, friend: 1 }),
+  Object.freeze({ id: 13, key: 'standard', name: 'Kynreeve Standard-Bearer', plural: 'Standard-Bearers', r: 0.8, h: 2.4, speed: 3, hpS: 20, team: 1, mob: [31, 31, 31, 31], scale: 1.2, hover: 0, blow: null }),
+  Object.freeze({ id: 14, key: 'shade', name: 'Vengeful Shade', plural: 'Shades', r: 0.4, h: 1.6, speed: 3, hpS: 999, mob: [18, 18, 18, 18], scale: 0.8, hover: 0.3, blow: Object.freeze({ nm: 'Shade Burst', t: 'd', r: 2, wu: 1000, rec: 0, p: 0.1, b: 0 }) }),
+  Object.freeze({ id: 15, key: 'thrall', name: 'Blood Thrall', plural: 'Blood Thralls', r: 0.5, h: 1.5, speed: 3, hpS: 6, mob: [3, 3, 3, 3], scale: 1, hover: 0.9, blow: null }),
+]);
+/** Which kinds each band's waves draw (section 12): the Galleries' six, the Cairn's Binders and Wraiths, the Shade's
+ *  Divers, and all of them in the Wellhead (its Daedra Lord one wave in six). */
+export const EG_BAND_KINDS = Object.freeze([
+  Object.freeze([0, 1, 2, 3, 4, 6]), Object.freeze([0, 1, 2, 3, 4, 6, 7, 8]), Object.freeze([0, 1, 2, 3, 4, 5, 6, 7, 8]), Object.freeze([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+]);
+/** The kinds a wave leads with (the Sappers and Ward-Bearers rise only where they have work). */
+const WAVE_LEADS = Object.freeze([EG_KIND.harrier, EG_KIND.breaker, EG_KIND.caster, EG_KIND.diver, EG_KIND.wraith]);
+/** A Harrier keeps its mark this long; it stops this short of the mark and Bites within reach; a Lurker wakes within its
+ *  `wake`; a Caster keeps this far off; a Wraith's tether breaks at its `brk`; a shade follows this long. */
+export const EG_RETARGET_MS = 3000;
+export const EG_BITE_REACH = 1.8;
+export const EG_CASTER_RANGE = Object.freeze([10, 18]);
+export const EG_SHADE_MS = 6000;
+/** How long an add takes to rise out of the floor (ms) - seen rising on every screen. */
+export const EG_ADD_RISE_MS = 900;
+/** A Kynval squad's affixes (section 8.7). */
+export const EG_AFFIXES = Object.freeze(['searing', 'shielded', 'wrathful', 'unshaken']);
+/** A pool's tick (ms): a Caster's Bolt, a Searing strike, Soul-Pools. */
+export const EG_POOL_TICK_MS = 1000;
+
+/** A kind's look for a band (its mobile, scale, hover - the client draws it). */
+export const egKindLook = (k, band) => { const K = EG_LEGION_KINDS[k] ?? EG_LEGION_KINDS[0]; return { mobile: K.mob[Math.max(0, Math.min(3, band))], scale: K.scale, hover: K.hover, name: K.name, plural: K.plural }; };
+/** An add's health in a fight. */
+export const egKindHp = (F, k, team = 1) => { const K = EG_LEGION_KINDS[k]; return K.team ? egHpTeam(F, K.hpS, team) : egHpMean(F, K.hpS); };
+const elOf = (F, el) => (el === 'band' ? F.el : el ?? null);
+const near = (b, here) => { let best = null, bd = Infinity; for (const m of here) { const d = Math.hypot(m.x - b.x, m.z - b.z); if (d < bd) { bd = d; best = m; } } return best ? { m: best, d: bd } : null; };
+const far = (x, z, here) => { let best = null, bd = -1; for (const m of here) { const d = Math.hypot(m.x - x, m.z - z); if (d > bd) { bd = d; best = m; } } return best; };
+
+/**
+ * A WAVE (section 12): `size` bodies of the band's kinds - led by one kind at half its size, the rest Harriers (a Binder
+ * with it under Swarm-Mother, two at rank II; one wave in six in the Wellhead a Daedra Lord leads it) - at `spots`.
+ * Answers the kinds, one a spot.
+ * @param {any} F @param {() => number} rng @param {number} size @param {{ swarm?: number, waveNo?: number, sky?: boolean }} o
+ */
+export function egWaveKinds(F, rng, size, { swarm = 0, waveNo = 0, sky = false } = {}) {
+  const open = EG_BAND_KINDS[F.band] ?? EG_BAND_KINDS[0];
+  const leads = WAVE_LEADS.filter((k) => open.includes(k) && (k !== EG_KIND.diver || sky));
+  const lead = leads[Math.floor(rng() * leads.length)] ?? EG_KIND.harrier;
+  const out = [];
+  if (F.band >= 3 && waveNo % 6 === 5) out.push(EG_KIND.dlord);
+  const half = Math.ceil(size / 2);
+  for (let i = out.length; i < size; i++) out.push(i < half ? lead : EG_KIND.harrier);
+  for (let s = 0; s < swarm; s++) out.push(EG_KIND.binder);
+  return out;
+}
+/** How many a wave raises for n living members (the gate's harrierCountFor - 2 to 5). */
+export const egWaveSize = (n) => harrierCountFor(n);
+
+/**
+ * A WAVE RISEN at `spots` (one per kind in `kinds`), each at its kind's health (a team kind's shared over its own),
+ * tagged with the wave's number (Kyn's Rally, a Binder's raise). Answers the bodies.
+ */
+export function egLegionRaise(F, kinds, spots, now, out, { wave = 0, fl = 0, hpX = 1 } = {}) {
+  const made = [];
+  const counts = {};
+  for (const k of kinds) counts[k] = (counts[k] ?? 0) + 1;
+  kinds.forEach((k, j) => {
+    const [x, z] = spots[j % spots.length];
+    const K = EG_LEGION_KINDS[k];
+    const hp = Math.round(egKindHp(F, k, counts[k]) * hpX);
+    const f = fl | (K.fly ? EG_FL.fly : 0) | (K.friend ? EG_FL.friend : 0) | (k === EG_KIND.lurker ? EG_FL.dormant : 0) | (k === EG_KIND.shade ? EG_FL.ward : 0) | (k === EG_KIND.dlord ? EG_FL.elite : 0);
+    const b = egBodyNew(F, EG_ROLE.add, k, x + (j % 3) * 0.7 - 0.7, z + Math.floor(j / 3) * 0.7, hp, { r: K.r, fl: f, up: EG_ADD_RISE_MS, now, wv: wave, h0: hp, rally: 0 });
+    if (b) made.push(b);
+  });
+  if (made.length) out.push({ k: 'ead', a: made.map((b) => [b.i, b.role, b.k, b.pt ?? 0, b.x, b.z, b.hp, b.max, b.fl, b.x, b.z, 0, 0]), at: now });
+  return made;
+}
+
+/**
+ * A BLOW of an add's kind begun from body `a` at target point (tx, tz) - its stamp laid as its kind lays it (a disc at
+ * its own feet or at the target's, a lane toward the target, a cone about its facing), its element the band's where it
+ * takes one, its share by the depth (and Wrathful's tenth). Chained Blows (`chain` 1 or 2) chain a second (and third)
+ * shape, outlined with the first, landing max(its wind-up, its floor + 0.3 s, 1.0 s) after it.
+ */
+function addBlow(F, spec, a, tx, tz, now, here, out, { chain = 0, twin = 0, atFeet = false } = {}) {
+  const K = EG_LEGION_KINDS[a.k], B = K.blow;
+  if (!B) return null;
+  const yaw = Math.atan2(tx - a.x, tz - a.z);
+  const stamp = (x, z) => (B.t === 'd' ? shDisc(atFeet ? tx : x, atFeet ? tz : z, B.r) : B.t === 'l' ? shLaneAt(x, z, yaw, B.len, B.w) : shCone(x, z, yaw, B.r, B.arc));
+  const wrath = egHas(a, EG_FL.wrathful) ? 1.1 : 1;
+  const base = { o: a.i, wu: B.wu, p: B.p * egShareX(F.c, wrath * (F.mem.furyX ?? 1)), b: B.b, el: elOf(F, B.el), nm: B.nm, pu: B.pu ?? 0, sp: B.run ? Math.round((B.len / B.run) * 1000) : 0 };
+  const first = egAim(F, spec, { ...base, s: [stamp(a.x, a.z)], at: now + B.wu }, here, now, out);
+  if (!first) return null;
+  a.atk = { i: first.i, at: first.at, until: first.at + (first.sp ?? 0) + (B.rec ?? 600) };
+  a.yaw = yaw;
+  let at = first.at;
+  for (let c = 0; c < chain; c++) {
+    const gap = Math.max(first.wu, 1000);
+    at += gap;
+    const ox = tx + Math.sin(yaw) * 3 * (c + 1), oz = tz + Math.cos(yaw) * 3 * (c + 1);
+    egAim(F, spec, { ...base, s: [B.t === 'l' ? shLaneAt(tx, tz, yaw, B.len, B.w) : shDisc(ox, oz, B.t === 'd' ? B.r : 3)], at, wu: at - now, nm: `${B.nm} (chained)` }, here, now, out);
+  }
+  for (let c = 0; c < twin; c++) {
+    at += 1200;
+    egAim(F, spec, { ...base, s: [shLaneAt(tx, tz, yaw, B.len, B.w)], at, wu: at - now, nm: 'Twin Charge' }, here, now, out);
+  }
+  if (B.run) { const L = Math.min(B.len, Math.hypot(tx - a.x, tz - a.z) + 4); const [ex, ez] = egKeepOnFight(spec, a.x + Math.sin(yaw) * L, a.z + Math.cos(yaw) * L, K.r); a.runTo = [ex, ez, first.at + first.sp]; }
+  return first;
+}
+
+/**
+ * THE LEGION'S BEAT on hall `spec`: each add carried, risen ones at their work - a Harrier at its mark, a Sapper at its
+ * objective, a Ward-Bearer's Pulse, a Breaker's charge, a Caster's Bolt, a Diver's dive, a Lurker woken, a Binder's raise,
+ * a Wraith's tether, the ghost and the deserter at the legion and the rifts, a shade at its slayer.
+ * `here` the living members on the floor (the hall's frame); `ctx`: `anchor` (a Court's lord's place - the Harriers run
+ * from it), `sapGoal(a)` (an add's objective: `[x, z]` or null) and `sapAt(a)` (it reached it), `decrees` (the circle's -
+ * `{chained, twincharge, ...}` ranks), `ghostHit(a, target)`, `deserterHit(a)`.
+ * @param {any} F @param {any} spec @param {number} now @param {{sub: string, x: number, z: number}[]} here @param {() => number} rng
+ * @param {any[]} out @param {any} ctx
+ */
+export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
+  const D = ctx.decrees ?? {};
+  const chain = D.chained ?? 0, twin = D.twincharge ?? 0;
+  for (const a of [...F.bodies]) {
+    if (a.role !== EG_ROLE.add || !(a.hp > 0)) continue;
+    if (now < (a.up ?? 0)) continue;
+    const K = EG_LEGION_KINDS[a.k];
+    if (a.atk) {
+      if (now < a.atk.until) { if (a.runTo && now >= a.runTo[2]) { egPlace(F, a, a.runTo[0], a.runTo[1], now); a.runTo = null; } continue; }
+      if (a.runTo) { egPlace(F, a, a.runTo[0], a.runTo[1], now); a.runTo = null; }
+      a.atk = null;
+    }
+    if (egHas(a, EG_FL.stun) && now < (a.stunUntil ?? 0)) { egStop(F, a, now); continue; }
+    switch (a.k) {
+      case EG_KIND.thrall: egStop(F, a, now); break;
+      case EG_KIND.harrier: {
+        let mark = a.tg ? here.find((m) => m.sub === a.tg) ?? null : null;
+        if (!mark || now - a.tgAt >= EG_RETARGET_MS) {
+          mark = ctx.anchor ? far(ctx.anchor[0], ctx.anchor[1], here) : near(a, here)?.m ?? null;
+          if (ctx.fadeOf) { const seen = here.filter((m) => !ctx.fadeOf(m.sub, now)); if (mark && ctx.fadeOf(mark.sub, now)) mark = near(a, seen)?.m ?? null; }
+          a.tg = mark?.sub ?? null; a.tgAt = now;
+        }
+        if (!mark) { egStop(F, a, now); break; }
+        if (Math.hypot(a.x - mark.x, a.z - mark.z) <= EG_BITE_REACH) { egStop(F, a, now); addBlow(F, spec, a, a.x, a.z, now, here, out, { chain }); break; }
+        egWalk(F, a, mark.x, mark.z, 1, K.speed, now, spec);
+        break;
+      }
+      case EG_KIND.sapper: {
+        const goal = ctx.sapGoal?.(a);
+        if (!goal) { egStop(F, a, now); break; }
+        if (Math.hypot(a.x - goal[0], a.z - goal[1]) <= (goal[2] ?? 1.6)) { egStop(F, a, now); ctx.sapAt?.(a); break; }
+        egWalk(F, a, goal[0], goal[1], (goal[2] ?? 1.6) * 0.8, K.speed, now, spec);
+        break;
+      }
+      case EG_KIND.bearer: {
+        const n = near(a, here);
+        if (!n || n.d > 6 || now < (a.next ?? 0)) break;
+        a.next = now + K.blow.every;
+        addBlow(F, spec, a, a.x, a.z, now, here, out, { chain });
+        break;
+      }
+      case EG_KIND.breaker: case EG_KIND.dlord: case EG_KIND.kynval: {
+        const n = near(a, here);
+        if (!n) { egStop(F, a, now); break; }
+        const reach = a.k === EG_KIND.breaker ? 14 : a.k === EG_KIND.dlord ? 7 : 3.5;
+        if (n.d <= reach && now >= (a.next ?? 0)) {
+          egStop(F, a, now);
+          addBlow(F, spec, a, n.m.x, n.m.z, now, here, out, { chain, twin: a.k === EG_KIND.breaker ? twin : 0 });
+          a.next = now + (a.k === EG_KIND.breaker ? 4000 : 2600);
+          if (a.k === EG_KIND.kynval && egHas(a, EG_FL.searing) && ctx.pool) ctx.pool(a.x, a.z, 2.5, now + K.blow.wu, 6000, 0.05, 2, F.el);
+          break;
+        }
+        egWalk(F, a, n.m.x, n.m.z, a.k === EG_KIND.breaker ? 10 : 1.5, K.speed, now, spec);
+        break;
+      }
+      case EG_KIND.caster: {
+        const n = near(a, here);
+        if (!n) { egStop(F, a, now); break; }
+        if (n.d < EG_CASTER_RANGE[0] || n.d > EG_CASTER_RANGE[1]) {
+          const want = (EG_CASTER_RANGE[0] + EG_CASTER_RANGE[1]) / 2, ux = (a.x - n.m.x) / (n.d || 1), uz = (a.z - n.m.z) / (n.d || 1);
+          egWalk(F, a, n.m.x + ux * want, n.m.z + uz * want, 0.5, K.speed, now, spec);
+        } else egStop(F, a, now);
+        if (now >= (a.next ?? 0)) {
+          const tgt = here[Math.floor(rng() * here.length)] ?? n.m;
+          a.next = now + K.blow.every + Math.floor(rng() * K.blow.jitter);
+          const bl = addBlow(F, spec, a, tgt.x, tgt.z, now, here, out, { chain, atFeet: true });
+          if (bl && ctx.pool) ctx.pool(tgt.x, tgt.z, 3, bl.at, 6000, 0.06, 2, F.el);
+        }
+        break;
+      }
+      case EG_KIND.diver: {
+        const n = near(a, here);
+        if (!n) { egStop(F, a, now); break; }
+        if (now >= (a.next ?? 0) && egOnFight(spec, n.m.x, n.m.z, -3)) {
+          a.next = now + K.blow.every;
+          egStop(F, a, now);
+          addBlow(F, spec, a, n.m.x, n.m.z, now, here, out, { chain });
+          break;
+        }
+        const t = (now / 1000) * 0.6 + a.i;
+        egWalk(F, a, n.m.x + Math.sin(t) * 8, n.m.z + Math.cos(t) * 8, 0.5, K.speed, now, spec, 0, true);
+        break;
+      }
+      case EG_KIND.lurker: {
+        const n = near(a, here);
+        if (egHas(a, EG_FL.dormant)) {
+          if (n && n.d <= K.wake) { egSetFl(F, a, EG_FL.dormant, false, out); a.up = now + 600; if (!F.mem.stirred) { F.mem.stirred = 1; out.push({ k: 'esay', w: 'stirs' }); } }
+          break;
+        }
+        if (!n) { egStop(F, a, now); break; }
+        if (n.d <= 2.5 && now >= (a.next ?? 0)) { egStop(F, a, now); addBlow(F, spec, a, a.x, a.z, now, here, out, { chain }); a.next = now + 2500; break; }
+        egWalk(F, a, n.m.x, n.m.z, 1.5, K.speed, now, spec);
+        break;
+      }
+      case EG_KIND.binder: {
+        const n = near(a, here);
+        if (a.cast) {
+          if (now >= a.cast.until) {
+            const g = a.cast.g;
+            a.cast = null; a.raised = 1;
+            egLegionRaise(F, [g.k], [[g.x, g.z]], now, out, { wave: a.wv });
+            out.push({ k: 'esay', w: 'raised' });
+          }
+          break;
+        }
+        if (n && n.d < 8) { const ux = (a.x - n.m.x) / (n.d || 1), uz = (a.z - n.m.z) / (n.d || 1); egWalk(F, a, a.x + ux * 4, a.z + uz * 4, 0.5, K.speed, now, spec); }
+        const g = !a.raised ? (F.mem.fallen ?? []).filter((x) => x.wv === a.wv && x.k !== EG_KIND.binder).pop() : null;
+        if (g && !F.mem.casting?.[a.i]) { egStop(F, a, now); a.cast = { g, at: now, until: now + K.raiseMs, dmg: 0, max: a.max / 10 }; F.pg.raise = [a.i, now + K.raiseMs]; out.push({ k: 'efl', i: a.i, fl: a.fl | EG_FL.lit }); }
+        break;
+      }
+      case EG_KIND.wraith: {
+        const tied = F.tethers.find((t) => t[0] === a.i && t[2] === 0);
+        const n = near(a, here);
+        if (!n) { egStop(F, a, now); break; }
+        if (tied) {
+          const m = here.find((x) => x.sub === tied[1]);
+          if (!m || Math.hypot(m.x - a.x, m.z - a.z) > K.drain.brk) { F.tethers = F.tethers.filter((t) => t !== tied); F.mem.txDirty = 1; }
+          else egWalk(F, a, m.x, m.z, 5, K.speed, now, spec, 0, true);
+          break;
+        }
+        if (n.d <= K.drain.r) { F.tethers.push([a.i, n.m.sub, 0, K.drain.r * 100 + K.drain.brk]); F.mem.txDirty = 1; egStop(F, a, now); break; }
+        egWalk(F, a, n.m.x, n.m.z, 4, K.speed, now, spec, 0, true);
+        break;
+      }
+      case EG_KIND.ghost: {
+        const foes = egBodiesOf(F, EG_ROLE.add).filter((b) => !egHas(b, EG_FL.friend) && !egHas(b, EG_FL.ward));
+        let best = null, bd = Infinity;
+        for (const f of foes) { const d = Math.hypot(f.x - a.x, f.z - a.z); if (d < bd) { bd = d; best = f; } }
+        if (!best) { egStop(F, a, now); break; }
+        if (bd <= 2.5) { egStop(F, a, now); if (now >= (a.next ?? 0)) { a.next = now + 1500; ctx.ghostHit?.(a, best); } break; }
+        egWalk(F, a, best.x, best.z, 1.5, K.speed, now, spec);
+        break;
+      }
+      case EG_KIND.deserter: {
+        const goal = ctx.deserterGoal?.(a);
+        if (!goal) { egStop(F, a, now); break; }
+        if (Math.hypot(a.x - goal[0], a.z - goal[1]) <= 2.5) { egStop(F, a, now); if (now >= (a.next ?? 0)) { a.next = now + 1000; ctx.deserterHit?.(a); } break; }
+        egWalk(F, a, goal[0], goal[1], 2, K.speed, now, spec);
+        break;
+      }
+      case EG_KIND.standard: {
+        const pts = ctx.rally ?? [];
+        if (!pts.length) break;
+        if (!a.goal || now >= (a.goalAt ?? 0)) { a.ri = ((a.ri ?? -1) + 1) % pts.length; a.goal = pts[a.ri]; a.goalAt = now + 20_000; }
+        egWalk(F, a, a.goal[0], a.goal[1], 0.5, K.speed, now, spec);
+        break;
+      }
+      case EG_KIND.shade: {
+        if (now >= a.burstAt) {
+          if (!a.burst) { a.burst = 1; const S = EG_LEGION_KINDS[EG_KIND.shade].blow; egAim(F, spec, { o: a.i, s: [shDisc(a.x, a.z, S.r)], at: now + S.wu, wu: S.wu, p: (D.shades >= 2 ? 0.15 : 0.1) * egShareX(F.c), b: 0, el: null, nm: S.nm }, here, now, out); a.atk = { at: now + S.wu, until: now + S.wu + 200 }; }
+          else egGone(F, [a], EG_GONE.crumbled, '', now, out);
+          break;
+        }
+        const m = here.find((x) => x.sub === a.tg);
+        if (m) egWalk(F, a, m.x, m.z, 0.5, K.speed, now, spec, 0, true);
+        break;
+      }
+      default: break;
+    }
+  }
+}
+
+/**
+ * AN ADD SLAIN by `sub` (`name`): its fall remembered for the Binders, and the decrees on a slaying - Pyre-Bound's burst,
+ * Vengeful Shades' shade at the slayer, Kyn's Rally's strength to its wave, Soul-Pools' pool.
+ */
+export function egAddSlain(F, spec, a, sub, now, here, out, ctx = {}) {
+  const D = ctx.decrees ?? {};
+  (F.mem.fallen ??= []).push({ k: a.k, x: a.x, z: a.z, wv: a.wv });
+  if (F.mem.fallen.length > 24) F.mem.fallen.shift();
+  if (D.pyre) egAim(F, spec, { o: 0, s: [shDisc(a.x, a.z, D.pyre >= 2 ? 3.5 : 2.5)], at: now + (D.pyre >= 2 ? 1200 : 1000), wu: D.pyre >= 2 ? 1200 : 1000, p: (D.pyre >= 2 ? 0.15 : 0.1) * egShareX(F.c), b: 0, el: 'fire', nm: 'Pyre' }, here, now, out);
+  if (D.shades && a.k !== EG_KIND.shade && sub) { const s = egLegionRaise(F, [EG_KIND.shade], [[a.x, a.z]], now, out, {}); if (s[0]) { s[0].tg = sub; s[0].burstAt = now + EG_SHADE_MS; s[0].up = now; } }
+  if (D.rally) {
+    const x = D.rally >= 2 ? 0.15 : 0.1;
+    for (const b of egBodiesOf(F, EG_ROLE.add)) if (b.wv === a.wv && b !== a && (b.rally ?? 0) < 3) { b.rally = (b.rally ?? 0) + 1; const add = Math.round(b.h0 * x); b.max += add; b.hp += add; }
+  }
+  if (D.soulpools && ctx.pool) ctx.pool(a.x, a.z, D.soulpools >= 2 ? 3.5 : 2.5, now, 8000, 0, 0, null, 'soul');
+}
+/** A Kynval squad (section 8.7): four elites in place of a wave, each with one affix. */
+export function egSquad(F, spots, now, out) {
+  return EG_AFFIXES.map((af, j) => {
+    const flag = { searing: EG_FL.searing, shielded: EG_FL.shielded, wrathful: EG_FL.wrathful, unshaken: EG_FL.unshaken }[af];
+    const [b] = egLegionRaise(F, [EG_KIND.kynval], [spots[j % spots.length]], now, out, { fl: EG_FL.elite | flag });
+    if (b && af === 'shielded') b.shield = Math.round(b.max / 4);
+    return b;
+  }).filter(Boolean);
+}
+/** A body's facing toward the struck pose - a blow from within 60 degrees of behind it (a shield-wall's, a Shielded
+ *  elite's law). */
+export function egFromBehind(b, px, pz) {
+  const yaw = b.yaw ?? 0, at = Math.atan2(px - b.x, pz - b.z);
+  return Math.abs(wrapAngle(at - yaw)) > (2 * Math.PI) / 3;
+}
+/** A blow from within the front 120 degrees. */
+export function egFromFront(b, px, pz) {
+  const yaw = b.yaw ?? 0, at = Math.atan2(px - b.x, pz - b.z);
+  return Math.abs(wrapAngle(at - yaw)) <= Math.PI / 3;
+}

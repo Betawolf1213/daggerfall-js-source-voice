@@ -8910,8 +8910,8 @@ export function createWorldModes(host) {
   async function enterEgHall(r) {
     if (mode !== 'exterior' || !r || typeof r.b !== 'string' || !Number.isSafeInteger(r.c) || r.c < 1 || !(playerEntity.health > 0)) return false;
     const site = r.site ?? null;
-    const dfLocation = egHallLocation({ b: r.b, seed: r.seed, c: r.c, regionIndex: site?.regionIndex ?? -1, regionName: site?.regionName ?? '', climate: site?.climate ?? undefined });
-    const hit = { dfLocation, blocksFile: egHallBlocks(blocks), egHall: { b: r.b, seed: r.seed >>> 0, c: r.c }, climateBase: site?.climateBase ?? 2, season: site?.season ?? 0, group: egRoomKey(r.b), door: null, dfBlock: null, recordIndex: -1 };
+    const dfLocation = egHallLocation({ b: r.b, seed: r.seed, c: r.c, geo: r.geo ?? 0, regionIndex: site?.regionIndex ?? -1, regionName: site?.regionName ?? '', climate: site?.climate ?? undefined });
+    const hit = { dfLocation, blocksFile: egHallBlocks(blocks), egHall: { b: r.b, seed: r.seed >>> 0, c: r.c, geo: r.geo ?? 0 }, climateBase: site?.climateBase ?? 2, season: site?.season ?? 0, group: egRoomKey(r.b), door: null, dfBlock: null, recordIndex: -1 };
     return gatedTransition((live) => dungeonTransition(hit, [], true, live));
   }
   /** ARENA2: the floor's light and air - the sky open over the sand, the hour the torches are lit: a warm ambient the
@@ -9142,7 +9142,7 @@ export function createWorldModes(host) {
   /** @type {Array<{ h: number, gpu: any, T: number[], draw: any }>} */
   let _egGates = [];
   function standEgHall(ctx, eh) {
-    const key = `${eh.seed}:${eh.c}`;
+    const key = `${eh.seed}:${eh.c}:${eh.geo ?? 0}`;
     if (!_egArt && renderer?.uploadTexture) {
       _egArt = true;
       const glow = { white: true };
@@ -9151,17 +9151,17 @@ export function createWorldModes(host) {
     if (_egMeshKey !== key) {
       if (_egMesh) { try { renderer?.destroyMesh?.(_egMesh); } catch { /* gone */ } }
       _egMesh = null; _egMeshKey = key;
-      try { _egMesh = renderer?.createMesh ? renderer.createMesh(buildEgCircleModel(eh.seed, eh.c)) : null; } catch (e) { console.warn('[eg] the circle would not build', e?.message ?? e); _egMesh = null; }
-      _egLamps = egCircleLights(eh.seed, eh.c);
+      try { _egMesh = renderer?.createMesh ? renderer.createMesh(buildEgCircleModel(eh.seed, eh.c, eh.geo ?? 0)) : null; } catch (e) { console.warn('[eg] the circle would not build', e?.message ?? e); _egMesh = null; }
+      _egLamps = egCircleLights(eh.seed, eh.c, eh.geo ?? 0);
     }
     if (_egMesh) ctx.dynamicDraws.push({ gpu: _egMesh, object: { matrix: identity() } });
-    const tris = egCircleColliderTris(eh.seed, eh.c), n = tris.length / 3;
+    const tris = egCircleColliderTris(eh.seed, eh.c, eh.geo ?? 0), n = tris.length / 3;
     const idx = n > 65535 ? new Uint32Array(n) : new Uint16Array(n);
     for (let i = 0; i < n; i++) idx[i] = i;
     ctx.collider.addMesh(EG_BUCKET, tris, idx, identity());
     for (const g of _egGates) if (g.gpu) { try { renderer?.destroyMesh?.(g.gpu); } catch { /* gone */ } }
     _egGates = [];
-    for (const spec of egCircleSpecs(eh.seed, eh.c)) {
+    for (const spec of egCircleSpecs(eh.seed, eh.c, eh.geo ?? 0)) {
       const parts = egGateParts(spec);
       if (!parts) continue;
       let gpu = null;
@@ -10210,7 +10210,7 @@ export function createWorldModes(host) {
     const sdBack = mode === 'dungeon' ? dungeonCtx?.sdStepsRide?.(dt, player, !overlayHeld) ?? null : null;
     if (sdBack) sdCastBack(sdBack);
     // EG-PLAY: AN ELITE BREACH'S SPANS ride before the motor too, and the void's cast-back (its cost the outer host's)
-    const egBack = mode === 'dungeon' && isEgHall(dungeonLoc) ? dungeonCtx?.egSpanRide?.(dt, player, !overlayHeld) ?? null : null;
+    const egBack = mode === 'dungeon' && isEgHall(dungeonLoc) ? dungeonCtx?.egSpanRide?.(dt, player, !overlayHeld && !host.egWitness?.()) ?? null : null;   // EG-FULL: a witness's body, put away under the hall, is never cast back
     if (egBack && egPlace(egBack)) host.egCastBack?.();
     // AUDIT 26 (hosts-modal): THE MOTOR ITSELF STOPS under a window.
     // PauseGame(true) sets Time.timeScale = 0 (GameManager.cs:600-609),

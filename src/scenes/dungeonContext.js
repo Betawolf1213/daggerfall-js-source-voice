@@ -1917,7 +1917,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // EG-PLAY (Elite-Gates.md sections 8 and 10): AN ELITE BREACH'S SPANS (scenes/egSpan.js) - every step of the circle's
   // courses, stood the first frame the outer host asks and moved on the realm's clock, ridden BEFORE the motor (the Steps'
   // way); the landing of the void's cast-back answered to the mode machine
-  const egSpan = _egHall ? createEgSpan({ renderer, audio, seed: dfLocation.egSeed, c: dfLocation.egCircle }) : null;
+  const egSpan = _egHall ? createEgSpan({ renderer, audio, seed: dfLocation.egSeed, c: dfLocation.egCircle, geo: dfLocation.egGeo ?? 0 }) : null;
   let _egSpanStood = false;
   /** One frame of the spans, before the motor: the landing of a cast-back, or null. */
   function egSpanRide(dt, body, live) {
