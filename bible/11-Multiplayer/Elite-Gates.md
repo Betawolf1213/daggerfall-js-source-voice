@@ -3480,11 +3480,18 @@ Closes layer one's first departure for the pieces.
 - **A regression closed.** Layer one's rewrite of the fight had dropped EG-PLAY's Rampart vents, which are told 1.0 s and
   judged on the member's feet. The place pass draws and judges them again.
 
+- **The Rampart's ground, closed.** Layer one had laid the Falling Wall and the Forge Bridge in the law
+  (`egWallFallenZ`, the `belt` band) but nothing acted on them. Now a Falling Wall's walkway stands as `EG_WALL_SEG_M`
+  2 m segments (`world/egHall.js` `egWallBand` leaves it out of the circle's mesh and collider). They fall behind the
+  company from 20 s after the hall's wake at 1.5 m/s (`systems/spireKit.js` `spireWake`, registered from the breach's
+  client), and a member caught is cast to the nearest segment wholly ahead of the edge. A Forge Bridge's walkway carries
+  whoever stands on it toward the arrival plate at `EG_BELT_MPS` 1.0 m/s.
+
 **What EG-D still owes**: the fragment kits beyond the Oblivion Caverns passage (the Ossuary, the Gloam Thicket, the
 Forge Gut and the rest of section 11.2) with their signature hazards; the set-piece passages; THE FORK (the High Road and
 the Low Road); the fragment law record (`net/egFragLaw.js`); engines, alcoves and the Annals; Grath's falling isles. Also
 the pieces' remaining tells (the Rail's dashed track, the Gust's streamers, the waystones lit) and the solver's median
 check.
 
-**Pins.** `test/egfull_span.test.js` (5) and `tools/mutants/egspan.json` (15, every one dead). `RELAY_VERSION` stays
+**Pins.** `test/egfull_span.test.js` (6) and `tools/mutants/egspan.json` (19, every one dead). `RELAY_VERSION` stays
 `world196` (renumbered past main's COATS1 `world195` at the merge), unshipped, rehashed with `net/egSpanLaw.js` in its graph.

@@ -133,5 +133,41 @@
     "tests": [
       "test/egfull_span.test.js"
     ]
+  },
+  {
+    "name": "EGSPAN-the-wall-stands",
+    "file": "src/scenes/egSpan.js",
+    "old": "const edge = fallenOf(g.spec, t), gone = g.z1 <= edge;",
+    "new": "const edge = fallenOf(g.spec, t), gone = false && g.z1 <= edge;",
+    "tests": [
+      "test/egfull_span.test.js"
+    ]
+  },
+  {
+    "name": "EGSPAN-cast-onto-fallen-ground",
+    "file": "src/scenes/egSpan.js",
+    "old": "    if (rz > edge + 0.5) return p;\n",
+    "new": "    return p;\n",
+    "tests": [
+      "test/egfull_span.test.js"
+    ]
+  },
+  {
+    "name": "EGSPAN-the-belt-runs-on",
+    "file": "src/scenes/egSpan.js",
+    "old": "body.collider?.move?.(body.pos, 0, 0, -EG_BELT_MPS * Math.min(dt, EG_GUST_DT_MAX), body.height, true);",
+    "new": "body.collider?.move?.(body.pos, 0, 0, EG_BELT_MPS * Math.min(dt, EG_GUST_DT_MAX), body.height, true);",
+    "tests": [
+      "test/egfull_span.test.js"
+    ]
+  },
+  {
+    "name": "EGSPAN-a-floor-under-the-wall",
+    "file": "src/world/egHall.js",
+    "old": "    for (const b of spec.bands) if (!egWallBand(spec, b)) quad(",
+    "new": "    for (const b of spec.bands) if (true) quad(",
+    "tests": [
+      "test/egfull_span.test.js"
+    ]
   }
 ]

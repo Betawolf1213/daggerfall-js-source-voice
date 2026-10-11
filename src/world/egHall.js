@@ -114,6 +114,9 @@ function bandModel(f, spec, b) {
   for (const x of [xl, xr]) { const a = D(x, y - 0.9, b.z0), c = D(x, y, b.z1); quadTo(f, SD_REALM_ROOT_RECORD, [a[0], a[1], a[2]], [a[0], a[1], c[2]], [a[0], c[1], c[2]], [a[0], c[1], a[2]], [x < b.x ? -1 : 1, 0, 0]); }
   for (const x of [xl - 0.004, xr + 0.004]) { const a = D(x, y + 0.124, b.z0), c = D(x, y + 0.124, b.z1); const s2 = x < b.x ? 0.05 : -0.05; quadTo(f, SD_REALM_EDGE_RECORD, [a[0], a[1], a[2]], [a[0] + s2, a[1], a[2]], [c[0] + s2, c[1], c[2]], [c[0], c[1], c[2]], [0, 1, 0]); }
 }
+/** EG-FULL LAYER TWO: is band `b` a Falling Wall's walkway (section 8.3) - stood and felled segment by segment by the
+ *  spans (scenes/egSpan.js), so neither the circle's mesh nor its collider carries it? */
+export const egWallBand = (spec, b) => spec.variant === 'fallingwall' && b.role === 'walk';
 /** The Oblivion Caverns passage: its walls and ceiling of basalt, its fire channels at the walls' feet, its curtain. */
 function caveModel(f, spec, q) {
   const D = (x, y, z) => egToDungeon(spec, x, y, z), y0 = q.y, y1 = q.y + q.height, w = q.halfW;
@@ -190,7 +193,7 @@ export function buildEgCircleModel(seed, c, geo = 0) {
       if (d.role === 'arrive' || d.role === 'end') plateModel(f, spec, d);
       else realmIsland(f, spec.x0 + d.x, d.z, d.r, d.role === 'court' || d.role === 'isle' || d.role === 'balcony' ? SD_REALM_ARENA_RECORD : SD_REALM_FLOOR_RECORD, { y: d.y, bands: d.role === 'court' || d.role === 'isle' ? Math.max(2, Math.round(d.r / 4)) : 0 });
     }
-    for (const b of spec.bands) bandModel(f, spec, b);
+    for (const b of spec.bands) if (!egWallBand(spec, b)) bandModel(f, spec, b);   // a Falling Wall's walkway is the spans' own segments (scenes/egSpan.js)
     for (const l of spec.lanes ?? []) laneModel(f, spec, l);
     for (const q of spec.caves) caveModel(f, spec, q);
     for (const d of spec.deco ?? []) decoModel(f, spec, d);
@@ -237,7 +240,7 @@ export function egCircleColliderTris(seed, c, geo = 0) {
         for (const s of [-1, 1]) { const a = realmToDungeon(spec.x0 + d.x + s * EG_DOOR.halfW - EG_DOOR.post / 2, d.y, d.z - EG_DOOR.post / 2), e = realmToDungeon(spec.x0 + d.x + s * EG_DOOR.halfW + EG_DOOR.post / 2, d.y + EG_DOOR.h, d.z + EG_DOOR.post / 2); box(a[0], a[1], a[2], e[0], e[1], e[2]); }
       }
     }
-    for (const b of spec.bands) quad(egToDungeon(spec, b.x - b.halfW, b.y, b.z0), egToDungeon(spec, b.x + b.halfW, b.y, b.z0), egToDungeon(spec, b.x + b.halfW, b.y, b.z1), egToDungeon(spec, b.x - b.halfW, b.y, b.z1));
+    for (const b of spec.bands) if (!egWallBand(spec, b)) quad(egToDungeon(spec, b.x - b.halfW, b.y, b.z0), egToDungeon(spec, b.x + b.halfW, b.y, b.z0), egToDungeon(spec, b.x + b.halfW, b.y, b.z1), egToDungeon(spec, b.x - b.halfW, b.y, b.z1));
     for (const q of spec.caves) {
       for (const s of [-1, 1]) { const a = egToDungeon(spec, s * (q.halfW + 0.6), q.y - 1.2, q.z0), e = egToDungeon(spec, s * q.halfW, q.y + q.height, q.z1); box(Math.min(a[0], e[0]), a[1], a[2], Math.max(a[0], e[0]), e[1], e[2]); }
       const a = egToDungeon(spec, -q.halfW - 0.6, q.y + q.height, q.z0), e = egToDungeon(spec, q.halfW + 0.6, q.y + q.height + 1, q.z1);

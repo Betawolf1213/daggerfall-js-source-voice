@@ -20,9 +20,15 @@
 // (world/sdSteps.js gustAt, Iron Footing taking its share); a Drop's landing stands walled on its far side and flanks to
 // EG_DROP_WALL_H. A Vent's tell and bite are the fight's (scenes/egFight.js - the telegraph pass).
 //
+// THE RAMPART'S GROUND (section 8.3): a FALLING WALL's walkway stands here as segments EG_WALL_SEG_M long (world/egHall.js
+// leaves it out of the circle's mesh and collider), each falling once the fallen edge (net/egLaw.js egWallFallenZ - 20 s
+// after the hall's wake, 1.5 m/s, systems/spireKit.js spireWake) passes it; a member caught is cast to the nearest standing
+// segment ahead. A FORGE BRIDGE's walkway is a conveyor: whoever stands on it is carried toward the arrival plate at
+// EG_BELT_MPS.
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
-import { egCircleSpecs, EG_VOID_Y } from '../net/egLaw.js';
+import { egCircleSpecs, egWallFallenZ, EG_VOID_Y, EG_BELT_MPS } from '../net/egLaw.js';
 import { buildStepModel, stepTris } from '../world/sdStepsModel.js';
 import { SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_STEP_THICK, gustAt } from '../world/sdSteps.js';
 import { ensureSdStepsArt } from './sdSteps.js';
@@ -30,7 +36,7 @@ import { faces } from '../world/gateModel.js';
 import { packRealmFaces, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_EDGE_RECORD } from '../world/sdRealm.js';
 import { identity } from '../world/mat4.js';
 import { egPieceAt, egPendAt, egPendHits, EG_PEND_HALF, EG_DROP_WALL_H } from '../net/egSpanLaw.js';
-import { spireFooting } from '../systems/spireKit.js';
+import { spireFooting, spireWake } from '../systems/spireKit.js';
 
 /** Where a gone step's bucket waits (far under every floor). */
 export const EG_STEP_GONE_Y = -400;
@@ -121,6 +127,9 @@ export function egPendModel() {
 const STEP_MESH_KIND = Object.freeze({ drift: 'drift', beat: 'beat', riser: 'riser', crumble: 'crumble' });
 const _at = { dx: 0, dz: 0, solid: true };
 const _gust = { push: 0, warn: false };
+/** A Falling Wall's segment (m along the walkway), and how fast a fallen one drops out of sight (m/s/s). */
+export const EG_WALL_SEG_M = 2;
+const WALL_FALL_G = 9.8;
 /** The longest frame a Gust pushes for (s) - a hitch is not a gale (scenes/sdSteps.js's BREATH_DT_MAX). */
 const EG_GUST_DT_MAX = 0.1;
 
@@ -151,6 +160,31 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
     if (gs.length) gusts.push({ spec, z0: Math.min(...gs.map((q) => q.z - q.d / 2)) - 4, z1: Math.max(...gs.map((q) => q.z + q.d / 2)) + 4 });
   }
   let pendMesh = null;
+  /** THE FALLING WALLS: each hall's walkway as segments, each its bucket, its draw and the moment it fell */
+  const walls = [];
+  for (const spec of specs) {
+    if (spec.variant !== 'fallingwall' || !spec.walk) continue;
+    const w = spec.walk, n = Math.max(1, Math.ceil((w.z1 - w.z0) / EG_WALL_SEG_M)), d = (w.z1 - w.z0) / n;
+    for (let k = 0; k < n; k++) walls.push({ spec, k, z0: w.z0 + k * d, z1: w.z0 + (k + 1) * d, w: 2 * w.halfW, d, key: `eg:wall:${spec.h}:${k}`, T: [0, EG_STEP_GONE_Y, 0], draw: null, goneAt: null });
+  }
+  /** each hall's conveyor (a Forge Bridge's walkway) */
+  const belts = specs.filter((q) => q.variant === 'forgebridge' && q.walk).map((q) => ({ spec: q, w: q.walk }));
+  /** A Falling Wall's fallen edge in hall `spec` at `t` (s): -Infinity until its hall wakes. */
+  const fallenOf = (spec, t) => { const wk = spireWake(); return wk.h === spec.h && wk.hw > 0 ? egWallFallenZ(spec, wk.hw, t * 1000) : wk.h > spec.h ? Infinity : -Infinity; };
+  function poseWalls(t) {
+    for (const g of walls) {
+      const edge = fallenOf(g.spec, t), gone = g.z1 <= edge;
+      if (gone && g.goneAt == null) g.goneAt = t;
+      if (!gone) g.goneAt = null;
+      const [x, y, z] = realmToDungeon(g.spec.x0 + g.spec.walk.x, 0, (g.z0 + g.z1) / 2);
+      g.T[0] = x; g.T[2] = z; g.T[1] = gone ? EG_STEP_GONE_Y : y;
+      if (g.draw) {
+        const drop = gone ? 0.5 * WALL_FALL_G * (t - g.goneAt) ** 2 : 0, seen = drop < 30;
+        if (seen) translate(g.draw.object.matrix, x, y - drop, z); else g.draw.object.matrix.fill(0);
+        g.draw.hidden = !seen;
+      }
+    }
+  }
   const translate = (m, x, y, z) => { m.fill(0); m[0] = m[5] = m[10] = m[15] = 1; m[12] = x; m[13] = y; m[14] = z; return m; };
 
   /** A step stood where the law has it at `t`: its bucket's place (sunk while it is gone) and its draw's. */
@@ -176,6 +210,17 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
     if (st.pend) { const w = egPendAt(s, t); const [px, py, pz] = realmToDungeon(st.spec.x0 + w.x, s.y, w.z); translate(st.pend.object.matrix, px, py, pz); }
   }
 
+  /** A cast-back's landing kept off a fallen walkway: on a Falling Wall, the nearest standing segment ahead of its fallen
+   *  edge (section 8.3 - "cast to the nearest standing segment ahead"). */
+  function wallSafe(p, t) {
+    const [rx, , rz] = dungeonToRealm(p[0], p[1], p[2]);
+    const spec = specs.find((q) => q.variant === 'fallingwall' && q.walk && Math.abs(rx - q.x0 - q.walk.x) <= q.walk.halfW + 1 && rz >= q.walk.z0 - 1 && rz <= q.walk.z1 + 1);
+    if (!spec) return p;
+    const edge = fallenOf(spec, t);
+    if (rz > edge + 0.5) return p;
+    const ahead = walls.find((g) => g.spec === spec && g.z1 > edge && g.z0 >= edge);
+    return ahead ? realmToDungeon(spec.x0 + spec.walk.x, 0, (ahead.z0 + ahead.z1) / 2) : p;
+  }
   return {
     /** Stand every step into the dungeon's draws and collider - once. */
     stand({ dynamicDraws, collider = null }) {
@@ -194,6 +239,14 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
         const { positions, indices } = trisOf(st.s);
         try { collider?.addMesh?.(st.key, positions, indices, identity(), () => st.T); } catch (e) { console.warn('[eg] a step\'s collider', e?.message ?? e); }
       }
+      for (const g of walls) {
+        const mk = `wall:${g.w}x${g.d}`;
+        if (!meshes.has(mk)) meshes.set(mk, make(egSlabModel(g.w, g.d)));
+        const gpu = meshes.get(mk);
+        if (gpu) { g.draw = { gpu, object: { matrix: new Float32Array(16) }, noShadow: true, texRemap: null }; draws.push(g.draw); }
+        const { positions, indices } = egSlabTris(g.w, g.d);
+        try { collider?.addMesh?.(g.key, positions, indices, identity(), () => g.T); } catch (e) { console.warn('[eg] a wall segment\'s collider', e?.message ?? e); }
+      }
       return true;
     },
     /**
@@ -207,6 +260,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
       const on = key ? byKey.get(key) ?? null : null;
       if (on && live && on.s.kind === 'crumble' && on.touched == null) on.touched = t;
       for (const st of steps) pose(st, t);
+      poseWalls(t);
       if (on && on.solid && on.wasSolid) {
         const dx = on.T[0] - on.was[0], dy = on.T[1] - on.was[1], dz = on.T[2] - on.was[2];
         if (dx || dy || dz) body.carryBy?.(dx, dy, dz);
@@ -219,6 +273,11 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
         const g = gusts.find((q) => rx >= q.spec.x0 - 40 && rx <= q.spec.x0 + 40 && rz >= q.z0 && rz <= q.z1);
         if (g) { gustAt(t, _gust); if (_gust.push) body.collider?.move?.(body.pos, _gust.push * (1 - footing) * Math.min(dt, EG_GUST_DT_MAX), 0, 0, body.height, !!body.grounded && !body.jumping); }
       }
+      // THE FORGE BRIDGE (section 8.3): its walkway runs toward the arrival plate, carrying whoever stands on it
+      if (dt > 0 && key === EG_FLOOR_KEY && body.grounded) {
+        const bt = belts.find((q) => Math.abs(rx - q.spec.x0 - q.w.x) <= q.w.halfW && rz >= q.w.z0 && rz <= q.w.z1);
+        if (bt) body.collider?.move?.(body.pos, 0, 0, -EG_BELT_MPS * Math.min(dt, EG_GUST_DT_MAX), body.height, true);
+      }
       // THE PENDULUM (section 10.3): a touch of its weight is a cast-back - Iron Footing III stands it
       if (footing < 1) {
         for (const st of steps) {
@@ -227,8 +286,9 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
         }
       }
       // the cast-back's place: the last floor I stood on (a plate, an island, a court, a bridge), or a still step
-      if (key === EG_FLOOR_KEY || (on && on.solid && (on.s.kind === 'still' || on.s.kind === 'ledge' || on.s.kind === 'drop' || on.s.kind === 'vent' || on.s.kind === 'gust'))) { safe = [body.pos[0], body.pos[1], body.pos[2]]; safeY = body.pos[1]; }
-      if (safe && body.pos[1] < safeY + EG_VOID_Y) { play(107, 0.6, 0.6); return [safe[0], safe[1] + 0.2, safe[2]]; }
+      const onWall = key ? walls.find((g) => g.key === key) : null;
+      if (key === EG_FLOOR_KEY || onWall || (on && on.solid && (on.s.kind === 'still' || on.s.kind === 'ledge' || on.s.kind === 'drop' || on.s.kind === 'vent' || on.s.kind === 'gust'))) { safe = [body.pos[0], body.pos[1], body.pos[2]]; safeY = body.pos[1]; }
+      if (safe && body.pos[1] < safeY + EG_VOID_Y) { play(107, 0.6, 0.6); const p = wallSafe(safe, t); return [p[0], p[1] + 0.2, p[2]]; }
       return null;
     },
     /** Where the void would cast me back to now (the dungeon's frame), or null - and set it (a pull's landing). */
@@ -236,6 +296,8 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
     setSafe(p) { safe = p ? [p[0], p[1], p[2]] : null; safeY = p ? p[1] : 0; },
     /** Every step as it stands (tests). */
     get steps() { return steps.map((st) => ({ h: st.spec.h, i: st.s.i, kind: st.s.kind, key: st.key, T: [...st.T], solid: st.solid })); },
+    /** Every Falling Wall segment as it stands (tests). */
+    get walls() { return walls.map((g) => ({ h: g.spec.h, k: g.k, z0: g.z0, z1: g.z1, key: g.key, T: [...g.T], gone: g.T[1] === EG_STEP_GONE_Y })); },
     /** Gone with the level: every mesh freed. */
     clear() {
       for (const m of meshes.values()) if (m) { try { renderer?.destroyMesh?.(m); } catch { /* gone */ } }
@@ -243,6 +305,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
       if (pendMesh) { try { renderer?.destroyMesh?.(pendMesh); } catch { /* gone */ } }
       pendMesh = null;
       for (const st of steps) { st.draw = null; st.pend = null; }
+      for (const g of walls) g.draw = null;
       draws = null; safe = null;
     },
   };

@@ -40,3 +40,12 @@ export function registerSpireFooting(fn) { _footing = typeof fn === 'function' ?
 export function spireFooting() {
   try { const v = Number(_footing?.() ?? 0); return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0; } catch { return 0; }
 }
+
+/** EG-FULL LAYER TWO: the breach's hall now and its wake on the relay's clock (`{ h, hw }`, ms - 0 before it wakes),
+ *  registered by the world host from the breach's client, read by the spans (scenes/egSpan.js - a Falling Wall falls from
+ *  its wake). */
+let _wake = null;
+export function registerSpireWake(fn) { _wake = typeof fn === 'function' ? fn : null; }
+export function spireWake() {
+  try { const w = _wake?.(); return w && Number.isFinite(w.h) && Number.isFinite(w.hw) ? { h: w.h, hw: w.hw } : { h: 0, hw: 0 }; } catch { return { h: 0, hw: 0 }; }
+}
