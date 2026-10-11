@@ -112,7 +112,8 @@ test('EG-PLAY THE ROOM: it admits its company alone, inside the open window - a 
     await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'in', z, lv: 20, bv: 1 }));
     assert.equal(eg.store.get(EG_KEY).mem['acct-mac'].in, 1);
     await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'in', z, lv: 20, bv: 1 }));
-    assert.equal(egs(ws).at(-1).m, 'the order is spent');
+    assert.equal(eg.store.get(EG_KEY).zs.length, 1, 'a counted member asked again (a reload, a new circle) spends nothing more');
+    assert.notEqual(egs(ws).at(-1).m, 'the order is spent', 'and is never refused');
     // the gather
     await eg.pose(ws, at(spec.x0 + spec.arrive.x, spec.arrive.z));
     await beat(EG_GATHER_MS - 1000);

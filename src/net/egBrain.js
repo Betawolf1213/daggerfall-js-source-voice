@@ -97,6 +97,7 @@ export function egAdmitWord(B, sub, now) {
 export function egEnter(B, sub, ez, lv, now) {
   const no = egAdmitWord(B, sub, now);
   if (no) return no;
+  if (B.mem[sub]?.in) { B.mem[sub].seenAt = now; return null; }   // counted already (a reload, a new circle's room): nothing to spend
   if (B.zs.includes(ez)) return 'the order is spent';
   B.zs = [...B.zs, ez].slice(-64);
   const c = B.co.find((x) => x.sub === sub);

@@ -1379,7 +1379,7 @@ export function accountEg({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
     admit: (b) => post('/v1/eg/admit', { b }),
     claim: (receipt) => post('/v1/eg/claim', { receipt }),
     me: () => storedSession(storage)?.id ?? null,
-    guest: () => storedSession(storage)?.kind === 'guest',
+    guest: () => (storedSession(storage)?.kind ?? null) === 'guest',
   };
 }
 

@@ -258,6 +258,8 @@ import { createSdRemnant } from './sdRemnant.js';   // SD8c: the Brass Remnant i
 import { sdMarksOf } from '../net/sdMarks.js';   // SD18c: its Hollow's Ending - the light it burns with
 import { SD_NO_RIFT } from '../net/sdLaw.js';   // SD4b: the Rift's word when nobody can answer it
 import { isSdRealm, SD_REALM_TEXT, SD_WAY_BACK_Z, SD_WAY_BACK_SIZE, SD_THRESHOLD_RIM } from '../world/sdRealm.js';   // SD5a: the Shattered Hour - a made place, its refusals, its way back
+import { isEgHall, EG_HALL_TEXT } from '../world/egHall.js';   // EG-PLAY: an Elite Breach's circle - a made place, its refusals
+import { createEgSpan } from './egSpan.js';   // EG-PLAY: its spans' steps, ridden before the motor
 import { realmToDungeon } from '../net/sdBrain.js';   // SD5a: the realm's frame
 import { dungeonTier } from '../systems/dungeonTier.js';   // SD4a: the location's tier, the one law (TIER1)
 import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemyBasics.js';
@@ -1017,6 +1019,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // elites among them, and its loot +50%. Read once here; every arm below asks it.
   const _superTier = dungeonTier(dfLocation) === 'super';
   const _sdRealm = isSdRealm(dfLocation);   // SD5a: the Shattered Hour, read once - every arm below asks the flag
+  const _egHall = isEgHall(dfLocation);   // EG-PLAY: an Elite Breach's circle, read once
   // REST3 (2026-10-03, bible/06-Systems/Rest-Arc.md section 4; Mac: "Dungeon layouts now recieve multiple strategic
   // placements for campfires"): THE DUNGEON'S OWN FIRES (world/dungeonFires.js). Placed here - after every block's
   // geometry is in the collider, before the flats are batched and the lights' flicker is sized - so a placed fire is a
@@ -1393,7 +1396,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // stands while the ladder does (read at each spawn) - the ladder off, DFU's own foes, as its champions and elites go
   // AUDIT BAL: never the port's own stages that wear a Crypt's type for want of one (the arena's floor, the gate's court,
   // the Shattered Hour - world/arenaFloor.js, gateArena.js, sdRealm.js) - their fights are tuned, and their health the relay's
-  const _placeVeteran = isGateArena(dfLocation) || isArenaFloor(dfLocation) || _sdRealm ? 0 : placeVeteran(dungeonRarityTier(dfLocation.mapTableData?.dungeonType));
+  const _placeVeteran = isGateArena(dfLocation) || isArenaFloor(dfLocation) || _sdRealm ? 0 : _egHall ? 0 : placeVeteran(dungeonRarityTier(dfLocation.mapTableData?.dungeonType));
   /** `puppet`: AUDIT BAL - another client's foe stands at this place too. The place is every client's (its tier, the
    *  ladder forced on online), so a puppet takes it - its blows on me as hard as on its owner; the owner's own standing
    *  (Master Skills) is the owner's, and the puppet's health the owner's record's (`k`, `h`). */
@@ -1910,6 +1913,17 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     if (!sdSteps) return null;
     if (!_sdStepsStood) { _sdStepsStood = true; sdSteps.stand({ dynamicDraws, collider }); }
     return sdSteps.ride(opts.sdClock?.() ?? performance.now() / 1000, dt, body, live);
+  }
+  // EG-PLAY (Elite-Gates.md sections 8 and 10): AN ELITE BREACH'S SPANS (scenes/egSpan.js) - every step of the circle's
+  // courses, stood the first frame the outer host asks and moved on the realm's clock, ridden BEFORE the motor (the Steps'
+  // way); the landing of the void's cast-back answered to the mode machine
+  const egSpan = _egHall ? createEgSpan({ renderer, audio, seed: dfLocation.egSeed, c: dfLocation.egCircle }) : null;
+  let _egSpanStood = false;
+  /** One frame of the spans, before the motor: the landing of a cast-back, or null. */
+  function egSpanRide(dt, body, live) {
+    if (!egSpan) return null;
+    if (!_egSpanStood) { _egSpanStood = true; egSpan.stand({ dynamicDraws, collider }); }
+    return egSpan.ride(opts.sdClock?.() ?? performance.now() / 1000, dt, body, live);
   }
   // SD8c (Super-Dungeons.md section 10): THE BRASS REMNANT in the Shattered Hour (scenes/sdRemnant.js) - the Remnant, its
   // Echoes and the Reset's Hearts, stood the first frame I stand here and placed every frame where the realm's fight (the
@@ -8098,6 +8112,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // tier of the record the load had just restored - every step of the run went gray - stamped it and pruned the
   // store the save carried; quickLoad's re-fetch below came too late to keep any of it.
   let automapRec = isGateArena(dfLocation) || isArenaFloor(dfLocation) || _sdRealm ? detachedAutomapRecord()   // ARENA2: nor the arena's floor   // AUDIT 27h M1: the court keeps no map, so it takes no slot from one
+    : _egHall ? detachedAutomapRecord()   // EG-PLAY: nor the Spire
     : enterDungeonAutomap(automapKey, classicMinutesRef.value, { fromLoad: !!opts.automapFromLoad });
   // ROAD-C c2/S1: the reveal MODEL (rows in DFU's block/element/model
   // walk order, the point-query hash grid, the draw partition). Bind
@@ -9002,7 +9017,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         loadingPrevented: () => !!opts.dungeonOnline?.(),
         timers: (o) => opts.timers?.(o) ?? null,   // TIMERS1: the world host's source, through worldModes
         post: () => opts.post?.() ?? null,   // SERVER-POST: the mailbox's box, the world host's through worldModes
-        savingPrevented: () => isGateArena(dfLocation) || isArenaFloor(dfLocation) || _sdRealm,   // ARENA2: nor on the arena's sand   // WB3b: the pause's Save says why, in the court
+        savingPrevented: () => isGateArena(dfLocation) || isArenaFloor(dfLocation) || _sdRealm || _egHall,   // EG-PLAY: nor in the Spire   // ARENA2: nor on the arena's sand   // WB3b: the pause's Save says why, in the court
         // SAV4: the slot window's seams over the same two verbs.
         playerName: () => playerEntity.name, playerId: () => playerEntity.characterId ?? null,
         saveAs: (saveName) => ctx.quickSave?.(saveName),
@@ -9025,6 +9040,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       if (activeOverlay) return;
       if (isGateArena(dfLocation)) { hudText.add(COURT_TEXT.noMap); return; }
       if (_sdRealm) { hudText.add(SD_REALM_TEXT.noMap); return; }   // SD5a: the Hour keeps no map, as the Deadlands keep none
+      if (_egHall) { hudText.add(EG_HALL_TEXT.noMap); return; }   // EG-PLAY: nor the Spire
       if (isArenaFloor(dfLocation)) { hudText.add(ARENA_TEXT.refuse.map); return; }   // ARENA2: a made level with nothing to chart   // WB3b: an empty level, and no place to chart
       // EM3: THE SKIN FORK, at the one place this host builds the map.
       // The classic arm answers null without its native art and the
@@ -9231,6 +9247,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       if (activeOverlay) return;
       if (isGateArena(dfLocation)) { hudText.add(COURT_TEXT.noRest); return; }
       if (_sdRealm) { hudText.add(SD_REALM_TEXT.noRest); return; }   // SD5a: nor a rest
+      if (_egHall) { hudText.add(EG_HALL_TEXT.noRest); return; }   // EG-PLAY: nor in the Spire - a Redoubt's rest is its own
       if (isArenaFloor(dfLocation)) { hudText.add(ARENA_TEXT.refuse.rest); return; }   // ARENA2: no rest on the sand (the duel's law)   // WB3b: an enemy is always near - the boss
       // S40: the gate itself moved to systems/restSession.js. It was
       // written out here because this was the only host that could
@@ -9362,6 +9379,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     quickSave(saveName = QUICK_SAVE_NAME, { quiet = false, sink = null } = {}) {   // REALM P0.5: a quiet checkpoint takes no shot and says only a failure; P1.3: a realm character's goes to the service
       // WB3b: a save made in the court would load into a place that no longer stands (the court is the day's alone)
       if (_sdRealm) { if (!quiet) hudText.add(SD_REALM_TEXT.noSave); return false; }   // SD5a: nor a save
+      if (_egHall) { if (!quiet) hudText.add(EG_HALL_TEXT.noSave); return false; }   // EG-PLAY: nor in the Spire
       if (isGateArena(dfLocation)) { if (!quiet) hudText.add(COURT_TEXT.noSave); return false; }
       if (isArenaFloor(dfLocation)) { if (!quiet) hudText.add(ARENA_TEXT.refuse.save); return false; }   // ARENA2: a made level no save re-enters
       const snap = snapshotPlayer(playerEntity, {
@@ -10294,6 +10312,10 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     /** SD7b: the Unmoored Steps' frame, BEFORE the motor (the mode machine's, beside the movers' ride): the steps moved and
      *  `body` carried; while `live`, the breath, the touch and the void - the landing of a cast-back, or null. */
     sdStepsRide(dt, body, live = true) { return sdStepsRide(dt, body, live); },
+    /** EG-PLAY: an Elite Breach's spans' frame, BEFORE the motor - the landing of the void's cast-back, or null; and the
+     *  place it would cast me back to set (a pull's landing). */
+    egSpanRide(dt, body, live = true) { return egSpanRide(dt, body, live); },
+    egSpanSafe(p) { egSpan?.setSafe(p); },
     /** AUDIT SD II (L2 F10): the Shattered Hour's hall and arena posed BEFORE the world pass draws them (the mode machine's
      *  dungeon arm, with no window up, as the Steps are ridden before the motor): the Orrery's hall stood, its word heard,
      *  its hands turned (SD6c); the Brass Remnant stood, my `in`, its bodies placed (SD8c). Posed in drawFoes, after the
@@ -10576,6 +10598,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       sdEnd?.clear();   // SD4b: the Rift and the Return, and the bell
       sdHall?.clear();   // SD6c: the hall's meshes
       sdSteps?.clear();   // SD7b: the Steps' meshes
+      egSpan?.clear();   // EG-PLAY: an Elite Breach's spans' meshes
       sdRemnant?.clear();   // SD8c: the Remnant's
       sdHang?.clear();   // SD-LOOK S11: the hang's
       // NT1 (F214): the context minted its own cast engine; a spell in

@@ -70,7 +70,7 @@ export function createEgLink({ now, say = () => {}, onReceipt = () => {}, onRefu
       s = foldEg(s, w, now());
       if (w.k === 'no') { onRefused(w.m); say(w.m.charAt(0).toUpperCase() + w.m.slice(1) + '.'); }
     },
-    state: () => s,
+    state: () => /** @type {any} */ (s),
     now,
     /** Out of the breach: everything but a call still standing forgotten. */
     clear() { s = s.call ? { ...EG_STATE_EMPTY, call: s.call, b: s.call.b, seed: s.call.seed, op: s.call.op, rh: s.call.rh } : EG_STATE_EMPTY; },
