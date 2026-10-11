@@ -21,7 +21,7 @@ import { SKY_CLEAR } from '../render/renderer.js'; import { centreFromFeet } fro
 import { FlatAnimator, armFlatAnim } from '../render/flatAnimation.js';   // FA1: the flats that move
 import { racialSuppressPopulationSpawns, racialSuppressTalk, lycanthropeMoveSound } from '../systems/lycanthropy.js';   // V4: the transformed gates; LM1: the 4-20s move-sound loop; DISC10-E L3: the inventory refusal moved INTO the window door
 import { Arch3dFile } from '../formats/arch3dFile.js';
-import { requestLook, makeLookGate, bindCursorToggle } from '../player/pointerLock.js';   // U45: bindCursorToggle is PlayerMouseLook.cursorActive
+import { requestLook, makeLookGate, bindCursorToggle, cursorActive } from '../player/pointerLock.js';   // U45: bindCursorToggle is PlayerMouseLook.cursorActive
 import { attachTouch } from '../ui/touch.js';
 import { quickslotHand } from '../ui/quickslotTags.js';   // DISC21-C: an empty quickslot press reads the hand
 import { attachGamepad } from '../ui/gamepadInput.js';   // GP1: the pad speaks the same hooks
@@ -69,6 +69,7 @@ import { mobilePersonName, lootPileName } from '../systems/worldTooltips.js';   
 import { wagonHoverName } from '../player/eotbWagon.js';   // WORLD-HOVER M6: the cart's word, beside its producer
 import { waterSourceHoverName } from '../systems/survival/items.js';   // WORLD-HOVER M6: a water source's word, beside its producer
 import { mwViewFrame, mwViewWheel, mwViewDrawBody, mwViewFootstep, mwViewAttachWagon, mwViewDrawWagon, mwViewWagonTargets, setEotbCartYields, mwViewWagonActivate, mwViewFirstPerson } from '../player/mwView.js';   // MW-D25: the Morrowind camera; AUDIT-EOTB2: the sprite's stride
+import { mwViewAttachHorse, mwViewSaddle } from '../player/mwView.js';   // COATS3D: the 3D horse under the Morrowind body - its rig, the saddle the body sits
 import { PITCH_LIMIT } from '../player/mwCamera.js';   // MW-D30: camera.cpp:323-331's own clamp
 import { getStaticDoors } from '../world/staticDoors.js';
 import { createDataPipeline } from './dataPipeline.js';
@@ -98,10 +99,17 @@ import { timeScale as hccTimeScale } from '../systems/timeScale.js';   // AUDIT 
 import { horseNameTooltip } from '../ui/horseNameTooltip.js';   // AUDIT HCC U6: the mod's HUD label, both skins
 import { createHorseCartPool } from './horseCartPool.js';   // HCC: the presentation, world.js's twin on this host
 import { wagonPoolDeps } from '../world/wagonModels.js';   // WAGONS1: the pool's two words, one seam for both hosts
+import { birthHorses, riddenHorseLook } from '../systems/horseCoats.js';   // COATS1: the horses born; COATS3D: and the ridden one's look, for the 3D horse
 import { createHorseCartRuntime } from '../systems/horseCart.js';   // HCC: TrailingWagonRuntime over this host's seams
 import { setHoldingsProvider, stableProviderFor } from '../ui/holdingsPages.js';   // HOLDINGS: the Stable page over this host's horse and wagon (no boats here)
 import { isQualifyingThreatState } from '../systems/horseFollow.js';   // HCC: CollectThreats' qualification
 import { totalWeight } from '../systems/inventory.js';   // HCC: PlayerEntity.WagonWeight
+import { createUpkeep, horseWhereOf, upkeepReach, registerUpkeepUses } from '../systems/upkeepRuntime.js';   // STEED1/WAGONS4: world.js's twin
+import { createSaddleHost } from './saddleHost.js';   // STEED-UI: world.js's twin - the saddle panel
+import { getBinding } from '../systems/inputActions.js';   // STEED-UI: the saddle panel's keys, named as the helm names them
+import { buttonText } from '../systems/controlsConfig.js';
+import { horseCareOn, wagonUpkeepOn } from '../systems/upkeepSwitch.js';
+import { setGallopGate } from '../systems/transport.js';
 import { wagonKgFor, activeWagonKind, horseCountOf, wagonTeamShort } from '../systems/wagonKinds.js';   // HCC: ItemHelper.WagonKgLimit - WAGONS1: the driven wagon's
 import { SEATED_EYE_HEIGHT } from '../player/seatPose.js';   // WAGONS3: the driver's seated eye
 import { InputMessageBoxWindow } from '../ui/inputMessageBox.js';   // HCC: the horse's name
@@ -235,7 +243,7 @@ import {
 import { ROTOR_HUB, rotorPhase, advanceRotor, mountRotor, MILL_SOUND, millSoundPosition } from '../world/windmills.js';   // WM4c: and the hum
 import { BODY } from '../world/windmillMesh.js';   // WM2d: the tower, for the collider
 import { remapSubMeshes } from '../world/texRemap.js';   // WM3: the one climate/dungeon remap seam
-import { isEnhanced } from '../systems/uiSkin.js';
+import { isEnhanced, isEnhancedPlus } from '../systems/uiSkin.js';
 import { getPref } from '../systems/uiPrefs.js';   // WATER1: the water's switch
 import { createCoverIndex, isCoverFlat, coverProxies } from '../ai/cover.js';   // TACT1: billboards are cover
 import { createLowPolyTrees } from '../systems/lowPolyTreesAssets.js';   // LPT1: Low Poly Trees - the host's one door (as world.js)
@@ -276,7 +284,7 @@ import { HeadBobber } from '../player/headBobber.js';   // AUDIT 28 W10: HeadBob
 import { createClimbFeelHost } from '../player/climbFeel.js';   // CLIMB4: the climb's camera
 import { lastHealthLost, lastHealthLostPercent } from '../ui/hudVitals.js';   // AUDIT 28 W9: the detector's loss
 import { fieldOfView } from '../ui/viewSettings.js';   // MENU: Video/FieldOfView, one home for five hosts
-import { keyEdges, noteKeyDown, noteKeyUp, beginInputFrame, pressed, released, actionsOf, held, moveHeld, anyMove, swallowBrowserKey, isTextEntryTarget, mouseCode, isSwingButton, keyboardLook, routeAction, installContextMenuGuard, POLLED_ACTIONS, QUICKSLOT_ACTIONS, swingKeyHeld } from '../ui/input.js';
+import { keyEdges, noteKeyDown, noteKeyUp, beginInputFrame, pressed, released, actionsOf, held, moveHeld, anyMove, swallowBrowserKey, isTextEntryTarget, mouseCode, isSwingButton, keyboardLook, routeAction, installContextMenuGuard, POLLED_ACTIONS, QUICKSLOT_ACTIONS, swingKeyHeld, bindings } from '../ui/input.js';
 import { useQuickslot, swapQuickslot, offHandQuickslot, spellQuickslotPress, offHandOffersSwap, tickQuickslotHold } from '../systems/quickslots.js';   // QS2/QS4: the diamond's performers   // QS6: the spell slot, the off hand's swap question, and the hold machine
 import { armUnloadGuard, releaseUnloadGuard } from '../systems/unloadGuard.js';   // MAC-L3: one door in front of every way out of a running game; AUDIT-MACL F3: ...and down for a door the game opened itself   // I2: the rebindable registry; AUDIT 39r: the mouse half of the held set
 import { hudShortcutKey, retroToggleKey, hudRenderEnabled } from '../ui/hudShortcuts.js';   // AUDIT 64 F36/F37: DaggerfallHUD.Update's LargeHUDToggle / HUDToggle arms; AUDIT PRE-MERGE 1003 U8: the arena's HUD hides with the toggle
@@ -437,6 +445,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   const dataReady = ensureAudio(fetchBytes);   // SIB1: awaited before the flats, for the mod's own files
 
   const { textureFiles, getTexture, uploadRecord, uploadRecordFrame, getGpuMesh, getWindmillMeshes, getMachineryParts, gpuMeshes, cpuModels } = pipeline;
+  mwViewAttachHorse(renderer);   // COATS3D: the 3D horse under the Morrowind body
   mwViewAttachWagon({ getGpuMesh, cpuModels }); const EOTB_WAGON_PACK = Object.freeze({ dungeon: Object.freeze({ wagonPrompt: true }) });   // EOTB-IL: SpawnWagon's CreateDaggerfallMeshGameObject(41239) through this host's pipeline; CheckWagon's AllowDungeonWagonAccess() + dfuiOpenInventoryWindow (IL_228b-IL_229f). One line, so the cites below it hold
   let _surfPath = false;   // EOTB-IL: PlayerMotor.OnExteriorPath, as the frame's surface model last answered it
 
@@ -1456,6 +1465,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     lookPitch: () => cam.pitch, lookYaw: () => cam.yaw, groundHeightAt: (x, z) => collider.heightAt(x, z),
     enhancedRiding: () => (rrRidingOn() ? { terrainFollowing: rrRidingSetting('followTerrainEnabled') === true, softenFollow: rrRidingSetting('followTerrainSoftenFactor') ?? 8 } : null),
     horseCart: () => hccRuntimeOn(),   // HCC: TrailingWagonTransportWindow's gate and route (declared below; read at open)
+    cartRefusal: () => upkeep.brokenWhy(),   // WAGONS4: the classic window's Cart row, a broken wagon dark (declared below; read at open)
   });
   preloadCharSheetArt({ renderer, fetchBytes, palette });   // U8a: INFO00I0 warms at boot
   warmLevelUpWindow();   // LV1's audit: the level-up window opens because the GAME decided, so its chunk warms at boot rather than inside a pause nobody asked for
@@ -1726,13 +1736,38 @@ export async function bootExterior(canvas, renderer, params, status) {
   // RW1 x WAGONS2 (FINAL AUDIT): the wagons stand in the street a window looks out on, as world.js has them - the fixed
   // city stands no caravan room, so none is left out
   renderer.outsideViewDraws?.add(({ renderer: r }) => { if (hccOn()) hcc.drawOutside(r, null); });
+  // STEED1 / WAGONS4: world.js's twin - horse care and wagon upkeep over this host's pack and the character's clock
+  const upkeep = createUpkeep({
+    items: () => playerEntity.items ?? [], now: () => ownMinutes(),
+    horseCare: horseCareOn, wagonUpkeep: wagonUpkeepOn,
+    where: () => horseWhereOf(hccRuntimeOn()?.stableView() ?? null),
+    stores: () => (upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()).wagonNear ? playerEntity.wagonItems ?? [] : []),   // the wagon's load, where it is in reach
+    say: (l) => townTalk.say(l),
+  });
+  /** The clock passed by an act of upkeep (a kit's hour), as a camp meal's: the ticker, then the encounters it owes. */
+  const upkeepPass = (n) => { playerTicker.advance(n); runEncounterTick(walkMode ? player.pos : cam.pos, true); };
+  setGallopGate((mode, mods) => upkeep.gallopGate(mode, mods));
+  registerUpkeepUses(upkeep, {
+    reach: () => upkeepReach(hccRuntimeOn(), !!hccRuntimeOn()), horseCare: horseCareOn, wagonUpkeep: wagonUpkeepOn,
+    pass: upkeepPass,
+  });
+  const wagonLoadShare = () => { const lim = wagonKgFor(playerEntity); return lim > 0 ? totalWeight(playerEntity.wagonItems ?? []) / lim : 0; };
+  let _upkeepOdo = null;
+  // STEED-UI: world.js's twin - the saddle panel. This host has no view key (the view's toggle is world.js's), so no View
+  const saddleKeyLabel = (action) => { const b = bindings(); const c = getBinding(b, action) ?? getBinding(b, action, false); return c && !/^Joystick/.test(c) ? buttonText(c) : ''; };
+  const saddleHost = createSaddleHost({
+    upkeep, runtime: () => hccRuntimeOn(), items: () => playerEntity.items ?? [],
+    wagonKg: () => totalWeight(playerEntity.wagonItems ?? []), wagonLimit: () => wagonKgFor(playerEntity),
+    say: (l) => townTalk.say(l), pass: upkeepPass, openStable: () => hudCtx.togglePause({ at: 'holdings' }),
+    canView: () => false, toggleView: () => {}, foot: () => mountRig.setMode(TRANSPORT_MODES.Foot),
+  });
   const hccRuntime = createHorseCartRuntime({
     ready: () => walkMode,
     transport: {
       get: () => player.transportMode, set: (m) => mountRig.setMode(m),
       hasCart: () => hasCart(playerEntity.items ?? []), hasHorse: () => hasHorse(playerEntity.items ?? []), isOnShip: () => false,
     },
-    teamShort: () => wagonTeamShort(playerEntity.items ?? []),   // WAGONS3: a pair's wagon takes its pair
+    teamShort: () => wagonTeamShort(playerEntity.items ?? []) ?? upkeep.brokenWhy(),   // WAGONS3: a pair's wagon takes its pair; WAGONS4: and a broken one goes nowhere
     player: { position: hccPlayerCentre, forward: hccForward, movement: () => ({ position: hccPlayerCentre(), forward: hccForward() }) },
     gps: { worldX: () => _anchorNative(player.pos).x, worldZ: () => _anchorNative(player.pos).z, scenePosition: hccPlayerCentre, currentMapPixel: () => _locPixel },
     streaming: { isReady: () => true, isInit: () => false, mapPixelX: () => _locPixel.x, mapPixelY: () => _locPixel.y, ratio: () => 1 / GLOBAL_SCALE },
@@ -1766,11 +1801,13 @@ export async function bootExterior(canvas, renderer, params, status) {
   // HOLDINGS (bible/03-World/Holdings.md): world.js's twin - the Stable page over this host's pair; no Fleet (this host
   // stands no Come Sail Away)
   setHoldingsProvider({
-    ...stableProviderFor({ runtime: hccRuntime, on: hccOn, hasHorse: () => hasHorse(playerEntity.items ?? []), hasCart: () => hasCart(playerEntity.items ?? []), wagonKind: () => activeWagonKind(playerEntity.items ?? []), items: () => playerEntity.items ?? [] }),   // WAGONS1: the Stable names the wagon driven - WAGONS2: and paints it
+    ...stableProviderFor({ runtime: hccRuntime, on: hccOn, hasHorse: () => hasHorse(playerEntity.items ?? []), hasCart: () => hasCart(playerEntity.items ?? []), wagonKind: () => activeWagonKind(playerEntity.items ?? []), items: () => playerEntity.items ?? [],
+      upkeep, pass: upkeepPass }),   // WAGONS1: the Stable names the wagon driven - WAGONS2: and paints it; STEED1/WAGONS4: and keeps them
     fleet: null,
   });
   /** AUDIT HCC H1: LateUpdate once a frame in every mode, before the world pass draws the wagon (world.js's twin). */
   const hccTick = (dt, nowMs) => {
+    birthHorses(playerEntity.items);   // COATS1: world.js's twin - a horse born its own look before anything draws it
     hcc.setEnabled(hccOn()); if (hcc.enabled) hccPollSettings(nowMs); hcc.frame(dt, cam.pos, gamePaused() ? 0 : dt * hccTimeScale());   // AUDIT HCC (branch audit): the runtime's Time.deltaTime - held by the pause, scaled with the world
     const tipOn = hcc.enabled && walkMode && modeNow() === 'exterior' && !worldPlaqueOn() && !gamePaused();   // AUDIT HCC U6: world.js's twin
     horseNameTooltip.set(tipOn ? hcc.tooltipText(cam.pos, [Math.sin(cam.yaw) * Math.cos(cam.pitch), Math.sin(cam.pitch), Math.cos(cam.yaw) * Math.cos(cam.pitch)], collider) : '');
@@ -2546,6 +2583,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     // MW-D10: rule 54's neck pitch; MW-D15: rule 32(a)'s sneak sink.
     camera: () => ({ pos: player.eyeAt(), yaw: cam.yaw, pitch: cam.pitch, sneaking: !!player.isSneaking, feet: player.pos, climbing: !!(player.climb?.isClimbing || player.mantling || player.onWall),   // HT1
       seat: _driverSeat ? { feet: _driverSeat.feet, yaw: _driverSeat.yaw, top: _driverSeat.top } : null,   // WAGONS3: on my wagon's bench, the body seated (still on it - combat/fpArm.js seatedCamera)
+      saddle: mwViewSaddle(),   // COATS3D: astride the 3D horse (player/mwView.js), the body's hips on its seat
       bob: [0, player.bobOffset ? player.bobOffset[1] : 0],   // IG1: the bob's vertical feeds the first-person offset
       move: motionBagOf(player),   // MW-D26: the movement-settings vector, the reference's own selection source; MW-D39 added the jump-state inputs; WW2: the one bag (a partial copy left the bob's idle gate unsent)
       climb: climbRigInput(player, cam.yaw) }),   // CLIMB6: the climb's snapshot - the body's limbs on the stone (player/climbPose.js)
@@ -5106,6 +5144,15 @@ export async function bootExterior(canvas, renderer, params, status) {
     // AT2: AmbientTextMod.Update, above the modal gate - see the note
     // at the same line in scenes/world.js.
     tickAmbientText();
+    {   // STEED-UI: the saddle panel (world.js saddleDrawPanel's twin) - above the modal gate, every mode, so a door takes it down
+      const show = isEnhancedPlus() && typeof document !== 'undefined' && walkMode && modeNow() === 'exterior' && !(townTalk.overlay instanceof DeathScreen);
+      saddleHost.frame({
+        show, mode: player.transportMode,
+        covered: townTalk.hudCovered || (modes?.hudCovered ?? false) || gamePaused() || !hudRenderEnabled(),
+        touch: !!touch, mouseFree: show && (cursorActive() || !document.pointerLockElement),
+        freeKey: saddleKeyLabel('FreeMouse'), keyOf: saddleKeyLabel,
+      });
+    }
     arenaFrame(dt);   // ARENA-FIX 12: the bout on the city's floor or the instance's - before the modal return, as the world host's
     player.arena = arenaBouts.ring();   // my bout's ring on the sand (the duel's clamp) - this host holds no other
     // AUDIT 66 F11: the torch sweep runs HERE, above the modal
@@ -5211,7 +5258,7 @@ export async function bootExterior(canvas, renderer, params, status) {
         // AUDIT 23 (entity-2): playerMotor.IsRunning && !IsStandingStill
         // (PlayerEntity.cs:408) - `player.running` never existed, so the
         // 88/min running drain was dead above ground. C6: the jump edge.
-        running: player.isRunning && !player.standing,
+        running: player.isRunning && !player.standing && upkeep.riderPaysGallop(player.transportMode),   // STEED1: a gallop is the horse's breath
         standing: !!player.standing,   // FATIGUE-IDLE: standing still on the ground pays no minute's band (worldTick.js)
         // AUDIT 64 F7 - PlayerEntity.cs:311, the TALLY's own gate:
         // `playerMotor.IsRunning && !playerMotor.IsRiding`, with NO
@@ -5261,6 +5308,7 @@ export async function bootExterior(canvas, renderer, params, status) {
       // and nothing else. Dropping run/sneak/autoRun/back from this bag read
       // as a RELEASE to the motor's press-edge latches, so a key held
       // through the paralysis fired a synthetic press on the frame it lifted.
+      player.rideSpeedScale = upkeep.rideScale(player.transportMode, wagonLoadShare());   // STEED1/WAGONS4: world.js's twin
       playerBlowFrame({ motor: player, entity: playerEntity, shake: (k) => betterAmbience.weaponKick(k), hurt: (n) => { hurtPlayer(playerEntity, n); flashPlayerDamage(n); surfacePlayer(); } });   // TELL6e: a landing's push, rattle, knockdown and bleed
       if (_overlayHeld) player.holdFrame();   // DISC8-G: a held motor reports no landing and no jump
       if (!_overlayHeld) player.update(dt, paralyzed ? { forward: 0, strafe: 0, run: held(keys, 'Run'), autoRun: held(keys, 'AutoRun'), back: mv.backwards, sneak: held(keys, 'Sneak') || walkModeOn(), jump: false, up: false, down: false, crouch: crouchPress } : {
@@ -5306,6 +5354,19 @@ export async function bootExterior(canvas, renderer, params, status) {
       // consumers below read it.
       const _surf = exteriorSurfaceNow();
       _surfPath = !!_surf.path;
+      {   // STEED1/WAGONS4: the frame's upkeep (world.js's twin)
+        const odo = player.odometer?.h ?? 0, metres = _upkeepOdo == null ? 0 : Math.max(0, odo - _upkeepOdo);
+        _upkeepOdo = odo;
+        const mode = player.transportMode;
+        const galloping = !_overlayHeld && mode === TRANSPORT_MODES.Horse && !!player.isRunning && !player.standing;
+        upkeep.tick(gamePaused() ? 0 : dt, {
+          mode, galloping, moving: !player.standing,
+          metres, road: _surfPath, load: wagonLoadShare(),
+          wagonGoes: mode === TRANSPORT_MODES.Cart || !!hccRuntimeOn()?.view?.()?.teamFollowing,
+        });
+        saddleHost.motion(gamePaused() ? 0 : dt, metres, galloping);   // STEED-UI: the saddle panel's pace and gait
+        if (mode === TRANSPORT_MODES.Cart && !hccRuntimeOn() && upkeep.brokenWhy()) mountRig.setMode(TRANSPORT_MODES.Foot);   // AUDIT WAGONS4: world.js's twin - the classic cart broken under its driver
+      }
       // PlayerHeightChanger's sink reads `OnExteriorWater == Swimming`
       // alone (:127, :294, :326, :550) - WaterWalking splashes but
       // never sinks the capsule. A6 left this flag false pending
@@ -5576,6 +5637,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     const mwv = (!shotMode || walkMode) && !riding
       ? mwViewFrame({ fpEye: cam.pos, feet: player.feetAt(), yaw: cam.yaw, pitch: cam.pitch,
           dt, riding: !!player.riding && !_driverSeat && !(player.transportMode === TRANSPORT_MODES.Cart && hcc.benchKind()),   // AUDIT-EOTB F3/F4: the host's own clock, and the one state only it has; WAGONS3: the bench is no saddle (AUDIT WAGONS3 B2: on a frame with no seat either)
+          horse: player.transportMode === TRANSPORT_MODES.Horse ? { look: riddenHorseLook(playerEntity.items ?? []) } : null,   // COATS3D: on a horse (never the cart), the Morrowind body sits a 3D horse in this look
           ...(_driverSeat ? { seated: true, stopped: true, feet: _driverSeat.feet } : {}),   // WAGONS3: seated on it, still on it, the camera's feet the seat's (after `feet`: it wins)
           pivotFloor: _driverSeat ? hcc.cameraFloor() : null,   // BENCH-CAM: the third-person camera turns about a pivot over my wagon's roof, never in my head
           cart: player.transportMode === TRANSPORT_MODES.Cart, onExteriorPath: _surfPath,   // EOTB-IL: UpdateWagon's two host facts
@@ -5768,6 +5830,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     renderer.beginFrame(proj, view, sunDirection(minute), WORLD_FRAME);   // AUDIT-EL F5: a WORLD frame - the lane replays its records for this one
     renderer.setCloudShadow(sky?.cloudShadow ?? null);   // VC4: the frame's deck, for the body and everything before the terrain
     mwViewDrawBody(canvas, { proj, view, eye, feet: player.bodyFeetAt(), yaw: player.bodyYawFor(cam.yaw), viewYaw: cam.yaw });   // MW-D24; DISC18: the body at the capsule's own feet, not the camera's smoothed ones
+    hcc.draw3d(canvas, { eye, proj, view });   // COATS3D: Horse Cart and Cargo's horses, 3D on the Morrowind lane
     mwViewDrawWagon(renderer, texRemap, streetCull);   // EOTB-IL: the cart, when the transport is the cart; PERF-WAGON: by the street's view test
     camps.draw(renderer, texRemap, streetCull);   // SURV3: the tents; PERF-WAGON: by the street's view test
     hcc.draw(renderer, texRemap, undefined, streetCull);   // HCC: the wagon and its cargo; PERF-WAGON: by the street's view test
@@ -6078,6 +6141,7 @@ export async function bootExterior(canvas, renderer, params, status) {
       exteriorFoes.drawVeiledBodies();   // MWNPC5c: the concealed foes' bodies, after the person billboards
       cityGuards.drawVeiledBodies();   // MWNPC6: and the watch's
       folkStreet.drawVeiled();   // MWNPC7: and the walkers'
+      hcc.drawVeiled3d();   // AUDIT COATS3D A5: and a concealed owner's 3D horses
     }
     // WINDFALL1: the leaves and the snow, with the opaque world (world.js's twin note)
     if (windfall.particles && windfall.draw(proj, view, renderer.flatLightAt(walkMode ? player.pos : cam.pos))) renderer.markForeignPass();
@@ -6293,6 +6357,7 @@ export async function bootExterior(canvas, renderer, params, status) {
           // platform does not have - which is the whole of AUDIT SOC C9.
           quickUse: (n) => quickUse(n), quickSwap: () => quickSwap(), quickOffHand: () => quickOffHand(), quickSpell: () => quickSpell(), quickSwitchHand: () => quickSwitchHand(),   // QS6   // MAC-R3
           grip: player.gripShown,   // CLIMB2
+          steed: modeNow() === 'exterior' ? upkeep.bar(player.transportMode) : null,   // STEED1: the ridden horse's breath
           weaponSheathed: !!weaponRig.playerWeapon.sheathed });   // AUDIT 28 W2: the arrow counter's drawn-bow gate   // U38 + X4 + U43
     }
     townTalk.frame(dt);   // T3b: HUD lines + the talk overlay, above everything

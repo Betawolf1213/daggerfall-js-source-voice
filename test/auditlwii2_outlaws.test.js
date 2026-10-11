@@ -108,8 +108,8 @@ test('AUDIT LW-II-2 C4: a band\'s chest holds none of a general store\'s fixed p
   // chest's Transportation guard stands should a store's roll ever carry one again (its mutant recorded equivalent)
   assert.deepEqual(['Transportation', 'bag', 'survival'].map((k) => fixed.some((it) => (k === 'bag' ? isBagItem(it) : k === 'survival' ? isSurvivalItem(it) : it.group === k))), [false, true, true]);
   assert.equal(counter.filter((it) => it.group === 'Transportation').length, 0, 'the horse, the cart and the wagons are the yards\' now');
-  const yards = [...yardStock('stable'), ...yardStock('transport')];
-  assert.ok(yards.length >= 4 && yards.every((it) => it.group === 'Transportation'), 'the yards mint the horse, the cart and the wagons');
+  const yards = [...yardStock('stable'), ...yardStock('transport')].filter((it) => it.group === 'Transportation');   // PIN MOVED (STEED1/WAGONS4): the yards sell their upkeep beside them - the oats, the kits
+  assert.ok(yards.length >= 4 && yards.some((it) => it.templateIndex === 94) && yards.some((it) => it.templateIndex === 93), 'the yards mint the horse, the cart and the wagons');
   for (const it of yards) assert.equal(chestPiece(it), false, `${it.name}: never a band's, whoever stocks it`);
   for (const it of fixed) assert.equal(chestPiece(it), false, `${it.name} is the store's, never a band's`);
   const draws = counter.filter((it) => !fixed.includes(it) && /Weapons|Clothing|Books/.test(it.group));

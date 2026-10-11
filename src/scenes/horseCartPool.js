@@ -95,14 +95,21 @@ import { caravanRoomModel } from '../world/caravanRoomModel.js';   // WAGONS2: t
 import { readWagonLook, wagonLookOfCode, WAGON_OUTSIDE_LOOKS, CARAVAN_INSIDE_LOOKS, CARAVAN_INSIDE_PARTS } from '../systems/wagonLooks.js';
 import { validWagonKind, wagonHitchOf, WAGON_KINDS, wagonHorsesOf } from '../systems/wagonKinds.js';
 import { CARAVAN_TEXT } from '../systems/caravanRoom.js';
+import { recolorHorse, horseLookCode, horseLookOfCode, lookSuffix } from '../systems/horseCoats.js';   // COATS1: the horses' looks, dyed as they upload
 import { DECOR_DRAW, DECOR_SHADOW, DECOR_SKIP, castOnly } from './decorRoom.js';   // PERF-TEAMS: the host's view verdict (world.js yardCull), as the merchant yards' wagons take it; PERF-WAGON: and the one maps-alone renderer
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 
 /** The horse art's archive key and record names on the renderer's texture map: `hcc_h<view>` a standing view,
- *  `hcc_w<view>#<frame>` a walk frame (the foes' own `record#frame` folding, scenes/exteriorFoes.js). */
+ *  `hcc_w<view>#<frame>` a walk frame (the foes' own `record#frame` folding, scenes/exteriorFoes.js). COATS1: a horse's
+ *  look (systems/horseCoats.js, its code) is the same picture dyed, under the record plus `~<code>`. */
 export const HORSE_ARCHIVE = 'hcc';
-export const horseStillRecord = (view) => `h${view}`;
-export const horseWalkRecord = (view, frame) => `w${view}#${frame}`;
+export const horseStillRecord = (view, look = 0) => `h${view}${lookSuffix(look)}`;
+export const horseWalkRecord = (view, frame, look = 0) => `w${view}#${frame}${lookSuffix(look)}`;
+/** COATS3D: a 3D horse's own idle phase, off its team's key. */
+const seedOfKey = (k) => { let h = 7; for (const c of k) h = (Math.imul(h, 31) + c.charCodeAt(0)) | 0; return (h >>> 0) % 65536 || 1; };
+/** COATS1: how many looks' dyed pictures stand at once - past it, the one longest undrawn is let go (every horse is its
+ *  own look, and a session meets many). */
+export const HORSE_LOOKS_KEPT = 16;
 /** StationaryHorseVisual.Initialize [IL_40b7-IL_40d9]: 121 x 0.025 by 94 (or 95, the walk set) x 0.025. */
 export const HORSE_BILLBOARD_WIDTH = HORSE_SPRITE_WIDTH * GLOBAL_SCALE;
 export const HORSE_BILLBOARD_HEIGHT = HORSE_SPRITE_HEIGHT * GLOBAL_SCALE;
@@ -260,6 +267,8 @@ export function createHorseCartPool({
   peerAnchor = (/** @type {string} */ _id) => /** @type {number[] | null} */ (null),
   wagonKind = () => 'cart', bakedWagon = /** @type {((kind: string) => Promise<any>) | null} */ (null),
   wagonLook = /** @type {() => any} */ (() => null),
+  horseLook = () => 0,   // COATS1: my horse's look (systems/horseCoats.js - its code)
+  horses3d = /** @type {() => any} */ (() => null),   // COATS3D: the Morrowind lane's 3D horse rig (world/horseRig.js), when it stands in for the billboards; null, the billboards
   enterCaravan = /** @type {(() => any) | null} */ (null),
   riders = /** @type {any} */ (null),
   wagonEntry = /** @type {() => any} */ (() => null),
@@ -280,6 +289,12 @@ export function createHorseCartPool({
   // the horse art
   let _stillLoading = null, _stillReady = false, _stillFailed = false;
   let _walkLoading = null, _walkReady = false, _walkFailed = false;
+  // COATS1: the bay's pixels as decoded (views, and walk frames `${view}#${frame}`) - each look is dyed off them once, and
+  // which looks are up: code -> { still, walk, used (the frame it was last drawn) }
+  const _stillPx = new Map(), _walkPx = new Map();
+  const _looksUp = new Map();
+  let _dyeBudget = 1;   // COATS1: one look's set dyed a frame (the walk set is some 20 ms of CPU) - refilled by frame()
+  let _frameNo = 0;
   // the billboards: mine and the peers'
   const _horseBatches = new Map();   // owner ('' mine) -> batch
   // the peers: owner -> { wire: { w, h } (the validated record, WIRE frame), toScene, wagon, horse (this frame's targets,
@@ -411,16 +426,57 @@ export function createHorseCartPool({
     if (_stillFailed || _stillLoading || !renderer?.uploadTexture) return false;
     _stillLoading = Promise.all(Array.from({ length: HORSE_VIEWS }, (_, v) => fetchPng(horseStillFile(v)).then((px) => {
       renderer.uploadTexture(HORSE_ARCHIVE, horseStillRecord(v), px);
+      _stillPx.set(v, px);   // COATS1
     }))).then(() => { _stillReady = true; onChanged?.(); }).catch((e) => { _stillFailed = true; log?.error?.(`[TrailingWagon] the horse art would not load: ${e?.message ?? e}`); }).finally(() => { _stillLoading = null; });
     return false;
   }
   function ensureWalk() {
     if (_walkReady || _walkFailed || _walkLoading || !renderer?.uploadTexture) return;   // AUDIT 68 S27-hcc-walk-fetch-storm: a failed set is not fetched again every frame - TryLoad fails once, as the stills do
     const jobs = [];
-    for (let v = 0; v < HORSE_VIEWS; v++) for (let f = 0; f < HORSE_WALK_FRAMES; f++) jobs.push(fetchPng(horseWalkFile(v, f)).then((px) => renderer.uploadTexture(HORSE_ARCHIVE, horseWalkRecord(v, f), px)));
+    for (let v = 0; v < HORSE_VIEWS; v++) for (let f = 0; f < HORSE_WALK_FRAMES; f++) jobs.push(fetchPng(horseWalkFile(v, f)).then((px) => { renderer.uploadTexture(HORSE_ARCHIVE, horseWalkRecord(v, f), px); _walkPx.set(`${v}#${f}`, px); }));   // COATS1: kept to dye
     _walkLoading = Promise.all(jobs).then(() => { _walkReady = true; }).catch((e) => { _walkFailed = true; log?.warn?.(`[TrailingWagon] the horse walk frames would not load; the standing views stay: ${e?.message ?? e}`); }).finally(() => { _walkLoading = null; });
   }
-  const horseArt = { ensureStationary, ensureWalk, hasWalk: () => _walkReady };
+  /** COATS1: a look's pictures up - its standing views once the bay's are, its walk frames once the bay's are - dyed
+   *  off the bay's kept pixels, a CPU pass and an upload a picture (systems/horseCoats.js recolorHorse), one set a frame
+   *  (`_dyeBudget`: a road of six looks seen at once is dyed over six frames, not in one). Answers whether every picture
+   *  the pool draws now is up in that look - the views, and the walk frames once the bay's are (the bay's: the art). */
+  function ensureHorseLook(look) {
+    const c = horseLookCode(horseLookOfCode(look));
+    if (!ensureStationary()) return false;
+    if (!c) return true;
+    let up = _looksUp.get(c);
+    if (!up) { up = { still: false, walk: false, used: _frameNo }; _looksUp.set(c, up); }
+    up.used = _frameNo;
+    if (!up.still && _dyeBudget > 0) {
+      _dyeBudget--;
+      for (const [v, px] of _stillPx) renderer.uploadTexture(HORSE_ARCHIVE, horseStillRecord(v, c), recolorHorse(px, c));
+      up.still = true;
+    }
+    if (!up.walk && _walkReady && _dyeBudget > 0) {
+      _dyeBudget--;
+      for (const [k, px] of _walkPx) { const [v, f] = k.split('#').map(Number); renderer.uploadTexture(HORSE_ARCHIVE, horseWalkRecord(v, f, c), recolorHorse(px, c)); }
+      up.walk = true;
+    }
+    return up.still && (up.walk || !_walkReady);
+  }
+  /** COATS1: a look's dyed pictures let go (EVERY ALLOCATION HAS AN OWNER - the pool's). */
+  function dropLook(c) {
+    const up = _looksUp.get(c);
+    if (!up) return;
+    _looksUp.delete(c);
+    if (up.still) for (const v of _stillPx.keys()) renderer?.evictTexture?.(`${HORSE_ARCHIVE}_${horseStillRecord(v, c)}`);
+    if (up.walk) for (const k of _walkPx.keys()) { const [v, f] = k.split('#').map(Number); renderer?.evictTexture?.(`${HORSE_ARCHIVE}_${horseWalkRecord(v, f, c)}`); }
+  }
+  /** COATS1: past HORSE_LOOKS_KEPT, the looks longest undrawn let go - never one drawn this frame or the last (a road's
+   *  teams are posed outside the pool's own frame). */
+  function trimLooks() {
+    if (_looksUp.size <= HORSE_LOOKS_KEPT) return;
+    const old = [..._looksUp].filter(([, u]) => u.used < _frameNo - 1).sort((a, b) => a[1].used - b[1].used);
+    for (const [c] of old.slice(0, _looksUp.size - HORSE_LOOKS_KEPT)) dropLook(c);
+  }
+  /** COATS1: the look an owner's horses wear ('' mine, a peer's key - theirs off their word, the bay before one says). */
+  const lookOfOwner = (owner) => horseLookCode(horseLookOfCode(owner === '' ? horseLook?.() : _peers.get(owner)?.horseLook ?? 0));
+  const horseArt = { ensureStationary, ensureWalk, hasWalk: () => _walkReady, ensureLook: ensureHorseLook };
 
   // ── the runtime's physics
   const phys = {
@@ -572,7 +628,7 @@ export function createHorseCartPool({
     if (entry) { wagon.entry = entry.entry; wagon.guild = entry.guild ?? null; }
     const h = v.horse;
     const horse = h?.isInteractive ? { position: h.position, forward: h.forward, frame: h.walk?.animationFrame ?? 0, walking: !!h.walk?.walking } : null;
-    return { wagon, horse, name: v.state?.HorseName ?? '', interaction: !!v.moving?.interaction, deployed: !!v.deployed?.isGrounded, go: riders?.go?.() ?? null, declined: riders?.declined?.() ?? [] };   // WAGONS1: a journey my riders go on, who I turned away
+    return { wagon, horse, name: v.state?.HorseName ?? '', look: lookOfOwner(''), interaction: !!v.moving?.interaction, deployed: !!v.deployed?.isGrounded, go: riders?.go?.() ?? null, declined: riders?.declined?.() ?? [] };   // WAGONS1: a journey my riders go on, who I turned away
   }
 
   // ── the horse billboards
@@ -591,23 +647,91 @@ export function createHorseCartPool({
   function dropTeamBatches(owner, from = 0) { for (let i = from; i < TEAM_MAX; i++) dropHorseBatch(teamKey(owner, i)); }
   /** StationaryHorseBillboard.LateUpdate: the orientation off the camera, the view and the flip, the frame. WAGONS3: `g`
    *  the rig's grow under the Overworld (the billboard stands on its foot, so it grows from the ground). */
-  function poseHorseBatch(b, cameraPos, horse, g = 1) {
+  function poseHorseBatch(b, cameraPos, horse, g = 1, look = 0) {
     const view = horseViewFor(calculateHorseOrientation(cameraPos, horse.position, horse.forward));
     if (!view) return;
     const walk = _walkReady;
-    b.record = walk ? horseWalkRecord(view.view, horse.frame) : horseStillRecord(view.view);
+    const c = look && ensureHorseLook(look) ? horseLookCode(horseLookOfCode(look)) : 0;   // COATS1: the look's pictures, the bay's until they are up
+    b.record = walk ? horseWalkRecord(view.view, horse.frame, c) : horseStillRecord(view.view, c);
     const h = walk ? HORSE_WALK_BILLBOARD_HEIGHT : HORSE_BILLBOARD_HEIGHT;
     b.size = { w: (view.flip ? -HORSE_BILLBOARD_WIDTH : HORSE_BILLBOARD_WIDTH) * g, h: h * g };
     b.origin[0] = horse.position[0]; b.origin[1] = horse.position[1]; b.origin[2] = horse.position[2];
   }
-  /** WAGONS3: an owner's team posed - each horse `drawn` its billboard, the rest's taken down. `conceal` a peer's look. */
+  // ── COATS3D: the 3D horses
+  // On the Morrowind lane (the host's `horses3d`, its rig up) every horse the pool stands - mine and every peer's, alone,
+  // following, parked in harness or pulling - is the owner's 3D horse (world/horseRig.js) in the owner's look, drawn in
+  // the body pass (draw3d) in place of its billboard: posed off the same team (teamOf), its gait off how far it went
+  // this frame, its heading its `forward`, grown with the rig under the Overworld (`g`).
+  /** @type {Map<string, { horse: any, rig: any, at: number[] | null, speed: number, frame: number, conceal: any }>} */
+  const _h3d = new Map();
+  let _dt3d = 0;   // the frame's real seconds (frame's `dt`), the 3D horses' gait step
+  /** A 3D horse's ground speed is eased toward the frame's over this many seconds (a stride does not flicker on a
+   *  stutter); a step past H3D_LEAP m/s is a jump - the drawn point snapped - never a gallop. */
+  const H3D_EASE = 0.15, H3D_LEAP = 40;
+  function pose3dTeam(rig, owner, team, conceal, dt) {
+    let i = 0;
+    for (const h of team) {
+      if (!h.drawn) continue;
+      const key = teamKey(owner, i++);
+      let e = _h3d.get(key);
+      if (!e) { const horse = rig.horse(seedOfKey(key)); if (!horse) continue; e = { horse, rig, at: null, speed: 0, frame: 0, conceal: null }; _h3d.set(key, e); }
+      const g = h.g ?? 1;
+      let v = 0;
+      if (e.at && dt > 0) v = Math.hypot(h.position[0] - e.at[0], h.position[2] - e.at[2]) / dt / g;   // the stride the horse's own size covers
+      if (v > H3D_LEAP) v = e.speed;
+      if (!h.walking && !h.hitched) v = 0;   // HCC's own word: a horse that is not walking stands
+      e.speed += (v - e.speed) * (dt > 0 ? Math.min(1, dt / H3D_EASE) : 1);
+      e.at = [h.position[0], h.position[1], h.position[2]];
+      const yaw = Math.atan2(h.forward[0], h.forward[2]);
+      rig.step(e.horse, { feet: h.position, yaw, speed: e.speed, dt, look: lookOfOwner(owner) });
+      if (g !== 1) rig.place(e.horse, h.position, yaw, g);
+      e.frame = _frameNo; e.conceal = owner ? conceal : null;
+    }
+  }
+  /** The 3D horses not posed this frame let go - their team gone, a peer away, the lane left. AUDIT COATS3D A7: each
+   *  through the rig that made it - the gate (horses3d) answers null under a beast's stand-in while the rig lives on. */
+  function trim3d() {
+    for (const [k, e] of _h3d) if (e.frame !== _frameNo) { e.rig?.release(e.horse); _h3d.delete(k); }
+  }
+  let _cam3d = null;   // AUDIT COATS3D A5: the body pass's camera, for the veiled horses after the opaque world
+  /** COATS3D: the 3D horses, in the host's body pass (between its sprite batch's open and flush - every Morrowind body's
+   *  picture in one bind). Answers how many drew. AUDIT COATS3D A5: a concealed owner's horses are not this pass's - a
+   *  veiled picture blends with no depth of its own, and the world drawn after it would paint it out - but drawVeiled3d's. */
+  function draw3d(canvas, { proj, view, eye, up = null }) {
+    const rig = horses3d?.();
+    _cam3d = rig ? { canvas, proj, view, eye, up } : null;
+    if (!rig) return 0;
+    let n = 0;
+    for (const e of _h3d.values()) if (e.frame === _frameNo && !e.conceal && rig.draw(e.horse, canvas, { proj, view, eye, up })) n++;
+    return n;
+  }
+  /** AUDIT COATS3D A5: the concealed owners' 3D horses, translucent, in the host's veiled pass (after its opaque world,
+   *  beside the concealed peers' bodies - net/peerBodies.js drawVeiled) with the body pass's camera. */
+  function drawVeiled3d() {
+    const rig = horses3d?.(), c = _cam3d;
+    if (!rig || !c) return 0;
+    let n = 0;
+    const own = !!renderer?.beginCharacterSpriteBatch && !renderer.characterSpriteBatchOpen;
+    for (const e of _h3d.values()) {
+      if (e.frame !== _frameNo || !e.conceal) continue;
+      if (own && !n) renderer.beginCharacterSpriteBatch();
+      if (rig.draw(e.horse, c.canvas, { proj: c.proj, view: c.view, eye: c.eye, up: c.up, conceal: e.conceal })) n++;
+    }
+    if (own && n) renderer.flushCharacterSpriteBatch();
+    return n;
+  }
+
+  /** WAGONS3: an owner's team posed - each horse `drawn` its billboard, the rest's taken down. `conceal` a peer's look.
+   *  COATS3D: on the Morrowind lane, its 3D horses instead (pose3dTeam) - and no billboard. */
   function poseTeam(owner, team, cameraPos, conceal = null) {
     _teams.set(owner, team);
+    const rig = horses3d?.();
+    if (rig?.ready()) { pose3dTeam(rig, owner, team, conceal, _dt3d); dropTeamBatches(owner, 0); return; }
     let i = 0;
     if (_stillReady) for (const h of team) {
       if (!h.drawn) continue;
       const b = horseBatch(teamKey(owner, i++));
-      if (b) { poseHorseBatch(b, cameraPos, h, h.g); if (owner) b.conceal = conceal; }
+      if (b) { poseHorseBatch(b, cameraPos, h, h.g, lookOfOwner(owner)); if (owner) b.conceal = conceal; }   // COATS1: in its owner's look
     }
     dropTeamBatches(owner, i);
   }
@@ -626,6 +750,8 @@ export function createHorseCartPool({
   /** PERF-TEAMS: where a peer's team stands this frame for the reach - its wagon's word, else its horse's (scene). */
   const peerTeamAt = (p) => p.wagon?.position ?? p.horse?.position ?? null;
   function frame(dt, cameraPos, gameDt = dt) {
+    trim3d(); _dt3d = dt;   // COATS3D: last frame's 3D horses not posed again let go (before the frame's count moves on); this frame's step
+    _dyeBudget = 1; _frameNo++; trimLooks();   // COATS1: a set dyed a frame; the looks long undrawn let go
     _eye = cameraPos ? [cameraPos[0], cameraPos[1], cameraPos[2]] : null;
     if (!enabled) { if (_horseBatches.size || _peers.size || _bucketKey || _harness.size) destroyAll(); return; }
     runtime?.lateUpdate(gameDt);
@@ -1061,7 +1187,7 @@ export function createHorseCartPool({
     if (!cameraPos) return;
     for (const [owner, team] of _teams) {
       let i = 0;
-      for (const h of team) { if (!h.drawn) continue; const b = _horseBatches.get(teamKey(owner, i++)); if (b) poseHorseBatch(b, cameraPos, h, h.g); }
+      for (const h of team) { if (!h.drawn) continue; const b = _horseBatches.get(teamKey(owner, i++)); if (b) poseHorseBatch(b, cameraPos, h, h.g, lookOfOwner(owner)); }   // AUDIT COATS3D A1: in its owner's look, as poseTeam turned it - without it, the bay's every frame
     }
   }
   /** WAGONS3: the harnesses in the world pass - world-space meshes, casting no shadow (a strap's would be a speckle). */
@@ -1380,7 +1506,7 @@ export function createHorseCartPool({
   function dropPeer(owner) { dropTeamBatches(owner); dropHarness(owner); _teams.delete(owner); _teamWalk.delete(owner); _peers.delete(owner); _grownWheels.delete(owner); }
   /** The switch off, a teardown: nothing of anyone's stands (the kept words stay as DATA, so the switch back on shows
    *  the cell's parked teams again without waiting on a welcome - HCC-PARK). */
-  function destroyAll() { _live.clear(); for (const owner of [..._peers.keys()]) dropPeer(owner); dropTeamBatches(''); dropHarness(''); _teams.delete(''); _teamWalk.delete(''); standWagonCollider(null); }
+  function destroyAll() { _live.clear(); for (const owner of [..._peers.keys()]) dropPeer(owner); dropTeamBatches(''); dropHarness(''); _teams.delete(''); _teamWalk.delete(''); standWagonCollider(null); _frameNo++; trim3d(); }   // COATS3D: and every 3D horse
 
   // ── ONLINE (HCC-ONLINE)
   /** My word, or null when nothing of mine stands. */
@@ -1465,6 +1591,7 @@ export function createHorseCartPool({
     p.toScene = v.toScene ?? ((q) => q);
     p.at = v.at ?? p.at;
     p.name = v.n ?? '';
+    p.horseLook = horseLookCode(horseLookOfCode(v.hc ?? 0));   // COATS1: the look their horses wear (`look` is their concealment)
     p.ownerId = v.ownerId; p.ownerName = v.ownerName ?? ''; p.kept = !!v.kept;
     p.go = v.go ?? null; p.pn = v.pn ?? [];   // WAGONS1
     retarget(p);
@@ -1475,7 +1602,7 @@ export function createHorseCartPool({
   }
   function syncPeer(owner) {
     const l = _live.get(owner) ?? null;
-    showPeer(owner, l ? { w: l.w, h: l.h, n: l.h ? l.n : '', go: l.go, pn: l.pn, toScene: l.toScene, at: l.at, ownerId: owner, ownerName: '', kept: false } : null);
+    showPeer(owner, l ? { w: l.w, h: l.h, n: l.h ? l.n : '', hc: l.hc, go: l.go, pn: l.pn, toScene: l.toScene, at: l.at, ownerId: owner, ownerName: '', kept: false } : null);
     for (const k of new Set([..._kept.values()].filter((e) => e.id === owner).map((e) => e.k))) syncKept(k);
   }
   const samePlace = (a, b) => !!a && !!b && Math.abs(a[0] - b[0]) <= PARK_SAME_NATIVES && Math.abs(a[2] - b[2]) <= PARK_SAME_NATIVES;
@@ -1488,7 +1615,7 @@ export function createHorseCartPool({
     const l = _live.get(e.id) ?? null;
     const w = e.w && !(l?.w && samePlace(l.w.position, e.w.position)) ? e.w : null;
     const h = e.h && !(l?.h && samePlace(l.h.position, e.h.position)) ? e.h : null;
-    showPeer(keptKey(k), { w, h, n: h ? e.n : '', toScene: e.toScene, ownerId: e.id, ownerName: e.name, kept: true });
+    showPeer(keptKey(k), { w, h, n: h ? e.n : '', hc: e.hc, toScene: e.toScene, ownerId: e.id, ownerName: e.name, kept: true });
   }
   /** Another's word through validHccRecord, kept in the WIRE frame; `null` (or an invalid record) drops theirs. */
   function applyOwner(owner, raw, toScene = (p) => p, nowMs = 0) {
@@ -1496,7 +1623,7 @@ export function createHorseCartPool({
     if (typeof owner !== 'string' || !owner || owner === (selfId?.() ?? null)) return false;
     const r = raw == null ? null : validHccRecord(raw);
     if (!r) { _live.delete(owner); syncPeer(owner); return raw == null; }
-    _live.set(owner, { w: r.w ?? null, h: r.h ?? null, n: r.n ?? '', go: r.go ?? null, pn: r.pn ?? [], toScene, at: nowMs });   // WAGONS1: the owner's journey and refusals ride with the word
+    _live.set(owner, { w: r.w ?? null, h: r.h ?? null, n: r.n ?? '', hc: r.hc ?? 0, go: r.go ?? null, pn: r.pn ?? [], toScene, at: nowMs });   // WAGONS1: the owner's journey and refusals ride with the word
     syncPeer(owner);
     return true;
   }
@@ -1521,7 +1648,7 @@ export function createHorseCartPool({
     const horses = (_teams.get(owner) ?? []).filter((h) => h.drawn && (h.hitched || f.hitched || lone)).map((h) => ({ at: [h.position[0], h.position[1], h.position[2]], forward: [h.forward[0], h.forward[1], h.forward[2]] }));
     const p = owner === '' ? null : _peers.get(owner) ?? null;
     const w = f.wagon, turn = owner === '' ? w.turn ?? { angle: w.angle ?? 0 } : p?.turn ?? { angle: w.angle ?? 0 };
-    return { kind: w.model, look: w.look ?? null, tier: w.tier ?? 0, turn, hitched: !!f.hitched, conceal: p?.look ?? null, lone: !!lone, at: [f.at[0], f.at[1], f.at[2]], rotation: [...f.rotation], horses };
+    return { kind: w.model, look: w.look ?? null, tier: w.tier ?? 0, turn, hitched: !!f.hitched, conceal: p?.look ?? null, horseLook: lookOfOwner(owner), lone: !!lone, at: [f.at[0], f.at[1], f.at[2]], rotation: [...f.rotation], horses };
   }
 
   // ── HCC-PARK: THE CELL'S MEMORY OF A PARKED TEAM (net/wire.js's header)
@@ -1541,7 +1668,7 @@ export function createHorseCartPool({
       return e.r == null;
     }
     const ttl = Number.isFinite(e.ttl) ? Math.max(0, Math.min(PARK_TTL_MS, e.ttl)) : PARK_TTL_MS;
-    _kept.set(slot, { room, k: e.k, id: e.id, w: v.w ?? null, h: v.h ?? null, n: v.n ?? '', name: typeof e.name === 'string' ? e.name.slice(0, 32) : '', expires: nowMs + ttl, toScene, seq: ++_keptSeq, y: thrown ? e.y : null });
+    _kept.set(slot, { room, k: e.k, id: e.id, w: v.w ?? null, h: v.h ?? null, n: v.n ?? '', hc: v.hc ?? 0, name: typeof e.name === 'string' ? e.name.slice(0, 32) : '', expires: nowMs + ttl, toScene, seq: ++_keptSeq, y: thrown ? e.y : null });
     syncKept(e.k);
     return true;
   }
@@ -1584,6 +1711,7 @@ export function createHorseCartPool({
     if (horseParked && rec?.h && !v.horseFollowing && !v.teamFollowing && near(rec.h[0], rec.h[2])) { r.h = [...rec.h]; r.h[5] = 0; if (rec.n) r.n = rec.n; }
     if (r.w && !near(r.w[1], r.w[3])) { delete r.w; delete r.wk; delete r.wh; delete r.wl; }
     if (r.w && rec.we) { r.we = rec.we; if (rec.wg) r.wg = rec.wg; }   // WAGONS2-VISIT: who may enter it, the cell's to keep while its owner is away
+    if ((r.w || r.h) && rec?.hc) r.hc = rec.hc;   // COATS1: the look of the horse it keeps (or of the pair in its shafts)
     if (r.w) Object.assign(r, wardenWord?.(a) ?? {});   // WARDEN1: a parked wagon's town, its road and where the watch would throw it
     return r.w || r.h ? { a, r } : { a };
   }
@@ -1623,7 +1751,7 @@ export function createHorseCartPool({
     // wagon of a KIND - its parts (`partsOf`) and its hitch (`hitchOfKind`) - never the player's driven one (`hitchOf`)
     presentation: { wagonParts, horseArt, hitchOf: () => hitchOf(myKind()), onChanged: () => onChanged?.(), drawWagon, drawWagonSeen, poseHorse: poseHorseBatch, partsOf, hitchOfKind: hitchOf },   // PERF-WAGON: the road's teams by the one verdict
     phys,
-    frame, batches, draw, targets, hoverName, tooltipText, activate, offsetAll, destroyAll, clearPeers, shown, groundMoved,
+    frame, batches, draw, draw3d, drawVeiled3d, targets, hoverName, tooltipText, activate, offsetAll, destroyAll, clearPeers, shown, groundMoved,
     wireRecord, applyOwner, sweepOwners, applyKept, replaceKept, pruneKept, parkWord, parkedDoor, mySeat, peerSeat, peerRide, mySeatCount, mySeatsKnown,
     seatDrawn, seatGlue, drawnFrameOf, puppetSeatDrawn, wordSeat,   // WAGONS2: the seats as drawn - the Overworld's grown wagons
     teamOf, driverDrawn, driverSeat, benchKind, driverGlue, cameraHit, cameraFloor, harnessEnds, faceTeams,   // WAGONS3: the team, the driver, the harness, the camera's wall (BENCH-CAM: and the pivot's floor)

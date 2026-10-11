@@ -28,7 +28,7 @@
 import { orientationFor, portrayedYaw, frameCount, frameTime, chooseTable, speedMod, LYCAN_TICK, meleeAnimTickTime, meleeStrokeFrames, forwardFrames, RANGED_TICK, SPELL_TICK } from '../player/eotbBillboard.js';
 import { getMeleeWeaponAnimTime } from '../characters/weaponStates.js';
 import { EOTB_FOOT_SET_COUNT } from '../player/classSkins.js';   // PEERFX3: a class skin is a set past the mod's
-import { spriteFor, eotbSpriteUrl, spriteSize, spriteOffset, flipRows, worldOrderColors } from '../player/eotbSprite.js';
+import { spriteFor, eotbSpriteUrl, spriteSize, spriteOffset, flipRows, worldOrderColors, lookedPixels } from '../player/eotbSprite.js';
 import { decodePng } from '../systems/textureReplacement.js';
 import { POSE_RIDE } from './wire.js';
 import {
@@ -49,6 +49,9 @@ export const CLAW_TABLE = 'AttackMeleeLycan';
 /** AUDIT RIDE: a sprite whose fetch or decode failed is asked for again after this long (a long-open tab across a
  *  deploy that moved the art's hashes answers 404 until it reloads - not forever). */
 export const RIDER_RETRY_MS = 30000;
+/** COATS1: how many riders' horse looks' dyed pictures stand at once, and how long a look undrawn is before it may go. */
+export const RIDER_LOOKS_KEPT = 12;
+export const RIDER_LOOK_IDLE_MS = 2000;
 
 async function decodeUrl(url) {
   const res = await fetch(url);
@@ -69,8 +72,26 @@ async function decodeUrl(url) {
 export function createEotbArt({ renderer = null, urlFor = eotbSpriteUrl, decode = decodeUrl, clock = () => Date.now(), loadLantern = loadLanternArt } = {}) {
   const tex = new Map();      // `${archive}:${rec}` -> { w, h } | Promise | null (no art at all) | { failedAt } (asked again after RIDER_RETRY_MS)
   const pixels = new Map();   // sprite key -> decode promise
+  // COATS1: the riders' horses' looks (systems/horseCoats.js) - each its own dyed pictures, so a look is let go once
+  // RIDER_LOOKS_KEPT others were drawn since (EVERY ALLOCATION HAS AN OWNER: every horse is its own look, and a session
+  // meets many riders). code -> { keys: Set<tex key>, used: clock() }
+  const looks = new Map();
+  function noteLook(s, k) {
+    if (!s.horse) return;
+    let l = looks.get(s.horse);
+    if (!l) { l = { keys: new Set(), used: 0 }; looks.set(s.horse, l); }
+    l.keys.add(k); l.used = clock();
+    if (looks.size <= RIDER_LOOKS_KEPT) return;
+    const now = clock();
+    const old = [...looks].filter(([, x]) => now - x.used > RIDER_LOOK_IDLE_MS).sort((a, b) => a[1].used - b[1].used);
+    for (const [code, x] of old.slice(0, looks.size - RIDER_LOOKS_KEPT)) {
+      looks.delete(code);
+      for (const key of x.keys) { tex.delete(key); renderer?.evictTexture?.(key.replace(':', '_')); }   // the cache's `archive:rec` is the renderer's `archive_rec`
+    }
+  }
   function ensure(s) {
     const k = `${s.archive}:${s.rec}`;
+    noteLook(s, k);
     const have = tex.get(k);
     if (have && !(have instanceof Promise) && !('failedAt' in have)) return have;
     if (have && 'failedAt' in have && clock() - have.failedAt >= RIDER_RETRY_MS) tex.delete(k);
@@ -79,12 +100,14 @@ export function createEotbArt({ renderer = null, urlFor = eotbSpriteUrl, decode 
     if (!url) { tex.set(k, null); return null; }
     let img = pixels.get(s.key);
     if (!img) { img = decode(url); pixels.set(s.key, img); img.catch(() => pixels.delete(s.key)); }
-    const p = img.then(({ width, height, colors }) => {
+    const p = img.then((raw) => {
+      if (tex.get(k) !== p) return null;   // COATS1: let go while in flight - never uploaded
+      const { width, height, colors } = lookedPixels(s, raw);   // COATS1: a rider's mount in its look
       renderer.uploadTexture(s.archive, s.rec, { width, height, colors: s.mirror ? flipRows(colors, width, height) : colors });
       return { w: width, h: height };
     });
     tex.set(k, p);
-    p.then((r) => tex.set(k, r), () => tex.set(k, { failedAt: clock() }));
+    p.then((r) => { if (tex.get(k) === p) tex.set(k, r); }, () => { if (tex.get(k) === p) tex.set(k, { failedAt: clock() }); });
     return null;
   }
   return { ensure, renderer, lantern: createLanternArt(() => renderer?.uploadTexture ? renderer : null, loadLantern) };
@@ -207,9 +230,12 @@ export function createPeerRiders({ renderer = null, urlFor = eotbSpriteUrl, deco
    * INVIS-LOOK: `conceal(id)` a concealed peer's draw (ECV1's visual, the host's) or null - read by `one`, for a
    * deferred beast too (the frame's own, kept like its placing).
    * @param {Array<any>} peers @param {(p: any) => number[]} toScene
-   * @param {{eye?: number[]|Float32Array|null, right?: number[], dt?: number, defer?: (peer: any) => boolean, conceal?: (id: string) => object|null, grow?: ((feet: number[]) => number)|null}} [opts]
+   * COATS3D: `yields(peer)` a rider another layer stands - the Morrowind lane's, its body astride the 3D horse
+   * (net/peerBodies.js): held back as a beast is (the host hands them to the bodies as a peer afoot), and `settle` draws
+   * them here after all when no body of theirs stood (AUDIT COATS3D A3: too far, the bodies full, still building).
+   * @param {{eye?: number[]|Float32Array|null, right?: number[], dt?: number, defer?: (peer: any) => boolean, yields?: (peer: any) => boolean, conceal?: (id: string) => object|null, grow?: ((feet: number[]) => number)|null}} [opts]
    */
-  function sync(peers, toScene, { eye = null, right = [1, 0, 0], dt = 0, defer = () => false, conceal = () => null, grow = null } = {}) {
+  function sync(peers, toScene, { eye = null, right = [1, 0, 0], dt = 0, defer = () => false, yields = () => false, conceal = () => null, grow = null } = {}) {
     const on = enabled();
     const seen = new Set();
     deferred.length = 0;
@@ -224,6 +250,7 @@ export function createPeerRiders({ renderer = null, urlFor = eotbSpriteUrl, deco
       const riding = pose.rd === POSE_RIDE.Horse || pose.rd === POSE_RIDE.Cart;
       if (!beast && !riding) continue;
       seen.add(peer.id);
+      if (riding && !beast && yields(peer)) { deferred.push(peer); continue; }   // COATS3D: on the 3D horse - the bodies', settled below
       if (beast && !riding && defer(peer)) { deferred.push(peer); continue; }   // WEREWOLF1 (AUDIT E4): settled below
       one(peer, pose, beast, riding, toScene, eye, right, dt);
     }
@@ -231,12 +258,14 @@ export function createPeerRiders({ renderer = null, urlFor = eotbSpriteUrl, deco
   }
 
   /** WEREWOLF1 (AUDIT E4): the beasts `sync` held back, now the other layer has stood what it stands this frame - each
-   *  drawn here, or let go where `stands(id)` (its wolf is standing).
-   *  @param {(id: string) => boolean} [stands] */
-  function settle(stands = () => false) {
+   *  drawn here, or let go where `stands(id)` (its wolf is standing). COATS3D: and the riders it yielded, let go where
+   *  `seated(id)` (their body stands astride the 3D horse), else drawn here as every rider is.
+   *  @param {(id: string) => boolean} [stands] @param {(id: string) => boolean} [seated] */
+  function settle(stands = () => false, seated = () => false) {
     for (const peer of deferred) {
-      if (stands(peer.id)) { layer.drop(peer.id); continue; }
-      one(peer, peer.shown, peer.shown.wb | 0, false, hScene, hEye, hRight, hDt);
+      const beast = peer.shown.wb | 0;
+      if (beast ? stands(peer.id) : seated(peer.id)) { layer.drop(peer.id); continue; }
+      one(peer, peer.shown, beast, !beast, hScene, hEye, hRight, hDt);
     }
     deferred.length = 0;
   }
@@ -269,7 +298,7 @@ export function createPeerRiders({ renderer = null, urlFor = eotbSpriteUrl, deco
     // PR-WW1: the form picks the lycan archive (tableArchive: 112380, or 112381 for the wereboar); a mounted table
     // still reads the rider's own set
     const yaw = peerBodyYaw(pose), view = viewOf(yaw, feet, eye);   // AUDIT CLIMB-ARC N2: a beast on the wall faces it
-    const s = spriteFor(table, view, r.frame, { onHorse: pose.rv | 0, lycanthropyType: beast });
+    const s = spriteFor(table, view, r.frame, { onHorse: pose.rv | 0, lycanthropyType: beast, horse: pose.rc | 0 });   // COATS1: `rc` the look their horse wears
     if (!s) return;
     faceDrawn(r, view, yaw, feet, eye);   // SPRITE-FACE: the way it is drawn facing, for an aura on it
     // PR-WW1: the transformed forms take the saddle's size (sizeMod - one constant serves both)

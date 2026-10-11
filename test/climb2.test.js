@@ -533,8 +533,8 @@ test('CLIMB2 hosts: the deps carry the Fatigue, the pack and the tally; every HU
   const bag = wm.slice(wm.indexOf('interiorTicker.tick(dt, {'), wm.indexOf('});', wm.indexOf('interiorTicker.tick(dt, {')));
   assert.match(bag, /climbing: !!player\.climb\?\.isClimbing,/, 'the interior ticker reports the climb (PlayerEntity.cs:405-408 asks it indoors too)');
   const hud = read('src/ui/hud.js');
-  assert.match(hud, /drawBreathBar\(renderer, canvas, art, vitals, s\);\n\s*drawGripBar\(renderer, canvas, art, grip, s\);/, 'the classic HUD draws the grip beside the breath');
-  assert.match(hud, /drawGripBar\(renderer, canvas, art, grip, s2\);/, '...and under the large HUD');
+  assert.match(hud, /drawBreathBar\(renderer, canvas, art, vitals, s\);\n\s*drawGripBar\(renderer, canvas, art, grip(?: \?\? steed)?, s\);/, 'the classic HUD draws the grip beside the breath');   // PIN MOVED (STEED1): the horse's breath in its place, a rider holding no wall
+  assert.match(hud, /drawGripBar\(renderer, canvas, art, grip(?: \?\? steed)?, s2\);/, '...and under the large HUD');   // PIN MOVED (STEED1)
   assert.match(hud, /\n\s*grip,   \/\/ CLIMB2\n/, 'the enhanced HUD is handed it');
   assert.match(read('src/ui/enhancedHud.js'), /el\('span', 'hud-breathlabel', 'Grip'\)/);
 });

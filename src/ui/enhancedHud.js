@@ -641,11 +641,13 @@ function build(doc) {
   // CLIMB2: THE GRIP, beside it and in its likeness - drawn while the hands
   // hold a wall and while the grip comes back after, short when it is failing
   // (the motor says which: player/motor.js gripShown).
+  // STEED1: the same bar is the ridden horse's breath while there is no grip (a rider holds no wall), its word the horse's.
   const grip = el('div', 'hud-breath hud-grip');
   const gripTrack = el('div', 'hud-track');
   const gripFill = el('i', 'hud-fill');
+  const gripLabel = el('span', 'hud-breathlabel', 'Grip');
   gripTrack.append(gripFill);
-  grip.append(el('span', 'hud-breathlabel', 'Grip'), gripTrack);
+  grip.append(gripLabel, gripTrack);
   bottom.append(grip);
   const bars = el('div', 'hud-bars');
   // PX30c (Mac: "for the status bars, can we use percentages and
@@ -881,7 +883,7 @@ function build(doc) {
   return { root, bottom, compass, marks, detectMarks: [], partyMarks: [], shipMarks: [], nodeMarks: [], boatMarks: [], gateMark: null, serpentMark: null, sdMark: null, questMark: null, wayOutMark: null, foe, foeName, foeFill, foeGhost, foeChunks, foeBladeFull, foePoise, foePoiseFill, foePoiseWord, magicka, health, fatigue,
     stat, quickCap: cap, quickDiamond: diamond, top,   // UI3: the status widget, the caption it stands on, the diamond it may stand beside and the top block over it (its band is measured from them)
     renown, renownBox, renownFill, renownGhost, renownNum,
-    breath, breathFill, grip, gripFill, readied, reticle, cross, centreWord, cornerWord,
+    breath, breathFill, grip, gripFill, gripLabel, readied, reticle, cross, centreWord, cornerWord,
     quick, quickCells: cells, quickTags: tags, hotDock,
     spellChip: { chip: spellChip, tag: spellTag, img: spellGlyph, text: spellText, name: spellName, icon: spellIcon } };
 }
@@ -1159,8 +1161,11 @@ export function drawEnhancedHud(vitals, heading01, dt = 0, opts = {}) {
     }
   }
 
-  // CLIMB2: THE GRIP - the host's `grip` ({ amount, low } or null).
-  const gr = opts.grip ?? null;
+  // CLIMB2: THE GRIP - the host's `grip` ({ amount, low } or null). STEED1: else the ridden horse's breath (`steed`, the
+  // same shape - systems/upkeepRuntime.js bar), in the grip's place and under the horse's word.
+  const gr = opts.grip ?? opts.steed ?? null;
+  const gripWord = opts.grip ? 'Grip' : 'Horse';
+  if (last.gripWord !== gripWord && parts.gripLabel) { last.gripWord = gripWord; parts.gripLabel.textContent = gripWord; }
   if (last.gripOn !== !!gr) {
     last.gripOn = !!gr;
     parts.grip.classList.toggle('on', !!gr);

@@ -38,6 +38,8 @@ import { NORMAL_GROUND_OFFSET } from '../systems/horseCartLaw.js';
 import { CARGO_DEFINITIONS } from '../systems/wagon41214.js';
 import { WAGON_KINDS, activeWagonKind, activeWagonItem } from '../systems/wagonKinds.js';
 import { wagonLookOf } from '../systems/wagonLooks.js';   // WAGONS2: the driven wagon's paint
+import { riddenHorseLook } from '../systems/horseCoats.js';   // COATS1: the ridden horse's look
+import { mwViewHorseRig } from '../player/mwView.js';   // COATS3D: the 3D horse rig, on the Morrowind lane
 import { SEATED_HIP_HEIGHT } from '../player/seatPose.js';   // WAGONS3: the seated hips' height over the feet, the measured biped's
 
 /** Where each wagon's bake is (fetched at the load, as the ships' are - systems/comeSailAwayModels.js). */
@@ -460,7 +462,7 @@ export function pitchedPoint(parts, p, pitch) {
   return add(r, a);
 }
 
-/** THE HOSTS' TWO WORDS (THE ONE CONSTRUCTION SEAM - scenes/world.js and scenes/exterior.js build the cart's pool, and
+/** THE HOSTS' WORDS (THE ONE CONSTRUCTION SEAM - scenes/world.js and scenes/exterior.js build the cart's pool, and
  *  each hands it these, so neither can forget one): `wagonKind` the kind the player drives off what they carry
  *  (systems/wagonKinds.js activeWagonKind - the Small Cart when they own none: the classic transport's), `bakedWagon`
  *  Mac's wagon of a kind, fetched once (a failed fetch is the pool's to fall back from). */
@@ -469,6 +471,8 @@ export function wagonPoolDeps(items, fetchFn = (u) => globalThis.fetch(u)) {
   return {
     wagonKind: () => activeWagonKind(items()) ?? 'cart',
     wagonLook: () => wagonLookOf(activeWagonItem(items())),   // WAGONS2: the driven wagon's paint
+    horseLook: () => riddenHorseLook(items()),   // COATS1: and the horse's look
+    horses3d: () => mwViewHorseRig(),   // COATS3D: on the Morrowind lane, every horse the pool stands is the 3D horse
     bakedWagon: (kind) => {
       if (!loads.has(kind)) loads.set(kind, Promise.resolve(fetchFn(WAGON_MODEL_URLS[kind])).then((r) => { if (!r?.ok) throw new Error(`HTTP ${r?.status}`); return r.json(); }));
       return loads.get(kind);

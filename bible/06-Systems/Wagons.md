@@ -908,6 +908,13 @@ Seen through the port's own CPU rasteriser (`src/ui/modelIcon.js`
 bakeModelIcon, at 420 px), not in a browser: this container has no ARENA2
 data.
 
+## WAGONS4 - upkeep (2026-10-11)
+
+Every kind wears as it rolls and on a journey, slows as it wears, and broken goes nowhere until a Wagon Yard's wright or
+a Wagon Repair Kit mends it - the condition its item always carried (`06-Systems/Wagon-Upkeep.md`). A broken wagon is
+the hosts' `teamShort` beside WAGONS3's short team, refused at every door that one is. The team pulling a wagon pulls
+it at its horses' mean Strength under its load (`06-Systems/Horse-Care.md`, STEED1).
+
 ## The relay
 
 A parked team's record (HCC-PARK) now keeps the wagon's kind and whether a

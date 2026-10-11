@@ -54,8 +54,11 @@ test('HC1: the art loads in the ONE place the mode changes, so every path to a s
   const at = rig.indexOf('function setMode(mode) {');
   const fn = rig.slice(at, rig.indexOf('\n  }', at));
   assert.match(fn, /art = null;/, 'the old mount\'s art is dropped on every change (U53)');
-  assert.match(fn, /if \(isRiding\(mode\)\) \{\s*loadRidingArt\(fetchBytes, palette, renderer, mode\)/, 'and the new mount\'s loads right there');
-  assert.match(fn, /\.then\(\(a\) => \{ if \(player\.transportMode === mode\) art = a; \}\)/, 'a dismount or a swap mid-load keeps what the mode says');
+  // COATS1: the load is the rig's `loadArt` (asked again when a look is chosen in the saddle), called right there
+  assert.match(fn, /art = null;\s*\n\s*loadArt\(mode\);/, 'and the new mount\'s loads right there');
+  const load = rig.slice(rig.indexOf('function loadArt(mode) {'), rig.indexOf('\n  }', rig.indexOf('function loadArt(mode) {')));
+  assert.match(load, /if \(!_artFor\) return;[\s\S]*loadRidingArt\(fetchBytes, palette, renderer, mode, lookNow\(mode\)\)/, 'a riding mode\'s, in the ridden horse\'s look');
+  assert.match(load, /if \(player\.transportMode === mode\) art = a;/, 'a dismount or a swap mid-load keeps what the mode says');
   // the T-key pick no longer carries its own copy of the load
   const pick = rig.slice(rig.indexOf('onMode: (mode) => {'), rig.indexOf('    },', rig.indexOf('onMode: (mode) => {')));
   assert.ok(!/loadRidingArt/.test(pick), 'the pick sets the mode and nothing else');

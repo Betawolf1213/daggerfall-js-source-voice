@@ -558,7 +558,7 @@ test('WAGONS3 TWO HORSES TO PULL A PAIR\'S WAGON: short of its pair the wagon is
   // the hosts hand the runtime the word and the pool the count
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const s = rd(host);
-    assert.match(s, /teamShort: \(\) => wagonTeamShort\(playerEntity\.items \?\? \[\]\),/, host);
+    assert.match(s, /teamShort: \(\) => wagonTeamShort\(playerEntity\.items \?\? \[\]\)(?: \?\? upkeep\.brokenWhy\(\))?,/, host);   // PIN MOVED (WAGONS4): and a broken wagon goes nowhere
     assert.match(s, /horses: \(\) => horseCountOf\(playerEntity\.items \?\? \[\]\),/, host);
   }
 });
@@ -726,7 +726,7 @@ test('WAGONS3 THIRD PERSON FROM THE BENCH (Mac: "Using a wagon doesnt allow you 
   mv.mwViewFrame({ fpEye: [0, 1.7, 0], feet: [0, 0, 0], yaw: 0, pitch: 0, dt: 0 });
   const src = rd('src/player/mwView.js');
   assert.match(src, /benchSeated = !!state\.seated;/);
-  assert.match(src, /mounted = !!state\.riding;\n\s*if \(mounted\)/, 'RIDE-POV unchanged: the saddle holds the head');
+  assert.match(src, /mounted = !!state\.riding && !saddled;\n\s*if \(mounted\)/, 'RIDE-POV unchanged: the saddle holds the head');   // PIN MOVED, COATS3D: a saddle of no 3D horse
   assert.match(rd('src/player/mountRig.js'), /!mwViewHides\(\)\.horse\) \{/, 'the mount\'s picture asks the hides');
   // AUDIT WAGONS3 B2: the bench is the KIND's - a journey, a teleport or a load's first frames stand no seat, and the
   // third person stays out of the head through them

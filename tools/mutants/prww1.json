@@ -11,8 +11,8 @@
   {
     "name": "PRWW1-form-not-handed-to-spriteFor",
     "file": "src/net/peerRiders.js",
-    "old": "{ onHorse: pose.rv | 0, lycanthropyType: beast }",
-    "new": "{ onHorse: pose.rv | 0 }",
+    "old": "{ onHorse: pose.rv | 0, lycanthropyType: beast, horse: pose.rc | 0 }",
+    "new": "{ onHorse: pose.rv | 0, horse: pose.rc | 0 }",
     "tests": [
       "test/prww1_werewolf.test.js"
     ]
@@ -102,8 +102,8 @@
   {
     "name": "PRWW1-local-body-on-the-settings-alone",
     "file": "src/player/eotbBody.js",
-    "old": "  const lookNow = () => ({ ...cfg, lycanthropyType: last.lycanthropyType });\n",
-    "new": "  const lookNow = () => cfg;\n",
+    "old": "  const lookNow = () => ({ ...cfg, lycanthropyType: last.lycanthropyType, horse: last.horseLook ?? 0 });",
+    "new": "  const lookNow = () => ({ ...cfg, horse: last.horseLook ?? 0 });",
     "tests": [
       "test/prww1_werewolf.test.js"
     ]

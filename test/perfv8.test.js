@@ -29,7 +29,7 @@ const WORLD = new URL('../src/scenes/world.js', import.meta.url);
 
 /** The statements moved out of the world host's frame, in the order they stand. */
 const CLOSURES = ['frameMotor', 'frameDwTerrainPass', 'frameOriginShift', 'framePixelChanged', 'frameDistantStorm', 'frameDreadStorm', 'frameGateStorm',
-  'frameLanterns', 'framePixelWalk', 'frameRing', 'frameWater', 'frameLocationRect', 'framePopulation', 'framePools', 'frameGrass', 'frameBanners',
+  'frameLanterns', 'frameBodies', 'framePixelWalk', 'frameRing', 'frameWater', 'frameLocationRect', 'framePopulation', 'framePools', 'frameGrass', 'frameBanners',
   'frameHaze', 'frameCurtains', 'frameSpells', 'frameHud', 'framePace'];
 
 test('PERF-V8: every `frame` in the world host\'s graph, and every closure moved out of one, is bytecode V8 optimizes - under --max-optimized-bytecode-size, and under three quarters of it (mutant: a moved statement folded back into the frame)', (t) => {

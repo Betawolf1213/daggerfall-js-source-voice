@@ -42,7 +42,7 @@
 import { lookAt, multiply, ortho, perspective, transformPoint, trs, wrapAngle } from '../world/mat4.js';
 import { ClimbPose } from '../player/climbPose.js';   // CLIMB6: the climb's limbs, in the world
 import { climbRequestToRig, climbRequestToFirstPerson } from './climbRig.js';   // CLIMB6: ...and in each rig's space
-import { seatRequestFor, seatedCamera } from '../player/seatPose.js';   // CARDS2b: the seat in the rig's space; WAGONS3: and the body still on it
+import { seatRequestFor, seatedCamera, saddleRequestFor } from '../player/seatPose.js';   // CARDS2b: the seat in the rig's space; WAGONS3: and the body still on it; COATS3D: and astride
 import { fieldOfView } from '../ui/viewSettings.js';   // CLIMB6: the world lens the arm's hands are matched to
 import { MW_ARM_PIXEL, CHAR_SPRITE_RT_SIZE } from '../render/renderer.js';
 import {
@@ -480,6 +480,23 @@ export function releaseSkip(keys, group, attackType, strength) {
  * MODEL space, and model space cannot see the frame it is drawn in.
  */
 export const NIF_TO_PASS = trs(0, 0, 0, -90, 0, 0);
+
+/** COATS3D: two sprite-law boxes ({ center, halfW, halfH } - a vertical half-height and an azimuth-safe horizontal
+ *  radius about the centre) as the one box that holds both: the rider's and the horse's, for the one picture. */
+export function spriteBoxUnion(a, b) {
+  const lo = Math.min(a.center[1] - a.halfH, b.center[1] - b.halfH), hi = Math.max(a.center[1] + a.halfH, b.center[1] + b.halfH);
+  // the horizontal centre: midway along the line through both, the radius that reaches the far side of each
+  const dx = b.center[0] - a.center[0], dz = b.center[2] - a.center[2], d = Math.hypot(dx, dz);
+  let cx = a.center[0], cz = a.center[2], r = a.halfW;
+  if (d + b.halfW <= a.halfW) { /* a holds b */ }
+  else if (d + a.halfW <= b.halfW) { cx = b.center[0]; cz = b.center[2]; r = b.halfW; }
+  else {
+    r = (d + a.halfW + b.halfW) / 2;
+    const k = (r - a.halfW) / (d || 1);
+    cx = a.center[0] + dx * k; cz = a.center[2] + dz * k;
+  }
+  return { center: [cx, (lo + hi) / 2, cz], halfW: r, halfH: (hi - lo) / 2 };
+}
 
 /** files/settings-default.cfg: `first person field of view = 60.0`. */
 export const FP_FIELD_OF_VIEW = Math.PI / 3;
@@ -3754,8 +3771,16 @@ export function createFpArm() {
     const rs = (built && built.raceScale) || { weight: 1, height: 1 };
     return seatRequestFor(cam && cam.seat, { unitsPerMetre: MW_UNITS_PER_METER, weight: rs.weight, height: rs.height });   // AUDIT CARDS D2: at this body's race
   }
+  /** COATS3D: the SADDLE's request in the rig - player/seatPose.js saddleRequestFor over the horse's seat this frame
+   *  (`cam.saddle`: { feet, seat, yaw, lean }), at this body's race: the hips on the seat, the feet in the stirrups,
+   *  the hands on the reins. Astride, the body never climbs either. */
+  function thirdSaddle(cam) {
+    const rs = (built && built.raceScale) || { weight: 1, height: 1 };
+    return saddleRequestFor(cam && cam.saddle, { unitsPerMetre: MW_UNITS_PER_METER, weight: rs.weight, height: rs.height });
+  }
   function thirdClimb(cw, cam) {
     if (cam && cam.seat) { climbLast = null; return thirdSeat(cam); }   // CARDS2b: seated - the seat, over any climb's tail
+    if (cam && cam.saddle) { climbLast = null; return thirdSaddle(cam); }   // COATS3D: astride - the saddle, over any climb's tail
     if (!(cw && cw.w > 0)) { climbLast = null; return null; }
     const snap = cam && cam.climb;
     if (snap && snap.feet) {
@@ -5393,7 +5418,7 @@ export function createFpArm() {
         // HT-WAIST: the lantern at the waist swings on the frame's motion before the body is posed around it.
         if (hipVisible()) stepHipSwing(cam, dt);
         // AUDIT MW-CLOAK: seated, the cloak's hem hangs behind the chair's sitter - a batch swapped, which the next pose skins.
-        if (t.cloaked) seatCloak(t.arm, !!(cam && cam.seat));
+        if (t.cloaked) seatCloak(t.arm, !!(cam && (cam.seat || cam.saddle)));   // COATS3D: astride, the hem falls behind the saddle as behind a chair
         // PEER-CADENCE: a frame that does not pose keeps last frame's
         // skin, upload and bounds; the clips above advanced all the
         // same, so the next posing frame lands where the clock is.
@@ -5800,7 +5825,7 @@ export function createFpArm() {
      * (chirality-true by MW-D23's measurement) already shows it.
      * Winding is safe: drawCharacter disables CULL_FACE.
      */
-    drawThird(canvas, { proj, view, eye, feet, yaw, hitFlash = 0, conceal = null, grow = 1, up = null, fx = null }) {   // MWNPC5: `fx` a foe's tells (renderer.js drawCharacterSpriteQuad)
+    drawThird(canvas, { proj, view, eye, feet, yaw, hitFlash = 0, conceal = null, grow = 1, up = null, fx = null, horse = null }) {   // MWNPC5: `fx` a foe's tells (renderer.js drawCharacterSpriteQuad); COATS3D: `horse` the one under the body
       if (!thirdActive() || !canvas || !feet) return false;
       const t = thirdBuilt;
       // AUDIT OW3 J6: `grow` - the travel view's OW-BIG, the body drawn that many times its size ABOUT ITS FEET (the root
@@ -5862,6 +5887,14 @@ export function createFpArm() {
       // INVIS-LOOK: `conceal` a concealed peer's draw (ECV1's visual, net/peerBodies.js drawVeiled) - the quad blends.
       // AUDIT OW4 J6: `up` the travel view's leaned vertical (player/mwView.js, face.up) - the quad leans with the flats and
       // the sprite lane's body, so the picture taken down the pitched ray is not foreshortened a second time
+      // COATS3D: ASTRIDE, ONE PICTURE. `horse` ({ mesh, model, box } - world/horseRig.js, stepped this frame) is drawn in
+      // the body's own picture, under the same depth: the window grows to hold the horse's box as well, and the picture
+      // is OF the horse - its middle is the anchor, so the figure is the rider on it, sized where the horse stands
+      if (horse && horse.mesh && horse.model && horse.box) {
+        const u = spriteBoxUnion({ center, halfW, halfH }, horse.box);
+        drawRigSpriteBox(renderer, canvas, thirdMesh, model, { ...u, anchor: horse.box.anchor, hitFlash, conceal, up, fx, also: [{ mesh: horse.mesh, model: horse.model }] }, proj, view, eye, MW_ARM_PIXEL);
+        return true;
+      }
       drawRigSpriteBox(renderer, canvas, thirdMesh, model, { center, halfW, halfH, anchor, hitFlash, conceal, up, fx }, proj, view, eye, MW_ARM_PIXEL);   // HITFLASH1: a struck peer's body flashes
       return true;
     },

@@ -74,8 +74,8 @@
   {
     "name": "WAGONS2-VISIT-a-door-changed-with-no-word",
     "file": "src/systems/horseCartWire.js",
-    "old": "rec.wl ?? 0, rec.we ?? 0, rec.wg ?? '']",
-    "new": "rec.wl ?? 0]",
+    "old": "rec.wl ?? 0, rec.we ?? 0, rec.wg ?? '', rec.hc ?? 0]",
+    "new": "rec.wl ?? 0, rec.hc ?? 0]",
     "tests": [
       "test/wagons2_visit.test.js"
     ]
@@ -591,8 +591,8 @@
   {
     "name": "WAGONS2-VISIT-AUDIT-the-door-carried",
     "file": "src/net/realmTradeLaw.js",
-    "old": "'acquired', 'wagonEntry']);",
-    "new": "'acquired']);",
+    "old": "'acquired', 'wagonEntry', 'horseBond', 'horseFed']);",
+    "new": "'acquired', 'horseBond', 'horseFed']);",
     "tests": [
       "test/wagons2_visit.test.js"
     ]

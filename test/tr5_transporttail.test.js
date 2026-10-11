@@ -52,8 +52,11 @@ test('TR5/MAC-K3: ONE place changes the mode - and it is ONE PLACE ACROSS THE PO
   // only the T-key pick). MW-D42 once hung an enhanced-skin 3D-horse
   // load off this tail; that horse was removed whole (2026-09-04), and
   // nothing but TR2's CFA load may grow back here unnoticed.
-  assert.match(rig, /art = null;\s*\n(?:\s*\/\/[^\n]*\n)*\s*if \(isRiding\(mode\)\) \{\s*\n\s*loadRidingArt\(fetchBytes, palette, renderer, mode\)[\s\S]{0,400}?\n\s*\}\s*\n\s*\}/,
+  // COATS1: the sprite load is the rig's `loadArt` (its riding mode's CFA, in the ridden horse's look), and the door
+  // still ends on it
+  assert.match(rig, /art = null;\s*\n(?:\s*\/\/[^\n]*\n)*\s*loadArt\(mode\);\s*\n\s*\}/,
     'the door: the drop, the sprite load, and nothing else');
+  assert.match(rig, /function loadArt\(mode\) \{\s*\n\s*_artFor = isRiding\(mode\) \? artKey\(mode\) : null;\s*\n\s*if \(!_artFor\) return;[\s\S]{0,120}loadRidingArt\(fetchBytes, palette, renderer, mode, lookNow\(mode\)\)/, 'the load: a riding mode\'s CFA, and nothing else');
   const door = rig.slice(rig.indexOf('function setMode(mode) {'), rig.indexOf('\n  }', rig.indexOf('function setMode(mode) {')));
   assert.ok(!/pegas|mesh|rig|nif/i.test(door), 'no 3D horse hangs off it');
   // TR4 put the Ship arm in front of the mode set - it is a teleport,

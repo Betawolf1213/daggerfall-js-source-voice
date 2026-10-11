@@ -83,8 +83,8 @@
  {
   "name": "MWNPC2-street-unbatched",
   "file": "src/scenes/world.js",
-  "old": "    renderer.beginCharacterSpriteBatch?.();\n    try {\n      renderer.setCloudShadow(sky?.cloudShadow ?? null);",
-  "new": "    try {\n      renderer.setCloudShadow(sky?.cloudShadow ?? null);",
+  "old": "    renderer.beginCharacterSpriteBatch?.();\n    const frameBodies = () => {   // PERF-V8",
+  "new": "    const frameBodies = () => {   // PERF-V8",
   "tests": [
    "test/mwnpc2_onepass.test.js"
   ]

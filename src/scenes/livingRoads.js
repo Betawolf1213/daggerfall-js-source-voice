@@ -703,6 +703,8 @@ export function createLivingRoads(deps) {
     /** LW10: the teams' wagons, in the host's world mesh pass. PERF-WAGON: `cull` the host's view test, handed on.
      *  @param {any} r @param {any} [cull] */
     drawTeams: (r, cull = null) => deps.teams?.draw(r, null, cull) ?? 0,
+    /** COATS3D: the teams' 3D horses (the Morrowind lane's), in the host's body pass. */
+    drawTeams3d: (canvas, cam) => deps.teams?.draw3d?.(canvas, cam) ?? 0,
     /** MWNPC10c: their Morrowind bodies, before the exterior's billboard pass. */
     drawBodies(canvas, proj, view, eye, dt) { deps.sprites.drawBodies?.(canvas, proj, view, eye, dt); },
     /** MWNPC10c: the floating origin moved - the bodies' feet follow it. @param {number[]} o */

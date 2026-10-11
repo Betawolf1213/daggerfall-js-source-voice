@@ -72,7 +72,8 @@ import { shieldWidgetTextures, shieldWidgetImage } from './shieldWidgetAssets.js
 import { setAttackOnPlayerHook } from './formulas.js';   // SW1: PCAAO's onAttackDamageCalculated, for the Recoil module
 import { conditionPercentage } from '../systems/itemInfo.js';   // SW1: the condition tier
 import { isShieldTemplate } from '../systems/armorMaterials.js';   // SW1: GetShieldProtectedBodyParts' own test
-import { rriNativeMaterialValue } from '../systems/rriItems.js';   // AUDIT 68 S09-v-shield-material-ignored: the port's one NativeMaterialValue
+import { rriNativeMaterialValue } from '../systems/rriItems.js';
+import { riddenHorseLook } from '../systems/horseCoats.js';   // COATS1: the sprite body's mount wears the ridden horse's look   // AUDIT 68 S09-v-shield-material-ignored: the port's one NativeMaterialValue
 import { createHandheldTorches, isHeldLight } from '../systems/handheldTorches.js';   // HT1: Handheld Torches' component, one per rig beside the widget; TORCH-VIS: and its own light test
 import { lanternAtWaist } from '../systems/playerTorch.js';   // HT-WAIST: a lantern hung at the waist is in no hand - the ladder, the Morrowind body and the sprite ask the one question
 import { isTransformedLycanthrope, liveLycanthropy } from '../systems/lycanthropy.js';   // WW1: Weapon Widget's FPSWeaponClone, beside the machine; AUDIT-EOTB2: the sprite's form
@@ -648,6 +649,7 @@ export function createWeaponRig({ renderer, canvas, fetchBytes, palette, audio, 
     usingBow: !!playerWeapon.machine.isBow,
     transformed: !!entity && isTransformedLycanthrope(entity),
     lycanthropyType: (entity && liveLycanthropy(entity)?.infectionType) || 0,
+    horseLook: entity ? riddenHorseLook(entity.items ?? []) : 0,   // COATS1: its code
     died: !!entity && (entity.health ?? 1) <= 0,
     motion: camera?.()?.move ?? null,
     attacking: playerWeapon.machine.state !== 'Idle',

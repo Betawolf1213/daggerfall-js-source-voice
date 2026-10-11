@@ -30,6 +30,7 @@ import { iilActive, iilInteriorLights, iilDungeonLights, iilTorch, iilSyncLane }
 import { resurrectionSpell } from '../systems/resurrect.js';   // RESURRECT1
 import { sharedCartographySpell } from '../systems/partyMap.js';   // PARTY-MAP
 import { isOnlinePage } from '../systems/onlineLane.js';   // RESURRECT1: the shelf's online arm
+import { horseCareOn } from '../systems/upkeepSwitch.js';   // STEED1: a Stable prices its horses by what they are while horses are cared for
 import { bloodDecalDeps } from '../combat/bloodSwitch.js';   // BLOOD1a
 import { createBloodMarks } from '../combat/bloodMarks.js';   // BLOOD1a
 import { doorWorldAabb, doorWorldPosition, doorWorldNormal, interiorLanding, exteriorLanding, dungeonEntranceLanding, climbLadder, floorLanding, repositionFeetY, standsOnFloor, interiorVoidRescue, standFromVoid, NOTHING_OF_VALUE_TEXT, INTERIOR_VOID_TEXT } from '../player/enterExit.js';   // FIELD BUGS 2026-10-04d VOID-ENTRY: the floor a landing stands on, the failsafe, and their two lines
@@ -279,7 +280,7 @@ import { reducedRepairCost } from '../systems/guildServices.js';   // R1: Fighte
 import {
   updateRepairTimes, repairJobsAt, repairRefusal, repairStatusLabel,
   isBeingRepaired, isRepairFinished, collectRepaired, calculateItemRepairTime, leaveForRepair,
-  MAGIC_ITEMS_CANNOT_BE_REPAIRED_TEXT_ID, DOES_NOT_NEED_TO_BE_REPAIRED_TEXT_ID, CANNOT_BE_REPAIRED_TEXT,
+  MAGIC_ITEMS_CANNOT_BE_REPAIRED_TEXT_ID, DOES_NOT_NEED_TO_BE_REPAIRED_TEXT_ID, CANNOT_BE_REPAIRED_TEXT, TRANSPORT_CANNOT_BE_REPAIRED_TEXT,
   INTERRUPT_REPAIR_TEXT,
 } from '../systems/repairService.js';
 import { GuildServiceWindow, preloadGuildServiceArt, guildServiceArtLoaded } from '../ui/guildServiceWindow.js';  import { enhancedWindow } from '../ui/enhancedPorts.js';   // PORT4: the service windows, in the enhanced skin
@@ -3438,28 +3439,34 @@ export function createWorldModes(host) {
    *  gone through or a talk opened meanwhile makes the press the player's past, and nothing opens (a window opened
    *  then took the interior's slot over whatever stood there, or the talk's in the street). */
   let _yardWait = null;
-  function openYardTrade(kind, regionIndex, tradeMode = 'Buy', name = '') {
+  function openYardTrade(kind, regionIndex, tradeMode = 'Buy', name = '', mapId = 0) {
     if (!validYardKind(kind) || mode !== 'exterior') return false;
     if (!tradeDoorReady() || (!isEnhanced() && !_shopFont)) {
       const first = !_yardWait;
-      _yardWait = { kind, regionIndex, tradeMode, name };
+      _yardWait = { kind, regionIndex, tradeMode, name, mapId };
       if (first) {
         ensureShopFont().then(() => {
           const w = _yardWait;
           _yardWait = null;
           if (!w || mode !== 'exterior' || townTalk?.overlay) return;
           if (!tradeDoorReady() || (!isEnhanced() && !_shopFont)) { setMidScreenText(YARD_TEXT.shut); return; }
-          openYardCounter(w.kind, w.regionIndex, w.tradeMode, w.name);
+          openYardCounter(w.kind, w.regionIndex, w.tradeMode, w.name, w.mapId);
         });
       }
       return true;
     }
-    return openYardCounter(kind, regionIndex, tradeMode, name);
+    return openYardCounter(kind, regionIndex, tradeMode, name, mapId);
   }
-  /** The yard's counter itself, its art and font in. */
-  function openYardCounter(kind, regionIndex, tradeMode, name) {
+  /** The yard's counter itself, its art and font in. STEED1/WAGONS4: the stock of the town (`mapId`) on the world's day -
+   *  the Stable's three horses, none the player owns, priced by what they are while horses are cared for; the oats and
+   *  the kits where they may be sold (merchantYards.js yardStock). */
+  function openYardCounter(kind, regionIndex, tradeMode, name, mapId = 0) {
     const b = yardCounter(kind, regionIndex, name);
-    const win = openTradeWindow({ items: tradeMode === 'Sell' ? [] : yardStock(kind) }, b, tradeMode === 'Sell' ? 'Sell' : 'Buy');
+    const stock = () => yardStock(kind, {
+      mapId, day: Math.floor(worldMinutes() / 1440), online: isOnlinePage(), priced: horseCareOn(),
+      owned: (playerEntity.items ?? []).map((it) => it?.horseSeed).filter(Number.isInteger),
+    });
+    const win = openTradeWindow({ items: tradeMode === 'Sell' ? [] : stock() }, b, tradeMode === 'Sell' ? 'Sell' : 'Buy');
     if (!win) return true;   // DISC10-E L3: the trade door refused the beast (and said so) - handled, nothing to mount
     mountServiceWindow(win);   // the street's slot (townTalk's) - the interior's is never drawn outdoors
     return true;
@@ -6706,6 +6713,7 @@ export function createWorldModes(host) {
       // template, TEXT.RSC 24 for full condition
       const lines = refusal === 'magic' ? _rowsText(rows(MAGIC_ITEMS_CANNOT_BE_REPAIRED_TEXT_ID), 'You cannot repair magic items.')
         : refusal === 'undamaged' ? _rowsText(rows(DOES_NOT_NEED_TO_BE_REPAIRED_TEXT_ID), 'This item does not need to be repaired.')
+        : refusal === 'transport' ? [TRANSPORT_CANNOT_BE_REPAIRED_TEXT]   // WAGONS4
         : [CANNOT_BE_REPAIRED_TEXT];
       mountServiceWindow(new ChoiceWindow({ lines, options: back }));
       return;

@@ -89,7 +89,7 @@ const qInv = (/** @type {number[]} */ q) => [-q[0], -q[1], -q[2], q[3]];
  *   uploadRecordFrame?: ((archive: number, record: number, frame: number) => void)|null,
  *   toScene: (wire: number[]) => number[], groundAt: (x: number, z: number) => number,
  *   showWagon?: ((r: any, texRemap: any, position: number[], rotation: number[], kind: string, look?: any, tier?: number, turn?: any, hitched?: boolean) => boolean)|null,
- *   wagonBox?: ((kind: string) => (number[]|null))|null, horseArt?: (() => boolean)|null,
+ *   wagonBox?: ((kind: string) => (number[]|null))|null, horseArt?: ((look?: number) => boolean)|null,
  *   hold?: (owner: string, on: boolean, lone?: boolean) => void, sound?: (what: 'heave'|'throw'|'land', at: number[]) => void,
  *   now?: () => number,
  * }} deps  `toScene` the wire frame's point in this scene; `groundAt` the drawn ground (NaN: none built); `showWagon`/
@@ -163,12 +163,13 @@ export function createWardenShows({
   function poseTeam(s, O, w, cam) {
     s.drawn = { at: vadd(O, w.at), rot: w.rot };
     if (!renderer?.createBillboardBatch || !horseArt?.()) return;
+    const look = s.horseLook && horseArt?.(s.horseLook) ? s.horseLook : 0;   // COATS1: the team's look once its pictures are up, the bay's until
     for (const h of s.horses) {
       const pos = vadd(s.drawn.at, quatRotate(w.rot, h.off)), fwd = quatRotate(w.rot, h.fwd);
       const view = horseViewFor(calculateHorseOrientation(cam ?? pos, pos, fwd));
       if (!h.batch) { h.batch = renderer.createBillboardBatch(HORSE_ARCHIVE, horseStillRecord(0), { w: HORSE_BILLBOARD_WIDTH, h: HORSE_BILLBOARD_HEIGHT }, [[0, 0, 0]]); h.batch.origin = [0, 0, 0]; }
       if (s.conceal) h.batch.conceal = s.conceal;   // AUDIT WARDEN1 C13: a concealed owner's horses stay concealed
-      if (view) { h.batch.record = horseStillRecord(view.view); h.batch.size = { w: view.flip ? -HORSE_BILLBOARD_WIDTH : HORSE_BILLBOARD_WIDTH, h: HORSE_BILLBOARD_HEIGHT }; }
+      if (view) { h.batch.record = horseStillRecord(view.view, look); h.batch.size = { w: view.flip ? -HORSE_BILLBOARD_WIDTH : HORSE_BILLBOARD_WIDTH, h: HORSE_BILLBOARD_HEIGHT }; }
       h.batch.origin[0] = pos[0]; h.batch.origin[1] = pos[1]; h.batch.origin[2] = pos[2];
     }
   }
@@ -242,7 +243,8 @@ export function createWardenShows({
       }));
       const s = {
         key, owners: [...owners], kind: snap.kind, look: snap.look ?? null, tier: snap.tier ?? 0, turn: snap.turn ?? null, hitched: !!snap.hitched,
-        conceal: snap.conceal ?? null, lone: snap.lone !== false, alive: typeof alive === 'function' ? alive : null, head: WARDEN_HEAD,
+        conceal: snap.conceal ?? null, horseLook: snap.horseLook ?? 0, lone: snap.lone !== false,   // COATS1: its horses' look (the pool's teamSnapshot)
+        alive: typeof alive === 'function' ? alive : null, head: WARDEN_HEAD,
         origin: [origin[0], origin[1], origin[2]], landing: [landing[0], landing[1]],
         rot0, rotT, floor, mid, line, lift, yaw0, yaw1, dyaw, horses, land2,
         side: [away[1], 0, -away[0]], times: null, turns: 1, peak: 0, from: null, to: null,

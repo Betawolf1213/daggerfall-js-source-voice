@@ -36,6 +36,12 @@ import { wagonKindCode, wagonKindOfCode } from './wagonKinds.js';
 import { validPassengers, validPeerId, MAX_SEATS } from './wagonSeats.js';
 import { wagonLookCode, wagonLookOfCode, WAGON_LOOK_CODE_MAX } from './wagonLooks.js';
 import { caravanEntryCode, caravanEntryOfCode, caravanGuildTag, CARAVAN_GUILD_CODE } from './caravanVisit.js';
+import { horseLookCode, horseLookOfCode, HORSE_LOOK_CODE_MAX } from './horseCoats.js';
+
+// COATS1 (2026-10-11): AND THE HORSES' LOOK. An owner's horses wear their look (systems/horseCoats.js - coat, pattern,
+// legs and the horse's own seed), so the word says it - `hc`, the look's code, at the record's top beside `n` (absent:
+// the bay as drawn - every word before COATS1), for the horse standing and the team in the wagon's shafts alike; an
+// older reader drops it and draws a bay.
 
 // WAGONS2 (2026-10-09): AND ITS PAINT. A wagon's paint (systems/wagonLooks.js - its outside, and a caravan's inside)
 // is one number, `wl`, beside `wk` at the record's top (absent: the wagon as built - every word before WAGONS2), folded
@@ -66,7 +72,7 @@ const inBounds = (p) => Math.abs(p[0]) <= POSE_BOUND && Math.abs(p[2]) <= POSE_B
  * My word: the pool's view of the runtime as the wire says it. `view` is scenes/horseCartPool.js's
  * `shown()` - `{ wagon: { kind, position, rotation, tier, angle } | null, horse: { position, forward, walking } | null,
  * name }` in scene units; `toWire` converts a scene point to the wire frame.
- * @returns {{ w?: number[], h?: number[], n?: string, wk?: number, wh?: number, wl?: number, we?: number, wg?: string, ps?: any[], go?: number[], pn?: string[] } | null} null when nothing stands (the reader drops mine)
+ * @returns {{ w?: number[], h?: number[], n?: string, hc?: number, wk?: number, wh?: number, wl?: number, we?: number, wg?: string, ps?: any[], go?: number[], pn?: string[] } | null} null when nothing stands (the reader drops mine)
  */
 export function hccWireRecord(view, toWire = (p) => p) {
   if (!view) return null;
@@ -94,6 +100,8 @@ export function hccWireRecord(view, toWire = (p) => p) {
   }
   const n = hccHorseNameOnWire(view.name);
   if (n && out.h) out.n = n;
+  const hc = horseLookCode(horseLookOfCode(view.look ?? 0));   // COATS1
+  if (hc && (out.w || out.h)) out.hc = hc;
   return out.w || out.h || out.go || out.pn ? out : null;
 }
 
@@ -137,6 +145,7 @@ export function validHccRecord(raw) {
     if (typeof raw.n !== 'string' || raw.n.length > HORSE_NAME_MAX * 4) return null;
     out.n = hccHorseNameOnWire(raw.n);
   }
+  if (Number.isInteger(raw.hc) && raw.hc >= 1 && raw.hc <= HORSE_LOOK_CODE_MAX && (out.w || out.h)) out.hc = raw.hc;   // COATS1: a look the law does not know is a bay, never a dropped record
   if (!out.w && !out.h && !out.go && !out.pn?.length) return null;
   return out;
 }
@@ -144,7 +153,7 @@ export function validHccRecord(raw) {
 /** A change key, so a frame carries the record only when the word moved (the full frame always does). */
 export function hccRecordKey(rec) {
   if (!rec) return '';
-  return JSON.stringify([rec.w ?? 0, rec.h ?? 0, rec.n ?? '', rec.wk ?? 0, rec.wh ?? 0, rec.ps ?? 0, rec.go ?? 0, rec.pn ?? 0, rec.wl ?? 0, rec.we ?? 0, rec.wg ?? '']);
+  return JSON.stringify([rec.w ?? 0, rec.h ?? 0, rec.n ?? '', rec.wk ?? 0, rec.wh ?? 0, rec.ps ?? 0, rec.go ?? 0, rec.pn ?? 0, rec.wl ?? 0, rec.we ?? 0, rec.wg ?? '', rec.hc ?? 0]);
 }
 
 /** The snap-or-ease a reader shows between two words: a step past `snap` metres is a teleport (the owner

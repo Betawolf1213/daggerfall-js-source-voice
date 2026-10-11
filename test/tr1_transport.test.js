@@ -151,7 +151,7 @@ test('TR1: the wiring - the climb gate, the Horse bob style, and no Running tall
     assert.equal(/running: held\(keys, 'Run'\)/.test(read(host)), false, `${host}: the raw Run key no longer reaches the tally`);
   }
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
-    assert.match(read(host), /running: player\.isRunning && !player\.standing,/, `${host}: the motor's own flag, already gated`);
+    assert.match(read(host), /running: player\.isRunning && !player\.standing(?: && upkeep\.riderPaysGallop\(player\.transportMode\))?,/, `${host}: the motor's own flag, already gated`);   // PIN MOVED (STEED1): and a gallop the horse's breath under horse care
   }
 });
 

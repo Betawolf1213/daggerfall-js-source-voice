@@ -63,7 +63,7 @@ import { applyDressStanding } from './clothingStanding.js';   // DRESS1 (2026-09
 import { ENCHANTMENT_TYPES } from '../formats/magicDef.js';
 import { SOCIAL_GROUP_COUNT } from '../formats/factionFile.js';   // AUDIT 63 F6: PlayerEntity.cs:128-129 sizes reactionMods at socialGroupCount = 11
 import { regenBarred } from './courtRules.js';   // WBX6: the Burning Court keeps no regeneration
-import { ITEM_TEMPLATES, templateByIndex, mendOrder, mintCondition } from './itemTemplates.js';   // MEND-WORN: the mend order's one home, and the smith's refusal
+import { ITEM_TEMPLATES, templateByIndex, mendOrder, mintCondition, TRANSPORT_HORSE, TRANSPORT_SMALL_CART } from './itemTemplates.js';   // MEND-WORN: the mend order's one home, and the smith's refusal
 import { WEAPONS, WEAPON_CONDITION_POOL } from '../characters/weapons.js';   // MEND-WORN: a pool weapon's tick is the classic Dagger's share
 import { repoolWeapon } from './conditionRepair.js';   // MEND-WORN: a weapon on its row's pool moves before a mend on the pool, as before a wear
 export { ENCHANTMENT_TYPES };
@@ -389,6 +389,7 @@ export function repairsObjectsTarget(items, { allowMagicRepairs = false } = {}) 
     if (!it || !Number.isFinite(it.currentCondition) || !Number.isFinite(it.maxCondition) || !(it.currentCondition < it.maxCondition)) continue;
     if (templateByIndex(it.templateIndex)?.isNotRepairable) continue;
     if (isEnchantedItem(it) && !allowMagicRepairs) continue;
+    if (it.templateIndex === TRANSPORT_SMALL_CART || it.templateIndex === TRANSPORT_HORSE) continue;   // AUDIT WAGONS4: a wagon's condition is its upkeep - a Wagon Yard's or a kit's, never a held enchantment's (DFU's wagon never wore)
     if (!best || mendOrder(it, best) < 0) best = it;
   }
   return best;

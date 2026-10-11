@@ -31,9 +31,13 @@ test('VIEW-TOGGLE seam: the sprite lane flips first to third and back, one press
     assert.equal(eotbCamera.thirdPerson(), false, 'handed back as found');
   } finally { mv.setEotbBodyReady(() => false); if (eotbCamera.thirdPerson()) eotbCamera.toggleOffset(false); }
   const src = rd('src/player/mwView.js');
-  // PIN MOVED (SPYGLASS, 2026-10-11): nor while the glass holds the head (mwViewHoldFirst)
-  assert.match(src, /export function mwViewTogglePerspective\(\) \{\n\s*if \(heldThird \|\| heldFirst\) return false;[^\n]*\n\s*if \(eotbLane\(\)\) \{ eotbCamera\.toggleOffset\(!eotbCamera\.thirdPerson\(\)\); return true; \}\n\s*if \(mwCamera\.thirdPerson\(\)\) return mwIntoHead\(\);\n\s*if \(!fpArm\.canThirdPerson\(\) \|\| mounted\) return false;\n\s*mwCamera\.restore\(\{ firstPerson: false, baseDistance: mwCamera\.baseDistance\(\) \}\);\n\s*fpArm\.setViewMode\('third'\);/,
+  // PIN MOVED (SPYGLASS, 2026-10-11): nor while the glass holds the head (mwViewHoldFirst) - in the one predicate (STEED-UI)
+  // PIN MOVED (STEED-UI, 2026-10-11): the toggle's refusals are one predicate now, mwViewCanTogglePerspective - the saddle
+  // panel's View button stands on the same word the toggle turns on (ui/enhancedSaddle.js)
+  assert.match(src, /export function mwViewTogglePerspective\(\) \{\n\s*if \(!mwViewCanTogglePerspective\(\)\) return false;\n\s*if \(eotbLane\(\)\) \{ eotbCamera\.toggleOffset\(!eotbCamera\.thirdPerson\(\)\); return true; \}\n\s*if \(mwCamera\.thirdPerson\(\)\) return mwIntoHead\(\);\n\s*mwCamera\.restore\(\{ firstPerson: false, baseDistance: mwCamera\.baseDistance\(\) \}\);\n\s*fpArm\.setViewMode\('third'\);/,
     'the Morrowind lane: in by the head\'s own door, out by the restore door, never in the saddle (RIDE-POV)');
+  assert.match(src, /export function mwViewCanTogglePerspective\(\) \{\n\s*if \(heldThird \|\| heldFirst\) return false;[^\n]*\n\s*if \(eotbLane\(\) \|\| mwCamera\.thirdPerson\(\)\) return true;\n\s*return !!fpArm\.canThirdPerson\(\) && !mounted;\n\}/,
+    'held, never; a lane with its third person, or already out, yes; else a body that can be shown, never in the saddle');
 });
 
 test('VIEW-TOGGLE action: a port action, appended, on the mouse\'s forward side button (a binding code since VOICE1, kept when voice was reverted - and never the browser\'s Forward), drawn in Movement; the world host polls its press edge under no window and hands it to the seam before the view frame', () => {

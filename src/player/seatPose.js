@@ -59,9 +59,9 @@ export const SEAT_HAND_OVER = 0.04;
 /** WAGONS3: a body seated on a moving seat (a wagon's bench) is still on it - the motor's bag (player/motor.js
  *  motionBagOf) with its stride taken out, so the third-person body poses the seat and plays no walk under it. */
 export const seatedMotion = (bag) => ({ ...bag, forward: 0, strafe: 0, running: false, speed: 0, standing: true, riding: false, jumping: false });
-/** WAGONS3: a rig's camera snapshot as the body reads it - seated (`seat`, a wagon's bench or a table's chair), its
+/** WAGONS3: a rig's camera snapshot as the body reads it - seated (`seat`, a wagon's bench or a table's chair; COATS3D: or `saddle`, astride), its
  *  motion bag still (combat/fpArm.js update: the hosts hand the motor's bag whole, WW2's one bag). */
-export const seatedCamera = (cam) => (cam && cam.seat && cam.move ? { ...cam, move: seatedMotion(cam.move) } : cam);
+export const seatedCamera = (cam) => (cam && (cam.seat || cam.saddle) && cam.move ? { ...cam, move: seatedMotion(cam.move) } : cam);   // COATS3D: astride too - the horse walks, not the rider
 
 /** The table's top above the feet as the wire's byte. */
 export const seatTopByte = (top) => Math.min(POSE_SEAT_TOP_MAX, Math.max(1, Math.round((Number(top) || 0) / SEAT_TOP_STEP)));
@@ -108,5 +108,76 @@ export function seatRigInput(feet, yaw, top = SEAT_TOP_DEFAULT, race = {}) {
 export function seatRequestFor(seat, { unitsPerMetre, weight = 1, height = 1 }) {
   if (!seat || !seat.feet) return null;
   const s = seatRigInput(seat.feet, seat.yaw, seat.top, { weight, height });
+  return climbRequestToRig(s.req, { feet: s.origin, yaw: s.yaw, unitsPerMetre, weight, height });
+}
+
+// ── COATS3D: the saddle ──────────────────────────────────────────────────────────────────────────────────────────────
+//
+// COATS3D (2026-10-11, the owner: "These are to be applied to horses for people using morrowind with the character
+// properly rigged when riding"): THE BODY ASTRIDE. Morrowind has no riding animation either (RIDE-POV kept the body in
+// the head for it), so the saddle is posed as the chair is: a world request the climb rig solves on the skeleton's own
+// bones - the hips on the 3D horse's seat (world/horseRig.js HORSE_SEAT, riding its back's stride), each foot in a
+// stirrup down the horse's side with the knee forward and out round its barrel, each hand on the reins over the
+// withers, the spine leaning into the gait. The STIRRUPS are the horse's (its width is no rider's), their drop and the
+// reins' reach the rider's (scaled by the race, as a chair's are).
+
+/** MEASURED (COATS3D, the owner's horse - its barrel 0.30 m either side of its middle at its widest, 1.0-1.45 m up):
+ *  a stirrup this far either side of the seat's middle, so the shin hangs clear of the barrel. */
+export const STIRRUP_SIDE = 0.32;
+/** ...this far below the hips (the measured biped's leg, thigh 0.46 and shin 0.53, bent at the knee round the barrel),
+ *  scaled by the race's height, and this far ahead of them (the foot under the knee, the heel down). */
+export const STIRRUP_DROP = 0.8;
+export const STIRRUP_AHEAD = 0.08;
+/** The reins in the hands: this far ahead of the hips (over the withers), above them, and either side. */
+export const REIN_AHEAD = 0.36;
+export const REIN_UP = 0.18;
+export const REIN_SIDE = 0.12;
+/** The spine's lean into the gait, radians: upright at a stand, this much forward at a gallop. */
+export const SADDLE_LEAN_GALLOP = 0.28;
+
+/**
+ * The body astride's world request: `{ origin, yaw, req }` as seatRigInput's - `origin` the feet the body is drawn at
+ * (the rider's own, on the ground under the horse), `req` the climb rig's request. `saddle` is the seat the horse holds
+ * this frame (world/horseRig.js seat: `{ seat, yaw, lean }` - the hips' world point, the horse's heading, the gait's
+ * lean 0..1); `race` the body's scales.
+ * @param {number[]} feet
+ * @param {{ seat: number[], yaw: number, lean?: number }} saddle
+ * @param {{weight?: number, height?: number}} [race]
+ */
+export function saddleRigInput(feet, saddle, race = {}) {
+  const h = race.height ?? 1, w = race.weight ?? 1;
+  const yaw = saddle.yaw;
+  const f = [Math.sin(yaw), 0, Math.cos(yaw)];
+  const right = [Math.cos(yaw), 0, 0 - Math.sin(yaw)];
+  const hips = saddle.seat;
+  const at = (ahead, side, up) => [hips[0] + f[0] * ahead + right[0] * side, hips[1] + up, hips[2] + f[2] * ahead + right[2] * side];
+  const unit = (v) => { const l = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0] / l + 0, v[1] / l + 0, v[2] / l + 0]; };
+  const stirrup = (side) => ({ at: at(STIRRUP_AHEAD * h, side * STIRRUP_SIDE, -STIRRUP_DROP * h), toe: unit([f[0] + right[0] * side * 0.3, 0, f[2] + right[2] * side * 0.3]),
+    pole: unit([f[0] * 0.85 + right[0] * side * 0.5, 0, f[2] * 0.85 + right[2] * side * 0.5]), w: 1 });
+  const rein = (side) => ({ at: at(REIN_AHEAD * h, side * REIN_SIDE * w, REIN_UP * h), fingers: f.slice(), palm: unit([0, -1, 0]),
+    pole: unit([right[0] * side * 0.6 - f[0] * 0.3, -0.75, right[2] * side * 0.6 - f[2] * 0.3]), w: 1, curl: 1.2 });
+  return {
+    origin: [feet[0], feet[1], feet[2]],
+    yaw,
+    req: {
+      w: 1,
+      offset: [hips[0] - feet[0], hips[1] - feet[1] - SEAT_PELVIS_HEIGHT * h, hips[2] - feet[2]],
+      lean: { pitch: SADDLE_LEAN_GALLOP * Math.min(1, Math.max(0, saddle.lean ?? 0)), roll: 0 },
+      hands: { L: rein(-1), R: rein(1) },
+      feet: { L: stirrup(-1), R: stirrup(1) },
+    },
+  };
+}
+
+/**
+ * A saddle (`{ feet, seat, yaw, lean }` - the host's `camera().saddle`, a peer's from its horse) as the RIG's request,
+ * mapped by the climb rig's own climbRequestToRig at the body's units and race. Null without one. fpArm's thirdSaddle
+ * is this.
+ * @param {{feet: number[], seat: number[], yaw: number, lean?: number} | null | undefined} saddle
+ * @param {{unitsPerMetre: number, weight?: number, height?: number}} rig
+ */
+export function saddleRequestFor(saddle, { unitsPerMetre, weight = 1, height = 1 }) {
+  if (!saddle || !saddle.feet || !saddle.seat) return null;
+  const s = saddleRigInput(saddle.feet, saddle, { weight, height });
   return climbRequestToRig(s.req, { feet: s.origin, yaw: s.yaw, unitsPerMetre, weight, height });
 }

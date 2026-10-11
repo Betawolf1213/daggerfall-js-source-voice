@@ -184,6 +184,35 @@ The readout names the player's own bindings in the Controls page's own words (`c
 drag to aim, lift to fire, a tap to board (the host's one activation arm), Crouch the touch table's press. The helm
 panel's buttons and the pad's d-pad at the helm are Come Sail Away's nine and nothing of the guns'.
 
+## The saddle panel (STEED-UI, 2026-10-11 - for Mac's read)
+
+The owner, after horse care and wagon upkeep (`06-Systems/Horse-Care.md`, `06-Systems/Wagon-Upkeep.md`): "Proper UI
+elements for the horse + wagon/cart (Enhanced plus)". CSA-L's answer for the helm is the answer for the saddle: on
+Enhanced Plus, astride a horse or on a wagon's bench outdoors, a SADDLE PANEL stands under the compass where the helm
+stands (`ui/enhancedSaddle.js` - the two are never up together), the helm's kind of thing: the HUD's, not a window -
+it pauses nothing, and a window over the HUD, the HUD toggled off, a pause or a journey (the travel view, Travel
+Options' bar) hides it. It spends NO key of its own and adds no binding.
+
+- **What it reads** (`systems/upkeepRuntime.js saddle`, never written): its title the rider's - "Riding <name>" or
+  "Driving the <wagon>" - with the gait (Standing, Trotting, Galloping, Rolling) and the pace in km/h, smoothed off
+  the motor's odometer (a placement or a carry never counted); the horse's Breath a bar while ridden (Winded in
+  words); its Hunger a chip with the hours its food has left - on a bench the TEAM's, its hungriest horse's (a
+  Caravan's second horse starving drags the team's Strength as its lead would); its Bond a bar to the next word; the
+  wagon's state and share of whole, and its load against its limit. The line under the title says what the horse
+  needs first (winded, starving, a wagon failing), else the gallop's key while ridden and, while the look holds the
+  mouse, how to free it (`FreeMouse`, Y).
+- **Every button is a door that already stands** (`scenes/saddleHost.js`, one glue for `world.js` and `exterior.js`):
+  Feed oats and Apple are the Stable page's acts, to the horse the panel shows hungry; Repair kit is the kit's Use
+  (where a kit would mend); Cargo is a press on the wagon (`systems/horseCart.js openWagonCargo` - the load opened
+  with the wagon chosen, where Horse Cart and Cargo's own reach allows); Stable opens the Holdings page; View is the
+  view key's toggle (`TogglePerspective`, shown only where it would turn - `player/mwView.js
+  mwViewCanTogglePerspective`); Dismount (or Climb down) is `HorseMount`'s own handler, the classic transport's foot
+  with the mod off. A button whose door has a key bound names it; one that cannot act now is dark with its reason on
+  its tooltip (no oats, full, out of reach); one that can never act is not shown.
+- **The mouse** clicks it while the pointer is free; **a finger** taps it (44 px, the helm's own place clear of the
+  stick and the corner); **a pad** keeps its d-pad for the quick slots (a rider's potions are on it) and presses the
+  panel with its cursor (PADPLUS1). The classic skin keeps the grip bar's breath and the keys.
+
 ## AUDIT KB1 (2026-09-24, Mac: "Audit this before we merge")
 
 Three lenses over the standard - the registry and the carry, the windows and the pad and the chat, the scene hosts -
@@ -384,6 +413,8 @@ Generated from `ACTION_GROUPS` and the two default tables; the enhanced pane dra
 |---|---|---|---|
 | `HorseMount` | , |  | Mount or dismount |
 | `HorseSummon` | . |  | Summon horse and wagon |
+
+On Enhanced Plus the saddle panel's Dismount is `HorseMount`'s own handler, and names its key (STEED-UI, above).
 
 ### Come Sail Away (drawn, and answering, while `come-sail-away` is on)
 

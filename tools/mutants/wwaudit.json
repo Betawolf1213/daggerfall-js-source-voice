@@ -282,7 +282,7 @@
   {
     "name": "WWAUDIT-E4-the-settle-dropped",
     "file": "src/scenes/world.js",
-    "old": "    peerRiders.settle((id) => peerBodies.wolfStands(id));",
+    "old": "    peerRiders.settle((id) => peerBodies.wolfStands(id), (id) => peerBodies.has(id));",
     "new": "",
     "tests": [
       "test/werewolf1.test.js"

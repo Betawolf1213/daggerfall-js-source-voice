@@ -588,6 +588,15 @@ const PUBLIC_ALLOWLIST = new Map([
   ['src/assets/grass/source/flowers.png', "SUPPLIED - Mac's flower tuft for the meadow grass (MEADOW1, 2026-10-06), 32x32 indexed, his own PNG bytes - his own pixel art, no ARENA2 pixel in it (his word, AUDIT MEADOW1 2026-10-06)"],
   ['src/assets/grass/source/tuft-dry.png', "SUPPLIED - Mac's dry grass tuft for the meadow grass (MEADOW1, 2026-10-06), 32x32 indexed, his own PNG bytes - his own pixel art, no ARENA2 pixel in it (his word, AUDIT MEADOW1 2026-10-06)"],
   ['src/assets/grass/source/bush.png', "SUPPLIED - Mac's bush for the meadow grass (MEADOW1, 2026-10-06), 64x64 indexed, his own PNG bytes - his own pixel art, no ARENA2 pixel in it (his word, AUDIT MEADOW1 2026-10-06)"],
+  // COATS3D (2026-10-11, the owner: "The first image is for the horse itself and the second is for the tail"): THE
+  // COURSER, a rigged horse supplied as five saves of one Blender rig and two pictures painted for its own UV layout -
+  // the newest whole save committed, as the ships' and the wagons' scenes are. tools/bakeHorse.mjs re-makes
+  // courser.json from it, and test/coats3d_horse3d.test.js holds it to the bytes. The pictures ship as supplied: the
+  // runtime dyes them per look (world/horseRig.js) and writes nothing back.
+  ['src/assets/horse/source/courser.fbx', "SUPPLIED - the owner's Blender export of the Courser horse rig (idle.fbx, 2026-10-11; idle-1.fbx the same bytes, walk/trot/gallop.fbx subsets of it), committed so courser.json is a DERIVATION the gate can re-run"],
+  ['src/assets/horse/courser.json', "SUPPLIED - courser.fbx baked to the armature's frame by tools/bakeHorse.mjs; geometry, skin and gaits only, no ARENA2 data"],
+  ['src/assets/horse/body.png', "SUPPLIED - the owner's body picture for the Courser (COATS3D, 2026-10-11), 256x256 indexed, as sent - a hide painted for the 3D model's own UV islands, no ARENA2 pixel in it (Daggerfall's horse is a sprite; this painting has no sprite's silhouette)"],
+  ['src/assets/horse/hair.png', "SUPPLIED - the owner's mane and tail picture for the Courser's nine alpha cards (COATS3D, 2026-10-11), 512x512 RGBA, as sent - no ARENA2 pixel in it"],
 ]);
 
 test('doctrine: nothing ships out of public/ or src/assets/ that is not provably ours', () => {

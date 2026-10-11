@@ -29,6 +29,7 @@
 import { CfaFile } from '../formats/cfaFile.js';
 import { frameToColor32 } from '../combat/fpsWeapon.js';   // TR2: the same index-to-RGBA the weapon art uses
 import { TRANSPORT_MODES, isRiding } from './transport.js';
+import { recolorHorse, horseLookCode, horseLookOfCode, lookSuffix } from './horseCoats.js';   // COATS1: the horse's look, dyed as it uploads
 
 /** :148-155. */
 export const HORSE_TEXTURE = 'MRED00I0.CFA';
@@ -58,19 +59,31 @@ export const ridingLoopClip = (mode) => (mode === TRANSPORT_MODES.Cart ? RIDING_
 export const nextNeighDelay = (rolls = Math.random) => 2 + Math.floor(rolls() * 38);
 export const mountNeighDelay = (rolls = Math.random) => 1 + Math.floor(rolls() * 4);
 
+/** COATS1: the look a mount's sprite is dyed in (a look code, systems/horseCoats.js): the horse's own - the cart's
+ *  never: MRED01I0 draws the cart's boards beside the horse, and their stained wood is the same warm brown as the hide. */
+export const ridingLook = (mode, look) => (mode === TRANSPORT_MODES.Horse ? horseLookCode(horseLookOfCode(look)) : 0);
+
 /** Loads one mount's CFA and uploads its frames, the same way the
- *  first-person weapon loads its CIF (fpsWeapon.loadFpsWeaponArt). */
-export async function loadRidingArt(getBytes, palette, renderer, mode) {
+ *  first-person weapon loads its CIF (fpsWeapon.loadFpsWeaponArt).
+ *  COATS1: `look` the horse's (a look code, systems/horseCoats.js) - each
+ *  frame dyed on its way up, under its own record (`~<code>`; the bay as
+ *  drawn keeps the record it always was). No hoof is in the picture, so
+ *  no leg is whitened (its lower edge is the neck's), and no saddle, so
+ *  no leather is spared (the neck's shadow by the mane is the hide's). `records` the
+ *  frames' records, so a look left behind is let go (player/mountRig.js). */
+export async function loadRidingArt(getBytes, palette, renderer, mode, look = 0) {
   const fileName = ridingTextureName(mode);
+  const c = ridingLook(mode, look);
   const cfa = new CfaFile();
   cfa.load(await getBytes(fileName), fileName, palette);
   const { width, height } = cfa.getSize(0);
-  const frames = [];
+  const frames = [], records = [];
   for (let f = 0; f < cfa.getFrameCount(0); f++) {
-    const c32 = frameToColor32(cfa.getDFBitmap(0, f), palette, null);
-    frames.push(renderer.uploadTexture('img', `ride:${fileName}:${f}`, c32));
+    const c32 = recolorHorse(frameToColor32(cfa.getDFBitmap(0, f), palette, null), c, { bottomFirst: false, legs: false, tack: false });
+    records.push(`ride:${fileName}:${f}${lookSuffix(c)}`);
+    frames.push(renderer.uploadTexture('img', records[f], c32));
   }
-  return { fileName, width, height, frames };
+  return { fileName, width, height, frames, look: c, records };
 }
 
 /**

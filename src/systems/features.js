@@ -345,6 +345,31 @@ export const FEATURES = Object.freeze([
     kinds: Object.freeze(['enhanced']),
     control: Object.freeze({ store: 'prefs', key: 'worldDungeonSizes', initial: false, online: true }),   // world/smallerDungeons.js WORLD_DUNGEON_SIZES_PREF; forced on online, the room's sizes
   }),
+  // STEED1 (2026-10-11, the owner: "Horse should have stamina, feeding them grows your bond and improves their stats.
+  // Every horse should have different stats"): HORSE CARE (bible/06-Systems/Horse-Care.md, systems/steedCare.js). On by
+  // default; online every horse is under it, so the lane forces it on there.
+  Object.freeze({
+    id: 'horse-care',
+    group: 'world',
+    title: 'Horse care',
+    note: 'Every horse has its own Speed, Stamina, Endurance and Strength, and gallops on its breath. Feeding it grows your '
+      + 'bond and every stat with it, and a hungry horse is weaker; online it is always on.',
+    effect: 'Takes effect at once.',
+    kinds: Object.freeze(['enhanced']),
+    control: Object.freeze({ store: 'prefs', key: 'horseCare', initial: true, online: true }),   // systems/upkeepSwitch.js HORSE_CARE_PREF
+  }),
+  // WAGONS4 (2026-10-11, the owner: "Wagons have durability and require upkeep to keep from breaking down and becoming
+  // unusable"): WAGON UPKEEP (bible/06-Systems/Wagon-Upkeep.md, systems/wagonUpkeep.js). On by default; forced on online.
+  Object.freeze({
+    id: 'wagon-upkeep',
+    group: 'world',
+    title: 'Wagon upkeep',
+    note: 'Your wagon wears as it rolls and on long journeys, and worn out it breaks down until a Wagon Yard or a Wagon '
+      + 'Repair Kit mends it. Online it is always on.',
+    effect: 'Takes effect at once.',
+    kinds: Object.freeze(['enhanced']),
+    control: Object.freeze({ store: 'prefs', key: 'wagonUpkeep', initial: true, online: true }),   // systems/upkeepSwitch.js WAGON_UPKEEP_PREF
+  }),
   // FT2 (2026-09-14): LAND VIEW DISTANCE - the first CONDENSED row. Two
   // controls for one radius: the pref (LV1, the enhanced lane's 1..6)
   // and DFU's Experimental/TerrainDistance (D1, the 1:1 lane's 1..4).

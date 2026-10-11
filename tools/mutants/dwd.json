@@ -146,8 +146,8 @@
   {
     "name": "DW-D-half-speed-base-without-the-modifier",
     "file": "src/player/motor.js",
-    "old": "    return isRiding(this.transportMode) ? rideSpeed(this.stats.speed, rideBaseFor(this.transportMode)) : this._refreshWalkSpeed();",
-    "new": "    return isRiding(this.transportMode) ? rideSpeed(this.stats.speed, rideBaseFor(this.transportMode)) : walkSpeed(this.stats.speed);",
+    "old": "    return isRiding(this.transportMode) ? rideSpeed(this.stats.speed, rideBaseFor(this.transportMode)) * this._rideScale() : this._refreshWalkSpeed();",
+    "new": "    return isRiding(this.transportMode) ? rideSpeed(this.stats.speed, rideBaseFor(this.transportMode)) * this._rideScale() : walkSpeed(this.stats.speed);",
     "tests": [
       "test/dwd_swim.test.js"
     ]

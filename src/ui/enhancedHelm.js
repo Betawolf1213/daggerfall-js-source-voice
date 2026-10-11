@@ -261,8 +261,12 @@ function makeButtons(doc, list, hooks) {
       });
       for (const t of ['pointerup', 'pointercancel', 'lostpointercapture']) n.addEventListener(t, up);
     } else {
+      // AUDIT STEED-UI (the saddle's twin): a tap button never keeps the keyboard's focus - a focused one is clicked
+      // again by the next Space or Enter (Leave the helm on a jump's keyup)
+      n.addEventListener('mousedown', (e) => e.preventDefault?.());
       n.addEventListener('click', (e) => {
         e.preventDefault?.();
+        n.blur?.();
         if (n.disabled) return;
         if (b.kind === 'hook') hooks[b.act]?.();
         else hooks.press?.(b.action, b.withHeld ?? null);

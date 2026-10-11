@@ -80,7 +80,15 @@ export const rideBaseFor = (mode) => (mode === TRANSPORT_MODES.Cart ? DF_CART_BA
 // DFU's own is CanRunUnlessRiding. Answers a boolean, or null for DFU's.
 let _canRun = null;
 export function setCanRunOverride(fn) { _canRun = typeof fn === 'function' ? fn : null; }
-export const canRunUnlessRiding = (mode) => _canRun?.(mode) ?? !isRiding(mode);
+// STEED1 (bible/06-Systems/Horse-Care.md): HORSE CARE'S WORD ON A GALLOP, after the mod's - `(mode, modsWord)` answers a
+// boolean, or null for no word (horse care off, or not a horse). A winded or starving horse will not gallop whatever the
+// mod allows; with no mod ruling, horse care lets a horse gallop on its breath. One a host (systems/upkeepRuntime.js).
+let _gallop = null;
+export function setGallopGate(fn) { _gallop = typeof fn === 'function' ? fn : null; }
+export const canRunUnlessRiding = (mode) => {
+  const mods = _canRun?.(mode) ?? null;
+  return _gallop?.(mode, mods) ?? mods ?? !isRiding(mode);
+};
 
 /** HandleTransition (:196-202): a building or dungeon interior puts
  *  you back on foot. Anything else leaves the mode alone. */

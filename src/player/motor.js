@@ -557,6 +557,7 @@ export class PlayerMotor {
     this.waterWalking = false;
     this.waterSurfaceY = null;   // the current block's water surface (world y), null when dry
     this.swimSpeedScale = 1;     // DW-D: Iliac Puddle No More's swim speed multiplier (a walk speed modifier while swimming - swimSpeedNow)
+    this.rideSpeedScale = 1;     // STEED1/WAGONS4: the ride's pace - a horse's Speed, a wagon's soundness and its team's Strength (systems/upkeepRuntime.js rideScale; 1 with both off)
     this.jumped = false;         // set for the frame a jump actually starts (fatigue/tally consumer)
     this.crouching = false;      // P12: toggled via input.crouch (edge); standing needs headroom
     this._pkCrouchRestore = false; // A low mantle's temporary stance, distinct from the player's crouch toggle.
@@ -764,8 +765,10 @@ export class PlayerMotor {
    *  uncrouched, is the ride base on a mount and RefreshWalkSpeed off one. */
   _halfSpeedBase() {
     if (this.crouching) return walkSpeed(this.stats.speed);
-    return isRiding(this.transportMode) ? rideSpeed(this.stats.speed, rideBaseFor(this.transportMode)) : this._refreshWalkSpeed();
+    return isRiding(this.transportMode) ? rideSpeed(this.stats.speed, rideBaseFor(this.transportMode)) * this._rideScale() : this._refreshWalkSpeed();
   }
+  /** STEED1/WAGONS4: the ride's pace scale, a finite positive number (1 for anything else). */
+  _rideScale() { const k = this.rideSpeedScale; return Number.isFinite(k) && k > 0 ? k : 1; }
   /** GetSwimSpeed(GetBaseSpeed()) - LevitateMotor's swim: GetBaseSpeed skips the crouch arm while it swims. */
   swimSpeedNow() {
     return swimSpeed(this._refreshWalkSpeed(), this.stats.swimming ?? 0);
@@ -3131,13 +3134,14 @@ export class PlayerMotor {
     const rideBase = (!this.crouching && isRiding(this.transportMode)) ? rideBaseFor(this.transportMode) : null;
     if (this.isRunning) {
       speed = runSpeed(this.stats.speed, this.stats.running, this.crouching, rideBase);
+      if (rideBase != null) speed *= this._rideScale();   // STEED1: a gallop at the horse's own pace
     } else {
       // ApplyInputSpeedAdjustment (:127-133): the SNEAK arm subtracts
       // from whatever GetBaseSpeed returned - including the RIDE base.
       // TR-AUDIT F-E4: TR1's first cut put the ride arm beside the
       // sneak instead of under it, so a sneaking rider trotted.
       speed = rideBase != null
-        ? rideSpeed(this.stats.speed, rideBase)
+        ? rideSpeed(this.stats.speed, rideBase) * this._rideScale()   // STEED1/WAGONS4: the horse's pace, the wagon's
         : (this.crouching ? crouchSpeed(this.stats.speed) : this._refreshWalkSpeed());   // DW-D: GetBaseSpeed's walk arm is RefreshWalkSpeed
       if (this.isSneaking) speed = sneakSpeed(speed);
     }

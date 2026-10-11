@@ -924,6 +924,11 @@ put it - 4 dead again, the fourth by that case.
 
 ## RIDE-POV - the Morrowind body has no saddle (2026-09-20)
 
+COATS3D (2026-10-11, `06-Systems/Horse-Coats.md` "The 3D horse"): it has one now. On a horse whose 3D rig is up the
+body sits astride the owner's Courser, and the view holds the head only off one (`mounted` is RIDE-POV's hold: in the
+saddle of the cart, or of a horse the rig cannot draw yet); astride, the wheel and the toggle take the view out as on
+foot. What follows is the rule as it stands for the cart and the rig's absence.
+
 Mac: *"When riding the horse with the morrowind model, you should be
 exempt from using 3rd person"*.
 

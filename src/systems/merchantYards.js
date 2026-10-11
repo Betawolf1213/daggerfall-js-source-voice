@@ -33,6 +33,9 @@ import { getNameBankOfRegion, GENDERS } from '../characters/nameHelper.js';
 import { residentName } from './livingWorld/census.js';
 import { setItemFields, mintCondition, TRANSPORT_HORSE } from './itemTemplates.js';
 import { WAGON_KIND_ORDER, newWagonItem, isWagonItem } from './wagonKinds.js';
+import { birthHorses } from './horseCoats.js';   // STEED1: the stable's horses born at the yard
+import { horseBornStats, steedValue } from './steedCare.js';   // STEED1: and priced by what they are
+import { UPKEEP_ITEM, newUpkeepItem, upkeepItemsAvailable } from './upkeepItemRows.js';   // STEED1/WAGONS4: the oats, the kits
 
 /** The two yards, in the order a town stands them. */
 export const YARD_KIND_ORDER = Object.freeze(['stable', 'transport']);
@@ -62,12 +65,49 @@ export const YARD_TOWN_TYPES = Object.freeze([LOCATION_TYPES.TownCity, LOCATION_
 /** Whether a location stands the yards (its MAPS.BSA type). */
 export const isYardTown = (loc) => YARD_TOWN_TYPES.includes(loc?.mapTableData?.locationType);
 
+/** STEED1: the horses a Stable stands on a day - each its own horse (systems/steedCare.js: its seed its stats). */
+export const STABLE_HORSES_OFFERED = 3;
+/** STEED1 / WAGONS4: the stack a yard sells its upkeep in - the Stable's oats, the Wagon Yard's kits. */
+export const YARD_OATS_STACK = 20;
+export const YARD_KITS_STACK = 5;
+/** A 32-bit mix of three integers (a stable's town, its day, its stall). */
+const mix3 = (a, b, c) => {
+  let h = Math.imul((a >>> 0) ^ 0x9e3779b9, 0x85ebca6b) ^ Math.imul((b >>> 0) + 0x632be5ab, 0xc2b2ae35) ^ Math.imul((c >>> 0) + 0x27d4eb2f, 0x165667b1);
+  h ^= h >>> 15; h = Math.imul(h, 0x2c1b3c6d); h ^= h >>> 12; h = Math.imul(h, 0x297a2d39); h ^= h >>> 15;
+  return h >>> 0;
+};
+/** mulberry32: a stream of [0, 1) off a 32-bit seed. */
+const stream = (seed) => () => { seed = (seed + 0x6d2b79f5) >>> 0; let t = seed; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+/**
+ * STEED1 (the owner: "Every horse should have different stats"): THE STABLE'S HORSES ON A DAY - STABLE_HORSES_OFFERED
+ * of them, each born at the yard (horseCoats.js birthHorses on a stream of the town's map id, the world's day and its
+ * stall - every client in the town that day sees the same three), so a buyer sees each one's look and stats before they
+ * pay. A horse the buyer already owns (its seed in `owned`) is not stood again. `priced`: its price by its born stats
+ * (steedCare.js steedValue - horse care on), else the template's.
+ * @param {number} mapId @param {number} day @param {{ owned?: Set<number>|number[], priced?: boolean }} [o]
+ */
+export function stableHorses(mapId, day, { owned = [], priced = false } = {}) {
+  const have = new Set(owned);
+  const out = [];
+  for (let i = 0; i < STABLE_HORSES_OFFERED; i++) {
+    const h = mintCondition(setItemFields({ group: 'Transportation', templateIndex: TRANSPORT_HORSE }));
+    birthHorses([h], stream(mix3(mapId | 0, day | 0, i)));
+    if (have.has(h.horseSeed)) continue;
+    if (priced) h.value = steedValue(horseBornStats(h));
+    out.push(h);
+  }
+  return out;
+}
 /** What a yard sells - its whole stock, minted as a shelf mints a row (setItemFields, mintCondition): the Stable a
- *  Horse; the Wagon Yard the Small Cart, the Open Wagon and the Caravan, in WAGON_KIND_ORDER. A fresh list each call. */
-export function yardStock(kind) {
+ *  Horse (STEED1: three of them, on the town's day - stableHorses) and a sack of oats; the Wagon Yard the Small Cart, the
+ *  Open Wagon and the Caravan, in WAGON_KIND_ORDER, and a Wagon Repair Kit. The oats and the kits only where they may be
+ *  sold (online once UPKEEP_ITEMS_ONLINE is on - systems/upkeepItemRows.js). A fresh list each call.
+ *  @param {string} kind @param {{ mapId?: number, day?: number, online?: boolean, owned?: Set<number>|number[], priced?: boolean }} [o] */
+export function yardStock(kind, { mapId = 0, day = 0, online = false, owned = [], priced = false } = {}) {
   const mint = (it) => mintCondition(setItemFields(it));
-  if (validYardKind(kind) === 'stable') return [mint({ group: 'Transportation', templateIndex: TRANSPORT_HORSE })];
-  if (validYardKind(kind) === 'transport') return WAGON_KIND_ORDER.map((k) => mint(newWagonItem(k)));
+  const upkeep = upkeepItemsAvailable(online);
+  if (validYardKind(kind) === 'stable') return [...stableHorses(mapId, day, { owned, priced }), ...(upkeep ? [mint(newUpkeepItem(UPKEEP_ITEM.Oats, YARD_OATS_STACK))] : [])];
+  if (validYardKind(kind) === 'transport') return [...WAGON_KIND_ORDER.map((k) => mint(newWagonItem(k))), ...(upkeep ? [mint(newUpkeepItem(UPKEEP_ITEM.WagonKit, YARD_KITS_STACK))] : [])];
   return [];
 }
 /** Whether a yard buys an item back: the Stable a horse, the Wagon Yard a cart or a wagon of any kind (DFU's Small Cart,
@@ -139,6 +179,10 @@ export const YARD_ROWS = Object.freeze([
   Object.freeze({ id: 'buy', label: 'Buy' }),
   Object.freeze({ id: 'sell', label: 'Sell' }),
 ]);
+/** WAGONS4: the Wagon Yard's third row - its wright mends the wagon driven (systems/wagonUpkeep.js mendPrice). */
+export const YARD_MEND_ROW = Object.freeze({ id: 'mend', label: 'Mend' });
+/** A yard's keeper's rows: the Stable's two, the Wagon Yard's three. */
+export const yardRowsFor = (kind) => (validYardKind(kind) === 'transport' ? [...YARD_ROWS, YARD_MEND_ROW] : [...YARD_ROWS]);
 
 /**
  * YARDS-FOUND (2026-10-10, from play: "The new stable and transport merchant shops dont show on town maps/overworld",

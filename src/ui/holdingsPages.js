@@ -19,9 +19,11 @@
 
 import { stableWagonName, WAGON_KINDS } from '../systems/wagonKinds.js';   // WAGONS1: the Stable's card names the wagon driven
 import { paintDrivenWagon, outsidePaintRow, LOOK_TEXT } from '../systems/wagonLooks.js';   // WAGONS2: and paints it
+import { restyleRiddenHorse, horseLookRows, birthHorses, HORSE_LOOK_PARTS } from '../systems/horseCoats.js';   // COATS1: and the horse's look
 import { requestFittedIcon, fittedImg } from './textureCanvas.js';
 import { WAGON_MODE, HORSE_MODE, TRANSPORT, HORSE_NAME_MAX } from '../systems/horseCartLaw.js';
 import { optionPath } from './settingsMap.js';   // ORG2: a switch named in a window says where it lives
+import { upkeepReach } from '../systems/upkeepRuntime.js';   // STEED1/WAGONS4: a horse fed by hand only beside it, a kit spent only at the wagon
 
 export const STABLE_PAGE_SECTIONS = Object.freeze([Object.freeze(['stable', 'Stable'])]);
 export const HOLDINGS_STYLE_ID = 'holdings-pages-css';
@@ -40,10 +42,12 @@ export function _setHoldingsIconForTests(fn) { _icon = fn ?? ((p, box, onReady) 
  * @property {any} [view]   the runtime's stableView() while `hcc`
  * @property {string|null} [kind]   WAGONS1: the wagon driven ('cart', 'openWagon', 'caravan' - systems/wagonKinds.js)
  * @property {{ choices: string[], current: number }|null} [paint]   WAGONS2: its outside's paints, and its paint now
+ * @property {{ desc: string, rows: Array<{ part: string, name: string, choices: string[], current: number }> }|null} [look]   COATS1: the ridden horse's look - in words, and a row of choices a part (coat, pattern, legs)
+ * @property {any} [care]   STEED1/WAGONS4: the upkeep's model (systems/upkeepRuntime.js model) - each horse's stats, bond, hunger and breath; the wagon's soundness; the oats, apples and kits carried
  *
  * @typedef {Object} HoldingsProvider
  * @property {() => StableModel} [stable]   the horse and the wagon
- * @property {(verb: 'summon'|'away'|'rename'|'paint', arg?: any) => { ok: boolean, text: string }} [stableAct]
+ * @property {(verb: 'summon'|'away'|'rename'|'paint'|'coat'|'pattern'|'legs'|'feed'|'treat'|'ride'|'kit', arg?: any) => { ok: boolean, text: string }} [stableAct]
  * @property {any} [fleet]   the fleet's model and acts (ui/fleetPage.js)
  * @property {{ model: () => any }} [captain]   CAPT-LOG: the captain's standing, letter, contracts and log (ui/captainPage.js)
  */
@@ -55,13 +59,25 @@ export const holdingsProvider = () => _provider;
  * THE ONE CONSTRUCTION SEAM (Home.md) for the two hosts that stand Horse Cart and Cargo (scenes/world.js,
  * scenes/exterior.js): the Stable's half of the provider over a host's runtime - `on()` the mod's switch, `hasHorse()`
  * and `hasCart()` the pack's two items. WAGONS2: `items()` the pack (the driven wagon painted in it - systems/
- * wagonLooks.js paintDrivenWagon) and `onPainted()` the host told (its word moved).
+ * wagonLooks.js paintDrivenWagon) and `onPainted()` the host told (its word moved). COATS1: the ridden horse's look
+ * (systems/horseCoats.js restyleRiddenHorse - its coat, its pattern, its legs) the same way, in the same pack, the host
+ * told the same; and a horse not yet born is born before the card reads it (birthHorses). STEED1/WAGONS4: `upkeep` the
+ * host's (systems/upkeepRuntime.js createUpkeep) - its model on the card, and its acts: a horse fed by hand only beside it
+ * (the mod's own mount reach - a horse waiting across the map is not) and never at the stable; a kit spent on the wagon
+ * only where its load can be reached; `pass(minutes)` the host's clock for the kit's hour.
  */
-export function stableProviderFor({ runtime, on, hasHorse, hasCart, wagonKind = () => null, items = () => [], onPainted = () => {} }) {
+export function stableProviderFor({ runtime, on, hasHorse, hasCart, wagonKind = () => null, items = () => [], onPainted = () => {}, upkeep = null, pass = () => {} }) {
+  const view = () => (on() ? runtime.stableView() : null);
   return {
-    stable: () => ({ hcc: !!on(), hasHorse: !!hasHorse(), hasCart: !!hasCart(), view: on() ? runtime.stableView() : null, kind: wagonKind() ?? null, paint: outsidePaintRow(items()) }),   // WAGONS1: which wagon; WAGONS2: its paint
+    stable: () => { birthHorses(items()); const v = view(); return { hcc: !!on(), hasHorse: !!hasHorse(), hasCart: !!hasCart(), view: v, kind: wagonKind() ?? null, paint: outsidePaintRow(items()), look: horseLookRows(items()), care: upkeep?.model({ near: upkeepReach(runtime, on()).near, name: v?.horseName ?? '' }) ?? null }; },   // WAGONS1: which wagon; WAGONS2: its paint; COATS1: the horse's look; STEED1/WAGONS4: their upkeep
     stableAct: (verb, arg) => {
+      if (upkeep && (verb === 'feed' || verb === 'treat' || verb === 'ride' || verb === 'kit')) {   // STEED1/WAGONS4: the upkeep's own acts, the mod on or off
+        const r = upkeep.act(verb, arg, { ...upkeepReach(runtime, on()), pass });
+        if (r.ok) onPainted();
+        return r;
+      }
       if (verb === 'paint') { const r = paintDrivenWagon(items(), 'outside', Number(arg) | 0); if (r.ok) onPainted(); return r; }   // WAGONS2: free, any time, the mod on or off - the paint is the wagon's
+      if (HORSE_LOOK_PARTS.some((p) => p.part === verb)) { const r = restyleRiddenHorse(items(), verb, Number(arg) | 0); if (r.ok) onPainted(); return r; }   // COATS1: the same - the look is the horse's
       if (!on()) return { ok: false, text: `Turn on Horse Cart and Cargo (${optionPath('feat:mod-horse-cart-and-cargo')}) to call your horse and wagon.` };   // ORG2: where it lives, from the map
       if (verb === 'summon') return runtime.summonTransport();
       if (verb === 'away') return runtime.sendTransportAway();
@@ -90,6 +106,7 @@ export const HOLDINGS_CSS = `
 .px-sys .hld-state.is-lost { color: #ff8a78; }
 .px-sys .hld-sub { font-size: 11px; color: #8b8578; }
 .px-sys .hld-meter { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 8px; max-width: 320px; }
+.px-sys .hld-meter.hld-stat { grid-template-columns: 76px 1fr 64px; }
 .px-sys .hld-mk { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #b8b0a0; }
 .px-sys .hld-mn { font-size: 11px; color: #b8b0a0; font-variant-numeric: tabular-nums; }
 .px-sys .hld-why { font-size: 11px; color: #e0a54a; }
@@ -135,6 +152,97 @@ export function holdingMeter(el, meter, label, now, max, tone) {
   r.append(el('span', 'hld-mn', `${Math.max(0, Math.round(now))} / ${Math.round(max)}`));
   return r;
 }
+/** STEED1: a stat's row - its word, the kit's bar of it out of 100, and the number with its bond's share beside.
+ *  STEED-UI: its making on the row's tooltip - what it was born with, what the bond adds, what hunger takes. */
+function statMeter(el, meter, label, now, plus, tone, why = '') {
+  const r = el('div', 'hld-meter hld-stat');
+  r.append(el('span', 'hld-mk', label));
+  r.append(typeof meter === 'function' ? meter(Math.max(0, now), 100, tone) : el('span', null, ''));
+  r.append(el('span', 'hld-mn', plus ? `${Math.round(now)} (+${plus})` : `${Math.round(now)}`));
+  if (why) r.title = why;
+  return r;
+}
+/** STEED-UI: a stat's making in words - born, the bond's points, hunger's. */
+export const statWhy = (st, bonus, penalty, hunger) => [`Born ${st.born}`, bonus ? `+${bonus} from your bond` : '', penalty ? `−${penalty} ${String(hunger).toLowerCase()}` : ''].filter(Boolean).join(', ');
+/** STEED1: a hunger's chip tone. */
+const HUNGER_TONE = Object.freeze({ fed: '', hungry: 'is-hurt', starving: 'is-lost' });
+/** STEED1: what a hunger costs, in the card's words. STEED-UI: a fed horse says how long its food lasts. */
+const HUNGER_LINE = Object.freeze({
+  fed: 'Fed.',
+  hungry: 'Hungry - every stat ten lower, and its breath slower back.',
+  starving: 'Starving - every stat twenty-five lower, no gallop, and your bond fading. Feed it.',
+});
+/** STEED-UI: the bond's row - the kit's bar of the way from its word to the next, and the points still to go (whole at
+ *  Kindred). */
+function bondMeter(el, meter, h) {
+  const r = el('div', 'hld-meter');
+  r.append(el('span', 'hld-mk', 'Bond'));
+  const span = h.next ? h.next.at - (h.tierAt ?? 0) : 1, got = h.next ? h.bond - (h.tierAt ?? 0) : 1;
+  r.append(typeof meter === 'function' ? meter(Math.max(0, got), span, 'thin') : el('span', null, ''));
+  r.append(el('span', 'hld-mn', h.next ? `${h.next.at - Math.floor(h.bond)} to ${h.next.name}` : 'Whole'));
+  r.title = h.next ? `Fed by your hand, ${h.tier} grows to ${h.next.name} at ${h.next.at}` : 'Kindred - the bond is whole';
+  return r;
+}
+/** STEED-UI: hours of food as a card says them. */
+const foodHours = (hours) => (hours >= 2 ? `${Math.floor(hours)} hours` : hours * 60 >= 2 ? `${Math.round(hours * 60)} minutes` : 'a minute');
+export const hungerLine = (h) => (h.hungerKey === 'fed' && h.fedHours > 0 ? `Fed - food in it for ${foodHours(h.fedHours)}.` : HUNGER_LINE[h.hungerKey] ?? '');
+/**
+ * STEED1: a horse's care on its card - its bond and hunger in words, its breath (the one ridden), its four stats, and
+ * the acts: oats and an apple from the pack, and the one ridden chosen. `h` a horse of the upkeep's model.
+ * STEED-UI: its bond a bar to the next word, its food's hours, a winded breath said, each stat's making on its tooltip.
+ */
+function steedLines(el, meter, h, care, act) {
+  const out = [];
+  out.push(el('span', 'hld-sub', `${h.tier} - bond ${Math.floor(h.bond)} of 100${h.bonus ? `, +${h.bonus} to every stat` : ''}. ${hungerLine(h)}`));
+  out.push(bondMeter(el, meter, h));
+  if (h.ridden) {
+    out.push(holdingMeter(el, meter, 'Breath', h.breath * 100, 100, h.breath < 0.25 || h.winded ? 'blood' : 'verdigris'));
+    if (h.winded) out.push(el('span', 'hld-sub hld-why', 'Winded - it will not gallop until its breath is back.'));
+  }
+  for (const st of h.stats) out.push(statMeter(el, meter, st.name, st.now, Math.max(0, st.now - st.born), 'thin', statWhy(st, h.bonus, h.penalty, h.hunger)));
+  const row = el('div', 'hld-acts');
+  const feed = el('button', h.full ? 'act' : 'act primary', `Feed oats (${care.oats})`);
+  feed.title = h.full ? 'It is not hungry' : 'A sack of oats - a day’s food';
+  if (!care.oats || h.full || !care.near) feed.setAttribute('aria-disabled', 'true');
+  feed.onclick = () => act('feed', h.i);
+  const treat = el('button', 'act', `Give an apple (${care.apples})`);
+  treat.title = 'A treat it loves - a little food, and the bond grows faster';
+  if (!care.apples || h.full || !care.near) treat.setAttribute('aria-disabled', 'true');
+  treat.onclick = () => act('treat', h.i);
+  row.append(feed, treat);
+  if (!h.ridden) {
+    const ride = el('button', 'act', 'Ride this one');
+    ride.title = 'The horse you ride, and the first in your wagon’s team';
+    ride.onclick = () => act('ride', h.i);
+    row.append(ride);
+  }
+  out.push(row);
+  return out;
+}
+/** STEED-UI: a wagon's state's bar tone - sound and worn the kit's verdigris, rickety its plain, failing and broken blood. */
+const WAGON_METER_TONE = Object.freeze({ sound: 'verdigris', worn: 'verdigris', rickety: '', failing: 'blood', broken: 'blood' });
+/** STEED-UI: what a Wagon Yard asks to make it whole - at the yard, and with its wright going out to it. */
+export const mendLine = (w) => (w.mend > 0 ? `A Wagon Yard makes it whole for ${w.mend} gold - ${w.mendAway} if its wright must go out to it.` : 'A town’s Wagon Yard mends it.');
+/** WAGONS4: the wagon's soundness on its card - its condition, its state's word, and a kit's act. STEED-UI: its bar in
+ *  its state's tone, and the yard's price. */
+function wagonLines(el, meter, w, care, act) {
+  const out = [];
+  out.push(holdingMeter(el, meter, 'Repair', w.share * 100, 100, WAGON_METER_TONE[w.stateKey] ?? 'verdigris'));
+  const advice = w.stateKey === 'broken' ? 'Broken down - it goes nowhere until it is mended.' : w.stateKey === 'failing' ? 'Failing - slow, and close to breaking down.'
+    : w.stateKey === 'rickety' ? 'Rickety - its team pulls it slower.' : w.stateKey === 'worn' ? 'Worn - a Wagon Yard can make it whole.' : 'Sound.';
+  out.push(el('span', `hld-sub${w.tone ? ' hld-why' : ''}`, `${advice} ${mendLine(w)}`));
+  if (w.kitWorks) {
+    const row = el('div', 'hld-acts');
+    const kit = el('button', 'act', `Use a repair kit (${care.kits})`);
+    kit.title = 'An hour’s work: a quarter of its soundness back, to 60% at most';
+    if (!care.kits) kit.setAttribute('aria-disabled', 'true');
+    kit.onclick = () => act('kit');
+    row.append(kit);
+    out.push(row);
+  }
+  return out;
+}
+
 /** How far a thing stands, in the words a card uses. */
 export const farWords = (m) => (m == null ? 'away from here' : m < 1000 ? `${m} m away` : `${(m / 1000).toFixed(1)} km away`);
 
@@ -178,6 +286,19 @@ let _said = null;   // { who: 'horse'|'wagon'|'both', ok, text } - the last act'
 let _renaming = false;   // the horse's name field open
 let _draft = '';
 
+/** WAGONS2/COATS1: a card's row of choices - its word, then a button a choice, the one worn pressed. */
+function choiceRow(el, word, { choices, current }, choose) {
+  const row = el('div', 'hld-acts');
+  row.append(el('span', 'hld-sub', `${word}:`));
+  choices.forEach((name, i) => {
+    const b = el('button', i === current ? 'act primary' : 'act', name);
+    b.setAttribute('aria-pressed', i === current ? 'true' : 'false');
+    b.onclick = () => choose(i);
+    row.append(b);
+  });
+  return row;
+}
+
 function card(el, { art, glyph, name, words, sub, extra, rerender }) {
   const item = el('div', 'hld-row');
   item.append(holdingArt(el, art, glyph, rerender));
@@ -207,6 +328,7 @@ export function drawStablePage(detail, rerender, { el, divider, meter = null } =
     return;
   }
   const v = m.hcc ? m.view : null;
+  const care = m.care ?? null;   // STEED1/WAGONS4: the upkeep's model
   const list = el('div', 'hld-list');
   const act = (verb, arg) => { const r = p?.stableAct?.(verb, arg) ?? { ok: false, text: 'Not here.' }; _said = { ok: r.ok, text: r.text }; rerender(); };
   if (words.horse) {
@@ -230,23 +352,25 @@ export function drawStablePage(detail, rerender, { el, divider, meter = null } =
       row.append(ok, no);
       extra.push(row);
     }
+    if (m.look) {   // COATS1: its look in words, then its coats, patterns and legs, a button each - pressed, worn
+      extra.push(el('span', 'hld-sub', `${m.look.desc[0].toUpperCase()}${m.look.desc.slice(1)}.`));
+      for (const row of m.look.rows) extra.push(choiceRow(el, row.name, row, (i) => act(/** @type {any} */ (row.part), i)));
+    }
+    const ridden = care?.horseCare ? care.horses.find((h) => h.ridden) : null;
+    if (ridden) extra.push(...steedLines(el, meter, ridden, care, act));   // STEED1: its care
     list.append(card(el, { art: HORSE_ART, glyph: '♞', name, words: words.horse, sub: v?.horseName ? 'Your horse' : null, extra, rerender }).item);
+    // STEED1: every other horse owned - its look, its care, and the choice to ride it
+    for (const h of care?.horseCare ? care.horses.filter((x) => !x.ridden) : []) {
+      list.append(card(el, { art: HORSE_ART, glyph: '♞', name: `${h.look[0].toUpperCase()}${h.look.slice(1)}`, words: { state: h.hunger, tone: HUNGER_TONE[h.hungerKey] ?? '', line: null }, sub: 'Another horse of yours', extra: steedLines(el, meter, h, care, act), rerender }).item);
+    }
   }
   if (words.wagon) {
     const extra = [];
     if (v && v.limit > 0) extra.push(holdingMeter(el, meter, 'Load', v.kg, v.limit, 'thin'));
-    if (m.paint) {   // WAGONS2: its outside's paints, a button each - pressed, painted
-      const row = el('div', 'hld-acts');
-      row.append(el('span', 'hld-sub', `${LOOK_TEXT.paint}:`));
-      m.paint.choices.forEach((name, i) => {
-        const b = el('button', i === m.paint.current ? 'act primary' : 'act', name);
-        b.setAttribute('aria-pressed', i === m.paint.current ? 'true' : 'false');
-        b.onclick = () => act('paint', i);
-        row.append(b);
-      });
-      extra.push(row);
-    }
-    list.append(card(el, { art: WAGON_ART, glyph: '☸', name: stableWagonName(m.kind), words: words.wagon, sub: m.kind && m.kind !== 'cart' ? WAGON_KINDS[m.kind]?.name ?? null : null, extra, rerender }).item);   // WAGONS1: the wagon driven, by its kind
+    if (care?.wagonUpkeep && care.wagon) extra.push(...wagonLines(el, meter, care.wagon, care, act));   // WAGONS4: its soundness, and a kit
+    if (m.paint) extra.push(choiceRow(el, LOOK_TEXT.paint, m.paint, (i) => act('paint', i)));   // WAGONS2: its outside's paints, a button each - pressed, painted
+    const wagonWords = care?.wagonUpkeep && care.wagon?.stateKey === 'broken' ? { ...words.wagon, state: 'Broken', tone: 'is-lost' } : words.wagon;   // WAGONS4: broken down, whatever else it is
+    list.append(card(el, { art: WAGON_ART, glyph: '☸', name: stableWagonName(m.kind), words: wagonWords, sub: m.kind && m.kind !== 'cart' ? WAGON_KINDS[m.kind]?.name ?? null : null, extra, rerender }).item);   // WAGONS1: the wagon driven, by its kind
   }
   detail.append(list);
   // THE ACTS - the pair's, as the mod's summon is (both answer together)

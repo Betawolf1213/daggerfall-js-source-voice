@@ -36,7 +36,7 @@
 // scenes/dungeonContext.js - stands no street: nothing here reaches it.
 //
 // Not a DFU member. Ledger A (MERCHANT-YARDS).
-import { YARD_KINDS, YARD_TEXT, YARD_ROWS, yardName, validYardKind } from '../systems/merchantYards.js';
+import { YARD_KINDS, YARD_TEXT, YARD_ROWS, yardName, validYardKind, yardRowsFor } from '../systems/merchantYards.js';
 import { WAGON_KINDS } from '../systems/wagonKinds.js';
 import { YARD_FOOT } from '../world/merchantYardSites.js';
 import { buildYardModel, signBoxOf, yardPoints } from '../world/merchantYardModels.js';
@@ -122,7 +122,7 @@ function turnedBox(cx, cz, forward, size, center) {
  *   horseArt?: (() => boolean)|null, showWagon?: ((r: any, texRemap: any, position: number[], rotation: number[], kind: string) => boolean)|null,
  *   wagonBox?: ((kind: string) => (number[]|null))|null,
  *   open?: (site: any, mode: 'Buy'|'Sell', name?: string) => boolean, say?: (text: string) => void, midText?: (text: string) => void,
- *   now?: () => number,
+ *   now?: () => number, mend?: (site: any) => boolean,
  * }} deps  `sites` every yard standing this frame, the scene's x, z of its middle and the frame's vertical compensation
  *   (`comp` - a change re-reads the ground); `horseArt()` true once the standing horse's views are uploaded (the HCC
  *   pool's own loader); `showWagon`/`wagonBox` the HCC pool's wagon of a kind - drawn, and its box ([x0, y0, z0, x1,
@@ -133,6 +133,7 @@ export function createMerchantYards({
   renderer = null, getTexture = null, uploadRecordFrame = null, sites, groundAt, collider = () => null,
   eye = () => null, feet = () => null, horseArt = null, showWagon = null, wagonBox = null,
   open = () => false, say = () => {}, midText = () => {}, now = () => performance.now(),
+  mend = () => false,   // WAGONS4: (site) => the host's wright - the wagon driven mended for gold (scenes/world.js mendAtYard)
 }) {
   /** The yards standing, by key: their site, where their middle stands, their matrix, their collider, their flats. */
   /** @type {Map<string, any>} */
@@ -403,7 +404,7 @@ export function createMerchantYards({
         if (!w) return null;
         return { title: WAGON_KINDS[w.kind]?.name ?? 'Wagon', subs: [WAGON_SHOW_LINE[w.kind] ?? '', YARD_TEXT.ask(K.keeper)], actions: [YARD_ROWS[0]] };
       }
-      return { title: p.y.name, subs: [`${K.keeper}: ${p.y.site.keeper?.name ?? ''}`, K.trade], actions: YARD_ROWS.map((r) => ({ id: r.id, label: r.label })) };
+      return { title: p.y.name, subs: [`${K.keeper}: ${p.y.site.keeper?.name ?? ''}`, K.trade], actions: yardRowsFor(p.y.site.kind).map((r) => ({ id: r.id, label: r.label })) };   // WAGONS4: the Wagon Yard's Mend
     },
     /** A press: the Sell row sells to the yard; the Buy row, or a press with no row lit, buys from it; Info names the keeper
      *  (a sign reads its name); Steal takes nothing. */
@@ -416,6 +417,7 @@ export function createMerchantYards({
         return true;
       }
       if (verb == null && mode === 'steal') { midText(YARD_TEXT.steal); return true; }
+      if (verb === 'mend' && p.y.site.kind === 'transport' && (p.what === 'keeper' || p.what === 'sign')) return mend(p.y.site) !== false;   // WAGONS4: the wright
       const trade = verb === 'sell' && (p.what === 'keeper' || p.what === 'sign') ? 'Sell' : 'Buy';
       if (!open(p.y.site, trade, p.y.name)) midText(YARD_TEXT.shut);   // AUDIT MERCHANT-YARDS Y5: the counter named for its keeper
       return true;

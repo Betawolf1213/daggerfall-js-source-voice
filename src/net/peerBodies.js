@@ -75,7 +75,10 @@ import { peerStubEntity, lookKey } from './remotePlayers.js';
 import { POSE_STRIKES } from './wire.js';   // MAC7 #1: the swing's kind, by the wire's index
 import { HIT_FRAME_MELEE, MELEE_NUM_FRAMES } from '../characters/weaponStates.js';   // MW-PACE1: where in a blow its hit lands
 import { wrapAngle } from '../world/mat4.js';   // ONCRASH1: the port's one angle wrap, which cannot loop
-import { seatTopOf } from '../player/seatPose.js';   // CARDS2b: the table's top the pose names
+import { seatTopOf, SEAT_PELVIS_HEIGHT } from '../player/seatPose.js';   // CARDS2b: the table's top the pose names; COATS3D: a standing pelvis, for a rider's lift
+import { POSE_RIDE } from './wire.js';   // COATS3D: a peer on a horse
+import { HORSE_SEAT } from '../world/horseRig.js';   // COATS3D: the 3D horse's seat, over the rider's feet
+import { gaitShare } from '../world/horseModel.js';
 import { JUMP_UNITS, stepPeerPace } from './peerPace.js'; import { peerBodyYaw, peerClimbing, peerMoving, PeerClimbTrack } from './peerClimb.js';   // HT-WAIST-BACK: the pace law, lifted - the walkers' lanterns swing off it too; CLIMB5: the climb's facing and pose
 
 
@@ -308,6 +311,13 @@ export function peerCamera(shown, feet, speed = 0, cam = null, yaw = peerBodyYaw
 }
 
 const dist2 = (a, b) => (a[0] - b[0]) ** 2 + (a[2] - b[2]) ** 2;
+/** COATS3D: a horse's feet under its rider's, its seat over them (player/mwView.js's own law), `grow` its size. */
+const horseFeetUnder = (feet, yaw, grow = 1) => [feet[0] - Math.sin(yaw) * HORSE_SEAT[1] * grow, feet[1], feet[2] - Math.cos(yaw) * HORSE_SEAT[1] * grow];
+/** COATS3D: how far a body astride stands over its feet's standing height - its hips on the seat, over a standing
+ *  pelvis (player/seatPose.js SEAT_PELVIS_HEIGHT, at the body's race) - so a rider's name rides over their head. */
+const saddleLift = (b) => { const s = b?.cam?.saddle; return s?.seat && b.feet ? Math.max(0, s.seat[1] - b.feet[1] - SEAT_PELVIS_HEIGHT * (b.rig.raceHeightScale?.() ?? 1)) : 0; };
+/** COATS3D: a peer's horse's own idle phase, off their id. */
+const seedOf = (id) => { let h = 0; for (const c of String(id)) h = (Math.imul(h, 31) + c.charCodeAt(0)) | 0; return (h >>> 0) % 65536 || 1; };
 
 /** WB9h: the rows of proj x view, and which row makes each side: left, right, bottom, top, near (the 4th row plus or
  *  minus the 1st, 2nd, 3rd). */
@@ -362,9 +372,11 @@ export class PeerBodies {
    * @param {ReturnType<typeof createBuildGate>|null} [p.gate] MWNPC4: the build queue, SHARED - BODY_BUILD_GATE, which every
    *   body lane the hosts stand passes, so one body builds at a time on the page however many lanes ask; none, the
    *   instance's own. AUDIT MW-NPC II L1: an NPC lane's (`buildInRange`) waits behind every peer's and family's.
+   * @param {() => any} [p.horses] COATS3D: the 3D horse rig (world/horseRig.js) a peer on a horse sits - null, none
    */
-  constructor({ renderer, enabled = () => true, createRig = createFpArm, buildOpts = peerBuildOpts, now = () => Date.now(), generation = () => 0, warn = (m) => console.warn(m), collider = () => null, limits = null, gate = null }) {
+  constructor({ renderer, enabled = () => true, createRig = createFpArm, buildOpts = peerBuildOpts, now = () => Date.now(), generation = () => 0, warn = (m) => console.warn(m), collider = () => null, limits = null, gate = null, horses = () => null }) {
     this.renderer = renderer;
+    this._horses = horses;   // COATS3D: the 3D horse rig (world/horseRig.js) a peer on a horse rides, or null - none, and no peer rides here
     this._max = limits?.max ?? BODIES_MAX;   // MWNPC3: the instance's caps (limits)
     this._range = limits?.range ?? BODY_RANGE;
     this._skinBudget = limits?.skinBudget ?? SKIN_BUDGET;
@@ -415,7 +427,7 @@ export class PeerBodies {
   has(id) { return this._standing(this._bodies.get(id)); }
 
   /** The body's height over its feet - the capsule scaled by the race's own (MW-D34) - or 0 without a standing body: the name pass's head. */
-  heightOf(id) { const b = this._bodies.get(id); return this._standing(b) ? (b.rig.bodyHeight?.() ?? CAPSULE_HEIGHT * (b.rig.raceHeightScale?.() ?? 1)) * (this._cam?.grow && b.feet ? Math.max(1, this._cam.grow(b.feet)) : 1) * this._scaleOf(b) : 0; }
+  heightOf(id) { const b = this._bodies.get(id); return this._standing(b) ? ((b.rig.bodyHeight?.() ?? CAPSULE_HEIGHT * (b.rig.raceHeightScale?.() ?? 1)) + saddleLift(b)) * (this._cam?.grow && b.feet ? Math.max(1, this._cam.grow(b.feet)) : 1) * this._scaleOf(b) : 0; }   // COATS3D: astride, the head as high as the saddle lifts it
 
   /** MWNPC10: a body's own scale (the lane's `scaleOf`), 1 without one. */
   _scaleOf(b) { const s = this._cam?.scaleOf ? this._cam.scaleOf(b.id) : 1; return s > 0 ? s : 1; }   // OW-PEERS: a grown body's head, for its name
@@ -642,7 +654,25 @@ export class PeerBodies {
     // CARDS2b: seated at a card table - the same seated request the sitter's own body takes (player/seatPose.js), at the
     // table's top the pose names; rebuilt only when the seat moves
     b.cam.seat = peer.shown.st ? seatFor(b, f, b.yaw, peer.shown.st) : null;
+    b.cam.saddle = this._saddle(b, peer.shown, f, dt);   // COATS3D: on a horse - astride its 3D horse
     b.inView = !this._planesOk || this._sees(b, turnLeadMargin(Math.sqrt(b.d2), this._turn));   // WB9h: in the last pass's view, with the margin a turning eye needs - MW-CROWD: led by the turn
+  }
+
+  /** COATS3D: a peer on a HORSE (the pose's `rd`; never the cart, never a beast) sits the 3D horse - its own, in the look
+   *  the pose names (`rc`), stepped at the body's pace under its feet, its seat the body's saddle (player/seatPose.js) as
+   *  the player's own is (player/mwView.js). Null, and the horse let go, off one or where the rig is not up. */
+  _saddle(b, shown, f, dt) {
+    const rig = this._horses();
+    if (!rig?.ready() || shown.rd !== POSE_RIDE.Horse || peerIsWolf(shown) || shown.wb) { this._unhorse(b); return null; }
+    b.horse ??= rig.horse(seedOf(b.id));
+    if (!b.horse) return null;
+    rig.step(b.horse, { feet: horseFeetUnder(f, b.yaw), yaw: b.yaw, speed: b.speed ?? 0, dt, look: shown.rc | 0 });
+    const seat = rig.seat(b.horse);
+    return seat ? { feet: [f[0], f[1], f[2]], seat, yaw: b.yaw, lean: gaitShare(b.horse.gait, 'gallop') } : null;
+  }
+  /** COATS3D: a body's horse let go (its palette). */
+  _unhorse(b) {
+    if (b?.horse) { this._horses()?.release(b.horse); b.horse = null; }
   }
 
   /** WB9h: does the view the last body pass drew (viewPlanes) reach this body - its sphere about its middle, BODY_SPHERE_SHARE of
@@ -853,7 +883,8 @@ export class PeerBodies {
       if (b.stale) {
         try { b.rig.update(0, { pose: true, effectsDt: b.bank }); b.bank = 0; b.stale = false; b.owed = false; b.posedAt = this._frame; } catch (e) { this._fail(b, `update threw: ${e?.message ?? e}`); continue; }
       }
-      try { if (b.rig.drawThird(canvas, { proj, view, eye, feet: b.feet, yaw: b.yaw, hitFlash: flashOf ? flashOf(b.id) : 0, conceal: b.veil ?? null, grow: g, up: this._cam?.up ?? null, fx: this._cam?.fxOf ? this._cam.fxOf(b.id) : null })) drawn++; } catch (e) { this._fail(b, `draw threw: ${e?.message ?? e}`); }   // AUDIT MWBODY A1; HITFLASH1: a struck body flashes red; INVIS-LOOK: a concealed one blends; OW-PEERS: grown and leaned under the Overworld
+      const horse = b.horse && b.cam?.saddle ? this._horses()?.picture(b.horse, horseFeetUnder(b.feet, b.yaw, g), b.yaw, g) ?? null : null;   // COATS3D: astride, the horse in the body's picture
+      try { if (b.rig.drawThird(canvas, { proj, view, eye, feet: b.feet, yaw: b.yaw, hitFlash: flashOf ? flashOf(b.id) : 0, conceal: b.veil ?? null, grow: g, up: this._cam?.up ?? null, fx: this._cam?.fxOf ? this._cam.fxOf(b.id) : null, horse })) drawn++; } catch (e) { this._fail(b, `draw threw: ${e?.message ?? e}`); }   // AUDIT MWBODY A1; HITFLASH1: a struck body flashes red; INVIS-LOOK: a concealed one blends; OW-PEERS: grown and leaned under the Overworld
     }
     return drawn;
   }
@@ -871,6 +902,7 @@ export class PeerBodies {
     const b = this._bodies.get(id);
     if (!b) return;
     this._bodies.delete(id);
+    this._unhorse(b);   // COATS3D: the horse is the peer's, never the spare body's
     // WB9h: a body given up in a swap - built, skinned - is kept for the next peer who wears it
     if (spare && b.state === 'ok' && (b.rig.thirdActive?.() ?? false)) { this._keepSpare(b, keep); return; }
     try { b.rig.unload(); } catch { /* a rig mid-build unloads when the build lands */ }

@@ -31,12 +31,13 @@
 // that does nothing.
 
 import { TRANSPORT_MODES, isRiding, hasHorse, hasCart } from '../systems/transport.js';
-import { RidingAnimator, loadRidingArt, ridingRect, RIDING_VOLUME_SCALE } from '../systems/riding.js';
+import { RidingAnimator, loadRidingArt, ridingRect, ridingLook, RIDING_VOLUME_SCALE } from '../systems/riding.js';
+import { riddenHorseLook } from '../systems/horseCoats.js';   // COATS1: the ridden horse's look, which the sprite wears
 import { TransportWindow, transportArtLoaded } from '../ui/transportWindow.js';
 import { enhancedWindow } from '../ui/enhancedPorts.js';   // PORT4: the transport picker, in the enhanced skin
 import { ownsShip } from '../systems/banking.js';
 import { horseOffsetHeight, dockedLargeHudHeight } from '../ui/hudLarge.js';   // ROAD-D D10: LargeHUDOffsetHorse; AUDIT-RR F25: EnhancedRiding's own arm asks LargeHUDDocked (EnhancedRiding.cs:256-257)
-import { mwViewHides } from './mwView.js';   // AUDIT-EOTB2: the sprite body on screen hides the FPV horse (Eye Of The Beholder's ToggleBillboard)
+import { mwViewHides, mwViewDrawSaddle } from './mwView.js';   // AUDIT-EOTB2: the sprite body on screen hides the FPV horse (Eye Of The Beholder's ToggleBillboard); COATS3D: the 3D horse in its place
 import { SOUND } from '../systems/soundClips.js';
 import { isShipAvailable } from '../systems/ship.js';   // RR1: TransportManager.ShipAvailiable, the delegate
 import { NATIVE_SCREEN_HEIGHT } from '../systems/riding.js';   // RR2: the 200-line native screen the sprite scales by
@@ -69,6 +70,7 @@ export function createMountRig({
   // rides at DFU's own 1.
   ridingVolumeScale = () => 1,
   horseCart = null,   // HCC: () => the Horse Cart and Cargo runtime, or null - TrailingWagonTransportWindow's gate and route
+  cartRefusal = () => null,   // WAGONS4: () => why the wagon goes nowhere (broken), or null - the classic window's Cart row dark (the mod's runtime asks its own teamShort)
 }) {
   const animator = new RidingAnimator();   // TR2: the mount's frames, loop and neigh
   // RR2: the terrain ring (EnhancedRiding.cs:26-31) and the pitch floor the
@@ -128,11 +130,31 @@ export function createMountRig({
     audio.setLoop('riding', null);
     animator.mount(mode);
     art = null;
-    if (isRiding(mode)) {
-      loadRidingArt(fetchBytes, palette, renderer, mode)
-        .then((a) => { if (player.transportMode === mode) art = a; })   // still that mount: a dismount mid-load keeps null
-        .catch((e) => console.warn('[transport] mount art unavailable:', e?.message ?? e));
-    }
+    loadArt(mode);
+  }
+  /** COATS1: the look the mount under the player wears now (the cart's sprite is never dyed - riding.js ridingLook). */
+  const lookNow = (mode) => ridingLook(mode, riddenHorseLook(playerEntity?.items ?? []));
+  /** COATS1: the mount and look the last load was asked for (`mode:look`) - asked once, loaded or failed, so a failed
+   *  load is not asked again every frame (HC1's art is asked by the mode's change alone). */
+  let _artFor = null;
+  const artKey = (mode) => `${mode}:${lookNow(mode)}`;
+  /** COATS1: the dyed frames of a look no longer worn let go (EVERY ALLOCATION HAS AN OWNER) - the bay's as drawn are
+   *  the art's own and stay. */
+  const letGo = (a) => { if (a?.look) for (const rec of a.records ?? []) renderer?.evictTexture?.(`img_${rec}`); };
+  let _lastArt = null;   // the last load landed - kept past a dismount, so its look is let go when another lands
+  let _req = 0;   // the newest load asked; an older one landing late is let go, never drawn
+  function loadArt(mode) {
+    _artFor = isRiding(mode) ? artKey(mode) : null;
+    if (!_artFor) return;
+    const id = ++_req;
+    loadRidingArt(fetchBytes, palette, renderer, mode, lookNow(mode))
+      .then((a) => {
+        if (id !== _req) { if (a.look !== art?.look && a.look !== _lastArt?.look && a.look !== lookNow(mode)) letGo(a); return; }   // AUDIT COATS3D A10: never the look the newest load is asking for - its frames are these (uploadTexture's one handle a key)
+        if (_lastArt && _lastArt.look !== a.look) letGo(_lastArt);
+        _lastArt = a;
+        if (player.transportMode === mode) art = a;   // still that mount: a dismount mid-load keeps null
+      })
+      .catch((e) => console.warn('[transport] mount art unavailable:', e?.message ?? e));
   }
 
   return {
@@ -158,7 +180,7 @@ export function createMountRig({
       const rt = horseCart?.() ?? null;
       showOverlay(enhancedWindow(new TransportWindow({
         hasHorse: rt ? !!rt.canMountHorseFromTransportWindow() : hasHorse(playerEntity.items ?? []),
-        hasCart: rt ? !!rt.canUseCartFromTransportWindow() : hasCart(playerEntity.items ?? []),
+        hasCart: rt ? !!rt.canUseCartFromTransportWindow() : hasCart(playerEntity.items ?? []) && !cartRefusal(),   // WAGONS4: a broken wagon no row
         // TR4: the row is live when a ship is owned - AND when this
         // host can actually sail it. A fixed city has nowhere to sail
         // to, so the row goes dark rather than opening onto nothing.
@@ -207,6 +229,11 @@ export function createMountRig({
         const ahead = groundHeightAt(player.pos[0] + Math.sin(yaw), player.pos[2] + Math.cos(yaw));
         if (Number.isFinite(here) && Number.isFinite(ahead)) { _terrainAngles[_sampleIdx++] = rrTerrainAngle(here, ahead); if (_sampleIdx >= RR_RIDING.samples) _sampleIdx = 0; }
       }
+      // COATS1: a look chosen in the saddle (the Stable card) dresses the sprite - the old one drawn until the new is up
+      if (_artFor && isRiding(player.transportMode) && _artFor !== artKey(player.transportMode)) loadArt(player.transportMode);
+      // COATS3D: on the Morrowind body's 3D horse, that horse is the one in first person - drawn here, in the sprite's
+      // place (after the world, under the hands), and the sprite stands down
+      if (isRiding(player.transportMode) && !ridePaused && !mwViewHides().horse && mwViewDrawSaddle(typeof canvas === 'function' ? canvas() : canvas)) return r;
       if (art && isRiding(player.transportMode) && !ridePaused && !mwViewHides().horse) {
         // ROAD-D D10: horseOffsetHeight (TransportManager.cs :304-309)
         // - the bar the LAST drawHud drew, lifted out from under the

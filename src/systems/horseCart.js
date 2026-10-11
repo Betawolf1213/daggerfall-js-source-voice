@@ -1086,6 +1086,15 @@ export function createHorseCartRuntime(deps) {
   const canAccessWagonFromDungeonExit = () => canAccessWagonStorage(STORAGE_CONTEXT.DungeonExitSelection);
   function consumeWagonSelectionRequest() { const r = selectWagonOnNextInventoryOpen; selectWagonOnNextInventoryOpen = false; return r; }
   function openWagonInventoryFromPhysicalActivation() { selectWagonOnNextInventoryOpen = true; deps.openInventoryWithWagon?.(); }
+  /** STEED-UI (the port's own, no IL twin): the saddle panel's Cargo - the wagon's load opened as a press on the wagon
+   *  opens it (the selection request, then the host's inventory door), only where CanAccessWagonInventory allows; a
+   *  refusal is said in its own words. Answers whether it opened. */
+  function openWagonCargo() {
+    const a = canAccessWagonInventory();
+    if (!a.allowed) { say(a.denialMessage); return false; }
+    openWagonInventoryFromPhysicalActivation();
+    return true;
+  }
 
   // ── the horse's name [IL_8644-IL_87dc]
   function refreshHorseNameInputState() { if (horseNameInputBox && !horseNameInputBox.isOpen()) horseNameInputBox = null; }
@@ -1524,7 +1533,7 @@ export function createHorseCartRuntime(deps) {
     handleQuickMountOrDismount, handleSummonTransport,
     summonTransport, sendTransportAway, renameHorse, stableView,   // HOLDINGS: the Stable page's four
     adoptYeet,   // WARDEN1: the town watch threw my parked wagon
-    canAccessWagonStorage, canAccessWagonInventory, canAccessWagonFromDungeonExit, consumeWagonSelectionRequest,
+    canAccessWagonStorage, canAccessWagonInventory, canAccessWagonFromDungeonExit, consumeWagonSelectionRequest, openWagonCargo,
     handleDeployedWagonActivation, handleFollowingWagonActivation, handleStationaryHorseActivation, openHorseNamePrompt, actionRows,
     ownsStationaryHorseActivator,
     get physicalPersistenceEnabled() { return physicalPersistenceEnabled; },

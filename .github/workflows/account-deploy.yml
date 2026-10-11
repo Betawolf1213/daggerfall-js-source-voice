@@ -281,6 +281,7 @@ on:
       - "src/systems/uiPrefs.js"
       - "src/systems/wagonKinds.js"
       - "src/systems/walletItem.js"
+      - "src/systems/upkeepItemRows.js"
       - "src/world/buildingNames.js"
       - "src/world/meshReader.js"
       - "src/world/perlin.js"

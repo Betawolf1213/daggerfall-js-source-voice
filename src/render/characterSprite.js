@@ -76,7 +76,10 @@ export function bodyFxPad(fx) {
   return fx.elite < 0 || fx.glint?.[3] > 0 ? 2 : 0;
 }
 
-export function drawRigSpriteBox(renderer, canvas, mesh, rigMat, { center, halfW: boxW, halfH: boxH, anchor = null, hitFlash = 0, conceal = null, up = null, fx = null }, proj, view, eye, pixel = CHAR_PIXEL) {
+/** COATS3D: `also`, optional - more meshes in the same picture ({ mesh, model } each: the horse under a rider), drawn
+ *  after `mesh` under the same camera and depth (renderer.js _renderCharacterSprite, and a batch's tiles). The box is the caller's, and holds
+ *  them all. */
+export function drawRigSpriteBox(renderer, canvas, mesh, rigMat, { center, halfW: boxW, halfH: boxH, anchor = null, hitFlash = 0, conceal = null, up = null, fx = null, also = null }, proj, view, eye, pixel = CHAR_PIXEL) {
   const aim = anchor && Math.hypot(anchor[0] - eye[0], anchor[1] - eye[1], anchor[2] - eye[2]) > 1e-6 ? anchor : center;   // PR-BOW1: the ray the picture is taken along
   const dx = aim[0] - eye[0], dy = aim[1] - eye[1], dz = aim[2] - eye[2];
   const dist = Math.max(0.5, Math.hypot(dx, dy, dz));
@@ -128,10 +131,10 @@ export function drawRigSpriteBox(renderer, canvas, mesh, rigMat, { center, halfW
   // MWNPC2: an open batch (renderer.js beginCharacterSpriteBatch) takes the picture as measured, and the flush draws it
   // in its own tile of the one bind; a lone call takes its own pass, as every call did
   if (renderer.characterSpriteBatchOpen) {
-    renderer.queueCharacterSprite({ mesh, model: rigMat, proj: sProj, view: sView, pw, ph, tx: 0, ty: 0, quad: { at, halfW, halfH, right, hitFlash, conceal, up, fx } });
+    renderer.queueCharacterSprite({ mesh, model: rigMat, also, proj: sProj, view: sView, pw, ph, tx: 0, ty: 0, quad: { at, halfW, halfH, right, hitFlash, conceal, up, fx } });
     return { center: at, halfW, halfH, pw, ph };
   }
-  const sTex = renderer.renderCharacterSprite(mesh, rigMat, sProj, sView, pw, ph);
+  const sTex = also ? renderer.renderCharacterSprite(mesh, rigMat, sProj, sView, pw, ph, { also }) : renderer.renderCharacterSprite(mesh, rigMat, sProj, sView, pw, ph);
   renderer.drawCharacterSpriteQuad(sTex, at, halfW, halfH, right, pw / CHAR_SPRITE_RT_SIZE, ph / CHAR_SPRITE_RT_SIZE, hitFlash, conceal, up, null, fx);   // MWNPC5: and a foe's tells   // HITFLASH1: a struck body's red; INVIS-LOOK: a concealed peer's body blends; AUDIT OW4 J6: leaned by `up`   // sample the sub-rect (fixed RT, audit fix)
   return { center: at, halfW, halfH, pw, ph };
 }

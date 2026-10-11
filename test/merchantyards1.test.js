@@ -53,11 +53,15 @@ test('MERCHANT-YARDS THE TOWNS: Daggerfall\'s cities and towns (TownCity, TownHa
 });
 
 test('MERCHANT-YARDS THE STOCK: the Stable sells a Horse, the Wagon Yard the Small Cart, the Open Wagon and the Caravan - each row minted as a shelf mints it, a fresh list every Buy (mutants: a horse at the wagon yard; the list kept)', () => {
+  // PIN MOVED (STEED1/WAGONS4): the Stable stands three horses, each its own (stableHorses - test/steed1_horsecare.test.js),
+  // and sells a sack of oats; the Wagon Yard a Wagon Repair Kit beside its three - the upkeep's items offline (and online
+  // once their switch is on - systems/upkeepItemRows.js)
   const s = yardStock('stable');
-  assert.deepEqual(s.map((it) => [it.group, it.templateIndex, it.name]), [['Transportation', TRANSPORT_HORSE, 'Horse']]);
+  assert.deepEqual(s.map((it) => [it.group, it.templateIndex, it.name]), [...Array(3).fill(['Transportation', TRANSPORT_HORSE, 'Horse']), ['UselessItems2', 1710, 'Sack of Oats']]);
   assert.ok(s[0].value > 0 && s[0].maxCondition > 0 && s[0].currentCondition === s[0].maxCondition, 'named, valued and whole, as a shelf\'s row');
   const t = yardStock('transport');
-  assert.deepEqual(t.map((it) => [it.templateIndex, it.wagonKind ?? null, it.value]), [[TRANSPORT_SMALL_CART, null, 150], [TRANSPORT_SMALL_CART, 'openWagon', WAGON_KINDS.openWagon.value], [TRANSPORT_SMALL_CART, 'caravan', WAGON_KINDS.caravan.value]]);
+  assert.deepEqual(t.map((it) => [it.templateIndex, it.wagonKind ?? null, it.value]), [[TRANSPORT_SMALL_CART, null, 150], [TRANSPORT_SMALL_CART, 'openWagon', WAGON_KINDS.openWagon.value], [TRANSPORT_SMALL_CART, 'caravan', WAGON_KINDS.caravan.value], [1711, null, 60]]);
+  assert.deepEqual([yardStock('stable', { online: true }).length, yardStock('transport', { online: true }).length], [3, 3], 'online, none of the upkeep\'s items until their switch is on');
   assert.notEqual(yardStock('stable')[0], s[0], 'a yard never sells out: each Buy mints its stock afresh');
   assert.deepEqual(yardStock('barn'), []);
 });
@@ -435,7 +439,7 @@ test('MERCHANT-YARDS THE FOUR HOSTS - world.js places, stands, draws and names t
   assert.match(world, /\(key\) => merchantYards\?\.hoverName\(key\) \?\? null,/);
   assert.match(world, /yardTargets: \(\) => merchantYards\?\.targets\(\) \?\? \[\],/);
   assert.match(world, /activateYard: \(key, mode, verb\) => merchantYards\?\.activate\(key, mode, verb\) \?\? false,/);
-  assert.match(world, /open: \(site, mode, name\) => modes\?\.openYardTrade\?\.\(site\.kind, site\.regionIndex, mode, name\) \?\? false,/);
+  assert.match(world, /open: \(site, mode, name\) => modes\?\.openYardTrade\?\.\(site\.kind, site\.regionIndex, mode, name, site\.mapId\) \?\? false,/);   // PIN MOVED (STEED1): the town's own horses
   assert.match(host, /if \(!open\(p\.y\.site, trade, p\.y\.name\)\) midText\(YARD_TEXT\.shut\);/, 'the counter named for its keeper (AUDIT Y5)');
   assert.match(world, /showWagon: \(r, texRemap, position, rotation, kind\) => hcc\.drawShowWagon\(r, texRemap, position, rotation, kind\),/);
   assert.match(world, /race: walkerRace\(climate\?\.people, dfLocation\.regionIndex\),/, 'the walkers...');
@@ -443,11 +447,11 @@ test('MERCHANT-YARDS THE FOUR HOSTS - world.js places, stands, draws and names t
   assert.match(modes, /for \(const t of host\.yardTargets\?\.\(\) \?\? \[\]\) targets\.push\(t\);/);
   assert.match(modes, /key\.startsWith\('yard:'\)\) \{[^\n]*\n\s*if \(_hitDist > _hitReach\) \{ setMidScreenText\(TOO_FAR_AWAY_TEXT\); return true; \}\n\s*return host\.activateYard\?\.\(key, getInteractionMode\(\), plaqueActionFor\(key\)\) \?\? true;/);
   assert.match(modes, /accepts: \(it\) => \(typeof b\.accepts === 'function' \? b\.accepts\(it\) : shopBuysItem\(b\.buildingType, it\)\),/, 'the counter asks the yard what it buys');
-  assert.match(modes, /const win = openTradeWindow\(\{ items: tradeMode === 'Sell' \? \[\] : yardStock\(kind\) \}, b, tradeMode === 'Sell' \? 'Sell' : 'Buy'\);\n\s*if \(!win\) return true;[^\n]*\n\s*mountServiceWindow\(win\);/, 'the counter in the street\'s slot, never the interior\'s (undrawn outdoors)');
+  assert.match(modes, /const win = openTradeWindow\(\{ items: tradeMode === 'Sell' \? \[\] : stock\(\) \}, b, tradeMode === 'Sell' \? 'Sell' : 'Buy'\);\n\s*if \(!win\) return true;[^\n]*\n\s*mountServiceWindow\(win\);/, 'the counter in the street\'s slot, never the interior\'s (undrawn outdoors)');   // PIN MOVED (STEED1): the stock the town's on the world's day
   // AUDIT MERCHANT-YARDS Y3: one press waits (the latest), and opens only where it was pressed - the street, its slot free
   assert.match(modes, /if \(!validYardKind\(kind\) \|\| mode !== 'exterior'\) return false;/, 'a yard\'s counter is the street\'s');
-  assert.match(modes, /const first = !_yardWait;\n\s*_yardWait = \{ kind, regionIndex, tradeMode, name \};\n\s*if \(first\) \{\n\s*ensureShopFont\(\)\.then\(\(\) => \{/, 'a press before the counter\'s art waits for it - one wait, the latest press');
-  assert.match(modes, /const w = _yardWait;\n\s*_yardWait = null;\n\s*if \(!w \|\| mode !== 'exterior' \|\| townTalk\?\.overlay\) return;\n\s*if \(!tradeDoorReady\(\) \|\| \(!isEnhanced\(\) && !_shopFont\)\) \{ setMidScreenText\(YARD_TEXT\.shut\); return; \}\n\s*openYardCounter\(w\.kind, w\.regionIndex, w\.tradeMode, w\.name\);/, 'opened where it was pressed, or not at all; a folder that gives no art says so');
+  assert.match(modes, /const first = !_yardWait;\n\s*_yardWait = \{ kind, regionIndex, tradeMode, name, mapId \};\n\s*if \(first\) \{\n\s*ensureShopFont\(\)\.then\(\(\) => \{/, 'a press before the counter\'s art waits for it - one wait, the latest press');
+  assert.match(modes, /const w = _yardWait;\n\s*_yardWait = null;\n\s*if \(!w \|\| mode !== 'exterior' \|\| townTalk\?\.overlay\) return;\n\s*if \(!tradeDoorReady\(\) \|\| \(!isEnhanced\(\) && !_shopFont\)\) \{ setMidScreenText\(YARD_TEXT\.shut\); return; \}\n\s*openYardCounter\(w\.kind, w\.regionIndex, w\.tradeMode, w\.name, w\.mapId\);/, 'opened where it was pressed, or not at all; a folder that gives no art says so');   // PIN MOVED (STEED1): and the town it was pressed in
   assert.match(modes, /if \(Number\.isFinite\(b\?\.priceIndex\)\) return b\.priceIndex;/, 'a counter\'s own index (AUDIT Y2)');
   assert.match(modes, /stealRefusal: \(\) => b\.noSteal \?\? null,/, 'the counter\'s word on a steal, to the window (AUDIT Y1)');
   assert.match(modes, /    openYardTrade,/);

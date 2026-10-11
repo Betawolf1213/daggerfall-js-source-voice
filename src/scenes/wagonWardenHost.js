@@ -74,7 +74,7 @@ export function wardenTownIn(built, translate, size, x, z) {
  *   toWire: (scene: number[]) => number[], toScene: (wire: number[]) => number[],
  *   townAt: (x: number, z: number) => ({ town: number, nav: any, local: number[], toScene: (u: number, v: number) => number[] }|null|undefined),
  *   townName?: (town: number) => string, wallNow?: () => number, eye?: () => (number[]|null), street?: () => boolean,
- *   notify?: (lines: string[]) => void, myKey?: () => (string|null),
+ *   notify?: (lines: string[]) => void, myKey?: () => (string|null), thrown?: () => void,
  * }} deps  `hcc` the HCC pool; `runtime()` its runtime (adoptYeet, view); `shows` scenes/wagonWardenShow.js's;
  *   `online()` the session or null (offline); `toWire`/`toScene` the pose's frame and back; `townAt(x, z)` the scene's
  *   point in a built town (wardenTownIn): its map id, its walk grid and the point in its frame (null: built, no watch
@@ -85,6 +85,7 @@ export function wardenTownIn(built, translate, size, x, z) {
 export function createWagonWarden({
   hcc, runtime, shows, online, toWire, toScene, townAt, townName = () => '', wallNow = () => Date.now(),
   eye = () => null, street = () => true, notify = () => {}, myKey = () => null,
+  thrown = () => {},   // WAGONS4: my wagon was thrown - the host's upkeep wears it (systems/wagonUpkeep.js THROWN_WEAR)
 }) {
   /** @type {any} */
   let stamp = null;
@@ -177,6 +178,7 @@ export function createWagonWarden({
     const alive = () => { const a = anchorOf(); return !!a && !!landed && Math.abs(a[0] - landed[0]) <= WARDEN_SAME_NATIVES && Math.abs(a[1] - landed[1]) <= WARDEN_SAME_NATIVES; };
     if (snap && near(snap.at)) shows.start({ key: 'mine', owners: [''], snap, origin: toWire(snap.at), landing: to, approach, alive });
     notify([WARDEN_TEXT.thrown(town), WARDEN_TEXT.fetch]);
+    thrown();   // WAGONS4: a wagon thrown is a wagon knocked about
     return true;
   }
 

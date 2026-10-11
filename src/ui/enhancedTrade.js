@@ -52,7 +52,7 @@ import {
   MAGIC_ITEMS_CANNOT_BE_REPAIRED_TEXT_ID, DOES_NOT_NEED_TO_BE_REPAIRED_TEXT_ID,
 } from '../systems/tradeModes.js';
 import {
-  CANNOT_BE_REPAIRED_TEXT, INTERRUPT_REPAIR_TEXT,
+  CANNOT_BE_REPAIRED_TEXT, TRANSPORT_CANNOT_BE_REPAIRED_TEXT, INTERRUPT_REPAIR_TEXT,
   isBeingRepaired as itemIsBeingRepaired, isRepairFinished, collectRepaired,
   updateRepairTimes, repairCountdown, repairCountdownText,   // UXB1-K: when a job is ready
 } from '../systems/repairService.js';
@@ -227,6 +227,7 @@ function refuse(refusal) {
     magic: rows(MAGIC_ITEMS_CANNOT_BE_REPAIRED_TEXT_ID),
     undamaged: rows(DOES_NOT_NEED_TO_BE_REPAIRED_TEXT_ID),
     notRepairable: [{ text: CANNOT_BE_REPAIRED_TEXT, center: true }],
+    transport: [{ text: TRANSPORT_CANNOT_BE_REPAIRED_TEXT, center: true }],   // WAGONS4
     identified: [{ text: DOESNT_NEED_IDENTIFY, center: true }],
     bagLoaded: [{ text: BAG_WORDS.notEmpty, center: true }],   // BAG1: a Materials Bag holding anything
   }[refusal] ?? [];

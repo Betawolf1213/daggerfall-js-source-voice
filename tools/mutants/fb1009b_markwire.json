@@ -21,8 +21,8 @@
   {
     "name": "MARK-WIRE-the-mark-off-the-list",
     "file": "src/net/realmTradeLaw.js",
-    "old": "export const RECEIVER_MARKS = Object.freeze(['equipSlot', 'questItem', 'acquired', 'wagonEntry']);",
-    "new": "export const RECEIVER_MARKS = Object.freeze(['equipSlot', 'questItem', 'wagonEntry']);",
+    "old": "export const RECEIVER_MARKS = Object.freeze(['equipSlot', 'questItem', 'acquired', 'wagonEntry', 'horseBond', 'horseFed']);",
+    "new": "export const RECEIVER_MARKS = Object.freeze(['equipSlot', 'questItem', 'wagonEntry', 'horseBond', 'horseFed']);",
     "tests": [
       "test/fb1009b_markwire.test.js"
     ]

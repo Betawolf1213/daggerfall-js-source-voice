@@ -507,6 +507,7 @@ export function hideHudTextSurfaces(hudText = null) {
 export function drawHud(renderer, canvas, art, vitals, heading01, dt = 0,
   { font = null, cursorActive = false, reticleHidden = false, windowCoversHud = null, hudHidden = false, detected = null, playerXZ = null, gate = null, quest = null, wayOut = null, party = null, ships = null, nodes = null, boats = null, largeHud = null, hover = null,
     grip = null,   // CLIMB2: the enhanced climb's grip, { amount, low } or null
+    steed = null,   // STEED1: the ridden horse's breath, the same shape (systems/upkeepRuntime.js bar) - drawn in the grip's place, a rider holding no wall
     readied = null, weapon = null, weaponSheathed = true, quickUse = null, quickSwap = null, quickOffHand = null, quickSpell = null, quickSwitchHand = null } = {}) {   // PX30b: for the enhanced HUD's hand plaques; AUDIT 28 W2: the arrow counter's gate; AUDIT 64 F35: the host's previousWindow answer; QS3: the diamond's sheathe state and its two phone taps; QS6: the caption's spell chip press
   // RETRO-UI (FIELD BUGS 2026-10-03): under retro mode's pillarbox the HUD lays out in DFU's CustomScreenRect - the
   // pillarbox's canvas, drawn at its place (ui/uiScreen.js) - not over the black bars. Once: a UI canvas answers itself.
@@ -709,6 +710,7 @@ export function drawHud(renderer, canvas, art, vitals, heading01, dt = 0,
       quickSwitchHand: quickSwitchHand ?? null,   // MAC-R3: the main cell's hand switch
       escortBottom: escortBottomPx(canvas),   // UI3: how far down the escort faces reach (CSS px) - the status widget keeps below them
       grip,   // CLIMB2
+      steed,   // STEED1
     });
     // FE1 + AUDIT 39 F133: the escort column is not the classic skin's
     // - DaggerfallHUD adds it unconditionally (:183-185) and even the
@@ -763,7 +765,7 @@ export function drawHud(renderer, canvas, art, vitals, heading01, dt = 0,
     // it, so the bar survives the large HUD - drawn here after the
     // crosshair, the order the components are added in (:158-160).
     drawBreathBar(renderer, canvas, art, vitals, s2);
-    drawGripBar(renderer, canvas, art, grip, s2);   // CLIMB2: beside it, surviving the large HUD as it does
+    drawGripBar(renderer, canvas, art, grip ?? steed, s2);   // CLIMB2: beside it, surviving the large HUD as it does; STEED1: the horse's breath in its place
     // FE1: the escort faces survive the large HUD - the force-off
     // block (DaggerfallHUD.cs:214-220) never names escortingFaces.
     drawEscortFaces(renderer, canvas);
@@ -796,7 +798,7 @@ export function drawHud(renderer, canvas, art, vitals, heading01, dt = 0,
     drawVitalsBars(renderer, rig, skin, rects, indicators);
   }
   drawBreathBar(renderer, canvas, art, vitals, s);
-  drawGripBar(renderer, canvas, art, grip, s);   // CLIMB2
+  drawGripBar(renderer, canvas, art, grip ?? steed, s);   // CLIMB2; STEED1: the horse's breath in its place
   // Compass, bottom-right: strip window first, frame over it.
   // DaggerfallHUD.cs:254-257 sets compass.Position to
   // (screenRect.xMax - Size.x, screenRect.yMax - Size.y) and HUDCompass

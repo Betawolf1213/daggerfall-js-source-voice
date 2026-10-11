@@ -38,6 +38,10 @@ import { eotbCamera } from './eotbCamera.js';
 import { eotbBody } from './eotbBody.js';
 import { eotbWagon } from './eotbWagon.js';
 import { modSetting } from '../systems/modSettings.js';
+import { horseRigFor, HORSE_SEAT } from '../world/horseRig.js';   // COATS3D: the 3D horse under the Morrowind body
+import { gaitShare } from '../world/horseModel.js';
+import { SEAT_PELVIS_HEIGHT } from './seatPose.js';
+import { RIDE_EYE_HEIGHT } from './motor.js';   // AUDIT COATS3D A8: the saddle's eye, the horse's ground under it
 
 /**
  * EOTB4: is Eye Of The Beholder the lane this frame?
@@ -153,6 +157,11 @@ export function mwViewFrame({ fpEye, feet, yaw, pitch, heightScale = null, rayca
   // the host's word for the hull sailed, and off the helm a distance past either's own far end comes back to it
   mwCamera.setSeaReach(seaReach);
   eotbCamera.setSeaReach(seaReach);
+  // AUDIT COATS3D A2: the 3D horse rig's dye runs every frame, on foot as mounted - the pool's, the road's and the
+  // peers' horses ask for their looks whether or not I ride - and A11: my own horse let go off its back, so a remount
+  // never gallops in place on the gait it was left in
+  horseRig?.tick();
+  if (!state.riding) dropOwnHorse();
   // EOTB4: the other lane, resolved first and returned whole - its
   // camera keeps its own ladder, its own smoothing and its own
   // obstacle casts (EOTB2), and nothing of Morrowind's runs.
@@ -190,13 +199,20 @@ export function mwViewFrame({ fpEye, feet, yaw, pitch, heightScale = null, rayca
     // it follows in first person too. `cart` and `onExteriorPath` are
     // the host's (TransportMode == Cart, PlayerMotor.OnExteriorPath).
     eotbWagon.tick(frame.dt ?? 0, { feet, yaw, height: frame.motion?.height, cart: !!frame.cart && !eotbCartYields(), onExteriorPath: !!frame.onExteriorPath, raycast });   // DISC10: HCC's wagon, when it trails, is the one cart
+    dropOwnHorse(); saddled = false;   // the sprite lane's rider is its own picture
     return eyeOverride ? { ...out, eye: eyeOverride, ownEye: out.eye } : out;   // TV1: the body's own camera kept - the view rises out of it
   }
   // HT-WAIST: the Morrowind lane has the frame, so the sprite's lantern at the waist (and the light point it drew
   // from) stands down - one line here rather than one in each of the four hosts.
   eotbBody.standDown();
-  // RIDE-POV: the saddle first, before any queued notch can cross out of the head
-  mounted = !!state.riding;
+  // RIDE-POV: the saddle first, before any queued notch can cross out of the head - COATS3D: unless the body sits a
+  // 3D horse (the host's `horse`: the ridden horse's look, on a horse and not the cart), which it can be seen on
+  // AUDIT COATS3D A8: the horse stands under the eye, not under the capsule's feet - swimming mounted (the eye at
+  // SWIM_RIDE_EYE_HEIGHT) it sinks into the water with its rider, and mounting (the eye rising to the saddle's over the
+  // height action) it rises under them: never a first-person eye inside its back. SINK_SLACK keeps a step's bob out.
+  ownSink = fpEye && feet ? Math.max(0, RIDE_EYE_HEIGHT - (fpEye[1] - feet[1]) - SINK_SLACK) : 0;
+  saddled = !!state.riding && stepOwnHorse(state.horse, feet, yaw, state.dt ?? 0);
+  mounted = !!state.riding && !saddled;
   if (mounted) { mwIntoHead(); pendingClicks = 0; }
   if (pendingClicks) {
     mwCamera.wheel(pendingClicks, { ready: fpArm.upperBodyReady() });
@@ -219,6 +235,9 @@ export function mwViewFrame({ fpEye, feet, yaw, pitch, heightScale = null, rayca
   } else {
     fpArm.setViewMode('first');
   }
+  // COATS3D: astride, the third-person camera turns about the rider's head - its feet lifted as far as the saddle lifts
+  // the hips over a standing body's (player/seatPose.js SEAT_PELVIS_HEIGHT, at the race's height)
+  if (saddled && ownSaddle) feet = [feet[0], feet[1] + Math.max(0, ownSaddle.seat[1] - feet[1] - SEAT_PELVIS_HEIGHT * heightScale), feet[2]];
   const eye = mwCamera.eye({ fpEye, feet, yaw, pitch, heightScale, raycast, spherecast, pivotFloor });   // MAC-A: the obstacle guards are castSphere's, where the host has one; BENCH-CAM: the pivot over my wagon's roof
   return eyeOverride ? { ...eye, eye: eyeOverride, ownEye: eye.eye } : eye;   // TV1: the travel view's eye, the rig's frame run all the same
 }
@@ -281,13 +300,19 @@ export function mwViewFirstPerson() {
  * (RIDE-POV: no saddle to show), and where no body can show at all.
  */
 export function mwViewTogglePerspective() {
-  if (heldThird || heldFirst) return false;   // SPYGLASS: nor while the glass holds the head
+  if (!mwViewCanTogglePerspective()) return false;
   if (eotbLane()) { eotbCamera.toggleOffset(!eotbCamera.thirdPerson()); return true; }
   if (mwCamera.thirdPerson()) return mwIntoHead();
-  if (!fpArm.canThirdPerson() || mounted) return false;
   mwCamera.restore({ firstPerson: false, baseDistance: mwCamera.baseDistance() });
   fpArm.setViewMode('third');
   return true;
+}
+/** STEED-UI: whether the toggle would turn the view now - the saddle panel's View button stands only where it does
+ *  (a lane with a third person, not held, not in the head of a seat that keeps it - RIDE-POV's `mounted`). */
+export function mwViewCanTogglePerspective() {
+  if (heldThird || heldFirst) return false;   // SPYGLASS: nor while the glass holds the head
+  if (eotbLane() || mwCamera.thirdPerson()) return true;
+  return !!fpArm.canThirdPerson() && !mounted;
 }
 
 /**
@@ -382,7 +407,85 @@ function mwIntoHead() {
 // cannot take one out. The frame remembers the saddle for the wheel, which
 // has no state of its own. Read off the seam's own frame, so every host
 // that rides the seam gets the rule and none has to know it.
+// COATS3D: `mounted` is RIDE-POV's hold - in the saddle of no 3D horse (the cart's seat, or a horse the rig cannot draw
+// yet); astride the 3D horse (`saddled`) the body has a saddle to show, and the head is not held.
 let mounted = false;
+
+// COATS3D (2026-10-11, the owner: "These are to be applied to horses for people using morrowind with the character
+// properly rigged when riding"; asked, "Yes, unlock it" for third person in the saddle, and "The 3D horse" for first
+// person): THE MORROWIND BODY HAS A SADDLE NOW. On a horse (the host's `horse` - its look; the cart is not one) the
+// view keeps the player's own 3D horse (world/horseRig.js): stepped each frame at the ground the body covers, under
+// the body's feet with its seat over them, and its seat handed to the body as `saddle` (the hosts' camera(), through
+// mwViewSaddle) - so the body sits astride it (player/seatPose.js saddleRigInput). Third person draws the two in one
+// picture (fpArm.js drawThird's `horse`), so RIDE-POV no longer holds the head: the wheel takes it out as on foot.
+// First person draws the horse from the eye in place of Daggerfall's riding sprite (player/mountRig.js,
+// mwViewDrawSaddle). Without the rig - not loaded yet, or failed - RIDE-POV stands as it did.
+let horseRig = null;
+let ownHorse = null;
+let saddled = false;
+let ownSaddle = null;
+let lastFeet = null;
+let groundSpeed = 0;
+let lastCamera = null;
+/** The body's ground speed is eased toward the frame's over this many seconds, so a gait does not flicker on a frame's
+ *  stutter; a step past HORSE_TELEPORT m/s is a teleport, never a gallop. */
+const SPEED_EASE = 0.12;
+const HORSE_TELEPORT = 40;
+/** AUDIT COATS3D A8: how far the eye stands under the saddle's (RIDE_EYE_HEIGHT), past SINK_SLACK - the horse's ground
+ *  that much under the rider's feet. */
+let ownSink = 0;
+const SINK_SLACK = 0.15;
+
+/** COATS3D: the host's renderer, once - the 3D horse rig's (world/horseRig.js horseRigFor) - and its bake asked for. */
+export function mwViewAttachHorse(renderer) {
+  if (!renderer || horseRig) return;
+  horseRig = horseRigFor(renderer);
+  horseRig.load();
+}
+
+/** COATS3D: one frame of the player's own horse - stepped, and its seat made the body's saddle. Answers whether the
+ *  body is astride it this frame. */
+function stepOwnHorse(horse, feet, yaw, dt) {
+  if (!horse || !horseRig?.ready() || !feet || !fpArm.canThirdPerson()) { dropOwnHorse(); return false; }
+  ownHorse ??= horseRig.horse(1);
+  if (!ownHorse) return false;
+  if (lastFeet && dt > 0) {
+    const v = Math.hypot(feet[0] - lastFeet[0], feet[2] - lastFeet[2]) / dt;
+    if (v < HORSE_TELEPORT) groundSpeed += (v - groundSpeed) * Math.min(1, dt / SPEED_EASE);
+  }
+  lastFeet = [feet[0], feet[1], feet[2]];
+  horseRig.step(ownHorse, { feet: horseFeetUnder(feet, yaw), yaw, speed: groundSpeed, dt, look: horse.look | 0 });
+  const seat = horseRig.seat(ownHorse);
+  ownSaddle = seat ? { feet: lastFeet, seat, yaw, lean: gaitShare(ownHorse.gait, 'gallop') } : null;
+  return !!ownSaddle;
+}
+/** The horse's own feet, so its seat stands over the rider's: its origin back from them by the seat's own way forward. */
+const horseFeetUnder = (feet, yaw, grow = 1) => [feet[0] - Math.sin(yaw) * HORSE_SEAT[1] * grow, feet[1] - ownSink * grow, feet[2] - Math.cos(yaw) * HORSE_SEAT[1] * grow];
+function dropOwnHorse() {
+  if (ownHorse) horseRig?.release(ownHorse);
+  ownHorse = null; ownSaddle = null; lastFeet = null; groundSpeed = 0;
+}
+
+/** COATS3D: the 3D horse rig while the world's horses are 3D - the Morrowind body is the one on screen (the player's
+ *  own lane: never the sprite lane's, whose riders and horses are its own pictures) and the rig is up; else null, and
+ *  every horse stands as its billboard. The pool's and the road's horses (scenes/horseCartPool.js, world/roadTeams.js)
+ *  ask it each frame. */
+export function mwViewHorseRig() {
+  return horseRig?.ready() && !eotbLane() && fpArm.canThirdPerson() ? horseRig : null;
+}
+
+/** COATS3D: the saddle the body sits this frame (`{ feet, seat, yaw, lean }`) for the hosts' camera() - or null, off a
+ *  3D horse. */
+export const mwViewSaddle = () => (saddled ? ownSaddle : null);
+
+/** COATS3D: the horse in first person, where Daggerfall's riding sprite is drawn (player/mountRig.js frame - after the
+ *  world, under the hands): taken with the world's own camera from the eye on its back. Answers whether it drew - the
+ *  riding sprite stands down when it did. */
+export function mwViewDrawSaddle(canvas) {
+  if (!saddled || !ownHorse || !lastCamera || mwCamera.thirdPerson() || eotbLane()) return false;
+  horseRig.place(ownHorse, horseFeetUnder(lastCamera.feet, lastCamera.yaw), lastCamera.yaw);
+  return horseRig.drawFirstPerson(ownHorse, canvas, lastCamera);
+}
 
 // WAGONS3 (2026-10-10, Mac: "Using a wagon doesnt allow you to zoom out into 3rd person when mounted"; "sit on the wagon
 // itself, the ledge its built for"): THE DRIVER ON THE BENCH IS NOT IN THE SADDLE. A host whose player drives a wagon
@@ -504,11 +607,15 @@ export function mwViewDrawBody(canvas, { proj, view, eye, feet, yaw, viewYaw = y
   // the body's on the wall (CLIMB5 handed it the body's, and a hanging player looking along the wall saw the sprite
   // edge-on); the Morrowind body below turns to the wall (`yaw`, the body's)
   if (eotbLane()) { const drawn = drawEotbBody(canvas, { proj, view, eye, feet, yaw: viewYaw, face }); spriteFigure = drawn ? eotbFigure() : null; spriteFacing = drawn ? eotbFacing() : null; return drawn; }   // AUDIT DEEP R-2: `face` - the travel view's basis for the quad; SERAPH-WINGS: the figure it drew kept for the aura on its back
+  lastCamera = { proj, view, feet, yaw };   // COATS3D: the frame's camera, for the horse in first person (mwViewDrawSaddle)
   if (!mwCamera.thirdPerson()) return false;
+  // COATS3D: astride, the horse under the body - placed at the body's own feet and facing this draw, in its picture
+  const grow = face?.grow > 1 ? face.grow : 1;
+  const horse = saddled && ownHorse ? horseRig.picture(ownHorse, horseFeetUnder(feet, yaw, grow), yaw, grow) : null;
   // AUDIT OW3 J6: OW-BIG's grown traveller is the Morrowind body's too - `face.grow` (player/travelCamera.js tvOwnGrow)
   // reached the sprite body alone, and under the travel view the Morrowind body stood a speck at its own size.
   // AUDIT OW4 J6: and `face.up` - its quad leaned as the sprite lane's is (eotbBody.js), not upright under a pitched picture
-  return fpArm.drawThird(canvas, { proj, view, eye, feet, yaw, grow: face?.grow > 1 ? face.grow : 1, up: face?.up ?? null });
+  return fpArm.drawThird(canvas, { proj, view, eye, feet, yaw, grow: face?.grow > 1 ? face.grow : 1, up: face?.up ?? null, horse });
 }
 
 /** SHADOW-CLOAK: the third-person Morrowind body's named bones where they stand this frame, in its own frame

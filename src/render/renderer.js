@@ -3304,6 +3304,16 @@ export class Renderer {
     }
     gl.enableVertexAttribArray(9); gl.vertexAttribPointer(9, 1, gl.FLOAT, false, stride, (floats - 1) * 4);   // the post
     this._bindVao(null);
+    return { vao, count: stream.length / floats, buffers: [vbo], vbo, floats, bounds: null,
+      skin: this.createSkinPalette({ pairs, width, height }) };
+  }
+
+  /** MWNPC1: a skin's palette texture (RGBA32F, `width` x `height`), uploaded by updateSkinPalette. COATS3D: its own
+   *  door, so meshes that share one stream - every 3D horse is the one horse - each pose on a palette of their own:
+   *  a picture queued in a sprite batch (MWNPC2) is drawn at the flush, so two horses on one palette would both stand
+   *  in the last one's pose. Let go by releaseCharacterSkin. */
+  createSkinPalette({ pairs, width, height }) {
+    const gl = this.gl;
     const tex = gl.createTexture();
     this._activeTexture(gl.TEXTURE0 + SKIN_PALETTE_UNIT);
     gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -3314,8 +3324,7 @@ export class Renderer {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     this._skinUnitHolds = tex;
     this._activeTexture(gl.TEXTURE0);
-    return { vao, count: stream.length / floats, buffers: [vbo], vbo, floats, bounds: null,
-      skin: { tex, pairs, width, height } };
+    return { tex, pairs, width, height };
   }
 
   /** MW-BOW1 x MWNPC1: a part that moved on its own clock - its corners alone put back into the static stream at
@@ -3705,7 +3714,7 @@ export class Renderer {
    *  the mesh sits at the ORIGIN of a private lens space (the FP
    *  viewmodel), not in the world - the cloud deck is borrowed off for
    *  it (VC5 review), as the studio variant does for the panels. */
-  renderCharacterSprite(mesh, modelMatrix, proj, view, pw, ph, { lensLocal = false, viewmodelLight = null } = {}) {
+  renderCharacterSprite(mesh, modelMatrix, proj, view, pw, ph, { lensLocal = false, viewmodelLight = null, also = null } = {}) {
     const gl = this.gl;
     // MAC-P (2026-09-17, Mac: "morrowind's first person view also doesn't
     // receive lighting and is consistently dark"): THE VIEWMODEL'S LIGHT.
@@ -3742,7 +3751,7 @@ export class Renderer {
       this._moonScale = 0;
     }
     try {
-      return this._renderCharacterSprite(mesh, modelMatrix, proj, view, pw, ph, { lensLocal });
+      return this._renderCharacterSprite(mesh, modelMatrix, proj, view, pw, ph, { lensLocal, also });
     } finally {
       if (vmSaved) {
         this._lightDir = vmSaved.lightDir; this._ambient = vmSaved.ambient; this._sunScale = vmSaved.sunScale;
@@ -3752,8 +3761,10 @@ export class Renderer {
     }
   }
 
-  /** The pass itself - MAC-P's light borrow wraps it above. */
-  _renderCharacterSprite(mesh, modelMatrix, proj, view, pw, ph, { lensLocal = false } = {}) {
+  /** The pass itself - MAC-P's light borrow wraps it above. COATS3D: `also`, more meshes in the same picture ({ mesh,
+   *  model } each) - a rider and the horse under them are one figure, taken under one depth (each its own quad,
+   *  composited apart, would cut the horse's neck by the rider's plane). */
+  _renderCharacterSprite(mesh, modelMatrix, proj, view, pw, ph, { lensLocal = false, also = null } = {}) {
     const gl = this.gl;
     const cs = this._charSpriteRT();
     gl.bindFramebuffer(gl.FRAMEBUFFER, cs.fbo);
@@ -3816,7 +3827,10 @@ export class Renderer {
     // setClearColor (:1953) is idempotent against the `_clearColor`
     // shadow this path no longer matches - AUDIT 26 F034's bug back,
     // permanently, off one caught exception.
-    try { this.drawCharacter(mesh, modelMatrix); }
+    try {
+      this.drawCharacter(mesh, modelMatrix);
+      if (also) for (const o of also) this.drawCharacter(o.mesh, o.model);   // COATS3D: a rider's horse, in the rider's picture
+    }
     finally {
       gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameFbo ?? null);   // EL4: the frame, or the canvas
       // ROAD-E E5: the viewport is BORROWED here too. This pass runs in
@@ -3867,7 +3881,7 @@ export class Renderer {
   /** MWNPC2: true between begin and flush - drawRigSpriteBox's question. */
   get characterSpriteBatchOpen() { return this._spriteBatch.open; }
 
-  /** MWNPC2: one body's picture, measured: { mesh, model, proj, view, pw, ph, quad: { at, halfW, halfH, right,
+  /** MWNPC2: one body's picture, measured: { mesh, model, also (COATS3D), proj, view, pw, ph, quad: { at, halfW, halfH, right,
    *  hitFlash, conceal, up } }. Its tile is written by the flush. */
   queueCharacterSprite(item) { this._spriteBatch.items.push(item); }
 
@@ -3919,6 +3933,7 @@ export class Renderer {
         this._proj = it.proj; this._view = it.view;
         this._cFrameStamp = -1;   // LA-COST1: its own camera's block, as the lone pass sends it
         this.drawCharacter(it.mesh, it.model);
+        if (it.also) for (const o of it.also) this.drawCharacter(o.mesh, o.model);   // COATS3D: a rider's horse, in the rider's picture
       }
     } finally {
       gl.disable(gl.SCISSOR_TEST);

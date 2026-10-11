@@ -419,14 +419,15 @@ test('LA-COST1: THE LAW, READ OFF THE SOURCE - every field the four gated frame 
       if (n === '_renderCharacterSprite') {
         assert.equal((b.match(/this\._cFrameStamp = -1;/g) || []).length, 2, 'the sprite pass forgets the character block on the way in and on the way out');
         assert.ok(b.indexOf('this._cFrameStamp = -1;') < b.indexOf('this.drawCharacter(') && b.lastIndexOf('this._cFrameStamp = -1;') > b.indexOf('finally {'), '...in, before its draw; out, in its finally');
-        assert.equal((b.match(/this\.draw[A-Z]\w*\(/g) || []).join(), 'this.drawCharacter(', 'and it draws the character program alone');
+        // PIN MOVED, COATS3D: a rider's horse is drawn in the rider's picture (`also`) - more draws, the one program's
+        assert.ok((b.match(/this\.draw[A-Z]\w*\(/g) || []).every((d) => d === 'this.drawCharacter('), 'and it draws the character program alone');
       } else if (n === '_renderCharacterSpriteTiles') {
         // MWNPC2: each tile forgets the block before its draw (its own camera's block, as the lone pass sends it), and
         // the finally forgets it on the way out
         const loop = b.indexOf('for (let i = from; i < to; i++) {'), f = b.indexOf('finally {');
         assert.ok(loop > 0 && b.indexOf('this._cFrameStamp = -1;', loop) < b.indexOf('this.drawCharacter(', loop), `${n}: a tile forgets the block before it draws`);
         assert.ok(b.lastIndexOf('this._cFrameStamp = -1;') > f && f > loop, `${n}: and the finally forgets it on the way out`);
-        assert.equal((b.match(/this\.draw[A-Z]\w*\(/g) || []).join(), 'this.drawCharacter(', `${n}: it draws the character program alone`);
+        assert.ok((b.match(/this\.draw[A-Z]\w*\(/g) || []).every((d) => d === 'this.drawCharacter('), `${n}: it draws the character program alone`);   // PIN MOVED, COATS3D: and a rider's horse
       } else {
         const t = b.indexOf('try {'), f = b.indexOf('finally {');
         assert.ok(t > 0 && b.indexOf('this._renderCharacterSprite(') > t && f > t, `${n}: its borrow wraps the sprite pass, which forgets the block`);

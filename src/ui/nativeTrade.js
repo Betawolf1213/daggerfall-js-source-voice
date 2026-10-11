@@ -48,7 +48,7 @@ import {
   localListAccepts, localClickDecision, sellGuardOf, DOESNT_NEED_IDENTIFY, LETTER_OF_CREDIT_TEXT,
   MAGIC_ITEMS_CANNOT_BE_REPAIRED_TEXT_ID, DOES_NOT_NEED_TO_BE_REPAIRED_TEXT_ID,
 } from '../systems/tradeModes.js';
-import { CANNOT_BE_REPAIRED_TEXT, INTERRUPT_REPAIR_TEXT, isBeingRepaired as itemIsBeingRepaired,
+import { CANNOT_BE_REPAIRED_TEXT, TRANSPORT_CANNOT_BE_REPAIRED_TEXT, INTERRUPT_REPAIR_TEXT, isBeingRepaired as itemIsBeingRepaired,
   isRepairFinished, collectRepaired, updateRepairTimes, repairStatusLabel } from '../systems/repairService.js';   // D7: the Repair mode's remote arm; UXB1-K: its misc label
 import { isFurnishing } from '../systems/decorFurnish.js';   // DECOR2b: furniture is delivered, never carried
 import { isSummoned, carriedWeight, totalWeight, transferAll, addItem } from '../systems/inventory.js';   // TransferItem's summoned guard; AUDIT 63 F48: transferAll is ItemCollection.TransferAll (:452), DoSteal's move
@@ -529,6 +529,7 @@ export class NativeTradeWindow {
       magic: rows(MAGIC_ITEMS_CANNOT_BE_REPAIRED_TEXT_ID),
       undamaged: rows(DOES_NOT_NEED_TO_BE_REPAIRED_TEXT_ID),
       notRepairable: [{ text: CANNOT_BE_REPAIRED_TEXT, center: true }],
+      transport: [{ text: TRANSPORT_CANNOT_BE_REPAIRED_TEXT, center: true }],   // WAGONS4
       identified: [{ text: DOESNT_NEED_IDENTIFY, center: true }],
       bagLoaded: [{ text: BAG_WORDS.notEmpty, center: true }],   // BAG1: a Materials Bag holding anything
     }[refusal] ?? [];

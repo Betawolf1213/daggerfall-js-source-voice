@@ -191,8 +191,8 @@
   {
     "name": "DISC7-hs-dropped-at-the-door",
     "file": "src/net/wire.js",
-    "old": "rv: uint(rv, POSE_RIDE_SPRITES - 1) ?? 0, ...(uint(hs, 1) ? { hs: 1 } : {}) } : {};",
-    "new": "rv: uint(rv, POSE_RIDE_SPRITES - 1) ?? 0 } : {};",
+    "old": "rv: uint(rv, POSE_RIDE_SPRITES - 1) ?? 0, ...(uint(hs, 1) ? { hs: 1 } : {}), ...(c ? { rc: c } : {}) } : {};",
+    "new": "rv: uint(rv, POSE_RIDE_SPRITES - 1) ?? 0, ...(c ? { rc: c } : {}) } : {};",
     "tests": [
       "test/disc7.test.js"
     ]
@@ -200,8 +200,8 @@
   {
     "name": "DISC7-hs-written-at-zero",
     "file": "src/net/wire.js",
-    "old": "...(uint(hs, 1) ? { hs: 1 } : {}) } : {};",
-    "new": "hs: uint(hs, 1) ? 1 : 0 } : {};",
+    "old": "...(uint(hs, 1) ? { hs: 1 } : {}), ...(c ? { rc: c } : {}) } : {};",
+    "new": "hs: uint(hs, 1) ? 1 : 0, ...(c ? { rc: c } : {}) } : {};",
     "tests": [
       "test/disc7.test.js"
     ]
@@ -218,8 +218,8 @@
   {
     "name": "DISC7-hs-lost-in-the-ease",
     "file": "src/net/online.js",
-    "old": "rv: to.rv ?? 0, ...(to.hs ? { hs: 1 } : {}) } : {}),",
-    "new": "rv: to.rv ?? 0 } : {}),",
+    "old": "rv: to.rv ?? 0, ...(to.hs ? { hs: 1 } : {}), ...(to.rc ? { rc: to.rc } : {}) } : {}),",
+    "new": "rv: to.rv ?? 0, ...(to.rc ? { rc: to.rc } : {}) } : {}),",
     "tests": [
       "test/disc7.test.js"
     ]

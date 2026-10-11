@@ -69,6 +69,8 @@ export const FRAME_ROLES = {
     '.tview-bar', '.tview-side', '.tview-confirm', '#wp-menu', '#travel-pace-box',   // OW-BLOCK: the Overworld's block; FILTERS-LEFT: its filters, their own block at the bottom left; OW-CONFIRM: its question; WAYPOINTS: the right-click menu; PACE-DIALS: the other skins' dials
     // CSA-L: the helm's bar (ui/enhancedHelm.js) - the journey bar's kind, under the compass where it stands
     '.helmpanel-bar',
+    // STEED-UI: the saddle's bar (ui/enhancedSaddle.js) - the helm's kind, where the helm stands (the two never up together)
+    '.saddlepanel-bar',
     // PLUS-MAP: the 3D dungeon map's control bar - the journey bar's carved stone, the same fittings
     '.hmroot .hmtools',
     // PLUS-DRESS (2026-09-26, Mac: "ensure any of the new UI elements are also a part of how enhanced plus looks"): the
@@ -156,6 +158,8 @@ export const FRAME_ROLES = {
     '#wp-menu .wpm-btn', '#wp-menu .wpm-kind',
     // CSA-L: the helm's presses - the sails, the trim, the lanterns, the time, the position, leaving
     '.helmpanel-btn',
+    // STEED-UI: the saddle's presses - the feed, the apple, the kit, the cargo, the Stable, the view, getting down
+    '.saddlepanel-btn',
     // PLUS-MAP: the 3D map's turn, tilt, floor and view buttons
     '.hmroot .hmtool',
     // PLUS-DRESS: the page's, the F-menu's (its Cancel stays a line of text), the duel's and the decorator's

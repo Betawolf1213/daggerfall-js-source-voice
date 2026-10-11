@@ -20,8 +20,8 @@
   {
     "name": "FATIGUEIDLE-the-world-host-forgets-standing",
     "file": "src/scenes/world.js",
-    "old": "        running: player.isRunning && !player.standing,   // AUDIT 23 (entity-2): PlayerEntity.cs:408\n        standing: !!player.standing,   // FATIGUE-IDLE: standing still on the ground pays no minute's band (worldTick.js)\n",
-    "new": "        running: player.isRunning && !player.standing,   // AUDIT 23 (entity-2): PlayerEntity.cs:408\n",
+    "old": "        running: player.isRunning && !player.standing && upkeep.riderPaysGallop(player.transportMode),   // AUDIT 23 (entity-2): PlayerEntity.cs:408; STEED1: a gallop is the horse's breath, not the rider's fatigue\n        standing: !!player.standing,   // FATIGUE-IDLE: standing still on the ground pays no minute's band (worldTick.js)\n",
+    "new": "        running: player.isRunning && !player.standing && upkeep.riderPaysGallop(player.transportMode),   // AUDIT 23 (entity-2): PlayerEntity.cs:408; STEED1: a gallop is the horse's breath, not the rider's fatigue\n",
     "tests": [
       "test/fatigue_idle.test.js"
     ]
@@ -29,8 +29,8 @@
   {
     "name": "FATIGUEIDLE-the-street-host-forgets-standing",
     "file": "src/scenes/exterior.js",
-    "old": "        running: player.isRunning && !player.standing,\n        standing: !!player.standing,   // FATIGUE-IDLE: standing still on the ground pays no minute's band (worldTick.js)\n",
-    "new": "        running: player.isRunning && !player.standing,\n",
+    "old": "        running: player.isRunning && !player.standing && upkeep.riderPaysGallop(player.transportMode),   // STEED1: a gallop is the horse's breath\n        standing: !!player.standing,   // FATIGUE-IDLE: standing still on the ground pays no minute's band (worldTick.js)\n",
+    "new": "        running: player.isRunning && !player.standing && upkeep.riderPaysGallop(player.transportMode),   // STEED1: a gallop is the horse's breath\n",
     "tests": [
       "test/fatigue_idle.test.js"
     ]

@@ -22,6 +22,9 @@
 // default. The final `default:` arm catches potions (a filled glass
 // bottle) before falling back to the misc record.
 import { wagonItemName } from './wagonKinds.js';   // WAGONS1: the Open Wagon's and the Caravan's names
+import { horseBornStats, bondTier, STEED_STATS, STEED_STAT_TEXT } from './steedCare.js';   // STEED1: a horse's nature on its card
+import { isOatsItem, isWagonKitItem } from './upkeepItemRows.js';   // STEED1/WAGONS4: what the two are for
+import { KIT_MEND, WAGON_KIT_CEILING } from './wagonUpkeep.js';
 import { unitWeightInKg } from './inventory.js';   // AUDIT 23 (items-8)
 import { enemyDisplayName } from '../characters/enemyBasics.js';   // X5: %hs, the trapped soul's name
 import { itemIsIdentified } from './tradeModes.js';   // X7: the DERIVED identified state
@@ -732,6 +735,8 @@ export function survivalInfoTokens(item) {
   else if (isIliacCard(item)) for (const text of iliacCardLines(item)) out.push({ text, center: true });   // CARDS8
   else if (isCardBinder(item)) for (const text of BINDER_CARD_LINES) out.push({ text, center: true });   // CARDS8
   else if (isCardPack(item)) for (const text of CARD_PACK_LINES) out.push({ text, center: true });   // CARDS9: the sealed pack
+  else if (isOatsItem(item)) out.push({ text: 'A day\u2019s food for a horse. Use it to feed the horse you ride.', center: true });   // STEED1
+  else if (isWagonKitItem(item)) out.push({ text: `Mends ${Math.round(KIT_MEND * 100)}% of a wagon, to ${Math.round(WAGON_KIT_CEILING * 100)}% at most - an hour's work.`, center: true });   // WAGONS4
   return out;
 }
 
@@ -875,9 +880,14 @@ export function itemStatRows(item) {
   // arrow, a helm or shield under HelmAndShieldMaterialDisplay - so the
   // panel never names a metal the pack withholds; push drops an empty.
   push('Material', itemNameParts(item).material);
-  const survival = isSurvivalItem(item) || isRestItem(item) || isPortalStone(item) || isWalletItem(item) || isIliacCard(item) || isCardBinder(item) || isCardPack(item);   // AUDIT CARDS-6 A5: and the pack's; CARDS8   // REST6: the seven's lines too; PORTAL1: and the Portal Stone's; WALLET1: and the wallet's
+  const survival = isSurvivalItem(item) || isRestItem(item) || isPortalStone(item) || isWalletItem(item) || isIliacCard(item) || isCardBinder(item) || isCardPack(item) || isOatsItem(item) || isWagonKitItem(item);   // STEED1/WAGONS4: the oats' and the kit's lines   // AUDIT CARDS-6 A5: and the pack's; CARDS8   // REST6: the seven's lines too; PORTAL1: and the Portal Stone's; WALLET1: and the wallet's
   if (survival) for (const t of survivalInfoTokens(item).slice(2)) push('', t.text);
   else if ((item.maxCondition ?? 0) > 0) push('Condition', `${conditionWord(item)} (${conditionPercentage(item)}%)`);
+  // STEED1: a horse's nature - its four stats as it was born (a Stable's horses say theirs before they are bought), and
+  // its bond with its owner where it has one (the care's stats as they stand are the Stable page's)
+  const born = horseBornStats(item);
+  if (born) for (const k of STEED_STATS) push(STEED_STAT_TEXT[k], String(born[k]));
+  if (born && Number.isInteger(item.horseBond) && item.horseBond > 0) push('Bond', `${bondTier(item.horseBond / 10)} (${Math.floor(item.horseBond / 10)})`);
   // The weight is the STACK's, as `weightString` has it and as the
   // rows above it are - a player looking at ×20 arrows is deciding
   // about twenty arrows.

@@ -119,8 +119,8 @@
   {
     "name": "AC6-A5-enhanced-gate",
     "file": "src/systems/itemInfo.js",
-    "old": "isCardBinder(item) || isCardPack(item);   // AUDIT CARDS-6 A5",
-    "new": "isCardBinder(item);   // AUDIT CARDS-6 A5",
+    "old": "isCardBinder(item) || isCardPack(item) || isOatsItem(item)",
+    "new": "isCardBinder(item) || isOatsItem(item)",
     "tests": [
       "test/auditcards6_a.test.js"
     ]

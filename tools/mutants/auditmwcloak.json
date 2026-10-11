@@ -212,8 +212,8 @@
   {
     "name": "AUDITMWCLOAK-the-frame-never-seats",
     "file": "src/combat/fpArm.js",
-    "old": "if (t.cloaked) seatCloak(t.arm, !!(cam && cam.seat));",
-    "new": "if (false) seatCloak(t.arm, !!(cam && cam.seat));",
+    "old": "if (t.cloaked) seatCloak(t.arm, !!(cam && (cam.seat || cam.saddle)));",
+    "new": "if (false) seatCloak(t.arm, !!(cam && (cam.seat || cam.saddle)));",
     "tests": ["test/mwcloak1.test.js"],
     "note": "A seated body's cloak never seated."
   },

@@ -190,7 +190,7 @@ test('VC3: the seam - the clouds ride the dome only, behind the one switch, on t
   // VC5 review: the FP arm is lens-local geometry at the origin - the deck is borrowed off for it, and only for it
   // MAC-P: the pass is `_renderCharacterSprite` now - `renderCharacterSprite` wraps it with the
   // viewmodel light borrow, and the lens-local flag it takes is unchanged.
-  assert.match(rr, /_renderCharacterSprite\(mesh, modelMatrix, proj, view, pw, ph, \{ lensLocal = false \} = \{\}\)/);
+  assert.match(rr, /_renderCharacterSprite\(mesh, modelMatrix, proj, view, pw, ph, \{ lensLocal = false(?:, also = null)? \} = \{\}\)/);   // PIN MOVED, COATS3D: and a rider's horse in the picture
   assert.match(rr, /const sd = lensLocal \? this\._cloudShadow : null;\s*\n\s*if \(sd\) \{ this\._cloudShadow = null; this\._csStamp\+\+; \}/, 'borrowed off');
   // AUDIT 65 RS-2: the deck's return is still here and still
   // unconditional - but it is now the TAIL of one finally that returns
