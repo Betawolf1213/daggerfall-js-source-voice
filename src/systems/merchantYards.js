@@ -79,30 +79,39 @@ export function yardBuysItem(kind, item) {
   return false;
 }
 
+/** SHIPYARDS (2026-10-11): a seed of the town and a salt - a yard's kind's own, or another of the town's places'
+ *  (systems/portPlaces.js portKeeper: the shipmaster's, the crewmaster's, the lightkeeper's). Pure. */
+export const townSeed = (mapId, salt) => (Math.imul((mapId >>> 0) ^ 0x9e3779b9, 0x85ebca6b) ^ (salt >>> 0)) >>> 0;
 /** A seed of the town and the kind. Pure. */
-export const yardSeed = (mapId, kind) => (Math.imul((mapId >>> 0) ^ 0x9e3779b9, 0x85ebca6b) ^ (YARD_KINDS[validYardKind(kind) ?? 'stable'].seed)) >>> 0;
+export const yardSeed = (mapId, kind) => townSeed(mapId, YARD_KINDS[validYardKind(kind) ?? 'stable'].seed);
 
 /**
- * A yard's keeper: their name (FullName on the region's bank, on the yard's seed - DFU's stream put back as it stood),
- * their gender, and `variant` which of the race's four outfits they wear. Pure.
- * @param {number} mapId @param {string} kind @param {number} regionIndex
+ * SHIPYARDS: A KEEPER OF THE TOWN'S, off a seed of theirs (townSeed's) - their name (FullName on the region's bank,
+ * DFU's stream put back as it stood), their gender, and `variant` which of the race's four outfits they wear. The one
+ * home of a keeper's draw: a yard's (`yardKeeper`) and a port's (systems/portPlaces.js portKeeper). Pure.
+ * @param {number} seed @param {number} regionIndex
  */
-export function yardKeeper(mapId, kind, regionIndex) {
-  const seed = yardSeed(mapId, kind);
+export function townKeeper(seed, regionIndex) {
   const female = ((seed >>> 7) & 1) === 1;
   const gender = female ? GENDERS.Female : GENDERS.Male;
   const name = residentName(seed, getNameBankOfRegion(Number.isInteger(regionIndex) ? regionIndex : -1), gender);
   return { name, gender, sex: female ? 'female' : 'male', variant: (seed >>> 11) & 3 };
 }
+/**
+ * A yard's keeper, on the yard's seed (townKeeper's draw). Pure.
+ * @param {number} mapId @param {string} kind @param {number} regionIndex
+ */
+export const yardKeeper = (mapId, kind, regionIndex) => townKeeper(yardSeed(mapId, kind), regionIndex);
 
-/** The yard's name, after its keeper: their surname where the bank gives one, else their name ("Halbrecht's Stables",
- *  "Jalib's Wagon Yard"). Pure. */
-export function yardName(kind, keeperName) {
-  const K = YARD_KINDS[validYardKind(kind) ?? 'stable'];
+/** SHIPYARDS: a place named after its keeper - their surname where the bank gives one, else their name - and its
+ *  title ("Halbrecht's Stables"); with no name, "The <title>". The one home of the yards' and the shipyard's names. Pure. */
+export function namedAfter(keeperName, title) {
   const parts = String(keeperName ?? '').trim().split(/\s+/).filter(Boolean);
   const who = parts.length > 1 ? parts[parts.length - 1] : parts[0] ?? '';
-  return who ? `${who}'s ${K.title}` : `The ${K.title}`;
+  return who ? `${who}'s ${title}` : `The ${title}`;
 }
+/** The yard's name, after its keeper ("Halbrecht's Stables", "Jalib's Wagon Yard"). Pure. */
+export const yardName = (kind, keeperName) => namedAfter(keeperName, YARD_KINDS[validYardKind(kind) ?? 'stable'].title);
 
 /** The yard's counter as the trade window reads a building's: its kind's own word for a type (never a DFU building
  *  type - no table of Daggerfall's is keyed by it), the yard's quality, the town's region, and what it buys. AUDIT

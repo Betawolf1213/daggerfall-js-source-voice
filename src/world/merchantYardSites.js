@@ -54,8 +54,9 @@ export const MONUMENT_KEEP_M = 8;
  *  world/mat4.js trs turns it (ryDeg: +90 takes +z to +x). */
 export const YARD_TURNS = Object.freeze([0, 90, 180, 270]);
 
-/** A cell grid's summed-area table: `sum(x0, y0, x1, y1)` over cells x0..x1-1, y0..y1-1 (clipped to the grid). */
-function summed(w, h, at) {
+/** A cell grid's summed-area table: `sum(x0, y0, x1, y1)` over cells x0..x1-1, y0..y1-1 (clipped to the grid).
+ *  SHIPYARDS: world/portSites.js places the port's two on it too. */
+export function summed(w, h, at) {
   const S = new Int32Array((w + 1) * (h + 1));
   for (let y = 0; y < h; y++) {
     let row = 0;
@@ -120,8 +121,8 @@ export function yardGround(nav, { buildings = [], props = [], flats = [], closed
   return { width: W, height: H, blocked, road };
 }
 
-/** The cells a yard's front looks onto, FRONT_ROAD_CELLS deep: [x0, y0, x1, y1). Pure. */
-function frontStrip(gx, gy, nx, nz, turn) {
+/** The cells a yard's front looks onto, FRONT_ROAD_CELLS deep: [x0, y0, x1, y1). Pure. SHIPYARDS: and a port place's. */
+export function frontStrip(gx, gy, nx, nz, turn) {
   const d = FRONT_ROAD_CELLS;
   if (turn === 0) return [gx, gy + nz, gx + nx, gy + nz + d];
   if (turn === 1) return [gx + nx, gy, gx + nx + d, gy + nz];
@@ -169,8 +170,9 @@ export function yardSite(g, kind) {
   };
 }
 
-/** Close a placed yard's ground and YARD_GAP_M round it on the placing grid (the next yard stands clear of it). */
-function closeSite(g, s) {
+/** Close a placed yard's ground and YARD_GAP_M round it on the placing grid (the next yard stands clear of it).
+ *  SHIPYARDS: the port's two are placed on what the yards left, and close theirs the same way. */
+export function closeSite(g, s) {
   const gap = Math.ceil(YARD_GAP_M / NAV_CELL - 1e-9);
   for (let gy = Math.max(0, s.gy - gap); gy < Math.min(g.height, s.gy + s.nz + gap); gy++) {
     for (let gx = Math.max(0, s.gx - gap); gx < Math.min(g.width, s.gx + s.nx + gap); gx++) g.blocked[gy * g.width + gx] = 1;
@@ -197,7 +199,17 @@ export function yardSitesOn(g) {
  * @param {{width: number, height: number, blocks: any[]}} loc @param {Parameters<typeof yardGround>[1]} [measures]
  */
 export function yardSitesOf(loc, measures = {}) {
-  if (!loc?.blocks?.length || !(loc.width > 0) || !(loc.height > 0)) return [];
+  const g = townGroundOf(loc, measures);
+  return g ? yardSitesOn(g) : [];
+}
+/**
+ * SHIPYARDS (2026-10-11): A LAID-OUT TOWN'S PLACING GROUND - its navgrid carved on the enhanced lane's water table, its
+ * blocks' measures over it (yardGround's) - or null for a layout with no blocks. The one ground a town's yards are placed
+ * on (yardSitesOf), and the port's two after them (world/portSites.js portSitesOn: on what the yards left). Pure.
+ * @param {{width: number, height: number, blocks: any[]}} loc @param {Parameters<typeof yardGround>[1]} [measures]
+ */
+export function townGroundOf(loc, measures = {}) {
+  if (!loc?.blocks?.length || !(loc.width > 0) || !(loc.height > 0)) return null;
   const nav = new CityNavigation(loc.width, loc.height);
   for (const b of loc.blocks) {
     const fld = b.dfBlock?.rmbBlock?.fldHeader;
@@ -205,7 +217,7 @@ export function yardSitesOf(loc, measures = {}) {
     const tiles = fld.groundData.groundTiles;
     nav.setBlockData(b.x, b.y, fld.autoMapData, (tx, ty) => tiles[tx][ty].textureRecord, { enhancedWater: true });
   }
-  return yardSitesOn(yardGround(nav, measures));
+  return yardGround(nav, measures);
 }
 
 /**

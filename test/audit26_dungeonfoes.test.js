@@ -537,7 +537,9 @@ test('F212: the world host collects both pools with the pixel, which is also wha
   // PIN MOVED (RVN10), 6800 -> 7000: a jump out of a fight routs me before the sweep, one statement above
   // PIN MOVED (AUDIT LW-II-2 H9), 7000 -> 7300: the stood hideout let go beside the camps, with its note, above the needles
   // PIN MOVED (HELM-JUMP, FIELD BUGS 2026-10-11), 7300 -> 7800: a jump lets go of Come Sail Away's helm first, with its note
-  const core = WORLD.slice(t, t + 7800);
+  // PIN MOVED (AUDIT CAPTAIN'S SEA G2/P7, at the merge of main), 7800 -> 8100: a pixel this game does not stream is landed
+  // where the world stands (`_streamedLanding`) beside the resets, with its note - three lines above the needles
+  const core = WORLD.slice(t, t + 8100);
   assert.ok(core.includes('destroyPixel(bx, by);'),
     'so a fast travel or a teleport takes every corpse with it');
   assert.ok(core.includes('exteriorFoes.clearLive();') && core.includes('cityGuards.clearLive();'),

@@ -45,6 +45,7 @@ export function _setHoldingsIconForTests(fn) { _icon = fn ?? ((p, box, onReady) 
  * @property {() => StableModel} [stable]   the horse and the wagon
  * @property {(verb: 'summon'|'away'|'rename'|'paint', arg?: any) => { ok: boolean, text: string }} [stableAct]
  * @property {any} [fleet]   the fleet's model and acts (ui/fleetPage.js)
+ * @property {{ model: () => any }} [captain]   CAPT-LOG: the captain's standing, letter, contracts and log (ui/captainPage.js)
  */
 let _provider = /** @type {HoldingsProvider|null} */ (null);
 /** The host's provider, or null to take the pages down. */
@@ -100,6 +101,7 @@ export const HOLDINGS_CSS = `
   color: #e9e4d9; background: rgba(15,17,22,0.75); border: 2px solid rgba(125,116,96,0.7); }
 .px-sys .hld-foot { font-size: 11px; color: #8b8578; margin: 4px 0 0; }
 .px-sys .hld-refit { display: flex; flex-direction: column; gap: 3px; padding: 6px 9px 7px; border-width: 2px; border-style: solid; box-sizing: border-box; margin-top: 6px; }
+.px-sys .hld-log { display: grid; grid-template-columns: minmax(120px, 38%) 1fr; align-items: baseline; gap: 8px; }
 @media (max-width: 480px) { .px-sys .hld-field { font-size: 16px; } }
 :root[data-plus-theme="stone"] .px-sys .hld-sub, :root[data-plus-theme="stone"] .px-sys .hld-foot { color: #e2d9c4; }
 `;

@@ -500,7 +500,8 @@ test('RAID1 the world host by source: the seams answered where GameManager would
   assert.match(body, /spawn: \(mt, pos, o\) => exteriorFoes\.spawnFoe\(mt, pos, \{ yaw: o\.yawRad, loose: true, transient: true \}\)/);
   assert.match(body, /\}, mobileType, \{ minDistance: RAID_SPAWN_MIN_DISTANCE, maxDistance: RAID_SPAWN_MAX_DISTANCE \}\),/);
   assert.match(body, /standDefender: \(threats\) => cityGuards\.standDefender\(\{/);
-  assert.match(body, /regionIndex: \(\) => \{ const px = playerTravelPixel\(\); return politicClaimed\(maps\.getPoliticIndex\(px\.x, px\.y\)\) \? _questRegionIndex\(\) : -1; \}/);
+  // PIN MOVED (AUDIT CAPTAIN'S SEA G7): nor the Etheric Sea, whose composed politic is the isles' region's
+  assert.match(body, /regionIndex: \(\) => \{ const px = playerTravelPixel\(\); return !\(etherSea && inEther\(px\.x, px\.y\)\) && politicClaimed\(maps\.getPoliticIndex\(px\.x, px\.y\)\) \? _questRegionIndex\(\) : -1; \}/);
   assert.match(body, /townHere: \(\) => \(\(modes\?\.mode \?\? 'exterior'\) === 'exterior' && _musicInLocationRect\(\) \? _questLoc\(\) : null\)/);
   assert.match(body, /picker: \(\) => travelMapPickerData\(\)/);
   assert.match(body, /defendersAllowed: \(\) => !playerEntity\.crimeCommitted && !isTransformedLycanthrope\(playerEntity\)/);

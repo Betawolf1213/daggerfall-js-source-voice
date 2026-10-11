@@ -865,6 +865,21 @@ export function tamrielLandOn(search) {
   return !!getPref('tamrielLand') && (isOnlinePage(search) || isEnhanced(search));
 }
 
+/** ETHER-SEA (bible/03-World/Etheric-Sea.md): THE ETHERIC SEA STANDS - its ground streamed in the world's far box
+ *  (world/ethericSea.js), its places, its ships and its way home through the Veil - in every game. AUDIT CAPTAIN'S SEA
+ *  G2: a save made past the Veil threw on its load under the classic skin, where the sea did not stand; it stands there
+ *  now, and its captain sails home. `?ether=off` the kill door (a save past the Veil then lands at the way home). No
+ *  Features row: the crossing is the player's own choice each time it is offered. The world host reads it once, at its
+ *  mount. */
+export function etherSeaOn(search) {
+  return pageParam('ether', search) !== 'off';
+}
+/** ETHER-CROSSING: THE CROSSING OUT, offered on the open Abecean - on the enhanced skin and online; the classic skin keeps
+ *  DFU's own sea (no captain of it is asked out, and one already past the Veil sails home through it). */
+export function etherCrossOutOn(search) {
+  return etherSeaOn(search) && (isOnlinePage(search) || isEnhanced(search));
+}
+
 /** TAMRIEL3: THE TRACE'S KILL DOOR - `?tamrieltrace=off` keeps the authored shape (the continent as TAMRIEL1 drew it)
  *  where the picture's own trace would stand; no row, a door for a day the trace reads a picture wrong. */
 export function tamrielTraceOn(search) {

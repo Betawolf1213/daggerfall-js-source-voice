@@ -163,20 +163,46 @@ test('AUDIT 30 A5: an answer landing on a pixel stood again under the ask falls 
   process.on('unhandledRejection', onRej);
   aim(w, n);
   assert.ok(w.host.press());
+  // GATHER-SPEED (PIN MOVED): the fall is the act's end's now (gatherHost.js fallNow), never the answer's - so the pixel
+  // is stood again under the ACT, and its end falls the node as its pixel stands then
+  w.host.onDestroyed(w.entry); w.built.set('400,150', entry2); w.host.onBuilt(entry2);
   for (let i = 0; i < 10 && w.host.acting(); i++) {
     w.input.v = { held: false, attack: false, choice: false };
     w.host.tick(CHOP_ACT.ringS);
     w.input.v = { held: false, attack: true, choice: false };
-    const before = w.host.acting();
     w.host.tick(0.001);
-    if (before && !w.host.acting()) { w.host.onDestroyed(w.entry); w.built.set('400,150', entry2); w.host.onBuilt(entry2); }
   }
+  assert.equal(w.host.acting(), false, 'the act played to its end on the pixel stood again');
   for (let i = 0; i < 8; i++) await tick();
   process.off('unhandledRejection', onRej);
   assert.equal(w.book.taken(n.key, 'logs'), true);
   assert.equal(unhandled, null, `the act-start node's flat read in the new wood: ${unhandled}`);
   assert.equal(w.made.filter((b) => b.tip).length, 0, 'no fall of a flat the new wood does not have');
   w.host.dispose();
+  // GATHER-SPEED: and a wood stood again under the act with every flat one place on (a flat put first) falls the node's
+  // OWN tree, where it stands - the act-start node's flat index is another tree's in the new wood
+  const v = await stand({ nowS: NOON });
+  const m = v.host.nodesOf(400, 150).reduce((a, b) => (b.flat.i > a.flat.i ? b : a));
+  const at = v.entry.forest.groups.get(m.flat.group).centers[m.flat.i].slice();
+  const moved = forestOf(400, 150, v.day(), WOODS).forest;
+  const far = { id: 9999, group: m.flat.group, i: 0, x: -5000, y: 0, z: -5000 };
+  moved.trees = [far, ...moved.trees.map((f) => ({ ...f, i: f.i + 1 }))];
+  moved.groups.get(m.flat.group).centers = moved.trees.map((f) => [f.x, f.y, f.z]);
+  aim(v, m);
+  assert.ok(v.host.press());
+  const entry3 = { ...v.entry, batches: [], forest: moved };
+  v.host.onDestroyed(v.entry); v.built.set('400,150', entry3); v.host.onBuilt(entry3);
+  for (let i = 0; i < 10 && v.host.acting(); i++) {
+    v.input.v = { held: false, attack: false, choice: false };
+    v.host.tick(CHOP_ACT.ringS);
+    v.input.v = { held: false, attack: true, choice: false };
+    v.host.tick(0.001);
+  }
+  for (let i = 0; i < 8; i++) await tick();
+  const fallen = v.made.filter((b) => b.tip);
+  assert.equal(fallen.length, 1, 'the node fell');
+  assert.deepEqual(fallen[0].centers, [at], 'its own tree, where it stands in the new wood');
+  v.host.dispose();
 });
 
 test('AUDIT 30 A6: a static batch moved (a wood with a tree sunk) is gridded where it is now, and its shadow is told it moved; a dynamic one (a gib\'s) keeps none', () => {

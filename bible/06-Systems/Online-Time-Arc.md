@@ -244,6 +244,7 @@ Nothing in this table changes. It is listed so the census has its other half.
 | The gates' income: receipts, spoils, the Sigil Broker's prices, the account service's `gate_kills` | `net/gateLink.js`, `net/gateClaims.js`, `scenes/spoilsPool.js`, `systems/sigilBroker.js`, `server-account` |
 | The day's generators, and the music's daily playlist seed | `worldTick.js` (`DAY_SALT`), the hosts' `gameDaysNow` |
 | The naval day: notoriety's decay, the port's grog, today's departures, the traffic seed | `world.js` (the naval `where`), `scenes/navalHost.js`, `systems/naval/` |
+| The captain's day: a port's board and exchange, the Etheric strands' regrowth, the legends' rise (CAPT-BOARD, ETHER-SEA, 2026-10-11) | `world.js` (the harbour office's and the Etheric host's `day`), `scenes/harbourOffice.js`, `scenes/etherHost.js` |
 | The minute a character joins online at | `ui/enhancedMenu.js` (`onlineCopyOf`) |
 
 ### 5.3 Your clock

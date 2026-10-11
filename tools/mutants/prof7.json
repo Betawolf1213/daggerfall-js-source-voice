@@ -437,21 +437,23 @@
   {
     "name": "PROF7-svc-state-no-hunt",
     "file": "server-account/src/professions.js",
-    "old": "    hunt: await huntToday(db, player.id, day),   // PROF7: the account's hides today (PROF0 6)\n",
+    "old": "    hunt: huntFrom(hunt[0]),   // PROF7: the account's hides today (PROF0 6)\n",
     "new": "",
     "tests": [
       "test/prof7_service.test.js",
       "test/prof1_service.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "PROF7-svc-answer-no-hunt",
     "file": "server-account/src/professions.js",
-    "old": "    ...(row.profession === 'hunting' ? { hunt: await huntToday(db, row.player, Number(row.day)) } : {}),",
+    "old": "    ...(row.profession === 'hunting' ? { hunt: huntFrom(r.get('hunt')?.[0]) } : {}),",
     "new": "",
     "tests": [
       "test/prof7_service.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "PROF7-svc-high-counts-all",

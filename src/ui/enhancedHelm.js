@@ -71,9 +71,10 @@ export function helmPadGesture(dir, kind, h, { press, hold }) {
   return false;
 }
 /** CSA-L: the prompt bar's rows at the helm (the pad's own glyphs, ui/plusPad.js showPrompts). */
-export function helmPadPrompts(h) {
+export function helmPadPrompts(h, { glass = [] } = {}) {
   if (!h) return null;
   const trims = h.manualTrim && h.hasSails;
+  if (glass.length) return glassHelmPrompts(h, glass, trims);
   const rows = [
     [[PAD_CODE.up], h.squareToggle ? 'Sails (hold: square sails)' : 'Sails'],
     [[PAD_CODE.down], 'Lanterns (hold: leave the helm)'],
@@ -81,6 +82,29 @@ export function helmPadPrompts(h) {
   // HELM-TIME-ONLINE: online no dial - the pair says the trim alone, where the trim is the player's
   if (h.timeDial === false) { if (trims) rows.push([[PAD_CODE.left, PAD_CODE.right], 'Trim (hold)']); }
   else rows.push([[PAD_CODE.left, PAD_CODE.right], trims ? 'Slower / faster (hold: trim)' : 'Slower / faster (hold left: normal time)']);
+  return rows;
+}
+/**
+ * AUDIT CAPTAIN'S SEA S3: THE HELM'S PROMPTS WITH THE GLASS ON THE D-PAD - a press the player gave the glass (`glass`:
+ * [{ dir, kind }]) is the glass's at the helm too (ui/gamepadInput.js), so each direction says its own two presses, the
+ * glass's in place of the helm's.
+ */
+function glassHelmPrompts(h, glass, trims) {
+  const dial = h.timeDial !== false;
+  const own = {
+    up: { tap: 'Sails', hold: h.squareToggle ? 'square sails' : null },
+    down: { tap: 'Lanterns', hold: 'leave the helm' },
+    left: { tap: dial ? 'Slower' : null, hold: trims ? 'trim' : dial ? 'normal time' : null },
+    right: { tap: dial ? 'Faster' : null, hold: trims ? 'trim' : null },
+  };
+  for (const { dir, kind } of glass) if (own[dir]) own[dir][kind] = 'spyglass';
+  const rows = [];
+  for (const dir of ['up', 'down', 'left', 'right']) {
+    const { tap, hold } = own[dir];
+    const t = tap === 'spyglass' ? 'Spyglass' : tap;
+    if (t) rows.push([[PAD_CODE[dir]], hold ? `${t} (hold: ${hold})` : t]);
+    else if (hold) rows.push([[PAD_CODE[dir]], `${hold.replace(/^./, (c) => c.toUpperCase())} (hold)`]);
+  }
   return rows;
 }
 

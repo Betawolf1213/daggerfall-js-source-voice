@@ -35,14 +35,19 @@ export const YARD_ORDER = Object.freeze(['hull', 'sail', 'crew', 'barrels']);
 /** Each row's price a piece. */
 export const YARD_PRICE = Object.freeze({ hull: REPAIR_PRICE.hull, sail: REPAIR_PRICE.sail, crew: REPAIR_PRICE.crew, barrels: BARREL_PRICE });
 
+/** CAPT-BOARD: a rank's favour off the yard's prices is never more than this. */
+export const YARD_DISCOUNT_MAX = 0.5;
 /**
  * What the yard offers a boat: each row's pieces missing, its price, what the whole of it costs, and how much of it the
- * purse pays for (and that for how much) - with the whole bill and the purse.
+ * purse pays for (and that for how much) - with the whole bill and the purse. CAPT-BOARD: `discount` a captain's rank's
+ * share off every price (captainLedger.js RANK_PERKS `yard`), a price kept to the copper.
  * @param {{ hull: number, maxHull: number, sail: number, maxSail: number, crew: number, maxCrew: number }} damage
  * @param {number} barrels - the barrels aboard
  * @param {number} gold - the purse
+ * @param {{ discount?: number }} [o]
  */
-export function yardOffer(damage, barrels, gold) {
+export function yardOffer(damage, barrels, gold, { discount = 0 } = {}) {
+  const k = 1 - Math.max(0, Math.min(YARD_DISCOUNT_MAX, Number(discount) || 0));
   const purse = Math.max(0, Math.floor(Number(gold) || 0));
   const missing = {
     hull: Math.max(0, Math.ceil(damage.maxHull - damage.hull - 1e-9)),
@@ -51,22 +56,23 @@ export function yardOffer(damage, barrels, gold) {
     barrels: Math.max(0, BARREL.stock - Math.max(0, barrels | 0)),
   };
   const rows = YARD_ORDER.map((id) => {
-    const n = missing[id], price = YARD_PRICE[id];
+    const n = missing[id], price = Math.round(YARD_PRICE[id] * k * 100) / 100;
     const afford = Math.min(n, Math.floor(purse / price));
-    return { id, missing: n, price, whole: n * price, afford, cost: afford * price };
+    return { id, missing: n, price, whole: Math.ceil(n * price - 1e-9), afford, cost: Math.ceil(afford * price - 1e-9) };
   });
   return { rows, whole: rows.reduce((sum, r) => sum + r.whole, 0), gold: purse };
 }
 
 /** MAKE HER WHOLE: each row in YARD_ORDER as far as the purse goes - `[{ id, n, cost }]`, the rows it can pay for. */
-export function yardAll(damage, barrels, gold) {
+export function yardAll(damage, barrels, gold, { discount = 0 } = {}) {
   let purse = Math.max(0, Math.floor(Number(gold) || 0));
   const out = [];
-  for (const r of yardOffer(damage, barrels, purse).rows) {
+  for (const r of yardOffer(damage, barrels, purse, { discount }).rows) {
     const n = Math.min(r.missing, Math.floor(purse / r.price));
     if (n <= 0) continue;
-    out.push({ id: r.id, n, cost: n * r.price });
-    purse -= n * r.price;
+    const cost = Math.ceil(n * r.price - 1e-9);
+    out.push({ id: r.id, n, cost });
+    purse -= cost;
   }
   return out;
 }

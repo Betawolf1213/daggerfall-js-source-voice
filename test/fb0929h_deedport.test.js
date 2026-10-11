@@ -20,7 +20,7 @@ const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8
 const f = Math.fround;
 
 /** The host's own port test and nearest-port finder, lifted off world.js, over a map of the test's making. */
-function hostPorts({ flagged = new Set(), dict, names, here }) {
+function hostPorts({ flagged = new Set(), dict, names, here, ether = null }) {
   const port = /\n {2}(const csaIsPortTown = \(x, y\) => \{\n[\s\S]*?\n {2}\};)\n/.exec(W);
   const near = /\n {2}(const COMPASS_WAYS = [^\n]*;\n {2}const csaNearestPort = \(\) => \{\n[\s\S]*?\n {2}\};)\n/.exec(W);
   assert.ok(port && near, 'the host\'s port test or its nearest-port finder moved');
@@ -31,8 +31,13 @@ function hostPorts({ flagged = new Set(), dict, names, here }) {
   const travelLocationSummaryAt = (d, x, y) => d.get(y * 1000 + x) ?? null;
   // eslint-disable-next-line no-new-func
   // SEAT2b part two (PIN MOVED): the port test asks hasPortFor - HasPort, or a members' Harbour at a seat (none set here)
+  // PIN MOVED (ETHER-PORTS): past the Veil the port test asks the isle's port (world.js etherPortAt) - with the Etheric Sea
+  // off (`etherSea` false: every host but the enhanced and online ones) it never asks; `ether` here is its box's west edge
+  // and its ports' pixels
   return new Function('mapDict', 'maps', 'travelLocationSummaryAt', 'hasPort', 'hasPortFor', 'PORT_LOCATION_IDS', 'getPixelFromPixelID', 'playerTravelPixel',
-    `${port[1]}\n${near[1]}\nreturn { csaIsPortTown, csaNearestPort };`)(dict, maps, travelLocationSummaryAt, hasPort, hasPortFor, PORT_LOCATION_IDS, getPixelFromPixelID, () => here);
+    'etherSea', 'inEther', 'etherPortAt',
+    `${port[1]}\n${near[1]}\nreturn { csaIsPortTown, csaNearestPort };`)(dict, maps, travelLocationSummaryAt, hasPort, hasPortFor, PORT_LOCATION_IDS, getPixelFromPixelID, () => here,
+    !!ether, (x) => !!ether && x >= ether.x0, (x, y) => (ether?.ports.has(`${x},${y}`) ? { name: 'an isle\'s port' } : null));
 }
 /** A map-directory row as buildMapDict mints one: its id is the pixel's (mapId & 0xfffff). */
 const row = (x, y, regionIndex, mapIndex) => [y * 1000 + x, { id: y * 1000 + x, regionIndex, mapIndex }];
@@ -45,6 +50,10 @@ test('DEED-PORT: a harbour the map draws is a port for the deed, a flagged locat
   assert.equal(csaIsPortTown(100, 100), true, 'the byte, as the mod reads it');
   assert.equal(csaIsPortTown(101, 100), false, 'a town that is neither');
   assert.equal(csaIsPortTown(5, 5), false, 'no location there');
+  // ETHER-PORTS: past the Veil an isle's port is a port for the deed, the open sea about it is not, and the Bay is as it was
+  const ether = { x0: 1000, ports: new Set(['1200,40']) };
+  const { csaIsPortTown: isleOrBay } = hostPorts({ flagged: new Set(['1:0']), dict, names: {}, here: { x: 0, y: 0 }, ether });
+  assert.deepEqual([isleOrBay(1200, 40), isleOrBay(1201, 40), isleOrBay(100, 100), isleOrBay(101, 100)], [true, false, true, false]);
 });
 
 test('DEED-PORT: the nearest harbour by name and the way to it - map y runs south; the host hands it to the runtime', () => {

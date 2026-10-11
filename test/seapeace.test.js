@@ -53,7 +53,7 @@ test('SEA-PEACE aboard: a pirate a bay off is no enemy of a player ashore - no r
   helm.run(3);
   assert.equal(helm.host.hostileNear(), true);
   assert.equal(helm.host.threats().length, 1);
-  assert.ok(helm.log.say.some((t) => /Sail ho! A Pirate Brigantine/.test(t)));
+  assert.ok(helm.log.say.some((t) => /Sail ho! A two-master/.test(t)));   // PIN MOVED (SPYGLASS): 300 m off, her colours unread - the cry names her hull; PIN MOVED (AUDIT CAPTAIN'S SEA S22): a two-master
   // off the helm on her deck - still aboard; walked a kilometre off onto the land - not
   helm.runtime.sailing = false;
   helm.view.feet = [0, 0.95, 0];   // PIN MOVED (SHIPS-2, 2026-10-07): Mac's Tiny Ship's deck 0.90 over the sea (the mod's boat's 0.1)

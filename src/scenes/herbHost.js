@@ -23,7 +23,7 @@
 //   Sickle's steady hand draws DFU's Tanto in the hand.
 // ═══════════════════════════════════════════════════════════════════
 import { herbPatches, nodeKey, HERB_TABLES } from '../net/nodeLaw.js';
-import { tierOpen, TIER_RANKS, actBand, PROF_RANK_MAX, herbKey, storesFullIn, fullWordsIn, GROUND_WHERE, GROUND_WHERE_WORDS } from '../net/professionLaw.js';
+import { tierOpen, TIER_RANKS, actBand, PROF_RANK_MAX, herbKey, storesFullIn, goneIn, fullWordsIn, GROUND_WHERE, GROUND_WHERE_WORDS } from '../net/professionLaw.js';
 import { natureStandsAt, insideRocks } from '../world/terrainNature.js';
 import { createHerbAct } from '../systems/herbAct.js';
 import { FT } from '../systems/foragingLaw.js';
@@ -120,7 +120,7 @@ export const SICKLE_HAND = Object.freeze({ group: 'Weapons', templateIndex: 114,
  * @returns {import('./gatherHost.js').GatherKind}
  */
 export function herbKind({ book }) {
-  const gone = (p) => book.taken(p.key, 'herbs') && book.taken(p.key, 'food');
+  const gone = (p) => goneIn(book, p.key, 'herbs') && goneIn(book, p.key, 'food');   // GATHER-SPEED: or being counted
   /** The patch's plan for its herbs (`basket` false) or its food, `only` that harvest (a tool's Use, a menu's row). */
   const planOf = (p, { entity, info, rank }, basket, only) => {
     const plan = patchPlan({

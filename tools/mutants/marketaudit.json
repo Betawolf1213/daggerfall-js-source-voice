@@ -38,11 +38,12 @@
   {
     "name": "MARKET-AUDIT-S4-family-after-cutoff",
     "file": "server-account/src/market.js",
-    "old": "      AND (?2 IS NULL OR material IN (SELECT value FROM json_each(?2))) ORDER BY price DESC, at LIMIT ${MARKET_SHOWN}`).bind(nowS, familyKeys).all();",
-    "new": "      ORDER BY price DESC, at LIMIT ${MARKET_SHOWN}`).bind(nowS).all();",
+    "old": "      AND (?2 IS NULL OR material IN (SELECT value FROM json_each(?2))) ORDER BY price DESC, at LIMIT ${MARKET_SHOWN}`).bind(nowS, familyKeys)]);",
+    "new": "      ORDER BY price DESC, at LIMIT ${MARKET_SHOWN}`).bind(nowS)]);",
     "tests": [
       "test/marketaudit.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "MARKET-AUDIT-B1-undo-ignored",

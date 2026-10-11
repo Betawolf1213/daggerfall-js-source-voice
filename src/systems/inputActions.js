@@ -174,6 +174,12 @@ export const ACTIONS = Object.freeze([
   // host's weapon rig reads it through the one door the torches' keys take (actionDown). Appended, like every port
   // action before it.
   'WeaponTechnique',
+  // SPYGLASS (2026-10-11, the owner: "a spyglass option where you can aim and view to observe other ships"): THE
+  // CAPTAIN'S GLASS - one press raises it to the eye aboard a ship, the next lowers it (scenes/world.js spyglassStep;
+  // the naval host makes out the ship it holds). A DEFAULT SHARE on K beside Travel Options' FollowPaths
+  // (DEFAULT_SHARES): the road's key ashore, the glass's aboard - a deck has no road, and the road is never followed
+  // from one. Appended, like every port action before it.
+  'Spyglass',
 ]);
 
 /** AUDIT SOC D3: THE PORT'S OWN ROWS, NAMED SO THE CLASSIC WINDOWS CAN YIELD THEM.
@@ -191,7 +197,7 @@ export const PORT_ACTIONS = Object.freeze(['SocialInteract', 'QuickUse1', 'Quick
   'TorchToggleLight', 'TorchDrop', 'TorchThrow', 'ShoulderSwitch', 'AutoPerspective', 'FollowPaths', 'HorseMount', 'HorseSummon', 'DebugOverlay',
   'BoatDisembark', 'BoatToggleLight', 'BoatToggleSail', 'BoatTrimRight', 'BoatTrimLeft', 'BoatTrimModifier',
   'BoatTimeScaleUp', 'BoatTimeScaleDown', 'BoatTimeScaleReset', 'TravelView', 'WalkMode', 'TogglePerspective', 'ActChoice', 'BoatSailUp', 'BoatSailDown', 'Professions',
-  'LegacyFamily', 'ModeWheel', 'WeaponTechnique']);   // TECH1: the weapon's technique   // LEGACY1: Project Legacy's family tree; MODE-WHEEL: the mode wheel   // KB1; TV1; PADWALK; VIEW-TOGGLE; PROF1   // QUICK-LOOT B4: the plaque's two, drawn in the enhanced pane under their own heading - the classic windows cannot draw them at all
+  'LegacyFamily', 'ModeWheel', 'WeaponTechnique', 'Spyglass']);   // SPYGLASS: the captain's glass   // TECH1: the weapon's technique   // LEGACY1: Project Legacy's family tree; MODE-WHEEL: the mode wheel   // KB1; TV1; PADWALK; VIEW-TOGGLE; PROF1   // QUICK-LOOT B4: the plaque's two, drawn in the enhanced pane under their own heading - the classic windows cannot draw them at all
 
 const ACTION_SET = new Set(ACTIONS);
 
@@ -388,7 +394,8 @@ export const DEFAULT_BINDINGS = Object.freeze([
  * KB1 law 3 keeps every OWNER once). `[code, action, partner]`: `action` answers `code` beside `partner`, the key's
  * owner in DEFAULT_BINDINGS. resetDefaults seats it only while the key's owner IS the partner - a player's own rebind
  * of the key is never shared onto - and an autofill only while the action is keyless and not force-removed, so a
- * player's own unbinding stands. The pairs: MORE SAIL on the up arrow beside PROF1's ActChoice - the helm's and an
+ * player's own unbinding stands; an autofill finding the key free (its partner moved off it) seats the action on it
+ * outright (AUDIT CAPTAIN'S SEA S14). The pairs: MORE SAIL on the up arrow beside PROF1's ActChoice - the helm's and an
  * herb patch's: a helm's hands are on the wheel, and the professions read no choice there (scenes/world.js); and
  * CLASSIC-PAGES' Professions key on the down arrow beside LESS SAIL - it opens nothing while sailing (ui/input.js).
  */
@@ -396,6 +403,9 @@ export const DEFAULT_SHARES = Object.freeze([
   Object.freeze(['ArrowUp', 'BoatSailUp', 'ActChoice']),
   // CLASSIC-PAGES: the Professions key on the down arrow beside less sail - off the helm the pages, at it the sails'
   Object.freeze(['ArrowDown', 'Professions', 'BoatSailDown']),
+  // SPYGLASS: the captain's glass on K beside the road's follow - ashore the road's, aboard the glass's (scenes/world.js
+  // reads the road's press nowhere aboard)
+  Object.freeze(['KeyK', 'Spyglass', 'FollowPaths']),
 ]);
 
 /**
@@ -454,6 +464,8 @@ export const MOD_ACTIONS = Object.freeze({
     Object.freeze({ action: 'BoatTimeScaleUp', legacy: 'Controls.IncreaseTimeScale', shipped: Object.freeze(['KeypadPlus']) }),
     Object.freeze({ action: 'BoatTimeScaleDown', legacy: 'Controls.DecreaseTimeScale', shipped: Object.freeze(['KeypadMinus']) }),
     Object.freeze({ action: 'BoatTimeScaleReset', legacy: 'Controls.ResetTimeScale', shipped: Object.freeze(['KeypadEnter']) }),
+    // SPYGLASS: the captain's glass - the port's own, live while the ships are (no TextKey of the mod's: `legacy` null)
+    Object.freeze({ action: 'Spyglass', legacy: null, shipped: Object.freeze([]) }),
   ]),
   // LEGACY1: the mod's "Key Input" (G) and "Second Key Input" (a chord for a pad) are TextKeys the port never shipped
   // as settings, so there is no saved value to carry (`legacy` null) - the pad reaches it through the registry's own row.
@@ -553,6 +565,7 @@ export const ACTION_GROUPS = Object.freeze([
     ['BoatTrimModifier', 'Trim the square sails (hold)'],
     ['BoatTimeScaleUp', 'Speed time up at the helm'], ['BoatTimeScaleDown', 'Slow time down at the helm'],
     ['BoatTimeScaleReset', 'Put time back to normal at the helm'],
+    ['Spyglass', 'Raise or lower the spyglass (aboard)'],   // SPYGLASS
   ], 'come-sail-away'),
   g('Project Legacy', [
     ['LegacyFamily', 'Family tree'],
@@ -1072,9 +1085,12 @@ export function resetDefaults(store, autofill = false) {
   for (const [code, action] of DEFAULT_BINDINGS) set(code, action);
   // HELM-KEYS: the default shares, onto their partner's key alone (DEFAULT_SHARES)
   for (const [code, action, partner] of DEFAULT_SHARES) {
-    if (store.primary.get(code) !== partner) continue;
     if (autofill && (getBinding(store, action, true) != null || getBinding(store, action, false) != null || store.removedPrimary.has(action))) continue;
-    shareBinding(store, code, action, true);
+    const owner = store.primary.get(code);
+    if (owner === partner) shareBinding(store, code, action, true);
+    // AUDIT CAPTAIN'S SEA S14: an autofill finding the share's key FREE - its partner moved off it in an older file (Travel
+    // Options' road follow on O) - seats the keyless action on it outright, as any missing default lands
+    else if (autofill && owner == null) testSetBinding(store, code, action, true);
   }
   // PAD1: THE PAD LAYOUT, in the SECONDARY dict and always by testSetBinding
   // - a full reset restores the keyboard primaries as DFU's does (:956-960)

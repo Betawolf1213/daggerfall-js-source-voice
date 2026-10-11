@@ -726,8 +726,8 @@
   {
     "name": "CSAL-pad-tap-after-hold",
     "file": "src/ui/gamepadInput.js",
-    "old": "          if (!st.fired) hooks.helm?.gesture?.(dir, 'tap');",
-    "new": "          if (st.fired || !st.fired) hooks.helm?.gesture?.(dir, 'tap');",
+    "old": "          if (!st.fired) { if (glassTap) fireDpad('Spyglass', code); else hooks.helm?.gesture?.(dir, 'tap'); }",
+    "new": "          if (st.fired || !st.fired) { if (glassTap) fireDpad('Spyglass', code); else hooks.helm?.gesture?.(dir, 'tap'); }",
     "tests": [
       "test/csa_together.test.js"
     ]

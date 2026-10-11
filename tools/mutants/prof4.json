@@ -666,11 +666,12 @@
   {
     "name": "PROF4-host-no-fall",
     "file": "src/scenes/gatherHost.js",
-    "old": "        if (now && k.felled) {",
-    "new": "        if (false) {",
+    "old": "    if (now && k.felled) {",
+    "new": "    if (false) {",
     "tests": [
       "test/prof4_client.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "PROF4-host-resin-unsaid",

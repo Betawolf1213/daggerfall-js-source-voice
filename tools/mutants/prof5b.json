@@ -163,12 +163,13 @@
   {
     "name": "PROF5b-svc-never-closed",
     "file": "server-account/src/market.js",
-    "old": "  await closeAuctions(ctx);   // PROF5b",
-    "new": "  // closeAuctions(ctx);   // PROF5b",
+    "old": "  if (dueAuctions.length) await closeAuctions(ctx, dueAuctions);",
+    "new": "  // closeAuctions",
     "tests": [
       "test/prof5b_service.test.js",
       "test/prof5b_client.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "PROF5b-svc-outbid-kept",

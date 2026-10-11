@@ -625,6 +625,31 @@ export function createGatherHost(deps) {
       // hold of it (`held`); no kind named one, and no carried harvest ever cut the count to the pack
       ...(actMaterial(a) ? { material: actMaterial(a) } : {}),
     }).then((r) => answered(a, r, before), () => {});
+    // GATHER-SPEED (2026-10-11, Mac: "look at gathering minigame performance and how the server affects it/slows down"):
+    // THE NODE GOES WITH THE ACT. The book counts the harvest from the ask (net/profBook.js `gone`: taken, or being
+    // counted), so the patch, the vein and the tree went a whole round trip after the act that took them - the fall
+    // waited on the service. Fallen and stood again now, once; the answer stands it again only where it was refused
+    // (`answered`), and the goods, the XP and a rank's rise are said when it comes, as ever.
+    fallNow(a);
+  }
+  /** GATHER-SPEED: a finished act's node gone now, where the book already counts it so - a felled tree's fall, then its
+   *  place stood again (its picture, its glow and the compass's mark go). Marked on the act (`fell`), said once. */
+  function fallNow(a) {
+    const k = kindOf(a.node);
+    if (a.loose || !k?.gone(a.node)) return;   // PROF7: a body stands nothing of the host's to stand again
+    a.fell = true;
+    fell(a, k);
+  }
+  /** A worked node's fall, seen by the one who worked it (PROF4: a felled tree tips away from them), and its place stood
+   *  again. AUDIT 30 A5: the node as its pixel stands NOW (stood again under the ask, its wood rebuilt, the act's node is
+   *  another's flat), and a fall that fails is the fall's alone - the pixel stands again whatever it did. */
+  function fell(a, k) {
+    const s = a.dungeon ? null : stood.get(pixelKey(a.px, a.py));
+    const now = s?.nodes.find((x) => x.key === a.node.key) ?? null;
+    if (now && k.felled) {
+      try { Promise.resolve(k.felled(now, { entry: s.entry, from: deps.eye().pos, tr: deps.pixelTranslation(a.px, a.py, [0, 0, 0]) })).catch((e) => console.warn('[gather] a fall', e)); } catch (e) { console.warn('[gather] a fall', e); }
+    }
+    restandOf(a);
   }
   /** A harvest's answer said: the Stores, the XP, a gem, a rank's rise; a refusal in words; a kept one once. */
   function answered(a, r, before, nodeKeyOf = null) {
@@ -668,24 +693,26 @@ export function createGatherHost(deps) {
       try { k?.answered?.(d, (t) => hud.toast(t), { hauled }); } catch (e) { console.warn('[gather] an answer', e); }   // PROF8: a trophy into the pack; HAUL-CARDS: `hauled` - its card said the goods (a Motherlode's silver on it)
       chipProfession = profession;
       chipLeft = CHIP_S;
-      if (a && !a.loose && k?.gone(a.node)) {   // PROF7: a body stands nothing of the host's to stand again
-        // PROF4: the node's fall, seen by the one who worked it (a felled tree tips away from them)
-        // AUDIT 30 A5: the node as its pixel stands NOW (stood again under the ask, its wood rebuilt, the act's node is
-        // another's flat), and a fall that fails is the fall's alone - the pixel stands again whatever it did
-        const s = a.dungeon ? null : stood.get(pixelKey(a.px, a.py));
-        const now = s?.nodes.find((x) => x.key === a.node.key) ?? null;
-        if (now && k.felled) {
-          try { Promise.resolve(k.felled(now, { entry: s.entry, from: deps.eye().pos, tr: deps.pixelTranslation(a.px, a.py, [0, 0, 0]) })).catch((e) => console.warn('[gather] a fall', e)); } catch (e) { console.warn('[gather] a fall', e); }
-        }
-        restandOf(a);
-      } else if (!a && nodeKeyOf) restandNode(nodeKeyOf);
+      // PROF4: the node's fall (fell) - GATHER-SPEED: once, at the act's end where it went then (fallNow)
+      if (a && !a.loose && !a.fell && k?.gone(a.node)) fell(a, k);   // PROF7: a body stands nothing of the host's to stand again
+      else if (!a && nodeKeyOf) restandNode(nodeKeyOf);
       return;
     }
     // GATHER-SAID: every kept act says so (a flag once a session left the second slow answer silent), and why
     if (r?.kept) { hud.toast(r.error === 'auth' || r.error === 'no-session' ? KEPT_SIGNED_OUT_LINE : KEPT_LINE); return; }
-    if (r?.error === 'lapsed') { hud.toast(LAPSED_LINE); return; }
+    // GATHER-SPEED: a kept harvest let go unanswered stands its node again - it went as its act ended
+    if (r?.error === 'lapsed') {
+      hud.toast(LAPSED_LINE);
+      if (!a && nodeKeyOf) {
+        restandNode(nodeKeyOf);
+        for (const k of kinds) { try { k.refused?.(nodeKeyOf, 'lapsed'); } catch (e) { console.warn('[gather] a lapse', e); } }   // AUDIT GATHER-SPEED G2: a tree's fall taken back
+      }
+      return;
+    }
     hud.toast(accountRefusalText(r?.error));
-    if (a && !a.loose && r?.error === 'node-taken') restandOf(a);
+    // GATHER-SPEED: and a refused one - its node went as its act ended, and stands again unless it is another's (node-taken)
+    if (a && !a.loose && (r?.error === 'node-taken' || a.fell)) restandOf(a);
+    else if (!a && nodeKeyOf) restandNode(nodeKeyOf);
     // AUDIT SILVER-WAYS D2 (REFUSALS-LEARNED): the refusal handed to the kinds - a Motherlode spent, found or gone is
     // learned (scenes/mineHost.js), its pixel stood again
     const key = a?.node?.key ?? nodeKeyOf;

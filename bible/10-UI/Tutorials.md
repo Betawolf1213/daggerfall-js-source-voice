@@ -22,11 +22,16 @@ curse's pins (`test/cursesync.test.js`) read its `_no_` task. Port-Ledger sectio
 
 ## The three parts
 
-- **The words** - `src/systems/tutorialCatalogue.js`. Sixty-eight pages in thirteen groups (Getting Started, Combat &
+- **The words** - `src/systems/tutorialCatalogue.js`. Sixty-nine pages in thirteen groups (Getting Started, Combat &
   Magic, Your Character, Exploring, Travel & Mounts, Towns, Trade & Guilds, Quests & Bounties, Loot & Gear,
   Professions & Survival, Ships & the Sea, Challenges, Family & Legacy, Playing Online). Each page: an id, a title, a
   `trigger` sentence (when it pops, or MENU_ONLY), paragraphs and points. Every claim was checked against the system's
   own bible page and code when it was written; a slice that changes how a system plays changes its page.
+  SHIPYARDS (2026-10-11, `03-World/Shipyards.md`) did: Sailing sends the player to a port's shipyard, not a shelf;
+  Shipwrights became Shipyards (the shipmaster, the crew hall, the helm's shipwright); Lighthouses is new - TUT1's
+  sixty-eight pages are sixty-nine. AUDIT SHIPYARDS (L7-4, L7-6): Sailing says a bought ship is laid up and brought round
+  from the shipyard's Your fleet page (she never waited at the quay), and Shipyards says port towns have one (a town with
+  no room stands none).
   TUT1 AUDIT (Mac: "Ensure explanations dont sound AI and arent overloaded"): every page rewritten plain and short -
   at most two paragraphs, three points and sixty words (the first cut averaged 49 words and ran to 113; now 33 and
   60), no asides, no flourish, the words a player uses. The popup lost its foot (the welcome page says where every
@@ -73,7 +78,7 @@ One shared door is one seam for every host. The trigger stands in:
   level-up while one is owed), `spellbookDoor`, `restDoor`, `automapDoor` and `townMapDoor`, `travelMapDoor`,
   `talkDoor`, `tradeDoor` and `merchantRepairDoor`, `tavernDoor`, `chronicleDoor` (quests, or the notebook),
   `bountyDoor` (the board), `noticeDoor`, `arenaDoor`, `brokerDoor`, `reforgeDoor`, `playerTradeDoor`,
-  `navalPlunderDoor` (the yard, or a prize's hold);
+  `navalPlunderDoor` (the shipwright's yard and a port's shipyard - one page - or a prize's hold);
 - the windows with no door: `BankWindow`, `SpellMakerWindow`, `GuildServiceWindow` and `CovenWindow`,
   `CourtScreenWindow`, `DeathScreen` (the page waits beneath it - it keeps the top - and is read after),
   `createUseMagicItemWindow`, `socketChooser`, `setCard`, `createCardTableHud` and `openIliacTableGame`,
@@ -81,7 +86,7 @@ One shared door is one seam for every host. The trigger stands in:
   `nativeInventory.js`);
 - the systems: the first weapon drawn (`PlayerWeapon.toggleSheath`), the first hotbar press (`useQuickslot`,
   `pressHotbar`), the first gather (`gatherHost`), the first torch lit, the transport window and a quick mount, a wagon
-  touched (`horseCartPool`), the Overworld, a carriage, a disease begun, a search, a summoning, a felt need (the HUD's
+  touched (`horseCartPool`), a lighthouse climbed (`portHost`, SHIPYARDS), the Overworld, a carriage, a disease begun, a search, a summoning, a felt need (the HUD's
   survival chips), a rare find (the loot banner), quest news (the herald) and a quest followed (the tracker), a
   level-up announced, a revenant's card and its judgement (with the companion page beside it), chat opened;
 - the hosts' own arms, where no module stands between: `world.js` a boat touched, a portal stone used, F pressed, a duel

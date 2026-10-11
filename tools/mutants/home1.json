@@ -471,8 +471,8 @@
   {
     "name": "HOME1-a-home-keeps-no-room",
     "file": "src/scenes/worldModes.js",
-    "old": "(!interiorHome && isHouseOwned(playerEntity.houses ?? [], b?.regionIndex ?? 0, b?.buildingKey))",
-    "new": "isHouseOwned(playerEntity.houses ?? [], b?.regionIndex ?? 0, b?.buildingKey)",
+    "old": "(!interiorHome && houseOwnedAt(b, b?.buildingKey))",
+    "new": "houseOwnedAt(b, b?.buildingKey)",
     "tests": [
       "test/home1.test.js",
       "test/auditworld6a.test.js",

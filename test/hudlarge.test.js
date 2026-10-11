@@ -774,7 +774,9 @@ test('E5: every host that draws the bar shrinks its world pass AND its lens', ()
   for (const host of ['scenes/world.js', 'scenes/exterior.js']) {
     assert.match(src(host), /sky\.draw\([^;]*worldAspect[,)]/s, `${host}'s sky shares the lens`);
   }
-  assert.match(src('scenes/world.js'), /fovY: fieldOfView\(\) \+ climbFeel\.fovRad\(\), aspect: worldAspect,/,
+  // PIN MOVED (SPYGLASS): the captain's glass narrows the lens the world takes, the kick inside it (world.js glassFov) -
+  // the far ring takes the same narrowed lens
+  assert.match(src('scenes/world.js'), /fovY: glassFov\(fieldOfView\(\) \+ climbFeel\.fovRad\(\), spyglass\.lens\), aspect: worldAspect,/,
     'the far ring shares it too - and the climb\'s kick (CLIMB4) - or the horizon steps against the terrain');
   // no plain-ratio lens survives anywhere in the world host
   const w = src('scenes/world.js');

@@ -110,8 +110,8 @@
   {
     "name": "HELMKEYS-the-share-unseated",
     "file": "src/systems/inputActions.js",
-    "old": "    shareBinding(store, code, action, true);\n  }\n  // PAD1",
-    "new": "  }\n  // PAD1",
+    "old": "    if (owner === partner) shareBinding(store, code, action, true);",
+    "new": "    if (owner === partner) void 0;",
     "tests": [
       "test/inputactions.test.js"
     ]
@@ -119,8 +119,8 @@
   {
     "name": "HELMKEYS-the-partner-unread",
     "file": "src/systems/inputActions.js",
-    "old": "    if (store.primary.get(code) !== partner) continue;\n",
-    "new": "",
+    "old": "    if (owner === partner) shareBinding(store, code, action, true);",
+    "new": "    if (owner != null) shareBinding(store, code, action, true);",
     "tests": [
       "test/inputactions.test.js"
     ]

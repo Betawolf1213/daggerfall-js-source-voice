@@ -74,6 +74,9 @@ export const PROF_TRIES = 3;
 export const PROF_RETRY_MS = Object.freeze([400, 1500]);
 /** The waits between a kept harvest's asks, by how often it has been asked (ms). */
 export const PROF_PUMP_MS = Object.freeze([2_000, 5_000, 15_000, 30_000]);
+/** GATHER-SPEED: the longest the pump goes without reading the kept table, when nothing it wrote moved it (ms) - a
+ *  harvest another tab kept is asked within it. */
+export const PUMP_IDLE_MAX_MS = 1_000;
 /** A region's Court writs are read through a minute's cache (the board's own, PROF0 19). */
 export const PROF_WRITS_CACHE_MS = 60_000;
 /** The pixels one read asks after (the service's PIXELS_READ_MAX). */
@@ -165,15 +168,45 @@ export function createProfBook({ door, storage = null, character = () => null, n
 
   // ─── THE KEPT ACTS ─────────────────────────────────────────────────
   let _memory = null;
-  const table = () => {
-    if (_memory) return _memory;
+  let _wrote = 0;   // GATHER-SPEED: the kept table's writes, counted
+  /** The kept table's text read as a table - anything else is an empty one. */
+  const parseKept = (raw) => {
     try {
-      const v = JSON.parse(storage?.getItem?.(PROF_KEPT_KEY) ?? 'null');
+      const v = JSON.parse(raw ?? 'null');
       return v && typeof v === 'object' && !Array.isArray(v) ? v : {};
     } catch { return {}; }
   };
+  const table = () => {
+    if (_memory) return _memory;
+    try { return parseKept(storage?.getItem?.(PROF_KEPT_KEY)); } catch { return {}; }
+  };
   const writeTable = (t) => {
     try { storage?.setItem?.(PROF_KEPT_KEY, JSON.stringify(t)); _memory = null; } catch { _memory = t; }
+    _wrote += 1;   // GATHER-SPEED: the pump's idle read is stale
+  };
+  /** GATHER-SPEED (2026-10-11, Mac: "look at gathering minigame performance"): THE KEPT TABLE AS LAST PARSED, for the
+   *  readers that only look - the prompt's `counting` (every plan, every frame) and the pump's due check (every frame).
+   *  Each parsed the whole table out of storage again, every frame. The text is read still (another tab may write it),
+   *  and parsed only when it changed; what this answers is never written to - a writer reads its own copy (keptOf). */
+  let _peek = { raw: /** @type {string|null|undefined} */ (undefined), table: /** @type {any} */ ({}) };
+  const peekTable = () => {
+    if (_memory) return _memory;
+    let raw;
+    try { raw = storage?.getItem?.(PROF_KEPT_KEY) ?? 'null'; } catch { return {}; }
+    if (raw !== _peek.raw) _peek = { raw, table: parseKept(raw) };
+    return _peek.table;
+  };
+  const peekHarvests = (key = slot()) => { const h = peekTable()[key]?.harvests; return Array.isArray(h) ? h : []; };
+  /** AUDIT GATHER-SPEED G1: THE NODES BEING COUNTED, as a set - `gone` asks it of every node near the player, every frame
+   *  (the target's scan, the marks, the groups), and a storage read for each was hundreds a frame. Read again when this
+   *  book writes the table, the slot changes, or PUMP_IDLE_MAX_MS on (another tab's harvest). */
+  let _counting = { key: '', wrote: -1, at: -Infinity, set: /** @type {Set<string>} */ (new Set()) };
+  const countingSet = () => {
+    const key = slot(), t = now();
+    if (_counting.key !== key || _counting.wrote !== _wrote || !(t >= _counting.at && t - _counting.at < PUMP_IDLE_MAX_MS)) {
+      _counting = { key, wrote: _wrote, at: t, set: new Set(peekHarvests(key).map((h) => `${h.node}|${h.kind}`)) };
+    }
+    return _counting.set;
   };
   const keptOf = (key = slot()) => {
     const k = table()[key];
@@ -285,6 +318,9 @@ export function createProfBook({ door, storage = null, character = () => null, n
   let _refresh = null;
   let _lastRead = { at: -Infinity, key: '', r: null };
   let _pump = null;
+  /** GATHER-SPEED: the pump's last idle look - the slot, the table's writes then (`_wrote`), and when its next kept
+   *  harvest falls due; the frames before it ask nothing. PUMP_IDLE_MAX_MS at most, for a table another tab wrote. */
+  let _pumpIdle = { key: '', wrote: -1, until: -Infinity };
   /** PROF2: the kept harvests on the wire - a pump never asks one again while its first ask waits (its answer said once). */
   const sending = new Set();
   let _withdrawBusy = null;
@@ -457,7 +493,12 @@ export function createProfBook({ door, storage = null, character = () => null, n
     // ─── A HARVEST ──────────────────────────────────────────────────
     /** Whether a node's kind is taken today - by the service's word, or on its way to it (being counted). */
     taken(node, kind) { return state.taken.has(`${node}|${kind}`); },
-    counting(node, kind) { return keptOf().harvests.some((h) => h.node === node && h.kind === kind); },
+    counting(node, kind) { return countingSet().has(`${node}|${kind}`); },
+    /** GATHER-SPEED: WHETHER A NODE'S KIND IS GONE FROM THE WORLD - taken, or being counted. A node stood until its
+     *  answer came back from the service (the harvest's round trip, or a kept harvest's minutes), the patch still
+     *  growing and the tree still standing after the act that took them. The kinds stand what is gone by this; their
+     *  plans keep the two apart (the prompt's "being counted"). A refusal lets it stand again (the host's restand). */
+    gone(node, kind) { return this.taken(node, kind) || this.counting(node, kind); },
     /**
      * A NODE HARVESTED: `{ node, kind, climate, region, act, at }` (the act's end, epoch seconds on the shared clock;
      * PROF7: a body's `foe` beside them) - kept with its own id, then asked. Answers `{ ok: true, data }` (the service's harvest), `{ ok: false, error }` (the
@@ -489,8 +530,16 @@ export function createProfBook({ door, storage = null, character = () => null, n
     pump(onAnswer = () => {}) {
       if (_pump) return _pump;
       const key = slot();
-      const due = keptOf(key).harvests.filter((h) => (h.nextAt ?? 0) <= now() && !sending.has(h.rid));
-      if (!due.length) return null;
+      // GATHER-SPEED: asked every frame - and answered from the last look until its next harvest is due, the table
+      // unwritten since (a send's answer writes it)
+      if (_pumpIdle.key === key && _pumpIdle.wrote === _wrote && now() < _pumpIdle.until) return null;
+      const all = peekHarvests(key);
+      const due = all.filter((h) => (h.nextAt ?? 0) <= now() && !sending.has(h.rid));
+      if (!due.length) {
+        const next = Math.min(...all.filter((h) => !sending.has(h.rid)).map((h) => h.nextAt ?? 0));
+        _pumpIdle = { key, wrote: _wrote, until: Math.min(now() + PUMP_IDLE_MAX_MS, next) };
+        return null;
+      }
       _pump = (async () => {
         for (const h of due) {
           const lapsed = now() - h.queuedAt > PROF_QUEUE_MS || dayOf(h.at * 1000) !== dayOf(now());

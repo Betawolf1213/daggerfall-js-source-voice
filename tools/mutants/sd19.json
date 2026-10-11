@@ -173,8 +173,8 @@
   {
     "name": "SD19-world-key-unleaned",
     "file": "src/scenes/world.js",
-    "old": "sdBrassLight(sunbabyKey(dreadLight(SUN_RIG_COLOR, skyDreadW), sunbabyW, sunbabyFace.evil), sdAirW));",
-    "new": "sunbabyKey(dreadLight(SUN_RIG_COLOR, skyDreadW), sunbabyW, sunbabyFace.evil));",
+    "old": "sdBrassLight(sunbabyKey(dreadLight(SUN_RIG_COLOR, skyDreadW), sunbabyW, sunbabyFace.evil), sdAirW), etherAirW",
+    "new": "sunbabyKey(dreadLight(SUN_RIG_COLOR, skyDreadW), sunbabyW, sunbabyFace.evil), etherAirW",
     "tests": [
       "test/sd19_presence.test.js"
     ]

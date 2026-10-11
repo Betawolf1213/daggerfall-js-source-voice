@@ -60,6 +60,10 @@
 //       cask of `f` (its lot navalPlunder.js SALVAGE_LOT, never one of LOT_KEYS) - hauled in and claimed as a cask is;
 //       at most NAVAL_WIRE_CASKS. A key of its own as `k`, `m` and `l` are: an older build reads none of it, where a lot
 //       past its LOT_KEYS would fail its door and the whole word with it
+//   d - AUDIT CAPTAIN'S SEA D8: the ships of `s` launched of the deep waters (CAPT-WATERS `deep`), each her number - her
+//       hold, her casks and the chart in her papers the deep's on every client (a peer's copy of her was open water's)
+//   e - AUDIT CAPTAIN'S SEA D8: the casks of `f` of a deep ship's (or the Etheric Sea's) cargo, each its id - a peer's
+//       haul of one drawn as rich as its owner's (it was DEEP_TIER tiers poorer)
 //   `k`, `m` and `l` are keys of their own because an older build's door checks every field of `s` and `p` by count: it
 //   passes a word with them whole and reads none of them, and a newer door reads an older build's word as saying none.
 //   Nor are theirs counted: a newer build's longer entry reads as its first fields, never the whole word refused.
@@ -126,11 +130,11 @@ const U32 = 0xffffffff;
  * point to the wire frame - and (AUDIT NAV1, online) my own boat at sea and my notoriety by crown. Null when there is
  * nothing to say (the reader drops mine).
  * @param {{ ships?: any[], volleys?: any[], barrels?: any[], me?: { hull: number, crippled: boolean, boarders: boolean, crew?: number, battle?: boolean, boatHull?: number } | null,
- *   law?: Record<string, number>, traffic?: string, casks?: { id: number, pos: number[], from: string, lot: string }[], spent?: number[],
+ *   law?: Record<string, number>, traffic?: string, casks?: { id: number, pos: number[], from: string, lot: string, deep?: boolean }[], spent?: number[],
  *   laid?: string[] }} view
  */
 export function navalWireRecord(view, toWire = (p) => p) {
-  const s = [], v = [], b = [], k = [];
+  const s = [], v = [], b = [], k = [], d = [], e = [];
   for (const sh of view?.ships ?? []) {
     if (s.length >= NAVAL_WIRE_SHIPS) break;
     const cls = SHIP_CLASSES.findIndex((c) => c.id === sh.classId);
@@ -142,6 +146,7 @@ export function navalWireRecord(view, toWire = (p) => p) {
     // AUDIT NAV2 F1/F3/F5: her captain - a ship said without a temper (a caller's older view) is said without one
     const temper = TEMPER_CODES.indexOf(sh.temper);
     if (temper >= 0) k.push([sh.n | 0, temper, Math.max(0, MODE_CODES.indexOf(sh.mode)), Number.isInteger(sh.struckTo) && sh.struckTo >= 0 && sh.struckTo <= 0xffff ? sh.struckTo : -1]);
+    if (sh.deep) d.push(sh.n | 0);   // AUDIT CAPTAIN'S SEA D8
   }
   for (const vo of view?.volleys ?? []) {
     if (v.length >= NAVAL_WIRE_VOLLEYS) break;
@@ -165,10 +170,12 @@ export function navalWireRecord(view, toWire = (p) => p) {
     if (cls < 0 || (!salvage && lot < 0) || !Array.isArray(c.pos)) continue;
     const p = toWire(c.pos.map((x) => Math.round(x * 2) / 2));
     if (salvage) w.push([c.id >>> 0, r2(p[0]), r2(p[1]), r2(p[2]), cls]);
-    else f.push([c.id >>> 0, r2(p[0]), r2(p[1]), r2(p[2]), cls, lot]);
+    else { f.push([c.id >>> 0, r2(p[0]), r2(p[1]), r2(p[2]), cls, lot]); if (c.deep) e.push(c.id >>> 0); }   // AUDIT CAPTAIN'S SEA D8
   }
   if (f.length) out.f = f;
   if (w.length) out.w = w;
+  if (d.length) out.d = d;
+  if (e.length) out.e = e;
   const me = view?.me;
   if (me) out.p = [pct(me.hull), me.crippled ? 1 : 0, me.boarders === false ? 0 : 1];
   // AUDIT GN-G3: my boat's laid broadsides - a bit a side (SIDE_CODES), said only while one is
@@ -202,7 +209,7 @@ function validCaptains(raw) {
 /**
  * A peer's word through the door - whole or not at all.
  * @returns {{ ships: any[], volleys: any[], barrels: any[], me: { hull: number, crippled: boolean, boarders: boolean } | null,
- *   law: Record<string, number>, traffic: string, casks: { id: number, pos: number[], from: string, lot: string }[],
+ *   law: Record<string, number>, traffic: string, casks: { id: number, pos: number[], from: string, lot: string, deep?: boolean }[],
  *   captains: Map<number, { temper: string, mode: string, struckTo: number }>, boat: { crew: number, battle: boolean, hull: number } | null, spent: number[],
  *   laid: string[] } | null}
  */
@@ -290,6 +297,12 @@ export function validNavalRecord(raw) {
   // AUDIT GN-G3: the owner's laid broadsides (an older build's word says none)
   if (raw.g !== undefined && !int(raw.g, 0, 15)) return null;
   const laid = SIDE_CODES.filter((_, i) => ((raw.g ?? 0) & (1 << i)) !== 0);
+  // AUDIT CAPTAIN'S SEA D8: the deep's ships and casks (an older build's word says none - open water's)
+  const deepShips = raw.d ?? [], deepCasks = raw.e ?? [];
+  if (!Array.isArray(deepShips) || deepShips.length > NAVAL_WIRE_SHIPS || !deepShips.every((x) => int(x, 0, 0xffff))) return null;
+  if (!Array.isArray(deepCasks) || deepCasks.length > NAVAL_WIRE_CASKS || !deepCasks.every((x) => int(x, 0, U32))) return null;
+  for (const sh of ships) if (deepShips.includes(sh.n)) sh.deep = true;
+  for (const c of casks) if (c.lot !== SALVAGE_LOT && deepCasks.includes(c.id)) c.deep = true;
   return { ships, volleys, barrels, me, law, traffic: raw.t === undefined ? TRAFFIC_DEFAULT : DENSITY_KEYS[raw.t], casks, captains, boat, spent: [...spent], laid };
 }
 

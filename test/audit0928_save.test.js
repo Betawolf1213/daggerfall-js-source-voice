@@ -23,7 +23,7 @@ import * as MS from '../src/systems/modSettings.js';
 import * as IA from '../src/systems/inputActions.js';
 import { setBindings, held } from '../src/ui/input.js';
 import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
-import { assignModBundle, isEntityWaterWalking, WATER_WALKING_SILENT_KIND } from '../src/systems/effects.js';
+import { assignModBundle, isEntityWaterWalking, WATER_WALKING_SILENT_KIND, effectKindLoaded } from '../src/systems/effects.js';
 import { assignShipToPlayer, ownsShip, sellShip, SHIP_TYPES } from '../src/systems/banking.js';
 import { createOceanHolesAbyss } from '../src/scenes/oceanHolesAbyss.js';
 import { mapPixelToLongitudeLatitude, mapPixelToWorldCoord, worldCoordToMapPixel } from '../src/formats/mapsFile.js';
@@ -268,21 +268,27 @@ const FISH = DEEP_WATERS_FISH_TEMPLATES[0].index;
 const fishRows = () => customItemsForGroup(BOAT_ITEM_GROUP).filter((t) => t === FISH);
 const keysFor = () => { const store = IA.createBindings(); IA.resetDefaults(store); setBindings(store); };
 
-test('AUDIT PRE-MERGE 0928 S4: the shelf\'s boat rows answer the switch as the game loaded it - switched on mid-game they stock nothing, switched off mid-game they stock on to the next load', () => {
+// PIN MOVED (SHIPYARDS, 2026-10-11): the boat rows stand on no shelf at all now - a port town's shipyard sells every hull
+// (systems/shipyards.js) - so S4's latch is pinned by the fish rows below, the one home's other mod rows
+test('AUDIT PRE-MERGE 0928 S4 x SHIPYARDS: no shelf stocks a boat row, whatever the switch and however the game loaded it - the shipyard sells the hulls', () => {
   MS._resetModSettings();
   try {
     MS.setModSetting('come-sail-away', 'Enabled', false);
     MS.latchModLoaded?.('come-sail-away', false);   // loaded off
     MS.setModSetting('come-sail-away', 'Enabled', true);   // the pane, mid-game
-    assert.deepEqual(boatRows(), [], 'no bare boat items on a shelf the mod never loaded for');
+    assert.deepEqual(boatRows(), [], 'loaded off, switched on');
     MS._resetModSettings();
     MS.latchModLoaded?.('come-sail-away', true);   // loaded on
     MS.setModSetting('come-sail-away', 'Enabled', false);
-    assert.deepEqual(boatRows(), [BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE], 'the mod stays loaded for this game');
+    assert.deepEqual(boatRows(), [], 'loaded on, switched off');
     MS._resetModSettings();
+    assert.deepEqual(boatRows(), [], 'no host latched it: the switch as it stands');
+    // AUDIT SHIPYARDS (the mutation rerun: S4-reset-keeps-latch survived the move above) - the latch still goes with the
+    // settings a test resets, seen through the mod's one door left, its effect kind
     MS.latchModLoaded?.('come-sail-away', false);
-    MS._resetModSettings();   // the latch goes with the settings a test resets
-    assert.deepEqual(boatRows(), [BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE], 'no host latched it (the menu, a test): the switch as it stands');
+    assert.equal(effectKindLoaded(WATER_WALKING_SILENT_KIND), false, 'latched off');
+    MS._resetModSettings();
+    assert.equal(effectKindLoaded(WATER_WALKING_SILENT_KIND), true, 'the latch reset with the settings: the switch as it stands (on)');
   } finally { MS._resetModSettings(); }
 });
 

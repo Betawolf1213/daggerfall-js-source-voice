@@ -236,9 +236,15 @@ export function createMarketTab(m, ui) {
   };
   /** AUDIT 30 U3: the last read asked - an answer to an earlier one (a view or a filter since left) is dropped. */
   let seq = 0;
-  async function load(force = false) {
+  async function load(force = false, { underAct = false } = {}) {
     const mine = ++seq;
-    st.loading = true; ui.rerender();
+    // MARKET-SPEED (2026-10-11): a read the minute's cache answers is drawn once, with its answer - it drew "Reading the
+    // market..." first, a whole window rebuilt for a frame; and a read an act asks (`underAct`) draws its waiting with the
+    // act's own end (the window's `run` draws it), never a rebuild of its own under the act's. AUDIT GATHER-SPEED G7: only
+    // that read - a view chosen while some other act runs draws its wait, or the press looked unheard
+    const quick = !force && m.book.fresh?.(st.view, q()) === true;
+    st.loading = !quick;
+    if (!quick && !(underAct && ui.busy())) ui.rerender();
     const r = await m.book.read(st.view, q(), { force });
     if (!ui.alive() || mine !== seq) return;
     st.loading = false;
@@ -261,7 +267,7 @@ export function createMarketTab(m, ui) {
   const settle = () => ui.run(async () => {
     const r = await m.book.settle(m.mint, m.putBack, m.drop ?? null);
     for (const x of arrived()) if (r?.ok) tried.add(x.id);
-    if (r?.settled) load(true);
+    if (r?.settled) load(true, { underAct: true });
     // MARKET-AUDIT P5: a collect refused is said, and an act still kept - each was said nowhere, and asked after no more
     const refused = (r?.refused ?? []).find(Boolean);
     return { ok: !!r?.ok && !refused, text: refused ? accountRefusalText(refused) : r?.settled ? MARKET_WORDS.settled
@@ -299,8 +305,8 @@ export function createMarketTab(m, ui) {
   /** An act through the window's door; its word, then the view read again - a press the market says has moved too. */
   const act = (start, okText) => ui.run(async () => {
     const r = await start();
-    if (r?.ok) { st.picked = null; load(true); return { ok: true, text: typeof okText === 'function' ? okText(r.data) : okText }; }
-    if (MOVED.includes(r?.error)) { st.picked = null; load(true); }
+    if (r?.ok) { st.picked = null; load(true, { underAct: true }); return { ok: true, text: typeof okText === 'function' ? okText(r.data) : okText }; }
+    if (MOVED.includes(r?.error)) { st.picked = null; load(true, { underAct: true }); }
     return { ok: false, text: r?.text ?? accountRefusalText(r?.error) };
   });
   /** What the Stores may spend or sell for Drakes of a material - never what gold bought (GOLD-MARKET's wall). */

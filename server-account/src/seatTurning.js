@@ -101,7 +101,7 @@ async function namesOf(db, ids) {
 export async function settleWeek(db, week, nowS, zero = null) {
   if (await db.prepare('SELECT 1 FROM town_seat_weeks WHERE week = ?').bind(week).first()) return { settled: false };
   const atS = turningOf(week);
-  const registry = await confirmedSeats(db, nowS);
+  const registry = await confirmedSeats(db, nowS, { fresh: true });   // D1-LOAD: the Turning reads the table as it stands
   const { results: pledgedKeys = [] } = await db.prepare('SELECT DISTINCT key FROM town_seat_pledges WHERE week = ?').bind(week).all();
   const { results: holdRows = [] } = await db.prepare('SELECT key, guild_id, region, tier, standing, truce_week, tithe, owed, since_week FROM town_seat_holds').all();
   const holds = new Map(holdRows.map((h) => [Number(h.key), h]));
@@ -495,6 +495,10 @@ export const SETTLE_LEASE_S = 60;
 export async function settleDueOnce(db, nowS, zero = null) {
   const last = (await db.prepare('SELECT MAX(week) AS w FROM town_seat_weeks').first())?.w;
   if (last != null && Number(last) + 1 >= weekAt(nowS)) return { settled: 0, pending: false };
+  // D1-LOAD: a lease held is READ, never asked of the one writer - every seat request that finds the week due while
+  // another settles (every client's list at the Turning) asked an INSERT that changed nothing, each one the writer's turn
+  const held = await db.prepare('SELECT until FROM town_seat_settling WHERE id = 1').first();
+  if (held && Number(held.until) > nowS) return { settled: 0, pending: true };
   const holder = crypto.randomUUID();
   const took = await db.prepare(`INSERT INTO town_seat_settling (id, holder, until) VALUES (1, ?1, ?2)
     ON CONFLICT (id) DO UPDATE SET holder = ?1, until = ?2 WHERE until <= ?3`).bind(holder, nowS + SETTLE_LEASE_S, nowS).run();

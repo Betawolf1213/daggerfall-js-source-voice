@@ -54,7 +54,8 @@ test('KB1 laws 1 and 3: every action is in one Controls group or hidden, no defa
     assert.ok(!shipped.has(action), `${action} owns no second key`);
     shipped.set(action, code);
   }
-  assert.deepEqual(DEFAULT_SHARES.map(([, a, p]) => [a, p]), [['BoatSailUp', 'ActChoice'], ['Professions', 'BoatSailDown']], 'the pairs: the helm\'s more sail and an herb patch\'s choice; CLASSIC-PAGES\' Professions key and the helm\'s less sail');
+  // PIN MOVED (SPYGLASS, 2026-10-11): and the captain's glass beside the road's follow - a deck has no road
+  assert.deepEqual(DEFAULT_SHARES.map(([, a, p]) => [a, p]), [['BoatSailUp', 'ActChoice'], ['Professions', 'BoatSailDown'], ['Spyglass', 'FollowPaths']], 'the pairs: the helm\'s more sail and an herb patch\'s choice; CLASSIC-PAGES\' Professions key and the helm\'s less sail; SPYGLASS\' glass and the road\'s follow');
   for (const [vendor, rows] of Object.entries(MOD_ACTIONS)) {
     const grp = ACTION_GROUPS.find((g) => g.mod === vendor);
     assert.ok(grp, `${vendor} has its own Controls group`);

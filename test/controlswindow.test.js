@@ -111,7 +111,8 @@ test('I4 + UXB1-S: the SAME key on two actions is a SHARE - marked, never blocki
   const store = freshStore();
   const u = createUnsavedKeybinds(store);
   assert.equal(checkDuplicates(u).ok, true, 'the defaults are clean');
-  assert.deepEqual([...checkDuplicates(u).shared], DEFAULT_SHARES.map(([c]) => c), '...and share only the default shares (HELM-KEYS: the up arrow)');
+  // PIN MOVED (SPYGLASS, 2026-10-11): as a set - K's share (the glass beside the road's follow) comes in the bindings' order, ahead of the arrows
+  assert.deepEqual([...checkDuplicates(u).shared].sort(), DEFAULT_SHARES.map(([c]) => c).sort(), '...and share only the default shares (HELM-KEYS: the up arrow; SPYGLASS: K)');
   // two actions on one code, in the SHOWN dict: a share
   setUnsavedBinding(u, 'Rest', 'KeyW');
   let d = checkDuplicates(u);
@@ -148,7 +149,7 @@ test('I4 + UXB1-S: the SAME key on two actions is a SHARE - marked, never blocki
   setUnsavedBinding(u2, 'Rest', null);
   setUnsavedBinding(u2, 'Jump', null);
   assert.equal(checkDuplicates(u2).ok, true, 'two unbound actions are not duplicates');
-  assert.deepEqual([...checkDuplicates(u2).shared], DEFAULT_SHARES.map(([c]) => c), '...nor a share (the default share alone stands)');
+  assert.deepEqual([...checkDuplicates(u2).shared].sort(), DEFAULT_SHARES.map(([c]) => c).sort(), '...nor a share (the default share alone stands)');   // PIN MOVED (SPYGLASS): as a set, K's share among them
   assert.equal(getDuplicates([null, null, 'KeyW']).size, 0);
   // the two colours are DFU's own; the share's is the port's, and neither of them
   assert.deepEqual([...INTERNAL_DUPE_COLOR], [1, 0, 0, 1]);

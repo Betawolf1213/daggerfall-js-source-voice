@@ -187,10 +187,15 @@ export class StreamingWorldState {
    *  when the land beyond the Bay is on, null for DFU's own edge of the world. `onMap` stays the MAP's law (World of
    *  Daggerfall's slots and every reader of the data ask it); `streams` is what the load list and the range ask. */
   static frame = null;
+  /** ETHER-SEA (bible/03-World/Etheric-Sea.md): THE OTHER BOXES the world streams over - each `{ x0, y0, w, h }` in the
+   *  map's own coordinates (the Etheric Sea's, world/ethericSea.js etherFrame), set by the world host apart from the
+   *  continent's `frame` (which the picture's fit resets as it lands). */
+  static frames = [];
   static streams(px, py) {
     if (StreamingWorldState.onMap(px, py)) return true;
     const f = StreamingWorldState.frame;
-    return !!f && px >= f.x0 && px < f.x0 + f.w && py >= f.y0 && py < f.y0 + f.h;
+    if (!!f && px >= f.x0 && px < f.x0 + f.w && py >= f.y0 && py < f.y0 + f.h) return true;
+    return StreamingWorldState.frames.some((b) => px >= b.x0 && px < b.x0 + b.w && py >= b.y0 && py < b.y0 + b.h);
   }
 
   inRange(px, py) {

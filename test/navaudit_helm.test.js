@@ -22,7 +22,7 @@ import { REPAIR_PRICE } from '../src/systems/naval/navalDamage.js';
 import { yardText, yardNote, mountNavalYardWindow } from '../src/ui/navalYardWindow.js';
 import { createNavalYardOverlay, navalYardOpen, closeNavalYard } from '../src/ui/navalPlunderDoor.js';
 import { WARM_CHUNKS } from '../src/ui/enhancedChunk.js';
-import { sea } from './navalSea.mjs';
+import { sea, knowAll } from './navalSea.mjs';
 import { stowSail } from '../src/systems/comeSailAway.js';   // AUDIT GALLEON-2 RG3: her canvas set, where her rig's boxes stand
 import { animatorOf } from '../src/systems/comeSailAwayBoat.js';
 import { mendScaleOf, MORALE_START } from '../src/systems/naval/shipCrew.js';   // SHIP-CREW: the mending by her crew's spirits
@@ -883,6 +883,7 @@ test('AUDIT NAV1 H17 the sea\'s ships on the compass: within COMPASS_SHIP_RANGE,
   frames(h, held, 2);
   struck.ship.damage.apply({ hull: Math.ceil(struck.ship.damage.maxHull * (1 - STRUCK_AT)) + 1, sail: 0, crew: 0 }, 0);
   frames(h, held);
+  knowAll(h.host);   // PIN MOVED (AUDIT CAPTAIN'S SEA S4): the compass marks a ship by what I know of her - her colours made out first
   const marks = h.host.compassShips();
   const byPos = (x, z) => marks.find((m) => Math.abs(m.x - x) < 1 && Math.abs(m.z - z) < 1)?.kind;
   assert.equal(byPos(300, 0), 'ship', 'a merchantman');

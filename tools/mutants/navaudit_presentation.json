@@ -391,8 +391,8 @@
   {
     "name": "NAVP-colours-struck-fly",
     "file": "src/scenes/navalHost.js",
-    "old": "    const colours = state === SHIP_STATES.afloat ? 'hers' : state === SHIP_STATES.prize ? 'taken' : 'struck';",
-    "new": "    const colours = state === SHIP_STATES.afloat ? 'hers' : state === SHIP_STATES.prize ? 'taken' : 'hers';",
+    "old": "    const colours = state === SHIP_STATES.afloat ? (falseFlagFor(e) && !e.blackFlag ? 'false' : 'hers') : state === SHIP_STATES.prize ? 'taken' : 'struck';",
+    "new": "    const colours = state === SHIP_STATES.afloat ? (falseFlagFor(e) && !e.blackFlag ? 'false' : 'hers') : state === SHIP_STATES.prize ? 'taken' : 'hers';",
     "tests": [
       "test/navaudit_presentation.test.js"
     ]
@@ -400,7 +400,7 @@
   {
     "name": "NAVP-colours-prize-hers",
     "file": "src/scenes/navalHost.js",
-    "old": "        b.flagColor = colours === 'hers' ? NAVAL_FACTIONS[s.cls?.faction]?.flag ?? null : null;",
+    "old": "        b.flagColor = colours === 'hers' ? NAVAL_FACTIONS[s.cls?.faction]?.flag ?? null : colours === 'false' ? NAVAL_FACTIONS.merchant.flag : null;",
     "new": "        b.flagColor = NAVAL_FACTIONS[s.cls?.faction]?.flag ?? null;",
     "tests": [
       "test/navaudit_presentation.test.js"
@@ -743,8 +743,8 @@
   {
     "name": "NAVP-brace-in-the-plate",
     "file": "src/ui/navalHud.js",
-    "old": "  plate.append(head, hull.row, sail.row, crew.row, chips, rose, hint);\n  root.append(card, warn, stack, plate, brace);",
-    "new": "  plate.append(head, hull.row, sail.row, crew.row, chips, rose, hint, brace);\n  root.append(card, warn, stack, plate);",
+    "old": "  plate.append(head, hull.row, sail.row, crew.row, chips, rose, hint);\n  root.append(card, warn, stack, plate, brace, glassBtn);",
+    "new": "  plate.append(head, hull.row, sail.row, crew.row, chips, rose, hint, brace);\n  root.append(card, warn, stack, plate, glassBtn);",
     "tests": [
       "test/navaudit_presentation.test.js",
       "test/navaudit_helm.test.js"
@@ -1136,7 +1136,7 @@
   {
     "name": "NAVP-hail-range-unread",
     "file": "src/scenes/navalHost.js",
-    "old": "if (e.hailed || d > nightSight(SAIL_HO_RANGE, { night, lit: showsLight(e) })) continue;",
+    "old": "if (e.hailed || d > nightSight(SAIL_HO_RANGE * sight, { night, lit: showsLight(e) }) * veilOf(e)) continue;",
     "new": "if (e.hailed) continue;",
     "tests": [
       "test/navaudit_presentation.test.js"
@@ -1208,8 +1208,8 @@
   {
     "name": "NAVP-tags-left-on-clear",
     "file": "src/scenes/world.js",
-    "old": "drawNavalHud(null); drawNavalTags([]); drawCrewBars([]); drawCrewLines([]); };",
-    "new": "drawNavalHud(null); drawCrewBars([]); drawCrewLines([]); };",
+    "old": "drawNavalHud(null); drawNavalTags([]); drawCrewBars([]); drawCrewLines([]); lowerGlass(); };",
+    "new": "drawNavalHud(null); drawCrewBars([]); drawCrewLines([]); lowerGlass(); };",
     "tests": [
       "test/navaudit_presentation.test.js"
     ]

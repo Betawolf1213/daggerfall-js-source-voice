@@ -675,6 +675,9 @@ test('SIB2: the bundle is the mod by its MANIFEST, not by one guessed file name;
   // quickload's is. Named here rather than merely counted, because the
   // count alone is what this line is guarding.
   assert.match(world, /await _teleportToPixel\(wake\.mapPixel\.x, wake\.mapPixel\.y, null, \{ modEvent: 'load', reposition: REPOSITION\.RandomStartMarker \}\);/, 'the online underground wake: a load');
-  assert.equal((world.match(/modEvent: '(travel|load)'/g) || []).length, 5, 'and no other caller names an event');
+  // PIN MOVED (ETHER-CROSSING, bible/03-World/Etheric-Sea.md): the crossing to and from the Etheric Sea is a voyage of
+  // days - a travel, OnPostFastTravel and all
+  assert.match(world, /await _teleportToPixel\(to\.px, to\.py, null, \{\n\s+arriveMinutes: sharedClockOn\(\) \? skyMinutes\(\) : worldMinutes\(\) \+ minutes,\n\s+modEvent: 'travel',/, 'the crossing: a travel');
+  assert.equal((world.match(/modEvent: '(travel|load)'/g) || []).length, 6, 'and no other caller names an event');
   assert.equal((world.match(/seasons\.onLoad\(\)/g) || []).length, 2, 'boot and the teleport core - the two loads');
 });

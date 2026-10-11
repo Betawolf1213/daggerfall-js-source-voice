@@ -392,6 +392,19 @@
   },
   {
    "file": "src/scenes/world.js",
+   "has": "day: () => Math.floor(worldMinutes() / 1440),",
+   "count": 3,
+   "clock": "event",
+   "why": "CAPT-BOARD and ETHER-SEA: the captain's day - a port's board and exchange, the strands' regrowth and the legends' rise; SHIPYARDS: the crew hall's day - which sailors a port town's hall has, the same for everyone in the town"
+  },
+  {
+   "file": "src/scenes/world.js",
+   "has": "arriveMinutes: sharedClockOn() ? skyMinutes() : worldMinutes() + minutes,",
+   "clock": "sky",
+   "why": "ETHER-CROSSING: the landfall's arrival - its season (offline the one clock's arrival, CROSS_DAYS on)"
+  },
+  {
+   "file": "src/scenes/world.js",
    "has": "levelBonus: () => seatEdicts.guardLevelBonus(Math.floor(skyMinutes())),",
    "clock": "sky",
    "why": "a Curfew's night watch (SEAT1d; AUDIT SEATS-3 E1)"

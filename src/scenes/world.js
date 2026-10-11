@@ -36,7 +36,7 @@ import { SKY_CLEAR } from '../render/renderer.js'; import { centreFromFeet } fro
 import { Arch3dFile } from '../formats/arch3dFile.js';
 import { requestLook, releaseLook, makeLookGate, bindCursorToggle, setCursorActive, cursorActive, holdCursor } from '../player/pointerLock.js';   // U45: bindCursorToggle is PlayerMouseLook.cursorActive; releaseLook: the chat's open (AUDIT CHAT C2); HERB-CURSOR: an act's free cursor
 import { attachTouch } from '../ui/touch.js';
-import { attachGamepad } from '../ui/gamepadInput.js';   // GP1: the pad speaks the same hooks
+import { attachGamepad, GLASS_PAD_ZOOM } from '../ui/gamepadInput.js';   // GP1: the pad speaks the same hooks - AUDIT CAPTAIN'S SEA S3: the glass's magnifying click
 import { BlocksFile } from '../formats/blocksFile.js';
 import { bindWorldDataBlocks } from '../formats/worldDataReplacement.js';   // RR3b
 import { isClimateFreeModel, NO_CLIMATE_REMAP, customModelFor, hasCustomModel, customModelNeeds, classicModelIdOf } from '../world/customModels.js';   // ARENA1: RuntimeMaterials' ApplyClimate 0 - the colosseum wears its own pictures; AUDIT MERCHANT-YARDS G1: the yards measure the registered models
@@ -279,10 +279,12 @@ import { treeKind, isTreeRecord, FOREST_STAMP } from './treeHost.js';   // PROF4
 import { createLowPolyTrees } from '../systems/lowPolyTreesAssets.js';   // LPT1: Low Poly Trees - the host's one door
 import { LPT_SCALE_MAX, lptVariety, buildTreeSet } from '../world/lowPolyTrees.js'; import { naturePicture } from '../world/naturePicture.js';   // LPT1: each tree's own draw, and a near pixel's set; AUDIT 05b A12: which picture a nature flat stands as, every host's one choice
 import { realForestsOn, FOREST_HIDDEN_LOCATION_TYPES, roadVergesOn, climateBlendOn } from './shared.js';   // FOREST1: the Real forests switch, and the places the woods hide; VERGE1: the clear roadsides' switch; ECOTONE1: the blended climates'
-import { landformsOn, tamrielLandOn, tamrielTraceOn } from './shared.js';   // LANDFORM1-3: the Landforms switch; TAMRIEL2: the land beyond the Bay's; TAMRIEL3: the trace's door
+import { landformsOn, tamrielLandOn, tamrielTraceOn, etherSeaOn, etherCrossOutOn } from './shared.js';   // LANDFORM1-3: the Landforms switch; TAMRIEL2: the land beyond the Bay's; TAMRIEL3: the trace's door; ETHER-SEA: the Etheric Sea's
 import { preloadTamrielTrace } from '../ui/tamrielTrace.js';   // TAMRIEL3: Daggerfall's own map of Tamriel, off the player's two files
 import { fitBayToPicture } from '../world/tamrielLand.js';   // TAMRIEL3: where the Bay stands on it
 import { groundWoods, groundClimateIndex } from '../world/tamrielGround.js';   // TAMRIEL2: the continent's ground round the Bay, for the kernels and the far ring
+import { etherWoods, etherClimateIndex, etherPoliticIndex, etherFrame, inEther, inEtherLaw, isleAt, islesNear, veilhaven, ETHER_HARBOUR_REACH, ETHER_SEA_NAME, CROSS_X, CROSS_LAND_PX, etherLight, ETHER_KEY_TINT } from '../world/ethericSea.js';   // ETHER-SEA: the Etheric Sea's ground and its box
+import { etherTemplates, etherTemplateOf, synthesizeEtherLocation, ETHER_REGION, ETHER_REGION_NAME } from '../world/etherPlaces.js';   // ETHER-PLACES: the isles' towns and ruins
 import { tamrielFrameInBay, inBay as onTheBay } from '../world/tamrielFrame.js';   // TAMRIEL2: the frame the world streams over, and the Bay's own ground
 import { createLandforms, landformLiftField, landformSites, landformClimates, cliffFadeAt } from '../world/landforms.js';   // LANDFORM1-3: the shaped ground, and what it lifts a point by; AUDIT LANDFORMS II I1: the lift's fade beside the sea
 import { vergeClear, natureReach, pathTileMask, lptFitCap } from '../world/roadVerge.js';   // VERGE1: a wild flat's footprint off the roads; LPT-FIT: every Low Poly tree's crown off them
@@ -301,11 +303,16 @@ import { createQuayPool } from './quayPool.js';   // QUAYS: a harbour's quays, s
 import { createLefayMonument } from './lefayMonumentHost.js';   // LEFAY1: the monument to Julian LeFay in Gothway Garden, and the flowers laid at it
 import { isLefayTown, lefaySpotOf, carveLefay } from '../world/lefayMonument.js';   // LEFAY1: its town, its spot off the town's navgrid, and the people's navgrid carved round it
 import { createMerchantYards } from './merchantYardsHost.js';   // MERCHANT-YARDS: every city's and town's Stable and Wagon Yard, and their trade
+import { createPortHost, PORT_TEXT, stairRefusal, stairFeetY } from './portHost.js';   // SHIPYARDS: every port town's shipyard and lighthouse, their people, their press and the lamp - and the stair's refusals
+import { createShipyardHost } from './shipyardHost.js';   // SHIPYARDS: the shipmaster's window's host half
 import { createWardenShows } from './wagonWardenShow.js';   // WARDEN1: the town watch's throw, played
 import { createWagonWarden, wardenTownIn } from './wagonWardenHost.js';   // WARDEN1: the town watch - my wagon's stamp, the cell's words, the offline clock; AUDIT WARDEN1 D3: the town under a point, one pure home
 import { WARDEN_VENDOR, isWardenTown } from '../systems/wagonWarden.js';   // WARDEN1: the stamp's save slot, and the towns a watch keeps
-import { yardSitesOf, carveYards, MONUMENT_KEEP_M, yardMeasuresOf, placedModelBox } from '../world/merchantYardSites.js';   // MERCHANT-YARDS: where they stand off the town's layout, and the people's navgrid carved round them
+import { townGroundOf, yardSitesOn, carveYards, MONUMENT_KEEP_M, yardMeasuresOf, placedModelBox } from '../world/merchantYardSites.js';   // MERCHANT-YARDS: where they stand off the town's layout, and the people's navgrid carved round them
 import { isYardTown, yardKeeper, YARD_KIND_ORDER } from '../systems/merchantYards.js';   // MERCHANT-YARDS: the towns that stand them, who keeps them, the town's people
+import { isPortTown, portTownByData, portKeeper, portPlaceName, PORT_SITE_ORDER } from '../systems/portPlaces.js';   // SHIPYARDS: the port towns, their keepers and their places' names
+import { townSeaOf, seaBearing, seaField, portSitesOn, portPlaceRows, sceneToLocationXZ } from '../world/portSites.js';   // SHIPYARDS: where a port town's shipyard and lighthouse stand - its seaward ground
+import { SHIPYARD as SHIPYARD_LAYOUT } from '../world/shipyardModel.js';   // SHIPYARDS: the crew hall's table, for the talk directory's row
 import { HARBOUR_REACH } from '../systems/naval/shipLife.js';   // AUDIT HOLDINGS O1: the harbour's scan reach, its pixels built before it is sounded
 import { createHarbourBook } from '../systems/naval/harbourBook.js';   // HARBOUR-BOOK: the harbours near the player, the quays' and the sea's
 import { withdrawIntoPack, materialLabel, materialCountLabel } from '../systems/profItems.js';   // PROF1: a Stores material as DFU's own item
@@ -491,7 +498,7 @@ import { composeContents } from '../systems/worldHover.js';   // WORLD-HOVER: th
 import { mobilePersonName, lootPileName } from '../systems/worldTooltips.js';   // WORLD-HOVER H2: MobilePersonNPC.NameNPC (.cs:299-302); M5: a dropped pile's word (.cs:534-548), outdoors too
 import { wagonHoverName } from '../player/eotbWagon.js';   // WORLD-HOVER M6: the cart's word, beside its producer
 import { waterSourceHoverName } from '../systems/survival/items.js';   // WORLD-HOVER M6: a water source's word, beside its producer
-import { mwViewFirstPerson, mwViewFrame, mwViewWheel, mwViewDrawBody, mwViewBodyBones, mwViewSpriteFigure, mwViewSpriteFacing, mwViewFootstep, mwViewLoadPose, mwViewNewGame, mwViewRebase, mwViewAttachWagon, mwViewDrawWagon, mwViewWagonTargets, setEotbCartYields, mwViewWagonActivate, setEotbComeSailAway, mwViewHoldThird, mwViewHoldChanged, mwViewSaveCamera, mwViewTogglePerspective } from '../player/mwView.js';   // MW-D25: the Morrowind camera; AUDIT-EOTB2: the sprite's stride and the load's POV; CSA-J: EOTB's boat
+import { mwViewFirstPerson, mwViewFrame, mwViewWheel, mwViewDrawBody, mwViewBodyBones, mwViewSpriteFigure, mwViewSpriteFacing, mwViewFootstep, mwViewLoadPose, mwViewNewGame, mwViewRebase, mwViewAttachWagon, mwViewDrawWagon, mwViewWagonTargets, setEotbCartYields, mwViewWagonActivate, setEotbComeSailAway, mwViewHoldThird, mwViewHoldChanged, mwViewSaveCamera, mwViewTogglePerspective, mwViewHoldFirst } from '../player/mwView.js';   // MW-D25: the Morrowind camera; AUDIT-EOTB2: the sprite's stride and the load's POV; CSA-J: EOTB's boat
 import { seaZoomReach } from '../player/seaZoom.js';   // FIELD BUGS 2026-09-29 (the sea) #3: the zoom at a helm
 import { mwCamera } from '../player/mwCamera.js';   // MW-D30: persistence
 import { pickActivatableHit, pickQuestFoe, pickFoe, peacefulFoePass } from '../player/activate.js';   // G3: corpse loot; QG1: the foe-click door; TI1: the lock-on pick
@@ -600,10 +607,22 @@ import { windWidgetFrameUrl as csaWindWidgetFrameUrl, waveDerivedUrl as csaWaveD
 import { WAVE_FRAME_COUNT as CSA_WAVE_FRAME_COUNT, waveDitherOf as csaWaveDitherOf } from '../systems/comeSailAwayWaves.js';   // CSA-F
 import { ComeSailAwayRenderer, softParticleTexture as csaSoftParticleTexture } from '../render/comeSailAwayRender.js';   // CSA-F: the waves' and the particles' passes
 import { createNavalHost, hullBoxOf as navalHullBoxOf, NAVAL_SAVE_VENDOR, NAVAL_TAG_RANGE } from './navalHost.js';   // NAV-H: the sea fight - the Iliac Bay's ships, the guns, boarding, the law and the word
+import { createCaptainLedger, CAPTAIN_SAVE_VENDOR, perksOf, PERKS_REFUSED_AT, logLines } from '../systems/naval/captainLedger.js';
+import { createHarbourOffice } from './harbourOffice.js';
+import { createEtherHost } from './etherHost.js';   // ETHER-SEA: the Etheric Sea's waters, charts, strands and legends
+import { createCrossingGate, crossingWayAt, crossingTarget, crossingRows, crossingWords, CROSS_DAYS, CROSS_CHECK_S, CROSS_REFUSED, CROSS_STALE, CROSS_FAILED } from '../systems/naval/etherCrossing.js';   // ETHER-CROSSING: the voyage across
+import { mulberry32 } from '../combat/bloodArt.js';   // CAPT-BOARD: a site's point off its seed
+import { CHART_TEMPLATE } from '../systems/naval/treasureCharts.js';   // CAPT-CHARTS: a treasure chart read   // CAPT-BOARD: the harbourmaster's board, the contracts, the letters
+import { mintDeed } from '../systems/comeSailAwayItems.js';   // CAPT-BOARD: the Admiralty's carrack's deed, the shelf's own mint   // CAPT-LOG: the captain's ledger - the log, the crowns' regard, the ranks, the letter of marque
+import { navalLootWorth } from '../systems/naval/navalTransfer.js';   // CAPT-LOG: what plunder is worth to the log
+import { watersOf } from '../systems/naval/navalDirector.js';   // CAPT-WATERS: the coast's waters, the open and the deep
 import { draftOf as navalDraftOf } from '../systems/naval/shipLife.js';   // AUDIT GN2-PF6: a hull's draft, hull 2's off her keel as she stands
 import { createNavalFlames } from './navalFlames.js';   // NAV-B: a burning ship's deck fires
 import { NavalRenderer } from '../render/navalRender.js';   // NAV-B: the smoke, the spray, the balls in flight and the aim
-import { drawNavalHud, navalTouchBrace, navalPadPrompts, drawNavalTags, drawCrewBars, CREW_BAR_RANGE, crewBarPoint, drawCrewLines, CREW_SAY_RANGE } from '../ui/navalHud.js';   // AUDIT NAV1 (#14): and the ships' tags - SHIPMATES: and the crew's bars (CEIL-GHOST: where they stand) - LIVING CREW: and their lines
+import { drawSpyglass, easeLens, glassFov, glassLookScale, spyglassTaps, nextGlassZoom, GLASS_FIELD } from '../ui/spyglassView.js';   // SPYGLASS: the glass's window, its lens - AUDIT CAPTAIN'S SEA S3/S16: a finger's two presses, the presses' round of magnifications, its field
+import { plusDpadMap, DPAD_CODES } from '../ui/plusPad.js';   // AUDIT CAPTAIN'S SEA S3: a d-pad press the player gave the glass
+import { GLASS_ZOOM, GLASS_ZOOM_MIN, GLASS_ZOOM_MAX } from '../systems/naval/shipKnowledge.js';   // SPYGLASS: its magnification
+import { drawNavalHud, navalTouchBrace, navalTouchGlass, navalPadPrompts, drawNavalTags, drawCrewBars, CREW_BAR_RANGE, crewBarPoint, drawCrewLines, CREW_SAY_RANGE } from '../ui/navalHud.js';   // AUDIT NAV1 (#14): and the ships' tags - SHIPMATES: and the crew's bars (CEIL-GHOST: where they stand) - LIVING CREW: and their lines
 import { createNavalCrew, CREW_RANGE, CREW_KEEP } from './navalCrew.js';   // LIVING CREW: the crews on the decks near the eye
 import { asleepHour } from '../systems/naval/shipWatch.js';   // SHIP-WATCH: the crews' sleeping hours
 import { crewRoster, crewCount } from '../systems/naval/crewLife.js';
@@ -615,7 +634,7 @@ import { hullBuild } from '../systems/naval/navalShips.js';   // LIVING CREW: a 
 import { sparedByPlayer, isShipmate } from '../combat/friendlyFire.js';   // SHIPMATES: the player's own crew, spared his blows and wearing their bars
 import { padFamily } from '../ui/padGlyphs.js';   // AUDIT NAV1 (the presentation): the pad in hand's family - the readout names its buttons
 import { hdGlyphName } from '../ui/padGlyphsHD.js';   // NAV-F: the helm's readout; AUDIT NAV1: its Brace under a finger
-import { createNavalPlunderOverlay, closeNavalPlunder, createNavalYardOverlay, closeNavalYard } from '../ui/navalPlunderDoor.js';   // NAV-F: a taken ship's window, behind its door; AUDIT NAV1: the shipwright's
+import { createNavalPlunderOverlay, closeNavalPlunder, createNavalYardOverlay, closeNavalYard, createEtherChartOverlay, closeEtherChart, createShipyardOverlay, closeShipyard } from '../ui/navalPlunderDoor.js';   // NAV-F: a taken ship's window, behind its door; AUDIT NAV1: the shipwright's
 import { installNavalSounds } from '../systems/naval/navalSounds.js';   // NAV-E: the guns' own sounds
 import { navalRecordKey } from '../systems/naval/navalWire.js';   // NAV-G: my sea's word, said when it changed
 import { CROWNS as NAVAL_CROWNS, crownOf as navalCrownOf } from '../systems/naval/navalShips.js';   // NAV-C: the three crowns, whose capitals name the waters; AUDIT NAV1 (B2): a raid at sea parsed in theirs
@@ -1312,6 +1331,22 @@ export async function bootWorld(canvas, renderer, params, status) {
     maps.getClimateIndex = groundClimateIndex(maps.getClimateIndex.bind(maps));
   }
   StreamingWorldState.frame = tamrielLand ? tamrielFrameInBay() : null;
+  // ETHER-SEA (bible/03-World/Etheric-Sea.md): THE ETHERIC SEA'S GROUND - its isles and its open water, composed over
+  // whatever the world grows past the Bay (world/ethericSea.js: its own box, far north of the continent's frame; the
+  // worker composes its copy the same way), its climate read beside it, and its box a frame the world streams over
+  // (the crossing's landfall and a save made there build from it).
+  const etherSea = etherSeaOn();
+  // AUDIT CAPTAIN'S SEA G2: THE SWITCH SPLIT - the sea stands in every game (its ground, its places, its ships and the way
+  // home: a save made past the Veil loads under any skin - the classic skin threw on it), and the crossing OUT is the
+  // enhanced skin's and online's (shared.js etherCrossOutOn); `?ether=off` stands neither
+  const etherOut = etherCrossOutOn();
+  let _etherCrossing = false;   // ETHER-CROSSING: a voyage under way (etherCross, far below) - declared with the switch, before any frame reads it (BOOT-TDZ2's law)
+  if (etherSea) {
+    woods = etherWoods(woods);
+    maps.getClimateIndex = etherClimateIndex(maps.getClimateIndex.bind(maps));
+    maps.getPoliticIndex = etherPoliticIndex(maps.getPoliticIndex.bind(maps), ETHER_REGION);   // its region the isles' (getRegionIndexAt reads it) - never the Alik'r's clamp
+  }
+  StreamingWorldState.frames = etherSea ? [etherFrame()] : [];
   // EV7: the pixel kernel's off-thread home - a COPY of the WOODS
   // bytes crosses once; this thread's `woods` stays the fallback law.
   const terrainGen = new TerrainGenClient({ woods, woodsBytes });
@@ -1539,6 +1574,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   let quays = null;   // QUAYS: the harbours' quays (scenes/quayPool.js), made beside the farms; read late (a transition, a load, the frame)
   let lefay = null;   // LEFAY1: the monument to Julian LeFay (scenes/lefayMonumentHost.js), made beside the Sigil Broker; read late (a transition, a load, the frame)
   let merchantYards = null;   // MERCHANT-YARDS: the towns' Stables and Wagon Yards (scenes/merchantYardsHost.js), made beside the monument; read late as it is
+  let portHost = null;   // SHIPYARDS: the port towns' shipyards and lighthouses (scenes/portHost.js), made beside the yards; read late as they are
   let wardenShows = null, wagonWarden = null;   // WARDEN1: the town watch's throws (scenes/wagonWardenShow.js) and its host (scenes/wagonWardenHost.js), made beside the yards; read late as they are
   const _bountyFarmLocs = [];   // BOUNTY-FARM: the game's own farmsteads - the nearest lends a farm bounty its buildings
   const _bountyDungeonPixels = new Map();   // BOUNTY1: the game's own dungeons, by pixel -> name, for a board's underground hunts
@@ -1620,6 +1656,10 @@ export async function bootWorld(canvas, renderer, params, status) {
   // a region's cities apart: its Hollow stood by another city, on another pixel, in another room.
   const _sdCityRows = params.has('online') ? _classicRows.filter((loc) => !!hubClaim(loc, maps.getRegionName(loc.regionIndex))) : [];
   const _sdTemplateRows = params.has('online') ? sdTemplates(_classicRows, isMainStoryDungeon) : [];
+  // ETHER-PLACES (world/etherPlaces.js): THE ISLES' TEMPLATES - the towns and the ruins an Etheric isle's place may
+  // clone, off the SAME rows (the game's own, as MAPS.BSA holds them: every client clones the same place), kept before
+  // the rows go
+  const _etherTemplates = etherSea ? etherTemplates(_classicRows ?? _hubRows.map(classicRow).filter(Boolean), isMainStoryDungeon) : null;
   _classicRows = null;   // read, let go
   // HUB1: every region's main city, one answer on every client (systems/regionHubs.js) - read online alone
   const regionHubs = pickRegionHubs(_hubRows, { regionNameOf: (r) => maps.getRegionName(r) });
@@ -2351,6 +2391,7 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  build took the index's word for a spawn it held, so one stood again at every rebuild whatever its clocks said, while
    *  the Overworld (tvSpawnGone) had it gone. */
   function _locationToBuild(px, py) {
+    if (etherSea && inEther(px, py)) return etherPlaceAt(px, py);   // ETHER-PLACES: an isle's place, or the open sea's none
     const key = `${px},${py}`;
     const loc = locationIndex.get(key);
     if (loc?.spawned && _spawnLedger.expired(key, _spawnClock()) && !_insideSpawn(key)) {
@@ -2359,6 +2400,23 @@ export async function bootWorld(canvas, renderer, params, status) {
       return null;
     }
     return loc || spawnedDungeonAt(px, py);
+  }
+  /** ETHER-PLACES (world/etherPlaces.js): THE PLACE AN ISLE'S CENTRE PIXEL STANDS - a port's town or a ruin's dungeon,
+   *  cloned off the game's own rows under the isle's own id, name and index, the region it answers for the Etheric Isles'
+   *  (etherPlaces.js ETHER_REGION) and its climate the isle's - stood in the index once (a building's door, a quest's
+   *  site and a save's records read it there), or null: the open sea, an isle's other pixels, a wild isle, a rock. */
+  function etherPlaceAt(px, py) {
+    const key = `${px},${py}`;
+    const had = locationIndex.get(key);
+    if (had?.ether) return had;
+    const isle = isleAt(px, py);
+    if (!isle || isle.px !== px || isle.py !== py) return null;
+    const template = etherTemplateOf(_etherTemplates, isle);
+    if (!template) return null;
+    const loc = synthesizeEtherLocation(template, isle, { regionIndex: ETHER_REGION, regionName: REGION_NAMES[ETHER_REGION] ?? ETHER_REGION_NAME, politic: 128 + ETHER_REGION, climate: getWorldClimateSettings(isle.climate) });   // AUDIT CAPTAIN'S SEA P8: its region's own name - the quests resolve and gate a site by it
+    _locIndexGen += 1;
+    locationIndex.set(key, loc);
+    return loc;
   }
   /** AUDIT OW4 D4: THE CLONE a pixel's spawn IS - the template its hash picks, dressed as where it stands (region, politic,
    *  climate, elite). Pure in the salt, the pixel and the map files, so the one answer serves spawnedDungeonAt (which stands
@@ -2392,7 +2450,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   /** AUDIT OW5b D3: WHAT STANDS ON A PIXEL, built or not - the index's place, else the spawn its roll would stand (online,
    *  side-effect free: tvSpawnAt). A member walking to the leader's spawn read the index alone, and a far spawn their own
    *  pixels had never built was a bare spot to them. */
-  const tvLocationAt = (x, y) => locationIndex.get(`${x},${y}`) ?? (params.has('online') && spawnsDungeon(_spawnSalt, x, y) ? tvSpawnAt(x, y) : null);
+  const tvLocationAt = (x, y) => locationIndex.get(`${x},${y}`) ?? (params.has('online') && !inEtherLaw(x, y) && spawnsDungeon(_spawnSalt, x, y) ? tvSpawnAt(x, y) : null);   // ETHER-PLACES: no spawn past the Veil - the isles stand their own
   /** AUDIT LANDFORMS B1: landformLiftAt's pixels not built yet - what the build will stand there: the index's place, else
    *  online the spawn its roll stands; one past its time with nobody in it is built empty (_locationToBuild), read here
    *  without taking it out of the index. AUDIT LANDFORMS II F1: declared here, beside the build's own answer, so it is the
@@ -3886,7 +3944,17 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  G3 - a palace read off the block's real buildings (talkTopics.js blockBuildingCount; the slots past it are
    *  garbage); G2 - the sites kept per town while its measures stand (a rebuild of the pixel placed it all again, a
    *  tenth of a second in the build, and said "no room" each time). */
-  const _yardMemo = new Map();   // mapId -> { sig, sites }, the latest few towns
+  /** SEAT2b part two (Seats-Arc 7.5: "Harbour (coastal seats only)"): a map pixel of sea - the port's one water law
+   *  (ui/overworldModel.js isWaterPixel over CLIMATE.PAK and WOODS.WLD's height), for a town's coast (fortLaw.js coastalAt).
+   *  SHIPYARDS (BOOT-TDZ): declared here, above the stream - a port town's places read its bearing in the boot's first
+   *  build, three thousand lines before its old place ran. */
+  const seaPixel = (x, y) => isWaterPixel(maps.getClimateIndex(x, y), woods.getHeightMapValue(x, y));
+  /** SHIPYARDS: whether a town stands the port's places (systems/portPlaces.js isPortTown) - a port by its own data alone:
+   *  Travel Options' hand-written harbours (travelPorts.js hasPort) or Daggerfall's PortTownAndUnknown byte. Never a seat's
+   *  members' harbour (hasPortFor's word is one guild's - every client stands the same shipyard), and never csaIsPortTown,
+   *  declared below the stream (BOOT-TDZ). */
+  const portByData = (dfLocation) => portTownByData(dfLocation, hasPort);
+  const _yardMemo = new Map();   // mapId -> { sig, sites, ports }, the latest few towns
   const _yardBoxes = new Map();   // a registered model's local box, by id
   const palaceIn = (b) => {
     const list = b.dfBlock?.rmbBlock?.fldHeader?.buildingDataList ?? [];
@@ -3894,7 +3962,13 @@ export async function bootWorld(canvas, renderer, params, status) {
     for (let i = 0; i < n; i++) if (list[i]?.buildingType === TALK_BUILDING_TYPES.Palace) return true;
     return false;
   };
-  function merchantYardSitesFor(dfLocation, lefaySpot, people, loc = null) {
+  /** MERCHANT-YARDS + SHIPYARDS: A TOWN'S PLACES - its yards placed on its ground as they always were (townGroundOf, then
+   *  yardSitesOn - yardSitesOf's own two steps), and a port town's shipyard and lighthouse on what they left (portSitesOn
+   *  off the sea: the town's own shoreline cells, else the sea's bearing off the map pixels round it - seaPixel), each
+   *  keyed by the town and its kind, with its keepers (systems/portPlaces.js portKeeper - the shipyard's crewmaster beside
+   *  its shipmaster), its name and the town's people. One memo a town, keyed by its measures and whether it is a port;
+   *  one call a build (AUDIT SHIPYARDS L3-3: the yards' and the port's each asked it whole). */
+  function townPlacesFor(dfLocation, lefaySpot, people, loc = null) {
     try {
       const yl = loc && isEnhanced() && windmillsOn() ? loc : layoutLocation(dfLocation, maps, blocks, { enhanced: true, windmills: true });
       const measures = {
@@ -3912,17 +3986,38 @@ export async function bootWorld(canvas, renderer, params, status) {
         keep: lefaySpot ? [[lefaySpot.x, lefaySpot.z, MONUMENT_KEEP_M]] : [],
       };
       const mapId = (dfLocation.mapTableData?.mapId ?? 0) >>> 0, regionIndex = dfLocation.regionIndex ?? 0, race = walkerRace(people, dfLocation.regionIndex);
-      const sig = JSON.stringify(measures);
+      const yardTown = isYardTown(dfLocation), port = isPortTown(dfLocation, portByData(dfLocation));
+      const sig = `${JSON.stringify(measures)}|${yardTown ? 'yards' : ''}|${port ? 'port' : ''}`;
       let memo = _yardMemo.get(mapId);
       if (!memo || memo.sig !== sig) {
-        memo = { sig, sites: yardSitesOf(yl, measures) };
+        const g = townGroundOf(yl, measures);
+        const sites = g && yardTown ? yardSitesOn(g) : [];
+        let ports = [];
+        if (g && port) {
+          const lp = longitudeLatitudeToMapPixel(dfLocation.mapTableData.longitude, dfLocation.mapTableData.latitude);
+          const bearing = seaBearing(lp.x, lp.y, seaPixel);   // AUDIT SHIPYARDS U2: and the town's own water against it is no sea
+          ports = portSitesOn(g, seaField(g.width, g.height, townSeaOf(yl, bearing), bearing));
+        }
+        memo = { sig, sites, ports };
         _yardMemo.delete(mapId);
         _yardMemo.set(mapId, memo);
         while (_yardMemo.size > 8) _yardMemo.delete(_yardMemo.keys().next().value);
-        if (memo.sites.length < YARD_KIND_ORDER.length) console.log(`[yards] ${dfLocation.name}: no room for ${YARD_KIND_ORDER.filter((k) => !memo.sites.some((t) => t.kind === k)).join(' or ')}`);
+        if (yardTown && memo.sites.length < YARD_KIND_ORDER.length) console.log(`[yards] ${dfLocation.name}: no room for ${YARD_KIND_ORDER.filter((k) => !memo.sites.some((t) => t.kind === k)).join(' or ')}`);
+        if (port && memo.ports.length < PORT_SITE_ORDER.length) console.log(`[port] ${dfLocation.name}: no room for its ${PORT_SITE_ORDER.filter((k) => !memo.ports.some((t) => t.kind === k)).join(' or its ')}`);
       }
-      return memo.sites.map((t) => ({ ...t, key: `${mapId}:${t.kind}`, mapId, regionIndex, race, keeper: yardKeeper(mapId, t.kind, regionIndex) }));
-    } catch (e) { console.warn('[yards] the town\'s yards would not place', e?.message ?? e); return []; }
+      const shipmaster = portKeeper(mapId, 'shipyard', regionIndex), crewmaster = portKeeper(mapId, 'crewhall', regionIndex), lightkeeper = portKeeper(mapId, 'lighthouse', regionIndex);
+      return {
+        yards: memo.sites.map((t) => ({ ...t, key: `${mapId}:${t.kind}`, mapId, regionIndex, race, keeper: yardKeeper(mapId, t.kind, regionIndex) })),
+        ports: memo.ports.map((t) => {
+          const keeper = t.kind === 'lighthouse' ? lightkeeper : shipmaster;
+          return {
+            ...t, key: `${mapId}:${t.kind}`, mapId, regionIndex, race, townName: dfLocation.name, keeper,
+            name: portPlaceName(t.kind, { keeperName: keeper.name, townName: dfLocation.name }),
+            ...(t.kind === 'shipyard' ? { crewmaster, crewName: portPlaceName('crewhall', { keeperName: crewmaster.name }) } : {}),
+          };
+        }),
+      };
+    } catch (e) { console.warn('[yards] the town\'s yards would not place', e?.message ?? e); return { yards: [], ports: [] }; }
   }
   /** FB1009 HOME-FOOT: each model's ground seen from above (homeYards.js modelFootRects), in its own frame - measured once. */
   const modelFeet = new Map();
@@ -4676,7 +4771,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     const eye = [cam.pos[0] + _dwEyeOffset[0], cam.pos[1] + _dwEyeOffset[1], cam.pos[2] + _dwEyeOffset[2]];
     const V = lookAt(eye, [eye[0] + forward[0], eye[1] + forward[1], eye[2] + forward[2]], UP_Y);
     const worldAspect = largeHudWorldAspect(canvas.clientWidth, canvas.clientHeight);   // ROAD-E E5: the docked bar's reduced aspect, as the frame's
-    const P = mirrorProjectionX(perspective(fieldOfView() + climbFeel.fovRad(), worldAspect, 0.2, 6000));   // the frame's own lens (HANDEDNESS, mat4's law; CLIMB4: its kick)
+    const P = mirrorProjectionX(perspective(fieldOfView() + climbFeel.fovRad(), worldAspect, 0.2, 6000));   // the frame's own wide lens - the glass's narrowing left out (AUDIT CAPTAIN'S SEA H22: nothing the spawners place pops into the view the glass comes down from) (HANDEDNESS, mat4's law; CLIMB4: its kick)
     const viewport = (q) => {
       const ex = V[0] * q[0] + V[4] * q[1] + V[8] * q[2] + V[12], ey = V[1] * q[0] + V[5] * q[1] + V[9] * q[2] + V[13];
       const ez = V[2] * q[0] + V[6] * q[1] + V[10] * q[2] + V[14], ew = V[3] * q[0] + V[7] * q[1] + V[11] * q[2] + V[15];
@@ -5517,7 +5612,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     const gateClear = _gateClearNow();
     const gateLedger = { refused: false, reach: [] };   // what the clearing cost this pixel, and what it stood (world/gateClearance.js)
     const gateSite = gateSiteTest(gateClear, px, py, gateLedger);
-    if (wod && await wodOpened) {
+    if (wod && onTheBay(px, py) && await wodOpened) {   // AUDIT CAPTAIN'S SEA G8: the mod's sites are the Bay's - its pick never run off it (off the map its pixel walk is a whole-list scan, 1.3 ms a pixel, thrown away)
       // AUDIT BRANCH (WoD) M2: the mod's decision can cost this pixel its site, never the pixel - a throw out of the
       // loader failed the whole build, terrain and all, on every pixel after it
       try {
@@ -5683,6 +5778,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     let locOrigin = null;    // the location origin, pixel-local
     let lefaySpot = null;    // LEFAY1: Gothway Garden's monument - its spot in the location frame (world/lefayMonument.js lefaySpot), null in any other town
     let yardSites = null;    // MERCHANT-YARDS: a city's or a town's Stable and Wagon Yard - their sites in the location frame, null in any other place
+    let portSites = null;    // SHIPYARDS: a port town's shipyard and lighthouse - their sites in the location frame, null in any other place
     let personBatches = null;
     let locBlocks = null;    // T3d: the layout blocks for the Where-is directory
     let homeTown = 0;        // HOME-LOOK: the town's map id, and its homes as heard at the build
@@ -5702,7 +5798,12 @@ export async function bootWorld(canvas, renderer, params, status) {
       const loc = layoutLocation(dfLocation, maps, blocks, { enhanced: isEnhanced(), windmills: windmillsOn() });   // WM3: the pack's own switch
       locBlocks = loc.blocks;
       if (isLefayTown(dfLocation)) lefaySpot = lefaySpotOf(loc);   // LEFAY1: the open ground nearest the town's middle, off its own navgrid
-      if (isYardTown(dfLocation)) yardSites = merchantYardSitesFor(dfLocation, lefaySpot, climate?.people, loc);   // MERCHANT-YARDS: the town's open ground, clear of its buildings, roads and lots
+      // MERCHANT-YARDS: the town's open ground, clear of its buildings, roads and lots; SHIPYARDS: and a port town's seaward
+      // ground, on what the yards left - one pass (AUDIT SHIPYARDS L3-3: the yards' and the port's each asked it whole)
+      const yardTown = isYardTown(dfLocation), portTown = isPortTown(dfLocation, portByData(dfLocation));
+      const places = yardTown || portTown ? townPlacesFor(dfLocation, lefaySpot, climate?.people, loc) : null;
+      if (yardTown) yardSites = places.yards;
+      if (portTown) portSites = places.ports;
       const tilePos = getLocationTerrainTileOrigin(dfLocation);
       const locLocal = [tilePos.x * tileSide, avg * worldHeight + 2.0 * 0.025, tilePos.y * tileSide];
       // T3d: EVERY location pixel keeps its origin (the population
@@ -6015,6 +6116,7 @@ export async function bootWorld(canvas, renderer, params, status) {
         }
         if (lefaySpot) carveLefay(nav, lefaySpot);   // LEFAY1: the people walk round the monument, never through it
         if (yardSites?.length) carveYards(nav, yardSites);   // MERCHANT-YARDS: and round the yards
+        if (portSites?.length) carveYards(nav, portSites);   // SHIPYARDS: and round the shipyard and the lighthouse
         personBatches = new Map();   // person -> batch (destroyed with the pixel)
         made.personBatches = personBatches;   // BUILD-FAIL1
         const personCollider = {
@@ -6513,6 +6615,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       population, locOrigin, personBatches,   // T2 towns
       lefay: lefaySpot,   // LEFAY1: the monument's spot, location frame (locOrigin + its x, z) - null off Gothway Garden
       merchantYards: yardSites,   // MERCHANT-YARDS: the Stable's and the Wagon Yard's sites, location frame - null off a city or a town
+      portSites,   // SHIPYARDS: the shipyard's and the lighthouse's sites, location frame - null off a port town
       wardenTown: dfLocation && isWardenTown(dfLocation.mapTableData?.locationType) ? (dfLocation.mapTableData?.mapId ?? 0) >>> 0 : null,   // WARDEN1: a city's, a hamlet's or a village's map id - its watch throws a wagon parked too long on its road, or past its fourth
       npcs: pixelNpcs,   // AUDIT 26 (F019): RMBLayout's street StaticNPCs, pixel-local
       npcBatches: [], npcQuestPass: false,   // E3: their billboards (a subset of `batches`) and the one-shot SetupIndividualStaticNPC latch
@@ -7625,7 +7728,9 @@ export async function bootWorld(canvas, renderer, params, status) {
     ridingVolumeScale: () => (_travelSoundsOff ? 0 : 1),   // AUDIT-TO1 J1: TransportManager.RidingVolumeScale = 0 for the journey
     // RR1: IsShipAvailiable's reads - the location under the player (loaded, a port) and whether they stand on the ship
     // AUDIT-RR2 G22: `travelOptionsEnabled` asks TO's "hasPort" (RoleplayRealism.cs:635-644; TravelOptionsMapWindow.cs:870-873 - the hand-written port list), else the flag - SEAT2b part two: a members' Harbour at a seat among them (travelPorts.js hasPortFor)
-    shipLocation: () => { const loc = _questLoc(); return loc ? { locationLoaded: true, portTown: (modSetting('travel-options', 'Enabled') === true ? hasPortFor(loc.mapTableData?.mapId) : (loc.exterior?.exteriorData?.portTownAndUnknown ?? 0) !== 0), onShip: isOnShip(playerEntity, playerEntity.boardShipPosition ?? null, playerTravelPixel()) } : { locationLoaded: false, onShip: false }; },   // DISC13-D: `locationLoaded`, the key isShipAvailable reads - `loaded` left shipPorts answering every port as the wilderness
+    // AUDIT CAPTAIN'S SEA P10: past the Veil an isle's place is a port by its own kind - TO's list knows only the Bay's, and a
+    // ruin kept its template's port byte
+    shipLocation: () => { const loc = _questLoc(); return loc ? { locationLoaded: true, portTown: (loc.ether ? loc.etherKind === 'port' : modSetting('travel-options', 'Enabled') === true ? hasPortFor(loc.mapTableData?.mapId) : (loc.exterior?.exteriorData?.portTownAndUnknown ?? 0) !== 0), onShip: isOnShip(playerEntity, playerEntity.boardShipPosition ?? null, playerTravelPixel()) } : { locationLoaded: false, onShip: false }; },   // DISC13-D: `locationLoaded`, the key isShipAvailable reads - `loaded` left shipPorts answering every port as the wilderness   // AUDIT CAPTAIN'S SEA P10: an isle's place a port by its kind, whatever Travel Options says
     // RR2: EnhancedRiding's reads - the look, the ground, the module's settings
     lookPitch: () => cam.pitch, lookYaw: () => cam.yaw, groundHeightAt: (x, z) => heightAt(x, z),
     enhancedRiding: () => (rrRidingOn() ? { terrainFollowing: rrRidingSetting('followTerrainEnabled') === true, softenFollow: rrRidingSetting('followTerrainSoftenFactor') ?? 8 } : null),
@@ -8010,6 +8115,7 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  the talk topics and to the compass reads below (one writer, one
    *  space). Null outside a location, which is the wilderness. */
   let _talkPlayerPos = () => null;
+  let _portDocksWait = null;   // SHIPYARDS-FOUND: the port town whose docks row waits on its harbour's sounding (docksWaitOf) - above syncTopics, its writer (BOOT-TDZ)
   function syncTopics() {
     let cur = null;
     for (const p of built.values()) {
@@ -8018,7 +8124,12 @@ export async function bootWorld(canvas, renderer, params, status) {
       if (lx >= 0 && lz >= 0 && lx < TERRAIN_SIZE && lz < TERRAIN_SIZE) { cur = p; break; }
     }
     const key = cur ? `${cur.px},${cur.py}` : null;
-    if (key === _topicsKey) return;
+    if (key === _topicsKey) {
+      // SHIPYARDS-FOUND: a port town's docks row joins its directory once the book has sounded its harbour (a frame or more
+      // after the crossing) - its places handed again then, once; a frame with none waiting asks nothing
+      if (_portDocksWait && cur && docksBerthOf(_portDocksWait)) { const loc = _portDocksWait; _portDocksWait = null; townTalk.setPorts(portPlacesOf(cur, loc)); }
+      return;
+    }
     // AUDIT 26 F062: the crime clear MOVED to the frame loop's rect
     // edge - AUDIT 17e read this pixel crossing as OnExitLocationRect,
     // but DFU's event fires on leaving the WIDENED TOWN RECT
@@ -8077,7 +8188,35 @@ export async function bootWorld(canvas, renderer, params, status) {
       regionIndex: dfLocation.regionIndex,
       playerPos: () => _talkPlayerPos(),
       yards: cur.merchantYards ?? null,   // YARDS-FOUND: the town's Stable and Wagon Yard, rows of its directory (scenes/townTalk.js rebuildDirectory)
+      ports: portPlacesOf(cur, dfLocation),   // SHIPYARDS: a port town's shipyard, crew hall, lighthouse and docks, rows of its directory too
     });
+    _portDocksWait = docksWaitOf(dfLocation, cur?.px, cur?.py);
+  }
+  /**
+   * SHIPYARDS-FOUND (2026-10-11, Mac: "Everything should show on the map/overworld and be able to be asked by NPCs"): A
+   * PORT TOWN'S PLACES AS ROWS OF ITS TALK DIRECTORY, in the location frame (systems/portPlaces.js portDirectoryRows): its
+   * shipyard and lighthouse where the town's layout placed them, the CREW HALL at the crewmaster's table inside the
+   * shipyard (world/shipyardModel.js SHIPYARD.points), and the DOCKS - the first berth's quay of the harbour the book has
+   * sounded off this town's shore (systems/naval/harbourBook.js, the scene's frame: its pixel's translation and the
+   * location's origin taken off), once it has; the frame hands them again as it is sounded (`docksWaitOf`).
+   */
+  function portPlacesOf(p, dfLocation) {
+    const berth = dfLocation && p?.locOrigin ? docksBerthOf(dfLocation) : null;
+    const docks = berth ? sceneToLocationXZ(berth, state.pixelTranslation(p.px, p.py), p.locOrigin) : null;
+    return portPlaceRows(p?.portSites, SHIPYARD_LAYOUT.points.crewmaster, docks, dfLocation?.name);
+  }
+  /** SHIPYARDS-FOUND: the first berth of the harbour the book has sounded off a town's shore - its scene point [x, z] -
+   *  or null (none sounded yet, or a shore with no berth). */
+  function docksBerthOf(dfLocation) {
+    try { return harbourBook.get(`port:${maskMapId(dfLocation.mapTableData?.mapId ?? 0)}`)?.harbour?.berths?.[0]?.pos ?? null; } catch { return null; }   // BOOT-TDZ: the book stands below the stream
+  }
+  /** SHIPYARDS-FOUND: the town whose docks row is still to come - one whose harbour the book sounds (csaIsPortTown, the
+   *  book's own test: AUDIT SHIPYARDS L3-2 - the shipyard's test, asked here, kept a seat's docks to a second visit and
+   *  waited for ever on a harbour the book never sounds) and has not sounded yet - or null; the frame hands the talk
+   *  window its rows again once it is (`_portDocksWait`). */
+  function docksWaitOf(dfLocation, px, py) {
+    if (!dfLocation || docksBerthOf(dfLocation)) return null;
+    try { return csaIsPortTown(px, py) ? dfLocation : null; } catch { return null; }   // BOOT-TDZ: the book's test stands below the stream
   }
   /** GetBuildingCompassDirection (TalkManager.cs:1203-1236) - %di's
    *  LOCAL arm, the one both consumers ask for by that name: the
@@ -8284,6 +8423,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   hccGroundMoved = hcc.groundMoved;   // DISC20-C
   // RW1 x WAGONS2: the wagons stand in the street a window looks out on - all but the caravan whose room I stand in
   renderer.outsideViewDraws?.add(({ renderer: r }) => { if (!hccOn()) return; const room = modes?.caravanRoom ?? null; hcc.drawOutside(r, room ? caravanRooms.fromNative(room.origin) : null); });
+  renderer.outsideViewDraws?.add(({ renderer: r }) => { portHost?.draw(r); });   // SHIPYARDS: and a port's shipyard and lighthouse in it, as AUDIT MERCHANT-YARDS G5's yards
   renderer.outsideViewDraws?.add(({ renderer: r }) => { merchantYards?.draw(r); });   // AUDIT MERCHANT-YARDS G5: the yards' timber and their wagons on show in the street a window looks out on (the view out drew empty ground where a Stable stood)
   // WAGONS1: the seats in the back of my wagon and of another's - asks and answers on the foes frame, a rider pinned to
   // their seat with the motor held, the owner's journey followed (the party's own, landing beside the owner's wagon)
@@ -8358,6 +8498,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   /** NAV-H: the naval host (made below, with Come Sail Away's runtime) - declared here, beside the pool whose sea list
    *  it fills, because the boats' colliders, rays and particles below read its ships. */
   let naval = null;
+  const captainLedger = createCaptainLedger();   // CAPT-LOG: one ledger a world host - the naval host and the harbour's windows read it
   /** SERPENT1: the sea serpent's host (scenes/serpentHost.js) - made with the online links below; the naval host and
    *  Come Sail Away read it through their seams at a frame, never at their build. */
   let serpentHost = null;
@@ -9069,6 +9210,8 @@ export async function bootWorld(canvas, renderer, params, status) {
   /** HOLDINGS: the Fleet page's host half (scenes/fleetHost.js) - stood once the sea fight is (below); the boats' refits
    *  are read through it from the first frame (null until then: none). */
   let fleetHost = null;
+  /** SHIPYARDS: the shipmaster's window's host half (scenes/shipyardHost.js) - stood with the Fleet's, over it. */
+  let shipyardHost = null;
   const csaRuntime = csaOn() ? createComeSailAwayRuntime({
     pool: csa,
     passengersAboard: csaPassengersOn,
@@ -9170,7 +9313,9 @@ export async function bootWorld(canvas, renderer, params, status) {
       // HOLDINGS (bible/03-World/Holdings.md): a ship's title is the Fleet's book's, where the mod's laws find it as they
       // found the pack's deed; a crewed ship's parts placed spend her parts, her title kept there (made if it is not)
       titles: () => fleetBook(), retitle: (boat, parts) => { knowShip(boat.uid, boat.hull, boat.variant, parts?.value); setShipPort(boat.uid, null); return !!retitle(boat.uid); } },   // AUDIT HOLDINGS Q8: placed anew, no port of before - made fast, the docking says hers
-    refit: (boat) => fleetHost?.refit(boat) ?? null,   // HOLDINGS: her Hold and Rigging refits, where the helm reads its rates
+    // HOLDINGS: her Hold and Rigging refits, where the helm reads its rates - CAPT-CREW: her Bosun's worth on her canvas with
+    // the Rigging's (navalHost.js postsWay), so her way under sail takes it as it takes the refit
+    refit: (boat) => { const r = fleetHost?.refit(boat) ?? null, k = naval?.postsWay?.(boat) ?? 1; return k === 1 ? r : { ...(r ?? {}), speed: (Number(r?.speed) || 1) * k }; },
     closeInventory: () => { _csaInventoryClosed = true; },   // the class's CloseWindow, carried out on the use's result (below)
     openCargo: (cargo) => csaOpenCargo(cargo),
     openListPicker: (rows, onPick) => csaOpenListPicker(rows, onPick),
@@ -9235,10 +9380,26 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  FIELD BUGS 29h (DEED-PORT; Mac: "Dont worry abour DFU"): or a harbour the map DRAWS - Travel Options' 378, the
    *  port list of the travel map's anchors and its passage (28e measured every one of the byte's 343 among them) - so the
    *  deed, the variant box and the shipwright answer to the port the player was shown. */
-  /** SEAT2b part two (Seats-Arc 7.5: "Harbour (coastal seats only)"): a map pixel of sea - the port's one water law
-   *  (ui/overworldModel.js isWaterPixel over CLIMATE.PAK and WOODS.WLD's height), for a town's coast (fortLaw.js coastalAt). */
-  const seaPixel = (x, y) => isWaterPixel(maps.getClimateIndex(x, y), woods.getHeightMapValue(x, y));
+  // SHIPYARDS (BOOT-TDZ): `seaPixel` - the port's one water law - is declared above the stream now, beside the towns' places
+  // (townPlacesFor reads it in the boot's own first build).
+  /** ETHER-PORTS (bible/03-World/Etheric-Sea.md): the Etheric isle whose town stands on a map pixel - a port isle's
+   *  centre - or null (the Bay's world, the open sea, any other isle). */
+  const etherPortAt = (x, y) => {
+    if (!etherSea || !inEther(x, y)) return null;
+    const i = isleAt(x, y);
+    return i && i.kind === 'port' && i.px === x && i.py === y ? i : null;
+  };
+  /** ETHER-PORTS: the port isle within a pixel of a map pixel (the nearest), or null. */
+  const etherPortNear = (x, y) => {
+    let best = null, bd = Infinity;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) { const i = etherPortAt(x + dx, y + dy); const d = Math.abs(dx) + Math.abs(dy); if (i && d < bd) { bd = d; best = i; } }
+    return best;
+  };
+  /** ETHER-PORTS: a port isle as the harbour office and the naval host read a port - `{ key, name, px, py, region,
+   *  crown: null, ether: true }`: no crown's writ runs past the Veil. */
+  const etherPortOf = (i) => ({ key: `${i.px},${i.py}`, name: i.name, px: i.px, py: i.py, region: ETHER_REGION, crown: null, ether: true });
   const csaIsPortTown = (x, y) => {
+    if (etherSea && inEther(x, y)) return !!etherPortAt(x, y);   // ETHER-PORTS: an isle's port, past the Veil
     const summary = travelLocationSummaryAt(mapDict, x, y);
     if (!summary) return false;
     if (hasPortFor(summary.id)) return true;   // SEAT2b part two: or a members' Harbour at a seat ("ships dock at the seat")
@@ -9250,6 +9411,13 @@ export async function bootWorld(canvas, renderer, params, status) {
   const COMPASS_WAYS = ['east', 'north-east', 'north', 'north-west', 'west', 'south-west', 'south', 'south-east'];
   const csaNearestPort = () => {
     const here = playerTravelPixel();
+    // AUDIT CAPTAIN'S SEA P5: past the Veil the nearest of its port isles - the Bay's were named 1,500 leagues off, and a
+    // ship sent away "sailed for Gavaudon" across the Veil
+    if (etherSea && inEther(here.x, here.y)) {
+      const isle = etherRisePort(here.x, here.y);
+      const turn = Math.atan2(here.y - isle.py, isle.px - here.x) / (Math.PI / 4);
+      return { name: isle.name, way: COMPASS_WAYS[((Math.round(turn) % 8) + 8) % 8], ether: true };
+    }
     let best = null, bestD = Infinity;
     for (const id of PORT_LOCATION_IDS) {
       const summary = mapDict?.get(id & 0x000fffff);
@@ -9493,7 +9661,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // the window left by (every mode runs this; the hide is a no-op on a layer already down)
     if (!_csaMapWindow) hideEnhancedTextLayer(CSA_MAP_TEXT_LAYER);
     if (!csaRuntime) return;
-    const paused = gamePaused() || _loading || _partyArrivalPending;   // CSA-J (the audit): Update, LateUpdate and FixedUpdate return while SaveLoadManager.LoadInProgress too (4291/4917/5087), the pause's arm
+    const paused = gamePaused() || _loading || _partyArrivalPending || _etherCrossing;   // ETHER-CROSSING: the ship held while she is carried across   // CSA-J (the audit): Update, LateUpdate and FixedUpdate return while SaveLoadManager.LoadInProgress too (4291/4917/5087), the pause's arm
     _csaDt = paused ? 0 : dt * worldTimeScale();
     if (!paused) _csaTime += _csaDt;
     _csaMovedPlayer = false;
@@ -9791,6 +9959,65 @@ export async function bootWorld(canvas, renderer, params, status) {
     }
     return _navalPortAt.near;
   };
+  /** CAPT-WATERS (systems/naval/navalDirector.js watersOf): how far the player's pixel lies from the nearest port of the
+   *  map (Travel Options' ports - travelPorts.js), in map pixels, Chebyshev - asked once a pixel, the ports' pixels found
+   *  once; null before the map's directory stands. */
+  let _navalPorts = null, _navalPortPxAt = null;
+  const navalPortPx = () => {
+    if (!mapDict) return null;
+    const p = playerTravelPixel(), key = `${p.x},${p.y}`;
+    if (_navalPortPxAt?.key === key) return _navalPortPxAt.d;
+    _navalPorts ??= [...new Set(PORT_LOCATION_IDS)].map((id) => mapDict.get(id & 0x000fffff)).filter(Boolean).map((s) => getPixelFromPixelID(s.id));
+    let d = Infinity;
+    for (const q of _navalPorts) d = Math.min(d, Math.max(Math.abs(q.x - p.x), Math.abs(q.y - p.y)));
+    _navalPortPxAt = { key, d: Number.isFinite(d) ? d : null };
+    return _navalPortPxAt.d;
+  };
+  /** CAPT-BOARD: every port of the map (Travel Options' - travelPorts.js) as the harbour board reads them - `{ key (its
+   *  map pixel), name, px, py, region, crown }` - found once the map's directory stands. */
+  let _navalPortList = null;
+  const navalPortList = () => {
+    if (!mapDict) return [];
+    if (_navalPortList) return _navalPortList;
+    const out = new Map();
+    for (const id of new Set(PORT_LOCATION_IDS)) {
+      const s = mapDict.get(id & 0x000fffff);
+      if (!s) continue;
+      const at = getPixelFromPixelID(s.id);
+      const name = maps.getRegion(s.regionIndex)?.mapNames?.[s.mapIndex];
+      const key = `${at.x},${at.y}`;
+      if (!name || out.has(key)) continue;
+      out.set(key, { key, name, px: at.x, py: at.y, region: s.regionIndex, crown: navalCrownOf(at.x, at.y, navalCapitals(), s.regionIndex).name });
+    }
+    _navalPortList = [...out.values()];
+    return _navalPortList;
+  };
+  /** CAPT-BOARD: the map's port within a pixel of the player (the nearest), or null - asked once a pixel. */
+  let _navalPortHereAt = null;
+  const navalPortHere = () => {
+    const p = playerTravelPixel(), key = `${p.x},${p.y}`;
+    if (_navalPortHereAt?.key === key) return _navalPortHereAt.port;
+    let port = null, best = Infinity;
+    if (etherSea && inEther(p.x, p.y)) {   // ETHER-PORTS: an isle's port past the Veil
+      const isle = etherPortNear(p.x, p.y);
+      _navalPortHereAt = { key, port: isle ? etherPortOf(isle) : null };
+      return _navalPortHereAt.port;
+    }
+    for (const q of navalPortList()) { const d = Math.max(Math.abs(q.px - p.x), Math.abs(q.py - p.y)); if (d <= 1 && d < best) { best = d; port = q; } }
+    _navalPortHereAt = { key, port };
+    return port;
+  };
+  /** CAPT-BOARD: a held contract's waters in the scene - open water within map pixel (px, py), a point of nine off its
+   *  seed (the pixel's middle third first), or null where none of them is open water or the pixel is not near. */
+  const navalSitePoint = (px, py, seed) => {
+    const r = mulberry32((seed >>> 0) ^ 0x517e);
+    for (let i = 0; i < 9; i++) {
+      const fx = i === 0 ? 0.35 + r() * 0.3 : r(), fz = i === 0 ? 0.35 + r() * 0.3 : r();
+      const [x, z] = state.localFromWorld((px + fx) * RAID_NATIVE_PIXEL, (499 - py + fz) * RAID_NATIVE_PIXEL);
+      if (Number.isFinite(x) && Number.isFinite(z) && navalIsWater(x, z, 0)) return [x, tvSeaY(), z];
+    }
+    return null;
+  };
   /** SHIP-LIFE (systems/naval/shipLife.js): the port town within a pixel of the player - its location's key and its
    *  footprint in the scene NOW (the native rect, locationWorldRect, through the floating origin's localFromWorld), which
    *  the naval host finds its harbour off - or null where no port stands near. The town asked once a pixel. */
@@ -9800,7 +10027,10 @@ export async function bootWorld(canvas, renderer, params, status) {
     const key = `${p.x},${p.y}`;
     if (_navalHarbourAt?.key !== key) {
       let town = null;
-      for (let dy = -1; dy <= 1 && !town; dy++) for (let dx = -1; dx <= 1 && !town; dx++) {
+      const isle = etherSea && inEther(p.x, p.y) ? etherPortNear(p.x, p.y) : null;   // ETHER-PORTS: an isle's town, its harbour sounded as any port's
+      const loc = isle ? etherPlaceAt(isle.px, isle.py) : null;
+      if (loc?.exterior?.exteriorData) town = { id: `ether:${isle.key}`, loc, x: isle.px, y: isle.py, name: isle.name, reach: ETHER_HARBOUR_REACH };   // AUDIT CAPTAIN'S SEA H1/P2: its isle's shore, ETHER_PORT_SHORE_M about the town
+      for (let dy = -1; dy <= 1 && !town && !isle; dy++) for (let dx = -1; dx <= 1 && !town; dx++) {
         if (!csaIsPortTown(p.x + dx, p.y + dy)) continue;
         const summary = travelLocationSummaryAt(mapDict, p.x + dx, p.y + dy);
         const loc = summary ? maps.getLocation(summary.regionIndex, summary.locationIndex ?? summary.mapIndex) : null;
@@ -9816,13 +10046,14 @@ export async function bootWorld(canvas, renderer, params, status) {
     // AUDIT HOLDINGS O1: whether every pixel the harbour's scan reads (the rect grown HARBOUR_REACH) is built - a pixel
     // not built reads as land, so a harbour sounded early found its shore at the streamed world's edge and two players
     // arriving by different roads found different berths and stood different quays; asked only before it is sounded
+    const reach = t.reach ?? HARBOUR_REACH;   // AUDIT CAPTAIN'S SEA H1: an isle port's sounding reaches its shore
     const ready = () => {
-      const x0 = rect.minX - HARBOUR_REACH, z0 = rect.minZ - HARBOUR_REACH, sx = rect.maxX - rect.minX + 2 * HARBOUR_REACH, sz = rect.maxZ - rect.minZ + 2 * HARBOUR_REACH;
+      const x0 = rect.minX - reach, z0 = rect.minZ - reach, sx = rect.maxX - rect.minX + 2 * reach, sz = rect.maxZ - rect.minZ + 2 * reach;
       const nx = Math.ceil(sx / 400), nz = Math.ceil(sz / 400);   // under 400 m apart, both edges read: no pixel (819.2 m) between two
       for (let i = 0; i <= nx; i++) for (let k = 0; k <= nz; k++) if (!csaPixelAt(x0 + (sx * i) / nx, z0 + (sz * k) / nz)) return false;
       return true;
     };
-    return { key: `port:${t.id}`, name: t.name, rect, ready };   // SHIP-TAGS: her name, the words a ship bound there is read by
+    return { key: `port:${t.id}`, name: t.name, rect, ready, reach };   // SHIP-TAGS: her name, the words a ship bound there is read by
   };
   // HARBOUR-BOOK (systems/naval/harbourBook.js; bible/03-World/Holdings.md section 7): THE HARBOURS NEAR THE PLAYER -
   // this host's, sounded off the port near the player every exterior frame whatever runs on the water, moved with the
@@ -10024,8 +10255,27 @@ export async function bootWorld(canvas, renderer, params, status) {
     townTalk.showOverlay(win, () => { if (why === 'hold') navalOpenHold(model, hold); });
     return true;
   }
+  /** ETHER-CHART: the chart of the Etheric Sea over the world (navalPlunderDoor.js's chart door) - the ship's pixel and
+   *  heading, the isles charted, the legends heard of (etherHost.js chart). Answers whether it opened. */
+  function openEtherChart() {
+    // AUDIT CAPTAIN'S SEA X16: the ship's heading at her helm (the camera's yaw is where the captain looks - astern, as often)
+    const heading = () => { const boat = csaRuntime?.isSailing?.() ? csaRuntime.state.CurrentBoat : null; if (!boat) return cam.yaw; const f = boatForward(boat); return Math.atan2(f[0], f[2]); };
+    const word = () => { const p = playerTravelPixel(); return etherHost.chart(p.x, p.y, heading()); };
+    const win = createEtherChartOverlay({ word });
+    if (!win) return false;
+    townTalk.showOverlay(win);
+    return true;
+  }
   /** AUDIT NAV1 (the helm): the shipwright's window over the world (navalPlunderDoor.js's yard door). */
   function navalOpenYard(model) {
+    // AUDIT CAPTAIN'S SEA B3: the harbourmaster's tab and the exchange's for a ship lying to the quay at her helm alone -
+    // the Fleet page's yard (a ship laid up anywhere) is the shipwright's
+    if (model.atQuay) model.office = () => {   // CAPT-BOARD: the harbourmaster's tab - ETHER-SEA: past the Veil a freeport's (etherHost.js office)
+      const port = navalPortHere();
+      if (port?.ether) { const o = etherHost.office(port); return o ? { ...o, buyChart: () => { const r = etherHost.buyChart(port); captainSay(); return r; } } : null; }
+      return harbourOffice.model({ uid: model.uid ?? null });
+    };
+    if (model.atQuay) model.exchange = () => harbourOffice.exchange({ uid: model.uid ?? null, cargo: model.cargo?.() ?? null, room: () => model.room?.() ?? null });   // CAPT-TRADE: the exchange's tab - AUDIT CAPTAIN'S SEA B11: and her room
     const win = createNavalYardOverlay({ model });
     if (!win) return false;
     townTalk.showOverlay(win);
@@ -10039,7 +10289,100 @@ export async function bootWorld(canvas, renderer, params, status) {
   const navalFlames = createNavalFlames({ renderer, getTexture, uploadRecordFrame });
   const navalCrew = createNavalCrew({ renderer, getTexture, uploadRecordFrame });   // LIVING CREW: the crews on the decks near the eye
   const navalRender = new NavalRenderer(renderer);
+  // CAPT-LOG (bible/03-World/Captains-Sea.md): THE CAPTAIN'S LEDGER - the log, the three crowns' regard and the ranks it
+  // earns, the letter of marque - its own save slot, carried whether the sea fight runs or not (AUDIT REALM2 C3's law); a
+  // rank crossed is said on the screen's middle as it is crossed. The letter is held on the captain's own clock.
+  /** AUDIT CAPTAIN'S SEA L9: A RANK WON OR LOST IS SAID ONCE, AND SEEN - kept back till the centred label is at rest (the
+   *  label replaces itself: "The Terror of Ykalon is yours!" and a legend's end, said in the same breath, wiped the
+   *  promotion before it showed), the crowns that named the same rank the same way in one line. */
+  const _rankLines = [];
+  const captainSay = () => {
+    const groups = new Map();
+    for (const c of captainLedger.takeRankChanges()) {
+      const up = c.to.rank > c.from.rank, title = up ? c.to.title : c.from.title, key = `${up}:${title}`;
+      if (!groups.has(key)) groups.set(key, { up, title, crowns: [] });
+      groups.get(key).crowns.push(c.crown);
+    }
+    for (const g of groups.values()) {
+      const who = g.crowns.length === 1 ? `The crown of ${g.crowns[0]}` : `The crowns of ${g.crowns.slice(0, -1).join(', ')} and ${g.crowns.at(-1)}`;
+      _rankLines.push(g.up ? `${who} ${g.crowns.length === 1 ? 'names' : 'name'} you ${g.title}!` : `${who} no longer ${g.crowns.length === 1 ? 'counts' : 'count'} you ${g.title}.`);
+    }
+  };
+  /** The rank lines kept back, one when the label is at rest. */
+  const captainSayFlush = () => { if (_rankLines.length && _wildMidText.timer === -1) setMidScreenText(_rankLines.shift(), 4); };
+  // CAPT-BOARD (bible/03-World/Captains-Sea.md): THE HARBOUR OFFICE - the board of the port the captain lies at, the
+  // contracts held and what the sea did to them, the letters a rank buys; the boards on the world's day, the terms on
+  // the captain's own clock
+  const harbourOffice = createHarbourOffice({
+    ledger: captainLedger,
+    now: () => Math.floor(playerTicker.ownMinutes),
+    day: () => Math.floor(worldMinutes() / 1440),
+    level: () => playerEntity.level ?? 1,
+    gold: () => totalGoldAmount(playerEntity),
+    pay: (n) => { deductGold(playerEntity, n); surfacePlayer(); },
+    credit: (n) => { addGold(playerEntity, n); surfacePlayer(); },
+    say: (text, s) => townTalk.say(text, s),
+    mid: (text, s) => setMidScreenText(text, s),
+    notorietyOf: (crown) => naval?.notorietyOf?.(crown) ?? 0,
+    port: () => navalPortHere(),
+    ports: () => navalPortList(),
+    seaAt: (x, y) => (tamrielLand || (x >= 0 && y >= 0 && x < MAP_WIDTH && y < MAP_HEIGHT)) && seaPixel(x, y),   // AUDIT CAPTAIN'S SEA B10: past the map's edge only where the land beyond the Bay stands (else nothing streams there - a site out of every reach)
+    waters: () => { const p = playerTravelPixel(); return etherSea && inEther(p.x, p.y) ? null : navalCrownOf(p.x, p.y, navalCapitals(), _questRegionIndex()).name; },   // ETHER-SEA: no crown's waters past the Veil
+    carrack: (price, port) => { const deed = mintDeed(4, 0, csaNewItemUid(), price); return !!titleDeed(deed, { port: { name: port.name } }); },
+    stow: (hold, item) => addItem(hold, item),   // CAPT-TRADE: goods into her hold
+    etherGoods: () => etherOut,   // AUDIT CAPTAIN'S SEA B16: the other sea's goods listed where the captain may sail for them
+  });
+  // ETHER-SEA (bible/03-World/Etheric-Sea.md): THE ETHERIC SEA'S HOST - its waters (the naval host's `where`), the isles
+  // charted as they are sighted, the wild isles' strands (sites of the naval host's), its legends' coming and their ends,
+  // and its harbourmasters' rumours and charts - over the same ledger
+  const etherHost = createEtherHost({
+    ledger: captainLedger,
+    day: () => Math.floor(worldMinutes() / 1440),
+    gold: () => totalGoldAmount(playerEntity),
+    pay: (n) => { deductGold(playerEntity, n); surfacePlayer(); },
+    credit: (n) => { addGold(playerEntity, n); surfacePlayer(); },
+    say: (text, s) => townTalk.say(text, s),
+    mid: (text, s) => setMidScreenText(text, s),
+  });
+  /** ETHER-SEA: the Etheric Sea's waters at the player's pixel (etherHost.js `waters`), or null in the Bay's world. */
+  const etherWatersHere = () => { if (!etherSea) return null; const p = playerTravelPixel(); return etherHost.waters(p.x, p.y); };
+  // CAPT-CHARTS: a treasure chart USED is read - its cache marked on the captain's charts and the chart spent (its words
+  // on the pack's line either way)
+  registerItemUseHandler(CHART_TEMPLATE, (item, collection) => {
+    const r = harbourOffice.readChart(item);
+    const i = r.ok && Array.isArray(collection) ? collection.indexOf(item) : -1;
+    if (i >= 0) collection.splice(i, 1);
+    return { kind: 'treasureChart', text: r.text };
+  });
+  const captainDeps = {
+    deed: (act, cls, o) => { const r = captainLedger.deed(act, cls, o); captainSay(); return r; },
+    regard: (crown, n) => { const r = captainLedger.regard(crown, n); captainSay(); return r; },
+    note: (field, n) => captainLedger.note(field, n),
+    sailed: (m) => captainLedger.sailed(m),
+    prize: (name, worth) => captainLedger.prize(name, worth),
+    marque: () => captainLedger.marque(Math.floor(playerTicker.ownMinutes)),
+    tearMarque: () => captainLedger.tearMarque(),
+    // CAPT-BOARD: what the sea did to the contracts held, their waters, and a rank's favours at sea
+    event: (ev) => { const r = harbourOffice.event(ev); captainSay(); return r; },
+    sites: () => { const p = playerTravelPixel(); return etherSea && inEther(p.x, p.y) ? [...harbourOffice.sites(), ...etherHost.sites(p.x, p.y)] : harbourOffice.sites(); },   // ETHER-SEA: and a wild isle's strand within reach
+    yardDiscount: () => harbourOffice.perksHere().yard,
+    seasonedHires: () => { const port = navalPortHere(); return !!port && harbourOffice.perksAt(port.crown).seasoned; },   // AUDIT CAPTAIN'S SEA C4: hands hired in a Commodore's harbour - never men pressed at sea
+    reliefSure: (crown) => harbourOffice.perksAt(crown).relief,
+    chartFor: (cls, seed, deep) => harbourOffice.chartFor(cls, seed, deep),   // CAPT-CHARTS: a chart among a pirate's papers
+    raiseCache: (id) => harbourOffice.raiseCache(id),   // CAPT-CHARTS: a cache raised and paid
+  };
   naval = createNavalHost({
+    captain: captainDeps,   // CAPT-LOG: the ledger's door
+    ether: etherSea ? {   // ETHER-SEA: the Etheric Sea's door - its legends, a corsair's papers, a strand's good
+      legendHere: (px, py, o) => etherHost.legendHere(px, py, o),
+      legendEnded: (id, act) => { const r = etherHost.legendEnded(id, act); captainSay(); return r; },
+      papers: (cls, seed, px, py) => etherHost.papers(cls, seed, px, py),
+      gather: (siteId) => etherHost.gather(siteId),
+    } : null,
+    bountyOf: (e) => (e?.bounty ? harbourOffice.bountyWords(e.bounty) : null),   // CAPT-BOARD: a bounty's purse on the glass's card
+    sitePoint: (px, py, seed) => navalSitePoint(px, py, seed),   // CAPT-BOARD: a held contract's waters in the scene
+    sightBlocked: (id, point) => glassSight.blocked(player.collider, [cam.pos[0] + _dwEyeOffset[0], cam.pos[1] + _dwEyeOffset[1], cam.pos[2] + _dwEyeOffset[2]], id, point),   // AUDIT CAPTAIN'S SEA S6: the glass's own sight test, from the eye the look is
+    worth: (items) => navalLootWorth(items),   // CAPT-LOG: plunder's worth to the log
     packedItems: packedItemsCodec,   // COMPANION-KIT: the companions' packs saved as the cargo's are - AUDIT WK-D11: the one codec
     pool: csa,
     csa: () => (navalOn() ? csaRuntime : null),
@@ -10056,7 +10399,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       dir: [Math.sin(cam.yaw) * Math.cos(cam.pitch), Math.sin(cam.pitch), Math.cos(cam.yaw) * Math.cos(cam.pitch)],
     }),
     level: () => playerEntity.level ?? 1,
-    where: () => { const p = playerTravelPixel(); return { px: p.x, py: p.y, region: _questRegionIndex(), day: Math.floor(worldMinutes() / 1440), nearPort: navalNearPort(), capitals: navalCapitals(), cityLights: isCityLightsOn(minuteNow()), night: isNight(minuteNow()) }; },   // AUDIT WK-N5: the lanterns' hours and the dark's, apart
+    where: () => { const p = playerTravelPixel(); const nearPort = navalNearPort(); const ether = etherWatersHere(); return { px: p.x, py: p.y, region: _questRegionIndex(), day: Math.floor(worldMinutes() / 1440), nearPort, port: nearPort ? navalPortHere() : null, waters: ether ? 'ether' : watersOf({ nearPort, portPx: navalPortPx() }), ether, capitals: navalCapitals(), cityLights: isCityLightsOn(minuteNow()), night: isNight(minuteNow()) }; },   // ETHER-SEA: the Etheric Sea's band and depth, and whether she is in the Veil   // CAPT-BOARD: the port lain at   // AUDIT WK-N5: the lanterns' hours and the dark's, apart - CAPT-WATERS: the deep waters
     say: (text, seconds) => townTalk.say(text, seconds),
     mid: (text, seconds) => setMidScreenText(text, seconds),
     shake: (amount) => betterAmbience.weaponKick(amount),   // FIELD-GUN6's door: a shake that is not a wound, under the player's own maxShake
@@ -10151,6 +10494,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   });
   naval.setEnabled(navalOn());   // the switch's state from the first frame (navalFrame follows it after)
   registerModSaveData(NAVAL_SAVE_VENDOR, naval);   // the player's boats' hurts, the crowns' notoriety, a raid a load carries
+  registerModSaveData(CAPTAIN_SAVE_VENDOR, { ...captainLedger, restoreSaveData: (r) => { _rankLines.length = 0; captainLedger.restoreSaveData(r); } });   // CAPT-LOG: the captain's log, the crowns' regard, the letter of marque - AUDIT CAPTAIN'S SEA L9: a load says no rank line of the game it left
   // HOLDINGS (bible/03-World/Holdings.md): THE FLEET'S LEDGER - every ship's title, name and refits - its own save slot,
   // carried whether Come Sail Away runs or not (AUDIT REALM2 C3's law: an off boot never loses a record); and the
   // Holdings tab's two pages over this host's horse, wagon and boats
@@ -10171,22 +10515,230 @@ export async function bootWorld(canvas, renderer, params, status) {
     nearestPort: () => csaNearestPort(),
     terrainAt: (p) => csaTerrainOf(csaPixelAt(p[0], p[2])),
     passengersAboard: (boat) => csaPassengersOn(boat),
+    // AUDIT CAPTAIN'S SEA P5: whether she lies on the other side of the Veil from the player - standing, by her pixel;
+    // laid up, by her port's side - so no Fleet order carries her across it (the crossing is a voyage of its own)
+    veilApart: (rec, boat) => { const p = playerTravelPixel(); const hers = boat?.MapPixel ? inEther(boat.MapPixel.X, boat.MapPixel.Y) : !!rec?.port?.ether; return etherSea && inEther(p.x, p.y) !== hers; },
     changed: () => surfacePlayer(),
   }) : null;
+  // SHIPYARDS (2026-10-11, Mac: "A new highly detailed shipmaster vendor and crew recruitment station within it. All
+  // detailed functions including ship upgrading should be present here, along with ship buying"): THE SHIPMASTER'S
+  // WINDOW'S HOST HALF (scenes/shipyardHost.js) - over the Fleet's host, the sea fight's, Come Sail Away's runtime and the
+  // purse; the counter's haggle the shops' (CalculateTradePrice's live Mercantile and Personality, worldModes.js
+  // openTradeWindow's), a concluded deal's Mercantile tally the counter's (DFU OnTrade)
+  shipyardHost = csaRuntime ? createShipyardHost({
+    fleet: () => fleetHost,
+    naval: () => (navalOn() ? naval : null),
+    csa: () => (csaOn() ? csaRuntime : null),
+    pack: () => (playerEntity.items ??= []),
+    addToPack: (item) => { addItem((playerEntity.items ??= []), item); surfacePlayer(); },
+    gold: () => totalGoldAmount(playerEntity),
+    pay: (n) => { deductGold(playerEntity, n); surfacePlayer(); },
+    // AUDIT SHIPYARDS L1-3: a sale the pack cannot carry as coin is paid as a letter of credit - the trade window's test
+    // on the live pack and ceiling (sellProceeds), the letter at the front of the pack as the counter puts one
+    credit: (n) => {
+      if (sellProceeds(n, { carriedWeightKg: carriedWeight(playerEntity), maxEncumbranceKg: entityMaxEncumbrance(playerEntity) }).kind === 'letterOfCredit') (playerEntity.items ??= []).unshift(letterOfCredit(n));
+      else addGold(playerEntity, n);
+      surfacePlayer();
+    },
+    canCarry: (item) => planTake(item, { bag: (playerEntity.items ??= []), entity: playerEntity, dryRun: true }).ok,   // AUDIT SHIPYARDS L1-4: the counter's carry gate
+    ashore: (uid) => naval?.handsAshore?.(uid) ?? 0,   // AUDIT SHIPYARDS L1-6: by her number, whatever the sea fight's switch
+    forgetBoat: (uid) => naval?.forgetBoat?.(uid),
+    skills: () => ({ mercantile: skillValue(playerEntity, SKILLS.Mercantile), personality: playerEntity.stats?.personality == null ? 50 : liveStat(playerEntity, 'personality') }),
+    traded: () => tallySkill(playerEntity, SKILLS.Mercantile, 1),
+    mintUid: () => csaNewItemUid(),
+    day: () => Math.floor(worldMinutes() / 1440),
+    changed: () => surfacePlayer(),
+    cabinHolds: (uid) => modes?.cabinHolds?.(uid) ?? 0,
+    cabinSold: (uid, region) => modes?.cabinSold?.(uid, region),
+    passengersAboard: (boat) => csaPassengersOn(boat),
+  }) : null;
+  /** SHIPYARDS: THE SHIPMASTER'S WINDOW (ui/shipyardWindow.js, through ui/navalPlunderDoor.js) over the street, on `page`
+   *  for the shipyard pressed (scenes/portHost.js); a summons that wants the water clicked runs once the window is down
+   *  (the Holdings page's hand-off - ui/enhancedMenu.js `door`), and where it would not start, the window comes back on
+   *  the Fleet page. Answers whether it opened. */
+  function openShipyard(site, page) {
+    if (!site) return false;
+    if (!shipyardHost) { setMidScreenText(PORT_TEXT.noSail); return true; }   // Come Sail Away off for this game: no ship to deal in
+    let door = null;
+    const win = createShipyardOverlay({
+      page,
+      model: (view) => shipyardHost.model(site, view),
+      act: (verb, a, b) => shipyardHost.act(site, verb, a, b),
+      onDoor: (fn) => { door = typeof fn === 'function' ? fn : null; },
+    });
+    if (!win) return false;
+    townTalk.showOverlay(win, () => { const fn = door; door = null; if (fn && fn() === false) openShipyard(site, 'fleet'); });
+    return true;
+  }
   setHoldingsProvider({
     ...stableProviderFor({ runtime: hccRuntime, on: hccOn, hasHorse: () => hasTransport(TRANSPORT_HORSE), hasCart: () => hasTransport(TRANSPORT_SMALL_CART), wagonKind: () => activeWagonKind(playerEntity.items ?? []), items: () => playerEntity.items ?? [], onPainted: () => { _hccDirty = true; } }),   // WAGONS1: the Stable names the wagon driven - WAGONS2: and paints it
     fleet: fleetHost ? { model: () => fleetHost.model(), offer: (uid) => fleetHost.offer(uid), act: (uid, verb, arg) => fleetHost.act(uid, verb, arg) } : null,
+    captain: fleetHost ? { model: () => captainModel() } : null,   // CAPT-LOG: the Captain page - the crowns' regard, the letter, the contracts, the log - AUDIT CAPTAIN'S SEA L15: beside the Fleet's, wherever there are ships to captain
   });
+  /** CAPT-LOG: the Captain page's model - each crown's standing, rank and favours (none while it hunts me), the letter of
+   *  marque held and its days, the contracts under way (CAPT-BOARD), and the log in words. */
+  function captainModel() {
+    const at = Math.floor(playerTicker.ownMinutes);   // the captain's own clock, the letter's
+    const mq = captainLedger.marque(at);
+    return {
+      crowns: captainLedger.crowns().map((c) => { const n = naval?.notorietyOf?.(c.crown) ?? 0; return { ...c, notoriety: n, perks: perksOf(c.rank.rank, n) }; }),
+      refusedAt: PERKS_REFUSED_AT,
+      marque: mq ? { crown: mq.crown, days: Math.max(1, Math.ceil((mq.until - at) / 1440)) } : null,
+      contracts: harbourOffice.pageContracts(),   // CAPT-BOARD: the contracts held
+      charts: harbourOffice.pageCharts(),   // CAPT-CHARTS: the caches marked
+      log: logLines(captainLedger.log),
+    };
+  }
   /** The sea emptied: a transition, a teleport, the arc switched off - its window with it. */
-  const navalClear = () => { naval?.clear(); navalFlames.clear(); navalCrew.clear(); closeNavalPlunder(); closeNavalYard(); drawNavalHud(null); drawNavalTags([]); drawCrewBars([]); drawCrewLines([]); };
-  const navalTransition = () => { harbourBook.clear(); navalClear(); };   // HARBOUR-BOOK: the harbours forgotten with the sea, found again where the world is next
+  const navalClear = () => { naval?.clear(); navalFlames.clear(); navalCrew.clear(); closeNavalPlunder(); closeShipyard(); closeNavalYard(); closeEtherChart(); drawNavalHud(null); drawNavalTags([]); drawCrewBars([]); drawCrewLines([]); lowerGlass(); };   // AUDIT CAPTAIN'S SEA S1: and the glass; X15: and the Ether; SHIPYARDS: and the shipmaster's window
+  const navalTransition = () => { harbourBook.clear(); navalClear(); withdrawCrossing(); };   // HARBOUR-BOOK: the harbours forgotten with the sea, found again where the world is next; AUDIT CAPTAIN'S SEA X2: and the crossing's question taken back
   /** KEEP-PLUNDER: before a transition or a jump empties the sea, my crew stows what I left on it (navalHost
    *  stowPlunder) - ahead of Come Sail Away's own transition, while my boats still stand. Never on a load: the loaded
    *  save's hold is the one that stands. */
   const navalStow = () => { if (!_loading) naval?.stowPlunder?.(); };
+  // ETHER-CROSSING (systems/naval/etherCrossing.js; bible/03-World/Etheric-Sea.md): THE CROSSING - asked at a helm in the
+  // crossing waters (out) and in the Veil (home), once each time the ship comes into them, and sailed: the helm let go,
+  // the jump to the landfall, the ship at whose helm the captain stood brought round where she floats there (her crew and
+  // her hold aboard her) and her helm taken again, the voyage's days on the clock.
+  const crossGate = createCrossingGate();
+  let _crossCheckT = 0;
+  /** A map pixel's distance to the nearest land (Chebyshev, map pixels), out to CROSS_LAND_PX (Infinity past it) - the
+   *  map's one water law (seaPixel), asked once a pixel. */
+  let _crossLandAt = null;
+  const crossLandPx = (px, py) => {
+    const key = `${px},${py}`;
+    if (_crossLandAt?.key === key) return _crossLandAt.d;
+    let d = Infinity;
+    ring: for (let r = 0; r <= CROSS_LAND_PX; r++) {
+      for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+        if (Math.max(Math.abs(dx), Math.abs(dy)) === r && !seaPixel(px + dx, py + dy)) { d = r; break ring; }
+      }
+    }
+    _crossLandAt = { key, d };
+    return d;
+  };
+  /** The way the helm's waters offer now: 'out' only where the crossing out is this game's (AUDIT CAPTAIN'S SEA G2), 'home'
+   *  in the Veil under any skin. */
+  const crossWayHere = () => {
+    const p = playerTravelPixel();
+    return crossingWayAt(p.x, p.y, etherOut && p.x < CROSS_X && !inEther(p.x, p.y) ? crossLandPx(p.x, p.y) : 0);
+  };
+  /** Why the crossing may not be sailed now - CROSS_REFUSED's key (an enemy near, another player aboard) - or null. */
+  const crossRefusal = () => (navalHostileNear() ? 'hostile' : csaPassengersOn(csaRuntime?.state?.CurrentBoat) > 0 ? 'passengers' : null);
+  let _crossBox = null, _crossSaid = null;   // the question up; the waters a refusal was said in
+  /** AUDIT CAPTAIN'S SEA X2: the question taken back unanswered - a load, a jump, a door (navalTransition). */
+  function withdrawCrossing() {
+    if (_crossBox && !_crossBox.done) _crossBox.withdraw();
+    _crossBox = null;
+  }
+  /** The helm's waters asked every CROSS_CHECK_S: a way they offer, not asked since the ship came into them, asked - or
+   *  said refused once in those waters (an enemy near, another player aboard), and asked as soon as the deck is clear.
+   *  AUDIT CAPTAIN'S SEA X1: a refusal marked the way asked, and the question never came back while she stayed in those
+   *  waters; X3: never while the world is being moved (a party member's helm through the arrival's wait). */
+  function etherCrossStep(dt) {
+    if (!etherSea || _etherCrossing || !csaRuntime?.isSailing?.()) return;
+    _crossCheckT -= dt;
+    if (_crossCheckT > 0) return;
+    _crossCheckT = CROSS_CHECK_S;
+    if (gamePaused() || _loading || townTalk.overlayActive || modes?.transitioning || worldMoveBusy() || _partyArrivalPending || _mode() !== 'exterior') return;
+    const way = crossWayHere();
+    if (way !== _crossSaid) _crossSaid = null;
+    if (!crossGate.offer(way)) return;
+    const why = crossRefusal();
+    if (why) { if (_crossSaid !== way) { _crossSaid = way; townTalk.say(CROSS_REFUSED[why], 4); } return; }
+    crossGate.asked(way);
+    const boat = csaRuntime.state.CurrentBoat;
+    _crossBox = new YesNoBoxWindow({ rows: crossingRows(way), onYes: () => { _crossBox = null; crossYes(way, boat); }, onNo: () => { _crossBox = null; } });
+    townTalk.showOverlay(_crossBox);
+  }
+  /** AUDIT CAPTAIN'S SEA X2: Yes is the question as it stands NOW - the same helm, the same waters, no enemy, no passenger,
+   *  the world still (a Yes after a load sailed the loaded helm out from wherever it stood, and kept that as the way out). */
+  function crossYes(way, boat) {
+    if (_etherCrossing || worldMoveBusy() || _partyArrivalPending || !csaRuntime?.isSailing?.() || csaRuntime.state.CurrentBoat !== boat || crossWayHere() !== way) {
+      crossGate.asked(null);   // asked afresh in its own waters
+      townTalk.say(CROSS_STALE, 4);
+      return;
+    }
+    const why = crossRefusal();
+    if (why) { crossGate.asked(null); _crossSaid = way; townTalk.say(CROSS_REFUSED[why], 4); return; }
+    etherCross(way).catch((e) => console.warn('[ether] the crossing:', e?.message ?? e));
+  }
+  /** A boat's heading in the scene's XZ, off her root's rotation (her bow: +Z in her own frame). */
+  const boatForward = (boat) => {
+    const q = boat?.GameObject?.rotation;
+    if (!q) return [Math.sin(cam.yaw), 0, Math.cos(cam.yaw)];
+    const fx = 2 * (q[0] * q[2] + q[3] * q[1]), fz = 1 - 2 * (q[0] * q[0] + q[1] * q[1]);
+    const l = Math.hypot(fx, fz) || 1;
+    return [fx / l, 0, fz / l];
+  };
+  /** THE VOYAGE: the captain and the ship at whose helm they stand carried across (out to Veilhaven's waters; home to the
+   *  Bay's the last crossing out set sail from), CROSS_DAYS on the clock. Answers whether she crossed. AUDIT CAPTAIN'S SEA
+   *  X9: a voyage that could not be made brings her and her captain back where they set out, at her helm. */
+  async function etherCross(way) {
+    const boat = csaRuntime?.state?.CurrentBoat ?? null;
+    if (_etherCrossing || !boat || !csaRuntime.isSailing() || worldMoveBusy() || _partyArrivalPending) return false;
+    _etherCrossing = true;
+    const here = playerTravelPixel();
+    const departure = { pixel: { x: here.x, y: here.y }, native: state.worldCoords(boat.GameObject.position), dir: boatForward(boat), was: captainLedger.crossedFrom() };
+    try {
+      const to = crossingTarget(way, captainLedger.crossedFrom());
+      if (way === 'out') captainLedger.setCrossedFrom({ px: here.x, py: here.y });
+      const minutes = CROSS_DAYS * 1440;
+      const dir = way === 'out' ? [-1, 0, 0] : [1, 0, 0];   // her bow on Veilhaven's quay, west - or on the Bay, east
+      hudFade.smashHUDToBlack();
+      csaCall(() => csaRuntime.StopSailing());   // the helm let go: she lies where she is until she is brought across
+      try {
+        await _teleportToPixel(to.px, to.py, null, {
+          arriveMinutes: sharedClockOn() ? skyMinutes() : worldMinutes() + minutes,
+          modEvent: 'travel',
+          // the landfall's pixel built: the ship brought round onto its middle, where she floats, and the captain on her deck
+          resolveArrival: () => {
+            const [x, z] = state.localFromWorld((to.px + 0.5) * RAID_NATIVE_PIXEL, (499 - to.py + 0.5) * RAID_NATIVE_PIXEL);
+            csaCall(() => csaRuntime.RepositionBoat(boat, [x, tvSeaY(), z], dir, csaTerrainOf(csaPixelAt(x, z))));
+            return { pos: [x, tvSeaY() + 1, z], yaw: Math.atan2(dir[0], dir[2]) };
+          },
+        });
+      } catch (error) {
+        // AUDIT CAPTAIN'S SEA X9: back where she set out - the departure's pixel built, her hull where she lay, her helm
+        console.warn('[ether] the crossing failed:', error?.message ?? error);
+        captainLedger.setCrossedFrom(departure.was);
+        try {
+          await _teleportToPixel(departure.pixel.x, departure.pixel.y, null, {
+            resolveArrival: () => {
+              const [x, z] = state.localFromWorld(departure.native.x, departure.native.z);
+              csaCall(() => csaRuntime.RepositionBoat(boat, [x, tvSeaY(), z], departure.dir, csaTerrainOf(csaPixelAt(x, z))));
+              return { pos: [x, tvSeaY() + 1, z], yaw: Math.atan2(departure.dir[0], departure.dir[2]) };
+            },
+          });
+          csaCall(() => csaRuntime.StartSailing(boat));
+        } catch (e) { console.warn('[ether] the way back:', e?.message ?? e); }
+        townTalk.say(CROSS_FAILED, 5);
+        return false;
+      }
+      setSyntheticTimeIncrease(true); playerTicker.advance(minutes);
+      csaCall(() => csaRuntime.StartSailing(boat));
+      captainLedger.crossed();
+      if (way === 'out') captainLedger.chartIsle(veilhaven().key);   // the landfall's port, on the charts from the first
+      else crossGate.asked('out');   // home in the crossing waters: not asked out again until she has left them
+      setMidScreenText(crossingWords(way), 7);
+      captainSay();
+      return true;
+    } finally {
+      _etherCrossing = false;
+      hudFade.fadeHUDFromBlack();
+    }
+  }
   let _navalWasOn = null;
   /** The frame: the switch read, the sounds loaded at the first sea, the host's step, the flames' clock. */
+  let _officeTickT = 0;   // CAPT-BOARD: the contracts' terms asked after every OFFICE_TICK_S
   function navalFrame(dt) {
+    if (!gamePaused() && !_loading) captainSayFlush();   // AUDIT CAPTAIN'S SEA L9
+    _officeTickT -= dt;
+    if (_officeTickT <= 0 && !gamePaused() && !_loading) {
+      _officeTickT = 2; harbourOffice.tick(); captainSay();   // CAPT-BOARD: a term run out
+      if (etherSea && _mode() === 'exterior') { const p = playerTravelPixel(); if (inEther(p.x, p.y)) { etherHost.sight(p.x, p.y); captainSay(); } }   // ETHER-SEA: the isles in sight charted, the depth kept
+    }
+    if (!gamePaused() && !_loading) etherCrossStep(dt);   // ETHER-CROSSING: the helm's waters asked
     const on = navalOn();
     if (on !== _navalWasOn) { _navalWasOn = on; naval.setEnabled(on); if (!on) { navalFlames.clear(); closeNavalPlunder(); closeNavalYard(); drawNavalHud(null); drawNavalTags([]); } }
     if (!on) return;
@@ -10199,6 +10751,80 @@ export async function bootWorld(canvas, renderer, params, status) {
     if (naval.collidable().length) csaSyncColliders();
     navalFlames.tick(gamePaused() ? 0 : dt);
   }
+  // ── SPYGLASS (2026-10-11, the owner: "a spyglass option where you can aim and view to observe other ships, their
+  // allegiance, cargo, etc." - bible/03-World/Captains-Sea.md): THE CAPTAIN'S GLASS. Its press (the Spyglass action - K
+  // beside the road's follow, the touch corner's or the plate's Glass, a pad button chosen for it) raises it to the eye
+  // aboard a ship - at a helm, on a deck, mine or another's - and lowers it; the wheel turns its magnification (x2, x4,
+  // x8). While it is up the view is the head's (mwViewHoldFirst), the lens narrowed to it (glassFov, eased over
+  // spyglassView.js GLASS_EASE_S), the look slowed by it, and the naval host makes out the ship it holds (navalHost.js
+  // glass) - her card under the reticle. Down at once ashore, under a window or a pause, under the travel view, with a
+  // broadside laid, and with the ships switched off. Its magnification is kept between raises (the session's).
+  const spyglass = { up: false, zoom: GLASS_ZOOM, lens: 1 };
+  /** AUDIT CAPTAIN'S SEA S2: a press of the glass by the host's own door (the pad's d-pad, the touch corner's Glass:
+   *  inputHooks.padAction) - never its key, K, which is the road's follow too. Read once. */
+  let glassDoorPress = false;
+  /** Whether the glass may be up this frame. AUDIT CAPTAIN'S SEA S1: never while a door builds or the world is moved -
+   *  the exterior's frame runs through a door's build, and the modal arms return before this step once it stands. */
+  const spyglassAllowed = () => navalOn() && !!naval?.aboard?.() && _mode() === 'exterior' && walkMode && playerSpawned && !_loading && !gamePaused()
+    && !townTalk.overlayActive && !travelView?.active && !naval?.aiming && !(townTalk.overlay instanceof DeathScreen)
+    && !modes?.transitioning && !worldMoveBusy();
+  /** AUDIT CAPTAIN'S SEA S1/S15: THE GLASS DOWN AT ONCE - every door, load and move of the world (navalClear's), and a
+   *  video over the world: the arms that take those frames return before spyglassStep, so a glass up through a cabin's
+   *  door stood frozen indoors (its window, its lens slowing the look, the wheel eaten, the head held). */
+  function lowerGlass() {
+    spyglass.up = false;
+    spyglass.lens = 1;
+    glassDoorPress = false;
+    mwViewHoldFirst(false);
+    naval?.glass?.(0, { up: false, zoom: spyglass.zoom });
+    drawSpyglass(null);
+    spyglassTaps();
+  }
+  /** AUDIT CAPTAIN'S SEA S3: the pad's press for the glass, as its foot names it - the button chosen for it, else the
+   *  d-pad's tap or hold the player gave it (Plus's d-pad), else none. */
+  function glassPadWords(padHand) {
+    const code = getBinding(bindings(), 'Spyglass', false);
+    if (code && /^Joystick/.test(code)) return hdGlyphName(padHand, code);
+    if (!isEnhancedPlus()) return null;
+    for (const [dir, m] of Object.entries(plusDpadMap())) {
+      if (m.tap === 'Spyglass') return hdGlyphName(padHand, DPAD_CODES[dir]);
+      if (m.hold === 'Spyglass') return `Hold ${hdGlyphName(padHand, DPAD_CODES[dir])}`;
+    }
+    return null;
+  }
+  /** AUDIT CAPTAIN'S SEA S3: the d-pad presses the player gave the glass, for the helm's prompts ([{ dir, kind }]). */
+  const glassDpad = () => (isEnhancedPlus() ? Object.entries(plusDpadMap()).flatMap(([dir, m]) => ['tap', 'hold'].filter((k) => m[k] === 'Spyglass').map((kind) => ({ dir, kind }))) : []);
+  /** The glass's frame: its press read (the key's edge, the plate's tap, the host's door, a finger's Lower), lowered where
+   *  it may not be up, the head held for it, its lens eased, the ship it holds made out and its window drawn. */
+  function spyglassStep(dt) {
+    const taps = spyglassTaps();
+    const pressedNow = hccActionPressed('Spyglass') || navalTouchGlass() || glassDoorPress || (taps.lower && spyglass.up);
+    glassDoorPress = false;
+    if (pressedNow && (spyglass.up || spyglassAllowed())) spyglass.up = !spyglass.up;
+    if (spyglass.up && !spyglassAllowed()) spyglass.up = false;
+    if (taps.zoom && spyglass.up) spyglass.zoom = nextGlassZoom(spyglass.zoom);   // AUDIT CAPTAIN'S SEA S3: a finger's Magnify
+    mwViewHoldFirst(spyglass.up);
+    spyglass.lens = easeLens(spyglass.lens, spyglass.up ? spyglass.zoom : 1, dt);
+    // AUDIT CAPTAIN'S SEA S19: the glass holds no ship outside its own circle - the tube's radius, at the lens drawn
+    const field = Math.atan(Math.tan(glassFov(fieldOfView() + climbFeel.fovRad(), spyglass.lens) / 2) * GLASS_FIELD * Math.min(1, largeHudWorldAspect(canvas.clientWidth, canvas.clientHeight) || 1));
+    const card = navalOn() && naval ? naval.glass(dt, { up: spyglass.up, zoom: spyglass.zoom, field }) : null;
+    const padHand = controllerLook() ? padFamily() : null;   // the pad in hand: its button named, not the key
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    drawSpyglass(spyglass.up ? { card, zoom: spyglass.zoom } : null, {
+      keys: { glass: padHand ? glassPadWords(padHand) : navalKeyName('Spyglass'), zoom: padHand ? hdGlyphName(padHand, GLASS_PAD_ZOOM) : null },
+      scale: enhancedHudScale(), touch: !!touch, pad: !!padHand, covered: !!townTalk.hudHidden,
+      rect: w > 0 && h > 0 ? worldRectPx(worldViewportRect(w, h), w, h) : null,   // AUDIT CAPTAIN'S SEA S10: the world's strip
+    });
+  }
+  /** SPYGLASS: the wheel turns the glass while it is up - a notch up doubles its magnification, a notch down halves it. */
+  function spyglassWheel(deltaY) {
+    if (!spyglass.up || !deltaY) return false;
+    spyglass.zoom = Math.max(GLASS_ZOOM_MIN, Math.min(GLASS_ZOOM_MAX, deltaY < 0 ? spyglass.zoom * 2 : spyglass.zoom / 2));
+    return true;
+  }
+  /** AUDIT CAPTAIN'S SEA S6: the glass's own sight test - a ship behind the land is not held (the tags' law, a cache of
+   *  its own off the look the glass is held along). */
+  const glassSight = createSightCache();
   /** The attack let go (every door's release, beside the rig's and as ungated): a laid broadside fires - unless a window
    *  came up over the aim, or the world under it went, which puts it down unfired. */
   function navalRelease() {
@@ -10521,6 +11147,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       vitals: enhancedHudBottom(), quick: enhancedHudQuick(),   // AUDIT NAV1: the vitals' column the plate keeps clear of, the quick block the card aside does
       compass: !isEnhanced() && hudArt?.compassBox ? classicCompassBox() : null,   // AUDIT NAV1: the classic compass the plate stands over
       touch: !!touch,   // a finger's screen: the plate over the touch corner's presses, the hints a finger's
+      glassUp: spyglass.up,   // SPYGLASS: the plate's Glass brass while the glass is up
     });
   }
   let _navalWordKey = null;   // the word my last foes frame carried ('' none stood; null: none said yet)
@@ -10924,6 +11551,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // is the street's (worldModes.tryEnter, the ladder's last family), and it answers its own key alone
     (key) => lefay?.hoverName(key) ?? null,
     (key) => merchantYards?.hoverName(key) ?? null,   // MERCHANT-YARDS: a yard by its name and its keeper's, a horse or a wagon on show by its own
+    (key) => portHost?.hoverName(key) ?? null,   // SHIPYARDS: a port's shipyard, crew hall and lighthouse by their names and keepers', and their rows
     // PEER-PLAQUE1: another player, by the session's own name - the port's
     // own family (DFU has no other players), so it sits with the cart and
     // the camps ABOVE the mod's switch, as the names over heads already do.
@@ -13832,6 +14460,21 @@ export async function bootWorld(canvas, renderer, params, status) {
   // per-pixel build raises that. Every teleport used to raise the
   // travel event: a forced apply and a rebuild of the season's atlases
   // on each, and the load's own two-step apply never on a load.
+  /** AUDIT CAPTAIN'S SEA G2/P7: the landing _teleportToPixel made for a pixel this game does not stream ('ether': past the
+   *  Veil, 'edge': past the map), said once the player stands - or null. */
+  let _unstreamedLanding = null;   // declared above its door (BOOT-TDZ2's law)
+  /** AUDIT CAPTAIN'S SEA G2/P7: A PIXEL THE WORLD DOES NOT STREAM - a save made past the Veil loaded under the sea's kill
+   *  door, a continent's loaded with its land off - lands where the world stands: past the Veil at the way home (the last
+   *  crossing out's waters, else the open Abecean), else the Bay's own nearest pixel; said once it stands
+   *  (`_unstreamedLanding`). Its load list held no pixel, and the build threw on it (the start menu's Load: "boot
+   *  failed"). The pixel to land at instead, or null where `px`,`py` streams. */
+  const _streamedLanding = (px, py) => {
+    if (StreamingWorldState.streams(px, py)) return null;
+    const home = inEther(px, py) ? crossingTarget('home', captainLedger.crossedFrom()) : { px: Math.max(0, Math.min(999, Math.floor(px) || 0)), py: Math.max(0, Math.min(499, Math.floor(py) || 0)) };
+    console.warn(`[world] pixel ${px},${py} does not stream in this game - landed at ${home.px},${home.py}`);
+    _unstreamedLanding = inEther(px, py) ? 'ether' : 'edge';
+    return home;
+  };
   async function _teleportToPixel(px, py, localPos = null, { grounded = false, arriveMinutes = null, reposition = REPOSITION.None, travelStart = null, modEvent = null, resolveArrival = null } = {}) {
     // CameraRecoiler's StreamingWorld_OnInitWorld (:178-183): "player
     // can be moved by one system or another with swaying active" -
@@ -13839,6 +14482,9 @@ export async function bootWorld(canvas, renderer, params, status) {
     // landing to the new place.
     cameraRecoiler.reset();
     climbFeel.reset();   // AUDIT CLIMB-ARC F6: no climb's turn or cue rides a teleport
+    // AUDIT CAPTAIN'S SEA G2/P7: a pixel this game does not stream lands where the world stands - before the helm's word
+    const unstreamed = _streamedLanding(px, py);
+    if (unstreamed) { px = unstreamed.px; py = unstreamed.py; localPos = null; resolveArrival = null; }
     dwTeleported(performance.now() / 1000);   // DW-D: OnTeleportToCoordinates' grace
     if (modEvent !== 'load') navalStow();   // KEEP-PLUNDER: a jump's sea stowed first - never a load's
     // HELM-JUMP (FIELD BUGS 2026-10-11): the helm let go before the jump, so the landing below is the last word on where
@@ -13948,6 +14594,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     quays?.destroyAll();   // QUAYS: and the quays - stood again off the harbours found in the new one
     lefay?.destroyAll();   // LEFAY1: and the monument - stood again the next frame that finds Gothway Garden built
     merchantYards?.destroyAll();   // MERCHANT-YARDS: and the yards - stood again the next frame, in the new frame
+    portHost?.destroyAll();   // SHIPYARDS: and the shipyards and lighthouses, the same
     wardenShows?.destroyAll();   // WARDEN1: and a throw in flight - its team set down where it landed
     riteHost?.destroyAll();   // WB12d: and the faithful's circle - its faithful went with the live pools; it stands again the next frame
     csaReanchor(state.initOffset);   // FIELD-CSA1: and every placed boat with it
@@ -14055,6 +14702,12 @@ export async function bootWorld(canvas, renderer, params, status) {
     // new origin (fast travel, quickload); CreateFoe's pending waves
     // invalidate across live AND scheduled quests.
     questBridge?.onInitWorld();
+    // AUDIT CAPTAIN'S SEA G2/P7: a landing made for a pixel this game does not stream, said where the player now stands
+    // (below the arrival's statements, which the party's boat pins run over stand-ins: partyBoatTeleportFix)
+    if (_unstreamedLanding) {
+      townTalk.say(_unstreamedLanding === 'ether' ? 'The Etheric Sea is closed in this game - you wake in the Bay\'s waters.' : 'That ground does not stand in this game - you wake at the edge of the Iliac Bay.', 7);
+      _unstreamedLanding = null;
+    }
 
     // TK-v: TalkManager's OnMapPixelChanged / OnLoadEvent (:3593-3597,
     // :3616-3620) - a new world origin means a new building list and a
@@ -14413,7 +15066,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // "Anchor must be set" - the 4001 box (:268-275). The cast is
     // spent either way; DFU refunds nothing.
     if (!plan) { townTalk.say('You must set an anchor first.'); return; }
-    if (plan.kind !== 'same-interior' && wildTeleportRefused(plan.anchor?.pixel ?? null)) return;   // PVPDUNGEONS: no Recall into, out of or inside the zone
+    if (plan.kind !== 'same-interior' && (wildTeleportRefused(plan.anchor?.pixel ?? null) || veilRefused(plan.anchor?.pixel ?? null))) return;   // PVPDUNGEONS: no Recall into, out of or inside the zone - AUDIT CAPTAIN'S SEA P6: nor across the Veil
     const wildTrip = plan.kind === 'same-interior' ? { ok: true, fee: 0 } : wildTravelGate(plan.anchor.pixel);   // WILD3: Recall is a fast journey too
     if (!wildTrip.ok) return;
     wildTravelPaid(wildTrip);
@@ -14539,7 +15192,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   async function teleportTo(pick) {
     if (worldMoveBusy()) return;   // AUDIT 68 S22
     if (_teleporting) return;
-    if (wildTeleportRefused(pick.pixel)) return;   // PVPDUNGEONS: the guild's teleport never into, out of or inside the zone
+    if (wildTeleportRefused(pick.pixel) || veilRefused(pick.pixel)) return;   // PVPDUNGEONS: the guild's teleport never into, out of or inside the zone - AUDIT CAPTAIN'S SEA P6: nor across the Veil
     const wildTrip = wildTravelGate(pick.pixel);   // WILD3: the guild's teleport is a fast journey too
     if (!wildTrip.ok) return;
     wildTravelPaid(wildTrip);
@@ -14643,7 +15296,13 @@ export async function bootWorld(canvas, renderer, params, status) {
   // (GetRandomCemetery's CurrentRegionIndex, :196), and the dungeon this
   // host mounts carries this same arm (worldModes' buildDungeonContext
   // opts), so a dungeon's registration no longer drops it.
+  /** AUDIT CAPTAIN'S SEA P4: where a death past the Veil rises - the nearest port isle's town within ETHER_RISE_PX, else
+   *  Veilhaven: the Bay's temples are a crossing away. */
+  const ETHER_RISE_PX = 60;
+  const etherRisePort = (x, y) => islesNear(x, y, ETHER_RISE_PX).find((i) => i.kind === 'port') ?? veilhaven();
   function transferToCemeteryArm() {
+    // AUDIT CAPTAIN'S SEA P4: no cemetery of the Bay's past the Veil - the transfer skipped, as where a region has none
+    { const p = playerTravelPixel(); if (etherSea && inEther(p.x, p.y)) { console.warn('[infection] past the Veil - no cemetery a crossing away; the transfer is skipped'); return; } }
     const mapTable = maps.getRegion(_questRegionIndex())?.mapTable ?? [];
     const idx = randomCemeteryLocationIndex(mapTable);
     if (idx == null) {
@@ -14986,7 +15645,12 @@ export async function bootWorld(canvas, renderer, params, status) {
       const wildSite = wildRise ? wildRiseSite(px, wasInDungeon) : null;
       if (wildSite) { land = wildSite.mapPixel; kind = wildSite.kind; }
       else if (wasInDungeon && !isPrivateersHold) kind = 'dungeon';   // the door out: the pixel already under the player
-      else {
+      else if (etherSea && inEther(px.x, px.y)) {
+        // AUDIT CAPTAIN'S SEA P4: past the Veil, the nearest port isle's town - the region's search read Betony's rows, and
+        // the dead woke at a Bay temple a crossing away (the ship and her hold left past the Veil)
+        const port = etherRisePort(px.x, px.y);
+        land = { x: port.px, y: port.py }; kind = 'city';
+      } else {
         const mapTable = maps.getRegion(_questRegionIndex())?.mapTable ?? [];
         // SEA-RISE: the open sea's region holds none of the three - the nearest in any region, never the seafloor
         const safe = nearestSafeLocation(mapTable, px) ?? nearestSafeLocationAnywhere(maps, px);
@@ -15890,6 +16554,10 @@ export async function bootWorld(canvas, renderer, params, status) {
         quays?.destroyAll();   // QUAYS: and the quays, off the harbours found again
         lefay?.destroyAll();   // LEFAY1: and the monument - its collider down, stood again off the loaded world (a flower in the air lands nowhere: thrown before the restore - AUDIT LEFAY1 B1)
         merchantYards?.destroyAll();   // MERCHANT-YARDS: and the yards, their colliders down, stood again off the loaded world
+        portHost?.destroyAll(); closeShipyard();   // SHIPYARDS: and the shipyards and lighthouses, and the shipmaster's window over a world gone
+        // SHIPYARDS: stood again at once off the loaded world, the player already where the save stood them - the frame
+        // steps the player before its pools stand, so a save made on a lighthouse's gallery found no floor for a frame
+        portFrame();
         wardenShows?.destroyAll();   // WARDEN1: and a throw in flight
         camps.dropOwn();   // AUDIT SURV-TIERS (the third pass): the save says which camps are mine - the pitch after it is undone, not kept beside the gear it gave back
         camps.restore(restandAt('pos')(w.camps), campFromNatives);   // SURV3
@@ -15944,7 +16612,7 @@ export async function bootWorld(canvas, renderer, params, status) {
           // AUDIT OH-F B5: a save in the drowned dungeon wakes nearest ITS door, the pit - not the borrowed template's
           const ohSaved = extras.modData?.[OCEAN_HOLES_VENDOR];
           const from = ohSaved?.Active && Number.isFinite(ohSaved.PitMapX) && Number.isFinite(ohSaved.PitMapY) ? { x: ohSaved.PitMapX, y: ohSaved.PitMapY } : pixel;
-          const wake = undergroundWakeSpot(maps.getRegion(maps.getRegionIndexAt(from.x, from.y))?.mapTable ?? [], from);
+          const wake = inEther(from.x, from.y) ? { kind: 'dungeon', mapPixel: { x: from.x, y: from.y } } : undergroundWakeSpot(maps.getRegion(maps.getRegionIndexAt(from.x, from.y))?.mapTable ?? [], from);   // ETHER-PLACES: an isle's ruin wakes at its own door - the region's search would read the Alik'r's past the map
           await _teleportToPixel(wake.mapPixel.x, wake.mapPixel.y, null, { modEvent: 'load', reposition: REPOSITION.RandomStartMarker });
           // WOD6 (audit): a load all the same - SaveLoadManager.OnLoad, last, at the landed player
           { const s = walkMode && playerSpawned; const f = s ? player.pos : cam.pos; wodOnLoad([f[0], f[1] + (s ? player.height / 2 : 0), f[2]]); }
@@ -16207,6 +16875,9 @@ export async function bootWorld(canvas, renderer, params, status) {
     // here is townTalk.say. It was silent: a Find Place taken in a
     // building closed the journal on nothing.
     if ((modes?.mode ?? 'exterior') !== 'exterior') { townTalk.say(CANNOT_TRAVEL_INDOORS_TEXT); return false; }
+    // ETHER-CHART (ui/etherChartWindow.js): past the Veil the map is the captain's chart of the Etheric Sea - the Bay's has
+    // no sea there to show, and nothing on it is travelled to
+    { const p = playerTravelPixel(); if (etherSea && inEther(p.x, p.y)) return openEtherChart(); }
     // W1/U61: the DOOR decides which map this skin wears. The classic
     // window needs its art - without it there is no map to click, so
     // the door says so rather than opening a blank one (the HUD/pause
@@ -16347,6 +17018,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   }
   function openTeleportMap() {
     if (!travelMapDoorReady()) return null;
+    if (veilRefused()) return null;   // AUDIT CAPTAIN'S SEA P6: past the Veil its map's every place is across it
     let win = null;
     win = buildTravelMapWindow({
       onTeleport: (pick) => { teleportTo(pick); },
@@ -16384,6 +17056,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     const refuse = (line) => { townTalk.say(line); return false; };
     const why = portalDoorRefusal();
     if (why) return refuse(why);
+    if (veilRefused()) return false;   // AUDIT CAPTAIN'S SEA P6: past the Veil its map's every place is across it
     if (!travelMapDoorReady()) return refuse(PORTAL_TEXT.noMap);
     // the list it came from, read again at the pick - a load in between stands a new pack (AUDIT PRE-MERGE 0928 S2's
     // law); a companion's or a sworn revenant's own storage is its own list (AUDIT PORTAL1 I2)
@@ -16408,6 +17081,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     if (!pick?.pixel) return;
     const why = portalDoorRefusal();
     if (why) { townTalk.say(why); return; }
+    if (veilRefused(pick.pixel)) return;   // AUDIT CAPTAIN'S SEA P6
     const feet = walkMode && playerSpawned ? player.feetAt() : cam.pos;
     const place = portalPlace(feet, cam.yaw, {
       ground: (o, d, m) => collider.surfaceHit(o, d, m)?.dist,   // the ground there - a mesh or the terrain, whichever is nearer (CAMP-GROUND's probe)
@@ -16662,7 +17336,7 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  it, a combo resolves, any key works (the old read built `Key` + a letter, so a custom bind that was not a letter
    *  never fired), and Travel Options switched off answers nothing. TO-ONLINE: the SAME door as
    *  beginAcceleratedTravel's, which has no online stand-down, so neither does this. */
-  function travelFollowPressed() { return pressed(latch.edge, keys, 'FollowPaths'); }
+  function travelFollowPressed() { return !naval?.aboard?.() && pressed(latch.edge, keys, 'FollowPaths'); }   // SPYGLASS: aboard, K is the glass's - a deck has no road
 
   /** AUDIT OW5 G2 (the audit before the merge): THE OVERWORLD'S OWN LINES OUTLAST ITS CLOCK. A HUD line counts down in
    *  game time (CSA-G: PopupText's Time.deltaTime), so at a journey's x10 "You have found X." (five seconds) was up for
@@ -17131,6 +17805,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       gridW: dfLoc.exterior.exteriorData.width, gridH: dfLoc.exterior.exteriorData.height,
       blocks: b.locBlocks.map((bl) => ({ x: bl.x, y: bl.y, autoMap: bl.dfBlock?.rmbBlock?.fldHeader?.autoMapData, landmark: arenaTownLandmark(bl.dfBlock) })),   // ARENA-MAP: the Arena's name (world/arenaCity.js)
       yards: b.merchantYards ?? null,   // YARDS-FOUND: the town's Stable and Wagon Yard on the map - their ground and their names (ui/townMapDoor.js)
+      ports: b.portSites ?? null,   // SHIPYARDS-FOUND: a port town's shipyard and lighthouse on it the same way
       playerPos: () => local,
       // the marker law is DFU's modulo of the MAP PIXEL frame, so the
       // window needs the location's origin inside that pixel back
@@ -17941,7 +18616,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     if (e.pointerType !== 'touch' && document.pointerLockElement !== canvas) setClickDelay((latch.activate ??= createActivateGate()));
     requestLook(canvas);
   });   // U8b/U8c: native windows own the pointer
-  canvas.addEventListener('wheel', (e) => { if (townTalk.wheel(e) || quickLootWheel(e.deltaY) || modes?.wheel?.(e) || mwViewWheel(e.deltaY)) e.preventDefault(); }, { passive: false });   // U-scroll: an open window owns the wheel; QUICK-LOOT B4: the plaque owns the wheel FIRST, and only while it is listing something - the ladder's own law ("an open window owns the wheel"), applied to a live list under the crosshair; MW-D25: otherwise the Morrowind camera zoom
+  canvas.addEventListener('wheel', (e) => { if (townTalk.wheel(e) || quickLootWheel(e.deltaY) || modes?.wheel?.(e) || spyglassWheel(e.deltaY) || mwViewWheel(e.deltaY)) e.preventDefault(); }, { passive: false });   // U-scroll: an open window owns the wheel; QUICK-LOOT B4: the plaque owns the wheel FIRST, and only while it is listing something - the ladder's own law ("an open window owns the wheel"), applied to a live list under the crosshair; MW-D25: otherwise the Morrowind camera zoom
   // ROAD-C c2/S4: THE OTHER TWO PHASES. This host already routed
   // `pointerdown` into the mode machine; the automap's chrome is
   // press-HOLD and drag driven, so a host that delivers `down` alone
@@ -18190,7 +18865,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // camera - PlayerMouseLook.ApplyLook (:126); the frame pays it out
     // at MouseLookSmoothingFactor. HANDEDNESS (mat4's law): mouse-right
     // turns toward +x = screen-right; the pitch clamp is the filter's.
-    lookFilter.add(e.movementX * lookScale(), -e.movementY * lookScale() * lookInvert());
+    lookFilter.add(e.movementX * lookScale() * glassLookScale(spyglass.lens), -e.movementY * lookScale() * lookInvert() * glassLookScale(spyglass.lens));   // SPYGLASS: slowed by the glass
   });
   // U41: `!townTalk.overlayActive` is the dungeon host's own gate
   // (dungeon.js:"latches this host used", "a right-click on a window is the window's...
@@ -18210,7 +18885,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   addEventListener('mouseup', (e) => { if (isSwingButton(e.button)) rightHeld = false; const mc = mouseCode(e.button); if (mc) { keys.delete(mc); noteKeyUp(latch.edge, mc); } if (isSwingButton(e.button) && walkMode && modeNow() === 'exterior') weaponRig.attackInput(0, 0, false); if (isSwingButton(e.button)) navalRelease(); });   // the RELEASE is never gated - a window opened mid-swing must still let go; NAV-H: let go at the helm, the broadside fires (a window over it puts the aim down unfired)
   const inputHooks = {   // GP1: one hooks object for the finger AND the pad   // mobile: stick synthesizes WASD; the right half is classified (TI1)
     look: (dx, dy) => {
-      lookFilter.add(dx * lookScale(), -dy * lookScale() * lookInvert());   // AUDIT 28 W7: through the look filter (HANDEDNESS, mat4's law)
+      lookFilter.add(dx * lookScale() * glassLookScale(spyglass.lens), -dy * lookScale() * lookInvert() * glassLookScale(spyglass.lens));   // AUDIT 28 W7: through the look filter (HANDEDNESS, mat4's law) - SPYGLASS: slowed by the glass
     },
     // TI1: the swipe is the RMB drag - the mousemove arm above, on a
     // finger: the exterior rig here, the modal rig through worldModes
@@ -18255,13 +18930,21 @@ export async function bootWorld(canvas, renderer, params, status) {
     overlayActive: () => townTalk.overlayActive || !!travelView?.active || !!modes?.overlayHeld,   // AUDIT DEEP2 A2: under the view the pad is a cursor (its pick, orbit and zoom) - never the world's look, activation or swing. FIELD BUGS 29h (TOUCH-HELD): and a window on a building's or a dungeon's own stack is a window - the castle guard's terms box had no nav row, so no abc, no keyboard and no Return on a phone (the standalone dungeon host's hook always read its stack)
     // PAD-BINDS (FIELD BUGS 2026-10-04e): a d-pad choice whose action is on no key - the Overworld ships unbound
     // MODE-WHEEL: the four mode actions ship unbound too - the pad's NextMode lands here, at the host's ChangeInteractionMode
-    padAction: (act) => { if (MODE_ACTIONS[act]) return townTalk.pickMode(MODE_ACTIONS[act]); if (act !== 'TravelView' || townTalk.overlayActive) return false; travelViewKey(); return true; },
+    padAction: (act) => {
+      if (MODE_ACTIONS[act]) return townTalk.pickMode(MODE_ACTIONS[act]);
+      if (act === 'Spyglass') { glassDoorPress = true; return true; }   // AUDIT CAPTAIN'S SEA S2: the glass's own door - never K, the road's follow too
+      if (act !== 'TravelView' || townTalk.overlayActive) return false;
+      travelViewKey();
+      return true;
+    },
+    // AUDIT CAPTAIN'S SEA S3: the glass under a pad - up, the look stick's click turns its magnification
+    glass: { up: () => spyglass.up, zoom: () => { if (spyglass.up) spyglass.zoom = nextGlassZoom(spyglass.zoom); } },
     aimHold: () => !!naval?.atGuns,   // NAV-H: at a helm with guns the attack is the broadside's aim - the pad and the finger HOLD it (no gesture strokes) and look on under it
     // CSA-L: the pad's helm d-pad (ui/gamepadInput.js HELM_DPAD) - at the helm on Enhanced Plus, the helm panel's presses
     helm: {
       up: () => !!(csaRuntime?.isSailing() && csaOn() && isEnhancedPlus()),
       gesture: (dir, kind) => { let r = false; csaCall(() => { r = helmPadGesture(dir, kind, csaRuntime?.helmPanelState() ?? null, { press: csaHelmPress, hold: csaHelmHold }); }); return r; },
-      prompts: () => { let r = null; csaCall(() => { r = helmPadPrompts(csaRuntime?.helmPanelState() ?? null); }); return r && naval?.atGuns ? [...r, ...navalPadPrompts(naval.hudModel(), navalPadCodes())] : r; },   // AUDIT NAV1: and the guns' own rows
+      prompts: () => { let r = null; csaCall(() => { r = helmPadPrompts(csaRuntime?.helmPanelState() ?? null, { glass: glassDpad() }); }); return r && naval?.atGuns ? [...r, ...navalPadPrompts(naval.hudModel(), navalPadCodes())] : r; },   // AUDIT NAV1: and the guns' own rows - AUDIT CAPTAIN'S SEA S3: a d-pad press the player gave the glass is the glass's here too
     },
     stickRuns: () => !csaRuntime?.isSailing(),   // AUDIT PRE-MERGE 0928 U3: at Come Sail Away's helm Run + a side key is the oars' strafe - the stick's throw runs nowhere there, so a full push turns the boat
     // AUDIT 62 F7: the finger's pause gate - the same predicate the
@@ -18808,7 +19491,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   function placeAtPixel(px, py) {
     const key = `${px},${py}`;
     if (_ohGpsName?.key === key && _ohGpsName.name) return _ohGpsName.name;   // AUDIT LOAD1 4: the abyss wears its own name over the pixel it borrows (_questLoc's law)
-    return locationIndex.get(key)?.name || REGION_NAMES[maps.getRegionIndexAt(px, py)] || '';
+    return locationIndex.get(key)?.name || (etherSea && inEther(px, py) ? ETHER_SEA_NAME : REGION_NAMES[maps.getRegionIndexAt(px, py)]) || '';   // ETHER-SEA: the sea's own name past the Veil
   }
   function placeHere() {
     const px = playerTravelPixel();
@@ -19129,8 +19812,10 @@ export async function bootWorld(canvas, renderer, params, status) {
     /** PlayerGPS.DiscoverLocation (:872-890): resolve by name and file
      *  it, THROWING when the pair names nothing - C#'s own throw. */
     discoverLocation: (regionName, locationName) => {
-      const loc = maps.getLocationByName(regionName, locationName);
-      if (!loc?.loaded) throw new Error(`Error finding location ${regionName} : ${locationName}`);
+      // AUDIT CAPTAIN'S SEA P8: an isle's place is in no MAPS.BSA table - found in the index it stands in (a guild's local
+      // job in an isle town threw here on its first tick, and the quest was removed)
+      const loc = maps.getLocationByName(regionName, locationName) ?? (etherSea ? [...locationIndex.values()].find((l) => l?.ether && l.name === locationName && l.regionName === regionName) ?? null : null);
+      if (!loc?.loaded && !loc?.ether) throw new Error(`Error finding location ${regionName} : ${locationName}`);
       return discoverLocation(loc.mapTableData.mapId, { regionName: loc.regionName, locationName: loc.name });   // QREPAIR: whether it was new, for the repair's count (RevealLocation reads nothing back)
     },
     /** RevealLocation's readmap note - PlayerNotebook.AddNote(string). */
@@ -20174,7 +20859,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     random: Math.random,   // UnityEngine.Random.Range - THE ENGINE-PRNG RULE
     maps: () => maps,
     picker: () => travelMapPickerData(),   // DaggerfallUI.GetImgBitmap("TRAV0I01.IMG")
-    regionIndex: () => { const px = playerTravelPixel(); return politicClaimed(maps.getPoliticIndex(px.x, px.y)) ? _questRegionIndex() : -1; },   // fix 8: the sea (politic 64) and an unmapped pixel are no province
+    regionIndex: () => { const px = playerTravelPixel(); return !(etherSea && inEther(px.x, px.y)) && politicClaimed(maps.getPoliticIndex(px.x, px.y)) ? _questRegionIndex() : -1; },   // fix 8: the sea (politic 64) and an unmapped pixel are no province - AUDIT CAPTAIN'S SEA G7: nor the Etheric Sea (its composed politic is the isles' region's, and Betony's raids were announced to a captain past the Veil)
     regionName: (r) => REGION_NAMES[r] ?? String(r),   // GetLocalizedRegionName - the port speaks one language (ui/travelMapWindow.js)
     townHere: () => ((modes?.mode ?? 'exterior') === 'exterior' && _musicInLocationRect() ? _questLoc() : null),   // FindCurrentRaid: outdoors, in the rect, at a location
     playerPixel: () => playerTravelPixel(),
@@ -23538,6 +24223,18 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  carriage inside of tiers ofc)"): a teleport - the guild's, Recall, the party's journey to its leader - neither leaves
    *  from nor lands in the open zone. Said, and true when refused. The zone's own roads between its tiers (the travel
    *  map's journey, wildTravelGate) are the one way about it. */
+  /** AUDIT CAPTAIN'S SEA P6: NO TELEPORT ACROSS THE VEIL - Recall, a guild's teleport, a portal stone, a party's journey
+   *  to its leader: the crossing is the one way over (the sea "is reached only by THE CROSSING"), and a ship left on the
+   *  far side came round to the caster by the Fleet's Summon. `to` the pixel it would land at; null: the door itself,
+   *  asked where the player stands (a teleport map past the Veil holds the Bay's places alone). Said when refused. */
+  const veilRefused = (to = null) => {
+    if (!etherSea) return false;
+    const from = playerTravelPixel();
+    const here = inEther(from.x, from.y);
+    if (to ? here === inEther(to.x, to.y) : !here) return false;
+    townTalk.say('Nothing of the Bay\'s magic reaches across the Veil - only the crossing does.');
+    return true;
+  };
   const wildTeleportRefused = (to = null) => {
     if (TEST_GODMODE && staffPowers().god) return false;   // TESTBUILD
     const m = online?.wildOk ? wildMapMask() : null;
@@ -25305,6 +26002,69 @@ export async function bootWorld(canvas, renderer, params, status) {
     open: (site, mode, name) => modes?.openYardTrade?.(site.kind, site.regionIndex, mode, name) ?? false,
     say: (text) => townTalk.say(text), midText: (text) => setMidScreenText(text),
   });
+  // SHIPYARDS (2026-10-11, Mac: "...a new highly detailed shipmaster vendor and crew recruitment station within it ...
+  // introduce the new lighthouse building"): A PORT TOWN'S SHIPYARD AND LIGHTHOUSE (scenes/portHost.js) - each where its
+  // pixel's build placed it on the town's seaward ground (`p.portSites`, the location frame), carried by the live
+  // floating-origin translation as the yards are; the shipmaster's window opened on the page pressed (openShipyard), the
+  // lighthouse's stair a placing of the player (climbLighthouse), its lamp lit in the lanterns' hours
+  const _portT = [0, 0, 0], _portSites = [];
+  portHost = createPortHost({
+    renderer, getTexture, uploadRecordFrame, collider: () => collider,
+    sites: () => {
+      _portSites.length = 0;
+      if (_mode() !== 'exterior') return _portSites;
+      for (const p of built.values()) {
+        if (!p.portSites?.length || !p.locOrigin) continue;
+        const t = state.pixelTranslation(p.px, p.py, _portT);
+        for (const s of p.portSites) {
+          const at = (s.scene ??= { ...s });
+          at.x = t[0] + p.locOrigin[0] + s.x; at.z = t[2] + p.locOrigin[2] + s.z; at.comp = state.compensation[1];
+          _portSites.push(at);
+        }
+      }
+      return _portSites;
+    },
+    groundAt: (x, z) => surfaceAt(x, z),   // the drawn ground, as the yards stand on
+    feet: () => (walkMode && playerSpawned ? player.feetAt() : null),
+    lit: () => lightsOnAt(minuteNow()),   // the lamp's hours: the town's lanterns'
+    open: (site, page) => openShipyard(site, page),
+    climb: (site, way, at) => climbLighthouse(way, at),
+    say: (text) => townTalk.say(text), midText: (text) => setMidScreenText(text),
+  });
+  /** SHIPYARDS: THE LIGHTHOUSE'S STAIR (Mac chose "Climbable, with keeper") - the lightkeeper lets me up: my feet set on
+   *  the gallery's floor facing the sea, or coming down at the tower's foot facing the town (`at`, scenes/portHost.js), as
+   *  a boarding places a body (the sea fight's `placePlayer`). Up on foot alone and never with a foe about; down always (a
+   *  gallery is never a trap), onto the drawn ground at the door where it stands higher than the tower's middle (a slope).
+   *  Answers true, or the refusal's words. */
+  function climbLighthouse(way, at) {
+    const walking = walkMode && playerSpawned && _mode() === 'exterior' && !!at?.feet;
+    const no = stairRefusal(way, { walking, onFoot: walking && isOnFoot(player.transportMode), sailing: walking && !!csaRuntime?.isSailing?.(), foes: walking && way === 'up' && !!livingTravelEnemies() });
+    if (no) return no;
+    player.spawn(at.feet[0], stairFeetY(way, at.feet[1], way === 'down' ? surfaceAt(at.feet[0], at.feet[2]) : NaN), at.feet[2]);
+    cam.yaw = at.yaw; cam.pitch = 0; lookFilter.settle();
+    cam.pos = player.eyeAt();
+    return true;
+  }
+  // SHIPYARDS x PERF-V8: THE PORT'S PER-FRAME WORK, AS THE HOST'S OWN FUNCTIONS - never inline in `frame` and never a
+  // closure made each frame: the frame's bytecode stays under three quarters of V8's ceiling (test/perfv8.test.js; a
+  // loop, a try or a spread inline added registers past r123, where every operand goes wide). Each is called once a frame
+  // where its statement stood.
+  /** The pool stood where its towns are built (the frame's, and a load's at once). */
+  function portFrame() { try { portHost?.frame(); } catch (e) { console.warn('[port] the port', e?.message ?? e); } }
+  /** The lighthouses' lamps and the shipyards' office lanterns into the frame's scene lights, in the town lanterns' colour
+   *  - beside the quays', never the player's extras: the pool's own records, refilled in place (PERF-LIGHTS' law, AUDIT
+   *  SHIPYARDS L4-2). @param {any[]} out */
+  function portLightsInto(out) { if (portHost) for (const l of portHost.lights()) { l.color = CITY_LIGHT_COLOR_F32; out.push(l); } }
+  /** The port's people offered their Morrowind bodies (`eye` the frame's, `dt` its step). */
+  function portBodies(eye, dt) { if (portHost && _mode() === 'exterior') portHost.offerBodies(offerStreetPerson, eye, townTalk.overlayActive ? 0 : dt); }
+  /** The port's people on the flats' axis. @param {any[]} out */
+  function portBatchesInto(out) { if (portHost && _mode() === 'exterior') for (const b of portHost.batches()) out.push(b); }
+  /** The lamps' glow and their turning beams, added light in the sea fight's particle pass (its lamps' own law). */
+  function portGlows() {
+    if (!portHost || _mode() !== 'exterior') return;
+    const glows = portHost.glows(cam.pos);
+    if (glows.length) navalRender.draw({ particles: glows });
+  }
   // WARDEN1 (2026-10-10, Mac: "...I want a gaurd to navigate, lift the wagon/horse on top of their sprite and yeet it far
   // away"): THE TOWN WATCH (scenes/wagonWardenHost.js) - my parked wagon stamped off the town built under it, its park
   // word's fields, the cell's two words, the offline clock; its throws played (scenes/wagonWardenShow.js) by a guard of
@@ -26635,7 +27395,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   /** PARTY-TRAVEL: the journey itself - the travel popup's own order (ui/travelPopUp.js tick): the screen smashed to
    *  black, then fastTravelTo, whose arrival fades it back; a journey that did not go clears it. */
   const partyTravelJourney = (pick, opts, computed) => {
-    if (pick?.besideAt && wildTeleportRefused(pick.pixel ?? null)) return Promise.resolve(false);   // PVPDUNGEONS: no teleport to the leader into, out of or inside the zone (a party's own journey on the zone's roads is fastTravelTo's, under wildTravelGate)
+    if (pick?.besideAt && (wildTeleportRefused(pick.pixel ?? null) || veilRefused(pick.pixel ?? null))) return Promise.resolve(false);   // AUDIT CAPTAIN'S SEA P6: nor to a leader across the Veil (a party is never carried across together)   // PVPDUNGEONS: no teleport to the leader into, out of or inside the zone (a party's own journey on the zone's roads is fastTravelTo's, under wildTravelGate)
     hudFade.smashHUDToBlack();
     return fastTravelTo(pick, opts, computed).then((went) => { if (!went) hudFade.clearFade(); return !!went; },
       (e) => { console.error('[party-travel] the journey failed:', e); hudFade.clearFade(); return false; });
@@ -29561,6 +30321,8 @@ export async function bootWorld(canvas, renderer, params, status) {
     activateMonument: (key, mode, verb) => lefay?.activate(key, mode, verb) ?? false,   // LEFAY1: read it, or throw it a flower
     yardTargets: () => merchantYards?.targets() ?? [],   // MERCHANT-YARDS: the yards' keepers, signs, horses and wagons on show, in the street's one ray
     activateYard: (key, mode, verb) => merchantYards?.activate(key, mode, verb) ?? false,   // MERCHANT-YARDS: buy from a yard, or sell to it
+    portTargets: () => portHost?.targets() ?? [],   // SHIPYARDS: the shipyards' people, boards and hulls, the lighthouses' keeper, door, hatch and lamp, in the street's one ray
+    activatePort: (key, mode, verb) => portHost?.activate(key, mode, verb) ?? false,   // SHIPYARDS: the shipmaster's window on its page, the crew hall's, the tower's stair
     boardTargets: () => {
       const out = [];
       for (const p of built.values()) {
@@ -30014,7 +30776,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
   };
   const travelViewWhere = () => {
     const px = playerTravelPixel();
-    const region = maps.getRegionName(maps.getRegionIndexAt(px.x, px.y)) || '';
+    const region = (etherSea && inEther(px.x, px.y) ? ETHER_SEA_NAME : maps.getRegionName(maps.getRegionIndexAt(px.x, px.y))) || '';   // ETHER-SEA: the sea's own name past the Veil
     const loc = locationIndex.get(`${px.x},${px.y}`);
     const inside = loc?.name && _inAnyLocationRect(walkMode ? player.pos : cam.pos);
     return travelViewLine({ place: inside ? loc.name : null, near: !inside && loc?.name ? loc.name : null, region });
@@ -30044,8 +30806,11 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // TV3: past the built grid, the far ring's own macro height for the pixel (render/farRing.js ringHeight) - the
     // ground the view shows out there - under the grid's current compensation
     const px = worldCoordToMapPixel(nx, nz);
-    const byte = px.x >= 0 && px.y >= 0 && px.x < 1000 && px.y < 500 ? woods.getHeightMapValue(px.x, px.y) : 0;
-    const fade = landform && px.x >= 0 && px.y >= 0 && px.x < 1000 && px.y < 500 ? cliffFadeAt((bx, by) => woods.getHeightMapValue(bx, by), px.x, px.y) : 1;   // AUDIT LANDFORMS II I1: faded beside the sea, as the ring is
+    // AUDIT CAPTAIN'S SEA G5: past the map the ground the ring reads there (the continent's, the Etheric Sea's) - an isle's
+    // plate stood at the sea's height under its silhouette
+    const ground = (px.x >= 0 && px.y >= 0 && px.x < 1000 && px.y < 500) || !!woods.isTamrielGround || !!woods.etherLaw?.(px.x, px.y);
+    const byte = ground ? woods.getHeightMapValue(px.x, px.y) : 0;
+    const fade = landform && ground ? cliffFadeAt((bx, by) => woods.getHeightMapValue(bx, by), px.x, px.y) : 1;   // AUDIT LANDFORMS II I1: faded beside the sea, as the ring is
     return [x, ringHeight(byte, !!landform, fade) + state.pixelTranslation(px.x, px.y)[1] + lift, z];   // LANDFORM1: the raised massif
   };
   /** TV4 (AUDIT TV D3): the land's height at a scene point - the built grid's, the far ring's past it. */
@@ -30100,7 +30865,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
   };
   // TV-BEYOND: off the map is the sea where the world streams nothing there (DFU's empty edge), and the ground's own
   // bytes where TAMRIEL2 streams the land beyond the Bay - `woods` is its composed reader then, the sea past the frame
-  const tvWater = (px, py) => (!woods.isTamrielGround && (px < 0 || py < 0 || px >= 1000 || py >= 500)) || woods.getHeightMapValue(px, py) <= WATER_BYTE;
+  const tvWater = (px, py) => (!woods.isTamrielGround && !woods.etherLaw?.(px, py) && (px < 0 || py < 0 || px >= 1000 || py >= 500)) || woods.getHeightMapValue(px, py) <= WATER_BYTE;   // AUDIT CAPTAIN'S SEA G5: the Etheric Sea's isles land, whatever the continent's switch says
   /** The trip is over when Travel Options no longer walks it - arrived, stopped, or replaced by a journey of its own. */
   const tvTripLive = () => !!tvTrip.plan && !!travelOptions?.route && travelOptions.route === tvTrip.plan.route;
   /** `roads` (TO-ROADS x OW-PATH): by the roads whatever the Path switch says - the map's first-person pick (tvMapForcesRoads). */
@@ -31360,6 +32125,10 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // Stable and Wagon Yard standing about me, its name over its ground and its signboard's emblem (scenes/merchantYardsHost.js
     // overworldMarks) - with the towns on the Towns switch
     for (const m of merchantYards?.overworldMarks() ?? []) marks.push(m);
+    // SHIPYARDS-FOUND (Mac: "Everything should show on the map/overworld"): each port town's shipyard and lighthouse
+    // standing about me (scenes/portHost.js overworldMarks), and its docks over the first quay laid (scenes/quayPool.js)
+    for (const m of portHost?.overworldMarks() ?? []) marks.push(m);
+    for (const m of quays?.overworldMarks() ?? []) marks.push(m);
     // BOUNTY-OVERWORLD (the player: "can the bounties also be shown on the overworld map"): EVERY BOUNTY I HOLD - its
     // hunt's pixel (the held map's black circle, scenes/bountyHost.js mapMarks), its foes and its distance, held at the
     // edge off the picture as the journey's end is, so the way to it is always shown
@@ -31992,7 +32761,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // AUDIT WB C5: and the gate's countdown goes down with it - a DOM line over the video would stand frozen on it.
     // AUDIT DEEP X-1: and the travel view is CUT - its readout stood over the film, its listeners on the canvas, until
     // its heartbeat noticed the frames had stopped
-    if (frameHeld()) { frameAbort(); hideWorldPlaque(); last = now; requestAnimationFrame(frame); drawGateBanner(null); drawGateMarksCard(null); drawGateDamageChart(null); drawGateGround(null); travelView?.exit('video', true); return; }
+    if (frameHeld()) { frameAbort(); hideWorldPlaque(); last = now; requestAnimationFrame(frame); drawGateBanner(null); drawGateMarksCard(null); drawGateDamageChart(null); drawGateGround(null); travelView?.exit('video', true); if (spyglass.up) lowerGlass(); return; }   // AUDIT CAPTAIN'S SEA S15: the glass's DOM never frozen over the video
     const dt = Math.min(0.1, (now - last) / 1000);
     // AUDIT 28 W7 + F-C1/F-C2 (self-audit 3): PlayerMouseLook.Update's
     // three answers - paused (:241-244) returns before ApplyLook and the
@@ -32013,7 +32782,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       // moving mouse is not a case a player reaches on purpose.
       const kb = keyboardLook(keys);
       if (helmTurnKeys()) kb.x = 0;   // HELM-KEYS: at a helm the turn keys turn the ship, never the view
-      if (kb.x || kb.y) lookFilter.add(kb.x * keyboardLookRate() * dt, kb.y * keyboardLookRate() * dt * lookInvert());
+      if (kb.x || kb.y) lookFilter.add(kb.x * keyboardLookRate() * dt * glassLookScale(spyglass.lens), kb.y * keyboardLookRate() * dt * lookInvert() * glassLookScale(spyglass.lens));   // AUDIT CAPTAIN'S SEA S13: slowed by the glass, as the mouse's
       if (pressed(latch.edge, keys, 'CenterView')) lookFilter.centerPitch(cam);   // KB1: Home levels the view (classic Daggerfall's centre key; DFU binds it and reads it nowhere)
       _lockChest = lockOn.tick(dt, cam, cam.pos, lookFilter);   // TI1: the lock pays its facing into the same filter, owed to the NEXT tick like a look
     }
@@ -33340,7 +34109,8 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // height out of its denominator here, and the sky, which draws
     // into the same rect, takes the same number.
     const worldAspect = largeHudWorldAspect(canvas.clientWidth, canvas.clientHeight);
-    const proj = mirrorProjectionX(perspective(fieldOfView() + climbFeel.fovRad(), worldAspect, 0.2, 6000));   // HANDEDNESS (mat4's law)   // CLIMB4: a leap's kick
+    spyglassStep(dt);   // SPYGLASS: the glass raised or lowered, its lens eased - before the lens is taken
+    const proj = mirrorProjectionX(perspective(glassFov(fieldOfView() + climbFeel.fovRad(), spyglass.lens), worldAspect, 0.2, 6000));   // HANDEDNESS (mat4's law)   // CLIMB4: a leap's kick   // SPYGLASS: the glass's lens
     // MW-D25: the eye goes through the Morrowind camera machine - in
     // first person it comes back untouched (camera.cpp:165-169), in
     // third it is the reference's focal-and-pull-back with this host's
@@ -33583,11 +34353,16 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // EV5: the moons light the night - the masser as a second key, the
     // secunda folded into the ambient. null by day and under classic.
     const moonNow = sky.moonlight();
-    renderer.setMoonlight(moonNow);
     // SD19: the land's light leaning to brass near a standing Hollow (sdBrassLight, both lights)
+    // ETHER-LIGHT (world/ethericSea.js etherLight): and cold and violet past the Veil, both lights
+    const etherPx = etherSea ? playerTravelPixel() : null;
+    const etherAirW = etherPx && inEther(etherPx.x, etherPx.y) ? 1 : 0;
+    // AUDIT CAPTAIN'S SEA G14: and the third, Masser's key, leaned as the sun's (it lit land, sea and hulls past the Veil in
+    // the Bay's colour) - the moon as it is under no lean, nothing made
+    renderer.setMoonlight(moonNow && etherAirW ? { scale: moonNow.scale, dir: moonNow.dir, color: etherLight(moonNow.color, etherAirW, ETHER_KEY_TINT) } : moonNow);
     renderer.setLighting(
-      sdBrassLight(sunbabyLight(dreadLight(withMoonAmbient(exteriorAmbient(minute, getFloat('Enhancements', 'NightAmbientLightScale', 0, 1), wxNow.sun), moonNow), skyDreadW), sunbabyW, sunbabyFace.evil), sdAirW), sunScale(minute) * wxNow.sun * flash * sky.sunFactor() * (1 - DREAD_KEY_DIM * skyDreadW),   // EVENT1: the land under the dread's light; SUNBABY1: lifted toward noon's under the sun baby (SUNBABY2: reddened under its wrath)   // ES1d: the cloud in front of the sun takes the KEY light (never the ambient - the sky still lights the ground); WX2: the scale is the front's
-      sdBrassLight(sunbabyKey(dreadLight(SUN_RIG_COLOR, skyDreadW), sunbabyW, sunbabyFace.evil), sdAirW));   // SUNBABY2: the key reddened under the wrath; SD19: brass near a Hollow
+      etherLight(sdBrassLight(sunbabyLight(dreadLight(withMoonAmbient(exteriorAmbient(minute, getFloat('Enhancements', 'NightAmbientLightScale', 0, 1), wxNow.sun), moonNow), skyDreadW), sunbabyW, sunbabyFace.evil), sdAirW), etherAirW), sunScale(minute) * wxNow.sun * flash * sky.sunFactor() * (1 - DREAD_KEY_DIM * skyDreadW),   // EVENT1: the land under the dread's light; SUNBABY1: lifted toward noon's under the sun baby (SUNBABY2: reddened under its wrath)   // ES1d: the cloud in front of the sun takes the KEY light (never the ambient - the sky still lights the ground); WX2: the scale is the front's
+      etherLight(sdBrassLight(sunbabyKey(dreadLight(SUN_RIG_COLOR, skyDreadW), sunbabyW, sunbabyFace.evil), sdAirW), etherAirW, ETHER_KEY_TINT));   // SUNBABY2: the key reddened under the wrath; SD19: brass near a Hollow
     // DW-C: the distance fog's own "under" (UnderwaterDistanceFog.TryGetUnderwaterPresentation) - the surfaces'
     // _DeepWatersUnderwater and UnderwaterPresentationEffects' light suppression read it too, so it is taken
     // here, before the lights, from this frame's camera and capsule
@@ -33655,6 +34430,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     try { quays?.frame(); } catch (e) { console.warn('[quays] pool', e?.message ?? e); }   // QUAYS: the harbours' quays stood or taken down, before the lights (their lanterns) and the world pass
     try { lefay?.frame(); } catch (e) { console.warn('[lefay] monument', e?.message ?? e); }   // LEFAY1: the monument stood where Gothway Garden is built, its flowers in flight and laid
     try { merchantYards?.frame(); } catch (e) { console.warn('[yards] the yards', e?.message ?? e); }   // MERCHANT-YARDS: each town's Stable and Wagon Yard stood where it is built
+    portFrame();   // SHIPYARDS: each port town's shipyard and lighthouse stood where it is built, before the lights (its lamp)
     // Lanterns on 17:00-08:00, flickering verbatim; pixel-local lights
     // placed under the current compensation, nearest 16 to the camera.
     // WOD2: the mod's lights burn at every hour and each carries its own
@@ -33668,6 +34444,9 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // QUAYS: the quays' lanterns, in the lanterns' hours, scene lights beside the boats' in the town lanterns' colour -
     // AUDIT HOLDINGS Q3: never the player's extras, which are never cut and pushed the street's nearest out of the cap
     if (lightsOnAt(minute)) for (const l of quays?.lights() ?? []) csaLit.push({ x: l.x, y: l.y, z: l.z, range: l.range, color: CITY_LIGHT_COLOR_F32 });
+    // SHIPYARDS: the lighthouses' lamps and the shipyards' office lanterns, in the lanterns' hours (the pool's own `lit`) -
+    // scene lights beside the quays', in the town lanterns' colour
+    if (portHost && lightsOnAt(minute)) portLightsInto(csaLit);
     const frameLanterns = () => {   // PERF-V8
     if (lightsOnAt(minute)) {
       worldLightAnimator.tick(dt);
@@ -33750,6 +34529,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     yards?.draw(renderer);   // HOME-YARD: the pieces outside the town's homes, and the one being placed
     lefay?.draw(renderer);   // LEFAY1: the monument to Julian LeFay
     merchantYards?.draw(renderer, yardCull);   // MERCHANT-YARDS: the yards' timber and the Wagon Yards' wagons on show; PERF-YARD (AUDIT 15): the street's view test
+    portHost?.draw(renderer, yardCull);   // SHIPYARDS: the shipyards' timber and the lighthouses' stone, by the street's view test as the yards are
     if (_mode() === 'exterior') wardenShows?.draw(renderer);   // WARDEN1: a wagon on a guard's shoulders, or in the air
     if (csaOn()) csa.draw(renderer);   // CSA-B: the boats - the hulls, the classic models their helpers stand, the baked sails
     // SERPENT1: the sea serpent's body with the opaque world, before the sea's top (its humps break it, the rest shows
@@ -33965,6 +34745,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     }
     };
     framePixelWalk();
+    portBodies(mwv.eye, dt);   // SHIPYARDS: the shipmasters, crewmasters, sailors, shipwrights and lightkeepers, standing people as the yards' keepers are
     if (merchantYards && _mode() === 'exterior') merchantYards.offerBodies(offerStreetPerson, mwv.eye, townTalk.overlayActive ? 0 : dt);   // AUDIT MW-NPC II P1: the Stables' and the Wagon Yards' keepers, standing people (their flats ride livePersonBatches)
     streetPeople.draw(canvas, proj, view, mwv.eye, townTalk.overlayActive ? 0 : dt);   // MWNPC8b: the standing people's bodies - before the flats draw
     siegeNpcs?.drawBodies(canvas, proj, view, mwv.eye, dt);   // MWNPC10: and the siege's fighters' (their batches ride the flats)
@@ -34016,7 +34797,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // gl_FragDepth, which ran its shader before the test for every pixel
     // the streamed world covered). Same picture, a third to a half fewer
     // sky fragments on an open road.
-    sky.draw(tvf ? tvf.yaw : cam.yaw, tvf ? tvf.pitch : cam.pitch + climbFeel.pitch(), fieldOfView() + climbFeel.fovRad(), worldAspect, renderer.worldViewportPx ?? [0, 0, renderer.gl.drawingBufferWidth, renderer.gl.drawingBufferHeight]);   // VC3: the clouds' map restores this rect
+    sky.draw(tvf ? tvf.yaw : cam.yaw, tvf ? tvf.pitch : cam.pitch + climbFeel.pitch(), glassFov(fieldOfView() + climbFeel.fovRad(), spyglass.lens), worldAspect, renderer.worldViewportPx ?? [0, 0, renderer.gl.drawingBufferWidth, renderer.gl.drawingBufferHeight]);   // VC3: the clouds' map restores this rect
     meterFor(renderer.gl)?.markCpu('ring');   // PERF-ZONE2: the far province ring (its rebuild and its hole) and the water, after the sky hands the frame back
     // EV8: the far province ring - the horizon's actual mountains,
     // drawn while the depth buffer is still the sky's (the streamed
@@ -34034,7 +34815,13 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
           climateAt: (x, y) => maps.getClimateIndex(x, y),
           baseX: state.current.x, baseY: state.current.y,
           relief: !!landform,   // LANDFORM1: the ring stands the massifs the streamed ground raises
-          byteAt: tamrielLand ? (x, y) => woods.getHeightMapValue(x, y) : null,   // TAMRIEL2: the continent past the map's edge, as the stream grows it
+          byteAt: tamrielLand || etherSea ? (x, y) => woods.getHeightMapValue(x, y) : null,   // TAMRIEL2: the continent past the map's edge, as the stream grows it (ETHER-SEA: and the Etheric Sea's isles)
+          pastOwn: tamrielLand ? null : inEtherLaw,   // AUDIT CAPTAIN'S SEA G6: the ground the reader answers past the map - its cliffs faded at their own pixels (the clamp's at the clamped)
+          // ETHER-SEA: the isles' own climates past the map - AUDIT CAPTAIN'S SEA G4/G9: the continent's wherever it stands (its
+          // tint never the sea's switch's), the sea's in its law, and else the Bay edge's clamped climate as ever (the read
+          // past the map answers -1 there, and the clamped mountains and deserts past the edge turned woodland green)
+          climatePast: tamrielLand ? (x, y) => maps.getClimateIndex(x, y)
+            : etherSea ? (x, y) => maps.getClimateIndex(...(inEtherLaw(x, y) ? [x, y] : [Math.max(0, Math.min(MAP_WIDTH - 1, x)), Math.max(0, Math.min(MAP_HEIGHT - 1, y))])) : null,
         }, state.current.x, state.current.y, state.terrainDistance);
       } else {
         farRing.punchHole(state.current.x, state.current.y, state.terrainDistance);
@@ -34051,7 +34838,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         // E5: the ring draws INTO the world pass's rect, so it takes
         // that pass's aspect - a horizon built on the full-canvas ratio
         // would step against the terrain in front of it under a docked bar.
-        fovY: fieldOfView() + climbFeel.fovRad(), aspect: worldAspect,   // CLIMB4: the lens the world took
+        fovY: glassFov(fieldOfView() + climbFeel.fovRad(), spyglass.lens), aspect: worldAspect,   // CLIMB4: the lens the world took (SPYGLASS: the glass's)
         // FAR-SEA1: the ring's sea under the water's sky; AUDIT FAR-SEA1: the eye and the world's lens it counts the sea
         // inside the hole from (P1: only the cells that can be past the far plane, none with the eye under the sea),
         // and the water's own body - the camera climate's tiles and Iliac Puddle No More's tint over its open sea (L1)
@@ -34315,6 +35102,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     if (sigilBroker && _mode() === 'exterior') livePersonBatches.push(...sigilBroker.batches());   // SET7: the Broker on the flats' axis, as a foe stands
     if (lefay && _mode() === 'exterior') livePersonBatches.push(...lefay.batches());   // LEFAY1: the flowers laid at the monument, and the ones in flight
     if (merchantYards && _mode() === 'exterior') livePersonBatches.push(...merchantYards.batches());   // MERCHANT-YARDS: the keepers and the Stables' horses on the flats' axis
+    portBatchesInto(livePersonBatches);   // SHIPYARDS: the port's people on the flats' axis
     if (wardenShows && _mode() === 'exterior') livePersonBatches.push(...wardenShows.batches());   // WARDEN1: the guard, and the horses it carries
     if (riteHost && _mode() === 'exterior') { riteHost.tick(dt); livePersonBatches.push(...riteHost.batches()); }   // WB12d: the braziers' flames and the faithful's fire
     // HCC: the horse billboards on the flats' axis (the runtime ticked above, hccTick - AUDIT HCC H1)
@@ -34347,6 +35135,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     csaDrawParticlesBlended();   // CSA-F: the oars' and rudders' drops (the Transparent queue)
     if (naval?.enabled) navalRender.draw(naval.drawFrame());   // NAV-B: the smoke, the spray, the balls in flight and the aim's arcs and zone, over the sea's top
     if (_serpentDraw) { try { serpentRenderer()?.drawSea(_serpentDraw); } catch (e) { console.warn('[serpent] marks', e?.message ?? e); } }   // SERPENT1: its telegraphs, the maelstrom and the venom, over the sea's top
+    portGlows();   // SHIPYARDS: the lighthouses' lamps and their turning beams, added light over the sea's top
     navalHud(dt);   // NAV-F: the helm's readout
     // DW-C: under the distance fog the air's own effects - the sand, the wisps, the bolts, none of which writes a depth
     // the mod's post effect would fog it by, so all of which it closes to the fog colour - are the fog's. PUDDLE-RAIN

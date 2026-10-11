@@ -415,14 +415,22 @@ export const TUTORIALS = Object.freeze([
   page({
     id: 'ships', group: 'sea', title: 'Sailing', trigger: 'When you first board a boat.',
     body: [
-      'General stores and pawn shops sell boats as parts or as a deed. Use the parts in water, or the deed near a port.',
+      'Shipyards in port towns sell ships. A rowboat comes as parts: use them by any water. A bigger ship is laid up where you bought her: bring her round from the shipyard\'s Your fleet page.',
       'At the helm, {BoatToggleSail} raises or lowers the sail and {BoatSailUp} and {BoatSailDown} set how much. {BoatDisembark} leaves the helm.',
     ],
   }),
   page({
-    id: 'shipyard', group: 'sea', title: 'Shipwrights', trigger: 'When you first visit a shipwright.',
+    id: 'shipyard', group: 'sea', title: 'Shipyards', trigger: 'When you first visit a shipyard or a shipwright.',
     body: [
-      'Take the helm in a port town\'s harbour to reach its shipwright, who can repair your ship.',
+      'Port towns have a shipyard by the water. The shipmaster sells ships and buys yours, and repairs and refits any ship of yours in port.',
+      'Its crew hall has new sailors to hire each day. You can also reach the shipwright from the helm in a port\'s harbour.',
+    ],
+  }),
+  page({
+    id: 'lighthouse', group: 'sea', title: 'Lighthouses', trigger: 'When you first climb a lighthouse.',
+    body: [
+      'Port towns have a lighthouse, lit from dusk to dawn. Talk to the keeper or use the tower\'s door to climb to the gallery.',
+      'Use the hatch on the gallery to climb back down.',
     ],
   }),
   page({

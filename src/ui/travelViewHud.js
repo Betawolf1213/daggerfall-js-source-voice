@@ -846,7 +846,44 @@ export const TV_HIDEOUT_R = 11;
  *  Yard's wheel (the carriage towns' own, a little smaller: OW-HUBS' wheelPath), the Stable's horseshoe with its opening
  *  up for luck and its nail holes - in `color` on the marks' black edge, about (x, y). */
 export const TV_YARD_R = 4.5;
+/** SHIPYARDS-FOUND (2026-10-11, Mac: "Everything should show on the map/overworld"): a port's places by their own
+ *  marks - the shipyard's anchor (its signboard's, world/portArt.js), the lighthouse's tower under its light, the docks'
+ *  bollard on its quay - in `color` on the marks' black edge, about (x, y). Each ink's two strokes, black then colour. */
+const inked = (g, color, width) => {
+  g.lineCap = 'round';
+  g.lineWidth = width + 2; g.strokeStyle = '#000'; g.stroke();
+  g.lineWidth = width; g.strokeStyle = color; g.stroke();
+  g.lineCap = 'butt';
+};
+export function portGlyph(g, x, y, kind, color) {
+  const R = TV_YARD_R;
+  if (kind === 'lighthouse') {
+    g.beginPath();   // the tower, narrowing up, and its lamp's light over it
+    g.moveTo(x - 3, y + R + 1); g.lineTo(x - 1.6, y - R + 1); g.lineTo(x + 1.6, y - R + 1); g.lineTo(x + 3, y + R + 1); g.closePath();
+    const fill = g.fillStyle;
+    g.fillStyle = color; g.lineWidth = 1; g.strokeStyle = '#000'; g.fill(); g.stroke();
+    g.beginPath(); g.arc(x, y - R - 1.5, 1.8, 0, Math.PI * 2); g.fillStyle = '#ffe9a8'; g.fill(); g.stroke();
+    g.fillStyle = fill;
+    return;
+  }
+  if (kind === 'docks') {
+    g.beginPath();   // the bollard: its post and its cap
+    g.moveTo(x - R, y + R - 0.5); g.lineTo(x + R, y + R - 0.5);   // the quay's edge
+    g.moveTo(x, y + R - 0.5); g.lineTo(x, y - R + 2);
+    g.moveTo(x - 2.4, y - R + 1.5); g.lineTo(x + 2.4, y - R + 1.5);
+    inked(g, color, 2);
+    return;
+  }
+  g.beginPath();   // the anchor: its ring, its shank and stock, its arms and flukes
+  g.arc(x, y - R + 0.5, 1.4, 0, Math.PI * 2);
+  g.moveTo(x, y - R + 2); g.lineTo(x, y + R);
+  g.moveTo(x - 2.6, y - R + 3.2); g.lineTo(x + 2.6, y - R + 3.2);
+  g.moveTo(x - R, y + 0.6); g.quadraticCurveTo(x - R + 0.4, y + R, x, y + R);
+  g.quadraticCurveTo(x + R - 0.4, y + R, x + R, y + 0.6);
+  inked(g, color, 1.5);
+}
 export function yardGlyph(g, x, y, kind, color) {
+  if (kind === 'shipyard' || kind === 'lighthouse' || kind === 'docks') { portGlyph(g, x, y, kind, color); return; }   // SHIPYARDS-FOUND: a port's three
   if (kind === 'transport') {
     wheelPath(g, x, y, TV_YARD_R);
     g.lineWidth = 3; g.strokeStyle = '#000'; g.stroke();
@@ -863,6 +900,12 @@ export function yardGlyph(g, x, y, kind, color) {
   for (const a of [0.35, 0.95, 1.55, 2.2, 2.8]) g.fillRect(x + Math.cos(a) * TV_YARD_R - 0.5, y - 1 + Math.sin(a) * TV_YARD_R - 0.5, 1, 1);   // the nail holes
   g.fillStyle = fill;
 }
+/** YARDS-FOUND: a yard mark's own kind - its kind's second word (`yard stable`, `yard transport`; SHIPYARDS-FOUND: `yard
+ *  shipyard`, `yard lighthouse`, `yard docks`), the Stable's where it names none the glyph knows. */
+export const yardMarkKind = (m) => {
+  const k = String(m?.kind ?? '').split(' ')[1] ?? '';
+  return k === 'transport' || k === 'shipyard' || k === 'lighthouse' || k === 'docks' ? k : 'stable';
+};
 /** OWS1: a mark at sea, by its kind. */
 export const isShipKind = (m) => /\bship\b/.test(m.kind ?? '');
 /** A mark's look, by its kind's first word. */
@@ -1168,7 +1211,7 @@ function drawMarks(marks, vw, vh, dpr, feet = null) {
     } else if (look === 'camp') {   // OW6: a camp - a tent's peak, not a band's dot
       g.beginPath(); g.moveTo(x, y - 6); g.lineTo(x + 6, y + 5); g.lineTo(x - 6, y + 5); g.closePath(); g.fill(); g.stroke();
     } else if (look === 'yard') {   // YARDS-FOUND: a town's yard by its signboard's emblem - the Wagon Yard's wheel, the Stable's horseshoe (its opening up)
-      yardGlyph(g, x, y, /\btransport\b/.test(m.kind ?? '') ? 'transport' : 'stable', C.brass);
+      yardGlyph(g, x, y, yardMarkKind(m), C.brass);   // SHIPYARDS-FOUND: and a port's shipyard, lighthouse and docks by theirs
     } else if ((look === 'place' || look === 'far') && m.hub) {   // OW-HUBS: a carriage town - its wheel, brass on a dark edge
       wheelPath(g, x, y, TV_WHEEL_R);
       g.lineWidth = 3; g.strokeStyle = '#000'; g.stroke();

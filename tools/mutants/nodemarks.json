@@ -11,11 +11,12 @@
   {
     "name": "NODE-MARKS-a-half-taken-patch-dropped",
     "file": "src/scenes/herbHost.js",
-    "old": "  const gone = (p) => book.taken(p.key, 'herbs') && book.taken(p.key, 'food');",
-    "new": "  const gone = (p) => book.taken(p.key, 'herbs') || book.taken(p.key, 'food');",
+    "old": "  const gone = (p) => goneIn(book, p.key, 'herbs') && goneIn(book, p.key, 'food');",
+    "new": "  const gone = (p) => goneIn(book, p.key, 'herbs') || goneIn(book, p.key, 'food');",
     "tests": [
       "test/nodemarks.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "NODE-MARKS-the-lift-kept",
@@ -120,11 +121,12 @@
   {
     "name": "NODE-MARKS-a-felled-tree-marked",
     "file": "src/scenes/treeHost.js",
-    "old": "    mark: (n) => (book.taken(n.key, 'logs') ? null : TREE_MARK),",
+    "old": "    mark: (n) => (goneIn(book, n.key, 'logs') ? null : TREE_MARK),",
     "new": "    mark: () => TREE_MARK,",
     "tests": [
       "test/nodemarks.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "NODE-MARKS-a-school-dropped",
@@ -138,11 +140,12 @@
   {
     "name": "NODE-MARKS-a-body-with-its-hide-taken-marked",
     "file": "src/scenes/huntHost.js",
-    "old": "    mark: (b) => (book.taken(b.key, 'hide') ? null : BODY_MARK),",
+    "old": "    mark: (b) => (goneIn(book, b.key, 'hide') ? null : BODY_MARK),",
     "new": "    mark: () => BODY_MARK,",
     "tests": [
       "test/nodemarks.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "NODE-MARKS-the-order-kept",

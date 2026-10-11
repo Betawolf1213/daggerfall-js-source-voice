@@ -189,22 +189,24 @@
   {
     "name": "SILVER-FINDS-switch-before-the-line",
     "file": "server-account/src/marks.js",
-    "old": "  if (accountKind(player) !== 'linked') return null;   // a guest is never struck: no line to look for",
-    "new": "  if (!strikesFor(player, env)) return null;",
+    "old": "  if (accountKind(player) !== 'linked') return [];   // a guest is never struck: no line to look for",
+    "new": "  if (!strikesFor(player, env)) return [];",
     "why": "a find made, answered \"none\" after the switch shut (AUDIT 28 M2)",
     "tests": [
       "test/silverfinds_service.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "SILVER-FINDS-days-crossed-in-answer",
     "file": "server-account/src/marks.js",
-    "old": "today: { found: line.kind === 'gather' ? today.gathered : today.found,",
-    "new": "today: { found: line.kind === 'gather' ? today.found : today.gathered,",
+    "old": "today: { found: Number((line.kind === 'gather' ? f?.gathered : f?.found) ?? 0),",
+    "new": "today: { found: Number((line.kind === 'gather' ? f?.found : f?.gathered) ?? 0),",
     "why": "a harvest's answer says the loot's day",
     "tests": [
       "test/silverfinds_service.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "SILVER-FINDS-gather-max-the-loots",
@@ -329,32 +331,35 @@
   {
     "name": "SILVER-FINDS-harvest-find-unsaid",
     "file": "server-account/src/professions.js",
-    "old": "  return m ? { marks: m } : {};",
-    "new": "  return {};",
+    "old": "ok: true, ...extra, ...(marks ? { marks } : {}),",
+    "new": "ok: true, ...extra,",
     "why": "a harvest's find never said",
     "tests": [
       "test/silverfinds_service.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "SILVER-FINDS-harvest-repeat-unsaid",
     "file": "server-account/src/professions.js",
-    "old": "if (prior) return harvestAnswer(db, prior, nowS, { repeat: true, ...(await gatherMarksOf(ctx, player, env, rid)) });",
-    "new": "if (prior) return harvestAnswer(db, prior, nowS, { repeat: true });",
+    "old": "  const q = answerReads(db, player, env, specOf(row), row.rid, nowS);",
+    "new": "  const q = answerReads(db, player, env, specOf(row), row.rid, nowS).filter(([n]) => !n.startsWith('marks'));",
     "why": "a harvest asked again says no find",
     "tests": [
       "test/silverfinds_service.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "SILVER-FINDS-harvest-made-unsaid",
     "file": "server-account/src/professions.js",
-    "old": "{ ...(levy > 0 ? { levy: { qty: levy, key: levyKey } } : {}), ...(await gatherMarksOf(ctx, player, env, rid)) }, rank);",
-    "new": "{ ...(levy > 0 ? { levy: { qty: levy, key: levyKey } } : {}) }, rank);",
+    "old": "material: key2, gem, extra, carry }, rid, nowS, { marks: !!find });",
+    "new": "material: key2, gem, extra, carry }, rid, nowS, { marks: false });",
     "why": "a harvest's first answer says no find",
     "tests": [
       "test/silverfinds_service.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched. AUDIT GATHER-SPEED (PIN MOVED): re-aimed by content."
   },
   {
     "name": "SILVER-FINDS-route-unlisted",

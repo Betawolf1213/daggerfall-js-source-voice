@@ -84,6 +84,8 @@ import './livingWorld/keepsake.js';
 import './legacy/heirloom.js';
 import './comeSailAwayItems.js';
 import './naval/navalStores.js';
+import './naval/tradeGoods.js';   // CAPT-TRADE: the exchange's goods
+import './naval/treasureCharts.js';   // CAPT-CHARTS: the treasure chart
 
 /** The law's version - a finding names the law that found it, so a law loosened later can be asked again. TECH1 moved it
  *  to 2: a weapon's technique line (systems/lootRarity.js AFFIX_KINDS.technique) is lawful from it on, so a finding a law

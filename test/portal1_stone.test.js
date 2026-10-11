@@ -18,6 +18,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as PS from '../src/systems/portalStone.js';
+import { inEther, veilhaven } from '../src/world/ethericSea.js';   // AUDIT CAPTAIN'S SEA P6: the Veil's refusal, the world's own
 import { PORTAL_STONE_TEMPLATE, PORTAL_STONE_TEMPLATES, PORTAL_STONE, PORTAL_STONE_SHARDS, portalStones, isPortalStone, welkyndShards, WELKYND_SHARD, WELKYND_SHARD_TEMPLATE, isWelkyndShard } from '../src/systems/gateSpoils.js';
 import { BOUND_TEMPLATES } from '../src/net/realmTradeLaw.js';
 import { isBound } from '../src/systems/itemBound.js';
@@ -390,6 +391,10 @@ test('PORTAL1 the door, the pick and the arrival, as world.js runs them: every r
   scope.portalGates = createPortalGates({ renderer: fakeRenderer(), now: () => 0, toScene: f.toScene, toWire: f.toWire });
   scope.portalHoldNow = mount(scope, cut(w, 'const portalHoldNow = () => portalHold({', '\n  });\n'), 'portalHoldNow');
   scope.portalDoorRefusal = mount(scope, cut(w, 'const portalDoorRefusal = () => {', '\n  };\n'), 'portalDoorRefusal');
+  // PIN MOVED (AUDIT CAPTAIN'S SEA P6): the door and the pick ask the Veil's refusal too - the world's own, mounted
+  Object.assign(scope, { etherSea: true, inEther, here: { x: 0, y: 0 } });
+  scope.playerTravelPixel = () => scope.here;
+  scope.veilRefused = mount(scope, cut(w, 'const veilRefused = (to = null) => {', '\n  };\n'), 'veilRefused');
   scope.standPortal = mount(scope, cut(w, 'function standPortal(pick, item, live) {', '\n  }\n'), 'standPortal');
   const openPortalStone = mount(scope, cut(w, 'function openPortalStone(item, list) {', '\n  }\n'), 'openPortalStone');
   const portalArrive = mount(scope, cut(w, 'function portalArrive(g) {', '\n  }\n'), 'portalArrive');
@@ -413,6 +418,7 @@ test('PORTAL1 the door, the pick and the arrival, as world.js runs them: every r
   door({ player: { isPlayerSwimming: true, feetAt: () => [0, 0, 0] }, boat: {} }, PS.PORTAL_TEXT.water);
   door({ boat: {} }, PS.PORTAL_TEXT.aboard);
   door({ isOnShip: () => true }, PS.PORTAL_TEXT.aboard);
+  door({ here: { x: veilhaven().px, y: veilhaven().py }, travelMapDoorReady: () => false }, 'Nothing of the Bay\'s magic reaches across the Veil - only the crossing does.');   // AUDIT CAPTAIN'S SEA P6: past the Veil its map's every place is across it - before the map's own
   door({ travelMapDoorReady: () => false }, PS.PORTAL_TEXT.noMap);
   playerEntity.health = 0; door({}, PS.PORTAL_HOLD_TEXT.busy); playerEntity.health = 10;
   assert.equal(built.length, 0, 'no map for a refusal');

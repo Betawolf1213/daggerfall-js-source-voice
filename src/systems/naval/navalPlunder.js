@@ -6,8 +6,8 @@
 // A HOLD IS LOTS. A ship carries one lot for each tier of its class's cargo (navalShips.js `cargo`, 1-4), each lot a
 // draw of DFU's treasure tables under a key that fits her trade (HOLD_KEYS): a pirate's plunder is gold, jewels and
 // arms ('S', 'E', 'Q'), a merchantman's cloth, spices and books ('Q', 'N', 'P', 'J'), a navy's its armoury ('T', 'F',
-// 'J'). A flagship's last lot is the captain's strongbox - 'J', whatever her trade. The keys are drawn from the
-// ship's seed, so the hold is the same whoever takes her.
+// 'J'). A flagship's last lot is the captain's strongbox - 'J', whatever her trade; a legend's last two (ETHER-LEGENDS).
+// The keys are drawn from the ship's seed, so the hold is the same whoever takes her.
 //
 // THE CAPTOR'S CHOICE is Black Flag's, in Daggerfall's words - one of:
 //   Repair   - her timber and cordage to your own ship: REPAIR_SHARE of your hull and sails made good
@@ -39,6 +39,11 @@ export const HOLD_KEYS = Object.freeze({
 });
 /** The flagship's strongbox. */
 export const STRONGBOX_KEY = 'J';
+/** ETHER-LEGENDS (AUDIT CAPTAIN'S SEA D15): a legend's last lots are her captain's strongboxes - two to a flagship's one,
+ *  the richest hold at sea (a flagship's beat hers). */
+export const LEGEND_STRONGBOXES = 2;
+/** How many of a ship's last lots are strongboxes: a legend's LEGEND_STRONGBOXES, a flagship's one, else none. */
+export const strongboxesOf = (shipClass) => (shipClass?.legend ? LEGEND_STRONGBOXES : shipClass?.flagship ? 1 : 0);
 /** AUDIT NAV1 (online #15): every key a lot can be drawn under, once - a cask says its lot on the wire by its row here. */
 export const LOT_KEYS = Object.freeze([...new Set([...Object.values(HOLD_KEYS).flat(), STRONGBOX_KEY])]);
 /** The captor's choices (AUDIT NAV1 B13: her papers the fourth). @type {readonly ('repair'|'powder'|'press'|'papers')[]} */
@@ -79,7 +84,7 @@ export function holdKeys(shipClass, seed) {
   const lots = Math.max(1, Math.min(4, shipClass.cargo | 0));
   const out = [];
   for (let i = 0; i < lots; i++) out.push(keys[Math.floor(rng() * keys.length) % keys.length]);
-  if (shipClass.flagship) out[out.length - 1] = STRONGBOX_KEY;
+  for (let i = Math.max(0, lots - strongboxesOf(shipClass)); i < lots; i++) out[i] = STRONGBOX_KEY;
   return out;
 }
 
@@ -114,9 +119,9 @@ export function flotsamKeys(shipClass, seed) {
  */
 export function drawHold(shipClass, seed, generate) {
   const items = [];
-  const keys = holdKeys(shipClass, seed);
+  const keys = holdKeys(shipClass, seed), boxes = strongboxesOf(shipClass);
   keys.forEach((key, i) => {
-    const strongbox = !!shipClass.flagship && i === keys.length - 1;
+    const strongbox = i >= keys.length - boxes;
     for (const it of generate(key, holdTier(shipClass, strongbox)) ?? []) items.push(it);
   });
   return items;

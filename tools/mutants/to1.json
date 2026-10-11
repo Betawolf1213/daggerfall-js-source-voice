@@ -855,8 +855,8 @@
   {
     "name": "to-online-the-follow-key-stands-down-again",
     "file": "src/scenes/world.js",
-    "old": "  function travelFollowPressed() { return pressed(latch.edge, keys, 'FollowPaths'); }",
-    "new": "  function travelFollowPressed() { if (sharedClockOn()) return false; return pressed(latch.edge, keys, 'FollowPaths'); }",
+    "old": "  function travelFollowPressed() { return !naval?.aboard?.() && pressed(latch.edge, keys, 'FollowPaths'); }",
+    "new": "  function travelFollowPressed() { if (sharedClockOn()) return false; return !naval?.aboard?.() && pressed(latch.edge, keys, 'FollowPaths'); }",
     "tests": [
       "test/to1_travelOptions.test.js"
     ]

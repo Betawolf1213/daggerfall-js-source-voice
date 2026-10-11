@@ -42,7 +42,9 @@ test('FIX-F: the keyboard look reads the four turn/look actions off the registry
   for (const h of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeon.js', 'src/scenes/interior.js']) {
     // HELM-KEYS: the streaming world's helm takes the turn keys for the rudder (inputActions.js HELM_RUDDER_ACTIONS) - the
     // one line between the read and the feed, and only there
-    assert.match(read(h), /else lookFilter\.tick\(dt, cam\);\s*\n(?:\s*\/\/[^\n]*\n)*\s*const kb = keyboardLook\(keys\);\s*\n(?:\s*if \(helmTurnKeys\(\)\) kb\.x = 0;[^\n]*\n)?\s*if \(kb\.x \|\| kb\.y\) lookFilter\.add\(kb\.x \* keyboardLookRate\(\) \* dt, kb\.y \* keyboardLookRate\(\) \* dt \* lookInvert\(\)\);/, `${h}: the keyboard look feeds the same filter the mouse does, every frame, owed to the next tick`);
+    // PIN MOVED (AUDIT CAPTAIN'S SEA S13): the streaming world's slowed by the captain's glass, as its mouse look is
+    const glass = h === 'src/scenes/world.js' ? String.raw` \* glassLookScale\(spyglass\.lens\)` : '';
+    assert.match(read(h), new RegExp(String.raw`else lookFilter\.tick\(dt, cam\);\s*\n(?:\s*\/\/[^\n]*\n)*\s*const kb = keyboardLook\(keys\);\s*\n(?:\s*if \(helmTurnKeys\(\)\) kb\.x = 0;[^\n]*\n)?\s*if \(kb\.x \|\| kb\.y\) lookFilter\.add\(kb\.x \* keyboardLookRate\(\) \* dt${glass}, kb\.y \* keyboardLookRate\(\) \* dt \* lookInvert\(\)${glass}\);`), `${h}: the keyboard look feeds the same filter the mouse does, every frame, owed to the next tick`);
     assert.equal(/if \(helmTurnKeys\(\)\) kb\.x = 0;/.test(read(h)), h === 'src/scenes/world.js', `${h}: the helm's rudder takes the turn keys in the streaming world alone`);
   }
 });

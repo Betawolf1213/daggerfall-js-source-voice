@@ -241,8 +241,10 @@ test('EV7: the worker shell imports only pure modules and spells the Worker URL 
   // ROADS 19: the cache joins - pure in the sense this list enforces: it
   // touches IndexedDB only through an injectable store that answers null
   // when the API is absent, and nothing else in its closure is a global.
-  assert.deepEqual(imports, ['../formats/woodsFile.js', './roadsCache.js', './roadsProducer.js', './tamrielFrame.js', './tamrielGround.js', './tamrielLand.js', './terrainGen.js'],
-    'the import graph is exactly the reader, the road cache, the producer, the kernel and the continent\'s ground (TAMRIEL2 - pure: the authored geography and the frame)');
+  // PIN MOVED (ETHER-SEA, bible/03-World/Etheric-Sea.md): and the Etheric Sea's ground (world/ethericSea.js - pure: it
+  // imports formats/ alone)
+  assert.deepEqual(imports, ['../formats/woodsFile.js', './ethericSea.js', './roadsCache.js', './roadsProducer.js', './tamrielFrame.js', './tamrielGround.js', './tamrielLand.js', './terrainGen.js'],
+    'the import graph is exactly the reader, the road cache, the producer, the kernel, the continent\'s ground (TAMRIEL2 - pure: the authored geography and the frame) and the Etheric Sea\'s');
   const code = shell.replace(/\/\/[^\n]*/g, '').replace(/\/\*[^]*?\*\//g, '');
   assert.ok(!/\bdocument\b/.test(code) && !/new Worker/.test(code), 'no DOM, no nested workers');
   assert.ok(shell.includes('globalThis.onmessage = (ev) =>'), 'the message loop is the module');

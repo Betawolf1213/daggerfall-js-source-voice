@@ -5,7 +5,8 @@
   "old": "DO UPDATE SET holder = ?1, until = ?2 WHERE until <= ?3`",
   "new": "DO UPDATE SET holder = ?1, until = ?2 WHERE until >= 0 OR ?3`",
   "tests": [
-   "test/seat1c_service.test.js"
+   "test/seat1c_service.test.js",
+   "test/d1load.test.js"
   ]
  },
  {
@@ -14,7 +15,8 @@
   "old": "if (!Number(took?.meta?.changes)) return { settled: 0, pending: true };",
   "new": "if (!Number(took?.meta?.changes)) return { settled: 0, pending: false };",
   "tests": [
-   "test/seat1c_service.test.js"
+   "test/seat1c_service.test.js",
+   "test/d1load.test.js"
   ]
  },
  {

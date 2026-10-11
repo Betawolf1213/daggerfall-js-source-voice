@@ -132,7 +132,10 @@ test('AUDIT CC-A5 (major): a hand home again stands on her deck - the last of th
   assert.equal(crew.ships()[0].life.standing(), 6);
   const w = rd('src/scenes/world.js');
   assert.match(w, /away: naval\?\.awayOf\?\.\(boat\) \?\? NO_HANDS_AWAY/, 'my boats always say who is away');
-  assert.match(rd('src/scenes/navalHost.js'), /if \(!boat\?\.uid \|\| !companions\.party\.length \|\| sailing\(\)\) return NO_HANDS_AWAY;/, 'none away: an empty set - and none while I sail (Mac: back on deck)');
+  // PIN MOVED (AUDIT CAPTAIN'S SEA C1): the rule moved into the host's one ashore set (`ashoreNames`), which the deck, her
+  // posts' worth, her answering hand and her card all read - the deck still answers the empty set, never null
+  assert.match(rd('src/scenes/navalHost.js'), /const ashoreNames = \(boat\) => \(boat\?\.uid && companions\.party\.length && !sailing\(\) \? companions\.awayOf\(boat\.uid\) : NO_HANDS_AWAY\);/, 'none away: an empty set - and none while I sail (Mac: back on deck)');
+  assert.match(rd('src/scenes/navalHost.js'), /const names = ashoreNames\(boat\);[^\n]*\n\s*if \(!names\.size\) return NO_HANDS_AWAY;/, 'the deck reads the one set');
 });
 
 test('AUDIT CC-A6 (major): the bars come down under a dungeon window - the overlay\'s early return draws them covered too', () => {
@@ -630,7 +633,7 @@ test('AUDIT CC-F6: the crew\'s small print - their lines by spirits and a third 
   const mid = createShipCrew({ seed: 9, record: { morale: 50, hands: [] } });
   for (let i = 0; i < 50; i++) assert.equal(mid.line(), null, 'steady spirits keep their own words');
   const card = crewCard({ morale: 60, hands: [{ name: 'A', role: 'Bosun', fights: 1, boardings: 2 }] });
-  assert.ok(card.some((l) => l === 'A, Bosun - 1 fight, 2 boardings'));
+  assert.ok(card.some((l) => l === 'A, Bosun - 1 fight, 2 boardings - Seasoned'));   // PIN MOVED (CAPT-CREW): a hand's rank of service ends his line from Seasoned up (1 + 2 x 2 = 5 service)
   assert.ok(crewCard({ morale: 60, hands: [] }).includes('No hands aboard.'));
   // a port stay resets the sea's clock and the sea the port's
   const t = createShipCrew({ seed: 9 });

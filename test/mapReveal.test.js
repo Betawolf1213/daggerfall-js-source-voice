@@ -111,7 +111,9 @@ test('T4: the townTalk seam is wired - the lazy %hnt gate, the mark, the entity 
   // the wiring is pinned at the source, the audit18 idiom.
   const src = readFileSync(new URL('../src/scenes/townTalk.js', import.meta.url), 'utf8');
   // MACRO-6: the laziness is the walk's own - the hint is a FUNCTION the walk calls per %hnt/%hnt2 occurrence
-  assert.match(src, /const hint = \(\) => \{\n\s+const h = buildingHint\(rolls, false\);/, 'the fork must be LAZY - a refusal record never rolls or marks');
+  // PIN MOVED (AUDIT SHIPYARDS L7-5): the fork asks whether a town map letters the place - the crew hall and the docks,
+  // which none does, take the way there (test/shipyards1_audit_port.test.js runs it)
+  assert.match(src, /const hint = \(\) => \{\n\s+const h = buildingHint\(rolls, !lettersOnMap\(building\.buildingKey\)\);/, 'the fork must be LAZY - a refusal record never rolls or marks');
   assert.doesNotMatch(src, /hint = randomVariant\(/, 'no eager roll left beside it');
   assert.match(src, /buildingHint\(rolls/, 'the reveal roll rides the seam-injectable rolls');
   assert.match(src, /if \(h\.reveal\) discoverBuilding\(/, 'the %loc mark side effect fires only on the reveal arm');

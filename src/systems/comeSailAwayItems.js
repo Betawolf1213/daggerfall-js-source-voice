@@ -10,15 +10,15 @@
 // THE CLASSES. Neither stacks (IsStackable false: the port's rule already answers false for a plain UselessItems2
 // row), each saves under its own class name (GetSaveData: the port's save copies the record whole), and each has a
 // UseItem - the runtime's (systems/comeSailAway.js useBoatParts / useBoatDeed), which the host hands the item-use
-// door. RegisterCustomItem's group puts both on DFU's shelves: `customItemsForGroup('UselessItems2')` answers them
-// while the mod is loaded for the game (systems/rriItems.js, the one home of GetCustomItemsForGroup), and the shelf's
-// second loop stocks them at the rarity's chance (DaggerfallLoot.cs:255-287).
+// door. RegisterCustomItem's group put both on DFU's shelves (the shelf's second loop stocked them at the rarity's
+// chance, DaggerfallLoot.cs:255-287) until SHIPYARDS (2026-10-11) took them off every shelf: a port town's shipyard
+// sells every hull now (systems/shipyards.js) - a DECLARED departure.
 //
 // AN ITEM'S UID. DFU gives every item one at construction (DaggerfallUnity.NextUID) and the mod keys two things off
 // it: the placed boat a deed stands for (GetPlacedBoatWithUID) and the cargo a packed boat carries (PackedCargoes).
 // The port's items carry none, so the mod's two are minted with one (`mintBoatItem`'s `uid`, the host's; the shelf's
 // two by `mintShelfBoatUids`) - DECLARED.
-import { registerCustomTemplates, setItemFields, mintCondition, registerCustomItemGroup } from './itemTemplates.js';   // CSA-H: RegisterCustomItem's group, on the shelves' one table (FORAGE1's one home)
+import { registerCustomTemplates, setItemFields, mintCondition } from './itemTemplates.js';   // CSA-H: the rows' one table; SHIPYARDS: RegisterCustomItem's group no longer stocks them (below)
 import { modSetting, modLatchedOn } from './modSettings.js';
 import { registerModEffectKind, WATER_WALKING_SILENT_KIND } from './effects.js';
 import { HULL_NAMES, HULL_PRICES, HULL_WEIGHTS, VARIANT_NAMES } from './comeSailAwayHulls.js';   // INT1: the leaf, not the boat's renderer
@@ -42,8 +42,11 @@ const csaLoaded = () => {
   if (latched !== undefined) return latched;
   try { return modSetting('come-sail-away', 'Enabled') !== false; } catch { return false; }
 };
-registerCustomItemGroup(BOAT_PARTS_TEMPLATE, BOAT_ITEM_GROUP, csaLoaded);
-registerCustomItemGroup(BOAT_DEED_TEMPLATE, BOAT_ITEM_GROUP, csaLoaded);
+// SHIPYARDS (2026-10-11, Mac: "Shipyard only"): THE TWO ROWS ON NO SHELF. A port town's shipyard sells every hull and
+// buys them back (systems/shipyards.js), so RegisterCustomItem's group no longer stocks them on a General Store's or a
+// Pawn Shop's shelf (the shelf's second loop, DaggerfallLoot.cs:255-287), and no shop buys them (systems/shopStock.js
+// shopBuysItem) - a DECLARED departure from the mod (Ledger A, SHIPYARDS), as MERCHANT-YARDS took DFU's horse and cart
+// off the General Store. AssignVariantsToShopItems stands, ported: a shelf stocked before (a save's) is still rewritten.
 // AUDIT PRE-MERGE 0928 S3: StartWaterwalking's WaterWalkingSilent is this mod's own effect - with the mod not loaded,
 // DFU's broker cannot instantiate it, and a save's restore skips it (systems/save.js restorePlayer)
 registerModEffectKind(WATER_WALKING_SILENT_KIND, csaLoaded);
@@ -79,6 +82,21 @@ export function mintDeed(hull, variant, uid, value) {
   deed.value = value;
   deed.name = boatItemName(deed.name, hull, variant);
   return deed;
+}
+
+/**
+ * SHIPYARDS (2026-10-11, the port's own - bible/03-World/Shipyards.md): A BOAT'S PARTS OF ONE HULL AND VARIANT, minted as
+ * the shelf's parts were (AssignVariantsToShopItems' parts arm: `hull * 10 + variant`, the hull's price and weight,
+ * "Parts of Rowboat 'I'") - the shipyard's Rowboat (systems/shipyards.js). A hull or variant the C#'s arrays would
+ * throw on throws here too.
+ */
+export function mintParts(hull, variant, uid) {
+  const parts = mintBoatItem(BOAT_PARTS_TEMPLATE, uid);
+  parts.message = boatItemMessage(hull, variant);
+  parts.value = at(HULL_PRICES, hull, 'hull');
+  parts.weightInKg = HULL_WEIGHTS[hull];
+  parts.name = boatItemName(parts.name, hull, variant);
+  return parts;
 }
 
 /**

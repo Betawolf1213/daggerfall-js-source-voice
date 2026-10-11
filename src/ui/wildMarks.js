@@ -39,7 +39,7 @@ export function wildMarkAlpha(distance) {
 }
 
 export const WILD_MARKS_CSS = `
-.dfwild-marks { position: fixed; inset: 0; pointer-events: none; z-index: 4; overflow: hidden; }
+.dfwild-marks { position: fixed; inset: 0; pointer-events: none; z-index: 3; overflow: hidden; }   /* AUDIT CAPTAIN'S SEA S17: a world label - under the glass (4) */
 .dfwild-mark { position: absolute; left: 0; top: 0; will-change: transform; }
 .dfwild-mark > span { display: block; font-family: ${PIXEL_STACK}; -webkit-font-smoothing: none; font-size: 26px; line-height: 1;
   color: rgb(243,239,44); letter-spacing: 0;

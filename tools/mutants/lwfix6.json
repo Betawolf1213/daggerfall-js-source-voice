@@ -2,8 +2,8 @@
   {
     "name": "LW-FIX6-owned-home",
     "file": "src/scenes/worldModes.js",
-    "old": "ctx.ownedRoom = !!(restore?.privateRoom || hit.sailingCabin || (building && (home !== null || isHouseOwned(",
-    "new": "ctx.ownedRoom = !!(restore?.privateRoom || hit.sailingCabin || (building && (isHouseOwned(",
+    "old": "ctx.ownedRoom = !!(restore?.privateRoom || hit.sailingCabin || (building && (home !== null || houseOwnedAt(",
+    "new": "ctx.ownedRoom = !!(restore?.privateRoom || hit.sailingCabin || (building && (houseOwnedAt(",
     "tests": [
       "test/lwfix6_rooms.test.js"
     ]
@@ -11,7 +11,7 @@
   {
     "name": "LW-FIX6-owned-house",
     "file": "src/scenes/worldModes.js",
-    "old": "(building && (home !== null || isHouseOwned(playerEntity.houses ?? [], building.regionIndex ?? 0, building.buildingKey))));",
+    "old": "(building && (home !== null || houseOwnedAt(building, building.buildingKey))));",
     "new": "(building && (home !== null)));",
     "tests": [
       "test/lwfix6_rooms.test.js"

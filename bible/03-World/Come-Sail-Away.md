@@ -1540,18 +1540,23 @@ AWAY - USING BOAT PARTS!" (kept).
 
 ### The shelves
 
-RegisterCustomItem's group puts both on DFU's shelves: the second loop
-of StockShopShelf (DaggerfallLoot.cs:255-287) walks every custom row of
-a group the shop sells, rarity at or under the quality and
+The mod's RegisterCustomItem group puts both on DFU's shelves, and the
+port stocked them so until SHIPYARDS retired the two rows (below; AUDIT
+SHIPYARDS L6-14 put this in the past): the second loop of
+StockShopShelf (DaggerfallLoot.cs:255-287) walked every custom row of a
+group the shop sells, rarity at or under the quality and
 chanceMod x 5 x (21 - rarity) / 100 to stock it - for these, rarity 1,
 a General Store's UselessItems2 chance of 50 in a hundred each, a Pawn
-Shop's 20. The port's shelf already walks `customItemsForGroup`, which
+Shop's 20. The port's shelf already walked `customItemsForGroup`, which
 knew Roleplay Realism: Items' rows alone; it is one table across the
 loaded mods now (`rriItems.js` registerCustomItemGroup, as DFU's
 customItemGroups is), each row answering while its mod is loaded for the
 game - the load-time answer, never the switch as it stands now (AUDIT
 PRE-MERGE 0928 S4: a mod switched on mid-game had stocked bare "Parts of"
-rows).
+rows). With the rows retired, Come Sail Away's switch feeds its one effect
+kind alone (WaterWalkingSilent's, `effects.js` registerModEffectKind) -
+pinned off, on and latched off (`csa_items`, AUDIT SHIPYARDS L6-11: its
+mutant CSA-H-group-always had survived the retirement).
 
 FOUND ON THE WAY: Iliac Puddle No More's DeepWaters.Init registers each
 fish's row into the same group (a null class) - so DFU's shelf stocks
@@ -1568,6 +1573,16 @@ another hull's parts). The port runs it after Roleplay Realism's shelf
 subscribers at both of the shelf's doors (`worldModes.js`, the order the
 two mods subscribe in); DFU's house containers raise the same event but
 stock classic rows only, so a boat item never stands in one.
+
+SHIPYARDS (2026-10-11, Mac chose "Shipyard only - the shipyard sells
+every hull and buys them back; Come Sail Away's random shelf deeds and
+parts are retired"; `03-World/Shipyards.md`): RegisterCustomItem's group
+no longer stocks the two - no General Store or Pawn Shop shelves them,
+and no counter buys them back (`systems/shopStock.js` shopBuysItem). A
+port town's shipyard sells every hull at the mod's own prices (the
+Rowboat as her parts, every other as her deed) and buys them back. A
+DECLARED departure (Ledger A, SHIPYARDS). AssignVariantsToShopItems
+stands, ported: a shelf a save stocked before is still rewritten.
 
 ### Packing and the cargo
 

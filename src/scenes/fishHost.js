@@ -28,7 +28,7 @@
 //   species' own item, into the pack once.
 // ═══════════════════════════════════════════════════════════════════
 import { haulKey, parseNodeKey, schoolSpots, SCHOOLS_PER_PIXEL, SCHOOL_R, pixelKey } from '../net/nodeLaw.js';
-import { FISH_KEY, actBand, PEARL, storesFullIn, fullWordsIn } from '../net/professionLaw.js';
+import { FISH_KEY, actBand, PEARL, storesFullIn, goneIn, fullWordsIn } from '../net/professionLaw.js';
 import { goodsWhere } from '../net/bagLaw.js';   // BAG1: where the haul went
 import { createFishAct } from '../systems/fishAct.js';
 import { FT, attributeAverage } from '../systems/foragingLaw.js';
@@ -292,7 +292,7 @@ export function fishKind({ book, host }) {
       return [{ key: c.key, at: () => castAt(host.eye()), lift: 0, reach: CAST_REACH_M, yields: true }];
     },
     /** A school is never a target; the cast is gone once its haul is asked (a new one stands). */
-    gone: (n) => !!n.school || book.taken(n.key, 'fish'),
+    gone: (n) => !!n.school || goneIn(book, n.key, 'fish'),   // GATHER-SPEED: or being counted
     /** NODE-MARKS: the day's schools are Fishing's marks - where the fish are; the cast (the look itself) none. */
     mark: (n) => (n.school ? SCHOOL_MARK : null),
     /** TOOL-USE: the Fishing-Net's Use at the cast is E there - a tap of it: no wind held, the net flies its shortest,

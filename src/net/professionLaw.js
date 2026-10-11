@@ -266,6 +266,10 @@ export function specsAt(row, nowS) {   // CRAFT3: a merged craft's track stands 
 export const DEEP_UNCONFIRMED_PER_DAY = 4;
 /** The Stores hold at most this many of any one material, own and bought together. */
 export const STORES_MAX = 5000;
+/** GATHER-SPEED (2026-10-11): WHETHER A NODE'S HARVEST IS GONE FROM THE WORLD - the book's word (net/profBook.js
+ *  `gone`: taken today, or being counted), so a node goes the moment its act ends, never a round trip after it. A book
+ *  that says no such word answers by `taken`, as before. */
+export const goneIn = (book, key, kind) => (typeof book?.gone === 'function' ? book.gone(key, kind) : book.taken(key, kind));
 /** STORES-ROOM (AUDIT 2026-10-01 part four): WHETHER A MATERIAL'S STORES ARE FULL AS THE SERVICE COUNTS THEM - every
  *  origin, own, bought and gold-bought alike (professions.js cuts a yield to the room over all three). The gathering
  *  kinds read `held` - what a station may spend, never gold's (GOLD-MARKET's wall) - so with 4,000 own and 1,000 bought

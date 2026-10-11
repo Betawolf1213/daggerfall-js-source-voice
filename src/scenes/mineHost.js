@@ -32,7 +32,7 @@
 // harvest (`ask`) to the service.
 // ═══════════════════════════════════════════════════════════════════
 import { veins, boulders, nodeKey, VEIN_TABLES, dungeonVeins, dveinKey } from '../net/nodeLaw.js';
-import { tierOpen, TIER_RANKS, PROF_RANK_MAX, pickAxeBand, minedMaterial, storesFullIn, fullWordsIn, GROUND_WHERE, GROUND_WHERE_WORDS } from '../net/professionLaw.js';
+import { tierOpen, TIER_RANKS, PROF_RANK_MAX, pickAxeBand, minedMaterial, storesFullIn, goneIn, fullWordsIn, GROUND_WHERE, GROUND_WHERE_WORDS } from '../net/professionLaw.js';
 import { natureStandsAt, groundAt, insideRocks } from '../world/terrainNature.js';   // NODE-CLEAR: the rock check's one home
 import { WORLD_MAP_TILE_DIM } from '../world/terrainTiles.js';
 import { TERRAIN_SIZE } from '../world/terrainSampler.js';
@@ -393,7 +393,7 @@ export const pickHandFrame = (swing) => (swing > 0 ? { state: 'StrikeDown', fram
  */
 export function mineKind({ book, lodes = null, marks = null }) {
   const harvestOf = (n) => (n.what === 'boulder' ? 'stone' : 'ore');
-  const gone = (n) => book.taken(n.key, harvestOf(n)) || (n.what === 'motherlode' && !!lodes?.found?.());   // PROF2b: the account's one found
+  const gone = (n) => goneIn(book, n.key, harvestOf(n)) || (n.what === 'motherlode' && !!lodes?.found?.());   // GATHER-SPEED: or being counted   // PROF2b: the account's one found
   return {
     id: 'mine',
     professions: Object.freeze(['mining']),

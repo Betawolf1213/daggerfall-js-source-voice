@@ -2,11 +2,12 @@
   {
     "name": "GLOBAL-MARKET-svc-orders-regional",
     "file": "server-account/src/market.js",
-    "old": "      AND (?2 IS NULL OR material IN (SELECT value FROM json_each(?2))) ORDER BY price DESC, at LIMIT ${MARKET_SHOWN}`).bind(nowS, familyKeys).all();",
-    "new": "      AND (?2 IS NULL OR material IN (SELECT value FROM json_each(?2))) AND region = ?3 ORDER BY price DESC, at LIMIT ${MARKET_SHOWN}`).bind(nowS, familyKeys, region).all();",
+    "old": "      AND (?2 IS NULL OR material IN (SELECT value FROM json_each(?2))) ORDER BY price DESC, at LIMIT ${MARKET_SHOWN}`).bind(nowS, familyKeys)]);",
+    "new": "      AND (?2 IS NULL OR material IN (SELECT value FROM json_each(?2))) AND region = ?3 ORDER BY price DESC, at LIMIT ${MARKET_SHOWN}`).bind(nowS, familyKeys, region)]);",
     "tests": [
       "test/globalmarket.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "GLOBAL-MARKET-svc-orders-no-road",

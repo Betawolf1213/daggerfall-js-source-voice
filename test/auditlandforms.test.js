@@ -328,7 +328,9 @@ test('AUDIT LANDFORMS B1: a pixel not built yet is asked what its build will sta
   assert.equal(ask(7, 3), null, 'and its mirror none');
   assert.equal(ask(4, 4), null);
   assert.deepEqual([...index], before, 'and the index is as it was');
-  assert.match(WORLD, /const tvLocationAt = \(x, y\) => locationIndex\.get\(`\$\{x\},\$\{y\}`\) \?\? \(params\.has\('online'\) && spawnsDungeon\(_spawnSalt, x, y\) \? tvSpawnAt\(x, y\) : null\);\n(?: {2}\/?\*{1,2}[^\n]*\n| {3}\*[^\n]*\n)* {2}const _liftLocationAt = /, 'declared right where the probe stands');
+  // PIN MOVED (ETHER-PLACES, bible/03-World/Etheric-Sea.md): the far read asks no spawn past the Veil (`!inEtherLaw` -
+  // spawnedMapId's law is the Bay's, and the isles stand their own places)
+  assert.match(WORLD, /const tvLocationAt = \(x, y\) => locationIndex\.get\(`\$\{x\},\$\{y\}`\) \?\? \(params\.has\('online'\) && !inEtherLaw\(x, y\) && spawnsDungeon\(_spawnSalt, x, y\) \? tvSpawnAt\(x, y\) : null\);[^\n]*\n(?: {2}\/?\*{1,2}[^\n]*\n| {3}\*[^\n]*\n)* {2}const _liftLocationAt = /, 'declared right where the probe stands');
 });
 
 test('AUDIT LANDFORMS B2: a record\'s frame follows the cuts - the field is the pipeline\'s own shaped ground less DFU\'s, a road\'s cut and fill and a river\'s channel with the lift, in the wild and through a town\'s blend', () => {

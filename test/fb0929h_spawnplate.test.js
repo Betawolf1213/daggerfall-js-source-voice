@@ -25,8 +25,10 @@ function host() {
   const built = new Map();
   const env = { clock: 0, inside: null };
   // eslint-disable-next-line no-new-func
+  // PIN MOVED (ETHER-PLACES): the builder answers an Etheric pixel by its isle first (world.js etherPlaceAt) - with the
+  // Etheric Sea off (`etherSea` false) it never asks, and the Bay's pixels are this pin's
   const make = new Function('_spawnLedger', '_spawnClock', '_insideSpawn', 'built', 'locationIndex', 'spawnedDungeonAt', 'bump',
-    `let _locIndexGen = 0; ${GONE}\n${TO_BUILD}\nreturn { tvSpawnGone, _locationToBuild };`);
+    `const etherSea = false; let _locIndexGen = 0; ${GONE}\n${TO_BUILD}\nreturn { tvSpawnGone, _locationToBuild };`);
   const fns = make(ledger, () => env.clock, (key) => key === env.inside, built, locationIndex, () => null);
   /** the pixel built (world.js buildPixel: `location: dfLocation ? dfLocation.name : null`) */
   const build = (px, py) => { const loc = fns._locationToBuild(px, py); built.set(`${px},${py}`, { location: loc ? loc.name : null }); return loc; };

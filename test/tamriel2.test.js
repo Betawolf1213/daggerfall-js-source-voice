@@ -265,7 +265,9 @@ test('TAMRIEL2 host: the reader is rebound to the composed one at the mount, aft
   assert.match(between, /StreamingWorldState\.frame = tamrielLand \? tamrielFrameInBay\(\) : null;/);
   assert.match(src, /if \(picks\.length && onTheBay\(px, py\)\) wodPicks = picks;/, 'the mod\'s sites are the Bay\'s');
   assert.match(src, /const dwNear = deepWaters && onTheBay\(px, py\) \? deepWaters\.promoteNear/, 'the mod\'s bathymetry is the Bay\'s');
-  assert.match(src, /byteAt: tamrielLand \? \(x, y\) => woods\.getHeightMapValue\(x, y\) : null,/, 'the ring past the map');
+  // PIN MOVED (ETHER-SEA, bible/03-World/Etheric-Sea.md): and the Etheric Sea's isles past the map, whatever the
+  // continent's switch says
+  assert.match(src, /byteAt: tamrielLand \|\| etherSea \? \(x, y\) => woods\.getHeightMapValue\(x, y\) : null,/, 'the ring past the map');
   assert.match(src, /restrideGrid\(\{ woods, px: p\.px/, 'the promotion reads the one reader');
   assert.equal((src.match(/tamrielLandOn\(\)/g) ?? []).length, 1, 'read once, at the mount');
 });

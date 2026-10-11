@@ -450,8 +450,8 @@
   {
     "name": "RAID1-host-fix8-the-sea-a-province",
     "file": "src/scenes/world.js",
-    "old": "return politicClaimed(maps.getPoliticIndex(px.x, px.y)) ? _questRegionIndex() : -1;",
-    "new": "return _questRegionIndex();",
+    "old": "return !(etherSea && inEther(px.x, px.y)) && politicClaimed(maps.getPoliticIndex(px.x, px.y)) ? _questRegionIndex() : -1;",
+    "new": "return !(etherSea && inEther(px.x, px.y)) ? _questRegionIndex() : -1;",
     "tests": ["test/raid1_raidingParties.test.js"]
   },
   {

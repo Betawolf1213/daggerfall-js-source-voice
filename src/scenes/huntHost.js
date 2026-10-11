@@ -34,7 +34,7 @@
 import { bodyKey, utcDayOfMs } from '../net/nodeLaw.js';
 import {
   hideOfFoe, tierOpen, TIER_RANKS, knifeBand, SKINNING_KNIFE, KNIFE_CHECKS, KNIFE_REFUSALS, HIGH_HIDES_PER_DAY,
-  HIGH_HIDE_TIER, TRACKER_M, KNIFE_WHERE, KNIFE_WHERE_WORDS, TRACE_ACT, storesFullIn, fullWordsIn,
+  HIGH_HIDE_TIER, TRACKER_M, KNIFE_WHERE, KNIFE_WHERE_WORDS, TRACE_ACT, storesFullIn, goneIn, fullWordsIn,
 } from '../net/professionLaw.js';
 import { enemyDisplayName } from '../characters/enemyBasics.js';
 import { createTraceAct } from '../systems/traceAct.js';
@@ -188,8 +188,8 @@ export function huntKind({ book, bodies, openLoot = null }) {
     /** A body is a node only while the pack holds a Skinning Knife. */
     looseNodesOf: ({ entity }) => (foragingToolIn(entity, SKINNING_KNIFE.templateIndex) ? bodies() : []),
     flatsOf: () => [],   // the body is its own picture (DFU's corpse)
-    gone: (b) => book.taken(b.key, 'hide'),
-    mark: (b) => (book.taken(b.key, 'hide') ? null : BODY_MARK),   // NODE-MARKS: a body the knife may still skin
+    gone: (b) => goneIn(book, b.key, 'hide'),   // GATHER-SPEED: or being counted
+    mark: (b) => (goneIn(book, b.key, 'hide') ? null : BODY_MARK),   // NODE-MARKS: a body the knife may still skin
     marksLoose: true,
     /** TOUCH-HOLD (2026-10-01 part four - Mac: "Interact button + knife Use"): the Skinning Knife's Use at a body is E
      *  there (TOOL-USE) - a phone and a pad had no E to start Hunting with, nor to hold while the line was drawn. */

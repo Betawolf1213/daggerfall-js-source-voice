@@ -130,8 +130,8 @@
   {
     "name": "TAMRIEL2-streams-is-the-map",
     "file": "src/world/streamingWorld.js",
-    "old": "return !!f && px >= f.x0 && px < f.x0 + f.w && py >= f.y0 && py < f.y0 + f.h;",
-    "new": "return false;",
+    "old": "if (!!f && px >= f.x0 && px < f.x0 + f.w && py >= f.y0 && py < f.y0 + f.h) return true;",
+    "new": "if (false) return true;",
     "tests": [
       "test/tamriel2.test.js"
     ]
@@ -139,8 +139,8 @@
   {
     "name": "TAMRIEL2-streams-past-the-frame",
     "file": "src/world/streamingWorld.js",
-    "old": "return !!f && px >= f.x0 && px < f.x0 + f.w && py >= f.y0 && py < f.y0 + f.h;",
-    "new": "return !!f && px >= f.x0 && py >= f.y0 && py < f.y0 + f.h;",
+    "old": "if (!!f && px >= f.x0 && px < f.x0 + f.w && py >= f.y0 && py < f.y0 + f.h) return true;",
+    "new": "if (!!f && px >= f.x0 && py >= f.y0 && py < f.y0 + f.h) return true;",
     "tests": [
       "test/tamriel2.test.js"
     ]

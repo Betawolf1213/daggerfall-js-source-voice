@@ -39,6 +39,8 @@ import { deductGold } from './court.js';
 import { LEVELING_CLASSIC, newCharacterLevelingSystem } from './oblivionLeveling.js';   // LEVEL-ONLINE-2: a character crossing levels the classic way
 import { levelUpSkillSumAnchor } from './advancement.js';   // LEVEL-ONLINE-2: ...from the start of the level it has
 import { isGoldPieces } from './inventory.js';
+import { crossFleetData } from './fleet.js';   // AUDIT SHIPYARDS L1-2: Come Sail Away's ships cross as a DFU deed does - kept, never sold
+import { COME_SAIL_AWAY_VENDOR } from './comeSailAway.js';   // ...her placed boats' record, by its vendor
 // AUDIT REALM2 S1: the allowance and the measure live in the law the service reads too (net/realmGoldLaw.js), which holds
 // a customs character's first save to them - re-exported here, their home before it; AUDIT REALM2 T2, T3 and T5's
 // counting with them (every container, a boat's hold, a deed at what the realm's bank pays)
@@ -74,6 +76,10 @@ export function applyCustoms(snap) {
   const accounts = Array.isArray(snap.bankAccounts) ? snap.bankAccounts : [];
   const call = callInEmpireDebt(accounts, { deductGold: (/** @type {number} */ n) => deductGold(snap, n) }, { cap: 0, nowMinutes: Math.floor(snap.classicMinutes ?? 0) });
   const crossed = crossDeeds(snap);
+  // AUDIT SHIPYARDS L1-2: and every ship of Come Sail Away's, by number - the Fleet's records, the placed boats, every deed
+  // and parts item wherever it lies - crossed: she sails in the realm, and no shipyard there buys her
+  const fleet = snap.modData && typeof snap.modData === 'object'
+    ? crossFleetData(snap.modData, [...carriedItemLists(snap), ...stashedItemLists(snap)], snap.modData[COME_SAIL_AWAY_VENDOR]?.placedBoats ?? null) : 0;
   const allowance = customsAllowance(snap.level);
   const wealth = liquidWealthOf(snap);
   let excess = Math.max(0, wealth - allowance);
@@ -144,7 +150,7 @@ export function applyCustoms(snap) {
   const decks = heldDecksOf(snap);   // AUDIT CARDS-6 A9: the binder's decks the pack backs before the cards' customs...
   const cards = cardCustoms(snap);   // CARDS9: and the cards, at their worth
   const decksShort = decks.filter((d) => deckHeldRefusal(d.cards, snap.items)).length;   // ...and those it left naming a card that stayed
-  return { called: call.called, paid: call.paid, owed: call.owed, wealth, allowance, taken: wealth - liquidWealthOf(snap), crossed, restKept, cardsKept: cards.kept, cardWorth: cards.worth, cardAllowance: cards.allowance, decksShort };
+  return { called: call.called, paid: call.paid, owed: call.owed, wealth, allowance, taken: wealth - liquidWealthOf(snap), crossed, fleet, restKept, cardsKept: cards.kept, cardWorth: cards.worth, cardAllowance: cards.allowance, decksShort };
 }
 
 /**
@@ -377,7 +383,7 @@ export const CUSTOMS_PROMISE = Object.freeze([
 /** What customs did, in the Online door's words - or, `before` it runs (FIELD 2026-09-29, Dracula/Valentin: "HOW TF WAS
  *  I SUPPOSED TO KNOW YALL WOULD FORCE THE LOANS TO BE PAID"), what it will do: the same report off a copy customs ran
  *  on, told ahead, and the door's promise under it. */
-export function customsLines({ called, owed, wealth, allowance, taken, crossed = [], restKept = 0, cardsKept = 0, cardWorth: cardsWorth = 0, cardAllowance = 0, decksShort = 0 }, { before = false } = {}) {
+export function customsLines({ called, owed, wealth, allowance, taken, crossed = [], fleet = 0, restKept = 0, cardsKept = 0, cardWorth: cardsWorth = 0, cardAllowance = 0, decksShort = 0 }, { before = false } = {}) {
   const lines = [];
   if (called > 0) {
     lines.push(before
@@ -393,6 +399,8 @@ export function customsLines({ called, owed, wealth, allowance, taken, crossed =
   const houses = crossed.filter((d) => d === 'house').length;
   const what = [crossed.includes('ship') ? 'your ship' : '', houses > 1 ? `${houses} houses` : houses ? 'your house' : ''].filter(Boolean).join(' and ');
   if (what) lines.push(`${what[0].toUpperCase()}${what.slice(1)} ${before ? 'will come' : 'came'} with you, every piece in ${crossed.length > 1 ? 'them' : 'it'}; the realm's bank does not buy back what comes through customs.`);
+  // AUDIT SHIPYARDS L1-2: Come Sail Away's ships come too, by number - sailed in the realm, never sold there
+  if (fleet > 0) lines.push(`${fleet === 1 ? 'Your boat' : `Your ${fleet} boats`} ${before ? 'will come' : 'came'} with you; no shipyard in the realm buys a boat that comes through customs.`);
   if (restKept > 0) lines.push(`Your rest supplies ${before ? 'will stay' : 'stayed'} with your offline character - they are not yet sold in the realm.`);   // AUDIT REST-PARTY B4; AUDIT REST II H13: the Tonics, Salts, Draughts and Candles are rest supplies, not camping
   // CARDS9: the cards past the allowance, the dearest first
   if (cardsKept > 0) lines.push(`Your cards are worth ${cardsWorth} gold; the realm lets a character of this level bring ${cardAllowance}. ${cardsKept} ${cardsKept === 1 ? 'card' : 'cards'}, the dearest, ${before ? 'will stay' : 'stayed'} with your offline character.`);

@@ -148,12 +148,44 @@ const _ships = new Map();   // uid -> record
 const _book = [];           // her title: the deed items, Come Sail Away's own shape (mintDeed)
 const upgradesBlank = () => ({ hold: 0, rigging: 0, hull: 0, guns: 0 });
 const isUid = (v) => Number.isSafeInteger(v) && v > 0;
+/** AUDIT SHIPYARDS L1-2 (RESTORE's "Keep all, can't sell", a DFU deed's law, for Come Sail Away's ships): THE SHIPS THAT
+ *  CAME INTO THE REALM THROUGH CUSTOMS, by number - each stays the player's and sails, and no shipyard buys her
+ *  (systems/shipyards.js saleRefusal). Weightless and uncounted at customs (net/realmGoldLaw.js liquidWealthOf counts none
+ *  of the Fleet), a ship sold online was an offline fortune crossed whole. A number is a ship's for life, so a crossed
+ *  ship stays crossed - parts, deed, standing or laid up. */
+const _crossed = new Set();
 const hullOk = (h) => Number.isInteger(h) && h >= 0 && h < HULL_NAMES.length;
 /** AUDIT HOLDINGS F7: a variant her hull has - the Large Boat's seven, every other hull's one (SpawnBoat throws on any
  *  other: a hostile save's Large Boat 8 threw from the page's Summon). */
 const variantOk = (hull, v) => Number.isInteger(v) && v >= 0 && v < Math.max(1, HULL_VARIANT_COUNTS[hull] ?? 0);
 /** AUDIT HOLDINGS F7: the most a save may hold, and her worth's ceiling (gold). */
 export const FLEET_MAX = 256;
+/** How many crossed numbers a save keeps (every ship and boat item a crossing found, and room past them). */
+export const CROSSED_MAX = 4096;
+/** Whether ship `uid` came into the realm through customs. */
+export const fleetCrossed = (uid) => _crossed.has(uid);
+/**
+ * CUSTOMS ON A SAVE'S SHIPS, in place (systems/realmCustoms.js applyCustoms): every ship number the save holds - the
+ * Fleet's records, Come Sail Away's placed boats (`placedBoats`, its record's own), every boat deed and parts item in
+ * `itemLists` - entered in the Fleet's record's `crossed`, the record made where the save had none. Answers how many
+ * numbers it found. Pure on its arguments.
+ * @param {any} modData a save's `modData` @param {any[][]} [itemLists] @param {any[]|null} [placedBoats]
+ */
+export function crossFleetData(modData, itemLists = [], placedBoats = null) {
+  if (!modData || typeof modData !== 'object') return 0;
+  const uids = new Set();
+  for (const r of Array.isArray(modData[FLEET_SAVE_VENDOR]?.ships) ? modData[FLEET_SAVE_VENDOR].ships : []) if (isUid(r?.uid)) uids.add(r.uid);
+  for (const b of Array.isArray(placedBoats) ? placedBoats : []) if (isUid(b?.UID)) uids.add(b.UID);
+  for (const list of itemLists) {
+    for (const it of Array.isArray(list) ? list : []) if ((it?.templateIndex === BOAT_DEED_TEMPLATE || it?.templateIndex === BOAT_PARTS_TEMPLATE) && isUid(it.UID)) uids.add(it.UID);
+  }
+  if (!uids.size) return 0;
+  const rec = modData[FLEET_SAVE_VENDOR] && typeof modData[FLEET_SAVE_VENDOR] === 'object' ? modData[FLEET_SAVE_VENDOR] : (modData[FLEET_SAVE_VENDOR] = newFleetSaveData());
+  const all = new Set((Array.isArray(rec.crossed) ? rec.crossed : []).filter(isUid));
+  for (const u of uids) all.add(u);
+  rec.crossed = [...all].slice(0, CROSSED_MAX);
+  return uids.size;
+}
 export const SHIP_VALUE_MAX = 10000000;
 /** A deed's hull and variant, read as Come Sail Away reads them (`hull * 10 + variant`). */
 const hullOfItem = (it) => Math.floor((it?.message | 0) / 10);
@@ -231,7 +263,7 @@ export function addRefit(uid, id) {
   return true;
 }
 /** The port she was laid up at (`{ name }`), or null. */
-export function setShipPort(uid, port) { const r = _ships.get(uid); if (r) r.port = port ? { name: String(port.name ?? '') } : null; }
+export function setShipPort(uid, port) { const r = _ships.get(uid); if (r) r.port = port ? { name: String(port.name ?? ''), ...(port.ether ? { ether: true } : {}) } : null; }   // AUDIT CAPTAIN'S SEA P5: and which side of the Veil she lies
 /** Her title made again where none is (a crewed ship's parts placed swap back to her deed - the mod's takePlaceItem). */
 export function retitle(uid) {
   const r = _ships.get(uid);
@@ -242,12 +274,13 @@ export function retitle(uid) {
 }
 
 // ── THE SAVE ─────────────────────────────────────────────────────────────────────────────────────────────────────────
-export function newFleetSaveData() { return { v: FLEET_SAVE_VERSION, ships: [] }; }
+export function newFleetSaveData() { return { v: FLEET_SAVE_VERSION, ships: [], crossed: [] }; }
 export function fleetSaveData() {
   return {
     v: FLEET_SAVE_VERSION,
     ships: [..._ships.values()].map((r) => ({ uid: r.uid, hull: r.hull, variant: r.variant, value: r.value, name: r.name, upgrades: { ...r.upgrades },
       credit: r.credit ? { ...r.credit } : null, port: r.port ? { ...r.port } : null, title: !!titleOf(r.uid) })),
+    crossed: [..._crossed],   // AUDIT SHIPYARDS L1-2: the numbers that came through customs
   };
 }
 /** A save's record restored - every field read as it may be (a record made by hand, a newer build's): an unknown
@@ -255,6 +288,8 @@ export function fleetSaveData() {
 export function restoreFleetSaveData(data) {
   _ships.clear();
   _book.length = 0;
+  _crossed.clear();
+  for (const u of (Array.isArray(data?.crossed) ? data.crossed : []).slice(0, CROSSED_MAX)) if (isUid(u)) _crossed.add(u);
   // AUDIT HOLDINGS F7: a save read as it may be - FLEET_MAX records at most, one a number (a second of the same uid
   // entered a second title), her variant one her hull has, her worth within [0, SHIP_VALUE_MAX], her port's name the
   // printable text a name keeps
@@ -267,7 +302,7 @@ export function restoreFleetSaveData(data) {
     for (const l of UPGRADE_LINES) r.upgrades[l.id] = Math.max(0, Math.min(UPGRADE_TIERS, Number(s.upgrades?.[l.id]) | 0));
     r.credit = s.credit && Number.isInteger(s.credit.region) && s.credit.region >= 0 ? { region: s.credit.region, due: Number.isFinite(s.credit.due) ? s.credit.due : 0 } : null;
     const port = typeof s.port?.name === 'string' ? printable(s.port.name).slice(0, 64) : '';
-    r.port = s.port && typeof s.port.name === 'string' ? { name: port } : null;
+    r.port = s.port && typeof s.port.name === 'string' ? { name: port, ...(s.port.ether === true ? { ether: true } : {}) } : null;   // AUDIT CAPTAIN'S SEA P5: her side of the Veil kept
     if (s.title) _book.push(mintDeed(r.hull, r.variant, r.uid, r.value));
   }
 }
@@ -276,5 +311,5 @@ const printable = (raw) => { let t = ''; for (const ch of String(raw ?? '')) { c
 /** The ledger as a mod's save slot (systems/modSaveData.js registerModSaveData). */
 export const fleetSaveSlot = Object.freeze({ newSaveData: newFleetSaveData, getSaveData: fleetSaveData, restoreSaveData: restoreFleetSaveData });
 /** Tests: an empty ledger. */
-export function _resetFleetForTests() { _ships.clear(); _book.length = 0; }
+export function _resetFleetForTests() { _ships.clear(); _book.length = 0; _crossed.clear(); }
 export { BOAT_DEED_TEMPLATE, BOAT_PARTS_TEMPLATE };

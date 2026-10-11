@@ -130,8 +130,8 @@
   {
     "name": "HARBOUR-BOOK-kept-past-a-transition",
     "file": "src/scenes/world.js",
-    "old": "const navalTransition = () => { harbourBook.clear(); navalClear(); };",
-    "new": "const navalTransition = () => { navalClear(); };",
+    "old": "const navalTransition = () => { harbourBook.clear(); navalClear(); withdrawCrossing(); };",
+    "new": "const navalTransition = () => { navalClear(); withdrawCrossing(); };",
     "tests": [
       "test/harbourbook.test.js"
     ]

@@ -22,12 +22,12 @@
   {
     "name": "SCALE4b-harvests-pruned-on-read",
     "file": "server-account/src/professions.js",
-    "old": "  const day = utcDay(nowS);\n  const { results: rows = [] } = await db.prepare('SELECT * FROM prof_tracks WHERE player = ?1 AND char_id = ?2').bind(player.id, character).all();",
-    "new": "  const day = utcDay(nowS);\n  await sweepHarvests(db, nowS);\n  const { results: rows = [] } = await db.prepare('SELECT * FROM prof_tracks WHERE player = ?1 AND char_id = ?2').bind(player.id, character).all();",
+    "old": "  const day = utcDay(nowS);\n  // GATHER-SPEED: the state's eight reads",
+    "new": "  const day = utcDay(nowS);\n  await sweepHarvests(db, nowS);\n  // GATHER-SPEED: the state's eight reads",
     "tests": [
       "test/scale4b.test.js"
     ],
-    "note": "the professions' state prunes on every ask again"
+    "note": "the professions' state prunes on every ask again GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "SCALE4b-history-pruned-on-read",
@@ -52,22 +52,22 @@
   {
     "name": "SCALE4b-settle-unasked",
     "file": "server-account/src/market.js",
-    "old": "  if (Number(due?.due)) {\n    await db.batch([\n      db.prepare(`UPDATE market_listings",
-    "new": "  if (true) {\n    await db.batch([\n      db.prepare(`UPDATE market_listings",
+    "old": "  if (Number(due[0]?.due)) {",
+    "new": "  if (true) {",
     "tests": [
       "test/scale4b.test.js"
     ],
-    "note": "the market's expiry written on every read again"
+    "note": "the market's expiry written on every read again GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "SCALE4b-settle-inverted",
     "file": "server-account/src/market.js",
-    "old": "  if (Number(due?.due)) {\n    await db.batch([\n      db.prepare(`UPDATE market_listings",
-    "new": "  if (!Number(due?.due)) {\n    await db.batch([\n      db.prepare(`UPDATE market_listings",
+    "old": "  if (Number(due[0]?.due)) {",
+    "new": "  if (!Number(due[0]?.due)) {",
     "tests": [
       "test/scale4b.test.js"
     ],
-    "note": "a listing past its hours never expired"
+    "note": "a listing past its hours never expired GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "SCALE4b-commissions-unasked",

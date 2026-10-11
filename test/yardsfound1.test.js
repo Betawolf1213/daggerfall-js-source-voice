@@ -34,7 +34,7 @@ const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const FONT = { fnt: { fixedWidth: 6, fixedHeight: 6, glyphWidth: () => 5 } };
 
 /** A town of two blocks by two, open ground with a road along row 64, its yards placed by the producer and handed the
- *  keeper the host hands them (scenes/world.js merchantYardSitesFor). */
+ *  keeper the host hands them (scenes/world.js townPlacesFor). */
 function town() {
   const g = yardGround({ width: 128, height: 128, weightAt: (gx, gy) => (gx < 0 || gy < 0 || gx >= 128 || gy >= 128 ? 0 : gy === 64 || gy === 65 ? ROAD_WEIGHT : 1) });
   const mapId = 7, regionIndex = 17;
@@ -229,7 +229,8 @@ test('YARDS-FOUND THE HOSTS: the streaming host hands its yards to the town map 
   assert.match(door, /if \(deps\.yards\?\.length\) deps = \{ \.\.\.deps, blocks: yardTownBlocks\(deps\.blocks \?\? \[\], deps\.yards\) \};\n\s+if \(heldMapWorn\(\)\) \{/, 'laid before either map is built');
   const tt = read('src/scenes/townTalk.js');
   assert.match(tt, /directory = buildBuildingDirectory\(topics\.exteriorBuildings, topics\.blocks, opts\);\n(?:\s+\/\/[^\n]*\n)*\s+directory\.push\(\.\.\.yardDirectoryRows\(topics\.yards\)\);/, 'joined to the directory');
-  assert.match(tt, /\.\.\.YARD_KIND_ORDER\.map\(\(k\) => \(\{ label: YARD_TALK_GROUPS\[k\], buildings: directory\.filter\(\(b\) => b\.yard === k\) \}\)\),/, 'the fallback\'s groups');
+  // PIN MOVED (SHIPYARDS-FOUND, 2026-10-11): the found places' one order - the yards' two, then a port's four
+  assert.match(tt, /\.\.\.FOUND_KIND_ORDER\.map\(\(k\) => \(\{ label: FOUND_TALK_GROUPS\[k\], buildings: directory\.filter\(\(b\) => b\.yard === k\) \}\)\),/, 'the fallback\'s groups');
   assert.doesNotMatch(read('src/scenes/exterior.js'), /merchantYards|yardTownBlocks/, 'the bench stands no yard');
   for (const host of ['src/scenes/worldModes.js', 'src/scenes/dungeonContext.js']) assert.doesNotMatch(read(host), /createTownMapWindow/, `${host} opens no town map`);
   assert.match(read('src/ui/travelViewHud.js'), /if \(k === 'yard'\) return k;/, 'the HUD\'s look');

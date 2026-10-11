@@ -38,8 +38,8 @@
   {
     "name": "STANCE-tag-unfriendly",
     "file": "src/scenes/navalHost.js",
-    "old": "        hostile: stance.hostile, friendly: stance.friendly, line:",
-    "new": "        hostile: stance.hostile, friendly: false, line:",
+    "old": "        hostile: !hid && stance.hostile, friendly: hid || stance.friendly, line:",
+    "new": "        hostile: !hid && stance.hostile, friendly: hid, line:",
     "tests": [
       "test/shipstance.test.js"
     ]
@@ -47,8 +47,8 @@
   {
     "name": "STANCE-card-as-before",
     "file": "src/scenes/navalHost.js",
-    "old": "      ...stanceOf(s), bound: boundOf(e),",
-    "new": "      hostile: hostile(s, meContact(), { notoriety: (c) => notoriety.get(c), now: clock }), friendly: false, bound: boundOf(e),",
+    "old": "hid ? { hostile: false, friendly: true } : stanceOf(s);",
+    "new": "hid ? { hostile: false, friendly: true } : { hostile: hostile(s, meContact(), { notoriety: (c) => notoriety.get(c), now: clock }), friendly: false };",
     "tests": [
       "test/shipstance.test.js"
     ]
@@ -56,8 +56,8 @@
   {
     "name": "STANCE-card-hostile-though-struck",
     "file": "src/scenes/navalHost.js",
-    "old": "      ...stanceOf(s), bound: boundOf(e),",
-    "new": "      ...stanceOf(s), hostile: hostile(s, meContact(), { notoriety: (c) => notoriety.get(c), now: clock }), bound: boundOf(e),",
+    "old": "hid ? { hostile: false, friendly: true } : stanceOf(s);",
+    "new": "hid ? { hostile: false, friendly: true } : { ...stanceOf(s), hostile: hostile(s, meContact(), { notoriety: (c) => notoriety.get(c), now: clock }) };",
     "tests": [
       "test/shipstance.test.js"
     ]
@@ -65,8 +65,8 @@
   {
     "name": "TAGS-line-no-crown",
     "file": "src/scenes/navalHost.js",
-    "old": "line: classLine(s.cls, s.names?.crown), bound: boundOf(e),",
-    "new": "line: s.cls.title, bound: boundOf(e),",
+    "old": "    if (disguisedOf(e)) return disguiseOf(e).line;\n    return classLine(e.ship.cls, e.ship.names?.crown);",
+    "new": "    if (disguisedOf(e)) return disguiseOf(e).line;\n    return e.ship.cls.title;",
     "tests": [
       "test/shipstance.test.js"
     ]
@@ -74,8 +74,8 @@
   {
     "name": "TAGS-tag-bound-unsaid",
     "file": "src/scenes/navalHost.js",
-    "old": "line: classLine(s.cls, s.names?.crown), bound: boundOf(e),",
-    "new": "line: classLine(s.cls, s.names?.crown), bound: '',",
+    "old": "line: shownLine(e), bound: hid ? '' : boundOf(e),",
+    "new": "line: shownLine(e), bound: '',",
     "tests": [
       "test/shipstance.test.js"
     ]
@@ -83,8 +83,8 @@
   {
     "name": "TAGS-card-bound-unsaid",
     "file": "src/scenes/navalHost.js",
-    "old": "      ...stanceOf(s), bound: boundOf(e),",
-    "new": "      ...stanceOf(s), bound: '',",
+    "old": "      ...stance, bound: known < KNOW.colours || hid ? '' : boundOf(e),",
+    "new": "      ...stance, bound: '',",
     "tests": [
       "test/shipstance.test.js"
     ]

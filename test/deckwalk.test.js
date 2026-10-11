@@ -467,7 +467,8 @@ test('SHIPMATES THE CREW\'S BARS: a green bar a crewman - the party\'s one green
   assert.match(WORLD, /for \(const f of _mode\(\) === 'exterior' \? exteriorFoes\.foes : _insidePool\(\)\) \{[^\n]*\n\s+const feet = f\.ai\?\.feet;\n\s+if \(!isShipmate\(f\) \|\| !feet \|\| !f\.entity\) continue;/);   // PIN MOVED (CREW-COMPANIONS): indoors and underground, my companions' bars
   assert.match(WORLD, /if \(crewSight\.blocked\(player\.collider, eye, key, head\)\) continue;/);
   assert.match(WORLD, /const crewSight = createSightCache\(\);/);
-  assert.match(WORLD, /drawNavalHud\(null\); drawNavalTags\(\[\]\); drawCrewBars\(\[\]\); drawCrewLines\(\[\]\); \};/);
+  // PIN MOVED (AUDIT CAPTAIN'S SEA S1): the clear lowers the glass after them
+  assert.match(WORLD, /drawNavalHud\(null\); drawNavalTags\(\[\]\); drawCrewBars\(\[\]\); drawCrewLines\(\[\]\); lowerGlass\(\); \};/);
 });
 
 // ── the room: another's crew ────────────────────────────────────────────────────────────────────────────────────

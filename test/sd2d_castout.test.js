@@ -143,7 +143,9 @@ test('SD2d a save taken inside a Hollow: its clone names its own pixel - the sav
   assert.notDeepEqual({ x: p.x, y: p.y }, { x: 450, y: 400 }, 'not the template\'s');
   const w = read('src/scenes/world.js');
   assert.match(w, /else if \(onlineOn && !\(pixel\.x === getInt\('Startup', 'StartCellX'\) && pixel\.y === getInt\('Startup', 'StartCellY'\)\)\) \{/, 'online: every dungeon save but the tutorial\'s wakes outside');
-  assert.match(w, /const wake = undergroundWakeSpot\(maps\.getRegion\(maps\.getRegionIndexAt\(from\.x, from\.y\)\)\?\.mapTable \?\? \[\], from\);/, 'by the nearest temple, town or graveyard to its pixel');
+  // PIN MOVED (ETHER-PLACES): past the Veil an isle's ruin wakes the sleeper at its own door - the region's search would
+  // read the Alik'r's past the map; the Bay's pixels as before
+  assert.match(w, /const wake = inEther\(from\.x, from\.y\) \? \{ kind: 'dungeon', mapPixel: \{ x: from\.x, y: from\.y \} \} : undergroundWakeSpot\(maps\.getRegion\(maps\.getRegionIndexAt\(from\.x, from\.y\)\)\?\.mapTable \?\? \[\], from\);/, 'by the nearest temple, town or graveyard to its pixel');
   assert.match(w, /else \{ _wodInside = false; townTalk\.say\('\(the dungeon has no entrance here - character restored at its door\)'\); \}/, 'offline, no Hollow stands: at its door');
   assert.match(read('src/scenes/dungeonContext.js'), /const p = longitudeLatitudeToMapPixel\(mt\.longitude, mt\.latitude\);\n {4}return \{ pixel: \{ x: p\.x, y: p\.y \}, mapId: mt\.mapId \?\? null \};/);
   const rec = read('bible/11-Multiplayer/Super-Dungeons.md');

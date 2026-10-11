@@ -453,13 +453,15 @@ test('HOME1 the wiring by source: the home answers at the door BEFORE Daggerfall
   // press asks (test/homeoffer.test.js, test/home2.test.js hold the rest) and the door does what it says
   assert.match(door, /if \(verb == null\) \{\s*const prompt = homeDoorPrompt\(\{ door, mode, price, declined: _homeDeclined\.has\(homeIdOf\(bd\)\), asked: homeAsked, isBash \}\);\s*if \(prompt === 'menu'\) \{ openHomeOwnerMenu\(bd, home, hit, entries\); return true; \}\s*if \(prompt === 'offer'\) \{ openHomeOffer\(bd, price, hit, entries\); return true; \}/);
   assert.match(m, /const homeOnward = \(hit, entries\) => \(\) => \{ activateStaticDoor\(hit, entries, false, \{ homeAsked: true \}\)/, 'No and Go in come back to the door, past the menu');
-  assert.match(m, /houseOwned: home !== null \|\| isHouseOwned\(/, 'no greeting from residents a home does not have');
+  // PIN MOVED (AUDIT CAPTAIN'S SEA P9): the deed read where the building stands - never an isle town's (houseOwnedAt)
+  assert.match(m, /houseOwned: home !== null \|\| houseOwnedAt\(/, 'no greeting from residents a home does not have');
   assert.match(m, /interiorHome = home;   \/\/ HOME1/);
   assert.match(m, /if \(home\?\.own\) addPermanentScene\(sceneCache\(\), homeSceneName\(homeTownOf\(building\), building\.buildingKey\)\);/, 'my home\'s scene is kept whichever page bought it');
   assert.equal((m.match(/(?<!let )interiorHome = null;/g) ?? []).length, 2, 'cleared at both teardowns');
   assert.match(m, /if \(interiorHome\?\.own\) return homeSceneName\(homeTownOf\(interiorBuilding\), key\);/);
   assert.match(m, /if \(c && interiorHome && !interiorHome\.own\) \{ say\(homeBelongsLine\(interiorHome\)\); return true; \}/);
-  assert.match(m, /isHouseOwned: \(key\) => home !== null \|\| isHouseOwned\(/, 'any home has no residents');
+  // PIN MOVED (AUDIT CAPTAIN'S SEA P9): the deed read where the building stands - never an isle town's (houseOwnedAt)
+  assert.match(m, /isHouseOwned: \(key\) => home !== null \|\| houseOwnedAt\(/, 'any home has no residents');
   assert.match(m, /if \(!s\?\.locationKey \|\| !canon \|\| !interiorCtx \|\| s\.home\) return false;/, 'no claim from a home\'s cupboard');
   assert.match(m, /\+ \(!_intShared\.home && Array\.isArray\(data\.l\) \? applyInteriorLoot\(/, 'no peer\'s word on one');
   assert.match(m, /addPermanentScene\(sceneCache\(\), homeSceneName\(mapId, bd\.buildingKey\)\);/, 'a bought home\'s scene is kept');

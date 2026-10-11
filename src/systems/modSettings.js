@@ -355,7 +355,7 @@ export const MOD_SETTINGS = Object.freeze({
     keys: Object.freeze({
       Enabled: Object.freeze({
         default: true,
-        description: 'Own and sail your own boat. Buy it as parts or as a deed, put it in the water (the deed near a port) '
+        description: 'Own and sail your own boat. Buy parts or a deed at a shipyard, put it in the water (the deed near a port) '
           + 'and take the helm: row with the oars or raise the sails and trim them to the wind, then pack it up '
           + 'to take with you. It carries what you and your cart carry, and it shows on the travel map.',
       }),

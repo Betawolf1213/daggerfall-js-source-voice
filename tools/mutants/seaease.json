@@ -65,8 +65,8 @@
   {
     "name": "SE-relief-always",
     "file": "src/systems/naval/navalDirector.js",
-    "old": "    if (!(r() < RELIEF_CHANCE)) return null;\n",
-    "new": "    r();\n",
+    "old": "    if (!ctx.reliefSure && !(roll < RELIEF_CHANCE)) return null;   // CAPT-BOARD: an Admiral's crown always answers (the draw taken either way)\n",
+    "new": "\n",
     "tests": [
       "test/seaease.test.js"
     ]
@@ -101,8 +101,8 @@
   {
     "name": "SE-relieving-unread",
     "file": "src/systems/naval/navalDirector.js",
-    "old": "Array.isArray(ctx.distress) && !ctx.relieving ? ctx.distress : null",
-    "new": "Array.isArray(ctx.distress) ? ctx.distress : null",
+    "old": "Array.isArray(ctx.distress) && !ctx.relieving && !ctx.ether ? ctx.distress : null",
+    "new": "Array.isArray(ctx.distress) && !ctx.ether ? ctx.distress : null",
     "tests": [
       "test/seaease.test.js"
     ]
@@ -218,8 +218,8 @@
   {
     "name": "SE-cry-every-frame",
     "file": "src/scenes/navalHost.js",
-    "old": "{ e.aidSaid = true; deps.say?.(`${nameOf(e)} comes to your aid!`, 4); }",
-    "new": "{ deps.say?.(`${nameOf(e)} comes to your aid!`, 4); }",
+    "old": "{ e.aidSaid = true; deps.say?.(`${calledName(e)} comes to your aid!`, 4); }",
+    "new": "{ deps.say?.(`${calledName(e)} comes to your aid!`, 4); }",
     "tests": [
       "test/seaease.test.js"
     ]

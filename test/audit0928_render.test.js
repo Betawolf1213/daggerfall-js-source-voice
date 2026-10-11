@@ -165,6 +165,7 @@ function exteriorFrame({ lane, night, town, boats, eye }) {
     festivalStage: null,   // FESTIVAL-STAGE: no Festival in this pin
     quays: null,   // PIN MOVED (QUAYS): the quays' lanterns join the night's extras - no harbour in this pin
     yards: null,   // PIN MOVED (YARD-LIGHT): the yards' lamps join the scene lights - no yard in this pin (test/yardlight.test.js runs them)
+    portHost: null,   // PIN MOVED (SHIPYARDS): the lighthouses' lamps join the scene lights - no port in this pin (test/shipyards1_found.test.js runs them)
     CITY_LIGHT_COLOR_F32: lanternColor(lane, new Float32Array(CITY_LIGHT_COLOR)),
     fillLanternPool, nearestLights, rangesFor, capFadeColors, capFadePairs, withPlayerLights, wodLightColors,
     meterFor: () => null,   // PIN MOVED (PERF-SIM3): the frame's CPU meter marks its spans inside this source - no meter in this pin

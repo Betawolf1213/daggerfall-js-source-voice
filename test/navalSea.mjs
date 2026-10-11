@@ -23,6 +23,10 @@ function standInPipeline() {
   const texture = () => ({ recordCount: 100, getSize: () => ({ width: 40, height: 64 }), getScale: () => ({ width: 0, height: 0 }) });
   return { getTexture: async () => texture(), uploadRecord() {}, getGpuMesh: async (id) => ({ classic: id }) };
 }
+/** SPYGLASS (2026-10-11): every ship in the sea made out to `level` (systems/naval/shipKnowledge.js KNOW - her colours
+ *  by default), as a glass held on each would - for the suites about a ship's tag and card rather than the glass. An
+ *  unknown hull wears no tag. Answers the host. */
+export const knowAll = (host, level = 1) => { for (const e of host._sea.values()) e.known = Math.max(e.known ?? 0, level); return host; };
 export const seeded = (seed = 1) => { let a = seed >>> 0; return () => { a = (a + 0x6d2b79f5) >>> 0; let t = Math.imul(a ^ (a >>> 15), a | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
 
 let _pool = null;

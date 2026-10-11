@@ -127,6 +127,7 @@ import { BEACH_JITTER, WORLD_MAP_TILE_DIM, blendLocationTerrain, locationFootpri
 import { DIR_DELTA, MAP_W, MAP_H } from './roadNetwork.js';
 import { perlinNoise } from './perlin.js';
 import { CLIMATES } from '../formats/mapsTables.js';
+import { inEtherLaw, etherClimateAt } from './ethericSea.js';   // AUDIT CAPTAIN'S SEA G3: the Etheric Sea's climates past the table (worker-safe)
 
 
 /** At or under this, a height is DFU's: the beach line with its jitter, the highest height the tile classifier can
@@ -228,7 +229,7 @@ const CLIFF_FADE = (() => {
   for (let d2 = 0; d2 < out.length; d2++) out[d2] = Math.round(smooth01((Math.sqrt(d2) - from) / (full - from)) * 1024) / 1024;
   return out;
 })();
-const CLIFF_REACH = Math.ceil(LANDFORM_DIALS.cliff.full);
+export const CLIFF_REACH = Math.ceil(LANDFORM_DIALS.cliff.full);   // AUDIT CAPTAIN'S SEA G6: exported - the far ring's padded bytes reach it
 
 /**
  * AUDIT LANDFORMS II I1: how much of the lift a byte node keeps beside the sea - 0 within `cliff.from` map pixels of a
@@ -629,6 +630,21 @@ function landShape(j, wx, wy, gx, gy, rock) {
   return saturate((shapeRaw(land.shape, wx, wy, gx, gy, rock, land) - norm[0]) * norm[1]);
 }
 
+/** AUDIT CAPTAIN'S SEA G3: a node's land in the Etheric Sea's law - its isle's climate's (world/ethericSea.js
+ *  etherClimateAt; the Ocean's woodlands at sea) - remembered for the last few nodes (a pixel's samples ask the same
+ *  four, and the law's isle read is a cache lookup); outside the law the table's, held to the map as ever. */
+const _etherLand = new Map();
+function etherLandAt(x, y, climates) {
+  if (!inEtherLaw(x, y)) return LAND_OF_CLIMATE[climates[(y < 0 ? 0 : y >= MAP_H ? MAP_H - 1 : y) * MAP_W + (x < 0 ? 0 : x >= MAP_W ? MAP_W - 1 : x)]];
+  const k = x * 65536 + y;
+  let l = _etherLand.get(k);
+  if (l === undefined) {
+    if (_etherLand.size >= 64) _etherLand.clear();
+    l = LAND_OF_CLIMATE[etherClimateAt(x, y)] ?? 0;
+    _etherLand.set(k, l);
+  }
+  return l;
+}
 /** LANDFORM6: the share of each land at a world sample - a node at every map pixel's centre wearing its pixel's
  *  climate, read through a smoothstep-weighted bilinear (as the water's stilling is), so a climate's land holds whole
  *  over its own pixels and gives way to its neighbour's across about a pixel. Writes the shares into `_share` (by land)
@@ -640,10 +656,16 @@ function landShares(gx, gy, climates, span) {
   // a world of another hDim read its climates off 128-sample pixels
   const fx = gx / span - 0.5, fy = MAP_H + 0.5 - gy / span;
   const ix = Math.floor(fx), iy = Math.floor(fy);
-  // the four nodes, their coordinates held to the map
-  const x0 = ix < 0 ? 0 : ix >= MAP_W ? MAP_W - 1 : ix, x1 = ix + 1 < 0 ? 0 : ix + 1 >= MAP_W ? MAP_W - 1 : ix + 1;
-  const r0 = (iy < 0 ? 0 : iy >= MAP_H ? MAP_H - 1 : iy) * MAP_W, r1 = (iy + 1 < 0 ? 0 : iy + 1 >= MAP_H ? MAP_H - 1 : iy + 1) * MAP_W;
-  const l00 = LAND_OF_CLIMATE[climates[r0 + x0]], l10 = LAND_OF_CLIMATE[climates[r0 + x1]], l01 = LAND_OF_CLIMATE[climates[r1 + x0]], l11 = LAND_OF_CLIMATE[climates[r1 + x1]];
+  // the four nodes, their coordinates held to the map - AUDIT CAPTAIN'S SEA G3: a node in the Etheric Sea's law its isle's
+  // own climate (every isle wore the land of the Bay's corner pixel, held to the map, whatever its climate)
+  let l00, l10, l01, l11;
+  if (inEtherLaw(ix, iy) || inEtherLaw(ix + 1, iy + 1)) {
+    l00 = etherLandAt(ix, iy, climates); l10 = etherLandAt(ix + 1, iy, climates); l01 = etherLandAt(ix, iy + 1, climates); l11 = etherLandAt(ix + 1, iy + 1, climates);
+  } else {
+    const x0 = ix < 0 ? 0 : ix >= MAP_W ? MAP_W - 1 : ix, x1 = ix + 1 < 0 ? 0 : ix + 1 >= MAP_W ? MAP_W - 1 : ix + 1;
+    const r0 = (iy < 0 ? 0 : iy >= MAP_H ? MAP_H - 1 : iy) * MAP_W, r1 = (iy + 1 < 0 ? 0 : iy + 1 >= MAP_H ? MAP_H - 1 : iy + 1) * MAP_W;
+    l00 = LAND_OF_CLIMATE[climates[r0 + x0]]; l10 = LAND_OF_CLIMATE[climates[r0 + x1]]; l01 = LAND_OF_CLIMATE[climates[r1 + x0]]; l11 = LAND_OF_CLIMATE[climates[r1 + x1]];
+  }
   if (l00 === l10 && l00 === l01 && l00 === l11) { _share[l00] = 1; return 1 << l00; }
   const u = smooth01(fx - ix), v = smooth01(fy - iy);
   _share[l00] = 0; _share[l10] = 0; _share[l01] = 0; _share[l11] = 0;

@@ -411,7 +411,8 @@ test('MERCHANT-YARDS THE YARD\'S FRAME IN THE SCENE: a point and a box turned wi
 test('MERCHANT-YARDS THE FOUR HOSTS - world.js places, stands, draws and names them and hands the press; worldModes\' street ray reaches them and opens their counter; exterior.js flagged; the dungeon none', () => {
   const world = read('src/scenes/world.js'), modes = read('src/scenes/worldModes.js'), host = read('src/scenes/merchantYardsHost.js');
   const ext = read('src/scenes/exterior.js'), dungeon = read('src/scenes/dungeonContext.js');
-  assert.match(world, /if \(isYardTown\(dfLocation\)\) yardSites = merchantYardSitesFor\(dfLocation, lefaySpot, climate\?\.people, loc\);/);
+  // PIN MOVED (AUDIT SHIPYARDS L3-3): a town's yards and its port's places in one pass - townPlacesFor asked once a build
+  assert.match(world, /const places = yardTown \|\| portTown \? townPlacesFor\(dfLocation, lefaySpot, climate\?\.people, loc\) : null;\n\s*if \(yardTown\) yardSites = places\.yards;/);
   assert.match(world, /const yl = loc && isEnhanced\(\) && windmillsOn\(\) \? loc : layoutLocation\(dfLocation, maps, blocks, \{ enhanced: true, windmills: true \}\);/, 'one layout for every lane (the build\'s own where it is that one)');
   // AUDIT MERCHANT-YARDS G1, G3, G4, G2: the measures the host hands yardMeasuresOf, and the sites kept per town
   assert.match(world, /custom: \(cid\) => \(hasCustomModel\(cid\) && !customModelNeeds\(cid\)\.length \? customModelFor\(cid\)\?\.positions \?\? null : null\),/, 'a registered model measured by its own geometry');
@@ -420,7 +421,9 @@ test('MERCHANT-YARDS THE FOUR HOSTS - world.js places, stands, draws and names t
   assert.match(world, /flatsOf: \(b\) => collectBlockFlats\(b\.dfBlock, 0\),/, 'every flat, the markers too');
   assert.match(world, /closedBlock: \(b\) => b\.blockName === ARENA_BLOCK \|\| palaceIn\(b\),/, 'a palace\'s block and the colosseum\'s left whole');
   assert.match(world, /const n = Math\.min\(list\.length, blockBuildingCount\(b\.dfBlock\)\);\n\s*for \(let i = 0; i < n; i\+\+\) if \(list\[i\]\?\.buildingType === TALK_BUILDING_TYPES\.Palace\) return true;/, 'a palace among the block\'s real buildings');
-  assert.match(world, /if \(!memo \|\| memo\.sig !== sig\) \{\n\s*memo = \{ sig, sites: yardSitesOf\(yl, measures\) \};/, 'placed again only when its measures moved');
+  // PIN MOVED (SHIPYARDS, 2026-10-11): yardSitesOf's own two steps (townGroundOf, yardSitesOn), so a port town's shipyard
+  // and lighthouse stand on what its yards left (world.js townPlacesFor) - the yards' own sites the same
+  assert.match(world, /if \(!memo \|\| memo\.sig !== sig\) \{\n\s*const g = townGroundOf\(yl, measures\);\n\s*const sites = g && yardTown \? yardSitesOn\(g\) : \[\];/, 'placed again only when its measures moved');
   assert.match(world, /renderer\.outsideViewDraws\?\.add\(\(\{ renderer: r \}\) => \{ merchantYards\?\.draw\(r\); \}\);/, 'and in the view out of a window (AUDIT G5)');
   assert.match(world, /if \(yardSites\?\.length\) carveYards\(nav, yardSites\);/, 'the people walk round them');
   assert.match(world, /merchantYards: yardSites,/);

@@ -622,6 +622,27 @@ test('CSA-C: DECLARED - a save loaded before the models are in is held: GetSaveD
 
 // ── LateUpdate's placing arm ──────────────────────────────────────────────────
 
+test('AUDIT SHIPYARDS L1-1 (the port\'s own): the placing click stands no boat whose item has left its collection - sold at a shipyard, dropped, taken by a load - and lets the placing go; the same click with her item still held, by her number and kind, places her', () => {
+  const s = scene();
+  s.terrains[0].tileMap.fill(0);
+  s.deps.raycast = () => ({ distance: 3, point: [2, 0, 2], name: 'DaggerfallTerrain', terrain: s.terrains[0], root: null });
+  const parts = { templateIndex: BOAT_PARTS_TEMPLATE, UID: 3, message: 14 };
+  const bag = [parts];
+  s.setTime(10);
+  s.rt.StartPlacing(parts, () => bag);
+  bag.length = 0;   // sold: her parts gone from the list the placing was armed with
+  s.setTime(10.3);
+  s.rt.lateUpdate({ activateComplete: true });
+  assert.deepEqual([s.rt.AllBoats.length, s.rt.placing], [0, false], 'no boat stood twice, the placing let go');
+  const kept = { templateIndex: BOAT_PARTS_TEMPLATE, UID: 4, message: 14 };
+  const bag2 = [{ ...kept }];   // her number and kind still held - a copy, as a list a load rebuilt holds
+  s.setTime(20);
+  s.rt.StartPlacing(kept, () => bag2);
+  s.setTime(20.3);
+  s.rt.lateUpdate({ activateComplete: true });
+  assert.equal(s.rt.AllBoats.length, 1, 'held by her number: placed');
+});
+
 test('CSA-C: LateUpdate\'s placing arm (4957) - held by its pause gate and while sailing; a released Activate a fifth of a second after StartPlacing places the item\'s hull and variant (its message), logged as the C# logs them', () => {
   const s = scene();
   s.terrains[0].tileMap.fill(0);

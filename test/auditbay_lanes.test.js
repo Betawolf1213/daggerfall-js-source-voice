@@ -8,7 +8,7 @@ import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { sea } from './navalSea.mjs';
+import { sea, knowAll } from './navalSea.mjs';
 import { room } from './navalRoom.mjs';
 import * as LANES from '../src/systems/naval/seaLanes.js';
 import * as HOST from '../src/scenes/navalHost.js';
@@ -207,7 +207,7 @@ test('AUDIT BAY A11 AND A16: WHERE SHE IS BOUND, TRULY - a crown\'s ship answeri
   const h = await sea({ hull: 2, settings: some });
   const n = h.host._sea.get(h.host.spawnShip('navyCutter', { range: 300 }));
   h.run(1);
-  const tag = (e) => h.host.tags().find((t) => t.id === e.id)?.bound;
+  const tag = (e) => knowAll(h.host).tags().find((t) => t.id === e.id)?.bound;   // PIN MOVED (SPYGLASS): her colours made out - an unknown hull wears no tag
   n.ship.errand = { kind: 'voyage', harbour: null, path: null, i: 0 };
   n.ship.mode = 'answer';
   assert.equal(tag(n), '', 'answering the guns');
@@ -363,7 +363,7 @@ test('AUDIT BAY A9: ANOTHER\'S PACKET READS HER LANE - known by her seed, a peer
   const theirs = bySeed(B, 22);
   assert.ok(theirs?.owner === 'a', 'a stands her');
   B.host.liners([P], { now: 4 });
-  const tag = () => B.host.tags().find((t) => t.id === theirs.id)?.bound;
+  const tag = () => knowAll(B.host).tags().find((t) => t.id === theirs.id)?.bound;   // PIN MOVED (SPYGLASS): her colours made out
   assert.equal(tag(), 'bound for Wayrest');
   const dwell = { ...P, phase: 'dwell', port: PORT, to: GLEN, from: GLEN };
   B.host.liners([dwell], { now: 6 });
@@ -612,7 +612,7 @@ test('AUDIT BAY A22: THE LEG SHE SAILS IS HER OWN TILL SHE HAS SAILED IT - a pac
   assert.deepEqual(round(e.ship.course), [0, 500 + LINER_LOOKAHEAD_M], 'her clock has her lying at her port: on to it');
   h.host.liners([{ ...P, phase: 'sail', to: GLEN, from: SENT, leg: home, pos: [0, 0, 2500], yaw: Math.PI }], { now: 4 });
   assert.deepEqual(round(e.ship.course), [0, 500 + LINER_LOOKAHEAD_M], 'her clock sails her home: on to her port still, never about');
-  const tag = (x) => { const t = h.host.tags().find((q) => q.id === x.id); return t?.bound; };
+  const tag = (x) => { const t = knowAll(h.host).tags().find((q) => q.id === x.id); return t?.bound; };   // PIN MOVED (SPYGLASS): her colours made out
   h.run(1);
   assert.equal(tag(e), 'bound for Sentinel', 'her tag reads her own leg');
   e.ship.pos = [0, 0, 3000 - LINER_PORT_M + 10];
@@ -673,7 +673,7 @@ test('AUDIT BAY A22: ANOTHER\'S PACKET IS FOLLOWED ALONG HER OWN LEG - known on 
   assert.deepEqual([60, 61, 62, 63, 64].map((sd) => bySeed(x, sd)?.owner), ['a', 'a', 'a', 'a', 'a'], 'all a\'s');
   assert.equal(dest(61), GLEN.key, 'under way mid-lane, heading back along her clock\'s leg: the leg before it, for the port it left');
   x.view.look = { origin: [900, 5, -300], dir: [1, -0.05, 0] }; x.run(0.2);
-  assert.equal(x.host.tags().find((t) => t.id === bySeed(x, 61).id)?.bound, 'bound for Glenpoint', 'and read so');
+  assert.equal(knowAll(x.host).tags().find((t) => t.id === bySeed(x, 61).id)?.bound, 'bound for Glenpoint', 'and read so');   // PIN MOVED (SPYGLASS): her colours made out
   assert.deepEqual([dest(60), dest(62), dest(63), dest(64)], [PORT.key, PORT.key, PORT.key, PORT.key], 'at a berth, off either port, or fighting: her clock\'s');
   // her clock sails her on: moored at a berth of her port, 1,196 m from her leg's end along it, she has made it
   const home = (l) => ({ ...l, from: PORT, to: GLEN, leg: east, yaw: Math.PI / 2 });

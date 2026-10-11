@@ -754,8 +754,8 @@
   {
     "name": "NAV1O-cask-pickup-ownerless",
     "file": "src/systems/naval/navalShots.js",
-    "old": "emit({ type: 'pickup', id: f.id, lot: f.lot, from: f.from, owner: f.owner, collector: c.id, point: [...f.pos] });",
-    "new": "emit({ type: 'pickup', id: f.id, lot: f.lot, from: f.from, collector: c.id, point: [...f.pos] });",
+    "old": "emit({ type: 'pickup', id: f.id, lot: f.lot, from: f.from, owner: f.owner, deep: !!f.deep, collector: c.id, point: [...f.pos] });",
+    "new": "emit({ type: 'pickup', id: f.id, lot: f.lot, from: f.from, deep: !!f.deep, collector: c.id, point: [...f.pos] });",
     "tests": [
       "test/navaudit_online.test.js"
     ]
@@ -1033,7 +1033,7 @@
   {
     "name": "NAV1O-cask-unsaid-host",
     "file": "src/scenes/navalHost.js",
-    "old": "const casks = shots.floaters().filter((f) => f.kind === 'flotsam' && !f.owner).map((f) => ({ id: Number(f.id), pos: f.pos, from: f.from, lot: f.lot }));",
+    "old": "const casks = shots.floaters().filter((f) => f.kind === 'flotsam' && !f.owner).map((f) => ({ id: Number(f.id), pos: f.pos, from: f.from, lot: f.lot, deep: !!f.deep }));",
     "new": "const casks = [];",
     "tests": [
       "test/navaudit_online.test.js"
@@ -1078,8 +1078,8 @@
   {
     "name": "NAV1O-answer-drawn-twice",
     "file": "src/scenes/navalHost.js",
-    "old": "    claims.delete(id);\n    pickFlotsam({ lot: c.lot, from: c.from, collector: c.collector, point: c.point });",
-    "new": "    pickFlotsam({ lot: c.lot, from: c.from, collector: c.collector, point: c.point });",
+    "old": "    claims.delete(id);\n    pickFlotsam({ lot: c.lot, from: c.from, deep: c.deep, collector: c.collector, point: c.point });",
+    "new": "    pickFlotsam({ lot: c.lot, from: c.from, deep: c.deep, collector: c.collector, point: c.point });",
     "tests": [
       "test/navaudit_online.test.js"
     ]
@@ -1141,7 +1141,7 @@
   {
     "name": "NAV1O-cask-snap-unmoved",
     "file": "src/scenes/navalHost.js",
-    "old": "      if (f) { f.pos[0] = pos[0]; f.pos[2] = pos[2]; }\n      else shots.dropFlotsam",
+    "old": "      if (f) { f.pos[0] = pos[0]; f.pos[2] = pos[2]; f.deep = !!c.deep; }\n      else shots.dropFlotsam",
     "new": "      if (!f) shots.dropFlotsam",
     "tests": [
       "test/navaudit_online.test.js"

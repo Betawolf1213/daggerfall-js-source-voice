@@ -30,6 +30,7 @@ thing to show:
 |---|---|---|
 | Stable | `ui/holdingsPages.js` | whenever a host provides it - owning nothing is a thing it says, and where to buy |
 | Fleet | `ui/fleetPage.js` | while Come Sail Away runs in the world host |
+| Captain | `ui/captainPage.js` (CAPT-LOG, `03-World/Captains-Sea.md`) | once a captain has a standing, a log, a contract or a chart - each crown's regard and rank, the letter, the contracts held, the treasure charts marked, the log (the Etheric Sea's lines among it: the isles charted, the deepest waters, the legends ended - `03-World/Etheric-Sea.md`) |
 | Companions | `ui/companionRoster.js` (moved off the Stats rail) | anyone sworn or at the player's side |
 | Revenants | `ui/revenantPage.js` (moved) | revenants made, or any remembered |
 | Stores | `ui/profPages.js` (moved; the Professions page stays on Stats) | online, the professions this account's |
@@ -205,6 +206,27 @@ difference stands: Iliac Puddle's Deep Waters is each player's own setting and c
 off - two players with it set differently find different berths and stand different quays. The model wears the classic ship's own textures (her planking 67_0, its
 darker plank 67_8, iron 0_79, a lamp's glass 0_10) out of the player's ARENA2. A ground not built yet lays nothing; the
 berth is laid again QUAY_RETRY_S (2 s) later.
+
+**THE PIER'S DRESS** (SHIPYARDS, 2026-10-11, Mac: *"This should also come with a detailed overhaul to piers"*;
+`systems/naval/quays.js` `pierDress`, `world/quayModel.js`; `03-World/Shipyards.md`). What a working quay stands besides,
+all in its berth's frame: each pair of neighbouring piles in a row crossed by two braces from under the deck's timbers
+down toward the water (to 1.1 m under the sea's top at the deepest - BRACE_LOW's 1.2 and a hand; never across a gap where
+a pile stood on the bank); joists every JOIST_STEP (1.2 m) under the quay's deck and the jetty's, stringers along their edges; fender piles
+about every FENDER_STEP (3 m) down the face past the water (FENDER_DOWN); two iron ladders down into the sea, one each
+side of her waist between its bollards, their stiles standing LADDER_GRAB (0.6 m) over the deck to be taken hold of;
+iron cleats at the face's ends and by each ladder; a coil of rope by each bollard (the rigging's own 0_77); on a
+harbour's first berth a CARGO CRANE at one end of the quay's back - its post clear of the jetty's mouth and the cargo,
+its jib swung along the quay toward its middle, its fall and hook hung over two crates stacked (CRANE_HOOK_UP), a winch
+at its foot; and on a long jetty a lamp post every JETTY_LAMP_STEP (22 m), the first that far out, on its rails by turns,
+each lantern hung in over the jetty and lit with the quay's own two (`lanternLights`, the quays' nearest within their
+reach). Every piece on the face keeps its BODY out of the gangway's lane and DRESS_LANE (0.6 m) past it - a fender pile by
+its width (FENDER_W, 0.26 m), a coil by its round (AUDIT SHIPYARDS L5-6: a fender's stood 0.055 m in) - so a plank run out
+to a ship touches none of it. The dress draws its few turns off its own stream (PIER_SALT): the cargo's load is the one it
+always was (pinned to main's own numbers, L5-4). The timbers under the decks (the joists, the stringers, the braces) and
+the deck's small fittings (the cleats, the coils) are drawn and never collided - the model's `collider` is the rest, the
+bucket the pool files at every recentre (L5-5: all of it went in, 2.5-3.8 times the undressed quay's). A berth's
+lanterns' light is made once and again only as the berth moves, off its LIVE place (L5-5: made every night frame, and off
+the plan's - where the berth lay when laid, which a recentre left behind).
 
 **THE POOL** (`scenes/quayPool.js`, the world host's): a harbour the world's book holds (`systems/naval/harbourBook.js`
 `list` - HARBOUR-BOOK, below) stands

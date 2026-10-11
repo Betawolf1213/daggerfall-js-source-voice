@@ -74,7 +74,7 @@
   {
     "name": "TV-BEYOND-host-sea-past-the-bay",
     "file": "src/scenes/world.js",
-    "old": "const tvWater = (px, py) => (!woods.isTamrielGround && (px < 0 || py < 0 || px >= 1000 || py >= 500)) || woods.getHeightMapValue(px, py) <= WATER_BYTE;",
+    "old": "const tvWater = (px, py) => (!woods.isTamrielGround && !woods.etherLaw?.(px, py) && (px < 0 || py < 0 || px >= 1000 || py >= 500)) || woods.getHeightMapValue(px, py) <= WATER_BYTE;",
     "new": "const tvWater = (px, py) => px < 0 || py < 0 || px >= 1000 || py >= 500 || woods.getHeightMapValue(px, py) <= WATER_BYTE;",
     "tests": [
       "test/fb1009_beyond.test.js"
@@ -83,7 +83,7 @@
   {
     "name": "TV-BEYOND-host-believes-the-clamp",
     "file": "src/scenes/world.js",
-    "old": "const tvWater = (px, py) => (!woods.isTamrielGround && (px < 0 || py < 0 || px >= 1000 || py >= 500)) || woods.getHeightMapValue(px, py) <= WATER_BYTE;",
+    "old": "const tvWater = (px, py) => (!woods.isTamrielGround && !woods.etherLaw?.(px, py) && (px < 0 || py < 0 || px >= 1000 || py >= 500)) || woods.getHeightMapValue(px, py) <= WATER_BYTE;",
     "new": "const tvWater = (px, py) => woods.getHeightMapValue(px, py) <= WATER_BYTE;",
     "tests": [
       "test/fb1009_beyond.test.js"

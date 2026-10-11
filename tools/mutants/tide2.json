@@ -209,11 +209,12 @@
  {
   "name": "TIDE2-mk-buy",
   "file": "server-account/src/market.js",
-  "old": "courierOf(await hubsAt(db, [from, region], own), from, region, units, courierSlow(env, nowS, region));",
-  "new": "courierOf(await hubsAt(db, [from, region], own), from, region, units);",
+  "old": "const road = courierOf(hubsNow, from, region, units, courierSlow(env, nowS, region));",
+  "new": "const road = courierOf(hubsNow, from, region, units);",
   "tests": [
    "test/tide_economy.test.js"
-  ]
+  ],
+  "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
  },
  {
   "name": "TIDE2-mk-bid",

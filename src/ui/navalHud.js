@@ -352,6 +352,13 @@ body:has(.hud-foe.on.blade) .dfnaval-hud { --nc-top: ${NAVAL_CARD_TOP_BLADE}; }
   user-select: none; -webkit-user-select: none; font-size: 14px; letter-spacing: 0.16em; text-transform: uppercase; color: #efe8d6; text-shadow: ${OUTLINED};
   background: ${T.groundButton}; border: 2px solid; border-color: ${T.stoneLit} ${T.stoneDim} ${T.stoneDark} ${T.stoneMid}; box-shadow: 0 0 0 1px #050608; }
 .dfnaval-brace.down { background: #2c2413; border-color: ${T.brassHi} ${T.brassLo} #5c3f1a ${T.brass}; color: ${T.gold}; }
+/* SPYGLASS: the plate's Glass under a finger, over the Brace - a tap raises the captain's glass, the next lowers it */
+.dfnaval-glassbtn { position: absolute; right: calc(18px + var(--nc-plate-w, ${NAVAL_PLATE_W}px) + 8px + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--nc-foot, ${NAVAL_PLATE_TOUCH_BOTTOM}px) + ${NAVAL_BRACE_H + 8}px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; width: ${NAVAL_BRACE_W}px;
+  height: ${NAVAL_BRACE_H}px; line-height: ${NAVAL_BRACE_H - 4}px; text-align: center; pointer-events: auto; touch-action: none;
+  user-select: none; -webkit-user-select: none; font-size: 14px; letter-spacing: 0.16em; text-transform: uppercase; color: #efe8d6; text-shadow: ${OUTLINED};
+  background: ${T.groundButton}; border: 2px solid; border-color: ${T.stoneLit} ${T.stoneDim} ${T.stoneDark} ${T.stoneMid}; box-shadow: 0 0 0 1px #050608; }
+.dfnaval-glassbtn.down { background: #2c2413; border-color: ${T.brassHi} ${T.brassLo} #5c3f1a ${T.brass}; color: ${T.gold}; }
 .dfnaval-stack { position: absolute; left: 50%; top: calc(50% + ${NAVAL_AIM_DOWN}px * var(--hud-scale, 1)); transform: translateX(-50%) scale(var(--hud-scale, 1));
   transform-origin: 50% 0; display: flex; flex-direction: column; align-items: center; gap: 4px; width: max-content; text-align: center;
   max-width: var(--nc-stack-max, calc((100vw - 2 * (${NAVAL_PLATE_W}px + 30px)) / var(--hud-scale, 1))); }
@@ -367,6 +374,7 @@ body:has(.hud-foe.on.blade) .dfnaval-hud { --nc-top: ${NAVAL_CARD_TOP_BLADE}; }
   width: 400px; max-width: calc(86vw / var(--nc-card-scale, var(--hud-scale, 1))); padding: 7px 14px 8px;
   text-align: center; background: ${T.groundPanel}; border: 2px solid ${T.stoneLit}; }
 .dfnaval-card-name { font-size: 15px; letter-spacing: 0.14em; text-transform: uppercase; color: #efe8d6; text-shadow: ${OUTLINED}; }
+.dfnaval-card.unknown .dfnaval-card-name { color: #b8c2ca; }   /* SPYGLASS: a hull whose colours are not made out */
 .dfnaval-card.navy .dfnaval-card-name { color: #f1d0c6; }
 .dfnaval-card.merchant .dfnaval-card-name { color: #f6e3a6; }
 .dfnaval-card.hostile .dfnaval-card-name { color: #ffb4a6; }
@@ -431,7 +439,7 @@ body:has(.hud-foe.on.blade) .dfnaval-hud { --nc-top: ${NAVAL_CARD_TOP_BLADE}; }
 .dfnaval-tally { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #efe8d6; text-shadow: ${OUTLINED}; text-wrap: balance; }
 .dfnaval-tally .dfnaval-tally-hits { color: ${T.brassHi}; }
 .dfnaval-hud.short .dfnaval-tally-rest { display: none; }
-.dfnaval-tags { position: fixed; inset: 0; pointer-events: none; z-index: 4; overflow: hidden; ${PIXEL_FONT_CSS} }
+.dfnaval-tags { position: fixed; inset: 0; pointer-events: none; z-index: 3; overflow: hidden; ${PIXEL_FONT_CSS} }   /* AUDIT CAPTAIN'S SEA S17: under the glass (4), with the world's other labels */
 .dfnaval-tag { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; white-space: nowrap;
   transform-origin: 0 0; will-change: transform, opacity; }
 .dfnaval-tag-name { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #efe8d6; text-shadow: ${OUTLINED}; }
@@ -478,6 +486,9 @@ body:has(.hud-foe.on.blade) .dfnaval-hud { --nc-top: ${NAVAL_CARD_TOP_BLADE}; }
 
 /** A share as a whole percent, bounded. */
 const pct = (v) => Math.max(0, Math.min(100, Math.round((Number(v) || 0) * 100)));
+/** ETHER-SEA: the Etheric Sea's waters on the plate - "The Reaches, 23 leagues past the Veil"; in the Veil itself "The
+ *  Veil" (AUDIT CAPTAIN'S SEA D19: "The Shallows, 0 leagues past the Veil" while she sailed in it). */
+export const etherWatersWords = (e) => (e.veil ? 'The Veil' : `${String(e.bandName ?? '').replace(/^./, (c) => c.toUpperCase())}, ${Math.max(0, Math.round(Number(e.depth) || 0))} ${Math.round(Number(e.depth) || 0) === 1 ? 'league' : 'leagues'} past the Veil`);
 const SIDE_WORDS = Object.freeze({ bow: 'Bow', port: 'Port', starboard: 'Starboard', stern: 'Stern' });
 const GUN_WORDS = Object.freeze({ long: 'long guns', swivel: 'swivels', heavy: 'great guns', chain: 'chain shot', barrel: 'fire barrels' });
 
@@ -522,6 +533,7 @@ function cardState(t, board, key) {
     if (mine && board.kind === 'heave') return { text: board.heaving ? 'Colours struck - heaving to' : `Colours struck - ${key}: heave to`, kind: 'board' };
     return { text: 'Colours struck', kind: '' };
   }
+  if (t.faction === 'unknown') return { text: 'Colours unknown', kind: '' };   // SPYGLASS: nothing of her stance till they are made out
   // SHIP-STANCE, SHIP-TAGS: how she stands to me, and where she is bound
   const stance = t.hostile ? 'Hostile' : t.friendly ? 'Friendly' : '';
   return { text: [stance, t.bound].filter(Boolean).join(' - '), kind: t.hostile ? 'hostile' : t.friendly ? 'friendly' : '' };
@@ -573,13 +585,15 @@ export function navalHudText(model, keys = {}, { touch = false } = {}) {
   const card = t ? {
     id: t.id ?? t.name, name: t.name, faction: t.faction, hostile: !!t.hostile, friendly: !!t.friendly && !t.hostile,
     sub: [t.classLine, t.captain ? `Captain ${t.captain}` : null, `${t.distance} m`].filter(Boolean).join(' - '),
-    hull: pct(t.hull), sail: t.sail == null ? null : pct(t.sail),
+    hull: t.hull == null ? null : pct(t.hull), sail: t.sail == null ? null : pct(t.sail),   // AUDIT CAPTAIN'S SEA S24: an unknown hull's none
     state: st.text, stateKind: st.kind,
   } : null;
   const ship = model.ship;
   const plate = ship ? {
     // SHIP-CREW: her crew's spirits and standing order beside her waters
-    name: ship.name, waters: [`${model.notoriety.crown} waters`, ship.spirits ? `crew ${ship.spirits.toLowerCase()}` : null, ship.order ?? null].filter(Boolean).join(' - '), anchors: model.notoriety.level,
+    // CAPT-WATERS: the deep waters said beside the crown's - richer prizes, bolder pirates
+    // ETHER-SEA: past the Veil, the band and the leagues from it - no crown's waters, no crown's anchors
+    name: ship.name, waters: [model.ether ? etherWatersWords(model.ether) : `${model.notoriety.crown} waters${model.waters === 'deep' ? ', deep' : ''}`, ship.spirits ? `crew ${ship.spirits.toLowerCase()}` : null, ship.order ?? null].filter(Boolean).join(' - '), anchors: model.ether ? 0 : model.notoriety.level,
     hull: pct(ship.hull), sail: ship.sail == null ? null : pct(ship.sail), crew: ship.crew == null ? null : pct(ship.crew),
     chips: [ship.wrecked ? 'wreck' : null, ship.fire ? 'fire' : null, ship.braced ? 'brace' : null, ship.repairing ? 'repair' : ship.mending ? 'mend' : null].filter(Boolean),   // SEA-REPAIR: her repairs over the free mending
     batteries,
@@ -610,10 +624,14 @@ const CHIP_WORDS = Object.freeze({ wreck: 'Crippled', fire: 'On fire', brace: 'B
 let root = null, parts = null;
 let shown = {};
 let touchBrace = false;   // AUDIT NAV1: the plate's Brace held under a finger
+let touchGlass = 0;   // SPYGLASS: the plate's Glass taps not yet read
 
 /** AUDIT NAV1 (the helm): whether a finger holds the plate's Brace - read by the world's brace beside the Crouch key.
  *  Only while the press stands: a plate hidden, covered or gone lets go (drawNavalHud, destroyNavalHud). */
 export function navalTouchBrace() { return touchBrace; }
+/** SPYGLASS: whether a finger tapped the plate's Glass since the last read - read once a frame by the world's glass
+ *  beside its key (each read takes the taps). */
+export function navalTouchGlass() { const tapped = touchGlass > 0; touchGlass = 0; return tapped; }
 
 function el(doc, tag, cls, text = null) {
   const n = doc.createElement(tag);
@@ -713,12 +731,14 @@ function build(doc) {
   brace.addEventListener?.('touchstart', hold(true), { passive: false });
   brace.addEventListener?.('touchend', hold(false), { passive: false });
   brace.addEventListener?.('touchcancel', hold(false));
+  const glassBtn = el(doc, 'div', 'dfnaval-glassbtn', 'Glass');   // SPYGLASS: the captain's glass under a finger
+  glassBtn.addEventListener?.('touchstart', (e) => { e?.preventDefault?.(); e?.stopPropagation?.(); touchGlass++; }, { passive: false });
   plate.append(head, hull.row, sail.row, crew.row, chips, rose, hint);
-  root.append(card, warn, stack, plate, brace);   // AUDIT NAV1 (the presentation): the brace beside her, at no scale
+  root.append(card, warn, stack, plate, brace, glassBtn);   // AUDIT NAV1 (the presentation): the brace beside her, at no scale
   (doc.body ?? doc.documentElement)?.append(root);
-  parts = { card, cardName, cardSub, cardHull, cardHullFill, cardGhost, cardChunks, cardSail, cardSailFill, cardState, aim, aimText, aimRange, aimTarget, warn, warnText, warnKey, tally: tallyEl, tallyHits, tallyRest, stack, plate, name, watersWord, anchors, hull, sail, crew, chips, rose, guns, hint, brace };
+  parts = { card, cardName, cardSub, cardHull, cardHullFill, cardGhost, cardChunks, cardSail, cardSailFill, cardState, aim, aimText, aimRange, aimTarget, warn, warnText, warnKey, tally: tallyEl, tallyHits, tallyRest, stack, plate, name, watersWord, anchors, hull, sail, crew, chips, rose, guns, hint, brace, glassBtn };
   shown = {};
-  touchBrace = false;
+  touchBrace = false; touchGlass = 0;
 }
 
 /** AUDIT NAV1 (the presentation): the draws' own clock (the `dt`s summed), and her hull bar's loss readout - whose card,
@@ -807,7 +827,7 @@ function placeParts({ key, W, H, scale, short, touch, bottom, vitals, quick, hel
  * enhanced HUD's bottom column the plate keeps clear of, `quick` its quick block the aside card keeps clear of, and
  * `compass` the classic skin's compass box ({ w, h } in CSS px - it stands in the plate's corner), on that skin alone.
  */
-export function drawNavalHud(model, { covered = false, doc = globalThis.document, keys = {}, scale = 1, under = null, touch = false, dt = 0, vitals = null, quick = null, compass = null } = {}) {
+export function drawNavalHud(model, { covered = false, doc = globalThis.document, keys = {}, scale = 1, under = null, touch = false, dt = 0, vitals = null, quick = null, compass = null, glassUp = false } = {}) {
   const want = !covered && !!model;
   if (!root) {
     if (!want || !doc?.createElement) return;
@@ -847,6 +867,10 @@ export function drawNavalHud(model, { covered = false, doc = globalThis.document
   show('plate', parts.plate, !!p);
   if (shown.braceBtn !== braceOn) { shown.braceBtn = braceOn; parts.brace.style.display = braceOn ? '' : 'none'; if (!braceOn) touchBrace = false; }
   cls('bracec', parts.brace, braceOn && touchBrace ? 'dfnaval-brace down' : 'dfnaval-brace');
+  // SPYGLASS: the Glass at a helm under a finger - brass while the glass is up
+  const glassOn = !!p && touch;
+  if (shown.glassBtn !== glassOn) { shown.glassBtn = glassOn; parts.glassBtn.style.display = glassOn ? '' : 'none'; if (!glassOn) touchGlass = 0; }
+  cls('glassc', parts.glassBtn, glassUp ? 'dfnaval-glassbtn down' : 'dfnaval-glassbtn');
   if (p) {
     put('name', parts.name, p.name);
     put('waters', parts.watersWord, p.waters);
@@ -900,13 +924,14 @@ export function drawNavalHud(model, { covered = false, doc = globalThis.document
     const top = !aside && foot > 0 ? `${colTop}px` : '';
     if (shown.cardTop !== top) { shown.cardTop = top; parts.card.style.top = top; }
     setVar('--nc-card-scale', aside ? '' : String(Math.round(kc * 1000) / 1000));
-    const hit = t.card ? cardLoss(t.card, dt) : '';
-    if (!t.card) { for (const x of parts.cardChunks) stowChunk(x); loss = null; }
+    const bars = t.card?.hull != null;   // AUDIT CAPTAIN'S SEA S24: an unknown hull's card has no bars
+    const hit = bars ? cardLoss(t.card, dt) : '';
+    if (!bars) { for (const x of parts.cardChunks) stowChunk(x); loss = null; }
     cls('cardc', parts.card, t.card ? `dfnaval-card ${t.card.faction}${t.card.hostile ? ' hostile' : ''}${t.card.friendly ? ' friendly' : ''}${hit}` : 'dfnaval-card fight');
     put('cardn', parts.cardName, c.name);
     put('cards', parts.cardSub, c.sub);
-    show('cardhull', parts.cardHull, !!t.card);
-    if (t.card) width('cardh', parts.cardHullFill, t.card.hull);
+    show('cardhull', parts.cardHull, bars);
+    if (bars) width('cardh', parts.cardHullFill, t.card.hull);
     show('cardsail', parts.cardSail, t.card?.sail != null);
     if (t.card?.sail != null) width('cardsl', parts.cardSailFill, t.card.sail);
     put('cardst', parts.cardState, t.card ? t.card.state : c.state);
@@ -1132,7 +1157,7 @@ export function drawCrewLines(points, { covered = false, doc = globalThis.docume
 /** The page is going (a test's reset, the host's teardown): the node leaves with it. */
 export function destroyNavalHud() {
   root?.remove?.();
-  root = null; parts = null; shown = {}; touchBrace = false; loss = null; hudClock = 0;
+  root = null; parts = null; shown = {}; touchBrace = false; touchGlass = 0; loss = null; hudClock = 0;
   tagRoot?.remove?.();
   tagRoot = null; tagSlots = []; tagHeld = new Set(); crewSlots = []; saySlots = []; sayMemory = crewSayMemory();
 }

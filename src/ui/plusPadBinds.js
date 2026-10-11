@@ -54,6 +54,9 @@ export const PLUS_BIND_ROWS = Object.freeze([
   // TECH1 (bible/05-Combat/Weapon-Techniques.md): the weapon's technique - no pad button ships on it (every Plus button
   // holds a row); a button chosen here holds to aim and lets go to loose, as the key does
   { id: 'technique', label: 'Weapon technique (hold to aim)', sec: 'WeaponTechnique' },
+  // SPYGLASS (bible/03-World/Captains-Sea.md): the captain's glass - no pad button ships on it; one chosen here raises it
+  // aboard and lowers it
+  { id: 'spyglass', label: 'Spyglass (aboard)', sec: 'Spyglass' },
 ]);
 
 /** The pad button a row is on, or null. */

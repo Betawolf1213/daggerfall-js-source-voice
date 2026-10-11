@@ -916,8 +916,9 @@ export function createComeSailAwayRuntime(deps) {
     }
   }
 
-  /** UpdateBoatCargoMod (3820-3858): the cargo's weight against the threshold; a mod past half or at all, said. */
-  function UpdateBoatCargoMod(boat) {
+  /** A boat's load as the cargo rule weighs it - her hold's cargo, the player and what they carry - and the threshold it
+   *  is weighed against (UpdateBoatCargoMod's own reckoning; AUDIT CAPTAIN'S SEA B11: the exchange reads it too). */
+  function cargoLoad(boat) {
     let num = f(deps.cargoWeight?.(boat.Cargo.Items) ?? 0);
     if (setting('Cargo.PlayerWeight', true)) num = f(num + (deps.entity?.isFemale?.() ? CARGO_WEIGHTS.female : CARGO_WEIGHTS.male));
     if (setting('Cargo.PlayerCarriedWeight', true)) num = f(num + f(deps.entity?.carriedWeight?.() ?? 0));
@@ -929,7 +930,12 @@ export function createComeSailAwayRuntime(deps) {
     const hold = !(boat.modifierCargoThreshold > 0) && responsive() ? CARGO_HOLD_MISSING : boat.modifierCargoThreshold;
     // HOLDINGS: her Hold refit - the threshold her load is weighed against, times it (`deps.refit`, the Fleet's)
     const holdK = Number(refitOf(boat)?.cargo);
-    state.boatCargoMod = mathfClamp(f(2 - f(num / f(f(f(Number(setting('Cargo.CargoThreshold', 500))) * f(hold)) * (Number.isFinite(holdK) && holdK > 0 ? f(holdK) : 1)))), 0, 1);
+    return { load: num, threshold: f(f(f(Number(setting('Cargo.CargoThreshold', 500))) * f(hold)) * (Number.isFinite(holdK) && holdK > 0 ? f(holdK) : 1)) };
+  }
+  /** UpdateBoatCargoMod (3820-3858): the cargo's weight against the threshold; a mod past half or at all, said. */
+  function UpdateBoatCargoMod(boat) {
+    const { load: num, threshold } = cargoLoad(boat);
+    state.boatCargoMod = mathfClamp(f(2 - f(num / threshold)), 0, 1);
     if (state.lastWeight !== num) {
       state.lastWeight = num;
       if (state.boatCargoMod < 0.5) deps.midScreenText("You're going to need a bigger boat", 3);
@@ -1705,7 +1711,11 @@ export function createComeSailAwayRuntime(deps) {
     if (paused) return;
     latchTravelling();
     if (isSailing()) lateUpdateSailing();
-    else if (state.placing && activateComplete && f(f(deps.time()) - f(state.placeTime)) > PLACE_CLICK_DELAY) {
+    else if (state.placing && activateComplete && f(f(deps.time()) - f(state.placeTime)) > PLACE_CLICK_DELAY && !holdsItem(state.placeItemCollection, state.placeItem)) {
+      // AUDIT SHIPYARDS L1-1 (the port's own): the item the placing was armed with is no longer the player's - sold at a
+      // shipyard, dropped, taken by a load - so its click stands no boat: the boat it would stand was a ship twice
+      StopPlacing();
+    } else if (state.placing && activateComplete && f(f(deps.time()) - f(state.placeTime)) > PLACE_CLICK_DELAY) {
       const hullFromMessage_ = hullFromMessage(state.placeItem.message);
       const variantFromMessage_ = variantFromMessage(state.placeItem.message);
       log(`COME SAIL AWAY - ITEM HULL IS ${hullFromMessage_}`);
@@ -2423,6 +2433,13 @@ export function createComeSailAwayRuntime(deps) {
     const key = cargoKey(uid);
     if (!state.PackedCargoes.has(key)) state.PackedCargoes.set(key, []);
     return state.PackedCargoes.get(key);
+  };
+  /** SHIPYARDS (systems/shipyards.js): a sold ship's hold let go - her entry under her number, only while it holds
+   *  nothing (a shipyard buys no ship with cargo aboard). Answers whether it went. */
+  const forgetHold = (uid) => {
+    const key = cargoKey(uid), held = state.PackedCargoes.get(key);
+    if (held?.length) return false;
+    return state.PackedCargoes.delete(key);
   };
   /** PlaceBoat(Boat, Vector3, Vector3, Terrain) (6171-6178). */
   function PlaceBoatOnTerrain(newBoat, position, direction, terrain = null) {
@@ -3157,6 +3174,13 @@ export function createComeSailAwayRuntime(deps) {
     get placing() { return state.placing; },
     get pendingRestore() { return pendingRestore; },
     isSailing,
+    /** AUDIT CAPTAIN'S SEA B11: a boat's room as the cargo rule weighs her - `{ load, slows, stops }` (kg): she draws lower
+     *  past `slows` and lies dead in the water at `stops` (the mod's 2 - load / threshold) - or null for no boat. */
+    cargoRoom(boat) {
+      if (!boat?.Cargo) return null;
+      const { load, threshold } = cargoLoad(boat);
+      return { load, slows: threshold, stops: 2 * threshold };
+    },
     /** CSA-K: the boat at the helm's way this frame - the world velocity LateUpdate translates it by and the degrees
      *  it turns it by, each per second of Time.deltaTime (the host scales them to the real clock) - or null: no helm,
      *  or a beached boat, which does not move. */
@@ -3207,7 +3231,7 @@ export function createComeSailAwayRuntime(deps) {
     LaunchFromParts, nodeReadingAt,   // OWS2: the Overworld's crossing - a launch aimed by the journey, and the node's law it probes with
     sailWayOf, oarWayOf,   // AUDIT SHIPS A4: her way under sail as she lies, and under oars - the journey's hand weighs one against the other
     LaunchFromDeed,   // SHIP-CLAIM: a claimed prize's deed, her boat stood where she lies
-    SummonBoat, LayUpBoat, laidUpHold,   // HOLDINGS: the Fleet page's summon and send away, and a laid-up hold
+    SummonBoat, LayUpBoat, laidUpHold, forgetHold,   // HOLDINGS: the Fleet page's summon and send away, and a laid-up hold; SHIPYARDS: a sold ship's let go
     activate, OnStartLoad, OnPreFastTravel, OnPreJump, OnPostFastTravel, OnPlayerDeath, OnNewMagicRound,   // HELM-JUMP: OnPreJump
     UpdateWind, OnNewHour, OnWeatherChange,
     GetSailPower, ToggleSails, RaiseSails, LowerSails, ToggleSquareSails, HasLargeSquareSailWithGaff,
@@ -3275,6 +3299,13 @@ function swapItem(list, item, by) {
 }
 /** HOLDINGS: `item` out of the list - itself, else the one of its template and UID (a ship's parts and her deed share
  *  her number, and removeItem's UID alone would take whichever came first). */
+/** AUDIT SHIPYARDS L1-1: whether a placing's collection still holds its item - by the object, or its number and kind as
+ *  removeExact finds it; a placing armed with no collection (none to ask) holds it. */
+function holdsItem(list, item) {
+  const l = typeof list === 'function' ? list() : list;
+  if (!l || !item) return !!item;
+  return l.includes(item) || (item.UID != null && l.some((it) => it?.UID === item.UID && it?.templateIndex === item.templateIndex));
+}
 function removeExact(list, item) {
   const l = typeof list === 'function' ? list() : list;
   if (!l) return;

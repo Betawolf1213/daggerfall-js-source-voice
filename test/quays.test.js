@@ -141,7 +141,9 @@ test('QUAYS THE MODEL: the plan built in classic textures - the ship\'s own plan
   const p = plan0();
   const m = buildQuayModel(p);
   assert.ok(m.indices.length / 3 > 200, `triangles: ${m.indices.length / 3}`);
-  assert.deepEqual(new Set(m.subMeshes.map((s) => `${s.textureArchive}_${s.textureRecord}`)), new Set(['67_0', '67_8', '0_79', '0_10']));
+  // PIN MOVED (SHIPYARDS, 2026-10-11 - THE PIER'S DRESS): and the rigging's own rope (0_77) - the coils by the bollards and
+  // the crane's fall
+  assert.deepEqual(new Set(m.subMeshes.map((s) => `${s.textureArchive}_${s.textureRecord}`)), new Set(['67_0', '67_8', '0_79', '0_10', '0_77']));
   let maxX = -Infinity, minX = Infinity, deckTop = -Infinity;
   for (let i = 0; i < m.positions.length; i += 3) {
     const x = m.positions[i], y = m.positions[i + 1];

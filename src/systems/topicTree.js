@@ -65,7 +65,7 @@
 import { BUILDING_TYPES, isResidence } from '../world/buildingNames.js';
 import { QUEST_MESSAGES, isShelved } from './quest/quest.js';   // the message-id enum (QuestMachine.cs:260-270); QUEST-SHELF: a quest set aside
 import { NPC_CONTEXT } from '../characters/staticNpc.js';   // AUDIT 24: NPCData.context is a NUMBER
-import { YARD_KIND_ORDER, YARD_TALK_GROUPS } from './merchantYards.js';   // YARDS-FOUND: the town's yards on the Where-is page
+import { FOUND_KIND_ORDER, FOUND_TALK_GROUPS } from './portPlaces.js';   // YARDS-FOUND: the town's yards on the Where-is page - SHIPYARDS-FOUND: and a port town's places after them, one order
 
 /** ListItemType (:128-133). */
 export const LIST_ITEM_TYPE = Object.freeze({ Item: 0, ItemGroup: 1, NavigationBack: 2 });
@@ -659,10 +659,10 @@ export class TopicTree {
     // group takes (systems/merchantYards.js yardDirectoryRows) - each its own group after the shops, asked and answered
     // as a building is (LocalBuilding: the knowledge roll, "%di of here", the map's mark). Their own variable: the
     // shared one's flow into the General section and the palace arm below is C#'s, untouched
-    for (const kind of YARD_KIND_ORDER) {
+    for (const kind of FOUND_KIND_ORDER) {   // SHIPYARDS-FOUND: the Stables, the Wagon yards, then the port's Shipyards, Crew halls, Lighthouses and Docks
       const yards = this.listBuildings.filter((x) => x.yard === kind);
       if (!yards.length) continue;
-      const yardGroup = newListItem({ type: LIST_ITEM_TYPE.ItemGroup, caption: YARD_TALK_GROUPS[kind], listChildItems: [] });
+      const yardGroup = newListItem({ type: LIST_ITEM_TYPE.ItemGroup, caption: FOUND_TALK_GROUPS[kind], listChildItems: [] });
       yardGroup.listChildItems.push(this._newBackItem());
       for (const y of yards) yardGroup.listChildItems.push(newListItem({ questionType: QUESTION_TYPE.LocalBuilding, caption: y.name, buildingKey: y.buildingKey }));
       this.listTopicLocation.push(yardGroup);

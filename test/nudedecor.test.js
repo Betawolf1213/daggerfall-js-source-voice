@@ -211,6 +211,7 @@ const NO_PERSON = Object.freeze({
   'src/scenes/navalCrew.js': 'crews as mobile units',
   'src/scenes/navalFlames.js': 'a ship\'s flames',
   'src/scenes/portalFx.js': 'a portal',
+  'src/scenes/portHost.js': 'a port\'s shipmaster, crewmaster, sailors, shipwrights and lightkeeper as walkers (PERSON_TEXTURES, never the table\'s flats)',   // SHIPYARDS
   'src/scenes/riteHost.js': 'a rite\'s fire',
   'src/scenes/siegeNpcs.js': 'a siege\'s fighters as mobile units',
   'src/scenes/sigilBrokerPool.js': 'the Sigil broker as a mobile unit',

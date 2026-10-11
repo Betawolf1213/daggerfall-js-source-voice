@@ -100,7 +100,9 @@ test('HC1: a shelf-set model in an OWNED house is MakeHouseContainer, not a shop
 
 test('HC1: the host answers houseOwned at BUILD, off the bank registry (:816)', () => {
   const wm = src('scenes/worldModes.js');
-  assert.ok(wm.includes('const houseOwned = !!restore?.privateRoom || !!hit.sailingCabin || (!!building && (home ? home.own : isHouseOwned(playerEntity.houses ?? [], building.regionIndex ?? 0, building.buildingKey)));'),   // AUDIT 68 S23-failed-entry-stale-building: the door's record, before the host commits it. HOME1 re-aim: online, the service's list decides where it names the building (home1.test.js)
+  // PIN MOVED (AUDIT CAPTAIN'S SEA P9): through houseOwnedAt - the registry's (region, key) law, an isle town's buildings no deed's
+  assert.ok(wm.includes('const houseOwned = !!restore?.privateRoom || !!hit.sailingCabin || (!!building && (home ? home.own : houseOwnedAt(building, building.buildingKey)));')
+    && wm.includes('const houseOwnedAt = (b, key) => !isEtherPlaceId(homeTownOf(b)) && isHouseOwned(playerEntity.houses ?? [], b?.regionIndex ?? 0, key);'),   // AUDIT 68 S23-failed-entry-stale-building: the door's record, before the host commits it. HOME1 re-aim: online, the service's list decides where it names the building (home1.test.js)
     'the host owns the registry and evaluates at BUILD');
   assert.ok(wm.includes('setupStaticNpc, houseOwned, peopleVisible,'),
     'the answer rides the opts into buildInteriorContext - the peopleVisible idiom');
@@ -125,7 +127,7 @@ test('HC1: owner access - house OR ship - opens loot-target storage, never stock
   // calls it before either branch, and the predicate is the same OR of the ship and the house.
   const pred = wm.slice(wm.indexOf('const ownsThisInterior = (b = interiorBuilding) =>'), wm.indexOf('const interiorHoverName = composeNamer(['));
   const guard = pred.indexOf("(b?.buildingType === BUILDING_TYPES.Ship && ownsShip(playerEntity))");
-  const houseGuard = pred.indexOf('|| (interiorHome && b === interiorBuilding ? interiorHome.own : isHouseOwned(playerEntity.houses ?? []');   // HOME1: and my online home's cupboards are my storage
+  const houseGuard = pred.indexOf('|| (interiorHome && b === interiorBuilding ? interiorHome.own : houseOwnedAt(b, b?.buildingKey)');   // PIN MOVED (AUDIT CAPTAIN'S SEA P9): the registry through houseOwnedAt   // HOME1: and my online home's cupboards are my storage
   assert.ok(guard >= 0 && houseGuard > guard, 'the ship arm (:905-906) rides the same OR as the house');
   assert.ok(arm.indexOf('const owned = ownsThisInterior(b);') >= 0, 'and the activation arm asks it');
   const ownedLatch = arm.indexOf('c.items ??= [];');

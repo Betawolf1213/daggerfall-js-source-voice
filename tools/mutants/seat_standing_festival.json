@@ -219,7 +219,7 @@
  {
   "name": "S1-redtick-no-week-reread",
   "file": "src/net/townSeatBook.js",
-  "old": "      else if (!pending && open === true && seatWeekOf(at) !== seatWeekOf(nowMs())) read({ force: true });\n",
+  "old": "      else if (!pending && open === true && seatWeekOf(at) !== seatWeekOf(nowMs() - turnSpreadMs)) read({ force: true });\n",
   "new": "",
   "tests": [
    "test/seat_standing_festival.test.js"
@@ -229,8 +229,8 @@
  {
   "name": "S1-redtick-every-frame",
   "file": "src/net/townSeatBook.js",
-  "old": "seatWeekOf(at) !== seatWeekOf(nowMs())) read({ force: true });",
-  "new": "seatWeekOf(at) <= seatWeekOf(nowMs())) read({ force: true });",
+  "old": "seatWeekOf(at) !== seatWeekOf(nowMs() - turnSpreadMs)) read({ force: true });",
+  "new": "seatWeekOf(at) <= seatWeekOf(nowMs() - turnSpreadMs)) read({ force: true });",
   "tests": [
    "test/seat_standing_festival.test.js"
   ],

@@ -15,6 +15,7 @@
 
 import { WoodsFile } from '../formats/woodsFile.js';
 import { groundWoods, dropGroundCache } from './tamrielGround.js';   // TAMRIEL2: the ground beyond the Bay
+import { etherWoods } from './ethericSea.js';   // ETHER-SEA: the Etheric Sea's ground
 import { setTamrielTrace } from './tamrielLand.js';   // TAMRIEL3: the picture's own land
 import { setTamrielFit } from './tamrielFrame.js';
 import { generatePixelTerrain, restrideGrid } from './terrainGen.js';   // PERF-EXT26: and a built pixel's grid at another stride
@@ -37,6 +38,7 @@ function handle(m) {
       // TAMRIEL2: the continent round the Bay, composed here as the host composes its own (the fallback law's) - the
       // same pure modules, so a pixel built on the worker is the bytes one built on the main thread is
       woods = m.tamriel ? groundWoods(w) : w;
+      if (m.ether) woods = etherWoods(woods);   // ETHER-SEA: the Etheric Sea over it, as the host composes its own
       return;
     }
     // LANDFORM4/6: the landforms' tables - the sites and the climates - arrive once, after init and before any job (the

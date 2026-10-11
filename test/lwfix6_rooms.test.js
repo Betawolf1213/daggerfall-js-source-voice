@@ -60,11 +60,12 @@ const AWAY = [0, 0, -4.65];   // AUDIT LW-ROOMS: a step behind the door's row, l
 test('LW-FIX6 a player\'s own room stands nobody of the living world - DFU\'s AddPeople stands nobody in a house the player owns; an online home (anyone\'s), a private room and a cabin likewise - the room\'s answer the people gate\'s own law, kept with the room; the host asks it (mutants: the home, the house, the private room, the answer unread)', () => {
   const m = rd('src/scenes/worldModes.js');
   const owned = lift(m, /\n\s*ctx\.ownedRoom = (!!\(restore\?\.privateRoom[^\n]*\)\)\)\);)\n/, 'the room\'s answer');
-  assert.match(m, /isHouseOwned: \(key\) => home !== null \|\| isHouseOwned\(playerEntity\.houses \?\? \[\], building\?\.regionIndex \?\? 0, key\),   \/\/ HOME1/, 'the people gate\'s law, the one it mirrors');
+  // PIN MOVED (AUDIT CAPTAIN'S SEA P9): the deed read where the building stands - never an isle town's (houseOwnedAt)
+  assert.match(m, /isHouseOwned: \(key\) => home !== null \|\| houseOwnedAt\(building, key\),   \/\/ HOME1/, 'the people gate\'s law, the one it mirrors');
   const houses = [{ region: 17, key: 41 }];
-  const isHouseOwned = (list, region, key) => list.some((h) => h.region === region && h.key === key);
+  const houseOwnedAt = (b, key) => houses.some((h) => h.region === (b?.regionIndex ?? 0) && h.key === key);
   const ask = ({ restore = null, hit = {}, building = { regionIndex: 17, buildingKey: 9 }, home = null }) =>
-    new Function('restore', 'hit', 'building', 'home', 'isHouseOwned', 'playerEntity', `return ${owned}`)(restore, hit, building, home, isHouseOwned, { houses });
+    new Function('restore', 'hit', 'building', 'home', 'houseOwnedAt', `return ${owned}`)(restore, hit, building, home, houseOwnedAt);
   assert.equal(ask({}), false, 'a stranger\'s house: theirs');
   assert.equal(ask({ building: { regionIndex: 17, buildingKey: 41 } }), true, 'the player\'s own house');
   assert.equal(ask({ home: { own: false } }), true, 'an online home - anyone\'s');

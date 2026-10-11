@@ -78,7 +78,8 @@ test('I1: the Actions enum, verbatim names and order (:324-384)', () => {
     'Professions',   // CLASSIC-PAGES: the Professions and Stores pages on either skin, appended after HELM-KEYS' two
     'LegacyFamily',   // LEGACY3: Project Legacy's Family tab, appended after CLASSIC-PAGES'
     'ModeWheel',   // MODE-WHEEL: the interaction-mode wheel, held - appended after LEGACY3's
-    'WeaponTechnique',   // TECH1: the weapon's technique (bible/05-Combat/Weapon-Techniques.md) - appended last
+    'WeaponTechnique',   // TECH1: the weapon's technique (bible/05-Combat/Weapon-Techniques.md) - appended
+    'Spyglass',   // SPYGLASS: the captain's glass (bible/03-World/Captains-Sea.md) - appended last
   ]);
   // ActionNameToEnum's sentinel: unknown parses to Unknown, and
   // Unknown itself is NOT a bindable action.
@@ -175,9 +176,10 @@ test('I1: ResetDefaults\' table, every row (:979-1032)', () => {
   assert.equal(DEFAULT_BINDINGS.length, 76);   // TECH1: plus the technique's (Mouse3); MODE-WHEEL: minus F1-F4 and Sneak's Alt, plus the wheel's; LEGACY3: plus the Family tab's; VIEW-TOGGLE: plus the view's toggle; PROF1: plus the act choice's; HELM-KEYS: plus less sail's
   assert.equal(bound.size, 76, 'no action is defaulted twice');   // TECH1: the technique's own
   // TV1: one more appended after them, and unbound - the travel view's door is the map's.
-  assert.equal(ACTIONS.length, 89);   // TECH1: + WeaponTechnique, last; MODE-WHEEL: + ModeWheel, last; LEGACY3: + LegacyFamily, last; CLASSIC-PAGES: + Professions, last; PADWALK: + WalkMode, after them (main's indices are live); VIEW-TOGGLE: + TogglePerspective; PROF1: + ActChoice; HELM-KEYS: + BoatSailUp, BoatSailDown, last
-  assert.deepEqual(ACTIONS.filter((a) => !bound.has(a)), ['ToggleConsole', 'Slide', 'StealMode', 'GrabMode', 'InfoMode', 'TalkMode', 'Sneak', 'QuickSwap', 'DebugOverlay', 'TravelView', 'WalkMode', 'BoatSailUp', 'Professions'], 'the thirteen without an owned key, named - more sail\'s and the Professions key\'s are default shares; MODE-WHEEL: the four modes and Sneak');
-  assert.deepEqual(DEFAULT_SHARES, [['ArrowUp', 'BoatSailUp', 'ActChoice'], ['ArrowDown', 'Professions', 'BoatSailDown']], 'HELM-KEYS: the default shares - onto their partners\' own keys; CLASSIC-PAGES: the Professions key beside less sail');
+  assert.equal(ACTIONS.length, 90);   // SPYGLASS: + Spyglass, last (PIN MOVED); TECH1: + WeaponTechnique; MODE-WHEEL: + ModeWheel, last; LEGACY3: + LegacyFamily, last; CLASSIC-PAGES: + Professions, last; PADWALK: + WalkMode, after them (main's indices are live); VIEW-TOGGLE: + TogglePerspective; PROF1: + ActChoice; HELM-KEYS: + BoatSailUp, BoatSailDown, last
+  // PIN MOVED (SPYGLASS, 2026-10-11): the glass owns no key - it shares K with the road's follow
+  assert.deepEqual(ACTIONS.filter((a) => !bound.has(a)), ['ToggleConsole', 'Slide', 'StealMode', 'GrabMode', 'InfoMode', 'TalkMode', 'Sneak', 'QuickSwap', 'DebugOverlay', 'TravelView', 'WalkMode', 'BoatSailUp', 'Professions', 'Spyglass'], 'the fourteen without an owned key, named - more sail\'s, the Professions key\'s and the glass\'s are default shares; MODE-WHEEL: the four modes and Sneak');
+  assert.deepEqual(DEFAULT_SHARES, [['ArrowUp', 'BoatSailUp', 'ActChoice'], ['ArrowDown', 'Professions', 'BoatSailDown'], ['KeyK', 'Spyglass', 'FollowPaths']], 'HELM-KEYS: the default shares - onto their partners\' own keys; CLASSIC-PAGES: the Professions key beside less sail; SPYGLASS: the glass beside the road\'s follow');
   const codes = DEFAULT_BINDINGS.map(([c]) => c);
   assert.equal(new Set(codes).size, codes.length, 'and no KEY is spent twice - the number row was free');
 });

@@ -1231,8 +1231,8 @@
   {
     "name": "AUDIT-LANDFORMS-II-I1-ring-unfaded",
     "file": "src/render/farRing.js",
-    "old": "const heightOf = relief ? (x, y) => ringHeight(byteAt(x, y), true, cliffFadeAt(byteAt, clampX(x), clampY(y))) :",
-    "new": "const heightOf = relief ? (x, y) => ringHeight(byteAt(x, y), true) :",
+    "old": "let heightOf = relief ? (x, y) => ringHeight(byteAt(x, y), true, cliffFadeAt(byteAt, clampX(x), clampY(y))) :",
+    "new": "let heightOf = relief ? (x, y) => ringHeight(byteAt(x, y), true) :",
     "tests": [
       "test/auditlandforms.test.js"
     ]

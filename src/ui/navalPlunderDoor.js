@@ -13,7 +13,9 @@
 // through `onClose(reason)` before its slot drops the overlay. One stands at a time.
 //
 // AUDIT NAV1 (the helm): THE SHIPWRIGHT'S WINDOW (ui/navalYardWindow.js) opens through the same door - one shape for the
-// sea fight's two windows (`openNavalWindow`), each its own host, chunk and slot.
+// sea fight's two windows (`openNavalWindow`), each its own host, chunk and slot. ETHER-CHART: and the chart of the
+// Etheric Sea (ui/etherChartWindow.js), the travel map's door past the Veil. SHIPYARDS (2026-10-11): and a port's
+// shipmaster's (ui/shipyardWindow.js) - a slot of its own, the same shape.
 import { mountEnhancedChunk } from './enhancedChunk.js';
 import { registerOverlay } from './enhancedOverlays.js';
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
@@ -35,6 +37,20 @@ const YARD = {
   load: () => import('./navalYardWindow.js'),
   mount: ({ mountNavalYardWindow }, host, deps) => mountNavalYardWindow(host, deps),
 };
+/** ETHER-CHART: the chart of the Etheric Sea (ui/etherChartWindow.js) - the travel map's door past the Veil. */
+/** @type {NavalWindowSlot} */
+const ETHER_CHART = {
+  id: 'ether-chart-host', label: 'ether-chart', open: null,
+  load: () => import('./etherChartWindow.js'),
+  mount: ({ mountEtherChartWindow }, host, deps) => mountEtherChartWindow(host, deps),
+};
+/** SHIPYARDS (2026-10-11): the shipmaster's window (ui/shipyardWindow.js) - a port's shipyard's, through the same door. */
+/** @type {NavalWindowSlot} */
+const SHIPYARD = {
+  id: 'shipyard-host', label: 'shipyard', open: null,
+  load: () => import('./shipyardWindow.js'),
+  mount: ({ mountShipyardWindow }, host, deps) => mountShipyardWindow(host, deps),
+};
 /** @param {NavalWindowSlot} slot */
 const isOpen = (slot) => !!slot.open && !slot.open.done;
 /** @param {NavalWindowSlot} slot */
@@ -51,7 +67,9 @@ function shut(slot) {
  * @param {any} deps - the window's own, less `onExit` (the door's close is its way out), plus `onClose(reason)`
  */
 function openNavalWindow(slot, deps) {
-  noteFirstUse(slot === YARD ? 'shipyard' : 'naval-combat');   // TUT1: the yard, or a beaten ship's hold
+  // ETHER-CHART (AUDIT CAPTAIN'S SEA, at the merge of SHIPYARDS): the chart of the Etheric Sea is neither a sea fight's
+  // window nor a yard's, and pops no page - the branch's arm read it as the sea fight's, main's as the yard's
+  if (slot !== ETHER_CHART) noteFirstUse(slot === PLUNDER ? 'naval-combat' : 'shipyard');   // TUT1: a beaten ship's hold, or the shipwright's yard and a port's shipyard (SHIPYARDS) - one page
   if (typeof document === 'undefined') return null;
   slot.open?.dispose();
   let fired = false;
@@ -115,3 +133,19 @@ export const closeNavalYard = () => shut(YARD);
 /** The shipwright's window (ui/navalYardWindow.js), as an overlay for the host's slot; `deps` as that window's, plus
  *  `onClose(reason)`. */
 export const createNavalYardOverlay = (deps) => openNavalWindow(YARD, deps);
+
+/** ETHER-CHART: is the chart of the Etheric Sea up. */
+export const etherChartOpen = () => isOpen(ETHER_CHART);
+/** ETHER-CHART: shut it, if it is up - and say whether it was. */
+export const closeEtherChart = () => shut(ETHER_CHART);
+/** ETHER-CHART: the chart (ui/etherChartWindow.js), as an overlay for the host's slot; `deps` as that window's, plus
+ *  `onClose(reason)`. */
+export const createEtherChartOverlay = (deps) => openNavalWindow(ETHER_CHART, deps);
+
+/** SHIPYARDS: is the shipmaster's window up. */
+export const shipyardOpen = () => isOpen(SHIPYARD);
+/** Shut the shipmaster's window, if it is up - and say whether it was. */
+export const closeShipyard = () => shut(SHIPYARD);
+/** The shipmaster's window (ui/shipyardWindow.js), as an overlay for the host's slot; `deps` as that window's, plus
+ *  `onClose(reason)`. */
+export const createShipyardOverlay = (deps) => openNavalWindow(SHIPYARD, deps);

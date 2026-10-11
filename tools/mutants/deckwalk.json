@@ -471,8 +471,8 @@
   {
     "name": "SHIPMATES-bars-clear-unwired",
     "file": "src/scenes/world.js",
-    "old": "drawNavalTags([]); drawCrewBars([]); drawCrewLines([]); };",
-    "new": "drawNavalTags([]); drawCrewLines([]); };",
+    "old": "drawNavalTags([]); drawCrewBars([]); drawCrewLines([]); lowerGlass(); };",
+    "new": "drawNavalTags([]); drawCrewLines([]); lowerGlass(); };",
     "tests": [
       "test/deckwalk.test.js"
     ]

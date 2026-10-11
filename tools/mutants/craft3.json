@@ -65,11 +65,12 @@
   {
     "name": "CRAFT3-service-row-unmapped",
     "file": "server-account/src/professions.js",
-    "old": ".bind(player, character, trackOf(profession)).first();",
-    "new": ".bind(player, character, profession).first();",
+    "old": ".bind(player, character, trackOf(profession));",
+    "new": ".bind(player, character, profession);",
     "tests": [
       "test/craft3_five.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "CRAFT3-service-view-unmapped",

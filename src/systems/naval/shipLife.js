@@ -164,12 +164,12 @@ export function footprintClear(pos, yaw, hull, isWater) {
  * hull }`, the berths nearest the town first - or null where the town has no shore to berth at or no way out to sea.
  * AUDIT GN2-GN1: sounded for `hull`'s footprint in `deep`'s water too - the deepest keel that berths (BERTH_HULLS).
  */
-export function findHarbour({ rect, isWater: own, hull = BERTH_HULL, deep = deepestBerther(), max = HARBOUR_BERTHS }) {
+export function findHarbour({ rect, isWater: own, hull = BERTH_HULL, deep = deepestBerther(), max = HARBOUR_BERTHS, reach = HARBOUR_REACH }) {
   const { length, halfWidth } = berthSize(hull);   // SHIPS-2: the berths' template's
   const isWater = (x, z, h) => !!own(x, z, h) && (h === deep || !!own(x, z, deep));
   const water = (x, z) => isWater(x, z, hull);
   const cx = (rect.minX + rect.maxX) / 2, cz = (rect.minZ + rect.maxZ) / 2;
-  const x0 = rect.minX - HARBOUR_REACH, x1 = rect.maxX + HARBOUR_REACH, z0 = rect.minZ - HARBOUR_REACH, z1 = rect.maxZ + HARBOUR_REACH;
+  const x0 = rect.minX - reach, x1 = rect.maxX + reach, z0 = rect.minZ - reach, z1 = rect.maxZ + reach;
   const cands = [];
   for (let x = x0; x <= x1; x += SHORE_STEP) {
     for (let z = z0; z <= z1; z += SHORE_STEP) {
@@ -188,7 +188,7 @@ export function findHarbour({ rect, isWater: own, hull = BERTH_HULL, deep = deep
       const off = halfWidth + BERTH_MARGIN;
       const pos = [x + nx * off, z + nz * off];
       const dx = Math.max(rect.minX - pos[0], 0, pos[0] - rect.maxX), dz = Math.max(rect.minZ - pos[1], 0, pos[1] - rect.maxZ);
-      if (Math.hypot(dx, dz) > HARBOUR_REACH) continue;
+      if (Math.hypot(dx, dz) > reach) continue;
       cands.push({ pos, normal: [nx, nz], d: Math.hypot(pos[0] - cx, pos[1] - cz) });
     }
   }

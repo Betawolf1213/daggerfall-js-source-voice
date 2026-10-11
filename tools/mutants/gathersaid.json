@@ -100,11 +100,12 @@
   {
     "name": "GATHERSAID-lapse-unsaid",
     "file": "src/scenes/gatherHost.js",
-    "old": "    if (r?.error === 'lapsed') { hud.toast(LAPSED_LINE); return; }",
-    "new": "    if (r?.error === 'lapsed') return;",
+    "old": "    if (r?.error === 'lapsed') {\n      hud.toast(LAPSED_LINE);\n",
+    "new": "    if (r?.error === 'lapsed') {\n",
     "tests": [
       "test/gathersaid.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched. AUDIT GATHER-SPEED (PIN MOVED): re-aimed by content."
   },
   {
     "name": "GATHERSAID-stopped-unsaid",

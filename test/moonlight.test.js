@@ -132,7 +132,8 @@ test('EV5: the wiring - three lit shaders, the latched flat tint, the studio, th
   // both exterior hosts drive it; no interior host ever does
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const src = readFileSync(host, 'utf8');
-    assert.ok(src.includes('renderer.setMoonlight(moonNow)'), `${host} sets the key`);
+    // PIN MOVED (AUDIT CAPTAIN'S SEA G14): the streaming world's key leaned past the Veil, the moon as it is else
+    assert.ok(src.includes(host === 'src/scenes/world.js' ? 'renderer.setMoonlight(moonNow && etherAirW ? { scale: moonNow.scale, dir: moonNow.dir, color: etherLight(moonNow.color, etherAirW, ETHER_KEY_TINT) } : moonNow)' : 'renderer.setMoonlight(moonNow)'), `${host} sets the key`);
     assert.ok(src.includes('withMoonAmbient(exteriorAmbient('), `${host} folds secunda into the ambient`);
   }
   for (const host of ['src/scenes/interior.js', 'src/scenes/dungeon.js']) {

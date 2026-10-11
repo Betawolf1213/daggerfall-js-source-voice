@@ -52,7 +52,7 @@
 // turns off, or the layer is disposed - a held key with no hand on it
 // is the disease the touch layer's `up()` guards against.
 import { bindings } from './input.js';
-import { getBinding, getAxisBinding, getAxisInversion, getJoystickUIBinding } from '../systems/inputActions.js';
+import { getBinding, getAxisBinding, getAxisInversion, getJoystickUIBinding, DEFAULT_SHARES } from '../systems/inputActions.js';
 import { unityAxes, unityButtons, axisNumber, axisKeyDown, axisKeyName, parseAxisKeyName, movementAxes, cameraAxes, controllerLookDegrees, controllerSettings, CURSOR_SPEED, NUM_AXES, AXIS_KEY_BASE } from '../systems/gamepad.js';
 import { getBinding as getBindingOf, isPadCode } from '../systems/inputActions.js';
 // PADPLUS1: the Enhanced Plus controller layer - its layout, the crossbar, the menus, the prompts (ui/plusPad.js)
@@ -82,6 +82,12 @@ const DPAD_DOWN = 'JoystickAxis7Button1';
 const modeActionOf = (mode) => Object.keys(MODE_ACTIONS).find((a) => MODE_ACTIONS[a] === mode) ?? null;
 /** PADPLUS9: how long a d-pad direction is held before it is its HOLD action (down: the travel map) rather than its tap. */
 export const DPAD_HOLD_S = 0.45;
+/** AUDIT CAPTAIN'S SEA S2: a SHARE's action (inputActions.js DEFAULT_SHARES - the Spyglass on K beside the road's follow)
+ *  is pressed by the host's own door (`padAction`), never by its key: that key is its partner's too. */
+const SHARE_ACTIONS = new Set(DEFAULT_SHARES.map(([, action]) => action));
+/** AUDIT CAPTAIN'S SEA S3: the look stick's click - while the glass is up it turns the glass's magnification (the wheel's
+ *  x2, x4, x8, round), and nothing else hears it until it is let go. */
+export const GLASS_PAD_ZOOM = 'JoystickButton9';
 const DPAD_DIRS = Object.freeze([['JoystickAxis7Button0', 'up'], ['JoystickAxis7Button1', 'down'], ['JoystickAxis6Button1', 'left'], ['JoystickAxis6Button0', 'right']]);
 
 /** PADPLUS4: ONE POINTER. With the pad in hand the page showed two - the gauntlet (a mouse pointer the page had not
@@ -293,6 +299,7 @@ export function attachGamepad(canvas, hooks = {}, { getPads = null, dispatch = s
     const fireDpad = (action, code) => {
       if (!action) return;
       const name = action === NEXT_MODE ? modeActionOf(nextInteractionMode(getInteractionMode())) : action;
+      if (SHARE_ACTIONS.has(name)) { try { if (hooks.padAction?.(name)) return; } catch (e) { console.warn('[gamepad] pad action:', e?.message ?? e); } }   // AUDIT CAPTAIN'S SEA S2
       const c = name ? codeOf(b, name) : null;
       // PAD-BINDS (FIELD BUGS 2026-10-04e): an action on no key at all (TravelView ships unbound) is the host's own
       // door - a synthetic press of nothing reached nothing
@@ -383,13 +390,16 @@ export function attachGamepad(canvas, hooks = {}, { getPads = null, dispatch = s
         wanted.delete(code); swallowed.add(code);
         const st = P.helm[code] ??= { t: -1, fired: false, held: false };
         const down = downNow.has(code);
+        // AUDIT CAPTAIN'S SEA S3: a press the player gave the glass on this direction is the glass's at the helm too (the
+        // helm's own gesture there yields to the player's choice - helmPadPrompts says so)
+        const glassTap = dpad[code]?.tap === 'Spyglass', glassHold = dpad[code]?.hold === 'Spyglass';
         if (down && !P.xbPrev.has(code)) { st.t = 0; st.fired = false; st.held = false; }
         if (st.t < 0) continue;
         if (down) {
           st.t += dt;
-          if (!st.fired && st.t >= DPAD_HOLD_S) { st.fired = true; st.held = !!hooks.helm?.gesture?.(dir, 'hold'); }   // true: a hold the let-go ends (the trim)
+          if (!st.fired && st.t >= DPAD_HOLD_S) { st.fired = true; if (glassHold) fireDpad('Spyglass', code); else st.held = !!hooks.helm?.gesture?.(dir, 'hold'); }   // true: a hold the let-go ends (the trim)
         } else {
-          if (!st.fired) hooks.helm?.gesture?.(dir, 'tap');
+          if (!st.fired) { if (glassTap) fireDpad('Spyglass', code); else hooks.helm?.gesture?.(dir, 'tap'); }
           else if (st.held) hooks.helm?.gesture?.(dir, 'release');
           st.t = -1; st.held = false;
         }
@@ -652,6 +662,14 @@ export function attachGamepad(canvas, hooks = {}, { getPads = null, dispatch = s
     // PADPLUS1: the Plus layer - the run toggle and the crossbar in the world, the tabs, the jumps, the scroll and
     // the Options press in a window. `swallowed` are buttons it took: no key, no click for them this frame.
     const swallowed = plus ? plusFrame({ b, wanted, overlay, dt, padDown, moving: !!analog, axes, s }) : null;
+    // AUDIT CAPTAIN'S SEA S3: THE GLASS UNDER A PAD - while it is up, the look stick's click turns its magnification (a
+    // pad has no wheel), and that click is the glass's until it is let go (whatever it is bound to waits)
+    const glassUp = !overlay && !!hooks.glass?.up?.();
+    const zoomDown = buttons.has(GLASS_PAD_ZOOM), zoomFresh = zoomDown && !P.zoomPrev;
+    P.zoomPrev = zoomDown;
+    if (glassUp && zoomFresh) { P.glassZoom = true; try { hooks.glass.zoom?.(); } catch (e) { console.warn('[gamepad] glass:', e?.message ?? e); } }
+    if (!zoomDown) P.glassZoom = false;
+    if (P.glassZoom) wanted.delete(GLASS_PAD_ZOOM);
     // PADPLUS10: while the bindings window waits for a button, a press is only its own code - no Back, no click
     const binding = !!capturing();
     if (binding) for (const code of wanted) if (padDownIn(axes, code)) capturedHeld.add(code);

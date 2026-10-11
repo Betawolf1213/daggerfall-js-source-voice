@@ -46,7 +46,7 @@ test('INT1: every item every honest producer mints carries no finding - in the s
   assert.deepEqual(honestItemsSkipped, [], 'every producer ran headless');
   const sources = new Set(SWEEP.map((s) => s.source));
   // PIN MOVED (its audit): the producers counted exactly - a producer dropped from the sweep is a hole, never a pass
-  assert.equal(sources.size, 84, `the sweep's producers: ${sources.size}`);   // PIN MOVED (TECH1): + lootRarity.addTechniqueLine and what may follow it
+  assert.equal(sources.size, 86, `the sweep's producers: ${sources.size}`);   // PIN MOVED (TECH1): + lootRarity.addTechniqueLine and what may follow it; PIN MOVED (AUDIT CAPTAIN'S SEA B12): + the exchange's goods and the treasure chart
   assert.ok(SWEEP.length >= 30_000, `the sweep's items: ${SWEEP.length}`);
   for (const wire of [false, true]) {
     const bad = (wire ? honestItems({ seeds: 4, wire: true }) : SWEEP).map(({ source, item }) => ({ source, f: itemFindings(item), item })).filter((x) => x.f.length);

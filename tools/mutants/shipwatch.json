@@ -389,8 +389,8 @@
   {
     "name": "H-hail-night-unread",
     "file": "src/scenes/navalHost.js",
-    "old": "d > nightSight(SAIL_HO_RANGE, { night, lit: showsLight(e) })",
-    "new": "d > SAIL_HO_RANGE",
+    "old": "d > nightSight(SAIL_HO_RANGE * sight, { night, lit: showsLight(e) })",
+    "new": "d > SAIL_HO_RANGE * sight",
     "tests": [
       "test/shipwatch.test.js"
     ]

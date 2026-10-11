@@ -27,7 +27,7 @@ import { fillLanternPool } from '../src/world/cityLights.js';
 import { createMusicDirector } from '../src/scenes/shared.js';
 import { LOCATION_TYPES, TAVERN_SONGS, MUSIC_ENV } from '../src/systems/songManager.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
-import { createTownSeatBook, SEAT_LIST_CACHE_MS, SEAT_RED_READ_MS } from '../src/net/townSeatBook.js';   // AUDIT FESTIVAL S1
+import { createTownSeatBook, SEAT_LIST_CACHE_MS, SEAT_RED_READ_MS, SEAT_TURN_READ_SPREAD_MS } from '../src/net/townSeatBook.js';   // AUDIT FESTIVAL S1   // D1-LOAD: the Turning's read spread
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const tick = (n = 4) => new Promise((r) => { let i = 0; const go = () => (++i >= n ? r() : setTimeout(go, 0)); setTimeout(go, 0); });
@@ -243,7 +243,10 @@ test('AUDIT FESTIVAL S1 the book\'s frame tick reads the list again ONCE when th
   let now = turning - 60_000;
   let edicts = ['festival', 'curfew'];   // week W's, then W+1's
   const door = turningDoor(() => (now < turning ? edicts[0] : edicts[1]));
-  const book = createTownSeatBook({ door, nowMs: () => now });
+  // PIN MOVED (D1-LOAD): each client reads at its own share of SEAT_TURN_READ_SPREAD_MS past the Turning - this one's
+  // half of it (rand 0.5), never every client in one second
+  const book = createTownSeatBook({ door, nowMs: () => now, rand: () => 0.5 });
+  const READ = turning + SEAT_TURN_READ_SPREAD_MS / 2 + 1000;
   await book.read();   // the arrival's
   const stage = createFestivalStage({ seatAt: (m) => (book.open === true && m === 3021 ? book.dressed({ key: 3021 }) : null), now: () => now, version: () => (book.open === true ? 1 : 0) });
   assert.equal(stage.festive(3021), true);
@@ -251,6 +254,10 @@ test('AUDIT FESTIVAL S1 the book\'s frame tick reads the list again ONCE when th
   book.redTick();
   assert.equal(door.calls, 1, 'before the Turning: nothing asked');
   now = turning + 1000;
+  book.redTick();
+  await tick();
+  assert.equal(door.calls, 1, 'the week turned, but inside this client\'s share of the spread: not yet');
+  now = READ;
   book.redTick();
   book.redTick();   // the same frame's second ask while the read is in flight
   await tick();
@@ -261,7 +268,7 @@ test('AUDIT FESTIVAL S1 the book\'s frame tick reads the list again ONCE when th
   for (let i = 0; i < 5; i++) { now += 60_000; book.redTick(); }
   await tick();
   assert.equal(door.calls, 2, 'this week\'s list read: not asked again until SEAT_RED_READ_MS');
-  now = turning + 1000 + SEAT_RED_READ_MS;
+  now = READ + SEAT_RED_READ_MS;
   book.redTick();
   await tick();
   assert.equal(door.calls, 3, 'the red lines\' own clock as before');
@@ -270,7 +277,7 @@ test('AUDIT FESTIVAL S1 the book\'s frame tick reads the list again ONCE when th
   const W2 = seatWeekStartMs(W + 2);
   now = W2 - 60_000;
   const door2 = turningDoor(() => (now < W2 ? edicts[0] : edicts[1]));
-  const book2 = createTownSeatBook({ door: door2, nowMs: () => now });
+  const book2 = createTownSeatBook({ door: door2, nowMs: () => now, rand: () => 0 });   // a share of nought: at once
   await book2.read();
   const stage2 = createFestivalStage({ seatAt: (m) => (m === 3021 ? book2.dressed({ key: 3021 }) : null), now: () => now });
   assert.equal(stage2.festive(3021), false);
@@ -282,11 +289,23 @@ test('AUDIT FESTIVAL S1 the book\'s frame tick reads the list again ONCE when th
   // seats shut to this account: no week's read
   now = turning - 60_000;
   const shut = { calls: 0, list: async () => { shut.calls++; return { ok: false, error: 'seats-closed' }; } };
-  const book3 = createTownSeatBook({ door: shut, nowMs: () => now });
+  const book3 = createTownSeatBook({ door: shut, nowMs: () => now, rand: () => 0 });
   await book3.read();
   now = turning + 1000;
   book3.redTick();
   await tick();
   assert.equal(shut.calls, 1, 'shut: never asked at the Turning');
   assert.match(src('src/scenes/world.js'), /\n    seatBook\?\.redTick\(\);   \/\/ CROWN2/, 'the host ticks the book each online frame');
+  assert.equal(SEAT_TURN_READ_SPREAD_MS, 120_000, 'two minutes');
+  // the shares drawn: a book's own, from its rand - the last of the window still reads inside it
+  const late = turningDoor(() => edicts[1]);
+  now = turning - 60_000;
+  const book4 = createTownSeatBook({ door: late, nowMs: () => now, rand: () => 0.999 });
+  await book4.read();
+  now = turning + SEAT_TURN_READ_SPREAD_MS - 1000;
+  book4.redTick(); await tick();
+  assert.equal(late.calls, 1, 'not before its own share');
+  now = turning + SEAT_TURN_READ_SPREAD_MS;
+  book4.redTick(); await tick();
+  assert.equal(late.calls, 2, 'and read at it, inside the window');
 });

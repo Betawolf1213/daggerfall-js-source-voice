@@ -189,6 +189,9 @@ test('AUDIT 29 C4: a kept harvest answered through the pump says its rank\'s ris
     const v = await ready(t);
     t.face(v);
     t.host.tick(0.016);
+    const centers = () => t.entry.batches.reduce((a, b) => a + (b.centers ?? 0), 0);
+    for (let i = 0; i < 4; i++) await tick();
+    const drawnBefore = centers();
     assert.equal(t.host.press(), true);
     for (let i = 0; i < 8 && t.host.acting(); i++) { t.setInput({ attack: true }); t.host.tick(MINE_ACT.swingS + 0.01); t.setInput({}); t.host.tick(0.01); }
     for (let i = 0; i < 6; i++) await tick();
@@ -196,7 +199,8 @@ test('AUDIT 29 C4: a kept harvest answered through the pump says its rank\'s ris
     assert.ok(!t.said.some((x) => /Mining 24 -> 25/.test(x)));
     const shown = t.host.nodesOf(PX, 150).filter((x) => x.what === 'vein').length;
     assert.ok(shown > 0);
-    const drawnBefore = t.entry.batches.reduce((a, b) => a + (b.centers ?? 0), 0);
+    // GATHER-SPEED (PIN MOVED): the node went with its act - being counted is gone from the world (profBook `gone`)
+    assert.equal(centers(), drawnBefore - 3, 'its node\'s flats taken down as its act ended, its harvest kept');
     t.clock.ms += 3_000;   // its wait past: the host's pump asks it again
     for (let i = 0; i < 10 && t.book.pendingHarvests; i++) { t.host.tick(0.016); await tick(); await tick(); }
     assert.equal(t.book.pendingHarvests, 0, 'answered through the pump');
@@ -204,8 +208,7 @@ test('AUDIT 29 C4: a kept harvest answered through the pump says its rank\'s ris
     assert.ok(t.said.includes('BANNER Apprentice Miner'));
     for (let i = 0; i < 4; i++) await tick();
     assert.ok(t.book.taken(v.key, 'ore'), 'taken by the service\'s word');
-    const centers = () => t.entry.batches.reduce((a, b) => a + (b.centers ?? 0), 0);
-    assert.equal(centers(), drawnBefore - 3, 'its node\'s flats taken down - its pixel stood again by the node\'s key (VEIN_FLATS)');
+    assert.equal(centers(), drawnBefore - 3, 'its node\'s flats still down - its pixel stood again by the node\'s key (VEIN_FLATS)');
   } finally { setForagingHost(null); }
 });
 

@@ -16,7 +16,8 @@ import { CONTAINER_IMAGES } from '../src/ui/targetIconPanel.js';
 import { customItemsForGroup, registerCustomItemGroup, templateByIndex } from '../src/systems/itemTemplates.js';
 import { DEEP_WATERS_FISH_TEMPLATES } from '../src/systems/deepWatersFishItems.js';
 import { isStackable } from '../src/systems/inventory.js';
-import { setModSetting } from '../src/systems/modSettings.js';
+import { setModSetting, latchModLoaded, modLatchedOn } from '../src/systems/modSettings.js';
+import { effectKindLoaded, WATER_WALKING_SILENT_KIND } from '../src/systems/effects.js';
 
 const DIR = new URL('../vendor/come-sail-away/Models/', import.meta.url);
 const json = (p) => JSON.parse(readFileSync(new URL(p, DIR), 'utf8'));
@@ -98,18 +99,20 @@ test('CSA-H: the two rows are the bundle\'s ItemTemplates.json field for field (
   assert.throws(() => boatItemName('Deed to', 0, 10), /IndexOutOfRangeException/, 'variantNames[10]');
 });
 
-test('CSA-H: RegisterCustomItem(1320/1321, UselessItems2) puts both on DFU\'s shelves - GetCustomItemsForGroup answers them after Roleplay Realism\'s own rows while the mod is loaded, and nothing when it is not', () => {
+// PIN MOVED (SHIPYARDS, 2026-10-11, Mac: "Shipyard only"): RegisterCustomItem's group no longer stocks the two - a port
+// town's shipyard sells every hull and buys them back (systems/shipyards.js), a DECLARED departure (Ledger A, SHIPYARDS)
+test('CSA-H x SHIPYARDS: the two rows stand on no shelf - GetCustomItemsForGroup answers neither, the mod on or off; the one home\'s Contains guard and the fish\'s rows stand', () => {
   try {
     setModSetting('come-sail-away', 'Enabled', true);
-    const g = customItemsForGroup('UselessItems2');
-    assert.deepEqual(g.filter((i) => i === 1320 || i === 1321), [1320, 1321], 'in registration order');
+    assert.deepEqual(customItemsForGroup('UselessItems2').filter((i) => i === 1320 || i === 1321), [], 'the mod on: on no shelf');
     assert.ok(!customItemsForGroup('Weapons').includes(1320));
     setModSetting('come-sail-away', 'Enabled', false);
     assert.ok(!customItemsForGroup('UselessItems2').includes(1320) && !customItemsForGroup('UselessItems2').includes(1321));
     setModSetting('come-sail-away', 'Enabled', true);
-    // a second registration of a row is DFU's Contains guard: no second row
-    registerCustomItemGroup(1320, 'UselessItems2', () => true);
-    assert.equal(customItemsForGroup('UselessItems2').filter((i) => i === 1320).length, 1);
+    // a second registration of a row is DFU's Contains guard: no second row (a row of the test's own, kept off)
+    registerCustomItemGroup(9931, 'UselessItems2', () => false);
+    registerCustomItemGroup(9931, 'UselessItems2', () => true);
+    assert.equal(customItemsForGroup('UselessItems2').filter((i) => i === 9931).length, 0, 'the first registration\'s switch stands');
     // found on the way: Iliac Puddle No More's DeepWaters.Init registers its fish into the same group (no class)
     const fish = DEEP_WATERS_FISH_TEMPLATES.map((t) => t.index);
     setModSetting('iliac-puddle-no-more', 'Enabled', true);
@@ -333,14 +336,28 @@ test('CSA-H: the host\'s seams - the two use handlers on the item-use door (the 
   assert.match(pool, /function setVariant\(boat, variant\) \{\s*setBoatVariant\(boat, variant, \{ models,/);
 });
 
-test('CSA-H: the shelf\'s custom loop stocks the two rows as DFU\'s does - rarity 1 at every quality, chanceMod x 5 x 20 / 100 each - through the one GetCustomItemsForGroup', async () => {
-  const { stockShopShelf } = await import('../src/systems/shopStock.js');
+test('CSA-H x SHIPYARDS: the shelf\'s custom loop stocks neither row - a roll that always succeeds stocks everything a General Store\'s or a Pawn Shop\'s shelf can hold, and no boat; neither counter buys one (PIN MOVED: the General Store stocked both, parts first)', async () => {
+  const { stockShopShelf, shopBuysItem } = await import('../src/systems/shopStock.js');
   const { BUILDING_TYPES } = await import('../src/world/buildingNames.js');
   const player = { level: 5, gender: 'male', race: 'Breton' };
-  // a roll that always succeeds stocks everything a shelf can hold; the two rows are among its UselessItems2
-  const all = stockShopShelf({ buildingType: BUILDING_TYPES.GeneralStore, quality: 10 }, player, { rolls: () => 0 });
-  const ours = all.filter((i) => i.templateIndex === 1320 || i.templateIndex === 1321).map((i) => i.templateIndex);
-  assert.deepEqual(ours, [1320, 1321], 'the General Store stocks both, parts first');
-  const none = stockShopShelf({ buildingType: BUILDING_TYPES.GeneralStore, quality: 10 }, player, { rolls: () => 0.9999 });
-  assert.equal(none.filter((i) => i.templateIndex === 1320 || i.templateIndex === 1321).length, 0);
+  for (const buildingType of [BUILDING_TYPES.GeneralStore, BUILDING_TYPES.PawnShop]) {
+    const all = stockShopShelf({ buildingType, quality: 10 }, player, { rolls: () => 0 });
+    assert.ok(all.length > 0, 'the shelf stocks');
+    assert.equal(all.filter((i) => i.templateIndex === 1320 || i.templateIndex === 1321).length, 0, `building ${buildingType}: no boat on its shelf`);
+    for (const t of [1320, 1321]) assert.equal(shopBuysItem(buildingType, mintBoatItem(t, 5)), false, `building ${buildingType}: buys no ${t}`);
+  }
+});
+
+// AUDIT SHIPYARDS L6-11: the mod's switch now feeds its one effect kind alone (the shelf's rows retired) - and nothing
+// pinned it, so CSA-H-group-always (the switch read as always on) survived; pinned here, the latch last (none clears it)
+test('CSA-H x AUDIT SHIPYARDS: WaterWalkingSilent - the mod\'s own effect - is a kind the broker knows only while the mod is loaded: off and unlatched, none; on, known; latched off for the game, none whatever the switch says', () => {
+  assert.equal(modLatchedOn('come-sail-away'), undefined, 'no host latched it in this file');
+  try {
+    setModSetting('come-sail-away', 'Enabled', false);
+    assert.equal(effectKindLoaded(WATER_WALKING_SILENT_KIND), false, 'the mod off: no such kind');
+    setModSetting('come-sail-away', 'Enabled', true);
+    assert.equal(effectKindLoaded(WATER_WALKING_SILENT_KIND), true, 'the mod on: its kind');
+    latchModLoaded('come-sail-away', false);
+    assert.equal(effectKindLoaded(WATER_WALKING_SILENT_KIND), false, 'latched off for the game: none, the switch on');
+  } finally { latchModLoaded('come-sail-away', true); setModSetting('come-sail-away', 'Enabled', true); }
 });

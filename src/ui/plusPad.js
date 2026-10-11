@@ -189,6 +189,8 @@ export const DPAD_CHOICES = Object.freeze([
   // TECH1 (bible/05-Combat/Weapon-Techniques.md): the weapon's technique - a d-pad's press looses it at the look (a held
   // aim is a button's: the Controller bindings window's row, ui/plusPadBinds.js)
   ['WeaponTechnique', 'Weapon technique'],
+  // SPYGLASS: the captain's glass, raised and lowered aboard (bible/03-World/Captains-Sea.md)
+  ['Spyglass', 'Spyglass (aboard)'],
 ]);
 export const dpadChoiceWord = (a) => DPAD_CHOICES.find(([v]) => v === (a ?? null))?.[1] ?? String(a);
 const DPAD_ACTION_OK = new Set(DPAD_CHOICES.map(([v]) => v));

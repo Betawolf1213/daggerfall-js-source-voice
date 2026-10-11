@@ -396,11 +396,12 @@
   {
     "name": "PROF5-svc-returned-piece-listed",
     "file": "server-account/src/market.js",
-    "old": "        db.prepare(`UPDATE products SET listed = 0 WHERE provenance = (SELECT provenance FROM market_listings WHERE id = ?1 AND rn = ?2)`).bind(l.id, nonce),\n      ]);\n      continue;",
-    "new": "      ]);\n      continue;",
+    "old": "        db.prepare(`UPDATE products SET listed = 0 WHERE provenance = (SELECT provenance FROM market_listings WHERE id = ?1 AND rn = ?2)`).bind(l.id, nonce),\n      );\n      continue;",
+    "new": "      );\n      continue;",
     "tests": [
       "test/prof5_service.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "PROF5-svc-load-no-room",
@@ -425,13 +426,14 @@
   {
     "name": "PROF5-svc-reports-to-all",
     "file": "server-account/src/market.js",
-    "old": "  const reportsOf = async (ids) => {\n    if (!moderator || !ids.length) return new Map();",
-    "new": "  const reportsOf = async (ids) => {\n    if (!ids.length) return new Map();",
+    "old": "    if (moderator && reported.length) {",
+    "new": "    if (reported.length) {",
     "tests": [
       "test/prof5_service.test.js"
     ],
     "equivalent": true,
-    "why": "the rows carry a report count only under the moderator's own spread; this first guard spares a reader the query, and changes no answer"
+    "why": "the rows carry a report count only under the moderator's own spread; this first guard spares a reader the query, and changes no answer",
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "PROF5-svc-reports-shown-to-all",

@@ -73,6 +73,7 @@ import {
   CHANCE_TO_REVEAL_LOCATION_ON_MAP, DIRECTION_TEXT_ID, MAP_REVEAL_TEXT_ID,
 } from './talkTopics.js';
 import { QUESTION_TYPE, NPC_KNOWLEDGE, BUILDING_HINT_TYPE, FACTIONS_AND_BUILDINGS } from './topicTree.js';
+import { lettersOnMap } from './portPlaces.js';   // AUDIT SHIPYARDS L7-5: the found places no town map letters
 import { randomRangeInclusive, srand } from '../formats/dfRandom.js';
 import { stringHash } from '../formats/netRuntime.js';   // the knowledge seed's string.GetHashCode (Ledger A)
 
@@ -611,6 +612,7 @@ export class AnswerPipeline {
   getKeySubjectBuildingHint() {
     const randomFloat = this._rolls()();
     if (this.deps.isPlayerInside?.() ?? false) return this.getKeySubjectBuildingDirection();
+    if (!lettersOnMap(this.currentKeySubjectBuildingKey)) return this.getKeySubjectBuildingDirection();   // AUDIT SHIPYARDS L7-5: no mark to make
     // FIELD BUGS 2026-09-30b (RES-MARK, a departure - Port-Ledger A): "People aren't marking it on the map, I've gone
     // in the direction they said but every door looks like just a house". A quest's own building (its row is a quest
     // resource's) is always marked by one who knows where it is, outdoors; DFU's 35% roll marked 26 questions in 100

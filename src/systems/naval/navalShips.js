@@ -355,6 +355,9 @@ export const NAVAL_FACTIONS = Object.freeze({
 });
 export const FACTION_IDS = Object.freeze(Object.keys(NAVAL_FACTIONS));
 
+/** ETHER-LEGENDS: a legend's class's `minLevel` - past any captain's, so no draw by level (classFor, the encounters, the
+ *  board's bounties, the raiders) ever finds one. */
+export const LEGEND_LEVEL = 999;
 /**
  * The classes. `hullHp`/`sailHp`/`crew` scale the hull's own build; `speed` is the best way it makes with the wind
  * on the quarter at the rated wind (m/s; navalAI.js WIND_RATED - AUDIT NAV1 set it off the player's own hulls at
@@ -365,7 +368,8 @@ export const FACTION_IDS = Object.freeze(Object.keys(NAVAL_FACTIONS));
  * well they lead), `range` how close it likes to fight (m), `cargo` the hold's worth (1-4, navalPlunder.js),
  * `minLevel` the player's level it first sails against, `weight` how often among its faction, `boarders` the muster a
  * boarding meets, `tactic` how it fights ('broadside', or a galley's 'bow' - its great guns over the stem). A flagship
- * carries a named captain the quest makes its boss.
+ * carries a named captain the quest makes its boss. ETHER-LEGENDS: `legend` one of the Etheric Sea's legends, launched by
+ * name alone.
  */
 export const SHIP_CLASSES = Object.freeze([
   cls('pirateSloop', 'pirate', HULL.LargeBoat, 'Pirate Sloop', { hullHp: 1.1, sailHp: 1, crew: 10, speed: 4.6, turn: 16, skill: 0.45, range: 50, cargo: 1, minLevel: 1, weight: 5, boarders: 8 }),
@@ -377,6 +381,14 @@ export const SHIP_CLASSES = Object.freeze([
   cls('merchantCarrack', 'merchant', HULL.Carrack, 'Merchant Carrack', { hullHp: 0.9, sailHp: 0.9, crew: 18, speed: 5.4, turn: 5, skill: 0.3, range: 120, cargo: 4, minLevel: 5, weight: 2, boarders: 11 }),
   cls('navyCutter', 'navy', HULL.SmallShip, 'Navy Cutter', { hullHp: 1, sailHp: 1, crew: 26, speed: 8.0, turn: 10, skill: 0.75, range: 90, cargo: 2, minLevel: 1, weight: 3, boarders: 14 }),
   cls('navyGalley', 'navy', HULL.LargeGalley, 'War Galley', { hullHp: 1, sailHp: 1, crew: 60, speed: 6.8, turn: 9, skill: 0.7, range: 70, cargo: 2, minLevel: 6, weight: 2, boarders: 18, tactic: 'bow' }),
+  // ETHER-LEGENDS (bible/03-World/Etheric-Sea.md): the Etheric Sea's six legends, each her own class - never drawn
+  // (LEGEND_LEVEL past any captain's, no weight): launched by name in her haunt (systems/naval/etherShips.js LEGENDS)
+  cls('legendWake', 'pirate', HULL.SmallShip, 'Legendary Brigantine', { hullHp: 1.8, sailHp: 1.4, crew: 34, speed: 9.4, turn: 12, skill: 0.85, range: 95, cargo: 4, minLevel: LEGEND_LEVEL, weight: 0, boarders: 22, legend: true }),
+  cls('legendQueen', 'pirate', HULL.Carrack, 'Legendary Carrack', { hullHp: 2.4, sailHp: 1.3, crew: 48, speed: 6.6, turn: 6, skill: 0.8, range: 115, cargo: 4, minLevel: LEGEND_LEVEL, weight: 0, boarders: 30, legend: true }),
+  cls('legendHunger', 'pirate', HULL.LargeGalley, 'Legendary War Galley', { hullHp: 2, sailHp: 1.3, crew: 120, speed: 7.2, turn: 9, skill: 0.75, range: 75, cargo: 4, minLevel: LEGEND_LEVEL, weight: 0, boarders: 45, tactic: 'bow', legend: true }),
+  cls('legendLantern', 'pirate', HULL.SmallShip, 'Legendary Brigantine', { hullHp: 2, sailHp: 1.5, crew: 40, speed: 8.8, turn: 11, skill: 0.9, range: 100, cargo: 4, minLevel: LEGEND_LEVEL, weight: 0, boarders: 26, legend: true }),
+  cls('legendRegent', 'pirate', HULL.Carrack, 'Legendary Carrack', { hullHp: 3.2, sailHp: 1.6, crew: 60, speed: 6.8, turn: 6, skill: 0.95, range: 125, cargo: 4, minLevel: LEGEND_LEVEL, weight: 0, boarders: 36, legend: true }),
+  cls('legendStarless', 'pirate', HULL.Carrack, 'Legendary Carrack', { hullHp: 3.6, sailHp: 1.8, crew: 70, speed: 7.4, turn: 7, skill: 0.92, range: 120, cargo: 4, minLevel: LEGEND_LEVEL, weight: 0, boarders: 40, legend: true }),
 ]);
 
 function cls(id, faction, hull, title, o) {
@@ -385,7 +397,7 @@ function cls(id, faction, hull, title, o) {
     id, faction, hull, title,
     hullHp: Math.round(b.hullHp * o.hullHp), sailHp: Math.round(b.sailHp * o.sailHp), crew: o.crew,
     speed: o.speed, turn: o.turn, skill: o.skill, range: o.range, cargo: o.cargo, minLevel: o.minLevel,
-    weight: o.weight, boarders: o.boarders, flagship: !!o.flagship, tactic: o.tactic ?? 'broadside',
+    weight: o.weight, boarders: o.boarders, flagship: !!o.flagship, tactic: o.tactic ?? 'broadside', legend: !!o.legend,
   });
 }
 export const classById = (id) => SHIP_CLASSES.find((c) => c.id === id) ?? null;
@@ -569,6 +581,25 @@ export function shipNames(shipClass, seed, { regionIndex = 17, crown: crownIn = 
     captain = fullName(bank, rng() < 0.5 ? GENDERS.Male : GENDERS.Female);
   } finally { setSeed(saved); }
   return { name, captain, crown: crown?.name ?? null };
+}
+
+/**
+ * CAPT-MARQUE (2026-10-11, bible/03-World/Captains-Sea.md) - A SHIP'S COLOURS: the crown whose flag she flies, which a
+ * letter of marque reads (navalHost.js chargePlayer) and the glass makes out (SPYGLASS). A crown's ship flies her
+ * crown's; a merchantman her home port's - FLAG_HOME_SHARE of them the crown her names' region is (a packet's home port,
+ * SEA-LANES), the rest one of the three by her seed on its own stream (FLAG_SALT, so her names and every other draw are
+ * the ones they were); a pirate none - the black flag. The same on every client: her seed and her word's region.
+ */
+export const FLAG_HOME_SHARE = 0.6;
+export const FLAG_SALT = 0xf1a6;
+export function flagOf(shipClass, seed, region = -1) {
+  if (!shipClass) return null;
+  if (shipClass.faction === 'navy') return crownOf(0, 0, null, region).name;
+  if (shipClass.faction !== 'merchant') return null;
+  const r = mulberry32(((seed >>> 0) ^ FLAG_SALT) >>> 0);
+  const home = CROWNS.find((c) => c.region === region) ?? null;
+  if (home && r() < FLAG_HOME_SHARE) return home.name;
+  return CROWNS[Math.floor(r() * CROWNS.length) % CROWNS.length].name;
 }
 
 /** The line the target card reads under a ship's name: "Pirate Brigantine" / "Wayrest War Galley". */

@@ -211,6 +211,9 @@ test('SEA-TOWN HUDS: the naval HUD with no ship near (or the HUD covered) is han
     enhancedHudBottom: () => { made.rects++; return null; }, enhancedHudQuick: () => { made.rects++; return null; },
     isEnhanced: () => true, hudArt: null, classicCompassBox: () => { made.rects++; return null; }, touch: null,
     drawNavalHud: (m, opts) => drawn.push({ m, opts }),
+    // PIN MOVED (THE CAPTAIN'S SEA, SPYGLASS - at the merge of main): the plate is handed the glass's state too (its
+    // Glass brass while the glass is up), so the host's glass stands in its scope
+    spyglass: { up: false },
   };
   const navalHud = mount(scope, cut(WORLD, 'function navalHud(dt = 0) {', '\n  }\n'), 'navalHud');
   navalHud(0.25);
@@ -229,6 +232,10 @@ test('SEA-TOWN HUDS: the naval HUD with no ship near (or the HUD covered) is han
   assert.equal(full.opts.dt, 0.25);
   assert.equal(full.opts.covered, false);
   assert.ok(made.keys === 3 && made.rects >= 4, `made for a plate that shows (${JSON.stringify(made)})`);
+  assert.equal(full.opts.glassUp, false, 'the glass down: the plate\'s Glass brass not pressed');
+  scope.spyglass.up = true;
+  navalHud(0.25);
+  assert.equal(drawn.pop().opts.glassUp, true, 'the glass up: its brass pressed');
 
   // the helm panel
   const helmDrawn = [];

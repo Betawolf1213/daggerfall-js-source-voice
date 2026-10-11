@@ -382,8 +382,8 @@
   {
     "name": "AUDIT-DEEP-X1-a-video-keeps-the-view",
     "file": "src/scenes/world.js",
-    "old": " drawGateGround(null); travelView?.exit('video', true); return; }",
-    "new": " drawGateGround(null); return; }",
+    "old": " drawGateGround(null); travelView?.exit('video', true); if (spyglass.up) lowerGlass(); return; }",
+    "new": " drawGateGround(null); if (spyglass.up) lowerGlass(); return; }",
     "tests": [
       "test/tv1_travel_view.test.js"
     ],

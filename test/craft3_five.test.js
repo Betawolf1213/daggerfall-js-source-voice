@@ -208,7 +208,7 @@ test('CRAFT3 service: the merge\'s free change - no Marks, in effect at once, an
 
 test('CRAFT3 service source: every track read and credit is the craft\'s - the craft, the smelt, the brew, the seats\' choices; a free change its own row (source pins)', () => {
   const svc = src('server-account/src/professions.js');
-  assert.match(svc, /db\.prepare\('SELECT \* FROM prof_tracks WHERE player = \?1 AND char_id = \?2 AND profession = \?3'\)\.bind\(player, character, trackOf\(profession\)\)\.first\(\);/);
+  assert.match(svc, /db\.prepare\('SELECT \* FROM prof_tracks WHERE player = \?1 AND char_id = \?2 AND profession = \?3'\)\.bind\(player, character, trackOf\(profession\)\);/);   // PIN MOVED (GATHER-SPEED): the track's read a statement, for a harvest's batch
   assert.match(svc, /const craft = trackOf\(prof\);/);
   assert.match(svc, /\.bind\(player\.id, character, rid, cap, nowS, nonce, trackOf\(r\.xp\)\)\] : \[\]\),/);
   assert.match(svc, /const profession = trackOf\(asked\);/);

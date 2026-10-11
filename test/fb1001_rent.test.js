@@ -103,7 +103,8 @@ test('RENT-REST: a tenant rests in the home they rent, as its owner does - the r
   const wm = src('src/scenes/worldModes.js');
   const bag = wm.slice(wm.indexOf('const interiorRestPlaceHere = () => {'), wm.indexOf('const interiorRestMarkers = () =>'));
   assert.match(bag, /homeBed: homeBedIsMine\(interiorHome, Math\.floor\(Date\.now\(\) \/ 1000\)\) \|\| !!interiorSeatHall\?\.member,/);   // PIN MOVED (SEAT-HALL): and the palace holder's members rest there
-  assert.match(bag, /houseOwned: !interiorHome && isHouseOwned\(/, 'an online home answers by its bed alone');
+  // PIN MOVED (AUDIT CAPTAIN'S SEA P9): the deed read where the building stands - never an isle town's (houseOwnedAt)
+  assert.match(bag, /houseOwned: !interiorHome && houseOwnedAt\(/, 'an online home answers by its bed alone');
 });
 
 test('RENT-RENEW: the renewal window offers only the days the service takes (one\'s own room renews from its end, never past thirty days ahead), says so when none is left, and a room off the offer says it cannot be renewed (mutants: every day offered; the renewal from now; the full line unsaid; the room off the offer said none free)', async (t) => {

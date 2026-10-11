@@ -62,7 +62,8 @@ import { startMobileTalk, expandMacros, expandAnswerRecord, oathTextId, honorifi
 import { REGION_RACES } from '../formats/mapsFile.js';
 import { ChoiceWindow } from '../ui/talkWindow.js';
 import { buildBuildingDirectory, questorCandidateBuildings, TOPIC_CATEGORIES, whereIsAnswer, reactionTier012, buildingHint } from '../systems/talkTopics.js';
-import { yardDirectoryRows, YARD_KIND_ORDER, YARD_TALK_GROUPS } from '../systems/merchantYards.js';   // YARDS-FOUND: the town's yards in its directory
+import { yardDirectoryRows } from '../systems/merchantYards.js';   // YARDS-FOUND: the town's yards in its directory
+import { portDirectoryRows, FOUND_KIND_ORDER, FOUND_TALK_GROUPS, lettersOnMap } from '../systems/portPlaces.js';   // SHIPYARDS-FOUND: and a port town's shipyard, crew hall, lighthouse and docks - the found places' one order
 import { LIST_ITEM_TYPE, QUESTION_TYPE } from '../systems/topicTree.js';   // TK-vi: the window's rows are the tree's ListItems; B6: the Work question type
 import { discoverBuilding } from '../systems/discovery.js';   // T4: %loc's mark side effect
 import { getNameBankOfRegion, fullName as nameHelperFullName, GENDERS } from '../characters/nameHelper.js';   // MACRO-6: %fn/%mn in the engine-less answer
@@ -331,6 +332,10 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
       // (the host's `yards`, the location's frame) as rows beside its buildings - the Where-is page, the compass, the
       // knowledge roll and the map's mark all read a place from this one list (systems/merchantYards.js yardDirectoryRows)
       directory.push(...yardDirectoryRows(topics.yards));
+      // SHIPYARDS-FOUND (Mac: "Everything should show on the map/overworld and be able to be asked by NPCs"): a port town's
+      // shipyard, its crew hall, its lighthouse and its docks (the host's `ports`, the location's frame), rows as the
+      // yards' are (systems/portPlaces.js portDirectoryRows)
+      directory.push(...portDirectoryRows(topics.ports));
       // QP1: GetBuildingList's questor half rides the SAME rebuild -
       // C# populates npcsWithWork inside the one building walk
       // (TalkManager.cs:2807-2874). The candidates go out through the
@@ -352,6 +357,13 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
   function setTopics(t) {
     topics = t;
     if (loaded) rebuildDirectory();   // pre-load swaps build at load's tail
+  }
+  /** SHIPYARDS-FOUND: a port town's places handed again (scenes/world.js portPlacesOf - its docks once the harbour is
+   *  sounded off its shore), the directory rebuilt over them; nothing while no town's topics stand. */
+  function setPorts(rows) {
+    if (!topics) return;
+    topics = { ...topics, ports: rows };
+    if (loaded) rebuildDirectory();
   }
 
   const textVariants = (id) => textRsc?.plainText(id) ?? [''];
@@ -1031,7 +1043,7 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
    *  one pipeline for the native window's rows and the keyed Where-is chain. */
   const directoryByCategory = () => [
     ...TOPIC_CATEGORIES.map((c) => ({ label: c.caption, buildings: directory.filter((b) => b.buildingType === c.type) })),
-    ...YARD_KIND_ORDER.map((k) => ({ label: YARD_TALK_GROUPS[k], buildings: directory.filter((b) => b.yard === k) })),   // YARDS-FOUND: the tree's own two groups, after the shops
+    ...FOUND_KIND_ORDER.map((k) => ({ label: FOUND_TALK_GROUPS[k], buildings: directory.filter((b) => b.yard === k) })),   // YARDS-FOUND: the tree's own groups, after the shops - SHIPYARDS-FOUND: the port's four after the yards' two
   ].filter((c) => c.buildings.length);
   /** The pre-engine fallback: T3c's flat category directory. */
   function localCategories() {
@@ -1202,7 +1214,7 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
     // function the walk calls per macro, and a record with neither
     // never rolls.
     const hint = () => {
-      const h = buildingHint(rolls, false);
+      const h = buildingHint(rolls, !lettersOnMap(building.buildingKey));   // AUDIT SHIPYARDS L7-5: a found place no map letters takes the way there
       const text = randomVariant(h.textId, h.reveal ? '... Let me just mark %loc here on your map' : '%di of here')   // MAC-U: the no-data fallback is the table's phrase too
         .replaceAll('%loc', building.name).replaceAll('%di', a.direction);
       // RP1: the discovery key is the CURRENT region's. This read the
@@ -1415,7 +1427,7 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
   });
   registerPresenter({ holds: (win) => windows.containsWindow(win) });   // TUT1 audit: whether this host's stack still holds a window (systems/notify.js windowHeld) - a registration of its own, no `mount`, so the presenter above keeps its shape
   return {
-    keydown, keyup, tryActivate, frame, ensureLoaded, nextMode, setMode, pickMode, showOverlay, pushOverlay, setTopics, pointerdown, pointer, wheel, hover,   // ROAD-B B1: pushOverlay is the stacking door beside the replacing one   // U45: setMode is the large HUD's mode panel, whose cycle is not nextMode's   // c2/S10: `pointer` is the RELEASE route (down rides pointerdown, move rides hover)
+    keydown, keyup, tryActivate, frame, ensureLoaded, nextMode, setMode, pickMode, showOverlay, pushOverlay, setTopics, setPorts, pointerdown, pointer, wheel, hover,   // ROAD-B B1: pushOverlay is the stacking door beside the replacing one   // U45: setMode is the large HUD's mode panel, whose cycle is not nextMode's   // c2/S10: `pointer` is the RELEASE route (down rides pointerdown, move rides hover)
     openTalkWindow,   // B7: TalkToStaticNPC's window push routes here (worldModes' click + the guild popup's TALK)
     /** TK-v: the two halves of the tone the ENGINE asks the host for -
      *  which tone button is selected, and the tier computation for a

@@ -117,7 +117,7 @@ test('AUDIT WB C5 the countdown is never over the step\'s fire, nor frozen over 
   assert.match(world, /banner: \(text\) => \{ _gateBannerWish = text; \},/);
   assert.match(world, /hidden = gamePaused\(\) \|\| !!townTalk\.hudHidden \|\| !!gateVeil\?\.busy;\n\s*drawGateBanner\(_gateBannerWish \?\? sb\?\.text \?\? null, \{ hidden, look: _gateBannerWish == null && sb \? 'brass' : 'gate' \}\);/);   // AUDIT SD III (T3, PIN MOVED): a Hollow's door in its own brass
   // WB9a/WB9d: the marks' card and his ground's rim go with it; GATE-UX: and the damage chart
-  assert.match(world, /if \(frameHeld\(\)\) \{ frameAbort\(\); hideWorldPlaque\(\); last = now; requestAnimationFrame\(frame\); drawGateBanner\(null\); drawGateMarksCard\(null\); drawGateDamageChart\(null\); drawGateGround\(null\);( travelView\?\.exit\('video', true\);)? return; \}/);
+  assert.match(world, /if \(frameHeld\(\)\) \{ frameAbort\(\); hideWorldPlaque\(\); last = now; requestAnimationFrame\(frame\); drawGateBanner\(null\); drawGateMarksCard\(null\); drawGateDamageChart\(null\); drawGateGround\(null\);( travelView\?\.exit\('video', true\);)?( if \(spyglass\.up\) lowerGlass\(\);)? return; \}/);   // PIN MOVED (AUDIT CAPTAIN'S SEA S15): and the glass
 });
 
 function fakeGl() {

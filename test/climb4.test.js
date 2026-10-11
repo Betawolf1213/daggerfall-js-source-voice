@@ -203,8 +203,10 @@ test('CLIMB4 F8: every host that draws a first-person view frames the feel after
   assert.ok(w.indexOf('climbFeel.frame(dt') > w.lastIndexOf('cam.pos = player.eyeAt();', w.indexOf('climbFeel.frame(dt')), 'world: framed after the eye');
   assert.match(w, /const view = betterAmbience\.view\(lookAt\(mwv\.eye[^\n]*\n\s*climbFeel\.view\(view, !tvf && !mwv\.thirdPerson\);/, 'world: the view half, first person, never the travel view');
   assert.match(w, /perspective\(fieldOfView\(\) \+ climbFeel\.fovRad\(\), worldAspect/, 'world: the kick on the lens');
-  assert.match(w, /sky\.draw\([^;]*cam\.pitch \+ climbFeel\.pitch\(\), fieldOfView\(\) \+ climbFeel\.fovRad\(\)/, 'world: the sky takes the pitch and the kick');
-  assert.match(w, /fovY: fieldOfView\(\) \+ climbFeel\.fovRad\(\)/, 'world: so does the far ring');
+  // PIN MOVED (SPYGLASS): the captain's glass narrows the world's lens past the kick - the sky and the far ring take the
+  // same narrowed lens the world does (world.js glassFov), the kick still inside it
+  assert.match(w, /sky\.draw\([^;]*cam\.pitch \+ climbFeel\.pitch\(\), glassFov\(fieldOfView\(\) \+ climbFeel\.fovRad\(\), spyglass\.lens\)/, 'world: the sky takes the pitch and the kick');
+  assert.match(w, /fovY: glassFov\(fieldOfView\(\) \+ climbFeel\.fovRad\(\), spyglass\.lens\)/, 'world: so does the far ring');
   assert.match(w, /createWorldModes\(\{\n\s*climbFeel,/, 'world: the modal frames take the one handle');
   const wm = read('worldModes');
   assert.match(wm, /host\.climbFeel\?\.frame\(dt, overlayHeld\);/, 'worldModes: framed (PIN MOVED, AUDIT CLIMB-ARC F2: held while the motor is)');

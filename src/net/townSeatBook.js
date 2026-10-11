@@ -62,6 +62,10 @@ export const SEAT_RED_SEEN_KEY = 'crown2.redSeen';
 export const SEAT_RED_SEEN_MAX = 100;
 /** CROWN2: how often an online client reads the seats' list again for the server's red lines, ms. */
 export const SEAT_RED_READ_MS = 15 * 60_000;
+/** D1-LOAD (2026-10-11, the service slow after SEAT-LEASE): THE TURNING'S READ SPREAD - each client asks its list once the
+ *  seat week turns (AUDIT FESTIVAL S1), and every client online asked it in the same second; each now waits its own
+ *  share of this window, drawn once a book, so the reads arrive over two minutes. */
+export const SEAT_TURN_READ_SPREAD_MS = 120_000;
 /** AUDIT SEATS-3 C5: how long after a list read that FAILED (offline, a timeout, the service's fault - never a refusal)
  *  the frame asks again, ms. */
 export const SEAT_LIST_RETRY_MS = 60_000;
@@ -122,6 +126,7 @@ export function parseSiegeCommand(text) {
  *   STORM-SHED: `rand` Math.random's shape, a failed Watch claim's jitter
  */
 export function createTownSeatBook({ door, storage = null, nowMs = () => Date.now(), me = () => null, character = () => null, rid = () => mintMarksRid(), isSeatPixel = () => false, relayNowS = () => null, onRed = null, rand = Math.random }) {
+  const turnSpreadMs = Math.floor(rand() * SEAT_TURN_READ_SPREAD_MS);   // D1-LOAD: this client's share of the Turning's read
   /** CROWN2: the red lines already said, by id - read from the device once */
   let redSeen = null;
   const redSeenList = () => {
@@ -409,7 +414,8 @@ export function createTownSeatBook({ door, storage = null, nowMs = () => Date.no
       if (!pending && (open === true || failed) && nowMs() - at >= (failed ? SEAT_LIST_RETRY_MS : SEAT_RED_READ_MS)) read({ force: true });
       // AUDIT FESTIVAL S1: and once when the seat week turns - a player who stays in a town sees the Festival (or Curfew)
       // that ended at the Turning end, and the one that became law begin (the read is this week's: asked once)
-      else if (!pending && open === true && seatWeekOf(at) !== seatWeekOf(nowMs())) read({ force: true });
+      // D1-LOAD: this client's share of SEAT_TURN_READ_SPREAD_MS past the boundary - never every client in one second
+      else if (!pending && open === true && seatWeekOf(at) !== seatWeekOf(nowMs() - turnSpreadMs)) read({ force: true });
     },
     // ─── SEASON1 part two: THE TIDES AS THIS CLIENT READS THEM ───────
     /** The week Season 0 began, as the seats' list last said - or null (no Season counted: every land is Calm). */

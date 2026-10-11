@@ -503,13 +503,13 @@
   {
     "name": "AUDIT-SCALE-A1-candidates-tithe-free",
     "file": "server-account/src/market.js",
-    "old": "OR ${balance('a')} + ${leastNetSql('high')} <= ?2 OR ends_at + ?3 <= ?1)\n",
-    "new": "OR ${balance('a')} + ${netSql('high')} <= ?2 OR ends_at + ?3 <= ?1)\n",
+    "old": "OR ${sellerBalanceSql('a')} + ${leastNetSql('high')} <= ?2 OR ends_at + ?3 <= ?1)\n",
+    "new": "OR ${sellerBalanceSql('a')} + ${netSql('high')} <= ?2 OR ends_at + ?3 <= ?1)\n",
     "tests": [
       "test/auditscale.test.js",
       "test/scale4b.test.js"
     ],
-    "note": "the candidates by the Tithe-free proceeds again: a sale that fits only under its Tithe waits out the grace"
+    "note": "the candidates by the Tithe-free proceeds again: a sale that fits only under its Tithe waits out the grace GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "AUDIT-SCALE-A1-room-tithe-free",

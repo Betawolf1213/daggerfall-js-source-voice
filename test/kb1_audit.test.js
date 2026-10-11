@@ -59,7 +59,8 @@ const defaults = () => { const s = createBindings(); resetDefaults(s); return s;
 function v1File(edit = () => {}) {
   const s = createBindings();
   resetDefaults(s);
-  for (const code of ['KeyE', 'Tab', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'KeyO', 'KeyG', 'KeyX', 'KeyB', 'NumpadAdd', 'KeyK', 'Comma', 'Period', 'Backquote']) s.primary.delete(code);
+  // PIN MOVED (SPYGLASS, 2026-10-11): a port row's default share goes with its owner's key - a v1 file had neither (K's glass)
+  for (const code of ['KeyE', 'Tab', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'KeyO', 'KeyG', 'KeyX', 'KeyB', 'NumpadAdd', 'KeyK', 'Comma', 'Period', 'Backquote']) { s.primary.delete(code); s.sharedPrimary?.delete(code); }
   s.primary.set('KeyE', 'AbortSpell'); s.primary.set('Backquote', 'ToggleConsole'); s.primary.set('ControlLeft', 'Slide');
   edit(s);
   const file = serializeKeyBinds(s);

@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { sea, seeded, modShipsPool } from './navalSea.mjs';
+import { sea, seeded, modShipsPool, knowAll } from './navalSea.mjs';
 import { sparsOf, FLAME_AWASH, BLAST_SHAKE, NEAR_BOOM_M, FAR_FADE_M, FAR_MATCH, GUN_PITCH_JITTER, GUN_GAIN_JITTER_DB, HIT_CONFIRM_REF_M, HIT_BURST_MAX, GUN_KICK, NEAR_LIFE_M, FAR_LIFE_EVERY,
   NAVAL_TAG_RANGE, NAVAL_TAG_NEAR, NAVAL_TAG_MAX, TAG_LIFT, SAIL_HO_RANGE, SAIL_HO_GAP_S, SAIL_HO_CHECK_S, bearingWords, withArticle,
   SMOKE_FROM, SMOKE_SPAN, DAMAGE_LIST_FROM, DAMAGE_LIST_MAX, DAMAGE_LIST_EASE_S, TIMBER_PER_HIT, sailsShown, lineOver } from '../src/scenes/navalHost.js';
@@ -902,6 +902,7 @@ test('AUDIT NAV1 (the presentation) THE SHIPS\' TAGS (#14): one card within 6 de
   const b = place(h, 'merchantGalleon', [300, 0, 0]);
   place(h, 'navyGalley', [0, 0, -(NAVAL_TAG_RANGE + 100)]);
   place(h, 'pirateSloop', [NAVAL_TAG_NEAR / 2, 0, 5]);
+  knowAll(h.host);   // PIN MOVED (SPYGLASS): their colours made out - an unknown hull wears no tag
   h.host.frame(0.05);
   let tags = h.host.tags();
   assert.deepEqual(tags.map((t) => t.id), [a.id, b.id], 'in reach, past the near, nearest first');
@@ -926,6 +927,7 @@ test('AUDIT NAV1 (the presentation) THE SHIPS\' TAGS (#14): one card within 6 de
   assert.ok(sunkBy.point[1] < ta.point[1] - 0.5, 'lower as she goes');
   // the cap
   for (let i = 0; i < NAVAL_TAG_MAX + 2; i++) place(h, 'merchantGalleon', [-100 - i * 40, 0, 100]);
+  knowAll(h.host);   // SPYGLASS: theirs too
   h.host.frame(0.05);
   assert.equal(h.host.tags().length, NAVAL_TAG_MAX);
 });
@@ -942,6 +944,7 @@ test('AUDIT NAV1 (the presentation) THE LOOKOUT (#14): a pirate turning on me sa
   sloop.ship.pos = [-300, 0, 300 + 150];
   brig.ship.pos = [400, 0, 0];
   const far = place(h, 'pirateSloop', [0, 0, -(SAIL_HO_RANGE + 200)]);
+  knowAll(h.host);   // PIN MOVED (SPYGLASS): their colours made out - a hull whose colours are unread is hailed by her kind (test/spyglass.test.js)
   h.run(SAIL_HO_CHECK_S * 2, 0.05);
   assert.deepEqual(hails(), ['Sail ho! A Pirate Brigantine on the starboard beam!'], 'the nearest, where she bears');
   h.run(SAIL_HO_GAP_S - 2, 0.1);
@@ -955,6 +958,7 @@ test('AUDIT NAV1 (the presentation) THE LOOKOUT (#14): a pirate turning on me sa
   assert.equal(hails()[2], 'Sail ho! A Pirate Sloop dead astern!', 'within the range: hailed');
   // a navy my notoriety turns
   const navy = place(h, 'navyGalley', [0, 0, 350]);
+  knowAll(h.host);   // SPYGLASS: hers too
   h.run(SAIL_HO_GAP_S + 1, 0.1);
   assert.equal(hails().length, 3, 'a lawful navy: no hail');
   h.host.notoriety.add(navy.ship.names.crown, NAVY_HUNTS);
@@ -999,7 +1003,8 @@ test('AUDIT NAV1 (the presentation) THE TAGS DRAWN (#14): one node a slot, moved
   assert.match(w, /const at = projectToScreen\(t\.point, w, h, proj, view, rect\);/);
   assert.match(w, /if \(shipSight\.blocked\(player\.collider, eye, t\.id, t\.point\)\) continue;/);
   assert.match(w, /drawNavalTags\(points, \{ covered, scale: enhancedHudScale\(\), reach: NAVAL_TAG_RANGE, focus: \{ x: r\.x \+ r\.w \/ 2, y: r\.y \+ r\.h \/ 2 \} \}\);/);   // SHIP-CLUTTER: and the crosshair
-  assert.match(w, /drawNavalHud\(null\); drawNavalTags\(\[\]\); drawCrewBars\(\[\]\); drawCrewLines\(\[\]\); \};/, 'the clear hides them - SHIPMATES: the crew\'s bars with them');
+  // PIN MOVED (AUDIT CAPTAIN'S SEA S1): the clear lowers the glass after them
+  assert.match(w, /drawNavalHud\(null\); drawNavalTags\(\[\]\); drawCrewBars\(\[\]\); drawCrewLines\(\[\]\); lowerGlass\(\); \};/, 'the clear hides them - SHIPMATES: the crew\'s bars with them');
   assert.match(w, /drawNavalHud\(null\); drawNavalTags\(\[\]\); \} \}/, 'the switch off hides them');
 });
 

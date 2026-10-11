@@ -110,8 +110,8 @@
   {
     "name": "WK-N6-lanterns-alone",
     "file": "src/scenes/navalHost.js",
-    "old": "lit: showsLight(e) })) continue;",
-    "new": "lit: shipLit(e) })) continue;",
+    "old": "lit: showsLight(e) }) * veilOf(e)) continue;",
+    "new": "lit: shipLit(e) }) * veilOf(e)) continue;",
     "tests": [
       "test/auditwatchkit_sea.test.js"
     ]

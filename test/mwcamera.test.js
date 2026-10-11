@@ -266,7 +266,8 @@ test('MW-D30: the pose carries the camera and the load FORCES it', () => {
   // EOTB-IL: the door also carries WHERE the player stands (the mod's
   // OnLoad reads PlayerEnterExit.IsPlayerInside); the restore is unchanged
   assert.ok(/mwViewLoadPose\(pose\.camera, .*\);/.test(src), 'and the one pose-apply restores it, through the seam');
-  assert.match(readFileSync(new URL('../src/player/mwView.js', import.meta.url), 'utf8'), /export function mwViewLoadPose\(pose, inside = false\) \{\s*if \(pose\) mwCamera\.restore\(pose\);/, 'the seam restores exactly as the host did');
+  // PIN MOVED (AUDIT CAPTAIN'S SEA S8): the glass's hold forgotten first - a load decides the view
+  assert.match(readFileSync(new URL('../src/player/mwView.js', import.meta.url), 'utf8'), /export function mwViewLoadPose\(pose, inside = false\) \{\s*heldFirst = null;[^\n]*\n\s*if \(pose\) mwCamera\.restore\(pose\);/, 'the seam restores exactly as the host did');
   // restore(undefined) is the older-save no-op, behaviorally:
   const cam = createMwCamera();
   cam.wheel(-1);

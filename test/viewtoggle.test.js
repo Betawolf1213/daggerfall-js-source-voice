@@ -31,12 +31,13 @@ test('VIEW-TOGGLE seam: the sprite lane flips first to third and back, one press
     assert.equal(eotbCamera.thirdPerson(), false, 'handed back as found');
   } finally { mv.setEotbBodyReady(() => false); if (eotbCamera.thirdPerson()) eotbCamera.toggleOffset(false); }
   const src = rd('src/player/mwView.js');
-  assert.match(src, /export function mwViewTogglePerspective\(\) \{\n\s*if \(heldThird\) return false;\n\s*if \(eotbLane\(\)\) \{ eotbCamera\.toggleOffset\(!eotbCamera\.thirdPerson\(\)\); return true; \}\n\s*if \(mwCamera\.thirdPerson\(\)\) return mwIntoHead\(\);\n\s*if \(!fpArm\.canThirdPerson\(\) \|\| mounted\) return false;\n\s*mwCamera\.restore\(\{ firstPerson: false, baseDistance: mwCamera\.baseDistance\(\) \}\);\n\s*fpArm\.setViewMode\('third'\);/,
+  // PIN MOVED (SPYGLASS, 2026-10-11): nor while the glass holds the head (mwViewHoldFirst)
+  assert.match(src, /export function mwViewTogglePerspective\(\) \{\n\s*if \(heldThird \|\| heldFirst\) return false;[^\n]*\n\s*if \(eotbLane\(\)\) \{ eotbCamera\.toggleOffset\(!eotbCamera\.thirdPerson\(\)\); return true; \}\n\s*if \(mwCamera\.thirdPerson\(\)\) return mwIntoHead\(\);\n\s*if \(!fpArm\.canThirdPerson\(\) \|\| mounted\) return false;\n\s*mwCamera\.restore\(\{ firstPerson: false, baseDistance: mwCamera\.baseDistance\(\) \}\);\n\s*fpArm\.setViewMode\('third'\);/,
     'the Morrowind lane: in by the head\'s own door, out by the restore door, never in the saddle (RIDE-POV)');
 });
 
 test('VIEW-TOGGLE action: a port action, appended, on the mouse\'s forward side button (a binding code since VOICE1, kept when voice was reverted - and never the browser\'s Forward), drawn in Movement; the world host polls its press edge under no window and hands it to the seam before the view frame', () => {
-  assert.deepEqual(ACTIONS.slice(-8), ['TogglePerspective', 'ActChoice', 'BoatSailUp', 'BoatSailDown', 'Professions', 'LegacyFamily', 'ModeWheel', 'WeaponTechnique'], 'appended - MERGE 2: the professions branch\'s act choice after it, main\'s shipped first; HELM-KEYS\' two after them; CLASSIC-PAGES\' key; LEGACY1\'s family tree; MODE-WHEEL\'s wheel; TECH1\'s technique last');
+  assert.deepEqual(ACTIONS.slice(-9), ['TogglePerspective', 'ActChoice', 'BoatSailUp', 'BoatSailDown', 'Professions', 'LegacyFamily', 'ModeWheel', 'WeaponTechnique', 'Spyglass'], 'appended - MERGE 2: the professions branch\'s act choice after it, main\'s shipped first; HELM-KEYS\' two after them; CLASSIC-PAGES\' key; LEGACY1\'s family tree; MODE-WHEEL\'s wheel; TECH1\'s technique; SPYGLASS\' glass last (PIN MOVED)');
   assert.ok(PORT_ACTIONS.includes('TogglePerspective'));
   assert.deepEqual(DEFAULT_BINDINGS.filter(([, a]) => a === 'TogglePerspective'), [['Mouse4', 'TogglePerspective']]);
   assert.equal(DEFAULT_BINDINGS.filter(([k]) => k === 'Mouse4').length, 1, 'nothing else on it');

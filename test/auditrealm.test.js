@@ -28,7 +28,9 @@ import { REMAINS_ROW } from '../src/systems/legacy/heirloom.js';   // LEGACY4: t
 import { WALLET_ROW } from '../src/systems/walletItem.js';   // WALLET1: the twelfth registrar
 import { AYLEID_STONE_TEMPLATES } from '../src/systems/ayleidStones.js';   // LOOT21: the fourteenth registrar
 import { GEM_GRADE_ROWS } from '../src/systems/gems.js';   // GEM2: the sixteenth registrar
-import { WEIR_KEY_ROW } from '../src/systems/weirKey.js';   // EG-PLAY: the seventeenth registrar - the Weir Key, bound
+import { GOODS_ROWS } from '../src/systems/naval/tradeGoods.js';   // CAPT-TRADE: the seventeenth registrar
+import { CHART_ROW } from '../src/systems/naval/treasureCharts.js';   // CAPT-CHARTS: the eighteenth
+import { WEIR_KEY_ROW } from '../src/systems/weirKey.js';   // EG-PLAY: the nineteenth - the Weir Key, bound
 import { createTradePack, tradeRefusal } from '../src/systems/tradePack.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { realmIo, realmCreate, realmFetch, realmPut, realmTradeCall, realmJoin, realmDelete, createRealmSession, realmGoldAct, realmTradeEscrow } from '../src/systems/realmSaves.js';
@@ -164,6 +166,7 @@ test('AUDIT REALM F1: BOUND_TEMPLATES is every row the game registers with `boun
     ILIAC_CARD_ROW, CARD_BINDER_ROW,   // CARDS8: a card changes hands; the binder - bound (and pack-only), as the wallet
     ...AYLEID_STONE_TEMPLATES,   // LOOT21: the Welkynd and Varla Stones - neither bound: a stone changes hands, as the Thunderlock does
     ...GEM_GRADE_ROWS,   // GEM2: the 32 graded gems - none bound: a gem changes hands, as DFU's do
+    ...GOODS_ROWS, CHART_ROW,   // CAPT-TRADE, CAPT-CHARTS (PIN MOVED): the exchange's goods and the treasure chart - none bound: cargo and charts change hands
     WEIR_KEY_ROW,   // EG-PLAY: the Weir Key - bound: the account's balance, never traded
   ];
   assert.deepEqual(rows.filter((t) => t.bound === true).map((t) => t.index).sort((a, b) => a - b), [...BOUND_TEMPLATES]);
@@ -181,7 +184,7 @@ test('AUDIT REALM F1: BOUND_TEMPLATES is every row the game registers with `boun
     }
   };
   walk('src');
-  assert.deepEqual(registrars.sort(), ['src/systems/ayleidStones.js', 'src/systems/comeSailAwayItems.js', 'src/systems/deepWatersFishItems.js', 'src/systems/foragingInstall.js', 'src/systems/gateSpoils.js', 'src/systems/gems.js', 'src/systems/iliacItems.js', 'src/systems/legacy/heirloom.js', 'src/systems/livingWorld/keepsake.js', 'src/systems/naval/navalStores.js', 'src/systems/profTemplates.js', 'src/systems/restItems.js', 'src/systems/rriInstall.js', 'src/systems/survival/items.js', 'src/systems/thunderlock.js', 'src/systems/walletItem.js', 'src/systems/weirKey.js']);   // EG-PLAY: the seventeenth, the Weir Key; SEA-REPAIR: the ninth, the carpenter's stores; REST6: the tenth, the rest supplies; LW6c: the eleventh, the keepsake; LEGACY4: the twelfth, an ancestor's remains; LOOT21: the fourteenth, the Ayleid stones
+  assert.deepEqual(registrars.sort(), ['src/systems/ayleidStones.js', 'src/systems/comeSailAwayItems.js', 'src/systems/deepWatersFishItems.js', 'src/systems/foragingInstall.js', 'src/systems/gateSpoils.js', 'src/systems/gems.js', 'src/systems/iliacItems.js', 'src/systems/legacy/heirloom.js', 'src/systems/livingWorld/keepsake.js', 'src/systems/naval/navalStores.js', 'src/systems/naval/tradeGoods.js', 'src/systems/naval/treasureCharts.js', 'src/systems/profTemplates.js', 'src/systems/restItems.js', 'src/systems/rriInstall.js', 'src/systems/survival/items.js', 'src/systems/thunderlock.js', 'src/systems/walletItem.js', 'src/systems/weirKey.js']);   // SEA-REPAIR: the ninth, the carpenter's stores; REST6: the tenth, the rest supplies; LW6c: the eleventh, the keepsake; LEGACY4: the twelfth, an ancestor's remains; LOOT21: the fourteenth, the Ayleid stones
   // and the honest client never offers one: the window's pack refuses it before a half is ever written
   const holder = { items: [{ ...sigilStone(), stackCount: 2 }], goldPieces: 0 };
   assert.equal(createTradePack(holder).offerable(holder.items[0]), tradeRefusal(holder.items[0]));

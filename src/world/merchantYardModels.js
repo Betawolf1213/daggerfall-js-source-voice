@@ -15,6 +15,9 @@
 // of planks, a barrel; and on the apron a SIGNPOST, its arm over the street, the signboard hung from it. A Small Cart,
 // an Open Wagon and a Caravan stand drawn up in the gravel and the wagonwright at the gate (the host's - `points`).
 //
+// SHIPYARDS (2026-10-11): the face kit below is the port's too - world/shipyardModel.js and world/lighthouseModel.js
+// build with it (YARD_MESH_KIT, at this file's end), under the port's own pictures (world/portArt.js).
+//
 // Pure: no renderer, no GL, no clock. Not a DFU member. Ledger A (MERCHANT-YARDS).
 import { YARD_ARCHIVE, YARD_REC } from './merchantYardArt.js';
 import { YARD_FOOT } from './merchantYardSites.js';
@@ -216,8 +219,9 @@ function drum(f, rec, x, z, sides, r0, r1, y0, y1, top = rec) {
   }
 }
 
-/** The faces gathered by picture into renderer.createMesh's model shape (world/lefayMonument.js assemble's). */
-function assemble(f) {
+/** The faces gathered by picture into renderer.createMesh's model shape (world/lefayMonument.js assemble's) - SHIPYARDS:
+ *  under `archive` (the port's models wear world/portArt.js PORT_ARCHIVE, the yards' materials at the yards' records). */
+function assemble(f, archive = YARD_ARCHIVE) {
   const recs = [...f.byRec.keys()].sort((a, b) => a - b);
   const count = recs.reduce((n, r) => n + f.byRec.get(r).p.length / 3, 0);
   const positions = new Float32Array(count * 3), normals = new Float32Array(count * 3), uvs = new Float32Array(count * 2);
@@ -228,7 +232,7 @@ function assemble(f) {
     const g = f.byRec.get(rec), n = g.p.length / 3;
     positions.set(g.p, v * 3); normals.set(g.n, v * 3); uvs.set(g.uv, v * 2);
     for (let i = 0; i < n; i++) indices[v + i] = v + i;
-    subMeshes.push({ textureArchive: YARD_ARCHIVE, textureRecord: rec, startIndex: v, primitiveCount: n / 3 });
+    subMeshes.push({ textureArchive: archive, textureRecord: rec, startIndex: v, primitiveCount: n / 3 });
     v += n;
   }
   return { positions, normals, uvs, indices, subMeshes };
@@ -310,3 +314,9 @@ export function signBoxOf(kind) {
 export const yardPoints = (kind) => (kind === 'transport'
   ? { keeper: WAGON_YARD.keeper, horses: [], wagons: WAGON_YARD.wagons }
   : { keeper: STABLE_YARD.keeper, horses: STABLE_YARD.horses, wagons: [] });
+
+/** SHIPYARDS (2026-10-11): THE YARDS' FACE KIT, ONE DOOR - world/shipyardModel.js and world/lighthouseModel.js build the
+ *  port's places with it (the faces, a face's UVs, a hexahedron, a box, a post, a fence run, a floor, a lean-to, a
+ *  signboard, a wheel, a drum, and assemble under an archive). One object, so no helper's name is declared twice across
+ *  the port's modules (test/audit24_onehome.test.js). */
+export const YARD_MESH_KIT = Object.freeze({ faces, uvOf, hexa, box, post, fenceRun, floor, leanTo, signboard, wheel, drum, assemble });

@@ -16,7 +16,7 @@
 import { byClass } from './chargenDom.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { sea } from './navalSea.mjs';
+import { sea, knowAll } from './navalSea.mjs';
 import { provoke, PROVOKED_S, NAVY_HUNTS } from '../src/systems/naval/navalAI.js';
 import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 import { classLine } from '../src/systems/naval/navalShips.js';
@@ -38,6 +38,7 @@ test('SHIP-STANCE FRIENDLY UNTIL PROVOKED, by the real host: a merchantman and a
   const n = stand(h, 'navyCutter', 400, 0);
   const p = stand(h, 'pirateBrig', 500, Math.PI);
   const w = stand(h, 'pirateSloop', 650, -Math.PI / 2, 'wary');   // a wary sloop: my boat no prize of hers
+  knowAll(h.host);   // PIN MOVED (SPYGLASS): their colours made out - an unknown hull wears no tag, and her card says nothing of her stance
   h.run(1.5);
   for (const e of [m, n, p, w]) assert.ok(tagOf(h, e), `${e.ship.cls.id} tagged`);
   const stance = (e) => { const t = tagOf(h, e); return [t.hostile, t.friendly]; };

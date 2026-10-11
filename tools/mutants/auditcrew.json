@@ -42,8 +42,8 @@
   {
     "name": "AUDIT-CC-A5-sailing-ashore",
     "file": "src/scenes/navalHost.js",
-    "old": "!companions.party.length || sailing()) return NO_HANDS_AWAY;",
-    "new": "!companions.party.length) return NO_HANDS_AWAY;",
+    "old": "companions.party.length && !sailing() ? companions.awayOf(boat.uid) : NO_HANDS_AWAY);",
+    "new": "companions.party.length ? companions.awayOf(boat.uid) : NO_HANDS_AWAY);",
     "tests": [
       "test/auditcrew.test.js",
       "test/crewcompanions.test.js"

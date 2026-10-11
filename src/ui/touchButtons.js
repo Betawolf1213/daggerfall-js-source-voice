@@ -46,6 +46,9 @@ export const TOUCH_BUTTON_ACTIONS = Object.freeze([
   // TECH1 (bible/05-Combat/Weapon-Techniques.md): the weapon's technique - held while the finger is: an aiming technique
   // aims while it holds (the other finger's drag is the look), and looses as it lifts; a quick tap looses it at the look
   { id: 'WeaponTechnique', label: 'Weapon technique (hold to aim)', glyph: 'Tech', kind: 'hold', w: 60 },
+  // SPYGLASS (bible/03-World/Captains-Sea.md): the captain's glass - a tap raises it aboard, the next lowers it (at a helm
+  // the plate offers its own Glass press too, ui/navalHud.js)
+  { id: 'Spyglass', label: 'Spyglass (aboard)', glyph: 'Glass', kind: 'tap', w: 64 },
 ]);
 const BY_ID = new Map(TOUCH_BUTTON_ACTIONS.map((a) => [a.id, a]));
 

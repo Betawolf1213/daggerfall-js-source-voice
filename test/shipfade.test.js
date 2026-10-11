@@ -15,7 +15,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { sea } from './navalSea.mjs';
+import { sea, knowAll } from './navalSea.mjs';
 import { SHIP_FADE_S, HARBOUR_LEAVE } from '../src/scenes/navalHost.js';
 import { createComeSailAwayPool, FADE_FLATS } from '../src/scenes/comeSailAwayPool.js';
 import { Boat } from '../src/systems/comeSailAwayBoat.js';
@@ -41,6 +41,7 @@ function until(h, done, max = 30, dt = 0.1) {
 test('SHIP-FADE A SHIP COMES INTO THE WORLD: every ship stood comes in over SHIP_FADE_S - her share of the world from nought to whole, her boat\'s with her and her tag\'s (she stood whole at once, from nothing)', async () => {
   const h = await sea({ hull: 2 });
   const e = h.host._sea.get(h.host.spawnShip('merchantCoaster', { range: 300 }));
+  knowAll(h.host);   // PIN MOVED (SPYGLASS): her colours made out - an unknown hull wears no tag
   assert.deepEqual([e.fade, e.retiring], [0, false], 'stood: not yet in the world');
   h.run(1);
   assert.ok(Math.abs(e.fade - 1 / SHIP_FADE_S) < 1e-6, `a second in: ${e.fade}`);

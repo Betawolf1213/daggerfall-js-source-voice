@@ -383,8 +383,8 @@
   {
     "name": "CSA-C-click-no-delay",
     "file": "src/systems/comeSailAway.js",
-    "old": "f(f(deps.time()) - f(state.placeTime)) > PLACE_CLICK_DELAY",
-    "new": "f(f(deps.time()) - f(state.placeTime)) >= 0",
+    "old": "    } else if (state.placing && activateComplete && f(f(deps.time()) - f(state.placeTime)) > PLACE_CLICK_DELAY) {",
+    "new": "    } else if (state.placing && activateComplete && f(f(deps.time()) - f(state.placeTime)) >= 0) {",
     "tests": [
       "test/csa_placing.test.js"
     ]

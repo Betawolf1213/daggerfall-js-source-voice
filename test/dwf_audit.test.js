@@ -75,14 +75,16 @@ test('AUDIT DW-F E5-6: the loot\'s unordered compares are the C#\'s own forms - 
   assert.doesNotMatch(lootSrc + spawner, /!\((rate|s\.rate|s\.clusterRate|reveal|column\.depth|column\.oceanY)[^)]*[<>]=?[^)]*\)/, 'no ordered negation left in their place');
 });
 
-test('AUDIT DW-F E5-1/E5-4: the view the loot and the guards test is the one the frame is about to draw, and the velocity is the motor\'s - rebased at a crossing, let go across a door, a teleport, a load (pins)', () => {
+test('AUDIT DW-F E5-1/E5-4: the view the loot and the guards test is the one the frame is about to draw (its wide lens - the captain\'s glass narrows the frame\'s alone), and the velocity is the motor\'s - rebased at a crossing, let go across a door, a teleport, a load (pins)', () => {
   const w = rd('src/scenes/world.js');
   const view = w.slice(w.indexOf('  function dwSpawnView() {'), w.indexOf('  /** The frame\'s CharacterController.velocity'));
   assert.match(view, /const V = lookAt\(eye, \[eye\[0\] \+ forward\[0\], eye\[1\] \+ forward\[1\], eye\[2\] \+ forward\[2\]\], UP_Y\);/, 'this frame\'s camera');
   // CLIMB4: the frame's lens carries the climb's kick (a leap's), and so does this one - the same lens, kicked or not
-  assert.match(view, /const worldAspect = largeHudWorldAspect\(canvas\.clientWidth, canvas\.clientHeight\);[^\n]*\n\s+const P = mirrorProjectionX\(perspective\(fieldOfView\(\) \+ climbFeel\.fovRad\(\), worldAspect, 0\.2, 6000\)\);/, '...through the frame\'s own lens');
+  assert.match(view, /const worldAspect = largeHudWorldAspect\(canvas\.clientWidth, canvas\.clientHeight\);[^\n]*\n\s+const P = mirrorProjectionX\(perspective\(fieldOfView\(\) \+ climbFeel\.fovRad\(\), worldAspect, 0\.2, 6000\)\);/, '...through the frame\'s own wide lens (AUDIT CAPTAIN\'S SEA H22: the glass\'s narrowing its own, below)');
   assert.doesNotMatch(view, /renderer\._view|renderer\._proj/, 'not the last pass\'s matrices');
-  assert.match(w, /const proj = mirrorProjectionX\(perspective\(fieldOfView\(\) \+ climbFeel\.fovRad\(\), worldAspect, 0\.2, 6000\)\);/, 'the frame draws through the same lens');
+  // PIN MOVED (SPYGLASS, 2026-10-11): the frame's lens narrowed by the captain's glass while it is up - the spawners keep the
+  // wide one, so nothing they place pops into the view the glass comes down from
+  assert.match(w, /const proj = mirrorProjectionX\(perspective\(glassFov\(fieldOfView\(\) \+ climbFeel\.fovRad\(\), spyglass\.lens\), worldAspect, 0\.2, 6000\)\);/, 'the frame draws through the same lens - the glass\'s narrowing on it while the glass is up (AUDIT CAPTAIN\'S SEA H22)');
   assert.match(w, /for \(let i = 0; i < 3; i\+\+\) _dwEyeOffset\[i\] = mwv\.eye\[i\] - cam\.pos\[i\];/, 'the camera machine\'s eye, relative (a crossing moves cam.pos, not the offset)');
   assert.match(w, /if \(_dwLootVel\.last\) for \(let i = 0; i < 3; i\+\+\) _dwLootVel\.last\[i\] \+= r\.offset\[i\];/, 'FloatingOrigin moves the player by transform: no velocity');
   assert.match(w, /dwLoot\?\.pump\(f\);[^\n]*\n\s+dwLootLetGoVelocity\(\);/, 'indoors: the way out is a reposition');

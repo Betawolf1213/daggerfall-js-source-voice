@@ -212,8 +212,8 @@
   {
     "name": "STORM-SHED-claim-unkept",
     "file": "server-account/src/seatInfluence.js",
-    "old": "const seats = await confirmedSeats(db, nowS, { kept: true });",
-    "new": "const seats = await confirmedSeats(db, nowS);",
+    "old": "const seats = await confirmedSeats(db, nowS);   // STORM-SHED: the isolate's kept witness rows",
+    "new": "const seats = await confirmedSeats(db, nowS, { fresh: true });   // STORM-SHED: the isolate's kept witness rows",
     "tests": [
       "test/stormshed.test.js"
     ],

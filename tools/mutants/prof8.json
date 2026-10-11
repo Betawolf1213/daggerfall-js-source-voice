@@ -174,11 +174,12 @@
   {
     "name": "PROF8-svc-hauls-unsaid",
     "file": "server-account/src/professions.js",
-    "old": "    ...(row.profession === 'fishing' ? { hauls: await haulsToday(db, row.player, Number(row.day)) } : {}),   // PROF8: the account's hauls today\n",
+    "old": "    ...(row.profession === 'fishing' ? { hauls: Number(r.get('hauls')?.[0]?.n ?? 0) } : {}),   // PROF8: the account's hauls today\n",
     "new": "",
     "tests": [
       "test/prof8_service.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "PROF8-act-held-is-a-press",

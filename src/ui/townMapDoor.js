@@ -57,9 +57,14 @@ export function townMapDoorReady() {
  * on the block rows HERE, once, for whichever map is built: their ground
  * in a shop's byte and their names among the landmarks
  * (world/merchantYardMap.js yardTownBlocks).
+ *
+ * SHIPYARDS-FOUND (2026-10-11): `ports` - a port town's shipyard and
+ * lighthouse (world/portSites.js's sites, the same frame) - laid the
+ * same way, the lighthouse in a house's byte.
  */
 export function createTownMapWindow(deps = {}) {
   noteFirstUse('automap');   // TUT1: the town's map is the same page
+  if (deps.ports?.length) deps = { ...deps, blocks: yardTownBlocks(deps.blocks ?? [], deps.ports) };   // SHIPYARDS-FOUND: a port town's shipyard and lighthouse, the same way
   if (deps.yards?.length) deps = { ...deps, blocks: yardTownBlocks(deps.blocks ?? [], deps.yards) };
   if (heldMapWorn()) {
     return new HeldMapWindow({

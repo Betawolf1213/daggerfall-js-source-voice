@@ -173,20 +173,22 @@
  {
   "name": "SEATS3-D2-read-the-constant",
   "file": "server-account/src/market.js",
-  "old": "      listingsMax: await listingsCapAt(db, nowS, boardOf(board)),",
-  "new": "      listingsMax: 30,",
+  "old": "  const [all, listingsMax] = await Promise.all([readAll(db, [...reads, ...own0]), listingsCapAt(db, nowS, boardOf(board))]);",
+  "new": "  const [all, listingsMax] = await Promise.all([readAll(db, [...reads, ...own0]), 30]);",
   "tests": [
    "test/audit_seats3_service.test.js"
-  ]
+  ],
+  "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
  },
  {
   "name": "SEATS3-D2-read-board-ignored",
   "file": "server-account/src/market.js",
-  "old": "      listingsMax: await listingsCapAt(db, nowS, boardOf(board)),",
-  "new": "      listingsMax: await listingsCapAt(db, nowS, boardOf(null)),",
+  "old": "  const [all, listingsMax] = await Promise.all([readAll(db, [...reads, ...own0]), listingsCapAt(db, nowS, boardOf(board))]);",
+  "new": "  const [all, listingsMax] = await Promise.all([readAll(db, [...reads, ...own0]), listingsCapAt(db, nowS, boardOf(null))]);",
   "tests": [
    "test/audit_seats3_service.test.js"
-  ]
+  ],
+  "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
  },
  {
   "name": "SEATS3-D2-piece-the-constant",

@@ -149,6 +149,10 @@ binds") - THE ARROWS ARE THE HELM (DECLARED, the Port-Ledger's HELM-KEYS row):
   onto the partner's own key (a player's own rebind of the arrow is never shared onto) and, on a saved file, only
   while More sail is keyless and not unbound on purpose. The two are never live together: a helm's hands are on the
   wheel, and the professions read no choice there (`world.js`). The down arrow was free.
+- **K is the glass's aboard** (SPYGLASS, 2026-10-11, a DEFAULT SHARE beside Travel Options' `FollowPaths`): one press
+  raises the captain's spyglass to the eye while standing on a deck or at a helm, the next lowers it; the wheel turns
+  its magnification (x2 to x8). Ashore K is the road's and the glass answers nothing; aboard the road's follow is read
+  nowhere - a deck has no road. `03-World/Captains-Sea.md` has what the glass makes out.
 - **The helm panel teaches them**: its line under the name is the helm's hand at a glance - her oars and her sails on
   W, S and the arrows, the rudder on A, D and the turn keys, as bound now - and its sails' button is the toggle (End). IN IRONS (her sails up, her bow within IRONS_TELL_DEG of the wind's eye, her way ahead through the water under
   IRONS_TELL_WAY - sternway counts, never the sea's current: AUDIT NAV2 F15) the helm is told once how she comes out -
@@ -396,6 +400,7 @@ Generated from `ACTION_GROUPS` and the two default tables; the enhanced pane dra
 | `BoatTimeScaleUp` | KPADMULTIPLY |  | Speed time up at the helm |
 | `BoatTimeScaleDown` | KPADSUBTRACT |  | Slow time down at the helm |
 | `BoatTimeScaleReset` | KPADENTER |  | Put time back to normal at the helm |
+| `Spyglass` | K |  | Raise or lower the spyglass (aboard) |
 
 ### Project Legacy (drawn, and answering, while `project-legacy` is on)
 

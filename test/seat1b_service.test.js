@@ -3,6 +3,7 @@
 // real Worker over node:sqlite with every migration applied (test/accountDb.mjs). bible/11-Multiplayer/Seats-Arc.md
 // 4.1-4.2; `06-Systems/Online-Arc.md` SEAT1b.
 import { test } from 'node:test';
+import { SEAT_ROWS_KEPT_S } from '../server-account/src/townSeats.js';   // D1-LOAD: the kept rows' minute
 import assert from 'node:assert/strict';
 import { webcrypto } from 'node:crypto';
 import { standService, T0 } from './accountDb.mjs';
@@ -66,6 +67,10 @@ test('SEAT1b THE PLEDGE: an Officer\'s or the guildmaster\'s, a confirmed seat, 
   member(mem, gid, { rank: 2 });
   assert.equal((await pledge(gm, ANTICLERE.key)).body.error, 'seat-unconfirmed', 'a seat the witnesses have not confirmed is no pledge');
   confirm(ANTICLERE); confirm(ALT); confirm(WAYREST);
+  // PIN MOVED (D1-LOAD): a pledge reads the isolate's kept witness rows (townSeats.js confirmedSeats) - a seat confirmed
+  // by witnesses another isolate took is pledgeable within the minute, the seats' list's own bound
+  assert.equal((await pledge(gm, ANTICLERE.key)).body.error, 'seat-unconfirmed', 'within the minute: the rows as this isolate kept them');
+  now += SEAT_ROWS_KEPT_S;
   assert.equal((await pledge(mem, ANTICLERE.key)).body.error, 'guild-rank', 'a Member pledges nothing');
   const p = await pledge(off, ANTICLERE.key);
   assert.equal(p.status, 200);
@@ -77,6 +82,7 @@ test('SEAT1b THE PLEDGE: an Officer\'s or the guildmaster\'s, a confirmed seat, 
   const more = [[7001, 'Glenpoint', 18, [200, 100]], [7002, 'Tulune', 58, [150, 120]], [7003, 'Kambria', 37, [700, 90]], [7004, 'Ykalon', 40, [720, 80]]]
     .map(([key, name, region, pixel]) => ({ key, name, region, tier: 'palace', pixel }));
   for (const s of more) confirm(s);
+  now += SEAT_ROWS_KEPT_S;   // PIN MOVED (D1-LOAD): read here within the minute
   for (const s of more.slice(0, 3)) assert.equal((await pledge(gm, s.key)).status, 200, `${s.name} pledged`);
   const full = await pledge(gm, more[3].key);
   assert.deepEqual([full.status, full.body.error], [409, 'seat-pledges-full'], `a guild's reach is ${SEAT_PLEDGE_REGIONS_MAX} regions`);

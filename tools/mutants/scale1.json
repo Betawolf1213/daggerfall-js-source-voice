@@ -195,11 +195,12 @@
   {
     "name": "SCALE1-D-the-medians-bound-one-each",
     "file": "server-account/src/market.js",
-    "old": "    (SELECT value FROM json_each(?2))`).bind(today - MARKET_MEDIAN_DAYS, JSON.stringify(keys)).all();",
-    "new": "    (${keys.map((_, i) => `?${i + 2}`).join(', ')})`).bind(today - MARKET_MEDIAN_DAYS, ...keys).all();",
+    "old": "    (SELECT value FROM json_each(?2))`).bind(today - MARKET_MEDIAN_DAYS, JSON.stringify(keys));",
+    "new": "    (${keys.map((_, i) => `?${i + 2}`).join(', ')})`).bind(today - MARKET_MEDIAN_DAYS, ...keys);",
     "tests": [
       "test/scale1.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched."
   },
   {
     "name": "SCALE1-E-the-service-deploys-unverified",

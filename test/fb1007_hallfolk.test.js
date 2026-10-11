@@ -226,5 +226,6 @@ test('HALL-FOLK by source: the interior host\'s re-roll asks the build\'s own la
   const body = dep.slice(0, dep.indexOf('\n    },\n'));
   assert.match(body, /if \(!interiorBuilding \|\| !interiorCtx\) return;[\s\S]*?if \(interiorHome \|\| privateVisitRoom\) return;[\s\S]*?if \(!updateNpcPresence\(interiorBuilding\?\.buildingType/, 'the room first, then DFU\'s law');
   assert.match(WM, /interiorHome = home;   \/\/ HOME1: the visit's latch/, 'the latch is the build\'s own answer');
-  assert.match(WM, /isHouseOwned: \(key\) => home !== null \|\| isHouseOwned\(/, 'the one the people gate read');
+  // PIN MOVED (AUDIT CAPTAIN'S SEA P9): the deed read where the building stands - never an isle town's (houseOwnedAt)
+  assert.match(WM, /isHouseOwned: \(key\) => home !== null \|\| houseOwnedAt\(/, 'the one the people gate read');
 });

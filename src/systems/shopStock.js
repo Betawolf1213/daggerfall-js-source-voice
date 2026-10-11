@@ -51,6 +51,7 @@ import { BUILDING_TYPES } from '../world/buildingNames.js';
 import { MINUTES_PER_DAY, dayOfYear } from './gameDate.js';   // X6: the soul-gem stock's daily seed; A2: CreateStockedDate's day term
 import { SOUL_TRAP_TEMPLATE } from './mysticism.js';   // X6: one home for the template id (X5 put it there with fillEmptyTrap)
 import { ILIAC_CARD_TEMPLATE, CARD_PACK_TEMPLATE } from './iliacItems.js';   // AUDIT CARDS-5 C2: the collectible card, which no shop buys; CARDS9: nor its pack
+import { goodOfTemplate } from './naval/tradeGoods.js';   // AUDIT CAPTAIN'S SEA B2: the exchange's goods, which no shop buys
 import { OIL_TEMPLATE, ARROW_TEMPLATE, addItem } from './inventory.js';   // SHOP-ARROWS: the counter's quiver   // AUDIT-RR2 G10: the shelf's AddItem   // AUDIT 58: UselessItems2.Oil (ItemEnums.cs:357) - one home for the id
 import { getBool } from './settings.js';   // AUDIT 58: DaggerfallUnity.Settings.PlayerTorchFromItems, read where DFU reads it
 import { FACTION_TYPES } from '../formats/factionFile.js';        // S41: UpdateRegionalPrices' type-7 region walk
@@ -60,6 +61,7 @@ import { turnOnConditionFlag, turnOffConditionFlag, REGION_FLAGS, REGION_COUNT }
 import { isOnlinePage } from './onlineLane.js';   // REALM P0.4: online, a shop pays at most half what it asks
 import { BAG_TEMPLATE, isBagItem } from '../net/bagLaw.js';   // BAG1: the Materials Bag, at every General Store online
 import { createPellets } from './thunderlock.js';   // SHOP-PELLETS: the gun's shot on the counter - the shot alone, never the gun
+import { BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE } from './comeSailAwayItems.js';   // SHIPYARDS: a ship's parts and deed, which no shop buys - a port's shipyard does
 
 // ItemGroups ids used by the shelf tables (DaggerfallUnityEnums).
 const GROUP_NAMES = Object.freeze({
@@ -161,6 +163,13 @@ export const shopBuysItem = (buildingType, item) => (SHOP_BUYS_GROUPS[buildingTy
   // CARDS9: nor a sealed pack - the tavern sells it at its counter's price, and no shelf buys it back (a pack bought
   // well and sold dear was the gold-for-nothing ENDLESS-STOCK shut)
   && item.templateIndex !== CARD_PACK_TEMPLATE
+  // AUDIT CAPTAIN'S SEA B2: nor the exchange's goods - the exchange alone deals in them (a General Store paid more for a
+  // tusk of ivory than the quay where it is made asked: a money loop without a voyage)
+  && !goodOfTemplate(item.templateIndex)
+  // SHIPYARDS (2026-10-11, Mac: "Shipyard only"): nor a boat's parts or deed - a port town's shipyard buys a ship back
+  // (systems/shipyards.js), as the Stable and the Wagon Yard took the horse and the cart (Come Sail Away's rows are on no
+  // shelf now - comeSailAwayItems.js)
+  && item.templateIndex !== BOAT_PARTS_TEMPLATE && item.templateIndex !== BOAT_DEED_TEMPLATE
   // AUDIT ENDLESS-STOCK F1/F2: online no shop buys back what never sells out - bought at a cheap shop and sold at a dear one
   // (the online asking price is halved, the buy-back cap is not) it was gold for nothing, and a sold one made any shelf endless
   && !(isOnlinePage() && isEndlessStock(item));

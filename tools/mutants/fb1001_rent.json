@@ -52,8 +52,8 @@
   {
     "name": "RENT-REST-the-host-asks-the-offline-bank-online",
     "file": "src/scenes/worldModes.js",
-    "old": "houseOwned: !interiorHome && isHouseOwned(playerEntity.houses",
-    "new": "houseOwned: isHouseOwned(playerEntity.houses",
+    "old": "houseOwned: !interiorHome && houseOwnedAt(b, b?.buildingKey ?? 0), homeBed:",
+    "new": "houseOwned: houseOwnedAt(b, b?.buildingKey ?? 0), homeBed:",
     "tests": [
       "test/fb1001_rent.test.js",
       "test/restlodging.test.js",

@@ -92,7 +92,7 @@
   {
     "name": "NAV-D-the-strongbox-dropped",
     "file": "src/systems/naval/navalPlunder.js",
-    "old": "  if (shipClass.flagship) out[out.length - 1] = STRONGBOX_KEY;",
+    "old": "  for (let i = Math.max(0, lots - strongboxesOf(shipClass)); i < lots; i++) out[i] = STRONGBOX_KEY;",
     "new": "",
     "tests": [
       "test/nav_d_boarding.test.js"

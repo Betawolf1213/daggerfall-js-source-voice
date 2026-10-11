@@ -332,8 +332,8 @@
   {
     "name": "DISC10-D-V4-the-transfer-refuses-inside",
     "file": "src/scenes/world.js",
-    "old": "  function transferToCemeteryArm() {\n    const mapTable",
-    "new": "  function transferToCemeteryArm() {\n    if ((modes?.mode ?? 'exterior') !== 'exterior') {\n      console.warn('[infection] the cemetery transfer needs the exterior mode - the vampire wakes where they fell');\n      return;\n    }\n    const mapTable",
+    "old": "  function transferToCemeteryArm() {\n    // AUDIT CAPTAIN'S SEA P4",
+    "new": "  function transferToCemeteryArm() {\n    if ((modes?.mode ?? 'exterior') !== 'exterior') {\n      console.warn('[infection] the cemetery transfer needs the exterior mode - the vampire wakes where they fell');\n      return;\n    }\n    // AUDIT CAPTAIN'S SEA P4",
     "tests": [
       "test/disc10_vampire.test.js"
     ]

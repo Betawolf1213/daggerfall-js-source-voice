@@ -44,8 +44,8 @@
   {
     "name": "TOUCH-BUTTONS-tap-slot-held-instead",
     "file": "src/ui/touch.js",
-    "old": "        b = button(action.glyph, ...at, () => tapAction(action.id));",
-    "new": "        b = button(action.glyph, ...at, () => { downAction(action.id); });",
+    "old": "b = button(action.glyph, ...at, () => { if (!(shared && hooks.padAction?.(action.id))) tapAction(action.id); });",
+    "new": "b = button(action.glyph, ...at, () => { downAction(action.id); });",
     "tests": ["test/touchbuttons.test.js"]
   },
   {

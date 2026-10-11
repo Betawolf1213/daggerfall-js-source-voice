@@ -386,11 +386,14 @@
   {
     "name": "AUDIT29-C4-the-node-stood-as-it-was",
     "file": "src/scenes/gatherHost.js",
-    "old": "      } else if (!a && nodeKeyOf) restandNode(nodeKeyOf);\n",
-    "new": "      }\n",
+    "old": "      else if (!a && nodeKeyOf) restandNode(nodeKeyOf);\n      return;\n    }",
+    "new": "      return;\n    }",
     "tests": [
       "test/audit29_host.test.js"
-    ]
+    ],
+    "note": "GATHER-SPEED/MARKET-SPEED (PIN MOVED): re-aimed by content - the reads batched.",
+    "equivalent": true,
+    "why": "GATHER-SPEED: a kept harvest's node went with its act (net/profBook.js `gone` - taken, or being counted), so the answer through the pump stands its pixel again over what it already shows; kept as the book's own word on the node. The lapse's and the refusal's stand-again are pinned and killed in test/gatherspeed.test.js."
   },
   {
     "name": "AUDIT29-C10-every-pixel-for-the-compass",

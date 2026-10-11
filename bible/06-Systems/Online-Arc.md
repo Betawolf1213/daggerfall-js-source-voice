@@ -15562,7 +15562,7 @@ a regular player Home)."
 A guild's hall is an online home (GUILD1d: a row of the homes table, its character the guild's own mark), and its
 door already stood none of the house's people: the interior host reads the town's answer once (`home`, latched as
 `interiorHome`), and AddPeople's owned arm hides every resident of a home, anyone's
-(`worldModes.js:"isHouseOwned: (key) => home !== null || isHouseOwned("`). Every way in takes that one answer - the
+(`worldModes.js:"isHouseOwned: (key) => home !== null || houseOwnedAt("`). Every way in takes that one answer - the
 door, a load made inside, a tenant's room - in the one interior host (`scenes/worldModes.js`), which both town hosts
 build.
 

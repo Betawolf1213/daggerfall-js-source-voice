@@ -33,7 +33,8 @@ export const YARD_ART_SIZE = 64;
 export const SIGN_ART_W = 224;
 export const SIGN_ART_H = 96;
 
-/** mulberry32 - the port's seeded rng (world/lefayArt.js's), kept here so the art is the yards' alone. */
+/** mulberry32 - the port's seeded rng (world/lefayArt.js's), kept here so the art is the yards' alone. SHIPYARDS: and
+ *  the port's (world/portArt.js paints with the yards' own tools). */
 function rng(seed) {
   let a = seed >>> 0;
   return () => {
@@ -193,15 +194,22 @@ export function yardIronArt(seed = 0x1207) {
 
 // ── THE SIGNBOARDS ───────────────────────────────────────────────────────────────────────────────────────────────
 /** THE SIGN-PAINTER'S LETTERS: rounded capitals five texels wide and seven high, one row a string, `#` painted. Only the
- *  letters a yard's word needs are drawn; signGlyph answers null for any other (the test holds both words to them). */
+ *  letters a yard's word needs are drawn - SHIPYARDS: and the port's boards' (SHIPS, CREW, world/portArt.js); signGlyph
+ *  answers null for any other (the tests hold every word to them). */
 export const SIGN_GLYPHS = Object.freeze({
   A: ['.###.', '#...#', '#...#', '#####', '#...#', '#...#', '#...#'],
   B: ['####.', '#...#', '#...#', '####.', '#...#', '#...#', '####.'],
+  C: ['.###.', '#...#', '#....', '#....', '#....', '#...#', '.###.'],   // SHIPYARDS: the port's boards' letters (world/portArt.js)
+  D: ['####.', '#...#', '#...#', '#...#', '#...#', '#...#', '####.'],
   E: ['#####', '#....', '#....', '####.', '#....', '#....', '#####'],
   G: ['.###.', '#...#', '#....', '#.###', '#...#', '#...#', '.###.'],
+  H: ['#...#', '#...#', '#...#', '#####', '#...#', '#...#', '#...#'],
+  I: ['.###.', '..#..', '..#..', '..#..', '..#..', '..#..', '.###.'],
   L: ['#....', '#....', '#....', '#....', '#....', '#....', '#####'],
   N: ['#...#', '##..#', '#.#.#', '#..##', '#...#', '#...#', '#...#'],
   O: ['.###.', '#...#', '#...#', '#...#', '#...#', '#...#', '.###.'],
+  P: ['####.', '#...#', '#...#', '####.', '#....', '#....', '#....'],
+  R: ['####.', '#...#', '#...#', '####.', '#.#..', '#..#.', '#...#'],
   S: ['.####', '#....', '#....', '.###.', '....#', '....#', '####.'],
   T: ['#####', '..#..', '..#..', '..#..', '..#..', '..#..', '..#..'],
   W: ['#...#', '#...#', '#...#', '#.#.#', '#.#.#', '##.##', '#...#'],
@@ -320,3 +328,8 @@ export const yardArt = () => [
   [YARD_REC.signStable, yardSignArt('stable')],
   [YARD_REC.signTransport, yardSignArt('transport')],
 ];
+
+/** SHIPYARDS (2026-10-11): THE YARDS' PAINTING TOOLS, ONE DOOR - world/portArt.js paints the port's pictures with them
+ *  (its seeded rng, its noise, an image, a pixel put and got, a mix, the iron's two tones, the signboard and its word).
+ *  One object, so no helper's name is declared twice across the port's modules (test/audit24_onehome.test.js). */
+export const YARD_ART_KIT = Object.freeze({ rng, noiseField, image, put, get, mix, IRON_DARK, IRON_LIGHT, board, paintWord });

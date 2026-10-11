@@ -86,7 +86,7 @@ import { createGestureRecognizer, TAP_PX, TAP_MS } from './touchGestures.js';
 import { PIXEL_FONT_CSS } from './pixelifyFive.js';   // FONT1: the enhanced skin's face for the layer's text
 import { overlayOpen } from './enhancedOverlays.js';
 import { bindings } from './input.js';                       // AUDIT 62 F8: the live registry
-import { getBinding, getCombo } from '../systems/inputActions.js';   // GetBinding (:641-671), GetCombo (:1195-1207)
+import { getBinding, getCombo, DEFAULT_SHARES } from '../systems/inputActions.js';   // GetBinding (:641-671), GetCombo (:1195-1207)
 import { getPref } from '../systems/uiPrefs.js';             // TI2: the touch* knobs
 import { lookNormalisation, analogAxes, gyroLookDelta } from './touchLook.js';   // TI2: the pure halves
 import { lookScale } from './lookSettings.js';               // TI2: the gyro speaks the host's look units
@@ -362,7 +362,10 @@ export function attachTouch(canvas, hooks = {}) {
       if (action.kind === 'hold') {
         b = button(action.glyph, ...at, () => { slotHeld.set(b, downAction(action.id)); }, () => { const c = slotHeld.get(b) ?? null; slotHeld.delete(b); upCode(c, liveNeeds()); });
       } else if (action.kind === 'tap') {
-        b = button(action.glyph, ...at, () => tapAction(action.id));
+        // AUDIT CAPTAIN'S SEA S2: a SHARE's action (the Spyglass on K beside the road's follow) by the host's own door -
+        // its key is its partner's too, and a tapped K followed the road ashore
+        const shared = DEFAULT_SHARES.some(([, a]) => a === action.id);
+        b = button(action.glyph, ...at, () => { if (!(shared && hooks.padAction?.(action.id))) tapAction(action.id); });
       } else if (action.kind === 'attack') {
         // the pause gate the swipe carries (AUDIT 62 F7): no swing under a window; the release is never gated
         // AUDIT TOUCH-BUTTONS A1: THE LIFT WAITS TWO FRAMES. The rig keeps the live button (weaponRig.attackInput) and
