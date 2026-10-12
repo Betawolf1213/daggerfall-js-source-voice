@@ -624,7 +624,7 @@
   {
     "name": "PORTAL1-heir-hands-a-bound-piece",
     "file": "src/scenes/exteriorFoes.js",
-    "old": "const items = unbound(validLootList(r.it));",
+    "old": "const items = peerHanded(validLootList(r.it));",
     "new": "const items = validLootList(r.it);",
     "tests": [
       "test/portal1_stone.test.js"

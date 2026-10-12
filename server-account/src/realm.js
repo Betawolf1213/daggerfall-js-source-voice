@@ -154,7 +154,7 @@ export async function listRealm({ db, nowS }, /** @type {string} */ playerId) {
 /** ARENA4b: the highest level a token's `cl` claim says - the summary's own bound (realmSummaryOf's `level`). */
 export const REALM_LEVEL_CLAIM_MAX = 1000;
 
-/** WHAT THE IDENTITY MINT SIGNS OF THE CHARACTER IT IS MINTED FOR - `{ rc, cl, wa, house }`, one read of its row.
+/** WHAT THE IDENTITY MINT SIGNS OF THE CHARACTER IT IS MINTED FOR - `{ rc, cl, wa, house, name }`, one read of its row.
  *  - `rc` REALM-DOOR (2026-09-29, the field): IS THIS ONE OF THE ACCOUNT'S REALM CHARACTERS? The relay's door refuses a
  *    0, so online is the realm's at the servers, not only in the new build's boot. A realm id of this account's own,
  *    standing - LEGACY7: never a tombstone - and INT9 (AUDIT): IN PLAY, a lease held (the token's `ci` is whose record a
@@ -170,7 +170,10 @@ export const REALM_LEVEL_CLAIM_MAX = 1000;
  *  - `house` LEGACY7 part two: ITS HOUSE (src/net/houseLaw.js) - its line's surname, the member's given name, a
  *    Bloodline's mark, the generation's numeral (legacy.js houseOn: null for a character of no line, and for a name the
  *    name filter refuses - a house is shown to every player, as an account's name is).
- *  The three are read only for a character that is the realm's (`rc` 1), as the mint signs them only then.
+ *  - `name` NAME-AS (2026-10-12): ITS OWN NAME, as its row keeps it (realmNameOf's) - the name the mint signs where the
+ *    account chose its character's (accounts.js wornNameOf, which asks whether the wire can carry it). A fifth answer of
+ *    the same read, never a second statement: test/scale4f.test.js holds it to its own read beside the four.
+ *  The four are read only for a character that is the realm's (`rc` 1), as the mint signs them only then.
  *  SCALE4f (2026-10-10, Mac: "really future proof our archetecture while also increasing performance"; bible
  *  11-Multiplayer/Scale-Arc.md SCALE4f): THE FOUR READS OF ONE ROW, IN ONE. These were four functions and four
  *  statements of the same realm_characters row (realmCharacterHeld, realmLevelOf, realmArmsOf, legacy.js realmHouseOf),
@@ -178,9 +181,9 @@ export const REALM_LEVEL_CLAIM_MAX = 1000;
  *  what the four answered: test/scale4f.test.js holds it to them, as they stood at acct106, over every state a row can be
  *  in. */
 export async function realmMintFacts({ db }, /** @type {string} */ playerId, /** @type {unknown} */ id) {
-  const none = { rc: 0, cl: null, wa: null, house: null };
+  const none = { rc: 0, cl: null, wa: null, house: null, name: null };
   if (typeof id !== 'string' || !REALM_ID_RE.test(id)) return none;
-  const row = await db.prepare('SELECT r.dead_at, r.lease, r.summary, r.level_seen, r.arms_top, r.arms_bow, r.person_id AS person, l.record AS record'
+  const row = await db.prepare('SELECT r.dead_at, r.lease, r.summary, r.level_seen, r.arms_top, r.arms_bow, r.person_id AS person, r.name AS name, l.record AS record'
     + ' FROM realm_characters r LEFT JOIN lineages l ON l.player = r.player AND l.id = r.lineage_id WHERE r.id = ? AND r.player = ?').bind(id, playerId).first();
   if (!row || row.dead_at != null || row.lease == null) return none;
   let summary = null;
@@ -192,6 +195,7 @@ export async function realmMintFacts({ db }, /** @type {string} */ playerId, /**
     cl: Number.isSafeInteger(lv) && lv >= 1 && lv <= REALM_LEVEL_CLAIM_MAX ? lv : null,
     wa: armsIssuable(arms) ? /** @type {[number, 0|1]} */ (arms) : null,
     house: houseOn(row.record, row.person),   // no line, no record: none (houseOn's own null)
+    name: typeof row.name === 'string' && row.name ? row.name : null,   // NAME-AS: its own name, for the mint to wear where chosen
   };
 }
 

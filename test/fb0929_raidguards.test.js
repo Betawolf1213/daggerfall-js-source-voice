@@ -159,6 +159,8 @@ test('FB0929: a defender on the look ray stays the swing - the townsperson behin
   assert.deepEqual(await guards.resolveCivilianHit(w, EYE0, FWD0, FEET0, [townsperson], { onMurder: () => { murders++; }, inViewFn: inView }), { spared: true }, 'the swing stops on the defender (AUDIT 29g: said as stopped, not as met-nobody)');
   assert.deepEqual([struck, murders, p.crimeCommitted], [[], 0, 0], 'nobody behind him is murdered');
   guards.dismissDefenders();
+  d.ai.feet[2] = 200; guards.update(0.016, FEET0, EYE0);   // WATCH-LEAVES: stood down, he walks off and is gone once past allowVisiblePopRange
+  assert.equal(d.dead, true);
   assert.deepEqual(await guards.resolveCivilianHit(w, EYE0, FWD0, FEET0, [townsperson], { onMurder: () => { murders++; }, inViewFn: inView }), { crime: 'murder' }, 'nobody in front: the townsperson is the only body there (DFU\'s own fallback)');
   assert.deepEqual([struck, murders, p.crimeCommitted], [['townsperson'], 1, 5]);
 });

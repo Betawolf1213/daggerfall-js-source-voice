@@ -173,7 +173,7 @@
   {
     "name": "AUDIT-SS-a-buildings-record-carries-a-bound-piece",
     "file": "src/world/interiorShared.js",
-    "old": "r: unbound(t.items).map((it) => ({ ...it })),",
+    "old": "r: peerHanded(t.items).map((it) => ({ ...it })),",
     "new": "r: t.items.map((it) => ({ ...it })),",
     "tests": [
       "test/ss1_stones.test.js"
@@ -182,7 +182,7 @@
   {
     "name": "AUDIT-SS-a-dungeons-record-carries-a-bound-piece",
     "file": "src/scenes/dungeonContext.js",
-    "old": "r: unbound(held).map((it) => ({ ...it })),",
+    "old": "r: peerHanded(held).map((it) => ({ ...it })),",
     "new": "r: held.map((it) => ({ ...it })),",
     "tests": [
       "test/ss1_stones.test.js",

@@ -242,20 +242,22 @@
   {
     "name": "WB9g-the-session-writes-no-aura",
     "file": "src/net/accountClient.js",
-    "old": "JSON.stringify({ id, name, kind, sessionId, secret, glyphs, aura })",
-    "new": "JSON.stringify({ id, name, kind, sessionId, secret, glyphs })",
+    "old": "JSON.stringify({ id, name, kind, sessionId, secret, glyphs, aura, nameAsAt })",
+    "new": "JSON.stringify({ id, name, kind, sessionId, secret, glyphs, nameAsAt })",
     "tests": [
       "test/wb9g_insignia.test.js"
-    ]
+    ],
+    "note": "NAME-AS (PIN MOVED): re-aimed by content - the session keeps the choice's stamp beside it."
   },
   {
     "name": "WB9g-a-changed-aura-never-written",
     "file": "src/net/accountClient.js",
-    "old": "&& sameGlyphs && sameAura) return false;",
-    "new": "&& sameGlyphs) return false;",
+    "old": "&& sameGlyphs && sameAura && next.nameAsAt === was.nameAsAt) return false;",
+    "new": "&& sameGlyphs && next.nameAsAt === was.nameAsAt) return false;",
     "tests": [
       "test/wb9g_insignia.test.js"
-    ]
+    ],
+    "note": "NAME-AS (PIN MOVED): re-aimed by content - the guard reads the choice's stamp too."
   },
   {
     "name": "WB9g-own-aura-any-word",

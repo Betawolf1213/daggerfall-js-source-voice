@@ -146,6 +146,7 @@ import { setIdOf, setById, setLines, setSigilLines } from '../systems/sigilSets.
 import { isLocked, toggleLocked, lockRefuses, lockedText, LOCKED_LINE } from '../systems/itemLock.js';   // LOCK1
 import { isJunk, junkable, toggleJunk, lockLiftsJunk, JUNK_LINE } from '../systems/itemJunk.js';   // LOOT18
 import { isBound, BOUND_LINE, boundRefusesPut, boundText, isPackOnly, packOnlyText } from '../systems/itemBound.js';   // SS1: a bound piece says so on its card   // SS3: and goes nowhere but the wagon and the player's own storage
+import { letterRefusesPut, letterPutText } from '../systems/peerWord.js';   // HACKED-GOLD: online a letter of credit goes nowhere a peer's word could hand it on
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { closeOnOutsideTap } from './enhancedOverlays.js';   // OT1
 import { repaintKeepingScroll } from './domRepaint.js';
@@ -891,10 +892,15 @@ function ghostAt(x, y, verb) {
  *  own `ok` is the honest answer to both, so the label is the plan's. */
 /** AUDIT BAG1: the bag's own rule, as every gate asks it - a piece the showing bag refuses (not a material), or null. */
 const bagRefuses = (item) => (remote?.kind === 'bag' ? bagStoreRefusal(item) : null);
+/** HACKED-GOLD: online a letter of credit goes into no container but the player's own (systems/peerWord.js) - a chest, a
+ *  body, a cupboard is the room's once opened, and its record a peer's word; the player's own pile on the ground (its
+ *  hooks' `playerOwned`, as the classic skin reads it) and storage are the player's. Every gate asks it. */
+const letterRefuses = (item) => letterRefusesPut(item, { container: remote?.kind === 'container', own: deps.loot?.playerOwned === true });
 function stowIntent(item) {
   if (remote?.kind === 'ground' && lockRefuses(item, 'drop')) return { kind: 'stow', label: null, speaks: true };   // LOCK1: released, it says why
   if (bagRefuses(item)) return { kind: 'stow', label: null, speaks: true };   // AUDIT BAG1: a dagger dragged to the bag read "Put in bag
   if (remote && boundRefusesPut(item, remote.kind)) return { kind: 'stow', label: null, speaks: true };   // SS3: a bound piece - released, it says why
+  if (remote && letterRefuses(item)) return { kind: 'stow', label: null, speaks: true };   // HACKED-GOLD: a letter online - released, it says why
   const plan = planStore(item, {
     remote: remote.items, usingWagon: session.usingWagon, chooseOne: session.chooseOne,
     dryRun: true,   // as canStow's own note says: the quest rung WRITES, and a label must not
@@ -1585,6 +1591,12 @@ function stow(item) {
   }
   if (remote && boundRefusesPut(item, remote.kind)) {
     notice = boundText(itemLongName(item, { getQuest: deps.getQuest ?? null }));
+    return render();
+  }
+  // HACKED-GOLD: online a LETTER OF CREDIT goes into no container but the player's own - it is gold, and a chest's record
+  // is a peer's word another player takes from (systems/peerWord.js). Ahead of the ladder, and it speaks.
+  if (remote && letterRefuses(item)) {
+    notice = letterPutText(itemLongName(item, { getQuest: deps.getQuest ?? null }));
     return render();
   }
   // BAG1: the bag takes materials alone - ahead of the ladder, and it speaks

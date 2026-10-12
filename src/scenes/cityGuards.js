@@ -104,6 +104,7 @@ import { EnemySoundSource, acuteHearingMultiplier, WatchVoice, ATTRACT_RADIUS, O
 import { placeFoeEnv, entityOccupancy } from './questFoeHost.js';   // D9: FoeSpawner.PlaceFoeFreely's env, over THIS pool's collider
 import { placeFoeFreely } from '../systems/quest/sceneMount.js';   // D9: PlayerEntity.cs:687 spawns through FoeSpawner like everything else
 import { SPAWNER_ARMS } from '../systems/encounters.js';   // the CreateFoeSpawner call-site table - cityGuards is one of its rows
+import { popAllowChange, POP_VISIBLE_RANGE } from '../systems/townPopulation.js';   // WATCH-LEAVES: a defender walking off goes only where a walker may
 import { fieldOfView } from '../ui/viewSettings.js';   // MENU: Video/FieldOfView, the one home the other placement hosts read
 import { flashPlayerDamage } from '../ui/damageFlash.js';   // AUDIT 24 (wave 39): ShowPlayerDamage   // AUDIT 24 (wave 38): EnemyDeath's one home
 import { combatVisualsOn, foeDraw, markConcealedHit } from '../systems/combatVisuals.js';   // ECV1: what the enhanced skin draws for a concealed foe
@@ -123,6 +124,10 @@ export const MAX_ACTIVE_GUARD_SPAWNS = 5;
 /** WERE-FRIGHT: how long a watchman frightened off by a beast runs before he is gone (frighten, below) - long
  *  enough to be seen running, some twenty-odd metres at the watch's pace. The port's own number. */
 export const FRIGHTENED_RUN_SECONDS = 5;
+/** WATCH-LEAVES (bible/01-Overview/Field-Bugs-2026-10-12e.md): one leg of a stood-down defender's walk off - aimed
+ *  away from where the player stands as it begins, and aimed afresh from where they stand at its end. The port's own
+ *  number: short enough that a player who moves is walked away from, not followed. */
+export const DEFENDER_LEAVE_LEG_SECONDS = 3;
 export const GUARD_NPC_SPAWN_RANGE = 77.5;
 export const GUARD_BEHIND_ANGLE = 105.469;     // convert non-guards this far behind the player
 export const GUARD_SEEN_ANGLE = 95;            // an NPC facing the player within this sees a crime
@@ -205,7 +210,10 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
   // watchman's, and nobody's while a window is over the world (`windowUp`). Off - the classic skin, the row off, the
   // fixed-city page - EnemySounds.FixedUpdate per watchman, 1:1.
   oneVoice = () => false,
-  windowUp = () => false }) {
+  windowUp = () => false,
+  // WATCH-LEAVES: () => the camera's yaw, for the walk-off's one law (popAllowChange: behind the player's view). A host
+  // that hands none (null) has its defenders go by the distance term alone - never in a view it cannot read.
+  viewYaw = () => null }) {
   // AUDIT 23 (hosts-3): currentMinute is REQUIRED - the () => 0 default
   // let a guard's poisoned hit anchor at minute 0, and the next world
   // tick (absolute clock ~523,530) caught the whole course up at once.
@@ -374,7 +382,7 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
       attack.rangedAttack = false;
       const mobile = new MobileUnit(GUARD_MOBILE_TYPE, basics, (rec) => tex.getFrameCount(rec), Math.random, 'male');
       const batch = renderer.createBillboardBatch(archive, 0, { w: 1, h: 1 }, [[0, 0, 0]]);
-      const g = { id: _nextGuardId++, mobile, ai, attack, entity, batch, tex, archive, mobileType: GUARD_MOBILE_TYPE, idleH, dead: false, _swingSeq: 0, _mout: null, defender: !!defender,   // DISC19-F
+      const g = { id: _nextGuardId++, mobile, ai, attack, entity, batch, tex, archive, mobileType: GUARD_MOBILE_TYPE, idleH, dead: false, _swingSeq: 0, _mout: null, defender: !!defender, leaving: false, beset: false,   // DISC19-F; WATCH-LEAVES: a defender stood down, walking off (dismissDefenders) - and one set upon on his way (update)
         // WATCH1: THE WATCH RIDES THE CELL'S STREAM. `seq` is this watchman's number on the wire, minted by the
         // encounter pool's own counter the first time he rides a frame (one number space with the foes, so a
         // peer's blow names one thing); `_atkA`/`_atkB` the attack count and its recipient in the pool's spelling
@@ -716,6 +724,10 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
       return best;
     };
     let came = 0;
+    // WATCH-LEAVES: the watch still in the street comes first - a squad stood down and walking off turns back, each at
+    // the threat nearest him, before any walker is turned or anyone minted (they already count in the cap)
+    for (const g of guards) if (!g.dead && g.leaving) { recallDefender(g, nearestThreat(g.ai.feet)); came++; }
+    if (came > 0) return came;
     for (const p of pool) {
       if (!p.guard || room() <= 0) continue;
       if (Math.hypot(p.pos[0] - playerFeet[0], p.pos[1] - playerFeet[1], p.pos[2] - playerFeet[2]) > GUARD_NPC_SPAWN_RANGE) continue;
@@ -758,6 +770,14 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
   async function standDefender({ playerFeet, playerFwd = [0, 0, 1], threats = [], minDistance, maxDistance } = {}) {
     const where = enterExitFlags?.();
     if (!playerFeet || where?.isPlayerInsideDungeon || where?.isPlayerInside) return null;
+    // WATCH-LEAVES: a defender stood down and walking off is the one the raid gets back, before one is minted
+    const back = guards.find((w) => !w.dead && w.leaving);
+    if (back) {
+      let near = null, bd = Infinity;
+      for (const t of threats) { if (!t?.ai?.feet || t.dead) continue; const d = Math.hypot(t.ai.feet[0] - back.ai.feet[0], t.ai.feet[2] - back.ai.feet[2]); if (d < bd) { bd = d; near = t; } }
+      recallDefender(back, near);
+      return back;
+    }
     const placing = placeFoeEnv({
       collider,
       playerFeet: [playerFeet[0], playerFeet[1] + 0.9, playerFeet[2]],   // the controller's centre, as the fallback arm casts from
@@ -779,24 +799,46 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
     return spawnGuardAt([spot.x, spot.y, spot.z], Math.atan2(face[0] - spot.x, face[2] - spot.z), null, { defender: true, threat: foe });
   }
   /** DISC19-F: the town is quiet, the player left it, or the switch went
-   *  off - the defenders walk away, as the crime watch walks away when
-   *  its crime clears: no corpse and nothing to loot. */
+   *  off - the defenders stand down: no corpse and nothing to loot.
+   *  WATCH-LEAVES (Field-Bugs-2026-10-12e): and they WALK OFF. This took
+   *  them out of the world on the spot - the crime watch's despawn
+   *  (EnemyEntity.cs:184-191), which is DFU's for the crime's watch and
+   *  was never this squad's: the feature promises the watch "leaves once
+   *  it's safe", and the player saw guards vanish where they stood, in
+   *  plain view. Each one now drops his fight and walks away from the
+   *  player (update, below), and goes from the world only where DFU's
+   *  PopulationManager lets any walker go (popAllowChange: beyond
+   *  allowVisiblePopRange, or behind the player). Answers how many stood
+   *  down. */
   function dismissDefenders() {
     let n = 0;
-    for (const g of guards) if (!g.dead && g.defender) { g.dead = true; releaseGuardBatch(g); n++; }
+    for (const g of guards) {
+      if (g.dead || !g.defender || g.leaving) continue;
+      g.leaving = true;
+      g.ai.target = null; g.ai.secondaryTarget = null;   // his fight is over - a target he holds from here was a monster's doing (update)
+      n++;
+    }
     return n;
+  }
+  /** WATCH-LEAVES: a defender walking off turns back to the fight - at `threat` (the summons' nearest, or a raid's) -
+   *  and is the town's answer again (defenderCount). */
+  function recallDefender(g, threat = null) {
+    g.leaving = false;
+    g.ai.fleeLeft = 0;   // the walk over (revenantFate.js's spelling)
+    if (threat?.ai) g.ai.makeEnemyHostileToAttacker(threat, threat.ai.feet, 600);
   }
   /** AUDIT DISC19: the in-flight mints count - the town watch decides
    *  on this number, and a summon still fetching its archive read as no
    *  defenders at all: a cold load over the countdown summoned twice,
    *  past the cap. */
-  const defenderCount = () => guards.filter((g) => !g.dead && g.defender).length + spawning.filter((p) => p.defender).length + _summonsWaiting;   // WATCH-FIX: and the summons waiting their turn
+  const defenderCount = () => guards.filter((g) => !g.dead && g.defender && !g.leaving).length + spawning.filter((p) => p.defender).length + _summonsWaiting;   // WATCH-FIX: and the summons waiting their turn; WATCH-LEAVES: never one walking off - the town has stood him down, and the next summons calls him back
   /** DISC19-F: a crime turns a defender into the ordinary watch on the
    *  spot - its species' team back on both per-instance fields (the
    *  allied copy would otherwise keep the player out of its target list,
    *  EnemySenses.cs:776) and the crime watch's own pursuit seeded. */
   function enlistDefender(g, playerFeet) {
     g.defender = false;
+    g.leaving = false; g.ai.fleeLeft = 0;   // WATCH-LEAVES: one walking off turns back for the criminal
     g.entity.team = g.entity.mobileTeam = staticTeamOf(GUARD_MOBILE_TYPE);
     g.ai.isHostile = true;
     g.ai.makeHostileToPlayer(600, playerFeet ?? null);
@@ -1137,13 +1179,31 @@ export function createCityGuards({ renderer, collider, fetchBytes, getTexture, u
       // (:55-57) - a city guard is an ordinary EnemyClass entity with no
       // exemption from either.
       const _gParalyzed = entityIsParalyzed(g.entity);   // S22: the FreeAction read-time fold
+      // WATCH-LEAVES: A DEFENDER STOOD DOWN WALKS OFF (dismissDefenders). He goes from the world only where DFU's
+      // PopulationManager lets any walker go - beyond allowVisiblePopRange or behind the player (popAllowChange) - so
+      // nobody sees him vanish. Set upon on his way - a monster's blow (MakeEnemyHostileToAttacker) or its pick
+      // (EnemySenses' recruit, EnemySenses.cs:403-407) hands him a target, as the walk itself never does (EnemyAI.flee) -
+      // he stops and defends himself, still stood down: whether he is the town's answer again is the town watch's word
+      // (a monster on a defender is its threat, and its summons calls him back), never his. Else he walks on, a leg at a
+      // time, away from where the player stands.
+      g.beset = false;
+      if (g.leaving) {
+        const yaw = viewYaw?.();
+        const dx = g.ai.feet[0] - playerFeet[0], dz = g.ai.feet[2] - playerFeet[2];
+        const dist = Math.hypot(dx, g.ai.feet[1] - playerFeet[1], dz);
+        if (Number.isFinite(yaw) ? popAllowChange(dx, dz, yaw, dist) : dist > POP_VISIBLE_RANGE) { g.dead = true; releaseGuardBatch(g); continue; }   // no body - he walked away
+        const foe = g.ai.target;
+        g.beset = !!foe && !isPlayerTarget(foe) && !foe.dead;
+        if (g.beset) g.ai.fleeLeft = 0;   // he stands and fights
+        else if (!(g.ai.fleeLeft > 0)) g.ai.flee(playerFeet, DEFENDER_LEAVE_LEG_SECONDS);
+      }
       applyEnemyMotorEffectFlags(g.ai, g.entity);   // A5: Levitate.SetEnemyMotor's IsLevitating, folded from the effect's presence
       if (groundStands && !groundStands(g.ai.feet[0], g.ai.feet[2])) g.ai.holdFrame(); else g.ai.update(foeFrameDt(dt), playerFeet, _armed(g, senses), _gParalyzed);   // FALL-HOLD (exteriorFoes.js); FOE-CATCHUP: three steps a frame at most
       // WERE-FRIGHT: a watchman frightened off (frighten, above) whose run is over is gone - the walk-away, no body,
       // as the watch goes when a crime clears. While he runs he only runs: no target, so no swing (below), no bark
       // (below), and - his run sensing nothing (EnemyAI.flee) - no alert and no tongue roll.
       if (g.fleeing && !(g.ai.fleeLeft > 0)) { g.dead = true; releaseGuardBatch(g); continue; }
-      const _tgt = g.fleeing ? null : _targetFeet(g, playerFeet);   // MT-ii: whatever it SELECTED; WERE-FRIGHT: a fleer selects nothing
+      const _tgt = g.fleeing || (g.leaving && !g.beset) ? null : _targetFeet(g, playerFeet);   // MT-ii: whatever it SELECTED; WERE-FRIGHT: a fleer selects nothing; WATCH-LEAVES: nor one walking off (a blow the brain still held would land on the player) - one set upon fights his attacker
       // AUDIT 24 (wave 36): EnemySenses.cs:531-535 - ANY enemy that is
       // targeting and seeing the player raises the alert, as the last
       // statement of FixedUpdate at method-body indent, not inside a

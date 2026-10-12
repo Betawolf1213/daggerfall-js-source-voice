@@ -56,8 +56,8 @@
   {
     "name": "WERE-FRIGHT-fleers-still-target",
     "file": "src/scenes/cityGuards.js",
-    "old": "const _tgt = g.fleeing ? null : _targetFeet(g, playerFeet);",
-    "new": "const _tgt = _targetFeet(g, playerFeet);",
+    "old": "const _tgt = g.fleeing || (g.leaving && !g.beset) ? null : _targetFeet(g, playerFeet);",
+    "new": "const _tgt = (g.leaving && !g.beset) ? null : _targetFeet(g, playerFeet);",
     "tests": [
       "test/werefright.test.js"
     ]

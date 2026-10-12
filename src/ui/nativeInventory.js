@@ -64,6 +64,7 @@ import { potionRecipeByKey } from '../systems/potions.js';   // AUDIT 64 F49: Po
 import { itemInfoRows, itemInfoPanelRows, infoPanelShorten, questLetterName, INFO_TEXT, itemLongName } from '../systems/itemInfo.js';   // U25; AUDIT 64 F51; AUDIT MERGE-PLUS C3: the refusal's name
 import { lockRefuses, lockedText } from '../systems/itemLock.js';   // AUDIT MERGE-PLUS C3: the player's lock holds on this skin too
 import { boundRefusesPut, boundText, isPackOnly, packOnlyText } from '../systems/itemBound.js';   // SS3: a bound piece stays the player's on this skin too; WALLET1: and a pack-only one in the pack
+import { letterRefusesPut, letterPutText } from '../systems/peerWord.js';   // HACKED-GOLD: online a letter of credit goes nowhere a peer's word could hand it on
 import { walletContents, walletLines, refreshWalletSilver } from '../systems/walletItem.js';   // WALLET1: the wallet's box
 import { BINDER_CARD_LINES } from '../systems/iliacItems.js';   // CARDS8 (AUDIT CARDS-5 C5): the binder's box
 import { dismantleStones, dismantleRefusal, dismantleWare, DISMANTLE_INSTEAD, DISMANTLED } from '../systems/sigilBroker.js';   // SS5: a Broker ware back into stones
@@ -993,6 +994,12 @@ export class NativeInventoryWindow {
           const n = ground && !dismantleRefusal(it) ? dismantleStones(it) : 0;   // (and never one the law would refuse - a locked one over the player's own pile)
           if (n > 0) { this._askDismantle(it, n); return; }
           this._refuse({ text: boundText(itemLongName(it, { getQuest: this.hooks.getQuest ?? null })) });
+          return;
+        }
+        // HACKED-GOLD: online a LETTER OF CREDIT goes into no container but the player's own (systems/peerWord.js) - a
+        // chest, a body, a cupboard is the room's once opened; the player's own pile and storage are the player's
+        if (letterRefusesPut(it, { container: t === REMOTE_TARGET_TYPES.Loot && this.hooks.loot?.storage !== true, own: this.hooks.loot?.playerOwned === true })) {
+          this._refuse({ text: letterPutText(itemLongName(it, { getQuest: this.hooks.getQuest ?? null })) });
           return;
         }
       }

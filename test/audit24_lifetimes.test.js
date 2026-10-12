@@ -82,7 +82,9 @@ test('audit24 lifetimes: a city guard frees its batch on both death paths, and t
     /health <= 0[\s\S]{0,300}releaseGuardBatch\(g\)/, 'the killed path');
   assert.match(src, /if \(!g\.dead && !g\.defender\) \{ g\.dead = true; releaseGuardBatch\(g\); \}/,   // DISC19-F: the town's defenders are not the crime's
     'and the walk-away path when the crime clears');
-  assert.match(src, /if \(!g\.dead && g\.defender\) \{ g\.dead = true; releaseGuardBatch\(g\); n\+\+; \}/, 'and the defenders\' own walk-away');
+  // PIN MOVED (WATCH-LEAVES, bible/01-Overview/Field-Bugs-2026-10-12e.md): the defenders' walk-away is the walk-off's end
+  // now, in update - stood down, a defender leaves the world only out of sight, and frees his batch as he goes.
+  assert.match(src, /: dist > POP_VISIBLE_RANGE\) \{ g\.dead = true; releaseGuardBatch\(g\); continue; \}/, 'and the defenders\' own walk-away');
   // AUDIT 39 MOVED THIS PIN. It read "the array must stay
   // index-stable, so nothing may splice guards" - which was true of
   // the keying, not of the law: the records themselves then

@@ -236,7 +236,7 @@ import {
   RANDOM_TREASURE_ARCHIVE, RANDOM_TREASURE_ICONS,
   RANDOM_TREASURE_MARKER_RECORD, DUNGEON_LOOT_KEYS,
 } from '../systems/loot.js';
-import { unbound } from '../systems/itemBound.js';   // SS3: a bound piece in the room's containers, or on a body, never lands
+import { peerHanded } from '../systems/peerWord.js';   // SS3: a bound piece in the room's containers, or on a body, never lands; HACKED-GOLD: nor a letter of credit (systems/peerWord.js)
 import { floorLanding, closestDoorTo } from '../player/enterExit.js';   // DE1: TransitionDungeonInterior orients away from the door it came through
 import { trs, multiply, identity, UP_Y } from '../world/mat4.js';
 import { StaticBatchBuilder, keyResolver, SHADOW_CELL_SIZE } from '../render/staticBatch.js';   // PERF5: the level's static models as one mesh; LA-AUDIT A1: with its shadow cells
@@ -6094,7 +6094,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         continue;
       }
       _lootTooBig.delete(canon);
-      out.push({ k: canon, r: unbound(held).map((it) => ({ ...it })), ...(Number.isFinite(_lootAt.get(canon)) ? { t: _lootAt.get(canon) } : {}) });   // WORLD8: the stamp rides the record   // AUDIT SS: and never a bound piece (itemBound.js) - an older build connected beside this one would land it
+      out.push({ k: canon, r: peerHanded(held).map((it) => ({ ...it })), ...(Number.isFinite(_lootAt.get(canon)) ? { t: _lootAt.get(canon) } : {}) });   // WORLD8: the stamp rides the record   // AUDIT SS: and never a bound piece (itemBound.js) - an older build connected beside this one would land it; HACKED-GOLD: nor a letter of credit
     }
     return out;
   }
@@ -6132,7 +6132,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     for (const rec of Array.isArray(list) ? list : []) {
       const canon = lootKeyOf(rec?.k);
       if (!canon) continue;
-      const items = unbound(validLootList(rec.r));   // SS3: a container is the room's - a bound piece in one never lands
+      const items = peerHanded(validLootList(rec.r));   // SS3: a container is the room's - a bound piece in one never lands; HACKED-GOLD: nor a letter of credit, a peer's gold
       if (!items) { if (lootHolder(canon) && !respawnDue(rec.t, _wallNow())) { _lootSeen.add(canon); _lootUnreadable.add(canon); } continue; }   // AUDIT SETS M2: the room has spoken, in words this build cannot read (a word due back is the room's no longer - WORLD8)
       const held = lootHolder(canon);
       if (!held) continue;
@@ -6332,7 +6332,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // record without the field - which is every record the memory writes since AUDIT WORLD4 D4 - leaves this foe's
     // own roll alone. A save off DISK is this client's own word and keeps its list whole.
     if (!wire) f.entity.items = sf.items.map((it) => ({ ...it }));
-    else if (sf.items != null) { const li = unbound(validLootList(sf.items)); if (li) f.entity.items = li; }   // SS3: nor a bound piece on a body
+    else if (sf.items != null) { const li = peerHanded(validLootList(sf.items)); if (li) f.entity.items = li; }   // SS3: nor a bound piece on a body; HACKED-GOLD: nor a letter of credit
     // REVIEW 2026-09-05: a save written before the enemyAnchor law holds
     // every idle bat's feet AT its marker; the rebuilt spawn stands
     // correctly and the old feet would put it back into the ceiling.

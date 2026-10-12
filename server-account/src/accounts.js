@@ -37,6 +37,8 @@
 
 import { guestName, isHandleShaped, isGuestShaped } from './guestName.js';
 import { handleLooksLikeEmail } from '../../src/net/handleShape.js';   // HANDLE-EMAIL: a username is never an address
+import { NAME_MAX } from '../../src/net/wire.js';   // NAME-AS: the wire's bound on a name, a worn character's among them
+import { checkName } from '../../src/net/nameFilter.js';   // NAME-AS: which word a character's name was refused for (NAME-F: a refusal names it)
 import { wardrobeOf, equipRefusal, canModerate, auraRefusal, glyphRefusal, glyphsHidden } from './titles.js';   // ACC3: what a player holds, wears and is true of - all four derived; WB9g: and the aura worn
 import { insigniaById, insigniaHeld } from '../../src/net/insignia.js';   // WB9g: the Broker's insignia - one law both ends
 import { ID_RE, nameIsIssuable } from '../../src/net/identityToken.js';
@@ -118,6 +120,82 @@ export function displayName(row) {
  *  first day rather than a second one bolted on beside it. */
 export function accountKind(row) {
   return row?.handle ? 'linked' : 'guest';
+}
+
+/**
+ * NAME-AS (2026-10-12, Mac: "I want to add an option to the profile menu where players can toggle to use their account
+ * name or character name for ingame use"): WHICH NAME THE ROOM READS - the account's (displayName, above) or the realm
+ * character's the token is minted for (wornNameOf, below). The row stores the second alone (`name_as` 'character',
+ * migration 0111), so a row that never chose reads as the account, as every player read before.
+ */
+export const NAME_AS = Object.freeze(['account', 'character']);
+/** NAME-AS: the choice this row holds - 'character', or the account's for anything else (null, a word no build wrote). */
+export const nameAsOf = (/** @type {any} */ row) => (row?.name_as === 'character' ? 'character' : 'account');
+
+/**
+ * NAME-AS: WHY A CHARACTER'S NAME CANNOT BE WORN AS IT STANDS - null where it can. The token's own law asked as a
+ * question (identityToken.js nameIsIssuable: the wire carries the name unchanged - claimsValid refuses a token whose `n`
+ * it would not, so a name signed past it is a player who cannot connect), its refusals told apart so the player can be
+ * told which: 'email' (HANDLE-EMAIL's law, worn as it is chosen - an address is never read out, and a character's name is
+ * read out to everyone), 'long' (past NAME_MAX), 'refused' (the name filter's, with the word it caught - NAME-F: a
+ * refusal names it), 'letters' (characters the wire does not carry - an accent, a symbol past plain text - or no letters
+ * at all). A realm name is trimmed and printable already (realm.js realmNameOf); this is the wire's narrower law.
+ * @param {unknown} name
+ * @returns {{ why: 'email'|'long'|'refused'|'letters', word?: string } | null}
+ */
+export function wornNameRefusal(name) {
+  const s = typeof name === 'string' ? name : '';
+  if (handleLooksLikeEmail(s)) return { why: 'email' };
+  if (nameIsIssuable(s)) return null;
+  if (s.length > NAME_MAX) return { why: 'long' };
+  const verdict = checkName(s);
+  if (!verdict.ok && verdict.kind !== 'empty') return { why: 'refused', word: verdict.word };
+  return { why: 'letters' };
+}
+
+/**
+ * NAME-AS: THE NAME THE MINT SIGNS (the token's `n`) - `{ name }`, and `why` (with `word`, for the filter's) where the row
+ * chose its character's and that name cannot be worn, so the account's stands in its place and the mint's answer says
+ * why (`nameWhy` - the player is told once, scenes/world.js adoptIssued).
+ *
+ * THE CHARACTER'S NAME IS THE SERVICE'S, NEVER THE CLIENT'S: `character` is the realm character's own name, off the row
+ * the token is minted for (realm.js realmMintFacts - a realm character of this account, standing and in play), never a
+ * word of the request (test/accountworker.test.js: a name in the body never reaches the token). None - no character
+ * named, an offline one, another account's, a tombstone - is the account's, and silently: there is nothing to wear.
+ *
+ * AND NEVER ANOTHER ACCOUNT'S USERNAME. A handle is unique (0001's handle_lc index) and is how an account is found - a
+ * letter, an invitation, a commission are each addressed by username - and handleShape.js keeps the guests' generated
+ * names out of that space by their shape alone. A character's name is chosen at chargen, so its shape promises nothing:
+ * one that is another account's username would walk every room wearing that account's name. So it is asked here, ONE
+ * read of the unique index, and only of a name that could be a handle at all (one word, HANDLE_RE - a name with a space
+ * in it never can). The player's own handle is theirs to wear as their character's name.
+ * @param {{db: any}} ctx @param {any} player the session's row @param {unknown} character
+ * @returns {Promise<{ name: string, why?: string, word?: string }>}
+ */
+export async function wornNameOf({ db }, player, character) {
+  const account = displayName(player);
+  if (nameAsOf(player) !== 'character' || typeof character !== 'string' || !character) return { name: account };
+  const refused = wornNameRefusal(character);
+  if (refused) return { name: account, ...refused };
+  if (isHandleShaped(character)) {
+    const other = await db.prepare('SELECT 1 AS taken FROM players WHERE handle_lc = ? AND id != ?').bind(character.toLowerCase(), player.id).first();
+    if (other) return { name: account, why: 'taken' };
+  }
+  return { name: character };
+}
+
+/**
+ * NAME-AS: CHOOSE WHICH NAME THE ROOM READS - 'account' or 'character' (NAME_AS); any other word is refused
+ * `no-name-as`. Either is always allowed: a player may always wear their account's name, and a character's is vetted
+ * where it is worn (wornNameOf, at every mint) rather than here - the character it names is whichever the next mint is
+ * for. The row keeps the second alone ('character'; the account's is null, as every row that never chose). Answers the
+ * choice as the row now holds it, so the caller never re-reads to know what it did.
+ * @param {{db: any, nowS: number}} ctx @param {any} player @param {unknown} as
+ */
+export async function chooseNameAs({ db, nowS }, player, as) {
+  if (!NAME_AS.includes(/** @type {any} */ (as))) return { error: 'no-name-as' };
+  await db.prepare('UPDATE players SET name_as = ?, last_seen = ? WHERE id = ?').bind(as === 'character' ? 'character' : null, nowS, player.id).run();
+  return { ok: true, nameAs: as };
 }
 
 /**
@@ -350,6 +428,8 @@ export function accountView(player, nowS) {
     registeredAt: Number.isSafeInteger(player.registered_at) ? player.registered_at : null,
     playedS: Number.isSafeInteger(player.played_s) ? player.played_s : 0,
     muted: isMuted(player, nowS),
+    // NAME-AS: which name the room reads - the profile card's choice, as the row holds it
+    nameAs: nameAsOf(player),
   };
 }
 

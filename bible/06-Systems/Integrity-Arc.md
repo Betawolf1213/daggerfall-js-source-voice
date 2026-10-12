@@ -243,7 +243,10 @@ finding standing excused, the bucket refilled), `realm-hold` (a hold by hand), `
 last checkpoint judged clean - kept past the row's rotation, and carried forward by a service move made ON a clean record
 - its seat taken from any tab so the next join loads it; never past a move the service made since (`service-moved`: a
 sold piece would come back and stand sold), never for the dead, its size the clean save's) and `realm-budget` (the
-measure - asked of the database a quantile at a time - and the config, kept an isolate a minute). Every act is written
+measure - asked of the database a quantile at a time - and the config, kept an isolate a minute). HACKED-GOLD added
+`realm-gains` (every character whose unexplained gain went past its bucket in a window, largest first - while the budget
+measures nothing is held, so `holds` listed none of them) and `realm-trades` (one character's settled realm trades, whom
+it traded with and what each gave - a trade is witnessed on both rows, so no finding names its receiver). Every act is written
 among the character's findings with who did it, and moves the row's `judge_rev`. The cron sweeps findings past 90 days
 and the hours past 30.
 
@@ -283,7 +286,13 @@ route's ids. Mutant records `tools/mutants/int_audit.json`; the arc's own record
 - Peer channels - a shared chest, a shop's shelf, a body's grant - still move lawful pieces between clients
   unwitnessed (the wild zone's remains are the account service's own records since INT9, section 5). What enters a realm character's record that way is charged to its budget, and the ledger
   catches a copy that keeps its key; a lawless piece no honest client takes (the wire's door drops it). Container locks
-  (Realm-Arc phase 2) stand as planned.
+  (Realm-Arc phase 2) stand as planned. HACKED-GOLD (Progress) narrowed it: a letter of credit never rides a peer's word,
+  a peer's price is held under the law's ceiling and a worn offer lands what can be worn - a COIN PILE still does (65,535
+  a pile, 64 a word: a forger's up to ~4.2 million a word, the receiver's budget's), as it is how an honest player takes
+  the coin another machine rolled. Asked whether to close it (each player's own roll of that coin), the session: "I
+  dont wanna mess with honest players" - it stays. So `enforce`, as built, would hold an honest player who took a
+  forger's coin: the coin on a peer's word wants charging to its giver, or a witness, first
+  (`01-Overview/Field-Bugs-2026-10-12f.md`, For Mac).
 - **Customs** brings an offline character's items in whole (RESTORE, "Keep all"); its first judgement charges what they
   add past its level's allowance to the budget, which holds nothing until staff turn it on.
 - A piece's id rides only the character's own five lists' stamping: a piece set out in a room or kept in a chest since
@@ -649,6 +658,25 @@ the clock, and the legacy record held to its own law.
 
 ## Progress
 
+- **HACKED-GOLD (2026-10-12, in a session: "apparently theres people handing out hacked gold ingame"): what a peer's
+  word hands on, what the law counts, and what staff see.** `01-Overview/Field-Bugs-2026-10-12f.md`. A peer's word (a
+  room's container record, a body's grant, a foe's heir's pack, a worn offer) credited value no record held - a letter
+  of credit at any worth, an item's price from below alone - so a modified client handed out gold it was never charged
+  for. LETTER-PEER (`systems/peerWord.js`): a letter never rides a peer's word, SS3's shape widened - every site that
+  read `unbound` reads `peerHanded`, the owner's grant keeps a letter on its body, and online the classic pack puts none
+  in a container but the player's own. PRICE-CAP (`systems/loot.js` lawPriced): a peer's price is held under the law's
+  `worthCeiling` (INT1's own measure; the honest sweep's 46,919 pieces under it but Come Sail Away's deeds, which keep
+  their hull's price). WORN-ONLY: a worn offer lands what can be worn. GOLD-INT: a purse, a letter's worth and a coin
+  pile's count past one DFU `int` are law findings (`itemLaw.js` GOLD_INT_MAX, `judge.js` purseWord) - the absurd holds
+  from day one, the measure no longer saturates; the law's version 4, `ACCOUNT_VERSION` acct123 (TECH1's rule; 3 and acct121 on its branch, renumbered past BAL9 at the merge, acct122 past NAME-AS at the next). The
+  review (INT6): `realm-gains` (who went past the bucket, largest first) and `realm-trades` (whom a character traded
+  with, and what each gave). `test/hackedgold.test.js` (10), and `int1_itemlaw`'s honest sweep through the projection with
+  and without the ceiling - no honest price moved; `tools/mutants/hackedgold.json` (34, all dead). Read again
+  against the session's "I dont wanna mess with honest players": an honest player feels it at one place alone - online
+  a letter goes into no room's container or body, and one already lying there is dropped (no one can tell it from a
+  forged one) - asked, and kept. Coins on a peer's word: asked, they stay. Left for Mac, on the page: the budget's
+  `enforce` (what a measured week leaves behind - no debt, a rollback that cannot reach it - and, the coins staying, an
+  honest taker of a forger's coin held by it), a hall's decor asking no hold, a boat's records on a peer's word.
 - **CRAFT-HOLD (2026-10-11, the exploit audit; its review the same day): the hold follows the piece.** `realm.js`
   craftHoldOf - a HOLD (never `record-unjudged`) of the account's realm character a crafted piece's maker record names
   (`products.char_id`, or the offline character a customs character came in as, `origin_id`) - asked by the list, the

@@ -309,9 +309,9 @@ test('SS3 what a peer hands over lands without a bound piece: a building\'s cont
   assert.equal(n, 1, 'the record lands');
   assert.deepEqual(ctx.containers[0].items.map((i) => i.name), ['Ruby'], 'without the stones');
   const dc = read('src/scenes/dungeonContext.js');
-  assert.match(dc, /const items = unbound\(validLootList\(rec\.r\)\);/, 'a dungeon\'s container');
-  assert.match(dc, /const li = unbound\(validLootList\(sf\.items\)\);/, 'a body on the wire');
-  assert.match(read('src/scenes/exteriorFoes.js'), /const grant = unbound\(validLootList\(data\.grant\)\);/, 'a peer\'s grant');
+  assert.match(dc, /const items = peerHanded\(validLootList\(rec\.r\)\);/, 'a dungeon\'s container');   // PIN MOVED (HACKED-GOLD): SS3's peer law rides systems/peerWord.js peerHanded - a bound piece and a letter of credit
+  assert.match(dc, /const li = peerHanded\(validLootList\(sf\.items\)\);/, 'a body on the wire');   // PIN MOVED (HACKED-GOLD): SS3's peer law rides systems/peerWord.js peerHanded - a bound piece and a letter of credit
+  assert.match(read('src/scenes/exteriorFoes.js'), /const grant = peerHanded\(validLootList\(data\.grant\)\);/, 'a peer\'s grant');   // PIN MOVED (HACKED-GOLD): SS3's peer law rides systems/peerWord.js peerHanded - a bound piece and a letter of credit
 });
 
 // ── SS4 (2026-09-27, Mac: "Also make the items sold by the oblivion vendor bound also. Can't be traded, dropped or
@@ -769,7 +769,7 @@ test('AUDIT SS nothing bound goes out on the wire: a building\'s container recor
   assert.equal(recs.length, 1);
   assert.deepEqual(recs[0].r.map((i) => i.name), ['Ruby'], 'the record: the gem alone');
   assert.deepEqual(ctx.containers[0].items, [gem, stones], 'the container itself untouched');
-  assert.match(read('src/scenes/dungeonContext.js'), /r: unbound\(held\)\.map\(\(it\) => \(\{ \.\.\.it \}\)\)/, 'the dungeon\'s records');
+  assert.match(read('src/scenes/dungeonContext.js'), /r: peerHanded\(held\)\.map\(\(it\) => \(\{ \.\.\.it \}\)\)/, 'the dungeon\'s records');   // PIN MOVED (HACKED-GOLD): SS3's peer law rides systems/peerWord.js peerHanded - a bound piece and a letter of credit
   const wm = read('src/scenes/worldModes.js');
   assert.match(wm, /shopBuysItem\(interiorBuilding\.buildingType, it\) && !isEquipped\(it\) && !isBound\(it\) && !lockRefuses\(it, 'sell'\) && !isSummoned\(it\)\);/, 'the keyed shelf lists neither');   // PIN MOVED (CRAFT-WORTH): nor a conjured piece
   assert.match(wm, /function doSell\(shelf, it\) \{\n    if \(isBound\(it\) \|\| lockRefuses\(it, 'sell'\)\) return 0;/, 'and sells neither');

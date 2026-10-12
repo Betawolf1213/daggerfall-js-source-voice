@@ -39,6 +39,7 @@
 
 import { HANDLE_RE } from './handleShape.js';
 import { AURAS } from './identityToken.js';   // WB9g: the auras that exist - a stored one is one of them, or none
+import { NAME_MAX } from './wire.js';   // NAME-AS: the wire's bound on a name, in the sentence that says a character's is past it
 import { LETTER_SUBJECT_MAX, LETTER_BODY_MAX, LETTER_LINES_MAX, LETTERS_SENT_MAX, LETTERS_PAIR_MAX } from './letterLaw.js';   // MAIL1: the letter's bounds, in the refusals' own sentences
 import { MUTE_RANGE_TEXT } from './moderation.js';   // AUDIT 68 S14-mute-range-text-duplicated: the mute's bound in the refusal's sentence, from its home
 import { HOME_CAP, RENT_ROOMS_MAX, RENT_HELD_MAX, RENT_DAYS_MAX } from './homeLaw.js';   // HOME1: the cap a refusal names; HOME-RENT: and the rooms'
@@ -167,6 +168,7 @@ export const REFUSALS = Object.freeze({
   // WB9g, the Broker's insignia (server-account/src/accounts.js buyInsignia, equipAura)
   'no-aura': 'The account service does not know that aura. The game may need updating.',
   'no-glyph': 'The account service does not know that glyph. The game may need updating.',   // GLYPH-WEAR
+  'no-name-as': 'The account service does not know that choice of name. The game may need updating.',   // NAME-AS
   'no-insignia': 'The Broker does not sell that any more. The game may need updating.',
   owned: 'Your account already owns that.',
   bought: 'You have bought from the Panoply this week. Come back next week.',   // EG-E1: the Broker's Panoply sink, once a week (server-account/src/egEconomy.js egSink)
@@ -207,6 +209,9 @@ export const REFUSALS = Object.freeze({
   'post-unclaimed': 'Claim the item in that message before you throw it away.',
   muted: 'You are muted, so you cannot send letters or pin notes until the mute ends.',
   'no-reader': 'No registered player has that username.',
+  // NAME-AS: a friend's letter goes to their ACCOUNT (server-account/src/letters.js `toAccount`), so a friend with no
+  // username yet is told apart from a username nobody has
+  'reader-guest': 'They have no username yet, so they cannot get letters.',
   'to-self': 'A letter goes to another player.',
   'inbox-full': 'Their letterbox is full. They have to throw letters away before another fits.',
   'no-letter': 'That letter is not in your letterbox any more.',
@@ -703,6 +708,26 @@ export const REFUSALS = Object.freeze({
  *  a player staring at `handle-frobnicated` has been told nothing. */
 export const accountRefusalText = (error) => REFUSALS[error] ?? REFUSALS.server;
 
+/** NAME-AS (2026-10-12): WHY MY CHARACTER'S NAME STOOD ASIDE, in words - a sentence for each reason the mint can give
+ *  (server-account/src/accounts.js wornNameRefusal, and wornNameOf's `taken`). The filter's names the word it caught where
+ *  the mint says one (nameWhyText - NAME-F: a refusal names it, so a player whose real name was caught can say so). */
+export const NAME_WHY_TEXT = Object.freeze({
+  email: 'it reads as an email address, and an address is never shown to other players',
+  long: `it is longer than ${NAME_MAX} characters`,
+  letters: 'it uses characters an online name cannot carry - plain letters, digits, spaces and punctuation only',
+  refused: 'the name filter refuses it',
+  taken: 'it is another player\'s username',
+});
+/** NAME-AS: the line the chat says ONCE (scenes/world.js adoptIssued) when a mint signed my account's name where I chose
+ *  my character's - or null where it did not. `who` is the minter's answer (accountTokenMinter's `onIssued`): its `name`
+ *  is the one the room reads, which is the account's wherever a reason is given - that is what the reason is for. */
+export function nameWhyText(who) {
+  const why = who?.nameWhy;
+  if (typeof why !== 'string' || !why) return null;
+  const reason = why === 'refused' && typeof who.nameWord === 'string' && who.nameWord ? `the name filter reads it as "${who.nameWord}"` : (NAME_WHY_TEXT[why] ?? 'it cannot be used online');
+  return `Your character's name cannot be shown online: ${reason}. Others see you as ${who.name}.`;
+}
+
 /** Is this a handle the service will accept the SHAPE of? Asked of the
  *  service's own regex rather than a second copy, so the field and the
  *  far end cannot disagree. The service still has the last word - it
@@ -894,6 +919,10 @@ export const equipAura = (io, aura) => call(io, '/v1/account/aura', { aura: aura
  *  the wardrobe after the write (`glyphs` still all that is true, `glyphsOff` the ones taken off). The service refuses
  *  `not-held` for a glyph that is not true of this account. */
 export const equipGlyph = (io, glyph, on) => call(io, '/v1/account/glyph', { glyph, on: !!on });
+/** NAME-AS (2026-10-12, Mac: "toggle to use their account name or character name for ingame use"): which name the room
+ *  reads - 'account' or 'character' (server-account/src/accounts.js NAME_AS) - `{ ok, nameAs }`, the choice the row now
+ *  holds. It asks; the service keeps it, and every later mint signs it (a character's name where it can be worn). */
+export const chooseNameAs = (io, as) => call(io, '/v1/account/name', { as });
 /** WB9g: buy a piece of the Broker's insignia (net/insignia.js INSIGNIA) for this account - the wardrobe after the sale and
  *  the `purse` its closed gates can still pay, or a refusal (`owned`, `short` with `purse` and `price`, `guest`). */
 export const buyInsignia = (io, item) => call(io, '/v1/account/insignia', { item });
@@ -944,9 +973,9 @@ export function storedSession(storage) {
 /** Keep the session this device signed in with. The RECOVERY CODE IS
  *  NEVER PART OF THIS - `register` and `recover` hand one back and it
  *  is the screen's to show and the player's to write down. */
-export function keepSession(storage, { id, name, kind, sessionId, secret, glyphs, aura }) {
+export function keepSession(storage, { id, name, kind, sessionId, secret, glyphs, aura, nameAsAt }) {
   try {
-    storage?.setItem?.(SESSION_KEY, JSON.stringify({ id, name, kind, sessionId, secret, glyphs, aura }));   // SHADOW-FANG: `glyphs` when the service has stated them (adoptIdentity) - JSON leaves it out otherwise; WB9g: `aura` likewise
+    storage?.setItem?.(SESSION_KEY, JSON.stringify({ id, name, kind, sessionId, secret, glyphs, aura, nameAsAt }));   // SHADOW-FANG: `glyphs` when the service has stated them (adoptIdentity) - JSON leaves it out otherwise; WB9g: `aura` likewise; NAME-AS: `nameAsAt` likewise
     return true;
   } catch { return false; }
 }
@@ -995,10 +1024,17 @@ export function keepSession(storage, { id, name, kind, sessionId, secret, glyphs
  * GLYPH-WEAR (2026-10-02): LESS THE GLYPHS TAKEN OFF (`glyphsOff`), when the answer states them - what dresses my own
  * player on my own screen is what the room is shown, so a Shadow Fang hidden is a wolf in no skin here as it is there.
  *
+ * NAME-AS (2026-10-12): `name` HERE IS THE ACCOUNT'S. The stored session is the account's picture (the profile mark reads
+ * its name as the account's), and since NAME-AS the room may read a character's name instead - so the minter hands this
+ * door the answer's `accountName` and the live sessions its `name` (accountTokenMinter, below). And `nameAsAt`: the
+ * moment the service took a choice of name made on this device (ui/accountFlow.js chooseName), stamped and never
+ * guessed - the world host says hello again when it moves (scenes/world.js nameAsFrame), so the room reads the new name
+ * now. Only ever forward: an older stamp is no news.
+ *
  * @param {any} storage
- * @param {{ name?: string, kind?: string, glyphs?: string[], glyphsOff?: string[], aura?: string|null, secret?: string }} [who]
+ * @param {{ name?: string, kind?: string, glyphs?: string[], glyphsOff?: string[], aura?: string|null, nameAsAt?: number, secret?: string }} [who]
  */
-export function adoptIdentity(storage, { name, kind, glyphs, glyphsOff, aura, secret } = {}) {
+export function adoptIdentity(storage, { name, kind, glyphs, glyphsOff, aura, nameAsAt, secret } = {}) {
   const was = storedSession(storage);
   if (!was) return false;
   if (typeof secret === 'string' && was.secret !== secret) return false;
@@ -1008,9 +1044,10 @@ export function adoptIdentity(storage, { name, kind, glyphs, glyphsOff, aura, se
   const off = Array.isArray(glyphsOff) ? glyphsOff : [];   // GLYPH-WEAR
   if (Array.isArray(glyphs)) next.glyphs = glyphs.filter((g) => typeof g === 'string' && g.length <= 24 && !off.includes(g)).slice(0, 16);
   if (aura !== undefined) next.aura = typeof aura === 'string' && AURAS.includes(aura) ? aura : null;   // WB9g: one that exists, or none
+  if (Number.isSafeInteger(nameAsAt) && nameAsAt > 0 && !(Number.isSafeInteger(was.nameAsAt) && was.nameAsAt >= nameAsAt)) next.nameAsAt = nameAsAt;   // NAME-AS: forward only
   const sameGlyphs = (next.glyphs ?? []).join('+') === (was.glyphs ?? []).join('+');
   const sameAura = (next.aura ?? null) === (was.aura ?? null);
-  if (next.name === was.name && next.kind === was.kind && sameGlyphs && sameAura) return false;   // nothing to write, and a write is a storage event every open tab hears
+  if (next.name === was.name && next.kind === was.kind && sameGlyphs && sameAura && next.nameAsAt === was.nameAsAt) return false;   // nothing to write, and a write is a storage event every open tab hears
   return keepSession(storage, next);
 }
 
@@ -1103,6 +1140,11 @@ export const lineHoldMs = (/** @type {unknown} */ wait, rand = Math.random) => {
  * The return stays the token alone: the session's contract with this
  * function is a string, and a pin holds it.
  *
+ * NAME-AS: AND THE TWO NAMES ARE TWO NOW. The answer's `name` is the
+ * token's - the name the ROOM reads, my character's where I chose it -
+ * and `accountName` the account's own: the store keeps the account's (the
+ * profile mark is the account's picture), the host is handed the room's.
+ *
  * RENOWN1: `character` answers the id of the character being brought
  * online (systems/characterId.js), read at EACH mint - the service signs
  * that character's Renown into the token, and `who.level`
@@ -1123,7 +1165,7 @@ export const lineHoldMs = (/** @type {unknown} */ wait, rand = Math.random) => {
  * @param {object} io
  * @param {(url: string, init: object) => Promise<any>} io.fetch
  * @param {any} io.storage  appStorage() in the app, a Map in a test
- * @param {((who: {name: string, kind: string, title: string|null, glyphs: string[], level: number|null, xp: number|null, guild?: string|null}) => void)|null} [io.onIssued]
+ * @param {((who: {name: string, kind: string, title: string|null, glyphs: string[], level: number|null, xp: number|null, guild?: string|null, accountName?: string, nameAs?: string, nameWhy?: string, nameWord?: string}) => void)|null} [io.onIssued]
  * @param {(() => string|null)|null} [io.character]
  * @param {(() => number)} [io.now]
  * @param {(() => number)} [io.rand]  Math.random's shape - the cooldown's jitter
@@ -1219,8 +1261,16 @@ export function accountTokenMinter({ fetch, storage, onIssued = null, character 
           // SEASON1 part two: a Season's banner ribbon under my own name (null for none) - absent from a service before acct58
           ...('ribbon' in answer.data ? { ribbon: Array.isArray(answer.data.ribbon) ? answer.data.ribbon : null } : {}),
           // LEGACY7: the house my realm character wears (null for none) - absent from a service before acct87
-          ...('house' in answer.data ? { house: answer.data.house && typeof answer.data.house === 'object' ? answer.data.house : null } : {}) };
-        adoptIdentity(storage, { ...who, secret: session.secret });   // AUDIT B4: into the session that asked
+          ...('house' in answer.data ? { house: answer.data.house && typeof answer.data.house === 'object' ? answer.data.house : null } : {}),
+          // NAME-AS: `name` above is the ROOM's - my character's where I chose it - and these say the account's own, the
+          // choice, and why a chosen character's name stood aside (`nameWhy`, `nameWord`); each absent from a service
+          // before acct122, whose `name` was the account's
+          ...(typeof answer.data.accountName === 'string' && answer.data.accountName ? { accountName: answer.data.accountName } : {}),
+          ...(answer.data.nameAs === 'account' || answer.data.nameAs === 'character' ? { nameAs: answer.data.nameAs } : {}),
+          ...(typeof answer.data.nameWhy === 'string' && answer.data.nameWhy ? { nameWhy: answer.data.nameWhy, ...(typeof answer.data.nameWord === 'string' ? { nameWord: answer.data.nameWord } : {}) } : {}) };
+        // AUDIT B4: into the session that asked. NAME-AS: the stored session is the ACCOUNT's picture (the profile mark's
+        // name), so it keeps the account's name - the room's, which may be my character's, goes to the live sessions
+        adoptIdentity(storage, { ...who, name: who.accountName ?? who.name, secret: session.secret });
         // A THROW HERE IS THE HOST'S AND IS NOT THE PLAYER'S. The token
         // is good and the connection is the thing that matters; a
         // display seam that breaks must not cost the hello its word.

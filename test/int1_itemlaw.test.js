@@ -11,7 +11,8 @@ import {
   itemFindings, lawfulItem, itemWorth, worthCeiling, templateGroups, lawTemplate, classicPiece, CUSTOM_TEMPLATE_GROUPS, ITEM_LAW_VERSION,
   REGULAR_MAGIC_TYPES, ARTIFACT_RECORDS,
 } from '../src/systems/itemLaw.js';
-import { validLootItem, validLootList, createArtifact, ITEM_GROUP_NAME_BY_CLASS } from '../src/systems/loot.js';
+import { validLootItem, validLootList, createArtifact, ITEM_GROUP_NAME_BY_CLASS, setItemLaw } from '../src/systems/loot.js';   // HACKED-GOLD: setItemLaw, to project the sweep without the price ceiling
+import { BOAT_TEMPLATES } from '../src/net/realmTradeLaw.js';   // HACKED-GOLD: a boat's records, whose value is no price
 import { AFFIX_RANGES, legendaryById, isCursed } from '../src/systems/lootRarity.js';
 import { liftCurse } from '../src/systems/lootCurse.js';
 import { ENCHANTMENT_TYPES as T, readMagicDef } from '../src/formats/magicDef.js';
@@ -52,7 +53,7 @@ test('INT1: every item every honest producer mints carries no finding - in the s
     const bad = (wire ? honestItems({ seeds: 4, wire: true }) : SWEEP).map(({ source, item }) => ({ source, f: itemFindings(item), item })).filter((x) => x.f.length);
     assert.deepEqual(bad.slice(0, 5).map((b) => `${b.source}: ${b.f.join(',')} ${JSON.stringify(b.item).slice(0, 200)}`), [], `${wire ? 'wire' : 'save'}: ${bad.length} honest items with findings`);
   }
-  assert.equal(ITEM_LAW_VERSION, 3);   // PIN MOVED (BAL9c): the caster's potency and wellspring lines and the arcane three are lawful from law 3 on; PIN MOVED (TECH1): a weapon's technique line is lawful from law 2 on
+  assert.equal(ITEM_LAW_VERSION, 4);   // PIN MOVED (HACKED-GOLD): a letter of credit's worth and a coin pile's count past one DFU int are findings from law 4 on (law 3 on its branch, renumbered past BAL9c at the merge); PIN MOVED (BAL9c): the caster's potency and wellspring lines and the arcane three are lawful from law 3 on; PIN MOVED (TECH1): a weapon's technique line is lawful from law 2 on
 });
 
 test('INT1: the forgeries the old wire validator took, each from an honest piece moved by one field - each named', () => {
@@ -257,4 +258,25 @@ test('AUDIT WAGON-PRICE Y4: a marked wagon counts to the wealth measure at its o
   assert.equal(worthCeiling(cart), worthCeiling({ ...cart, wagonKind: 'nonsense' }), 'a kind the law does not know: DFU\'s cart');
   assert.equal(itemWorth(cart), cart.value, 'the Small Cart as it was');
   assert.equal(WEALTH_VERSION, 2, 'the measure moved: every stored record measured again, no gain charged');
+});
+
+// HACKED-GOLD PRICE-CAP (bible/01-Overview/Field-Bugs-2026-10-12f.md; the session: "I dont wanna mess with honest
+// players"): THE CAP NEVER TOUCHES AN HONEST PRICE. systems/loot.js lawPriced holds a peer's price under this law's
+// worthCeiling on every door the wire's projection guards - a room's container, a body, a shop's shelf, a trade, the
+// market's and the post's deliveries - so a ceiling an honest piece passed would take value from an honest player.
+// Every piece the sweep holds is projected twice: with the ceiling registered (as the game registers it) and with the
+// law alone (the projection before PRICE-CAP - its floor, AUDIT WORLD6a B1, unchanged). Not one price may differ -
+// Come Sail Away's deeds among them, the one honest price past the ceiling (their hull's), which the cap leaves be.
+test('HACKED-GOLD PRICE-CAP: the cap never moves an honest price - every piece every honest producer mints comes off the wire\'s projection at the price it did before the cap, a deed priced past the ceiling among them (mutants: the ceiling halved; a deed capped)', () => {
+  const price = (it) => validLootItem(copy(it))?.value ?? null;
+  const capped = SWEEP.map(({ item }) => price(item));
+  setItemLaw(itemFindings);
+  let uncapped;
+  try { uncapped = SWEEP.map(({ item }) => price(item)); } finally { setItemLaw(itemFindings, worthCeiling); }
+  const moved = SWEEP.flatMap(({ source, item }, i) => (capped[i] === uncapped[i] ? [] : [`${source}: ${item.name} ${uncapped[i]} -> ${capped[i]}`]));
+  assert.deepEqual(moved.slice(0, 5), [], `${moved.length} honest prices the cap moved`);
+  assert.ok(capped.filter((v) => v != null).length >= 30_000, `the projection priced ${capped.filter((v) => v != null).length} honest pieces`);
+  const deeds = SWEEP.filter(({ item }) => BOAT_TEMPLATES.includes(item.templateIndex) && item.value > worthCeiling(item));
+  assert.ok(deeds.length > 0, 'the sweep mints a deed priced past the ceiling - the cap\'s one exemption is asked');
+  assert.ok(deeds.every(({ item }) => price(item) === item.value), 'and each comes off the projection at its own price');
 });

@@ -20,6 +20,10 @@
 //                            window (a patron's purchases - AUDIT LW-II-2 S6) and the budget's config; `set` writes it
 //   /v1/mod/realm-bodies     INT14: the boss fights' count - each fight's receipts, the mends claimed a minute, and what the
 //                            line standing would have cost (bodiesMeasure)
+//   /v1/mod/realm-gains      HACKED-GOLD: who gained past the bucket in a window, largest first (gainsMeasure) - while the
+//                            budget only measures nothing is held, so `holds` lists none of them
+//   /v1/mod/realm-trades     HACKED-GOLD: one character's realm trades, newest first - whom it traded with, and what each
+//                            gave (tradesOf): a trade is witnessed on both rows, so no finding names its receiver
 //
 // THE MEASURE (Mac: "Measure 7 days, then enforce"). realm_wealth_hours keeps each character's hour - the gain no witness
 // explained and the seconds it played. The report reads every hour with play enough to say something (MEASURE_PLAYED_MIN),
@@ -31,6 +35,7 @@ import { isDeveloper } from './titles.js';
 import { REALM_ID_RE, realmSaveTextOf, dropObjects } from './realm.js';
 import { budgetConfig, budgetConfigOf, forgetBudgetConfig, BUDGET_DEFAULT, FAUCET_KINDS } from './budget.js';   // AUDIT LW-II-2 S6: and the service's own faucets
 import { wealthOf } from './judge.js';
+import { REALM_LETTER_TEMPLATE } from '../../src/net/realmGoldLaw.js';   // HACKED-GOLD: a trade's letters, at their worth
 
 /** How long the judge's findings are kept (the hourly sweep, cron.js). */
 export const REALM_FINDINGS_KEEP_S = 90 * 24 * 3600;
@@ -44,6 +49,9 @@ export const HOLDS_LIST_MAX = 200;
 export const NOTE_MAX = 300;
 /** The quantiles the measure answers. */
 export const MEASURE_QUANTILES = Object.freeze([0.5, 0.9, 0.99, 0.999]);
+/** HACKED-GOLD: how many characters one read of the gains lists, and how many trades one character's. */
+export const GAINS_LIST_MAX = 200;
+export const TRADES_LIST_MAX = 200;
 
 const noteOf = (/** @type {unknown} */ v) => (typeof v === 'string' ? v.slice(0, NOTE_MAX) : null);
 const parse = (/** @type {string} */ t) => { try { return JSON.parse(t); } catch { return null; } };
@@ -86,9 +94,11 @@ export async function reviewAct({ db, bucket, nowS }, player, env, act, body = {
     return measure(db, nowS, Number.isSafeInteger(body.days) && body.days >= 1 && body.days <= 30 ? body.days : 7);
   }
   if (act === 'bodies') return bodiesMeasure(db, nowS, Number.isSafeInteger(body.days) && body.days >= 1 && body.days <= 30 ? body.days : 7);
+  if (act === 'gains') return gainsMeasure(db, nowS, Number.isSafeInteger(body.days) && body.days >= 1 && body.days <= 30 ? body.days : 7);
   const row = await rowOf(db, body.id);
   if (!row) return typeof body.id === 'string' ? { error: 'no-realm-character' } : { error: 'body' };
   const note = noteOf(body.note);
+  if (act === 'trades') return tradesOf(db, row);
   if (act === 'findings') {
     const f = await db.prepare('SELECT seq, at, law, kind, detail FROM realm_findings WHERE char_id = ? ORDER BY id DESC LIMIT 100').bind(row.id).all();
     const h = await db.prepare('SELECT hour, level, gain, loss, played_s, checkpoints FROM realm_wealth_hours WHERE char_id = ? ORDER BY hour DESC LIMIT 336').bind(row.id).all();
@@ -180,6 +190,62 @@ export async function measure(db, nowS, days) {
     return { kind, gold: Number(r?.gold ?? 0), n: Number(r?.n ?? 0) };
   });
   return { days, config, isDefault: config === BUDGET_DEFAULT, bands, faucets };
+}
+
+/**
+ * HACKED-GOLD - WHO GAINED PAST THE BUCKET over the last `days`: every character whose rise no witness explained went past
+ * the bucket its play filled (verdict.js: a `measure` finding while the budget only measures, a `budget` one once it
+ * holds), largest first, with its account, its hold, its wealth now, how many times, and its largest gain. While the
+ * budget only measures nothing is held, so `holds` lists none of them: a character that had made itself nine quadrillion
+ * gold stood in no list a developer could read, and neither did one that took a peer's forged gold. This one does.
+ * @param {any} db @param {number} nowS @param {number} days
+ */
+export async function gainsMeasure(db, nowS, days) {
+  const since = nowS - days * 24 * 3600;
+  const { results = [] } = await db.prepare(
+    `SELECT f.char_id AS id, c.name, c.player, p.handle, c.held, c.wealth, COUNT(*) AS n,
+       MAX(CAST(json_extract(f.detail, '$.gain') AS INTEGER)) AS gain, MAX(f.at) AS last
+     FROM realm_findings f JOIN realm_characters c ON c.id = f.char_id LEFT JOIN players p ON p.id = c.player
+     WHERE f.at >= ?1 AND f.kind IN ('measure', 'budget')
+     GROUP BY f.char_id ORDER BY gain DESC LIMIT ?2`,
+  ).bind(since, GAINS_LIST_MAX).all();
+  return { days, characters: results };
+}
+
+/** What one side of a settled trade received (realmTradeLaw.js settleRealmTrade's `toA`/`toB`, kept in the row's `result`):
+ *  its gold, its letters of credit at their worth, and how many pieces. */
+const receiptOf = (/** @type {any} */ side) => {
+  const items = Array.isArray(side?.items) ? side.items : [];
+  const letters = items.filter((/** @type {any} */ it) => it?.templateIndex === REALM_LETTER_TEMPLATE).reduce((/** @type {number} */ n, /** @type {any} */ it) => n + (Number(it.value) || 0), 0);
+  return { gold: Number(side?.gold) || 0, letters, pieces: items.length };
+};
+
+/**
+ * HACKED-GOLD - ONE CHARACTER'S TRADES: every realm trade it settled that the service still keeps (realmTrade.js
+ * REALM_TRADE_KEEP_S), newest first - the character on the other side and its account, and what each side gave. A trade's
+ * gold is witnessed on both rows (the budget charges neither), so this is the trail from one who made gold to the hands
+ * it reached. @param {any} db @param {any} row
+ */
+export async function tradesOf(db, row) {
+  const { results = [] } = await db.prepare(
+    `SELECT t.sid, t.created_at AS at, t.a_char, t.b_char, t.a_player, t.b_player, t.result,
+       ca.name AS a_name, cb.name AS b_name, pa.handle AS a_handle, pb.handle AS b_handle
+     FROM realm_trades t
+       LEFT JOIN realm_characters ca ON ca.id = t.a_char LEFT JOIN realm_characters cb ON cb.id = t.b_char
+       LEFT JOIN players pa ON pa.id = t.a_player LEFT JOIN players pb ON pb.id = t.b_player
+     WHERE t.state = 'done' AND (t.a_char = ?1 OR t.b_char = ?1) ORDER BY t.created_at DESC LIMIT ?2`,
+  ).bind(row.id, TRADES_LIST_MAX).all();
+  const trades = results.map((/** @type {any} */ t) => {
+    const r = parse(t.result) ?? {};
+    const mine = t.a_char === row.id ? 'a' : 'b', theirs = mine === 'a' ? 'b' : 'a';
+    // the row keeps what each side RECEIVED, so what I gave is what the other side got
+    return {
+      sid: t.sid, at: t.at,
+      with: { id: t[`${theirs}_char`] ?? null, name: t[`${theirs}_name`] ?? null, player: t[`${theirs}_player`] ?? null, handle: t[`${theirs}_handle`] ?? null },
+      gave: receiptOf(r[theirs]), got: receiptOf(r[mine]),
+    };
+  });
+  return { character: { id: row.id, name: row.name }, trades };
 }
 
 /** INT14: the fights whose receipts carry the relay's count, by the table their claims keep it in. */

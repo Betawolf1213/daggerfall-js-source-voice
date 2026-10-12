@@ -18664,6 +18664,14 @@ document without an SVG namespace draws no glyph and does not throw.
 `tools/mutants/chatfit.json`: 14, 14 dead. acc3wear's roster-order pin
 re-aimed at the row's line.
 
+**TITLE-C (2026-10-12, Mac: "I also want to remove titles from appearing
+in the chat")** took the title off the line - the badge above laid it
+before the name. The line wears the guild's tag and the glyphs after the
+name, as the roster row has since TITLE-R, and the badge pass keys a line
+on what it draws, so a title put on re-lays nothing. Recorded in
+`06-Systems/Chat-Roster-And-Names.md` TITLE-C; this section's pins and
+its layLine mutant re-aimed there.
+
 ## DISCORD5 - five reports off the bug-reports channel: black arms, three arms, the torch keys, the hotslot, the loot that came back (2026-09-22, through Mac)
 
 Five players, five root causes, one commit. The torch's two are recorded in `06-Systems/Handheld-Torches.md` (3ARMS + TORCH-BIND) and the corpse loot in `06-Systems/Online-Arc.md` (LOOT-REGEN); the three that are this arc's are below.

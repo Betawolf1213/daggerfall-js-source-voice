@@ -290,9 +290,9 @@
   },
   {
     "name": "LW-TALK-hidden-no-range",
-    "file": "src/systems/livingWorld/livingTown.js",
-    "old": "return Math.hypot(dx, dz) > POP_VISIBLE_RANGE || !this._inView(dx, dz, viewYaw);",
-    "new": "return !this._inView(dx, dz, viewYaw);",
+    "file": "src/systems/townPopulation.js",
+    "old": "  return dist > POP_VISIBLE_RANGE || !(dx * Math.sin(viewYaw) + dz * Math.cos(viewYaw) > 0);",
+    "new": "  return !(dx * Math.sin(viewYaw) + dz * Math.cos(viewYaw) > 0);",
     "tests": [
       "test/lw2_livingTown.test.js",
       "test/lwtalk_town.test.js"
@@ -301,9 +301,9 @@
   },
   {
     "name": "LW-TALK-hidden-no-view",
-    "file": "src/systems/livingWorld/livingTown.js",
-    "old": "return Math.hypot(dx, dz) > POP_VISIBLE_RANGE || !this._inView(dx, dz, viewYaw);",
-    "new": "return Math.hypot(dx, dz) > POP_VISIBLE_RANGE;",
+    "file": "src/systems/townPopulation.js",
+    "old": "  return dist > POP_VISIBLE_RANGE || !(dx * Math.sin(viewYaw) + dz * Math.cos(viewYaw) > 0);",
+    "new": "  return dist > POP_VISIBLE_RANGE;",
     "tests": [
       "test/lw2_livingTown.test.js",
       "test/lwtalk_town.test.js"

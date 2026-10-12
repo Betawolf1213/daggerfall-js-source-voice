@@ -43,6 +43,9 @@ export function renownTracksOfCard(r) {
   return Array.isArray(r) ? r.filter((t) => renownText(t?.level) && Number.isSafeInteger(t?.xp) && t.xp >= 0) : [];
 }
 
+/** NAME-AS: the two names the room may read, in the order the toggle draws them - the account's, then the character's. */
+export const NAME_AS_CHOICES = Object.freeze([['account', 'Account name'], ['character', 'Character name']]);
+
 /** COPY LIVES IN ONE TABLE, so a stage cannot be drawn with a heading
  *  from one slice and a paragraph from another. Keyed by stage, and a
  *  pin asserts every stage has an entry - a stage added without one
@@ -416,6 +419,39 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
   }
 
   /**
+   * NAME-AS (2026-10-12, Mac: "I want to add an option to the profile menu where players can toggle to use their account
+   * name or character name for ingame use") - THE NAME THE ROOM READS, a toggle of two: the account's (the plate's own
+   * name) or the character's being played. A press asks the flow (chooseName: the service keeps the choice and every
+   * later mint signs it), and the one chosen is pressed - `worn`, aria-pressed - as a title worn is, in the wardrobe's own
+   * vocabulary (this card brings no design language of its own). One line under it says what the other players see: the
+   * account's name, by name; or the character's, and the account's where the character's cannot be shown (the mint says
+   * why, and the game says it once). A service from before NAME-AS states no choice, and gets no toggle.
+   */
+  function nameAsRow() {
+    const a = flow.account;
+    if (a?.nameAs !== 'account' && a?.nameAs !== 'character') return;
+    const box = el('div', 'acctwear acctnameas');
+    box.append(el('span', 'fieldlabel', 'Name in game'));
+    const row = el('div', 'acctwearrow');
+    for (const [as, label] of NAME_AS_CHOICES) {
+      const on = a.nameAs === as;
+      const b = keyedAs(el('button', `acttitle${on ? ' worn' : ''}`), `nameas:${as}`);
+      b.append(el('span', 'acttitleword', label));
+      b.type = 'button';
+      b.disabled = !!flow.busy;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.title = on ? 'Shown in game now' : `Show your ${label.toLowerCase()} in game`;
+      b.onclick = () => flow.chooseName(as);
+      row.append(b);
+    }
+    box.append(row);
+    box.append(el('p', 'meta', a.nameAs === 'character'
+      ? `Others see the name of the character you play online, or ${a.name} where it cannot be shown.`
+      : `Others see ${a.name} over your head and in chat.`));
+    host.append(box);
+  }
+
+  /**
    * PATREON-LINK — THE PATRON'S OWN LINK (Mac: "having to manually hand out titles ... its really hard to keep up with
    * it"). A registered account, on a service with linking on, gets one row: Link Patreon, or Linked with what the
    * pledge holds, a Refresh (the same link - Patreon asked again) and an Unlink.
@@ -588,8 +624,8 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
       wardrobe();
       if (host.children.length > 1) kept.append(host);
 
-      // THE ACCOUNT - what it is: the name it goes by, its kind, when it was made and the time played on it - and its
-      // Patreon link, which is the account's too.
+      // THE ACCOUNT - what it is: the name it goes by, its kind, when it was made and the time played on it - NAME-AS: and
+      // which name the room reads - and its Patreon link, which is the account's too.
       const account = section('Account');
       // A GUEST IS NOT A LESSER ACCOUNT, and the card says so rather
       // than showing an empty username and a nag. It is an account
@@ -607,6 +643,7 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
       row('Time played', playedText(flow.account.playedS));
       kept.append(account);
       host = account;
+      nameAsRow();   // NAME-AS: the name the room reads - the account's own section, beside the name it goes by
       patreonRow();   // PATREON-LINK
       if (!flow.account.handle) {
         account.append(el('p', 'meta', 'Adding a username keeps everything this account already has.'));

@@ -1180,6 +1180,10 @@ img.fit { image-rendering: pixelated; }   /* AUDIT UI A1: a fitted picture drawn
 .card a.act { display: inline-flex; align-items: center; text-decoration: none; }
 .card .acctpatreon .acctwearrow { align-items: center; }
 .card .acctpatreonstate { display: inline-flex; align-items: center; font-size: 12.5px; color: var(--dim); }
+/* NAME-AS - THE NAME THE ROOM READS: two of the wardrobe's own buttons in the card's own colour (the chosen one at full
+   strength behind the doubled edge, the other dimmed, as a title worn and held), and one quiet line under them saying
+   what the other players see - tight under its buttons, where .meta's own foot would part them. */
+.card .acctnameas p.meta { margin: 0; }
 /* One rule per title and per glyph, WALKED out of the vocabulary in
    ui/playerBadge.js - so the gold on this card and the gold over a
    head are one fact, and a title added to the token gets a colour

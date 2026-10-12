@@ -244,8 +244,9 @@ test('SHADOW-FANG over a head: the name layer paints the title once when it CHAN
   for (const k of TITLE_PAINT_KEYS) if (k !== 'color') assert.equal(title.style[k], '', `the gradient's ${k} is cleared`);
   layer.render({ points: [pt({})] });
   for (const k of TITLE_PAINT_KEYS) assert.equal(title.style[k], '', 'no title, no paint');
-  // the chat line and the profile card paint through the same law
-  assert.match(rd('src/ui/chatPanel.js'), /const titleSpan = \(badge, cls\) => paintTitle\(el\('span', cls, badge\.text\), badge\);/);
+  // the profile card paints through the same law - and the chat line paints no title at all (TITLE-C, 2026-10-12, Mac:
+  // "remove titles from appearing in the chat"; it painted one through this law until then)
+  assert.doesNotMatch(rd('src/ui/chatPanel.js'), /paintTitle|titleBadge/, 'TITLE-C: the chat draws no title');
   assert.match(rd('src/ui/profileWindow.js'), /head\.append\(paintTitle\(el\('div', 'dfprofile-title', v\.title\.text\), v\.title\)\);/);
 });
 

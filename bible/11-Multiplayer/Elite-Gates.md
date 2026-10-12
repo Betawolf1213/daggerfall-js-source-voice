@@ -2402,7 +2402,7 @@ the pay law `net/egPay.js`, and the Broker sells the Panoply's sink. File by fil
   piece) or `short` 409 (the purse and the price). It is in `ROUTES`, the eg act map, `EG_STATUS` and the route comment.
 - **`server-account/src/index.js`**: the claim takes `{ receipt, character }`. INT5's `grantSpoils` fires only for a
   recorded, paid Redoubt.
-- **Migration 0111** (EG-PLAY's, unshipped) gains a block of its own:
+- **Migration 0112** (EG-PLAY's, unshipped; 0111 on its branch, renumbered past NAME-AS's 0111 at the merge) gains a block of its own:
   - `eg_redoubts`: `wk`, `paid`, `stones`, `nonce`, `forced`, `wkey`;
   - `players`: `eg_pity`, `eg_valk_wk`;
   - the table `eg_sink (account, wk, piece, at)`.
@@ -2843,7 +2843,7 @@ relay receipt is):
 | `/v1/eg/live` | the drain's question: any breach live, and until when |
 
 **Migrations**: the next free numbers when each slice lands, today 0109 (EG2: `players.eg_keys`, `eg_finds`,
-`players.eg_key_miss`, the launch gift) and 0110-0111 (EG8 and EG14: `eg_stakes`, `players.eg_live`,
+`players.eg_key_miss`, the launch gift) and 0110-0112 (EG8 and EG14: `eg_stakes`, `players.eg_live`,
 `players.eg_mercy`, `eg_redoubts`, `eg_runs`, `eg_pity`, the depths, `eg_honours`, `players.eg_annals`).
 
 **Versions.** Each slice that moves the relay bundle bumps `RELAY_VERSION` (`world194` when this page was last revised; EG-PLAY's `world198` - `world195` on its branch, renumbered past COATS1, CHAT-LANG and BAL8 at the merges -,
@@ -3319,7 +3319,7 @@ its band's art: no slice ships a placeholder. EG8 to EG12 ship behind `EG_OPEN=f
 | **EG0a** | AUDIT EG0 | the bible |
 | **EG0b** | the fragments (sections 11 and 8.8 as first written) | the bible |
 | **EG0c** | AUDIT EG II, the polish pass | the bible |
-| **EG-PLAY** | THE ELITE BREACH, PLAYABLE: the slice the user asked for before the rest - the smallest Elite Breach that plays online end to end, cut through EG2, EG5, EG8, EG9-EG12 and EG14's `w` arm (its record, below, says what each piece took and left) | client, relay (world196), service (acct122) |
+| **EG-PLAY** | THE ELITE BREACH, PLAYABLE: the slice the user asked for before the rest - the smallest Elite Breach that plays online end to end, cut through EG2, EG5, EG8, EG9-EG12 and EG14's `w` arm (its record, below, says what each piece took and left) | client, relay (world196), service (acct124) |
 | **EG1** | THE GATE'S TIERS: `systems/gateTier.js`, `GATE_TIER_TEXT`, the Regular tier's words unchanged; THE REGISTRY: `world/pseudoArchives.js`, every port archive in it, and its collision test | client |
 | **EG2** | THE WEIR KEY: template 575 and its art; the balance (migration); the rolls in `claimGate` (which gains `rand`) and `claimSd`; the pity; `/v1/eg/find`, the killer's ask and the caps; `/v1/eg/keys`; the restack, new; the launch gift (a send migration) | client, service |
 | **EG3** | THE BOSS SEAM: `net/bossSeam.js`; the gate, the Remnant and the serpent re-plugged, frames and pins unchanged; the trails keep y | relay (a version) |
@@ -3478,7 +3478,7 @@ to the next circle.
 **What shipped, by piece.**
 
 - **The key** (EG2's core): template 575 (`systems/weirKey.js`), bound and stacked; its picture DFU's Talisman's
-  (TEXTURE.211 record 50). The count is the account's (`players.eg_keys`, migration 0111) and the pack's stack its face,
+  (TEXTURE.211 record 50). The count is the account's (`players.eg_keys`, migration 0111 - 0112 since the merge past NAME-AS) and the pack's stack its face,
   restacked by every answer that carries it. Rolled at a recorded gate claim (the first certain, then one in six, one in
   four with the rite broken, the pity after five misses) and an Hour claim (one in three) - `server-account/src/eg.js`
   `rollWeirKey`, answered as `weir` on both claims. `/v1/eg/keys`. The launch gift: one key to every account with a
@@ -3562,7 +3562,7 @@ to the next circle.
 `test/egplay_client.test.js` (11 - the client played against the relay's real Room, from the key to the Redoubt, the
 way home and the next circle). Mutants: `tools/mutants/egplay.json` (20), every one dead. Records of other arcs whose
 quoted lines moved, re-aimed by content: the bound list's (`auditrealm`, `cards8`, `loot9`, `portal1`, `wallet1` - 575
-joins it), the account version's (`br5`, `crafthold`, `fb1004d_knight_house`, `tech1`, `gatekeys` - acct122, acct116, acct118, acct119 then acct121 on the branch, renumbered past main's acct116 to acct121 at the merges), the order kinds'
+joins it), the account version's (`br5`, `crafthold`, `fb1004d_knight_house`, `tech1`, `gatekeys` - acct124, acct116, acct118, acct119, acct121 then acct122 on the branch, renumbered past main's acct116 to acct123 at the merges), the order kinds'
 (`guild1c`, `seat2a2`) and the relay version's (`soc1` - world195, then world196 past COATS1, then world197 past CHAT-LANG, then world198 past BAL8). The Ledger: section A's ELITE-GATES row
 (`01-Overview/Port-Ledger.md`), naming every file.
 

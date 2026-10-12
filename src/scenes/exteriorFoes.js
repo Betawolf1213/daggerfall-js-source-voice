@@ -47,7 +47,7 @@ import { wildLootAfter } from './hostCombat.js';   // WILD1: the open zone's gol
 import { TELL } from '../ai/tells.js';   // TELL1: the breaking blow's shove
 import { validLootList, LOOT_NEWER_TAKE_TEXT } from '../systems/loot.js';   // WORLD6b-iii(c): the pile on the wire, WORLD4's projection; AUDIT ONLINE2 F4: a grant this build cannot read
 import { foeHandoverFrames } from '../world/foeHandover.js';
-import { unbound } from '../systems/itemBound.js';   // SS3: a bound piece in a peer's grant never lands
+import { peerHanded, neverPeerHanded } from '../systems/peerWord.js';   // SS3: a bound piece in a peer's grant never lands; HACKED-GOLD: nor a letter of credit (systems/peerWord.js)
 import { calculateAttackDamage, meleeHitConnects, MELEE_HIT_YAW_DEG, chooseEnemyWeapon, dropWeaponIfTargetImmune, enemyWeightClassicUnits, weaponKnockbackSpeed, weaponKnockbackApplies, enemyLanguageSkill, calculateEnemyPacification } from '../combat/formulas.js';   // AUDIT 24 (wave 42): pacification
 import { tallySkill, SKILLS } from '../systems/skills.js';
 import { liveStat } from '../systems/statMods.js';
@@ -1967,17 +1967,22 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
    *  what went only once the frame LEFT (a refused frame - the rate, the size - takes nothing). */
   function grantCorpse(f, to, k) {
     const items = f.entity?.items ?? [];
-    let n = items.length;
+    // HACKED-GOLD: WHAT NEVER RIDES A PEER'S WORD STAYS ON THE BODY, ITS OWNER'S (systems/peerWord.js) - a bound piece, a
+    // letter of credit (a revenant carries what it took of mine in its body - RVN8). The grant reserves its pieces from the
+    // pile's FRONT by count, so they stand behind what may go, and the grant reads only what may.
+    const stays = items.filter(neverPeerHanded);
+    if (stays.length) { const go = items.filter((it) => !neverPeerHanded(it)); items.length = 0; items.push(...go, ...stays); }
+    let n = items.length - stays.length;
     while (n > 0) {
       // AUDIT WORLD6b-iii(c) A3/C2: a REFUSED projection (an item the port could not mint, a list past LOOT_LIST_MAX) is
       // not an empty grant - it narrows to the one item and DROPS it (it can never be granted), the rest still goes;
       // an empty grant then spliced the whole pile away and told the taker the body was empty
       const grant = validLootList(items.slice(0, n));
-      if (!grant) { if (n > 1) { n = n >> 1; continue; } items.splice(0, 1); n = items.length; continue; }
+      if (!grant) { if (n > 1) { n = n >> 1; continue; } items.splice(0, 1); n = items.length - stays.length; continue; }
       const frame = { to, k, i: f.seq, grant, n: _foesSeq };   // A7: and the frame counter at the grant, so a record older than it re-opens nothing
       if (JSON.stringify({ t: 'hit', data: frame }).length > GRANT_FRAME_MAX) {
         if (n > 1) { n = n >> 1; continue; }
-        items.splice(0, 1); n = items.length; continue;   // A4/C10: one item larger than a frame can never be granted - dropped, the rest reachable
+        items.splice(0, 1); n = items.length - stays.length; continue;   // A4/C10: one item larger than a frame can never be granted - dropped, the rest reachable
       }
       // LOOT-DUP: THE ITEMS ARE RESERVED THE MOMENT THE FRAME IS ACCEPTED, and come back if it never leaves.
       //
@@ -2440,7 +2445,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       const g = wireRecipient(f.ai.target);   // AUDIT WORLD6b-ii A8: no target is '' (none) - '.' was the word for a foe that had not stepped yet, and it latched the puppet hostile
       // AUDIT WORLD6b-ii B2/B3: the attacker's terms - its level and its right-hand weapon - so a puppet's blow is this foe's
       const wpn = f.entity.weapon, wd = wpn && Number.isInteger(wpn.templateIndex) ? [wpn.templateIndex, wpn.material | 0] : null;
-      const r = { i: f.seq, t: f.mobileType, x: f.gender === 'female' ? 1 : 0, f: [q2(w[0]), q2(w[1]), q2(w[2])], y: q3(f.ai.yaw), ...(Number.isFinite(f.entity.health) ? { h: Math.max(0, Math.min(FOE_HEALTH_MAX, f.entity.health)) } : {}), ...(Number.isFinite(f.entity.maxHealth) && f.entity.maxHealth >= 1 ? { k: Math.min(FOE_HEALTH_MAX, f.entity.maxHealth) } : {}), d: f.dead ? 1 : 0, a: f._atkA | 0, b: f._atkB ?? '', m: f.ai.moving ? 1 : 0, g, l: f.entity.level | 0, w: wd, c: f._castN | 0, s: f._castIdx | 0, u: f._castU ?? '', o: onWatch || _questLike(f) ? 0 : (f.corpse ? Math.min(255, f.entity?.items?.length | 0) : 0), ...(f.entity?.eliteFoe ? { z: 1 } : {}), ...(!onWatch && typeof f.entity?.revenant?.name === 'string' && f.entity.revenant.name ? { nm: f.entity.revenant.name.replace(/[\u0000-\u001f\u007f]/g, '').slice(0, REVENANT_NAME_MAX) } : {}), ...(f.yielded ? { yd: 1 } : {}), ...(f.executing ? { ex: 1 } : {}), ...(f.sparing ? { sp: 1 } : {}) };   // REVENANT-FATE: kneeling, burning   // REVENANT-WIRE: its revenant's name rides to every puppet   // ELITE FOES: `z` an elite, so a puppet stands as one   // AUDIT (pre-merge) Q5: nor a quest foe's body - its take arm answers only the owner's own (A5), so a member's press asked again forever   // AUDIT WATCH1 A3: a watch body advertises NO pile - its take arm is its owner's own door (cityGuards.takeLoot), which the wire does not reach, so a peer offered the body clicked it for ever and heard nothing; WORLD6b-iii: the cast count and its spell; AUDIT WORLD6b-iii(a) A3: b/u whom the last blow/cast was at; WORLD6b-iii(c): o the body's pile
+      const r = { i: f.seq, t: f.mobileType, x: f.gender === 'female' ? 1 : 0, f: [q2(w[0]), q2(w[1]), q2(w[2])], y: q3(f.ai.yaw), ...(Number.isFinite(f.entity.health) ? { h: Math.max(0, Math.min(FOE_HEALTH_MAX, f.entity.health)) } : {}), ...(Number.isFinite(f.entity.maxHealth) && f.entity.maxHealth >= 1 ? { k: Math.min(FOE_HEALTH_MAX, f.entity.maxHealth) } : {}), d: f.dead ? 1 : 0, a: f._atkA | 0, b: f._atkB ?? '', m: f.ai.moving ? 1 : 0, g, l: f.entity.level | 0, w: wd, c: f._castN | 0, s: f._castIdx | 0, u: f._castU ?? '', o: onWatch || _questLike(f) ? 0 : (f.corpse ? Math.min(255, peerHanded(f.entity?.items ?? []).length) : 0), ...(f.entity?.eliteFoe ? { z: 1 } : {}), ...(!onWatch && typeof f.entity?.revenant?.name === 'string' && f.entity.revenant.name ? { nm: f.entity.revenant.name.replace(/[\u0000-\u001f\u007f]/g, '').slice(0, REVENANT_NAME_MAX) } : {}), ...(f.yielded ? { yd: 1 } : {}), ...(f.executing ? { ex: 1 } : {}), ...(f.sparing ? { sp: 1 } : {}) };   // REVENANT-FATE: kneeling, burning   // REVENANT-WIRE: its revenant's name rides to every puppet   // ELITE FOES: `z` an elite, so a puppet stands as one   // AUDIT (pre-merge) Q5: nor a quest foe's body - its take arm answers only the owner's own (A5), so a member's press asked again forever   // AUDIT WATCH1 A3: a watch body advertises NO pile - its take arm is its owner's own door (cityGuards.takeLoot), which the wire does not reach, so a peer offered the body clicked it for ever and heard nothing; WORLD6b-iii: the cast count and its spell; AUDIT WORLD6b-iii(a) A3: b/u whom the last blow/cast was at; WORLD6b-iii(c): o the body's pile
       if (!onWatch && Number.isInteger(f.entity?.zoneGiant)) r.gg = f.entity.zoneGiant;   // GREATER-GIANT: which of the zone's Greater Giants it is, to every puppet
       if (!onWatch && f.entity?.champion) r.cp = championIndex(f.entity.champion);   // LOOT7: its trait rides to every puppet, which stands as the same champion
       if (onWatch && typeof f.livingFrom?.id === 'string' && LIVING_ID_RE.test(f.livingFrom.id)) r.lr = f.livingFrom.id;   // WATCH-FIX: the living world's resident he stands for - a reader takes them off its street while he stands
@@ -2454,7 +2459,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
         // heir's copy read a plain foe: no last stand, no will, no kneel, a corpse and a closed fight nobody's record
         // heard. It goes with me, as a watchman goes with his own
         const h = f.entity?.revenant?.id ? null : (heirOf(f) ?? null);
-        const items = h ? validLootList(f.entity?.items ?? []) : null;
+        const items = h ? peerHanded(validLootList(f.entity?.items ?? [])) : null;   // HACKED-GOLD: never a letter of credit to the heir (systems/peerWord.js)
         f._heir = items ? h : null;
         if (f._heir) { r.e = h; r.it = items; }
       }
@@ -2579,7 +2584,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       seen.add(r.i);
       // Only the nominated heir receives the inventory. A rejected list must never become an empty reward.
       if (heirIsMe(r) && r.it !== undefined) {
-        const items = unbound(validLootList(r.it));   // AUDIT PORTAL1 I4: SS3's law - a list a peer hands over lands without a bound piece (a forged Portal Stone is a free portal)
+        const items = peerHanded(validLootList(r.it));   // AUDIT PORTAL1 I4: SS3's law - a list a peer hands over lands without a bound piece (a forged Portal Stone is a free portal); HACKED-GOLD: nor a letter of credit (a forged one is free gold)
         if (!items) continue;
         r.it = items;
         // A retried handover must not replace a living adopted foe or resurrect a dead one with fresh loot.
@@ -2898,7 +2903,7 @@ export function createExteriorFoes({ renderer, collider, fetchBytes, getTexture,
       // an unasked grant is refused whole (any socket in the cell put items and gold into my pack at will)
       const f = _pupIndex.get(pupKey(from, data.i | 0)) ?? null;
       const asked = !!f && f._takeAsked != null && _now() - f._takeAsked <= TAKE_WINDOW_MS;
-      const grant = unbound(validLootList(data.grant));   // SS3: without a bound piece - one never passes between players
+      const grant = peerHanded(validLootList(data.grant));   // SS3: without a bound piece - one never passes between players; HACKED-GOLD: nor a letter of credit (systems/peerWord.js)
       if (!grant) {
         // AUDIT ONLINE2 F4: one I asked for that this build cannot read - its owner is told (`back`), so the pieces go
         // back to the body rather than to nobody, and the player is told to reload

@@ -330,6 +330,10 @@ test('DISC19-F: the defenders come as the player\'s allies, sent at the monster 
   const d = guards.guards.find((x) => !x.dead);
   assert.equal(guards.defenderCount(), 1);
   assert.equal(guards.dismissDefenders(), 1);
+  assert.equal(d.dead, false, 'WATCH-LEAVES: stood down, he walks off - never gone where he stands');
+  assert.equal(guards.defenderCount(), 0, 'and is no longer the town\'s answer');
+  d.ai.feet[0] = 200;   // walked out past allowVisiblePopRange
+  guards.update(0.016, FEET0, EYE0, {});
   assert.equal(d.dead, true);
   assert.ok(!d.corpse, 'walked away: no body, nothing to loot');
 });

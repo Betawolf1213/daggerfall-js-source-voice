@@ -42,7 +42,7 @@
 //    (`WITNESS_M`, a clear line - `o.sees`) counts it a crime; so does every one who saw a hand caught in a purse, and
 //    one of the watch STRUCK (`struck`) remembers the blow. A word's tone (`toned`) moves a regard once a day. The town
 //    talks of it for NEWS_DAYS (`deedNews`): one of its own struck down - and, seen, by whom.
-import { POP_VISIBLE_RANGE, POP_RECYCLE_DISTANCE, maxPopulationFor } from '../townPopulation.js';
+import { POP_RECYCLE_DISTANCE, maxPopulationFor, popAllowChange } from '../townPopulation.js';
 import { PERSON_MOVE_SPEED } from '../../characters/mobilePerson.js';
 import { townPlaces, exitToward, harbourDock, streetGeometry } from './places.js';
 import { townCensus, isHome, watchShiftSize } from './census.js';
@@ -975,11 +975,9 @@ export class LivingTown {
     if (ids.size) for (const r of this.pool) if (r.res && ids.has(r.res.id)) this._free(r);
   }
 
-  _inView(dx, dz, viewYaw) { return dx * Math.sin(viewYaw) + dz * Math.cos(viewYaw) > 0; }
-
   /** DFU's hiding: whether a body `dx`, `dz` off the player is out of their sight - beyond POP_VISIBLE_RANGE or behind
    *  them - where a row may come on or go (in sight it does neither). */
-  _hidden(dx, dz, viewYaw) { return Math.hypot(dx, dz) > POP_VISIBLE_RANGE || !this._inView(dx, dz, viewYaw); }
+  _hidden(dx, dz, viewYaw) { return popAllowChange(dx, dz, viewYaw); }
 
   /** WATCH-PROTECTS: what frightens one on the street this frame - the nearest hostile monster (`dangers`, the host's,
    *  [x, z] in the location frame): within PANIC_M, run from; once they ran, kept clear of standing while it is within

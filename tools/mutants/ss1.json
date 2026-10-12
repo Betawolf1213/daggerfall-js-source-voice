@@ -228,7 +228,7 @@
   {
     "name": "SS3-a-buildings-container-lands-a-bound-piece",
     "file": "src/world/interiorShared.js",
-    "old": "    const items = unbound(validLootList(rec.r));",
+    "old": "    const items = peerHanded(validLootList(rec.r));",
     "new": "    const items = validLootList(rec.r);",
     "tests": [
       "test/ss1_stones.test.js"
@@ -237,7 +237,7 @@
   {
     "name": "SS3-a-dungeons-container-lands-a-bound-piece",
     "file": "src/scenes/dungeonContext.js",
-    "old": "      const items = unbound(validLootList(rec.r));",
+    "old": "      const items = peerHanded(validLootList(rec.r));",
     "new": "      const items = validLootList(rec.r);",
     "tests": [
       "test/ss1_stones.test.js"
@@ -246,7 +246,7 @@
   {
     "name": "SS3-a-body-on-the-wire-lands-a-bound-piece",
     "file": "src/scenes/dungeonContext.js",
-    "old": "const li = unbound(validLootList(sf.items));",
+    "old": "const li = peerHanded(validLootList(sf.items));",
     "new": "const li = validLootList(sf.items);",
     "tests": [
       "test/ss1_stones.test.js"
@@ -255,7 +255,7 @@
   {
     "name": "SS3-a-peers-grant-lands-a-bound-piece",
     "file": "src/scenes/exteriorFoes.js",
-    "old": "      const grant = unbound(validLootList(data.grant));",
+    "old": "      const grant = peerHanded(validLootList(data.grant));",
     "new": "      const grant = validLootList(data.grant);",
     "tests": [
       "test/ss1_stones.test.js"

@@ -38,7 +38,7 @@
   {
     "name": "INT1-gold-under-the-wire-bound",
     "file": "src/systems/itemLaw.js",
-    "old": "const stackMax = (/** @type {any} */ item) => (item.group === 'Currency' && item.templateIndex === GOLD_TEMPLATE ? Number.MAX_SAFE_INTEGER : LOOT_STACK_MAX);",
+    "old": "const stackMax = (/** @type {any} */ item) => (item.group === 'Currency' && item.templateIndex === GOLD_TEMPLATE ? GOLD_INT_MAX : LOOT_STACK_MAX);",
     "new": "const stackMax = (/** @type {any} */ item) => LOOT_STACK_MAX;",
     "tests": [
       "test/int1_itemlaw.test.js"

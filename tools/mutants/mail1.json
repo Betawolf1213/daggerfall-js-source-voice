@@ -32,12 +32,12 @@
   {
     "name": "MAIL-shape-after-rate",
     "file": "server-account/src/letters.js",
-    "old": "  if (!HANDLE_RE.test(handle)) return { error: 'no-reader' };\n",
+    "old": "  if (!account && !HANDLE_RE.test(handle)) return { error: 'no-reader' };\n",
     "new": "",
     "tests": [
       "test/mail1.test.js"
     ],
-    "note": "A shape no handle has spends the sender's rate on a lookup that cannot find anyone."
+    "note": "A shape no handle has spends the sender's rate on a lookup that cannot find anyone. NAME-AS (PIN MOVED): re-aimed by content - a letter by account (a friend's) asks no handle's shape."
   },
   {
     "name": "MAIL-sender-rate-dropped",
@@ -445,12 +445,12 @@
   {
     "name": "TAB-to-not-kept",
     "file": "src/ui/socialPanel.js",
-    "old": "    to.addEventListener('input', () => { d.to = to.value; });\n",
+    "old": "    to.addEventListener('input', () => { d.to = to.value; d.account = null; });   // NAME-AS: a name typed is a username - the friend's account no longer addresses it\n",
     "new": "",
     "tests": [
       "test/mail1.test.js"
     ],
-    "note": "The name typed is not the name sent."
+    "note": "The name typed is not the name sent. NAME-AS (PIN MOVED): re-aimed by content - the typed name also lets the friend's account go."
   },
   {
     "name": "TAB-delete-one-press",
@@ -461,16 +461,6 @@
       "test/mail1.test.js"
     ],
     "note": "One stray press throws a letter away."
-  },
-  {
-    "name": "TAB-guest-friend-written",
-    "file": "src/ui/socialPanel.js",
-    "old": "        const named = handleShapeOk(r.name);",
-    "new": "        const named = true;",
-    "tests": [
-      "test/mail1.test.js"
-    ],
-    "note": "A guest's generated name offered as an address the service will refuse."
   },
   {
     "name": "TAB-refusal-clears-draft",

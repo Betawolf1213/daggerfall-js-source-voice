@@ -310,7 +310,7 @@ test('EG-ZF service: THE FIRST-TIME LINES ONCE AN ACCOUNT (section 27.7) - `/v1/
   assert.equal((await S.call('/v1/eg/first', { bits: 1 })).status, 401, 'no session, no lines');
   assert.ok(EG_FIRST_REHEARSAL_BIT < 16 && EG_FIRST_BITS_MAX === 0xffff, 'room for every line the client keeps');
   assert.equal(S.env.DB._raw.prepare('SELECT eg_first FROM players WHERE id = ?').get(me.id).eg_first, 0b111);
-  assert.match(rd('server-account/migrations/0111_elite_breach.sql'), /ALTER TABLE players ADD COLUMN eg_first INTEGER NOT NULL DEFAULT 0;/);
+  assert.match(rd('server-account/migrations/0112_elite_breach.sql'), /ALTER TABLE players ADD COLUMN eg_first INTEGER NOT NULL DEFAULT 0;/);
 });
 
 test('EG-ZF service: THE RECAP\'S BOARD LINE (section 27.6) - an end\'s claim answers the member\'s standing: its company\'s rank in its Descent bracket where the breach ranks there (begun at Hall 1, unwagered), moving as deeper companies claim, asked again the same; a wagered or deeper-started breach the account\'s rank on the Depths; a Rehearsal or no hall cleared none (mutants: the bracket wrong; the rank off by one; a wagered breach on the Descent; a Rehearsal answered)', async (t) => {

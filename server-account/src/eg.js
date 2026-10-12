@@ -7,7 +7,7 @@
 //
 // ═══ THE BALANCE IS THE ACCOUNT'S ══════════════════════════════════
 //
-// A Weir Key opens a real relay instance, so it is a count on the account's row (`players.eg_keys`, migration 0111) -
+// A Weir Key opens a real relay instance, so it is a count on the account's row (`players.eg_keys`, migration 0112) -
 // the item in the pack is its face, restacked by the client to every answer here that carries the count (`keys`). The
 // service rolls every key with its own die (`rand`), at a claim it already verifies: a recorded Dagon's Breach kill
 // (one in six, one in four for a fighter who broke the rite, the account's first kill certain, and the sixth kill after
@@ -37,7 +37,7 @@
 //
 // No relay witnesses an ordinary dungeon, so an elite foe's killer's client asks (`/v1/eg/find`, section 5) with the
 // dungeon's tier, and the service rolls the key with its own die - bounded, never believed: a handle and a proven account,
-// EG_FIND_PER_DAY asks a tier a real day, EG_FIND_KEYS_PER_WEEK keys a week from finds (`eg_finds`, migration 0111).
+// EG_FIND_PER_DAY asks a tier a real day, EG_FIND_KEYS_PER_WEEK keys a week from finds (`eg_finds`, migration 0112).
 //
 // ═══ THE FIRST-TIME LINES AND THE RECAP'S BOARD LINE (EG-ZF) ═══════
 //

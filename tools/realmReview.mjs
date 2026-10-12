@@ -11,6 +11,10 @@
 //   node tools/realmReview.mjs budget-set <json>             write the budget's config - { enforce, bands: [{ upTo, rate, cap }] }
 //   node tools/realmReview.mjs bodies [days]                 INT14: the boss fights' count - mends claimed a minute, and what
 //                                                            the line standing would have cost
+//   node tools/realmReview.mjs gains [days]                  HACKED-GOLD: who gained past the bucket, largest first - held or
+//                                                            not (while the budget only measures, `holds` lists none of them)
+//   node tools/realmReview.mjs trades <id>                   HACKED-GOLD: one character's realm trades - whom it traded with,
+//                                                            and the gold, letters and pieces each side gave
 //
 // THE MEASURE FIRST (Mac, 2026-10-09: "Measure 7 days, then enforce"): read `budget 7` after a week, set each band's
 // `rate` past its 0.999 quantile with room, and `budget-set` with `enforce: true`.
@@ -30,6 +34,8 @@ export const USAGE = [
   '       node tools/realmReview.mjs budget [days]',
   '       node tools/realmReview.mjs budget-set <json>',
   '       node tools/realmReview.mjs bodies [days]',
+  '       node tools/realmReview.mjs gains [days]',
+  '       node tools/realmReview.mjs trades <realm character id>',
   '  Sign in with DAGGER_HANDLE and DAGGER_PASSWORD (or DAGGER_SECRET); DAGGER_ACCOUNT_SERVICE for another service.',
 ].join('\n');
 
@@ -42,7 +48,7 @@ export function faucetLines(body) {
 }
 
 /** The acts that name a character. */
-const BY_ID = Object.freeze(['findings', 'clear', 'hold', 'rollback']);
+const BY_ID = Object.freeze(['findings', 'clear', 'hold', 'rollback', 'trades']);   // HACKED-GOLD: a character's trades
 
 /**
  * The route and body for these arguments - `{ path, body }` - or `{ usage }`.
@@ -60,9 +66,9 @@ export function reviewRequest(argv) {
     const days = rest.length ? Number(rest[0]) : 7;
     return Number.isSafeInteger(days) && days >= 1 && days <= 30 ? { path: '/v1/mod/realm-budget', body: { days } } : { usage: USAGE };
   }
-  if (act === 'bodies' && rest.length <= 1) {   // INT14
+  if ((act === 'bodies' || act === 'gains') && rest.length <= 1) {   // INT14; HACKED-GOLD: the gains past the bucket
     const days = rest.length ? Number(rest[0]) : 7;
-    return Number.isSafeInteger(days) && days >= 1 && days <= 30 ? { path: '/v1/mod/realm-bodies', body: { days } } : { usage: USAGE };
+    return Number.isSafeInteger(days) && days >= 1 && days <= 30 ? { path: `/v1/mod/realm-${act}`, body: { days } } : { usage: USAGE };
   }
   if (act === 'budget-set' && rest.length >= 1) {
     let set = null;

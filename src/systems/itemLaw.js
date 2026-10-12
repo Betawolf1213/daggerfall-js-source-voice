@@ -56,7 +56,7 @@ import { BROKER_PRICES } from './sigilBroker.js';
 import { ENCHANTMENT_TYPES } from '../formats/magicDef.js';
 import { enchantmentSettings, forcedEnchantments, hasItemMakerFlag, ITEM_MAKER_FLAGS, ENCHANTMENT_EXCLUSIONS, SOUL_COUNT } from './enchantmentCatalogue.js';
 import { itemEnchantmentPower, craftedJewelRecipe, MAX_ENCHANTMENTS } from './enchanting.js';
-import { isStackable, ARROW_TEMPLATE, GOLD_TEMPLATE, GLASS_BOTTLE_TEMPLATE } from './inventory.js';
+import { isStackable, ARROW_TEMPLATE, GOLD_TEMPLATE, GLASS_BOTTLE_TEMPLATE, LETTER_OF_CREDIT_TEMPLATE } from './inventory.js';   // HACKED-GOLD: a letter's worth is gold (GOLD-INT)
 import { setItemLaw, LOOT_STACK_MAX, ITEM_GROUP_NAME_BY_CLASS } from './loot.js';
 import { CREATE_ITEM_ROWS, MENS_PLAIN_ROBES, WOMENS_PLAIN_ROBES } from './createItemRows.js';
 import { cardById } from '../net/iliacCards.js';
@@ -91,8 +91,9 @@ import './naval/treasureCharts.js';   // CAPT-CHARTS: the treasure chart
 /** The law's version - a finding names the law that found it, so a law loosened later can be asked again. TECH1 moved it
  *  to 2: a weapon's technique line (systems/lootRarity.js AFFIX_KINDS.technique) is lawful from it on, so a finding a law
  *  of 1 made against one is a finding to ask again. BAL9c moved it to 3: the caster's potency and wellspring lines and
- *  the arcane three (lootRarity.js ARCANE_LEGENDARIES) are lawful from it on. */
-export const ITEM_LAW_VERSION = 3;
+ *  the arcane three (lootRarity.js ARCANE_LEGENDARIES) are lawful from it on. HACKED-GOLD moved it to 4: a letter of
+ *  credit's worth and a coin pile's count past one count (GOLD_INT_MAX, below) are findings from it on. */
+export const ITEM_LAW_VERSION = 4;
 
 const T = ENCHANTMENT_TYPES;
 const TYPE_KEY = Object.freeze(Object.fromEntries(Object.entries(T).map(([k, v]) => [v, k])));
@@ -166,9 +167,18 @@ const BANDAGE = Object.freeze({ group: 'UselessItems2', templateIndex: BANDAGE_T
  *  reader never registered), and the bandage. */
 const stacks = (/** @type {any} */ item, /** @type {any} */ row) => isStackable({ ...item, equipSlot: undefined, questItem: undefined }) || row?.isIngredient === true || row?.stackable === true
   || (item.group === BANDAGE.group && item.templateIndex === BANDAGE.templateIndex);
+/** HACKED-GOLD (GOLD-INT): THE MOST GOLD ONE NUMBER HOLDS - DFU's own `int`, the type of every one of them
+ *  (PlayerEntity.cs:64 `int goldPieces`; DaggerfallUnityItem.cs:40 `int value` and DaggerfallUnityItem.cs:51
+ *  `int stackCount` - a letter of credit's worth and a coin pile's count). The port's own producers keep under it (the
+ *  bank's amount field, nine digits - DaggerfallBankingWindow.cs:188-190; an estate's `| 0`; the realm's own credits, at
+ *  most a hundred million), so a count past it is no honest one: a modified client's letter at nine quadrillion was
+ *  "lawful" here, a law finding now (and the account service's wealth measure no longer saturates on it). */
+export const GOLD_INT_MAX = 2_147_483_647;
+/** A classic save's record keeps its value as the save tree writes it, unsigned (formats/saveTreeFile.js getUint32). */
+export const CLASSIC_VALUE_MAX = 4_294_967_295;
 /** Gold is a count, not a stack the wire carries: a purse dropped, a wagon's coin, a death in the wild lay piles past the
- *  wire's bound (loot.js LOOT_STACK_MAX) in an honest save. */
-const stackMax = (/** @type {any} */ item) => (item.group === 'Currency' && item.templateIndex === GOLD_TEMPLATE ? Number.MAX_SAFE_INTEGER : LOOT_STACK_MAX);
+ *  wire's bound (loot.js LOOT_STACK_MAX) in an honest save - never past what one count holds (GOLD-INT). */
+const stackMax = (/** @type {any} */ item) => (item.group === 'Currency' && item.templateIndex === GOLD_TEMPLATE ? GOLD_INT_MAX : LOOT_STACK_MAX);
 const isInt = (/** @type {unknown} */ v) => Number.isInteger(v);
 const has = (/** @type {any} */ o, /** @type {string} */ k) => o[k] !== undefined && o[k] !== null;
 /** A deep copy of a plain record, for the cross-checks that write as they read (validSetMarks rewrites a sigil). */
@@ -211,6 +221,9 @@ export function itemFindings(v, opts = {}) {
   // ── the classic words only a classic save writes ─────────────────────
   const classic = has(item, 'typeDependentData');
   if (has(item, 'flags') && item.flags !== 0 && !classic) out.add('flags');
+  // ── HACKED-GOLD (GOLD-INT): a letter of credit's worth is gold - at most what one count holds (a classic save's, its
+  //    tree's unsigned) ──
+  if (item.templateIndex === LETTER_OF_CREDIT_TEMPLATE && typeof item.value === 'number' && item.value > (classic ? CLASSIC_VALUE_MAX : GOLD_INT_MAX)) out.add('value');
   // ── a conjured item: only Create Item's, and it vanishes ─────────────
   if (has(item, 'timeForItemToDisappear') && item.timeForItemToDisappear > 0 && !SUMMONED.has(`${item.group}:${item.templateIndex}`)) out.add('summoned');
   // ── a poisoned blade, a trapped soul, an artifact's marks ────────────
@@ -574,4 +587,4 @@ export function itemWorth(/** @type {any} */ item) {
   return Math.max(Math.min(value, worthCeiling(item)), floor) * stack;
 }
 
-setItemLaw(itemFindings);
+setItemLaw(itemFindings, worthCeiling);   // HACKED-GOLD: and the ceiling a peer's price is held under (loot.js lawPriced)

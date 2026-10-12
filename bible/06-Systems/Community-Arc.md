@@ -545,7 +545,7 @@ contracts, invitations)."
   `src/net/letterLaw.js` joins the worker's deploy paths (test/accountdeploy.test.js caught it missing). The relay
   sends no new frame, but `visibleText` moved within its bundle, so world102's LAW row is restated.
 
-Pins: `test/mail1.test.js` (17); `tools/mutants/mail1.json` (51, all dead); `tools/mailProbe.mjs` (36 checks, 12
+Pins: `test/mail1.test.js` (17); `tools/mutants/mail1.json` (51, all dead - 50 since NAME-AS retired TAB-guest-friend-written, whose line it took out: `06-Systems/Accounts-And-Cloud-Saves-Arc.md` NAME-AS); `tools/mailProbe.mjs` (36 checks, 12
 photographs at a desktop, a narrow window and a phone). Re-aimed: ACC1b's table list, ACC1e's refusal walk (which reads
 letterLaw's words, since the service returns them verbatim), CHAT1's and AUDIT DROPS F's online-frame order, and
 SOC3's host pin.

@@ -40,6 +40,7 @@
 
 import {
   openGuest, register, login, recover, readAccount, changePassword, logout, equipTitle, equipAura, equipGlyph, adoptIdentity, unlinkPatreon,
+  chooseNameAs,   // NAME-AS: which name the room reads
   storedSession, keepSession, forgetSession, accountRefusalText, handleShapeOk,
   PASSWORD_MIN_LEN,
 } from '../net/accountClient.js';
@@ -118,6 +119,12 @@ export const LOCAL_REFUSALS = Object.freeze({
   'privacy-unticked': 'Read and agree to the Privacy Policy to create an account.',
 });
 
+/** NAME-AS: what the card says once the service has taken a choice of name - which name the room reads from now. */
+export const NAME_AS_NOTE = Object.freeze({
+  account: 'Others now see your account name.',
+  character: 'Others now see the name of the character you play online.',
+});
+
 /**
  * The flow.
  *
@@ -126,8 +133,9 @@ export const LOCAL_REFUSALS = Object.freeze({
  * @param {object} deps.storage     appStorage, or anything with get/set/removeItem
  * @param {() => void} [deps.onChange]  called after every state change, so the
  *                                      renderer repaints without polling
+ * @param {() => number} [deps.now]  the epoch clock, ms - NAME-AS's stamp
  */
-export function AccountFlow({ io, storage, onChange = () => {} }) {
+export function AccountFlow({ io, storage, onChange = () => {}, now = () => Date.now() }) {
   const self = {
     stage: /** @type {string} */ ('loading'),
     /** the account view from /v1/account, when signed in */
@@ -426,6 +434,37 @@ export function AccountFlow({ io, storage, onChange = () => {} }) {
       self.busy = false;
       self.note = want ? `Wearing ${AURA_TEXT[want] ?? want}.` : 'Aura removed.';   // SHADOW-CLOAK (AUDIT): the aura's name, never its key
       adoptIdentity(storage, { glyphs: r.data.glyphs, glyphsOff: r.data.glyphsOff, aura: auraStated(r.data), secret: asked });
+      changed();
+      return true;
+    } catch {
+      return refuse(accountRefusalText('offline'));
+    }
+  };
+
+  /**
+   * NAME-AS (2026-10-12, Mac: "I want to add an option to the profile menu where players can toggle to use their account
+   * name or character name for ingame use") - WHICH NAME THE ROOM READS: the account's, or the character's being played.
+   * It asks, as a wear does; the service keeps the choice and every later mint signs it - a character's name only where it
+   * can be worn, the mint saying why where it cannot (the game says it once: scenes/world.js adoptIssued). Pressing the
+   * one already chosen asks nothing. A choice the service took STAMPS the stored session (`nameAsAt`, forward only), and
+   * the world host, seeing its stamp move, says hello again on fresh tokens - the room reads the new name now
+   * (scenes/world.js nameAsFrame), whichever host mode the player stands in.
+   */
+  self.chooseName = async (as) => {
+    if (self.busy || self.stage !== 'in' || !self.account) return false;
+    if ((self.account.nameAs ?? 'account') === as) return false;
+    const asked = secret();
+    self.busy = true; self.error = ''; self.note = ''; changed();
+    try {
+      const r = await ask(() => chooseNameAs(door(), as));
+      if (!r) return false;                 // `auth` already landed on `out`
+      if (!r.ok) return refuse(accountRefusalText(r.error));
+      const nameAs = r.data?.nameAs === 'character' ? 'character' : 'account';   // the service's word, as a wear's answer is
+      self.account = { ...self.account, nameAs };
+      self.busy = false;
+      self.note = NAME_AS_NOTE[nameAs];
+      const was = storedSession(storage)?.nameAsAt;
+      adoptIdentity(storage, { nameAsAt: Math.max(now(), Number.isSafeInteger(was) ? was + 1 : 0), secret: asked });   // AUDIT B4: into the session that asked
       changed();
       return true;
     } catch {

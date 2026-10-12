@@ -46,6 +46,10 @@
 // ACC3, the wardrobe. A player HOLDS titles by derivation and WEARS at
 // most one, which is the only part of it that is a choice:
 //   POST /v1/account/title { title }      -> { ok, titles[], title, glyphs[] }
+// NAME-AS, which name the room reads - the account's, or the realm character's the mint is for; the token's answer
+// says both (`name` the room's, `accountName` the account's), the choice (`nameAs`) and, where the character's could
+// not be worn, why (`nameWhy`, `nameWord`):
+//   POST /v1/account/name { as }          -> { ok, nameAs }
 // ACC4, time played. A beat carries no number - this clock measures:
 //   POST /v1/account/played {}            -> { playedS }
 // MOD1, moderation. The caller must be a moderator or a developer:
@@ -55,6 +59,7 @@
 //   POST /v1/mod/realm-holds | realm-findings { id } | realm-clear { id, note? } | realm-hold { id, note? }
 //        | realm-rollback { id, note? } | realm-budget { days?, set? }   INT6: the review of the judge's verdicts (review.js)
 //        | realm-bodies { days? }   INT14: the boss fights' count, measured (review.js bodiesMeasure)
+//        | realm-gains { days? } | realm-trades { id }   HACKED-GOLD: who gained past the bucket; a character's trades (review.js)
 // DUEL1, the duelling record. The caller of `loss` is the loser:
 //   POST /v1/duel/loss   { winner }       -> { recorded, wins, losses }
 //   POST /v1/duel/record { id }           -> { id, wins, losses, gates }
@@ -188,6 +193,7 @@ import {
   register, login, recover, changePassword, setEmail, overRate, overAccountRate,
   accountWardrobe, equipTitle, equipAura, equipGlyph, buyInsignia, insigniaPurse, creditPlay, muteAccount, isMuted, mutedUntil,
   duelRecordOf, claimDuel, gateRecordOf, claimGate, legalRefusal,
+  nameAsOf, wornNameOf, chooseNameAs,   // NAME-AS: the name the room reads - the account's or the character's
   ACCOUNT_MAX, ACCOUNT_WINDOW_S,
 } from './accounts.js';
 import { mintToken, mintOrder, mintRenownOrder, mintGuildOrder, mintGuildOutOrder, MAX_TTL_S, TOKEN_V, ID_RE, SEAT_TITLES, CHAPTER_TITLES, TOKEN_MAX_CHARS, TOKEN_BODY_MAX, tokenBodyOf } from '../../src/net/identityToken.js';
@@ -935,10 +941,15 @@ const service = {
         // surname, its given name, a Bloodline's mark, the generation's numeral) - off the line the service holds, never a
         // word of the client's
         const house = facts.house;
+        // NAME-AS (2026-10-12): AND THE NAME THE ROOM READS - the account's, or, where the account chose its character's,
+        // that realm character's own (`facts.name`, off the same read), where the wire can carry it and it is no other
+        // account's username (accounts.js wornNameOf). Never a word of the request: the body names WHICH character, as it
+        // always did, and its name is the row's.
+        const nameWorn = await wornNameOf(ctx, who.player, facts.name);
         // AUDIT LEGACY III O1: AND WHICH REALM CHARACTER (`ci`, beside a 1 alone) - the relay stamps it on a wedding's frames,
         // so each half names the character its player saw. Kept when a house is left unsaid: the widest token without a
         // house is under TOKEN_MAX_CHARS with it (test/auditlegacy3)
-        const signed = { s: who.player.id, n: displayName(who.player), k: accountKind(who.player), ...wardrobe, mu, lv, ...(guild ?? {}), rc, ...(rc ? { ci: body.character } : {}), ...(ar !== undefined ? { ar } : {}), ...(cl != null ? { cl } : {}), ...(wa ? { wa } : {}) };
+        const signed = { s: who.player.id, n: nameWorn.name, k: accountKind(who.player), ...wardrobe, mu, lv, ...(guild ?? {}), rc, ...(rc ? { ci: body.character } : {}), ...(ar !== undefined ? { ar } : {}), ...(cl != null ? { cl } : {}), ...(wa ? { wa } : {}) };
         let token = await mintToken(house ? { ...signed, ...house } : signed, key, { subtle, nowS });
         // the token's own bounds (identityToken.js TOKEN_MAX_CHARS, and AUDIT LEGACY III O11 the relay hello's TOKEN_BODY_MAX):
         // a house that would take it past either is left unsaid, never the rest
@@ -946,7 +957,10 @@ const service = {
         if (house && (token.length > TOKEN_MAX_CHARS || tokenBodyOf(token).length > TOKEN_BODY_MAX)) { token = await mintToken(signed, key, { subtle, nowS }); houseWorn = null; }
         return json({
           token,
-          name: displayName(who.player),
+          name: nameWorn.name,   // NAME-AS: the name the token signs - the room's, which the live sessions take in (NAME-ADOPT)
+          accountName: displayName(who.player),   // NAME-AS: and the account's own, which the device's stored session keeps (the profile mark's)
+          nameAs: nameAsOf(who.player),   // NAME-AS: the choice the name was signed under
+          ...(nameWorn.why ? { nameWhy: nameWorn.why, ...(nameWorn.word ? { nameWord: nameWorn.word } : {}) } : {}),   // NAME-AS: why the character's name stood aside, absent where it did not
           kind: accountKind(who.player),
           title: wardrobe.t ?? null,
           ...(wardrobe.ts ? { ts: wardrobe.ts } : {}),   // SEAT1c: a seat title's claim, the client's to word
@@ -1665,6 +1679,14 @@ const service = {
         return r.error ? no(r.error, r.error === 'not-held' ? 403 : 400, origin) : json(r, 200, origin);
       }
 
+      if (path === '/v1/account/name' && request.method === 'POST') {
+        // NAME-AS (2026-10-12, Mac: "toggle to use their account name or character name for ingame use"): WHICH NAME THE
+        // ROOM READS - `{ as: 'account' | 'character' }`, the row's choice, which every later mint signs (accounts.js
+        // wornNameOf). Nothing to hold, so nothing to refuse but a word that is neither: 400 `no-name-as`.
+        const r = await chooseNameAs(ctx, who.player, body.as);
+        return r.error ? no(r.error, 400, origin) : json(r, 200, origin);
+      }
+
       if (path === '/v1/account/insignia' && request.method === 'POST') {
         // WB9g: THE BROKER'S INSIGNIA, BOUGHT (accounts.js buyInsignia - one UPDATE, the account's closed gates paying).
         // 403 for a guest (the credential is good, the sale is not theirs to keep); 409 for one owned or one the gates
@@ -1772,9 +1794,9 @@ const service = {
         }
         if (request.method !== 'POST') return no('method', 405, origin);
         if (path === '/v1/mail/send') {
-          const r = await sendLetter(ctx, who.player, { to: body.to, subject: body.subject, body: body.body });
+          const r = await sendLetter(ctx, who.player, { to: body.to, toAccount: body.toAccount, subject: body.subject, body: body.body });   // NAME-AS: or by account - a friend's letter
           if (!('error' in r)) return json(r, 200, origin);
-          const status = r.error === 'muted' ? 403 : r.error === 'no-reader' ? 404 : r.error === 'mail-rate' ? 429 : r.error === 'inbox-full' ? 409 : 400;
+          const status = r.error === 'muted' ? 403 : r.error === 'no-reader' || r.error === 'reader-guest' ? 404 : r.error === 'mail-rate' ? 429 : r.error === 'inbox-full' ? 409 : 400;
           return no(r.error, status, origin);
         }
         const r = path === '/v1/mail/read' ? await readLetter(ctx, who.player, env, body.id) : await deleteLetter(ctx, who.player, body.id);

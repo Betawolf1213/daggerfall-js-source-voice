@@ -82,7 +82,10 @@ function noteView(n, row, env, nowS, { mine = false, mod = false, reports = 0 } 
   const guildOk = recruits(n);
   return {
     // TEXT-F1: the words starred as they are read - a note pinned before the filter reads as one pinned after it
-    id: n.id, from: n.author_name, ...badgeOf(row, env, nowS), subject: maskText(n.subject), body: maskText(n.body),
+    // NAME-AS: and its author's ACCOUNT (`by`) beside the name it was signed with - the room may know them by their
+    // character's name, so a note's duel finds its author among the players here by account (the relay's `sub`), never
+    // by name (scenes/world.js answerNote); an account id is what every chat line already carries
+    id: n.id, from: n.author_name, by: n.author, ...badgeOf(row, env, nowS), subject: maskText(n.subject), body: maskText(n.body),
     // a recruitment note whose guild is gone - or whose author can no longer invite to it - keeps its words and loses
     // its button and its seal (0026_board.sql)
     button: n.button === 'guild' && !guildOk ? null : (n.button ?? null),

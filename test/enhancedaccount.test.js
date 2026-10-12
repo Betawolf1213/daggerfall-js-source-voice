@@ -26,8 +26,9 @@ function fakeDoc() {
     const n = {
       tag, className: '', textContent: null, type: null, value: '', maxLength: 0,
       autocomplete: null, autocapitalize: null, spellcheck: null, disabled: false,
-      children: [],
+      children: [], attrs: {},
       append: (...kids) => n.children.push(...kids.filter(Boolean)),
+      setAttribute: (k, v) => { n.attrs[k] = String(v); },   // NAME-AS: the toggle says which is pressed (aria-pressed)
       get text() {
         return [n.textContent, ...n.children.map((c) => c.text)].filter(Boolean).join(' ');
       },
@@ -234,7 +235,7 @@ test('ACC1e: every class the card wears is one the enhanced skin defines', () =>
     const { flow, card } = build();
     flow.stage = stage;
     if (stage === 'code') flow.recoveryCode = 'A-B';
-    if (stage === 'in') flow.account = { name: 'N', handle: null, guestName: 'A B', kind: 'guest' };
+    if (stage === 'in') flow.account = { name: 'N', handle: null, guestName: 'A B', kind: 'guest', nameAs: 'account' };   // NAME-AS: and the name-in-game toggle's classes walked with the rest
     card.paint();
     for (const c of classesOf(card)) for (const one of c.split(/\s+/)) if (one) worn.add(one);
   }

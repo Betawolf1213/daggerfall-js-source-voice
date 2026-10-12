@@ -483,7 +483,7 @@ function spawn(raid, kind, mobileType) {
     if (_pending === p) _pending = null;
     if (!foe) return;
     if (p.cancelled && kind === 'raider') { h.removeFoe?.(foe); return; }
-    _live.push({ foe, key: p.key, kind, routed: false, counted: false });
+    if (!_live.some((e) => e.foe === foe)) _live.push({ foe, key: p.key, kind, routed: false, counted: false });   // WATCH-LEAVES: a defender called back from his walk off is the one already held
     if (kind === 'raider') foe.raidKey = p.key;   // RAID2: it rides my frame tagged with its raid
   }, () => { if (_pending === p) _pending = null; });
 }

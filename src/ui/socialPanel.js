@@ -699,12 +699,11 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
       // a friend is invited by ACCOUNT - the person, not whichever tab they happen to have open (net/wire.js
       // SOCIAL_ACTS: party.invite takes either, and the hub resolves a peer to the account behind it anyway)
       acts.append(btn('Invite', { enabled: inv.can, why: inv.why, run: () => act({ k: 'party.invite', acct: r.acct }) }));
-      // MAIL1: a letter, online or not - which is the point of one. A friend who is still a guest has no username a
-      // letter can find (their name is generated, and carries the one space a handle never does: net/handleShape.js)
-      if (mail) {
-        const named = handleShapeOk(r.name);
-        acts.append(btn('Letter', { enabled: named, why: named ? null : 'no username', run: () => { tab = 'letters'; writeTo(r.name); } }));
-      }
+      // MAIL1: a letter, online or not - which is the point of one. NAME-AS (2026-10-12): ADDRESSED TO THE ACCOUNT, never
+      // to the name on the row - that is the name the room reads, which may be their character's (no username at all, or
+      // somebody else's), so the shape of it says nothing about a username any more. A friend who is still a guest has
+      // no letterbox, and the service says so in its own words (`reader-guest`).
+      if (mail) acts.append(btn('Letter', { run: () => { tab = 'letters'; writeTo(r.name, '', r.acct); } }));
       // ONE CLICK ARMS, THE SECOND SENDS. No `window.confirm`: it is a modal the game cannot dismiss, it steals the
       // pointer this panel just freed, and on a touch device it is a different surface entirely.
       acts.append(confirm === r.acct
@@ -840,9 +839,10 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
   };
   /** Into one of the tab's views. */
   const lettersTo = (mode, id = null) => { letters.mode = mode; letters.id = id; letters.del = null; ui++; if (open) repaint(); };
-  /** THE FORM, on a draft: a fresh one to `to` (a friend's row, a reply), or - named nothing - the words already there. */
-  const writeTo = (to = null, subject = '') => {
-    if (to != null) letters.draft = { to: String(to), subject: String(subject ?? ''), body: '' };
+  /** THE FORM, on a draft: a fresh one to `to` (a friend's row, a reply), or - named nothing - the words already there.
+   *  NAME-AS: `account`, a friend's account id - the letter goes to the account, `to` only the name it is shown by. */
+  const writeTo = (to = null, subject = '', account = null) => {
+    if (to != null) letters.draft = { to: String(to), account: typeof account === 'string' && account ? account : null, subject: String(subject ?? ''), body: '' };
     letters.word = '';
     lettersTo('write');
   };
@@ -959,7 +959,7 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
     paintCount();
     // THE DRAFT IS WRITTEN ON EVERY KEYSTROKE and the form is NOT rebuilt by one - only a view change or a send
     // rebuilds it - so the caret stays where the player put it and nothing typed is ever lost to a repaint.
-    to.addEventListener('input', () => { d.to = to.value; });
+    to.addEventListener('input', () => { d.to = to.value; d.account = null; });   // NAME-AS: a name typed is a username - the friend's account no longer addresses it
     subject.addEventListener('input', () => { d.subject = subject.value; });
     body.addEventListener('input', () => { d.body = body.value; paintCount(); });
     const out = [form];
@@ -967,7 +967,7 @@ export function createSocialPanel({ social, send = null, mail = null, guild = nu
     const send = () => {
       if (letters.sending) return;
       letters.sending = true; letters.word = ''; ui++; if (open) repaint();
-      mail.send({ to: d.to, subject: d.subject, body: d.body }).then((r) => {
+      mail.send({ to: d.to, account: d.account, subject: d.subject, body: d.body }).then((r) => {   // NAME-AS: a friend's, by account
         letters.sending = false;
         if (r.ok) {
           letters.draft = { to: '', subject: '', body: '' };

@@ -545,7 +545,7 @@ test('PORTAL1 the hosts: every shop\'s keeper sells it (a teller and a mod\'s se
   const f = read('src/scenes/exteriorFoes.js');
   assert.match(f, /if \(data\.pg !== undefined\) _onPortals\?\.\(from, data\.pg\);[^\n]*\n\s+if \(data\.hv !== undefined\) _onHcc/, 'past the pool\'s room test, beside the camps');
   assert.match(f, /\n\s+setOnPortals,   \/\/ PORTAL1\n\s+setOnCamps, setOnHcc, setOnDuel \};/, 'the pool hands the door out');
-  assert.match(f, /const items = unbound\(validLootList\(r\.it\)\);/, 'AUDIT PORTAL1 I4: an heir\'s list lands without a bound piece');
+  assert.match(f, /const items = peerHanded\(validLootList\(r\.it\)\);/, 'AUDIT PORTAL1 I4: an heir\'s list lands without a bound piece');   // PIN MOVED (HACKED-GOLD): SS3's peer law rides systems/peerWord.js peerHanded - a bound piece and a letter of credit
   assert.doesNotMatch(read('server/src/index.js'), /\bpg\b/, 'the relay reads nothing inside a foes frame - no relay change, no version');
   assert.match(read('src/scenes/shared.js'), /import '\.\.\/systems\/portalStone\.js';/, 'the Use registers in every host');
   assert.doesNotMatch(read('src/scenes/dungeonContext.js'), /openPortal/, 'the dungeon: no door - the reader says PORTAL_TEXT.notHere');

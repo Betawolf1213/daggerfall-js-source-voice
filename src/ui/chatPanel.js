@@ -63,17 +63,20 @@
 // `overflow-y: auto` on it was true and never reached. The column's
 // content is absolute inside it now (`.dfchat-who-inner`), so the
 // column is exactly as tall as the conversation beside it and the
-// list scrolls inside that. A row is ONE LINE: the title, the name,
-// the glyphs and the tag stand in a nowrap flex line and the NAME is
+// list scrolls inside that. A row is ONE LINE: the name, the glyphs
+// and the tag (and the title, until TITLE-R) stand in a nowrap flex line and the NAME is
 // the one that gives (ellipsis, the full name as its title), because
 // a title and a glyph are a few pixels and a name is what the row is
 // for - `overflow-wrap: anywhere` had every long name folding under
 // its own title. And a chat LINE wears the author's badge the way the
-// roster row does: the title before the name, the glyphs after it,
-// drawn by the one SVG door the roster already had, asked of the host
-// (`badgeOf`, net/online.js's answer for me, a peer, or a peer this
-// session once met) on the same pass that asks the name's colour, so a
-// title equipped mid-conversation reaches the lines already said.
+// roster row does: the glyphs after the name, drawn by the one SVG door
+// the roster already had, asked of the host (`badgeOf`, net/online.js's
+// answer for me, a peer, or a peer this session once met) on the same
+// pass that asks the name's colour, so a glyph shown or hidden
+// mid-conversation reaches the lines already said. (CHAT-FIT laid the
+// author's title before the name too; TITLE-C, 2026-10-12, Mac: "remove
+// titles from appearing in the chat", took it off - a line wears no
+// title, as the roster has worn none since TITLE-R.)
 //
 // SOC3 (2026-09-16, Mac: "A social button next to the chat UI, that
 // when tapped opens the new friends list + party interface ... be able
@@ -138,7 +141,7 @@
 // (keep a reader's scroll) applied to a moment it was never written for:
 // C8 is about lines arriving under a reader, not about coming back. So an
 // open, and a tab change, land on the newest line whatever the box says.
-// (2) The badge pass lays a title and glyphs into a line AFTER the list
+// (2) The badge pass lays a badge (the glyphs, a guild's tag) into a line AFTER the list
 // scrolled to its bottom, and a line that wraps under its badge pushed the
 // newest out of view by its own growth - so the scroll to the newest is
 // the paint's LAST act, after every pass that can change a line's height,
@@ -156,7 +159,7 @@ import { isTouchDevice } from './touch.js';
 import { CHAT_MAX } from '../net/wire.js';
 import { tagOf, findQuery, findLines, playerFound, CHAT_FIND_MAX } from '../net/chat.js';   // CHAT-FIND: the search's own law
 import { guildTagText } from '../net/guildLaw.js';   // GUILD1c: the guild's tag beside a name, as over a head
-import { titleBadge, glyphBadges, glyphSvgNode, cssRgba, TITLE_RGBA, paintTitle } from './playerBadge.js';   // ACC3c: the same table the name over a head reads - a name wears one title everywhere it is drawn; cssRgba comes from HERE and not ui/nameLayer.js, which would pull the whole remote-player pass into this panel
+import { glyphBadges, glyphSvgNode, cssRgba, TITLE_RGBA } from './playerBadge.js';   // ACC3c: the same table the name over a head reads - a name wears its glyphs everywhere it is drawn (TITLE-C: its title over the head alone, never in the chat); cssRgba comes from HERE and not ui/nameLayer.js, which would pull the whole remote-player pass into this panel
 import { rosterRows, rosterTitle } from '../net/roster.js';   // CHAT-R1: who is online, in order (the cap is the model's own - AUDIT-CHATR F4: this file imported it and never used it, and lint could not see that: no-unused-vars is on for server/src and not for src)
 import { PARTY_GREEN_CSS } from '../net/social.js';   // CHAT-CHAN: the Party tab's mark wears the party's one green
 import { SHORTCODE_LIST, findCommandOf } from '../net/chatCommands.js';   // EMOTE1: the picker offers the shortcodes' own emoji, in their order, so a pick and a :code: say the same thing
@@ -405,9 +408,8 @@ ${Object.entries(CHANNEL_COLOURS).map(([ch, c]) => `.dfchat[data-colours="on"] .
 /* ACC3c: the glyphs AFTER the name, the world label read left to right (TITLE-R: the roster wears no title). */
 .dfchat-who-glyph { width: calc(11px * var(--dfchat-scale, 1)); height: calc(11px * var(--dfchat-scale, 1)); display: inline-block; vertical-align: -1px;
   margin-left: 3px; }
-/* CHAT-FIT: the same badge on a chat LINE - the title before the name
-   at the tag's size, the glyphs after it at the roster's size. */
-.dfchat-line-title { font-size: calc(11px * var(--dfchat-scale, 1)); letter-spacing: .05em; text-transform: uppercase; margin-right: 4px; }
+/* CHAT-FIT: the same badge on a chat LINE - the glyphs after the name
+   at the roster's size (TITLE-C: no title before it, as the roster wears none). */
 .dfchat-line-glyph { width: calc(11px * var(--dfchat-scale, 1)); height: calc(11px * var(--dfchat-scale, 1)); display: inline-block; vertical-align: -1px; margin-left: 3px; }
 /* GUILD1c: the guild's tag right of the name, before the glyphs - the name layer's own steel, on a line and in the roster */
 .dfchat-line-guild, .dfchat-who-guild { flex: none; color: #a9c4dd; font-size: calc(11px * var(--dfchat-scale, 1)); letter-spacing: .04em; margin-left: 4px; }
@@ -790,22 +792,24 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
   /** ACC3c / CHAT-FIT: ONE GLYPH AS AN SVG - the roster's drawing, shared with the chat line. Null where the
    *  document has no SVG door: such a document draws NO glyph rather than throwing under somebody's name. */
   const glyphSvg = (g, cls) => glyphSvgNode(doc, g, cls);   // INSPECT1: the one drawing, ui/playerBadge.js - shared with the name over a head and the profile card
-  const titleSpan = (badge, cls) => paintTitle(el('span', cls, badge.text), badge);   // SHADOW-FANG: its colour, or its gradient
-  /** CHAT-FIT: the badge nodes a chat line's author wears - the title BEFORE the name, the glyphs AFTER it, the
-   *  roster row's own order (ACC3c) - for a { title, glyphs } record, or none for null. */
+  /** CHAT-FIT: the badge nodes a chat line's author wears AFTER the name - the guild's tag, then the glyphs, the roster
+   *  row's own order (ACC3c) - for a { glyphs, gt } record, or none for null. TITLE-C (2026-10-12, Mac: "remove titles
+   *  from appearing in the chat"): nothing BEFORE the name - a line wears no title, as a roster row wears none (TITLE-R);
+   *  a title is worn over the head (ui/nameLayer.js, net/remotePlayers.js) and on the inspect card (ui/profileWindow.js). */
   const badgeNodes = (peer, prefix) => {
-    const badge = titleBadge(peer);
-    const before = badge ? [titleSpan(badge, `${prefix}-title`)] : [];
     const after = [];
     const gt = guildTagText(peer?.gt);   // GUILD1c: the guild's tag first after the name, before the glyphs
     if (gt) after.push(el('span', `${prefix}-guild`, gt));
     for (const g of glyphBadges(peer)) { const svg = glyphSvg(g, `${prefix}-glyph`); if (!svg) break; after.push(svg); }
-    return { before, after };
+    return after;
   };
-  const badgeKeyOf = (b) => (b ? `${b.title ?? ''}|${(Array.isArray(b.glyphs) ? b.glyphs : []).join('+')}|${b.gt ?? ''}` : '');   // GUILD1c: a tag that moved re-lays the line
-  /** CHAT-FIT: a line is laid from its PARTS - time, the badge's title, the name, the badge's glyphs, the tag, the
+  /** CHAT-FIT: what a line's badge DRAWS, as the key the badge pass compares - the glyphs and the guild's tag (GUILD1c:
+   *  a tag that moved re-lays the line). TITLE-C: never the title, which no line draws - a title put on or taken off
+   *  mid-conversation re-lays nothing (CHAT-R's law: keyed by what is drawn). */
+  const badgeKeyOf = (b) => (b ? `${(Array.isArray(b.glyphs) ? b.glyphs : []).join('+')}|${b.gt ?? ''}` : '');
+  /** CHAT-FIT: a line is laid from its PARTS - time, the name, the badge (the guild's tag and the glyphs), the tag, the
    *  text - so the badge pass can re-lay one line when its author's badge changes, without rebuilding the list. */
-  const layLine = (r) => { r.node.replaceChildren(...[r.chan, r.time, ...r.before, r.nameEl, ...r.after, r.tag, r.text].filter(Boolean)); };
+  const layLine = (r) => { r.node.replaceChildren(...[r.chan, r.time, r.nameEl, ...r.after, r.tag, r.text].filter(Boolean)); };
   /** CHAT-CHAN: the mark a PEEK line wears when it was said on a tab other than the one the chat opens on - the
    *  peek is every tab's (net/chat.js peek), and a line with no mark is the open tab's own. A line the game said on
    *  every tab (`tab` null) is everybody's and wears none. */
@@ -878,7 +882,7 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
    *  change touches the line. */
   const lineRow = (line, withTime, extra, withChan = false, hit = '') => {
     const parts = lineNode(line, withTime, withChan, hit);
-    return { ...parts, id: line.id, css: null, badgeKey: null, before: [], after: [], ...extra };
+    return { ...parts, id: line.id, css: null, badgeKey: null, after: [], ...extra };
   };
 
   /**
@@ -924,7 +928,7 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
         if (r.badgeKey === key) continue;
         if (inList && keep === null) keep = log.open && unseen === 0 && atNewest();
         r.badgeKey = key;
-        ({ before: r.before, after: r.after } = badgeNodes(b ?? {}, 'dfchat-line'));
+        r.after = badgeNodes(b ?? {}, 'dfchat-line');
         layLine(r);
       }
     };
@@ -1091,7 +1095,8 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
       const line = el('div', 'dfchat-who-line');
       // TITLE-R (2026-09-24, Mac: "Titles shouldnt show in the online panel. Only glyphs. Titles should remain over
       // names and within chat itself"): the roster is a list of who is here - the glyphs AFTER the name are what is
-      // true of each; the title a player chose to wear is theirs to show over their head and beside their lines.
+      // true of each; the title a player chose to wear is theirs to show over their head (TITLE-C, 2026-10-12, Mac:
+      // "remove titles from appearing in the chat" - and no longer beside their lines).
       line.append(nameEl);
       const gt = guildTagText(r.gt);   // GUILD1c: the guild's tag right of the name, as over a head
       if (gt) line.append(el('span', 'dfchat-who-guild', gt));
@@ -1149,7 +1154,7 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
     peek.replaceChildren();
     paintSocial();   // SOC3
     paintNames();
-    // CHAT-SCROLL: LAST, after the badge pass - a title laid into a new line can wrap it, and a scroll taken before
+    // CHAT-SCROLL: LAST, after the badge pass - a badge laid into a new line can wrap it, and a scroll taken before
     // that growth left the newest line under the fold
     if (follow) toNewest(); else paintJump();
   };

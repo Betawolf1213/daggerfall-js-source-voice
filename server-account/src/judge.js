@@ -37,7 +37,7 @@
 //     piles it dropped - picked up again, a pile is no gain). INT5's budget reads it.
 // ═══════════════════════════════════════════════════════════════════
 
-import { itemFindings, itemWorth, lawTemplate, classicPiece, PROVENANCE_RE, ITEM_UID_RE, ITEM_LAW_VERSION } from '../../src/systems/itemLaw.js';
+import { itemFindings, itemWorth, lawTemplate, classicPiece, PROVENANCE_RE, ITEM_UID_RE, ITEM_LAW_VERSION, GOLD_INT_MAX } from '../../src/systems/itemLaw.js';
 import { valuablePiece } from '../../src/systems/itemIds.js';
 import { armsOf } from '../../src/net/siegeRef.js';   // INT7: the arms the token signs
 import { liquidWorthOf, deedsOf } from '../../src/net/realmGoldLaw.js';
@@ -146,6 +146,9 @@ export function wealthOf(save, { level = save?.level } = {}) {
 
 /** A count the save may leave out, and must otherwise write as gold is written: a whole number, never below nothing. */
 const goldWord = (/** @type {unknown} */ v) => v == null || (Number.isSafeInteger(v) && /** @type {number} */ (v) >= 0);
+/** HACKED-GOLD (GOLD-INT): and the purse is one count - DFU's `int goldPieces` (itemLaw.js GOLD_INT_MAX). A purse past it
+ *  is no honest one: a modified client's nine quadrillion was "lawful" here, a law finding now. */
+const purseWord = (/** @type {unknown} */ v) => goldWord(v) && !(/** @type {number} */ (v) > GOLD_INT_MAX);
 
 /**
  * THE CHARACTER LAW: a level the summary agrees with, attributes and skills inside the port's own caps, its gold - the
@@ -157,7 +160,7 @@ export function characterFindings(save, summary) {
   const level = save?.level;
   if (!Number.isInteger(level) || level < 1 || level > JUDGE_LEVEL_MAX) out.push({ code: 'level' });
   else if (summary && summary.level != null && summary.level !== level) out.push({ code: 'level-claim' });
-  if (!goldWord(save?.goldPieces)) out.push({ code: 'gold' });
+  if (!purseWord(save?.goldPieces)) out.push({ code: 'gold' });
   arrayOf(save?.bankAccounts).forEach((/** @type {any} */ a, /** @type {number} */ i) => {
     if (a != null && !(goldWord(a?.accountGold) && goldWord(a?.loanTotal))) out.push({ code: 'bank', at: i });
   });

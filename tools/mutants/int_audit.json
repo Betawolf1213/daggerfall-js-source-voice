@@ -281,7 +281,7 @@
   {
     "name": "INTA-the-gold-unread",
     "file": "server-account/src/judge.js",
-    "old": "  if (!goldWord(save?.goldPieces)) out.push({ code: 'gold' });\n",
+    "old": "  if (!purseWord(save?.goldPieces)) out.push({ code: 'gold' });\n",
     "new": "",
     "tests": [
       "test/int2_judge.test.js"
@@ -389,8 +389,8 @@
   {
     "name": "INTA-the-chest-lost",
     "file": "src/systems/loot.js",
-    "old": "    if (!lawRefuses(it)) out.push(it);\n",
-    "new": "    if (lawRefuses(it)) return null;\n    out.push(it);\n",
+    "old": "    if (!lawRefuses(it)) out.push(lawPriced(it));   // HACKED-GOLD: at no price past the law's ceiling\n",
+    "new": "    if (lawRefuses(it)) return null;\n    out.push(lawPriced(it));   // HACKED-GOLD: at no price past the law's ceiling\n",
     "tests": [
       "test/int1_itemlaw.test.js"
     ]

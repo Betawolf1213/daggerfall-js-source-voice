@@ -32,6 +32,14 @@ export function maxPopulationFor(totalBlocks) {
   return Math.max(1, Math.min(4, Math.floor(totalBlocks / 16))) * POP_PER_16_BLOCKS;
 }
 
+/** UpdateMobiles' `allowChange` - the one law that hides a pop: a body may come on or go only beyond
+ *  allowVisiblePopRange, or outside the player's 180-degree forward view (behind them). `dx`, `dz` the body off the
+ *  player, `viewYaw` the camera's; `dist` the caller's measure (this manager's own is 3D). One home for every reader:
+ *  this pool, the living town's (livingTown.js `_hidden`) and the town watch's defenders walking off (cityGuards.js). */
+export function popAllowChange(dx, dz, viewYaw, dist = Math.hypot(dx, dz)) {
+  return dist > POP_VISIBLE_RANGE || !(dx * Math.sin(viewYaw) + dz * Math.cos(viewYaw) > 0);
+}
+
 export class TownPopulation {
   /**
    * @param nav CityNavigation
@@ -144,7 +152,7 @@ export class TownPopulation {
       if (!it.active) continue;
       const dx = it.person.pos[0] - playerPos[0], dz = it.person.pos[2] - playerPos[2];
       const dist = Math.hypot(dx, it.person.pos[1] - playerPos[1], dz);
-      const allowChange = dist > POP_VISIBLE_RANGE || !this._inView(dx, dz, viewYaw);
+      const allowChange = popAllowChange(dx, dz, viewYaw, dist);
       if (it.scheduleEnable && allowChange && isDay && !this.suppressSpawns()) { it.scheduleEnable = false; it.visible = true; }   // V4: SuppressPopulationSpawns holds the promote
       if (it.person.seekCount > POP_MAX_SEEKS || dist > POP_RECYCLE_DISTANCE || !isDay) it.scheduleRecycle = true;
       if (it.scheduleRecycle && allowChange) {
@@ -167,12 +175,6 @@ export class TownPopulation {
       return true;
     }
     return false;
-  }
-
-  _inView(dx, dz, viewYaw) {
-    // Within the 180-degree forward view (Vector3.Angle <= 90)
-    const fx = Math.sin(viewYaw), fz = Math.cos(viewYaw);
-    return dx * fx + dz * fz > 0;
   }
 
   /** Per-frame drive; ticks at 10Hz internally. Returns the LIVE

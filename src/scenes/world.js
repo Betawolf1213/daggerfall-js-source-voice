@@ -763,9 +763,9 @@ import { pageWave } from '../net/reconnectWave.js';   // SCALE2c: a relay deploy
 import { quietFoesGate } from '../net/foesQuiet.js';   // SCALE2c: a full foes frame that says nothing, said once
 import { createSeatLock, SEAT_NOTICE, SEAT_MID_TEXT, PLAY_HERE_LABEL } from '../net/oneSeat.js';   // ONE-SEAT: one tab of a player online - the browser's arm, beside the hub's
 import { readAccount, buyInsignia, equipTitle, equipAura, adoptIdentity as adoptSessionIdentity } from '../net/accountClient.js';   // WB9g: the Broker's insignia - the account's wardrobe, its sale and its wearing, and my own screen's word of it
-import { ownAura } from '../systems/ownGlyphs.js';   // WB9g: the aura at my own feet - the service's last word, kept on the stored session
+import { ownAura, ownNameAsAt } from '../systems/ownGlyphs.js';   // WB9g: the aura at my own feet - the service's last word, kept on the stored session; NAME-AS: and when this device last chose the name its player wears
 import { INSIGNIA, insigniaRefusal } from '../net/insignia.js';   // WB9g
-import { accountTokenMinter, storedSession, muteAccount, serviceBase, accountRefusalText, accountDuels, accountWild, accountRenown, accountRoll, accountHomes, accountDecor, accountGuilds, accountGates, accountMarks, accountCards, accountBoard, accountProf, accountRaids, accountMarket, accountWrits, accountSeats, accountSerpents, accountSds } from '../net/accountClient.js';   // ACC1d: the hello's signed word, minted per connection from the account session this device holds   // ACC4's beat knocks through the tab's heartbeat (SCALE4c), not from here
+import { accountTokenMinter, storedSession, muteAccount, serviceBase, accountRefusalText, accountDuels, accountWild, accountRenown, accountRoll, accountHomes, accountDecor, accountGuilds, accountGates, accountMarks, accountCards, accountBoard, accountProf, accountRaids, accountMarket, accountWrits, accountSeats, accountSerpents, accountSds, nameWhyText } from '../net/accountClient.js';   // NAME-AS: nameWhyText, why my character's name stood aside   // ACC1d: the hello's signed word, minted per connection from the account session this device holds   // ACC4's beat knocks through the tab's heartbeat (SCALE4c), not from here
 import { parseModCommand, runModCommand, mutedText, mutedNotices } from '../net/moderation.js';   // MOD1: /mute and /unmute, and the line a muted player reads
 import { createHeartbeat, whileLive } from '../net/heartbeat.js';   // SCALE4c: the beat, the letterbox and the town's board in one request
 import { startPlayClock } from '../net/playClock.js';   // ACC4: time played, knocked from here and measured by the account service's clock
@@ -930,7 +930,7 @@ import { createQuestBridge, tokensToRows } from './questBridge.js';
 import { loadQuestPack } from './questData.js';
 import { ensureFactionRep, getReputation, changeReputation } from '../systems/factionRep.js';
 import { changeLegalRep, legalRepOf, CRIMES, setCrimeCommitted, lowerRepForCrime, setCrimeRepFactor } from '../systems/court.js';   // the region's LegalRep: the status box, the quest actions, the crimes (REP1 retired :498-511's levy)
-import { isEquipped, unequipSlot, unequipItem } from '../systems/equip.js';
+import { isEquipped, unequipSlot, unequipItem, wearableItem } from '../systems/equip.js';   // HACKED-GOLD: a worn offer holds what can be worn
 import { ServiceFlowWindow } from '../ui/guildServiceWindows.js';
 import { makeItemPermanent } from '../systems/quest/item.js';
 import { isShelved } from '../systems/quest/quest.js';   // QUEST-SHELF: a quest set aside
@@ -11855,6 +11855,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     levelBonus: () => seatEdicts.guardLevelBonus(Math.floor(skyMinutes())),   // SEAT1d: a Curfew's night watch - AUDIT SEATS-3 E1: the sky's night (TIME1), the one the town sees
     fightHere: () => areEnemiesNearby([...cityGuards.guards, ...exteriorFoes.foes]),   // PROTECT-FIGHT: under the protection, a fight spares the street's walkers
     oneVoice: () => livingWorldOn(), windowUp: () => townTalk.overlayActive,   // HALT-ONE: the living watch calls as one, and nobody under a window (cityGuards.js)
+    viewYaw: () => cam.yaw,   // WATCH-LEAVES: a defender walking off goes behind the view the street's walkers come and go behind (population.update's yaw)
     say: (l) => townTalk.say(l),   // C-slice: equipment breaks speak
     currentMinute: () => Math.floor(playerTicker.ownMinutes),   // AUDIT 23 (hosts-3): the poison clock
     currentPixelKey: () => `${playerTravelPixel().x},${playerTravelPixel().y}`,   // TrackLooseObject's stamp - the pile seam's key, one shape
@@ -21555,6 +21556,32 @@ export async function bootWorld(canvas, renderer, params, status) {
     who = { ...who, glyphs: _staffGlyphs.filter((g) => !off.includes(g)) };
     online?.adoptIdentity?.(who); if (who && 'aura' in who) _auraHeard = who.aura ?? null;
     for (const link of chatLinks?.values?.() ?? []) link.adoptIdentity?.(who);
+    // NAME-AS (2026-10-12): I chose my character's name and the mint signed my account's - its name cannot be worn as it
+    // stands (too long, letters the wire drops, the filter's word, another account's username). Said ONCE, in the chat,
+    // until the reason changes or goes: every room I open mints, and the line is the player's, not a room's.
+    const said = nameWhyText(who);
+    if (said == null) _nameWhySaid = null;
+    else if (said !== _nameWhySaid && chatLog) { _nameWhySaid = said; chatNotice(said); }
+  };
+  /** NAME-AS: the reason the chat last said for my character's name standing aside, or null. */
+  let _nameWhySaid = null;
+  /** NAME-AS (2026-10-12): A NAME CHOSEN ON THIS DEVICE REACHES THE ROOM AT ONCE. The account card stamps the stored
+   *  session when the service has taken a new choice (ui/accountFlow.js chooseName, `nameAsAt`); a stamp this page has
+   *  not acted on says hello again in every room I hold - the presence session's and every chat channel's, since a line's
+   *  name and the roster's are the channel's own - on a fresh token, which signs the new name (AURA-LIVE's door,
+   *  net/online.js rehello). Never on a mint's word: a mint already in flight when the choice landed answers the old
+   *  name, and the stamp is not its to move - so a late answer can neither hide a choice nor loop one, and a choice made
+   *  on another device (no stamp moved here) is simply what every later mint signs. A stamp from before this page is
+   *  read once and is no news. */
+  let _nameAsAtSeen;
+  const nameAsFrame = () => {
+    const at = ownNameAsAt();
+    if (at === _nameAsAtSeen) return;
+    const first = _nameAsAtSeen === undefined;
+    _nameAsAtSeen = at;
+    if (first || !online) return;
+    online.rehello?.();
+    for (const link of chatLinks?.values?.() ?? []) link.rehello?.();
   };
   /** STAFF1: MY GLYPHS AS THE ACCOUNT SERVICE LAST ISSUED THEM (never the device's stored copy, which is only a cache). */
   const staffGlyphs = () => _staffGlyphs;
@@ -23989,7 +24016,10 @@ export async function bootWorld(canvas, renderer, params, status) {
     remotePlayers?.holdCorpse?.(from, WILD_DEATH_HOLD_S * 1000);   // "the body ... disappears in 2 minutes"
     // AUDIT INT9: each record minted alone, its place in the offer kept - a record the law refused shifted every later one,
     // and the pick named another piece
-    const minted = (Array.isArray(body.items) ? body.items : []).map((it) => validLootList([it])?.[0] ?? null);
+    // HACKED-GOLD: and a WORN offer holds what can be worn (systems/wildDropLaw.js wornOffer: the fallen's worn pieces
+    // alone) - a coin pile in one went through the window's gold arm, which pays the purse and answers before the
+    // choice, so a modified client's offer paid its killer up to a million gold and was never chosen
+    const minted = (Array.isArray(body.items) ? body.items : []).map((it) => { const r = validLootList([it])?.[0] ?? null; return r && wearableItem(r) ? r : null; });
     const items = minted.filter(Boolean);
     if (!items.length || !wildOutdoors()) return;
     const mark = remotePlayers?.corpseMarks?.(onlineToScene)?.find((c) => c.id === from) ?? null;
@@ -28353,7 +28383,10 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  JOURNAL1's PENDING DOOR (`_letterPending`), opened the first frame the panel may stand - the board it was pressed
    *  on still held the slot this frame, so a direct open was refused, and the board closed on nothing at all. */
   const answerNote = (note) => {
-    const peer = note?.button === 'duel' ? [...(online?.peers?.values?.() ?? [])].find((q) => q?.name === note.from) : null;
+    // NAME-AS: the author found by ACCOUNT - the relay's `sub` against the note's `by` - since the name the room reads them
+    // by may be their character's, never the account's name the note was signed with; a service from before it says
+    // no `by`, and the name stands in as it did
+    const peer = note?.button === 'duel' ? [...(online?.peers?.values?.() ?? [])].find((q) => (typeof note.by === 'string' && note.by ? q?.sub === note.by : q?.name === note.from)) : null;
     const plan = planNoteAnswer(note, {
       duelHere: !!peer && duelCan() == null && duelNear(peer.id),
       mail: mail?.state ?? null, letters: !!socialPanel, signedOutText: LETTERS_SIGNED_OUT_TEXT,
@@ -29371,6 +29404,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     rollTracker?.tick();   // CHAP1: this character's standing with the guilds - read once, then what moved claimed when due
     peerMenuFrame();   // PEERMENU1: the bind's hold timer
     peerFxFrame();   // PEERFX1: the others' blows and hurts, played
+    nameAsFrame();   // NAME-AS: a name chosen on this device said again in every room I hold - before the dead return, as the chat's channels keep theirs
     // REALM-DOOR: the relay shut its door on this tab's token as naming no realm character of its account - the character
     // deleted elsewhere, or the account signed out and another in: the realm's own end, to the Online door with the realm's
     // word (the relay's words are for a build from before the realm), before anything else this frame draws over it

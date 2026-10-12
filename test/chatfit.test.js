@@ -3,8 +3,10 @@
 // should also show on chat names in the chat itself"): THE ROSTER
 // COLUMN IS AS TALL AS THE CONVERSATION and scrolls inside that, a row
 // is ONE LINE with the name giving way, and a chat line wears its
-// author's badge - the title before the name, the glyphs after - asked
-// of the host on the colour pass's law.
+// author's badge - the glyphs after the name - asked of the host on the
+// colour pass's law. TITLE-C (2026-10-12, Mac: "remove titles from
+// appearing in the chat"): CHAT-FIT laid the title before the name too;
+// a line wears none now, as the roster has worn none since TITLE-R.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -54,7 +56,7 @@ function mount({ badges = new Map(), svg = true, roster = null } = {}) {
   return { doc, log, panel, root: doc.body.children[0] };
 }
 
-test('CHAT-FIT: the sheet - the column is absolute inside a relative column of fixed width, a row\'s line is nowrap flex and only the NAME shrinks (ellipsis), and the line badge classes exist at the roster\'s sizes', () => {
+test('CHAT-FIT: the sheet - the column is absolute inside a relative column of fixed width, a row\'s line is nowrap flex and only the NAME shrinks (ellipsis), and the line badge classes exist at the roster\'s sizes - TITLE-C: and no title class on a line, which nothing draws', () => {
   const who = rule('.dfchat-who');
   assert.equal(who.position, 'relative'); assert.equal(who.width, 'calc(148px * var(--dfchat-scale, 1))', 'CHAT-SIZE: 148px at the sheet\'s own size, and wider with the text'); assert.equal(who.display, undefined, 'the column is not a flex column any more - its inner is');
   const inner = rule('.dfchat-who-inner');
@@ -65,7 +67,7 @@ test('CHAT-FIT: the sheet - the column is absolute inside a relative column of f
   assert.equal(rule('.dfchat-who-glyph, .dfchat-who-tag').flex, 'none', 'the glyphs and the tag never give (TITLE-R: the roster wears no title)');
   const row = rule('.dfchat-who-row'); assert.equal(row['overflow-wrap'], undefined, 'no more folding a name under its title'); assert.equal(row.display, undefined, 'the row is a block, so the menu opens under the line');
   assert.equal(rule('.dfchat-line-glyph').width, rule('.dfchat-who-glyph').width, 'a line glyph is the roster glyph\'s size');
-  assert.equal(rule('.dfchat-line-title')['text-transform'], 'uppercase');
+  assert.equal(CSS_RULES(CHAT_CSS).some((x) => /dfchat-line-title/.test(x.sel)), false, 'TITLE-C: no rule for a title on a line - nothing draws one');
 });
 
 test('CHAT-FIT / TITLE-R: the roster column\'s DOM - head, list and more sit in the absolute inner; a row is a block holding ONE line of name (its full text in the title attribute), glyphs and tag - no title (Mac: "Titles shouldnt show in the online panel. Only glyphs"); the action menu opens under the line', () => {
@@ -90,7 +92,7 @@ test('CHAT-FIT / TITLE-R: the roster column\'s DOM - head, list and more sit in 
   assert.equal(dup.length, 2); for (const r of dup) assert.ok(one(r, 'dfchat-who-tag'), 'a shared name carries its tag in the line');
 });
 
-test('CHAT-FIT: a chat LINE wears its author\'s badge - the title before the name, the glyphs after, the tag and the text after those; a system line none; an author the host does not know none; and the peek rows the same', () => {
+test('CHAT-FIT / TITLE-C: a chat LINE wears its author\'s badge - the glyphs after the name, the tag and the text after those, and NO title (Mac: "remove titles from appearing in the chat"); a system line none; an author the host does not know none; and the peek rows the same (mutants: the title back on a line)', () => {
   const badges = new Map([['p1', { title: 'founder', glyphs: ['sprout'] }], ['p3', { title: null, glyphs: ['dev', 'sprout'] }]]);
   const { root, log, panel } = mount({ badges });
   log.push('world', { id: 'p1', name: 'Icebreyker', text: 'hello', at: 1000 });
@@ -100,20 +102,21 @@ test('CHAT-FIT: a chat LINE wears its author\'s badge - the title before the nam
   log.setOpen(true); panel.render?.(); panel.paint?.();
   const list = one(root, 'dfchat-list');
   const [l1, l2, l3, l4] = list.children;
-  assert.equal(shape(l1), 'dfchat-time dfchat-line-title dfchat-name dfchat-line-glyph dfchat-tag dfchat-text', 'title before the name, glyph after it, then the tag and the text');
-  assert.equal(one(l1, 'dfchat-line-title').textContent, TITLE_TEXT.founder);
+  assert.equal(shape(l1), 'dfchat-time dfchat-name dfchat-line-glyph dfchat-tag dfchat-text', 'the name, its glyph after it, then the tag and the text - the Founder wears no title here');
+  const words = (n) => [n.textContent, ...n.children.map(words)].join(' ');
+  assert.equal(words(l1).includes(TITLE_TEXT.founder), false, 'TITLE-C: the title\'s word is nowhere on the line');
   assert.equal(one(l1, 'dfchat-line-glyph').children[0].attrs.d, GLYPH_PATH.sprout, 'the glyph is the vocabulary\'s own path');
   assert.equal(shape(l2), 'dfchat-time dfchat-name dfchat-tag dfchat-text', 'an unknown author: no badge, the line as it was');
-  assert.equal(shape(l3), 'dfchat-time dfchat-name dfchat-line-glyph dfchat-line-glyph dfchat-tag dfchat-text', 'two glyphs, no title');
+  assert.equal(shape(l3), 'dfchat-time dfchat-name dfchat-line-glyph dfchat-line-glyph dfchat-tag dfchat-text', 'two glyphs');
   assert.equal(shape(l4), 'dfchat-time dfchat-text', 'a notice is not attributed and wears nothing');
   // the peek rows (closed state) wear the same
   log.setOpen(false); panel.render?.(); panel.paint?.();
   const peek = one(root, 'dfchat-peek');
   const p1 = peek.children.find((n) => one(n, 'dfchat-name')?.textContent === 'Icebreyker');
-  assert.ok(p1, 'the peek shows the line'); assert.equal(shape(p1), 'dfchat-line-title dfchat-name dfchat-line-glyph dfchat-tag dfchat-text', 'no time in the peek, the badge the same');
+  assert.ok(p1, 'the peek shows the line'); assert.equal(shape(p1), 'dfchat-name dfchat-line-glyph dfchat-tag dfchat-text', 'no time in the peek, the badge the same - no title');
 });
 
-test('CHAT-FIT: the badge pass re-lays a line ONLY when its author\'s badge changes - a title equipped mid-conversation reaches the lines already said, an unchanged answer touches nothing, and the name keeps its colour', () => {
+test('CHAT-FIT / TITLE-C: the badge pass re-lays a line ONLY when what it DRAWS changes - a glyph shown mid-conversation reaches the lines already said, a title put on or taken off alone touches nothing (no line draws one), an unchanged answer touches nothing, and the name keeps its colour (mutants: the title back in the badge key)', () => {
   const badges = new Map([['p1', { title: null, glyphs: [] }]]);
   let colour = '';
   const doc = fakeDocument(), win = fakeWindow();
@@ -127,9 +130,12 @@ test('CHAT-FIT: the badge pass re-lays a line ONLY when its author\'s badge chan
   let lays = 0; const orig = line.replaceChildren; line.replaceChildren = (...cs) => { lays++; orig(...cs); };
   panel.render?.(); panel.paint?.(); panel.render?.();
   assert.equal(lays, 0, 'an unchanged badge touches nothing');
+  badges.set('p1', { title: 'founder', glyphs: [] });
+  panel.render?.(); panel.paint?.();
+  assert.equal(lays, 0, 'TITLE-C: a title put on alone re-lays nothing - the line draws no title');
   badges.set('p1', { title: 'founder', glyphs: ['sprout'] }); colour = 'rgb(1, 2, 3)';
   panel.render?.(); panel.paint?.();
-  assert.equal(lays, 1, 'one re-lay for the change'); assert.equal(shape(line), 'dfchat-time dfchat-line-title dfchat-name dfchat-line-glyph dfchat-tag dfchat-text');
+  assert.equal(lays, 1, 'one re-lay for the glyph'); assert.equal(shape(line), 'dfchat-time dfchat-name dfchat-line-glyph dfchat-tag dfchat-text');
   assert.equal(one(line, 'dfchat-name'), nameEl, 'the same name span, re-laid'); assert.equal(nameEl.style.color, 'rgb(1, 2, 3)', 'and the colour pass still paints it');
   badges.set('p1', { title: null, glyphs: [] });
   panel.render?.(); panel.paint?.();
@@ -140,7 +146,7 @@ test('CHAT-FIT: a document with no SVG door draws no glyph and does not throw; w
   const badges = new Map([['p1', { title: 'founder', glyphs: ['sprout'] }]]);
   const { root, log, panel } = mount({ badges, svg: false });
   log.push('world', { id: 'p1', name: 'Ice', text: 'a', at: 1000 }); log.setOpen(true); panel.render?.(); panel.paint?.();
-  assert.equal(shape(one(root, 'dfchat-list').children[0]), 'dfchat-time dfchat-line-title dfchat-name dfchat-tag dfchat-text', 'the title still, the glyph not');
+  assert.equal(shape(one(root, 'dfchat-list').children[0]), 'dfchat-time dfchat-name dfchat-tag dfchat-text', 'no glyph (no SVG door) - and no title (TITLE-C)');
   const doc = fakeDocument(), win = fakeWindow(); const log2 = new ChatLog({ now: () => 1000 });
   const panel2 = createChatPanel({ log: log2, onSend: () => true, doc, win, touch: false, action: () => null, overlay: () => false });
   log2.push('world', { id: 'p1', name: 'Ice', text: 'a', at: 1000 }); log2.setOpen(true); panel2.render?.(); panel2.paint?.();

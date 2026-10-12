@@ -281,6 +281,9 @@ test('ACC3c / TITLE-R: the roster REPAINTS when a glyph changes - it is keyed, a
   assert.doesNotMatch(row, /titleBadge|who-title/, 'TITLE-R: no title on the roster row');
   // CHAT-FIT: they sit in the row's one nowrap LINE (`line`), not on the row itself
   assert.ok(row.indexOf('line.append(nameEl)') >= 0 && row.indexOf('line.append(nameEl)') < row.indexOf('dfchat-who-glyph'), 'the glyphs after the name');
-  // the title stays where Mac kept it: over the name (ui/nameLayer.js, net/remotePlayers.js) and on a chat line
-  assert.match(panel, /const badgeNodes = \(peer, prefix\) => \{\s*const badge = titleBadge\(peer\);/, 'a chat line still wears its author\'s title');
+  // the title stays where Mac kept it: over the name (ui/nameLayer.js, net/remotePlayers.js) - TITLE-C (2026-10-12, Mac:
+  // "remove titles from appearing in the chat") took it off the chat line as TITLE-R took it off the roster
+  const nodes = /const badgeNodes = \(peer, prefix\) => \{[^]*?\n  \};/.exec(panel);
+  assert.ok(nodes, 'the line badge\'s builder moved');
+  assert.doesNotMatch(nodes[0].replace(/\/\/[^\n]*|\/\*[^]*?\*\//g, ''), /title/i, 'TITLE-C: a chat line wears no title (its comments stripped - a note saying so is not a title)');
 });

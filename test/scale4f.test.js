@@ -44,6 +44,13 @@ async function realmArmsOf({ db }, playerId, id) {
   const wa = row && row.arms_top != null ? [row.arms_top, row.arms_bow === 1 ? 1 : 0] : null;
   return armsIssuable(wa) ? wa : null;
 }
+// NAME-AS (acct122): AND ITS OWN NAME - a fifth answer the fold reads in the same statement (realm.js realmMintFacts
+// `name`), held here to its own read beside the four.
+async function realmOwnName({ db }, playerId, id) {
+  if (typeof id !== 'string' || !REALM_ID_RE.test(id)) return null;
+  const row = await db.prepare('SELECT name FROM realm_characters WHERE id = ? AND player = ?').bind(id, playerId).first();
+  return typeof row?.name === 'string' && row.name ? row.name : null;
+}
 async function realmHouseOf({ db }, playerId, id) {
   if (typeof id !== 'string' || !/^r[0-9a-f]{20}$/.test(id)) return null;
   const row = await db.prepare('SELECT r.person_id AS person, l.record AS record FROM realm_characters r JOIN lineages l ON l.player = r.player AND l.id = r.lineage_id'
@@ -54,10 +61,10 @@ async function realmHouseOf({ db }, playerId, id) {
 /** What the mint asked before the fold - the four reads, each only behind `rc` as the mint asked them. */
 async function oracle(ctx, playerId, id) {
   const rc = (await realmCharacterHeld(ctx, playerId, id)) ? 1 : 0;
-  return { rc, cl: rc ? await realmLevelOf(ctx, playerId, id) : null, wa: rc ? await realmArmsOf(ctx, playerId, id) : null, house: rc ? await realmHouseOf(ctx, playerId, id) : null };
+  return { rc, cl: rc ? await realmLevelOf(ctx, playerId, id) : null, wa: rc ? await realmArmsOf(ctx, playerId, id) : null, house: rc ? await realmHouseOf(ctx, playerId, id) : null, name: rc ? await realmOwnName(ctx, playerId, id) : null };
 }
 
-test('SCALE4f the mint\'s four reads of one row, in one - exactly what the four answered, over every state a row can be in: held or not, leased or not, a tombstone, another\'s, a level judged, summarised, none or out of bounds, arms with a bow, without, unjudged, a house, a line gone, a name the filter refuses, no person (mutants: the lease unread; a tombstone read as held; the summary\'s level unread; the level\'s bounds unread; the bow unread; the arms\' law unread; a house without its line; the house never read)', async () => {
+test('SCALE4f the mint\'s four reads of one row, in one - exactly what the four answered, over every state a row can be in: held or not, leased or not, a tombstone, another\'s, a level judged, summarised, none or out of bounds, arms with a bow, without, unjudged, a house, a line gone, a name the filter refuses, no person - NAME-AS: and its own name, a fifth answer of the same read (mutants: the lease unread; a tombstone read as held; the summary\'s level unread; the level\'s bounds unread; the bow unread; the arms\' law unread; a house without its line; the house never read)', async () => {
   const S = await standService();
   const g = await S.guest();
   const other = await S.guest();
@@ -104,7 +111,7 @@ test('SCALE4f the mint\'s four reads of one row, in one - exactly what the four 
     }
   }
   assert.ok(held >= 20 && housedSeen >= 5, `the states reached both sides of every arm (${held} held, ${housedSeen} housed)`);
-  for (const bad of [null, 7, '', 'r123', 'R'.padEnd(21, 'f'), `${housed.id}x`]) assert.deepEqual(await realmMintFacts(ctx, g.id, bad), { rc: 0, cl: null, wa: null, house: null }, String(bad));
+  for (const bad of [null, 7, '', 'r123', 'R'.padEnd(21, 'f'), `${housed.id}x`]) assert.deepEqual(await realmMintFacts(ctx, g.id, bad), { rc: 0, cl: null, wa: null, house: null, name: null }, String(bad));
 });
 
 test('SCALE4f the mint asks its realm row ONCE - one statement where four were, and a token as it was (mutants: the four asked again)', async () => {

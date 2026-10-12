@@ -42,7 +42,7 @@ import { themedIngredientPool } from './lootThemes.js';   // MOD: a monster's Cr
 import { isOnlinePage } from './onlineLane.js';   // REALM P0.4: online, a pile's gold is not the level's
 import { rriLootMatrix, rriEnemyLootTableKey, conditionBasedPricesOn, randomConditionLootItems } from './rriRealism.js';   // RRI2: LootRealismTables over DefaultLootTables, MobLootKeys over the basics' key, the condition roll on tabled loot
 import { RRI_VENDOR } from './rriItems.js';   // FORAGE3: the pile event's first subscriber, named by its mod
-import { RECEIVER_MARKS } from '../net/realmTradeLaw.js';   // MARK-WIRE: the receiver's marks, one list with the realm's trade law
+import { RECEIVER_MARKS, VALUE_IS_IDENTITY_TEMPLATES, BOAT_TEMPLATES } from '../net/realmTradeLaw.js';   // MARK-WIRE: the receiver's marks, one list with the realm's trade law; HACKED-GOLD: the records whose `value` is no price
 
 // LootChanceMatrix rows, verbatim (22 keys, '-' included).
 export const LOOT_MATRICES = Object.freeze({
@@ -572,18 +572,37 @@ export const LOOT_ARRAY_FIELDS = Object.freeze(itemFieldsOfKind('array'));
  *  minted. A registration, not an import: the law reads the loot graph whole (the records, the spoils, the Broker), and
  *  this module sits under it. Until a host imports the law, the wire checks the shapes alone, as it always did. */
 let _itemLaw = null;
-export function setItemLaw(fn) { _itemLaw = typeof fn === 'function' ? fn : null; }
+/** HACKED-GOLD: and the law's CEILING on an honest price (itemLaw.js worthCeiling), registered beside it - the wire's
+ *  price has a floor (AUDIT WORLD6a B1, below) and, with the law, a ceiling. */
+let _priceCeiling = null;
+export function setItemLaw(fn, ceiling = null) { _itemLaw = typeof fn === 'function' ? fn : null; _priceCeiling = typeof ceiling === 'function' ? ceiling : null; }
 
 /** One item record off the wire, clamped to a copy - or null when it is not one this port could have minted: its shape
  *  (wireLootItem) and the item law. */
 export function validLootItem(v) {
   const out = wireLootItem(v);
-  return out && !lawRefuses(out) ? out : null;
+  return out && !lawRefuses(out) ? lawPriced(out) : null;
 }
 /** INT1: the item law's word on a clamped record - its fields agree with each other as a producer mints them (a tier's
  *  lines its tier's, a record's its record's, a sigil its band's, the maker's rows within the item's power). The
  *  receiver's own marks were stripped, never judged. */
 const lawRefuses = (/** @type {any} */ it) => !!_itemLaw && _itemLaw(it, { receiver: true }).length > 0;
+/** HACKED-GOLD: THE PRICE IS NOT THE WIRE'S, ABOVE EITHER. AUDIT WORLD6a B1 floored a peer's price at what the port
+ *  mints the piece at and left the top open ("an honest value above it ... stands") - and every counter pays a piece by
+ *  that price (tradeModes.js counterValueOf; shopStock.js calculateTradePrice, a sixth of it online at 50 Mercantile and
+ *  Personality, half offline), so a modified client's dagger priced at nine million sold for 1,471,656 in an honest
+ *  player's hands. The top is the law's own ceiling on an honest price (itemLaw.js
+ *  worthCeiling, the wealth measure's - its base four times over, its lines', a tier's, a margin): of the 46,919 pieces
+ *  every honest producer mints (test/honestItems.mjs) none passes it but Come Sail Away's deeds, whose worth is their
+ *  hull's. A record whose `value` is no price - a letter of credit (its value IS it) and a boat's parts or deed
+ *  (net/realmTradeLaw.js) - is left as it came: a letter never rides a peer's word at all (systems/peerWord.js), and a
+ *  boat's records never leave their holder in a trade. Never under the floor the projection set. */
+const lawPriced = (/** @type {any} */ it) => {
+  if (_priceCeiling && !VALUE_IS_IDENTITY_TEMPLATES.includes(it.templateIndex) && !BOAT_TEMPLATES.includes(it.templateIndex)) {
+    it.value = Math.min(it.value, Math.max(_priceCeiling(it), wireFloorOf(it)));
+  }
+  return it;
+};
 
 /** One item record off the wire, clamped to a copy - or null when its SHAPE is not one this port could have minted (a
  *  template it has not, a field not its kind, a mark that disagrees with its item). The law is validLootItem's. */
@@ -638,7 +657,7 @@ export function validLootList(v) {
     if (!it) return null;
     // INT1 (AUDIT INT): a piece the item law refuses is no item - IT goes, never the list: a forged piece in a chest, a
     // body or a shelf cost every honest piece beside it ("from a newer version of the game", which no reload mends)
-    if (!lawRefuses(it)) out.push(it);
+    if (!lawRefuses(it)) out.push(lawPriced(it));   // HACKED-GOLD: at no price past the law's ceiling
   }
   return out;
 }

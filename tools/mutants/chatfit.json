@@ -12,7 +12,7 @@
  { "name": "CHATFIT-the-inner-is-not-in-the-column", "file": "src/ui/chatPanel.js",
    "old": "  whoInner.append(whoHead, whoList, whoMore);   // CHAT-FIND: the search strip goes above the heading (placeFind)\n  who.append(whoInner);", "new": "  who.append(whoHead, whoList, whoMore);", "tests": ["test/chatfit.test.js"] },
  { "name": "CHATFIT-the-line-wears-the-glyphs-before-the-name", "file": "src/ui/chatPanel.js",
-   "old": "  const layLine = (r) => { r.node.replaceChildren(...[r.chan, r.time, ...r.before, r.nameEl, ...r.after, r.tag, r.text].filter(Boolean)); };", "new": "  const layLine = (r) => { r.node.replaceChildren(...[r.chan, r.time, ...r.after, r.nameEl, ...r.before, r.tag, r.text].filter(Boolean)); };", "tests": ["test/chatfit.test.js"] },
+   "old": "  const layLine = (r) => { r.node.replaceChildren(...[r.chan, r.time, r.nameEl, ...r.after, r.tag, r.text].filter(Boolean)); };", "new": "  const layLine = (r) => { r.node.replaceChildren(...[r.chan, r.time, ...r.after, r.nameEl, r.tag, r.text].filter(Boolean)); };", "tests": ["test/chatfit.test.js"] },
  { "name": "CHATFIT-the-badge-pass-re-lays-every-line-every-frame", "file": "src/ui/chatPanel.js",
    "old": "        if (r.badgeKey === key) continue;\n", "new": "", "tests": ["test/chatfit.test.js"] },
  { "name": "CHATFIT-the-badge-pass-skips-the-peek", "file": "src/ui/chatPanel.js",

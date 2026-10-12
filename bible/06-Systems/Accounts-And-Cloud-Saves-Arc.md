@@ -3181,7 +3181,7 @@ patreon titles. These also recieve their own unique glyphs. The account Dutchess
   - The client gates it coming in and keeps it as a system line on every tab, drawn in the title's orange.
   - The host parses it before /red and never guards it.
 - **The roster** (the chat's online column) shows glyphs only. The title stays over the name (`ui/nameLayer.js`,
-  `net/remotePlayers.js`) and on a chat line (`badgeNodes`).
+  `net/remotePlayers.js`) - and stood on a chat line (`badgeNodes`) until TITLE-C (2026-10-12, below) took it off.
 - **Founder** is closed. It was already derived from `registered_at <= FOUNDER_UNTIL` (2026-09-23T00:00Z), so no
   account registered since then could obtain it, and every account that holds it keeps it, both held and worn. A pin
   now holds both halves.
@@ -4018,7 +4018,7 @@ unique different version of the aura, a title named Hour's First, and each the g
   has 11 mutants, all dead.
 
 
-## EG-E2 — the Spire's titles and auras (2026-10-12, acct121, acct122 past BAL9, world197, world198 past BAL8)
+## EG-E2 — the Spire's titles and auras (2026-10-12, acct121, acct122 past BAL9, acct124 past NAME-AS and HACKED-GOLD, world197, world198 past BAL8)
 
 The Elite Breach's honours (`bible/11-Multiplayer/Elite-Gates.md` section 19, THE HONOURS; its EG-E2 record at the end
 of section 20), added as every honour is: the ids last in `identityToken.js` `TITLES` and `AURAS` (the relay's bundle -
@@ -5458,3 +5458,107 @@ among them.
   one; an address chosen before signing in, named by its guest name in the login and the token, its card showing its
   handle; the form refusing before any request and never refusing the sign-in; `tools/mutants/handleemail.json` (6,
   all killed).
+
+## NAME-AS - the name the room reads: the account's, or the character's (2026-10-12, acct122)
+
+Mac: "I want to add an option to the profile menu where players can toggle to use their account name or character
+name for ingame use".
+
+The room reads the token's `n` - ACC1g: no client writes a name, and ACC1a (Mac, 2026-09-21: "the account name would be
+used for online") made it the account's. So a choice of name cannot be the client's: a device that relabelled itself
+would be the only screen that believed it (NAME-ADOPT's bug, inverted). The choice is the account row's, and the mint
+signs it.
+
+- **The choice** (`server-account/migrations/0111_name_as.sql`, `server-account/src/accounts.js` NAME_AS, nameAsOf,
+  chooseNameAs): `name_as` 'character', or null for the account's - so every row that never chose reads as every player
+  read before. `POST /v1/account/name { as }` answers `{ ok, nameAs }`; any other word is 400 `no-name-as`. The account
+  view says it (`nameAs`).
+- **The mint** (`/v1/auth/token`, accounts.js wornNameOf): the account's name, or - where the row chose its
+  character's - the realm character's own name, off the row the token is minted for: `server-account/src/realm.js`
+  realmMintFacts answers `name`, a fifth answer of SCALE4f's one read of that row, never a second statement
+  (`test/scale4f.test.js` holds it to its own read beside the four). Never a word of the request: the body names WHICH
+  character, as it always did. Another account's character, one not in play, or none named: the account's, silently -
+  there is nothing to wear. The answer says `name` (the token's - the room's), `accountName` (the account's own),
+  `nameAs`, and, where the character's name stood aside, `nameWhy` and `nameWord`.
+- **When a character's name stands aside for the account's** (wornNameRefusal). It cannot ride the wire as it stands -
+  `src/net/identityToken.js` claimsValid refuses a token whose `n` is not nameIsIssuable, so a name signed past that law
+  is a player who cannot connect: `long` (past NAME_MAX, 24 - a realm name may be 32), `letters` (an accent, a symbol
+  past plain text, or no letters at all), `refused` (the name filter's, with the word it caught - NAME-F: a refusal
+  names it). `email` - HANDLE-EMAIL's law, worn as it is chosen: an address is never read out. And `taken`: ANOTHER
+  ACCOUNT'S USERNAME. A handle is unique and is how an account is found - a letter, a guild invitation, a commission,
+  staff's `/tp @name` - and `src/net/handleShape.js` keeps the guests' generated names out of that space by their shape
+  alone. A character's name is chosen at chargen and its shape promises nothing, so it is asked here: one read of the
+  unique `handle_lc` index, and only of a name that could be a handle at all (one word, HANDLE_RE - a name with a space
+  never can). The player's own handle is theirs to wear as their character's name. A name another player's character
+  or a guest also wears is no claim on any account - the roster's `#tag` tells them apart, as it always has.
+- **The device keeps two names** (`src/net/accountClient.js` accountTokenMinter, adoptIdentity): the stored session is
+  the account's picture - the profile mark's name - so it adopts `accountName`; the live sessions take `name`, the
+  room's: NAME-ADOPT's law one field further (my own roster row, my chat lines and the `@name` that pings me are the
+  room's name). A service before acct122 answers `name` alone, adopted as it always was.
+- **Said once** (`src/scenes/world.js` adoptIssued, accountClient.js nameWhyText): "Your character's name cannot be
+  shown online: <the reason>. Others see you as <the name the room reads>." - once, in the chat, until the reason
+  changes or goes; every room mints, and the line is the player's, not a room's.
+- **The room hears it at once** (`src/ui/accountFlow.js` chooseName, `src/systems/ownGlyphs.js` ownNameAsAt, world.js
+  nameAsFrame). A choice the service took STAMPS the stored session (`nameAsAt`, forward only, the flow's own clock);
+  the world host, seeing a stamp it has not acted on (its online frame, after the others' blows and before the realm
+  door's, the seat's and the dead's returns), says hello again on every open socket - the presence session's and every
+  chat channel's, since a line's name and a channel's roster are the channel's own - through AURA-LIVE's door
+  (`src/net/online.js` rehello), on a fresh token that signs the new name. Keyed on the stamp and never on a mint's
+  word: a mint already in flight when the choice landed answers the old name, and adopting its word would hide the
+  choice - or, against a store another device left behind, loop. A choice made on another device moves no stamp here
+  and is simply what every later mint signs. THE FOUR HOSTS: `scenes/world.js` wired - its online frame serves the
+  streaming exterior, `scenes/worldModes.js`'s interiors and `scenes/dungeonContext.js`'s dungeons, one online
+  session for all three, so no pause hook is threaded; `scenes/exterior.js`, the single-town bench, runs no online
+  session and has nothing to say a hello in.
+- **The card** (`src/ui/enhancedAccount.js` nameAsRow, NAME_AS_CHOICES). In the Account section, beside the name it goes
+  by: "Name in game", Account name / Character name, the chosen one pressed (`aria-pressed`) and worn in the
+  wardrobe's own vocabulary - the card brings no design language of its own; `src/ui/enhancedStyle.js` holds the one
+  rule, the note tight under its buttons - and one line under them: "Others see <account name> over your head and in
+  chat." or "Others see the name of the character you play online, or <account name> where it cannot be shown." A
+  service before NAME-AS states no choice, and gets no toggle.
+- **Where a name stood in for an account, the account now.** The slice swept every place a player's name is used as an
+  identity before it built - the relay's (staff's `/tp`, `/find`, the hub's record), the service's (every typed name
+  resolves against `handle_lc`) and the client's - and two of them joined the room's name to an account:
+  - **A friend's letter** (`src/ui/socialPanel.js`, `src/net/mail.js`, `server-account/src/letters.js` `toAccount`).
+    The friends list's name is the hub's, the room's: a character's two words (no username at all), or a word that IS
+    another account's username - which that account would have been sent. The row's Letter addresses the friend's
+    account now, and a name typed over it is a username again; a guest friend is refused `reader-guest`, in its own
+    words (the row's shape test is gone - a name's shape says nothing of a username any more); the answer names the
+    reader as the world reads their account (HANDLE-EMAIL: never an address). The row's name rides beside the account
+    (`mail.js` sendCall): a service from before NAME-AS reads the name alone, and every name it signed was an
+    account's - the username the row shows - so a client deployed first still reaches the friend.
+  - **A notice-board note's duel** (`server-account/src/board.js` `by`, world.js answerNote): the author found among the
+    players here by account - the relay's `sub` against the note's `by` - never by the account name the note was
+    signed with. A service without `by`, by name as before.
+- **What stays the account's.** What the service keeps by value - a home's owner, a guild roster's member, a board
+  note's author, a letter's sender, the leaderboards - is an account's record, and a letter, an invitation and a
+  commission are addressed by username. Migrations 0009, 0010 and 0013 wrote "a name over a head is the account's" and
+  "a character's name is never shown to another player" as law; 0111 records it as a choice, the account's by default.
+- **No relay change.** `n` was always "the display name" (identityToken.js), and claimsValid ties it to nothing but
+  the wire's own law, so the relay draws whatever the mint signs. `RELAY_VERSION` stays world197. acct122 - acct121 on its branch,
+  renumbered past BAL9 at the merge (`05-Combat/Balance-Arc.md` section 15 took acct121 the same day).
+- **Pinned**: `test/nameas_service.test.js` (6) - the law; the route; the mint over a real realm character; the
+  fallbacks through the real mint; a letter by account; a note's account. `test/nameas_client.test.js` (7) - the
+  minter's two names; the reason in words; the stamp; the flow; the card; the host by source; a friend's letter's
+  wire. `test/mail1.test.js`'s friend-letter pin re-aimed and driven end to end over the real service - the letter
+  reaches the friend's account and not the account whose username is the row's word. `test/scale4f.test.js`'s oracle
+  carries the fifth answer; `test/accountworker.test.js`'s schema pin the column. `tools/mutants/nameas.json` - 39,
+  all dead. Re-aimed: ACCOUNT_VERSION's pins at acct122 (PIN MOVED; BAL9c's service-behind-the-law record re-aimed
+  with them, its mutant still below law 3's floor); CHAT1's and AUDIT DROPS F's online-frame order,
+  for the frame's call; SHADOW-FANG's skin pin on the mint's adoption (the account's name beside the answer it keeps
+  whole); and by content, the records whose lines NAME-AS rewrote - ACC1b-14 (the mint signs the worn
+  name), MAIL-shape-after-rate and TAB-to-not-kept (a friend's account beside the name), NAME-ADOPT-2 and -6, and
+  SFSKIN's and WB9g's session and guard records (the stamp beside them). TAB-guest-friend-written is retired with its
+  line: `mail1.json` is 50.
+- **Not seen on a GPU.** The toggle, the line and the hello said again are driven in node; nobody has watched them in
+  the game. Worth a pass with a second player: choose Character name over the pause menu and watch the name over your
+  head change on their screen; name a character something the filter refuses and read the chat.
+
+## TITLE-C - no title in the chat (2026-10-12)
+
+Mac: "I also want to remove titles from appearing in the chat". TITLE-R (2026-09-24) took the title off the roster and
+kept it "over names and within chat itself"; a chat line now wears no title either. It wears the glyphs and the
+guild's tag after the name - the roster row's own order - and the title is worn over the head (`ui/nameLayer.js`,
+`net/remotePlayers.js`, the travel view's) and on the Inspect card (`ui/profileWindow.js`). A letter's sender line keeps
+its title: a letter is the letterbox's, not the chat. The record and its pins are `06-Systems/Chat-Roster-And-Names.md`
+TITLE-C.

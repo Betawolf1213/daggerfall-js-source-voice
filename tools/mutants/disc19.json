@@ -228,8 +228,8 @@
   {
     "name": "DISC19-F-dismiss-leaves-a-body",
     "file": "src/scenes/cityGuards.js",
-    "old": "    for (const g of guards) if (!g.dead && g.defender) { g.dead = true; releaseGuardBatch(g); n++; }",
-    "new": "    for (const g of guards) if (!g.dead && g.defender) { g.dead = true; g.corpse = true; releaseGuardBatch(g); n++; }",
+    "old": "if (Number.isFinite(yaw) ? popAllowChange(dx, dz, yaw, dist) : dist > POP_VISIBLE_RANGE) { g.dead = true; releaseGuardBatch(g); continue; }",
+    "new": "if (Number.isFinite(yaw) ? popAllowChange(dx, dz, yaw, dist) : dist > POP_VISIBLE_RANGE) { g.dead = true; g.corpse = true; releaseGuardBatch(g); continue; }",
     "tests": [
       "test/disc19.test.js"
     ]
