@@ -13,16 +13,18 @@ import { EG_BOSS_KEYS } from '../src/net/egLords.js';
 
 const T0 = 1_800_000_000_000;
 
-test('EG-E THE FEATS (section 19): every lord three - Unbroken, Swift and its own signature; a champion none; each signature read off its Court\'s counted beats (Grath Scorched twice, every Examination passed, the Twins within 3 s, Garoth before the Covenant...); a band mastered when all its lords\' feats are held (mutants: a fall still Unbroken; a slow fall Swift; one Scorch enough)', () => {
+// PIN MOVED (EG-ZB, section 19's own example): Grath's signature reads who a burning bridge caught (the census's `F.cg`),
+// no longer his Scorches - its pins below set the bridges burned (`mem.burnI`) and a catch.
+test('EG-E THE FEATS (section 19): every lord three - Unbroken, Swift and its own signature; a champion none; each signature read off its Court (Grath felled with no member caught by a burning bridge - EG-ZB, every Examination passed, the Twins within 3 s, Garoth before the Covenant...); a band mastered when all its lords\' feats are held (mutants: a fall still Unbroken; a slow fall Swift; a bridge\'s catch forgiven)', () => {
   const lords = EG_BOSS_KEYS.filter((k) => !['kynreeve', 'kynmarcher', 'markynaz'].includes(k));
   assert.deepEqual(Object.keys(EG_FEAT_SIGNS).sort(), [...lords].sort(), 'every lord its signature');
   assert.deepEqual(EG_FEAT_BANDS.flat().sort(), [...lords].sort(), 'every lord in one band');
   const now = 1_000_000;
   const F = (o = {}) => ({ fellThisHall: 0, lordAt: now - 60_000, said: {}, mem: {}, ...o });
   assert.equal(egFeatBits('kynreeve', F(), { now }), 0, 'a champion keeps no feats');
-  assert.equal(egFeatBits('hound', F({ said: { scorched: 2 } }), { now }), EG_FEATS_ALL);
-  assert.equal(egFeatBits('hound', F({ said: { scorched: 1 } }), { now }), 0b011, 'one Scorch is not the signature');
-  assert.equal(egFeatBits('hound', F({ fellThisHall: 1, said: { scorched: 2 } }), { now }), 0b110, 'a fall breaks Unbroken');
+  assert.equal(egFeatBits('hound', F({ mem: { burnI: 0 } }), { now }), EG_FEATS_ALL);
+  assert.equal(egFeatBits('hound', F({ mem: { burnI: 0 }, cg: { 'Burning Bridge': ['acct-1'] } }), { now }), 0b011, 'a member caught by a burning bridge is not the signature');
+  assert.equal(egFeatBits('hound', F({ fellThisHall: 1, mem: { burnI: 0 } }), { now }), 0b110, 'a fall breaks Unbroken');
   assert.equal(egFeatBits('hound', F({ lordAt: now - EG_FEAT_SWIFT_MS - 1 }), { now }), 0b001, 'past its par, not Swift');
   assert.equal(egFeatBits('spellmaster', F({ said: { passed: 2, failed: 1 } }), { now }) & 4, 0, 'a failed Examination');
   assert.equal(egFeatBits('spellmaster', F({ said: { passed: 2 } }), { now }) & 4, 4);
@@ -58,12 +60,12 @@ test('EG-E THE FEATS ON THE RECEIPT (sections 19 and 23): a Court felled owes ea
   const stepAt = (p) => { now += 250; return egStep(B, now, co.map(([sub]) => ({ sub, ...p, dead: false, at: now })), rng); };
   for (let k = 0; k < 100 && !(B.F.said?.scent > 0); k++) stepAt(ring);
   assert.ok(B.F.said?.scent >= 1, 'the Scent counted');
-  B.F.lordAt = now - 30_000; B.F.said = { scorched: 2 }; B.F.fellThisHall = 0; B.F.mem.lordsFell = 1;
+  B.F.lordAt = now - 30_000; B.F.said = { scorched: 2 }; B.F.fellThisHall = 0; B.F.mem.lordsFell = 1; B.F.mem.burnI = 0; B.F.cg = {};   // PIN MOVED (EG-ZB): the bridges burned, none caught
   for (const [sub] of co) { B.mem[sub].dc = 100; B.mem[sub].act = 3; }
   step();
   const owed = B.owe.filter((o) => o.claims.q === 'w');
   assert.equal(owed.length, 2, 'each earner a Redoubt receipt');
-  for (const o of owed) { assert.equal(o.claims.lk, 'hound'); assert.equal(o.claims.ft, 7, 'Unbroken, Swift and Burnt Paws'); }
+  for (const o of owed) { assert.equal(o.claims.lk, 'hound'); assert.equal(o.claims.ft, 7, 'Unbroken, Swift and Unsinged'); }
   const c = { ...owed[0].claims, c: 5, i: 1_800_000_000, e: 1_800_000_000 + 3600, h: owed[0].claims.h };
   assert.equal(egReceiptValid(c), true);
   assert.equal(egReceiptValid({ ...c, ft: 8 }), false, 'a fourth bit');

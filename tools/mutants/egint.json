@@ -227,8 +227,8 @@
   {
     "name": "EGINT-the-cast-back-uncapped",
     "file": "src/net/egBrain.js",
-    "old": "hits.push({ sub: b.sub, share: Math.min(EG_CAST_BACK_LOSS, Math.max(0, (m.bd?.v ?? 1) - EG_CAST_BACK_FLOOR)), i: 0, k: 2 });",
-    "new": "hits.push({ sub: b.sub, share: EG_CAST_BACK_LOSS, i: 0, k: 2 });",
+    "old": "hits.push({ sub: b.sub, share: Math.min(egCastBackCost(m.vs), Math.max(0, (m.bd?.v ?? 1) - EG_CAST_BACK_FLOOR)), i: 0, k: 2 });",
+    "new": "hits.push({ sub: b.sub, share: egCastBackCost(m.vs), i: 0, k: 2 });",
     "tests": [
       "test/egint_relay.test.js"
     ]
@@ -236,8 +236,8 @@
   {
     "name": "EGINT-a-disc-at-the-anchor",
     "file": "src/net/bossRef.js",
-    "old": "      if (deepShared((x, z) => egInBlow(a, x, z), b.tr, a.at, F.h, spec, ys)) out.push({ sub: b.sub, share, i: a.i, k: 0 });",
-    "new": "      if (deepShared((x, z) => Math.hypot(x - a.s[0][1], z - a.s[0][2]) <= 4, b.tr, a.at, F.h, spec, ys)) out.push({ sub: b.sub, share, i: a.i, k: 0 });",
+    "old": "test = (x, z) => egInBlow(a, x, z);",
+    "new": "test = (x, z) => Math.hypot(x - a.s[0][1], z - a.s[0][2]) <= 4;",
     "tests": [
       "test/egint_relay.test.js"
     ]
@@ -254,8 +254,8 @@
   {
     "name": "EGINT-an-element-counted",
     "file": "src/net/bossRef.js",
-    "old": "    const share = a.el == null ? Math.min(1, Math.max(0, a.p)) : 0, ys = floorsUnder(spec, a.s?.[0]);",
-    "new": "    const share = Math.min(1, Math.max(0, a.p)), ys = floorsUnder(spec, a.s?.[0]);",
+    "old": "    const share = a.el == null ? Math.min(1, Math.max(0, a.p)) : 0, ys = floorsUnder(spec, a.s?.[0]),",
+    "new": "    const share = Math.min(1, Math.max(0, a.p)), ys = floorsUnder(spec, a.s?.[0]),",
     "tests": [
       "test/egint_relay.test.js"
     ]
@@ -263,8 +263,8 @@
   {
     "name": "EGINT-the-wait-skipped",
     "file": "src/net/bossRef.js",
-    "old": "      if (a.bh.includes(b.sub) || !egTrailReady(b.tr, a.at, now)) continue;",
-    "new": "      if (a.bh.includes(b.sub)) continue;",
+    "old": "      if (!egTrailReady(b.tr, a.at, now)) continue;\n      a.bh.push(b.sub);\n      if (deepShared(test, b.tr, a.at, F.h, spec, ys, free)) out.push(hit);",
+    "new": "      a.bh.push(b.sub);\n      if (deepShared(test, b.tr, a.at, F.h, spec, ys, free)) out.push(hit);",
     "tests": [
       "test/egint_relay.test.js"
     ]
@@ -281,8 +281,8 @@
   {
     "name": "EGINT-off-the-fight-floor",
     "file": "src/net/bossRef.js",
-    "old": "  for (const p of [p0, p1]) { const f = egFightFloorAt(spec, p[1], p[2], p[3]); if (!f || (ys && !ys.includes(f.y ?? 0))) return false; }",
-    "new": "  void ys;",
+    "old": "  if (!free) for (const p of [p0, p1]) { const f = egFightFloorAt(spec, p[1], p[2], p[3]); if (!f || (ys && !ys.includes(f.y ?? 0))) return false; }",
+    "new": "  void ys; void free;",
     "tests": [
       "test/egint_relay.test.js"
     ]
@@ -290,8 +290,8 @@
   {
     "name": "EGINT-a-hazards-element-counted",
     "file": "src/net/bossRef.js",
-    "old": "    const share = q.el == null ? Math.min(1, q.p) : 0;",
-    "new": "    const share = Math.min(1, q.p);",
+    "old": "    const share = q.el == null ? Math.min(1, q.p) : 0, test = (x, z) => egInShape(q.s, x, z);",
+    "new": "    const share = Math.min(1, q.p), test = (x, z) => egInShape(q.s, x, z);",
     "tests": [
       "test/egint_relay.test.js"
     ]

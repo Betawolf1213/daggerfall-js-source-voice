@@ -7335,7 +7335,7 @@ export class Room {
     if (cur == null || cur > at) await this.state.storage.setAlarm(at);
   }
   /** A pose of the dungeon's frame in the Spire's (net/sdBrain.js dungeonToRealm - the court's frame). */
-  _egPose(p) { const [sx, , z] = dungeonToRealm(p.x, p.y ?? 0, p.z); return { sx, z }; }
+  _egPose(p) { const [sx, y, z] = dungeonToRealm(p.x, p.y ?? 0, p.z); return { sx, y, z }; }   // EG-ZB (section 11.7): the feet's height with it - the fight floor a blow is struck from is read by it
   /** The breach's members in the room now - each one's NEWEST socket speaking for it (the gate's law), a pose older than
    *  SD_POSE_FRESH_MS speaking for no body (AUDIT SD III F3's law): where it stands, whether it died, when it posed. */
   _egBodies(B, now) {
@@ -7346,7 +7346,7 @@ export class Room {
       const had = newest.get(b.sub);
       if (!had || (b.since ?? 0) >= (had.since ?? 0)) newest.set(b.sub, b);
     }
-    return [...newest.values()].map((b) => { const p = this._egPose(b.pose); return { sub: b.sub, sx: p.sx, z: p.z, dead: !!b.pose.dd, at: b.eAt ?? now }; });
+    return [...newest.values()].map((b) => { const p = this._egPose(b.pose); return { sub: b.sub, sx: p.sx, y: p.y, z: p.z, dead: !!b.pose.dd, at: b.eAt ?? now }; });
   }
   // ── EG-H1 (EG8d): WHAT THE RELAY JUDGES (net/egFair.js, net/egBrain.js; Elite-Gates.md section 21) ──
   /** The line the Spire's count runs by: the hub's BOSS_BODY body line (its depth, its pace) - its enforcement the Spire's

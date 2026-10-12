@@ -29,18 +29,23 @@
 // the hall's hazards, net/bossRef.js; a fall told `bd`), the room's own heals restored to it (egCountHeals), the member's
 // own word believed (egBodyWord); Watchfire's company told each committed blow early (watchOf).
 //
+// EG-ZB (2026-10-12; sections 8.2, 11.7, 19 and 21): THE LEGION HUNTS - a span's legion raised in its stage (spanLegion: the
+// Harriers shadowing the company, the Divers waiting at its islands), a blow struck only from THE FIGHT GROUND
+// (net/egWalkGraph.js), a member off the floors past six seconds hunted (huntStep), and THE CENSUS widened: the drains, the
+// Vestiges that change it, Featherstep's cast-back, a fallen segment's catch, and who each blow caught (`F.cg`, the feats').
+//
 // Pure: a record and a beat in, frames out. Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT_MS, EG_CLOSING_SPAN_MS, EG_CLOSING_COUNT_MS, EG_STAIR_HOLD_MS, EG_REST_MS,
   EG_WAKE_RING_MS, EG_ABSENT_TRIAL_MS, EG_LAST_WORD_MS, EG_REDOUBT_HOLD_MS, EG_COUNT_CAP_MS, egHallOf, egCircleOfHall, egFirstHallOf, egStartHall, egTimes, egAdmits, egCountNew, egCountLeft, egCountRun, egCountHold,
   egInHall, egLocalX, egOnArrive, egAtDoor, egOnFight, egSpecDigest, egGeoOf, egSeed, egProclamationOf, egKeepOnFight, EG_VOID_Y, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR } from './egLaw.js';
-import { EG_ROLE, EG_FL, EG_GONE, EG_STATE_EVERY_MS, egFightNew, egFightState, egCarry, egMovesOut, egHpOut, egBlowsStep, egHitBody, egGone, egHas, egSetFl, egBodiesOf, egBodyById, egHpTeam, egRaise, egWalk, egAim, egTethersOut, egMarksOut, egStruck } from './egBodies.js';
-import { EG_KIND, egLegionStep, egLegionRaise, egWaveKinds, egWaveSize, egAddSlain, egSquad, egFromBehind } from './egLegion.js';
+import { EG_ROLE, EG_FL, EG_GONE, EG_STATE_EVERY_MS, egFightNew, egFightState, egCarry, egMovesOut, egHpOut, egBlowsStep, egHitBody, egGone, egHas, egSetFl, egBodiesOf, egBodyById, egHpTeam, egRaise, egWalk, egAim, egTethersOut, egMarksOut, egStruck, egMark, egUnmark, egMarkOf, egBodyAt } from './egBodies.js';
+import { EG_KIND, EG_LEGION_KINDS, EG_DIVER_WAIT_R, egIsleAhead, egLegionStep, egLegionRaise, egWaveKinds, egWaveSize, egAddSlain, egSquad, egFromBehind } from './egLegion.js';
 import { EG_OBJ, egLordsNew, egLordsWake, egLordsStep, egLordsAwake, egLordsFell, egLordsOf, egLordHit, egLordHitX, egObjBroken, egObjsOf, zoneOut, egStun } from './egLords.js';
 import { egAsk, egVote, egAskResult, egAsksDue, egDecreesAsk, egDecreesChosen, egDecreeRanks, egDecreesInForce, egBargainDecree, egTideOf, egStratumAt, egOffers, egPick, egPicksClose, egSurplus,
   egLoseNewest, egCacheDraw, egGive, egBuy, egVestigeX, egThreatX, egFadeOn, egMarkFoe, egRunOf, EG_CANTRIPS, EG_LUMEN_ADD, EG_LUMEN_RIFT } from './egRun.js';
-import { egVOf, egAccordsOf } from './egVestige.js';
+import { egVOf, egAccordsOf, egRankOf, EG_MASTERIES, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX, EG_DR_MAX } from './egVestige.js';
 import { shDisc, shLane, egInShape } from './egShape.js';
-import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half
+import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL, EG_HAZARDS, egWispAt } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half
 import { egAnnalsNext, egAnnalsLordPage } from './egAnnals.js';
 import { egFeatBits } from './egFeats.js';   // EG-E: the lords' feats, judged at a lord's fall
 import { arenaWeekOf } from './arenaLaw.js';   // EG-E: the Proclamation's week, the arena's (Monday to Monday from the season epoch)
@@ -49,9 +54,12 @@ import { orreryOf, orreryFresh, orreryJudge, orreryShortest } from './sdBrain.js
 import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gateBrain.js';
 // EG-H1 (EG8d): WHAT THE RELAY JUDGES - THE FAIR TRAIL and its time law (net/egFair.js), one judge for every shape and the
 // hall's own hazards (net/bossRef.js), and the body counted (net/bossBody.js) - the member's one life
-import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt } from './egFair.js';
+import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt, egFallenAt, egTrailAt, egFightFloorAt, EG_POSE_NEAR_MS } from './egFair.js';
 import { judgeShapes, judgePlace } from './bossRef.js';
 import { bodyStruck, bodySaid, bodyHealed, bodyLife } from './bossBody.js';
+// EG-ZB (2026-10-12; sections 8.2, 11.7, 19 and 21): THE LEGION HUNTS - the fight ground and the walk graph (net/egWalkGraph.js),
+// the span's legion, the hunt, the census's drains and its Vestiges, who a place's blow caught
+import { egFightView, egGroundAt, egAirKeep, EG_STRIKE_PAD_M } from './egWalkGraph.js';
 
 /** The rifts together hold this many seconds of the company's reference damage (section 8.1); a Wellspring's great
  *  rift and each anchor; a Rampart's gate's Ward-Bearers; a Muster's standard; a captive's chains; a Holdfast's hold. */
@@ -104,6 +112,34 @@ export const EG_RD_WINDOW_MS = 6000;
 export const EG_TOUCH_M = 2.5;
 /** The most of the legion standing at once on the wire. */
 export const EG_STANDING_MAX = 16;
+/** EG-ZB (section 11.7): a member off the fight floors this long in a fight is HUNTED by the Harriers (ms) - its mark
+ *  (Hunted, net/egBodies.js mark 7) said this long at a time, a pair rising for the hunt where no Harrier stands; in the
+ *  halls whose trial is one fight on its floor (a span's legion shadows instead, a Deepway's passages are crossed, a
+ *  Scriptorium is quiet). */
+export const EG_HUNT_AFTER_MS = 6000;
+export const EG_HUNT_MARK_MS = 30_000;
+export const EG_HUNT_RAISE = 2;
+export const EG_HUNT_KINDS = Object.freeze(['yard', 'rampart', 'proving', 'athenaeum', 'court']);
+/** EG-ZB (section 8.2): a span's Harriers rise this far beside a member and this far ahead of it (m); a member stands on a
+ *  span's fight ground (its islands, its plates, its passages' floors) within this of it (m). */
+export const EG_SHADOW_SIDE_M = 5;
+export const EG_SHADOW_AHEAD_M = 6;
+export const EG_SPAN_GROUND_PAD_M = 0.5;
+/** EG-ZB (section 21): THE CENSUS'S VESTIGES (section 15) - Challenger's Oath: lords' blows on its holder weaker by rank;
+ *  Featherstep: a cast-back's cost by rank; Immovable: still this long (ms) within this (m) on a fight floor, blows 25%
+ *  less; Bastion's reach and Steadfast Line's (m), and Steadfast's three allies. */
+export const EG_OATH_DR = Object.freeze([0.05, 0.10, 0.15]);
+export const EG_FEATHER_CAST = Object.freeze([0.08, 0.06, 0.04]);
+export const EG_IMMOVABLE_MS = 1000;
+export const EG_IMMOVABLE_M = 0.2;
+export const EG_IMMOVABLE_DR = 0.25;
+export const EG_BASTION_M = 6;
+export const EG_STEADFAST_M = 8;
+export const EG_STEADFAST_N = 3;
+/** EG-ZB (sections 11.2 and 12): a drain's tick (ms - the screens' own, scenes/egFight.js EG_TICK_MS), and how soon one
+ *  soul-wisp binds a member again after it lets go (ms - its WISP_AGAIN_MS). */
+export const EG_DRAIN_TICK_MS = 1000;
+export const EG_WISP_AGAIN_MS = 6000;
 /** The names the gate's old frames gave (kept for the tracker's words). */
 export const EG_FOE_NAMES = Object.freeze({ champion: 'The Kynreeve', lord: 'The Lord of the Court' });
 
@@ -218,8 +254,9 @@ export function egStateOf(B, now) {
 /** The hall's fight's whole word (`efs`), or null when it holds none. */
 export function egFightStateOf(B, now = Date.now()) { return B.F ? egFightState(B.F, now) : null; }
 
-/** A member's body in the hall's own frame, or null when it stands in no part of hall `spec`. */
-const local = (spec, b) => (b && egInHall(spec, b.sx, b.z) ? { sub: b.sub, x: egLocalX(spec, b.sx), z: b.z } : null);
+/** A member's body in the hall's own frame, or null when it stands in no part of hall `spec` - EG-ZB: its feet's height
+ *  `y` with it where the pose said one (the fight floor a body stands on is read by it - section 11.7). */
+const local = (spec, b) => (b && egInHall(spec, b.sx, b.z) ? { sub: b.sub, x: egLocalX(spec, b.sx), z: b.z, ...(Number.isFinite(b.y) ? { y: b.y } : {}) } : null);
 
 /** A receipt owed - its seed the room's own draw. */
 function owe(B, sub, claims) { B.owe.push({ sub, claims: { b: B.b, s: sub, z: B.ez, ...claims } }); }
@@ -345,7 +382,14 @@ function ringSpots(spec, x, z, r, k, rng) {
  */
 function standFight(B, spec, now, rng, out) {
   const L = living(B), lvs = L.map(([, m]) => m.lv);
-  if (spec.kind === 'span' || spec.kind === 'brink') { const F = egFightNew(spec, now, lvs); F.D = egDecreeRanks(B); spanTwist(B, F, spec, now, out); fragStand(B, F, spec, now, out); return F; }
+  if (spec.kind === 'span' || spec.kind === 'brink') {
+    const F = egFightNew(spec, now, lvs);
+    F.D = egDecreeRanks(B);
+    // EG-ZB (section 8.2): a span's legion - its first shadows 4 s after the wake (Stillness: 14 s), Hunting Pack's on its own clock
+    if (spec.kind === 'span') { F.waveAt = now + (B.still ? 14_000 : 4000); F.packAt = now + 30_000; B.still = 0; }
+    spanTwist(B, F, spec, now, out); fragStand(B, F, spec, now, out);
+    return F;
+  }
   const F = egFightNew(spec, now, lvs);
   F.D = egDecreeRanks(B);
   const n = F.n, P = F.pg;
@@ -598,6 +642,7 @@ function egRaiseObj(F, t, x, z, hp, now, out, o = {}) {
 function door(B, spec, now, out, inHall = []) {
   clearHall(B, now);
   if (B.F) { egGone(B.F, egBodiesOf(B.F, EG_ROLE.add), EG_GONE.crumbled, '', now, out); egGone(B.F, egObjsOf(B.F, 'spark'), EG_GONE.crumbled, '', now, out); }
+  if (B.F?.marks?.some((q) => q[1] === 7)) { B.F.marks = B.F.marks.filter((q) => q[1] !== 7); egMarksOut(B.F, out); }   // EG-ZB: the hunt is over with the trial
   B.sg = 'closing'; B.sa = now; B.dn = now;
   const span = spec.kind === 'span' || spec.kind === 'deepway' || spec.kind === 'brink' || spec.kind === 'proving';
   B.su = now + (span ? EG_CLOSING_SPAN_MS : EG_CLOSING_FIGHT_MS);
@@ -847,7 +892,11 @@ function trial(B, spec, now, inHall, rng, out) {
   const F = B.F;
   if (!F) return;
   egCarry(F, now);
-  const here = inHall.filter((b) => egOnFight(spec, b.x, b.z, 4));
+  // EG-ZB (sections 8.2 and 11.7): THE FIGHT GROUND (net/egWalkGraph.js egFightView) - a span's islands and plates beside its
+  // passages' floors, a Rampart's pillars and winch plates beside its walkway. On a span a member is aimed at only standing
+  // on it (traversal ground is never aimed at); elsewhere within the fight's old 4 m.
+  const view = egFightView(spec), span = spec.kind === 'span';
+  const here = span ? inHall.filter((b) => egGroundAt(view, b.x, b.y, b.z, EG_SPAN_GROUND_PAD_M)) : inHall.filter((b) => egOnFight(view, b.x, b.z, 4));
   const D = F.D ?? {};
   const cap = Math.max(0, Math.min(EG_STANDING_MAX, Math.floor(egLegionCap(F.n, F.c) / (F.halfCap ? 2 : 1))) - egBodiesOf(F, EG_ROLE.add).filter((a) => !egHas(a, EG_FL.friend)).length);
   const wave = (spots, k = egWaveSize(F.n), o = {}) => {
@@ -878,9 +927,13 @@ function trial(B, spec, now, inHall, rng, out) {
   // Road's foes at their work meanwhile
   if (spec.kind === 'span' || spec.kind === 'brink') {
     for (const b of inHall) for (const o of egObjsOf(F, 'vault')) if (dist(b.x, b.z, o.x, o.z) <= 3 && fairOf(B, b.sub) && !(o.took ??= {})[b.sub]) { o.took[b.sub] = 1; egGive(B.mem[b.sub], 'rel', egCircleOfHall(B.h)); out.push({ k: 'egot', to: b.sub, w: 'rel' }); }
-    if (egBodiesOf(F, EG_ROLE.add).length) egLegionStep(F, spec, now, here, rng, out, legionCtx);
+    // EG-ZB (section 8.2): THE SPAN'S LEGION - the Harriers shadow every member in the hall and bite only those on its fight
+    // ground; from the Shade the Divers wait at its islands
+    if (span) spanLegion(F, view, now, inHall, cap, out);
+    if (egBodiesOf(F, EG_ROLE.add).length) egLegionStep(F, view, now, here, rng, out, span ? { ...legionCtx, span: 1, shadow: inHall, isles: view.fl.filter((f) => f.g === 'island' || f.g === 'plate') } : legionCtx);
     if (doorOpener(B, spec, inHall)) door(B, spec, now, out, inHall);   // EG-H1: a fair arrival opens it (section 21)
-    egMovesOut(F, out);
+    if (span) { egBlowsStep(F, view, now, here, out, watchOf(B)); fightTail(F, now, out); }
+    else egMovesOut(F, out);
     return;
   }
   const kind = spec.kind, v = spec.variant;
@@ -999,15 +1052,86 @@ function trial(B, spec, now, inHall, rng, out) {
   if (kind === 'deepway' && F.chamberDone && doorOpener(B, spec, inHall)) { door(B, spec, now, out); return; }   // EG-H1: a fair arrival
   if (F.captive && !egObjsOf(F, 'chain').length) { F.captive = 0; for (const [sub, m] of living(B)) { egGive(m, 'cant', 1, rng); out.push({ k: 'egot', to: sub, w: 'cant' }); } out.push({ k: 'esay', w: 'freed' }); }
   hazards(B, F, spec, now, here, rng, out);
-  egLegionStep(F, spec, now, here, rng, out, legionCtx);
-  egBlowsStep(F, spec, now, here, out, watchOf(B));   // EG-H1: Watchfire's company told each committed blow early
+  legionCtx.hunted = huntStep(B, F, view, spec, now, inHall, out);   // EG-ZB (section 11.7): off the floors past six seconds, hunted
+  egLegionStep(F, view, now, here, rng, out, legionCtx);
+  egBlowsStep(F, view, now, here, out, watchOf(B));   // EG-H1: Watchfire's company told each committed blow early
   // the census: where a landing found a member's pose (section 21's measure - the struck member's own machine resolves it)
   for (const bl of F.blows) if (!bl.counted && now >= bl.at) { bl.counted = 1; for (const m of egStruck(bl, here)) { const mm = B.mem[m.sub]; if (mm) mm.struck = (mm.struck ?? 0) + 1; if (bl.o && egLordsOf(F).some((L) => L.i === bl.o) && mm) mm.lordLandedAt = now; } }
+  fightTail(F, now, out);
+}
+/** The fight's words a beat ends with: the walks, the health, the tethers and marks that moved, the whole fight now and then. */
+function fightTail(F, now, out) {
   egMovesOut(F, out);
   egHpOut(F, now, out);
   if (F.mem.txDirty) { F.mem.txDirty = 0; egTethersOut(F, out); }
   if (F.mem.mkDirty) { F.mem.mkDirty = 0; egMarksOut(F, out); }
   if (now - F.stateAt >= EG_STATE_EVERY_MS) { F.stateAt = now; out.push(egFightState(F, now)); }
+}
+/**
+ * EG-ZB (section 8.2): THE SPAN'S LEGION - Harriers shadow the company along the course and, from the Shade, Divers wait at
+ * its islands: a wave every egWaveEveryMs(c) (and Hunting Pack's on its own clock - section 14) of egWaveSize(n), within the
+ * legion's cap (`cap`, the room left under it). The Harriers rise in the air beside the members in turn, EG_SHADOW_SIDE_M
+ * out and EG_SHADOW_AHEAD_M ahead (kept out of a passage's rock); from the Shade every other wave is led at half by Divers
+ * over the island (or plate) the leading member stands on or comes to next (net/egLegion.js egIsleAhead). No die is drawn: a span's legion keeps the breach's rolls where they were.
+ */
+function spanLegion(F, view, now, inHall, cap, out) {
+  if (!inHall.length) return;
+  const D = F.D ?? {};
+  let due = 0, room = cap;
+  if (now >= F.waveAt) { F.waveAt = now + egWaveEveryMs(F.c); due++; }
+  if (D.pack && now >= F.packAt) { F.packAt = now + (D.pack >= 2 ? 20_000 : 30_000); due++; }
+  const isles = view.fl.filter((f) => f.g === 'island' || f.g === 'plate');
+  for (; due > 0; due--) {
+    const n = Math.min(egWaveSize(F.n), room);
+    if (n <= 0) return;
+    room -= n;
+    F.waveNo = (F.waveNo ?? 0) + 1;
+    const lead = inHall.reduce((p, q) => (q.z > p.z ? q : p)), isle = egIsleAhead(isles, lead.z);
+    const divers = F.band >= 2 && isle && F.waveNo % 2 === 1 ? Math.ceil(n / 2) : 0;
+    const kinds = [], spots = [];
+    for (let j = 0; j < n; j++) {
+      if (j < divers) { const a = (j / divers) * Math.PI * 2; kinds.push(EG_KIND.diver); spots.push(egAirKeep(view, isle.x + Math.sin(a) * EG_DIVER_WAIT_R, isle.z + Math.cos(a) * EG_DIVER_WAIT_R)); continue; }
+      const m = inHall[j % inHall.length], s = j % 2 ? 1 : -1;
+      kinds.push(EG_KIND.harrier); spots.push(egAirKeep(view, m.x + s * EG_SHADOW_SIDE_M, m.z + EG_SHADOW_AHEAD_M));
+    }
+    egLegionRaise(F, kinds, spots, now, out, { wave: F.waveNo });
+  }
+}
+/**
+ * EG-ZB (section 11.7): THE HUNT - in a hall whose trial is one fight on its floor (EG_HUNT_KINDS), a member who has stood on
+ * its fight ground this hall and is off it (net/egWalkGraph.js egGroundAt, EG_STRIKE_PAD_M - by its feet's height where its
+ * pose says one: a member up on an arch's wall over the floor stands on none) for more than EG_HUNT_AFTER_MS is HUNTED:
+ * marked (7, Hunted - EG_HUNT_MARK_MS at a time, unmarked back on the floor), first in every Harrier's mind
+ * (net/egLegion.js), and where no Harrier stands a pair (EG_HUNT_RAISE) rises at the floor's edge nearest them, within the
+ * legion's cap, once a hunt. Answers the hunted (`{sub, x, z, y?}`, the hall's frame).
+ */
+function huntStep(B, F, view, spec, now, inHall, out) {
+  const hunted = [];
+  if (!EG_HUNT_KINDS.includes(spec.kind)) return hunted;
+  for (const b of inHall) {
+    const m = B.mem[b.sub];
+    if (!m) continue;
+    if (egGroundAt(view, b.x, b.y, b.z, EG_STRIKE_PAD_M)) {
+      m.flH = B.h; m.offAt = 0;
+      if (egMarkOf(F, b.sub, 7)) { egUnmark(F, b.sub, 7); F.mem.mkDirty = 1; }
+      if (F.hunt) delete F.hunt[b.sub];
+      continue;
+    }
+    if (m.flH !== B.h) continue;   // not in the fight yet - an approach still being crossed
+    if (!m.offAt) m.offAt = now;
+    if (now - m.offAt <= EG_HUNT_AFTER_MS) continue;
+    hunted.push(b);
+    const mk = egMarkOf(F, b.sub, 7);
+    if (!mk || mk[2] <= now) { egMark(F, b.sub, 7, now + EG_HUNT_MARK_MS); F.mem.mkDirty = 1; }
+    if ((F.hunt ??= {})[b.sub]) continue;
+    F.hunt[b.sub] = now;
+    const stand = egBodiesOf(F, EG_ROLE.add).filter((a) => !egHas(a, EG_FL.friend));
+    const room = Math.min(EG_STANDING_MAX, egLegionCap(F.n, F.c)) - stand.length;
+    if (stand.some((a) => a.k === EG_KIND.harrier) || room <= 0) continue;
+    const [kx, kz] = egKeepOnFight(view, b.x, b.z, 1);
+    egLegionRaise(F, Array(Math.min(EG_HUNT_RAISE, room)).fill(EG_KIND.harrier), [[kx, kz]], now, out, { wave: 0 });
+  }
+  return hunted;
 }
 /** The hall's own hazards under the decrees: Ashfall's meteors, Wellhead Sparks, Hunting Pack's waves, Soul-Pools' heal,
  *  the Wellhead Erupts' vents. */
@@ -1073,10 +1197,15 @@ export function egBlow(B, sub, m, pose, now) {
   const out = [];
   const mm = B.mem[sub], F = B.F;
   if (!mm || !mm.in || !mm.alive || mm.home || B.sg !== 'trial' || !F || !pose || m.k !== 'hit') return out;
-  const spec = specOf(B), p = local(spec, { sub, sx: pose.sx, z: pose.z, dead: false });
+  const spec = specOf(B), p = local(spec, { sub, sx: pose.sx, y: pose.y, z: pose.z, dead: false });
   if (!p || egFairRefuses(fairOfMember(B, sub), now)) return out;   // EG-H1: a second break of the fair trail in a hall refuses its hits a while
   const body = egBodyById(F, m.i);
   if (!body) return out;
+  // EG-ZB (sections 11.7 and 21): A BLOW IS STRUCK FROM THE FIGHT GROUND (net/egWalkGraph.js egFightView) - a pose on
+  // traversal ground (a step, a ledge, a side span, the top of an arch's wall over the floor) strikes nothing; an object
+  // standing off it (a false wall in its alcove) is struck from beside it, as before (net/egBodies.js egHitBody)
+  const view = egFightView(spec);
+  if (!egGroundAt(view, p.x, p.y, p.z, EG_STRIKE_PAD_M) && !(body.role === EG_ROLE.obj && !egGroundAt(view, body.x, NaN, body.z, body.r ?? 1))) return out;
   const here = Object.entries(B.mem).filter(([, x]) => x.alive && x.in && x.pose).map(([s, x]) => ({ sub: s, x: x.pose.x, z: x.pose.z }));
   mm.pose = p;
   const vx = egVestigeX(B, sub, p, body, m.r, now, here);
@@ -1236,12 +1365,14 @@ export function egPoseIn(B, sub, p, t) {
     const k = fairKey(B, m);
     // a trail begins on the arrival plate (or where a recall stood it): a first pose anywhere else is a step the law never
     // saw - a break, so a member who left the plate in the gather's last seconds holds nothing until it stands on an island
-    if (m.fair?.k !== k) { m.fair = { ...egFairNew(B.h), k, cbHeld: 0 }; if (!egOnArrive(spec, x, z, 2) && m.roseH !== B.h) { m.fair.brk = 1; m.fair.brks = 1; m.fair.why = 'start'; } }
+    if (m.fair?.k !== k) { m.fair = { ...egFairNew(B.h, B.hw), k, cbHeld: 0 }; if (!egOnArrive(spec, x, z, 2) && m.roseH !== B.h) { m.fair.brk = 1; m.fair.brks = 1; m.fair.why = 'start'; } }
     const A = m.fair;
     egFairPose(A, spec, { x, y, z, ride, cl: !!p.cl }, t);
     if (spec.fork && z >= spec.fork.z && x >= (spec.fork.lowX + spec.fork.x) / 2) A.road = 1;
     if (egAtDoor(spec, x, z)) egFairCross(A, t, A.road);
-    if (A.sup && y < A.sup[2] + EG_VOID_Y) { if (!A.cbHeld) { A.cbHeld = 1; m.cbOwe = (m.cbOwe ?? 0) + 1; } }
+    // a fall past EG_VOID_Y - EG-ZB (section 21): or feet on a Falling Wall's or the Collapsing Tube's fallen ground, which the
+    // screen casts on to the nearest standing segment at the same cost (net/egFair.js egFallenAt) - owes one cast-back
+    if ((A.sup && y < A.sup[2] + EG_VOID_Y) || egFallenAt(spec, A.hw ?? 0, x, y, z, t)) { if (!A.cbHeld) { A.cbHeld = 1; m.cbOwe = (m.cbOwe ?? 0) + 1; } }
     else if (A.sup && A.sup[0] === t) A.cbHeld = 0;
   }
   return { x, y, z, h: B.h };
@@ -1256,22 +1387,29 @@ export const EG_BODY_ENFORCE = true;
  * hazards struck, cast-backs, the thousandths counted) and taken off its count (bodyStruck - a plain blow's share; an
  * element's is seen and never counted). A count at nothing under enforcement is the member's FALL - one life (egFall: the
  * witness, the Memento, the final fall's receipt) - and is told to it (`bd`, `to` it). Answers the frames.
+ * EG-ZB (section 21; EG-H1's departures 10 and 11 closed): judged on THE FIGHT GROUND (net/egWalkGraph.js egFightView - a
+ * span's islands and plates, where its Harriers bite); THE DRAINS counted (censusDrains - a soul-wisp's, a Wraith's tether);
+ * the census APPLIES THE VESTIGES that change it (egCensusDr - Bastion, Challenger's Oath, Steadfast Line, Immovable - and
+ * Featherstep's lighter cast-back, egCastBackCost); and WHO A BLOW CAUGHT is kept on the fight by its name (`F.cg`, the
+ * feats' - net/egFeats.js), an element's as a plain one's.
  * @param {any} B @param {number} now @param {Array<{sub: string, tr?: number[][]}>} bodies each living member's trail
  * (`[t, x, y, z, h]` - the hall's frame, shared ms) @param {{depth: number, perS: number}} line @param {boolean} [enforce]
  */
 export function egCount(B, now, bodies, line, enforce = EG_BODY_ENFORCE) {
   const out = [];
   if (B.end || !(B.h > 0) || (B.sg !== 'trial' && B.sg !== 'closing')) return out;
-  const spec = specOf(B), F = B.F;
+  const spec = specOf(B), F = B.F, view = egFightView(spec);
   const live = bodies.filter((b) => { const m = B.mem[b.sub]; return m && m.in && m.alive && !m.home; });
-  const hits = [...judgeShapes(F, live, now, spec), ...judgePlace(F, spec, B.hw, live, now)];
+  const hits = [...judgeShapes(F, live, now, view), ...judgePlace(F, view, B.hw, live, now), ...censusDrains(F, view, live, now)];
   for (const b of live) {
     const m = B.mem[b.sub];
-    for (; (m.cbOwe ?? 0) > 0; m.cbOwe--) hits.push({ sub: b.sub, share: Math.min(EG_CAST_BACK_LOSS, Math.max(0, (m.bd?.v ?? 1) - EG_CAST_BACK_FLOOR)), i: 0, k: 2 });
+    for (; (m.cbOwe ?? 0) > 0; m.cbOwe--) hits.push({ sub: b.sub, share: Math.min(egCastBackCost(m.vs), Math.max(0, (m.bd?.v ?? 1) - EG_CAST_BACK_FLOOR)), i: 0, k: 2 });
   }
   for (const h of hits) {
     const m = B.mem[h.sub];
     if (!m?.alive) continue;
+    if (h.k === 0 && h.share > 0) h.share *= 1 - egCensusDr(B, F, view, h, live);
+    if (F && h.nm) { const c = ((F.cg ??= {})[h.nm] ??= []); if (!c.includes(h.sub)) c.push(h.sub); }
     const cs = (m.cs ??= [0, 0, 0, 0]);
     cs[h.k]++; cs[3] += Math.round(h.share * 1000);
     if (!(h.share > 0) || !bodyStruck(m, h.share, now, line) || !enforce) continue;
@@ -1279,6 +1417,86 @@ export function egCount(B, now, bodies, line, enforce = EG_BODY_ENFORCE) {
     egFall(B, h.sub, now, out, at && at[4] === B.h ? { x: at[1], z: at[3] } : null);
     out.push({ k: 'bd', to: h.sub });
   }
+  return out;
+}
+/** EG-ZB (section 15's Featherstep, in the census): what a cast-back costs a member's count - a tenth, Featherstep's 8, 6 or
+ *  4% by rank (the floor's quarter is egCount's). */
+export const egCastBackCost = (vs) => { const r = egRankOf(vs, 'featherstep'); return r ? EG_FEATHER_CAST[r - 1] : EG_CAST_BACK_LOSS; };
+/** Immovable's number (the Mastery's id - net/egVestige.js EG_MASTERIES). */
+const IMMOVABLE_ID = EG_MASTERIES.find((M) => M.key === 'immovable')?.id ?? -1;
+/**
+ * EG-ZB - THE CENSUS'S VESTIGES (section 21: "the relay's census applies Bastion, Challenger's Oath, Steadfast Line, Immovable
+ * and Lifeline itself"; section 15's numbers): the share of a counted blow `h` (`{sub, at, o}` - its landing and thrower)
+ * its member is spared, by where the company stood at its landing on their shared-time trails (`bodies`):
+ *   - Challenger's Oath: a lord's blow on its holder, 5 / 10 / 15% less (EG_OATH_DR);
+ *   - Bastion: another living member within EG_BASTION_M holding it - the strongest, and 2% more for each other holder, at
+ *     most 6% over it (section 15's stacking: EG_AURA_EXTRA, EG_AURA_EXTRA_MAX);
+ *   - Steadfast Line: its holder with EG_STEADFAST_N allies within EG_STEADFAST_M;
+ *   - Immovable: its holder still EG_IMMOVABLE_MS (within EG_IMMOVABLE_M) on a fight floor, 25% less;
+ * together never past EG_DR_MAX (30%). Lifeline is not here: a heal one member casts on another is the ALLY-CAST frame,
+ * which the relay forwards unread. Pure.
+ * @param {any} B @param {any} F @param {any} view @param {{sub: string, at?: number, o?: number}} h @param {Array<{sub: string, tr?: number[][]}>} bodies
+ */
+export function egCensusDr(B, F, view, h, bodies) {
+  const m = B.mem[h.sub];
+  if (!m) return 0;
+  const t = h.at ?? 0;
+  const trOf = (sub) => bodies.find((b) => b.sub === sub)?.tr ?? null;
+  const posOf = (sub) => { const e = egTrailAt(trOf(sub), t); return e && e[4] === B.h ? e : null; };
+  let dr = 0;
+  const oath = egRankOf(m.vs, 'oath');
+  if (oath && h.o && F && egLordsOf(F).some((L) => L.i === h.o)) dr += EG_OATH_DR[oath - 1];
+  const me = posOf(h.sub);
+  if (me) {
+    const near = (r) => living(B).filter(([s]) => s !== h.sub).map(([s, x]) => [x, posOf(s)]).filter(([, p]) => p && Math.hypot(p[1] - me[1], p[3] - me[3]) <= r).map(([x]) => x);
+    const bast = near(EG_BASTION_M).map((x) => egVOf(x.vs, 'bastion')).filter((v) => v > 0).sort((a, b) => b - a);
+    if (bast.length) dr += Math.min(bast[0] + EG_AURA_EXTRA * (bast.length - 1), bast[0] + EG_AURA_EXTRA_MAX);
+    const sf = egVOf(m.vs, 'steadfast');
+    if (sf > 0 && near(EG_STEADFAST_M).length >= EG_STEADFAST_N) dr += sf;
+    if (m.mast === IMMOVABLE_ID && egFightFloorAt(view, me[1], me[2], me[3])) {
+      const tr = trOf(h.sub), from = egTrailAt(tr, t - EG_IMMOVABLE_MS);
+      if (from && from[4] === B.h && tr.every((e) => e[0] < from[0] || e[0] > t || Math.hypot(e[1] - me[1], e[3] - me[3]) <= EG_IMMOVABLE_M)) dr += EG_IMMOVABLE_DR;
+    }
+  }
+  return Math.min(EG_DR_MAX, dr);
+}
+/**
+ * EG-ZB - THE DRAINS, COUNTED (EG-H1's departure 11 closed): a SOUL-WISP (section 11.2) binds a member on a fight floor within
+ * its reach (EG_HAZARDS.wisp `r`, within 3 m of its height), drains them EG_DRAIN_TICK_MS by EG_DRAIN_TICK_MS from a tick
+ * after it binds, lets go at its `brk` or after its `live`, and binds them again only EG_WISP_AGAIN_MS later - the screens'
+ * own law (scenes/egFight.js wispStep), judged on each member's freshest pose (within EG_POSE_NEAR_MS of the beat); a
+ * WRAITH's tether (section 12) drains its member each tick while within its kind's reach. `[{sub, share, i: 0, k: 1, nm,
+ * at}]`, each a plain share. The fight's holds kept on it (`F.drn`).
+ * @param {any} F @param {any} view @param {Array<{sub: string, tr?: number[][]}>} bodies @param {number} now
+ */
+function censusDrains(F, view, bodies, now) {
+  const out = [];
+  if (!F) return out;
+  const H = (F.drn ??= {});
+  const fresh = (b) => { const e = egTrailAt(b.tr, now); return e && now - e[0] <= EG_POSE_NEAR_MS && e[4] === F.h ? e : null; };
+  const L = EG_HAZARDS.wisp;
+  for (const hz of view?.hazards ?? []) {
+    if (hz.kind !== 'wisp') continue;
+    const [wx, wz] = egWispAt(hz, now / 1000);
+    for (const b of bodies) {
+      const e = fresh(b), q = (H[`w${hz.i}:${b.sub}`] ??= { from: 0, tick: 0, free: 0 });
+      const d = e && egFightFloorAt(view, e[1], e[2], e[3]) && Math.abs(e[2] - (hz.y ?? 0)) < 3 ? Math.hypot(e[1] - wx, e[3] - wz) : Infinity;
+      if (!q.from) { if (d <= L.r && now >= q.free) { q.from = now; q.tick = now + EG_DRAIN_TICK_MS; } continue; }
+      if (d > L.brk || now - q.from >= L.live) { q.from = 0; q.free = now + EG_WISP_AGAIN_MS; continue; }
+      if (now >= q.tick) { q.tick += EG_DRAIN_TICK_MS; out.push({ sub: b.sub, share: L.pct, i: 0, k: 1, nm: L.name, at: now }); }
+    }
+  }
+  const W = EG_LEGION_KINDS[EG_KIND.wraith], seen = new Set();
+  for (const t of F.tethers ?? []) {
+    const b = t[2] === 0 ? bodies.find((x) => x.sub === t[1]) : null, a = b ? egBodyById(F, t[0]) : null;
+    if (!a) continue;
+    const key = `t${t[0]}:${t[1]}`, q = (H[key] ??= { tick: now + EG_DRAIN_TICK_MS }), e = fresh(b), [ax, az] = egBodyAt(a, now);
+    seen.add(key);
+    if (now < q.tick) continue;
+    q.tick += EG_DRAIN_TICK_MS;
+    if (e && Math.hypot(e[1] - ax, e[3] - az) <= W.drain.r) out.push({ sub: b.sub, share: W.drain.pct, i: 0, k: 1, nm: W.name, at: now });
+  }
+  for (const k of Object.keys(H)) if (k[0] === 't' && !seen.has(k)) delete H[k];
   return out;
 }
 /**

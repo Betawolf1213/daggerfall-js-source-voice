@@ -18,10 +18,10 @@
     ]
   },
   {
-    "name": "EGECO-one-scorch-enough",
+    "name": "EGECO-a-bridges-catch-forgiven",
     "file": "src/net/egFeats.js",
-    "old": "test: (s) => (s.scorched ?? 0) >= 2 }",
-    "new": "test: (s) => (s.scorched ?? 0) >= 1 }",
+    "old": " && !egCaughtBy(F, EG_FEAT_BRIDGE).length }",
+    "new": " }",
     "tests": [
       "test/egeco_feats.test.js"
     ]
