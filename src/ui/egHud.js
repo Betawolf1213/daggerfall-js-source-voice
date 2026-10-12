@@ -15,12 +15,19 @@
 // The models are pure (`egHudModel`, `egPanelModel`, `egRecapModel`); the drawing keeps one node each, updated, never
 // rebuilt line by line beyond what changed, and hidden with the HUD.
 //
+// EG-ZF (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 27.6): THE RECAP'S
+// NUMBERS - each member's share of the company's damage and what they healed (the room's `ds`, net/egTally.js), the board's
+// line from the end's claim (`egBoardLine` - *The Descent, the Few: 14th*), and the lord's fall's chart as the gate's own
+// chart reads one (`egChartFell` - ui/gateDamageChart.js damageChartModel).
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { egHallOf, egCircleOfHall, egSlotOfHall, egPhase, egTimes, egCountText, egObjectiveOf, EG_TEXT, EG_COUNT_START_MS, EG_LAST_WORD_MS, EG_BANDS, EG_DECREES, EG_TWIST_NAMES } from '../net/egLaw.js';
 import { egCountAt, egLivingCount, egMemberOf, egRunOfMember } from '../net/egLink.js';
 import { egCardText, egAccordsOf, EG_VESTIGES, EG_M_BY_ID } from '../net/egVestige.js';
 import { EG_CANTRIPS } from '../net/egRun.js';
 import { injectEnhancedFonts } from './enhancedStyle.js';
+import { chartShare, chartNumber } from './gateDamageChart.js';   // EG-ZF: the share and the numbers as the gate's chart says them
+import { EG_PRES_TEXT } from './egBeats.js';   // EG-ZF: the board's line and the chart's words
 
 /** Under this, THE COUNT burns red; under this it pulses; above this it is gold (ms). */
 export const EG_HUD_LOW_MS = 2 * 60_000;
@@ -184,8 +191,10 @@ export function egPanelModel(E, me, now, voted = {}) {
  *  ended in words (`whyText`, the client's end words), a strip per circle (`strip` - its halls' glyphs, its lord, its
  *  falls), the company member by member (`members` - numeral, name, falls, the recall kept or spent, how they left), the
  *  Accords I held with any companion (`accords`), the Reliquaries opened (`opened` - home or the last word open them; a
- *  tear, a wipe and a fall lose them) and the board's line when the herald gave one (`board`). Each member's share of the
- *  damage and their healing are not on the room's words (EG-E's receipts carry the share): said so in the record. */
+ *  tear, a wipe and a fall lose them) and the board's line (`board`).
+ *  EG-ZF (2026-10-12, section 27.6): each member's share of the company's damage (`share`, the gate chart's words - "34%")
+ *  and what they healed in others (`healed`), off the room's `ds` (null both where the room said none); the board's line
+ *  from the end's claim (`board`, egBoardLine); the breach it was (`b` - the board's line finds its recap by it). */
 export function egRecapModel(E, me, log, now, { whyText = '', board = '', why = E?.end ?? '' } = {}) {
   if (!E?.b) return null;
   const run = me ? egRunOfMember(E, me) : null;
@@ -195,7 +204,9 @@ export function egRecapModel(E, me, log, now, { whyText = '', board = '', why = 
   const band = E.h > 0 ? EG_BANDS[egHallOf(E.seed, E.h, E.geo ?? 0).band]?.name ?? '' : '';
   const others = (E.ms ?? []).filter((r) => r[0] !== me);
   const accords = [...new Set(others.flatMap((r) => egAccordsOf(run?.vs ?? [], r[6] ?? []).map((A) => A.name)))];
+  const ds = new Map((E.ds ?? []).map((t) => [t[0], t])), dealt = [...ds.values()].reduce((a, t) => a + t[1], 0);   // EG-ZF
   return {
+    b: E.b,
     title: `Hall ${E.h} - Redoubt ${E.rd} - ${band}`,
     time: ms(t), why: why ?? '',
     circles: circles.filter(Boolean).map((hs, j) => `Circle ${j + 1}: ${hs.map((h) => h.glyph).join(' ')}${hs.some((h) => h.fall) ? ' (a fall)' : ''}`),
@@ -207,7 +218,9 @@ export function egRecapModel(E, me, log, now, { whyText = '', board = '', why = 
     strip: circles.map((hs, j) => (hs ? { c: j + 1, glyphs: hs.map((h) => h.glyph), lord: hs.find((h) => h.lordName)?.lordName ?? '', falls: hs.filter((h) => h.fall).length } : null)).filter(Boolean),
     members: E.co.map((c) => {
       const [, name, n, alive, home, inn, wit, forsaken, falls, recall] = c;
-      return { numeral: ROMAN[n] ?? String(n), name, falls: falls ?? 0, recall: recall === 1 ? 'held' : 'spent', left: forsaken ? 'forsaken' : home ? 'home' : inn !== 1 ? 'away' : wit || !alive ? 'fallen' : 'standing' };
+      const t = ds.get(c[0]);   // EG-ZF: their share of the company's damage and what they healed - the room's own count
+      return { numeral: ROMAN[n] ?? String(n), name, falls: falls ?? 0, recall: recall === 1 ? 'held' : 'spent', left: forsaken ? 'forsaken' : home ? 'home' : inn !== 1 ? 'away' : wit || !alive ? 'fallen' : 'standing',
+        share: ds.size ? chartShare(t?.[1] ?? 0, dealt) : null, healed: ds.size ? t?.[2] ?? 0 : null };
     }),
     accords, opened: why === 'home' || why === 'last' ? run?.rel ?? 0 : 0, board,
   };
@@ -222,8 +235,46 @@ export function egRecapKeep(store, recap, at = Date.now()) {
   try { store?.setItem?.(EG_RECAPS_KEY, JSON.stringify(list)); } catch { /* the session's alone */ }
   return list;
 }
-/** EG-G1: a recap member's line (section 27.6's company - numeral, name, falls, the recall, how they left). */
-export const egRecapMemberLine = (m, words) => `${m.numeral} ${m.name} - ${words.left[m.left] ?? m.left}, ${m.falls === 1 ? '1 fall' : `${m.falls} falls`}, ${words.recall[m.recall] ?? m.recall}`;
+/** EG-G1: a recap member's line (section 27.6's company - numeral, name, falls, the recall, how they left). EG-ZF: and their
+ *  share of the damage and what they healed, where the room said them (`words.share`, `words.healed`; healing where any). */
+export const egRecapMemberLine = (m, words) => `${m.numeral} ${m.name} - ${words.left[m.left] ?? m.left}, ${m.falls === 1 ? '1 fall' : `${m.falls} falls`}, ${words.recall[m.recall] ?? m.recall}`
+  + (m.share != null && words.share ? ` - ${words.share(m.share)}${m.healed > 0 && words.healed ? `, ${words.healed(chartNumber(m.healed))}` : ''}` : '');
+/** EG-ZF (section 27.6): a rank as the board's line says it - 1st, 2nd, 3rd, 4th; 11th, 12th, 13th; 21st, 111th. Pure. */
+export function egRankText(n) {
+  const k = Math.max(1, Math.floor(Number(n) || 1)), t = k % 100;
+  return `${k}${t >= 11 && t <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][k % 10] ?? 'th'}`;
+}
+/** EG-ZF (section 27.6): THE BOARD'S LINE - the end's claim's standing (server-account/src/egHonours.js egStandingOf:
+ *  `{ k: 'descent', br, rank }` or `{ k: 'depths', rank }`) in words, *The Descent, the Few: 14th*; '' for none. Pure. */
+export function egBoardLine(board) {
+  if (!board || !Number.isSafeInteger(board.rank) || board.rank < 1) return '';
+  if (board.k === 'descent' && EG_PRES_TEXT.boardBrackets[board.br]) return EG_PRES_TEXT.boardDescent(EG_PRES_TEXT.boardBrackets[board.br], egRankText(board.rank));
+  if (board.k === 'depths') return EG_PRES_TEXT.boardDepths(egRankText(board.rank));
+  return '';
+}
+/** EG-ZF: the board's line set on the kept recap of breach `b` (the claim answers after the run is kept). Answers the list. */
+export function egRecapBoardKeep(store, b, line) {
+  const list = egRecapsKept(store);
+  let i = list.length - 1;
+  while (i >= 0 && list[i]?.b !== b) i--;
+  if (i < 0 || !line || list[i].board === line) return list;
+  list[i] = { ...list[i], board: line };
+  try { store?.setItem?.(EG_RECAPS_KEY, JSON.stringify(list)); } catch { /* the session's alone */ }
+  return list;
+}
+/**
+ * EG-ZF (section 27.6): A LORD'S FALL'S CHART as the gate's chart reads a fall (ui/gateDamageChart.js damageChartModel's
+ * `fell`): the room's compact rows (`E.chart.dm` - `[sub, level, dealt, on the lord, blows, heaviest, falls, healed]`)
+ * named by the company, the lord's part in the crystals' column, the Healed column where anyone healed; null for none.
+ * Pure.
+ */
+export function egChartFell(E) {
+  const C = E?.chart;
+  if (!C?.dm?.length) return null;
+  const nameOf = (sub) => (E.co ?? []).find((c) => c[0] === sub)?.[1] ?? '?';
+  const healed = C.dm.some((t) => t[7] > 0);
+  return { at: C.at, n: C.dm.length, dm: C.dm.map(([sub, l, d, x, h, b, f, hl]) => ({ n: nameOf(sub), l, d, x, h, b, f, ...(healed ? { hl } : {}) })) };
+}
 
 // ── the drawing ─────────────────────────────────────────────────────────────────────────────────────────────
 let root = null, parts = null, panel = null, panelKey = '';
@@ -273,7 +324,7 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
   const want = !hidden && (!!model || !!recap);
   if (!want) { if (panel) { panel.remove?.(); panel = null; panelKey = ''; } return; }
   if (!doc?.createElement) return;
-  const key = JSON.stringify([model, recap ? recap.title + recap.why : '', focus]).replace(/"left":\d+/g, '');   // EG-G1: the pad's focus redraws
+  const key = JSON.stringify([model, recap ? recap.title + recap.why + (recap.board ?? '') : '', focus]).replace(/"left":\d+/g, '');   // EG-G1: the pad's focus redraws; EG-ZF: the board's line, when the claim brings it
   const leftOf = (q) => model?.asks?.find((a) => a.q === q)?.left ?? 0;
   if (panel && key === panelKey) {
     for (const el of panel.querySelectorAll?.('[data-left]') ?? []) el.textContent = `${Math.ceil(leftOf(el.getAttribute('data-left')) / 1000)}s`;
@@ -293,7 +344,7 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
     const opened = doc.createElement('div'); opened.className = 'eg-note eg-rel'; opened.setAttribute('data-rel', '1'); opened.textContent = words.recapReliquaries(relShown ?? recap.opened);
     const lines = [words.recapDepth(recap.depth.h, recap.depth.rd, recap.depth.band), `${words.recapTime(recap.time)} - ${recap.whyText || recap.why}`, opened,
       ...recap.strip.map((c) => `Circle ${c.c}: ${c.glyphs.join(' ')}${c.lord ? ` - ${c.lord}` : ''}${c.falls ? ` (${c.falls === 1 ? 'a fall' : `${c.falls} falls`})` : ''}`),
-      ...recap.members.map((m) => egRecapMemberLine(m, { left: words.recapLeft, recall: words.recapRecall })),
+      ...recap.members.map((m) => egRecapMemberLine(m, { left: words.recapLeft, recall: words.recapRecall, share: words.recapShare, healed: words.recapHealed })),
       recap.vestiges.length ? `Vestiges: ${recap.vestiges.join(', ')}` : '', recap.accords.length ? `${words.recapAccords}: ${recap.accords.join(', ')}` : '', recap.board];
     for (const line of lines) {
       if (!line) continue;

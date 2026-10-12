@@ -677,8 +677,8 @@
   {
     "name": "EGF-the-relay-key-withheld",
     "file": "server-account/src/index.js",
-    "old": "'/v1/eg/keys': async () => ({ ...(await egKeysOf(ctx, who.player)), rk: String(env.GATE_PUBLIC_KEY ?? '') || null }),",
-    "new": "'/v1/eg/keys': async () => egKeysOf(ctx, who.player),",
+    "old": "'/v1/eg/keys': async () => ({ ...(await egKeysOf(ctx, who.player, env)), rk: String(env.GATE_PUBLIC_KEY ?? '') || null }),",
+    "new": "'/v1/eg/keys': async () => egKeysOf(ctx, who.player, env),",
     "tests": [
       "test/egarch_service.test.js"
     ]

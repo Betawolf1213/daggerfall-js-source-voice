@@ -13,8 +13,9 @@
 //     a gift, a hall's wake (its twist and its fork) and the last word - and the first-time lines they bring due. Pure:
 //     what was heard before the first look is never replayed (a reload mid-breach says nothing old);
 //   THE FIRST BREACH (`EG_TEXT_FIRST`, section 27.7): nine lines, each at its first occurrence and never in a card
-//     before it applies, once a device (`egFirstDue`, the bits kept by the client - the service's bits are EG-E's);
-//     and the Rehearsal's own teaching line, once;
+//     before it applies, and the Rehearsal's own teaching line, once (`egFirstDue`). EG-ZF (2026-10-12): ONCE AN ACCOUNT -
+//     the account service keeps the bits (`/v1/eg/keys` `first`, written by `/v1/eg/first` as a line is shown) and they
+//     are read over the device's own (`egFirstOver`); a device with no account keeps the device's (`eg.first`);
 //   THE EXAMINATION HEARD (section 25.7): the Spellmaster's runes tell their order by numerals and light, and by a chime
 //     as each lights, pitched up its numeral (`EG_RUNE_CHIME`), its numeral in the live line;
 //   THE TOUCH OF IT (`EG_HAPTICS`, section 27.8): 15 ms when the Beat underfoot enters its last 0.4 s, 30 ms on a peril,
@@ -61,6 +62,14 @@ export const EG_PRES_TEXT = Object.freeze({
   recapReliquaries: (n) => `Reliquaries opened: ${n}`,
   recapAccords: 'Accords',
   recapClose: 'Press Enter to close.',
+  // EG-ZF (section 27.6): each member's share and healing on the recap; the board's line; the lord's fall's chart
+  recapShare: (s) => `${s} of the damage`,
+  recapHealed: (n) => `${n} healed`,
+  boardDescent: (bracket, rank) => `The Descent, ${bracket}: ${rank}`,
+  boardDepths: (rank) => `The Depths: ${rank}`,
+  boardBrackets: Object.freeze({ alone: 'Alone', few: 'the Few', company: 'the Company' }),
+  chartLord: 'Lord',
+  chartSub: (name, n, plural) => `${name} ${plural ? 'have' : 'has'} fallen - ${n === 1 ? 'one alone' : `a company of ${n}`}`,
 });
 /** The bands' own lines, on a band's first arrival card (section 7's table). */
 export const EG_BAND_LINES = Object.freeze([
@@ -233,6 +242,10 @@ export function egRehearsalDue(bits) {
   const bit = 1 << EG_FIRST_REHEARSAL_BIT;
   return (bits | 0) & bit ? { line: null, bits: bits | 0 } : { line: EG_PRES_TEXT.rehearsal, bits: (bits | 0) | bit };
 }
+/** EG-ZF (section 27.7, once an account): THE BITS IN FORCE - the account's (the service's answer, a whole number; null
+ *  while it has none: no account, a guest, no answer yet) over the device's own, with the lines this screen has shown
+ *  since (`shown`) - a line shown is never shown again while its word to the service is still on its way. Pure. */
+export const egFirstOver = (device, account, shown = 0) => ((Number.isSafeInteger(account) && account >= 0 ? account : device | 0) | (shown | 0));
 /** The device's bits from its store (0 for none or a broken one). */
 export const egFirstRead = (store) => { try { const v = Number.parseInt(store?.getItem?.(EG_FIRST_KEY) ?? '0', 10); return Number.isSafeInteger(v) && v >= 0 ? v : 0; } catch { return 0; } };
 export const egFirstWrite = (store, bits) => { try { store?.setItem?.(EG_FIRST_KEY, String(bits | 0)); } catch { /* the session's alone */ } };

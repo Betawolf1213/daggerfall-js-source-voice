@@ -61,10 +61,11 @@
 // WB5b, the gates closed. The caller is the account the receipt names:
 //   POST /v1/serpent/claim { receipt, character, name?, cid? } -> { recorded, slain, renown, spoils, order, marks? }   (SERPENT1: a sea serpent's receipt; SERPENT-SET: `marks` its silver where it recorded)
 //   POST /v1/sd/claim    { receipt } -> { recorded, slot?, title?, aura?, broken }   (SD9b: a Brass Remnant's receipt - an Hour broken; Hourbreaker and The Turning Hour rolled on its first write)
-//   POST /v1/eg/keys     {} -> { keys, live, rehearsal, proven, redoubts, sink, annals, feats }   (EG-PLAY: the Weir Keys held, the live breach; EG-E1: `sink` the week's Panoply sale, { week, piece }; EG-E2: the Annals' pages kept, each lord's feats)
+//   POST /v1/eg/keys     {} -> { keys, live, rehearsal, proven, redoubts, sink, annals, feats, first }   (EG-PLAY: the Weir Keys held, the live breach; EG-E1: `sink` the week's Panoply sale, { week, piece }; EG-E2: the Annals' pages kept, each lord's feats; EG-ZF: the first-time lines shown - and First of the Spire's letter, once, to an account its list names)
+//   POST /v1/eg/first    { bits } -> { first }   (EG-ZF: the first-time lines a client showed, OR'ed onto the account - guest 403, bits 400)
 //   POST /v1/eg/open     { rq, rh? } -> { order, b, ez, keys, until, rh }   (EG-PLAY: a key staked - or the day's Rehearsal - and the open order signed; idempotent on `rq`)
 //   POST /v1/eg/admit    { b } -> { order, b }   (EG-PLAY: a member's admission order; one live breach an account)
-//   POST /v1/eg/claim    { receipt, character? } -> { recorded, q, b, w?, keys, ... }   (EG-PLAY: an `e1` - a Redoubt taken, a member's end, a void; EG-E1: a Redoubt's `paid`, `again`, `marks`, `deed`, `embers`, `purse`, `weir`, `pity`, an end's `rl`; EG-E2: `honours`, the titles a Redoubt newly granted)
+//   POST /v1/eg/claim    { receipt, character? } -> { recorded, q, b, w?, keys, ... }   (EG-PLAY: an `e1` - a Redoubt taken, a member's end, a void; EG-E1: a Redoubt's `paid`, `again`, `marks`, `deed`, `embers`, `purse`, `weir`, `pity`, an end's `rl`; EG-ZF: an end's `board`, the member's standing - { k: 'descent', br, rank } or { k: 'depths', rank }; EG-E2: `honours`, the titles a Redoubt newly granted)
 //   POST /v1/eg/sink     { piece } -> { ok, piece, week, purse }   (EG-E1: the Broker's Panoply piece, once a week for 20 embers - guest 403, piece 400, bought / short 409)
 //   POST /v1/eg/board    {} -> { ok, season, descent: { alone, few, company }, depths, deepest, proclamation, best }   (EG-E2: the Elite Breach's three boards - egHonours.js)
 //   POST /v1/eg/find     { tier } -> { found, keys, asks }   (EG-E3: a dungeon elite's find - 'super' | 'elite' | 'regular', the service's die, 6 asks a tier a day, 2 keys a week)
@@ -209,7 +210,7 @@ import { contractRegionOfRaid } from '../../src/net/writLaw.js';   // CHAP2b: th
 import { claimRaid, raidRecordOf } from './raids.js';   // RAID4: the towns defended
 import { claimSerpent, serpentRecordOf } from './serpents.js';   // SERPENT1: the serpents slain
 import { claimSd, sdRecordOf } from './sds.js';   // SD9b: the Hours broken
-import { egKeysOf, openEg, admitEg, claimEg, rollWeirKey, findEg } from './eg.js';   // EG-PLAY: the Elite Breach - the Weir Keys, the open, the admission, the claim; EG-E3: a dungeon elite's find
+import { egKeysOf, openEg, admitEg, claimEg, rollWeirKey, findEg, egFirstSay } from './eg.js';   // EG-PLAY: the Elite Breach - the Weir Keys, the open, the admission, the claim; EG-E3: a dungeon elite's find
 import { egBoardOf, withEgHonours } from './egHonours.js';   // EG-E2: the Elite Breach's boards, and Spire Champion on the row
 import { egSink } from './egEconomy.js';   // EG-E1: the Broker's Panoply sink
 import { startsEg } from './egStarts.js';   // EG-F: the start window's preflight
@@ -1145,7 +1146,8 @@ const service = {
       if (path.startsWith('/v1/eg/')) {
         if (request.method !== 'POST') return no('method', 405, origin);
         const act = {
-          '/v1/eg/keys': async () => ({ ...(await egKeysOf(ctx, who.player)), rk: String(env.GATE_PUBLIC_KEY ?? '') || null }),   // EG-F: and the relay's public half - a stranger's arch verified (egStarts.js)
+          '/v1/eg/keys': async () => ({ ...(await egKeysOf(ctx, who.player, env)), rk: String(env.GATE_PUBLIC_KEY ?? '') || null }),   // EG-F: and the relay's public half - a stranger's arch verified (egStarts.js); EG-ZF: `env`, First of the Spire's list
+          '/v1/eg/first': async () => egFirstSay(ctx, who.player, body),   // EG-ZF: the first-time lines shown, once an account
           '/v1/eg/starts': async () => startsEg(ctx, who.player, body, String(env.GATE_PUBLIC_KEY ?? '') || null),   // EG-F: the start window's preflight
           '/v1/eg/open': async () => openEg(ctx, who.player, body, await signingKey(env, subtle)),
           '/v1/eg/admit': async () => admitEg(ctx, who.player, body, await signingKey(env, subtle)),

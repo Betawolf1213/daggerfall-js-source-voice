@@ -161,3 +161,9 @@ CREATE INDEX IF NOT EXISTS idx_eg_finds_week ON eg_finds (account, wk);
 ALTER TABLE eg_stakes ADD COLUMN ew INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE eg_stakes ADD COLUMN wg TEXT NOT NULL DEFAULT '';
 CREATE INDEX IF NOT EXISTS idx_eg_stakes_b ON eg_stakes (b);
+-- EG-ZF (2026-10-12, Mac: "I said I want everything") - THE FIRST-TIME LINES ONCE AN ACCOUNT (bible/11-Multiplayer/
+-- Elite-Gates.md section 27.7: "First-time lines, once an account (service bits, EG_TEXT_FIRST)"). `eg_first` holds the
+-- lines the account has been shown, a bit a line in src/ui/egBeats.js EG_FIRST_KEYS' order (the Rehearsal's after them),
+-- OR'ed by `/v1/eg/first` as a client shows one and answered on `/v1/eg/keys` (server-account/src/eg.js egFirstSay) - a
+-- new device says none of them again.
+ALTER TABLE players ADD COLUMN eg_first INTEGER NOT NULL DEFAULT 0;

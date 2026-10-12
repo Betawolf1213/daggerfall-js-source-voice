@@ -327,6 +327,7 @@ import { EG_INTERNAL_HERALD, EG_HERALD_KEY, EG_HERALD_KEEP_MS, EG_HERALD_TELL_MS
 // those trails and the body counted, ENFORCED in the Spire (net/egBrain.js egCount - the member's one life), the room's
 // heals restored to it, the member's own word of its body (`vt`), the shared clock's ping answered (`clk`)
 import { egPoseIn, egCount, egCountHeals, egBodyWord, egFairWoke, EG_BODY_ENFORCE } from '../../src/net/egBrain.js';
+import { egHeal } from '../../src/net/egBrain.js';   // EG-ZF (Elite-Gates.md section 27.6): what a companion's spell healed in a member - the recap's healing
 import { egPoseClock, egPoseShared, egTrailPush } from '../../src/net/egFair.js';
 import { signEgCall } from '../../src/net/egCallSig.js';   // EG-F: the hub's signature on the call's arch fields
 import { egGate, EG_INTERNAL_OPEN, EG_KEY, egCallKey, validEgOpenTell, EG_BRAIN_MIN } from './relay.js';
@@ -7503,6 +7504,11 @@ export class Room {
       if (egHome(B, a.sub, now, out)) { this._egFan(out); await this._egMint(B, now); await this._egSave(B, now, true); }
       return;
     }
+    // EG-ZF (section 27.6): WHAT COMPANIONS' SPELLS HEALED IN THIS MEMBER, and whose - each healer the socket in this room its
+    // peer id names (a member of the breach, else nobody: net/egTally.js credits only the company); believed within the
+    // member's heal bucket - the recap's healing, a Court's chart, and the count's mend (net/egBrain.js egHeal, the gate's
+    // GATE-HEAL and AUDIT INT11 law). A figure for the round-up: it keeps no beat and wakes nothing.
+    if (m.k === 'heal') { egHeal(B, a.sub, m.h.map(([id, n]) => [this._idFirst(id)?.[1]?.sub ?? '', n]), now, this._egLine(), EG_BODY_ENFORCE); return; }
     if (m.k === 'hit') this._egFan(egBlow(B, a.sub, m, pose, now));
     else {
       // EG-FULL: a member's other words - a Vestige picked, the company's word, a Cantrip, a purchase, a ping, a bequest,

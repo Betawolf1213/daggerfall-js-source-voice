@@ -11,7 +11,10 @@
 //     place's gusts and darkness, the beats said;
 //   what is the member's alone: their Vestige offer, what they were given, a recall's word;
 //   EG-H1 (EG8d): the blows Watchfire told me early (`told` - each `tell`'s blow and the lead shown, until its `eb` or its
-//     `untell`).
+//     `untell`);
+//   EG-ZF (2026-10-12; section 27.6, THE RECAP): each member's damage and healing over the breach (`ds`, `[sub, dealt,
+//     healed]` - each `st`'s, and the end's), and the last lord's fall's DAMAGE CHART (`chart` - `{ at, h, dm }`, the
+//     Redoubt's `dm` or an end's at the fall - net/egTally.js).
 //
 // PURE in its fold (`foldEg`); the link around it keeps the state, hands each receipt on and says a refusal once.
 //
@@ -27,6 +30,7 @@ export const EG_STATE_EMPTY = Object.freeze({
   fight: EG_FIGHT_EMPTY, offer: null, tally: Object.freeze({}), asked: Object.freeze({}), got: Object.freeze([]), rises: Object.freeze([]), pings: Object.freeze([]), heals: Object.freeze([]), pz: null,
   falls: Object.freeze([]), redoubt: null, no: null, heardAt: 0,
   site: null,   // EG-F: the arch's site as the room keeps it (the cast-out's landing with the arch gone)
+  ds: Object.freeze([]), chart: null,   // EG-ZF: the recap's numbers and the last lord's fall's chart
 });
 /** How many falls, beats, gifts and pings the state keeps for the screen to say. */
 export const EG_FALLS_KEPT = 8;
@@ -98,13 +102,14 @@ export function foldEg(s, w, now) {
       return { ...(same ? s : EG_STATE_EMPTY), call: same ? s.call : null, b: w.b, seed: w.seed, egv: w.egv, op: w.op, wk: w.wk, ...stageOf(w), co: w.co, rd: w.rd, rh: w.rh, dg: w.dg, end: w.end,
         dc: w.dc, pr: w.pr, wg: w.wg, td: w.td, sr: w.sr, geo: w.geo, ms: w.ms, ca2: w.ca2, mm: w.mm, rp: w.rp, sp: w.sp, as: w.as,
         site: w.site ?? (same ? s.site : null),   // EG-F
+        ds: w.ds ?? [],   // EG-ZF
         fight: same && s.fight.h === w.h ? s.fight : EG_FIGHT_EMPTY, heardAt: now };
     }
     case 'sg': return { ...s, ...stageOf(w), fight: w.h === s.fight.h ? s.fight : EG_FIGHT_EMPTY, offer: w.sg === 'rest' ? s.offer : null, heardAt: now };
     case 'co': return { ...s, co: w.co, heardAt: now };
     case 'fall': return { ...s, falls: keepLast(s.falls, { s: w.s, n: w.n, at: w.at, fin: w.fin }, EG_FALLS_KEPT), heardAt: now };
-    case 'rd': return { ...s, rd: w.w, redoubt: { w: w.w, h: w.h, at: w.at, cl: w.cl, g: w.g, v: w.v, cov: w.cov }, heardAt: now };
-    case 'end': return { ...s, end: w.why, sg: 'end', offer: null, as: [], heardAt: now };
+    case 'rd': return { ...s, rd: w.w, redoubt: { w: w.w, h: w.h, at: w.at, cl: w.cl, g: w.g, v: w.v, cov: w.cov }, chart: w.dm ? { at: w.at, h: w.h, dm: w.dm } : s.chart, heardAt: now };   // EG-ZF: the lord's fall's chart
+    case 'end': return { ...s, end: w.why, sg: 'end', offer: null, as: [], ds: w.ds?.length ? w.ds : s.ds, chart: w.dm ? { at: w.at, h: s.h, dm: w.dm } : s.chart, heardAt: now };   // EG-ZF: the end's numbers, and its fall's chart
     case 'no': return { ...s, no: w.m, heardAt: now };
     case 'offer': return { ...s, offer: w.v.length && w.n > 0 ? { v: w.v, n: w.n, at: now } : null, heardAt: now };
     case 'ask': return { ...s, as: [...s.as.filter((a) => a[0] !== w.q), [w.q, w.o, w.until]], heardAt: now };

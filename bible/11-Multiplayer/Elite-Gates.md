@@ -2473,7 +2473,8 @@ an arm: its statements appended to the arm's batch, and a `w`'s new honours merg
     relay mints no `td` yet; a company is the accounts that claimed an end of one breach, not the receipt's `co`;
   - a Descent row's Proclamation is its company's first claim's week, not the open's;
   - THE SEAL's ranking (a run ranked by its seconds to the sealed Redoubt) is not special-cased;
-  - First of the Spire's mailbox send is not written (the list is empty);
+  - First of the Spire's mailbox send is not written (the list is empty) (EG-ZF wrote it: `egFirstPost`, the list as
+    the send);
   - THE QUIET COMPANY: `render/auraRing.js` has no quiet seam - the hosts draw every aura they gather - so a cosmetic
     aura still draws during a trial; the host owes it;
   - the herald's lines for a new top of the Descent and for First of the Spire are not here.
@@ -4194,14 +4195,16 @@ art stay the look's (EG16, EG17).
 **Where EG-G1 departs from this page, said plainly.**
 
 1. The first-time lines are once a device (`eg.first`), not an account's service bits. The bits are the account
-   service's to add, and a new device says each line once more.
+   service's to add, and a new device says each line once more. (EG-ZF added them: `players.eg_first`, `/v1/eg/first`,
+   read over the device's - `ui/egBeats.js` egFirstOver.)
 2. The new words are not in `EG_TEXT`. `net/egLaw.js` is in the relay's bundle, so a client's word there would move the
    relay's law hash for nothing the relay reads. They are in `ui/egBeats.js` instead.
 3. The arrival card wears `ui/gateTitleCard.js`'s sheet on a node of its own, because that module's one card is the
    fight's.
 4. The recap shows no share and no healing per member, because the room's words carry neither (the share rides EG-E's
    receipts). The board's line shows when the herald hands one (`board`), and today nothing does. The damage chart at a
-   lord's fall (`ui/gateDamageChart.js`) is not shown, because the room puts no Spire damage table on the wire.
+   lord's fall (`ui/gateDamageChart.js`) is not shown, because the room puts no Spire damage table on the wire. (EG-ZF
+   built all three: the room's `dm` and `ds` - `net/egTally.js` - and the board's line from the end's claim.)
 5. The door has its screen-edge marker, its metres, its sound and the fight's words. Its compass mark on the enhanced
    HUD's strip, the beam and the closing's ring are the look's (EG16).
 6. The absent ring reads this screen's silence: no pose of theirs in my room, the same silence the relay counts. The
@@ -4674,3 +4677,107 @@ and draws what they choose.
   (`egBandUp`) and builds its waystones (`egLookBuild`). The old circle's look mesh is freed with its circle mesh.
 - The fight's wind-up barks keep EG-H1's feint gate (the wind once the wind-up is past `EG_FEINT_AT`, never on a
   feint), and Watchfire's early outlines draw after the ordered blows. The fight's clock is the breach's corrected one.
+
+### EG-ZF - 2026-10-12 - THE RECAP WHOLE AND THE ACCOUNT'S MEMORY
+
+(Mac: *"I said I want everything"*.) Closes EG-G1's first and fourth departures, EG-E2's mailbox send, and the gap
+audit's rows 12, 13, 15 and 21: the damage chart at a lord's fall, each member's share and healing on the recap, the
+recap's board line, the first-time lines once an account, and First of the Spire's letter.
+
+**What shipped, by piece.**
+
+- **The director's count** (`net/egTally.js`, new, in the relay's bundle; section 27.6). Every number is the relay's
+  own count, never a screen's:
+  - A Court's wake lays a chart on its fight (`F.tl`, `egTallyWake`). Each member's row holds what they dealt in the
+    Court, the lord's part of it, the blows that landed, the heaviest, their falls there and what they healed in
+    others. A blow is counted as egBlow believed it (`got`, after the gate's hand and purse and the lord's weight).
+  - Each member's damage and healing over the whole breach sit on the member's record (`m.dt`, `m.ht`).
+  - A companion's heal is said by its receiver. The healer is named by its peer id, which the room turns into the
+    healer's account. It is credited to the healer, never to the receiver itself, a stranger, or one who never
+    entered. It is believed within the receiver's heal bucket, which is the gate's (GATE-HEAL: a whole reference health
+    refilled over `HEAL_REFILL_S`, `HEAL_DEPTH_X` deep). A fallen member's word is still heard; a forsaken one's, and
+    any after the end, are not.
+  - What was believed also mends the receiver's count, as an ally's mend and never out of its own budget
+    (`net/egBrain.js` `egHeal` - `bodyHealed`, the gate's AUDIT INT11 law).
+  - None of it buys anything: no receipt, no share of a Redoubt's earners (the director keeps its own `dc`), no threat.
+- **On the wire** (`net/wire.js`).
+  - The Redoubt carries the chart (`rd`'s `dm`): `[sub, level, dealt, on the lord, blows, heaviest, falls, healed]`,
+    at most a company's rows, most dealt first, ties in the company's order. Every member with a part, and every member
+    standing in the Court at the fall, has a row.
+  - An end that came at the lord's fall (a Rehearsal's, at Redoubt 1) carries its chart on the `end`. An end anywhere
+    else (a tear, say) carries none.
+  - Every `st` and the `end` carry each member's part (`ds`, `[sub, dealt, healed]`).
+  - A bad chart is no chart, never no Redoubt. A state with bad tallies is no state, as its runs are.
+  - The member's `heal` is the gate's own word, validated by `validGateIn`'s law. The breach's room hears it
+    (`server/src/index.js` `_egFrame`).
+  - `net/egLink.js` keeps `ds` and the last fall's `chart`.
+- **The chart at a lord's fall** (`scenes/egClient.js`, `ui/egHud.js` `egChartFell`).
+  - It is the gate's own chart (`ui/gateDamageChart.js`), shown a beat after the Redoubt for its minute, to the side,
+    in its one slot.
+  - The crystals' column is the lord's part (*Lord*). The Healed column shows where anyone healed. My row is marked.
+    The sub line names the lord: *Grath has fallen - a company of 3*, or *The Twin Lords have fallen*.
+  - It is drawn from the online frame in every mode, so an end's chart outlives the walk out. Once its minute is up it
+    is drawn no more, so it never takes the slot from a gate court's chart.
+- **The recap's share and healing** (`ui/egHud.js` `egRecapModel`, `egRecapMemberLine`). Each member's row shows their
+  share of the company's damage, in the gate chart's words, and what they healed where any:
+  *II Ann - stood to the end, 1 fall, recall spent - 25% of the damage, 1,250 healed*.
+- **The heal word out** (`scenes/egClient.js` `healedBy`). What my companions' spells healed in me is owed to each
+  caster by peer id. It goes to the room once a second (`EG_HEAL_SEND_MS`) in whole points, the fractions kept for the
+  next, inside the Spire alone.
+- **The recap's board line** (`server-account/src/egHonours.js` `egStandingOf`; `ui/egHud.js` `egBoardLine`).
+  - An end's claim answers the member's standing (`board`). Where the breach ranks on the Descent, that is its
+    company's bracket and rank this season: `{ k: 'descent', br, rank }`. The company is the accounts that have
+    claimed an end of the breach so far; if the same company has a better breach, that breach's place is given.
+  - Otherwise it is the account's own rank on the Depths this season: `{ k: 'depths', rank }`.
+  - A Rehearsal, or an end with no hall cleared, answers none. A re-claim answers the same.
+  - The client puts the line on that breach's recap, the one standing or the one kept (`egRecapBoardKeep`), and on
+    one still to be made: *The Descent, the Few: 14th*, *The Depths: 31st*.
+- **The first-time lines once an account** (section 27.7).
+  - The account keeps the lines it has been shown (`players.eg_first`, a bit a line in `EG_FIRST_KEYS`' order, the
+    Rehearsal's after them). `POST /v1/eg/first { bits }` ORs them (`egFirstSay`) and answers `{ first }`; a guest is
+    refused `guest` (403), and anything outside sixteen bits `bits` (400). `/v1/eg/keys` answers `first`.
+  - The client reads the account's bits over the device's own (`ui/egBeats.js` `egFirstOver`), together with the lines
+    this screen showed since. A line newly shown is kept on the device and told to the account; the next balance's
+    answer carries a word that was lost.
+  - Where no account answers, the device's `eg.first` holds.
+- **First of the Spire's letter** (`server-account/src/egHonours.js` `EG_FIRST_POST`, `egFirstPost`; section 19).
+  Hour's First's letter was the operator's send to names frozen the day they were known (`tools/sendServerPost.mjs`
+  HOURS_FIRST, migration 0094). First of the Spire's names are not known until its company comes, so the list is the
+  send:
+  - an account `EG_FIRST_HANDLES` names is written its letter at its next balance's read, once (0093's one-a-send
+    index);
+  - the words are fixed, the developers', with no item: *Your company was the first ever to take Redoubt 10 of the
+    Battlespire. The Spire remembers.* The title and Firstlight are the account's by the list;
+  - `post.js`, `net/postLaw.js` and the Accounts arc's SERVER-POST record now say so.
+
+**Where it departs from this page, said plainly.**
+
+1. The chart shows at a Court's fall (the Redoubt, or a Rehearsal's end) and nowhere else. A Proving Walk's champion
+   and a Deepway chamber's are not lords, and no chart is laid for them.
+2. The chart's sub line is the Spire's own words over the gate's model. The gate's *n challengers* has no Spire
+   meaning.
+3. The heal word only reaches the room once the host feeds it. FLAGGED below: `scenes/world.js` must hand the client
+   the ally cast's healing. Until then the Healed column and each member's healing read 0.
+4. The board line is the end's claim's answer, not the herald's: the herald posts to Discord and hands the client
+   nothing. A recap made before its claim answers shows the line when the answer lands.
+5. First of the Spire's letter is written by a route a player reaches (`/v1/eg/keys`), not by the operator's
+   workflow. Only the operator's list chooses who gets it, and its words are fixed here.
+6. A first-time line shown on a device signed in as a guest stays the device's. A guest holds no Weir Key and enters
+   no breach, so none is ever said.
+
+**The four hosts.**
+- `src/scenes/world.js` - FLAGGED (the lead's). `online.onCast` owes the Spire the ally cast's healing, beside the gate
+  court's: `egClient?.healedBy?.(id, healed)` next to `gateCourt?.healedBy?.(id, healed)`. Nothing else is owed: the
+  chart and the recap draw from the client's own online frame, and the account door (`accountEg(...).first`) is the
+  client's. Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED. It has nothing to wire: the chart is drawn from the online frame in every mode.
+- `src/scenes/dungeonContext.js` - FLAGGED, for the same reason.
+- `src/scenes/exterior.js` - FLAGGED as section 28 has it: offline, no breach.
+
+**Pins.** `test/egz_recap.test.js` (10). `tools/mutants/egz_recap.json` (99, every one dead). PIN MOVED:
+`test/egplay_relay.test.js` (`EG_KINDS` gains `heal`), `test/egplay_service.test.js` (the keys' answer carries
+`first`) and `test/accountworker.test.js` (`players.eg_first`). Two records re-aimed by content, both still dead:
+`egarch.json`'s EGF-the-relay-key-withheld (the keys' route hands `env` on) and `eglook.json`'s EGLOOK-client-look-kept
+(`away()` puts the chart away after the look). `RELAY_VERSION` `world197` is re-hashed with
+`net/egTally.js` in its graph (unshipped). `ACCOUNT_VERSION` stays `acct121`: 0111 is extended, unshipped. The
+Ledger's ELITE-GATES row gains `net/egTally.js` at the lead's merge.
