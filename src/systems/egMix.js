@@ -1,0 +1,82 @@
+// @ts-check
+// EG-G2 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 26 - THE SPIRE MIX,
+// EG17): what the breach's screen hears first. The audio engine (systems/audio.js) has no voice cap, ducking or priority,
+// and the gate stings only for a Meteor or a Leap on your ground (world/gateBoss.js BOSS_CUES.sting): fourteen adds,
+// eight players and the score would mask the cues that matter. So, in the Spire:
+//   A PERSONAL STING, always, for a lord's blow or a CHECK on your feet - the gate's sting (the parry's ring at your feet);
+//     for an add's, at most one each EG_MIX.addGapMs;
+//   THE CRITICAL BUS (stings, a lord's wind-up and release, CHECKs) ducks the score by EG_MIX.duckDb for EG_MIX.duckMs and
+//     is never culled (systems/music.js duck - the song's own level dipped, the fades left alone);
+//   BARKS capped at EG_MIX.barksPerKind a kind a frame, nearest first (egBarkCull) - the legion's wind-up cues;
+//   PEERS' sounds EG_MIX.peerDb down, and WATCHFIRE's tell at EG_MIX.watchfirePitch (the law's numbers - the peers'
+//     sounds are the online layer's, net/peerFx.js, and no Watchfire tell is sounded yet: said in the arc's record);
+//   the reverb is the hall's (section 11.9 - its own slice).
+// The law is pure (egStingWanted, egBarkCull); `createSpireMix` is its seam over the engine and the music.
+//
+// Not a DFU member. Ledger A (ELITE-GATES).
+import { BOSS_CUES } from '../world/gateBoss.js';
+
+/** THE SPIRE MIX's numbers (section 26). */
+export const EG_MIX = Object.freeze({ duckDb: 6, duckMs: 300, addGapMs: 1500, barksPerKind: 4, peerDb: -4, watchfirePitch: 1.4 });
+/** A level in decibels as a gain. */
+export const egDbGain = (db) => 10 ** (db / 20);
+/** What rides THE CRITICAL BUS (never culled, ducks the score). */
+export const EG_CRITICAL = Object.freeze(['sting', 'windup', 'release', 'check']);
+
+/** Whether a personal sting sounds for a blow of `kind` ('lord', 'check', 'add') on my feet at `now`, the last add's sting
+ *  at `lastAddAt` (ms). Pure. */
+export const egStingWanted = (kind, now, lastAddAt = -Infinity) => kind === 'lord' || kind === 'check' || (kind === 'add' && now - lastAddAt >= EG_MIX.addGapMs);
+
+/**
+ * THE BARKS' CAP: of `barks` (`{ kind, at: [x, y, z] }`), at most `per` a kind, nearest `ear` first - the rest dropped this
+ * frame. The critical bus is never culled: a bark marked `critical` always stays (and counts toward its kind). Pure; the
+ * order kept is nearest first.
+ */
+export function egBarkCull(barks, ear, per = EG_MIX.barksPerKind) {
+  const d2 = (b) => (ear && b.at ? (b.at[0] - ear[0]) ** 2 + (b.at[1] - ear[1]) ** 2 + (b.at[2] - ear[2]) ** 2 : 0);
+  const sorted = [...barks].sort((a, b) => (b.critical ? 1 : 0) - (a.critical ? 1 : 0) || d2(a) - d2(b));
+  const n = new Map(), out = [];
+  for (const b of sorted) {
+    const k = n.get(b.kind) ?? 0;
+    if (k >= per && !b.critical) continue;
+    n.set(b.kind, k + 1);
+    out.push(b);
+  }
+  return out;
+}
+
+/**
+ * THE MIX'S SEAM: `sting(kind, at)` (a personal sting at my feet, ducking the score), `critical()` (the duck alone),
+ * `barks(list, ear, play)` (the cap, each kept bark played by `play`), `peerVolume(v)`.
+ * @param {{ audio?: any, music?: any, now?: () => number }} deps
+ */
+export function createSpireMix({ audio = null, music = null, now = () => Date.now() } = {}) {
+  let lastAdd = -Infinity, stings = 0, ducks = 0;
+  const mix = {
+    /** THE CRITICAL BUS: the score ducked EG_MIX.duckDb for EG_MIX.duckMs. */
+    critical() { ducks++; try { music?.duck?.(EG_MIX.duckDb, EG_MIX.duckMs / 1000); } catch { /* the score is never the fight */ } },
+    /** A personal sting for a blow of `kind` on my feet, at `at` (the scene's frame). Answers whether it sounded. */
+    sting(kind, at) {
+      const t = now();
+      if (!egStingWanted(kind, t, lastAdd)) return false;
+      if (kind === 'add') lastAdd = t;
+      stings++;
+      const c = BOSS_CUES.sting;
+      try { if (at) audio?.play3d?.(c.clip, at, c.volume, { maxDistance: c.reach, distanceModel: 'linear', pitch: c.pitch }); } catch { /* a sound is never the fight */ }
+      mix.critical();
+      return true;
+    },
+    /** The frame's barks, capped (egBarkCull) and each kept one handed to `play`. Answers how many sounded. */
+    barks(list, ear, play) {
+      if (!list.length) return 0;
+      const kept = egBarkCull(list, ear);
+      for (const b of kept) { try { play(b); } catch { /* never the fight */ } if (b.critical) mix.critical(); }
+      return kept.length;
+    },
+    /** A peer's sound's volume in the Spire. */
+    peerVolume: (v) => v * egDbGain(EG_MIX.peerDb),
+    /** What the mix has done (tests). */
+    stats: () => ({ stings, ducks }),
+  };
+  return mix;
+}

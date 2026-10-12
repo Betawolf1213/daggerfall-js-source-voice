@@ -17,12 +17,17 @@
 //     shared clock (net/egFragLaw.js) drawn and judged on my own feet - a fire fall, a surge, the basalt, the cascade, the
 //     hammers, the tide, the Eclipse, a soul-wisp's drain.
 // Nothing is sent but my blows (`hit` on a body by its number - the relay's caps decide what lands).
+// EG-G2 (2026-10-12, sections 25 and 26): the Spire's own telegraph stage (render/gateTelegraph.js TELEGRAPH_FS_SPIRE - the
+// fog floor, the fill, the style bit), each shape in the shelf's danger palette and fill (world/egLook.js egLookPrefs), a
+// shape aimed at another member filled at THE QUIET COMPANY's 0.55 and mine drawn last with a brighter rim; THE SPIRE MIX
+// (systems/egMix.js): a personal sting for a lord's blow or a CHECK on my feet (an add's at most one each 1.5 s), the score
+// ducked under the critical bus, the legion's wind-up barks capped four a kind, nearest first.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../net/gateBrain.js';
 import { strikeDamage, savedShare } from '../net/gateStrike.js';
 import { bossFrame, crystalStandIn, gateHitFlash, hostStandIn, hostCue, BOSS_CUES } from '../world/gateBoss.js';
-import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL } from '../render/gateTelegraph.js';
+import { GateTelegraphRenderer, TELEGRAPH_KIND, TELEGRAPH_STYLE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE, TELEGRAPH_POOL, TELEGRAPH_POOL_HAVEN } from '../render/gateTelegraph.js';
 import { CourtCrystalRenderer } from '../render/courtCrystals.js';
 import { titleCardModel, drawGateTitleCard, TITLE_HOLD_MS } from '../ui/gateTitleCard.js';
 import { setBatchHitFlash } from '../systems/hitFlash.js';
@@ -38,6 +43,9 @@ import { egKindLook, EG_LEGION_KINDS } from '../net/egLegion.js';
 import { EG_BOSS_KEYS, EG_OBJ, egBossLook, egBossName } from '../net/egLords.js';
 import { egHallCentre } from '../world/egHall.js';
 import { egHazardParts, egHazardBites, egWispAt, EG_HAZARDS } from '../net/egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' hazards
+import { egLookPrefs, egQuietCompany, EG_DANGER_PALETTES, EG_FOG_FLOOR } from '../world/egLook.js';   // EG-G2: the palettes, the fill, the quiet company, the fog floor
+import { createSpireMix } from '../systems/egMix.js';   // EG-G2: THE SPIRE MIX - personal stings, the critical bus, the barks' cap
+import { getPref } from '../systems/uiPrefs.js';
 
 /** The objects' types by number (net/egLords.js EG_OBJ), and which are struck (drawn as crystals) - the rest are stood on. */
 const OBJ_KEY = Object.freeze(Object.fromEntries(Object.entries(EG_OBJ).map(([k, v]) => [v, k])));
@@ -93,9 +101,38 @@ export const EG_SAY = Object.freeze({
   hcache: (n) => `${n || 'Someone'} takes the High Road's cache - a Reliquary.`, lowroad: () => 'Something stirs on the Low Road.',
 });
 
+/**
+ * EG-G2 (sections 25.2, 25.4 and 25.7): THE LOOK LAID ON a frame's shapes - every danger line in the shelf's palette's
+ * edge (THE SPIRE DANGER EDGE in the Standard), its fill at the shelf's opacity and the palette's style bit; a shape
+ * aimed at another member filled at THE QUIET COMPANY's share during a trial, mine with a brighter rim; a haven in the
+ * palette's safety and THE HAVEN GRAMMAR (render/gateTelegraph.js TELEGRAPH_POOL_HAVEN); the place's white in its hazard colour; every one keeping THE FOG FLOOR. `look` egLookPrefs's, `stage`
+ * the hall's. In place. Pure.
+ */
+export function egLookShapes(shapes, look, stage) {
+  const pal = EG_DANGER_PALETTES[look.palette] ?? EG_DANGER_PALETTES.standard, quiet = egQuietCompany(stage, !look.quiet);
+  for (const sh of shapes) {
+    sh.fogFloor = EG_FOG_FLOOR_ARR;
+    if (sh.edge === TELEGRAPH_EDGE_DAGON) {
+      sh.edge = sh.mine ? brighter(pal.edge) : pal.edge; sh.look = pal.bits;
+      sh.fillK = look.fill * (sh.pool === TELEGRAPH_POOL.blow && !sh.mine ? quiet.aimedOther : 1);
+    } else if (sh.edge === TELEGRAPH_EDGE_SAFE) {
+      sh.edge = pal.safe; sh.look = 0; sh.fillK = 1; sh.pool = TELEGRAPH_POOL_HAVEN;   // THE HAVEN GRAMMAR (section 25.5)
+      if (sameRgb(sh.color, GOLD)) sh.color = pal.safe;
+    }
+    if (sameRgb(sh.color, PEND_COLOR)) sh.color = pal.hazard;
+  }
+  return shapes;
+}
 /** A shape slot of the telegraph pass's own shape (render/gateTelegraph.js), refilled. */
 const slot = () => ({ kind: 0, origin: [0, 0], yaw: 0, r: 0, halfArc: 0, body: 0, end: [0, 0], halfW: 0, r0: 0, r1: 0, points: [], n: 0,
-  t: 0, flash: 0, alpha: 0, color: GOLD, edge: TELEGRAPH_EDGE_DAGON, court: 0, style: TELEGRAPH_STYLE.weight, since: 0, span: 1, after: -1, runS: 0, pool: TELEGRAPH_POOL.blow });
+  t: 0, flash: 0, alpha: 0, color: GOLD, edge: TELEGRAPH_EDGE_DAGON, court: 0, style: TELEGRAPH_STYLE.weight, since: 0, span: 1, after: -1, runS: 0, pool: TELEGRAPH_POOL.blow,
+  mine: false, fillK: 1, look: 0, fogFloor: EG_FOG_FLOOR_ARR });   // EG-G2: aimed at me, the fill, the style bit, the fog floor
+/** EG-G2: THE FOG FLOOR as the Spire's stage takes it (world/egLook.js EG_FOG_FLOOR). */
+const EG_FOG_FLOOR_ARR = Object.freeze([EG_FOG_FLOOR.floor, EG_FOG_FLOOR.within, EG_FOG_FLOOR.ease]);
+/** EG-G2: two colours the same (a shape's colour is a table's - read by value, so a copy reads as its table's). */
+const sameRgb = (a, b) => !!a && a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
+/** EG-G2: a rim brightened for the shape aimed at me (section 25.4). */
+const brighter = (c) => [c[0] + (1 - c[0]) * 0.3, c[1] + (1 - c[1]) * 0.3, c[2] + (1 - c[2]) * 0.3];
 const STYLE_OF = Object.freeze({ fire: TELEGRAPH_STYLE.fire, frost: TELEGRAPH_STYLE.frost, shock: TELEGRAPH_STYLE.shock, poison: TELEGRAPH_STYLE.poison });
 const COLOR_OF = Object.freeze({ fire: [1.0, 0.45, 0.1], frost: [0.62, 0.78, 0.82], shock: [0.6, 0.7, 1.0], poison: [0.55, 0.85, 0.3], null: [1.0, 0.3, 0.2] });
 
@@ -149,9 +186,9 @@ export function egLookOf(b, band) {
  *   cam?: () => number[]|null, feet?: () => number[]|null, player?: () => any, me?: () => string|null, save?: (e: any, el: string) => number,
  *   strike?: (dmg: number, o: { fire?: boolean, el?: string|null, name?: string }) => void, say?: (t: string) => void,
  *   hudHidden?: () => boolean, sendHit?: (f: any) => boolean, push?: (dx: number, dz: number, m: number) => void, castBack?: () => void,
- *   peerAt?: (sub: string) => number[]|null, ring?: (x: number, z: number, r: number, inside: boolean) => void, hold?: (ms: number) => void }} deps
+ *   peerAt?: (sub: string) => number[]|null, ring?: (x: number, z: number, r: number, inside: boolean) => void, hold?: (ms: number) => void, music?: any }} deps
  */
-export function createEgFight({ renderer = null, gl = null, getTexture = null, uploadRecordFrame = null, audio = null, link, now, cam = () => null, feet = () => null, player = () => null, me = () => null,
+export function createEgFight({ renderer = null, gl = null, getTexture = null, uploadRecordFrame = null, audio = null, music = null, link, now, cam = () => null, feet = () => null, player = () => null, me = () => null,
   save = () => 100, strike = () => {}, say = () => {}, hudHidden = () => false, sendHit = () => false, push = () => {}, castBack = () => {}, peerAt = () => null, ring = () => {}, hold = () => {} }) {
   let hall = 0, spec = null, centre = null, floor = null, band = 0;
   let beat = null, saysSeen = 0, wokeSeen = 0, fellSeen = new Set(), phaseSeen = new Set(), gustSeen = 0;
@@ -164,6 +201,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     return blowSeq;
   }
   let pass = null, passTried = false, crystalPass = null, crystalTried = false;
+  /** EG-G2: THE SPIRE MIX over this screen's engine and the music; the blows I was stung for; the frame's barks */
+  const mix = createSpireMix({ audio, music, now });
+  const stung = new Set(), _barks = [];
+  let stageNow = 'wait';
   const textures = new Map(), drawn = new Map();
   const judged = new Set(), cued = new Set(), landedSet = new Set();
   const zoneTick = new Map();
@@ -194,7 +235,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   /** A new hall: its frame, its floor for the telegraph pass. */
   function reset(E) {
     for (const d of drawn.values()) destroy(d);
-    drawn.clear(); judged.clear(); cued.clear(); landedSet.clear(); zoneTick.clear(); fellSeen = new Set(); phaseSeen = new Set(); crystalSlots.clear(); ventJudged.clear(); hazHit.clear(); wispHold.clear();
+    drawn.clear(); judged.clear(); cued.clear(); landedSet.clear(); zoneTick.clear(); fellSeen = new Set(); phaseSeen = new Set(); crystalSlots.clear(); ventJudged.clear(); hazHit.clear(); wispHold.clear(); stung.clear();
     hall = E.h; spec = egHallOf(E.seed, E.h, E.geo ?? 0); centre = egHallCentre(spec); band = spec.band ?? 0;
     floor = spec.fight ? { r: spec.fight.r + 6, courts: [[spec.fight.x, spec.fight.z]] } : { r: 40, courts: [[0, spec.len / 2]] };
     beat = null; saysSeen = E.fight.says.length; wokeSeen = 0; gustSeen = 0;
@@ -238,7 +279,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       d.target.height = (look.lord ? 2.2 : EG_LEGION_KINDS[b.k]?.h ?? 2) * (look.lord ? look.scale / 1.2 : 1); d.target.radius = look.lord ? Math.max(0.8, (1.8 * look.scale) / 3) : EG_LEGION_KINDS[b.k]?.r ?? 0.6; d.target.m = b.max;
       _targets.push(d.target);
     }
-    if (blow && !cued.has(blow.i) && t < blow.at) { cued.add(blow.i); play3(hostCue('windup', look.mobile), d.at); }
+    if (blow && !cued.has(blow.i) && t < blow.at) { cued.add(blow.i); _barks.push({ kind: look.mobile, at: [d.at[0], d.at[1], d.at[2]], cue: hostCue('windup', look.mobile), critical: !!look.lord }); }   // EG-G2: capped by THE SPIRE MIX after the bodies
   }
   /** A struck object: a crystal in its colour, cracking as it falls, and a body my blows meet. */
   function drawStruck(b, t, key) {
@@ -279,12 +320,12 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       if (!fillStamp(sh, s)) continue;
       sh.t = Math.max(0, Math.min(1, (t - from) / Math.max(1, bl.wu))); sh.flash = t >= bl.at ? 1 : 0;
       sh.alpha = bl.cut ? Math.max(0, 1 - (t - bl.cut) / 150) : t > bl.at + span ? 1 - (t - bl.at - span) / LINGER_MS : aimedAtMe ? 1 : 0.85;
-      sh.color = COLOR_OF[bl.el] ?? COLOR_OF.null; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.court = 0;
+      sh.color = COLOR_OF[bl.el] ?? COLOR_OF.null; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.court = 0; sh.mine = aimedAtMe;
       sh.style = bl.ch ? TELEGRAPH_STYLE.dagon : STYLE_OF[bl.el] ?? TELEGRAPH_STYLE.weight;
       sh.since = Math.max(0, (t - from) / 1000); sh.span = Math.max(0.001, bl.wu / 1000); sh.after = t >= bl.at ? (t - bl.at) / 1000 : -1; sh.runS = (bl.sp ?? 0) / 1000;
       _shapes.push(sh);
       // a CHECK's havens, gold and safe
-      if (s[0] === 'h') for (let i = 1; i + 2 < s.length; i += 3) { const hv = (_slots[_shapes.length] ??= slot()); hv.kind = TELEGRAPH_KIND.disc; hv.origin[0] = s[i]; hv.origin[1] = s[i + 1]; hv.r = s[i + 2]; hv.color = GOLD; hv.edge = TELEGRAPH_EDGE_SAFE; hv.pool = TELEGRAPH_POOL.ground; hv.t = 1; hv.flash = 0; hv.alpha = 1; hv.style = TELEGRAPH_STYLE.weight; hv.since = 0; hv.span = 1; hv.after = -1; hv.court = 0; _shapes.push(hv); }
+      if (s[0] === 'h') for (let i = 1; i + 2 < s.length; i += 3) { const hv = (_slots[_shapes.length] ??= slot()); hv.mine = false; hv.kind = TELEGRAPH_KIND.disc; hv.origin[0] = s[i]; hv.origin[1] = s[i + 1]; hv.r = s[i + 2]; hv.color = GOLD; hv.edge = TELEGRAPH_EDGE_SAFE; hv.pool = TELEGRAPH_POOL.ground; hv.t = 1; hv.flash = 0; hv.alpha = 1; hv.style = TELEGRAPH_STYLE.weight; hv.since = 0; hv.span = 1; hv.after = -1; hv.court = 0; _shapes.push(hv); }
     }
   }
   /** THE PLACE (sections 8.3 and 10.3), on every screen alike: a Rampart's vents (told EG_VENT_WARN_MS and erupting
@@ -417,7 +458,9 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       if (!E.b || !(E.h > 0) || E.end) { if (hall) this.leave(); return; }
       if (E.h !== hall) reset(E);
       const F = E.fight.h === E.h ? E.fight : null;
-      _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0;
+      _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0; _barks.length = 0;
+      for (const sl of _slots) sl.mine = false;   // EG-G2: a slot is mine only when this frame's blow says so
+      stageNow = E.sg;
       place(E, t);
       if (!F) { drawGateTitleCard(titleCardModel(beat, t), { hidden: hudHidden() }); return; }
       const f = myFeet(), e = player(), standing = !!f && !!e && e.health > 0;
@@ -432,10 +475,16 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       }
       for (const [i, d] of drawn) if (!live.has(i)) { destroy(d); drawn.delete(i); }
       for (const i of crystalSlots.keys()) if (!live.has(i)) crystalSlots.delete(i);
+      mix.barks(_barks, cam(), (b) => play3(b.cue, b.at));   // EG-G2: the legion's barks, four a kind, nearest first
       // THE BLOWS - drawn in the budget's order, each judged on my feet at its landing
       const lordIds = new Set(F.bodies.filter((b) => b.role === EG_ROLE.lord).map((b) => b.i));
       const order = egShapeOrder(F.blows.filter((bl) => !bl.cut || t - bl.cut < 150), f ?? [0, 0], t, { lords: lordIds });
-      for (const bl of order) drawBlow(bl, t, !!f && bl.s.some((s) => egInShape(s, f[0], f[1])));
+      for (const bl of order) {
+        const mine = !!f && bl.s.some((s) => egInShape(s, f[0], f[1]));
+        drawBlow(bl, t, mine);
+        // EG-G2 - THE SPIRE MIX: a personal sting at its word for a lord's blow or a CHECK on my feet; an add's at most one each 1.5 s
+        if (mine && standing && !stung.has(bl.i) && t < bl.at) { stung.add(bl.i); const d0 = feet(); mix.sting(bl.ch ? 'check' : lordIds.has(bl.o) ? 'lord' : 'add', d0 ? [d0[0], d0[1], d0[2]] : null); }
+      }
       for (const bl of F.blows) {
         if (!judged.has(bl.i) && !bl.cut && standing) {
           const v = egBlowVerdict(bl, f[0], f[1], t);
@@ -499,13 +548,17 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         if (!crystalTried && gl) { crystalTried = true; try { crystalPass = new CourtCrystalRenderer(gl); } catch (e) { console.warn('[eg] the crystals would not build', e?.message ?? e); crystalPass = null; } }
         if (crystalPass) { crystalPass.draw(_crystals, proj, view, eye, seconds, fog); drew = drew || crystalPass.drawn > 0; }
       }
-      if (!passTried && gl) { passTried = true; try { pass = new GateTelegraphRenderer(gl); } catch (e) { console.warn('[eg] the telegraphs would not build', e?.message ?? e); pass = null; } }
+      if (!passTried && gl) { passTried = true; try { pass = new GateTelegraphRenderer(gl, { spire: true }); } catch (e) { console.warn('[eg] the telegraphs would not build', e?.message ?? e); pass = null; } }
       if (!pass) return drew;
-      for (const sh of _shapes) { pass.draw(sh, proj, view, eye, seconds, fog, centre, null, floor); drew = true; }
+      egLookShapes(_shapes, egLookPrefs({ dangerPalette: getPref('dangerPalette'), telegraphFill: getPref('telegraphFill'), allyEffects: getPref('allyEffects') }), stageNow);
+      for (const sh of _shapes) if (!sh.mine) { pass.draw(sh, proj, view, eye, seconds, fog, centre, null, floor); drew = true; }
+      for (const sh of _shapes) if (sh.mine) { pass.draw(sh, proj, view, eye, seconds, fog, centre, null, floor); drew = true; }   // section 25.4: mine on top
       return drew;
     },
     /** What the driver holds (tests, stats). */
-    state: () => ({ hall, bodies: drawn.size, crystals: _crystals.length, shapes: _shapes.length, targets: _targets.length, judged: judged.size }),
+    state: () => ({ hall, bodies: drawn.size, crystals: _crystals.length, shapes: _shapes.length, targets: _targets.length, judged: judged.size, mix: mix.stats(), stung: stung.size }),
+    /** EG-G2: the frame's shapes as the pass will draw them (tests): each one's look laid on. */
+    shapes: () => _shapes,
     /** The count's words for a tracker that asks. */
     countText: (ms) => egCountText(ms),
     /** Out of the breach: everything put away. */

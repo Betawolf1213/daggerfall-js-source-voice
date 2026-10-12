@@ -118,7 +118,9 @@ import { gateArenaLocation, gateArenaBlocks, isGateArena, buildCourtModel, build
 import { isSdRealm, sdRealmLocation, sdRealmBlocks, buildRealmModel, realmColliderTris, realmLightsWith, realmLighting, SD_REALM_ARCHIVE, SD_REALM_FOG } from '../world/sdRealm.js';   // SD5a: the Shattered Hour, a made level as the court is
 import { realmArt } from '../world/sdRealmArt.js';   // SD5a: its art, made in code
 import { isEgHall, egHallLocation, egHallBlocks, buildEgCircleModel, egCircleColliderTris, egCircleLights, egLightsWith, egHallLighting, egGateParts, EG_HALL_FOG } from '../world/egHall.js';   // EG-PLAY: an Elite Breach's circle, a made level as the Hour is
-import { egRoomKey, egCircleSpecs, EG_TEXT } from '../net/egLaw.js';   // EG-PLAY: its room, its halls, its words
+import { egRoomKey, egCircleSpecs, egBandOfCircle, EG_TEXT } from '../net/egLaw.js';   // EG-PLAY: its room, its halls, its words
+import { egBandArt, egBandArchive } from '../world/egBandArt.js';   // EG-G2: each band's own dress, painted in code
+import { buildEgLookModel } from '../world/egLook.js';   // EG-G2: the waystones lit (world/meshKit.js)
 import { SD_HOUR_GRADE } from '../world/sdLook.js';   // SD-LOOK: the Hour's grade on the lane
 /** SD-LOOK: the dungeon arm's two draw options for its dynamic draws (render/renderer.js drawMesh), made once - the hot
  *  loop makes nothing. */
@@ -9197,12 +9199,14 @@ export function createWorldModes(host) {
     ctx.addActivationNamer((key) => ((typeof key === 'string' && key.startsWith('spoil')) ? host.spoilName?.(key) ?? null : null));
   }
   /** EG-PLAY: AN ELITE BREACH'S CIRCLE stood into its built context (world/egHall.js), the Hour's way: the Hour's art
-   *  uploaded once a session (its halls wear it until the Spire's own look - EG16), the circle's mesh made once a circle
+   *  uploaded once a session (the Steps' faces wear it) and the circle's band's own dress beside it (EG-G2 - world/
+   *  egBandArt.js, once a session a band), the circle's mesh made once a circle
    *  and among the context's draws, its floors and walls on the collider (the spawn lands on its first plate), each
    *  Rampart's portcullis its own draw and a moving bucket (sunk once its door opens - the outer host's word), and the
    *  Redoubt's way home a target the press takes. */
   const EG_BUCKET = 'eg:hall';
-  let _egMesh = null, _egMeshKey = '', _egArt = false, _egLamps = [];
+  let _egMesh = null, _egMeshKey = '', _egArt = false, _egLamps = [], _egLookMesh = null;
+  const _egBands = new Set();   // EG-G2: the bands whose dress is up this session
   /** @type {Array<{ h: number, gpu: any, T: number[], draw: any }>} */
   let _egGates = [];
   function standEgHall(ctx, eh) {
@@ -9212,13 +9216,19 @@ export function createWorldModes(host) {
       const glow = { white: true };
       try { for (const [rec, art] of realmArt()) { renderer.uploadTexture(SD_REALM_ARCHIVE, rec, art.albedo); renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission, glow); } } catch (e) { console.warn('[eg] the Spire\'s art would not upload', e?.message ?? e); }
     }
+    { const band = egBandOfCircle(eh.c);   // EG-G2 (section 25.1): the circle's band's dress under its own archive, once a session a band
+      if (!_egBands.has(band) && renderer?.uploadTexture) { _egBands.add(band); try { for (const [rec, art] of egBandArt(band)) { renderer.uploadTexture(egBandArchive(band), rec, art.albedo); renderer.uploadEmissionTexture?.(egBandArchive(band), rec, art.emission, { white: true }); } } catch (e) { console.warn('[eg] the band\'s art would not upload', e?.message ?? e); } } }
     if (_egMeshKey !== key) {
       if (_egMesh) { try { renderer?.destroyMesh?.(_egMesh); } catch { /* gone */ } }
       _egMesh = null; _egMeshKey = key;
       try { _egMesh = renderer?.createMesh ? renderer.createMesh(buildEgCircleModel(eh.seed, eh.c, eh.geo ?? 0)) : null; } catch (e) { console.warn('[eg] the circle would not build', e?.message ?? e); _egMesh = null; }
+      if (_egLookMesh) { try { renderer?.destroyMesh?.(_egLookMesh); } catch { /* gone */ } }   // EG-G2: the look's own mesh (the waystones), once a circle
+      _egLookMesh = null;
+      try { const lm = buildEgLookModel(eh.seed, eh.c, eh.geo ?? 0); _egLookMesh = lm && renderer?.createMesh ? renderer.createMesh(lm) : null; } catch (e) { console.warn('[eg] the look would not build', e?.message ?? e); }
       _egLamps = egCircleLights(eh.seed, eh.c, eh.geo ?? 0);
     }
     if (_egMesh) ctx.dynamicDraws.push({ gpu: _egMesh, object: { matrix: identity() } });
+    if (_egLookMesh) ctx.dynamicDraws.push({ gpu: _egLookMesh, object: { matrix: identity() }, noShadow: true });   // EG-G2
     const tris = egCircleColliderTris(eh.seed, eh.c, eh.geo ?? 0), n = tris.length / 3;
     const idx = n > 65535 ? new Uint32Array(n) : new Uint16Array(n);
     for (let i = 0; i < n; i++) idx[i] = i;
@@ -10704,6 +10714,7 @@ export function createWorldModes(host) {
         mwViewDrawBody(canvas, { proj, view, eye: mwv.eye, feet: player.bodyFeetAt(), yaw: player.bodyYawFor(cam.yaw), viewYaw: cam.yaw });   // MW-D24; DISC18: the body at the capsule's own feet, not the camera's smoothed ones
         host.drawPeerBodies?.({ proj, view, eye: mwv.eye });   // MWBODY1: the others' bodies, after the player's own
       } finally { renderer.flushCharacterSpriteBatch?.(); }   // MWNPC2: every body's picture in one bind of the sprite target
+      if (isEgHall(dungeonLoc)) dungeonCtx.egSpanCull?.(proj, view);   // EG-G2: the Spire's pieces batched a kind and culled against this frame's frustum (scenes/egPieceBatch.js) - every one noShadow, so the shadow record never moves with a cull
       if (dungeonCtx.staticBatch) renderer.drawMesh(dungeonCtx.staticBatch, BATCH_IDENTITY, null);   // PERF5: the level's static models, one call per texture
       for (const d of dungeonCtx.drawList) if (!d._batched) renderer.drawMesh(d.mesh, d.matrix, d.texRemap ?? dungeonCtx.texRemap);   // AUDIT PRE-MERGE 1003 W4: a climate-free model's own table
       for (const d of dungeonCtx.dynamicDraws) if (!d.hidden && !d.culled) renderer.drawMesh(d.gpu, d.object.matrix, d.texRemap ?? dungeonCtx.texRemap, d.noShadow ? DRAW_NO_SHADOW : DRAW_SHADOW);   // AUDIT SD II (L2 F11): a draw that says it is hidden (the Hour's gone steps and bodies) is no draw, and no shadow's record; SD-LOOK: a draw's own texRemap (a state's records), `noShadow` (a part that turns rebuilds no cube) and `culled` (a stage out of sight) - each read only where a draw carries it
@@ -10712,7 +10723,7 @@ export function createWorldModes(host) {
       drawArenaWall(); if (isArenaFloor(dungeonLoc)) host.drawSky?.(cam.yaw, cam.pitch + (host.climbFeel?.pitch?.() ?? 0), fieldOfView() + (host.climbFeel?.fovRad() ?? 0), largeHudWorldAspect(canvas.clientWidth, canvas.clientHeight), renderer.worldViewportPx ?? [0, 0, renderer.gl.drawingBufferWidth, renderer.gl.drawingBufferHeight]);   // ARENA5: the Hall of Champions' plaques - opaque, before the flats; HOTFIX 1003l (live: "the private sessions are missing the sky and the entrance is black"): the floor is drawn as a dungeon, cleared to black - the world's own sky over it now, after the opaque level (it shades only what nothing nearer claimed) and before the flats
       if (isGateArena(dungeonLoc)) host.drawGateBackdrop?.({ proj, view, eye: mwv.eye });   // WB6a: the Deadlands' sea and sky - after the court's solid geometry, so they burn only where they show (PERF2's law), before its flats, so a flat blended over the sky lands on it
       if (isSdRealm(dungeonLoc)) host.drawSdSky?.({ proj, view, eye: mwv.eye });   // SD5b: the Hour's sky - after its islands, before its flats (PERF2's law)
-      if (isEgHall(dungeonLoc)) host.drawSdSky?.({ proj, view, eye: mwv.eye });   // EG-PLAY: the void's sky over the Spire - the Hour's, until the Spire's own (EG16)
+      if (isEgHall(dungeonLoc)) host.drawEgSky?.({ proj, view, eye: mwv.eye });   // EG-PLAY; EG-G2: the Spire's own sky (render/egSkyPass.js - its band's void and the Spire's underside)
       dungeonCtx.flatAnims.tick(dt);   // FA1
       renderer.drawFoeTelegraphs?.(drawableBlows(tacticsNow(), player.pos));   // TACT4: a foe's wind-up on the ground
       renderer.drawFoeTelegraphs?.(techniqueMarksNow());   // TECH1: and the player's own marks, after the foes' (bible/05-Combat/Weapon-Techniques.md)
