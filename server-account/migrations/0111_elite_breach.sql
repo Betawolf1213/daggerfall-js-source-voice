@@ -67,3 +67,10 @@ CREATE INDEX IF NOT EXISTS idx_eg_runs_account ON eg_runs (account);
 -- THE LAUNCH GIFT (section 5): every account that has closed a Dagon's Breach (a recorded kill, never the rite alone)
 -- holds one key when this lands.
 UPDATE players SET eg_keys = eg_keys + 1 WHERE EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = players.id AND g.earned != 'rite');
+-- EG-F (2026-10-12, the Elite Gates arc) - THE START WINDOW AND THE WAGER (bible/11-Multiplayer/Elite-Gates.md sections 5,
+-- 16.6 and 18). A stake keeps where its breach starts and what it wagered: `ew` the start Redoubt (0 Hall 1 - every
+-- admission is held to it, no carries), `wg` the Wager (its decrees' numbers joined by commas, '' none). Admissions find
+-- a breach's stake by its id.
+ALTER TABLE eg_stakes ADD COLUMN ew INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE eg_stakes ADD COLUMN wg TEXT NOT NULL DEFAULT '';
+CREATE INDEX IF NOT EXISTS idx_eg_stakes_b ON eg_stakes (b);

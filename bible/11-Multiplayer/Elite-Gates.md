@@ -3651,3 +3651,129 @@ The economy layer's first piece, the one the relay must judge: **FEATS OF THE SP
 
 **Pins.** `test/egeco_feats.test.js` (2) and `tools/mutants/egeco.json` (6, every one dead). `RELAY_VERSION` `world197`,
 rehashed with `net/egFeats.js` in its graph.
+
+### EG-F - 2026-10-12 - THE ARCH AND THE CALL
+
+**What this is, said plainly.** EG9's slice, built whole: the key's eight refusals, THE START WINDOW, THE ARCH and THE
+CALL. It closes EG-PLAY's departure 1 (no arch: the call and `/breach` were the door) and EG-FULL layer one's departure 4,
+and the Wager half of EG-PLAY's departure 8 (the order's `wg` omitted). A Weir Key now asks where in the Spire before
+any key is staked, an arch of the gate's own stone rises at the opener's feet, everyone on the opener's cell sees it, and
+the company scattered across the Bay is called by a horn and a prompt and answers through a portal at its own feet.
+
+**What shipped, by piece.**
+
+- **The key's refusals** (section 5, in the page's order - `scenes/egArch.js` `egKeyRefusal`, each a line of `EG_TEXT`):
+  cold; open sky; the Portal Stone's holds (`portalHold`'s five words, each worded for the key), the water and a boat;
+  inside a location's footprint (*Not within Daggerfall.*); another breach near (a Dagon's Breach within
+  `EG_ARCH_GATE_NEAR_M` 300 m, an arch within `EG_ARCH_NEAR_M` 150 m); a breach held (or an open in flight); the road
+  shut; no room for the arch. EG-PLAY's arm had cold, sky, held and shut; the rest are the host's facts
+  (`egClient`'s `keyFacts`). A guest's refusal stands second, after cold - the service's own refusal said before it asks.
+- **Where the arch stands** (`egArchPlace`): the Portal Stone's `portalPlace` ahead of the opener (`PORTAL_AHEAD`), turned
+  to face them, then `EG_ARCH_CLEAR_M` 8 m clear across it either way and before and behind it a metre up, with ground
+  under both its feet; anything else is *There is no room for it here.* Its site on the wire (`egArchSite`) is its pixel
+  and its foot in that pixel's own frame (the gate's spot's frame, the height the world frame's) and its turn, so every
+  client stands it the same in its own scene.
+- **The start window** (`ui/egStartWindow.js`): the stake (*Weir Keys: 3 - one will be staked.*; no key, the Rehearsal
+  alone), the quest warning (a tracked quest's clock inside the 36 game hours of the last word), the choices - *Hall 1*
+  and every Redoubt the opener may start at, deepest first, each named with the band its first hall stands in
+  (*Redoubt 12 - the Shade Perilous*) and a `+` or an `x` for each member of the party in its order - the Wager's own
+  list (each decree with its family; a second of a family or a fourth refused and said; *Done*), and *Rehearse - Halls
+  1-5, no key*. A start some member cannot make asks once, *Go without Mara?* (DFU's YesNo box, `ui/yesNoBox.js`); a
+  choice closes the list before it is acted on, and is made once. On both skins the lists are DFU's
+  DaggerfallListPickerWindow (`ui/listPicker.js` - the boat variant picker's way, on the mode machine's window slot),
+  which draws itself in the enhanced skin (`ui/enhancedPicker.js`).
+- **The preflight** (`/v1/eg/starts`, `server-account/src/egStarts.js`): for the opener and each member it names (at most
+  8), the starts they may make - `src/net/egStartLaw.js` `egStartsFrom`, the one law both ends read: Hall 1, this
+  season's Redoubts (the arena's season, `arenaSeasonOf`), else half the all-time best; null for a guest. With it the
+  opener's keys, the day's Rehearsal and the relay's public half (`rk`).
+- **The open carries the choice**: `/v1/eg/open` takes `ew` and `wg`, refuses `start` (a start the opener may not make:
+  no carries, its own included) and `wager` (not up to three decrees of three families - `egWagerOf`, its families
+  copied by number and held equal to `EG_DECREES`), and writes both into the stake (migration 0111's EG-F block:
+  `eg_stakes.ew`, `eg_stakes.wg`) and the order (`ew`, `ewg`). Every admission is held to the breach's start (`start`,
+  403), and its order names it; the three new refusal words (`start`, `wager`, `subs`) each have a sentence in
+  `net/accountClient.js` `REFUSALS`. The hub hands the order's Wager to the room (`wg` on the open's tell), and a breach that
+  starts at Redoubt `w` begins at the next circle's first hall (`src/net/egLaw.js` `egStartHall`).
+- **The arch** (`scenes/egArch.js` `createEgArchPool`, drawn through the gate's pool - `scenes/gatePool.js` `arches`):
+  the gate's model at `EG_ARCH_SCALE` 0.62 (10.04 m tall, 4.79 m a side) on the gate's records' twins
+  (`EG_ARCH_RECORD_OF`: 5, 6, 7 in `GATE_ARCHIVE`), its skin painted in code (`world/gateArt.js` `archArt` - white marble,
+  a gold inlay lattice gleaming faintly by night, the gate's own basalt veins laid through it as cracks with an ember
+  banked in them; the rim's gold twice as close; the spines gold to basalt). It climbs out of the ground over
+  `GATE_RISE_MS` from the opening, stands sealed, burns open, and sinks over `GATE_COLLAPSE_MS` when the first hall wakes
+  (or at its end, or the open window's end - `egArchLife`); sunk whole before it rises, a beacon alone off the built
+  ground. Its collider stands while it stands risen; a body it stands up around is set down before it.
+- **The pass, per draw** (`render/gatePass.js`): the membrane's tint and scale and the beacon's height, foot under the
+  ground, light's start and colour are set inside the loop (`gatePassValues`); `GATE_PASS_MAX` is 4. The arch's beacon
+  is gold, 400 m over its foot, its light from its own lintel. THE GATE'S OWN DRAW IS WHAT IT WAS: its record names none
+  of them and takes the gate's (scale exactly 1, tint exactly white, 400 under, 1200 tall, the literal's own foot,
+  `BEACON_COLOR`), and the per-draw sources are the gate's own templated - written back with the gate's values they are
+  `MEMBRANE_VS` ... `BEACON_FS` byte for byte, which the Hollow's omen still builds from.
+- **The clear sweep's keys** (`world/gateClearance.js`): a clearing is the gate's or a set (`gateClearSet` - the gate's
+  and every standing arch's, `EG_ARCH_ROCK_M` 14 m about each foot, keyed by breach id); a built pixel is built again only
+  for what changed - an arch come that its pieces reach, a clearing gone that cost it something - and the gate alone
+  keeps its one key, sweeping as it did.
+- **The call** (section 6.4): the hub signs the call's arch fields with the receipts' key (`src/net/egCallSig.js` -
+  `ec1` leading the signed bytes) and says `ew`, `wg` and `sg` with it. Each member's client sounds a horn (`scenes/egCall.js`
+  `buildEgHorn`, a war horn's rising call made in code), writes the one line *<opener> opens an Elite Breach.*, and shows
+  the prompt (`createEgCallPrompt`, the duel challenge's strip's shape): *The breach opens in 4:12.* while sealed,
+  *Answer the call - 4:12* while open (Enter, the pad's A, or the strip's button), *Answer from open ground.* indoors,
+  gone under any window and back when it closes, gone once answered or the window over. Answering asks `/v1/eg/admit`;
+  the order in hand, the Portal Stone's portal opens at the member's feet for `PORTAL_OPEN_MS`
+  (`createEgCallPortal`, the Portal Stone's own pool, its holds keeping it shut), and stepping into it is the admission.
+  A portal that closes unused leaves the prompt to stand again. The opener steps through the arch itself (or presses it);
+  anyone outside the company is told *The breach answers only to <opener>'s company.* Late: *The breach has closed
+  behind <opener>'s company.* - after the window, and when the room refuses an answer after the first hall woke.
+- **Strangers see it** (section 23): the opener's foes frame carries the signed arch fields (`ea`) while the opener
+  stands within `EG_ARCH_SAY_M` of it; a stranger believes one only near the opener's own feet, one an opener, at most
+  `EG_ARCH_PER_CELL` two, and only once the hub's signature verifies against the relay's public half. A forged one stands
+  nothing.
+- **The landing**: the opener lands before the arch (`world/gateArena.js` `gateLandingFor`, widened to take an arch
+  record - its site and its turn), `EG_ARCH_LANDING_M` out; everyone else where they answered (the portal's step is the
+  mode machine's own `from`). The room keeps the arch's site, and its whole state (`st`) carries it.
+- **The Timers row, the sight line, the map mark** (section 2): `systems/eventTimers.js` gains the kind `'elite'`, the
+  company's alone - *Elite Breach opens* while sealed, the window to answer, then *Hall 17* and what is left on the count;
+  *You see an Elite Breach 140 metres to the North!* once an arch, by the Elite Dungeon's own law (`world/spawnedDungeons.js`
+  `sightLineOf`); the company's arch on the held map (`ui/egArchMapMark.js`, the gate's ring's painter in the arch's gold)
+  and on the enhanced compass (the gate's diamond in gold).
+
+**Where EG-F departs from this page** (said plainly):
+
+1. **The order's Wager rides `ewg`, not `wg`.** `wg` is INT9's remains order's guild (`REMAINS_FIELDS`), and the order
+   fields are exclusive by kind; the room's tell, the `st` frame and the receipts keep `wg`.
+2. **The relay's public half reaches the clients through the account service** (`rk` on `/v1/eg/keys` and
+   `/v1/eg/starts`, its `GATE_PUBLIC_KEY`): the page says peers check `sg` and not with what, and the relay holds its key
+   non-extractable. A guest asks neither and so stands no stranger's arch.
+3. **The cell word rides the opener's foes frame** (`ea`, as the Portal Stone's `pg` does), not a frame of its own; the
+   call and the word carry the opening `op`, from which `riseAt` and `openAt` are the clock's (`egTimes`).
+4. **A stranger's arch sinks at the open window's end**: only the company hears the first hall's wake, so only its arch
+   sinks then.
+5. **The band a start is named with is its first hall's.** The page's example names *Redoubt 12 - the Soul Cairn*; a
+   breach started there begins Hall 61, in the Shade Perilous, and the window says so.
+6. **A deeper start's first circle stands under the Proclamation and the Wager alone**: no circle's decrees were chosen
+   for it (the rest that chooses them is a Redoubt this breach never stood).
+7. **The prompt is a strip, not a native window**: the duel challenge's precedent, on both skins.
+8. **Refusal 7 is the hub's `egOk`** on the client; the hub's live cap and drain are its own refusal of the open.
+9. **Found, not fixed (another arc's)**: `ui/hud.js` hands the enhanced compass neither the sea serpent's mark nor the
+   Abyss Dungeon's - world.js passes `serpent` and `sd` and the classic HUD's options drop them. The arch's `arch` is
+   passed through.
+10. Nothing here has run in a browser: there is no Daggerfall data in the build container. The pieces are tested headless,
+    the client against the relay's real Room.
+
+**The four hosts.**
+
+- `src/scenes/world.js` - WIRED: the arch pool made beside the client and handed to the gate's pool (its frame, world pass,
+  foreign pass, lights, eye boxes, plaques and presses); the key's facts (`portalHoldNow`, the water, a boat, the location
+  rect, the gate's place, `egArchPlace` over the collider's probes); the start window's three doors; the call's portal
+  (drawn with the Portal Stone's, `scenes/portalGates.js` `drawAlso`, PORTAL1's flats line unmoved) and its prompt; my arch on my foes frame (`portalWord`) and a peer's
+  through the street's pool (`exteriorFoes.setOnEgArch`); the Timers row, the held map, the compass (`frameHud`'s own
+  object); the clearing's set (`_gateClearNow`). No statement joins `function frame(now)`.
+- `src/scenes/worldModes.js` - WIRED: `enterEgHall` takes the opener's `landing` as the way out's (`dungeonReturn.from`).
+- `src/scenes/dungeonContext.js` - FLAGGED: the arch stands in the open world alone; a dungeon has none and asks nothing.
+- `src/scenes/exterior.js` - FLAGGED: the `?exterior` bench is offline; the key says *The key is cold here.*
+
+**Pins.** `test/egarch_law.test.js` (8), `test/egarch_client.test.js` (7) and `test/egarch_service.test.js` (3).
+`tools/mutants/egarch.json` (75, every one dead). Records of other slices whose quoted lines moved, re-aimed by content
+and judged again: `gateclear.json` (the sweep's turn), `auditwb_world.json`, `gateseen.json` and `wb2.json` (the gate
+pool's doors). Pins moved, each said so: `test/egplay_service.test.js` (the keys' answer carries `rk`; `EG_ORDER_FIELDS`
+gains `ewg`) and `test/wb2_gate.test.js` (the cap, now 4, met by six gates). `RELAY_VERSION` stays `world197`,
+unshipped, rehashed with `net/egCallSig.js` in its graph. `ACCOUNT_VERSION` stays `acct121`; migration 0111 gains the
+EG-F block; `.github/workflows/account-deploy.yml` lists `src/net/egStartLaw.js`, which the account Worker bundles.

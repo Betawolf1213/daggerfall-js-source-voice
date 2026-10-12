@@ -136,6 +136,7 @@ on:
       - "src/characters/itemTemplates.json"
       - "src/net/sdReceipt.js"
       - "src/net/egReceipt.js"
+      - "src/net/egStartLaw.js"
       - "src/net/sdMarks.js"
       - "src/net/postLaw.js"
       - "src/systems/wind.js"

@@ -312,6 +312,7 @@ import { mintSdReceipt, readSdReceipt, SD_RECEIPT_TTL_S } from '../../src/net/sd
 import { isEgRoom, egRoomKey, egBreachOfRoom, EG_SEALED_MS, EG_ADMIT_MAX_MS } from '../../src/net/egLaw.js';
 import { egBreachNew, egEnter, egAdmitWord, egStep, egBlow, egDown, egHome, egWord, egStateOf, egFightStateOf, egLive } from '../../src/net/egBrain.js';
 import { mintEgReceipt } from '../../src/net/egReceipt.js';
+import { signEgCall } from '../../src/net/egCallSig.js';   // EG-F: the hub's signature on the call's arch fields
 import { egGate, EG_INTERNAL_OPEN, EG_KEY, egCallKey, validEgOpenTell, EG_BRAIN_MIN } from './relay.js';
 
 // AUDIT WORLD34 D4: the relay names itself in /health. SLAM13 (AUDIT SLAM A5): the name lives in net/wire.js, so the
@@ -7404,11 +7405,14 @@ export class Room {
     if (!members.includes(a.sub)) members = [a.sub, ...members].slice(0, 8);
     const recs = await this._accts(members);
     const co = members.map((sub, i) => [sub, sanitizeName(recs.get(sub)?.name ?? (sub === a.sub ? a.name ?? '' : '')), i + 1]);
-    const tell = { b: c.eb, ez: c.ez, s: c.s, o: sanitizeName(a.name ?? rec?.name ?? ''), ew: c.ew, rh: c.rh === 1 ? 1 : 0, seed: rand32(), op: now, co, site: m.site };
+    const tell = { b: c.eb, ez: c.ez, s: c.s, o: sanitizeName(a.name ?? rec?.name ?? ''), ew: c.ew, rh: c.rh === 1 ? 1 : 0, seed: rand32(), op: now, co, site: m.site, ...(Array.isArray(c.ewg) ? { wg: c.ewg } : {}) };   // EG-F: the order's Wager to the room (EG-PLAY departure 8 closed)
     if (!validEgOpenTell(tell)) { no(); return; }
     const res = await this._egPost(egRoomKey(c.eb), EG_INTERNAL_OPEN, tell);
     if (!res?.ok) { no(); return; }
-    const call = { k: 'call', b: c.eb, o: tell.o, os: c.s, seed: res.seed ?? tell.seed, op: res.op ?? tell.op, rh: tell.rh, co, site: m.site };
+    const call = { k: 'call', b: c.eb, o: tell.o, os: c.s, seed: res.seed ?? tell.seed, op: res.op ?? tell.op, rh: tell.rh, co, site: m.site, ew: tell.ew, wg: tell.wg ?? [] };
+    // EG-F (section 6.3): THE HUB SIGNS THE ARCH'S FIELDS (net/egCallSig.js) with the receipts' key - the opener's client
+    // carries them on its world cell, and a stranger stands the arch only when this verifies
+    call.sg = await signEgCall(call, await this._receiptKeyOf(), { subtle: crypto.subtle });
     const until = call.op + EG_SEALED_MS + EG_ADMIT_MAX_MS, word = JSON.stringify({ t: 'eg', ...call });
     await this.state.storage.put(Object.fromEntries(members.map((sub) => [egCallKey(sub), { call, until }])));
     for (const sub of members) this._sayTo(sub, word);

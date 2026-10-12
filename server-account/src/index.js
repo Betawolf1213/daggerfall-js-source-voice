@@ -65,6 +65,7 @@
 //   POST /v1/eg/open     { rq, rh? } -> { order, b, ez, keys, until, rh }   (EG-PLAY: a key staked - or the day's Rehearsal - and the open order signed; idempotent on `rq`)
 //   POST /v1/eg/admit    { b } -> { order, b }   (EG-PLAY: a member's admission order; one live breach an account)
 //   POST /v1/eg/claim    { receipt } -> { recorded, q, b, w?, keys }   (EG-PLAY: an `e1` - a Redoubt taken, a member's end, a void)
+//   POST /v1/eg/starts   { subs } -> { starts: { [sub]: [w, ..., 0] | null }, keys, rehearsal, rk }   (EG-F: the start window's preflight - which starts each member may make)
 //   POST /v1/gate/claim  { receipt, region?, character? } -> { recorded, stones, closed, seat? }   (WB12d: the row's embers, AUDIT WB12d A4; SEAT1b: `seat` the kill's influence)
 // MARKS1, Marks - an account's alone, behind MARKS_OPEN (marks.js); `rid` the act's own id:
 //   POST /v1/marks/balance {}                               -> { balance, today, bank }
@@ -206,6 +207,7 @@ import { claimRaid, raidRecordOf } from './raids.js';   // RAID4: the towns defe
 import { claimSerpent, serpentRecordOf } from './serpents.js';   // SERPENT1: the serpents slain
 import { claimSd, sdRecordOf } from './sds.js';   // SD9b: the Hours broken
 import { egKeysOf, openEg, admitEg, claimEg, rollWeirKey } from './eg.js';   // EG-PLAY: the Elite Breach - the Weir Keys, the open, the admission, the claim
+import { startsEg } from './egStarts.js';   // EG-F: the start window's preflight
 import { readReceipt } from '../../src/net/gateReceipt.js';   // EG-PLAY: a recorded kill's rite (`r`), for its Weir Key's odds
 /** EG-PLAY: did the fighter who carries this gate receipt break the rite (its `r`)? Read after the claim verified it. */
 const readGateRite = (r) => readReceipt(r)?.r === 1;
@@ -395,6 +397,7 @@ const EG_STATUS = Object.freeze({
   'no-signing-key': 503, 'no-gate-key': 503,
   guest: 403, 'not-yours': 403, unproven: 403,
   live: 409, short: 409, rehearsed: 409, spent: 409,
+  start: 403,   // EG-F: a start the account may not make (no carries)
 });
 const MARKS_STATUS = Object.freeze({
   'marks-need-account': 403, 'marks-closed': 403, 'marks-young': 403, 'not-developer': 403, 'guild-rank': 403, 'guilds-need-account': 403,
@@ -1135,14 +1138,15 @@ const service = {
       if (path.startsWith('/v1/eg/')) {
         if (request.method !== 'POST') return no('method', 405, origin);
         const act = {
-          '/v1/eg/keys': async () => egKeysOf(ctx, who.player),
+          '/v1/eg/keys': async () => ({ ...(await egKeysOf(ctx, who.player)), rk: String(env.GATE_PUBLIC_KEY ?? '') || null }),   // EG-F: and the relay's public half - a stranger's arch verified (egStarts.js)
+          '/v1/eg/starts': async () => startsEg(ctx, who.player, body, String(env.GATE_PUBLIC_KEY ?? '') || null),   // EG-F: the start window's preflight
           '/v1/eg/open': async () => openEg(ctx, who.player, body, await signingKey(env, subtle)),
           '/v1/eg/admit': async () => admitEg(ctx, who.player, body, await signingKey(env, subtle)),
           '/v1/eg/claim': async () => claimEg(ctx, who.player, body.receipt, await gatePublicKey(env, subtle)),
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
-        if ('error' in r) return json({ error: r.error, ...(r.why ? { why: r.why } : {}), ...(typeof r.b === 'string' ? { b: r.b } : {}), ...(Number.isSafeInteger(r.keys) ? { keys: r.keys } : {}) }, EG_STATUS[r.error] ?? 400, origin);
+        if ('error' in r) return json({ error: r.error, ...(r.why ? { why: r.why } : {}), ...(typeof r.b === 'string' ? { b: r.b } : {}), ...(Number.isSafeInteger(r.keys) ? { keys: r.keys } : {}), ...(Number.isSafeInteger(r.w) ? { w: r.w } : {}) }, EG_STATUS[r.error] ?? 400, origin);   // EG-F: `w` a refused start
         if (path === '/v1/eg/claim' && r.recorded === true && r.q === 'w') await grantSpoils(ctx.db, who.player.id);   // INT5: a signed win's spoils, the budget's fill
         return json(r, 200, origin);
       }

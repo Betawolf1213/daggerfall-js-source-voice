@@ -346,6 +346,11 @@ import { SdOmenPassRenderer } from '../render/sdOmenPass.js';   // SD2c: the Hol
 import { SD_CAST_OUT_LINE, sdRoomKey, isSdRoom, sdPhase } from '../net/sdLaw.js';   // SD2d: a Hollow's end said to whoever it casts out; SD5a: the Hour's room; SD9e: a receipt from my realm's
 import { egRoomKey, EG_TEXT } from '../net/egLaw.js';   // EG-PLAY: an Elite Breach's room, and its words
 import { createEgClient } from './egClient.js';   // EG-PLAY: the breach on this screen - the key, the call, the halls, the receipts
+import { createEgArchPool, egArchPlace, egArchSite, EG_ARCH_GATE_NEAR_M } from './egArch.js';   // EG-F: the Elite Breach's arch - its pool, its place, its site; a Dagon's Breach near
+import { createEgCallPortal, createEgCallPrompt } from './egCall.js';   // EG-F: the call's portal at my feet, and its prompt
+import { openEgStartWindow } from '../ui/egStartWindow.js';   // EG-F: the start window, over DFU's list picker
+import { gateClearSet } from '../world/gateClearance.js';   // EG-F: the gate's clearing and every standing arch's, one set
+import { EG_LAST_WORD_MIN } from '../net/egLaw.js';   // EG-F: a quest falling due inside a breach's last word
 import { createEgFight } from './egFight.js';   // EG-PLAY: a hall's fight
 import { registerSpirePotionLaw, registerSpireFooting, registerSpireWake, registerSpireObjs, registerSpireAct } from '../systems/spireKit.js';   // EG-FULL: THE POTION LAW (two restoring potions a hall); Iron Footing on the spans
 import { accountEg } from '../net/accountClient.js';   // EG-PLAY: the Weir Keys, the open, the admission, the claims
@@ -17704,6 +17709,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       raids: () => (raidingPartiesOn() ? raidMapMarks(raidState().raids, worldMinutes(), { regionName: (r) => REGION_NAMES[r] ?? '', localTime: sharedClockOn() ? eventLocalTime : null, relay: raidRelayState }) : []),   // TIME1: online the withdrawal in local time
       serpent: () => serpentOmen?.mapMark() ?? null,   // SERPENT1: the sea serpent's ring, in the sea's colours - the held map alone draws it
       sd: () => sdHost?.mapMark() ?? null,   // SD2c: a found Super dungeon's ring, in its omen's brass - the held map alone draws it
+      arch: () => egClient?.archMapMark() ?? null,   // EG-F: my company's Elite arch while it stands, in its gold - the held map alone draws it
       // GUIDE5: WHERE THE QUESTS POINT - every active quest's place the player's map holds, the followed one filled
       // (ui/questMarks.js); a function for the gate's reason (a step logged while the map stands open). The enhanced
       // map alone draws them: a player who chose DFU's own maps chose DFU's look.
@@ -18048,6 +18054,7 @@ export async function bootWorld(canvas, renderer, params, status) {
         serpent: { place: serpentOmen?.current?.()?.site?.near ?? null, fellAt: (day) => { const site = serpentOmen?.current?.()?.site; return site && site.day === day ? serpentLink?.fellAt?.(day, site) ?? null : null; } },
         // SD2c: the Super dungeon - the hub's record, its name and its city (the row's own law asks the phase: a row once found)
         sd: sdHost ? { rec: sdHost.record(), name: sdHost.hollow()?.loc?.name ?? null, place: sdHost.hollow()?.site?.cityName ?? null } : null,
+        elite: egClient?.timers() ?? null,   // EG-F: my company's Elite Breach - its opening, its window, its hall and count
         seatsOpen: seatBook?.open === true,   // AUDIT TIMERS1 D5: the seat week's rows are for an account the seats are open to
         seats: seatBook?.open === true ? (seatBook.data?.seats ?? null) : null,
         zero: seatBook?.open === true ? seatBook.zero : null,
@@ -22033,6 +22040,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // take no blow), and my copy of the quest counts the injury and the kill it sees on a partner's foe
     exteriorFoes.setOnRaids((from, rk, at) => raidPeerWord(from, rk, at));   // RAID2: a peer's word on the raids it fought, past the pool's room test
     exteriorFoes.setQuestShare(questShareSeam);   // QUEST-PARTY: the party's law, one home (questShareSeam)
+    exteriorFoes.setOnEgArch((from, r) => { const p = online?.peers?.get(from); egClient?.archHeard(from, r, p?.shown ? onlineToScene(p.shown) : null); });   // EG-F: a peer's Elite arch - believed only near the peer's own feet, and when the hub's signature verifies
     exteriorFoes.setOnPortals((from, r) => { const p = online?.peers?.get(from); portalGates.applyOwner(from, r, p?.shown ? onlineToScene(p.shown) : null); });   // PORTAL1: a peer's portal - believed only near the peer's own feet (AUDIT PORTAL1 O1), kept to its own time
     exteriorFoes.setOnDuel((from, r, at) => { const rec = r === null ? null : validRingRecord(r); if (rec) _duelRings.set(from, { rec, at }); else _duelRings.delete(from); }, () => _duelRings.clear());   // DUEL1: a peer's ring, for the wall
     online.onPark = (room, e) => { wagonWarden?.keptWord(room, e); hcc.applyKept(room, e, campToScene, performance.now()); };   // HCC-PARK: a cell's word about a parked team (mine or a halo's cell), its owner here or not; WARDEN1: a throw it had not said played from where the team stood, before the pool moves it to the landing
@@ -24944,8 +24952,55 @@ export async function bootWorld(canvas, renderer, params, status) {
     cam.pos = player.eyeAt();
     return true;
   }
+  // ── EG-F (bible/11-Multiplayer/Elite-Gates.md sections 5, 6.3 and 6.4): THE ARCH AND THE CALL ────────────────────────
+  // the arch pool (scenes/egArch.js - drawn through the gate's pool below), the call's portal and its prompt
+  // (scenes/egCall.js), the key's facts for its refusals, and the start window (ui/egStartWindow.js - DFU's list picker,
+  // the boat variant picker's way, and DFU's YesNo box). Online alone, as the breach is.
+  const egFeet = () => (walkMode && playerSpawned && (modes?.mode ?? 'exterior') === 'exterior' ? player.feetAt() : null);
+  const egProbes = () => ({ ground: (o, d, m) => collider.surfaceHit(o, d, m)?.dist, wall: (o, d, m) => collider.raycastHit(o, d, m)?.dist });
+  const egArchPool = params.has('online') ? createEgArchPool({
+    renderer, collider: () => collider, pixelTranslation: (px, py) => state.pixelTranslation(px, py), heightAt: (x, z) => heightAt(x, z), now: egNow,
+    feet: egFeet, me: () => _accountEg.me(), say: (text) => setMidScreenText(text), onStep: (b) => egClient?.archStep(b), landAt: (l) => egLandAt(l),
+    verifyKey: () => egClient?.relayKey() ?? Promise.resolve(null),
+  }) : null;
+  const _egCallPortal = params.has('online') ? createEgCallPortal({
+    renderer, audio, toScene: (p) => campToScene(p), toWire: (p) => campToWire(p), hold: () => portalHoldNow(),
+    groundAt: (s) => { const d = collider.surfaceHit([s[0], s[1] + PORTAL_REGROUND, s[2]], [0, -1, 0], PORTAL_REGROUND * 2)?.dist; return Number.isFinite(d) ? s[1] + PORTAL_REGROUND - d : null; },
+    onEnter: () => egClient?.portalEntered(), onRefused: (hold) => townTalk.say(PORTAL_HOLD_TEXT[hold]),
+  }) : null;
+  if (_egCallPortal) portalGates.drawAlso(() => _egCallPortal.batches());   // EG-F: the call's portal drawn with the Portal Stone's, on the flats' axis
+  const egCallPrompt = params.has('online') ? createEgCallPrompt({ onAnswer: () => egClient?.command(''), touch: isTouchDevice(), doc: document }) : null;
+  /** The key's facts (scenes/egArch.js egKeyRefusal): the Portal Stone's holds, the water, a boat, a location's footprint,
+   *  a Dagon's Breach near, and the arch's site where it would stand (null: no room - egArchPlace). */
+  const egKeyFacts = () => {
+    const f = egFeet(), px = playerTravelPixel(), g = gatePool?.place?.() ?? null;
+    const at = f ? egArchPlace(f, cam.yaw, egProbes()) : { refused: 'room' };
+    return {
+      hold: portalHoldNow(), water: !!player.isPlayerSwimming, aboard: !!(csaBoatUnderMe() || isOnShip(playerEntity, playerEntity.boardShipPosition ?? null, px)),
+      within: _wasInLocationRect ? (_musicLoc?.name || 'this place') : null,
+      nearGate: !!(g && f && Math.hypot(g.origin[0] - f[0], g.origin[2] - f[2]) <= EG_ARCH_GATE_NEAR_M),
+      site: at.at && Number.isSafeInteger(px?.x) ? egArchSite(at.at, at.yaw, px.x, px.y, state.pixelTranslation(px.x, px.y)) : null,
+    };
+  };
+  /** THE START WINDOW's three doors: DFU's list picker on the mode machine's window slot (the boat's variant picker's own
+   *  way - csaOpenListPicker), and DFU's YesNo box on the overlay. */
+  const egStartWindow = (o) => openEgStartWindow({
+    ...o,
+    openList: (labels, onPick, onCancel) => {
+      if (!listPickerArtLoaded()) { Promise.resolve().then(onCancel); return null; }   // no list to ask with: nothing staked
+      const win = new ListPickerWindow({ items: labels, backdrop: 'none', onPick: (i) => onPick(i), onCancel: () => onCancel() });
+      if (modes?.mountWindow?.(win)) return win;
+      Promise.resolve().then(onCancel);
+      return null;
+    },
+    closeList: (win) => { if (win) modes?.closeWindow?.(win); },
+    ask: (lines, onYes, onNo) => townTalk.showOverlay(new YesNoBoxWindow({ rows: lines, onYes, onNo })),
+  });
   const egClient = params.has('online') ? createEgClient({
     modes: () => modes, online: () => online, hub: () => socialLink(), account: _accountEg, now: egNow, entity: playerEntity, player, cam,
+    keyFacts: egKeyFacts, startWindow: egStartWindow, arches: egArchPool, callPortal: _egCallPortal, prompt: egCallPrompt, feet: egFeet, probes: egProbes,   // EG-F
+    party: () => (social?.party?.members ?? []).map((m) => ({ sub: m.acct, name: m.name })), windowUp: () => gamePaused(),   // EG-F: the start window's ticks; the prompt under a window
+    questDue: () => questTracker.views.some((v) => Number.isFinite(v.clockSeconds) && v.clockSeconds < EG_LAST_WORD_MIN * 60),   // EG-F: a quest falls due inside the last word
     say: (text) => chatNotice(text), mid: (text) => egMid(text), veil: () => gateVeil,
     site: egSiteNow, wire: egWireNow, landAt: egLandAt,
     hurt: (n) => { if (playerEntity.health > 0) { hurtPlayer(playerEntity, n, { bypassShield: true, spare: () => {} }); flashPlayerDamage(n); } },   // the void is a setback, never a death
@@ -25015,6 +25070,7 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  the relay's clock as the omen reads it, the last offset kept through a reconnect. DISCORD-GATES: the site kept
    *  beside it, for the hub's word below. */
   let _gateClearOf = { day: null, site: null, clear: null };
+  let _gateClearSetOf = { g: null, a: null, s: null };   // EG-F: the set last made, and what it was made of
   if (gateOmen) _gateClearNow = () => {
     if (!_gateScan) return null;
     const day = gateAt(Date.now() + _sharedOffsetMs).day;
@@ -25023,7 +25079,10 @@ export async function bootWorld(canvas, renderer, params, status) {
       try { site = findGateSite(day, _gateScan); } catch (e) { console.warn('[gate] no clearing', e?.message ?? e); }
       _gateClearOf = { day, site, clear: gateClearFor(site) };
     }
-    return _gateClearOf.clear;
+    // EG-F: the gate's clearing and every standing arch's, one set (world/gateClearance.js gateClearSet) - made again only when either moves
+    const ac = egClient?.archClears() ?? null;
+    if (_gateClearOf.clear !== _gateClearSetOf.g || ac !== _gateClearSetOf.a) _gateClearSetOf = { g: _gateClearOf.clear, a: ac, s: gateClearSet(_gateClearOf.clear, ac ?? []) };
+    return _gateClearSetOf.s;
   };
   /** DISCORD-GATES: THIS GAME'S WORD OF WHERE THE GATE STANDS, to the hub (net/online.js sendGateSite, once a socket and
    *  day): the clearing's own site - the gate the clock is about, from its scan's end on, ~85 real minutes before its
@@ -25326,6 +25385,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     ready: () => !!online?.gateOk,   // WB3b: a relay that runs a gate's boss room (net/wire.js relaySupportsGate)
     landBefore: (g) => landBeforeGate(g),   // AUDIT WBX W1: a player sealed in the stone as it stands whole, set down before the gate
     enter: (g) => { modes?.enterGateArena?.(g); },   // WB3b: into the Burning Court (scenes/worldModes.js)
+    arches: egArchPool,   // EG-F: the Elite Breaches' arches, stood, drawn and pressed beside the gate
   }) : null;
   /** WB12d: THE FAITHFUL'S RITE (scenes/riteHost.js) - online alone, as the gate is: each breach's circle from the omen to
    *  its collapse, its smoke until the breach opens, its faithful shared by the World of Daggerfall camps' law (one site,
@@ -26318,6 +26378,8 @@ export async function bootWorld(canvas, renderer, params, status) {
     if (!full) return;
     const pg = portalGates.wireRecord(walkMode && playerSpawned ? player.feetAt() : cam.pos);   // the scene's metres (AUDIT PORTAL1 O3: the wire's units made 256 a reach of 6.4 m)
     if (pg) frame.pg = pg;
+    const ea = egClient?.archWord(walkMode && playerSpawned ? player.feetAt() : cam.pos);   // EG-F (section 23): my Elite arch for my cell - the hub's signed call's arch fields, while I stand near it
+    if (ea) frame.ea = ea;
   };
   /** DUEL1: THE RING I DUEL IN, FOR THE ONLOOKERS, on my foes frame (validRingRecord's shape): on every FULL frame while it
    *  stands (a joiner learns it within FOES_FULL_MS) and once more, as null, when it comes down; a frame without it leaves
@@ -35971,6 +36033,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
           hudHidden: townTalk.hudHidden,   // MAP-FIELD2: the held map takes the vitals and the status icons with it, on both skins
           detected: _detected, playerXZ: [enchantFeet()[0], enchantFeet()[2]],
           gate: gateCompassMark(),   // WB1: the Oblivion Gate on the compass, while the player stands in its ring
+          arch: egClient?.archCompass() ?? null,   // EG-F: my company's Elite arch on the compass, while it stands
           serpent: serpentCompassMark(),   // SERPENT1: the sea serpent on the compass, while the player sails in its ring
           sd: sdCompassMark(),   // SD2c: a found Super dungeon on the compass, while the player stands within SD_COMPASS_M of it
           quest: vendorCompassMark() ?? townQuestCompassMark() ?? questCompassMark(),   // GUIDE5: the tracker's quest's place on the compass, on the street; HOME-VENDOR: a trader's waypoint first, while it is set; GUIDE8: the Town tier's building, in its town

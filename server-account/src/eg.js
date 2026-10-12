@@ -36,6 +36,8 @@
 import { verifyEgReceipt } from '../../src/net/egReceipt.js';
 import { mintEgOrder } from '../../src/net/identityToken.js';
 import { utcDay } from '../../src/net/marksLaw.js';
+import { egMayStart, egWagerOf } from '../../src/net/egStartLaw.js';   // EG-F: the start Redoubt and the Wager, held at the open and every admission
+import { egStartsFor } from './egStarts.js';
 
 /** The odds a recorded gate kill rolls a key, a fighter who broke the rite, an Hour; the kills in a row the pity waits. */
 export const EG_KEY_ODDS = 1 / 6;
@@ -82,7 +84,9 @@ export async function egKeysOf({ db, nowS }, player) {
  * THE OPEN: one key staked (`rh` 1: the day's Rehearsal, no key) and the open order signed. Answers `{ order, b, ez,
  * keys, until, rh }`, or `{ error }`: `no-signing-key` (503), `guest`, `rq` (a bad request id), `unproven` (no gate
  * closed, no Redoubt taken), `live` (a breach held - `b` which), `short` (no key), `rehearsed` (today's Rehearsal
- * spent).
+ * spent). EG-F (sections 5, 16.6 and 18): `ew` the start Redoubt the start window chose and `wg` its Wager - refused
+ * `start` (`w`: not one the opener may start at - egStarts.js) and `wager` (not up to three decrees of three families);
+ * a Rehearsal starts at Hall 1 with no Wager. Both ride the stake and the order (`ew`, `ewg`).
  * @param {{ db: any, nowS: number, subtle: SubtleCrypto, rand: (b: Uint8Array) => Uint8Array }} ctx
  * @param {{ id: string, handle?: string|null }} player @param {any} body @param {CryptoKey|null} key
  */
@@ -91,15 +95,20 @@ export async function openEg({ db, nowS, subtle, rand }, player, body, key) {
   if (!player.handle) return { error: 'guest' };
   const rq = body?.rq, rh = body?.rh === 1 ? 1 : 0;
   if (typeof rq !== 'string' || !EG_RQ_RE.test(rq)) return { error: 'rq' };
+  // EG-F: the start and the Wager the window chose (a Rehearsal: Hall 1, none)
+  const ew = body?.ew ?? 0, wg = egWagerOf(body?.wg);
+  if (!Number.isSafeInteger(ew) || ew < 0 || ew > 999 || (rh && ew !== 0)) return { error: 'start', w: Number.isSafeInteger(ew) ? ew : 0 };
+  if (!wg || (rh && wg.length)) return { error: 'wager' };
   // ASKED AGAIN: the same breach back, while its stake still holds
-  const had = await db.prepare('SELECT ez, b, rh, until, state FROM eg_stakes WHERE account = ?1 AND rq = ?2').bind(player.id, rq).first();
+  const had = await db.prepare('SELECT ez, b, rh, until, state, ew, wg FROM eg_stakes WHERE account = ?1 AND rq = ?2').bind(player.id, rq).first();
   if (had) {
     if (had.state !== 'held' || int(had.until) <= nowS) return { error: 'spent' };
     const row = await playerRow(db, player.id);
-    const order = await mintEgOrder({ o: 'egopen', s: player.id, eb: had.b, ez: had.ez, ew: 0, rh: int(had.rh) === 1 ? 1 : undefined }, key, { subtle, nowS });
+    const order = await mintEgOrder({ o: 'egopen', s: player.id, eb: had.b, ez: had.ez, ew: int(had.ew), rh: int(had.rh) === 1 ? 1 : undefined, ewg: wagerOfRow(had.wg) }, key, { subtle, nowS });
     return { order, b: had.b, ez: had.ez, keys: int(row?.eg_keys), until: int(had.until), rh: int(had.rh) };
   }
   if (!rh && !(await proven(db, player.id))) return { error: 'unproven' };
+  if (ew > 0 && !egMayStart(await egStartsFor(db, player.id, nowS), ew)) return { error: 'start', w: ew };   // EG-F: no carries, the opener's own start too
   const b = hex(rand(new Uint8Array(8))), ez = hex(rand(new Uint8Array(12))), until = nowS + EG_LIVE_S, day = utcDay(nowS);
   // ONE TRANSACTION: the key (or the day's Rehearsal) and the live breach taken together, and the stake written by that
   // write alone (the row carries this breach only when the UPDATE took it)
@@ -107,8 +116,8 @@ export async function openEg({ db, nowS, subtle, rand }, player, body, key) {
     db.prepare(`UPDATE players SET eg_keys = eg_keys - ?3, eg_rh_day = CASE WHEN ?6 = 1 THEN ?5 ELSE eg_rh_day END, eg_live_b = ?2, eg_live_until = ?4
       WHERE id = ?1 AND (eg_live_b IS NULL OR eg_live_until <= ?7) AND (CASE WHEN ?6 = 1 THEN eg_rh_day != ?5 ELSE eg_keys >= 1 END) RETURNING eg_keys`)
       .bind(player.id, b, rh ? 0 : 1, until, day, rh, nowS),
-    db.prepare("INSERT INTO eg_stakes (ez, account, b, rq, rh, at, until, state) SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, 'held' WHERE EXISTS (SELECT 1 FROM players WHERE id = ?2 AND eg_live_b = ?3)")
-      .bind(ez, player.id, b, rq, rh, nowS, until),
+    db.prepare("INSERT INTO eg_stakes (ez, account, b, rq, rh, at, until, state, ew, wg) SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, 'held', ?8, ?9 WHERE EXISTS (SELECT 1 FROM players WHERE id = ?2 AND eg_live_b = ?3)")
+      .bind(ez, player.id, b, rq, rh, nowS, until, ew, wg.join(',')),   // EG-F: the stake keeps its start and its Wager
   ]);
   const left = took?.results?.[0];
   if (!left) {
@@ -117,14 +126,18 @@ export async function openEg({ db, nowS, subtle, rand }, player, body, key) {
     if (live) return { error: 'live', b: live.b };
     return rh ? { error: 'rehearsed' } : { error: 'short', keys: int(row?.eg_keys) };
   }
-  const order = await mintEgOrder({ o: 'egopen', s: player.id, eb: b, ez, ew: 0, rh: rh ? 1 : undefined }, key, { subtle, nowS });
+  const order = await mintEgOrder({ o: 'egopen', s: player.id, eb: b, ez, ew, rh: rh ? 1 : undefined, ewg: wg.length ? wg : undefined }, key, { subtle, nowS });
   return { order, b, ez, keys: int(left.eg_keys), until, rh };
 }
+/** EG-F: a stake's Wager as its row keeps it ('' none; the decrees' numbers joined by commas) - an order's `ewg`, or none. */
+const wagerOfRow = (s) => { const wg = egWagerOf(String(s ?? '').split(',').filter(Boolean).map(Number)); return wg?.length ? wg : undefined; };
 
 /**
  * A MEMBER'S ADMISSION: the account's live breach set to `b` (one breach at a time - a lapsed one is clear) and its
  * admit order signed (`egadmit`). The room checks the company and spends the order once. Answers `{ order, b }`, or
- * `{ error }`: `no-signing-key`, `guest`, `breach` (a bad id), `live` (another breach held - `b` which).
+ * `{ error }`: `no-signing-key`, `guest`, `breach` (a bad id), `live` (another breach held - `b` which). EG-F (section
+ * 16.6): `start` (`w`) - the breach starts at a Redoubt this member may not start at (no carries); the order names the
+ * breach's start (`ew`, its stake's).
  * @param {{ db: any, nowS: number, subtle: SubtleCrypto, rand: (b: Uint8Array) => Uint8Array }} ctx
  * @param {{ id: string, handle?: string|null }} player @param {any} body @param {CryptoKey|null} key
  */
@@ -133,10 +146,12 @@ export async function admitEg({ db, nowS, subtle, rand }, player, body, key) {
   if (!player.handle) return { error: 'guest' };
   const b = body?.b;
   if (typeof b !== 'string' || !BREACH_RE.test(b)) return { error: 'breach' };
+  const ew = int((await db.prepare('SELECT ew FROM eg_stakes WHERE b = ?1').bind(b).first())?.ew);   // EG-F: the breach's start
+  if (ew > 0 && !egMayStart(await egStartsFor(db, player.id, nowS), ew)) return { error: 'start', w: ew };
   const took = await db.prepare(`UPDATE players SET eg_live_b = ?2, eg_live_until = CASE WHEN eg_live_b = ?2 AND eg_live_until > ?3 THEN eg_live_until ELSE ?4 END
     WHERE id = ?1 AND (eg_live_b IS NULL OR eg_live_b = ?2 OR eg_live_until <= ?3) RETURNING eg_live_b`).bind(player.id, b, nowS, nowS + EG_LIVE_S).first();
   if (!took) { const live = liveOf(await playerRow(db, player.id), nowS); return { error: 'live', ...(live ? { b: live.b } : {}) }; }
-  const order = await mintEgOrder({ o: 'egadmit', s: player.id, eb: b, ez: hex(rand(new Uint8Array(12))), ew: 0 }, key, { subtle, nowS });
+  const order = await mintEgOrder({ o: 'egadmit', s: player.id, eb: b, ez: hex(rand(new Uint8Array(12))), ew }, key, { subtle, nowS });
   return { order, b };
 }
 

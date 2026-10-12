@@ -8975,7 +8975,8 @@ export function createWorldModes(host) {
     if (mode !== 'exterior' || !r || typeof r.b !== 'string' || !Number.isSafeInteger(r.c) || r.c < 1 || !(playerEntity.health > 0)) return false;
     const site = r.site ?? null;
     const dfLocation = egHallLocation({ b: r.b, seed: r.seed, c: r.c, geo: r.geo ?? 0, regionIndex: site?.regionIndex ?? -1, regionName: site?.regionName ?? '', climate: site?.climate ?? undefined });
-    const hit = { dfLocation, blocksFile: egHallBlocks(blocks), egHall: { b: r.b, seed: r.seed >>> 0, c: r.c, geo: r.geo ?? 0 }, climateBase: site?.climateBase ?? 2, season: site?.season ?? 0, group: egRoomKey(r.b), door: null, dfBlock: null, recordIndex: -1 };
+    const hit = { dfLocation, blocksFile: egHallBlocks(blocks), egHall: { b: r.b, seed: r.seed >>> 0, c: r.c, geo: r.geo ?? 0 }, climateBase: site?.climateBase ?? 2, season: site?.season ?? 0, group: egRoomKey(r.b), door: null, dfBlock: null, recordIndex: -1,
+      egFrom: r.landing?.pos ? r.landing : null }   // EG-F (section 6.4): the opener's landing - before the arch (world/gateArena.js gateLandingFor, an arch record);
     return gatedTransition((live) => dungeonTransition(hit, [], true, live));
   }
   /** ARENA2: the floor's light and air - the sky open over the sand, the hour the torches are lit: a warm ambient the
@@ -9735,6 +9736,7 @@ export function createWorldModes(host) {
         // gone with it), as the arena's floor does (AUDIT PRE-MERGE 1003b C7) - never the dungeon's own frame read outside
         from: { pos: [player.pos[0], player.pos[1] + CAPSULE_HEIGHT / 2, player.pos[2]], normal: [Math.sin(cam.yaw), 0, Math.cos(cam.yaw)] },
       };
+      if (hit.egFrom) dungeonReturn.from = hit.egFrom;   // EG-F (section 6.4): the breach's opener lands before its arch
       // DE1: WHICH DFU MEMBER THIS IS. Walking in through the door is
       // TransitionDungeonInterior, which uses the START marker and
       // aborts where there is none; startInDungeon (a new game) is
