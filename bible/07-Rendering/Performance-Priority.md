@@ -967,8 +967,21 @@ and a far haven, their regions spread over 62, with dives and the sea; `townsNea
 town's trips for 90 days and every town's visitors for 20, cold, five runs: the same 133,851 trips and 17,067 visits to
 the byte on both (a digest of every trip's id, kind, goal, times and party, and every visit's times); the whole
 2,008 -> 1,344 ms best; `ownTrip`, `pickWeighted` and the distance sort 3.9 s -> 0.95 s of the five runs' profile
-(`roadChoices` 0.24 s of it). In the client this is ~3.7 s of the 5.5 s frozen after the first frame; at the node
-run's share, ~2.8 s of it should go. Not measured: the installed client on this branch.
+(`roadChoices` 0.24 s of it). In the client, a live A/B: two local builds of the same main (f5a7f183d), one with
+this change, each launched fresh and booted into the world with the same online character on the same machine, the
+same capture on both (main-thread tasks over 100 ms from the trace, `tripsOf`'s share of each from the CPU profile, the
+20 s after the boot's last step):
+
+| | main | TRIP-PICKS |
+|---|---|---|
+| click -> the boot's last step | 12.24 s | 12.54 s (the network's; this change is after it) |
+| the first world frame | 2,765 ms (trips 1,944) | 1,105 ms (trips 304) |
+| the frozen frames after it | 920 + 924 + 176 + 125 ms | 202 + 202 ms |
+| frozen in all after the boot | 5,011 ms | 1,617 ms |
+| of it the trips | 3,966 ms | 624 ms |
+
+One run each: the trips are the same answers on both, so the work is the same work, and the rest of the frames
+(the first frame's ~800 ms beside the trips, the boot's 1.3 s reading the map) stand alike on both.
 
 Pins: `test/trippicks.test.js` (2) - `roadOrder` against the old law restated, for every town of a mixed map (gaps,
 jitter, ties of distance, three regions, courts and temples, ids out of the grid's order), every job and an unlisted
