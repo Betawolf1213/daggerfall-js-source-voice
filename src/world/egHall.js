@@ -24,6 +24,10 @@
 // circle's band's own archive (world/egBandArt.js egBandDress): white marble and gold leaf in the Galleries, slate violet
 // and bone in the Cairn, black glass and moon-silver in the Shade, basalt and iron in the Wellhead. The magma and the fire
 // channels wear the band's liquid (EG_DRESS.molten), no longer the edge line's gold.
+// EG-ZC (2026-10-12, Mac: "I said I want everything"; sections 11.1-11.2): THE SHAFTS built - the Deepway's way down (the
+// law's `caves` marked `shaft`): their walls running 6 m down past their foot, their vault over the rim (none over THE
+// HOLLOW TRUNK, open to the moon), their kit's dress; and THE COOLING SLAG's spouts over each crossing's lanes, their mouths
+// in the band's liquid (draw-only - the crusts and the spill are the spans', scenes/egSpan.js).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { realmToDungeon } from '../net/sdBrain.js';
@@ -31,6 +35,7 @@ import { faces } from './gateModel.js';
 import { realmIsland, packRealmFaces, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_COBBLE_RECORD, SD_ISLAND_SIDES } from './sdRealm.js';
 import { egCircleSpecs, egBandOfCircle, EG_TEXT } from '../net/egLaw.js';
 import { EG_FRAGS } from '../net/egFragLaw.js';
+import { egSlagX, EG_SLAG_SPOUTS } from '../net/egSpanLaw.js';   // EG-ZC: the slag's spouts
 import { egBandDress, EG_DRESS } from './egBandArt.js';   // EG-G2: the band's dress
 
 /** The made location's id (the Hour's is 0x7ffff200, the court's 0x7ffff000), its one block's name and index. */
@@ -144,6 +149,25 @@ export const egWallBand = (spec, b) => spec.variant === 'fallingwall' && b.role 
  * (egCircleColliderTris), every decoration outside the walk.
  */
 const NICHE = Object.freeze({ w: 2.0, d: 2.4, h: 2.6 });
+/** EG-ZC: how far a passage's walls run down under its lowest floor (m) - a pit's (the Mist Stair's, every shaft's) 6 m. */
+export const egWallFoot = (q) => (q.kit === 'mist' || q.shaft ? 6 : 1.2);
+/** EG-ZC - THE COOLING SLAG's SPOUTS (section 11.2): over each slag crossing's lanes, at the crust's near edge, a spout on
+ *  its wall 2.6 m over the crust - an iron mouth whose lip is the band's liquid. Draw-only (nothing stands under it but the
+ *  lane's outer half, over every jump's head). Its boxes (the dungeon's frame) and lips, each `[x0, y0, z0, x1, y1, z1]`. */
+export const EG_SLAG_SPOUT = Object.freeze({ up: 2.6, h: 0.6, d: 0.8, out: 0.7 });
+export function egSlagSpouts(spec) {
+  const out = [];
+  for (const s of spec.steps ?? []) {
+    if (s.kind !== 'slag') continue;
+    const q = (spec.caves ?? []).find((c) => s.z >= c.z0 && s.z <= c.z1), wall = q ? q.halfW : s.w + s.amp, zN = s.z - s.d / 2;
+    for (let k = 0; k < EG_SLAG_SPOUTS; k++) {
+      const side = egSlagX(s, k) < s.x ? -1 : 1, xw = (q ? q.x : s.x) + side * wall, xi = xw - side * EG_SLAG_SPOUT.out;
+      const a = egToDungeon(spec, Math.min(xw, xi), s.y + EG_SLAG_SPOUT.up, zN - EG_SLAG_SPOUT.d), c = egToDungeon(spec, Math.max(xw, xi), s.y + EG_SLAG_SPOUT.up + EG_SLAG_SPOUT.h, zN);
+      out.push({ box: [Math.min(a[0], c[0]), a[1], Math.min(a[2], c[2]), Math.max(a[0], c[0]), c[1], Math.max(a[2], c[2])], side, lip: egToDungeon(spec, xi, s.y + EG_SLAG_SPOUT.up, zN - EG_SLAG_SPOUT.d / 2) });
+    }
+  }
+  return out;
+}
 /** The z-spans of passage `q`'s wall on `side` left standing between its alcoves' openings. */
 function wallRuns(spec, q, side) {
   const cuts = (spec.alcoves ?? []).filter((a) => Math.sign(a.x - q.x) === side && Math.abs(Math.abs(a.x - q.x) - q.halfW) < 3 && a.z > q.z0 && a.z < q.z1).map((a) => [a.z - NICHE.w / 2, a.z + NICHE.w / 2]).sort((a, b) => a[0] - b[0]);
@@ -170,7 +194,7 @@ function caveModel(f, spec, q) {
   const wallRec = kit === 'mist' || kit === 'ossuary' ? SD_REALM_ROOT_RECORD : SD_REALM_PILLAR_RECORD;
   if (!open) for (const s of [-1, 1]) {
     for (const [z0, z1] of wallRuns(spec, q, s)) {
-      const a = D(X + s * (w + 0.6), yLo - (kit === 'mist' ? 6 : 1.2), z0), c = D(X + s * w, yHi + q.height, z1);
+      const a = D(X + s * (w + 0.6), yLo - egWallFoot(q), z0), c = D(X + s * w, yHi + q.height, z1);
       boxD(f, wallRec, Math.min(a[0], c[0]), a[1], a[2], Math.max(a[0], c[0]), c[1], c[2], true, 0.5);
     }
     // the fire running down the wall's foot - a glowing channel the length of each floor (the Caverns, the Forge)
@@ -291,6 +315,11 @@ export function buildEgCircleModel(seed, c, geo = 0) {
     for (const v of spec.vignettes ?? []) vignetteModel(f, spec, v);
     for (const d of spec.deco ?? []) if (d.t === 'arch') for (const [x0, y0, z0, x1, y1, z1] of archParts(spec, d)) boxD(f, SD_REALM_PILLAR_RECORD, x0, y0, z0, x1, y1, z1, true, 0.5);
     for (const q of spec.ramps ?? []) { const [a, b, c, e] = rampCorners(spec, q); quadTo(f, SD_REALM_FLOOR_RECORD, a, b, c, e, [0, 1, 0]); quadTo(f, SD_REALM_ROOT_RECORD, a, b, [b[0], b[1] - 0.6, b[2]], [a[0], a[1] - 0.6, a[2]], [0, -1, 0]); }
+    // EG-ZC: the slag's spouts - iron on the wall, the band's liquid at the mouth facing down onto the lane
+    for (const { box: [x0, y0, z0, x1, y1, z1] } of egSlagSpouts(spec)) {
+      boxD(f, SD_REALM_BRASS_RECORD, x0, y0, z0, x1, y1, z1, false, 0.5);
+      quadTo(f, EG_DRESS.molten, [x0, y0 - 0.002, z0], [x1, y0 - 0.002, z0], [x1, y0 - 0.002, z1], [x0, y0 - 0.002, z1], [0, -1, 0]);
+    }
   }
   return egBandDress(packRealmFaces(f), egBandOfCircle(c));
 }
@@ -341,7 +370,7 @@ export function egCircleColliderTris(seed, c, geo = 0) {
     for (const q of spec.caves) {
       const yLo = Math.min(q.y, q.yB ?? q.y), yHi = Math.max(q.y, q.yB ?? q.y);
       if (q.open) continue;
-      for (const s of [-1, 1]) for (const [z0, z1] of wallRuns(spec, q, s)) { const a = egToDungeon(spec, q.x + s * (q.halfW + 0.6), yLo - (q.kit === 'mist' ? 6 : 1.2), z0), e = egToDungeon(spec, q.x + s * q.halfW, yHi + q.height, z1); box(Math.min(a[0], e[0]), a[1], a[2], Math.max(a[0], e[0]), e[1], e[2]); }
+      for (const s of [-1, 1]) for (const [z0, z1] of wallRuns(spec, q, s)) { const a = egToDungeon(spec, q.x + s * (q.halfW + 0.6), yLo - egWallFoot(q), z0), e = egToDungeon(spec, q.x + s * q.halfW, yHi + q.height, z1); box(Math.min(a[0], e[0]), a[1], a[2], Math.max(a[0], e[0]), e[1], e[2]); }
       if (q.kit === 'gloam' || q.tube) continue;
       const a = egToDungeon(spec, q.x - q.halfW - 0.6, yHi + q.height, q.z0), e = egToDungeon(spec, q.x + q.halfW + 0.6, yHi + q.height + 1, q.z1);
       box(a[0], a[1], a[2], e[0], e[1], e[2]);

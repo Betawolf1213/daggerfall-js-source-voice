@@ -26,10 +26,17 @@
 // Galleries' third circle), the Sinking Stair, the Moon Path and the Forge Line (the Brinks into the Cairn, the Shade and
 // the Wellhead - section 8.9: "built from them").
 //
+// EG-ZC (2026-10-12, Mac: "I said I want everything"; sections 11.1, 11.2 and 11.10): THE LAST FRAGMENTS - from spec law
+// EG_SLAG_LAW the Forge kit lays THE COOLING SLAG (a crossing two spouts pour in turn - net/egSpanLaw.js `slag`, its molten
+// lanes the place's hazard), and THE SHAFTS are planned (egFragShaft): every band's way down through ledges and a Drop - the
+// Caverns' throat, the Mist Stair's pit, THE HOLLOW TRUNK of the Gloam Thicket on its moon-bound branches, THE SLAG CHUTE of
+// the Forge Gut onto its crusts, the deep Caverns' throat - laid as the Deepway's third fragment. And the engines as the page
+// wrote them: the Sluice floods its lane EG_ENGINES.sluice.flood, the Moon-Mirror lights a branch EG_ENGINES.mirror.lit.
+//
 // The generator half is integer-exact (centimetres and milliseconds, the hall's own die - net/egLaw.js): one seed, one
 // fragment, on every machine. Pure. Not a DFU member. Ledger A (ELITE-GATES).
 import { shDisc, shLane, egWindupFloorMs, egWidthOk, egInShape } from './egShape.js';
-import { EG_MOON_EVERY_S, EG_DRUM_MPS, EG_SPAN_RUN_MPS } from './egSpanLaw.js';
+import { EG_MOON_EVERY_S, EG_DRUM_MPS, EG_SPAN_RUN_MPS, EG_SLAG_TELL_S, EG_SLAG_MOLTEN_S, EG_SLAG_CRUST_S, EG_SLAG_CYCLE_S, EG_SLAG_SPOUTS } from './egSpanLaw.js';
 
 /** The fragment record's version (a change to a fragment's law is a relay version - section 11.5). */
 export const EG_FRAG_V = 1;
@@ -61,7 +68,7 @@ export const EG_SET_PIECE_NAMES = Object.freeze({ tube: 'the Collapsing Tube', s
 /** The pieces each fragment's inner course and each set piece lays (net/egSpanLaw.js's kinds - its law, its dress). */
 export const EG_FRAG_PIECES = Object.freeze({
   caverns: Object.freeze(['ledge']), stacks: Object.freeze(['ledge']), colonnade: Object.freeze(['still', 'drum']), ossuary: Object.freeze(['bone']), mist: Object.freeze(['ledge']),
-  gloam: Object.freeze(['moon']), forge: Object.freeze(['rail']), deep: Object.freeze(['ledge']), sinking: Object.freeze(['sink']), moonpath: Object.freeze(['moon']), forgeline: Object.freeze(['rail']),
+  gloam: Object.freeze(['moon']), forge: Object.freeze(['rail', 'slag']), deep: Object.freeze(['ledge']), sinking: Object.freeze(['sink']), moonpath: Object.freeze(['moon']), forgeline: Object.freeze(['rail']),
 });
 /** A chamber's play (section 11.4 - "a chamber is never a disc with walls"): a second fight floor on two stairs, a
  *  chokepoint arch, a moving hazard, an engine. */
@@ -81,7 +88,7 @@ export const EG_HAZARDS = Object.freeze({
   wisp: Object.freeze({ tell: 0, live: 4000, period: 0, pct: 0.03, el: null, aim: 'fight', name: 'Soul-Wisp', r: 3, brk: 6 }),
   mist: Object.freeze({ tell: 1000, live: 3000, period: 12000, pct: 0, el: null, aim: 'sight', name: 'Mist Surge' }),
   hammer: Object.freeze({ tell: 1400, live: 300, period: 6000, pct: 0.2, el: null, aim: 'fight', name: 'Hammer Drop' }),
-  slag: Object.freeze({ tell: 1200, live: 6000, period: 20000, crust: 10000, pct: 0.2, el: 'fire', aim: 'fight', name: 'Slag Spill' }),
+  slag: Object.freeze({ tell: EG_SLAG_TELL_S * 1000, live: EG_SLAG_MOLTEN_S * 1000, period: EG_SLAG_CYCLE_S * 1000, crust: EG_SLAG_CRUST_S * 1000, pct: 0.2, el: 'fire', aim: 'fight', name: 'Slag Spill' }),   // EG-ZC: its numbers' one home is the crust's (net/egSpanLaw.js)
   tide: Object.freeze({ tell: 5000, live: 15000, period: 60000, pct: 0.1, el: 'fire', aim: 'fight', name: 'Magma Tide' }),
   eclipse: Object.freeze({ tell: 6000, live: 500, period: 40000, pct: 0.3, el: 'shock', aim: 'check', name: 'The Eclipse', r: 3, mps: 1.5 }),
   hammerline: Object.freeze({ tell: 1400, live: 300, period: 5000, pct: 0.2, el: null, aim: 'trav', name: 'Forge Hammer' }),
@@ -101,12 +108,47 @@ export const EG_ENGINE_CD_MS = 30_000;
 export const EG_ENGINE_PCT = 0.2;
 export const EG_ENGINE_TELL_MS = 1500;
 export const EG_ENGINES = Object.freeze({
-  sluice: Object.freeze({ name: 'the Sluice', what: 'floods a channel - adds in it lose 40% of their health', sh: 'lane', pct: 0.4 }),
+  sluice: Object.freeze({ name: 'the Sluice', what: 'floods a channel for 6 s - adds in it lose 40% of their health', sh: 'lane', pct: 0.4, flood: 6000 }),   // EG-ZC: the channel flooded 6 s
   shelf: Object.freeze({ name: 'the Shelf', what: 'topples once onto the adds', sh: 'lane', pct: 0.5, once: true }),
   soulbell: Object.freeze({ name: 'the Soul-Bell', what: 'stuns Wraiths and Binders for 4 s', sh: 'disc', pct: 0, stun: 4000 }),
-  mirror: Object.freeze({ name: 'the Moon-Mirror', what: 'blinds the Divers for 4 s', sh: 'disc', pct: 0, stun: 4000 }),
+  mirror: Object.freeze({ name: 'the Moon-Mirror', what: 'lights a branch for 6 s and blinds the Divers for 4 s', sh: 'disc', pct: 0, stun: 4000, lit: 6000 }),   // EG-ZC: a branch lit 6 s
   hammer: Object.freeze({ name: 'the Drop-Hammer', what: 'a disc of r 3 onto the adds - and once a phase it stuns the lord', sh: 'disc', pct: 0.5, lordStun: 2000 }),
 });
+/** EG-ZC - THE COOLING SLAG laid (section 11.2): the spec law it is laid from (net/egLaw.js EG_SPEC - the law before keeps
+ *  its halls byte for byte), a crust's top (cm - a spout's lane 4 m wide, THE WIDTH RULE's least, 3 m along the course),
+ *  how far each spout's lane stands either side of the crossing's line (cm - the two lanes 10 cm apart), and the molten
+ *  lane's reach onto the floor it pours toward (cm - where a waiting member stands aside). */
+export const EG_SLAG_LAW = 5;
+export const EG_SLAG_STEP = Object.freeze({ w: 400, d: 300 });
+export const EG_SLAG_LANE_CM = 205;
+export const EG_SLAG_LIP_CM = 150;
+/** EG-ZC - THE SHAFTS (sections 11.1-11.2): each band's shaft kits (the Deepway's way down), their names where the page
+ *  names one (the rest are their fragment's), and the pieces each lays. */
+export const EG_SHAFT_KITS = Object.freeze([Object.freeze(['caverns']), Object.freeze(['mist']), Object.freeze(['gloam']), Object.freeze(['forge', 'deep'])]);
+export const EG_SHAFT_NAMES = Object.freeze({ gloam: 'the Hollow Trunk', forge: 'the Slag Chute' });
+export const EG_SHAFT_PIECES = Object.freeze({
+  caverns: Object.freeze(['ledge', 'drop']), mist: Object.freeze(['ledge', 'drop']), gloam: Object.freeze(['moon', 'drop']), forge: Object.freeze(['ledge', 'drop', 'slag']), deep: Object.freeze(['ledge', 'drop']),
+});
+/** A shaft's mouth (its rim's floor, cm), its foot (the floor it lands on), a flight's fall (cm - THE ENVELOPE's step down
+ *  under a metre), its Drop's (at most the Drop's 4.5 m), its headroom over its mouth (cm). */
+export const EG_SHAFT_RIM_CM = 300;
+export const EG_SHAFT_FOOT_CM = 300;
+export const EG_SHAFT_FLIGHT_CM = 90;
+export const EG_SHAFT_DROP_CM = Object.freeze([300, 450]);
+export const EG_SHAFT_HEIGHT_CM = 650;
+/** The spouts' lanes of a slag crossing whose crust stands `zS` to `zE` (cm, the plan's frame) about `x`, its top `y`: each
+ *  spout's molten lane from the crust's near edge onto EG_SLAG_LIP_CM of the floor past it, its clock the crossing's, each
+ *  spout half a cycle behind the last (net/egSpanLaw.js egSlagState). */
+const slagLanes = (x, zS, zE, y, phase) => Array.from({ length: EG_SLAG_SPOUTS }, (_, k) => {
+  const lx = x + (k === 0 ? -EG_SLAG_LANE_CM : EG_SLAG_LANE_CM);
+  return { kind: 'slag', sh: [lx, zS, lx, zE + EG_SLAG_LIP_CM], w: EG_SLAG_STEP.w, y, phase: phase + (k * EG_SLAG_CYCLE_S * 1000) / EG_SLAG_SPOUTS, period: 0 };
+});
+/** A slag crossing's course item (net/egLaw.js lays it): `gap` before it, its clock's phase (ms). */
+const slagItem = (gap, phase) => ({ k: 'slag', gap, x: 0, dy: 0, amp: EG_SLAG_LANE_CM, period: EG_SLAG_CYCLE_S * 1000, phase });
+/** EG-ZC (section 11.10): the Moon-Mirror's reach (m - the nearest Moon branch within it is the one it lights), and the
+ *  lit branch's gold ring (m - a haven over its top, THE HAVEN GRAMMAR: gold on what you stand on means it holds). */
+export const EG_MIRROR_REACH_M = 30;
+export const EG_MIRROR_LIT_R = 1.8;
 /** An alcove's reach (m - a member within it takes what it holds, once), what one may hold. */
 export const EG_ALCOVE_REACH_M = 2;
 export const EG_ALCOVE_HOLDS = Object.freeze(['lumen', 'shard', 'page']);
@@ -127,7 +169,7 @@ const wrapT = (t, p) => ((t % p) + p) % p;
  * its exit facing +Z, its floor at y 0): `{ kit, cls, halfW, height, len, zA, zB, yB, open, course, hazards, anchors,
  * alcoves, vignettes, lights, engine }` - the chasm from `zA` to `zB` crossed on `course` (each `{ k, gap, x, dy, ... }`
  * laid one after another from `zA`, the Steps' records - net/egLaw.js lays them), the far floor `yB` from the near one.
- * @param {string} kit @param {() => number} r the hall's stream @param {{ c?: number, deep?: number }} [o]
+ * @param {string} kit @param {() => number} r the hall's stream @param {{ c?: number, deep?: number, law?: number }} [o] (EG-ZC: `law` the spec law - the newest when none)
  */
 export function egFragPassage(kit, r, o = {}) {
   const F = EG_FRAGS[kit] ?? EG_FRAGS.caverns, H = EG_HAZARDS;
@@ -185,12 +227,22 @@ export function egFragPassage(kit, r, o = {}) {
     for (let q = 0; q < n; q++) course.push({ k: 'moon', gap: g, x: (q % 2 === 0 ? -1 : 1) * 60, dy: 0, amp: 0, period, phase, beat: zA0 });
     lights.push([0, 400, zA0 + Math.floor(chasm / 2), 'moon']);
   } else if (kit === 'forge') {
-    // THE FORGE GUT: conveyors (Rails) across the chasm; hammer drops on the floors; slag that cools to the alcove
-    halfW = 350; height = 650; chasm = 1300;
+    // THE FORGE GUT: conveyors (Rails) across the chasm; hammer drops on the floors; EG-ZC: from EG_SLAG_LAW THE COOLING SLAG
+    // - the chasm's last stretch crossed only on a crust its two spouts pour in turn, left onto the far floor (the walls wider
+    // for the spouts' two lanes, the passage longer by the crust, so its floors and hammers stand where they stood)
+    const slag = (o.law ?? Infinity) >= EG_SLAG_LAW;
+    halfW = slag ? 420 : 350; height = 650; chasm = 1300; len = slag ? len + EG_SLAG_STEP.d : len;
     const g = 320;
     course.push({ k: 'rail', gap: g, x: 0, dy: 0, amp: 200, period: between(r, 60, 80) * 100, phase: between(r, 0, 9) * 100 });
     course.push({ k: 'rail', gap: g, x: 0, dy: 0, amp: 200, period: between(r, 60, 80) * 100, phase: between(r, 0, 9) * 100 + 2000 });
     chasm = 3 * g + 2 * 300;
+    if (slag) {
+      const ph = between(r, 0, 199) * 100;
+      course.push(slagItem(g, ph));
+      chasm += EG_SLAG_STEP.d;
+      const zE = Math.floor((len - chasm) / 2) + chasm;
+      hazards.push(...slagLanes(0, zE - EG_SLAG_STEP.d, zE, 0, ph));
+    }
     const zA0 = Math.floor((len - chasm) / 2);
     hazards.push({ kind: 'hammer', spots: [[-100, 300], [150, 650], [-50, zA0 - 250]], r: 300, y: 0, phase: between(r, 0, 59) * 100 });
     hazards.push({ kind: 'hammer', spots: [[100, zA0 + chasm + 300], [-150, len - 650], [50, len - 300]], r: 300, y: 0, phase: between(r, 0, 59) * 100 });
@@ -228,6 +280,54 @@ export function egFragPassage(kit, r, o = {}) {
   const vs = EG_VIGNETTES[kit] ?? EG_VIGNETTES.caverns;
   for (let q = 0, n = between(r, 1, 2); q < n; q++) vignettes.push({ t: vs[q % vs.length], x: (q % 2 === 0 ? -1 : 1) * (halfW - 90), z: q === 0 ? 200 : len - 200, y: q === 0 ? 0 : yB, yaw: q % 2 === 0 ? 90 : 270 });
   return { kit, cls: 'passage', name: F.name, halfW, height, len, zA, zB, yB, open, course, hazards, anchors, alcoves, vignettes, lights, reverb: F.reverb, engine: null };
+}
+
+/**
+ * EG-ZC - A SHAFT, PLANNED (sections 11.1-11.2: the class that goes "down through ledges and drops", the Deepway's way down;
+ * centimetres and milliseconds, its rim at z 0 and y 0, its foot facing +Z): `{ kit, cls, name, halfW, height, len, zA, zB,
+ * yB, open, course, hazards, anchors, alcoves, vignettes, lights, reverb, engine }` - its rim (0 to `zA`), three or four
+ * flights down (three in the Slag Chute) (each EG_SHAFT_FLIGHT_CM - THE ENVELOPE's step down under a metre), its Drop (EG_SHAFT_DROP_CM, onto the Drop's
+ * walled landing), and its foot (`zB` to `len`, `yB` under the rim). Blows land on none of it - its floors are traversal
+ * ground - and its walls run down past its foot. By kit:
+ *   the Oblivion Caverns (and deep)  basalt flights down a lava tube's throat, a fire fall across its rim;
+ *   the Mist Stair                   flights wound down a pit of mist, the mist surging under its foot;
+ *   THE HOLLOW TRUNK (the Gloam)     black-glass branches down a hollow trunk open to the moon, solid while the beam walking
+ *                                    down it lies on them (the Moon's law);
+ *   THE SLAG CHUTE (the Forge)       iron ledges down a chute, its Drop, then a slag crossing its two spouts pour, left onto
+ *                                    the foot (net/egSpanLaw.js `slag`).
+ * Proven by THE TIMED SOLVER with the hall, its own crossing inside EG_SHAFT_MAX_S (net/egSpanLaw.js egSpanProof).
+ * @param {string} kit @param {() => number} r the hall's stream
+ */
+export function egFragShaft(kit, r) {
+  const F = EG_FRAGS[kit] ?? EG_FRAGS.caverns, moon = kit === 'gloam';
+  /** @type {any[]} */
+  const course = [], hazards = [], lights = [];
+  const halfW = kit === 'forge' ? 420 : kit === 'deep' ? 450 : 400, zA = EG_SHAFT_RIM_CM, n = kit === 'forge' ? 3 : between(r, 3, 4);   // the Chute's crust takes a flight's room: a Deepway stays inside EG_HALL_LEN_MAX
+  const period = EG_MOON_EVERY_S * 1000, mph = moon ? between(r, 0, period / 100 - 1) * 100 : 0;
+  let y = 0, run = 0;
+  for (let q = 0; q < n; q++) {
+    const side = q % 2 === 0 ? -1 : 1;
+    y -= EG_SHAFT_FLIGHT_CM;
+    if (moon) { const gap = between(r, 180, 240); course.push({ k: 'moon', gap, x: side * 60, dy: -EG_SHAFT_FLIGHT_CM, amp: 0, period, phase: mph, beat: zA }); run += gap + 220; }
+    else { const gap = between(r, 240, 280); course.push({ k: 'ledge', gap, x: side * between(r, 7, 10) * 10, dy: -EG_SHAFT_FLIGHT_CM }); run += gap + 200; }
+  }
+  const fall = between(r, EG_SHAFT_DROP_CM[0] / 10, EG_SHAFT_DROP_CM[1] / 10) * 10, dg = between(r, 240, 280);
+  y -= fall;
+  course.push({ k: 'drop', gap: dg, x: 0, dy: -fall });
+  run += dg + 600;
+  if (kit === 'forge') {
+    // THE SLAG CHUTE's crossing: from its Drop's landing over the chute's last gap onto the foot, on its spouts' crusts
+    const ph = between(r, 0, 199) * 100, sg = between(r, 240, 280);
+    course.push(slagItem(sg, ph));
+    run += sg + EG_SLAG_STEP.d;
+    hazards.push(...slagLanes(0, zA + run - EG_SLAG_STEP.d, zA + run, y, ph));
+  }
+  const zB = zA + run, len = zB + EG_SHAFT_FOOT_CM, yB = y;
+  if (kit === 'caverns' || kit === 'deep') hazards.push({ kind: 'fall', sh: [-halfW, zA - 120, halfW, zA - 120], w: 120, y: 0, phase: between(r, 0, 49) * 100 });
+  else if (kit === 'mist') hazards.push({ kind: 'mist', y: yB - 300, phase: between(r, 0, 119) * 100 });
+  const glow = moon ? 'moon' : kit === 'mist' ? 'band' : 'lava';
+  lights.push([0, 300, Math.floor(zA / 2), glow], [0, yB + 300, zB + Math.floor(EG_SHAFT_FOOT_CM / 2), glow]);
+  return { kit, cls: 'shaft', name: EG_SHAFT_NAMES[kit] ?? F.name, halfW, height: EG_SHAFT_HEIGHT_CM, len, zA, zB, yB, open: 0, course, hazards, anchors: {}, alcoves: [], vignettes: [], lights, reverb: F.reverb, engine: null };
 }
 
 /**

@@ -7631,7 +7631,7 @@ export class Room {
       // that asked - a client whose law is not the breach's builds from them (net/egLaw.js egSpecGive)
       const c = B.h > 0 ? egCircleOfHall(B.h) : 1, hc = egCircleOfHall(m.h);
       if (B.end || (hc !== c && hc !== c + 1)) return;
-      this._send(ws, JSON.stringify({ t: 'eg', k: 'spec', egv: B.egv, h: m.h, sp: egHallOf(B.seed, m.h, egGeo(B)) }));
+      this._send(ws, JSON.stringify({ t: 'eg', k: 'spec', egv: B.egv, h: m.h, sp: egHallOf(B.seed, m.h, egGeo(B), B.egv) }));   // EG-ZC: drawn in that law (the law before kept)
       return;
     }
     if (m.k === 'home') {

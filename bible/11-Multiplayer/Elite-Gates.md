@@ -5032,3 +5032,103 @@ section 22's tick.
   `egeco_relay` (four), `egmade` (three) and `egplay`.
 - `RELAY_VERSION` `world197`, unshipped, rehashed: `net/egBrain.js` imports `net/egReceipt.js`, so the graph's walk
   swaps it ahead of `net/egDurable.js`. No `EG_SPEC` change, so no new `EG_LAWS` entry. No new src module.
+
+### EG-ZC - 2026-10-12 - THE LAST FRAGMENTS
+
+Closes what layer three and EG-G2 left of sections 11.1, 11.2 and 11.10: the Cooling Slag laid, the shafts (the Slag Chute
+and the Hollow Trunk among them), and the engines as the page wrote them. Spec law 5.
+
+- **THE COOLING SLAG** (`net/egSpanLaw.js`, the crust's one home - `EG_HAZARDS.slag` reads its numbers):
+  - a spill is told `EG_SLAG_TELL_S` 1.2 s, molten `EG_SLAG_MOLTEN_S` 6 s, then a crust `EG_SLAG_CRUST_S` 10 s, every
+    `EG_SLAG_CYCLE_S` 20 s (`egSlagState`);
+  - a `slag` step is a crossing poured by `EG_SLAG_SPOUTS` two spouts side by side, `amp` (2.05 m) either side of its
+    line, each lane 4 m wide (`EG_SLAG_STEP`), the second half a cycle behind the first. One crust always stands
+    (`egSlagLane`), and the piece stands on that crust's lane (`egPieceAt`), so THE FAIR TRAIL's support
+    (`net/egFair.js egSupportAt`) and the floor test know it unchanged;
+  - THE TIMED SOLVER believes a landing on a crust only while that lane holds through its crossing (its depth at THE
+    SPAN BUILD's run, and the Crumble's slack). The window shuts about 0.7 s at each change of lane, never a queue. A crust
+    is left onto still ground (`EG_SLAG_AFTER` - the ground, a still step, a ledge or a Drop), never onto a timed piece;
+  - the spill's lanes are the place's hazard (kind `slag`, 4 m wide, told over the wind-up floor, 20% fire). They pour
+    over the crust and `EG_SLAG_LIP_CM` onto the floor beyond, so a member waiting at the lip stands aside. The
+    director judges them as it judges every fragment hazard (`net/bossRef.js judgePlace`). A body that stays on a crust
+    as it breaks falls, and owes the count its cast-back (`egPoseIn`'s void rule).
+- **THE FORGE KIT LAYS IT** (`net/egFragLaw.js`, from `EG_SLAG_LAW` 5). The Forge Gut's chasm runs two conveyors, then a
+  slag crossing that is left onto the far floor. The passage is 3 m longer for its crust, so its floors and hammers stand
+  where they stood, and its walls 0.7 m wider for the two lanes. It is laid in the Wellhead's spans, on its Low Roads
+  (whose passage is the band's first kit) and in its Deepways.
+- **THE SHAFTS** (`egFragShaft`, `EG_SHAFT_KITS`). The Deepway goes down by a shaft of its band's kit in place of its three
+  bare ledges:
+  - every shaft: a 3 m rim, three or four flights each `EG_SHAFT_FLIGHT_CM` 0.9 m down (THE ENVELOPE's step under a
+    metre), one Drop of 3-4.5 m onto the Drop's walled landing, and a 3 m foot;
+  - by band: the Caverns' throat under a fire fall across its rim; the Mist Stair's pit with the mist under its foot;
+    **the Hollow Trunk**'s black-glass branches on the Moon's law, the beam walking down the trunk, open to the moon;
+    **the Slag Chute**'s iron ledges, its Drop, then a slag crossing onto the foot (three flights, so a Deepway stays
+    inside `EG_HALL_LEN_MAX`); the deep Caverns' throat;
+  - its floors are traversal ground (blows land on none). The law marks its walls `shaft` in `caves` and names it a
+    fragment of class `shaft`;
+  - THE TIMED SOLVER holds each shaft's own crossing to `EG_SHAFT_MAX_S` 15 s at its median (section 10.5). Measured over
+    12,200 halls (61 seeds, twenty circles, two grounds): every course proven, none on the plain fallback, the longest
+    shaft 7.7 s, the longest hall 153.5 m.
+- **THE ENGINES AS WRITTEN** (`net/egBrain.js`):
+  - **the Sluice floods its lane for 6 s** (`EG_ENGINES.sluice.flood`). Its ring tells the flood 1.5 s and bites
+    nothing itself (`p` 0, the place's fire). From the landing the channel is burning ground on every screen for 6 s: the
+    place's 20% fire a tick on a member in it, and every add in it, whenever it walks in, losing its 40% once a flood;
+  - **the Moon-Mirror lights a branch** (`EG_ENGINES.mirror.lit`) as well as blinding the Divers. It lights the Moon
+    branch nearest it within `EG_MIRROR_REACH_M` (30 m) for 6 s, with a haven over its top (`EG_MIRROR_LIT_R`, THE HAVEN
+    GRAMMAR: gold on what you stand on means it holds). The branch stands on every screen while lit
+    (`scenes/egClient.js` `objs().lit`, `systems/spireKit.js` `spireObjs`), and THE FAIR TRAIL holds a body on it
+    (`egPoseIn`). In the Shade's Deepways that is the Hollow Trunk's first branch, 17-21 m from the chamber's mirror;
+  - **the Low Road's closing waits on either road** (`forkClosing`). It begins at the first Low Road arrival at the door
+    (`B.lw` - a member whose trail took the Low Road) or at the door's opening plus the roads' difference, whichever comes
+    first. A member who takes the Low Road after the door opened is waited for, and a door opened by the Low Road closes
+    as the High Road's. The stage word carries the moved end.
+- **THE LAW PIN** (section 22, EG-H2's departure 4). `EG_SPEC` is 5 and `EG_LAWS` keeps law 4 (`{ 4: '2026-10-11', 5:
+  '2026-10-12' }`) WITH its generator: `egHallOf(seed, h, geo, law)` and `egCircleSpecs(..., law)` draw either law, and
+  law 4's halls stand byte for byte as they were (800 halls hashed whole, pinned). Each hall says its law (`v`). The
+  director draws every hall in its breach's own law (`specOf` reads `egv`), and the relay answers a `spec` in that law.
+  Law 4 may leave the table from 2026-10-19.
+- **On the screen:**
+  - `scenes/egSpan.js`: each slag lane is its crust (`egSlagCrustModel` - the cooled crust on sides of the band's
+    liquid, THE EDGE LINE round it; a bucket up only while it holds, shaking its last `EG_SLAG_WARN_S`) and its molten
+    sheet (`egSlagMoltenModel`, `EG_DRESS.molten`, drawn only while it pours, no collider - magma is the void), batched
+    with the other pieces; a lit Moon branch stands while lit;
+  - `world/egHall.js`: a shaft's walls run 6 m under its foot (`egWallFoot`) in the drawn mesh and the collider, the
+    Hollow Trunk unvaulted; each slag lane's spout on its wall over the crust's near edge, its lip the band's liquid
+    (`egSlagSpouts`, draw-only);
+  - `scenes/egFight.js`: a crust's last second told in white over its lane ("every piece shows what it will do next");
+    the spill's bite judged on my own feet by the fragments' hazard pass, as every hazard is.
+
+**Departures, said plainly.**
+- **Two spouts, not one.** Section 11.2 says a spill and its crust. A lone crust holds the company 10 s at its lip, past
+  section 10.5's no-queue bound (`EG_WAIT_MAX` 4 s). So every crossing pours from two spouts in turn, each keeping the
+  page's numbers, one crust always standing.
+- **The Sluice's share moved to its flood.** Layer three's told blow took a plain 20% (counted). The flood now takes the
+  place's 20% fire each tick a member stands in it (an element's share - seen in the census, never counted), and the ring
+  bites nothing.
+- **The Moon-Mirror's branch is the nearest within 30 m**, the port's number. Only a Shade Deepway's chamber stands a
+  branch in reach today. A mirror elsewhere blinds the Divers alone.
+- **One pull.** The page pulls each road at its own closing's end (the door frame's `ul`). The company is pulled once, at
+  the later road's end, and the stage word's `su` says it - no `ul` on the wire.
+- **The shafts are the Deepway's.** The Low Road still goes down by its Drop (section 11.4 allows "a Drop or a shaft").
+  A shaft keeps no alcoves or vignettes, and the camera's 20-degree bias over a shaft's drop (section 11.8) is not built.
+- **The telegraphs of a shaft** (the Slag Chute's spill, a crust's tell) draw on the hall's one telegraph plane, as the
+  Mist Stair's do: telegraphs per fight floor are still EG6b's.
+- **Not verified without a browser and the game's data:** the crusts, sheets, spouts and shafts were checked by their
+  meshes, colliders and draws in node, never seen in the live game.
+
+**The four hosts.** `src/scenes/world.js` - WIRED through its existing `registerSpireObjs` (the lit branches ride the
+breach client's `objs()`); no line changed, nothing added to `function frame(now)`. `src/scenes/worldModes.js` - WIRED:
+the circle's mesh and collider it already stands carry the shafts' walls and the spouts, and the spans it already stands
+carry the slag's lanes; no line changed. `src/scenes/dungeonContext.js` - WIRED: `egSpanRide` and `egSpanCull` move and
+cull the lanes; no line changed. `src/scenes/exterior.js` - FLAGGED: the bench holds no Elite Breach.
+
+**Pins.**
+- `test/egz_frag.test.js` (9). `tools/mutants/egz_frag.json` (48, every one dead).
+- PIN MOVED: `test/egdur_relay.test.js` (EG_LAWS: law 5 the law since 2026-10-12, law 4 kept); `test/egseam_law.test.js`
+  (EG4's record reads the Spire's pieces off law 4's courses, kept byte for byte); `test/egfrag_law.test.js` (a shaft's
+  floors are no fight floors); `test/egfrag_client.test.js` (the client's `objs()` names its lit branches). Re-aimed by
+  content: `egfrag.json`'s EGFRAG-a-closing-that-leaves-the-low-road, onto `forkClosing`'s end. Judged again over the
+  files this slice touched: the records of `egfrag.json`, `egfull.json`, `egspan.json`, `egplay.json`, `eglook.json`,
+  `egint.json`, `egseam.json` and `egmade.json` on them (178, every one dead).
+- `RELAY_VERSION` `world197`, unshipped, rehashed (net/egLaw.js, egFragLaw.js, egSpanLaw.js, egBrain.js, egDurable.js
+  and server/src/index.js moved). `ACCOUNT_VERSION` stays `acct121`.

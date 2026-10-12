@@ -37,6 +37,12 @@
 // this hall offers the activation ray: an Athenaeum's Orrery stones (a turn forward and back - `pz`), a chamber's engine
 // (`use`), pressed through systems/spireKit.js spireAct.
 //
+// EG-ZC (2026-10-12, Mac: "I said I want everything"; sections 11.2 and 11.10): THE COOLING SLAG on this screen - each slag
+// crossing's two spouts, each lane its molten sheet in the band's liquid (world/egBandArt.js EG_DRESS.molten) while it pours
+// and its crust (a bucket, the cooled top over the still-glowing sides, THE EDGE LINE round it) while it holds, shaking its
+// last second; its spill's bite is the fight's (scenes/egFight.js - the place's hazard on my own feet). A Moon branch the
+// Moon-Mirror lights (the relay's haven over it - systems/spireKit.js spireObjs `lit`) stands while lit, beam or none.
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
 import { egCircleSpecs, egWallFallenZ, egBandOfCircle, EG_VOID_Y, EG_BELT_MPS } from '../net/egLaw.js';
@@ -47,11 +53,13 @@ import { faces } from '../world/gateModel.js';
 import { packRealmFaces, realmIsland, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_ISLAND_SIDES } from '../world/sdRealm.js';
 import { identity } from '../world/mat4.js';
 import { egPieceAt, egPendAt, egPendHits, EG_PEND_HALF, EG_DROP_WALL_H, EG_CRUMBLE_KINDS, EG_SINK_MPS, EG_SINK_GONE_M } from '../net/egSpanLaw.js';
+import { egSlagState, egSlagX, EG_SLAG_SPOUTS, EG_SLAG_CRUST_S, EG_SLAG_WARN_S } from '../net/egSpanLaw.js';   // EG-ZC: the Cooling Slag
+import { egInShape } from '../net/egShape.js';   // EG-ZC: a lit branch under the mirror's haven
 import { egTubeEdge, EG_ENGINES } from '../net/egFragLaw.js';
 import { egNicheBoxes, egIsleDisc } from '../world/egHall.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
 import { spireFooting, spireWake, spireObjs, spireAct } from '../systems/spireKit.js';
-import { egBandDress } from '../world/egBandArt.js';   // EG-G2: the band's dress on every piece
+import { egBandDress, EG_DRESS } from '../world/egBandArt.js';   // EG-G2: the band's dress on every piece (EG-ZC: its liquid on the slag)
 import { createEgPieceBatch, EG_BATCH_CULL_PAD } from './egPieceBatch.js';   // EG-G2: one draw a kind, culled
 import { meshKitBounds } from '../world/meshKit.js';
 import { spherePlanes, sphereInPlanes } from '../render/bounds.js';
@@ -156,6 +164,29 @@ export function egPendModel() {
   };
   box(SD_REALM_BRASS_RECORD, -h, h, 0, 2 * h, -h, h);
   box(SD_REALM_EDGE_RECORD, -c, c, 2 * h, 2 * h + PEND_CHAIN_H, -c, c);
+  return packRealmFaces(f);
+}
+/** EG-ZC - A SLAG CRUST (section 11.2): one spout's platform (its top's centre the origin, `w` across, `d` along,
+ *  SD_STEP_THICK deep) - the cooled crust (the band's root) on sides of the band's liquid still glowing, its underside the
+ *  liquid too, THE EDGE LINE's gold round its top: gold on what you stand on means it holds. */
+export function egSlagCrustModel(w, d) {
+  const f = faces(), x = w / 2, z = d / 2, h = SD_STEP_THICK;
+  const P = (a, b, c) => [a, b, c];
+  f.quad(SD_REALM_ROOT_RECORD, P(-x, 0, -z), P(-x, 0, z), P(x, 0, z), P(x, 0, -z), [0, 0], [0, d / 2], [w / 2, d / 2], [w / 2, 0]);
+  for (const [a, b, n] of [[P(-x, 0, -z), P(x, 0, -z), [0, 0, -1]], [P(x, 0, -z), P(x, 0, z), [1, 0, 0]], [P(x, 0, z), P(-x, 0, z), [0, 0, 1]], [P(-x, 0, z), P(-x, 0, -z), [-1, 0, 0]]]) {
+    f.quad(EG_DRESS.molten, a, P(a[0], -h, a[2]), P(b[0], -h, b[2]), b, [0, 0], [0, 0.3], [1, 0.3], [1, 0]);
+    const o = 0.02;
+    f.quad(SD_REALM_EDGE_RECORD, P(a[0] + n[0] * o, 0.004, a[2] + n[2] * o), P(a[0] + n[0] * o, -0.05, a[2] + n[2] * o), P(b[0] + n[0] * o, -0.05, b[2] + n[2] * o), P(b[0] + n[0] * o, 0.004, b[2] + n[2] * o), [0, 0], [0, 1], [1, 1], [1, 0]);
+  }
+  f.quad(EG_DRESS.molten, P(-x, -h, -z), P(x, -h, -z), P(x, -h, z), P(-x, -h, z), [0, 0], [1, 0], [1, 1], [0, 1]);
+  return packRealmFaces(f);
+}
+/** EG-ZC - A SLAG SPILL's molten lane over one spout's crossing while it pours: a sheet of the band's liquid just under the
+ *  walk (no collider - magma is the void, section 11.8), `w` across and `d` along. */
+export const EG_SLAG_MOLTEN_SINK = 0.15;
+export function egSlagMoltenModel(w, d) {
+  const f = faces(), x = w / 2, z = d / 2, y = -EG_SLAG_MOLTEN_SINK;
+  f.quad(EG_DRESS.molten, [-x, y, -z], [-x, y, z], [x, y, z], [x, y, -z], [0, 0], [0, d / 2], [w / 2, d / 2], [w / 2, 0]);
   return packRealmFaces(f);
 }
 /** A COLLAPSING TUBE's vault over one segment (its own frame: the floor's top centre the origin): a slab of the vault's
@@ -267,6 +298,12 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
   /** GRATH'S ISLANDS (section 13.3): each its bucket and draw, its fall the relay's word */
   const isles = [];
   for (const spec of specs) for (const d of spec.discs) if (egIsleDisc(spec, d)) isles.push({ spec, d, key: `eg:isle:${spec.h}:${isles.length}`, T: [0, 0, 0], draw: null, st: 0, stAt: 0, drop: 0 });
+  /** EG-ZC - THE COOLING SLAG (section 11.2): each slag crossing's spouts - each lane its crust (a bucket, stood while it
+   *  holds) and its molten sheet (drawn while it pours) */
+  const slags = [];
+  for (const st of steps) if (st.s.kind === 'slag') for (let k = 0; k < EG_SLAG_SPOUTS; k++) slags.push({ st, s: st.s, spec: st.spec, k, key: `${st.key}:${k}`, T: [0, EG_STEP_GONE_Y, 0], crust: null, molten: null, state: 'gone' });
+  /** EG-ZC (section 11.10): the Moon branches the Moon-Mirror lights now (the relay's havens over them) */
+  const lit = new Set(), moons = steps.some((st) => st.s.kind === 'moon');
   /** THE FALSE WALLS (section 11.10): one in each seam alcove's doorway, standing until the relay says it broken */
   const seals = [];
   for (const spec of specs) for (const nb of egNicheBoxes(spec)) if (nb.a.seal === 'seam') seals.push({ spec, a: nb.a, door: nb.door, side: nb.side, key: `eg:seal:${spec.h}:${nb.a.i}`, T: [0, 0, 0], draw: null, up: true });
@@ -324,6 +361,30 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
     }
   }
 
+  /** EG-ZC: the slag's lanes where the law has them at `t` - a crust stood (shaking its last EG_SLAG_WARN_S, the eye's
+   *  alone), a spill's molten sheet drawn, neither while its lane is told or gone. */
+  function poseSlags(t) {
+    for (const g of slags) {
+      const S = egSlagState(g.s, g.k, t);
+      g.state = S.st;
+      const [x, y, z] = realmToDungeon(g.spec.x0 + egSlagX(g.s, g.k), g.s.y, g.s.z);
+      const crust = S.st === 'crust', shake = crust && (1 - S.k) * EG_SLAG_CRUST_S < EG_SLAG_WARN_S ? 0.05 * Math.sin(t * 60) : 0;
+      g.T[0] = x; g.T[2] = z; g.T[1] = crust ? y : EG_STEP_GONE_Y;
+      for (const [dr, on, dx] of /** @type {[any, boolean, number][]} */ ([[g.crust, crust, shake], [g.molten, S.st === 'molten', 0]])) {
+        if (!dr) continue;
+        if (on) translate(dr.object.matrix, x + dx, y, z); else dr.object.matrix.fill(0);
+        dr.hidden = !on;
+      }
+    }
+  }
+  /** EG-ZC: the Moon branches lit now - each under a live haven the Moon-Mirror laid in its hall. */
+  function poseLit(t) {
+    lit.clear();
+    if (!moons) return;
+    const O = spireObjs(), ms = t * 1000, on = (O.lit ?? []).filter((q) => ms >= q.from && ms < q.until);
+    if (on.length) for (const st of steps) if (st.s.kind === 'moon' && st.spec.h === O.h && on.some((q) => egInShape(q.s, st.s.x, st.s.z))) lit.add(st);
+  }
+
   /** A step stood where the law has it at `t`: its bucket's place (sunk while it is gone) and its draw's. */
   function pose(st, t) {
     const s = st.s;
@@ -331,7 +392,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
     st.wasSolid = st.solid;
     const at = egPieceAt(s, t, _at);   // a Drift across, a Rail along, a Beat on its beat (net/egSpanLaw.js - the one law)
     const [x, y, z] = realmToDungeon(st.spec.x0 + s.x + at.dx, s.y, s.z + at.dz);
-    let solid = at.solid, drop = 0;
+    let solid = at.solid || lit.has(st), drop = 0;   // EG-ZC: a branch the Moon-Mirror lit stands while lit
     if (EG_CRUMBLE_KINDS.includes(s.kind) && st.touched != null) {
       const since = t - st.touched;
       if (since < 0 || since >= SD_CRUMBLE_DELAY + SD_CRUMBLE_BACK) st.touched = null;
@@ -390,11 +451,18 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
       // (scenes/egPieceBatch.js - the slot each pose writes is the draw it replaced); without one, a draw a piece as before
       batch = renderer?.createMesh && renderer?.updateMeshVertices ? createEgPieceBatch({ renderer }) : null;
       for (const st of steps) {
+        if (st.s.kind === 'slag') continue;   // EG-ZC: a slag crossing stands as its spouts' lanes (below)
         const mk = meshKey(st.s);
         st.draw = place(mk, () => modelOf(st.s));
         if (st.s.kind === 'pend') st.pend = place('pend', () => egPendModel());
         const { positions, indices } = trisOf(st.s);
         try { collider?.addMesh?.(st.key, positions, indices, identity(), () => st.T); } catch (e) { console.warn('[eg] a step\'s collider', e?.message ?? e); }
+      }
+      for (const g of slags) {
+        g.crust = place(`slagc:${g.s.w}x${g.s.d}`, () => egSlagCrustModel(g.s.w, g.s.d));
+        g.molten = place(`slagm:${g.s.w}x${g.s.d}`, () => egSlagMoltenModel(g.s.w, g.s.d));
+        const { positions, indices } = egSlabTris(g.s.w, g.s.d);
+        try { collider?.addMesh?.(g.key, positions, indices, identity(), () => g.T); } catch (e) { console.warn('[eg] a slag crust\'s collider', e?.message ?? e); }
       }
       for (const g of tubes) {
         g.draw = place(`wall:${g.w}x${g.d}`, () => egSlabModel(g.w, g.d));
@@ -468,7 +536,9 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
       const key = body?.grounded && typeof body.groundKey === 'string' ? body.groundKey : null;
       const on = key ? byKey.get(key) ?? null : null;
       if (on && live && (EG_CRUMBLE_KINDS.includes(on.s.kind) || on.s.kind === 'sink') && on.touched == null) on.touched = t;
+      poseLit(t);
       for (const st of steps) pose(st, t);
+      poseSlags(t);
       poseWalls(t);
       poseTubes(t);
       poseIsles(t);
@@ -525,6 +595,10 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
     get seals() { return seals.map((g) => ({ h: g.spec.h, i: g.a.i, key: g.key, up: g.up })); },
     /** Every step as it stands (tests). */
     get steps() { return steps.map((st) => ({ h: st.spec.h, i: st.s.i, kind: st.s.kind, key: st.key, T: [...st.T], solid: st.solid })); },
+    /** EG-ZC: every slag lane as it stands (tests): its hall, its step, its spout, its state, whether its crust is up. */
+    get slags() { return slags.map((g) => ({ h: g.spec.h, i: g.s.i, k: g.k, key: g.key, state: g.state, up: g.T[1] !== EG_STEP_GONE_Y, T: [...g.T] })); },
+    /** EG-ZC: the Moon branches lit now (tests): their hall and number. */
+    get lit() { return [...lit].map((st) => ({ h: st.spec.h, i: st.s.i })); },
     /** Every Falling Wall segment as it stands (tests). */
     get walls() { return walls.map((g) => ({ h: g.spec.h, k: g.k, z0: g.z0, z1: g.z1, key: g.key, T: [...g.T], gone: g.T[1] === EG_STEP_GONE_Y })); },
     /** Gone with the level: every mesh freed. */
@@ -538,6 +612,8 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
       for (const g of tubes) { g.draw = null; g.lid = null; }
       for (const g of isles) g.draw = null;
       for (const g of seals) g.draw = null;
+      for (const g of slags) { g.crust = null; g.molten = null; }
+      lit.clear();
       targetList = [];
       draws = null; safe = null;
     },

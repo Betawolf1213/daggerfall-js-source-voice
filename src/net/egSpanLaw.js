@@ -26,6 +26,10 @@
 // EG-FULL, LAYER THREE (section 11): the fragments' own pieces (a Moon branch under its beams, a rolling Drum, a Bone
 // bridge, a Sinking flight), proofs road by road (THE FORK), the real gap after each run, and THE MEDIAN (egRoadCross).
 //
+// EG-ZC (2026-10-12, Mac: "I said I want everything"; sections 10.5 and 11.2): THE COOLING SLAG - a crossing whose crusts
+// stand only after a spill, two spouts pouring in turn (egSlagState, egSlagLane), each landing on a crust held through its
+// crossing and each crust left onto still ground; and THE SHAFTS' bound, a shaft crossed inside EG_SHAFT_MAX_S.
+//
 // EG-H3 (2026-10-12; sections 10.1 and 29, EG4): THE PLATFORM CLOCK, ONE HOME - the Unmoored Steps' stepAt, beatStands,
 // beatBlinks and beatWarned moved here whole on the two laws the Spire's pieces move by (egDriftDx, egBeatAt), with the
 // Beat's and the Crumble's numbers; world/sdSteps.js re-exports them, so the Hour and the Spire keep one clock. And THE
@@ -92,6 +96,25 @@ export const EG_SINK_WAIT_MAX = 2;
 export const EG_SINK_ON_S = 1;
 /** The pieces that fall under a foot (the Crumble's law): their depth crossed before the delay, no wait upon them. */
 export const EG_CRUMBLE_KINDS = Object.freeze(['crumble', 'bone']);
+/** EG-ZC (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 11.2) - THE COOLING SLAG,
+ *  the Forge Gut's signature and its ONE HOME (net/egFragLaw.js EG_HAZARDS.slag says these numbers): a spill is a lane of
+ *  magma 4 m wide, told EG_SLAG_TELL_S, molten EG_SLAG_MOLTEN_S, then a crust that stands EG_SLAG_CRUST_S, every
+ *  EG_SLAG_CYCLE_S - the way across exists only after a spill. A `slag` step is a crossing poured by EG_SLAG_SPOUTS spouts
+ *  side by side, `amp` either side of its `x`, each `w` wide, the second half a cycle behind the first: a lone crust would
+ *  hold the company 10 s at its lip, past THE TIMED SOLVER's EG_WAIT_MAX (section 10.5's "no queues"), so the spouts pour in
+ *  turn and one crust stands while the other is told and molten. A landing on a crust is believed only while it holds
+ *  through the crossing (its depth at THE SPAN BUILD's run, and the Crumble's slack), and a crust is left onto still ground
+ *  (EG_SLAG_AFTER) - nobody waits on a crust for a timed piece. EG_SLAG_WARN_S before it breaks its lane is told in white. */
+export const EG_SLAG_TELL_S = 1.2;
+export const EG_SLAG_MOLTEN_S = 6;
+export const EG_SLAG_CRUST_S = 10;
+export const EG_SLAG_CYCLE_S = 20;
+export const EG_SLAG_SPOUTS = 2;
+export const EG_SLAG_WARN_S = 1;
+/** What a crust is left onto: the ground itself, or a step that keeps no time. */
+export const EG_SLAG_AFTER = Object.freeze(['still', 'ledge', 'drop']);
+/** THE SHAFTS (section 10.5): a shaft takes at most this long at THE SPAN BUILD (s - its median crossing). */
+export const EG_SHAFT_MAX_S = 15;
 
 const TAU = 2 * Math.PI;
 const wrapT = (t, p) => ((t % p) + p) % p;
@@ -169,6 +192,28 @@ export function egTriAt(amp, period, phase, t) {
   const u = wrapT(t + phase, period) / period;
   return u < 0.5 ? -amp + 4 * amp * u : 3 * amp - 4 * amp * u;
 }
+/**
+ * EG-ZC - A SLAG CROSSING'S SPOUT `k` at `t` (shared seconds): `{ st, k }` - told (`tell`, the spill coming), `molten` (a
+ * lane of magma), `crust` (a platform) or `gone` (the crust broken, the chasm open), and how far through that state (0 to
+ * 1). Spout k pours `k` halves of a cycle behind the first.
+ * @param {any} s @param {number} k @param {number} t
+ * @returns {{ st: 'tell'|'molten'|'crust'|'gone', k: number }}
+ */
+export function egSlagState(s, k, t) {
+  const P = s.period > 0 ? s.period : EG_SLAG_CYCLE_S, u = wrapT(t + (s.phase ?? 0) + (k * P) / EG_SLAG_SPOUTS, P);
+  if (u < EG_SLAG_TELL_S) return { st: 'tell', k: u / EG_SLAG_TELL_S };
+  if (u < EG_SLAG_TELL_S + EG_SLAG_MOLTEN_S) return { st: 'molten', k: (u - EG_SLAG_TELL_S) / EG_SLAG_MOLTEN_S };
+  if (u < EG_SLAG_TELL_S + EG_SLAG_MOLTEN_S + EG_SLAG_CRUST_S) return { st: 'crust', k: (u - EG_SLAG_TELL_S - EG_SLAG_MOLTEN_S) / EG_SLAG_CRUST_S };
+  return { st: 'gone', k: (u - EG_SLAG_TELL_S - EG_SLAG_MOLTEN_S - EG_SLAG_CRUST_S) / Math.max(1e-9, P - EG_SLAG_TELL_S - EG_SLAG_MOLTEN_S - EG_SLAG_CRUST_S) };
+}
+/** The spout whose crust stands at `t` (the first first), or -1 - none. */
+export function egSlagLane(s, t) {
+  for (let k = 0; k < EG_SLAG_SPOUTS; k++) if (egSlagState(s, k, t).st === 'crust') return k;
+  return -1;
+}
+/** Spout `k`'s lane across the course (its centre's x, the hall's frame): `amp` either side of the step's `x`. */
+export const egSlagX = (s, k) => s.x + (k === 0 ? -s.amp : s.amp);
+
 /** The centre of the moonbeam nearest a Moon step at `t` (the beams walk +z at EG_MOON_MPS, `period` apart). */
 export function egMoonBeamZ(s, t) {
   const every = EG_MOON_MPS * (s.period > 0 ? s.period : EG_MOON_EVERY_S), c0 = s.beat + EG_MOON_MPS * (t + s.phase);
@@ -186,6 +231,7 @@ export function egPieceAt(s, t, out = { dx: 0, dz: 0, solid: true }) {
   else if (s.kind === 'beat') out.solid = egBeatAt(s, t) < EG_BEAT_SOLID_S;
   else if (s.kind === 'drum') out.dz = egTriAt(s.amp, s.period, s.phase, t);
   else if (s.kind === 'moon') out.solid = Math.abs(s.z - egMoonBeamZ(s, t)) <= EG_MOON_HALF;
+  else if (s.kind === 'slag') { const k = egSlagLane(s, t); out.solid = k >= 0; out.dx = k >= 0 ? egSlagX(s, k) - s.x : 0; }   // EG-ZC: the standing crust's lane
   return out;
 }
 /** A Pendulum's weight at `t`: across the course (x, the hall's frame) over the middle of the gap before its step (z). */
@@ -248,6 +294,8 @@ function jumpLands(pair, t) {
   const { reach, air } = egJumpReach(by - ay);
   if (!(reach > 0)) return false;
   if (b) { egPieceAt(b, t + air, PB); if (!PB.solid) return false; }
+  // EG-ZC: a crust landed on holds through its crossing - the lane it lands on still a crust at the far edge
+  if (b?.kind === 'slag' && egSlagState(b, egSlagLane(b, t + air), t + air + b.d / EG_SPAN_RUN_MPS + EG_CRUMBLE_SLACK_S).st !== 'crust') return false;
   // the launch: the far edge of what I stand on (a step's own, or the ground's edge), anywhere across its width
   const lz = a ? a.z + PA.dz + a.d / 2 : pair.edge;
   const lx0 = a ? a.x + PA.dx - a.w / 2 : -Infinity, lx1 = a ? a.x + PA.dx + a.w / 2 : Infinity;
@@ -328,6 +376,12 @@ export function egSpanProof(spec) {
       const after = next && (next.road ?? 0) === (s.road ?? 0) && Math.abs(next.z - next.d / 2 - (next.gap ?? 0) - (s.z + s.d / 2)) < 1e-6 ? next.gap ?? 0 : Infinity;
       if (s.amp > Math.min(s.gap ?? 0, after) - EG_RAIL_CLEAR) why.push(`${s.i}: a Rail's travel closes on what stands beside it`);
     }
+    // EG-ZC: a slag crust is left onto still ground - the ground itself, or a step of its road that keeps no time
+    if (s.kind === 'slag') {
+      const next = (spec.steps ?? [])[s.i + 1];
+      const meets = !!next && (next.road ?? 0) === (s.road ?? 0) && Math.abs(next.z - next.d / 2 - (next.gap ?? 0) - (s.z + s.d / 2)) < 1e-6;
+      if (meets && !EG_SLAG_AFTER.includes(next.kind)) why.push(`${s.i}: a slag crust left onto a ${next.kind}`);
+    }
   }
   for (const pair of egSpanPairs(spec)) {
     const w = egPairWindows(pair), at = pair.b ? pair.b.i : `${pair.a?.i}>ground`;
@@ -341,6 +395,12 @@ export function egSpanProof(spec) {
   if (!why.length) for (const road of [0, 1]) {
     const c = egRoadCross(spec, road);
     if (c.n && c.fast > 0 && c.median > EG_MEDIAN_X * c.fast) why.push(`road ${road}: a median crossing of ${c.median.toFixed(1)} s past ${EG_MEDIAN_X} x its fastest ${c.fast.toFixed(1)} s`);
+  }
+  // EG-ZC - THE SHAFTS (section 10.5): each shaft's own steps crossed, at their median, inside EG_SHAFT_MAX_S
+  if (!why.length) for (const f of spec.frags ?? []) {
+    if (f.cls !== 'shaft') continue;
+    const c = egRoadCross({ steps: (spec.steps ?? []).filter((s) => (s.road ?? 0) === (f.road ?? 0) && s.z > f.z0 && s.z < f.z1) }, f.road ?? 0);
+    if (c.n && c.median > EG_SHAFT_MAX_S) why.push(`a shaft crossed in ${c.median.toFixed(1)} s, past ${EG_SHAFT_MAX_S} s`);
   }
   return { ok: why.length === 0, why };
 }

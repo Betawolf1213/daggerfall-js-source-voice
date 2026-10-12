@@ -249,8 +249,8 @@
   {
     "name": "EGFRAG-a-closing-that-leaves-the-low-road",
     "file": "src/net/egBrain.js",
-    "old": "B.su += Math.max(0, Math.round((spec.fork.lo - spec.fork.hi) * 1000));",
-    "new": "B.su += 0;",
+    "old": "  const su = B.dn + EG_CLOSING_SPAN_MS + (B.lw || away ? Math.max(0, lowFrom - B.dn) : 0);",
+    "new": "  const su = B.dn + EG_CLOSING_SPAN_MS + 0;",
     "tests": [
       "test/egfrag_relay.test.js"
     ]

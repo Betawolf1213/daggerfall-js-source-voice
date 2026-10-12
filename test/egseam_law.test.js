@@ -227,7 +227,9 @@ function courseRecord() {
   const steps = SD_STEPS_COURSE.map((st) => ts.map((t) => [...stepAt(st, t), beatStands(st, t), beatBlinks(st, t), beatWarned(st, t)]));
   const zs = Array.from({ length: 60 }, (_, k) => k * 4 - 10);
   const pieces = [];
-  for (const [seed, c] of [[99, 1], [99, 3], [7, 7], [7, 12], [123, 17]]) for (const spec of egCircleSpecs(seed, c)) for (const st of spec.steps) for (const t of ts.slice(0, 12)) { const o = egPieceAt(st, t); pieces.push([o.dx, o.dz, o.solid]); }
+  // PIN MOVED (EG-ZC): the pieces read off spec law 4's courses - law 5 laid new courses (the Cooling Slag, the shafts), and
+  // law 4 is kept byte for byte (test/egz_frag.test.js), so the one clock is held over the very pieces it was hashed on
+  for (const [seed, c] of [[99, 1], [99, 3], [7, 7], [7, 12], [123, 17]]) for (const spec of egCircleSpecs(seed, c, 0, 4)) for (const st of spec.steps) for (const t of ts.slice(0, 12)) { const o = egPieceAt(st, t); pieces.push([o.dx, o.dz, o.solid]); }
   return {
     course: SD_STEPS_COURSE, checks: SD_CHECKPOINTS, end: SD_COURSE_END, free: SD_STEPS_FREE, floors: SD_STEPS_FLOORS, steps,
     spans: zs.map((z) => spanAt(z)), breath: zs.map((z) => inBreath(z)), back: [0, 1, 2, 5, -1].map((k) => castBackTo(k)),

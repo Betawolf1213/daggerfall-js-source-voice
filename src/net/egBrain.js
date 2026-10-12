@@ -22,6 +22,10 @@
 // false walls, THE FORK's High Road cache and Low Road niche and foes and its closing, the Clan Pit's Honour Horn, the
 // fragments' Lurkers, a lord's page of the Annals (net/egAnnals.js).
 //
+// EG-ZC (2026-10-12, Mac: "I said I want everything"; sections 11.4, 11.10 and 22): THE ENGINES AS WRITTEN - the Sluice's
+// channel flooded 6 s, the Moon-Mirror lighting a branch as well as blinding the Divers (its body held in THE FAIR TRAIL);
+// the Low Road's closing waiting on either road (forkClosing); every hall drawn in the breach's own law (`egv`).
+//
 // EG-H1 (EG8d, 2026-10-12, Mac: "I said I want everything"; section 21): WHAT THE RELAY JUDGES - each member's pose fed
 // to THE FAIR TRAIL at its shared time (egPoseIn, net/egFair.js), every pose-gated credit asking it (the door, `down`, a
 // cache, THE GOLD RUN, a niche, a Memento, the Vault, the High Road's cache), a second break refusing a member's hits a
@@ -47,7 +51,8 @@ import { egAsk, egVote, egAskResult, egAsksDue, egDecreesAsk, egDecreesChosen, e
   egLoseNewest, egCacheDraw, egGive, egBuy, egVestigeX, egThreatX, egFadeOn, egMarkFoe, egRunOf, EG_CANTRIPS, EG_LUMEN_ADD, EG_LUMEN_RIFT } from './egRun.js';
 import { egVOf, egAccordsOf } from './egVestige.js';
 import { shDisc, shLane, egInShape } from './egShape.js';
-import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half
+import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL, EG_MIRROR_REACH_M, EG_MIRROR_LIT_R } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half (EG-ZC: the Moon-Mirror's branch)
+import { EG_BODY_R } from './egSpanLaw.js';   // EG-ZC: a lit branch's top, the capsule about it
 import { egAnnalsNext, egAnnalsLordPage } from './egAnnals.js';
 import { egFeatBits } from './egFeats.js';   // EG-E: the lords' feats, judged at a lord's fall
 import { arenaWeekOf } from './arenaLaw.js';   // EG-E: the Proclamation's week, the arena's (Monday to Monday from the season epoch)
@@ -56,7 +61,7 @@ import { orreryOf, orreryFresh, orreryJudge, orreryShortest } from './sdBrain.js
 import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gateBrain.js';
 // EG-H1 (EG8d): WHAT THE RELAY JUDGES - THE FAIR TRAIL and its time law (net/egFair.js), one judge for every shape and the
 // hall's own hazards (net/bossRef.js), and the body counted (net/bossBody.js) - the member's one life
-import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt, egCrossMinMs } from './egFair.js';
+import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt, egCrossMinMs, EG_SUPPORT_UP_M, EG_SUPPORT_DOWN_M } from './egFair.js';
 import { egCompanyTag, EG_SHARE_WHOLE, EG_MEASURES, EG_MEASURE_MAX } from './egReceipt.js';   // EG-ZA: the company, the share and the measures a receipt carries
 import { judgeShapes, judgePlace } from './bossRef.js';
 import { bodyStruck, bodySaid, bodyHealed, bodyLife } from './bossBody.js';
@@ -152,7 +157,7 @@ const memberName = (B, sub) => B.mem[sub]?.name ?? B.co.find((c) => c.sub === su
 /** The circle's span decrees, folded into the specs (net/egLaw.js egGeoOf). */
 export const egGeo = (B) => egGeoOf(egDecreesInForce(B));
 /** The hall the company stands in. */
-const specOf = (B) => egHallOf(B.seed, B.h, egGeo(B));
+const specOf = (B) => egHallOf(B.seed, B.h, egGeo(B), B.egv);   // EG-ZC: the breach's own law (THE LAW PIN - the law before kept)
 // ── EG-H1 (EG8d): THE FAIR TRAIL'S DOOR - bible/11-Multiplayer/Elite-Gates.md section 21 ───────────────────────────────
 /** A member's fair trail is its hall's and its life's: a new hall, or a fall, begins it again. */
 const fairKey = (B, m) => `${B.h}:${m.falls ?? 0}`;
@@ -494,7 +499,7 @@ function standFight(B, spec, now, rng, out) {
  * engines' cooldowns, the Clan Pit's horn.
  */
 function fragStand(B, F, spec, now, out) {
-  F.alc = {}; F.engCd = {}; F.engUsed = {}; F.engHits = []; F.engStun = {}; F.lowUp = 0; F.took = {};
+  F.alc = {}; F.engCd = {}; F.engUsed = {}; F.engHits = []; F.engStun = {}; F.lowUp = 0; F.took = {}; F.lit = [];
   F.horn = spec.spots.horn?.length ? { at: now + EG_HORN_FIRST_MS, kv: 0, sub: '', foul: 0, ashAt: 0, ash: 0 } : null;
   for (const a of spec.alcoves ?? []) {
     if (a.seal !== 'seam') { F.alc[a.i] = 1; continue; }
@@ -542,18 +547,24 @@ function fragStep(B, F, spec, now, inHall, here, rng, out) {
       out.push({ k: 'esay', w: 'lowroad', n: mm.name });
     }
   }
-  // the engines' blows land on the legion (each member's own share is the blow's - every screen judges its own feet)
+  // the engines' blows land on the legion (each member's own share is the blow's - every screen judges its own feet); EG-ZC:
+  // the Sluice's flood lands every beat until its 6 s run, each add's share once; a lit branch goes dark at its end
   if (F.engHits.length) {
     const due = F.engHits.filter((h) => now >= h.at);
-    F.engHits = F.engHits.filter((h) => now < h.at);
+    F.engHits = F.engHits.filter((h) => now < h.at || now < (h.until ?? 0));
     for (const h of due) engineLands(B, F, spec, h, now, out);
   }
+  if (F.lit?.length) F.lit = F.lit.filter((q) => now < q.until);
   if (F.horn && B.sg === 'trial') hornStep(B, F, spec, now, inHall, rng, out);
 }
 /**
  * AN ENGINE WORKED (section 11.10 - `use`): the Sluice floods a channel through the legion, the Shelf topples onto it
  * (once), the Drop-Hammer falls on it, each a blow of the place told EG_ENGINE_TELL_MS (a member caught takes the place's
- * 20%); the Soul-Bell and the Moon-Mirror ring out about the engine. Aimed where the legion stands thickest.
+ * 20%); the Soul-Bell and the Moon-Mirror ring out about the engine. Aimed where the legion stands thickest. EG-ZC (the
+ * engines as written): the Sluice's channel stays flooded `flood` from its landing - burning ground of the place's fire, a
+ * member in it taking the place's 20% each tick, every add in it losing its 40% once (its ring tells the flood, and bites
+ * nothing itself); the Moon-Mirror also lights the Moon branch nearest it within EG_MIRROR_REACH_M for `lit` - a haven over
+ * its top on every screen (it stands while lit), and its body held there in THE FAIR TRAIL (egPoseIn).
  */
 function engineWork(B, F, spec, e, mm, now, out) {
   const E = EG_ENGINES[e.kind];
@@ -566,21 +577,31 @@ function engineWork(B, F, spec, e, mm, now, out) {
     : e.kind === 'shelf' ? shLane(e.x, e.z, e.x + Math.sin(yaw) * 12, e.z + Math.cos(yaw) * 12, 4)
       : e.kind === 'hammer' ? shDisc(tx, tz, 3) : shDisc(e.x, e.z, 8);
   const at = now + EG_ENGINE_TELL_MS;
+  if (E.flood) zoneOut(F, 'burn', stamp, at, at + E.flood, out, { p: EG_ENGINE_PCT, b: 0, el: 'fire' });
   if (E.pct > 0) {
     const here = living(B).map(([s2, m2]) => (m2.pose ? { sub: s2, x: m2.pose.x, z: m2.pose.z } : null)).filter(Boolean);
-    egAim(F, spec, { o: 0, s: [stamp], at, wu: EG_ENGINE_TELL_MS, p: EG_ENGINE_PCT, b: 0, el: null, nm: E.name }, here, now, out);
+    egAim(F, spec, { o: 0, s: [stamp], at, wu: EG_ENGINE_TELL_MS, p: E.flood ? 0 : EG_ENGINE_PCT, b: 0, el: E.flood ? 'fire' : null, nm: E.name }, here, now, out);
   }
-  F.engHits.push({ at, kind: e.kind, s: stamp, i: e.i });
+  F.engHits.push({ at, until: E.flood ? at + E.flood : 0, kind: e.kind, s: stamp, i: e.i, got: [] });
+  const br = E.lit ? moonNear(spec, e) : null;
+  if (br) { (F.lit ??= []).push({ i: br.i, from: at, until: at + E.lit }); zoneOut(F, 'haven', shDisc(br.x, br.z, EG_MIRROR_LIT_R), at, at + E.lit, out); }
   if (E.once) F.engUsed[e.i] = 1;
   out.push({ k: 'esay', w: 'engine', n: mm.name, t: E.name.replace(/^the /, '') });
   return true;
 }
+/** EG-ZC: the Moon branch nearest engine `e` within the Moon-Mirror's reach (EG_MIRROR_REACH_M), or null. */
+function moonNear(spec, e) {
+  let best = null, bd = EG_MIRROR_REACH_M;
+  for (const s of spec.steps ?? []) if (s.kind === 'moon' && dist(s.x, s.z, e.x, e.z) <= bd) { bd = dist(s.x, s.z, e.x, e.z); best = s; }
+  return best;
+}
 /** An engine's blow landed: the adds caught lose their share; the bell stuns Wraiths and Binders, the mirror the Divers;
- *  the hammer stuns a lord caught, once a phase. */
+ *  the hammer stuns a lord caught, once a phase. EG-ZC: a flood (`got`) takes each add's share once while it runs. */
 function engineLands(B, F, spec, h, now, out) {
   const E = EG_ENGINES[h.kind];
   for (const a of egBodiesOf(F, EG_ROLE.add)) {
     if (egHas(a, EG_FL.friend) || !(a.hp > 0) || !egInShape(h.s, a.x, a.z)) continue;
+    if (h.got) { if (h.got.includes(a.i)) continue; h.got.push(a.i); }
     if (E.stun) {
       const k = /** @type {number[]} */ (h.kind === 'soulbell' ? [EG_KIND.wraith, EG_KIND.binder] : [EG_KIND.diver]);
       if (k.includes(a.k)) { egSetFl(F, a, EG_FL.stun, true, out); a.stunUntil = now + E.stun; }
@@ -644,14 +665,29 @@ function door(B, spec, now, out, inHall = []) {
   B.sg = 'closing'; B.sa = now; B.dn = now;
   const span = spec.kind === 'span' || spec.kind === 'deepway' || spec.kind === 'brink' || spec.kind === 'proving';
   B.su = now + (span ? EG_CLOSING_SPAN_MS : EG_CLOSING_FIGHT_MS);
-  // THE FORK (section 11.4): opened by a High Road arrival with members still on the Low Road, the closing waits the
-  // difference between the two roads' fastest crossings - the safe road is never a forfeit
-  const opener = inHall.find((b) => egAtDoor(spec, b.x, b.z));
-  if (spec.fork && opener && !onLowRoad(spec, opener) && inHall.some((b) => b !== opener && onLowRoad(spec, b) && !egAtDoor(spec, b.x, b.z))) B.su += Math.max(0, Math.round((spec.fork.lo - spec.fork.hi) * 1000));
+  // THE FORK (section 11.4): the Low Road's closing waits on either road - EG-ZC (forkClosing)
+  if (spec.fork) { B.lw = 0; forkClosing(B, spec, inHall, now); }
   // Rally (and the Rallying Cry): the company heals when a hall's door opens - the strongest holder's
   const rally = Math.max(0, ...living(B).map(([, m]) => egVOf(m.vs, 'rally')));
   if (rally > 0) out.push({ k: 'eheal', p: B.tide === 'hungering' ? rally / 3 : rally, why: 'rally' });
   out.push(egStageWord(B, now), { k: 'esay', w: 'door' });
+}
+/**
+ * EG-ZC - THE LOW ROAD'S CLOSING (section 11.4, as written): the High Road's closing begins at the door's opening; the Low
+ * Road's at its first arrival at the door (`B.lw` - a member whose trail took the Low Road), or at the door's opening plus
+ * the difference between the two roads' fastest crossings, whichever comes first - so the safe road is never a forfeit, and
+ * a Low Road that arrives early brings its closing forward. The company is pulled once, at the later road's end, while a
+ * member is still on the Low Road or has come by it. Answers whether the closing's end moved.
+ */
+function forkClosing(B, spec, inHall, now) {
+  const low = (b) => onLowRoad(spec, b) || fairOfMember(B, b.sub)?.road === 1;
+  if (!B.lw && inHall.some((b) => low(b) && egAtDoor(spec, b.x, b.z))) B.lw = now;
+  const away = inHall.some((b) => low(b) && !egAtDoor(spec, b.x, b.z) && B.mem[b.sub]?.downH !== B.h);
+  const lowFrom = Math.min(B.lw || Infinity, B.dn + Math.max(0, Math.round((spec.fork.lo - spec.fork.hi) * 1000)));
+  const su = B.dn + EG_CLOSING_SPAN_MS + (B.lw || away ? Math.max(0, lowFrom - B.dn) : 0);
+  if (su === B.su) return false;
+  B.su = su;
+  return true;
 }
 /** A hall's part in the circle counted for each living member: blows landed in it, or a step through its door. */
 function countPart(B) {
@@ -829,6 +865,7 @@ export function egStep(B, now, bodies, rng) {
     if (B.cnt.at > 0 && egCountLeft(B.cnt, now) <= 0) { egEnd(B, 'tear', now, out); return out; }
     cacheStep(B, spec, inHall, now, rng, out);
     if (B.F) fragStep(B, B.F, spec, now, inHall, inHall, rng, out);   // LAYER THREE: an alcove, a cache, a niche taken in the closing too
+    if (spec.fork && forkClosing(B, spec, inHall, now)) out.push(egStageWord(B, now));   // EG-ZC: the Low Road's closing on either road
     goldRun(B, spec, now, out);
     const L = living(B);
     if (now >= B.su || (L.length && L.every(([, m]) => m.downH === B.h))) pull(B, now, out);
@@ -1281,6 +1318,7 @@ export function egPoseIn(B, sub, p, t) {
   if (!egInHall(spec, p.sx, p.z, 4)) return null;
   let x = egLocalX(spec, p.sx), y = p.y, z = p.z, ride = false;
   if (Array.isArray(p.pl) && egRideHolds(spec, p.pl)) { const q = egRideAt(spec, p.pl, t / 1000); if (q) { [x, y, z] = q; ride = true; } }
+  if (!ride && litOn(B.F, spec, x, y, z, t)) ride = true;   // EG-ZC: a branch the Moon-Mirror lit holds its body
   if ((B.sg === 'trial' || B.sg === 'closing') && m.hereH === B.h && m.downH !== B.h) {
     const k = fairKey(B, m);
     // a trail begins on the arrival plate (or where a recall stood it): a first pose anywhere else is a step the law never
@@ -1294,6 +1332,15 @@ export function egPoseIn(B, sub, p, t) {
     else if (A.sup && A.sup[0] === t) A.cbHeld = 0;
   }
   return { x, y, z, h: B.h };
+}
+/** EG-ZC: is a body at (x, y, z) (the hall's frame) at shared ms `t` on a Moon branch the Moon-Mirror lit - its top, the
+ *  capsule about it, within the support's heights (net/egFair.js)? */
+function litOn(F, spec, x, y, z, t) {
+  for (const q of F?.lit ?? []) {
+    const s = t >= q.from && t < q.until ? spec.steps?.[q.i] : null;
+    if (s && Math.abs(x - s.x) <= s.w / 2 + EG_BODY_R && Math.abs(z - s.z) <= s.d / 2 + EG_BODY_R && y <= s.y + EG_SUPPORT_UP_M && y >= s.y - EG_SUPPORT_DOWN_M) return true;
+  }
+  return false;
 }
 /** EG14, after EG8d (EG-H1 lands it - section 21): THE BODY COUNT IS ENFORCED in `eg:` rooms whatever the gate's BOSS_BODY
  *  line says - the relay's count is the member's one life. The line's depth and pace stay the hub's. */

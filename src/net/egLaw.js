@@ -28,13 +28,21 @@
 // Tube, and the Brinks' Sinking Stair, Moon Path and Forge Line), THE FORK's High Road and Low Road (each its own course,
 // both onto the end plate), and the ground after each run that the solver jumps.
 //
+// EG-ZC (2026-10-12, Mac: "I said I want everything"; sections 11.1, 11.2 and 22): SPEC LAW 5 - THE LAST FRAGMENTS. The
+// Forge kit lays THE COOLING SLAG (net/egFragLaw.js - a crossing its two spouts pour in turn), and the Deepway goes down by a
+// SHAFT of its band's kit in place of its three bare ledges (egFragShaft - the Caverns' throat, the Mist Stair's pit, THE
+// HOLLOW TRUNK, THE SLAG CHUTE). THE LAW PIN keeps the law before: `egHallOf(seed, h, geo, law)` draws either law (law 4's
+// halls byte for byte as they were - test/egz_frag.test.js), the relay a breach's own (`egv` - net/egDurable.js EG_LAWS).
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { sdSeed, sdRng } from './sdBrain.js';
 import { egSpanProof, egRoadCross, EG_SPAN_RUN_MPS } from './egSpanLaw.js';   // EG-FULL: THE TIMED SOLVER - a course it refuses is laid again
 import { egFragPassage, egFragChamber, egSetPiece, egSetPieceOf, EG_PASSAGE_KITS, EG_CHAMBER_KITS, EG_FRAGS } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments
+import { egFragShaft, EG_SHAFT_KITS, EG_SLAG_LAW, EG_SLAG_STEP } from './egFragLaw.js';   // EG-ZC: the shafts, the slag's law and its crust
 
-/** The spec law's number - a change to any draw below changes it (and the relay's version with it). */
-export const EG_SPEC = 4;
+/** The spec law's number - a change to any draw below changes it (and the relay's version with it). EG-ZC: 5, the last
+ *  fragments (the law before kept - net/egDurable.js EG_LAWS). */
+export const EG_SPEC = 5;
 /** The most a company holds (the party's own PARTY_MAX, net/wire.js - pinned equal). */
 export const EG_PARTY_MAX = 8;
 
@@ -437,6 +445,8 @@ export const EG_STEP = Object.freeze({
   // EG-FULL LAYER THREE: the fragments' own pieces (net/egSpanLaw.js) - a moon-bound branch, a rolling drum, a bone bridge
   // (the Crumble's depth), a flight of the Sinking Stair
   moon: Object.freeze({ w: 280, d: 220 }), drum: Object.freeze({ w: 300, d: 300 }), bone: Object.freeze({ w: 260, d: 260 }), sink: Object.freeze({ w: 300, d: 260 }),
+  // EG-ZC: a slag crossing's crust, each spout's lane (net/egFragLaw.js EG_SLAG_STEP - its one home)
+  slag: EG_SLAG_STEP,
 });
 /** Which pieces each band unlocks (section 10.3) - the Galleries' five, the Cairn's Gust and Rail, the Shade's Pendulum,
  *  the Wellhead's Vent. */
@@ -478,7 +488,8 @@ export const EG_WALL_FALL_MPS = 1.5;
 export const EG_BELT_MPS = 1.0;
 
 /**
- * HALL h's SPEC (`geo` the circle's span decrees - net/egLaw.js egGeoOf): its kind, variant, twist, band, circle, slot,
+ * HALL h's SPEC (`geo` the circle's span decrees - net/egLaw.js egGeoOf; EG-ZC: `law` the spec law it is drawn under, this
+ * build's EG_SPEC unless a breach of the law before asks its own - net/egBrain.js): its kind, variant, twist, band, circle, slot,
  * name and objective; its geometry in its own frame (metres): the plates (`arrive`, `end`), the walkable discs and bands
  * and lanes (`discs`, `bands`, `lanes`), a span's steps and islands (the Steps' record: `{i, kind, span, x, y, z, w, d,
  * amp, period, phase, beat}`, period and phase in seconds), the fragments' passages (`caves`, each its band's kit), and
@@ -488,23 +499,24 @@ export const EG_BELT_MPS = 1.0;
  * (`foe`), the Court's wake ring (`ring`) and its lord (`lord`). Frozen, and cached.
  * @param {number} seed @param {number} h @param {number} [geo]
  */
-export function egHallOf(seed, h, geo = 0) {
+export function egHallOf(seed, h, geo = 0, law = EG_SPEC) {
   const key = `${seed >>> 0}:${h}:${geo | 0}`;
   const given = _given.get(key);   // EG-H2: a hall the relay drew under the breach's own law (egSpecGive, below)
   if (given) return given;
-  const had = _specs.get(key);
+  const lawKey = law === EG_SPEC ? key : `${key}:${law}`;   // EG-ZC: the law before drawn apart
+  const had = _specs.get(lawKey);
   if (had) return had;
   // THE TIMED SOLVER (section 10.5, net/egSpanLaw.js): a course it refuses is laid again from the next sub-seed, at most
   // EG_RELAY_MAX times, then from the band's first two pieces alone
-  let spec = layHall(seed >>> 0, h, geo | 0, 0), tries = 0;
-  while (spec.steps.length && !egSpanProof(spec).ok && tries < EG_RELAY_MAX) spec = layHall(seed >>> 0, h, geo | 0, ++tries);
-  if (spec.steps.length && !egSpanProof(spec).ok) spec = layHall(seed >>> 0, h, geo | 0, EG_RELAY_MAX + 1);
+  let spec = layHall(seed >>> 0, h, geo | 0, 0, law), tries = 0;
+  while (spec.steps.length && !egSpanProof(spec).ok && tries < EG_RELAY_MAX) spec = layHall(seed >>> 0, h, geo | 0, ++tries, law);
+  if (spec.steps.length && !egSpanProof(spec).ok) spec = layHall(seed >>> 0, h, geo | 0, EG_RELAY_MAX + 1, law);
   // THE FORK's two roads' fastest crossings at THE SPAN BUILD (s; the Low Road's bridges across and back run too) - the
   // Low Road's closing reads their difference (section 11.4)
   if (spec.fork) spec.fork = { ...spec.fork, hi: Math.round(egRoadCross(spec, 0, spec.fork.z).fast * 10) / 10, lo: Math.round((egRoadCross(spec, 1).fast + (2 * (spec.fork.lowX - spec.fork.x)) / EG_SPAN_RUN_MPS) * 10) / 10 };
   spec = deepFreeze({ ...spec, laid: tries });
   if (_specs.size >= 48) _specs.delete(_specs.keys().next().value);
-  _specs.set(key, spec);
+  _specs.set(lawKey, spec);
   return spec;
 }
 const _specs = new Map();
@@ -527,7 +539,7 @@ export function egSpecForget() { _given.clear(); }
 
 /** How often a course the solver refuses is laid again before the band's first two pieces stand alone (section 10.5). */
 export const EG_RELAY_MAX = 8;
-function layHall(seed, h, geo, attempt = 0) {
+function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   const c = egCircleOfHall(h), slot = egSlotOfHall(h), plan = egCirclePlan(seed, c)[slot - 1];
   const kind = plan.kind, variant = plan.variant, twist = plan.twist, bnd = egBandOfHall(h);
   const r = sdRng(egSeed(seed, HALL_SALT + h + attempt * RELAY_SALT));
@@ -605,7 +617,7 @@ function layHall(seed, h, geo, attempt = 0) {
    *  the Forge Gut, the deep Caverns), its floor broken by a chasm crossed on its inner course; its floors its landings
    *  (fight floors - section 11.1), its hazards on the shared clock. `x` its offset across the hall (the Low Road's). */
   const cave = (kit = passageKit(), x = 0) => {
-    const Q = egFragPassage(kit, r, { c, deep: bnd });
+    const Q = egFragPassage(kit, r, { c, deep: bnd, law });
     const X0 = X + x, z0 = edge, zA = z0 + Q.zA, zB = z0 + Q.zB, z1 = z0 + Q.len, y0 = y, role = Q.open ? 'colonnade' : 'cave';
     band(z0, zA, Q.halfW, role, y, X0); flL(X0, z0, X0, zA, Q.halfW, y);
     edge = zA; kitNow = kit;
@@ -615,6 +627,22 @@ function layHall(seed, h, geo, attempt = 0) {
     P.caves.push({ x: X0, y: y0, yB: y, z0, z1, zA, zB, halfW: Q.halfW, height: Q.height, kit, open: Q.open, road });
     P.frags.push({ kit, cls: 'passage', name: Q.name, x: X0, y: y0, z0, z1, play: '', reverb: Q.reverb, road });
     lay(Q, X0, z0, y0);
+    edge = z1;
+  };
+  /** EG-ZC - A SHAFT (sections 11.1-11.2): the band's way down (net/egFragLaw.js egFragShaft) - its rim and its foot still
+   *  ground that is no fight floor (blows land on none of it), its flights, its Drop and the Slag Chute's crust its course;
+   *  its walls the passages' (world/egHall.js - running down past its foot), marked `shaft`. */
+  const shaft = (kit = EG_SHAFT_KITS[bnd][between(r, 0, EG_SHAFT_KITS[bnd].length - 1)]) => {
+    const Q = egFragShaft(kit, r);
+    const z0 = edge, zA = z0 + Q.zA, zB = z0 + Q.zB, z1 = z0 + Q.len, y0 = y;
+    band(z0, zA, Q.halfW, 'cave', y);
+    edge = zA; kitNow = kit;
+    for (const it of Q.course) { y += it.dy ?? 0; step(it.k, it.gap, { x: it.x ?? 0, amp: it.amp, period: it.period, phase: it.phase, beat: it.beat != null ? z0 + it.beat : 0 }); }
+    kitNow = '';
+    band(zB, z1, Q.halfW, 'cave', y);
+    P.caves.push({ x: X, y: y0, yB: y, z0, z1, zA, zB, halfW: Q.halfW, height: Q.height, kit, open: 0, road, shaft: 1 });
+    P.frags.push({ kit, cls: 'shaft', name: Q.name, x: X, y: y0, z0, z1, play: '', reverb: Q.reverb, road });
+    lay(Q, X, z0, y0);
     edge = z1;
   };
   /** A SET PIECE (section 11.3): the band's own passage on the shared clock, proven by the solver like any other - the
@@ -832,7 +860,8 @@ function layHall(seed, h, geo, attempt = 0) {
     edge += 300;
     const set = plain ? null : egSetPieceOf(c, kind, bnd, egTubeCircle(seed));
     if (set) { setPiece(set); island(between(r, 200, 260)); }
-    else for (let q = 0; q < 3; q++) { y -= 150; step('ledge', 150, { x: (q % 2 ? 1 : -1) * 80 }); }   // the shaft: down on its ledges
+    else if (law >= EG_SLAG_LAW) shaft();   // EG-ZC: a shaft of its band's kit - the Hollow Trunk, the Slag Chute
+    else for (let q = 0; q < 3; q++) { y -= 150; step('ledge', 150, { x: (q % 2 ? 1 : -1) * 80 }); }   // the law before: down on three ledges
     cave();
     edge += gap();
   } else if (kind === 'scriptorium') {
@@ -961,7 +990,7 @@ function layHall(seed, h, geo, attempt = 0) {
   for (const [k, v] of Object.entries(P.spots)) spots[k] = v.map((q) => { const o = { ...q, x: m(q.x), z: m(q.z) }; if (q.r != null) o.r = m(q.r); if (q.plate) o.plate = [m(q.plate[0]), m(q.plate[1])]; if (q.bx != null) { o.bx = m(q.bx); o.bz = m(q.bz); } if (q.z1 != null) o.z1 = m(q.z1); return o; });
   const lord = kind === 'court' ? egBossOf(seed, c) : null;
   return {
-    v: EG_SPEC, seed, h, c, slot, kind, variant, twist, band: bnd, geo, lord,
+    v: law, seed, h, c, slot, kind, variant, twist, band: bnd, geo, lord,
     champ: kind === 'proving' || (kind === 'deepway' && P.foe) ? EG_CHAMPIONS[bnd].key : null,
     name: kind === 'court' ? `${EG_LORDS[lord].name}, ${EG_LORDS[lord].epithet}` : EG_HALL_NAMES[variant ?? kind], objective: EG_OBJECTIVES[variant ?? kind],
     x0: (slot - 1) * EG_HALL_PITCH, len: m(edge),
@@ -971,7 +1000,7 @@ function layHall(seed, h, geo, attempt = 0) {
     lanes: P.lanes.map((l) => ({ ax: m(l.ax), az: m(l.az), bx: m(l.bx), bz: m(l.bz), hw: m(l.hw), role: l.role, y: m(l.y) })),
     steps: P.steps.map((s) => ({ i: s.i, kind: s.kind, span: s.span, x: m(s.x), y: m(s.y), z: m(s.z), w: m(s.w), d: m(s.d), amp: m(s.amp), period: s.period / 1000, phase: s.phase / 1000, beat: s.kind === 'moon' ? m(s.beat) : s.beat / 1000, gap: m(s.gap), road: s.road, kit: s.kit, after: m(s.after) })),
     islands: P.islands.map(pt),
-    caves: P.caves.map((q) => ({ x: m(q.x), y: m(q.y), yB: m(q.yB), z0: m(q.z0), z1: m(q.z1), zA: m(q.zA), zB: m(q.zB), halfW: m(q.halfW), height: m(q.height), kit: q.kit, open: q.open, road: q.road, tube: q.tube ?? 0 })),
+    caves: P.caves.map((q) => ({ x: m(q.x), y: m(q.y), yB: m(q.yB), z0: m(q.z0), z1: m(q.z1), zA: m(q.zA), zB: m(q.zB), halfW: m(q.halfW), height: m(q.height), kit: q.kit, open: q.open, road: q.road, tube: q.tube ?? 0, ...(q.shaft ? { shaft: 1 } : {}) })),   // EG-ZC: a shaft's walls marked
     // EG-FULL LAYER THREE: the fragments (net/egFragLaw.js) - metres and seconds, the hall's frame
     frags: P.frags.map((q) => ({ ...q, x: m(q.x), y: m(q.y), z0: m(q.z0), z1: m(q.z1) })),
     hazards: P.hazards.map((q) => ({ kind: q.kind, i: q.i, x: m(q.x), z: m(q.z), y: m(q.y), period: q.period / 1000, phase: q.phase / 1000, w: m(q.w), r: m(q.r), ring: m(q.ring),
@@ -1000,8 +1029,8 @@ export function egTubeCircle(seed) {
   for (let c = 3; c <= 5; c++) if (egCirclePlan(seed, c)[1]?.kind === 'span') return c;
   return 0;
 }
-/** A circle's five specs, in slot order (`geo` its span decrees). */
-export const egCircleSpecs = (seed, c, geo = 0) => [1, 2, 3, 4, 5].map((s) => egHallOf(seed, egFirstHallOf(c) + s - 1, geo));
+/** A circle's five specs, in slot order (`geo` its span decrees; EG-ZC: `law` the spec law, this build's unless named). */
+export const egCircleSpecs = (seed, c, geo = 0, law = EG_SPEC) => [1, 2, 3, 4, 5].map((s) => egHallOf(seed, egFirstHallOf(c) + s - 1, geo, law));
 
 /** The spec's digest (section 9's `sd`): FNV-1a over its JSON - one seed, one digest, on every machine. */
 export function egSpecDigest(spec) {
