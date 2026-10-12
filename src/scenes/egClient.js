@@ -83,6 +83,13 @@
 //     word: a listener on my own identity (egSeedListen - no presence, no pose) says hello to the breach's room, and its
 //     `st` is the circle built, never circle 1 of seed 0. A room that refuses the hello lets the way back go in its words;
 //     no word within EG_BACK_SEED_WAIT_MS opens the veil on open ground and says so.
+
+//   EG-ZN (2026-10-12, Mac: "I said I want everything"; sections 11.8 and 29): THE SHAFT'S CAMERA told - the way down a
+//     shaft's ledge my feet stand on faces (world/egHall.js egShaftLedgeAt) and whether the screen stands still
+//     (player/mwView.js setSpireShaft, which biases the pitch and lifts the camera there); and THE BAND TEXTURES' OWNER - the
+//     mode machine's band dress let go at the breach's end (its egBandsDown), on the first frame out of the Spire that is no
+//     swap's or answer's step under way: the way home, the tear, the last fall, forsaking, a void, a refused or lost socket,
+//     and any other way out alike.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
@@ -143,6 +150,8 @@ import { setTouchSpire } from '../ui/touch.js';   // EG-ZH (section 27.8): touch
 import { OnlineSession, TOKEN_WAIT_MS } from '../net/online.js';
 import { foldEg, EG_STATE_EMPTY } from '../net/egLink.js';
 import { egRoomKey } from '../net/egLaw.js';
+import { egShaftLedgeAt } from '../world/egHall.js';   // EG-ZN (section 11.8): the shaft's ledge the camera leans over
+import { setSpireShaft } from '../player/mwView.js';   // EG-ZN (section 11.8): the shaft's camera
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -884,6 +893,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (player && fragArena && player.arena === fragArena) player.arena = null;
     fragArena = null;
   }
+  /** EG-ZN - THE SHAFT'S LEDGE (section 11.8): the way down a shaft faces while my feet stand on its rim or a flight above
+   *  its Drop's landing (world/egHall.js egShaftLedgeAt), else null. The camera judges the facing (player/mwView.js). */
+  function shaftWay(E) {
+    const H = feetHall(E);
+    return H && player?.pos ? egShaftLedgeAt(H.spec, player.pos) : null;
+  }
 
   // ── the witness (section 16.5) ──────────────────────────────────────────────────────────────────────────
   /** THE FALL: the body put away under the hall (no blow reaches it, the void never casts it back), the room told, the
@@ -1412,6 +1427,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         if (fight) { fight.leave(); }
         if (look) { look.release(); look = null; }   // EG-G2: the look's passes, freed on every way out
         if (!swapping && !answering) reverb.release();   // EG-ZH: let go on every way out - held through a swap or an answer's step under way
+        if (!swapping && !answering) modes()?.egBandsDown?.();   // EG-ZN (section 29): the band textures freed at the breach's end, every way out - never under a swap's or an answer's step (the next circle's stand uploads nothing)
         clampAway();   // EG-ZH
         if (leaving || (E.end && E.b)) { leaving = false; link.forget(); }
         if (door || portal) dropDoor();
@@ -1641,5 +1657,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   // eye is the witness's), nothing anywhere else
   setSpireCamera(() => inSpire() && !witness);
   setTouchSpire(() => (inSpire() && !witness ? { span: api.onTraverse() } : null));
+  // EG-ZN (section 11.8): THE SHAFT'S CAMERA told by this screen - the way down the shaft's ledge my feet stand on (null off
+  // every ledge) and whether the screen stands still, while I stand alive in the Spire; nothing anywhere else
+  setSpireShaft(() => (inSpire() && !witness ? { way: shaftWay(link.state()), still: stillNow() } : null));
   return api;
 }

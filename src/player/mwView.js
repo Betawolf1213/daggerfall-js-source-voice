@@ -32,7 +32,7 @@
 // person at all, and the wheel then does nothing rather than pulling
 // the eye out of an invisible head.
 
-import { mwCamera, MW_UNITS_PER_METER } from './mwCamera.js';
+import { mwCamera, MW_UNITS_PER_METER, FOCAL_HEIGHT, PITCH_LIMIT } from './mwCamera.js';
 import { fpArm } from '../combat/fpArm.js';
 import { eotbCamera } from './eotbCamera.js';
 import { eotbBody } from './eotbBody.js';
@@ -156,6 +156,68 @@ export function spireCameraFrame(out, full, dt) {
   return out;
 }
 /**
+ * EG-ZN (2026-10-12, Mac: "I said I want everything"; Elite-Gates.md section 11.8, "The camera in rock"): ON A SHAFT'S LEDGE
+ * FACING A DROP, THE PITCH BIASES 20 DEGREES DOWN AND THE CAMERA RISES TO LOOK OVER THE EDGE, so the landing is seen, not
+ * the back. The breach client says where my feet stand (`setSpireShaft` - scenes/egClient.js: the shaft's way down while I
+ * stand on its rim or a flight above its Drop's landing, world/egHall.js egShaftLedgeAt, and whether the screen stands
+ * still); this seam judges the facing on the frame's yaw, and both lanes lay the bias on their own eye: the camera's pitch
+ * SPIRE_SHAFT_PITCH under the look's, its pivot SPIRE_SHAFT_RISE_M over its own (the casts start there), both eased over
+ * SPIRE_SHAFT_EASE_S as the facing comes and goes - under reduced motion whole at once, as the stair cuts. The look the
+ * player aims with is never moved: the frame's eye answers the camera's own forward (`look`) for the host's view alone. In
+ * third person only, and nowhere but the Spire. A departure from camera.cpp and from the mod, Ledger A (ELITE-GATES).
+ */
+export const SPIRE_SHAFT_PITCH = (20 * Math.PI) / 180;
+/** How far the camera's pivot rises over its own at the whole bias (m) - the camera with it, over the ledge's edge. */
+export const SPIRE_SHAFT_RISE_M = 1.0;
+/** How long the bias takes to come in whole, and to go (s). */
+export const SPIRE_SHAFT_EASE_S = 0.5;
+/** Facing the drop: the look's bearing within 60 degrees of the way down to turn it on, past 75 to turn it off (the
+ *  cosines) - a turn at the edge does not flicker it. */
+export const SPIRE_SHAFT_FACE_IN = Math.cos((60 * Math.PI) / 180);
+export const SPIRE_SHAFT_FACE_OUT = Math.cos((75 * Math.PI) / 180);
+let _spireShaft = () => null;
+/** The breach client's word: `{ way, still }` while I stand alive in the Spire (`way` the unit [x, z] a shaft's ledge I stand
+ *  on faces down, or null; `still` reduced motion), null everywhere else. */
+export function setSpireShaft(fn) { _spireShaft = typeof fn === 'function' ? fn : () => null; }
+/** Whether a look at `yaw` faces the way `way` ([x, z], unit) - within SPIRE_SHAFT_FACE_IN, or SPIRE_SHAFT_FACE_OUT while it
+ *  already did (`was`). Pure. */
+export function spireShaftFacing(way, yaw, was) {
+  const c = Math.sin(yaw) * way[0] + Math.cos(yaw) * way[1];
+  return c >= (was ? SPIRE_SHAFT_FACE_OUT : SPIRE_SHAFT_FACE_IN);
+}
+/** THE EASE (pure): the bias this frame - `prev` last frame's, `want` SPIRE_SHAFT_PITCH or nought, `dt` the frame (s) - the
+ *  whole bias every SPIRE_SHAFT_EASE_S, never past `want`; `still` (reduced motion) at once. */
+export function spireShaftEase(prev, want, dt, still) {
+  if (still) return want;
+  const step = (SPIRE_SHAFT_PITCH * Math.max(0, Number(dt) || 0)) / SPIRE_SHAFT_EASE_S;
+  return prev < want ? Math.min(want, prev + step) : Math.max(want, prev - step);
+}
+let _shaftBias = 0, _shaftFacing = false;
+/** The frame's camera pitch over a shaft's ledge: the look's `pitch` less the eased bias (at most the camera's own limit),
+ *  the bias stepped first. Out of the Spire, or in first person (`third` false), none at once. */
+export function spireShaftPitch(pitch, yaw, dt, third) {
+  let word = null;
+  try { word = _spireShaft(); } catch { word = null; }
+  if (!word || !third) { _shaftBias = 0; _shaftFacing = false; return pitch; }
+  _shaftFacing = !!word.way && spireShaftFacing(word.way, yaw, _shaftFacing);
+  _shaftBias = spireShaftEase(_shaftBias, _shaftFacing ? SPIRE_SHAFT_PITCH : 0, dt, !!word.still);
+  return _shaftBias > 0 ? Math.max(-PITCH_LIMIT, pitch - _shaftBias) : pitch;
+}
+/** The frame's pivot floor over a shaft's ledge: the lane's own pivot (`pivotY`, a world height) risen by the bias's share
+ *  of SPIRE_SHAFT_RISE_M - never under the host's own floor (`floor`). */
+export function spireShaftPivot(floor, pivotY) {
+  if (!(_shaftBias > 0)) return floor;
+  return Math.max(floor ?? -Infinity, pivotY + (SPIRE_SHAFT_RISE_M * _shaftBias) / SPIRE_SHAFT_PITCH);
+}
+/** The camera's own forward on a third-person eye while the bias is laid (`out.look` - the host's view looks along it; the
+ *  aim keeps the player's). In place; answers `out`. */
+export function spireShaftLook(out, yaw, pitch) {
+  if (_shaftBias > 0 && out?.thirdPerson && out.focal) { const cp = Math.cos(pitch); out.look = [Math.sin(yaw) * cp, Math.sin(pitch), Math.cos(yaw) * cp]; }
+  return out;
+}
+/** The bias laid now (radians; tests). */
+export const spireShaftBias = () => _shaftBias;
+/**
  * CSA-J: TWO MODS, ONE BOAT. Eye of the Beholder's ModCompatibilityChecking looks for Come Sail Away by its GUID and
  * hands its OnUpdateSailing to the mod's receiver; the camera then targets the boat and the sprite faces its heading.
  * The world host builds the boat's runtime each boot and hands it here (null: the mod is off) with Unity's
@@ -192,7 +254,10 @@ let pendingClicks = 0;
  * origin, the Morrowind camera's focal) stands at least at: the host's word while I drive from a wagon's bench
  * (scenes/horseCartPool.js cameraFloor - over the wagon's roof), null everywhere else. First person never reads it.
  *
- * @returns {{eye:number[], thirdPerson:boolean, distance:number}}
+ * EG-ZN: `look` - the camera's own forward, where the Spire biases its pitch over a shaft's ledge (absent everywhere else:
+ * the camera looks where the player does).
+ *
+ * @returns {{eye:number[], thirdPerson:boolean, distance:number, look?:number[]}}
  */
 export function mwViewFrame({ fpEye, feet, yaw, pitch, heightScale = null, raycast = null, spherecast = null, eyeOverride = null, seaReach = 0, pivotFloor = null, ...state }) {
   standInEdge({ fpEye, feet, yaw, pitch });   // BEAST-SELF: the view carried across the arm's stand-aside
@@ -230,8 +295,11 @@ export function mwViewFrame({ fpEye, feet, yaw, pitch, heightScale = null, rayca
     // at all. Found by a test helper that span forever waiting for it.
     pendingClicks = 0;
     eotbCamera.tick(frame);
+    pitch = spireShaftPitch(pitch, yaw, frame.dt ?? 0, eotbCamera.thirdPerson());   // EG-ZN: over a shaft's ledge facing its drop, the camera's pitch biased down...
+    pivotFloor = spireShaftPivot(pivotFloor, fpEye[1]);   // ...and its pivot - the head - risen
     const out = eotbCamera.eye({ fpEye, feet, yaw, pitch, raycast, pivotFloor, ...frame });   // BENCH-CAM: the pivot over my wagon's roof
     spireCameraFrame(out, SPIRE_EOTB_FULL_M, frame.dt ?? 0);   // EG-ZH: in the Spire, eased back out
+    spireShaftLook(out, yaw, pitch);   // EG-ZN: the camera's own forward, for the host's view
     // EOTB-IL: the billboard's three Unity phases, handed the frame's
     // camera - `PlayerBillboard` reads mainCamera's position and forward
     // in LateUpdate (IL_3d86-IL_3dbf, IL_455d), and its FEET are the
@@ -281,11 +349,14 @@ export function mwViewFrame({ fpEye, feet, yaw, pitch, heightScale = null, rayca
   } else {
     fpArm.setViewMode('first');
   }
+  pitch = spireShaftPitch(pitch, yaw, state.dt ?? 0, mwCamera.thirdPerson());   // EG-ZN: over a shaft's ledge facing its drop, the camera's pitch biased down...
+  pivotFloor = spireShaftPivot(pivotFloor, feet[1] + (FOCAL_HEIGHT * heightScale) / MW_UNITS_PER_METER);   // ...and its focal risen (the standing feet's: no saddle in the Spire)
   // COATS3D: astride, the third-person camera turns about the rider's head - its feet lifted as far as the saddle lifts
   // the hips over a standing body's (player/seatPose.js SEAT_PELVIS_HEIGHT, at the race's height)
   if (saddled && ownSaddle) feet = [feet[0], feet[1] + Math.max(0, ownSaddle.seat[1] - feet[1] - SEAT_PELVIS_HEIGHT * heightScale), feet[2]];
   const eye = mwCamera.eye({ fpEye, feet, yaw, pitch, heightScale, raycast, spherecast, pivotFloor });   // MAC-A: the obstacle guards are castSphere's, where the host has one; BENCH-CAM: the pivot over my wagon's roof
   spireCameraFrame(eye, mwCamera.baseDistance() / MW_UNITS_PER_METER, state.dt ?? 0);   // EG-ZH: in the Spire, eased back out
+  spireShaftLook(eye, yaw, pitch);   // EG-ZN: the camera's own forward, for the host's view
   return eyeOverride ? { ...eye, eye: eyeOverride, ownEye: eye.eye } : eye;   // TV1: the travel view's eye, the rig's frame run all the same
 }
 

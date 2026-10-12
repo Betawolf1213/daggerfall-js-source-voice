@@ -129,8 +129,8 @@
   {
     "name": "EGLOOK-hall-circle-undressed",
     "file": "src/world/egHall.js",
-    "old": "return egBandDress(packRealmFaces(f), egBandOfCircle(c));",
-    "new": "return packRealmFaces(f);",
+    "old": "const model = egBandDress(packRealmFaces(f), egBandOfCircle(c));",
+    "new": "const model = packRealmFaces(f);",
     "tests": [
       "test/eglook_art.test.js"
     ]
