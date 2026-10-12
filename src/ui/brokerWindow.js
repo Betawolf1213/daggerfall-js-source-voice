@@ -335,7 +335,8 @@ export function mountBrokerWindow(host, deps) {
       }
     }
     // EG-E1: THE BATTLEMAGE'S PANOPLY, under the insignia - its heading and price, then a row a piece in the wares' own grid
-    const pan = deps.panoply?.rows?.() ?? [];
+    const panRows = deps.panoply?.rows;   // the sink's nine rows (EG-E1) - the host's, never a TEXT.RSC read
+    const pan = typeof panRows === 'function' ? panRows() : [];
     const panPick = pickedPan && pickedSlot === -1 && !pickedInsig ? pan.find((x) => x.id === pickedPan) ?? null : null;
     if (pan.length) {
       const head = el('li', 'broker-insignia-head broker-panoply-head');
