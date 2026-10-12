@@ -2937,12 +2937,18 @@ export function createWorldModes(host) {
   /** The building-interior mount; also the machine's hot-place callback
    *  (deps.world.mountCurrentSiteQuestResources - Place.AssignQuest-
    *  Resource's isPlayerHere tail re-runs the walk mid-scene). */
+  let relayingBuilt = false;   // QUEST-VOID: the built dungeon's re-lay under way
   function mountQuestResources() {
     if (!questBridge) return;
     // B2: the machine's hot-place callback is mode-aware - Place.
     // AssignQuestResource's isPlayerHere tail re-runs the walk for
     // whichever site the player stands in.
     if (dungeonCtx && mode === 'dungeon') {
+      if (relayingBuilt) return;   // QUEST-VOID: the re-lay's own placements ask for this mount - the one below stands them
+      // QUEST-VOID (questRepair.js relayBuiltDungeon): a quest target on a marker this build has not - its foe in the
+      // void, its item in rock - is laid again on the dungeon as built before anything stands.
+      relayingBuilt = true;
+      try { questBridge.relayBuiltDungeon?.(dungeonLoc, dungeonQuestAdapter.currentMapId()); } catch (e) { console.error('[quest] built-dungeon re-lay failed:', e?.message ?? e); } finally { relayingBuilt = false; }
       questBridge.mountScene(dungeonQuestAdapter, SITE_TYPES.Dungeon, 0);
       return;
     }
