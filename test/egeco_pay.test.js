@@ -5,7 +5,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { arenaWeekOf, ARENA_WEEK_S, ARENA_SEASON_EPOCH_S, arenaSeasonOf } from '../src/net/arenaLaw.js';
-import { egValkRedoubt, egSpoilsPasses, egPanoplyIn, egLegendaryShare, egPanoplyHit, egPanoplyDraw, egPassSeed, egEmbersOf, EG_PANOPLY_PITY, EG_SINK_EMBERS, EG_PAY_MARKS } from '../src/net/egPay.js';
+import { egValkRedoubt, egSpoilsPasses, egPanoplyIn, egLegendaryShare, egPanoplyHit, egPanoplyDraw, egPassSeed, egEmbersOf, EG_PANOPLY_PITY, EG_SINK_EMBERS, EG_PAY_MARKS, EG_PANOPLY_IDS } from '../src/net/egPay.js';
 import { egBreachNew } from '../src/net/egBrain.js';
 import { egProclamationOf } from '../src/net/egLaw.js';
 
@@ -40,6 +40,7 @@ test('EG-E WHAT A REDOUBT PAYS (section 19): a Valkynaz every fifth Redoubt, its
   for (let s = 1; s < 500; s++) { let a = (s + 0x6D2B79F5) >>> 0; let t = Math.imul(a ^ (a >>> 15), a | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); const first = ((t ^ (t >>> 14)) >>> 0) / 4294967296; if (first === egPanoplyDraw(s, 0)) same++; }
   assert.equal(same, 0);
   assert.equal(EG_PANOPLY_PITY, 10); assert.equal(EG_SINK_EMBERS, 20); assert.equal(EG_PAY_MARKS, 20);
+  assert.equal(EG_PANOPLY_IDS.length, 9, 'nine pieces'); assert.equal(new Set(EG_PANOPLY_IDS).size, 9);
 });
 
 test('EG-E THE WEEK\'S PROCLAMATION (section 20): drawn by the arena\'s week of the breach\'s open - Monday to Monday from the season epoch, as the week\'s pay and the sink are (mutant: the old epoch-of-1970 weeks)', () => {
