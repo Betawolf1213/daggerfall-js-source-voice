@@ -274,11 +274,12 @@
   {
     "name": "RENOWN1-layered-health-saved",
     "file": "src/systems/save.js",
-    "old": "  if (renownHpOf(entity) || renownMpOf(entity)) Object.assign(snap, offlineVitals(entity));",
+    "old": "  if (renownHpOf(entity) || onlineMpOf(entity)) Object.assign(snap, offlineVitals(entity));",
     "new": "",
     "tests": [
       "test/renown1.test.js"
-    ]
+    ],
+    "note": "EG15 (PIN MOVED): the save asks for the folds' magicka too (onlineMpOf: Renown's and the Battlemage's Bearing) - re-aimed by content."
   },
   {
     "name": "RENOWN1-scale-kills",

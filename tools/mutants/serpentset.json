@@ -2,13 +2,13 @@
   {
     "name": "SERPENT-SET-set-out-of-the-record",
     "file": "src/systems/sigil.js",
-    "old": "'thieftaker', 'orcsbane', 'coilscale', 'numidium']);",
-    "new": "'thieftaker', 'orcsbane', 'numidium']);",
+    "old": "'thieftaker', 'orcsbane', 'coilscale', 'numidium', 'panoply']);",
+    "new": "'thieftaker', 'orcsbane', 'numidium', 'panoply']);",
     "why": "the set no sigil may name: every Coilscale piece refused off the wire",
     "tests": [
       "test/serpentset.test.js"
     ],
-    "note": "SD9d (PIN MOVED): the Brass of Numidium after the serpent's - re-aimed by content."
+    "note": "SD9d (PIN MOVED): the Brass of Numidium after the serpent's - re-aimed by content. SD9d (PIN MOVED): the Brass of Numidium after the serpent's - re-aimed by content. EG15 (PIN MOVED): and the Battlemage's Panoply after it."
   },
   {
     "name": "SERPENT-SET-a-world-set",
@@ -113,13 +113,13 @@
   {
     "name": "SERPENT-SET-not-a-record",
     "file": "src/systems/aetheric.js",
-    "old": "export const AETHERIC_RECORDS = Object.freeze([...REGALIA, ...RAID_SET_PIECES, ...SERPENT_SET_PIECES, ...NUMIDIUM_SET_PIECES]);",
-    "new": "export const AETHERIC_RECORDS = Object.freeze([...REGALIA, ...RAID_SET_PIECES, ...NUMIDIUM_SET_PIECES]);",
+    "old": "export const AETHERIC_RECORDS = Object.freeze([...REGALIA, ...RAID_SET_PIECES, ...SERPENT_SET_PIECES, ...NUMIDIUM_SET_PIECES, ...PANOPLY_SET_PIECES]);",
+    "new": "export const AETHERIC_RECORDS = Object.freeze([...REGALIA, ...RAID_SET_PIECES, ...NUMIDIUM_SET_PIECES, ...PANOPLY_SET_PIECES]);",
     "why": "a Coilscale piece no reader knows - forged to the wire",
     "tests": [
       "test/serpentset.test.js"
     ],
-    "note": "SD9d (PIN MOVED): the Brass of Numidium's records after the serpent's - re-aimed by content."
+    "note": "SD9d (PIN MOVED): the Brass of Numidium's records after the serpent's - re-aimed by content. SD9d (PIN MOVED): the Brass of Numidium's records after the serpent's - re-aimed by content. EG15 (PIN MOVED): and the Panoply's after them."
   },
   {
     "name": "SERPENT-SET-the-chance",
@@ -235,12 +235,13 @@
   {
     "name": "SERPENT-SET-the-bow-refused",
     "file": "src/systems/sigilSetPowers.js",
-    "old": "  if (!(damage > 0) || !weapon) return;\n  coiled(attacker, target);\n  if (ranged(weapon)) return;",
-    "new": "  if (!(damage > 0) || !weapon) return;\n  if (ranged(weapon)) return;\n  coiled(attacker, target);",
+    "old": "  if (!(damage > 0) || !weapon) return;\n  coiled(attacker, target);\n  returned(attacker);   // EG15: the Discipline's return - a bow's blow too (a weapon blow)\n  if (ranged(weapon)) return;",
+    "new": "  if (!(damage > 0) || !weapon) return;\n  if (ranged(weapon)) return;\n  coiled(attacker, target);\n  returned(attacker);   // EG15: the Discipline's return - a bow's blow too (a weapon blow)",
     "why": "a bow's blow never tightens it",
     "tests": [
       "test/serpentset.test.js"
-    ]
+    ],
+    "note": "EG15 (PIN MOVED): the Discipline's return sits between the coil and the bow's turn-back - re-aimed by content."
   },
   {
     "name": "SERPENT-SET-the-death-ignored",
@@ -315,12 +316,13 @@
   {
     "name": "SERPENT-SET-shed-no-chip",
     "file": "src/systems/sigilSetPowers.js",
-    "old": "  if (t.get('coilscale')?.[2] && st.shedRecoverLeft) out.push({ key: 'shed', set: 'coilscale', name: 'Shed Skin', text: time(st.shedRecoverLeft), state: 'recovering' });\n",
+    "old": "  if (t.get('coilscale')?.[2] && (st.shedRecoverLeft || held.has('shed'))) out.push({ key: 'shed', set: 'coilscale', name: 'Shed Skin', text: wait('shed', st.shedRecoverLeft), state: 'recovering' });\n",
     "new": "",
     "why": "the recovery never shown",
     "tests": [
       "test/serpentset.test.js"
-    ]
+    ],
+    "note": "EG15 (PIN MOVED): the chip reads \"Redoubt\" while the Spire holds the save - re-aimed by content."
   },
   {
     "name": "SERPENT-SET-shed-never-said-ready",
