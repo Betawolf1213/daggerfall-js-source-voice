@@ -482,6 +482,10 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
 
   const drawList = [];
   const dynamicDraws = [];
+  // EG-ZP (bible/11-Multiplayer/Elite-Gates.md section 29 - EVERY ALLOCATION HAS AN OWNER): the teardowns an owner hands
+  // this context for what it stood into it and keeps itself (the mode machine's Elite circle - worldModes.js egCircleDown),
+  // each run once as the context is destroyed (`addTeardown`)
+  const _teardowns = [];
   // STUCK-ARROWS (combat/arrowFlight.js): the stuck shafts' entries in dynamicDraws, by pile, and the 99800 mesh they wear
   const _stuckDraws = new Map();
   let _stuckGpu = null;
@@ -10356,6 +10360,10 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     egSpanCull(proj, view) { return egSpan?.cull(proj, view) ?? 0; },   // EG-G2 (Elite-Gates.md section 11.9): the spans' pieces culled against this frame's frustum, before the draws
     egSpanDraw(proj, view, fog) { return !!egSpan?.drawPass(proj, view, fog); },   // EG-ZL (Elite-Gates.md sections 10.3 and 10.8): the spans' ghosts and a peer's ghost slab, in the breach client's pass (scenes/egClient.js drawPass)
     egSpanPeer(x, y, z) { return !!egSpan?.peerOn(x, y, z); },   // EG-ZL (section 10.8): a peer's drawn feet on a Crumble I have seen fall - its ghost slab (scenes/egClient.js rideDraw)
+    /** EG-ZP (Elite-Gates.md section 29): a teardown run once as this context is destroyed - an owner's own GPU objects,
+     *  draws and buckets stood into it (the mode machine's Elite circle - worldModes.js egCircleDown), let go on every
+     *  way the context ends: the exit, a load or a teleport out, an abandoned build. */
+    addTeardown(fn) { if (typeof fn === 'function') _teardowns.push(fn); },
     /** AUDIT SD II (L2 F10): the Shattered Hour's hall and arena posed BEFORE the world pass draws them (the mode machine's
      *  dungeon arm, with no window up, as the Steps are ridden before the motor): the Orrery's hall stood, its word heard,
      *  its hands turned (SD6c); the Brass Remnant stood, my `in`, its bodies placed (SD8c). Posed in drawFoes, after the
@@ -10639,6 +10647,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       sdHall?.clear();   // SD6c: the hall's meshes
       sdSteps?.clear();   // SD7b: the Steps' meshes
       egSpan?.clear();   // EG-PLAY: an Elite Breach's spans' meshes
+      for (const fn of _teardowns.splice(0)) { try { fn(); } catch (e) { console.warn('[dungeon] a teardown failed:', e?.message ?? e); } }   // EG-ZP: and its circle's, the mode machine's own (worldModes.js egCircleDown) - each once
       sdRemnant?.clear();   // SD8c: the Remnant's
       sdHang?.clear();   // SD-LOOK S11: the hang's
       // NT1 (F214): the context minted its own cast engine; a spell in

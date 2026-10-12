@@ -3758,7 +3758,7 @@ Grath's falling isles, and the solver's median check.
 - **The chambers** (section 11.4). A yard or proving court in a chamber from circle 2 takes its band's chamber kit and
   names its play:
   - a second floor 3-4 m up, its stair a ramp;
-  - a chokepoint arch 6 m wide (the relay's walkers do not yet route through it - see the departures);
+  - a chokepoint arch 6 m wide;
   - the channels surging in thirds every 20 s;
   - an engine.
   It then carries its kit's signature: the basalt, the wisp, the hammers, the Eclipse, the tide (three dry floors, no
@@ -3805,8 +3805,7 @@ Grath's falling isles, and the solver's median check.
 - **The relay half's own departures:**
   - a code-built fragment's law lives in the spec's own fields, not a separate record with `sockets`, polygon `floors` and a
     legion `graph` (an authored fragment's law is that record since EG6c - `net/egFragLaw.js` `egFragRecordFault` - but no
-    hall lays one yet). A passage's mouth and exit are its `z0` and `z1`; its floors are rectangles. The legion walks straight to
-    its mark, kept to the fight floors as it was, so an arch's walls do not yet turn it;
+    hall lays one yet). A passage's mouth and exit are its `z0` and `z1`; its floors are rectangles;
   - the Sluice takes its share at once rather than flooding a channel for 6 s;
   - the Moon-Mirror blinds the Divers but does not yet light a branch;
   - a Low Road member's closing waits the roads' difference only when the High Road opened the door;
@@ -3930,31 +3929,23 @@ wait. A blow's word now never shows less than its whole wind-up, however late it
    socket's offset" alone places a pose at its send time plus the quickest way here, which counts the very dodge the
    page pins. The delay is the member's word, held to the judge's own 300 ms window.
 2. A backdated stamp is dropped as out of order, not clamped.
-3. Support is the spec's law geometry, never the collider. A Falling Wall's and the Collapsing Tube's fallen segments
-   still hold; a belt carries under the push's allowance, and is not ridden.
-5. The measures (`egFairMeasure`, the census `cs`) stay on each member's record. The `e1` receipt's `m` is the receipts
-   slice's to carry (the receipt's 640-byte bound, and that slice's work on the same claims).
-6. The lead is every lord's chosen blow, its fury chain and its extras. The errands' place-tied blows (the Twins'
+3. Support is the spec's law geometry, never the collider. A belt carries under the push's allowance, and is
+   not ridden.
+4. The lead is every lord's chosen blow, its fury chain and its extras. The errands' place-tied blows (the Twins'
    Crossing, a Burning Perch) and every CHECK keep their own time; the legion's and the place's blows are never told.
    A tell goes at the beat its lead comes due, and its `sh` lets a screen draw it from the lead.
-7. The fight's words keep layer one's `e` prefix: the page's `{k:'cut', i}` is `ecut`. `tell` and `untell` keep the
+5. The fight's words keep layer one's `e` prefix: the page's `{k:'cut', i}` is `ecut`. `tell` and `untell` keep the
    page's names.
-8. The feint's dashed fade is the look's (EG16): its mark still fades over 0.15 s as before.
-9. The span's own Pendulums and Vents stand on traversal ground no aimed blow reaches, so they share no union set. The
-   client's arrow (section 11.7) is not built.
-10. A plain blow's whole `p` is counted, its points never.
-11. A fire fall and the hammer line (`trav`) stay the screens' alone; a soul-wisp's drain is not counted.
-12. Found, not fixed: a breach in a trial cannot be checkpointed. The trial keeps the legion's callbacks on the fight
-    (`F.legionCtx`), which storage cannot clone - the durability slice's.
-13. `bd` is said once, never told again (AUDIT INT11's `bodyTellOwed` is the three game-held fights'). A breach's fall
-    is the director's own (`egFall`): the company (`co`) it sends carries it, and a screen that missed `bd` enters its
-    witness from its own record there. `int_lane3_audit`'s pin of the body's word bucket counts four rooms now.
+6. The span's own Pendulums and Vents stand on traversal ground no aimed blow reaches, so they share no union set.
+7. A plain blow's whole `p` is counted, its points never.
+8. `bd` is said once, never told again (AUDIT INT11's `bodyTellOwed` is the three game-held fights'). A breach's fall
+   is the director's own (`egFall`): the company (`co`) it sends carries it, and a screen that missed `bd` enters its
+   witness from its own record there. `int_lane3_audit`'s pin of the body's word bucket counts four rooms now.
 
 **The four hosts.**
 
-- `src/scenes/world.js` - FLAGGED, not wired by this slice: its `egNow` and the spans' anchored clock still read the
-  welcome's offset. `egClient.sharedNow()` is the corrected clock for them (the breach's link and fight read it already).
-  `bd` needs no host: it reaches `egClient.word` through `online.onEg`.
+- `src/scenes/world.js` - FLAGGED, not wired by this slice. `bd` needs no host: it reaches `egClient.word` through
+  `online.onEg`.
 - `src/scenes/worldModes.js`, `src/scenes/dungeonContext.js` - unchanged.
 - `src/scenes/exterior.js` - unchanged (offline, section 28).
 
@@ -5721,9 +5712,6 @@ applies every Vestige section 21 names); both sentences are deleted above.
 11. **The toll's words** are `EG_PRES_TEXT`'s (the client's), not `EG_TEXT`'s, as EG-G1's beats are. A word in `EG_TEXT`
     would move the relay's law hash for a line the relay never says. The toll plays no sound of its own: the pull's row's
     sound is the veil's close.
-12. **Not built:** Lifeline's other half, the receiver's client taking its blows less. No screen applies a word-Vestige
-    (Bastion, Steadfast Line, Lifeline) today. The census applies them all now, so a holder's count is spared what its
-    body would be; a body that took the whole blow says less than the count, which claims nothing.
 
 **The four hosts.**
 
@@ -6997,3 +6985,141 @@ seen in the live game.
   EG-ZK's seam. `ACCOUNT_VERSION` is untouched (`acct121` when this slice was cut, `acct122` since the lead's merge of
   main), and there is no migration.
 - No new src module. The Port-Ledger's ELITE-GATES row is the lead's.
+
+### EG-ZP - 2026-10-12 - THE CLIENT'S LAST DEBTS
+
+Mac: "I said I want everything". Three debts the screen still owed. The member's own client applied no team Vestige to a
+blow it took, while the relay's census did (EG-ZI's "Not built"). The Spire's circle kept its meshes after the player left
+(section 29, found by EG-ZN). And the page kept sentences the code had closed: EG-H1's departures 3, 10 and 11 and layer
+three's straight-walking legion, which EG-ZB said it retired. This slice closes EG-ZI's departure 12; that sentence, and
+each stale one below, is deleted above.
+
+**What shipped, by piece.**
+
+- **THE RECEIVER'S VESTIGES** (`scenes/egFight.js` `egShieldDr`, `egShieldBreach`, `spared`; sections 15 and 21).
+  - A blow of the fight that lands on me (`F.blows`, the census's `k` 0) is now spared on my screen by the share the
+    relay's census spares the same blow: Bastion within 6 m (the strongest, and 2% for each other holder, 6% over it at
+    most), my Steadfast Line with three allies within 8 m, my Challenger's Oath on a lord's blow, my Immovable still a
+    second on a fight floor, and my Lifeline windows. Together they never pass 30%.
+  - The law is not copied. The screen calls the census itself (`net/egBrain.js` `egCensusDr`) on what it holds:
+    - the breach as the census reads it, built from the room's own words (`egShieldBreach`): each company row's `in`,
+      `alive` and `home`, each run's Vestiges and Mastery (`ms`), and my windows on mine;
+    - the fight's lords (`F.bodies`) and the hall's fight floors (`net/egWalkGraph.js` `egFightView`);
+    - my trail, kept each frame in the census's own shape (`[t, x, y, z, h]` in the hall's frame, its last `EG_TRAIL_MS`
+      and the one before);
+    - each companion where the screen draws it at the blow's landing, at its feet (the pose stands at the eye,
+      `PEER_EYE_M`). A companion the screen does not draw is unseen, as the census counts no member it holds no pose of.
+  - `landShare` takes the share (`dr`). The blow's share of my health and its points are both spared by it before the
+    saving throw, so its share is the census's to the thousandth: a 0.4 blow beside a Bastion III holder takes 352 of
+    1,000 health on the screen and 352 thousandths off the count.
+- **LIFELINE, THE RECEIVER'S HALF** (`scenes/egClient.js` `lifelineSaid`, `egLifelineOf`; `scenes/egFight.js`
+  `egLifelineOpen`, the fight's `lifeline(v, at)`).
+  - Each heal word the screen says (`heal`, EG-ZF's) is read as the census reads it (`egHeal`). If I stood under 30%
+    within `EG_LIFELINE_LOOK_MS`, the strongest Lifeline among its healers opens a window on my blows. Healers are named
+    by account (`accountOf`, the host's `net/social.js` `accountOfPeer`, as `egPeers` names the company), read by the
+    runs the room says, and never mine.
+  - "Under 30%" (`lowAt`) is my body seen so at a frame in the Spire, or before the heal that lifted me (my body less
+    the heal, as the census reads the count before it).
+  - The window is the census's own: `[from, until, share]`, from `EG_HEAL_WORD_MS` before the word's arrival to
+    `EG_LIFELINE_MS` after it. The arrival is the word's send on the shared clock plus the half round trip
+    (`net/egClock.js` `egClockHalfRtt`). Windows no blow can still be judged in are let go, four are kept, and the
+    strongest window's share applies. The numbers are imported from `net/egBrain.js` and `net/egFair.js`, never declared
+    again.
+- **THE CIRCLE'S MESHES FREED** (`scenes/worldModes.js` `egCircleDown`; `scenes/dungeonContext.js` `addTeardown`; section
+  29: "every exit path ... frees the hall's meshes, colliders, riders").
+  - `egCircleDown(ctx)` lets the whole circle go from the context it stands in:
+    - the slots are emptied first: the mesh, its key, the portcullises, the waystones' mesh and the lamps;
+    - the dither pass is told next (`egOcc.clear`, its views of the mesh let go);
+    - the circle's draws leave the context's list, and its floors' bucket and each portcullis's moving bucket leave the
+      collider;
+    - the meshes are freed last, the circle's, the waystones' (`world/egLook.js`) and every portcullis's, so a second
+      call frees nothing twice.
+  - THE SWAP now lets the old circle go through it: the same lines, moved into the one teardown.
+  - The stand hands the context the circle's teardown (`ctx.addTeardown`). The dungeon host keeps its teardowns and runs
+    each once in its own `destroy()`, beside the spans' clear. Every road out of the Spire destroys the context: the
+    exit (the way home, the tear, a fall's walk out, forsaking, a void, a refused or lost socket), the forced exit (a
+    load, a teleport, a respawn) and the two builds abandoned after the stand. So each frees the circle once, and the
+    old step under the veil frees it before the next circle stands.
+  - The circle goes at the context's end, before the mode turns. The band dress it wore goes on the client's first frame
+    out of the Spire (EG-ZN's `egBandsDown`, still refused while a circle stands), so the dress always goes after the
+    circle.
+  - A way back into the same circle builds it anew, where it once found the old mesh still standing.
+- **THE PAGE'S STALE SENTENCES**, each checked against the code (RETIRING A FLAG DELETES THE SENTENCE):
+  - EG-ZI's departure 12 (*Not built*: the receiver's client) is deleted.
+  - EG-H1's departures:
+    - its 3 loses the fallen segments, which EG-ZB made hold nobody (`net/egFair.js` `bandFallen`). The belt's sentence
+      stands: belts are still carried under the push's allowance and never ridden (`EG_RIDE_KINDS`);
+    - its 11 (the fire fall, the hammer line, the soul-wisp's drain) is deleted. EG-ZB judges the traversal hazards
+      (`net/bossRef.js` `judgePlace`) and counts the drains (`censusDrains`);
+    - its 10, whose Vestige half EG-ZB and EG-ZI had already closed, stands as it was: the census counts a plain blow's
+      share and never its points, since the relay holds no member's maximum health (`judgeShapes`).
+
+    Found on the way, closed by later slices and deleted with them:
+    - its 5: EG-ZA's Redoubt receipt carries THE FAIR TRAIL's measures (`m`);
+    - its 8: EG-ZD built the feint's dashed fade;
+    - its 9's second sentence: EG-ZG built the peril arrow (`world/egTelegraph.js` `egPerilOf`);
+    - its 12: EG-H2 put the fight's closures off the saved record, so a trial checkpoints;
+    - its world.js host flag's clock sentence: EG-ZD put `egNow` and the spans' anchored clock on the corrected clock.
+
+    The rest are renumbered: old 4, 6, 7, 9, 10 and 13 are now 4, 5, 6, 7, 8 and 9.
+  - Layer three's "The legion walks straight to its mark ... an arch's walls do not yet turn it" is deleted, with its
+    pointer in the chambers' bullet ("the relay's walkers do not yet route through it - see the departures"). EG-ZB's walk
+    graph routes every ground walker through an arch's gap (`net/egLegion.js` `walkGraph`, `net/egWalkGraph.js`
+    `egArchCut`).
+
+**The four hosts.**
+
+- `src/scenes/world.js` - WIRED: the breach client's `accountOf`, a heal word's healer by account (`social.accountOfPeer`,
+  the way `egPeers` names the company). Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - WIRED: `egCircleDown`, the stand's teardown handed to its context, and THE SWAP through it.
+- `src/scenes/dungeonContext.js` - WIRED: `addTeardown`, and the teardowns run once in `destroy()`.
+- `src/scenes/exterior.js` - FLAGGED: the bench is offline and holds no Elite Breach (section 28).
+
+**Departures, said plainly.**
+
+1. **The screen applies the census's whole reduction**, Challenger's Oath and Immovable with the three team Vestiges: one
+   sum under one cap. With three of the five the screen would disagree with the census whenever the cap binds. Section
+   15's table gives both to the client as well. Immovable's other half (pushes do nothing) is not built here.
+2. **"Under 30%"** is read off my own body, where the census reads its count and my body's word. They agree when the word
+   and the count do.
+3. **Lifeline's window opens when the word goes.** A blow already taken inside its back second is not given back. The
+   census also judges each blow once, so a blow it judged before the word arrived is not spared there either. The two
+   can differ only within the one-way delay.
+4. **The heal bucket is not mirrored.** The screen believes a companion's heal that reached it. A heal the room's bucket
+   refuses (more healing than an honest company casts) opens a window on the screen alone.
+5. **The places are each side's own.** A companion stands where the screen draws it, and the census reads where its
+   trail stood. My trail is kept each frame, so Immovable's stillness is judged on more samples than the poses the
+   census reads.
+6. **A blow's points are spared by the same share.** The census counts none (EG-H1's departure 7, as renumbered once EG6a's merge retired its 4). Zones,
+   hazards, drains, the toll and cast-backs are spared nothing, which is the census's own rule (EG-ZB's departure 8).
+7. **The circle goes with its context**, not with the client's word as the band dress does. A way back into the same
+   circle builds it again. The fight's telegraph and crystal passes are a screen's, built once a session and kept. The
+   spans' riders and meshes are the dungeon host's own and go at its clear, as before.
+8. **The page's numbers.** Code comments that name a retired EG-H1 departure by number name it as its closing slice found
+   it ("EG-H1's departure 3 closed" in `net/egFair.js`, its 11 in `net/bossRef.js`, its 10 and 11 in `net/egBrain.js`).
+   The two tags renumbering would have pointed at another sentence (`scenes/egFight.js` and `render/gateTelegraph.js`, "EG-H1's departure 8") now
+   read "an EG-H1 departure retired". EG-ZB's departures keep their gap at 2 (EG5 + EG-ZK deleted it without
+   renumbering), since EG-ZI's pointer to their 8 would move.
+9. **Found, not built here:** Shield-Hymn (Bastion with Rally, "Rally's heal also gives the company 4 s of Bastion's
+   protection") is applied by neither the census nor any screen. Most client Vestiges of the holder's own body are applied
+   by no screen either: Stoneskin, Second Wind, Searing Edge, Momentum, Bloodied Fury, Battlemage's Focus, Overcharge,
+   Spellbane, Shieldweaver, Arcane Echo, Fleetfoot and Mender's Grace. Iron Footing is the only one a screen applies
+   today.
+
+**Not verified without a browser and the game's data:** nothing was played. Each blow was counted on the director's own
+breach and fight (`egCount`, `egHeal`) and on `createEgFight` with no renderer, and the heal word on `createEgClient`
+against a stub host. The circle's frees were counted on a counting renderer over the real collider, not on GL.
+
+**Pins.**
+
+- `test/egz_debts.test.js` (6) and `test/egz_debts_circle.test.js` (3).
+- `tools/mutants/egz_debts.json` (49, every one dead on the first run).
+- Re-aimed by content (mutantdrift), all dead: `egseam.json`'s EGSWAP-the-old-circle-kept, -the-old-floors-kept,
+  -the-old-gates-kept and -a-freed-mesh-drawn, `eglook.json`'s EGLOOK-swap-old-waystones-kept and `egz_camera.json`'s
+  EGZN-swap-keeps-the-old. They now aim at `egCircleDown`'s lines, which the swap goes through.
+- Judged again: the eleven records of other lists aimed at or beside a line this slice changed (`egint.json`,
+  `eglook.json`, `egseam.json`, `egz_camera.json`, `egz_ends.json`, `egz_recap.json`), every one dead; and every record
+  of the arc's lists aimed at `scenes/egFight.js`, `scenes/egClient.js`, `scenes/worldModes.js` or
+  `scenes/dungeonContext.js` (276: 275 dead, and `egz_ends.json`'s EGZM-slot-emptied-after equivalent as recorded).
+- No pin moved. `RELAY_VERSION` and `ACCOUNT_VERSION` are untouched (nothing in the relay's graph moved); no migration.
+  No new src module, so the Port-Ledger's ELITE-GATES row is unchanged.

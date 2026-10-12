@@ -90,6 +90,12 @@
 //     mode machine's band dress let go at the breach's end (its egBandsDown), on the first frame out of the Spire that is no
 //     swap's or answer's step under way: the way home, the tear, the last fall, forsaking, a void, a refused or lost socket,
 //     and any other way out alike.
+
+//   EG-ZP (2026-10-12, sections 15 and 21): LIFELINE, THE RECEIVER'S HALF - my heal word said with a Lifeline holder's heal
+//     in it while I stood under 30% within the census's look back (`lowAt` - my body at a frame, or before the heal that
+//     lifted me) opens that holder's window on my blows in the fight (scenes/egFight.js egLifelineOpen), at the word's
+//     arrival at the room as my corrected clock reckons it: the census's own window (net/egBrain.js egHeal), so my body and
+//     the room's count take the same blow.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
@@ -152,6 +158,7 @@ import { foldEg, EG_STATE_EMPTY } from '../net/egLink.js';
 import { egRoomKey } from '../net/egLaw.js';
 import { egShaftLedgeAt } from '../world/egHall.js';   // EG-ZN (section 11.8): the shaft's ledge the camera leans over
 import { setSpireShaft } from '../player/mwView.js';   // EG-ZN (section 11.8): the shaft's camera
+import { EG_LIFELINE_UNDER, EG_LIFELINE_LOOK_MS } from '../net/egBrain.js';   // EG-ZP (section 15): Lifeline's 30%, and how far back the census looks for it
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -307,6 +314,16 @@ function requestId() {
   return [...b].map((v) => v.toString(36).padStart(2, '0')).join('').slice(0, 24);
 }
 
+/** EG-ZP (section 15's Lifeline): the strongest Lifeline among a heal word's healers (`subs`, their accounts - null for a
+ *  peer this screen cannot name) by the runs the room says (`ms` - the members it counts in the breach alone), never mine
+ *  (the census believes no member's own heal - net/egTally.js egTallyHeal); 0 for none. Pure.
+ * @param {any} E @param {string|null} me @param {Array<string|null>} subs */
+export function egLifelineOf(E, me, subs) {
+  let v = 0;
+  for (const s of subs) if (s !== me) v = Math.max(v, egVOf(egRunOfMember(E, s).vs, 'lifeline'));
+  return v;
+}
+
 /**
  * @param {{ modes: () => any, online: () => any, hub: () => any, account: any, now: () => number, entity: any, player: any, cam: any,
  *   say: (text: string) => void, mid?: (text: string) => void, veil?: () => any, site: () => any, wire: () => any, landAt: (l: any) => boolean,
@@ -314,19 +331,21 @@ function requestId() {
  *   peers?: () => { sub: string, pos: number[] }[], heal?: ((p: number, why: string) => void) | null,
  *   paid?: ((c: any, data: any) => void) | null, win?: any, redoubt?: ((rd: number) => void) | null, board?: (() => any) | null,
  *   keyFacts?: (() => any) | null, startWindow?: ((o: any) => any) | null, party?: () => { sub: string, name: string }[], questDue?: () => boolean,
- *   callPortal?: any, arches?: any, prompt?: any, windowUp?: () => boolean, feet?: () => (number[]|null), probes?: () => any, Session?: any }} deps
+ *   callPortal?: any, arches?: any, prompt?: any, windowUp?: () => boolean, feet?: () => (number[]|null), probes?: () => any, Session?: any,
+ *   accountOf?: (peer: string) => (string|null) }} deps
  *   EG-F: `keyFacts` the host's facts for the key's refusals (scenes/egArch.js egKeyRefusal - `site` the arch's site on the
  *   wire where it would stand, null with no room); `startWindow` opens the start window (ui/egStartWindow.js; none: Hall 1
  *   at once); `party` my party's members; `questDue` whether a quest falls due inside the last word; `callPortal` the
  *   call's portal (scenes/egCall.js createEgCallPortal; none: the answer steps in at once); `arches` the arch pool
  *   (scenes/egArch.js); `prompt` the call's strip; `windowUp` a window over the screen; `feet` my feet in the scene;
  *   `probes` the ground and wall probes a portal's place asks. EG-ZM: `Session` the session class a way back's listener is
- *   made of (net/online.js OnlineSession - egSeedListen).
+ *   made of (net/online.js OnlineSession - egSeedListen). EG-ZP: `accountOf` a peer's account by its id in the room (the
+ *   company is my party - net/social.js accountOfPeer), a heal word's healer's.
  */
 export function createEgClient({ modes, online, hub, account, now: hostNow, entity, player, cam, say, mid = () => {}, veil = () => null, site, wire, landAt, hurt,
   store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null, peers = () => [], heal = null, paid = null, win = globalThis.window, redoubt = null, board = null,
   keyFacts = null, startWindow = null, party = () => [], questDue = () => false, callPortal = null, arches = null, prompt = null, windowUp = () => false,
-  feet = () => null, probes = () => ({}), Session = OnlineSession }) {
+  feet = () => null, probes = () => ({}), Session = OnlineSession, accountOf = () => null }) {
   // EG-H1: THE SHARED CLOCK, CORRECTED (section 10.8; net/egClock.js) - the host's clock until the room has answered a ping,
   // then this machine's wall clock plus the median offset; the breach's link, its fight and every time here read it
   const clock = egClockNew();
@@ -1242,6 +1261,19 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     for (const [by, n] of healOwed) if (n >= 1 && h.length < GATE_HEAL_ROWS_MAX) h.push([by, Math.min(Math.floor(n), GATE_HEAL_WIRE_MAX)]);
     if (!h.length || !online()?.sendEg?.('heal', { h })) return;
     for (const [by, n] of h) { const left = healOwed.get(by) - n; if (left > 0) healOwed.set(by, left); else healOwed.delete(by); }
+    lifelineSaid(h);   // EG-ZP
+  }
+  /** EG-ZP: when my body last stood under EG_LIFELINE_UNDER (the shared clock) - noted each frame in the Spire and at a
+   *  companion's heal that found me so: the census's `lowAt` (net/egBrain.js), off my own body. */
+  let lowAt = -Infinity;
+  /** EG-ZP - LIFELINE, THE RECEIVER'S HALF (section 15; the census's own rule - net/egBrain.js egHeal): the heal word just
+   *  said (`h`, `[peer, points]`) opens the strongest Lifeline among its healers on my blows (the fight's - scenes/
+   *  egFight.js egLifelineOpen) when I stood under EG_LIFELINE_UNDER within EG_LIFELINE_LOOK_MS (`lowAt` - this frame's
+   *  body among them), at the word's arrival at the room as my corrected clock reckons it (the shared clock and the half
+   *  round trip it measured). */
+  function lifelineSaid(h) {
+    const t = now(), v = egLifelineOf(link.state(), me(), h.map(([by]) => accountOf(by)));
+    if (v > 0 && t - lowAt <= EG_LIFELINE_LOOK_MS) fight?.lifeline?.(v, t + egClockHalfRtt(clock));
   }
   /** THE BOARD'S LINE from my end's claim (server-account/src/egHonours.js egStandingOf), on that breach's recap - the one
    *  standing, the one kept, and one still to be made. */
@@ -1414,6 +1446,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         const c = egClockDue(clock, Date.now());
         if (c != null && !o?.sendEg?.('clk', { c, h: egClockHalfRtt(clock) })) clock.sent.delete(c);
         if (!witness && entity.health > 0 && entity.maxHealth > 0 && egMemberOf(E, me())?.in) sayBody(entity.health / entity.maxHealth, Date.now());
+        if (entity.health < entity.maxHealth * EG_LIFELINE_UNDER) lowAt = t;   // EG-ZP: my body seen under 30%, for Lifeline (lifelineSaid)
       }
       if (returnable() && backSaid !== wayBack.b) { backSaid = wayBack.b; say(EG_BACK_TEXT.offer); }   // EG-ZD (section 22): THE WAY BACK offered, once
       this.callFrame(t);   // EG-F: the arch, the call's prompt and portal, the sight lines
@@ -1652,6 +1685,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     healedBy(id, n) {
       if (!inSpire() || witness || !(n > 0) || typeof id !== 'string' || !id) return false;
       healOwed.set(id, (healOwed.get(id) ?? 0) + n);
+      if (entity.health - n < entity.maxHealth * EG_LIFELINE_UNDER) lowAt = now();   // EG-ZP: the heal found me under 30% (it has landed: my body less it)
       return true;
     },
     /** EG-ZH: the hall's reverb as held (tests). */
