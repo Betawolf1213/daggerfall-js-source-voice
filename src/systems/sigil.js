@@ -196,6 +196,15 @@ export function setSigilOnline(on) { _online = !!on; if (!_online) _renown = nul
 export function setSigilRenown(level) { _renown = _online && Number.isSafeInteger(level) && level >= 1 ? level : null; }
 export const sigilOnline = () => _online;
 export const sigilRenown = () => _renown;
+/** RENOWN-GATE (2026-10-12, the owner: "gate elite/revenant spawns behind renown level"; asked, offline "Unchanged
+ *  offline"): DOES THE PAGE'S RENOWN OPEN WHAT WAITS FOR RENOWN `min`? Offline always - Renown is online's own and
+ *  offline earns none, so offline play keeps what it had (RENOWN-LOOT's offline answer). Online once the page's Renown
+ *  reaches `min`, and never before the page knows it (the moments before the first token) - nothing opens ahead of the
+ *  Renown behind it, RENOWN-LOOT's first-stage law. The one door: eliteFoes.js eliteRenownOpen (Renown 5) and revenant.js
+ *  revenantHeld (Renown 10) ask it (`06-Systems/Revenants.md` section 39).
+ *  @param {number} min
+ *  @param {{ online?: boolean, renown?: number|null }} [o] */
+export const renownOpens = (min, { online = _online, renown = _renown } = {}) => !online || (Number.isSafeInteger(renown) && /** @type {number} */ (renown) >= min);
 
 /**
  * THE DRINK: the weapon in my hand drinks `xp`, the Renown XP I just earned with it (a kill, a quest) - online, my

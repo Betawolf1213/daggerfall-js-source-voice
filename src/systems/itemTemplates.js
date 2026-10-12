@@ -6,7 +6,7 @@
 // group's j-th entry is GROUP_TEMPLATE_INDICES[group][j]
 // (ItemHelper.GetEnumArray/GetItemTemplate).
 
-import { clampArmorVariant } from './armorMaterials.js';   // AUDIT 23 (items-6)
+import { clampArmorVariant, isPlate, plateMetal } from './armorMaterials.js';   // AUDIT 23 (items-6); BAL6-GAUNTLETS: a plate piece's metal
 import { conditionMultipliersByMaterial, valueMultipliersByMaterial, WEAPONS, WEAPON_CONDITION_POOL } from '../characters/weapons.js';   // AUDIT 23 (items-5); AUDIT 68 S27-weightForMaterial-dup: ItemBuilder's value ladder and the Weapons enum, one home each; WEAPON-POOL: the one pool
 import { GROUP_TEMPLATE_INDICES } from './itemTemplatesData.js';
 import { WAGON_KINDS, wagonKindOf } from './wagonKinds.js';   // WAGONS1: a wagon's picture is Mac's wagon of its kind (read at call time - wagonKinds.js reads this module's TRANSPORT_SMALL_CART)
@@ -122,7 +122,7 @@ export function itemBaseValue(item, lookup = templateByIndex) {
   if (item.group === 'Armor') {
     const m = item.material ?? 0;
     if (m === 0x0100) return t.basePrice * 2;                     // chain
-    if (m >= 0x0200) return materialValue(t.basePrice, m - 0x0200);   // plate
+    if (isPlate(m)) return materialValue(t.basePrice, plateMetal(m));   // plate (AUDIT CLAWS B2: the decode's one home)
     return t.basePrice;                                           // leather
   }
   return t.basePrice;
@@ -295,7 +295,7 @@ export function mintCondition(item) {
   const mat = item.material;
   if (mat != null && max > 0) {
     if (item.group === 'Weapons') max = Math.trunc((max * (conditionMultipliersByMaterial[mat] ?? 4)) / 4);
-    else if (item.group === 'Armor' && mat >= 0x0200) max = Math.trunc((max * (conditionMultipliersByMaterial[mat - 0x0200] ?? 4)) / 4);
+    else if (item.group === 'Armor' && isPlate(mat)) max = Math.trunc((max * (conditionMultipliersByMaterial[plateMetal(mat)] ?? 4)) / 4);   // BAL6-GAUNTLETS: the plate decode's one home (armorMaterials.js plateMetal)
   }
   item.maxCondition = max;
   item.currentCondition = max;

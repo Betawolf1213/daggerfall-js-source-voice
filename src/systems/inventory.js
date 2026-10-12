@@ -22,6 +22,7 @@ import { weightForMaterial, WEAPONS } from '../characters/weapons.js';   // AUDI
 // A2: SetItem's two draws-and-writes, one home each (itemTemplates.js
 // is a leaf of this module's import graph - it reads the same JSON).
 import { mintCondition, rollPaintingMessage, templateByIndex, isAmmunition } from './itemTemplates.js';
+import { isPlate, plateMetal } from './armorMaterials.js';   // AUDIT CLAWS B2: a plate piece's metal, one decode (a leaf)
 import { ammoTemplateFor } from '../characters/thunderlockIds.js';   // what a ranged weapon spends - a leaf, so no cycle (see the file)
 import { isRriStackable } from './rriRealism.js';   // RRI2: the IsItemStackable override - an added yes (FormulaHelper.cs:2100-2102)
 import { noteShot } from './shotTally.js';   // ARENA-ARROWS: the shots a bout loosed - a leaf, so no cycle
@@ -589,7 +590,7 @@ export function unitWeightInKg(item) {
   }
   if (item.group === 'Armor' && item.material != null) {
     if (item.material === 0x0000) base = leatherWeight(base);
-    else if (item.material >= 0x0200) base = weightForMaterial(base, item.material - 0x0200); // plate
+    else if (isPlate(item.material)) base = weightForMaterial(base, plateMetal(item.material)); // plate
   }
   return base;
 }

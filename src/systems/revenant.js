@@ -31,6 +31,11 @@
 // OFF IS DFU EXACTLY: with the loot-rarity row off (the Loot arc's switch, as LOOT7's), no revenant is made, flees or
 // returns.
 //
+// RENOWN-GATE (2026-10-12, bible/06-Systems/Revenants.md section 39): ONLINE, REVENANTS WAIT FOR RENOWN 10
+// (REVENANT_MIN_RENOWN). Under it a character's are HELD (revenantHeld): every door that makes, stands, spreads or marks
+// one answers as the switch's off does, while what is remembered stays on the page and the sworn keep their days.
+// Offline nothing is held. And a due one takes two encounter rolls in five, not one in two (REVENANT_RETURN_CHANCE).
+//
 // ONLINE: a revenant is its character's own memory; a returning one is my own foe, streamed as any - its kind, health,
 // trait, glow and (REVENANT-WIRE) its NAME, the foe record's `nm`, so every puppet is called what its owner calls it.
 //
@@ -42,6 +47,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { lootRarityOn } from './lootRarity.js';
+import { renownOpens } from './sigil.js';   // RENOWN-GATE: the page's Renown, the door every Renown-woken power reads
 import { wildHere } from './wildZone.js';   // PVPDUNGEONS: no revenant is made in, nor returns to, the open zone
 import { registerPlayerBlowLanded } from './sigilSetPowers.js';
 import { registerPlayerHurtListener } from '../characters/playerEntity.js';   // REVENANT-HARM: a death no blow names
@@ -85,6 +91,10 @@ import { setFeudGate, setFeudClock, noteFeudHarm, noteFeudBackstab, takeFeud, se
 // ── the numbers ─────────────────────────────────────────────────────
 /** A revenant is a foe of this level or more (LOOT7's champion floor, ELITE-FLOOR's). */
 export const REVENANT_MIN_LEVEL = 3;
+/** RENOWN-GATE (2026-10-12, the owner: "gate elite/revenant spawns behind renown level"; asked, "Elites 5, revenants 10",
+ *  offline "Unchanged offline"): online, a character's revenants wait for this Renown (revenantHeld) - an evening's play
+ *  past the elites' 5 (eliteFoes.js ELITE_FOE_MIN_RENOWN), so a returning elite always finds elites standing. */
+export const REVENANT_MIN_RENOWN = 10;
 /** How many living revenants a character keeps; a new one past it replaces the weakest, oldest. */
 export const REVENANT_MAX = 5;
 /** The highest rank a revenant climbs to. */
@@ -119,8 +129,9 @@ export const REVENANT_TOMBS_MAX = 200;
 /** It comes back between one and three days later, on the character's own clock. */
 export const REVENANT_RETURN_MIN_MINUTES = 1440;
 export const REVENANT_RETURN_MAX_MINUTES = 4320;
-/** A due revenant takes an open-world encounter roll this often. */
-export const REVENANT_RETURN_CHANCE = 0.5;
+/** A due revenant takes an open-world encounter roll this often. RENOWN-GATE (the owner: "slighty reduce the spawn rate
+ *  of revnants"; asked, "Return chance 50% → 40%"): two rolls in five - it was one in two. */
+export const REVENANT_RETURN_CHANCE = 0.4;
 /** Out in the world and gone unfought (outrun, a load, a sweep), it waits this long and comes again. */
 export const REVENANT_LOST_MINUTES = 360;
 /** Its rank over what it was: health and blows per rank, and a class foe's level per rank. */
@@ -194,6 +205,12 @@ const sanitizeDay = (v) => (Number.isInteger(v) && v >= 0 ? v : null);
 const laterDay = (a, b) => (a == null ? b : b == null ? a : Math.max(a, b));
 
 export const revenantOn = () => lootRarityOn();
+/** RENOWN-GATE: are this page's revenants HELD - online under REVENANT_MIN_RENOWN, or before the page knows its Renown
+ *  (sigil.js renownOpens; offline never)? Held, every door that makes, stands, spreads or marks one answers as the
+ *  switch's off does - none is made or flees, none returns or keeps its lair, no rumor or hunt points at one, none
+ *  festers - and what is remembered stays on the page (ui/revenantPage.js says it is held) while the sworn keep their days.
+ *  @param {{ online?: boolean, renown?: number|null }} [o] */
+export const revenantHeld = (o) => !renownOpens(REVENANT_MIN_RENOWN, o);
 const nowMinutes = () => { try { return Math.floor(ownMinutes()); } catch { return 0; } };
 /** Does the sky read night now (TIME1's sky - the world's offline)? */
 const skyIsNight = () => { try { return isNight(skyMinutes()); } catch { return false; } };
@@ -394,6 +411,7 @@ const dueFrom = (now, rolls) => now + REVENANT_RETURN_MIN_MINUTES + Math.floor(r
  *  never the watch or an ally; `rec` the pool's record when there is one - never a quest's foe or a summons. */
 export function revenantCandidate(entity, rec = null) {
   if (!entity || !revenantOn()) return false;
+  if (revenantHeld()) return false;   // RENOWN-GATE: held - none made, none runs (a flight that could make no revenant would only rob a kill), no ledger kept
   if (entity.retinueOf != null) return false;   // RVN6 (Feud-Arc.md 17): a band's follower is its master's, never one itself
   if (entity.wildFoe || entity.wildGiant) return false;   // PVPDUNGEONS (the owner: "No elite or any monster in the zone can be a revenant")
   if (entity.bout) return false;   // AUDIT ARENA-LADDER 2: a fighter on the sand is its bout's - an elite champion never flees it as a revenant, nor becomes one
@@ -678,6 +696,7 @@ export const revenantRecord = (player, id) => { ensureMirror(player); return rev
  *  character's out in the world already), the highest rank first, on REVENANT_RETURN_CHANCE. Answers the record, or null. */
 export function revenantToReturn(player, { now = nowMinutes(), rolls = Math.random } = {}) {
   if (!revenantOn() || wildHere()) return null;   // PVPDUNGEONS: none returns in the open zone
+  if (revenantHeld()) return null;   // RENOWN-GATE: held - none returns, and none is claimed
   ensureMirror(player);
   const living = livingRevenants();
   if (living.some((r) => r.out)) return null;
@@ -754,6 +773,7 @@ export function revenantHandBack(player, r, entity = null) {
  *  living, unsworn revenant whose lair it is, not out, and due or its lair known; CLAIMED as a return is (its stand
  *  crosses awaits). Decided here: a Night-stalker is at home at any hour - the dark is its own underground. */
 export function revenantForLair(player, here, { now = nowMinutes(), dueOnly = false } = {}) {   // `dueOnly`: a rest's answer - due, never merely known
+  if (revenantHeld()) return null;   // RENOWN-GATE: held - none is at home, and none is claimed
   if (!revenantOn() || wildHere() || !here || !Number.isInteger(here.px) || !Number.isInteger(here.py)) return null;   // PVPDUNGEONS: no lair in the open zone
   ensureMirror(player);
   const r = livingRevenants().filter((x) => !x.out && x.lair && x.lair.px === here.px && x.lair.py === here.py && (x.dueAt <= now || (!dueOnly && x.lairKnown)))
@@ -1042,6 +1062,7 @@ export function revenantSignatureEvent(r, noun, { archive = null, playerName = '
  *  RUMOR_WEAK carries its weakness - hinted, or one time in RUMOR_NAMED named ("Folk say it can't abide fire.").
  *  Nothing is written into the mill. Answers the words, or null - the mill's turn. */
 export function revenantRumor(here, session, { rolls = Math.random } = {}) {
+  if (revenantHeld()) return null;   // RENOWN-GATE: held - no word of a lair it is not at; the mill's turn, its answer unspent
   if (!revenantOn() || !here || !session || !Number.isInteger(here.px) || !Number.isInteger(here.py)) return null;
   if (!((session.numAnswersGivenTellMeAboutOrRumors | 0) < MAX_ANSWERS_TELL_ME_ABOUT_OR_RUMORS || session.isSpyMaster)) return null;
   const inRegion = (r) => Number.isInteger(here.region) && here.region >= 0 && r.lair.region === here.region;
@@ -1067,6 +1088,7 @@ export function revenantRumor(here, session, { rolls = Math.random } = {}) {
 /** RVN7c (bible/12-Enhanced-AI/Feud-Arc.md 18.3): THE LAIRS HEARD OF, ON THE MAPS - a circle at each living, unsworn
  *  revenant's lair the player knows (`lairKnown`), named for it (ui/bountyMapMark.js's shape, in blood red). */
 export function revenantMapMarks() {
+  if (revenantHeld()) return [];   // RENOWN-GATE: held - no lair marked where none waits
   if (!revenantOn()) return [];
   return livingRevenants().filter((r) => r.lair && r.lairKnown).map((r) => ({ cx: r.lair.px + 0.5, cy: r.lair.py + 0.5, r: LAIR_RING_R, label: r.given ?? r.name, id: r.id }));
 }
@@ -1074,6 +1096,7 @@ export function revenantMapMarks() {
  *  questLog's shape, BOUNTY1's precedent): "Hunt: Grushnak the Butcher", the way there from `here` (my map pixel), no
  *  clock. Its Abandon (systems/huntJournal.js) forgets the lair. */
 export function revenantHuntEntries(here = null) {
+  if (revenantHeld()) return [];   // RENOWN-GATE: held - no hunt in the log for a lair none waits in
   if (!revenantOn()) return [];
   const line = (text) => ({ formatting: 'text', text });
   return livingRevenants().filter((r) => r.lair && r.lairKnown).map((r) => {
@@ -1108,8 +1131,11 @@ export function revenantFester(player, { now = nowMinutes(), rolls = Math.random
   if (_state.lastDay == null) { _state.lastDay = day; persist(); return []; }   // the first count: from here
   if (day <= _state.lastDay) return [];   // the encounter tick's every ask: nothing new. AUDIT FEUD: nor a clock behind it (a reload of an older save) - the mirror counted those days; none counts twice
   const up = [];
+  // RENOWN-GATE: held, none festers - none can come, so none is left unfought; its held days pass uncounted (lastDay
+  // moves on below, so none is caught up when the gate opens), and the sworn's days run as ever
+  const held = revenantHeld();
   for (let d = Math.max(_state.lastDay + 1, day - FESTER.CATCHUP + 1); d <= day; d++) {
-    for (const r of livingRevenants()) {
+    for (const r of held ? [] : livingRevenants()) {
       if (r.out || !festersOn(Math.floor((r.dueAt ?? 0) / MINUTES_PER_DAY), d)) continue;
       if (r.rank >= REVENANT_MAX_RANK) { r.wrath = Math.min(WRATH_MAX, (r.wrath | 0) + 1); touch(r); continue; }
       r.wrath = (r.wrath | 0) + 1;
@@ -1188,6 +1214,7 @@ function splitPack(player, r) {
  *  the rest, and its gold, to me); the cap held; its member forgotten. The host stands it, hostile, where its body stood
  *  (applyRevenant's `turned`). Answers the record, or null. */
 export function revenantBetrays(player, r, { now = nowMinutes(), rolls = Math.random } = {}) {
+  if (revenantHeld()) return null;   // RENOWN-GATE: held - none turns on me where it stands (a hostile one stood); it stays sworn until the gate opens
   if (!r?.sworn || r.defeated) return null;
   splitPack(player, r);   // its pack as a deserter's
   r.sworn = false; r.fate = null; r.companion = null;

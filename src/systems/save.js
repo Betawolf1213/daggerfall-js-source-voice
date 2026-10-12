@@ -936,6 +936,11 @@ export function restorePlayer(entity, snap, spellsByIndex = null) {
   // marker and the entry can never disagree (the gates - a second
   // infection, the disease immunity - read the marker).
   entity.racialOverride = entity.activeEffects.find((a) => a.kind === 'racialOverride' && !a.ended) ?? null;
+  // AUDIT CLAWS A2: and the beast-form flag, the curse entry's mirror (lycanthropy.js writes it from `isTransformed` at
+  // each change and each round) - a load onto the same entity left the last game's: a man loaded over a transformed
+  // werewolf kept it (the round returns at once for a character with no curse), and a transformed save on a fresh page
+  // waited a round for it. Its readers - the claws' metal, the street's politeness gate, the tells - read it at once.
+  entity.isInBeastForm = !!(entity.racialOverride?.racial === 'lycanthropy' && entity.racialOverride.isTransformed);
   // DISC19-C: the revival decided above, now that the poison, the
   // continuous damage and the exposure it ends are the save's own.
   if (loadDeadOnline) reviveForPlay(entity);

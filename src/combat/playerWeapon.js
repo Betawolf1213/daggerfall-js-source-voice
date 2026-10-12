@@ -367,9 +367,11 @@ export class PlayerWeapon {
    * weapon - the material gate (0 damage on anything silver-to-hit) and a
    * 0-0 weapon range, ~9 a swing where the beast's +30 HandToHand fist
    * does ~21. Everything else `weapon` carries (the draw, the swing sound,
-   * the art) is the screen's and stays. BAL6: the bare hand still - but
-   * the beast's claws meet a foe's metal as silver (characters/weapons.js
-   * strikeMaterialOf, read by both cores off the entity's beast form).
+   * the art) is the screen's and stays. BAL6-CLAWS (bible/05-Combat/
+   * Balance-Arc.md section 12): BAL6 had the claws strike as silver; the
+   * owner reverted it - the bare hand, ungated, DFU's. BAL6-GAUNTLETS: the
+   * plate gauntlets the beast wears add their metal's damage to it, a port
+   * departure (combat/clawMetal.js, read by both cores).
    */
   get strikingWeapon() {
     if (!this.weapon?.werecreatureClaws) return this.weapon;

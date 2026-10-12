@@ -20,6 +20,7 @@ comes back later under a name of its own, stronger, carrying better loot, and it
 A **special** foe: an elite (`systems/eliteFoes.js`), a LOOT7 champion (`systems/champions.js`), or a revenant already.
 It must be level 3 or more (LOOT7's floor), and never the city watch, an ally, or a quest's foe
 (`revenantCandidate`). With the **Loot rarity** row off nothing here happens: no revenant is made, flees or returns.
+Online, under **Renown 10**, a character's revenants are held (RENOWN-GATE, section 39): none is made, flees or returns.
 
 Two deeds make one:
 
@@ -78,9 +79,9 @@ A record per character:
 
 - **Due** one to three days later on the character's own clock (`worldTick.ownMinutes`).
 - **Claimed by its roll**: the record is out from the roll that picks it, so no second copy stands while its stand loads. A stand that stood nobody frees it (`releaseRevenantStand`).
-- On a due revenant, an open-world encounter roll (`scenes/world.js runEncounterTick`) stands it instead, 50% of the
-  rolls. Only one is out at a time, the highest rank first. This happens before the party's group-roll gate: a revenant
-  is the player's own.
+- On a due revenant, an open-world encounter roll (`scenes/world.js runEncounterTick`) stands it instead, 40% of the
+  rolls (50% until RENOWN-GATE, section 39). Only one is out at a time, the highest rank first. This happens before the
+  party's group-roll gate: a revenant is the player's own. Online, under Renown 10, no roll stands one (section 39).
 - **Stood** by `spawnFoe(..., { revenant })` (`revenantSpawnOptions`):
   - an elite's glow again where elites stand (online), never a fresh roll;
   - its champion trait again, never a fresh roll;
@@ -177,6 +178,7 @@ Every number is a named constant at the top of `systems/revenant.js`:
 | Constant | Value |
 |---|---|
 | `REVENANT_MIN_LEVEL` | 3 |
+| `REVENANT_MIN_RENOWN` | 10 (online - RENOWN-GATE, section 39) |
 | `REVENANT_MAX` | 5 |
 | `REVENANT_MAX_RANK` | 5 |
 | `REVENANT_FLEE_HEALTH` / `_YOUNG` | 0.2 / 0.35 (FLIGHT-FIRST: ranks 1-2) |
@@ -186,7 +188,7 @@ Every number is a named constant at the top of `systems/revenant.js`:
 | `REVENANT_ESCAPE_NEAR` | 12 (20 until FLIGHT-FIRST) |
 | `REVENANT_ESCAPE_DISTANCE` | 45 |
 | `REVENANT_RETURN_MIN/MAX_MINUTES` | 1440 / 4320 |
-| `REVENANT_RETURN_CHANCE` | 0.5 |
+| `REVENANT_RETURN_CHANCE` | 0.4 (0.5 until RENOWN-GATE) |
 | `REVENANT_LOST_MINUTES` | 360 |
 | `REVENANT_HEALTH_PER_RANK` | 0.25 |
 | `REVENANT_DAMAGE_PER_RANK` | 0.1 |
@@ -627,3 +629,68 @@ Killing the player still ranks a revenant up; it is no longer nearly the only wa
 (6), `tools/mutants/flightfirst.json` (15 dead). PIN MOVED: `test/feudharness.test.js` - its flight and rank 5's
 rally chase as a fast runner, and a rank 3 run down is cornered (its last stand comes before a kneel mid-run);
 `test/audittell.test.js` - the flee's signature.
+
+## 39. The Renown gate (RENOWN-GATE, 2026-10-12)
+
+The owner: "I want to gate elite/revenant spawns behind renown level and also slighty reduce the spawn rate of
+revnants". Asked, the owner chose elites at Renown 5 and revenants at 10 ("Elites 5, revenants 10"), offline "Unchanged
+offline", a shared dungeon's elites "Room's pick stands", and the rate "Return chance 50% → 40%".
+
+**The door.** Renown is online's own (`Accounts-And-Cloud-Saves-Arc.md` RENOWN1: offline earns none), so the gate is
+too. `systems/sigil.js renownOpens(min)` sits beside the door every Renown-woken power reads (the sigils', the sets',
+RENOWN-LOOT's): offline it is always open; online it opens once the page's Renown reaches `min`, and never before the
+page knows it (the moments before the first token) - RENOWN-LOOT's first-stage law, nothing ahead of the Renown behind
+it. `scenes/world.js` sets the door; `scenes/exterior.js`, the offline bench, never does.
+
+**Elites at Renown 5** (`eliteFoes.js ELITE_FOE_MIN_RENOWN`, `eliteRenownOpen`). The elites a player stands as its
+own wait for it: the open world's one in twenty (`rollOverworldElite` - a street puppet reads its owner's word off
+`z`) and a search's waking dead (`searchables.js rollSearchElite`). Each draws its roll first, so the dice are the
+same held or not. A save's word on a foe stands whatever the Renown (it is never re-rolled), and a returning revenant
+stands as what it was. Not a shared dungeon's pick (`pickDungeonElites`: a normal dungeon's one in five, an Elite
+Dungeon's three or four, a Super dungeon's six). Every client builds that pick alike, and the room's memory carries no
+elite word (`net/wire.js validSharedFoe`; adding one is a relay deploy), so one client's Renown would split the room:
+a joiner's copy would take the host's x5 health off the record, with no glow and x1 blows. It stays the room's, as
+ELITE-FLOOR's class level does online (`05-Combat/Balance-Arc.md` section 10). The arena's tier champions are their
+bout's.
+
+**Revenants at Renown 10** (`revenant.js REVENANT_MIN_RENOWN`, `revenantHeld`) - an evening's play past the
+elites', so a returning elite always finds elites standing. Under it a character's revenants are HELD, and every door
+that makes, stands, spreads or marks one answers as the Loot rarity row's off does:
+
+- none is made, runs or keeps a fight's ledger (`revenantCandidate`) - a flight that could make no revenant would only
+  rob the player of a kill;
+- none returns on an encounter roll or a rest, none is at home in its lair, and none is claimed (`revenantToReturn`,
+  `revenantForLair`); a sworn one at the edge of betrayal stays sworn (`revenantBetrays`: its turning stands a hostile
+  revenant beside the player);
+- the towns say nothing of one, the person's answer unspent (`revenantRumor`); the maps mark no lair and the log holds
+  no hunt (`revenantMapMarks`, `revenantHuntEntries`);
+- none festers (RVN9, section 25): one that cannot come is not left unfought, and its held days pass uncounted, so the
+  gate's opening catches none up.
+
+What is remembered stays. The page lists every one, each **Held** - "It will not come for you before Renown 10." - with
+its lair named but promised on no map and by no town, and with none it says revenants come from Renown 10
+(`ui/revenantPage.js` comeWords, lairWords). The sworn keep their days: loyalty moves and a desertion leaves, as it
+stands nothing (a deserter's return is held like any).
+
+**The rate.** A due revenant takes 40% of the encounter rolls (`REVENANT_RETURN_CHANCE`, 0.5 before) - a fifth fewer
+returns, online and offline alike.
+
+**Offline nothing is held**: elites stand as BAL4 has them, and revenants are made, flee and come as before - at the
+new rate.
+
+**The four hosts** (rule 17e). Every gate is read inside the shared laws, so no host carries one of its own (a sweep of
+`src/scenes/` pins it):
+
+- `scenes/world.js` WIRED: its wilds' roll (the `exteriorFoes.js` pool), its graveyards' searches, its returns,
+  rumors, marks and hunts, all through the laws; it sets the door.
+- `scenes/dungeonContext.js` WIRED: a search's elite, a lair's stand, a rest's return and a flight, through the laws;
+  its layout pick the room's, untouched (the owner's choice).
+- `scenes/worldModes.js` WIRED for its dungeon mode (the same context). FLAGGED for its buildings: they roll no elite
+  (the one factory's `inLocation` defaults to a location's ground) and stand no return, and its arena stages' tier
+  champions are their bout's - nothing to gate.
+- `scenes/exterior.js` WIRED through `revenantToReturn`; its pool rolls no elite (a town's ground, as a building's),
+  and the bench never goes online, so nothing is held there.
+
+Pinned: `test/renowngate.test.js` (14); `tools/mutants/renowngate.json` (30, all dead). No pin moved; two AUDIT BAL
+records (`tools/mutants/bal.json` AUDIT-BAL-a-search-elite-anywhere and AUDIT-BAL-the-search-roll-skipped) were re-aimed
+by content at the search's roll as it now reads, and both still die.

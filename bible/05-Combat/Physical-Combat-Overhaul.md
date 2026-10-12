@@ -51,7 +51,7 @@ its `modsettings.json`:
 | `CalculateStruckBodyPart` | twenty slots, feet likelier than the head | `PCAAO_BODY_PARTS`, `pcaaoStruckBodyPart` |
 | `CriticalStrikeHandler` | luck's `Mathf.Floor((luck-50)/25f)` term (clamp discarded) bending the divisor | `pcaaoCriticalStrike` |
 | `GetBonusOrPenaltyByEnemyType` | willpower's `Random.Range(0, n)` bonus and the level penalty on the career's Bonus/Phobia bits, the Humanoid arm on GetEnemyGroup | `pcaaoBonusOrPenaltyByEnemyType` |
-| `CalculateHandToHandAttackDamage` / `CalculateWeaponAttackDamage` | the strength term, the Skeletal Warrior's halving and the silver six's doubling, a two-handed non-bow doubling the strength term | `pcaaoHandToHandAttackDamage`, `pcaaoWeaponAttackDamage`, `SILVER_DOUBLED_CAREERS` |
+| `CalculateHandToHandAttackDamage` / `CalculateWeaponAttackDamage` | the strength term, the Skeletal Warrior's halving and the silver six's doubling, a two-handed non-bow doubling the strength term (and the beast's claws their gauntlets' metal since BAL6-GAUNTLETS, the fifth departure) | `pcaaoHandToHandAttackDamage`, `pcaaoWeaponAttackDamage`, `SILVER_DOUBLED_CAREERS` |
 | `AdjustWeaponHitChanceMod` / `AdjustWeaponAttackDamage` | Roleplay Realism's archery: the bow's draw time in ms bends hit and damage; registered on FormulaHelper whatever the armour module says (AUDIT PCO1) | Roleplay Realism's own `rrAdjustWeaponHitChanceMod`, `rrAdjustWeaponAttackDamage` (rrRealism.js - one export, AUDIT 68), registered on `formulas.adjustWeaponHitChanceMod` / `adjustWeaponAttackDamage` - DFU's two no-op hooks, grown into the stock core at the C#'s two sites (AUDIT PCO1); the draw timer is `playerWeapon.lastDrawMs` (below) |
 | `AlterDamageBasedOnWepCondition` / `AlterArmorReducBasedOnItemCondition` | the condition bands | `pcaaoAlterDamageBasedOnWepCondition`, `pcaaoAlterArmorReducBasedOnItemCondition` |
 | `ArmorMaterialIdentifier` / `ArmorMaterialModifierFinder` / `EqualizeMaterialConditions` / `SpecificWeaponConditionDamage` | the four material ladders | the four `pcaao*` of the same names |
@@ -220,6 +220,22 @@ value, and every even version of that measured easier. That split is the
 mod's premise: armour reduces damage and never the chance to be hit. The
 fight against a foe at the 97% clamp moves through the crit (damage taken
 about 14% more), and against a lower foe through the to-hit.
+
+## The fifth departure: the beast's claws take its gauntlets' metal (BAL6-GAUNTLETS, 2026-10-12)
+
+The owner, 2026-10-12: "based on your equipped gauntlets it would affect
+your attacks as a wereboar/werewolf. Like scaling without being
+overpowered" (`05-Combat/Balance-Arc.md` section 12). The mod's
+`CalculateHandToHandAttackDamage` rolls the fist, adds the swing's and
+the career's modifiers and its own strength term, and reads no item. A
+transformed lycanthrope's plate gauntlets now add their metal's
+GetWeaponMaterialModifier (Elven +1 to Daedric +6, never below 0) there,
+after the strength term and before the `< 1` floor, where
+`CalculateWeaponAttackDamage` adds a weapon's. `pcaaoHandToHandAttackDamage`
+reads `combat/clawMetal.js` clawMetalDamage, the one law DFU's core, the
+refereed lanes' stand-in and the stats card's model read too. The hit
+chance is untouched, the condition bands never read it, and a fist that
+is not the beast's is the mod's as written.
 
 ## What is kept bug for bug
 

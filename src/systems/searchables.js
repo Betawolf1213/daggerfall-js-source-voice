@@ -35,7 +35,7 @@
 import { DOOR_ACTIVATION_DISTANCE } from '../player/activate.js';
 import { isShopShelfModel } from './shopStock.js';
 import { registerModSaveData } from './modSaveData.js';
-import { eliteHash, eliteRng, elitesAllowed } from './eliteFoes.js';   // AUDIT BAL: and where elites stand at all
+import { eliteHash, eliteRng, elitesAllowed, eliteRenownOpen } from './eliteFoes.js';   // AUDIT BAL: and where elites stand at all; RENOWN-GATE: and the searcher's Renown
 import { goldStack } from './inventory.js';
 import { createRandomWeapon, createRandomArmor, createRandomJewellery, createRandomReligiousItem, createRandomGem, createRandomClothing, createRandomPotion } from './loot.js';
 import { createRandomBook } from './books.js';
@@ -136,8 +136,10 @@ export const SEARCH_FOE_SPACING = 0.9;
 export const SEARCH_DOOR_REACH_M = 30;
 /** AUDIT BAL (bible/05-Combat/Balance-Arc.md section 10): only where elites stand (eliteFoes.js elitesAllowed - online,
  *  or offline under the loot ladder; an elite's drop is the ladder's) - the roll drawn first, so a search's dice are
- *  the same either way. With the ladder off a search woke an elite and its ladder-tier drop, the one door that did. */
-export const rollSearchElite = (rolls = Math.random) => rolls() < SEARCH_ELITE_CHANCE && elitesAllowed();
+ *  the same either way. With the ladder off a search woke an elite and its ladder-tier drop, the one door that did.
+ *  RENOWN-GATE (bible/06-Systems/Revenants.md section 39): and online only from the searcher's Renown 5
+ *  (eliteFoes.js eliteRenownOpen) - the foes a search wakes are the searcher's own stands. */
+export const rollSearchElite = (rolls = Math.random) => rolls() < SEARCH_ELITE_CHANCE && elitesAllowed() && eliteRenownOpen();
 
 // ── the loot ────────────────────────────────────────────────────────
 export const SEARCH_LOOT_MIN = 1;

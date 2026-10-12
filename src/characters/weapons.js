@@ -66,16 +66,6 @@ export const WEAPON_MATERIALS = Object.freeze({
   Mithril: 5, Adamantium: 6, Ebony: 7, Orcish: 8, Daedric: 9,
 });
 
-/** BAL6 (bible/05-Combat/Balance-Arc.md section 12; asked, "Beast claws count as silver"): A DEPARTURE - THE BEAST'S
- *  CLAWS STRIKE AS SILVER. DFU's material gate asks a weapon alone (FormulaHelper.cs:576-583, and the overhaul's soft
- *  rule inside the same `if (weapon)`), and a lycanthrope's claws are the empty hand - so with the curse's +30
- *  Hand-to-Hand a level-12 beast struck a Lich, whose hide asks Mithril, at x15 what a steel blade does. Against a foe's
- *  metal the claws are silver now (the soft rule's x0.4 at a Mithril foe; with it off, ineffective as a silver blade
- *  is); an ordinary fist - a monk's, a vampire's - stays DFU's, ungated. The material a blow is struck with: the
- *  weapon's, the beast's claws', or null (no gate). */
-export const BEAST_CLAW_MATERIAL = WEAPON_MATERIALS.Silver;
-export const strikeMaterialOf = (attacker, weapon) => (weapon ? weapon.material : attacker?.isInBeastForm ? BEAST_CLAW_MATERIAL : null);
-
 // ItemBuilder.cs statics, verbatim (indexed by WeaponMaterialTypes).
 export const weightMultipliersByMaterial = Object.freeze([4, 5, 4, 4, 3, 4, 4, 2, 4, 5]);
 export const valueMultipliersByMaterial = Object.freeze([1, 2, 4, 8, 16, 32, 64, 128, 256, 512]);

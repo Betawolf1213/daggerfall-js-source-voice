@@ -163,6 +163,7 @@ on:
       - "src/characters/thunderlockIds.js"
       - "src/characters/weaponStates.js"
       - "src/characters/weapons.js"
+      - "src/combat/clawMetal.js"
       - "src/combat/enemyEquipment.js"
       - "src/combat/formulas.js"
       - "src/combat/gunFeel.js"

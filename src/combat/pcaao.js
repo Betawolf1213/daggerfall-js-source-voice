@@ -85,7 +85,7 @@ import { liveStat } from '../systems/statMods.js';
 import { skillValue, SKILLS } from '../systems/skills.js';
 import { RACES } from '../systems/races.js';
 import { SPECIAL_ABILITY_BITS } from '../systems/specialAdvantages.js';
-import { WEAPONS, weaponMinDamage, weaponMaxDamage, weaponSkillUsed, strikeMaterialOf } from '../characters/weapons.js';
+import { WEAPONS, weaponMinDamage, weaponMaxDamage, weaponSkillUsed } from '../characters/weapons.js';
 import { equipTableOf, lowerCondition, blowWear, slotForBodyPart, EQUIP_SLOTS, weaponProficiencyFlag } from '../systems/equip.js';
 import { SHIELD_PARTS, isShieldTemplate, itemArmorValue } from '../systems/armorMaterials.js';
 import { conditionPercentage, itemLongName } from '../systems/itemInfo.js';
@@ -96,6 +96,7 @@ import { stampedTier } from '../systems/rarityTier.js';   // RARE-BREAK1: a piec
 import { entityEnchantArmorMod, entityArmorPoints, weaponDamageMods, weaponBlowMods } from '../systems/entityMods.js';   // RF1: the enchantment channels and the port's points (AUDIT SET P-M1: read apart) (SET2: and the weapon's own and the blow's, read here too)
 import { getItemHands, ITEM_HANDS } from '../characters/equipTable.js';
 import { createWeapon } from './enemyEquipment.js';
+import { clawMetalDamage } from './clawMetal.js';   // BAL6-GAUNTLETS: the beast's claws take its gauntlets' metal
 import {
   registerFormulaOverride, handToHandMinDamage, handToHandMaxDamage,
   WEAPON_MATERIAL_MODIFIER, enemyEntityGroup, careerAttackModifier, ENEMY_GROUPS, dice100,
@@ -468,7 +469,9 @@ export function pcaaoBonusOrPenaltyByEnemyType(attacker, target, rolls) {
 
 /** CalculateHandToHandAttackDamage: the player rolls DFU's own
  *  min..max, adds the modifier and the mod's STRENGTH term; a monster's
- *  `damageModifier` IS its summed attack damage. */
+ *  `damageModifier` IS its summed attack damage. BAL6-GAUNTLETS: the
+ *  beast's claws add its gauntlets' metal where a weapon's material
+ *  modifier stands (after Strength, before the floor - combat/clawMetal.js). */
 export function pcaaoHandToHandAttackDamage(attacker, target, damageModifier, player, rolls) {
   let damage = 0;
   if (player) {
@@ -476,6 +479,7 @@ export function pcaaoHandToHandAttackDamage(attacker, target, damageModifier, pl
     damage = range(handToHandMinDamage(h2h), handToHandMaxDamage(h2h), rolls);
     damage += damageModifier;
     damage += pcaaoDamageModifier(stat(attacker, 'strength'));
+    damage += clawMetalDamage(attacker);
   } else {
     damage += damageModifier;
   }
@@ -1046,23 +1050,24 @@ export function pcaaoAttackDamage(attacker, target, {
     if (int(((b.minDamage ?? 0) + (b.maxDamage ?? 0)) / 2) > wepAvg) weapon = null;
   }
   const struckWith = weapon;   // WEAR-VANILLA: the weapon the blow is struck with - never a monster's stand-in below
-  const struckMaterial = strikeMaterialOf(attacker, weapon);   // BAL6: a weapon's metal, or the beast's claws' silver
-  if (struckMaterial !== null) {
+  if (weapon) {
     if (modules.softMaterialRequirements) {
-      if ((target.minMetalToHit ?? -1) > struckMaterial) {
-        let m = F((target.minMetalToHit ?? -1) - struckMaterial);
+      if ((target.minMetalToHit ?? -1) > weapon.material) {
+        let m = F((target.minMetalToHit ?? -1) - weapon.material);
         m = m <= 0 ? F(1) : F(F(Math.min(F(m * F(0.2)), F(0.9)) - 1) * -1);
         matReqDamMulti = m;
       }
-    } else if ((target.minMetalToHit ?? -1) > struckMaterial) {
-      if (isPlayer(attacker)) say?.(MATERIAL_INEFFECTIVE_TEXT);
-      if (notes) notes.ineffective = true;
-      return 0;
+      skillID = weaponSkillOf(weapon);
+      if (skillID === SKILLS.BluntWeapon) bluntWep = true;
+    } else {
+      if ((target.minMetalToHit ?? -1) > weapon.material) {
+        if (isPlayer(attacker)) say?.(MATERIAL_INEFFECTIVE_TEXT);
+        if (notes) notes.ineffective = true;
+        return 0;
+      }
+      skillID = weaponSkillOf(weapon);
+      if (skillID === SKILLS.BluntWeapon) bluntWep = true;
     }
-  }
-  if (weapon) {
-    skillID = weaponSkillOf(weapon);
-    if (skillID === SKILLS.BluntWeapon) bluntWep = true;
   } else {
     skillID = SKILLS.HandToHand;
   }

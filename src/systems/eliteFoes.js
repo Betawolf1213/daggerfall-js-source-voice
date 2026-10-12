@@ -15,6 +15,10 @@
 //   - outdoors the foe's owner rolls the 5% and the foe record carries it (`z`, net/wire.js), so a puppet stands as the
 //     same elite: the size, the glow and the blows it lands at me (its owner's maximum health rides `k` already).
 //
+// RENOWN-GATE (2026-10-12, bible/06-Systems/Revenants.md section 39): ONLINE, AN ELITE OF MY OWN WAITS FOR RENOWN 5 -
+// the open world's roll and a search's (ELITE_FOE_MIN_RENOWN); a shared dungeon's pick stays every client's, and
+// offline every roll stands as BAL4 has it.
+//
 // PURE but for the item minters - the hosts call in.
 import { createRandomWeapon, createRandomArmor } from './loot.js';
 import { mintCondition, setItemFields } from './itemTemplates.js';
@@ -23,6 +27,7 @@ import { goldStack } from './inventory.js';
 import { isAmmunition } from './itemTemplates.js';
 import { KNIGHT_CITY_WATCH } from '../characters/mobileTypes.js';   // ELITE-FLOOR: the watch is never an elite
 import { ENEMY_BASICS } from '../characters/enemyBasics.js';   // ELITE-FLOOR: a kind's own level, the same on every client
+import { renownOpens } from './sigil.js';   // RENOWN-GATE: the page's Renown, the door every Renown-woken power reads
 
 /** Health and damage, times the foe's own (rolled, before any Elite Dungeon doubling - an elite is 5x, not 10x). */
 export const ELITE_FOE_HEALTH_MULT = 5;
@@ -63,6 +68,17 @@ export const ELITE_FOE_PREFIX = 'Elite ';
 /** ELITE-FLOOR (2026-10-02): an elite is a foe of this level or more - LOOT7's champion floor (systems/champions.js
  *  CHAMPION_MIN_LEVEL), so a new character's first road is never a five-times foe that hits three times as hard. */
 export const ELITE_FOE_MIN_LEVEL = 3;
+/** RENOWN-GATE (2026-10-12, the owner: "gate elite/revenant spawns behind renown level"; asked, "Elites 5, revenants 10",
+ *  offline "Unchanged offline", a shared dungeon "Room's pick stands"): ONLINE, AN ELITE OF MY OWN WAITS FOR THIS RENOWN -
+ *  the open world's roll (rollOverworldElite) and a search's (searchables.js rollSearchElite), each a foe its roller
+ *  stands as its own, so the roller's Renown is the word (a street puppet reads it off `z`). Not a shared dungeon's pick
+ *  (pickDungeonElites): every client builds that alike and the room's memory carries no word of an elite (wire.js
+ *  validSharedFoe), so one client's Renown would split the room - it stays the room's, as ELITE-FLOOR's class level
+ *  does online. A returning revenant stands as what it was (its record's `elite`), never a fresh roll. */
+export const ELITE_FOE_MIN_RENOWN = 5;
+/** RENOWN-GATE: does the page's Renown open an elite of its own? Offline always (sigil.js renownOpens).
+ *  @param {{ online?: boolean, renown?: number|null }} [o] */
+export const eliteRenownOpen = (o) => renownOpens(ELITE_FOE_MIN_RENOWN, o);
 
 /** ELITE-FLOOR: may this freshly built foe stand as an elite? Never under ELITE_FOE_MIN_LEVEL, never the city watch,
  *  never an ally - LOOT7's own exclusions (systems/champions.js applyChampion). */
@@ -156,8 +172,9 @@ export function pickDungeonElites(enemies, key, { elite = true, count = null, cl
   return n;
 }
 
-/** THE OPEN WORLD'S ROLL: is this new foe an elite? */
-export const rollOverworldElite = (rolls = Math.random) => rolls() < ELITE_FOE_OVERWORLD_CHANCE;
+/** THE OPEN WORLD'S ROLL: is this new foe an elite? RENOWN-GATE: the roll drawn first, then the Renown's word - the
+ *  same draw either way. */
+export const rollOverworldElite = (rolls = Math.random) => rolls() < ELITE_FOE_OVERWORLD_CHANCE && eliteRenownOpen();
 
 function gearPiece(level, rolls) {
   for (let tries = 0; tries < 6; tries++) {

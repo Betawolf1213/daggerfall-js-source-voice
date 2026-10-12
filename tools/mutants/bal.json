@@ -497,8 +497,8 @@
   {
     "name": "AUDIT-BAL-a-search-elite-anywhere",
     "file": "src/systems/searchables.js",
-    "old": "rolls() < SEARCH_ELITE_CHANCE && elitesAllowed();",
-    "new": "rolls() < SEARCH_ELITE_CHANCE;",
+    "old": "rolls() < SEARCH_ELITE_CHANCE && elitesAllowed() && eliteRenownOpen();",
+    "new": "rolls() < SEARCH_ELITE_CHANCE && eliteRenownOpen();",
     "tests": [
       "test/bal_arc.test.js"
     ]
@@ -506,8 +506,8 @@
   {
     "name": "AUDIT-BAL-the-search-roll-skipped",
     "file": "src/systems/searchables.js",
-    "old": "rolls() < SEARCH_ELITE_CHANCE && elitesAllowed();",
-    "new": "elitesAllowed() && rolls() < SEARCH_ELITE_CHANCE;",
+    "old": "rolls() < SEARCH_ELITE_CHANCE && elitesAllowed() && eliteRenownOpen();",
+    "new": "elitesAllowed() && rolls() < SEARCH_ELITE_CHANCE && eliteRenownOpen();",
     "tests": [
       "test/bal_arc.test.js"
     ]
