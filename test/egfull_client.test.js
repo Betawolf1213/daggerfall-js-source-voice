@@ -16,6 +16,7 @@ import { EG_VESTIGES, EG_V_BY_KEY } from '../src/net/egVestige.js';
 import { isRestoringPotion, registerSpirePotionLaw, spirePotionRefusal, SPIRE_POTION_TEXT } from '../src/systems/spireKit.js';
 import { POTION_RECIPES, potionRecipeKey } from '../src/systems/potionRecipes.js';
 import { useItem } from '../src/systems/useItem.js';
+import { registerMadeLevelHere } from '../src/systems/madeLevel.js';   // EG-H2: THE POTION LAW is the made level's rule
 import { TEMPLATES } from '../src/systems/itemKinds.js';
 import { createEgLink } from '../src/net/egLink.js';
 
@@ -110,6 +111,7 @@ test('EG-FULL THE POTION LAW (section 17.4): the restoring potions are the recip
   const P = inBreach();
   const { client } = P;
   registerSpirePotionLaw({ allowed: () => client.potionAllowed(), used: () => client.potionUsed() });
+  registerMadeLevelHere(() => 'spire');   // PIN MOVED (EG-H2): the potion door asks the made level's law where the player stands - the world host's word, here the Spire's
   try {
     client.frame();   // the trial's wake fills the count
     const bottle = () => ({ group: 'UselessItems1', templateIndex: TEMPLATES.Glass_Bottle, potionRecipeKey: key('healing'), name: 'Healing' });
@@ -127,7 +129,7 @@ test('EG-FULL THE POTION LAW (section 17.4): the restoring potions are the recip
     client.frame();
     assert.equal(spirePotionRefusal({ potionRecipeKey: key('healing') }), null);
     assert.equal(EG_POTIONS_PER_HALL, 2);
-  } finally { registerSpirePotionLaw(null); }
+  } finally { registerSpirePotionLaw(null); registerMadeLevelHere(null); }
   assert.equal(spirePotionRefusal({ potionRecipeKey: key('healing') }), null, 'outside the breach, never');
 });
 

@@ -805,7 +805,9 @@ function trial(B, spec, now, inHall, rng, out) {
     deserterGoal: () => { const r = egObjsOf(F, 'rift').filter((o) => o.hp > 0 && !egHas(o, EG_FL.ward)); return r[0] ? [r[0].x, r[0].z] : null; },
     deserterHit: () => { const r = egObjsOf(F, 'rift').filter((o) => o.hp > 0 && !egHas(o, EG_FL.ward))[0]; if (r) { r.hp -= F.mean * 2; if (r.hp <= 0) { r.hp = 0; F.desClosed = (F.desClosed ?? 0) + 1; riftClosed(B, F, spec, r, 'The Deserter', now, out); } } },
   };
-  F.legionCtx = legionCtx;
+  // EG-H2 (Elite-Gates.md section 22): the beat's own closures ride the fight unenumerated - a record that carried them
+  // could not be structured-cloned, so every trial's checkpoint threw and storage kept the hall as it woke
+  Object.defineProperty(F, 'legionCtx', { value: legionCtx, enumerable: false, writable: true, configurable: true });
   // the Span, the Brink: the door opens on the first living member at the far plate; a fragment's Lurkers and the Low
   // Road's foes at their work meanwhile
   if (spec.kind === 'span' || spec.kind === 'brink') {

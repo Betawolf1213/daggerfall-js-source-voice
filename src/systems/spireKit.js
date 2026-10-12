@@ -7,6 +7,7 @@
 // arm asks first (the bottle is kept on a refusal) and tells after. The count is the breach client's (scenes/egClient.js
 // potionAllowed / potionUsed), registered by the world host. A departure from DFU: Ledger A (ELITE-GATES).
 import { POTION_RECIPES, potionRecipeKey } from './potionRecipes.js';
+import { madeRuleHere } from './madeLevel.js';   // EG-H2 (Elite-Gates.md section 24): THE POTION LAW is a made level's rule - the Spire's ('counted')
 
 /** The classic Heal-Health effect key (HealHealth.cs - group 10, subgroup 8). */
 export const SPIRE_RESTORING_EFFECT = '10,8';
@@ -22,14 +23,14 @@ export const isRestoringPotion = (item) => RESTORING_KEYS.has(item?.potionRecipe
 let _law = null;
 /** The breach's count, registered by the world host (null removes it). */
 export function registerSpirePotionLaw(law) { _law = law && typeof law.allowed === 'function' ? law : null; }
-/** The refusal of this potion now, or null. */
+/** The refusal of this potion now, or null - asked only where the made level's law counts restoring potions (the Spire). */
 export function spirePotionRefusal(item) {
-  if (!_law || !isRestoringPotion(item)) return null;
+  if (madeRuleHere('potions') !== 'counted' || !_law || !isRestoringPotion(item)) return null;
   try { return _law.allowed() ? null : SPIRE_POTION_TEXT; } catch { return null; }
 }
-/** A potion drunk: a restoring one counted. */
+/** A potion drunk: a restoring one counted (where the law counts them). */
 export function spirePotionDrunk(item) {
-  if (!_law || !isRestoringPotion(item)) return;
+  if (madeRuleHere('potions') !== 'counted' || !_law || !isRestoringPotion(item)) return;
   try { _law.used(); } catch { /* the count is not the bottle's problem */ }
 }
 

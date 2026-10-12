@@ -3651,3 +3651,112 @@ The economy layer's first piece, the one the relay must judge: **FEATS OF THE SP
 
 **Pins.** `test/egeco_feats.test.js` (2) and `tools/mutants/egeco.json` (6, every one dead). `RELAY_VERSION` `world197`,
 rehashed with `net/egFeats.js` in its graph.
+
+### EG-H2 - 2026-10-12 - THE MADE LEVEL'S RULES AND DURABILITY
+
+Layer six's first part (EG-H): EG7 (section 24) and EG8e (section 22), with EG10's DEATH-PENALTY exemption, the flight
+bans and the technique refusal, and the jump buffer. Closes layer one's departure 6 for `madeLevelOf`, `MADE_LEVEL_RULES`,
+the jump buffer, the technique refusal, the slowfall ban, AvoidDeath refused, THE HOLD and THE DRAIN (THE FAIR TRAIL, the
+clock correction and the ridden poses stay owed).
+
+**THE MADE LEVEL'S RULES** (`systems/madeLevel.js`). One law in place of the per-level checks at every rule's door:
+- `madeLevelOf(loc)` answers `'court'`, `'hour'`, `'spire'` or null off each made location's own predicate (`isGateArena`,
+  `isSdRealm`, `isEgHall`), and the mode machine says it (`madeLevel` in scenes/worldModes.js, the dungeon mode's alone).
+- `MADE_LEVEL_RULES` is section 24's table as data, twenty rules a row (null where a level leaves the game as it is):
+  saves, rest, the map, the Mark, the Recall, the Portal Stone, companions, regeneration, THE POTION LAW (`'counted'`),
+  Levitate, Slowfall, a technique's flight, the jump buffer and the late press (0.12 s each in the Spire, 0 elsewhere),
+  Resurrect, AvoidDeath, what a death is, DEATH-PENALTY, /unstuck, and the voice a refusal is said in. `MADE_LEVEL_TEXT` is
+  each level's refusals in its own home's words (COURT_TEXT, SD_REALM_TEXT, EG_TEXT), unchanged.
+- `registerMadeLevelHere` is the world host's word on where the player stands, and whether its feet are on the Spire's
+  traversal ground (scenes/egClient.js `onTraverse`: in a hall of the circle and off its fight floor, or over the void
+  between the halls). Doors with no host in reach read it: the potion law, a technique, the motor's forgiveness.
+
+**The doors, re-plugged.**
+- `scenes/dungeonContext.js` reads `madeLevelRule(_made, ...)` once per rule: the save door and the pause's Save, the M
+  key and the map's record, the rest, the slow fall (written false in the Spire - the effect runs on), the avoid-death
+  consult, and the death screen's `penalty`.
+- `scenes/world.js` reads `madeRuleHere(...)`: both companion doors, the Mark and the Recall (said through `madeSay`, the
+  Hour's voice or the mid-screen line), the respawn's DEATH-PENALTY and its death branches, /unstuck, the ONE Levitate
+  ward (section 10.7 - EG-PLAY's second seam, `registerSpireLevitateWard`, is retired), the frame's one
+  `setCourtRules`, Resurrect, and the Portal Stone's door. It registers the law's word and THE FORGIVENESS.
+- `systems/spireKit.js` (THE POTION LAW) and `combat/techniques.js` (the flight's refusal) ask it too.
+
+**The Burning Court and the Hour, unchanged.** Every value in their two columns is what their doors did at 4f0e71965,
+pinned rule by rule (test/egmade_law.test.js) and by their own suites, whose pins moved to the law with `PIN MOVED` notes:
+sd5a, wb3b, sd21, gatecrowd, gatefbx, sd11c, sd12, sd20f, sd26, sd27, sd7b, audit_seats_client, auditwatchkit_net,
+arena2_hosts, mapkeep, wbx_gate_fixes, deathpenalty and donline1_respawn. Twenty-nine of their mutant records were
+re-aimed by content, every one dead.
+
+**The Spire's rules, built.**
+- **THE FORGIVENESS** (section 10.8; `player/motor.js` `registerJumpForgiveness`). A jump pressed in the air up to the
+  buffer before landing fires on the landing, past DFU's 0.1 s gate. A plain jump pressed up to the late press after
+  walking off an edge still leaps. With nothing registered, or 0, the gate is DFU's verbatim. Measured on the real motor:
+  a tap 0.08 s before landing fires on it, and a press 0.05 s off an edge rises. Both are swallowed in the court and the
+  Hour.
+- **The technique's flight refused** (section 10.7). A leap or a dash on the Spire's traversal ground is refused in the
+  Spire's words (*The Spire's spans are walked, not flown.*), with nothing paid. On a fight floor it is a technique.
+- **The slow fall banned**, and **AvoidDeath refused**: Stendarr does not reach into the Spire.
+- **DEATH-PENALTY exempted** (EG10). EG-FULL's death save makes a killing blow a fall, so only a death no save is asked
+  of reaches the death screen in the Spire (the exhaustion collapse, a drowning's SetHealth(0)). Its screen states no
+  loss, and its respawn takes none. EG-PLAY's departure 9 is closed.
+- The pause's Save now refuses in the Spire, as the save door always did (it had never asked the Spire). A Resurrect is
+  refused there, and the frame's court law covers the Spire's whole frame.
+
+**DURABILITY** (`net/egDurable.js`, in the relay bundle; `server/src/index.js` `_egOf`, `_egResume`, `_egTick`).
+- **Saves to storage** were already at the open, every admission, stage, fall, pick and end, and every CHECKPOINT_MS. But
+  **every trial's checkpoint threw**: the director kept its beat's closures on the fight (`F.legionCtx`), so the record
+  could not be structured-cloned, and storage held the hall as it woke. The context is now unenumerated, and a trial's
+  save lands (pinned). At a Redoubt the receipts are kept in storage before they go out.
+- **Time across a restart.** The room stamps each beat (`tk`). A room woken from storage, or a beat that comes late, gives
+  the gap back (`egGiveBack`): every instant the record holds after its first wake moves forward. That covers the count,
+  the stage and hall clocks, the lords' and the legion's timers, and each member's absence. The open never moves (the
+  last word is the wall clock's, as the service's live window is), and nothing moves before the first wake.
+- **THE HOLD.** A room woken between trials (a closing, the swap, a rest) holds from its last beat: the count frozen, the
+  director still. It waits until every living member's body stands in the room again or EG_REJOIN_MS (180 s) has passed,
+  then gives the whole gap back and runs on.
+- **THE DRAIN and THE COST.** The hub keeps its live list (`eglive`: each breach's law and last word) and answers the
+  public `/v1/eg/live` (counts, `between`, `laws`, `until`, `drain`, no breach named). With the relay setting `egDrain`
+  'on' (a developer's `/relay egDrain on`, or the `EG_DRAIN` var), or EG_LIVE_MAX (64) live, the hub refuses an open with
+  *the road is shut*. It mints the opener a `v` receipt at once, so the stake the service took comes straight back. The
+  relay deploy (.github/workflows/relay-deploy.yml) reads `/v1/eg/live` after the siege blackout: a live breach under a
+  law the build does not draw is THE DRAIN (it waits five minutes at a time for none live or the longest's last word);
+  otherwise THE HOLD (it waits up to twenty minutes for every breach to stand between trials).
+- **THE LAW PIN.** `EG_LAWS` (`{ 4: '2026-10-11' }`, a law kept EG_LAW_KEEP_DAYS) names the laws this build draws. A
+  woken room whose `egv` is not among them ends its breach with `why: 'void'`: the entered members' end receipts return
+  the stake, the opener who never entered is handed a `v`, and the Redoubts taken stay. A member's `spec` is answered
+  with that hall in the breach's own law's bytes (this circle or the next). A client whose law is not its breach's asks
+  each hall of its circle once and is told once. The halls given are read before any draw (net/egLaw.js `egSpecGive`),
+  and the circle standing is built again once all five have come.
+- **Secret, deterministic receipts.** The room draws `rs` (32 bytes) at the open and never sends it. A receipt's seed is
+  HMAC-SHA-256(rs, sub|R|kind)'s first 32 bits, so a room woken before its save mints the same roll again. A breach opened
+  before this keeps the CSPRNG's seed.
+
+**Departures, said plainly.**
+1. **Section 24's table had the court refusing a Recall.** It never has: the court refuses the Mark alone (World-Bosses.md:
+   "Recall's mark"). Re-plugged unchanged, the law says so.
+2. **The deploy does not ask a room to hold.** An unauthenticated ask would let anyone freeze a breach. The room holds
+   itself on the restart it wakes from, so the deploy only waits for every breach to stand between trials. That keeps the
+   page's rules of the count held and the gap given back.
+3. **THE DRAIN's road is shut by a developer** (`/relay egDrain on`, and `off` after the deploy - the hub keeps it across
+   one). The deploy cannot sign a hub frame, so it waits on `/v1/eg/live` and says the setting in its log. The hub refuses
+   the open after the service has staked the key, so each refusal hands the stake back as a void at once.
+4. **One generator.** The relay and the client keep the current law's generator alone, so "seven days of EG_SPEC" is the
+   table and the void. A future spec change keeps its predecessor in EG_LAWS (with its generator) for seven days, or goes
+   through THE DRAIN. A client rebuilds a circle drawn before its given halls came, under the veil. Its next circle draws
+   from them at once.
+5. **Not built here:** THE FAIR TRAIL, the clock correction, the ridden poses (EG-H's rest); a `force` deploy voiding live
+   breaches by name; the hub retrying `EG_INTERNAL_OPEN`; `{k:'void', z}` from a client holding a stake the room never
+   took; the unknown room's tombstone (EG8a/EG8b's key-loss paths).
+6. **The Ledger A ELITE-GATES row** owes THE FORGIVENESS and AvoidDeath refused as departures from DFU
+   (`01-Overview/Port-Ledger.md`, the lead's to write).
+
+**The four hosts.** `src/scenes/world.js` WIRED: the doors above, the law's word and THE FORGIVENESS registered, the
+one ward. `src/scenes/worldModes.js` WIRED: `madeLevel`. `src/scenes/dungeonContext.js` WIRED: the doors above.
+`src/scenes/exterior.js`: unchanged - the fixed city stands no made level and registers no word, so every door there is
+the game's own.
+
+**Pins.** `test/egmade_law.test.js` (5) and `test/egdur_relay.test.js` (5). `tools/mutants/egmade.json` (58, every one
+dead), with twenty-nine records of other arcs re-aimed (`audit27h`, `audit_seats_client`, `auditclimb1`, `auditcrew`,
+`bounty1`, `egplay`, `fb1011b`, `gatecrowd`, `gatefbx`, `macd`, `sd11c`, `sd12_onelife`, `sd20f`, `sd21_alone`,
+`sd27_audit`, `sd5a`, `sd7b`, `wb3b`), every one dead. `RELAY_VERSION` `world197`, unshipped, rehashed with
+`net/egDurable.js` in its graph.

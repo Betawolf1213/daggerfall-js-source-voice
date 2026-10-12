@@ -173,9 +173,9 @@
   },
   {
     "name": "EGPLAY-the-spire-unwarded",
-    "file": "src/characters/playerEntity.js",
-    "old": "export const levitateWarded = () => siegeOrHourWarded() || spireWarded();",
-    "new": "export const levitateWarded = () => siegeOrHourWarded();",
+    "file": "src/systems/madeLevel.js",
+    "old": "levitate: 'banned', slowfall: 'banned', techFlight",
+    "new": "levitate: null, slowfall: 'banned', techFlight",
     "tests": [
       "test/egplay_client.test.js"
     ]

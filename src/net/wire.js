@@ -5422,18 +5422,18 @@ export function validSdFoundTell(b) {
 // relay's clock; every point the hall's own frame.
 
 /** What a client may say: `open` to the hub; the rest to a breach's room. */
-export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use']);
+export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'spec']);   // EG-H2: `spec` - a hall of the breach's own law asked (section 22, THE LAW PIN)
 /** What the hub and a breach's room say back. */
 export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail']);
 export const EG_RUN_KINDS = Object.freeze(['offer', 'ask', 'asked', 'tally', 'egot', 'run', 'rise', 'eping', 'pz', 'eheal']);
-export const EG_OUT_KINDS = Object.freeze(['call', 'st', 'sg', 'co', 'fall', 'rd', 'rcpt', 'end', 'no', ...EG_FIGHT_KINDS, ...EG_RUN_KINDS]);
+export const EG_OUT_KINDS = Object.freeze(['call', 'st', 'sg', 'co', 'fall', 'rd', 'rcpt', 'end', 'no', 'spec', ...EG_FIGHT_KINDS, ...EG_RUN_KINDS]);   // EG-H2: `spec` - the room's own bytes of a hall
 /** A hall's stages as the wire says them (section 7): before the first hall (`wait` - the arch rising, sealed, open),
  *  the arrival and gather, the trial, the closing (its door open), a Redoubt's rest, the end. */
 export const EG_STAGES = Object.freeze(['wait', 'arrive', 'trial', 'closing', 'rest', 'end']);
 /** How a breach ends (the `end` frame's `why`, net/egReceipt.js EG_END_WHYS' room half). */
 export const EG_END_WORDS = Object.freeze(['tear', 'wipe', 'gone', 'last', 'empty', 'rehearsal', 'void', 'home']);
 /** The room's refusals, in words. */
-export const EG_NO_WORDS = Object.freeze(['the breach is closed', 'the breach answers only to its company', 'the order is spent', 'you have fallen', 'you went home', 'the order is not yours']);
+export const EG_NO_WORDS = Object.freeze(['the breach is closed', 'the breach answers only to its company', 'the order is spent', 'you have fallen', 'you went home', 'the order is not yours', 'the road is shut']);   // EG-H2: THE DRAIN's refusal at the hub (its stake handed back)
 /** The beats a room names (`esay`'s `w` - the client words each: scenes/egFight.js EG_SAY). */
 export const EG_SAY_KEYS = Object.freeze(['wake', 'fury', 'covenant', 'covenantrest', 'stunned', 'scent', 'scorched', 'phase', 'images', 'examination', 'cage', 'passed', 'failed', 'challenge', 'challengewon',
   'challengeend', 'conquest', 'muster', 'tithe', 'bare', 'twinfell', 'twinraised', 'crossing', 'chaining', 'grounded', 'anchors', 'vanish', 'tether', 'tetherbroken', 'eclipse', 'mirrors', 'relit', 'landed',
@@ -5579,9 +5579,19 @@ export function validEgIn(m) {
     case 'bequest': return intIn(m.v, 0, 99) ? { k: 'bequest', v: m.v } : null;
     case 'pz': return intIn(m.i, 0, 5) && (m.a === 1 || m.a === -1) ? { k: 'pz', i: m.i, a: m.a } : null;
     case 'use': return intIn(m.i, 0, 7) ? { k: 'use', i: m.i } : null;   // LAYER THREE: an engine worked (section 11.10)
+    case 'spec': return intIn(m.h, 1, EG_HALL_WIRE_MAX) ? { k: 'spec', h: m.h } : null;   // EG-H2: a hall asked of its breach's own law
     default: return null;
   }
 }
+/** EG-H2 (section 22, THE LAW PIN): a hall's spec as the room says it - an object naming its seed and hall (hall `h`), of
+ *  at most EG_SPEC_WIRE_MAX characters, handed on whole (the relay's own bytes: net/egLaw.js egSpecGive takes them). */
+export const EG_SPEC_WIRE_MAX = 32_768;
+const egSpecW = (sp, h) => {
+  if (!sp || typeof sp !== 'object' || Array.isArray(sp) || sp.h !== h || !intIn(sp.seed, 0, 0xffffffff) || !intIn(sp.geo ?? 0, 0, 8)) return null;
+  let text = '';
+  try { text = JSON.stringify(sp); } catch { return null; }
+  return text.length <= EG_SPEC_WIRE_MAX ? JSON.parse(text) : null;
+};
 
 /**
  * A breach frame from the hub or a breach's room, projected for the client: the kind's own fields, bounded, or null.
@@ -5618,6 +5628,7 @@ export function validEgOut(m) {
     case 'rcpt': return typeof m.r === 'string' && m.r.length <= EG_RECEIPT_WIRE_MAX && EG_RECEIPT_RE.test(m.r) ? { k: 'rcpt', r: m.r } : null;
     case 'end': return EG_END_WORDS.includes(m.why) && gateMs(m.at) ? { k: 'end', why: m.why, at: m.at } : null;
     case 'no': return EG_NO_WORDS.includes(m.m) ? { k: 'no', m: m.m } : null;
+    case 'spec': { const sp = intIn(m.egv, 1, 999) && intIn(m.h, 1, EG_HALL_WIRE_MAX) ? egSpecW(m.sp, m.h) : null; return sp ? { k: 'spec', egv: m.egv, h: m.h, sp } : null; }   // EG-H2
     // ── the fight ──
     case 'efs': {
       const b = egBodies(m.b), bl = egList(m.bl ?? [], egBlowW, EG_WIRE_BLOWS_MAX), tx = egList(m.tx ?? [], egTether), mk = egList(m.mk ?? [], egMarkW);

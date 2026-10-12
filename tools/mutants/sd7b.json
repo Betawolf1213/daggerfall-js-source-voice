@@ -276,7 +276,7 @@
   {
     "name": "SD7B-world-no-ward",
     "file": "src/scenes/world.js",
-    "old": "registerLevitateWard(() => inSiegeRoom() || modes?.sdRealmSlot?.() != null);",
+    "old": "registerLevitateWard(() => inSiegeRoom() || madeRuleHere('levitate') === 'banned');",
     "new": "registerLevitateWard(() => inSiegeRoom());",
     "tests": [
       "test/sd7b_steps.test.js"

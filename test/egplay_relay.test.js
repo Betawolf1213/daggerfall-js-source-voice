@@ -10,7 +10,7 @@ import { Room } from '../server/src/index.js';
 import worker from '../server/src/index.js';
 import { fakeRooms, fakeRoom } from './fakeRoom.mjs';
 import { SOCIAL_ROOM, EG_KEY, egCallKey, validEgOut, validEgIn, EG_KINDS, EG_OUT_KINDS, relaySupportsEg, EG_RELAY_MIN, parseClient } from '../src/net/wire.js';
-import { egRoomKey, egHallOf, EG_SEALED_MS, EG_GATHER_MS } from '../src/net/egLaw.js';
+import { egRoomKey, egHallOf, EG_SEALED_MS, EG_GATHER_MS, EG_SPEC } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { readEgReceipt } from '../src/net/egReceipt.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
@@ -52,7 +52,7 @@ async function withBreach(fn, { party = false } = {}) {
 }
 
 test('EG-PLAY THE WIRE (EG-FULL): a breach\'s words each way, projected and bounded - the open (its order and the landing), the admission, the door, the way home, a blow on a body by its number, a Vestige picked, a vote, a Cantrip, the Sutler, a ping, a bequest, forsaking, the Orrery\'s turn, a fall said; the call, the state, a stage, the company of ten fields, a fall, a Redoubt, a receipt, the end, a refusal; the fight in the Spire\'s own words (a body\'s thirteen, a blow\'s FULL shape stamp, a zone, a tether, a mark) and the run\'s; a relay before it is sent nothing (mutants: an open with no landing; a company of nine; a stamp out of bounds; a body\'s row cut short)', () => {
-  assert.deepEqual([...EG_KINDS], ['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use']);   // EG-FULL LAYER THREE: `use` - an engine worked
+  assert.deepEqual([...EG_KINDS], ['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'spec']);   // EG-FULL LAYER THREE: `use` - an engine worked; PIN MOVED (EG-H2): `spec` - a hall of the breach's own law asked (Elite-Gates.md section 22)
   for (const k of ['call', 'st', 'efs', 'ead', 'eb', 'ez', 'etx', 'emk', 'offer', 'ask', 'rise', 'eheal']) assert.ok(EG_OUT_KINDS.includes(k), k);
   assert.equal(validEgIn({ k: 'open', z: 'v1.abc.def' }), null, 'an open names where its company answers from');
   assert.deepEqual(validEgIn({ k: 'open', z: 'v1.abc.def', site: SITE, junk: 1 }), { k: 'open', z: 'v1.abc.def', site: SITE });
@@ -208,7 +208,7 @@ test('EG-PLAY THE WORKER: an `eg:` key that is not a breach\'s mints no object (
   const post = (body) => r.room.fetch(new Request('https://relay.internal/internal/eg/open', { method: 'POST', body: JSON.stringify(body) }));
   const a = await post(tell);
   assert.equal(a.status, 200);
-  assert.deepEqual(await (await post(tell)).json(), { ok: true, seed: 9, op: T0 });
+  assert.deepEqual(await (await post(tell)).json(), { ok: true, seed: 9, op: T0, egv: EG_SPEC });   // PIN MOVED (EG-H2): the room answers the law it opened under - the hub's live list keeps it (Elite-Gates.md section 22)
   assert.equal((await post({ ...tell, ez: 'y'.repeat(20) })).status, 409);
   assert.equal((await post({ ...tell, co: [] })).status, 400);
   assert.ok(Room);

@@ -225,13 +225,10 @@ export const staffFly = () => _staff.fly;
  *  the typer's own and is not warded. A ward that throws wards nothing. */
 let _levitateWard = null;
 export function registerLevitateWard(fn) { _levitateWard = typeof fn === 'function' ? fn : null; }
-/** EG-PLAY (bible/11-Multiplayer/Elite-Gates.md section 8): THE SPIRE'S WARD, beside the one - its own seam, so neither
- *  registration takes the other's place (an Elite Breach's spans are walked and its void is real). */
-let _spireWard = null;
-export function registerSpireLevitateWard(fn) { _spireWard = typeof fn === 'function' ? fn : null; }
-const spireWarded = () => { try { return !!_spireWard?.(); } catch { return false; } };
-const siegeOrHourWarded = () => { try { return !!_levitateWard?.(); } catch { return false; } };
-export const levitateWarded = () => siegeOrHourWarded() || spireWarded();
+/** EG-H2 (bible/11-Multiplayer/Elite-Gates.md section 10.7): ONE WARD. The Spire's ward is OR'd into the one
+ *  registration (scenes/world.js - the made level's law, systems/madeLevel.js `levitate`, beside the siege's room), as
+ *  the page asks; EG-PLAY's second seam beside it (registerSpireLevitateWard) is retired. */
+export const levitateWarded = () => { try { return !!_levitateWard?.(); } catch { return false; } };
 /** AUDIT-SEATS G4 (Seats-Arc 6.6: "a free camera over the town"; 19: "a free camera (WASD, the mouse, the pad's
  *  sticks)"): A SPECTATOR'S FLIGHT, registered by the host that knows who watches a battle from its room (scenes/
  *  world.js): while it answers true, the motor-flag write lifts the body as the staff's /fly does - the motor's own

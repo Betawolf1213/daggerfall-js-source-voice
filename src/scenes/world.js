@@ -349,7 +349,9 @@ import { createEgClient } from './egClient.js';   // EG-PLAY: the breach on this
 import { createEgFight } from './egFight.js';   // EG-PLAY: a hall's fight
 import { registerSpirePotionLaw, registerSpireFooting, registerSpireWake, registerSpireObjs, registerSpireAct } from '../systems/spireKit.js';   // EG-FULL: THE POTION LAW (two restoring potions a hall); Iron Footing on the spans
 import { accountEg } from '../net/accountClient.js';   // EG-PLAY: the Weir Keys, the open, the admission, the claims
-import { registerSpireLevitateWard, registerPlayerDeathSave, registerPlayerDamageMod } from '../characters/playerEntity.js';   // EG-PLAY: the Spire's ward on Levitate, beside the one; EG-FULL: the fall's death save and the witness's damage mod
+import { registerPlayerDeathSave, registerPlayerDamageMod } from '../characters/playerEntity.js';   // EG-FULL: the fall's death save and the witness's damage mod (EG-H2: the Spire's Levitate ward is the one ward's, by the made level's law)
+import { registerMadeLevelHere, madeRuleHere, madeSaysHere } from '../systems/madeLevel.js';   // EG-H2 (Elite-Gates.md section 24): THE MADE LEVEL'S RULES - every per-level door below asks the one law
+import { registerJumpForgiveness } from '../player/motor.js';   // EG-H2 (section 10.8): THE FORGIVENESS - the Spire's jump buffer and late press, the made level's law's
 import { isSdRealm, realmArena, SD_REALM_TEXT, SD_REALM_FOG, SD_REALM_FLOORS, SD_ARENA_FLOORS, arenaHolds } from '../world/sdRealm.js';   // SD5a: the Shattered Hour - its edge, its refusals
 import { SdSkyRenderer, SD_SKY_STEPS } from '../render/sdSky.js';   // SD5b: the Hour's sky
 import { SdArenaGlowRenderer, sdArenaGlowAt, sdHourClockOf } from '../render/sdArenaGlow.js';   // SD-LOOK S7: the arena's floor reads the clock, and the sky's word for the fight
@@ -11272,9 +11274,7 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  same way - lifted as the player steps through the Rift, stood behind them again out of the Hour. */
   function companionPlace({ crew = true } = {}) {   // REVENANT-COMPANION: the sworn's layer asks it without the naval arc's gate
     if ((crew && !navalOn()) || !walkMode || !playerSpawned || _loading || modes?.transitioning || travelView?.active || csaRuntime?.isSailing?.()) return null;
-    if (modes?.gateArenaDay?.() != null) return null;   // GATE-ALONE: they wait outside the gate
-    if (modes?.sdRealmSlot?.() != null) return null;   // SD-ALONE: nor through the Rift - they wait outside the Hour
-    if (modes?.egHallBreach?.() != null) return null;   // EG-PLAY: nor into the Spire - they wait outside the breach
+    if (madeRuleHere('companions') === 'out') return null;   // GATE-ALONE: they wait outside the gate; SD-ALONE: nor through the Rift; EG-PLAY: nor into the Spire - EG-H2: the made level's law
     const spotOf = (col) => (from, dx, dz) => { const p = [from[0], from[1], from[2]]; try { col?.move(p, dx, 0, dz, 1.8); } catch { /* the leader's own spot */ } return [p[0], p[1], p[2]]; };   // AUDIT CC-A3: the swept spot's own height (a slope's, a stair's)
     const mode = _mode();
     const standIn = (pool) => (mobile, feet, o) => pool.spawnFoe(mobile, feet, { yaw: o.yaw, gender: o.gender, allied: true, loose: true, transient: true });
@@ -11402,9 +11402,7 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  name, role and effects, his health off his body where one stands here (else as the party carries it, a share of
    *  his whole); none with the arc off. */
   function partyCompanions() {
-    if (modes?.gateArenaDay?.() != null) return [];   // GATE-ALONE: none in a gate's court - they wait outside it
-    if (modes?.sdRealmSlot?.() != null) return [];   // SD-ALONE: and none in the Shattered Hour
-    if (modes?.egHallBreach?.() != null) return [];   // EG-PLAY: and none in the Spire
+    if (madeRuleHere('companions') === 'out') return [];   // GATE-ALONE: none in a gate's court - they wait outside it; SD-ALONE: nor in the Hour; EG-PLAY: nor in the Spire - EG-H2: the made level's law
     // AUDIT WK-U5: none while I sail - the party is lifted aboard (it stood its cards over the ship's plate on a phone)
     const party = navalOn() && !csaRuntime?.isSailing?.() ? naval?.companions?.party ?? [] : [];
     const sworn = swornCards?.() ?? [];   // REVENANT-COMPANION: the sworn's cards after the crew's
@@ -15056,12 +15054,13 @@ export async function bootWorld(canvas, renderer, params, status) {
   // teleport, the interior re-entry the quickload uses, the dungeon
   // mount the quest respawner uses), and none of them exist in the
   // mounted modes.
+  /** EG-H2 (Elite-Gates.md section 24): a made level's refusal, said in its own voice (systems/madeLevel.js `says`) -
+   *  the Hour's (sdSay), else the mid-screen line - in its own words. */
+  function madeSay(rule) { const t = madeSaysHere(rule); if (madeRuleHere('says') === 'hour') sdSay(t); else setMidScreenText(t); }
   /** SetAnchor (:100-117): the outer host's world half, the mounted
    *  mode's inside half, one record. */
   function setRecallAnchor() {
-    if (modes?.gateArenaDay?.() != null) { setMidScreenText(COURT_TEXT.noMark); return; }   // WB3b: a mark in a place that ends with the day
-    if (modes?.sdRealmSlot?.() != null) { sdSay(SD_REALM_TEXT.noMark); return; }   // SD5a: nor in the Shattered Hour
-    if (modes?.egHallBreach?.() != null) { setMidScreenText(EG_TEXT.noRecall); return; }   // EG-PLAY: nor in the Spire
+    if (madeRuleHere('mark') === 'refused') { madeSay('mark'); return; }   // WB3b: a mark in a place that ends with the day; SD5a: nor in the Hour; EG-PLAY: nor in the Spire - EG-H2: the made level's law, each in its own words
     if (modes?.dungeonLocation?.superTier) { sdSay(SD_NO_MARK); return; }   // AUDIT SD IV (F2): nor in a Hollow - a later one may stand on its pixel
     const inside = modes?.anchorContext?.() ?? { worldContext: WORLD_CONTEXT.Exterior, local: null, buildingKey: 0, interior: null };
     const pf = walkMode && playerSpawned ? player.pos : cam.pos;
@@ -15131,8 +15130,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // AUDIT ARENA-LADDER A5: NO RECALL OFF THE SAND - my bout holds me as its doors do (the duel's law: no door, no rest, no
     // travel). Recall tore the floor down under a losing bout, which went unsaid: no loss, no run lost, the climb untouched.
     if (arenaBouts.holds()) { townTalk.say(ARENA_TEXT.refuse.travel); return; }
-    if (modes?.sdRealmSlot?.() != null) { sdSay(SD_REALM_TEXT.noRecall); return; }   // SD5a (Super-Dungeons.md section 7): nothing answers a Recall in the Hour - its ways are the Rift's
-    if (modes?.egHallBreach?.() != null) { setMidScreenText(EG_TEXT.noRecall); return; }   // EG-PLAY: the Spire holds you
+    if (madeRuleHere('recall') === 'refused') { madeSay('recall'); return; }   // SD5a (Super-Dungeons.md section 7): nothing answers a Recall in the Hour - its ways are the Rift's; EG-PLAY: the Spire holds you - EG-H2: the made level's law (the court refuses the Mark alone)
     const anchor = playerEntity.anchorPosition;
     const plan = teleportPlan(anchor, {
       ...(modes?.insideContext?.() ?? { insideBuilding: false, insideDungeon: false, buildingKey: 0 }),
@@ -15662,7 +15660,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     reviveForPlay(playerEntity, { force: true });
     surfacePlayer();
     player.stopAutorun();   // SEA-RISE: a player raised from death does not come up running - the latch walked them back into the sea
-    const goldLost = wildRise ? 0 : applyDeathPenalty(playerEntity);   // WILD GOLD: the zone takes half into the remains instead of the usual penalty
+    const goldLost = wildRise || madeRuleHere('deathPenalty') === 'none' ? 0 : applyDeathPenalty(playerEntity);   // WILD GOLD: the zone takes half into the remains instead of the usual penalty   // EG-H2 (Elite-Gates.md section 24): DEATH-PENALTY exempted in the Spire - its death is a fall's
     // DEATH-PENALTY: once per death - the _respawning guard above is what makes it once
     // AUDIT REP, Mac's call ("What do you think? I trust you"): A DEATH ENDS THE CHASE. The respawn is handled as the
     // journey it most resembles (HCC H2, below) and the travel map's arrival clears the crime (PostFastTravel), but the
@@ -15675,8 +15673,8 @@ export async function bootWorld(canvas, renderer, params, status) {
     _deathWasOnline = null;   // armed fresh for the NEXT death
     const mode = modes?.mode ?? 'exterior';
     const wasInDungeon = mode === 'dungeon';
-    const diedInHour = modes?.sdRealmSlot?.() != null;   // AUDIT SD II (L6 F4): a death in the Shattered Hour is the Hour's - its veil and its words, read while the Hour stands
-    const diedInSpire = !!egClient?.diedHere();   // EG-PLAY: a death in an Elite Breach is the member's fall - it wakes where it answered from
+    const diedInHour = madeRuleHere('death') === 'final';   // AUDIT SD II (L6 F4): a death in the Shattered Hour is the Hour's - its veil and its words, read while the Hour stands (EG-H2: the made level's law - final for the Hollow)
+    const diedInSpire = madeRuleHere('death') === 'fall';   // EG-PLAY: a death in an Elite Breach is the member's fall - it wakes where it answered from (EG-H2: the made level's law)
     const spireBack = diedInSpire ? modes?.egHallReturn?.() ?? null : null;
     // AUDIT OH-F B5: a death in the drowned dungeon wakes at ITS door - the pit (the dungeon's own pixel is the borrowed
     // template's, perhaps across the map), stood on the entrance as the way up stands it. Read before the exit clears it.
@@ -17120,7 +17118,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   /** Why a portal may not open where I stand, or null: the open world's alone, the holds, the water, a boat's deck (a
    *  portal stands in the world's frame and would be sailed away from), and one of mine at a time. */
   const portalDoorRefusal = () => {
-    if (_mode() !== 'exterior') return PORTAL_TEXT.notHere;
+    if (_mode() !== 'exterior' || madeRuleHere('portalStone') === 'refused') return PORTAL_TEXT.notHere;   // EG-H2: and never in a made level (the made level's law - each is a dungeon too)
     const hold = portalHoldNow();
     if (hold) return PORTAL_HOLD_TEXT[hold];
     if (player.isPlayerSwimming) return PORTAL_TEXT.water;
@@ -22356,14 +22354,16 @@ export async function bootWorld(canvas, renderer, params, status) {
           // be cancelled (a second /unstuck or "/unstuck cancel" cancels too), and a 60 minute cooldown - overworld and dungeons
           const say = (t) => chatLog.push(tabId, { text: t, system: true });
           if (/cancel/i.test(text) || _unstuckWait) { if (_unstuckWait) { unstuckCancel('You stay where you are.'); } else say('Nothing to cancel.'); return true; }
-          if (modes?.egHallBreach?.() != null) { say(`${EG_TEXT.noRecall} The way home stands at a Redoubt.`); return true; }   // EG-PLAY: the Spire holds you - its way out is a Redoubt's, a death or the end
+          // EG-H2 (Elite-Gates.md section 24): a made level's /unstuck is the made level's law's -
           // AUDIT SD III (H10): in the Shattered Hour, the Hour's own way out - under its veil, in its words, as every other
           // way out of it is; refused there (the dead's is the death's), nothing more said
-          if (modes?.sdRealmSlot?.() != null) { if (sdWayHome()) say('You find your way back outside.'); return true; }
-          // AUDIT GATE-FBX C2: and in a gate's Burning Court, none - its ways out are the portal where he fell, a death and
-          // the Wrath (a court gone silent casts its fighters out itself: gateCourt.silent); /unstuck walked out mid-fight
-          // with no veil, no toll and no cooldown spent on a death
-          if (modes?.gateArenaDay?.() != null) { say(COURT_TEXT.noUnstuck); return true; }
+          // EG-PLAY: the Spire holds you - its way out is a Redoubt's, a death or the end; AUDIT GATE-FBX C2: and in a gate's
+          // Burning Court, none - its ways out are the portal where he fell, a death and the Wrath (a court gone silent casts
+          // its fighters out itself: gateCourt.silent); /unstuck walked out mid-fight with no veil, no toll and no cooldown
+          // spent on a death
+          const madeUnstuck = madeRuleHere('unstuck');
+          if (madeUnstuck === 'wayHome') { if (sdWayHome()) say('You find your way back outside.'); return true; }
+          if (madeUnstuck === 'refused') { say(madeSaysHere('unstuck')); return true; }
           const inZone = wildHere() && !(TEST_GODMODE && staffPowers().god);   // TESTBUILD: god mode - /unstuck at once, no cooldown
           const _godU = TEST_GODMODE && staffPowers().god;
           if (inZone && (modes?.mode ?? 'exterior') === 'exterior') { say('/unstuck does not work outdoors in the mountains.'); return true; }   // PVPDUNGEONS
@@ -23226,8 +23226,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   const inSiegeRoom = () => !!online?.room && online.room === siegeSession?.room();
   /** AUDIT-SEATS G5: the cast engine's word on a spell here (hostMagic.js spellRefusal) - a siege's wards. */
   const battleSpellRefusal = (sp) => (inSiegeRoom() && siegeSpellBarred(sp) ? SIEGE_SPELL_BARRED_TEXT : null);
-  registerLevitateWard(() => inSiegeRoom() || modes?.sdRealmSlot?.() != null);   // AUDIT-SEATS G5: a Levitate already running lifts nothing in a siege's room; SD7b: nor in the Shattered Hour - its Steps are walked, not flown
-  registerSpireLevitateWard(() => modes?.egHallBreach?.() != null);   // EG-PLAY: nor in an Elite Breach - its spans are walked, its void is real
+  registerLevitateWard(() => inSiegeRoom() || madeRuleHere('levitate') === 'banned');   // AUDIT-SEATS G5: a Levitate already running lifts nothing in a siege's room; SD7b: nor in the Shattered Hour - its Steps are walked, not flown; EG-PLAY: nor in an Elite Breach - its spans are walked, its void is real (EG-H2: the made level's law, OR'd into the ONE ward - Elite-Gates.md section 10.7)
   /** AUDIT-SEATS G4 (Seats-Arc 6.6, 19: "a free camera (WASD, the mouse, the pad's sticks); nothing they do reaches the
    *  fight"): whether I watch a battle - a siege or a Royal Tourney, on a spectator's pass - from its own room. */
   const spectatingHere = () => {
@@ -24975,6 +24974,8 @@ export async function bootWorld(canvas, renderer, params, status) {
     return out;
   }
   registerPlayerDeathSave('eg-fall', () => !!egClient?.fallSave());   // EG-FULL (section 16.5): a death in the Spire is a fall - the witness, not the death screen
+  registerMadeLevelHere(() => modes?.madeLevel?.() ?? null, () => !!egClient?.onTraverse?.());   // EG-H2 (Elite-Gates.md section 24): where the player stands, for the made level's doors with no host in reach (an item, a technique, the motor) - and the Spire's traversal ground (section 10.7)
+  registerJumpForgiveness(() => madeRuleHere('jumpBuffer'), () => madeRuleHere('latePress'));   // EG-H2 (section 10.8): THE FORGIVENESS - the Spire's jump buffer and late press; elsewhere none, DFU's motor
   registerPlayerDamageMod('eg-witness', (e, d) => (egClient?.witnessing() ? 0 : d));   // EG-FULL: no blow reaches a witness
   registerSpirePotionLaw(egClient ? { allowed: () => egClient.potionAllowed(), used: () => egClient.potionUsed() } : null);   // EG-FULL: THE POTION LAW's count
   registerSpireFooting(egClient ? () => egClient.footing() : null);   // EG-FULL LAYER TWO: Iron Footing against the spans' Gust and Pendulum
@@ -24983,11 +24984,10 @@ export async function bootWorld(canvas, renderer, params, status) {
   registerSpireAct(egClient ? (key) => egClient.act(key) : null);   // EG-FULL LAYER THREE: an Orrery stone turned, an engine worked
   egClient?.claimKeys();   // the Weir Key's use is this screen's open
   const egFrame = () => { try { egClient?.frame(); } catch (e) { console.warn('[eg] frame', e?.message ?? e); } };
-  /** The host frame's breach lines, out of it (PERF-V8): with no online frame the breach's fight and tracker put away; in
-   *  a breach the court's law, after the court's own lines have set it. */
+  /** The host frame's breach lines, out of it (PERF-V8): with no online frame the breach's fight and tracker put away (EG-H2:
+   *  the court's law in a breach is the made level's - the frame's one setCourtRules). */
   const egCourtFrame = () => {
     if (!(onlineOn && playerSpawned)) egClient?.away();
-    if (modes?.egHallBreach?.() != null) setCourtRules(true);
   };
   /** The witness's eye (section 16.5), behind a living companion - the host frame's view, moved when it is. */
   const egWitnessEye = (/** @type {{ eye: any }} */ v) => { if (egClient?.witnessing()) { const c = { pos: v.eye }; if (egClient.witnessEye(c, cam.yaw)) v.eye = c.pos; } };
@@ -29175,7 +29175,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       // caster's pose) as new, and rose the instant it fell
       if (!_respawning) {
         if (!_rezSeen) _rezSeen = rezSnapshot(social?.others() ?? []);
-        const rez = social?.acct && modes?.sdRealmSlot?.() == null ? rezFor(social.others(), social.acct, _rezSeen) : null;   // SD-ONELIFE: no Resurrect in the Hour - one life (AUDIT SD III: asked of the call, so the rise stays MWBODY1's `if (rez)`)
+        const rez = social?.acct && madeRuleHere('resurrect') !== 'refused' ? rezFor(social.others(), social.acct, _rezSeen) : null;   // SD-ONELIFE: no Resurrect in the Hour - one life; EG-H2: nor in the Spire (the made level's law) (AUDIT SD III: asked of the call, so the rise stays MWBODY1's `if (rez)`)
         if (rez) { resurrectInPlace(rez); return; }
       }
       peerBodies.destroy(); remotePlayers.sync([], onlineToScene); peerRiders?.destroy(); peerWalkers?.destroy(); peerCandlesFrame([], dt); return;   // PEERLIGHT2: and no candle hangs over the dead; AUDIT RIDE: and no rider stands frozen over it either
@@ -33032,8 +33032,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     sdAirFrame();   // SD14b: and the Hour's, the same way
     if (onlineOn && playerSpawned && (seatOut() || townTalk.overlay instanceof DeathScreen || modes?.deathUp?.())) { siegeHud?.hide(); siegeNpcs?.leave(); }   // AUDIT SEATS-2 C4: the dead and a tab out of the seat draw no battle - the online frame returns before its tick
     arenaFrame(dt);   // ARENA2: the bout on the city's floor or the instance's - before the modal return, so the instance's runs too
-    setCourtRules(modes?.gateArenaDay?.() != null);
-    if (modes?.sdRealmSlot?.() != null) setCourtRules(true);   // SD5a: nor in the Shattered Hour - the court's law (Super-Dungeons.md section 7)   // WBX6: the Deadlands keep no regeneration - set before any magic round of this frame, cleared the frame the court is gone
+    setCourtRules(madeRuleHere('regen') === 'off');   // SD5a: nor in the Shattered Hour - the court's law (Super-Dungeons.md section 7); EG-H2: nor in the Spire - one law, systems/madeLevel.js   // WBX6: the Deadlands keep no regeneration - set before any magic round of this frame, cleared the frame the court is gone
     egCourtFrame();   // EG-PLAY: no online frame - the breach's fight and tracker put away; in an Elite Breach, the court's law (Elite-Gates.md section 16)
     // LOAD1: THE LOADING SCREEN STANDS WHILE THE WORLD IS MOVED - AUDIT 68 S22's one question (every mover's latch, the
     // teleport core's window, the abyss) and a door's build in this host's modes. Above the mode's return, so every
