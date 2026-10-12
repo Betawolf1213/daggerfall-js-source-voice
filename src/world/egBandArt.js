@@ -224,15 +224,26 @@ function pillarArt(band) {
   return { albedo, emission };
 }
 
+/** Each record's painter, by record. */
+const PAINTERS = Object.freeze({
+  [EG_DRESS.floor]: floorArt, [EG_DRESS.brass]: metalArt, [EG_DRESS.root]: rootArt, [EG_DRESS.arena]: arenaArt,
+  [EG_DRESS.cobble]: walkArt, [EG_DRESS.edge]: edgeArt, [EG_DRESS.molten]: moltenArt, [EG_DRESS.pillar]: pillarArt,
+});
 /** Every picture band `band` (0-3) wears, by record: `[record, { albedo, emission }]` - what a host uploads under the
  *  band's archive (egBandArchive) before it draws the band's halls. Pure: the same pixels every call. */
 /** @returns {Array<[number, { albedo: import('./sdPixelKit.js').Img, emission: import('./sdPixelKit.js').Img }]>} */
 export function egBandArt(band) {
-  const b = Math.max(0, Math.min(3, band | 0));
-  return [
-    [EG_DRESS.floor, floorArt(b)], [EG_DRESS.brass, metalArt(b)], [EG_DRESS.root, rootArt(b)], [EG_DRESS.arena, arenaArt(b)],
-    [EG_DRESS.cobble, walkArt(b)], [EG_DRESS.edge, edgeArt()], [EG_DRESS.molten, moltenArt(b)], [EG_DRESS.pillar, pillarArt(b)],
-  ];
+  return EG_DRESS_RECORDS.map((rec) => egBandArtOf(band, rec));
+}
+/** EG-ZO (2026-10-12, Elite-Gates.md section 7): ONE of band `band`'s pictures, `[record, { albedo, emission }]` - painted
+ *  alone, for a pass that wears a few of the band's records (the Spire's underside on the stair - world/egUnderside.js:
+ *  its walkways' tesserae, the costliest picture by far, are never painted for a fall that wears none). The same pixels
+ *  egBandArt paints for that record. Pure. A record the band does not paint throws.
+ *  @returns {[number, { albedo: import('./sdPixelKit.js').Img, emission: import('./sdPixelKit.js').Img }]} */
+export function egBandArtOf(band, rec) {
+  const paint = PAINTERS[rec];
+  if (!paint) throw new Error(`the band paints no record ${rec}`);
+  return [rec, paint(Math.max(0, Math.min(3, band | 0)))];
 }
 /** The palette each band's pictures are forced into (the law's check: nothing off it). */
 export function egBandPalette(band) {

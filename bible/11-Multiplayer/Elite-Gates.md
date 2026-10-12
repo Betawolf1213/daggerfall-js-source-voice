@@ -4720,7 +4720,7 @@ pillar and the witness's sight.
     0.6 s (whole at once under reduced motion), and keeps 0.6 of itself through any haze, so it is seen hall-wide.
   - The closing's ring lies at the door's reach (`EG_DOOR_REACH_M` 3 m, where `down` is heard), in every hall kind. Its
     arc is the closing's seconds left, from the relay's own stage word (`sa`, `su`); the spent arc stays at a quarter.
-  - The door's mark on the enhanced compass is `egDoorCompass`, through the client's `archCompass` (departure 6).
+  - The door's mark on the enhanced compass is `egDoorCompass`, through the client's `archCompass` (departure 5).
 - **THE REDOUBT'S LIGHTS** (sections 16.2 and 27.5).
   - THE BEACON climbs at the court's heart 1.5 s after the Redoubt's word (`rd`'s `at` - the relay says it on the step
     the lords fell). It stands at the place the spoils are thrown from (`beaconAt`'s own), 90 m tall, climbing over
@@ -4752,24 +4752,21 @@ pillar and the witness's sight.
 1. **The pull keeps the veil's flash** (section 27.5's table). It goes shut at once in the stair's own look, with the
    hall held and the band's chime, and opens in the 0.8 s dither. It never closes first, because the pull is the
    room's, taken at once.
-2. **The fall is a picture on the veil's canvas.** The underside falls away overhead and embers streak up, but the
-   world's camera does not fall past a mesh of the underside. The hall's own sky (`render/egSkyPass.js`) shows the
-   underside once the step lands.
-3. **The fall's least hold can keep a fast swap waiting** by the difference between its work and 1.2 s. It is never
+2. **The fall's least hold can keep a fast swap waiting** by the difference between its work and 1.2 s. It is never
    longer than the Hour's veil every step used before (pinned).
-4. **The hall held is a DOM label over the veil**, in the classic face (Cormorant, the arrival card's gold) on both
+3. **The hall held is a DOM label over the veil**, in the classic face (Cormorant, the arrival card's gold) on both
    skins, and hidden from screen readers (the arrival card's words reach the live region).
-5. **A witness's stair does not cross-dissolve with the member it watches.** A witness sees the company's stair.
-6. **The door's compass mark rides the arch's gold slot.** The world host's frame already hands the enhanced compass
+4. **A witness's stair does not cross-dissolve with the member it watches.** A witness sees the company's stair.
+5. **The door's compass mark rides the arch's gold slot.** The world host's frame already hands the enhanced compass
    `arch: egClient?.archCompass()`, the gate's diamond in the Spire's gold. The arch stands only in the open world, so
    in the Spire the slot is the door's, and no host line moved. The classic compass carries neither, because EG-F's
    ninth departure stands: the classic HUD's options drop the arch.
-7. **The beacon's 1.5 s is timed from the Redoubt's word, not from SPIRREDT's chord.** The score's own clock is
+6. **The beacon's 1.5 s is timed from the Redoubt's word, not from SPIRREDT's chord.** The score's own clock is
    EG-G2's.
-8. **The witness's sight speaks the twist in the chat**, with no HUD line. A ping's cooldown is not shown: the relay
+7. **The witness's sight speaks the twist in the chat**, with no HUD line. A ping's cooldown is not shown: the relay
    refuses a ping inside 3 s, and the screen says nothing.
-9. **Blue is the same in every palette.** The palettes move the danger, the safety and the hazard only.
-10. **Nothing here has run in a browser**, because the build container holds no Daggerfall data. The two shaders were
+8. **Blue is the same in every palette.** The palettes move the danger, the safety and the hazard only.
+9. **Nothing here has run in a browser**, because the build container holds no Daggerfall data. The two shaders were
     evaluated through `test/glsl.mjs`, the passes run over a recording GL, and the client played against the relay's
     own words through the wire.
 
@@ -5637,3 +5634,119 @@ peers, the tell, the reverb's crossfade and TEXTURE.356 are closed here.
 - PIN MOVED: `test/audit39_render.test.js` (the fire walls take GetFireWallColors32). `bible/06-Systems/Systems.md` counts
   517 modules. `bible/07-Rendering/Rendering.md` and `Rendering-Arc.md` say GetFireWallColors32 shipped.
 - `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
+
+### EG-ZO - 2026-10-12 - THE FALL PAST THE SPIRE'S UNDERSIDE
+
+Mac: "I said I want everything". Section 7's stair, the full fall a company sees at a band's first hall (Hall 1, each Brink
+and a Brink start), is now a camera falling past a modelled underside of the Spire. EG-ZE painted it as a picture on the
+veil's canvas. This closes EG-ZE's departure 2: its sentence is deleted, the departures after it are renumbered, and the
+record's own pointer to its old sixth moves with them. The 0.8 s veil at every other step, the plain cut under reduced
+motion, the hall held centred and the band's chime are unchanged.
+
+**What shipped, by piece.**
+
+- **THE UNDERSIDE MODELLED** (`world/egUnderside.js`, new).
+  - It is built with the arc's one mesh kit (`world/meshKit.js`: its quads, triangles, prisms, lathes and extrusions).
+    It has 2,660 triangles and a sub-mesh for each of its four records (`EG_UNDERSIDE_RECORDS`): the floor's flags, the
+    band's metal, the undersides' strata and the walls' ashlar. Each sits under the band's own archive
+    (`world/egBandArt.js`), the band the step falls into.
+  - THE PLAN (`egUndersidePlan`) is seeded and the same for every band, because the Spire is one:
+    - the torn floor, 44 m across its ragged rim (32 corners, 10% either way) and 4.5 m thick, its broken edge the walls'
+      ashlar;
+    - the rock torn up with it, hanging 40 m under it in eight rings. The rings narrow by the rock's taper
+      (`egUndersideRockR`), are jittered, and are cake-stepped, each ledge facing down into the deep's light. The top
+      ring follows the rim inward, so the floor's underside never folds;
+    - ten spires of rock, 14 to 30 m long, bent away and broken at the tip by the islands' own law
+      (`egUndersideSpireRing`, after `world/sdIslandModel.js` spireRing);
+    - six galleries' broken floors jutting from the flank;
+    - the colonnade of the hall above, seven columns hanging upside down under the rim;
+    - six girders of the band's metal welded through the rock.
+  - Nothing stands over the floor, and nothing is wider than its rim. The strata run by depth (the undersides' record
+    top to tip: the torn lip, the courses, the works, the haze), and every broken tip is in the haze.
+  - `egBandArtOf(band, rec)` (`world/egBandArt.js`) paints one of a band's pictures alone, the same pixels as its whole
+    dress (`egBandArt` now reads it record by record). The fall paints four. It never paints the walkways' tesserae, which
+    took 92 ms of a band's ~100 ms dress, measured in node.
+- **THE FALL'S CAMERA** (`EG_FALL`, `egFallDepth`, `egFallPitch`, `egFallEye`, `egFallCamera`).
+  - The eye steps off the torn floor's rim (58 m from the axis, an eye's height over the floor) and faces the axis.
+  - It falls from rest toward 44 m/s against the void's drag, v (t - tau (1 - e^(-t/tau))) with tau 0.7 s, and drifts
+    0.8 m outward for each metre fallen.
+  - Its eyes rise from 11.5 degrees down (the void opening under it) to 24 degrees up (the underside climbing away
+    overhead). The raise is eased over the stair's own 2.8 s: 0.8 s in, the 1.2 s least hold, 0.8 s out
+    (`world/egLights.js` EG_STAIR_VEIL, `EG_FALL_SPAN`). It is still at both ends, and nothing else turns.
+  - As timed, the eye is among the spires as the veil shuts (0.8 s, 14 m fallen) and below the last stone as the least
+    hold ends (2.0 s, 57 m down against the main tip's 46). It never comes within 10 m of the rock, and the underside
+    stays on the screen, climbing it, through the longest hold the veil allows (20 s).
+- **THE STAIR'S PASS** (`render/egStairPass.js`).
+  - In the fall, the triangle paints the band's void along the falling camera's rays (`fallRay`; the ray basis is
+    `render/sdSky.js` sdSkyBasisInto's): the deep below rising to meet the faller, and embers streaking up past the eye.
+  - The painted underside (`undersideEdge` and its black) is gone. With it went the picture's own reversed edge,
+    `smoothstep(edge + 0.03, edge, e)`, which SD20c's sweep could not read because its edges were not literals.
+  - EG-ZE's fix stands as written: `c += DEEP[b] * 0.35 * k * smoothstep(0.0, 1.0, -e);`.
+  - THE UNDERSIDE'S PROGRAM (`EG_UNDERSIDE_VS`, `EG_UNDERSIDE_FS`) draws the model through the camera, depth-tested and
+    written, with back faces culled.
+  - It is lit by the place alone (`EG_UNDERSIDE_LOOK`): the deep from below, the horizon all round, the zenith from above,
+    and the Shade's moon where `render/egSkyPass.js` stands it.
+  - It melts into the band's void with distance (0.004 a metre). Both programs paint the same void (`EG_VOID_GLSL`). It is
+    dithered in and out with the veil and posterized as the stair is.
+  - `upload(parts)` builds the program the first time and keeps it with the pass. A program that will not build is never
+    tried again, and the void is drawn alone.
+  - The upload makes a vertex array, three vertex buffers, the pack's Uint32 index buffer and a picture a record (nearest
+    up close, mipmapped, the strata clamped top to tip). An `EgUnderside` owns them, and its `destroy` frees every one,
+    once. An upload that fails part way frees what it made.
+- **THE VEIL** (`ui/gateVeil.js`).
+  - Its canvas asks for a depth buffer. The fire's and the Hour's looks never test against it.
+  - A fall taken starts its own underside (`fallTake`). The underside is made a slice a tick (`fallSlice`: the rock, the
+    spires, the wreck, the pack, then four pictures), from the stair's first frame. That is eight ticks, about 0.13 s of
+    the 0.8 s closing, and the upload is one more slice.
+  - No slice runs in the tick the veil shuts in, because that tick's end runs the step's own work: THE SWAP.
+  - The fall is drawn every frame through the falling camera on the stair's own clock, with the hall held centred over it.
+  - EVERY ALLOCATION HAS AN OWNER. `fallFree` empties the slot first, then frees the underside, on every exit:
+    - the veil opened;
+    - a look that is not this fall taken (a flash);
+    - another band's fall;
+    - the veil destroyed, before the pass that drew it.
+- **THE SWAP UNDER IT** (`scenes/egClient.js`, unchanged). The step into Hall 26 is EG-H3's circle swap in place (the next
+  circle built during the rest, `egSwapCircle`) under the full fall. Played with a real veil, the swap stands while the
+  veil is shut, after the underside stood, in a tick that made none of it, and the underside is drawn on through the hold.
+
+**The four hosts.**
+- `src/scenes/world.js` - FLAGGED: untouched. The veil is the world host's (`host.gateVeil`), and the fall needs nothing of
+  its frame.
+- `src/scenes/worldModes.js` - FLAGGED: untouched. `stepThroughFire(go, look, opts)` hands the veil the step's look, and
+  the swap in place runs inside it as before.
+- `src/scenes/dungeonContext.js` - FLAGGED: it has nothing to wire.
+- `src/scenes/exterior.js` - FLAGGED, as section 28 has it: offline, no breach.
+
+**Departures, said plainly.**
+- **The fall's camera is the stair's own, on the veil's canvas** (its own GL context, a third of the pixels), not the
+  world's camera. Under the veil the world's place is being torn down and stood again (THE SWAP), and the veil keeps
+  drawing while the place beyond is built. A fall in the world's renderer would draw the hall being swapped, and would
+  need the hosts' frames.
+- **The fall is faster than a body falls**: from rest at v/tau (63 m/s per second) toward 44 m/s, so the underside is
+  passed inside the 1.2 s least hold.
+- **The underside has no light of its own.** Its metal's rubbed glint (the band's emission picture) is not uploaded, so
+  the deep alone lights it, as SD-LOOK's structure is lit.
+- **One underside for every band**, dressed in each band's stone. The hall's sky (`render/egSkyPass.js`) still paints the
+  underside as a shape, smaller each band, once the step lands.
+- **The fall's first frames show the void alone**: about eight frames, while the dither has taken a sliver of the screen.
+  Nothing of the fall is made during the rest. Its parts are made in the closing's first frames, which no swap's work
+  shares, and freed as it ends.
+- **Not verified without a browser and the game's data.** Nothing here has run in a browser. The shaders were evaluated
+  through `test/glsl.mjs`, the pass and the veil ran over a recording GL, and the client was played with a real veil
+  against the relay's own words. The fall's look (the stone in the deep's light, the haze, the motion's comfort) has not
+  been seen.
+
+**Pins.**
+- `test/egz_fall.test.js` (7).
+- `tools/mutants/egz_fall.json` (79, every one dead). Two survived the first run, a freed underside drawn and one freed
+  twice. Both were hidden by `destroy` clearing its lists, which also left `live` meaning nothing. `destroy` now rests on
+  `live` alone, and the draw's pin reads that nothing of a freed underside is drawn.
+- PIN MOVED: `test/egz_stair.test.js`. The stair's build is refused by the stair's own text (`stairScene`), and its shader
+  test no longer holds the picture's underside. `tools/mutants/egz_stair.json` loses the two records aimed at that
+  picture (EGZ-the-underside-never-falls, EGZ-the-underside-never-black).
+- Judged again over the three files this slice touched that other lists aim at (`render/egStairPass.js`,
+  `ui/gateVeil.js`, `world/egBandArt.js`): 51 records in six lists (`auditwb_sound` 3, `eglook` 5, `egz_stair` 21, `sd11d` 4, `sd25_look` 10, `wb6c` 8), every
+  one dead.
+- `bible/07-Rendering/Rendering.md`'s row for the stair's pass says the fall is modelled.
+- `RELAY_VERSION` untouched: nothing in the relay's graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
+- New in `src/`: `src/world/egUnderside.js`. The Ledger's ELITE-GATES row gains it at the lead's merge.
