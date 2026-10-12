@@ -52,7 +52,7 @@ async function withBreach(fn, { party = false } = {}) {
 }
 
 test('EG-PLAY THE WIRE (EG-FULL): a breach\'s words each way, projected and bounded - the open (its order and the landing), the admission, the door, the way home, a blow on a body by its number, a Vestige picked, a vote, a Cantrip, the Sutler, a ping, a bequest, forsaking, the Orrery\'s turn, a fall said; the call, the state, a stage, the company of ten fields, a fall, a Redoubt, a receipt, the end, a refusal; the fight in the Spire\'s own words (a body\'s thirteen, a blow\'s FULL shape stamp, a zone, a tether, a mark) and the run\'s; a relay before it is sent nothing (mutants: an open with no landing; a company of nine; a stamp out of bounds; a body\'s row cut short)', () => {
-  assert.deepEqual([...EG_KINDS], ['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell']);
+  assert.deepEqual([...EG_KINDS], ['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use']);   // EG-FULL LAYER THREE: `use` - an engine worked
   for (const k of ['call', 'st', 'efs', 'ead', 'eb', 'ez', 'etx', 'emk', 'offer', 'ask', 'rise', 'eheal']) assert.ok(EG_OUT_KINDS.includes(k), k);
   assert.equal(validEgIn({ k: 'open', z: 'v1.abc.def' }), null, 'an open names where its company answers from');
   assert.deepEqual(validEgIn({ k: 'open', z: 'v1.abc.def', site: SITE, junk: 1 }), { k: 'open', z: 'v1.abc.def', site: SITE });

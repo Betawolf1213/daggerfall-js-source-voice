@@ -109,7 +109,7 @@ function obj(F, t, x, z, hp, now, out, o = {}) {
   return egBodyNew(F, EG_ROLE.obj, EG_OBJ[t] ?? 0, x, z, hp > 0 ? hp : 1, { t, r: o.r ?? 1.2, fl: hp > 0 ? 0 : EG_FL.ward, pt: o.pt ?? 0, now, out, st: 0, ...o.extra });
 }
 /** THE OBJECTS' TYPES on the wire (`k` of an object body). */
-export const EG_OBJ = Object.freeze({ rift: 0, anchor: 1, rune: 2, gem: 3, haven: 4, brazier: 5, banner: 6, heart: 7, seal: 8, pillar: 9, standard: 10, chain: 11, relic: 12, isle: 13, spark: 14, plate: 15, cache: 16, niche: 17, shrine: 18, sutler: 19, engine: 20, image: 21, umbra: 22, memento: 23, vault: 24, stone: 25 });
+export const EG_OBJ = Object.freeze({ rift: 0, anchor: 1, rune: 2, gem: 3, haven: 4, brazier: 5, banner: 6, heart: 7, seal: 8, pillar: 9, standard: 10, chain: 11, relic: 12, isle: 13, spark: 14, plate: 15, cache: 16, niche: 17, shrine: 18, sutler: 19, engine: 20, image: 21, umbra: 22, memento: 23, vault: 24, stone: 25, fwall: 26 });   // LAYER THREE: `fwall` an alcove's false wall (one blow)
 
 /** Whom a lord goes at: THREAT_PICK of the time its top of threat, else a living member at random. */
 function pickTarget(L, here, rng, law) {

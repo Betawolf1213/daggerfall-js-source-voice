@@ -347,7 +347,7 @@ import { SD_CAST_OUT_LINE, sdRoomKey, isSdRoom, sdPhase } from '../net/sdLaw.js'
 import { egRoomKey, EG_TEXT } from '../net/egLaw.js';   // EG-PLAY: an Elite Breach's room, and its words
 import { createEgClient } from './egClient.js';   // EG-PLAY: the breach on this screen - the key, the call, the halls, the receipts
 import { createEgFight } from './egFight.js';   // EG-PLAY: a hall's fight
-import { registerSpirePotionLaw, registerSpireFooting, registerSpireWake } from '../systems/spireKit.js';   // EG-FULL: THE POTION LAW (two restoring potions a hall); Iron Footing on the spans
+import { registerSpirePotionLaw, registerSpireFooting, registerSpireWake, registerSpireObjs, registerSpireAct } from '../systems/spireKit.js';   // EG-FULL: THE POTION LAW (two restoring potions a hall); Iron Footing on the spans
 import { accountEg } from '../net/accountClient.js';   // EG-PLAY: the Weir Keys, the open, the admission, the claims
 import { registerSpireLevitateWard, registerPlayerDeathSave, registerPlayerDamageMod } from '../characters/playerEntity.js';   // EG-PLAY: the Spire's ward on Levitate, beside the one; EG-FULL: the fall's death save and the witness's damage mod
 import { isSdRealm, realmArena, SD_REALM_TEXT, SD_REALM_FOG, SD_REALM_FLOORS, SD_ARENA_FLOORS, arenaHolds } from '../world/sdRealm.js';   // SD5a: the Shattered Hour - its edge, its refusals
@@ -24948,6 +24948,8 @@ export async function bootWorld(canvas, renderer, params, status) {
   registerSpirePotionLaw(egClient ? { allowed: () => egClient.potionAllowed(), used: () => egClient.potionUsed() } : null);   // EG-FULL: THE POTION LAW's count
   registerSpireFooting(egClient ? () => egClient.footing() : null);   // EG-FULL LAYER TWO: Iron Footing against the spans' Gust and Pendulum
   registerSpireWake(egClient ? () => { const E = egClient.state(); return { h: E.h | 0, hw: E.hw || 0 }; } : null);   // EG-FULL LAYER TWO: a Falling Wall falls from its hall's wake
+  registerSpireObjs(egClient ? () => egClient.objs() : null);   // EG-FULL LAYER THREE: Grath's islands fall, the false walls stand, as the relay says
+  registerSpireAct(egClient ? (key) => egClient.act(key) : null);   // EG-FULL LAYER THREE: an Orrery stone turned, an engine worked
   egClient?.claimKeys();   // the Weir Key's use is this screen's open
   const egFrame = () => { try { egClient?.frame(); } catch (e) { console.warn('[eg] frame', e?.message ?? e); } };
   let _omenClockAt = null;   // AUDIT WB C4: when the relay's clock was first read this session (the omen's fallback wait)

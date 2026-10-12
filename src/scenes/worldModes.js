@@ -9962,7 +9962,8 @@ export function createWorldModes(host) {
       activateStaticNpc((dungeonCtx.npcTargets?.() ?? [])[Number(key.split(':')[1])]);   // WORLD-HOVER: the `person:` index is the registered producer's, so the handler reads THAT list - a second local copy is how the two drift
       return true;
     }
-    if (key.startsWith('sdrift:') || key.startsWith('sdreturn:') || key.startsWith('sdstone:') || key.startsWith('sdplaque:')) { dungeonCtx.sdPress?.(key); return true; }   // SD4b: a Super dungeon's Rift and Return (Super-Dungeons.md section 6) - the context's own
+    if (key.startsWith('sdrift:') || key.startsWith('sdreturn:') || key.startsWith('sdstone:') || key.startsWith('sdplaque:')) { dungeonCtx.sdPress?.(key); return true; }
+    if (key.startsWith('egstone:') || key.startsWith('egengine:')) { dungeonCtx.egPress?.(key); return true; }   // EG-FULL LAYER THREE: an Elite Breach's Orrery stone, a chamber's engine   // SD4b: a Super dungeon's Rift and Return (Super-Dungeons.md section 6) - the context's own
     if (key.startsWith('questflat:')) {
       // DQ1: buildingKey is 0 down here - StaticNPC reads it from the
       // runtime data and a dungeon has no building, the same reason

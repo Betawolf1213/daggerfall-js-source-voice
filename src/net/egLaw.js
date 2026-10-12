@@ -23,12 +23,18 @@
 // rank, the Rampart and its five variants, the Athenaeum, the Deepway, the Brink, the Scriptorium) and the twists; the
 // lords' draw and every lord's own ground; the decrees' table, the Proclamation and the span decrees in the spec.
 //
+// EG-FULL, LAYER THREE (section 11): THE FRAGMENTS laid into the spec off their law (net/egFragLaw.js) - each passage of
+// its band's library over its chasm and inner course, each chamber's play and signature, the set pieces (the Collapsing
+// Tube, and the Brinks' Sinking Stair, Moon Path and Forge Line), THE FORK's High Road and Low Road (each its own course,
+// both onto the end plate), and the ground after each run that the solver jumps.
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { sdSeed, sdRng } from './sdBrain.js';
-import { egSpanProof } from './egSpanLaw.js';   // EG-FULL: THE TIMED SOLVER - a course it refuses is laid again
+import { egSpanProof, egRoadCross, EG_SPAN_RUN_MPS } from './egSpanLaw.js';   // EG-FULL: THE TIMED SOLVER - a course it refuses is laid again
+import { egFragPassage, egFragChamber, egSetPiece, egSetPieceOf, EG_PASSAGE_KITS, EG_CHAMBER_KITS, EG_FRAGS } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments
 
 /** The spec law's number - a change to any draw below changes it (and the relay's version with it). */
-export const EG_SPEC = 3;
+export const EG_SPEC = 4;
 /** The most a company holds (the party's own PARTY_MAX, net/wire.js - pinned equal). */
 export const EG_PARTY_MAX = 8;
 
@@ -421,6 +427,9 @@ export const EG_STEP = Object.freeze({
   crumble: Object.freeze({ w: 260, d: 260 }), still: Object.freeze({ w: 300, d: 260 }), ledge: Object.freeze({ w: 240, d: 200 }),
   gust: Object.freeze({ w: 300, d: 260 }), rail: Object.freeze({ w: 300, d: 300 }), pend: Object.freeze({ w: 300, d: 260 }),
   vent: Object.freeze({ w: 420, d: 420 }), drop: Object.freeze({ w: 600, d: 600 }),
+  // EG-FULL LAYER THREE: the fragments' own pieces (net/egSpanLaw.js) - a moon-bound branch, a rolling drum, a bone bridge
+  // (the Crumble's depth), a flight of the Sinking Stair
+  moon: Object.freeze({ w: 280, d: 220 }), drum: Object.freeze({ w: 300, d: 300 }), bone: Object.freeze({ w: 260, d: 260 }), sink: Object.freeze({ w: 300, d: 260 }),
 });
 /** Which pieces each band unlocks (section 10.3) - the Galleries' five, the Cairn's Gust and Rail, the Shade's Pendulum,
  *  the Wellhead's Vent. */
@@ -445,8 +454,16 @@ const PLATE_R = 500, ISLE_R = 300, BRIDGE_HALF = 200;
 /** The Oblivion Caverns passage (section 11's first fragment): its floor's half-width, its length, the chasm in it and
  *  the ledges that cross it, its height (cm). */
 export const EG_CAVE = Object.freeze({ halfW: 300, len: 2800, chasm: 1000, height: 520 });
-/** The fragment kits by band (section 11.2): the passage each band's spans and Deepways run through. */
+/** The fragment kits by band (section 11.2): the passage each band's Brinks are torn from (the rest draw from the band's
+ *  whole library - net/egFragLaw.js EG_PASSAGE_KITS). */
 export const EG_FRAG_KITS = Object.freeze(['caverns', 'ossuary', 'gloam', 'forge']);
+/** THE FORK (section 11.4): from circle 2 every span forks at an island - the High Road over the void, the Low Road this
+ *  far across (cm, the hall's x) and a Drop down, through a passage beneath; the High Road meets its height by a Drop. */
+export const EG_FORK_FROM_C = 2;
+export const EG_LOW_X_CM = 1500;
+export const EG_FORK_DROP_CM = 450;
+/** The roads: the one course (and the High Road), the Low Road, and an alcove's side way (optional - never proven). */
+export const EG_ROAD = Object.freeze({ high: 0, low: 1, side: 2 });
 /** The Rampart's waystones (m apart), a Falling Wall's start and pace, a Forge Bridge's belt (section 8.3). */
 export const EG_WAYSTONE_EVERY_M = 30;
 export const EG_WALL_FALL_AFTER_MS = 20_000;
@@ -473,6 +490,9 @@ export function egHallOf(seed, h, geo = 0) {
   let spec = layHall(seed >>> 0, h, geo | 0, 0), tries = 0;
   while (spec.steps.length && !egSpanProof(spec).ok && tries < EG_RELAY_MAX) spec = layHall(seed >>> 0, h, geo | 0, ++tries);
   if (spec.steps.length && !egSpanProof(spec).ok) spec = layHall(seed >>> 0, h, geo | 0, EG_RELAY_MAX + 1);
+  // THE FORK's two roads' fastest crossings at THE SPAN BUILD (s; the Low Road's bridges across and back run too) - the
+  // Low Road's closing reads their difference (section 11.4)
+  if (spec.fork) spec.fork = { ...spec.fork, hi: Math.round(egRoadCross(spec, 0, spec.fork.z).fast * 10) / 10, lo: Math.round((egRoadCross(spec, 1).fast + (2 * (spec.fork.lowX - spec.fork.x)) / EG_SPAN_RUN_MPS) * 10) / 10 };
   spec = deepFreeze({ ...spec, laid: tries });
   if (_specs.size >= 48) _specs.delete(_specs.keys().next().value);
   _specs.set(key, spec);
@@ -491,24 +511,27 @@ function layHall(seed, h, geo, attempt = 0) {
   const gale = geo % 3, crumbling = Math.floor(geo / 3) % 3;
   const X = 0;
   /** the hall's parts in cm, said in metres at the end */
-  const P = { discs: [], bands: [], lanes: [], steps: [], islands: [], caves: [], rifts: [], vents: [], fl: [], spots: {}, deco: [], gate: null, foe: null, arrive: null, end: null, ring: null, walk: null, waystones: [], chamber: 0 };
+  const P = { discs: [], bands: [], lanes: [], steps: [], islands: [], caves: [], rifts: [], vents: [], fl: [], spots: {}, deco: [], gate: null, foe: null, arrive: null, end: null, ring: null, walk: null, waystones: [], chamber: 0,
+    // EG-FULL LAYER THREE: the fragments' law halves (net/egFragLaw.js) - each fragment's record, its hazards on the shared
+    // clock, its ramps (support, never fight floors), its engines, alcoves, vignettes and lights; the Collapsing Tube; THE FORK
+    frags: [], hazards: [], ramps: [], engines: [], alcoves: [], vignettes: [], lights: [], tube: null, fork: null };
   const disc = (x, z, rad, role, y = 0) => { const d = { x, y, z, r: rad, role }; P.discs.push(d); return d; };
   const band = (z0, z1, half, role, y = 0, x = X) => { const b = { x, y, z0, z1, halfW: half, role }; P.bands.push(b); return b; };
   const lane = (ax, az, bx, bz, half, role, y = 0) => { const l = { ax, az, bx, bz, hw: half, role, y }; P.lanes.push(l); return l; };
   const flD = (x, z, rad, y = 0) => P.fl.push({ t: 'd', x, z, r: rad, y });
   const flL = (ax, az, bx, bz, half, y = 0) => P.fl.push({ t: 'l', ax, az, bx, bz, hw: half, y });
   const spot = (role, x, z, extra = {}) => { (P.spots[role] ??= []).push({ x, z, ...extra }); };
-  let edge = 0, y = 0, span = 0, risen = false;
+  let edge = 0, y = 0, span = 0, risen = false, road = 0, kitNow = '', xRoad = 0;
   const pieces = plain ? EG_BAND_PIECES[bnd].slice(0, 2) : EG_BAND_PIECES[bnd];
   /** a step laid `gap` past the edge (its unused fields nought, one shape for every step - the Steps' law) */
   const step = (k, gap, o = {}) => {
     const S = EG_STEP[k];
     const z = edge + gap + S.d / 2;
-    P.steps.push({ i: P.steps.length, kind: k, span, x: X + (o.x ?? 0), y, z, w: S.w, d: S.d, amp: o.amp ?? 0, period: o.period ?? 0, phase: o.phase ?? 0, beat: o.beat ?? 0, gap });
+    P.steps.push({ i: P.steps.length, kind: k, span, x: X + (o.x ?? xRoad), y, z, w: S.w, d: S.d, amp: o.amp ?? 0, period: o.period ?? 0, phase: o.phase ?? 0, beat: o.beat ?? 0, gap, road, kit: kitNow, after: 0 });
     edge = z + S.d / 2;
   };
   const gap = () => between(r, EG_GAP_MIN_CM, EG_GAP_MAX_CM);
-  const island = (g = gap()) => { const z = edge + g + ISLE_R; P.islands.push({ x: X, y, z, r: ISLE_R }); disc(X, z, ISLE_R, 'island', y); edge = z + ISLE_R; span++; };
+  const island = (g = gap(), x = X) => { const z = edge + g + ISLE_R; P.islands.push({ x, y, z, r: ISLE_R, road }); disc(x, z, ISLE_R, 'island', y); edge = z + ISLE_R; span++; return z; };
   /** a run of `n` steps of one piece (section 10.3 - every piece at the Steps' own timing, at every depth) */
   const run = (k, n) => {
     if (k === 'drift') for (let q = 0; q < n; q++) step('drift', gap(), { amp: between(r, 100, 200), period: between(r, 40, 70) * 100, phase: q * 900 });
@@ -520,33 +543,162 @@ function layHall(seed, h, geo, attempt = 0) {
         step('beat', gap(), { beat: (b++ % 2) * EG_BEAT_HALF_MS });
       }
     } else if (k === 'crumble') {
-      const drop = Math.ceil(y / Math.max(1, n));
-      for (let q = 0; q < n; q++) { y = Math.max(0, y - drop); step('crumble', gap()); }
+      // down toward the plates' height while above it (never up: a course below it - a Mist Stair's, a Sinking Stair's - stays)
+      const drop = y > 0 ? Math.ceil(y / Math.max(1, n)) : 0;
+      for (let q = 0; q < n; q++) { if (y > 0) y = Math.max(0, y - drop); step('crumble', gap()); }
     } else if (k === 'gust') for (let q = 0; q < n; q++) step('gust', gap(), { period: 6000, phase: q * 0 });
-    else if (k === 'rail') for (let q = 0; q < n; q++) step('rail', gap(), { amp: between(r, 150, 250), period: between(r, 60, 90) * 100, phase: q * 1500 });
+    else if (k === 'rail') for (let q = 0; q < n; q++) step('rail', gap(), { amp: between(r, 150, 200), period: between(r, 60, 90) * 100, phase: q * 1500 });   // LAYER THREE: its travel under the least gap less EG_RAIL_CLEAR
     else if (k === 'pend') for (let q = 0; q < n; q++) step('pend', gap(), { amp: 0, period: between(r, 30, 50) * 100, phase: q * 700 });
     else if (k === 'vent') for (let q = 0; q < n; q++) step('vent', gap(), { period: between(r, 40, 60) * 100, phase: between(r, 0, 39) * 100 });
     else if (k === 'drop' && y < 200) for (let q = 0; q < n; q++) step('still', gap());
     else if (k === 'drop') { const fall = Math.min(EG_DROP_CM, Math.max(200, y)); y = Math.max(0, y - fall); step('drop', gap()); }
     else for (let q = 0; q < n; q++) step('still', gap());
   };
-  /** A FRAGMENT'S PASSAGE (section 11): a tunnel of its band's kit over the course, its floor broken by a chasm crossed
-   *  on ledges (the Oblivion Caverns' in the Galleries; the Ossuary's bone vault, the Gloam Thicket, the Forge Gut below). */
-  const cave = (kit = EG_FRAG_KITS[bnd]) => {
-    const z0 = edge, zA = z0 + Math.floor((EG_CAVE.len - EG_CAVE.chasm) / 2), zB = zA + EG_CAVE.chasm, z1 = z0 + EG_CAVE.len;
-    band(z0, zA, EG_CAVE.halfW, 'cave', y);
-    edge = zA;
-    const ledges = 3, lgap = Math.floor((EG_CAVE.chasm - ledges * EG_STEP.ledge.d) / (ledges + 1));
-    for (let q = 0; q < ledges; q++) step('ledge', lgap, { x: (q % 2 === 0 ? -1 : 1) * 60 });
-    band(zB, z1, EG_CAVE.halfW, 'cave', y);
-    P.caves.push({ x: X, y, z0, z1, zA, zB, halfW: EG_CAVE.halfW, height: EG_CAVE.height, curtain: zA - 120, kit });
+  /** A fragment's law half laid into the hall (net/egFragLaw.js's plan, in its own frame about (x0, z0, y0)): its hazards,
+   *  anchors, alcoves, vignettes and lights, every point moved into the hall's frame. The far floor's (`zB` on) stand at
+   *  `yB`. */
+  const lay = (Q, x0, z0, y0) => {
+    const yAt = (zr) => y0 + (Q.cls === 'passage' && zr >= (Q.zB ?? Infinity) ? Q.yB ?? 0 : 0);
+    const at = (q) => [x0 + q[0], z0 + q[1]];
+    for (const h of Q.hazards) {
+      const z1 = h.sh ? h.sh[1] : h.spots ? h.spots[0][1] : h.lanes ? h.lanes[0][1] : h.path ? h.path[1] : 0;
+      const o = { kind: h.kind, i: P.hazards.length, x: x0, z: z0, y: (h.kind === 'mist' ? y0 : yAt(z1)) + (h.kind === 'mist' ? h.y : (h.y ?? 0)), period: h.period ?? 0, phase: h.phase ?? 0, w: h.w ?? 0, r: h.r ?? 0, ring: h.ring ?? 0, sh: null, spots: null, lanes: null, path: null };
+      if (h.sh) o.sh = [x0 + h.sh[0], z0 + h.sh[1], x0 + h.sh[2], z0 + h.sh[3]];
+      if (h.spots) o.spots = h.spots.map(at);
+      if (h.lanes) o.lanes = h.lanes.map((q) => [x0 + q[0], z0 + q[1], x0 + q[2], z0 + q[3]]);
+      if (h.path) o.path = [x0 + h.path[0], z0 + h.path[1], h.path[2], h.path[3]];
+      P.hazards.push(o);
+    }
+    for (const [k, list] of Object.entries(Q.anchors ?? {})) for (const q of list) { const [ax, az] = at(q); spot(k, ax, az, { y: yAt(q[1]), road, f: P.frags.length - 1 }); }   // `f` its fragment (P.frags)
+    for (const q of Q.alcoves ?? []) P.alcoves.push({ i: P.alcoves.length, x: x0 + q.x, z: z0 + q.z, y: y0 + (q.y ?? 0), seal: q.seal, side: q.side ?? 1, holds: q.holds });
+    for (const q of Q.vignettes ?? []) P.vignettes.push({ t: q.t, x: x0 + q.x, z: z0 + q.z, y: y0 + (q.y ?? 0), yaw: q.yaw ?? 0 });
+    for (const q of Q.lights ?? []) P.lights.push([x0 + q[0], y0 + q[1], z0 + q[2], q[3]]);
+  };
+  /** The band's passage kit for this hall (the hall's die - the band's library, section 11.2). */
+  const passageKit = () => { const L = EG_PASSAGE_KITS[bnd]; return L[between(r, 0, L.length - 1)]; };
+  /** A FRAGMENT'S PASSAGE (section 11): a tunnel of its kit over the course (net/egFragLaw.js egFragPassage - the
+   *  Oblivion Caverns' lava tube, the Fallen Stacks, the Broken Colonnade, the Ossuary, the Mist Stair, the Gloam Thicket,
+   *  the Forge Gut, the deep Caverns), its floor broken by a chasm crossed on its inner course; its floors its landings
+   *  (fight floors - section 11.1), its hazards on the shared clock. `x` its offset across the hall (the Low Road's). */
+  const cave = (kit = passageKit(), x = 0) => {
+    const Q = egFragPassage(kit, r, { c, deep: bnd });
+    const X0 = X + x, z0 = edge, zA = z0 + Q.zA, zB = z0 + Q.zB, z1 = z0 + Q.len, y0 = y, role = Q.open ? 'colonnade' : 'cave';
+    band(z0, zA, Q.halfW, role, y, X0); flL(X0, z0, X0, zA, Q.halfW, y);
+    edge = zA; kitNow = kit;
+    for (const it of Q.course) { y += it.dy ?? 0; step(it.k, it.gap, { x: x + (it.x ?? 0), amp: it.amp, period: it.period, phase: it.phase, beat: it.beat != null ? z0 + it.beat : 0 }); }
+    kitNow = '';
+    band(zB, z1, Q.halfW, role, y, X0); flL(X0, zB, X0, z1, Q.halfW, y);
+    P.caves.push({ x: X0, y: y0, yB: y, z0, z1, zA, zB, halfW: Q.halfW, height: Q.height, kit, open: Q.open, road });
+    P.frags.push({ kit, cls: 'passage', name: Q.name, x: X0, y: y0, z0, z1, play: '', reverb: Q.reverb, road });
+    lay(Q, X0, z0, y0);
     edge = z1;
   };
-  /** A chamber (section 11.4): a fight floor in walls - its disc, its walls' ring, its second floor where it has one. */
-  const chamberAt = (zc, R) => { P.chamber = 1; P.deco.push({ t: 'wall', x: X, z: zc, r: R + 150, h: 900, y }); };
+  /** A SET PIECE (section 11.3): the band's own passage on the shared clock, proven by the solver like any other - the
+   *  Collapsing Tube a passage whose floor falls behind the company; the Sinking Stair's, the Moon Path's and the Forge
+   *  Line's flights laid as the course. */
+  const setPiece = (kind, short = false) => {
+    const Q = egSetPiece(kind, r, { short });
+    if (kind === 'tube') {
+      const z0 = edge, z1 = z0 + Q.len;
+      band(z0, z1, Q.halfW, 'tube', y); flL(X, z0, X, z1, Q.halfW, y);
+      P.caves.push({ x: X, y, yB: y, z0, z1, zA: z1, zB: z1, halfW: Q.halfW, height: Q.height, kit: 'caverns', open: 0, road, tube: 1 });
+      P.frags.push({ kit: 'caverns', cls: 'passage', name: Q.name, x: X, y, z0, z1, play: 'tube', reverb: 'cave', road });
+      P.tube = { x: X, y, z0, z1, halfW: Q.halfW, start: Q.tube.start, mps: Q.tube.mps };
+      P.lights.push([X, y + 160, z0 + 300, 'lava'], [X, y + 160, Math.floor((z0 + z1) / 2), 'lava'], [X, y + 160, z1 - 300, 'lava']);
+      edge = z1;
+      return;
+    }
+    const z0 = edge, y0 = y;
+    kitNow = kind;
+    for (const it of Q.course) {
+      y += it.dy ?? 0;
+      step(it.k, it.gap, { x: it.x ?? 0, amp: it.amp, period: it.period, phase: it.phase, beat: it.beatRel != null ? z0 + it.beatRel : 0 });
+      // the Forge Line's hammers: one over each conveyor's middle, told 1.4 s (the place's own - judged wherever it lands)
+      if (it.hammer) { const s0 = P.steps[P.steps.length - 1]; P.hazards.push({ kind: 'hammerline', i: P.hazards.length, x: X, z: s0.z, y, period: 0, phase: between(r, 0, 49) * 100, w: 0, r: 300, ring: 0, sh: null, spots: [[s0.x, s0.z]], lanes: null, path: null }); }
+    }
+    kitNow = '';
+    P.frags.push({ kit: kind, cls: 'passage', name: Q.name, x: X, y: y0, z0, z1: edge, play: kind, reverb: kind === 'forgeline' ? 'cave' : 'quarry', road });
+    for (const h of Q.hazards) P.hazards.push({ kind: h.kind, i: P.hazards.length, x: X, z: z0, y: y0 + h.y, period: 0, phase: h.phase ?? 0, w: 0, r: 0, ring: 0, sh: null, spots: null, lanes: null, path: null });
+  };
+  /** A chamber (section 11.4): a fight floor in walls - its kit's play (a second floor on its stairs, a chokepoint arch,
+   *  its channels surging, an engine) and its signature (net/egFragLaw.js egFragChamber); `kit` null for the trials' own
+   *  walled floors (the Athenaeum's, the Scriptorium's: never a fragment). */
+  const chamberAt = (zc, R, kit = /** @type {string|null} */ (EG_CHAMBER_KITS[bnd][between(r, 0, EG_CHAMBER_KITS[bnd].length - 1)])) => {
+    P.chamber = 1;
+    if (!kit) { P.deco.push({ t: 'wall', x: X, z: zc, r: R + 150, h: 900, y }); return; }
+    const Q = egFragChamber(kit, r, R);
+    const rim = Q.floors.length ? R + 900 : R + 150;
+    P.deco.push({ t: 'wall', x: X, z: zc, r: rim, h: kit === 'clanpit' ? 600 : 900, y, kit });
+    for (const f of Q.floors) { disc(X + f.x, zc + f.z, f.r, 'balcony', y + f.y); flD(X + f.x, zc + f.z, f.r, y + f.y); spot('balcony', X + f.x, zc + f.z, { y: y + f.y }); }
+    for (const q of Q.ramps) P.ramps.push({ ax: X + q.ax, az: zc + q.az, bx: X + q.bx, bz: zc + q.bz, hw: q.hw, y0: y + q.y0, y1: y + q.y1 });
+    if (Q.arch) P.deco.push({ t: 'arch', x: X, z: zc + Q.arch.z, w: Q.arch.w, h: Q.arch.h, r: R, y });
+    if (Q.engine) P.engines.push({ i: P.engines.length, kind: Q.engine.kind, x: X + Q.engine.x, z: zc + Q.engine.z, y });
+    if (Q.horn) spot('horn', X, zc, { r: 600 });
+    P.frags.push({ kit, cls: 'chamber', name: Q.name, x: X, y, z0: zc - R, z1: zc + R, play: Q.play, reverb: Q.reverb, road });
+    lay(Q, X, zc, y);
+  };
   /** The court disc of a fight hall, at z centre `zc`, radius R. */
   const court = (R, role = 'court') => { const zc = edge + 400 + R; band(edge - 50, edge + 450, BRIDGE_HALF, 'bridge', y); disc(X, zc, R, role, y); flD(X, zc, R, y); edge = zc + R; return zc; };
   const downToPlate = () => { if (y > 0) { island(); run('crumble', Math.max(2, Math.ceil(y / EG_STEP_DOWN_CM))); } };
+  /** The span decrees' sections (section 14) - never dropped for room ("every span carries a gust"), at least two pieces
+   *  each. */
+  function decreeSections() {
+    if (gale > 0) { island(); run('gust', Math.max(2, Math.min(2 + gale, Math.floor((10200 - edge) / 560)))); }
+    if (crumbling > 0) { if (crumbling < 2) island(); run('crumble', Math.max(2, Math.min(2 + crumbling, Math.floor((10200 - edge) / 560)))); }
+  }
+  /**
+   * THE FORK (section 11.4): the course forks at an island. THE HIGH ROAD stays over the void - harder (two sections, each
+   * at the Steps' own timing), shorter, its cache of Reliquaries at its hardest point - and meets the end plate's height by
+   * a Drop. THE LOW ROAD bridges across EG_LOW_X_CM and drops into the deep, through a passage of the band's kit, past its
+   * Battlemage's niche (the one niche that heals - and a Memento niche), with fewer falls and more foes. Each road its own
+   * course (the Steps' records carry their `road`), proven road by road; both end on the end plate, at the Low Road's height.
+   */
+  function fork(two, extra) {
+    run(two[0], extra > 0 ? 2 : between(r, 3, 4));
+    const zc = island(), yF = y, zF = edge;
+    spot('fork', X, zc);
+    // THE HIGH ROAD (road 0)
+    road = EG_ROAD.high;
+    run(two[1], 3);
+    decreeSections();
+    const zCache = island();
+    spot('hcache', X, zCache);
+    run(pieces[between(r, 0, pieces.length - 1)], extra > 0 ? 2 : 3);
+    y = yF - EG_FORK_DROP_CM;
+    step('drop', gap());
+    const zHi = edge, yLow = y;
+    // THE LOW ROAD (road 1): across, down its Drop, through its passage, past its niche
+    road = EG_ROAD.low;
+    const LX = X + EG_LOW_X_CM;
+    lane(X + ISLE_R - 50, zc, LX - ISLE_R + 50, zc, BRIDGE_HALF, 'bridge', yF);
+    edge = zc - ISLE_R; y = yF;
+    disc(LX, zc, ISLE_R, 'island', yF); P.islands.push({ x: LX, y: yF, z: zc, r: ISLE_R, road });
+    edge = zc + ISLE_R;
+    y = yLow;
+    step('drop', gap(), { x: EG_LOW_X_CM });
+    cave(EG_PASSAGE_KITS[bnd][0], EG_LOW_X_CM);
+    // the Battlemage's niche on a landing past the passage: heals 15% once a member, holds a shard each, takes a Memento
+    const zN = edge + 400;
+    band(edge, zN + 300, BRIDGE_HALF + 100, 'cave', y, LX); flL(LX, edge, LX, zN + 300, BRIDGE_HALF + 100, y);
+    spot('lniche', LX + BRIDGE_HALF, zN, { y });
+    spot('niche', LX + BRIDGE_HALF, zN);
+    edge = zN + 300;
+    for (const g of ['harrier', 'harrier']) spot('lowfoe', LX, zN - 600, { k: g });
+    // fewer falls: still ground the rest of the way, then across to the end plate
+    xRoad = EG_LOW_X_CM;
+    run('still', 2);
+    xRoad = 0;
+    const zLo = edge;
+    // the roads meet at the end plate (at the Low Road's height): a High Road that ends first is carried on by still
+    // ground; a Low Road by its bridge across to the plate
+    road = EG_ROAD.high;
+    edge = zHi; y = yLow;
+    while (edge < zLo) step('still', EG_GAP_MIN_CM);
+    const zPlate = edge + gap() + PLATE_R;
+    lane(LX, zLo, X + PLATE_R - 100, zPlate, BRIDGE_HALF, 'bridge', yLow);
+    P.fork = { x: X, z: zF, lowX: LX, y: yF, yLow, plate: zPlate, hi: 0, lo: 0 };
+    edge = zPlate - PLATE_R;
+  }
   P.arrive = disc(X, 0, PLATE_R, 'arrive');
   edge = PLATE_R;
 
@@ -573,25 +725,30 @@ function layHall(seed, h, geo, attempt = 0) {
   } else if (kind === 'span' || kind === 'brink') {
     const extra = gale + crumbling;
     const two = c <= 1 ? ['drift', 'beat'] : [pieces[between(r, 0, pieces.length - 1)], pieces[between(r, 0, pieces.length - 1)]];
-    if (kind === 'brink') { run('still', 2); island(); cave(EG_FRAG_KITS[Math.max(0, bnd - 1)]); island(between(r, 200, 260)); run(two[0], 3); island(); cave(EG_FRAG_KITS[bnd]); island(between(r, 200, 260)); run(two[1], 2); }
+    const set = plain ? null : egSetPieceOf(c, kind, bnd, egTubeCircle(seed));
+    if (kind === 'brink') {
+      // the hall tears loose from one realm into the next (section 8.9): the last band's passage, then the new band's set piece
+      run('still', 2); island(); cave(EG_FRAG_KITS[Math.max(0, bnd - 1)]); island(between(r, 200, 260)); run(two[0], 3); island();
+      if (set) setPiece(set); else cave(EG_FRAG_KITS[bnd]);
+      island(between(r, 200, 260)); run(two[1], 2);
+    } else if (c >= EG_FORK_FROM_C && !plain && !set) fork(two, extra);
     else {
-      run(two[0], extra > 0 ? 3 : c <= 1 ? 6 : between(r, 4, 5));   // the span decrees' sections take the room of the runs before them
-      if (crumbling < 1) island();
-      if (c <= 2 || r() < 0.5) { cave(); island(between(r, 200, 260)); }   // in circles 1 and 2 every span carries a passage (section 7)
-      run(two[1], extra > 0 ? 3 : c <= 1 ? 6 : between(r, 4, 5));
-      // the span decrees' sections are never dropped for room (section 12: "every span carries a gust") - at least two pieces each
-      if (gale > 0) { island(); run('gust', Math.max(2, Math.min(2 + gale, Math.floor((10200 - edge) / 560)))); }
-      if (crumbling > 0) { if (crumbling < 2) island(); run('crumble', Math.max(2, Math.min(2 + crumbling, Math.floor((10200 - edge) / 560)))); }
-      if (c >= 3 && extra < 2 && edge < 9000) { island(); run(pieces[between(r, 0, pieces.length - 1)], between(r, 3, 4)); }
+      // the span decrees' sections take the room of the runs before them; a set piece takes most of the hall
+      run(two[0], set ? 2 : extra > 0 ? 3 : c <= 1 ? 6 : between(r, 4, 5));
+      if (crumbling < 1 || set) island();
+      if (set) { setPiece(set, extra > 0); island(between(r, 200, 260)); }
+      else if (c <= 2 || r() < 0.5) { cave(); island(between(r, 200, 260)); }   // in circles 1 and 2 every span carries a passage (section 7)
+      if (!(set && extra > 0)) run(two[1], set ? 2 : extra > 0 ? 3 : c <= 1 ? 6 : between(r, 4, 5));
+      decreeSections();
+      if (c >= 3 && extra < 2 && edge < 9000 && !set) { island(); run(pieces[between(r, 0, pieces.length - 1)], between(r, 3, 4)); }
       if (twist === 'vault') { const [vx, vz] = [X + 900, edge - 300]; lane(X, edge - 300, vx, vz, BRIDGE_HALF, 'side', y); disc(vx, vz, 350, 'vault', y); spot('vault', vx, vz); }
     }
-    downToPlate();
-    edge += gap();
+    if (!P.fork) { downToPlate(); edge += gap(); }   // THE FORK lays its own way onto the plate
   } else if (kind === 'proving') {
     run(c <= 1 ? 'still' : pieces[between(r, 0, 1)], between(r, 5, 7));
     const R = 1400, zc = edge + gap() + R;
     disc(X, zc, R, 'court', y); flD(X, zc, R, y);
-    if (c >= 2 && r() * 3 < 1) { chamberAt(zc, R); for (const s of [-1, 1]) { disc(X + s * (R + 200), zc, 400, 'balcony', y + 350); spot('balcony', X + s * (R + 200), zc); } }
+    if (c >= 2 && r() * 3 < 1) chamberAt(zc, R);   // one proving court in three a chamber (section 11.4) - its play its own
     P.foe = { x: X, z: zc + 400 };
     for (const deg of [0, 120, 240]) { const [x, z] = polar(X, zc, 900, deg + 60); spot('standard', x, z); }
     edge = zc + R;
@@ -627,7 +784,7 @@ function layHall(seed, h, geo, attempt = 0) {
     run(c <= 1 ? 'still' : pieces[between(r, 0, 1)], between(r, 3, 5));
     const R = 1600, zc = edge + gap() + R;
     disc(X, zc, R, 'court', y); flD(X, zc, R, y);
-    chamberAt(zc, R);
+    chamberAt(zc, R, null);   // never a fragment in the Athenaeum: the lock is the hall (section 11.4)
     spot('orrery', X, zc);
     for (const deg of [30, 90, 150, 210, 270, 330]) { const [x, z] = polar(X, zc, 1100, deg); spot('stone', x, z); }
     edge = zc + R;
@@ -646,16 +803,18 @@ function layHall(seed, h, geo, attempt = 0) {
     else spot('engine', X, zc);
     spot('niche', X + R - 200, zc);
     edge = zc + R;
-    // the shaft: ledges down
+    // the shaft down - or the Galleries' set piece (section 8.8's third fragment)
     band(edge - 50, edge + 300, BRIDGE_HALF, 'bridge', y);
     edge += 300;
-    for (let q = 0; q < 3; q++) { y -= 150; step('ledge', 150, { x: (q % 2 ? 1 : -1) * 80 }); }   // the shaft: down on its ledges
+    const set = plain ? null : egSetPieceOf(c, kind, bnd, egTubeCircle(seed));
+    if (set) { setPiece(set); island(between(r, 200, 260)); }
+    else for (let q = 0; q < 3; q++) { y -= 150; step('ledge', 150, { x: (q % 2 ? 1 : -1) * 80 }); }   // the shaft: down on its ledges
     cave();
     edge += gap();
   } else if (kind === 'scriptorium') {
     run('still', 3);
     const R = 1200, zc = edge + gap() + R;
-    disc(X, zc, R, 'court', y); chamberAt(zc, R);
+    disc(X, zc, R, 'court', y); chamberAt(zc, R, null);
     spot('niche', X, zc);
     edge = zc + R;
     run('still', 2);
@@ -723,7 +882,7 @@ function layHall(seed, h, geo, attempt = 0) {
       P.deco.push({ t: 'wall', x: X, z: zc, r: R + 150, h: 1100, y });
     } else if (g === 'forge') {
       // the Forge Gut's long chamber: 55 m, the Colossus's route along it
-      const z0 = edge + 300, z1 = z0 + 5500;
+      const z0 = edge, z1 = z0 + 5500;   // EG-FULL LAYER THREE: from the approach's own gap (the solver now jumps the real gap - 3 m more was unreachable)
       band(z0, z1, 1000, 'court', y); flL(X, z0, X, z1, 1000, y);
       P.foe = { x: X, z: z0 + 800 }; P.ring = { x: X, z: z0 + 600, r: 900 };
       spot('route', X, z0 + 800, { z1: z1 - 800 });
@@ -750,6 +909,17 @@ function layHall(seed, h, geo, attempt = 0) {
   if (slot === 3 || kind === 'scriptorium') spot('niche', X - 350, 0);
   // the cache on every trial hall's end plate (section 17.1)
   if (P.end && kind !== 'brink') spot('cache', P.end.x, P.end.z - 200);
+  // THE GROUND AFTER EACH RUN (net/egSpanLaw.js egSpanPairs): each step no step of its road follows knows how far on its
+  // road's next still ground begins - an island, a plate, a passage's floor - so the solver jumps the real gap
+  for (const s of P.steps) {
+    const far = s.z + s.d / 2, next = P.steps.find((q) => q.road === s.road && q.i > s.i);
+    if (next && Math.abs(next.z - next.d / 2 - next.gap - far) < 1) continue;
+    let best = Infinity;
+    for (const d of P.discs) if (Math.abs(d.x - s.x) <= d.r + s.w && d.z - d.r >= far - 1) best = Math.min(best, d.z - d.r - far);
+    for (const b of P.bands) if (Math.abs(b.x - s.x) <= b.halfW + s.w && b.z0 >= far - 1) best = Math.min(best, b.z0 - far);
+    for (const l of P.lanes) { const lz = Math.min(l.az, l.bz); if (Math.abs(l.ax - s.x) <= l.hw + s.w && lz >= far - 1) best = Math.min(best, lz - far); }
+    s.after = Number.isFinite(best) ? Math.max(0, best) : 0;
+  }
   // the fight's bounding disc (the telegraph pass's floor, the wire's bound)
   let fight = null;
   if (P.fl.length) {
@@ -775,9 +945,20 @@ function layHall(seed, h, geo, attempt = 0) {
     discs: P.discs.map(pt),
     bands: P.bands.map((b) => ({ x: m(b.x), y: m(b.y), z0: m(b.z0), z1: m(b.z1), halfW: m(b.halfW), role: b.role })),
     lanes: P.lanes.map((l) => ({ ax: m(l.ax), az: m(l.az), bx: m(l.bx), bz: m(l.bz), hw: m(l.hw), role: l.role, y: m(l.y) })),
-    steps: P.steps.map((s) => ({ i: s.i, kind: s.kind, span: s.span, x: m(s.x), y: m(s.y), z: m(s.z), w: m(s.w), d: m(s.d), amp: m(s.amp), period: s.period / 1000, phase: s.phase / 1000, beat: s.beat / 1000, gap: m(s.gap) })),
+    steps: P.steps.map((s) => ({ i: s.i, kind: s.kind, span: s.span, x: m(s.x), y: m(s.y), z: m(s.z), w: m(s.w), d: m(s.d), amp: m(s.amp), period: s.period / 1000, phase: s.phase / 1000, beat: s.kind === 'moon' ? m(s.beat) : s.beat / 1000, gap: m(s.gap), road: s.road, kit: s.kit, after: m(s.after) })),
     islands: P.islands.map(pt),
-    caves: P.caves.map((q) => ({ x: m(q.x), y: m(q.y), z0: m(q.z0), z1: m(q.z1), zA: m(q.zA), zB: m(q.zB), halfW: m(q.halfW), height: m(q.height), curtain: m(q.curtain), kit: q.kit })),
+    caves: P.caves.map((q) => ({ x: m(q.x), y: m(q.y), yB: m(q.yB), z0: m(q.z0), z1: m(q.z1), zA: m(q.zA), zB: m(q.zB), halfW: m(q.halfW), height: m(q.height), kit: q.kit, open: q.open, road: q.road, tube: q.tube ?? 0 })),
+    // EG-FULL LAYER THREE: the fragments (net/egFragLaw.js) - metres and seconds, the hall's frame
+    frags: P.frags.map((q) => ({ ...q, x: m(q.x), y: m(q.y), z0: m(q.z0), z1: m(q.z1) })),
+    hazards: P.hazards.map((q) => ({ kind: q.kind, i: q.i, x: m(q.x), z: m(q.z), y: m(q.y), period: q.period / 1000, phase: q.phase / 1000, w: m(q.w), r: m(q.r), ring: m(q.ring),
+      sh: q.sh ? q.sh.map(m) : null, spots: q.spots ? q.spots.map((p) => p.map(m)) : null, lanes: q.lanes ? q.lanes.map((p) => p.map(m)) : null, path: q.path ? q.path.map(m) : null })),
+    ramps: P.ramps.map((q) => ({ ax: m(q.ax), az: m(q.az), bx: m(q.bx), bz: m(q.bz), hw: m(q.hw), y0: m(q.y0), y1: m(q.y1) })),
+    engines: P.engines.map((q) => ({ i: q.i, kind: q.kind, x: m(q.x), z: m(q.z), y: m(q.y) })),
+    alcoves: P.alcoves.map((q) => ({ i: q.i, x: m(q.x), z: m(q.z), y: m(q.y), seal: q.seal, side: q.side, holds: q.holds })),
+    vignettes: P.vignettes.map((q) => ({ t: q.t, x: m(q.x), z: m(q.z), y: m(q.y), yaw: q.yaw })),
+    lights: P.lights.map((q) => [m(q[0]), m(q[1]), m(q[2]), q[3]]),
+    tube: P.tube ? { x: m(P.tube.x), y: m(P.tube.y), z0: m(P.tube.z0), z1: m(P.tube.z1), halfW: m(P.tube.halfW), start: P.tube.start / 1000, mps: P.tube.mps } : null,
+    fork: P.fork ? { x: m(P.fork.x), z: m(P.fork.z), lowX: m(P.fork.lowX), y: m(P.fork.y), yLow: m(P.fork.yLow), plate: m(P.fork.plate), hi: 0, lo: 0 } : null,
     fl: P.fl.map((f) => (f.t === 'd' ? { t: 'd', x: m(f.x), z: m(f.z), r: m(f.r), y: m(f.y) } : { t: 'l', ax: m(f.ax), az: m(f.az), bx: m(f.bx), bz: m(f.bz), hw: m(f.hw), y: m(f.y) })),
     fight: pt(fight), foe: P.foe ? { x: m(P.foe.x), z: m(P.foe.z) } : null, ring: pt(P.ring), spots, chamber: P.chamber,
     deco: P.deco.map((d) => Object.fromEntries(Object.entries(d).map(([k, v]) => [k, typeof v === 'number' ? m(v) : v]))),
@@ -789,6 +970,12 @@ function layHall(seed, h, geo, attempt = 0) {
   };
 }
 
+/** THE COLLAPSING TUBE's circle (section 11.3 - the Galleries' set piece): the first circle from the third whose
+ *  traversal is a span. */
+export function egTubeCircle(seed) {
+  for (let c = 3; c <= 5; c++) if (egCirclePlan(seed, c)[1]?.kind === 'span') return c;
+  return 0;
+}
 /** A circle's five specs, in slot order (`geo` its span decrees). */
 export const egCircleSpecs = (seed, c, geo = 0) => [1, 2, 3, 4, 5].map((s) => egHallOf(seed, egFirstHallOf(c) + s - 1, geo));
 

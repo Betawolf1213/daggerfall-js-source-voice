@@ -3495,3 +3495,135 @@ check.
 
 **Pins.** `test/egfull_span.test.js` (6) and `tools/mutants/egspan.json` (19, every one dead). `RELAY_VERSION` stays
 `world196` (renumbered past main's COATS1 `world195` at the merge), unshipped, rehashed with `net/egSpanLaw.js` in its graph.
+
+### EG-FULL, LAYER THREE - 2026-10-11 - THE FRAGMENTS, THE FORK, THE SET PIECES
+
+Closes the fragments EG-D owed: section 11's library, THE FORK, the set pieces, the engines, the alcoves, the Annals,
+Grath's falling isles, and the solver's median check.
+
+- **The fragments' law** (`net/egFragLaw.js`, in the relay bundle; it imports `egShape.js` and `egSpanLaw.js`). The ten
+  of section 11.2 in `EG_FRAGS`, each with its band, classes, reverb, light, engine and signature. `egFragPassage`,
+  `egFragChamber` and `egSetPiece` plan a fragment in whole centimetres and milliseconds off the hall's own die, with no
+  transcendental in the generator (pinned by a source sweep). `net/egLaw.js` lays the plan into the spec: `caves` (each
+  with its kit, its far floor's height `yB`, `open` for a fragment with no walls), `frags`, `hazards`, `ramps`,
+  `engines`, `alcoves`, `vignettes`, `lights`, `tube` and `fork` (`EG_SPEC` 4).
+- **The passages, kit by kit**:
+  - the Oblivion Caverns (a fire fall at the chasm's lip, a magma surge along the far floor, falling basalt on the near
+    one, three ledges across the chasm);
+  - the Fallen Stacks (bookcase ledges; THE CASCADE across both floors);
+  - the Broken Colonnade (open over the void; two Drums rolling along the course);
+  - the Ossuary (three Bone bridges; soul-wisps over its floors);
+  - the Mist Stair (four flights down, each under a metre; mist surges);
+  - the Gloam Thicket (four Moon branches under a walking train of moonbeams);
+  - the Forge Gut (two conveyors; hammer drops on both floors);
+  - the Oblivion Caverns, deep (wider, two fire falls, two surges).
+  A passage's floors are its fight floors (section 11.1), so its Lurkers and a Low Road's foes fight there.
+- **The hazards on the shared clock** (`egHazardParts`, `egHazardBites`):
+  - a fire fall burns 2 s of every 5, a white shimmer the 1 s before, 15% fire, judged wherever a body stands in it;
+  - a surge's 4 m lane, told 1.0 s, 20% fire;
+  - the basalt's disc r 2.5, told 1.2 s;
+  - the cascade's 4 m lanes told 1.2 s, 1.5 s apart;
+  - the hammers' disc r 3, told 1.4 s;
+  - the Eclipse every 40 s, told 6 s, 30% outside its three moon-shafts (r 3, walking 1.5 m/s);
+  - the tide over a chamber's low floor, 15 s of every 60, told 5 s, ticking 10% a second;
+  - a soul-wisp drains a member within 3 m by 3% a second, letting go at 6 m or after 4 s, then not again for 6 s.
+  `egHazardLawful` holds every laid hazard to THE WIDTH RULE and THE WIND-UP FLOOR, and the hazards' clocks are the
+  same at every depth.
+- **The fragments' own pieces** (`net/egSpanLaw.js`):
+  - Moon: solid while a beam lies on it, the beams walking at `EG_MOON_MPS` 2.5 m/s, one every 4 s, each lit 3.5 m
+    either side;
+  - Drum: rolling out and back at a fixed `EG_DRUM_MPS` 2.0 m/s, ridden as a Rail;
+  - Bone: the Crumble's law (`EG_CRUMBLE_KINDS`);
+  - Sink: sinks 0.5 m/s under a foot and is gone 3 m down. The jump off it is taken 0.5 m low, and a wait on it is
+    never longer than 2 s.
+- **The solver, deeper**:
+  - THE MEDIAN (`egRoadCross`): a road's median crossing over start phases is at most 1.6 times its fastest.
+  - THE GROUND AFTER EACH RUN: each step that ends a run carries `after`, the gap to the next still ground, and the
+    solver jumps that real gap. Before this, it had assumed the ground began at the step's edge.
+  - Proofs run road by road; an alcove's side way (road 2) is never asked of anyone.
+  - Over 5 seeds, 20 circles and three grounds, 47 of 1,500 courses were re-laid and none fell back.
+- **THE FORK** (section 11.4). From circle 2 every span that carries no set piece forks at an island:
+  - **The High Road** (road 0) runs two sections, the span decrees' among them. Its Reliquary cache stands on an island
+    at its hardest point, and it meets the end plate's height by one Drop.
+  - **The Low Road** (road 1) bridges `EG_LOW_X_CM` 15 m across, drops 4.5 m and runs through a passage of the band's
+    kit. It passes its Battlemage's niche (15% once, a shard each, and a Memento niche) and runs still ground to its
+    bridge onto the plate.
+  - The spec's `fork` carries each road's fastest crossing (`hi`, `lo`). A door opened from the High Road while a
+    member is still on the Low Road waits their difference.
+- **The set pieces** (section 11.3; `egSetPieceOf`, `egTubeCircle`):
+  - the Collapsing Tube, in the Galleries' first span from circle 3. It is 60-80 m long and its floor and vault fall at
+    `EG_TUBE_MPS` 4.0 m/s from 18 s after the wake. THE SPAN BUILD outruns it with 37% to spare, and a member caught
+    is cast forward to the nearest standing segment ahead;
+  - the Sinking Stair, the Moon Path and the Forge Line (three conveyors under hammers), in the Brinks into the Cairn,
+    the Shade and the Wellhead.
+- **The chambers** (section 11.4). A yard or proving court in a chamber from circle 2 takes its band's chamber kit and
+  names its play:
+  - a second floor 3-4 m up, its stair a ramp;
+  - a chokepoint arch 6 m wide (the relay's walkers do not yet route through it - see the departures);
+  - the channels surging in thirds every 20 s;
+  - an engine.
+  It then carries its kit's signature: the basalt, the wisp, the hammers, the Eclipse, the tide (three dry floors, no
+  point of the low floor more than 24 m from a stair), or the Clan Pit's horn. The Athenaeum and the Scriptorium stay
+  plain walls.
+- **The relay's half** (`net/egBrain.js`):
+  - **Engines** (`use`, within 2 m, once in 30 s; the Shelf once): the Sluice, the Shelf and the Drop-Hammer tell a
+    blow of the place 1.5 s (20% to a member caught) and take 40-50% from the adds caught. The Drop-Hammer stuns a lord
+    once a phase. The Soul-Bell stuns Wraiths and Binders 4 s, the Moon-Mirror the Divers.
+  - **The alcoves.** A seam alcove's false wall is a struck object, `fwall`, that falls to one blow. Behind it, each
+    member takes its lumen, its shard or a page of the Annals, once.
+  - **THE FORK's half**: the High Road's cache, the Low Road's niche, and the Low Road's two Harriers rising as the
+    first member takes it.
+  - **The Clan Pit's Honour Horn**, 20 s after the wake and again 40 s after each call. Answered alone, every member
+    gets a Reliquary. Fouled, Ashfall falls in the Pit for the rest of the hall: fire pools every 6 s.
+  - **The fragments' Lurkers**, dormant in the walls: the Low Road's every one, one a passage from circle 3, one a
+    chamber from circle 4.
+  - **A lord's page.** Its first fall adds its page of the Annals to every living member at the Redoubt.
+- **The Annals of 3E 398** (`net/egAnnals.js`): thirty pages of two sentences each, seventeen found behind the false
+  walls and thirteen the lords'.
+- **On the screen**:
+  - `world/egHall.js`: the passages' walls and vaults in their kit's dress, each wall broken at its alcove with the
+    niche floored behind it; the Colonnade open; the Gloam Thicket under the sky; the chambers' arches, stairs and
+    vignettes; each fragment's lights.
+  - `scenes/egSpan.js`:
+    - the new pieces;
+    - the Collapsing Tube's floor and vault as segments;
+    - Grath's islands as buckets, shaking while cracked and sinking when fallen as the relay's `eob` says
+      (`systems/spireKit.js` `spireObjs`), a cast-back from a fallen one landing on a standing one;
+    - the false walls standing until they fall;
+    - the activation ray's Orrery handles and engines (`spireAct`).
+  - `scenes/egFight.js`: every hazard drawn and judged on the member's own feet once a part.
+  - `scenes/egClient.js`: `/breach use` and `/breach annals`.
+- **Fixed on the way**:
+  - **the Athenaeum could not be solved.** No client ever sent the Orrery's `pz`; the stones now stand in the
+    activation ray and a press sends the turn;
+  - **a Drop's far wall closed the road** (layer two): it was walled whole across, and now keeps a doorway 2.4 m wide
+    and 3.0 m high on the course's line;
+  - **the Colossus's forge chamber stood 3 m past the approach's gap.** The solver's real gap after each run found it;
+  - **a decree's crumbles climbed back up** after a course that had gone below the plates;
+  - **the Forge's hammers were laid with no reach**, caught by the hazard law's own test.
+
+**Departures, said plainly** (each still owed to its slice):
+- **The relay half's own departures:**
+  - a fragment's law lives in the spec's own fields, not a separate record with `sockets`, polygon `floors` and a legion
+    `graph`. A passage's mouth and exit are its `z0` and `z1`; its floors are rectangles. The legion walks straight to
+    its mark, kept to the fight floors as it was, so an arch's walls do not yet turn it;
+  - the Sluice takes its share at once rather than flooding a channel for 6 s;
+  - the Moon-Mirror blinds the Divers but does not yet light a branch;
+  - a Low Road member's closing waits the roads' difference only when the High Road opened the door;
+  - the Annals are kept for the breach. The account's `players.eg_annals` comes with EG-E.
+- **The look:**
+  - the dress is the Hour's records in each kit's shapes; the band art is EG-G's;
+  - the mist is not drawn;
+  - the slag's crust (law kind `slag`) is laid by no kit yet;
+  - a member who joins mid-fight sees Grath's islands standing until the next `eob`.
+- **Still owed by EG-D:**
+  - the moving pieces' instanced pass, the cull and the measured budgets;
+  - `world/meshKit.js` and `world/pseudoArchives.js`;
+  - the authored hero fragments;
+  - the pieces' last tells (the Rail's track, the Gust's streamers, the waystones lit).
+
+**Pins.**
+- `test/egfrag_law.test.js` (9), `test/egfrag_relay.test.js` (5), `test/egfrag_client.test.js` (6).
+- `tools/mutants/egfrag.json` (51, every one dead). Re-aimed and judged again: `egfull.json` (31), `egspan.json` (19)
+  and `egplay.json` (20), every one dead.
+- `RELAY_VERSION` stays `world196`, unshipped, rehashed with `net/egFragLaw.js` and `net/egAnnals.js` in its graph.

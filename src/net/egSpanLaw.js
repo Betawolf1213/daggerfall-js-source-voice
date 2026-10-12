@@ -23,6 +23,9 @@
 // enough to stand clear of its disc, a Drop's landing deep enough to take a running body. A course the solver refuses is
 // laid again (net/egLaw.js).
 //
+// EG-FULL, LAYER THREE (section 11): the fragments' own pieces (a Moon branch under its beams, a rolling Drum, a Bone
+// bridge, a Sinking flight), proofs road by road (THE FORK), the real gap after each run, and THE MEDIAN (egRoadCross).
+//
 // The motor's numbers are pinned here, not imported (this module is in the relay's bundle; test/egfull_span.test.js
 // holds them equal to player/motor.js). Pure. Not a DFU member. Ledger A (ELITE-GATES).
 
@@ -60,9 +63,40 @@ export const EG_RAIL_CLEAR = 0.3;
 /** The Drop: its landing's least depth and its walls' least height over it (m). */
 export const EG_DROP_LAND_MIN = 6;
 export const EG_DROP_WALL_H = 7.5;
+/** EG-FULL LAYER THREE (sections 11.2-11.3) - THE FRAGMENTS' OWN PIECES:
+ *   Moon   a black-glass branch of the Gloam Thicket (and the Moon Path), solid only while a moonbeam lies on it: the
+ *          beams walk the course at EG_MOON_MPS, one every `period` (EG_MOON_MPS x `period` apart), each lit EG_MOON_HALF
+ *          either side of its centre - the Beat's law, driven by the beams (`beat` where a beam stood at nought).
+ *   Drum   a column drum of the Broken Colonnade rolling along the course at a fixed EG_DRUM_MPS, out and back - ridden as
+ *          a Rail is (`amp` half its roll).
+ *   Bone   a bone bridge of the Ossuary: the Crumble's law in its dress.
+ *   Sink   a flight of the Sinking Stair: from a foot it sinks into the mist at EG_SINK_MPS (each member's own, as a
+ *          Crumble is), gone EG_SINK_GONE_M down, and back after the Crumble's return. A wait on it is never longer than
+ *          EG_SINK_WAIT_MAX, and the jump off it is taken EG_SINK_ON_S of sinking low. */
+export const EG_MOON_MPS = 2.5;
+export const EG_MOON_HALF = 3.5;
+export const EG_MOON_EVERY_S = 4;
+export const EG_DRUM_MPS = 2.0;
+export const EG_SINK_MPS = 0.5;
+export const EG_SINK_GONE_M = 3;
+export const EG_SINK_WAIT_MAX = 2;
+export const EG_SINK_ON_S = 1;
+/** The pieces that fall under a foot (the Crumble's law): their depth crossed before the delay, no wait upon them. */
+export const EG_CRUMBLE_KINDS = Object.freeze(['crumble', 'bone']);
 
 const TAU = 2 * Math.PI;
 const wrapT = (t, p) => ((t % p) + p) % p;
+/** Out and back at one speed: -amp to amp and home over `period` (s) - a drum's roll, a moonbeam's walk. */
+export function egTriAt(amp, period, phase, t) {
+  if (!(period > 0)) return 0;
+  const u = wrapT(t + phase, period) / period;
+  return u < 0.5 ? -amp + 4 * amp * u : 3 * amp - 4 * amp * u;
+}
+/** The centre of the moonbeam nearest a Moon step at `t` (the beams walk +z at EG_MOON_MPS, `period` apart). */
+export function egMoonBeamZ(s, t) {
+  const every = EG_MOON_MPS * (s.period > 0 ? s.period : EG_MOON_EVERY_S), c0 = s.beat + EG_MOON_MPS * (t + s.phase);
+  return c0 + Math.round((s.z - c0) / every) * every;
+}
 
 /**
  * Where a piece stands at `t` (shared seconds): `{ dx, dz, solid }` - its offset from its spec place (a Drift across, a
@@ -73,6 +107,8 @@ export function egPieceAt(s, t, out = { dx: 0, dz: 0, solid: true }) {
   if (s.kind === 'drift' && s.period > 0) out.dx = s.amp * Math.sin((TAU * t) / s.period + s.phase);
   else if (s.kind === 'rail' && s.period > 0) out.dz = s.amp * Math.sin((TAU * t) / s.period + s.phase);
   else if (s.kind === 'beat') out.solid = wrapT(t - s.beat, EG_BEAT_CYCLE_S) < EG_BEAT_SOLID_S;
+  else if (s.kind === 'drum') out.dz = egTriAt(s.amp, s.period, s.phase, t);
+  else if (s.kind === 'moon') out.solid = Math.abs(s.z - egMoonBeamZ(s, t)) <= EG_MOON_HALF;
   return out;
 }
 /** A Pendulum's weight at `t`: across the course (x, the hall's frame) over the middle of the gap before its step (z). */
@@ -115,11 +151,13 @@ export function egJumpReach(h) {
  */
 export function egSpanPairs(spec) {
   const steps = spec.steps ?? [], out = [];
-  const meets = (a, b) => !!a && !!b && Math.abs(a.z + a.d / 2 - (b.z - b.d / 2 - (b.gap ?? 0))) < 1e-6;
+  // one road's steps follow one another (THE FORK: each road its own course - section 11.4)
+  const meets = (a, b) => !!a && !!b && (a.road ?? 0) === (b.road ?? 0) && Math.abs(a.z + a.d / 2 - (b.z - b.d / 2 - (b.gap ?? 0))) < 1e-6;
   for (let k = 0; k < steps.length; k++) {
     const s = steps[k], prev = steps[k - 1], next = steps[k + 1];
+    if (s.road === 2) continue;   // an alcove's side way is optional - never proven, never asked of anyone
     if (s.kind !== 'riser') out.push({ a: meets(prev, s) ? prev : null, b: s, edge: s.z - s.d / 2 - (s.gap ?? 0) });   // a riser is climbed, never jumped onto
-    if (!meets(s, next)) out.push({ a: s, b: null, edge: s.z + s.d / 2 });
+    if (!meets(s, next)) out.push({ a: s, b: null, edge: s.z + s.d / 2 + (s.after ?? 0) });   // the still ground's own edge, the real gap on
   }
   return out;
 }
@@ -129,7 +167,7 @@ const PA = { dx: 0, dz: 0, solid: true }, PB = { dx: 0, dz: 0, solid: true };
 function jumpLands(pair, t) {
   const { a, b } = pair;
   if (a) { egPieceAt(a, t, PA); if (!PA.solid) return false; }
-  const ay = a ? a.y : (b ? b.y : 0), by = b ? b.y : (a ? a.y : 0);
+  const ay = (a ? a.y : (b ? b.y : 0)) - (a?.kind === 'sink' ? EG_SINK_MPS * EG_SINK_ON_S : 0), by = b ? b.y : (a ? a.y : 0);
   const { reach, air } = egJumpReach(by - ay);
   if (!(reach > 0)) return false;
   if (b) { egPieceAt(b, t + air, PB); if (!PB.solid) return false; }
@@ -167,6 +205,37 @@ export function egPairWindows(pair) {
   return { open: open * EG_SOLVE_STEP_S, worst12: worst * EG_SOLVE_STEP_S, wait: wait * EG_SOLVE_STEP_S, clearRun: clear * EG_SOLVE_STEP_S };
 }
 
+/** THE MEDIAN (section 10.5): a road's median crossing, swept over start phases, is at most this many times its fastest. */
+export const EG_MEDIAN_X = 1.6;
+const CROSS_SAMPLES = 72;
+/**
+ * A ROAD'S CROSSING (section 10.5): THE SPAN BUILD running the road from its first launch to its last landing, from start
+ * phases every EG_SOLVE_HORIZON_S / 72 - each pair waited for in turn (the next window that lands), the still ground run
+ * between - `{ fast, median, n }` (s; `n` its pairs). A road with no pairs crosses in nought. `from` its stretch from that
+ * far along the hall (THE FORK's roads, from the fork).
+ * @param {any} spec @param {number} [road] @param {number} [from]
+ */
+export function egRoadCross(spec, road = 0, from = -Infinity) {
+  const launch = (p) => (p.a ? p.a.z + p.a.d / 2 : p.edge);
+  const pairs = egSpanPairs(spec).filter((p) => ((p.b ?? p.a)?.road ?? 0) === road && launch(p) >= from);
+  if (!pairs.length) return { fast: 0, median: 0, n: 0 };
+  const z0 = launch(pairs[0]), times = [];
+  for (let k = 0; k < CROSS_SAMPLES; k++) {
+    const t0 = (k * EG_SOLVE_HORIZON_S) / CROSS_SAMPLES;
+    let waited = 0;
+    for (const p of pairs) {
+      const at = t0 + (launch(p) - z0) / EG_SPAN_RUN_MPS + waited;
+      let w = 0;
+      while (w < EG_SOLVE_HORIZON_S && !jumpLands(p, at + w)) w += EG_SOLVE_STEP_S;
+      waited += w;
+    }
+    const last = pairs[pairs.length - 1];
+    times.push((launch(last) - z0) / EG_SPAN_RUN_MPS + waited);
+  }
+  times.sort((a, b) => a - b);
+  return { fast: times[0], median: times[CROSS_SAMPLES >> 1], n: pairs.length };
+}
+
 /**
  * THE TIMED SOLVER on a hall's course: `{ ok, why }` - every pair's windows, every Crumble left in time, every Vent's
  * platform wide enough, every Drop's landing deep enough. `why` names each failure (the step's number and what failed).
@@ -176,10 +245,10 @@ export function egSpanProof(spec) {
   for (const s of spec.steps ?? []) {
     if (s.kind === 'vent' && Math.min(s.w, s.d) < EG_VENT_MIN_W) why.push(`${s.i}: a Vent's platform under ${EG_VENT_MIN_W} m`);
     if (s.kind === 'drop' && s.d < EG_DROP_LAND_MIN) why.push(`${s.i}: a Drop's landing under ${EG_DROP_LAND_MIN} m`);
-    if (s.kind === 'crumble' && s.d / EG_SPAN_RUN_MPS + EG_CRUMBLE_SLACK_S > EG_CRUMBLE_DELAY_S) why.push(`${s.i}: a Crumble too deep to cross before it falls`);
-    if (s.kind === 'rail') {
+    if (EG_CRUMBLE_KINDS.includes(s.kind) && s.d / EG_SPAN_RUN_MPS + EG_CRUMBLE_SLACK_S > EG_CRUMBLE_DELAY_S) why.push(`${s.i}: a Crumble too deep to cross before it falls`);
+    if (s.kind === 'rail' || s.kind === 'drum') {
       const next = (spec.steps ?? [])[s.i + 1];
-      const after = next && Math.abs(next.z - next.d / 2 - (next.gap ?? 0) - (s.z + s.d / 2)) < 1e-6 ? next.gap ?? 0 : Infinity;
+      const after = next && (next.road ?? 0) === (s.road ?? 0) && Math.abs(next.z - next.d / 2 - (next.gap ?? 0) - (s.z + s.d / 2)) < 1e-6 ? next.gap ?? 0 : Infinity;
       if (s.amp > Math.min(s.gap ?? 0, after) - EG_RAIL_CLEAR) why.push(`${s.i}: a Rail's travel closes on what stands beside it`);
     }
   }
@@ -188,7 +257,13 @@ export function egSpanProof(spec) {
     if (w.worst12 < EG_WINDOW_MIN) why.push(`${at}: a window of ${w.worst12.toFixed(2)} s in some 12 s`);
     else if (w.wait > EG_WAIT_MAX) why.push(`${at}: a wait of ${w.wait.toFixed(2)} s`);
     if (pair.b?.kind === 'pend' && w.clearRun < EG_PEND_CLEAR_MIN) why.push(`${at}: a Pendulum's gap clear only ${w.clearRun.toFixed(2)} s`);
-    if (pair.a?.kind === 'crumble' && w.wait > EG_CRUMBLE_DELAY_S - EG_CRUMBLE_SLACK_S) why.push(`${at}: a wait on a Crumble`);
+    if (EG_CRUMBLE_KINDS.includes(pair.a?.kind) && w.wait > EG_CRUMBLE_DELAY_S - EG_CRUMBLE_SLACK_S) why.push(`${at}: a wait on a Crumble`);
+    if (pair.a?.kind === 'sink' && w.wait > EG_SINK_WAIT_MAX) why.push(`${at}: a wait of ${w.wait.toFixed(2)} s on a sinking flight`);
+  }
+  // THE MEDIAN, road by road: no road whose ordinary crossing runs far past its best
+  if (!why.length) for (const road of [0, 1]) {
+    const c = egRoadCross(spec, road);
+    if (c.n && c.fast > 0 && c.median > EG_MEDIAN_X * c.fast) why.push(`road ${road}: a median crossing of ${c.median.toFixed(1)} s past ${EG_MEDIAN_X} x its fastest ${c.fast.toFixed(1)} s`);
   }
   return { ok: why.length === 0, why };
 }

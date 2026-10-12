@@ -164,8 +164,8 @@
   {
     "name": "EGSPAN-a-floor-under-the-wall",
     "file": "src/world/egHall.js",
-    "old": "    for (const b of spec.bands) if (!egWallBand(spec, b)) quad(",
-    "new": "    for (const b of spec.bands) if (true) quad(",
+    "old": "    for (const b of spec.bands) if (!egWallBand(spec, b) && !egTubeBand(b)) quad(",
+    "new": "    for (const b of spec.bands) if (!egTubeBand(b)) quad(",
     "tests": [
       "test/egfull_span.test.js"
     ]

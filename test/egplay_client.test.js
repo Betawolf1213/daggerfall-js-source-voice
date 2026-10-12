@@ -378,8 +378,11 @@ test('EG-PLAY THE SPANS: every step of a circle stood as a moving bucket where t
   const span = createEgSpan({ seed, c: 1 });
   assert.equal(span.stand({ dynamicDraws: draws, collider }), true);
   assert.equal(span.stand({ dynamicDraws: draws, collider }), false, 'once');
-  const all = specs.reduce((n, s) => n + s.steps.length, 0);
+  // every step a bucket - and (EG-FULL LAYERS TWO and THREE) every Falling Wall and Collapsing Tube segment, each of
+  // Grath's islands, each false wall
+  const all = specs.reduce((n, s) => n + s.steps.length, 0) + span.walls.length + span.tubes.length + span.isles.length + span.seals.length;
   assert.equal(added.size, all, 'every step a bucket');
+  assert.equal(span.isles.length, specs.find((s) => s.kind === 'court')?.lord === 'hound' ? 3 : 0, 'Grath\'s three islands stand as buckets');
   // on the floor: the cast-back's place set
   const floorAt = realmToDungeon(0, 0, 1.5);
   const body = { pos: [...floorAt], grounded: true, groundKey: EG_FLOOR_KEY, carried: [0, 0, 0], carryBy(dx, dy, dz) { this.carried[0] += dx; this.carried[1] += dy; this.carried[2] += dz; } };

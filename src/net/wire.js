@@ -5399,11 +5399,12 @@ export function validSdFoundTell(b) {
 // `esay` a beat's words, `egust`/`edark`/`erail` the place's own; THE RUN'S - `offer` (a member's Vestiges), `ask`/`asked`/
 // `tally` (the company's word), `egot` and `run` (a member's run), `rise` (a recall), `eping` (a ping), `pz` (an
 // Athenaeum's turn), `eheal` (the room's word on a heal). A member's words: `hit` (a blow on a body by its number),
-// `down`, `home`, `pick`, `surplus`, `vote`, `cant`, `buy`, `lping`, `ping`, `bequest`, `forsake`, `pz`. Every time is the
+// `down`, `home`, `pick`, `surplus`, `vote`, `cant`, `buy`, `lping`, `ping`, `bequest`, `forsake`, `pz`, `use` (EG-FULL
+// LAYER THREE: a fragment's engine worked - and `egot` 'page', a page of the Annals found). Every time is the
 // relay's clock; every point the hall's own frame.
 
 /** What a client may say: `open` to the hub; the rest to a breach's room. */
-export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell']);
+export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use']);
 /** What the hub and a breach's room say back. */
 export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail']);
 export const EG_RUN_KINDS = Object.freeze(['offer', 'ask', 'asked', 'tally', 'egot', 'run', 'rise', 'eping', 'pz', 'eheal']);
@@ -5419,9 +5420,12 @@ export const EG_NO_WORDS = Object.freeze(['the breach is closed', 'the breach an
 export const EG_SAY_KEYS = Object.freeze(['wake', 'fury', 'covenant', 'covenantrest', 'stunned', 'scent', 'scorched', 'phase', 'images', 'examination', 'cage', 'passed', 'failed', 'challenge', 'challengewon',
   'challengeend', 'conquest', 'muster', 'tithe', 'bare', 'twinfell', 'twinraised', 'crossing', 'chaining', 'grounded', 'anchors', 'vanish', 'tether', 'tetherbroken', 'eclipse', 'mirrors', 'relit', 'landed',
   'broken', 'stirs', 'raised', 'raisebroken', 'door', 'recalled', 'home', 'goldrun', 'mimic', 'memento', 'relicbroken', 'silenced', 'orrerytrue', 'chamberdone', 'freed', 'desertertook', 'sapperfed',
-  'reopened', 'cantrip', 'bargain', 'respite', 'ready']);
+  'reopened', 'cantrip', 'bargain', 'respite', 'ready',
+  // EG-FULL LAYER THREE: a false wall falls, an engine worked, the Clan Pit's horn (blown, won, fouled), the Low Road's
+  // niche, the High Road's cache, the Low Road taken
+  'seam', 'engine', 'horn', 'hornwon', 'hornfoul', 'niche', 'hcache', 'lowroad']);
 /** The gifts a member is told of (`egot`'s `w`). */
-export const EG_GOT_WORDS = Object.freeze(['shard', 'tonic', 'cant', 'lumen', 'rel', 'longstep']);
+export const EG_GOT_WORDS = Object.freeze(['shard', 'tonic', 'cant', 'lumen', 'rel', 'longstep', 'page']);   // LAYER THREE: 'page' - a page of the Annals (`p`)
 /** The zones' kinds (`ez`). */
 export const EG_ZONE_KINDS = Object.freeze(['burn', 'void', 'soul', 'haven']);
 /** THE BRAIN'S LAW by number, said on every `in` (`bv`) and refused below EG_BRAIN_MIN (the gate's law). EG-FULL: 2 - the
@@ -5556,6 +5560,7 @@ export function validEgIn(m) {
     case 'lping': case 'ping': return egXZ(m.x) && egXZ(m.z) && intIn(m.w, 0, 2) ? { k: m.k, x: m.x, z: m.z, w: m.w } : null;
     case 'bequest': return intIn(m.v, 0, 99) ? { k: 'bequest', v: m.v } : null;
     case 'pz': return intIn(m.i, 0, 5) && (m.a === 1 || m.a === -1) ? { k: 'pz', i: m.i, a: m.a } : null;
+    case 'use': return intIn(m.i, 0, 7) ? { k: 'use', i: m.i } : null;   // LAYER THREE: an engine worked (section 11.10)
     default: return null;
   }
 }
@@ -5625,7 +5630,7 @@ export function validEgOut(m) {
     case 'ask': return typeof m.q === 'string' && /^[a-z:]{1,24}$/.test(m.q) && Array.isArray(m.o) && m.o.length <= 4 && m.o.every((x) => intIn(x, 0, 99)) && gateMs(m.until) ? { k: 'ask', q: m.q, o: [...m.o], until: m.until } : null;
     case 'asked': return typeof m.q === 'string' && /^[a-z:]{1,24}$/.test(m.q) && intIn(m.r, -1, 9) ? { k: 'asked', q: m.q, r: m.r } : null;
     case 'tally': return typeof m.q === 'string' && /^[a-z:]{1,24}$/.test(m.q) && Array.isArray(m.v) && m.v.length <= 8 && m.v.every((x) => intIn(x, 0, 9)) ? { k: 'tally', q: m.q, v: [...m.v] } : null;
-    case 'egot': return EG_GOT_WORDS.includes(m.w) ? { k: 'egot', w: m.w } : null;
+    case 'egot': return EG_GOT_WORDS.includes(m.w) ? (m.w === 'page' ? (intIn(m.p, 0, 29) ? { k: 'egot', w: 'page', p: m.p } : null) : { k: 'egot', w: m.w }) : null;
     case 'run': { const r = egRunW(m.r); return r ? { k: 'run', r } : null; }
     case 'rise': return egId(m.s) && finite(m.p) && m.p > 0 && m.p <= 1 && egXZ(m.x) && egXZ(m.z) && intIn(m.h, 1, EG_HALL_WIRE_MAX) ? { k: 'rise', s: m.s, p: m.p, x: m.x, z: m.z, h: m.h } : null;
     case 'eping': return egId(m.s) && egXZ(m.x) && egXZ(m.z) && intIn(m.w, 0, 2) ? { k: 'eping', s: m.s, x: m.x, z: m.z, w: m.w, wit: m.wit === 1 ? 1 : 0 } : null;

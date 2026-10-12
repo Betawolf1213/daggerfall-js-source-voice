@@ -49,3 +49,22 @@ export function registerSpireWake(fn) { _wake = typeof fn === 'function' ? fn : 
 export function spireWake() {
   try { const w = _wake?.(); return w && Number.isFinite(w.h) && Number.isFinite(w.hw) ? { h: w.h, hw: w.hw } : { h: 0, hw: 0 }; } catch { return { h: 0, hw: 0 }; }
 }
+
+// EG-FULL LAYER THREE (section 11 - the fragments): what the spans stand from the relay's fight, and the hands a span's
+// activation reaches. Both registered by the world host (scenes/world.js), off the breach client (scenes/egClient.js).
+/** @type {(() => { h: number, objs: { t: string, i: number, x: number, z: number, st: number, stAt: number, pt: number }[] }) | null} */
+let _objs = null;
+/** The fight's errand objects of the hall now (its number `h`; Grath's islands with their state, the false walls standing). */
+export function registerSpireObjs(fn) { _objs = typeof fn === 'function' ? fn : null; }
+export function spireObjs() {
+  if (!_objs) return { h: 0, objs: [] };
+  try { const r = _objs(); return r && Array.isArray(r.objs) ? r : { h: 0, objs: [] }; } catch { return { h: 0, objs: [] }; }
+}
+/** @type {((key: string) => boolean) | null} */
+let _act = null;
+/** A press on a span's own target (an Orrery stone's handle, an engine) - `egstone:<h>:<i>:<f|b>`, `egengine:<h>:<i>`. */
+export function registerSpireAct(fn) { _act = typeof fn === 'function' ? fn : null; }
+export function spireAct(key) {
+  if (!_act) return false;
+  try { return !!_act(key); } catch { return false; }
+}

@@ -13,7 +13,9 @@
 //     its landing (co-op's law - net/egShape.js egBlowVerdict), its share of my health through my saving throw, its push;
 //   THE ZONES - burning ground ticking, the floor gone (a cast-back), a Soul-Pool, a haven;
 //   THE TETHERS - a Wraith's drain on me ticking, a Blood Tether, a chain (the stay-close grammar), a challenge's ring;
-//   THE PLACE - a gust's push, the Gutterdark, the Colossus's Rails.
+//   THE PLACE - a gust's push, the Gutterdark, the Colossus's Rails; EG-FULL LAYER THREE: every fragment's hazard on the
+//     shared clock (net/egFragLaw.js) drawn and judged on my own feet - a fire fall, a surge, the basalt, the cascade, the
+//     hammers, the tide, the Eclipse, a soul-wisp's drain.
 // Nothing is sent but my blows (`hit` on a body by its number - the relay's caps decide what lands).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
@@ -35,15 +37,16 @@ import { EG_ROLE, EG_FL } from '../net/egBodies.js';
 import { egKindLook, EG_LEGION_KINDS } from '../net/egLegion.js';
 import { EG_BOSS_KEYS, EG_OBJ, egBossLook, egBossName } from '../net/egLords.js';
 import { egHallCentre } from '../world/egHall.js';
+import { egHazardParts, egHazardBites, egWispAt, EG_HAZARDS } from '../net/egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' hazards
 
 /** The objects' types by number (net/egLords.js EG_OBJ), and which are struck (drawn as crystals) - the rest are stood on. */
 const OBJ_KEY = Object.freeze(Object.fromEntries(Object.entries(EG_OBJ).map(([k, v]) => [v, k])));
-const STRUCK = new Set(['rift', 'anchor', 'banner', 'heart', 'seal', 'brazier', 'standard', 'chain', 'pillar', 'spark']);
+const STRUCK = new Set(['rift', 'anchor', 'banner', 'heart', 'seal', 'brazier', 'standard', 'chain', 'pillar', 'spark', 'fwall']);   // LAYER THREE: `fwall` an alcove's false wall - one blow
 /** The struck objects' colours (display-encoded): the rifts Dagon's, the wards' red-bronze, a heart's storm, a pillar's
  *  basalt glow. */
 export const EG_OBJ_COLORS = Object.freeze({
   rift: [1.0, 0.18, 0.34], anchor: [0.95, 0.3, 0.2], banner: [0.9, 0.22, 0.18], heart: [0.4, 0.75, 1.0], seal: [0.75, 0.5, 1.0], brazier: [1.0, 0.5, 0.12],
-  standard: [0.85, 0.3, 0.2], chain: [0.75, 0.7, 0.6], pillar: [1.0, 0.45, 0.1], spark: [1.0, 0.9, 0.4],
+  standard: [0.85, 0.3, 0.2], chain: [0.75, 0.7, 0.6], pillar: [1.0, 0.45, 0.1], spark: [1.0, 0.9, 0.4], fwall: [1.0, 0.82, 0.38],
 });
 /** The stood-on objects' colours: gold for the way and the havens (THE FIVE LIGHTS), violet for a soul-gem. */
 const GOLD = Object.freeze([1.0, 0.82, 0.38]);
@@ -55,6 +58,14 @@ const TETHER_COLOR = Object.freeze([1.0, 0.24, 0.28]);
 /** THE PLACE's colours: a vent's fire, a Pendulum's lane white (SD-LOOK: what moves next is told in white). */
 const VENT_COLOR = Object.freeze([1.0, 0.45, 0.12]);
 const PEND_COLOR = Object.freeze([0.95, 0.95, 1.0]);
+/** EG-FULL LAYER THREE: a fragment hazard's colour - told in white where it moves (a fire fall's shimmer), burning in
+ *  its element; a soul-wisp's violet, the moon-shafts' gold (a CHECK's havens). */
+const HAZ_FIRE = Object.freeze([1.0, 0.45, 0.12]);
+const HAZ_STONE = Object.freeze([1.0, 0.3, 0.2]);
+const HAZ_SOUL = Object.freeze([0.6, 0.35, 0.9]);
+/** A soul-wisp's tether (section 11.2): its drain's tick (ms), how soon one wisp binds again after it lets go (ms). */
+const WISP_TICK_MS = 1000;
+const WISP_AGAIN_MS = 6000;
 /** A zone's and a drain's tick (ms); a body's fall's length; how long after its landing a blow's shape lingers. */
 export const EG_TICK_MS = 1000;
 const FALL_MS = 1200;
@@ -75,6 +86,11 @@ export const EG_SAY = Object.freeze({
   orrerytrue: () => 'The Orrery turns true. A Vestige waits.', chamberdone: () => 'The chamber is cleared. Find the way down.', freed: () => 'The Battlemage is freed - a Cantrip for each of you.',
   desertertook: () => 'The Deserter takes the cache.', sapperfed: () => 'A Sapper reaches its lord and heals it.', reopened: () => 'A Sapper tears a rift open again!', cantrip: (n, t) => `${n} uses ${t}.`,
   bargain: (n, t) => `Dagon's Bargain is struck: ${t}.`, respite: (n, t) => `A respite: ${t} seconds.`, ready: () => 'The company is ready.',
+  // EG-FULL LAYER THREE: the fragments' beats
+  seam: (n) => `${n || 'Someone'} breaks a false wall - an alcove opens.`, engine: (n, t) => `${n || 'Someone'} works the ${t || 'engine'}!`,
+  horn: (n) => `The Honour Horn sounds - ${n || 'one of you'} is called into the ring. Answer alone!`, hornwon: (n) => `${n || 'The challenger'} fought with honour - the tiers throw Reliquaries!`,
+  hornfoul: () => 'Another steps into the ring - the crowd throws fire! Ashfall in the Pit.', niche: (n) => `${n || 'Someone'} rests at the Battlemage's niche.`,
+  hcache: (n) => `${n || 'Someone'} takes the High Road's cache - a Reliquary.`, lowroad: () => 'Something stirs on the Low Road.',
 });
 
 /** A shape slot of the telegraph pass's own shape (render/gateTelegraph.js), refilled. */
@@ -155,6 +171,8 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   const _batches = [], _lights = [], _targets = [], _crystals = [], _shapes = [], _slots = [];
   /** THE PLACE's eruptions already judged (a Rampart vent's by its instant, a span Vent's by its cycle) */
   const ventJudged = new Map();
+  /** LAYER THREE: the fragment hazards' bites taken on my own feet (each part's key once), the soul-wisps' holds on me */
+  const hazHit = new Map(), wispHold = new Map();
   const crystalSlots = new Map();
 
   const play3 = (cue, at) => { if (!cue || !audio || !at) return; try { if (cue.id != null) audio.play3dId?.(cue.id, at, cue.volume, { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch }); else audio.play3d?.(cue.clip, at, cue.volume, { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch }); } catch { /* a sound is never the fight */ } };
@@ -176,7 +194,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   /** A new hall: its frame, its floor for the telegraph pass. */
   function reset(E) {
     for (const d of drawn.values()) destroy(d);
-    drawn.clear(); judged.clear(); cued.clear(); landedSet.clear(); zoneTick.clear(); fellSeen = new Set(); phaseSeen = new Set(); crystalSlots.clear(); ventJudged.clear();
+    drawn.clear(); judged.clear(); cued.clear(); landedSet.clear(); zoneTick.clear(); fellSeen = new Set(); phaseSeen = new Set(); crystalSlots.clear(); ventJudged.clear(); hazHit.clear(); wispHold.clear();
     hall = E.h; spec = egHallOf(E.seed, E.h, E.geo ?? 0); centre = egHallCentre(spec); band = spec.band ?? 0;
     floor = spec.fight ? { r: spec.fight.r + 6, courts: [[spec.fight.x, spec.fight.z]] } : { r: 40, courts: [[0, spec.len / 2]] };
     beat = null; saysSeen = E.fight.says.length; wokeSeen = 0; gustSeen = 0;
@@ -318,6 +336,62 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         _shapes.push(sh);
       }
     }
+    fragHazards(E, ts, f, fy, standing);
+  }
+  /**
+   * EG-FULL LAYER THREE - THE FRAGMENTS' HAZARDS (section 11.2; net/egFragLaw.js egHazardParts): each told and live part
+   * drawn in the telegraph pass - a fire fall's white shimmer then its burning, a surge's and a cascade's lanes, the basalt's
+   * and the hammers' discs, a slag spill, the tide over a chamber's low floor, the Eclipse's moon-shafts gold - and each
+   * live part judged on my own feet once (its key), within its height. A soul-wisp binds a member within 3 m and drains them
+   * until 6 m apart or 4 s, then lets go a while. The mist is sight alone, never harm (not drawn here).
+   */
+  function fragHazards(E, ts, f, fy, standing) {
+    if (!spec.hazards?.length) return;
+    const t = ts * 1000;
+    for (const hz of spec.hazards) {
+      if (hz.kind === 'mist') continue;
+      if (hz.kind === 'wisp') { wispStep(hz, ts, t, f, fy, standing); continue; }
+      for (const p of egHazardParts(hz, ts)) {
+        if (p.sh[0] === 'h') {
+          // a CHECK (the Eclipse): its moon-shafts drawn gold - the havens; everything outside them is struck at its landing
+          for (let k = 1; k + 2 < p.sh.length; k += 3) {
+            const sh = (_slots[_shapes.length] ??= slot());
+            sh.kind = TELEGRAPH_KIND.disc; sh.origin[0] = p.sh[k]; sh.origin[1] = p.sh[k + 1]; sh.r = p.sh[k + 2];
+            sh.t = p.k; sh.flash = 0; sh.alpha = 1; sh.color = GOLD; sh.edge = TELEGRAPH_EDGE_SAFE; sh.pool = TELEGRAPH_POOL.ground; sh.style = TELEGRAPH_STYLE.weight; sh.since = p.k * 6; sh.span = 6; sh.after = -1; sh.court = 0;
+            _shapes.push(sh);
+          }
+        } else {
+          const sh = (_slots[_shapes.length] ??= slot());
+          if (!fillStamp(sh, p.sh)) continue;
+          const told = EG_HAZARDS[hz.kind].tell / 1000;
+          sh.t = p.st === 'tell' ? p.k : 1; sh.flash = p.st === 'live' ? 1 : 0; sh.alpha = 1;
+          sh.color = p.st === 'tell' && hz.kind === 'fall' ? PEND_COLOR : p.el === 'fire' ? HAZ_FIRE : HAZ_STONE;
+          sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = p.el === 'fire' ? TELEGRAPH_STYLE.fire : TELEGRAPH_STYLE.weight;
+          sh.since = p.st === 'tell' ? p.k * told : told; sh.span = told; sh.after = p.st === 'live' ? 0 : -1; sh.court = 0;
+          _shapes.push(sh);
+        }
+        if (p.st === 'live' && standing && !hazHit.has(p.key) && egHazardBites(hz, p, f[0], fy, f[1])) {
+          hazHit.set(p.key, 1);
+          if (hazHit.size > 512) hazHit.delete(hazHit.keys().next().value);
+          landShare(p.pct, 0, p.el, EG_HAZARDS[hz.kind].name);
+        }
+      }
+    }
+  }
+  /** A soul-wisp: drawn where it drifts; it binds me within its reach on its floor, drains me a tick a second, and lets
+   *  go at 6 m or after 4 s - then not again for WISP_AGAIN_MS. */
+  function wispStep(hz, ts, t, f, fy, standing) {
+    const L = EG_HAZARDS.wisp, [wx, wz] = egWispAt(hz, ts);
+    const sh = (_slots[_shapes.length] ??= slot());
+    sh.kind = TELEGRAPH_KIND.disc; sh.origin[0] = wx; sh.origin[1] = wz; sh.r = 0.6;
+    sh.t = 1; sh.flash = 0; sh.alpha = 0.7; sh.color = HAZ_SOUL; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.ground; sh.style = TELEGRAPH_STYLE.weight; sh.since = 0; sh.span = 1; sh.after = -1; sh.court = 0;
+    _shapes.push(sh);
+    const hold = wispHold.get(hz.i) ?? { from: 0, tick: 0, free: 0 };
+    wispHold.set(hz.i, hold);
+    const d = standing && Math.abs(fy - hz.y) < 3 ? Math.hypot(f[0] - wx, f[1] - wz) : Infinity;
+    if (!hold.from) { if (d <= L.r && t >= hold.free) { hold.from = t; hold.tick = t + WISP_TICK_MS; } return; }
+    if (d > L.brk || t - hold.from >= L.live) { hold.from = 0; hold.free = t + WISP_AGAIN_MS; return; }
+    if (t >= hold.tick) { hold.tick += WISP_TICK_MS; landShare(L.pct, 0, null, L.name); }
   }
   /** The beats' words and cards: a lord's wake (its card), its phases, its fall, the room's beats. */
   function beats(E, t, F) {

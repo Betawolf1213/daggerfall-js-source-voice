@@ -13,6 +13,7 @@ import { egStampOk, egInShape, egInBlow, egEscapeM, egWidthOk, egWindupFloorMs, 
   EG_ESCAPE_MPS, EG_REACT_S, EG_WIDTH_MIN, EG_SHAPES_DRAWN_MAX } from '../src/net/egShape.js';
 import { runSpeed } from '../src/player/motor.js';
 import { GATE_COURT_BOUND } from '../src/net/wire.js';
+import { EG_FRAG_PIECES } from '../src/net/egFragLaw.js';
 
 const SEEDS = [77, 5, 0xbeef, 0x7fffffff, 12345];
 
@@ -127,7 +128,8 @@ test('EG-FULL EVERY GROUND, EVERY GEO (sections 11 and 13.3): over seeds, twenty
           for (const list of Object.values(s.spots ?? {})) for (const p of list) assert.ok(Math.abs(p.x) <= GATE_COURT_BOUND && Math.abs(p.z) <= GATE_COURT_BOUND, `a spot out of bounds in hall ${s.h}`);
           if (s.kind === 'span') {
             const allowed = new Set([...EG_BAND_PIECES[s.band], 'still', 'ledge', ...(geo % 3 ? ['gust'] : []), ...(geo >= 3 ? ['crumble'] : [])]);
-            for (const st of s.steps) assert.ok(allowed.has(st.kind), `a ${st.kind} in band ${s.band}'s span`);
+            // LAYER THREE: a fragment's inner course lays its own pieces (net/egFragLaw.js EG_FRAG_PIECES), the rest the band's
+            for (const st of s.steps) assert.ok(st.kit ? EG_FRAG_PIECES[st.kit]?.includes(st.kind) : allowed.has(st.kind), `a ${st.kind} in band ${s.band}'s span${st.kit ? ` (${st.kit})` : ''}`);
             if (geo % 3) assert.ok(s.steps.some((st) => st.kind === 'gust') || s.walk?.some?.((w) => w.kind === 'gust') || JSON.stringify(s).includes('gust'), `Gale-Swept lays a gust in hall ${s.h}`);
           }
         }

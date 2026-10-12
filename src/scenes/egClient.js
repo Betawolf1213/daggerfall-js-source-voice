@@ -36,6 +36,10 @@ import { EG_CANTRIPS } from '../net/egRun.js';
 import { egVOf } from '../net/egVestige.js';
 import { fillVitalSigns } from '../systems/statMods.js';
 import { createPortalSet } from './portalFx.js';
+import { EG_ROLE } from '../net/egBodies.js';
+import { EG_OBJ } from '../net/egLords.js';
+import { EG_ANNALS } from '../net/egAnnals.js';
+import { EG_ENGINES, EG_ENGINE_REACH_M } from '../net/egFragLaw.js';
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -59,6 +63,9 @@ export const EG_END_TEXT = Object.freeze({
   seal: 'The way down is sealed. The halls are yours.',
 });
 /** A gift's words (`egot`). */
+/** EG-FULL LAYER THREE: the relay's object types by number (net/egLords.js EG_OBJ) - the spans read Grath's islands and
+ *  the false walls by name (systems/spireKit.js spireObjs). */
+const OBJ_NAME = Object.freeze(Object.fromEntries(Object.entries(EG_OBJ).map(([k, v]) => [v, k])));
 export const EG_GOT_TEXT = Object.freeze({ shard: 'You take a Vestige shard.', tonic: 'You take a Spire Tonic.', cant: 'You take a Cantrip.', lumen: 'You take 10 lumen.', rel: 'A Reliquary is sealed for you.', longstep: 'Long Step: your crumbles wait half a second more this span.' });
 /** A hall's glyph on THE RECAP's strip. */
 const KIND_GLYPH = Object.freeze({ yard: 'Y', span: 'S', proving: 'P', rampart: 'R', court: 'C', athenaeum: 'A', deepway: 'D', brink: 'B', scriptorium: 's' });
@@ -117,6 +124,8 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
   /** THE WITNESS VIEW: my fall's place, whom I watch; THE POTION LAW's count this hall; THE RECAP's log; my answers to
    *  the company's word; a recap standing; a forsake asked once. */
   let witness = null, potions = EG_POTIONS_PER_HALL, potionHall = '', recap = null, recapUntil = 0, forsakeAskAt = -Infinity, logH = 0;
+  /** EG-FULL LAYER THREE: the pages of the Annals this breach has given me (the account keeps them - EG-E) */
+  const annals = new Set();
   const log = [];
   const voted = {};
   const me = () => account?.me?.() ?? null;
@@ -440,7 +449,8 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
       if (w.k === 'fall' && w.s === me() && !witness) enterWitness(now(), true);
       if (w.k === 'rise' && w.s === me()) riseAt(w);
       if (w.k === 'eheal') applyHeal(w.p, w.why);
-      if (w.k === 'egot' && EG_GOT_TEXT[w.w]) say(EG_GOT_TEXT[w.w]);
+      if (w.k === 'egot' && w.w === 'page' && EG_ANNALS[w.p]) { annals.add(w.p); say(`A page of the Annals of 3E 398 - ${EG_ANNALS[w.p][0]}: ${EG_ANNALS[w.p][1]}`); }
+      else if (w.k === 'egot' && EG_GOT_TEXT[w.w]) say(EG_GOT_TEXT[w.w]);
       if (w.k === 'rd') say(w.cov ? `${EG_TEXT.redoubt(w.w)}: the Covenant has spoken - this Redoubt is the last.` : `${EG_TEXT.redoubt(w.w)}: the count gains ${egCountText(Math.max(0, w.g ?? 0))}.`);
       void room;
     },
@@ -463,8 +473,10 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
           if (Date.now() - forsakeAskAt > EG_HOME_CONFIRM_MS) { forsakeAskAt = Date.now(); mid('Forsake the breach? Your recall is lost. /breach forsake again to go.'); return; }
           forsakeAskAt = -Infinity; o?.sendEg?.('forsake'); return;
         }
+        if (a === 'use' || a === 'engine') { this.useEngine(); return; }
+        if (a === 'annals') { const n = (Number(b) | 0) - 1, have = [...annals].sort((x, y) => x - y); if (!have.length) say('No page of the Annals is yours yet. Look behind the halls\' false walls.'); else if (n >= 0 && have[n] != null) say(`${EG_ANNALS[have[n]][0]}: ${EG_ANNALS[have[n]][1]}`); else say(`Your pages of the Annals: ${have.map((p, j) => `${j + 1}. ${EG_ANNALS[p][0]}`).join(', ')}. /breach annals N to read one.`); return; }
         if (a === 'bequest') { const run = egRunOfMember(E, me()), n = (Number(b) | 0) - 1, v = run.vs[n]?.[0]; if (!witness || v == null) say('A fallen member names one of their Vestiges: /breach bequest N.'); else o?.sendEg?.('bequest', { v }); return; }
-        say('In the breach: /breach pick N, vote yes|no|N, cant N, buy cant|tonic|shard, ping, watch, forsake, home.');
+        say('In the breach: /breach pick N, vote yes|no|N, cant N, buy cant|tonic|shard, use, annals, ping, watch, forsake, home.');
         return;
       }
       answer();
@@ -569,6 +581,35 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
     diedHere: () => inSpire(),
     /** The breach as held (tests). */
     state: () => link.state(),
+    /** EG-FULL LAYER THREE: the hall's errand objects as the relay keeps them (systems/spireKit.js spireObjs - the spans
+     *  stand Grath's islands and the false walls by them). */
+    objs() {
+      const E = link.state(), F = E.fight;
+      if (!inSpire() || !F || F.h !== E.h) return { h: E.h | 0, objs: [] };
+      return { h: E.h | 0, objs: F.bodies.filter((b) => b.role === EG_ROLE.obj).map((b) => ({ t: OBJ_NAME[b.k] ?? '', i: b.i, x: b.x, z: b.z, st: b.st ?? 0, stAt: b.stAt ?? 0, pt: b.pt ?? 0 })) };
+    },
+    /** A press on a span's own target (systems/spireKit.js spireAct): an Orrery stone's handle (`pz` - a turn forward or
+     *  back) or an engine (`use`), in the hall I stand in. */
+    act(key) {
+      const E = link.state(), o = online();
+      if (!inSpire()) return false;
+      const st = /^egstone:(\d+):(\d):([fb])$/.exec(key ?? '');
+      if (st) { if (Number(st[1]) !== E.h || E.sg !== 'trial') { say('The Orrery is still.'); return true; } return !!o?.sendEg?.('pz', { i: Number(st[2]), a: st[3] === 'f' ? 1 : -1 }); }
+      const en = /^egengine:(\d+):(\d+)$/.exec(key ?? '');
+      if (en) { if (Number(en[1]) !== E.h || E.sg !== 'trial') { say('The engine is cold.'); return true; } const ok = !!o?.sendEg?.('use', { i: Number(en[2]) }); if (ok) mid('You work the engine.'); return ok; }
+      return false;
+    },
+    /** `/breach use`: the engine within reach, worked. */
+    useEngine() {
+      const E = link.state(), at = standing();
+      if (!inSpire() || !at) return false;
+      const spec = egHallOf(E.seed, E.h, E.geo ?? 0), x = egLocalX(spec, at.sx);
+      const e = (spec.engines ?? []).find((q) => Math.hypot(q.x - x, q.z - at.z) <= EG_ENGINE_REACH_M + 0.5);
+      if (!e) { say((spec.engines ?? []).length ? `Stand at ${EG_ENGINES[spec.engines[0].kind].name} to work it.` : 'No engine stands in this hall.'); return false; }
+      return this.act(`egengine:${E.h}:${e.i}`);
+    },
+    /** The pages of the Annals this breach has given me (their numbers). */
+    annals: () => [...annals].sort((a, b) => a - b),
     /** Online gone: every piece put away (the call kept - it is the hub's). */
     away() { fight?.leave(); dropDoor(); drawEgHud(null); drawEgPanel(null); witness = null; },
     /** Registered as the key's opener (systems/weirKey.js). */

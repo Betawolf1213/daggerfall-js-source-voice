@@ -8396,6 +8396,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     targets.push(...camps.targets());   // SURV3: the fires, at the same 3.2
     if (sdEnd) targets.push(...sdEnd.targets());   // SD4b: the Rift and the Return, at a door's reach
     if (sdHall) targets.push(...sdHall.targets());   // SD6c: the stones' handles and the Ledger plaques
+    if (egSpan) targets.push(...egSpan.targets());   // EG-FULL LAYER THREE: an Athenaeum's Orrery stones, a chamber's engine
     return targets;
   }
 
@@ -8623,6 +8624,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     (key) => camps.hoverName?.(key) ?? null,            // SURV3/HEARTH1, likewise
     (key) => sdEnd?.hoverName(key) ?? null,             // SD4b: the Rift and the Return
     (key) => sdHall?.hoverName(key) ?? null,            // SD6c: a stone's handle, a Ledger plaque
+    (key) => egSpan?.hoverName(key) ?? null,            // EG-FULL LAYER THREE: an Orrery stone's handle, an engine
     (key, hit) => composeNamer(_hostNamers)(key, hit),  // ...and whatever the host stands
     _dungeonHoverName,                                  // ...then the mod's own ladder (.cs:285-296)
   ]);
@@ -10314,6 +10316,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     },
     /** SD4b: a press on a Super dungeon's Rift or Return - the press ladder's `sdrift:` / `sdreturn:` arm (worldModes.js). */
     sdPress(key) { return !!sdEnd?.press(key) || !!sdHall?.press(key); },   // SD6c: and the Orrery's hall
+    egPress(key) { return !!egSpan?.press(key); },   // EG-FULL LAYER THREE: an Elite Breach's stone or engine
     // SD-LOOK: the Rift's and the Return's picture for the hosts' pass (render/sdRiftPass.js, render/sdHalo.js) and their
     // lights for the light list - undefined where no Super dungeon's end stands here
     sdEndLook: sdEnd ? (eye, sky, hour) => sdEnd.look(eye, sky, hour) : undefined,

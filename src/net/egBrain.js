@@ -18,17 +18,23 @@
 // ONE LIFE, ONE RECALL (section 16.5): a fall makes a witness; the next Redoubt the living take calls them back once, or a
 // Memento carried to a Battlemage's niche does sooner; a second fall is final. No living member, and the breach ends.
 //
+// EG-FULL, LAYER THREE (section 11): THE FRAGMENTS' RELAY HALF - the engines worked (`use`), the alcoves behind their
+// false walls, THE FORK's High Road cache and Low Road niche and foes and its closing, the Clan Pit's Honour Horn, the
+// fragments' Lurkers, a lord's page of the Annals (net/egAnnals.js).
+//
 // Pure: a record and a beat in, frames out. Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT_MS, EG_CLOSING_SPAN_MS, EG_CLOSING_COUNT_MS, EG_STAIR_HOLD_MS, EG_REST_MS,
   EG_WAKE_RING_MS, EG_ABSENT_TRIAL_MS, EG_LAST_WORD_MS, EG_REDOUBT_HOLD_MS, EG_COUNT_CAP_MS, egHallOf, egCircleOfHall, egFirstHallOf, egTimes, egAdmits, egCountNew, egCountLeft, egCountRun, egCountHold,
   egInHall, egLocalX, egOnArrive, egAtDoor, egOnFight, egSpecDigest, egGeoOf, egSeed, egProclamationOf, egKeepOnFight } from './egLaw.js';
 import { EG_ROLE, EG_FL, EG_GONE, EG_STATE_EVERY_MS, egFightNew, egFightState, egCarry, egMovesOut, egHpOut, egBlowsStep, egHitBody, egGone, egHas, egSetFl, egBodiesOf, egBodyById, egHpTeam, egRaise, egWalk, egAim, egTethersOut, egMarksOut, egStruck } from './egBodies.js';
 import { EG_KIND, egLegionStep, egLegionRaise, egWaveKinds, egWaveSize, egAddSlain, egSquad, egFromBehind } from './egLegion.js';
-import { EG_OBJ, egLordsNew, egLordsWake, egLordsStep, egLordsAwake, egLordsFell, egLordsOf, egLordHit, egLordHitX, egObjBroken, egObjsOf, zoneOut } from './egLords.js';
+import { EG_OBJ, egLordsNew, egLordsWake, egLordsStep, egLordsAwake, egLordsFell, egLordsOf, egLordHit, egLordHitX, egObjBroken, egObjsOf, zoneOut, egStun } from './egLords.js';
 import { egAsk, egVote, egAskResult, egAsksDue, egDecreesAsk, egDecreesChosen, egDecreeRanks, egDecreesInForce, egBargainDecree, egTideOf, egStratumAt, egOffers, egPick, egPicksClose, egSurplus,
   egLoseNewest, egCacheDraw, egGive, egBuy, egVestigeX, egThreatX, egFadeOn, egMarkFoe, egRunOf, EG_CANTRIPS, EG_LUMEN_ADD, EG_LUMEN_RIFT } from './egRun.js';
 import { egVOf } from './egVestige.js';
-import { shDisc } from './egShape.js';
+import { shDisc, shLane, egInShape } from './egShape.js';
+import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half
+import { egAnnalsNext, egAnnalsLordPage } from './egAnnals.js';
 import { orreryOf, orreryFresh, orreryStep, orreryShortest, SD_STONE_SETTLE_MS } from './sdBrain.js';
 import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gateBrain.js';
 
@@ -45,6 +51,14 @@ export const EG_RELIC_MAX = 100;
 export const EG_WINCH_MS = 60_000;
 export const EG_SILENCE_MS = 3000;
 export const EG_ENGINE_HOLD_MS = 45_000;
+/** EG-FULL LAYER THREE - THE CLAN PIT's Honour Horn (section 11.2): first blown this long after the wake, then once the
+ *  last call ends and this long more; the Kynval's ring (m); Ashfall's pulse (ms) and its pools. */
+export const EG_HORN_FIRST_MS = 20_000;
+export const EG_HORN_AGAIN_MS = 40_000;
+export const EG_HORN_RING_M = 6;
+export const EG_ASHFALL_EVERY_MS = 6000;
+/** The High Road's cache and the Low Road's niche reach (m). */
+export const EG_HCACHE_REACH_M = 2.5;
 export const EG_SCRIPTORIUM_MS = 30_000;
 /** How often each rift pours a wave at circle c (section 8.1 - never under nine seconds), a Rampart's march, a Court's
  *  escort, an Athenaeum's pressure, Hunting Pack's (ms). */
@@ -267,7 +281,7 @@ function ringSpots(spec, x, z, r, k, rng) {
  */
 function standFight(B, spec, now, rng, out) {
   const L = living(B), lvs = L.map(([, m]) => m.lv);
-  if (spec.kind === 'span' || spec.kind === 'brink') { const F = egFightNew(spec, now, lvs); F.D = egDecreeRanks(B); spanTwist(B, F, spec, now, out); return F; }
+  if (spec.kind === 'span' || spec.kind === 'brink') { const F = egFightNew(spec, now, lvs); F.D = egDecreeRanks(B); spanTwist(B, F, spec, now, out); fragStand(B, F, spec, now, out); return F; }
   const F = egFightNew(spec, now, lvs);
   F.D = egDecreeRanks(B);
   const n = F.n, P = F.pg;
@@ -362,7 +376,142 @@ function standFight(B, spec, now, rng, out) {
   if (F.D.vigil && spec.kind !== 'proving' && spec.kind !== 'court' && spec.arrive) { const champ = ['kynreeve', 'kynmarcher', 'markynaz', 'markynaz'][spec.band]; egLordsNew(F, spec, champ, now, out, { decrees: F.D, n, at: [spec.arrive.x, spec.arrive.z + 3] }); egLordsWake(F, spec, now, out, { n }); }
   if ((F.D.warband || B.tide === 'warband') && spec.fight && spec.kind !== 'court') egSquad(F, ringSpots(spec, spec.fight.x, spec.fight.z, 6, 4, rng), now, out);
   F.sparkAt = now + 20_000; F.ashAt = now + 12_000; F.packAt = now + 30_000;
+  fragStand(B, F, spec, now, out);
   return F;
+}
+
+// ── EG-FULL LAYER THREE: THE FRAGMENTS' RELAY HALF (net/egFragLaw.js; section 11) ─────────────────────────────────
+/**
+ * At a hall's wake: each seam alcove's false wall (one blow - a struck object, `fwall`), the fragments' Lurkers dormant
+ * in their walls' shadow (the Low Road's every one; a passage's one from circle 3; a chamber's one from circle 4), the
+ * engines' cooldowns, the Clan Pit's horn.
+ */
+function fragStand(B, F, spec, now, out) {
+  F.alc = {}; F.engCd = {}; F.engUsed = {}; F.engHits = []; F.engStun = {}; F.lowUp = 0; F.took = {};
+  F.horn = spec.spots.horn?.length ? { at: now + EG_HORN_FIRST_MS, kv: 0, sub: '', foul: 0, ashAt: 0, ash: 0 } : null;
+  for (const a of spec.alcoves ?? []) {
+    if (a.seal !== 'seam') { F.alc[a.i] = 1; continue; }
+    const o = egRaiseObj(F, 'fwall', a.x, a.z, 1, now, out, { r: 1.0, pt: a.i });
+    if (o) o.alc = a.i;
+  }
+  const lurks = [], firstOf = new Set();
+  for (const q of spec.spots.lurker ?? []) {
+    const f = spec.frags?.[q.f], low = q.road === 1;
+    if (!f) continue;
+    if (low || (!firstOf.has(q.f) && ((f.cls === 'passage' && spec.c >= 3) || (f.cls === 'chamber' && spec.c >= 4)))) { lurks.push([q.x, q.z]); firstOf.add(q.f); }
+  }
+  if (lurks.length) egLegionRaise(F, lurks.map(() => EG_KIND.lurker), lurks, now, out, { wave: 0 });
+}
+/** The Low Road's member (section 11.4): past the fork, on its side of the hall. */
+const onLowRoad = (spec, b) => !!spec.fork && b.z >= spec.fork.z && b.x >= (spec.fork.lowX + spec.fork.x) / 2;
+/**
+ * The fragments' beat, in a trial and its closing: the alcoves (a member within reach of an open one takes what it
+ * holds, once), the High Road's cache (a Reliquary to each who touches it) and the Low Road's niche (15% once, a shard
+ * each), the Low Road's foes risen as the first member takes it, the engines' blows landing on the legion, the Clan Pit's
+ * horn.
+ */
+function fragStep(B, F, spec, now, inHall, here, rng, out) {
+  if (!F.alc) return;
+  for (const b of inHall) {
+    const mm = B.mem[b.sub];
+    if (!mm) continue;
+    const took = (F.took[b.sub] ??= {});
+    for (const a of spec.alcoves ?? []) {
+      if (!F.alc[a.i] || took[`a${a.i}`] || dist(b.x, b.z, a.x, a.z) > EG_ALCOVE_REACH_M) continue;
+      took[`a${a.i}`] = 1;
+      if (a.holds === 'page') {
+        const p = egAnnalsNext(mm.pages ?? 0, (B.seed + spec.h * 7 + a.i) % 17);
+        if (p >= 0) { mm.pages = (mm.pages ?? 0) | (1 << p); out.push({ k: 'egot', to: b.sub, w: 'page', p }); }
+        else { egGive(mm, 'lumen'); out.push({ k: 'egot', to: b.sub, w: 'lumen' }); }
+      } else { egGive(mm, a.holds); out.push({ k: 'egot', to: b.sub, w: a.holds }); }
+      out.push({ k: 'run', r: egRunOf(b.sub, mm) });
+    }
+    for (const q of spec.spots.hcache ?? []) if (!took.hc && dist(b.x, b.z, q.x, q.z) <= EG_HCACHE_REACH_M) { took.hc = 1; egGive(mm, 'rel', egCircleOfHall(B.h)); out.push({ k: 'egot', to: b.sub, w: 'rel' }, { k: 'esay', w: 'hcache', n: mm.name }, { k: 'run', r: egRunOf(b.sub, mm) }); }
+    for (const q of spec.spots.lniche ?? []) if (!took.ln && dist(b.x, b.z, q.x, q.z) <= EG_ALCOVE_REACH_M) { took.ln = 1; egGive(mm, 'shard'); out.push({ k: 'eheal', p: EG_NICHE_HEAL, why: 'niche', to: b.sub }, { k: 'egot', to: b.sub, w: 'shard' }, { k: 'esay', w: 'niche', n: mm.name }, { k: 'run', r: egRunOf(b.sub, mm) }); }
+    if (!F.lowUp && B.sg === 'trial' && onLowRoad(spec, b)) {
+      F.lowUp = 1;
+      const foes = spec.spots.lowfoe ?? [];
+      if (foes.length) egLegionRaise(F, foes.map(() => EG_KIND.harrier), foes.map((q) => [q.x, q.z]), now, out, { wave: 0 });
+      out.push({ k: 'esay', w: 'lowroad', n: mm.name });
+    }
+  }
+  // the engines' blows land on the legion (each member's own share is the blow's - every screen judges its own feet)
+  if (F.engHits.length) {
+    const due = F.engHits.filter((h) => now >= h.at);
+    F.engHits = F.engHits.filter((h) => now < h.at);
+    for (const h of due) engineLands(B, F, spec, h, now, out);
+  }
+  if (F.horn && B.sg === 'trial') hornStep(B, F, spec, now, inHall, rng, out);
+}
+/**
+ * AN ENGINE WORKED (section 11.10 - `use`): the Sluice floods a channel through the legion, the Shelf topples onto it
+ * (once), the Drop-Hammer falls on it, each a blow of the place told EG_ENGINE_TELL_MS (a member caught takes the place's
+ * 20%); the Soul-Bell and the Moon-Mirror ring out about the engine. Aimed where the legion stands thickest.
+ */
+function engineWork(B, F, spec, e, mm, now, out) {
+  const E = EG_ENGINES[e.kind];
+  if (!E) return false;
+  const adds = egBodiesOf(F, EG_ROLE.add).filter((a) => !egHas(a, EG_FL.friend) && a.hp > 0);
+  let tx = spec.fight?.x ?? e.x, tz = spec.fight?.z ?? e.z, best = -1;
+  for (const a of adds) { const n = adds.filter((q) => dist(q.x, q.z, a.x, a.z) <= 3).length; if (n > best) { best = n; tx = a.x; tz = a.z; } }
+  const yaw = Math.atan2(tx - e.x, tz - e.z), far = Math.max(8, dist(e.x, e.z, tx, tz) + 6);
+  const stamp = e.kind === 'sluice' ? shLane(e.x, e.z, e.x + Math.sin(yaw) * Math.max(far, 2 * (spec.fight?.r ?? 12)), e.z + Math.cos(yaw) * Math.max(far, 2 * (spec.fight?.r ?? 12)), 4)
+    : e.kind === 'shelf' ? shLane(e.x, e.z, e.x + Math.sin(yaw) * 12, e.z + Math.cos(yaw) * 12, 4)
+      : e.kind === 'hammer' ? shDisc(tx, tz, 3) : shDisc(e.x, e.z, 8);
+  const at = now + EG_ENGINE_TELL_MS;
+  if (E.pct > 0) {
+    const here = living(B).map(([s2, m2]) => (m2.pose ? { sub: s2, x: m2.pose.x, z: m2.pose.z } : null)).filter(Boolean);
+    egAim(F, spec, { o: 0, s: [stamp], at, wu: EG_ENGINE_TELL_MS, p: EG_ENGINE_PCT, b: 0, el: null, nm: E.name }, here, now, out);
+  }
+  F.engHits.push({ at, kind: e.kind, s: stamp, i: e.i });
+  if (E.once) F.engUsed[e.i] = 1;
+  out.push({ k: 'esay', w: 'engine', n: mm.name, t: E.name.replace(/^the /, '') });
+  return true;
+}
+/** An engine's blow landed: the adds caught lose their share; the bell stuns Wraiths and Binders, the mirror the Divers;
+ *  the hammer stuns a lord caught, once a phase. */
+function engineLands(B, F, spec, h, now, out) {
+  const E = EG_ENGINES[h.kind];
+  for (const a of egBodiesOf(F, EG_ROLE.add)) {
+    if (egHas(a, EG_FL.friend) || !(a.hp > 0) || !egInShape(h.s, a.x, a.z)) continue;
+    if (E.stun) {
+      const k = /** @type {number[]} */ (h.kind === 'soulbell' ? [EG_KIND.wraith, EG_KIND.binder] : [EG_KIND.diver]);
+      if (k.includes(a.k)) { egSetFl(F, a, EG_FL.stun, true, out); a.stunUntil = now + E.stun; }
+      continue;
+    }
+    a.hp -= a.max * E.pct;
+    if (a.hp <= 0) { a.hp = 0; egGone(F, [a], EG_GONE.slain, E.name, now, out); }
+  }
+  if (E.lordStun) for (const L of egLordsOf(F)) if (egInShape(h.s, L.x, L.z) && F.engStun[L.i] !== L.ph) { F.engStun[L.i] = L.ph; egStun(F, L, E.lordStun, now, out); }
+}
+/**
+ * THE HONOUR HORN (the Clan Pit, section 11.2): a Kynval steps into a ring (r 6) and calls one member. If that member
+ * alone fights him, the tiers throw a Reliquary to every member; if another member enters the ring, the crowd throws
+ * fire - Ashfall in the Pit for the rest of the hall. With one member it is always honourable.
+ */
+function hornStep(B, F, spec, now, inHall, rng, out) {
+  const H = F.horn, at = spec.spots.horn[0];
+  if (H.ash && now >= H.ashAt) { H.ashAt = now + EG_ASHFALL_EVERY_MS; const c = spec.fight ?? at; for (let k = 0; k < 3; k++) { const a = rng() * Math.PI * 2, r = rng() * Math.max(2, (c.r ?? 12) - 3); zoneOut(F, 'burn', shDisc(c.x + Math.sin(a) * r, c.z + Math.cos(a) * r, 3), now + 1500, now + 7500, out, { p: 0.06, b: 2, el: 'fire' }); } }
+  if (!H.kv) {
+    if (now < H.at || !inHall.length) return;
+    const callee = inHall[Math.floor(rng() * inHall.length)];
+    const [k] = egLegionRaise(F, [EG_KIND.kynval], [[at.x, at.z]], now, out, { wave: 0 });
+    if (!k) { H.at = now + EG_HORN_AGAIN_MS; return; }
+    H.kv = k.i; H.sub = callee.sub; H.foul = inHall.length <= 1 ? 0 : H.foul;
+    out.push({ k: 'esay', w: 'horn', n: memberName(B, callee.sub) });
+    return;
+  }
+  const k = egBodyById(F, H.kv);
+  if (!k || !(k.hp > 0)) {
+    if (!H.foul) { for (const [s2, m2] of living(B)) { egGive(m2, 'rel', egCircleOfHall(B.h)); out.push({ k: 'egot', to: s2, w: 'rel' }); } out.push({ k: 'esay', w: 'hornwon', n: memberName(B, H.sub) }); }
+    H.kv = 0; H.sub = ''; H.foul = 0; H.at = now + EG_HORN_AGAIN_MS;
+    return;
+  }
+  if (!H.foul && inHall.length > 1 && inHall.some((b) => b.sub !== H.sub && dist(b.x, b.z, k.x, k.z) <= EG_HORN_RING_M)) {
+    H.foul = 1;
+    if (!H.ash) { H.ash = 1; H.ashAt = now; }
+    out.push({ k: 'esay', w: 'hornfoul' });
+  }
 }
 /** A Span's twist: the Reliquary Vault's cache. */
 function spanTwist(B, F, spec, now, out) {
@@ -382,12 +531,16 @@ function egRaiseObj(F, t, x, z, hp, now, out, o = {}) {
 }
 
 /** The door opens (section 7): the closing begins - a Rally's heal said, the cache's plaque, the legion crumbles. */
-function door(B, spec, now, out) {
+function door(B, spec, now, out, inHall = []) {
   B.cleared = Math.max(B.cleared, B.h);
   if (B.F) { egGone(B.F, egBodiesOf(B.F, EG_ROLE.add), EG_GONE.crumbled, '', now, out); egGone(B.F, egObjsOf(B.F, 'spark'), EG_GONE.crumbled, '', now, out); }
   B.sg = 'closing'; B.sa = now; B.dn = now;
   const span = spec.kind === 'span' || spec.kind === 'deepway' || spec.kind === 'brink' || spec.kind === 'proving';
   B.su = now + (span ? EG_CLOSING_SPAN_MS : EG_CLOSING_FIGHT_MS);
+  // THE FORK (section 11.4): opened by a High Road arrival with members still on the Low Road, the closing waits the
+  // difference between the two roads' fastest crossings - the safe road is never a forfeit
+  const opener = inHall.find((b) => egAtDoor(spec, b.x, b.z));
+  if (spec.fork && opener && !onLowRoad(spec, opener) && inHall.some((b) => b !== opener && onLowRoad(spec, b) && !egAtDoor(spec, b.x, b.z))) B.su += Math.max(0, Math.round((spec.fork.lo - spec.fork.hi) * 1000));
   // Rally (and the Rallying Cry): the company heals when a hall's door opens - the strongest holder's
   const rally = Math.max(0, ...living(B).map(([, m]) => egVOf(m.vs, 'rally')));
   if (rally > 0) out.push({ k: 'eheal', p: B.tide === 'hungering' ? rally / 3 : rally, why: 'rally' });
@@ -441,6 +594,9 @@ function redoubt(B, now, rng, out) {
   if (valk) B.resp += EG_RESPITE_VALK_MS;
   for (const [, m] of L) { m.dc = 0; m.act = 0; }
   B.log.push({ h: B.h, rd: w, lord: specOf(B).lord });
+  // THE ANNALS (section 11.10): a lord's first fall adds its page to every living member's
+  const page = egAnnalsLordPage(specOf(B).lord ?? '');
+  if (page >= 0) for (const [sub, m] of L) if (!((m.pages ?? 0) & (2 ** page))) { m.pages = (m.pages ?? 0) + 2 ** page; out.push({ k: 'egot', to: sub, w: 'page', p: page }); }
   egStratumAt(B, w, rng);
   B.F = null;
   B.sg = 'rest'; B.sa = now; B.su = now + EG_RD_WINDOW_MS + EG_REST_MS; B.hw = 0; B.dn = 0;
@@ -553,6 +709,7 @@ export function egStep(B, now, bodies, rng) {
     if (B.cnt.at > 0 && now >= B.dn + EG_CLOSING_COUNT_MS) { B.cnt = egCountHold(B.cnt, now); out.push(egStageWord(B, now)); }
     if (B.cnt.at > 0 && egCountLeft(B.cnt, now) <= 0) { egEnd(B, 'tear', now, out); return out; }
     cacheStep(B, spec, inHall, now, rng, out);
+    if (B.F) fragStep(B, B.F, spec, now, inHall, inHall, rng, out);   // LAYER THREE: an alcove, a cache, a niche taken in the closing too
     goldRun(B, spec, now, out);
     const L = living(B);
     if (now >= B.su || (L.length && L.every(([, m]) => m.downH === B.h))) pull(B, now, out);
@@ -630,13 +787,7 @@ function trial(B, spec, now, inHall, rng, out) {
     const kinds = egWaveKinds(F, rng, n, { swarm: D.swarm ?? 0, waveNo: F.waveNo, sky: !spec.chamber });
     return egLegionRaise(F, kinds, spots, now, out, { wave: F.waveNo, ...o });
   };
-  // the Span, the Brink: the door opens on the first living member at the far plate
-  if (spec.kind === 'span' || spec.kind === 'brink') {
-    for (const b of inHall) for (const o of egObjsOf(F, 'vault')) if (dist(b.x, b.z, o.x, o.z) <= 3 && !(o.took ??= {})[b.sub]) { o.took[b.sub] = 1; egGive(B.mem[b.sub], 'rel', egCircleOfHall(B.h)); out.push({ k: 'egot', to: b.sub, w: 'rel' }); }
-    if (inHall.some((b) => egAtDoor(spec, b.x, b.z))) door(B, spec, now, out);
-    egMovesOut(F, out);
-    return;
-  }
+  fragStep(B, F, spec, now, inHall, here, rng, out);
   const lordCtx = { decrees: D, n: F.n, covenant: B.covenant };
   const legionCtx = {
     decrees: D,
@@ -651,6 +802,15 @@ function trial(B, spec, now, inHall, rng, out) {
     deserterHit: () => { const r = egObjsOf(F, 'rift').filter((o) => o.hp > 0 && !egHas(o, EG_FL.ward))[0]; if (r) { r.hp -= F.mean * 2; if (r.hp <= 0) { r.hp = 0; F.desClosed = (F.desClosed ?? 0) + 1; riftClosed(B, F, spec, r, 'The Deserter', now, out); } } },
   };
   F.legionCtx = legionCtx;
+  // the Span, the Brink: the door opens on the first living member at the far plate; a fragment's Lurkers and the Low
+  // Road's foes at their work meanwhile
+  if (spec.kind === 'span' || spec.kind === 'brink') {
+    for (const b of inHall) for (const o of egObjsOf(F, 'vault')) if (dist(b.x, b.z, o.x, o.z) <= 3 && !(o.took ??= {})[b.sub]) { o.took[b.sub] = 1; egGive(B.mem[b.sub], 'rel', egCircleOfHall(B.h)); out.push({ k: 'egot', to: b.sub, w: 'rel' }); }
+    if (egBodiesOf(F, EG_ROLE.add).length) egLegionStep(F, spec, now, here, rng, out, legionCtx);
+    if (inHall.some((b) => egAtDoor(spec, b.x, b.z))) door(B, spec, now, out, inHall);
+    egMovesOut(F, out);
+    return;
+  }
   const kind = spec.kind, v = spec.variant;
   if (kind === 'yard' || (kind === 'deepway' && F.chamber === 0)) {
     const rifts = egObjsOf(F, 'rift');
@@ -871,7 +1031,8 @@ export function egBlow(B, sub, m, pose, now) {
     if (sweep && m.r === HIT_KINDS.Melee) for (const a of egBodiesOf(F, EG_ROLE.add)) if (a !== b && !egHas(a, EG_FL.friend) && !egHas(a, EG_FL.ward) && dist(a.x, a.z, b.x, b.z) <= 3) { a.hp -= got * sweep; if (a.hp <= 0) addDied(B, F, spec, a, sub, mm, now, here, out); }
     if (b.hp <= 0) addDied(B, F, spec, b, sub, mm, now, here, out);
   } else if (b.role === EG_ROLE.obj && b.hp <= 0) {
-    if (b.t === 'rift') { riftClosed(B, F, spec, b, mm.name, now, out); F.coClosed = (F.coClosed ?? 0) + 1; }
+    if (b.t === 'fwall') { egGone(F, [b], EG_GONE.slain, mm.name, now, out); if (F.alc) F.alc[b.alc] = 1; out.push({ k: 'esay', w: 'seam', n: mm.name }); }   // LAYER THREE: a false wall falls - its alcove open
+    else if (b.t === 'rift') { riftClosed(B, F, spec, b, mm.name, now, out); F.coClosed = (F.coClosed ?? 0) + 1; }
     else if (b.t === 'anchor') { egObjBroken(F, spec, b, mm.name, now, out); (F.brokenAnchors ??= []).push([b.x, b.z]); }
     else egObjBroken(F, spec, b, mm.name, now, out);
   }
@@ -938,7 +1099,15 @@ export function egWord(B, sub, m, pose, now, rng) {
     case 'ping': if (!mm.alive && now - (mm.pingAt ?? 0) >= 3000) { mm.pingAt = now; out.push({ k: 'eping', s: sub, x: m.x, z: m.z, w: m.w, wit: 1 }); } break;
     case 'bequest': if (!mm.alive && (mm.vs ?? []).some((q) => q[0] === m.v)) mm.bequest = m.v; break;
     case 'forsake': egForsake(B, sub, now, out); break;
-    case 'fell': if (mm.alive && B.h > 0) egFall(B, sub, now, out, p); break;   // a death in the Spire, said by the member's own machine (the pose's `dd`'s twin - the death save turned it into a fall there)
+    case 'fell': if (mm.alive && B.h > 0) egFall(B, sub, now, out, p); break;
+    case 'use': {
+      // EG-FULL LAYER THREE: an engine worked (section 11.10) - within 2 m, once in 30 s (the Shelf once)
+      const F = B.F, e = (spec?.engines ?? [])[m.i];
+      if (!mm.alive || !F?.engCd || B.sg !== 'trial' || !p || !e || dist(p.x, p.z, e.x, e.z) > EG_ENGINE_REACH_M + 0.5) break;
+      if (now < (F.engCd[e.i] ?? 0) || F.engUsed[e.i]) break;
+      if (engineWork(B, F, spec, e, mm, now, out)) F.engCd[e.i] = now + EG_ENGINE_CD_MS;
+      break;
+    }   // a death in the Spire, said by the member's own machine (the pose's `dd`'s twin - the death save turned it into a fall there)
     case 'pz': {
       const F = B.F;
       if (!mm.alive || !F?.orrery || B.sg !== 'trial' || !p) break;

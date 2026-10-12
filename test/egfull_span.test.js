@@ -100,7 +100,7 @@ test('EG-FULL THE TIMED SOLVER (section 10.5): every course the generator lays i
   const far = { ...base, steps: steps.map((q, k) => (k === 1 ? { ...q, z: q.z + 1.5, gap: q.gap + 1.5 } : k > 1 ? { ...q, z: q.z + 1.5 } : q)) };
   assert.equal(egSpanProof(far).ok, false, 'a gap past the reach');
   const rail = { kind: 'rail', i: 0, x: 0, y: 0, z: 10, w: 3, d: 3, amp: 6, period: 8, phase: 0, gap: 3.1, beat: 0, span: 0 };
-  assert.equal(egSpanProof({ steps: [rail] }).ok, false, 'a Rail whose travel closes on what stands before it');
+  assert.ok(egSpanProof({ steps: [rail] }).why.some((w) => /Rail's travel closes/.test(w)), 'a Rail whose travel closes on what stands before it - refused for that');   // LAYER THREE: by its own reason (THE MEDIAN would refuse it too)
   const pend = { kind: 'pend', i: 0, x: 0, y: 0, z: 10, w: 3, d: 2.6, amp: 0, period: 0.9, phase: 0, gap: 3, beat: 0, span: 0 };
   assert.equal(egSpanProof({ steps: [pend] }).ok, false, 'a Pendulum too quick to pass');
   assert.equal(egSpanProof({ steps: [{ ...pend, kind: 'vent', w: 3, d: 3, period: 5 }] }).ok, false, 'a Vent on a narrow platform');
