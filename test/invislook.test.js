@@ -264,5 +264,5 @@ test('INVIS-LOOK by source: the host - the look read once a frame and handed to 
   // AUDIT OW4 J6: `up` rides beside `conceal` (the travel view's leaned quad)
   // PIN MOVED (MWNPC5): the box and the quad carry a foe's tells (`fx`) beside the look
   assert.match(rd('src/combat/fpArm.js'), /drawRigSpriteBox\(renderer, canvas, thirdMesh, model, \{ center, halfW, halfH, anchor, hitFlash, conceal, up, fx \}, proj, view, eye, MW_ARM_PIXEL\);/);
-  assert.match(rd('src/render/characterSprite.js'), /renderer\.drawCharacterSpriteQuad\(sTex, at, halfW, halfH, right, pw \/ CHAR_SPRITE_RT_SIZE, ph \/ CHAR_SPRITE_RT_SIZE, hitFlash, conceal, up, null, fx\);/);
+  assert.match(rd('src/render/characterSprite.js'), /renderer\.drawCharacterSpriteQuad\(sTex, at, halfW, halfH, right, pw \/ CHAR_SPRITE_RT_SIZE, ph \/ CHAR_SPRITE_RT_SIZE, hitFlash, conceal, qUp, null, fx\);/);   // PIN MOVED (BODY-LEAN): the quad's own up, the view's where one is handed
 });

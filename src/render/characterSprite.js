@@ -12,7 +12,7 @@
 import { multiply, ortho, lookAt, perspective, transformPoint, trs } from '../world/mat4.js';
 import { CHAR_PIXEL, CHAR_SPRITE_RT_SIZE } from './renderer.js';
 
-/** The upright quad's vertical - every sprite's but a leaned one's (AUDIT OW4 J6). */
+/** World up - landAnchor's vertical when it is handed none (BODY-LEAN: drawRigSpriteBox always hands its own). */
 const WORLD_UP = Object.freeze([0, 1, 0]);
 
 /**
@@ -101,7 +101,14 @@ export function drawRigSpriteBox(renderer, canvas, mesh, rigMat, { center, halfW
   let halfH = boxH * Math.sqrt(1 - tilt * tilt) + halfW * tilt;
   const rl = Math.hypot(camDir[0], camDir[2]) || 1;
   const right = [-camDir[2] / rl, 0, camDir[0] / rl];   // horizontal billboard right (classic Y-only rotation)
-  const qUp = up ?? WORLD_UP;   // AUDIT OW4 J6: the quad's vertical
+  // BODY-LEAN (2026-10-12, the owner: "when using morrowind models, depending on your camera position other sprites can
+  // shrink or grow, same goes for the horse"): THE QUAD LEANS BY THE PICTURE'S OWN UP. The picture is taken down the
+  // pitched ray, so it is already the body as the eye sees it; pasted on an UPRIGHT quad, the same eye foreshortened it a
+  // second time - every body and 3D horse stood cos(pitch) of its height: 0.97 from a level third-person eye, 0.64 from
+  // a camera 50 degrees above it, 0.34 at 70, so a body grew and shrank as the camera rose and fell or walked up to it.
+  // Leaned by lookAt's own y for the ray, the quad stands square to it and the body draws its true size from any eye.
+  // The travel view's lean (AUDIT OW4 J6) is the view's own, the flats' with it, and stands where it is handed.
+  const qUp = up ?? pictureUp(camDir);   // AUDIT OW4 J6: the quad's vertical
   const at = aim === center ? center : landAnchor(center, anchor, camDir, right, qUp);   // PR-BOW1: where the quad stands
   const pvS = multiply(proj, view);
   const prjY = (x, y, z) => { const w = pvS[3]*x + pvS[7]*y + pvS[11]*z + pvS[15]; return (pvS[1]*x + pvS[5]*y + pvS[9]*z + pvS[13]) / w; };
@@ -131,12 +138,21 @@ export function drawRigSpriteBox(renderer, canvas, mesh, rigMat, { center, halfW
   // MWNPC2: an open batch (renderer.js beginCharacterSpriteBatch) takes the picture as measured, and the flush draws it
   // in its own tile of the one bind; a lone call takes its own pass, as every call did
   if (renderer.characterSpriteBatchOpen) {
-    renderer.queueCharacterSprite({ mesh, model: rigMat, also, proj: sProj, view: sView, pw, ph, tx: 0, ty: 0, quad: { at, halfW, halfH, right, hitFlash, conceal, up, fx } });
+    renderer.queueCharacterSprite({ mesh, model: rigMat, also, proj: sProj, view: sView, pw, ph, tx: 0, ty: 0, quad: { at, halfW, halfH, right, hitFlash, conceal, up: qUp, fx } });
     return { center: at, halfW, halfH, pw, ph };
   }
   const sTex = also ? renderer.renderCharacterSprite(mesh, rigMat, sProj, sView, pw, ph, { also }) : renderer.renderCharacterSprite(mesh, rigMat, sProj, sView, pw, ph);
-  renderer.drawCharacterSpriteQuad(sTex, at, halfW, halfH, right, pw / CHAR_SPRITE_RT_SIZE, ph / CHAR_SPRITE_RT_SIZE, hitFlash, conceal, up, null, fx);   // MWNPC5: and a foe's tells   // HITFLASH1: a struck body's red; INVIS-LOOK: a concealed peer's body blends; AUDIT OW4 J6: leaned by `up`   // sample the sub-rect (fixed RT, audit fix)
+  renderer.drawCharacterSpriteQuad(sTex, at, halfW, halfH, right, pw / CHAR_SPRITE_RT_SIZE, ph / CHAR_SPRITE_RT_SIZE, hitFlash, conceal, qUp, null, fx);   // MWNPC5: and a foe's tells   // HITFLASH1: a struck body's red; INVIS-LOOK: a concealed peer's body blends; AUDIT OW4 J6: leaned by `up`   // sample the sub-rect (fixed RT, audit fix)
   return { center: at, halfW, halfH, pw, ph };
+}
+
+/** BODY-LEAN: the picture's own up - (-dir) x right, lookAt's y for a camera looking along `dir` (any length). Level, it
+ *  is world up; looking down, it leans away from the eye by the pitch. */
+export function pictureUp(dir) {
+  const l = Math.hypot(dir[0], dir[1], dir[2]) || 1;
+  const nx = dir[0] / l, ny = dir[1] / l, nz = dir[2] / l;
+  const hl = Math.hypot(nx, nz) || 1;
+  return [-nx * ny / hl, hl, -nz * ny / hl];
 }
 
 /** PR-BOW1: the quad centre that lands `anchor`'s own image ON `anchor`.
@@ -151,10 +167,7 @@ export function drawRigSpriteBox(renderer, canvas, mesh, rigMat, { center, halfW
  *  quad's own vertical when it leans (drawRigSpriteBox's `up`) - Q moves
  *  down IT, not world up; upright it is exactly what stood. */
 export function landAnchor(center, anchor, dir, right, quadUp = WORLD_UP) {
-  const l = Math.hypot(dir[0], dir[1], dir[2]) || 1;
-  const nx = dir[0] / l, ny = dir[1] / l, nz = dir[2] / l;
-  const hl = Math.hypot(nx, nz) || 1;
-  const up = [-nx * ny / hl, hl, -nz * ny / hl];   // (-dir) x right: lookAt's y for a camera looking along dir
+  const up = pictureUp(dir);
   const ax = anchor[0] - center[0], ay = anchor[1] - center[1], az = anchor[2] - center[2];
   const px = ax * right[0] + ay * right[1] + az * right[2];
   const py = ax * up[0] + ay * up[1] + az * up[2];

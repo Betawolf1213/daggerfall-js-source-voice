@@ -272,6 +272,23 @@ card table's; exterior.js draws the player's body alone and keeps the lone
 pass. A renderer without the batch (every counting renderer in the suite)
 keeps the lone pass, so every earlier pin reads what it read.
 
+BODY-LEAN (2026-10-12, the owner: "when using morrowind models, depending
+on your camera position other sprites can shrink or grow, same goes for
+the horse"). The picture is taken down the eye's PITCHED ray, so it is
+already the body as that eye sees it - and it was pasted on an UPRIGHT
+quad, which the same eye foreshortened a second time. Every body and 3D
+horse stood cos(pitch) of its height: 0.97 from a level third-person eye,
+0.64 from a camera 50 degrees above it, 0.34 at 70 - so a figure shrank as
+the camera rose over it and grew back as it came down or walked away.
+drawRigSpriteBox now leans the quad by the picture's own up
+(`characterSprite.js` pictureUp - lookAt's y for the ray; world up from a
+level eye), by the lone pass and the batch alike, and the anchor is landed
+along it, so a figure draws its true height from wherever the camera
+stands (0.99-1.00 over those eyes). A lean the host hands - the travel
+view's (AUDIT OW4 J6), the flats' own - stands as handed. Classic
+billboards keep DFU's upright quad: they are flats, not pictures of a 3D
+figure. Pinned: `test/bodylean.test.js`; mutants `tools/mutants/bodylean.json`.
+
 PROVEN. `test/mwnpc2_onepass.test.js` on the real Renderer over a recording
 GL: three bodies, two binds where alone they were six, each tile cleared
 and drawn under its own camera, each quad sampling its own tile, the

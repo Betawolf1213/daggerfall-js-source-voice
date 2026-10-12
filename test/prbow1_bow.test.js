@@ -122,9 +122,9 @@ function drawnBody({ arm, cap }, cam, grow = undefined) {
   assert.equal(arm.drawThird(canvas, { proj: cam.proj, view: cam.view, eye: cam.eye, feet: FEET, yaw: 0, grow }), true, 'the body draws');   // AUDIT OW3 J6: `grow` the travel view's
   const pv = multiply(cam.proj, cam.view);
   const mini = multiply(multiply(cap.sprite.oproj, cap.sprite.oview), cap.sprite.model);
-  const { center: c, halfW, halfH, right } = cap.quad;
-  /** where a Morrowind-space point of the body is DRAWN in the world: its RT NDC, laid on the quad */
-  const place = (mw) => { const [nx, ny] = ndc(mini, mw); return [c[0] + right[0] * halfW * nx, c[1] + halfH * ny, c[2] + right[2] * halfW * nx]; };
+  const { center: c, halfW, halfH, right } = cap.quad, U = cap.quad.up ?? [0, 1, 0];
+  /** where a Morrowind-space point of the body is DRAWN in the world: its RT NDC, laid on the quad (BODY-LEAN: along its own up) */
+  const place = (mw) => { const [nx, ny] = ndc(mini, mw); return [0, 1, 2].map((k) => c[k] + right[k] * halfW * nx + U[k] * halfH * ny); };
   const onScreen = (mw) => ndc(pv, place(mw))[1];
   return { px: (onScreen([0, 0, 3.2]) - onScreen([0, 0, 0])) * canvas.clientHeight / 2, quad: cap.quad, sprite: cap.sprite, place };
 }
@@ -171,9 +171,11 @@ test('PR-BOW1: the picture is OF the body - taken along the eye\'s ray to the ac
       const landed = got.place([0, 0, midZ]);
       assert.ok(near3(landed, axis, 1e-5), `${at}: the body's axis point draws on itself (off by ${(Math.hypot(landed[0] - axis[0], landed[1] - axis[1], landed[2] - axis[2]) * 100).toFixed(2)} cm)`);
       const ref = drawnBody(bare, cam);
+      // BODY-LEAN: half a millimetre - a drawn blade's stance moves the body's own mid-height (its anchor) a hair, and
+      // the leaned quad carries that hair along its tilt (0.10 mm at 192/20); the bug this pins was a third of a metre
       for (const s of SAMPLES) {
         const a = got.place(s), b = ref.place(s);
-        assert.ok(near3(a, b, 1e-4), `${at}: MW ${s} draws where bare hands draw it (off by ${(Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) * 100).toFixed(2)} cm)`);
+        assert.ok(near3(a, b, 5e-4), `${at}: MW ${s} draws where bare hands draw it (off by ${(Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) * 100).toFixed(2)} cm)`);
       }
     }
   }
@@ -201,7 +203,7 @@ test('AUDIT OW3 J6: drawThird\'s `grow` (the travel view\'s OW-BIG - the Morrowi
   }
 });
 
-test('AUDIT OW4 J6: under the Overworld the grown Morrowind body\'s quad LEANS by the view\'s up (drawThird `up`, the sprite lane\'s and the flats\' own lean) - the picture taken down the pitched ray was pasted UPRIGHT and foreshortened a second time: at 52 and 75 degrees it stood ~cos(tilt) of its true height, now ~cos(tilt/2); the axis point still draws on itself; left out, the quad is upright as it stood', async () => {
+test('AUDIT OW4 J6: under the Overworld the grown Morrowind body\'s quad LEANS by the view\'s up (drawThird `up`, the sprite lane\'s and the flats\' own lean) - the picture taken down the pitched ray was pasted UPRIGHT and foreshortened a second time: at 52 and 75 degrees it stood ~cos(tilt) of its true height, now ~cos(tilt/2); the axis point still draws on itself; left out (BODY-LEAN), the quad leans by the picture\'s own up and the body stands its true height', async () => {
   const body = await standBody();
   const pieces = body.arm.built().third.arm.pieces.filter((p) => !CARRIED_SLOTS.includes(p.slot) && p.indices);
   const { minZ, maxZ } = meshBounds(pieces);
@@ -220,11 +222,12 @@ test('AUDIT OW4 J6: under the Overworld the grown Morrowind body\'s quad LEANS b
       const place = (mw) => { const [nx, ny] = ndc(mini, mw); return [0, 1, 2].map((k) => quad.center[k] + quad.right[k] * quad.halfW * nx + U[k] * quad.halfH * ny); };
       return { quad, sprite, place, px: scr(place([0, 0, 3.2])) - scr(place([0, 0, 0])) };
     };
-    const upright = drawn(false), leaned = drawn(true);
-    assert.equal(upright.quad.up, null, 'left out: the upright quad that always stood');
+    const own = drawn(false), leaned = drawn(true);
+    const ray = [0, 1, 2].map((k) => own.sprite.oview[k * 4 + 1]);   // lookAt's y - the picture's own up
+    assert.ok(near3(own.quad.up, ray, 1e-6), `left out (BODY-LEAN): the picture's own up (${own.quad.up})`);
     assert.deepEqual(leaned.quad.up, up, 'the view\'s up reaches the quad');
     const truth = scr(transformPoint(leaned.sprite.model, 0, 0, 3.2)) - scr(transformPoint(leaned.sprite.model, 0, 0, 0));   // the body's own axis, as a mesh would draw
-    assert.ok(Math.abs(upright.px / truth - Math.cos(tilt)) < 0.05, `${pitch} deg upright: ${(upright.px / truth).toFixed(3)} of its height - foreshortened twice`);
+    assert.ok(Math.abs(own.px / truth - 1) < 0.02, `${pitch} deg, the picture's own lean: ${(own.px / truth).toFixed(3)} of its height (upright, ~cos(tilt): foreshortened twice)`);
     assert.ok(Math.abs(leaned.px / truth - Math.cos(tilt / 2)) < 0.05, `${pitch} deg leaned: ${(leaned.px / truth).toFixed(3)} of its height`);
     assert.ok(near3(leaned.place([0, 0, midZ]), [FEET[0], FEET[1] + midZ * u * g, FEET[2]], 1e-3), 'the axis point, grown up from the feet, still draws on itself');
     // the resolution is read ALONG the lean: a texel stays MW_ARM_PIXEL (3) screen pixels on the leaned quad (near enough
@@ -287,9 +290,9 @@ test('PR-BOW1: the sprite box is what the pass DRAWS - a sheathed (hidden) longs
 test('PR-BOW1: drawRigSpriteBox\'s anchor - the picture is taken along the eye\'s ray to the anchor, still centred on the box, and stood so the anchor draws on itself; two boxes about one anchor draw every point in ONE place; the resolution is read where the quad stands; no anchor is exactly what stood (the voxel rigs)', () => {
   const eye = [0.3, 1.9, -2.8];
   const proj = perspective(Math.PI / 3, 1.6, 0.05, 500), view = lookAt(eye, [0, 1, 0], [0, 1, 0]);
-  const rec = () => { const c = {}; return { c, renderCharacterSprite: (m, model, op, ov, pw, ph) => { Object.assign(c, { op, ov, pw, ph }); return {}; }, drawCharacterSpriteQuad: (t, center, hw, hh, right) => { Object.assign(c, { center, hw, hh, right }); } }; };
+  const rec = () => { const c = {}; return { c, renderCharacterSprite: (m, model, op, ov, pw, ph) => { Object.assign(c, { op, ov, pw, ph }); return {}; }, drawCharacterSpriteQuad: (t, center, hw, hh, right, u1, v1, hf, cc, up) => { Object.assign(c, { center, hw, hh, right, up }); } }; };
   const id = trs(0, 0, 0, 0, 0, 0, 1, 1, 1);
-  const place = (c, p) => { const [nx, ny] = ndc(multiply(c.op, c.ov), p); return [c.center[0] + c.right[0] * c.hw * nx, c.center[1] + c.hh * ny, c.center[2] + c.right[2] * c.hw * nx]; };
+  const place = (c, p) => { const [nx, ny] = ndc(multiply(c.op, c.ov), p); return [0, 1, 2].map((k) => c.center[k] + c.right[k] * c.hw * nx + c.up[k] * c.hh * ny); };   // BODY-LEAN: along the quad's own up
   const lookDir = (ov) => [-ov[2], -ov[6], -ov[10]];
   const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
   const box = { center: [0.1, 0.9, 0.4], halfW: 0.7, halfH: 0.95 };
@@ -327,7 +330,7 @@ test('PR-BOW1: drawRigSpriteBox\'s anchor - the picture is taken along the eye\'
   // (MWHEAD1: the window is the ray's own now, so the law is asserted as the law - the quad's height on screen over
   // its rows is `pixel` to the rounding - rather than as equality with another box whose ray tilts differently)
   const pv = multiply(proj, view);
-  const quadPx = Math.abs(ndc(pv, [a1.c.center[0], a1.c.center[1] + a1.c.hh, a1.c.center[2]])[1] - ndc(pv, [a1.c.center[0], a1.c.center[1] - a1.c.hh, a1.c.center[2]])[1]) * canvas.clientHeight / 2;
+  const quadPx = Math.abs(ndc(pv, a1.c.center.map((v, k) => v + a1.c.up[k] * a1.c.hh))[1] - ndc(pv, a1.c.center.map((v, k) => v - a1.c.up[k] * a1.c.hh))[1]) * canvas.clientHeight / 2;   // BODY-LEAN: along the quad's own up
   assert.ok(Math.abs(quadPx / a1.c.ph - 3) < 3 / a1.c.ph + 1e-9, `a texel is 3 screen pixels where the quad stands (${quadPx / a1.c.ph})`);
   assert.ok(Math.abs(a1.c.pw / a1.c.ph - a1.c.hw / a1.c.hh) < 1 / a1.c.ph + 1e-9, 'and square');
   // an anchor AT the eye has no ray: what stood

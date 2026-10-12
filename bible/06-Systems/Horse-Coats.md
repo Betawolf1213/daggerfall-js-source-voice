@@ -238,7 +238,9 @@ A horse alone is drawn as the Morrowind body is - a picture through the sprite p
 (`characterSprite.js` drawRigSpriteBox, MW_ARM_PIXEL). A horse under a rider is in the RIDER's picture: `also`, more
 meshes in the one picture under one depth (`renderer.js` _renderCharacterSprite and the batch's tiles; each its own
 quad would cut the horse's neck by the rider's plane), the window the union of the two boxes (`fpArm.js` spriteBoxUnion),
-the anchor the horse's middle.
+the anchor the horse's middle. BODY-LEAN (2026-10-12, the owner: "depending on your camera position other sprites can
+shrink or grow, same goes for the horse"): the picture's quad leans by the picture's own up, so a horse no longer draws
+cos(pitch) of its height from a camera above it (`04-Characters/Morrowind-NPCs.md` section 7).
 
 ### The look on the 3D horse
 

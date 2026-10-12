@@ -29,7 +29,7 @@
   {
     "name": "land-picture-up-is-world-up",
     "file": "src/render/characterSprite.js",
-    "old": "  const up = [-nx * ny / hl, hl, -nz * ny / hl];",
+    "old": "  const up = pictureUp(dir);",
     "new": "  const up = [0, 1, 0];",
     "tests": [
       "test/prbow1_bow.test.js"
