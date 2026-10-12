@@ -25,6 +25,9 @@
 //   EG-ZJ (2026-10-12; sections 11.7 and 23): A BODY'S FEET on the wire (egFeetAt, egWalkFeet) - the fight ground under a body
 //     (section 11.7's band about where it stood, else the lowest that holds it), and a graph walker's floor now and at its
 //     next walk's end; every screen draws each body at its own height (net/egBodies.js egBodyWire carries it).
+//   EG-ZQ (2026-10-12; sections 8.3, 11.7 and 12): THE WAY ON KEPT ONLY WHILE IT IS WALKED (egWayOn - EG-ZK's rule for the
+//     lords, the graph's own now: a walker set down off its walk keeps no node to walk straight to through a wall), and A
+//     PINNED WALKER keeps to its own region (a Rampart's Caster on its pillar, whatever the pillar's plan meets).
 //
 // Pure, deterministic (no die), in the relay bundle (net/egLegion.js, net/egBrain.js). Not a DFU member. Ledger A
 // (ELITE-GATES).
@@ -230,12 +233,31 @@ export function egKeepInRegion(view, G, k, x, z, inset = 0) {
   return [px, pz];
 }
 /**
+ * EG-ZK's rule, given its one home here by EG-ZQ (section 11.7; EG-ZK's departure 7) - THE WAY ON IS KEPT ONLY WHILE IT IS
+ * WALKED: the node body `b` headed to (`b.wn`) is a way on only while its walk (`b.mv`) still goes to it. Set down since - a
+ * Breaker's charge cut at an arch's wall, a push, a pull, a lord's blow, leap or blink, a straight walk - it keeps none, so
+ * egWalkNext never walks it straight from where it stands to a far gap node through the wall; one it stands at is reached:
+ * its region the body's now (a stair's top, its upper floor's) and its feet on that floor. Every graph walker asks it before
+ * its next step, the legion (net/egLegion.js walkGraph) and the lords (net/egLords.js lordWalk) alike. Moves `b.wn`, `b.fr`
+ * and `b.y` in place.
+ * @param {any} view @param {any} b @param {any} [G]
+ */
+export function egWayOn(view, b, G = egWalkGraph(view)) {
+  const wn = Number.isInteger(b.wn) && b.wn >= 0 ? G.nodes[b.wn] ?? null : null;
+  if (!wn || (b.mv && Math.abs(b.mv.tx - wn.x) <= 0.011 && Math.abs(b.mv.tz - wn.z) <= 0.011)) return;
+  if (Math.hypot(wn.x - b.x, wn.z - b.z) <= EG_NODE_REACH_M) { b.fr = wn.rg; b.y = cm(view.fl[G.rg[wn.rg].f]?.y ?? 0); }
+  b.wn = -1;
+}
+/**
  * THE LEGION'S NEXT STEP over hall `view`'s walk graph: where body `b` (at b.x, b.z, its region kept on it as `b.fr` and
  * the node it walks to as `b.wn`)
  * walks next toward (gx, gz) (`gy` its height when known - a member's feet): the goal (kept `inset` inside the region it
  * stands in) when that is the body's region; else the first node of the shortest way, each node it has reached moving
  * `b.fr` on; with no way, the point of its own region nearest the goal. Answers `[x, z, last]` - `last` true when it is
  * the goal (or the nearest it can come).
+ * EG-ZQ (sections 8.3 and 12): a PINNED walker (`b.pinned` - a Rampart's Caster on its pillar) keeps to the region it stands
+ * in, whatever that region's edge overlaps or overlies: its goal is kept inside it and no way off is walked (a pillar whose
+ * plan meets a bastion's has a lip onto it).
  * A view with no fight ground answers the goal (free). Moves `b.fr` in place.
  * @param {any} view @param {any} b @param {number} gx @param {number} gz @param {number} [gy] @param {number} [inset]
  * @returns {[number, number, boolean]}
@@ -251,7 +273,7 @@ export function egWalkNext(view, b, gx, gz, gy = NaN, inset = 0) {
   b.wn = -1;
   const [from] = egRegionAt(view, G, b.x, b.z, Number.isFinite(b.y) ? b.y : NaN, Number.isInteger(b.fr) ? b.fr : -1);   // EG-ZJ: by its own feet (a Caster on its pillar's top, never the walkway its plan overlaps)
   b.fr = from;
-  const [to] = egRegionAt(view, G, gx, gz, gy);
+  const to = b.pinned ? from : egRegionAt(view, G, gx, gz, gy)[0];   // EG-ZQ: a pinned walker's ground is its own region
   const goal = egKeepInRegion(view, G, to, gx, gz, inset);   // `inset` in, as net/egLaw.js egKeepOnFight keeps a walker
   if (to === from) return [goal[0], goal[1], true];
   // Dijkstra from the body (a source joined to every node of its region) to the goal (joined from every node of its own)

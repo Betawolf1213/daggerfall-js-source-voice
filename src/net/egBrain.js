@@ -372,6 +372,7 @@ export function egFall(B, sub, now, out, at = null) {
   // a carrier's fall drops the Memento where they fall
   for (const q of B.mementos) if (q.by === sub) { q.by = null; if (at) { q.x = at.x; q.z = at.z; q.h = B.h; } }
   if (B.F) B.F.fellThisHall = (B.F.fellThisHall ?? 0) + 1;
+  if (B.F) EG_SEAM.join(egLordsFight(B.F, null, {}, now), sub, m.name, m.lv, now, null, { admits: false });   // EG-ZQ (section 13.2): A FALL RETIRES A SHARE - out of every lord standing, through the seam
   egTallyFall(B.F, sub);   // EG-ZF: on a Court's chart
   B.log.push({ h: B.h, fall: m.name });
   out.push({ k: 'fall', s: sub, n: m.name, at: now, fin: final ? 1 : 0 }, { k: 'co', co: egCompanyOf(B) });
@@ -457,16 +458,16 @@ function ringSpots(spec, x, z, r, k, rng) {
  * champion; the Deepway's chamber; the Scriptorium's quiet; the Court's lord asleep in its ring - and the twist's own.
  */
 function standFight(B, spec, now, rng, out) {
-  const L = living(B), lvs = L.map(([, m]) => m.lv);
+  const L = living(B), lvs = L.map(([, m]) => m.lv), subs = L.map(([sub]) => sub);   // EG-ZQ: the company by account, each lord's fighters
   if (spec.kind === 'span' || spec.kind === 'brink') {
-    const F = egFightNew(spec, now, lvs);
+    const F = egFightNew(spec, now, lvs, subs);
     F.D = egDecreeRanks(B);
     // EG-ZB (section 8.2): a span's legion - its first shadows 4 s after the wake (Stillness: 14 s), Hunting Pack's on its own clock
     if (spec.kind === 'span') { F.waveAt = now + (B.still ? 14_000 : 4000); F.packAt = now + 30_000; B.still = 0; }
     spanTwist(B, F, spec, now, out); fragStand(B, F, spec, now, out);
     return F;
   }
-  const F = egFightNew(spec, now, lvs);
+  const F = egFightNew(spec, now, lvs, subs);
   F.D = egDecreeRanks(B);
   const n = F.n, P = F.pg;
   F.waveAt = now + (B.still ? 14_000 : 4000);
@@ -1069,6 +1070,10 @@ function trial(B, spec, now, inHall, rng, out) {
     return egLegionRaise(F, kinds, spots, now, out, { wave: F.waveNo, ...o });
   };
   fragStep(B, F, spec, now, inHall, here, rng, out);
+  // EG-ZQ (section 13.2): THE SEEN-AND-RESTORE STEP - every living member in the hall joins the lords through the seam, its
+  // share in each lord's health: one the hall did not wake with brings it, a recalled one's comes back. The fallen are never
+  // seen here (their shares retired at the fall - egFall), so the next beat never restores one
+  if (egLordsOf(F).length) { const lf = egLordsFight(F, spec, {}, now); for (const b of inHall) { const mm = B.mem[b.sub]; EG_SEAM.join(lf, b.sub, mm.name, mm.lv, now, null, { admits: mm.alive && mm.in && !mm.home }); } }
   const lordCtx = { decrees: D, n: F.n, covenant: B.covenant };
   const legionCtx = {
     decrees: D,

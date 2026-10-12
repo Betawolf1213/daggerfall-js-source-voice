@@ -650,6 +650,11 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   const lane = (ax, az, bx, bz, half, role, y = 0) => { const l = { ax, az, bx, bz, hw: half, role, y }; P.lanes.push(l); return l; };
   const flD = (x, z, rad, y = 0) => P.fl.push({ t: 'd', x, z, r: rad, y });
   const flL = (ax, az, bx, bz, half, y = 0) => P.fl.push({ t: 'l', ax, az, bx, bz, hw: half, y });
+  // EG-ZQ (section 9): A SPOT'S HEIGHT IS IN CENTIMETRES. Where a spot carries a `y` (a fragment's anchors, a balcony, the
+  // Low Road's niche) it is the law's own centimetres, and the spec says it so: its `x` and `z` are said in metres below and
+  // its `y` is not (Seed 1's Hall 22: Lurker spots at y -760 over floors at -7.6 m). Nothing reads it - every body's feet are
+  // the fight ground's (net/egWalkGraph.js egFeetAt) - and saying it in metres is a spec law of its own (EG_SPEC, section 22),
+  // the change of the first slice that reads it; until then a reader divides by 100.
   const spot = (role, x, z, extra = {}) => { (P.spots[role] ??= []).push({ x, z, ...extra }); };
   let edge = 0, y = 0, road = 0, kitNow = '', xRoad = 0;
   const pieces = plain ? EG_BAND_PIECES[bnd].slice(0, 2) : EG_BAND_PIECES[bnd];
@@ -1062,7 +1067,7 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   }
   // said in metres
   const pt = (q) => (q ? { ...q, x: m(q.x), y: m(q.y ?? 0), z: m(q.z), ...(q.r != null ? { r: m(q.r) } : {}) } : null);
-  const spots = {};
+  const spots = {};   // EG-ZQ: a spot's `y` stays in centimetres (the law's - see `spot`, above)
   for (const [k, v] of Object.entries(P.spots)) spots[k] = v.map((q) => { const o = { ...q, x: m(q.x), z: m(q.z) }; if (q.r != null) o.r = m(q.r); if (q.plate) o.plate = [m(q.plate[0]), m(q.plate[1])]; if (q.bx != null) { o.bx = m(q.bx); o.bz = m(q.bz); } if (q.z1 != null) o.z1 = m(q.z1); return o; });
   const lord = kind === 'court' ? egBossOf(seed, c) : null;
   return {

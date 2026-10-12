@@ -73,7 +73,7 @@ function breachAt(seed, h, { n = 2 } = {}) {
 /** A Court laid above the hall's own height, every floor of it (the law's - the fight centre's height is the hall's 0). */
 const courtAbove = () => findSpec((q) => q.kind === 'court' && q.fl.length > 0 && q.fl.every((f) => f.y > 1));
 
-test('EG-ZJ A BODY\'S FEET, THE LAW (sections 11.7 and 23; net/egWalkGraph.js egFeetAt, egWalkFeet; net/egLegion.js egAirY; net/egBodies.js): on a chamber\'s stair\'s top the balcony from above and the floor from under it, the lowest with no height, the balcony past the floor\'s rim, a height kept over no fight ground; a walker up the stair standing on the floor with its walk ending on the balcony; a flier at its mark\'s floor, past the band at its own feet; a body stood on the ground under it or at its height, whole centimetres; a walk carrying its height and its end\'s, said again past EG_Y_RESAY_M or with its feet off its line, a stop and a place on their ground; a body\'s row of seventeen with its state as said; the whole fight\'s walk carried to its instant; a standing body whose ground moves under it said again; a Sapper up a stair from the floor\'s height to the balcony\'s and off its lip at the floor\'s at once; a Caster on its pillar over a bastion standing on the pillar; the fight\'s ground kept unenumerated and bound again (mutants: the climb flat; the lip a glide; the walker\'s region by plan; the band\'s fallback dropped; a stair\'s end read off the wrong region; a flier at the floor past the band; a height in millimetres; a walk\'s end\'s height never resaid; the feet off the line unheard; a place left in the air; the state unsaid; the whole fight\'s walk at its head start)', () => {
+test('EG-ZJ A BODY\'S FEET, THE LAW (sections 11.7 and 23; net/egWalkGraph.js egFeetAt, egWalkFeet; net/egLegion.js egAirY; net/egBodies.js): on a chamber\'s stair\'s top the balcony from above and the floor from under it, the lowest with no height, the balcony past the floor\'s rim, a height kept over no fight ground; a walker up the stair standing on the floor with its walk ending on the balcony; a flier at its mark\'s floor, past the band at its own feet; a body stood on the ground under it or at its height, whole centimetres; a walk carrying its height and its end\'s, said again past EG_Y_RESAY_M or with its feet off its line, a stop and a place on their ground; a body\'s row of eighteen with its state as said; the whole fight\'s walk carried to its instant; a standing body whose ground moves under it said again; a Sapper up a stair from the floor\'s height to the balcony\'s and off its lip at the floor\'s at once; a Caster on its pillar over a bastion standing on the pillar; the fight\'s ground kept unenumerated and bound again (mutants: the climb flat; the lip a glide; the walker\'s region by plan; the band\'s fallback dropped; a stair\'s end read off the wrong region; a flier at the floor past the band; a height in millimetres; a walk\'s end\'s height never resaid; the feet off the line unheard; a place left in the air; the state unsaid; the whole fight\'s walk at its head start)', () => {
   // a chamber's balcony over its floor and its stair between (the law's)
   const { s: spec } = findSpec((q) => (q.ramps ?? []).length > 0);
   const view = egFightView(spec), q = spec.ramps[0];
@@ -143,12 +143,12 @@ test('EG-ZJ A BODY\'S FEET, THE LAW (sections 11.7 and 23; net/egWalkGraph.js eg
   assert.equal(b.y, q.y0, 'and back down on the floor');
   // a body's row: seventeen, its feet and its walk's end's, its state as said and since when
   const isle = egBodyNew(F, EG_ROLE.obj, EG_OBJ.isle, f0.x, f0.z, 1, { now: T0 });
-  assert.deepEqual(egBodyWire(isle).slice(13), [f0.y, f0.y, 0, 0], 'nothing said yet');
+  assert.deepEqual(egBodyWire(isle).slice(13), [f0.y, f0.y, 0, 0, 0], 'nothing said yet');   // PIN MOVED (EG-ZQ): and its size, the eighteenth (0 its look's own)
   const out = [];
   egObSay(isle, 2, T0 + 500, out);
   assert.deepEqual(out, [{ k: 'eob', i: isle.i, st: 2, at: T0 + 500 }]);
-  assert.deepEqual(egBodyWire(isle).slice(13), [f0.y, f0.y, 2, T0 + 500], 'the island fallen, since its word');
-  assert.equal(egBodyWire(fl).length, 17);
+  assert.deepEqual(egBodyWire(isle).slice(13), [f0.y, f0.y, 2, T0 + 500, 0], 'the island fallen, since its word');
+  assert.equal(egBodyWire(fl).length, 18);   // PIN MOVED (EG-ZQ): a row of eighteen
   // the whole fight's walk carried to its instant: its place, its height and its `at` then
   egWalk(F, lord, f0.x + 9, f0.z, 0, 3, T0 + 2000, court);
   const row = egFightState(F, T0 + 3000).b.find((t) => t[0] === lord.i), [cx, cz] = egBodyAt(lord, T0 + 3000);
@@ -221,7 +221,7 @@ const EG_LORDS_FLY = new Set(Object.values(EG_LORDS).filter((L) => L.fly).map((L
 /** A Court laid above the hall's own height, every floor of it, its lord a walker. */
 const groundCourt = () => findSpec((q) => q.kind === 'court' && q.fl.length > 0 && q.fl.every((f) => f.y > 1) && !EG_LORDS_FLY.has(q.lord));
 
-test('EG-ZJ EVERY BODY ON ITS FEET, BY THE DIRECTOR (section 23; EG-ZB\'s departure 3 closed): a Court laid above the hall\'s own height says its lord, its objects and its legion on that floor and every walk over it; a woken room\'s restored fight raises on that floor from its first beat; a span\'s shadows rise at the height of the member they shadow down a course that has dropped, and fly at it - to another platform\'s height when the company moves; from the Shade the Divers rise and circle at the island ahead\'s height; a Deepway\'s Lurkers stand on the floor past its shaft and a false wall on its alcove\'s - every row seventeen, every walk nine, every height whole centimetres (mutants: the rows\' height dropped; a restored fight raising at the hall\'s 0; the shadows\' flight at their own height; the Divers at nought; the shadows at the plates\' height; the alcove\'s floor ignored; the walk\'s height off the wire)', () => {
+test('EG-ZJ EVERY BODY ON ITS FEET, BY THE DIRECTOR (section 23; EG-ZB\'s departure 3 closed): a Court laid above the hall\'s own height says its lord, its objects and its legion on that floor and every walk over it; a woken room\'s restored fight raises on that floor from its first beat; a span\'s shadows rise at the height of the member they shadow down a course that has dropped, and fly at it - to another platform\'s height when the company moves; from the Shade the Divers rise and circle at the island ahead\'s height; a Deepway\'s Lurkers stand on the floor past its shaft and a false wall on its alcove\'s - every row eighteen, every walk nine, every height whole centimetres (mutants: the rows\' height dropped; a restored fight raising at the hall\'s 0; the shadows\' flight at their own height; the Divers at nought; the shadows at the plates\' height; the alcove\'s floor ignored; the walk\'s height off the wire)', () => {
   // a Court above the hall's 0
   const { seed: cs, s: court } = groundCourt();
   const fy = new Set(court.fl.map((f) => f.y));
@@ -231,7 +231,7 @@ test('EG-ZJ EVERY BODY ON ITS FEET, BY THE DIRECTOR (section 23; EG-ZB\'s depart
   for (let k = 0; k < 120; k++) C.step();
   const rows = rowsOf(C.frames), walks = walksOf(C.frames);
   assert.ok(rows.some((t) => t[1] === EG_ROLE.lord) && walks.length > 0, 'its lord stood and walking');
-  for (const t of rows) { assert.equal(t.length, 17); assert.ok(fy.has(t[13]) && fy.has(t[14]), `a ${['lord', 'add', 'object'][t[1]]} on the Court's floor (${t[13]}), never the hall's 0`); }
+  for (const t of rows) { assert.equal(t.length, 18); assert.ok(fy.has(t[13]) && fy.has(t[14]), `a ${['lord', 'add', 'object'][t[1]]} on the Court's floor (${t[13]}), never the hall's 0`); }
   for (const m of walks) { assert.equal(m.length, 9); assert.ok(fy.has(m[7]) && fy.has(m[8]), `a walk over the floor (${m[7]} to ${m[8]})`); }
   // a woken room: its fight restored from storage keeps no hall, and from its first beat stands what it raises on the floor
   const R = structuredClone(C.B), rpos = (t) => ['acct-0', 'acct-1'].map((sub) => ({ sub, ...C.pos[sub], dead: false, at: t }));
@@ -283,12 +283,12 @@ test('EG-ZJ EVERY BODY ON ITS FEET, BY THE DIRECTOR (section 23; EG-ZB\'s depart
   const RA = breachAt(rs2, ram.h), casters = rowsOf(RA.frames).filter((t) => t[1] === EG_ROLE.add && t[2] === EG_KIND.caster);   // its wake's: the pinned ones
   const pillarY = (t) => ram.discs.find((d) => d.role === 'pillar' && Math.hypot(d.x - t[4], d.z - t[5]) <= d.r)?.y;
   assert.ok(casters.length > 0 && casters.every((t) => t[13] === pillarY(t) && t[13] > 1), `each Caster on its pillar's top (${casters.map((t) => `${t[13]}/${pillarY(t)}`)})`);
-  // the wire: a row of seventeen and a walk of nine, their heights in the hall's bounds, a state in its own
+  // the wire: a row of eighteen and a walk of nine, their heights in the hall's bounds, a state in its own
   const row0 = rowsOf(C.frames)[0], efs0 = { k: 'efs', h: court.h, wk: T0, b: [row0], bl: [], tx: [], mk: [], pg: {} };
   assert.ok(validEgOut(efs0));
-  assert.equal(validEgOut({ ...efs0, b: [[...row0.slice(0, 13), 401, row0[14], row0[15], row0[16]]] }), null, 'feet past the hall\'s bound');
-  assert.equal(validEgOut({ ...efs0, b: [[...row0.slice(0, 14), -401, row0[15], row0[16]]] }), null, 'a walk\'s end past it');
-  assert.equal(validEgOut({ ...efs0, b: [[...row0.slice(0, 15), 100, row0[16]]] }), null, 'a state past its bound');
+  assert.equal(validEgOut({ ...efs0, b: [[...row0.slice(0, 13), 401, row0[14], row0[15], row0[16], row0[17]]] }), null, 'feet past the hall\'s bound');   // PIN MOVED (EG-ZQ): each a row of eighteen
+  assert.equal(validEgOut({ ...efs0, b: [[...row0.slice(0, 14), -401, row0[15], row0[16], row0[17]]] }), null, 'a walk\'s end past it');
+  assert.equal(validEgOut({ ...efs0, b: [[...row0.slice(0, 15), 100, row0[16], row0[17]]] }), null, 'a state past its bound');
   assert.equal(validEgOut({ ...efs0, zs: [{ i: 1, kind: 'lava', s: ['d', 0, 0, 3], from: T0, until: T0 + 1, p: 0, b: 0, el: null }] }), null, 'a zone the wire does not know');
   const mv0 = walks[0];
   assert.ok(validEgOut({ k: 'emv', m: [mv0] }));
@@ -549,7 +549,7 @@ test('EG-ZJ A RELOAD MID-FIGHT IN THE ROOM (server/src/index.js _egHello; sectio
     assert.ok(efs.zs.some((z) => z.i === zone.i && z.kind === 'burn' && z.until === clock + 7900), 'the burning ground still to burn');
     assert.ok(efs.zs.every((z) => z.until > clock), 'and none burnt out');
     const row = efs.b.find((t) => t[0] === rift.i);
-    assert.deepEqual(row.slice(15), [1, clock - 100], 'the object\'s state, since its word');
+    assert.deepEqual(row.slice(15), [1, clock - 100, 0], 'the object\'s state, since its word');   // PIN MOVED (EG-ZQ): and its size
     for (const t of efs.b) assert.equal(t[13], egFeetAt(egFightView(spec), t[4], t[5], t[13]), 'every body on its floor');
     const J = heard.reduce((s, m) => foldEg(s, validEgOut(m), clock), EG_STATE_EMPTY);
     sameFight(J, R, clock, 'the reloaded screen');

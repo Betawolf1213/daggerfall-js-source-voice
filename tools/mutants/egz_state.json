@@ -13,9 +13,9 @@
   { "name": "EGZJ-walk-of-no-length-at-its-start", "file": "src/net/egBodies.js", "old": "if (!(m.v > 0) || len < 1e-6) return y1;", "new": "if (!(m.v > 0) || len < 1e-6) return y0;", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-carry-leaves-the-height", "file": "src/net/egBodies.js", "old": "b.x = x; b.z = z; b.y = egWalkY(b.mv, now); } }", "new": "b.x = x; b.z = z; } }", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-whole-fight-walk-head-start", "file": "src/net/egBodies.js", "old": "const m = b.mv, live = !!m && now > 0;", "new": "const m = b.mv, live = false;", "tests": ["test/egz_state.test.js"] },
-  { "name": "EGZJ-row-height-unrounded", "file": "src/net/egBodies.js", "old": "    r2(y), m ? m.ty : r2(y), b.ws ?? 0, b.wsAt ?? 0];", "new": "    y, m ? m.ty : r2(y), b.ws ?? 0, b.wsAt ?? 0];", "tests": ["test/egz_state.test.js"] },
-  { "name": "EGZJ-row-walk-end-height-dropped", "file": "src/net/egBodies.js", "old": "    r2(y), m ? m.ty : r2(y), b.ws ?? 0, b.wsAt ?? 0];", "new": "    r2(y), r2(y), b.ws ?? 0, b.wsAt ?? 0];", "tests": ["test/egz_state.test.js"] },
-  { "name": "EGZJ-row-state-unsaid", "file": "src/net/egBodies.js", "old": "    r2(y), m ? m.ty : r2(y), b.ws ?? 0, b.wsAt ?? 0];", "new": "    r2(y), m ? m.ty : r2(y), 0, 0];", "tests": ["test/egz_state.test.js"] },
+  { "name": "EGZJ-row-height-unrounded", "file": "src/net/egBodies.js", "old": "    r2(y), m ? m.ty : r2(y), b.ws ?? 0, b.wsAt ?? 0, b.sz ?? 0];", "new": "    y, m ? m.ty : r2(y), b.ws ?? 0, b.wsAt ?? 0, b.sz ?? 0];", "tests": ["test/egz_state.test.js"] },
+  { "name": "EGZJ-row-walk-end-height-dropped", "file": "src/net/egBodies.js", "old": "    r2(y), m ? m.ty : r2(y), b.ws ?? 0, b.wsAt ?? 0, b.sz ?? 0];", "new": "    r2(y), r2(y), b.ws ?? 0, b.wsAt ?? 0, b.sz ?? 0];", "tests": ["test/egz_state.test.js"] },
+  { "name": "EGZJ-row-state-unsaid", "file": "src/net/egBodies.js", "old": "    r2(y), m ? m.ty : r2(y), b.ws ?? 0, b.wsAt ?? 0, b.sz ?? 0];", "new": "    r2(y), m ? m.ty : r2(y), 0, 0, b.sz ?? 0];", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-object-state-said-not-kept", "file": "src/net/egBodies.js", "old": "export function egObSay(o, st, now, out) { egSaid(o, st, now); out.push(", "new": "export function egObSay(o, st, now, out) { out.push(", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-state-since-dropped", "file": "src/net/egBodies.js", "old": "export function egSaid(b, st, now) { b.ws = st; b.wsAt = now; }", "new": "export function egSaid(b, st, now) { b.ws = st; }", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-raised-at-nought", "file": "src/net/egBodies.js", "old": "y: Number.isFinite(y) ? r2(y) : F.view ? egFeetAt(F.view, x, z) : 0,", "new": "y: Number.isFinite(y) ? r2(y) : 0,", "tests": ["test/egz_state.test.js"] },
@@ -65,7 +65,7 @@
   { "name": "EGZJ-shadows-rise-at-the-plates", "file": "src/net/egBrain.js", "old": "egAirY(view, m, {})]);", "new": "0]);", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-divers-rise-at-nought", "file": "src/net/egBrain.js", "old": "isle.y ?? 0]); continue; }", "new": "0]); continue; }", "tests": ["test/egz_state.test.js"] },
 
-  { "name": "EGZJ-wire-row-of-thirteen", "file": "src/net/wire.js", "old": "t.length !== 17 || !intIn(t[0], 1, 1e9)", "new": "t.length !== 13 || !intIn(t[0], 1, 1e9)", "tests": ["test/egz_state.test.js"] },
+  { "name": "EGZJ-wire-row-of-thirteen", "file": "src/net/wire.js", "old": "t.length !== 18 || !intIn(t[0], 1, 1e9)", "new": "t.length !== 13 || !intIn(t[0], 1, 1e9)", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-wire-heights-unbounded", "file": "src/net/wire.js", "old": "if (!egXZ(t[13]) || !egXZ(t[14]) || !intIn(t[15], 0, 99) || !egMs(t[16])) return null;", "new": "if (!intIn(t[15], 0, 99) || !egMs(t[16])) return null;", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-wire-walk-end-unbounded", "file": "src/net/wire.js", "old": "if (!egXZ(t[13]) || !egXZ(t[14]) || !intIn(t[15], 0, 99) || !egMs(t[16])) return null;", "new": "if (!egXZ(t[13]) || !intIn(t[15], 0, 99) || !egMs(t[16])) return null;", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-wire-state-unbounded", "file": "src/net/wire.js", "old": "if (!egXZ(t[13]) || !egXZ(t[14]) || !intIn(t[15], 0, 99) || !egMs(t[16])) return null;", "new": "if (!egXZ(t[13]) || !egXZ(t[14]) || !egMs(t[16])) return null;", "tests": ["test/egz_state.test.js"] },
@@ -78,7 +78,7 @@
   { "name": "EGZJ-link-feet-dropped", "file": "src/net/egLink.js", "old": "y: t[13] ?? 0, hp: t[6]", "new": "y: 0, hp: t[6]", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-link-walk-height-dropped", "file": "src/net/egLink.js", "old": "at: t[12], y: t[13] ?? 0, ty: t[14] ?? t[13] ?? 0 } : null, born", "new": "at: t[12], y: 0, ty: 0 } : null, born", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-link-object-state-dropped", "file": "src/net/egLink.js", "old": "if (t[1] === EG_ROLE.obj) { b.st = t[15] ?? 0; b.stAt = t[16] ?? 0; }", "new": "if (t[1] === EG_ROLE.obj) { b.st = 0; b.stAt = 0; }", "tests": ["test/egz_state.test.js"] },
-  { "name": "EGZJ-link-lord-phase-dropped", "file": "src/net/egLink.js", "old": "{ b.ph = t[15] ?? 0; if", "new": "{ b.ph = 0; if", "tests": ["test/egz_state.test.js"] },
+  { "name": "EGZJ-link-lord-phase-dropped", "file": "src/net/egLink.js", "old": "{ b.ph = t[15] ?? 0; b.sz =", "new": "{ b.ph = 0; b.sz =", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-link-fall-from-now", "file": "src/net/egLink.js", "old": "b.fellAt = t[16] || had?.fellAt || now;", "new": "b.fellAt = now;", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-link-born-anew", "file": "src/net/egLink.js", "old": "born: had ? had.born : born };", "new": "born };", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-link-joiner-sees-them-rise", "file": "src/net/egLink.js", "old": "egBodyOf(t, now, had?.get(t[0]) ?? null, 0)", "new": "egBodyOf(t, now, had?.get(t[0]) ?? null)", "tests": ["test/egz_state.test.js"] },
@@ -102,5 +102,5 @@
   { "name": "EGZJ-traversal-on-the-floors", "file": "src/world/egTelegraph.js", "old": "EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? hz.y ?? 0 : NaN", "new": "hz?.kind === 'slag' ? hz.y ?? 0 : NaN", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-surface-at-nought", "file": "src/world/egTelegraph.js", "old": "EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? hz.y ?? 0 : NaN", "new": "EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? 0 : NaN", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-lord-straight-walk-at-nought", "file": "src/net/egLords.js", "old": "if (from === to) { egWalk(F, L, gx, gz, stop, speed, now, spec, L.r); return; }", "new": "if (from === to) { egWalk(F, L, gx, gz, stop, speed, now, spec, L.r, false, 0); return; }", "tests": ["test/egz_state.test.js"] },
-  { "name": "EGZJ-lord-top-reached-feet-left-on-the-stair", "file": "src/net/egLords.js", "old": "{ L.fr = wn.rg; L.y = egWalkFeet(view, L)?.[0] ?? L.y; }", "new": "{ L.fr = wn.rg; }", "tests": ["test/egz_state.test.js"] }
+  { "name": "EGZJ-lord-top-reached-feet-left-on-the-stair", "file": "src/net/egWalkGraph.js", "old": "{ b.fr = wn.rg; b.y = cm(view.fl[G.rg[wn.rg].f]?.y ?? 0); }", "new": "{ b.fr = wn.rg; }", "tests": ["test/egz_state.test.js"] }
 ]

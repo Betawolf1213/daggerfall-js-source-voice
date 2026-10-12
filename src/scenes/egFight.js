@@ -241,7 +241,7 @@ export function egLookOf(b, band) {
   if (b.role === EG_ROLE.lord) {
     const key = EG_BOSS_KEYS[b.k] ?? 'kynreeve', L = egBossLook(key, b.pt), lord = EG_LORDS[key];
     const fly = (b.fl & EG_FL.fly) !== 0 && (b.fl & EG_FL.grounded) === 0;
-    return { mobile: L.mobile, scale: L.scale * ((b.fl & EG_FL.mirror) !== 0 ? 0.95 : 1), hover: fly ? 6 : 0, name: egBossName(key, b.pt), lord: true, epithet: lord?.epithet ?? '' };
+    return { mobile: L.mobile, scale: L.scale * (b.sz ?? 1) * ((b.fl & EG_FL.mirror) !== 0 ? 0.95 : 1), hover: fly ? 6 : 0, name: egBossName(key, b.pt), lord: true, epithet: lord?.epithet ?? '' };   // EG-ZQ: `sz` the room's size (net/egLink.js - Colossal's)
   }
   if (b.role === EG_ROLE.add) { const L = egKindLook(b.k, band); return { ...L, hover: (b.fl & EG_FL.fly) !== 0 ? L.hover : Math.min(L.hover, 0.9) }; }
   return null;

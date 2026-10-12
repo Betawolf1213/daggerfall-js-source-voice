@@ -34,7 +34,7 @@
 import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egBodyWire, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpMean, egHpTeam, egBodiesOf, egShareX } from './egBodies.js';
 import { shDisc, shLaneAt, shCone } from './egShape.js';
 import { egKeepOnFight, egOnFight } from './egLaw.js';
-import { egWalkNext, egAirNext, egAirKeep, egArchCut, egGroundAt, egWalkFeet, egFeetAt, EG_PIECE_TOUCH_M } from './egWalkGraph.js';   // EG-ZB: the walk graph and the air; EG-ZJ: the feet on it
+import { egWalkNext, egAirNext, egAirKeep, egArchCut, egGroundAt, egWalkFeet, egFeetAt, egWayOn, EG_PIECE_TOUCH_M } from './egWalkGraph.js';   // EG-ZB: the walk graph and the air; EG-ZJ: the feet on it; EG-ZQ: the way on kept only while walked
 import { harrierCountFor } from './gateBrain.js';
 import { wrapAngle } from '../world/mat4.js';   // the one wrap (ONCRASH1 C2) - already in the relay's graph
 
@@ -97,8 +97,11 @@ export const EG_HUNT_LEAVE_M = 1.5;
  *  its goal `stop` short; said as net/egBodies.js egWalk says a walk (the point already kept on its region). EG-ZJ (section
  *  23): its FEET the graph's (net/egWalkGraph.js egWalkFeet) - set on the floor of a region it has just come into (a lip
  *  stepped off, a portal, a stair's top), its walk ending on its next node's floor (a stair climbed as it goes). EG-ZK: every
- *  lord's and champion's walk too (net/egLords.js lordWalk) - so a lord's feet ride the graph as the legion's do. */
+ *  lord's and champion's walk too (net/egLords.js lordWalk) - so a lord's feet ride the graph as the legion's do. EG-ZQ: the
+ *  node it walked to kept only while it still walks there (net/egWalkGraph.js egWayOn - a Breaker set down at an arch's wall
+ *  by its cut charge, a pushed or pulled walker, keeps none to walk straight to). */
 export function walkGraph(F, view, a, gx, gz, stop, speed, now, gy = NaN) {
+  if (view?.fl?.length) egWayOn(view, a);   // EG-ZQ (EG-ZK's departure 7): set down off its walk, it keeps no way on through a wall
   const fr = a.fr, [x, z, last] = egWalkNext(view, a, gx, gz, gy, a.r ?? 0.6), H = egWalkFeet(view, a);
   if (H && a.fr !== fr) a.y = H[0];
   egWalk(F, a, x, z, last ? stop : 0, speed, now, view, 0, true, H ? H[1] : NaN);
