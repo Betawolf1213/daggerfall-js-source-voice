@@ -495,7 +495,7 @@ test('BA1: the four hosts gate the classic stride through the one gate, drive th
   for (const [name, src] of [['world', world], ['exterior', ext], ['worldModes', wm], ['dungeon', dj]]) {
     assert.match(src, /if \(_step && classicFootstepAllowed\(_step\.clip\)\) audio\.playOneShot\(_step\.clip, _step\.volume\);/, `${name}: the one gate`);
     assert.equal((src.match(/betterAmbience\.frame\(dt, \{/g) ?? []).length, 1, `${name}: one frame`);
-    assert.equal((src.match(/betterAmbience\.view\(lookAt\(/g) ?? []).length, 1, `${name}: the view fold`);
+    assert.equal((src.match(/betterAmbience\.view\(lookAt\(/g) ?? []).length, name === 'worldModes' ? 2 : 1, `${name}: the view fold`);   // PIN MOVED (EG-ZN, Elite-Gates.md section 11.8): the mode machine folds the shake into a second view too - over a shaft's ledge the camera's own leaned view replaces the drawn one AFTER the aim view is taken, so each of the two views is shaken once
     assert.match(src, /import \{ betterAmbience, classicFootstepAllowed \} from '\.\.\/systems\/betterAmbience\.js'/, name);
     assert.match(src, /swimming: !!player\.isPlayerSwimming, motorSwimming: !!player\.swimming,/, `${name}: PlayerEnterExit.IsPlayerSwimming AND playerMotor.IsSwimming, the two the source reads`);
   }
