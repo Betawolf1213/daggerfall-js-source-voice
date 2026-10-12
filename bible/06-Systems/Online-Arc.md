@@ -11218,9 +11218,13 @@ scaled by it: a forged level would be paid more for every honest receipt.
   weekly report counts the accounts at the combat cap (`capped.combat`, where `capped.gate` stood). SERPENT-SET
   (2026-10-05): a sea serpent slain strikes under the same cap - 40, a ship that stood 20 (`MARKS_COMBAT.kinds` gate,
   raid, serpent; `11-Multiplayer/Sea-Serpent.md` section 8) - and the capped lines and cards name the serpents.
+  EG-E1 (2026-10-12): a Redoubt of the Elite Breach taken strikes under it too - 20, once an account a Redoubt an arena
+  week (`MARKS_COMBAT.kinds` gate, raid, serpent, eg; its line `eg:<week>:<Redoubt>`; `11-Multiplayer/Elite-Gates.md`
+  section 19) - and the capped lines, the cards and the Bank's card name the Redoubts.
 - **GUILD DEEDS** - the `guild-deed` faucet, into a guild's treasury, never an account's: when three of a guild's
   accounts - each claiming with a character seven days in the guild - have claimed the same raid (`raid:<key>`) or gate
-  (`gate:<game day>`), 25 silver; once an event a guild (the line `deed:<event>`, the guild its actor), at most four a
+  (`gate:<game day>`) - EG-E1: or the same Redoubt of the same breach (`eg:<breach>:<Redoubt>`), each claim the week
+  pays - 25 silver; once an event a guild (the line `deed:<event>`, the guild its actor), at most four a
   guild a UTC day - a deed the day's cap refused is struck by the next member's COUNTED claim of that event (AUDIT
   SILVER-WAYS A2). The mark and the strike ride the claim's own batch, by its own row (marks.js deedStatements;
   `guild_deed_marks`). One account is one mark an event, however many of its characters are in the guild - or in other

@@ -30,12 +30,17 @@
 // mercy when the breach took no Redoubt); a void (`v`) - the stake given back. Guests are answered `guest` and counted
 // nothing, as every claim's are.
 //
+// EG-E1 (2026-10-12, Mac: "I said I want everything"; Elite-Gates.md section 19): WHAT A REDOUBT PAYS - the week's pay,
+// its Marks and guild's deed, its embers, a Valkynaz's Weir Key and the Panoply's pity - is egEconomy.js's, written in the
+// `w` claim's own batch; the end's Reliquaries answered by the week's pay; the Broker's Panoply sink (`/v1/eg/sink`).
+//
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js.
 // ═══════════════════════════════════════════════════════════════════
 
 import { verifyEgReceipt } from '../../src/net/egReceipt.js';
 import { mintEgOrder } from '../../src/net/identityToken.js';
 import { utcDay } from '../../src/net/marksLaw.js';
+import { egRedoubtPay, egReliquariesOf, egSinkOf } from './egEconomy.js';   // EG-E1: what a Redoubt pays, the sink
 
 /** The odds a recorded gate kill rolls a key, a fighter who broke the rite, an Hour; the kills in a row the pity waits. */
 export const EG_KEY_ODDS = 1 / 6;
@@ -67,15 +72,15 @@ async function playerRow(db, id) {
 }
 
 /**
- * THE BALANCE AND THE LIVE BREACH - `{ keys, live, rehearsal, proven, redoubts }`: the Weir Keys held, the breach the
- * account is in (`{b, until}`, or null), whether the day's Rehearsal is still free, whether it may stake a key, and the
- * Redoubts it has taken.
+ * THE BALANCE AND THE LIVE BREACH - `{ keys, live, rehearsal, proven, redoubts, sink }`: the Weir Keys held, the breach the
+ * account is in (`{b, until}`, or null), whether the day's Rehearsal is still free, whether it may stake a key, the
+ * Redoubts it has taken, and (EG-E1) the week's Panoply sink - `{ week, piece }`, the piece null until one is bought.
  * @param {{ db: any, nowS: number }} ctx @param {{ id: string }} player
  */
 export async function egKeysOf({ db, nowS }, player) {
   const row = await playerRow(db, player.id);
   const rd = await db.prepare('SELECT COUNT(*) AS n FROM eg_redoubts WHERE account = ?1').bind(player.id).first();
-  return { keys: int(row?.eg_keys), live: liveOf(row, nowS), rehearsal: int(row?.eg_rh_day) !== utcDay(nowS), proven: await proven(db, player.id), redoubts: int(rd?.n) };
+  return { keys: int(row?.eg_keys), live: liveOf(row, nowS), rehearsal: int(row?.eg_rh_day) !== utcDay(nowS), proven: await proven(db, player.id), redoubts: int(rd?.n), sink: await egSinkOf({ db, nowS }, player) };
 }
 
 /**
@@ -152,24 +157,31 @@ const spendStake = (db, ez) => db.prepare("UPDATE eg_stakes SET state = 'spent' 
 /**
  * THE CLAIM: an `e1` receipt verified with the relay's public half and naming `player`. Answers `{ recorded, q, ...,
  * keys }` (`recorded` false with `why: 'claimed'` for one already counted, `why: 'guest'` for a guest), or `{ error }` -
- * `no-gate-key`, `receipt` (`why` the rung), `not-yours`.
- * @param {{ db: any, nowS: number, subtle: SubtleCrypto }} ctx
+ * `no-gate-key`, `receipt` (`why` the rung), `not-yours`. EG-E1: a Redoubt's says what it paid (egEconomy.js egRedoubtPay
+ * - `paid`, `marks`, `deed`, `embers`, `purse`, `weir`, `pity`; `again` for one already counted), an end's the Reliquaries
+ * it opens (`rl`); `env` the service's (the Marks' switch), `character` the claiming character (its guild's deed).
+ * @param {{ db: any, nowS: number, subtle: SubtleCrypto, rand: (b: Uint8Array) => Uint8Array }} ctx
  * @param {{ id: string, handle?: string|null }} player @param {unknown} receipt @param {CryptoKey|null} publicKey
+ * @param {{ env?: any, character?: string|null }} [pay]
  */
-export async function claimEg({ db, nowS, subtle }, player, receipt, publicKey) {
+export async function claimEg({ db, nowS, subtle, rand }, player, receipt, publicKey, { env = null, character = null } = {}) {
   if (!publicKey) return { error: 'no-gate-key' };
   const v = await verifyEgReceipt(receipt, publicKey, { subtle, nowS });
   if (!v.ok) return { error: 'receipt', why: v.why };
   const c = v.claims;
   if (c.s !== player.id) return { error: 'not-yours' };
   if (!player.handle) return { recorded: false, why: 'guest', q: c.q };
-  let recorded = false;
+  let recorded = false, said = {};
   if (c.q === 'w') {
-    const [row] = await db.batch([
-      db.prepare('INSERT OR IGNORE INTO eg_redoubts (b, account, w, h, t, at) VALUES (?1, ?2, ?3, ?4, ?5, ?6)').bind(c.b, player.id, c.w, c.h, c.t, nowS),
+    // EG-E1: the row written with the week's pay, and the pay's statements in this batch (egEconomy.js)
+    const pay = await egRedoubtPay({ db, nowS, rand }, player, c, { env, character, draw: (p) => drawUnder(rand, p) });
+    const [row, , ...paid] = await db.batch([
+      pay.row,
       spendStake(db, c.z),   // the stake is spent by the breach's first Redoubt
+      ...pay.statements,
     ]);
     recorded = Number(row?.meta?.changes ?? 0) > 0;
+    said = await pay.answer(recorded, paid);
   } else if (c.q === 'x') {
     // the stake: a void gives it back; the first breach's mercy gives it back once ever when the breach took no
     // Redoubt; any other end spends it
@@ -189,6 +201,7 @@ export async function claimEg({ db, nowS, subtle }, player, receipt, publicKey) 
       ...settle,
     ]);
     recorded = Number(row?.meta?.changes ?? 0) > 0;
+    said = await egReliquariesOf({ db, nowS }, player, c);   // EG-E1: the Reliquaries it opens, by the week's pay
   } else {
     // a void: the stake back (once - the stake's own state guards it) and the live breach cleared; answered as recorded
     // however often it is carried
@@ -196,7 +209,7 @@ export async function claimEg({ db, nowS, subtle }, player, receipt, publicKey) 
     recorded = true;
   }
   const keys = int((await playerRow(db, player.id))?.eg_keys);
-  return recorded ? { recorded: true, q: c.q, b: c.b, ...(c.q === 'w' ? { w: c.w } : {}), keys } : { recorded: false, why: 'claimed', q: c.q, keys };
+  return recorded ? { recorded: true, q: c.q, b: c.b, ...(c.q === 'w' ? { w: c.w } : {}), keys, ...said } : { recorded: false, why: 'claimed', q: c.q, keys, ...said };
 }
 
 /**

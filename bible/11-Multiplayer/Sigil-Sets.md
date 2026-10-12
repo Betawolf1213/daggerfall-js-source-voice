@@ -308,6 +308,16 @@ match would only pay more gold for stones never spent at the Broker. SS4 closed 
 ware the Broker sold is bought by any counter now (both are bound), so the figures above are a record, not a route to
 gold - a stone's only worth is at its own vendor.
 
+**The Battlemage's Panoply, once a week** (EG-E1, 2026-10-12; `11-Multiplayer/Elite-Gates.md` section 19, THE SINK).
+Beside the day's stock and the insignia, the Broker sells one piece of the Spire's set of the buyer's choosing - the
+Warhelm, either Pauldron, the Cuirass, the Gauntlets, the Greaves, the Boots, the Spire-Shield or the Spire-Saber - once
+an account an arena week, for 20 Deadlands Embers. It is the account service's law, not her day's stock: the sale is
+recorded there (`server-account/src/egEconomy.js` egSink, the table `eg_sink`), paid from the purse the insignia spend
+(the Spire's embers in it), and the client takes the embers from the pack and mints the piece (`systems/sigilBroker.js`
+panoplySale, the insignia's two halves). The piece carries no Broker price (`stonesPaid`): no dismantle pays its embers
+back, and the day's prices (`BROKER_PRICES`) are unmoved. Her window lists the nine pieces under the insignia, their
+price and their week (`ui/brokerWindow.js`).
+
 ## 8. What it does not do, said so
 
 - No server checks a set piece, as none checks a sigil: a forged save can carry one (`Multiplayer.md` "Trust").

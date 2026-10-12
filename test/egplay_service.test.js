@@ -10,6 +10,7 @@ import { verifyOrder, orderValid, mintEgOrder, ORDER_KINDS, EG_ORDER_FIELDS } fr
 import { mintEgReceipt, readEgReceipt, verifyEgReceipt, egReceiptValid, EG_RECEIPT_V } from '../src/net/egReceipt.js';
 import { EG_LIVE_S, EG_LAST_WORD_S, EG_KEY_PITY } from '../server-account/src/eg.js';
 import { EG_LAST_WORD_MS } from '../src/net/egLaw.js';
+import { arenaWeekOf } from '../src/net/arenaLaw.js';   // EG-E1: the week the Panoply sink keeps
 
 const { subtle } = globalThis.crypto;
 const RQ = 'rq0123456789abcdef';
@@ -26,7 +27,7 @@ const keysOf = (S, id) => S.env.DB._raw.prepare('SELECT eg_keys AS k FROM player
 test('EG-PLAY THE KEYS: a fresh account holds none and may not stake (`unproven`); its first breach closed rolls one, certain (the gate claim answers `weir`); the open stakes it and signs an egopen order the relay verifies; the same request id asked again is the same breach, never a second key (mutants: the open without the stake; the request id ignored; the order unsigned)', async (t) => {
   const { S, me } = await stood(t);
   const k0 = (await S.call('/v1/eg/keys', {}, me.secret)).body;
-  assert.deepEqual(k0, { keys: 0, live: null, rehearsal: true, proven: false, redoubts: 0 });
+  assert.deepEqual(k0, { keys: 0, live: null, rehearsal: true, proven: false, redoubts: 0, sink: { week: arenaWeekOf(T0), piece: null } });   // PIN MOVED (EG-E1): and the week's Panoply sink (server-account/src/egEconomy.js egSinkOf)
   assert.deepEqual((await S.call('/v1/eg/open', { rq: RQ }, me.secret)).body, { error: 'unproven' });
   const g = (await S.claim(me, 700, T0)).body;
   assert.deepEqual(g.weir, { found: true, keys: 1 }, 'the first breach closed gives the Spire once');
@@ -85,8 +86,11 @@ test('EG-PLAY THE CLAIM: a Redoubt\'s `w` is counted once a (breach, account, Re
   const open = (await S.call('/v1/eg/open', { rq: RQ }, me.secret)).body;
   const w = await mintEgReceipt({ q: 'w', b: open.b, s: me.id, z: open.ez, c: 77, w: 1, h: 5, t: 900, n: 1, ew: 0, l: 12 }, S.gatePriv, { subtle, nowS: T0 });
   const c1 = await S.call('/v1/eg/claim', { receipt: w }, me.secret);
-  assert.deepEqual(c1.body, { recorded: true, q: 'w', b: open.b, w: 1, keys: 0 });
-  assert.deepEqual((await S.call('/v1/eg/claim', { receipt: w }, me.secret)).body, { recorded: false, why: 'claimed', q: 'w', keys: 0 });
+  // PIN MOVED (EG-E1): a Redoubt's answer says what it paid (server-account/src/egEconomy.js egRedoubtPay - the week's first:
+  // paid, its first-this-season ember into the purse beside the gate's; Marks shut here) and, asked again, the same pay
+  const pay = { b: open.b, w: 1, paid: true, marks: null, deed: null, embers: 1, purse: 2, weir: null, pity: [] };
+  assert.deepEqual(c1.body, { recorded: true, q: 'w', keys: 0, ...pay });
+  assert.deepEqual((await S.call('/v1/eg/claim', { receipt: w }, me.secret)).body, { recorded: false, why: 'claimed', q: 'w', keys: 0, ...pay, again: true });
   assert.equal(S.env.DB._raw.prepare('SELECT state FROM eg_stakes WHERE ez = ?').get(open.ez).state, 'spent');
   const x = await mintEgReceipt({ q: 'x', b: open.b, s: me.id, z: open.ez, c: 78, h: 5, t: 960, n: 1, ew: 0, l: 12, why: 'home' }, S.gatePriv, { subtle, nowS: T0 });
   assert.equal((await S.call('/v1/eg/claim', { receipt: x }, me.secret)).body.recorded, true);
