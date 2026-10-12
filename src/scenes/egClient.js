@@ -941,10 +941,13 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     return egRideOf(spec, egLocalX(spec, at.sx), y, at.z, now() / 1000);
   }
   /** EG-H1 - A PEER'S RIDDEN POSE drawn on its piece at MY shared clock plus its offset (net/online.js `rideAt`, on the peer's
-   *  drawn place, moved in place) - a rider never floats beside a swinging platform. A peer in another hall is left alone. */
+   *  drawn place, moved in place) - a rider never floats beside a swinging platform. A peer in another hall is left alone.
+   *  EG-ZL (section 10.8): a peer on no ride is told to the spans, never moved - standing on a Crumble I have seen fall, it
+   *  is drawn on a ghost slab (scenes/egSpan.js peerOn). */
   function rideDraw(q) {
     const E = link.state();
-    if (!inSpire() || !(E.h > 0) || !Array.isArray(q?.pl)) return;
+    if (!inSpire() || !(E.h > 0) || !q) return;
+    if (!Array.isArray(q.pl)) { modes()?.dungeonCtx?.egSpanPeer?.(q.x, q.y ?? 0, q.z); return; }
     const spec = egHallOf(E.seed, E.h, E.geo ?? 0);
     if (egSlotAt(dungeonToRealm(q.x, q.y ?? 0, q.z)[0]) !== egSlotOfHall(E.h)) return;
     const r = egRideAt(spec, q.pl, now() / 1000);
@@ -1449,9 +1452,10 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       const L = lookCircle(link.state()), ts = now() / 1000;
       const under = !!L?.drawUnder(proj, view, eye, ts, fog);
       const drew = !!fight?.drawPass(proj, view, eye, seconds, fog);
+      const ghosts = !!modes()?.dungeonCtx?.egSpanDraw?.(proj, view, fog);   // EG-ZL (sections 10.3 and 10.8): the spans' ghosts and a peer's ghost slab (scenes/egSpan.js drawPass), under the lines
       const over = !!L?.drawOver(proj, view, eye, ts, fog);
       const lit = !!L?.drawLights(proj, view, eye, ts, fog, lightsNow(), stillNow());   // EG-ZE: THE LIGHTS, added over the lines
-      return under || drew || over || lit;
+      return under || drew || ghosts || over || lit;
     },
     /** EG-G2: THE SPIRE'S SKY (render/egSkyPass.js) in the host's sky slot - the band's void and the Spire's underside. */
     drawSky(proj, view, eye, seconds, fog, gain = 1) { return inSpire() ? !!lookCircle(link.state())?.drawSky(proj, view, seconds, fog, gain) : false; },

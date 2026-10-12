@@ -684,7 +684,8 @@ export class OnlineSession {
     this.onEg = null;             // EG-PLAY: (word, room) => void - an Elite Breach's word (net/wire.js validEgOut): the hub's call, my own breach room's state, fights and receipts
     /** EG-H1 (bible/11-Multiplayer/Elite-Gates.md section 10.8 - RIDDEN POSES): () => [i, dx, dy, dz] | null - my pose's ride on
      *  a breach's moving piece, laid on each pose I say (scenes/egClient.js ridePl); and (pose) => void - a peer's drawn place
-     *  moved onto its ride at my shared clock (rideDraw). Null outside the Spire. */
+     *  moved onto its ride at my shared clock (rideDraw), EG-ZL: and a peer on no ride told, never moved (its ghost slab on a
+     *  Crumble I have seen fall - section 10.8). Null outside the Spire. */
     this.poseRide = null;
     this.rideAt = null;
     this.onSdFight = null;        // SD8b: (word, room) => void - the realm's word of its fight (net/wire.js validSdOut's fight kinds), from my own realm alone
@@ -3608,6 +3609,7 @@ export class OnlineSession {
       else if (s.mv && now - p.drawnAt >= SHOWN_MOVE_HOLD_MS) s.mv = 0;   // AUDIT 637 C3: the sender's own edge (world.js: moving while now < moved + the hold)
       p.shown = p.drawn = s;
       if (s.pl && this.rideAt) { const r = { ...s }; this.rideAt(r); p.shown = r; }   // EG-H1: a ridden peer drawn on its piece at my clock (its walk's place left as it was)
+      else if (this.rideAt) this.rideAt(s);   // EG-ZL (Elite-Gates.md section 10.8): a peer on no ride told too, never moved - on a Crumble I have seen fall it stands on a ghost slab
     }
   }
 
