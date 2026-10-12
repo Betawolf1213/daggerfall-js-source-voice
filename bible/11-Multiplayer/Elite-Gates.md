@@ -5132,3 +5132,143 @@ cull the lanes; no line changed. `src/scenes/exterior.js` - FLAGGED: the bench h
   `egint.json`, `egseam.json` and `egmade.json` on them (178, every one dead).
 - `RELAY_VERSION` `world197`, unshipped, rehashed (net/egLaw.js, egFragLaw.js, egSpanLaw.js, egBrain.js, egDurable.js
   and server/src/index.js moved). `ACCOUNT_VERSION` stays `acct121`.
+
+### EG-ZB - 2026-10-12 - THE LEGION HUNTS
+
+Mac: "I said I want everything". The last wave's legion slice: sections 8.2, 11.7, 19 and 21, all relay law. It closes
+EG-PLAY's departure 6 for the span Harriers, layer three's "the legion walks straight to its mark ... an arch's walls do
+not yet turn it", EG-H1's departures 3, 10 and 11, and EG-E's departure for the feats.
+
+**What shipped, by piece.**
+
+- **THE FIGHT GROUND** (`net/egWalkGraph.js` `egFightView`, `egGroundAt`, new, in the relay bundle). The spec gains no
+  field: `EG_SPEC` stays 4 and `net/egDurable.js` `EG_LAWS` is untouched. Every reading is derived at runtime from the
+  spec's own geometry and cached on the frozen spec.
+  - The fight ground is `spec.fl` and, beside it, the ground the page fights on that the spec lays as plain discs: a
+    span's islands and its two plates (section 8.2), and in any hall a Rampart's caster pillars (section 8.3, "reach them
+    by short side spans") and its winch plates.
+  - `egGroundAt` is section 11.7's band: with a height, the highest floor at or below the feet plus 0.5 m whose top is
+    at most 3 m under them; with none, the lowest that holds the plan.
+- **THE WALK GRAPH** (`egWalkGraph`, `egWalkNext`):
+  - its REGIONS are the fight ground's pieces (a disc, a lane's capsule, each convex). A chamber's chokepoint arch
+    (`deco` `arch`) splits its disc into two halves;
+  - its NODES are where two pieces at one height overlap or touch (a portal, both ways), where a higher piece borders a
+    lower one within 4.6 m (a lip stepped off, one way), a stair's foot and top (`spec.ramps`, both ways), and the arch's
+    gap. Within a region every node sees every other;
+  - a walker keeps its region (`b.fr`) and the node it walks to (`b.wn`), and goes by the shortest way over a dozen
+    nodes (Dijkstra). With no way (a chasm between a passage's floors, the void between a span's islands, a perch with
+    no stair up) it walks to the point of its own region nearest its goal;
+  - `egArchCut`: a straight run that meets an arch's wall ends there.
+- **THE AIR** (`egAirOf`, `egAirNext`, `egAirKeep`). The rock a flier cannot pass is a covered passage's rock mass
+  (`EG_ROCK_M` either side of its tunnel), an arch's wall, and a chamber's wall ring (open only where the course comes in
+  and goes on). A flier goes straight when the air is clear, else by the fewest metres over the mouths, the rock's corners
+  and the gaps.
+- **THE LEGION WALKS THE GRAPH** (`net/egLegion.js`):
+  - every ground walker goes over the graph (`walkGraph`): the Harrier, which hovers along it, the Sapper, Breaker, Daedra
+    Lord, Kynval, Caster, Lurker, Binder, the Ghost, the Deserter and the Standard;
+  - the fliers (a Diver circling, a Wraith, a Shade, a span's and a hunt's Harriers) go about the rock (`walkAir`);
+  - a Breaker's charge run into an arch's wall ends at it;
+  - a pinned Caster's pillar is a region with no way off, so it now stays on its pillar.
+- **THE SPAN'S LEGION** (`net/egBrain.js` `spanLegion`; section 8.2, with section 12's numbers):
+  - the first wave rises 4 s after the wake (14 s after a Stillness), then one every `egWaveEveryMs(c)`, each of
+    `egWaveSize(n)`, within the legion's cap. Hunting Pack adds its own wave on its own clock;
+  - the Harriers rise in the air beside the members in turn (`EG_SHADOW_SIDE_M` out, `EG_SHADOW_AHEAD_M` ahead, kept out of
+    a passage's rock). Each shadows the member nearest it (every member in the hall) and flies about the rock. Over a
+    platform it hovers at its member and never bites; it bites only a member on an island or a plate;
+  - from the Shade every other wave is led at half by Divers. They rise over the island or plate the leading member
+    stands on or comes to next (`egIsleAhead`), circle it `EG_DIVER_WAIT_R` out, and dive their member once that member
+    stands on it: ground at least `EG_DIVE_GROUND_M` (6 m) across, within the Dive's 10 m;
+  - no die is drawn, so the breach's rolls after a span stay where they were;
+  - on a span a member is aimed at only standing on the fight ground (`EG_SPAN_GROUND_PAD_M`). The span stage now ends as
+    every trial does: its blows stepped and its words said (`ehp`, `etx`, `emk`, the whole fight every 2 s).
+- **A BLOW FROM THE FIGHT GROUND** (`egBlow`; sections 11.7 and 21). A pose off it (`EG_STRIKE_PAD_M` about its plan, by
+  the feet's height) strikes nothing: a step, a ledge, a side span, the top of an arch's wall. An object standing off the
+  floor (a false wall in its alcove) is struck from beside it, as before. The relay now reads a pose's height:
+  `server/src/index.js` `_egPose` and `_egBodies` carry `y`.
+- **THE HUNT** (`huntStep`; section 11.7):
+  - in a hall whose trial is one fight on its floor (`EG_HUNT_KINDS`: a Rift-Yard, a Rampart, a Proving Walk, an
+    Athenaeum, a Court), a member who has stood on the fight ground this hall and is off it for more than
+    `EG_HUNT_AFTER_MS` (6 s) is HUNTED;
+  - the member is marked (mark 7, *Hunted* - the HUD's `EG_MARK_NAMES` held its word unread) for `EG_HUNT_MARK_MS` at a
+    time, and unmarked back on the floor or at the door;
+  - every Harrier goes to the hunted first: along the graph to the floor's edge nearest them, then through the air. Where
+    no Harrier stands, a pair (`EG_HUNT_RAISE`) rises there, once a hunt;
+  - a hunting Harrier's Bite carries `hn`, and the census judges it off the floors for that member alone.
+- **THE CENSUS** (section 21; EG-H1's departures 3, 10 and 11 closed):
+  - a Falling Wall's and the Collapsing Tube's fallen segments hold nobody (`net/egFair.js` `egSupportAt`'s `hw`; a fair
+    trail keeps its hall's wake). Feet on one (`egFallenAt`) owe the count a cast-back, the screen's cast forward;
+  - a traversal hazard is judged while its part burns, at the feet, wherever a body stands (`net/bossRef.js`
+    `judgePlace`). A fire fall is seen (fire, nought counted); the Forge Line's hammers are counted at the screens' 20%;
+  - THE DRAINS (`censusDrains`): a soul-wisp binds a member on a fight floor within 3 m and drains 3% a tick from a second
+    in. It lets go at 6 m or after 4 s and binds again only `EG_WISP_AGAIN_MS` (6 s) later - the screens' `wispStep`. A
+    Wraith's tether drains its member each tick within its 8 m;
+  - THE CENSUS'S VESTIGES (`egCensusDr`): Challenger's Oath on a lord's blow (`EG_OATH_DR`); Bastion within 6 m (the
+    strongest, 2% more for each other holder, 6% over it at most); Steadfast Line with three allies within 8 m; Immovable
+    still a second on a fight floor (25%). Together they are capped at 30% (`EG_DR_MAX`), on blows. Featherstep's lighter
+    cast-back (`egCastBackCost`, `EG_FEATHER_CAST`);
+  - a lingering blow (a charge's run, a burning bridge - its `sp`) catches a body that steps in while it lasts, the
+    screens' own verdict (`judgeShapes`). Before, it was judged at its landing alone;
+  - every hit says its landing, thrower and name (`at`, `o`, `nm`), and the census keeps who each blow caught by its name
+    on the fight (`F.cg`).
+- **THE FEATS** (`net/egFeats.js`; section 19's examples). Grath's signature is the page's own: *Unsinged*, felled with
+  no member caught by a burning bridge (`EG_FEAT_BRIDGE`, `egCaughtBy`) once the bridges have burned.
+
+**Departures, said plainly.**
+
+1. The walk graph is derived from the spec, not carried as the fragment record's `graph` (section 11.5). The spec gains
+   no field, so `EG_SPEC` and `EG_LAWS` stand. EG-ZC's bump for the fragments is its own, and nothing here asks for one.
+   Its nodes are only those the geometry implies. A passage's two floors are two regions; a chamber's ring has no node
+   inside its floor.
+2. The lords walk as before: their own walks go straight to a goal kept on the fight floor. Section 11.7 names the
+   legion. FLAGGED for the lords: a champion in an arch's chamber still walks through the wall.
+3. The wire carries no body's height. A body's floor is its region in plan. A screen draws every body at the fight
+   centre's height plus its hover (`scenes/egFight.js`), so a span's Harrier over a course that has climbed or dropped
+   draws at the plates' height. FLAGGED to the look.
+4. The Harriers' body-block is a Harrier hovering at its member, not a collider: the motor collides with no add.
+5. The fight ground beyond `spec.fl` is a span's islands and plates and a Rampart's pillars and winch plates. Bridges
+   and side spans stay traversal ground. On a span a member is aimed at within 0.5 m of it; elsewhere the fight's old
+   4 m stands.
+6. The hunt is for the halls whose trial is one fight on its floor, and only after the member has stood on the fight
+   ground this hall:
+   - an approach crossed is never hunted;
+   - a Deepway (its passages crossed between floors) and a Brink are not hunted;
+   - a span has its shadows instead.
+   The mark's 30 s is renewed while the hunt lasts.
+7. An object standing off the fight floor (a false wall) is still struck from beside it: a seal in a wall is no fight.
+8. The census's Vestiges:
+   - Lifeline is not applied: a heal one member casts on another rides ALLY-CAST's `cast` frame, which the relay
+     forwards unread;
+   - the reductions are summed and capped at 30%, on blows alone (not hazards, drains or cast-backs);
+   - Featherstep is applied though section 21 leaves it to "the rest restores it": its cost is a number the relay holds;
+   - Iron Footing needs no term: a push it resists makes no cast-back, and the poses say so.
+9. The Forge Line's hammers count their 20% (the screens' share), not a cast-back's cost.
+10. Only Grath's signature reads a catch: the page gives no other place's example. The Spellmaster's "no rune missed"
+    is its none-failed. The others keep their beats.
+11. A span's Divers dive ground 6 m across within their lane. A Diver in any other hall keeps its old rule (its member
+    3 m inside the floor).
+
+**The four hosts.**
+
+- `src/scenes/world.js` - FLAGGED: not touched. This is relay law, and the screens draw what the relay says (the span's
+  bodies, the `Hunted` mark on the HUD's marks line). Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED: unchanged.
+- `src/scenes/dungeonContext.js` - FLAGGED: unchanged.
+- `src/scenes/exterior.js` - FLAGGED: offline (section 28).
+
+**Pins.**
+
+- `test/egz_legion.test.js` (7): the span's legion, the Divers, the walk graph, the fight ground and the hunt, the census,
+  the feats, and the real Room.
+- `tools/mutants/egz_legion.json` (56, every one dead). Two survived the first run and were killed by new assertions:
+  - a lip climbed: both drop branches folded into one line, and a walker from under a balcony's lip;
+  - the view without its islands: the span test's island moved to one no passage floor reaches.
+- Re-aimed by content and judged again, every one dead:
+  - `egint.json`'s six (the census's cast-back, the judge's stamp, an element's share, the wait, the floor, a hazard's
+    element);
+  - `egeco.json`'s Grath record (EGECO-a-bridges-catch-forgiven);
+  - `int_lane3.json`'s INT11-CHARGE-TWICE (its own line made the only copy).
+- Judged again over the files this slice touched: `egint.json`, `egfull.json`, `egfrag.json`, `egeco.json`,
+  `egplay.json` and `egspan.json` (210, every one dead).
+- PIN MOVED: `test/egeco_feats.test.js` (Grath's signature).
+- `RELAY_VERSION` `world197` was rehashed with `net/egWalkGraph.js` in its graph. `ACCOUNT_VERSION` stays `acct121`.
+- New in `src/`: `src/net/egWalkGraph.js`. The Port-Ledger's row is the lead's.

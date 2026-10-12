@@ -19,7 +19,9 @@
 //     tens of seconds, so the room keeps an ONLINE accumulator per member, in the sender's own time:
 //     - SUPPORT: a pose lies on a floor, a ramp or a platform's top (its footprint at that time by net/egSpanLaw.js
 //       egPieceAt - the Steps' stepAt and beatStands - inflated by the capsule EG_BODY_R and by the platform's travel
-//       over EG_SUPPORT_LAG_S), or a climb's hold beside one (the pose's `cl`), or is in the air;
+//       over EG_SUPPORT_LAG_S), or a climb's hold beside one (the pose's `cl`), or is in the air. EG-ZB: a Falling
+//       Wall's and the Collapsing Tube's fallen segments hold nothing after the hall's wake, and feet on one owe the
+//       census a cast-back (egFallenAt);
 //     - SPEED: no stretch faster than THE FAST BUILD's run times EG_FAIR_RUN_X, plus a push and a ride
 //       (EG_FAIR_CARRY_MPS), plus EG_FAIR_SNAP_M for the snaps the game makes itself (a ring kept, a segment's cast);
 //       a step back to where the member last stood (a cast-back) is no step;
@@ -43,6 +45,8 @@
 import { poseTsDiff } from './wire.js';
 import { egPieceAt, EG_BODY_R, EG_SINK_GONE_M } from './egSpanLaw.js';
 import { segDist } from './egShape.js';
+import { egWallFallenZ } from './egLaw.js';   // EG-ZB: a Falling Wall's fallen edge - and the Collapsing Tube's, below
+import { egTubeEdge } from './egFragLaw.js';
 
 // ── THE TIME LAW ─────────────────────────────────────────────────────────────────────────────────────────────
 /** A socket's offset to relay time is the least `arrival - ts` over this many of its last poses. */
@@ -173,15 +177,20 @@ export const EG_CLIMB_NEAR_M = 3;
  *  ground that is no island (the end plate, an alcove), a piece. */
 export const EG_HOLD = Object.freeze({ none: 0, island: 1, still: 2, piece: 3 });
 const yOn = (y, fy) => y <= fy + EG_SUPPORT_UP_M && y >= fy - EG_SUPPORT_DOWN_M;
+/** EG-ZB (section 21; EG-H1's departure 3 closed): is band `b` fallen at `z` - a Falling Wall's walkway behind its fallen edge
+ *  (net/egLaw.js egWallFallenZ), the Collapsing Tube's floor behind its (net/egFragLaw.js egTubeEdge) - with the hall woken
+ *  at `hw` (relay ms) and the shared time `tMs`? A fallen segment holds nobody. */
+const bandFallen = (spec, b, z, hw, tMs) => hw > 0 && ((b.role === 'walk' && z < egWallFallenZ(spec, hw, tMs)) || (b.role === 'tube' && !!spec.tube && z < egTubeEdge(spec.tube, tMs - hw)));
 /**
  * WHAT HOLDS a body's feet at (x, y, z) (the hall's frame) at shared second `tS` (EG_HOLD). `plan` - the floor's plan
- * alone, every height (a climb's hold). Pure.
- * @param {any} spec @param {number} x @param {number} y @param {number} z @param {number} tS @param {boolean} [plan]
+ * alone, every height (a climb's hold). EG-ZB: `hw` the hall's wake (relay ms) - a Falling Wall's and the Collapsing Tube's
+ * fallen segments hold nothing after it. Pure.
+ * @param {any} spec @param {number} x @param {number} y @param {number} z @param {number} tS @param {boolean} [plan] @param {number} [hw]
  */
-export function egSupportAt(spec, x, y, z, tS, plan = false) {
+export function egSupportAt(spec, x, y, z, tS, plan = false, hw = 0) {
   const P = EG_SUPPORT_PAD + (plan ? EG_CLIMB_NEAR_M : 0), on = (fy) => plan || yOn(y, fy ?? 0);
   for (const d of spec?.discs ?? []) if (Math.hypot(x - d.x, z - d.z) <= d.r + P && on(d.y)) return d.role === 'end' ? EG_HOLD.still : EG_HOLD.island;
-  for (const b of spec?.bands ?? []) if (z >= b.z0 - P && z <= b.z1 + P && Math.abs(x - b.x) <= b.halfW + P && on(b.y)) return EG_HOLD.island;
+  for (const b of spec?.bands ?? []) if (z >= b.z0 - P && z <= b.z1 + P && Math.abs(x - b.x) <= b.halfW + P && on(b.y) && !bandFallen(spec, b, z, hw, tS * 1000)) return EG_HOLD.island;
   for (const l of spec?.lanes ?? []) if (segDist(x, z, l.ax, l.az, l.bx, l.bz) <= l.hw + P && on(l.y)) return EG_HOLD.island;
   for (const r of spec?.ramps ?? []) {
     const dx = r.bx - r.ax, dz = r.bz - r.az, L2 = dx * dx + dz * dz, u = L2 > 0 ? Math.max(0, Math.min(1, ((x - r.ax) * dx + (z - r.az) * dz) / L2)) : 0;
@@ -198,6 +207,15 @@ export function egSupportAt(spec, x, y, z, tS, plan = false) {
   }
   for (const a of spec?.alcoves ?? []) if (Math.hypot(x - a.x, z - a.z) <= 1.8 + P && on(a.y)) return EG_HOLD.still;
   return EG_HOLD.none;
+}
+/** EG-ZB (section 21): IS A BODY CAUGHT BY FALLEN GROUND - its feet at (x, y, z) over a Falling Wall's or the Collapsing
+ *  Tube's fallen segment at shared ms `tMs` (the hall woken at `hw`), and nothing else holding it? The screen casts it on to
+ *  the nearest standing segment at the cast-back's cost (section 8.3), and the census owes that cost (net/egBrain.js
+ *  egPoseIn). Pure. */
+export function egFallenAt(spec, hw, x, y, z, tMs) {
+  if (!(hw > 0)) return false;
+  const over = (spec?.bands ?? []).some((b) => z >= b.z0 && z <= b.z1 && Math.abs(x - b.x) <= b.halfW && yOn(y, b.y ?? 0) && bandFallen(spec, b, z, hw, tMs));
+  return over && egSupportAt(spec, x, y, z, tMs / 1000, false, hw) === EG_HOLD.none;
 }
 
 // ── THE FAIR TRAIL ───────────────────────────────────────────────────────────────────────────────────────────
@@ -228,9 +246,10 @@ export const EG_FAIR_REPEAT_MS = 5000;
  * A member's FAIR TRAIL in hall `h`, fresh (its arrival, a recall, a new hall): no break, nothing judged. `from` the
  * crossing's start (its first judged pose), `cross` its time at the end plate, `blind`/`span` the ms blind and judged,
  * `brk` breaks since the last island, `brks` the hall's, `fast` its fastest stretch (cm/s), `refuse` hits refused until.
- * @param {number} h
+ * EG-ZB: `hw` the hall's wake (relay ms) - after it a Falling Wall's and the Collapsing Tube's fallen segments hold nothing.
+ * @param {number} h @param {number} [hw]
  */
-export const egFairNew = (h) => ({ h, last: /** @type {number[]|null} */ (null), sup: /** @type {number[]|null} */ (null), isl: /** @type {number[]|null} */ (null), airAt: 0, airBrk: 0,
+export const egFairNew = (h, hw = 0) => ({ h, hw, last: /** @type {number[]|null} */ (null), sup: /** @type {number[]|null} */ (null), isl: /** @type {number[]|null} */ (null), airAt: 0, airBrk: 0,
   win: /** @type {number[]|null} */ (null), brk: 0, brks: 0, why: '', refuse: 0, fast: 0, blind: 0, span: 0, from: 0, cross: 0, cblind: 0, road: 0, wake: 0 });
 
 /** A break of the law: counted since the last island and in the hall; a second in the hall refuses the hits a while. */
@@ -248,7 +267,7 @@ function broke(A, why, t) {
 export function egFairPose(A, spec, p, t) {
   if (![p.x, p.y, p.z, t].every(Number.isFinite)) return;
   const L = A.last;
-  const hold = p.ride ? EG_HOLD.piece : egSupportAt(spec, p.x, p.y, p.z, t / 1000) || (p.cl && egSupportAt(spec, p.x, p.y, p.z, t / 1000, true) ? EG_HOLD.piece : EG_HOLD.none);
+  const hold = p.ride ? EG_HOLD.piece : egSupportAt(spec, p.x, p.y, p.z, t / 1000, false, A.hw ?? 0) || (p.cl && egSupportAt(spec, p.x, p.y, p.z, t / 1000, true) ? EG_HOLD.piece : EG_HOLD.none);
   A.last = [t, p.x, p.y, p.z];
   if (!A.from) A.from = t;
   if (!L) { if (hold) { A.sup = [t, p.x, p.y, p.z]; if (hold === EG_HOLD.island) A.isl = [p.x, p.z]; } return; }

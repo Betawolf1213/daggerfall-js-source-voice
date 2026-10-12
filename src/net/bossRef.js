@@ -40,7 +40,7 @@ import { SERPENT_ATTACK_BY_ID, SERPENT_ATTACK_TABLE, GRIP, CRUSH, MAEL_GRIND, MA
 import { shapeMeets, fleetShare } from '../systems/serpentStrike.js';
 import { deepIn, BODY_AFTER_MS } from './bossBody.js';
 import { egInBlow, egInShape, segDist } from './egShape.js';   // EG-H1: the Spire's FULL shape stamps, one judge for them all
-import { egTrailAt, egTrailAfter, egTrailNear, egTrailReady, egFightFloorAt, EG_POSE_WAIT_MS } from './egFair.js';   // EG-H1: THE TIME LAW's trails
+import { egTrailAt, egTrailAfter, egTrailNear, egTrailReady, egFightFloorAt, EG_POSE_WAIT_MS, EG_POSE_NEAR_MS } from './egFair.js';   // EG-H1: THE TIME LAW's trails
 import { egVentAt, EG_VENT_PCT } from './egLaw.js';
 import { egHazardParts, EG_HAZARDS } from './egFragLaw.js';
 
@@ -211,12 +211,27 @@ export function judgeSerpent(f, bodies, now) {
  * Is a body on trail `tr` deep in `test` at the landing `at` in hall `h` - before it and after it both, on a fight floor of
  * one of `ys` (the heights the blow lands at; null any)? Pure.
  */
-function deepShared(test, tr, at, h, spec, ys) {
+function deepShared(test, tr, at, h, spec, ys, free = false) {
   if (!egTrailNear(tr, at)) return false;
   const p0 = egTrailAt(tr, at), p1 = egTrailAfter(tr, at) ?? p0;
   if (!p0 || p0[4] !== h || p1[4] !== h) return false;
-  for (const p of [p0, p1]) { const f = egFightFloorAt(spec, p[1], p[2], p[3]); if (!f || (ys && !ys.includes(f.y ?? 0))) return false; }
+  if (!free) for (const p of [p0, p1]) { const f = egFightFloorAt(spec, p[1], p[2], p[3]); if (!f || (ys && !ys.includes(f.y ?? 0))) return false; }
   return deepIn(test, p0[1], p0[3]) && deepIn(test, p1[1], p1[3]);
+}
+/**
+ * EG-ZB (section 21): CAUGHT WHILE IT LASTS - a pose of trail `tr` sent in (`from`, `until`] (the shared ms a lingering field
+ * stands: a charge's run, a burning bridge, a fire fall's burning) in hall `h` that stands in `test` - deep in it by THE
+ * WIDTH RULE's margin on a fight floor of one of `ys` (an aimed blow's law); or `point`, at its feet within `band` m of the
+ * field's height `y` wherever it stands (a traversal hazard's - the screens' own egHazardBites). Pure.
+ */
+function caughtWhile(test, tr, from, until, h, spec, ys, { free = false, point = false, y = null, band = 1.5 } = {}) {
+  for (const e of tr ?? []) {
+    if (e[0] <= from || e[0] > until || e[4] !== h) continue;
+    if (point) { if ((y == null || Math.abs(e[2] - y) <= band) && test(e[1], e[3])) return true; continue; }
+    if (!free) { const f = egFightFloorAt(spec, e[1], e[2], e[3]); if (!f || (ys && !ys.includes(f.y ?? 0))) continue; }
+    if (deepIn(test, e[1], e[3])) return true;
+  }
+  return false;
 }
 /** The fight floors' heights a stamp lands on: those whose plan holds its anchor (a CHECK's, every floor: null). */
 function floorsUnder(spec, s) {
@@ -229,9 +244,13 @@ function floorsUnder(spec, s) {
  * living member's shared-time trail once its trail is ready (egTrailReady) - `[{sub, share, i, k: 0}]`, `share` the blow's
  * `p` for a plain blow (its points need a maximum health the relay does not hold: the struck member's favour), 0 for an
  * element's (seen, never counted). A feint never lands (its cut takes it off the fight). The blows marked in place.
+ * EG-ZB (sections 11.7, 19 and 21): each hit says its blow's landing, thrower and name (`at`, `o`, `nm` - the census's
+ * Vestiges and the feats read them); a blow with a span (`sp` - a charge's run, a burning bridge) also catches a body that
+ * steps into it while it lasts; a hunted member's Bite (`hn`) is judged off the floors. `spec` the hall's fight ground
+ * (net/egWalkGraph.js egFightView).
  * @param {any} F the hall's fight @param {Array<{sub: string, tr?: number[][]}>} bodies the living members, each its trail
  * (`[t, x, y, z, h]` - the hall's frame, shared ms) @param {number} now @param {any} spec the hall
- * @returns {Array<{sub: string, share: number, i: number, k: number}>}
+ * @returns {Array<{sub: string, share: number, i: number, k: number, at: number, o: number, nm: string}>}
  */
 export function judgeShapes(F, bodies, now, spec) {
   const out = [];
@@ -239,13 +258,26 @@ export function judgeShapes(F, bodies, now, spec) {
   for (const a of F.blows ?? []) {
     if (a.bj || now < a.at) continue;
     a.bh ??= [];
-    const share = a.el == null ? Math.min(1, Math.max(0, a.p)) : 0, ys = floorsUnder(spec, a.s?.[0]);
+    const share = a.el == null ? Math.min(1, Math.max(0, a.p)) : 0, ys = floorsUnder(spec, a.s?.[0]), sp = Math.max(0, a.sp ?? 0), test = (x, z) => egInBlow(a, x, z);
     for (const b of bodies) {
-      if (a.bh.includes(b.sub) || !egTrailReady(b.tr, a.at, now)) continue;
+      if (a.bh.includes(b.sub)) continue;   // caught, or judged at its landing
+      // EG-ZB (section 11.7): a Harrier's Bite on a member it HUNTS (`hn`) is judged off the floors for that member alone
+      const free = a.hn === b.sub, hit = { sub: b.sub, share, i: a.i, k: 0, at: a.at, o: a.o ?? 0, nm: a.nm ?? '' };
+      if (sp > 0) {
+        // EG-ZB (section 21): A LINGERING FIELD (a charge's run, a burning bridge) catches at its landing as a blow does, or by
+        // any pose sent inside it while it lasts - the screens' own verdict (net/egShape.js egBlowVerdict's span)
+        a.bl ??= {}; a.bt ??= {};
+        if (!a.bl[b.sub]) { if (!egTrailReady(b.tr, a.at, now)) continue; a.bl[b.sub] = 1; if (deepShared(test, b.tr, a.at, F.h, spec, ys, free)) { a.bh.push(b.sub); out.push(hit); continue; } }
+        const upto = Math.min(now, a.at + sp);
+        if (caughtWhile(test, b.tr, a.bt[b.sub] ?? a.at, upto, F.h, spec, ys, { free })) { a.bh.push(b.sub); out.push(hit); }
+        a.bt[b.sub] = upto;
+        continue;
+      }
+      if (!egTrailReady(b.tr, a.at, now)) continue;
       a.bh.push(b.sub);
-      if (deepShared((x, z) => egInBlow(a, x, z), b.tr, a.at, F.h, spec, ys)) out.push({ sub: b.sub, share, i: a.i, k: 0 });
+      if (deepShared(test, b.tr, a.at, F.h, spec, ys, free)) out.push(hit);
     }
-    if (now >= a.at + EG_POSE_WAIT_MS) a.bj = 1;
+    if (now >= a.at + sp + EG_POSE_WAIT_MS) a.bj = 1;
   }
   return out;
 }
@@ -256,7 +288,9 @@ export function judgeShapes(F, bodies, now, spec) {
  * the beat they are live (`F.hzq`, the queue; `F.hzk`, the keys seen) and judged on each living member's trail as a blow
  * is, within the hazard's own height (egHazardBites' band) - `[{sub, share, i: 0, k: 1}]`, `share` a plain hazard's (the
  * basalt, the cascade, the hammers), 0 for an element's (seen). The screens judge their own feet as they did; this is the
- * relay's count and census beside them. Pure but for the fight's marks.
+ * relay's count and census beside them. EG-ZB: a traversal hazard's part too (a fire fall's burning, seen; the Forge Line's
+ * hammers, counted), wherever a body stands in it while it burns; each hit says its landing and the hazard's name (`at`,
+ * `nm`). Pure but for the fight's marks.
  * @param {any} F @param {any} spec @param {number} hw @param {Array<{sub: string, tr?: number[][]}>} bodies @param {number} now
  */
 export function judgePlace(F, spec, hw, bodies, now) {
@@ -270,21 +304,29 @@ export function judgePlace(F, spec, hw, bodies, now) {
   }
   for (const hz of spec.hazards ?? []) {
     const L = EG_HAZARDS[hz.kind];
-    if (!L || (L.aim !== 'fight' && L.aim !== 'check') || hz.kind === 'wisp' || !(L.pct > 0)) continue;
-    for (const p of egHazardParts(hz, now / 1000)) if (p.st === 'live' && !seen(`h${p.key}`)) F.hzq.push({ s: p.sh, at: now, p: p.pct, el: p.el, y: hz.kind === 'eclipse' ? null : hz.y ?? 0, band: hz.kind === 'fall' ? 2.5 : 1.5 });
+    if (!L || (L.aim !== 'fight' && L.aim !== 'check' && L.aim !== 'trav') || hz.kind === 'wisp' || !(L.pct > 0)) continue;
+    // EG-ZB (section 21; EG-H1's departure 11 closed): a TRAVERSAL hazard (a fire fall, the Forge Line's hammers) is judged
+    // wherever a body stands in it while its part burns (`tv` - its live span), at its feet, as the screens judge it
+    for (const p of egHazardParts(hz, now / 1000)) if (p.st === 'live' && !seen(`h${p.key}`)) F.hzq.push({ s: p.sh, at: now, p: p.pct, el: p.el, y: hz.kind === 'eclipse' ? null : hz.y ?? 0, band: hz.kind === 'fall' ? 2.5 : 1.5, nm: L.name, ...(L.aim === 'trav' ? { tv: L.live } : {}) });
   }
   const keep = [];
   for (const q of F.hzq) {
     q.bh ??= [];
-    const share = q.el == null ? Math.min(1, q.p) : 0;
+    const share = q.el == null ? Math.min(1, q.p) : 0, test = (x, z) => egInShape(q.s, x, z);
     for (const b of bodies) {
-      if (q.bh.includes(b.sub) || !egTrailReady(b.tr, q.at, now)) continue;
+      if (q.bh.includes(b.sub)) continue;
+      if (q.tv) {
+        // its live span from the beat it was first seen: each pose sent inside it, once a body
+        if (caughtWhile(test, b.tr, q.at - EG_POSE_NEAR_MS, Math.min(now, q.at + q.tv), F.h, spec, null, { point: true, y: q.y, band: q.band })) { q.bh.push(b.sub); out.push({ sub: b.sub, share, i: 0, k: 1, at: q.at, nm: q.nm ?? '' }); }
+        continue;
+      }
+      if (!egTrailReady(b.tr, q.at, now)) continue;
       q.bh.push(b.sub);
       const p0 = egTrailAt(b.tr, q.at);
       if (q.y != null && (!p0 || Math.abs(p0[2] - q.y) > q.band)) continue;
-      if (deepShared((x, z) => egInShape(q.s, x, z), b.tr, q.at, F.h, spec, null)) out.push({ sub: b.sub, share, i: 0, k: 1 });
+      if (deepShared(test, b.tr, q.at, F.h, spec, null)) out.push({ sub: b.sub, share, i: 0, k: 1, at: q.at, nm: q.nm ?? '' });
     }
-    if (now < q.at + EG_POSE_WAIT_MS) keep.push(q);
+    if (now < q.at + (q.tv ?? 0) + EG_POSE_WAIT_MS) keep.push(q);
   }
   F.hzq = keep.slice(-64);
   return out;

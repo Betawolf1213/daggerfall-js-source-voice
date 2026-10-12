@@ -7,20 +7,29 @@
 // Examinations passed with none failed, the Twin Lords falling within 3 s of each other, ...). A band's feats, all held,
 // are its Master's title (section 19's honours - server-account/src/eg.js).
 //
+// EG-ZB (2026-10-12; section 19's examples, EG-E's departure closed): a feat reads WHO A PLACE'S BLOW CAUGHT, not only the
+// beats - the census keeps each blow's catch by its name on the fight (`F.cg`, net/egBrain.js egCount over net/bossRef.js's
+// judges, an element's seen as a plain one's), so Grath's signature is the page's own: felled with no member caught by a
+// burning bridge (once the bridges have burned).
+//
 // Pure. Not a DFU member. Ledger A (ELITE-GATES).
 
 /** A lord felled this soon after its wake is SWIFT (ms). */
 export const EG_FEAT_SWIFT_MS = 180_000;
 /** The Twin Lords' signature: both fall this close together (ms). */
 export const EG_FEAT_TWINS_MS = 3000;
+/** EG-ZB: Grath's burning bridge, by the name its blow is said with (net/egLords.js - the Hound's phase two). */
+export const EG_FEAT_BRIDGE = 'Burning Bridge';
+/** EG-ZB: who a blow of name `nm` caught in fight `F` (the census's `F.cg` - net/egBrain.js egCount). */
+export const egCaughtBy = (F, nm) => F?.cg?.[nm] ?? [];
 
 /**
  * Each lord's signature feat: its name, its words, and its test over the Court's counted beats (`said` - each `esay` key
- * the Court spoke, counted), its fight (`F`) and the breach's state (`ctx`).
+ * the Court spoke, counted), its fight (`F` - EG-ZB: who its blows caught, egCaughtBy) and the breach's state (`ctx`).
  * @type {Readonly<Record<string, Readonly<{ name: string, what: string, test: (said: Record<string, number>, F: any, ctx: { covenant?: number, now: number }) => boolean }>>>}
  */
 export const EG_FEAT_SIGNS = Object.freeze({
-  hound: Object.freeze({ name: 'Burnt Paws', what: 'Grath Scorched twice', test: (s) => (s.scorched ?? 0) >= 2 }),
+  hound: Object.freeze({ name: 'Unsinged', what: 'Grath felled with no member caught by a burning bridge', test: (s, F) => (F.mem?.burnI ?? -1) >= 0 && !egCaughtBy(F, EG_FEAT_BRIDGE).length }),
   spellmaster: Object.freeze({ name: 'Perfect Marks', what: 'every Examination passed, none failed', test: (s) => (s.passed ?? 0) >= 1 && !(s.failed > 0) }),
   armsmaster: Object.freeze({ name: 'Every Challenge Met', what: 'two Challenges met', test: (s) => (s.challengewon ?? 0) >= 2 }),
   ilthys: Object.freeze({ name: 'No Ground Conceded', what: 'three of her banners broken', test: (s) => (s.broken ?? 0) >= 3 }),
