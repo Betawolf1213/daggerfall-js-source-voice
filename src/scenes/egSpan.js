@@ -46,12 +46,25 @@
 // (scenes/egFight.js), never DFU's hard-landing grunt: while my body falls onto a Drop the course asked for, `overDrop`
 // says so, and the dungeon arm plays no FallHard for that landing (scenes/dungeonContext.js reportActivity).
 //
+// EG6a (2026-10-12; Elite-Gates.md sections 10.1 and 10.3): THE STEPS' READERS ON THE SPIRE'S COURSES - every course the
+// span generator lays (net/egSpanLaw.js egSpanOf, read back off the spec a road at a time by egCourseOf) is fed to the Hour's
+// own course readers: each island carries the Steps' waystone (world/sdStepsModel.js sdWaystonesOf), lit gold while it is my
+// cast-back point and dark else; and a gone Beat plate or my fallen Crumble pin hangs as the Steps' gold ghost where it will
+// return (render/sdStepsPass.js - sdGhostStepsOf over the course I am on, the SD_GHOSTS_MAX nearest ahead of me, its hand
+// running back to the return), drawn in the hall's telegraph pass (egSpan's drawPass, the dungeon host's egSpanDraw). A
+// Gust's push blows over a run of its pieces alone, on its own road's line (world/egLook.js egGustSections,
+// EG_GUST_REACH_M).
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
 import { egCircleSpecs, egWallFallenZ, egBandOfCircle, EG_VOID_Y, EG_BELT_MPS } from '../net/egLaw.js';
 import { buildStepModel, stepTris } from '../world/sdStepsModel.js';
-import { SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_STEP_THICK, gustAt } from '../world/sdSteps.js';
-import { ensureSdStepsArt } from './sdSteps.js';
+import { SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_STEP_THICK, SD_BEAT_CYCLE, SD_BEAT_SOLID, gustAt } from '../world/sdSteps.js';
+import { ensureSdStepsArt, WAYSTONE_DARK } from './sdSteps.js';
+import { sdWaystonesOf, buildWaystoneModel } from '../world/sdStepsModel.js';   // EG6a: the islands' waystones - the Steps' own reader
+import { SdStepsPass, sdGhostStepsOf, SD_GHOSTS_MAX, SD_GHOST } from '../render/sdStepsPass.js';   // EG6a: the Steps' ghosts on the Spire's courses
+import { SD_SKY_STEPS } from '../render/sdSky.js';
+import { egCourseOf, egBeatAt } from '../net/egSpanLaw.js';   // EG6a: a hall's course on a road, as the Steps' readers take it
 import { faces } from '../world/gateModel.js';
 import { packRealmFaces, realmIsland, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_ISLAND_SIDES } from '../world/sdRealm.js';
 import { identity } from '../world/mat4.js';
@@ -61,6 +74,7 @@ import { egInShape } from '../net/egShape.js';   // EG-ZC: a lit branch under th
 import { egTubeEdge, EG_ENGINES } from '../net/egFragLaw.js';
 import { egOverDrop } from '../world/egTelegraph.js';   // EG-ZG: a Drop's landing, the law
 import { egNicheBoxes, egIsleDisc } from '../world/egHall.js';
+import { egGustSections } from '../world/egLook.js';   // EG6a: the breath's sections, its one home (the streamers' too)
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
 import { spireFooting, spireWake, spireObjs, spireAct } from '../systems/spireKit.js';
 import { egBandDress, EG_DRESS } from '../world/egBandArt.js';   // EG-G2: the band's dress on every piece (EG-ZC: its liquid on the slag)
@@ -230,6 +244,8 @@ export const EG_WALL_SEG_M = 2;
 const WALL_FALL_G = 9.8;
 /** The longest frame a Gust pushes for (s) - a hitch is not a gale (scenes/sdSteps.js's BREATH_DT_MAX). */
 const EG_GUST_DT_MAX = 0.1;
+/** EG6a: how far across a Gust section's line its push reaches (m - an island's 3 m and a body pushed off it). */
+export const EG_GUST_REACH_M = 6;
 
 /**
  * A circle's spans.
@@ -254,12 +270,23 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
   const meshKey = (s) => STEP_MESH_KIND[s.kind] ?? `${s.kind === 'drop' ? 'drop' : 'slab'}:${s.w}x${s.d}`;
   const modelOf = (s) => (STEP_MESH_KIND[s.kind] ? buildStepModel(STEP_MESH_KIND[s.kind]) : s.kind === 'drop' ? egDropModel(s.w, s.d) : egSlabModel(s.w, s.d));
   const trisOf = (s) => (STEP_MESH_KIND[s.kind] ? stepTris(STEP_MESH_KIND[s.kind]) : s.kind === 'drop' ? egDropTris(s.w, s.d) : egSlabTris(s.w, s.d));
-  /** each hall's Gust sections: the stretch of the course its Gust pieces stand in, an island's reach either side */
-  const gusts = [];
-  for (const spec of specs) {
-    const gs = spec.steps.filter((q) => q.kind === 'gust');
-    if (gs.length) gusts.push({ spec, z0: Math.min(...gs.map((q) => q.z - q.d / 2)) - 4, z1: Math.max(...gs.map((q) => q.z + q.d / 2)) + 4 });
+  /** each hall's Gust sections (world/egLook.js egGustSections - a run of Gusts, on its road's line) */
+  const gusts = egGustSections(specs);
+  /** EG6a - THE COURSES the span generator laid, one a road (net/egSpanLaw.js egCourseOf), each with its hall; the islands'
+   *  WAYSTONES (the Steps' sdWaystonesOf over each course's checkpoints but the arrival plate - an island's, the Low Road's
+   *  island too): where each stands and its island, its draw once stood, the one lit; and THE GHOSTS - the course I am on,
+   *  its SD_GHOSTS_MAX Beat plates and Crumble pins nearest ahead of me (sdGhostStepsOf), the pass's two uniform arrays
+   *  (written in place), the pass, made the first time it draws, its buffer laid again as the window moves */
+  const courses = [];
+  for (const spec of specs) for (const road of [0, 1]) { const course = egCourseOf(spec, road); if (course?.steps.length) courses.push({ spec, road, course }); }
+  const stones = [];
+  for (const { spec, road, course } of courses) {
+    const at = sdWaystonesOf(course);
+    for (let k = road === 0 ? 1 : 0; k < at.length; k++) stones.push({ spec, isle: course.checkpoints[k], at: realmToDungeon(spec.x0 + at[k][0], at[k][1], at[k][2]), draw: null });
   }
+  let stoneMesh = null, litStone = -2;
+  let ghostList = /** @type {any[]} */ ([]), ghostKey = '', ghostDirty = false, pass = null, passTried = false;
+  const ghostStep = new Float32Array(SD_GHOSTS_MAX * 4), ghostState = new Float32Array(SD_GHOSTS_MAX * 4);
   /** EG-G2: the circle's pieces batched (scenes/egPieceBatch.js), or null (no renderer that moves vertices - a draw a piece) */
   let batch = null;
   /** @type {Map<string, any>} the batched kinds' models */
@@ -447,6 +474,46 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
     const ahead = walls.find((g) => g.spec === spec && g.z1 > edge && g.z0 >= edge);
     return ahead ? realmToDungeon(spec.x0 + spec.walk.x, 0, (ahead.z0 + ahead.z1) / 2) : p;
   }
+  /** EG6a: THE WAYSTONE LIT - the one on the island my cast-back would stand me on (egSpan's `safe`), the rest dark; set
+   *  only when it changes. */
+  function poseStones() {
+    if (!stoneMesh) return;
+    let mine = -1;
+    if (safe) {
+      const [sx, , sz] = dungeonToRealm(safe[0], safe[1], safe[2]);
+      mine = stones.findIndex((g) => Math.hypot(sx - g.spec.x0 - g.isle.x, sz - g.isle.z) <= g.isle.r + 0.5);
+    }
+    if (mine === litStone) return;
+    litStone = mine;
+    for (let k = 0; k < stones.length; k++) if (stones[k].draw) stones[k].draw.texRemap = k === mine ? null : WAYSTONE_DARK;
+  }
+  /** EG6a: THE GHOSTS - the course I am on (the hall about my x, the Low Road when I stand on its line), its ghostable steps
+   *  whose far edge is not yet behind me, SD_GHOSTS_MAX of them; each slot's top and state written in place (the Steps' own
+   *  law: a gone Beat plate outlined, its hand running back to XII and brightening its last SD_GHOST.rise; my fallen
+   *  Crumble pin counting its return). */
+  function poseGhosts(t, rx, rz) {
+    const spec = specs.find((q) => Math.abs(rx - q.x0) <= 40);
+    const road = spec?.fork && Math.abs(rx - spec.x0 - spec.fork.lowX) <= 6 ? 1 : 0;
+    const c = spec ? courses.find((q) => q.spec === spec && q.road === road) : null;
+    const list = c ? sdGhostStepsOf(c.course).filter((s) => s.z + s.d / 2 >= rz - 3).slice(0, SD_GHOSTS_MAX) : [];
+    const k = `${spec?.h ?? 0}:${road}:${list.map((s) => s.i).join(',')}`;
+    if (k !== ghostKey) { ghostKey = k; ghostList = list.map((s) => ({ s, st: byKey.get(egStepKey(spec.h, s.i)) })); ghostDirty = true; }
+    ghostState.fill(0);
+    for (let j = 0; j < ghostList.length; j++) {
+      const { s, st } = ghostList[j], o = j * 4, [x, y, z] = realmToDungeon(spec.x0 + s.x, s.y, s.z);
+      ghostStep[o] = x; ghostStep[o + 1] = y; ghostStep[o + 2] = z;
+      if (s.kind === 'beat') {
+        if (st?.solid) continue;
+        const left = SD_BEAT_CYCLE - egBeatAt(s, t), e = Math.max(0, Math.min(1, (SD_GHOST.rise - left) / SD_GHOST.rise));
+        ghostState[o] = 1; ghostState[o + 1] = left / (SD_BEAT_CYCLE - SD_BEAT_SOLID); ghostState[o + 2] = SD_GHOST.base + (SD_GHOST.peak - SD_GHOST.base) * e * e * (3 - 2 * e);
+      } else if (st?.touched != null) {
+        const f = t - st.touched - SD_CRUMBLE_DELAY;
+        if (f < 0) continue;
+        const e = Math.max(0, Math.min(1, (f - (SD_CRUMBLE_BACK - SD_GHOST.rise)) / SD_GHOST.rise));
+        ghostState[o] = 1; ghostState[o + 1] = (SD_CRUMBLE_BACK - f) / SD_CRUMBLE_BACK; ghostState[o + 2] = SD_GHOST.base + (SD_GHOST.peak - SD_GHOST.base) * e * e * (3 - 2 * e);
+      }
+    }
+  }
   return {
     /** Stand every step into the dungeon's draws and collider - once. */
     stand({ dynamicDraws, collider = null }) {
@@ -510,6 +577,13 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
         const { positions, indices } = egSlabTris(g.w, g.d);
         try { collider?.addMesh?.(g.key, positions, indices, identity(), () => g.T); } catch (e) { console.warn('[eg] a wall segment\'s collider', e?.message ?? e); }
       }
+      // EG6a: the islands' waystones - the Steps' own stone, dark until it is my cast-back point
+      stoneMesh = stones.length && renderer?.createMesh ? (() => { try { return renderer.createMesh(buildWaystoneModel()); } catch (e) { console.warn('[eg] a waystone would not build', e?.message ?? e); return null; } })() : null;
+      if (stoneMesh) {
+        const sphere = meshKitBounds(buildWaystoneModel().positions);
+        for (const g of stones) { g.draw = { gpu: stoneMesh, object: { matrix: translate(new Float32Array(16), g.at[0], g.at[1], g.at[2]) }, noShadow: true, texRemap: WAYSTONE_DARK, sphere }; draws.push(g.draw); }
+      }
+      litStone = -2;
       batch?.build(draws);
       return true;
     },
@@ -522,7 +596,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
       if (!draws) return 0;
       let planes = null;
       if (proj && view) { mul4(_vp, proj, view); planes = spherePlanes(_vp, _planes); }
-      for (const g of [...isles, ...seals]) {
+      for (const g of [...isles, ...seals, ...stones]) {
         const d = g.draw;
         if (!d?.sphere) continue;
         const M = d.object.matrix, c = d.sphere.centre;
@@ -560,7 +634,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
       const footing = spireFooting();
       // THE GUST (section 10.3): the Steps' breath over a Gust section of the hall I stand in, Iron Footing taking its share
       if (dt > 0 && footing < 1) {
-        const g = gusts.find((q) => rx >= q.spec.x0 - 40 && rx <= q.spec.x0 + 40 && rz >= q.z0 && rz <= q.z1);
+        const g = gusts.find((q) => Math.abs(rx - q.spec.x0 - q.x) <= EG_GUST_REACH_M && rz >= q.z0 && rz <= q.z1);
         if (g) { gustAt(t, _gust); if (_gust.push) body.collider?.move?.(body.pos, _gust.push * (1 - footing) * Math.min(dt, EG_GUST_DT_MAX), 0, 0, body.height, !!body.grounded && !body.jumping); }
       }
       // THE FORGE BRIDGE (section 8.3): its walkway runs toward the arrival plate, carrying whoever stands on it
@@ -578,9 +652,26 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
       // the cast-back's place: the last floor I stood on (a plate, an island, a court, a bridge), or a still step
       const onWall = key ? walls.find((g) => g.key === key) ?? tubes.find((g) => g.key === key) ?? isles.find((g) => g.key === key && g.st === 0) : null;
       if (key === EG_FLOOR_KEY || onWall || (on && on.solid && (on.s.kind === 'still' || on.s.kind === 'ledge' || on.s.kind === 'drop' || on.s.kind === 'vent' || on.s.kind === 'gust'))) { safe = [body.pos[0], body.pos[1], body.pos[2]]; safeY = body.pos[1]; }
+      poseStones();
+      poseGhosts(t, rx, rz);
       if (safe && body.pos[1] < safeY + EG_VOID_Y) { play(107, 0.6, 0.6); const p = wallSafe(safe, t); return [p[0], p[1] + 0.2, p[2]]; }
       return null;
     },
+    /** EG6a: THE GHOSTS DRAWN - the gone Beat plates and my fallen Crumble pins of the course I am on, outlined gold where
+     *  they will return (render/sdStepsPass.js, made the first time, its buffer laid again as the window moved), in `fog`.
+     *  Answers whether it drew (the host marks a foreign pass). */
+    drawPass(proj, view, fog = null) {
+      if (!draws || !renderer?.gl) return false;
+      if (!passTried) { passTried = true; try { pass = new SdStepsPass(renderer.gl, ghostList.map((g) => g.s)); ghostDirty = false; } catch (e) { console.warn('[eg] the spans\' ghosts would not build', e?.message ?? e); pass = null; } }
+      if (!pass) return false;
+      if (ghostDirty) { pass.setGhosts(ghostList.map((g) => g.s)); ghostDirty = false; }
+      const vp = renderer._worldViewportPx;
+      return pass.draw(proj, view, ghostStep, ghostState, fog, renderer.lightingLane ? SD_SKY_STEPS.lane : SD_SKY_STEPS.classic, vp?.[2] ?? 0, vp?.[3] ?? 0);
+    },
+    /** EG6a: the ghosts as the pass reads them (tests): which steps (hall, number), each slot's top and state. */
+    get ghosts() { return { steps: ghostList.map((g) => g.s.i), step: ghostStep, state: ghostState }; },
+    /** EG6a: the waystones (tests): each one's island (the hall's frame), its place (the dungeon's), whether lit. */
+    get stones() { return stones.map((g, k) => ({ h: g.spec.h, x: g.isle.x, z: g.isle.z, at: g.at, lit: k === litStone, drawn: !!g.draw })); },
     /** Where the void would cast me back to now (the dungeon's frame), or null - and set it (a pull's landing). */
     safe: () => safe,
     /** EG-ZG (section 25.8): am I falling onto a Drop the course asked for (this frame, before the motor)? Its landing is the
@@ -617,6 +708,11 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
       for (const m of meshes.values()) if (m) { try { renderer?.destroyMesh?.(m); } catch { /* gone */ } }
       meshes.clear();
       batch?.clear(); batch = null;   // EG-G2: the batched kinds' meshes
+      if (stoneMesh) { try { renderer?.destroyMesh?.(stoneMesh); } catch { /* gone */ } }   // EG6a: the waystones' mesh and the ghosts' pass
+      stoneMesh = null; litStone = -2;
+      for (const g of stones) g.draw = null;
+      try { pass?.destroy(); } catch { /* gone */ }
+      pass = null; passTried = false; ghostDirty = false; ghostKey = ''; ghostList = [];
       models.clear();
       for (const st of steps) { st.draw = null; st.pend = null; }
       for (const g of walls) g.draw = null;

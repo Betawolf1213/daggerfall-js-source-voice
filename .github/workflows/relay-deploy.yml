@@ -82,12 +82,15 @@ jobs:
           if [ -n "$v" ] && [ "$v" != "$got" ]; then echo "deploying=true" >> "$GITHUB_OUTPUT"; else echo "deploying=false" >> "$GITHUB_OUTPUT"; fi
           echo "source says '${v}', live says '${got:-unreachable}'"
 
+  # EG6a: and the Elite Breach's course sweep at 500 seeds a band, not a pull request's 25 - a relay that draws the halls
+  # is deployed only when every course of them a real motor crossed (eg-sweep.yml)
   verify:
     needs: drift
     if: needs.drift.outputs.deploying == 'true'
     uses: ./.github/workflows/verify.yml
     with:
       build: false
+      sweep: 500
 
   deploy:
     needs: [drift, verify]

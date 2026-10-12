@@ -98,7 +98,8 @@ const key = (rec) => `${SD_REALM_ARCHIVE}_${rec}`;
 const BEAT_FRAMES = Object.freeze(SD_STEPS_RECORD.beat.map((rec, k) => (k === 0 ? null : new Map([[key(SD_STEPS_RECORD.beat[0]), key(rec)]]))));
 const BEAT_FALTER = new Map([[key(SD_STEPS_RECORD.beat[0]), key(SD_STEPS_RECORD.falter)]]);
 const CRUMBLE_STAGES = Object.freeze(SD_STEPS_RECORD.crumble.map((rec, k) => (k === 0 ? null : new Map([[key(SD_STEPS_RECORD.crumble[0]), key(rec)]]))));
-const WAYSTONE_DARK = new Map([[key(SD_STEPS_RECORD.parts), key(SD_STEPS_RECORD.partsDark)]]);
+/** A waystone dark (its rune unlit) - EG6a: the Spire's islands' waystones wear it too (scenes/egSpan.js). */
+export const WAYSTONE_DARK = new Map([[key(SD_STEPS_RECORD.parts), key(SD_STEPS_RECORD.partsDark)]]);
 
 const _uploaded = new WeakSet();
 /** The Steps' pictures, uploaded once a renderer - albedo and their own light. */

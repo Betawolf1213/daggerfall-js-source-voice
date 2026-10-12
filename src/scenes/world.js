@@ -30131,7 +30131,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     egHostHit: (hit) => !!egClient?.fight()?.hostHit(hit),
     egBatches: () => egClient?.batches() ?? [],   // EG-PLAY: the hall's bodies and the way home's portal
     egLights: () => [...(egClient?.lights() ?? []), ...(sdSpoilsPool?.lights() ?? [])],   // EG-PLAY: the fight's glows, before the Spire's lamps; EG-E: and a Redoubt's spoils'
-    drawEgFight: ({ proj, view, eye }) => { const t = performance.now() / 1000, fog = courtFogNow(); const a = !!egClient?.drawPass(proj, view, eye, t, fog), b = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog); if (a || b) renderer.markForeignPass(); },   // EG-PLAY: the telegraphs, vents and rifts; EG-E: a Redoubt's spoils' lines
+    drawEgFight: ({ proj, view, eye }) => { const t = performance.now() / 1000, fog = courtFogNow(); const a = !!egClient?.drawPass(proj, view, eye, t, fog), b = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog), g = !!modes?.dungeonCtx?.egSpanDraw?.(proj, view, fog); if (a || b || g) renderer.markForeignPass(); },   // EG-PLAY: the telegraphs, vents and rifts; EG-E: a Redoubt's spoils' lines; EG6a: the spans' ghosts
     drawEgSky: ({ proj, view, eye }) => { if (egClient?.drawSky(proj, view, eye, deadlandsSeconds(), courtFogNow(), skyGain(renderer._fogColor, EG_HALL_FOG.color))) renderer.markForeignPass(); },   // EG-G2: the Spire's own sky (render/egSkyPass.js) - the band's void, the Spire's underside
     egWayHome: () => egClient?.wayHome(),   // EG-PLAY: a Redoubt's way home, pressed
     egCastBack: () => egClient?.castBack(),   // EG-PLAY: the void's cost

@@ -1,0 +1,423 @@
+// EG6a (2026-10-12, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md sections 9, 10.4 and 10.5): THE SPAN SOLVER'S
+// CLI AND THE COURSE SWEEP.
+//
+// The solver is the law's (net/egSpanLaw.js - the relay and every client draw the same course); this only drives it, as
+// tools/sdScoreProbe.mjs drives the Hour's score (section 9).
+//
+//     node tools/egSpanSolve.mjs <seed> <hall> [geo]
+//         every course of the hall, road by road: each pair's launch windows (the span build's open share, its least in any
+//         12 s, its longest wait), the proof, the road's crossing at THE SPAN BUILD (fastest, median) and at THE FAST BUILD,
+//         and the crossing's bound (EG_CROSS_MIN, section 10.5)
+//
+//     node tools/egSpanSolve.mjs --sweep [--band <0-3>] [--seeds <n>] [--from <seed>] [--golden]
+//         THE SWEEP (section 10.5): every course the generator lays in a circle of the band, for each seed, crossed STEP BY
+//         STEP BY THE REAL MOTOR - player/motor.js PlayerMotor at THE SPAN BUILD (Speed 10, Running 0, Jumping 0, every gap
+//         a plain running jump; the online page's parkour at skill 0 for a riser alone) on player/collider.js Collider, over
+//         the circle's floors (world/egHall.js egCircleColliderTris, the one bucket the dungeon stands) and its pieces as
+//         the screen rides them (scenes/egSpan.js createEgSpan - the Steps' stepTris slabs, moving on the shared clock,
+//         carrying, crumbling, a Pendulum's touch casting back, a Gust pushing). SD7b's harness (test/sd7b_steps.test.js) is
+//         the model. A pilot plays each pair as a player would: it stands where it will run from, waits for a launch the
+//         solver says lands (egJumpLands - its window held either side of the launch, its own piece standing under it to
+//         the last, no gust in the flight), runs at the landing and jumps at the edge (what slides under it on the way, a
+//         Rail's travel meeting its neighbour's, it stands on); a riser it runs up. Each band's
+//         circle is the seed's (its first circle and the seed's fifth after it, its ground of span decrees the seed's from
+//         the second). `--golden` adds the law pin's four seeds (test/egz_frag.test.js). A course that is not crossed
+//         fails the run, naming its seed, hall, road and step; the exit code says so.
+//
+// CI runs 25 seeds a band on every pull request (.github/workflows/eg-sweep.yml, called by verify.yml), 500 nightly, and
+// 500 again before every relay deploy (relay-deploy.yml).
+//
+// Not a DFU member. Ledger A (ELITE-GATES).
+import { egCircleSpecs, egFirstHallOf } from '../src/net/egLaw.js';
+import { egHallOf } from '../src/net/egLaw.js';
+import { egSpanPairs, egPairWindows, egSpanProof, egRoadCross, egFastCross, egCrossMin, egCourseOf, egJumpLands, egJumpReach, egPieceAt, egPendHits,
+  egSlagLane, egSlagState, egSlagX, EG_SPAN_RUN_MPS, EG_CRUMBLE_KINDS, EG_CRUMBLE_DELAY_S, EG_SOLVE_HORIZON_S } from '../src/net/egSpanLaw.js';
+import { egCircleColliderTris } from '../src/world/egHall.js';
+import { createEgSpan, egStepKey, EG_FLOOR_KEY } from '../src/scenes/egSpan.js';
+import { egGustSections } from '../src/world/egLook.js';
+import { PlayerMotor, walkSpeed } from '../src/player/motor.js';
+import { Collider } from '../src/player/collider.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
+import { gustAt } from '../src/world/sdSteps.js';
+import { identity } from '../src/world/mat4.js';
+import { isMain } from './lib/isMain.mjs';
+
+/** THE SPAN BUILD on the motor (section 10.2 - SD7b's: Speed 10, Running 0), and its skills for the parkour (a riser). */
+export const SWEEP_BUILD = Object.freeze({ speed: 10, running: 0, swimming: 30 });
+const SKILL0 = Object.freeze({ climbing: 0, jumping: 0, khajiit: false, enhanced: false, fatigue: 1, load: 0 });
+/** The law pin's seeds (test/egz_frag.test.js) - every pull request sweeps their circles too. */
+export const SWEEP_GOLDEN = Object.freeze([77, 0xbeef, 3, 12345]);
+/** The pilot's frame, its margins (s, m), and how long a course may take before it is called lost (s of the clock). */
+const DT = 1 / 60;
+const HOLD_S = 0.06;          // a launch is taken only where it lands this long either side
+const EDGE_M = 0;             // the jump is pressed at the edge: the motor still stands on it the frame it passes it, and a
+                              // jump pressed short of it (SD7b pressed 0.1 m short) loses the widest gaps to a round island
+const RUNUP_M = 0.45;         // the run-up the pilot stands back from the edge
+const SIDE_M = 0.55;          // the landing aimed this far inside a piece's side
+const COURSE_MAX_S = 240;
+const WINDOW_LOOK_S = 1.5;    // how far into a window the pilot looks for the moment its two tops line up
+const LATE_S = 0.2;           // a landing looked ahead from comes this late, at the near edge (a gap's widest is caught by the edge)
+/** The pieces that stand still (and may be stepped down onto): a plain step, a ledge, a Drop's landing, a Gust's or a
+ *  Vent's, a Bone bridge, a Crumble. */
+const STILL = new Set(['still', 'ledge', 'drop', 'gust', 'vent', 'bone', 'crumble']);
+/** The pieces that keep time under a foot: gone off their beat (a Beat, a Moon branch, a crust) or falling after one. */
+const TIMED = new Set(['beat', 'moon', 'slag', 'crumble', 'bone', 'sink']);
+const still = (o = {}) => ({ forward: 0, strafe: 0, run: false, jump: false, up: false, down: false, ...o });
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+/** Still ground under me: the circle's floors, a Falling Wall's or a Collapsing Tube's segment, one of Grath's islands
+ *  (scenes/egSpan.js's own buckets). */
+const onGround = (key) => key === EG_FLOOR_KEY || /^eg:(wall|tube|isle):/.test(key ?? '');
+
+/** A circle of `band` for `seed`, and its ground of span decrees (none in the first circle - its law has none). */
+export function sweepCircleOf(seed, band) {
+  const c = 1 + 5 * band + (seed % 5);
+  return { c, geo: c <= 1 ? 0 : seed % 9 };
+}
+
+/** A road's chain as the pilot crosses it: the Low Road's the trunk's pairs to its fork, then its own (as the solver's). */
+export function sweepPath(spec, road) {
+  const launch = (p) => (p.a ? p.a.z + p.a.d / 2 : p.edge), roadOf = (p) => (p.b ?? p.a)?.road ?? 0;
+  const fork = road === 1 && !!spec.fork;
+  const path = egSpanPairs(spec).filter((p) => (fork ? roadOf(p) === 1 || (roadOf(p) === 0 && launch(p) < spec.fork.z - 0.01) : roadOf(p) === road));
+  // a road's steps laid apart in the hall's count (THE FORK's High Road, its tail after the Low Road's) meet over no ground:
+  // the solver's chain lands on the edge and leaves it again - the pilot jumps it whole
+  const out = [];
+  for (const p of path) {
+    const l = out[out.length - 1];
+    if (l && !l.b && l.a && !p.a && p.b && Math.abs(p.edge - l.edge) < 0.01 && roadOf(l) === roadOf(p)) out[out.length - 1] = { a: l.a, b: p.b, edge: p.edge };
+    else out.push(p);
+  }
+  return out;
+}
+
+/**
+ * THE CIRCLE STOOD for the sweep: its floors in one bucket and its pieces as the screen rides them, on a real Collider.
+ * @param {number} seed @param {number} c @param {number} geo
+ */
+export function sweepStand(seed, c, geo) {
+  const col = new Collider(() => -Infinity);
+  const tris = egCircleColliderTris(seed, c, geo), n = tris.length / 3, idx = n > 65535 ? new Uint32Array(n) : new Uint16Array(n);
+  for (let i = 0; i < n; i++) idx[i] = i;
+  col.addMesh(EG_FLOOR_KEY, tris, idx, identity());
+  const span = createEgSpan({ seed, c, geo });
+  span.stand({ dynamicDraws: [], collider: col });
+  return { seed, c, geo, col, span, specs: egCircleSpecs(seed, c, geo) };
+}
+
+/**
+ * ONE COURSE CROSSED BY THE REAL MOTOR: hall `spec`'s road `road`, from the arrival plate at shared second `t0`, pair by
+ * pair, to the end plate (a Court's: onto its lord's ground). `{ ok, seed, h, road, step, why, t }` - `step` the step the
+ * crossing failed at (its number in the hall, or `ground`), `t` the crossing's seconds. `trace` hears every frame (a hook
+ * for following one crossing): the clock, where I stand (the hall's frame), whether grounded and on what, the input.
+ * @param {ReturnType<typeof sweepStand>} S @param {any} spec @param {number} road @param {number} t0
+ */
+export function sweepCourse(S, spec, road, t0, trace = null) {
+  const { col, span } = S, h = spec.h, X0 = spec.x0;
+  let climbing = false;
+  const parkour = { enabled: () => climbing, inputs: () => SKILL0, tally: () => {}, say: () => {}, hold: null };
+  const m = new PlayerMotor(col, SWEEP_BUILD, { parkour });
+  const fail = (step, why) => ({ ok: false, seed: S.seed, h, road, step, why, t: t - t0 });
+  let t = t0;
+  const at = realmToDungeon(X0 + spec.arrive.x, spec.arrive.y ?? 0, spec.arrive.z);
+  m.spawn(at[0], at[1] + 0.05, at[2]);
+  span.setSafe(null);
+  const me = () => { const p = dungeonToRealm(m.pos[0], m.pos[1], m.pos[2]); return { x: p[0] - X0, y: p[1], z: p[2] }; };
+  /** one frame: the screen's ride before the motor (the game's order); a cast-back is a fall */
+  const frame = (input, yaw = 0) => {
+    const back = span.ride(t, DT, m, true);
+    if (back) return 'fell';
+    m.update(DT, input, yaw, 0);
+    t += DT;
+    trace?.(t, me(), m.grounded, m.groundKey, input);
+    return null;
+  };
+  /** walk to (x, z) of the hall's frame - `rel` a piece it moves with (its offset from the piece's place) - and stand */
+  const walkTo = (gx, gz, rel = null, until = Infinity) => {
+    let best = Infinity, since = t;
+    const y0 = me().y;
+    for (let k = 0; k < 60 * 60; k++) {
+      const o = rel ? egPieceAt(rel, t) : null;
+      const tx = gx + (o ? o.dx : 0), tz = gz + (o ? o.dz : 0), p = me(), dx = tx - p.x, dz = tz - p.z, d = Math.hypot(dx, dz);
+      if (d < 0.08 || t >= until) return null;
+      if (d < best - 0.02) { best = d; since = t; }
+      if (t - since > 2) return 'stuck';
+      const yaw = Math.atan2(dx, dz);
+      if (frame(still({ forward: 1, run: d > 0.3 }), yaw)) return 'fell';
+      if (!m.grounded && me().y < y0 - 2.5) return 'fell';
+    }
+    return 'stuck';
+  };
+  /** THE STILL GROUND along the line `x` (the hall's frame): its stretches along z, merged - a plate, an island, a band, a
+   *  passage's floors, a lane along the course. The hall law leaves gaps between them (a passage's floor and the island
+   *  after it, a Collapsing Tube's end): no piece keeps their time, so the solver's chain runs over them as one ground. */
+  const groundAt = (x) => {
+    const iv = [];
+    for (const d of spec.discs) { const dx = Math.abs(x - d.x); if (dx <= d.r - 0.4) { const hh = Math.sqrt(d.r * d.r - dx * dx); iv.push([d.z - hh, d.z + hh]); } }
+    for (const q of spec.bands) if (Math.abs(x - q.x) <= q.halfW - 0.4) iv.push([q.z0, q.z1]);
+    for (const l of spec.lanes) if (Math.abs(l.ax - l.bx) < 0.01 && Math.abs(x - l.ax) <= l.hw - 0.4) iv.push([Math.min(l.az, l.bz), Math.max(l.az, l.bz)]);
+    iv.sort((u, v) => u[0] - v[0]);
+    const out = [];
+    for (const q of iv) { const l = out[out.length - 1]; if (l && q[0] <= l[1] + 0.05) l[1] = Math.max(l[1], q[1]); else out.push([...q]); }
+    return out;
+  };
+  /** over the still ground along `gx` to `gz`, every gap in it leapt (a running jump at its edge - nothing keeps its time) */
+  const crossGround = (gx, gz) => {
+    const iv = groundAt(gx);
+    for (let n = 0; n < 32; n++) {
+      const p = me(), here = iv.find((q) => p.z >= q[0] - 0.6 && p.z <= q[1] + 0.6);
+      if (!here || gz <= here[1] - 0.3) return walkTo(gx, Math.min(gz, here ? here[1] - 0.5 : gz));
+      const next = iv.find((q) => q[0] > here[1]);
+      if (!next) return walkTo(gx, gz);
+      if (next[0] - here[1] > 3.6) return `a gap of ${(next[0] - here[1]).toFixed(2)} m in the ground`;
+      const err = walkTo(gx, here[1] - EDGE_M - RUNUP_M);
+      if (err) return err;
+      let jumped = false, landed = false;
+      for (let k = 0; k < 4 * 60 && !landed; k++) {
+        const go = !jumped && me().z >= here[1] - EDGE_M;
+        if (frame(still({ forward: jumped ? 0 : 1, run: true, jump: go, up: go }), 0)) return 'fell';
+        if (go) jumped = true;
+        if (!m.grounded && me().y < p.y - 4.6) return 'fell over a gap in the ground';
+        landed = jumped && m.grounded && !m.jumping && me().z > here[1];
+      }
+      if (!landed) return 'never landed over a gap in the ground';
+    }
+    return walkTo(gx, gz);
+  };
+  // the gust's sections of this hall (the screen's own reach: its Gust pieces, 4 m either side)
+  const gz = egGustSections([spec]);
+  const gusty = (r, z, a, b) => { if (!gz.some((g) => g.road === r && z >= g.z0 && z <= g.z1)) return false; for (let u = a; u <= b; u += 0.05) if (gustAt(u).push) return true; return false; };
+
+  // settle on the plate
+  for (let k = 0; k < 20; k++) if (frame(still())) return fail('ground', 'fell from the arrival plate');
+  const pairs = sweepPath(spec, road);
+  let standSince = t, standLane = -1;
+  // THE PLANNER: a launch the solver says lands (egJumpLands - held HOLD_S either side), my own piece standing under me to
+  // the last (a Beat on its beat, a Moon branch lit, a crust holding, a Crumble before its fall, a sinking flight before it
+  // is gone), no gust in its flight - and, while what it lands on keeps time, the launch from THERE made in time too: a
+  // player lands on a Beat only when the next launch comes before it goes (the chain looked ahead, its answers kept)
+  const airOf = (p) => { const ya = p.a ? p.a.y : p.b ? p.b.y : 0; return egJumpReach((p.b ? p.b.y : ya) - ya).air; };
+  /** a piece where it stands at `u` - a slag crossing the spout's crust I stand on (`lane`), never the other's */
+  const pieceAt = (q, u, lane = -1) => (q.kind === 'slag' && lane >= 0 ? { dx: egSlagX(q, lane) - q.x, dz: 0, solid: egSlagState(q, lane, u).st === 'crust' } : egPieceAt(q, u));
+  const lzOf = (p, u, lane = -1) => (p.a ? p.a.z + pieceAt(p.a, u, lane).dz + p.a.d / 2 : p.edge);
+  const lands = (p, u) => egJumpLands(p, u - HOLD_S) && egJumpLands(p, u) && egJumpLands(p, u + HOLD_S);
+  const goneAt = (q, since, lane = -1) => {
+    if (!q || !TIMED.has(q.kind)) return Infinity;
+    if (EG_CRUMBLE_KINDS.includes(q.kind)) return since + EG_CRUMBLE_DELAY_S - 0.06;
+    if (q.kind === 'sink') return since + 5;
+    for (let u = since; u < since + EG_SOLVE_HORIZON_S; u += 0.02) if (!pieceAt(q, u, lane).solid) return u;
+    return Infinity;
+  };
+  /** THE AIM of pair `pi` launched at `u`: where on my piece's far edge (its width, a Drop's doorway) and where on the
+   *  landing (its width at the landing, an island's middle), the run's way and the flight's reach, and whether it is run off
+   *  rather than jumped (a still step a short way down - `run` or `walk` its pace off the edge) */
+  const aimOf = (pi, u, lane = -1) => {
+    const p = pairs[pi], { a, b } = p, ay = p.a ? p.a.y : me().y, by = p.b ? p.b.y : ay, lz = lzOf(p, u, lane);   // still ground: the height I stand at
+    const offs = [];
+    if (b && by - ay < -0.3 && STILL.has(b.kind) && (!a || STILL.has(a.kind))) {
+      const fall = Math.sqrt((2 * (ay - by)) / 20), gap = b.z - b.d / 2 - lz;
+      for (const [name, v] of [['run', EG_SPAN_RUN_MPS], ['walk', walkSpeed(SWEEP_BUILD.speed)]]) { const d = v * fall + EDGE_M; if (d >= gap + 0.4 && d <= gap + b.d - 0.5) offs.push([name, fall, v]); }
+    }
+    const off = offs[0] ?? null, air = off ? off[1] : egJumpReach(by - ay).air, T = u + air;
+    const bx = b ? b.x + egPieceAt(b, T).dx : (a ? a.x : 0);   // onto still ground: its line (an island is round - its edge nearest on its middle)
+    let xl;
+    if (!a) xl = clamp(bx, (b ? b.x : 0) - 1.0, (b ? b.x : 0) + 1.0);
+    else { const o = pieceAt(a, u, lane), half = a.kind === 'drop' ? 0.75 : a.w / 2 - 0.3; xl = clamp(bx, a.x + o.dx - half, a.x + o.dx + half); }   // a Drop's landing is left by its far wall's doorway
+    const xt = b ? clamp(xl, bx - b.w / 2 + SIDE_M, bx + b.w / 2 - SIDE_M) : xl;
+    const flight = off ? off[2] * air : (EG_SPAN_RUN_MPS + 0.225) * air, yaw = Math.asin(clamp((xt - xl) / Math.max(0.5, flight), -0.85, 0.85));
+    return { off: off ? off[0] : null, air, ay, by, lz, xl, xt, yaw, zLand: lz - EDGE_M + flight * Math.cos(yaw) };
+  };
+  /** A Pendulum over the gap: its weight clear of the flight's whole line, not its middle alone (the screen judges every
+   *  frame of it) */
+  const pendClear = (pi, u, lane = -1) => {
+    const b = pairs[pi].b;
+    if (b?.kind !== 'pend') return true;
+    const A = aimOf(pi, u, lane);
+    for (let k = 0; k <= 12; k++) { const f = k / 12; if (egPendHits(b, u + f * A.air, A.xl + (A.xt - A.xl) * f, b.y, A.lz - EDGE_M + (A.zLand - A.lz + EDGE_M) * f)) return false; }
+    return true;
+  };
+  const ahead = new Map();
+  /** how far the two tops overlap across the course for a launch at `u` (m - the more, the straighter the jump) */
+  const overlap = (p, u, air, lane = -1) => {
+    if (!p.a || !p.b) return 0;
+    const oa = pieceAt(p.a, u, lane), ob = egPieceAt(p.b, u + air);
+    return Math.min(p.a.x + oa.dx + p.a.w / 2, p.b.x + ob.dx + p.b.w / 2) - Math.max(p.a.x + oa.dx - p.a.w / 2, p.b.x + ob.dx - p.b.w / 2);
+  };
+  /** a launch of pair `pi` at `u` the pilot takes: it lands held either side, no gust in the flight, a Pendulum clear */
+  const takes = (pi, u, lane = -1) => {
+    const p = pairs[pi];
+    return lands(p, u) && !gusty((p.b ?? p.a)?.road ?? 0, lzOf(p, u, lane), u - 0.2, u + airOf(p) + 0.1) && pendClear(pi, u - HOLD_S, lane) && pendClear(pi, u, lane) && pendClear(pi, u + HOLD_S, lane);
+  };
+  const launch = (pi, ready, since, depth = 0, lane = -1) => {
+    const p = pairs[pi], gone = goneAt(p.a, since, lane), air = airOf(p), nx = pairs[pi + 1];
+    let best = null, bestOv = -Infinity, first = null;
+    for (let u = ready; u <= ready + EG_SOLVE_HORIZON_S && u + 0.05 < gone; u += 0.02) {
+      if (first != null && u > first + WINDOW_LOOK_S) break;
+      if (!takes(pi, u, lane)) continue;
+      if (p.b && TIMED.has(p.b.kind) && nx && nx.a === p.b && depth < 8) {
+        const land = u + air, kb = p.b.kind === 'slag' ? egSlagLane(p.b, land) : -1, key = `${pi + 1}:${Math.round(land * 50)}`;
+        if (!ahead.has(key)) ahead.set(key, launch(pi + 1, land + p.b.d / EG_SPAN_RUN_MPS + LATE_S, EG_CRUMBLE_KINDS.includes(p.b.kind) || p.b.kind === 'sink' ? land + LATE_S : land, depth + 1, kb) != null);
+        if (!ahead.get(key)) continue;
+      }
+      // the window found: within its first WINDOW_LOOK_S, the moment the two tops line up best (a still pair: its first)
+      first ??= u;
+      const ov = overlap(p, u, air, lane);
+      if (ov > bestOv + 0.02) { bestOv = ov; best = u; }
+    }
+    return best;
+  };
+  for (let pi = 0; pi < pairs.length; pi++) {
+    const pair = pairs[pi], { a, b } = pair, at = b ? b.i : a ? `${a.i}>ground` : 'ground';
+    // the Low Road's first launch: across the fork's bridge to its island first
+    if (road === 1 && spec.fork && (b ?? a)?.road === 1 && (pi === 0 || ((pairs[pi - 1].b ?? pairs[pi - 1].a)?.road ?? 0) === 0)) {
+      const err = walkTo(spec.fork.x, spec.fork.z - 3) ?? walkTo(spec.fork.lowX, spec.fork.z - 3);   // the fork's island's middle, then the bridge
+      if (err) return fail(at, `${err} on the fork's bridge`);
+    }
+    // a riser is run up (CLIMB3's wall run at skill 0 - the online page's parkour), never jumped onto
+    if (a?.kind === 'riser' && m.groundKey !== egStepKey(h, a.i)) {
+      const p = me();
+      const err = walkTo(clamp(p.x, a.x - 0.6, a.x + 0.6), a.z - a.d / 2 - 1.4);
+      if (err) return fail(a.i, `${err} before the riser`);
+      climbing = true;
+      let up = false;
+      for (let k = 0; k < 4 * 60 && !up; k++) {
+        const go = me().z >= a.z - a.d / 2 - 0.8;
+        if (frame(still({ forward: 1, run: true, jump: go, up: go }), 0)) return fail(a.i, 'fell off the riser');
+        up = m.grounded && m.groundKey === egStepKey(h, a.i);
+      }
+      climbing = false;
+      if (!up) return fail(a.i, 'the riser was not run up');
+      for (let k = 0; k < 8; k++) if (frame(still())) return fail(a.i, 'fell off the riser');
+    }
+    // on still ground, over it to the launch's edge first (its gaps leapt)
+    if (!a) { const err = crossGround(b ? b.x : me().x, pair.edge - EDGE_M - RUNUP_M - 0.2); if (err) return fail(at, `${err} on the way to the launch`); }
+    // where the launch is: the far edge of what I stand on, wherever it is then - or the ground's edge
+    const lane = a?.kind === 'slag' ? standLane : -1, lzAt = (u) => lzOf(pair, u, lane);
+    const tau = launch(pi, t + Math.max(0, lzAt(t) - EDGE_M - me().z) / EG_SPAN_RUN_MPS + 0.03, standSince, 0, lane);
+    if (tau == null) return fail(at, a && TIMED.has(a.kind) ? `no launch before the ${a.kind} under me goes` : 'no launch the solver allows in its horizon');
+    const A = aimOf(pi, tau, lane), { xl, xt, yaw, zLand, off } = A, T = tau + A.air, ob = b ? egPieceAt(b, T) : null;
+    // stand back from the edge on the aim's line (on my piece, moving with it), held there against a push until it is time
+    // to run; then run at the landing (steered at it each frame), and jump at the edge - or, onto a step a short way down,
+    // run off it as a player steps down a stair (a running jump would fly past it)
+    const v = off === 'walk' ? walkSpeed(SWEEP_BUILD.speed) : EG_SPAN_RUN_MPS;
+    const run = RUNUP_M, lz0 = A.lz, rel = a && a.kind !== 'slag' ? a : null, o0 = rel ? egPieceAt(rel, tau) : null;   // a crust stands still
+    const rx = xl - run * Math.sin(yaw), rz = lz0 - EDGE_M - run * Math.cos(yaw), go0 = tau - run / v;
+    const gx = rel ? rx - o0.dx : rx, gz = rel ? rz - o0.dz : rz;
+    const err = walkTo(gx, gz, rel, go0);
+    if (err) return fail(at, `${err} on the way to the launch`);
+    while (t < go0) { const e2 = walkTo(gx, gz, rel, go0); if (e2) return fail(at, `${e2} while waiting`); if (t < go0 && frame(still())) return fail(at, 'fell while waiting'); }
+    // two Rails' travels may meet across the gap: what slides under me on the way to the edge is stood on, not jumped past
+    const onB = () => !!b && m.grounded && (m.groundKey === egStepKey(h, b.i) || !!m.groundKey?.startsWith(`${egStepKey(h, b.i)}:`));
+    let jumped = false, across = false;
+    for (let k = 0; k < 90 && !jumped && !across; k++) {
+      const p = me(), go = !off && (p.z >= lzAt(t) - EDGE_M || t >= tau + 0.03);
+      if (frame(still({ forward: 1, run: off !== 'walk', jump: go, up: go }), Math.atan2(xt + (b ? egPieceAt(b, T).dx - ob.dx : 0) - p.x, zLand - p.z))) return fail(at, 'fell before the launch');
+      jumped = go || (!!off && !m.grounded);
+      across = !jumped && onB();
+    }
+    if (!jumped && !across) return fail(at, off ? 'never ran off the edge' : 'never reached the edge');
+    // the flight, and the landing
+    let landed = across;
+    for (let k = 0; k < 6 * 60 && !landed; k++) {
+      if (frame(still(), yaw)) return fail(at, 'fell (cast back)');
+      if (!m.grounded && me().y < Math.min(A.ay, A.by) - 2.5) return fail(at, 'fell short');
+      landed = m.grounded && !m.jumping;
+    }
+    if (!landed) return fail(at, 'never landed');
+    const key = m.groundKey, want = b ? egStepKey(h, b.i) : EG_FLOOR_KEY;
+    // a slag crossing's crust is its spout's lane; the hall's own ground at the step's height (a vault's side lane laid
+    // across the gap before it) is landed on as a player would, and walked onto the step from
+    const level = onGround(key) && b && me().y >= b.y - 0.3;
+    if (b ? key !== want && !key?.startsWith(`${want}:`) && !level : !onGround(key)) return fail(at, `landed on ${key ?? 'nothing'}, not ${want}`);
+    standSince = t;
+    standLane = b?.kind === 'slag' ? Number(/:(\d+)$/.exec(key)?.[1] ?? -1) : -1;   // the spout whose crust I landed on
+    if (t - t0 > COURSE_MAX_S) return fail(at, 'the course took too long');
+  }
+  // on to the goal: the end plate (the Low Road's bridge first), a Court's ground past its approach
+  if (spec.end) {
+    const lane = road === 1 && spec.fork ? spec.lanes.find((l) => l.role === 'bridge' && Math.abs(l.ax - spec.fork.lowX) < 0.01 && Math.abs(l.bz - spec.fork.plate) < 0.01) : null;
+    if (lane) { const err = walkTo(lane.ax, lane.az + 1); if (err) return fail('ground', `${err} onto the Low Road's bridge`); const e2 = walkTo(lane.ax + 0.9 * (lane.bx - lane.ax), lane.az + 0.9 * (lane.bz - lane.az)); if (e2) return fail('ground', `${e2} on the Low Road's bridge`); }
+    // onto the plate before its door (the door's posts stand across its middle)
+    const err = lane ? walkTo(spec.end.x, spec.end.z - 1.5) : crossGround(spec.end.x, spec.end.z - 1.5);
+    if (err) return fail('ground', `${err} on the way to the end plate`);
+    if (m.groundKey !== EG_FLOOR_KEY) return fail('ground', 'not standing on the end plate');
+  }
+  return { ok: true, seed: S.seed, h, road, step: null, why: '', t: t - t0 };
+}
+
+/**
+ * THE SWEEP of one seed's circle in `band`: every course (each hall's every road) crossed by the real motor. Answers each
+ * crossing's result.
+ */
+export function sweepSeed(seed, band) {
+  const { c, geo } = sweepCircleOf(seed, band), S = sweepStand(seed, c, geo), out = [];
+  let k = 0;
+  for (const spec of S.specs) for (const road of [0, 1]) {
+    const course = egCourseOf(spec, road);
+    if (!course || !course.steps.length) continue;
+    const t0 = 1_800_000_000 + (seed % 36) + 0.37 + 200 * k++;
+    out.push({ c, geo, t0, ...sweepCourse(S, spec, road, t0) });
+  }
+  S.span.clear();
+  return out;
+}
+
+/** The sweep's seeds: `n` from `from`, the law pin's beside them when asked. */
+export const sweepSeeds = (n, from = 1, golden = false) => [...new Set([...Array.from({ length: n }, (_, i) => from + i), ...(golden ? SWEEP_GOLDEN : [])])];
+
+/** THE SOLVER'S READING of a hall: each road's pairs and their windows, its proof, its crossings, its bound. */
+export function solveReport(seed, hall, geo = 0) {
+  const spec = egHallOf(seed, hall, geo), lines = [];
+  lines.push(`seed ${seed} hall ${hall} (${spec.kind}${spec.variant ? ` ${spec.variant}` : ''}, band ${spec.band}, circle ${spec.c}, ground ${geo}) - ${spec.steps.length} steps, laid again ${spec.laid} time(s)`);
+  const proof = egSpanProof(spec);
+  lines.push(`  proof: ${proof.ok ? 'proven' : `REFUSED - ${proof.why.join('; ')}`}`);
+  for (const road of [0, 1]) {
+    const course = egCourseOf(spec, road);
+    if (!course) continue;
+    lines.push(`  road ${road}: ${course.steps.length} steps, ${course.checkpoints.length} checkpoints, end at ${course.end.toFixed(2)} m`);
+    for (const pair of sweepPath(spec, road)) {
+      const w = egPairWindows(pair), name = `${pair.a ? `${pair.a.i} ${pair.a.kind}` : 'ground'} > ${pair.b ? `${pair.b.i} ${pair.b.kind}` : 'ground'}`;
+      lines.push(`    ${name.padEnd(28)} open ${w.open.toFixed(2)} s of ${EG_SOLVE_HORIZON_S}, least in 12 s ${w.worst12.toFixed(2)}, longest wait ${w.wait.toFixed(2)}`);
+    }
+    const c = egRoadCross(spec, road);
+    lines.push(`    the span build: fastest ${c.fast.toFixed(2)} s, median ${c.median.toFixed(2)} s`);
+    if (spec.end) lines.push(`    the fast build: ${egFastCross(spec, road).toFixed(2)} s - EG_CROSS_MIN ${egCrossMin(spec, road)} ms`);
+  }
+  return lines;
+}
+
+/**
+ * THE SWEEP RUN: every seed's circle of every band asked, each course crossed (`sweep` - sweepSeed), each one not crossed
+ * said by its seed, hall, road and step, each band's count and time said. Answers `{ bad, n }`.
+ */
+export function runSweep(bands, seeds, sweep = sweepSeed, log = console.log) {
+  let bad = 0, n = 0;
+  for (const band of bands) {
+    const t0 = performance.now();
+    let courses = 0;
+    for (const seed of seeds) {
+      for (const r of sweep(seed, band)) {
+        courses++; n++;
+        if (!r.ok) { bad++; log(`FAIL seed ${r.seed} hall ${r.h} road ${r.road} step ${r.step} (circle ${r.c}, ground ${r.geo}, from ${r.t0}): ${r.why}`); }
+      }
+    }
+    log(`band ${band}: ${seeds.length} seeds, ${courses} courses crossed by the real motor in ${((performance.now() - t0) / 1000).toFixed(1)} s`);
+  }
+  log(bad ? `${bad} of ${n} courses NOT crossed` : `every one of ${n} courses crossed`);
+  return { bad, n };
+}
+
+export function main(argv, log = console.log, sweep = sweepSeed) {
+  const arg = (k, d) => (argv.includes(k) ? argv[argv.indexOf(k) + 1] : d);
+  if (!argv.includes('--sweep')) {
+    const [seed, hall, geo] = argv.filter((x) => !x.startsWith('--')).map(Number);
+    if (!Number.isSafeInteger(seed) || !Number.isSafeInteger(hall) || hall < 1) { log('usage: node tools/egSpanSolve.mjs <seed> <hall> [geo] | --sweep [--band 0-3] [--seeds n] [--from seed] [--golden]'); return 2; }
+    for (const l of solveReport(seed, hall, geo || 0)) log(l);
+    return 0;
+  }
+  const bands = argv.includes('--band') ? [Number(arg('--band'))] : [0, 1, 2, 3];
+  if (!bands.every((b) => [0, 1, 2, 3].includes(b))) { log('--band is 0, 1, 2 or 3'); return 2; }
+  const { bad } = runSweep(bands, sweepSeeds(Number(arg('--seeds', 25)), Number(arg('--from', 1)), argv.includes('--golden')), sweep, log);
+  return bad ? 1 : 0;
+}
+
+if (isMain(import.meta.url)) process.exitCode = main(process.argv.slice(2));

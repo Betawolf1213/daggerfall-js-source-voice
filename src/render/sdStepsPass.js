@@ -132,6 +132,14 @@ export class SdStepsPass {
     this._viewport = new Float32Array(2);
     this.drawn = false;
   }
+  /** EG6a: the ghosts this pass stands for, laid again - another course's (scenes/egSpan.js, the Spire's: the ones ahead
+   *  of me on the course I am on), SD_GHOSTS_MAX at most. Its program and uniforms kept; only the static buffer re-laid. */
+  setGhosts(ghosts) {
+    const gl = this.gl, verts = sdGhostVertices(ghosts);
+    this.count = verts.length / FLOATS;
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vbo);
+    gl.bufferData(gl.ARRAY_BUFFER, verts, gl.STATIC_DRAW);
+  }
   /** Add the ghosts (`step`, `state`: SD_GHOST_STEPS.length vec4s each, written in place by the Steps) onto the frame,
    *  `steps` the pixel law's levels, `vw` x `vh` the world image (px - the drawing buffer's when not said). Answers
    *  whether any drew. */

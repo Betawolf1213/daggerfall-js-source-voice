@@ -33,7 +33,8 @@
 //       island, a plate, a passage's floor - never the end plate it is crossing to). Every pose-gated credit asks it.
 //     - REPEATS: a second break within a hall refuses the member's hits for EG_FAIR_REPEAT_MS.
 //     - THE CROSSING: from the hall's first judged pose to the end plate, its time against egCrossMinMs and its blind
-//       share - the measure (egFairMeasure), which gates nothing until EG21.
+//       share - the measure (egFairMeasure), which gates nothing until EG21. EG6a: the bound is the timed solver's
+//       fastest crossing at THE FAST BUILD less 15% (net/egSpanLaw.js egCrossMin), no longer the course's length.
 //   RIDDEN POSES (section 10.8). A pose on a moving piece (a Drift, a Rail, a Drum) carries `pl`: the piece's index and
 //     its offset from that piece's top at the sender's time (egRideOf); a receiver draws it at the piece's place on its
 //     own clock plus the offset, and the relay judges it on the piece's clock position at the pose's shared time
@@ -43,7 +44,7 @@
 // Pure: a pose, a spec and a clock in; the accumulator moved in place. In the relay bundle (net/egBrain.js); the client
 // reads the ridden poses' half. Not a DFU member. Ledger A (ELITE-GATES).
 import { poseTsDiff } from './wire.js';
-import { egPieceAt, EG_BODY_R, EG_SINK_GONE_M } from './egSpanLaw.js';
+import { egPieceAt, egCrossMin, EG_BODY_R, EG_SINK_GONE_M, EG_FAST_RUN_MPS } from './egSpanLaw.js';
 import { segDist } from './egShape.js';
 import { egWallFallenZ } from './egLaw.js';   // EG-ZB: a Falling Wall's fallen edge - and the Collapsing Tube's, below
 import { egTubeEdge } from './egFragLaw.js';
@@ -220,8 +221,9 @@ export function egFallenAt(spec, hw, x, y, z, tMs) {
 
 // ── THE FAIR TRAIL ───────────────────────────────────────────────────────────────────────────────────────────
 /** THE FAST BUILD's run (section 10.2 - Speed 100, Running 100, Fleetfoot III's +10%): player/motor.js runSpeed(100, 100) x
- *  1.1, pinned equal by test/egint_relay.test.js (the relay's bundle does not carry the motor). */
-export const EG_FAST_RUN_MPS = ((100 + 150) / 39.5) * (1.35 + 100 / 200) * 1.1;
+ *  1.1, pinned equal by test/egint_relay.test.js (the relay's bundle does not carry the motor). EG6a: the span law's (its
+ *  one home, beside THE SPAN BUILD's - net/egSpanLaw.js), said here. */
+export { EG_FAST_RUN_MPS };
 /** The law's speed: the fast build's run times this, plus a push and a ride (a blow's, a gust's, a Rail's, a belt's). */
 export const EG_FAIR_RUN_X = 1.1;
 export const EG_FAIR_CARRY_MPS = 4;
@@ -318,12 +320,12 @@ export function egFairCross(A, t, road = 0) {
   if (!A || A.cross || !A.from) return;
   A.cross = Math.max(1, t - A.from); A.cblind = A.span > 0 ? A.blind / A.span : 0; A.road = road;
 }
-/** THE CROSSING'S LOWER BOUND (section 10.5's EG_CROSS_MIN): the road's length from the arrival plate to the end plate at
- *  THE FAST BUILD's run, less 15% (ms) - the Low Road's bridges across and back added. A measure; it gates nothing. */
+/** THE CROSSING'S LOWER BOUND (section 10.5's EG_CROSS_MIN): EG6a - the timed solver's fastest crossing of the road at THE
+ *  FAST BUILD, arrival plate to end plate, less 15% (ms - net/egSpanLaw.js egCrossMin; the Low Road's bridges across and
+ *  back run too). A measure; it gates nothing. */
 export function egCrossMinMs(spec, road = 0) {
   if (!spec?.arrive || !spec?.end) return 0;
-  const len = Math.max(0, spec.end.z - spec.arrive.z) + (road === 1 && spec.fork ? 2 * Math.abs(spec.fork.lowX - spec.fork.x) : 0);
-  return Math.round((len / EG_FAST_RUN_MPS) * 0.85 * 1000);
+  return egCrossMin(spec, road);
 }
 /**
  * A MEMBER'S MEASURES as a receipt's `m` would carry them (whole numbers): the crossing (ds), its lower bound (ds), its

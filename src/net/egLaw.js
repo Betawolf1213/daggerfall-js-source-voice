@@ -34,9 +34,15 @@
 // HOLLOW TRUNK, THE SLAG CHUTE). THE LAW PIN keeps the law before: `egHallOf(seed, h, geo, law)` draws either law (law 4's
 // halls byte for byte as they were - test/egz_frag.test.js), the relay a breach's own (`egv` - net/egDurable.js EG_LAWS).
 //
+// EG6a (2026-10-12; sections 9 and 10.1): THE SPAN GENERATOR - every course of a hall (its runs, its islands, a passage's
+// inner course, a set piece's flights, THE FORK's two roads) is drawn by net/egSpanLaw.js egSpanOf off this hall's die and
+// laid by courseOf, one course a road: layHall stands the hall about the generator's edge. Laws 4 and 5 lay byte for byte
+// the halls they laid before (test/egz_frag.test.js, test/eg6a_span.test.js).
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { sdSeed, sdRng } from './sdBrain.js';
 import { egSpanProof, egRoadCross, EG_SPAN_RUN_MPS } from './egSpanLaw.js';   // EG-FULL: THE TIMED SOLVER - a course it refuses is laid again
+import { egSpanOf, egDieBetween, EG_GAP_MIN_CM, EG_STEP_DOWN_CM } from './egSpanLaw.js';   // EG6a: THE SPAN GENERATOR - every course laid by it, through courseOf
 import { egFragPassage, egFragChamber, egSetPiece, egSetPieceOf, EG_PASSAGE_KITS, EG_CHAMBER_KITS, EG_FRAGS } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments
 import { egFragShaft, EG_SHAFT_KITS, EG_SLAG_LAW, EG_SLAG_STEP } from './egFragLaw.js';   // EG-ZC: the shafts, the slag's law and its crust
 
@@ -434,7 +440,7 @@ const polar = (x, z, r, deg) => [x + Math.trunc((r * lawSin(deg)) / 10000), z + 
 
 // ── the hall spec (section 9) ──────────────────────────────────────────────────────────────────────────────
 /** A die's whole number from lo to hi, both in. */
-const between = (r, lo, hi) => lo + Math.floor(r() * (hi - lo + 1));
+const between = egDieBetween;
 const m = (cm) => cm / 100;
 /** The span's pieces, the Steps' sizes and clocks (world/sdSteps.js - pinned equal), in cm and ms. */
 export const EG_STEP = Object.freeze({
@@ -456,13 +462,9 @@ export const EG_BAND_PIECES = Object.freeze([
   Object.freeze(['drift', 'beat', 'riser', 'crumble', 'drop', 'gust', 'rail', 'pend']),
   Object.freeze(['drift', 'beat', 'riser', 'crumble', 'drop', 'gust', 'rail', 'pend', 'vent']),
 ]);
-export const EG_RISER_CM = 230;
-export const EG_BEAT_HALF_MS = 1800;
-export const EG_GAP_MIN_CM = 240;
-export const EG_GAP_MAX_CM = 320;
-/** A step down within a run is under a metre (THE ENVELOPE, section 10.4); a Drop at most 4.5 m. */
-export const EG_STEP_DOWN_CM = 95;
-export const EG_DROP_CM = 450;
+/** THE ENVELOPE (section 10.4): a riser's rise, the Beat's half, a gap's range, a step down within a run (under a metre), a
+ *  Drop (at most 4.5 m) - EG6a: the span generator's own (net/egSpanLaw.js), said here as they always were. */
+export { EG_RISER_CM, EG_BEAT_HALF_MS, EG_GAP_MIN_CM, EG_GAP_MAX_CM, EG_STEP_DOWN_CM, EG_DROP_CM } from './egSpanLaw.js';
 /** No hall runs longer than this (m): its fight's every point stays inside the gate's wire bound (net/wire.js
  *  GATE_COURT_BOUND, 160 - pinned under it). */
 export const EG_HALL_LEN_MAX = 158;
@@ -557,39 +559,17 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   const flD = (x, z, rad, y = 0) => P.fl.push({ t: 'd', x, z, r: rad, y });
   const flL = (ax, az, bx, bz, half, y = 0) => P.fl.push({ t: 'l', ax, az, bx, bz, hw: half, y });
   const spot = (role, x, z, extra = {}) => { (P.spots[role] ??= []).push({ x, z, ...extra }); };
-  let edge = 0, y = 0, span = 0, risen = false, road = 0, kitNow = '', xRoad = 0;
+  let edge = 0, y = 0, road = 0, kitNow = '', xRoad = 0;
   const pieces = plain ? EG_BAND_PIECES[bnd].slice(0, 2) : EG_BAND_PIECES[bnd];
-  /** a step laid `gap` past the edge (its unused fields nought, one shape for every step - the Steps' law) */
-  const step = (k, gap, o = {}) => {
-    const S = EG_STEP[k];
-    const z = edge + gap + S.d / 2;
-    P.steps.push({ i: P.steps.length, kind: k, span, x: X + (o.x ?? xRoad), y, z, w: S.w, d: S.d, amp: o.amp ?? 0, period: o.period ?? 0, phase: o.phase ?? 0, beat: o.beat ?? 0, gap, road, kit: kitNow, after: 0 });
-    edge = z + S.d / 2;
-  };
-  const gap = () => between(r, EG_GAP_MIN_CM, EG_GAP_MAX_CM);
-  const island = (g = gap(), x = X) => { const z = edge + g + ISLE_R; P.islands.push({ x, y, z, r: ISLE_R, road }); disc(x, z, ISLE_R, 'island', y); edge = z + ISLE_R; span++; return z; };
+  // EG6a - THE SPAN GENERATOR (net/egSpanLaw.js egSpanOf): every course of this hall, one a road, drawn off this hall's die
+  // and laid by courseOf. The hall stands about its edge and tells it where the hall stands before each piece it asks for.
+  const S = egSpanOf(seed, h, bnd, { r, sizes: EG_STEP, start: { x: X, y: 0, z: 0, r: PLATE_R }, checkR: ISLE_R });
+  /** a step laid `gap` past the edge (its unused fields nought, one shape for every step - the Steps' law): its place */
+  const step = (k, gap, o = {}) => { S.at(edge, y); const at = S.step(k, gap, { ...o, x: X + (o.x ?? xRoad), kit: kitNow }); edge = S.edge; return at; };
+  const gap = () => S.gap();
+  const island = (g = gap(), x = X) => { S.at(edge, y); const z = S.check(g); P.islands.push({ x, y, z, r: ISLE_R, road }); disc(x, z, ISLE_R, 'island', y); edge = S.edge; return z; };
   /** a run of `n` steps of one piece (section 10.3 - every piece at the Steps' own timing, at every depth) */
-  const run = (k, n) => {
-    if (k === 'drift') for (let q = 0; q < n; q++) step('drift', gap(), { amp: between(r, 100, 200), period: between(r, 40, 70) * 100, phase: q * 900 });
-    else if (k === 'beat' || k === 'riser') {
-      const riserAt = n >= 5 && !risen ? between(r, 2, n - 2) : -1;   // one riser a hall: the climb down after it stays short
-      let b = 0;
-      for (let q = 0; q < n; q++) {
-        if (q === riserAt) { y += EG_RISER_CM; risen = true; step('riser', 0); continue; }
-        step('beat', gap(), { beat: (b++ % 2) * EG_BEAT_HALF_MS });
-      }
-    } else if (k === 'crumble') {
-      // down toward the plates' height while above it (never up: a course below it - a Mist Stair's, a Sinking Stair's - stays)
-      const drop = y > 0 ? Math.ceil(y / Math.max(1, n)) : 0;
-      for (let q = 0; q < n; q++) { if (y > 0) y = Math.max(0, y - drop); step('crumble', gap()); }
-    } else if (k === 'gust') for (let q = 0; q < n; q++) step('gust', gap(), { period: 6000, phase: q * 0 });
-    else if (k === 'rail') for (let q = 0; q < n; q++) step('rail', gap(), { amp: between(r, 150, 200), period: between(r, 60, 90) * 100, phase: q * 1500 });   // LAYER THREE: its travel under the least gap less EG_RAIL_CLEAR
-    else if (k === 'pend') for (let q = 0; q < n; q++) step('pend', gap(), { amp: 0, period: between(r, 30, 50) * 100, phase: q * 700 });
-    else if (k === 'vent') for (let q = 0; q < n; q++) step('vent', gap(), { period: between(r, 40, 60) * 100, phase: between(r, 0, 39) * 100 });
-    else if (k === 'drop' && y < 200) for (let q = 0; q < n; q++) step('still', gap());
-    else if (k === 'drop') { const fall = Math.min(EG_DROP_CM, Math.max(200, y)); y = Math.max(0, y - fall); step('drop', gap()); }
-    else for (let q = 0; q < n; q++) step('still', gap());
-  };
+  const run = (k, n) => { S.at(edge, y); S.run(k, n, X + xRoad, kitNow); edge = S.edge; y = S.y; };
   /** A fragment's law half laid into the hall (net/egFragLaw.js's plan, in its own frame about (x0, z0, y0)): its hazards,
    *  anchors, alcoves, vignettes and lights, every point moved into the hall's frame. The far floor's (`zB` on) stand at
    *  `yB`. */
@@ -664,9 +644,9 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     kitNow = kind;
     for (const it of Q.course) {
       y += it.dy ?? 0;
-      step(it.k, it.gap, { x: it.x ?? 0, amp: it.amp, period: it.period, phase: it.phase, beat: it.beatRel != null ? z0 + it.beatRel : 0 });
+      const s0 = step(it.k, it.gap, { x: it.x ?? 0, amp: it.amp, period: it.period, phase: it.phase, beat: it.beatRel != null ? z0 + it.beatRel : 0 });
       // the Forge Line's hammers: one over each conveyor's middle, told 1.4 s (the place's own - judged wherever it lands)
-      if (it.hammer) { const s0 = P.steps[P.steps.length - 1]; P.hazards.push({ kind: 'hammerline', i: P.hazards.length, x: X, z: s0.z, y, period: 0, phase: between(r, 0, 49) * 100, w: 0, r: 300, ring: 0, sh: null, spots: [[s0.x, s0.z]], lanes: null, path: null }); }
+      if (it.hammer) { P.hazards.push({ kind: 'hammerline', i: P.hazards.length, x: X, z: s0.z, y, period: 0, phase: between(r, 0, 49) * 100, w: 0, r: 300, ring: 0, sh: null, spots: [[s0.x, s0.z]], lanes: null, path: null }); }
     }
     kitNow = '';
     P.frags.push({ kit: kind, cls: 'passage', name: Q.name, x: X, y: y0, z0, z1: edge, play: kind, reverb: kind === 'forgeline' ? 'cave' : 'quarry', road });
@@ -719,9 +699,10 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     y = yF - EG_FORK_DROP_CM;
     step('drop', gap());
     const zHi = edge, yLow = y;
-    // THE LOW ROAD (road 1): across, down its Drop, through its passage, past its niche
+    // THE LOW ROAD (road 1): across, down its Drop, through its passage, past its niche - its own course, from its island
     road = EG_ROAD.low;
     const LX = X + EG_LOW_X_CM;
+    S.road(road, { x: LX, y: yF, z: zc, r: ISLE_R });
     lane(X + ISLE_R - 50, zc, LX - ISLE_R + 50, zc, BRIDGE_HALF, 'bridge', yF);
     edge = zc - ISLE_R; y = yF;
     disc(LX, zc, ISLE_R, 'island', yF); P.islands.push({ x: LX, y: yF, z: zc, r: ISLE_R, road });
@@ -744,6 +725,7 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     // the roads meet at the end plate (at the Low Road's height): a High Road that ends first is carried on by still
     // ground; a Low Road by its bridge across to the plate
     road = EG_ROAD.high;
+    S.road(road);
     edge = zHi; y = yLow;
     while (edge < zLo) step('still', EG_GAP_MIN_CM);
     const zPlate = edge + gap() + PLATE_R;
@@ -962,6 +944,8 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   if (slot === 3 || kind === 'scriptorium') spot('niche', X - 350, 0);
   // the cache on every trial hall's end plate (section 17.1)
   if (P.end && kind !== 'brink') spot('cache', P.end.x, P.end.z - 200);
+  // EG6a: THE HALL'S STEPS ARE ITS COURSES, laid by courseOf (net/egSpanLaw.js) - one a road, in the hall's one count
+  P.steps = S.lay();
   // THE GROUND AFTER EACH RUN (net/egSpanLaw.js egSpanPairs): each step no step of its road follows knows how far on its
   // road's next still ground begins - an island, a plate, a passage's floor - so the solver jumps the real gap
   for (const s of P.steps) {
