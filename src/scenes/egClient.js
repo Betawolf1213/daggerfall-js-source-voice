@@ -24,6 +24,13 @@
 //     Vestige offer and the company's word on THE PANEL (ui/egHud.js - keys 1-6, Y and N, or `/breach pick`, `/breach
 //     vote`); Cantrips, the Sutler, pings, forsaking and a Surplus in `/breach` words; THE POTION LAW's count; THE RECAP.
 //
+//   EG-H1 (EG8d, 2026-10-12; sections 21 and 10.8): WHAT THE RELAY JUDGES, this screen's half - THE SHARED CLOCK CORRECTED
+//     (net/egClock.js: the room's `clk` pinged, the median of five half round trips, again every 30 s - the breach's link,
+//     its fight and every time here read it: `sharedNow`); MY BODY in my own word (`vt`, net/bossBody.js bodySayer's pace)
+//     to a relay that counts it, and THE RELAY'S COUNT'S FALL OF ME (`bd`) - in the Spire a fall, never a death: the
+//     witness, as the Hour's bossCountFell is its one life; RIDDEN POSES - my pose's `pl` on a moving piece (`ridePl`,
+//     net/online.js `poseRide`) and a peer's drawn on its piece at my clock (`rideDraw`, net/online.js `rideAt`).
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember } from '../net/egLink.js';
 import { egHallOf, egCircleOfHall, egSlotOfHall, egSlotAt, egLocalX, egAtDoor, egPhase, egTimes, egCountText, EG_TEXT, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR } from '../net/egLaw.js';
@@ -40,6 +47,9 @@ import { EG_ROLE } from '../net/egBodies.js';
 import { EG_OBJ } from '../net/egLords.js';
 import { EG_ANNALS } from '../net/egAnnals.js';
 import { EG_ENGINES, EG_ENGINE_REACH_M } from '../net/egFragLaw.js';
+import { egClockNew, egClockDue, egClockHeard, egClockOffset, egClockHalfRtt } from '../net/egClock.js';   // EG-H1: the shared clock, corrected
+import { bodySayer } from '../net/bossBody.js';   // EG-H1: my body, in my own word
+import { egRideOf, egRideAt } from '../net/egFair.js';   // EG-H1: RIDDEN POSES
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -52,6 +62,8 @@ export const EG_END_WALK_MS = 4000;
 export const EG_KEYS_EVERY_MS = 10 * 60_000;
 export const EG_OPEN_RETRY_MS = 2500;
 export const EG_OPEN_TRIES = 4;
+/** EG-H1: THE RELAY'S COUNT HAS FALLEN ME (`bd`) - its words in the Spire (the gate's and the Hour's say the fight's). */
+export const EG_COUNT_FELL_TEXT = 'The Spire counts you fallen.';
 /** A second press of the way home within this long walks (ms). */
 export const EG_HOME_CONFIRM_MS = 6000;
 /** The end's words, by why it ended. */
@@ -113,8 +125,13 @@ function requestId() {
  *   peers?: () => { sub: string, pos: number[] }[], heal?: ((p: number, why: string) => void) | null,
  *   paid?: ((c: any, data: any) => void) | null }} deps
  */
-export function createEgClient({ modes, online, hub, account, now, entity, player, cam, say, mid = () => {}, veil = () => null, site, wire, landAt, hurt,
+export function createEgClient({ modes, online, hub, account, now: hostNow, entity, player, cam, say, mid = () => {}, veil = () => null, site, wire, landAt, hurt,
   store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null, peers = () => [], heal = null, paid = null }) {
+  // EG-H1: THE SHARED CLOCK, CORRECTED (section 10.8; net/egClock.js) - the host's clock until the room has answered a ping,
+  // then this machine's wall clock plus the median offset; the breach's link, its fight and every time here read it
+  const clock = egClockNew();
+  const now = () => { const off = egClockOffset(clock); return off == null ? hostNow() : Date.now() + off; };
+  const sayBody = bodySayer((v) => !!online()?.sendEg?.('vt', { v }));
   const link = createEgLink({ now, say, onReceipt: (r) => claimAdd(r), onRefused: (w) => refused(w) });
   let fight = null;
   /** an open in flight: its request id, the service's order, whether the hub took it */
@@ -370,6 +387,36 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
     mid(`FALLEN. ${mine?.recall ? 'The next Redoubt can call you back.' : 'The Spire will not take you back.'}`);
     for (const h of log.slice(-1)) h.fall = true;
   }
+  /** EG-H1 - THE RELAY'S COUNT HAS FALLEN ME (`bd`, net/bossBody.js - enforced in the Spire, section 21): in the Spire a fall,
+   *  never a death - the witness begins (the room made it the breach's fall: its `fall` word follows, so nothing is said back),
+   *  as the Hour's bossCountFell is its one life. Heard outside the Spire, nothing. */
+  function countFell() {
+    if (!inSpire() || witness) return;
+    mid(EG_COUNT_FELL_TEXT);
+    enterWitness(now(), true);
+  }
+  /** EG-H1 - RIDDEN POSES (section 10.8): my pose's `pl` while my feet stand on a moving piece of the hall I am in (net/egFair.js
+   *  egRideOf, at the shared clock), else null - net/online.js sendPose lays it on the pose (`poseRide`). */
+  function ridePl() {
+    const E = link.state();
+    if (!inSpire() || witness || !(E.h > 0) || !player?.pos) return null;
+    const at = standing();
+    if (!at || at.slot !== egSlotOfHall(E.h)) return null;
+    const spec = egHallOf(E.seed, E.h, E.geo ?? 0), y = dungeonToRealm(player.pos[0], player.pos[1], player.pos[2])[1];
+    return egRideOf(spec, egLocalX(spec, at.sx), y, at.z, now() / 1000);
+  }
+  /** EG-H1 - A PEER'S RIDDEN POSE drawn on its piece at MY shared clock plus its offset (net/online.js `rideAt`, on the peer's
+   *  drawn place, moved in place) - a rider never floats beside a swinging platform. A peer in another hall is left alone. */
+  function rideDraw(q) {
+    const E = link.state();
+    if (!inSpire() || !(E.h > 0) || !Array.isArray(q?.pl)) return;
+    const spec = egHallOf(E.seed, E.h, E.geo ?? 0);
+    if (egSlotAt(dungeonToRealm(q.x, q.y ?? 0, q.z)[0]) !== egSlotOfHall(E.h)) return;
+    const r = egRideAt(spec, q.pl, now() / 1000);
+    if (!r) return;
+    const [x, y, z] = egToDungeon(spec, r[0], r[1], r[2]);
+    q.x = x; q.y = y; q.z = z;
+  }
   /** A witness's frame: the body held where it is put away; whom it watches kept to a living member. */
   function witnessFrame(E) {
     if (witness.hold && player?.pos) { player.pos[0] = witness.hold[0]; player.pos[1] = witness.hold[1]; player.pos[2] = witness.hold[2]; player.velY = 0; player._airVelX = 0; player._airVelZ = 0; player.falling = false; player.fallStart = player.pos[1]; }
@@ -444,6 +491,8 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
     /** A word of the hub or my breach's room (net/online.js onEg). */
     word(w, room) {
       if (!w) return;
+      if (w.k === 'clk') { egClockHeard(clock, w.c, w.now, Date.now()); return; }   // EG-H1: a sample of the shared clock
+      if (w.k === 'bd') { countFell(); return; }   // EG-H1: the relay's count's fall of me - the Spire's one life
       link.word(w);
       if (w.k === 'call') {
         if (opening && w.os === me()) opening = null;
@@ -546,6 +595,15 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
       if (opening && opening.tries >= EG_OPEN_TRIES && Date.now() - opening.sentAt > EG_OPEN_RETRY_MS * 2) { opening = null; say(EG_TEXT.shut); }
       if (E.call && !inSpire() && egPhase({ openedAt: E.call.op }, t) === 'ended' && !E.wk) link.forget();
       portalSet?.tick(cam?.pos ?? null);
+      // EG-H1: the shared clock's ping while the breach's room holds me; my body's word while I stand alive in it; the ride's
+      // two hooks on the presence link (net/online.js `poseRide`, `rideAt`)
+      const o = online();
+      if (o) { o.poseRide = inSpire() ? ridePl : null; o.rideAt = inSpire() ? rideDraw : null; }
+      if (inSpire()) {
+        const c = egClockDue(clock, Date.now());
+        if (c != null && !o?.sendEg?.('clk', { c, h: egClockHalfRtt(clock) })) clock.sent.delete(c);
+        if (!witness && entity.health > 0 && entity.maxHealth > 0 && egMemberOf(E, me())?.in) sayBody(entity.health / entity.maxHealth, Date.now());
+      }
       if (inSpire()) {
         spireFrame(E, t);
         pushStep();
@@ -630,7 +688,13 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
     /** The pages of the Annals this breach has given me (their numbers). */
     annals: () => [...annals].sort((a, b) => a - b),
     /** Online gone: every piece put away (the call kept - it is the hub's). */
-    away() { fight?.leave(); dropDoor(); drawEgHud(null); drawEgPanel(null); witness = null; },
+    away() { fight?.leave(); dropDoor(); drawEgHud(null); drawEgPanel(null); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } },
+    /** EG-H1: the breach's shared clock (relay ms) and its offset to this machine's wall clock (null before the room has
+     *  answered a ping) - the host's spans and its fight read it (scenes/world.js's `egNow`, the spans' anchored clock). */
+    sharedNow: () => now(),
+    clockOffset: () => egClockOffset(clock),
+    /** EG-H1: my ride's `pl` now (tests; net/online.js reads it through `poseRide`). */
+    ridePl: () => ridePl(),
     /** Registered as the key's opener (systems/weirKey.js). */
     claimKeys() { setWeirKeyOpener(() => useKey()); },
     restack,

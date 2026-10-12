@@ -7,7 +7,8 @@
 //   `efs` - the whole fight (its bodies `b`, blows `bl`, tethers `tx`, marks `mk`, progress `pg`), at the wake, a hello
 //          and every STATE_SEND_MS;
 //   `ead` a body risen, `emv` the beat's walks, `ehp` health as it falls, `edie` gone, `efl` a body's flags;
-//   `eb`  a blow (net/egShape.js - its FULL shape stamp), `ecut` a feint cut, `etx` the tethers, `emk` the marks.
+//   `eb`  a blow (net/egShape.js - its FULL shape stamp), `ecut` a feint cut, `etx` the tethers, `emk` the marks;
+//   EG-H1: `tell` a lord's blow told early to a Watchfire holder's company (`to` each), `untell` a told blow held.
 //
 // A BODY: `{ i, role (0 lord, 1 add, 2 object), k (the lord's, the kind's, the object's number), pt (a part: the twin, a
 // mirror, a rune's numeral), x, z, mv, hp, max, fl (flags), r (its radius), ... }`. Its walk is said once and carried by
@@ -18,7 +19,8 @@
 // Pure: a record and a beat in, frames out. In the relay bundle. Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, MELEE_REACH, POSE_SLACK, MOVE_RESAY_M, MOVE_RESAY_MS, HP_SEND_MS, HOST_HP_MIN, dpsRef, spendBlow, spendPurse } from './gateBrain.js';
 import { egKeepOnFight, egOnFight, egFloorTest, EG_BANDS } from './egLaw.js';
-import { egBlowOf, egUnionHolds, egInBlow, EG_UNION_HOLD_TICKS, EG_BLOWS_MAX } from './egShape.js';
+import { egBlowOf, egInBlow, EG_BLOWS_MAX } from './egShape.js';
+import { egUnionHolds, egPlaceLandings, egBlowNear, EG_UNION_HOLD_TICKS } from './egFloor.js';   // EG-H1: THE UNION FLOOR where the page says it lives, the place's landings in its set, Watchfire's reach
 
 /** A body's role. */
 export const EG_ROLE = Object.freeze({ lord: 0, add: 1, obj: 2 });
@@ -140,41 +142,106 @@ export function egGone(F, bodies, w, name, now, out) {
   out.push({ k: 'edie', is, w, n: name || '', at: now });
 }
 
+/** EG-H1 (EG8d; section 15's Watchfire): every lord's blow is COMMITTED this long before its wind-up begins, whether or not
+ *  anyone holds Watchfire - so a blow's timing never depends on who does; its word (`eb`) goes out when the wind-up does. */
+export const EG_TELL_LEAD_MS = 400;
+/** Watchfire reaches blows aimed within this of its holder, and a member sees another's Watchfire lines only for blows
+ *  within this of themselves (m). */
+export const EG_TELL_NEAR_M = 12;
+/** Far Watch (Long Sight + Watchfire): the lead grows this much for a blow aimed at the Long Sight holder (ms), never past
+ *  EG_TELL_LEAD_MS. */
+export const EG_FARWATCH_MS = 50;
+
 /**
- * A BLOW BEGUN (net/egShape.js - its stamps, its wind-up kept at THE WIND-UP FLOOR unless a CHECK): checked against THE
- * UNION FLOOR for every member it could reach (`here`, the hall's frame) - held when it would leave one no floor, tried
- * again each beat, dropped after EG_UNION_HOLD_TICKS - and said (`eb`) when it stands. Answers the blow, or null (held).
+ * A BLOW BEGUN (net/egShape.js - its stamps, its wind-up kept at THE WIND-UP FLOOR unless a CHECK). With no `lead`, its word
+ * is due now (egSay). EG-H1: a lord's blow carries `lead` (EG_TELL_LEAD_MS) - committed now, its landing that much later,
+ * kept pending (`F.pend`) until its word is due, told meanwhile to a Watchfire holder's company (egBlowsStep). Answers the
+ * blow (said, or pending), or null (held).
  * @param {any} F @param {any} spec @param {any} o the blow (net/egShape.js egBlowOf's) @param {{sub: string, x: number, z: number}[]} here
- * @param {number} now @param {any[]} out
+ * @param {number} now @param {any[]} out @param {number} [lead]
  */
-export function egAim(F, spec, o, here, now, out) {
+export function egAim(F, spec, o, here, now, out, lead = 0) {
   const blow = egBlowOf({ ...o, i: ++F.bl });
+  if (lead > 0) { blow.at = Math.max(blow.at + lead, now + lead + blow.wu); (F.pend ??= []).push({ b: blow, say: now + lead, told: [] }); return blow; }
+  return egSay(F, spec, blow, here, now, out, []) ? blow : null;
+}
+/**
+ * A BLOW'S WORD DUE: checked against THE UNION FLOOR (net/egFloor.js - the pending landings and the place's own) for every
+ * member it could reach (`here`, the hall's frame) - HELD when it would leave one no floor, tried again each beat and
+ * dropped after EG_UNION_HOLD_TICKS - else said (`eb`). Its landing is never sooner than its whole wind-up after its word
+ * (EG-H1: a floored wind-up and a late beat lengthen the wait, never shorten what a screen shows). A blow Watchfire told
+ * (`told`) and then held is untold at once (`untell`, to each it was told) - no ghost outline stays on the floor. Answers
+ * whether it was said.
+ * @param {any} F @param {any} spec @param {any} blow @param {{sub: string, x: number, z: number}[]} here @param {number} now @param {any[]} out @param {string[]} told
+ */
+function egSay(F, spec, blow, here, now, out, told) {
+  blow.at = Math.max(blow.at, now + blow.wu);
   if (!blow.ch && here.length) {
-    const onFloor = egFloorTest(spec), pending = F.blows.filter((b) => !b.ch && b.at > now);
+    const onFloor = egFloorTest(spec), pending = [...F.blows.filter((b) => !b.ch && b.at > now), ...egPlaceLandings(spec, F.wokeAt, now, blow.at)];
     for (const m of here) {
       if (!blow.s.some((s) => s[0] === 'a' || s[0] === 'h' || (s.length >= 3 && Math.hypot(m.x - s[1], m.z - s[2]) < 40))) continue;
-      if (egUnionHolds(pending, blow, m.x, m.z, now, onFloor)) { F.held.push({ o, ticks: 0, at: now }); return null; }
+      if (egUnionHolds(pending, blow, m.x, m.z, now, onFloor)) {
+        for (const sub of told) out.push({ k: 'untell', to: sub, i: blow.i });
+        F.held.push({ b: blow, ticks: 0, at: now });
+        return false;
+      }
     }
   }
   F.blows.push(blow);
   if (F.blows.length > EG_BLOWS_MAX) F.blows.shift();
   out.push({ k: 'eb', ...blow });
-  return blow;
+  return true;
 }
-/** THE UNION FLOOR's held blows, tried again a beat later (their landing later by the wait), and dropped past their
- *  ticks; the blows long landed forgotten. */
-export function egBlowsStep(F, spec, now, here, out) {
+/**
+ * WATCHFIRE'S COMPANY for a committed blow at `now` (section 15): the holders (`watch` - `{sub, x, z, lead, ls}`, `lead` its
+ * rank's ms, `ls` the Long Sight holders it keeps Far Watch with) within EG_TELL_NEAR_M of the blow set its lead (the
+ * greatest, Far Watch's EG_FARWATCH_MS more for a blow aimed at a Long Sight holder, never past EG_TELL_LEAD_MS); once its
+ * word is that near (`say` less the lead), each holder and each member within EG_TELL_NEAR_M of it is told, with the lead
+ * shown (`lead`). Pure.
+ * @param {any} blow @param {{sub: string, x: number, z: number, lead: number, ls?: number[][]}[]} watch @param {{sub: string, x: number, z: number}[]} here
+ * @param {number} say @param {number} now
+ */
+export function egTellTo(blow, watch, here, say, now) {
+  let lead = 0;
+  const near = [];
+  for (const w of watch) {
+    if (!(w.lead > 0) || egBlowNear(blow, w.x, w.z) > EG_TELL_NEAR_M) continue;
+    near.push(w.sub);
+    lead = Math.max(lead, Math.min(EG_TELL_LEAD_MS, w.lead + ((w.ls ?? []).some((p) => egInBlow(blow, p[0], p[1])) ? EG_FARWATCH_MS : 0)));
+  }
+  if (!(lead > 0) || now < say - lead) return [];
+  const subs = new Set(near);
+  for (const m of here) if (egBlowNear(blow, m.x, m.z) <= EG_TELL_NEAR_M) subs.add(m.sub);
+  return [...subs].map((sub) => ({ sub, lead }));
+}
+/** The beat's blows: the long landed forgotten; EG-H1: each committed blow told to its Watchfire company as the lead comes
+ *  due (`tell`, its `sh` the lead shown) and said when its word is; THE UNION FLOOR's held blows tried again (their landing
+ *  later by the wait) and dropped past their ticks. `watch` the Watchfire holders (egTellTo). */
+export function egBlowsStep(F, spec, now, here, out, watch = []) {
   F.blows = F.blows.filter((b) => now <= b.at + Math.max(1, b.sp ?? 0) + 1500);
+  if (F.pend?.length) {
+    const pend = F.pend;
+    F.pend = [];
+    for (const p of pend) {
+      for (const t of egTellTo(p.b, watch, here, p.say, now)) if (!p.told.includes(t.sub)) { p.told.push(t.sub); out.push({ k: 'tell', to: t.sub, sh: t.lead, ...p.b }); }
+      if (now < p.say) F.pend.push(p);
+      else egSay(F, spec, p.b, here, now, out, p.told);
+    }
+  }
   if (!F.held.length) return;
   const held = F.held;
   F.held = [];
   for (const h of held) {
     if (++h.ticks > EG_UNION_HOLD_TICKS) continue;
-    const wait = now - h.at;
-    const got = egAim(F, spec, { ...h.o, at: h.o.at + wait }, here, now, out);
-    if (!got) { const last = F.held[F.held.length - 1]; if (last) { last.ticks = h.ticks; last.at = now; last.o = { ...h.o, at: h.o.at + wait }; } }
+    h.b.at += now - h.at;
+    if (!egSay(F, spec, h.b, here, now, out, [])) { const last = F.held[F.held.length - 1]; if (last) last.ticks = h.ticks; }
   }
 }
+/** EG-H1: A FEINT'S CUT (section 13.2: Feud-Arc section 7.3 exactly) - its mark fills to this share of its wind-up and is cut
+ *  (`ecut` - the page's `cut`; ai/tells.js TELL.FEINT_AT, which carries the AI's own imports, pinned equal by
+ *  test/egint_relay.test.js). The relay's `eb` carries no feint flag, so a modified client cannot read a feint early; an
+ *  honest screen sounds a blow's WIND only past this share, uncut (scenes/egFight.js). */
+export const EG_FEINT_AT = 0.55;
 /** A blow cut (a feint, at FEINT_AT - section 13.2): gone, said. */
 export function egCut(F, i, out) { F.blows = F.blows.filter((b) => b.i !== i); out.push({ k: 'ecut', i }); }
 /** The members a landed blow struck, by the relay's own reckoning of their poses (the census - section 21). */

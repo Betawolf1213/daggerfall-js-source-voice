@@ -17,9 +17,8 @@
 //     distance to the shape's edge at THE ESCAPE BUILD's run, ceiled to 10 ms; it CLAMPS (lengthens), never refuses.
 //   THE WIDTH RULE - every aimed shape at least EG_WIDTH_MIN across at its narrowest, or the relay's census could never
 //     see it (net/bossBody.js deepIn's probes).
-//   THE UNION FLOOR - a member's pending landings, taken in time, never leave them no floor to stand on: a set of 1 m
-//     cells over their fight floor, dilated between landings by the escape build's reach less EG_REACT_S, losing each
-//     landing's cells; a new blow that would empty it is HELD (egUnionHolds).
+//   THE UNION FLOOR - a member's pending landings, taken in time, never leave them no floor to stand on (EG-H1: moved to
+//     net/egFloor.js, where the page says it lives - egUnionHolds, and the place's landings beside the blows).
 //   THE CHECK CLASS - a whole-floor or haven blow (`ch` 1) has a fixed wind-up and damage; the wind-up floor does not
 //     touch it (its errand's own floor does - the lords' brains).
 //   THE TELEGRAPH BUDGET - which shapes a screen draws when there are more than it can (egShapeOrder).
@@ -34,11 +33,6 @@ export const EG_ESCAPE_MPS = ((40 + 150) / 39.5) * (1.35 + 20 / 200);
 export const EG_REACT_S = 0.5;
 /** THE WIDTH RULE's narrowest aimed shape (m). */
 export const EG_WIDTH_MIN = 4;
-/** A held blow waits a tick and is dropped after this many (section 13.2). */
-export const EG_UNION_HOLD_TICKS = 4;
-/** The union floor's cells (m) and how far about the member it looks. */
-export const EG_UNION_CELL = 1;
-export const EG_UNION_R = 30;
 /** THE TELEGRAPH BUDGET: the most shapes a screen draws (section 25.4). */
 export const EG_SHAPES_DRAWN_MAX = 24;
 /** The most stamps one blow carries, and the most pending blows a frame says. */
@@ -161,54 +155,6 @@ export function egBlowVerdict(blow, px, pz, now, late = 400) {
   if (now > blow.at + span + late) return 'miss';
   if (egInBlow(blow, px, pz)) return 'hit';
   return now >= blow.at + span ? 'miss' : 'wait';
-}
-
-// ── THE UNION FLOOR, in time ───────────────────────────────────────────────────────────────────────────
-/**
- * Would blow `next` - with the landings already pending on a member standing at (px, pz) at `now` - leave them no
- * floor? `onFloor(x, z)` the member's fight floor (its walls and open edges bound it). The set starts as the cells
- * reachable before the first landing, dilates by the escape build's reach less EG_REACT_S between landings, and loses
- * each landing's cells. True when it empties - hold the blow.
- * @param {any[]} pending @param {any} next @param {number} px @param {number} pz @param {number} now @param {(x: number, z: number) => boolean} onFloor
- */
-export function egUnionHolds(pending, next, px, pz, now, onFloor) {
-  const blows = [...pending, next].filter((b) => b && !b.ch && b.at > now).sort((a, b) => a.at - b.at);
-  if (!blows.length || next.ch) return false;
-  const C = EG_UNION_CELL, R = Math.ceil(EG_UNION_R / C), side = 2 * R + 1;
-  const ix = (i, j) => (i + R) * side + (j + R);
-  const floor = new Uint8Array(side * side);
-  for (let i = -R; i <= R; i++) for (let j = -R; j <= R; j++) if (i * i + j * j <= R * R && onFloor(px + i * C, pz + j * C)) floor[ix(i, j)] = 1;
-  let set = new Uint8Array(side * side);
-  set[ix(0, 0)] = 1;
-  let t = now;
-  const grow = (m) => {
-    const steps = Math.max(0, Math.floor(m / C));
-    for (let k = 0; k < steps; k++) {
-      const nx = set.slice();
-      for (let i = -R; i <= R; i++) for (let j = -R; j <= R; j++) {
-        if (!set[ix(i, j)]) continue;
-        for (let di = -1; di <= 1; di++) for (let dj = -1; dj <= 1; dj++) {
-          const a = i + di, b = j + dj;
-          if (a < -R || a > R || b < -R || b > R) continue;
-          const q = ix(a, b);
-          if (floor[q] && (di === 0 || dj === 0 || k % 3 !== 2)) nx[q] = 1;   // diagonals two steps in three: a disc, not a square
-        }
-      }
-      set = nx;
-    }
-  };
-  for (const b of blows) {
-    grow(EG_ESCAPE_MPS * Math.max(0, (b.at - t) / 1000 - EG_REACT_S));
-    t = b.at;
-    let any = false;
-    for (let i = -R; i <= R; i++) for (let j = -R; j <= R; j++) {
-      const q = ix(i, j);
-      if (!set[q]) continue;
-      if (egInBlow(b, px + i * C, pz + j * C)) set[q] = 0; else any = true;
-    }
-    if (!any) return true;
-  }
-  return false;
 }
 
 // ── THE TELEGRAPH BUDGET (section 25.4) ────────────────────────────────────────────────────────────────

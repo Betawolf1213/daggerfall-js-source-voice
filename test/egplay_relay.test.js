@@ -13,7 +13,7 @@ import { SOCIAL_ROOM, EG_KEY, egCallKey, validEgOut, validEgIn, EG_KINDS, EG_OUT
 import { egRoomKey, egHallOf, EG_SEALED_MS, EG_GATHER_MS } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { readEgReceipt } from '../src/net/egReceipt.js';
-import { realmToDungeon } from '../src/net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
 
 const { subtle } = globalThis.crypto;
 const T0 = 1_800_000_000_000;
@@ -52,7 +52,7 @@ async function withBreach(fn, { party = false } = {}) {
 }
 
 test('EG-PLAY THE WIRE (EG-FULL): a breach\'s words each way, projected and bounded - the open (its order and the landing), the admission, the door, the way home, a blow on a body by its number, a Vestige picked, a vote, a Cantrip, the Sutler, a ping, a bequest, forsaking, the Orrery\'s turn, a fall said; the call, the state, a stage, the company of ten fields, a fall, a Redoubt, a receipt, the end, a refusal; the fight in the Spire\'s own words (a body\'s thirteen, a blow\'s FULL shape stamp, a zone, a tether, a mark) and the run\'s; a relay before it is sent nothing (mutants: an open with no landing; a company of nine; a stamp out of bounds; a body\'s row cut short)', () => {
-  assert.deepEqual([...EG_KINDS], ['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use']);   // EG-FULL LAYER THREE: `use` - an engine worked
+  assert.deepEqual([...EG_KINDS], ['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk']);   // EG-FULL LAYER THREE: `use` - an engine worked; PIN MOVED (EG-H1): `vt` a member's word of its body and `clk` the shared clock's ping (test/egint_relay.test.js pins them)
   for (const k of ['call', 'st', 'efs', 'ead', 'eb', 'ez', 'etx', 'emk', 'offer', 'ask', 'rise', 'eheal']) assert.ok(EG_OUT_KINDS.includes(k), k);
   assert.equal(validEgIn({ k: 'open', z: 'v1.abc.def' }), null, 'an open names where its company answers from');
   assert.deepEqual(validEgIn({ k: 'open', z: 'v1.abc.def', site: SITE, junk: 1 }), { k: 'open', z: 'v1.abc.def', site: SITE });
@@ -165,7 +165,10 @@ test('EG-PLAY THE ROOM: it admits its company alone, inside the open window - a 
     assert.equal(held().sg, 'closing', 'the last rift closed opens the door');
     assert.ok(egs(ws).some((m) => m.k === 'edie'), 'the bodies\' falls said');
     for (const m of egs(ws)) assert.ok(validEgOut(m), `a room word the wire refuses: ${m.k}`);
-    await eg.pose(ws, at(spec.x0 + spec.end.x, spec.end.z));
+    // PIN MOVED (EG-H1): the member WALKS to the door - THE FAIR TRAIL refuses a step through it from a teleport
+    // (test/egint_relay.test.js pins the refusal)
+    const last = eg.room._attach?.(ws)?.pose ?? ws.att.pose, [lx, , lz] = dungeonToRealm(last.x, last.y ?? 0, last.z), n = Math.ceil(Math.hypot(spec.x0 + spec.end.x - lx, spec.end.z - lz) / 2);
+    for (let k = 1; k <= n; k++) { await eg.pose(ws, at(lx + ((spec.x0 + spec.end.x - lx) * k) / n, lz + ((spec.end.z - lz) * k) / n)); await beat(250); }
     await eg.raw(ws, JSON.stringify({ t: 'eg', k: 'down', h: 1 }));
     await beat(500);
     const after = held();

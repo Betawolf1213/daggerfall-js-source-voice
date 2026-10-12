@@ -9,14 +9,16 @@
 //   the hall's fight in the Spire's own words (net/egBodies.js): its bodies (the lords and champions, the legion, the
 //     errands' objects) each with its walk, its blows (FULL shape stamps), its zones, tethers and marks, its progress, the
 //     place's gusts and darkness, the beats said;
-//   what is the member's alone: their Vestige offer, what they were given, a recall's word.
+//   what is the member's alone: their Vestige offer, what they were given, a recall's word;
+//   EG-H1 (EG8d): the blows Watchfire told me early (`told` - each `tell`'s blow and the lead shown, until its `eb` or its
+//     `untell`).
 //
 // PURE in its fold (`foldEg`); the link around it keeps the state, hands each receipt on and says a refusal once.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 
 /** A fight before anything is heard. */
-export const EG_FIGHT_EMPTY = Object.freeze({ h: 0, wk: 0, bodies: Object.freeze([]), blows: Object.freeze([]), zones: Object.freeze([]), tx: Object.freeze([]), mk: Object.freeze([]), pg: Object.freeze({}), gust: null, dark: 0, rail: 0, says: Object.freeze([]), fells: Object.freeze([]), gone: Object.freeze([]), phases: Object.freeze([]) });
+export const EG_FIGHT_EMPTY = Object.freeze({ h: 0, wk: 0, bodies: Object.freeze([]), blows: Object.freeze([]), zones: Object.freeze([]), tx: Object.freeze([]), mk: Object.freeze([]), pg: Object.freeze({}), gust: null, dark: 0, rail: 0, says: Object.freeze([]), fells: Object.freeze([]), gone: Object.freeze([]), phases: Object.freeze([]), told: Object.freeze([]) });
 /** The state before anything is heard. */
 export const EG_STATE_EMPTY = Object.freeze({
   call: null, b: null, seed: 0, egv: 0, op: 0, wk: 0, h: 0, sg: 'wait', sa: 0, su: 0, cl: 0, ca: 0, hw: 0, dn: 0,
@@ -46,7 +48,7 @@ const keepLast = (list, item, n) => [...list, item].slice(-n);
 /** One fight word folded (pure). */
 function foldFight(f, w, now) {
   switch (w.k) {
-    case 'efs': return { ...EG_FIGHT_EMPTY, h: w.h, wk: w.wk, bodies: w.b.map((t) => egBodyOf(t, now)), blows: w.bl, tx: w.tx, mk: w.mk, pg: w.pg, zones: f.h === w.h ? f.zones : [], says: f.h === w.h ? f.says : [], gone: f.h === w.h ? f.gone : [], fells: f.h === w.h ? f.fells : [], phases: f.h === w.h ? f.phases : [], gust: f.gust, dark: f.dark, rail: f.rail };
+    case 'efs': return { ...EG_FIGHT_EMPTY, h: w.h, wk: w.wk, bodies: w.b.map((t) => egBodyOf(t, now)), blows: w.bl, tx: w.tx, mk: w.mk, pg: w.pg, zones: f.h === w.h ? f.zones : [], says: f.h === w.h ? f.says : [], gone: f.h === w.h ? f.gone : [], fells: f.h === w.h ? f.fells : [], phases: f.h === w.h ? f.phases : [], told: f.h === w.h ? f.told ?? [] : [], gust: f.gust, dark: f.dark, rail: f.rail };
     case 'ead': { const had = new Set(f.bodies.map((b) => b.i)); return { ...f, bodies: [...f.bodies, ...w.a.filter((t) => !had.has(t[0])).map((t) => egBodyOf(t, now))] }; }
     case 'emv': {
       const by = new Map(w.m.map((t) => [t[0], t]));
@@ -58,7 +60,9 @@ function foldFight(f, w, now) {
       return { ...f, bodies: f.bodies.filter((b) => !w.is.includes(b.i)), gone: [...f.gone, ...gone].slice(-EG_GONE_KEPT), tx: f.tx.filter((t) => !w.is.includes(t[0]) && !w.is.includes(t[1])) };
     }
     case 'efl': return { ...f, bodies: f.bodies.map((b) => (b.i === w.i ? { ...b, fl: w.fl } : b)) };
-    case 'eb': return { ...f, blows: [...f.blows.filter((b) => b.i !== w.i && now <= b.at + Math.max(1, b.sp) + 1500), { ...w, heard: now }].slice(-40) };
+    case 'eb': return { ...f, blows: [...f.blows.filter((b) => b.i !== w.i && now <= b.at + Math.max(1, b.sp) + 1500), { ...w, heard: now }].slice(-40), told: (f.told ?? []).filter((b) => b.i !== w.i) };   // EG-H1: a told blow said - its early outline gone
+    case 'tell': return { ...f, told: [...(f.told ?? []).filter((b) => b.i !== w.i && now <= b.at + 1500), { ...w, heard: now }].slice(-16) };   // EG-H1: Watchfire's early outline
+    case 'untell': return { ...f, told: (f.told ?? []).filter((b) => b.i !== w.i) };   // EG-H1: a told blow the union floor held - no ghost on the floor
     case 'ecut': return { ...f, blows: f.blows.map((b) => (b.i === w.i ? { ...b, cut: now } : b)) };
     case 'etx': return { ...f, tx: w.t };
     case 'emk': return { ...f, mk: w.m };
@@ -73,7 +77,7 @@ function foldFight(f, w, now) {
     default: return f;
   }
 }
-const FIGHT_WORDS = new Set(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail']);
+const FIGHT_WORDS = new Set(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail', 'tell', 'untell']);
 
 /**
  * One word folded into the breach's state (pure). A word of another breach than the one held is not this one's - a call

@@ -82,7 +82,7 @@
   },
   {
     "name": "EGFULL-the-union-never-holds",
-    "file": "src/net/egShape.js",
+    "file": "src/net/egFloor.js",
     "old": "    if (!any) return true;",
     "new": "    if (false) return true;",
     "tests": [

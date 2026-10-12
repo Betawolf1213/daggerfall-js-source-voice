@@ -3830,3 +3830,123 @@ The economy layer's first piece, the one the relay must judge: **FEATS OF THE SP
 
 **Pins.** `test/egeco_feats.test.js` (2) and `tools/mutants/egeco.json` (6, every one dead). `RELAY_VERSION` `world197`,
 rehashed with `net/egFeats.js` in its graph.
+
+### EG-H1 - 2026-10-12 - INTEGRITY: WHAT THE RELAY JUDGES
+
+EG8d, built (Mac: "I said I want everything"), and EG14's `BOSS_BODY` on in `eg:` rooms after it. It closes EG-PLAY's
+departure 6 for THE FAIR TRAIL and the body count in `eg:` rooms, and layer one's departure 6 for THE FAIR TRAIL, the
+clock's correction and the ridden poses (HOLD and DRAIN are the durability slice's).
+
+**What shipped, by piece.**
+
+- **THE TIME LAW** (`net/egFair.js` `egPoseShared`, new, in the relay bundle). Every `eg:` pose is placed at its shared
+  time on its socket's trail (`[t, x, y, z, h]`, the hall's own frame): its `ts` unwrapped mod `POSE_TS_MOD`, plus the
+  least `arrival - ts` over its last 32 poses, less the one-way delay the member's corrected clock says with its `clk`
+  ping. A pose is never later than it arrived, never before its socket's last, and never more than `EG_TS_LAG_MAX_MS`
+  (300 ms) before it arrived. A stamp that runs backwards judges nothing. The judge's readers (`egTrailAt`,
+  `egTrailAfter`, `egTrailNear`, `egTrailReady`) take where a body stood at a landing from the last pose sent at or
+  before it, and after it from the first pose sent after it, waited for up to `EG_POSE_WAIT_MS` (800 ms). A body with no
+  pose within `EG_POSE_NEAR_MS` (300 ms) of the landing is not counted. Pinned in the room: a dodge sent 50 ms before
+  the landing at a 300 ms round trip is never counted; the same dodge from a clock that said no delay is.
+- **THE CLOCK CORRECTED** (`net/egClock.js`, new, the client's). In the Spire the client pings the room (`clk`) five
+  times 250 ms apart, again every 30 s. Each answer is a sample: the relay's `now` less the midpoint of the ping's send
+  and the answer's arrival. The offset is their median; the delay is half the median round trip, said with each later
+  ping. `scenes/egClient.js` reads the shared clock through it (`sharedNow`); the breach's link and its fight run on it
+  (`scenes/egFight.js` takes the link's clock where it keeps one). The room answers a ping at once, to its socket alone.
+- **THE FAIR TRAIL** (`spanFair` - `egFairPose`, fed by `net/egBrain.js` `egPoseIn` on every `eg:` pose). It is an
+  online accumulator per member, a hall, a life:
+  - support: a disc, a band, a lane or a ramp of the spec at its height, a piece's top at its clock (`egPieceAt`) with
+    the capsule and 0.15 s of its travel, an alcove, a ride its piece holds, or a climb's hold (`cl`) beside a floor;
+  - speed: over stretches of 0.5 s, THE FAST BUILD's run (`runSpeed(100, 100)` with Fleetfoot III, pinned to the motor)
+    times 1.1, plus 4 m/s for a push or a carry, plus 2.5 m for the game's own snaps. A stretch that outruns its whole
+    window is judged at once. A cast-back onto still ground behind, or back where the member last stood, is no step;
+  - air: an airborne stretch past `EG_AIR_MAX_S` (2.5 s) that is no fall;
+  - blindness: a `ts` gap over 0.4 s judges nothing. A crossing more than 30% blind opens no door;
+  - the last island: a fair pose on still ground (a plate, an island, a passage's floor, a bridge, a ramp - never the end
+    plate) ends the window. The trail begins on the arrival plate, or where a recall stood the member;
+  - repeats: a second break in a hall refuses the member's hits for 5 s;
+  - the crossing: its time at the end plate, its blind share and its road, against `egCrossMinMs`
+    (`egFairMeasure`, kept on the member's record).
+  The door of a span, a Brink or the Deepway's way down opens to a fair arrival (`doorOpener`). The same holds for
+  `down`, a cache (and so THE GOLD RUN's arrival), the Low Road's niche, a Memento carried and set, the Reliquary Vault and
+  the High Road's cache. After the room is woken mid-hall (`egFairWoke`), the first arrival opens the door when no saved
+  trail is fair, its measure saying `wake`.
+- **ONE JUDGE FOR EVERY SHAPE** (`net/bossRef.js` `judgeShapes`, beside the gate's, the Remnant's and the serpent's). Every
+  blow the Spire says carries its FULL stamp, so one judge tests a lane, a cone, a ring, a disc, the whole floor or
+  outside the havens. It judges each blow per fight floor (`egFightFloorAt`, section 11.7's band), deep in it (THE WIDTH
+  RULE's margin) both before and after the landing on the shared-time trail, each blow once a body. A plain blow's
+  share is counted; an element's is seen (the member's save is its own). The hall's own hazards are judged at their
+  landing on a fight floor (`judgePlace`): a Rampart's vents, the fragments' live parts aimed at a fight floor, the
+  Eclipse. The basalt, the cascade and the hammers count; fire is seen.
+- **THE BODY COUNTED, ENFORCED** (`net/egBrain.js` `egCount`, `EG_BODY_ENFORCE`). The Spire enforces whatever the gate's
+  `BOSS_BODY` line says, with the hub's depth and pace. The judge's hits, the hazards' and each cast-back (a tenth, never
+  below a quarter) are taken off the member's count (`net/bossBody.js` `bodyStruck`) and kept in its census (`cs`).
+  A count at nothing is the member's fall: one life, the witness, the Memento, said `bd` to it alone. Its own word
+  (`vt`, `egBodyWord`) is believed out of its budget, and the room's heals restore it (`egCountHeals`: a rest whole, a
+  Rally, a Mending or a niche healed, the fray's lash never the last, a recall a new life). The client says its body at
+  INT15's pace. It hears `bd` as a fall, never a death (`countFell`, the Hour's `bossCountFell`'s twin, through
+  `egClient.word`).
+- **THE UNION FLOOR, IN TIME** (`net/egFloor.js`, new). `egUnionHolds` moved whole from `net/egShape.js`, where layer one
+  had built it, under the page's name. It is widened by the place: a Rampart vent's every eruption and a fragment's live
+  parts on a fight floor land in the set beside the blows (`egPlaceLandings`). Pinned: a vent erupting first holds the
+  ring that alone would leave a way out.
+- **RIDDEN POSES** (`pl` in `net/wire.js` `validPose`; `egRideOf`, `egRideAt`, `egRideHolds`). A pose on a Drift, a Rail
+  or a Drum carries `[i, dx, dy, dz]`: the piece and its offset from the piece's top. The relay judges it at the piece's
+  clock position at the pose's shared time, its offset held to the piece's top. A screen draws a peer's ride on its piece
+  at its own clock (`net/online.js` `rideAt`, set by `egClient`), and lays its own on each pose (`poseRide`).
+- **THE FEINT'S CUT, WATCHFIRE'S TELL, THE UNTELL** (`net/egBodies.js`, `net/egLords.js`). Every lord's chosen blow is
+  committed `EG_TELL_LEAD_MS` (400 ms) before its wind-up begins. Meanwhile it is told (`tell`) to a Watchfire holder
+  and each member within 12 m of it, at the rank's lead (Far Watch's 50 ms more, never past the 400). It is said to all
+  with no feint flag. A feint is cut at `EG_FEINT_AT` of its own wind-up (`ecut`, pinned to `ai/tells.js` `TELL.FEINT_AT`).
+  A told blow that THE UNION FLOOR holds is untold (`untell`) to each it was told. A screen sounds a blow's WIND only
+  past FEINT_AT and uncut, and draws a told blow as a pulsing red outline until its word.
+
+**Fixed on the way.** A wind-up floored by THE WIND-UP FLOOR kept its old landing, so a screen saw only the unfloored
+wait. A blow's word now never shows less than its whole wind-up, however late it is said.
+
+**Departures, said plainly.**
+
+1. The time law subtracts the delay the member's own clock says (`h`, at most 300 ms). The page's "`ts` plus the
+   socket's offset" alone places a pose at its send time plus the quickest way here, which counts the very dodge the
+   page pins. The delay is the member's word, held to the judge's own 300 ms window.
+2. A backdated stamp is dropped as out of order, not clamped.
+3. Support is the spec's law geometry, never the collider. A Falling Wall's and the Collapsing Tube's fallen segments
+   still hold; a belt carries under the push's allowance, and is not ridden.
+4. `EG_CROSS_MIN` is the course at THE FAST BUILD's run less 15%, not the timed solver at that build (the solver runs at
+   the span build). It gates nothing.
+5. The measures (`egFairMeasure`, the census `cs`) stay on each member's record. The `e1` receipt's `m` is the receipts
+   slice's to carry (the receipt's 640-byte bound, and that slice's work on the same claims).
+6. The lead is every lord's chosen blow, its fury chain and its extras. The errands' place-tied blows (the Twins'
+   Crossing, a Burning Perch) and every CHECK keep their own time; the legion's and the place's blows are never told.
+   A tell goes at the beat its lead comes due, and its `sh` lets a screen draw it from the lead.
+7. The fight's words keep layer one's `e` prefix: the page's `{k:'cut', i}` is `ecut`. `tell` and `untell` keep the
+   page's names.
+8. The feint's dashed fade is the look's (EG16): its mark still fades over 0.15 s as before.
+9. The span's own Pendulums and Vents stand on traversal ground no aimed blow reaches, so they share no union set. The
+   client's arrow (section 11.7) is not built.
+10. The census applies no Vestige. A plain blow's whole `p` is counted, its points never; a holder's halving is its own
+    word, believed back as a mend.
+11. A fire fall and the hammer line (`trav`) stay the screens' alone; a soul-wisp's drain is not counted.
+12. Found, not fixed: a breach in a trial cannot be checkpointed. The trial keeps the legion's callbacks on the fight
+    (`F.legionCtx`), which storage cannot clone - the durability slice's.
+13. `bd` is said once, never told again (AUDIT INT11's `bodyTellOwed` is the three game-held fights'). A breach's fall
+    is the director's own (`egFall`): the company (`co`) it sends carries it, and a screen that missed `bd` enters its
+    witness from its own record there. `int_lane3_audit`'s pin of the body's word bucket counts four rooms now.
+
+**The four hosts.**
+
+- `src/scenes/world.js` - FLAGGED, not wired by this slice: its `egNow` and the spans' anchored clock still read the
+  welcome's offset. `egClient.sharedNow()` is the corrected clock for them (the breach's link and fight read it already).
+  `bd` needs no host: it reaches `egClient.word` through `online.onEg`.
+- `src/scenes/worldModes.js`, `src/scenes/dungeonContext.js` - unchanged.
+- `src/scenes/exterior.js` - unchanged (offline, section 28).
+
+**Pins.**
+
+- `test/egint_relay.test.js` (11) and `test/egint_client.test.js` (5).
+- `tools/mutants/egint.json` (64, every one dead).
+- Moved: `egplay_relay`'s `EG_KINDS` (`vt`, `clk`), and its door and `egplay_client`'s now walked to (THE FAIR TRAIL
+  refuses a teleport); `egfull_law` imports the union floor from `net/egFloor.js`; `egfull.json`'s union mutant
+  re-aimed there, and `egfrag.json`'s High Road cache re-aimed by content (the fair trail's ask on its line) - both
+  judged again, both dead. `int_lane3_audit`'s count of the rooms that keep a body's word on its own bucket: four.
+- `RELAY_VERSION` `world197`, rehashed with `net/egFair.js` and `net/egFloor.js` in its graph.

@@ -33,7 +33,7 @@ import { egHallOf, egCountText, egVentAt, egInVent, EG_LORDS, EG_BANDS, EG_VENT_
 import { egVentState, egInVentDisc, egPendAt, EG_VENT_R, EG_VENT_TELL_S, EG_PEND_REACH, EG_PEND_HALF, EG_PEND_CLEAR_MIN } from '../net/egSpanLaw.js';
 import { egBodyPlace } from '../net/egLink.js';
 import { egBlowVerdict, egInShape, egShapeOrder, coneInscribed } from '../net/egShape.js';
-import { EG_ROLE, EG_FL } from '../net/egBodies.js';
+import { EG_ROLE, EG_FL, EG_FEINT_AT } from '../net/egBodies.js';
 import { egKindLook, EG_LEGION_KINDS } from '../net/egLegion.js';
 import { EG_BOSS_KEYS, EG_OBJ, egBossLook, egBossName } from '../net/egLords.js';
 import { egHallCentre } from '../world/egHall.js';
@@ -66,6 +66,11 @@ const HAZ_SOUL = Object.freeze([0.6, 0.35, 0.9]);
 /** A soul-wisp's tether (section 11.2): its drain's tick (ms), how soon one wisp binds again after it lets go (ms). */
 const WISP_TICK_MS = 1000;
 const WISP_AGAIN_MS = 6000;
+/** EG-H1 (section 13.2): a blow's WIND sounds once it is past EG_FEINT_AT of its wind-up and still uncut, this long more
+ *  for the cut's way here (ms) - a feint, cut at FEINT_AT on the relay, never glints in the ear (no frame flags it early). */
+export const EG_WIND_GRACE_MS = 150;
+/** EG-H1 (section 15): Watchfire's early outline - a PULSING solid red line (a dashed line is a feint's), its pulse (ms). */
+const TOLD_PULSE_MS = 180;
 /** A zone's and a drain's tick (ms); a body's fall's length; how long after its landing a blow's shape lingers. */
 export const EG_TICK_MS = 1000;
 const FALL_MS = 1200;
@@ -153,6 +158,8 @@ export function egLookOf(b, band) {
  */
 export function createEgFight({ renderer = null, gl = null, getTexture = null, uploadRecordFrame = null, audio = null, link, now, cam = () => null, feet = () => null, player = () => null, me = () => null,
   save = () => 100, strike = () => {}, say = () => {}, hudHidden = () => false, sendHit = () => false, push = () => {}, castBack = () => {}, peerAt = () => null, ring = () => {}, hold = () => {} }) {
+  // EG-H1: the fight runs on the breach's link's clock where it keeps one (scenes/egClient.js - the shared clock, corrected)
+  if (typeof link?.now === 'function') now = link.now;
   let hall = 0, spec = null, centre = null, floor = null, band = 0;
   let beat = null, saysSeen = 0, wokeSeen = 0, fellSeen = new Set(), phaseSeen = new Set(), gustSeen = 0;
   let blowSeq = 0;
@@ -238,7 +245,8 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       d.target.height = (look.lord ? 2.2 : EG_LEGION_KINDS[b.k]?.h ?? 2) * (look.lord ? look.scale / 1.2 : 1); d.target.radius = look.lord ? Math.max(0.8, (1.8 * look.scale) / 3) : EG_LEGION_KINDS[b.k]?.r ?? 0.6; d.target.m = b.max;
       _targets.push(d.target);
     }
-    if (blow && !cued.has(blow.i) && t < blow.at) { cued.add(blow.i); play3(hostCue('windup', look.mobile), d.at); }
+    // EG-H1: the WIND once the wind-up is past FEINT_AT and the blow still stands - a feint's cut comes first, so it never glints
+    if (blow && !cued.has(blow.i) && !blow.cut && t < blow.at && t >= blow.at - blow.wu + blow.wu * EG_FEINT_AT + EG_WIND_GRACE_MS) { cued.add(blow.i); play3(hostCue('windup', look.mobile), d.at); }
   }
   /** A struck object: a crystal in its colour, cracking as it falls, and a body my blows meet. */
   function drawStruck(b, t, key) {
@@ -285,6 +293,20 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       _shapes.push(sh);
       // a CHECK's havens, gold and safe
       if (s[0] === 'h') for (let i = 1; i + 2 < s.length; i += 3) { const hv = (_slots[_shapes.length] ??= slot()); hv.kind = TELEGRAPH_KIND.disc; hv.origin[0] = s[i]; hv.origin[1] = s[i + 1]; hv.r = s[i + 2]; hv.color = GOLD; hv.edge = TELEGRAPH_EDGE_SAFE; hv.pool = TELEGRAPH_POOL.ground; hv.t = 1; hv.flash = 0; hv.alpha = 1; hv.style = TELEGRAPH_STYLE.weight; hv.since = 0; hv.span = 1; hv.after = -1; hv.court = 0; _shapes.push(hv); }
+    }
+  }
+  /** EG-H1 - WATCHFIRE'S EARLY OUTLINE (section 15): a told blow's stamps as a PULSING solid red line - no fill, never blue -
+   *  from its lead (`sh`) before its wind-up (or its hearing) until its word (`eb`) takes it over or its `untell` takes it off. */
+  function drawTold(bl, t) {
+    const from = Math.max(bl.heard ?? -Infinity, bl.at - bl.wu - (bl.sh ?? 0));
+    if (t < from || t >= bl.at) return;
+    for (const s of bl.s) {
+      const sh = (_slots[_shapes.length] ??= slot());
+      if (!fillStamp(sh, s)) continue;
+      sh.t = 0; sh.flash = 0; sh.alpha = 0.65 + 0.35 * Math.sin((t / TOLD_PULSE_MS) * Math.PI);
+      sh.color = COLOR_OF.null; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.court = 0; sh.style = TELEGRAPH_STYLE.weight;
+      sh.since = 0; sh.span = Math.max(0.001, bl.wu / 1000); sh.after = -1; sh.runS = 0;
+      _shapes.push(sh);
     }
   }
   /** THE PLACE (sections 8.3 and 10.3), on every screen alike: a Rampart's vents (told EG_VENT_WARN_MS and erupting
@@ -436,6 +458,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       const lordIds = new Set(F.bodies.filter((b) => b.role === EG_ROLE.lord).map((b) => b.i));
       const order = egShapeOrder(F.blows.filter((bl) => !bl.cut || t - bl.cut < 150), f ?? [0, 0], t, { lords: lordIds });
       for (const bl of order) drawBlow(bl, t, !!f && bl.s.some((s) => egInShape(s, f[0], f[1])));
+      for (const bl of F.told ?? []) drawTold(bl, t);   // EG-H1: Watchfire's early outlines
       for (const bl of F.blows) {
         if (!judged.has(bl.i) && !bl.cut && standing) {
           const v = egBlowVerdict(bl, f[0], f[1], t);
