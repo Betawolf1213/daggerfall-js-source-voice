@@ -6,7 +6,8 @@
 //
 // A piece of the post is the developers' to one account: a subject, a body, and at most ONE item, which its reader
 // claims into the online character they are playing. Nothing a player sends writes one - the operator's workflow
-// (.github/workflows/server-post.yml) is its only sender.
+// (.github/workflows/server-post.yml) is its sender, and (EG-ZF, 2026-10-12) the operator's list First of the Spire's letter's,
+// its words fixed (server-account/src/egHonours.js egFirstPost).
 
 /** A piece's id: the service's mintId shape, or the operator's statement's `lower(hex(randomblob(12)))` - 24 hex. */
 export const POST_ID_RE = /^[A-Za-z0-9_-]{16,40}$/;

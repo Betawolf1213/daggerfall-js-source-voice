@@ -244,7 +244,9 @@ test('ACC1b: the migration is the real schema, and applying it twice changes not
   // EG-E2 added TWO (0111, PIN MOVED): `eg_annals`, the Annals' pages the relay said a member was given (a fact of play), and
   // `eg_honours`, the Spire's honours a recorded Redoubt granted (Spirewalker ... the four Masters) - recorded as `sd_honours`
   // is and held for good; Spire Champion and First of the Spire are read, never columns.
-  assert.deepEqual(cols.sort(), ['aura', 'created_at', 'eg_annals', 'eg_honours', 'eg_key_miss', 'eg_keys', 'eg_live_b', 'eg_live_until', 'eg_mercy', 'eg_pity', 'eg_rh_day', 'eg_valk_wk', 'email', 'first_played_at', 'glyphs_off', 'guest_name', 'handle', 'handle_lc', 'id', 'insignia', 'insignia_spent',
+  // EG-ZF added ONE (0111, unshipped, PIN MOVED): `eg_first`, the first-time lines of the Spire the account has been shown (a
+  // bit a line - Elite-Gates.md section 27.7, once an account) - a fact of play, as `eg_annals` is; it grants nothing.
+  assert.deepEqual(cols.sort(), ['aura', 'created_at', 'eg_annals', 'eg_first', 'eg_honours', 'eg_key_miss', 'eg_keys', 'eg_live_b', 'eg_live_until', 'eg_mercy', 'eg_pity', 'eg_rh_day', 'eg_valk_wk', 'email', 'first_played_at', 'glyphs_off', 'guest_name', 'handle', 'handle_lc', 'id', 'insignia', 'insignia_spent',
     'last_seen', 'legal_accepted_at', 'muted_by', 'muted_until', 'password', 'patreon_at', 'patreon_status', 'patreon_tiers', 'patreon_user',
     'played_at', 'played_s', 'privacy_version', 'recovery_hash',
     'registered_at', 'renown_hour', 'renown_hour_xp', 'renown_last_credit', 'sd_honours', 'terms_version', 'title']);

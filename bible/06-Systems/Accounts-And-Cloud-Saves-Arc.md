@@ -3931,7 +3931,9 @@ notifications whenever players have a message. First use is to utilize it for pl
 
 A piece of the server's post is the developers' to ONE registered account: a subject, a body, and at most one item. It
 is not a letter (MAIL1, 0007): a letter is a player's and carries words alone; nothing a player can do writes a piece -
-the operator's workflow is its only sender.
+the operator's workflow is its sender, and (EG-ZF, 2026-10-12) a list in the operator's config sends one letter of fixed
+words: First of the Spire's, once to each account `EG_FIRST_HANDLES` names (`server-account/src/egHonours.js` egFirstPost,
+`bible/11-Multiplayer/Elite-Gates.md` section 31, EG-ZF).
 
 - **The table** (0093, `server_post`): one row a piece - `to_id` (CASCADE with the account), `batch` (the operator's name
   for the send; UNIQUE with `to_id`, so a send run twice sends once), `sender`, `subject`, `body`, `item` (the record as

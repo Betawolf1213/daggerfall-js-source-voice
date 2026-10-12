@@ -730,8 +730,8 @@
   {
     "name": "EGLOOK-client-look-kept",
     "file": "src/scenes/egClient.js",
-    "old": "away() { fight?.leave(); if (look) { look.release(); look = null; } dropDoor();",
-    "new": "away() { fight?.leave(); dropDoor();",
+    "old": "away() { fight?.leave(); if (look) { look.release(); look = null; } chartAway();",
+    "new": "away() { fight?.leave(); chartAway();",
     "tests": [
       "test/eglook_hosts.test.js"
     ]

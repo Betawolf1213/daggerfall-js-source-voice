@@ -5436,8 +5436,8 @@ export function validSdFoundTell(b) {
 // a lord's blow told early to a Watchfire holder's company (`tell` - the blow's own fields and `sh`, the lead shown) and a
 // told blow THE UNION FLOOR held (`untell`). A pose on a moving piece carries `pl` (validPose - RIDDEN POSES).
 
-/** What a client may say: `open` to the hub (EG-ZA: and `void` and `claimed`); the rest to a breach's room. */
-export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed']);   // EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
+/** What a client may say: `open` to the hub (EG-ZA: and `void` and `claimed`); the rest to a breach's room (EG-ZF: `heal`). */
+export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed', 'heal']);   // EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
 /** What the hub and a breach's room say back. */
 export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail', 'tell', 'untell']);   // EG-H1: Watchfire's `tell`, the union floor's `untell`
 export const EG_RUN_KINDS = Object.freeze(['offer', 'ask', 'asked', 'tally', 'egot', 'run', 'rise', 'eping', 'pz', 'eheal']);
@@ -5575,6 +5575,24 @@ function egRunW(t) {
   return [t[0], t[1], t[2], t[3], t[4], [...t[5]], t[6].map((p) => [...p]), t[7]];
 }
 const egDecreesW = (a) => egList(a, (p) => (Array.isArray(p) && p.length === 2 && intIn(p[0], 0, 31) && intIn(p[1], 1, 2) ? [...p] : null), 9);
+/** EG-ZF (2026-10-12; bible/11-Multiplayer/Elite-Gates.md section 27.6, THE RECAP): a number of the recap's - all a member
+ *  dealt or healed in a breach (net/egTally.js), whole. */
+const EG_TALLY_WIRE_MAX = 1e9;
+const egTallyN = (v) => intIn(v, 0, EG_TALLY_WIRE_MAX);
+/** EG-ZF: a Court's DAMAGE CHART at its lord's fall (`rd`'s and an end's `dm` - net/egTally.js egChartOf): at most a
+ *  company's rows, each `[sub, level, dealt, on the lord, blows, heaviest, falls, healed]` (the lord's part and the
+ *  heaviest never past the whole), most dealt first, no member twice; anything else is no chart. */
+const egChartW = (a) => {
+  const rows = egList(a, (t) => (Array.isArray(t) && t.length === 8 && egId(t[0]) && intIn(t[1], 1, GATE_LV_WIRE_MAX) && egTallyN(t[2]) && egTallyN(t[3]) && t[3] <= t[2]
+    && intIn(t[4], 0, EG_TALLY_WIRE_MAX) && egTallyN(t[5]) && t[5] <= t[2] && intIn(t[6], 0, 99) && egTallyN(t[7]) ? [...t] : null), EG_COMPANY_MAX);
+  return rows && rows.every((r, i) => i === 0 || r[2] <= rows[i - 1][2]) && new Set(rows.map((r) => r[0])).size === rows.length ? rows : null;
+};
+/** EG-ZF: each member's part in the breach (`st`'s and `end`'s `ds` - net/egTally.js egTalliesOf): `[sub, dealt, healed]`,
+ *  at most a company's, no member twice. */
+const egTalliesW = (a) => {
+  const rows = egList(a, (t) => (Array.isArray(t) && t.length === 3 && egId(t[0]) && egTallyN(t[1]) && egTallyN(t[2]) ? [...t] : null), EG_COMPANY_MAX);
+  return rows && new Set(rows.map((r) => r[0])).size === rows.length ? rows : null;
+};
 
 /**
  * A client's breach frame, projected (every number bounded), or null.
@@ -5603,6 +5621,9 @@ export function validEgIn(m) {
     case 'spec': return intIn(m.h, 1, EG_HALL_WIRE_MAX) ? { k: 'spec', h: m.h } : null;   // EG-H2: a hall asked of its breach's own law
     case 'void': return egOrder(m.z) ? { k: 'void', z: m.z } : null;   // EG-ZA: my open's order, a stake no call answered (the hub asks its room)
     case 'claimed': return typeof m.b === 'string' && EG_B_RE.test(m.b) && ['w', 'x', 'v'].includes(m.q) && intIn(m.w ?? 0, 0, 19_999) ? { k: 'claimed', b: m.b, q: m.q, w: m.w ?? 0 } : null;   // EG-ZA: a receipt of mine the service counted (the hub forgets its copy)
+    // EG-ZF (section 27.6): what companions' spells healed in me, each caster by peer id in the room, once - the gate's own
+    // word and law (GATE-HEAL: validGateIn's `heal`), heard by a breach's room for the recap and the chart
+    case 'heal': { const g = validGateIn({ k: 'heal', h: m.h }); return g ? { k: 'heal', h: g.h } : null; }
     default: return null;
   }
 }
@@ -5639,22 +5660,30 @@ export function validEgOut(m) {
       const dc = egDecreesW(m.dc ?? []), ms = egList(m.ms ?? [], egRunW, EG_COMPANY_MAX);
       const mm = egList(m.mm ?? [], (q) => (Array.isArray(q) && q.length === 5 && egId(q[0]) && intIn(q[1], 1, EG_HALL_WIRE_MAX) && egXZ(q[2]) && egXZ(q[3]) && (q[4] === '' || egId(q[4])) ? [...q] : null), 8);
       const as = egList(m.as ?? [], (a) => (Array.isArray(a) && a.length === 3 && typeof a[0] === 'string' && /^[a-z:]{1,24}$/.test(a[0]) && Array.isArray(a[1]) && a[1].length <= 4 && a[1].every((x) => intIn(x, 0, 99)) && gateMs(a[2]) ? [a[0], [...a[1]], a[2]] : null), 8);
-      if (!dc || !ms || !mm || !as || !intIn(m.geo ?? 0, 0, 8) || !intIn(m.rp ?? 0, 0, 1e8) || !intIn(m.sp ?? 0, 0, 9)) return null;
+      const ds = egTalliesW(m.ds ?? []);   // EG-ZF: the recap's numbers
+      if (!dc || !ms || !mm || !as || !ds || !intIn(m.geo ?? 0, 0, 8) || !intIn(m.rp ?? 0, 0, 1e8) || !intIn(m.sp ?? 0, 0, 9)) return null;
       const words = (a) => (Array.isArray(a) && a.length <= 8 && a.every((x) => typeof x === 'string' && /^[a-z]{0,16}$/.test(x)) ? [...a] : null);
       const sr = words(m.sr ?? []);
       if (!sr || (m.pr != null && !/^[a-z]{0,16}$/.test(m.pr)) || (m.td != null && !/^[a-z]{0,16}$/.test(m.td)) || (m.ca2 != null && !/^[a-z]{0,8}$/.test(m.ca2))) return null;
       const wg = Array.isArray(m.wg) && m.wg.length <= 3 && m.wg.every((x) => intIn(x, 0, 31)) ? [...m.wg] : [];
       return { k: 'st', b: m.b, seed: m.seed, egv: m.egv, op: m.op, wk: m.wk, ...st, co, rd: m.rd, rh: m.rh, dg: m.dg, end: m.end ?? null,
-        dc, pr: m.pr ?? '', wg, td: m.td ?? '', sr, geo: m.geo ?? 0, ms, ca2: m.ca2 ?? '', mm, rp: m.rp ?? 0, sp: m.sp ?? 0, as,
+        dc, pr: m.pr ?? '', wg, td: m.td ?? '', sr, geo: m.geo ?? 0, ms, ca2: m.ca2 ?? '', mm, rp: m.rp ?? 0, sp: m.sp ?? 0, as, ds,
         site: egSite(m.site) };   // EG-F (section 6.3): the arch's site, kept by the room - a cast-out member with no landing of its own lands there
     }
     case 'sg': { const st = egStage(m); return st ? { k: 'sg', ...st } : null; }
     case 'co': { const co = egCompany(m.co, true); return co ? { k: 'co', co } : null; }
     case 'fall': return egId(m.s) && typeof m.n === 'string' && gateMs(m.at) ? { k: 'fall', s: m.s, n: sanitizeName(m.n), at: m.at, fin: m.fin === 1 ? 1 : 0 } : null;
-    case 'rd': return intIn(m.w, 1, EG_HALL_WIRE_MAX) && intIn(m.h, 1, EG_HALL_WIRE_MAX) && gateMs(m.at) && intIn(m.cl, 0, EG_COUNT_WIRE_MAX) && intIn(m.g ?? 0, -EG_COUNT_WIRE_MAX, EG_COUNT_WIRE_MAX)
-      ? { k: 'rd', w: m.w, h: m.h, at: m.at, cl: m.cl, g: m.g ?? 0, v: m.v === 1 ? 1 : 0, cov: m.cov === 1 ? 1 : 0 } : null;
+    case 'rd': {
+      const dm = m.dm === undefined ? null : egChartW(m.dm);   // EG-ZF: the Court's chart at its lord's fall - a bad one is no chart, never no Redoubt
+      return intIn(m.w, 1, EG_HALL_WIRE_MAX) && intIn(m.h, 1, EG_HALL_WIRE_MAX) && gateMs(m.at) && intIn(m.cl, 0, EG_COUNT_WIRE_MAX) && intIn(m.g ?? 0, -EG_COUNT_WIRE_MAX, EG_COUNT_WIRE_MAX)
+        ? { k: 'rd', w: m.w, h: m.h, at: m.at, cl: m.cl, g: m.g ?? 0, v: m.v === 1 ? 1 : 0, cov: m.cov === 1 ? 1 : 0, ...(dm?.length ? { dm } : {}) } : null;
+    }
     case 'rcpt': return typeof m.r === 'string' && m.r.length <= EG_RECEIPT_WIRE_MAX && EG_RECEIPT_RE.test(m.r) ? { k: 'rcpt', r: m.r } : null;
-    case 'end': return EG_END_WORDS.includes(m.why) && gateMs(m.at) ? { k: 'end', why: m.why, at: m.at } : null;
+    case 'end': {
+      // EG-ZF (section 27.6): each member's part in the breach, and the chart of a lord's fall the end came at (a Rehearsal's)
+      const ds = egTalliesW(m.ds ?? []) ?? [], dm = m.dm === undefined ? null : egChartW(m.dm);
+      return EG_END_WORDS.includes(m.why) && gateMs(m.at) ? { k: 'end', why: m.why, at: m.at, ds, ...(dm?.length ? { dm } : {}) } : null;
+    }
     case 'no': return EG_NO_WORDS.includes(m.m) ? { k: 'no', m: m.m } : null;
     case 'bd': return { k: 'bd' };   // EG-H1: no fields - the fall is mine, the socket's own
     case 'clk': return intIn(m.c, 0, 0x7fffffff) && gateMs(m.now) ? { k: 'clk', c: m.c, now: m.now } : null;   // EG-H1: the relay's clock as it answered my ping

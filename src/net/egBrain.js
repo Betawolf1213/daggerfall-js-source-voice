@@ -43,6 +43,9 @@
 // Harriers shadowing the company, the Divers waiting at its islands), a blow struck only from THE FIGHT GROUND
 // (net/egWalkGraph.js), a member off the floors past six seconds hunted (huntStep), and THE CENSUS widened: the drains, the
 // Vestiges that change it, Featherstep's cast-back, a fallen segment's catch, and who each blow caught (`F.cg`, the feats').
+// EG-ZF (2026-10-12, Mac: "I said I want everything"; section 27.6): THE RECAP'S NUMBERS - each member's damage and healing
+// over the breach (`st`'s and `end`'s `ds`), a Court's DAMAGE CHART at its lord's fall (`rd`'s `dm`), the healing a
+// companion's spell did said by its receiver (egHeal) - counted by net/egTally.js.
 //
 // Pure: a record and a beat in, frames out. Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT_MS, EG_CLOSING_SPAN_MS, EG_CLOSING_COUNT_MS, EG_STAIR_HOLD_MS, EG_REST_MS,
@@ -72,6 +75,8 @@ import { bodyStruck, bodySaid, bodyHealed, bodyLife } from './bossBody.js';
 // EG-ZB (2026-10-12; sections 8.2, 11.7, 19 and 21): THE LEGION HUNTS - the fight ground and the walk graph (net/egWalkGraph.js),
 // the span's legion, the hunt, the census's drains and its Vestiges, who a place's blow caught
 import { egFightView, egGroundAt, egAirKeep, EG_STRIKE_PAD_M } from './egWalkGraph.js';
+import { egTallyWake, egTallyBlow, egTallyFall, egTallyHeal, egChartOf, egTalliesOf } from './egTally.js';   // EG-ZF: the recap's numbers (section 27.6)
+import { healRef } from './gateBrain.js';   // EG-ZF: a heal's share of the count, at the gate's reference health
 
 /** The rifts together hold this many seconds of the company's reference damage (section 8.1); a Wellspring's great
  *  rift and each anchor; a Rampart's gate's Ward-Bearers; a Muster's standard; a captive's chains; a Holdfast's hold. */
@@ -261,6 +266,7 @@ export function egStateOf(B, now) {
     ms: Object.entries(B.mem).filter(([, m]) => m.in).map(([sub, m]) => egRunOf(sub, m)),
     ca2: B.cache ? B.cache.k : '', mm: B.mementos.map((q) => [q.s, q.h, Math.round(q.x * 100) / 100, Math.round(q.z * 100) / 100, q.by ?? '']),
     rp: Math.round(B.resp), sp: B.sur, as: (B.asks ?? []).map((a) => [a.q, [...a.o], a.until]),
+    ds: egTalliesOf(B),   // EG-ZF (section 27.6): each member's damage and healing over the breach - the recap's share and healing
     ...(B.site ? { site: B.site } : {}) };   // EG-F (section 6.3): the arch's site, the room's to keep - the cast-out's landing with the arch gone
 }
 /** The hall's fight's whole word (`efs`), or null when it holds none. */
@@ -346,6 +352,7 @@ export function egFall(B, sub, now, out, at = null) {
   // a carrier's fall drops the Memento where they fall
   for (const q of B.mementos) if (q.by === sub) { q.by = null; if (at) { q.x = at.x; q.z = at.z; q.h = B.h; } }
   if (B.F) B.F.fellThisHall = (B.F.fellThisHall ?? 0) + 1;
+  egTallyFall(B.F, sub);   // EG-ZF: on a Court's chart
   B.log.push({ h: B.h, fall: m.name });
   out.push({ k: 'fall', s: sub, n: m.name, at: now, fin: final ? 1 : 0 }, { k: 'co', co: egCompanyOf(B) });
 }
@@ -388,6 +395,7 @@ export function egEnd(B, why, now, out) {
   if (!(B.wk > 0) && !(why === 'empty' && B.called)) why = 'void';
   B.end = why; B.endAt = now; B.sg = 'end'; B.sa = now; B.su = 0;
   B.cnt = egCountHold(B.cnt, now);
+  const dm = B.F && egLordsFell(B.F) ? egChartOf(B) : [];   // EG-ZF: an end at a lord's fall (a Rehearsal's) says its chart
   if (B.F) egGone(B.F, egBodiesOf(B.F, EG_ROLE.add), EG_GONE.crumbled, '', now, out);
   B.F = null;
   B.asks = [];
@@ -400,7 +408,7 @@ export function egEnd(B, why, now, out) {
     const E = entrants(B);
     heraldOwe(B, now, { k: 'dc', h: B.cleared, td: B.td ?? 0, n: E.length, o: B.o ?? '', by: E.map(([, m]) => m.name ?? '') });
   }
-  out.push({ k: 'end', why, at: now }, egStageWord(B, now));
+  out.push({ k: 'end', why, at: now, ds: egTalliesOf(B), ...(dm.length ? { dm } : {}) }, egStageWord(B, now));   // EG-ZF (section 27.6): the recap's numbers
 }
 
 // ── a hall's wake: its fight stood ──────────────────────────────────────────────────────────────────────────
@@ -412,6 +420,7 @@ function wake(B, now, rng, out) {
   for (const [, m] of living(B)) { m.downH = 0; m.dh = 0; }
   B.cache = spec.end && spec.kind !== 'brink' ? egCacheDraw(rng, spec.twist === 'mimic') : null;
   B.F = standFight(B, spec, now, rng, out);
+  egTallyWake(B.F, spec.kind);   // EG-ZF: a Court lays its damage chart
   out.push(egStageWord(B, now), egStateOf(B, now));
   if (B.F) out.push(egFightState(B.F, now));
 }
@@ -767,6 +776,7 @@ function redoubt(B, now, rng, out) {
   countPart(B);
   if (B.F) egGone(B.F, egBodiesOf(B.F, EG_ROLE.add), EG_GONE.crumbled, '', now, out);
   if (B.rh) { egEnd(B, 'rehearsal', now, out); return; }
+  const dm = egChartOf(B);   // EG-ZF (section 27.6): THE DAMAGE CHART at the lord's fall, said with the Redoubt
   const w = egCircleOfHall(B.h), L = living(B), total = L.reduce((s, [, m]) => s + m.dc, 0), n = Math.max(1, L.length);
   const earners = L.filter(([, m]) => m.dc >= total / (2 * n) || m.act >= 3);
   const valk = w % 5 === 0;
@@ -800,7 +810,7 @@ function redoubt(B, now, rng, out) {
   B.F = null;
   B.sg = 'rest'; B.sa = now; B.su = now + EG_RD_WINDOW_MS + EG_REST_MS; B.hw = 0; B.dn = 0;
   B.rdSeq = { recalled: 0, window: 0, valk };
-  out.push({ k: 'rd', w, h: B.h, at: now, cl: Math.round(egCountLeft(B.cnt, now)), g: Math.round(gain), v: valk ? 1 : 0, cov: B.covenant ? 1 : 0 }, egStageWord(B, now));
+  out.push({ k: 'rd', w, h: B.h, at: now, cl: Math.round(egCountLeft(B.cnt, now)), g: Math.round(gain), v: valk ? 1 : 0, cov: B.covenant ? 1 : 0, ...(dm.length ? { dm } : {}) }, egStageWord(B, now));
 }
 /** The Redoubt's sequence run on (section 16.2): the recalls, the rest window, the respite and the Ready. */
 function restStep(B, now, rng, out) {
@@ -1305,6 +1315,7 @@ export function egBlow(B, sub, m, pose, now) {
   if (got && body.role === EG_ROLE.add && (body.shield ?? 0) > 0) { const soak = Math.min(body.shield, got); body.shield -= soak; body.hp += soak; if (body.shield <= 0) egSetFl(F, body, EG_FL.shielded, false, out); }
   if (!got || !r.b) return out;
   mm.dh += got; mm.dc += got;
+  egTallyBlow(mm, F, sub, got, r.b.role === EG_ROLE.lord);   // EG-ZF: the recap's damage, and a Court's chart
   if (m.r >= 0 && m.r <= 2) mm.kinds[m.r] = (mm.kinds[m.r] ?? 0) + 1;
   egMarkFoe(mm, body, m.r, now);
   egFadeOn(mm, now);
@@ -1619,6 +1630,19 @@ export function egBodyWord(B, sub, v, now, line, enforce = EG_BODY_ENFORCE) {
   const m = B.mem[sub];
   if (!m || !m.in || !m.alive || m.home || B.end) return false;
   return bodySaid(m, v / 1000, now, line, { enforce });
+}
+/**
+ * EG-ZF (section 27.6) - WHAT A COMPANION'S SPELL HEALED IN A MEMBER, by its receiver's word (`pairs` `[healer's account,
+ * points]` - the room's reading of the peer ids the word named): the recap's healing and a Court's chart (net/egTally.js
+ * egTallyHeal, believed within the member's heal bucket), and what was believed mends the member's count - an ally's
+ * mend, never its own budget's (net/bossBody.js bodyHealed, at the gate's reference health: the gate's AUDIT INT11 law).
+ * Answers the points believed.
+ * @param {any} B @param {string} sub @param {Array<[string, number]>} pairs @param {number} now @param {{depth: number, perS: number}} line @param {boolean} [enforce]
+ */
+export function egHeal(B, sub, pairs, now, line, enforce = EG_BODY_ENFORCE) {
+  const got = egTallyHeal(B, sub, pairs, now);
+  if (got > 0) bodyHealed(B.mem[sub], got / healRef(B.mem[sub].lv), now, line, { enforce });
+  return got;
 }
 /** Is the breach still running at `now` (its room's beat wanted)? */
 export const egLive = (B, now) => !!B && !B.end && now < B.op + EG_LAST_WORD_MS;

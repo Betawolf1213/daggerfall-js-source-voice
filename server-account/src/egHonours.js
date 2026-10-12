@@ -40,6 +40,16 @@
 // `eg_champions` the first time a read in the new season finds the last one unkept (a board, a token's mint, a badge),
 // and read onto the row (`eg`) at the doors the Iliac Champion is (withEgHonours, withEgHonoursAll).
 //
+// ═══ THE RECAP'S BOARD LINE AND FIRST OF THE SPIRE'S LETTER (EG-ZF) ═
+//
+// Section 27.6's recap ends on the board's line (*The Descent, the Few: 14th*): an end's claim answers the member's
+// standing (egStandingOf) - its company's rank in its Descent bracket where the breach ranks there, else the account's on
+// the Depths. Section 19: First of the Spire "is granted as Hour's First was: a list in the service's config, and the
+// mailbox" - Hour's First's letter was the operator's send (tools/sendServerPost.mjs HOURS_FIRST, migration 0094) to names
+// frozen the day they were known; First of the Spire's names are not known until its company comes, so THE LIST IS THE
+// SEND: an account EG_FIRST_HANDLES names is written its letter, once (0093's ux_server_post_batch), at its next balance's
+// read (egFirstPost) - the operator's act still the one that sends it, words fixed here, never a player's.
+//
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js. Not a DFU member: Daggerfall Unity has no accounts.
 // ═══════════════════════════════════════════════════════════════════
 
@@ -48,6 +58,8 @@ import { egBandMastered, EG_FEAT_BANDS } from '../../src/net/egFeats.js';
 import { egProclamationOf, EG_DECREE_BY_KEY } from '../../src/net/egLaw.js';
 import { topWithMe, ARENA_BOARD_TOP } from './arena.js';
 import { boardNamesOf } from './boardNames.js';
+import { isSpireFirst } from './titles.js';   // EG-ZF: First of the Spire's list - its letter's addressees
+import { POST_SENDER } from '../../src/net/postLaw.js';   // EG-ZF: the post's sender, as the box shows it
 
 /** THE SPIRE'S HONOURS on the row (`players.eg_honours`), a bit each, in section 19's table's order - each a title of
  *  the same id (src/net/identityToken.js TITLES). */
@@ -263,6 +275,57 @@ export async function withEgHonoursAll(ctx, rows, nowS) {
   if (!rows.some((r) => r?.handle)) return rows;
   const ids = await championsNow(ctx, nowS);
   return rows.map((r) => (r?.handle ? { ...r, eg: { champion: ids.has(r.id) } } : r));
+}
+
+/**
+ * EG-ZF (section 27.6, THE RECAP: "the board's line: *The Descent, the Few: 14th*") - A MEMBER'S STANDING, answered on
+ * its end's claim (eg.js claimEg, after the end's row is written): where the breach ranks on the Descent (its rows among
+ * DESCENT_SQL's - begun at Hall 1, unwagered, no Rehearsal), its company's - the accounts that have claimed an end of this
+ * breach so far, its best breach's place if it has a better one - bracket and rank this season; else the account's own
+ * rank on the Depths this season. `{ board: { k: 'descent', br, rank } }`, `{ board: { k: 'depths', rank } }`, or `{}` (a Rehearsal, no
+ * hall cleared, another kind).
+ * @param {any} db @param {{ id: string }} player @param {any} c the verified claims
+ */
+export async function egStandingOf(db, player, c) {
+  if (c?.q !== 'x' || c.rh === 1 || !(int(c.h) >= 1)) return {};
+  const season = arenaSeasonOf(c.i);
+  const rows = (await db.prepare(DESCENT_SQL).bind(season).all()).results ?? [];
+  const key = [...new Set(rows.filter((r) => r.b === c.b).map((r) => r.account))].sort().join(',');   // '' off the Descent: no company's
+  const brackets = egDescentBrackets(egDescentCompanies(rows));
+  for (const br of EG_BRACKETS) {
+    const i = brackets[br].findIndex((r) => r.key === key);
+    if (i >= 0) return { board: { k: 'descent', br, rank: i + 1 } };
+  }
+  const i = ((await db.prepare(DEPTHS_SQL).bind(season).all()).results ?? []).findIndex((r) => r.account === player.id);
+  return i >= 0 ? { board: { k: 'depths', rank: i + 1 } } : {};
+}
+
+/** EG-ZF (section 19): FIRST OF THE SPIRE'S LETTER - its send's name (one piece a send an account), its subject and its
+ *  words, the developers' (src/net/postLaw.js POST_SENDER), Hour's First's in kind (tools/sendServerPost.mjs HOURS_FIRST).
+ *  No item: the title and Firstlight are the account's by the list. */
+export const EG_FIRST_POST = Object.freeze({
+  batch: 'spire-first',
+  subject: 'First of the Spire',
+  body: [
+    'Your company was the first ever to take Redoubt 10 of the Battlespire. The Spire remembers.',
+    '',
+    'Your title, First of the Spire, and its aura, Firstlight, are yours to wear - choose them on your profile.',
+    '',
+    `- ${POST_SENDER}`,
+  ].join('\n'),
+});
+/**
+ * EG-ZF: FIRST OF THE SPIRE'S LETTER, SENT - to `player` while First of the Spire's list names it (titles.js isSpireFirst:
+ * a handle, never a guest), once (INSERT OR IGNORE over 0093's one-a-send index; its id the database's own random, as the
+ * operator's statement draws one). Answers whether this call wrote it.
+ * @param {any} db @param {{ id: string, handle?: string|null }} player @param {any} env @param {number} nowS
+ */
+export async function egFirstPost(db, player, env, nowS) {
+  if (!isSpireFirst(player, env)) return false;
+  const r = await db.prepare(`INSERT OR IGNORE INTO server_post (id, to_id, batch, sender, subject, body, item, sent_at)
+    VALUES (lower(hex(randomblob(12))), ?1, ?2, ?3, ?4, ?5, NULL, ?6)`)
+    .bind(player.id, EG_FIRST_POST.batch, POST_SENDER, EG_FIRST_POST.subject, EG_FIRST_POST.body, nowS).run();
+  return Number(r?.meta?.changes ?? 0) > 0;
 }
 
 /** The week's Proclamation (section 20): its decree's key, name and line. */

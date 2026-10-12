@@ -133,6 +133,7 @@ export const REFUSALS = Object.freeze({
   // EG-E3: a dungeon elite's find (server-account/src/eg.js findEg)
   tier: 'That is no dungeon the Spire knows.',
   capped: 'The dungeons have given all they will today.',
+  bits: 'The Spire could not read those lines.',   // EG-ZF: the first-time lines' bits (server-account/src/eg.js egFirstSay)
   // EG-F: the start window's refusals (server-account/src/eg.js, egStarts.js)
   start: 'You may not start a breach that deep this season.',
   wager: 'The Spire could not read that Wager.',
@@ -1398,6 +1399,7 @@ export function accountEg({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
     claim: (receipt, character = null) => post('/v1/eg/claim', { receipt, ...(typeof character === 'string' && character ? { character } : {}) }),   // EG-E1: the claiming character - its guild's deed
     sink: (piece) => post('/v1/eg/sink', { piece }),   // EG-E1: the Broker's Panoply piece, once a week
     find: (tier) => post('/v1/eg/find', { tier }),   // EG-E3: a dungeon elite's find (section 5) - `{ found, keys, asks }`
+    first: (bits) => post('/v1/eg/first', { bits }),   // EG-ZF: the first-time lines shown, kept once an account (section 27.7) - `{ first }`
     me: () => storedSession(storage)?.id ?? null,
     guest: () => (storedSession(storage)?.kind ?? null) === 'guest',
   };

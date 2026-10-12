@@ -22100,6 +22100,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       const healed = Math.max(0, Math.trunc(playerEntity.health - before));
       if (healed > 0 && loud) townTalk.say(`You are healed ${healed} points.`);
       if (healed > 0) gateCourt?.healedBy?.(id, healed);   // GATE-HEAL: in a gate's court, the caster's healing (the round-up's)
+      if (healed > 0) egClient?.healedBy?.(id, healed);   // EG-ZF (Elite-Gates.md section 27.6): in a breach, a companion's healing said to the room - the chart's Healed column and the recap's
       surfacePlayer();
     };
     // INSPECT1: A CARD FRAME AT ME. An ASK is answered with my card - what my own sheet shows and what I wear now

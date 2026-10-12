@@ -65,6 +65,10 @@
 //     past EG_VOID_WAIT_MS with neither its void asked of the hub (`void`, again every EG_VOID_ASK_MS, across reloads); a
 //     receipt the hub holds for me heard at my hello like any other; and each receipt the service has counted said to the
 //     hub (`claimed`), which forgets its copy.
+//   EG-ZF (2026-10-12, Mac: "I said I want everything"; sections 27.6 and 27.7): THE RECAP WHOLE AND THE ACCOUNT'S MEMORY -
+//     THE DAMAGE CHART at a lord's fall (the gate's own, ui/gateDamageChart.js, off the room's `dm`), what my companions'
+//     spells healed in me said to the room (`heal`, for the chart's Healed column and each member's healing), the board's
+//     line from my end's claim on the recap, and the first-time lines once an account (the service's bits over the device's).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
@@ -111,6 +115,11 @@ import { egFallModel, drawEgFall, EG_FALL_MS, EG_FALL_TEXT } from '../ui/egSpire
 import { egSupportAt, EG_HOLD } from '../net/egFair.js';
 import { anchoredClock } from '../render/deadlands.js';
 import { createSpireMix } from '../systems/egMix.js';
+// EG-ZF (sections 27.6 and 27.7): the lord's fall's chart, the board's line, the heal word's bounds, the first bits over an account
+import { damageChartModel, drawGateDamageChart, DAMAGE_CHART_DELAY_MS, DAMAGE_CHART_MS } from '../ui/gateDamageChart.js';
+import { egChartFell, egBoardLine, egRecapBoardKeep } from '../ui/egHud.js';
+import { egFirstOver } from '../ui/egBeats.js';
+import { GATE_HEAL_ROWS_MAX, GATE_HEAL_WIRE_MAX } from '../net/wire.js';
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -139,6 +148,10 @@ export const EG_OPEN_TRIES = 4;
 export const EG_COUNT_FELL_TEXT = 'The Spire counts you fallen.';
 /** A second press of the way home within this long walks (ms). */
 export const EG_HOME_CONFIRM_MS = 6000;
+/** EG-ZF: what my companions healed in me goes to the room at most this often (ms - the gate court's HEAL_SEND_MS). */
+export const EG_HEAL_SEND_MS = 1000;
+/** EG-ZF: the breaches whose board's line this screen holds for a recap still to be made. */
+const EG_RECAPS_BOARDS = 8;
 /** EG-H2 (section 22, THE LAW PIN): how often a hall of the breach's own law is asked again while unanswered (ms), and
  *  what a member whose law is not the breach's is told, once a breach. */
 export const EG_SPEC_ASK_MS = 3000;
@@ -340,6 +353,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (a?.ok) restack(a.data?.keys);
     if (a?.ok && typeof a.data?.rk === 'string') rk = a.data.rk;   // EG-F: the relay's public half
     if (a?.ok) backHeard(a.data?.live ?? null);   // EG-ZD (section 22): the account's live breach - THE WAY BACK
+    // EG-ZF (section 27.7): the first-time lines the account has heard - read over the device's; a line this screen showed
+    // that the account has not heard yet is told it again
+    if (a?.ok && Number.isSafeInteger(a.data?.first) && a.data.first >= 0) { pres.acct = a.data.first; if (pres.shown & ~pres.acct) tellFirst(); }
   }
   /** EG-F: THE RELAY'S PUBLIC HALF, imported once it is heard (a stranger's arch is believed only when the hub's signature
    *  over it verifies - net/egCallSig.js). Null until then. */
@@ -530,6 +546,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         // the Marks, the deed, the embers), and the spoils it rolls; a re-claim answers the same (`again`), a guest's its
         // gold alone. Never for a Rehearsal (the service pays none).
         if (a?.ok && c.q === 'w' && c.rh !== 1 && (a.data?.recorded || a.data?.again || a.data?.why === 'guest')) paid?.(c, a.data);
+        if (a?.ok && c.q === 'x' && a.data?.board) boardHeard(c.b, a.data.board);   // EG-ZF (section 27.6): the board's line on the recap
         if (egClaimDone(a)) { drop(); hub()?.sendEg?.('claimed', { b: c.b, q: c.q, w: c.q === 'w' ? c.w : 0 }); }   // EG-ZA: the hub forgets its held copy
       }
     } finally { flushing = false; }
@@ -663,9 +680,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (mine?.alive) relHeld = egRunOfMember(E, me()).rel;   // EG-ZD (section 16.5): what a fall would cost
     if (mine && mine.forsaken) { if (!leaving) { witness = null; backDrop(E.b); walkOut(EG_END_TEXT.forsake); } return; }
     if (mine && !mine.alive && !witness && !leaving) enterWitness(t, false);
-    if (mine && mine.home) { witness = null; backDrop(E.b); if (!leaving && endSeen !== 'home') { endSeen = 'home'; recap = egRecapModel(E, me(), log, t, { whyText: EG_END_TEXT.home, why: 'home' }); recapUntil = Date.now() + 30_000; recapOpened(); } walkOut(null); return; }   // EG-G1: a member who walks home reads the recap too (section 27.6)
+    if (mine && mine.home) { witness = null; backDrop(E.b); if (!leaving && endSeen !== 'home') { endSeen = 'home'; recap = egRecapModel(E, me(), log, t, { whyText: EG_END_TEXT.home, why: 'home', board: boards.get(E.b) ?? '' }); recapUntil = Date.now() + 30_000; recapOpened(); } walkOut(null); return; }   // EG-G1: a member who walks home reads the recap too (section 27.6)
     if (E.end) {
-      if (endSeen !== E.end) { endSeen = E.end; endAt = t; backDrop(E.b); mid(EG_END_TEXT[E.end] ?? EG_TEXT.ended); recap = egRecapModel(E, me(), log, t, { whyText: EG_END_TEXT[E.end] ?? '' }); recapUntil = Date.now() + 30_000; recapOpened(); }
+      if (endSeen !== E.end) { endSeen = E.end; endAt = t; backDrop(E.b); mid(EG_END_TEXT[E.end] ?? EG_TEXT.ended); recap = egRecapModel(E, me(), log, t, { whyText: EG_END_TEXT[E.end] ?? '', board: boards.get(E.b) ?? '' }); recapUntil = Date.now() + 30_000; recapOpened(); }
       if (t - endAt >= EG_END_WALK_MS) { if (witness) { witness = null; entity.health = Math.max(1, entity.health); } walkOut(null); }
       return;
     }
@@ -857,7 +874,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   /** the beats' watch, the device's first-time bits, the warnings said this breach, who is unseen, the perils and the
    *  Beat already pulsed, a gain in flight, a teaching line, the live line, the arrival card, the pad's choice, the
    *  folded decrees, the recap's Reliquaries opened so far */
-  const pres = { memo: egBeatMemo(), bits: -1, said: new Set(), b: null, absent: new Map(), perils: new Set(), perilH: 0, beatCycle: -1,
+  const pres = { memo: egBeatMemo(), acct: /** @type {number|null} */ (null), shown: 0, said: new Set(), b: null, absent: new Map(), perils: new Set(), perilH: 0, beatCycle: -1,
     gain: null, first: '', firstAt: 0, live: '', card: null, cardH: 0, cardAt: 0, cardFirst: true, prevSp: -1, focus: 0, foldOpen: false, rel: 0, relAt: 0, touch: /** @type {boolean|null} */ (null),
     pingAt: 0, sightH: 0 };   // EG-ZE: the newest ping heard, the hall the witness's sight was said for
   /** How long a teaching line stands under the objective (ms). */
@@ -873,13 +890,26 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (words) pres.live = words;
     return plan;
   }
-  /** THE FIRST BREACH: each line due, once a device - in the chat and under the objective. */
+  /** EG-ZF (section 27.7): THE FIRST-TIME BITS IN FORCE - the account's over the device's, with what this screen showed. */
+  const firstBits = () => egFirstOver(egFirstRead(store), pres.acct, pres.shown);
+  /** EG-ZF: lines newly shown - kept on the device, and told the account (signed in: the service ORs them, so a word lost
+   *  is carried by the next, or by the next balance's answer). */
+  function firstShown(fresh) {
+    pres.shown |= fresh;
+    egFirstWrite(store, egFirstRead(store) | fresh);
+    tellFirst();
+  }
+  async function tellFirst() {
+    if (!me() || account?.guest?.() || typeof account?.first !== 'function') return;
+    try { const a = await account.first(firstBits()); if (a?.ok && Number.isSafeInteger(a.data?.first) && a.data.first >= 0) pres.acct = a.data.first; } catch { /* told again with the next line */ }
+  }
+  /** THE FIRST BREACH: each line due, once an account (EG-ZF - once a device where no account answers) - in the chat and
+   *  under the objective. */
   function teach(keys) {
     if (!keys.length) return;
-    if (pres.bits < 0) pres.bits = egFirstRead(store);
-    const { due, bits } = egFirstDue(pres.bits, keys);
+    const before = firstBits(), { due, bits } = egFirstDue(before, keys);
     if (!due.length) return;
-    pres.bits = bits; egFirstWrite(store, bits);
+    firstShown(bits & ~before);
     for (const line of due) say(line);
     pres.first = due.at(-1); pres.firstAt = now(); pres.live = pres.first;
   }
@@ -950,11 +980,10 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (witness && E.h > 0 && pres.sightH !== E.h) { pres.sightH = E.h; const line = egWitnessTwist(E); if (line) { say(EG_LIGHTS_TEXT.sight(line)); pres.live = EG_LIGHTS_TEXT.sight(line); } }
     if (pres.prevSp >= 0 && (E.sp ?? 0) > pres.prevSp) pres.gain = { text: EG_PRES_TEXT.surplus, blue: true, at: t };
     pres.prevSp = E.sp ?? 0;
-    // THE REHEARSAL's teaching, once a device
+    // THE REHEARSAL's teaching, once an account (EG-ZF - a device where none answers)
     if (E.rh && E.wk > 0 && E.sg === 'trial') {
-      if (pres.bits < 0) pres.bits = egFirstRead(store);
-      const r = egRehearsalDue(pres.bits);
-      if (r.line) { pres.bits = r.bits; egFirstWrite(store, r.bits); say(r.line); pres.first = r.line; pres.firstAt = t; }
+      const before = firstBits(), r = egRehearsalDue(before);
+      if (r.line) { firstShown(r.bits & ~before); say(r.line); pres.first = r.line; pres.firstAt = t; }
     }
     // THE COUNT CHIP's warnings, each once a count
     for (const k of egChipWarnings(pres.said, E, t)) {
@@ -1015,6 +1044,48 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (id === 'forsake') { api.command('forsake'); return true; }
     if (id === 'home') return api.wayHome();
     return false;
+  }
+
+  // ── EG-ZF (section 27.6): THE RECAP WHOLE - the lord's fall's chart, the healing, the board's line ──────────────────
+  /** THE DAMAGE CHART AT A LORD'S FALL - the gate's own (ui/gateDamageChart.js), its crystals' column the lord's part, from
+   *  a beat after the fall for DAMAGE_CHART_MS, a readout to the side; the next fall's in its place; put away when its time
+   *  is up, or with the breach. Drawn from the online frame in every mode (an end's chart outlives the walk out). */
+  let chart = null, chartFor = null;
+  function chartFrame(E) {
+    const C = E.chart;   // a new fall's chart is a new word (net/egLink.js folds each `rd` and end into its own)
+    if (C && C !== chartFor) {
+      chartFor = C;
+      const spec = egHallOf(E.seed, C.h, E.geo ?? 0), L = EG_LORDS[spec.lord];
+      chart = { at: Date.now(), fell: egChartFell(E), lord: L?.name ?? EG_TEXT.name, plural: spec.lord === 'twins', me: egMemberOf(E, me())?.name ?? null };
+    }
+    if (!chart) return;
+    const model = damageChartModel(chart.fell, { boss: chart.lord, me: chart.me, since: chart.at, now: Date.now(), crystals: EG_PRES_TEXT.chartLord });
+    if (model) model.sub = EG_PRES_TEXT.chartSub(chart.lord, chart.fell?.n ?? 0, chart.plural);
+    drawGateDamageChart(model, { hidden: hudHidden() });
+    if (!model && Date.now() - chart.at >= DAMAGE_CHART_DELAY_MS + DAMAGE_CHART_MS) { chart = null; drawGateDamageChart(null); }
+  }
+  function chartAway() { if (chart) { chart = null; drawGateDamageChart(null); } }
+  /** WHAT MY COMPANIONS' SPELLS HEALED IN ME, owed to each caster by peer id since my last word to the room (the gate
+   *  court's GATE-HEAL way): whole points, each caster once, the fractions kept for the next. */
+  const healOwed = new Map();
+  let healSentAt = -Infinity;
+  function healSend(t) {
+    healSentAt = t;
+    const h = [];
+    for (const [by, n] of healOwed) if (n >= 1 && h.length < GATE_HEAL_ROWS_MAX) h.push([by, Math.min(Math.floor(n), GATE_HEAL_WIRE_MAX)]);
+    if (!h.length || !online()?.sendEg?.('heal', { h })) return;
+    for (const [by, n] of h) { const left = healOwed.get(by) - n; if (left > 0) healOwed.set(by, left); else healOwed.delete(by); }
+  }
+  /** THE BOARD'S LINE from my end's claim (server-account/src/egHonours.js egStandingOf), on that breach's recap - the one
+   *  standing, the one kept, and one still to be made. */
+  const boards = new Map();
+  function boardHeard(b, board) {
+    const line = egBoardLine(board);
+    if (!line) return;
+    boards.set(b, line);
+    if (boards.size > EG_RECAPS_BOARDS) boards.delete(boards.keys().next().value);
+    if (recap?.b === b && recap.board !== line) recap = { ...recap, board: line };
+    egRecapBoardKeep(store, b, line);
   }
 
   // ── EG-H2 (section 22, THE LAW PIN): a breach opened under another law than mine ─────────────────────────────
@@ -1183,6 +1254,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         fight ??= makeFight(link);
         fight?.frame();
         presFrame(link.state(), t);   // EG-G1
+        if (healOwed.size && Date.now() - healSentAt >= EG_HEAL_SEND_MS) healSend(Date.now());   // EG-ZF: what my companions healed in me, out
       } else {
         presAway();   // EG-G1
         if (fight) { fight.leave(); }
@@ -1191,6 +1263,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         if (door || portal) dropDoor();
       }
       drawEgHud(inSpire() ? null : egHudModel(link.state(), me(), t, { inSpire: false, witness: !!witness, potions }), { hidden: hudHidden() });   // EG-G1: inside, the Spire's HUD
+      chartFrame(link.state());   // EG-ZF (section 27.6): the lord's fall's chart
       if (recap && Date.now() > recapUntil) recap = null;
       if (recap && pres.rel < (recap.opened ?? 0) && Date.now() - pres.relAt >= 400) { pres.rel++; pres.relAt = Date.now(); playSound(EG_BEAT_SOUNDS.rare); }   // EG-G1: one each 400 ms, the Rare chime
       const panelModel = inSpire() ? egPanelModel(link.state(), me(), t, voted) : null;
@@ -1306,7 +1379,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** The pages of the Annals this breach has given me (their numbers). */
     annals: () => [...annals].sort((a, b) => a - b),
     /** Online gone: every piece put away (the call kept - it is the hub's). */
-    away() { fight?.leave(); if (look) { look.release(); look = null; } dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } callPortal?.clear?.(); prompt?.draw?.(null); startWin?.close?.(); startWin = null; },   // EG-F: and the call's portal, its prompt, the start window; EG-G2: the look released
+    away() { fight?.leave(); if (look) { look.release(); look = null; } chartAway(); healOwed.clear(); dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } callPortal?.clear?.(); prompt?.draw?.(null); startWin?.close?.(); startWin = null; },   // EG-F: and the call's portal, its prompt, the start window; EG-G2: the look released
     /** EG-H1: the breach's shared clock (relay ms) and its offset to this machine's wall clock (null before the room has
      *  answered a ping) - the host's spans and its fight read it (scenes/world.js's `egNow`, the spans' anchored clock). */
     sharedNow: () => now(),
@@ -1399,6 +1472,14 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     touchAct: (id) => touchAct(id),
     /** A beat said from outside the breach's words (a Weir Key found - section 27.5). */
     beat: (k) => beatNow(k),
+    /** EG-ZF (section 27.6): ANOTHER'S SPELL HEALED ME `n` points (the host's ally cast - the health that moved; scenes/world.js
+     *  onCast, as the gate court's healedBy), `id` the caster's peer id in the room: owed to them, said to the room. False
+     *  outside the Spire, as a witness, or for nothing. */
+    healedBy(id, n) {
+      if (!inSpire() || witness || !(n > 0) || typeof id !== 'string' || !id) return false;
+      healOwed.set(id, (healOwed.get(id) ?? 0) + n);
+      return true;
+    },
   };
   return api;
 }

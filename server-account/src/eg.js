@@ -39,6 +39,13 @@
 // dungeon's tier, and the service rolls the key with its own die - bounded, never believed: a handle and a proven account,
 // EG_FIND_PER_DAY asks a tier a real day, EG_FIND_KEYS_PER_WEEK keys a week from finds (`eg_finds`, migration 0111).
 //
+// ═══ THE FIRST-TIME LINES AND THE RECAP'S BOARD LINE (EG-ZF) ═══════
+//
+// Section 27.7's first-time lines are said once an account: the lines a client has shown are OR'ed onto the account's row
+// (`players.eg_first`, a bit a line - `/v1/eg/first`, egFirstSay) and answered on `/v1/eg/keys` (`first`), so a new
+// device says none again. Section 27.6's board line: an end's claim answers the member's standing (`board` - egHonours.js
+// egStandingOf). And First of the Spire's letter goes to a listed account at its keys' read (egHonours.js egFirstPost).
+//
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js.
 // ═══════════════════════════════════════════════════════════════════
 
@@ -46,6 +53,7 @@ import { verifyEgReceipt } from '../../src/net/egReceipt.js';
 import { mintEgOrder } from '../../src/net/identityToken.js';
 import { utcDay } from '../../src/net/marksLaw.js';
 import { egHonourStatements, egHonoursAnswer, egRecordOf } from './egHonours.js';   // EG-E2: the feats, the Annals, the honours
+import { egStandingOf, egFirstPost } from './egHonours.js';   // EG-ZF: the recap's board line; First of the Spire's letter
 import { egRedoubtPay, egReliquariesOf, egSinkOf } from './egEconomy.js';   // EG-E1: what a Redoubt pays, the sink
 import { arenaWeekOf } from '../../src/net/arenaLaw.js';   // EG-E3: the week a find's keys are capped by, the arena's
 import { egMayStart, egWagerOf } from '../../src/net/egStartLaw.js';   // EG-F: the start Redoubt and the Wager, held at the open and every admission
@@ -71,6 +79,9 @@ export const EG_FIND_PER_DAY = 6;
 export const EG_FIND_KEYS_PER_WEEK = 2;
 /** A request id an open is idempotent on, a breach id, an order id. */
 export const EG_RQ_RE = /^[a-z0-9]{16,32}$/;
+/** EG-ZF (section 27.7): the first-time lines' bits the account keeps - sixteen, room past the page's nine and the
+ *  Rehearsal's own (src/ui/egBeats.js EG_FIRST_KEYS, EG_FIRST_REHEARSAL_BIT). */
+export const EG_FIRST_BITS_MAX = 0xffff;
 const BREACH_RE = /^[0-9a-f]{16}$/;
 
 const int = (v) => (Number.isSafeInteger(Number(v)) ? Number(v) : 0);
@@ -84,20 +95,37 @@ async function proven(db, id) {
   return int(r?.ok) === 1;
 }
 async function playerRow(db, id) {
-  return db.prepare('SELECT eg_keys, eg_key_miss, eg_live_b, eg_live_until, eg_rh_day, eg_mercy FROM players WHERE id = ?1').bind(id).first();
+  return db.prepare('SELECT eg_keys, eg_key_miss, eg_live_b, eg_live_until, eg_rh_day, eg_mercy, eg_first FROM players WHERE id = ?1').bind(id).first();
 }
 
 /**
- * THE BALANCE AND THE LIVE BREACH - `{ keys, live, rehearsal, proven, redoubts, sink, annals, feats }`: the Weir Keys held,
- * the breach the account is in (`{b, until}`, or null), whether the day's Rehearsal is still free, whether it may stake a
- * key, the Redoubts it has taken, (EG-E1) the week's Panoply sink - `{ week, piece }`, the piece null until one is bought -
- * and (EG-E2) the Annals' pages it keeps and each lord's feats (egHonours.js egRecordOf).
- * @param {{ db: any, nowS: number }} ctx @param {{ id: string }} player
+ * THE BALANCE AND THE LIVE BREACH - `{ keys, live, rehearsal, proven, redoubts, sink, annals, feats, first }`: the Weir Keys
+ * held, the breach the account is in (`{b, until}`, or null), whether the day's Rehearsal is still free, whether it may
+ * stake a key, the Redoubts it has taken, (EG-E1) the week's Panoply sink - `{ week, piece }`, the piece null until one is
+ * bought - (EG-E2) the Annals' pages it keeps and each lord's feats (egHonours.js egRecordOf), and (EG-ZF) the first-time
+ * lines it has been shown (`first`, a bit a line). EG-ZF: an account First of the Spire's list names is sent its letter,
+ * once (egHonours.js egFirstPost - `env` the service's config).
+ * @param {{ db: any, nowS: number }} ctx @param {{ id: string, handle?: string|null }} player @param {any} [env]
  */
-export async function egKeysOf({ db, nowS }, player) {
+export async function egKeysOf({ db, nowS }, player, env = null) {
   const row = await playerRow(db, player.id);
   const rd = await db.prepare('SELECT COUNT(*) AS n FROM eg_redoubts WHERE account = ?1').bind(player.id).first();
-  return { keys: int(row?.eg_keys), live: liveOf(row, nowS), rehearsal: int(row?.eg_rh_day) !== utcDay(nowS), proven: await proven(db, player.id), redoubts: int(rd?.n), sink: await egSinkOf({ db, nowS }, player), ...(await egRecordOf(db, player.id)) };
+  await egFirstPost(db, player, env, nowS);
+  return { keys: int(row?.eg_keys), live: liveOf(row, nowS), rehearsal: int(row?.eg_rh_day) !== utcDay(nowS), proven: await proven(db, player.id), redoubts: int(rd?.n), sink: await egSinkOf({ db, nowS }, player), ...(await egRecordOf(db, player.id)), first: int(row?.eg_first) };
+}
+/**
+ * EG-ZF (section 27.7): THE FIRST-TIME LINES SHOWN (`{ bits }`, a bit a line - the client's lines in force), OR'ed onto
+ * the account's row: a line once shown is held for good, and a bit asked again changes nothing. Answers `{ first }` (the
+ * account's bits after), or `{ error }`: `guest` (no account to remember for - the device keeps its own), `bits` (not a
+ * whole number of EG_FIRST_BITS_MAX's sixteen bits).
+ * @param {{ db: any }} ctx @param {{ id: string, handle?: string|null }} player @param {any} body
+ */
+export async function egFirstSay({ db }, player, body) {
+  if (!player.handle) return { error: 'guest' };
+  const bits = body?.bits;
+  if (!Number.isSafeInteger(bits) || bits < 0 || bits > EG_FIRST_BITS_MAX) return { error: 'bits' };
+  const row = await db.prepare('UPDATE players SET eg_first = eg_first | ?2 WHERE id = ?1 RETURNING eg_first').bind(player.id, bits).first();
+  return { first: int(row?.eg_first) };
 }
 
 /**
@@ -254,7 +282,7 @@ export async function claimEg({ db, nowS, subtle, rand }, player, receipt, publi
       ...egReceiptRest(db, player, c),   // EG-ZA: the company, as the Descent keeps a company one row
     ]);
     recorded = Number(row?.meta?.changes ?? 0) > 0;
-    said = await egReliquariesOf({ db, nowS }, player, c);   // EG-E1: the Reliquaries it opens, by the week's pay
+    said = { ...(await egReliquariesOf({ db, nowS }, player, c)), ...(await egStandingOf(db, player, c)) };   // EG-E1: the Reliquaries it opens, by the week's pay; EG-ZF: the member's standing - the recap's board line
   } else {
     // a void: the stake back (once - the stake's own state guards it) and the live breach cleared; answered as recorded
     // however often it is carried
