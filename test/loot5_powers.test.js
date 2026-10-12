@@ -185,7 +185,7 @@ test('LOOT5: the landed strike - chain, quake, echo, open hand, conduit', () => 
   wear(me4, legendary('gauntlets-of-the-rose'));
   const d5 = door([rec('struck', struck, 0)], me4);
   LP.lootStrike(me4, struck, 7, null);
-  assert.deepEqual(d5.hurts, [['struck', 7]], 'a bare-handed blow lands twice');
+  assert.deepEqual(d5.hurts, [['struck', 4]], 'a bare-handed blow lands again - PIN MOVED (BAL7, bible/05-Combat/Balance-Arc.md section 13): for half (3.5, a whole 4)');
   LP.lootStrike(me4, struck, 7, createWeapon(120, 0, () => 0.5));
   assert.equal(d5.hurts.length, 1, 'a weapon\'s does not');
   fresh();
@@ -290,10 +290,10 @@ test('LOOT5: death, the vigil, the kill, the round, the absorption, the find', (
   me = player(); wear(me, legendary('mark-of-the-hist'));
   me.health = 60;
   LP.lootRound(me);
-  assert.equal(me.health, 62, '2% a round');
+  assert.equal(me.health, 61, '1% a round - PIN MOVED (BAL7, Balance-Arc.md section 13): halved, it was 2%');
   me.health = 40;
   LP.lootRound(me);
-  assert.equal(me.health, 44, '4% under half');
+  assert.equal(me.health, 42, '2% under half (it was 4%)');
   fresh();
   me = player(); wear(me, legendary('reachmans-torc'));
   assert.equal(LP.lootAbsorbChance(me), 15);

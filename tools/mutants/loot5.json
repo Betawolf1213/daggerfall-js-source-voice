@@ -137,8 +137,8 @@
   {
     "name": "LOOT5-open-hand-on-a-sword",
     "file": "src/systems/lootPowers.js",
-    "old": "      case 'fists': if (!weapon) again(target, damage); break;",
-    "new": "      case 'fists': again(target, damage); break;",
+    "old": "      case 'fists': if (!weapon) again(target, (damage * p.share) / 100); break;   // BAL7: for half (the record's share)",
+    "new": "      case 'fists': again(target, (damage * p.share) / 100); break;   // BAL7: for half (the record's share)",
     "tests": [
       "test/loot5_powers.test.js"
     ]

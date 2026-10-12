@@ -25,6 +25,8 @@
 //     draws), never the claim's own word alone.
 //   - A CAST: at most 3 damaging a 5 seconds, each to 60; a heal to 40,
 //     three a 5 seconds of its own.
+//   - BAL8: EVERY HARM, blows and casts together, at most 180 in any 5
+//     seconds (SIEGE_HARM - the casts' own ceiling, every striker's).
 //   - A STEP: no faster than 18 m/s and half a metre (MEASURED below) -
 //     AUDIT-SEATS R1/R2: its run and its climb together, on an allowance
 //     the fighter carries (a second's run and the slack at most); past it
@@ -68,6 +70,12 @@ export const SIEGE_BLOWS_HZ = 4;
  *  its own (DECIDED here: 6.1 clamped a heal's size and named no rate, and at the frame gate's 8 a second an unbounded heal
  *  is 320 a second - a fighter nobody can fell; the referee has no unbounded verb). */
 export const SIEGE_CASTS = Object.freeze({ max: 3, windowMs: 5000, damageMax: 60, healMax: 40 });
+/** BAL8 (bible/05-Combat/Balance-Arc.md section 14): ONE CEILING FOR EVERY STRIKER. INT10 bounded a caster at 3 casts of
+ *  60 in 5 s - 180, 36 a second - and a striker with a blade or a bare hand at nothing past 4 blows a second and one blow's
+ *  bucket, which no measured blow came near (the highest of 40,000 was 54): a kitted monk's 45.8 a second felled a
+ *  fighter in 8.3 s, where the mage's ceiling takes 10.6. Every harm a fighter deals - blows and casts together, so a
+ *  blade and a spell are never two ceilings - is held to the casts' own: at most `max` in any `windowMs`. */
+export const SIEGE_HARM = Object.freeze({ max: SIEGE_CASTS.max * SIEGE_CASTS.damageMax, windowMs: SIEGE_CASTS.windowMs });
 /**
  * THE STEP (6.1): the fastest a fighter may move across the ground, and the slack a step earns, in metres. MEASURED (6.1:
  * "the fastest legal run the motor allows with every Speed buff ... the ceiling 25% above it"): player/motor.js runSpeed
@@ -187,7 +195,7 @@ export function siegeHeld(look, w, m) {
 /** A fighter's state as the room keeps it. */
 export const newFighter = (lv, now) => {
   const max = siegeVitality(lv);
-  return { lv: Math.max(1, Math.min(SIEGE_VITALITY.levelMax, Math.trunc(Number(lv) || 1))), hp: max, max, down: false, upAt: 0, safeTo: 0, rate: SIEGE_BLOWS_HZ, rateAt: now, casts: [], heals: [], dealt: 0, clipped: 0 };
+  return { lv: Math.max(1, Math.min(SIEGE_VITALITY.levelMax, Math.trunc(Number(lv) || 1))), hp: max, max, down: false, upAt: 0, safeTo: 0, rate: SIEGE_BLOWS_HZ, rateAt: now, casts: [], heals: [], harm: [], dealt: 0, clipped: 0 };
 };
 const metres = (a, b) => Math.hypot((a.x - b.x) / SIEGE_UNITS_PER_M, (a.y - b.y) / SIEGE_UNITS_PER_M, (a.z - b.z) / SIEGE_UNITS_PER_M);
 /** The striker's rate bucket, refilled to `now` (one second deep) - true where a blow may be spent. */
@@ -198,6 +206,12 @@ function spend(f, now) {
   f.rate -= 1;
   return true;
 }
+/** BAL8: the harm the striker may still deal inside SIEGE_HARM's window (its record of `[at, dealt]` pruned to it). */
+export function harmRoom(f, now) {
+  f.harm = (f.harm ?? []).filter((h) => Array.isArray(h) && now - h[0] < SIEGE_HARM.windowMs);
+  return Math.max(0, SIEGE_HARM.max - f.harm.reduce((n, h) => n + h[1], 0));
+}
+const spendHarm = (f, now, n) => { if (n > 0) f.harm.push([now, n]); };
 
 /**
  * A BLOW JUDGED (6.1) - `by` and `to` the two fighters' states, `from` and `at` their last poses (null: unknown), `held`
@@ -222,7 +236,8 @@ export function refereeBlow(by, to, { from = null, at = null, held = null, d = 0
   const reach = (shaft ? SIEGE_REACH.shaft : SIEGE_REACH.melee) + SIEGE_REACH.slack;
   if (metres(from, at) > reach) return { ok: false, dealt: 0, fell: false, why: 'reach' };
   const want = Math.max(0, Math.trunc(Number(d) || 0));
-  const got = Math.min(want, siegeBlowMax(held.w, held.m, wa), to.hp);
+  const got = Math.min(want, siegeBlowMax(held.w, held.m, wa), to.hp, harmRoom(by, now));   // BAL8: and the striker's harm ceiling
+  spendHarm(by, now, got);
   by.clipped += want - got;
   by.dealt += got;
   to.hp -= got;
@@ -257,7 +272,8 @@ export function refereeCast(by, to, { from = null, at = null, d = 0, heal = fals
   if (by.casts.length >= SIEGE_CASTS.max) return { ok: false, dealt: 0, fell: false, why: 'rate' };
   by.casts.push(now);
   if (now < to.safeTo) return { ok: false, dealt: 0, fell: false, why: 'protected' };
-  const got = Math.min(want, SIEGE_CASTS.damageMax, to.hp);
+  const got = Math.min(want, SIEGE_CASTS.damageMax, to.hp, harmRoom(by, now));   // BAL8: the blows' and the casts' one ceiling
+  spendHarm(by, now, got);
   by.clipped += want - got;
   by.dealt += got;
   to.hp -= got;

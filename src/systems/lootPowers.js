@@ -17,7 +17,8 @@
 //               hand's blow at its kind of foe (DFU's own four groups:
 //               combat/formulas.js enemyEntityGroup)
 //   leech       a STRIKE listener (the blow that LANDED, its final
-//               damage): that share of it heals me, the fraction carried
+//               damage): that share of it heals me, the fraction carried,
+//               a weapon's lines and gems summed under LEECH_CAP (BAL7)
 //   thorns      a LANDED-BLOW listener (sigilSetPowers.js - the one law
 //               of a foe's blow that took my health): the foe takes that
 //               much back, all I wear summed under THORNS_CAP - and never
@@ -77,6 +78,11 @@ export const FOCUS_CAP = 30;
 export const SPELL_CUT_MOST = 50;
 /** CAST-SPEED: all the casting speed a wearer's pieces sum to, at most (%). */
 export const CAST_SPEED_CAP = 30;
+/** BAL7 (bible/05-Combat/Balance-Arc.md section 13): all the leech a weapon's lines and gems sum to, at most (%) - the
+ *  top of a Legendary line's band, as THORNS_CAP is. Summed uncapped, an Exalted line and a Perfect Emerald healed 17% of
+ *  every landed blow, and the heal grew with every point of offence: the measured kit without a guard went from 6.6
+ *  Ancient Liches in a Dragon's Den before it fell to 49.7. */
+export const LEECH_CAP = 10;
 
 const mine = (e) => !!e?.isPlayer && !e.peer;
 /** A piece's valid lines of one kind - none with the switch off (off is DFU exactly). */
@@ -226,6 +232,7 @@ export function lootStrike(attacker, target, damage, weapon) {
   if (!mine(attacker) || !(damage > 0) || !target || target.isPlayer) return;
   let pct = 0;
   for (const a of linesOf(weapon, 'leech')) pct += a.value;
+  pct = Math.min(LEECH_CAP, pct);   // BAL7
   if (pct > 0) healMine(attacker, (damage * pct) / 100);
   // LOOT5: the powers that answer a blow that landed
   const now = _now();
@@ -234,7 +241,7 @@ export function lootStrike(attacker, target, damage, weapon) {
       case 'chain': if (ranged(weapon)) arc(target, (damage * p.share) / 100, p.metres); break;
       case 'quake': if (weapon && !ranged(weapon)) quake(target, (damage * p.share) / 100, p.metres); break;
       case 'echo': if (_rand() * 100 < p.chance) again(target, damage); break;
-      case 'fists': if (!weapon) again(target, damage); break;
+      case 'fists': if (!weapon) again(target, (damage * p.share) / 100); break;   // BAL7: for half (the record's share)
       case 'conduit': gainMana(attacker, p.mana); break;
       case 'flow': _s.flow = Math.min(p.max, flowStacks(now) + 1); _s.flowUntil = now + p.seconds; break;
       case 'toll': if (weapon) { _tolls.set(weapon, ((_tolls.get(weapon) ?? 0) + 1) % p.every); _lastToll = { foe: target, at: now }; } break;   // GILDED1

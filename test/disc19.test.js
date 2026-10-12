@@ -28,7 +28,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createLycanthropyCurse, liveLycanthropy, cureLycanthropy } from '../src/systems/lycanthropy.js';
+import { createLycanthropyCurse, liveLycanthropy, cureLycanthropy, morphSelf } from '../src/systems/lycanthropy.js';
 import { createVampirismCurse, liveVampirism, cureVampirism } from '../src/systems/vampirism.js';
 import { endDisease } from '../src/systems/diseases.js';
 import { LYCANTHROPY_TYPES, VAMPIRE_CLANS, INFECTION, startInfection, liveInfection } from '../src/systems/infection.js';
@@ -66,7 +66,7 @@ const reload = (p, minutes) => { const q = { isPlayer: true }; restorePlayer(q, 
 const live = (e) => liveLycanthropy(e) ?? liveVampirism(e);
 
 test('DISC19-A: a werewolf and a vampire who have lived a round come back from a load still cursed - through the next rounds offline, and through the online arrival', () => {
-  for (const make of [(p) => createLycanthropyCurse(p, LYCANTHROPY_TYPES.Werewolf, { now: T0 }), (p) => createVampirismCurse(p, VAMPIRE_CLANS.Lyrezi, { now: T0 })]) {
+  for (const make of [(p) => { const e = createLycanthropyCurse(p, LYCANTHROPY_TYPES.Werewolf, { now: T0 }); morphSelf(p, { force: true, nowMinutes: T0 }); return e; }, (p) => createVampirismCurse(p, VAMPIRE_CLANS.Lyrezi, { now: T0 })]) {   // PIN MOVED (BAL6, bible/05-Combat/Balance-Arc.md section 12): the werewolf's mods are the beast's - it changes before it lives its rounds
     setWorldMinutes(T0); resetMagicRoundMarker(null);
     const p = mortal();
     const racial = make(p).racial;

@@ -31,7 +31,7 @@ import { sheetModel } from '../src/ui/enhancedCharSheet.js';
 import { SKILLS, SKILL_NAMES, skillValue, permanentSkillValue } from '../src/systems/skills.js';
 import { createCharacter } from '../src/systems/chargen.js';
 import {
-  createLycanthropyCurse, lycanthropyMagicRound, LYCANTHROPE_SKILL_MOD, LYCANTHROPE_SKILLS,
+  createLycanthropyCurse, lycanthropyMagicRound, morphSelf, LYCANTHROPE_SKILL_MOD, LYCANTHROPE_SKILLS,
 } from '../src/systems/lycanthropy.js';
 import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 import { isFullMoonFromMinutes, MINUTES_PER_DAY, CLASSIC_GAME_START_TIME } from '../src/systems/gameDate.js';
@@ -83,6 +83,7 @@ function lycanthrope() {
   const p = { isPlayer: true, reflexes: 2, items: [], activeEffects: [] };
   createCharacter(p, CAREER, 16, { rolls: seq(0) });
   createLycanthropyCurse(p, LYCANTHROPY_TYPES.Werewolf, { now: QUIET });
+  morphSelf(p, { force: true, nowMinutes: QUIET });   // PIN MOVED (BAL6, bible/05-Combat/Balance-Arc.md section 12): the +30 is the beast's - the fixture changes
   lycanthropyMagicRound(p, { nowMinutes: QUIET });
   setSpellRecordsByIndex(null);
   return p;

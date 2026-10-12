@@ -82,7 +82,7 @@ test('PVP-REF THE BLOW IN THE ROOM: judged on the striker\'s look and both last 
     await say(a, { k: 'blow', to: 'peer-0002', w: 123, m: 9, d: 10, r: 0 });
     assert.equal(sieges(b, 'hp').length, 1, 'out of reach at 8 m');
     await r.pose(b, at(3)); step(1000);
-    for (let i = 0; i < 4; i++) { await say(a, { k: 'blow', to: 'peer-0002', w: 123, m: 9, d: 500, r: 0 }); step(250); }
+    for (let i = 0; i < 24 && !r.room._siege.fighters['acct-peer-0002'].down; i++) { await say(a, { k: 'blow', to: 'peer-0002', w: 123, m: 9, d: 500, r: 0 }); step(500); }   // PIN MOVED (BAL8, bible/05-Combat/Balance-Arc.md section 14): the referee's harm ceiling, 180 in any 5 s - the fall takes longer than four blows
     assert.deepEqual(sieges(eye, 'fell').at(-1), { t: 'siege', k: 'fell', id: 'peer-0002', by: 'peer-0001' });
     const f = r.room._siege.fighters['acct-peer-0002'];
     assert.deepEqual([f.hp, f.down], [0, true]);

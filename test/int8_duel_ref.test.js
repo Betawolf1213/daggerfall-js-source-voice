@@ -97,7 +97,8 @@ test('INT8 THE REFEREE\'S LAW, THE BLOWS: none before the count runs; a strike c
   assert.equal(duelBlow(st, 'acct-a', 'peer-b', { d: 50, held: { w: -1, m: 0 } }, s - 1).why, 'not-live', 'the count');
   const r = duelBlow(st, 'acct-a', 'peer-b', { d: 999, held: { w: 123, m: 9 } }, s);
   assert.deepEqual([r.ok, r.dealt], [true, siegeBlowMax(123, 9)], 'clipped to a Daedric Dai-Katana\'s bucket');
-  const signed = duelBlow(st, 'acct-a', 'peer-b', { d: 999, held: { w: 123, m: 9 }, wa: [16, 0] }, s + 300);
+  const fresh = opened();   // PIN MOVED (BAL8, bible/05-Combat/Balance-Arc.md section 14): a bout of its own - the blow above spent 124 of the 180 the referee's harm ceiling allows in any 5 s
+  const signed = duelBlow(fresh.st, 'acct-a', 'peer-b', { d: 999, held: { w: 123, m: 9 }, wa: [16, 0] }, fresh.bout.startMs);
   assert.equal(signed.dealt, siegeBlowMax(123, 9, [16, 0]), 'INT7: and the pack\'s signed reach');
   assert.equal(duelBlow(st, 'acct-a', 'peer-c', { d: 10, held: { w: -1, m: 0 } }, s + 600).why, 'not-opponent');
   assert.equal(duelBlow(st, 'acct-a', 'peer-b', { d: 10, held: null }, s + 900).why, 'weapon', 'a weapon the look does not hold');
@@ -106,7 +107,7 @@ test('INT8 THE REFEREE\'S LAW, THE BLOWS: none before the count runs; a strike c
   // the fall
   const far = { st, t: s + 10_000 };
   let res;
-  for (let k = 0; k < 20 && !(res?.fell); k++) { far.t += 300; res = duelBlow(st, 'acct-b', 'peer-a', { d: 999, held: { w: -1, m: 0 } }, far.t); }
+  for (let k = 0; k < 40 && !(res?.fell); k++) { far.t += 300; res = duelBlow(st, 'acct-b', 'peer-a', { d: 999, held: { w: -1, m: 0 } }, far.t); }   // PIN MOVED (BAL8): the harm ceiling - more blows to the fall
   assert.equal(res.fell, true);
   assert.equal(bout.a.f.hp, 0);
 });

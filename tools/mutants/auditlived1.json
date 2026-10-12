@@ -169,7 +169,7 @@
   {
     "name": "AUDITLIVED1-F-the-curse-clocks-uncapped",
     "file": "src/systems/save.js",
-    "old": "    for (const k of ['lastKilledInnocent', 'lastCastMorphSelf', 'lastUrgeNotify', 'lastTimeFed']) cap(a, k, own);",
+    "old": "    for (const k of ['lastKilledInnocent', 'lastCastMorphSelf', 'lastMorphHeal', 'lastUrgeNotify', 'lastTimeFed']) cap(a, k, own);",
     "new": "",
     "tests": [
       "test/auditlived1.test.js"

@@ -4016,11 +4016,11 @@ unique different version of the aura, a title named Hour's First, and each the g
   has 11 mutants, all dead.
 
 
-## EG-E2 — the Spire's titles and auras (2026-10-12, acct121, world197)
+## EG-E2 — the Spire's titles and auras (2026-10-12, acct121, world197, world198 past BAL8)
 
 The Elite Breach's honours (`bible/11-Multiplayer/Elite-Gates.md` section 19, THE HONOURS; its EG-E2 record at the end
 of section 20), added as every honour is: the ids last in `identityToken.js` `TITLES` and `AURAS` (the relay's bundle -
-`world197`, unshipped, rehashed), the branches in `titles.js` `titlesHeld`/`aurasHeld`, the words and colours in
+`world197`, unshipped, rehashed; `world198` since the merge past BAL8), the branches in `titles.js` `titlesHeld`/`aurasHeld`, the words and colours in
 `ui/playerBadge.js` (`SPIRE_*`), a look each in `render/auraRing.js`. No glyph (the widest token stays inside the hello).
 - **Titles** (13): `spirewalker` Spirewalker, `beaconlighter` Beacon-Lighter, `kynbane` Kynbane, `unfallen` The Unfallen,
   `lonebeacon` The Lone Beacon, `battlemage` Battlemage of the Spire, `wellheadwalker` Wellhead-Walker, `mastergallery`

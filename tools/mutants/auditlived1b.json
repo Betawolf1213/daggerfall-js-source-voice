@@ -906,8 +906,8 @@
   {
     "name": "AUDITLIVED1B-T7-sv-clamp-feeding-uncapped",
     "file": "src/systems/save.js",
-    "old": "for (const k of ['lastKilledInnocent', 'lastCastMorphSelf', 'lastUrgeNotify', 'lastTimeFed']) cap(a, k, own);",
-    "new": "for (const k of ['lastKilledInnocent', 'lastCastMorphSelf', 'lastUrgeNotify']) cap(a, k, own);",
+    "old": "for (const k of ['lastKilledInnocent', 'lastCastMorphSelf', 'lastMorphHeal', 'lastUrgeNotify', 'lastTimeFed']) cap(a, k, own);",
+    "new": "for (const k of ['lastKilledInnocent', 'lastCastMorphSelf', 'lastMorphHeal', 'lastUrgeNotify']) cap(a, k, own);",
     "tests": [
       "test/auditlived1b_t.test.js"
     ]
@@ -924,8 +924,8 @@
   {
     "name": "AUDITLIVED1B-T7-sv-clamp-kill-uncapped",
     "file": "src/systems/save.js",
-    "old": "for (const k of ['lastKilledInnocent', 'lastCastMorphSelf', 'lastUrgeNotify', 'lastTimeFed']) cap(a, k, own);",
-    "new": "for (const k of ['lastCastMorphSelf', 'lastUrgeNotify', 'lastTimeFed']) cap(a, k, own);",
+    "old": "for (const k of ['lastKilledInnocent', 'lastCastMorphSelf', 'lastMorphHeal', 'lastUrgeNotify', 'lastTimeFed']) cap(a, k, own);",
+    "new": "for (const k of ['lastCastMorphSelf', 'lastMorphHeal', 'lastUrgeNotify', 'lastTimeFed']) cap(a, k, own);",
     "tests": [
       "test/auditlived1b_t.test.js"
     ]

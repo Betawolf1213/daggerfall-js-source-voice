@@ -108,7 +108,7 @@ test('PVP-REF THE BLOW: both standing, the weapon the look holds, its kind its o
   now += 1000;
   assert.equal(refereeBlow(a, b, { from: null, at: at(2), held: dk, d: 1 }, now).why, 'reach', 'a striker with no pose');
   assert.equal(refereeBlow(a, a, { from: at(0), at: at(0), held: dk, d: 1 }, now).why, 'no-fighter');
-  now += 1000;
+  now += 5000;   // PIN MOVED (BAL8, bible/05-Combat/Balance-Arc.md section 14): past the referee's 5 s harm window - the blows above spent its 180
   b.hp = 30;
   const kill = blow({ d: 60 });
   assert.deepEqual([kill.dealt, kill.fell, b.hp, b.down], [30, true, 0, true], 'never past what is left');

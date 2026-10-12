@@ -58,8 +58,9 @@
 // travel rules alone, so a hooded vampire in the street at noon still
 // stood 20 down - the sun's only bite since VAMP-DAY, and the one the
 // player could see. vampirismMagicRound asks racialSunAverse, the one
-// hood law: under a raised hood the street's sun reaches the curse no
-// more than a roof's, and the vampire has DFU's +20.
+// hood law: under a raised hood the street's sun does not reach the
+// curse - BAL6: and the vampire stands at 0 under it, the sun's -20
+// kept off but a roof's +20 not given (Balance-Arc.md section 12).
 //
 // THE QUESTS went live in V2d (racialQuests.js): P0A01L00 on the
 // first 50% hit of the 38-day arm with hasStartedInitialVampireQuest
@@ -111,8 +112,13 @@ export const VAMPIRE_STAT_MOD = 20;
  *  and a dungeon's EnableDungeonParent (:1110). So the penalty asks that same flag through the seam every host
  *  registers (passiveSpecials.js playerInSunlight: worldModes for the street and its buildings, dungeonContext for a
  *  dungeon), and out of the sun - indoors, underground, in a cell, or by night - the vampire has what DFU gives him at
- *  every hour: ApplyVampireAdvantages' +20 (VampirismEffect.cs:349-359). No bonus past it. */
-export const vampireStatMod = (clockMinutes, sunAverse = true) => (sunAverse && playerInSunlight(clockMinutes) ? -VAMPIRE_STAT_MOD : VAMPIRE_STAT_MOD);   // HOOD-SUN: a raised hood (racialSunAverse false) keeps the sun off
+ *  every hour: ApplyVampireAdvantages' +20 (VampirismEffect.cs:349-359). No bonus past it.
+ *  BAL6 (bible/05-Combat/Balance-Arc.md section 12; asked, "Hood only shields"): THE HOOD SHIELDS, IT DOES NOT MAKE IT
+ *  NIGHT. HOOD-SUN gave a raised hood in the street by day the full +20 - the night's bonus at noon, so with a hood the
+ *  curse stood +20 at every hour and everywhere (the measurement's x1.67-2.07 a mortal's damage a second, x0.80-0.89 of
+ *  what it takes). Under a hood in the sun the vampire is neither burned nor blessed: 0. Out of the sun (indoors,
+ *  underground, in a cell, by night) DFU's +20 stands, as Mac asked of the interiors. */
+export const vampireStatMod = (clockMinutes, sunAverse = true) => (playerInSunlight(clockMinutes) ? (sunAverse ? -VAMPIRE_STAT_MOD : 0) : VAMPIRE_STAT_MOD);   // HOOD-SUN: a raised hood (racialSunAverse false) keeps the sun off; BAL6: and gives no bonus in it
 export const VAMPIRE_SKILL_MOD = 30;
 export const VAMPIRE_STATS = Object.freeze(['strength', 'willpower', 'agility', 'endurance', 'personality', 'speed', 'luck']);
 export const VAMPIRE_SKILLS = Object.freeze([
@@ -249,7 +255,7 @@ export function consumeVampirismPending(entity, { now = 0 } = {}) {
  * Intelligence (:295-296). VAMP-DAY: the sun's -20 on the same stats,
  * DFU's +20 out of it - FIELD BUGS 2026-10-01b: by day only where the
  * sun reaches, the host's roof read through vampireStatMod - and
- * HOOD-SUN: never under a raised hood (racialSunAverse)
+ * HOOD-SUN: never under a raised hood (racialSunAverse; BAL6: 0 there)
  * (`nowMinutes` is the world clock, worldTick's `clockMinutes`).
  */
 export function vampirismMagicRound(entity, { nowMinutes = 0, skyMinutes = nowMinutes } = {}) {

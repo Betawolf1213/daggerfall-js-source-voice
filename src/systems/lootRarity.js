@@ -763,7 +763,12 @@ export const RARE_FLAVOURS = Object.freeze({
     { type: T.CastWhenStrikes, param: 53 },   // Hand of Sleep
     { type: T.CastWhenStrikes, param: 52 },   // Vampiric Touch
     { type: T.CastWhenStrikes, param: 33 },   // Wildfire
-    { type: T.VampiricEffect, param: 1 },     // when strikes
+    // BAL7 (bible/05-Combat/Balance-Arc.md section 13): RETIRED, as BAL5 retired Troll's Blood. Vampiric Effect when
+    // strikes heals the wearer every point the blow deals (enchantments.js, DFU's own payload) - DFU prices it at 1,000
+    // of an item maker's points; one random Rare blade took the plain level-20 build in a Dragon's Den from 1.1 kills
+    // before it fell to 50 and counting. A piece that drew it keeps it, the item maker still sells it, and Gortwog's
+    // Cleaver carries it as its record's (a Legendary's enchantment is never a flavour)
+    { type: T.VampiricEffect, param: 1, retired: true },     // when strikes
     { type: T.PotentVs, param: 0 },           // Undead
     { type: T.PotentVs, param: 1 },           // Daedra
     { type: T.PotentVs, param: 2 },           // Humanoid
@@ -1027,8 +1032,10 @@ export const LEGENDARY_POWERS = Object.freeze({
     brief: 'Heal 20% when low (60s)', text: 'When a hurt leaves you under a third of your health, you are healed 20% of it. Recovers in 60 s' }),
   'wayrest-treads': Object.freeze({ name: "Courier's Haste", kind: 'haste', speed: 20, rounds: 2, recover: 10,
     brief: 'Kills: +20 Speed (2 rounds)', text: 'A kill fortifies your Speed by 20 for two magic rounds. Recovers in 10 s' }),
-  'gauntlets-of-the-rose': Object.freeze({ name: 'Open Hand', kind: 'fists',
-    brief: 'Bare-handed blows land twice', text: 'Each of your bare-handed blows that lands strikes again for the same damage' }),
+  // BAL7 (bible/05-Combat/Balance-Arc.md section 13): the second blow lands for half - it was the whole blow again on
+  // every landed fist, the kit's 74 a swing at 3.2x the plain monk's and 4.3-5.5x the plain sword's
+  'gauntlets-of-the-rose': Object.freeze({ name: 'Open Hand', kind: 'fists', share: 50,
+    brief: 'Fists land again for half', text: 'Each of your bare-handed blows that lands strikes again for half its damage' }),
   'mountains-root': Object.freeze({ name: 'Bedrock', kind: 'bedrock', less: 4, max: 5, seconds: 6,
     brief: '-4% damage a hit, up to 5', text: 'Each foe\'s blow that lands on you lessens the blows after it by 4% for 6 s, up to five times' }),
   'ravens-wings': Object.freeze({ name: "Raven's Evasion", kind: 'evade', chance: 15,
@@ -1049,8 +1056,10 @@ export const LEGENDARY_POWERS = Object.freeze({
     brief: 'Strikers hexed: -25% (8s)', text: 'A foe whose blow lands on you is hexed for 8 s: its blows on you are lessened by a quarter' }),
   'duelists-vambrace': Object.freeze({ name: 'First Blood', kind: 'firstblood', pct: 60,
     brief: '+60% first blow on a foe', text: 'Your first weapon blow on each foe deals +60% damage' }),
-  'mark-of-the-hist': Object.freeze({ name: 'Hist-Sap', kind: 'regen', pct: 2, low: 4,
-    brief: 'Regenerate 2% a round', text: 'Each magic round you regenerate 2% of your health, 4% while you are under half' }),
+  // BAL7 (Balance-Arc.md section 13): halved - at 2% a round (4% under half) it was the kit's longest life, worth more
+  // than any guard (without it the measured kit fell after 21 Ancient Liches, not 47)
+  'mark-of-the-hist': Object.freeze({ name: 'Hist-Sap', kind: 'regen', pct: 1, low: 2,
+    brief: 'Regenerate 1% a round', text: 'Each magic round you regenerate 1% of your health, 2% while you are under half' }),
   'reachmans-torc': Object.freeze({ name: "Hagraven's Pact", kind: 'absorb', chance: 15,
     brief: '15% to absorb a spell', text: 'A Destruction spell that strikes you is absorbed 15 times in a hundred, as Spell Absorption is' }),
 });

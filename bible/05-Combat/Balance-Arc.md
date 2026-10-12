@@ -1,4 +1,4 @@
-# The Balance arc - the place sets the threat, one rule for every striker (BAL1-BAL5)
+# The Balance arc - the place sets the threat, one rule for every striker (BAL1-BAL8)
 
 > Design page, written from the measurement before the code (2026-10-10). The slices ship in one pull request, in this
 > order, each verifiable without the next. Where this page and a shipped slice disagree, the slice's own record
@@ -281,6 +281,9 @@ thirteen. The simulation leaves out the formulas' tail (an elite, the mentor, a 
 | BAL3 | the place sets the threat | one law, two seams |
 | BAL4 | the offline defaults | three switches and the death's cost |
 | BAL5 | the blow paid back (section 11, 2026-10-11) | one law at the door, one cap, one flavour retired |
+| BAL6 | the curses (section 12, 2026-10-12) | the beast's advantages, its heal, its claws; the vampire's hood |
+| BAL7 | the loot that wins alone (section 13, 2026-10-12) | one flavour retired, one cap, two powers halved |
+| BAL8 | the PvP referee, one rule for every striker (section 14, 2026-10-12) | one ceiling at the referee, one door's facing |
 
 ## 10. What shipped
 
@@ -417,3 +420,178 @@ Pinned: `test/bal5_blowback.test.js` (5) by execution - the real Ancient Lich's 
 lines through the real damage door, worn to its last point and never killed; Spite alone and both together the same;
 3,000 seeded Rare cuirasses never drawing Troll's Blood and drawing every other armour flavour; a piece that drew it
 lawful to `itemFindings`. `tools/mutants/bal5.json` (12, all dead).
+
+## 12. BAL6 - the curses (2026-10-12)
+
+The owner, 2026-10-12: *"I want to continue balancing the online world. Mages have been adjusted a lot, but what about
+were wolves, vampires, melee users, etc. The goal isnt to strip people of fun but to balance things out to where things
+arent overpowered"*. Four read-only measurements ran through the real code before anything changed (the curses, the
+loot a melee player wears, the ranged and stealth lanes, and a recap of the mage work - CAST-SPEED, STACK-CAP, INT10);
+the three calls that move a DFU law or an earlier call of Mac's were put to the owner and answered.
+
+THE MEASUREMENT (40,000 seeded swings a cell through the real `pcaaoAttackDamage`; section 2's builds; damage a second
+with each form's own swing tempo):
+
+| fight | human, sword | lycanthrope, human form, sword | beast, claws |
+| --- | --- | --- | --- |
+| L12 steel, an Orc Warlord | 6.8 | 19.5 | 29.9 |
+| L12 steel, a Lich | 0.9 | 2.8 | 23.2 |
+| L20 ebony, an Orc Warlord | 19.9 | 35.6 | 39.6 |
+| L20 ebony, an Ancient Lich | 16.6 | 33.4 | 31.6 |
+
+1. **The lycanthrope's +40 / +30 stood in both forms** (LycanthropyEffect's ConstantEffect, ported verbatim): a
+   lycanthrope with a sword, a shield, potions and talk struck at x1.8-2.9 a plain character's damage a second and took
+   14-17% less, and changing added only x1.1-1.5 on top. In a duel the same: 30.1 a second to a mortal's 18.2 at level 20.
+2. **Every change healed whole** (MorphSelf, both ways): two full heals a day, and as many as the player liked under
+   Hircine's Ring, which lifts the once-a-day gate.
+3. **The claws met no metal.** DFU's material gate asks a weapon, and the claws are the bare hand: with the curse's +30
+   Hand-to-Hand (+45 to hit through the overhaul's x1.5) a level-12 beast struck a Lich, whose hide asks Mithril, at x15
+   what a steel blade does (12.48 a swing to 0.85).
+4. **A hooded vampire stood +20 at every hour.** VAMP-DAY made the day's cost a -20 for the burn; VAMP-SUN gave the
+   interiors DFU's +20 back; HOOD-SUN gave a raised hood in the street the +20 too - so with a hood the curse was +20
+   everywhere and always: x1.67-2.07 a mortal's damage a second, x0.80-0.89 of what it takes.
+
+THE LAWS.
+
+- **The advantages are the beast's** (asked: "Beast-only bonuses"). `systems/lycanthropy.js` lycanthropeAdvantages
+  writes DFU's four stats and seven skills only while transformed, on every round (after the moon's forced change, so
+  the round never reads the other form) and at the change itself, both ways (morphSelf) - never a round late. The beast
+  is exactly what it was; the man is his own character, and changing is the trade it reads as (no weapon, shield, pack
+  or talk for the beast's numbers). A curse saved before BAL6 carries the man's +40 until its first round rewrites it.
+- **One change a day heals.** `morphHeals`: a change heals when a whole day (STRICTLY more than 1,440 minutes, the gate's
+  own day) has passed since the last change that healed (`lastMorphHeal`, a curse clock's marker: `save.js`
+  clampMarkersAheadOf brings it back to a save's clock), whichever way it goes and whatever forced it. The Ring frees the
+  change, never the heal. A curse from before BAL6 has no stamp: its next change heals.
+- **The beast's claws strike as silver** (asked: "Beast claws count as silver"). `characters/weapons.js`
+  strikeMaterialOf - a weapon's metal, the beast's claws' silver (BEAST_CLAW_MATERIAL), or none - is what both cores'
+  material gates read (`combat/pcaao.js`, `combat/formulas.js`): under the overhaul's soft rule a Mithril foe takes the
+  claws at x0.4 (three tiers); with it off, DFU's refusal and its line, as a silver blade meets. An ordinary fist - a
+  monk's, a vampire's - stays DFU's, ungated.
+- **The hood shields, it does not make it night** (asked: "Hood only shields"). `systems/vampirism.js` vampireStatMod:
+  bare in the street's sun -20, hooded there 0, out of the sun (a roof, underground, a cell, the night) DFU's +20, hood
+  or not - Mac's "Should be buffed in interiors" and "shielding against the sun" both kept.
+
+WHAT MOVES. A lycanthrope in human form strikes and takes as the character it is (19.5 -> 6.8 a second at level 12,
+35.6 -> 19.9 at level 20; a duel's 30.1 -> 18.2); the beast is unchanged but for a metal-hided foe (a level-12 beast on a
+Lich ~12.5 -> ~5.0 a swing, on an Ancient Lich ~10.6 -> ~4.3; with the soft rule off, nothing); two healing changes a
+day are one, and the Ring's endless ones are one. A hooded vampire in the street by day is +0 where it was +20 (its
++30 skills alone: about x1.10-1.17 a mortal's damage). THE FOUR HOSTS: none is touched - each law is the curse's or the
+blow's, read wherever the curse runs its round and the blow is struck (`scenes/world.js`, `scenes/worldModes.js`,
+`scenes/dungeonContext.js` and `scenes/exterior.js` all strike through the same two cores and run the same round).
+
+RECORDED, NOT CHANGED:
+
+- **The vampire out of the sun.** Indoors, underground and at night the vampire keeps DFU's +20 and the measured
+  x1.67-2.07 (Mac's VAMP-SUN). The other lever offered - the +20 the night's alone, 0 sheltered by day - was not chosen.
+- **The vampire's clan spells** stay at DFU's flat 5 spell points (MinimumCastingCost; asked: "Leave at 5"), Ice Storm
+  and Wildfire among them. A refereed fight bounds every cast whatever it cost (INT10, and section 14's ceiling).
+- **A vampire's and a monk's fists** stay ungated: DFU's rule, and the beast's claws were the measured outlier.
+- **The silver-to-hit of a beast in a refereed fight**: every referee rolls a striker's claim against the striker's own
+  stand-in, so the beast's defence never counts there - reading it would make the beast stronger in PvP, not weaker.
+- **The wereboar** is the werewolf in another skin (the same advantages, claws and change), as in DFU.
+
+Pinned: `test/bal6_curses.test.js` (4) by execution - the advantages through liveStat and skillValue in both forms, at
+the change's instant and after a round, a pre-BAL6 save's word rewritten; the heal's day, the Ring's change without it,
+the stamp clamped on a load; 2,000 seeded beast swings at a Lich's Mithril (x0.4), at silver (whole), a man's fist
+ungated, DFU's refusal through both cores; vampireStatMod in the street and under a roof, bare and hooded.
+`tools/mutants/bal6.json` (16).
+
+## 13. BAL7 - the loot that wins alone (2026-10-12)
+
+BAL5 left the next measurement to "wear the loot", and it did: a level-20 kit of the ladder's own pieces (Ansei's Edge
+with two Flawless Diamonds; Titanheart, Mountain's Root, Raven's Wings, the Visor; three Rares imprinted Dawnward,
+Last Stand and Bulwark; Divine Grace, Hex, Hist-Sap, First Blood and a Rare ring), through the real blow, the real door
+and every guard and save. Foes killed in a row before the player fell (stopping at 50):
+
+| fight (place, tier) | plain ebony | the kit, no guards | the kit |
+| --- | --- | --- | --- |
+| an Orc Warlord (a Barbarian Stronghold, 11) | 8 | 43 | 50 |
+| a Lich (a Vampire Haunt, 14) | 3.6 | 18 | 50 |
+| an Ancient Lich (a Dragon's Den, 18) | 1.1 | 6.6 | 47 |
+
+Four things decided a fight without the player in it:
+
+1. **Vampiric Effect when strikes**, one Rare weapon flavour in eleven (LR2's `RARE_FLAVOURS`): DFU's own payload heals
+   the wearer every point the blow deals; DFU charges 1,000 of an item maker's points for it (Troll's Blood was 920).
+   The plain build with that one blade went from 1.1 Ancient Liches to 50 and counting.
+2. **The leech** summed a weapon's line and its gems uncapped: an Exalted 10 and a Perfect Emerald's 7 healed 17% of
+   every landed blow, and the heal grew with every point of offence - the kit without a guard went from 6.6 to 49.7.
+3. **Hist-Sap** regenerated 2% a round (4% under half): taken away, the kit fell after 21 Ancient Liches, not 47 - worth
+   more than any guard (Bulwark 36, Divine Grace 38, Dawnward 41, the Raven 42).
+4. **Open Hand** struck every landed bare-handed blow twice, whole: a kitted monk's 74 a swing, 3.2x the plain monk's
+   and 4.3-5.5x the plain sword's.
+
+THE LAWS. Vampiric Effect is retired from the Rare weapon draw as BAL5 retired Troll's Blood (`retired`: the law and
+the market still read a piece that drew it as minted, so it keeps it; the item maker still sells it at DFU's price;
+Gortwog's Cleaver carries it as its record's - a Legendary's enchantment is never a flavour). The leech a weapon's lines
+and gems sum to is at most `LEECH_CAP` 10 (`systems/lootPowers.js`) - the top of a Legendary line's band, as THORNS_CAP
+is; every line already rolled stays lawful. Hist-Sap is 1% a round, 2% under half. Open Hand's second blow lands for
+half (`share`, the record's), never less than a point; its card says so.
+
+WHAT MOVES. A new Rare blade never heals its whole blow; a leech kit heals 10 of a hundred where it healed 17; Hist-Sap
+half (the measured kit's Ancient Liches about 47 -> 31); a kitted monk's 74 a swing about 56. Not moved: every guard,
+every set, the techniques, a Legendary's own power but these two.
+
+RECORDED, NOT CHANGED:
+
+- **The guards** compose with no overall ceiling (all eight about x0.49 of what lands; past their avoidance about 96%
+  off a blow at the extreme). A 50% ceiling at the door barely bound (7.22 -> 7.28 a blow) once the heals above were
+  answered, so the heals were the cause and the guards stand.
+- **Skill lines past the softcap** (gear's Critical Strike to 110 in the kit, x2.1 a crit): -6% in the measured kit;
+  a ceiling on them is a watch item, not a cause.
+- **The blow powers** multiply across their three registries (sigil, sets, loot) with no ceiling; they bind only in a
+  stacked burst on a cooldown.
+- **Gortwog's Cleaver** keeps its record's Vampiric Effect: one named Legendary, never a random draw.
+
+Pinned: `test/bal7_loot.test.js` (3) by execution - 3,000 seeded Rare blades never drawing Vampiric Effect and drawing
+every other weapon flavour, a piece that drew it lawful, the Cleaver's record; a line and a gem healing 10 of 100;
+Hist-Sap's round at 61 and 42 of 100; Open Hand's 20 again for 10, a 1 for 1, a weapon's for nothing.
+`tools/mutants/bal7.json` (6). PIN MOVED: `loot5_powers` (Hist-Sap's 62 and 44 are 61 and 42, Open Hand's 7 is 4) and
+its LOOT5-open-hand-on-a-sword mutant, re-aimed by content.
+
+## 14. BAL8 - the PvP referee, one rule for every striker (2026-10-12)
+
+BAL2's law for the foes - one rule for every striker - had not reached the referee of a fight between players.
+
+1. **A caster had a ceiling and a blade did not.** INT10 holds a caster to 3 damaging casts of 60 in 5 s (180, 36 a
+   second); a blade or a bare hand was held to 4 blows a second and one blow's bucket (`siegeBlowMax`, ~110), which no
+   measured blow came near (the highest of 40,000 was 54). Every refereed lane equalises vitality (300 + 2 x Renown) and
+   rolls a striker's claim against its own stand-in, so offence alone decides it: a kitted monk 45.8 a second (a fighter
+   felled in 8.3 s), a kitted sword 26.5, the mage at its ceiling 36 (10.6 s).
+2. **The arena's rival faced nowhere.** `scenes/world.js` arenaRivalBody hands the rival's stand-in `yaw: 0`, and the
+   swing's door and the shaft's read a backstab off it - every blow or arrow from its -z side tripled, whatever way the
+   rival faced (about double the damage a second over a bout). The duel's, the siege's and the zone's referees roll no
+   backstab at all (`combat/duelCombat.js`), and AUDIT WB11 W2 found and fixed the same yaw-0 back on the crystals.
+
+THE LAWS. Every harm a fighter deals - blows and casts together, so a blade and a spell are never two ceilings - is at
+most `SIEGE_HARM` (`net/siegeRef.js`: the casts' own 180 in any 5 s), in `refereeBlow` and `refereeCast`, the one
+referee of the duel (`net/duelRef.js`), the Wild Zone (`net/wildRef.js`) and the siege's room (`server/src/index.js`).
+A claim past it is judged and lands nothing (the striker's `clipped` counts it); a heal is no harm; a room's fighter
+from before BAL8 has dealt none. The arena's swing and shaft doors hand the rival no facing (`scenes/dungeonContext.js`:
+`_backFacing = false`, `playerFeet: null`) - no backstab at a player in any lane. The relay is `world197`.
+
+WHAT MOVES. Only a striker past 36 a second sustained: the kitted monk 45.8 -> 36; every measured sword, bow and gun
+stands (18.2, 26.5, 13). A spellsword's blows and casts share the one 180. The arena's bouts lose the free x3 from the
+rival's -z side. Not moved: the arena's own bucket (`net/arenaLaw.js` ARENA_BUCKET_RATE 40, depth 120), its own lane's.
+
+RECORDED, NOT CHANGED:
+
+- **A refereed fight reads no defence** - not the defender's armour, Dodging, guards, sets or Shield spells; vitality
+  is equal and every claim is rolled against the striker's own stand-in. Reading the defender's kit in PvP is a design
+  of its own (a signed defence, as INT7 signed the arms), not a balance pass.
+- **The Warden is backstabbed by a crowd** (`dungeonContext.js` reads his facing): a rogue behind him reaches ~67 a
+  second, inside his per-player bucket (75 at level 20). Its own call - the rogue's role, or a watchful boss.
+- **Kiting**: a player at Speed 70 runs 8.9 m/s and a plain melee foe 5 (6.25 at Speed 100); only elite, champion and
+  revenant foes of eight kinds charge or leap. A bow kites any plain melee foe for nothing - an Enhanced AI change of
+  its own.
+- **Companions** roughly double a player's damage in the open world and dungeons; they are already out of the gate's
+  court, the Shattered Hour and PvP's referees.
+- **The Thunderlock** is a sidegrade (per shot 36% over an ebony long bow, per second equal to it and 0.70x a sword;
+  x0.8 at a Mithril foe). The arena's blow table has no row for its template 560 (a bare hand's cap, 122, where its own
+  would be ~96) - harmless at its numbers.
+
+Pinned: `test/bal8_pvp.test.js` (3) - the ceiling by execution (two blows reach 180, the third lands nothing, the
+window slides at 5 s to the millisecond, casts and a blow sharing it, INT10's three still its own, a heal no harm, a
+fighter without the field); one referee for the three lanes and the arena's two doors by source.
+`tools/mutants/bal8.json` (7). PIN MOVED: `tools/mutants/pvpref.json`'s five clipping records, re-aimed by content; the
+relay's version pins (`world197`).

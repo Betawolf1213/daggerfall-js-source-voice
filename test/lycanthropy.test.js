@@ -119,6 +119,12 @@ test('V2a: the advantages are +40/+30 through the live channels, re-applied per 
   const p = P();
   const entry = createLycanthropyCurse(p, LYCANTHROPY_TYPES.Werewolf, { now: QUIET });
   assert.ok(entry);
+  // PIN MOVED (BAL6, bible/05-Combat/Balance-Arc.md section 12): the advantages are the beast's - none in human form,
+  // so the curse changes before they are read (test/bal6_curses.test.js holds both forms)
+  lycanthropyMagicRound(p, { nowMinutes: QUIET + 1 });
+  assert.equal(liveStat(p, 'strength'), 50, 'BAL6: the man is his own');
+  assert.equal(p.minMetalToHit, WEAPON_MATERIALS.Iron);
+  morphSelf(p, { force: true, nowMinutes: QUIET + 1 });
   lycanthropyMagicRound(p, { nowMinutes: QUIET + 1 });
   for (const stat of LYCANTHROPE_STATS) {
     assert.equal(liveStat(p, stat), 90, `${stat} 50 + 40, read through liveStat itself`);
@@ -129,9 +135,7 @@ test('V2a: the advantages are +40/+30 through the live channels, re-applied per 
       'the seven skills, +30 through skillValue itself');
   }
   assert.ok(LYCANTHROPE_SKILLS.includes(SKILLS.HandToHand), 'the claws ride Hand-to-Hand');
-  // untransformed: iron finds you; transformed: silver or better
-  assert.equal(p.minMetalToHit, WEAPON_MATERIALS.Iron);
-  morphSelf(p, { force: true, nowMinutes: QUIET + 2 });
+  // untransformed: iron found you (above); transformed: silver or better
   lycanthropyMagicRound(p, { nowMinutes: QUIET + 3 });
   assert.equal(p.minMetalToHit, WEAPON_MATERIALS.Silver);
   assert.equal(p.isInBeastForm, true);

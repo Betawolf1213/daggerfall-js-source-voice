@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 
 import { createCharacter } from '../src/systems/chargen.js';
 import { SKILLS } from '../src/systems/skills.js';
-import { createLycanthropyCurse, lycanthropyMagicRound } from '../src/systems/lycanthropy.js';
+import { createLycanthropyCurse, morphSelf, lycanthropyMagicRound } from '../src/systems/lycanthropy.js';
 import { createVampirismCurse, vampirismMagicRound } from '../src/systems/vampirism.js';
 import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 import { liveStat } from '../src/systems/statMods.js';
@@ -52,6 +52,7 @@ function character() {
 function werewolf() {
   const p = character();
   assert.ok(createLycanthropyCurse(p, LYCANTHROPY_TYPES.Werewolf, { now: NIGHT }));
+  morphSelf(p, { force: true, nowMinutes: NIGHT });   // PIN MOVED (BAL6, bible/05-Combat/Balance-Arc.md section 12): the +40 is the beast's - the report's werewolf has changed
   lycanthropyMagicRound(p, { nowMinutes: NIGHT + 1 });
   assert.equal(liveStat(p, 'strength'), 100, 'the curse\'s +40, read through liveStat itself');
   return p;

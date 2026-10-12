@@ -20,7 +20,7 @@ import { mintCondition, setItemFields } from '../src/systems/itemTemplates.js';
 import { WEAPONS } from '../src/characters/weapons.js';
 import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { liveStat } from '../src/systems/statMods.js';
-import { createLycanthropyCurse, lycanthropyMagicRound, LYCANTHROPE_STAT_MOD } from '../src/systems/lycanthropy.js';
+import { createLycanthropyCurse, lycanthropyMagicRound, morphSelf, LYCANTHROPE_STAT_MOD } from '../src/systems/lycanthropy.js';
 import { LYCANTHROPY_TYPES } from '../src/systems/infection.js';
 import { isFullMoonFromMinutes, MINUTES_PER_DAY, CLASSIC_GAME_START_TIME } from '../src/systems/gameDate.js';
 import { installRoleplayRealismItems } from '../src/systems/rriInstall.js';
@@ -34,12 +34,13 @@ const QUIET = (() => {
   return m;
 })();
 /** A base-55 character with the curse's advantages applied, as one magic round applies them. */
-function werewolf() {
+function werewolf(beast = true) {
   const p = {
     isPlayer: true, level: 5, health: 60, maxHealth: 60, activeEffects: [], items: [], spells: [], skills: {},
     stats: { strength: 55, intelligence: 50, willpower: 50, agility: 55, endurance: 55, personality: 50, speed: 55, luck: 50 },
   };
   assert.ok(createLycanthropyCurse(p, LYCANTHROPY_TYPES.Werewolf, { now: QUIET }));
+  if (beast) morphSelf(p, { force: true, nowMinutes: QUIET });   // PIN MOVED (BAL6, bible/05-Combat/Balance-Arc.md section 12): the curse's +40 is the beast's
   lycanthropyMagicRound(p, { nowMinutes: QUIET + 1 });
   return p;
 }
@@ -65,10 +66,11 @@ const swing = (rig) => {
   return t;
 };
 
-test('DISC29-G: a base-55 lycanthrope\'s live Speed is 95 - the curse\'s 40, in either form', () => {
+test('DISC29-G: a base-55 lycanthrope\'s live Speed is 95 in beast form - the curse\'s 40 (PIN MOVED, BAL6: the beast\'s alone - the man reads his own 55)', () => {
   const p = werewolf();
   assert.equal(LYCANTHROPE_STAT_MOD, 40);
   assert.equal(liveStat(p, 'speed'), 95, 'the Attributes page shows 95 / 100, not 55');
+  assert.equal(liveStat(werewolf(false), 'speed'), 55, 'BAL6: in human form, the character\'s own');
 });
 
 test('DISC29-G (SWING-LAW): the real rig swings a base-55 werewolf under two blows a second - DFU\'s line had it at 3.3 - with the mods off and on; the curse still shows, and nothing swings at the cap\'s four', () => {

@@ -35,7 +35,7 @@ import { SPECIAL_ABILITY_BITS, PROFICIENCY_BITS } from '../systems/specialAdvant
 // hasSpecialAbility back out of it makes a cycle, and the ESM binding lands in
 // the temporal dead zone: the helper reads `undefined` at call time and the
 // bonus silently never applies. specialAdvantages.js is a leaf.
-import { weaponMinDamage, weaponMaxDamage, weaponSkillUsed } from '../characters/weapons.js';   // AUDIT 18: GetBaseDamageMin/Max and GetWeaponSkillIDAsShort resolve the TEMPLATE, never a baked field or a display name
+import { weaponMinDamage, weaponMaxDamage, weaponSkillUsed, strikeMaterialOf } from '../characters/weapons.js';   // AUDIT 18: GetBaseDamageMin/Max and GetWeaponSkillIDAsShort resolve the TEMPLATE, never a baked field or a display name
 import { equipTableOf, lowerCondition, dfuBlowWear, slotForBodyPart, EQUIP_SLOTS, weaponProficiencyFlag } from '../systems/equip.js';   // C-slice: DamageEquipment; CF1: GetWeaponSkillUsed as a ProficiencyFlag, -1 quirk included
 import { SHIELD_PARTS } from '../systems/armorMaterials.js';
 import { totalWeight } from '../systems/inventory.js';   // EW1: ItemCollection.GetWeight, the one home for a stack's kg
@@ -617,7 +617,8 @@ export function calculateAttackDamage(attacker, target, { weapon = null, damageM
   if (overridden !== undefined) {
     damage = overridden;
   } else {
-  if (weapon && (target.minMetalToHit ?? -1) > weapon.material) {
+  const struckMaterial = strikeMaterialOf(attacker, weapon);   // BAL6: the beast's claws strike as silver (characters/weapons.js)
+  if (struckMaterial !== null && (target.minMetalToHit ?? -1) > struckMaterial) {
     // L-slice (AUDIT 23 combat-16): FormulaHelper.cs:576-583 - a
     // too-low weapon material returns 0, and when the attacker is
     // the PLAYER the HUD says so (`materialIneffective`,

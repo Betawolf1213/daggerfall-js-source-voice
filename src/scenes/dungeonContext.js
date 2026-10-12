@@ -4527,7 +4527,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     for (const cr of gateCrystalBodies()) { cr._backFacing = false; live.push(cr); }   // WB9c: the Reckoning's crystals, bodies the swing meets as it meets him
     for (const hb of gateHostBodies()) { hb._backFacing = false; live.push(hb); }   // WB11c: his host, bodies the swing meets (its facing is the relay's walk, not a body's - no backstab)
     const rival = arenaRivalBody();   // ARENA4: my opponent on a relay's sand - a body the swing meets, by its surface
-    if (rival) { rival._backFacing = foeDeps.isBackFacing(rival.ai.yaw, rival.ai.feet, playerFeet); live.push(rival); }
+    if (rival) { rival._backFacing = false; live.push(rival); }   // BAL8 (bible/05-Combat/Balance-Arc.md section 14): no backstab at a player - the stand-in faces nowhere (world.js hands `yaw: 0`, so every blow from its -z side was one, x3), and the duel's, the siege's and the zone's referees roll none (AUDIT WB11 W2's law)
     // (the module-level playerEntity import IS foeDeps.playerEntity -
     // the old shadowing destructure was the null read that crashed)
     let hitEnemy = false;
@@ -4782,7 +4782,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
           const rv = m.technique ? null : arenaRivalBody();   // TECH1: a technique's shaft passes a player's body by (TECH law 3)
           if (rv && missileHitsCapsule(m.pos, rv.ai.feet, rv.ai.height, rv.ai.radius)) {
             nextArenaQ();   // ARENA4b: each shaft its own blow
-            playerArrowHitFoe(m, rv, { playerEntity, playerWeapon, playerFeet, audio, hitEffects, say: (l) => hudText.add(l), dealDamage: (t, d) => landOnRival(rv, d, 'arrow') });
+            playerArrowHitFoe(m, rv, { playerEntity, playerWeapon, playerFeet: null, audio, hitEffects, say: (l) => hudText.add(l), dealDamage: (t, d) => landOnRival(rv, d, 'arrow') });   // BAL8: no backstab at a player (the stand-in's yaw is no one's)
             retireMissile(m);
             continue;
           }

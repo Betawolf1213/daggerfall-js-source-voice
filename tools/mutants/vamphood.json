@@ -104,8 +104,8 @@
   {
     "name": "HOODSUN-the-arm-ignored",
     "file": "src/systems/vampirism.js",
-    "old": "(sunAverse && playerInSunlight(clockMinutes) ?",
-    "new": "(playerInSunlight(clockMinutes) ?",
+    "old": "(sunAverse ? -VAMPIRE_STAT_MOD : 0)",
+    "new": "(-VAMPIRE_STAT_MOD)",
     "tests": [
       "test/fb0929_vampirehood.test.js"
     ]

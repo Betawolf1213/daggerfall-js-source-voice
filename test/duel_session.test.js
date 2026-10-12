@@ -264,7 +264,7 @@ test('DUEL1 THE ENDS AND WHOM THEY NAME - INT8: THE REFEREE\'S. A fall at the re
   // DUEL_HEAL_HOLD_MS after. A fall is the referee's vitality at none, the record its receipt, and the hold lets the
   // ended duel go with no heal - a duel never touches the save's health now.
   let r = duelling();
-  for (let i = 0; i < 10 && r.m.a.live; i++) { r.m.a.blow('strike', { by: 'melee', p: r.P.a.pos, d: 999 }); r.pump(); r.tick(300); }
+  for (let i = 0; i < 40 && r.m.a.live; i++) { r.m.a.blow('strike', { by: 'melee', p: r.P.a.pos, d: 999 }); r.pump(); r.tick(300); }   // PIN MOVED (BAL8, bible/05-Combat/Balance-Arc.md section 14): the referee's harm ceiling, 180 in any 5 s - the fall takes more blows than ten
   assert.deepEqual(r.P.b.ends, [{ why: 'fell', won: false, lost: true, by: 'me' }], 'B fell: B lost');
   assert.deepEqual(r.P.a.ends, [{ why: 'fell', won: true, lost: false, by: 'them' }], 'A won');
   assert.deepEqual([r.P.a.receipts, r.P.b.receipts], [[RC], [RC]], 'the receipt, to both: either carries it');

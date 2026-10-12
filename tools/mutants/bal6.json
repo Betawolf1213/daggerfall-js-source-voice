@@ -1,0 +1,146 @@
+[
+  {
+    "name": "BAL6-the-advantages-in-both-forms",
+    "file": "src/systems/lycanthropy.js",
+    "old": "  if (!entry.isTransformed) return;\n  for (const stat of LYCANTHROPE_STATS)",
+    "new": "  for (const stat of LYCANTHROPE_STATS)",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-the-change-writes-no-advantages",
+    "file": "src/systems/lycanthropy.js",
+    "old": "  lycanthropeAdvantages(entry);   // BAL6: the form's own advantages from the change's instant, not the next round's",
+    "new": "  // the change writes nothing",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-the-round-writes-no-advantages",
+    "file": "src/systems/lycanthropy.js",
+    "old": "  // maps. BAL6: the beast's alone, so after the moon's change above.\n  lycanthropeAdvantages(entry);",
+    "new": "  // maps. BAL6: the beast's alone, so after the moon's change above.",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-every-change-heals",
+    "file": "src/systems/lycanthropy.js",
+    "old": "  if (morphHeals(entry, nowMinutes)) {",
+    "new": "  if (true) {",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-the-heal-on-the-cast-stamp",
+    "file": "src/systems/lycanthropy.js",
+    "old": "export const morphHeals = (entry, nowMinutes = 0) => nowMinutes - (entry.lastMorphHeal ?? -Infinity) > MINUTES_PER_DAY;",
+    "new": "export const morphHeals = (entry, nowMinutes = 0) => nowMinutes - (entry.lastCastMorphSelf ?? -Infinity) > MINUTES_PER_DAY;",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-the-heal-a-day-exactly",
+    "file": "src/systems/lycanthropy.js",
+    "old": "export const morphHeals = (entry, nowMinutes = 0) => nowMinutes - (entry.lastMorphHeal ?? -Infinity) > MINUTES_PER_DAY;",
+    "new": "export const morphHeals = (entry, nowMinutes = 0) => nowMinutes - (entry.lastMorphHeal ?? -Infinity) >= MINUTES_PER_DAY;",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-the-heal-never-stamped",
+    "file": "src/systems/lycanthropy.js",
+    "old": "    entry.lastMorphHeal = nowMinutes;",
+    "new": "    void nowMinutes;",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-the-heal-stamp-uncapped-on-load",
+    "file": "src/systems/save.js",
+    "old": "'lastCastMorphSelf', 'lastMorphHeal', 'lastUrgeNotify'",
+    "new": "'lastCastMorphSelf', 'lastUrgeNotify'",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-the-claws-ungated",
+    "file": "src/characters/weapons.js",
+    "old": "export const strikeMaterialOf = (attacker, weapon) => (weapon ? weapon.material : attacker?.isInBeastForm ? BEAST_CLAW_MATERIAL : null);",
+    "new": "export const strikeMaterialOf = (attacker, weapon) => (weapon ? weapon.material : null);",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-the-claws-as-iron",
+    "file": "src/characters/weapons.js",
+    "old": "export const BEAST_CLAW_MATERIAL = WEAPON_MATERIALS.Silver;",
+    "new": "export const BEAST_CLAW_MATERIAL = WEAPON_MATERIALS.Iron;",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-every-fist-gated",
+    "file": "src/characters/weapons.js",
+    "old": "attacker?.isInBeastForm ? BEAST_CLAW_MATERIAL : null);",
+    "new": "BEAST_CLAW_MATERIAL);",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-the-overhaul-asks-the-weapon-alone",
+    "file": "src/combat/pcaao.js",
+    "old": "  const struckMaterial = strikeMaterialOf(attacker, weapon);   // BAL6: a weapon's metal, or the beast's claws' silver",
+    "new": "  const struckMaterial = weapon ? weapon.material : null;",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-dfu-asks-the-weapon-alone",
+    "file": "src/combat/formulas.js",
+    "old": "  const struckMaterial = strikeMaterialOf(attacker, weapon);   // BAL6: the beast's claws strike as silver (characters/weapons.js)",
+    "new": "  const struckMaterial = weapon ? weapon.material : null;",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-the-hood-the-nights",
+    "file": "src/systems/vampirism.js",
+    "old": "(sunAverse ? -VAMPIRE_STAT_MOD : 0)",
+    "new": "(sunAverse ? -VAMPIRE_STAT_MOD : VAMPIRE_STAT_MOD)",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-the-hood-shields-nothing",
+    "file": "src/systems/vampirism.js",
+    "old": "(sunAverse ? -VAMPIRE_STAT_MOD : 0)",
+    "new": "(-VAMPIRE_STAT_MOD)",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  },
+  {
+    "name": "BAL6-a-roof-the-hoods",
+    "file": "src/systems/vampirism.js",
+    "old": "(playerInSunlight(clockMinutes) ? (sunAverse ? -VAMPIRE_STAT_MOD : 0) : VAMPIRE_STAT_MOD)",
+    "new": "(playerInSunlight(clockMinutes) ? (sunAverse ? -VAMPIRE_STAT_MOD : 0) : (sunAverse ? VAMPIRE_STAT_MOD : 0))",
+    "tests": [
+      "test/bal6_curses.test.js"
+    ]
+  }
+]
