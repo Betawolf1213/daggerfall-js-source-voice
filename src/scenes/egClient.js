@@ -41,6 +41,11 @@
 //     (scenes/egArch.js, the host's pool: the company's from the call, a stranger's from the cell - each fed here), THE
 //     CALL's horn, its one line and its prompt (scenes/egCall.js), the answer's portal at my feet - stepping into it is the
 //     admission - and the opener's step through the arch; the opener's landing before the arch; the late line.
+//   EG-ZH (2026-10-12, sections 11.7-11.9, 27.8): THE HALL'S REVERB (systems/egReverb.js - held while I stand in the breach
+//     and through a swap or a pull under way, the hall my feet stand in heard in its fragments' space, crossfaded at a
+//     mouth, let go on every way out); THE FRAGMENT'S OWN CLAMP on my motor while I stand in one (world/egHall.js
+//     egFragArena - `player.arena`, set where no other arena holds me); the cameras eased back out of the rock
+//     (player/mwView.js setSpireCamera) and the touch layer's Spire branch (ui/touch.js setTouchSpire), both told here.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
@@ -78,6 +83,10 @@ import { isTouchDevice } from '../ui/touchDevice.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { createEgLookDraw } from './egLookDraw.js';   // EG-G2: the Spire's sky, mist and lines (section 25)
 import { egQuietCompany } from '../world/egLook.js';
+import { createEgReverb } from '../systems/egReverb.js';   // EG-ZH (section 11.9): the hall's reverb
+import { egFragArena } from '../world/egHall.js';   // EG-ZH (sections 11.7-11.8): the fragment's own clamp
+import { setSpireCamera } from '../player/mwView.js';   // EG-ZH (section 11.8): the camera in rock
+import { setTouchSpire } from '../ui/touch.js';   // EG-ZH (section 27.8): touch on the spans
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -209,6 +218,10 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   const lookOf = () => (look ??= renderer?.gl ? createEgLookDraw({ gl: renderer.gl }) : null);
   /** The circle this screen stands in, told to the look. */
   const lookCircle = (E) => { const L = lookOf(); if (L && E.b && E.h > 0) L.setCircle(E.seed, egCircleOfHall(E.h), E.geo ?? 0); return L; };
+  // EG-ZH: THE HALL'S REVERB over this screen's engine (systems/egReverb.js); the arena my motor was given (mine to take
+  // back, never another's)
+  const reverb = createEgReverb({ audio });
+  let fragArena = null;
 
   // ── the keys ────────────────────────────────────────────────────────────────────────────────────────
   /** The pack's keys set to the account's balance (a face, never the count). */
@@ -418,6 +431,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (leaving) return;
     leaving = true;
     dropDoor();
+    reverb.release(); clampAway();   // EG-ZH: the hall's reverb let go, the fragment's clamp off my motor
     swapWaitAt = 0; modes()?.egSwapDrop?.();   // EG-H3: the swap's build forgotten with the breach
     veil()?.flash?.('hourHome');
     if (text) say(text);
@@ -486,6 +500,38 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     // THE REDOUBT: the company healed once, the way home stood at the Court's heart through the rest
     if (E.sg === 'rest') { if (rdSeen !== E.h) { rdSeen = E.h; redoubt?.(E.rd); say(`${EG_TEXT.redoubt(E.rd)} taken. Choose a Vestige; the way home stands at the Court's heart; the stair down opens when the rest ends.`); } standDoor(E); }
     else if (door) dropDoor();
+  }
+
+  // ── EG-ZH: the hall's sound and the fragment's clamp (sections 11.7-11.9) ───────────────────────────────────────
+  /** The hall my feet stand in, in the circle the level is: its number and spec, or null (between the halls, no circle). */
+  function feetHall(E) {
+    const at = standing(), c = modes()?.egHallCircle?.() ?? egCircleOfHall(E.h);
+    if (!at?.slot || !E.seed || !(c > 0)) return null;
+    const h = (c - 1) * 5 + at.slot;
+    return { h, spec: egHallOf(E.seed, h, E.geo ?? 0), at };
+  }
+  /** THE HALL'S REVERB: held while I stand in the breach; the hall my feet stand in made behind the veil as it changes (a
+   *  swap, a pull), and turned at a fragment's mouth as I walk. */
+  function reverbFrame(E) {
+    reverb.hold();
+    const H = feetHall(E);
+    if (!H) return;
+    reverb.hall(`${E.b}:${H.h}`, H.spec);
+    reverb.at(egLocalX(H.spec, H.at.sx), H.at.z);
+  }
+  /** THE FRAGMENT'S OWN CLAMP (section 11.7): while I stand in a fragment and no other arena holds my motor (a duel's ring,
+   *  a court's floor - the world host sets those first each frame), its zone is my arena: its walls hold my feet, its
+   *  ceiling my head, its open edges let me go. A witness's body is held elsewhere and takes none. */
+  function clampFrame(E) {
+    if (!player || (player.arena && player.arena !== fragArena)) { fragArena = null; return; }
+    const H = witness ? null : feetHall(E);
+    fragArena = H && player.pos ? egFragArena(H.spec, player.pos) : null;
+    player.arena = fragArena;
+  }
+  /** The fragment's clamp taken back off my motor - only my own (another's arena is never mine to clear). */
+  function clampAway() {
+    if (player && fragArena && player.arena === fragArena) player.arena = null;
+    fragArena = null;
   }
 
   // ── the witness (section 16.5) ──────────────────────────────────────────────────────────────────────────
@@ -890,10 +936,13 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         fight ??= makeFight(link);
         fight?.frame();
         presFrame(link.state(), t);   // EG-G1
+        if (!leaving) { reverbFrame(link.state()); clampFrame(link.state()); }   // EG-ZH (sections 11.7-11.9)
       } else {
         presAway();   // EG-G1
         if (fight) { fight.leave(); }
         if (look) { look.release(); look = null; }   // EG-G2: the look's passes, freed on every way out
+        if (!swapping && !answering) reverb.release();   // EG-ZH: let go on every way out - held through a swap or an answer's step under way
+        clampAway();   // EG-ZH
         if (leaving || (E.end && E.b)) { leaving = false; link.forget(); }
         if (door || portal) dropDoor();
       }
@@ -1085,6 +1134,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     touchAct: (id) => touchAct(id),
     /** A beat said from outside the breach's words (a Weir Key found - section 27.5). */
     beat: (k) => beatNow(k),
+    /** EG-ZH: the hall's reverb as held (tests). */
+    reverbState: () => reverb.state(),
   };
+  // EG-ZH: THE CAMERA IN ROCK and TOUCH ON THE SPANS told by this screen - the Spire's while I stand alive in it (a witness's
+  // eye is the witness's), nothing anywhere else
+  setSpireCamera(() => inSpire() && !witness);
+  setTouchSpire(() => (inSpire() && !witness ? { span: api.onTraverse() } : null));
   return api;
 }

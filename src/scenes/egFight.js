@@ -22,6 +22,10 @@
 // shape aimed at another member filled at THE QUIET COMPANY's 0.55 and mine drawn last with a brighter rim; THE SPIRE MIX
 // (systems/egMix.js): a personal sting for a lord's blow or a CHECK on my feet (an add's at most one each 1.5 s), the score
 // ducked under the critical bus, the legion's wind-up barks capped four a kind, nearest first.
+// EG-ZH (2026-10-12, sections 11.6, 25.8 and 26): THE SPIRE MIX's last two - every peer's sound 4 dB down while a hall's
+// fight runs (systems/egMix.js `peers`), WATCHFIRE'S TELL at pitch 1.4 where each told blow will land, once a blow (`tell`);
+// and THE CAVERNS' FIRE FALLS in Daggerfall's own TEXTURE.356 (world/egHall.js egFireFallFlames) while each burns, its
+// frames at the billboards' rate (render/flatAnimation.js GENERAL_FPS).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../net/gateBrain.js';
@@ -41,7 +45,8 @@ import { egBlowVerdict, egInShape, egShapeOrder, coneInscribed } from '../net/eg
 import { EG_ROLE, EG_FL, EG_FEINT_AT } from '../net/egBodies.js';
 import { egKindLook, EG_LEGION_KINDS } from '../net/egLegion.js';
 import { EG_BOSS_KEYS, EG_OBJ, egBossLook, egBossName } from '../net/egLords.js';
-import { egHallCentre } from '../world/egHall.js';
+import { egHallCentre, egFireFallFlames, EG_FIRE_FALL } from '../world/egHall.js';   // EG-ZH: the fire falls' flames
+import { GENERAL_FPS } from '../render/flatAnimation.js';   // EG-ZH: DaggerfallBillboard's framesPerSecond - the fire falls' frames
 import { egHazardParts, egHazardBites, egWispAt, EG_HAZARDS } from '../net/egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' hazards
 import { egAccessNow, egPaletteOf } from '../ui/egAccess.js';   // EG-G1 (section 25.7): the shelf's danger palette and fill - their one home
 import { egPaletteBits, egQuietCompany, EG_FOG_FLOOR } from '../world/egLook.js';   // EG-G2: the palette's style bit, the quiet company, the fog floor
@@ -79,6 +84,13 @@ const WISP_AGAIN_MS = 6000;
 export const EG_WIND_GRACE_MS = 150;
 /** EG-H1 (section 15): Watchfire's early outline - a PULSING solid red line (a dashed line is a feint's), its pulse (ms). */
 const TOLD_PULSE_MS = 180;
+/** EG-ZH (section 26): where WATCHFIRE'S TELL is heard - the told blow's first stamp that has an origin (a disc's, a lane's,
+ *  a cone's, a ring's), else `feet` (a blow over the whole floor lands where I stand); `[x, z]` in the hall's frame, or
+ *  null. Pure. */
+export function egToldAt(bl, feet = null) {
+  for (const s of bl?.s ?? []) if (s && (s[0] === 'd' || s[0] === 'l' || s[0] === 'c' || s[0] === 'r') && Number.isFinite(s[1]) && Number.isFinite(s[2])) return [s[1], s[2]];
+  return feet ? [feet[0], feet[1]] : null;
+}
 /** A zone's and a drain's tick (ms); a body's fall's length; how long after its landing a blow's shape lingers. */
 export const EG_TICK_MS = 1000;
 const FALL_MS = 1200;
@@ -212,6 +224,11 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   /** EG-G2: THE SPIRE MIX over this screen's engine and the music; the blows I was stung for; the frame's barks */
   const mix = createSpireMix({ audio, music, now });
   const stung = new Set(), _barks = [];
+  /** EG-ZH: the told blows Watchfire's tell has sounded for (this hall's); the fire falls' flames - TEXTURE.356 loaded once
+   *  (`fire` its state), each fall's batch by its hazard's number */
+  const toldHeard = new Set();
+  let fire = null;
+  const fireBatches = new Map();
   let stageNow = 'wait';
   const textures = new Map(), drawn = new Map();
   const judged = new Set(), cued = new Set(), landedSet = new Set();
@@ -240,10 +257,33 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     return null;
   }
   function destroy(d) { if (d?.batch) { renderer?.destroyBillboardBatch?.(d.batch); d.batch = null; } }
+  /** EG-ZH: TEXTURE.356 asked once (the player's own - none in a build without ARENA2: then no flames, the telegraph still
+   *  tells the fall), answered `{ tex }` once it lands, or null while it is on its way or failed. */
+  function fireTexture() {
+    if (fire && !(fire instanceof Promise)) return fire.failed ? null : fire;
+    if (!fire && getTexture) fire = Promise.resolve().then(() => getTexture(EG_FIRE_FALL.archive)).then((tex) => { fire = tex && tex.recordCount > EG_FIRE_FALL.record ? { tex } : { failed: true }; }, () => { fire = { failed: true }; });
+    return null;
+  }
+  function dropFire() { for (const b of fireBatches.values()) renderer?.destroyBillboardBatch?.(b); fireBatches.clear(); }
+  /** EG-ZH: a fire fall burning - its flames in Daggerfall's own fire, the frame the clock says, among the frame's batches. */
+  function drawFireFall(hz, t) {
+    const T = fireTexture();
+    if (!T || !renderer?.createBillboardBatch || !centre) return;
+    const F = egFireFallFlames(spec, hz);
+    if (!F) return;
+    const n = Math.max(1, T.tex.getFrameCount?.(EG_FIRE_FALL.record) ?? 1), frame = Math.floor((t / 1000) * GENERAL_FPS) % n;
+    const rkey = `${EG_FIRE_FALL.record}#${frame}`;
+    if (!renderer.textures?.has?.(`${EG_FIRE_FALL.archive}_${rkey}`)) uploadRecordFrame?.(EG_FIRE_FALL.archive, EG_FIRE_FALL.record, frame);
+    let b = fireBatches.get(hz.i);
+    if (!b) { b = renderer.createBillboardBatch(EG_FIRE_FALL.archive, rkey, { w: F.w, h: F.h }, F.at); if (!b) return; b.origin = [centre[0], centre[1], centre[2]]; fireBatches.set(hz.i, b); }
+    b.record = rkey;
+    _batches.push(b);
+  }
   /** A new hall: its frame, its floor for the telegraph pass. */
   function reset(E) {
     for (const d of drawn.values()) destroy(d);
     drawn.clear(); judged.clear(); cued.clear(); landedSet.clear(); zoneTick.clear(); fellSeen = new Set(); phaseSeen = new Set(); crystalSlots.clear(); ventJudged.clear(); hazHit.clear(); wispHold.clear(); stung.clear();
+    toldHeard.clear(); dropFire();   // EG-ZH
     hall = E.h; spec = egHallOf(E.seed, E.h, E.geo ?? 0); centre = egHallCentre(spec); band = spec.band ?? 0;
     floor = spec.fight ? { r: spec.fight.r + 6, courts: [[spec.fight.x, spec.fight.z]] } : { r: 40, courts: [[0, spec.len / 2]] };
     beat = null; saysSeen = E.fight.says.length; wokeSeen = 0; gustSeen = 0;
@@ -434,6 +474,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
           sh.since = p.st === 'tell' ? p.k * told : told; sh.span = told; sh.after = p.st === 'live' ? 0 : -1; sh.court = 0;
           _shapes.push(sh);
         }
+        if (p.st === 'live' && hz.kind === 'fall') drawFireFall(hz, t);   // EG-ZH: the fall burning in Daggerfall's own fire
         if (p.st === 'live' && standing && !hazHit.has(p.key) && egHazardBites(hz, p, f[0], fy, f[1])) {
           hazHit.set(p.key, 1);
           if (hazHit.size > 512) hazHit.delete(hazHit.keys().next().value);
@@ -480,6 +521,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       const E = link.state(), t = now();
       if (!E.b || !(E.h > 0) || E.end) { if (hall) this.leave(); return; }
       if (E.h !== hall) reset(E);
+      mix.peers(true);   // EG-ZH (section 26): every peer's sound 4 dB down while a hall's fight runs
       const F = E.fight.h === E.h ? E.fight : null;
       _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0; _barks.length = 0;
       for (const sl of _slots) sl.mine = false;   // EG-G2: a slot is mine only when this frame's blow says so
@@ -508,7 +550,11 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         // EG-G2 - THE SPIRE MIX: a personal sting at its word for a lord's blow or a CHECK on my feet; an add's at most one each 1.5 s
         if (mine && standing && !stung.has(bl.i) && t < bl.at) { stung.add(bl.i); const d0 = feet(); mix.sting(bl.ch ? 'check' : lordIds.has(bl.o) ? 'lord' : 'add', d0 ? [d0[0], d0[1], d0[2]] : null); }
       }
-      for (const bl of F.told ?? []) drawTold(bl, t);   // EG-H1: Watchfire's early outlines
+      for (const bl of F.told ?? []) {
+        drawTold(bl, t);   // EG-H1: Watchfire's early outlines
+        // EG-ZH (section 26): WATCHFIRE'S TELL - heard once a blow, as its outline first shows, where it will land
+        if (!toldHeard.has(bl.i) && t >= Math.max(bl.heard ?? -Infinity, bl.at - bl.wu - (bl.sh ?? 0)) && t < bl.at) { toldHeard.add(bl.i); const at = egToldAt(bl, f); if (at) mix.tell(toDungeon(at[0], 1, at[1])); }
+      }
       for (const bl of F.blows) {
         if (!judged.has(bl.i) && !bl.cut && standing) {
           const v = egBlowVerdict(bl, f[0], f[1], t);
@@ -580,7 +626,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       return drew;
     },
     /** What the driver holds (tests, stats). */
-    state: () => ({ hall, bodies: drawn.size, crystals: _crystals.length, shapes: _shapes.length, targets: _targets.length, judged: judged.size, mix: mix.stats(), stung: stung.size }),
+    state: () => ({ hall, bodies: drawn.size, crystals: _crystals.length, shapes: _shapes.length, targets: _targets.length, judged: judged.size, mix: mix.stats(), stung: stung.size, heard: mix.heard(), fires: fireBatches.size }),
     /** EG-G2: the frame's shapes as the pass will draw them (tests): each one's look laid on. */
     shapes: () => _shapes,
     /** The count's words for a tracker that asks. */
@@ -589,6 +635,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     leave() {
       for (const d of drawn.values()) destroy(d);
       drawn.clear(); crystalSlots.clear();
+      dropFire(); toldHeard.clear(); mix.peers(false);   // EG-ZH: the flames freed, the peers as they were
       drawGateTitleCard(null);
       hall = 0; spec = null; centre = null; beat = null;
       _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0;

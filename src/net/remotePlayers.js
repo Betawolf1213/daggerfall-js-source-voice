@@ -62,6 +62,7 @@ import { billboardSize } from '../world/rmbFlats.js';   // PCORPSE1: a corpse st
 import { raceGenderPain3Sound, CLASSIC_PLAYER_DEATH_SOUND } from '../systems/playerDeath.js';   // PCORPSE1: the fallen player's own cry
 import { SEAT_HIP_DROP } from '../player/seatPose.js';   // CARDS2c: a seated sprite sinks by the seat's own drop
 import { RACES } from '../systems/races.js'; import { PeerClimbSounds, peerBodyYaw, peerMoving } from './peerClimb.js';   // CLIMB5: a peer on the wall faces it, takes no stride, and is heard climbing
+import { peerHeard } from './peerFx.js';   // EG-ZH: every peer sound through the place's scope (Elite-Gates.md section 26)
 
 // ── PCORPSE1: THE FALLEN ──────────────────────────────────────────
 //
@@ -482,8 +483,10 @@ export const PEER_SOUND_PROFILE = Object.freeze({ refDistance: 6, maxDistance: 3
 /** Past the far edge nothing is made at all (a panner and a source per step for a peer nobody can hear). */
 export const peerInEarshot = (f, eye) => !(eye && eye.length === 3) || Math.hypot(f[0] - eye[0], f[1] - eye[1], f[2] - eye[2]) < PEER_SOUND_PROFILE.maxDistance;
 function peerSound(audio, clip, at, volume) {
-  if (audio.play3d) audio.play3d(clip, at, volume, PEER_SOUND_PROFILE);
-  else audio.playOneShot?.(clip, volume);
+  peerHeard(() => {   // EG-ZH: a peer's sound, as the place hears it (net/peerFx.js - 4 dB down in the Spire)
+    if (audio.play3d) audio.play3d(clip, at, volume, PEER_SOUND_PROFILE);
+    else audio.playOneShot?.(clip, volume);
+  });
 }
 export const ridingLoopName = (id) => `peerRide:${id}`;
 /** AUDIT DISC7 B3: a mounted peer whose newest pose is older than this is standing still for the riding loop - a
@@ -556,7 +559,7 @@ export class RemotePlayers {
         const d = Math.hypot(f[0] - eye[0], f[1] - eye[1], f[2] - eye[2]);
         falloff = d <= 8 ? 1 : d >= 45 ? 0 : 1 - (d - 8) / 37;
       }
-      if (falloff > 0) audio.playOneShot(peerDeathSound(peer?.look), falloff);
+      if (falloff > 0) peerHeard(() => audio.playOneShot(peerDeathSound(peer?.look), falloff));   // EG-ZH: as the place hears it
     }
   }
 

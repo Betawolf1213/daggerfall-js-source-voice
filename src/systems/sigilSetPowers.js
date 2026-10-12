@@ -630,11 +630,23 @@ function spireHold(k) { const room = spireRoom(); if (room != null) _s.spireHeld
 const spireHeld = (k) => { const room = _s.spireHeld.get(k); return room !== undefined && room === spireRoom(); };
 /** Is this power ready now: its timer run out, and no breach holding it. */
 const recovered = (k, now) => now >= _s[SPIRE_SAVES[k]] && !spireHeld(k);
+// EG-ZH (2026-10-12, Mac: "I said I want everything"; Elite-Gates.md section 15, "Death saves"): THE SPIRE'S RECOVERY FOR
+// THE POWERS THAT ARE NOT THE SETS'. systems/lootPowers.js reads the blow's law out of this file and this file may not
+// import it, so its death saves (Divine Grace, the Ghost-King's Vigil) hold to the same breach by the same host word
+// (`spireRoomNow`) and recover at the same Redoubt through this door - registered at its import, never cleared by a reset.
+/** @type {Map<string, () => void>} */
+const _spireRedoubts = new Map();
+/** A power's own recovery at a Redoubt taken in a breach (`key` its name - one each). */
+export function registerSpireRedoubt(key, fn) { if (typeof fn === 'function') _spireRedoubts.set(key, fn); else _spireRedoubts.delete(key); }
+/** The Elite Breach the player stands in now (the host's `setSpireRecovery` word - any value but null and false), or null. */
+export const spireRoomNow = () => spireRoom();
 /** The host's word (scenes/egClient.js, as the room says a Redoubt was taken): every death save recovers at once - the
- *  four above, held or still on a timer - and the next round says each is ready again. */
+ *  four above, held or still on a timer - and the next round says each is ready again. EG-ZH: and every other death save
+ *  registered beside them (systems/lootPowers.js - Divine Grace and the Ghost-King's Vigil), each its own. */
 export function spireRedoubtTaken() {
   for (const field of Object.values(SPIRE_SAVES)) _s[field] = 0;
   _s.spireHeld.clear();
+  for (const fn of _spireRedoubts.values()) { try { fn(); } catch { /* one power's recovery is not the others' */ } }
 }
 
 /** The Nova: every live foe within NOVA_METRES of my feet takes `n` - never an ally or a foe at peace (H1), one on

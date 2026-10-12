@@ -26,12 +26,13 @@
 // channels wear the band's liquid (EG_DRESS.molten), no longer the edge line's gold.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { realmToDungeon } from '../net/sdBrain.js';
+import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
 import { faces } from './gateModel.js';
 import { realmIsland, packRealmFaces, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_COBBLE_RECORD, SD_ISLAND_SIDES } from './sdRealm.js';
 import { egCircleSpecs, egBandOfCircle, EG_TEXT } from '../net/egLaw.js';
 import { EG_FRAGS } from '../net/egFragLaw.js';
 import { egBandDress, EG_DRESS } from './egBandArt.js';   // EG-G2: the band's dress
+import { FIRE_WALLS_ARCHIVE } from './emissiveTextures.js';   // EG-ZH: the Caverns' fire falls wear Daggerfall's own fire
 
 /** The made location's id (the Hour's is 0x7ffff200, the court's 0x7ffff000), its one block's name and index. */
 export const EG_HALL_LOCATION_ID = 0x7ffff300;
@@ -438,3 +439,103 @@ const _egLight = { tri: { sky: [0.14, 0.13, 0.16], equator: [0.13, 0.1, 0.08], g
 export const egHallLighting = () => _egLight;
 /** The words the level's refusals say (the dungeon host's save, map and rest arms). */
 export const EG_HALL_TEXT = Object.freeze({ noSave: EG_TEXT.noSave, noMap: EG_TEXT.noMap, noRest: EG_TEXT.noRest });
+
+// ── EG-ZH (2026-10-12, Mac: "I said I want everything"): THE FIRE FALLS DRESSED, AND THE FRAGMENT'S OWN CLAMP ─────────────
+/**
+ * THE CAVERNS' FIRE FALLS (Elite-Gates.md sections 11.6 and 25.8): a fire fall wears Daggerfall's own TEXTURE.356 - the
+ * Mantellan Crux's fire walls, record 0, lit through DFU's GetFireWallColors32 (formats/baseImageFile.js) - read from the
+ * player's own ARENA2 at runtime, never shipped. Its flames stand across the passage on the fall's own line, `w` wide each
+ * and as tall as the passage, while the fall burns (scenes/egFight.js draws them, animated at the billboards' own rate).
+ */
+export const EG_FIRE_FALL = Object.freeze({ archive: FIRE_WALLS_ARCHIVE, record: 0, w: 2, h: 4 });
+/**
+ * A fire fall's flames in hall `spec` (`hz` one of its hazards, kind `fall`): `{ at: [[x, y, z], ...], w, h }` in the hall's
+ * frame - each flame's foot on the fall's line across the passage, `w` wide, the passage's height tall (the passage the
+ * line crosses - its cave - else EG_FIRE_FALL.h) - or null for any other hazard. Pure.
+ * @param {any} spec @param {any} hz
+ */
+export function egFireFallFlames(spec, hz) {
+  if (hz?.kind !== 'fall' || !Array.isArray(hz.sh) || hz.sh.length < 4) return null;
+  const [x0, z0, x1, z1] = hz.sh, len = Math.hypot(x1 - x0, z1 - z0);
+  const cave = (spec.caves ?? []).find((q) => Math.abs(q.x - (x0 + x1) / 2) <= q.halfW + 0.5 && (z0 + z1) / 2 >= q.z0 && (z0 + z1) / 2 <= q.z1);
+  const n = Math.max(1, Math.round(len / EG_FIRE_FALL.w));
+  const at = [];
+  for (let k = 0; k < n; k++) { const t = (k + 0.5) / n; at.push([x0 + (x1 - x0) * t, hz.y ?? 0, z0 + (z1 - z0) * t]); }
+  return { at, w: len / n, h: cave ? cave.height : EG_FIRE_FALL.h };
+}
+
+/** THE FRAGMENT'S CLAMP's slack (m): a body this far past a zone's footprint is still that zone's to put back. */
+export const EG_CLAMP_SLACK_M = 1.5;
+/** The capsule's height (player/motor.js CAPSULE_HEIGHT): a zone's ceiling holds the head under it, so the feet stand at
+ *  most this far below. */
+const CLAMP_BODY_M = 1.8;
+/**
+ * THE FRAGMENT KEEPS ITS OWN CLAMP (Elite-Gates.md sections 11.7 and 11.8): climbing and wall-runs would carry a player up a
+ * chamber's walls, and a safe perch over the fight would make traversal's immunity a ranged build's fortress - so each
+ * fragment's footprint is extruded to its ceiling as the motor's clamp (`player.arena.clamp`), its open edges released.
+ * Hall `spec`'s zones, in the hall's frame (pure):
+ *   a PASSAGE (each cave)  `{ t: 'passage', x, z0, z1, halfW, y, ceil, open }` - its walls bound it (an open passage's sides
+ *     are open edges), its two mouths and every alcove's doorway are open, its vault (or its walls' top) the ceiling;
+ *   a CHAMBER (each fragment's ring wall - a trial's own walled floor is never a fragment) `{ t: 'chamber', x, z, r, y, ceil }`
+ *     - its ring bounds it, the gaps where the course comes in and goes on are open, the ring's top the ceiling.
+ * Never the made levels' analytic clamps (the Hour's realmClamp, the Burning Court's courtArena).
+ */
+export function egFragZones(spec) {
+  const out = [];
+  for (const q of spec.caves ?? []) out.push({ t: 'passage', x: q.x, z0: q.z0, z1: q.z1, halfW: q.halfW, y: Math.min(q.y, q.yB ?? q.y), ceil: Math.max(q.y, q.yB ?? q.y) + q.height, open: q.open ? 1 : 0 });
+  for (const d of spec.deco ?? []) if (d.t === 'wall' && d.kit) out.push({ t: 'chamber', x: d.x, z: d.z, r: d.r, y: d.y ?? 0, ceil: (d.y ?? 0) + d.h });
+  return out;
+}
+/** The zone of `zones` (egFragZones) a hall-frame point stands in - within its footprint and EG_CLAMP_SLACK_M, from 3 m
+ *  under its floor to 3 m over its ceiling - or null. Pure. */
+export function egFragZoneAt(zones, x, y, z) {
+  for (const q of zones) {
+    if (y < q.y - 3 || y > q.ceil + 3) continue;
+    if (q.t === 'passage' ? z >= q.z0 && z <= q.z1 && Math.abs(x - q.x) <= q.halfW + EG_CLAMP_SLACK_M : Math.hypot(x - q.x, z - q.z) <= q.r + EG_CLAMP_SLACK_M) return q;
+  }
+  return null;
+}
+/** Whether a ring's bearing from its centre is one of its open gaps (the course in at -z, on at +z: world/egHall.js's ring
+ *  wall leaves out every side whose middle's |sin| is under 0.2). */
+const ringGap = (dx, dz) => { const d = Math.hypot(dx, dz); return d > 1e-9 && Math.abs(dx / d) < 0.2; };
+/**
+ * THE KEEP: a hall-frame (x, z) put back inside zone `q`, a body of radius `r` - `[x, z]` where it is put, or null where it
+ * already stands (or stands at an open edge, or has left the zone). A passage's side holds it `r` inside its wall, never past
+ * its mouths, at an alcove's doorway (`spec`'s alcoves) or along an open passage; a chamber's ring holds it `r` inside its
+ * rim, never through a gap or once it is past the rim's slack. Pure.
+ */
+export function egFragKeep(q, x, z, r, spec = null) {
+  if (!q) return null;
+  if (q.t === 'passage') {
+    if (q.open || z < q.z0 || z > q.z1) return null;   // an open passage's sides, and its two mouths, are open edges
+    const dx = x - q.x, lim = q.halfW - r;
+    if (Math.abs(dx) <= lim) return null;
+    const side = Math.sign(dx);
+    const door = (spec?.alcoves ?? []).some((a) => Math.sign(a.x - q.x) === side && Math.abs(a.z - z) <= NICHE.w / 2 && a.z > q.z0 && a.z < q.z1);
+    return door ? null : [q.x + side * lim, z];
+  }
+  const dx = x - q.x, dz = z - q.z, d = Math.hypot(dx, dz), lim = q.r - r;
+  if (d <= lim || d > q.r + EG_CLAMP_SLACK_M || ringGap(dx, dz)) return null;
+  return [q.x + (dx / d) * lim, q.z + (dz / d) * lim];
+}
+/**
+ * THE MOTOR'S ARENA for a body at dungeon-frame `pos` in hall `spec` (player/motor.js _keepInArena's shape): `{ centre,
+ * radius, ceilAbove, clamp, zone }` - the zone's floor its centre's height, its ceiling less the body its `ceilAbove`, and a
+ * clamp that puts the feet back inside its walls (dungeon frame in, dungeon frame out) - or null outside every zone. Pure.
+ * @param {any} spec @param {number[]} pos
+ */
+export function egFragArena(spec, pos) {
+  if (!spec || !Array.isArray(pos)) return null;
+  const [rx, y, z] = dungeonToRealm(pos[0], pos[1], pos[2]), x = rx - spec.x0;
+  const q = egFragZoneAt(egFragZones(spec), x, y, z);
+  if (!q) return null;
+  const c = egToDungeon(spec, q.x, q.y, q.t === 'passage' ? (q.z0 + q.z1) / 2 : q.z);
+  return {
+    centre: c, radius: 1, ceilAbove: Math.max(0.5, q.ceil - q.y - CLAMP_BODY_M), zone: q,
+    clamp: (p, r) => {
+      const [px, , pz] = dungeonToRealm(p[0], p[1], p[2]);
+      const to = egFragKeep(q, px - spec.x0, pz, r, spec);
+      return to ? [egToDungeon(spec, to[0], 0, to[1])[0], egToDungeon(spec, to[0], 0, to[1])[2]] : null;
+    },
+  };
+}

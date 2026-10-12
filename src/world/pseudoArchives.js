@@ -38,6 +38,10 @@ export const EG_BAND_ARCHIVES = Object.freeze([38241, 38251, 38261, 38271]);
 export const EG_BAND_BLOCK = 9;
 /** THE ARCH, THE KEY AND THE BEACON's block (section 25.1's 38231-38239, moved past the bands: 38231 is the harbour's). */
 export const EG_ARCH_ARCHIVES = Object.freeze({ from: 38281, to: 38289 });
+/** EG-ZH (2026-10-12, section 25.1): what the arch's block holds, in the page's order - the arch's skin at its first number
+ *  (held for the arch's slice), the WEIR KEY's picture at the second (painted - world/egKeyArt.js), the beacon's at the
+ *  third (held); the rest held for the Spire's later pictures. */
+export const EG_ARCH_BLOCK = Object.freeze({ arch: EG_ARCH_ARCHIVES.from, key: EG_ARCH_ARCHIVES.from + 1, beacon: EG_ARCH_ARCHIVES.from + 2 });
 
 /**
  * @typedef {{ from: number, to: number, owner: string, name: string, kind: 'port'|'mod'|'data'|'synthetic', what: string }} PseudoArchiveRange
@@ -73,7 +77,7 @@ export const PSEUDO_ARCHIVES = Object.freeze([
   N(EG_BAND_ARCHIVES[1], 'world/pseudoArchives.js', 'EG_BAND_ARCHIVES', 'port', "the Spire's Soul Cairn", EG_BAND_ARCHIVES[1] + EG_BAND_BLOCK - 1),
   N(EG_BAND_ARCHIVES[2], 'world/pseudoArchives.js', 'EG_BAND_ARCHIVES', 'port', "the Spire's Shade Perilous", EG_BAND_ARCHIVES[2] + EG_BAND_BLOCK - 1),
   N(EG_BAND_ARCHIVES[3], 'world/pseudoArchives.js', 'EG_BAND_ARCHIVES', 'port', "the Spire's Havoc Wellhead", EG_BAND_ARCHIVES[3] + EG_BAND_BLOCK - 1),
-  N(EG_ARCH_ARCHIVES.from, 'world/pseudoArchives.js', 'EG_ARCH_ARCHIVES', 'port', "the Spire's arch, the Weir Key and the beacon (held)", EG_ARCH_ARCHIVES.to),
+  N(EG_ARCH_ARCHIVES.from, 'world/pseudoArchives.js', 'EG_ARCH_ARCHIVES', 'port', "the Spire's arch (held), the Weir Key (38282, painted - world/egKeyArt.js) and the beacon (held)", EG_ARCH_ARCHIVES.to),
   N(38990, 'tools/abyssLab.js', 'LAB_ARCHIVE', 'port', "the abyss lab's walls and floor"),
   N(56790, 'world/townStandIns.js', 'TOWN_CLUTTER_ARCHIVE', 'data', "the towns' clutter Daggerfall's blocks name"),
   N(112358, 'systems/handheldTorches.js', 'DROPPED_ARCHIVE', 'mod', 'Handheld Torches: a dropped torch'),

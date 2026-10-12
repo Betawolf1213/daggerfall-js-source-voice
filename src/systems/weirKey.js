@@ -13,20 +13,25 @@
 // "The key is cold here." Every reader shows a `text` result (useItem.js's registered arm), so no reader needs a new
 // kind.
 //
-// ITS PICTURE is DFU's Talisman's (ItemTemplates 263: TEXTURE.211 record 50 - the picture is DFU's own), as the Portal
-// Stone wears the Diamond's and the Wallet the Small Sack's; EG1's registry is where a key of its own is painted.
+// ITS PICTURE is its own (EG-ZH, 2026-10-12 - Elite-Gates.md section 25.1): painted in code under the Spire's held archive
+// block (world/egKeyArt.js, world/pseudoArchives.js EG_ARCH_BLOCK.key) - a Battlemage's key in gold leaf with a blue stone
+// in its bow - and put on the texture door at this file's import as its archive's stand-in, so every door that draws an
+// item's picture draws it (the custom template's world arm - systems/itemTemplates.js usesWorldTexture).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { registerCustomTemplates, setItemFields, mintCondition, registerItemUseHandler } from './itemTemplates.js';
 import { EG_TEXT } from '../net/egLaw.js';
+import { WEIR_KEY_ART, registerWeirKeyArt } from '../world/egKeyArt.js';   // EG-ZH: its own picture
+import { addVendorTextures } from './textureReplacement.js';
 
 export const WEIR_KEY_TEMPLATE = 575;
 /** Its row: bound (net/realmTradeLaw.js BOUND_TEMPLATES names it - never traded, never lost to a death) and stacked. */
 export const WEIR_KEY_ROW = Object.freeze({
   index: WEIR_KEY_TEMPLATE, name: EG_TEXT.keyName, baseWeight: 0.25, hitPoints: 1000, basePrice: 500, rarity: 20,
-  worldTextureArchive: 211, worldTextureRecord: 50, bound: true, stackable: true,
+  worldTextureArchive: WEIR_KEY_ART.archive, worldTextureRecord: WEIR_KEY_ART.record, bound: true, stackable: true,
 });
 registerCustomTemplates([WEIR_KEY_ROW]);
+registerWeirKeyArt(addVendorTextures);   // EG-ZH: the import IS the registration
 /** Whether a record is a Weir Key - its template and its group, the one spelling every rule reads. */
 export const isWeirKey = (/** @type {any} */ item) => item?.templateIndex === WEIR_KEY_TEMPLATE && item?.group === 'UselessItems2';
 /** `n` Weir Keys (at least one), one stack. */
