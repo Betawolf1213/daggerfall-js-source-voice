@@ -18,7 +18,13 @@
 //
 // PURE in its fold (`foldEg`); the link around it keeps the state, hands each receipt on and says a refusal once.
 //
+//   EG-ZJ (2026-10-12; sections 11.7, 22 and 23): each body's feet and its walk's height, its state as the room said it (an
+//     object's, a lord's phase and fall), and the zones still burning - the whole fight (`efs`) folded over what this screen
+//     already holds of each body (when it rose, its hurt), so a member who joins or reloads mid-fight holds the company's
+//     fight at once and the fight said again every two seconds never stands its bodies anew.
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
+import { EG_ROLE, EG_FL, egWalkY } from './egBodies.js';   // EG-ZJ: a lord's fall, a walk's height (the room's own law)
 
 /** A fight before anything is heard. */
 export const EG_FIGHT_EMPTY = Object.freeze({ h: 0, wk: 0, bodies: Object.freeze([]), blows: Object.freeze([]), zones: Object.freeze([]), tx: Object.freeze([]), mk: Object.freeze([]), pg: Object.freeze({}), gust: null, dark: 0, rail: 0, says: Object.freeze([]), fells: Object.freeze([]), gone: Object.freeze([]), phases: Object.freeze([]), told: Object.freeze([]) });
@@ -37,8 +43,22 @@ export const EG_FALLS_KEPT = 8;
 export const EG_SAYS_KEPT = 12;
 export const EG_GONE_KEPT = 48;
 const stageOf = (w) => ({ h: w.h, sg: w.sg, sa: w.sa, su: w.su, cl: w.cl, ca: w.ca, hw: w.hw, dn: w.dn });
-/** A body as the state keeps it, from its wire array `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at]`. */
-export const egBodyOf = (t, now) => ({ i: t[0], role: t[1], k: t[2], pt: t[3], x: t[4], z: t[5], hp: t[6], max: t[7], fl: t[8], mv: t[11] > 0 ? { x: t[4], z: t[5], tx: t[9], tz: t[10], v: t[11], at: t[12] } : null, born: now });
+/**
+ * A body as the state keeps it, from its wire array `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa]`.
+ * EG-ZJ (sections 11.7, 22 and 23): its feet `y` and its walk's end's (`mv.ty`); its state as the room said it - an object's
+ * (`st`, since `stAt` - its `eob`), a lord's phase once it wakes (`ph`; 0 asleep) and, fallen (EG_FL.fell), its fall
+ * (`fellAt`); `born` when it rose (`ead` - now; a body this screen first hears whole has stood all along, `born` 0, and never
+ * rises again); `had` the body this screen already holds, whose own memory it keeps - when it rose, when it was last hurt and
+ * whether by my blow.
+ */
+export function egBodyOf(t, now, had = null, born = now) {
+  const b = { i: t[0], role: t[1], k: t[2], pt: t[3], x: t[4], z: t[5], y: t[13] ?? 0, hp: t[6], max: t[7], fl: t[8], mv: t[11] > 0 ? { x: t[4], z: t[5], tx: t[9], tz: t[10], v: t[11], at: t[12], y: t[13] ?? 0, ty: t[14] ?? t[13] ?? 0 } : null, born: had ? had.born : born };
+  if (t[1] === EG_ROLE.obj) { b.st = t[15] ?? 0; b.stAt = t[16] ?? 0; }
+  else if (t[1] === EG_ROLE.lord) { b.ph = t[15] ?? 0; if ((t[8] & EG_FL.fell) !== 0) b.fellAt = t[16] || had?.fellAt || now; }
+  if (had?.hurtAt != null) b.hurtAt = had.hurtAt;
+  if (had?.mineAt != null) b.mineAt = had.mineAt;
+  return b;
+}
 /** Where a body stands at `now` - its walk carried from its word (net/egBodies.js egBodyAt's law). */
 export function egBodyPlace(b, now) {
   const m = b?.mv;
@@ -48,23 +68,39 @@ export function egBodyPlace(b, now) {
   const along = Math.min(len, (Math.max(0, now - m.at) / 1000) * m.v);
   return [m.x + ((m.tx - m.x) / len) * along, m.z + ((m.tz - m.z) / len) * along];
 }
+/** EG-ZJ: a body's feet at `now` - its walk's height carried from its word (net/egBodies.js egWalkY, the room's own law),
+ *  else where it stands. */
+export const egBodyHeight = (b, now) => (b?.mv ? egWalkY(b.mv, now) : b?.y ?? 0);
 const keepLast = (list, item, n) => [...list, item].slice(-n);
+/** EG-ZJ: a lord's fall as its flags say it - fallen (EG_FL.fell, a Twin's first fall among them, which no `efell` says) it
+ *  lies from its fall's word or from now, raised again (the Twins' fifteen seconds) it stands. In place; answers the body. */
+function fellOf(b, now) {
+  if (b.role !== EG_ROLE.lord) return b;
+  if ((b.fl & EG_FL.fell) !== 0) b.fellAt ??= now;
+  else delete b.fellAt;
+  return b;
+}
 
 /** One fight word folded (pure). */
 function foldFight(f, w, now) {
   switch (w.k) {
-    case 'efs': return { ...EG_FIGHT_EMPTY, h: w.h, wk: w.wk, bodies: w.b.map((t) => egBodyOf(t, now)), blows: w.bl, tx: w.tx, mk: w.mk, pg: w.pg, zones: f.h === w.h ? f.zones : [], says: f.h === w.h ? f.says : [], gone: f.h === w.h ? f.gone : [], fells: f.h === w.h ? f.fells : [], phases: f.h === w.h ? f.phases : [], told: f.h === w.h ? f.told ?? [] : [], gust: f.gust, dark: f.dark, rail: f.rail };
+    case 'efs': {
+      // EG-ZJ (section 22): the room's whole fight over what this screen holds of it - each body known kept its own memory
+      // (egBodyOf's `had`), one first heard here standing all along; the zones the room still burns
+      const same = f.h === w.h, had = same ? new Map(f.bodies.map((b) => [b.i, b])) : null;
+      return { ...EG_FIGHT_EMPTY, h: w.h, wk: w.wk, bodies: w.b.map((t) => egBodyOf(t, now, had?.get(t[0]) ?? null, 0)), blows: w.bl, tx: w.tx, mk: w.mk, pg: w.pg, zones: w.zs ?? (same ? f.zones : []), says: same ? f.says : [], gone: same ? f.gone : [], fells: same ? f.fells : [], phases: same ? f.phases : [], told: same ? f.told ?? [] : [], gust: f.gust, dark: f.dark, rail: f.rail };
+    }
     case 'ead': { const had = new Set(f.bodies.map((b) => b.i)); return { ...f, bodies: [...f.bodies, ...w.a.filter((t) => !had.has(t[0])).map((t) => egBodyOf(t, now))] }; }
     case 'emv': {
-      const by = new Map(w.m.map((t) => [t[0], t]));
-      return { ...f, bodies: f.bodies.map((b) => { const t = by.get(b.i); return t ? { ...b, x: t[1], z: t[2], mv: t[5] > 0 ? { x: t[1], z: t[2], tx: t[3], tz: t[4], v: t[5], at: t[6] } : null } : b; }) };
+      const by = new Map(w.m.map((t) => [t[0], t]));   // EG-ZJ: `[i, x, z, tx, tz, v, at, y, ty]` - its height and its end's
+      return { ...f, bodies: f.bodies.map((b) => { const t = by.get(b.i); return t ? { ...b, x: t[1], z: t[2], y: t[7] ?? b.y, mv: t[5] > 0 ? { x: t[1], z: t[2], tx: t[3], tz: t[4], v: t[5], at: t[6], y: t[7] ?? b.y, ty: t[8] ?? t[7] ?? b.y } : null } : b; }) };
     }
     case 'ehp': { const by = new Map(w.h.map((t) => [t[0], t[1]])); return { ...f, bodies: f.bodies.map((b) => (by.has(b.i) ? { ...b, hp: by.get(b.i), hurtAt: by.get(b.i) < b.hp ? now : b.hurtAt } : b)) }; }
     case 'edie': {
       const gone = f.bodies.filter((b) => w.is.includes(b.i)).map((b) => ({ ...b, goneAt: w.at, w: w.w, n: w.n }));
       return { ...f, bodies: f.bodies.filter((b) => !w.is.includes(b.i)), gone: [...f.gone, ...gone].slice(-EG_GONE_KEPT), tx: f.tx.filter((t) => !w.is.includes(t[0]) && !w.is.includes(t[1])) };
     }
-    case 'efl': return { ...f, bodies: f.bodies.map((b) => (b.i === w.i ? { ...b, fl: w.fl } : b)) };
+    case 'efl': return { ...f, bodies: f.bodies.map((b) => (b.i === w.i ? fellOf({ ...b, fl: w.fl }, now) : b)) };   // EG-ZJ: a lord fallen lies down at once, one raised again stands
     case 'eb': return { ...f, blows: [...f.blows.filter((b) => b.i !== w.i && now <= b.at + Math.max(1, b.sp) + 1500), { ...w, heard: now }].slice(-40), told: (f.told ?? []).filter((b) => b.i !== w.i) };   // EG-H1: a told blow said - its early outline gone
     case 'tell': return { ...f, told: [...(f.told ?? []).filter((b) => b.i !== w.i && now <= b.at + 1500), { ...w, heard: now }].slice(-16) };   // EG-H1: Watchfire's early outline
     case 'untell': return { ...f, told: (f.told ?? []).filter((b) => b.i !== w.i) };   // EG-H1: a told blow the union floor held - no ghost on the floor

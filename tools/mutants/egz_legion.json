@@ -155,8 +155,8 @@
   {
     "name": "EGZ-ground-walkers-straight",
     "file": "src/net/egLegion.js",
-    "old": "const [x, z, last] = egWalkNext(view, a, gx, gz, gy, a.r ?? 0.6);",
-    "new": "const [x, z, last] = [gx, gz, true];",
+    "old": "[x, z, last] = egWalkNext(view, a, gx, gz, gy, a.r ?? 0.6)",
+    "new": "[x, z, last] = [gx, gz, true]",
     "tests": [
       "test/egz_legion.test.js"
     ]

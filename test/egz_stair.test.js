@@ -358,7 +358,7 @@ test('EG-ZE THE FLOOR UNDER AND THE WITNESS\'S SIGHT (section 16.5): a ping stan
   const Br = breach({ h: 7, sg: 'trial', seed: 1, clock: now }), spec7 = egHallOf(1, 7, 0);
   assert.ok(spec7.alcoves.length > 0);
   const al = spec7.alcoves[0];
-  const lurker = [9, EG_ROLE.add, EG_KIND.lurker, 0, 2, 40, 100, 100, EG_FL.dormant, 0, 0, 0, 0], awake = [10, EG_ROLE.add, EG_KIND.lurker, 0, -2, 40, 100, 100, 0, 0, 0, 0, 0];
+  const lurker = [9, EG_ROLE.add, EG_KIND.lurker, 0, 2, 40, 100, 100, EG_FL.dormant, 0, 0, 0, 0, 0, 0, 0, 0], awake = [10, EG_ROLE.add, EG_KIND.lurker, 0, -2, 40, 100, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0];   // PIN MOVED (EG-ZJ): a body's row is seventeen (its feet, its walk's end's height, its state and since when)
   const E = heard([egStateOf(Br, now), { k: 'efs', h: 7, wk: now, b: [lurker, awake], bl: [], tx: [], mk: [], pg: {} }], now);
   assert.equal(E.fight.bodies.length, 2);
   assert.deepEqual(egSpireLights(E, now), [], 'the living see neither');

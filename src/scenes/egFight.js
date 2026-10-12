@@ -36,6 +36,10 @@
 // fight runs (systems/egMix.js `peers`), WATCHFIRE'S TELL at pitch 1.4 where each told blow will land, once a blow (`tell`);
 // and THE CAVERNS' FIRE FALLS in Daggerfall's own TEXTURE.356 (world/egHall.js egFireFallFlames) while each burns, its
 // frames at the billboards' rate (render/flatAnimation.js GENERAL_FPS).
+// EG-ZJ (2026-10-12, sections 11.7, 22 and 23): EVERY BODY ON ITS OWN FEET - each drawn, struck at and heard at the height the
+// room says it stands (net/egLink.js egBodyHeight - a span's Harrier beside its member down a course, a Deepway's Lurker on
+// the floor past its shaft, a Court laid above the hall's own height), never the hall's; and the Cooling Slag's spill and
+// its crust's last second told on the crust's own surface (world/egTelegraph.js egHazardSurface).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../net/gateBrain.js';
@@ -47,7 +51,7 @@ import { titleCardModel, drawGateTitleCard, TITLE_HOLD_MS } from '../ui/gateTitl
 import { setBatchHitFlash, setBatchGlint } from '../systems/hitFlash.js';
 import { groundViewModel, drawGateGround } from '../ui/gateGroundView.js';   // EG-ZG: the peril arrow and the chain's words, the gate's own readout
 import { screenBearing } from './gateCourt.js';   // EG-ZG: the way out as the screen turns it
-import { egFightFloors, egFloorPlan, egPerilOf, egTetherKind, egTetherBreak, egPullLook, egChainLook, egChainWords, egPoolRgb, egEclipseAt, egEclipseDark, egSigilsOf, egScreenAt, egViewYaw, egAuraHolders, egRimOf, egHeavyShake, egShakeMotion, egBodyFlash, egDropUnder,
+import { egFightFloors, egFloorPlan, egHazardSurface, egPerilOf, egTetherKind, egTetherBreak, egPullLook, egChainLook, egChainWords, egPoolRgb, egEclipseAt, egEclipseDark, egSigilsOf, egScreenAt, egViewYaw, egAuraHolders, egRimOf, egHeavyShake, egShakeMotion, egBodyFlash, egDropUnder,
   EG_CHECK_ORDER, EG_ECLIPSE_LOOK, EG_SIGIL_UP_M, EG_AURA_RING, EG_DROP_THUD, EG_TETHER } from '../world/egTelegraph.js';   // EG-ZG: THE TELEGRAPHS AS WRITTEN, the law
 import { drawEgSigils } from '../ui/egSpireHud.js';   // EG-ZG: the marks over heads
 import { egMemberOf } from '../net/egLink.js';
@@ -60,7 +64,7 @@ import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { egHallOf, egCountText, egVentAt, egInVent, EG_LORDS, EG_BANDS, EG_VENT_PCT, EG_VENT_WARN_MS, EG_VENT_FIRE_MS } from '../net/egLaw.js';
 import { egVentState, egInVentDisc, egPendAt, EG_VENT_R, EG_VENT_TELL_S, EG_PEND_REACH, EG_PEND_HALF, EG_PEND_CLEAR_MIN } from '../net/egSpanLaw.js';
 import { egSlagState, egSlagX, EG_SLAG_SPOUTS, EG_SLAG_CRUST_S, EG_SLAG_WARN_S } from '../net/egSpanLaw.js';   // EG-ZC: a slag crust's break told
-import { egBodyPlace } from '../net/egLink.js';
+import { egBodyPlace, egBodyHeight } from '../net/egLink.js';   // EG-ZJ: a body's feet
 import { egBlowVerdict, egInShape, egShapeOrder, coneInscribed } from '../net/egShape.js';
 import { EG_ROLE, EG_FL, EG_FEINT_AT } from '../net/egBodies.js';
 import { egKindLook, EG_LEGION_KINDS } from '../net/egLegion.js';
@@ -356,8 +360,8 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     if (!T || !renderer?.createBillboardBatch) return;
     const act = egBodyAct(b, t, look.mobile, blow, look.hover);
     if (act.act === 'gone' || ((b.fl & EG_FL.hidden) !== 0 && b.role === EG_ROLE.lord)) return;
-    const [x, z] = egBodyPlace(b, t);
-    const y = (act.sink > 0 ? -act.sink : 0) + (look.hover > 0 ? look.hover + 0.15 * Math.sin(t / 260 + b.i) : 0);
+    const [x, z] = egBodyPlace(b, t), bodyY = egBodyHeight(b, t);   // EG-ZJ (section 11.7): on its own feet, the room's word - never the hall's height
+    const y = bodyY + (act.sink > 0 ? -act.sink : 0) + (look.hover > 0 ? look.hover + 0.15 * Math.sin(t / 260 + b.i) : 0);
     d.at[0] = centre[0] + x; d.at[1] = centre[1] + y; d.at[2] = centre[2] + z;
     const eye = cam() ?? d.at;
     const fr = bossFrame(/** @type {any} */ (act), b.yaw ?? (b.mv ? Math.atan2(b.mv.tx - b.mv.x, b.mv.tz - b.mv.z) : Math.PI), d.at, eye, (rec) => T.tex.getFrameCount?.(rec) ?? 1);
@@ -386,8 +390,8 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     const color = EG_OBJ_COLORS[key] ?? EG_OBJ_COLORS.rift;
     const c = crystalSlots.get(b.i) ?? { at: [0, 0, 0], yaw: 0, seed: ((b.i * 7919) % 997) / 997, grow: 1, broke: -1, hp: 1, flash: 0, color, beam: null };
     crystalSlots.set(b.i, c);
-    const [x, z] = egBodyPlace(b, t);
-    c.at[0] = centre[0] + x; c.at[1] = centre[1] + (key === 'pillar' ? 3 : 0); c.at[2] = centre[2] + z;
+    const [x, z] = egBodyPlace(b, t), bodyY = egBodyHeight(b, t);   // EG-ZJ: where it stands (a false wall on its alcove's floor)
+    c.at[0] = centre[0] + x; c.at[1] = centre[1] + bodyY + (key === 'pillar' ? 3 : 0); c.at[2] = centre[2] + z;
     c.yaw = c.seed * Math.PI * 2; c.hp = b.max > 0 ? Math.max(0, b.hp / b.max) : 0; c.color = color; c.broke = b.goneAt ? Math.max(0, (t - b.goneAt) / 1000) : -1;
     c.flash = Math.max(0, 1 - (t - (b.hurtAt ?? -Infinity)) / 180);
     c.grow = (b.fl & EG_FL.ward) !== 0 ? 0.6 : 1;
@@ -505,6 +509,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
           sh.kind = TELEGRAPH_KIND.lane; sh.origin[0] = lx; sh.origin[1] = s.z - s.d / 2; sh.end[0] = lx; sh.end[1] = s.z + s.d / 2; sh.halfW = s.w / 2; sh.r = 0;
           sh.t = 1 - left / EG_SLAG_WARN_S; sh.flash = 0; sh.alpha = 1; sh.color = PEND_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.ground; sh.style = TELEGRAPH_STYLE.weight;
           sh.since = EG_SLAG_WARN_S - left; sh.span = EG_SLAG_WARN_S; sh.after = -1; sh.court = 0;
+          sh.y = s.y;   // EG-ZJ (section 11.7): on the crust's own surface - a step of the course, never a fight floor's
           _shapes.push(sh);
         }
       }
@@ -544,7 +549,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
           sh.color = p.st === 'tell' && hz.kind === 'fall' ? PEND_COLOR : p.el === 'fire' ? HAZ_FIRE : HAZ_STONE;
           sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.style = p.el === 'fire' ? TELEGRAPH_STYLE.fire : TELEGRAPH_STYLE.weight;
           sh.since = p.st === 'tell' ? p.k * told : told; sh.span = told; sh.after = p.st === 'live' ? 0 : -1; sh.court = 0;
-          if (H.aim === 'trav') sh.y = hz.y ?? 0;   // EG-ZG (section 11.7): a hazard of the traversal ground, on its own surface
+          sh.y = egHazardSurface(hz);   // EG-ZG (section 11.7): a hazard of the traversal ground on its own surface; EG-ZJ: and the slag's spill, over its crust
           _shapes.push(sh);
         }
         if (p.st === 'live' && hz.kind === 'fall') drawFireFall(hz, t);   // EG-ZH: the fall burning in Daggerfall's own fire
@@ -608,10 +613,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       wokeSeen = E.h;
       const look = egLookOf(L0, band);
       beat = { kind: 'wake', at: t, until: t + TITLE_HOLD_MS, kicker: look.lord ? look.epithet || EG_BANDS[band].name : '', main: look.name, sub: '' };
-      play3(BOSS_CUES.roar, toDungeon(L0.x, 3, L0.z));
+      play3(BOSS_CUES.roar, toDungeon(L0.x, (L0.y ?? 0) + 3, L0.z));
     }
     for (const f of F.fells) if (!fellSeen.has(f.i)) { fellSeen.add(f.i); const b = F.bodies.find((x) => x.i === f.i) ?? F.gone.find((x) => x.i === f.i); beat = { kind: 'fall', at: t, until: t + TITLE_HOLD_MS, kicker: b ? egLookOf(b, band)?.name ?? '' : '', main: 'FELLED', sub: '' }; }
-    for (const p of F.phases) { const key = `${p.i}:${p.ph}`; if (!phaseSeen.has(key)) { phaseSeen.add(key); play3(BOSS_CUES.growl, L0 ? toDungeon(L0.x, 3, L0.z) : null); } }
+    for (const p of F.phases) { const key = `${p.i}:${p.ph}`; if (!phaseSeen.has(key)) { phaseSeen.add(key); play3(BOSS_CUES.growl, L0 ? toDungeon(L0.x, (L0.y ?? 0) + 3, L0.z) : null); } }
     for (let k = saysSeen; k < F.says.length; k++) { const s = F.says[k], fn = EG_SAY[s.w]; const text = fn ? fn(s.n, s.t) : ''; if (s.w === 'scent' && !s.s?.includes(me())) continue; if (text) say(text); }
     saysSeen = F.says.length;
   }

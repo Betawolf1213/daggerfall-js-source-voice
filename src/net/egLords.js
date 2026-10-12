@@ -25,7 +25,7 @@
 //
 // Pure: a fight and a beat in, frames out. In the relay bundle. Not a DFU member. Ledger A (ELITE-GATES).
 import { PHASE_AT, SHIELD_MS, THREAT_PICK, THREAT_DECAY, HIT_KINDS, STUN_MS, STUN_HIT_X } from './gateBrain.js';
-import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpTeam, egBodiesOf, egBodyById, egMark, egUnmark, egMarkOf, egShareX, egCut, EG_TELL_LEAD_MS, EG_FEINT_AT } from './egBodies.js';
+import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpTeam, egBodiesOf, egBodyById, egMark, egUnmark, egMarkOf, egShareX, egCut, egSaid, egObSay, EG_TELL_LEAD_MS, EG_FEINT_AT } from './egBodies.js';   // EG-ZJ: egSaid, egObSay - a body's state kept as said
 import { shDisc, shLane, shLaneAt, shCone, shRing, shAll, shOut, egErrandMs, egBlowFrom } from './egShape.js';
 import { EG_LORDS, egKeepOnFight } from './egLaw.js';
 import { EG_KIND, egLegionRaise, egWaveKinds, egWaveSize, egFromBehind, egFromFront } from './egLegion.js';
@@ -198,7 +198,7 @@ export function egLordsWake(F, spec, now, out, ctx) {
   for (const L of egLordsOf(F)) {
     if (L.up2) continue;
     woke++;
-    L.up2 = true; L.nextAt = now + EG_LORD_WAKE_MS; L.wokeAt = now;
+    L.up2 = true; L.nextAt = now + EG_LORD_WAKE_MS; L.wokeAt = now; egSaid(L, L.ph, now);   // EG-ZJ: awake - its phase on the wire (0 asleep)
     KITS[L.key]?.wake?.(F, spec, L, now, out, ctx);
   }
   if (!woke) return;
@@ -259,7 +259,7 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     const frac = L.hp / L.max;
     const want = frac <= PHASE_AT[1] ? 3 : frac <= PHASE_AT[0] ? 2 : 1;
     if (want > L.ph && !L.champ) {
-      L.ph = want;
+      L.ph = want; egSaid(L, want, now);
       ward(F, L, SHIELD_MS, now, out);
       out.push({ k: 'eph', i: L.i, ph: L.ph });
       KITS[L.key]?.phase?.(F, spec, L, L.ph, now, here, rng, out, ctx);
@@ -324,7 +324,7 @@ export function egLordHit(F, spec, L, sub, name, got, pose, now, here, out, ctx 
   if (L.hp > 1e-6) return;
   L.hp = 0;
   if (egHas(L, EG_FL.mirror)) { egGone(F, [L], EG_GONE.slain, name, now, out); KITS[L.key]?.mirrorDown?.(F, L, now, out); return; }
-  L.fellAt = now;
+  L.fellAt = now; egSaid(L, L.ph, now);   // EG-ZJ: its fall's instant on the wire
   egSetFl(F, L, EG_FL.fell, true, out);
   const left = egLordsOf(F).filter((x) => !egHas(x, EG_FL.mirror) && x.hp > 0);
   if (L.key === 'twins' && left.length) { F.mem.twinFellAt = now; say(out, 'twinfell', { n: egBossName('twins', L.pt) }); return; }
@@ -376,8 +376,8 @@ const KITS = {
     tick(F, spec, L, now, here, rng, out, ctx) {
       // the islands crack and fall, and rise again
       for (const o of egObjsOf(F, 'isle')) {
-        if (o.st === 1 && now >= o.stAt) { o.st = 2; o.stAt = now + 15_000; out.push({ k: 'eob', i: o.i, st: 2, at: now }); zoneOut(F, 'void', shDisc(o.x, o.z, 11), now, now + 15_000, out); }
-        else if (o.st === 2 && now >= o.stAt) { o.st = 0; out.push({ k: 'eob', i: o.i, st: 0, at: now }); }
+        if (o.st === 1 && now >= o.stAt) { o.st = 2; o.stAt = now + 15_000; egObSay(o, 2, now, out); zoneOut(F, 'void', shDisc(o.x, o.z, 11), now, now + 15_000, out); }
+        else if (o.st === 2 && now >= o.stAt) { o.st = 0; egObSay(o, 0, now, out); }
       }
       // THE SCENT: a member hunted for 8 s at 5.2 m/s; a catch is a Maul (n = 1: no Scent - it gores twice as often)
       if (ctx.n >= 2 && now >= (F.mem.scentAt ?? Infinity) && !F.mem.scent) {
@@ -555,7 +555,7 @@ const KITS = {
           if (t.left <= 0) continue;
           const m = here.find((x) => x.sub === t.sub);
           const g = m ? gems.find((o) => o.souls < o.cap && dist(o.x, o.z, m.x, m.z) <= 1.5) : null;
-          if (g) { if (t.gem !== g.i) { t.gem = g.i; t.stood = now; } if (now - t.stood >= 1500) { g.souls++; t.left--; t.stood = now; out.push({ k: 'eob', i: g.i, st: g.souls, at: now }); if (t.left <= 0) { egUnmark(F, t.sub, 1); F.mem.mkDirty = 1; } else egMark(F, t.sub, 1, t.until, t.left); } }
+          if (g) { if (t.gem !== g.i) { t.gem = g.i; t.stood = now; } if (now - t.stood >= 1500) { g.souls++; t.left--; t.stood = now; egObSay(g, g.souls, now, out); if (t.left <= 0) { egUnmark(F, t.sub, 1); F.mem.mkDirty = 1; } else egMark(F, t.sub, 1, t.until, t.left); } }
           else t.gem = 0;
           if (now >= t.until && t.left > 0) {
             t.left = 0; egUnmark(F, t.sub, 1); F.mem.mkDirty = 1;
@@ -563,7 +563,7 @@ const KITS = {
           }
         }
         if (T.every((t) => t.left <= 0)) F.mem.tithe = null;
-        if (gems.length && gems.every((o) => o.souls >= o.cap)) { egStun(F, L, 8000, now, out); for (const o of gems) { o.souls = 0; out.push({ k: 'eob', i: o.i, st: 0, at: now }); } say(out, 'bare'); }
+        if (gems.length && gems.every((o) => o.souls >= o.cap)) { egStun(F, L, 8000, now, out); for (const o of gems) { o.souls = 0; egObSay(o, 0, now, out); } say(out, 'bare'); }
       }
     },
   },
@@ -852,7 +852,7 @@ function crack(F, isle, now, out) {
   const o = egBodyById(F, isle);
   if (!o || o.st) return;
   o.st = 1; o.stAt = now + 3700;
-  out.push({ k: 'eob', i: o.i, st: 1, at: now });
+  egObSay(o, 1, now, out);
 }
 /** The moon-shafts' places at `t` (section 11.2: r 3, walking a ring at a fixed 1.5 m/s). */
 export function moonShafts(S, t) {
@@ -895,8 +895,8 @@ function errandTick(F, spec, L, now, here, rng, out) {
   if (!E) return;
   if (E.kind === 'runes') {
     const runes = egObjsOf(F, 'rune'), cur = runes.find((r) => r.pt === E.next);
-    if (cur && !(cur.st & 1)) { cur.st = 1; out.push({ k: 'eob', i: cur.i, st: 1, at: now }); }
-    if (cur && here.some((m) => dist(m.x, m.z, cur.x, cur.z) <= 1.8)) { cur.st = 2; out.push({ k: 'eob', i: cur.i, st: 2, at: now }); E.next++; }
+    if (cur && !(cur.st & 1)) { cur.st = 1; egObSay(cur, 1, now, out); }
+    if (cur && here.some((m) => dist(m.x, m.z, cur.x, cur.z) <= 1.8)) { cur.st = 2; egObSay(cur, 2, now, out); E.next++; }
     if (E.next > E.k) { F.mem.exam = null; L.hpFloor = null; egGone(F, runes, EG_GONE.crumbled, '', now, out); egStun(F, L, STUN_MS, now, out); say(out, 'passed'); return; }
     if (now >= E.until) { F.mem.exam = null; L.hpFloor = null; egGone(F, runes, EG_GONE.crumbled, '', now, out); egAim(F, spec, { o: L.i, s: [shAll()], at: now + 2000, wu: 2000, p: 0.6, b: 0, el: 'shock', nm: 'The Failed Examination', ch: 1 }, [], now, out); say(out, 'failed'); }
   } else {

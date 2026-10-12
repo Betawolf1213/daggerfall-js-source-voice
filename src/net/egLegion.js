@@ -31,10 +31,10 @@
 //
 // Pure: a fight and a beat in, frames out. In the relay bundle (the looks are data the client reads). Not a DFU member.
 // Ledger A (ELITE-GATES).
-import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpMean, egHpTeam, egBodiesOf, egShareX } from './egBodies.js';
+import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egBodyWire, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpMean, egHpTeam, egBodiesOf, egShareX } from './egBodies.js';
 import { shDisc, shLaneAt, shCone } from './egShape.js';
 import { egKeepOnFight, egOnFight } from './egLaw.js';
-import { egWalkNext, egAirNext, egAirKeep, egArchCut, egGroundAt } from './egWalkGraph.js';   // EG-ZB: the walk graph and the air
+import { egWalkNext, egAirNext, egAirKeep, egArchCut, egGroundAt, egWalkFeet, egFeetAt, EG_PIECE_TOUCH_M } from './egWalkGraph.js';   // EG-ZB: the walk graph and the air; EG-ZJ: the feet on it
 import { harrierCountFor } from './gateBrain.js';
 import { wrapAngle } from '../world/mat4.js';   // the one wrap (ONCRASH1 C2) - already in the relay's graph
 
@@ -94,16 +94,28 @@ export const EG_DIVE_GROUND_M = 6;
 export const EG_HUNT_LEAVE_M = 1.5;
 
 /** EG-ZB (section 11.7): A GROUND WALKER'S WALK over the hall's graph (net/egWalkGraph.js egWalkNext) - to its next node, or to
- *  its goal `stop` short; said as net/egBodies.js egWalk says a walk (the point already kept on its region). */
+ *  its goal `stop` short; said as net/egBodies.js egWalk says a walk (the point already kept on its region). EG-ZJ (section
+ *  23): its FEET the graph's (net/egWalkGraph.js egWalkFeet) - set on the floor of a region it has just come into (a lip
+ *  stepped off, a portal, a stair's top), its walk ending on its next node's floor (a stair climbed as it goes). */
 function walkGraph(F, view, a, gx, gz, stop, speed, now, gy = NaN) {
-  const [x, z, last] = egWalkNext(view, a, gx, gz, gy, a.r ?? 0.6);
-  egWalk(F, a, x, z, last ? stop : 0, speed, now, view, 0, true);
+  const fr = a.fr, [x, z, last] = egWalkNext(view, a, gx, gz, gy, a.r ?? 0.6), H = egWalkFeet(view, a);
+  if (H && a.fr !== fr) a.y = H[0];
+  egWalk(F, a, x, z, last ? stop : 0, speed, now, view, 0, true, H ? H[1] : NaN);
+}
+/** EG-ZJ (sections 11.7 and 23): A FLIER'S HEIGHT for its mark `m` (a member, an island: `{x, z, y?}`) - on the fight ground
+ *  under it where its feet stand in that ground's band (a flier over a floor keeps to the floor, never to a jump), else at
+ *  its own feet (a member on a span's platform, over the void); with no height known, the fight ground under its plan by
+ *  the flier's own (net/egWalkGraph.js egFeetAt). Whole centimetres. */
+export function egAirY(view, m, a) {
+  if (!Number.isFinite(m?.y)) return egFeetAt(view, m.x, m.z, a.y ?? NaN, a.y ?? 0);
+  const f = egGroundAt(view, m.x, m.y, m.z, EG_PIECE_TOUCH_M);
+  return Math.round((f ? f.y ?? 0 : m.y) * 100) / 100;
 }
 /** EG-ZB: A FLIER'S WAY through the air about the rock (net/egWalkGraph.js egAirNext) - to its next way, or to its goal
- *  (kept out of a passage's rock) `stop` short. */
-function walkAir(F, view, a, gx, gz, stop, speed, now) {
+ *  (kept out of a passage's rock) `stop` short. EG-ZJ: at its mark's height (egAirY - `m` the mark, its `y` the height). */
+function walkAir(F, view, a, gx, gz, stop, speed, now, m = null) {
   const [tx, tz] = egAirKeep(view, gx, gz), [x, z] = egAirNext(view, a.x, a.z, tx, tz);
-  egWalk(F, a, x, z, x === tx && z === tz ? stop : 0, speed, now, view, 0, true);
+  egWalk(F, a, x, z, x === tx && z === tz ? stop : 0, speed, now, view, 0, true, egAirY(view, m ?? { x: gx, z: gz }, a));
 }
 
 /** A kind's look for a band (its mobile, scale, hover - the client draws it). */
@@ -136,21 +148,23 @@ export const egWaveSize = (n) => harrierCountFor(n);
 
 /**
  * A WAVE RISEN at `spots` (one per kind in `kinds`), each at its kind's health (a team kind's shared over its own),
- * tagged with the wave's number (Kyn's Rally, a Binder's raise). Answers the bodies.
+ * tagged with the wave's number (Kyn's Rally, a Binder's raise). Answers the bodies. EG-ZJ: a spot `[x, z, y]` raises its
+ * body at that height (a span's shadows at their member's, its Divers at the island's); said as every body is
+ * (net/egBodies.js egBodyWire).
  */
 export function egLegionRaise(F, kinds, spots, now, out, { wave = 0, fl = 0, hpX = 1 } = {}) {
   const made = [];
   const counts = {};
   for (const k of kinds) counts[k] = (counts[k] ?? 0) + 1;
   kinds.forEach((k, j) => {
-    const [x, z] = spots[j % spots.length];
+    const [x, z, y] = spots[j % spots.length];
     const K = EG_LEGION_KINDS[k];
     const hp = Math.round(egKindHp(F, k, counts[k]) * hpX);
     const f = fl | (K.fly ? EG_FL.fly : 0) | (K.friend ? EG_FL.friend : 0) | (k === EG_KIND.lurker ? EG_FL.dormant : 0) | (k === EG_KIND.shade ? EG_FL.ward : 0) | (k === EG_KIND.dlord ? EG_FL.elite : 0);
-    const b = egBodyNew(F, EG_ROLE.add, k, x + (j % 3) * 0.7 - 0.7, z + Math.floor(j / 3) * 0.7, hp, { r: K.r, fl: f, up: EG_ADD_RISE_MS, now, wv: wave, h0: hp, rally: 0 });
+    const b = egBodyNew(F, EG_ROLE.add, k, x + (j % 3) * 0.7 - 0.7, z + Math.floor(j / 3) * 0.7, hp, { r: K.r, fl: f, up: EG_ADD_RISE_MS, now, wv: wave, h0: hp, rally: 0, ...(Number.isFinite(y) ? { y } : {}) });
     if (b) made.push(b);
   });
-  if (made.length) out.push({ k: 'ead', a: made.map((b) => [b.i, b.role, b.k, b.pt ?? 0, b.x, b.z, b.hp, b.max, b.fl, b.x, b.z, 0, 0]), at: now });
+  if (made.length) out.push({ k: 'ead', a: made.map((b) => egBodyWire(b)), at: now });
   return made;
 }
 
@@ -240,11 +254,11 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
           if (bl && hunt) bl.hn = mark.sub;   // the census judges a hunted member's Bite off the floors (net/bossRef.js)
           break;
         }
-        if (ctx.span) walkAir(F, spec, a, mark.x, mark.z, 1, K.speed, now);
+        if (ctx.span) walkAir(F, spec, a, mark.x, mark.z, 1, K.speed, now, mark);
         else if (hunt) {
           // along the graph to the floor's edge nearest them, then on through the air
           const [kx, kz] = egKeepOnFight(spec, mark.x, mark.z, 0.5);
-          if (Math.hypot(a.x - kx, a.z - kz) <= EG_HUNT_LEAVE_M || !egGroundAt(spec, a.x, NaN, a.z, 0.5)) walkAir(F, spec, a, mark.x, mark.z, 1, K.speed, now);
+          if (Math.hypot(a.x - kx, a.z - kz) <= EG_HUNT_LEAVE_M || !egGroundAt(spec, a.x, NaN, a.z, 0.5)) walkAir(F, spec, a, mark.x, mark.z, 1, K.speed, now, mark);
           else walkGraph(F, spec, a, kx, kz, 0, K.speed, now);
         } else walkGraph(F, spec, a, mark.x, mark.z, 1, K.speed, now, mark.y);
         break;
@@ -303,7 +317,7 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
           break;
         }
         const t = (now / 1000) * 0.6 + a.i;
-        walkAir(F, spec, a, n.m.x + Math.sin(t) * 8, n.m.z + Math.cos(t) * 8, 0.5, K.speed, now);
+        walkAir(F, spec, a, n.m.x + Math.sin(t) * 8, n.m.z + Math.cos(t) * 8, 0.5, K.speed, now, n.m);
         break;
       }
       case EG_KIND.lurker: {
@@ -340,11 +354,11 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
         if (tied) {
           const m = here.find((x) => x.sub === tied[1]);
           if (!m || Math.hypot(m.x - a.x, m.z - a.z) > K.drain.brk) { F.tethers = F.tethers.filter((t) => t !== tied); F.mem.txDirty = 1; }
-          else walkAir(F, spec, a, m.x, m.z, 5, K.speed, now);
+          else walkAir(F, spec, a, m.x, m.z, 5, K.speed, now, m);
           break;
         }
         if (n.d <= K.drain.r) { F.tethers.push([a.i, n.m.sub, 0, K.drain.r * 100 + K.drain.brk]); F.mem.txDirty = 1; egStop(F, a, now); break; }
-        walkAir(F, spec, a, n.m.x, n.m.z, 4, K.speed, now);
+        walkAir(F, spec, a, n.m.x, n.m.z, 4, K.speed, now, n.m);
         break;
       }
       case EG_KIND.ghost: {
@@ -377,7 +391,7 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
           break;
         }
         const m = here.find((x) => x.sub === a.tg);
-        if (m) walkAir(F, spec, a, m.x, m.z, 0.5, K.speed, now);
+        if (m) walkAir(F, spec, a, m.x, m.z, 0.5, K.speed, now, m);
         break;
       }
       default: break;
@@ -410,7 +424,7 @@ function diverOnSpan(F, view, a, K, now, here, out, ctx, chain) {
     return;
   }
   const t = (now / 1000) * 0.6 + a.i;
-  walkAir(F, view, a, isle.x + Math.sin(t) * EG_DIVER_WAIT_R, isle.z + Math.cos(t) * EG_DIVER_WAIT_R, 0.5, K.speed, now);
+  walkAir(F, view, a, isle.x + Math.sin(t) * EG_DIVER_WAIT_R, isle.z + Math.cos(t) * EG_DIVER_WAIT_R, 0.5, K.speed, now, isle);   // EG-ZJ: at the island's height
 }
 
 /**

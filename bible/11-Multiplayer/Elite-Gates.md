@@ -1293,6 +1293,10 @@ audit39. Everything else is painted in code into the band's archives (section 25
   - Lurkers wait at `anchors.lurker`, Casters stand at `anchors.caster` (raised where the chamber has a second floor),
     and rifts open at `anchors.rift`.
   - Divers dive only in fragments open to the sky.
+  - Every body's feet ride the wire: the fight ground under it (a graph walker's region, a stair climbed as it goes, a lip
+    stepped off at once), a flier at its mark's height (the floor under the mark, or past that floor's band the mark's own
+    feet). Every screen draws, strikes at and hears each body there, never at the hall's own height. Built by EG-ZJ (its
+    record, below).
 - **The fragment keeps its own clamp.** Climbing and wall-runs would carry a player up a chamber's walls, and a safe
   perch over the fight would make traversal's immunity a ranged build's fortress. So each floor polygon is extruded to
   its `ceil` (to the motor's arena ring `ceilAbove` where it is open to the sky) as the motor's clamp
@@ -2667,6 +2671,11 @@ plate, with no cast-back's cost: a platform has moved on, and a reconnect is not
 `/v1/eg/keys` answers the account's live breach, and the world host offers *Return to the Spire*: a hello as an entrant
 (no new order), resumed by the dropped socket's rule; between trials, at the current hall's arrival plate.
 
+**A joiner's fight.** The hello of a member who joins or reloads mid-fight hands it the breach (`st`) and the fight whole
+(`efs`): every body where the room holds it at that instant and on its feet, each object's state and each lord's phase and
+fall as the room said them, the zones still to burn. Its screen holds the company's fight at once, and the fight said again
+every two seconds never stands a body anew. Built by EG-ZJ (its record, below).
+
 **A key's loss.** A key is never lost to an infrastructure fault:
 
 - the hub retries `EG_INTERNAL_OPEN` idempotently on `ez`, and members may ask for the call again;
@@ -2746,6 +2755,11 @@ admission never depends on seeing it.
 
 **Poses.** A pose on a moving piece carries `pl` and its offset (RIDDEN POSES, section 10.8); the field joins
 `validPose`, a relay version (EG8).
+
+**The fight's bodies.** A body's row is `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa]`: its feet and its
+walk's end's height in whole centimetres (the law's, section 9), and its state as the room last said it with since when. A
+walk (`emv`) is `[i, x, z, tx, tz, v, at, y, ty]`. The whole fight (`efs`) carries the zones still to burn (`zs`). Every
+height rides a word the fight already says, so the frames stay as many as they were. EG-ZJ.
 
 **Frames** (`{t:'eg', k, ...}`; `EG_KINDS` and `EG_OUT_KINDS` in `src/net/wire.js`, each with its validator):
 
@@ -3791,8 +3805,7 @@ Grath's falling isles, and the solver's median check.
 - **The look:**
   - the dress is the Hour's records in each kit's shapes; the band art is EG-G's;
   - the mist is not drawn;
-  - the slag's crust (law kind `slag`) is laid by no kit yet;
-  - a member who joins mid-fight sees Grath's islands standing until the next `eob`.
+  - the slag's crust (law kind `slag`) is laid by no kit yet.
 - **Still owed by EG-D:**
   - the moving pieces' instanced pass, the cull and the measured budgets;
   - `world/meshKit.js` and `world/pseudoArchives.js`;
@@ -5113,8 +5126,6 @@ and the Hollow Trunk among them), and the engines as the page wrote them. Spec l
   the later road's end, and the stage word's `su` says it - no `ul` on the wire.
 - **The shafts are the Deepway's.** The Low Road still goes down by its Drop (section 11.4 allows "a Drop or a shaft").
   A shaft keeps no alcoves or vignettes, and the camera's 20-degree bias over a shaft's drop (section 11.8) is not built.
-- **The telegraphs of a shaft** (the Slag Chute's spill, a crust's tell) draw on the hall's one telegraph plane, as the
-  Mist Stair's do: telegraphs per fight floor are still EG6b's.
 - **Not verified without a browser and the game's data:** the crusts, sheets, spouts and shafts were checked by their
   meshes, colliders and draws in node, never seen in the live game.
 
@@ -5223,30 +5234,27 @@ not yet turn it", EG-H1's departures 3, 10 and 11, and EG-E's departure for the 
    inside its floor.
 2. The lords walk as before: their own walks go straight to a goal kept on the fight floor. Section 11.7 names the
    legion. FLAGGED for the lords: a champion in an arch's chamber still walks through the wall.
-3. The wire carries no body's height. A body's floor is its region in plan. A screen draws every body at the fight
-   centre's height plus its hover (`scenes/egFight.js`), so a span's Harrier over a course that has climbed or dropped
-   draws at the plates' height. FLAGGED to the look.
-4. The Harriers' body-block is a Harrier hovering at its member, not a collider: the motor collides with no add.
-5. The fight ground beyond `spec.fl` is a span's islands and plates and a Rampart's pillars and winch plates. Bridges
+3. The Harriers' body-block is a Harrier hovering at its member, not a collider: the motor collides with no add.
+4. The fight ground beyond `spec.fl` is a span's islands and plates and a Rampart's pillars and winch plates. Bridges
    and side spans stay traversal ground. On a span a member is aimed at within 0.5 m of it; elsewhere the fight's old
    4 m stands.
-6. The hunt is for the halls whose trial is one fight on its floor, and only after the member has stood on the fight
+5. The hunt is for the halls whose trial is one fight on its floor, and only after the member has stood on the fight
    ground this hall:
    - an approach crossed is never hunted;
    - a Deepway (its passages crossed between floors) and a Brink are not hunted;
    - a span has its shadows instead.
    The mark's 30 s is renewed while the hunt lasts.
-7. An object standing off the fight floor (a false wall) is still struck from beside it: a seal in a wall is no fight.
-8. The census's Vestiges:
+6. An object standing off the fight floor (a false wall) is still struck from beside it: a seal in a wall is no fight.
+7. The census's Vestiges:
    - Lifeline is not applied: a heal one member casts on another rides ALLY-CAST's `cast` frame, which the relay
      forwards unread;
    - the reductions are summed and capped at 30%, on blows alone (not hazards, drains or cast-backs);
    - Featherstep is applied though section 21 leaves it to "the rest restores it": its cost is a number the relay holds;
    - Iron Footing needs no term: a push it resists makes no cast-back, and the poses say so.
-9. The Forge Line's hammers count their 20% (the screens' share), not a cast-back's cost.
-10. Only Grath's signature reads a catch: the page gives no other place's example. The Spellmaster's "no rune missed"
-    is its none-failed. The others keep their beats.
-11. A span's Divers dive ground 6 m across within their lane. A Diver in any other hall keeps its old rule (its member
+8. The Forge Line's hammers count their 20% (the screens' share), not a cast-back's cost.
+9. Only Grath's signature reads a catch: the page gives no other place's example. The Spellmaster's "no rune missed"
+   is its none-failed. The others keep their beats.
+10. A span's Divers dive ground 6 m across within their lane. A Diver in any other hall keeps its old rule (its member
     3 m inside the floor).
 
 **The four hosts.**
@@ -5637,3 +5645,143 @@ peers, the tell, the reverb's crossfade and TEXTURE.356 are closed here.
 - PIN MOVED: `test/audit39_render.test.js` (the fire walls take GetFireWallColors32). `bible/06-Systems/Systems.md` counts
   517 modules. `bible/07-Rendering/Rendering.md` and `Rendering-Arc.md` say GetFireWallColors32 shipped.
 - `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
+
+### EG-ZJ - 2026-10-12 - THE FIGHT WHOLE ON THE WIRE
+
+Mac: "I said I want everything". Closes what sections 11.7, 22 and 23 left of the fight's own words: every body's height on
+the wire and on every screen, the whole fight handed to a member who joins or reloads mid-fight, and the shaft's
+telegraphs on the slag's own surface. It closes EG-ZB's departure 3 (the wire carried no body's height), layer three's look
+departure (a joiner saw Grath's islands standing until the next `eob`) and EG-ZC's departure for the telegraphs of a
+shaft. Each sentence is deleted where it stood.
+
+**What shipped, by piece.**
+
+- **A BODY'S FEET** (`net/egWalkGraph.js` `egFeetAt`, `egWalkFeet`; `net/egLegion.js` `egAirY`, `walkGraph`, `walkAir`).
+  - `egFeetAt` gives the fight ground under a body (`egGroundAt`, 0.3 m about its plan). It looks first in section 11.7's
+    band about where the body stood. With nothing in that band it takes the lowest floor that holds the plan: a leap up past
+    a floor's rim, a fall off a lip. With no fight ground under it at all (the void, a wall's alcove) the body keeps its own
+    height. Heights are whole centimetres, the law's.
+  - A graph walker's feet are its region's floor (`egWalkFeet`: the region it stands in, and the one its next walk ends
+    in). `walkGraph` sets its feet on a region it has just entered, so a lip stepped off is a drop at the lip and never a
+    glide. Its walk ends on its next node's floor, so a stair is climbed as it goes. `egWalkNext` now reads the walker's own
+    region by its feet (`b.y`), where it read the plan alone. A Caster on a pillar whose plan shares a bastion's now stands
+    on the pillar.
+  - A flier's height is its mark's (`egAirY`). It keeps the floor under the mark while the mark's feet stand in that
+    floor's band, so a jump never lifts it. Past the band it keeps the mark's own feet: a member on a span's platform, a
+    hunted member held high. Every flier is given its mark: a span's shadow its member, a span's Diver the island ahead, a
+    Diver elsewhere its member, a hunting Harrier the hunted, a Wraith coming or tethered, a Shade its slayer.
+- **THE BODY'S WORD** (`net/egBodies.js`; `net/wire.js`).
+  - A body carries its feet (`y`). `egBodyNew` takes a height it is given, else `egFeetAt`. A raise's spot may carry a
+    height (`egRaise`, `egLegionRaise`: `[x, z, y]`). The director raises a span's shadows at their member's height and its
+    Divers at the island's (`spanLegion`), a false wall on its alcove's own floor (`fragStand`), and a Rampart's pinned
+    Casters on their pillars' tops (`standFight`'s `onPillar`).
+  - A walk carries its height and its end's (`mv.y`, `mv.ty`). `egWalkY` carries the height along its place and `egCarry`
+    carries it with the place. `egWalk` says a walk again when its end's height moves past `EG_Y_RESAY_M` (0.6 m, a level's
+    own band), or when the body's feet have left the walk's line (a lip stepped off). A standing body whose ground moves
+    under it is said again too. `egStop` keeps its feet. `egPlace` sets a body down on the ground at its landing, by the
+    band about where it stood.
+  - On the wire a body's row is seventeen, `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa]`, and a walk
+    (`emv`) is nine, `[i, x, z, tx, tz, v, at, y, ty]`. `validEgOut` bounds both heights at the hall's coordinate bound
+    (`EG_XZ_MAX`, 400 m) and the state at 0-99.
+  - THE FIGHT'S GROUND. `egFightBind` keeps the hall's fight view (`egFightView`) on the fight unenumerated, because storage
+    keeps the fight and never its hall. `egFightNew` binds it. The director's `specOf` binds it again on every word it takes,
+    a beat's or a blow's. So a woken room's restored fight stands what it raises, places and walks on its ground from its
+    first word.
+- **THE JOINER'S STATE** (section 22; `net/egBodies.js`, `net/egLords.js`, `net/egLink.js`).
+  - Every object's state word goes through `egObSay`, which keeps the state on the object as said (`egSaid`: `ws`, and
+    since when, `wsAt`). That covers Grath's islands cracked, fallen and risen, the soul-gems' souls laid and emptied, and the
+    runes lit and stood on. A lord keeps its phase from its wake and its fall's instant. On the wire that is the row's `st`
+    and `sa`: a lord's `st` is its phase once awake (0 asleep), and a fallen lord's `sa` is its fall.
+  - THE WHOLE FIGHT (`egFightState`) carries every body at its instant, with its walk carried to that instant (its place,
+    its height and its `at` then), its feet and its state. It also carries the zones still to burn (`zs`): burning ground,
+    a fallen island's void, a Soul-Pool, a haven (which stands the Moon-Mirror's lit branch). `server/src/index.js`
+    `_egHello` already handed `st` and the whole fight. It now hands all of this, and needed no change.
+  - THE SCREEN'S FOLD (`egBodyOf`, `foldEg`). The whole fight folds over what the screen already holds:
+    - a body it knows keeps when it rose, its hurt and my blow on it (`born`, `hurtAt`, `mineAt`);
+    - a body first heard whole has stood all along (`born` 0) and never rises;
+    - its state is the room's: an object's `st`/`stAt`, a lord's `ph`, its `fellAt` from its fall's word;
+    - the zones are the room's.
+    A lord's flags fallen lay it down at once (`efl` - a Twin's first fall says no `efell`), and raised again it stands.
+  - Engines' cooldowns are not carried: no screen draws one (the engine's subtitle says "once in 30 seconds" whatever its
+    cooldown). The Gutterdark, the Rails and a gust are not carried either: no screen draws the first two, and a gust is a
+    moment's push.
+- **THE SHAFT'S TELEGRAPHS** (`world/egTelegraph.js` `egHazardSurface`; `scenes/egFight.js`).
+  - A fragment hazard's own surface is its height when it is of the traversal ground (`aim` 'trav') or the Cooling Slag's
+    spill. The spill's lanes pour over a crossing's crust, which is a step of the course and never a fight floor, and over
+    its lip. The fight draws the spill told and pouring at that height as one quad of its own (`egFloorPlan`'s own-surface
+    draw), as EG-ZG drew the `'trav'` shapes. A crust's last second, told in white, is drawn on the crust's own surface
+    (`sh.y` the step's).
+  - Checked against the law, before and after. The test finds the first Wellhead Deepway that goes down by the Slag Chute
+    (Seed 1's Hall 82: its crust at -5.9 m, no fight floor under it). Before, the floors' plan drew the spill, and the
+    crust's tell, only where it clipped them onto the passage floor past the lip (an anchor within 1 m of it), and nothing
+    over the crust. After, each is one quad on the crust's surface. A Forge Gut's spill over its chasm is one quad too,
+    where before only its lip drew on the far floor.
+- **Fixed on the way** (found while building it, each pinned):
+  - the whole fight, said every two seconds, stood every body anew on every screen. Every add rose out of the floor again,
+    Grath's islands stood again, a fallen lord stood up, a lord's phase was forgotten, and each walk ran ahead by its head
+    start (its `at` was the walk's start, its place the room's carried one). The folds above end all of it;
+  - the lord's bar never showed in a lord's first phase. `egLordBar` reads a lord awake by its phase, and no word said
+    phase 1. The whole fight now says it within 2 s of the wake;
+  - bodies stood off the hall's own height were drawn at it, and struck at by the screen's own targets there: the Last
+    Armsmaster's Court laid at 2.3 m (Seed 1's Hall 30), the Lurkers past a Deepway's shaft (its floors 5.7-8.1 m down), a
+    false wall in an alcove under the course.
+
+**Departures, said plainly.**
+1. The heights ride the words the fight already says, the body's row and the walk, with no frame of their own. A row grows
+   by its four fields: 8 bytes at a floor's 0, at most 33 at the wire's bounds. A walk grows by its two. Over 60 s of a
+   Rift-Yard fought by four with its legion up, the room's frames weighed 75,068 bytes before and 83,043 after (+10.6%), in
+   the same number of frames. Section 23 names no per-frame number. The relay's 16 KiB frame holds a 64-body fight's rows
+   at their bounds (8.3 KB).
+2. A walk's height runs in a straight line from its start to its end: a stair's own line, a flier's climb to its mark. A lip
+   stepped off is a drop at the lip. A leap, a blink and a charge's end land on the ground at the landing, by the band about
+   where the body stood, or on the lowest floor there when the band holds none.
+3. A body raised at a spot with no height of its own stands on the lowest floor that holds it, so a spot inside two floors'
+   plans (a balcony's rim over its chamber) raises it on the lower one. The Rampart's pinned Casters are raised at their
+   pillar's own height.
+4. A flier keeps its mark's floor while the mark stands in that floor's band, so a jump never lifts it. A Diver over a span
+   circles at its island's height. One with no island or plate ahead circles at nought, but such a member stands off the
+   hall.
+5. The lord's phase rides the whole fight, not a word of its own at the wake, so the bar shows within the next whole fight
+   (2 s) of the wake. An `eph` at the wake would have been heard as a phase's growl.
+6. Engines' cooldowns, the Gutterdark, the Rails and a gust are not handed to a joiner: no screen draws them.
+7. A blow Watchfire told a member before its word (`tell`, at most 400 ms ahead) is not told again to one who joins in that
+   instant.
+8. `server/src/index.js` is unchanged: its hello already sent `st` and the whole fight.
+
+**Found, not changed** (FLAGGED, outside this slice):
+- A Rampart pillar whose plan overlaps a bastion's (161 of 3,336 pillar spots over seeds 1-30) has a lip onto the bastion,
+  and the walk graph steps a pinned Caster off it (one way, within EG_DROP_M). Over 23 such Ramparts of seeds 1-6, 19 of 69
+  pinned Casters walked off their pillars within 50 s, at the PR head as now, so EG-ZB's "it now stays on its pillar"
+  holds only where the pillar stands alone. The screens now draw the step down at the lip. FLAGGED to the legion.
+- The spec's spots carry their `y` in centimetres: `net/egLaw.js` puts every spot's `x` and `z` into metres but not its
+  `y`. Seed 1's Hall 22 has Lurker spots at `y` -760 over floors at -7.6 m. Nothing reads a spot's `y` today, and this
+  slice reads the fight ground instead. Mending it is a law change (`EG_SPEC`). FLAGGED to the law.
+
+**The four hosts.**
+- `src/scenes/world.js` - FLAGGED, nothing to wire: the fight draws its bodies in the pass the host already calls, and
+  `feet`, `peerAt` and the link are as they were. Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED: untouched.
+- `src/scenes/dungeonContext.js` - FLAGGED: untouched (the breach client's `drawPass` it already calls draws the bodies).
+- `src/scenes/exterior.js` - FLAGGED: offline, no breach (section 28).
+
+**Not verified without a browser and the game's data:** the bodies' heights, the joiner's screen and the slag's quads were
+checked against the director's own words, the screen's batches, targets and sounds, and the floor plan in node. None was
+seen in the live game.
+
+**Pins.**
+- `test/egz_state.test.js` (6): the feet's law, the director, the screen, the joiner, a reload in the real Room, the
+  shaft's telegraphs.
+- `tools/mutants/egz_state.json` (94, every one dead). One survived the first run - the pinned Casters raised at
+  a spot's height again - and was killed by finding a Rampart whose pillars given to a company of two share a bastion's plan.
+- Re-aimed by content (mutantdrift): `egz_frag.json`'s EGZ-the-breach-s-law-forgotten (onto `specOf`'s own line) and
+  `egz_legion.json`'s EGZ-ground-walkers-straight (onto `walkGraph`'s). Judged again, every record of the lists aimed at
+  the fight's modules this slice touched (`net/egBodies.js`, `egLegion.js`, `egLords.js`, `egWalkGraph.js`, `egLink.js`,
+  `scenes/egFight.js`, `world/egTelegraph.js`) and those within ten lines of its changes in `net/egBrain.js` and `net/wire.js`:
+  `egz_telegraph.json` (52), `egz_legion.json` (21), `egint.json` (15), `egz_sound.json` (12), `eglook.json` (6),
+  `egz_recap.json` (6), `egz_return.json` (6), `egfrag.json` (5), `egpres_hud.json` (4), `egz_frag.json` (3) and
+  `egspan.json` (2) - 132, every one dead.
+- PIN MOVED: `test/egplay_relay.test.js` (a body's row of seventeen, cut short at sixteen); `test/egz_stair.test.js` (its
+  two hand-built rows of seventeen).
+- `RELAY_VERSION` `world198`, unshipped, rehashed in place: `net/egWalkGraph.js` now walks before `net/egLegion.js` in the
+  relay's graph, since `net/egBodies.js` imports it. `ACCOUNT_VERSION` stays `acct121`, and there is no migration.
+- No new src module. The Port-Ledger's ELITE-GATES row is the lead's.

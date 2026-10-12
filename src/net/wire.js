@@ -5436,6 +5436,10 @@ export function validSdFoundTell(b) {
 // the shared clock's ping (`clk` and its answer, the relay's `now` - net/egClock.js); the count's fall (`bd`, to the fallen);
 // a lord's blow told early to a Watchfire holder's company (`tell` - the blow's own fields and `sh`, the lead shown) and a
 // told blow THE UNION FLOOR held (`untell`). A pose on a moving piece carries `pl` (validPose - RIDDEN POSES).
+//
+// EG-ZJ (2026-10-12; sections 11.7, 22 and 23): THE FIGHT WHOLE ON THE WIRE - a body's row carries its feet and its walk's
+// end's height (`y`, `ty`), and its state as the room said it with since when (`st`, `sa`); each walk (`emv`) its height
+// and its end's; the whole fight (`efs`) the zones still to burn (`zs`), so a member who joins mid-fight holds the company's.
 
 /** What a client may say: `open` to the hub (EG-ZA: and `void` and `claimed`); the rest to a breach's room (EG-ZF: `heal`). */
 export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed', 'heal']);   // EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
@@ -5527,10 +5531,13 @@ function egStage(m) {
   if (!intIn(m.cl, 0, EG_COUNT_WIRE_MAX) || !egMs(m.ca) || !egMs(m.hw) || !egMs(m.dn)) return null;
   return { h: m.h, sg: m.sg, sa: m.sa, su: m.su, cl: m.cl, ca: m.ca, hw: m.hw, dn: m.dn };
 }
-/** A body (net/egBodies.js egBodyWire): `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at]`. */
+/** A body (net/egBodies.js egBodyWire): `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa]` - EG-ZJ: its feet and
+ *  its walk's end's height (a coordinate's bound, whole centimetres on the room's side), its state as said (an object's
+ *  `eob`, a lord's phase) and since when. */
 function egBody(t) {
-  if (!Array.isArray(t) || t.length !== 13 || !intIn(t[0], 1, 1e9) || !intIn(t[1], 0, 2) || !intIn(t[2], 0, 99) || !intIn(t[3], 0, 99)) return null;
+  if (!Array.isArray(t) || t.length !== 17 || !intIn(t[0], 1, 1e9) || !intIn(t[1], 0, 2) || !intIn(t[2], 0, 99) || !intIn(t[3], 0, 99)) return null;
   if (!egXZ(t[4]) || !egXZ(t[5]) || !intIn(t[6], 0, EG_HP_MAX) || !intIn(t[7], 1, EG_HP_MAX) || !intIn(t[8], 0, 0xffff) || !egXZ(t[9]) || !egXZ(t[10]) || !finite(t[11]) || t[11] < 0 || t[11] > 30 || !egMs(t[12])) return null;
+  if (!egXZ(t[13]) || !egXZ(t[14]) || !intIn(t[15], 0, 99) || !egMs(t[16])) return null;
   return [...t];
 }
 const egBodies = (a, max = EG_WIRE_BODIES_MAX) => { if (!Array.isArray(a) || a.length > max) return null; const out = a.map(egBody); return out.every(Boolean) ? out : null; };
@@ -5691,11 +5698,11 @@ export function validEgOut(m) {
     case 'spec': { const sp = intIn(m.egv, 1, 999) && intIn(m.h, 1, EG_HALL_WIRE_MAX) ? egSpecW(m.sp, m.h) : null; return sp ? { k: 'spec', egv: m.egv, h: m.h, sp } : null; }   // EG-H2
     // ── the fight ──
     case 'efs': {
-      const b = egBodies(m.b), bl = egList(m.bl ?? [], egBlowW, EG_WIRE_BLOWS_MAX), tx = egList(m.tx ?? [], egTether), mk = egList(m.mk ?? [], egMarkW);
-      return b && bl && tx && mk && intIn(m.h, 1, EG_HALL_WIRE_MAX) && egMs(m.wk) ? { k: 'efs', h: m.h, wk: m.wk, b, bl, tx, mk, pg: egProgress(m.pg) } : null;
+      const b = egBodies(m.b), bl = egList(m.bl ?? [], egBlowW, EG_WIRE_BLOWS_MAX), tx = egList(m.tx ?? [], egTether), mk = egList(m.mk ?? [], egMarkW), zs = egList(m.zs ?? [], egZone);   // EG-ZJ: the live zones (section 22 - a joiner's)
+      return b && bl && tx && mk && zs && intIn(m.h, 1, EG_HALL_WIRE_MAX) && egMs(m.wk) ? { k: 'efs', h: m.h, wk: m.wk, b, bl, tx, mk, pg: egProgress(m.pg), zs } : null;
     }
     case 'ead': { const a = egBodies(m.a, 24); return a && gateMs(m.at) ? { k: 'ead', a, at: m.at } : null; }
-    case 'emv': { const mv = egList(m.m, (t) => (Array.isArray(t) && t.length === 7 && intIn(t[0], 1, 1e9) && egXZ(t[1]) && egXZ(t[2]) && egXZ(t[3]) && egXZ(t[4]) && finite(t[5]) && t[5] >= 0 && t[5] <= 30 && gateMs(t[6]) ? [...t] : null), EG_WIRE_BODIES_MAX); return mv ? { k: 'emv', m: mv } : null; }
+    case 'emv': { const mv = egList(m.m, (t) => (Array.isArray(t) && t.length === 9 && intIn(t[0], 1, 1e9) && egXZ(t[1]) && egXZ(t[2]) && egXZ(t[3]) && egXZ(t[4]) && finite(t[5]) && t[5] >= 0 && t[5] <= 30 && gateMs(t[6]) && egXZ(t[7]) && egXZ(t[8]) ? [...t] : null), EG_WIRE_BODIES_MAX); return mv ? { k: 'emv', m: mv } : null; }   // EG-ZJ: each walk's height and its end's
     case 'ehp': { const h = egList(m.h, (t) => (Array.isArray(t) && t.length === 2 && intIn(t[0], 1, 1e9) && intIn(t[1], 0, EG_HP_MAX) ? [...t] : null), EG_WIRE_BODIES_MAX); return h ? { k: 'ehp', h } : null; }
     case 'edie': return Array.isArray(m.is) && m.is.length >= 1 && m.is.length <= EG_WIRE_BODIES_MAX && m.is.every((i) => intIn(i, 1, 1e9)) && intIn(m.w, 0, 2) && gateMs(m.at) ? { k: 'edie', is: [...m.is], w: m.w, n: egText(m.n ?? '', 48) ?? '', at: m.at } : null;
     case 'efl': return intIn(m.i, 1, 1e9) && intIn(m.fl, 0, 0xffff) ? { k: 'efl', i: m.i, fl: m.fl } : null;

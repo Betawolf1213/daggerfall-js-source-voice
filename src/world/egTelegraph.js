@@ -14,6 +14,8 @@
 //   THE TWO TETHER GRAMMARS, A SPIRE POOL, THE ECLIPSE (sections 25.2 and 25.5), the marks' sigils over heads (section 13.2),
 //     a Vestige aura's ring (section 25.4), THE SHADE'S RIM LIGHT (section 25.6), and WEIGHT (section 25.8): the heavy blows'
 //     shakes, allies' hits at 0.4, a Drop's thud and dust.
+//   EG-ZJ (2026-10-12): A HAZARD'S OWN SURFACE (egHazardSurface) - the traversal ground's hazards and the Cooling Slag's spill
+//     drawn as one quad at their own height, never clipped onto a fight floor near them.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { telegraphBounds, telegraphField, TELEGRAPH_KIND, TELEGRAPH_NOW_MS } from '../render/gateTelegraph.js';
@@ -123,6 +125,15 @@ export function egShapeYs(floors, sh) {
   return ys.size ? ys : null;
 }
 
+/**
+ * EG-ZJ (section 11.7; EG-ZC's shafts) - A HAZARD'S OWN SURFACE: the height a fragment hazard's telegraph draws at as one quad
+ * of its own (scenes/egFight.js `sh.y` - egFloorPlan's own-surface draw), or NaN for one drawn on the fight floors it covers.
+ * A hazard of the traversal ground (`aim` 'trav': a fire fall, the Forge Line's hammers), and THE COOLING SLAG's spill, whose
+ * lanes pour over a crossing's crust (a step of the course, never a fight floor) and its lip - in a Forge Gut's chasm and
+ * down a Wellhead Deepway's Slag Chute, where no fight floor stands at all. Pure.
+ * @param {any} hz the hazard as the spec says it
+ */
+export const egHazardSurface = (hz) => (EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? hz.y ?? 0 : NaN);
 /** How far my feet stand from a shape's ground (its bounds' box; nought inside it or for a whole floor's). */
 function nearOf(sh, feet) {
   const B = telegraphBounds(sh);
