@@ -6,7 +6,10 @@
 //   THE MIST       render/egMistPass.js - a Mist Stair's and the Sinking Stair's surges, UNDER the telegraphs and the
 //                  lines (section 25.6: they draw after every transparent volume);
 //   THE LINES      render/egLinePass.js - THE EDGE LINE, the tracks and the Gust's streamers, OVER everything the hall's
-//                  fight draws, so the gold that says "it holds" is the last thing laid on the floor.
+//                  fight draws, so the gold that says "it holds" is the last thing laid on the floor;
+//   THE LIGHTS     render/egLightPass.js (EG-ZE, sections 7, 16.2, 16.5 and 27.5) - the door's beam and the closing's
+//                  ring, the Redoubt's beacon, the recall's and the pings' blue pillars, the witness's marks
+//                  (world/egLights.js egSpireLights), added over the lines: light, never paint.
 // Each pass is built the first time it is wanted and kept for the breach; a circle's edges are made once a circle (its
 // static buffer), its streamers and mist sheets written a frame into kept arrays. `release()` frees all of it - every exit
 // of the breach reaches it through the client's leave (scenes/egClient.js). No GL, no draw: every method answers false.
@@ -17,6 +20,7 @@ import { egCircleEdges, egGustSections, egStreamersAt, egMistSheets, egMistSheet
 import { EgLinePass, EG_STREAMERS_MAX } from '../render/egLinePass.js';
 import { EgMistPass } from '../render/egMistPass.js';
 import { EgSkyPass } from '../render/egSkyPass.js';
+import { EgLightPass } from '../render/egLightPass.js';   // EG-ZE: THE SPIRE'S LIGHTS
 
 /**
  * @param {{ gl?: WebGL2RenderingContext | null }} deps
@@ -25,7 +29,8 @@ export function createEgLookDraw({ gl = null } = {}) {
   /** @type {EgLinePass|null} */ let lines = null;
   /** @type {EgMistPass|null} */ let mist = null;
   /** @type {EgSkyPass|null} */ let sky = null;
-  const tried = { lines: false, mist: false, sky: false };
+  /** @type {EgLightPass|null} */ let lights = null;   // EG-ZE
+  const tried = { lines: false, mist: false, sky: false, lights: false };
   let key = '', band = 0, sections = [], sheets = [], edgeCount = 0, trackCount = 0;
   const streamers = new Float32Array(EG_STREAMERS_MAX * 6), alphas = new Float32Array(EG_STREAMERS_MAX);
   const build = (name, make) => {
@@ -67,13 +72,22 @@ export function createEgLookDraw({ gl = null } = {}) {
       const n = sections.length ? egStreamersAt(sections, ts, streamers, alphas) : 0;
       return lines.draw(proj, view, eye, ts, fog, streamers, n, alphas);
     },
+    /** EG-ZE: THE LIGHTS, after the lines: `list` world/egLights.js egSpireLights's answer for this frame, `still` reduced
+     *  motion. The pass is built the first time a light stands. */
+    drawLights(proj, view, eye, ts, fog = null, list = null, still = false) {
+      if (!key || !list?.length) return false;
+      lights ??= build('lights', () => (gl ? new EgLightPass(gl) : null));
+      return !!lights?.draw(proj, view, eye, ts, fog, list, still);
+    },
+    /** EG-ZE: the lights' pass as it stands (tests, stats): built, and how many vertices it drew last. */
+    lightState: () => ({ pass: !!lights, drawn: lights?.drawn ?? 0 }),
     /** What the look holds (tests, stats). */
     state: () => ({ key, band, edges: edgeCount, tracks: trackCount, gusts: sections.length, mists: sheets.length, passes: { lines: !!lines, mist: !!mist, sky: !!sky } }),
     /** Out of the breach: every pass freed. */
     release() {
-      for (const p of [lines, mist, sky]) { if (p) { try { p.destroy(); } catch { /* gone */ } } }
-      lines = null; mist = null; sky = null;
-      tried.lines = false; tried.mist = false; tried.sky = false;
+      for (const p of [lines, mist, sky, lights]) { if (p) { try { p.destroy(); } catch { /* gone */ } } }
+      lines = null; mist = null; sky = null; lights = null;
+      tried.lines = false; tried.mist = false; tried.sky = false; tried.lights = false;
       key = ''; sections = []; sheets = [];
     },
   };

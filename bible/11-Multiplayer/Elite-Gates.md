@@ -4674,3 +4674,124 @@ and draws what they choose.
   (`egBandUp`) and builds its waystones (`egLookBuild`). The old circle's look mesh is freed with its circle mesh.
 - The fight's wind-up barks keep EG-H1's feint gate (the wind once the wind-up is past `EG_FEINT_AT`, never on a
   feint), and Watchfire's early outlines draw after the ordered blows. The fight's clock is the breach's corrected one.
+### EG-ZE - 2026-10-12 - THE STAIR, THE DOOR AND THE LIGHTS
+
+The last wave's slice for what EG-G1 and EG-G2 left the screen (Mac: "I said I want everything"). It closes EG-G2's "the
+stair's fall and veil are law only; drawing them is the swap's screen" and EG-G1's fifth departure (the door's compass
+mark, its beam and the closing's ring). It also draws what no record had named: the witness's and the living's pings
+(the `eping` words were folded into the link's `pings` and read by nothing), the Redoubt's beacon, the recall's blue
+pillar and the witness's sight.
+
+**What shipped, by piece.**
+
+- **THE STAIR DRAWN** (section 7; `world/egLights.js` `egStairStep`, `ui/gateVeil.js`, `render/egStairPass.js`).
+  - `world/egLook.js` `egStairOf` is the law, read now by the screen. `egStairStep(h, reduced, again)` gives the step its
+    look as a veil theme: `egFall` at a band's first hall and each Brink, `egVeil` elsewhere, `egCut` under reduced
+    motion (the port's row or the system's - `ui/egAccess.js` `egReducedMotion`).
+  - It hands the veil the band the step falls into, the hall held centred (*Hall 13*), and the band's chime. The chime
+    is the Concord's chime (clip 364) on the first note of the band's motif (`systems/egScore.js`), pitched as the
+    Hour's quarters are.
+  - A circle built again under the breach's own law (EG-H2's THE LAW PIN) never falls: the company has not moved.
+  - THE VEIL'S THREE THEMES: the veil keeps the fire's law (`render/gateVeil.js` `veilAt`) and runs it at the stair's
+    pace, 0.8 s each way (`EG_STAIR_VEIL`). A veil half open and asked to close again closes from where it stands, at
+    that pace.
+  - The stair's own pass draws at a third of the pixels, pixelated. Every pixel goes and comes back in the ordered
+    dither, posterized in the band's own sky (`world/egLook.js` `EG_SKIES`):
+    - THE FALL: the band's void opening under the faller. The Spire's underside climbs away overhead, black with its rim
+      lit from below. Embers streak up past the eye and the deep rises to meet it.
+    - THE VEIL: the band's void, dim, its motes drifting up.
+    - THE CUT: the same void, standing still.
+  - The band's chime sounds as the veil closes and at a pull's flash, with the deep wind under the fall.
+  - The hall is a label of the veil's own, centred over its canvas. It comes and goes with the dither and goes with the
+    veil.
+  - The fall stands shut at least `EG_STAIR_VEIL.fallHold` (1.2 s), so the underside is seen to fall away.
+  - WHERE IT IS DRAWN (`scenes/egClient.js`):
+    - the step into the breach: the stair of its own first hall (`egStartHall`), so Hall 1 and a Brink start fall;
+    - THE SWAP, in place (`scenes/worldModes.js` `egSwapCircle`) and its fallback alike, through `stepThroughFire`'s own
+      look;
+    - every pull's flash.
+  - NEVER SLOWER: the swap closes in 0.8 s where the Hour's veil it used took 1.2, and opens in 0.8 where it took 1.7.
+    The fall's close, hold and open (2.8 s) stay inside the Hour's veil's 2.9 (pinned). The swap's own work runs inside
+    the hold, never after it.
+- **THE DOOR** (sections 7 and 27.3).
+  - Through the closing, a gold beam stands over the END PLATE in the palette's safety. It is 48 m tall, climbs in
+    0.6 s (whole at once under reduced motion), and keeps 0.6 of itself through any haze, so it is seen hall-wide.
+  - The closing's ring lies at the door's reach (`EG_DOOR_REACH_M` 3 m, where `down` is heard), in every hall kind. Its
+    arc is the closing's seconds left, from the relay's own stage word (`sa`, `su`); the spent arc stays at a quarter.
+  - The door's mark on the enhanced compass is `egDoorCompass`, through the client's `archCompass` (departure 6).
+- **THE REDOUBT'S LIGHTS** (sections 16.2 and 27.5).
+  - THE BEACON climbs at the court's heart 1.5 s after the Redoubt's word (`rd`'s `at` - the relay says it on the step
+    the lords fell). It stands at the place the spoils are thrown from (`beaconAt`'s own), 90 m tall, climbing over
+    1.2 s, and stands through the rest. It burns wider and brighter for 0.8 s as each recall lands.
+  - THE RECALL'S PILLAR is blue, 6 m, where the called-back rise (the room's `rise`). It rises in 0.4 s, stands 3 s and
+    fades over its last 0.6.
+- **THE COMPANY'S WORD** (sections 16.4 and 16.5).
+  - Every ping is a Battlemage-blue pillar 6 m tall with its kind's glyph: *here* a ring, *danger* a triangle with its
+    bar, *mine* or a witness's *cache* a diamond. It rises in 0.25 s, stands 5 s and fades over its last second.
+  - Each newly heard ping chimes once (the beats' chime).
+  - The wire carries a ping's x and z alone. The floor it stands on is the one under it nearest its pinger's own height
+    (`egFloorUnder` - mine, or the company's poses), else the highest.
+  - A witness's ping now stands where the member it watches stands. Before, it stood on the arrival plate, because a
+    witness's own body is held under the hall.
+- **THE WITNESS'S SIGHT** (section 16.5): for a witness alone, a blue ring and an eye at each dormant Lurker's anchor,
+  and a ring and a diamond at each alcove on its own floor. The next hall's twist is said once a hall: *Beyond the
+  door: A Battlemage hangs in chains.*
+- **THE LIGHTS' PASS** (`render/egLightPass.js`, through `scenes/egLookDraw.js` `drawLights`).
+  - It draws beams and pillars facing the eye about their upright axis, rings flat on the floor and glyph squares facing
+    the screen. They are written on the CPU each frame into one kept buffer and blended additively.
+  - THE FOG FLOOR keeps them within 30 m, and a beam has its own floor past that.
+  - The pass is depth-tested and never writes depth. It draws after THE EDGE LINE in the fight's pass, and gives back
+    its state.
+  - Every light is the way's gold (the shelf palette's `safety`) or Battlemage blue, never a warning.
+  - A trial with nothing said stands no light, and the law makes nothing for it: the draw asks every frame.
+
+**Where EG-ZE departs from this page, said plainly.**
+
+1. **The pull keeps the veil's flash** (section 27.5's table). It goes shut at once in the stair's own look, with the
+   hall held and the band's chime, and opens in the 0.8 s dither. It never closes first, because the pull is the
+   room's, taken at once.
+2. **The fall is a picture on the veil's canvas.** The underside falls away overhead and embers streak up, but the
+   world's camera does not fall past a mesh of the underside. The hall's own sky (`render/egSkyPass.js`) shows the
+   underside once the step lands.
+3. **The fall's least hold can keep a fast swap waiting** by the difference between its work and 1.2 s. It is never
+   longer than the Hour's veil every step used before (pinned).
+4. **The hall held is a DOM label over the veil**, in the classic face (Cormorant, the arrival card's gold) on both
+   skins, and hidden from screen readers (the arrival card's words reach the live region).
+5. **A witness's stair does not cross-dissolve with the member it watches.** A witness sees the company's stair.
+6. **The door's compass mark rides the arch's gold slot.** The world host's frame already hands the enhanced compass
+   `arch: egClient?.archCompass()`, the gate's diamond in the Spire's gold. The arch stands only in the open world, so
+   in the Spire the slot is the door's, and no host line moved. The classic compass carries neither, because EG-F's
+   ninth departure stands: the classic HUD's options drop the arch.
+7. **The beacon's 1.5 s is timed from the Redoubt's word, not from SPIRREDT's chord.** The score's own clock is
+   EG-G2's.
+8. **The witness's sight speaks the twist in the chat**, with no HUD line. A ping's cooldown is not shown: the relay
+   refuses a ping inside 3 s, and the screen says nothing.
+9. **Blue is the same in every palette.** The palettes move the danger, the safety and the hazard only.
+10. **Nothing here has run in a browser**, because the build container holds no Daggerfall data. The two shaders were
+    evaluated through `test/glsl.mjs`, the passes run over a recording GL, and the client played against the relay's
+    own words through the wire.
+
+**The four hosts.**
+- `src/scenes/world.js` - FLAGGED: untouched. The compass's slot (`arch: egClient?.archCompass()`) and the client's
+  `drawPass` already reach it. Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED: untouched. `stepThroughFire(go, look, opts)` already hands the veil the step's
+  look, and the swap in place runs inside it unchanged.
+- `src/scenes/dungeonContext.js` - FLAGGED: it has nothing to wire.
+- `src/scenes/exterior.js` - FLAGGED, as section 28 has it: offline, no breach.
+
+**Pins.**
+- `test/egz_stair.test.js` (9).
+- `tools/mutants/egz_stair.json` (85, every one dead). Two survived the first run:
+  - a witness's compass during a closing - a pin was added;
+  - the client's own guard on the lights outside the halls - redundant with the draw's own and the law's, so it was
+    removed.
+- Records of other slices whose quoted line moved: `sd25_look.json`'s SD25-the-hold-dropped, re-aimed by content (the
+  veil's hold now reads the stair's too).
+- Judged again over the three shared files this slice touched (`ui/gateVeil.js`, `scenes/egClient.js`,
+  `scenes/egLookDraw.js`): 84 records in fourteen lists (`auditwb_sound`, `egarch`, `egeco`, `egfrag`, `egfull`,
+  `egint`, `eglook`, `egmade`, `egplay`, `egpres_hud`, `egseam`, `sd11d`, `sd25_look`, `wb6c`), every one dead.
+- PIN MOVED: `test/tv4_weather_above.test.js` names `render/egLightPass.js` as drawn in an Elite Breach alone, never
+  under the travel view. `bible/07-Rendering/Rendering.md` lists the two new passes.
+- `RELAY_VERSION` untouched: nothing in the relay's graph moved. `ACCOUNT_VERSION` stays `acct121`.
+- The Ledger's ELITE-GATES row gains `world/egLights.js`, `render/egStairPass.js` and `render/egLightPass.js` at the
+  lead's merge.
