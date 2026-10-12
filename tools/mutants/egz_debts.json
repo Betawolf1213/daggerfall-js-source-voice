@@ -10,18 +10,20 @@
   },
   {
     "name": "EGZP-share-unspared",
+    "note": "EG-ZR (PIN MOVED): re-aimed by content - a blow's share is of the body without Stoneskin's cushion (spireBodyMax)",
     "file": "src/scenes/egFight.js",
-    "old": "raw = strikeDamage(pct * k, e.maxHealth, base * k)",
-    "new": "raw = strikeDamage(pct, e.maxHealth, base * k)",
+    "old": "raw = strikeDamage(pct * k, spireBodyMax(e), base * k)",
+    "new": "raw = strikeDamage(pct, spireBodyMax(e), base * k)",
     "tests": [
       "test/egz_debts.test.js"
     ]
   },
   {
     "name": "EGZP-points-unspared",
+    "note": "EG-ZR (PIN MOVED): re-aimed by content - a blow's share is of the body without Stoneskin's cushion (spireBodyMax)",
     "file": "src/scenes/egFight.js",
-    "old": "raw = strikeDamage(pct * k, e.maxHealth, base * k)",
-    "new": "raw = strikeDamage(pct * k, e.maxHealth, base)",
+    "old": "raw = strikeDamage(pct * k, spireBodyMax(e), base * k)",
+    "new": "raw = strikeDamage(pct * k, spireBodyMax(e), base)",
     "tests": [
       "test/egz_debts.test.js"
     ]

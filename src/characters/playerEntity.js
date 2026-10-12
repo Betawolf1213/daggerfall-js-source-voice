@@ -155,20 +155,35 @@ export function setAvoidDeathHook(fn) {
 
 /** THE damage door. Every path that can take player health goes through here.
  *  Returns true when this blow killed. */
+/** EG-ZR (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 15 - Shieldweaver: "your Shield spell soaks +20 / 35 /
+ *  50%", applied by "client (`hurtPlayer`'s pool)"): THE SHIELD POOL'S SOAK MODIFIERS, a named registry as the damage
+ *  modifiers below are (registerShieldSoakMod) - `fn(entity, entry) -> multiplier`, how much damage one point of that live
+ *  Shield entry's pool soaks (1 Daggerfall's; above 1 a pool that holds longer). With none registered, or every one
+ *  answering 1, the pool is X1's exactly. */
+const _shieldSoaks = new Map();
+/** The soak of one point of a Shield entry's pool - the product of every modifier over 1 (a modifier that throws is none). */
+function shieldSoakOf(entity, a) {
+  let k = 1;
+  for (const fn of _shieldSoaks.values()) { try { const v = fn(entity, a); if (Number.isFinite(v) && v > 1) k *= v; } catch { /* a Vestige is not the blow's problem */ } }
+  return k;
+}
 /** X1: consume `dmg` from any live Shield pool and answer what is
  *  left. Emptying the pool ENDS the effect at once (ResignAsIncumbent
- *  + RoundsRemaining = 0), and exactly zeroing it still busts it. */
+ *  + RoundsRemaining = 0), and exactly zeroing it still busts it.
+ *  EG-ZR: a point of the pool soaks `k` of damage (shieldSoakOf) - the
+ *  pool spends dmg / k, and the excess that gets through is whole points. */
 export function damageShieldPool(entity, dmg) {
   for (const a of entity?.activeEffects ?? []) {
     if (a.kind !== 'shield' || a.ended) continue;
     if (!(a.shieldRemaining > 0)) continue;   // a busted pool absorbs nothing
-    a.shieldRemaining -= dmg;
+    const k = _shieldSoaks.size ? shieldSoakOf(entity, a) : 1;
+    a.shieldRemaining -= k === 1 ? dmg : dmg / k;
     if (a.shieldRemaining <= 0) {
       const overflow = Math.abs(a.shieldRemaining);
       a.shieldRemaining = 0;
       a.ended = true;
       a.roundsRemaining = 0;
-      return overflow;   // only the excess gets through
+      return k === 1 ? overflow : Math.round(overflow * k);   // only the excess gets through
     }
     return 0;            // fully absorbed
   }
@@ -265,6 +280,8 @@ const namedRegistry = (map) => (name, fn) => { if (typeof fn === 'function') map
 export const registerPlayerDamageMod = namedRegistry(_damageMods);
 export const registerPlayerDeathSave = namedRegistry(_deathSaves);
 export const registerPlayerHurtListener = namedRegistry(_hurtListeners);
+/** EG-ZR: a Shield pool's soak modifier (damageShieldPool, above - `fn(entity, entry) -> multiplier`). */
+export const registerShieldSoakMod = namedRegistry(_shieldSoaks);
 // AUDIT FINAL F10: THE DOOR OPENS - a DOOR-OPEN LISTENER, `fn(entity)`, told FIRST on every call, before the veto (a
 // SetHealth(0) door and a duel's too): each call is one hurt's word, so a foe's blow its door never landed - the veto, a
 // halving to nothing, a Shield that took it whole, or a party's weighing that called no door at all

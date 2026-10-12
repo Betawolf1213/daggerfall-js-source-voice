@@ -255,9 +255,10 @@
   },
   {
     "name": "RENOWN1-layer-in-the-stored-health",
+    "note": "EG-ZR (PIN MOVED): re-aimed by content - the live maximum reads the Spire's Stoneskin beside Renown's (systems/renownLayer.js spireHpOf)",
     "file": "src/systems/chargen.js",
-    "old": "      return own + renownHpOf(this);",
-    "new": "      return own;",
+    "old": "      return own + renownHpOf(this) + spireHpOf(this);",
+    "new": "      return own + spireHpOf(this);",
     "tests": [
       "test/renown1.test.js"
     ]

@@ -156,9 +156,10 @@
   },
   {
     "name": "EGZM-wait-outlives-the-frame",
+    "note": "EG-ZR (PIN MOVED): re-aimed by content - `away` lets the Vestiges held go after the seed's wait (spireHolderStep)",
     "file": "src/scenes/egClient.js",
-    "old": "startWin?.close?.(); startWin = null; seedFrame({ silent: true }); },",
-    "new": "startWin?.close?.(); startWin = null; },",
+    "old": "startWin?.close?.(); startWin = null; seedFrame({ silent: true }); spireHolderStep(entity, null); },",
+    "new": "startWin?.close?.(); startWin = null; spireHolderStep(entity, null); },",
     "tests": [
       "test/egz_ends_return.test.js"
     ]

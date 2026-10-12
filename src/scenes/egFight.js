@@ -45,6 +45,11 @@
 // (net/egBrain.js egCensusDr, called on what this screen holds - egShieldDr): Bastion near me, my Steadfast Line, my
 // Lifeline windows (egLifelineOpen, opened by scenes/egClient.js as my heal word goes), my Challenger's Oath and my
 // Immovable, together never past 30% - so my body and the room's count of it take the same blow.
+// EG-ZR (2026-10-12, section 15): THE VESTIGES ON THEIR HOLDER - my blows on a Spire body carry Searing Edge, Momentum,
+// Bloodied Fury and Overcharge (systems/spireVestiges.js egHolderBlow) and an Arcane Echo's repeat (hostHit); SHIELD-HYMN on
+// my screen (`rally` - net/egVestige.js egHymnOf on where the screen draws the company, read by egShieldDr with the census's
+// law); Immovable's push half (`immovable` - the census's own stillness on my trail); a blow's share of the body without
+// Stoneskin's cushion (systems/renownLayer.js spireBodyMax).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../net/gateBrain.js';
@@ -86,6 +91,9 @@ import { egCensusDr, EG_HEAL_WORD_MS, EG_LIFELINE_MS } from '../net/egBrain.js';
 import { EG_TRAIL_MS } from '../net/egFair.js';   // EG-ZP: how long the census keeps a trail - and a Lifeline window
 import { egFightView } from '../net/egWalkGraph.js';   // EG-ZP: the hall's fight ground, the census's floor
 import { egRunOfMember } from '../net/egLink.js';   // EG-ZP: each member's Vestiges and Mastery
+import { egVOf, egHymnOf, EG_ECHO_SHARE, EG_BLOODIED_UNDER, EG_HYMN_MS } from '../net/egVestige.js';   // EG-ZR (section 15): the holder's Vestiges, Shield-Hymn's pair
+import { egHolderBlow } from '../systems/spireVestiges.js';   // EG-ZR: a blow of mine with the Vestiges I hold
+import { spireBodyMax } from '../systems/renownLayer.js';   // EG-ZR: Stoneskin's cushion over the body a share is of
 
 /** The objects' types by number (net/egLords.js EG_OBJ), and which are struck (drawn as crystals) - the rest are stood on. */
 const OBJ_KEY = Object.freeze(Object.fromEntries(Object.entries(EG_OBJ).map(([k, v]) => [v, k])));
@@ -128,6 +136,9 @@ export function egToldAt(bl, feet = null) {
   for (const s of bl?.s ?? []) if (s && (s[0] === 'd' || s[0] === 'l' || s[0] === 'c' || s[0] === 'r') && Number.isFinite(s[1]) && Number.isFinite(s[2])) return [s[1], s[2]];
   return feet ? [feet[0], feet[1]] : null;
 }
+/** EG-ZR: an Arcane Echo is a blow of its own on the relay (its own hand), numbered this far past the cast it repeats - the
+ *  bodies one cast meets share their echo's number as they share the cast's (the wire's `q` holds to 0x7fffffff). */
+export const EG_ECHO_Q = 0x40000000;
 /** A zone's and a drain's tick (ms); a body's fall's length; how long after its landing a blow's shape lingers. */
 export const EG_TICK_MS = 1000;
 const FALL_MS = 1200;
@@ -251,17 +262,18 @@ export function egLookOf(b, band) {
 /**
  * EG-ZP: THE BREACH THE CENSUS READS, AS THIS SCREEN HOLDS IT - the record net/egBrain.js egCensusDr asks (`{ h, mem }`):
  * the hall, and each member of the company the room says (`co`) as its row stands (in, alive, gone home), with the
- * Vestiges and the Mastery its run says (`ms`), and on mine `ll`, my Lifeline windows (egLifelineOpen). Pure.
- * @param {any} E the breach's state (net/egLink.js) @param {string|null} me @param {number[][]} ll
+ * Vestiges and the Mastery its run says (`ms`), and on mine `ll`, my Lifeline windows (egLifelineOpen). EG-ZR: and `hy`,
+ * Shield-Hymn's window on this screen (`rally`), when one was opened. Pure.
+ * @param {any} E the breach's state (net/egLink.js) @param {string|null} me @param {number[][]} ll @param {any[]|null} [hy]
  */
-export function egShieldBreach(E, me, ll) {
+export function egShieldBreach(E, me, ll, hy = null) {
   /** @type {Record<string, any>} */
   const mem = {};
   for (const c of E?.co ?? []) {
     const m = egMemberOf(E, c[0]), run = egRunOfMember(E, c[0]);
     mem[c[0]] = { in: m?.in, alive: m?.alive, home: m?.home, vs: run.vs, mast: run.mast, ...(c[0] === me ? { ll } : {}) };
   }
-  return { h: E?.h ?? 0, mem };
+  return { h: E?.h ?? 0, mem, ...(hy ? { hy } : {}) };
 }
 /**
  * EG-ZP - THE RECEIVER'S VESTIGES (section 15; section 21's census): the share of blow `bl` on me the company's Vestiges
@@ -270,12 +282,12 @@ export function egShieldBreach(E, me, ll) {
  * (`E`), the hall's fight (`F` - its lords) and spec (its fight floors), my trail (`tr`, the census's own
  * `[t, x, y, z, h]` in the hall's frame) and each companion where it stands at the blow's landing (`at(sub)` - `[x, y, z]`
  * in the hall's frame, or null: unseen, as the census counts no member it holds no pose of), and my Lifeline windows
- * (`ll`). Pure.
+ * (`ll`). EG-ZR: and Shield-Hymn's window (`hy`). Pure.
  * @param {any} E @param {any} F @param {any} spec @param {{at: number, o?: number}} bl @param {string|null} me
- * @param {number[][]} tr @param {(sub: string) => (number[]|null)} at @param {number[][]} ll
+ * @param {number[][]} tr @param {(sub: string) => (number[]|null)} at @param {number[][]} ll @param {any[]|null} [hy]
  */
-export function egShieldDr(E, F, spec, bl, me, tr, at, ll) {
-  const B = egShieldBreach(E, me, ll), bodies = [{ sub: me ?? '', tr }];   // mine first: the census reads a member's first trail
+export function egShieldDr(E, F, spec, bl, me, tr, at, ll, hy = null) {
+  const B = egShieldBreach(E, me, ll, hy), bodies = [{ sub: me ?? '', tr }];   // mine first: the census reads a member's first trail
   for (const sub of Object.keys(B.mem)) {
     const p = at(sub);
     if (p) bodies.push({ sub, tr: [[bl.at, p[0], p[1], p[2], B.h]] });
@@ -298,13 +310,13 @@ export const egLifelineOpen = (ll, v, at) => [...ll.filter((w) => w[1] >= at - E
  *   strike?: (dmg: number, o: { fire?: boolean, el?: string|null, name?: string }) => void, say?: (t: string) => void,
  *   hudHidden?: () => boolean, sendHit?: (f: any) => boolean, push?: (dx: number, dz: number, m: number) => void, castBack?: () => void,
  *   peerAt?: (sub: string) => number[]|null, ring?: (x: number, z: number, r: number, inside: boolean) => void, hold?: (ms: number) => void, music?: any,
- *   shake?: (k: number) => void, yaw?: () => number|null }} deps
+ *   shake?: (k: number) => void, yaw?: () => number|null, rand?: () => number }} deps
  *   EG-ZG: `shake` the camera's (the port's one shaker by default - systems/betterAmbience.js weaponKick, under the player's own
- *   maxShake); `yaw` the camera's (none: read off the view the world pass hands drawPass).
+ *   maxShake); `yaw` the camera's (none: read off the view the world pass hands drawPass). EG-ZR: `rand` an Arcane Echo's roll.
  */
 export function createEgFight({ renderer = null, gl = null, getTexture = null, uploadRecordFrame = null, audio = null, music = null, link, now, cam = () => null, feet = () => null, player = () => null, me = () => null,
   save = () => 100, strike = () => {}, say = () => {}, hudHidden = () => false, sendHit = () => false, push = () => {}, castBack = () => {}, peerAt = () => null, ring = () => {}, hold = () => {},
-  shake = (k) => betterAmbience.weaponKick(k), yaw = () => null }) {
+  shake = (k) => betterAmbience.weaponKick(k), yaw = () => null, rand = Math.random }) {
   // EG-H1: the fight runs on the breach's link's clock where it keeps one (scenes/egClient.js - the shared clock, corrected)
   if (typeof link?.now === 'function') now = link.now;
   let hall = 0, spec = null, centre = null, floor = null, band = 0;
@@ -349,12 +361,17 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   const trail = [];
   /** @type {number[][]} */
   let ll = [];
+  /** EG-ZR (section 15): Shield-Hymn's window on my blows (`[from, until, subs]` - `rally`, the census's `B.hy`); Momentum's
+   *  body and stacks (`q` the blow that last built them); an Arcane Echo's roll for the cast `q` */
+  let hymn = /** @type {any[]|null} */ (null), mom = { i: -1, n: 0, q: -1 }, echo = { q: -1, on: false };
 
   const play3 = (cue, at) => { if (!cue || !audio || !at) return; try { if (cue.id != null) audio.play3dId?.(cue.id, at, cue.volume, { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch }); else audio.play3d?.(cue.clip, at, cue.volume, { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch }); } catch { /* a sound is never the fight */ } };
   /** EG-ZG: a sound of my own (a Drop's thud, the Eclipse's wind and toll) - `{ rec, vol, pitch }`, the engine's one-shot. */
   const playOne = (S) => { try { audio?.playOneShot?.(S.rec, S.vol, S.pitch); } catch { /* a sound is never the fight */ } };
   const toDungeon = (x, y, z) => [centre[0] + x, centre[1] + y, centre[2] + z];
   const myFeet = () => { const f = feet(); return f && centre ? [f[0] - centre[0], f[2] - centre[2]] : null; };
+  /** EG-ZR: a companion's feet in the hall's frame where this screen draws it (its pose stands at the eye), or null. */
+  const peerFeet = (sub) => { const p = peerAt(sub); return p && centre ? [p[0] - centre[0], p[1] - PEER_EYE_M - centre[1], p[2] - centre[2]] : null; };
 
   function texture(mobile) {
     const archive = ENEMY_BASICS[mobile]?.maleTexture;
@@ -395,6 +412,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     for (const d of drawn.values()) destroy(d);
     drawn.clear(); judged.clear(); cued.clear(); landedSet.clear(); zoneTick.clear(); fellSeen = new Set(); phaseSeen = new Set(); crystalSlots.clear(); ventJudged.clear(); hazHit.clear(); wispHold.clear(); stung.clear();
     toldHeard.clear(); dropFire();   // EG-ZH
+    mom = { i: -1, n: 0, q: -1 }; echo = { q: -1, on: false };   // EG-ZR: a new hall's bodies build no stacks of the last's
     hall = E.h; spec = egHallOf(E.seed, E.h, E.geo ?? 0); centre = egHallCentre(spec); band = spec.band ?? 0;
     floor = spec.fight ? { r: spec.fight.r + 6, courts: [[spec.fight.x, spec.fight.z]] } : { r: 40, courts: [[0, spec.len / 2]] };
     floors = egFightFloors(spec);   // EG-ZG (section 11.7): each fight floor triangulated once
@@ -402,16 +420,16 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     beat = null; saysSeen = E.fight.says.length; wokeSeen = 0; gustSeen = 0;
   }
   /** A blow on me landed - its share of my health and its base, through my saving throw against its element. EG-ZP: less
-   *  the share `dr` my company's Vestiges spare a blow (spared). */
+   *  the share `dr` my company's Vestiges spare a blow (spared). EG-ZR: its share of my body without Stoneskin's points. */
   function landShare(pct, base, el, name, dr = 0) {
     const e = player();
     if (!e || !(e.health > 0) || !(pct > 0)) return;
-    const k = 1 - dr, raw = strikeDamage(pct * k, e.maxHealth, base * k), dmg = el ? savedShare(raw, save(e, el)) : raw;
+    const k = 1 - dr, raw = strikeDamage(pct * k, spireBodyMax(e), base * k), dmg = el ? savedShare(raw, save(e, el)) : raw;
     if (dmg > 0) strike(dmg, { fire: el === 'fire', el, name });
   }
   /** EG-ZP: the share of blow `bl` on me my company's Vestiges spare (egShieldDr - the census's own law) - each companion
    *  where this screen draws them, at their feet (the pose stands at the eye). */
-  const spared = (E, F, bl) => egShieldDr(E, F, spec, bl, me(), trail, (sub) => { const p = peerAt(sub); return p && centre ? [p[0] - centre[0], p[1] - PEER_EYE_M - centre[1], p[2] - centre[2]] : null; }, ll);
+  const spared = (E, F, bl) => egShieldDr(E, F, spec, bl, me(), trail, peerFeet, ll, hymn);
   /** One body drawn: its look's sprite at its act's frame, at its place. */
   function drawBody(b, t, blow) {
     const look = egLookOf(b, band);
@@ -870,12 +888,23 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     /** Every body my blows meet - lords, the legion, the struck objects - and a blow of mine on one (`hit` by number). */
     hostTargets: () => _targets,
     hostHit({ i, d, r } = /** @type {any} */ ({})) {
-      const dmg = Math.round(d);
-      if (!Number.isInteger(i) || !(dmg >= 1) || !Object.values(HIT_KINDS).includes(r)) return false;
+      if (!Number.isInteger(i) || !(Math.round(d) >= 1) || !Object.values(HIT_KINDS).includes(r)) return false;
       const E = link.state(), b = E.fight.bodies.find((q) => q.i === i);
       if (!b) return false;
       b.hurtAt = b.mineAt = now();   // EG-ZG: mine - its flash full (an ally's is 0.4)
-      return !!sendHit({ i, q: blowQ(`e${i}`), d: dmg, r });
+      // EG-ZR (section 15): THE VESTIGES I HOLD ON THE BLOW - Searing Edge's fire on a melee blow, Momentum's stacks on
+      // this body, Bloodied Fury under half my health, Overcharge on a spell (egHolderBlow); the relay's bucket grown by
+      // their declared factor takes the claim
+      const vs = egRunOfMember(E, me()).vs, e = player(), q = blowQ(`e${i}`);
+      const dmg = Math.round(egHolderBlow(vs, d, r, { stacks: mom.i === i ? mom.n : 0, low: !!e && e.health < e.maxHealth * EG_BLOODIED_UNDER }));
+      if (!sendHit({ i, q, d: dmg, r })) return false;
+      if (q !== mom.q) mom = { i, n: mom.i === i ? mom.n + 1 : 1, q };   // a blow builds one stack, on the first body it met
+      // ARCANE ECHO: a damage spell repeats at half, its share of casts - one roll a cast, a blow of its own on each body
+      if (r === HIT_KINDS.Spell) {
+        if (q !== echo.q) { const v = egVOf(vs, 'echo'); echo = { q, on: v > 0 && rand() < v }; }
+        if (echo.on) sendHit({ i, q: q + EG_ECHO_Q, d: Math.max(1, Math.round(dmg * EG_ECHO_SHARE)), r });
+      }
+      return true;
     },
     riftTargets: () => [],
     riftHit: () => false,
@@ -919,6 +948,34 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     lifeline(v, at) { if (v > 0 && Number.isFinite(at)) ll = egLifelineOpen(ll, v, at); },
     /** EG-ZP (tests): my Lifeline windows and my trail's length. */
     shield: () => ({ ll: ll.map((w) => [...w]), trail: trail.length }),
+    /**
+     * EG-ZR - SHIELD-HYMN, THIS SCREEN'S HALF (section 15's Accord; the census's - net/egBrain.js egHymnStep): Rally's heal
+     * said (`at` the door's opening on the shared clock - the word's arrival less its way here) with a Bastion holder within
+     * EG_ACCORD_M of another member holding Rally, where this screen stands them - me at my feet, each companion where it is
+     * drawn, the living company the room counts (net/egVestige.js egHymnOf) - gives me those holders' Bastion for
+     * EG_HYMN_MS, which egShieldDr reads with the census's own law. A door with no such pair leaves the last to lapse.
+     */
+    rally(at) {
+      const E = link.state(), sub = me();
+      if (!Number.isFinite(at) || !centre) return;
+      const ms = [];
+      for (const c of E.co ?? []) {
+        const m = egMemberOf(E, c[0]), q = c[0] === sub ? null : peerFeet(c[0]), p = c[0] === sub ? myFeet() : q && [q[0], q[2]];
+        if (m?.in && m.alive && !m.home && p) ms.push({ sub: c[0], vs: egRunOfMember(E, c[0]).vs, x: p[0], z: p[1] });
+      }
+      const hy = egHymnOf(ms);
+      if (hy.length) hymn = [at, at + EG_HYMN_MS, hy];
+    },
+    /** EG-ZR (tests): Shield-Hymn's window on this screen, or null. */
+    hymn: () => (hymn ? [hymn[0], hymn[1], [...hymn[2]]] : null),
+    /** EG-ZR - IMMOVABLE'S OTHER HALF (section 15: "pushes do nothing until you move"): do I stand still EG_IMMOVABLE_MS on a
+     *  fight floor now, holding it - the census's own judgment of my trail (net/egBrain.js egCensusDr, asked of my Mastery
+     *  alone: its Immovable is the only share it can answer). */
+    immovable() {
+      const E = link.state(), sub = me();
+      if (!spec || !sub || hall !== E.h || !trail.length) return false;
+      return egCensusDr({ h: hall, mem: { [sub]: { mast: egRunOfMember(E, sub).mast } } }, null, egFightView(spec), { sub, at: now() }, [{ sub, tr: trail }]) > 0;
+    },
     /** The count's words for a tracker that asks. */
     countText: (ms) => egCountText(ms),
     /** Out of the breach: everything put away. */
@@ -931,6 +988,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       if (sigilsUp) { drawEgSigils(null); sigilsUp = false; }
       hall = 0; spec = null; centre = null; beat = null;
       trail.length = 0; ll = [];   // EG-ZP
+      hymn = null; mom = { i: -1, n: 0, q: -1 }; echo = { q: -1, on: false };   // EG-ZR
       _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0;
       floors = []; lastPlan = null; lastPeril = null; lastGround = null; _sigils.length = 0; dusts.length = 0;
     },

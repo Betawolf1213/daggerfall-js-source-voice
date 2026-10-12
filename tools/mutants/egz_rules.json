@@ -491,16 +491,18 @@
   },
   {
     "name": "EGZI-client-toll-the-step",
+    "note": "EG-ZR (PIN MOVED): re-aimed by content - the toll's share is of the body without Stoneskin's cushion (spireBodyMax)",
     "file": "src/scenes/egClient.js",
-    "old": "Math.round(q * EG_TOLL_STEP * (entity.maxHealth ?? 0))",
-    "new": "Math.round(q * 0.1 * (entity.maxHealth ?? 0))",
+    "old": "Math.round(q * EG_TOLL_STEP * spireBodyMax(entity))",
+    "new": "Math.round(q * 0.1 * spireBodyMax(entity))",
     "tests": ["test/egz_rules.test.js"]
   },
   {
     "name": "EGZI-client-toll-the-last-taken",
+    "note": "EG-ZR (PIN MOVED): re-aimed by content - the toll's share is of the body without Stoneskin's cushion (spireBodyMax)",
     "file": "src/scenes/egClient.js",
-    "old": "(entity.maxHealth ?? 0)), entity.health - 1);",
-    "new": "(entity.maxHealth ?? 0)), entity.health);",
+    "old": "EG_TOLL_STEP * spireBodyMax(entity)), entity.health - 1);",
+    "new": "EG_TOLL_STEP * spireBodyMax(entity)), entity.health);",
     "tests": ["test/egz_rules.test.js"]
   },
   {

@@ -22163,7 +22163,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       const targetLine = allyCastTargetLine(who, spell.name);
       if (loud && (!mate || _mateGiftGate(targetLine))) townTalk.say(targetLine);   // GIFT-QUIET: a mate's, once a window
       const before = playerEntity.health;
-      magic.applySpellToPlayer(spell, d.level, null, { allyCast: true, strangerCast: !mate });   // AUDIT SPELL-GIFT B6: a stranger's Cure leaves an infection be
+      magic.applySpellToPlayer(spell, d.level, null, { allyCast: true, strangerCast: !mate }); egClient?.menderGrace?.(id, playerEntity.health - before);   // AUDIT SPELL-GIFT B6: a stranger's Cure leaves an infection be; EG-ZR (Elite-Gates.md section 15): in a breach, the caster's Mender's Grace heals me its share more
       const healed = Math.max(0, Math.trunc(playerEntity.health - before));
       if (healed > 0 && loud) townTalk.say(`You are healed ${healed} points.`);
       if (healed > 0) gateCourt?.healedBy?.(id, healed);   // GATE-HEAL: in a gate's court, the caster's healing (the round-up's)

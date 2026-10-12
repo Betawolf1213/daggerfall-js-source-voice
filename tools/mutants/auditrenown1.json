@@ -421,9 +421,10 @@
   },
   {
     "name": "AUDIT-RENOWN1-limiter-caps-the-layer",
+    "note": "EG-ZR (PIN MOVED): re-aimed by content - the live maximum reads the Spire's Stoneskin beside Renown's (systems/renownLayer.js spireHpOf)",
     "file": "src/systems/chargen.js",
-    "old": "      return own + renownHpOf(this);",
-    "new": "      return Math.min(stored + renownHpOf(this), limiter >= 1 ? limiter : Infinity);",
+    "old": "      return own + renownHpOf(this) + spireHpOf(this);",
+    "new": "      return Math.min(stored + renownHpOf(this), limiter >= 1 ? limiter : Infinity) + spireHpOf(this);",
     "tests": [
       "test/auditrenown1.test.js",
       "test/renown1.test.js"
