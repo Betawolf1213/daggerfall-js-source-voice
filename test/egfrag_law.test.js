@@ -126,7 +126,7 @@ test('EG-FULL LAYER THREE THE PASSAGES (sections 11.1, 11.5, 11.6 and 11.8): eac
   let laid = 0;
   for (const s of halls([0])) for (const q of s.caves) {
     laid++;
-    if (q.tube) continue;
+    if (q.tube || q.shaft) continue;   // PIN MOVED (EG-ZC): a shaft's rim and foot are traversal ground - blows land on none of it (section 11.1)
     assert.ok(egOnFight(s, q.x, (q.z0 + q.zA) / 2) && egOnFight(s, q.x, (q.zB + q.z1) / 2), `hall ${s.h}: a passage's floors are fight floors`);
     for (const st of s.steps.filter((x) => x.kit === q.kit && x.z > q.zA && x.z < q.zB)) assert.ok(Math.abs(st.x - q.x) < q.halfW, 'its course inside its walls');
   }

@@ -981,11 +981,13 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       return { at: [floor[0], floor[1] + EG_BEACON_SPEW_UP, floor[2]], keep: { centre: floor, r: Math.max(2, r.r - EG_BEACON_RIM_M), floorY: floor[1] } };
     },
     /** EG-FULL LAYER THREE: the hall's errand objects as the relay keeps them (systems/spireKit.js spireObjs - the spans
-     *  stand Grath's islands and the false walls by them). */
+     *  stand Grath's islands and the false walls by them). EG-ZC (section 11.10): and the havens the Moon-Mirror lays over the
+     *  branches it lights (`lit` - each zone's stamp and its run, relay ms), by which the spans stand a lit branch. */
     objs() {
       const E = link.state(), F = E.fight;
-      if (!inSpire() || !F || F.h !== E.h) return { h: E.h | 0, objs: [] };
-      return { h: E.h | 0, objs: F.bodies.filter((b) => b.role === EG_ROLE.obj).map((b) => ({ t: OBJ_NAME[b.k] ?? '', i: b.i, x: b.x, z: b.z, st: b.st ?? 0, stAt: b.stAt ?? 0, pt: b.pt ?? 0 })) };
+      if (!inSpire() || !F || F.h !== E.h) return { h: E.h | 0, objs: [], lit: [] };
+      return { h: E.h | 0, objs: F.bodies.filter((b) => b.role === EG_ROLE.obj).map((b) => ({ t: OBJ_NAME[b.k] ?? '', i: b.i, x: b.x, z: b.z, st: b.st ?? 0, stAt: b.stAt ?? 0, pt: b.pt ?? 0 })),
+        lit: (F.zones ?? []).filter((z) => z.kind === 'haven').map((z) => ({ s: z.s, from: z.from, until: z.until })) };
     },
     /** A press on a span's own target (systems/spireKit.js spireAct): an Orrery stone's handle (`pz` - a turn forward or
      *  back) or an engine (`use`), in the hall I stand in. */

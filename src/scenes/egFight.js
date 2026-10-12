@@ -36,6 +36,7 @@ import { stateAnims, FLY_ANIM_SPEED, PRIMARY_ATTACK_ANIM_SPEED, HURT_ANIM_SPEED 
 import { mobileBillboardSize } from '../world/rmbFlats.js';
 import { egHallOf, egCountText, egVentAt, egInVent, EG_LORDS, EG_BANDS, EG_VENT_PCT, EG_VENT_WARN_MS, EG_VENT_FIRE_MS } from '../net/egLaw.js';
 import { egVentState, egInVentDisc, egPendAt, EG_VENT_R, EG_VENT_TELL_S, EG_PEND_REACH, EG_PEND_HALF, EG_PEND_CLEAR_MIN } from '../net/egSpanLaw.js';
+import { egSlagState, egSlagX, EG_SLAG_SPOUTS, EG_SLAG_CRUST_S, EG_SLAG_WARN_S } from '../net/egSpanLaw.js';   // EG-ZC: a slag crust's break told
 import { egBodyPlace } from '../net/egLink.js';
 import { egBlowVerdict, egInShape, egShapeOrder, coneInscribed } from '../net/egShape.js';
 import { EG_ROLE, EG_FL, EG_FEINT_AT } from '../net/egBodies.js';
@@ -354,7 +355,9 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   /** THE PLACE (sections 8.3 and 10.3), on every screen alike: a Rampart's vents (told EG_VENT_WARN_MS and erupting
    *  EG_VENT_FIRE_MS on the relay's clock from the hall's wake - net/egLaw.js egVentAt) and a span's Vents and Pendulums
    *  (the shared clock - net/egSpanLaw.js): each drawn in the telegraph pass, a vent's eruption judged on my feet once. A
-   *  Pendulum's touch is the span's own cast-back (scenes/egSpan.js); its lane here brightens over its last EG_PEND_CLEAR_MIN. */
+   *  Pendulum's touch is the span's own cast-back (scenes/egSpan.js); its lane here brightens over its last EG_PEND_CLEAR_MIN.
+   *  EG-ZC: a slag crust's last EG_SLAG_WARN_S told in white over its lane - it breaks next (the spill's own molten lanes are
+   *  the fragments' hazards, fragHazards). */
   function place(E, t) {
     if (!spec || (E.sg !== 'trial' && E.sg !== 'closing')) return;
     const f = myFeet(), d = feet(), e = player(), standing = !!f && !!e && e.health > 0, fy = d && centre ? d[1] - centre[1] : 0;
@@ -398,6 +401,16 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         sh.t = toCentre < EG_PEND_CLEAR_MIN ? 1 - toCentre / EG_PEND_CLEAR_MIN : 0; sh.flash = 0; sh.alpha = toCentre < EG_PEND_CLEAR_MIN ? 1 : 0.4;
         sh.color = PEND_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.ground; sh.style = TELEGRAPH_STYLE.weight; sh.since = 0; sh.span = EG_PEND_CLEAR_MIN; sh.after = -1; sh.court = 0;
         _shapes.push(sh);
+      } else if (s.kind === 'slag') {
+        for (let k = 0; k < EG_SLAG_SPOUTS; k++) {
+          const S = egSlagState(s, k, ts), left = (1 - S.k) * EG_SLAG_CRUST_S;
+          if (S.st !== 'crust' || left >= EG_SLAG_WARN_S) continue;
+          const sh = (_slots[_shapes.length] ??= slot()), lx = egSlagX(s, k);
+          sh.kind = TELEGRAPH_KIND.lane; sh.origin[0] = lx; sh.origin[1] = s.z - s.d / 2; sh.end[0] = lx; sh.end[1] = s.z + s.d / 2; sh.halfW = s.w / 2; sh.r = 0;
+          sh.t = 1 - left / EG_SLAG_WARN_S; sh.flash = 0; sh.alpha = 1; sh.color = PEND_COLOR; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.ground; sh.style = TELEGRAPH_STYLE.weight;
+          sh.since = EG_SLAG_WARN_S - left; sh.span = EG_SLAG_WARN_S; sh.after = -1; sh.court = 0;
+          _shapes.push(sh);
+        }
       }
     }
     fragHazards(E, ts, f, fy, standing);
@@ -405,7 +418,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   /**
    * EG-FULL LAYER THREE - THE FRAGMENTS' HAZARDS (section 11.2; net/egFragLaw.js egHazardParts): each told and live part
    * drawn in the telegraph pass - a fire fall's white shimmer then its burning, a surge's and a cascade's lanes, the basalt's
-   * and the hammers' discs, a slag spill, the tide over a chamber's low floor, the Eclipse's moon-shafts gold - and each
+   * and the hammers' discs, a slag spill (EG-ZC: the Forge kit's spouts now pour it), the tide over a chamber's low floor, the Eclipse's moon-shafts gold - and each
    * live part judged on my own feet once (its key), within its height. A soul-wisp binds a member within 3 m and drains them
    * until 6 m apart or 4 s, then lets go a while. The mist is sight alone, never harm (not drawn here).
    */

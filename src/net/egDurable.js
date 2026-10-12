@@ -38,8 +38,9 @@ export const EG_INSTANT_SLACK_MS = 60_000;
  *  the other still draws a breach's own halls. */
 export const EG_LAW_KEEP_DAYS = 7;
 /** THE LAWS THIS BUILD DRAWS: spec law -> the day it became the law (net/egLaw.js EG_SPEC is always one). One line, read
- *  by the relay deploy's drain step (.github/workflows/relay-deploy.yml). */
-export const EG_LAWS = Object.freeze({ 4: '2026-10-11' });
+ *  by the relay deploy's drain step (.github/workflows/relay-deploy.yml). EG-ZC: law 5 (the last fragments - the Cooling
+ *  Slag, the shafts) beside law 4, kept EG_LAW_KEEP_DAYS with its generator (net/egLaw.js egHallOf's `law`). */
+export const EG_LAWS = Object.freeze({ 4: '2026-10-11', 5: '2026-10-12' });
 /** Does this build draw spec law `v`? */
 export const egLawKnown = (/** @type {any} */ v) => Number.isSafeInteger(v) && Object.hasOwn(EG_LAWS, String(v));
 /** The most breaches live at once (section 22, THE COST - the Rehearsals among them). */
