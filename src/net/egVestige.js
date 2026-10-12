@@ -10,6 +10,9 @@
 //
 // A member's Vestiges on the wire are `[id, rank]` pairs (rank 1-3); a Mastery its own id. Pure law: the tables, the
 // offer's draw (the relay's rng), the factors. In the relay bundle. Not a DFU member. Ledger A (ELITE-GATES).
+// EG-ZR (2026-10-12): the numbers section 15 gives no rank (Momentum's stack, Second Wind's and Bloodied Fury's lines, an
+// Echo's share, Shield-Hymn's seconds, an Accord's reach) and Shield-Hymn's pair (egHymnOf), each declared once here - the
+// holder's screen (systems/spireVestiges.js, scenes/egFight.js) and the relay's census (net/egBrain.js) import them.
 
 export const EG_V_FAMILIES = Object.freeze(['stone', 'blade', 'hunt', 'arcana', 'fellowship']);
 export const EG_V_FAMILY_NAMES = Object.freeze({ stone: 'Stone', blade: 'Blade', hunt: 'Hunt', arcana: 'Arcana', fellowship: 'Fellowship' });
@@ -25,6 +28,15 @@ export const EG_FADE_CD_S = 8;
 export const EG_OFFER_MAX = 6;
 /** Three shards make a rank of a held Vestige, or a pick of two new ones. */
 export const EG_SHARDS_PER = 3;
+/** EG-ZR (section 15's numbers that are no rank's): Momentum's share a stack; the line Second Wind falls under; the line
+ *  Bloodied Fury fights under; an Arcane Echo's share of the spell it repeats; how long Shield-Hymn's protection lasts (ms);
+ *  how near two members stand for an Accord (m). */
+export const EG_MOMENTUM_STEP = 0.04;
+export const EG_SECOND_WIND_UNDER = 0.3;
+export const EG_BLOODIED_UNDER = 0.5;
+export const EG_ECHO_SHARE = 0.5;
+export const EG_HYMN_MS = 4000;
+export const EG_ACCORD_M = 10;
 
 /**
  * EVERY VESTIGE: its number, family, name, its three ranks' values (`v`), what applies it (`by`: 'client' - the holder's
@@ -36,12 +48,12 @@ export const EG_VESTIGES = Object.freeze([
   // STONE
   Object.freeze({ id: 0, key: 'stoneskin', fam: 'stone', name: 'Stoneskin', v: [0.10, 0.18, 0.25], by: 'client', line: (v) => `+${pc(v)} maximum health.` }),
   Object.freeze({ id: 1, key: 'ironfooting', fam: 'stone', name: 'Iron Footing', v: [0.35, 0.65, 1.0], by: 'client', line: (v) => `Pushes against you ${pc(v)} weaker.` }),
-  Object.freeze({ id: 2, key: 'secondwind', fam: 'stone', name: 'Second Wind', v: [0.15, 0.25, 0.35], by: 'client', line: (v) => `Once a hall, falling under 30% heals ${pc(v)}.` }),
+  Object.freeze({ id: 2, key: 'secondwind', fam: 'stone', name: 'Second Wind', v: [0.15, 0.25, 0.35], by: 'client', line: (v) => `Once a hall, falling under ${pc(EG_SECOND_WIND_UNDER)} heals ${pc(v)}.` }),
   Object.freeze({ id: 3, key: 'bastion', fam: 'stone', name: 'Bastion', v: [0.04, 0.08, 0.12], by: 'word', aura: 6, line: (v) => `Allies within 6 m take ${pc(v)} less from blows.` }),
   Object.freeze({ id: 4, key: 'oath', fam: 'stone', name: "Challenger's Oath", v: [1.5, 2, 2.5], by: 'relay', line: (v) => `Your threat x${v}; lords' blows on you weaker.` }),
   // BLADE
   Object.freeze({ id: 5, key: 'searing', fam: 'blade', name: 'Searing Edge', v: [3, 6, 9], x: [1.04, 1.07, 1.10], by: 'client', line: (v) => `Melee blows +${v} fire.` }),
-  Object.freeze({ id: 6, key: 'momentum', fam: 'blade', name: 'Momentum', v: [3, 4, 5], x: [1.05, 1.07, 1.09], by: 'client', line: (v) => `Blows on one target +4% each, to ${v} stacks.` }),
+  Object.freeze({ id: 6, key: 'momentum', fam: 'blade', name: 'Momentum', v: [3, 4, 5], x: [1.05, 1.07, 1.09], by: 'client', line: (v) => `Blows on one target +${pc(EG_MOMENTUM_STEP)} each, to ${v} stacks.` }),
   Object.freeze({ id: 7, key: 'sweeping', fam: 'blade', name: 'Sweeping Arc', v: [0.20, 0.35, 0.50], by: 'relay', line: (v) => `Melee blows splash ${pc(v)} to adds within 3 m.` }),
   Object.freeze({ id: 8, key: 'bloodied', fam: 'blade', name: 'Bloodied Fury', v: [0.10, 0.18, 0.25], x: [1.03, 1.05, 1.07], by: 'client', line: (v) => `Under half health, +${pc(v)} damage.` }),
   Object.freeze({ id: 9, key: 'culling', fam: 'blade', name: 'Culling Edge', v: [0.30, 0.45, 0.60], by: 'relay', line: (v) => `+${pc(v)} on adds under a quarter health.` }),
@@ -117,6 +129,18 @@ export function egDeclaredX(vs) {
 /** The relay-established factor for a blow, capped (EG_RELAY_X_MAX) and, with the declared one, capped together
  *  (EG_BUCKET_ALL_MAX). */
 export const egCapX = (relayX, declaredX) => Math.min(EG_RELAY_X_MAX, relayX, EG_BUCKET_ALL_MAX / Math.max(1, declaredX));
+/**
+ * EG-ZR - SHIELD-HYMN (section 15's Accord: Bastion with Rally - "Rally's heal also gives the company 4 s of Bastion's
+ * protection"): the Bastion holders among the living company `ms` (`{ sub, vs, x, z }` - each where it stands) within
+ * EG_ACCORD_M of a Rally holder who is another member (an Accord is two members'). Their Bastion is the company's for
+ * EG_HYMN_MS when Rally's heal is said - the relay's census (net/egBrain.js egHymnStep) and each screen (scenes/egFight.js
+ * `rally`) read the pair by this one law, each on the places it holds. Pure.
+ * @param {Array<{ sub: string, vs: number[][], x: number, z: number }>} ms
+ */
+export function egHymnOf(ms) {
+  const rally = ms.filter((m) => egRankOf(m.vs, 'rally') > 0);
+  return ms.filter((b) => egRankOf(b.vs, 'bastion') > 0 && rally.some((r) => r.sub !== b.sub && Math.hypot(r.x - b.x, r.z - b.z) <= EG_ACCORD_M)).map((b) => b.sub);
+}
 /** Accords a pair of members hold (by their Vestiges). */
 export function egAccordsOf(vsA, vsB) {
   const has = (vs, k) => egRankOf(vs, k) > 0;

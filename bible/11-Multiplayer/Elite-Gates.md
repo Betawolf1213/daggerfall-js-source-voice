@@ -7077,7 +7077,7 @@ each stale one below, is deleted above.
 
 1. **The screen applies the census's whole reduction**, Challenger's Oath and Immovable with the three team Vestiges: one
    sum under one cap. With three of the five the screen would disagree with the census whenever the cap binds. Section
-   15's table gives both to the client as well. Immovable's other half (pushes do nothing) is not built here.
+   15's table gives both to the client as well.
 2. **"Under 30%"** is read off my own body, where the census reads its count and my body's word. They agree when the word
    and the count do.
 3. **Lifeline's window opens when the word goes.** A blow already taken inside its back second is not given back. The
@@ -7098,11 +7098,6 @@ each stale one below, is deleted above.
    The two tags renumbering would have pointed at another sentence (`scenes/egFight.js` and `render/gateTelegraph.js`, "EG-H1's departure 8") now
    read "an EG-H1 departure retired". EG-ZB's departures keep their gap at 2 (EG5 + EG-ZK deleted it without
    renumbering), since EG-ZI's pointer to their 8 would move.
-9. **Found, not built here:** Shield-Hymn (Bastion with Rally, "Rally's heal also gives the company 4 s of Bastion's
-   protection") is applied by neither the census nor any screen. Most client Vestiges of the holder's own body are applied
-   by no screen either: Stoneskin, Second Wind, Searing Edge, Momentum, Bloodied Fury, Battlemage's Focus, Overcharge,
-   Spellbane, Shieldweaver, Arcane Echo, Fleetfoot and Mender's Grace. Iron Footing is the only one a screen applies
-   today.
 
 **Not verified without a browser and the game's data:** nothing was played. Each blow was counted on the director's own
 breach and fight (`egCount`, `egHeal`) and on `createEgFight` with no renderer, and the heal word on `createEgClient`
@@ -7260,3 +7255,197 @@ were checked through the wire, the screen's fold and `egLookOf` in node, not see
   (`acct122`), and there is no migration. `EG_SPEC` is 5 and `EG_LAWS` are as they were.
 - The 25-seed sweep (`tools/egSpanSolve.mjs --sweep --golden`, bands 0-3): every course crossed (95, 111, 108 and 109).
 - No new src module. The Port-Ledger's ELITE-GATES row is the lead's.
+
+### EG-ZR - 2026-10-12 - THE VESTIGES ON THEIR HOLDER
+
+Mac: "I said I want everything". EG-ZP found two debts of section 15 and left them, said in its departures 1 and 9: Shield-Hymn
+was applied by neither the census nor any screen, and of the Vestiges section 15 gives the holder's own client, Iron Footing
+alone was applied on a screen, Immovable's push half not at all. Checked against section 15 and `net/egVestige.js` (every
+`by: 'client'` row, and the `word` rows a receiver applies), the list is EG-ZP's twelve and one more: Featherstep, whose
+crumbles waited Daggerfall's delay on every screen and whose cast-back the screen charged a tenth while the census charged
+8, 6 or 4%. This slice applies all thirteen on their holder, Shield-Hymn on both halves and Immovable's push half. Both of
+EG-ZP's sentences are deleted above.
+
+**What shipped, by piece.**
+
+- **THE HOLDER** (`systems/spireVestiges.js` `spireHolderStep`, new; `scenes/egClient.js` `holderNow`).
+  - Every frame, the breach client hands its holder to the Vestiges' doors: my run's Vestiges and Mastery as the room says
+    them (`egRunOfMember`), the breach and its hall. It does so only while I stand alive in the breach the room counts me
+    in (in, alive, not gone home, the breach not ended, not a witness); otherwise the holder is null.
+  - With no holder every door answers as if nothing were held. The client's `away` (online gone) and the first frame out
+    of the Spire let go. So does a fall (a witness holds nothing) and the way home.
+  - Each door is the one the port already has for its kind, registered once at the module's import (as
+    `systems/lootPowers.js` and `systems/sigilSetPowers.js` register theirs). Every number is `net/egVestige.js`'s.
+- **STONESKIN** (+10 / 18 / 25% maximum health; `systems/renownLayer.js` `setSpireHp`, `spireHpOf`, `spireBodyMax`;
+  `systems/chargen.js` `defineLiveMaxHealth`).
+  - A third online term on the live maximum, beside Renown's: its rank's share of the body without it, in whole points
+    (rounded). It goes on and comes off as Renown's layer does, the fraction kept: 500 of 1000 is 625 of 1250 at rank III,
+    and 500 of 1000 again once let go. Only a live maximum carries it (every player's: chargen's and the load arm's).
+  - THE CUSHION: every share the room takes of a body is a share of the body without Stoneskin, which is the census's whole.
+    That covers a blow, a zone, a hazard and a drain (`scenes/egFight.js` `landShare`), and the void, the toll and the lash
+    (`scenes/egClient.js`). A 0.4 blow takes 400 of a Stoneskin III holder's 1250, and the census counts 400 thousandths.
+- **SECOND WIND** (once a hall, falling under 30% heals 15 / 25 / 35%; a hurt listener on the one damage door,
+  `characters/playerEntity.js` `registerPlayerHurtListener`, the Ghost-King's Vigil's way).
+  - A hurt that takes me from 30% of my maximum or over to under it heals its rank's share of the maximum
+    (`systems/playerHeal.js` `healMine`), once in each hall of each breach.
+  - Never on a hurt that leaves me at 30%, nor on one already under. Never on a killing blow a death save turned aside
+    (the hurt's `saved`).
+- **SPELLBANE** (every resistance +10 / 18 / 25; the resist channel's fold, `systems/entityMods.js`
+  `registerEntityFold`). Every element the saving throw names (`systems/lootRarity.js` `RESIST_ELEMENTS`) gets its rank,
+  as the Battlemage's Bearing rides the same channel. The entity is folded again the frame the value moves, so the throw
+  reads it at once and stops at once. A fire save of 55 is 80 at rank III.
+- **BATTLEMAGE'S FOCUS** (spell cost -10 / 18 / 25%; `systems/spellcost.js` `registerSpellCostMod`). My cast's spell
+  points less its share. The cost door rounds and never goes under 1, and another caster's price is untouched.
+- **SHIELDWEAVER** (my Shield spell soaks +20 / 35 / 50%; `characters/playerEntity.js` `registerShieldSoakMod`,
+  `damageShieldPool`).
+  - A new named registry on the Shield pool: a point of a live Shield entry's pool soaks `k` of a blow. The pool spends
+    dmg / k, and the excess that gets through is whole points. With no modifier, or every one answering 1, the pool is
+    X1's exactly.
+  - Shieldweaver answers 1 + its share for a Shield I cast on myself (`bundleSelfCast`). A party mate's gift (ALLY-CAST
+    lands with no caster) soaks as Daggerfall's. At rank III a 120 blow on a 100 pool is soaked whole, 20 left, and the
+    next 60 passes 30.
+- **FLEETFOOT** (run speed +4 / 7 / 10%; `player/motor.js` `registerRunSpeedMod`, `runSpeedMult`). A new named registry of
+  run modifiers beside the walk's swim scale, read every step. With none, the run is Daggerfall's exactly. Fleetfoot
+  multiplies the run on foot; the walk and a horse's gallop are as they were. THE FAST BUILD's run (`net/egSpanLaw.js`
+  `EG_FAST_RUN_MPS`) is now pinned to Fleetfoot III's own number.
+- **FEATHERSTEP** (crumbles wait +0.2 / 0.35 / 0.5 s; cast-backs cost 8 / 6 / 4%).
+  - A Crumble (or a Bone bridge) my foot sets waits Daggerfall's delay and the holder's seconds (`scenes/egSpan.js`, the
+    step's `wait`, set from `spireCrumbleWait` as the foot lands). Its three crack stages spread across the wait, its
+    chunks fall after it, and the fall, the return and the click home keep their own lengths after it.
+  - The void's cost on my screen is the census's own law (`net/egBrain.js` `egCastBackCost`, imported), so a cast-back
+    costs 8, 6 or 4% on the screen as in the count. It is said as it is (`ui/egBeats.js` `EG_PRES_TEXT.castBackCost`,
+    `EG_BEATS.castBack` taking the cost): *-8%* at rank I, *-4%* at III, *-10%* unheld.
+- **THE BLOW** (`systems/spireVestiges.js` `egHolderBlow`; `scenes/egFight.js` `hostHit`, `EG_ECHO_Q`). Every blow of mine
+  on a Spire body leaves through `hostHit`: a swing, an arrow, a spell, as the dungeon host's `landOnHost` sends it. The
+  Vestiges I hold are laid on the claim there, where the relay's bucket, grown by their declared factor
+  (`egDeclaredX`), takes it.
+  - SEARING EDGE: a melee blow +3 / 6 / 9.
+  - MOMENTUM: +4% a stack on one body, to 3 / 4 / 5 stacks. A blow builds one stack, on the first body it meets, and a blow
+    on another body starts again. A blow the wire refused builds none. A new hall starts again.
+  - BLOODIED FURY: under half my health +10 / 18 / 25%.
+  - OVERCHARGE: a spell +8 / 14 / 20%.
+  - The fire is added first and the factors multiply it: (d + fire) x Momentum x Bloodied Fury x Overcharge.
+  - ARCANE ECHO: a damage spell repeats at half on each body it met, 10 / 16 / 22% of casts. There is one roll a cast (the
+    blow's sequence), and the repeat is a blow of its own on the relay, numbered `EG_ECHO_Q` past the cast's. A melee
+    blow or an arrow never rolls.
+- **MENDER'S GRACE, THE RECEIVER'S HALF** (heals you cast on allies +15 / 25 / 35%; `scenes/egClient.js` `menderGrace`,
+  `egMenderOf`; `scenes/world.js` `onCast`).
+  - Another's heal on me (ALLY-CAST) heals its caster's rank's share of the health it moved more. The caster's run is read
+    by account (`accountOf`), as the room says it.
+  - Never my own heal, a stranger's or an unnamed peer's, as a witness, or out of the Spire. The host hands every ally
+    cast's heal to it before the heal is told, so the line, the chart's Healed column and the heal word carry the whole.
+- **SHIELD-HYMN** (Bastion with Rally: "Rally's heal also gives the company 4 s of Bastion's protection"; `net/egVestige.js`
+  `egHymnOf`; `net/egBrain.js` `egHymnStep`, `egCensusDr`; `scenes/egFight.js` `rally`, `egShieldBreach`'s and
+  `egShieldDr`'s `hy`; `scenes/egClient.js` the word).
+  - ONE LAW FOR THE PAIR (`egHymnOf`): the Bastion holders among the living company within `EG_ACCORD_M` (10 m) of another
+    member who holds Rally. An Accord is two members', so one member holding both is no pair.
+  - THE CENSUS'S HALF: as the door says Rally's heal (`door`), `egHymnStep` reads the pair off each living member's pose in
+    this hall. Each pose now carries its hall, so a pose of the last hall pairs nobody. It mints `B.hy`:
+    `[the door, the door + EG_HYMN_MS, the Bastion holders]`.
+  - `egCensusDr` reads the window. Inside it, from the door to 4 s past it with both ends in, the hymn's Bastion holders
+    stand by every other living member wherever it stands. They are one aura with any Bastion holder near, each holder
+    counted once and stacked as Bastion is (the strongest, +2% each other), inside the census's 30%.
+  - THE SCREEN'S HALF: Rally's word (`eheal`, `why: 'rally'`) opens the same window on my fight at the door's opening (the
+    word's arrival less the half round trip), over the company where my screen draws it (`rally`). `egShieldDr` hands it
+    to the census's own law. A 0.4 blow far from the hymn's Bastion III holder takes 352 on the screen and 352 off the
+    count.
+- **IMMOVABLE'S PUSH HALF** ("pushes do nothing until you move"; `scenes/egFight.js` `immovable`; `scenes/egClient.js`
+  `footing`; `systems/spireKit.js` `spireFooting`).
+  - The fight asks the census's own law of my trail with my Mastery alone (`egCensusDr`, whose Immovable is then its only
+    answer): am I still a second on a fight floor?
+  - While it holds, the share off a push is the whole of it, so a blow's push moves me not at all and the spans' Gust and
+    Pendulum read the whole off. Moved, short of the second, off a fight floor, or without the Mastery, Iron Footing's
+    share stands as before.
+- **THE LAW'S NUMBERS** (`net/egVestige.js`, declared once): `EG_MOMENTUM_STEP` (0.04), `EG_SECOND_WIND_UNDER` (0.3),
+  `EG_BLOODIED_UNDER` (0.5), `EG_ECHO_SHARE` (0.5), `EG_HYMN_MS` (4000), `EG_ACCORD_M` (10). Momentum's and Second Wind's
+  lines read them.
+
+**The four hosts.**
+
+- `src/scenes/world.js` - WIRED: one statement in `onCast`, on the cast's own line (ALLY-CAST's source pin holds the
+  cast and the healed points' line together): an ally cast's heal handed to Mender's Grace before it is told.
+  Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED, nothing to wire: every door the Vestiges ride is one every host already shares:
+  - the motor's run (`player/motor.js`);
+  - the one damage door's hurt and Shield pool (`characters/playerEntity.js`);
+  - the cast's price, the resist fold and the live maximum;
+  - a blow on a Spire body, which reaches `hostHit` through the mode machine's gate-to-hall seams unchanged.
+- `src/scenes/dungeonContext.js` - FLAGGED, unchanged: its `landOnHost` sends the game's own blow as before, and the spans
+  it stands (`scenes/egSpan.js`) read Featherstep.
+- `src/scenes/exterior.js` - FLAGGED: offline, no breach (section 28).
+
+**Departures, said plainly.**
+
+1. **Stoneskin is a cushion.** The room's shares are of the body without it; the room's heals (a rest, Rally, a Mending)
+   and a recall's share are of the whole maximum, the cushion with it. With shares of the whole, Stoneskin would buy
+   nothing against a blow of the Spire's, every one of which is a share.
+2. **The census does not widen a Stoneskin holder's count.** Its whole is the body without the cushion, and the member's
+   own word of its body carries the difference, believed within its mend budget (`net/bossBody.js` `bodySaid`). Under
+   `BOSS_BODY` enforcement (off today) the census would count a holder fallen at the plain body's worth. EG14 must widen
+   the count by the holder's rank before it turns enforcement on.
+3. **The blow's Vestiges are laid at `hostHit`**, not on the formulas' blow and spell-power modifiers:
+   - a fist is no weapon blow (`handToHandAttackDamage` reads no blow modifier);
+   - a spell's power modifier runs a damage effect at a time and knows no blow, so it can count no stack and roll no
+     echo;
+   - every foe in the Spire is the relay's, and every blow on one leaves by `hostHit`.
+
+   The number a blow pops on the screen (HN1) is the game's own blow, the Vestiges not in it; the relay counts the claim
+   with them.
+4. **Searing Edge's fire is whole on every body.** The relay keeps no element, and its stand-ins take fire whole. The page
+   gives the Vestiges no order, so the fire is added first and the three factors multiply it.
+5. **Momentum's stacks never lapse** inside a hall: the page names no window. An Echo's repeat builds none: it is the
+   cast's own, not a blow I struck.
+6. **An Echo is sent at once, as a blow of its own**, so it spends a hand of the relay's rate (`spendBlow`).
+7. **Second Wind** reads and heals the screen's body (its live maximum, Stoneskin's points in it). The census hears the
+   heal only as the member's own word of its body.
+8. **Spellbane** rides the resist channel's five names. A throw that reads two of them reads it twice, as a worn affix's
+   line would.
+9. **Shieldweaver** makes a point soak more rather than the pool larger: the same soak. A Shield carried out of the breach
+   soaks as Daggerfall's at once.
+10. **Featherstep's wait** is read as the foot lands; a rank taken mid-shake changes the next crumble. The Sinking Stair is
+    no crumble.
+11. **Mender's Grace** is on the health that moved, so a heal stopped at the maximum gives nothing more. The room's heal
+    bucket may refuse the excess the heal word carries; the screen believes it (EG-ZP's departure 4).
+12. **Shield-Hymn's places are each side's own** (EG-ZP's departure 5): the census's pair is read on its poses at the door,
+    the screen's where it draws the company as the word lands. A Bastion holder's own blows are never spared by its own
+    Bastion, which shields allies. A door with no pair leaves the last window to lapse.
+13. **Immovable's push half** is judged on the screen's trail, a sample a frame (EG-ZP's departure 5). The spans read it a
+    frame late at most.
+14. **Found, not built here:**
+    - the capstones' client halves: Rooted's immunity to push (its threat is the relay's and applied), Spellweave's free
+      fourth damage spell, and Rallying Cry's Second Wind refreshed at a door;
+    - the relay's Bladestorm and Deadeye;
+    - the Accords Hammer and Anvil, Ambush, Kindled Steel, Living Wall and War-Chorus. Only Far Watch, No Quarter and now
+      Shield-Hymn are applied.
+
+**Not verified without a browser and the game's data:** nothing was played. Each Vestige was driven through its own door
+headless: `hurtPlayer`, `savingChance`, `calculateCastCost`, a `PlayerMotor` on a real collider, `createEgSpan` with a
+counting renderer, `createEgFight` and `createEgClient` against a stub host. Every blow was counted by the director's own
+census on the same inputs. Shield-Hymn's door was opened by the director's own beat (a fair crossing of a span).
+
+**Pins.**
+
+- `test/egz_vestiges.test.js` (12) and `test/egz_vestiges_hymn.test.js` (4).
+- `tools/mutants/egz_vestiges.json` (100, every one dead; four survived the first run, and each now dies on a pin added for
+  it: a refused blow's stack, the chunks' fall a wait later, a saved killing blow at 40%, and a Shield whose excess is
+  fractional).
+- Re-aimed by content (mutantdrift):
+  - `renown1.json`'s RENOWN1-layer-in-the-stored-health and `auditrenown1.json`'s
+    AUDIT-RENOWN1-limiter-caps-the-layer, on the live maximum's line;
+  - `egz_debts.json`'s EGZP-share-unspared and -points-unspared, `egfull.json`'s EGFULL-the-lash-kills, `egz_rules.json`'s
+    EGZI-client-toll-the-step and -the-last-taken, on the shares of the body without the cushion;
+  - `egpres_hud.json`'s EGPRES-the-cost-shown-without-a-cost and -the-rewind-silent-without-a-cost, on the cast-back's
+    cost;
+  - `egz_ends.json`'s EGZM-wait-outlives-the-frame, on `away`;
+  - `egz_tells.json`'s EGZL-crumble-stage-frozen, on the wait.
+- Judged again: the 51 records of other lists aimed at or within two lines of a line this slice changed, every one dead
+  (`allycast.json`, `audit27d.json`, `auditrenown1.json`, `disc10.json`, `egfrag.json`, `egfull.json`, `eglook.json`,
+  `egplay.json`, `egpres_hud.json`, `egz_debts.json`, `egz_ends.json`, `egz_legion.json`, `egz_rules.json`, `egz_sound.json`,
+  `egz_telegraph.json`, `egz_tells.json`, `giftquiet.json`, `renown1.json`, `steed1.json`). `steed1.json`'s
+  STEED1-the-gallop-unscaled no longer parsed: it took out the line the run's modifiers now hang an `else` on. It is
+  re-aimed by content to unapply the gallop's scale in place, and dies.
+- No test pin moved. `RELAY_VERSION` `world198` is rehashed in place (unshipped): `net/egBrain.js` and `net/egVestige.js` moved,
+  and nothing joined the bundle. `ACCOUNT_VERSION` stays `acct122`; no migration.
+- `src/systems/spireVestiges.js` is a new module, so `06-Systems/Systems.md` counts 519. Its header cites Ledger A
+  (ELITE-GATES), as the arc's files do. The Port-Ledger's ELITE-GATES row names the arc's files, and this one is to join
+  them there; the row is left to the merge, as this arc's slices leave it.

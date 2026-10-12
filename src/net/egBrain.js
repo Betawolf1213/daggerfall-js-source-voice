@@ -52,6 +52,8 @@
 // counted, `m.late`; after two in a row the gather waits only EG_LATE_ARRIVE_MS for it - arriveWait - and its `here` is
 // heard when it reaches the plate after the wake); and LIFELINE IN THE CENSUS (a heal of a Lifeline holder's, said while
 // its member stood under 30%, spares that member's blows for 3 s - egHeal, egCensusDr).
+// EG-ZR (2026-10-12; section 15): SHIELD-HYMN IN THE CENSUS - Rally's heal at a door with a Bastion holder within 10 m of
+// another member holding Rally gives the company that Bastion for 4 s (egHymnStep, read by egCensusDr).
 //
 // Pure: a record and a beat in, frames out. Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT_MS, EG_CLOSING_SPAN_MS, EG_CLOSING_COUNT_MS, EG_STAIR_HOLD_MS, EG_REST_MS,
@@ -65,6 +67,7 @@ import { EG_SEAM, egLordsFight } from './egLords.js';   // EG-ZK (section 13.1):
 import { egAsk, egVote, egAskResult, egAsksDue, egDecreesAsk, egDecreesChosen, egDecreeRanks, egDecreesInForce, egBargainDecree, egTideOf, egStratumAt, egOffers, egPick, egPicksClose, egSurplus,
   egLoseNewest, egCacheDraw, egGive, egBuy, egVestigeX, egThreatX, egFadeOn, egMarkFoe, egRunOf, EG_CANTRIPS, EG_LUMEN_ADD, EG_LUMEN_RIFT } from './egRun.js';
 import { egVOf, egAccordsOf, egRankOf, EG_MASTERIES, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX, EG_DR_MAX } from './egVestige.js';
+import { egHymnOf, EG_HYMN_MS } from './egVestige.js';   // EG-ZR (section 15's Accord): Shield-Hymn's pair and its seconds
 import { shDisc, shLane, egInShape } from './egShape.js';
 import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL, EG_MIRROR_REACH_M, EG_MIRROR_LIT_R, EG_HAZARDS, egWispAt } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half (EG-ZC: the Moon-Mirror's branch; EG-ZB: the census's drains)
 import { EG_BODY_R } from './egSpanLaw.js';   // EG-ZC: a lit branch's top, the capsule about it
@@ -744,7 +747,7 @@ function door(B, spec, now, out, inHall = []) {
   if (spec.fork) { B.lw = 0; forkClosing(B, spec, inHall, now); }
   // Rally (and the Rallying Cry): the company heals when a hall's door opens - the strongest holder's
   const rally = Math.max(0, ...living(B).map(([, m]) => egVOf(m.vs, 'rally')));
-  if (rally > 0) out.push({ k: 'eheal', p: B.tide === 'hungering' ? rally / 3 : rally, why: 'rally' });
+  if (rally > 0) { out.push({ k: 'eheal', p: B.tide === 'hungering' ? rally / 3 : rally, why: 'rally' }); egHymnStep(B, now); }   // EG-ZR: and Shield-Hymn with it
   out.push(egStageWord(B, now), { k: 'esay', w: 'door' });
 }
 /**
@@ -961,7 +964,7 @@ export function egStep(B, now, bodies, rng) {
   }
   const spec = specOf(B);
   const inHall = alive.map((b) => local(spec, b)).filter(Boolean);
-  for (const b of inHall) B.mem[b.sub].pose = { x: b.x, z: b.z };
+  for (const b of inHall) B.mem[b.sub].pose = { x: b.x, z: b.z, h: B.h };   // EG-ZR: the hall it stood in (egHymnStep reads none of another)
   mementoStep(B, spec, inHall, now, out);
   // EG-ZI (sections 7 and 21): A LATE WAKE'S `here` - a member the hall woke without says it as it reaches the arrival
   // plate, and its trail is judged from there (unheard, its trail never began: nothing it crossed was judged, and the toll
@@ -1604,6 +1607,19 @@ export function egCount(B, now, bodies, line, enforce = EG_BODY_ENFORCE) {
 /** EG-ZB (section 15's Featherstep, in the census): what a cast-back costs a member's count - a tenth, Featherstep's 8, 6 or
  *  4% by rank (the floor's quarter is egCount's). */
 export const egCastBackCost = (vs) => { const r = egRankOf(vs, 'featherstep'); return r ? EG_FEATHER_CAST[r - 1] : EG_CAST_BACK_LOSS; };
+/**
+ * EG-ZR - SHIELD-HYMN, THE CENSUS'S HALF (section 15's Accord, Bastion with Rally - "Rally's heal also gives the company 4 s
+ * of Bastion's protection"; section 21: the census applies Bastion): as Rally's heal is said at a door, the Bastion holders
+ * standing within EG_ACCORD_M of another member who holds Rally (net/egVestige.js egHymnOf, on each living member's pose in
+ * this hall) give the company their Bastion for EG_HYMN_MS - `B.hy` `[from, until, subs]`, which egCensusDr reads. A door
+ * with no such pair leaves the last window to lapse. Answers `B.hy`.
+ * @param {any} B @param {number} now
+ */
+export function egHymnStep(B, now) {
+  const hy = egHymnOf(living(B).filter(([, m]) => m.pose?.h === B.h).map(([sub, m]) => ({ sub, vs: m.vs ?? [], x: m.pose.x, z: m.pose.z })));
+  if (hy.length) B.hy = [now, now + EG_HYMN_MS, hy];
+  return B.hy ?? null;
+}
 /** Immovable's number (the Mastery's id - net/egVestige.js EG_MASTERIES). */
 const IMMOVABLE_ID = EG_MASTERIES.find((M) => M.key === 'immovable')?.id ?? -1;
 /**
@@ -1618,6 +1634,8 @@ const IMMOVABLE_ID = EG_MASTERIES.find((M) => M.key === 'immovable')?.id ?? -1;
  *   - EG-ZI, Lifeline: a blow landing inside a window a Lifeline holder's heal opened on its member (`m.ll` - egHeal, from
  *     the member's own `heal` word, which the room hears since EG-ZF), 20 / 30 / 40% less by the healer's rank, the
  *     strongest window's;
+ *   - EG-ZR, Shield-Hymn: inside the window Rally's heal opened (`B.hy` - egHymnStep), the hymn's Bastion holders stand by
+ *     every other member wherever it stands - Bastion's one aura, stacked with the holders near as Bastion is;
  * together never past EG_DR_MAX (30%). Pure.
  * @param {any} B @param {any} F @param {any} view @param {{sub: string, at?: number, o?: number}} h @param {Array<{sub: string, tr?: number[][]}>} bodies
  */
@@ -1634,10 +1652,11 @@ export function egCensusDr(B, F, view, h, bodies) {
   for (const w of m.ll ?? []) if (t >= w[0] && t <= w[1] && w[2] > ll) ll = w[2];
   dr += ll;
   const me = posOf(h.sub);
+  const near = (r) => (me ? living(B).filter(([s]) => s !== h.sub).map(([s, x]) => [x, posOf(s)]).filter(([, p]) => p && Math.hypot(p[1] - me[1], p[3] - me[3]) <= r).map(([x]) => x) : []);
+  const hymn = B.hy && t >= B.hy[0] && t <= B.hy[1] ? living(B).filter(([s]) => s !== h.sub && B.hy[2].includes(s)).map(([, x]) => x) : [];   // EG-ZR: Shield-Hymn
+  const bast = [...new Set([...near(EG_BASTION_M), ...hymn])].map((x) => egVOf(x.vs, 'bastion')).filter((v) => v > 0).sort((a, b) => b - a);
+  if (bast.length) dr += Math.min(bast[0] + EG_AURA_EXTRA * (bast.length - 1), bast[0] + EG_AURA_EXTRA_MAX);
   if (me) {
-    const near = (r) => living(B).filter(([s]) => s !== h.sub).map(([s, x]) => [x, posOf(s)]).filter(([, p]) => p && Math.hypot(p[1] - me[1], p[3] - me[3]) <= r).map(([x]) => x);
-    const bast = near(EG_BASTION_M).map((x) => egVOf(x.vs, 'bastion')).filter((v) => v > 0).sort((a, b) => b - a);
-    if (bast.length) dr += Math.min(bast[0] + EG_AURA_EXTRA * (bast.length - 1), bast[0] + EG_AURA_EXTRA_MAX);
     const sf = egVOf(m.vs, 'steadfast');
     if (sf > 0 && near(EG_STEADFAST_M).length >= EG_STEADFAST_N) dr += sf;
     if (m.mast === IMMOVABLE_ID && egFightFloorAt(view, me[1], me[2], me[3])) {

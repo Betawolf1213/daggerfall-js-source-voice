@@ -72,6 +72,18 @@ export function registerJumpForgiveness(buffer, late) {
 }
 /** A word read as seconds in [0, 0.5] - one that throws, or is no number, forgives nothing. */
 const jumpForgiven = (fn) => { if (!fn) return 0; try { const v = Number(fn()); return Number.isFinite(v) ? Math.max(0, Math.min(0.5, v)) : 0; } catch { return 0; } };
+// EG-ZR (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 15 - Fleetfoot: "run speed +4 / 7 / 10%", the holder's
+// client's; a departure from DFU, Ledger A): THE RUN'S SPEED MODIFIERS - a named registry beside the walk's one (DW-D's
+// swim scale): `fn() -> multiplier` on the run on foot (a mount's canter is the horse's pace - STEED1's - never its
+// rider's run), read every step. None registered, or each answering 1 (or no number), is DFU's run exactly.
+const _runMods = new Map();
+export function registerRunSpeedMod(name, fn) { if (typeof fn === 'function') _runMods.set(name, fn); else _runMods.delete(name); }
+/** The run's multiplier now - the product of every modifier's positive number (one that throws is none). */
+export function runSpeedMult() {
+  let k = 1;
+  for (const fn of _runMods.values()) { try { const v = Number(fn()); if (Number.isFinite(v) && v > 0) k *= v; } catch { /* a Vestige is not the step's problem */ } }
+  return k;
+}
 // HOTFIX 2026-08-17 (live mobile report: "jumping has me go in the
 // air but instantly snaps me to the ground"): the motor integrated
 // with RAW RENDER dt - DFU's physics runs in Unity's FixedUpdate at
@@ -3166,6 +3178,7 @@ export class PlayerMotor {
     if (this.isRunning) {
       speed = runSpeed(this.stats.speed, this.stats.running, this.crouching, rideBase);
       if (rideBase != null) speed *= this._rideScale();   // STEED1: a gallop at the horse's own pace
+      else if (_runMods.size) speed *= runSpeedMult();   // EG-ZR: the run's modifiers - Fleetfoot's, in an Elite Breach
     } else {
       // ApplyInputSpeedAdjustment (:127-133): the SNEAK arm subtracts
       // from whatever GetBaseSpeed returned - including the RIDE base.

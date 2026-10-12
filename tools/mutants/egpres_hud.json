@@ -516,18 +516,20 @@
   },
   {
     "name": "EGPRES-the-cost-shown-without-a-cost",
+    "note": "EG-ZR (PIN MOVED): re-aimed by content - the cast-back's beat carries Featherstep's cost (its share)",
     "file": "src/scenes/egClient.js",
-    "old": "castBackBeat(cut > 0);",
-    "new": "castBackBeat(true);",
+    "old": "castBackBeat(cut > 0, share);",
+    "new": "castBackBeat(true, share);",
     "tests": [
       "test/egpres_hud.test.js"
     ]
   },
   {
     "name": "EGPRES-the-rewind-silent-without-a-cost",
+    "note": "EG-ZR (PIN MOVED): re-aimed by content - the cast-back's beat says the cost taken (Featherstep's)",
     "file": "src/scenes/egClient.js",
-    "old": "if (cost) beatNow('castBack'); else playSound(EG_BEAT_SOUNDS.rewind);",
-    "new": "if (cost) beatNow('castBack');",
+    "old": "if (cost) beatNow('castBack', { t: EG_PRES_TEXT.castBackCost(share) }); else playSound(EG_BEAT_SOUNDS.rewind);",
+    "new": "if (cost) beatNow('castBack', { t: EG_PRES_TEXT.castBackCost(share) });",
     "tests": [
       "test/egpres_hud.test.js"
     ]

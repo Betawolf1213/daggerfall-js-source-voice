@@ -68,6 +68,10 @@
 // banners keep to a run of its pieces on its own road's line, its wind to that run's stretch (world/egLook.js
 // egGustSections, EG_GUST_REACH_M).
 //
+// EG-ZR (2026-10-12; Elite-Gates.md section 15): FEATHERSTEP - a Crumble (and a Bone bridge) my foot sets waits its holder's
+// 0.2, 0.35 or 0.5 s longer (systems/spireVestiges.js spireCrumbleWait, read as the foot lands), its cracks' stages spread
+// across the wait; crumbles are each member's own, so nothing of it reaches the relay.
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
 import { egCircleSpecs, egWallFallenZ, egBandOfCircle, EG_VOID_Y, EG_BELT_MPS } from '../net/egLaw.js';
@@ -93,6 +97,7 @@ import { egOverDrop } from '../world/egTelegraph.js';   // EG-ZG: a Drop's landi
 import { egNicheBoxes, egIsleDisc } from '../world/egHall.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
 import { spireFooting, spireWake, spireObjs, spireAct } from '../systems/spireKit.js';
+import { spireCrumbleWait } from '../systems/spireVestiges.js';   // EG-ZR (Elite-Gates.md section 15): Featherstep - my crumbles wait longer
 import { egBandDress, EG_DRESS, egTellArchive, egBeatWarnArt, egBeatBackArt, egBeatTellMaps } from '../world/egBandArt.js';   // EG-G2: the band's dress on every piece (EG-ZC: its liquid on the slag); EG-ZL: a Beat's warning
 import { createEgPieceBatch, EG_BATCH_CULL_PAD } from './egPieceBatch.js';   // EG-G2: one draw a kind, culled
 import { meshKitBounds } from '../world/meshKit.js';
@@ -371,7 +376,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
    *  `pivot`) - when my foot's Crumble came whole again (`back`), when a peer last stood on it fallen (`peerAt`), and its
    *  ghost's slot (-1 none) */
   const steps = [];
-  for (const spec of specs) for (const s of spec.steps) steps.push({ s, spec, key: egStepKey(spec.h, s.i), T: [0, EG_STEP_GONE_Y, 0], was: [0, EG_STEP_GONE_Y, 0], solid: false, wasSolid: false, draw: null, pend: null, touched: null, stages: null, chunks: null, grit: null, hang: null, pivot: null, back: -Infinity, peerAt: -Infinity, ghost: -1 });
+  for (const spec of specs) for (const s of spec.steps) steps.push({ s, spec, key: egStepKey(spec.h, s.i), T: [0, EG_STEP_GONE_Y, 0], was: [0, EG_STEP_GONE_Y, 0], solid: false, wasSolid: false, draw: null, pend: null, touched: null, wait: SD_CRUMBLE_DELAY, stages: null, chunks: null, grit: null, hang: null, pivot: null, back: -Infinity, peerAt: -Infinity, ghost: -1 });
   const byKey = new Map(steps.map((st) => [st.key, st]));
   /** @type {Map<string, any>} */
   const meshes = new Map();
@@ -490,12 +495,12 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
     let sx = 0, sz = 0;
     if (shaking && !still) { sx = SD_CRUMBLE_SHAKE * Math.sin(t * 71); sz = SD_CRUMBLE_SHAKE * Math.cos(t * 53); }
     else if (!shaking && since < 0 && t >= st.back && t - st.back < SD_CHUNK.shudder && !still) { const k = 1 - (t - st.back) / SD_CHUNK.shudder; sx = SD_CHUNK.settle * k * Math.sin(t * 83); sz = SD_CHUNK.settle * k * Math.cos(t * 61); }   // a shudder, and it is whole
-    const n = shaking ? 1 + Math.min(2, Math.floor((since / SD_CRUMBLE_DELAY) * 3)) : 0;
+    const n = shaking ? 1 + Math.min(2, Math.floor((since / st.wait) * 3)) : 0;   // EG-ZR: its stages across the wait my foot set (Featherstep's)
     if (st.draw && (solid || chunked)) { if (solid && n === 0) { translate(st.draw.object.matrix, x + sx, y, z + sz); st.draw.hidden = false; } else away(st.draw); }   // fallen, its chunks fall in its stead
     for (let k = 0; k < 3; k++) { const d = st.stages[k]; if (!d) continue; if (n === k + 1) { translate(d.object.matrix, x + sx, y, z + sz); d.hidden = false; } else away(d); }
     const g = st.grit;
     if (g) { if (shaking) { translate(g.object.matrix, x + sx, y - ((t * SD_GRIT.speed) % SD_GRIT.period), z + sz); g.hidden = false; } else away(g); }
-    const f = solid ? -1 : since - SD_CRUMBLE_DELAY, back = SD_CRUMBLE_BACK - SD_CHUNK.rewind;
+    const f = solid ? -1 : since - st.wait, back = SD_CRUMBLE_BACK - SD_CHUNK.rewind;
     const r = f >= back ? 1 - (f - back) / SD_CHUNK.rewind : 0, tau = f >= back ? SD_CHUNK.rise * r * r : f, show = f >= back || (f >= 0 && drop < SD_CRUMBLE_SEEN);
     for (let j = 0; j < st.chunks.length; j++) { const d = st.chunks[j]; if (!d) continue; if (show) { sdChunkMatrix(d.object.matrix, chunkWays[j], tau, x, y, z); d.hidden = false; } else away(d); }
     if (st.ghost < 0) return;
@@ -668,10 +673,10 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
     let solid = at.solid || lit.has(st), drop = 0;   // EG-ZC: a branch the Moon-Mirror lit stands while lit
     let mine = -1;   // EG-ZL: how long since my foot stood on this Crumble (-1 none)
     if (EG_CRUMBLE_KINDS.includes(s.kind) && st.touched != null) {
-      const since = t - st.touched;
-      if (since >= SD_CRUMBLE_DELAY + SD_CRUMBLE_BACK && since < SD_CRUMBLE_DELAY + SD_CRUMBLE_BACK + 1) { st.back = st.touched + SD_CRUMBLE_DELAY + SD_CRUMBLE_BACK; play3(SD_STEPS_SOUNDS.clack, [x, y, z], 0.7, 2.6); }   // EG-ZL: back - its chunks click home
-      if (since < 0 || since >= SD_CRUMBLE_DELAY + SD_CRUMBLE_BACK) st.touched = null;
-      else { mine = since; if (since >= SD_CRUMBLE_DELAY) { const f = since - SD_CRUMBLE_DELAY; drop = 0.5 * SD_CRUMBLE_FALL_G * f * f; solid = false; } }
+      const since = t - st.touched, wait = st.wait;   // EG-ZR: the wait my foot set (Featherstep's longer)
+      if (since >= wait + SD_CRUMBLE_BACK && since < wait + SD_CRUMBLE_BACK + 1) { st.back = st.touched + wait + SD_CRUMBLE_BACK; play3(SD_STEPS_SOUNDS.clack, [x, y, z], 0.7, 2.6); }   // EG-ZL: back - its chunks click home
+      if (since < 0 || since >= wait + SD_CRUMBLE_BACK) st.touched = null;
+      else { mine = since; if (since >= wait) { const f = since - wait; drop = 0.5 * SD_CRUMBLE_FALL_G * f * f; solid = false; } }
     }
     // a flight of the Sinking Stair: under my foot it sinks at EG_SINK_MPS (it carries me down), gone EG_SINK_GONE_M down,
     // and back after the Crumble's return
@@ -826,7 +831,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       if (!draws) return null;
       const key = body?.grounded && typeof body.groundKey === 'string' ? body.groundKey : null;
       const on = key ? byKey.get(key) ?? null : null;
-      if (on && live && (EG_CRUMBLE_KINDS.includes(on.s.kind) || on.s.kind === 'sink') && on.touched == null) { on.touched = t; if (on.s.kind !== 'sink') play3(SD_STEPS_SOUNDS.grind, [on.T[0], on.T[1], on.T[2]], 1, 1.3); }   // EG-ZL: a Crumble grinds under my foot (the Steps')
+      if (on && live && (EG_CRUMBLE_KINDS.includes(on.s.kind) || on.s.kind === 'sink') && on.touched == null) { on.touched = t; on.wait = SD_CRUMBLE_DELAY + spireCrumbleWait(); if (on.s.kind !== 'sink') play3(SD_STEPS_SOUNDS.grind, [on.T[0], on.T[1], on.T[2]], 1, 1.3); }   // EG-ZL: a Crumble grinds under my foot (the Steps')
       lastT = t; access = egAccessNow();   // EG-ZL: the frame's clock and the screen's settings (the danger palette, reduced motion)
       poseLit(t);
       for (const st of steps) pose(st, t);

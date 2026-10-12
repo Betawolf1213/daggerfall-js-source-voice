@@ -36,6 +36,8 @@ const tollPct = (q) => Math.round(q * EG_TOLL_STEP * 100);
 /** Every new line, worded once (section 27.9). */
 export const EG_PRES_TEXT = Object.freeze({
   castBack: '-10%',
+  // EG-ZR (section 15's Featherstep): a cast-back's cost as it was taken - 8, 6 or 4% for its holder
+  castBackCost: (share) => `-${Math.round(share * 100)}%`,
   // EG-ZI (section 10.6): the pull's toll - its share on the screen, as the cast-back's, and its line with the pull's
   toll: (q) => `-${tollPct(q)}%`,
   tollLine: (q) => `The Spire takes its toll: ${tollPct(q)}% of your health.`,
@@ -136,7 +138,7 @@ export const egRuneChime = (pt) => ({ rec: EG_RUNE_CHIME.rec, vol: EG_RUNE_CHIME
  * client's own chat line (scenes/egClient.js), null this beat's own: on the screen, and in the chat where `chat`.
  */
 export const EG_BEATS = Object.freeze({
-  castBack: Object.freeze({ sight: "a 0.4 s dither cut to the waystone, the Steps' rewind burst", sound: 'rewind', words: () => EG_PRES_TEXT.castBack, by: null, chat: false }),
+  castBack: Object.freeze({ sight: "a 0.4 s dither cut to the waystone, the Steps' rewind burst", sound: 'rewind', words: (n, t) => t ?? EG_PRES_TEXT.castBack, by: null, chat: false }),   // EG-ZR: `t` the cost taken (Featherstep's)
   pull: Object.freeze({ sight: "the veil's flash", sound: 'veil', words: () => EG_TEXT.pulled, by: 'client', chat: true }),
   door: Object.freeze({ sight: 'the beam, the markers', sound: 'door', words: () => EG_TEXT.door, by: 'fight', chat: false }),
   cache: Object.freeze({ sight: "its icon on the door's plaque; taken: the loot banner", sound: 'chime', words: null, by: 'client', chat: true }),

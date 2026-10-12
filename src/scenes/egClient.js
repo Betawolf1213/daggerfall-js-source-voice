@@ -96,6 +96,13 @@
 //     lifted me) opens that holder's window on my blows in the fight (scenes/egFight.js egLifelineOpen), at the word's
 //     arrival at the room as my corrected clock reckons it: the census's own window (net/egBrain.js egHeal), so my body and
 //     the room's count take the same blow.
+
+//   EG-ZR (2026-10-12, section 15): THE VESTIGES ON THEIR HOLDER - my run's Vestiges handed to the holder's doors every frame
+//     I stand alive in the breach, and taken back on every way out (systems/spireVestiges.js spireHolderStep); Featherstep's
+//     cast-back cost, the census's own (net/egBrain.js egCastBackCost), said as it is; the room's shares of my body (the
+//     void's, the toll's, the lash's) of the body without Stoneskin's cushion (systems/renownLayer.js spireBodyMax);
+//     Immovable's push half (a push does nothing while the fight's `immovable` holds); SHIELD-HYMN's word (Rally's heal) to
+//     the fight at the door's opening; and MENDER'S GRACE, the receiver's half (menderGrace - a caster's heal on me more).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
@@ -159,6 +166,10 @@ import { egRoomKey } from '../net/egLaw.js';
 import { egShaftLedgeAt } from '../world/egHall.js';   // EG-ZN (section 11.8): the shaft's ledge the camera leans over
 import { setSpireShaft } from '../player/mwView.js';   // EG-ZN (section 11.8): the shaft's camera
 import { EG_LIFELINE_UNDER, EG_LIFELINE_LOOK_MS } from '../net/egBrain.js';   // EG-ZP (section 15): Lifeline's 30%, and how far back the census looks for it
+import { egCastBackCost } from '../net/egBrain.js';   // EG-ZR (section 15's Featherstep): a cast-back's cost, the census's own
+import { spireHolderStep } from '../systems/spireVestiges.js';   // EG-ZR: THE VESTIGES ON THEIR HOLDER
+import { spireBodyMax } from '../systems/renownLayer.js';   // EG-ZR: the body the room's shares are of (Stoneskin's cushion over it)
+import { healMine } from '../systems/playerHeal.js';   // EG-ZR: Mender's Grace's heal, the one heal a power gives
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -323,6 +334,12 @@ export function egLifelineOf(E, me, subs) {
   for (const s of subs) if (s !== me) v = Math.max(v, egVOf(egRunOfMember(E, s).vs, 'lifeline'));
   return v;
 }
+
+/** EG-ZR (section 15's Mender's Grace, "the receiver's client, from the room's word"): the share more a heal of `sub`'s on me
+ *  heals - its Mender's Grace by the run the room says (`ms` - members it counts in the breach alone), never mine; 0 for
+ *  none, for a caster this screen cannot name. Pure.
+ * @param {any} E @param {string|null} me @param {string|null} sub */
+export const egMenderOf = (E, me, sub) => (sub && sub !== me ? egVOf(egRunOfMember(E, sub).vs, 'mender') : 0);
 
 /**
  * @param {{ modes: () => any, online: () => any, hub: () => any, account: any, now: () => number, entity: any, player: any, cam: any,
@@ -998,15 +1015,27 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (why === 'rest' && p >= 1) { fillVitalSigns(entity); return; }
     if (heal) { heal(p, why); return; }
     const max = entity.maxHealth ?? 0;
-    if (p < 0) { const cut = Math.min(Math.round(-p * max), entity.health - 1); if (cut > 0) hurt(cut); return; }
+    if (p < 0) { const cut = Math.min(Math.round(-p * spireBodyMax(entity)), entity.health - 1); if (cut > 0) hurt(cut); return; }   // EG-ZR: of the body without Stoneskin's cushion
     entity.health = Math.max(1, Math.min(max, Math.round(entity.health + p * max)));
+  }
+
+  /** EG-ZR (section 15): THE HOLDER on this screen - my run's Vestiges and Mastery, the breach and its hall - while I stand
+   *  alive in the breach the room counts me in (systems/spireVestiges.js spireHolderStep); null otherwise: out of the
+   *  Spire, a witness, gone home, the breach ended. */
+  function holderNow() {
+    if (!inSpire() || witness) return null;
+    const E = link.state(), m = egMemberOf(E, me());
+    if (!E.b || E.end || !m?.in || !m.alive || m.home) return null;
+    const run = egRunOfMember(E, me());
+    return { vs: run.vs, mast: run.mast, b: E.b, h: E.h | 0 };
   }
 
   // ── THE PUSH, THE CAGE AND THE RING (section 9.3: "applied by the struck client as the Steps' gust is") ────────────
   /** a push owed: its unit way in the hall's frame (the dungeon's axes - world/egHall.js egToDungeon) and metres left */
   let pushX = 0, pushZ = 0, pushLeft = 0, pushAt = 0;
-  /** Iron Footing's share off a push (net/egVestige.js - by: 'client'). */
-  const footing = () => egVOf(egRunOfMember(link.state(), me()).vs, 'ironfooting');
+  /** Iron Footing's share off a push (net/egVestige.js - by: 'client'). EG-ZR: the whole of it while I stand Immovable
+   *  (section 15: "pushes do nothing until you move" - the fight's `immovable`, the census's own stillness). */
+  const footing = () => (fight?.immovable?.() ? 1 : egVOf(egRunOfMember(link.state(), me()).vs, 'ironfooting'));
   /** A push of `m` metres along (dx, dz), carried out at the Steps' breath's speed by the collider's own move (scenes/
    *  sdSteps.js's - no edge stops it: near one it is a cast-back). */
   function pushBy(dx, dz, m) {
@@ -1086,8 +1115,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     for (const line of due) say(line);
     pres.first = due.at(-1); pres.firstAt = now(); pres.live = pres.first;
   }
-  function castBackBeat(cost) {
-    if (cost) beatNow('castBack'); else playSound(EG_BEAT_SOUNDS.rewind);
+  function castBackBeat(cost, share = EG_CAST_BACK_LOSS) {
+    if (cost) beatNow('castBack', { t: EG_PRES_TEXT.castBackCost(share) }); else playSound(EG_BEAT_SOUNDS.rewind);   // EG-ZR: Featherstep's cost said as it is
     teach(['void']);
   }
   /** EG-ZI (section 10.6): THE PULL'S TOLL, paid as the void's cost is (castBack): `q` quarters of the road I did not cross,
@@ -1097,7 +1126,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   function payToll(q, h) {
     if (witness || !(entity.health > 0) || !inSpire() || h === tollH) return;
     tollH = h;
-    const cut = Math.min(Math.round(q * EG_TOLL_STEP * (entity.maxHealth ?? 0)), entity.health - 1);
+    const cut = Math.min(Math.round(q * EG_TOLL_STEP * spireBodyMax(entity)), entity.health - 1);   // EG-ZR: of the body without Stoneskin's cushion
     if (cut > 0) hurt(cut);
     mid(EG_PRES_TEXT.toll(q));
     say(EG_PRES_TEXT.tollLine(q));
@@ -1339,6 +1368,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (w.k === 'fall' && w.s === me() && !witness) enterWitness(now(), true, w.fin);
       if (w.k === 'rise' && w.s === me()) riseAt(w);
       if (w.k === 'eheal') applyHeal(w.p, w.why);
+      if (w.k === 'eheal' && w.why === 'rally') fight?.rally?.(now() - egClockHalfRtt(clock));   // EG-ZR: SHIELD-HYMN - at the door's opening, the word's way here taken off
       if (w.k === 'toll') payToll(w.q, w.h);   // EG-ZI: the pull's toll (section 10.6)
       if (w.k === 'egot' && w.w === 'page' && EG_ANNALS[w.p]) { annals.add(w.p); say(`A page of the Annals of 3E 398 - ${EG_ANNALS[w.p][0]}: ${EG_ANNALS[w.p][1]}`); }
       else if (w.k === 'egot' && EG_GOT_TEXT[w.w]) say(EG_GOT_TEXT[w.w]);
@@ -1430,6 +1460,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** One frame (the online frame, every mode). */
     frame() {
       const t = now(), E = link.state();
+      spireHolderStep(entity, holderNow());   // EG-ZR: the Vestiges I hold on their doors, or let go
       seedFrame();   // EG-ZM: a way back waiting under the veil for the room's first word
       if (Date.now() - keysAt >= EG_KEYS_EVERY_MS) askKeys();
       if (Date.now() - claimAt >= EG_CLAIM_RETRY_MS) flush();
@@ -1506,11 +1537,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         ctx: { band, motif: bandLord?.motif ?? 0, valk: EG_LORDS[valkKey]?.motif ?? 3, seed: E.seed >>> 0 },
       };
     },
-    /** THE VOID'S COST (section 8): a tenth of my health, never below a quarter of it. */
+    /** THE VOID'S COST (section 8): a tenth of my health, never below a quarter of it. EG-ZR: Featherstep's 8, 6 or 4% by
+     *  its rank (the census's own law - net/egBrain.js egCastBackCost), of the body without Stoneskin's cushion. */
     castBack() {
-      const max = entity.maxHealth ?? 0, cut = Math.min(EG_CAST_BACK_LOSS * max, Math.max(0, entity.health - EG_CAST_BACK_FLOOR * max));
+      const share = egCastBackCost(egRunOfMember(link.state(), me()).vs), max = spireBodyMax(entity), cut = Math.min(share * max, Math.max(0, entity.health - EG_CAST_BACK_FLOOR * max));
       if (cut > 0) hurt(Math.round(cut));
-      castBackBeat(cut > 0);   // EG-G1: -10% on the screen, the Steps' rewind, and the first time its line
+      castBackBeat(cut > 0, share);   // EG-G1: -10% on the screen, the Steps' rewind, and the first time its line
     },
     /** THE WAY HOME (a Redoubt's rest): pressed once, asked; pressed again, walked. */
     wayHome() {
@@ -1586,7 +1618,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** The pages of the Annals this breach has given me (their numbers). */
     annals: () => [...annals].sort((a, b) => a - b),
     /** Online gone: every piece put away (the call kept - it is the hub's). */
-    away() { fight?.leave(); if (look) { look.release(); look = null; } chartAway(); healOwed.clear(); dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } callPortal?.clear?.(); prompt?.draw?.(null); startWin?.close?.(); startWin = null; seedFrame({ silent: true }); },   // EG-F: and the call's portal, its prompt, the start window; EG-G2: the look released; EG-ZM: a way back's wait for the room's word given up
+    away() { fight?.leave(); if (look) { look.release(); look = null; } chartAway(); healOwed.clear(); dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } callPortal?.clear?.(); prompt?.draw?.(null); startWin?.close?.(); startWin = null; seedFrame({ silent: true }); spireHolderStep(entity, null); },   // EG-F: and the call's portal, its prompt, the start window; EG-G2: the look released; EG-ZM: a way back's wait for the room's word given up; EG-ZR: the Vestiges I held let go
     /** EG-H1: the breach's shared clock (relay ms) and its offset to this machine's wall clock (null before the room has
      *  answered a ping) - the host's spans and its fight read it (scenes/world.js's `egNow`, the spans' anchored clock). */
     sharedNow: () => now(),
@@ -1687,6 +1719,16 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       healOwed.set(id, (healOwed.get(id) ?? 0) + n);
       if (entity.health - n < entity.maxHealth * EG_LIFELINE_UNDER) lowAt = now();   // EG-ZP: the heal found me under 30% (it has landed: my body less it)
       return true;
+    },
+    /** EG-ZR - MENDER'S GRACE, THE RECEIVER'S HALF (section 15: "heals you cast on allies +15 / 25 / 35%" - "the receiver's
+     *  client, from the room's word (ALLY-CAST's law)"): another's heal of `n` points just landed on me (scenes/world.js
+     *  onCast - the health that moved), `id` its caster's peer id in the room: its Mender's Grace, as the room says the
+     *  caster's run, heals me its share of it more (egMenderOf). Answers the points added - none outside the Spire, as a
+     *  witness, or of a caster the room counts no run of. */
+    menderGrace(id, n) {
+      if (!inSpire() || witness || !(n > 0) || !(entity.health > 0) || typeof id !== 'string') return 0;
+      const v = egMenderOf(link.state(), me(), accountOf(id));
+      return v > 0 ? healMine(entity, n * v) : 0;
     },
     /** EG-ZH: the hall's reverb as held (tests). */
     reverbState: () => reverb.state(),

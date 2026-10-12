@@ -208,9 +208,10 @@
   },
   {
     "name": "EGFULL-the-lash-kills",
+    "note": "EG-ZR (PIN MOVED): re-aimed by content - the lash's share is of the body without Stoneskin's cushion (spireBodyMax)",
     "file": "src/scenes/egClient.js",
-    "old": "    if (p < 0) { const cut = Math.min(Math.round(-p * max), entity.health - 1); if (cut > 0) hurt(cut); return; }",
-    "new": "    if (p < 0) { const cut = Math.round(-p * max); if (cut > 0) hurt(cut); return; }",
+    "old": "    if (p < 0) { const cut = Math.min(Math.round(-p * spireBodyMax(entity)), entity.health - 1); if (cut > 0) hurt(cut); return; }",
+    "new": "    if (p < 0) { const cut = Math.round(-p * spireBodyMax(entity)); if (cut > 0) hurt(cut); return; }",
     "tests": [
       "test/egfull_client.test.js"
     ]

@@ -244,8 +244,9 @@
   },
   {
     "name": "EGZL-crumble-stage-frozen",
+    "note": "EG-ZR (PIN MOVED): re-aimed by content - the cracks' stages spread across the wait the foot set (Featherstep's - st.wait)",
     "file": "src/scenes/egSpan.js",
-    "old": "const n = shaking ? 1 + Math.min(2, Math.floor((since / SD_CRUMBLE_DELAY) * 3)) : 0;",
+    "old": "const n = shaking ? 1 + Math.min(2, Math.floor((since / st.wait) * 3)) : 0;",
     "new": "const n = shaking ? 1 : 0;",
     "tests": [
       "test/egz_tells.test.js"
