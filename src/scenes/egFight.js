@@ -22,6 +22,10 @@
 // shape aimed at another member filled at THE QUIET COMPANY's 0.55 and mine drawn last with a brighter rim; THE SPIRE MIX
 // (systems/egMix.js): a personal sting for a lord's blow or a CHECK on my feet (an add's at most one each 1.5 s), the score
 // ducked under the critical bus, the legion's wind-up barks capped four a kind, nearest first.
+// EG-ZD (2026-10-12, Mac: "I said I want everything"; section 13.2, EG-H1's departure 8): THE FEINT'S DASHED FADE - a cut
+// blow's fill frozen where the cut found it and its whole mark dashed as it fades over TELL_FEINT_FADE (ai/blowShapes.js -
+// Feud-Arc section 7.3's own number), the Spire stage's `uLook` 4 (world/egLook.js EG_LOOK_BIT.dash); and the mix handed to
+// the breach's client (`mix`), so the HUD's beats ride its critical bus (section 26).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../net/gateBrain.js';
@@ -46,6 +50,8 @@ import { egHazardParts, egHazardBites, egWispAt, EG_HAZARDS } from '../net/egFra
 import { egAccessNow, egPaletteOf } from '../ui/egAccess.js';   // EG-G1 (section 25.7): the shelf's danger palette and fill - their one home
 import { egPaletteBits, egQuietCompany, EG_FOG_FLOOR } from '../world/egLook.js';   // EG-G2: the palette's style bit, the quiet company, the fog floor
 import { createSpireMix } from '../systems/egMix.js';   // EG-G2: THE SPIRE MIX - personal stings, the critical bus, the barks' cap
+import { EG_LOOK_BIT } from '../world/egLook.js';   // EG-ZD: a cut feint's dashed fade
+import { TELL_FEINT_FADE } from '../ai/blowShapes.js';   // EG-ZD (section 13.2): the feint's fade - Feud-Arc section 7.3's one number
 
 /** The objects' types by number (net/egLords.js EG_OBJ), and which are struck (drawn as crystals) - the rest are stood on. */
 const OBJ_KEY = Object.freeze(Object.fromEntries(Object.entries(EG_OBJ).map(([k, v]) => [v, k])));
@@ -79,6 +85,8 @@ const WISP_AGAIN_MS = 6000;
 export const EG_WIND_GRACE_MS = 150;
 /** EG-H1 (section 15): Watchfire's early outline - a PULSING solid red line (a dashed line is a feint's), its pulse (ms). */
 const TOLD_PULSE_MS = 180;
+/** EG-ZD (section 13.2): a cut feint's mark fades out dashed over this (ms - Feud-Arc section 7.3's TELL_FEINT_FADE). */
+export const EG_FEINT_FADE_MS = Math.round(TELL_FEINT_FADE * 1000);
 /** A zone's and a drain's tick (ms); a body's fall's length; how long after its landing a blow's shape lingers. */
 export const EG_TICK_MS = 1000;
 const FALL_MS = 1200;
@@ -112,14 +120,14 @@ export const EG_SAY = Object.freeze({
  * aimed at another member filled at THE QUIET COMPANY's share during a trial, mine with a brighter rim; a haven in the
  * palette's safety and THE HAVEN GRAMMAR (render/gateTelegraph.js TELEGRAPH_POOL_HAVEN); the place's white in its hazard
  * colour; every one keeping THE FOG FLOOR. `acc` the shelf as ui/egAccess.js egAccessNow reads it (`palette`, `fill`),
- * `stage` the hall's. In place. Pure.
+ * `stage` the hall's. EG-ZD: a blow cut as a feint (`cut`) dashed as it fades (EG_LOOK_BIT.dash). In place. Pure.
  */
 export function egLookShapes(shapes, acc, stage) {
   const pal = acc?.palette ?? egPaletteOf('standard'), fill = acc?.fill ?? 1, bits = egPaletteBits(pal), quiet = egQuietCompany(stage);
   for (const sh of shapes) {
     sh.fogFloor = EG_FOG_FLOOR_ARR;
     if (sh.edge === TELEGRAPH_EDGE_DAGON) {
-      sh.edge = sh.mine ? brighter(pal.danger) : pal.danger; sh.look = bits;
+      sh.edge = sh.mine ? brighter(pal.danger) : pal.danger; sh.look = bits | (sh.cut ? EG_LOOK_BIT.dash : 0);   // EG-ZD: a cut feint dashed as it fades
       sh.fillK = fill * (sh.pool === TELEGRAPH_POOL.blow && !sh.mine ? quiet.aimedOther : 1);
     } else if (sh.edge === TELEGRAPH_EDGE_SAFE) {
       sh.edge = pal.safety; sh.look = 0; sh.fillK = 1; sh.pool = TELEGRAPH_POOL_HAVEN;   // THE HAVEN GRAMMAR (section 25.5)
@@ -132,7 +140,7 @@ export function egLookShapes(shapes, acc, stage) {
 /** A shape slot of the telegraph pass's own shape (render/gateTelegraph.js), refilled. */
 const slot = () => ({ kind: 0, origin: [0, 0], yaw: 0, r: 0, halfArc: 0, body: 0, end: [0, 0], halfW: 0, r0: 0, r1: 0, points: [], n: 0,
   t: 0, flash: 0, alpha: 0, color: GOLD, edge: TELEGRAPH_EDGE_DAGON, court: 0, style: TELEGRAPH_STYLE.weight, since: 0, span: 1, after: -1, runS: 0, pool: TELEGRAPH_POOL.blow,
-  mine: false, fillK: 1, look: 0, fogFloor: EG_FOG_FLOOR_ARR });   // EG-G2: aimed at me, the fill, the style bit, the fog floor
+  mine: false, fillK: 1, look: 0, fogFloor: EG_FOG_FLOOR_ARR, cut: false });   // EG-G2: aimed at me, the fill, the style bit, the fog floor; EG-ZD: a cut feint
 /** EG-G2: THE FOG FLOOR as the Spire's stage takes it (world/egLook.js EG_FOG_FLOOR). */
 const EG_FOG_FLOOR_ARR = Object.freeze([EG_FOG_FLOOR.floor, EG_FOG_FLOOR.within, EG_FOG_FLOOR.ease]);
 /** EG-G2: two colours the same (a shape's colour is a table's - read by value, so a copy reads as its table's). */
@@ -327,8 +335,9 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     for (const s of bl.s) {
       const sh = (_slots[_shapes.length] ??= slot());
       if (!fillStamp(sh, s)) continue;
-      sh.t = Math.max(0, Math.min(1, (t - from) / Math.max(1, bl.wu))); sh.flash = t >= bl.at ? 1 : 0;
-      sh.alpha = bl.cut ? Math.max(0, 1 - (t - bl.cut) / 150) : t > bl.at + span ? 1 - (t - bl.at - span) / LINGER_MS : aimedAtMe ? 1 : 0.85;
+      sh.t = Math.max(0, Math.min(1, ((bl.cut ? Math.min(t, bl.cut) : t) - from) / Math.max(1, bl.wu))); sh.flash = t >= bl.at ? 1 : 0;   // EG-ZD: a feint's fill frozen where it was cut
+      sh.alpha = bl.cut ? Math.max(0, 1 - (t - bl.cut) / EG_FEINT_FADE_MS) : t > bl.at + span ? 1 - (t - bl.at - span) / LINGER_MS : aimedAtMe ? 1 : 0.85;
+      sh.cut = !!bl.cut;   // EG-ZD (section 13.2): dashed as it fades
       sh.color = COLOR_OF[bl.el] ?? COLOR_OF.null; sh.edge = TELEGRAPH_EDGE_DAGON; sh.pool = TELEGRAPH_POOL.blow; sh.court = 0; sh.mine = aimedAtMe;
       sh.style = bl.ch ? TELEGRAPH_STYLE.dagon : STYLE_OF[bl.el] ?? TELEGRAPH_STYLE.weight;
       sh.since = Math.max(0, (t - from) / 1000); sh.span = Math.max(0.001, bl.wu / 1000); sh.after = t >= bl.at ? (t - bl.at) / 1000 : -1; sh.runS = (bl.sp ?? 0) / 1000;
@@ -482,7 +491,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       if (E.h !== hall) reset(E);
       const F = E.fight.h === E.h ? E.fight : null;
       _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0; _barks.length = 0;
-      for (const sl of _slots) sl.mine = false;   // EG-G2: a slot is mine only when this frame's blow says so
+      for (const sl of _slots) { sl.mine = false; sl.cut = false; }   // EG-G2: a slot is mine only when this frame's blow says so; EG-ZD: a cut feint's the same
       stageNow = E.sg;
       place(E, t);
       if (!F) { drawGateTitleCard(titleCardModel(beat, t), { hidden: hudHidden() }); return; }
@@ -501,7 +510,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       mix.barks(_barks, cam(), (b) => play3(b.cue, b.at));   // EG-G2: the legion's barks, four a kind, nearest first
       // THE BLOWS - drawn in the budget's order, each judged on my feet at its landing
       const lordIds = new Set(F.bodies.filter((b) => b.role === EG_ROLE.lord).map((b) => b.i));
-      const order = egShapeOrder(F.blows.filter((bl) => !bl.cut || t - bl.cut < 150), f ?? [0, 0], t, { lords: lordIds });
+      const order = egShapeOrder(F.blows.filter((bl) => !bl.cut || t - bl.cut < EG_FEINT_FADE_MS), f ?? [0, 0], t, { lords: lordIds });
       for (const bl of order) {
         const mine = !!f && bl.s.some((s) => egInShape(s, f[0], f[1]));
         drawBlow(bl, t, mine);
@@ -583,6 +592,9 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     state: () => ({ hall, bodies: drawn.size, crystals: _crystals.length, shapes: _shapes.length, targets: _targets.length, judged: judged.size, mix: mix.stats(), stung: stung.size }),
     /** EG-G2: the frame's shapes as the pass will draw them (tests): each one's look laid on. */
     shapes: () => _shapes,
+    /** EG-ZD (section 26): THE SPIRE MIX this fight holds (over the host's music) - the breach's client plays the HUD's beats
+     *  on its critical bus (scenes/egClient.js). */
+    mix: () => mix,
     /** The count's words for a tracker that asks. */
     countText: (ms) => egCountText(ms),
     /** Out of the breach: everything put away. */

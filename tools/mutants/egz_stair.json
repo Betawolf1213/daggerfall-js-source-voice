@@ -641,8 +641,8 @@
   {
     "name": "EGZ-the-swap-under-the-hour",
     "file": "src/scenes/egClient.js",
-    "old": "      }, step.look, step.opts);\n    } finally { swapping = false; }",
-    "new": "      }, 'hourIn');\n    } finally { swapping = false; }",
+    "old": "      }, step.look, step.opts);\n      if (modes()?.egHallCircle?.() === c) circleSeed",
+    "new": "      }, 'hourIn');\n      if (modes()?.egHallCircle?.() === c) circleSeed",
     "tests": [
       "test/egz_stair.test.js"
     ]
@@ -762,6 +762,15 @@
     "new": "for (const p of [lines, mist, sky]) { if (p) { try { p.destroy(); } catch { /* gone */ } } }\n      lines = null; mist = null; sky = null;",
     "tests": [
       "test/egz_stair.test.js"
+    ]
+  },
+  {
+    "name": "EGZ-the-way-back-under-the-hour",
+    "file": "src/scenes/egClient.js",
+    "old": "geo: R.geo, site: site() }), step.look, step.opts);",
+    "new": "geo: R.geo, site: site() }), 'hourIn');",
+    "tests": [
+      "test/egz_return.test.js"
     ]
   }
 ]

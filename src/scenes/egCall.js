@@ -126,7 +126,8 @@ export function createEgCallPrompt({ onAnswer, doc = globalThis.document, touch 
   let alive = true;
   return {
     root,
-    /** @param {{ text: string, answerable: boolean } | null} m */
+    /** @param {{ text: string, answerable: boolean, button?: string } | null} m - EG-ZD: `button` the button's own word (the way
+     *  back's *Return* - scenes/egClient.js EG_BACK_TEXT), *Answer* when it says none */
     draw(m) {
       if (!alive) return;
       const up = !!m;
@@ -134,6 +135,8 @@ export function createEgCallPrompt({ onAnswer, doc = globalThis.document, touch 
       if (!up) return;
       if (line.textContent !== m.text) line.textContent = m.text;
       if (btn.hidden !== !m.answerable) btn.hidden = !m.answerable;
+      const word = m.button ?? 'Answer';
+      if (btn.textContent !== word) btn.textContent = word;
     },
     destroy() { if (!alive) return; alive = false; root.remove?.(); },
   };

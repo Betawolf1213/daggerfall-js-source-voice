@@ -24873,8 +24873,13 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  are one moment on every screen in the court. AUDIT WB D7: ANCHORED ON THE WALL CLOCK - the page's clock is carried
    *  from an anchor on Date.now() and the relay's offset, taken again when the two part by more than a second (a sleep
    *  stops the page's clock and not the wall's, and timeOrigin + now() drifted from every other screen after one; an
-   *  offset that moved). Between anchors it runs on the page's clock alone, so it never steps back. */
-  const deadlandsSeconds = anchoredClock({ perf: () => performance.now(), wall: () => Date.now() + _sharedOffsetMs });
+   *  offset that moved). Between anchors it runs on the page's clock alone, so it never steps back.
+   *  EG-ZD (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 10.8, EG-H1's host flag): IN A BREACH, THE CORRECTED CLOCK -
+   *  the spans move on it (the dungeon arm's `sdClock` reads this), so every member sees every platform where the relay
+   *  has it: the breach's client's anchored seconds (scenes/egClient.js spanSeconds - the clock its fight already runs
+   *  on), the welcome's offset everywhere else and before the room has answered a ping. */
+  const deadlandsShared = anchoredClock({ perf: () => performance.now(), wall: () => Date.now() + _sharedOffsetMs });
+  const deadlandsSeconds = () => egClient?.spanSeconds() ?? deadlandsShared();
   /** WB6b: the court's air (scenes/deadlandsAir.js) - the wind, the fire, the thunder, the beasts; the braziers' fire
    *  beds in the dungeon's frame, where their loops burn. */
   const deadlandsAir = createDeadlandsAir(audio);
@@ -24946,7 +24951,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   // a new circle), the fight (scenes/egFight.js - the gate's own pieces about the hall), the Redoubt, the way out, the
   // tracker and the receipts. Online only.
   const _accountEg = accountEg({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() });
-  const egNow = () => Date.now() + _sharedOffsetMs;
+  const egNow = () => egClient?.breachNow() ?? Date.now() + _sharedOffsetMs;   // EG-ZD (section 10.8): in a breach the corrected clock (scenes/egClient.js breachNow), the welcome's offset elsewhere
   /** A line on the screen for its length (the court's), and a saving throw against a blow's element (the gate's). */
   const egMid = (text) => setMidScreenText(text, courtSaySeconds(text));
   const egSave = (e, el = 'fire') => { const w = GATE_SAVES[el] ?? GATE_SAVES.fire; return savingThrow(w[0], w[1], e); };

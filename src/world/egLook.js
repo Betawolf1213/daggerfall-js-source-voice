@@ -200,8 +200,9 @@ export const EG_SKIES = Object.freeze([
 export const egSkyOf = (c) => EG_SKIES[egBandOfCircle(c)];
 
 // ── THE DANGER PALETTES, THE FILL, THE QUIET COMPANY ───────────────────────────────────────────────────────────
-/** The telegraph pass's style bits (render/gateTelegraph.js uLook): the double keyline, the 45° hatch in the fill. */
-export const EG_LOOK_BIT = Object.freeze({ keyline2: 1, hatch: 2 });
+/** The telegraph pass's style bits (render/gateTelegraph.js uLook): the double keyline, the 45° hatch in the fill; EG-ZD
+ *  (section 13.2) a cut feint's mark dashed as it fades (scenes/egFight.js lays it on a cut blow, never a palette). */
+export const EG_LOOK_BIT = Object.freeze({ keyline2: 1, hatch: 2, dash: 4 });
 /** The style bits a shelf palette lays on (ui/egAccess.js EG_DANGER_PALETTES - `keyline` 2 the double keyline, `hatch`
  *  the 45-degree hatch). Pure. */
 export const egPaletteBits = (P) => ((P?.keyline ?? 1) >= 2 ? EG_LOOK_BIT.keyline2 : 0) | (P?.hatch ? EG_LOOK_BIT.hatch : 0);

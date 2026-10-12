@@ -102,7 +102,7 @@ export const EG_BEAT_SOUNDS = Object.freeze({
   bell: Object.freeze({ rec: 107, vol: 0.8, pitch: 1.3 }),
   fanfare: Object.freeze({ rec: 32, vol: 0.9, pitch: 1 }),
   drum: Object.freeze({ rec: 374, vol: 1, pitch: 0.9 }),
-  lowToll: Object.freeze({ rec: 107, vol: 0.9, pitch: 0.55 }),
+  lowToll: Object.freeze({ rec: 107, vol: 0.9, pitch: 0.42 }),   // EG-ZD (section 16.5): a fall's low toll - clip 107 at pitch 0.42, the page's
   toll: Object.freeze({ rec: 107, vol: 1, pitch: 0.75 }),
   rare: Object.freeze({ rec: 364, vol: 1, pitch: 1 }),
   chord: Object.freeze({ rec: 365, vol: 0.9, pitch: 0.9 }),

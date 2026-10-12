@@ -19,6 +19,7 @@ import { useItem } from '../src/systems/useItem.js';
 import { registerMadeLevelHere } from '../src/systems/madeLevel.js';   // EG-H2: THE POTION LAW is the made level's rule
 import { TEMPLATES } from '../src/systems/itemKinds.js';
 import { createEgLink } from '../src/net/egLink.js';
+import { EG_FALL_MS } from '../src/ui/egSpireHud.js';   // EG-ZD: THE FALL's length, before the witness's eye
 
 const T0 = 1_800_000_000_000;
 const ME = 'acct-0';
@@ -63,8 +64,10 @@ test('EG-FULL THE WITNESS (section 16.5): the death save takes a killing blow in
   assert.ok(y < -30, 'the body put away under the hall');
   player.pos[1] += 5; client.frame();
   assert.ok(dungeonToRealm(...player.pos)[1] < -30, 'and held there');
-  // the eye: behind and over the living companion
+  // the eye: behind and over the living companion - PIN MOVED (EG-ZD, section 16.5): once THE FALL's own screen has run
+  // (the eye sinking where I fell, the card, the dither - ui/egSpireHud.js EG_FALL_MS; test/egz_return.test.js pins it)
   P.setPeers([{ sub: 'acct-1', pos: [10, 2, 20] }]);
+  P.step(EG_FALL_MS);
   client.frame();
   const c = { pos: [0, 0, 0] };
   assert.equal(client.witnessEye(c, 0), true);

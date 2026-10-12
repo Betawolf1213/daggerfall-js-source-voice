@@ -102,7 +102,7 @@
   {
     "name": "EGPLAY-the-next-circle-never-built",
     "file": "src/scenes/egClient.js",
-    "old": "{ if (E.sg === 'arrive') swapTo(E, c); return; }",
+    "old": "{ if (E.sg === 'arrive' || returning === E.b) swapTo(E, c); return; }",
     "new": "{ return; }",
     "tests": [
       "test/egplay_client.test.js"
