@@ -2629,7 +2629,7 @@ relay receipt is):
 `players.eg_key_miss`, the launch gift) and 0110-0111 (EG8 and EG14: `eg_stakes`, `players.eg_live`,
 `players.eg_mercy`, `eg_redoubts`, `eg_runs`, `eg_pity`, the depths, `eg_honours`, `players.eg_annals`).
 
-**Versions.** Each slice that moves the relay bundle bumps `RELAY_VERSION` (`world194` when this page was last revised; EG-PLAY's `world196` - `world195` on its branch, renumbered past COATS1 at the merge -,
+**Versions.** Each slice that moves the relay bundle bumps `RELAY_VERSION` (`world194` when this page was last revised; EG-PLAY's `world197` - `world195` on its branch, renumbered past COATS1 and CHAT-LANG at the merges -,
 in `src/net/wire.js`) with its `LAW` row, and a game that does not know it is told to reload. Each that moves the
 service bumps `ACCOUNT_VERSION` (`acct114` then, in `server-account/src/service.js`). The new titles and auras join
 `TITLES` and `AURAS` in `src/net/identityToken.js`.
@@ -3284,7 +3284,7 @@ to the next circle.
   one life (a death, or three minutes absent in a trial, is a member's fall). The legion (`net/egHost.js` - the gate's
   Harriers and Ward-Bearers about a hall's own spots); the champion's kit (`net/egLord.js` - the Warden's cleave, slam
   and charge) for the Proving Walk's champion, *The Kynreeve*, and the INTERIM Court lord, *The Kynreeve Castellan*.
-  The receipts minted with the relay's key and re-handed at a hello. `RELAY_VERSION` `world195` (`world196` since the merge past COATS1).
+  The receipts minted with the relay's key and re-handed at a hello. `RELAY_VERSION` `world195` (`world196` since the merge past COATS1, `world197` since the merge past CHAT-LANG).
 - **The call and the step in** (EG9's core): the call said in chat and on the tracker; `/breach` answers it once the
   breach opens (and a Weir Key used while one stands does the same), `/breach rehearse` opens the day's Rehearsal,
   `/breach home` takes a Redoubt's way home.
@@ -3346,7 +3346,7 @@ to the next circle.
 way home and the next circle). Mutants: `tools/mutants/egplay.json` (20), every one dead. Records of other arcs whose
 quoted lines moved, re-aimed by content: the bound list's (`auditrealm`, `cards8`, `loot9`, `portal1`, `wallet1` - 575
 joins it), the account version's (`br5`, `crafthold`, `fb1004d_knight_house`, `tech1`, `gatekeys` - acct121, acct116, acct118 then acct119 on the branch, renumbered past main's acct116 to acct120 at the merges), the order kinds'
-(`guild1c`, `seat2a2`) and the relay version's (`soc1` - world195, then world196 past COATS1). The Ledger: section A's ELITE-GATES row
+(`guild1c`, `seat2a2`) and the relay version's (`soc1` - world195, then world196 past COATS1, then world197 past CHAT-LANG). The Ledger: section A's ELITE-GATES row
 (`01-Overview/Port-Ledger.md`), naming every file.
 
 ### EG-FULL, LAYER ONE - 2026-10-11 (Mac: "I said I want everything") - THE SPIRE'S OWN FIGHT, THE RUN, THE WITNESS
@@ -3441,7 +3441,7 @@ fall, the fall and the recall, the Redoubt's choices, forsaking) and `test/egful
 were rewritten to the Spire's own words: `test/egplay_law.test.js`, `test/egplay_relay.test.js` and
 `test/egplay_client.test.js`. Mutants: `tools/mutants/egfull.json` (31). Records whose quoted lines moved were re-aimed
 by content: `egplay`, `sd6a` and `sd18a` (the Orrery widened with defaults equal to the Hour's bytes). `RELAY_VERSION`
-stays `world195` (`world196` since the merge past COATS1), unshipped, with its hash and graph recomputed. The account Worker bundles `net/egShape.js` through the
+stays `world195` (`world196` since the merge past COATS1, `world197` past CHAT-LANG), unshipped, with its hash and graph recomputed. The account Worker bundles `net/egShape.js` through the
 wire, so `account-deploy.yml` lists it. A real defect was found and fixed on the way: the rest's offers were fanned to the
 whole company, so every screen showed the last member's cards.
 
@@ -3494,7 +3494,7 @@ the pieces' remaining tells (the Rail's dashed track, the Gust's streamers, the 
 check.
 
 **Pins.** `test/egfull_span.test.js` (6) and `tools/mutants/egspan.json` (19, every one dead). `RELAY_VERSION` stays
-`world196` (renumbered past main's COATS1 `world195` at the merge), unshipped, rehashed with `net/egSpanLaw.js` in its graph.
+`world196` (renumbered past main's COATS1 `world195` at the merge; `world197` past CHAT-LANG's `world196` at the next), unshipped, rehashed with `net/egSpanLaw.js` in its graph.
 
 ### EG-FULL, LAYER THREE - 2026-10-11 - THE FRAGMENTS, THE FORK, THE SET PIECES
 
@@ -3626,4 +3626,5 @@ Grath's falling isles, and the solver's median check.
 - `test/egfrag_law.test.js` (9), `test/egfrag_relay.test.js` (5), `test/egfrag_client.test.js` (6).
 - `tools/mutants/egfrag.json` (51, every one dead). Re-aimed and judged again: `egfull.json` (31), `egspan.json` (19)
   and `egplay.json` (20), every one dead.
-- `RELAY_VERSION` stays `world196`, unshipped, rehashed with `net/egFragLaw.js` and `net/egAnnals.js` in its graph.
+- `RELAY_VERSION` `world197` (renumbered past main's CHAT-LANG `world196` at this layer's merge), unshipped, rehashed with
+  `net/egFragLaw.js` and `net/egAnnals.js` in its graph.

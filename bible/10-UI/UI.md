@@ -25,8 +25,9 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and TUT1's TUTORIALS (`tutorialPopup.js`: the first-use popup's line on the message box's door; `tutorialsPane.js`: the menu's Tutorials tab and section; `10-UI/Tutorials.md`)
 - and SHIPYARDS' window (`shipyardWindow.js`: the shipmaster's - ships for sale, the fleet, the shipwright, the refits and the crew hall; `03-World/Shipyards.md`)
 - and STEED-UI's SADDLE PANEL (`enhancedSaddle.js`: the horse and the wagon under the compass on Enhanced Plus, the helm panel's kind; `10-UI/Controls.md`)
+- and TEXT-FONT (`textFont.js`: the enhanced skin's words in a face the player picks - Sans, Monospace, OpenDyslexic or an installed font) and the CHAT'S COLOURS (`chatColours.js`: each channel's, name's and @mention's colour, light and page pairs held to 4.5:1 - `06-Systems/Community-Arc.md`)
 - and EG-PLAY's TRACKER (`egHud.js`: an Elite Breach's call, THE COUNT, the hall, its stage and the company; `11-Multiplayer/Elite-Gates.md` section 31)
-348 modules
+350 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.
