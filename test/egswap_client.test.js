@@ -308,6 +308,9 @@ async function withPlay(fn, { worker = () => syncWorker(), offer = true } = {}) 
     });
   } finally { Date.now = realNow; }
 }
+/** The rest run out on the room's own beats (EG-H2, Elite-Gates.md section 22: a gap between beats past EG_GAP_MS is a
+ *  restart, and the room gives it back - so a clock stepped past the rest would hold it). */
+const restOut = async (P) => { for (let i = 0; i < Math.ceil(EG_REST_MS / 1500) + 4 && P.rec().sg === 'rest'; i++) await P.frame(1500); };
 /** The breach carried to its first Court's rest, until my screen has heard it. */
 const toRest = async (P) => {
   const B0 = P.eg.room._eg; B0.h = 5; B0.sg = 'rest'; B0.F = null; B0.sa = P.now(); B0.su = P.now() + 8000; B0.rd = 1;
@@ -323,7 +326,7 @@ test('EG10 THE SWAP, PLAYED (scenes/egClient.js against the relay): while the Co
     await toRest(P);
     assert.ok(asked.prebuilt.includes(2), 'the next circle asked while the Court rests');
     assert.equal(P.swap.state(rec().seed, 2, rec().geo ?? 0), 'ready', 'built during the rest');
-    step(EG_REST_MS); await frame(1500);
+    await restOut(P);   // PIN MOVED (EG-H2): the rest run out on the room's own beats - a clock that jumps past them is a restart, and its gap given back
     assert.deepEqual([rec().h, rec().sg], [egFirstHallOf(2), 'arrive']);
     await frame(300);
     assert.deepEqual(asked.swaps, [2], 'the built level stood in place');
@@ -347,7 +350,7 @@ test('EG10 THE SWAP\'S FALLBACK, PLAYED: a build still in flight when the step i
   await withPlay(async (P) => {
     const { asked, frame, rec, step } = P;
     await toRest(P);
-    step(EG_REST_MS); await frame(1500);
+    await restOut(P);   // PIN MOVED (EG-H2): the rest run out on the room's own beats - a clock that jumps past them is a restart, and its gap given back
     assert.equal(rec().sg, 'arrive');
     await frame(200);
     assert.equal(asked.swaps.length + asked.exits, 0, 'waiting on the build');
@@ -360,7 +363,7 @@ test('EG10 THE SWAP\'S FALLBACK, PLAYED: a build still in flight when the step i
   await withPlay(async (P) => {
     const { asked, frame, rec, step, modes } = P;
     await toRest(P);
-    step(EG_REST_MS); await frame(1500);
+    await restOut(P);   // PIN MOVED (EG-H2): the rest run out on the room's own beats - a clock that jumps past them is a restart, and its gap given back
     assert.equal(rec().sg, 'arrive');
     await frame(EG_SWAP_WAIT_MS / 2);
     assert.equal(asked.exits, 0, 'still waiting');
@@ -377,7 +380,7 @@ test('EG10 THE SWAP\'S FALLBACK, PLAYED: a build still in flight when the step i
   await withPlay(async (P) => {
     const { asked, frame, rec, step } = P;
     await toRest(P);
-    step(EG_REST_MS); await frame(1500);
+    await restOut(P);   // PIN MOVED (EG-H2): the rest run out on the room's own beats - a clock that jumps past them is a restart, and its gap given back
     assert.equal(rec().sg, 'arrive');
     await frame(300);
     assert.equal(asked.swaps.length, 0);

@@ -23,6 +23,7 @@ import { egHallBlock, egHallLocation, isEgHall, egToDungeon, egFromDungeon, buil
 import { isWeirKey, weirKeysHeld } from '../src/systems/weirKey.js';
 import { EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { EG_RD_WINDOW_MS } from '../src/net/egBrain.js';
+import { madeLevelRule, madeLevelSays } from '../src/systems/madeLevel.js';   // EG-H2: the made level's law the hosts read
 
 const { subtle } = globalThis.crypto;
 const T0 = 1_800_000_000_000;
@@ -471,18 +472,24 @@ test('EG-PLAY THE HOSTS WIRED: the world host builds the client online and hears
   assert.match(W, /if \(tab\.room === SOCIAL_ROOM\) link\.onEg = \(w, room\) => egClient\?\.word\(w, room\);/);
   assert.match(W, /else if \(modes\?\.roomIdentity\?\.\(\)\?\.kind === 'eg'\) key = egRoomKey\(modes\?\.roomIdentity\?\.\(\)\?\.b\);/);
   assert.match(W, /\n {4}egFrame\(\);/);
-  assert.match(W, /const diedInSpire = !!egClient\?\.diedHere\(\);/);
+  assert.match(W, /const diedInSpire = madeRuleHere\('death'\) === 'fall';/);   // PIN MOVED (EG-H2): a death in the Spire is the made level's law's - a fall (systems/madeLevel.js)
   assert.match(W, /if \(diedInSpire\) \{[^\n]*\n {8}modes\?\.forceExitToExterior\(\);\n {8}if \(spireBack && egLandAt\(spireBack\)\)/);
-  assert.match(W, /registerSpireLevitateWard\(\(\) => modes\?\.egHallBreach\?\.\(\) != null\);/);
-  assert.match(W, /if \(modes\?\.egHallBreach\?\.\(\) != null\) setCourtRules\(true\);/);
-  assert.match(W, /if \(modes\?\.egHallBreach\?\.\(\) != null\) return null;/);
-  assert.match(W, /if \(modes\?\.egHallBreach\?\.\(\) != null\) return \[\];/);
-  assert.equal((W.match(/if \(modes\?\.egHallBreach\?\.\(\) != null\) \{ setMidScreenText\(EG_TEXT\.noRecall\); return; \}/g) ?? []).length, 2, 'Mark and Recall');
+  // PIN MOVED (EG-H2, Elite-Gates.md section 24): every per-level door asks the made level's law - the Spire's Levitate ward
+  // OR'd into the ONE ward (section 10.7), the court's law the frame's one setCourtRules, the companions kept out, Mark and
+  // Recall refused in the Spire's words; the law's own rows pinned here and in test/egmade_law.test.js
+  assert.match(W, /registerLevitateWard\(\(\) => inSiegeRoom\(\) \|\| madeRuleHere\('levitate'\) === 'banned'\);/);
+  assert.match(W, /setCourtRules\(madeRuleHere\('regen'\) === 'off'\);/);
+  assert.match(W, /if \(madeRuleHere\('companions'\) === 'out'\) return null;/);
+  assert.match(W, /if \(madeRuleHere\('companions'\) === 'out'\) return \[\];/);
+  assert.match(W, /if \(madeRuleHere\('mark'\) === 'refused'\) \{ madeSay\('mark'\); return; \}/);
+  assert.match(W, /if \(madeRuleHere\('recall'\) === 'refused'\) \{ madeSay\('recall'\); return; \}/);
+  for (const [rule, want] of [['levitate', 'banned'], ['regen', 'off'], ['companions', 'out'], ['mark', 'refused'], ['recall', 'refused'], ['save', 'refused'], ['automap', 'off'], ['rest', 'refused']]) assert.equal(madeLevelRule('spire', rule), want, rule);
+  assert.equal(madeLevelSays('spire', 'mark'), EG_TEXT.noRecall, 'the Spire holds you');
   assert.match(W, /const m = \/\^\\\/breach\(\?:\\s\+\(\\w\+\)\)\?\$\/i\.exec\(text\.trim\(\)\);/);
   assert.match(W, /egClient\?\.claimKeys\(\);/);
   assert.match(W, /claim: \(r\) => _accountSds\.claim\(r\)\.then\(weirHeard\),/);
   assert.match(W, /weirHeard\(a\);/);
-  assert.match(E, /export const levitateWarded = \(\) => siegeOrHourWarded\(\) \|\| spireWarded\(\);/);
+  assert.doesNotMatch(E, /export function registerSpireLevitateWard/, 'PIN MOVED (EG-H2): the second seam retired - one ward, the made level\'s law OR\'d into it');
   assert.match(M, /for \(const \[gate, eg\] of \[\['gateBoss', 'egBoss'\], \['onBossHit', 'egBossHit'\], \['gateCrystals', 'egRifts'\], \['onCrystalHit', 'egRiftHit'\], \['gateHost', 'egHost'\], \['onHostHit', 'egHostHit'\]\]\)/);
   assert.match(M, /if \(hit\.egHall\) standEgHall\(ctx, hit\.egHall\);/);
   assert.match(M, /isEgHall\(dungeonLoc\) \? \{ kind: 'eg', b: dungeonLoc\.egBreach \}/);
@@ -490,8 +497,9 @@ test('EG-PLAY THE HOSTS WIRED: the world host builds the client online and hears
   assert.match(M, /if \(isEgHall\(dungeonLoc\)\) host\.drawEgFight\?\.\(\{ proj, view, eye: mwv\.eye \}\);/);
   assert.match(M, /egLeave: \(\) => \{ if \(mode !== 'dungeon' \|\| !isEgHall\(dungeonLoc\) \|\| !dungeonCtx\) return false; pendingDungeonExit = true; return true; \},/);
   assert.match(M, /if \(egBack && egPlace\(egBack\)\) host\.egCastBack\?\.\(\);/);
-  assert.match(D, /if \(_egHall\) \{ hudText\.add\(EG_HALL_TEXT\.noMap\); return; \}/);
-  assert.match(D, /if \(_egHall\) \{ hudText\.add\(EG_HALL_TEXT\.noRest\); return; \}/);
-  assert.match(D, /if \(_egHall\) \{ if \(!quiet\) hudText\.add\(EG_HALL_TEXT\.noSave\); return false; \}/);
+  // PIN MOVED (EG-H2): the dungeon host's refusals are the made level's law's, each in its level's own words
+  assert.match(D, /if \(madeLevelRule\(_made, 'automap'\) === 'off'\) \{ hudText\.add\(madeLevelSays\(_made, 'automap'\)\); return; \}/);
+  assert.match(D, /if \(madeLevelRule\(_made, 'rest'\) === 'refused'\) \{ hudText\.add\(madeLevelSays\(_made, 'rest'\)\); return; \}/);
+  assert.match(D, /if \(madeLevelRule\(_made, 'save'\) === 'refused'\) \{ if \(!quiet\) hudText\.add\(madeLevelSays\(_made, 'save'\)\); return false; \}/);
   assert.match(D, /egSpanRide\(dt, body, live = true\) \{ return egSpanRide\(dt, body, live\); \},/);
 });

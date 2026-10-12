@@ -490,6 +490,8 @@ export const EG_BELT_MPS = 1.0;
  */
 export function egHallOf(seed, h, geo = 0) {
   const key = `${seed >>> 0}:${h}:${geo | 0}`;
+  const given = _given.get(key);   // EG-H2: a hall the relay drew under the breach's own law (egSpecGive, below)
+  if (given) return given;
   const had = _specs.get(key);
   if (had) return had;
   // THE TIMED SOLVER (section 10.5, net/egSpanLaw.js): a course it refuses is laid again from the next sub-seed, at most
@@ -507,6 +509,21 @@ export function egHallOf(seed, h, geo = 0) {
 }
 const _specs = new Map();
 const deepFreeze = (o) => { if (o && typeof o === 'object' && !Object.isFrozen(o)) { Object.freeze(o); for (const v of Object.values(o)) deepFreeze(v); } return o; };
+// EG-H2 (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 22, THE LAW PIN): A HALL GIVEN. A client whose law is not
+// its breach's (`st`'s `egv` - net/egDurable.js EG_LAWS) asks the room `{k:'spec'}` and takes the relay's own bytes: given,
+// a hall is read before any draw, so every reader (world/egHall.js, scenes/egSpan.js, scenes/egFight.js, the breach's
+// client) builds the breach's own halls. The relay never gives one. A few circles' worth are kept.
+const _given = new Map();
+/** A hall the relay drew, taken as given - answers whether it was one (its seed, hall and ground whole numbers). */
+export function egSpecGive(spec) {
+  if (!spec || typeof spec !== 'object' || !Number.isSafeInteger(spec.seed) || !Number.isSafeInteger(spec.h) || spec.h < 1 || !Number.isSafeInteger(spec.geo ?? 0)) return false;
+  const key = `${spec.seed >>> 0}:${spec.h}:${(spec.geo ?? 0) | 0}`;
+  if (!_given.has(key) && _given.size >= 32) _given.delete(_given.keys().next().value);
+  _given.set(key, deepFreeze(JSON.parse(JSON.stringify(spec))));
+  return true;
+}
+/** Every given hall forgotten (out of the breach). */
+export function egSpecForget() { _given.clear(); }
 
 /** How often a course the solver refuses is laid again before the band's first two pieces stand alone (section 10.5). */
 export const EG_RELAY_MAX = 8;

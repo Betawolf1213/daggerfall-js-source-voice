@@ -58,6 +58,20 @@ export const SYSTEM_TIMER_UPDATES_DIVISOR = 0.0549254;
 // on landing (CheckFallingDamage: damage past 5, a hard-fall alert
 // past 2.5 - the HOST applies HP/sounds; PlayerHealth does in DFU).
 export const GROUNDED_JUMP_GATE_S = 0.1;
+// EG-H2 (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 10.8, THE FORGIVENESS - a departure from DFU, Ledger A):
+// in an Elite Breach's halls a jump pressed up to the buffer before landing fires ON landing (the 0.1 s gate above
+// swallowed it, and chained Beats and Crumbles ate presses), and a plain jump pressed up to the late press after walking
+// off an edge still leaps (the parkour's PARKOUR_COYOTE_S covers only the running leap). Seconds, asked of the world
+// host every step (the made level's law - systems/madeLevel.js `jumpBuffer`, `latePress`): none registered, or 0, is
+// DFU's motor exactly. The timed solver proves every course without them - margin, never entry.
+let _jfBufferOf = null, _jfLateOf = null;
+/** The world host's two words (seconds, each a function; null removes it). */
+export function registerJumpForgiveness(buffer, late) {
+  _jfBufferOf = typeof buffer === 'function' ? buffer : null;
+  _jfLateOf = typeof late === 'function' ? late : null;
+}
+/** A word read as seconds in [0, 0.5] - one that throws, or is no number, forgives nothing. */
+const jumpForgiven = (fn) => { if (!fn) return 0; try { const v = Number(fn()); return Number.isFinite(v) ? Math.max(0, Math.min(0.5, v)) : 0; } catch { return 0; } };
 // HOTFIX 2026-08-17 (live mobile report: "jumping has me go in the
 // air but instantly snaps me to the ground"): the motor integrated
 // with RAW RENDER dt - DFU's physics runs in Unity's FixedUpdate at
@@ -524,6 +538,9 @@ export class PlayerMotor {
     this.velY = 0;
     this.grounded = false;
     this.groundedTime = 0;         // PlayerMotor.GroundedTime (the 0.1 s jump gate reads it)
+    this._jfBuf = Infinity;        // EG-H2 (THE FORGIVENESS): seconds since a fresh Jump pressed in the air (Infinity: none waiting)
+    this._jfAir = Infinity;        // EG-H2: seconds since the feet last stood (Infinity: they have not yet)
+    this._jfWas = false;           // EG-H2: the Jump key's last step, for the press's edge (its own - the parkour lane keeps one too)
     this.jumping = false;          // AcrobatMotor.Jumping: set at jump, cleared on the next grounded frame
     this.falling = false;          // AcrobatMotor.Falling (CheckInitFall / CheckFallingDamage)
     // PlayerMotor.CancelMovement: raised by the swim/levitate edges
@@ -3279,10 +3296,20 @@ export class PlayerMotor {
     // JUMP-SLOW (FIELD BUGS 2026-10-11b, Mac: "Give the jump back"; a departure, Port-Ledger A): DFU's IsSlowFalling
     // clause of this cancel (AcrobatMotor.cs:68) is dropped - the rise is the jump's, and the spell's 2.1 m/s takes the
     // descent from the apex (ApplyGravity below). Still ground-gated (0.1 s): no jump from the air, so no climbing on air.
-    if (this.grounded && input.jump && !this._pkJumpLatch   // AUDIT CLIMB1 F7: not the Jump a move spent
+    // EG-H2 (THE FORGIVENESS, above): the buffer - a fresh press in the air, landed within it, fires on the landing; the
+    // late press - a fresh press within it of walking off an edge (no jump of its own) leaps as from the edge. Both 0
+    // outside an Elite Breach, and the gate below is DFU's verbatim.
+    const fBuf = jumpForgiven(_jfBufferOf), fLate = jumpForgiven(_jfLateOf);
+    const jFresh = !!input.jump && !this._jfWas;
+    this._jfWas = !!input.jump;
+    if (jFresh && !this.grounded) this._jfBuf = 0; else if (this._jfBuf !== Infinity) this._jfBuf += dt;
+    if (this.grounded) this._jfAir = 0; else if (this._jfAir !== Infinity) this._jfAir += dt;
+    const jBuffered = fBuf > 0 && this.grounded && this._jfBuf <= fBuf;
+    const jLate = fLate > 0 && !this.grounded && !this.jumping && jFresh && this._jfAir <= fLate;
+    if (((this.grounded && input.jump && (this.climb?.wasClimbing || this.groundedTime >= GROUNDED_JUMP_GATE_S)) || jBuffered || jLate)
+        && !this._pkJumpLatch   // AUDIT CLIMB1 F7: not the Jump a move spent
         && !this.onExteriorWater
-        && this.transportMode !== TRANSPORT_MODES.Cart
-        && (this.climb?.wasClimbing || this.groundedTime >= GROUNDED_JUMP_GATE_S)) {
+        && this.transportMode !== TRANSPORT_MODES.Cart) {
       const boost = this.transportMode === TRANSPORT_MODES.Horse
         ? HORSE_JUMP_MULTIPLIER
         : (this.jumpBoost ? this.jumpBoost() : 1);
@@ -3296,6 +3323,7 @@ export class PlayerMotor {
       this.groundedTime = 0;
       this.jumping = true;
       this.jumped = true;   // P11: the fatigue/tally consumer reads this frame flag
+      this._jfBuf = Infinity;   // EG-H2: the press spent (a jump's own fall owes no late press: `jLate` asks it is no jump's)
     }
     this._airVelX = vx;
     this._airVelZ = vz;

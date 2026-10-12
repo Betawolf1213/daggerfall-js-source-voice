@@ -48,6 +48,7 @@ import { egKeyRefusal } from './egArch.js';   // EG-F: the key's refusals, in th
 import { egCallPromptModel, soundEgHorn, EG_CALL_KEYS } from './egCall.js';   // EG-F: the call's prompt and horn
 import { importPublicKeyB64 } from '../net/identityToken.js';   // EG-F: the relay's public half, for a stranger's arch
 import { egHallOf, egCircleOfHall, egSlotOfHall, egSlotAt, egLocalX, egAtDoor, egPhase, egTimes, egCountText, EG_TEXT, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR } from '../net/egLaw.js';
+import { egOnFight, egSpecGive, EG_SPEC } from '../net/egLaw.js';   // EG-H2 (section 10.7): the fight floor, and off it the Spire's traversal ground; (section 22) a hall given, the law I draw
 import { readEgReceipt } from '../net/egReceipt.js';
 import { dungeonToRealm } from '../net/sdBrain.js';
 import { egToDungeon } from '../world/egHall.js';
@@ -91,6 +92,10 @@ export const EG_OPEN_TRIES = 4;
 export const EG_COUNT_FELL_TEXT = 'The Spire counts you fallen.';
 /** A second press of the way home within this long walks (ms). */
 export const EG_HOME_CONFIRM_MS = 6000;
+/** EG-H2 (section 22, THE LAW PIN): how often a hall of the breach's own law is asked again while unanswered (ms), and
+ *  what a member whose law is not the breach's is told, once a breach. */
+export const EG_SPEC_ASK_MS = 3000;
+export const EG_LAW_TEXT = 'This breach keeps another law. The Spire sends you its halls.';
 /** The end's words, by why it ended. */
 export const EG_END_TEXT = Object.freeze({
   fall: EG_TEXT.fallen, home: 'You walk home. The Redoubts you took are kept.', tear: EG_TEXT.torn,
@@ -327,6 +332,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   }
   /** A refusal the hub or the room said. */
   function refused(w) {
+    if (opening && w === 'the road is shut') { opening = null; return; }   // EG-H2 (section 22): THE DRAIN - the hub handed the stake back (its void receipt), no retry
     if (opening && !inSpire() && w === 'the breach is closed' && opening.tries < EG_OPEN_TRIES) { opening.sentAt = Date.now() - EG_OPEN_RETRY_MS + 1000; return; }
     if (w === 'the breach is closed' && answeredFor && link.state().call?.b === answeredFor) { say(EG_TEXT.late(link.state().call.o)); answeredFor = ''; callPortal?.clear?.(); return true; }   // EG-F: answered after the first hall woke - the late line, said instead
     if (w === 'the order is spent' || w === 'the order is not yours') admit = admit ? { ...admit, z: null } : null;
@@ -448,6 +454,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       return;
     }
     if (!(E.h > 0)) return;
+    lawFrame(E);   // EG-H2 (section 22): the halls of a breach of another law, asked
     // THE RECAP's log: each hall the company stood in, its glyph and its falls
     if (E.h !== logH) { logH = E.h; const sp = egHallOf(E.seed, E.h, E.geo ?? 0); log.push({ h: E.h, glyph: KIND_GLYPH[sp.kind] ?? '?', lord: sp.lord, lordName: sp.kind === 'court' ? EG_LORDS[sp.lord]?.name ?? '' : '', fall: false }); if (log.length > 200) log.shift(); }
     // THE POTION LAW: two restoring potions a hall, refilled at each wake and at the rest
@@ -716,6 +723,33 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     return false;
   }
 
+  // ── EG-H2 (section 22, THE LAW PIN): a breach opened under another law than mine ─────────────────────────────
+  /** the halls asked (`b:h` -> when), the halls given, the breach told, the circle built again from its given halls */
+  const lawAsked = new Map(), lawGot = new Set();
+  let lawSaid = '', lawBuilt = '';
+  /** Each hall of my circle the room has not given me asked (`{k:'spec'}`), EG_SPEC_ASK_MS apart - once my law is not the
+   *  breach's (`st`'s `egv`). Said once a breach. */
+  function lawFrame(E) {
+    if (!E.b || !(E.egv > 0) || E.egv === EG_SPEC || !(E.h > 0) || E.end) return;
+    if (lawSaid !== E.b) { lawSaid = E.b; say(EG_LAW_TEXT); }
+    const c = egCircleOfHall(E.h), o = online();
+    for (let h = (c - 1) * 5 + 1; h <= c * 5; h++) {
+      const k = `${E.b}:${h}`;
+      if (lawGot.has(k) || Date.now() - (lawAsked.get(k) ?? -Infinity) < EG_SPEC_ASK_MS) continue;
+      if (o?.sendEg?.('spec', { h })) lawAsked.set(k, Date.now());
+    }
+  }
+  /** A hall the room gave (net/egLaw.js egSpecGive - read before any draw). Once all five of my circle are given, the
+   *  circle standing (drawn by my own law before they came) is built again from them, under the veil. */
+  function lawTook(w) {
+    const E = link.state();
+    if (!E.b || w.egv !== E.egv || w.sp?.seed !== E.seed || !egSpecGive(w.sp)) return;
+    lawGot.add(`${E.b}:${w.h}`);
+    const c = egCircleOfHall(E.h);
+    for (let h = (c - 1) * 5 + 1; h <= c * 5; h++) if (!lawGot.has(`${E.b}:${h}`)) return;
+    if (lawBuilt !== `${E.b}:${c}` && inSpire() && modes()?.egHallCircle?.() === c && !swapping && !answering) { lawBuilt = `${E.b}:${c}`; swapTo(E, c); }
+  }
+
   const api = {
     link,
     /** A word of the hub or my breach's room (net/online.js onEg). */
@@ -724,6 +758,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (w.k === 'clk') { egClockHeard(clock, w.c, w.now, Date.now()); return; }   // EG-H1: a sample of the shared clock
       if (w.k === 'bd') { countFell(); return; }   // EG-H1: the relay's count's fall of me - the Spire's one life
       link.word(w);
+      if (w.k === 'spec') { lawTook(w); return; }   // EG-H2: a hall of the breach's own law
       if (w.k === 'call') {
         if (opening && w.os === me()) opening = null;
         const key = `${w.b}`;
@@ -885,6 +920,16 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     },
     /** A death in the Spire is one (the respawn's branch): read before the respawn leaves. */
     diedHere: () => inSpire(),
+    /** EG-H2 (section 10.7): do my feet stand on the Spire's TRAVERSAL GROUND - in a hall of the circle and off its fight
+     *  floor (a span, a Deepway, a Brink's course, a plate), or over the void between the halls? A witness stands on none.
+     *  The made level's law refuses a technique's flight there (systems/madeLevel.js madeOnTraverse). */
+    onTraverse() {
+      const E = link.state(), at = standing();
+      if (!inSpire() || witness || !at || !(E.h > 0)) return false;
+      if (!at.slot) return true;
+      const spec = egHallOf(E.seed, (egCircleOfHall(E.h) - 1) * 5 + at.slot, E.geo ?? 0);
+      return !egOnFight(spec, egLocalX(spec, at.sx), at.z);
+    },
     /** The breach as held (tests). */
     state: () => link.state(),
     /** EG-E2/section 25.4, THE QUIET COMPANY: during a trial in the Spire the cosmetic auras draw at nothing (the host's
