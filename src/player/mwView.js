@@ -32,7 +32,7 @@
 // person at all, and the wheel then does nothing rather than pulling
 // the eye out of an invisible head.
 
-import { mwCamera } from './mwCamera.js';
+import { mwCamera, MW_UNITS_PER_METER } from './mwCamera.js';
 import { fpArm } from '../combat/fpArm.js';
 import { eotbCamera } from './eotbCamera.js';
 import { eotbBody } from './eotbBody.js';
@@ -110,6 +110,51 @@ function standInEdge({ fpEye, feet, yaw, pitch }) {
   _beastInSprite = false;
 }
 export function setEotbCartYields(fn) { eotbCartYields = typeof fn === 'function' ? fn : () => false; }
+
+/**
+ * EG-ZH (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 11.8, "The camera in
+ * rock"): IN THE SPIRE BOTH CAMERAS PULL IN AT ONCE AGAINST A WALL AND EASE BACK OUT OVER 0.25 s, never snapping. Each
+ * lane's own casts still decide how far the camera may stand (the Morrowind camera's sphere casts, camera.cpp:186/:200;
+ * Eye Of The Beholder's axis casts and its line of sight) - over the fragments' collider proxy, the drawn rock's inner
+ * envelope (world/egHall.js egCircleColliderTris), so the camera never stands inside visible rock - and the Spire only
+ * keeps it from springing back out the frame a wall leaves the cast: out from the focal at most its whole free distance
+ * every SPIRE_CAMERA_EASE_S, never past where the cast allows. The breach client says when (scenes/egClient.js -
+ * `setSpireCamera`); everywhere else both lanes are their own, as they were. A departure from camera.cpp and from the
+ * mod, Ledger A (ELITE-GATES).
+ */
+export const SPIRE_CAMERA_EASE_S = 0.25;
+/** The Eye Of The Beholder camera's free distance (section 11.8: it "rides 0.5 m over the eye and 2 m behind it") - the
+ *  pace its ease walks back out at. */
+export const SPIRE_EOTB_FULL_M = Math.hypot(0.5, 2);
+let _spireCamera = () => false;
+/** The breach client's word: true while the Spire holds the camera (its halls), false everywhere else. */
+export function setSpireCamera(fn) { _spireCamera = typeof fn === 'function' ? fn : () => false; }
+/**
+ * THE EASE (pure): the distance the camera stands at this frame - `want` the lane's own (its casts' answer, at most its free
+ * distance `full`), `prev` last frame's (null: none - a cut), `dt` the frame (s). In at once; out at most `full` every
+ * SPIRE_CAMERA_EASE_S, never past `want`.
+ */
+export function spireCameraEase(prev, want, full, dt) {
+  if (!(prev != null && Number.isFinite(prev)) || !(want > prev)) return want;
+  const step = (Math.max(full, want) * Math.max(0, Number(dt) || 0)) / SPIRE_CAMERA_EASE_S;
+  return Math.min(want, prev + step);
+}
+let _spireCamDist = null;
+/** The Spire's ease laid on a lane's answered eye (`out` - `{ eye, focal, distance, thirdPerson }`), `full` its free
+ *  distance; a first-person eye (no focal) is a cut. In place; answers `out`. */
+export function spireCameraFrame(out, full, dt) {
+  let on = false;
+  try { on = !!_spireCamera(); } catch { on = false; }
+  if (!on || !out?.thirdPerson || !out.focal || !(out.distance > 1e-6)) { _spireCamDist = null; return out; }
+  const d = spireCameraEase(_spireCamDist, out.distance, full, dt);
+  _spireCamDist = d;
+  if (d < out.distance) {
+    const f = out.focal, k = d / out.distance;
+    out.eye = [f[0] + (out.eye[0] - f[0]) * k, f[1] + (out.eye[1] - f[1]) * k, f[2] + (out.eye[2] - f[2]) * k];
+    out.distance = d;
+  }
+  return out;
+}
 /**
  * CSA-J: TWO MODS, ONE BOAT. Eye of the Beholder's ModCompatibilityChecking looks for Come Sail Away by its GUID and
  * hands its OnUpdateSailing to the mod's receiver; the camera then targets the boat and the sprite faces its heading.
@@ -186,6 +231,7 @@ export function mwViewFrame({ fpEye, feet, yaw, pitch, heightScale = null, rayca
     pendingClicks = 0;
     eotbCamera.tick(frame);
     const out = eotbCamera.eye({ fpEye, feet, yaw, pitch, raycast, pivotFloor, ...frame });   // BENCH-CAM: the pivot over my wagon's roof
+    spireCameraFrame(out, SPIRE_EOTB_FULL_M, frame.dt ?? 0);   // EG-ZH: in the Spire, eased back out
     // EOTB-IL: the billboard's three Unity phases, handed the frame's
     // camera - `PlayerBillboard` reads mainCamera's position and forward
     // in LateUpdate (IL_3d86-IL_3dbf, IL_455d), and its FEET are the
@@ -239,6 +285,7 @@ export function mwViewFrame({ fpEye, feet, yaw, pitch, heightScale = null, rayca
   // the hips over a standing body's (player/seatPose.js SEAT_PELVIS_HEIGHT, at the race's height)
   if (saddled && ownSaddle) feet = [feet[0], feet[1] + Math.max(0, ownSaddle.seat[1] - feet[1] - SEAT_PELVIS_HEIGHT * heightScale), feet[2]];
   const eye = mwCamera.eye({ fpEye, feet, yaw, pitch, heightScale, raycast, spherecast, pivotFloor });   // MAC-A: the obstacle guards are castSphere's, where the host has one; BENCH-CAM: the pivot over my wagon's roof
+  spireCameraFrame(eye, mwCamera.baseDistance() / MW_UNITS_PER_METER, state.dt ?? 0);   // EG-ZH: in the Spire, eased back out
   return eyeOverride ? { ...eye, eye: eyeOverride, ownEye: eye.eye } : eye;   // TV1: the travel view's eye, the rig's frame run all the same
 }
 

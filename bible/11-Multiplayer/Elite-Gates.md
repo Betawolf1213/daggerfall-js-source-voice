@@ -5510,3 +5510,130 @@ arrow. The law is one new module, `world/egTelegraph.js`; the gate's own telegra
 - No other pin moved. EG-G2's lab (`src/tools/spireLab.js`) still draws through the pass's plain `draw`, which is
   unchanged. `RELAY_VERSION` is untouched (nothing in the relay's graph moved), and `ACCOUNT_VERSION` stays `acct121`.
 - New src module for the Ledger's ELITE-GATES row: `src/world/egTelegraph.js`.
+
+### EG-ZH - 2026-10-12 - THE HALL'S SOUND, THE CAMERA, THE ART AND TOUCH
+
+Closes the last of sections 11.6-11.9, 15, 25.1, 25.8, 26 and 27.8 that no layer built: the hall's reverb, the mix's peers
+and Watchfire's tell, the camera in rock and the fragment's own clamp, Daggerfall's own fire in the Caverns, the death saves
+that are no timers in the Spire, the Weir Key's own picture, and touch on the spans. EG-G2's "not built" lines for the
+peers, the tell, the reverb's crossfade and TEXTURE.356 are closed here.
+
+- **THE HALL'S REVERB** (`systems/egReverb.js`, new; `systems/audio.js`; `systems/betterAmbience.js`; read by
+  `scenes/egClient.js`).
+  - The law: each fragment's `reverb` (`net/egFragLaw.js` EG_FRAGS, carried on the hall spec's `frags`) as the engine's
+    preset (`EG_REVERB_PRESETS` - Cave, Stoneroom, Quarry); a hall's own open ground Quarry (`EG_REVERB_OPEN`); a
+    fragment's footprint its z-span and its reach across (a passage its cave's half width, a chamber half its span);
+    `egReverbZoneAt` enters a zone at its edge and leaves it only `EG_REVERB_HYST_M` (1 m) past it.
+  - The engine: `holdReverb(owner)` takes the zone (Better Ambience's zone off the send, and `setReverb` refused while it
+    is held); `reverbZone(live, idle)` makes two convolvers behind the veil, each preset's impulse made once for the hold
+    and a slot already holding its preset kept; `reverbFade(preset, seconds)` crossfades them over `EG_REVERB_FADE_S`
+    (0.4 s), a third preset taking the idle slot on its cached impulse; `releaseReverb(owner)` (the holder's word alone)
+    frees both convolvers and every impulse.
+  - Better Ambience yields while the zone is held and forgets its cache, so its first frame after the release asserts its
+    wish again.
+  - The client holds it while I stand in the breach, and through a swap or an answer's step under way; the hall my feet
+    stand in is made as it changes (a swap, a pull) and turned at a fragment's mouth; it is let go on the walk out and the
+    first frame out of the breach.
+- **THE SPIRE MIX'S PEERS AND WATCHFIRE** (`systems/egMix.js`, `net/peerFx.js`, `scenes/egFight.js`; the scope in
+  `systems/audio.js`).
+  - The engine's `scaled(gain, fn)`: every one-shot (`playOneShot`, `play3d`) made inside it at `gain` times its own
+    volume, nested scopes multiplying.
+  - `net/peerFx.js` `peerHeard(run)` and `setPeerSoundScope(fn)`: every peer sound plays inside it - the peers' blows and
+    hurts (the fx player), the walkers' steps, swings and cries (`net/remotePlayers.js` `peerSound` and the cry), their
+    climbs (`net/peerClimb.js`).
+  - The mix's `peers(on)` hands the scope in at `peerVolume` (4 dB down); the fight turns it on while a hall's fight runs
+    and off on `leave`.
+  - WATCHFIRE'S TELL (`EG_TELL_CUE`): the gate's sting (the parry's ring) at `EG_MIX.watchfirePitch` 1.4, played once a
+    told blow as its outline first shows, where it will land (`egToldAt` - its first stamp with an origin, else my feet).
+- **THE CAMERA IN ROCK** (`player/mwView.js`): `spireCameraEase` and `spireCameraFrame` laid on both lanes' eyes - in at
+  once against a wall, back out at most the free distance each `SPIRE_CAMERA_EASE_S` (0.25 s), never past where the lane's
+  own casts allow, along the line from the focal; a first-person frame a cut. The lanes' casts still decide the distance
+  over the fragments' collider proxy (the drawn rock's inner envelope), so the camera never stands in visible rock. The
+  client says when (`setSpireCamera` - alive in the Spire).
+- **THE FRAGMENT'S OWN CLAMP** (`world/egHall.js` `egFragZones`, `egFragZoneAt`, `egFragKeep`, `egFragArena`; set by
+  `scenes/egClient.js`). Each passage's cave and each fragment chamber's ring (a trial's own walled floor is never a
+  fragment) extruded to its ceiling: the walls hold the feet a capsule inside, the head under the vault (the motor's
+  `ceilAbove`); the mouths, an alcove's doorway, an open passage's sides and a ring's gaps are open edges; a body is a
+  zone's within 1.5 m of its footprint (`EG_CLAMP_SLACK_M`). The client sets it as `player.arena` while I stand in a
+  fragment and no other arena holds me (the world host sets those first each frame), and takes back only its own.
+- **DAGGERFALL'S OWN FIRE** (`formats/baseImageFile.js`, `world/emissiveTextures.js`, `scenes/dataPipeline.js`).
+  - `getFireWallColors32` ported verbatim from DFU's BaseImageFile.cs, on Unity's Color32 law in single precision
+    (`unityColor32` - the Color to Color32 conversion, `Mathf.Round` half to even; `unityColor32Lerp` - Color32.Lerp, t
+    clamped, the byte cast truncating), read from UnityCsReference 2019.4 (DFU builds on 2019.4.41).
+  - `FIRE_WALL_COLOR` (0.706, 0.271, 0.086 - "Average of dim frame (0)") and `FIRE_WALL_SCALE` (0.3), TextureReader.cs:312
+    and :315.
+  - Both upload arms take it for TEXTURE.356 over the classic albedo (TextureReader.cs:303 and :309 - a pack's picture
+    over the record still lights from the reference texture), and never on a stand-in. `test/audit39_render.test.js`
+    re-pinned (PIN MOVED).
+  - Tested on synthetic bytes - through a TextureFile's own palette and getColor32, and through the real pipeline with a made
+    TEXTURE.356 in its archive table: Daggerfall's data is not here.
+- **THE CAVERNS' FIRE FALLS** (`world/egHall.js` `egFireFallFlames`, `EG_FIRE_FALL`; drawn by `scenes/egFight.js`).
+  TEXTURE.356 record 0 stands on each fire fall's line across its passage, 2 m wide a flame and as tall as the passage,
+  while the fall burns; its frames turn at the billboards' rate (`render/flatAnimation.js` GENERAL_FPS), each uploaded once
+  through the pipeline's frame door. The archive is asked once; with no data there are no flames and the telegraph still
+  tells the fall.
+- **THE DEATH SAVES AT A REDOUBT** (`systems/lootPowers.js`; the door in `systems/sigilSetPowers.js`). Divine Grace and
+  the Ghost-King's Vigil spent in an `eg:` room are held past their timers to the next Redoubt taken, as EG15 held the sets'
+  (`lootSpireHeld`, `LOOT_SPIRE_SAVES`). Their chips read *Redoubt* and the round says nothing. The Redoubt recovers both,
+  held or still on a timer, through `registerSpireRedoubt` (called by `spireRedoubtTaken`); the breach is the same host
+  word (`spireRoomNow`). Out of the breach, or in another, their own timers govern.
+- **THE WEIR KEY'S OWN PICTURE** (`world/egKeyArt.js`, new; `world/pseudoArchives.js` `EG_ARCH_BLOCK`;
+  `systems/weirKey.js`). A Battlemage's key in the Galleries' gold leaf, its bow ringing a Battlemage-blue stone lit from
+  within, a collar, a shaft and a two-step bit, 32 x 22, painted in code with the Hour's paint box. It is kept at the
+  arch's block's second number (38282 - the page's "the arch, the key and the beacon": 38281, 38282, 38283), registered in
+  the block's entry. The key's row names it in place of TEXTURE.211 record 50, and `systems/weirKey.js` puts it on the
+  texture door at its import as its archive's stand-in, so every item door draws it.
+- **TOUCH ON THE SPANS** (`ui/touch.js`; the client's word, `setTouchSpire`). Inside an Elite Breach alone:
+  - a Jump press that keeps sliding past the tap radius looks, with the drag's own gain;
+  - an upward flick on the look half (`EG_FLICK_PX` 40 px within `EG_FLICK_MS` 150 ms) jumps, once a finger (the Jump key
+    held two frames so the host's frame reads it);
+  - on the spans (the Spire's traversal ground, `onTraverse`) the stick runs at full throw: Run at any push past the dead
+    zone, and the analog reading at length 1.
+  Out of the Spire the layer is TI2's.
+
+**The four hosts.**
+- `src/scenes/world.js` - FLAGGED: untouched. Every seam is the breach client's (`scenes/egClient.js`, built there) or a
+  registry its modules set (`setSpireCamera`, `setTouchSpire`, the sets' door). The clamp rides the online frame's order:
+  the duel's frame sets `player.arena` before `egFrame` runs. Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED: untouched. The fire falls are the fight's billboards, and the camera's ease rides
+  `mwViewFrame`, which the dungeon arm already calls.
+- `src/scenes/dungeonContext.js` - FLAGGED: untouched.
+- `src/scenes/exterior.js` - FLAGGED: the bench is offline and holds no Elite Breach. Its `mwViewFrame` and touch layer
+  meet neither Spire branch.
+
+**Departures, said plainly.**
+- **Done another way:**
+  - a hall with no fragment of its own is heard as open ground (Quarry), where the page names only the fragments'
+    presets;
+  - the reverb's two slots take a third preset by rebuilding the idle convolver on the hold's cached impulse - nothing is
+    synthesised within a hall, but a convolver node is made at that mouth;
+  - the reverb is let go on the first frame out of the breach or on the walk out, never during a swap's own step;
+  - the fire falls are billboards (camera-facing, the fight's own batches) standing on the fall's line, not a mesh curtain
+    in the circle's model, so they burn only while the fall does;
+  - the Weir Key's picture is a stand-in of its archive on the texture door (its build answers the painted picture), the
+    port's other painted art's way.
+- **Not built:**
+  - occluders between the camera and the body dithering out (`setDissolve`): the circle is one mesh, so no part of it can
+    dissolve alone;
+  - the shaft ledge's 20 degree pitch bias and the camera's rise over a drop;
+  - `hit` and `ahit` refused off the fight floors, and the Harriers' hunt of a member off them for more than 6 s - the
+    relay's half of section 11.7, gap row 7;
+  - the haptics and the pad's rumble of section 27.8 stand as EG-G1 built them.
+- **Not verified without a browser and the game's data:** the reverb was heard by no ear (driven against a recording Web
+  Audio graph); the fire falls were never seen with a real TEXTURE.356 (its frames' count and look are the player's data's);
+  the key's picture was checked as texels, not in the inventory; the touch branch was driven on the stub DOM, not a phone.
+- The Port-Ledger's rows are left to the merge: the ELITE-GATES row's new files (`systems/egReverb.js`, `world/egKeyArt.js`),
+  and section C's BaseImageFile row, whose GetFireWallColors32 now ships.
+
+**Pins.**
+- `test/egz_sound.test.js` (7), `test/egz_art.test.js` (8), `test/egz_body.test.js` (9).
+- `tools/mutants/egz_sound.json` (115, every one dead). Five survived the first run and were killed by new assertions: an
+  impulse synthesised again, TEXTURE.356 asked twice in flight, the ground's colour, a trial's wall as a fragment's, and the
+  flick's Jump never lifted. One record was re-aimed to a mutant the tests can see: the key's ground alpha, which `image()`
+  already leaves clear, became the ground's colour.
+- Re-aimed by content (mutantdrift): `audit0928_input.json`'s two U3 records (the stick's Run line), `egint.json`'s
+  EGINT-the-told-never-drawn, `loot5.json`'s grace and vigil gates; `cardstouch.json`'s CT-gyro kept one site by this
+  slice's own line's order. All six re-run, dead.
+- PIN MOVED: `test/audit39_render.test.js` (the fire walls take GetFireWallColors32). `bible/06-Systems/Systems.md` counts
+  517 modules. `bible/07-Rendering/Rendering.md` and `Rendering-Arc.md` say GetFireWallColors32 shipped.
+- `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.

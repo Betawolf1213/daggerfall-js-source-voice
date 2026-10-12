@@ -8,9 +8,10 @@
 //   THE CRITICAL BUS (stings, a lord's wind-up and release, CHECKs) ducks the score by EG_MIX.duckDb for EG_MIX.duckMs and
 //     is never culled (systems/music.js duck - the song's own level dipped, the fades left alone);
 //   BARKS capped at EG_MIX.barksPerKind a kind a frame, nearest first (egBarkCull) - the legion's wind-up cues;
-//   PEERS' sounds EG_MIX.peerDb down, and WATCHFIRE's tell at EG_MIX.watchfirePitch (the law's numbers - the peers'
-//     sounds are the online layer's, net/peerFx.js, and no Watchfire tell is sounded yet: said in the arc's record);
-//   the reverb is the hall's (section 11.9 - its own slice).
+//   PEERS' sounds EG_MIX.peerDb down (EG-ZH: `peers(on)` hands the online layer's one scope over every peer sound -
+//     net/peerFx.js peerHeard - the engine's gain about it, systems/audio.js scaled), and WATCHFIRE's tell at
+//     EG_MIX.watchfirePitch (EG-ZH: `tell(at)` - the gate's sting, lower, where the told blow will land, once a blow);
+//   the reverb is the hall's (section 11.9 - systems/egReverb.js).
 // The law is pure (egStingWanted, egBarkCull); `createSpireMix` is its seam over the engine and the music.
 // EG-ZD (2026-10-12, Mac: "I said I want everything"; section 26, EG-G1's departure 9): THE BEATS ON THE CRITICAL BUS -
 //   the HUD's beats (ui/egBeats.js EG_BEAT_SOUNDS: a door, a fall's low toll, a Redoubt's, the count's tolls, a rune's
@@ -18,6 +19,7 @@
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { BOSS_CUES } from '../world/gateBoss.js';
+import { setPeerSoundScope } from '../net/peerFx.js';   // EG-ZH: the peers' sounds' one scope
 
 /** THE SPIRE MIX's numbers (section 26). */
 export const EG_MIX = Object.freeze({ duckDb: 6, duckMs: 300, addGapMs: 1500, barksPerKind: 4, peerDb: -4, watchfirePitch: 1.4 });
@@ -48,14 +50,20 @@ export function egBarkCull(barks, ear, per = EG_MIX.barksPerKind) {
   return out;
 }
 
+/** EG-ZH: WATCHFIRE'S TELL (section 26) - the gate's sting (the parry's ring, world/gateBoss.js BOSS_CUES.sting) at
+ *  EG_MIX.watchfirePitch, so an early outline is heard apart from a sting on your own feet (pitch 2.2); its volume and
+ *  reach the sting's. */
+export const EG_TELL_CUE = Object.freeze({ clip: BOSS_CUES.sting.clip, pitch: EG_MIX.watchfirePitch, volume: BOSS_CUES.sting.volume, reach: BOSS_CUES.sting.reach });
+
 /**
  * THE MIX'S SEAM: `sting(kind, at)` (a personal sting at my feet, ducking the score), `critical()` (the duck alone),
  * `barks(list, ear, play)` (the cap, each kept bark played by `play`), `beat(S)` (EG-ZD: a HUD beat's one-shot on the
- * critical bus), `peerVolume(v)`.
+ * critical bus), `peerVolume(v)`; EG-ZH: `peers(on)` (every peer's sound EG_MIX.peerDb down while on) and `tell(at)`
+ * (Watchfire's tell where a told blow will land).
  * @param {{ audio?: any, music?: any, now?: () => number }} deps
  */
 export function createSpireMix({ audio = null, music = null, now = () => Date.now() } = {}) {
-  let lastAdd = -Infinity, stings = 0, ducks = 0;
+  let lastAdd = -Infinity, stings = 0, ducks = 0, tells = 0, peersOn = false;
   const mix = {
     /** THE CRITICAL BUS: the score ducked EG_MIX.duckDb for EG_MIX.duckMs. */
     critical() { ducks++; try { music?.duck?.(EG_MIX.duckDb, EG_MIX.duckMs / 1000); } catch { /* the score is never the fight */ } },
@@ -89,8 +97,26 @@ export function createSpireMix({ audio = null, music = null, now = () => Date.no
     },
     /** A peer's sound's volume in the Spire. */
     peerVolume: (v) => v * egDbGain(EG_MIX.peerDb),
+    /** EG-ZH: THE PEERS DOWN - while on, every peer's sound (net/peerFx.js peerHeard) plays at `peerVolume` of itself through
+     *  the engine's scope (systems/audio.js scaled); off, they are as they were. Idempotent; answers whether it is on. */
+    peers(on) {
+      const want = !!on;
+      if (want === peersOn) return peersOn;
+      peersOn = want;
+      setPeerSoundScope(want ? (run) => (typeof audio?.scaled === 'function' ? audio.scaled(mix.peerVolume(1), run) : run()) : null);
+      return peersOn;
+    },
+    /** EG-ZH: WATCHFIRE'S TELL - a told blow heard at `at` (the scene's frame), EG_TELL_CUE. Answers whether it sounded. */
+    tell(at) {
+      if (!at || !audio?.play3d) return false;
+      tells++;
+      try { audio.play3d(EG_TELL_CUE.clip, at, EG_TELL_CUE.volume, { maxDistance: EG_TELL_CUE.reach, distanceModel: 'linear', pitch: EG_TELL_CUE.pitch }); } catch { /* a sound is never the fight */ }
+      return true;
+    },
     /** What the mix has done (tests). */
     stats: () => ({ stings, ducks }),
+    /** EG-ZH: the tells sounded and whether the peers are down (tests). */
+    heard: () => ({ tells, peers: peersOn }),
   };
   return mix;
 }

@@ -1453,8 +1453,9 @@ classic-visuals direction (Mac): spectral enemies land as billboards,
 so the two owed BaseImageFile helpers ported verbatim and the
 billboard pass gained emission + a blended spectral phase (180 alpha,
 red eyes, V^1.9 body glow) - full record in Characters-Arc E4.
-GetFireWallColors32 stays unported until a firewall consumer exists
-(a two-line lerp). Live visual sign-off open (Mac). R13 shipped precipitation + verbatim storm
+GetFireWallColors32 SHIPPED 2026-10-12 with its first consumer, the
+Elite Breach's fire falls (EG-ZH, `11-Multiplayer/Elite-Gates.md`):
+both upload arms light TEXTURE.356 through it. Live visual sign-off open (Mac). R13 shipped precipitation + verbatim storm
 lightning. R10 retired groundMesh.js - all ground
 (exterior + terrain) runs the verbatim tilemap shader.
 

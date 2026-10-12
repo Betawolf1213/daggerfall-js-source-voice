@@ -499,7 +499,7 @@
   {
     "name": "EGINT-the-told-never-drawn",
     "file": "src/scenes/egFight.js",
-    "old": "      for (const bl of F.told ?? []) drawTold(bl, t);   // EG-H1: Watchfire's early outlines",
+    "old": "        drawTold(bl, t);   // EG-H1: Watchfire's early outlines",
     "new": "      void drawTold;",
     "tests": [
       "test/egint_client.test.js"
