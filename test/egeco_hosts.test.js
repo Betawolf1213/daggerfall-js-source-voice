@@ -33,7 +33,7 @@ test('EG-E3 THE FIND\'S HOST DOORS (section 5): the owner\'s death names the str
   assert.match(d, /raiseEnemyDeath\(foe\.entity, \{ luck: liveStat\(playerEntity, 'luck'\), by: foe\._killedBy \?\? null \}\);/);
   assert.match(d, /r\.v === \(opts\.selfId\?\.\(\) \?\? null\)\) egFindStruck\(f\.entity\)\.catch\(\(\) => \{\}\);/);
   assert.match(w, /registerEgFind\(\{\s*ask: \(t\) => _accountEg\.find\(t\)/);
-  assert.match(w, /tierNow: \(\) => \(_mode\(\) === 'dungeon' && modes\?\.dungeonLocation \? dungeonTier\(modes\.dungeonLocation\) : null\)/);
+  assert.match(w, /tierNow: \(\) => \(_mode\(\) === 'dungeon' && modes\?\.dungeonLocation \? dungeonTier\(modes\?\.dungeonLocation\) : null\)/);
   // the seam: the joiner's door reaches the registered find, and nothing once it is disposed
   const asked = [];
   const elite = { eliteFoe: true, items: [] };

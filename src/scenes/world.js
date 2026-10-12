@@ -25012,7 +25012,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   // throws the key from the body and restacks the pack (systems/egFind.js)
   if (params.has('online')) registerEgFind({
     ask: (t) => _accountEg.find(t), selfId: () => online?.id ?? null, online: () => !!online && online.status === 'open', say: (l) => chatNotice(l),
-    tierNow: () => (_mode() === 'dungeon' && modes?.dungeonLocation ? dungeonTier(modes.dungeonLocation) : null),
+    tierNow: () => (_mode() === 'dungeon' && modes?.dungeonLocation ? dungeonTier(modes?.dungeonLocation) : null),
     throwKey: (e, n) => { egFindThrow(e, playerEntity.items ?? (playerEntity.items = []), n); saveSoon.changed(); },
   });
   egClient?.claimKeys();   // the Weir Key's use is this screen's open
