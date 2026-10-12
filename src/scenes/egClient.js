@@ -35,6 +35,13 @@
 //     sounds and lines and the first-time lines (ui/egBeats.js), the party rows (ui/egParty.js - the party panel's
 //     `setSpire`), the pad's d-pad and the touch buttons for the panel and the witness, the haptics, the danger palette
 //     and reduced motion (ui/egAccess.js), and THE RECAP whole (the last five kept).
+//   EG-ZE (2026-10-12, Mac: "I said I want everything"; sections 7, 16.2, 16.4, 16.5, 27.3 and 27.5): THE STAIR, THE DOOR
+//     AND THE LIGHTS - every step down drawn as THE STAIR (world/egLights.js egStairStep: the full fall into a band's
+//     first hall, the band's veil at every other step and pull, a plain cut under reduced motion - the veil's own themes,
+//     ui/gateVeil.js), never slower than the veil it replaced; the door's beam, the closing's ring and its mark on the
+//     enhanced compass (the arch's gold slot - the arch never stands in the Spire); the Redoubt's beacon, the recall's
+//     blue pillar and the pings drawn (render/egLightPass.js through the look) and each ping's chime; the witness's sight
+//     (the dormant Lurkers, the alcoves, the next hall's twist said) and a witness's ping at the member it watches.
 //   EG-F (2026-10-12, Mac: "I said I want everything"; sections 5, 6.3 and 6.4): THE ARCH AND THE CALL - the key's
 //     refusals in the page's order (scenes/egArch.js egKeyRefusal, over the host's facts), THE START WINDOW before any key
 //     is staked (ui/egStartWindow.js - the preflight `/v1/eg/starts`, its choice and Wager carried by the open), THE ARCH
@@ -78,6 +85,9 @@ import { isTouchDevice } from '../ui/touchDevice.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { createEgLookDraw } from './egLookDraw.js';   // EG-G2: the Spire's sky, mist and lines (section 25)
 import { egQuietCompany } from '../world/egLook.js';
+import { egStairStep, egSpireLights, egDoorCompass, egWitnessTwist, EG_LIGHTS_TEXT } from '../world/egLights.js';   // EG-ZE: the stair, the door and the lights
+import { egReducedMotion } from '../ui/egAccess.js';
+import { egStartHall } from '../net/egLaw.js';
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -209,6 +219,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   const lookOf = () => (look ??= renderer?.gl ? createEgLookDraw({ gl: renderer.gl }) : null);
   /** The circle this screen stands in, told to the look. */
   const lookCircle = (E) => { const L = lookOf(); if (L && E.b && E.h > 0) L.setCircle(E.seed, egCircleOfHall(E.h), E.geo ?? 0); return L; };
+  /** EG-ZE: reduced motion now (the port's row or the system's) - the stair's cut, the lights still. */
+  const stillNow = () => egReducedMotion(win);
 
   // ── the keys ────────────────────────────────────────────────────────────────────────────────────────
   /** The pack's keys set to the account's balance (a face, never the count). */
@@ -326,7 +338,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     placedH = 0; downH = 0; endSeen = null; rdSeen = 0; leaving = false;
     answeredFor = c.b;
     const landing = c.os === me() ? arches?.landing?.(c.b) ?? null : null;
-    const went = await modes()?.stepThroughFire?.(() => modes()?.enterEgHall?.({ b: c.b, seed: c.seed, c: (c.ew ?? 0) + 1, geo: E.geo ?? 0, site: site(), ...(landing ? { landing } : {}) }), 'hourIn');
+    const step = egStairStep(egStartHall(c.ew ?? 0), stillNow());   // EG-ZE: THE STAIR into the breach's first hall - Hall 1's (and a Brink start's) the full fall
+    const went = await modes()?.stepThroughFire?.(() => modes()?.enterEgHall?.({ b: c.b, seed: c.seed, c: (c.ew ?? 0) + 1, geo: E.geo ?? 0, site: site(), ...(landing ? { landing } : {}) }), step.look, step.opts);
     if (!went) { answeredFor = ''; say(EG_TEXT.shut); }
     return !!went;
   }
@@ -394,7 +407,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     const spec = egHallOf(E.seed, h, E.geo ?? 0);
     if (!spec.arrive) return false;
     const at = egToDungeon(spec, spec.arrive.x, spec.arrive.y + 0.1, spec.arrive.z);
-    if (flash) veil()?.flash?.('hourIn');
+    if (flash) { const step = egStairStep(h, stillNow()); veil()?.flash?.(step.look, step.opts); }   // EG-ZE: THE PULL under the stair's veil - the band's, the hall held
     return !!modes()?.egPlace?.(at, 0);
   }
   /** The Redoubt's way home: its door at the Court's heart (an exit door - the dungeon's own press and name). */
@@ -434,6 +447,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (built === 'building') { if (!swapWaitAt) swapWaitAt = now(); if (now() - swapWaitAt < EG_SWAP_WAIT_MS) return; }
     swapWaitAt = 0;
     swapping = true;
+    // EG-ZE: THE STAIR the swap shows - the full fall into a band's first hall, the veil else (the circle standing built
+    // again under the breach's law veils: the company has not moved), the cut under reduced motion; 0.8 s each way
+    const step = egStairStep(E.h, stillNow(), c === modes()?.egHallCircle?.());
     try {
       const back = modes()?.egHallReturn?.() ?? null;
       placedH = 0; downH = 0; dropDoor();
@@ -442,7 +458,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         modes()?.forceExitToExterior?.();
         if (back) landAt(back);
         return modes()?.enterEgHall?.({ b: E.b, seed: E.seed, c, geo: E.geo ?? 0, site: site() });
-      }, 'hourIn');
+      }, step.look, step.opts);
     } finally { swapping = false; }
   }
   /** One frame in the Spire. */
@@ -607,7 +623,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
    *  Beat already pulsed, a gain in flight, a teaching line, the live line, the arrival card, the pad's choice, the
    *  folded decrees, the recap's Reliquaries opened so far */
   const pres = { memo: egBeatMemo(), bits: -1, said: new Set(), b: null, absent: new Map(), perils: new Set(), perilH: 0, beatCycle: -1,
-    gain: null, first: '', firstAt: 0, live: '', card: null, cardH: 0, cardAt: 0, cardFirst: true, prevSp: -1, focus: 0, foldOpen: false, rel: 0, relAt: 0, touch: /** @type {boolean|null} */ (null) };
+    gain: null, first: '', firstAt: 0, live: '', card: null, cardH: 0, cardAt: 0, cardFirst: true, prevSp: -1, focus: 0, foldOpen: false, rel: 0, relAt: 0, touch: /** @type {boolean|null} */ (null),
+    pingAt: 0, sightH: 0 };   // EG-ZE: the newest ping heard, the hall the witness's sight was said for
   /** How long a teaching line stands under the objective (ms). */
   const FIRST_SHOW_MS = 9000;
   const playSound = (S) => { if (!S?.rec && S?.rec !== 0) return; try { audio?.playOneShot?.(S.rec, S.vol, S.pitch); } catch { /* a sound is never the breach */ } };
@@ -644,6 +661,30 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     const spec = egHallOf(E.seed, E.h, E.geo ?? 0), y = dungeonToRealm(...player.pos)[1];
     return { spec, x: egLocalX(spec, at.sx), y, z: at.z };
   }
+  /** EG-ZE: THE LIGHTS this frame (world/egLights.js egSpireLights - none outside the halls) in the shelf's palette and
+   *  reduced motion, with each pinger's own height in the hall's frame (mine, and the company's poses) so a ping stands
+   *  on the floor it was said from. Asked by the draw alone, in the Spire. */
+  function lightsNow() {
+    const E = link.state();
+    let ys = null;
+    if (E.pings?.length) {
+      ys = new Map();
+      if (player?.pos && !witness) ys.set(me(), dungeonToRealm(player.pos[0], player.pos[1], player.pos[2])[1]);
+      for (const q of peers()) if (q?.pos) ys.set(q.sub, dungeonToRealm(q.pos[0], q.pos[1], q.pos[2])[1]);
+    }
+    return egSpireLights(E, now(), { witness: !!witness, still: stillNow(), palette: egAccessNow(win).palette, ys });
+  }
+  /** EG-ZE: where a ping is said from, in the hall's frame - my feet; a witness's at the member it watches (its own body
+   *  is held under the hall, so its ping stood on the arrival plate whatever it watched), or the plate with nobody to
+   *  watch. */
+  function pingPlace(E) {
+    if (!(E.h > 0)) return null;
+    const spec = egHallOf(E.seed, E.h, E.geo ?? 0);
+    const q = witness?.watched ? peers().find((p) => p.sub === witness.watched) : null;
+    if (q?.pos) { const [sx, , z] = dungeonToRealm(q.pos[0], q.pos[1], q.pos[2]); return { x: egLocalX(spec, sx), z }; }
+    const at = standing();
+    return at ? { x: egLocalX(spec, at.sx), z: at.z } : null;
+  }
   /** The choices the pad moves among: the offer's cards, else the newest open choice's options. */
   function choices(E) {
     if (E.offer?.v?.length) return { kind: 'offer', n: E.offer.v.length, ask: null };
@@ -666,6 +707,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (b.k === 'goldRun') pres.gain = { text: EG_PRES_TEXT.gain('1:00', ''), at: t };
     }
     teach(firsts);
+    // EG-ZE: THE COMPANY'S WORD HEARD - a chime as a ping is newly said (sections 16.4 and 16.5); THE WITNESS'S SIGHT - the
+    // next hall's twist, said once a hall to a witness
+    let pinged = false;
+    for (const q of E.pings ?? []) if (q.at > pres.pingAt) { pres.pingAt = q.at; pinged = true; }
+    if (pinged) playSound(EG_BEAT_SOUNDS.chime);
+    if (witness && E.h > 0 && pres.sightH !== E.h) { pres.sightH = E.h; const line = egWitnessTwist(E); if (line) { say(EG_LIGHTS_TEXT.sight(line)); pres.live = EG_LIGHTS_TEXT.sight(line); } }
     if (pres.prevSp >= 0 && (E.sp ?? 0) > pres.prevSp) pres.gain = { text: EG_PRES_TEXT.surplus, blue: true, at: t };
     pres.prevSp = E.sp ?? 0;
     // THE REHEARSAL's teaching, once a device
@@ -799,7 +846,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         if (a === 'cant' || a === 'cantrip') { const run = egRunOfMember(E, me()), n = (Number(b) | 0) - 1; if (n < 0 || n >= run.cant.length) say(run.cant.length ? `Your Cantrips: ${run.cant.map((c, j) => `${j + 1}. ${EG_CANTRIPS[c]?.name}`).join(', ')}.` : 'You hold no Cantrip.'); else o?.sendEg?.('cant', { i: n }); return; }
         if (a === 'buy') { const i = { cant: 0, cantrip: 0, tonic: 1, shard: 2 }[b]; if (i == null) say('The Sutler sells a Cantrip (20 lumen), a Spire Tonic (15) or a Vestige shard (30): /breach buy cant|tonic|shard.'); else o?.sendEg?.('buy', { i }); return; }
         if (a === 'surplus') { o?.sendEg?.('surplus', { use: b === 'reroll' ? 1 : 0 }); return; }
-        if (a === 'ping') { const at = standing(); if (at) { const spec = egHallOf(E.seed, E.h, E.geo ?? 0); o?.sendEg?.(witness ? 'ping' : 'lping', { x: Math.round(egLocalX(spec, at.sx) * 100) / 100, z: Math.round(at.z * 100) / 100, w: { danger: 1, mine: 2, cache: 2 }[b] ?? 0 }); } return; }
+        if (a === 'ping') { const at = pingPlace(E); if (at) o?.sendEg?.(witness ? 'ping' : 'lping', { x: Math.round(at.x * 100) / 100, z: Math.round(at.z * 100) / 100, w: { danger: 1, mine: 2, cache: 2 }[b] ?? 0 }); return; }   // EG-ZE: a witness pings where the member it watches stands
         if (a === 'watch') { if (witness) { witness.idx++; witness.watched = null; } return; }
         if (a === 'forsake') {
           if (!witness) { say('Only the fallen may forsake the breach.'); return; }
@@ -914,7 +961,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       const under = !!L?.drawUnder(proj, view, eye, ts, fog);
       const drew = !!fight?.drawPass(proj, view, eye, seconds, fog);
       const over = !!L?.drawOver(proj, view, eye, ts, fog);
-      return under || drew || over;
+      const lit = !!L?.drawLights(proj, view, eye, ts, fog, lightsNow(), stillNow());   // EG-ZE: THE LIGHTS, added over the lines
+      return under || drew || over || lit;
     },
     /** EG-G2: THE SPIRE'S SKY (render/egSkyPass.js) in the host's sky slot - the band's void and the Spire's underside. */
     drawSky(proj, view, eye, seconds, fog, gain = 1) { return inSpire() ? !!lookCircle(link.state())?.drawSky(proj, view, seconds, fog, gain) : false; },
@@ -1055,8 +1103,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     },
     /** The arches' clearings (world/gateClearance.js gateClearSet's members). */
     archClears: () => arches?.clears?.() ?? NO_CLEARS,
-    /** My arch on the compass, and on the held map. */
-    archCompass: () => arches?.compass?.() ?? null,
+    /** My arch on the compass, and on the held map. EG-ZE (section 27.3): in the Spire the compass's gold slot is the door's
+     *  while it stands open (world/egLights.js egDoorCompass) - the arch stands in the open world alone. */
+    archCompass: () => (inSpire() ? egDoorCompass(link.state(), !!witness) : arches?.compass?.() ?? null),
     archMapMark: () => arches?.mapMark?.() ?? null,
     /** My arch for my foes frame (`ea`), and a stranger's heard on theirs. */
     archWord: (near) => arches?.word?.(near) ?? null,
