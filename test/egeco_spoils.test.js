@@ -124,4 +124,8 @@ test('EG-E THE PANOPLY IN THE SPOILS (section 19): a piece exactly when the Pano
   assert.equal(plain.gold, forced.gold);
   assert.deepEqual(plain.pieces.filter((x) => !x.item.aetheric).slice(0, 2).map((x) => x.item.name), forced.pieces.filter((x) => !x.item.aetheric).slice(0, 2).map((x) => x.item.name), 'the pieces before it as they were');
   assert.ok(EG_PANOPLY_IDS.includes(panoply[0].item.aetheric));
+  // WHICH piece is the spoils' own draw, taken every time: the forced pieces over many seeds are many pieces, never one
+  const which = new Set();
+  for (let k = 1; k <= 60; k++) for (const x of rollEgSpoils((k * 2654435761) >>> 0, 20, 3, { lord: 'hound', pity: [0] })[0].pieces) if (String(x.item.aetheric ?? '').startsWith('panoply-')) which.add(x.item.aetheric);
+  assert.ok(which.size >= 6, `the nine pieces by the draw (${[...which].join(', ')})`);
 });
