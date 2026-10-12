@@ -23,7 +23,7 @@ import { spoilsBase, magicOrBetter, SPOILS_SOURCE } from './gateSpoils.js';
 import { applyRarity, lastPass, socketPass, weaponSocketPass, techniquePass } from './lootRarity.js';
 import { bossGems } from './gems.js';
 import { bossCardRoll } from './bossCards.js';
-import * as aetheric from './aetheric.js';   // THE BATTLEMAGE'S PANOPLY's records (EG15) - read off the module, so a build before them rolls none
+import { mintPanoplyPiece } from './aetheric.js';   // EG15: THE BATTLEMAGE'S PANOPLY's nine records - which piece, one draw
 import { egLordArm } from './egLordArms.js';
 import { RANDOM_TREASURE_ICONS } from './loot.js';
 import { egSpoilsPasses, egPassSeed, egPanoplyHit, egLegendaryShare, EG_LORD_ARM_IN } from '../net/egPay.js';
@@ -77,8 +77,7 @@ function rollPass(seed, lv, w, pass, o) {
   for (let i = 0; i < more; i++) pieces.push(graded(spoilsBase(lv, rolls), magicOrBetter(rolls, SPOILS_SOURCE), rolls));
   // THE BATTLEMAGE'S PANOPLY: whether, by its own stream (or the service's pity); which, one draw always taken
   const which = rolls();
-  const mint = /** @type {any} */ (aetheric).mintPanoplyPiece;
-  if (typeof mint === 'function' && (o.forced || egPanoplyHit(o.seed0, w, pass))) { const p = mint(() => which); if (p) pieces.push({ item: p, tier: p.rarity }); }
+  if (o.forced || egPanoplyHit(o.seed0, w, pass)) { const p = mintPanoplyPiece(() => which); if (p) pieces.push({ item: p, tier: p.rarity }); }
   // THE LORD'S NAMED LEGENDARY: one draw always; its making's draws when it comes
   const named = rolls() * EG_LORD_ARM_IN < 1 && o.lord ? egLordArm(o.lord, lv, rolls) : null;
   if (named) pieces.push({ item: named, tier: named.rarity });

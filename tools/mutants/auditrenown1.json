@@ -459,11 +459,12 @@
   {
     "name": "AUDIT-RENOWN1-magery-of-the-layer",
     "file": "src/systems/passiveSpecials.js",
-    "old": "  const raw = Math.max(0, (entity.maxMagicka ?? 0) - renownMpOf(entity));",
+    "old": "  const raw = Math.max(0, (entity.maxMagicka ?? 0) - onlineMpOf(entity));",
     "new": "  const raw = entity.maxMagicka ?? 0;",
     "tests": [
       "test/auditrenown1.test.js"
-    ]
+    ],
+    "note": "EG15 (PIN MOVED): the magery's raw takes off every online term - Renown's and the folds' magicka (renownLayer.js onlineMpOf) - re-aimed by content."
   },
   {
     "name": "AUDIT-RENOWN1-zero-maximum-holds-one",

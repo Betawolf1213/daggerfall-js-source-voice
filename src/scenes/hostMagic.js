@@ -64,6 +64,7 @@ import { createSpellImpactSounds } from '../systems/spellImpactSound.js';   // I
 import { createMagicCandle } from './magicCandle.js';   // X11: the Light effect's candle
 import { CAPSULE_HEIGHT } from '../player/motor.js';   // PlayerController.height, the candle's y term
 import { setPlayerDoor } from '../systems/playerDoor.js';   // SET2: this host publishes itself as the scene a set's power reaches into
+import { tellPlayerCast } from '../systems/playerCasts.js';   // EG15: the player's own cast told (the Battlemage's Discipline), a leaf
 import { createHitEffects } from './hitEffects.js';   // AUDIT 26 F033: DaggerfallMissile's impact flash
 import { duelSpellOf } from '../combat/duelCombat.js';   // DUEL1: the harmful half of a spell, which alone may reach a duel opponent
 import { markPlayerHarm } from '../systems/harmMark.js';   // REVENANT-HARM: a foe's spell on the player leaves its mark (a death no blow names is its)
@@ -984,7 +985,7 @@ export function createPlayerMagic({
     const eye = lastAim ? lastAim.eye : p.eye;
     const dir = lastAim ? lastAim.dir : p.dir;
     // :2141 - readySpellDoesNotCostSpellPoints clears with the ready.
-    const done = (v) => { lastSpell = sp; onCastReadySpell?.(sp); readiedSpell = null; readiedFree = false; readiedCost = 0; return v; };   // :2136-2141 (lastSpell = readySpell, the raise, then the clear)
+    const done = (v) => { lastSpell = sp; onCastReadySpell?.(sp); if (v) tellPlayerCast(playerEntity, sp, cost); readiedSpell = null; readiedFree = false; readiedCost = 0; return v; };   // :2136-2141 (lastSpell = readySpell, the raise, then the clear); EG15: a cast that left the hands told with its cost, beside the raise - every host builds this one engine
     // ALLY-CAST: THE PARTY MATE UNDER THE CROSSHAIR takes a beneficial CasterOnly, ByTouch or SingleTargetAtRange
     // cast - the port's own targeting (systems/allyCast.js, a recorded departure): a CasterOnly Heal read off a
     // friend is a touch on them, not on me. The spell is spent as any cast is (the magicka went at the cast, the

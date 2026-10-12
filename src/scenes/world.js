@@ -1230,6 +1230,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // whatever record carries the ID 433 or 107 (AUDIT 58: the two are unrelated), or nothing
     else if (name === 'gear') audio.playOneShot(SD_HALL_SOUNDS.clunk, 1);   // SD9d: Gearward - the gear catching the blow (the Orrery's own clunk)
     else if (name === 'hour') audio.playOneShot(SD_HALL_SOUNDS.toll, 1);   // SD9d: The Hour Turns - the Hour's bell, turned back
+    else if (name === 'reprieve') audio.playOneShotId(SPELL_CAST_SOUND[4], 1);   // EG15: Battlemage's Reprieve - a Shield spell's own cast (its element, Magic)
   } });
   // A1: THE TEXTURE SEASON IS THE CALENDAR'S, NOT A URL PARAM.
   // Every production site in the reference reads the world clock -

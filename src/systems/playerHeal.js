@@ -5,7 +5,12 @@
 // it stands here, below both, and neither imports the other to reach it (an import cycle there would read the set
 // powers' registries before they stood). Pure but for the fraction it carries.
 //
-// Not a DFU member: the port's own powers. Ledger A (LOOT4, SERPENT-SET).
+// EG15 (2026-10-12, the Elite Gates arc): AND THE ONE MAGICKA A POWER RETURNS - the Legendary Arcane Conduit's
+// (systems/lootPowers.js lootStrike) and the Battlemage's Discipline's refund (systems/sigilSetPowers.js setStrike). It
+// lived in lootPowers.js, private, until the Battlemages' set needed it: moved here whole, byte for byte, by the heal's
+// own law.
+//
+// Not a DFU member: the port's own powers. Ledger A (LOOT4, SERPENT-SET, EG15).
 
 let _healOwed = 0;   // a heal's fraction, carried to the next heal
 /** Heal MY entity by `amount` - the fraction carried, never past its maximum, never a body. Answers what it healed. */
@@ -21,5 +26,15 @@ export function healMine(entity, amount) {
   return entity.health - before;
 }
 
-/** Tests only: no fraction carried. */
-export function _resetPlayerHealForTests() { _healOwed = 0; }
+let _manaOwed = 0;   // a return's fraction, carried to the next (EG15: moved from lootPowers.js with the function)
+/** Restore MY magicka, the fraction carried, never past its maximum. */
+export function gainMana(entity, amount) {
+  if (!entity || !(amount > 0) || !Number.isFinite(entity.magicka)) return;
+  const exact = amount + _manaOwed;
+  const whole = Math.floor(exact + 1e-9);
+  _manaOwed = exact - whole;
+  if (whole > 0) entity.magicka = Math.min(Number.isFinite(entity.maxMagicka) ? entity.maxMagicka : entity.magicka + whole, entity.magicka + whole);
+}
+
+/** Tests only: no fraction carried (EG15: the magicka's either). */
+export function _resetPlayerHealForTests() { _healOwed = 0; _manaOwed = 0; }

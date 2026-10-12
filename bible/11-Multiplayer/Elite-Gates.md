@@ -2304,6 +2304,10 @@ set's stage is its lowest worn piece's (`Sigil-Sets.md` section 2), levelled as 
 | 4 | **Battlemage's Discipline**: a spell cast arms your next weapon blow with its element; a weapon blow returns some of your last spell's cost | +20% -> +50% of the blow; 5% -> 15% of the cost |
 | 6 | **Battlemage's Reprieve**: a blow that takes you under 20% (never a killing blow) raises a shield that soaks part of your max health for 6 s, half of it shared with allies within 8 m; then it must recover | 15% -> 40%; recovers 240 -> 120 s |
 
+**EG15 record (2026-10-12):** the set is `panoply` (`systems/sigilSets.js`), its nine records `PANOPLY_SET_PIECES`
+(`systems/aetheric.js`, under `EG_PANOPLY_IDS`; `mintPanoplyPiece` picks the spoils' piece, `panoplyPieceById` the sink's),
+its powers and the Spire's recovery `systems/sigilSetPowers.js`'s; the whole record is `Sigil-Sets.md` section 6e.
+
 **No Gilded piece.** Mac, of the Hourlock: *"The most rare and gilded item in the entire game"*. GILDED1 made it the
 one, and the Spire's top drop is the Panoply.
 

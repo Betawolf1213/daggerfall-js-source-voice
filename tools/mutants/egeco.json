@@ -142,5 +142,32 @@
     "tests": [
       "test/egeco_spoils.test.js"
     ]
+  },
+  {
+    "name": "EGECO-the-panoply-off-the-spoils-stream",
+    "file": "src/systems/egSpoils.js",
+    "old": "  if (o.forced || egPanoplyHit(o.seed0, w, pass)) {",
+    "new": "  if (o.forced || which * 4 < 1) {",
+    "tests": [
+      "test/egeco_spoils.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-the-pity-ignored",
+    "file": "src/systems/egSpoils.js",
+    "old": "  if (o.forced || egPanoplyHit(o.seed0, w, pass)) {",
+    "new": "  if (egPanoplyHit(o.seed0, w, pass)) {",
+    "tests": [
+      "test/egeco_spoils.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-the-choice-only-on-a-hit",
+    "file": "src/systems/egSpoils.js",
+    "old": "  const which = rolls();\n",
+    "new": "  const which = 0.5;\n",
+    "tests": [
+      "test/egeco_spoils.test.js"
+    ]
   }
 ]

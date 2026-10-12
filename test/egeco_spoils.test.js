@@ -10,6 +10,7 @@ import { EG_LORDS } from '../src/net/egLaw.js';
 import { templateByIndex } from '../src/systems/itemTemplates.js';
 import { validLootItem } from '../src/systems/loot.js';
 import { seededRng } from '../src/systems/wind.js';
+import { egPanoplyHit, EG_PANOPLY_IDS } from '../src/net/egPay.js';
 import { rollEgSpoils, egSpoilsList, egSpoilsGold, egSpoilsDay, egSpoilsOf } from '../src/systems/egSpoils.js';
 
 const LORDS = Object.keys(EG_LORDS);
@@ -98,4 +99,29 @@ test('EG-E THE LORD\'S ARM AND CARD IN THE SPOILS (section 19): the named Legend
   }
   assert.deepEqual(egSpoilsOf(egSpoilsDay('0123456789abcdef', 12)), { b: '0123456789abcdef', w: 12 });
   assert.equal(egSpoilsOf('sd:12'), null, 'never an Hour\'s');
+});
+
+test('EG-E THE PANOPLY IN THE SPOILS (section 19): a piece exactly when the Panoply\'s own draw says so (net/egPay.js egPanoplyHit - the stream the account service reads its pity by) or the service forced the pass; its choice one draw always taken, so a forced piece moves nothing before it; never at a Rehearsal\'s pay (mutants: the hit read off the spoils\' stream; the pity ignored; the choice\'s draw taken only on a hit)', () => {
+  let agreed = 0;
+  for (let s = 1; s <= 400; s++) {
+    const seed = (s * 40503 + 17) >>> 0;
+    for (const w of [1, 5, 16]) {
+      const passes = rollEgSpoils(seed, 20, w, { lord: 'hound' });
+      passes.forEach((p, k) => {
+        const has = p.pieces.some((x) => typeof x.item.aetheric === 'string' && x.item.aetheric.startsWith('panoply-'));
+        assert.equal(has, egPanoplyHit(seed, w, k), `seed ${seed} Redoubt ${w} pass ${k}`);
+        agreed++;
+      });
+    }
+  }
+  assert.ok(agreed > 1000);
+  // the pity: a pass with no piece by its draw is given one, and nothing before the piece moves
+  let seed = 1;
+  while (egPanoplyHit(seed, 3, 0)) seed++;
+  const plain = rollEgSpoils(seed, 20, 3, { lord: 'hound' })[0], forced = rollEgSpoils(seed, 20, 3, { lord: 'hound', pity: [0] })[0];
+  const panoply = forced.pieces.filter((x) => String(x.item.aetheric ?? '').startsWith('panoply-'));
+  assert.equal(panoply.length, 1, 'the pity\'s piece');
+  assert.equal(plain.gold, forced.gold);
+  assert.deepEqual(plain.pieces.filter((x) => !x.item.aetheric).slice(0, 2).map((x) => x.item.name), forced.pieces.filter((x) => !x.item.aetheric).slice(0, 2).map((x) => x.item.name), 'the pieces before it as they were');
+  assert.ok(EG_PANOPLY_IDS.includes(panoply[0].item.aetheric));
 });

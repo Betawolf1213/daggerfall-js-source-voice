@@ -522,12 +522,13 @@
   {
     "name": "AUDIT625-P1-shed-deaf",
     "file": "src/systems/sigilSetPowers.js",
-    "old": "  if (!v || !(max > 0) || !(after > 0) || saved) return;",
-    "new": "  if (!v || !(max > 0) || !(after > 0)) return;",
+    "old": "  const v = tierOf(entity, 'coilscale', 2);\n  const max = entity?.maxHealth;\n  if (!v || !(max > 0) || !(after > 0) || saved) return;",
+    "new": "  const v = tierOf(entity, 'coilscale', 2);\n  const max = entity?.maxHealth;\n  if (!v || !(max > 0) || !(after > 0)) return;",
     "why": "Shed Skin heals on top of a death save",
     "tests": [
       "test/audit625_serpent.test.js"
-    ]
+    ],
+    "note": "EG15 (PIN MOVED): the Battlemage's Reprieve carries the same guard - anchored on Shed Skin's own tier, re-aimed by content."
   },
   {
     "name": "AUDIT625-P2-the-bout-unread",

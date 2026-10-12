@@ -269,6 +269,40 @@ Greaves of the Unmade Stride, Boots of the Unmoored Step, The Gear-Face (Round S
 The Hour Turns heals through the one heal a power gives (`systems/playerHeal.js`). The HUD's chip shows its recovery.
 Their sounds are the Orrery hall's (`scenes/sdHall.js`): Gearward the hall's gear, The Hour Turns its low bell.
 
+## 6e. The Spire's own set (EG15, 2026-10-12)
+
+`Elite-Gates.md` section 19: one more Aetheric set, **The Battlemage's Panoply** - the war-gear the Imperial Battlemages
+wore in the Spire, taken by the Kyn - and its patron no Daedra: the Imperial Battlemages themselves. Nine fixed records of
+Mithril, light enough for a spellsword - the seven body pieces, a kite shield and a ONE-HANDED Saber, so all nine are worn
+at once - every affix at the Legendary band's TOP and the Spire-Saber's blow the sigil's greatest (12): the Spire's top
+drop pays what the Warden and the Brass do (the design's "No Gilded piece"). No resistance on any piece: Battlemage's
+Bearing raises every one, so the set alone stands at +15 an element at most, far under the saving throw's immunity (AUDIT
+FINAL's lesson). Each record's id is the pay law's (`net/egPay.js` `EG_PANOPLY_IDS`, `panoply-<key>`), the one the
+account service's weekly sink sells by. It rolls no drop of its own: a Redoubt's spoils decide WHETHER (`systems/egSpoils.js`
+`rollEgSpoils` - the pay law's draw and the service's pity) and `mintPanoplyPiece` picks WHICH, off one draw; the sink
+mints by id (`panoplyPieceById`). No world drop, shelf or day's stock rolls one: her day's stock stays the four sets of the
+world and the Regalia (`systems/aetheric.js` `PANOPLY_SET_PIECES`).
+
+The Battlemage's Warhelm, the Battlemage's Right and Left Pauldrons, The Battlemage's Cuirass, The Battlemage's
+Gauntlets, The Battlemage's Greaves, The Battlemage's Boots, The Spire-Shield (Kite Shield), The Spire-Saber (Saber).
+
+| pieces | ability | Faint -> Ascendant |
+|---|---|---|
+| 2 | **Battlemage's Bearing** - every resistance, and your maximum magicka (a fold channel of its own, `magicka`, read by the live maximum beside Renown's term: never kept by a save, never under the magery's third) | +5 -> +15 each; +10 -> +30 magicka |
+| 4 | **Battlemage's Discipline** - a spell you cast arms your next weapon blow with its element (that blow alone, never a fist's; a foe that resists the element takes half, an immune foe none, and the arm is spent all the same); each weapon blow that lands, a bow's too, returns a share of your last spell's cost as magicka | +20% -> +50% of the blow; 5% -> 15% of the cost |
+| 6 | **Battlemage's Reprieve** - a foe's blow that takes you under 20% (from at or over it, still standing - never a killing blow, a saved one, a fall or a spell) raises a shield of a share of your maximum health for 6 s, spent point for point on whatever comes, and shields your allies within 8 m for half of it; then it must recover | 15% -> 40%; recovers 240 -> 120 s |
+
+The cast is told by a seam of its own (`systems/playerCasts.js`, at the one cast engine's release - `scenes/hostMagic.js`
+`done()`), and the return comes through the one magicka a power gives (`systems/playerHeal.js` `gainMana`, moved there from
+`systems/lootPowers.js` whole). The allies' half is no reach of the set's: a player's vitals are their own client's
+(ALLY-CAST), so the host's door (`setSetPowersAllies`) casts a Shield at each ally and their client lands it as its own
+pool. 6 s is no whole number of magic rounds (a round is 5 s of the shared clock online), so an ally's Shield is rounded up
+to whole rounds and given one more, as Eventide's is: three rounds, at least the 6 s the card says (10 to 15). Its points
+ride the cast frame's byte (255 at most). **The Spire's recovery** (`Elite-Gates.md` section 15): in an Elite Breach the
+Reprieve, Unbroken, The Hour Turns and Shed Skin are no timers - spent there, each is held to the next Redoubt taken, and
+its chip reads *Redoubt*; out of that breach its own timer governs again. The HUD's chip shows the Reprieve's shield (its
+points) while it holds, then its recovery; its sound is a Shield spell's own cast.
+
 ## 7. The Sigil Broker - Sigil Stones buy the day's stock (SET7)
 
 A Daedra trader (the game has no Dremora sprite; a Daedra Seducer stands in) is held at each breach's faithful's
@@ -379,6 +413,7 @@ price and their week (`ui/brokerWindow.js`).
 | AUDIT SET | the whole arc, audited: four lanes, every finding fixed or said here | - |
 | SS1, SS2 | the Sigil Stone stacks and is bound; the Broker's prices doubled | a pack's stones fold on load, and the Broker reads the stacks |
 | SS3 | a bound stone is never dropped; the portal where he fell is pressed | the pack says why; the press is the bridge's own |
+| EG15 | the Spire's own set, the Battlemage's Panoply (6e), and the Spire's recovery for every death save | its records and powers stand alone; a Redoubt's spoils and the Broker's weekly sink pay it (`Elite-Gates.md` EG14) |
 
 ## 10. What shipped, slice by slice
 
@@ -971,3 +1006,36 @@ never answered the fight its set drops in; now a body's own blow (never the Hour
 (`setBossStruck`, taken as the door opens, a blow's window old at most) and Gearward alone reads it (section 8). And a
 blow too small to lighten by a whole point no longer spends the winding. Pinned: `test/sd10b_audit.test.js`; `tools/mutants/sd10b.json` (its C7 and
 C8 records, all dead); `tools/mutants/sd9d.json`'s Gearward records re-aimed by content.
+
+### EG15 - the Spire's own set (2026-10-12)
+
+Section 6e, whole but for the roll and the sink that pay it (`Elite-Gates.md` section 19: the spoils and the Broker's
+weekly sink are EG-E's other slices) and the host lines that open its two doors. The law (`systems/sigilSets.js`
+`panoply` and its `REPRIEVE_*` constants; `systems/sigil.js` names it after the Brass's), its three powers
+(`systems/sigilSetPowers.js` - the fold for Bearing, over `systems/entityMods.js`'s new `magicka` channel, which
+`systems/chargen.js` `defineLiveMaxMagicka` reads beside Renown's and `systems/renownLayer.js` `onlineMpOf` takes off for a
+save and the magery; the cast listener and the blow for Discipline's arm, the strike for its return; the hurt listener,
+the damage modifier and the allies' door for the Reprieve; the round's "ready again"; its chip; the states), the Spire's
+recovery for every death save the file holds (`setSpireRecovery`, `spireRedoubtTaken`), the nine records
+(`systems/aetheric.js` `PANOPLY_SET_PIECES`, `mintPanoplyPiece`, `panoplyPieceById`; `AETHERIC_RECORDS` ends with them),
+the cast seam (`systems/playerCasts.js`, told by `scenes/hostMagic.js`) and the voice (`scenes/world.js`: a Shield
+spell's cast). The wire's check is the raid sets' (AUDIT SETS L6), and the account service's judge holds an honest piece
+to no finding and a forged one (an affix past its record, another template, set, make or blow) to one.
+
+THE FOUR HOSTS. The cast is told by the one engine every host builds (`scenes/hostMagic.js` `createPlayerMagic`:
+`scenes/world.js`'s - whose instance `scenes/worldModes.js`'s interiors take - `scenes/exterior.js`'s and
+`scenes/dungeonContext.js`'s), so every host's casts arm the Discipline. The two doors are `scenes/world.js`'s, the
+streaming page that keeps the party and the Spire, and FLAGGED here until EG-E's host wiring registers them:
+`setSetPowersAllies` (the party mates within 8 m, cast at through `castAtAllyDoor`) and `setSpireRecovery` (the breach the
+player stands in, `modes.egHallBreach()`), with `spireRedoubtTaken` called as the room says a Redoubt was taken
+(`scenes/egClient.js`). Unopened, the Reprieve shields its wearer alone and every death save keeps its timer.
+`scenes/exterior.js`, the offline town page, wires neither - the sets are online gear. FLAGGED too: section 15 names
+Divine Grace and the Ghost-King's Vigil (`systems/lootPowers.js`) among the saves the Spire holds; they are the loot's, not
+this slice's, and still recover on their timers.
+
+Pinned: `test/eg15_panoply.test.js` (15); `tools/mutants/eg15.json` (91, all dead). The older pins it moved: SET1's,
+SD9d's and SERPENT-SET's set lists and records, SET3's states and voice, SERPENT-SET's heal imports, and the cast
+engine's release tail (FIX-F's, AUDIT 36's and QG1's: the tell sits after the raise, before the clear); their records
+re-aimed by content (SET1's order, SD9d's three, SERPENT-SET's four, SET3's three, AUDIT 625's Shed Skin guard, RENOWN1's
+save and AUDIT RENOWN1's magery), every one dead. The records' import of the pay law brings `net/egPay.js` into the
+account Worker's bundle, so the account deploy's path filter names it (ACC4).
