@@ -37,6 +37,7 @@
 // fragment, on every machine. Pure. Not a DFU member. Ledger A (ELITE-GATES).
 import { shDisc, shLane, egWindupFloorMs, egWidthOk, egInShape } from './egShape.js';
 import { EG_MOON_EVERY_S, EG_DRUM_MPS, EG_SPAN_RUN_MPS, EG_SLAG_TELL_S, EG_SLAG_MOLTEN_S, EG_SLAG_CRUST_S, EG_SLAG_CYCLE_S, EG_SLAG_SPOUTS } from './egSpanLaw.js';
+import { EG_PEND_REACH, EG_PEND_HALF, EG_SINK_GONE_M } from './egSpanLaw.js';   // EG6c: an inner piece's travel (egFragSwept)
 
 /** The fragment record's version (a change to a fragment's law is a relay version - section 11.5). */
 export const EG_FRAG_V = 1;
@@ -538,4 +539,241 @@ export function egHazardLawful(hz) {
     }
   }
   return { ok: why.length === 0, why };
+}
+
+// ── EG6c: A BAKED FRAGMENT'S RECORD (section 11.5), READ ─────────────────────────────────────────────────────────────
+// EG6c (2026-10-12, sections 10.5, 11.5 and 11.6 - "Authored hero fragments ... modelled in Blender"): the record an
+// AUTHORED fragment's bake writes (tools/fragBake.mjs - the named markers of Mac's scene baked to the law half), and the
+// reader every holder of one keeps it to: the bake before it writes, the registry at its import (net/egHeroFrags.js), the
+// laying when one is laid. Section 11.5's record in whole centimetres and milliseconds, in the fragment's own frame - the
+// foot of its mouth at the origin, its exits toward +Z, y up:
+//   { v, id, kit, band, class, variant, play, sockets: { in: { x, y, z, yaw, w, h }, out: [...] }, floors: [{ y, poly,
+//     fight }], ramps: [{ poly, y0, y1 }] (a slope's corners each `[x, y, z]`, at its own height), open: [[floor, edge]],
+//     ceil: [{ y, poly }] or null (open to the sky), graph: { nodes: [[x, y, z, r]], edges: [[a, b]] }, anchors: { rift,
+//     caster, lurker, niche, engine, hazard } (each `[[x, y, z], ...]`), hazards: [{ kind, x, y, z, w, r, ring, period,
+//     phase, sh, spots, lanes, path }] (the spec's own fields, in the shape its kind is said in - EG_HAZARD_SHAPES; the
+//     wind-up, the share and the element are the kind's law, EG_HAZARDS, never copied into a record that could disagree),
+//     course: [{ kind, x, y, z, w, d, amp, period, phase, beat, gap, after }] (the Steps' records), alcoves: [{ x, y, z,
+//     seal, side, holds }], proof: { crossFast, crossSlow, moves }, cost: { tris, collider, lights, draws }, reverb,
+//     lights: [[x, y, z, kind]], box: [x0, y0, z0, x1, y1, z1] }
+// THE CEILING CLAMP (sections 10.5, 11.7 and 11.8): a floor stands wholly under a ceiling or wholly open to the sky (the
+// clamp extrudes each floor to ONE ceiling), that ceiling at least its class's EG_FRAG_HEADROOM_CM over it; a ramp keeps a
+// passage's headroom; and the ceiling over every inner piece keeps THE FAST BUILD's flight from it clear (4.5 m - its
+// 2.68 m apex and the capsule's 1.8 m, section 11.8), so the clamp never cuts a proven flight short.
+// VOLUMES STAND APART (section 11.5): `box` holds every drawn vertex, every marker and every inner piece's travel - the
+// reader refuses a record whose law stands outside it - so a laying that keeps boxes EG_FRAG_APART_CM apart (egFragApart)
+// keeps the whole fragment apart. Its mouth is the box's -Z face and its exits its +Z face: the course meets it there.
+// Integer-exact, no transcendental (test/eg6c_law.test.js sweeps this section).
+
+/** Section 11.5: a fragment's box plus this (cm) is disjoint from every other volume of its hall. */
+export const EG_FRAG_APART_CM = 200;
+/** Section 11.8: the headroom (cm) a class keeps over its floors - a passage 3.5 m, a chamber 6 m, a shaft a passage's -
+ *  and over an inner course (`course`) the fast build's apex and the capsule, 4.5 m. */
+export const EG_FRAG_HEADROOM_CM = Object.freeze({ passage: 350, chamber: 600, shaft: 350, course: 450 });
+/** How far (cm) a socket may stand off its face of the box. */
+export const EG_FRAG_SOCKET_TOL_CM = 10;
+/** A graph node stands on a floor within this (cm) of its height. */
+export const EG_FRAG_NODE_ON_CM = 50;
+/** Section 11.9's starting bounds for one fragment: drawn triangles, collider triangles, lights, draws. */
+export const EG_FRAG_BUDGET = Object.freeze({ tris: 12000, collider: 3000, lights: 4, draws: 12 });
+/** The legion's places a fragment names (section 11.5's `anchors`), its lights' kinds (world/egHall.js egCircleLights: the
+ *  kit's own colour, the lava's, the moon's) and its alcoves' seals (section 11.10: a false wall, an optional hard jump). */
+export const EG_FRAG_ANCHORS = Object.freeze(['rift', 'caster', 'lurker', 'niche', 'engine', 'hazard']);
+export const EG_FRAG_LIGHTS = Object.freeze(['band', 'lava', 'moon']);
+export const EG_FRAG_SEALS = Object.freeze(['seam', 'jump']);
+/** The shape each hazard kind is said in (the generator's own: a fire fall's, a surge's and a spill's lane `sh`; the
+ *  basalt's, the hammers' and the Forge Line's `spots`; the cascade's `lanes`; a wisp's `path`; the mist's line alone; the
+ *  tide's disc and the Eclipse's `ring` about their `x, z`). */
+export const EG_HAZARD_SHAPES = Object.freeze({ fall: 'sh', surge: 'sh', slag: 'sh', basalt: 'spots', hammer: 'spots', hammerline: 'spots', cascade: 'lanes', wisp: 'path', mist: 'level', tide: 'disc', eclipse: 'ring' });
+
+/** Twice polygon `poly`'s signed area ([[x, z], ...] - positive when it winds counter-clockwise, x right and z up). */
+export function egFragArea2(poly) {
+  let a = 0;
+  for (let i = 0; i < poly.length; i++) { const p = poly[i], q = poly[(i + 1) % poly.length]; a += p[0] * q[1] - q[0] * p[1]; }
+  return a;
+}
+/** Does polygon `poly` ([[x, z], ...]) hold (x, z) - its edges and corners its own? */
+export function egFragInPoly(poly, x, z) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const ax = poly[j][0], az = poly[j][1], bx = poly[i][0], bz = poly[i][1];
+    if ((bx - ax) * (z - az) - (bz - az) * (x - ax) === 0 && x >= Math.min(ax, bx) && x <= Math.max(ax, bx) && z >= Math.min(az, bz) && z <= Math.max(az, bz)) return true;
+    if ((az > z) !== (bz > z) && x < ax + ((bx - ax) * (z - az)) / (bz - az)) inside = !inside;
+  }
+  return inside;
+}
+/** THE CEILING OVER (x, z) above a height `y`: the lowest of the record's ceilings over it standing higher, or null - open
+ *  to the sky (the motor's arena ring's `ceilAbove`, section 11.7). */
+export function egFragCeilAt(rec, x, z, y) {
+  let best = null;
+  for (const c of rec.ceil ?? []) if (c.y > y && (best === null || c.y < best) && egFragInPoly(c.poly, x, z)) best = c.y;
+  return best;
+}
+/** VOLUMES STAND APART (section 11.5): are boxes `a` and `b` ([x0, y0, z0, x1, y1, z1], cm) at least `margin` apart? */
+export const egFragApart = (a, b, margin = EG_FRAG_APART_CM) =>
+  a[3] + margin <= b[0] || b[3] + margin <= a[0] || a[4] + margin <= b[1] || b[4] + margin <= a[1] || a[5] + margin <= b[2] || b[5] + margin <= a[2];
+/** A record's box laid with its origin at (x, y, z) (cm). */
+export const egFragBoxAt = (rec, x, y, z) => [rec.box[0] + x, rec.box[1] + y, rec.box[2] + z, rec.box[3] + x, rec.box[4] + y, rec.box[5] + z];
+/** An inner piece's swept box (cm): its top over its travel - a Drift's and a spill's across, a Rail's and a Drum's along,
+ *  a Pendulum's weight over the gap before it, a Sink's fall. */
+export function egFragSwept(c) {
+  const ax = c.kind === 'drift' || c.kind === 'slag' ? c.amp : c.kind === 'pend' ? Math.round((EG_PEND_REACH + EG_PEND_HALF) * 100) : 0;
+  const az = c.kind === 'rail' || c.kind === 'drum' ? c.amp : 0;
+  return [c.x - c.w / 2 - ax, c.y - (c.kind === 'sink' ? EG_SINK_GONE_M * 100 : 0), c.z - c.d / 2 - az - (c.kind === 'pend' ? c.gap : 0), c.x + c.w / 2 + ax, c.y, c.z + c.d / 2 + az];
+}
+/** A hazard's extent in plan (cm, `[x0, z0, x1, z1]`), or null for the mist's line. */
+export function egFragHazardPlan(h) {
+  const box = [Infinity, Infinity, -Infinity, -Infinity];
+  const take = (x, z, r) => { box[0] = Math.min(box[0], x - r); box[1] = Math.min(box[1], z - r); box[2] = Math.max(box[2], x + r); box[3] = Math.max(box[3], z + r); };
+  if (h.sh) { take(h.sh[0], h.sh[1], h.w / 2); take(h.sh[2], h.sh[3], h.w / 2); }
+  for (const s of h.spots ?? []) take(s[0], s[1], h.r);
+  for (const q of h.lanes ?? []) { take(q[0], q[1], h.w / 2); take(q[2], q[3], h.w / 2); }
+  if (h.path) { take(h.path[0] - h.path[2], h.path[1] - h.path[3], 0); take(h.path[0] + h.path[2], h.path[1] + h.path[3], 0); }
+  if (h.kind === 'tide') take(h.x, h.z, h.r);
+  if (h.kind === 'eclipse') take(h.x, h.z, h.ring + EG_HAZARDS.eclipse.r * 100);
+  return box[0] === Infinity ? null : box;
+}
+/** A record's inner course as a hall spec's steps (metres and seconds - net/egLaw.js's own conversion: a Moon's `beat` the
+ *  beams' origin along the hall), laid with the fragment's origin at (x0, y0, z0) (m); the solver's input (section 10.5). */
+export function egFragSteps(rec, x0 = 0, y0 = 0, z0 = 0) {
+  return (rec.course ?? []).map((c, i) => ({ i, kind: c.kind, span: 0, x: x0 + c.x / 100, y: y0 + c.y / 100, z: z0 + c.z / 100, w: c.w / 100, d: c.d / 100, amp: c.amp / 100, period: c.period / 1000, phase: c.phase / 1000,
+    beat: c.kind === 'moon' ? z0 + c.beat / 100 : c.beat / 1000, gap: c.gap / 100, road: 0, kit: rec.kit, after: c.after / 100 }));
+}
+/** A record's hazards as a hall spec's (metres and seconds, net/egLaw.js's fields), laid with the fragment's origin at
+ *  (x0, y0, z0) (m): what egHazardParts and egHazardLawful read. */
+export function egFragHazards(rec, x0 = 0, y0 = 0, z0 = 0) {
+  const at = (p) => [x0 + p[0] / 100, z0 + p[1] / 100];
+  return (rec.hazards ?? []).map((h, i) => ({ kind: h.kind, i, x: x0 + h.x / 100, z: z0 + h.z / 100, y: y0 + h.y / 100, period: h.period / 1000, phase: h.phase / 1000, w: h.w / 100, r: h.r / 100, ring: h.ring / 100,
+    sh: h.sh ? [...at([h.sh[0], h.sh[1]]), ...at([h.sh[2], h.sh[3]])] : null, spots: h.spots ? h.spots.map(at) : null,
+    lanes: h.lanes ? h.lanes.map((q) => [...at([q[0], q[1]]), ...at([q[2], q[3]])]) : null, path: h.path ? [...at([h.path[0], h.path[1]]), h.path[2] / 100, h.path[3] / 100] : null }));
+}
+
+/**
+ * THE READER: what is wrong with fragment record `rec` (section 11.5), in words - none when it is sound. Every number
+ * whole; its kit's band, class and reverb; a chamber's play; its sockets on the faces of its box; its floors, ramps and
+ * open edges; THE CEILING CLAMP; its walk graph on its ground; its anchors, hazards (each said in its kind's shape, and
+ * lawful - THE WIDTH RULE and THE WIND-UP FLOOR, egHazardLawful), course, alcoves and lights; everything inside its box
+ * (VOLUMES STAND APART); its cost inside the budget; its proof. Pure.
+ * @param {any} rec @returns {string[]}
+ */
+export function egFragRecordFault(rec) {
+  if (!rec || rec.v !== EG_FRAG_V) return [`not a fragment record of version ${EG_FRAG_V}`];
+  /** @type {string[]} */
+  const why = [];
+  const whole = (v, at) => {
+    if (typeof v === 'number') { if (!Number.isInteger(v)) why.push(`${at}: ${v} is not whole`); } else if (Array.isArray(v)) v.forEach((x, i) => whole(x, `${at}[${i}]`));
+    else if (v && typeof v === 'object') for (const [k, x] of Object.entries(v)) whole(x, `${at}.${k}`);
+  };
+  whole(rec, 'record');
+  const F = EG_FRAGS[rec.kit];
+  if (!F) why.push(`kit ${rec.kit}: no such fragment`);
+  else {
+    if (rec.band !== F.band) why.push(`band ${rec.band}: ${rec.kit} is band ${F.band}'s`);
+    if (!F.classes.includes(rec.class)) why.push(`class ${rec.class}: ${rec.kit} is ${F.classes.join(', ')}`);
+    if (rec.reverb !== F.reverb) why.push(`reverb ${rec.reverb}: ${rec.kit}'s is ${F.reverb}`);
+  }
+  if (!Array.isArray(rec.play) || rec.play.some((p) => !EG_PLAYS.includes(p))) why.push(`play ${JSON.stringify(rec.play)}: not among ${EG_PLAYS.join(', ')}`);
+  else if (rec.class === 'chamber' && !rec.play.length) why.push('a chamber names its play (section 11.4 - never a disc with walls)');
+  const B = rec.box;
+  if (!Array.isArray(B) || B.length !== 6 || !(B[0] < B[3] && B[1] < B[4] && B[2] < B[5])) return [...why, 'box: not a volume'];
+  const holds = (x, y, z, at) => { if (x < B[0] || x > B[3] || y < B[1] || y > B[4] || z < B[2] || z > B[5]) why.push(`${at} stands outside the fragment's box`); };
+  // ── the sockets: the mouth at the origin on the box's -Z face, each exit on its +Z face
+  const S = rec.sockets ?? {};
+  if (!S.in || S.in.x !== 0 || S.in.y !== 0 || S.in.z !== 0 || S.in.yaw !== 180) why.push('sockets.in: the mouth stands at the origin facing -Z');
+  if (B[2] < -EG_FRAG_SOCKET_TOL_CM) why.push(`the mouth is not the box's -Z face (the box runs ${-B[2]} cm behind it)`);
+  if (!Array.isArray(S.out) || !S.out.length) why.push('sockets.out: no exit');
+  for (const [k, o] of (S.out ?? []).entries()) {
+    if (o.yaw !== 0) why.push(`sockets.out[${k}]: an exit faces +Z`);
+    if (Math.abs(o.z - B[5]) > EG_FRAG_SOCKET_TOL_CM) why.push(`sockets.out[${k}]: not on the box's +Z face (${B[5] - o.z} cm short of it)`);
+  }
+  for (const [k, o] of [['in', S.in], ...(S.out ?? []).map((o, i) => [`out[${i}]`, o])]) {
+    if (!o) continue;
+    if (!(o.w > 0) || !(o.h >= EG_FRAG_HEADROOM_CM.passage)) why.push(`sockets.${k}: ${o.w} by ${o.h} cm - an opening at least ${EG_FRAG_HEADROOM_CM.passage} cm high (no fragment asks for a crouch)`);
+    holds(o.x - o.w / 2, o.y, o.z, `sockets.${k}`); holds(o.x + o.w / 2, o.y + o.h, o.z, `sockets.${k}`);
+  }
+  // ── the floors, the ramps, the open edges
+  const floors = rec.floors ?? [], ramps = rec.ramps ?? [];
+  if (!floors.length) why.push('no floor');
+  if (rec.class === 'chamber' && !floors.some((f) => f.fight)) why.push('a chamber with no fight floor');
+  for (const [i, f] of floors.entries()) {
+    if (!(f.poly?.length >= 3) || !(egFragArea2(f.poly) > 0)) why.push(`floors[${i}]: not a counter-clockwise polygon`);
+    for (const p of f.poly ?? []) holds(p[0], f.y, p[1], `floors[${i}]`);
+  }
+  for (const [i, q] of ramps.entries()) {
+    if (!(q.poly?.length >= 3) || !(egFragArea2(q.poly.map((p) => [p[0], p[2]])) > 0)) why.push(`ramps[${i}]: not a counter-clockwise polygon`);
+    else if (!(q.y1 > q.y0) || Math.min(...q.poly.map((p) => p[1])) !== q.y0 || Math.max(...q.poly.map((p) => p[1])) !== q.y1) why.push(`ramps[${i}]: rises from ${q.y0} to ${q.y1} over corners that say otherwise`);
+    for (const p of q.poly ?? []) holds(p[0], p[1], p[2], `ramps[${i}]`);
+  }
+  for (const [i, oe] of (rec.open ?? []).entries()) if (!floors[oe[0]] || !(oe[1] >= 0 && oe[1] < floors[oe[0]].poly.length)) why.push(`open[${i}]: floor ${oe[0]} has no edge ${oe[1]}`);
+  // ── THE CEILING CLAMP
+  for (const c of rec.ceil ?? []) { if (!(c.poly?.length >= 3) || !(egFragArea2(c.poly) > 0)) why.push('a ceiling is not a counter-clockwise polygon'); for (const p of c.poly ?? []) holds(p[0], c.y, p[1], 'a ceiling'); }
+  const room = EG_FRAG_HEADROOM_CM[rec.class] ?? EG_FRAG_HEADROOM_CM.passage;
+  for (const [i, f] of floors.entries()) {
+    const n = f.poly?.length ?? 0, pts = [];
+    for (let k = 0; k < n; k++) { const p = f.poly[k], q = f.poly[(k + 1) % n]; pts.push(p, [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]); }
+    const over = pts.map((p) => egFragCeilAt(rec, p[0], p[1], f.y)), under = over.filter((c) => c !== null);
+    if (under.length && under.length < over.length) why.push(`floors[${i}] stands half under a ceiling - a floor is clamped to one ceiling or open to the sky`);
+    else if (under.length && Math.min(...under) - f.y < room) why.push(`floors[${i}]: ${Math.min(...under) - f.y} cm of headroom where a ${rec.class} keeps ${room}`);
+  }
+  for (const [i, q] of ramps.entries()) for (const p of q.poly ?? []) {
+    const c = egFragCeilAt(rec, p[0], p[2], p[1]);
+    if (c !== null && c - p[1] < EG_FRAG_HEADROOM_CM.passage) { why.push(`ramps[${i}]: ${c - p[1]} cm of headroom at a corner, under ${EG_FRAG_HEADROOM_CM.passage}`); break; }
+  }
+  for (const [i, c] of (rec.course ?? []).entries()) {
+    const s = egFragSwept(c), low = [[s[0], s[2]], [s[3], s[2]], [s[3], s[5]], [s[0], s[5]], [c.x, c.z]].map((p) => egFragCeilAt(rec, p[0], p[1], c.y)).filter((y) => y !== null);
+    if (low.length && Math.min(...low) - c.y < EG_FRAG_HEADROOM_CM.course) why.push(`course[${i}] (${c.kind}): the ceiling ${Math.min(...low) - c.y} cm over its top - the clamp would cut a proven flight short (sections 10.5, 11.8)`);
+  }
+  // ── the walk graph: its nodes on the ground, its edges between them
+  const nodes = rec.graph?.nodes ?? [], edges = rec.graph?.edges ?? [];
+  for (const [i, nd] of nodes.entries()) {
+    const [x, y, z, r] = nd;
+    if (!(r > 0)) why.push(`graph.nodes[${i}]: no reach`);
+    const on = floors.some((f) => Math.abs(y - f.y) <= EG_FRAG_NODE_ON_CM && egFragInPoly(f.poly, x, z)) || ramps.some((q) => egFragInPoly(q.poly.map((p) => [p[0], p[2]]), x, z) && y >= q.y0 - EG_FRAG_NODE_ON_CM && y <= q.y1 + EG_FRAG_NODE_ON_CM);
+    if (!on) why.push(`graph.nodes[${i}] stands on no floor and no ramp - the legion walks the ground (section 11.7)`);
+    holds(x, y, z, `graph.nodes[${i}]`);
+  }
+  const seen = new Set();
+  for (const [i, e] of edges.entries()) {
+    if (!(e[0] < e[1]) || !nodes[e[0]] || !nodes[e[1]]) why.push(`graph.edges[${i}]: ${JSON.stringify(e)} is not two nodes, lowest first`);
+    else if (seen.has(`${e[0]}:${e[1]}`)) why.push(`graph.edges[${i}]: twice`);
+    seen.add(`${e[0]}:${e[1]}`);
+  }
+  // ── the legion's places, the hazards, the course, the alcoves, the lights
+  for (const [k, list] of Object.entries(rec.anchors ?? {})) {
+    if (!EG_FRAG_ANCHORS.includes(k)) why.push(`anchors.${k}: no such place`);
+    for (const p of list) holds(p[0], p[1], p[2], `anchors.${k}`);
+  }
+  const laid = egFragHazards(rec);
+  for (const [i, h] of (rec.hazards ?? []).entries()) {
+    const shape = EG_HAZARD_SHAPES[h.kind];
+    if (!shape) { why.push(`hazards[${i}]: no hazard ${h.kind}`); continue; }
+    const says = { sh: !!h.sh, spots: !!h.spots?.length, lanes: !!h.lanes?.length, path: !!h.path };
+    if (Object.entries(says).some(([k, v]) => v !== (k === shape)) || (shape === 'disc' && !(h.r > 0)) || (shape === 'ring' && !(h.ring > 0))) why.push(`hazards[${i}] (${h.kind}): not said as its ${shape}`);
+    const L = egHazardLawful(laid[i]);
+    if (!L.ok) why.push(`hazards[${i}]: ${L.why.join(', ')}`);
+    const plan = egFragHazardPlan(h);
+    if (plan) { holds(plan[0], h.y, plan[1], `hazards[${i}] (${h.kind})`); holds(plan[2], h.y, plan[3], `hazards[${i}] (${h.kind})`); } else holds(B[0], h.y, B[2], `hazards[${i}] (${h.kind})`);
+  }
+  let edge = -Infinity;
+  for (const [i, c] of (rec.course ?? []).entries()) {
+    if (!(c.w > 0 && c.d > 0) || !(c.gap >= 0) || !(c.after >= 0)) why.push(`course[${i}] (${c.kind}): its size, gap or ground after it`);
+    if (c.z - c.d / 2 < edge) why.push(`course[${i}] (${c.kind}): stands over the piece before it - the course runs along +Z`);
+    edge = c.z + c.d / 2;
+    const s = egFragSwept(c);
+    holds(s[0], s[1], s[2], `course[${i}] (${c.kind})`); holds(s[3], s[4], s[5], `course[${i}] (${c.kind})`);
+  }
+  for (const [i, a] of (rec.alcoves ?? []).entries()) {
+    if (!EG_FRAG_SEALS.includes(a.seal) || !EG_ALCOVE_HOLDS.includes(a.holds) || (a.side !== 1 && a.side !== -1)) why.push(`alcoves[${i}]: a ${a.seal} seal holding ${a.holds} on side ${a.side}`);
+    holds(a.x, a.y, a.z, `alcoves[${i}]`);
+  }
+  for (const [i, l] of (rec.lights ?? []).entries()) {
+    if (!EG_FRAG_LIGHTS.includes(l[3])) why.push(`lights[${i}]: no light ${l[3]}`);
+    holds(l[0], l[1], l[2], `lights[${i}]`);
+  }
+  // ── the cost (section 11.9) and the proof (section 10.5)
+  for (const [k, max] of Object.entries(EG_FRAG_BUDGET)) if (!(rec.cost?.[k] >= 0) || rec.cost[k] > max) why.push(`cost.${k}: ${rec.cost?.[k]} past the fragment's budget of ${max}`);
+  if (rec.cost && rec.cost.lights !== (rec.lights ?? []).length) why.push(`cost.lights: ${rec.cost.lights} where it carries ${(rec.lights ?? []).length}`);
+  const P = rec.proof;
+  if (!P || !(P.moves >= 0) || !(P.crossFast >= 0) || !(P.crossSlow >= P.crossFast) || (P.moves === 0) !== !(rec.course ?? []).length) why.push(`proof: ${JSON.stringify(P)} is not a crossing's bounds`);
+  return why;
 }

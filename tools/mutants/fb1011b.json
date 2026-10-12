@@ -110,7 +110,7 @@
   {
     "name": "HOMELINE-no-line",
     "file": "src/scenes/homeYards.js",
-    "old": "  if (points.some(([px, pz]) => yardGapTo(others, px, pz) < yardGapTo(own, px, pz))) return YARD_ON_OTHER;   // HOME-LINE",
+    "old": "  if (points.some(([px, pz]) => yardGapTo(lines, px, pz) < yardGapTo(own, px, pz))) return YARD_ON_OTHER;   // HOME-LINE; YARD-LINE: a lot's holder's",
     "new": "",
     "tests": [
       "test/fb1011b_homeline.test.js",
@@ -120,8 +120,8 @@
   {
     "name": "HOMELINE-a-tie-theirs",
     "file": "src/scenes/homeYards.js",
-    "old": "yardGapTo(others, px, pz) < yardGapTo(own, px, pz)",
-    "new": "yardGapTo(others, px, pz) <= yardGapTo(own, px, pz)",
+    "old": "yardGapTo(lines, px, pz) < yardGapTo(own, px, pz)",
+    "new": "yardGapTo(lines, px, pz) <= yardGapTo(own, px, pz)",
     "tests": [
       "test/fb1011b_homeline.test.js"
     ]

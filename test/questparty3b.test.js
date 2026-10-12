@@ -160,8 +160,8 @@ test('QUEST-PARTY 3b by source: the building pool\'s net and the party\'s law, i
   assert.match(wm, /applyOwnHit\(id, data\) \{ return mode === 'interior' && interiorFoes \? interiorFoes\.applyHit\(id, data\) : mode === 'dungeon'/);
   assert.match(w, /onPeerHit: \(hit, fate\) => hitSend\(\{ \.\.\.hit, own: 1 \}, fate\),/, 'a blow on a peer\'s foe in the building is marked own');
   assert.match(w, /toWire: \(feet\) => \[feet\[0\], feet\[1\] - state\.compensation\[1\], feet\[2\]\],\n\s*toScene: \(p\) => \[p\[0\], p\[1\] \+ state\.compensation\[1\], p\[2\]\],\n\s*\} : null\),/, 'the room\'s frame is the pose\'s');
-  assert.match(w, /foesQuestShare: \(\) => questShareSeam,/);
-  assert.match(w, /exteriorFoes\.setQuestShare\(questShareSeam\);/, 'one law for both pools');
+  assert.match(w, /foesQuestShare: \(\) => partyOnlyQuestShare\(questShareSeam\),/, 'PIN MOVED (QUEST-OWNER, 2026-10-12): the seam narrowed to the owner\'s party');
+  assert.match(w, /exteriorFoes\.setQuestShare\(partyOnlyQuestShare\(questShareSeam\)\);/, 'one law for both pools');
   assert.match(w, /const ownStream = \(now\) => \{\n\s*if \(!online \|\| online\.status !== 'open' \|\| !online\.ownOk \|\| !isWorldRoom\(online\.room\)\) return false;/, 'only through a relay that carries the lane');
   assert.match(w, /if \(!online\.sendOwnFoes\(frame\)\) \{ _ownFullAt = -Infinity; return false; \}/);
   assert.match(w, /online\.onOwnFoes = \(id, data\) => \{ modes\?\.applyOwnFoes\?\.\(id, data\); \};/);

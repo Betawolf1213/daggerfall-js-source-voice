@@ -9,7 +9,7 @@
 // A VOTE is one registered account's word on one online home (a guild's
 // hall among them): up (+1) or down (-1), changed or taken back (0) at
 // will, never more than one standing an account. A home's SCORE is its
-// votes summed; while it runs NEGATIVE the home is SHUNNED, and what its
+// votes summed; while it runs down to HOME_SHUN_AT (-5 - HOME-SHUN) the home is SHUNNED, and what its
 // owner chose to show stands for its insiders alone - every other player
 // walks into the room Daggerfall furnished (no placed piece but a hired
 // trader with goods on sale, nothing taken out - AUDIT HOME-VOTE B2, II
@@ -47,8 +47,13 @@ export const homeVoteOwnerOk = (o) => typeof o === 'string' && o.length > 0 && o
 export const homeScoreOf = (raw) => (Number.isSafeInteger(raw) ? raw : 0);
 /** An account's own vote on a home as the service answers it - -1, +1, or 0 for none. */
 export const homeMyVoteOf = (raw) => (raw === HOME_VOTE_DOWN || raw === HOME_VOTE_UP ? raw : 0);
-/** THE LAW: a home whose votes run negative is shunned. */
-export const homeShunned = (score) => homeScoreOf(score) < 0;
+/** HOME-SHUN (2026-10-12, from play: "-1 is a bit crazy since you START at 0 when you buy a house... hide placements
+ *  from everyone starting at like -5, -10"): THE SCORE AT WHICH A HOME IS SHUNNED - five votes down, net. One account's
+ *  down-vote on a new house nobody had seen yet hid it, and a hidden house is one nobody sees to vote up; a home now
+ *  hides only when the town's word against it outweighs it by five. */
+export const HOME_SHUN_AT = -5;
+/** THE LAW: a home whose votes run down to HOME_SHUN_AT is shunned. */
+export const homeShunned = (score) => homeScoreOf(score) <= HOME_SHUN_AT;
 
 /**
  * WHETHER A HOME'S DECOR STANDS FOR THE PLAYER LOOKING - its placed pieces inside and out, the furniture its owner took

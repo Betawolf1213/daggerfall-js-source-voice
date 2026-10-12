@@ -35,6 +35,9 @@
 //     - THE CROSSING: from the hall's first judged pose to the end plate, its time against egCrossMinMs and its blind
 //       share - the measure (egFairMeasure), which gates nothing until EG21. EG6a: the bound is the timed solver's
 //       fastest crossing at THE FAST BUILD less 15% (net/egSpanLaw.js egCrossMin), no longer the course's length.
+//     - EG-ZI (2026-10-12; section 10.6): THE FURTHEST FAIR POINT - the furthest along the road a held pose stood with no
+//       break since the last island (`far`), and when still ground was last first stood on so (`fnew`, groundAt's keys):
+//       the pull's toll counts the road still ahead of the one and is waived by the other (net/egBrain.js egTollOf).
 //   RIDDEN POSES (section 10.8). A pose on a moving piece (a Drift, a Rail, a Drum) carries `pl`: the piece's index and
 //     its offset from that piece's top at the sender's time (egRideOf); a receiver draws it at the piece's place on its
 //     own clock plus the offset, and the relay judges it on the piece's clock position at the pose's shared time
@@ -183,20 +186,34 @@ const yOn = (y, fy) => y <= fy + EG_SUPPORT_UP_M && y >= fy - EG_SUPPORT_DOWN_M;
  *  at `hw` (relay ms) and the shared time `tMs`? A fallen segment holds nobody. */
 const bandFallen = (spec, b, z, hw, tMs) => hw > 0 && ((b.role === 'walk' && z < egWallFallenZ(spec, hw, tMs)) || (b.role === 'tube' && !!spec.tube && z < egTubeEdge(spec.tube, tMs - hw)));
 /**
+ * EG-ZI (section 10.6): THE STILL GROUND under a body's feet at (x, y, z) at shared second `tS` - its key, or '' none: `a`
+ * the arrival plate, `e` the end plate, `d<i>` another disc (an island, a court, a balcony), `b<i>` a band (a passage's
+ * floor, a walkway, a bridge), `l<i>` a lane, `r<i>` a ramp (a stair, a slope). egSupportAt's first reads, in its order,
+ * so the toll's "new island, or a fragment's node" is the support law's own ground. Pure.
+ * @param {any} spec @param {number} x @param {number} y @param {number} z @param {number} tS @param {boolean} plan @param {number} hw
+ */
+function groundAt(spec, x, y, z, tS, plan, hw) {
+  const P = EG_SUPPORT_PAD + (plan ? EG_CLIMB_NEAR_M : 0), on = (fy) => plan || yOn(y, fy ?? 0);
+  const D = spec?.discs ?? [], Bd = spec?.bands ?? [], Ln = spec?.lanes ?? [], R = spec?.ramps ?? [];
+  for (let i = 0; i < D.length; i++) { const d = D[i]; if (Math.hypot(x - d.x, z - d.z) <= d.r + P && on(d.y)) return d.role === 'end' ? 'e' : d.role === 'arrive' ? 'a' : `d${i}`; }
+  for (let i = 0; i < Bd.length; i++) { const b = Bd[i]; if (z >= b.z0 - P && z <= b.z1 + P && Math.abs(x - b.x) <= b.halfW + P && on(b.y) && !bandFallen(spec, b, z, hw, tS * 1000)) return `b${i}`; }
+  for (let i = 0; i < Ln.length; i++) { const l = Ln[i]; if (segDist(x, z, l.ax, l.az, l.bx, l.bz) <= l.hw + P && on(l.y)) return `l${i}`; }
+  for (let i = 0; i < R.length; i++) {
+    const r = R[i], dx = r.bx - r.ax, dz = r.bz - r.az, L2 = dx * dx + dz * dz, u = L2 > 0 ? Math.max(0, Math.min(1, ((x - r.ax) * dx + (z - r.az) * dz) / L2)) : 0;
+    if (segDist(x, z, r.ax, r.az, r.bx, r.bz) <= r.hw + P && on(r.y0 + (r.y1 - r.y0) * u)) return `r${i}`;
+  }
+  return '';
+}
+/**
  * WHAT HOLDS a body's feet at (x, y, z) (the hall's frame) at shared second `tS` (EG_HOLD). `plan` - the floor's plan
  * alone, every height (a climb's hold). EG-ZB: `hw` the hall's wake (relay ms) - a Falling Wall's and the Collapsing Tube's
- * fallen segments hold nothing after it. Pure.
+ * fallen segments hold nothing after it. EG-ZI: still ground is groundAt's - the end plate still, the rest an island. Pure.
  * @param {any} spec @param {number} x @param {number} y @param {number} z @param {number} tS @param {boolean} [plan] @param {number} [hw]
  */
 export function egSupportAt(spec, x, y, z, tS, plan = false, hw = 0) {
+  const g = groundAt(spec, x, y, z, tS, plan, hw);
+  if (g) return g === 'e' ? EG_HOLD.still : EG_HOLD.island;
   const P = EG_SUPPORT_PAD + (plan ? EG_CLIMB_NEAR_M : 0), on = (fy) => plan || yOn(y, fy ?? 0);
-  for (const d of spec?.discs ?? []) if (Math.hypot(x - d.x, z - d.z) <= d.r + P && on(d.y)) return d.role === 'end' ? EG_HOLD.still : EG_HOLD.island;
-  for (const b of spec?.bands ?? []) if (z >= b.z0 - P && z <= b.z1 + P && Math.abs(x - b.x) <= b.halfW + P && on(b.y) && !bandFallen(spec, b, z, hw, tS * 1000)) return EG_HOLD.island;
-  for (const l of spec?.lanes ?? []) if (segDist(x, z, l.ax, l.az, l.bx, l.bz) <= l.hw + P && on(l.y)) return EG_HOLD.island;
-  for (const r of spec?.ramps ?? []) {
-    const dx = r.bx - r.ax, dz = r.bz - r.az, L2 = dx * dx + dz * dz, u = L2 > 0 ? Math.max(0, Math.min(1, ((x - r.ax) * dx + (z - r.az) * dz) / L2)) : 0;
-    if (segDist(x, z, r.ax, r.az, r.bx, r.bz) <= r.hw + P && on(r.y0 + (r.y1 - r.y0) * u)) return EG_HOLD.island;
-  }
   for (const s of spec?.steps ?? []) {
     const fy = s.y ?? 0;
     if (!plan && !(y <= fy + EG_SUPPORT_UP_M && y >= fy - (s.kind === 'sink' ? EG_SINK_GONE_M : EG_SUPPORT_DOWN_M))) continue;
@@ -249,10 +266,14 @@ export const EG_FAIR_REPEAT_MS = 5000;
  * crossing's start (its first judged pose), `cross` its time at the end plate, `blind`/`span` the ms blind and judged,
  * `brk` breaks since the last island, `brks` the hall's, `fast` its fastest stretch (cm/s), `refuse` hits refused until.
  * EG-ZB: `hw` the hall's wake (relay ms) - after it a Falling Wall's and the Collapsing Tube's fallen segments hold nothing.
+ * EG-ZI (section 10.6): `far` the furthest fair point (the road's +z, null none yet), `fnew` when the newest still ground
+ * was first stood on fairly (shared ms), `seen` the still ground so stood on (groundAt's keys), `atEnd` stood at the door
+ * on a fair trail (net/egBrain.js egPoseIn) - the pull's toll reads them.
  * @param {number} h @param {number} [hw]
  */
 export const egFairNew = (h, hw = 0) => ({ h, hw, last: /** @type {number[]|null} */ (null), sup: /** @type {number[]|null} */ (null), isl: /** @type {number[]|null} */ (null), airAt: 0, airBrk: 0,
-  win: /** @type {number[]|null} */ (null), brk: 0, brks: 0, why: '', refuse: 0, fast: 0, blind: 0, span: 0, from: 0, cross: 0, cblind: 0, road: 0, wake: 0 });
+  win: /** @type {number[]|null} */ (null), brk: 0, brks: 0, why: '', refuse: 0, fast: 0, blind: 0, span: 0, from: 0, cross: 0, cblind: 0, road: 0, wake: 0,
+  far: /** @type {number|null} */ (null), fnew: 0, seen: /** @type {string[]} */ ([]), atEnd: 0 });
 
 /** A break of the law: counted since the last island and in the hall; a second in the hall refuses the hits a while. */
 function broke(A, why, t) {
@@ -272,7 +293,7 @@ export function egFairPose(A, spec, p, t) {
   const hold = p.ride ? EG_HOLD.piece : egSupportAt(spec, p.x, p.y, p.z, t / 1000, false, A.hw ?? 0) || (p.cl && egSupportAt(spec, p.x, p.y, p.z, t / 1000, true) ? EG_HOLD.piece : EG_HOLD.none);
   A.last = [t, p.x, p.y, p.z];
   if (!A.from) A.from = t;
-  if (!L) { if (hold) { A.sup = [t, p.x, p.y, p.z]; if (hold === EG_HOLD.island) A.isl = [p.x, p.z]; } return; }
+  if (!L) { if (hold) { A.sup = [t, p.x, p.y, p.z]; if (hold === EG_HOLD.island) A.isl = [p.x, p.z]; } farther(A, spec, p, t, hold); return; }
   const dt = t - L[0];
   if (!(dt > 0)) return;
   A.span += dt;
@@ -307,6 +328,22 @@ export function egFairPose(A, spec, p, t) {
   if (hold) A.sup = [t, p.x, p.y, p.z];
   // THE LAST ISLAND: a fair pose on still ground (never the end plate) ends the window
   if (hold === EG_HOLD.island && fair) { A.brk = 0; A.isl = [p.x, p.z]; }
+  farther(A, spec, p, t, hold);
+}
+/**
+ * EG-ZI (section 10.6) - THE FURTHEST FAIR POINT, after a pose of the trail: a held pose (still ground, a piece, the end
+ * plate - never one in the air, a leap toward the end is no ground reached) with no break since the last island moves `far`
+ * along the road's +z; still ground stood on so for the first time this hall (an island, a passage's or a chamber's floor,
+ * a stair - the arrival plate it began on aside) is new ground, `fnew` its instant. The pull's toll reads both.
+ * @param {ReturnType<typeof egFairNew>} A @param {any} spec @param {{x: number, y: number, z: number}} p @param {number} t @param {number} hold
+ */
+function farther(A, spec, p, t, hold) {
+  if (!hold || A.brk !== 0) return;
+  if (A.far == null || p.z > A.far) A.far = p.z;
+  if (hold !== EG_HOLD.island) return;
+  const g = groundAt(spec, p.x, p.y, p.z, t / 1000, false, A.hw ?? 0);
+  if (!g || g === 'a' || (A.seen ??= []).includes(g)) return;
+  A.seen.push(g); A.fnew = t;
 }
 /** Is the member's crossing more than EG_FAIR_BLIND_MAX blind (once it has run EG_FAIR_SPAN_MIN_MS)? */
 export const egFairBlind = (A) => !!A && A.span >= EG_FAIR_SPAN_MIN_MS && A.blind / A.span > EG_FAIR_BLIND_MAX;

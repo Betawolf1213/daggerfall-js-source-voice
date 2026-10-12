@@ -29,8 +29,9 @@ test('VEIN-WASH: no two ores that share DFU\'s picture look alike - the first of
     byLook.set(look, key);
   }
   // the pictures' owners keep DFU's own colours, and the five with a picture of their own take no wash
-  for (const key of ['metal:lead', 'metal:lodestone', 'metal:mercury', 'metal:gold', 'metal:iron', 'metal:tin', 'metal:sulphur']) assert.equal(mineWash(vein(key)), null, key);
-  assert.deepEqual(Object.keys(ORE_WASH).sort(), ['metal:copper', 'metal:platinum', 'metal:silver', 'ore:adamantium', 'ore:dwarven', 'ore:ebony', 'ore:mithril', 'ore:moonstone', 'ore:orichalcum']);
+  // PIN MOVED (VEIN-HUE, FIELD BUGS 2026-10-12b): Lodestone wears a wash of its own - its picture is the boulder's lump
+  for (const key of ['metal:lead', 'metal:mercury', 'metal:gold', 'metal:iron', 'metal:tin', 'metal:sulphur']) assert.equal(mineWash(vein(key)), null, key);
+  assert.deepEqual(Object.keys(ORE_WASH).sort(), ['metal:copper', 'metal:lodestone', 'metal:platinum', 'metal:silver', 'ore:adamantium', 'ore:dwarven', 'ore:ebony', 'ore:mithril', 'ore:moonstone', 'ore:orichalcum']);
   for (const [k, w] of Object.entries(ORE_WASH)) assert.ok(w.length === 3 && w.every((c) => c > 0), `${k}: a colour`);
   assert.equal(mineWash({ what: 'boulder', material: 'stone:rough' }), null, 'a boulder\'s loose stone is Lodestone\'s lump as it is');
   assert.deepEqual(mineWash({ what: 'motherlode', material: 'ore:ebony' }), ORE_WASH['ore:ebony'], 'a Motherlode wears its ore\'s');

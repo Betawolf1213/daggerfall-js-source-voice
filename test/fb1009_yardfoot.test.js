@@ -191,8 +191,8 @@ test('FB1009 HOME-FOOT the world host by source: every building\'s ground measur
   const w = src('src/scenes/world.js');
   assert.match(w, /import \{ modelFootRects, footRectsAt \} from '\.\/homeYards\.js';/);
   assert.match(w, /const modelFeetOf = \(id, cpu\) => \{\n\s*let rs = modelFeet\.get\(id\);\n\s*if \(!rs\) modelFeet\.set\(id, rs = modelFootRects\(cpu\.positions, cpu\.indices\)\);\n\s*return rs;\n\s*\};/);
-  assert.match(w, /const rects = footRectsAt\(modelFeetOf\(placed\.modelIdNum, cpu\), local\);[^\n]*\n\s*const f = pixelHomeFrames\.get\(homeKey\);\n\s*if \(!f && at\) pixelHomeFrames\.set\(homeKey, \{ at, box: \[\.\.\.box\], rects \}\);\n\s*else if \(f\) \{ for \(let i = 0; i < 3; i\+\+\) \{ f\.box\[i\] = Math\.min\(f\.box\[i\], box\[i\]\); f\.box\[i \+ 3\] = Math\.max\(f\.box\[i \+ 3\], box\[i \+ 3\]\); \} f\.rects\.push\(\.\.\.rects\); \}/,
-    'the ground beside the box, a second model\'s joined to the first\'s');
+  assert.match(w, /const rects = footRectsAt\(modelFeetOf\(placed\.modelIdNum, cpu\), local\);[^\n]*\n\s*const f = pixelHomeFrames\.get\(homeKey\);\n\s*if \(!f && at\) pixelHomeFrames\.set\(homeKey, \{ at, box: \[\.\.\.box\], rects, type: bd\?\.buildingType \?\? null, faction: bd\?\.factionId \?\? 0 \}\);\n\s*else if \(f\) \{ for \(let i = 0; i < 3; i\+\+\) \{ f\.box\[i\] = Math\.min\(f\.box\[i\], box\[i\]\); f\.box\[i \+ 3\] = Math\.max\(f\.box\[i \+ 3\], box\[i \+ 3\]\); \} f\.rects\.push\(\.\.\.rects\); \}/,
+    'the ground beside the box, a second model\'s joined to the first\'s (PIN MOVED, YARD-LINE: and its record\'s type and faction)');
   const y = src('src/scenes/homeYards.js');
   assert.match(y, /lot: yardLot\(frame\.at, frame\.box, YARD_MARGIN, frame\.rects\)/);
   assert.match(y, /const ground = f\.rects\?\.length \? f\.rects : \[\[f\.box\[0\], f\.box\[2\], f\.box\[3\], f\.box\[5\]\]\];/);

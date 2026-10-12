@@ -12,12 +12,14 @@
 // A row: { id, kind, title, where, detail, live, at, until }
 //   at     the moment the countdown runs to (ms, relay clock): the start of a coming row, the end of a live one
 //   until  a live row's end; null on a coming row
+//   door   EG-ZM: on an Elite row where the host hands the boards' door (`doors.board`) - 'board', the window's button
 import { gateAt, gateTimes, gatePhase, GATE_EVERY_DAYS, gameDayAt, GATE_DAY_MINUTES } from '../net/gateLaw.js';
 import { wallMsForClassicMinutes } from '../net/wire.js';
 import { seatWeekOf, seatWeekStartMs, seatPhaseOf, SEAT_RECKONING_MS, seasonOf, seatSeasonName, battleLengthMs, SIGN_CLOSES_MS, guildWords } from '../net/townSeatLaw.js';
 import { serpentAt, serpentTimes, serpentPhase, serpentBossOf, SERPENT_EVERY_DAYS } from '../net/serpentLaw.js';   // SERPENT-TIMERS: the sea serpent's day
 import { sdPhase, SD_COLLAPSE_MS } from '../net/sdLaw.js';   // SD2c: the Super dungeon's record, once it is news
 import { egTimes } from '../net/egLaw.js';   // EG-F: an Elite Breach's clock - the company's own row
+import { arenaSeasonOf, arenaSeasonEndsS } from '../net/arenaLaw.js';   // EG-ZM: the Spire's boards keep the arena's season
 
 const DAY_MS = 86_400_000;
 
@@ -32,13 +34,14 @@ const capital = (s) => (s ? s[0].toUpperCase() + s.slice(1) : s);
  *           serpent?: { place?: string|null, fellAt?: (day: number) => (number|null) } | null,
  *           sd?: { rec: any, name?: string|null, place?: string|null } | null,
  *           elite?: { op: number, rh?: number, h?: number, until?: number|null, end?: string|null } | null,
+ *           doors?: { board?: () => any } | null,
  *           seatsOpen?: boolean, seats?: Array<any> | null, zero?: number | null, region?: string | null,
  *           raids?: Array<{ name: string, region?: string, type?: string, startMs: number, endMs: number, done?: boolean }> | null }} src
  */
 export function eventTimerRows(src) {
   const now = Number(src?.now);
   if (!Number.isFinite(now)) return [];
-  /** @type {Array<{id: string, kind: string, title: string, where: string|null, detail: string|null, live: boolean, at: number, until: number|null}>} */
+  /** @type {Array<{id: string, kind: string, title: string, where: string|null, detail: string|null, live: boolean, at: number, until: number|null, door?: string}>} */
   const rows = [];
   const coming = (id, kind, title, at, where = null, detail = null) => rows.push({ id, kind, title, where, detail, live: false, at, until: null });
   const live = (id, kind, title, until, where = null, detail = null) => rows.push({ id, kind, title, where, detail, live: true, at: until, until });
@@ -97,6 +100,15 @@ export function eventTimerRows(src) {
     if ((el.h ?? 0) > 0 && Number.isFinite(el.until)) live(`elite:${el.op}`, 'elite', `Hall ${el.h}`, /** @type {number} */ (el.until), null, 'Left on the count');
     else if (now < T.openAt) coming(`elite:${el.op}`, 'elite', `${what} opens`, T.openAt, null, 'Your company is called');
     else if (now < T.admitUntil) live(`elite:${el.op}`, 'elite', `${what} open`, T.admitUntil, null, 'Answer the call before this runs out');
+  }
+  // EG-ZM (Elite-Gates.md section 20, THE BOARD WINDOW - "reached from the Timers row"): where the host hands the boards'
+  // door, every Elite row carries it, and the boards' own season - the arena's eight weeks (net/arenaLaw.js) - stands as an
+  // Elite row of its own, so the door is there with no breach of mine: its end, when each Descent bracket's top ten are kept
+  // as Spire Champions through the next.
+  if (typeof src?.doors?.board === 'function') {
+    const season = arenaSeasonOf(Math.floor(now / 1000));
+    coming(`elite:season:${season}`, 'elite', `The Spire's season ${season} ends`, arenaSeasonEndsS(season) * 1000, null, 'Each Descent bracket\'s top ten hold Spire Champion through the next');
+    for (const r of rows) if (r.kind === 'elite') r.door = 'board';
   }
 
   // ── THE TOWN RAIDS (the mod's day: each town's raid a two-hour classic window) ──

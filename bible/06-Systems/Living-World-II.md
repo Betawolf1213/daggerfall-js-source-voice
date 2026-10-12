@@ -698,7 +698,8 @@ census's roster) and `src/systems/livingWorld/trips.js` (`leaderOf`, `ownTrip`, 
 - **PILGRIM BANDS.** A town's pilgrims setting out the same day for the same town, in no merchant's train, go
   together, the first place leading.
 - **THE HOLY DAY** (`holyDayOf`, `holyTrip`). A pilgrim's cycle with a temple town in range keeping its region's own
-  holy day (`holidays.js getHolidayId`; never a day every region keeps) goes to it on the pilgrim's own draw
+  holy day (`holidays.js getHolidayId`'s answer, read a day at a time off its tables - `holidayOn`, HOLY-DAYS in
+  `07-Rendering/Performance-Priority.md`; never a day every region keeps) goes to it on the pilgrim's own draw
   (HOLY_CHANCE, 0.8 - AUDIT LW-II F7: on it alone; the cycle's own chance was asked first, and the cycle's draw is
   still taken in its order, so no other trip's dice move): out at one minute of the morning for its town (`holyDepartMin` - so its pilgrims go as a band),
   in by HOLY_IN_H (10) of the holy day, home the morning after - inside the cycle, or the trip it always was. A

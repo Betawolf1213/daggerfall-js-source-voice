@@ -218,7 +218,7 @@ test('STAFF-TP dungeon identity selects the target dungeon; interior entry uses 
     restoreInterior: async (_saved, pos) => { assert.equal(pos, null, 'no unchecked target position during the build'); return true; } };
   const prepare = hostFunction('prepareStaffDestination', { modes, _wodInside: false, playerSpawned: false,
     _teleportToPixel: async () => {}, staffLanding: (d) => d.pos, ohAbyss: null });
-  await prepare(d); assert.deepEqual(calls, [{ locationKey: 'dungeon:9812' }]);
+  await prepare(d); assert.deepEqual(calls, [{ locationKey: 'dungeon:9812', holdOpen: true }]);   // PIN MOVED (HOLD-ONCE): staff may land by a player in Privateer's Hold
   await prepare(interior);
 });
 

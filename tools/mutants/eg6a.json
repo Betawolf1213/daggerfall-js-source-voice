@@ -387,105 +387,6 @@
     ]
   },
   {
-    "name": "EG6A-every-stone-lit",
-    "file": "src/scenes/egSpan.js",
-    "old": "if (stones[k].draw) stones[k].draw.texRemap = k === mine ? null : WAYSTONE_DARK;",
-    "new": "if (stones[k].draw) stones[k].draw.texRemap = null;",
-    "tests": [
-      "test/eg6a_screen.test.js"
-    ]
-  },
-  {
-    "name": "EG6A-the-lit-stone-never-moved",
-    "file": "src/scenes/egSpan.js",
-    "old": "    if (mine === litStone) return;\n    litStone = mine;",
-    "new": "    if (litStone !== -2) return;\n    litStone = mine;",
-    "tests": [
-      "test/eg6a_screen.test.js"
-    ]
-  },
-  {
-    "name": "EG6A-the-stone-s-island-wide",
-    "file": "src/scenes/egSpan.js",
-    "old": "mine = stones.findIndex((g) => Math.hypot(sx - g.spec.x0 - g.isle.x, sz - g.isle.z) <= g.isle.r + 0.5);",
-    "new": "mine = stones.findIndex((g) => Math.hypot(sx - g.spec.x0 - g.isle.x, sz - g.isle.z) <= g.isle.r + 50);",
-    "tests": [
-      "test/eg6a_screen.test.js"
-    ]
-  },
-  {
-    "name": "EG6A-the-stones-leaked",
-    "file": "src/scenes/egSpan.js",
-    "old": "      if (stoneMesh) { try { renderer?.destroyMesh?.(stoneMesh); } catch { /* gone */ } }   // EG6a: the waystones' mesh and the ghosts' pass",
-    "new": "      // EG6a: the waystones' mesh and the ghosts' pass",
-    "tests": [
-      "test/eg6a_screen.test.js"
-    ]
-  },
-  {
-    "name": "EG6A-a-standing-beat-ghosted",
-    "file": "src/scenes/egSpan.js",
-    "old": "        if (st?.solid) continue;\n",
-    "new": "",
-    "tests": [
-      "test/eg6a_screen.test.js"
-    ]
-  },
-  {
-    "name": "EG6A-the-hand-backwards",
-    "file": "src/scenes/egSpan.js",
-    "old": "ghostState[o + 1] = left / (SD_BEAT_CYCLE - SD_BEAT_SOLID);",
-    "new": "ghostState[o + 1] = 1 - left / (SD_BEAT_CYCLE - SD_BEAT_SOLID);",
-    "tests": [
-      "test/eg6a_screen.test.js"
-    ]
-  },
-  {
-    "name": "EG6A-a-crumble-ghosted-before-it-fell",
-    "file": "src/scenes/egSpan.js",
-    "old": "        if (f < 0) continue;\n",
-    "new": "",
-    "tests": [
-      "test/eg6a_screen.test.js"
-    ]
-  },
-  {
-    "name": "EG6A-the-crumble-s-count-backwards",
-    "file": "src/scenes/egSpan.js",
-    "old": "ghostState[o + 1] = (SD_CRUMBLE_BACK - f) / SD_CRUMBLE_BACK;",
-    "new": "ghostState[o + 1] = f / SD_CRUMBLE_BACK;",
-    "tests": [
-      "test/eg6a_screen.test.js"
-    ]
-  },
-  {
-    "name": "EG6A-the-window-never-moved-on",
-    "file": "src/scenes/egSpan.js",
-    "old": "sdGhostStepsOf(c.course).filter((s) => s.z + s.d / 2 >= rz - 3).slice(0, SD_GHOSTS_MAX)",
-    "new": "sdGhostStepsOf(c.course).slice(0, SD_GHOSTS_MAX)",
-    "tests": [
-      "test/eg6a_screen.test.js"
-    ]
-  },
-  {
-    "name": "EG6A-the-low-road-s-ghosts-the-high-road-s",
-    "file": "src/scenes/egSpan.js",
-    "old": "    const road = spec?.fork && Math.abs(rx - spec.x0 - spec.fork.lowX) <= 6 ? 1 : 0;",
-    "new": "    const road = 0;",
-    "tests": [
-      "test/eg6a_screen.test.js"
-    ]
-  },
-  {
-    "name": "EG6A-the-world-host-never-marks-the-ghosts",
-    "file": "src/scenes/world.js",
-    "old": "if (a || b || g) renderer.markForeignPass();",
-    "new": "if (a || b) renderer.markForeignPass();",
-    "tests": [
-      "test/eg6a_screen.test.js"
-    ]
-  },
-  {
     "name": "EG6A-the-low-road-crossed-without-its-trunk",
     "file": "tools/egSpanSolve.mjs",
     "old": "  const path = egSpanPairs(spec).filter((p) => (fork ? roadOf(p) === 1 || (roadOf(p) === 0 && launch(p) < spec.fork.z - 0.01) : roadOf(p) === road));",
@@ -636,6 +537,24 @@
     "new": " && ",
     "tests": [
       "test/eg6a_sweep.test.js"
+    ]
+  },
+  {
+    "name": "EG6A-the-banner-on-the-other-road",
+    "file": "src/scenes/egSpan.js",
+    "old": " && Math.abs(isl.x - g.x) <= EG_GUST_REACH_M) { const v = sdVaneAt",
+    "new": " && true) { const v = sdVaneAt",
+    "tests": [
+      "test/eg6a_screen.test.js"
+    ]
+  },
+  {
+    "name": "EG6A-the-world-host-draws-the-ghosts-again",
+    "file": "src/scenes/world.js",
+    "old": "b = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog); if (a || b) renderer.markForeignPass(); }",
+    "new": "b = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog), g = !!modes?.dungeonCtx?.egSpanDraw?.(proj, view, fog); if (a || b || g) renderer.markForeignPass(); }",
+    "tests": [
+      "test/eg6a_screen.test.js"
     ]
   }
 ]

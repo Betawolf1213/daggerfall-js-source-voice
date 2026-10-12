@@ -9,7 +9,8 @@ and the merchants'), PERF-INST (the shadow pass's memory of a model's copies), P
 pixels), PERF-FACE (a lantern's six faces copied for one mover) and PERF-NAMES (the crowd's names laid out at every
 move). Then what is left, ranked - the levers that do move
 the picture are the owner's. Later the same day: PERF-TEAMS (another player's team, cut by its distance and the view)
-and PERF-WAGON (the rest of the carts, wagons and tents, and the fixed city's host).
+and PERF-WAGON (the rest of the carts, wagons and tents, and the fixed city's host); the next day HARNESS-REST (a
+standing team's harness neither stepped nor sent), its section after PERF-WAGON's.
 
 AUDITED the same day (the owner: "Lets do an audit on this"): five cold lanes over a frozen snapshot, every finding
 fixed, pinned and mutated or recorded - `01-Overview/Audit-Perf-Priority.md`. What the audit changed is written into
@@ -23,6 +24,23 @@ PEER-HULL-RANGE (2026-10-11, a player's report from a profile of the live game) 
 player's ship far off stands no hull on my client. It does not move the picture - every ship it holds back is past the
 fog on every lane (AUDIT PEER-HULL-RANGE moved its edges there and gave a hull built again her record's dress). Its
 section is after PERF-WAGON.
+
+STORE-CACHE (2026-10-11, a player: "faz uma verificacao no meu jogo aberto ... o que mais esta custando o FPS") is the
+next profile of the live desktop client: a storage read was a file read, and the game reads storage every frame. It
+does not move the picture. Its section is after PEER-HULL-RANGE.
+
+The same player's next profiles (2026-10-11 and 12) brought six more, merged together: PERF-DYE (a horse's look dyed a
+few pictures a frame), OWN-HULL-RANGE (my own sea's ship far off stands no hull either), OVERWORLD-WALK (walking the
+overworld, the same answers for less), NAV-FAR-AI (a far captain keeps her watch every few frames) and WILD-DRY (the
+dry-ground answer, read only until it is certain), their sections in that order after STORE-CACHE's; and HOLY-DAYS (the
+pilgrims' holy day, the same answer for less), its section after What is left. PERF-DYE wears a new look a few frames
+later (the bay's until then, as before); the rest do not move the picture - OWN-HULL-RANGE's and NAV-FAR-AI's ships are
+past the fog. WILD-FREE, the same load's other half, is written in
+`11-Multiplayer/Wild-Zone.md` section 12, THE COST.
+
+YARD-MERGE (2026-10-12, a capture of the draws in Daggerfall) merges a settled yard's models into one mesh and its
+flats of one picture into one batch: the draws cut by 17-18% where furnished yards stand in view. Its section is after
+YARD-RANGE.
 
 ## How the pass was run
 
@@ -72,6 +90,11 @@ a pixel, is 44,982 - under the 3/4 line by 1,098). The price: the frame's contex
 the closures read live there now - `dt`, the batch lists), and 21 closures are made a frame - ~0.8 us and ~0.5 KB of
 young allocation, under 0.01% of a frame. Not measured: the frame's time in the game - the change is that V8 is now
 allowed to optimize it, and how much that buys is the real machine's A/B (For the owner).
+
+**MWNPC19 (2026-10-12, `04-Characters/Morrowind-NPCs.md` section 28).** The frame had grown to 45,893 bytes, 187 under
+the 3/4 line, and the standing horses' and the crews' calls took it over. Their work is the host's own functions
+(`standingHorsesFrame`, `offerCrews`), and the look's step before the motor - `if (!gamePaused()) {`, the look filter,
+the keyboard look, the lock-on - runs as a closure of its own, `frameLook`: 44,976 bytes.
 
 Pins: `test/perfv8.test.js` (2) - every `frame` in the world host's graph and every closure moved out of one under the
 ceiling and under three quarters of it (the tripwire: move the next statement out before the cliff, not after); over
@@ -144,7 +167,7 @@ performance with player's exterior decor items". Read from the code, not measure
 
 **Left.** A yard's lamps keep AUDIT YARD-LIGHT L2's law (no distance cuts a lamp) at 75 and 150 m; Off takes them with
 the yard. A yard's flats are still one batch a piece - merged batches by record, as a pixel's own flats are, would cut
-the draws again and are the next lever. Whether this player's town is yard-bound is not known: the 15.1 ms before the
+the draws again and are the next lever (YARD-MERGE, below, pulled it, and merged a yard's models too). Whether this player's town is yard-bound is not known: the 15.1 ms before the
 frame is not the game's code (`Performance-Exterior.md` SCRIPT-SPLIT), and `?perf=cpu` against an offline visit to the
 same town (yards stand online only) would say.
 
@@ -152,6 +175,62 @@ Pins: `test/yardrange.test.js` (5) - the law and the shelf's default, the row's 
 over the real yard and pool, the default, 75 m and Off - models and flats alike, my own yard always, Off taking a
 stranger's yard down and standing it again; my own yard 200 m off; six syncs of an unchanged town stringifying nothing.
 Mutants: `tools/mutants/yardrange.json`, 10, all dead.
+
+## YARD-MERGE — a yard's models one mesh, its flats of one picture one batch
+
+**Found.** A capture standing in Daggerfall (2026-10-12, the perf build: main and the open performance pull requests,
+every WebGL call counted a frame and a draw's stack sampled one in 32): 1,878 draws a frame, 7,854 WebGL calls, 569
+textures bound. About 360 of the draws were the yards' model pieces - `decorRoom.js draw`, a `drawMesh` a piece, one
+draw a texture of its model - and at a second spot the yards handed 185 flats to the billboard pass, 86 pictures among
+them, each its own batch and its own draw. The town's own statics had been one mesh a pixel since PERF4; a yard's
+pieces never were. YARD-RANGE's "Left" named the lever.
+
+**The fix.** A pool its host lets merge (`createDecorRoom`'s `merge` - the town's yards; a room's host gives none) merges
+once it has stood unchanged `DECOR_MERGE_SETTLE_MS` (500 ms: a town's yards stand piece by piece as their models land -
+one merge, not one a landing) and its host's budget allows (`homeYards.js` `YARD_MERGES_A_FRAME`, one a frame: a town
+streaming in stands every yard at once).
+
+- **The models.** PERF4's `StaticBatchBuilder` over every model piece standing (`decorMergeable`: its triangles,
+  normals and texture coordinates in hand, no door, standing from the pool's origin) - each piece's own matrix less the
+  origin (`mergeDecorModels`), drawn back at it (`decorMergeMatrix`), grouped by each sub-mesh's OWN texture key,
+  unresolved: the merge draws through the host's remap as each piece did (a yard's town's climate is written into its
+  pixel's table as its pieces land, so a key resolved at the merge could be one landed late). One `drawMesh` - one draw
+  a texture - by the host's verdict over the merge's whole box (PERF-YARD's law), its count the pieces'.
+- **The flats.** Flats of one picture, one drawn size (a mirrored one apart) and one lean (the sway and Windfall's share
+  its batch was given) are one billboard batch of many quads, each where it stood (`decorFlatMergeKey`), as a town's
+  flats of one record are. Drawn alone, as before: a figure (the people lane's), a mount (the decal pass's), an animated
+  flat (its animator's, frame by frame - a lamp's flame), a tree Low Poly Trees stands (scaled a flat at a time), any
+  batch with a look of its own, and a picture standing once. A group is handed while any of its flats is big enough to
+  see (YARD-RANGE's size law).
+- **Change.** A piece standing after the merge draws on its own until the next; a merged piece taken out, moved or
+  replaced lets the merges go at once - every piece draws on its own that frame - and the pool merges again once it
+  settles (the decorator's edits included). A recentre moves the merges as one (`restand`); nothing is merged again.
+
+**What it changes on screen.** Nothing for a piece in view. A piece off screen whose yard's box is in view is drawn
+(the GPU clips it) where it was culled alone, and a model too small to see far off (YARD-RANGE's cup past 15 m) is
+drawn with its yard's merge - the flats keep the size law a group at a time.
+
+**Measured** (the perf build, RX 6700 XT, the `__ymOff` switch flipped live, ABBA, standing still; draws counted a
+frame by a light wrapper on the draw calls):
+
+| spot | draws a frame, off -> on | FPS, off -> on |
+|---|---|---|
+| Daggerfall's street, facing furnished yards (models only) | 2,343 -> 1,940 (-17%) | 152.1 -> 158.8 (vsync on: 240 Hz steps) |
+| above the same streets, 10-20 m over the roofs | 2,594 -> 2,129 (-18%) | 163.1 -> 164.2 (vsync off: within the noise) |
+| the same, a CPU profile and a toplevel trace over it | - | 159.8 -> 166.6 |
+
+The same spot's time a frame (the CPU A/B, 4 phases a side): the GPU process's main thread - where ANGLE turns each draw
+into Direct3D - 4.45 -> 3.95 ms (-11%, every phase on below every phase off); the renderer's main thread 6.15 -> 5.90 ms
+(-4%). On this machine the frame is not the draws': the FPS moves within the noise without a profiler. The cut is the
+draws and their cost on both threads, which is the frame on a machine where a draw is dear (the browser's WebGL, a
+weaker CPU, a slower driver - YARD-RANGE's player at 20-40 fps).
+
+Pins: `test/yardmerge.test.js` (12) - the merge where each piece's matrix stood it, keyed unresolved; what joins one;
+the settle, the budget, one draw through the same remap; the verdict over the merge's box and a recentre; a removal
+letting it go and asking a merge again, a late piece on its own; no merge for a room, one model, or one without
+normals; the yards' budget wired; the flats' key and every way out of it; a group of one picture, handed once; a
+removal and a recentre over a group; the size law a group at a time; a group's lean, a host's flat asking. Mutants:
+`tools/mutants/yardmerge.json`, 53, all dead.
 
 ## PERF-INST — a mesh's copies are remembered by place
 
@@ -449,6 +528,39 @@ synthetic map's bands - and the four hosts' wiring. Mutants: `tools/mutants/perf
 hosts' tents-and-wagons lines), `lw10_wagons` (the host's teams line, the pool's presentation), `lw12_outlaws` (the
 hideouts' line). Every existing record within three lines of a changed line was run again: 25, all dead.
 
+## HARNESS-REST — a standing team's harness comes to rest
+
+*A player (2026-10-11): "agora ataca os arreios das carroças" - the next cost in a profile of their live client (a
+town at night, 1080p, RX 6700 XT).*
+
+**Found.** 4.0% of the main thread (598 ms of 15,014; again 512 of 14,152 the same evening, 0.42 ms a frame at 76
+FPS): `horseCartPool.js:"function stepHarness(dt) {"` steps every harness within PERF-TEAMS' reach every frame - its
+ropes' Verlet step, the tube laid again, the vertices sent (`renderer.updateMeshVertices`, which measures the mesh's
+sphere, each sub-mesh's over the index list - both windings, eight times the vertices - and compares the bake). PERF-WAGON
+culls the draw, not this. The live client held 11 to 14 harnesses, every one a parked team's (two or four traces), and
+read over CDP across 60 frames not one end had moved; the ropes drifted ~6 mm, the step's own jitter as the frame's
+length changes (the sag's balance moves with dt), nothing a 22 mm strap shows.
+
+**The fix.** A harness whose ends have stood within `HARNESS_STILL_M` (0.1 mm) of where they stood for `HARNESS_REST_S`
+(3 s) is neither stepped, laid nor sent - it hangs as last drawn - until an end moves, and that frame it steps again
+(`harnessStill`, over each end and its scale). Measured from where the ends stood when they came to rest, never from last
+frame, so an ease creeping a hair a frame adds up and wakes it. Three seconds is past any swing: ROPE damps a step by
+0.97 at 60 steps a second at least, so under 0.5% of a swing is left. A floating-origin shift, a horse led off, a wagon
+driven: each moves an end and wakes it. Nothing a player sees but the jitter gone.
+
+**Measured.** In the player's running client, a LOWER BOUND by A/B: the bundle is not open to a live edit (Electron's
+V8 refuses `Debugger.setScriptSource`, and its `dagger://` chunks pass no CDP `Fetch`), but the pool's harness map is
+public (`harness`), so each harness's `ropes.forEach` (the tube laid again) and the renderer's `updateMeshVertices` (the
+send) were wrapped as own properties: on B a harness under this law (0.1 mm, 3 s) was neither laid nor sent, on A as
+shipped; the Verlet step ran on both (~0.09 ms a frame in the profile, out of reach). Six rounds of each, 10 s,
+interleaved ABBA, standing by the town's parked teams: 10 harnesses, all 10 at rest on B; the laying and sending 0.26 ms
+a frame on A and none on B; 86.6 -> 89.8 FPS mean (medians 88.0 -> 89.8), 11.6 -> 11.1 ms a frame - inside the
+rounds' noise (B ahead in four pairs of six). With the step the branch also stops, ~0.35 ms of an ~11.5 ms frame: ~3%
+where the teams stand, nothing where every team is on the move.
+
+Pins: `test/harnessrest.test.js` (3), over a real pool's real driven harness. Mutants: `tools/mutants/harnessrest.json`,
+7, all dead.
+
 ## PEER-HULL-RANGE — another's ship far off stands no hull here
 
 *A player's report (2026-10-11): under 50 FPS on a Radeon RX 6700 XT and an i5-13600K at 1080p; a profile of the live
@@ -488,6 +600,245 @@ the picture, both fixed:
 Pins: `test/peerhullrange.test.js` (+2): every lane's fog closed at the near edge; a struck ship and a torn, burning
 ship under way given back and built again, each in her record's dress. Mutants (+6): the first cut's edge, each of the
 three remembered things kept, her fires left hung, whole in a frame.
+
+## STORE-CACHE — the desktop store answers a read from memory
+
+*A player's own client (2026-10-11): the installed app at 1920x1080 on a Radeon RX 6700 XT, online in a town at night
+with five players about. A 15 s CPU profile through the shell's debugging port (`--remote-debugging-port`, CDP
+`Profiler`), 86 FPS over it, script 13.7 ms a frame on the HUD.*
+
+**Found.** 18.5% of the main thread (2,772 ms of 15,014) was `localStorage.getItem` - in the desktop app the DA2 store
+(`app/lib/fileStorage.cjs`), which answered every read with a `readFileSync` (and an `encodeURIComponent` and a
+`path.join` for the file's name): 68 us a read on this machine, where the browser's localStorage answers from memory.
+The game's readers are written for the browser's:
+
+- 2,405 ms: the professions' book keys its counting set by `profBook.js:"const slot = () =>"`, the account half of it
+  the signed-in session (`accountClient.js` `storedSession`, `dagger.account.session`), so every `counting` - every
+  harvest node near the player, every frame, from the marks, the target's scan and the pump - read the session's file.
+  GATHER-SPEED cached the set and not its key.
+- 166 ms the remains waypoint (`dfjs.wild.remainsWp`, every frame), 86 ms the claims' watch, 80 ms the weapon rig's
+  glyphs and aura, ~40 ms the rest.
+
+**The fix.** The store keeps a pref's or a slot file's text as last read or written (`read`, by key) and reads its file
+again after `readTtlMs` (1,000 ms) - a key asked every frame is one file read a second. A write keeps what it wrote; a
+write that throws and a remove forget the key, so the next read is the disk's. The enumeration sweep's `rescan` empties
+it, so a save copied into the open Saves folder reads as itself the moment the sweep lists it, as before. The
+screenshot is never kept. The game's readers are untouched: one change at the seam answers every reader there is and
+every one to come, and the browser build has no file to read.
+
+**Measured.** The store over the player's own Prefs, the session read 20,000 times: 67.9 us a read on main, 0.095 us on
+the branch (`node` 22; the shell's asar-patched `fs` is slower still). And in the player's running client, A/B: the
+bridge object is frozen, so the page's own wrapper (`appStorage.js`'s, which every reader holds and which looks its
+`getItem` up at each call) was found through CDP `Runtime.queryObjects` and answered, on B, from a cache under this
+law (1 s, forgotten on its own writes) with one bridge crossing kept a read (`key(0)`), so B costs what the branch
+does; on A, as shipped. Six rounds of A and B, 10 s each, interleaved ABBA, standing still in a town at night:
+58-64 reads a frame on both arms, 1.83 ms a frame in them on A and 0.04 on B; 85.7 -> 109.9 FPS mean (the medians
+92.5 -> 114.2), 12.0 -> 9.2 ms a frame, and B ahead in every pair. The p99 does not move (both ~19-21 ms: the frame's
+hitches are elsewhere).
+
+Pins: `test/storecache.test.js` (3) - a frame's 300 reads of a key are one disk read, of a key the store wrote none, of
+an absent key one, of the screenshot each; a file changed by hand seen past `readTtlMs` and at once after a rescan; a
+write, a remove and a thrown write each leave the next read the disk's truth. Mutants: `tools/mutants/storecache.json`,
+6, all dead.
+
+## PERF-DYE — a horse's look is dyed a few pictures a frame
+
+*A player's live client (2026-10-12), two minutes' travel across the overworld: 58 FPS on average, 122 frames over
+50 ms.*
+
+**Found.** 29 of those 122 frames were one thing: a horse look met on the road (a passing team, a parked one come into
+view) having its walk set dyed. COATS1 dyes a look off the bay's kept pictures, a CPU pass a picture
+(`horseCoats.js recolorHorse`), under a budget of one SET a frame (`horseCartPool.js ensureHorseLook`). The views are
+five pictures; the walk set is forty (`HORSE_VIEWS` x `HORSE_WALK_FRAMES`), some 45 ms on a desktop, in a single frame.
+The budget kept six looks from landing in one frame, and still let each one stop a frame on its own.
+
+**The fix.** The budget counts PICTURES: `HORSE_DYE_PICTURES` (5) a frame, among every look (`_dyeBudget`, refilled
+by the pool's `frame`). A look's pictures are dyed in order - its views, then its walk frames - and it counts how many
+of each are up (`up.views`, `up.walks`); a look is worn once every picture it draws is up, the bay's until then, as
+before. Five a frame is the views in one frame and the walk set over eight. A look let go (`dropLook`, past
+`HORSE_LOOKS_KEPT`) gives back exactly the pictures dyed so far, a set's first ones too.
+
+**Measured.** On the live client (0.1.8127, a town with eight horse looks in view, the window in front), a conditional
+breakpoint inside the walk set's branch alternating the shipped dye with this one, 20 s each, three times, every look
+let go every 2 s so both dye the same horses over and over (336 and 329 walk sets):
+
+| | a set a frame | `HORSE_DYE_PICTURES` a frame |
+|---|---|---|
+| frames over 50 ms | 89 | 0 |
+| frames over 33 ms | 132 | 3 |
+| 99th percentile | 54.1 ms | 20.9 ms |
+| worst frame | 288 ms | 50 ms |
+| median | 8.3 ms | 8.4 ms |
+| average | 97.2 FPS | 95.3 FPS |
+
+The same work, spread: the average holds under a load no road makes (every horse dyed again every two seconds), and
+the hitch is gone. Then four minutes' plain travel across the overworld, nothing forced, the two alternating every
+30 s: of the frames a walk set began in, 25 of 74 ran over 50 ms the old way (worst 104 ms) and 5 of 88 this way
+(worst 92 ms, other work in the same frame). The travel's other hitches are not the dye's (the professions' store
+reads, the ports' ships, the collector), and its average moved with the road, not the mode - the dye is some 3% of
+the frame time either way. A first cut of the probe, a breakpoint on every `ensureLook` call, cost 118 -> 51 FPS by itself and
+was thrown away.
+
+Pins: `test/perfdye.test.js` (4), over a real pool: never more than `HORSE_DYE_PICTURES` a frame, among two looks too;
+the views before the walk frames, each once, worn in the frame of the last; before the walk art, worn once the views
+are; a look let go halfway gives back exactly what was dyed. `coats1_horsecoats.test.js`' two pool pins count frames
+by `HORSE_DYE_PICTURES` (PIN MOVED). Mutants: `tools/mutants/perfdye.json`, 7, all dead.
+
+## OWN-HULL-RANGE — my own sea's ship far off stands no hull either
+
+*A player's live client (2026-10-12), main with every open performance fix built in, travelling the overworld along
+the Iliac Bay's coast.*
+
+**Found.** Halfway through the run fourteen hulls stood at once, 9 to 727 km off, in four regions - and the frame went
+from 90 FPS to 37: their sails baked (`comeSailAwayPool.js frame`, +4.5 ms a frame), their wakes and flags gathered and
+drawn (+3.4 ms), their rigging stepped (`navalHost.js poseShip`, +2.9 ms), their animators (+1.3 ms), the collector
+(+1.5 ms). None had an owner. PEER-HULL-RANGE gave a far PEER's hull back to the pool, and built every ship with no
+owner wherever she lay (`peerHullNear`: `!e.owner ||`). But a ship with no owner is not only this tab's own traffic: it
+is also every peer ship this tab ADOPTS as its owner leaves the room or goes quiet (`releaseOwner` -> `adopt`, wherever
+she lies) - so the 80-700 km fleets PEER-HULL-RANGE was written for came back as mine, hulls and all.
+
+**The fix.** PEER-HULL-RANGE's edges for every ship (`peerHullNear`, `shedFarHulls`): built within
+`PEER_HULL_NEAR_M`, given back past `PEER_HULL_FAR_M`. Her record sails, fights, burns and sinks as ever - the captains,
+the director and the damage read the record, never the hull. But for what reads one of my own sea's ships BY her
+hull wherever she is (`hullKept`): bodies on her deck, the boarding I am in, a prize not yet settled (`claimPrize`
+moves her deck by her hull), and a fight - hers (engage or board, afloat) or one that targets her (`foughtIds`): a
+shot lands only on a hull (`targets`) and a galley rams only one (`checkShipRams`), so a fight between hull-less ships
+would never end. A peer's ship is unchanged.
+
+**Measured.** On the live client with the fix built in and a switch for the old law, fourteen galleons launched
+30-650 km off with the host's own `spawnShip`, the two laws alternating every 20 s, three times each, standing in the
+overworld:
+
+| | every ship of mine with a hull | OWN-HULL-RANGE |
+|---|---|---|
+| average | 75.1 FPS | 149.8 FPS |
+| median | 12.5 ms | 8.3 ms |
+| 99th percentile | 25.0 ms | 12.5 ms |
+| frames over 33 ms | 5 | 0 |
+
+Pins: `test/ownhullrange.test.js` (4), over the real pool: a ship of mine near and 90 km off, the eye coming and going;
+a far peer's ship adopted as they leave stays hull-less; `hullKept`'s every case; a far ship it keeps built and never
+given back, a peer's never kept by it. Mutants: `tools/mutants/ownhullrange.json`, 11, all dead;
+`peerhullrange.json`'s PHR-no-range re-aimed at the build's new line, its nine all dead.
+
+## OVERWORLD-WALK — walking the overworld, the same answers for less
+
+*A player (2026-10-12): "when I stand on the coast my FPS is 130, when I start walking it drops to 40 practically."
+Measured on the live client with every open performance fix built in: standing 115 FPS, walking the same coast 55 -
+the frame's main thread 8.5 ms standing, 18.2 walking, and the page allocating some 430 MB a second.*
+
+**Found.** No one thing: walking turns on a dozen systems that standing leaves idle, each 0.5-2 ms a frame. Three of
+them did work that gave the same answer for less, and made most of the garbage the collector then stopped the frame for:
+
+- **NAV-COST - the sea's captains** (`systems/naval/navalAI.js stepCaptain`, `scenes/navalHost.js separateHulls`). A
+  captain asked `hostile` - for a wary pirate a sizing-up, `shipPower` and `fightingPower` - of every ship in the sea,
+  every frame, and only then whether it was in sight; and the pass that keeps hulls apart measured every pair of the
+  sea's ships, two new flats a pair, nearly all of them hundreds of km apart. Now her sight is asked first (both halves
+  read nothing they change), and a pair farther apart than twice their reaches is never measured (`hullOverlap`
+  answers null for it: a hull's half extent along any axis is under its half length and half width together, and one
+  of A's own axes holds at least 1/sqrt 2 of the distance between the centres); a flat is made once a pass, again once
+  its hull is shoved.
+- **PIXEL-KEYS - the sea's soundings** (`world/pixelKeys.js pixelKeyText`, `scenes/world.js csaPixelAt`). A captain
+  sounds the water ahead (`navalIsWater`, three points a step of every probe), and each sounding made its pixel's key
+  text anew, `${x},${y}`, to ask the built pixels. The text is made once a pixel now, kept by its numbers - the same
+  string every time - within PIXEL_KEY_SPAN of nought, PIXEL_KEYS_KEPT of them.
+- **PERF-ROPE - the moving teams' harness** (`systems/wagonRopes.js stepRope`). Every sub-step made two new end
+  arrays, every step two more, and every link of every iteration a `Math.hypot` of three, whose every answer was boxed
+  (7% of what the page allocated, walking). A rope steps in place now: its ends in its own arrays, the sub-step's in
+  one pair for every rope, a length as a root of its squares - the rope it was to within a float's rounding.
+
+**Measured.** On the live client with the three (and NAV-FAR-AI, its own pull request) behind one switch, walking the
+same coast, the old and the new alternating 15 s at a time three times over, standing between:
+
+| walking the coast | the old | OVERWORLD-WALK |
+|---|---|---|
+| average | 78.6 FPS | 92.8 FPS |
+| median frame | 12.4 ms | 8.4 ms |
+| 90th percentile | 20.8 ms | 16.7 ms |
+| 99th percentile | 33.4 ms | 29.2 ms |
+| allocated | 430 MB/s | 360 MB/s |
+| main thread a frame | 12.7 ms | 10.8 ms |
+
+By the profile, the harness's step -0.36 ms a frame (the old rope gone from it), the captains' `hostile` -0.21 ms; the
+rest of the main thread's -1.9 ms is the walk's own (the terrain built, what the eye fell on). Standing, the same build
+drew 203 FPS: walking still costs, and the rest is elsewhere (What is left).
+
+Pins: `test/navcost.test.js` (4) - a captain never sizes up a ship past her sight, one in sight is and is fought; past
+twice their reaches no two hulls overlap (20,000 random pairs); two in each other pushed apart, and a heap of three where
+the old pass put them. `test/pixelkeys.test.js` (3) - every key the text it was (50,000 random pixels, negative ones,
+-0, past the span, fractions), the same string each time, the keeping bounded, and the soundings asking by it.
+`test/perfrope.test.js` (2) - 200 teams' 120 steps against the old law restated, every knot within a micrometre; the
+ends kept in the rope's own arrays. Mutants: `tools/mutants/navcost.json` (5 dead, 1 equivalent as recorded: the cull
+is the cost alone), `pixelkeys.json` (4), `perfrope.json` (4), all dead.
+
+## NAV-FAR-AI — a far captain keeps her watch every FAR_LIFE_EVERY frames
+
+*A player's live client (2026-10-12), main with every open performance fix built in: the captains of the sea's ships
+were 12% of the main thread and some 29% of what the page allocated while walking the coast, the ships this tab holds
+with no owner numbering 2 to 31 through the day (its own traffic, and every peer's fleet it adopts as they leave the
+room - `releaseOwner`), most of them tens to hundreds of km off.*
+
+**Found.** `stepSea` stepped every captain of mine every frame wherever she was: her lookout over every contact, her
+land probes ahead, her wandering course. AUDIT NAV1 already let a far ship's RIGGING step every FAR_LIFE_EVERY frames
+past NEAR_LIFE_M on the time it missed; her captain had no such law.
+
+**The fix** (`scenes/navalHost.js keepWatch`, `watchesFar`). Past FAR_WATCH_M (5,500 m - where she stands no hull
+to be seen, PEER_HULL_FAR_M) of the eye, a captain afloat, in no fight of her own (engage or board), lashed to no prize
+and no fight's target keeps her watch every FAR_LIFE_EVERY frames, each ship on her own frame of the stride, on the
+time she missed - never more than FRAME_STEP_S at once (the sea's own step: what she owes is stepped first when a frame
+would carry it past), and come near, what she owes is stepped with her first frame there. Her damage, fires and sinking
+keep every frame's clock; a frame between watches fires and runs out nothing. Unlike NAV-COST this is not the same
+answer: a far captain's course is integrated in coarser steps (at most FRAME_STEP_S, the step the sea already takes
+on a slow frame), seen by nobody here - her hull stands nowhere past PEER_HULL_FAR_M - and by a peer near her only
+through this tab's word, which comes far more seldom than the stride.
+
+**Measured.** On the live client, standing on the coast, NAV-COST alone against NAV-COST with this, alternating every
+15 s four times: the captains' share of the main thread 0.06 -> 0.02 ms a frame (-67%), allocation 306 -> 295 MB/s -
+but the sea emptied while it ran (17 ships of mine to 2: the peers came back for theirs), so the absolute numbers are
+that hour's. With the 14-31 far ships of the day's worst hours the captains were 1-2.4 ms a frame
+(OVERWORLD-WALK's profile), most of them past FAR_WATCH_M - two thirds of that is what this takes off.
+
+Pins: `test/navfarai.test.js` (4), over the real sea: a captain past FAR_WATCH_M one frame in FAR_LIFE_EVERY on her
+own stride, every second of her clock kept, a near one every frame; never more than FRAME_STEP_S at once at a slow
+frame; `watchesFar`'s every case (near, the eye on the flat, no eye, engage, board, lashed, struck, sinking, a fight's
+target, the fights asked last); a far captain come near steps what she owes, then every frame. Mutants:
+`tools/mutants/navfarai.json`, 11, all dead.
+
+## WILD-DRY — the dry-ground answer, read only until it is certain
+
+*A player (2026-10-12): "as soon as you enter the game and open the map with V, the game freezes for 4 to 5
+seconds."*
+
+**Found.** One frame of 6.7 s on the live client, 94% of it in one question. The map's overlay draws the Wrothgarian
+zone's giants (`wildGiants`), and their walking ground (`systems/wildGiants.js cellsOf`, built once a zone mask)
+asks every pixel of the zone the wild halls' `free` test - whose dear half is SPAWN-SHORE's
+`createSpawnGround`: is the plateau a ruin would stand on dry? Each answer read the pixel's whole noiseless kernel,
+129 x 129 = 16,641 samples, and averaged them (`spawnPlateauFloor`), for 12,564 pixels. Kept per pixel after, so
+only the first open froze - and the zone's halls ask the same question as the world loads in it.
+
+**The fix** (`world/spawnedDungeons.js spawnGroundDry`). The same answer, read only until it is certain: every
+sample is in [0, 1] (sampleKernel's clamp01), so the running sum never falls - nor does a float sum of non-negatives,
+nor the division and the product by positive constants - so once a column's running average is over the line, the
+whole one is. A pixel that never gets there is answered by the very sum `spawnPlateauFloor` makes, in its order.
+`createSpawnGround` asks it; `spawnPlateauFloor` stands as it was for its other readers.
+
+**Measured.** Over the real zone (the player's ARENA2): the 12,564 pixels 17.9 s -> 1.0 s (17x), every answer the same.
+On the live client, the map's first open in a fresh session, the old and the new in two sessions:
+
+| the map's first open (V) | before | WILD-DRY |
+|---|---|---|
+| the frozen frame | 6,714 ms | **692 ms** |
+| of which the giants' ground | ~6,300 ms | 393 ms |
+
+And the zone's halls as the world loads (the same question; WILD-FREE's bench, the real zone): their first day
+19.2 s -> 1.06 s on main's picks, 4.0 s -> 0.24 s with WILD-FREE's.
+
+Pins: `test/wilddry.test.js` (3) - every pixel of thirteen grounds (the sea, a beach, coasts four ways, slopes, a
+ridge, a ground whose first columns stand over the line and the rest under it, one the ground noise would lift over
+it) answers as `spawnPlateauFloor(...) > SPAWN_DRY_ELEVATION` did, with four large-map levels; a dry pixel stops
+reading early (inland under half the kernel, the mountains under a tenth) and the open sea reads it all; the spawns'
+ground asks it. Mutants: `tools/mutants/wilddry.json`, 5, all dead; `spawnshore.json`'s SHORE-law-byte-only
+re-aimed at the gate's new line, still dead.
 
 ## What is left, ranked
 
@@ -538,8 +889,55 @@ Each with what was found and whether it moves the picture (those are the owner's
    circle, a bounty farm, the quays and the LeFay monument are each drawn whole wherever they stand streamed. One each:
    a box apiece and the street's test would save a few draws a frame. Nothing a player sees.
 
+**From a player's profile** (STORE-CACHE's, above; the boats' 7% there is PEER-HULL-RANGE's, merged after that build).
+10. **The harness** - 4.0% of the main thread - is HARNESS-REST's (above): a team past PERF-TEAMS' reach is dropped
+    from `_teams` and lays no harness, and every harness the profile held was a parked team's inside it, which now comes
+    to rest. Left: a team on the move steps, lays and sends its harness every frame
+    (`horseCartPool.js:"function stepHarness(dt) {"`), its rope stepped in place since OVERWORLD-WALK's PERF-ROPE. It
+    moves, so nothing more is spared without changing what a player sees.
+11. **The hover pick** - 3.3%: the exterior's tooltip ray is cast every frame over every target list (corpses, piles,
+    torches, wagons, carts, camps). Asked only when the eye moved, or every other frame, it would halve. Moves the
+    tooltip's answer by a frame.
+12. **The professions' scan** - 2.6% once STORE-CACHE took its reads: the marks, the target's scan and the pump each
+    walk the harvest nodes near the player every frame. Nothing a player sees.
+
 **The GPU** (unchanged from PERF-NEXT): the cloud march, Steady shadows' every-frame lantern faces, an automatic quality
 governor - each the owner's.
+
+## HOLY-DAYS — the pilgrims' holy day, the same answer for less
+
+*A player (2026-10-11): "eu sei que quando o jogo carrega normalmente da uma travada, tem alguma forma de voce medir
+isso?" - the installed client's load captured from its first second through the debugging port (CDP Tracing, the
+page's CPU profile, every frame's length and the long animation frames).*
+
+**Found.** Entering the world froze it for ~20 s in two frames - 14.5 s, then 5.1 s - every millisecond the main
+thread's script, none the GPU's: 8.1 s the wild zone's halls (`wildDungeons.js wildHallPicks`, asked by the nearest
+dungeon's list - WILD-FREE, its own change), 5.7 s and 4.9 s the Living World planning its roads' day the first time a
+town asked (`livingTown.js _roadsOf` -> the host's `tripsOf`). Of the roads' time, ~3.6 s and ~3.0 s were the pilgrims:
+`trips.js holyTrip` built its town's temples again for every pilgrim (the towns near filtered by their ring and
+`templeTown`, then sorted by distance), and `companies.js holyDayOf` asked `getHolidayId` of every day of the cycle at
+every temple - a day of the year summed from the minutes and the 53 rows walked each time. The capture's own tracing
+and sampling slowed the client; the shares are the profile's.
+
+**The fix.** The same answers, asked less. `holidays.js holidayOn` reads the two tables once into the holiday row on
+each day of the year (one row a day: no two rows share one), and `holidayKeptIn` is GetHolidayId's own test of a row
+(every region's, or the region's ID - its index plus one); `holyDayOf` sums the day once a day, passes a day that is no
+holiday or every region's (LW13's law, on a line of its own) without asking a temple, and takes the first temple in its
+order that keeps the row - `getHolidayId`'s answer, as before. `trips.js templesNear`
+keeps each town's temples by its trip world (the world's towns and their temples are the map's; `townsNear` was kept
+already). The Living World's trips are every client's alike, so nothing may move: every answer is the old one.
+
+**Measured.** In node 22 over the suite's synthetic map (`test/lwRoads.mjs` synthMap, 144 towns their regions spread
+over 62, `townsNear` kept as the host keeps it), every town's trips for 90 days, cold, five runs: the same 88,279 trips
+and 1,836 holy-day pilgrimages to the byte on both (a digest of every trip's id, kind, goal, times and holy day);
+`holyTrip` 766 ms -> 29 ms of the run, the whole 877 -> 733 ms best. In the client the pilgrims' share of the two frozen
+frames, ~6.6 s, goes; the rest of the roads' day (the other travellers' plans, the weighted picks) stands. Not measured:
+the installed client on this branch.
+
+Pins: `test/holydays.test.js` (3) - `holidayOn` and `holidayKeptIn` against `getHolidayId` on every day of the year in
+every region; `holyDayOf` against the old law restated, over 4,000 drawn cycles and temple lists; `templesNear` the old
+filter and sort, asked of the world once a town. Mutants: `tools/mutants/holydays.json`, 6, all dead; `lw13.json`'s
+LW13-holy-region re-aimed at the line that passes every region's day.
 
 ## For the owner
 

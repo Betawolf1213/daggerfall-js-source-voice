@@ -1844,6 +1844,24 @@ export function ownBodyPaths(add, rows) {
 
 /** ...and what the binder takes beside the add's own mesh: those bodies' bytes out of the loaded archives, and the part
  *  it is fitted onto (MW-BRIG3 `fitTo`). Nothing at all for an add that is not skinned from the body. */
+/**
+ * HEAD-HELD (FIELD BUGS 2026-10-12b, "morrowind NPCs missing heads" - Boistun, a knight in iron, a nub of neck at his
+ * collar): THE SKIN ROWS A HELM HID AND NEVER COVERED. composeWornArmor hides the head and the hair a helm takes
+ * (worn.shadows) before the helm's own mesh is read or bound, and a helm that bound nothing - its mesh not in the
+ * archives, no shape its bone takes, a parse that threw: each only a note - left the neck alone above the collar. A worn
+ * add whose part is the head's or the hair's covers them only if a piece of it bound (`pieces`, the assembly's); when
+ * none did, the rows they hid come back - the never-traps law, "every miss is a note and the skin stands". Never the
+ * wolf's (its hair is its head's own law, WEREWOLF1). Rows in the skin rows' shape ({ slot, bones, model }).
+ */
+export function bareHeadRows(rows, worn, pieces, werewolf = false) {
+  if (werewolf) return [];
+  const hidden = ['head', 'hair'].filter((slot) => (worn?.shadows ?? []).includes(slot));
+  if (!hidden.length) return [];
+  const caps = new Set((worn?.adds ?? []).filter((a) => a.partName === 'head' || a.partName === 'hair').map((a) => a.slot));
+  if ((pieces ?? []).some((p) => caps.has(p.slot))) return [];
+  return (rows ?? []).filter((r) => r.record && hidden.includes(r.slot)).map((r) => ({ slot: r.slot, bones: PART_BONES[r.slot] ?? [], model: r.record.model }));
+}
+
 export function ownBodyPart(add, rows, find) {
   if (!add.skinFrom) return {};
   return {
@@ -1963,9 +1981,24 @@ async function buildTpBody({
     const resolvedHip = resolveHipLanternPart({ hipLight, allLights, find, skeletonBytes, has: archiveHas(archives), hasBone: boneProbe(skeletonBytes, boneSources) });
     partBytes.push(...resolvedHip.parts);
 
-    const arm = await assembleFirstPersonArm({ skeletonBytes, parts: partBytes, boneSources, parseNif: parseNifOnce });   // MWNPC3: one parse a mesh, every body
+    let arm = await assembleFirstPersonArm({ skeletonBytes, parts: partBytes, boneSources, parseNif: parseNifOnce });   // MWNPC3: one parse a mesh, every body
     if (!arm.ok) {
       return { ok: false, stage: arm.stage || 'assembly', error: arm.error, notes: [...missing, ...(arm.notes || [])], rows };
+    }
+    // HEAD-HELD: a helm that bound nothing gives back the head and hair it hid - assembled again with them, never headless
+    const bare = bareHeadRows(rows, worn, arm.pieces, werewolf);
+    if (bare.length) {
+      await loadFromArchives(archives, bare.map((r) => `meshes/${r.model}`));
+      const back = bare.flatMap((r) => {
+        const path = `meshes/${r.model}`, arc = find(path);
+        return arc ? [{ slot: r.slot, bones: r.bones, bytes: nifBytes(arc, path) }] : [];
+      });
+      const again = back.length ? await assembleFirstPersonArm({ skeletonBytes, parts: [...partBytes, ...back], boneSources, parseNif: parseNifOnce }) : null;
+      if (again?.ok) {
+        arm = again;
+        skinRows.push(...bare);
+        missing.push(`helm: none of it bound - the ${bare.map((r) => r.slot).join(' and ')} drawn bare`);
+      }
     }
     hangHipLight(arm);   // HT-WAIST: the hook and the anchor, once, on the assembled skeleton
     const cloakFit = fitThirdPersonCloak(arm, new Set([...skinRows, ...worn.adds].map((row) => row.slot)));   // MW-CLOAK1

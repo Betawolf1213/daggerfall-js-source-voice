@@ -221,6 +221,33 @@ export function questPrivateTag(machine, f) {
   return { q: quest.questName, s, pv: 1 };
 }
 
+/** QUEST-OWNER (2026-10-12, Mac: "quest mobs that get spawned in dungeons to only appear for the questowner or the
+ *  questowners party so he gets credit, same for the main quest", then "Yes quest monsters always owner and its party"):
+ *  A QUEST'S FOE IS ITS OWNER'S AND ITS OWNER'S PARTY'S - underground, in a building and in the open air alike (world.js
+ *  hands every pool the narrowed seam; the dungeon narrows what it is handed again, which changes nothing). DESYNC-ZERO stood every quest foe for everyone in the place (a private one tagged `pv`), and let
+ *  anyone strike it - so in a dungeon every player's copy of the same quest stood its monsters there side by side
+ *  (the main quest's above all: its dungeons are fixed, never a random pick, so every player on that step of it meets
+ *  in the same one), a stranger could take the kill, and the foe hunted strangers who could not stop it. This copy of
+ *  the host's seam (`seam` - world.js questShareSeam) narrows the three doors to the party: a player stands
+ *  another's quest foe only when that player is a party member (`accepts`), only a party member's blow lands on mine
+ *  and mine hunts only the party (`peerMayHit`). Everything else - the tags, the kill and injury credit (already a
+ *  party member's alone), the heirs, the orphan law - is the seam's own, read off it live. The same object for the
+ *  same seam. */
+const _partyOnlySeams = new WeakMap();
+export function partyOnlyQuestShare(seam) {
+  if (!seam) return null;
+  let w = _partyOnlySeams.get(seam);
+  if (!w) {
+    const member = (id) => id != null && !!seam.partyPeer?.(id);
+    const accepts = (from, tag) => member(from) && (typeof seam.accepts === 'function' ? !!seam.accepts(from, tag) : true);
+    const peerMayHit = (id, f) => member(id) && !!seam.peerMayHit?.(id, f);
+    // every other door read off the seam at the moment it is asked (the host may change one), these two narrowed
+    w = new Proxy(seam, { get: (t, k) => (k === 'accepts' ? accepts : k === 'peerMayHit' ? peerMayHit : t[k]) });
+    _partyOnlySeams.set(seam, w);
+  }
+  return w;
+}
+
 /** DESYNC-ZERO (the owner: "when a party member kills the quest monsters it also counts for the quest owner or everyone
  *  who also has this quest ... in the SAME party"): my Foe for a party member's quest foe - my copy kept in step with the
  *  party (sharedQuestFoe), or else any live copy of the same quest I hold, by name, and its Foe by symbol. The CALLER

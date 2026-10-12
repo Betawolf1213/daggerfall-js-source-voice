@@ -27,13 +27,14 @@ import { trs, multiply } from './mat4.js';   // AUDIT MERCHANT-YARDS R2: the blo
 import { staticBuildingBox, staticBuildingWorldAabb } from './staticBuildings.js';
 import { localAabb, transformedAabb } from '../render/frustum.js';
 import { ROAD_WEIGHT } from '../systems/gothwayBoards.js';
-import { YARD_KIND_ORDER } from '../systems/merchantYards.js';
+import { YARD_KIND_ORDER, CRAFT_YARD_ORDER } from '../systems/merchantYards.js';
 
 /** Each yard's ground, metres: half its width (x) and half its depth (z) - its fence and the apron before its gate
  *  where its sign and its keeper stand (world/merchantYardModels.js lays both out inside it). */
 export const YARD_FOOT = Object.freeze({
   stable: Object.freeze({ hx: 7, hz: 5.75 }),
   transport: Object.freeze({ hx: 9, hz: 6.75 }),
+  carpenter: Object.freeze({ hx: 7, hz: 6 }),   // CARP-YARD: the joinery, 14 m by 12
 });
 /** The ring round a yard that must be open ground too (a road allowed), metres. */
 export const YARD_PAD_M = NAV_CELL;
@@ -184,6 +185,20 @@ export function closeSite(g, s) {
 export function yardSitesOn(g) {
   const out = [];
   for (const kind of YARD_KIND_ORDER) {
+    const s = yardSite(g, kind);
+    if (!s) continue;
+    out.push(s);
+    closeSite(g, s);
+  }
+  return out;
+}
+
+/** CARP-YARD: THE PROFESSIONS' YARDS on a ground, in CRAFT_YARD_ORDER, each on what the last left - placed by the host
+ *  AFTER the two yards and a port town's places (scenes/world.js townPlacesFor), so none of theirs moves. Pure (it closes
+ *  `g` as it goes). */
+export function craftYardSitesOn(g) {
+  const out = [];
+  for (const kind of CRAFT_YARD_ORDER) {
     const s = yardSite(g, kind);
     if (!s) continue;
     out.push(s);

@@ -64,7 +64,7 @@ export const LEGACY_TEXT = Object.freeze({
   seat: (loc) => `${loc} is your family's seat.`,
   // FAMILY-SEAT (FIELD BUGS 2026-10-07b): the seat moved where the one played stands (the House page)
   seatMoved: (loc) => `The house moves its seat: ${loc} is your family's seat.`,
-  seatNowhere: 'Stand in another town - its streets or one of its buildings - to make it the family\'s seat.',   // AUDIT FB1007b S5: and the House page's hint
+  seatNowhere: 'Stand in another town - its streets or one of its buildings - or at a home of the house\'s own, to make it the family\'s seat.',   // AUDIT FB1007b S5: and the House page's hint; FB1012d SEAT-HOME: a farm's home too
   named: (sur) => `Your house takes its seat's name: the house of ${houseWord(sur)}.`,   // LEGACY-NAME: a house founded nameless, named
   elder: (name, age) => `${name} is ${age} - an elder of the house now. The years ahead are fewer than those behind.`,
   born: (name, loc) => `${name} takes up the family's name in ${loc}.`,
@@ -244,7 +244,10 @@ export function createLegacyHost(deps) {
   function writeCurrent({ saving = false } = {}) {
     const p = current();
     if (past || !p || !deps.entity?.chargenDone || !isAlive(p) || p.retired != null) return;
-    if (p.characterId && deps.entity.characterId && p.characterId !== String(deps.entity.characterId)) return;   // never another character's into this person
+    // never another character's into this person - FB1012d HEIR-CLONE: nor into one never played (no character id), the
+    // member a choice made current while this page still plays its own (the Succession, a switch, before the boot goes):
+    // a save there wrote the one in the world over them - their name, class and character - and kept their birthday
+    if (!playedHere(p)) return;
     writePlayer(p, deps.entity);
     p.lived = lived();
     p.savedAt = Math.max((Number(p.savedAt) || 0) + 1, Math.floor(deps.wall?.() ?? Date.now()));   // AUDIT LEGACY III P5: this page's word on them, the newest
@@ -773,7 +776,7 @@ export function createLegacyHost(deps) {
     setCurrent(family, id);
     touch(family);
     store();
-    return { ok: play(personOf(family, id), here ? deps.town(deps.here()) : null) };
+    return { ok: play(personOf(family, id), here ? placeHere() : null) };   // FB1012d SEAT-HOME: met at a home of the house's own (a farm), born there
   }
 
   /** Why the played elder may not pass the mantle now, or null. */
@@ -890,7 +893,7 @@ export function createLegacyHost(deps) {
     // AUDIT LEGACY III A9/F9: a NEW child is news - the Succession's newborn heir; a member long of the house played for
     // the first time (an adult sibling, a child of a marriage the towns already heard of) is no birth
     if (newborn) tellNews('born', fullNameOf(p.given, p.surname), here?.mapId);
-    const loc = deps.town(here)?.loc ?? family.seat?.loc ?? '';
+    const loc = placeHere()?.loc ?? family.seat?.loc ?? '';   // FB1012d SEAT-HOME: a home of the house's own names where they were born
     deps.say(LEGACY_TEXT.born(fullNameOf(p.given, p.surname), loc || 'the Bay'));
     payEstateOf(p, { write: false });
     const landed = (ok) => {
@@ -931,7 +934,10 @@ export function createLegacyHost(deps) {
     if (!family || !deps.on()) return null;
     if (unstored) store();   // AUDIT LEGACY II P1: a refused write, tried again - first: a death's above all
     if (past) return { past, fall: family.pending ? fallOutcome() : null };
-    if (family.pending) return deps.entity?.chargenDone ? { fall: fallOutcome() } : null;
+    // FB1012d HEIR-CLONE: a page BEARING a member (`born`, until onBorn lands them) is the fall's answer - it offers the
+    // Succession again to nobody. Online the birth waits on the realm (the world standing, the character made, its first
+    // save) with the world running, and the waiting fall's window rose over the newborn, its lit choice another heir
+    if (family.pending) return deps.entity?.chargenDone && !born ? { fall: fallOutcome() } : null;
     if (!deps.entity?.chargenDone) return null;
     const p = current();
     if (!p || !isAlive(p) || !playedHere(p)) return null;   // AUDIT LEGACY II A1: nothing of the one handed the line, on a page not theirs
@@ -1257,10 +1263,27 @@ export function createLegacyHost(deps) {
   function familySeatHere() {
     const p = current();
     if (!family || past || family.pending || !deps.on() || !p || !isAlive(p) || !playedHere(p)) return null;
-    const t = deps.town(deps.here());
+    const t = placeHere();
     return t && !(t.loc === family.seat?.loc && t.region === family.seat?.region) ? t : null;
   }
-  /** Move the seat to the town the one played stands in. Stamped with when (`at`, the wall clock): the move stands over
+  /**
+   * FB1012d SEAT-HOME (Discord, "Odd family tree behavior": "the house (admittedly a tiny hovel on a farm) purchased and
+   * made the seat of the house by the parent character was not where the heir ended up spawning"): THE PLACE THE ONE
+   * PLAYED STANDS IN, as the seat and a birth name it - a town (deps.town: its streets or a building of it, never a
+   * dungeon under it), or a place where the house holds a home of its own, a farm or a manor (`family.houses` by the
+   * place's map id: its grounds or the house). A home off a town's map was the line's home and never its seat, so its
+   * heirs were born in the town first noted - a new character's first out of Privateer's Hold. Null anywhere else.
+   */
+  function placeHere() {
+    const h = deps.here();
+    const t = deps.town(h);
+    if (t) return t;
+    if (!h || h.mode === 'dungeon' || !h.region || !h.loc || h.mapId == null) return null;
+    const id = h.mapId >>> 0;
+    return (family?.houses ?? []).some((x) => (x.mapId >>> 0) === id) ? { region: String(h.region), loc: String(h.loc), mapId: id } : null;
+  }
+  /** Move the seat to the town the one played stands in (or the home of the house's own - FB1012d SEAT-HOME, placeHere).
+   *  Stamped with when (`at`, the wall clock): the move stands over
    *  an older copy's seat in every merge, whichever copy is the newer by rev (systems/legacy/store.js mergeFacts). */
   function moveFamilySeat() {
     const t = familySeatHere();

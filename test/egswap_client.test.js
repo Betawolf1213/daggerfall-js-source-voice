@@ -23,7 +23,8 @@ import { realmArt } from '../src/world/sdRealmArt.js';
 import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
 import { identity } from '../src/world/mat4.js';
 import { egBandOfCircle } from '../src/net/egLaw.js';   // EG-G2 (merged): the band's dress and the waystones go up with a swapped circle
-import { egBandArt, egBandArchive } from '../src/world/egBandArt.js';
+import { egBandArt, egBandArchive, EG_DRESS_RECORDS, EG_BEAT_TELL_RECORDS } from '../src/world/egBandArt.js';
+import { createEgOccluders } from '../src/scenes/egOcclude.js';   // EG-ZN: the circle's occluders' dither pass, in the stand's own source
 import { buildEgLookModel } from '../src/world/egLook.js';
 import { Collider } from '../src/player/collider.js';
 
@@ -158,9 +159,11 @@ function swapRig({ workerFactory = () => syncWorker() } = {}) {
     `${dcSrc}\nreturn { egSpanRide, egRecircle, get egSpan() { return egSpan; } };`)(createEgSpan, renderer, null, loc, dynamicDraws, collider, { sdClock: () => 10 }, true);
   const ctx = { dynamicDraws, collider, addActivationNamer() {}, egRecircle: (r) => dc.egRecircle(r) };
   const host = { egGateOpen: () => false };
-  const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'getState',
+  // PIN MOVED (EG-ZN): the circle's occluders' dither pass stands in the same source (scenes/egOcclude.js), and the band
+  // dress's records it frees at the breach's end
+  const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'getState',
     `let mode = 'dungeon', dungeonLoc = getState().loc, dungeonCtx = getState().ctx;\n${wmSrc.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap(getState().swapDeps);')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egGatesFrame, set mode(m) { mode = m; }, get lamps() { return _egLamps; }, get gates() { return _egGates; }, get meshKey() { return _egMeshKey; }, egSwap };`)(
-    host, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel,
+    host, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS,
     () => ({ loc, ctx, swapDeps: { workerFactory } }));
   const body = { pos: realmToDungeon(0, 0.05, 1.5), grounded: true, height: 1.8 };
   const count = () => ({ live: live.size, buckets: [...collider._buckets.keys()].sort(), draws: dynamicDraws.length, hallTris: collider._buckets.get('eg:hall')?.tris.length ?? 0 });
@@ -208,8 +211,11 @@ test('EG10 THE SWAP IN PLACE, EXECUTED - THE FREE PINS (scenes/worldModes.js egS
   R.dc.egSpanRide(0.016, R.body, true);
   assert.deepEqual(R.count(), base, 'twenty swaps and back: the live meshes, the buckets and the draws at their baseline');
   const bandTex = (b) => [...egBandArt(b)].length * 2;   // an albedo and an emission a record
+  // PIN MOVED (EG-ZL, Elite-Gates.md section 10.3): a band's Beats' own pictures (its warning in the palette, its return -
+  // world/egBandArt.js EG_BEAT_TELL_RECORDS) go up with its first span that lays a Beat, once a session as its dress does
+  const tellTex = (b) => (Array.from({ length: 21 }, (_, i) => i + 1).some((c) => egBandOfCircle(c) === b && egCircleSpecs(SEED, c).some((s) => s.steps.some((q) => q.kind === 'beat'))) ? (EG_BEAT_TELL_RECORDS.warn[0].length + EG_BEAT_TELL_RECORDS.back.length) * 2 : 0);
   const bands = new Set(Array.from({ length: 21 }, (_, i) => egBandOfCircle(i + 1)));
-  assert.equal(R.textures, tex + [...bands].filter((b) => b !== egBandOfCircle(1)).reduce((n, b) => n + bandTex(b), 0), 'each band\'s dress uploaded once a session, at a prebuild, never by a swap');
+  assert.equal(R.textures, tex + [...bands].filter((b) => b !== egBandOfCircle(1)).reduce((n, b) => n + bandTex(b) + tellTex(b), 0), 'each band\'s dress (and its Beats\' pictures) uploaded once a session, never by a swap');
   assert.equal(R.made - R.freed, base.live);
   assert.equal(R.wm.meshKey, egCircleKey(SEED, 1));
 });

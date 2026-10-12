@@ -2,8 +2,8 @@
   {
     "name": "PHR-no-range",
     "file": "src/scenes/navalHost.js",
-    "old": "      if (e.boat || !peerHullNear(e, eye)) continue;   // PEER-HULL-RANGE",
-    "new": "      if (e.boat) continue;   // PEER-HULL-RANGE",
+    "old": "      if (e.boat || !peerHullNear(e, eye, (fought ??= foughtIds()))) continue;   // PEER-HULL-RANGE, OWN-HULL-RANGE",
+    "new": "      if (e.boat) continue;   // PEER-HULL-RANGE, OWN-HULL-RANGE",
     "tests": [
       "test/peerhullrange.test.js"
     ]

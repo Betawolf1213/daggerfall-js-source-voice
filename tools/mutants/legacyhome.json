@@ -152,7 +152,7 @@
   {
     "name": "LEGACY-HOME-born-at-the-seat-always",
     "file": "src/scenes/legacyHost.js",
-    "old": "    return { ok: play(personOf(family, id), here ? deps.town(deps.here()) : null) };",
+    "old": "    return { ok: play(personOf(family, id), here ? placeHere() : null) };",
     "new": "    return { ok: play(personOf(family, id), null) };",
     "tests": [
       "test/legacyhome.test.js"

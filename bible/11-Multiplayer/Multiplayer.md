@@ -43,8 +43,9 @@ in the save, adding health and magicka only while online (`06-Systems/Accounts-A
 inhabit that world while also being able to continue their progress
 ... True persistance"), a persistent shared world one room at a time:
 a dungeon's dead stay dead for whoever comes next, kept by the relay
-and not by anyone's save. (One dungeon keys no room: the tutorial, Privateer's
-Hold, is every character's own - HOLD-SOLO, `06-Systems/Online-Arc.md`.)
+and not by anyone's save. (Privateer's Hold among them: HOLD-SOLO keyed it no room from
+2026-10-07 until HOLD-SHARED reverted it, 2026-10-12; online it is entered once, by the new game's start -
+HOLD-ONCE, `06-Systems/Online-Arc.md`.)
 
 ## The three locked decisions
 

@@ -98,8 +98,26 @@ const key = (rec) => `${SD_REALM_ARCHIVE}_${rec}`;
 const BEAT_FRAMES = Object.freeze(SD_STEPS_RECORD.beat.map((rec, k) => (k === 0 ? null : new Map([[key(SD_STEPS_RECORD.beat[0]), key(rec)]]))));
 const BEAT_FALTER = new Map([[key(SD_STEPS_RECORD.beat[0]), key(SD_STEPS_RECORD.falter)]]);
 const CRUMBLE_STAGES = Object.freeze(SD_STEPS_RECORD.crumble.map((rec, k) => (k === 0 ? null : new Map([[key(SD_STEPS_RECORD.crumble[0]), key(rec)]]))));
-/** A waystone dark (its rune unlit) - EG6a: the Spire's islands' waystones wear it too (scenes/egSpan.js). */
-export const WAYSTONE_DARK = new Map([[key(SD_STEPS_RECORD.parts), key(SD_STEPS_RECORD.partsDark)]]);
+const WAYSTONE_DARK = new Map([[key(SD_STEPS_RECORD.parts), key(SD_STEPS_RECORD.partsDark)]]);
+/** EG-ZL (Elite-Gates.md section 10.3): the same maps for the Spire's Steps (scenes/egSpan.js) - one set of pictures. */
+export { BEAT_FRAMES as SD_BEAT_FRAMES, CRUMBLE_STAGES as SD_CRUMBLE_STAGES, WAYSTONE_DARK as SD_WAYSTONE_DARK };
+/** SD-LOOK S9 - THE CHUNKS' WAYS (EG-ZL: exported, the Spire's Crumbles fall by them too): each chunk tumbling outward
+ *  about its own horizontal axis (kx, 0, kz), its drift outward (ox, oz), its own spin and its own share of the fall. */
+export const sdChunkWays = (chunks) => chunks.map((c, j) => {
+  const l = Math.hypot(c.at[0], c.at[2]) || 1, ox = c.at[0] / l, oz = c.at[2] / l;
+  return { at: c.at, ox, oz, kx: oz, kz: -ox, w: SD_CHUNK.spin * (0.8 + 0.15 * j), g: 1 + 0.06 * (j - 1.5) };   // tumbling outward, each its own
+});
+/** SD-LOOK S9 - A CHUNK `tau` seconds down its fall (its way `C`), its step's top at (x, y, z): its matrix written into `m`
+ *  in place - turned about its own horizontal axis by its tumble, stood where its fall has it (EG-ZL: exported - the
+ *  Spire's chunks are written by it too). */
+export function sdChunkMatrix(m, C, tau, x, y, z) {
+  const a = C.w * tau, c = Math.cos(a), sn = Math.sin(a), v = 1 - c;
+  m[0] = c + v * C.kx * C.kx; m[1] = sn * C.kz; m[2] = v * C.kx * C.kz; m[3] = 0;
+  m[4] = -sn * C.kz; m[5] = c; m[6] = sn * C.kx; m[7] = 0;
+  m[8] = v * C.kx * C.kz; m[9] = -sn * C.kx; m[10] = c + v * C.kz * C.kz; m[11] = 0;
+  m[12] = x + C.at[0] + C.ox * SD_CHUNK.drift * tau; m[13] = y + C.at[1] - 0.5 * SD_CRUMBLE_FALL_G * tau * tau * C.g; m[14] = z + C.at[2] + C.oz * SD_CHUNK.drift * tau; m[15] = 1;
+  return m;
+}
 
 const _uploaded = new WeakSet();
 /** The Steps' pictures, uploaded once a renderer - albedo and their own light. */
@@ -215,12 +233,7 @@ export function createSdSteps({ renderer = null, audio = null, ending = null, li
       for (let j = 0; j < st.chunks.length; j++) {
         const d = st.chunks[j];
         if (!show) { hide(d); continue; }
-        // turned about its own horizontal axis (kx, 0, kz) by its tumble, stood where its fall has it - in place
-        const C = chunkWays[j], m = d.object.matrix, a = C.w * tau, c = Math.cos(a), sn = Math.sin(a), v = 1 - c;
-        m[0] = c + v * C.kx * C.kx; m[1] = sn * C.kz; m[2] = v * C.kx * C.kz; m[3] = 0;
-        m[4] = -sn * C.kz; m[5] = c; m[6] = sn * C.kx; m[7] = 0;
-        m[8] = v * C.kx * C.kz; m[9] = -sn * C.kx; m[10] = c + v * C.kz * C.kz; m[11] = 0;
-        m[12] = x + C.at[0] + C.ox * SD_CHUNK.drift * tau; m[13] = y + C.at[1] - 0.5 * SD_CRUMBLE_FALL_G * tau * tau * C.g; m[14] = z + C.at[2] + C.oz * SD_CHUNK.drift * tau; m[15] = 1;
+        sdChunkMatrix(d.object.matrix, chunkWays[j], tau, x, y, z);   // turned about its own horizontal axis by its tumble, stood where its fall has it - in place
         d.hidden = false;
       }
     }
@@ -316,10 +329,7 @@ export function createSdSteps({ renderer = null, audio = null, ending = null, li
       pendMesh = make(buildPendulum({ teeth: !lite }));
       const chunks = buildCrumbleChunks(lite ? 2 : 4);
       chunkMeshes = chunks.map((c) => make(c.model));
-      chunkWays = chunks.map((c, j) => {
-        const l = Math.hypot(c.at[0], c.at[2]) || 1, ox = c.at[0] / l, oz = c.at[2] / l;
-        return { at: c.at, ox, oz, kx: oz, kz: -ox, w: SD_CHUNK.spin * (0.8 + 0.15 * j), g: 1 + 0.06 * (j - 1.5) };   // tumbling outward, each its own
-      });
+      chunkWays = sdChunkWays(chunks);
       gritMesh = make(buildGritModel());
       for (const st of steps) {
         const gpu = meshes.get(st.s.kind);

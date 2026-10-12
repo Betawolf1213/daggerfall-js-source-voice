@@ -212,7 +212,7 @@ test('AUDIT SCALE D2: the clock\'s moment in seconds - scheduled() hands runCron
   assert.equal(svc.env.DB._raw.prepare('SELECT COUNT(*) AS n FROM sessions WHERE player_id = ?').get(g.id).n, 1);
 });
 
-test('AUDIT SCALE D7: on a quiet world the clock is six statements a minute and twenty-two an hour (AUDIT LW-II-2 S3) - each job asks once and, its page short, never again; the Motherlodes are not picked behind `dev`; a metrics write that throws costs no job', async () => {
+test('AUDIT SCALE D7: on a quiet world the clock is six statements a minute and twenty-three an hour (AUDIT LW-II-2 S3; EG-ZM) - each job asks once and, its page short, never again; the Motherlodes are not picked behind `dev`; a metrics write that throws costs no job', async () => {
   clock(T0);
   const svc = await standService({ SEATS_OPEN: 'on', PROFESSIONS_OPEN: 'on' });
   _resetCronForTests();
@@ -228,8 +228,10 @@ test('AUDIT SCALE D7: on a quiet world the clock is six statements a minute and 
   // board switches are off) - twenty-one still
   // PIN MOVED (AUDIT LW-II-2 S3): while the market is not open to everyone the patrons' job marks every trader's hours
   // as they pass (market.js markPatronsShut - one statement), so opening it pays none of them - twenty-two
-  assert.deepEqual(hour.map((j) => [j.name, j.statements]), [['board', 2], ['guild-board', 1], ['harvests', 2], ['market-history', 10], ['rate-limits', 1], ['sessions', 1], ['guild-invites', 1], ['realm-findings', 1], ['realm-wealth-hours', 1], ['wild-falls', 1], ['patrons', 1]]);
-  assert.equal(minute.reduce((n, j) => n + j.statements, 0) + hour.reduce((n, j) => n + j.statements, 0), 6 + 22);   // PIN MOVED (AUDIT LW-II-2 S3)
+  // PIN MOVED (EG-ZM, Elite-Gates.md section 23): the Weir Key's stake clock asks the held stakes due once - none on a
+  // quiet world, so nothing spent and no letter written (eg.js spendLapsedStakes); twenty-three
+  assert.deepEqual(hour.map((j) => [j.name, j.statements]), [['board', 2], ['guild-board', 1], ['harvests', 2], ['market-history', 10], ['rate-limits', 1], ['sessions', 1], ['guild-invites', 1], ['realm-findings', 1], ['realm-wealth-hours', 1], ['wild-falls', 1], ['patrons', 1], ['eg-stakes', 1]]);
+  assert.equal(minute.reduce((n, j) => n + j.statements, 0) + hour.reduce((n, j) => n + j.statements, 0), 6 + 23);   // PIN MOVED (AUDIT LW-II-2 S3; EG-ZM)
   // behind `dev` the Motherlodes are a developer's: never picked by the clock
   const dev = await standService({ PROFESSIONS_OPEN: 'dev' });
   _resetCronForTests();

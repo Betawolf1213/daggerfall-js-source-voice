@@ -169,6 +169,36 @@ export function routePath(points, w = Infinity, h = Infinity) {
   return d.trim();
 }
 
+/** OW-DOTS-EVEN: the route's widths at the feet (px) - enhancedStyle.js .tview-route-casing's and .tview-route-line's,
+ *  pinned equal; a smaller dot's pair is these times its size (the frame's `routeDotSizes`). */
+export const ROUTE_CASING_W = 7, ROUTE_LINE_W = 4;
+/** OW-DOTS-EVEN: a path pair a dot size - every rim under every dot - made the first frame that hands the sizes. */
+function dotPairsFor(sizes) {
+  const route = parts?.route;
+  if (!route || !Array.isArray(sizes) || !sizes.length) return null;
+  if (parts.dotPairs?.length === sizes.length) return parts.dotPairs;
+  const doc = route.ownerDocument;
+  const mk = (cls, w) => { const n = doc.createElementNS(SVG_NS, 'path'); n.setAttribute('class', cls); n.style.strokeWidth = `${w}px`; return n; };
+  const pairs = sizes.map((z) => ({ casing: mk('tview-route-casing', +(ROUTE_CASING_W * z).toFixed(2)), line: mk('tview-route-line', +(ROUTE_LINE_W * z).toFixed(2)), d: '' }));
+  route.append(...pairs.map((q) => q.casing), ...pairs.map((q) => q.line));
+  parts.dotPairs = pairs;
+  return pairs;
+}
+
+/** OW-DOTS-GROUND: the route's dots as path data - a zero-length stroke at each (round caps draw it a dot), to the tenth
+ *  of a pixel, those on the screen grown by ROUTE_CLIP_PX alone. */
+export function routeDotsPath(dots, w = Infinity, h = Infinity, cls = null) {
+  const M = Number.isFinite(w) && Number.isFinite(h) ? ROUTE_CLIP_PX : Infinity;
+  let d = '';
+  for (const p of dots ?? []) {
+    if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y)) continue;
+    if (cls != null && (p.c ?? 0) !== cls) continue;   // OW-DOTS-EVEN: one size's dots
+    if (p.x < -M || p.y < -M || p.x > w + M || p.y > h + M) continue;
+    d += `M${p.x.toFixed(1)} ${p.y.toFixed(1)}h0`;
+  }
+  return d;
+}
+
 function put(node, key, value) {
   if (!node || last[key] === value) return;
   last[key] = value;
@@ -705,10 +735,12 @@ function listenPointer(win, on) {
  * One frame's readout.
  * @param {{ feet: {x:number,y:number,front:boolean}|null, heading: number|null, yaw: number, where: string, keys?: {move?:string, out?:string}|null,
  *   touch?: boolean, fade?: number, trip?: string, route?: Array<{x:number,y:number,front:boolean}|null>, followDist?: Record<string,string>|null,
+ *   routeDots?: Array<{x:number,y:number,c?:number}|null>|null, routeDotSizes?: readonly number[]|null,
  *   marks?: Array<{key:string, x:number, y:number, front:boolean, label?:string, sub?:string, kind?:string, pick?:boolean, edge?:boolean}> }} f
  *   `feet` the projected feet, `heading` the chevron's degrees (null keeps the last), `yaw` the camera's heading,
  *   `fade` 0..1 how far risen (the readout comes in with the camera and goes with it); TV2: `trip` the journey's line,
- *   `route` its projected points, and a mark with `pick` takes a click (`hooks.onMark`)
+ *   `route` its projected points, and a mark with `pick` takes a click (`hooks.onMark`); OW-DOTS-GROUND: `routeDots` the
+ *   route's ground dots (scenes/travelView.js routeGroundDots), OW-DOTS-EVEN: `routeDotSizes` a path pair a size
  */
 export function updateTravelViewHud(f) {
   if (!parts) return;
@@ -721,7 +753,10 @@ export function updateTravelViewHud(f) {
   style(root, 'op', 'opacity', fade.toFixed(3));
   if (f.feet?.front) {
     style(parts.you, 'you-d', 'display', '');
-    style(parts.you, 'you-t', 'transform', `translate(${Math.round(f.feet.x)}px, ${Math.round(f.feet.y)}px)`);
+    // TV-SMOOTH (2026-10-12, Mac: "the overworld traveling at high speed looks stuttery on the character and the circle"):
+    // a tenth of a pixel, never a whole one - the ring rounded to the pixel hopped a pixel at a time beside a body drawn
+    // smoothly (a 3d transform: the compositor moves it, no layout)
+    style(parts.you, 'you-t', 'transform', `translate3d(${f.feet.x.toFixed(1)}px, ${f.feet.y.toFixed(1)}px, 0)`);
   } else style(parts.you, 'you-d', 'display', 'none');
   if (f.heading != null) style(parts.chev, 'chev', 'transform', `rotate(${f.heading.toFixed(1)}deg)`);
   const words = `${last.where}|${last.hint}|${last.trip}`;
@@ -732,10 +767,23 @@ export function updateTravelViewHud(f) {
   if (`${last.where}|${last.hint}|${last.trip}` !== words) furniture.at = -Infinity;   // the bar's words changed: its height may have (a line wrapped, a journey's line came) - measured again next frame
   if (parts.line) {
     const d = routePath(f.route ?? [], vw, vh);   // FB0929: cut to the screen read above - a far journey's line dashed off it cost the frame
-    if (last.route !== d) {
-      last.route = d;
-      parts.line.setAttribute('d', d);
-      parts.casing.setAttribute('d', d);
+    // OW-DOTS-GROUND: the line is drawn as its dots - each a point on the land the view projected (scenes/travelView.js
+    // routeGroundDots), a zero-length stroke with round caps; the line's own path (`d`) where a host hands no dots
+    // OW-DOTS-EVEN: each size's dots on their own pair, the smaller toward the horizon (the frame's `routeDotSizes`)
+    const pairs = Array.isArray(f.routeDots) ? dotPairsFor(f.routeDotSizes) : null;
+    const shown = pairs ? '' : Array.isArray(f.routeDots) ? routeDotsPath(f.routeDots, vw, vh) : d;
+    last.route = d;
+    if (last.routeShown !== shown) {
+      last.routeShown = shown;
+      parts.line.setAttribute('d', shown);
+      parts.casing.setAttribute('d', shown);
+    }
+    for (const [i, q] of (pairs ?? parts.dotPairs ?? []).entries()) {
+      const dd = pairs ? routeDotsPath(f.routeDots, vw, vh, i) : '';
+      if (q.d === dd) continue;
+      q.d = dd;
+      q.line.setAttribute('d', dd);
+      q.casing.setAttribute('d', dd);
     }
   }
   // OW-FILTER: the counts are of every mark (a hidden group still says how many it holds); the canvas draws the shown
@@ -884,6 +932,18 @@ export function portGlyph(g, x, y, kind, color) {
 }
 export function yardGlyph(g, x, y, kind, color) {
   if (kind === 'shipyard' || kind === 'lighthouse' || kind === 'docks') { portGlyph(g, x, y, kind, color); return; }   // SHIPYARDS-FOUND: a port's three
+  if (kind === 'carpenter') {   // CARP-YARD: the joinery's board's hand saw - its blade tapering to the toe, its teeth, its handle
+    const R = TV_YARD_R;
+    g.beginPath();
+    g.moveTo(x - R + 2.5, y - 2); g.lineTo(x + R, y - 2); g.lineTo(x + R, y + 0.6); g.lineTo(x - R + 2.5, y + 2.4); g.closePath();
+    const fill = g.fillStyle;
+    g.fillStyle = color; g.lineWidth = 1; g.strokeStyle = '#000'; g.fill(); g.stroke();
+    g.beginPath(); g.rect(x - R - 0.5, y - 3, 3, 6.2); g.fill(); g.stroke();   // the handle
+    g.fillStyle = '#000';
+    for (let k = 0; k < 4; k++) g.fillRect(x - R + 3.2 + k * 1.6, y + 1.9 - k * 0.45, 0.8, 0.8);   // the teeth
+    g.fillStyle = fill;
+    return;
+  }
   if (kind === 'transport') {
     wheelPath(g, x, y, TV_YARD_R);
     g.lineWidth = 3; g.strokeStyle = '#000'; g.stroke();
@@ -900,11 +960,116 @@ export function yardGlyph(g, x, y, kind, color) {
   for (const a of [0.35, 0.95, 1.55, 2.2, 2.8]) g.fillRect(x + Math.cos(a) * TV_YARD_R - 0.5, y - 1 + Math.sin(a) * TV_YARD_R - 0.5, 1, 1);   // the nail holes
   g.fillStyle = fill;
 }
+/**
+ * OW-GLYPHS (2026-10-12, Mac: "give all the symbols the red dots (monsters and dungeons), green dots, logging nodes etc
+ * fitting symbols"): THE OVERWORLD'S MARKS BY WHAT THEY ARE - each in the marks' own art (its colour as the fill, the
+ * black one-pixel edge, details cut dark), about (x, y) and no taller than the dots were wide by much, so a label under
+ * or over one stands where it stood: a roaming band (monsters) a skull, a dungeon a stone arch round its dark door (an
+ * unfound lair in its red, a found one in brass), a player and my party a bust - a crowd two - a party on the road its
+ * pack, and a profession's nodes by their work: Mining's pick, Logging's pine, Herbalism's leaf, Hunting's paw, Fishing's
+ * fish. The colours are the ones the dots had; only the shapes are new. The fill is the caller's (`g.fillStyle`).
+ */
+const cutDark = (g, fn) => { const f = g.fillStyle; g.fillStyle = '#000'; fn(); g.fillStyle = f; };
+export function skullGlyph(g, x, y) {
+  g.beginPath();   // the cranium over the top, down to the jaw
+  g.moveTo(x - 3, y + 5.5); g.lineTo(x - 3, y + 2.6);
+  g.arc(x, y - 1, 5.2, Math.PI * 0.74, Math.PI * 2.26);
+  g.lineTo(x + 3, y + 5.5); g.closePath();
+  g.fill(); g.stroke();
+  cutDark(g, () => {
+    for (const dx of [-2.1, 2.1]) { g.beginPath(); g.arc(x + dx, y - 1, 1.45, 0, Math.PI * 2); g.fill(); }   // the eyes
+    g.beginPath(); g.moveTo(x, y + 0.9); g.lineTo(x + 0.9, y + 2.3); g.lineTo(x - 0.9, y + 2.3); g.closePath(); g.fill();   // the nose
+    for (const dx of [-1.1, 1.1]) g.fillRect(x + dx - 0.35, y + 3.6, 0.7, 1.9);   // the teeth
+  });
+}
+export function dungeonGlyph(g, x, y) {
+  g.beginPath();   // the arch's stones
+  g.moveTo(x - 6, y + 5.5); g.lineTo(x - 6, y - 0.5); g.arc(x, y - 0.5, 6, Math.PI, 0); g.lineTo(x + 6, y + 5.5); g.closePath();
+  g.fill(); g.stroke();
+  cutDark(g, () => {
+    g.beginPath();   // the door, dark
+    g.moveTo(x - 3, y + 5.5); g.lineTo(x - 3, y + 0.5); g.arc(x, y + 0.5, 3, Math.PI, 0); g.lineTo(x + 3, y + 5.5); g.closePath(); g.fill();
+    g.fillRect(x - 0.6, y - 6.5, 1.2, 2);   // the keystone's joints
+    g.fillRect(x - 6, y + 2, 2, 0.8); g.fillRect(x + 4, y + 2, 2, 0.8);
+  });
+}
+export function personGlyph(g, x, y) {
+  g.beginPath();   // the shoulders
+  g.moveTo(x - 5, y + 5.5); g.quadraticCurveTo(x - 5, y + 0.2, x, y + 0.2); g.quadraticCurveTo(x + 5, y + 0.2, x + 5, y + 5.5); g.closePath();
+  g.fill(); g.stroke();
+  g.beginPath(); g.arc(x, y - 3.4, 2.9, 0, Math.PI * 2); g.fill(); g.stroke();   // the head
+}
+export function crowdGlyph(g, x, y) {
+  personGlyph(g, x + 3.5, y - 1.5);   // the one behind
+  personGlyph(g, x - 2.5, y + 1);
+}
+export function packGlyph(g, x, y) {
+  const ink = g.strokeStyle;
+  g.beginPath(); g.arc(x, y - 4.2, 2, Math.PI, 0);   // the strap's loop: the edge, then its leather
+  g.lineWidth = 2.8; g.stroke(); g.lineWidth = 1.2; g.strokeStyle = g.fillStyle; g.stroke();
+  g.lineWidth = 1; g.strokeStyle = ink;
+  g.beginPath(); g.moveTo(x - 4.5, y + 5.5); g.lineTo(x - 4.5, y - 1); g.quadraticCurveTo(x - 4.5, y - 4, x, y - 4); g.quadraticCurveTo(x + 4.5, y - 4, x + 4.5, y - 1); g.lineTo(x + 4.5, y + 5.5); g.closePath();
+  g.fill(); g.stroke();   // the sack
+  cutDark(g, () => { g.fillRect(x - 4.5, y - 0.4, 9, 1); g.fillRect(x - 0.6, y - 0.4, 1.2, 3); });   // the flap and its buckle
+}
+/** OW-CROSS (2026-10-12, Mac: "where you click a cross mark not a circle"): THE JOURNEY'S END - an X, as a map marks the
+ *  spot: its shadow on the ground, two brush strokes crossed (the black rim, the gold, a pale stroke of light down
+ *  each), `r` its arms' reach. The spot a click walks to (`target`) and the place a journey ends at (`dest`, the
+ *  larger) wear it; the brush is handed back. */
+export const TV_CROSS_R = 6.5;
+export const TV_CROSS_GOLD = '#e8be6e';
+export function crossGlyph(g, x, y, r = TV_CROSS_R) {
+  const f = g.fillStyle, k = g.strokeStyle, w = g.lineWidth;
+  g.beginPath(); g.ellipse(x, y + r * 0.55, r * 1.25, r * 0.5, 0, 0, Math.PI * 2); g.fillStyle = 'rgba(0,0,0,0.35)'; g.fill();   // its shadow
+  const arms = () => { g.beginPath(); g.moveTo(x - r, y - r); g.lineTo(x + r, y + r); g.moveTo(x + r, y - r); g.lineTo(x - r, y + r); };
+  g.lineCap = 'round';
+  arms(); g.lineWidth = 5.5; g.strokeStyle = '#000'; g.stroke();
+  arms(); g.lineWidth = 3; g.strokeStyle = TV_CROSS_GOLD; g.stroke();
+  g.beginPath(); g.moveTo(x - r + 1.2, y - r + 0.4); g.lineTo(x + r - 0.8, y + r - 1.6); g.moveTo(x + r - 0.4, y - r + 1.2); g.lineTo(x - r + 1.6, y + r - 0.8);
+  g.lineWidth = 0.9; g.strokeStyle = 'rgba(255,248,225,0.75)'; g.stroke();   // the light down each stroke
+  g.lineCap = 'butt';
+  g.fillStyle = f; g.strokeStyle = k; g.lineWidth = w;
+}
+/** OW-GLYPHS: a profession's group of nodes by its work, in its colour. `prof` the kind's second word. */
+export function gatherGlyph(g, x, y, prof, color) {
+  if (prof === 'mining') {   // the pick: its handle, its curved head
+    g.beginPath(); g.moveTo(x - 4.5, y + 5.5); g.lineTo(x + 2, y - 3);
+    g.moveTo(x - 4, y - 5); g.quadraticCurveTo(x + 2.5, y - 6.5, x + 6, y - 0.5);
+    inked(g, color, 2);
+    g.lineWidth = 1; g.strokeStyle = '#000';   // the brush back for the label's turn
+    return;
+  }
+  if (prof === 'logging') {   // the pine: two tiers and its trunk
+    g.beginPath(); g.moveTo(x, y - 7); g.lineTo(x + 4, y - 1.5); g.lineTo(x + 2, y - 1.5); g.lineTo(x + 5.5, y + 3); g.lineTo(x - 5.5, y + 3); g.lineTo(x - 2, y - 1.5); g.lineTo(x - 4, y - 1.5); g.closePath();
+    g.fill(); g.stroke();
+    cutDark(g, () => g.fillRect(x - 1.2, y + 3, 2.4, 3));
+    return;
+  }
+  if (prof === 'herbalism') {   // the leaf and its vein
+    g.beginPath(); g.moveTo(x - 5, y + 5); g.quadraticCurveTo(x - 6, y - 5, x + 5, y - 5.5); g.quadraticCurveTo(x + 5.5, y + 5, x - 5, y + 5); g.closePath();
+    g.fill(); g.stroke();
+    g.beginPath(); g.moveTo(x - 5, y + 5); g.lineTo(x + 2.5, y - 2.5); g.stroke();
+    return;
+  }
+  if (prof === 'hunting') {   // the paw: its pad and four toes
+    g.beginPath(); g.ellipse(x, y + 2.2, 3.6, 3, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+    for (const [dx, dy] of [[-4.6, -1.6], [-1.7, -4.4], [1.7, -4.4], [4.6, -1.6]]) { g.beginPath(); g.arc(x + dx, y + dy, 1.6, 0, Math.PI * 2); g.fill(); g.stroke(); }
+    return;
+  }
+  if (prof === 'fishing') {   // the fish: its body, its tail, its eye
+    g.beginPath(); g.moveTo(x - 6, y); g.quadraticCurveTo(x - 1, y - 5.5, x + 3.5, y); g.lineTo(x + 6.5, y - 3.5); g.lineTo(x + 6.5, y + 3.5); g.lineTo(x + 3.5, y); g.quadraticCurveTo(x - 1, y + 5.5, x - 6, y); g.closePath();
+    g.fill(); g.stroke();
+    cutDark(g, () => { g.beginPath(); g.arc(x - 3.2, y - 0.6, 0.9, 0, Math.PI * 2); g.fill(); });
+    return;
+  }
+  g.beginPath(); g.moveTo(x, y - 7); g.lineTo(x + 5, y); g.lineTo(x, y + 7); g.lineTo(x - 5, y); g.closePath(); g.fill(); g.stroke();   // GATHER-OW's diamond, for a work with no glyph
+}
 /** YARDS-FOUND: a yard mark's own kind - its kind's second word (`yard stable`, `yard transport`; SHIPYARDS-FOUND: `yard
- *  shipyard`, `yard lighthouse`, `yard docks`), the Stable's where it names none the glyph knows. */
+ *  shipyard`, `yard lighthouse`, `yard docks`; CARP-YARD: `yard carpenter`), the Stable's where it names none the glyph
+ *  knows. */
 export const yardMarkKind = (m) => {
   const k = String(m?.kind ?? '').split(' ')[1] ?? '';
-  return k === 'transport' || k === 'shipyard' || k === 'lighthouse' || k === 'docks' ? k : 'stable';
+  return k === 'transport' || k === 'carpenter' || k === 'shipyard' || k === 'lighthouse' || k === 'docks' ? k : 'stable';   // CARP-YARD: the joinery's
 };
 /** OWS1: a mark at sea, by its kind. */
 export const isShipKind = (m) => /\bship\b/.test(m.kind ?? '');
@@ -1196,16 +1361,16 @@ function drawMarks(marks, vw, vh, dpr, feet = null) {
       g.restore();
     } else if (look === 'waypoint') {   // WAYPOINTS: a small flag in its colour (a party's pip, a guild's bar)
       paintWaypointFlag(g, x, y, { color: m.color, kind: m.wpKind, followed: !!m.followed, hover: m.key === hover });
-    } else if (look === 'target') {
-      g.beginPath(); g.arc(x, y, 8, 0, Math.PI * 2); g.lineWidth = 2; g.strokeStyle = C.brass; g.stroke();
+    } else if (look === 'target' || look === 'dest') {   // OW-CROSS: where the click walks to - an X marks the spot (a place's end the larger)
+      crossGlyph(g, x, y, look === 'dest' ? TV_CROSS_R + 0.5 : TV_CROSS_R);
     } else if (isShipKind(m)) {
       drawShipMark(g, x, y);
     } else if (look === 'bounty') {   // BOUNTY-OVERWORLD: a hunt - a ring round a dot, the held map's circle
       g.beginPath(); g.arc(x, y, 7, 0, Math.PI * 2); g.lineWidth = 4; g.strokeStyle = C.bountyRim; g.stroke();
       g.lineWidth = 2; g.strokeStyle = color; g.stroke();
       g.beginPath(); g.arc(x, y, 2.5, 0, Math.PI * 2); g.lineWidth = 1; g.strokeStyle = C.bountyRim; g.fill(); g.stroke();
-    } else if (look === 'gather') {   // GATHER-OW: a profession's group - a gem's diamond in its colour, a ring of dark
-      g.beginPath(); g.moveTo(x, y - 7); g.lineTo(x + 5, y); g.lineTo(x, y + 7); g.lineTo(x - 5, y); g.closePath(); g.fill(); g.stroke();
+    } else if (look === 'gather') {   // GATHER-OW: a profession's group in its colour - OW-GLYPHS: by its work's glyph
+      gatherGlyph(g, x, y, (m.kind ?? '').split(' ')[1] ?? '', color);
     } else if (look === 'stranger') {   // STRANGER-HELM (the owner: "a stranger should have a knights helmet in the same art as the dots"): a great helm - its fill the stranger's red, the dots' black edge, the eye slit and the breaths cut dark
       strangerHelm(g, x, y);
     } else if (look === 'camp') {   // OW6: a camp - a tent's peak, not a band's dot
@@ -1216,6 +1381,12 @@ function drawMarks(marks, vw, vh, dpr, feet = null) {
       wheelPath(g, x, y, TV_WHEEL_R);
       g.lineWidth = 3; g.strokeStyle = '#000'; g.stroke();
       g.lineWidth = 1.5; g.strokeStyle = C.brass; g.stroke();
+    } else if (look === 'band' || look === 'raider') {   // OW-GLYPHS: monsters on the move - a skull in the enemy's red
+      skullGlyph(g, x, y);
+    } else if (look === 'lair' || (look === 'far' && /\bdungeon\b/.test(m.kind ?? ''))) {   // OW-GLYPHS: a dungeon - its arch, an unfound lair's red, a found one's brass
+      dungeonGlyph(g, x, y);
+    } else if (look === 'party' || look === 'traveller') {   // OW-GLYPHS: a player - a bust, my party's green, a stranger's verdigris; a crowd two
+      if (/\bcrowd\b/.test(m.kind ?? '')) crowdGlyph(g, x, y); else personGlyph(g, x, y);
     } else if (look === 'wayfarer' && /\bhideout\b/.test(m.kind ?? '')) {   // LW12: a band's rumoured hideout - a ring, its area, never a point
       g.beginPath(); g.arc(x, y, TV_HIDEOUT_R, 0, Math.PI * 2); g.lineWidth = 4; g.strokeStyle = '#000'; g.stroke();
       g.lineWidth = 2; g.strokeStyle = color; g.setLineDash?.([4, 3]); g.stroke(); g.setLineDash?.([]);
@@ -1224,7 +1395,7 @@ function drawMarks(marks, vw, vh, dpr, feet = null) {
       if (/\bcaravan\b/.test(m.kind ?? '')) {   // LW10: a caravan's mark its wagon - the bed and two wheels under it
         g.beginPath(); g.rect(x - r - 1, y - r + 1, r * 2 + 2, r * 1.4); g.fill(); g.stroke();
         for (const wx of [x - r * 0.55, x + r * 0.55]) { g.beginPath(); g.arc(wx, y + r * 0.6, r * 0.42, 0, Math.PI * 2); g.fill(); g.stroke(); }
-      } else { g.beginPath(); g.rect(x - r, y - r, r * 2, r * 2); g.fill(); g.stroke(); }
+      } else packGlyph(g, x, y);   // OW-GLYPHS: pilgrims, a pedlar - their pack (LW3's square)
     } else {
       const r = look === 'dest' || /\bcrowd\b/.test(m.kind ?? '') ? 7 : look === 'place' || look === 'far' ? 4 : 5;   // OW-CROWD: a crowd's dot the larger
       g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); g.stroke();

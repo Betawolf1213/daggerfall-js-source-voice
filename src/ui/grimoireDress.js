@@ -30,6 +30,7 @@
 // The pictures are the pack's, cut at run time (ui/grimoireArt.js) - nothing new is committed.
 import { FRAME_ROLES, FRAME_CSS } from './enhancedFrame.js';
 import { CHANNEL_COLOURS, NAME_COLOURS, PING_COLOURS, channelRules, pipRules } from './chatColours.js';   // CHAT-COLOURS, NAME-INK, PING1: the chat's colours on the page
+import { tierMarkCss } from './lootTierMarks.js';   // LOOT-MARKS: the quick loot's tier gem and wash, on the page
 import { buildGrimoireArt, grimoireFontUrl, grimoireImg, artVar, FRAME_ART, nativeSize, BOOK_SLICE, PLATE_SLICE,
   VIAL_CUT, DIAL_ICONS, dialIconSize, dialArtName, grimoireDeskUrl } from './grimoireArt.js';
 import { getPref, setPref } from '../systems/uiPrefs.js';
@@ -38,6 +39,8 @@ import { pageParam } from '../systems/pageQuery.js';
 export const GRIMOIRE_DRESS = 'grimoire';
 /** The scope every rule of the dress sits under. */
 export const G = ':root[data-plus-dress="grimoire"]';
+/** DIAL-PACK: the Tab dial's doors in Daggerfall's own art unless the card's row keeps the pack's paintings. */
+const DIAL_CLASSIC = `${G}:not([data-grim-dial="pack"])`;
 export const GRIMOIRE_FAMILY = 'DFO Alagard';
 export const GRIMOIRE_STACK = `'${GRIMOIRE_FAMILY}', 'Alagard', Georgia, serif`;
 
@@ -58,6 +61,11 @@ export const GRIMOIRE_VITALS = Object.freeze({ upright: 'Upright vials', row: 'V
  *  GrimoireUI spellbook?"): the spellbook as the dress's book (the desk's painted book, like every other) or as
  *  GrimoireUI's own spellbook picture (SPBK00I0), every press of the enhanced book written on it. */
 export const GRIMOIRE_SPELLBOOKS = Object.freeze({ book: 'DFO book', pack: 'GrimoireUI\'s own' });
+/** DIAL-PACK (2026-10-12, Mac: "add the old Tab selector as optional to the overhaul option"): the Tab dial's doors in
+ *  Daggerfall's own art (the face and the HUD bar's icons - ui/dialClassicArt.js, the default) or the pack's paintings
+ *  (GRIM4's helm, book, chest and map). */
+export const GRIMOIRE_DIALS = Object.freeze({ classic: 'Daggerfall icons', pack: 'Grimoire paintings' });
+export const grimoireDial = () => (Object.hasOwn(GRIMOIRE_DIALS, getPref('grimoireDial')) ? getPref('grimoireDial') : 'classic');
 export const grimoireSpellbook = () => (Object.hasOwn(GRIMOIRE_SPELLBOOKS, getPref('grimoireSpellbook')) ? getPref('grimoireSpellbook') : 'book');
 export const grimoireVitals = () => (Object.hasOwn(GRIMOIRE_VITALS, getPref('grimoireVitals')) ? getPref('grimoireVitals') : 'upright');
 export const grimoirePages = () => (Object.hasOwn(GRIMOIRE_PAGES, getPref('grimoirePages')) ? getPref('grimoirePages') : 'cream');
@@ -1155,6 +1163,14 @@ ${G} .px-dial .px-arm[data-grim-icon]:is(.on, :hover, :focus-visible) .px-c {
   filter: drop-shadow(0 0 1px ${T.yellow}) drop-shadow(0 0 5px rgba(244,224,76,0.5)) drop-shadow(2px 3px 0 rgba(0,0,0,0.55)); }
 ${Object.keys(DIAL_ICONS).map((k) => { const [w, h] = dialIconSize(k); return `${G} .px-dial .px-arm[data-grim-icon="${k}"] .px-c { width: calc(${w}px * var(--dial-k)); height: calc(${h}px * var(--dial-k));
   background-image: var(${artVar(dialArtName(k))}, none);${DIAL_ICONS[k].cells ? ' image-rendering: pixelated;' : ''} }`; }).join('\n')}
+/* DIAL-CLASSIC (ui/dialClassicArt.js; Mac: "the arena2 files look for those symbols ... make the icons fit to each other
+   sizewise"): in game the doors wear Daggerfall's own - the player's face, the HUD bar's star, sack and scroll, each at
+   a whole number of screen pixels to its own, the four the same height; the pack's paintings (above) are each door's
+   until its own is read. DIAL-PACK (Mac: "add the old Tab selector as optional"): the card's 'Tab dial' row keeps the
+   pack's paintings instead (GRIMOIRE_DIALS 'pack'). */
+${Object.keys(DIAL_ICONS).map((k) => { const [w, h] = dialIconSize(k); return `${DIAL_CLASSIC} .px-dial .px-arm[data-grim-icon="${k}"] .px-c { width: calc(var(--dial-classic-w-${k}, ${w}px) * var(--dial-k)); height: calc(var(--dial-classic-h-${k}, ${h}px) * var(--dial-k));
+  background-image: var(--dial-classic-${k}, var(${artVar(dialArtName(k))}, none)); }`; }).join('\n')}
+${DIAL_CLASSIC}[data-grim-dial-art="classic"] .px-dial .px-arm[data-grim-icon] .px-c { image-rendering: pixelated; }
 ${G} .px-dial .px-arm[data-grim-icon]::after { content: none; }
 ${G} .px-dial .px-arm[data-grim-icon]::before { background: rgba(216,176,74,0.4); }
 ${G} .px-dial .px-arm[data-grim-icon]:is(.on, :hover)::before { background: ${T.goldLeaf}; }
@@ -1368,6 +1384,10 @@ ${G} .wplaque-row[data-rarity="legendary"] > span:first-child { color: #9a4210 !
 ${G} .wplaque-row[data-rarity="aetheric"] > span:first-child { color: #1d6a86 !important; }
 ${G} .wplaque-row[data-rarity="artifact"] > span:first-child { color: #5e2a96 !important; }
 ${G} .wplaque-row[data-rarity="gilded"] > span:first-child { color: #7a4a00 !important; }
+/* LOOT-MARKS (2026-10-12, a player's video: "seeing rarity in the quickloot is quite hard"): on the page the Rare, the
+   Legendary and the Gilded were three browns - each rolled row now carries its tier's own bright gem, edged in ink, and
+   a wash of its ink tone under it (ui/lootTierMarks.js); the lit row keeps its red bar beside the wash. */
+${tierMarkCss({ scope: G, wash: (k) => RARITY_INK[k], washAlpha: 0.3, edge: T.outline, bang: true })}
 
 /* INK-TONES (2026-10-10, a player: "make the fonts better visible ... the blue and Mora's Mantle ones ... don't make them
    totally different"): a rarity's, a set's and the sigil's words are drawn in their OWN colour - a CSS variable
@@ -2095,6 +2115,7 @@ export function mountGrimoireDress(doc = globalThis.document) {
   root.dataset.grimBackdrop = grimoireBackdrop();
   root.dataset.grimVitals = grimoireVitals();
   root.dataset.grimSpellbook = grimoireSpellbook();
+  root.dataset.grimDial = grimoireDial();   // DIAL-PACK
   let kit = doc.getElementById(GRIM_KIT_ID);
   if (!kit) { kit = doc.createElement('style'); kit.id = GRIM_KIT_ID; kit.textContent = GRIMOIRE_KIT_CSS; }
   let ink = doc.getElementById(GRIM_INK_ID);
@@ -2183,6 +2204,12 @@ export function setGrimoireVitals(id, doc = globalThis.document) {
   if (!Object.hasOwn(GRIMOIRE_VITALS, id)) return false;
   setPref('grimoireVitals', id);
   if (doc?.documentElement?.dataset) doc.documentElement.dataset.grimVitals = id;
+  return true;
+}
+export function setGrimoireDial(id, doc = globalThis.document) {
+  if (!Object.hasOwn(GRIMOIRE_DIALS, id)) return false;
+  setPref('grimoireDial', id);
+  if (doc?.documentElement?.dataset) doc.documentElement.dataset.grimDial = id;
   return true;
 }
 export function setGrimoireSpellbook(id, doc = globalThis.document) {

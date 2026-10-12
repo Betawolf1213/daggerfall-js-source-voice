@@ -363,6 +363,19 @@ Then "as centered as possible not on the border to the other tier... dont overri
   `WILD_HALL_SPACING` (3) pixels apart at least, each next one of the best few by the day's own roll - eased (two
   pixels, one, the whole ring) before the tier is ever short of its count (`wildHallPicks`,
   `wildDungeons.js:"export function wildHallPicks"`).
+- THE COST (WILD-FREE, 2026-10-11 - a player's load captured from the installed client: entering the world froze it
+  14.5 s, 8.1 s of them the day's first picks, asked by the nearest dungeon's list). `wildHallFree` is the host's
+  dearest pixel test - its last word the spawns' plateau (`spawnedDungeons.js:"export function spawnPlateauFloor"`, a
+  heightmap kernel summed for a pixel) - and the picks asked it of every pixel of every ring before they cut the band:
+  12,564 asks over the real zone (the player's ARENA2, its box 164 x 107), where the band reads 2,628. They ask it now
+  where an answer is read, once a pixel (`isFree`): the deepest level holding a free pixel (the old reduce's `maxBd`),
+  the band and its lowerings, the whole ring when the band is short. Every client stands the same halls, so nothing
+  moves - each step reads the free pixels it read, in the scan's order. Measured over the real zone in node 22: the
+  first day 19.2 s -> 4.0 s, the same 28 halls on each of 60 days to the byte; a later day was ~12 ms on both (the
+  plateau keeps its answers per pixel). FOUND READING IT: two arms of the law never decide - the two-pixel band (read
+  only when the band is short, and by then it IS the band, the floor already lowered to 2) and the whole ring's passes
+  (the band's one-pixel pass fills the count whenever the band holds it; a band that does not was the whole ring
+  already). They stand verbatim; their mutants are recorded equivalent (`tools/mutants/wildfree.json`).
 - WHEN: by the DAY - `wdunDay`, the relay's clock (`WDUN_DAY_MS`, `wire.js:"export const WDUN_DAY_MS"`; the hub's `st`
   carries it, and the client keeps the skew), never a client's own: every player sees the same halls (`wildActiveNow`,
   `world.js:"const wildActiveNow"`). A day gone, its halls leave the index (the one I stand in stays until I leave

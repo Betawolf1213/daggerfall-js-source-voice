@@ -179,3 +179,9 @@ ALTER TABLE eg_redoubts ADD COLUMN m TEXT;
 -- OR'ed by `/v1/eg/first` as a client shows one and answered on `/v1/eg/keys` (server-account/src/eg.js egFirstSay) - a
 -- new device says none of them again.
 ALTER TABLE players ADD COLUMN eg_first INTEGER NOT NULL DEFAULT 0;
+
+-- EG-ZM (2026-10-12) - THE STAKE'S CLOCK (bible/11-Multiplayer/Elite-Gates.md section 23, "The clock"). A stake no receipt
+-- ever settled is spent by the service's hourly clock once nothing can name it (server-account/src/eg.js
+-- spendLapsedStakes, EG_STAKE_CLOCK_S past its `until`), its opener's letter written with it; the clock asks the held
+-- stakes by their end, oldest first, by this index - never a walk of every stake ever staked.
+CREATE INDEX IF NOT EXISTS idx_eg_stakes_held ON eg_stakes (state, until);

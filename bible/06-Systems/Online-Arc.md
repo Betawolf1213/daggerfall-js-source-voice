@@ -10181,8 +10181,8 @@ HOME-VOTE II (below).
   offered its take-back alone (II A3: homeVoteRows, homeVotePressable). The vote is shown at once and read back (the
   registry's `vote`; a house the page holds no owner of is asked again, and no vote sent), never told as a home of
   mine changed (LEGACY7's listener).
-- **HOME-VOTE - what a negative score hides, and from whom.** While a home's score runs below zero it is SHUNNED
-  (homeShunned), and what its owner chose to show stands for its INSIDERS alone - the owner's own account (any of its
+- **HOME-VOTE - what a negative score hides, and from whom.** While a home's score runs down to HOME_SHUN_AT (-5,
+  HOME-SHUN below) it is SHUNNED (homeShunned), and what its owner chose to show stands for its INSIDERS alone - the owner's own account (any of its
   characters: `mine`) and, for a hall, an account with any character in its guild (`member`, `insider` -
   homeDecorShown). Everyone else walks into the room Daggerfall furnished - no placed piece but a hired trader with
   goods on sale at it (a shop, never a decoration: decorStaysShunned; II A1: any piece may be made a trader, so the
@@ -10197,9 +10197,9 @@ HOME-VOTE II (below).
   map opened (II B6: nothing re-reads it on a clock; a viewer standing at a yard keeps what they read). The owner
   reads the score at their own door - on its plaque, or in their Info box where none is drawn (II B2) - and,
   shunned, that the house's decorations are hidden from other players.
-- **The calls made here, each the owner's to change.** NEGATIVE means a score below zero, as asked - one vote down on a
-  home nobody has voted up hides it until somebody does; there is no minimum count (the week's age and the hour's 30
-  are what stand between a throwaway account and every home). A hall is a player's house and is voted as one.
+- **The calls made here, each the owner's to change.** SHUNNED means five votes down, net (HOME_SHUN_AT - HOME-SHUN,
+  below: it was any score below zero, as first asked); there is no minimum count beyond it (the week's age and the
+  hour's 30 are what stand between a throwaway account and every home). A hall is a player's house and is voted as one.
   "Exterior decorations" is read as the yard AND the painted outside (HOME-LOOK's Exterior tab); a hall's banners are
   its guild's heraldry, not its decor, and stand. A hired trader stands. A tenant renting a room, and a party member
   let in, are visitors: a shunned home is bare to them. The vicinity is the door: the service cannot see where a voter
@@ -10215,8 +10215,8 @@ HOME-VOTE II (below).
   more of a shunned home's room and paint than a new one (AUDIT A3); its yards are the client's to hide. No relay
   change.
 - Pinned in `test/decorfigure.test.js` (8) and `test/homevote.test.js` (12); `tools/mutants/decorfigure.json` 19 dead
-  and 1 equivalent as recorded, `tools/mutants/homevote.json` 92 dead and 1 equivalent as recorded (AUDIT HOME-VOTE
-  II's among them). PIN MOVED: guild_yard's and homelook's look-merge pin (a look
+  and 1 equivalent as recorded, `tools/mutants/homevote.json` 94 dead and 1 equivalent as recorded (AUDIT HOME-VOTE
+  II's and HOME-SHUN's among them). PIN MOVED: guild_yard's and homelook's look-merge pin (a look
   counts where it is shown - never lookOfHome, which would rebuild the owner's street under the painter's preview;
   `tools/mutants/guild_yard.json` and `housing.json` re-aimed); home2's, homerent's and guild1d_client's door rows (the
   visitor's rows and the votes under them); decor1's room list (the vote's gate between the list stood and its
@@ -10337,6 +10337,38 @@ fixed and pinned unless DOCUMENTED:
   and the placer's figure by kind (every catalogue person is in the archives).
 - Pinned in `test/homevote.test.js` (four AUDIT II tests) and `test/decorfigure.test.js`; `tools/mutants/homevote.json`
   and `decorfigure.json` - every AUDIT II mutant dead but the two equivalents.
+
+### HOME-SHUN - a home is hidden at five votes down, not one (2026-10-12, from play)
+
+A player, in feature-feedback: "I put a park bench and a small fence in my backyard and it got voted down from 0 to -1
+from some troll ... how can anyone vote positively for your house if no one sees it ... people could see the negative,
+and also vote negative, thinking it's bad (they can't see what's there) ... I think the voting system should hide
+placements from everyone starting at like, -5, -10 or something ... -1 is a bit crazy since you START at 0 when you buy
+a house. The system should primarily hide plagues that the majority hates."
+
+- **The law.** A home is shunned at HOME_SHUN_AT, -5 - its score at five down net or lower (`src/net/homeVoteLaw.js`
+  homeShunned) - where any score below zero hid it. One account's word against a house nobody had seen yet hid it from
+  everyone, and a hidden house could only be voted on blind, so a vote down drew more of them; at -1 to -4 a house now
+  stands whole, to be seen and voted up. The bar sits at the low end of the player's "-5, -10": the week's age and the
+  hour's 30 already stand between a throwaway account and a home, and five accounts a week old agreeing is the town's
+  word, not a troll's.
+- **One law, every reader.** Everything that hides a home reads homeShunned: the room the service hands out
+  (`server-account/src/homeVotes.js` homeShownTo, so a build from before HOME-SHUN is handed a home at -1 to -4 whole),
+  the paint homesInTown says (`server-account/src/homes.js` lookFor), the client's room, yard and paint
+  (homeDecorShown), and the door's lines (`src/systems/onlineHomes.js` homeVoteLines). No migration: the score kept on
+  the row is unchanged, only what it means. A home that stood at -1 to -4 stands whole again at the next read of its
+  town.
+- **The four hosts.** As HOME-VOTE: `scenes/world.js` and `scenes/worldModes.js` read the law and change no line;
+  `scenes/exterior.js` and `scenes/dungeonContext.js` stand no online homes. ACCOUNT_VERSION is unchanged: the service
+  reads the law it imports, and no route's shape moves - the deploy is the service and the page together, either first.
+- Pinned in `test/homevote.test.js` (12): -1 to -4 shown and -5, -6 shunned; a visitor shown at -1 and hidden at -5; the
+  owner, a member and the kin shown at -5; the service hands a home at -1 its whole room and at -5 its trader alone; a
+  hall shunned by five votes down. PIN MOVED: every service pin that shunned a home by one vote now votes it down by
+  five accounts (the test's `shun`); the yard's pin stands at HOME_SHUN_AT. Mutants: `tools/mutants/homevote.json`'s
+  HOME-VOTE-zero-shunned re-aimed at the new line, and HOME-SHUN-one-vote-hides and HOME-SHUN-the-bar-itself-shown,
+  both dead. FOUND ON THE WAY: HOME-VOTE-gone-never-re-asked survived on main - its pin voted on a house the page held
+  no owner of, which re-asks before it sends - so a vote on a house sold under the reader now reaches the service's own
+  `no-home` and is pinned to re-ask.
 
 ### YARD-LIGHT - a yard's lamp lights as the town's (2026-10-07)
 
@@ -15499,7 +15531,7 @@ whenever it mounts before the card, which made the probe's Escape check a race.
   serpent1_auditclient (the serpents slain are a plaque). Re-aimed: inspect1.json INS-gear-out-of-order (the row carries
   its part).
 
-## HOLD-SOLO (2026-10-07, FIELD BUGS 2026-10-07b, nObOdy on the Discord: "Lock privateer's hold. The first dungeon is a tutorial area") - the tutorial dungeon is every character's own
+## HOLD-SOLO (2026-10-07, FIELD BUGS 2026-10-07b, nObOdy on the Discord: "Lock privateer's hold. The first dungeon is a tutorial area") - the tutorial dungeon is every character's own (REVERTED 2026-10-12: HOLD-SHARED, below)
 
 "New players loading in in front of 50 players in a dead dungeon with no enemies ruins the magic. ... I couldnt even get
 gear or experience for my character cause i had to zoom past dead enemies and already open doors to get out and i sure
@@ -15527,8 +15559,60 @@ the presence session hears no welcome (H4); and a staff `/tp` to a player there 
 Of every location in the world, the start cell holds one: Daggerfall's Privateer's Hold (map id 187853213, pixel
 109/158; MAPS.BSA read through the port's own reader).
 
-- **Pinned**: `test/fb1007b_holdsolo.test.js` (9; one gated on ARENA2); `tools/mutants/fb1007b.json` (its
-  FB1007B-HOLD / START-CELL / PH1 records and the audit's H records). Record: `01-Overview/Field-Bugs-2026-10-07b.md`.
+- **Pinned** (until the revert): `test/fb1007b_holdsolo.test.js` (9; one gated on ARENA2) - DELETED by HOLD-SHARED;
+  `tools/mutants/fb1007b.json` (its FB1007B-HOLD / START-CELL / PH1 records and the audit's H records). Record:
+  `01-Overview/Field-Bugs-2026-10-07b.md`.
+
+## HOLD-SHARED (2026-10-12, asked: "I want to revert the change we made to privateers hold making it instanced") - Privateer's Hold is a shared world room again
+
+HOLD-SOLO and AUDIT FB1007b's H1-H5, above, reverted. Online, Privateer's Hold keys its world room by its map id, as
+every dungeon does - `dungeon:m187853213` (`net/online.js` roomKeyFor): the others' bodies, the room's memory (WORLD1),
+its simulation (WORLD2), its acts (WORLD3), its loot (WORLD4) and a trade from anyone there, as before 2026-10-07.
+
+- `scenes/worldModes.js` roomIdentity marks no dungeon `solo`; `scenes/world.js`'s key block asks `private` alone.
+- Gone with it: the page's own memory of the Hold (H2: `keepSoloMemory` / `restoreSoloMemory`, its load reset), the
+  staff `/tp` refusal there (H3), the hub link's clock for a presence session with no room (H4 - that session keys the
+  Hold's room again and hears its own welcome), the Local tab's, a page held out's, the party card's and the Online
+  pane's words that the Hold is the player's alone (H5: `net/chat.js` SOLO_LOCAL_TEXT, `ui/partyPanel.js` withMe's
+  tutorial clause), and the Playing Online page's "Your starting cave is yours alone" (`systems/tutorialCatalogue.js`).
+- `systems/startDungeon.js` keeps isStartCell and isStartDungeon - PH1's in-place respawn and TUT1 read them, and they
+  read the configured start cell as ever; isTutorialHold and SHIPPED_START_CELL (H1) are gone.
+- The relay is untouched: HOLD-SOLO never moved it, and every client joins the Hold's room again.
+- Four hosts: `scenes/world.js` and `scenes/worldModes.js` reverted; `scenes/exterior.js` and
+  `scenes/dungeonContext.js` never keyed a room for the Hold (TUT1's start-cave tutorial in `dungeonContext.js` is
+  untouched).
+
+- **Pinned**: `test/holdshared.test.js` (5) - the start cell, the identity and the key block, the staff teleport and the
+  Local line executed from their source, withMe, the Online pane and the Playing Online page; `tools/mutants/holdshared.json`
+  (4, each a piece of HOLD-SOLO back, dead). Re-aimed: fb1007b.json's START-CELL and PH1 records (to holdshared; the
+  13 HOLD and H records retired, 46 left), sdonline.json SD-ONLINE-the-identity-blind and auditparty8.json
+  AP-hud-place-by-words by content. PIN MOVED: tier1_dungeontiers (the transition's line), sdonline (the identity).
+
+## HOLD-ONCE (2026-10-12, asked: "Let's make it where players outside of privateers hold cannot re enter") - online, Privateer's Hold is entered once
+
+A character begins in Privateer's Hold and, online, walks out of it for good. `scenes/worldModes.js` tryEnterDungeon -
+the one funnel every dungeon entry takes (the door, startInDungeon's Recall, quest transfer, cemetery and Hollow arms,
+the abyss, the undercroft, the arena floor) - refuses the Hold online before its gate (no hub's word, no build) and
+says so: "You cannot go back into Privateer's Hold." (`systems/startDungeon.js` HOLD_ONCE_TEXT).
+
+- The Hold is known by its map id - `systems/startDungeon.js` isPrivateersHold, `world/dungeonTextures.js`
+  PRIVATEERS_HOLD_MAP_ID (187853213, DaggerfallDungeon.IsMainStoryDungeon's first; MAIN_STORY_DUNGEON_IDS reads the
+  same constant) - never the configured start cell, a setting that would otherwise open the real Hold.
+- What still enters: the new game's start (`scenes/world.js`, the classic start's `startInDungeon({ holdOpen: true })`),
+  a save made inside the Hold (the load's `fromLoad`), and a staff `/tp` to a player there (prepareStaffDestination's
+  `holdOpen`). PH1's death respawn inside the Hold stands the player in place and enters nothing.
+- What is refused: the Hold's door from outside, a Recall to an anchor set inside (it lands at the Hold's pixel
+  outside, DFU's "The way underground is closed. Repositioning player." arm), and a quest's `transfer pc inside` there
+  (the exterior fallback, as for any site with no entrance).
+- Offline, the Hold's door is DFU's. The relay is untouched: the Hold keeps its shared room (HOLD-SHARED, above), and
+  every player in it is one who has not yet walked out.
+- Four hosts: `scenes/worldModes.js` holds the gate, and both town hosts build it; `scenes/world.js` marks its two
+  ways in; `scenes/exterior.js` hands no `dungeonOnline` (offline, DFU's); `scenes/dungeonContext.js` enters no dungeon.
+
+- **Pinned**: `test/holdonce.test.js` (3) - isPrivateersHold against a moved start cell; tryEnterDungeon executed from
+  its source, online and off, every arm; the ways in by source. `tools/mutants/holdonce.json` (11, all dead). PIN MOVED
+  (`holdOpen` beside `fromLoad`): mapkeep, castle1, classicstart, dungeonentry, audit68_worldmodes (the Hold's refusal
+  before the gate), fixc_firstStart (the new game's start), staffTeleport (the staff landing).
 
 ## CARDS5 (2026-10-08, Mac: "Do 3 4 and 5") - the relay deals
 

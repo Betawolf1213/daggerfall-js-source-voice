@@ -308,6 +308,13 @@ ${Object.entries(CHANNEL_COLOURS).map(([ch, c]) => `.dfchat[data-colours="on"] .
 .dfchat-box { container-type: inline-size; }
 .dfchat-tablist { display: flex; gap: 2px; min-width: 0; flex: 1 1 auto; overflow-x: auto; scrollbar-width: none; }
 .dfchat-tablist::-webkit-scrollbar { display: none; }
+/* TAB-WHEEL (2026-10-12, Mac: "if there are too many you cant click em aynmore and they get cut off hovering over the
+   bars and scrolling would help, dont add a scrollbar up there"): the strip turns under the mouse wheel (panel: the
+   strip's wheel), still with no bar; where tabs stand past an edge that edge fades out, so the cut-off tab reads as
+   "more this way" and not as a broken label. */
+.dfchat-tablist[data-more="right"] { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent); }
+.dfchat-tablist[data-more="left"] { -webkit-mask-image: linear-gradient(90deg, transparent, #000 22px); mask-image: linear-gradient(90deg, transparent, #000 22px); }
+.dfchat-tablist[data-more="both"] { -webkit-mask-image: linear-gradient(90deg, transparent, #000 22px, #000 calc(100% - 22px), transparent); mask-image: linear-gradient(90deg, transparent, #000 22px, #000 calc(100% - 22px), transparent); }
 .dfchat-tab .dfchat-badge:not(:empty) { display: inline-block; width: 7px; height: 7px; padding: 0; margin-left: 5px; border-radius: 50%;
   font-size: 0; line-height: 0; vertical-align: middle; }
 @container (max-width: 400px) {
@@ -622,11 +629,32 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
     const badge = el('span', 'dfchat-badge');
     badge.setAttribute('aria-hidden', 'true');   // CHAT-CHAN: a dot to the eye - the count is the button's name (paint)
     b.append(badge);
-    b.addEventListener('click', () => { if (query) setQuery(''); log.select(tab.id); paint(true); input.focus?.(); });   // CHAT-FIND: a tab pressed under a search is that tab's conversation - the search gives way to it
+    b.addEventListener('click', () => { if (query) setQuery(''); log.select(tab.id); paint(true); input.focus?.(); b.scrollIntoView?.({ block: 'nearest', inline: 'nearest' }); });   // CHAT-FIND: a tab pressed under a search is that tab's conversation - the search gives way to it; TAB-WHEEL: a tab chosen is wholly in the strip
     tabList.append(b);
     tabButtons.set(tab.id, { b, badge, name: null });
   }
   tabs.append(tabList);
+  // TAB-WHEEL: the wheel over the strip turns it sideways (either wheel axis - a mouse's turns Y, a pad's X), and the
+  // page under it does not scroll while the strip still can; each edge with tabs past it fades (tabEdges, the sheet).
+  const tabEdges = () => {
+    const over = (tabList.scrollWidth ?? 0) - (tabList.clientWidth ?? 0);
+    const at = tabList.scrollLeft ?? 0;
+    const left = over > 1 && at > 1, right = over > 1 && at < over - 1;
+    const more = left && right ? 'both' : left ? 'left' : right ? 'right' : '';
+    if (tabList.dataset && (tabList.dataset.more ?? '') !== more) tabList.dataset.more = more;
+  };
+  tabList.addEventListener('wheel', (e) => {
+    const over = (tabList.scrollWidth ?? 0) - (tabList.clientWidth ?? 0);
+    if (!(over > 1)) return;
+    const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? tabList.clientWidth : 1);
+    if (!d) return;
+    const was = tabList.scrollLeft;
+    tabList.scrollLeft = Math.max(0, Math.min(over, was + d));
+    if (tabList.scrollLeft !== was) e.preventDefault();
+    tabEdges();
+  }, { passive: false });
+  tabList.addEventListener('scroll', tabEdges);
+  if (typeof globalThis.ResizeObserver === 'function') new globalThis.ResizeObserver(tabEdges).observe(tabList);   // the box opened, dragged wider or narrower
   // SOC3: the two Social buttons - one for each state of the panel, built only when the host asked for them. The
   // badge is a SPAN of the chat's own badge class, so a request waiting on the player counts the way an unread line
   // does; its colour in the sheet is what keeps the two from reading as one number.

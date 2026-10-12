@@ -37,6 +37,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { lootRarityOn, reforgeableLines, reforgeAffix, honeableLines, honeAffix, affixBand } from './lootRarity.js';   // LOOT17: and the hone
+import { rarityOf } from './lootRarity.js';   // FB1012d SALVAGE-CLASSIC: the tier a piece's card wears
 import { ALL_GEM_IDS, SOCKET_EMPTY, gemKindOf, gemGrade, hasSocket, socketsOf, socketGem, socketGems, setGem, unsetGem } from './lootRarity.js';   // LOOT20: the sockets; GEM1: a list of them, every grade of gem
 import { mintGem } from './gems.js';   // GEM1: an extracted gem, whole again
 import { welkyndShards, isWelkyndShard, WELKYND_SHARD } from './gateSpoils.js';
@@ -60,7 +61,15 @@ export function salvageShards(item) {
   return t === 'magic' || t === 'rare' ? SALVAGE_SHARDS[t] : 0;
 }
 /** Why a piece may not be salvaged, or null: 'off', 'aetheric', 'gilded', 'artifact', 'quest', 'not' (nothing to salvage),
- *  'bound', 'worn', 'locked'. */
+ *  'classic', 'bound', 'worn', 'locked'.
+ *
+ *  FB1012d SALVAGE-CLASSIC (FIELD BUGS 2026-10-12b; Discord: "magic item with only cast on use effect cannot be salvaged"
+ *  - a "Blazing Holy Dagger of Fireballs", MAGIC.DEF's "Blazing %it of Fireballs" on a Holy Dagger): 'classic' is a piece
+ *  whose card wears Magic (lootRarity.js rarityOf: DFU's own magic, an Item Maker's enchantment, a soul-bound piece) that
+ *  the ladder never graded. LOOT9's law stands - it breaks for no shard: a guild's shelf sells that magic every day and its
+ *  Item Maker makes it, a found one cannot be told from a bought one, and shards come from what was found, never bought
+ *  (five of them are a Portal Stone) - and the faces now SAY so, where they listed it nowhere. A made piece (its
+ *  `provenance`) stays 'not': the Enchanting Station's disenchant is its door, as the Broker's dismantle is the Aetheric's. */
 export function salvageRefusal(item) {
   if (!lootRarityOn()) return 'off';
   if (!item) return 'not';
@@ -69,7 +78,7 @@ export function salvageRefusal(item) {
   if (item.artifact || item.rarity === 'artifact') return 'artifact';
   if (item.questItem) return 'quest';
   if (socketGems(item).length) return 'gems';   // AUDIT GEM: a set gem is never broken with its piece - extracted or unset first (a Magic weapon holds one since GEM1, and the bulk salvage swept it)
-  if (!salvageShards(item)) return 'not';
+  if (!salvageShards(item)) return typeof item.provenance !== 'string' && rarityOf(item) === 'magic' ? 'classic' : 'not';   // FB1012d SALVAGE-CLASSIC: it wears Magic, and is never graded
   if (isBound(item)) return 'bound';
   if (isEquipped(item)) return 'worn';
   if (isLocked(item)) return 'locked';

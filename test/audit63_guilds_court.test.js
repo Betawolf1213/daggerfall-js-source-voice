@@ -474,7 +474,7 @@ const dungeonEnemyArm = (mode, rolls = null) => {
   };
   const build = new Function('dungeonCtx', 'tryMobileEnemyActivate', 'eye', 'dir',
     'getInteractionMode', 'playerEntity', 'makeEnemiesHostile', 'player', 'townTalk',
-    'FOUND_NOTHING_VALUABLE_TEXT_ID', 'say', 'mountInterior', 'ActionTextBox', 'doorDistanceOf', 'targets',
+    'FOUND_NOTHING_VALUABLE_TEXT_ID', 'say', 'mountInterior', 'ActionTextBox', 'doorDistanceOf', 'targets', '_pick',
     `${decl}\n    return _enemyArm;`);
   const arm = build(dungeonCtx,
     // the REAL member, with only the dice fixed - the sinks under test
@@ -484,7 +484,8 @@ const dungeonEnemyArm = (mode, rolls = null) => {
     { pos: [0, 0, 0] }, { randomText: () => null, say: (t) => seen.say.push(t) }, 8999,
     (t) => seen.say.push(t), (w) => seen.mounted.push(w),
     class { constructor(rows) { this.rows = rows; } },
-    doorDistanceOf, []);   // AUDIT TACT C7: the arm asks for a door behind the foe - none here
+    doorDistanceOf, [],   // AUDIT TACT C7: the arm asks for a door behind the foe - none here
+    null);   // FB1012d ALLY-YIELDS: and the ladder's winner behind him (`behind: _pick`) - none here
   return { arm, seen, foe };
 };
 

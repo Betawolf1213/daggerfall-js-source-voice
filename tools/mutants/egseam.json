@@ -200,7 +200,7 @@
   {
     "name": "EGSEAM-the-ghosts-past-the-most",
     "file": "src/render/sdStepsPass.js",
-    "old": "  const list = ghosts.slice(0, SD_GHOSTS_MAX);",
+    "old": "  const list = ghosts.slice(0, max);",
     "new": "  const list = ghosts;",
     "tests": [
       "test/egseam_law.test.js"

@@ -20,7 +20,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { planRoute, routeLegs, routeDrawPoints } from '../src/systems/travelRoute.js';
-import { createTravelView } from '../src/scenes/travelView.js';
+import { createTravelView, ROUTE_DOT_PX, ROUTE_DOTS_MAX } from '../src/scenes/travelView.js';
 import { forwardOf, TV_RISE_S } from '../src/player/travelCamera.js';
 import { projectToScreen } from '../src/player/tapRay.js';
 import { perspective, lookAt, mirrorProjectionX } from '../src/world/mat4.js';
@@ -38,7 +38,9 @@ const SPOT_M = 300;   // a click on the ground the view shows: 300 m north, in t
 
 // the line's paint, read off the style sheet: the dash's period and the casing's width
 const CSS = rd('src/ui/enhancedStyle.js');
-const DASH = /\.tview-route-line \{[^}]*stroke-dasharray: (\d+) (\d+);/.exec(CSS);
+// OW-DOTS-GROUND: the line is drawn as dots now (the view's world points, scenes/travelView.js routeGroundDots) - the
+// path's length is still the measure of what an uncut line would cost, a dot every ROUTE_DOT_PX at the finest
+const DASH = [null, '0', String(ROUTE_DOT_PX)];
 const CASING = /\.tview-route-casing \{[^}]*stroke-width: (\d+);[^}]*stroke-linecap: round; stroke-linejoin: round;/.exec(CSS);
 const PERIOD = Number(DASH?.[1]) + Number(DASH?.[2]);
 
@@ -120,7 +122,7 @@ function drawn(j, turn = 0) {
     const f = tv.frame(1 / 60);
     V = lookAt(f.eye, [f.eye[0] + f.fwd[0], f.eye[1] + f.fwd[1], f.eye[2] + f.fwd[2]], [0, 1, 0]);   // world.js's view
     tv.drawHud();
-    return { d: hud.travelViewHudState().route, points: seen.route };
+    return { d: hud.travelViewHudState().route, points: seen.route, dots: seen.routeDots ?? [] };
   } finally { tv.exit('escape', true); hud.disposeTravelViewHud(); }
 }
 
@@ -138,7 +140,7 @@ const lengthOf = (d) => strokesOf(d).reduce((s, st) => st.reduce((t, p, i) => (i
 const dashesOf = (d) => Math.round(lengthOf(d) / PERIOD);
 
 test('FB0929 law: the line is cut to the screen grown by ROUTE_CLIP_PX, wider than the casing\'s reach - a cut\'s cap never shows; no screen given, the TV2 law as it was', () => {
-  assert.ok(DASH && CASING && PERIOD === 15, 'the brass line is dashed 9 on 6 over a round-capped casing');
+  assert.ok(CASING && PERIOD === 12, 'OW-DOTS: a dot every 12 px at the feet, over a round-capped casing');
   assert.equal(hud.ROUTE_CLIP_PX, 16);
   assert.ok(hud.ROUTE_CLIP_PX > Number(CASING[1]) / 2 + 1, 'a round cap at the cut reaches half the casing\'s width past it (and a pixel of smoothing): off the screen');
   const at = (x, y, front = true) => ({ x, y, front });
@@ -170,7 +172,7 @@ test('FB0929 law: the line is cut to the screen grown by ROUTE_CLIP_PX, wider th
 test('FB0929 far: a pick across the map is a line of 139 legs - uncut, ~1.5 million px of path and ~100,000 dashes a frame; cut, every point within the grown screen and a few hundred dashes', () => {
   const far = journey(FAR);
   assert.equal(far.legs.length, 139, 'four hundred pixels of Hazelnut\'s roads');
-  const { d, points } = drawn(far);
+  const { d, points, dots: dotsDrawn } = drawn(far);
   assert.equal(points.length, 1 + 4 * far.legs.length, 'the host hands the readout the WHOLE way, four points a leg');
   const uncut = hud.routePath(points);
   assert.ok(dashesOf(uncut) > 50000, `the line as it was: ${dashesOf(uncut)} dashes over ${Math.round(lengthOf(uncut))} px`);
@@ -178,6 +180,7 @@ test('FB0929 far: a pick across the map is a line of 139 legs - uncut, ~1.5 mill
   for (const st of strokesOf(d)) for (const [x, y] of st) assert.ok(x >= -M && x <= W + M && y >= -M && y <= H + M, `(${x}, ${y}) lies within the screen grown by ${M}`);
   assert.ok(d.startsWith(uncut.slice(0, uncut.indexOf(' L'))), 'the line still starts at the traveller\'s feet');
   assert.ok(dashesOf(d) <= 500, `a screen's worth of dashes (${dashesOf(d)}, over ${Math.round(lengthOf(d))} px)`);
+  assert.ok(dotsDrawn.length > 0 && dotsDrawn.length <= ROUTE_DOTS_MAX, `OW-DOTS-GROUND: the dots drawn are bounded (${dotsDrawn.length})`);
   // the camera dragged half round: the line runs behind and beside the eye
   const back = drawn(far, Math.PI);
   assert.ok(dashesOf(hud.routePath(back.points)) > 50000 && dashesOf(back.d) <= 500, `turned: ${dashesOf(hud.routePath(back.points))} dashes uncut, ${dashesOf(back.d)} cut`);

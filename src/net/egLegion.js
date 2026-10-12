@@ -94,14 +94,15 @@ export const EG_DIVE_GROUND_M = 6;
 export const EG_HUNT_LEAVE_M = 1.5;
 
 /** EG-ZB (section 11.7): A GROUND WALKER'S WALK over the hall's graph (net/egWalkGraph.js egWalkNext) - to its next node, or to
- *  its goal `stop` short; said as net/egBodies.js egWalk says a walk (the point already kept on its region). */
-function walkGraph(F, view, a, gx, gz, stop, speed, now, gy = NaN) {
+ *  its goal `stop` short; said as net/egBodies.js egWalk says a walk (the point already kept on its region). EG-ZK: every
+ *  lord's and champion's walk too (net/egLords.js). */
+export function walkGraph(F, view, a, gx, gz, stop, speed, now, gy = NaN) {
   const [x, z, last] = egWalkNext(view, a, gx, gz, gy, a.r ?? 0.6);
   egWalk(F, a, x, z, last ? stop : 0, speed, now, view, 0, true);
 }
 /** EG-ZB: A FLIER'S WAY through the air about the rock (net/egWalkGraph.js egAirNext) - to its next way, or to its goal
- *  (kept out of a passage's rock) `stop` short. */
-function walkAir(F, view, a, gx, gz, stop, speed, now) {
+ *  (kept out of a passage's rock) `stop` short. EG-ZK: a flying lord's too (net/egLords.js). */
+export function walkAir(F, view, a, gx, gz, stop, speed, now) {
   const [tx, tz] = egAirKeep(view, gx, gz), [x, z] = egAirNext(view, a.x, a.z, tx, tz);
   egWalk(F, a, x, z, x === tx && z === tz ? stop : 0, speed, now, view, 0, true);
 }

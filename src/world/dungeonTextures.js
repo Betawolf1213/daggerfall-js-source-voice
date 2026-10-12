@@ -87,10 +87,12 @@ export function applyTextureTable(archive, textureTable, climateBaseType) {
   }
 }
 
+/** DaggerfallDungeon.IsMainStoryDungeon's first id (:151): Daggerfall/Privateer's Hold. */
+export const PRIVATEERS_HOLD_MAP_ID = 187853213;
 /** DaggerfallDungeon.IsMainStoryDungeon (:146-172), the fourteen ids,
  *  keyed on Summary.ID = MapTableData.MapId (raw, :104). */
 export const MAIN_STORY_DUNGEON_IDS = Object.freeze(new Set([
-  187853213,    // Daggerfall/Privateer's Hold
+  PRIVATEERS_HOLD_MAP_ID,    // Daggerfall/Privateer's Hold
   630439035,    // Wayrest/Wayrest
   1291010263,   // Daggerfall/Daggerfall
   6634853,      // Sentinel/Sentinel

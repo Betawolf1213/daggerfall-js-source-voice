@@ -46,7 +46,7 @@ test('FIX-C: the first exterior stand is DFU\u2019s Origin reposition - the terr
 });
 
 test('FIX-C: the dungeon start IS the spawn - the exterior gate cannot re-fire on the first step outside', () => {
-  assert.match(world, /const entered = await modes\.startInDungeon\(\);\s*\n\s*if \(!entered\) console\.warn\([^\n]*\);\s*\n(?:\s*\/\/[^\n]*\n)*\s*if \(entered\) playerSpawned = true;/);
+  assert.match(world, /const entered = await modes\.startInDungeon\(\{ holdOpen: true \}\);[^\n]*\n\s*if \(!entered\) console\.warn\([^\n]*\);\s*\n(?:\s*\/\/[^\n]*\n)*\s*if \(entered\) playerSpawned = true;/);   // PIN MOVED (HOLD-ONCE): the new game's start may enter Privateer's Hold online
   // worldModes never writes the flag - the host does, at the one place it learns the dungeon stood the player
   assert.doesNotMatch(read('src/scenes/worldModes.js'), /playerSpawned\s*=/);
 });

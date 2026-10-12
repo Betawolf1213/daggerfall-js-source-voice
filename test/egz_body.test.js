@@ -164,7 +164,7 @@ test('EG-ZH THE FRAGMENT\'S OWN CLAMP (world/egHall.js, sections 11.7-11.8): a p
   assert.equal(EG_CLAMP_SLACK_M, 1.5);
   const spec = egHallOf(77, 2, 0), q = spec.caves[0];
   const Z = egFragZones(spec);
-  assert.deepEqual(Z, [{ t: 'passage', x: q.x, z0: q.z0, z1: q.z1, halfW: q.halfW, y: Math.min(q.y, q.yB), ceil: Math.max(q.y, q.yB) + q.height, open: 0 }]);
+  assert.deepEqual(Z, [{ t: 'passage', x: q.x, z0: q.z0, z1: q.z1, halfW: q.halfW, y: Math.min(q.y, q.yB), ceil: Math.max(q.y, q.yB) + q.height, open: 0, shaft: 0, zB: q.zB, yB: q.yB }]);   // PIN MOVED (EG-ZN): a zone carries a shaft's mark, its foot and the foot's height (world/egHall.js egShaftLedgeAt)
   const P = Z[0], mid = (P.z0 + P.z1) / 2;
   assert.equal(egFragZoneAt(Z, P.x, P.y, mid), P);
   assert.equal(egFragZoneAt(Z, P.x + P.halfW + 1.4, P.y, mid), P, 'within the slack');

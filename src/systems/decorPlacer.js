@@ -31,6 +31,17 @@
 // upright from where the owner stands), the turn is its spin on the
 // surface, it hangs a hair off it, the grid snaps it across the surface
 // and the owner's lift moves it up the surface. No surface, no mount.
+//
+// WALL-CLEAR (FIELD BUGS 2026-10-12b, "a lot of stuff just clips through
+// walls, even with grid on and changing size"): A PIECE THE EYE SETS ON A
+// WALL STANDS IN FRONT OF IT. Every other piece stood its origin on the
+// point the eye met - on a wall, half a model's box and half a turning
+// flat's width inside it, the more so the bigger it was scaled. A face
+// that is neither floor nor ceiling (its normal within DECOR_HANG_NY of
+// level) is a wall: the grid snaps along the wall, never into it, and
+// the piece stands out from the face by how far it reaches into it - a
+// model by its box, turned and scaled; a flat, which turns to the eye, by
+// half its scaled width - and a hair more.
 // ═══════════════════════════════════════════════════════════════════
 
 import { trs } from '../world/mat4.js';
@@ -48,6 +59,8 @@ export const DECOR_SCALE_STEP = 1.1;
 export const DECOR_GRID = 0.25;
 /** DECOR-SHELL: a face whose normal (the eye's, facing it) points this far down is hung from, never stood on. */
 export const DECOR_HANG_NY = 0.5;
+/** WALL-CLEAR: how far a piece set on a wall stands clear of it, past its own reach into it (metres). */
+export const DECOR_WALL_GAP = 0.02;
 
 /** A turn wrapped into (-180, 180]. */
 export function wrapTurn(deg) {
@@ -71,9 +84,10 @@ export const decorEntrySized = (entry) => !decorIsFigure(entry);
  * bounds [minX, minY, minZ, maxX, maxY, maxZ] (render/frustum.js localAabb), null for a flat. DECOR1e: `from` a placed
  * piece being moved - the tool starts at its turn and its scale. DECOR2a: `free` - the player's own item, which costs
  * nothing whatever its size, and whose piece carries its descriptor (`entry.item`). DECOR2c: an entry that is a `mount`
- * is set on the surface, the turn its spin there.
+ * is set on the surface, the turn its spin there. WALL-CLEAR: `flat` a flat's size { w, h } in metres at scale 1 - how far it
+ * reaches into a wall it is set on.
  */
-export function createDecorPlacer(entry, { radius = null, box = null, from = null, free = false } = {}) {
+export function createDecorPlacer(entry, { radius = null, box = null, from = null, free = false, flat = null } = {}) {
   const mount = !!entry.mount;
   const s = { yaw: from ? wrapTurn((mount ? from.rot?.[2] : from.rot?.[0]) ?? 0) : 0, raise: 0, scale: from?.scale ?? 1, snap: false };
   // DECOR-FIGURE: one of Daggerfall's people takes no size step - placed or moved, it stands at scale 1, one grown before
@@ -92,6 +106,14 @@ export function createDecorPlacer(entry, { radius = null, box = null, from = nul
     if (entry.model == null || !box) return 0;
     const b = transformedAabb(box, trs(0, 0, 0, 0, s.yaw, 0, s.scale, s.scale, s.scale));
     return -b[4];
+  }
+
+  /** WALL-CLEAR: how far the piece, turned and scaled, reaches from its origin into a wall whose level normal is `n`. */
+  function reach(n) {
+    if (entry.model == null) return flat && flat.w > 0 ? flat.w * s.scale / 2 : 0;
+    if (!box) return 0;
+    const b = transformedAabb(box, trs(0, 0, 0, 0, s.yaw, 0, s.scale, s.scale, s.scale));
+    return Math.max(0, Math.max(-n[0] * b[0], -n[0] * b[3]) + Math.max(-n[1] * b[2], -n[1] * b[5]));
   }
 
   /** DECOR2c: THE MOUNT for a surface point and its `normal` (the eye's hit's, facing the eye), or null with no surface. */
@@ -166,7 +188,21 @@ export function createDecorPlacer(entry, { radius = null, box = null, from = nul
       const up = hang ? drop() + s.raise : lift() + s.raise;
       let x = hit[0] - origin[0];
       let z = hit[2] - origin[2];
-      if (s.snap) { x = snapTo(x, DECOR_GRID); z = snapTo(z, DECOR_GRID); }
+      // WALL-CLEAR: a face within DECOR_HANG_NY of level is a wall - the piece stands clear of it, snapped along it
+      const hl = nl > 0 ? Math.hypot(normal[0], normal[2]) : 0;
+      const wall = !hang && hl > 0 && Math.abs(normal[1] / nl) < DECOR_HANG_NY;
+      if (wall) {
+        const n = [normal[0] / hl, normal[2] / hl];
+        if (s.snap) {   // along the wall, never into it
+          const a = snapTo(x * -n[1] + z * n[0], DECOR_GRID);
+          const c = x * n[0] + z * n[1];
+          x = -n[1] * a + n[0] * c;
+          z = n[0] * a + n[1] * c;
+        }
+        const out = reach(n) + DECOR_WALL_GAP;
+        x = round(x + n[0] * out, 3);
+        z = round(z + n[1] * out, 3);
+      } else if (s.snap) { x = snapTo(x, DECOR_GRID); z = snapTo(z, DECOR_GRID); }
       return decorPieceOf({
         id, model: entry.model ?? null, flat: entry.flat ? [entry.flat[0], entry.flat[1]] : null, item: entry.item ?? null,
         pos: [x, hit[1] - origin[1] + up, z], rot: [s.yaw, 0, 0], scale: s.scale,

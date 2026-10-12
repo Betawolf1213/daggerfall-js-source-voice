@@ -115,6 +115,24 @@ export function getHolidayId(gameMinutes, regionIndex) {
   return HOLIDAYS.None;
 }
 
+/** HOLY-DAYS (2026-10-11, a profile of a player's live client entering the world: the Living World's pilgrims asked
+ *  getHolidayId of every day of their cycle at every temple near - a day-of-year sum and the 53 rows each - ~2 s of a
+ *  single frozen frame). THE HOLIDAY ROW ON A DAY OF THE YEAR - `{ id, region }` (the id GetHolidayId returns, the region
+ *  id that keeps it, 0xFF every region) - or null. Each day of the table is one row's (no two rows share a day, every one
+ *  inside HOLIDAY_LAST_DAY), so GetHolidayId on a day is this row where `holidayKeptIn` says so, else None. Read off the
+ *  tables once. */
+let _holidayByDay = null;
+export function holidayOn(dayOfYear) {
+  if (!_holidayByDay) {
+    _holidayByDay = new Map();
+    for (let i = 0; i < HOLIDAY_SEARCH_LIMIT; i++) _holidayByDay.set(HOLIDAY_DAYS_OF_YEAR[i], Object.freeze({ id: i + 1, region: REGION_CELEBRATING_HOLIDAY[i] }));
+  }
+  return _holidayByDay.get(dayOfYear) ?? null;
+}
+/** HOLY-DAYS: GetHolidayId's own test of a row (:1844) - kept everywhere, or in this region (a region ID is the index
+ *  plus one). */
+export const holidayKeptIn = (row, regionIndex) => row.region === 0xFF || row.region === regionIndex + 1;
+
 /** The three holidays a temple cures disease FREE on, and the one that
  *  halves the price (DaggerfallGuildServiceCureDisease :60-88). */
 export const FREE_CURE_HOLIDAYS = Object.freeze([

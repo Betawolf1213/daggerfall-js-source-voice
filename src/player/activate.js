@@ -298,6 +298,7 @@ export function liveFoeTargets(foes, keyPrefix, { idOf = null } = {}) {
       distance: RAY_DISTANCE,
       reach: MOBILE_NPC_ACTIVATION_DISTANCE,
       ...(f.ai && !(f.puppet ? f._pupMine : f.ai.isHostile) && f.companion == null ? { peaceful: true } : {}),   // TACT3d: passes a door click (peacefulFoePass); AUDIT TACT C1/C5: hostile to ME (a puppet on me), never my companion
+      ...(isCompanion(f) ? { ally: true } : {}),   // FB1012d ALLY-YIELDS: he yields to what answers behind him (peacefulFoePass marks his hit, raceWinner reads it)
     });
   }
   return targets;
@@ -312,8 +313,11 @@ export function doorDistanceOf(eye, dir, targets, collider) {
 
 /** TACT3d: the plaque's half of mobileEnemyActivate's `yieldsToDoor` - a foe hit on a PEACEFUL foe (liveFoeTargets'
  *  `peaceful`) with a door, or the ladder's other winner, within the door's reach behind it is no hit, so the plaque
- *  names what the press opens. */
+ *  names what the press opens. FB1012d ALLY-YIELDS: and the one seam every plaque's foe passes through, so a hit on a
+ *  COMPANION (liveFoeTargets' `ally`) leaves it marked - the race (activationRace.js raceWinner) passes him by for what
+ *  answers behind him, as the press's `allyYields` does, in every mode. */
 export function peacefulFoePass(foeHit, targets, doorBehind, mode = null) {
+  if (foeHit && targets.find((t) => t.key === foeHit.key)?.ally === true) return { ...foeHit, ally: true };   // FB1012d ALLY-YIELDS
   if (!foeHit || mode === 'steal' || !(Number.isFinite(doorBehind) && doorBehind <= DOOR_ACTIVATION_DISTANCE)) return foeHit;   // AUDIT TACT C5: a pickpocket is asked of him
   return targets.find((t) => t.key === foeHit.key)?.peaceful ? null : foeHit;
 }
@@ -451,6 +455,31 @@ export function firmFirst(entrants, nearest) {
   if (!entrants.some(yieldsRay)) return nearest(entrants);
   return nearest(entrants.filter((e) => !yieldsRay(e))) ?? nearest(entrants.filter(yieldsRay));
 }
+
+/**
+ * FB1012d ALLY-YIELDS (Discord bug-reports, 2026-10-12, "Companion Inventory prioritized over looting, taking helm, and
+ * other context options": "you need to get them to move before you can loot an item since it keeps opening their
+ * inventory instead"). A COMPANION - the companion layer's body (scenes/crewAshore.js `companion`: a crew hand ashore, a
+ * sworn revenant) or another player's (`peer:`) - is a foe the ray strikes like any other, so one standing at the
+ * player's heel between the crosshair and a body, a pile, a boat's helm, a door or a shelf was the nearest hit and
+ * took the press: his pack, every time. He walks where the player walks, so he stood there every time.
+ *
+ * He YIELDS: whatever the press would take were he not there - the ladder's own winner behind him - takes it when it
+ * ANSWERS from where the player stands, a firm pick inside its own reach. Not anything the ray meets (PR-WAGON1's law,
+ * `firmFirst`): his pack is storage the player reaches every day, and indoors a shelf, a door or a bed stands on the
+ * ray behind him on nearly every look, so "anything else" made him unreachable and answered "You are too far away"
+ * from a shelf across the room. A thing behind him out of its reach would only refuse, so he takes the press - and with
+ * nothing behind him, he is the hit as ever. Another player's team, which yields itself, is no rival (`answersPress`).
+ * The press asks `allyYields` (mobileEnemyActivate.js tryMobileEnemyActivate, each host handing its ladder's winner as
+ * `behind`); the plaque asks the same `answersPress` of the race's other winner (activationRace.js raceWinner, the
+ * foe's hit marked `ally` by `peacefulFoePass` off `liveFoeTargets`), so it names what the press takes.
+ */
+export const isCompanion = (f) => !!f && f.companion != null;
+/** FB1012d ALLY-YIELDS: a pick the press would ACT on from here - firm (PR-WAGON1: a pick that yields is never a
+ *  rival), and inside its own reach (MC-2: past it, its handler only refuses). A pick with no reach answers nothing. */
+export const answersPress = (p) => !!p && !yieldsRay(p) && p.distance <= p.reach;
+/** FB1012d ALLY-YIELDS: a companion under the ray passes the press to what answers behind him. */
+export const allyYields = (foe, behind) => isCompanion(foe) && answersPress(behind);
 
 /** The ray's nearest hit - DFU's one raycast, as the port spells it (the
  *  law documented above). LOOT-STACK's stack walks it too, over the bodies

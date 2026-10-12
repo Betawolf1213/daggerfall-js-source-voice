@@ -121,6 +121,13 @@ pass, the proc line, the Exalted's, the curse's and the Reforge's pools are the 
 its own pass, LAST (Magic 12%, Rare 30%, Legendary 45%; law 9 of the second arc), so no stream above moved. The Reforge
 turns it only into another of its family's, and a line added after the mint is set before it.
 
+BAL9c (2026-10-12, the owner: "introduce some new magic/mage perks to the rarity loot pool ... still dont make it
+overpowered"; `05-Combat/Balance-Arc.md` section 15) set two more after `castSpeed` and before `technique`, so the
+numbers' pass draws as it did: `potency`, jewellery and weapons, prefix, 3-6 / 6-10 / 10-15, "+N% spell damage" - a
+damage spell's landing at a foe, all you wear at most 30% (`systems/spellPower.js`); and `wellspring`, jewellery,
+suffix, 2-4 / 4-7 / 7-10, "N% magicka on a kill" - the caster's leech, all you wear at most 10% a kill. The last pass
+moved as CAST-SPEED's did: a jewel's proc pick lands in four kinds where it landed in two, a blade's in five where four.
+
 A weapon's three are the weapon IN HAND's alone; a wearer's armour and jewellery sum, under the caps. Each answers MY
 entity alone, offline and online, and never a player (law 5). Names: `Burning Longsword of the Leech`, `Barbed
 Cuirass of the Bear`, `Adept's Ring of the Owl`, `Shortsword of the Gravewatch`.
@@ -134,7 +141,12 @@ under a line, the night, a first blow, bare hands), stacks a strike or a kill ra
 echoes, a leech, a kill's heal or magicka or gold or spell on me, a charge that turns a blow aside, a hex on the foe
 that struck me, a death cheated, a cost cut, a spell absorbed, a round's regeneration, a better find. A power counts
 ONCE however many pieces carry it (a Legendary and a Rare imprinted with it). The powers work offline and online and
-never on a player (law 5); the HUD's set chips show a power's stacks and recovery as a set's do.
+never on a player (law 5); the HUD's set chips show a power's stacks and recovery as a set's do. BAL9c (2026-10-12,
+`05-Combat/Balance-Arc.md` section 15) added three records of the casters' own, a table after the wardrobe's six
+(`ARCANE_LEGENDARIES`), the first powers to reach a spell's damage, its throw and its magicka: the Eye of Magnus
+(Magnus's Gaze, a Destruction spell's throw 15 lower after its immunity), the Ring of Artaeum (Wellspring of Artaeum, 1%
+of the magicka back a round, 2% under half) and Shalidor's Brand (Arcane Surge, +25% spell damage above three quarters
+of the magicka) - all the loot adds to a spell at most 50%.
 
 ## 8. LOOT6 - signature drops
 
@@ -643,6 +655,17 @@ card's Salvage; `tools/mutants/loot9.json` (52, all dead).
 (`06-Systems/Portal-Stone.md`), spent through the same purse (`shardsHeld`, `spendShards`). AUDIT PORTAL1 I1: the purse
 now spends a shard unlocked AND UNWORN - a shard is a gem, a crystal a slot takes, and a worn one spent left a ghost on
 the doll (the Reforge's since LOOT9).
+
+**SALVAGE-CLASSIC (FIELD BUGS 2026-10-12b; Discord: "magic item with only cast on use effect cannot be salvaged")**: a
+"Blazing Holy Dagger of Fireballs" - MAGIC.DEF's "Blazing %it of Fireballs" on a Holy Dagger - wore Magic on its card
+(`lootRarity.js` `rarityOf` derives it for any enchanted piece) and the Salvage page dropped it without a word. The law
+above stands: DFU's own magic, an Item Maker's piece and a soul-bound one are never graded and break for no shard (a
+guild's shelf sells that magic every day; a found one cannot be told from a bought one, and five shards are a Portal
+Stone). The faces say so now: `reforge.js` `salvageRefusal` answers `'classic'` for a piece that wears Magic, has no
+grade and no `provenance` (a made piece stays `'not'` - the Enchanting Station's disenchant is its door, as F2 below
+says); the Salvage page lists it after every piece that breaks, its press "Classic magic" and disabled, "No shards",
+the reason its title; the pack card's Salvage, pressed, says why (`enhancedInventory.js` `SALVAGE_CLASSIC`) and asks
+nothing. `test/fb1012d_salvageclassic.test.js` (4), `tools/mutants/fb1012d_salvageclassic.json` (11, all dead).
 
 ### LOOT10 - the codex, and the imprint (2026-10-01)
 

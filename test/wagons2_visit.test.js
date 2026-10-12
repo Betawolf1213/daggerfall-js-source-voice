@@ -7,6 +7,7 @@
 // hosts' own functions lifted out of their source and run (scenes/world.js, scenes/worldModes.js). The relay's half is
 // test/wagons2_visit_relay.test.js.
 import './modsOff.js';
+import { DECOR_HIDDEN_CAP } from '../src/net/decorLaw.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -14,7 +15,7 @@ import { parse } from 'acorn';
 
 import {
   caravanEntryCode, caravanEntryOfCode, caravanEntryOf, setDrivenCaravanEntry, caravanMayEnter, caravanGuildTag, CARAVAN_GUILD_CODE,
-  caravanDecorDoc, readCaravanDecor, CARAVAN_DECOR_BYTES, CARAVAN_DECOR_V, CARAVAN_VISIT_TEXT,
+  caravanDecorDoc, readCaravanDecor, readCaravanHidden, CARAVAN_DECOR_BYTES, CARAVAN_DECOR_V, CARAVAN_VISIT_TEXT,
 } from '../src/systems/caravanVisit.js';
 import { HOME_ENTRIES } from '../src/net/homeLaw.js';
 import { HOME_ENTRY_WORDS, homeNextEntry } from '../src/systems/onlineHomes.js';
@@ -160,6 +161,23 @@ test('WAGONS2-VISIT THE DOCUMENT: what the owner placed, through the decor law i
   const saved = turnCaravanScene(room, 90).decor;
   const back = turnCaravanScene({ decor: readCaravanDecor(caravanDecorDoc(saved)) }, -90).decor[0];
   assert.ok(Math.abs(back.pos[0] - 1) < 1e-3 && Math.abs(back.pos[2]) < 1e-3 && Math.abs(back.rot[0] - 10) < 1e-6, JSON.stringify(back));
+});
+
+test('WAGONS2-BASE THE DOCUMENT\'S TAKEN-OUT LIST (from play: the caravan\'s lantern taken out by its owner still lit the room for its visitors): the room\'s own pieces its owner took out ride the document as `h` - base keys the decor law takes, once, at most its cap, counted before the pieces so a full room never crowds them out; a visitor reads them back, none from no document or an older one (mutants: the list dropped, a bad key published, the list uncapped, the pieces crowding it out, an older document misread)', () => {
+  assert.deepEqual(caravanDecorDoc([piece('a')]).h, [], 'none taken out: an empty list');
+  const doc = caravanDecorDoc([piece('a')], ['f3:210.22', 'f3:210.22', 'bad key', 7, 'm0:41000']);
+  assert.deepEqual(doc.h, ['f3:210.22', 'm0:41000'], 'the lantern, once; a word the law refuses left out');
+  assert.deepEqual(readCaravanHidden(doc), ['f3:210.22', 'm0:41000']);
+  assert.deepEqual(readCaravanHidden({ v: CARAVAN_DECOR_V, p: [] }), [], 'an older document: none');
+  assert.deepEqual(readCaravanHidden({ v: 9, p: [], h: ['f3:210.22'] }), [], 'another shape: none');
+  assert.deepEqual(readCaravanHidden(null), []);
+  assert.deepEqual(readCaravanHidden({ v: CARAVAN_DECOR_V, p: [], h: ['f1:1.1', 'nope', 'f1:1.1'] }), ['f1:1.1'], 'a visitor reads through the same law');
+  const lots = Array.from({ length: DECOR_HIDDEN_CAP + 5 }, (_, i) => `m${i}:1`);
+  assert.equal(caravanDecorDoc([], lots).h.length, DECOR_HIDDEN_CAP, 'capped');
+  const many = Array.from({ length: 200 }, (_, i) => piece(`piece-${String(i).padStart(4, '0')}-xxxxxxx`, { light: { color: [0.123, 0.456, 0.789], range: 12.34, intensity: 1.23 }, pos: [10.123, 2.456, -3.789], rot: [123.4, -45.6, 78.9], scale: 1.234 }));
+  const full = caravanDecorDoc(many, ['f3:210.22']);
+  assert.deepEqual(full.h, ['f3:210.22'], 'a full room keeps the lantern out');
+  assert.ok(JSON.stringify(full).length <= CARAVAN_DECOR_BYTES, 'and still fits');
 });
 
 // ─── the pool: a peer's parked caravan, a visit's target and its row; my own caravan's door row ────────────────────
@@ -481,7 +499,10 @@ test('WAGONS2-VISIT THE INTERIOR HOST\'S ROOM: a visitor is a caravan\'s guest o
     mode: 'interior', interiorCtx: {}, interiorCabin: room, privateVisitRoom: `caravan:${'a'.repeat(24)}`, transitioning: false, renderer: {},
     isCaravanRoom, turnCaravanScene, caravanDecorDoc, readCaravanDecor, paintCaravanRoom: () => {}, say: (l) => said.push(l), exitInteriorNow: () => { exits.push(1); return true; },
     interiorDecor: { set: (p) => stood.push(p), list: () => stood.at(-1) ?? [] },
+    readCaravanHidden,
   };
+  const outs = [];   // WAGONS2-BASE: the room's own pieces set out (scenes/decorBase.js setHidden), as the host sets them
+  scope.interiorCtx = { base: { setHidden: (k) => outs.push(k), hidden: () => ['f3:210.22'] } };
   const make = new Function(...Object.keys(scope), `let _caravanVisit = null;
     const caravanGuestHere = ${lift('src/scenes/worldModes.js', 'caravanGuestHere')};
     const caravanGuestStation = ${lift('src/scenes/worldModes.js', 'caravanGuestStation')};
@@ -495,7 +516,11 @@ test('WAGONS2-VISIT THE INTERIOR HOST\'S ROOM: a visitor is a caravan\'s guest o
   const p = stood.at(-1)[0];
   assert.ok(Math.abs(p.pos[0] - 1) < 1e-3 && Math.abs(p.pos[2]) < 1e-3, `turned with the caravan as it stands: ${p.pos}`);
   assert.equal(g.apply(`caravan:${'b'.repeat(24)}`, doc), false, 'another room\'s word is not this one\'s');
+  assert.deepEqual(outs.at(-1), [], 'WAGONS2-BASE: a document taking nothing out sets nothing out');
+  assert.equal(g.apply(scope.privateVisitRoom, { ...doc, h: ['f3:210.22'] }), true);
+  assert.deepEqual(outs.at(-1), ['f3:210.22'], 'WAGONS2-BASE: the lantern its owner took out is out for its guest');
   assert.equal(g.apply(scope.privateVisitRoom, null), true); assert.deepEqual(stood.at(-1), [], 'none stands nothing');
+  assert.deepEqual(outs.at(-1), [], 'WAGONS2-BASE: and puts back what it took out');
   g.apply(scope.privateVisitRoom, doc);
   assert.deepEqual(g.station('forge'), { kind: 'home', fee: 0 }, 'its forge serves its guest');
   assert.equal(g.station('loom'), null);
@@ -507,6 +532,7 @@ test('WAGONS2-VISIT THE INTERIOR HOST\'S ROOM: a visitor is a caravan\'s guest o
   const out = o.mine();
   assert.deepEqual(out.p[0].pos.map((v) => Math.round(v * 1000) / 1000 + 0), [0, 0, 1], 'unturned: a piece at +x of a caravan turned a quarter is +z of the save');
   assert.deepEqual(out.p[0].pos, doc.p[0].pos, 'as the save keeps it');
+  assert.deepEqual(out.h, ['f3:210.22'], 'WAGONS2-BASE: and what the owner took out of the room');
   assert.equal(o.apply(scope.privateVisitRoom, doc), false, 'no visit, no other\'s pieces');
   // gone: told and stood outside; a door walking holds it
   assert.equal(host({ transitioning: true }).leave('gone'), false);

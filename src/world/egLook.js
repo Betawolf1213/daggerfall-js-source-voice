@@ -6,8 +6,9 @@
 //     rim (the drawn rim's own 48 sides - world/sdRealm.js SD_ISLAND_SIDES - so the line never cuts inside the stone or
 //     floats past it), each bridge's, walkway's and lane's two sides; never a passage's walled floor (its walls are its
 //     kerbs), and never a piece that moves (its own line rides its mesh - scenes/egSpan.js);
-//   THE PIECES' LAST TELLS (layer two's "still owed"): the Rail's and the Drum's dashed track under its whole travel, the
-//     Gust's streamers across its section from the breath's rise through the gust (the Steps' own breathSeen), the
+//   THE PIECES' LAST TELLS (layer two's "still owed"): the Rail's and the Drum's dashed track under its whole travel (EG-ZL:
+//     ticked across at each end), the Gust's streamers across its section from the breath's rise through the gust (the
+//     Steps' own breathSeen), the
 //     waystones lit (their own mesh - buildEgLookModel - with a gold cap that holds by emission, never a lamp of the cap);
 //   THE STAIR (section 7) - the full fall at a band's first hall, the veil's dither everywhere else, a plain cut under
 //     reduced motion;
@@ -74,6 +75,8 @@ export function egCircleEdges(seed, c, geo = 0) {
       if ((s.kind !== 'rail' && s.kind !== 'drum') || !(s.amp > 0)) continue;
       const y = s.y - EG_TRACK.under, z0 = s.z - s.amp - s.d / 2, z1 = s.z + s.amp + s.d / 2;
       for (const side of [-1, 1]) seg(track, egToDungeon(spec, s.x + side * (s.w / 2 - 0.2), y, z0), egToDungeon(spec, s.x + side * (s.w / 2 - 0.2), y, z1));
+      // EG-ZL (section 10.3: "ticked at each end"): a dash across each side's track where its travel turns
+      for (const side of [-1, 1]) for (const z of [z0, z1]) { const x = s.x + side * (s.w / 2 - 0.2); seg(track, egToDungeon(spec, x - EG_TRACK.dash / 2, y, z), egToDungeon(spec, x + EG_TRACK.dash / 2, y, z)); }
     }
   }
   return { edge: new Float32Array(edge), track: new Float32Array(track) };

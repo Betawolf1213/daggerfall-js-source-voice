@@ -446,8 +446,8 @@
   {
     "name": "LOOT9-card-salvages-the-worn",
     "file": "src/ui/enhancedInventory.js",
-    "old": "if (side === 'local' && !line.equipped && salvageShards(picked) > 0 &&",
-    "new": "if (side === 'local' && salvageShards(picked) > 0 &&",
+    "old": "if (side === 'local' && !line.equipped && (salvageShards(picked) > 0 ||",
+    "new": "if (side === 'local' && (salvageShards(picked) > 0 ||",
     "tests": [
       "test/loot9_reforge.test.js"
     ]

@@ -125,6 +125,7 @@ Each line is a slice's acceptance, not an aspiration:
 | MWNPC16 THE BODY'S OWN SHADOW | an NPC's body casts its own shape - the skinned depth program off its palette, a run of ranges one draw, unseen bodies cast where they stand; the flat under it casts nothing (SHIPPED, section 24) | the shadow pass, the rig, every NPC lane |
 | MWNPC17 THE WARDROBE | who wears what by role, dressed off the seed - silhouettes, garments, dyes, cloaks, armour kits, Morrowind's clothing ladder; each garment's record picked and the head and hair walked off the look's `npc` hint (SHIPPED, section 25) | wardrobe.js; the item map, the build; every look producer |
 | MWNPC18 THE PLACED FIGURES | a figure a player set down in a home or a yard stands in a body - its sex and role off FLATS.CFG (SHIPPED, section 26) | worldModes.js (rooms), world.js (yards) |
+| MWNPC19 THE FLATS THAT STAND | the standing horses (TEXTURE.201's, a World of Daggerfall site's, the Stables') as the 3D horse; a person's flat no StaticNPC holds (a factionless figure, a site's people, a marker's captive, a boat's crew) in a body (SHIPPED, section 28) | world.js, exterior.js, merchantYardsHost.js, comeSailAwayPool.js; worldModes.js and dungeonContext.js named |
 
 Click and talk boxes keep the billboard's size (they are the classic
 game's); the arena crowd stays flats.
@@ -546,7 +547,12 @@ INVISLOOK's late-pass mutants re-aimed by content.
   look is (composeLook) - and under it a shirt, legs and shoes from its
   gender's wardrobe in common dyes, each only where no piece of its own
   stands (boots on the feet: no shoes). The look is kept on the foe while
-  it wears the same, so a foe is one build for its life. Its actor: the
+  it wears the same, so a foe is one build for its life. (AMENDED BY FB1012d
+  ALLY-RACE, `01-Overview/Field-Bugs-2026-10-12d.md`: a person of their
+  own is drawn off THEIR seed, not the stand's - a companion the layer
+  stood, by its stamp; a revenant, by its record's, minted off the body it
+  was born in - so a companion is one person through every door and load.)
+  Its actor: the
   motor's feet and yaw (the player's own convention, forward sin/cos),
   moving, and running only in pursuit (the give-up timer both motors keep);
   its weapon out; a swing per new attack count (the stream's `_atkA`, its
@@ -2385,3 +2391,114 @@ was left was reproduced, fixed and pinned.
   changed test file or a re-aimed site names was judged again: 136, 134 dead
   and two equivalent as recorded; after R3, the 90 that the shadow's and the
   wardrobe's test files name, all dead.
+
+## 28. MWNPC19 - THE FLATS THAT STAND (STAND-FLAT, STAND-HORSE; SHIPPED 2026-10-12)
+
+The owner, 2026-10-12: "Some models arent affected when morrowind is
+attached, like static NPCs, static horses, etc".
+
+THE CENSUS. Every file that batches a billboard is already named by
+`test/nudedecor.test.js`, a person host or not. Read against the lanes,
+these still drew a person or a horse as a sprite with Morrowind data
+attached:
+
+- A PERSON'S FLAT NO StaticNPC HOLDS. RMBLayout stands a StaticNPC only on
+  a flat with a non-zero FactionID (`characters/exteriorNpcs.js`
+  collectExteriorNpcs). Any other flat of a person's archive
+  (RDBLayout.NPCFlatArchives, `world/npcFlatArchives.js`) was scenery, in
+  the shared groups: a block's factionless figure, World of Daggerfall's
+  people (184.22 and 184.18 on the Betony and Poor docks), and the
+  captive, merchant or prisoner a WoD marker stands (357.6, 182.0, 184.31 -
+  `world/wodSpawner.js`). A batch shared by a group cannot give one
+  person's place to a body.
+- A BOAT'S CREW. Come Sail Away's prefabs carry their people as
+  billboards (`BillboardHelper-182_*`), the sea's ships' and the
+  player's boats' alike (`scenes/comeSailAwayPool.js` syncFlats).
+- THE STANDING HORSES. COATS3D gave the 3D horse to every horse that moves
+  (`06-Systems/Horse-Coats.md`): the rider's, the peers', the pool's, the
+  road's teams. The ones that only stand kept their sprites: Daggerfall's
+  own town horses (TEXTURE.201 records 0 and 1, a block's flats and WoD's
+  bandit camps and forts, 12 placements), and the Stable's three
+  (`scenes/merchantYardsHost.js`).
+
+WHAT LANDS.
+
+- ONE RECORD (`world/standFlats.js`). `isStandFlat` - a town horse
+  (`world/standingHorses.js` isStandingHorseFlat: TEXTURE.201 by the
+  records AddAnimalAudioSource's table names a horse,
+  `systems/soundClips.js` ANIMAL_SOUND_BY_RECORD) or any flat of a
+  person's archive the StaticNPC pass has not taken. `standFlatRecord`
+  makes what a host keeps: a horse's heading and idle seed off its id, its
+  look the road's strangers' law (`strangerHorseLook`); a person's piece,
+  their BORN flat, for figureLook. Both exterior hosts mint it here (THE
+  ONE CONSTRUCTION SEAM).
+- A BATCH EACH. world.js takes these flats out of the block's groups and
+  out of a WoD site's (unscaled) groups, and stands each in a batch of its
+  own in the pixel's list. The batch carries the pixel's cull, the far
+  rings' rule, its animation and its teardown. A person's picture is the
+  clothed stand-in under NUDE-FLATS. A marker's person joins the pixel's
+  list when the marker stands them. exterior.js does the same for its one
+  location. Neither was cover: 201 is NOT_COVER's, and a person never is
+  (AUDIT TACT B3). A factionless figure that used to group was cover, and
+  is not now.
+- THE PEOPLE. In the near rings each person is offered on the street's
+  'people' lane, read as a placed figure is (MWNPC18's figureLook:
+  FLATS.CFG's sex and caption, the region's race, the seed their place).
+  Their billboard is cast-only while a body stands. A boat's crew is the
+  same, at the flat's base on her deck: `people(fn)` walks every flat of a
+  person's archive in her walk, named by her deed's uid (or her hull) and
+  their place in it, so a boat's crew is the same people on every machine.
+  A concealed owner's crew keeps the veiled flats. Indoors their flats are
+  drawn again, since they stand where a boat does through extraBillboards.
+- THE HORSES (`world/standingHorses.js`). One manager a host: `begin`
+  with the lane's rig (`mwViewHorseRig`, none under the travel view),
+  `offer` each, `end` stands the nearest STANDING_HORSES_MAX (8) within
+  STANDING_HORSE_RANGE (60 m), one already standing held by
+  STANDING_HORSE_HOLD (1.15). It steps only the ones in view, still (speed
+  0, the bake's idle), at its billboard's base, and its billboard is
+  cast-only. `draw` opens a character-sprite bind of its own (none for
+  none, flushed whatever throws), after the people's and before the
+  flats. A horse no longer offered, out of the cut or
+  under a new rig is let go through the rig that made it (AUDIT COATS3D
+  A7), and its billboard is drawn again. The Stable's horses are offered
+  where they stand and the way they face, in the bay their sprite is drawn
+  in. Their place is worked out whether or not Horse Cart and Cargo's
+  pictures are up.
+- THE FRAME'S BYTECODE (PERF-V8, `test/perfv8.test.js`). The world host's
+  frame stood 187 bytes under three quarters of V8's ceiling. The crews'
+  offer and the horses' end are host functions the frame calls
+  (`offerCrews`, `standingHorsesFrame`), and the look's step before the
+  motor (`if (!gamePaused()) {` - the look filter, the keyboard look, the
+  lock-on) moved into a closure of its own, `frameLook`, as PERF-V8's are:
+  45,893 bytes before this slice, 44,976 after.
+
+NOT HERE, AND WHY.
+
+- TEXTURE.201's other animals (the cows, pigs, cats and dogs, and the rest)
+  keep their sprites: Morrowind has none of them.
+- A child, a vampire's people, a Daedra Prince (TEXTURE.175) and a flat
+  FLATS.CFG names no sex for keep their sprites (figureLook, sections 13a
+  and 26). The arena crowd stays flats (section 4).
+- The town watch's carried team (`scenes/wagonWardenShow.js`) stays
+  FLAGGED (COATS3D: a throw of a few seconds).
+- THE RANGE IS THE LANE'S. A standing person stands in a body only inside
+  the tier's range: 30 m at Near (the default) and 60 m at All, the
+  nearest across every lane's frame budget (section 16). Past it, or past
+  the near rings, Daggerfall's sprite stands, as for the walkers.
+- THE FOUR HOSTS. scenes/world.js and scenes/exterior.js are WIRED.
+  scenes/worldModes.js (a building) stands every person as a StaticNPC
+  (`interiorContext.js`, section 13a) and no horse. scenes/dungeonContext.js
+  stands every flat of a person's archive as a StaticNPC (RDBLayout's
+  AddFlat, section 13b), and a dungeon's TEXTURE.201 animal, if a level
+  places one, keeps its sprite (FLAGGED).
+
+PROVEN. `test/standflats.test.js` (8): which flat is a horse, and which
+stands for a body; the cut, the range, the billboard hidden, and off the
+lane; the hold; the let-go (not offered, a new rig, the street left) and
+the unseen horse not posed; the one record and a person read as a figure;
+the Stable's horses offered without their pictures; and both hosts and the
+boats by source. `tools/mutants/standflats.json`: 18 mutants, 18 dead. Pins
+moved: MWNPC8c's two exterior.js records re-aimed by content (the group's
+`else if`, the stale cast-only before this slice's block), both dead;
+DISC20-C's distance from the entry to its ground call (10200 -> 10400, the
+`standFlats` line); PERF-V8's closures (`frameLook`, first).

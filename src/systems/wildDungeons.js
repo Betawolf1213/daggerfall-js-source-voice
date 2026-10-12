@@ -84,6 +84,13 @@ const borderDist = (mask) => { let d = _bd.get(mask); if (!d) _bd.set(mask, d = 
 /**
  * THE DAY'S HALLS. `free(x, y)` says a pixel may hold one (land, dry, no place on it or beside it - the host's map files
  * answer); `day` the relay's day. Returns `[{ x, y, ring, key }]`, the foothills' first.
+ *
+ * WILD-FREE (2026-10-11, a player's load captured from the live client: 8.1 s of a 14.5 s frozen frame): `free` is the
+ * host's dearest question (world.js wildHallFree - the spawns' plateau, a whole heightmap kernel summed for a pixel), and
+ * it was asked of every pixel of every ring before the band was cut - 12,564 times over the real zone, where the picks
+ * read 2,628 answers. It is asked now where an answer is read, once a pixel: the deepest free level, the band and its
+ * widenings, the whole ring only when the band cannot hold the count. Every client's halls must be the same, so nothing
+ * moves: each step reads the free pixels it read before, in the same order.
  * @param {{ width:number, height:number, depth:ArrayLike<number>, maxDepth:number, box?:{x0:number,y0:number,x1:number,y1:number} }} mask
  * @param {(x:number, y:number) => boolean} free
  * @param {number} day
@@ -92,14 +99,17 @@ export function wildHallPicks(mask, free, day) {
   if (!mask?.depth || !mask.maxDepth) return [];
   const box = mask.box ?? { x0: 0, y0: 0, x1: mask.width - 1, y1: mask.height - 1 };
   const bd = borderDist(mask);
+  // WILD-FREE: every ring's pixels in the scan's order, `free` not yet asked - it is asked of a pixel once, and only
+  // where the picks read its answer (`isFree`): what was `byRing` (the free ones) is `all()` below, made only if read
   const byRing = Array.from({ length: WILD_RINGS + 1 }, () => []);
   for (let y = box.y0; y <= box.y1; y++) {
     for (let x = box.x0; x <= box.x1; x++) {
       const i = y * mask.width + x;
       const ring = ringOf(mask, i);
-      if (ring && free(x, y)) byRing[ring].push({ x, y, ring, bd: bd[i] });
+      if (ring) byRing[ring].push({ x, y, ring, bd: bd[i], free: /** @type {boolean|undefined} */ (undefined) });
     }
   }
+  const isFree = (p) => (p.free ??= !!free(p.x, p.y));
   const halls = [];
   const far = (p, also) => {
     let m = Infinity;
@@ -109,21 +119,31 @@ export function wildHallPicks(mask, free, day) {
   };
   for (let ring = 1; ring <= WILD_RINGS; ring++) {
     const want = WILD_DUNGEONS_PER_RING[ring - 1] ?? 0;
-    const all = byRing[ring];
-    if (!all.length || !want) continue;
+    const ring_ = byRing[ring];
+    if (!want) continue;
+    // WILD-FREE: the ring's free pixels at `min` and deeper, in the scan's order - all.filter(bd >= min) as it was
+    const freeFrom = (min) => ring_.filter((p) => p.bd >= min && isFree(p));
+    let _all = null;
+    const all = () => (_all ??= ring_.filter(isFree));
+    // the deepest a free pixel stands (the reduce over the free ones): asked a level at a time from the deepest down;
+    // none free, an empty ring
+    let deepest = -Infinity;
+    for (const lv of [...new Set(ring_.map((p) => p.bd))].sort((a, b) => b - a)) if (ring_.some((p) => p.bd === lv && isFree(p))) { deepest = lv; break; }
+    if (deepest === -Infinity) continue;
     // AS CENTRED AS THE RING ALLOWS: the deepest band of the ring that still holds room for its halls all the way round
     // (at least three candidates a hall), never a pixel touching another tier when the ring has any other
-    const maxBd = all.reduce((m, p) => Math.max(m, p.bd), 1);
+    const maxBd = Math.max(1, deepest);
     let floor = Math.max(1, Math.ceil(maxBd * 0.6));
-    let pool = all.filter((p) => p.bd >= floor);
-    while (pool.length < want * 3 && floor > 2) { floor -= 1; pool = all.filter((p) => p.bd >= floor); }
-    if (pool.length < want) pool = all.filter((p) => p.bd >= 2).length >= want ? all.filter((p) => p.bd >= 2) : all;
+    let pool = freeFrom(floor);
+    while (pool.length < want * 3 && floor > 2) { floor -= 1; pool = freeFrom(floor); }
+    if (pool.length < want) { const two = freeFrom(2); pool = two.length >= want ? two : all(); }
     const rand = rng(Math.imul(day + 1, 0x9e3779b1) ^ Math.imul(ring, 0x85ebca6b));
     const picked = [];
     // THE COUNT IS THE OWNER'S: the spacing is kept while the band allows it, then eased (two pixels, then any free one),
     // then the band widened to the whole ring - never fewer halls than the tier is owed while it has free ground
-    for (const [spacing, from] of /** @type {Array<[number, any[]]>} */ ([[WILD_HALL_SPACING, pool], [2, pool], [1, pool], [2, all], [1, all]])) {
+    for (const [spacing, fromOf] of /** @type {Array<[number, () => any[]]>} */ ([[WILD_HALL_SPACING, () => pool], [2, () => pool], [1, () => pool], [2, all], [1, all]])) {
       if (picked.length >= want) break;
+      const from = fromOf();   // WILD-FREE: the whole ring's free pixels asked only when the band could not hold the count
       if (!picked.length) {
         const first = from.filter((p) => far(p, []) >= spacing);
         if (!first.length) continue;

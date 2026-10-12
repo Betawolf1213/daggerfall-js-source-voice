@@ -24,14 +24,21 @@
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_TEXT, EG_TWIST_LINES, egHallOf } from '../net/egLaw.js';
+import { EG_TOLL_STEP } from '../net/egLaw.js';   // EG-ZI: the pull's toll, a quarter's share
 import { egInShape } from '../net/egShape.js';
 import { EG_BEAT_CYCLE_S, EG_BEAT_SOLID_S } from '../net/egSpanLaw.js';
 import { EG_OBJ } from '../net/egLords.js';
 import { EG_ROLE } from '../net/egBodies.js';
 
+/** EG-ZI: a toll of `q` quarters as a whole percentage of the body. */
+const tollPct = (q) => Math.round(q * EG_TOLL_STEP * 100);
+
 /** Every new line, worded once (section 27.9). */
 export const EG_PRES_TEXT = Object.freeze({
   castBack: '-10%',
+  // EG-ZI (section 10.6): the pull's toll - its share on the screen, as the cast-back's, and its line with the pull's
+  toll: (q) => `-${tollPct(q)}%`,
+  tollLine: (q) => `The Spire takes its toll: ${tollPct(q)}% of your health.`,
   divides: 'The way divides.',
   lastWord: 'The last word. The breach closes.',
   held: 'Held',

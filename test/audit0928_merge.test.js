@@ -30,6 +30,7 @@ import { inFireWard } from '../src/world/dungeonFires.js';   // REST3: the spawn
 import { freeLodgedFeet } from '../src/characters/foeSpacing.js';   // FIELD BUGS 2026-10-04d CRATE-FREE: the build's stand (a free name there, the module's own import)
 import { auraWingLights } from '../src/render/auraRing.js';   // SERAPH-WINGS: peerTorchLights' tail
 import { foeSeed, applyWireLook } from '../src/characters/foeBodies.js';   // AUDIT MW-NPC II K3: the dungeon context's look seed, in the mounted scope
+import { partyOnlyQuestShare } from '../src/scenes/questFoeHost.js';   // QUEST-OWNER: the dungeon's quest seam, narrowed to the party (ownShare)
 
 function sliced(path) {
   const S = readFileSync(new URL(path, import.meta.url), 'utf8');
@@ -109,7 +110,7 @@ function context({ authority, self }) {
     _ownSeq: 0, _ownFrameSeq: 0, _ownPups: new Map(), _ownPending: new Map(), _ownPendLoose: new Set(), _ownOwners: new Map(), _ownAdopted: new Map(),
     _retyping: new Set(), _lootSeen: new Set(), _lootAt: new Map(), flatGroups: new Map(), billboardBatches: [],
     lastPlayerFeet: [0, 0, 0], _motorYaw: 0, collider: {}, dfLocation: null, dungeon: { blocks: [] },
-    opts: { selfId: () => self, questShare: () => null, onEnemySpawn: (rec) => { heard.push(rec); state.hook?.(rec); } },
+    partyOnlyQuestShare, opts: { selfId: () => self, questShare: () => null, onEnemySpawn: (rec) => { heard.push(rec); state.hook?.(rec); } },
     renderer: { createBillboardBatch: () => ({ id: ++batchN }), destroyBillboardBatch: () => {} },
     foeDeps: {
       floorLanding: (c, p) => [p[0], p[1] - 0.2, p[2]],

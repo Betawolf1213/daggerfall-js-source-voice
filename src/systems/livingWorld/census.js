@@ -73,8 +73,8 @@ export const RETAINER_CLASSES = Object.freeze([MOBILE_TYPES.Knight, MOBILE_TYPES
 
 /**
  * @typedef {{ mapId: number, name?: string, px?: number, py?: number, type?: number, region?: number, people?: number,
- *   blocks: number, port?: boolean, wild?: boolean }} LwTown - a town as its MAPS row says it: `blocks` its RMB grid's
- *   cells, `people` the climate's (0 Nord, 2 Redguard, 3 Breton), `port` whether ships put in; LW9 `wild` no town - a
+ *   blocks: number, w?: number, h?: number, port?: boolean, wild?: boolean }} LwTown - a town as its MAPS row says it:
+ *   `blocks` its RMB grid's cells, WALL-WAY `w` and `h` the grid's own width (east) and height (north), `people` the climate's (0 Nord, 2 Redguard, 3 Breton), `port` whether ships put in; LW9 `wild` no town - a
  *   hunter's point in the wild (trips.js wildTrip)
  * @typedef {{ key: number, type: number, quality?: number, factionId?: number }} LwBuilding - a building summary's own
  *   columns (world/buildingSummaries.js: buildingKey, buildingType, quality, factionId)

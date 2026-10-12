@@ -12,7 +12,7 @@ DFU-distributed freeware set, outside the tree): the towers were measured and dr
 |---|---|---|---|
 | 1 | "The two Daggerfall Castle courtyard tower interiors are very bugged. Everything inside them seems to be shifted up several meters including stairs, and there is open void in some spots" (Jacob) | the towers' room shells are ObjectType 5, which classic writes at the storey a model stands on, and DFU places centred on it - each storey half a shell under its furniture, lights and markers, the stair 3.2 m under its own; DFU carries it | TOWER-FLOORS |
 | 2 | "when you want your family to be situated in a specific town, especially if your fresh from Privateer's Hold, you have to really rough it ... the option in the enhanced ui to reset your family seat to a town your currently in" (afjiz) | the seat is the first second the house stands on any town's map pixel - inns and trade have nothing to do with it - and nothing ever moved it | FAMILY-SEAT |
-| 3 | "The first dungeon is a tutorial area. New players loading in in front of 50 players in a dead dungeon with no enemies ruins the magic" (nObOdy) | every character online in Privateer's Hold stood in one world room, `dungeon:m187853213` - its memory, its foes, its doors and its loot | HOLD-SOLO |
+| 3 | "The first dungeon is a tutorial area. New players loading in in front of 50 players in a dead dungeon with no enemies ruins the magic" (nObOdy) | every character online in Privateer's Hold stood in one world room, `dungeon:m187853213` - its memory, its foes, its doors and its loot | HOLD-SOLO (REVERTED 2026-10-12, HOLD-SHARED) |
 | 4 | "if you keep walking forward into a home can make your character climb and let go of the surface at an extremely fast rate, making levelling climbing a joke. An easy fix could be disabling climbing during overworld travel" (Shabalako); "would also reduce the mortality rate of travellers falling from mountains at 60x speed" (Sahh) | the travel's scale grows the motor's step: at x60 a step is a second, and every climb timer fell due every step or two | CLIMB-TRAVEL |
 
 ## TOWER-FLOORS (1)
@@ -86,6 +86,14 @@ Where the move is not offered, the House page says where it is (AUDIT FB1007b S5
 
 ## HOLD-SOLO (3)
 
+**REVERTED 2026-10-12 (HOLD-SHARED, asked: "I want to revert the change we made to privateers hold making it
+instanced").** Privateer's Hold keys its shared world room, `dungeon:m187853213`, as every dungeon does again: roomIdentity
+marks nothing `solo`, `systems/startDungeon.js` keeps isStartCell and isStartDungeon (PH1, TUT1) and loses
+isTutorialHold, and AUDIT FB1007b's H1-H5 went with it (the page's memory of the Hold, the staff `/tp` refusal, the hub
+link's clock, the Local tab's, the page's, the party card's and the Online pane's words) and the Playing Online page's
+"Your starting cave is yours alone". Pinned by `test/holdshared.test.js` and `tools/mutants/holdshared.json`;
+`06-Systems/Online-Arc.md` HOLD-SHARED. What follows is the record of what was built and is no longer.
+
 `scenes/worldModes.js` roomIdentity (`solo`) and PH1's respawn; `scenes/world.js` the key block; `systems/startDungeon.js`
 (new: isStartCell, isStartDungeon). Every dungeon's room is keyed by its map id, so every character in Privateer's Hold
 stood in one world room: the others' bodies, the room's memory (the dead stay dead, the doors stay open), its
@@ -132,7 +140,8 @@ dungeonContext.js builds no motor (nor does the standalone scenes/dungeon.js's, 
 - `test/fb1007b_familyseat.test.js` (8): the host's move, refusals and store; every merge, either copy the newer; the
   name kept through every merge (two tabs over one store); the stamp after the seat it moves; every guard; the House
   page's two presses, its refusal, its word's lifetime, the keyboard and the hint; the world host's provider.
-- `test/fb1007b_holdsolo.test.js` (9; one gated on ARENA2): the start cell, a custom one too; roomIdentity and the key
+- `test/fb1007b_holdsolo.test.js` (9; one gated on ARENA2) - DELETED with HOLD-SOLO's revert (2026-10-12); its start
+  cell pin stands in `test/holdshared.test.js`. It held: the start cell, a custom one too; roomIdentity and the key
   block executed from their source; the shipped cell's Hold alone solo; the staff teleport, the hub's clock, the Hold's
   own memory and its words, executed; the world's one location on the start cell.
 - `test/fb1007b_climbtravel.test.js` (7): the report measured and the law, both lanes, on the world host's motor; the

@@ -406,7 +406,9 @@ test('AUDIT TACT C4: the street\'s doorways are mapped once a door generation, a
 
 test('AUDIT TACT C5: my companion and a pickpocket\'s mark are asked of HIM; the pass is for a DOOR, never the shelf behind', () => {
   const peaceful = { ai: { isHostile: false } };
-  assert.equal(yieldsToDoor({ ...peaceful, companion: 'me' }, 2), false, 'my companion\'s pack');
+  // FB1012d ALLY-YIELDS (bible/01-Overview/Field-Bugs-2026-10-12d.md): the door pass is still never his - his own yield is
+  // `allyYields`, to what the LADDER would take behind him (test/fb1012d_allyyields.test.js), asked before this one
+  assert.equal(yieldsToDoor({ ...peaceful, companion: 'me' }, 2), false, 'my companion\'s pack: the peaceful\'s door pass is not his');
   assert.equal(yieldsToDoor(peaceful, 2, 'steal'), false, 'a pickpocket');
   assert.equal(yieldsToDoor(peaceful, 2, 'info'), true);
   const c = new Collider(() => -100);

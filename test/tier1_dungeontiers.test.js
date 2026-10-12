@@ -111,7 +111,7 @@ test('TIER1: the words on the overworld - the sight line names the tier, the pla
   // AUDIT SD III (D7, PIN MOVED): kept by place - the maps hand a fresh location each ask, and the label's own memory never held one
   assert.match(w, /tierAt: params\.has\('online'\) \? \(summary\) => \{\n\s*if \(!summary\) return null;\n\s*const key = `\$\{summary\.regionIndex\}:\$\{summary\.locationIndex \?\? summary\.mapIndex\}`;\n\s*if \(!_tierLabels\.has\(key\)\) _tierLabels\.set\(key, dungeonTierLabel\(maps\.getLocation\(summary\.regionIndex, summary\.locationIndex \?\? summary\.mapIndex\)\)\);\n\s*return _tierLabels\.get\(key\);\n\s*\} : null,/, 'the held map\'s seam: the whole location, online alone, read once a place');
   // the entry line: the BUILT dungeon's word, online, said once on the transition
-  assert.match(w, /onTransitionDungeonInterior: \(ctx\) => \{ navalStow\(\); ohAbyss\?\.onDungeonEntered\(ohDungeonOf\(ctx\)\); csaOnTransition\(\); dungeonTierSay\(\); navalTransition\(\); restoreSoloMemory\(\); \},/);   // PIN MOVED (the merge of #668): HOLD-SOLO's beside it
+  assert.match(w, /onTransitionDungeonInterior: \(ctx\) => \{ navalStow\(\); ohAbyss\?\.onDungeonEntered\(ohDungeonOf\(ctx\)\); csaOnTransition\(\); dungeonTierSay\(\); navalTransition\(\); \},/);   // PIN MOVED (HOLD-SHARED, 2026-10-12): HOLD-SOLO's restoreSoloMemory gone from beside it
   const say = w.slice(w.indexOf('function dungeonTierSay() {'), w.indexOf('\n  }\n', w.indexOf('function dungeonTierSay() {')));
   assert.match(say, /if \(!params\.has\('online'\)\) return;\s*const line = tierPhrase\(dungeonTierLabel\(modes\?\.dungeonLocation \?\? null\)\);\s*if \(line\) townTalk\.say\(line, 4\);/);
 });

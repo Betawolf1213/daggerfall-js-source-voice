@@ -538,6 +538,11 @@ export function comeSailAwayCarrier(deps) {
   };
 }
 
+/** UpdateBoatCargoMod's two lines (3820-3858), by the cargo's mod: past half "a bigger boat", under whole "draws a little
+ *  lower", whole nothing. FB1012d ETHER-STRAND (bible/01-Overview/Field-Bugs-2026-10-12d.md): one home for the words, so a
+ *  host that covers the helm's mid-screen line - the Etheric crossing's own words, 7 s over its 3 - can say them again. */
+export const cargoModWords = (mod) => (mod < 0.5 ? "You're going to need a bigger boat" : mod < 1 ? 'The boat draws a little lower than usual' : null);
+
 /**
  * @param {any} deps - see the file's head
  */
@@ -938,8 +943,8 @@ export function createComeSailAwayRuntime(deps) {
     state.boatCargoMod = mathfClamp(f(2 - f(num / threshold)), 0, 1);
     if (state.lastWeight !== num) {
       state.lastWeight = num;
-      if (state.boatCargoMod < 0.5) deps.midScreenText("You're going to need a bigger boat", 3);
-      else if (state.boatCargoMod < 1) deps.midScreenText('The boat draws a little lower than usual', 3);
+      const words = cargoModWords(state.boatCargoMod);
+      if (words) deps.midScreenText(words, 3);
     }
   }
 

@@ -3933,7 +3933,9 @@ A piece of the server's post is the developers' to ONE registered account: a sub
 is not a letter (MAIL1, 0007): a letter is a player's and carries words alone; nothing a player can do writes a piece -
 the operator's workflow is its sender, and (EG-ZF, 2026-10-12) a list in the operator's config sends one letter of fixed
 words: First of the Spire's, once to each account `EG_FIRST_HANDLES` names (`server-account/src/egHonours.js` egFirstPost,
-`bible/11-Multiplayer/Elite-Gates.md` section 31, EG-ZF).
+`bible/11-Multiplayer/Elite-Gates.md` section 31, EG-ZF). EG-ZM (2026-10-12): and the service's own hourly clock one more, of
+fixed words, to the opener of a Weir Key's stake it spent with no receipt ever naming it, one a stake (`server-account/src/eg.js`
+spendLapsedStakes, its batch `spire-stake-<order id>`; Elite-Gates.md section 31, EG-ZM).
 
 - **The table** (0093, `server_post`): one row a piece - `to_id` (CASCADE with the account), `batch` (the operator's name
   for the send; UNIQUE with `to_id`, so a send run twice sends once), `sender`, `subject`, `body`, `item` (the record as
@@ -4016,7 +4018,7 @@ unique different version of the aura, a title named Hour's First, and each the g
   has 11 mutants, all dead.
 
 
-## EG-E2 — the Spire's titles and auras (2026-10-12, acct121, world197, world198 past BAL8)
+## EG-E2 — the Spire's titles and auras (2026-10-12, acct121, acct122 past BAL9, world197, world198 past BAL8)
 
 The Elite Breach's honours (`bible/11-Multiplayer/Elite-Gates.md` section 19, THE HONOURS; its EG-E2 record at the end
 of section 20), added as every honour is: the ids last in `identityToken.js` `TITLES` and `AURAS` (the relay's bundle -

@@ -96,7 +96,7 @@ test('EG-ZE THE STAIR\'S LAW (section 7): the full fall into a band\'s first hal
 /** A page with a canvas, a label's node, a frame clock and a recording GL - the veil's whole world. */
 function stairPage({ noStair = false, reduce = false } = {}) {
   const calls = [], sources = new Map(), attached = new Map(), nodes = [];
-  const failed = (sh) => noStair && sources.get(sh)?.includes('undersideEdge');
+  const failed = (sh) => noStair && sources.get(sh)?.includes('stairScene');   // EG-ZO (PIN MOVED): the stair's own text - the picture's underside is gone
   const gl = new Proxy({ ARRAY_BUFFER: 1, STATIC_DRAW: 2, FLOAT: 3, TRIANGLES: 4, COLOR_BUFFER_BIT: 5, VERTEX_SHADER: 6, FRAGMENT_SHADER: 7 }, {
     get(t, k) {
       if (k in t) return t[k];
@@ -212,7 +212,7 @@ test('EG-ZE THE STAIR ON THE VEIL (ui/gateVeil.js): the Spire\'s three themes dr
   assert.equal(g.label(), null, 'and holds no hall');
 });
 
-test('EG-ZE THE STAIR\'S SHADER (render/egStairPass.js, evaluated): the dither takes the screen pixel by pixel - none at nothing, all at the whole, exactly half a 4x4 at half; the fall\'s underside black overhead at its start and gone off the top as it falls, its share the JS law\'s, the band\'s deep lit below; the veil\'s motes drift where the cut\'s stand still; each band its own void (mutants: the dither inverted; the underside never falling away; the cut moving)', () => {
+test('EG-ZE THE STAIR\'S SHADER (render/egStairPass.js, evaluated): the dither takes the screen pixel by pixel - none at nothing, all at the whole, exactly half a 4x4 at half; the fall\'s deep rising, its share the JS law\'s, the band\'s deep lit below (EG-ZO, PIN MOVED: the underside is a model now - test/egz_fall.test.js - and its picture here is gone); the veil\'s motes drift where the cut\'s stand still; each band its own void (mutants: the dither inverted; the cut moving)', () => {
   const f = glslFunctions(EG_STAIR_FS, { uRes: [427, 240], uTime: 0, uCover: 0, uMode: 0, uBand: 0, gl_FragCoord: [0, 0, 0, 1], o: [0, 0, 0, 0] });
   const at = (x, y, set) => { Object.assign(f.globals, set); f.globals.gl_FragCoord = [x + 0.5, y + 0.5, 0, 1]; f.main(); return [...f.globals.o]; };
   for (const [cover, want] of [[0, 0], [1, 16], [0.5, 8], [0.25, 4]]) {
@@ -223,12 +223,6 @@ test('EG-ZE THE STAIR\'S SHADER (render/egStairPass.js, evaluated): the dither t
   assert.deepEqual(at(5, 5, { uCover: 0 }), [0, 0, 0, 0], 'untaken: the world shows through');
   // THE FALL
   for (const t of [0, 0.4, 1, 2.5, 6]) assert.ok(near(f.fallen(t), egStairFallen(t), 1e-9), `the shader's share the law's at ${t} s`);
-  assert.ok(f.undersideEdge(0, 0) < 0.3, 'the underside overhead at the start');
-  assert.ok([-1.5, -0.6, 0, 0.6, 1.5].every((x) => f.undersideEdge(x, 6) > 1.0), 'fallen away off the top by six seconds');
-  const black = [0.012, 0.01, 0.012];
-  const early = f.stairScene([0, 0.6], 0.1, 0, EG_STAIR_MODE.fall), late = f.stairScene([0, 0.6], 6, 0, EG_STAIR_MODE.fall);
-  assert.ok(early.every((v, i) => near(v, black[i], 1e-9)), 'black overhead');
-  assert.ok(late.some((v, i) => !near(v, black[i], 1e-6)), 'the void where it hung');
   const deep = f.stairScene([0.31, -0.95], 3, 0, EG_STAIR_MODE.fall), D = EG_SKIES[0].deep;
   assert.ok(deep[0] > deep[2] * 3 && deep[0] >= D[0] * 0.9, 'the fire-sea lit below');
   assert.ok(f.stairScene([0.31, -0.95], 3, 0, EG_STAIR_MODE.fall)[0] > f.stairScene([0.31, -0.95], 0, 0, EG_STAIR_MODE.fall)[0], 'rising to meet the faller');

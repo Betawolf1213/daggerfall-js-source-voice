@@ -447,7 +447,7 @@ test('PROF4 pages: the Workbench at a Furniture Store - the saws for the logs he
   assert.match(text(), /Your workbench/);
   bench = null;
   draw();
-  assert.match(text(), /Carpentry is done at a workbench: a Furniture Store's \(50 gold a craft or a saw\)/);
+  assert.match(text(), /Carpentry is done at a workbench: a Furniture Store's or a joinery's \(50 gold a craft or a saw\)/);   // PIN MOVED (CARP-YARD, 2026-10-12): a joinery's bench too
   // the Professions page: Smithing practised - its cards chosen at 50 (PROF4's FOUND)
   root.remove(); root = el('div'); document.body.append(root);
   drawProfessionsPage(root, () => {}, kit);
@@ -476,7 +476,7 @@ test('PROF4 wiring: a built pixel keeps its forest (the tree flats by World of D
   assert.match(w, /if \(isCraftedFurniture\(it\)\) \(playerEntity\.furnishings \?\?= \[\]\)\.push\(it\);\n\s*else addItem\(\(playerEntity\.items \?\?= \[\]\), it, 'back'\);/);
   // PROF7 moved it: the station a recipe's profession names (craftStation) - the workbench Carpentry's, the loom Outfitting's
   assert.match(w, /const st = craftStation\(recipeById\(recipe\)\?\.profession\);\n\s*const f = st\.here\(\);/);
-  assert.match(w, /const craftStation = \(profession\) => \(profession === 'carpentry'\n\s*\? \{ here: \(\) => modes\?\.workbenchHere\?\.\(\) \?\? null,/);
+  assert.match(w, /const craftStation = \(profession\) => \(profession === 'carpentry'\n\s*\? \{ here: \(\) => workbenchHere\(\),/);   // PIN MOVED (CARP-YARD, 2026-10-12): the host's own question - a joinery's bench in the street
   // PIN MOVED (PROF11): the work names the mason's bench too
   assert.match(w, /const bench = work\?\.station === 'workbench', loom = work\?\.station === 'loom', mason = work\?\.station === 'mason';/);
   assert.match(w, /planeBand: \(\) => planeBand\(\{ agility: liveStat\(playerEntity, 'agility'\), willpower: liveStat\(playerEntity, 'willpower'\) \}\),/);

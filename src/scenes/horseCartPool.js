@@ -110,6 +110,12 @@ const seedOfKey = (k) => { let h = 7; for (const c of k) h = (Math.imul(h, 31) +
 /** COATS1: how many looks' dyed pictures stand at once - past it, the one longest undrawn is let go (every horse is its
  *  own look, and a session meets many). */
 export const HORSE_LOOKS_KEPT = 16;
+/** PERF-DYE: how many of a look's pictures are dyed a frame - each a CPU pass of about a millisecond on a desktop
+ *  (systems/horseCoats.js recolorHorse) and an upload. The budget was a SET a frame, and the walk set is forty pictures:
+ *  a look met on a road (a passing team, a parked one come into view) cost one frame some 45 ms, a hitch the eye sees
+ *  (2026-10-12, the live client: 29 of the 122 frames over 50 ms in two minutes' travel). Five a frame is the views in
+ *  one, the walk frames over eight. */
+export const HORSE_DYE_PICTURES = 5;
 /** StationaryHorseVisual.Initialize [IL_40b7-IL_40d9]: 121 x 0.025 by 94 (or 95, the walk set) x 0.025. */
 export const HORSE_BILLBOARD_WIDTH = HORSE_SPRITE_WIDTH * GLOBAL_SCALE;
 export const HORSE_BILLBOARD_HEIGHT = HORSE_SPRITE_HEIGHT * GLOBAL_SCALE;
@@ -172,6 +178,26 @@ export const PEER_TEAM_DRAW_SLACK_M = 25;
  *  how far it rises above the wagon's point and sinks below it - every kind's body, its wheels and a hitched pair
  *  inside it (the Caravan is the longest, its team at the pole's end ahead of it). Generous by design: a box too big
  *  costs a draw, one too small loses a wagon at the screen's edge. */
+/** HARNESS-REST (2026-10-11, a profile of a player's live client in a town: 4.0% of the main thread, eleven parked
+ *  teams' harnesses stepped, laid and sent to the GPU every frame): A HARNESS WHOSE ENDS STAND STILL COMES TO REST. Once
+ *  every end has stayed within HARNESS_STILL_M of where it stood for HARNESS_REST_S, its ropes are neither stepped nor
+ *  laid nor sent again - they hang as last drawn - until an end moves. By then the damping has taken any swing (ROPE's
+ *  0.97 a step, at least 60 steps a second: under 0.5% of it is left); what stops is the step's own millimetre jitter
+ *  as the frame's length changes. Measured against where the ends stood when they came to rest, not last frame, so an
+ *  ease creeping a hair a frame adds up and wakes it. */
+export const HARNESS_REST_S = 3;
+export const HARNESS_STILL_M = 1e-4;
+/** HARNESS-REST: do `ends` (harnessEnds') stand where `at` (the same kinds, as they stood) does - every end of every
+ *  rope within HARNESS_STILL_M, at the same scale? Pure. */
+export function harnessStill(ends, at) {
+  if (!at || at.length !== ends.length) return false;
+  for (let i = 0; i < ends.length; i++) {
+    const e = ends[i], w = at[i];
+    if (e.g !== w.g) return false;
+    for (let k = 0; k < 3; k++) if (!(Math.abs(e.a[k] - w.a[k]) <= HARNESS_STILL_M && Math.abs(e.b[k] - w.b[k]) <= HARNESS_STILL_M)) return false;
+  }
+  return true;
+}
 export const PEER_TEAM_BOX_HALF_M = 10;
 export const PEER_TEAM_BOX_UP_M = 8;
 export const PEER_TEAM_BOX_DOWN_M = 2;
@@ -293,7 +319,7 @@ export function createHorseCartPool({
   // which looks are up: code -> { still, walk, used (the frame it was last drawn) }
   const _stillPx = new Map(), _walkPx = new Map();
   const _looksUp = new Map();
-  let _dyeBudget = 1;   // COATS1: one look's set dyed a frame (the walk set is some 20 ms of CPU) - refilled by frame()
+  let _dyeBudget = HORSE_DYE_PICTURES;   // PERF-DYE: the pictures dyed this frame, of any look - refilled by frame()
   let _frameNo = 0;
   // the billboards: mine and the peers'
   const _horseBatches = new Map();   // owner ('' mine) -> batch
@@ -437,35 +463,43 @@ export function createHorseCartPool({
     _walkLoading = Promise.all(jobs).then(() => { _walkReady = true; }).catch((e) => { _walkFailed = true; log?.warn?.(`[TrailingWagon] the horse walk frames would not load; the standing views stay: ${e?.message ?? e}`); }).finally(() => { _walkLoading = null; });
   }
   /** COATS1: a look's pictures up - its standing views once the bay's are, its walk frames once the bay's are - dyed
-   *  off the bay's kept pixels, a CPU pass and an upload a picture (systems/horseCoats.js recolorHorse), one set a frame
-   *  (`_dyeBudget`: a road of six looks seen at once is dyed over six frames, not in one). Answers whether every picture
-   *  the pool draws now is up in that look - the views, and the walk frames once the bay's are (the bay's: the art). */
+   *  off the bay's kept pixels, a CPU pass and an upload a picture (systems/horseCoats.js recolorHorse). PERF-DYE: in
+   *  order, the views then the walk frames, HORSE_DYE_PICTURES a frame among every look (`_dyeBudget`), never a whole
+   *  set at once; `up.views` and `up.walks` count those up. Answers whether every picture the pool draws now is up in
+   *  that look - the views, and the walk frames once the bay's are (the bay's until then: the art). */
   function ensureHorseLook(look) {
     const c = horseLookCode(horseLookOfCode(look));
     if (!ensureStationary()) return false;
     if (!c) return true;
     let up = _looksUp.get(c);
-    if (!up) { up = { still: false, walk: false, used: _frameNo }; _looksUp.set(c, up); }
+    if (!up) { up = { views: 0, walks: 0, used: _frameNo }; _looksUp.set(c, up); }
     up.used = _frameNo;
-    if (!up.still && _dyeBudget > 0) {
-      _dyeBudget--;
-      for (const [v, px] of _stillPx) renderer.uploadTexture(HORSE_ARCHIVE, horseStillRecord(v, c), recolorHorse(px, c));
-      up.still = true;
+    if (up.views < _stillPx.size && _dyeBudget > 0) {
+      const views = [..._stillPx];
+      for (; up.views < views.length && _dyeBudget > 0; up.views++, _dyeBudget--) {
+        const [v, px] = views[up.views];
+        renderer.uploadTexture(HORSE_ARCHIVE, horseStillRecord(v, c), recolorHorse(px, c));
+      }
     }
-    if (!up.walk && _walkReady && _dyeBudget > 0) {
-      _dyeBudget--;
-      for (const [k, px] of _walkPx) { const [v, f] = k.split('#').map(Number); renderer.uploadTexture(HORSE_ARCHIVE, horseWalkRecord(v, f, c), recolorHorse(px, c)); }
-      up.walk = true;
+    const still = up.views >= _stillPx.size;
+    if (still && _walkReady && up.walks < _walkPx.size && _dyeBudget > 0) {
+      const frames = [..._walkPx];
+      for (; up.walks < frames.length && _dyeBudget > 0; up.walks++, _dyeBudget--) {
+        const [k, px] = frames[up.walks];
+        const [v, f] = k.split('#').map(Number);
+        renderer.uploadTexture(HORSE_ARCHIVE, horseWalkRecord(v, f, c), recolorHorse(px, c));
+      }
     }
-    return up.still && (up.walk || !_walkReady);
+    return still && (up.walks >= _walkPx.size || !_walkReady);
   }
   /** COATS1: a look's dyed pictures let go (EVERY ALLOCATION HAS AN OWNER - the pool's). */
   function dropLook(c) {
     const up = _looksUp.get(c);
     if (!up) return;
     _looksUp.delete(c);
-    if (up.still) for (const v of _stillPx.keys()) renderer?.evictTexture?.(`${HORSE_ARCHIVE}_${horseStillRecord(v, c)}`);
-    if (up.walk) for (const k of _walkPx.keys()) { const [v, f] = k.split('#').map(Number); renderer?.evictTexture?.(`${HORSE_ARCHIVE}_${horseWalkRecord(v, f, c)}`); }
+    // PERF-DYE: the pictures dyed so far, a set's first ones too (the bay's maps keep their order)
+    for (const v of [..._stillPx.keys()].slice(0, up.views)) renderer?.evictTexture?.(`${HORSE_ARCHIVE}_${horseStillRecord(v, c)}`);
+    for (const k of [..._walkPx.keys()].slice(0, up.walks)) { const [v, f] = k.split('#').map(Number); renderer?.evictTexture?.(`${HORSE_ARCHIVE}_${horseWalkRecord(v, f, c)}`); }
   }
   /** COATS1: past HORSE_LOOKS_KEPT, the looks longest undrawn let go - never one drawn this frame or the last (a road's
    *  teams are posed outside the pool's own frame). */
@@ -751,7 +785,7 @@ export function createHorseCartPool({
   const peerTeamAt = (p) => p.wagon?.position ?? p.horse?.position ?? null;
   function frame(dt, cameraPos, gameDt = dt) {
     trim3d(); _dt3d = dt;   // COATS3D: last frame's 3D horses not posed again let go (before the frame's count moves on); this frame's step
-    _dyeBudget = 1; _frameNo++; trimLooks();   // COATS1: a set dyed a frame; the looks long undrawn let go
+    _dyeBudget = HORSE_DYE_PICTURES; _frameNo++; trimLooks();   // PERF-DYE: HORSE_DYE_PICTURES dyed a frame; COATS1: the looks long undrawn let go
     _eye = cameraPos ? [cameraPos[0], cameraPos[1], cameraPos[2]] : null;
     if (!enabled) { if (_horseBatches.size || _peers.size || _bucketKey || _harness.size) destroyAll(); return; }
     runtime?.lateUpdate(gameDt);
@@ -1171,7 +1205,11 @@ export function createHorseCartPool({
       if (!ends.length) { dropHarness(owner); continue; }
       const key = ends.map((e) => e.kind[0]).join('');
       let h = _harness.get(owner);
-      if (!h || h.key !== key) { dropHarness(owner); h = { key, ropes: ends.map((e) => newRope(e.kind)), model: null, gpu: null }; _harness.set(owner, h); }
+      if (!h || h.key !== key) { dropHarness(owner); h = { key, ropes: ends.map((e) => newRope(e.kind)), model: null, gpu: null, restAt: null, stillS: 0 }; _harness.set(owner, h); }
+      // HARNESS-REST: still since restAt for HARNESS_REST_S, and drawn - nothing to step, lay or send
+      if (harnessStill(ends, h.restAt)) h.stillS += Math.max(0, dt);
+      else { h.restAt = ends.map((e) => ({ a: [...e.a], b: [...e.b], g: e.g })); h.stillS = 0; }
+      if (h.stillS >= HARNESS_REST_S && (h.gpu || !renderer?.createMesh)) continue;
       ends.forEach((e, i) => stepRope(h.ropes[i], e.a, e.b, dt, e.g));
       if (!renderer?.createMesh) continue;
       const model = h.model ?? (h.model = tubeModel(h.ropes.length, WAGON_ARCHIVE, WAGON_TEX.harness));

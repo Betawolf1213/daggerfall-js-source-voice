@@ -218,6 +218,116 @@ export function travelViewLine({ place = null, near = null, region = '' } = {}) 
  * @param {(fn:Function, ms:number) => any} [deps.schedule] - the heartbeat's timer (setTimeout)
  * @param {(h:any) => void} [deps.cancel] - and its cancel (clearTimeout)
  */
+/** OW-DOTS-GROUND / OW-DOTS-EVEN: how far apart the route's dots stand on the screen at the traveller's feet (px). */
+export const ROUTE_DOT_PX = 12;
+/** OW-DOTS-EVEN: the closest two dots may stand on the screen toward the horizon before every other one is let go (px) -
+ *  by then each is drawn at its smallest (ROUTE_DOT_SIZES' last), so the line keeps its rhythm: a dot, a gap. */
+export const ROUTE_DOT_MIN_PX = 4;
+/** OW-DOTS-EVEN: the dots' sizes, a share of the dot at the feet - each dot drawn at the one nearest its own perspective
+ *  (the ground's scale where it lies over the scale at the feet), so a dot and the gap after it shrink together toward
+ *  the horizon, as a row of posts does. */
+export const ROUTE_DOT_SIZES = Object.freeze([1, 0.85, 0.72, 0.6, 0.5, 0.42]);
+/** The size class of a dot whose ground stands `r` times the feet's scale: the nearest of ROUTE_DOT_SIZES. */
+export function routeDotClass(r) {
+  let best = 0;
+  for (let i = 1; i < ROUTE_DOT_SIZES.length; i++) if (Math.abs(ROUTE_DOT_SIZES[i] - r) < Math.abs(ROUTE_DOT_SIZES[best] - r)) best = i;
+  return best;
+}
+/** OW-DOTS-GROUND: the finest spacing on the ground (m) - every spacing is it doubled, so a coarser set is a subset. */
+export const ROUTE_DOT_M = 0.25;
+/** OW-DOTS-GROUND: the most dots a frame lays (a far journey's line toward the horizon is bounded by it). */
+export const ROUTE_DOTS_MAX = 1500;
+/** OW-DOTS-EVEN: the spacing picked at the feet is kept until the dots there stand outside this share of ROUTE_DOT_PX
+ *  (a zoom, a slope) - a spacing on its edge never flickers between two. */
+export const ROUTE_DOT_KEEP = Object.freeze([0.8, 2.2]);
+/** The finest doubling of ROUTE_DOT_M that stands `px` apart where the ground is `perM` px a metre. */
+const dotStep = (perM, px) => ROUTE_DOT_M * 2 ** Math.max(0, Math.ceil(Math.log2(px / (perM * ROUTE_DOT_M))));
+/**
+ * OW-DOTS-GROUND (2026-10-12, Mac with a video: "the dotted lines dont look still"): THE ROUTE'S DOTS ARE POINTS ON THE
+ * LAND. A dash pattern lives on the screen: laid along the projected path, it slid whenever the picture's lengths
+ * changed - the camera's perspective stretches every piece as it follows the traveller, so no offset could hold it. Here
+ * each dot is a place on the route in the world, at a whole multiple of a spacing measured back along the route from the
+ * journey's end (ground metres, x and z), and projected like any mark: it stays where it lies while the traveller walks
+ * over it.
+ * OW-DOTS-EVEN (Mac: "the dot spacing is still a bit weird make it more consistent"): ONE SPACING ON THE GROUND for the
+ * whole line - the doubling of ROUTE_DOT_M that stands ROUTE_DOT_PX apart at the traveller's feet, kept (`keep`, the
+ * caller's memo) while it stays within ROUTE_DOT_KEEP of it - so the dots are evenly spaced on the land and close in
+ * toward the horizon only as the land itself does, as a road's posts would. (A spacing picked piece by piece doubled at
+ * every threshold the line crossed: runs of dots, then gaps.) Only where they would crowd closer than ROUTE_DOT_MIN_PX
+ * on the screen does every other one drop out. Each dot carries its size class (`c`, routeDotClass): drawn smaller as the
+ * land recedes, so the dot keeps its share of the gap after it. A piece is halved until it is short on the screen (a straight world piece
+ * is not straight on it), and one behind the eye or off the screen (`w` x `h`, grown by `m`) lays nothing.
+ * @param {number[][]} points the route's world points, the traveller's feet first, the journey's end last
+ * @param {(p:number[]) => ({x:number, y:number, front:boolean}|null)} proj
+ * @returns {{x:number, y:number, c:number}[]}
+ */
+export function routeGroundDots(points, proj, { px = ROUTE_DOT_PX, min = ROUTE_DOT_MIN_PX, max = ROUTE_DOTS_MAX, w = Infinity, h = Infinity, m = 16, keep = null } = {}) {
+  const out = [];
+  if (!points || points.length < 2 || typeof proj !== 'function') return out;
+  const off = (q) => !q?.front || !Number.isFinite(q.x) || !Number.isFinite(q.y);
+  const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+  // THE LINE'S ONE SPACING: the ground's scale at the feet - a metre (or the first piece, if shorter) along the way
+  let base = 0, feetPerM = 0;
+  {
+    const f = points[0];
+    let n = 1;
+    while (n < points.length - 1 && Math.hypot(points[n][0] - f[0], points[n][2] - f[2]) < 1e-6) n++;
+    const L = Math.hypot(points[n][0] - f[0], points[n][2] - f[2]);
+    const t = L > 0 ? Math.min(1, 1 / L) : 0;
+    const q0 = proj(f), q1 = t > 0 ? proj(lerp(f, points[n], t)) : null;
+    const perM = !off(q0) && !off(q1) ? Math.hypot(q1.x - q0.x, q1.y - q0.y) / (L * t) : 0;
+    feetPerM = perM;
+    if (perM > 0) {
+      const kept = keep?.k > 0 ? keep.k * perM : 0;
+      base = kept >= px * ROUTE_DOT_KEEP[0] && kept <= px * ROUTE_DOT_KEEP[1] ? keep.k : dotStep(perM, px);
+      if (keep) keep.k = base;
+    } else if (keep?.k > 0) base = keep.k;   // the feet off the picture: the spacing they last had
+  }
+  // a: the far end (dA from the journey's end), b: the near end (dB < dA)
+  const piece = (a, b, dA, dB, qa, qb, depth) => {
+    if (out.length >= max || !(dA > dB)) return;
+    if (off(qa) && off(qb)) return;
+    if (!off(qa) && !off(qb)) {
+      if ((qa.x < -m && qb.x < -m) || (qa.x > w + m && qb.x > w + m) || (qa.y < -m && qb.y < -m) || (qa.y > h + m && qb.y > h + m)) return;
+    }
+    const len = off(qa) || off(qb) ? Infinity : Math.hypot(qb.x - qa.x, qb.y - qa.y);
+    if (len > 80 && depth < 16) {   // short on the screen: its scale near even along it (OW-DOTS-EVEN)
+      const mid = lerp(a, b, 0.5), dm = (dA + dB) / 2, qm = proj(mid);
+      piece(a, mid, dA, dm, qa, qm, depth + 1);
+      piece(mid, b, dm, dB, qm, qb, depth + 1);
+      return;
+    }
+    if (!Number.isFinite(len)) return;   // still across the eye's plane at the depth's end: no dots there
+    const perM = len / (dA - dB);
+    if (!(perM > 0)) return;
+    const k = Math.max(base || dotStep(perM, px), dotStep(perM, min));   // the line's spacing; thinned only where it would crowd
+    // each dot's size by the ground's scale where IT lies: the steps to its neighbours on the screen over the step on the
+    // ground (the piece's own scale for a lone dot) - a piece's mean would size its near and far dots alike
+    const qs = [];
+    for (let t = Math.floor(dA / k) * k; t > dB && qs.length + out.length < max; t -= k) {
+      if (t > dA || t <= 0) continue;   // the end's own dot is the cross
+      qs.push(proj(lerp(b, a, (t - dB) / (dA - dB))));
+    }
+    for (let i = 0; i < qs.length; i++) {
+      const q = qs[i];
+      if (off(q) || q.x < -m || q.x > w + m || q.y < -m || q.y > h + m) continue;
+      const nb = [qs[i - 1], qs[i + 1]].filter((o) => o && !off(o));
+      const here = nb.length ? nb.reduce((sum, o) => sum + Math.hypot(q.x - o.x, q.y - o.y), 0) / nb.length / k : perM;
+      out.push({ x: q.x, y: q.y, c: routeDotClass(feetPerM > 0 ? here / feetPerM : 1) });
+    }
+  };
+  let d = 0;
+  let qb = proj(points[points.length - 1]);
+  for (let i = points.length - 1; i > 0 && out.length < max; i--) {
+    const b = points[i], a = points[i - 1];
+    const seg = Math.hypot(b[0] - a[0], b[2] - a[2]);
+    const qa = proj(a);
+    if (seg > 0) piece(a, b, d + seg, d, qa, qb, 0);
+    d += seg; qb = qa;
+  }
+  return out;
+}
+
 export function createTravelView(deps) {
   const win = deps.win ?? globalThis;
   let state = 'off';           // 'off' | 'rising' | 'up' | 'falling'
@@ -494,6 +604,7 @@ export function createTravelView(deps) {
   }
 
   /** The readout, after the frame's matrices exist (the host's projection). */
+  const dotSpacing = { k: 0 };   // OW-DOTS-EVEN: the route's ground spacing, kept between frames (routeGroundDots `keep`)
   function drawHud() {
     if (state === 'off' || !deps.hud) return;
     const feet = deps.feet();
@@ -503,6 +614,7 @@ export function createTravelView(deps) {
     const h = f && a && f.front && a.front ? (Math.atan2(a.x - f.x, -(a.y - f.y)) * 180) / Math.PI : null;
     if (h != null) lastHeading = h;
     const proj = (p) => (deps.project && p ? deps.project(p) : null);
+    const routeWorld = deps.route?.() ?? [];
     const marks = [];
     for (const m of deps.marks?.() ?? []) {
       const at = proj(m.at);
@@ -513,7 +625,9 @@ export function createTravelView(deps) {
     deps.hud.update({
       feet: f, heading: lastHeading, yaw: camera?.yaw ?? 0, where: deps.where?.() ?? '',
       touch: !!deps.touch, fade: t, marks, keys: hintKeys,
-      route: (deps.route?.() ?? []).map(proj), trip: deps.trip?.() ?? '',
+      route: routeWorld.map(proj), trip: deps.trip?.() ?? '',
+      routeDots: routeGroundDots(routeWorld, proj, { w: deps.canvas?.clientWidth || Infinity, h: deps.canvas?.clientHeight || Infinity, keep: dotSpacing }),   // OW-DOTS-GROUND; OW-DOTS-EVEN: the line's spacing kept frame to frame
+      routeDotSizes: ROUTE_DOT_SIZES,   // OW-DOTS-EVEN: the readout's path pair a size
       followDist: deps.followDist?.() ?? null,   // WAYPOINTS: the followed list's distances
     });
   }

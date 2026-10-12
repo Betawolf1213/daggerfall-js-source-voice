@@ -203,10 +203,10 @@ test('GATHER-OW the filter: a switch of its own, Gathering - its marks counted u
   assert.match(css, /\.tview-fdot-gathering \{ background: [^}]+\}/, 'its switch\'s dot');
 });
 
-test('GATHER-OW the glyph: the HUD draws a group as a diamond in its own colour - never a dot (mutants: the dot; the brass)', () => {
+test('GATHER-OW the glyph: the HUD draws a group by its work in its own colour - never a dot (OW-GLYPHS: Mining\'s pick; mutants: the dot; the brass)', () => {
   const calls = [], fills = [];
   const ctx = new Proxy({}, {
-    get: (t, k) => (k in t ? t[k] : k === 'measureText' ? (str) => ({ width: String(str).length * 7 }) : (...a) => { calls.push([k, ...a]); if (k === 'fill' || k === 'fillText') fills.push([k, t.fillStyle]); }),
+    get: (t, k) => (k in t ? t[k] : k === 'measureText' ? (str) => ({ width: String(str).length * 7 }) : (...a) => { calls.push([k, ...a]); if (k === 'fill' || k === 'fillText') fills.push([k, t.fillStyle]); if (k === 'stroke') fills.push([k, t.strokeStyle]); }),
     set: (t, k, v) => { t[k] = v; return true; },
   });
   const win = { devicePixelRatio: 1, innerWidth: 1280, innerHeight: 720, addEventListener() {}, removeEventListener() {} };
@@ -221,9 +221,9 @@ test('GATHER-OW the glyph: the HUD draws a group as a diamond in its own colour 
   try {
     hud.updateTravelViewHud({ feet: null, heading: null, yaw: 0, where: '', marks: [{ key: 'gather:405,150:mining', x: 300, y: 300, front: true, label: groupLabel('mining', 5), kind: 'gather mining', color: nodeMarkCss('mining') }] });
   } finally { hud.disposeTravelViewHud(); }
-  assert.equal(calls.filter((c) => c[0] === 'arc').length, 0, 'a diamond, not a dot');
-  assert.equal(calls.filter((c) => c[0] === 'lineTo').length, 3, 'its four corners');
-  assert.deepEqual(fills.filter(([k]) => k === 'fill').map(([, c]) => c), [nodeMarkCss('mining')], 'in Mining\'s copper');
+  assert.equal(calls.filter((c) => c[0] === 'arc').length, 0, 'a pick, not a dot');
+  assert.equal(calls.filter((c) => c[0] === 'quadraticCurveTo').length, 1, 'its curved head');
+  assert.deepEqual(fills.filter(([k]) => k === 'stroke').map(([, c]) => c), ['#000', nodeMarkCss('mining')], 'inked: the black edge, then Mining\'s copper');
 });
 
 test('GATHER-OW the world host: the Overworld\'s marks take the gathering host\'s groups at the player\'s feet, beside the camps (by source)', () => {

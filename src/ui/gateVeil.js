@@ -20,6 +20,12 @@
 // `egVeil`, `egCut`), drawn by render/egStairPass.js on its own clock (world/egLights.js EG_STAIR_VEIL: the dither
 // 0.8 s each way - the fire's law run at that pace), the fall held shut its least, the band's chime as it closes, and
 // the hall it steps to held centred over it (a label of its own beside the canvas).
+// EG-ZO (2026-10-12, Elite-Gates.md section 7): THE FALL PAST THE SPIRE'S UNDERSIDE - the full fall is a camera falling
+// past a modelled underside (world/egUnderside.js), drawn on this canvas in its own pass (render/egStairPass.js): the
+// underside and its four pictures made A SLICE A TICK from the fall's first frame (never in the tick the veil shuts in,
+// whose end runs the step's own work - THE SWAP), uploaded as one more slice, and every GL allocation of it freed as the
+// fall ends - the veil opened, a look that is not this fall taken, the veil destroyed. The canvas has a depth buffer for
+// it; the other looks never test against it.
 // Not a DFU member. Ledger A (WB).
 import { audio as defaultAudio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
@@ -31,6 +37,7 @@ import { midiNote } from '../systems/gateScore.js';
 import { HOUR_CHIME, HOUR_CHIME_MENDED } from '../systems/sdScore.js';
 import { EgStairRenderer, EG_STAIR_MODE } from '../render/egStairPass.js';   // EG-ZE: THE SPIRE'S STAIR
 import { EG_STAIR_VEIL } from '../world/egLights.js';
+import { egUndersideParts, egFallCamera } from '../world/egUnderside.js';   // EG-ZO: THE FALL PAST THE SPIRE'S UNDERSIDE
 
 /** Over the world and its HUD (z 4, appended after .hud, which it ties and follows - ui/nameLayer.js AUDIT NAME1 F4
  *  maps the page's layers), under the chat and the party (5): a word said as the fire closes is still read. No pointer. */
@@ -118,6 +125,32 @@ export function createGateVeil({ doc = globalThis.document, raf = (f) => globalT
   // held centred and its node, the band's chime's pitch
   let egPass = null, egBroken = false, egBand = 0, egLabel = '', egChime = 1, labelEl = null;
   const egMode = () => VEIL_EG_MODE[theme];
+  /** EG-ZO: THE FALL'S OWN - the band it falls into, its underside's parts being made a slice a tick, the underside on
+   *  the GPU once uploaded, and whether its upload failed (the void alone is drawn); the falling camera's arrays. */
+  /** @type {null | { band: number, parts: ReturnType<typeof egUndersideParts>, under: any, failed: boolean }} */
+  let fall = null;
+  const fallCam = { eye: new Float32Array(3), view: new Float32Array(16), proj: new Float32Array(16) };
+  /** EG-ZO: the fall's underside freed - the slot emptied before what was in it is told. Every exit comes here. */
+  function fallFree() {
+    const f = fall;
+    fall = null;
+    try { f?.under?.destroy(); } catch { /* the context went with the page */ }
+  }
+  /** EG-ZO: the look just taken: a fall into band `egBand` keeps (or starts) its own underside; any other look frees it. */
+  function fallTake() {
+    if (egMode() !== EG_STAIR_MODE.fall) { fallFree(); return; }
+    if (fall?.band === egBand) return;
+    fallFree();
+    fall = { band: egBand, parts: egUndersideParts(egBand), under: null, failed: false };
+  }
+  /** EG-ZO: one slice of the fall's underside - a piece of its model or one of its pictures, or, all made, its upload.
+   *  The fall's own pass must stand first (it is built as the stair is first drawn). */
+  function fallSlice() {
+    if (!fall || fall.under || fall.failed || !egPass) return;
+    if (!fall.parts.done) { fall.parts.step(); return; }
+    fall.under = egPass.upload(fall.parts);
+    if (!fall.under) fall.failed = true;
+  }
   /** EG-ZE: the veil's clock against its law's - the stair's 0.8 s each way where the fire takes VEIL_CLOSE_S and
    *  VEIL_OPEN_S (every law below reads the one clock, so the fire's curve is the stair's, faster); shut, the same. */
   const pace = () => (egMode() === undefined ? 1 : phase === 'closing' ? VEIL_CLOSE_S / EG_STAIR_VEIL.close : phase === 'opening' ? VEIL_OPEN_S / EG_STAIR_VEIL.open : 1);
@@ -188,8 +221,10 @@ export function createGateVeil({ doc = globalThis.document, raf = (f) => globalT
     if (canvas.width !== w) canvas.width = w;
     if (canvas.height !== h) canvas.height = h;
     if (canvas.style.imageRendering !== 'pixelated') canvas.style.imageRendering = 'pixelated';
-    const v = current(t);
-    try { egPass.draw(w, h, (t - began) / 1000, v, { mode: egMode(), band: egBand }); } catch { /* a veil is never the step */ }
+    const v = current(t), s = (t - began) / 1000, m = egMode();
+    // EG-ZO: the fall through its own camera, its underside over the void once it stands
+    const cam = m === EG_STAIR_MODE.fall ? egFallCamera(s, w / h, fallCam) : null;
+    try { egPass.draw(w, h, s, v, { mode: m, band: egBand, cam, under: fall?.under ?? null }); } catch { /* a veil is never the step */ }
     labelShow(v.cover);
     return true;
   }
@@ -202,7 +237,7 @@ export function createGateVeil({ doc = globalThis.document, raf = (f) => globalT
       canvas.style.cssText = `${VEIL_CSS}display:none;`;
       canvas.setAttribute?.('aria-hidden', 'true');
       doc.body.appendChild(canvas);
-      const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false });
+      const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false, depth: true, stencil: false });   // EG-ZO: the fall's underside is depth-tested
       if (!gl) throw new Error('no WebGL2');
       veilGl = gl;
       unseat = onPageGone(() => loseGlContext(gl));   // GL-LEAK
@@ -258,6 +293,8 @@ export function createGateVeil({ doc = globalThis.document, raf = (f) => globalT
     ticking = false;
     const t = now();
     if (hourMode() !== undefined) hourCues(t);
+    const shuts = phase === 'closing' && seconds(t) >= VEIL_CLOSE_S;
+    if (!shuts) fallSlice();   // EG-ZO: a slice of the fall's underside a tick - never in the tick whose end runs the step's own work
     if (phase === 'closing' && seconds(t) >= VEIL_CLOSE_S) { phase = 'shut'; at = t; quarters = 0; cue('shut'); settle(true); }
     if (phase === 'shut') {
       // SD-LOOK: an Hour's veil stands shut its least before it opens (the way home's mend, the forced face read)
@@ -270,6 +307,7 @@ export function createGateVeil({ doc = globalThis.document, raf = (f) => globalT
     }
     if (phase === 'opening' && seconds(t) >= VEIL_OPEN_S) phase = 'idle';
     if (phase === 'idle') labelShow(0);   // EG-ZE: the hall's label goes with the veil
+    if (phase === 'idle') fallFree();   // EG-ZO: and the fall's underside with it
     if (phase === 'idle' || !canvas) { if (canvas) canvas.style.display = 'none'; return; }
     draw(t);
     kick();
@@ -281,6 +319,7 @@ export function createGateVeil({ doc = globalThis.document, raf = (f) => globalT
   function takeLook(look, opts) {
     theme = themeOf(look);
     egBand = Math.max(0, Math.min(3, (opts?.band ?? 0) | 0)); egLabel = typeof opts?.label === 'string' ? opts.label : ''; egChime = Number(opts?.chime) > 0 ? Number(opts.chime) : 1;   // EG-ZE: the stair's own
+    fallTake();   // EG-ZO: a fall keeps or starts its underside; any other look frees it
     const fresh = now() - aimAt < VEIL_AIM_MS && theme !== VEIL_THEMES.hourCast;
     const c = opts?.centre ?? (fresh ? [aimX, aimY] : null), x = Number.isFinite(c?.[0]) ? c[0] : 0, y = Number.isFinite(c?.[1]) ? c[1] : 0, l = Math.hypot(x, y);
     centre = l > VEIL_CENTRE_MAX ? [(x / l) * VEIL_CENTRE_MAX, (y / l) * VEIL_CENTRE_MAX] : [x, y];
@@ -341,6 +380,7 @@ export function createGateVeil({ doc = globalThis.document, raf = (f) => globalT
       try { pass?.destroy(); } catch { /* the context went with the page */ }
       try { hourPass?.destroy(); } catch { /* the context went with the page */ }
       hourPass = null;
+      fallFree();   // EG-ZO: the fall's underside before the pass that drew it
       try { egPass?.destroy(); } catch { /* the context went with the page */ }
       egPass = null; labelEl?.remove?.(); labelEl = null;   // EG-ZE
       loseGlContext(veilGl); unseat?.();   // GL-LEAK: the context let go with its canvas, not at the collector's leisure
