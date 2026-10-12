@@ -312,6 +312,9 @@ let timersView = null;
 let timersAnchor = null;      // AUDIT TIMERS1 UI-3: the hourglass's re-placing, disconnected with the face it stands in
 let timersFocusBack = false;  // AUDIT TIMERS1 UI-5: a closed window hands the focus back to the hourglass
 const stopTimers = () => { timersView?.stop(); timersView = null; timersAnchor?.(); timersAnchor = null; };
+/** EG-ZM (Elite-Gates.md section 20): a timers row's door (the Elite rows' Boards) is a handoff, as the sheet's doors are -
+ *  the pause face down first, the door's window in the slot it frees, and a door that opened nothing a resume. */
+const timersDoor = (fn) => { onAction('handoff'); if (!fn()) onAction('resume'); };
 /** SERVER-POST: the mailbox's window over the pause face, its live view, the envelope's count kept live and its placing. */
 let postOpen = false;
 let postView = null;
@@ -4009,7 +4012,7 @@ function renderHome() {
     else if (timersOpen && hooks.timers?.()) {
       const tstage = el('div', 'px-stage px-timersstage');
       // AUDIT TIMERS1 UI-9: the window's read is the one that asks the service (the seats list); the hourglass's test does not
-      timersView = timersWindow(document, { read: () => hooks.timers?.({ ask: true }) ?? null, onClose: () => { timersOpen = false; timersFocusBack = true; render(); } });
+      timersView = timersWindow(document, { read: () => hooks.timers?.({ ask: true }) ?? null, onClose: () => { timersOpen = false; timersFocusBack = true; render(); }, door: timersDoor });   // EG-ZM: a row's door
       tstage.append(timersView.root);
       home.append(tstage);
       closeOnOutsideTap(home, '.px-timerswin', () => { timersOpen = false; timersFocusBack = true; render(); });

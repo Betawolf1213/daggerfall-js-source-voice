@@ -77,6 +77,12 @@
 //   EG-ZI (2026-10-12, Mac: "I said I want everything"; section 10.6): THE PULL'S TOLL - the room's `toll` paid beside the
 //     void's cost (payToll: its quarters' share of my health through the hurt door, never the last of it) and said with the
 //     pull, its share on the screen and its line in the chat.
+
+//   EG-ZM (2026-10-12, section 22 - the EG-ZD departure it retires): THE RETURN'S SEED - a way back the device knows only
+//     from the account service's word (no seed, no opening, no hall) holds its step under the veil until the room's first
+//     word: a listener on my own identity (egSeedListen - no presence, no pose) says hello to the breach's room, and its
+//     `st` is the circle built, never circle 1 of seed 0. A room that refuses the hello lets the way back go in its words;
+//     no word within EG_BACK_SEED_WAIT_MS opens the veil on open ground and says so.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
@@ -133,6 +139,10 @@ import { createEgReverb } from '../systems/egReverb.js';   // EG-ZH (section 11.
 import { egFragArena } from '../world/egHall.js';   // EG-ZH (sections 11.7-11.8): the fragment's own clamp
 import { setSpireCamera } from '../player/mwView.js';   // EG-ZH (section 11.8): the camera in rock
 import { setTouchSpire } from '../ui/touch.js';   // EG-ZH (section 27.8): touch on the spans
+// EG-ZM (section 22): the room's first word heard under the veil - a listener session on my own identity, its fold
+import { OnlineSession, TOKEN_WAIT_MS } from '../net/online.js';
+import { foldEg, EG_STATE_EMPTY } from '../net/egLink.js';
+import { egRoomKey } from '../net/egLaw.js';
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -178,7 +188,45 @@ export const EG_BACK_TEXT = Object.freeze({
   prompt: 'Your breach still stands - return to the Spire',
   button: 'Return',
   back: 'You return to the Spire.',
+  silent: 'The Spire does not answer. Type /breach to try again.',   // EG-ZM: no word from the room under the veil
 });
+/** EG-ZM (section 22): how long a way back that knows no seed holds its step under the veil for the room's first word
+ *  (ms) - the listener's own wait for its token (net/online.js TOKEN_WAIT_MS, past which its hello goes without one and is
+ *  refused), and four seconds for the socket, the hello and the room's answer. */
+export const EG_BACK_SEED_WAIT_MS = TOKEN_WAIT_MS + 4000;
+/** Whether a closed socket's word is the breach room's own refusal of me (net/wire.js EG_NO_WORDS - the order, the
+ *  company, the fallen, home, a breach closed), as against the relay's or the socket's - and that word as a sentence. */
+const roomRefused = (w) => typeof w === 'string' && /breach|order|fallen|home|company/i.test(w);
+const sentenceOf = (w) => `${w.charAt(0).toUpperCase()}${w.slice(1).replace(/\.$/, '')}.`;
+/**
+ * EG-ZM (section 22): THE ROOM'S FIRST WORD, HEARD UNDER THE VEIL - a listener on my primary session's own identity
+ * (`main`: its url, id, secret, name, look and token minter - net/caravanVisitLink.js's way), joined to breach `b`'s room
+ * with no presence: no pose, so it stands no body in the breach and sends nothing but its hello and its heartbeat. The room answers that hello with the breach's state (`st` - server/src/index.js _egHello) or refuses it in
+ * words (net/egBrain.js egAdmitWord). `frame(nowMs)` answers null while it waits, then once: `{ st }` (the room's state,
+ * folded as the link folds it - net/egLink.js foldEg), `{ no }` (the session's terminal word: the room's refusal, or the
+ * relay's), or `{ silent: true }` (no word by `at + waitMs`) - and the listener is left at its answer, before the circle is
+ * built and my own session says hello there (the relay keeps one socket an account in a breach's room). `close()` leaves
+ * it, once.
+ * @param {{ main: any, b: string, at: number, Session?: any, waitMs?: number }} o
+ */
+export function egSeedListen({ main, b, at, Session = OnlineSession, waitMs = EG_BACK_SEED_WAIT_MS }) {
+  const room = egRoomKey(b);
+  let st = null, done = false;
+  const link = new Session({ url: main.url, id: main.id, secret: main.secret, name: main.name, look: main.look, mintToken: main.mintToken, presence: false });
+  link.onEg = (w, r) => { if (r === room && w?.k === 'st' && w.b === b) st ??= foldEg(EG_STATE_EMPTY, w, at); };
+  link.join(room, null);
+  const close = () => { if (done) return; done = true; link.onEg = null; link.leave(); };
+  return {
+    frame(nowMs) {
+      if (done) return null;
+      link.tick();
+      const a = st ? { st } : link.terminal ? { no: String(link.error ?? '') } : nowMs - at >= waitMs ? { silent: true } : null;
+      if (a) close();
+      return a;
+    },
+    close,
+  };
+}
 /** EG-ZD (section 10.8): the spans' anchored seconds are taken again when the corrected offset moves more than this (ms) -
  *  a burst's median that wanders a millisecond never steps a platform. */
 export const EG_SPAN_REANCHOR_MS = 5;
@@ -257,18 +305,19 @@ function requestId() {
  *   peers?: () => { sub: string, pos: number[] }[], heal?: ((p: number, why: string) => void) | null,
  *   paid?: ((c: any, data: any) => void) | null, win?: any, redoubt?: ((rd: number) => void) | null, board?: (() => any) | null,
  *   keyFacts?: (() => any) | null, startWindow?: ((o: any) => any) | null, party?: () => { sub: string, name: string }[], questDue?: () => boolean,
- *   callPortal?: any, arches?: any, prompt?: any, windowUp?: () => boolean, feet?: () => (number[]|null), probes?: () => any }} deps
+ *   callPortal?: any, arches?: any, prompt?: any, windowUp?: () => boolean, feet?: () => (number[]|null), probes?: () => any, Session?: any }} deps
  *   EG-F: `keyFacts` the host's facts for the key's refusals (scenes/egArch.js egKeyRefusal - `site` the arch's site on the
  *   wire where it would stand, null with no room); `startWindow` opens the start window (ui/egStartWindow.js; none: Hall 1
  *   at once); `party` my party's members; `questDue` whether a quest falls due inside the last word; `callPortal` the
  *   call's portal (scenes/egCall.js createEgCallPortal; none: the answer steps in at once); `arches` the arch pool
  *   (scenes/egArch.js); `prompt` the call's strip; `windowUp` a window over the screen; `feet` my feet in the scene;
- *   `probes` the ground and wall probes a portal's place asks.
+ *   `probes` the ground and wall probes a portal's place asks. EG-ZM: `Session` the session class a way back's listener is
+ *   made of (net/online.js OnlineSession - egSeedListen).
  */
 export function createEgClient({ modes, online, hub, account, now: hostNow, entity, player, cam, say, mid = () => {}, veil = () => null, site, wire, landAt, hurt,
   store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null, peers = () => [], heal = null, paid = null, win = globalThis.window, redoubt = null, board = null,
   keyFacts = null, startWindow = null, party = () => [], questDue = () => false, callPortal = null, arches = null, prompt = null, windowUp = () => false,
-  feet = () => null, probes = () => ({}) }) {
+  feet = () => null, probes = () => ({}), Session = OnlineSession }) {
   // EG-H1: THE SHARED CLOCK, CORRECTED (section 10.8; net/egClock.js) - the host's clock until the room has answered a ping,
   // then this machine's wall clock plus the median offset; the breach's link, its fight and every time here read it
   const clock = egClockNew();
@@ -337,6 +386,26 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (inSpire()) return;
     if (wayBack && wayBack.b !== backLive) backDrop();
     if (!wayBack && backLive && backLive !== backOver && /^[0-9a-f]{16}$/.test(backLive)) wayBack = { b: backLive, seed: 0, op: 0, geo: 0, ew: 0, rh: 0, h: 0, in: 0, li: null, wf: 0 };
+  }
+  // EG-ZM (section 22): a way back held under the veil for the room's first word - its listener (egSeedListen) and the
+  // step that waits on it
+  let seedWait = null;
+  /** The room's first word, asked of breach `b`'s room by a listener on my own identity; the frame settles it (seedFrame). */
+  function seedHeard(b) {
+    const main = online();
+    if (!main?.url) return Promise.resolve({ silent: true });
+    return new Promise((resolve) => { seedWait = { L: egSeedListen({ main, b, at: Date.now(), Session }), resolve }; });
+  }
+  /** The listener asked each frame, and its answer handed to the step that waits - the slot emptied before the step is told.
+   *  `end` an answer the screen gives it instead (its online frame gone - away). */
+  function seedFrame(end = null) {
+    if (!seedWait) return;
+    const a = end ?? seedWait.L.frame(Date.now());
+    if (!a) return;
+    const { L, resolve } = seedWait;
+    seedWait = null;
+    L.close();
+    resolve(a);
   }
   /** May I go back into my breach now: outside it, the service saying it lives, and either counted by its room or with no
    *  call of it still open to answer (the call's own answer is its door while it stands). */
@@ -496,7 +565,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   }
   /** EG-ZD (section 22): THE WAY BACK - a hello as an entrant (no new order: the room re-admits a member it counts), under the
    *  veil into the circle of the hall my record last stood in (the start's, before any); the room's word on where the company
-   *  stands puts me there (spireFrame). */
+   *  stands puts me there (spireFrame). EG-ZM: a record the device knows only from the account service's word (no opening -
+   *  so no seed and no hall) waits under the veil for the room's first word and stands the circle that word says; the room's
+   *  refusal lets the way back go in its words, and silence opens the veil where I stood. */
   async function returnIn() {
     const M = modes(), R = wayBack;
     if (!R) return false;
@@ -507,8 +578,21 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       placedH = 0; downH = 0; endSeen = null; rdSeen = 0; leaving = false;
       answeredFor = R.b; returning = R.b;
       const step = egStairStep(R.h > 0 ? R.h : egStartHall(R.ew ?? 0), stillNow());   // EG-ZE (merged): the way back under the stair, as every step into the Spire
-      const went = await M?.stepThroughFire?.(() => M?.enterEgHall?.({ b: R.b, seed: R.seed, c: R.h > 0 ? egCircleOfHall(R.h) : R.ew + 1, geo: R.geo, site: site() }), step.look, step.opts);
-      if (!went) { returning = null; answeredFor = ''; say(EG_TEXT.shut); return false; }
+      let heard = null;
+      const went = await M?.stepThroughFire?.(async () => {
+        if (!(R.op > 0)) {   // EG-ZM: no seed known - the room's first word first, under the veil
+          heard = await seedHeard(R.b);
+          if (!heard.st) return false;
+          backFrame(heard.st, egMemberOf(heard.st, me()));   // the record kept as the room says it (its seed, its opening, its geometry, its hall) - the circle stood from it
+        }
+        return M?.enterEgHall?.({ b: R.b, seed: R.seed, c: R.h > 0 ? egCircleOfHall(R.h) : R.ew + 1, geo: R.geo, site: site() });
+      }, step.look, step.opts);
+      if (!went) {
+        returning = null; answeredFor = '';
+        if (roomRefused(heard?.no)) { backDrop(R.b); say(sentenceOf(heard.no)); }   // EG-ZM: the room will not take me back - said, and the way back let go
+        else say(heard?.silent ? EG_BACK_TEXT.silent : EG_TEXT.shut);
+        return false;
+      }
       circleSeed = R.seed >>> 0;
       say(EG_BACK_TEXT.back);
       return true;
@@ -687,9 +771,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     const M = modes(), o = online();
     if (o?.terminal) {
       if (!leaving && entity.health > 0 && !M?.deathUp?.()) {
-        const said = typeof o.error === 'string' && /breach|order|fallen|home|company/i.test(o.error);
+        const said = roomRefused(o.error);
         if (said) backDrop(M?.egHallBreach?.() ?? undefined); else keysAt = -Infinity;   // EG-ZD (section 22): a room that refused me lets the way back go; a socket lost asks the service again
-        walkOut(said ? `${o.error.charAt(0).toUpperCase()}${o.error.slice(1).replace(/\.$/, '')}.` : EG_TEXT.shut);
+        walkOut(said ? sentenceOf(o.error) : EG_TEXT.shut);
       }
       return;
     }
@@ -1296,6 +1380,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** One frame (the online frame, every mode). */
     frame() {
       const t = now(), E = link.state();
+      seedFrame();   // EG-ZM: a way back waiting under the veil for the room's first word
       if (Date.now() - keysAt >= EG_KEYS_EVERY_MS) askKeys();
       if (Date.now() - claimAt >= EG_CLAIM_RETRY_MS) flush();
       stakeFrame();   // EG-ZA: a stake no call answered, its void asked
@@ -1448,7 +1533,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** The pages of the Annals this breach has given me (their numbers). */
     annals: () => [...annals].sort((a, b) => a - b),
     /** Online gone: every piece put away (the call kept - it is the hub's). */
-    away() { fight?.leave(); if (look) { look.release(); look = null; } chartAway(); healOwed.clear(); dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } callPortal?.clear?.(); prompt?.draw?.(null); startWin?.close?.(); startWin = null; },   // EG-F: and the call's portal, its prompt, the start window; EG-G2: the look released
+    away() { fight?.leave(); if (look) { look.release(); look = null; } chartAway(); healOwed.clear(); dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } callPortal?.clear?.(); prompt?.draw?.(null); startWin?.close?.(); startWin = null; seedFrame({ silent: true }); },   // EG-F: and the call's portal, its prompt, the start window; EG-G2: the look released; EG-ZM: a way back's wait for the room's word given up
     /** EG-H1: the breach's shared clock (relay ms) and its offset to this machine's wall clock (null before the room has
      *  answered a ping) - the host's spans and its fight read it (scenes/world.js's `egNow`, the spans' anchored clock). */
     sharedNow: () => now(),

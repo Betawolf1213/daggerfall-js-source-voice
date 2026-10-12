@@ -17,7 +17,10 @@ test('EG-E THE HOSTS (sections 15, 19, 20, 25.4): the claim with its character a
   assert.match(w, /panoply: _accountEg \? panoplyDeps : null,/);
   assert.match(w, /mint: \(p\) => panoplyPieceById\(p\)/);
   assert.match(w, /redoubt: \(\) => spireRedoubtTaken\(\),/);
-  assert.match(w, /board: \(\) => openEgBoard\(\{ doc: document, classic: !isEnhancedPlus\(\), fetchBoard: \(\) => _accountEg\.board\(\)/);
+  // PIN MOVED (EG-ZM): `/breach board` opens the boards through their one door (ui/egBoardWindow.js createEgBoardDoor), which
+  // the Timers row's Elite entries and the start window share - its `open` the skin's and the service's, as before
+  assert.match(w, /board: \(\) => egBoardDoor\(\),/);
+  assert.match(w, /open: \(o\) => openEgBoard\(\{ doc: document, classic: !isEnhancedPlus\(\), fetchBoard: \(\) => _accountEg\.board\(\)/);
   assert.match(w, /setSetPowersAllies\(\{\s*near: \(m\) => \{[^\n]*p\.mate && p\.feet && Math\.hypot\([^\n]*<= m\); \},\s*shield: \(a, sp\) => castAtAllyDoor\(a\.id, allyCastFrame\(sp, effectiveLevel\(playerEntity\), a\.id\)\),/);
   assert.match(w, /setSpireRecovery\(\(\) => modes\?\.egHallBreach\?\.\(\) \?\? null\);/);
   assert.match(w, /if \(egClient\?\.quiet\?\.\(\)\) return;/);

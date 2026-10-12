@@ -120,7 +120,7 @@ async function withReturn(fn) {
   } finally { Date.now = realNow; }
 }
 
-test('EG-ZD THE WAY BACK, ON THE RELAY (section 22, slice EG10): a counted member\'s page reloaded mid-breach is offered *Return to the Spire* once the service\'s keys answer says the breach lives - its strip says Return - and answering asks no new order and no admission: a hello as an entrant, the room re-admitting a member it counts; between trials it stands me on the hall\'s arrival plate; in a trial, past the open window and with the old call held, it is NEVER refused as late and resumes me on my last island; a device with no record is taken back too, the circle rebuilt in place once the room says its seed (mutants: `live` unread; the record unkept; the late refusal kept; a new admission asked; the plate for the island; the seed never checked)', async () => {
+test('EG-ZD THE WAY BACK, ON THE RELAY (section 22, slice EG10): a counted member\'s page reloaded mid-breach is offered *Return to the Spire* once the service\'s keys answer says the breach lives - its strip says Return - and answering asks no new order and no admission: a hello as an entrant, the room re-admitting a member it counts; between trials it stands me on the hall\'s arrival plate; in a trial, past the open window and with the old call held, it is NEVER refused as late and resumes me on my last island; a record whose seed is not the room\'s is taken back too, the circle rebuilt in place once the room says its seed (mutants: `live` unread; the record unkept; the late refusal kept; a new admission asked; the plate for the island; the seed never checked)', async () => {
   await withReturn(async (P) => {
     const { said, asked, rec } = P;
     // the first step in - the call answered in its window, the room's count of me
@@ -188,13 +188,17 @@ test('EG-ZD THE WAY BACK, ON THE RELAY (section 22, slice EG10): a counted membe
     assert.ok(asked.looks.length > 0 && asked.looks.every((l) => ['egFall', 'egVeil', 'egCut'].includes(l)), `the way back under the stair's veil, never the Hour's (${asked.looks})`);   // MERGED WITH EG-ZE
     assert.equal(rec().mem[ME].alive, 1, 'and counted alive');
 
-    // A DEVICE WITH NO RECORD: the service's word alone - the circle stood from no seed, rebuilt once the room says it
-    await P.reload(memStore());
+    // A RECORD WHOSE SEED IS NOT THE ROOM'S (one another build wrote): the circle stood from it, rebuilt once the room says
+    // its seed. PIN MOVED (EG-ZM): this was a device with no record, which now waits under the veil for the room's first
+    // word and stands the room's circle at once - test/egz_ends_return.test.js
+    const stale = memStore();
+    stale.setItem(EG_BACK_KEY, JSON.stringify({ b: B, seed: SEED + 1, op: T0, geo: 0, ew: 0, rh: 0, h: 1, in: 1, li: null, wf: 0 }));
+    await P.reload(stale);
     await P.frame(0); await P.frame(0);
     assert.ok(said.includes(EG_BACK_TEXT.offer));
     assert.equal(P.client.useKey(), EG_BACK_TEXT.back, 'the key\'s use takes me back too');
     await P.settle();
-    assert.equal(asked.enter.at(-1).seed, 0, 'no seed known');
+    assert.equal(asked.enter.at(-1).seed, SEED + 1, 'the record\'s seed');
     await P.enter();
     await P.frame(0); await P.frame(0);
     assert.equal(asked.enter.at(-1).seed, SEED, 'rebuilt from the room\'s seed');

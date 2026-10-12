@@ -2566,6 +2566,7 @@ ${SUPPORT_MARKS_CSS}
 .px-timerswin .tm-row.live .tm-count { color: #9fe8b4; }
 .px-timerswin .tm-when { font-size: 11px; color: var(--dim); white-space: nowrap; }
 .px-timerswin .tm-empty { color: var(--dim); font-size: 13px; }
+.px-timerswin .tm-door { flex: 0 0 auto; }   /* EG-ZM: a row's door (the Elite rows' Boards) beside its clock */
 /* AUDIT TIMERS1 UI-4: STONE'S LIGHT GROUND (AUDIT MERGE-PLUS D3's law) - the window takes the theme's panel, and Stone's
    light grey left the dim words at 2.6:1 and the where line at 3.0; lifted past 4.5:1 over a hard black drop. */
 :root[data-plus-theme="stone"] .px-timerswin { --dim: #e2dccd; --brass: #ffd98a; text-shadow: 1px 1px 0 rgba(5,6,8,0.85); }

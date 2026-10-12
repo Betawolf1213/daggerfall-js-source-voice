@@ -381,7 +381,7 @@ import { createBrokerOverlay, closeBrokerDoor } from '../ui/brokerDoor.js';   //
 import { panoplyRows, PANOPLY_NAMES } from '../ui/brokerWindow.js';   // EG-E1: the Broker's Panoply sink - its nine rows and their names
 import { panoplyPieceById } from '../systems/aetheric.js';   // EG15: a Panoply piece minted by its id - the sink's
 import { EG_SINK_EMBERS } from '../net/egPay.js';   // EG-E1: the sink's price
-import { openEgBoard } from '../ui/egBoardWindow.js';   // EG-E2: the Elite Breach's three boards
+import { openEgBoard, createEgBoardDoor } from '../ui/egBoardWindow.js';   // EG-E2: the Elite Breach's three boards; EG-ZM: their one door
 import { registerEgFind, egFindThrow } from '../systems/egFind.js';   // EG-E3: the dungeon's find
 import { setSetPowersAllies, setSpireRecovery, spireRedoubtTaken } from '../systems/sigilSetPowers.js';   // EG15: the Reprieve's allies, the death saves held to a Redoubt in a breach
 import { brokerStock, brokerDay, brokerBought, makeBrokerSale, spendableStonesIn, lockedStonesIn, stoneCount, insigniaSale, stonesText, panoplySale } from '../systems/sigilBroker.js';   // SET7: the day's stock, the record, the sale   // SS1: the stones counted over their stacks
@@ -18148,6 +18148,7 @@ export async function bootWorld(canvas, renderer, params, status) {
         // SD2c: the Super dungeon - the hub's record, its name and its city (the row's own law asks the phase: a row once found)
         sd: sdHost ? { rec: sdHost.record(), name: sdHost.hollow()?.loc?.name ?? null, place: sdHost.hollow()?.site?.cityName ?? null } : null,
         elite: egClient?.timers() ?? null,   // EG-F: my company's Elite Breach - its opening, its window, its hall and count
+        doors: egClient ? { board: () => egBoardDoor() } : null,   // EG-ZM (Elite-Gates.md section 20): the boards' door on the Elite rows
         seatsOpen: seatBook?.open === true,   // AUDIT TIMERS1 D5: the seat week's rows are for an account the seats are open to
         seats: seatBook?.open === true ? (seatBook.data?.seats ?? null) : null,
         zero: seatBook?.open === true ? seatBook.zero : null,
@@ -25065,10 +25066,18 @@ export async function bootWorld(canvas, renderer, params, status) {
       site: at.at && Number.isSafeInteger(px?.x) ? egArchSite(at.at, at.yaw, px.x, px.y, state.pixelTranslation(px.x, px.y)) : null,
     };
   };
+  /** EG-ZM (Elite-Gates.md section 20, THE BOARD WINDOW): THE BOARDS' ONE DOOR (ui/egBoardWindow.js createEgBoardDoor) -
+   *  `/breach board`, the Timers row's Elite entries and the start window all open the boards here, in the skin worn (the
+   *  enhanced panel, or the classic skin's DFU pickers on the mode's window slot), one at a time. */
+  const egBoardDoor = createEgBoardDoor({
+    open: (o) => openEgBoard({ doc: document, classic: !isEnhancedPlus(), fetchBoard: () => _accountEg.board(), listPickerReady: listPickerArtLoaded, ...o }),
+    slot: { top: () => modes?.topWindow?.() ?? null, mount: (w) => modes?.mountWindow?.(w), close: (w) => modes?.closeWindow?.(w) },
+  });
   /** THE START WINDOW's three doors: DFU's list picker on the mode machine's window slot (the boat's variant picker's own
-   *  way - csaOpenListPicker), and DFU's YesNo box on the overlay. */
+   *  way - csaOpenListPicker), and DFU's YesNo box on the overlay. EG-ZM: and the boards' door (egBoardDoor). */
   const egStartWindow = (o) => openEgStartWindow({
     ...o,
+    board: (onClosed) => egBoardDoor(onClosed),
     openList: (labels, onPick, onCancel) => {
       if (!listPickerArtLoaded()) { Promise.resolve().then(onCancel); return null; }   // no list to ask with: nothing staked
       const win = new ListPickerWindow({ items: labels, backdrop: 'none', onPick: (i) => onPick(i), onCancel: () => onCancel() });
@@ -25103,7 +25112,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     peers: () => egPeers(),   // EG-FULL: the witness's eye follows a living companion
     paid: (c, d) => egSpoilsPaid(c, d),   // EG-E: what a Redoubt paid - its spoils, its Marks and deed
     redoubt: () => spireRedoubtTaken(),   // EG15: a Redoubt taken - every death save held to it recovers (Elite-Gates.md section 15)
-    board: () => openEgBoard({ doc: document, classic: !isEnhancedPlus(), fetchBoard: () => _accountEg.board(), mountWindow: (w) => !!modes?.mountWindow?.(w), closeWindow: (w) => modes?.closeWindow?.(w), listPickerReady: listPickerArtLoaded }),   // EG-E2: `/breach board`
+    board: () => egBoardDoor(),   // EG-E2: `/breach board` - EG-ZM: through the boards' one door
   }) : null;
   /** EG-FULL: my company's other members where this screen draws them (the room's poses, by account - net/social.js
    *  accountOfPeer: the company is my party). */
