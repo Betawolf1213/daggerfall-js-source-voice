@@ -4628,7 +4628,6 @@ and draws what they choose.
   - the cull covers the pieces, islands and seals (all `noShadow`), not the circle's one static mesh;
   - a haven is a pool (`TELEGRAPH_POOL_HAVEN`), not a new telegraph kind;
   - a lord's wake is its own 2-bar song (SPIRWAKE), a fourteenth name beside the page's table;
-  - a band's textures stay up for the session once stood, never freed at the breach's end;
   - the Steps' own pieces (the Crumble, the Beat with its twelve dial frames, the Drift and the riser) keep the Hour's
     art: their faces are tells, swapped frame by frame through the Hour's archive.
 - **Not verified without a browser and the game's data:**
@@ -5112,7 +5111,7 @@ and the Hollow Trunk among them), and the engines as the page wrote them. Spec l
 - **One pull.** The page pulls each road at its own closing's end (the door frame's `ul`). The company is pulled once, at
   the later road's end, and the stage word's `su` says it - no `ul` on the wire.
 - **The shafts are the Deepway's.** The Low Road still goes down by its Drop (section 11.4 allows "a Drop or a shaft").
-  A shaft keeps no alcoves or vignettes, and the camera's 20-degree bias over a shaft's drop (section 11.8) is not built.
+  A shaft keeps no alcoves or vignettes.
 - **The telegraphs of a shaft** (the Slag Chute's spill, a crust's tell) draw on the hall's one telegraph plane, as the
   Mist Stair's do: telegraphs per fight floor are still EG6b's.
 - **Not verified without a browser and the game's data:** the crusts, sheets, spouts and shafts were checked by their
@@ -5613,9 +5612,6 @@ peers, the tell, the reverb's crossfade and TEXTURE.356 are closed here.
   - the Weir Key's picture is a stand-in of its archive on the texture door (its build answers the painted picture), the
     port's other painted art's way.
 - **Not built:**
-  - occluders between the camera and the body dithering out (`setDissolve`): the circle is one mesh, so no part of it can
-    dissolve alone;
-  - the shaft ledge's 20 degree pitch bias and the camera's rise over a drop;
   - `hit` and `ahit` refused off the fight floors, and the Harriers' hunt of a member off them for more than 6 s - the
     relay's half of section 11.7, gap row 7;
   - the haptics and the pad's rumble of section 27.8 stand as EG-G1 built them.
@@ -5637,3 +5633,141 @@ peers, the tell, the reverb's crossfade and TEXTURE.356 are closed here.
 - PIN MOVED: `test/audit39_render.test.js` (the fire walls take GetFireWallColors32). `bible/06-Systems/Systems.md` counts
   517 modules. `bible/07-Rendering/Rendering.md` and `Rendering-Arc.md` say GetFireWallColors32 shipped.
 - `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
+
+### EG-ZN - 2026-10-12 - THE CAMERA IN THE SPIRE, AND THE BAND TEXTURES' OWNER
+
+(Mac: *"I said I want everything"*.) Closes the last two lines of section 11.8 that no layer built - the occluders between
+the camera and the body dithered out, and the shaft ledge's pitch bias with the camera's rise over the drop - and section
+29's owner of the band textures. EG-ZH's two "Not built" lines for the camera, EG-ZC's "the camera's 20-degree bias over a
+shaft's drop is not built" and EG-G2's "a band's textures stay up for the session once stood" are retired here.
+
+**What shipped, by piece.**
+
+- **THE OCCLUDERS MARKED** (`world/egHall.js` `buildEgCircleModel`, `egOccluderRuns`; section 11.6's mesh half). The
+  circle stays one mesh, one upload and one draw of a sub-mesh a record. As it is laid, every piece of rock the camera may
+  stand behind is marked (`occluderMarker`):
+  - a passage's or a shaft's every wall run and its vault;
+  - each box of its kit's dress (the Stacks' bookcases, the Colonnade's drums, the Ossuary's ribs and arches, the Gloam's
+    trunks, the Forge's pipes and anvils);
+  - a niche's walls and lid (never its floor), each vignette, a ring wall (a chamber's, a court's, a pit's tiers) a segment
+    at a time, the Forge's long walls a side at a time, an arch's walls, the end plate's posts and lintel, and each slag
+    spout with its lip.
+  Each piece is `{ b, r }` - its box, and its runs of the mesh's own indices (`model.occluders`) - read off the packed
+  mesh. The floors, bands, lanes, plates, islands, ramps and the magma stay the circle's ground. A circle holds 18 to 141
+  pieces, about a thousand of its 21,000 to 28,600 triangles. The swap's worker build carries them with the model
+  (`world/egCircleParts.js`, which builds through `buildEgCircleModel`, unchanged).
+- **THE DITHER PASS** (`scenes/egOcclude.js`, new - a helper the mode machine calls, not a fifth host; `render/renderer.js`
+  `meshView`; `scenes/worldModes.js` `egOccludeFrame`, `egCircleDraw`):
+  - THE RAY: each frame in third person, a segment from the eye to the body's pivot (the lane's own focal) and one to its
+    chest (`EG_OCCLUDE_CHEST_M`, 0.9 m over the render feet), each stopped `EG_OCCLUDE_BODY_M` (0.3 m) short of the body,
+    is tried against every piece's box and then against its own triangles, from either face (`egSegBox`, `egSegTri`,
+    `egOccludersHit`). Only the occluders' own triangles are kept for it.
+  - THE EASE (`egOccludeEase`): a piece the ray crosses dithers out to `EG_OCCLUDE_KEEP` (a quarter - 4 of bayer4's 16)
+    over `EG_OCCLUDE_FADE_S` (0.2 s), and back the same way once the ray is clear.
+  - THE DRAW: while nothing dithers, the circle's draw is the dungeon loop's own, untouched. While pieces dither, the pass
+    runs after the frame's beginFrame and the cull, before the dynamic draws:
+    - it takes the circle's draw for the frame (`hidden`);
+    - it records the whole mesh's shadow as the loop would (`recordShadowMesh` - the lanterns' caches see the record they
+      always saw);
+    - it draws the rest of the mesh as a view of its own buffers with the pieces' runs cut out;
+    - it draws each share's pieces as one view under `setDissolve` (SHIP-FADE's ordered dither), adjacent runs as one
+      range, and sets the dissolve back to whole after.
+  - Nothing is uploaded. A view (`meshView`) is its mesh's VAO with no buffer of its own, never handed to destroyMesh, and
+    none is made of a dead mesh or of a view. The pass keeps its views per set (at most `EG_OCCLUDE_VIEWS_MAX`, 64) and
+    lets them go with the circle.
+  - First person, a witness's eye (`host.egWitness`) and the decorator's free camera try nothing; whatever dithered comes
+    back whole.
+  - THE SWAP keeps its shape. The stand and the swap hand the pass the circle's mesh and its model (`egOcc.set`) and push
+    the circle's one draw (`egCircleDraw`). The slot is emptied first: the pass lets the old circle go (`egOcc.clear`)
+    before its mesh is freed, and a circle that will not build leaves the pass holding nothing.
+- **THE BUDGET, MEASURED** (node, 60 circles: seeds 7, 99 and 12345, circles 1 to 20, as EG-G2 measured the pieces):
+  - while nothing stands between, the circle is one draw of a sub-mesh a record, as before: a mean of 7.15 GL draws, at
+    worst 8;
+  - with any one piece dithering, it costs at most two draws more for each record the piece touches: a mean of 9.15, at
+    worst 12;
+  - the frame's circle and batched pieces together (`scenes/egPieceBatch.js` through `scenes/egSpan.js`, every copy in
+    view) run a mean of 20.7 GL draws, at worst 30, whole, and at most 34 with the worst single piece dithering - under
+    the Hour's 82.
+- **THE SHAFT'S LEDGE** (`world/egHall.js` `egShaftLedgeAt`, `EG_SHAFT_LEDGE_M`, `EG_SHAFT_WAY`; `egFragZones` now carries
+  a zone's `shaft`, `zB` and `yB`). A body stands on a shaft's ledge facing a drop while its feet are in a zone the law
+  marks `shaft`, short of the foot and at least 0.5 m over the foot's height: the rim, every flight down to the Drop, and
+  the air between them. The Drop's landing, the Slag Chute's crust, the foot and every other zone are none. Every shaft
+  leaves facing +Z (`net/egFragLaw.js` egFragShaft), so its way down is +z in the hall's frame and the dungeon's.
+- **THE SHAFT'S CAMERA** (`player/mwView.js` `setSpireShaft`, `spireShaftFacing`, `spireShaftEase`, `spireShaftPitch`,
+  `spireShaftPivot`, `spireShaftLook`; told by `scenes/egClient.js` `shaftWay`):
+  - facing the way down (the look's bearing within 60 degrees, `SPIRE_SHAFT_FACE_IN`, and held to 75,
+    `SPIRE_SHAFT_FACE_OUT`), the camera's pitch biases `SPIRE_SHAFT_PITCH` (20 degrees) under the look's, and its pivot
+    rises `SPIRE_SHAFT_RISE_M` (1 m) by the bias's share, eased over `SPIRE_SHAFT_EASE_S` (0.5 s) as the facing comes and
+    goes. The orbit carries the eye up its arc too: the real Morrowind camera's eye stands the metre and its distance times
+    sin 20 degrees higher, looking down the shaft;
+  - both lanes lay it on their own eye before their casts (the Morrowind camera's focal, Eye Of The Beholder's head), so
+    the casts guard the leaned eye;
+  - reduced motion (the shelf's row or the system's - `ui/egAccess.js` egReducedMotion, the client's `stillNow`) lays it
+    whole at once, as the stair cuts; first person and out of the Spire take none, at once; the pitch never passes the
+    camera's own limit (`PITCH_LIMIT`);
+  - the frame's eye answers the camera's own forward (`look`), and the dungeon arm's view looks along it after the aim is
+    taken (`aimView`, AUDIT CLIMB-ARC F10's order), so the player's aim, the listener and the casts keep the player's look.
+- **THE BAND TEXTURES' OWNER** (`scenes/worldModes.js` `egBandsDown`; section 29: "band textures are cached per band and
+  freed at the breach's end"):
+  - each band's dress goes up once a breach - at a circle's stand, or a prebuild while the Court rests (EG-G2's `egBandUp`,
+    unchanged) - and the swap in place uploads nothing;
+  - at the breach's end every band it put up is freed: each record's albedo (`releaseTexture`, every variant) and its
+    emission (`evictEmissionTexture`), from GL. It is refused while a circle stands, since its draws still wear them. The
+    Hour's own art (`SD_REALM_ARCHIVE` - the Steps' faces, and the Hour's) is kept for the session;
+  - the breach client says when (`scenes/egClient.js`): on the first frame out of the Spire that is no swap's or answer's
+    step under way (`!swapping && !answering`, the reverb's own rule). So the way home, the tear, the last fall's walk out,
+    forsaking, a void, a refused or lost socket and leaving the Spire any other way all free it, and the old step under
+    the veil (out and in again) keeps it. A reload ends the page's GL context with every texture in it; a reload's return
+    uploads again at its stand and frees again at its end.
+
+**The four hosts.**
+
+- `src/scenes/worldModes.js` - WIRED:
+  - the dither pass after the cull (`egOccludeFrame`), before the dynamic draws;
+  - the circle's draw through `egCircleDraw` at its stand and its swap;
+  - the pass handed each circle and cleared first;
+  - the view along the camera's own forward after the aim;
+  - `egBandsDown`, and the doors `egBandsDown` and `egOccluders`.
+- `src/scenes/world.js` - FLAGGED: untouched. The breach client it builds carries both words. Its exterior frame's
+  `mwViewFrame` answers no `look`, since the client's word is null outside the Spire. Nothing was added to
+  `function frame(now)`.
+- `src/scenes/dungeonContext.js` - FLAGGED: untouched. The circle's draw rides its `dynamicDraws` as it did; the pass runs
+  in the mode machine's dungeon arm.
+- `src/scenes/exterior.js` - FLAGGED: the bench holds no Elite Breach, and its `mwViewFrame` never meets a Spire word.
+
+**Departures, said plainly.**
+
+- **Done another way:**
+  - the occluders are runs of the circle's one mesh drawn through views, not meshes of their own. A draw of their own
+    would cost each piece's records in every frame; the views cost them only while something dithers;
+  - a piece is one solid the builder lays (a wall run, a vault, a bookcase, a ring wall's segment), not a whole fragment,
+    so the ray dithers what it crosses and the rest of the rock stands;
+  - a dithering piece keeps a quarter of its fragments, not none, so the rock still reads as rock with the body through it;
+  - a dithering piece's shadow stays whole (it is recorded with the whole mesh), so no lantern redraws as the camera turns;
+  - the facing's cone, the ease and the rise are the port's numbers: the page gives the 20 degrees alone;
+  - "a shaft's ledge" is the rim, every flight down to the Drop and the air between them: each has a drop before it;
+  - reduced motion lays the bias whole at once rather than leaving it off, as the stair cuts rather than skipping;
+  - the band textures are freed on the client's first frame out of the Spire, not by the room's end word, so a member who
+    leaves early frees them early; the Hour's art the Spire also wears is the session's.
+- **Not verified without a browser and the game's data:** the dither was drawn on a recording GL (its draws and
+  `uDissolveCut` read), never seen; the shaft's camera was never flown (the Morrowind camera's eye computed in node, the
+  sprite lane's by its source); the frees were read off the renderer's own maps and GL's `deleteTexture`.
+
+**Pins.**
+
+- `test/egz_camera.test.js` (3), `test/egz_camera_host.test.js` (2), `test/egz_camera_budget.test.js` (1),
+  `test/egz_camera_shaft.test.js` (4).
+- `tools/mutants/egz_camera.json` (103: 98 dead, 5 kept as equivalent, each with its why - two prefilters of the ray,
+  Moller-Trumbore's early out, the marker's empty-piece guard and a share forgotten at whole). Four survived the first run;
+  two were killed by new assertions (a niche's floor marked; a ray past a triangle's far edge) and two are the equivalents
+  above.
+- Re-aimed by content (mutantdrift): `eglook.json`'s EGLOOK-hall-circle-undressed, onto the circle's `const model`. Judged
+  again over the text this slice changed: `benchcam1.json` (2), `eglook.json` (2), `egseam.json` (4), `egz_frag.json` (1)
+  and `egz_sound.json` (2) - 11, every one dead; and every record of every list on `world/egHall.js` and
+  `player/mwView.js` (82), every one dead.
+- PIN KEPT by order: the shaft's two lines stand above the Morrowind lane's saddle line, and the view's lean below the
+  climb's feel, so COATS3D's and CLIMB4's source pins read their lines as they were.
+- PIN MOVED: `test/egswap_client.test.js` (the swap's rig hands the stand's own source `createEgOccluders` and
+  `EG_DRESS_RECORDS`); `test/egz_body.test.js` (a zone carries `shaft`, `zB` and `yB`).
+- `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
+- New in `src/`: `src/scenes/egOcclude.js`. The Port-Ledger's ELITE-GATES row is left to the merge.
