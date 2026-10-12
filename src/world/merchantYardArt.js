@@ -14,6 +14,9 @@
 //   iron    - brackets and tyres: dark iron, a little rust.
 //   the two SIGNBOARDS - a dark-stained board, a painted cream border, an emblem in iron and paint (the Stable's
 //   horseshoe, its opening up for luck; the Wagon Yard's wheel) and the yard's word in painted capitals beside it.
+//   CARP-YARD (2026-10-12): the joinery's - its board a hand saw and JOINERY; its floor SHAVINGS (pale sawdust, curls
+//   and chips in it - not the port's sawdust, world/portArt.js, whose record is its own), its logs' BARK (dark furrowed
+//   bark, its furrows along u) and their END GRAIN (rings about the picture's middle, a check across them).
 //
 // Low and square-pixelled, Daggerfall's own texel size: the yards sit in the pixel world, not over it. Deterministic
 // (its own mulberry32 on fixed seeds): every client's yard is the same timber.
@@ -26,6 +29,7 @@ export const YARD_ARCHIVE = 38221;
 /** Its records. */
 export const YARD_REC = Object.freeze({
   wood: 0, plank: 1, shingle: 2, hay: 3, dirt: 4, gravel: 5, water: 6, iron: 7, signStable: 8, signTransport: 9,
+  signCarpenter: 10, shavings: 11, endgrain: 12, bark: 13,   // CARP-YARD: the joinery's
 });
 /** A material picture's side, texels. */
 export const YARD_ART_SIZE = 64;
@@ -205,6 +209,7 @@ export const SIGN_GLYPHS = Object.freeze({
   G: ['.###.', '#...#', '#....', '#.###', '#...#', '#...#', '.###.'],
   H: ['#...#', '#...#', '#...#', '#####', '#...#', '#...#', '#...#'],
   I: ['.###.', '..#..', '..#..', '..#..', '..#..', '..#..', '.###.'],
+  J: ['..###', '....#', '....#', '....#', '#...#', '#...#', '.###.'],   // CARP-YARD: JOINERY's
   L: ['#....', '#....', '#....', '#....', '#....', '#....', '#####'],
   N: ['#...#', '##..#', '#.#.#', '#..##', '#...#', '#...#', '#...#'],
   O: ['.###.', '#...#', '#...#', '#...#', '#...#', '#...#', '.###.'],
@@ -213,6 +218,7 @@ export const SIGN_GLYPHS = Object.freeze({
   S: ['.####', '#....', '#....', '.###.', '....#', '....#', '####.'],
   T: ['#####', '..#..', '..#..', '..#..', '..#..', '..#..', '..#..'],
   W: ['#...#', '#...#', '#...#', '#.#.#', '#.#.#', '##.##', '#...#'],
+  Y: ['#...#', '#...#', '.#.#.', '..#..', '..#..', '..#..', '..#..'],   // CARP-YARD: JOINERY's
 });
 export const SIGN_GLYPH_W = 5;
 export const SIGN_GLYPH_H = 7;
@@ -306,12 +312,96 @@ function paintWheel(img) {
   }
 }
 
+/** CARP-YARD: the joinery's hand saw, its toe to the right - a steel blade tapering from the heel to the toe, its teeth
+ *  along its foot, a highlight along its back, three brass rivets at its heel; a wooden handle with its grip's hole; a
+ *  painted cream edge round it all so it reads on the dark board. SAW_BLADE: the blade's back, its foot at the heel and
+ *  at the toe, and its two ends, texels. */
+export const SAW_BLADE = Object.freeze({ x0: 28, x1: 78, back: 38, heelFoot: 60, toeFoot: 51, teeth: 3 });
+function paintSaw(img) {
+  const B = SAW_BLADE, WOOD = [168, 120, 70], WOOD_DARK = [112, 76, 42];
+  const foot = (x) => B.heelFoot + ((B.toeFoot - B.heelFoot) * (x - B.x0)) / (B.x1 - B.x0);
+  const blade = (x, y) => {
+    if (x < B.x0 || x > B.x1 || y < B.back) return false;
+    const f = foot(x);
+    if (y <= f - B.teeth) return true;
+    return y <= f && ((x - B.x0) % (B.teeth + 1)) <= f - y;   // a tooth: a triangle every four texels along the foot
+  };
+  const H = Object.freeze({ x0: 14, x1: 31, y0: 32, y1: 66, hx0: 19, hx1: 25, hy0: 41, hy1: 57 });
+  const handle = (x, y) => {
+    if (x < H.x0 || x > H.x1 || y < H.y0 || y > H.y1) return false;
+    if (x >= H.hx0 && x <= H.hx1 && y >= H.hy0 && y <= H.hy1) return false;   // the grip's hole
+    const cx = x < H.x0 + 4 ? H.x0 + 4 : x > H.x1 - 4 ? H.x1 - 4 : x, cy = y < H.y0 + 4 ? H.y0 + 4 : y > H.y1 - 4 ? H.y1 - 4 : y;
+    return (x - cx) ** 2 + (y - cy) ** 2 <= 16;   // its corners rounded
+  };
+  const any = (x, y) => blade(x, y) || handle(x, y);
+  for (let y = 0; y < SIGN_ART_H; y++) for (let x = 0; x < SIGN_EMBLEM + 4; x++) {
+    if (any(x, y)) continue;
+    if (any(x - 1, y) || any(x + 1, y) || any(x, y - 1) || any(x, y + 1)) put(img, x, y, PAINT);   // the painted edge
+  }
+  for (let y = 0; y < SIGN_ART_H; y++) for (let x = 0; x < SIGN_EMBLEM + 4; x++) {
+    if (blade(x, y)) {
+      const across = (y - B.back) / Math.max(1, foot(x) - B.back);
+      put(img, x, y, y <= B.back + 1 ? [196, 194, 188] : mix([170, 168, 164], IRON_DARK, 0.15 + 0.55 * across));
+    } else if (handle(x, y)) put(img, x, y, mix(WOOD, WOOD_DARK, (x - H.x0) / (H.x1 - H.x0) * 0.6 + (y - H.y0) / (H.y1 - H.y0) * 0.3));
+  }
+  for (const [rx, ry] of [[B.x0 + 3, B.back + 5], [B.x0 + 3, B.back + 14], [B.x0 + 8, B.back + 9.5]]) {   // the rivets
+    for (const [ox, oy] of [[0, 0], [1, 0], [0, 1], [1, 1]]) put(img, Math.round(rx) + ox, Math.round(ry) + oy, [206, 172, 92]);
+  }
+}
+
 /** A yard's signboard: the board, its emblem and its word (systems/merchantYards.js YARD_KINDS `sign`). Row 0 is the
  *  board's top (world/merchantYardModels.js maps its faces so). */
 export function yardSignArt(kind) {
-  const img = board(kind === 'transport' ? 0x51a9 : 0x51a5);
-  if (kind === 'transport') paintWheel(img); else paintHorseshoe(img);
-  paintWord(img, YARD_KINDS[kind === 'transport' ? 'transport' : 'stable'].sign);
+  const k = kind === 'transport' || kind === 'carpenter' ? kind : 'stable';
+  const img = board(k === 'transport' ? 0x51a9 : k === 'carpenter' ? 0x51ab : 0x51a5);
+  if (k === 'transport') paintWheel(img); else if (k === 'carpenter') paintSaw(img); else paintHorseshoe(img);
+  paintWord(img, YARD_KINDS[k].sign);
+  return img;
+}
+
+/** CARP-YARD: the joinery's floor - pale sawdust and shavings over the earth, a curl of shaving and a dark chip here and
+ *  there. Tileable. */
+export function yardShavingsArt(seed = 0x5a3d) {
+  const S = YARD_ART_SIZE, img = image(S);
+  const n = noiseField(seed, 8), fine = noiseField(seed + 1, 32), r = rng(seed + 2);
+  const DEEP = [132, 104, 66], PALE = [214, 186, 132];
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) put(img, x, y, mix(DEEP, PALE, 0.35 + 0.4 * n(x, y) + 0.3 * (fine(x, y) - 0.5)));
+  for (let k = 0; k < 24; k++) {   // shavings: short pale curls
+    let x = r() * S, y = r() * S, a = r() * Math.PI * 2;
+    const len = 4 + Math.floor(r() * 4), turn = (r() - 0.5) * 0.9;
+    for (let i = 0; i < len; i++) { put(img, (Math.floor(x) + S) % S, (Math.floor(y) + S) % S, [236, 214, 160]); x += Math.cos(a); y += Math.sin(a); a += turn; }
+  }
+  for (let k = 0; k < 30; k++) put(img, Math.floor(r() * S), Math.floor(r() * S), [88, 64, 40]);   // chips
+  return img;
+}
+/** CARP-YARD: a log's bark - dark, its furrows running along u (the log's length), a lighter ridge between them.
+ *  Tileable. */
+export function yardBarkArt(seed = 0xba4c) {
+  const S = YARD_ART_SIZE, img = image(S);
+  const furrow = noiseField(seed, 2, S, S, 12), blot = noiseField(seed + 1, 6), r = rng(seed + 2);
+  const DARK = [46, 34, 24], LIGHT = [106, 82, 58];
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    let c = mix(DARK, LIGHT, 0.15 + 0.65 * furrow(x, y) ** 1.5 + 0.2 * (blot(x, y) - 0.5));
+    if (r() < 0.04) c = mix(c, [30, 22, 16], 0.6);
+    put(img, x, y, c);
+  }
+  return img;
+}
+/** CARP-YARD: a sawn log's end - pale wood, its growth rings about the picture's middle (a cap's uvs are centred there,
+ *  world/merchantYardModels.js), darker toward the bark, a check split across them. */
+export function yardEndGrainArt(seed = 0xe9d4) {
+  const S = 32, img = image(S), c = (S - 1) / 2;
+  const wob = noiseField(seed, 4, S), r = rng(seed + 1);
+  const PALE = [206, 168, 112], RING = [150, 108, 64], EDGE = [92, 64, 40];
+  const check = r() * Math.PI;
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    const dx = x - c, dy = y - c, d = Math.sqrt(dx * dx + dy * dy) / c;
+    let col = mix(PALE, RING, (Math.sin((d * 7 + wob(x, y) * 0.8) * Math.PI * 2) + 1) / 2 * 0.55);
+    col = mix(col, EDGE, Math.max(0, d - 0.75) * 3);
+    const across = Math.abs(dx * Math.sin(check) - dy * Math.cos(check));
+    if (across < 0.6 && d > 0.15 && d < 0.8) col = mix(col, [70, 48, 30], 0.7);   // the check
+    put(img, x, y, col);
+  }
   return img;
 }
 
@@ -327,6 +417,10 @@ export const yardArt = () => [
   [YARD_REC.iron, yardIronArt()],
   [YARD_REC.signStable, yardSignArt('stable')],
   [YARD_REC.signTransport, yardSignArt('transport')],
+  [YARD_REC.signCarpenter, yardSignArt('carpenter')],   // CARP-YARD: the joinery's
+  [YARD_REC.shavings, yardShavingsArt()],
+  [YARD_REC.endgrain, yardEndGrainArt()],
+  [YARD_REC.bark, yardBarkArt()],
 ];
 
 /** SHIPYARDS (2026-10-11): THE YARDS' PAINTING TOOLS, ONE DOOR - world/portArt.js paints the port's pictures with them

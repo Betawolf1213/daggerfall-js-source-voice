@@ -90,7 +90,7 @@ test('OW-CROWD: of the travellers alone in the picture, the TV_BADGES_MAX neares
   assert.ok(party[0].m.badge, 'my party\'s arrow keeps its badge');
 });
 
-test('OW-CROWD through the readout: forty travellers held at one edge are one arrow and one label; a crowd in the picture a larger dot with its count (by the HUD over a stub canvas)', () => {
+test('OW-CROWD through the readout: forty travellers held at one edge are one arrow and one label; a crowd in the picture two busts (OW-GLYPHS) with its count (by the HUD over a stub canvas)', () => {
   const calls = [];
   const ctx = new Proxy({}, {
     get: (t, k) => (k in t ? t[k] : k === 'measureText' ? (s) => ({ width: String(s).length * 7 }) : (...a) => { calls.push([k, ...a]); }),
@@ -118,8 +118,8 @@ test('OW-CROWD through the readout: forty travellers held at one edge are one ar
       { key: 'trav:a', x: 300, y: 300, front: true, label: 'Ann', kind: 'traveller' }, { key: 'trav:b', x: 310, y: 305, front: true, label: 'Bo', kind: 'traveller' },
     ] });
     const arcs = calls.filter((c) => c[0] === 'arc');
-    assert.equal(arcs.length, 1, 'one dot for the two');
-    assert.equal(arcs[0][3], 7, 'the larger dot');
+    assert.equal(arcs.length, 2, 'one mark for the two - OW-GLYPHS: a crowd\'s two busts, a head apiece');
+    assert.deepEqual(arcs.map((c) => c[3]), [2.9, 2.9], 'two heads');
     assert.equal(calls.filter((c) => c[0] === 'drawImage').length, 1, 'one label');
   } finally { hud.disposeTravelViewHud(); }
 });

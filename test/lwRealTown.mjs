@@ -76,7 +76,7 @@ export function hostTown(dfLocation) {
     .map((b) => ({ key: b.buildingKey, type: b.buildingType, quality: b.quality, factionId: b.factionId }));
   const town = {
     mapId: md.mapId >>> 0, name: String(dfLocation.name ?? ''), px: p.x, py: p.y, type: md.locationType, region: dfLocation.regionIndex,
-    people: getWorldClimateSettings(maps.getClimateIndex(p.x, p.y))?.people, blocks: Math.max(1, loc.width * loc.height), port: hasPort(md.mapId),
+    people: getWorldClimateSettings(maps.getClimateIndex(p.x, p.y))?.people, blocks: Math.max(1, loc.width * loc.height), w: Math.max(1, loc.width), h: Math.max(1, loc.height), port: hasPort(md.mapId),   // WALL-WAY
   };
   return { nav, doors, buildings, town, gates };
 }

@@ -24,7 +24,7 @@
 // systems/shipyards.js; the recruits systems/crewHall.js. Pure: no DOM, no renderer, no clock. Not a DFU member. Ledger A
 // (SHIPYARDS).
 import { LOCATION_TYPES } from '../formats/mapsFile.js';
-import { YARD_KIND_ORDER, YARD_TALK_GROUPS, YARD_KEY_BASE, YARD_QUALITY, townSeed, townKeeper, namedAfter } from './merchantYards.js';
+import { YARD_KIND_ORDER, CRAFT_YARD_ORDER, YARD_TALK_GROUPS, YARD_KEY_BASE, YARD_QUALITY, townSeed, townKeeper, namedAfter } from './merchantYards.js';
 
 /** The two places a port town's layout stands, in the order they are placed (world/portSites.js). */
 export const PORT_SITE_ORDER = Object.freeze(['shipyard', 'lighthouse']);
@@ -61,8 +61,9 @@ export const portTownByData = (loc, hasPort) => !!hasPort?.(loc?.mapTableData?.m
  * THE FOUND PLACES' ONE ORDER (YARDS-FOUND's law, widened): the town's yards (systems/merchantYards.js), then the port's
  * places - the Where-is page's groups after the shops, and each one's key in the town's directory: YARD_KEY_BASE and its
  * place here, so the Stable and the Wagon Yard keep the keys they had (YARD_KEY_BASE + 0, + 1) and the port's follow.
+ * CARP-YARD: the professions' yards last (the joinery's YARD_KEY_SLOT is its place here), so every key before it stays.
  */
-export const FOUND_KIND_ORDER = Object.freeze([...YARD_KIND_ORDER, ...PORT_PLACE_ORDER]);
+export const FOUND_KIND_ORDER = Object.freeze([...YARD_KIND_ORDER, ...PORT_PLACE_ORDER, ...CRAFT_YARD_ORDER]);
 /** The Where-is page's group of each found place. */
 export const FOUND_TALK_GROUPS = Object.freeze({
   ...YARD_TALK_GROUPS,

@@ -908,6 +908,50 @@ Seen through the port's own CPU rasteriser (`src/ui/modelIcon.js`
 bakeModelIcon, at 420 px), not in a browser: this container has no ARENA2
 data.
 
+## WAGONS2-BASE (2026-10-12, from play)
+
+A player, in feature-feedback: "Had homies come check my caravan but it keeps
+the overhead lighting for visitors ... if it's taken out (first thing I did)
+that others don't still see it."
+
+**The fault.** The caravan's room is a block of its own
+(`src/systems/caravanRoom.js` caravanRoomBlock), its lantern one of its flats,
+hung from the peak with its light (`CARAVAN_LANTERN`). The decorator takes
+out a room's own pieces through the base room (`src/scenes/decorBase.js`:
+hide drops a flat's batch and its light together), and the owner's list of
+what is out was kept in the owner's save alone: an online home's room hands
+its `hidden` list to everyone from the account service, but a caravan's
+document (`src/systems/caravanVisit.js` caravanDecorDoc) carried the placed
+pieces only. A visitor's room was built whole - lantern lit - and nothing
+ever took it out.
+
+**The fix.** The document carries `h` beside `p`: the base keys the owner
+took out (`interiorCtx.base.hidden()`, read by `myCaravanDecor` in
+`src/scenes/worldModes.js`), each through the decor law's key
+(`DECOR_BASE_KEY_RE`), once, at most `DECOR_HIDDEN_CAP`, and counted before
+the pieces so a room full of them never crowds the lantern out of the frame.
+A key is an index into the room's own fixed block, so it needs no turn.
+`applyCaravanDecor` sets the guest's base room to it (readCaravanHidden;
+`setHidden` puts back whatever the owner puts back). The listener already
+re-sends the document when it changes, so a lantern taken out or put back
+reaches the guest within the tick. No relay change: `validCaravanData`
+carries the document as it is. An older document carries no `h` and takes
+nothing out; an older client reads past it. The limit is the visits' own:
+a guest sees what the owner took out the last time the owner stood in the
+caravan online.
+
+The four hosts: `scenes/worldModes.js` WIRED (the document said and stood);
+`scenes/world.js` carries the document unchanged (caravanDecorTick,
+onCaravan); `scenes/exterior.js` and `scenes/dungeonContext.js` stand no
+caravan room - FLAGGED as WAGONS2-VISIT left them.
+
+Pins: `test/wagons2_visit.test.js` (18) - the document's taken-out list
+(its law, its cap, a full room, an older document) and the interior host's
+room (the owner says it, the guest sets it, a document taking nothing out
+puts it back). Mutants: six in `tools/mutants/wagons2_visit.json`
+(`WAGONS2-BASE-*`), all dead. Not seen in a browser: this container has no
+ARENA2 data.
+
 ## WAGONS4 - upkeep (2026-10-11)
 
 Every kind wears as it rolls and on a journey and slows as it wears, until a Wagon Yard's wright or a Wagon Repair Kit

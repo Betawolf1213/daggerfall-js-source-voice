@@ -646,6 +646,7 @@ uniform float uEliteTime;  // ELITE FOES: the embers' clock
 uniform vec4 uGlint;  // TELL2: a wind-up's glint (render/renderer.js BB_FS) - rgb in display colour, decoded below
 uniform vec4 uDissolve;  // DISSOLVE: the burn's share and its edge (systems/dissolve.js)
 uniform vec3 uBatchTint;  // ARENA5: the batch's own wash (batch.tint), in display colour - decoded below as every colour the lane takes
+uniform float uBatchDye;  // VEIN-HUE: how far the wash is the flat's colour (render/renderer.js BB_FS)
 uniform vec3 uTint;
 uniform vec3 uBBSun;
 uniform int uPointCount;
@@ -709,7 +710,9 @@ ${LPT_FS_TEXEL}  if (tex.a < ((uSpectral == 1 || uConceal.x > 0.0) ? 0.1 : 0.5))
   // function, at each corner - the four agree - and hands it here flat.
   vec3 sunLit = dot(uBBSun, uBBSun) > 0.0 ? uBBSun * cloudShadowAt(vBBWorld) * vBBSunVis : vec3(0.0);
   vec3 lit = albedo * (uTint + sunLit + elPointFlat(vBBWorld, base) + elIndirectFlat(vBBWorld)) + emission;
+  float undyed = dot(lit, vec3(0.2126, 0.7152, 0.0722));   // VEIN-HUE: the lit flat's brightness, in the lane's linear light
   lit *= elDecode(uBatchTint);   // ARENA5: the batch's wash after both maps (the classic lane's law, in the lane's linear light - white is white)
+  if (uBatchDye > 0.0) lit = mix(lit, undyed * elDecode(uBatchTint), uBatchDye);   // VEIN-HUE: a dyed batch's wash is its colour
   if (uConceal.x == 2.0) lit *= ${SHADE_DARK};   // AUDIT-EL F14: a uniform nothing uploaded read 0 - every shade a black cut-out
   if (uConceal.x == 5.0) lit = mix(lit, vec3(0.95, 0.06, 0.04), uConceal.z);   // PEERFX3's mode, which this lane never drew
   lit = eliteGlowLit(lit, albedo + emission, max(uEliteGlow, 0.0));   // ELITE FOES (never a corpse)

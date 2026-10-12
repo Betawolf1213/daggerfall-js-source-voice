@@ -84,31 +84,12 @@
     ]
   },
   {
-    "name": "FB1007B-HOLD-SHARED",
-    "file": "src/scenes/world.js",
-    "old": "      key = ident?.private ? privateRoomHere(ident) : ident?.solo ? null : roomKeyFor({",
-    "new": "      key = ident?.private ? privateRoomHere(ident) : roomKeyFor({",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ],
-    "why": "the field bug itself: every character in Privateer's Hold in the one world room"
-  },
-  {
-    "name": "FB1007B-HOLD-UNMARKED",
-    "file": "src/scenes/worldModes.js",
-    "old": "...(isTutorialHold(dungeonLoc) ? { solo: true } : {}) })",
-    "new": "...({}) })",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ]
-  },
-  {
     "name": "FB1007B-START-CELL-Y-UNREAD",
     "file": "src/systems/startDungeon.js",
     "old": "px.y === getInt('Startup', 'StartCellY')",
     "new": "true",
     "tests": [
-      "test/fb1007b_holdsolo.test.js"
+      "test/holdshared.test.js"
     ]
   },
   {
@@ -117,7 +98,7 @@
     "old": "px.x === getInt('Startup', 'StartCellX')",
     "new": "px.x === 109",
     "tests": [
-      "test/fb1007b_holdsolo.test.js"
+      "test/holdshared.test.js"
     ]
   },
   {
@@ -126,7 +107,7 @@
     "old": "            const isPrivateersHold = isStartDungeon(dfLocation);",
     "new": "            const isPrivateersHold = false;",
     "tests": [
-      "test/fb1007b_holdsolo.test.js"
+      "test/holdshared.test.js"
     ]
   },
   {
@@ -160,8 +141,8 @@
   {
     "name": "FB1007B-SEAT-OVER-SUCCESSION",
     "file": "src/scenes/legacyHost.js",
-    "old": "    if (!family || past || family.pending || !deps.on() || !p || !isAlive(p) || !playedHere(p)) return null;\n    const t = deps.town(deps.here());\n    return t &&",
-    "new": "    if (!family || past || !deps.on() || !p || !isAlive(p) || !playedHere(p)) return null;\n    const t = deps.town(deps.here());\n    return t &&",
+    "old": "    if (!family || past || family.pending || !deps.on() || !p || !isAlive(p) || !playedHere(p)) return null;\n    const t = placeHere();\n    return t &&",
+    "new": "    if (!family || past || !deps.on() || !p || !isAlive(p) || !playedHere(p)) return null;\n    const t = placeHere();\n    return t &&",
     "tests": [
       "test/fb1007b_familyseat.test.js"
     ]
@@ -432,116 +413,6 @@
       "test/fb1007b_climbtravel.test.js"
     ],
     "note": "AUDIT FB1007b C4: a load's hold taken mid-journey, to be let go the same step (the climb lens's survivor)"
-  },
-  {
-    "name": "FB1007B-AUDIT-H1-SETTING-KEYS-SOLO",
-    "file": "src/scenes/worldModes.js",
-    "old": "...(isTutorialHold(dungeonLoc) ? { solo: true } : {}) })",
-    "new": "...(isStartDungeon(dungeonLoc) ? { solo: true } : {}) })",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ],
-    "note": "AUDIT FB1007b H1: a player's own start cell takes any dungeon out of the shared world"
-  },
-  {
-    "name": "FB1007B-AUDIT-H1-SHIPPED-X-UNREAD",
-    "file": "src/systems/startDungeon.js",
-    "old": "  return !!px && px.x === SHIPPED_START_CELL.x && px.y === SHIPPED_START_CELL.y;",
-    "new": "  return !!px && px.y === SHIPPED_START_CELL.y;",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ],
-    "note": "AUDIT FB1007b H1: every dungeon on the Hold's row solo"
-  },
-  {
-    "name": "FB1007B-AUDIT-H1-SHIPPED-Y-UNREAD",
-    "file": "src/systems/startDungeon.js",
-    "old": "  return !!px && px.x === SHIPPED_START_CELL.x && px.y === SHIPPED_START_CELL.y;",
-    "new": "  return !!px && px.x === SHIPPED_START_CELL.x;",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ],
-    "note": "AUDIT FB1007b H1: every dungeon on the Hold's column solo"
-  },
-  {
-    "name": "FB1007B-AUDIT-H2-NO-MEMORY",
-    "file": "src/scenes/world.js",
-    "old": "    else if (id?.solo) _soloMemory = { mapId: id.mapId, shared: modes?.placeSharedWorld() };",
-    "new": "    else if (id?.solo) _soloMemory = null;",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ],
-    "note": "AUDIT FB1007b H2: the Hold built whole at every entry, its loot rolled anew"
-  },
-  {
-    "name": "FB1007B-AUDIT-H2-LOAD-REMEMBERS",
-    "file": "src/scenes/world.js",
-    "old": "    if (_loading) _soloMemory = null;\n    else if (id?.solo)",
-    "new": "    if (id?.solo)",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ],
-    "note": "AUDIT FB1007b H2: a load's leave keeps the abandoned run's memory"
-  },
-  {
-    "name": "FB1007B-AUDIT-H2-RESET-REMEMBERS",
-    "file": "src/scenes/world.js",
-    "old": "    _soloMemory = null;   // AUDIT FB1007b H2: nor the tutorial dungeon's memory - the loaded character's time is the save's\n",
-    "new": "",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ],
-    "note": "AUDIT FB1007b H2: the load's reset keeps the memory"
-  },
-  {
-    "name": "FB1007B-AUDIT-H3-STAFF-TO-THE-HOLD",
-    "file": "src/scenes/world.js",
-    "old": "    if (identity?.solo) return { error: 'unavailable' };\n",
-    "new": "",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ],
-    "note": "AUDIT FB1007b H3: staff sent to an empty copy of the Hold"
-  },
-  {
-    "name": "FB1007B-AUDIT-H4-HUB-CLOCK-UNHEARD",
-    "file": "src/scenes/world.js",
-    "old": "      if (tab.room === SOCIAL_ROOM) link.onClock = (offsetMs) => online?.onClock?.(offsetMs);\n",
-    "new": "",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ],
-    "note": "AUDIT FB1007b H4: in the Hold the relay's clock is never heard"
-  },
-  {
-    "name": "FB1007B-AUDIT-H5-LOCAL-SILENT",
-    "file": "src/scenes/world.js",
-    "old": "    if (tabId === 'local' && soloHere()) return why(SOLO_LOCAL_TEXT);   // AUDIT FB1007b H5: said, never kept in the field in silence\n",
-    "new": "",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ],
-    "note": "AUDIT FB1007b H5: a Local line kept in the field, nothing said"
-  },
-  {
-    "name": "FB1007B-AUDIT-H5-NOT-CONNECTED",
-    "file": "src/scenes/world.js",
-    "old": "      : soloHere() ? PAGE_NO_READERS_TEXT   // AUDIT FB1007b H5: in the Hold, connected and alone - never \"not connected\"\n",
-    "new": "",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ],
-    "note": "AUDIT FB1007b H5: a page held out in the Hold says \"You are not connected.\""
-  },
-  {
-    "name": "FB1007B-AUDIT-H5-WITH-ME",
-    "file": "src/ui/partyPanel.js",
-    "old": "  && !((p.in ?? 0) === 1 && p.px === SHIPPED_START_CELL.x && p.py === SHIPPED_START_CELL.y);",
-    "new": "  && true;",
-    "tests": [
-      "test/fb1007b_holdsolo.test.js"
-    ],
-    "note": "AUDIT FB1007b H5: two members each in their own Hold read as together"
   },
   {
     "name": "FB1007B-AUDIT-T2-SEAT-BY-REGION-ONLY",

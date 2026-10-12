@@ -38,6 +38,17 @@ export const BUILDING_TYPES = Object.freeze({
   AnyShop: 0xfffd, AnyHouse: 0xfffe, AllValid: 0xffff,
 });
 
+/** PROF-FOUND (2026-10-12, Mac: "Ensure all the professions new stores are flagged on the town map and you can ask NPCs
+ *  where they are"; bible/06-Systems/Professions-Arc.md 42, Ledger A): THE SHOPS CLASSIC NEVER OPENED AND THE PORT DID -
+ *  the Furniture Store, the furnisher's counter (DECOR2b) and Carpentry's workbench (PROF4), the one station shop a
+ *  player could neither see nor ask after. DFU keeps its type off the Where-is page (TalkManager
+ *  CheckBuildingTypeInSkipList) and groups its automap byte with the houses (ExteriorAutomap.cs:1482-1541); the port
+ *  asks after it under its group's word (systems/topicTree.js, scenes/townTalk.js) and draws it in the shop's colour on
+ *  both town maps (ui/townQuarters.js). DFU's own tables stay as they are. */
+export const OPENED_SHOP_TYPES = Object.freeze([BUILDING_TYPES.FurnitureStore]);
+/** Each opened shop's Where-is group, worded as DFU's are ("Clothing stores", "General stores"). */
+export const OPENED_SHOP_GROUPS = Object.freeze({ [BUILDING_TYPES.FurnitureStore]: 'Furniture stores' });
+
 export const NAMED_BUILDING_TYPES = Object.freeze([0, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
 export const isNamedBuildingType = (t) => NAMED_BUILDING_TYPES.includes(t);
 /** RMBLayout.IsResidence (:753-760): only House1-House4 ID as a

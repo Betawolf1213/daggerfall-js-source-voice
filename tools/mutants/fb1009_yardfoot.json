@@ -92,8 +92,8 @@
   {
     "name": "FB1009-the-host-records-no-ground",
     "file": "src/scenes/world.js",
-    "old": "            if (!f && at) pixelHomeFrames.set(homeKey, { at, box: [...box], rects });",
-    "new": "            if (!f && at) pixelHomeFrames.set(homeKey, { at, box: [...box] });",
+    "old": "            if (!f && at) pixelHomeFrames.set(homeKey, { at, box: [...box], rects, type: bd?.buildingType ?? null, faction: bd?.factionId ?? 0 });",
+    "new": "            if (!f && at) pixelHomeFrames.set(homeKey, { at, box: [...box], type: bd?.buildingType ?? null, faction: bd?.factionId ?? 0 });",
     "tests": [
       "test/fb1009_yardfoot.test.js"
     ]

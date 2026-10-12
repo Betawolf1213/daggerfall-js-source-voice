@@ -10,8 +10,12 @@
 //   speed - the rate a fast journey (and the Overworld's own walk) runs at
 //   foe   - the slowest the clock runs while an enemy holds it (ENEMY-PACE's floor)
 // THE ROAD RULE, for both: x100 may be chosen only while the traveller stands on a road or a track; the moment they
-// leave it, a dial at x100 goes to x60 - kept so (it does not climb back by itself on the next road). Off the road the
-// ladder ends at x60.
+// leave it, a dial at x100 runs (and reads) x60. Off the road the ladder ends at x60.
+// PACE-KEEP (2026-10-12, Mac: "sometimes your multiplier slows down randomly without an enemy nearby"): the player's
+// x100 is KEPT and comes back on the next road. It was written down to x60 the moment the ground said "off the road" -
+// and a journey by the road says so for a moment wherever its route crosses one pixel of open ground between two road
+// pixels (a gap in the network, a corner the search cut), so a x100 journey dropped to x60 for the rest of the trip with
+// nothing in sight. The ground now caps the dial (paceNow, paceRateOn), it never rewrites it.
 //
 // THE RULE LIVES HERE, NOT IN A PANEL: every reader asks this module (systems/timeScale.js travelRateOf, travelThreat.js
 // foePaced), and the host tells it the ground each frame a journey or the Overworld runs (`setPaceGround`) - so every
@@ -106,18 +110,15 @@ export function travelPace() {
 /** Whether the host last said the traveller stands on a road. */
 export const paceOnRoad = () => ground;
 
-/** THE ROAD RULE'S DOOR: the host's word on the ground, each frame a journey or the Overworld runs. Leaving a road takes
- *  every dial at x100 down to x60 at once (told to the listeners, so a running journey asks its clock again). */
+/** THE ROAD RULE'S DOOR: the host's word on the ground, each frame a journey or the Overworld runs. Leaving a road runs
+ *  every dial at x100 at x60 at once - the ground's top caps it (paceNow, paceRateOn) - and the next road gives it back
+ *  (PACE-KEEP: the player's choice is never rewritten). The listeners are told either way, so a running journey asks
+ *  its clock again and the panels say the rate in force (and offer x100 on a road, refuse it off it). */
 export function setPaceGround(onRoad) {
   const was = ground;
   ground = !!onRoad;
   if (was === ground) return;
   const cur = travelPace();
-  if (!ground && (cur.speed > OPEN_PACE_MAX || cur.foe > OPEN_PACE_MAX)) {
-    write({ speed: Math.min(cur.speed, OPEN_PACE_MAX), foe: Math.min(cur.foe, OPEN_PACE_MAX) }, 'ground');
-    return;
-  }
-  // the ground moved and no dial did: the panels' + is told (x100 offered on a road, refused off it)
   for (const fn of [...listeners]) { try { fn(cur, 'ground'); } catch { /* a listener's own fault */ } }
 }
 

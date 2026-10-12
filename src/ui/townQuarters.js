@@ -31,16 +31,28 @@
 // so the `+ 1` cannot drift.
 // ═══════════════════════════════════════════════════════════════════
 
+import { OPENED_SHOP_TYPES } from '../world/buildingNames.js';   // PROF-FOUND: the shops the port opened
+
 /** A pixel that is not a building at all. */
 export const STREET_BYTE = 0;
 /** Scenery, not architecture - see SHOWALL_SET below. */
 export const GROUND_FLAT_BYTE = 0xfb;
 
+/** THE ONE PLACE THE `+ 1` IS WRITTEN: the grid's byte for a building type. */
+const byteOfType = (type) => type + 1;
+
 // the byte groups (ExteriorAutomap.cs:1482-1541; byte = BuildingType + 1)
+const DFU_SHOP_BYTES = [1, 3, 4, 6, 7, 9, 10, 11, 13, 14];
+const DFU_HOUSE_BYTES = [2, 5, 8, 17, 18, 19, 20, 21, 22, 23, 24];
+/** PROF-FOUND (2026-10-12, Mac: "Ensure all the professions new stores are flagged on the town map"; Ledger A): the
+ *  bytes of the shops the port opened (world/buildingNames.js OPENED_SHOP_TYPES - the Furniture Store, byte 8, which DFU
+ *  groups with the houses because classic never opened it) move from DFU's house group to its shop group, so both maps
+ *  draw Carpentry's workbench as the shop it is. */
+export const OPENED_SHOP_BYTES = Object.freeze(OPENED_SHOP_TYPES.map(byteOfType));
 export const TEMPLE_SET = Object.freeze([12, 15]);
-export const SHOP_SET = Object.freeze([1, 3, 4, 6, 7, 9, 10, 11, 13, 14]);
+export const SHOP_SET = Object.freeze([...DFU_SHOP_BYTES, ...OPENED_SHOP_BYTES].sort((a, b) => a - b));
 export const TAVERN_BYTE = 16;
-export const HOUSE_SET = Object.freeze([2, 5, 8, 17, 18, 19, 20, 21, 22, 23, 24]);
+export const HOUSE_SET = Object.freeze(DFU_HOUSE_BYTES.filter((b) => !OPENED_SHOP_BYTES.includes(b)));
 /** The bytes the shipped map only draws in its "show all" mode - ships
  *  and specials (:1519-1528), the town's own furniture rather than its
  *  buildings, and 0xfb (the ground flat) is one of them. They are NOT a
@@ -78,11 +90,11 @@ export function quarterOf(byte) {
 /** Is this byte one classic draws only in its "show all" mode? */
 export const isShowAllByte = (byte) => SHOWALL.has(byte);
 
-/** THE ONE PLACE THE `+ 1` IS WRITTEN. A building summary's
- *  `buildingType` is the FLD byte minus one, so a plate and its own
- *  pixels go through the same ladder.
+/** A building summary's `buildingType` is the FLD byte minus one, so a
+ *  plate and its own pixels go through the same ladder (byteOfType's
+ *  one `+ 1`).
  *  @param {number|null|undefined} type */
-export const quarterOfType = (type) => (type == null ? null : quarterOf(type + 1));
+export const quarterOfType = (type) => (type == null ? null : quarterOf(byteOfType(type)));
 
 /**
  * DFU'S OWN FOUR COLOURS, as 0xAARRGGBB - the defaults the classic

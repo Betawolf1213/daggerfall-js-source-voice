@@ -409,7 +409,7 @@ test('LW3 the Overworld knows a party on the road: the `wayfarer` kind is the tr
   assert.match(hud, /if \(k === 'wayfarer'\) return k;/);
   // LW10: PIN MOVED - a caravan's mark is its wagon now (lw10_wagons.test.js); the rest keep the square
   // AUDIT LW-II F6: the square tied to the wayfarer's own branch again (its caravan's wagon between) - loose, any square drew it
-  assert.match(hud, /\} else if \(look === 'wayfarer'\) \{[^\n]*\n\s*const r = \/\\bcaravan\\b\/\.test\(m\.kind \?\? ''\) \? 5 : 3\.5;\n\s*if \(\/\\bcaravan\\b\/\.test\(m\.kind \?\? ''\)\) \{[^\n]*\n[^\n]*\n[^\n]*\n\s*\} else \{ g\.beginPath\(\); g\.rect\(x - r, y - r, r \* 2, r \* 2\); g\.fill\(\); g\.stroke\(\); \}\n/);
+  assert.match(hud, /\} else if \(look === 'wayfarer'\) \{[^\n]*\n\s*const r = \/\\bcaravan\\b\/\.test\(m\.kind \?\? ''\) \? 5 : 3\.5;\n\s*if \(\/\\bcaravan\\b\/\.test\(m\.kind \?\? ''\)\) \{[^\n]*\n[^\n]*\n[^\n]*\n\s*\} else packGlyph\(g, x, y\);[^\n]*\n/);   // OW-GLYPHS: a pack, the square's place
 });
 
 test('LW3 the ways: the living world\'s own book - a pair of towns asked once, the lower map id first and the other way its reverse; a few new pairs a frame; nothing while the roads are not built; the drawn network, whichever it is, and a new network clears the book (mutants: the direction, the budget, the network)', () => {

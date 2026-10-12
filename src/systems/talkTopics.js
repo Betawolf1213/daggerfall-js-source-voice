@@ -67,7 +67,11 @@ export function npcKnowsAboutItem(npcSeed, buildingKey, socialGroup = 0, questio
 // Special1-4, Town23 and Town4 - the port listed Palaces and
 // Furniture stores, which classic never offers. The list is built in
 // BUILDING_TYPES enum order (DFU walks the enum), and three captions
-// were paraphrased rather than taken from DFU's strings.
+// were paraphrased rather than taken from DFU's strings. PROF-FOUND
+// (2026-10-12): the Furniture Store, Carpentry's workbench, is asked
+// after again under its own group AFTER these (world/buildingNames.js
+// OPENED_SHOP_TYPES; scenes/townTalk.js, systems/topicTree.js) - this
+// list stays DFU's.
 const SKIPPED_BUILDING_TYPES = new Set([
   BUILDING_TYPES.HouseForSale, BUILDING_TYPES.Town4, BUILDING_TYPES.FurnitureStore,
   BUILDING_TYPES.Palace, BUILDING_TYPES.House1, BUILDING_TYPES.House2,

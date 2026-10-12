@@ -20,8 +20,8 @@ import { validParkData, validPose, poseChanged, HORSE_LOOK_MAX, POSE_RIDE } from
 import { spriteFor, lookedPixels } from '../src/player/eotbSprite.js';
 import { ridingLook, loadRidingArt } from '../src/systems/riding.js';
 import { TRANSPORT_MODES } from '../src/systems/transport.js';
-import { createHorseCartPool, horseStillRecord, horseWalkRecord, HORSE_ARCHIVE, HORSE_LOOKS_KEPT } from '../src/scenes/horseCartPool.js';
-import { HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT } from '../src/systems/horseCartLaw.js';
+import { createHorseCartPool, horseStillRecord, horseWalkRecord, HORSE_ARCHIVE, HORSE_LOOKS_KEPT, HORSE_DYE_PICTURES } from '../src/scenes/horseCartPool.js';
+import { HORSE_SPRITE_WIDTH, HORSE_SPRITE_HEIGHT, HORSE_VIEWS, HORSE_WALK_FRAMES } from '../src/systems/horseCartLaw.js';
 import { createEotbArt, RIDER_LOOKS_KEPT, RIDER_LOOK_IDLE_MS } from '../src/net/peerRiders.js';
 import { stableProviderFor } from '../src/ui/holdingsPages.js';
 
@@ -337,7 +337,10 @@ function poolWith(look) {
   return { pool, uploads, evicted, batches };
 }
 
-test('COATS1 the pool: my horse posed in my look once its pictures are dyed - one set a frame, each set once - the bay\'s until', async () => {
+/** PERF-DYE: the frames a look's every picture takes to be dyed, HORSE_DYE_PICTURES a frame (the views, then the walk set). */
+const FRAMES_A_LOOK = Math.ceil(HORSE_VIEWS * (1 + HORSE_WALK_FRAMES) / HORSE_DYE_PICTURES);
+
+test('COATS1 the pool: my horse posed in my look once its pictures are dyed - PERF-DYE: HORSE_DYE_PICTURES a frame, each once - the bay\'s until', async () => {
   const look = { v: code(4, 1, 1, 77) };
   const { pool, uploads, batches } = poolWith(look);
   assert.equal(pool.presentation.horseArt.ensureLook(look.v), false, 'nothing until the bay is up');
@@ -346,8 +349,10 @@ test('COATS1 the pool: my horse posed in my look once its pictures are dyed - on
   pool.frame(0, [0, 1, 0]);
   const mine = batches.find((b) => b.archive === HORSE_ARCHIVE);
   assert.ok(mine, 'my horse stands');
-  assert.doesNotMatch(mine.record, /~/, 'one set dyed a frame: the views this one, so the walking horse is still the bay\'s');
+  assert.doesNotMatch(mine.record, /~/, 'the views dyed this frame, so the walking horse is still the bay\'s');
   assert.ok(uploads.includes(`${HORSE_ARCHIVE}_${horseStillRecord(2, look.v)}`) && !uploads.includes(`${HORSE_ARCHIVE}_${horseWalkRecord(1, 3, look.v)}`));
+  for (let i = 2; i < FRAMES_A_LOOK; i++) pool.frame(0, [0, 1, 0]);
+  assert.doesNotMatch(mine.record, /~/, 'PERF-DYE: the walk set a few pictures a frame - the bay\'s until its last');
   pool.frame(0, [0, 1, 0]);
   assert.ok(mine.record.endsWith(`~${look.v}`), 'posed in my look once its walk frames are dyed too');
   const n = uploads.length;
@@ -365,7 +370,7 @@ test('COATS1 the pool: past HORSE_LOOKS_KEPT looks, the one longest undrawn is l
   const { pool, evicted } = poolWith(look);
   pool.presentation.horseArt.ensureStationary(); await flush();
   pool.presentation.horseArt.ensureWalk(); await flush();
-  for (let s = 1; s <= HORSE_LOOKS_KEPT; s++) { look.v = code(1, 0, 0, s); pool.frame(0, [0, 1, 0]); pool.frame(0, [0, 1, 0]); }
+  for (let s = 1; s <= HORSE_LOOKS_KEPT; s++) { look.v = code(1, 0, 0, s); for (let i = 0; i < FRAMES_A_LOOK; i++) pool.frame(0, [0, 1, 0]); }
   assert.equal(evicted.length, 0, 'HORSE_LOOKS_KEPT looks stand together');
   look.v = code(1, 0, 0, HORSE_LOOKS_KEPT + 1);
   for (let i = 0; i < 3; i++) pool.frame(0, [0, 1, 0]);

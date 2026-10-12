@@ -255,3 +255,64 @@ owns never stood again, and a stack of oats beside them (`06-Systems/Horse-Care.
 Kits beside its wagons, and its keeper's third row, Mend, makes the wagon driven whole for gold - a wright sent out to
 a wagon away (`06-Systems/Wagon-Upkeep.md`). Online the oats and the kits waited a release on UPKEEP_ITEMS_ONLINE
 (`systems/upkeepItemRows.js`, REST6's law); UPKEEP-ONLINE (2026-10-12) turned it on. The counter opens on the yard's town (`openYardTrade`'s `mapId`).
+
+## CARP-YARD - the Joinery (2026-10-12, Mac)
+
+Mac, after PROF-FOUND (`06-Systems/Professions-Arc.md` 42): "Let's also redesign their buildings like we did with
+stables, etc". Asked how, he chose a new Carpenter's Yard in each city and town, its own keeper, sign and models, the
+Furniture Store left as it is, and its workbench a working Carpentry station. Nothing here is DFU's (Ledger A, CARP-YARD).
+
+**A third yard kind** (`systems/merchantYards.js`): `carpenter` - the JOINERY, named for its carpenter ("Thane's
+Joinery"), its board JOINERY, its trade "Carpentry at the workbench - 50 gold a craft or a saw", its keeper the
+Carpenter (`YARD_KINDS.carpenter`). It keeps no counter: `yardStock` answers it nothing and `yardBuysItem` buys nothing.
+Its one row is the bench (`YARD_BENCH_ROW`, `yardRowsFor`). Steal takes nothing, in the carpenter's own word
+(`CARPENTER_STEAL_TEXT`).
+
+**Placed last, keyed last.** The Stable and the Wagon Yard are placed first, as they always were (`YARD_KIND_ORDER`
+unchanged). A port town's shipyard and lighthouse go on what they leave. Then the joinery goes on what is left
+(`CRAFT_YARD_ORDER`, `world/merchantYardSites.js` `craftYardSitesOn`, called after `portSitesOn` in `scenes/world.js`
+townPlacesFor). So no town's existing place moves, and a town too full for it stands none. Its ground is
+`YARD_FOOT.carpenter`, 14 m by 12. Its talk-directory key is `YARD_KEY_BASE + 6` (`YARD_KEY_SLOT`), its place in
+`systems/portPlaces.js` FOUND_KIND_ORDER after the port's four. So no key a save's discovery holds now names another
+place. On the Where-is page its group is "Carpenters", after the port's groups.
+
+**What stands** (`world/merchantYardModels.js` `buildCarpenterModel`, `CARPENTER_YARD`). It wears the yards' own
+pictures (`world/merchantYardArt.js`) and four new ones: the JOINERY board, `shavings`, `bark` and `endgrain`
+(records 10-13; the floor is `shavings`, not `sawdust`, because the port's art already keeps a `sawdust` of its own
+under another record):
+
+- a low post-and-rail fence round a floor of shavings, and a gate arch at its front with the board hung from its beam
+  (a hand saw - steel blade, teeth, brass rivets, wooden handle - and JOINERY; `J` and `Y` added to the sign-painter's
+  letters);
+- across its back a shingled workshop, open to the yard. In its middle stands THE WORKBENCH: a top on four legs, a
+  shelf under it, a vise at its front corner, a plane, a mallet and offcuts on it. Over it a tool board hangs a hand
+  saw, a hammer, a square and three chisels. In the left bay is a timber rack of three shelves of planks; in the right
+  a chair half made (its back legs up bare), a finished chest and a barrel of dowels;
+- in the yard: a pile of five logs (bark round them, their sawn ends in rings), two sawhorses with a plank across
+  them, a chopping block with an axe in it, and a stack of planks drying on bearers with sticks between the layers;
+- by the gate, the carpenter's work on show - a table with a chair at each end, and a bench - and the carpenter, a
+  person of the town's people, as every keeper is.
+
+**The bench is a station.** A press on the carpenter, the board or the bench (`scenes/merchantYardsHost.js` - the bench
+is the eye's third box, `benchBoxOf`) opens the Stores page, landed on The Workbench (`scenes/world.js` openYardBench:
+`focusStoresStation('workbench')`, then the pause on `stores`). Where the page is not (offline, the switch shut) it
+says the bench is bare (`WORKBENCH_COLD_LINE`, a home workbench's word). While the player's feet are within
+`YARD_REACH` of the bench across the ground and `YARD_BENCH_RISE` up or down (`workbenchNear`), the street's workbench
+question answers `YARD_BENCH`: a shop's bench at the furnisher's own fee (`WORKBENCH_FEE` - no bench is a cheaper
+one), the carpenter the one paid. That question is `scenes/world.js` workbenchHere, asked by the craft, the Stores page
+and the saw alike; indoors it is still the mode machine's. The Stores page names the joinery's carpenter
+(`ui/profPages.js`). The furnisher's Linen counter stays a Furniture Store's alone (`!bench.yard`).
+
+**Found as a yard is.** Its row of the talk directory, the town maps' shop-coloured ground and its lettered name come
+through YARDS-FOUND's own doors unchanged. The Overworld marks it with the board's saw (`ui/travelViewHud.js`
+yardGlyph, `yardMarkKind`), under the Towns switch.
+
+THE FOUR HOSTS (CARP-YARD): `scenes/world.js` - WIRED (the placing, the pool's bench, the street's workbench).
+`scenes/worldModes.js` - its street ray reaches every `yard:` key unchanged, and indoors its workbenchHere answers as
+before. `scenes/exterior.js` - stands no yard (FLAGGED above). `scenes/dungeonContext.js` - no town.
+
+Pins: `test/carpyard1.test.js` (8). Mutants: `tools/mutants/carpyard1.json` (23, all dead). Pins moved: `prof4_client`
+(the bench's empty line, the craft's station question), `audit30_client` and `prof7_client` (the host's question),
+`shipyards1` (the found order), `yardsfound1` (the groups). Mutant records re-aimed: `shipyards1.json` (the found order,
+the mark's kind), `wagons4.json` (the mend row), `prof4.json` (the Linen's gate). Not seen in a real town (no ARENA2
+here). The model was checked by a software render of its own geometry and pictures.

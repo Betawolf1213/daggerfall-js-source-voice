@@ -55,23 +55,31 @@ export const LODESTONE_RECORD = 66;
  *  per ore" kept at last. DFU gives five metals a picture of their own (Mercury 61, Gold 62, Iron 63, Tin 64, Sulphur 67)
  *  and two to the rest: Lead, Silver and Platinum share record 65, Copper and Lodestone record 66 - and every new ore
  *  borrows 66. The first of each shared picture keeps DFU's own colours (Lead, Lodestone); every other ore on it wears its
- *  own wash, none like another's. The port's own colours (the nodes are no DFU member): each the hue its metal is read by
+ *  own wash, none like another's. VEIN-HUE (FIELD BUGS 2026-10-12b, "Boulder/lodestone/moonstone still identical" -
+ *  "Moonstone might be a slight shade darker but thats about it"): a wash multiplies a lump near grey, so its colour is
+ *  the wash's own spread - and the first washes spread a fifth to a half (Moonstone 1.12 to 1.65), a grey a shade off
+ *  grey. Every wash is now its hue at full spread, and Lodestone wears one of its own (a rust red), so a boulder's loose
+ *  stone - Lodestone's lump as it is - is no Lodestone's. The port's own colours (the nodes are no DFU member): each the hue its metal is read by
  *  - Copper's orange, Silver's cold white, Platinum's pale gold, Moonstone's moonlight, Dwarven Scrap's brass, Mithril's
  *  sea-green, Adamantium's violet, Ebony's black, Orichalcum's orc-green. */
 export const ORE_WASH = Object.freeze({
-  'metal:copper': Object.freeze([1.45, 0.88, 0.58]),
-  'metal:silver': Object.freeze([1.25, 1.3, 1.45]),
-  'metal:platinum': Object.freeze([1.4, 1.34, 1.08]),
-  'ore:moonstone': Object.freeze([1.12, 1.28, 1.65]),
-  'ore:dwarven': Object.freeze([1.45, 1.12, 0.5]),
-  'ore:mithril': Object.freeze([0.78, 1.36, 1.3]),
-  'ore:adamantium': Object.freeze([1.12, 0.72, 1.4]),
-  'ore:ebony': Object.freeze([0.42, 0.4, 0.48]),
-  'ore:orichalcum': Object.freeze([0.85, 1.28, 0.52]),
+  'metal:copper': Object.freeze([1.9, 1.0, 0.45]),
+  'metal:lodestone': Object.freeze([1.25, 0.6, 0.5]),
+  'metal:silver': Object.freeze([1.6, 1.65, 1.8]),
+  'metal:platinum': Object.freeze([1.75, 1.6, 1.05]),
+  'ore:moonstone': Object.freeze([1.25, 1.55, 2.4]),
+  'ore:dwarven': Object.freeze([1.75, 1.5, 0.4]),
+  'ore:mithril': Object.freeze([0.55, 1.45, 1.6]),
+  'ore:adamantium': Object.freeze([1.35, 0.6, 1.85]),
+  'ore:ebony': Object.freeze([0.32, 0.28, 0.42]),
+  'ore:orichalcum': Object.freeze([0.7, 1.7, 0.5]),
 });
 /** VEIN-WASH: a node's flats' wash ([r, g, b]), or null for DFU's own colours - a vein's or a Motherlode's by its ore; a
  *  boulder's loose stone none. */
 export const mineWash = (node) => (node.what === 'boulder' ? null : ORE_WASH[node.material] ?? null);
+/** VEIN-HUE: how far a washed node's wash is its colour (render/renderer.js uBatchDye) - all the way: the picture's own
+ *  hue (Lodestone's lump is no grey) kept none of it. */
+export const ORE_DYE = 1;
 /** A vein is this many of its metal's flats at this times the item's own size, spread this far (m) at the foot. */
 export const VEIN_FLATS = 3;
 export const VEIN_SCALE = 2.2;
@@ -412,7 +420,7 @@ export function mineKind({ book, lodes = null, marks = null }) {
     dungeonNodesOf({ dungeon, day, info, confirmed, wall }) {
       return standDungeonVeins({ dungeon, day, climate: info.climate, confirmed, wall });
     },
-    flatsOf: (n) => [{ archive: ORE_FLAT_ARCHIVE, record: mineRecord(n), scale: n.what === 'boulder' ? STONE_SCALE : n.what === 'motherlode' ? MOTHERLODE_SCALE : VEIN_SCALE, centers: mineFlats(n), tint: mineWash(n) }],   // VEIN-WASH: its ore's own wash
+    flatsOf: (n) => [{ archive: ORE_FLAT_ARCHIVE, record: mineRecord(n), scale: n.what === 'boulder' ? STONE_SCALE : n.what === 'motherlode' ? MOTHERLODE_SCALE : VEIN_SCALE, centers: mineFlats(n), tint: mineWash(n), dye: mineWash(n) ? ORE_DYE : 0 }],   // VEIN-WASH: its ore's own wash; VEIN-HUE: as its colour
     gone,
     /** NODE-MARKS: every vein and boulder standing; a Prospector's veins from PROSPECT_M off (PROF0 3.3) */
     mark(n, { specs }) {

@@ -853,15 +853,18 @@ export function stepCaptain(ship, world) {
     const held = c.id === ship.target && (ship.mode === 'engage' || ship.mode === 'board');
     const lit = !!c.lit || !!flashed?.has(c.id);
     const see = nightSight(sight, { night: !!world.night, lit });   // SHIP-WATCH: by night, by her lanterns (or her guns)
-    if (hostile(ship, c, world) && !((ship.spare.get(c.id) ?? -Infinity) > ship.clock)) {
+    // NAV-COST (2026-10-12): her sight asked FIRST - `hostile` (a wary pirate sizing a quarry up: shipPower, fightingPower)
+    // was asked of every ship in the sea, every frame, for each of mine, and nearly all of them hundreds of km off. Both
+    // halves read nothing they change, so the answer is the one it was.
+    if (dist < (held ? see * DISENGAGE : see) && hostile(ship, c, world) && !((ship.spare.get(c.id) ?? -Infinity) > ship.clock)) {
       // SEA-EASE: a pirate fighting a player she stands by is hers first
       const rank = (held ? dist * 0.8 : dist) * (aids && fightsAny(c, aids) ? AID_PRIORITY : 1);
-      if (dist < (held ? see * DISENGAGE : see) && rank < enemyD) { enemy = c; enemyD = rank; }
+      if (rank < enemyD) { enemy = c; enemyD = rank; }
     }
     // a threat is anything hostile that would take US - SEA-PEACE: sized up by her own power, and a player who fired on
     // her a threat to a pirate too (a wary one runs from a stronger one; a bold one fights it out, as she did)
-    const theyTakeUs = c.kind === 'ship' ? c.ship && hostile(c.ship, { kind: 'ship', faction: ship.cls.faction, id: ship.id, ship }, world) : (ship.provoked.get(c.id) ?? -Infinity) > world.now - PROVOKED_S;
-    if (theyTakeUs && dist < nightSight(FLEE_RANGE, { night: !!world.night, lit }) && dist < threatD) { threat = c; threatD = dist; }   // SHIP-WATCH: a threat seen
+    if (dist < threatD && dist < nightSight(FLEE_RANGE, { night: !!world.night, lit })
+      && (c.kind === 'ship' ? c.ship && hostile(c.ship, { kind: 'ship', faction: ship.cls.faction, id: ship.id, ship }, world) : (ship.provoked.get(c.id) ?? -Infinity) > world.now - PROVOKED_S)) { threat = c; threatD = dist; }   // SHIP-WATCH: a threat seen
   }
   if (enemy) enemyD = bearingTo(ship, enemy.pos).dist;
   for (const c of world.contacts ?? []) {

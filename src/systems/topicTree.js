@@ -62,7 +62,7 @@
 //   onTopicListsUpdated()      - DaggerfallUI.TalkWindow
 //                                .UpdateListboxTopic (the instant tail)
 
-import { BUILDING_TYPES, isResidence } from '../world/buildingNames.js';
+import { BUILDING_TYPES, isResidence, OPENED_SHOP_TYPES, OPENED_SHOP_GROUPS } from '../world/buildingNames.js';   // PROF-FOUND: the shops the port opened
 import { QUEST_MESSAGES, isShelved } from './quest/quest.js';   // the message-id enum (QuestMachine.cs:260-270); QUEST-SHELF: a quest set aside
 import { NPC_CONTEXT } from '../characters/staticNpc.js';   // AUDIT 24: NPCData.context is a NUMBER
 import { FOUND_KIND_ORDER, FOUND_TALK_GROUPS } from './portPlaces.js';   // YARDS-FOUND: the town's yards on the Where-is page - SHIPYARDS-FOUND: and a port town's places after them, one order
@@ -653,6 +653,18 @@ export class TopicTree {
         }
         this.listTopicLocation.push(itemBuildingTypeGroup);
       }
+    }
+    // PROF-FOUND (2026-10-12, Mac: "Ensure all the professions new stores are flagged on the town map and you can ask
+    // NPCs where they are"; Ledger A): the shops the port opened that C#'s skip list keeps off this page - the Furniture
+    // Store, Carpentry's workbench (world/buildingNames.js OPENED_SHOP_TYPES) - a group each after DFU's, asked as any
+    // building is (LocalBuilding). Their own variable, as the yards' below: the shared one's flow is C#'s, untouched
+    for (const buildingType of OPENED_SHOP_TYPES) {
+      const shops = this.listBuildings.filter((x) => x.buildingType === buildingType);
+      if (!shops.length) continue;
+      const shopGroup = newListItem({ type: LIST_ITEM_TYPE.ItemGroup, caption: OPENED_SHOP_GROUPS[buildingType], listChildItems: [] });
+      shopGroup.listChildItems.push(this._newBackItem());
+      for (const s of shops) shopGroup.listChildItems.push(newListItem({ questionType: QUESTION_TYPE.LocalBuilding, caption: s.name, buildingKey: s.buildingKey }));
+      this.listTopicLocation.push(shopGroup);
     }
     // YARDS-FOUND (2026-10-10, from play: "Ensure these locations appear when talking to NPCs"; Ledger A): the town's
     // Stable and Wagon Yard - the port's own, rows of the directory under a key no building holds and a type no DFU

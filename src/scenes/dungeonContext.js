@@ -212,7 +212,7 @@ import { ARENA_PUPPET_OWNER } from '../net/arenaLaw.js';   // ARENA4: the relay'
 import { calculateCastCost } from '../systems/spellcost.js';
 import { snapshotPlayer, restorePlayer, composeSessionState, restoreSessionState , copyEffectEntry } from '../systems/save.js';   // B4: the ONE quest+talk composer
 import { saveSlot, loadSlot, quickLoadSlot, QUICK_SAVE_NAME, requestScreenshot, slotLoaded } from '../systems/saveSlots.js';   // SAV4: the quicksave is a SLOT named QuickSave; SS1: the shot arms here, the HOST loop delivers it
-import { bindQuestFoeHost, placeFoeEnv, entityOccupancy } from './questFoeHost.js';
+import { bindQuestFoeHost, placeFoeEnv, entityOccupancy, partyOnlyQuestShare } from './questFoeHost.js';   // QUEST-OWNER: a quest's foe underground is its owner's party's alone
 import { puppetLead } from './puppetLead.js';   // DESYNC-ZERO: a moving puppet leads its last word
 import { validQuestTags, questMarkerYields, QUEST_PUPPETS_MAX, validLooseSeqs, companionNames } from './exteriorFoes.js';   // QUEST-PARTY phase 3c: the party's quest words and the marker's law, one home   // B1: quest foes ride this pool   // RE1: the placement ring's env over this host's collider
 import { placeFoeFreely, PLACE_FOE_DEFAULTS, sceneMarkerMover } from '../systems/quest/sceneMount.js';   // RE1: FoeSpawner.PlaceFoeFreely, the one home; AUDIT III E1: its numbers, a joiner's spot held to them; TOTEM-CAGE: GetDaggerfallMarker's motion
@@ -5362,7 +5362,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // named elsewhere, its owner's leave, a quiet owner, a room change)
   const _ownKept = new Map();
   const ownPupKey = (from, i) => `${from}:${i}`;
-  const ownShare = () => opts.questShare?.() ?? null;
+  const ownShare = () => partyOnlyQuestShare(opts.questShare?.() ?? null);   // QUEST-OWNER (questFoeHost.js): seen, struck and hunted by its owner's party alone underground
   /** QUEST-PARTY phase 3c: the party's word on MY quest foe past the layout - { q, s } while its quest is shared. */
   const ownQuestTag = (f) => (!f || f._ownFrom != null || isRoomFoe(f) ? null : f.questBehaviour ? (ownShare()?.tagOf?.(f) ?? null) : (f._keptTag ?? null));   // AUDIT (pre-merge) Q3: a taken foe my copy has no quest for keeps its partner's word
   /** SUMMON-SYNC: MY loose stand past the run (spawnLooseFoe's mark) - no quest's, no room's, nobody else's. */

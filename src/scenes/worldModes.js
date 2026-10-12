@@ -71,7 +71,7 @@ import { CARAVAN_SCENE_NAME, CARAVAN_TEXT, readCaravanRoom, isCaravanRoom, turnC
 import { wagonItemName } from '../systems/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): a marked wagon's name on the keyed shelf
 import { wagonLoadedHeld } from '../systems/tradePack.js';   // WAGONS2 (AUDIT): the wagon a loaded store hangs on - FINAL AUDIT: the pack's one law
 import { caravanPaintRows } from '../systems/wagonLooks.js';   // WAGONS2: the caravan's inside, painted from the decorator
-import { caravanDecorDoc, readCaravanDecor } from '../systems/caravanVisit.js';   // WAGONS2-VISIT: what a caravan's owner placed, said to its room and stood for its visitor
+import { caravanDecorDoc, readCaravanDecor, readCaravanHidden } from '../systems/caravanVisit.js';   // WAGONS2-VISIT: what a caravan's owner placed, said to its room and stood for its visitor
 import { caravanKeyOf } from '../net/privateInterior.js';   // WAGONS2-VISIT: a caravan's own room
 import { INTERIOR_SHELL_BUCKET } from './decorBase.js';   // HOME-DOORS: a doorway is an opening in the shell's walls   // AUDIT 63 F22: AddFlats' RandomTreasure arm lives with the walk that finds its markers
 import { advanceMachinery, mountMachineryChild, machineryChildPos, MILL_SOUND } from '../world/windmills.js';   // WM4b: the machinery's moving parts; WM4c: its hum
@@ -278,7 +278,7 @@ import { expandGuildRows } from '../systems/guildServiceActions.js';   // MACROS
 import { hallAccessAnytime } from '../systems/guildServices.js';
 import { resolveVariantGuild } from '../systems/guildVariants.js';
 import { getBool, getInt } from '../systems/settings.js';   // R1: InstantRepairs / AllowMagicRepairs go LIVE
-import { isStartDungeon, isTutorialHold } from '../systems/startDungeon.js';   // PH1: the classic start's own cell; HOLD-SOLO: Privateer's Hold, the shipped one's (AUDIT FB1007b H1)
+import { isStartDungeon, isPrivateersHold, HOLD_ONCE_TEXT } from '../systems/startDungeon.js';   // PH1: Privateer's Hold - the classic start's own cell; HOLD-ONCE: the Hold itself, by its map id
 import { reviveForPlay } from '../systems/deathRespawn.js';   // PH1: the in-place respawn's own heal, the SAME fraction world.js's own online respawn uses
 import { reducedRepairCost } from '../systems/guildServices.js';   // R1: FightersGuild.ReducedRepairCost finds its caller
 import {
@@ -7053,8 +7053,14 @@ export function createWorldModes(host) {
    *  The host passes ITS ray (the tap's, or the crosshair's) so the two
    *  picks are measured along one line, as DFU's one raycast is. AUDIT 65 MC-2: it answers for a door the player cannot REACH as well as one they can, because DFU's single ray HIT that door - the foe behind it was never the enemy check's subject, and tryEnter refuses out loud. It used to answer Infinity there and the foe ate the click. */
   function exteriorActivationDistance(eye = player.eye, dir = eyeDir()) {
-    if (mode !== 'exterior') return Infinity;
-    return pickActivatableHit(eye, dir, exteriorActivationTargets().targets, baseCollider())?.distance ?? Infinity;
+    return exteriorActivationHit(eye, dir)?.distance ?? Infinity;
+  }
+  /** FB1012d ALLY-YIELDS: ...and that activatable's own pick, its reach beside its distance - the street's press hands it
+   *  to the race (activationRace.js `door`), whose `next` asks whether it answers from here before a companion standing
+   *  in front of it may take the press. Null off the street, or with nothing under the ray. */
+  function exteriorActivationHit(eye = player.eye, dir = eyeDir()) {
+    if (mode !== 'exterior') return null;
+    return pickActivatableHit(eye, dir, exteriorActivationTargets().targets, baseCollider());
   }
 
   /**
@@ -8595,6 +8601,7 @@ export function createWorldModes(host) {
       reach, getInteractionMode(), playerEntity, {
         nearerThan,
         doorBehind: doorDistanceOf(eye, dir, targets, interiorCtx.collider),   // TACT3d; AUDIT TACT C5: a DOOR behind him, never the shelf the ladder would open
+        behind: _pick,   // FB1012d ALLY-YIELDS: the ladder's winner (read when the arm runs) - my companion yields to it where it answers
         hud: (t) => say(t),
         modal: (t) => mountInterior(new ActionTextBox(String(t).split('\n'))),
         makeEnemiesHostile: () => makeEnemiesHostile(interiorEnemyDatabase()),
@@ -9369,7 +9376,11 @@ export function createWorldModes(host) {
     mapTableData: loc.mapTableData && { ...loc.mapTableData },
     dungeon: loc.dungeon && { ...loc.dungeon, blocks: loc.dungeon.blocks?.map((b) => ({ ...b })) },
   });
-  async function tryEnterDungeon(hit, entries, { preferEnterMarker = false, fromLoad = false } = {}) {
+  async function tryEnterDungeon(hit, entries, { preferEnterMarker = false, fromLoad = false, holdOpen = false } = {}) {
+    // HOLD-ONCE (2026-10-12, asked: "Let's make it where players outside of privateers hold cannot re enter"): online,
+    // Privateer's Hold is entered once - by the new game's start (or a save made inside it, or staff landing by a player
+    // there: `holdOpen`); its door, a Recall to an anchor set inside and a quest's transfer are refused. Offline, DFU's.
+    if (!fromLoad && !holdOpen && host.dungeonOnline?.() && isPrivateersHold(hit?.dfLocation)) { say(HOLD_ONCE_TEXT); return false; }
     return gatedTransition(async (live) => {   // AUDIT 68 X3-transition-build-race
       // PVPDUNGEONS: the zone's tier rules - the hub's word on my lock is awaited INSIDE the gate (AUDIT 68 X3: awaited
       // before it, a teleport, a recall or a load during the hub's four seconds did not stale the door, and the dungeon
@@ -9900,7 +9911,7 @@ export function createWorldModes(host) {
    *  candidates the exit landing is computed from. The classic start
    *  used to boot scenes/dungeon.js, which has no exit path at all, so
    *  Privateer's Hold was a sealed box: the whole reason this exists. */
-  async function startInDungeon({ locationKey = null, fromLoad = false } = {}) {
+  async function startInDungeon({ locationKey = null, fromLoad = false, holdOpen = false } = {}) {   // HOLD-ONCE: `holdOpen` - the new game's start and a staff landing may enter Privateer's Hold online
     const entries = doorTargets();
     // CRUX1 (2026-09-22, "the final dungeon mission is unbeatable"):
     // AND WITHOUT A DOOR. DFU's StartDungeonInterior(location) builds
@@ -9925,7 +9936,7 @@ export function createWorldModes(host) {
     // DE1: this is StartDungeonInterior, not the door transition - the
     // player is placed inside without ever walking through, so the
     // ENTER marker wins and the facing is plain north.
-    return tryEnterDungeon(hit, entries, { preferEnterMarker: true, fromLoad });   // MAP-KEEP: a save's own dungeon, entered on the load arm
+    return tryEnterDungeon(hit, entries, { preferEnterMarker: true, fromLoad, holdOpen });   // MAP-KEEP: a save's own dungeon, entered on the load arm
   }
 
   function tryExitDungeon({ pressCast = false, interact = false, actClick = false } = {}) {
@@ -9976,6 +9987,7 @@ export function createWorldModes(host) {
       reach, getInteractionMode(), playerEntity, {
         nearerThan,
         doorBehind: doorDistanceOf(eye, dir, targets, dungeonCtx.collider),   // AUDIT TACT C7: a castle's peaceful guard is no door either
+        behind: _pick,   // FB1012d ALLY-YIELDS: the ladder's winner, underground - my companion yields to it where it answers
         openCompanion: (rec) => !!host.openCompanionPack?.(rec),   // COMPANION-KIT: my companion's pack, underground
         openFate: (rec) => !!host.openRevenantFate?.(rec),   // REVENANT-FATE: a beaten revenant's choice, underground
         openLiving: (rec) => !!host.openLivingDiver?.(rec),   // LW14: a company of the living world's door, underground
@@ -12846,7 +12858,7 @@ export function createWorldModes(host) {
      *  caravanDecorDoc: the pieces as the save keeps them, unturned) - null anywhere else, a visit included. */
     myCaravanDecor() {
       if (mode !== 'interior' || !interiorCtx || !isCaravanRoom(interiorCabin) || privateVisitRoom) return null;
-      return caravanDecorDoc(turnCaravanScene({ decor: interiorDecor.list() }, interiorCabin.turn).decor);
+      return caravanDecorDoc(turnCaravanScene({ decor: interiorDecor.list() }, interiorCabin.turn).decor, interiorCtx.base?.hidden() ?? []);   // WAGONS2-BASE: and what I took out of the room - its keys need no turn
     },
     /** WAGONS2-VISIT: WHAT A CARAVAN'S OWNER PLACED, STOOD FOR ITS VISITOR - the document its room `room` said
      *  (systems/caravanVisit.js readCaravanDecor), turned with the caravan as it stands here and stood whole (the owner's
@@ -12854,6 +12866,7 @@ export function createWorldModes(host) {
     applyCaravanDecor(room, doc) {
       if (!caravanGuestHere() || !interiorCtx || room !== privateVisitRoom) return false;
       interiorDecor.set(turnCaravanScene({ decor: readCaravanDecor(doc) ?? [] }, -interiorCabin.turn).decor);
+      interiorCtx.base?.setHidden(readCaravanHidden(doc));   // WAGONS2-BASE: the room's own pieces its owner took out (the lantern and its light) are out for its guest too
       return true;
     },
     /** WAGONS2-VISIT: the caravan I visit has moved on or gone (net/caravanVisitLink.js) - stood outside behind its door,
@@ -12930,7 +12943,7 @@ export function createWorldModes(host) {
     // ONLINE1: what the host needs to name the room - the mounted dungeon's
     // location, the interior's building; null in the exterior
     // ARENA4: the floor's instance standing a relay's bout is that bout's room (`arena:b<id>`)
-    roomIdentity: () => (mode === 'dungeon' ? (isGateArena(dungeonLoc) ? { kind: 'gate', day: dungeonLoc.gate } : isSdRealm(dungeonLoc) ? { kind: 'sd', s: dungeonLoc.sdRealm } : isEgHall(dungeonLoc) ? { kind: 'eg', b: dungeonLoc.egBreach } : isArenaFloor(dungeonLoc) && dungeonLoc.arenaBout ? { kind: 'arena', o: dungeonLoc.arenaBout } : { kind: 'dungeon', mapId: dungeonLoc?.mapTableData?.mapId ?? null, regionIndex: dungeonLoc?.regionIndex ?? -1, name: dungeonLoc?.name ?? '', size: builtDungeonSize(dungeonLoc), ...(isTutorialHold(dungeonLoc) ? { solo: true } : {}) })   // WB3b: the court's room is its gate's own; SD-ONLINE: a dungeon's room is its layout's (the size it was BUILT at); HOLD-SOLO (FIELD BUGS 2026-10-07b): the tutorial dungeon is every character's own - `solo`, which world.js keys no room (AUDIT FB1007b H1: the shipped start's, never a setting's)
+    roomIdentity: () => (mode === 'dungeon' ? (isGateArena(dungeonLoc) ? { kind: 'gate', day: dungeonLoc.gate } : isSdRealm(dungeonLoc) ? { kind: 'sd', s: dungeonLoc.sdRealm } : isEgHall(dungeonLoc) ? { kind: 'eg', b: dungeonLoc.egBreach } : isArenaFloor(dungeonLoc) && dungeonLoc.arenaBout ? { kind: 'arena', o: dungeonLoc.arenaBout } : { kind: 'dungeon', mapId: dungeonLoc?.mapTableData?.mapId ?? null, regionIndex: dungeonLoc?.regionIndex ?? -1, name: dungeonLoc?.name ?? '', size: builtDungeonSize(dungeonLoc) })   // WB3b: the court's room is its gate's own; SD-ONLINE: a dungeon's room is its layout's (the size it was BUILT at); HOLD-SHARED (2026-10-12): Privateer's Hold keys its shared room as every dungeon does (HOLD-SOLO's `solo` reverted)
       : mode === 'interior' ? { kind: 'interior', buildingKey: interiorBuilding?.buildingKey ?? 0, layout: _visitLayout, ...(interiorCabin ? { boatUid: interiorCabin.uid } : {}), ...(_intShared?.owned ? { private: true, privateRoom: privateVisitRoom } : {}) } : null),   // personal interiors share presence in an owner-specific room, never world memory/loot
     get dungeonLocation() { return dungeonLoc; },   // B2: playerInside's dungeon arm
     /** X7: the Identify SPELL's window (Identify.cs:71-76 pushes the
@@ -14052,6 +14065,7 @@ export function createWorldModes(host) {
     enterCaravanRoom,   // WAGONS1
     tryEnter,
     exteriorActivationDistance,   // AUDIT 63 F33 (review): the rival distance the living-foe arm must beat
+    exteriorActivationHit,   // FB1012d ALLY-YIELDS: ...and its pick, reach and all, for the race's `next`
     exteriorHoverPick,   // WORLD-HOVER: the plaque's winner, raced exactly as the press's is
     exteriorHoverName,   // ...and what that winner is called
     openYardTrade,   // MERCHANT-YARDS: a yard's counter, opened from the street (scenes/world.js merchantYards' `open`)

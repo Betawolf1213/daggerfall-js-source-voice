@@ -223,8 +223,10 @@ the trample (`retire`), the probes.
   reverse - so every client walks the same way, `WAYS_PER_FRAME` (2) new pairs a frame at the least, and more while the
   frame's asking has taken under 2 ms (PERF-WAYS1, below); a new network clears the book
   and the host's trips with it (`generation`). Two players on different road networks see their travellers on their
-  own roads. `wayOf` lays it through its pixels' centres, which is the road itself; each end is trimmed by the town's
-  half-width and a block (`townTrim`), so a party walks out of the town's edge.
+  own roads. `wayOf` lays it through its pixels' centres, which is the road itself; each end is trimmed where the way
+  leaves the town's grid grown by half a block (`wayTrims`, `townExit` - WALL-WAY, `01-Overview/Field-Bugs-2026-10-12b.md`:
+  the radius `townTrim` set a diagonal way's party down inside the walls), so a party walks out past the town's walls;
+  the two ends are held to 0.4 of the way each only where they would meet.
 - **Caravans** (`formCaravans`), each a law of the trips alone: a merchant takes the town's sellswords UNDER CONTRACT
   to them - the town's sellswords dealt to its merchants in slot order, the first to the first, round again - their
   trip's own roll of up to `HIRE_MAX` (3) of them; a merchant's trips never overlap, so neither do their sellswords'.

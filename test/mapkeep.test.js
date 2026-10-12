@@ -49,8 +49,8 @@ test('MAP-KEEP: at "remember 0 dungeons" the store a load restored survives the 
 test('MAP-KEEP / THE HOSTS: the world host\'s load enters the saved dungeon on the load arm, through the door build', () => {
   assert.match(rd('src/scenes/world.js'), /modes\?\.startInDungeon\?\.\(\{ locationKey: extras\.locationKey, fromLoad: true \}\)/);
   const m = rd('src/scenes/worldModes.js');
-  assert.match(m, /async function startInDungeon\(\{ locationKey = null, fromLoad = false \} = \{\}\) \{/);
-  assert.match(m, /return tryEnterDungeon\(hit, entries, \{ preferEnterMarker: true, fromLoad \}\);/);
+  assert.match(m, /async function startInDungeon\(\{ locationKey = null, fromLoad = false, holdOpen = false \} = \{\}\) \{/);   // PIN MOVED (HOLD-ONCE): `holdOpen` beside it
+  assert.match(m, /return tryEnterDungeon\(hit, entries, \{ preferEnterMarker: true, fromLoad, holdOpen \}\);/);
   // PIN MOVED (WILD-SUITE): the door build is one gated arrow now - the zone's gate asked inside it (AUDIT 68 X3), handed
   // the load's flag too (a save's own hall is never refused at its door) - and the flag still rides to the build
   assert.match(m, /return gatedTransition\(async \(live\) => \{[^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*if \(host\.wildDungeonGate && !\(await host\.wildDungeonGate\(hit, fromLoad\)\)\) return false;\n\s*if \(!live\(\)\) return false;[^\n]*\n\s*return dungeonTransition\(hit, entries, preferEnterMarker, live, fromLoad\);/);

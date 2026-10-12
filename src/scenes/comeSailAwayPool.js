@@ -43,6 +43,7 @@ import { StaticBatchBuilder } from '../render/staticBatch.js';   // AUDIT NAV1 (
 import { instanceParticleSystems } from '../world/unityParticles.js';
 import { bakeSkinnedMesh, recalculateNormals, fixDeformationsTick } from '../world/skinnedBake.js';
 import { billboardSize } from '../world/rmbFlats.js';
+import { isNpcFlat } from '../world/npcFlatArchives.js';   // STAND-FLAT: a prefab's person - her crew, for the host's people lane
 import { GLOBAL_SCALE } from '../world/meshReader.js';
 import { multiply, identity } from '../world/mat4.js';
 import { spherePlanes, sphereInPlanes, transformSphere } from '../render/bounds.js';   // AUDIT NAV1 (#13): the boats culled as the world's meshes are
@@ -155,6 +156,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
   const bakes = new Map();       // FixDeformations script -> { gpu, positions, normals, loading, rig? (AUDIT GN2-RG1) }
   const _rigV = [0, 0, 0];
   const flats = new Map();       // billboard object -> batch
+  const crew = new Map();        // STAND-FLAT: billboard object -> its person ({ piece }), for a flat of a person's archive
   const warned = new Set();
   const warnOnce = (k, ...a) => { if (warned.has(k)) return; warned.add(k); log?.warn?.(...a); };
   // AUDIT PRE-MERGE 0928 R5: ONE WALK A FRAME. Each drawn boat's active objects and their world matrices, walked once by
@@ -395,7 +397,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     if (st?.mesh) renderer?.destroyMesh?.(st.mesh);
     stills.delete(boat);
     for (const n of boat.GameObject.walk()) {
-      const b = flats.get(n); if (b) { renderer?.destroyBillboardBatch?.(b); flats.delete(n); }
+      const b = flats.get(n); if (b) { renderer?.destroyBillboardBatch?.(b); flats.delete(n); crew.delete(n); }
       for (const c of n.components) if (c.type === 'FixDeformations') { const k = bakes.get(c); if (k?.gpu) renderer?.destroyMesh?.(k.gpu); bakes.delete(c); }
     }
   }
@@ -523,6 +525,10 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
           b = renderer.createBillboardBatch(bb.Summary.Archive, bb.Summary.Record, { w, h }, [[0, 0, 0]]);   // AUDIT PRE-MERGE 0928 R6: its centre stands still - the origin moves it, which SC1's origin test sees; a batch built dynamic is replayed by every lantern near it every frame
           b.origin = [0, 0, 0];
           flats.set(n, b);
+          // STAND-FLAT (bible/04-Characters/Morrowind-NPCs.md section 28): one of her crew - a person's flat - is a person
+          // the host's people lane can stand a body for, read as a placed figure is; her deed's uid (or her hull) and the
+          // flat's place in her walk name them, so a boat's crew is the same people on every machine
+          if (isNpcFlat(bb.Summary.Archive)) crew.set(n, { piece: { id: `csa:${boat.uid || `h${boat.hull}`}:${i}`, flat: [bb.Summary.Archive, bb.Summary.Record] } });
         }
         const s = n.lossyScaleOf(m);
         b.size = { w: w * Math.abs(s[0]), h: h * Math.abs(s[1]) };
@@ -532,9 +538,14 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
         seen.add(n);
       }
     }
-    for (const [n, b] of flats) if (!seen.has(n)) { renderer?.destroyBillboardBatch?.(b); flats.delete(n); }
+    for (const [n, b] of flats) if (!seen.has(n)) { renderer?.destroyBillboardBatch?.(b); flats.delete(n); crew.delete(n); }
   }
   const batches = () => [...flats.values()];
+  /** STAND-FLAT: each of the crews standing this frame - `fn(person, batch)`, the batch's origin their feet (its base),
+   *  its `conceal` their owner's look. */
+  function people(fn) {
+    for (const [n, f] of crew) { const b = flats.get(n); if (b) fn(f, b); }
+  }
 
   /**
    * The boats' meshes, in the host's world pass.
@@ -753,7 +764,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
   }
 
   return {
-    ensureModels, spawn, spawnNow, preload, ready: () => preloaded, remove, setVariant, frame, batches, draw, lights, offsetAll, destroyAll,
+    ensureModels, spawn, spawnNow, preload, ready: () => preloaded, remove, setVariant, frame, batches, people, draw, lights, offsetAll, destroyAll,
     deckOf,   // DECK-WALK
     hullRig,   // OWS2
     spawnPeerNow, spawnSeaNow,

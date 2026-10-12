@@ -497,7 +497,6 @@ export const TUTORIALS = Object.freeze([
     id: 'online', group: 'online', title: 'Playing Online', trigger: 'When you first play online.',
     body: [
       'Online, everyone shares the same world, time, weather and events. The game doesn\'t pause when you open the menu.',
-      'Your starting cave is yours alone. You meet other players once you leave it.',
     ],
   }),
   page({

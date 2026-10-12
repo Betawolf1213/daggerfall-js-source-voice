@@ -290,8 +290,8 @@
   {
     "name": "NAV1-no-disengage-hysteresis",
     "file": "src/systems/naval/navalAI.js",
-    "old": "      if (dist < (held ? see * DISENGAGE : see) && rank < enemyD) { enemy = c; enemyD = rank; }",
-    "new": "      if (dist < see && rank < enemyD) { enemy = c; enemyD = rank; }",
+    "old": "    if (dist < (held ? see * DISENGAGE : see) && hostile(ship, c, world) && !((ship.spare.get(c.id) ?? -Infinity) > ship.clock)) {",
+    "new": "    if (dist < see && hostile(ship, c, world) && !((ship.spare.get(c.id) ?? -Infinity) > ship.clock)) {",
     "tests": [
       "test/navaudit_captains.test.js"
     ]

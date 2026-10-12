@@ -3300,8 +3300,9 @@ function itemActs(picked, side, { qty = true } = {}) {
     acts.append(d);
   }
   // LOOT9 (the Loot arc): a laddered piece SALVAGED into Welkynd Shards (systems/reforge.js) - the Reforge's coin - asked
-  // first, as the dismantle is; never a worn one (taken off first), and a piece that will never break shows no button
-  if (side === 'local' && !line.equipped && salvageShards(picked) > 0 && !['off', 'aetheric', 'gilded', 'artifact', 'quest', 'bound'].includes(salvageRefusal(picked) ?? '')) {
+  // first, as the dismantle is; never a worn one (taken off first), and a piece that will never break shows no button -
+  // but one that wears Magic and never will (FB1012d SALVAGE-CLASSIC: DFU's own magic) shows it, and its press says why
+  if (side === 'local' && !line.equipped && (salvageShards(picked) > 0 || salvageRefusal(picked) === 'classic') && !['off', 'aetheric', 'gilded', 'artifact', 'quest', 'bound'].includes(salvageRefusal(picked) ?? '')) {
     const v = el('button', 'act', 'Salvage');
     v.onclick = () => askSalvage(picked);
     acts.append(v);
@@ -3406,10 +3407,12 @@ export const SALVAGE_ASK = (name, n) => [`Salvage ${name}?`, `It is gone for goo
 export const SALVAGED_LINE = (name, n) => `Salvaged: ${name}, for ${shardsText(n)}.`;
 /** AUDIT GEM: a piece holding a set gem is never salvaged with it (systems/reforge.js salvageRefusal 'gems'). */
 export const SALVAGE_GEMS = (name) => `${name} holds a gem - extract it at the Reforge, or unset it, first.`;
+/** FB1012d SALVAGE-CLASSIC: a piece that wears Magic the ladder never graded (systems/reforge.js salvageRefusal 'classic'). */
+export const SALVAGE_CLASSIC = (name) => `${name} will not break: its magic is classic, the kind the guilds sell and make. Welkynd Shards come only from a piece the loot ladder graded.`;
 function askSalvage(item) {
   hideTip(); closeMenu(); closeInfo(); closeDismantle();
   const name = itemLongName(item, { getQuest: deps.getQuest ?? null });
-  const refusedFor = (why) => { notice = why === 'locked' ? lockedText(name) : why === 'gems' ? SALVAGE_GEMS(name) : null; refresh(); render(); };   // AUDIT GEM: the gems, said
+  const refusedFor = (why) => { notice = why === 'locked' ? lockedText(name) : why === 'gems' ? SALVAGE_GEMS(name) : why === 'classic' ? SALVAGE_CLASSIC(name) : null; refresh(); render(); };   // AUDIT GEM: the gems, said; FB1012d: classic magic
   const why = salvageRefusal(item);
   if (why) { refusedFor(why); return; }
   const n = salvageShards(item);

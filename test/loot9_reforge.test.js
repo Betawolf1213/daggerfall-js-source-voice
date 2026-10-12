@@ -334,5 +334,7 @@ test('LOOT9: the pack card offers Salvage for a graded piece - asked first, Keep
       assert.equal(RF.shardsHeld(e.items), 3, 'into its shards');
     } finally { view.unmount(); }
   });
-  assert.match(read('src/ui/enhancedInventory.js'), /if \(side === 'local' && !line\.equipped && salvageShards\(picked\) > 0 && !\['off', 'aetheric', 'gilded', 'artifact', 'quest', 'bound'\]\.includes\(salvageRefusal\(picked\) \?\? ''\)\) \{/, 'never a worn piece, never one that will not break');
+  // PIN MOVED (SALVAGE-CLASSIC, bible/01-Overview/Field-Bugs-2026-10-12d.md): a piece that wears Magic and never breaks
+  // (DFU's own magic, salvageRefusal 'classic') shows the button too, and its press says why (test/fb1012d_salvageclassic.test.js)
+  assert.match(read('src/ui/enhancedInventory.js'), /if \(side === 'local' && !line\.equipped && \(salvageShards\(picked\) > 0 \|\| salvageRefusal\(picked\) === 'classic'\) && !\['off', 'aetheric', 'gilded', 'artifact', 'quest', 'bound'\]\.includes\(salvageRefusal\(picked\) \?\? ''\)\) \{/, 'never a worn piece, never one that will not break - but classic magic says why');
 });

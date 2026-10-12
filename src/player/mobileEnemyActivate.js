@@ -46,7 +46,7 @@
 // PlayerActivate alone and appears in no save record, so it lives on
 // the live foe entity and dies with the pool, as DFU's does.
 
-import { PICKPOCKET_DISTANCE, TREASURE_ACTIVATION_DISTANCE, TOO_FAR_AWAY_TEXT, pickFoeHit, DOOR_ACTIVATION_DISTANCE } from './activate.js';   // AUDIT WK-P6: a companion's pack is storage, at storage's reach
+import { PICKPOCKET_DISTANCE, TREASURE_ACTIVATION_DISTANCE, TOO_FAR_AWAY_TEXT, pickFoeHit, DOOR_ACTIVATION_DISTANCE, allyYields } from './activate.js';   // AUDIT WK-P6: a companion's pack is storage, at storage's reach; FB1012d ALLY-YIELDS: and he yields to what answers behind him
 import { setMidScreenText } from '../ui/midScreenText.js';   // AUDIT 64 F34: :834 is the HUD's centred label, not the popup queue
 import { PLAYER_TARGET, resetAllyTeamOnPlayerAttack } from '../characters/enemyTargets.js';   // AUDIT NAV2 F54: MakeEnemyHostileToAttacker's entity-side half
 import { enemyDisplayName } from '../characters/enemyBasics.js';
@@ -214,6 +214,12 @@ export function activateMobileEnemy(foe, distance, mode, player, {
  * @param deps.doorBehind  TACT3d: the distance of the door (or other
  *   activatable) the ladder would open behind the foe, Infinity for
  *   none - see `yieldsToDoor`.
+ * @param deps.behind  FB1012d ALLY-YIELDS: the ladder's own winner - the
+ *   pick the press takes when this arm passes, its `reach` beside its
+ *   distance (activationRace.js's `next` on the street, the ladder's
+ *   `_pick` in a building and underground), null for none. A companion
+ *   struck first passes the press to it when it answers from here
+ *   (activate.js `allyYields`); a host that hands none keeps him the hit.
  */
 export function tryMobileEnemyActivate(eye, dir, foes, collider, reach, mode, player, deps = {}) {
   const hit = pickFoeHit(eye, dir, foes, collider, reach);
@@ -221,6 +227,7 @@ export function tryMobileEnemyActivate(eye, dir, foes, collider, reach, mode, pl
   // :419 is reached only for the ray's OWN hit - a nearer activatable
   // means the enemy was never the thing the ray struck.
   if (!(hit.distance < (deps.nearerThan ?? Infinity))) return false;
+  if (allyYields(hit.foe, deps.behind)) return false;   // FB1012d ALLY-YIELDS: a companion passes the press to what answers behind him
   if (yieldsToDoor(hit.foe, deps.doorBehind, mode)) return false;   // TACT3d: the door behind takes the click
   return activateMobileEnemy(hit.foe, hit.distance, mode, player, deps);
 }
@@ -233,6 +240,10 @@ export function tryMobileEnemyActivate(eye, dir, foes, collider, reach, mode, pl
  * between the crosshair and a door within the door's own reach no
  * longer eats the click: the door opens. A hostile foe still takes it
  * (DFU's one ray), and with no door in reach behind, nothing changes.
+ * FB1012d ALLY-YIELDS: a companion is not passed by THIS law - his own
+ * yield (activate.js `allyYields`, asked first) is to what the ladder
+ * would take, so a door behind a nearer winner that only refuses (a
+ * headstone out of its 1.6) never takes his press.
  */
 export function yieldsToDoor(foe, doorBehind, mode = null) {
   if (!foe || foe.companion != null || mode === 'steal') return false;   // AUDIT TACT C5: my companion's pack, a pickpocket - asked of HIM

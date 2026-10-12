@@ -65,7 +65,7 @@ import { homeLookRecords } from '../world/homeLook.js';   // HOME-LOOK (AUDIT): 
 import { onPathTile } from '../player/exteriorSurface.js';   // FB1001 ROAD-LOT: PlayerMotor.OnPathTile - Daggerfall's own road tiles
 import { RMB_TILE_SIDE } from '../world/locationEntrance.js';   // FB1001 ROAD-LOT: RMBLayout.RMBTileSide, a ground tile's side
 import { TERRAIN_TILE_DIM } from '../world/terrainSurface.js';
-import { homeOutsideKept, homeYardWhere } from '../systems/onlineHomes.js';   // GUILD-YARD: a hall's keepers keep its outside
+import { homeOutsideKept, homeYardWhere, homeCandidate } from '../systems/onlineHomes.js';   // GUILD-YARD: a hall's keepers keep its outside
 import { homeDecorShown } from '../net/homeVoteLaw.js';   // HOME-VOTE: a shunned home's yard stands for its insiders alone
 import { createYardNature, isNaturePiece, yardNatureFlat, yardTreeSet } from './yardNature.js';   // DECOR-OUTDOOR: a yard's trees and plants, in its town's season; DECOR-LPT: as Low Poly Trees' own
 import { remapSubMeshes } from '../world/texRemap.js';   // DECOR-OUTDOOR: a yard's models in its town's climate
@@ -165,6 +165,9 @@ export const YARD_RETRY_MAX_MS = 300_000;
 export const yardRetryMs = (n) => Math.min(YARD_RETRY_MAX_MS, YARD_RETRY_MS * 2 ** Math.max(0, n - 1));
 /** How often the yards are brought in line with the town, seconds. */
 export const YARD_SYNC_S = 0.5;
+/** YARD-MERGE: how many yards' models are merged in one frame (decorRoom.js DECOR_MERGE_SETTLE_MS) - a town streaming in
+ *  stands every yard at once, and its merges are spread a frame each. */
+export const YARD_MERGES_A_FRAME = 1;
 /** What the decorator says of a piece off the lot, in the house, or on another building's ground. */
 export const YARD_OFF_LOT = 'Outside your lot - keep it within the marked edge.';
 export const YARD_IN_HOUSE = 'That is inside your house - place it in the yard around it.';
@@ -298,8 +301,12 @@ export function yardFootMeets(poly, r, pad = 0) {
  * of it nearer another building's ground than the house's own - the lot is the house grown YARD_MARGIN, and two houses'
  * lots overlap where they stand closer than twice that, so the ground between them is split down its middle (a tie the
  * house's). The marked edge is still the lot's rectangle.
+ * YARD-LINE (FIELD BUGS 2026-10-12b, "I am unable to build in about 50% of my yard. It says that it belongs to another
+ * property no matter what I do"): the midline is drawn to `lines` alone - the ground of the buildings that hold a lot of
+ * their own (yardLineHolder) - never to a shop's, a temple's or a tavern's, which hold no yard to split with; `others`
+ * (every building's ground) is still never stood on. Unpassed, `lines` is `others`, as HOME-LINE had it.
  */
-export function yardWhyNot(pos, lot, others = [], foot = [], roads = []) {
+export function yardWhyNot(pos, lot, others = [], foot = [], roads = [], lines = others) {
   if (!lot || !Array.isArray(pos)) return YARD_OFF_LOT;
   const [x, , z] = pos;
   const corners = (foot ?? []).map(([dx, dz]) => [x + dx, z + dz]);
@@ -310,11 +317,18 @@ export function yardWhyNot(pos, lot, others = [], foot = [], roads = []) {
   if ((lot.walls ?? [lot.house]).some(meets)) return YARD_IN_HOUSE;
   if ((others ?? []).some(meets)) return YARD_ON_OTHER;
   const own = lot.walls ?? [lot.house];
-  if (points.some(([px, pz]) => yardGapTo(others, px, pz) < yardGapTo(own, px, pz))) return YARD_ON_OTHER;   // HOME-LINE
+  if (points.some(([px, pz]) => yardGapTo(lines, px, pz) < yardGapTo(own, px, pz))) return YARD_ON_OTHER;   // HOME-LINE; YARD-LINE: a lot's holder's
   if ((roads ?? []).some((r) => yardFootMeets(ground, r, YARD_EDGE_PAD))) return YARD_ON_ROAD;
   if (!decorYardHighOk({ pos })) return YARD_TOO_HIGH;   // YARD-HEIGHT: never a tower - the service's own law
   return null;
 }
+/**
+ * YARD-LINE (FIELD BUGS 2026-10-12b): WHETHER A NEIGHBOURING BUILDING HOLDS A LOT the ground between it and a yard is split
+ * with - a building that could be a home (onlineHomes.js homeCandidate: Daggerfall's houses, a guild's hideout never), or
+ * one a home's record stands for (a guild hall's yard). `frame` is the town pixel's (scenes/world.js: its `type` and
+ * `faction`, the building's own record), `home` the town's home at its key, or null.
+ */
+export const yardLineHolder = (frame, bk, home = null) => !!home || homeCandidate({ buildingType: frame?.type, buildingKey: bk, factionId: frame?.faction ?? 0 });
 /**
  * FB1001 ROAD-LOT: THE ROAD UNDER A LOT - every ground tile of the built pixel `p` the lot reaches that is road or path,
  * as its square [x0, z0, x1, z1] in the frame of `at` (the building's own place, pixel-local). Road is what Daggerfall
@@ -455,6 +469,8 @@ export function createHomeYards(deps) {
   /** @type {Map<string, {pool: any, px: number, py: number, mapId: number, bk: number, t: number[], sig: string, src: any[] | null, srcSig: string, kept: boolean, lot: any, frame: any, entry: any, trees: Map<string, any>, treeSet: any}>} */
   const yards = new Map();
   const yardFigs = [];   // MWNPC18 (AUDIT MWNPC16-18 D4): figures()'s one list
+  let mergesLeft = 0;   // YARD-MERGE: this frame's merges still to make (draw refills it)
+  const merge = { take: () => (mergesLeft > 0 ? (mergesLeft--, true) : false), now };
   let syncIn = 0;
   /** @type {any} the owner's own yard the decorator stands in, or null */
   let cur = null;
@@ -525,6 +541,7 @@ export function createHomeYards(deps) {
       // YARD-LIGHT: a lamp lights as the town's (yardLampOf) - the room's machinery mounts it when its picture stands, moves
       // it with a recentre (restand) and takes it down with the piece; `lamps` reads them in the order the pieces stand
       lampOf: yardLampOf,
+      merge,   // YARD-MERGE: a yard's models one mesh once it settles, a frame's budget at a time
       flatAnims: () => entryOf(y)?.flatAnims ?? null,   // DECOR-OUTDOOR: a street's animal or flame moves as its town's own (the pixel's animator, ticked with it)
       prepareModel: (gpu) => climateOf(y, gpu),   // DECOR-OUTDOOR: its town's climate
       // DECOR-OUTDOOR: a tree or a plant in its town's season - the climate's own, drawn as its pixel draws its nature;
@@ -618,15 +635,20 @@ export function createHomeYards(deps) {
     }
     if (!best) return null;
     const { y, home } = best;
-    const others = [];
+    const others = [], lines = [];
     const p = deps.built?.()?.get?.(`${y.px},${y.py}`);
     for (const [bk, f] of p?.homeFrames ?? []) {
       if (bk === y.bk) continue;
       // FB1009 HOME-FOOT: a neighbour's ground is what its faces cover too (its box, where none are known)
       const ground = f.rects?.length ? f.rects : [[f.box[0], f.box[2], f.box[3], f.box[5]]];
-      for (const r of ground) others.push([r[0] - y.frame.at[0], r[1] - y.frame.at[2], r[2] - y.frame.at[0], r[3] - y.frame.at[2]]);
+      const holds = yardLineHolder(f, bk, deps.homes?.homeAt?.(y.mapId, bk) ?? null);   // YARD-LINE: the midline is a lot's holder's alone
+      for (const r of ground) {
+        const g = [r[0] - y.frame.at[0], r[1] - y.frame.at[2], r[2] - y.frame.at[0], r[3] - y.frame.at[2]];
+        others.push(g);
+        if (holds) lines.push(g);
+      }
     }
-    return { yard: y, others, roads: yardRoadsOf(p, y.frame.at, y.lot), hall: !!home.hall };   // FB1001 ROAD-LOT: the road under the lot; GUILD-YARD: a hall's
+    return { yard: y, others, lines, roads: yardRoadsOf(p, y.frame.at, y.lot), hall: !!home.hall };   // FB1001 ROAD-LOT: the road under the lot; GUILD-YARD: a hall's
   }
 
   // THE DECORATOR OUTSIDE: the room's own tool over the yard the owner stands on - its pool the yard's, its writes the
@@ -684,7 +706,7 @@ export function createHomeYards(deps) {
     openSlot: (o) => deps.openSlot?.(o), closeSlot: () => {},
     say: (l) => deps.say?.(l), refusal: (w) => deps.refusal?.(w) ?? null, now,
     // HOME-YARD: the lot - a piece off it refused, its edge marked
-    placeOk: (piece, foot) => (cur ? hallWords(yardWhyNot(piece.pos, cur.yard.lot, cur.others, foot, cur.roads)) : YARD_OFF_LOT),   // FB1001 ROAD-LOT: off the road
+    placeOk: (piece, foot) => (cur ? hallWords(yardWhyNot(piece.pos, cur.yard.lot, cur.others, foot, cur.roads, cur.lines)) : YARD_OFF_LOT),   // FB1001 ROAD-LOT: off the road
     lot: () => (cur ? yardLotQuads(cur.yard.lot, originOf(cur.yard), YARD_MARK_HIGH, cur.roads) : []),   // FB1001 ROAD-LOT: the edge along the road's side
     yardCap: DECOR_YARD_CAP,
     // HOME-LOOK: the house's outside, painted from the yard's panel
@@ -796,6 +818,7 @@ export function createHomeYards(deps) {
       let n = 0;
       const eye = deps.eye?.() ?? null;
       const cull = deps.cull ?? null;   // PERF-YARD: the host's view test, a piece's box at a time (decorRoom.js draw)
+      mergesLeft = YARD_MERGES_A_FRAME;   // YARD-MERGE: the frame's budget
       for (const y of yards.values()) {
         if (!nearEye(y, eye)) continue;   // YARD-RANGE: the player's distance for a stranger's, YARD_DRAW_M for one's own
         _eye = y === cur?.yard ? null : eye;   // YARD-RANGE: never the yard being placed in

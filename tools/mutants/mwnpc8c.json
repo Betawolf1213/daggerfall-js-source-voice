@@ -2,8 +2,8 @@
  {
   "name": "MWNPC8c-location-person-grouped",
   "file": "src/scenes/exterior.js",
-  "old": "      if (!_people.has(flat)) {\n        const key",
-  "new": "      if (true) {\n        const key",
+  "old": "      else if (!_people.has(flat)) {\n        const key",
+  "new": "      else if (true) {\n        const key",
   "tests": [
    "test/mwnpc8c_location.test.js",
    "test/dungeonquestclick.test.js"
@@ -52,8 +52,8 @@
  {
   "name": "MWNPC8c-location-cast-only-stale",
   "file": "src/scenes/exterior.js",
-  "old": "      else pn.standBatch.castOnly = false;\n    }\n    standPeople.draw",
-  "new": "    }\n    standPeople.draw",
+  "old": "      else pn.standBatch.castOnly = false;\n    }\n    // STAND-FLAT / STAND-HORSE (section 28)",
+  "new": "    }\n    // STAND-FLAT / STAND-HORSE (section 28)",
   "tests": [
    "test/mwnpc8c_location.test.js",
    "test/dungeonquestclick.test.js"

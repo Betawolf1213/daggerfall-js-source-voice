@@ -104,7 +104,7 @@ import { getPref, setPref } from '../systems/uiPrefs.js';
  * @property {(material: string, qty: number, counter?: string) => Promise<{ ok: boolean, text: string }>} [stock]   PROF3: the
  *   smith's stock (PROF4: and the furnisher's; PROF7: the Weavers' at the tailor's loom - `counter`)
  * @property {() => number} [heatBand]   PROF3: the heat's attribute band (recipeLaw heatBand)
- * @property {() => ({ kind: 'shop'|'home', fee: number }|null)} [workbench]   PROF4: the workbench the player stands at
+ * @property {() => ({ kind: 'shop'|'home', fee: number, who?: string, yard?: boolean }|null)} [workbench]   PROF4: the workbench the player stands at; CARP-YARD: a joinery's names its carpenter (`who`) and is a yard's (`yard`)
  * @property {() => number} [planeBand]   PROF4: the plane's attribute band (recipeLaw planeBand)
  * @property {() => number} [purse]   AUDIT 30 U13: the gold the player carries - a station's fee the purse cannot meet is
  *   not offered (the heat was struck, and then the smith refused)
@@ -1375,7 +1375,8 @@ function planeBoard(el, act, finish, rerender) {
  * PROF4: THE WORKBENCH - the sawing (a log to planks), and Carpentry's recipes by family and wood, each with its inputs
  * as the Stores hold them (a Joiner's half the planks; a Heartwood for one), the rank it asks and the odds; the
  * furnisher's Linen where a bed wants it (a Furniture Store's alone); Craft (the plane) and Quick craft. Only at a
- * workbench: a Furniture Store's, its fee a craft or a saw, or the player's own home's.
+ * workbench: a Furniture Store's, its fee a craft or a saw, or the player's own home's - CARP-YARD: or a joinery's in the
+ * street (systems/merchantYards.js YARD_BENCH: its carpenter paid the same fee; the landing a press on it makes).
  * @param {HTMLElement} detail @param {() => void} rerender @param {{ el: Function, divider: (w: string) => HTMLElement }} kit
  */
 function drawWorkbench(detail, rerender, { el, divider }) {
@@ -1383,15 +1384,16 @@ function drawWorkbench(detail, rerender, { el, divider }) {
   if (!p?.workbench || !p.craft || !p.smelt) return;
   const book = p.book;
   const bench = p.workbench();
-  detail.append(divider('The Workbench'));
+  detail.append(stationHead(divider, 'The Workbench', 'workbench'));   // CARP-YARD: a joinery's press lands here
   if (!bench) {
     _bench.act?.cancel(); _bench.act = null; _bench.actRecipe = null;
-    detail.append(el('p', 'px-note', `Carpentry is done at a workbench: a Furniture Store's (${WORKBENCH_FEE} gold a craft or a saw), or your own home's.`));
+    detail.append(el('p', 'px-note', `Carpentry is done at a workbench: a Furniture Store's or a joinery's (${WORKBENCH_FEE} gold a craft or a saw), or your own home's.`));
     return;
   }
   const rank = book.track('carpentry')?.rank ?? 0;
-  detail.append(el('p', 'px-note', `${bench.kind === 'shop' ? `The furnisher's workbench - ${bench.fee} gold a craft or a saw.` : 'Your workbench.'} ${professionName('carpentry')} ${rank} (${rankName(rank)}).`));
-  const short = purseShort(bench, 'furnisher', 'a craft or a saw');
+  const who = bench.who ?? 'furnisher';   // CARP-YARD: a joinery's carpenter
+  detail.append(el('p', 'px-note', `${bench.kind === 'shop' ? `The ${who}'s workbench - ${bench.fee} gold a craft or a saw.` : 'Your workbench.'} ${professionName('carpentry')} ${rank} (${rankName(rank)}).`));
+  const short = purseShort(bench, who, 'a craft or a saw');
   if (short) detail.append(el('p', 'px-note prof-short', short));
   // AUDIT 30 A2: Gentle acts switched on under a pass sets the plane down - nothing spent, the craft a plain one
   if (_bench.act && getPref('gentleActs') === true) { _bench.act.cancel(); _bench.act = null; _bench.actRecipe = null; _bench.word = 'You set the plane down; nothing is spent.'; }
@@ -1429,7 +1431,7 @@ function drawWorkbench(detail, rerender, { el, divider }) {
       const line = el('div', `prof-input${have >= inp.n ? '' : ' prof-short'}`);
       line.append(el('span', null, `${p.name(inp.key)} ${Math.min(have, inp.n)} / ${inp.n} (${have} stored)`));
       const sale = stockOf(inp.key);
-      if (sale?.counter === 'furnisher' && have < inp.n && bench.kind === 'shop') counterBuy(line, { el, p, state: _bench, rerender, key: inp.key, need: inp.n - have, sale, who: 'the furnisher' });   // COUNTER-GATES
+      if (sale?.counter === 'furnisher' && have < inp.n && bench.kind === 'shop' && !bench.yard) counterBuy(line, { el, p, state: _bench, rerender, key: inp.key, need: inp.n - have, sale, who: 'the furnisher' });   // COUNTER-GATES
       box.append(line);
     }
     const chain = chainNote(box, el, p, book, spends);   // CRAFT1: the works it runs first

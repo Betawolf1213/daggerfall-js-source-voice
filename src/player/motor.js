@@ -831,10 +831,23 @@ export class PlayerMotor {
    *  teleport would sweep the camera through the world for one frame;
    *  snapping is the honest picture. Recenters never reach this guard
    *  because offsetOrigin shifts both ends of the span. */
+  /** TV-SMOOTH (2026-10-12, Mac with a video: "the overworld traveling at high speed looks stuttery on the character"):
+   *  THE SNAP GUARD SCALES WITH THE STEP. Under an accelerated journey the step is FIXED_DT x the clock (TO1, update's
+   *  `step`), and one step of a body walking at x100 is 8 to 17 m - every step past SNAP_SPAN, so every span read as a
+   *  placement and the picture snapped to the raw feet: the body, the Overworld's camera and its ring moved only when a
+   *  step landed - one frame in two at 120 Hz, two steps in one when a frame ran long - the judder. A span is a
+   *  placement only past what the fastest body could walk in the last step (ODOMETER_MAX_SPEED, MOVE-REAL's own bound
+   *  for "faster than any body moves"), never under SNAP_SPAN: at x1 that is 1 m a step and SNAP_SPAN stands, exactly
+   *  as before. Squared, as the guards compare. */
+  _snapSpan2() {
+    const s = Math.max(PlayerMotor.SNAP_SPAN, ODOMETER_MAX_SPEED * (this._spanStep ?? FIXED_DT));
+    return s * s;
+  }
+
   eyeAt(alpha = this._alpha) {
     const p = this.pos, q = this._prevPos;
     const dx = p[0] - q[0], dy = p[1] - q[1], dz = p[2] - q[2];
-    if (dx * dx + dy * dy + dz * dz > PlayerMotor.SNAP_SPAN * PlayerMotor.SNAP_SPAN) { this._eyeFeetY = null; return this.eye; }   // MAC1: a placement primes the eye filter afresh
+    if (dx * dx + dy * dy + dz * dz > this._snapSpan2()) { this._eyeFeetY = null; return this.eye; }   // MAC1: a placement primes the eye filter afresh
     const a = Math.max(0, Math.min(1, alpha));
     const b = this.bobOffset;
     // MAC1: the height is the low-passed interpolated feet (`_smoothEyeFeet`)
@@ -875,7 +888,7 @@ export class PlayerMotor {
   feetAt(alpha = this._alpha) {
     const p = this.pos, q = this._prevPos;
     const dx = p[0] - q[0], dy = p[1] - q[1], dz = p[2] - q[2];
-    if (dx * dx + dy * dy + dz * dz > PlayerMotor.SNAP_SPAN * PlayerMotor.SNAP_SPAN) { this._eyeFeetY = null; return [p[0], p[1], p[2]]; }   // MAC1: a placement primes the eye filter afresh
+    if (dx * dx + dy * dy + dz * dz > this._snapSpan2()) { this._eyeFeetY = null; return [p[0], p[1], p[2]]; }   // MAC1: a placement primes the eye filter afresh
     const a = Math.max(0, Math.min(1, alpha));
     const feetY = (this._eyeFeetY != null && alpha === this._alpha) ? this._eyeFeetY : q[1] + dy * a;
     return [q[0] + dx * a, feetY, q[2] + dz * a];
@@ -892,7 +905,7 @@ export class PlayerMotor {
     if (this.drawFeet) return [this.drawFeet[0], this.drawFeet[1], this.drawFeet[2]];   // WAGONS2: seated in a wagon drawn grown under the Overworld, the body is drawn on its seat there (scenes/world.js)
     const p = this.pos, q = this._prevPos;
     const dx = p[0] - q[0], dy = p[1] - q[1], dz = p[2] - q[2];
-    if (dx * dx + dy * dy + dz * dz > PlayerMotor.SNAP_SPAN * PlayerMotor.SNAP_SPAN) return [p[0], p[1], p[2]];
+    if (dx * dx + dy * dy + dz * dz > this._snapSpan2()) return [p[0], p[1], p[2]];
     const a = Math.max(0, Math.min(1, alpha));
     return [q[0] + dx * a, q[1] + dy * a, q[2] + dz * a];
   }
@@ -1567,6 +1580,7 @@ export class PlayerMotor {
     // is exactly FIXED_DT and nothing changes.
     const step = FIXED_DT * scale;
     this._acc = (this._acc ?? 0) + frameDt;
+    if (this._acc >= step) this._spanStep = step;   // TV-SMOOTH: the span the reads lerp across is a step of THIS length
     const moveInput = this._downLeft > 0 ? { ...input, forward: 0, strafe: 0, back: false, jump: false, autoRun: false, up: false, down: false } : input;   // TELL6e: knocked down - no move
     while (this._acc >= step) {
       this._acc -= step;

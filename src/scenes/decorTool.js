@@ -900,20 +900,20 @@ export function createDecorTool(deps) {
           p.flatSize = { ...own.size };
           p.mirrors = own.mirrors !== false;   // a tree turns in earnest - its picture never mirrors
           p.release = own.release ?? null;
-          p.placer = createDecorPlacer(entry, { radius, from: editing, free });
+          p.placer = createDecorPlacer(entry, { radius, from: editing, free, flat: p.flatSize });   // WALL-CLEAR: how far it reaches into a wall
           if (renderer?.createBillboardBatch) p.batch = renderer.createBillboardBatch(own.archive, own.key, { ...p.flatSize }, [[0, 0, 0]]);
           return;
         }
         if (pic) {
           p.flatSize = { w: pic.w, h: pic.h };
-          p.placer = createDecorPlacer(entry, { radius, from: editing, free });
+          p.placer = createDecorPlacer(entry, { radius, from: editing, free, flat: p.flatSize });   // WALL-CLEAR: how far it reaches into a wall
           if (renderer?.createBillboardBatch) p.batch = renderer.createBillboardBatch(MW_STAND_ARCHIVE, pic.key, { ...p.flatSize }, [[0, 0, 0]]);
           return;
         }
         if (!t || !(gr < t.recordCount)) return;
         deps.uploadRecord?.(ga, gr);
         p.flatSize = billboardSize(t, gr);
-        p.placer = createDecorPlacer(entry, { radius, from: editing, free });
+        p.placer = createDecorPlacer(entry, { radius, from: editing, free, flat: p.flatSize });   // WALL-CLEAR: how far it reaches into a wall
         if (renderer?.createBillboardBatch) p.batch = renderer.createBillboardBatch(ga, gr, { ...p.flatSize }, [[0, 0, 0]]);
       }, () => {});
     }

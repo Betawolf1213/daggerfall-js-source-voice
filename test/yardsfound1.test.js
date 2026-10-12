@@ -69,7 +69,7 @@ test('YARDS-FOUND THE DIRECTORY\'S ROWS: each yard a row of its town\'s talk dir
   assert.notEqual(rows[0].buildingKey, rows[1].buildingKey);
   assert.deepEqual(yardDirectoryRows([{ kind: 'barn', x: 1, z: 1 }, null]), []);
   assert.deepEqual(yardDirectoryRows(null), []);
-  assert.deepEqual(YARD_TALK_GROUPS, { stable: 'Stables', transport: 'Wagon yards' });
+  assert.deepEqual(YARD_TALK_GROUPS, { stable: 'Stables', transport: 'Wagon yards', carpenter: 'Carpenters' });   // PIN MOVED (CARP-YARD, 2026-10-12): the joinery's group
 });
 
 test('YARDS-FOUND THE WHERE-IS PAGE: the town\'s Stable and Wagon Yard each their own group after the shops\' - its Previous List head, its yard asked as a building (LocalBuilding, its key) - and before the General section and Regional; a town with none has neither group, and the palace still joins General (mutants: the yards ungrouped)', () => {

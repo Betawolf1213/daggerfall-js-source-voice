@@ -61,6 +61,19 @@ export const TRAVEL_OPTIONS_VENDOR = 'travel-options';
 /** RATE-LAW: the route legs whose ground is a road - a road, or a track (travelRoute.js roadShare's own pair). */
 export const ROAD_LEG_KINDS = Object.freeze(['road', 'track']);
 
+/** ROAD-BRIDGE (2026-10-12, Mac's video: "sometimes your multiplier slows down randomly without an enemy nearby"): a
+ *  road's route can step off its painted pixels for ONE pixel - a bend the network draws as a diagonal gap, a crossing
+ *  whose cell holds no road bit - and that single open leg, a road leg on each side, dropped the clock from x100 to x60
+ *  and back within a second or two. The traveller never left the road; the route's pixels did. One open leg between two
+ *  road legs, one map pixel from the leg before it, is the road's. A longer open stretch, or the last stretch to a spot,
+ *  is still the open ground's. */
+export function bridgedRoadLeg(legs, i) {
+  const leg = legs?.[i], prev = legs?.[i - 1], next = legs?.[i + 1];
+  if (!leg || leg.kind !== 'open' || !prev || !next) return false;
+  if (!ROAD_LEG_KINDS.includes(prev.kind) || !ROAD_LEG_KINDS.includes(next.kind)) return false;
+  return Math.max(Math.abs(leg.x - prev.x), Math.abs(leg.y - prev.y)) <= 1;
+}
+
 /* KB1: :132's six follow keys, and the custom bind past them, are the registry's FollowPaths action now
  * (systems/inputActions.js MOD_ACTIONS carries the six, for the one-time carry of a player's old choice) - the
  * key is bound in Controls, beside every other key, and read with `pressed` like them. */
@@ -692,8 +705,9 @@ export function createTravelOptions(deps = {}) {
       // AUDIT-D1/D2: the last stretch to a SPOT aims at the spot itself, off its pixel's step wherever the spot lies (the
       // road's x100 to a camp half a pixel from the road), and a route of no legs is a straight walk - the host's lanes say
       if (r.point && r.i >= r.legs.length - 1) return !!deps.onRoad?.();
-      const leg = r.legs[Math.min(r.i, r.legs.length - 1)];
-      return !!leg && ROAD_LEG_KINDS.includes(leg.kind);
+      const at = Math.min(r.i, r.legs.length - 1);
+      const leg = r.legs[at];
+      return !!leg && (ROAD_LEG_KINDS.includes(leg.kind) || bridgedRoadLeg(r.legs, at));   // ROAD-BRIDGE
     }
     if (st.walk === 'path' || st.walk === 'ring') return true;
     return !!deps.onRoad?.();

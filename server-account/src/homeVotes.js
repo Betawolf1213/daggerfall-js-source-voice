@@ -55,7 +55,7 @@ export async function homeScore(db, mapId, buildingKey) {
  * AUDIT HOME-VOTE A3: WHETHER A HOME'S DECOR IS SHOWN TO THE ACCOUNT `playerId` - by the service, so a build from
  * before HOME-VOTE (a desktop release not yet updated) or a client that ignores the law shows a shunned home's decor
  * no more than the law does (net/homeVoteLaw.js homeDecorShown): to its insiders always, to anyone else unless its votes
- * run below zero. A building that is no home shows what stands.
+ * run down to HOME_SHUN_AT (HOME-SHUN). A building that is no home shows what stands.
  */
 export async function homeShownTo(db, mapId, buildingKey, playerId) {
   const r = await db.prepare(`SELECT h.score AS score, ${INSIDER} AS insider FROM homes h WHERE h.map_id = ? AND h.building_key = ?`)
