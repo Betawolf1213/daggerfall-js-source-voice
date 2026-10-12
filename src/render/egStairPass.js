@@ -65,7 +65,7 @@ vec3 stairScene(vec2 p, float t, int b, float mode) {
   if (mode < 0.5) {
     // THE FALL: the deep rising to meet the faller, embers streaking up past the eye, the underside climbing away
     float k = fallen(t);
-    c += DEEP[b] * 0.35 * k * smoothstep(0.0, -1.0, e);
+    c += DEEP[b] * 0.35 * k * smoothstep(0.0, 1.0, -e);   // never a reversed edge (SD20c V14)
     vec2 g = vec2(p.x * 26.0, e * 6.0 - t * ${f4(EG_STAIR_LOOK.streak * 6)});
     float r = h21(floor(g));
     if (r > 0.9 && abs(fract(g.x) - 0.5) < 0.08) c += DEEP[b] * 0.7 * fract(g.y);

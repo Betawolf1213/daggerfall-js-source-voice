@@ -335,8 +335,8 @@
   {
     "name": "EGZ-the-deep-never-rises",
     "file": "src/render/egStairPass.js",
-    "old": "c += DEEP[b] * 0.35 * k * smoothstep(0.0, -1.0, e);",
-    "new": "c += DEEP[b] * 0.35 * smoothstep(0.0, -1.0, e);",
+    "old": "c += DEEP[b] * 0.35 * k * smoothstep(0.0, 1.0, -e);",
+    "new": "c += DEEP[b] * 0.35 * smoothstep(0.0, 1.0, -e);",
     "tests": [
       "test/egz_stair.test.js"
     ]
