@@ -30,6 +30,11 @@
 //     to a relay that counts it, and THE RELAY'S COUNT'S FALL OF ME (`bd`) - in the Spire a fall, never a death: the
 //     witness, as the Hour's bossCountFell is its one life; RIDDEN POSES - my pose's `pl` on a moving piece (`ridePl`,
 //     net/online.js `poseRide`) and a peer's drawn on its piece at my clock (`rideDraw`, net/online.js `rideAt`).
+//   EG-G1 (2026-10-12, sections 27 and 25.7): THE HUD, THE BEATS AND THE FIRST BREACH - the seams that feed them: the
+//     Spire's HUD by form factor and its count chip (ui/egSpireHud.js), the arrival card, the door's marker, the beats'
+//     sounds and lines and the first-time lines (ui/egBeats.js), the party rows (ui/egParty.js - the party panel's
+//     `setSpire`), the pad's d-pad and the touch buttons for the panel and the witness, the haptics, the danger palette
+//     and reduced motion (ui/egAccess.js), and THE RECAP whole (the last five kept).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember } from '../net/egLink.js';
@@ -51,6 +56,16 @@ import { egClockNew, egClockDue, egClockHeard, egClockOffset, egClockHalfRtt } f
 import { bodySayer } from '../net/bossBody.js';   // EG-H1: my body, in my own word
 import { egRideOf, egRideAt } from '../net/egFair.js';   // EG-H1: RIDDEN POSES
 import { EG_SWAP_WAIT_MS } from './egSwap.js';   // EG-H3 (EG10): how long a new circle's step waits on its build
+// EG-G1: THE HUD, THE BEATS AND THE FIRST BREACH (bible/11-Multiplayer/Elite-Gates.md section 27)
+import { egSpireHudModel, drawEgSpireHud, egArrivalCard, egArrivalShown, drawEgArrivalCard, egFormFactor, egGainText, egPressInForce, egChipWarnings, egDoorMarker, egPadUp, egPadAct, egPadPrompts, EG_PAD_DIRS, EG_GAIN_MS, EG_CHIP_WARNINGS } from '../ui/egSpireHud.js';
+import { egBeatMemo, egBeatWatch, egBeatPlan, egFirstDue, egRehearsalDue, egFirstRead, egFirstWrite, egBuzz, egBeatUnder, egPerilsNew, egRuneChime, EG_PRES_TEXT, EG_BEAT_SOUNDS } from '../ui/egBeats.js';
+import { egAbsentStep, egPartyRows, egPartyDeco, egRoadOf, EG_NUMERALS } from '../ui/egParty.js';
+import { egAccessNow } from '../ui/egAccess.js';
+import { egRecapKeep, egAskText } from '../ui/egHud.js';
+import { EG_LORDS, EG_LAST_WORD_MS } from '../net/egLaw.js';
+import { isEnhanced } from '../systems/uiSkin.js';
+import { isTouchDevice } from '../ui/touchDevice.js';
+import { getPref } from '../systems/uiPrefs.js';
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -70,7 +85,7 @@ export const EG_HOME_CONFIRM_MS = 6000;
 /** The end's words, by why it ended. */
 export const EG_END_TEXT = Object.freeze({
   fall: EG_TEXT.fallen, home: 'You walk home. The Redoubts you took are kept.', tear: EG_TEXT.torn,
-  wipe: 'The company has fallen. The breach closes.', last: "The Spire's last word: the breach closes.",
+  wipe: 'The company has fallen. The breach closes.', last: EG_PRES_TEXT.lastWord,   // EG-G1: the beats' own words (section 27.5)
   empty: 'Nobody answered the call. The breach closes.', gone: 'Nobody stayed. The breach closes.',
   rehearsal: EG_TEXT.rehearsalDone, void: 'The breach failed to hold. Your key is returned.', forsake: 'You forsake the breach.',
   seal: 'The way down is sealed. The halls are yours.',
@@ -124,10 +139,10 @@ function requestId() {
  *   say: (text: string) => void, mid?: (text: string) => void, veil?: () => any, site: () => any, wire: () => any, landAt: (l: any) => boolean,
  *   hurt: (n: number) => void, store?: any, saved?: () => void, hudHidden?: () => boolean, fight?: (link: any) => any, renderer?: any, audio?: any,
  *   peers?: () => { sub: string, pos: number[] }[], heal?: ((p: number, why: string) => void) | null,
- *   paid?: ((c: any, data: any) => void) | null }} deps
+ *   paid?: ((c: any, data: any) => void) | null, win?: any }} deps
  */
 export function createEgClient({ modes, online, hub, account, now: hostNow, entity, player, cam, say, mid = () => {}, veil = () => null, site, wire, landAt, hurt,
-  store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null, peers = () => [], heal = null, paid = null }) {
+  store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null, peers = () => [], heal = null, paid = null, win = globalThis.window }) {
   // EG-H1: THE SHARED CLOCK, CORRECTED (section 10.8; net/egClock.js) - the host's clock until the room has answered a ping,
   // then this machine's wall clock plus the median offset; the breach's link, its fight and every time here read it
   const clock = egClockNew();
@@ -354,15 +369,15 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (mine && !mine.in && admit?.b === E.b && admit.z && o?.welcomes !== inFor && o?.sendEg?.('in', { z: admit.z, lv: Math.max(1, entity.level | 0) })) inFor = o.welcomes;
     if (mine && mine.forsaken) { if (!leaving) { witness = null; walkOut(EG_END_TEXT.forsake); } return; }
     if (mine && !mine.alive && !witness && !leaving) enterWitness(t, false);
-    if (mine && mine.home) { witness = null; walkOut(null); return; }
+    if (mine && mine.home) { witness = null; if (!leaving && endSeen !== 'home') { endSeen = 'home'; recap = egRecapModel(E, me(), log, t, { whyText: EG_END_TEXT.home, why: 'home' }); recapUntil = Date.now() + 30_000; recapOpened(); } walkOut(null); return; }   // EG-G1: a member who walks home reads the recap too (section 27.6)
     if (E.end) {
-      if (endSeen !== E.end) { endSeen = E.end; endAt = t; mid(EG_END_TEXT[E.end] ?? EG_TEXT.ended); recap = egRecapModel(E, me(), log, t); recapUntil = Date.now() + 30_000; }
+      if (endSeen !== E.end) { endSeen = E.end; endAt = t; mid(EG_END_TEXT[E.end] ?? EG_TEXT.ended); recap = egRecapModel(E, me(), log, t, { whyText: EG_END_TEXT[E.end] ?? '' }); recapUntil = Date.now() + 30_000; recapOpened(); }
       if (t - endAt >= EG_END_WALK_MS) { if (witness) { witness = null; entity.health = Math.max(1, entity.health); } walkOut(null); }
       return;
     }
     if (!(E.h > 0)) return;
     // THE RECAP's log: each hall the company stood in, its glyph and its falls
-    if (E.h !== logH) { logH = E.h; const sp = egHallOf(E.seed, E.h, E.geo ?? 0); log.push({ h: E.h, glyph: KIND_GLYPH[sp.kind] ?? '?', lord: sp.lord, fall: false }); if (log.length > 200) log.shift(); }
+    if (E.h !== logH) { logH = E.h; const sp = egHallOf(E.seed, E.h, E.geo ?? 0); log.push({ h: E.h, glyph: KIND_GLYPH[sp.kind] ?? '?', lord: sp.lord, lordName: sp.kind === 'court' ? EG_LORDS[sp.lord]?.name ?? '' : '', fall: false }); if (log.length > 200) log.shift(); }
     // THE POTION LAW: two restoring potions a hall, refilled at each wake and at the rest
     if ((E.sg === 'trial' || E.sg === 'rest') && potionHall !== `${E.h}:${E.sg === 'rest' ? 'r' : 't'}`) { potionHall = `${E.h}:${E.sg === 'rest' ? 'r' : 't'}`; potions = EG_POTIONS_PER_HALL; }
     const c = egCircleOfHall(E.h);
@@ -382,7 +397,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     }
     if (E.sg !== 'closing') downAt = -Infinity;
     // THE REDOUBT: the company healed once, the way home stood at the Court's heart through the rest
-    if (E.sg === 'rest') { if (rdSeen !== E.h) { rdSeen = E.h; mid(`${EG_TEXT.redoubt(E.rd)}. ${EG_TEXT.rest}`); say(`${EG_TEXT.redoubt(E.rd)} taken. Choose a Vestige; the way home stands at the Court's heart; the stair down opens when the rest ends.`); } standDoor(E); }
+    if (E.sg === 'rest') { if (rdSeen !== E.h) { rdSeen = E.h; say(`${EG_TEXT.redoubt(E.rd)} taken. Choose a Vestige; the way home stands at the Court's heart; the stair down opens when the rest ends.`); } standDoor(E); }
     else if (door) dropDoor();
   }
 
@@ -500,7 +515,136 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     player.pos[0] = q[0]; player.pos[2] = q[2]; player._airVelX = 0; player._airVelZ = 0;
   }
 
-  return {
+  // ── EG-G1: THE HUD, THE BEATS AND THE FIRST BREACH (section 27) ────────────────────────────────────────────
+  /** the beats' watch, the device's first-time bits, the warnings said this breach, who is unseen, the perils and the
+   *  Beat already pulsed, a gain in flight, a teaching line, the live line, the arrival card, the pad's choice, the
+   *  folded decrees, the recap's Reliquaries opened so far */
+  const pres = { memo: egBeatMemo(), bits: -1, said: new Set(), b: null, absent: new Map(), perils: new Set(), perilH: 0, beatCycle: -1,
+    gain: null, first: '', firstAt: 0, live: '', card: null, cardH: 0, cardAt: 0, cardFirst: true, prevSp: -1, focus: 0, foldOpen: false, rel: 0, relAt: 0, touch: /** @type {boolean|null} */ (null) };
+  /** How long a teaching line stands under the objective (ms). */
+  const FIRST_SHOW_MS = 9000;
+  const playSound = (S) => { if (!S?.rec && S?.rec !== 0) return; try { audio?.playOneShot?.(S.rec, S.vol, S.pitch); } catch { /* a sound is never the breach */ } };
+  /** One beat (section 27.5): its sound, its line on the screen and in the chat where nobody says it already. */
+  function beatNow(k, w = {}) {
+    const plan = egBeatPlan(k, w);
+    playSound(plan.sound);
+    if (plan.screen) mid(plan.screen);
+    if (plan.chat) say(plan.chat);
+    const words = plan.screen ?? plan.chat;
+    if (words) pres.live = words;
+    return plan;
+  }
+  /** THE FIRST BREACH: each line due, once a device - in the chat and under the objective. */
+  function teach(keys) {
+    if (!keys.length) return;
+    if (pres.bits < 0) pres.bits = egFirstRead(store);
+    const { due, bits } = egFirstDue(pres.bits, keys);
+    if (!due.length) return;
+    pres.bits = bits; egFirstWrite(store, bits);
+    for (const line of due) say(line);
+    pres.first = due.at(-1); pres.firstAt = now(); pres.live = pres.first;
+  }
+  function castBackBeat(cost) {
+    if (cost) beatNow('castBack'); else playSound(EG_BEAT_SOUNDS.rewind);
+    teach(['void']);
+  }
+  /** The recap's Reliquaries open one each 400 ms, each with the Rare chime (section 27.6); the run kept. */
+  function recapOpened() { pres.rel = 0; pres.relAt = Date.now(); egRecapKeep(store, recap); }
+  /** My feet in the hall's frame, or null. */
+  function feetInHall(E) {
+    const at = standing();
+    if (!at || !(E.h > 0) || at.slot !== egSlotOfHall(E.h)) return null;
+    const spec = egHallOf(E.seed, E.h, E.geo ?? 0), y = dungeonToRealm(...player.pos)[1];
+    return { spec, x: egLocalX(spec, at.sx), y, z: at.z };
+  }
+  /** The choices the pad moves among: the offer's cards, else the newest open choice's options. */
+  function choices(E) {
+    if (E.offer?.v?.length) return { kind: 'offer', n: E.offer.v.length, ask: null };
+    const open = (E.as ?? []).filter((q) => q[2] > now());
+    const a = open.at(-1);
+    return a ? { kind: 'ask', n: egAskText(a[0], a[1]).opts.length, ask: a } : { kind: null, n: 0, ask: null };
+  }
+  const padCtx = () => { const E = link.state(); return { recap: !!recap, panel: inSpire() && !E.end && choices(E).n > 0, witness: inSpire() && !!witness }; };
+  const hudScaleNow = () => { try { return /** @type {any} */ (globalThis.document?.querySelector?.('.hud'))?.style?.getPropertyValue?.('--hud-scale') || ''; } catch { return ''; } };
+  const rgbCss = (c) => `rgb(${Math.round(c[0] * 255)}, ${Math.round(c[1] * 255)}, ${Math.round(c[2] * 255)})`;
+  /** One frame of the Spire's presentation (after the halls' and the fight's). */
+  function presFrame(E, t) {
+    if (pres.b !== E.b) { pres.b = E.b; pres.said = new Set(); pres.cardFirst = true; pres.cardH = 0; pres.prevSp = -1; pres.absent = new Map(); }
+    // THE BEATS and the first-time lines they bring due
+    const { beats, firsts, runes } = egBeatWatch(pres.memo, E, me());
+    for (const pt of runes) { playSound(egRuneChime(pt)); pres.live = `Rune ${EG_NUMERALS[pt] ?? pt}`; }   // THE EXAMINATION HEARD (section 25.7)
+    for (const b of beats) {
+      beatNow(b.k, b);
+      if (b.k === 'redoubt' && E.redoubt) { const text = egGainText(E.redoubt, { press: egPressInForce(E), leftAfter: E.redoubt.cl ?? 0, lastWordLeft: E.op + EG_LAST_WORD_MS - (E.redoubt.at ?? t) }); if (text) pres.gain = { text, at: t }; }
+      if (b.k === 'goldRun') pres.gain = { text: EG_PRES_TEXT.gain('1:00', ''), at: t };
+    }
+    teach(firsts);
+    if (pres.prevSp >= 0 && (E.sp ?? 0) > pres.prevSp) pres.gain = { text: EG_PRES_TEXT.surplus, blue: true, at: t };
+    pres.prevSp = E.sp ?? 0;
+    // THE REHEARSAL's teaching, once a device
+    if (E.rh && E.wk > 0 && E.sg === 'trial') {
+      if (pres.bits < 0) pres.bits = egFirstRead(store);
+      const r = egRehearsalDue(pres.bits);
+      if (r.line) { pres.bits = r.bits; egFirstWrite(store, r.bits); say(r.line); pres.first = r.line; pres.firstAt = t; }
+    }
+    // THE COUNT CHIP's warnings, each once a count
+    for (const k of egChipWarnings(pres.said, E, t)) {
+      const W = EG_CHIP_WARNINGS[k];
+      if (W.toll) playSound(EG_BEAT_SOUNDS.toll);
+      if (W.words) { const line = W.words(); mid(line); say(line); pres.live = line; }
+    }
+    // THE ARRIVAL CARD
+    if (E.h > 0 && E.h !== pres.cardH && (E.sg === 'arrive' || E.sg === 'trial')) { pres.cardH = E.h; pres.cardAt = t; pres.card = egArrivalCard(E, { first: pres.cardFirst }); pres.cardFirst = false; if (pres.card) pres.live = `${pres.card.main}. ${pres.card.sub}`; }
+    const acc = egAccessNow(win);
+    drawEgArrivalCard(egArrivalShown(pres.card, pres.cardAt, t), { hidden: hudHidden(), still: acc.still });
+    // THE PARTY ROWS' absent ring: who of the company this screen holds no pose of
+    pres.absent = egAbsentStep(pres.absent, E, me(), new Set(peers().map((q) => q.sub)), t);
+    // THE TOUCH OF IT: the Beat underfoot in its last 0.4 s, a blow newly aimed at my feet
+    const F = feetInHall(E);
+    const buzzOn = !!getPref('touchHaptics');
+    if (pres.perilH !== E.h) { pres.perilH = E.h; pres.perils.clear(); }
+    if (F && !witness) {
+      const cyc = egBeatUnder(F.spec, F.x, F.y, F.z, t / 1000);
+      if (cyc >= 0 && cyc !== pres.beatCycle) { pres.beatCycle = cyc; egBuzz('beat', { on: buzzOn }); }
+      if (E.fight?.h === E.h && egPerilsNew(E.fight.blows, F.x, F.z, pres.perils, t).length) egBuzz('peril', { on: buzzOn });
+    }
+    // THE DOOR's marker, while the way down stands open
+    const door = F && E.sg === 'closing' && F.spec.end && !witness ? egDoorMarker({ x: F.x, z: F.z }, F.spec.end, cam?.yaw ?? 0) : null;
+    // THE HUD
+    const ff = egFormFactor({ w: win?.innerWidth ?? 1280, h: win?.innerHeight ?? 720 });
+    const P = choices(E);
+    pres.focus = P.n > 0 ? Math.min(pres.focus, P.n - 1) : 0;
+    const model = egSpireHudModel(E, me(), t, { ff, witness: !!witness, potions, gain: pres.gain && t - pres.gain.at < EG_GAIN_MS ? pres.gain : null,
+      first: pres.first && t - pres.firstAt < FIRST_SHOW_MS ? pres.first : '', door, live: pres.live, touch: pres.touch ??= isTouchDevice(win), foldOpen: pres.foldOpen });
+    drawEgSpireHud(model, { hidden: hudHidden(), skin: isEnhanced() ? 'enhanced' : 'classic', still: acc.still, danger: rgbCss(acc.palette.danger), scale: hudScaleNow(),
+      onTouch: (id) => touchAct(id), onFold: () => { pres.foldOpen = !pres.foldOpen; } });
+  }
+  /** Out of the halls: the HUD and the card put away. */
+  function presAway() { drawEgSpireHud(null); drawEgArrivalCard(null); }
+  /** A d-pad press while it is the Spire's (the pad's own codes on the classic skin, the prompt bar's gestures on Plus). */
+  function padGesture(dir, kind) {
+    const ctx = padCtx(), act = egPadAct(dir, kind, ctx);
+    if (!act) return false;
+    const E = link.state(), o = online();
+    if (act.k === 'close') { recap = null; drawEgPanel(null); return true; }
+    if (act.k === 'watch') { if (witness) { witness.idx += act.d; if (witness.idx < 0) witness.idx += 8; witness.watched = null; } return true; }
+    if (act.k === 'forsake') { api.command('forsake'); return true; }
+    const P = choices(E);
+    if (act.k === 'focus' && P.n > 0) { pres.focus = (pres.focus + act.d + P.n) % P.n; return true; }
+    if (act.k === 'take' && P.kind === 'offer') { const card = E.offer.v[pres.focus]; if (card != null) o?.sendEg?.('pick', { v: card }); return true; }
+    if (act.k === 'take' && P.ask) { voted[P.ask[0]] = pres.focus; o?.sendEg?.('vote', { q: P.ask[0], y: pres.focus }); return true; }
+    if (act.k === 'no') return api.vote('no');
+    return false;
+  }
+  /** A touch button (section 27.8): the witness's eye, forsaking, the way home. */
+  function touchAct(id) {
+    if (id === 'prev' || id === 'next') { if (witness) { witness.idx += id === 'next' ? 1 : -1; if (witness.idx < 0) witness.idx += 8; witness.watched = null; } return true; }
+    if (id === 'forsake') { api.command('forsake'); return true; }
+    if (id === 'home') return api.wayHome();
+    return false;
+  }
+
+  const api = {
     link,
     /** A word of the hub or my breach's room (net/online.js onEg). */
     word(w, room) {
@@ -568,10 +712,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     key(e) {
       if (!inSpire() && !recap) return false;
       const code = e?.code ?? '';
-      if (recap && (code === 'Enter' || code === 'Escape')) { recap = null; drawEgPanel(null); return true; }
+      if (recap && (code === 'Enter' || code === 'Escape' || EG_PAD_DIRS[code] === 'up')) { recap = null; drawEgPanel(null); return true; }
       if (!inSpire()) return false;
       const E = link.state(), o = online(), m = /^Digit([1-6])$/.exec(code);
       if (witness && (code === 'KeyQ' || code === 'KeyE')) { witness.idx += code === 'KeyE' ? 1 : -1; if (witness.idx < 0) witness.idx += 8; witness.watched = null; return true; }
+      const dir = EG_PAD_DIRS[code];   // EG-G1 (section 27.8): the pad's d-pad, its own codes (the classic skin's pad)
+      if (dir && egPadUp(padCtx())) return padGesture(dir, dir === 'down' && witness ? 'hold' : 'tap');
       if (m && E.offer?.v?.length) { const card = E.offer.v[Number(m[1]) - 1]; if (card != null) { o?.sendEg?.('pick', { v: card }); return true; } }
       const open = (E.as ?? []).filter((q) => q[2] > now());
       if (open.length && (code === 'KeyY' || code === 'KeyN')) return this.vote(code === 'KeyY' ? 'yes' : 'no');
@@ -623,15 +769,18 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         pushStep();
         fight ??= makeFight(link);
         fight?.frame();
+        presFrame(link.state(), t);   // EG-G1
       } else {
+        presAway();   // EG-G1
         if (fight) { fight.leave(); }
         if (leaving || (E.end && E.b)) { leaving = false; link.forget(); }
         if (door || portal) dropDoor();
       }
-      drawEgHud(egHudModel(link.state(), me(), t, { inSpire: inSpire(), witness: !!witness, potions }), { hidden: hudHidden() });
+      drawEgHud(inSpire() ? null : egHudModel(link.state(), me(), t, { inSpire: false, witness: !!witness, potions }), { hidden: hudHidden() });   // EG-G1: inside, the Spire's HUD
       if (recap && Date.now() > recapUntil) recap = null;
+      if (recap && pres.rel < (recap.opened ?? 0) && Date.now() - pres.relAt >= 400) { pres.rel++; pres.relAt = Date.now(); playSound(EG_BEAT_SOUNDS.rare); }   // EG-G1: one each 400 ms, the Rare chime
       const panelModel = inSpire() ? egPanelModel(link.state(), me(), t, voted) : null;
-      drawEgPanel(panelModel, { hidden: hudHidden() && !recap, recap, onPick: (card) => online()?.sendEg?.('pick', { v: card }), onVote: (q, y) => { voted[q] = y; online()?.sendEg?.('vote', { q, y }); }, onSurplus: (use) => online()?.sendEg?.('surplus', { use }) });
+      drawEgPanel(panelModel, { hidden: hudHidden() && !recap, recap, focus: pres.focus, relShown: pres.rel, words: EG_PRES_TEXT, onPick: (card) => online()?.sendEg?.('pick', { v: card }), onVote: (q, y) => { voted[q] = y; online()?.sendEg?.('vote', { q, y }); }, onSurplus: (use) => online()?.sendEg?.('surplus', { use }) });
     },
     /** The hall's fight driver (the dungeon host's seams), or null outside the Spire. */
     fight: () => (inSpire() ? fight : null),
@@ -642,7 +791,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     castBack() {
       const max = entity.maxHealth ?? 0, cut = Math.min(EG_CAST_BACK_LOSS * max, Math.max(0, entity.health - EG_CAST_BACK_FLOOR * max));
       if (cut > 0) hurt(Math.round(cut));
-      say(EG_TEXT.castBack);
+      castBackBeat(cut > 0);   // EG-G1: -10% on the screen, the Steps' rewind, and the first time its line
     },
     /** THE WAY HOME (a Redoubt's rest): pressed once, asked; pressed again, walked. */
     wayHome() {
@@ -702,7 +851,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** The pages of the Annals this breach has given me (their numbers). */
     annals: () => [...annals].sort((a, b) => a - b),
     /** Online gone: every piece put away (the call kept - it is the hub's). */
-    away() { fight?.leave(); dropDoor(); drawEgHud(null); drawEgPanel(null); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } },
+    away() { fight?.leave(); dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } },
     /** EG-H1: the breach's shared clock (relay ms) and its offset to this machine's wall clock (null before the room has
      *  answered a ping) - the host's spans and its fight read it (scenes/world.js's `egNow`, the spans' anchored clock). */
     sharedNow: () => now(),
@@ -712,5 +861,29 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** Registered as the key's opener (systems/weirKey.js). */
     claimKeys() { setWeirKeyOpener(() => useKey()); },
     restack,
+    // EG-G1 (section 27): the seams the host reads
+    /** The party rows in the party panel's terms (ui/egParty.js egPartyDeco), or null outside a breach. */
+    partyRows() {
+      if (!inSpire()) return null;
+      const E = link.state(), t = now(), roads = new Map();
+      const spec = E.h > 0 ? egHallOf(E.seed, E.h, E.geo ?? 0) : null;
+      if (spec?.fork) {
+        for (const q of peers()) { const [sx, y, z] = dungeonToRealm(q.pos[0], q.pos[1] - 1.6, q.pos[2]); roads.set(q.sub, egRoadOf(spec, egLocalX(spec, sx), y, z)); }
+        const F = feetInHall(E);
+        if (F) roads.set(me(), egRoadOf(spec, F.x, F.y, F.z));
+      }
+      return egPartyDeco(egPartyRows(E, t, { absent: pres.absent, roads }));
+    },
+    /** Whether the pad's d-pad is the Spire's now (the recap, the panel, the witness's eye). */
+    padUp: () => egPadUp(padCtx()),
+    /** A d-pad gesture while it is the Spire's (`dir` up | down | left | right, `kind` tap | hold | release). */
+    padGesture: (dir, kind) => padGesture(dir, kind),
+    /** The prompt bar's rows while the d-pad is the Spire's. */
+    padPrompts: () => egPadPrompts(padCtx()),
+    /** A touch button's press. */
+    touchAct: (id) => touchAct(id),
+    /** A beat said from outside the breach's words (a Weir Key found - section 27.5). */
+    beat: (k) => beatNow(k),
   };
+  return api;
 }

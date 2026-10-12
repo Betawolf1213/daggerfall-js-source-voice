@@ -18,7 +18,7 @@
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { egHallOf, egCircleOfHall, egSlotOfHall, egPhase, egTimes, egCountText, egObjectiveOf, EG_TEXT, EG_COUNT_START_MS, EG_LAST_WORD_MS, EG_BANDS, EG_DECREES, EG_TWIST_NAMES } from '../net/egLaw.js';
 import { egCountAt, egLivingCount, egMemberOf, egRunOfMember } from '../net/egLink.js';
-import { egCardText, EG_VESTIGES, EG_M_BY_ID } from '../net/egVestige.js';
+import { egCardText, egAccordsOf, EG_VESTIGES, EG_M_BY_ID } from '../net/egVestige.js';
 import { EG_CANTRIPS } from '../net/egRun.js';
 import { injectEnhancedFonts } from './enhancedStyle.js';
 
@@ -59,6 +59,7 @@ export const EG_HUD_CSS = `
 .eg-panel button { flex: 1 1 170px; text-align: left; cursor: pointer; padding: 8px 10px; border: 1px solid rgba(214,170,92,0.45); border-radius: 3px;
   background: rgba(40,28,20,0.85); color: #f1dcc2; font: inherit; }
 .eg-panel button:hover, .eg-panel button:focus { border-color: #e8c473; background: rgba(70,50,30,0.95); outline: none; }
+.eg-panel button.eg-focus { border-color: #6f9dff; box-shadow: 0 0 0 1px #6f9dff; }
 .eg-panel button b { display: block; color: #ffe9cf; }
 .eg-panel button small { display: block; color: #cdb79e; font-size: 13px; margin-top: 2px; }
 .eg-panel .eg-ask { margin-top: 10px; }
@@ -178,22 +179,51 @@ export function egPanelModel(E, me, now, voted = {}) {
   return { offer, asks };
 }
 /** THE RECAP (section 27.6): the depth, the time from the first wake, why it ended, the circles' strip, the company,
- *  my Vestiges. `log` the client's own record of the halls it saw. Pure. */
-export function egRecapModel(E, me, log, now) {
+ *  my Vestiges. `log` the client's own record of the halls it saw. Pure.
+ *  EG-G1 (2026-10-12, section 27.6 completed): the depth as its parts (`depth` - the hall, the Redoubt, the band), why it
+ *  ended in words (`whyText`, the client's end words), a strip per circle (`strip` - its halls' glyphs, its lord, its
+ *  falls), the company member by member (`members` - numeral, name, falls, the recall kept or spent, how they left), the
+ *  Accords I held with any companion (`accords`), the Reliquaries opened (`opened` - home or the last word open them; a
+ *  tear, a wipe and a fall lose them) and the board's line when the herald gave one (`board`). Each member's share of the
+ *  damage and their healing are not on the room's words (EG-E's receipts carry the share): said so in the record. */
+export function egRecapModel(E, me, log, now, { whyText = '', board = '', why = E?.end ?? '' } = {}) {
   if (!E?.b) return null;
   const run = me ? egRunOfMember(E, me) : null;
   const t = E.wk ? Math.max(0, now - E.wk) : 0;
   const circles = [];
   for (const h of log ?? []) { const c = egCircleOfHall(h.h); (circles[c - 1] ??= []).push(h); }
+  const band = E.h > 0 ? EG_BANDS[egHallOf(E.seed, E.h, E.geo ?? 0).band]?.name ?? '' : '';
+  const others = (E.ms ?? []).filter((r) => r[0] !== me);
+  const accords = [...new Set(others.flatMap((r) => egAccordsOf(run?.vs ?? [], r[6] ?? []).map((A) => A.name)))];
   return {
-    title: `Hall ${E.h} - Redoubt ${E.rd} - ${E.h > 0 ? EG_BANDS[egHallOf(E.seed, E.h, E.geo ?? 0).band]?.name : ''}`,
-    time: ms(t), why: E.end ?? '',
+    title: `Hall ${E.h} - Redoubt ${E.rd} - ${band}`,
+    time: ms(t), why: why ?? '',
     circles: circles.filter(Boolean).map((hs, j) => `Circle ${j + 1}: ${hs.map((h) => h.glyph).join(' ')}${hs.some((h) => h.fall) ? ' (a fall)' : ''}`),
     company: egCompanyRows(E),
     vestiges: (run?.vs ?? []).map(([id, r]) => `${EG_VESTIGES[id]?.name ?? ''} ${ROMAN[r]}`).concat(run && run.mast >= 100 ? [`${EG_M_BY_ID[run.mast]?.name ?? ''} (Mastery)`] : []),
     reliquaries: run?.rel ?? 0,
+    // EG-G1: the page's fields
+    depth: { h: E.h, rd: E.rd, band }, whyText,
+    strip: circles.map((hs, j) => (hs ? { c: j + 1, glyphs: hs.map((h) => h.glyph), lord: hs.find((h) => h.lordName)?.lordName ?? '', falls: hs.filter((h) => h.fall).length } : null)).filter(Boolean),
+    members: E.co.map((c) => {
+      const [, name, n, alive, home, inn, wit, forsaken, falls, recall] = c;
+      return { numeral: ROMAN[n] ?? String(n), name, falls: falls ?? 0, recall: recall === 1 ? 'held' : 'spent', left: forsaken ? 'forsaken' : home ? 'home' : inn !== 1 ? 'away' : wit || !alive ? 'fallen' : 'standing' };
+    }),
+    accords, opened: why === 'home' || why === 'last' ? run?.rel ?? 0 : 0, board,
   };
 }
+/** EG-G1 (section 27.6): THE LAST FIVE RUNS, kept on the device - each recap as it ended, newest last. */
+export const EG_RECAPS_KEY = 'eg.recaps';
+export const EG_RECAPS_KEPT = 5;
+export const egRecapsKept = (store) => { try { const v = JSON.parse(store?.getItem?.(EG_RECAPS_KEY) ?? '[]'); return Array.isArray(v) ? v.slice(-EG_RECAPS_KEPT) : []; } catch { return []; } };
+export function egRecapKeep(store, recap, at = Date.now()) {
+  if (!recap) return egRecapsKept(store);
+  const list = [...egRecapsKept(store), { ...recap, at }].slice(-EG_RECAPS_KEPT);
+  try { store?.setItem?.(EG_RECAPS_KEY, JSON.stringify(list)); } catch { /* the session's alone */ }
+  return list;
+}
+/** EG-G1: a recap member's line (section 27.6's company - numeral, name, falls, the recall, how they left). */
+export const egRecapMemberLine = (m, words) => `${m.numeral} ${m.name} - ${words.left[m.left] ?? m.left}, ${m.falls === 1 ? '1 fall' : `${m.falls} falls`}, ${words.recall[m.recall] ?? m.recall}`;
 
 // ── the drawing ─────────────────────────────────────────────────────────────────────────────────────────────
 let root = null, parts = null, panel = null, panelKey = '';
@@ -237,22 +267,40 @@ export function drawEgHud(model, { hidden = false, doc = globalThis.document } =
  * Draw THE PANEL for a model (null takes it down): its buttons call `onPick(card)`, `onVote(q, y)`, `onSurplus(use)`;
  * rebuilt only when what it shows changes (its key).
  * @param {any} model
- * @param {{ hidden?: boolean, doc?: any, onPick?: (card: number) => void, onVote?: (q: string, y: number) => void, onSurplus?: (use: number) => void, recap?: any }} [o]
+ * @param {{ hidden?: boolean, doc?: any, onPick?: (card: number) => void, onVote?: (q: string, y: number) => void, onSurplus?: (use: number) => void, recap?: any, focus?: number, relShown?: number|null, words?: any }} [o]
  */
-export function drawEgPanel(model, { hidden = false, doc = globalThis.document, onPick = () => {}, onVote = () => {}, onSurplus = () => {}, recap = null } = {}) {
+export function drawEgPanel(model, { hidden = false, doc = globalThis.document, onPick = () => {}, onVote = () => {}, onSurplus = () => {}, recap = null, focus = -1, relShown = null, words = null } = {}) {
   const want = !hidden && (!!model || !!recap);
   if (!want) { if (panel) { panel.remove?.(); panel = null; panelKey = ''; } return; }
   if (!doc?.createElement) return;
-  const key = JSON.stringify([model, recap ? recap.title + recap.why : '']).replace(/"left":\d+/g, '');
+  const key = JSON.stringify([model, recap ? recap.title + recap.why : '', focus]).replace(/"left":\d+/g, '');   // EG-G1: the pad's focus redraws
   const leftOf = (q) => model?.asks?.find((a) => a.q === q)?.left ?? 0;
-  if (panel && key === panelKey) { for (const el of panel.querySelectorAll?.('[data-left]') ?? []) el.textContent = `${Math.ceil(leftOf(el.getAttribute('data-left')) / 1000)}s`; return; }
+  if (panel && key === panelKey) {
+    for (const el of panel.querySelectorAll?.('[data-left]') ?? []) el.textContent = `${Math.ceil(leftOf(el.getAttribute('data-left')) / 1000)}s`;
+    if (recap && relShown != null && words) for (const el of panel.querySelectorAll?.('[data-rel]') ?? []) el.textContent = words.recapReliquaries(relShown);   // EG-G1: the Reliquaries open one by one
+    return;
+  }
   ensureStyle(doc);
   panel?.remove?.();
   panel = doc.createElement('div');
   panel.className = 'eg-panel';
   panelKey = key;
   const h = (text) => { const e = doc.createElement('h3'); e.textContent = text; return e; };
-  if (recap) {
+  if (recap && words) {
+    // EG-G1 (section 27.6): THE RECAP, whole - the depth, the time and why, a strip per circle, the company member by
+    // member, the Vestiges and the Accords, the Reliquaries opening one by one, the board's line
+    panel.append(h(words.recapHead));
+    const opened = doc.createElement('div'); opened.className = 'eg-note eg-rel'; opened.setAttribute('data-rel', '1'); opened.textContent = words.recapReliquaries(relShown ?? recap.opened);
+    const lines = [words.recapDepth(recap.depth.h, recap.depth.rd, recap.depth.band), `${words.recapTime(recap.time)} - ${recap.whyText || recap.why}`, opened,
+      ...recap.strip.map((c) => `Circle ${c.c}: ${c.glyphs.join(' ')}${c.lord ? ` - ${c.lord}` : ''}${c.falls ? ` (${c.falls === 1 ? 'a fall' : `${c.falls} falls`})` : ''}`),
+      ...recap.members.map((m) => egRecapMemberLine(m, { left: words.recapLeft, recall: words.recapRecall })),
+      recap.vestiges.length ? `Vestiges: ${recap.vestiges.join(', ')}` : '', recap.accords.length ? `${words.recapAccords}: ${recap.accords.join(', ')}` : '', recap.board];
+    for (const line of lines) {
+      if (!line) continue;
+      if (typeof line !== 'string') { panel.append(line); continue; }
+      const p = doc.createElement('div'); p.className = 'eg-note'; p.style.whiteSpace = 'pre-line'; p.textContent = line; panel.append(p);
+    }
+  } else if (recap) {
     panel.append(h('The breach is over'));
     for (const line of [recap.title, `Time: ${recap.time} - ${recap.why}`, `Reliquaries opened: ${recap.why === 'home' || recap.why === 'last' ? recap.reliquaries : 0}`, ...recap.circles, recap.company, recap.vestiges.length ? `Vestiges: ${recap.vestiges.join(', ')}` : '']) {
       if (!line) continue;
@@ -264,6 +312,7 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
     const row = doc.createElement('div'); row.className = 'eg-cards';
     for (const c of model.offer.cards) {
       const b = doc.createElement('button');
+      if (c.key - 1 === focus) b.className = 'eg-focus';   // EG-G1: the pad's choice
       const t = doc.createElement('b'); t.textContent = `${c.key}. ${c.name}`;
       const s = doc.createElement('small'); s.textContent = c.line;
       b.append(t, s);
@@ -282,7 +331,7 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
     const t = h(a.title); const left = doc.createElement('span'); left.setAttribute('data-left', a.q); left.textContent = `${Math.ceil(a.left / 1000)}s`; t.append(' - ', left);
     box.append(t);
     const row = doc.createElement('div'); row.className = 'eg-cards';
-    a.opts.forEach((label, y) => { const b = doc.createElement('button'); b.textContent = `${a.mine === y ? '> ' : ''}${label}`; b.addEventListener?.('click', () => onVote(a.q, y)); row.append(b); });
+    a.opts.forEach((label, y) => { const b = doc.createElement('button'); if (!model.offer && a === model.asks.at(-1) && y === focus) b.className = 'eg-focus'; b.textContent = `${a.mine === y ? '> ' : ''}${label}`; b.addEventListener?.('click', () => onVote(a.q, y)); row.append(b); });   // EG-G1: the pad's choice, on the newest
     box.append(row);
     panel.append(box);
   }

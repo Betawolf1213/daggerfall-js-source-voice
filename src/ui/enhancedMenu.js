@@ -127,6 +127,7 @@ import { exportSavesZip, collectSlots, importSlots, entriesFromFiles, slotPathOf
 import { appStorage, tabStorage } from '../systems/appStorage.js';   // SP1: the store under this build - the browser's on the site, the file store in the app   // SAV4: the slot store; SLOTS1: every slot
 import { uiSkin, SKIN_NAMES, isEnhanced } from '../systems/uiSkin.js';   // FD1: which boot rail
 import { getPref, setPref, isOpen, setOpen, PREF_DEFAULTS } from '../systems/uiPrefs.js';
+import { EG_DANGER_PALETTES, EG_DANGER_PALETTE_KEYS } from './egAccess.js';   // EG-G1: the Spire's danger palettes, named once
 import { TOUCH_BUTTON_SLOTS, touchButtonSlots, nextTouchButton, touchButtonChoices } from './touchButtons.js';   // TOUCH-BUTTONS: the corner's three slots
 import { DEFAULT_SERVER } from '../net/online.js';   // ONLINE1: the relay this port hosts, the field's placeholder   // R7: the port's own switches; SO1: the folded tiers' memory
 import { GATE_CROWD_TIERS } from '../net/gateCrowd.js';   // GATE-CROWD: how many other players a gate's court draws
@@ -2700,7 +2701,20 @@ function portRowsInterface({ pause = false } = {}) {
   out.push(prefRow('showFps', 'FPS counter',
     'Frame rate in the top-right corner.'));
   if (!pause) out.push(prefRow('skipStartVideo', SKIP_START_VIDEO_NAME, SKIP_START_VIDEO_NOTE));   // UXB1-A: read at launch, so the front door's alone - as the skin's
+  out.push(...spireAccessRows());   // EG-G1: Settings > Accessibility lists them (ui/settingsMap.js)
   return out.filter(Boolean);   // FT13
+}
+
+/** EG-G1 (bible/11-Multiplayer/Elite-Gates.md section 25.7): THE SPIRE'S ACCESSIBILITY ROWS (ui/egAccess.js) - reduced
+ *  motion, the danger palette and a danger fill's light; every device, both skins. */
+function spireAccessRows() {
+  const motion = prefRow('reducedMotion', 'Reduced motion', 'Nothing on the HUD pulses, flies or rises. Your system\'s own setting does the same.');
+  const palette = choiceRow('dangerPalette', 'Danger colours', 'The colour of a blow\'s edge, of safe ground and of a hazard.',
+    EG_DANGER_PALETTE_KEYS.map((k) => [k, EG_DANGER_PALETTES[k].name]));
+  const fill = choiceRow('telegraphFill', 'Danger fill', 'How brightly a blow\'s ground fills. Its edge stays whole.',
+    [[1, '100%'], [0.85, '85%'], [0.7, '70%'], [0.5, '50%']]);
+  for (const [row, key] of [[palette, 'dangerPalette'], [fill, 'telegraphFill']]) if (row?.dataset) { row.dataset.opt = key; row.dataset.pref = key; }   // ORG2: the map finds it by its key
+  return [motion, palette, fill];
 }
 
 /** UXB1-A (2026-09-25, the UX backlog: '"Skip Start Video" in the options ... Disabled by default, of course.'):

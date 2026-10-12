@@ -1,0 +1,103 @@
+// @ts-check
+// EG-G1 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 25.7): THE SPIRE'S
+// ACCESSIBILITY - three of the port's own rows on the prefs shelf (systems/uiPrefs.js), drawn under Settings >
+// Accessibility (ui/settingsMap.js), and the law that reads them:
+//   `port:dangerPalette` - Standard, High contrast, Deutan-Protan, Tritan: the danger edge, the safety gold and the place's
+//     white hazard each its preset's colour. High contrast draws the danger edge magenta ([1.0, 0.15, 0.75]), safety a
+//     solid white-gold and the hazard cyan; the two colour-blind presets are pinned to separate under simulation
+//     (`egCvd` - Machado, Oliveira and Fernandes 2009 at full severity, in linear light, measured in CIELAB). The colours
+//     ride the telegraph pass's existing `uEdgeCol` and `uColor` (render/gateTelegraph.js) through `egAccessShape`;
+//   `port:telegraphFill` - a danger fill's light, 50-100%: the fill's colour scaled, the line left whole (the pass adds
+//     the fill as `uColor * inner` and the line as `uEdgeCol * line`, so the line never dims with it);
+//   `port:reducedMotion` - the system's `prefers-reduced-motion` or this row: the count chip's pulse, the gains' flight,
+//     the arrival card's rise and the absent's draining ring stand still (ui/egSpireHud.js).
+// The larger HUD is the port's own `--hud-scale` (port:hudScale), which every part of the Spire's HUD reads; the beats'
+// words go to a polite live region for a screen reader.
+//
+// Not a DFU member. Ledger A (ELITE-GATES).
+import { getPref } from '../systems/uiPrefs.js';
+
+/** The danger palettes (section 25.7): each its danger edge, its safety gold, its place's hazard, and whether the
+ *  shader's double keyline and 45-degree hatch are asked (EG16's style bit - the colours ride today). Standard is the
+ *  five lights' own (section 25.2): TELEGRAPH_EDGE_DAGON's crimson, the way's gold, the hazard's white. */
+export const EG_DANGER_PALETTES = Object.freeze({
+  standard: Object.freeze({ key: 'standard', name: 'Standard', danger: Object.freeze([1.0, 0.24, 0.28]), safety: Object.freeze([1.0, 0.82, 0.38]), hazard: Object.freeze([0.95, 0.95, 1.0]), keyline: 1, hatch: 0 }),
+  contrast: Object.freeze({ key: 'contrast', name: 'High contrast', danger: Object.freeze([1.0, 0.15, 0.75]), safety: Object.freeze([1.0, 0.95, 0.7]), hazard: Object.freeze([0.2, 0.95, 1.0]), keyline: 2, hatch: 1 }),
+  deutan: Object.freeze({ key: 'deutan', name: 'Deutan-Protan', danger: Object.freeze([0.62, 0.32, 1.0]), safety: Object.freeze([1.0, 0.86, 0.2]), hazard: Object.freeze([1.0, 1.0, 1.0]), keyline: 1, hatch: 0 }),
+  tritan: Object.freeze({ key: 'tritan', name: 'Tritan', danger: Object.freeze([1.0, 0.12, 0.2]), safety: Object.freeze([0.25, 0.9, 0.85]), hazard: Object.freeze([1.0, 1.0, 1.0]), keyline: 1, hatch: 0 }),
+});
+export const EG_DANGER_PALETTE_KEYS = Object.freeze(Object.keys(EG_DANGER_PALETTES));
+/** A danger fill's light at least, at most (section 25.7: 50-100%). */
+export const EG_FILL_MIN = 0.5;
+export const EG_FILL_MAX = 1;
+/** The shelf's keys (systems/uiPrefs.js PREF_DEFAULTS). */
+export const EG_ACCESS_PREFS = Object.freeze({ palette: 'dangerPalette', fill: 'telegraphFill', motion: 'reducedMotion' });
+/** The pass's two edges the Spire draws (render/gateTelegraph.js TELEGRAPH_EDGE_DAGON and TELEGRAPH_EDGE) and its safe
+ *  edge (TELEGRAPH_EDGE_SAFE) - pinned equal by test/egpres_access.test.js, not imported (the law runs without GL). */
+export const EG_EDGE_DANGER = Object.freeze([Object.freeze([1.0, 0.24, 0.28]), Object.freeze([1.0, 0.36, 0.05])]);
+export const EG_EDGE_SAFE = Object.freeze([0.72, 0.95, 1.0]);
+
+const same = (a, b) => !!a && !!b && Math.abs(a[0] - b[0]) < 1e-3 && Math.abs(a[1] - b[1]) < 1e-3 && Math.abs(a[2] - b[2]) < 1e-3;
+/** The way's gold (scenes/egFight.js GOLD) and a white hazard (its PEND_COLOR, the fragments' shimmer): a fill read as
+ *  safety or as the place's hazard. */
+const isGold = (c) => same(c, EG_DANGER_PALETTES.standard.safety);
+const isWhite = (c) => !!c && c[0] >= 0.9 && c[1] >= 0.9 && c[2] >= 0.9;
+
+/** The palette a key names (Standard for anything else). */
+export const egPaletteOf = (key) => EG_DANGER_PALETTES[key] ?? EG_DANGER_PALETTES.standard;
+/** A fill's light, clamped to 50-100% (100% for anything not a number). */
+export const egFillOf = (v) => { const n = Number(v); return Number.isFinite(n) ? Math.min(EG_FILL_MAX, Math.max(EG_FILL_MIN, n)) : EG_FILL_MAX; };
+/** Whether the screen should stand still: the row, or the system's setting (`win` a window-like - its query asked once
+ *  and kept, the frame reading the kept answer). */
+const motionQuery = new WeakMap();
+export function egReducedMotion(win = globalThis.window, pref = getPref(EG_ACCESS_PREFS.motion)) {
+  if (pref === true) return true;
+  if (!win || typeof win !== 'object') return false;
+  try {
+    if (!motionQuery.has(win)) motionQuery.set(win, win.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null);
+    return !!motionQuery.get(win)?.matches;
+  } catch { return false; }
+}
+/** The three settings as the draws read them now: `{ palette, fill, still }`. */
+export function egAccessNow(win = globalThis.window) {
+  return { palette: egPaletteOf(getPref(EG_ACCESS_PREFS.palette)), fill: egFillOf(getPref(EG_ACCESS_PREFS.fill)), still: egReducedMotion(win) };
+}
+
+/**
+ * One telegraph shape in the palette's colours (pure): a danger edge takes the palette's danger, the safe edge and a
+ * gold fill its safety, a white fill its hazard, and a danger shape's fill its light at `fill`. Standard at full light
+ * answers the shape itself; otherwise `out` (a scratch the caller keeps) is filled and answered - the shape is never
+ * written.
+ * @param {any} sh render/gateTelegraph.js's shape @param {any} out @param {{ palette?: any, fill?: number }} [a]
+ */
+export function egAccessShape(sh, out, { palette = EG_DANGER_PALETTES.standard, fill = 1 } = {}) {
+  const P = palette ?? EG_DANGER_PALETTES.standard;
+  const danger = EG_EDGE_DANGER.some((e) => same(sh.edge, e));
+  if (P.key === 'standard' && !(danger && fill < 1)) return sh;
+  Object.assign(out, sh);
+  out.edge = danger ? P.danger : same(sh.edge, EG_EDGE_SAFE) ? P.safety : sh.edge;
+  out.color = isGold(sh.color) ? P.safety : isWhite(sh.color) ? P.hazard : sh.color;
+  if (danger && fill < 1 && out.color === sh.color) out.color = [sh.color[0] * fill, sh.color[1] * fill, sh.color[2] * fill];
+  return out;
+}
+
+// ── the simulation the colour-blind presets are pinned under ──────────────────────────────────────────────────
+/** Machado, Oliveira and Fernandes (2009), severity 1.0, on linear RGB. */
+export const EG_CVD = Object.freeze({
+  protan: Object.freeze([0.152286, 1.052583, -0.204868, 0.114503, 0.786281, 0.099216, -0.003882, -0.048116, 1.051998]),
+  deutan: Object.freeze([0.367322, 0.860646, -0.227968, 0.280085, 0.672501, 0.047413, -0.01182, 0.04294, 0.968881]),
+  tritan: Object.freeze([1.255528, -0.076749, -0.178779, -0.078411, 0.930809, 0.147602, 0.004733, 0.691367, 0.3039]),
+});
+const toLinear = (c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
+/** A display colour seen under `kind` (null: as it is), in CIELAB (D65). */
+export function egCvd(rgb, kind = null) {
+  let l = rgb.map(toLinear);
+  const m = kind ? EG_CVD[kind] : null;
+  if (m) l = [0, 1, 2].map((i) => Math.min(1, Math.max(0, m[i * 3] * l[0] + m[i * 3 + 1] * l[1] + m[i * 3 + 2] * l[2])));
+  const X = 0.4124 * l[0] + 0.3576 * l[1] + 0.1805 * l[2], Y = 0.2126 * l[0] + 0.7152 * l[1] + 0.0722 * l[2], Z = 0.0193 * l[0] + 0.1192 * l[1] + 0.9505 * l[2];
+  const f = (t) => (t > 216 / 24389 ? Math.cbrt(t) : ((24389 / 27) * t + 16) / 116);
+  const fx = f(X / 0.95047), fy = f(Y), fz = f(Z / 1.08883);
+  return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
+}
+/** How far apart two colours stand under `kind` (CIE76 delta E). */
+export const egCvdDistance = (a, b, kind = null) => { const A = egCvd(a, kind), B = egCvd(b, kind); return Math.hypot(A[0] - B[0], A[1] - B[1], A[2] - B[2]); };

@@ -38,6 +38,7 @@ import { egKindLook, EG_LEGION_KINDS } from '../net/egLegion.js';
 import { EG_BOSS_KEYS, EG_OBJ, egBossLook, egBossName } from '../net/egLords.js';
 import { egHallCentre } from '../world/egHall.js';
 import { egHazardParts, egHazardBites, egWispAt, EG_HAZARDS } from '../net/egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' hazards
+import { egAccessNow, egAccessShape } from '../ui/egAccess.js';   // EG-G1 (section 25.7): the danger palette and the fill's light
 
 /** The objects' types by number (net/egLords.js EG_OBJ), and which are struck (drawn as crystals) - the rest are stood on. */
 const OBJ_KEY = Object.freeze(Object.fromEntries(Object.entries(EG_OBJ).map(([k, v]) => [v, k])));
@@ -524,7 +525,8 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       }
       if (!passTried && gl) { passTried = true; try { pass = new GateTelegraphRenderer(gl); } catch (e) { console.warn('[eg] the telegraphs would not build', e?.message ?? e); pass = null; } }
       if (!pass) return drew;
-      for (const sh of _shapes) { pass.draw(sh, proj, view, eye, seconds, fog, centre, null, floor); drew = true; }
+      const acc = egAccessNow(), accSh = {};   // EG-G1: each shape in the player's danger palette, its fill at their light
+      for (const sh of _shapes) { pass.draw(egAccessShape(sh, accSh, acc), proj, view, eye, seconds, fog, centre, null, floor); drew = true; }
       return drew;
     },
     /** What the driver holds (tests, stats). */
