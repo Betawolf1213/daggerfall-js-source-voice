@@ -44,6 +44,10 @@ export function egFindThrow(entity, pack, keys) {
   restackWeirKeys(pack, Math.max(0, keys - 1));
 }
 
+/** The registered find (registerEgFind's), for the joiner's door the dungeon host reads (egFindStruck). */
+let _registered = null;
+/** THE JOINER'S DOOR (scenes/dungeonContext.js, where the owner's record names me the striker): ask for this body's find. */
+export const egFindStruck = (/** @type {any} */ entity) => _registered?.struck(entity) ?? Promise.resolve(false);
 /**
  * THE FIND, REGISTERED: a death handler for the owner's kills (`opts.by` the striker the host names - its `_killedBy`) and
  * the joiner's door (`struck`). `ask(tier)` is the service's call (accountEg's `find` - `{ ok, data: { found, keys,
@@ -70,5 +74,7 @@ export function registerEgFind({ ask, tierNow, selfId, online, say = () => {}, t
   /** @param {any} entity @param {string|null} [by] */
   const death = (entity, by = null) => (by == null || by === selfId() ? find(entity) : Promise.resolve(false));
   registerEnemyDeathHandler(EG_FIND_HANDLER, (/** @type {any} */ entity, /** @type {any} */ opts = {}) => { death(entity, opts.by ?? null).catch((e) => console.warn('[eg] find failed', e?.message ?? e)); });
-  return { death, struck: (/** @type {any} */ entity) => find(entity), dispose: () => registerEnemyDeathHandler(EG_FIND_HANDLER, null) };
+  const reg = { death, struck: (/** @type {any} */ entity) => find(entity), dispose: () => { registerEnemyDeathHandler(EG_FIND_HANDLER, null); if (_registered === reg) _registered = null; } };
+  _registered = reg;
+  return reg;
 }

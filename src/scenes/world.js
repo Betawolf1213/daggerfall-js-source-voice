@@ -370,7 +370,13 @@ import { sdCities, sdTemplates } from '../systems/sdSite.js';   // SD2b: the Hol
 import { RANDOM_TREASURE_ARCHIVE } from '../systems/lootDataTables.js';   // WB12d: the casket's pile, undrawn
 import { createSigilBroker } from './sigilBrokerPool.js';   // SET7: the Sigil Broker - her body, her box and name, her press; BROKER-CAGE: caged at the faithful's circle
 import { createBrokerOverlay, closeBrokerDoor } from '../ui/brokerDoor.js';   // SET7: her window, a lazy chunk behind its door
-import { brokerStock, brokerDay, brokerBought, makeBrokerSale, spendableStonesIn, lockedStonesIn, stoneCount, insigniaSale, stonesText } from '../systems/sigilBroker.js';   // SET7: the day's stock, the record, the sale   // SS1: the stones counted over their stacks
+import { panoplyRows, PANOPLY_NAMES } from '../ui/brokerWindow.js';   // EG-E1: the Broker's Panoply sink - its nine rows and their names
+import { panoplyPieceById } from '../systems/aetheric.js';   // EG15: a Panoply piece minted by its id - the sink's
+import { EG_SINK_EMBERS } from '../net/egPay.js';   // EG-E1: the sink's price
+import { openEgBoard } from '../ui/egBoardWindow.js';   // EG-E2: the Elite Breach's three boards
+import { registerEgFind, egFindThrow } from '../systems/egFind.js';   // EG-E3: the dungeon's find
+import { setSetPowersAllies, setSpireRecovery, spireRedoubtTaken } from '../systems/sigilSetPowers.js';   // EG15: the Reprieve's allies, the death saves held to a Redoubt in a breach
+import { brokerStock, brokerDay, brokerBought, makeBrokerSale, spendableStonesIn, lockedStonesIn, stoneCount, insigniaSale, stonesText, panoplySale } from '../systems/sigilBroker.js';   // SET7: the day's stock, the record, the sale   // SS1: the stones counted over their stacks
 import { drawGateBanner } from '../ui/gateBanner.js';
 import { drawGateGround } from '../ui/gateGroundView.js';   // WB9d: his ground's rim and warning - hidden with a held frame (the court draws it); SD15: and the Hour's
 import { drawGateDamageChart } from '../ui/gateDamageChart.js';   // GATE-UX: the kill's damage chart (the court draws it - scenes/gateCourt.js); a held frame hides it with the rest
@@ -24954,13 +24960,13 @@ export async function bootWorld(canvas, renderer, params, status) {
     return true;
   }
   const egClient = params.has('online') ? createEgClient({
-    modes: () => modes, online: () => online, hub: () => socialLink(), account: _accountEg, now: egNow, entity: playerEntity, player, cam,
+    modes: () => modes, online: () => online, hub: () => socialLink(), account: { ..._accountEg, claim: (r) => _accountEg.claim(r, characterIdOf(playerEntity)).then(weirHeard) }, now: egNow,   // EG-E1: a claim carries the claiming character (its guild's deed) and its Weir Key restacks entity: playerEntity, player, cam,
     say: (text) => chatNotice(text), mid: (text) => egMid(text), veil: () => gateVeil,
     site: egSiteNow, wire: egWireNow, landAt: egLandAt,
     hurt: (n) => { if (playerEntity.health > 0) { hurtPlayer(playerEntity, n, { bypassShield: true, spare: () => {} }); flashPlayerDamage(n); } },   // the void is a setback, never a death
     store: appStorage(), saved: () => saveSoon.changed(), hudHidden: () => gamePaused() || !!townTalk.hudHidden, renderer, audio,
     fight: (link) => createEgFight({
-      renderer, gl: renderer.gl, getTexture, uploadRecordFrame, audio, link, now: egNow, cam: () => cam.pos,
+      renderer, gl: renderer.gl, getTexture, uploadRecordFrame, audio, link, now: () => (egClient ? egClient.sharedNow() : egNow()), cam: () => cam.pos,   // EG-H1: the fight on the breach's corrected clock
       feet: () => (playerSpawned && modes?.egHallBreach?.() != null ? player.feetAt() : null), player: () => playerEntity,
       save: (e, el) => egSave(e, el),   // the throw against a blow's element, the gate's
       strike: (d, how) => modes?.dungeonCtx?.strikePlayer?.(d, how), say: (text) => egMid(text),
@@ -24973,6 +24979,8 @@ export async function bootWorld(canvas, renderer, params, status) {
     }),
     peers: () => egPeers(),   // EG-FULL: the witness's eye follows a living companion
     paid: (c, d) => egSpoilsPaid(c, d),   // EG-E: what a Redoubt paid - its spoils, its Marks and deed
+    redoubt: () => spireRedoubtTaken(),   // EG15: a Redoubt taken - every death save held to it recovers (Elite-Gates.md section 15)
+    board: () => openEgBoard({ doc: document, classic: !isEnhancedPlus(), fetchBoard: () => _accountEg.board(), mountWindow: (w) => !!modes?.mountWindow?.(w), closeWindow: (w) => modes?.closeWindow?.(w), listPickerReady: listPickerArtLoaded }),   // EG-E2: `/breach board`
   }) : null;
   /** EG-FULL: my company's other members where this screen draws them (the room's poses, by account - net/social.js
    *  accountOfPeer: the company is my party). */
@@ -24991,6 +24999,22 @@ export async function bootWorld(canvas, renderer, params, status) {
   registerSpireWake(egClient ? () => { const E = egClient.state(); return { h: E.h | 0, hw: E.hw || 0 }; } : null);   // EG-FULL LAYER TWO: a Falling Wall falls from its hall's wake
   registerSpireObjs(egClient ? () => egClient.objs() : null);   // EG-FULL LAYER THREE: Grath's islands fall, the false walls stand, as the relay says
   registerSpireAct(egClient ? (key) => egClient.act(key) : null);   // EG-FULL LAYER THREE: an Orrery stone turned, an engine worked
+  // EG15 (Elite-Gates.md sections 15 and 19, THE BATTLEMAGE'S PANOPLY): the Reprieve's half for the party mates within its
+  // reach (each a Shield at ALLY-CAST's door - the receiver's own client applies it), and THE SPIRE'S RECOVERY - a death
+  // save spent in a breach held to that breach's next Redoubt (scenes/egClient.js `redoubt`)
+  setSetPowersAllies({
+    near: (m) => { const f = player.feetAt(); return (allyMarksNear() ?? []).filter((p) => p.mate && p.feet && Math.hypot(p.feet[0] - f[0], p.feet[1] - f[1], p.feet[2] - f[2]) <= m); },
+    shield: (a, sp) => castAtAllyDoor(a.id, allyCastFrame(sp, effectiveLevel(playerEntity), a.id)),
+  });
+  setSpireRecovery(() => modes?.egHallBreach?.() ?? null);
+  // EG-E3 (Elite-Gates.md section 5, THE DUNGEON'S FIND): an elite foe's death in a dungeon online asks the account service
+  // for a Weir Key - the owner for its own kill, the striking joiner for its (scenes/dungeonContext.js egFindStruck); a yes
+  // throws the key from the body and restacks the pack (systems/egFind.js)
+  if (params.has('online')) registerEgFind({
+    ask: (t) => _accountEg.find(t), selfId: () => online?.id ?? null, online: () => !!online && online.status === 'open', say: (l) => chatNotice(l),
+    tierNow: () => (_mode() === 'dungeon' && modes?.dungeonLocation ? dungeonTier(modes.dungeonLocation) : null),
+    throwKey: (e, n) => { egFindThrow(e, playerEntity.items ?? (playerEntity.items = []), n); saveSoon.changed(); },
+  });
   egClient?.claimKeys();   // the Weir Key's use is this screen's open
   let _egSpoilsIn = false;
   const egFrame = () => {
@@ -26078,8 +26102,36 @@ export async function bootWorld(canvas, renderer, params, status) {
       bought: () => brokerBought(brokerDay(_brokerNow())), buy: brokerBuy,
       wearer: playerEntity, nameOf: (item) => itemLongName(item),
       insignia: insigniaRows, insigniaLoad, buyInsignia: insigniaBuy, wearInsignia: insigniaWear, insigniaBusy: () => _insignia.busy,   // WB9g
+      panoply: _accountEg ? panoplyDeps : null,   // EG-E1: THE BATTLEMAGE'S PANOPLY, once a week (online)
     });
     if (win) townTalk.showOverlay(win);
+  };
+  // EG-E1 (Elite-Gates.md section 19, THE SINK): THE BATTLEMAGE'S PANOPLY AT THE BROKER - one piece of the buyer's choosing,
+  // once an account an arena week, for EG_SINK_EMBERS embers out of the insignia's purse (server-account/src/egEconomy.js
+  // egSink): the pack's embers held first and given back on a refusal, a lost answer asked after through the week's sale
+  // (`/v1/eg/keys`' `sink`), the piece minted by its id (systems/aetheric.js panoplyPieceById) - never `stonesPaid`, never
+  // the day's stock (systems/sigilBroker.js panoplySale).
+  let _panoplySink = null;
+  const panoplyDeps = {
+    rows: () => panoplyRows(_panoplySink),
+    load: async () => { try { const a = await _accountEg.keys(); if (a?.ok) _panoplySink = a.data?.sink ?? null; } catch { /* the window says what it held */ } },
+    busy: () => _insignia.busy,
+    buy: async (id) => {
+      if (_insignia.busy) return { ok: false, text: 'The Broker is busy.' };
+      _insignia.busy = true;
+      try {
+        playerEntity.items = playerEntity.items || [];
+        const r = await panoplySale(id, {
+          items: playerEntity.items, buy: (p) => _accountEg.sink(p), mint: (p) => panoplyPieceById(p), save: () => saveSoon.changed(),
+          held: async (p) => { const a = await _accountEg.keys(); return a?.ok && a.data?.sink?.piece === p ? a.data.sink : null; },
+        });
+        if (!r.ok) return { ok: false, text: r.error === 'stones' ? `You need ${stonesText(EG_SINK_EMBERS)}.` : accountRefusalText(r.error) };
+        _panoplySink = { week: r.data?.week ?? _panoplySink?.week ?? null, piece: id };
+        audio.playOneShot(SOUND.GoldPieces, 1);
+        surfacePlayer();
+        return { ok: true, text: `Bought: ${PANOPLY_NAMES[id] ?? id}, for ${stonesText(EG_SINK_EMBERS)}.` };
+      } catch { return { ok: false, text: accountRefusalText('offline') }; } finally { _insignia.busy = false; }
+    },
   };
   const sigilBroker = gateOmen ? createSigilBroker({
     renderer, getTexture, uploadRecordFrame, collider: () => collider,
@@ -29529,6 +29581,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   function auraFrame(seen) {
     _auraWearers.length = 0;
     if (!online || travelView?.active) return;
+    if (egClient?.quiet?.()) return;   // EG-E2 (Elite-Gates.md section 25.4, THE QUIET COMPANY): no cosmetic aura during a Spire's trial
     const t = performance.now() / 1000;
     const mine = ownAura(); if (_auraHeard !== undefined && mine !== _auraHeard && online.rehello?.()) _auraHeard = mine;   // the service's last word on my own - a mint's, a wear's from any door; AURA-LIVE: one the room's token did not say (a wear since) is said again, so the room sees it now
     if (mine && playerSpawned) {

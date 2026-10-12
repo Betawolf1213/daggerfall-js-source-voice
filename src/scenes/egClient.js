@@ -139,10 +139,10 @@ function requestId() {
  *   say: (text: string) => void, mid?: (text: string) => void, veil?: () => any, site: () => any, wire: () => any, landAt: (l: any) => boolean,
  *   hurt: (n: number) => void, store?: any, saved?: () => void, hudHidden?: () => boolean, fight?: (link: any) => any, renderer?: any, audio?: any,
  *   peers?: () => { sub: string, pos: number[] }[], heal?: ((p: number, why: string) => void) | null,
- *   paid?: ((c: any, data: any) => void) | null, win?: any }} deps
+ *   paid?: ((c: any, data: any) => void) | null, win?: any, redoubt?: ((rd: number) => void) | null, board?: (() => any) | null }} deps
  */
 export function createEgClient({ modes, online, hub, account, now: hostNow, entity, player, cam, say, mid = () => {}, veil = () => null, site, wire, landAt, hurt,
-  store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null, peers = () => [], heal = null, paid = null, win = globalThis.window }) {
+  store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null, peers = () => [], heal = null, paid = null, win = globalThis.window, redoubt = null, board = null }) {
   // EG-H1: THE SHARED CLOCK, CORRECTED (section 10.8; net/egClock.js) - the host's clock until the room has answered a ping,
   // then this machine's wall clock plus the median offset; the breach's link, its fight and every time here read it
   const clock = egClockNew();
@@ -397,7 +397,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     }
     if (E.sg !== 'closing') downAt = -Infinity;
     // THE REDOUBT: the company healed once, the way home stood at the Court's heart through the rest
-    if (E.sg === 'rest') { if (rdSeen !== E.h) { rdSeen = E.h; say(`${EG_TEXT.redoubt(E.rd)} taken. Choose a Vestige; the way home stands at the Court's heart; the stair down opens when the rest ends.`); } standDoor(E); }
+    if (E.sg === 'rest') { if (rdSeen !== E.h) { rdSeen = E.h; redoubt?.(E.rd); say(`${EG_TEXT.redoubt(E.rd)} taken. Choose a Vestige; the way home stands at the Court's heart; the stair down opens when the rest ends.`); } standDoor(E); }
     else if (door) dropDoor();
   }
 
@@ -674,6 +674,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       const parts = String(arg).trim().toLowerCase().split(/\s+/).filter(Boolean), a = parts[0] ?? '', b = parts[1] ?? '';
       if (a === 'rehearse' || a === 'rehearsal') { const no = openRefusal(); if (no) { say(no); return; } open(true); say(EG_TEXT.opening); return; }
       if (a === 'home') { this.wayHome(); return; }
+      if (a === 'board' || a === 'boards') { if (!board?.()) say('The boards cannot be read just now.'); return; }   // EG-E2: the three boards (ui/egBoardWindow.js)
       const o = online(), E = link.state();
       if (inSpire()) {
         if (a === 'pick') { const n = Number(b) | 0, card = E.offer?.v?.[n - 1]; if (card == null) say('No Vestige waits for that number.'); else o?.sendEg?.('pick', { v: card }); return; }
@@ -810,6 +811,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     diedHere: () => inSpire(),
     /** The breach as held (tests). */
     state: () => link.state(),
+    /** EG-E2/section 25.4, THE QUIET COMPANY: during a trial in the Spire the cosmetic auras draw at nothing (the host's
+     *  aura gather asks it) - every light on the floor is the fight's. */
+    quiet: () => inSpire() && link.state()?.sg === 'trial',
     /** EG-E: where a Redoubt's spoils leave from - the Court's heart of hall `h`, over its floor, and the floor they are
      *  kept to (world/gateSpew.js keepLaunch's `{ centre, r, floorY }`) - while I stand in that hall; null anywhere else
      *  (the spoils go straight into the pack). */

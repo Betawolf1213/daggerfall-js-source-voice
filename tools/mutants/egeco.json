@@ -169,5 +169,59 @@
     "tests": [
       "test/egeco_spoils.test.js"
     ]
+  },
+  {
+    "name": "EGECO-the-claim-without-its-character",
+    "file": "src/scenes/world.js",
+    "old": "claim: (r) => _accountEg.claim(r, characterIdOf(playerEntity)).then(weirHeard) }",
+    "new": "claim: (r) => _accountEg.claim(r).then(weirHeard) }",
+    "tests": [
+      "test/egeco_hosts.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-the-sink-unpassed",
+    "file": "src/scenes/world.js",
+    "old": "      panoply: _accountEg ? panoplyDeps : null,",
+    "new": "      panoply: null,",
+    "tests": [
+      "test/egeco_hosts.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-the-redoubt-never-told",
+    "file": "src/scenes/egClient.js",
+    "old": "rdSeen = E.h; redoubt?.(E.rd);",
+    "new": "rdSeen = E.h;",
+    "tests": [
+      "test/egeco_hosts.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-auras-in-a-trial",
+    "file": "src/scenes/world.js",
+    "old": "    if (egClient?.quiet?.()) return;",
+    "new": "    if (false) return;",
+    "tests": [
+      "test/egeco_hosts.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-the-striker-unnamed",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "by: foe._killedBy ?? null });",
+    "new": "by: null });",
+    "tests": [
+      "test/egeco_hosts.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-the-joiners-door-unwired",
+    "file": "src/scenes/dungeonContext.js",
+    "old": " egFindStruck(f.entity).catch(() => {});",
+    "new": " void 0;",
+    "tests": [
+      "test/egeco_hosts.test.js"
+    ]
   }
 ]

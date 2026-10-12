@@ -296,6 +296,7 @@ import { createHostNpcBodies, npcBodiesOn } from '../characters/npcBodies.js';  
 import { isBodyFoe, foeActor, foeFx, foeId, foeSeed, applyWireLook } from '../characters/foeBodies.js';
 import { createPopulationLane } from '../characters/npcBodies.js'; import { personActor } from '../characters/peopleBodies.js';   // MWNPC8b: the dungeon's standing people   // ENHANCED AI 3b: the Enhanced tab's switch
 import { raiseEnemyDeath, playRareDrop, pileBody, sayEnemyDied } from './corpseMarker.js';   // UL1: OnEnemyDeath; LR3: the drop chime; LOOT-STACK: a body as the loot window's tab; LOOT7-CHECK DUNGEON-DIED: the kill notice
+import { egFindStruck } from '../systems/egFind.js';   // EG-E3: the dungeon's find - a joiner's kill, asked by the joiner
 import { rollCorpseKit, capFoeLoot } from '../systems/foeLootCap.js';   // KIT-ROLL: a foe's kit, laddered at its death by every body door; AUDIT 625 L5: a copy's cap
 import { dropFoeCard } from '../systems/cardSources.js';   // AUDIT CARDS-6 A3: a joiner's copy of a body draws for its own card
 import { FOE_LEVEL_MAX, CELL_LOOSE_PUPPETS, sharedClassicMinutes, hitClassField, hitClassOf } from '../net/wire.js';   // TELL8: a blow's class on a hit   // SEARCH1: a room's search stamp, read as the world minute it was searched at   // AUDIT RENOWN1 GAME-3: the stream's bound on a class foe's level; SUMMON-SYNC: an owner's loose stands a reader stands, the cell's allowance
@@ -5734,6 +5735,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // AUDIT SET P-M3: THE HOST'S WORD THAT MY BLOW KILLED IT (its record's `v`, roomRecord's) - read before the death below
     // lays the body, once: the frame after finds the foe dead
     if (r.d === 1 && !f.dead && r.v != null && r.v === (opts.selfId?.() ?? null)) reportPlayerKill(f.entity, REMOTE_KILL);
+    if (r.d === 1 && !f.dead && r.v != null && r.v === (opts.selfId?.() ?? null)) egFindStruck(f.entity).catch(() => {});   // EG-E3: my blow killed an elite - my client asks the find (systems/egFind.js)
     // LOOT7-CHECK DUNGEON-DIED: ...and the kill notice with it - the striker's own, said at the striker (damageFoe's death
     // arm speaks none for a peer's blow at the host); a death the host's record names nobody for is the host's to say
     if (r.d === 1 && !f.dead && r.v != null && r.v === (opts.selfId?.() ?? null)) sayEnemyDied((l) => hudText.add(l), f.mobileType, f.entity);
@@ -6818,7 +6820,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       spawnCorpse(foe);
       playRareDrop(audio, foe.ai.feet, foe.entity.items);   // LR3: the chime for a Rare or better on the body
       stampWonWeapons(foe.entity.items, _sharedFoe(foe) ? fightN(foe) : 1);   // SIGIL1: the body's Magic+ weapons won online may carry a sigil; a bigger fight, better odds
-      raiseEnemyDeath(foe.entity, { luck: liveStat(playerEntity, 'luck') });   // UL1: OnEnemyDeath (EnemyDeath.cs:139) - the kill, not the load's rewind. AUDIT VC6: the player's luck, which SURV2's food rolls against - this host keeps no loot stream of its own, so the roll stays Math.random as its spawn loot's is
+      raiseEnemyDeath(foe.entity, { luck: liveStat(playerEntity, 'luck'), by: foe._killedBy ?? null });   // EG-E3: the striker the foes stream names (a joiner's kill is the joiner's find); UL1: OnEnemyDeath (EnemyDeath.cs:139) - the kill, not the load's rewind. AUDIT VC6: the player's luck, which SURV2's food rolls against - this host keeps no loot stream of its own, so the roll stays Math.random as its spawn loot's is
       return;
     }
     // C15 knockback (WeaponManager.WeaponDamage): WEAPON hits carry
