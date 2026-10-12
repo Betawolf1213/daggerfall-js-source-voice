@@ -36,6 +36,7 @@ import { shDisc, shLane, egInShape } from './egShape.js';
 import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half
 import { egAnnalsNext, egAnnalsLordPage } from './egAnnals.js';
 import { egFeatBits } from './egFeats.js';   // EG-E: the lords' feats, judged at a lord's fall
+import { arenaWeekOf } from './arenaLaw.js';   // EG-E: the Proclamation's week, the arena's (Monday to Monday from the season epoch)
 import { orreryOf, orreryFresh, orreryStep, orreryShortest, SD_STONE_SETTLE_MS } from './sdBrain.js';
 import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gateBrain.js';
 
@@ -104,7 +105,7 @@ const dist = (ax, az, bx, bz) => Math.hypot(ax - bx, az - bz);
 export function egBreachNew(t) {
   return {
     v: 2, b: t.b, ez: t.ez, s: t.s, o: t.o, ew: t.ew, rh: t.rh, seed: t.seed >>> 0, egv: EG_SPEC, op: t.op, site: t.site,
-    wg: Array.isArray(t.wg) ? t.wg.slice(0, 3) : [], pr: t.pr ?? egProclamationOf(Math.floor(t.op / 604_800_000)),
+    wg: Array.isArray(t.wg) ? t.wg.slice(0, 3) : [], pr: t.pr ?? egProclamationOf(arenaWeekOf(t.op / 1000)),
     co: t.co.map(([sub, name, n]) => ({ sub, name, n })),
     /** @type {Record<string, any>} each member admitted: its name, numeral, level, life, purse and run */
     mem: {},
