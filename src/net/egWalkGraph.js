@@ -22,6 +22,9 @@
 //     open to the sky"). A flier goes straight unless rock stands between: a covered passage's walls (its rock mass,
 //     EG_ROCK_M either side of its tunnel), a chokepoint arch's wall, a chamber's wall ring (open only where the course
 //     comes in and goes on) - then by the fewest metres over their mouths, corners and gaps.
+//   EG-ZJ (2026-10-12; sections 11.7 and 23): A BODY'S FEET on the wire (egFeetAt, egWalkFeet) - the fight ground under a body
+//     (section 11.7's band about where it stood, else the lowest that holds it), and a graph walker's floor now and at its
+//     next walk's end; every screen draws each body at its own height (net/egBodies.js egBodyWire carries it).
 //
 // Pure, deterministic (no die), in the relay bundle (net/egLegion.js, net/egBrain.js). Not a DFU member. Ledger A
 // (ELITE-GATES).
@@ -85,6 +88,19 @@ export function egGroundAt(view, x, y, z, pad = 0) {
     if (!best || (high ? fy > (best.y ?? 0) : fy < (best.y ?? 0))) best = f;
   }
   return best;
+}
+/** EG-ZJ (section 23): a height on the wire is whole centimetres, as the law lays every height (section 9). */
+const cm = (v) => Math.round(v * 100) / 100;
+/**
+ * EG-ZJ (sections 11.7 and 23) - A BODY'S FEET at (x, z) in hall `view` (egFightView's, or the spec): the fight ground under
+ * it (egGroundAt, EG_PIECE_TOUCH_M about its plan) - in section 11.7's band about `y0`, where it stood, and with none in that
+ * band the lowest that holds the plan (a leap up onto a perch, a fall off a lip); with no fight ground under it at all (a
+ * body over the void, an object in a wall's alcove), `y0` kept, else `none`. Whole centimetres. Pure.
+ * @param {any} view @param {number} x @param {number} z @param {number} [y0] @param {number} [none]
+ */
+export function egFeetAt(view, x, z, y0 = NaN, none = 0) {
+  const f = (Number.isFinite(y0) ? egGroundAt(view, x, y0, z, EG_PIECE_TOUCH_M) : null) ?? egGroundAt(view, x, NaN, z, EG_PIECE_TOUCH_M);
+  return cm(f ? f.y ?? 0 : Number.isFinite(y0) ? y0 : none);
 }
 
 // ── THE WALK GRAPH ──────────────────────────────────────────────────────────────────────────────────────────
@@ -233,7 +249,7 @@ export function egWalkNext(view, b, gx, gz, gy = NaN, inset = 0) {
   let wn = wi >= 0 ? G.nodes[wi] ?? null : null;
   if (wn && Math.hypot(wn.x - b.x, wn.z - b.z) <= EG_NODE_REACH_M) { b.fr = wn.rg; wn = null; }
   b.wn = -1;
-  const [from] = egRegionAt(view, G, b.x, b.z, NaN, Number.isInteger(b.fr) ? b.fr : -1);
+  const [from] = egRegionAt(view, G, b.x, b.z, Number.isFinite(b.y) ? b.y : NaN, Number.isInteger(b.fr) ? b.fr : -1);   // EG-ZJ: by its own feet (a Caster on its pillar's top, never the walkway its plan overlaps)
   b.fr = from;
   const [to] = egRegionAt(view, G, gx, gz, gy);
   const goal = egKeepInRegion(view, G, to, gx, gz, inset);   // `inset` in, as net/egLaw.js egKeepOnFight keeps a walker
@@ -261,6 +277,19 @@ export function egWalkNext(view, b, gx, gz, gy = NaN, inset = 0) {
     b.fr = n.rg;   // reached: the body stands in the node's region now
   }
   return [goal[0], goal[1], true];
+}
+/**
+ * EG-ZJ (sections 11.7 and 23) - A GRAPH WALKER'S FEET once egWalkNext has moved it on: the floor of the region it stands in
+ * (`b.fr`) and the floor its next walk ends on - its node's region (`b.wn`: a stair's top, a portal past a lip), else its own
+ * (egWalkNext keeps the goal inside the region it stands in) - `[y, ty]`, whole centimetres; null with no region (a view
+ * with no fight ground). A stair's walk climbs from the one to the other. Pure.
+ * @param {any} view @param {any} b
+ * @returns {[number, number] | null}
+ */
+export function egWalkFeet(view, b) {
+  if (!view?.fl?.length || !Number.isInteger(b?.fr) || b.fr < 0) return null;
+  const G = egWalkGraph(view), at = (k) => cm(view.fl[G.rg[k]?.f]?.y ?? 0), n = Number.isInteger(b.wn) && b.wn >= 0 ? G.nodes[b.wn] ?? null : null;
+  return [at(b.fr), at(n ? n.rg : b.fr)];
 }
 /** Does the straight walk from (ax, az) to (bx, bz) cross an arch's wall? Where it first meets one, else null (a
  *  Breaker's run is cut there). */

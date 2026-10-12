@@ -58,8 +58,8 @@ import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT
   EG_WAKE_RING_MS, EG_ABSENT_TRIAL_MS, EG_LAST_WORD_MS, EG_REDOUBT_HOLD_MS, EG_COUNT_CAP_MS, egHallOf, egCircleOfHall, egFirstHallOf, egStartHall, egTimes, egAdmits, egCountNew, egCountLeft, egCountRun, egCountHold,
   egInHall, egLocalX, egOnArrive, egAtDoor, egOnFight, egSpecDigest, egGeoOf, egSeed, egProclamationOf, egKeepOnFight, EG_VOID_Y, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR } from './egLaw.js';
 import { EG_LATE_HALLS, EG_LATE_ARRIVE_MS, EG_TOLL_STEP, EG_TOLL_QUARTERS, EG_TOLL_WAIVE_MS, EG_TOLL_KINDS } from './egLaw.js';   // EG-ZI: the late wake and the pull's toll (sections 7 and 10.6)
-import { EG_ROLE, EG_FL, EG_GONE, EG_STATE_EVERY_MS, egFightNew, egCarry, egMovesOut, egHpOut, egBlowsStep, egHitBody, egGone, egHas, egSetFl, egBodiesOf, egBodyById, egHpTeam, egRaise, egWalk, egAim, egTethersOut, egMarksOut, egStruck, egMark, egUnmark, egMarkOf, egBodyAt } from './egBodies.js';
-import { EG_KIND, EG_LEGION_KINDS, EG_DIVER_WAIT_R, egIsleAhead, egLegionStep, egLegionRaise, egWaveKinds, egWaveSize, egAddSlain, egSquad, egFromBehind } from './egLegion.js';
+import { EG_ROLE, EG_FL, EG_GONE, EG_STATE_EVERY_MS, egFightNew, egFightBind, egCarry, egMovesOut, egHpOut, egBlowsStep, egHitBody, egGone, egHas, egSetFl, egBodiesOf, egBodyById, egHpTeam, egRaise, egWalk, egAim, egTethersOut, egMarksOut, egStruck, egMark, egUnmark, egMarkOf, egBodyAt } from './egBodies.js';
+import { EG_KIND, EG_LEGION_KINDS, EG_DIVER_WAIT_R, egIsleAhead, egAirY, egLegionStep, egLegionRaise, egWaveKinds, egWaveSize, egAddSlain, egSquad, egFromBehind } from './egLegion.js';
 import { EG_OBJ, egLordsWake, egLordsAwake, egLordsFell, egLordsOf, egObjBroken, egObjsOf, zoneOut, egStun } from './egLords.js';
 import { EG_SEAM, egLordsFight } from './egLords.js';   // EG-ZK (section 13.1): every lord through THE BOSS SEAM, called inside the one beat
 import { egAsk, egVote, egAskResult, egAsksDue, egDecreesAsk, egDecreesChosen, egDecreeRanks, egDecreesInForce, egBargainDecree, egTideOf, egStratumAt, egOffers, egPick, egPicksClose, egSurplus,
@@ -214,8 +214,10 @@ const living = (B) => Object.entries(B.mem).filter(([, m]) => m.in && m.alive &&
 const memberName = (B, sub) => B.mem[sub]?.name ?? B.co.find((c) => c.sub === sub)?.name ?? '';
 /** The circle's span decrees, folded into the specs (net/egLaw.js egGeoOf). */
 export const egGeo = (B) => egGeoOf(egDecreesInForce(B));
-/** The hall the company stands in. */
-const specOf = (B) => egHallOf(B.seed, B.h, egGeo(B), B.egv);   // EG-ZC: the breach's own law (THE LAW PIN - the law before kept)
+/** The hall the company stands in, in its breach's own law (EG-ZC: THE LAW PIN - the law before kept). EG-ZJ: and its fight
+ *  bound to its fight ground (net/egBodies.js egFightBind) - every word the director takes reads its hall here first, so a
+ *  woken room's restored fight stands what it raises, places and walks on its ground from the first word, a beat's or a blow's. */
+const specOf = (B) => { const spec = egHallOf(B.seed, B.h, egGeo(B), B.egv); if (B.F) egFightBind(B.F, egFightView(spec)); return spec; };
 // ── EG-H1 (EG8d): THE FAIR TRAIL'S DOOR - bible/11-Multiplayer/Elite-Gates.md section 21 ───────────────────────────────
 /** A member's fair trail is its hall's and its life's: a new hall, or a fall, begins it again. */
 const fairKey = (B, m) => `${B.h}:${m.falls ?? 0}`;
@@ -499,15 +501,16 @@ function standFight(B, spec, now, rng, out) {
     if (spec.twist === 'deserter') { egLegionRaise(F, [EG_KIND.deserter], [[spec.fight.x, spec.fight.z - spec.fight.r + 3]], now, out); F.desClosed = 0; F.coClosed = 0; }
   } else if (spec.kind === 'rampart') {
     const pillars = spec.spots.pillar ?? [];
+    const onPillar = (p) => [p.x, p.z, spec.discs.find((d) => d.role === 'pillar' && Math.hypot(d.x - p.x, d.z - p.z) < 0.01)?.y];   // EG-ZJ: a pinned Caster on its pillar's top, never the walkway its plan overlaps
     if (v === 'gauntlet') {
       const k = Math.min(pillars.length, 2 + Math.ceil(n / 2));
       F.gauntlet = pillars.slice(0, k).map((p) => ({ p, stood: 0, at: 0, done: 0 }));
-      for (const g of F.gauntlet) { const [c] = egLegionRaise(F, [EG_KIND.caster], [[g.p.x, g.p.z]], now, out); if (c) { c.pinned = 1; g.i = c.i; } }
+      for (const g of F.gauntlet) { const [c] = egLegionRaise(F, [EG_KIND.caster], [onPillar(g.p)], now, out); if (c) { c.pinned = 1; g.i = c.i; } }
       P.obj = 'gauntlet'; P.left = F.gauntlet.length;
     } else {
       if (v !== 'winch') egLegionRaise(F, [EG_KIND.bearer, EG_KIND.bearer], spec.gate.bearers.map((q) => [q.x, q.z]), now, out);
       const k = Math.min(pillars.length, 1 + Math.ceil(n / 3));
-      for (const p of pillars.slice(0, k)) { const [c] = egLegionRaise(F, [EG_KIND.caster], [[p.x, p.z]], now, out); if (c) c.pinned = 1; }
+      for (const p of pillars.slice(0, k)) { const [c] = egLegionRaise(F, [EG_KIND.caster], [onPillar(p)], now, out); if (c) c.pinned = 1; }
       F.waveAt = now + 6000;
       if (v === 'winch') { F.winch = 0; P.obj = 'winch'; P.winch = 0; } else P.obj = 'wards';
     }
@@ -573,7 +576,7 @@ function fragStand(B, F, spec, now, out) {
   F.horn = spec.spots.horn?.length ? { at: now + EG_HORN_FIRST_MS, kv: 0, sub: '', foul: 0, ashAt: 0, ash: 0 } : null;
   for (const a of spec.alcoves ?? []) {
     if (a.seal !== 'seam') { F.alc[a.i] = 1; continue; }
-    const o = egRaiseObj(F, 'fwall', a.x, a.z, 1, now, out, { r: 1.0, pt: a.i });
+    const o = egRaiseObj(F, 'fwall', a.x, a.z, 1, now, out, { r: 1.0, pt: a.i, y: a.y });   // EG-ZJ: on its alcove's own floor
     if (o) o.alc = a.i;
   }
   const lurks = [], firstOf = new Set();
@@ -721,7 +724,7 @@ function spanTwist(B, F, spec, now, out) {
 const egBargainOpen = (B) => !(B.bargainDc ?? []).length;
 /** An errand's object stood (net/egLords.js's law for its types). */
 function egRaiseObj(F, t, x, z, hp, now, out, o = {}) {
-  const b = egRaise(F, EG_ROLE.obj, EG_OBJ[t] ?? 0, [[x, z]], hp > 0 ? hp : 1, now, out, { r: o.r ?? 1.2, pt: o.pt ?? 0 })[0];
+  const b = egRaise(F, EG_ROLE.obj, EG_OBJ[t] ?? 0, [[x, z, o.y]], hp > 0 ? hp : 1, now, out, { r: o.r ?? 1.2, pt: o.pt ?? 0 })[0];
   if (!b) return null;
   b.t = t; b.st = 0; b.great = o.great ?? 0;
   if (!(hp > 0)) egSetFl(F, b, EG_FL.ward, true, out);
@@ -1249,9 +1252,9 @@ function spanLegion(F, view, now, inHall, cap, out) {
     const divers = F.band >= 2 && isle && F.waveNo % 2 === 1 ? Math.ceil(n / 2) : 0;
     const kinds = [], spots = [];
     for (let j = 0; j < n; j++) {
-      if (j < divers) { const a = (j / divers) * Math.PI * 2; kinds.push(EG_KIND.diver); spots.push(egAirKeep(view, isle.x + Math.sin(a) * EG_DIVER_WAIT_R, isle.z + Math.cos(a) * EG_DIVER_WAIT_R)); continue; }
+      if (j < divers) { const a = (j / divers) * Math.PI * 2; kinds.push(EG_KIND.diver); spots.push([...egAirKeep(view, isle.x + Math.sin(a) * EG_DIVER_WAIT_R, isle.z + Math.cos(a) * EG_DIVER_WAIT_R), isle.y ?? 0]); continue; }
       const m = inHall[j % inHall.length], s = j % 2 ? 1 : -1;
-      kinds.push(EG_KIND.harrier); spots.push(egAirKeep(view, m.x + s * EG_SHADOW_SIDE_M, m.z + EG_SHADOW_AHEAD_M));
+      kinds.push(EG_KIND.harrier); spots.push([...egAirKeep(view, m.x + s * EG_SHADOW_SIDE_M, m.z + EG_SHADOW_AHEAD_M), egAirY(view, m, {})]);   // EG-ZJ: risen at their member's height (the Divers at the island's)
     }
     egLegionRaise(F, kinds, spots, now, out, { wave: F.waveNo });
   }

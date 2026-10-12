@@ -211,7 +211,7 @@
   {
     "name": "EGZK-a-reached-node-forgotten",
     "file": "src/net/egLords.js",
-    "old": "    if (Math.hypot(wn.x - L.x, wn.z - L.z) <= EG_NODE_REACH_M) L.fr = wn.rg;\n",
+    "old": "    if (Math.hypot(wn.x - L.x, wn.z - L.z) <= EG_NODE_REACH_M) { L.fr = wn.rg; L.y = egWalkFeet(view, L)?.[0] ?? L.y; }   // EG-ZJ: its feet on that floor, as the legion's (net/egLegion.js walkGraph)\n",
     "new": "\n",
     "tests": [
       "test/egz_lords.test.js"
