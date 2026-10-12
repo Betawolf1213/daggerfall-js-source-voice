@@ -4873,15 +4873,13 @@ beats on `audio.playOneShot`).
 2. "A counted member" is the device's record of the room's count. A device with no record (another browser, cleared
    storage) is offered the way back on the service's word alone, and the room decides: a member it never counted is
    refused at the hello past the window, and that refusal lets the record go.
-3. A device with no record knows no seed. It stands circle 1 of seed 0 until the room's word, then rebuilds the right
-   circle in place (a moment of the wrong circle under the veil). The account service keeps no seed.
-4. The last island is the client's own record of still ground, written at most each second, not the relay's last
+3. The last island is the client's own record of still ground, written at most each second, not the relay's last
    pose. A page whose socket only dropped never left the circle, and stays where its own motor holds it.
-5. The drain is a backdrop's saturation (the HUD keeps its colour), and the dither goes through black. Neither is a
+4. The drain is a backdrop's saturation (the HUD keeps its colour), and the dither goes through black. Neither is a
    cross-dissolve of two frames. The sink starts from the first-person eye where I fell (`cam.pos`), in either view.
-6. THE FALL's words are the client's (`EG_FALL_TEXT` in ui/egSpireHud.js). `net/egLaw.js` is in the relay's bundle, so
+5. THE FALL's words are the client's (`EG_FALL_TEXT` in ui/egSpireHud.js). `net/egLaw.js` is in the relay's bundle, so
    only the final line is `EG_TEXT.fallen`.
-7. The spans' clock is taken again past 5 ms. anchoredClock's own slack (1 s) would never take the correction, which is
+6. The spans' clock is taken again past 5 ms. anchoredClock's own slack (1 s) would never take the correction, which is
    a one-way latency of tens of milliseconds.
 
 **The four hosts.**
@@ -5004,14 +5002,11 @@ section 22's tick.
 4. `m` is the circle's six measures, not one hall's. `sh` is thousandths of the living members' damage that circle.
 5. The hub holds every receipt, not only those for members with no socket in the room. It hands a member in the room
    nothing (the room did), but holds the receipt for their hellos.
-6. The service's clock (a stake spent after `EG_VOID_MAX_S` with no receipt naming it) is not written. A stake no
-   receipt settles stays `held`. That costs nothing: its key was taken at the open, its `eg_live` lapses on its own,
-   and the relay refuses a void past `EG_VOID_MAX_S`.
-7. A member's word still arms a beat at once (a vote, a step through the door); only the room's own tick keeps the
+6. A member's word still arms a beat at once (a vote, a step through the door); only the room's own tick keeps the
    law. A closing with a foe standing in it (a Kyn Mimic's Lurker) beats as a trial.
-8. THE FORCE VOID is a Worker variable the deploy sets, not an asked door. EG-H2's departure 2 gives the reason: an
+7. THE FORCE VOID is a Worker variable the deploy sets, not an asked door. EG-H2's departure 2 gives the reason: an
    unauthenticated ask would let anyone void a breach.
-9. THE SEAL's ranking needs no case of its own. A sealed run ends at the sealed Redoubt's Court, its `td` the seconds to
+8. THE SEAL's ranking needs no case of its own. A sealed run ends at the sealed Redoubt's Court, its `td` the seconds to
    that Court's fall, so the Descent's order (the deepest hall, then the fewest seconds) ranks sealed runs by their
    seconds. The relay mints no `'seal'` end while `EG_OPEN` is 4.
 
@@ -5637,3 +5632,133 @@ peers, the tell, the reverb's crossfade and TEXTURE.356 are closed here.
 - PIN MOVED: `test/audit39_render.test.js` (the fire walls take GetFireWallColors32). `bible/06-Systems/Systems.md` counts
   517 modules. `bible/07-Rendering/Rendering.md` and `Rendering-Arc.md` say GetFireWallColors32 shipped.
 - `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
+
+### EG-ZM - 2026-10-12 - THE LOOSE ENDS: THE RETURN'S SEED, THE BOARD'S DOORS, THE STAKE'S CLOCK, THE LEDGER ROW
+
+Four loose ends of the last wave (Mac: *"I said I want everything"*). It closes EG-ZD's departure for a device with no
+record (its way back stood circle 1 of seed 0 under the veil until the room's word), section 20's board window *"reached
+from the Timers row and from the start window"* (EG14's window had one door, `/breach board`), EG-ZA's departure for the
+service's clock (a stake no receipt settles stayed `held`), and the ELITE-GATES row of the Port-Ledger, which still
+named a retired ward and the Hour's art.
+
+**What shipped, by piece.**
+
+- **THE RETURN'S SEED** (`scenes/egClient.js`, section 22).
+  - A way back the device knows only from the account service's `live` is a record with no opening (`op` 0), so no seed
+    and no hall. Its step goes under the veil and is held there until the room's first word.
+  - The word is heard by a listener on my own identity (`egSeedListen`). It is an `OnlineSession` made of my primary
+    session's url, id, secret, name, look and token minter, with `presence: false`: no pose, so it stands no body in the
+    breach and sends nothing but its hello and its heartbeat (`net/caravanVisitLink.js`'s way). The room answers its
+    hello as it answers any member's, with the breach's `st`, or refuses it in words (`net/egBrain.js` egAdmitWord).
+  - The `st` is folded as the link folds it (`net/egLink.js` foldEg) and kept on the record (`backFrame`): the seed, the
+    opening, the geometry, the hall. The circle stood is the record's, so it is the room's: for a breach begun at
+    Redoubt 1 under a Crumbling Wager, Hall 6's circle 2 in the Wager's geometry, never circle 1 of seed 0, and nothing is
+    rebuilt once my own socket says hello.
+  - The listener is left at its answer, before the circle stands. The relay keeps one socket an account in a breach's
+    room (`server/src/index.js:"if (egRoom && who.subject) for"`), so my own socket's hello is never refused as a
+    replacement of it.
+  - A refusal in the room's own words (the order, the company, the fallen, home, a breach closed - `roomRefused`, now the
+    one law spireFrame's terminal close reads too) is said, and the way back is let go and marked over. A refusal that
+    is not the room's (the relay's, for want of a sign-in) says the road is shut and keeps the way back.
+  - No word within `EG_BACK_SEED_WAIT_MS` (12 s: the listener's own wait for its token, `TOKEN_WAIT_MS`, and four seconds
+    for the socket, the hello and the answer) opens the veil where I stood: *The Spire does not answer. Type /breach to
+    try again.* The way back is kept, and asked again it waits again. The online frame gone (`away`) ends the wait the
+    same way, and a session with no relay address is silent at once.
+  - The frame settles the wait (`seedFrame`), the wait's slot emptied before the step is told.
+- **THE BOARD'S DOORS** (section 20).
+  - **One door.** `ui/egBoardWindow.js` `createEgBoardDoor`, the world host's `egBoardDoor`, opens the boards in the skin
+    worn (the enhanced panel; the classic skin's DFU pickers on the mode's slot), one at a time: asked again, the boards
+    standing are closed and out of the slot before the next go in. A window on its way out of the mode's slot - a pause
+    face handed off, done but not yet drained - gives the slot up to the classic picker; a live window keeps it.
+    `/breach board` goes through it.
+  - **The Timers row** (`systems/eventTimers.js`, `ui/enhancedTimers.js`, `ui/enhancedMenu.js`). The timers source carries
+    the door (`doors.board`). Where it does, every Elite row carries `door: 'board'`: my breach's, and the boards' own
+    season, an Elite row of its own (*The Spire's season 2 ends*, at the arena season's end - `net/arenaLaw.js` - when
+    each Descent bracket's top ten are kept as Spire Champions), so the door stands with no breach of mine. The window
+    draws it as a *Boards* button beside the row's clock, a button as the window's Close is, so a tap and the pad's walk
+    of the pause face reach it alike. A press reads the source's door at the press, and the pause face hands its place on
+    first, as the sheet's doors do (`handoff`; a door that opened nothing resumes).
+  - **The start window** (`ui/egStartWindow.js`). Its last row is *The Boards of the Spire* (`EG_BOARD_TEXT.title`), with
+    keys or with the Rehearsal alone. Picked, the list leaves the slot before the boards open, and comes back once they
+    close (once, however often their close is told; at once where none opened; never after the window ended). It is a row
+    of DFU's list picker on the classic skin and of the skin's own picker on the enhanced, with their own touch and pad.
+- **THE STAKE'S CLOCK** (`server-account/src/eg.js` spendLapsedStakes, `server-account/src/cron.js` `eg-stakes`; section
+  23).
+  - **When.** A stake still `held` `EG_STAKE_CLOCK_S` past its `until` is spent by the service's hourly clock. That is
+    the void's window (`EG_VOID_WINDOW_S`, the relay's `EG_VOID_MAX_S` pinned equal) and a receipt's life
+    (`EG_RECEIPT_TTL_S`): an order is signed at the latest at its stake's `until` (an open asked again re-signs it only
+    while the stake holds), its void may be minted a week after, and that void is carried a week more. Past the bound
+    nothing can name the stake.
+  - **What the key becomes.** Spent: it stays taken, as any spent stake's does. A clock never returns a key.
+  - **What the player is told.** A letter in the mailbox (`server_post`, the post the pause face's envelope reads), from
+    the developers, one a stake (`spire-stake-<order id>`, INSERT OR IGNORE over 0093's index, so a letter already there
+    never holds the clock): *The Weir Key you staked on 2027-01-15 opened a breach that never sent word back: no Redoubt,
+    no end and no void reached the Spire's ledger in the time a key waits for one. That key is spent. It does not
+    return.* A Rehearsal's stake held no key: it is spent and says nothing.
+  - **How.** The stakes due are asked in one statement, a page of `SWEEP_ROWS`, the oldest first (a quiet hour asks no
+    more), then spent with their letters in one transaction, each only while it is still held: a receipt claimed between
+    the ask and the spending settles its stake its own way. The job asks again while a page is full. The held stakes are
+    asked by their own index (migration 0111 extended: `idx_eg_stakes_held` on `(state, until)`), never a walk of every
+    stake ever staked.
+- **THE LEDGER ROW** (`bible/01-Overview/Port-Ledger.md`, ELITE-GATES). `characters/playerEntity.js` holds one Levitate
+  ward (EG-H2 retired `registerSpireLevitateWard`); `world/egHall.js` wears its band's dress (EG-G2's
+  `world/egBandArt.js`), not the Hour's art; `server-account/src/egEconomy.js` and `server-account/src/egStarts.js` are
+  named, and the stake's clock on `server-account/src/cron.js`.
+
+**Departures, said plainly.**
+
+1. The clock waits fourteen days past the stake's end (`EG_STAKE_CLOCK_S`), not the page's seven days
+   (`EG_VOID_MAX_S`). A void can be minted up to seven days past its order's issue and carried seven days more, so a
+   stake spent at seven would lose the key such a void returns, and a key is never lost to an infrastructure fault.
+2. The service keeps its own void window (`EG_VOID_WINDOW_S`), pinned equal to the relay's: `net/egDurable.js` is the
+   relay's and outside the account Worker's bundle (`EG_LAST_WORD_S`'s precedent in the same file).
+3. The player is told by a letter in the mailbox, not a line in the game: the clock runs on the service, days after the
+   player last played, and the post is the one place the service speaks to an account between sessions. The words are
+   fixed here, as First of the Spire's are.
+4. The way back's veil is chosen before the room has spoken, so a device with no record steps under the stair of the
+   record's start (Hall 1's full fall) whatever hall the room says. A record that knows its seed waits for nothing, as
+   before, and a circle it had wrong is still rebuilt in place.
+5. For the length of the wait a second socket stands on my identity in the breach's room. It holds no pose, so the room
+   counts no body of it; it is gone before my own socket says hello.
+6. The Timers row's door hangs on the boards' own season as well as on my breach's row: a Timers window with no breach of
+   mine had no Elite row to carry it. The season row stands only where the door does.
+7. The Timers window is the enhanced pause face's (TIMERS1). On the classic skin it is reached where the enhanced pause
+   opens on either skin (the mailbox's door, the family's pages); its door opens the boards in the skin worn.
+
+**The four hosts.**
+- `src/scenes/world.js` - WIRED: `egBoardDoor` (`createEgBoardDoor` over `openEgBoard` and the mode's slot -
+  `topWindow`, `mountWindow`, `closeWindow`), and through it `/breach board`'s `board`, the timers source's `doors` and
+  the start window's `board`. The return's listener is the breach client's own (it builds from the `online` it is
+  already handed). Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED: untouched. Its interiors' pause face reads the world host's timers source, which
+  carries the door; the classic boards mount through its own `mountWindow`, `closeWindow` and `topWindow`.
+- `src/scenes/dungeonContext.js` - FLAGGED: untouched; its pause face reads the same source through worldModes, and its
+  slot takes the boards' pickers as it takes any window.
+- `src/scenes/exterior.js` - FLAGGED: offline - no timers source, no breach, no boards (section 28).
+
+**Not verified without a browser and the game's data:** the listener's hello ran against the relay's real Room through
+a bridged socket, not a deployed relay; the Timers button and the start window's row were driven on a stub DOM and fake
+pickers, not seen on either skin; the letter was read through the real Worker's mailbox routes, not the pause face's
+envelope.
+
+**Pins.**
+- `test/egz_ends_return.test.js` (3), `test/egz_ends_board.test.js` (3), `test/egz_ends_stake.test.js` (2).
+- `tools/mutants/egz_ends.json` (73: 71 dead, 2 equivalent as recorded - the wait's slot emptied before its step is
+  told, and the Timers shape naming a row's door, which the season row's coming and going moves anyway). Six survived the
+  first run and were answered: three were the return's target read twice (the room's word written into the record and
+  then into the step), so the step now stands the record's circle, as it always did, and the record is pinned; a
+  settled stake long due and a page of one were pinned; the shape's became the second equivalent.
+- PIN MOVED: `test/egz_return.test.js` (EG-ZD's device with no record is now a record whose seed is not the room's -
+  still rebuilt in place); `test/egeco_hosts.test.js` (`/breach board` through the one door); `test/auditscale.test.js`
+  D7 (a quiet world's hour is twenty-three statements, the stake clock's one ask the twenty-third).
+- Re-aimed by content: `egz_stair.json`'s EGZ-the-way-back-under-the-hour (the way back's step now waits under its veil
+  before it stands the circle).
+- Judged again over the files this slice touched (`scenes/egClient.js`, `systems/eventTimers.js`, `ui/egStartWindow.js`,
+  `ui/egBoardWindow.js`, `ui/enhancedTimers.js`, `server-account/src/eg.js`, `cron.js` and `post.js`): 232 records of
+  `auditlwii2_service`, `auditscale`, `cap_off`, `egarch`, `egeco`, `egeco_honours`, `egeco_pay`, `egeco_relay`,
+  `egfrag`, `egfull`, `egint`, `eglook`, `egmade`, `egplay`, `egpres_hud`, `egseam`, `egz_frag`, `egz_keys`,
+  `egz_recap`, `egz_return`, `egz_sound`, `egz_stair`, `lw15`, `scale4b`, `sd19`, `sd2c`, `serpent2` and `serverpost`.
+  Every one is dead.
+- `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; migration 0111
+  extended (unshipped).
+- No new src module. The ELITE-GATES ledger row corrected (above).

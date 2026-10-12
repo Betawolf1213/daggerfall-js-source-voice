@@ -46,10 +46,18 @@
 // device says none again. Section 27.6's board line: an end's claim answers the member's standing (`board` - egHonours.js
 // egStandingOf). And First of the Spire's letter goes to a listed account at its keys' read (egHonours.js egFirstPost).
 //
+// ═══ THE STAKE'S CLOCK (EG-ZM) ═════════════════════════════════════
+//
+// Section 23: the key is never returned by a clock - a clock SPENDS. A stake no receipt has settled (no Redoubt, no end of
+// the opener's, no void claimed) is spent by the service's own hourly clock (cron.js) once nothing can name it any more -
+// EG_STAKE_CLOCK_S past its `until` - and its opener is told so in the mailbox, one letter a stake (EG_STAKE_POST). Its
+// key stays taken, as any spent stake's does; a Rehearsal's held none and says nothing.
+//
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js.
 // ═══════════════════════════════════════════════════════════════════
 
-import { verifyEgReceipt } from '../../src/net/egReceipt.js';
+import { verifyEgReceipt, EG_RECEIPT_TTL_S } from '../../src/net/egReceipt.js';
+import { POST_SENDER } from '../../src/net/postLaw.js';   // EG-ZM: the post's sender, as the box shows it
 import { mintEgOrder } from '../../src/net/identityToken.js';
 import { utcDay } from '../../src/net/marksLaw.js';
 import { egHonourStatements, egHonoursAnswer, egRecordOf } from './egHonours.js';   // EG-E2: the feats, the Annals, the honours
@@ -79,6 +87,28 @@ export const EG_FIND_PER_DAY = 6;
 export const EG_FIND_KEYS_PER_WEEK = 2;
 /** A request id an open is idempotent on, a breach id, an order id. */
 export const EG_RQ_RE = /^[a-z0-9]{16,32}$/;
+/** EG-ZM: how long after its order's issue a breach's void may be asked - the relay's (src/net/egDurable.js EG_VOID_MAX_S,
+ *  pinned equal; that module is the relay's, outside this Worker's bundle). */
+export const EG_VOID_WINDOW_S = 7 * 24 * 3600;
+/** EG-ZM (section 23, "The clock"): THE STAKE'S CLOCK - a stake still `held` this long past its `until` is spent by the
+ *  service's own clock. Past it nothing can name it: no void can be minted for its order (the hub and the room refuse one
+ *  EG_VOID_WINDOW_S past the order's issue, and an order is issued at the latest at its stake's `until` - an open asked
+ *  again signs it again only while the stake holds), and no receipt minted before is still alive (EG_RECEIPT_TTL_S, a
+ *  receipt's life). Every end and Redoubt receipt is minted by the breach's last word, inside `until`. */
+export const EG_STAKE_CLOCK_S = EG_VOID_WINDOW_S + EG_RECEIPT_TTL_S;
+/** EG-ZM: THE LETTER a stake the clock spent sends its opener (server_post - the mailbox): one a stake, its batch
+ *  `spire-stake-<ez>` (src/net/postLaw.js POST_BATCH_RE); `{day}` the UTC day the key was staked. */
+export const EG_STAKE_POST = Object.freeze({
+  batch: 'spire-stake-',
+  subject: 'A Weir Key spent',
+  body: [
+    'The Weir Key you staked on {day} opened a breach that never sent word back: no Redoubt, no end and no void reached the Spire\'s ledger in the time a key waits for one.',
+    '',
+    'That key is spent. It does not return.',
+    '',
+    `- ${POST_SENDER}`,
+  ].join('\n'),
+});
 /** EG-ZF (section 27.7): the first-time lines' bits the account keeps - sixteen, room past the page's nine and the
  *  Rehearsal's own (src/ui/egBeats.js EG_FIRST_KEYS, EG_FIRST_REHEARSAL_BIT). */
 export const EG_FIRST_BITS_MAX = 0xffff;
@@ -227,6 +257,28 @@ const returnStake = (db, ez, mercy = false) => [
 ];
 /** A stake spent, once. */
 const spendStake = (db, ez) => db.prepare("UPDATE eg_stakes SET state = 'spent' WHERE ez = ?1 AND state = 'held'").bind(ez);
+
+/**
+ * EG-ZM (section 23, "The clock"): THE STAKE'S CLOCK, ONE PAGE - at most `limit` stakes still `held` EG_STAKE_CLOCK_S past
+ * their `until`, the oldest first, asked in one statement (a quiet world's hour asks no more), then spent in one
+ * transaction with their openers' letters (EG_STAKE_POST - a key's stake alone; INSERT OR IGNORE over 0093's one-a-batch
+ * index, so a letter already there never holds the clock), each only while it is still held - a receipt claimed between
+ * the ask and the spending settles it its own way. The key is not given back: a spent stake's key stays taken. Answers how
+ * many it spent (cron.js asks again while a page is full).
+ * @param {any} db @param {number} nowS @param {number} limit
+ */
+export async function spendLapsedStakes(db, nowS, limit) {
+  const due = (await db.prepare("SELECT ez FROM eg_stakes WHERE state = 'held' AND until <= ?1 ORDER BY until, ez LIMIT ?2").bind(nowS - EG_STAKE_CLOCK_S, limit).all()).results ?? [];
+  if (!due.length) return 0;
+  const ez = JSON.stringify(due.map((r) => r.ez));
+  const [, spent] = await db.batch([
+    db.prepare(`INSERT OR IGNORE INTO server_post (id, to_id, batch, sender, subject, body, item, sent_at)
+      SELECT lower(hex(randomblob(12))), account, ?2 || ez, ?3, ?4, replace(?5, '{day}', strftime('%Y-%m-%d', at, 'unixepoch')), NULL, ?6
+      FROM eg_stakes WHERE state = 'held' AND rh = 0 AND ez IN (SELECT value FROM json_each(?1))`).bind(ez, EG_STAKE_POST.batch, POST_SENDER, EG_STAKE_POST.subject, EG_STAKE_POST.body, nowS),
+    db.prepare("UPDATE eg_stakes SET state = 'spent' WHERE state = 'held' AND ez IN (SELECT value FROM json_each(?1))").bind(ez),
+  ]);
+  return Number(spent?.meta?.changes ?? 0);
+}
 
 /**
  * THE CLAIM: an `e1` receipt verified with the relay's public half and naming `player`. Answers `{ recorded, q, ...,
