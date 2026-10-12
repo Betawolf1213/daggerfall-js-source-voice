@@ -434,7 +434,7 @@
   {
     "name": "EGZL-banner-none",
     "file": "src/scenes/egSpan.js",
-    "old": "if (isl.z + isl.r >= g.z0 && isl.z - isl.r <= g.z1) {",
+    "old": "if (isl.z + isl.r >= g.z0 && isl.z - isl.r <= g.z1 && Math.abs(isl.x - g.x) <= EG_GUST_REACH_M) {",
     "new": "if (false) {",
     "tests": [
       "test/egz_tells.test.js"

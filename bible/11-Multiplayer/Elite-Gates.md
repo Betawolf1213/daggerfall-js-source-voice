@@ -931,9 +931,11 @@ phase, beat}`, plus checkpoints `{x, y, z, r}` (the Spire's islands): exactly wh
   - every reader takes a course, the Hour's by default - the ghosts (`sdGhostStepsOf`, the pass's count a maximum,
     `SD_GHOSTS_MAX`), the waystones and the vane, the rewind's edges and eye, the hang's islands, `abyssLab`, the
     riders (`createSdSteps`) and the check and breath builders. The motes still read `SD_COURSE_END`, the Hour's own
-    sky.
-- **The generator**: `egSpanOf(seed, hall, budget, band)` emits a course from the pieces below, one per road when the
-  span forks.
+    sky. The Spire's islands carry the Steps' waystones, read off the Spire's own courses (EG6a, `scenes/egSpan.js`
+    over `egCourseOf`); its timed pieces carry the Steps' ghosts, the circle's (EG-ZL).
+- **The generator (EG6a)**: `egSpanOf(seed, hall, band, o)` (`src/net/egSpanLaw.js`) draws a hall's every course from the
+  pieces below off the hall's own die, one per road when the span forks, and `courseOf` lays them: the hall law stands
+  the hall about the generator's edge. `egCourseOf(spec, road)` reads a road back as the readers take it.
 
 ### 10.2 Three builds, each for its reason
 
@@ -1019,9 +1021,9 @@ what the solver proves, road by road:
 the span build would refuse every honest faster player (AUDIT EG II L2-5).
 
 **The sweep.** CI runs SD7b's harness (the real `PlayerMotor` on the real `Collider` over `stepTris` slabs). A course
-costs about 182 ms of motor (a falling one 2.5 s), so a pull request runs 25 seeds a band plus every changed golden
-spec, and the 500-seed sweep per band runs nightly and before every relay deploy. EG6a sweeps the Galleries' pieces;
-each band's slice adds its own.
+costs about 182 ms of motor (a falling one 2.5 s), so a pull request runs 25 seeds a band plus the law pin's golden
+seeds, and the 500-seed sweep per band runs nightly and before every relay deploy. EG6a sweeps every band's pieces: the
+generator lays them all (`tools/egSpanSolve.mjs --sweep`, `.github/workflows/eg-sweep.yml`).
 
 ### 10.6 The toll and the fall
 
@@ -3917,8 +3919,6 @@ wait. A blow's word now never shows less than its whole wind-up, however late it
 2. A backdated stamp is dropped as out of order, not clamped.
 3. Support is the spec's law geometry, never the collider. A Falling Wall's and the Collapsing Tube's fallen segments
    still hold; a belt carries under the push's allowance, and is not ridden.
-4. `EG_CROSS_MIN` is the course at THE FAST BUILD's run less 15%, not the timed solver at that build (the solver runs at
-   the span build). It gates nothing.
 5. The measures (`egFairMeasure`, the census `cs`) stay on each member's record. The `e1` receipt's `m` is the receipts
    slice's to carry (the receipt's 640-byte bound, and that slice's work on the same claims).
 6. The lead is every lord's chosen blow, its fury chain and its extras. The errands' place-tied blows (the Twins'
@@ -4035,9 +4035,7 @@ one Orrery judge, and a new circle is stood in place from a level built while th
    judges two coordinates.
 5. The motes (`render/sdMotes.js`) still read the Hour's `SD_COURSE_END`, baked into their shader. Their sky is the
    Hour's own, over its own void.
-6. Every reader takes a course, but nothing in the game feeds one another course yet. The Spire's spans are laid by the
-   hall law (`net/egLaw.js`) in the same step record and ride `scenes/egSpan.js`, not the Hour's riders. `egSpanOf`
-   (EG6a) is still to come.
+6. The Spire's spans ride `scenes/egSpan.js`, not the Hour's riders (`createSdSteps`).
 7. **THE SWAP is still a circle a level** (EG-PLAY's second departure, narrowed). The five halls of a circle stand in one
    level, and the pull between them is still a teleport under the veil's flash.
    - What is new is the step into a NEW circle: a swap in place of a level built during the Court's rest. That is the
@@ -6629,3 +6627,182 @@ waystones had already answered. All of it is client-only: nothing in the relay's
 - PIN MOVED: `test/egswap_client.test.js` - a band's Beats' pictures go up once a session with its dress, never by a swap.
 - `RELAY_VERSION` is untouched (nothing in the relay's graph moved), and `ACCOUNT_VERSION` stays `acct121`; no migration.
 - No new src module. The Port-Ledger's ELITE-GATES row is left to the merge (it names every file touched).
+
+### EG6a - 2026-10-12 - THE SPAN GENERATOR, THE SWEEP AND THE CROSSING'S BOUND
+
+Mac: "I said I want everything". Section 31's EG6a row, as this slice was cut: the span generator (sections 9 and 10.1),
+the real-motor course sweep (section 10.5, "The sweep") and the crossing's bound at THE FAST BUILD (section 10.5). It
+retires EG-H1's departure 4 and narrows EG-H3's departure 6 to the riders.
+
+**What shipped, by piece.**
+
+- **THE SPAN GENERATOR** (`net/egSpanLaw.js` `egSpanOf`, new, in the relay bundle). The envelope moved there with it
+  (`EG_GAP_MIN_CM`, `EG_GAP_MAX_CM`, `EG_RISER_CM`, `EG_BEAT_HALF_MS`, `EG_STEP_DOWN_CM`, `EG_DROP_CM`, and the die's
+  `egDieBetween`); `net/egLaw.js` says them as it always did.
+  - `egSpanOf(seed, hall, band, { r, sizes, start, checkR })` draws a hall's every course off the hall's own die (the hall
+    law makes it from the seed and the hall, a sub-seed a try - section 10.5's redraw), in the law's integers. It draws each
+    piece's numbers at the Steps' own timing (`run`: one riser a hall, Crumbles stepping down, a Drop or still ground under
+    2 m), a gap of the envelope (`gap`), an island (`check`, a checkpoint and the next span), a piece placed (`step`), and
+    THE FORK's two roads, each its own course spec (`road`). The hall tells it where the hall stands before each piece it
+    asks for (`at`: still ground run over, a climb or a fall, said into the road's spec).
+  - `courseOf` lays the Spire's specs too. A spec that says its `road` carries the hall law's fields (`gap`, `road`, `kit`,
+    `after`); a piece carries its own `x` and its number in the hall's one count (`i`); a `ground` entry is still ground run
+    over; a section says its `span`. The Hour's spec still lays the Hour's course byte for byte (EG4's pin).
+  - `layHall` calls it. Its `step`, `gap`, `island` and `run` are the generator's, and its passages, set pieces, shafts and
+    THE FORK lay their courses through it. The hall's steps ARE its courses laid (`P.steps = S.lay()`, every road's steps in
+    the hall's one count).
+  - Spec laws 4 and 5 lay byte for byte the halls they laid before: each law's 800-hall hash, and 25,200 halls (24 seeds,
+    five grounds, 105 halls, both laws) hashed whole before and after.
+  - `egCourseOf(spec, road)` reads a road back off the spec as the Steps' readers take it (`{ road, steps, checkpoints,
+    end }`, in metres).
+- **THE STEPS' READERS ON THE SPIRE'S COURSES** (`scenes/egSpan.js`). The islands' waystones are read off the courses
+  the generator laid: `sdWaystonesOf` over each road's course (`egCourseOf`), the arrival plate none, the Low Road's
+  island its own. Over 9,000 halls that is every island of the hall, so each island has exactly one stone. The stones'
+  look and the ghosts are EG-ZL's (see "At the merge" below).
+- **THE SWEEP** (`tools/egSpanSolve.mjs`, new; `.github/workflows/eg-sweep.yml`, new).
+  - The CLI reads a hall's courses through the solver: each pair's windows, the proof, the road's crossing at THE SPAN
+    BUILD and at THE FAST BUILD, and `EG_CROSS_MIN`.
+  - `--sweep` crosses every course of a seed's circle in each band (each hall's every road, THE FORK's two) STEP BY STEP BY
+    THE REAL MOTOR. That is `PlayerMotor` at THE SPAN BUILD (Speed 10, Running 0, Jumping 0; the online page's parkour at
+    skill 0 only to run up a riser) on the real `Collider`, over the circle's floors (`egCircleColliderTris`, the one bucket
+    the dungeon stands) and its pieces as `createEgSpan` rides them (the Steps' `stepTris` slabs on the shared clock,
+    carrying, crumbling, a Pendulum's touch casting back, a Gust pushing). SD7b's harness is the model.
+  - A pilot plays each pair as a player would:
+    - it stands where it will run from, held there against a push;
+    - it takes a launch the solver says lands (`egJumpLands`, now exported), held 0.06 s either side: its own piece standing
+      under it to the last, no gust in the flight, a Pendulum's weight clear of the flight's whole line, the two tops lined
+      up best within the window;
+    - while what it lands on keeps time, it looks ahead: the launch from there must come in time too, the landing allowed
+      0.2 s late;
+    - it runs at the landing and jumps at the edge itself (pressed 0.1 m short, as SD7b presses it, the motor falls
+      short of a Drum's widest roll and of 3.19 m to a round island);
+    - what slides under it on the way to the edge it stands on (two Rails' travels meeting), and the hall's own ground at
+      the step's height it lands on (a vault's side lane laid across the gap before a step);
+    - it runs off a still step a short way down (a running jump flies past a stair), runs up a riser, and leaps the gaps
+      the hall leaves in its still ground.
+  - A course not crossed fails the run, naming it (`FAIL seed <s> hall <h> road <r> step <i>`), and the exit code is 1.
+  - CI: `verify.yml`'s new `sweep` input (25) and its `sweep` job call `eg-sweep.yml` on the commit it verifies: four band
+    jobs beside the test shards, the law pin's golden seeds with them. `eg-sweep.yml` runs 500 nightly (06:41 UTC) and on a
+    dispatch. `relay-deploy.yml`'s verify asks 500 before a deploy drops a player.
+  - Measured on a four-core machine, the four bands side by side: the pull request's 25 seeds and the golden four in
+    16-19 s a band (95-111 courses), beside test shards that run minutes; the nightly's 500 and the golden four in
+    166-197 s a band. Every one of those 7,582 courses (seeds 1 to 500 of every band, THE FORK's Low Roads among them) is
+    crossed.
+  - The first 500-seed sweep failed 9 of 5,669 courses past seed 125, every one the pilot's: the jump pressed short of
+    the edge, a Rail it jumped past, a side lane it refused. Each is fixed and pinned (the pins below).
+- **THE CROSSING'S BOUND** (`net/egSpanLaw.js` `egFastReach`, `egFastCrossAt`, `egFastCross` and `egCrossMin`, new;
+  `EG_FAST_RUN_MPS` moved here from `net/egFair.js`, which says it; `EG_FAST_JUMP_X`, `EG_CROSS_SLACK`, `EG_FAST_LEAP_M`).
+  - THE FAST BUILD's jump is the motor's 4.5 m/s times 2.3 (Jumping 100, the Jump spell, athleticism improved - pinned to
+    `systems/skills.js` `jumpSpeedMultiplier`), a 2.68 m apex; its run is `runSpeed(100, 100)` times Fleetfoot III's 1.1.
+  - A road's crossing at it is the earliest arrival over the road's chain (the Low Road's: the trunk, the bridges across and
+    back, its own). Every launch is the first that lands; any piece within the build's jump may be leapt past
+    (`EG_FAST_LEAP_M`). The crossing is the least over 72 start phases.
+  - `EG_CROSS_MIN` is that less 15% (`egCrossMin`, ms). `net/egFair.js` `egCrossMinMs` reads it, and it stays a measure on
+    the member's record that gates nothing until EG21.
+  - Measured over the 366 roads of seeds 1, 2, 3 and 77: the fast build never waits, leaping past whatever it cannot land
+    on. So on every one the bound equals the road's length at the fast run less 15%, the number it measured before - now
+    as the solver's answer. It differs where a timed piece holds even the fast build.
+
+**Fixed on the way.** A Gust's breath (`scenes/egSpan.js`, `EG_GUST_REACH_M`) blew over the whole hall's width and from a
+hall's first Gust piece to its last. The sweep found a Low Road walker, 15 m across and 4.5 m under, blown off its bridge by
+the High Road's breath, and the Crumbles between two runs of Gusts blown as though the runs were one. Each run of Gust
+pieces is now its own section, on its own road's line, 6 m either side: `world/egLook.js` `egGustSections`, the streamers'
+sections, is the breath's one home, and the screen blows over it. At the merge EG-ZL's banners and wind came to read the
+same sections. A banner stands on a run's own islands, never on THE FORK's other road's island beside the run (seed 1's
+circle 9, hall 42). The wind is heard over the run's stretch.
+
+**Departures, said plainly.**
+
+1. `egSpanOf` takes no `budget`. Section 9's `egBudget` is EG21's knob and unbuilt, and any budget draw would move every
+   hall of laws 4 and 5, which this slice keeps byte for byte. The die is the hall's, handed in, so `net/egSpanLaw.js` stays
+   a leaf that imports nothing.
+2. The hall law still picks each run's piece and count (the two pieces, the counts by circle and decree). The generator
+   draws each piece's own numbers, places it and lays it. The spec gains no field (`egCourseOf` reads a road back off it),
+   so `EG_SPEC` stays 5.
+3. THE TIMED SOLVER is unchanged, since changing it would move the halls. The sweep found six places where it is looser
+   than the motor, and the pilot covers each as a player does:
+   - the solver treats still ground as one ground, but the hall law leaves gaps of 2.0-3.2 m in it (a passage's floor and
+     the island after it, a Collapsing Tube's end). No piece keeps their time, and the sweep leaps every one;
+   - it judges a Pendulum's weight at the flight's middle alone;
+   - it never asks what a Beat or a Crumble does under a member standing on it before the next launch;
+   - it reads a round island's edge as straight across;
+   - its sideways reach counts the capsule over both edges, so at the widest gap the pilot waits for the tops to line up;
+   - THE FORK's High Road tail is chained through a ground of no length (the roads' steps are laid apart in the one count);
+   - the proof measures a Rail's travel against its neighbours at rest, so two Rails side by side may roll into one
+     another (seed 470's band 2, hall 52), their slabs overlapping, and the next is walked onto.
+   None has failed a course in the sweep. Each is a solver change for a later spec law.
+4. The pilot plays with the solver's windows in hand, so a course that fails can name a wrong guess of the pilot's as
+   surely as an uncrossable course. Every failure found while building it was the pilot's or the screen's (the gust),
+   none the generator's. One of its readings is unpinned: which spout's crust it stands on (a slag crossing's lane, read
+   off the key it landed on). Forgetting it crosses all 7,582 courses still, so no mutant of it can die.
+5. The ghosts are EG-ZL's circle-wide ones (its `EG_GHOSTS_MAX`, a Bone bridge among them), not the Hour's reader
+   `sdGhostStepsOf` over the course I am on. That reader still takes only the Hour's course; the Spire's courses feed it
+   nothing yet.
+6. The fast build's crossing reads the pieces' tops as the solver does: a leap over a riser or through a Pendulum's lane is
+   not refused. A lower bound may only err fast.
+7. The page's "every changed golden spec" is the law pin's four golden seeds, swept on every pull request.
+8. Section 10.6's pull's toll and the Drop's own tells were not among this slice's items.
+
+**The four hosts.**
+
+- `src/scenes/world.js` - FLAGGED: untouched at the merge. The breach client's pass (`scenes/egClient.js`, EG-ZL) draws
+  the spans' ghosts. This slice's second draw in `drawEgFight` was deleted, or every ghost was drawn twice a frame.
+  Nothing was added to `function frame(now)`.
+- `src/scenes/dungeonContext.js` - WIRED by EG-ZL's door: `egSpanDraw(proj, view, fog)` (and `egSpanPeer`), the one
+  kept of the two this slice and EG-ZL each wrote.
+- `src/scenes/worldModes.js` - FLAGGED: untouched; it already calls `host.drawEgFight` for every Elite hall.
+- `src/scenes/exterior.js` - FLAGGED: offline, no Elite Breach (section 28).
+
+**Not verified without a browser and the game's data:** the waystones and the banners read off the courses were never
+drawn. They were checked as slots and matrices, not pixels. The sweep crossed with the real motor and collider in node, never with a person at the keys. The workflows have
+not run yet: the nightly runs only from main.
+
+**Pins.**
+
+- `test/eg6a_span.test.js` (5), `test/eg6a_sweep.test.js` (4), `test/eg6a_screen.test.js` (3 since the merge). The sweep's file crosses
+  the hard courses by name: seed 295's Drum and seed 147's round island (band 0), seed 362's vault lane (band 0), seed
+  470's meeting Rails (band 2).
+- `tools/mutants/eg6a.json` (71 at the slice, 62 since the merge, every one dead; judged on the merged tree beside `egz_tells.json`'s 65 and `eg5.json`'s 40 - 167 dead). Six were judged again after the gust
+  sections moved to `world/egLook.js` and the die's draw was renamed - dead.
+- Re-aimed by content and judged again: `egseam.json`'s EGSEAM-the-line-lost (courseOf's line now names the Spire's
+  road). Judged again over the five files whose text moved (`net/egSpanLaw.js`, `net/egLaw.js`, `net/egFair.js`,
+  `scenes/egSpan.js`, `world/egLook.js`): the 113 records the other lists aim at them (egarch, egfrag, egfull, egint,
+  eglook, egmade, egplay, egseam, egspan, egz_frag, egz_legion, egz_telegraph, sd10b, sd7a) - every one dead.
+- `RELAY_VERSION` `world198`, unshipped, rehashed in place: `net/egSpanLaw.js`, `net/egLaw.js` and `net/egFair.js`
+  changed. Rehashed again on the merged tree, its note after every other slice's. `ACCOUNT_VERSION` stays `acct121`;
+  no migration.
+- New: `tools/egSpanSolve.mjs` and `.github/workflows/eg-sweep.yml`; `src/` gains no module. The Port-Ledger's
+  ELITE-GATES row names them (at the merge).
+
+**At the merge** (the pull request's head 17491139: EG-ZI, EG-ZO, EG6c, main, EG5 with EG-ZK, EG-ZM, EG-ZN and EG-ZL).
+
+- EG-ZL built the same two things this slice built in `scenes/egSpan.js` and `render/sdStepsPass.js`: the Steps' waystone
+  on every island, lit at the cast-back point, and the gold ghosts for gone Beats and fallen Crumbles. EG-ZL's is the
+  more complete, so it is the one kept:
+  - its ghosts are the circle's (up to 48, a Bone bridge among them), each with a slab for a peer standing on a Crumble I
+    have seen fall, under the Spire's fog floor;
+  - its stones are batched slots, lit and dark;
+  - its seams are `egSpanDraw` and `egSpanPeer`.
+- DELETED from this slice:
+  - the course window of ghosts (`poseGhosts`, `SD_GHOSTS_MAX` nearest ahead);
+  - `SdStepsPass.setGhosts`;
+  - the stones' own mesh and `poseStones`;
+  - the `stones` and `ghosts` getters;
+  - `scenes/sdSteps.js`'s `WAYSTONE_DARK` export (EG-ZL's `SD_WAYSTONE_DARK` is the one);
+  - the second ghost draw in `world.js`'s `drawEgFight`.
+- FOLDED INTO EG-ZL's:
+  - its stones are read off `egCourseOf`;
+  - its gust (push, banners, wind) reads `egGustSections`' runs on their road's line.
+- PIN MOVED: `test/eg6a_screen.test.js`.
+  - Its waystones test reads EG-ZL's `marks.stones`, standing two frames because the marks are posed at the frame's start.
+  - Its ghosts test is deleted: `test/egz_tells.test.js` pins the kept ghosts.
+  - Its hosts test now pins one ghost draw a frame.
+  - Its gust test adds the banner on the run's own line.
+- Mutants:
+  - eleven `eg6a.json` records went with the code they mutated;
+  - two are new: the banner on the other road; the world host drawing the ghosts again;
+  - `egz_tells.json`'s EGZL-banner-none was re-aimed by content (the banner's test now names the run's line).
+- EG5's change to `net/egLaw.js` (the fight profile) merged clean. The merged tree's 25,200 halls (laws 4 and 5) hash as
+  the pull request's head's do, and each law's 800-hall hash holds.
+- The sweep on the merged tree: the 25 seeds a band and the golden four, all crossed. Seeds 1 to 500 of every band,
+  7,582 courses, all crossed.

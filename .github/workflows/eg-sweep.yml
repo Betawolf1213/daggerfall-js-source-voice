@@ -1,0 +1,62 @@
+# EG6a (2026-10-12; bible/11-Multiplayer/Elite-Gates.md section 10.5 "The sweep"): THE COURSE SWEEP.
+#
+# Every course the Elite Breach's span generator lays (src/net/egSpanLaw.js egSpanOf) is crossed STEP BY STEP BY THE REAL
+# PLAYER MOTOR - src/player/motor.js PlayerMotor at THE SPAN BUILD (Speed 10, Running 0, Jumping 0) on the real Collider,
+# over each circle's floors and its pieces as the screen rides them (tools/egSpanSolve.mjs --sweep; SD7b's harness is
+# the model). The timed solver proves a course on the motor's closed form; this proves it on the motor itself. A course
+# the motor does not cross fails the run, and the log names its seed, hall, road and step.
+#
+# HOW MANY SEEDS A BAND - one home, the `seeds` each caller asks:
+#   - 25 on every pull request and before every deploy: verify.yml calls this with its own `sweep` input, 25 by default,
+#     and the law pin's four golden seeds beside them;
+#   - 500 nightly (the schedule below, or a dispatch);
+#   - 500 before every relay deploy: relay-deploy.yml asks verify.yml for 500.
+# The four bands run at once, one job each, beside the test shards - so the sweep adds no time to verify's longest leg.
+# Measured on one core: a band's 25 seeds (about 100 courses) take 15-25 s of motor; its 500, five to eight minutes.
+name: span sweep
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: The commit to sweep (empty - the caller's own).
+        type: string
+        default: ""
+      seeds:
+        description: Seeds a band.
+        type: number
+        default: 25
+  schedule:
+    - cron: "41 6 * * *"
+  workflow_dispatch:
+    inputs:
+      seeds:
+        description: Seeds a band.
+        type: number
+        default: 500
+
+permissions:
+  contents: read
+
+jobs:
+  sweep:
+    name: span sweep, band ${{ matrix.band }}
+    runs-on: ubuntu-latest
+    strategy:
+      # every band reports, so one red run names every failing course
+      fail-fast: false
+      matrix:
+        band: [0, 1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      # a scheduled run carries no inputs: the nightly's 500
+      - name: Cross every course of band ${{ matrix.band }} with the real motor
+        run: node tools/egSpanSolve.mjs --sweep --band ${{ matrix.band }} --seeds ${{ inputs.seeds || 500 }} --golden

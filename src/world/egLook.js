@@ -86,12 +86,20 @@ export function egCircleEdges(seed, c, geo = 0) {
  *  speed across the course (m/s) and how high over the course they fly. */
 export const EG_STREAMERS = Object.freeze({ n: 7, len: 2.2, mps: 9, lo: 0.5, hi: 1.9, reach: 7 });
 /** Each hall's Gust sections - the stretch its Gust pieces stand in, an island's reach either side - in the hall's frame:
- *  `[{ spec, x, y, z0, z1 }]` (scenes/egSpan.js's own reach). */
+ *  `[{ spec, road, x, y, z0, z1 }]`, the breath's one home (scenes/egSpan.js blows over them, the streamers fly in them).
+ *  EG6a: a RUN of Gust pieces is a section (the pieces between two runs - a decree's Crumbles, a passage - stand in no
+ *  breath), on its own road's line (THE FORK's other road, 15 m across and under it, is no span of theirs). The course
+ *  sweep found both: a Low Road walker blown off its bridge by the High Road's breath, two runs blown as one. */
 export function egGustSections(specs) {
   const out = [];
-  for (const spec of specs) {
-    const gs = spec.steps.filter((q) => q.kind === 'gust');
-    if (gs.length) out.push({ spec, x: gs.reduce((a, q) => a + q.x, 0) / gs.length, y: Math.min(...gs.map((q) => q.y)), z0: Math.min(...gs.map((q) => q.z - q.d / 2)) - 4, z1: Math.max(...gs.map((q) => q.z + q.d / 2)) + 4 });
+  for (const spec of specs) for (const road of [0, 1]) {
+    let run = null;
+    for (const q of spec.steps ?? []) {
+      if ((q.road ?? 0) !== road) continue;
+      if (q.kind !== 'gust') { run = null; continue; }
+      if (!run) { run = { spec, road, x: q.x, y: q.y, z0: q.z - q.d / 2 - 4, z1: 0 }; out.push(run); }
+      run.y = Math.min(run.y, q.y); run.z1 = q.z + q.d / 2 + 4;
+    }
   }
   return out;
 }

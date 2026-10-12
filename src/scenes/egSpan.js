@@ -62,6 +62,12 @@
 //     islands carry the Steps' vane, swinging to point the coming push a second ahead, and the wind rises
 //     (AmbientWindMoanDeep) with its clack, once a gust, over the section I stand in.
 //
+// EG6a (2026-10-12; Elite-Gates.md sections 10.1 and 10.3): THE STEPS' READERS ON THE SPIRE'S COURSES - the waystones
+// above are read off the courses the span generator lays (net/egSpanLaw.js egSpanOf, read back a road at a time by
+// egCourseOf - each course's checkpoints but the arrival plate: every island, the Low Road's its own). A Gust's push and its
+// banners keep to a run of its pieces on its own road's line, its wind to that run's stretch (world/egLook.js
+// egGustSections, EG_GUST_REACH_M).
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
 import { egCircleSpecs, egWallFallenZ, egBandOfCircle, EG_VOID_Y, EG_BELT_MPS } from '../net/egLaw.js';
@@ -74,12 +80,12 @@ import { SD_SKY_STEPS } from '../render/sdSky.js';
 import { egAccessNow } from '../ui/egAccess.js';   // EG-ZL: the danger palette's hazard on a Beat's warning; reduced motion stills the shakes
 import { isTouchDevice } from '../ui/touchDevice.js';
 import { createMeshKit } from '../world/meshKit.js';
-import { EG_FOG_FLOOR } from '../world/egLook.js';
+import { EG_FOG_FLOOR, egGustSections } from '../world/egLook.js';   // EG6a: the breath's sections, its one home (the streamers' too)
 import { EG_RIDE_DOWN_M, EG_RIDE_UP_M } from '../net/egFair.js';
 import { faces } from '../world/gateModel.js';
 import { packRealmFaces, realmIsland, SD_REALM_ARCHIVE, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_ISLAND_SIDES } from '../world/sdRealm.js';
 import { identity } from '../world/mat4.js';
-import { egPieceAt, egPendAt, egPendHits, egBeatAt, EG_PEND_HALF, EG_DROP_WALL_H, EG_CRUMBLE_KINDS, EG_SINK_MPS, EG_SINK_GONE_M, EG_BODY_R } from '../net/egSpanLaw.js';
+import { egPieceAt, egPendAt, egPendHits, egBeatAt, egCourseOf, EG_PEND_HALF, EG_DROP_WALL_H, EG_CRUMBLE_KINDS, EG_SINK_MPS, EG_SINK_GONE_M, EG_BODY_R } from '../net/egSpanLaw.js';
 import { egSlagState, egSlagX, EG_SLAG_SPOUTS, EG_SLAG_CRUST_S, EG_SLAG_WARN_S } from '../net/egSpanLaw.js';   // EG-ZC: the Cooling Slag
 import { egInShape } from '../net/egShape.js';   // EG-ZC: a lit branch under the mirror's haven
 import { egTubeEdge, EG_ENGINES } from '../net/egFragLaw.js';
@@ -254,6 +260,8 @@ export const EG_WALL_SEG_M = 2;
 const WALL_FALL_G = 9.8;
 /** The longest frame a Gust pushes for (s) - a hitch is not a gale (scenes/sdSteps.js's BREATH_DT_MAX). */
 const EG_GUST_DT_MAX = 0.1;
+/** EG6a: how far across a Gust section's line its push reaches (m - an island's 3 m and a body pushed off it). */
+export const EG_GUST_REACH_M = 6;
 
 // ── EG-ZL: THE PIECES' TELLS (sections 10.3 and 10.8) ─────────────────────────────────────────────────────────────
 /** A DRIFT'S CHAINS (section 10.3: "hangs on two chains from an anchor 18 m up ... leaning as it swings"): a link's length,
@@ -379,12 +387,8 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
   const meshKey = (s) => (s.kind === 'beat' ? beatKind(s) : STEP_MESH_KIND[s.kind] ?? `${s.kind === 'drop' ? 'drop' : 'slab'}:${s.w}x${s.d}`);   // EG-ZL: a Beat's kind its beat's
   const modelOf = (s) => (STEP_MESH_KIND[s.kind] ? buildStepModel(STEP_MESH_KIND[s.kind]) : s.kind === 'drop' ? egDropModel(s.w, s.d) : egSlabModel(s.w, s.d));
   const trisOf = (s) => (STEP_MESH_KIND[s.kind] ? stepTris(STEP_MESH_KIND[s.kind]) : s.kind === 'drop' ? egDropTris(s.w, s.d) : egSlabTris(s.w, s.d));
-  /** each hall's Gust sections: the stretch of the course its Gust pieces stand in, an island's reach either side */
-  const gusts = [];
-  for (const spec of specs) {
-    const gs = spec.steps.filter((q) => q.kind === 'gust');
-    if (gs.length) gusts.push({ spec, z0: Math.min(...gs.map((q) => q.z - q.d / 2)) - 4, z1: Math.max(...gs.map((q) => q.z + q.d / 2)) + 4 });
-  }
+  /** each hall's Gust sections (world/egLook.js egGustSections - a run of Gusts, on its road's line) */
+  const gusts = egGustSections(specs);
   /** EG-G2: the circle's pieces batched (scenes/egPieceBatch.js), or null (no renderer that moves vertices - a draw a piece) */
   let batch = null;
   /** @type {Map<string, any>} the batched kinds' models */
@@ -405,16 +409,23 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
   /** THE CHUNKS a Crumble breaks into (two on a phone) and their ways (scenes/sdSteps.js sdChunkWays - the Hour's law) */
   const chunkParts = buildCrumbleChunks(lite ? 2 : 4), chunkWays = sdChunkWays(chunkParts);
   /** THE WAYSTONES: one on every island, at the Steps' own place beside its landing (world/sdStepsModel.js sdWaystonesOf) -
-   *  each its lit draw and its dark; and the one my cast-back would stand me on */
+   *  each its lit draw and its dark; and the one my cast-back would stand me on. EG6a: read off the courses the generator
+   *  laid (net/egSpanLaw.js egCourseOf - each road's checkpoints but the arrival plate, the Low Road's island its own) */
   const stones = [];
-  for (const spec of specs) { const at = sdWaystonesOf({ checkpoints: spec.islands }); spec.islands.forEach((isl, k) => stones.push({ spec, isl, at: realmToDungeon(spec.x0 + at[k][0], at[k][1], at[k][2]), lit: null, dark: null })); }
+  for (const spec of specs) for (const road of [0, 1]) {
+    const course = egCourseOf(spec, road);
+    if (!course) continue;
+    const at = sdWaystonesOf(course);
+    for (let k = road === 0 ? 1 : 0; k < at.length; k++) stones.push({ spec, isl: course.checkpoints[k], at: realmToDungeon(spec.x0 + at[k][0], at[k][1], at[k][2]), lit: null, dark: null });
+  }
   let litStone = null;
   /** THE GUST'S BANNERS: the Steps' vane on every island of a Gust section (sdVaneAt's place on it); each section heard
-   *  over its islands too (`h0`-`h1`, the hall's z) */
+   *  over its islands too (`h0`-`h1`, the hall's z). EG6a: a section is a run of Gusts on its road's line (egGustSections),
+   *  so its islands are the ones on that line - THE FORK's other road's island beside it stands in no breath of its */
   const vanes = [];
   for (const g of gusts) {
     g.h0 = g.z0; g.h1 = g.z1;
-    for (const isl of g.spec.islands) if (isl.z + isl.r >= g.z0 && isl.z - isl.r <= g.z1) { const v = sdVaneAt({ checkpoints: [isl, isl, isl] }); vanes.push({ at: realmToDungeon(g.spec.x0 + v[0], v[1], v[2]), draw: null }); g.h0 = Math.min(g.h0, isl.z - isl.r); g.h1 = Math.max(g.h1, isl.z + isl.r); }
+    for (const isl of g.spec.islands) if (isl.z + isl.r >= g.z0 && isl.z - isl.r <= g.z1 && Math.abs(isl.x - g.x) <= EG_GUST_REACH_M) { const v = sdVaneAt({ checkpoints: [isl, isl, isl] }); vanes.push({ at: realmToDungeon(g.spec.x0 + v[0], v[1], v[2]), draw: null }); g.h0 = Math.min(g.h0, isl.z - isl.r); g.h1 = Math.max(g.h1, isl.z + isl.r); }
   }
   /** the gust last heard (its number), the last ride's clock (s), the screen's settings this frame (ui/egAccess.js: the
    *  danger palette, reduced motion) */
@@ -837,7 +848,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       const footing = spireFooting();
       // THE GUST (section 10.3): the Steps' breath over a Gust section of the hall I stand in, Iron Footing taking its share
       if (dt > 0 && footing < 1) {
-        const g = gusts.find((q) => rx >= q.spec.x0 - 40 && rx <= q.spec.x0 + 40 && rz >= q.z0 && rz <= q.z1);
+        const g = gusts.find((q) => Math.abs(rx - q.spec.x0 - q.x) <= EG_GUST_REACH_M && rz >= q.z0 && rz <= q.z1);
         if (g) { gustAt(t, _gust); if (_gust.push) body.collider?.move?.(body.pos, _gust.push * (1 - footing) * Math.min(dt, EG_GUST_DT_MAX), 0, 0, body.height, !!body.grounded && !body.jumping); }
       }
       // EG-ZL - THE GUST'S WIND (section 10.3: "the wind rising (AmbientWindMoanDeep)"): a second before each gust over a Gust
