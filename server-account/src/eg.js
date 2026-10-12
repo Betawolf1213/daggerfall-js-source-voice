@@ -33,6 +33,11 @@
 // EG-E1 (2026-10-12, Mac: "I said I want everything"; Elite-Gates.md section 19): WHAT A REDOUBT PAYS - the week's pay,
 // its Marks and guild's deed, its embers, a Valkynaz's Weir Key and the Panoply's pity - is egEconomy.js's, written in the
 // `w` claim's own batch; the end's Reliquaries answered by the week's pay; the Broker's Panoply sink (`/v1/eg/sink`).
+// ═══ THE DUNGEON'S FIND (EG-E3) ════════════════════════════════════
+//
+// No relay witnesses an ordinary dungeon, so an elite foe's killer's client asks (`/v1/eg/find`, section 5) with the
+// dungeon's tier, and the service rolls the key with its own die - bounded, never believed: a handle and a proven account,
+// EG_FIND_PER_DAY asks a tier a real day, EG_FIND_KEYS_PER_WEEK keys a week from finds (`eg_finds`, migration 0111).
 //
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js.
 // ═══════════════════════════════════════════════════════════════════
@@ -42,6 +47,7 @@ import { mintEgOrder } from '../../src/net/identityToken.js';
 import { utcDay } from '../../src/net/marksLaw.js';
 import { egHonourStatements, egHonoursAnswer, egRecordOf } from './egHonours.js';   // EG-E2: the feats, the Annals, the honours
 import { egRedoubtPay, egReliquariesOf, egSinkOf } from './egEconomy.js';   // EG-E1: what a Redoubt pays, the sink
+import { arenaWeekOf } from '../../src/net/arenaLaw.js';   // EG-E3: the week a find's keys are capped by, the arena's
 
 /** The odds a recorded gate kill rolls a key, a fighter who broke the rite, an Hour; the kills in a row the pity waits. */
 export const EG_KEY_ODDS = 1 / 6;
@@ -54,6 +60,13 @@ export const EG_LAST_WORD_S = 10_800;
 export const EG_OPEN_WINDOW_S = 600;
 export const EG_LIVE_SLACK_S = 600;
 export const EG_LIVE_S = EG_LAST_WORD_S + EG_OPEN_WINDOW_S + EG_LIVE_SLACK_S;
+/** EG-E3 (2026-10-12, Mac: "I said I want everything"; section 5, "The dungeon's find"): a dungeon elite's odds of a key,
+ *  by the dungeon's tier as the port names it (src/systems/dungeonTier.js DUNGEON_TIERS - `super` the player's Abyss
+ *  Dungeon); the asks a tier an account a real UTC day; the keys finds may pay an account an arena week. At the caps a
+ *  forger's ceiling is 6/400 + 6/150 + 6/60 = 0.155 keys a day, under an honest gatebreaker's. */
+export const EG_FIND_ODDS = Object.freeze({ super: 1 / 60, elite: 1 / 150, regular: 1 / 400 });
+export const EG_FIND_PER_DAY = 6;
+export const EG_FIND_KEYS_PER_WEEK = 2;
 /** A request id an open is idempotent on, a breach id, an order id. */
 export const EG_RQ_RE = /^[a-z0-9]{16,32}$/;
 const BREACH_RE = /^[0-9a-f]{16}$/;
@@ -237,6 +250,38 @@ export async function rollWeirKey({ db, rand }, player, { kind, rite = false }) 
   const after = await db.prepare(`UPDATE players SET eg_keys = eg_keys + ?2, eg_key_miss = CASE WHEN ?3 = 1 THEN eg_key_miss ELSE (CASE WHEN ?2 = 1 THEN 0 ELSE eg_key_miss + 1 END) END WHERE id = ?1 RETURNING eg_keys`)
     .bind(player.id, found ? 1 : 0, kind === 'gate' ? 0 : 1).first();
   return { found, keys: int(after?.eg_keys) };
+}
+/**
+ * EG-E3: THE DUNGEON'S FIND (section 5) - an elite foe fallen in a dungeon online, asked by its killer's client with the
+ * dungeon's tier (`{ tier }`, a key of EG_FIND_ODDS). The ask is counted before the die (a lost roll spends it too), at
+ * most EG_FIND_PER_DAY a tier a real day; the die is this service's own at the tier's odds; a yes adds one to `eg_keys`
+ * while the account's finds this arena week have paid fewer than EG_FIND_KEYS_PER_WEEK. Answers `{ found, keys, asks }`
+ * (`asks` the tier's asks left today), or `{ error }`: `guest`, `tier` (not a tier), `unproven` (no gate closed, no
+ * Redoubt taken - a fresh account cannot farm), `capped` (the tier's asks spent today - `keys` with it).
+ * @param {{ db: any, nowS: number, rand?: (b: Uint8Array) => Uint8Array }} ctx
+ * @param {{ id: string, handle?: string|null }} player @param {any} body
+ */
+export async function findEg({ db, nowS, rand }, player, body) {
+  if (!player.handle) return { error: 'guest' };
+  const tier = body?.tier;
+  if (typeof tier !== 'string' || !Object.hasOwn(EG_FIND_ODDS, tier)) return { error: 'tier' };
+  if (!(await proven(db, player.id))) return { error: 'unproven' };
+  const day = utcDay(nowS), wk = arenaWeekOf(nowS);
+  const ask = await db.prepare(`INSERT INTO eg_finds (account, day, tier, wk, asks, found) VALUES (?1, ?2, ?3, ?4, 1, 0)
+    ON CONFLICT (account, day, tier) DO UPDATE SET asks = asks + 1 WHERE asks < ?5 RETURNING asks`).bind(player.id, day, tier, wk, EG_FIND_PER_DAY).first();
+  if (!ask) return { error: 'capped', keys: int((await playerRow(db, player.id))?.eg_keys) };
+  let found = false;
+  if (drawUnder(rand, EG_FIND_ODDS[tier])) {
+    // ONE TRANSACTION: the key and the find's mark together, each only while the week's finds are under the cap
+    const [took] = await db.batch([
+      db.prepare('UPDATE players SET eg_keys = eg_keys + 1 WHERE id = ?1 AND (SELECT COALESCE(SUM(found), 0) FROM eg_finds WHERE account = ?1 AND wk = ?2) < ?3 RETURNING eg_keys')
+        .bind(player.id, wk, EG_FIND_KEYS_PER_WEEK),
+      db.prepare('UPDATE eg_finds SET found = found + 1 WHERE account = ?1 AND day = ?2 AND tier = ?3 AND (SELECT COALESCE(SUM(found), 0) FROM eg_finds WHERE account = ?1 AND wk = ?4) < ?5')
+        .bind(player.id, day, tier, wk, EG_FIND_KEYS_PER_WEEK),
+    ]);
+    found = !!took?.results?.[0];
+  }
+  return { found, keys: int((await playerRow(db, player.id))?.eg_keys), asks: EG_FIND_PER_DAY - int(ask.asks) };
 }
 /** One draw of this service's die under `p` - none without a die (a harness's ctx). */
 function drawUnder(rand, p) {

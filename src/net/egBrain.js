@@ -37,6 +37,7 @@ import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGIN
 import { egAnnalsNext, egAnnalsLordPage } from './egAnnals.js';
 import { egFeatBits } from './egFeats.js';   // EG-E: the lords' feats, judged at a lord's fall
 import { arenaWeekOf } from './arenaLaw.js';   // EG-E: the Proclamation's week, the arena's (Monday to Monday from the season epoch)
+import { EG_HERALD_TELL_MAX } from './egHerald.js';   // EG-E3: the herald's news, kept on the breach for the hub
 import { orreryOf, orreryFresh, orreryStep, orreryShortest, SD_STONE_SETTLE_MS } from './sdBrain.js';
 import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gateBrain.js';
 
@@ -192,8 +193,25 @@ function oweEnd(B, sub, why, now) {
   if (m) m.x = 1;
   const good = why === 'home' || why === 'last' || why === 'void' || why === 'seal';
   owe(B, sub, { q: 'x', h: B.cleared, t: B.wk ? secs(now - B.wk) : 0, n: Object.values(B.mem).filter((x) => x.in).length, ew: B.ew, l: m?.lv ?? 1, why,
-    ...(good && m?.rel?.length ? { rl: m.rel.slice(0, 64) } : {}), fl: m?.falls ?? 0, ...(B.rh ? { rh: 1 } : {}) });
+    ...(good && m?.rel?.length ? { rl: m.rel.slice(0, 64) } : {}), fl: m?.falls ?? 0, ...(B.rh ? { rh: 1 } : {}),
+    // EG-E3: the Wager (the boards rank a wagered breach on the Depths alone) and the Annals' pages the breach gave
+    ...(B.wg?.length ? { wg: [...B.wg] } : {}), ...(m?.pages ? { an: m.pages } : {}) });
 }
+/** EG-E3: a hall cleared (the door, or a Court's fall) - the deepest the breach holds, and its seconds from Hall 1's wake
+ *  (`td`, the Descent's second key - section 20). */
+function clearHall(B, now) {
+  if (B.h <= B.cleared) return;
+  B.cleared = B.h;
+  B.td = B.wk ? secs(now - B.wk) : 0;
+}
+/** EG-E3: THE HERALD'S NEWS (net/egHerald.js) - kept on the breach, numbered, for the room to tell the hub, which decides
+ *  what the channel hears; the oldest let go past EG_HERALD_TELL_MAX. */
+function heraldOwe(B, now, ev) {
+  B.hn = (B.hn ?? 0) + 1;
+  B.hq = [...(B.hq ?? []), { i: B.hn, at: now, ...ev }].slice(-EG_HERALD_TELL_MAX);
+}
+/** The company's entrants, in its order: `[sub, m]`. */
+const entrants = (B) => B.co.map((c) => [c.sub, B.mem[c.sub]]).filter(([, m]) => m?.in);
 
 /**
  * A MEMBER FALLS (section 16.5): a death, or EG_ABSENT_TRIAL_MS gone in a trial. Their Reliquaries are lost; they become a
@@ -254,6 +272,12 @@ export function egEnd(B, why, now, out) {
   B.asks = [];
   for (const [sub, m] of Object.entries(B.mem)) if (m.in && !m.home && !m.x && (m.alive || !m.forsaken)) oweEnd(B, sub, m.alive ? why : (why === 'home' ? 'fall' : why), now);
   if (why === 'empty' && !B.mem[B.s]) oweEnd(B, B.s, 'empty', now);   // the opener's stake settles even when nobody came
+  // EG-E3: THE DESCENT'S CANDIDATE (section 20) - a breach begun at Hall 1, unwagered and no Rehearsal, told the herald:
+  // the hub keeps the season's best a bracket, and says a new top
+  if (!B.rh && !B.ew && !(B.wg ?? []).length && B.cleared > 0) {
+    const E = entrants(B);
+    heraldOwe(B, now, { k: 'dc', h: B.cleared, td: B.td ?? 0, n: E.length, o: B.o ?? '', by: E.map(([, m]) => m.name ?? '') });
+  }
   out.push({ k: 'end', why, at: now }, egStageWord(B, now));
 }
 
@@ -534,7 +558,7 @@ function egRaiseObj(F, t, x, z, hp, now, out, o = {}) {
 
 /** The door opens (section 7): the closing begins - a Rally's heal said, the cache's plaque, the legion crumbles. */
 function door(B, spec, now, out, inHall = []) {
-  B.cleared = Math.max(B.cleared, B.h);
+  clearHall(B, now);
   if (B.F) { egGone(B.F, egBodiesOf(B.F, EG_ROLE.add), EG_GONE.crumbled, '', now, out); egGone(B.F, egObjsOf(B.F, 'spark'), EG_GONE.crumbled, '', now, out); }
   B.sg = 'closing'; B.sa = now; B.dn = now;
   const span = spec.kind === 'span' || spec.kind === 'deepway' || spec.kind === 'brink' || spec.kind === 'proving';
@@ -578,7 +602,7 @@ function redoubtGain(B, now) {
  * put to the company, the Ready and the respite. A Rehearsal ends here instead.
  */
 function redoubt(B, now, rng, out) {
-  B.cleared = Math.max(B.cleared, B.h);
+  clearHall(B, now);
   countPart(B);
   if (B.F) egGone(B.F, egBodiesOf(B.F, EG_ROLE.add), EG_GONE.crumbled, '', now, out);
   if (B.rh) { egEnd(B, 'rehearsal', now, out); return; }
@@ -595,6 +619,10 @@ function redoubt(B, now, rng, out) {
     owe(B, sub, { q: 'w', w, h: B.h, t: secs(now - B.wk), n: earners.length, ew: B.ew, l: m.lv, vs: (m.vs ?? []).slice(0, 32), fl: m.falls ?? 0, ...(lone ? { lb: 1 } : {}), ...(B.wg?.length ? { wg: B.wg } : {}), ...(lk ? { lk, ft } : {}) });
     m.rel = [...(m.rel ?? []), w];
   }
+  // EG-E3: THE HERALD'S NEWS - a Valkynaz's Redoubt (the hub says every tenth, the first tenth ever as First of the Spire,
+  // and a band passed whose seal a deploy lifted), and a Court felled alone, once a member a breach
+  if (valk) heraldOwe(B, now, { k: 'rd', w, h: B.h, t: secs(now - B.wk), o: B.o ?? '', by: earners.map(([, m]) => m.name ?? '') });
+  if (lone && !L[0][1].lbSaid) { L[0][1].lbSaid = 1; heraldOwe(B, now, { k: 'lb', n: L[0][1].name ?? '', lk, c: entrants(B).length }); }
   if (valk) B.resp += EG_RESPITE_VALK_MS;
   for (const [, m] of L) { m.dc = 0; m.act = 0; }
   B.log.push({ h: B.h, rd: w, lord: specOf(B).lord });

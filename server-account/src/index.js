@@ -67,6 +67,7 @@
 //   POST /v1/eg/claim    { receipt, character? } -> { recorded, q, b, w?, keys, ... }   (EG-PLAY: an `e1` - a Redoubt taken, a member's end, a void; EG-E1: a Redoubt's `paid`, `again`, `marks`, `deed`, `embers`, `purse`, `weir`, `pity`, an end's `rl`; EG-E2: `honours`, the titles a Redoubt newly granted)
 //   POST /v1/eg/sink     { piece } -> { ok, piece, week, purse }   (EG-E1: the Broker's Panoply piece, once a week for 20 embers - guest 403, piece 400, bought / short 409)
 //   POST /v1/eg/board    {} -> { ok, season, descent: { alone, few, company }, depths, deepest, proclamation, best }   (EG-E2: the Elite Breach's three boards - egHonours.js)
+//   POST /v1/eg/find     { tier } -> { found, keys, asks }   (EG-E3: a dungeon elite's find - 'super' | 'elite' | 'regular', the service's die, 6 asks a tier a day, 2 keys a week)
 //   POST /v1/gate/claim  { receipt, region?, character? } -> { recorded, stones, closed, seat? }   (WB12d: the row's embers, AUDIT WB12d A4; SEAT1b: `seat` the kill's influence)
 // MARKS1, Marks - an account's alone, behind MARKS_OPEN (marks.js); `rid` the act's own id:
 //   POST /v1/marks/balance {}                               -> { balance, today, bank }
@@ -207,7 +208,7 @@ import { contractRegionOfRaid } from '../../src/net/writLaw.js';   // CHAP2b: th
 import { claimRaid, raidRecordOf } from './raids.js';   // RAID4: the towns defended
 import { claimSerpent, serpentRecordOf } from './serpents.js';   // SERPENT1: the serpents slain
 import { claimSd, sdRecordOf } from './sds.js';   // SD9b: the Hours broken
-import { egKeysOf, openEg, admitEg, claimEg, rollWeirKey } from './eg.js';   // EG-PLAY: the Elite Breach - the Weir Keys, the open, the admission, the claim
+import { egKeysOf, openEg, admitEg, claimEg, rollWeirKey, findEg } from './eg.js';   // EG-PLAY: the Elite Breach - the Weir Keys, the open, the admission, the claim; EG-E3: a dungeon elite's find
 import { egBoardOf, withEgHonours } from './egHonours.js';   // EG-E2: the Elite Breach's boards, and Spire Champion on the row
 import { egSink } from './egEconomy.js';   // EG-E1: the Broker's Panoply sink
 import { readReceipt } from '../../src/net/gateReceipt.js';   // EG-PLAY: a recorded kill's rite (`r`), for its Weir Key's odds
@@ -394,11 +395,11 @@ const GUILD_STATUS = Object.freeze({
  *  the finds of an account not yet a week registered) 403, no guild 404, short or capped 409, the hour's acts spent
  *  429, a bad shape 400 (the default). */
 /** EG-PLAY: each Elite Breach refusal's status - the service without its key 503, not this account's (a guest, another's
- *  receipt) 403, a breach held or no key to stake 409, a bad shape 400 (the default). */
+ *  receipt) 403, a breach held or no key to stake 409, a bad shape 400 (the default). EG-E3: a find's day spent 409. */
 const EG_STATUS = Object.freeze({
   'no-signing-key': 503, 'no-gate-key': 503,
   guest: 403, 'not-yours': 403, unproven: 403,
-  live: 409, short: 409, rehearsed: 409, spent: 409,
+  live: 409, short: 409, rehearsed: 409, spent: 409, capped: 409,   // EG-E3: a find past its day's asks
   bought: 409,   // EG-E1: the week's Panoply piece already bought
 });
 const MARKS_STATUS = Object.freeze({
@@ -1148,6 +1149,7 @@ const service = {
           '/v1/eg/claim': async () => claimEg(ctx, who.player, body.receipt, await gatePublicKey(env, subtle), { env, character: typeof body.character === 'string' ? body.character : null }),
           '/v1/eg/sink': async () => egSink(ctx, who.player, body),   // EG-E1: the Broker's Panoply piece, once a week
           '/v1/eg/board': async () => egBoardOf({ ...ctx, db: env.DB }, who.player, env),   // EG-E2: the three boards - on the binding, as a #1's count is (the last season's champions may be written here)
+          '/v1/eg/find': async () => findEg(ctx, who.player, body),   // EG-E3: a dungeon elite's find
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
