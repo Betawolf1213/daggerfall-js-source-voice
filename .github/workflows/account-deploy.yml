@@ -852,6 +852,72 @@ jobs:
           echo "::error::the account service never reported $want - the deploy did not take"
           exit 1
 
+      # D1-NEAR (bible/11-Multiplayer/Scale-Arc.md; audited, 01-Overview/Audit-D1-Near.md): WHERE THE
+      # WORKER ANSWERS FROM, WHAT A STATEMENT COSTS IT THERE, AND WHERE THE PRIMARY IS - SAID ON EVERY
+      # DEPLOY. SCALE1 left the Worker to Smart Placement on the word that it would run beside its
+      # database, and nothing said where it ran: on 2026-10-12 it ran in Sydney, a Pacific from the
+      # primary, and every statement on the primary paid the crossing.
+      #   - where it runs: Cloudflare's `cf-placement` on five health answers;
+      #   - what a statement costs it there: the median of five one-statement reads on the primary
+      #     (/v1/seats/sieges/live) less the median of five health answers, which ask the database
+      #     nothing - only answers that came (`-f`: an error answer is no statement), each bounded;
+      #   - where the primary is, by D1's own word: a `SELECT 1`'s answer names the data centre that
+      #     served it (`served_by_colo`) and whether that was the primary (`served_by_primary`).
+      # A REPORT AND NEVER A GATE (`continue-on-error`, and bounded by `timeout-minutes`): the header
+      # is Cloudflare's to rename and a runner's network is noisy. A primary not near the region
+      # wrangler.toml's [placement] names is the cue to change that line.
+      - name: Report where the account Worker runs
+        continue-on-error: true
+        timeout-minutes: 4
+        working-directory: server-account
+        run: |
+          set -uo pipefail
+          worker="${{ steps.deploy.outputs.base }}"
+          seen=""; health=(); read1=()
+          for i in 1 2 3 4 5; do
+            got=$(curl -fsS --max-time 10 -o /dev/null -D - -w 'took: %{time_total}\n' "$worker/v1/health" 2>/dev/null) || got=""
+            got=$(printf '%s\n' "$got" | tr -d '\r')
+            at=$(printf '%s\n' "$got" | sed -n 's/^cf-placement:[[:space:]]*//Ip')
+            at=${at%%$'\n'*}
+            seen="$seen ${at:-none}"
+            health+=("$(printf '%s\n' "$got" | sed -n 's/^took: //p')")
+            one=$(curl -fsS --max-time 10 -o /dev/null -w '%{time_total}' "$worker/v1/seats/sieges/live" 2>/dev/null) || one=""
+            read1+=("$one")
+          done
+          # the middle of the answers that came, in ms - nothing where none came; and how many came
+          mid() { printf '%s\n' "$@" | grep -E '^[0-9]+(\.[0-9]+)?$' | sort -n | awk '{ v[NR] = $1 } END { if (NR) printf "%d", v[int((NR + 1) / 2)] * 1000 + 0.5 }'; }
+          came() { printf '%s\n' "$@" | grep -cE '^[0-9]+(\.[0-9]+)?$'; }
+          h=$(mid "${health[@]}") || h=""
+          s=$(mid "${read1[@]}") || s=""
+          hn=$(came "${health[@]}") || hn=0
+          sn=$(came "${read1[@]}") || sn=0
+          if [ -n "$h" ] && [ -n "$s" ]; then
+            cost="one statement on the primary costs it ~$(( s > h ? s - h : 0 )) ms (medians: /v1/seats/sieges/live ${s} ms of ${sn} answers, /v1/health ${h} ms of ${hn})"
+          else
+            cost="one statement's cost unmeasured (of five, /v1/health answered ${hn} and /v1/seats/sieges/live ${sn})"
+          fi
+          d1=$(timeout 60 $WRANGLER d1 execute "$DB_NAME" --remote --command "SELECT 1" --json 2>/dev/null) || d1=""
+          colo=$(printf '%s' "$d1" | jq -r '.[0].meta.served_by_colo // empty' 2>/dev/null) || colo=""
+          region=$(printf '%s' "$d1" | jq -r '.[0].meta.served_by_region // empty' 2>/dev/null) || region=""
+          onprimary=$(printf '%s' "$d1" | jq -r '.[0].meta.served_by_primary' 2>/dev/null) || onprimary=""
+          if [ -n "$colo" ] && [ "$onprimary" = true ]; then
+            primary="D1's primary answered from ${colo} (${region:-its region unsaid})"
+          elif [ -n "$colo" ]; then
+            primary="a D1 replica answered from ${colo}, not the primary - where the primary is, unsaid"
+          else
+            primary="D1 did not say where its primary is"
+          fi
+          echo "cf-placement over five answers:$seen; $cost; $primary"
+          {
+            echo "### Where the account Worker runs"
+            echo ""
+            echo "\`cf-placement\` over five answers to /v1/health:$seen (wrangler.toml [placement] names the region; bible/11-Multiplayer/Scale-Arc.md D1-NEAR)"
+            echo ""
+            echo "From there, $cost - beside the primary it is D1's own time and a short hop, across an ocean 150 ms and more."
+            echo ""
+            echo "$primary - wrangler.toml [placement] should name the cloud region nearest it."
+          } >> "$GITHUB_STEP_SUMMARY"
+
       # ═══ AUDIT PRE-MERGE 0929 T-CI: THE SMOKE AGREES AS A PLAYER DOES ══
       #
       # TERMS1 (acct20) refuses a guest row or a name without the Terms

@@ -64,14 +64,35 @@ enabled = true
 binding = "METRICS"
 dataset = "daggerfall_accounts"
 
-# SCALE1: SMART PLACEMENT. A request here makes its D1 round trips one
-# after another - a checkpoint seven, a harvest up to seventeen, a
-# market read about twenty - and each pays the distance between the
-# Worker and the database. Cloudflare runs the Worker where that sum is
-# least (near the database) once it has seen the traffic; a Worker with
-# no bindings to reach would stay at the edge.
+# D1-NEAR (2026-10-12, from play: "a lot of UI elements that utilize the
+# server (like searching players, the guild menu, etc) take an insane
+# amount of time to load"; bible/11-Multiplayer/Scale-Arc.md D1-NEAR,
+# audited in bible/01-Overview/Audit-D1-Near.md): THE WORKER RUNS BESIDE
+# ITS DATABASE'S PRIMARY, BY NAME. A request here makes its D1 round trips
+# one after another - a guild look thirteen or fourteen, a seat board
+# nineteen to thirty-five - and each pays the distance between the Worker
+# and the primary, so what a route costs is that distance times its round
+# trips.
+#
+# SCALE1 set `mode = "smart"` on the word that Cloudflare would run the
+# Worker near the database, and nothing said where it ran. On 2026-10-12
+# it ran in SYDNEY (`cf-placement: remote-SYD` on 2,208 answers of 2,238)
+# while one statement on the primary cost it ~150-180 ms: the primary is
+# in western North America (the record has the bounds), and a guild look
+# spent some 2-2.5 s on round trips before any load. Cloudflare says Smart
+# Placement weighs request durations in places the Worker has already run;
+# why it chose Sydney, it does not say.
+#
+# `region` runs the Worker beside the cloud region named - Northern
+# California, central to western North America: a player pays one trip to
+# it, and each statement after that costs D1's own time and a short hop.
+# D1 placed the primary when the database was made and does not currently
+# move it. Every deploy reads, and says, where D1 says its primary answered
+# from, where the Worker runs, and what a statement costs it there
+# (account-deploy.yml, "Report where the account Worker runs"): a primary
+# not near this region is the cue to change this line.
 [placement]
-mode = "smart"
+region = "aws:us-west-1"
 
 # SCALE4b (2026-10-08): THE SERVICE'S OWN CLOCK (src/cron.js). Every
 # minute the settlements a read should not wait on (the auctions, the
