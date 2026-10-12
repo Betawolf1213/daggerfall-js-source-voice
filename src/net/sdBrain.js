@@ -272,6 +272,25 @@ export function orreryTurned(R, who, id, road, after, now) {
 /** Whom the snap lashes: the peers who turned this thread and did not bring the Concord nearer by it, net - at most
  *  `max`. */
 export const orreryLashed = (R, max = 256) => Object.entries(R.ids).filter(([, net]) => net >= 0).map(([id]) => id).slice(0, max);
+/**
+ * EG-H3 (2026-10-12; bible/11-Multiplayer/Elite-Gates.md sections 8.4 and 31, EG4): ONE TURN OF A STONE, JUDGED - the
+ * Hour's realm's judge (server/src/index.js _sdTurn) and the Spire's Athenaeum's (net/egBrain.js), one law over the one
+ * draw (orreryOf, widened): nothing while the Concord holds or while the stone's gear has not settled (SD_STONE_SETTLE_MS
+ * since `last[i]`); under THE STONES' RIGHTS (`R` - the Hour's thread; the Spire's company keeps none) a turner that may
+ * not turn now is told to wait (`{ wait: true }`), and a turn it takes is counted to it by the road before and after
+ * (orreryTurned); else the turn - orreryStep's answer. `lock` the hall's `{ st, f, ok }`. The judge the realm ran,
+ * extracted whole: THE GOLDEN FRAMES' Orrery (test/egseam_law.test.js) hold the Hour's every word to what it said.
+ * @returns {null | { wait: boolean, st?: number[], f?: number, ok?: boolean, x?: boolean, lit?: number }}
+ */
+export function orreryJudge(o, lock, last, i, a, now, R = null, who = '', id = '') {
+  if (lock.ok || now - (last[i] ?? 0) < SD_STONE_SETTLE_MS) return null;
+  if (R && !orreryMayTurn(R, who, now)) return { wait: true };
+  const road = R ? orreryShortest(o, lock.st) : 0;
+  const res = orreryStep(o, lock, i, a);
+  if (!res) return null;
+  if (R) orreryTurned(R, who, id, road, orreryShortest(o, orreryTurn(o, lock.st, i, a)), now);
+  return { wait: false, ...res };
+}
 
 /** Whether a pose (the realm's frame) reaches stone `i` - the relay allowing `slack` for a pose's lag. A pose that is no
  *  number reaches nothing (NaN compares false). */

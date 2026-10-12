@@ -925,15 +925,13 @@ and through it the Hour's art; the union floor's bearing search lives in `src/sc
 `src/world/sdSteps.js` lays the Unmoored Steps as a uniform array, `{i, kind, span, x, y, z, w, d, amp, period,
 phase, beat}`, plus checkpoints `{x, y, z, r}` (the Spire's islands): exactly what a generator emits.
 
-- **Today** it is frozen at import (`layCourse`, `SD_STEPS_COURSE`). Its module-scope readers are `SD_GHOST_STEPS`
-  (the pass's uniform count), `SD_WAYSTONES` and `SD_VANE`, `sdFx`'s `SD_REWIND_EDGES`, `sdIslandModel` and
-  `abyssLab`. The motes read `SD_COURSE_END` lazily. At build time, `createSdSteps` (`src/scenes/sdSteps.js`, the
-  riders) and `src/world/sdStepsModel.js`'s check and breath builders (`buildChecksModel`, `checkFloorTris`,
-  `buildBreathModel`) read it too.
-- **EG4 turns it into data**:
-  - `courseOf(courseSpec)` lays a course;
-  - the Hour's course is `courseOf(SD_COURSE_SPEC)`, byte for byte the frozen one, pinned;
-  - every reader above takes a course, and the pass's ghost count becomes a maximum.
+- **It is data (EG4, shipped in EG-H3)**:
+  - `courseOf(courseSpec)` (`src/net/egSpanLaw.js`) lays a course;
+  - the Hour's course is `courseOf(SD_COURSE_SPEC)` (`SD_COURSE`), byte for byte the course it froze at import, pinned;
+  - every reader takes a course, the Hour's by default - the ghosts (`sdGhostStepsOf`, the pass's count a maximum,
+    `SD_GHOSTS_MAX`), the waystones and the vane, the rewind's edges and eye, the hang's islands, `abyssLab`, the
+    riders (`createSdSteps`) and the check and breath builders. The motes still read `SD_COURSE_END`, the Hour's own
+    sky.
 - **The generator**: `egSpanOf(seed, hall, budget, band)` emits a course from the pieces below, one per road when the
   span forks.
 
@@ -1460,14 +1458,10 @@ A hall with no legion draws no dice.
 
 ### 13.1 One seam for every boss
 
-The relay hosts three bosses today, each by hand:
-
-- `_gateTick`, `_gateFrame`, `_gateFall`;
-- `_sdFightTick`, `_sdFightFrame`, `_sdFightFall`;
-- the serpent's.
-
-A realm holds ONE fight (`this._sdFight`). The Spire needs a different lord every fifth hall, so EG3 builds **one boss
-seam** (`net/bossSeam.js`). It is the shape every brain already keeps by convention, made a contract:
+The relay hosts three bosses, each in its own host (`_gateTick`, `_gateFrame`, `_gateFall`; `_sdFightTick`,
+`_sdFightFrame`, `_sdFightFall`; the serpent's), and since EG3 (EG-H3) every one of them through **one boss seam**
+(`net/bossSeam.js`). A realm holds ONE fight (`this._sdFight`). It is the shape every brain already kept by convention,
+made a contract:
 
 ```
 new(profile, rng)            join(f, sub, name, lv, now, present)      hit(f, sub, d, r, pose, now, seq)
@@ -3954,3 +3948,126 @@ wait. A blow's word now never shows less than its whole wind-up, however late it
   re-aimed there, and `egfrag.json`'s High Road cache re-aimed by content (the fair trail's ask on its line) - both
   judged again, both dead. `int_lane3_audit`'s count of the rooms that keep a body's word on its own bucket: four.
 - `RELAY_VERSION` `world197`, rehashed with `net/egFair.js` and `net/egFloor.js` in its graph.
+### EG-H3 - 2026-10-12 - THE BOSS SEAM, THE COURSE AS DATA, THE SWAP'S BUILD
+
+EG3, EG4 and EG10's THE SWAP, built (Mac: "I said I want everything"). The relay's three bosses now run through one
+contract, the Unmoored Steps' course is data that every reader takes, the Hour and the Spire keep one platform clock and
+one Orrery judge, and a new circle is stood in place from a level built while the Court rests.
+
+**What shipped, by piece.**
+
+- **THE BOSS SEAM** (`net/bossSeam.js`, in the relay bundle). The contract is section 13.1's seven members: `new`,
+  `join`, `hit`, `step`, `stateOf`, `judge` and `earned`. `bossSeam(name, members)` refuses a boss that lacks one and
+  carries nothing else. `GATE_SEAM`, `SD_SEAM` and `SERPENT_SEAM` re-plug the Warden, the Brass Remnant and the Sea
+  Serpent.
+  - Where a brain's shape already was the contract's, the member IS the brain's own function (the same reference).
+  - Where it was not, a thin map hands the brain exactly the arguments the host handed it before: the births (`new`
+    takes the brain's own birth record), the gate's and the serpent's refusals (`o.admits`, the serpent's `o.hl` and
+    `o.near`), and the serpent's zone (`o.z`) and a hand's own weapons (the blow's kind 1).
+  - `server/src/index.js` calls every boss's birth, join, blow, beat, state, judge and earning through its seam.
+- **THE GOLDEN FRAMES** (`test/egseam_law.test.js`). A gate's court, an Abyss Dungeon's realm, its Orrery and a
+  serpent's cell are played through the real Room, on a seeded clock and a seeded die, with the count enforced. Every
+  word each says is hashed whole. The four hashes were taken on the tree before the seam (4f0e71965) and stand
+  unchanged after it.
+- **THE TRAILS KEEP Y.** The relay's `_trailOf` hands its judges `[t, x, z, y]`: the height follows the frame's two, so
+  `posAt` and `posAfter` read what they read before. `posYAt` (`net/bossRef.js`) reads the height where a body stood,
+  for section 11.7's per-floor judge.
+- **THE COURSE AS DATA** (EG4).
+  - `courseOf(spec)` (`net/egSpanLaw.js`) lays a course record, `{ steps, checkpoints, end }`, the Steps' one step
+    shape, from sections of pieces: a gap, a size, a riser's rise, a checkpoint after its section, a descent to nought.
+  - The Hour's course is `SD_COURSE = courseOf(SD_COURSE_SPEC)` (`world/sdSteps.js`), byte for byte the course
+    `layCourse` froze at import. `SD_STEPS_COURSE`, `SD_CHECKPOINTS` and `SD_COURSE_END` are its fields.
+  - Every reader takes a course, the Hour's by default:
+    - the ghosts (`sdGhostStepsOf`, `sdGhostVertices`, `SdStepsPass`). The pass's uniform count is now a maximum,
+      `SD_GHOSTS_MAX` (the Hour's fifteen), and a course with more draws its first fifteen;
+    - the waystones (`sdWaystonesOf`) and the vane (`sdVaneAt`);
+    - the checkpoints' islands and floors and the breath (`buildChecksModel`, `checkFloorTris`, `buildBreathModel`);
+    - the rewind's edges and eye (`sdRewindEdgesOf`, `sdCastBackSeen`, `createSdFx`'s `course`);
+    - the hang (`sdHangIslandsOf`, `buildHangModel`'s `islands`, `createSdHang`'s `course`);
+    - `spanAt`, `inBreath`, `castBackTo`, the riders (`createSdSteps`'s `course`) and `abyssLab`.
+  - The record's byte-for-byte pin hashes the course and every reader's output, taken before.
+- **THE PLATFORM CLOCK, ONE HOME** (section 29). `stepAt`, `beatStands`, `beatBlinks` and `beatWarned` moved whole into
+  `net/egSpanLaw.js`, on the two laws the Spire's pieces already moved by: `egDriftDx` (a Drift's swing) and `egBeatAt`
+  (a Beat's place in its cycle). `egPieceAt` reads the same two. The Beat's blink joined the Beat's and the Crumble's
+  numbers there (`EG_BEAT_BLINK_S`), and `world/sdSteps.js` re-exports all of them as it always named them.
+- **THE ORRERY'S ONE JUDGE.** `orreryJudge` (`net/sdBrain.js`) is the realm's judge, extracted whole: the settle, the
+  Concord, THE STONES' RIGHTS (a turner held is told to wait), and the turn and its turner counted by the road. The
+  Hour's realm (`_sdTurn`) and the Spire's Athenaeum (`net/egBrain.js`'s `pz`, with no rights) both judge by it. The
+  Hour's every hall word is pinned by the golden Orrery. `orreryOf`'s widening was layer one's.
+- **THE SWAP'S BUILD** (EG10).
+  - `world/egCircleParts.js` builds a circle's made level apart from the screen: its halls' mesh, the collider's
+    triangles, its lamps and its portcullises, under the mode machine's own key (`egCircleKey`). The builders are the
+    stand's own, so the build is byte for byte the level the stand makes.
+  - `world/egCircleWorker.js` runs that build off the main thread (a circle's mesh is 30-70 ms in one task, and its hall
+    law's solver as long again) and transfers its buffers.
+  - `scenes/egSwap.js` schedules it, one build at a time keyed by the circle: asked, building, ready, handed over once.
+    Asking for another drops the one held. A worker that errors, or answers another circle, offers no build again until
+    the breach's end.
+- **THE SWAP IN PLACE.**
+  - While the Court rests, the client asks for the next circle's level (`egPrebuild`).
+  - When the step is due, the mode machine stands the built circle in the same level (`egSwapCircle`): the old mesh,
+    portcullises, floors and draws go first (the slot emptied before what was in it is freed); then the new circle is
+    uploaded, laid and lit, and the level takes its circle's number.
+  - The dungeon host stands the new circle's spans (`egRecircle`). The spans' draws and buckets are tracked at their
+    stand, so they leave whole.
+  - The client puts my feet on the new circle's first plate under the veil it closed.
+  - No exterior pixel, no landing, no world-cell hello and no new context: the presence socket stays the breach's.
+  - THE FREE PINS: after twenty swaps and back, the live meshes, the collider's buckets, the hall's triangles and the
+    draws are at their baseline, and no texture was uploaded again.
+- **THE FALLBACK.** A build still in flight holds the step `EG_SWAP_WAIT_MS` (1.5 s). A build not ready by then, no
+  module Worker, or a failed worker each step the old way: out under the veil and in again. The build is never made on
+  the main thread, because a hitch in the rest is worse than the step it would save. Walking out of the breach forgets
+  the build and ends the worker (`egSwapDrop`).
+
+**Where EG-H3 departs from this page, said plainly.**
+
+1. The seam's `judge` is `(f, bodies, now)`: each body carries its trail (`tr`), so the page's `judge(f, blow,
+   trails)` is that call. `new` takes the brain's own birth record, not a `profile`. `hit` answers each brain's own
+   answer (the damage taken, or the serpent's words).
+2. The gate's crystals, host and heals and the Remnant's Echoes and Hearts stay each brain's own blows beside the seam.
+3. **The Spire's lords are not written to the seam.** They are a hall's fight inside the breach's director
+   (`net/egBrain.js` over `net/egBodies.js` and `net/egLords.js`), stepped in one beat with the legion and the place's
+   hazards, and they share the gate's hand and purse (`spendBlow`, `spendPurse`). A seam for each lord would split that
+   beat between two hosts in a file another slice was changing. The seam is the room-level contract.
+4. The trails keep y for section 11.7's per-floor judge, which is not built. `posAt` and `posAfter` still hand the
+   judges two coordinates.
+5. The motes (`render/sdMotes.js`) still read the Hour's `SD_COURSE_END`, baked into their shader. Their sky is the
+   Hour's own, over its own void.
+6. Every reader takes a course, but nothing in the game feeds one another course yet. The Spire's spans are laid by the
+   hall law (`net/egLaw.js`) in the same step record and ride `scenes/egSpan.js`, not the Hour's riders. `egSpanOf`
+   (EG6a) is still to come.
+7. **THE SWAP is still a circle a level** (EG-PLAY's second departure, narrowed). The five halls of a circle stand in one
+   level, and the pull between them is still a teleport under the veil's flash.
+   - What is new is the step into a NEW circle: a swap in place of a level built during the Court's rest. That is the
+     window before a new circle; a hall's closing builds nothing, because a circle is the unit.
+   - At most two circles are resident: the stood one and the built one.
+   - The 4 ms slicing is not needed, because the build runs off the main thread.
+   - The new circle's hall specs are still drawn on the main thread by the client's law reads as it arrives
+     (`egHallOf`), as before.
+8. Nothing of the swap has run in a browser: there is no Daggerfall data in the build container. The swap in place is
+   run from `scenes/worldModes.js`'s and `scenes/dungeonContext.js`'s own source over a counting renderer and the real
+   collider. The client is played against the relay's real Room, with the worker run in-process.
+
+**The four hosts.**
+
+- `src/scenes/worldModes.js` - WIRED: the swap's build (`createEgSwap`), `egPrebuild`, `egSwapCircle`, `egSwapDrop`,
+  and one portcullis stand for the stand and the swap (`egGateStand`).
+- `src/scenes/dungeonContext.js` - WIRED: `egRecircle`, the spans' draws and buckets tracked at their stand.
+- `src/scenes/world.js` - FLAGGED: untouched and needs nothing; the client reaches the swap through the mode machine's
+  doors.
+- `src/scenes/exterior.js` - FLAGGED: untouched (offline, as section 28 has it).
+
+`scenes/egClient.js` asks the build at the rest, swaps in place and falls back. It is a helper the hosts call, not a
+fifth host.
+
+**Pins.**
+
+- `test/egseam_law.test.js` (8) and `test/egswap_client.test.js` (8).
+- `tools/mutants/egseam.json` (66, every one dead).
+- Records of other arcs whose quoted lines moved, re-aimed by content and judged again, every one dead (39): `egspan`,
+  `int_lane3`, `int_lane3_audit`, `sd6b`, `sd7a`, `sd7b`, `sd8b`, `sd8c`, `sd9a`, `sd10b`, `sd11a`, `sd11b`, `sd18a`,
+  `sd25_steps`, `serpent1`, `serpent1_audit`, `serpent4`, `wb3` and `wb8b`.
+- Source pins moved to the seam's calls, each `PIN MOVED`: `auditwbx`, `sd8b_fight` (and the relay graph's order),
+  `sd8c_remnant_page`, `sd9a_receipt`, `sd18a_marks`, `sd20a_fight`, `serpent4` and `wb8c_gate_detail`.
+- `RELAY_VERSION` `world197`, unshipped, rehashed: `net/bossSeam.js` joins its graph where `net/bossRef.js` walked, and
+  `net/egSpanLaw.js`, `net/sdBrain.js`, `net/bossRef.js` and `net/egBrain.js` changed.

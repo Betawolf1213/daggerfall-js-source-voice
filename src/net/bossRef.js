@@ -64,6 +64,17 @@ export function posAfter(b, t) {
   for (const p of b.tr ?? []) if (p[0] > t) return [p[1], p[2]];
   return [b.x, b.z];
 }
+/** EG-H3 (Elite-Gates.md sections 11.7 and 31, EG3): THE TRAILS KEEP Y - the height body `b` stood at by its trail at
+ *  `t`: its last pose at or before `t` (an entry's fourth, `[t, x, z, y]` - the relay's _trailOf); no trail, its own `y`;
+ *  null when that is not known (all after, or a trail that never said a height). posAt's twin for the per-floor judge
+ *  (a member is on a floor while its height lies in the floor's band); posAt and posAfter are unchanged. Pure.
+ *  @param {{y?: number, tr?: number[][]}} b @param {number} t @returns {number | null} */
+export function posYAt(b, t) {
+  if (!b.tr) return Number.isFinite(b.y) ? b.y : null;
+  let q = null;
+  for (const p of b.tr) { if (p[0] <= t) q = p; else break; }
+  return q && Number.isFinite(q[3]) ? q[3] : null;
+}
 /** Is body `b` deep in `test` at `t` - before it and after it both (where it stood before not known: no)? */
 const deepAt = (test, b, t) => { const p0 = posAt(b, t), [x1, z1] = posAfter(b, t); return !!p0 && deepIn(test, p0[0], p0[1]) && deepIn(test, x1, z1); };
 

@@ -1917,13 +1917,33 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // EG-PLAY (Elite-Gates.md sections 8 and 10): AN ELITE BREACH'S SPANS (scenes/egSpan.js) - every step of the circle's
   // courses, stood the first frame the outer host asks and moved on the realm's clock, ridden BEFORE the motor (the Steps'
   // way); the landing of the void's cast-back answered to the mode machine
-  const egSpan = _egHall ? createEgSpan({ renderer, audio, seed: dfLocation.egSeed, c: dfLocation.egCircle, geo: dfLocation.egGeo ?? 0 }) : null;
+  let egSpan = _egHall ? createEgSpan({ renderer, audio, seed: dfLocation.egSeed, c: dfLocation.egCircle, geo: dfLocation.egGeo ?? 0 }) : null;
   let _egSpanStood = false;
+  /** EG-H3: what the spans stood - their draws and their buckets - taken out again when a new circle is stood in place */
+  let _egSpanDraws = null, _egSpanKeys = [];
   /** One frame of the spans, before the motor: the landing of a cast-back, or null. */
   function egSpanRide(dt, body, live) {
     if (!egSpan) return null;
-    if (!_egSpanStood) { _egSpanStood = true; egSpan.stand({ dynamicDraws, collider }); }
+    if (!_egSpanStood) {
+      _egSpanStood = true;
+      const n0 = dynamicDraws.length, keys = (_egSpanKeys = []);
+      egSpan.stand({ dynamicDraws, collider: { addMesh: (...a) => { keys.push(a[0]); return collider.addMesh(...a); } } });
+      _egSpanDraws = new Set(dynamicDraws.slice(n0));
+    }
     return egSpan.ride(opts.sdClock?.() ?? performance.now() / 1000, dt, body, live);
+  }
+  /** EG-H3 (Elite-Gates.md sections 7 and 31, EG10): THE SWAP - a new circle stood in this same level (scenes/worldModes.js
+   *  egSwapCircle): the old circle's spans out of the draws and the collider (the slot emptied before they are freed),
+   *  then the next circle's made, stood at the next ride. */
+  function egRecircle({ seed, c, geo = 0 }) {
+    if (!_egHall) return false;
+    const was = egSpan, draws = _egSpanDraws, keys = _egSpanKeys;
+    egSpan = null; _egSpanDraws = null; _egSpanKeys = []; _egSpanStood = false;
+    if (draws) for (let i = dynamicDraws.length - 1; i >= 0; i--) if (draws.has(dynamicDraws[i])) dynamicDraws.splice(i, 1);
+    for (const k of keys) collider.removeBucket(k);
+    was?.clear();
+    egSpan = createEgSpan({ renderer, audio, seed, c, geo });
+    return true;
   }
   // SD8c (Super-Dungeons.md section 10): THE BRASS REMNANT in the Shattered Hour (scenes/sdRemnant.js) - the Remnant, its
   // Echoes and the Reset's Hearts, stood the first frame I stand here and placed every frame where the realm's fight (the
@@ -10333,6 +10353,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
      *  place it would cast me back to set (a pull's landing). */
     egSpanRide(dt, body, live = true) { return egSpanRide(dt, body, live); },
     egSpanSafe(p) { egSpan?.setSafe(p); },
+    egRecircle(r) { return egRecircle(r); },   // EG-H3 (EG10): THE SWAP - a new circle's spans in this same level
     /** AUDIT SD II (L2 F10): the Shattered Hour's hall and arena posed BEFORE the world pass draws them (the mode machine's
      *  dungeon arm, with no window up, as the Steps are ridden before the motor): the Orrery's hall stood, its word heard,
      *  its hands turned (SD6c); the Brass Remnant stood, my `in`, its bodies placed (SD8c). Posed in drawFoes, after the

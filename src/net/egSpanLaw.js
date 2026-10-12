@@ -26,6 +26,12 @@
 // EG-FULL, LAYER THREE (section 11): the fragments' own pieces (a Moon branch under its beams, a rolling Drum, a Bone
 // bridge, a Sinking flight), proofs road by road (THE FORK), the real gap after each run, and THE MEDIAN (egRoadCross).
 //
+// EG-H3 (2026-10-12; sections 10.1 and 29, EG4): THE PLATFORM CLOCK, ONE HOME - the Unmoored Steps' stepAt, beatStands,
+// beatBlinks and beatWarned moved here whole on the two laws the Spire's pieces move by (egDriftDx, egBeatAt), with the
+// Beat's and the Crumble's numbers; world/sdSteps.js re-exports them, so the Hour and the Spire keep one clock. And THE
+// COURSE AS DATA: courseOf lays a course record (`{ steps, checkpoints, end }`, the Steps' uniform step) from a spec -
+// the Hour's is world/sdSteps.js courseOf(SD_COURSE_SPEC), byte for byte the course it froze at import.
+//
 // The motor's numbers are pinned here, not imported (this module is in the relay's bundle; test/egfull_span.test.js
 // holds them equal to player/motor.js). Pure. Not a DFU member. Ledger A (ELITE-GATES).
 
@@ -38,9 +44,12 @@ export const EG_JUMP_G = 20;
 export const EG_JUMP_FWD = 0.05;
 export const EG_BODY_R = 0.35;
 export const EG_DROP_GAIN = 0.45;
-/** The Steps' Beat (world/sdSteps.js SD_BEAT_CYCLE, SD_BEAT_SOLID) and Crumble (SD_CRUMBLE_DELAY) - pinned equal. */
+/** The Steps' Beat (its cycle, its solid share, the warning blink before it goes) and Crumble (the delay under a foot) -
+ *  THEIR ONE HOME since EG-H3: world/sdSteps.js says them as SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK and
+ *  SD_CRUMBLE_DELAY. */
 export const EG_BEAT_CYCLE_S = 3.6;
 export const EG_BEAT_SOLID_S = 2.4;
+export const EG_BEAT_BLINK_S = 0.4;
 export const EG_CRUMBLE_DELAY_S = 0.7;
 /** THE TIMED SOLVER's bounds (section 10.5). */
 export const EG_WINDOW_MIN = 0.5;
@@ -86,6 +95,74 @@ export const EG_CRUMBLE_KINDS = Object.freeze(['crumble', 'bone']);
 
 const TAU = 2 * Math.PI;
 const wrapT = (t, p) => ((t % p) + p) % p;
+
+// ── EG-H3 (EG4): THE PLATFORM CLOCK ──────────────────────────────────────────────────────────────────────────────
+/** A Drift's swing across the course at `t` (shared seconds): `amp` either side over `period`, from `phase` - the Steps'
+ *  and the Spire's one swing. */
+export const egDriftDx = (s, t) => s.amp * Math.sin((TAU * t) / s.period + s.phase);
+/** Where `t` falls in a Beat's cycle, from its own half beat (`beat`): 0 to EG_BEAT_CYCLE_S. */
+export const egBeatAt = (s, t) => wrapT(t - s.beat, EG_BEAT_CYCLE_S);
+/** A step's top-centre at `t` (the realm's anchored seconds), the realm's frame: the Drift's swing across x. AUDIT SD: into
+ *  `out` when one is given - the page's frame makes nothing. */
+export function stepAt(s, t, out = [0, 0, 0]) {
+  // AUDIT SD II (L2 F9): two stores - a choice between a made number and a whole one was a number made a step a frame
+  if (s.kind === 'drift') out[0] = s.x + egDriftDx(s, t);
+  else out[0] = s.x;
+  out[1] = s.y;
+  out[2] = s.z;
+  return out;
+}
+/** Whether a Beat step stands at `t` (the others always do): solid EG_BEAT_SOLID_S of every EG_BEAT_CYCLE_S, from its own
+ *  half beat. */
+export function beatStands(s, t) {
+  if (s.kind !== 'beat') return true;
+  return egBeatAt(s, t) < EG_BEAT_SOLID_S;
+}
+/** Whether a Beat step is blinking at `t` - the last EG_BEAT_BLINK_S of its stand, its warning. */
+export function beatBlinks(s, t) {
+  if (s.kind !== 'beat') return false;
+  const u = egBeatAt(s, t);
+  return u >= EG_BEAT_SOLID_S - EG_BEAT_BLINK_S && u < EG_BEAT_SOLID_S;
+}
+/** SD-FLASH: how long a Beat step has been warning at `t` (s; meaningful while `beatBlinks`) - its falter's own clock. */
+export function beatWarned(s, t) {
+  return egBeatAt(s, t) - (EG_BEAT_SOLID_S - EG_BEAT_BLINK_S);
+}
+
+// ── EG-H3 (EG4): THE COURSE AS DATA ──────────────────────────────────────────────────────────────────────────────
+/**
+ * A COURSE LAID FROM ITS SPEC - the record the Hour's Unmoored Steps and every reader of a course take: `steps` (each one
+ * shape, `{ i, kind, span, x, y, z, w, d, amp, period, phase, beat }` - x, z its top's centre at rest, y its top, its
+ * unused fields nought), `checkpoints` (`{ x, y, z, r }`, the first the spec's `start`) and `end` (where the course
+ * meets its goal). Laid along +z from the start's far edge, section by section (a section's index is its steps' `span`):
+ * each piece `gap` past the last edge, `size` (`{ w, d }`) its top; a piece's `rise` lifts the course before it stands
+ * (a riser); a section that `descend`s steps evenly down to nought over its pieces (the Crumble); a section's `check`
+ * is the gap to the checkpoint after it. Each spec number is used as the Steps' own arithmetic used it, so the Hour's
+ * spec lays the Hour's course byte for byte. Pure.
+ * @param {{ start: { x: number, y?: number, z: number, r: number }, x?: number, checkR: number, toEnd: number,
+ *   sections: ReadonlyArray<{ pieces: ReadonlyArray<{ kind: string, gap: number, size: { w: number, d: number }, rise?: number,
+ *   amp?: number, period?: number, phase?: number, beat?: number }>, check?: number | null, descend?: boolean }> }} spec
+ */
+export function courseOf(spec) {
+  const steps = [], checkpoints = [{ x: spec.start.x, y: spec.start.y ?? 0, z: spec.start.z, r: spec.start.r }];
+  const x0 = spec.x ?? 0;
+  let edge = spec.start.z + spec.start.r, y = spec.start.y ?? 0;
+  const put = (kind, span, size, gap, { amp = 0, period = 0, phase = 0, beat = 0 } = {}) => {
+    const z = edge + gap + size.d / 2;
+    steps.push({ i: steps.length, kind, span, x: x0, y, z, w: size.w, d: size.d, amp, period, phase, beat });
+    edge = z + size.d / 2;
+  };
+  spec.sections.forEach((sec, span) => {
+    const drop = sec.descend ? y / sec.pieces.length : 0;
+    for (const p of sec.pieces) {
+      if (p.rise) y += p.rise;
+      if (sec.descend) y = Math.max(0, y - drop);
+      put(p.kind, span, p.size, p.gap, p);
+    }
+    if (sec.check != null) { const z = edge + sec.check + spec.checkR; checkpoints.push({ x: x0, y, z, r: spec.checkR }); edge = z + spec.checkR; }
+  });
+  return { steps, checkpoints, end: edge + spec.toEnd };
+}
 /** Out and back at one speed: -amp to amp and home over `period` (s) - a drum's roll, a moonbeam's walk. */
 export function egTriAt(amp, period, phase, t) {
   if (!(period > 0)) return 0;
@@ -104,9 +181,9 @@ export function egMoonBeamZ(s, t) {
  */
 export function egPieceAt(s, t, out = { dx: 0, dz: 0, solid: true }) {
   out.dx = 0; out.dz = 0; out.solid = true;
-  if (s.kind === 'drift' && s.period > 0) out.dx = s.amp * Math.sin((TAU * t) / s.period + s.phase);
+  if (s.kind === 'drift' && s.period > 0) out.dx = egDriftDx(s, t);
   else if (s.kind === 'rail' && s.period > 0) out.dz = s.amp * Math.sin((TAU * t) / s.period + s.phase);
-  else if (s.kind === 'beat') out.solid = wrapT(t - s.beat, EG_BEAT_CYCLE_S) < EG_BEAT_SOLID_S;
+  else if (s.kind === 'beat') out.solid = egBeatAt(s, t) < EG_BEAT_SOLID_S;
   else if (s.kind === 'drum') out.dz = egTriAt(s.amp, s.period, s.phase, t);
   else if (s.kind === 'moon') out.solid = Math.abs(s.z - egMoonBeamZ(s, t)) <= EG_MOON_HALF;
   return out;

@@ -29,7 +29,7 @@
   {
     "name": "EGSPAN-a-beat-always-there",
     "file": "src/net/egSpanLaw.js",
-    "old": "out.solid = wrapT(t - s.beat, EG_BEAT_CYCLE_S) < EG_BEAT_SOLID_S;",
+    "old": "out.solid = egBeatAt(s, t) < EG_BEAT_SOLID_S;",
     "new": "out.solid = true;",
     "tests": [
       "test/egfull_span.test.js"

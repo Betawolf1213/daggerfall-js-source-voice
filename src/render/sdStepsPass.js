@@ -16,20 +16,28 @@ import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { BAYER_GLSL, SD_PIXEL_GLSL } from './orderedDither.js';
 import { telegraphLineW } from './gateTelegraph.js';
 import { SD_LIGHT } from '../world/sdLook.js';
-import { SD_STEPS_COURSE } from '../world/sdSteps.js';
+import { SD_COURSE } from '../world/sdSteps.js';
 import { stepEdges } from '../world/sdStepsModel.js';
 
 /** The ghosts: their width (px), the hand's reach and lift over the top (m), their gold, their light at rest and at
  *  the return (L3), and how long before the return it brightens (s - a Beat plate's; a Crumble pin's over its rewind). */
 export const SD_GHOST = Object.freeze({ px: 2, hand: 0.9, lift: 0.02, color: SD_LIGHT.gold, base: 0.45, peak: 1.1, rise: 0.3 });
-/** The steps a ghost can stand for, in the course's order: the Beat's plates and the Crumble's pins. */
-export const SD_GHOST_STEPS = Object.freeze(SD_STEPS_COURSE.filter((s) => s.kind === 'beat' || s.kind === 'crumble'));
+/** The steps a ghost can stand for in `course` (EG-H3, EG4: a course record - net/egSpanLaw.js courseOf), in its order:
+ *  the Beat's plates and the Crumble's pins. */
+export const sdGhostStepsOf = (course) => course.steps.filter((s) => s.kind === 'beat' || s.kind === 'crumble');
+/** The Hour's. */
+export const SD_GHOST_STEPS = Object.freeze(sdGhostStepsOf(SD_COURSE));
+/** EG-H3 (EG4): the pass's uniform count is a MAXIMUM - the Hour's fifteen; a course with more ghosts draws its first
+ *  SD_GHOSTS_MAX. */
+export const SD_GHOSTS_MAX = SD_GHOST_STEPS.length;
 /** A ghost's segments: its box's twelve edges, then its hand. */
 const SEGS = 13;
 const FLOATS = 10;   // aA xyz, aB xyz, aM (slot, side, end, hand)
-/** THE STATIC BUFFER: every ghost's segments as quads (six vertices each), in its step's own frame. Pure. */
-export function sdGhostVertices() {
-  const v = new Float32Array(SD_GHOST_STEPS.length * SEGS * 6 * FLOATS);
+/** THE STATIC BUFFER: every ghost's segments as quads (six vertices each), in its step's own frame - `ghosts` a course's
+ *  (sdGhostStepsOf; the Hour's by default), SD_GHOSTS_MAX at most. Pure. */
+export function sdGhostVertices(ghosts = SD_GHOST_STEPS) {
+  const list = ghosts.slice(0, SD_GHOSTS_MAX);
+  const v = new Float32Array(list.length * SEGS * 6 * FLOATS);
   let o = 0;
   const put = (a, b, slot, hand) => {
     for (const [side, end] of [[-1, 0], [1, 0], [1, 1], [-1, 0], [1, 1], [-1, 1]]) {
@@ -37,14 +45,14 @@ export function sdGhostVertices() {
       v[o++] = slot; v[o++] = side; v[o++] = end; v[o++] = hand;
     }
   };
-  SD_GHOST_STEPS.forEach((s, slot) => {
+  list.forEach((s, slot) => {
     for (const [a, b] of stepEdges(s.kind)) put(a, b, slot, 0);
     put([0, 0, 0], [0, 0, 0], slot, 1);   // the hand: placed by its state
   });
   return v;
 }
 
-const N = SD_GHOST_STEPS.length;
+const N = SD_GHOSTS_MAX;
 export const SD_STEPS_PASS_VS = `#version 300 es
 precision highp float;
 layout(location = 0) in vec3 aA;
@@ -102,13 +110,13 @@ void main() {
 
 /** The ghosts' pass. */
 export class SdStepsPass {
-  /** @param {WebGL2RenderingContext} gl */
-  constructor(gl) {
+  /** @param {WebGL2RenderingContext} gl @param {ReadonlyArray<any>} [ghosts] a course's ghosts (sdGhostStepsOf - EG-H3) */
+  constructor(gl, ghosts = SD_GHOST_STEPS) {
     this.gl = gl;
     this.program = buildProgram(gl, SD_STEPS_PASS_VS, SD_STEPS_PASS_FS, 'sd steps ghosts');
     this.u = {};
     for (const n of ['uVP', 'uStep', 'uState', 'uViewport', 'uWidth', 'uColor', 'uSteps', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos']) this.u[n] = gl.getUniformLocation(this.program, n);
-    const verts = sdGhostVertices();
+    const verts = sdGhostVertices(ghosts);
     this.count = verts.length / FLOATS;
     this.vao = gl.createVertexArray();
     gl.bindVertexArray(this.vao);

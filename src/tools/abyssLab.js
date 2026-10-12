@@ -71,7 +71,7 @@ import { createSdHall, sdStoneKey, SD_CONCORD_MS, SD_BRIDGE_LAY_MS } from '../sc
 import { hallSolidTris, stoneFrame, SD_BANNER } from '../world/sdHall.js';
 import { createSdSteps } from '../scenes/sdSteps.js';
 import { createSdFx } from '../scenes/sdFx.js';
-import { SD_STEPS_COURSE, SD_BEAT_CYCLE } from '../world/sdSteps.js';
+import { SD_COURSE, SD_BEAT_CYCLE } from '../world/sdSteps.js';
 import { createSdRemnant } from '../scenes/sdRemnant.js';
 import { createSdEnd, SD_RETURN_KEY } from '../scenes/sdEnd.js';
 import { createSdHang } from '../scenes/sdHang.js';
@@ -222,7 +222,7 @@ const hang = createSdHang({ renderer, clock: () => clock });   // SD-LOOK S11: t
 hang.stand({ dynamicDraws });
 steps.stand({ dynamicDraws, collider: null });
 /** SD-LOOK S9: the Steps' knobs - every Crumble pin touched ?crumble= ago, the waystone ?span= lit, the rewind on ?on=. */
-const CRUMBLES = SD_STEPS_COURSE.filter((s) => s.kind === 'crumble').map((s) => s.i);
+const CRUMBLES = SD_COURSE.steps.filter((s) => s.kind === 'crumble').map((s) => s.i);   // EG-H3 (EG4): the course record's
 const labFx = createSdFx({ link: { state: () => null, now: () => clock * 1000 } });
 if (params.has('rewind')) labFx.rewind(Number(params.get('on') ?? 1), (clock - Number(params.get('rewind'))) * 1000);
 const labLink = { state: () => labFight() ?? SD_FIGHT_EMPTY, now: () => clock * 1000, inDue: () => false, sentIn() {}, joined: () => false };   // SD-LOOK S8: the made fight

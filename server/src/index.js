@@ -220,11 +220,11 @@ import { newDuelRef, duelNote, duelOpen, duelBoutOf, duelBlow, duelPose, duelEnd
 import { newWildRef, wildZone, wildPose, wildBlow, wildPick, wildSigned, wildStep, wildVitals, wildGone, wildCarry, wildCarryOf, wildSignNow, wildFallOf, WILD_FALL_PREFIX, WILD_REF } from '../../src/net/wildRef.js';   // INT9: the open zone refereed
 import { mintWildReceipt } from '../../src/net/wildReceipt.js';   // INT9: a fall, signed
 import { mintDuelReceipt } from '../../src/net/duelReceipt.js';   // INT8: a duel won, signed
-import { newFight, joinFight, applyHit, applyCrystalHit, applyHostHit, applyHeal, healRef, stepBrain, stateOf, earned, earnedBy, COURT_CENTRE, BRAIN_TICK_MS, CHECKPOINT_MS, GATE_FIGHTERS_MAX } from '../../src/net/gateBrain.js';
+import { applyCrystalHit, applyHostHit, applyHeal, healRef, earnedBy, COURT_CENTRE, BRAIN_TICK_MS, CHECKPOINT_MS, GATE_FIGHTERS_MAX } from '../../src/net/gateBrain.js';
 import { mintReceipt, importReceiptKey, readReceipt, RECEIPT_TTL_S } from '../../src/net/gateReceipt.js';
 import { bodyConfig, bodyStruck, bodySaid, bodyHealed, bodyLife, bodyCensus, bodyMeasure, bodyOut, bodyDown, bodyTellOwed, HULL_REFLOAT, BODY_TRAIL_MS, BODY_TRAIL_MAX } from '../../src/net/bossBody.js';   // INT11: the body counted
 import { BODY_DEFAULT, BODY_LINE_MAX } from '../../src/net/bossBody.js';   // AUDIT SCALE II R1-4: a relay setting's line, refused past it in words
-import { judgeGate, judgeRemnant, judgeSerpent } from '../../src/net/bossRef.js';   // INT11-INT13: the boss's blows judged here
+import { GATE_SEAM, SD_SEAM, SERPENT_SEAM } from '../../src/net/bossSeam.js';   // EG-H3 (EG3): THE BOSS SEAM - the Warden, the Brass Remnant and the Sea Serpent born, joined, struck, stepped, said, judged (INT11-INT13) and paid through one contract
 // SERPENT1 (2026-10-04, Mac: "a new world event that requires players with a ship to meet up and take on a large scale
 // sea serpent in the ocean"): FOUR FILES JOIN THE BUNDLE - net/serpentLaw.js (the day's window - it imports wire.js and
 // gateLaw.js, both here), net/serpentBody.js and net/serpentBrain.js (the body and the fight, pure law - they import
@@ -299,8 +299,8 @@ import { sdFirst, sdRise, sdFind, sdFell, sdGone, sdDue, pickSdRegion, sdFindBel
 // post names). The hub posts off its own alarm, after the director's beat.
 import { sdHeraldDue, sdHeraldPost, readSdHeraldState } from '../../src/net/sdHerald.js';
 import { sdMarksOf } from '../../src/net/sdMarks.js';   // SD18a: a Hollow's marks by its slot - the Remnant's profile and the Orrery's fray
-import { orreryOf, orreryStep, orreryLit, orreryFresh, orreryTurn, orreryShortest, orreryRightsFresh, orreryTurnerOf, orreryMayTurn, orreryTurned, orreryLashed, stoneInReach, dungeonToRealm, SD_STONES, SD_HOURS, SD_FRAY_MAX, SD_STONE_REACH_SLACK, SD_STONE_SETTLE_MS } from '../../src/net/sdBrain.js';   // SD6b: the Orrery's law - the realm judges every turn by it; AUDIT SD II (L7 H2): and who may turn while others turn
-import { newRemnantFight, joinRemnant, applyRemnantHit, applyEchoHit, applyHeartHit, stepRemnant, remnantStateOf, arenaOf, inArena, SD_ARENA_SLACK, SD_LOST_MS, SD_POSE_FRESH_MS } from '../../src/net/sdRemnant.js';   // SD8b: the Brass Remnant's law - the realm runs its fight by it
+import { orreryOf, orreryJudge, orreryLit, orreryFresh, orreryRightsFresh, orreryTurnerOf, orreryLashed, stoneInReach, dungeonToRealm, SD_STONES, SD_HOURS, SD_FRAY_MAX, SD_STONE_REACH_SLACK } from '../../src/net/sdBrain.js';   // SD6b: the Orrery's law - the realm judges every turn by it; AUDIT SD II (L7 H2): and who may turn while others turn
+import { applyEchoHit, applyHeartHit, arenaOf, inArena, SD_ARENA_SLACK, SD_LOST_MS, SD_POSE_FRESH_MS } from '../../src/net/sdRemnant.js';   // SD8b: the Brass Remnant's law - the realm runs its fight by it
 import { mintSdReceipt, readSdReceipt, SD_RECEIPT_TTL_S } from '../../src/net/sdReceipt.js';   // SD9a: the Hour's receipt - minted at the Remnant's fall, kept by the hub
 // EG-PLAY (2026-10-11, the Elite Gates arc; bible/11-Multiplayer/Elite-Gates.md section 31, EG-PLAY): THE BREACH JOINS THE
 // BUNDLE - net/egLaw.js (the breach's room, clock and hall specs - it imports sdBrain.js), net/egBrain.js (the director)
@@ -5916,7 +5916,7 @@ export class Room {
    *  younger than a trail (woken, its trails lost to its sleep), when where it stood is not known: `[]`. */
   _trailOf(ws, frame) {
     const tr = this._trails?.get(ws);
-    if (tr?.length) return tr.map(([t, x, y, z]) => { const c = frame({ x, y, z }); return [t, c.x, c.z]; });
+    if (tr?.length) return tr.map(([t, x, y, z]) => { const c = frame({ x, y, z }); return [t, c.x, c.z, c.y ?? y]; });   // EG-H3 (EG3): THE TRAILS KEEP Y - the height after the frame's own two (net/bossRef.js posYAt reads it; posAt and posAfter read the two as before)
     return Date.now() - this._trailsAt < BODY_TRAIL_MS ? [] : undefined;
   }
   /** AUDIT INT11: a socket that has just become a fighter stands where its last pose put it FROM NOW - on its trail, so a
@@ -5983,16 +5983,16 @@ export class Room {
       // AUDIT WBX R7: a client that does not know this brain's attacks is not let fight them (a tab loaded before the
       // deploy judged each new one a miss) - refused in words it has, and taken out of the court by its own law
       if (!(m.bv >= GATE_BRAIN_MIN)) { this._send(ws, JSON.stringify({ t: 'gate', k: 'no', m: 'the gate is closed' })); return; }
-      if (!f) f = this._fight = newFight(day, now, gateTimes(day).wrathAt, gateBossOf(day).id, gateModsOf(day));   // WB8b: the day's marks, kept on the fight
+      if (!f) f = this._fight = GATE_SEAM.new({ day, now, wrathAt: gateTimes(day).wrathAt, boss: gateBossOf(day).id, md: gateModsOf(day) });   // WB8b: the day's marks, kept on the fight
       const joined = !f.players[a.sub];   // AUDIT WB A3: a newcomer - an `in` again (every welcome says one) changes nothing to keep
       const present = new Set();   // AUDIT WB A1: the accounts in the court now - a full fight frees an idle seat, never theirs
       for (const [, b] of this._courtSockets()) if (b.id && b.sub) present.add(b.sub);   // SCALE5d part two: and in its copies
-      if (!joinFight(f, a.sub, a.name ?? '', m.lv, now, gateAdmits(day, now), present)) {
+      if (!GATE_SEAM.join(f, a.sub, a.name ?? '', m.lv, now, present, { admits: gateAdmits(day, now) })) {
         const no = f.fell || f.wrath ? 'the gate is closing' : Object.keys(f.players).length >= GATE_FIGHTERS_MAX ? 'the court is full' : 'the gate is sealed';
         this._send(ws, JSON.stringify({ t: 'gate', k: 'no', m: no }));
         return;
       }
-      this._send(ws, JSON.stringify({ t: 'gate', ...stateOf(f) }));
+      this._send(ws, JSON.stringify({ t: 'gate', ...GATE_SEAM.stateOf(f) }));
       this._trailSeed(ws, a, now);   // AUDIT INT11
       const r = f.rc?.[a.sub];
       if (r) this._send(ws, JSON.stringify({ t: 'gate', k: 'rcpt', r }));
@@ -6030,7 +6030,7 @@ export class Room {
     // health goes out on the beat)
     else if (m.k === 'ahit') this._gateFan(applyHostHit(f, a.sub, m.i, m.d, m.r, at, now, m.q));
     else {
-      applyHit(f, a.sub, m.d, m.r, at, now, m.q);   // AUDIT WB11 W3: the blow's sequence - once a blow
+      GATE_SEAM.hit(f, a.sub, m.d, m.r, at, now, m.q);   // AUDIT WB11 W3: the blow's sequence - once a blow
       if (f.fell && !f.said) { await this._gateFall(f, now); return; }
     }
     // AUDIT WBX R6: a blow keeps the beat as an `in` does - a court that emptied slept until its day's end, and a client
@@ -6054,9 +6054,9 @@ export class Room {
       // screen drew - judged before the brain moves on from them), then the brain steps over it as it stands after
       // AUDIT INT11: the bodies read once a beat - the census run over them again for the brain, after the count moved
       const line = this._bodyLine(), bodies = this._gateBodies(f), census = () => bodyCensus(f, bodies, now, line.body, line.enforce);
-      await this._bodyCount('gate', f, judgeGate(f, census(), now), now, line.body);
+      await this._bodyCount('gate', f, GATE_SEAM.judge(f, census(), now), now, line.body);
       this._bodyTell('gate', f, now);   // AUDIT INT11: a fall its game has not taken, told again
-      this._gateFan(stepBrain(f, now, this._bodiesBare(census()), rand01));
+      this._gateFan(GATE_SEAM.step(f, now, this._bodiesBare(census()), rand01));
       this._riteAskAhead(f, now);   // AUDIT WB12d (R2, L3): the rite's helpers asked of the hub ahead of the kill, never awaited by the beat
       if (f.fell && !f.said) await this._gateFall(f, now);
       else if (f.said && !f.told) await this._gateTellHubOnce(f, now);   // AUDIT WB A10: the hub told until it answers
@@ -6091,8 +6091,8 @@ export class Room {
     const helped = new Set(f.helped ?? []);
     f.rc = {};
     for (const sub of Object.keys(f.players)) {
-      if (!earned(f, sub)) continue;
-      try { f.rc[sub] = await mintReceipt({ d: f.day, b: f.boss, s: sub, c: rand32(), x: earnedBy(f, sub), l: f.players[sub].lv, ...(helped.has(sub) ? { r: 1 } : {}), ...this._bodyMeasureOf(f, sub, earned) }, key, { subtle: crypto.subtle, nowS }); }   // AUDIT WBX S2: the level the fight admitted it at; INT14: the count's measure
+      if (!GATE_SEAM.earned(f, sub)) continue;
+      try { f.rc[sub] = await mintReceipt({ d: f.day, b: f.boss, s: sub, c: rand32(), x: earnedBy(f, sub), l: f.players[sub].lv, ...(helped.has(sub) ? { r: 1 } : {}), ...this._bodyMeasureOf(f, sub, GATE_SEAM.earned) }, key, { subtle: crypto.subtle, nowS }); }   // AUDIT WBX S2: the level the fight admitted it at; INT14: the count's measure
       catch (e) { console.warn('[gate] receipt refused', e?.message ?? e); }
     }
     // WB12d: one who broke the rite and took no part in the fight - a receipt of the rite alone (its ember, and nothing else)
@@ -6422,7 +6422,7 @@ export class Room {
       const own = this._siegeSocketOf(a.sub)?.[0] === ws;
       const pose = a.pose && !a.pose.dd && !sunk && own ? this._serpentFrameOf(f, a.pose) : null;   // the dead strike nothing
       // the kill is said by _serpentFall alone, its receipts minted and kept first (AUDIT WB A10's law) - never the brain's word of it here
-      await this._serpentSay(fights, id, f, serpentBrain.applySerpentHit(f, a.sub, m.d, m.z, pose, now, m.r === 1).filter((o) => o.k !== 'fell'), now);   // SERPENT4: `r` 1 - a hand's own weapons
+      await this._serpentSay(fights, id, f, SERPENT_SEAM.hit(f, a.sub, m.d, m.r, pose, now, null, { z: m.z }).filter((o) => o.k !== 'fell'), now);   // SERPENT4: `r` 1 - a hand's own weapons
       if (f.fell && !f.said) { await this._serpentFall(id, f, now); return; }
     } else if (m.k === 'wr') {
       // AUDIT 2 XC5: a coil holding her lets her go. AUDIT INT13: her own word of a wreck makes it hers (`cw` gone - the
@@ -6468,7 +6468,7 @@ export class Room {
       const room = this._serpentRoomFor(fights, t.day);
       if (room === null) { no('the waters are full'); return; }
       if (room !== true) await this._serpentForget(fights, room);
-      f = serpentBrain.newSerpentFight(t.day, now, t.soundAt, serpentBossOf(t.day).id, m.sx, m.sz, serpentRiseYaw(t.day));
+      f = SERPENT_SEAM.new({ day: t.day, now, soundAt: t.soundAt, boss: serpentBossOf(t.day).id, sx: m.sx, sz: m.sz, yaw: serpentRiseYaw(t.day) });
       fights.set(id, f);
       await this._serpentIndex(fights);
       born = true;
@@ -6481,12 +6481,12 @@ export class Room {
     const joined = !f.players[a.sub];
     if (!joined) await this._serpentHullBack(fights, id, f, a.sub, at.x, at.z, now);   // AUDIT INT13: back from her yard - before the join counts her seen
     const lv = Number.isSafeInteger(a.cl) && a.cl >= 1 ? Math.min(m.lv, a.cl) : m.lv;
-    if (!serpentBrain.joinSerpentFight(f, a.sub, a.name ?? '', lv, m.hl, now, serpentAdmits(t.day, now), present, off <= serpentBrain.ENGAGE_R)) {
-      this._send(ws, JSON.stringify({ t: 'serpent', ...serpentBrain.serpentStateOf(f) }));
+    if (!SERPENT_SEAM.join(f, a.sub, a.name ?? '', lv, now, present, { hl: m.hl, admits: serpentAdmits(t.day, now), near: off <= serpentBrain.ENGAGE_R })) {
+      this._send(ws, JSON.stringify({ t: 'serpent', ...SERPENT_SEAM.stateOf(f) }));
       no(f.fell ? 'it is already slain' : Object.keys(f.players).length >= serpentBrain.SERPENT_FIGHTERS_MAX ? 'the waters are full' : 'the serpent is gone');   // SERPENT4: no storm closes its waters
       return;
     }
-    this._send(ws, JSON.stringify({ t: 'serpent', ...serpentBrain.serpentStateOf(f) }));
+    this._send(ws, JSON.stringify({ t: 'serpent', ...SERPENT_SEAM.stateOf(f) }));
     this._trailSeed(ws, a, now);   // AUDIT INT11
     if (joined || born) await this._serpentSave(id, f, now, true);
     if (!f.fell && !f.gone) await this._serpentArm(now);
@@ -6518,9 +6518,9 @@ export class Room {
           // or came on another; the count of the hull she left with is not hers (bodyLife, her measure kept). Kept, a yard's
           // whole hull read as a patch past the line, and the count wrecked a ship whose hull stood at seven tenths
           for (const b of bodies) if (!b.dead) await this._serpentHullBack(fights, id, f, b.sub, b.x, b.z, now);
-          await this._bodyCount('serpent', f, judgeSerpent(f, bodies, now), now, line.hull, (sub) => this._serpentCountWreck(fights, id, f, sub, now), { sx: f.sx, sz: f.sz });
+          await this._bodyCount('serpent', f, SERPENT_SEAM.judge(f, bodies, now), now, line.hull, (sub) => this._serpentCountWreck(fights, id, f, sub, now), { sx: f.sx, sz: f.sz });
           this._bodyTell('serpent', f, now, { sx: f.sx, sz: f.sz }, (p) => !!p.cw);   // AUDIT INT11: her game has not wrecked her (her own `wr 1` takes `cw`)
-          const said = serpentBrain.stepSerpentBrain(f, now, this._bodiesBare(bodies), rand01);
+          const said = SERPENT_SEAM.step(f, now, this._bodiesBare(bodies), rand01);
           // AUDIT 2 XB6 (2026-10-06): kept before it is said when a word lays its track (_serpentSay's law, the beat's
           // own checkpoint with it - written once; its sounding's `gone` is one, so it is written at once)
           await this._serpentSave(id, f, now, serpentBrain.serpentSaysTrack(said));
@@ -6552,9 +6552,9 @@ export class Room {
     const nowS = Math.floor(now / 1000);
     f.rc = {};
     for (const sub of Object.keys(f.players)) {
-      if (!serpentBrain.serpentEarned(f, sub)) continue;
+      if (!SERPENT_SEAM.earned(f, sub)) continue;
       const p = f.players[sub];
-      try { f.rc[sub] = await mintSerpentReceipt({ d: f.day, b: f.boss, s: sub, c: rand32(), x: serpentBrain.serpentEarnedBy(f, sub), h: p.hl, l: p.lv, ...this._bodyMeasureOf(f, sub, serpentBrain.serpentEarned) }, key, { subtle: crypto.subtle, nowS }); }   // INT14: the count's measure
+      try { f.rc[sub] = await mintSerpentReceipt({ d: f.day, b: f.boss, s: sub, c: rand32(), x: serpentBrain.serpentEarnedBy(f, sub), h: p.hl, l: p.lv, ...this._bodyMeasureOf(f, sub, SERPENT_SEAM.earned) }, key, { subtle: crypto.subtle, nowS }); }   // INT14: the count's measure
       catch (e) { console.warn('[serpent] receipt refused', e?.message ?? e); }
     }
     f.said = true;   // said once, whatever the next beat finds
@@ -7238,17 +7238,15 @@ export class Room {
     // AUDIT SD II (L7 L1): judged at the instant it is judged - the asks above awaited other objects, and a turn of this
     // socket's own may have been judged meanwhile
     now = Date.now();
-    if (m.q <= (meter.pzq ?? -1) || hall.ok || now - hall.last[m.i] < SD_STONE_SETTLE_MS) return;
+    if (m.q <= (meter.pzq ?? -1)) return;
     const R = this._sdRightsOf(s), who = orreryTurnerOf(a.sub, !a.lk);
-    if (!orreryMayTurn(R, who, now)) {
+    const res = orreryJudge(o, hall, hall.last, m.i, m.a, now, R, who, a.id);   // EG-H3 (EG4): the Orrery's one judge (net/sdBrain.js) - the settle, THE STONES' RIGHTS, the turn and its turner counted
+    if (!res) return;
+    if (res.wait) {
       if (!(now - (meter.pzw ?? -Infinity) < SD_PZ_WAIT_SAY_MS)) { meter.pzw = now; this._send(ws, this._sdHallWord(hall, { w: 1 })); }
       return;
     }
-    const road = orreryShortest(o, hall.st);
-    const res = orreryStep(o, hall, m.i, m.a);
-    if (!res) return;
     meter.pzq = m.q;
-    orreryTurned(R, who, a.id, road, orreryShortest(o, orreryTurn(o, hall.st, m.i, m.a)), now);
     const lash = res.x ? { x: 1, ls: orreryLashed(R, SD_FIGHTERS_MAX) } : {};
     if (res.x) this._sdRights = { s, R: orreryRightsFresh() };   // the snap begins a fresh thread
     hall.st = res.st; hall.f = res.f; hall.ok = res.ok; hall.last[m.i] = now;
@@ -7585,7 +7583,7 @@ export class Room {
     const sf = await this._sdFightOf();
     if (!sf || sf.lost || sf.s !== s) return true;
     if (!sf.fell && now - sf.lastTickAt >= SD_LOST_MS) { sf.lost = { at: now }; await this._sdFightSave(sf, now, true); return true; }
-    if (!this._send(ws, JSON.stringify({ t: 'sd', ...remnantStateOf(sf) }))) return false;
+    if (!this._send(ws, JSON.stringify({ t: 'sd', ...SD_SEAM.stateOf(sf) }))) return false;
     if (!sf.fell) { await this._sdFightArm(now); return true; }
     const r = sub ? sf.rc?.[sub] : null;
     return !r || this._send(ws, JSON.stringify({ t: 'sd', k: 'rcpt', r }));
@@ -7618,9 +7616,9 @@ export class Room {
       if (f && f.s !== s) f = this._sdFight = null;
       const at = this._arenaPoseOf(a.pose);
       if (!inArena(at.x, at.z, SD_ARENA_SLACK)) return;   // from the arena alone (AUDIT SD II, L4 C2: never the Steps)
-      if (f?.fell) { this._send(ws, JSON.stringify({ t: 'sd', ...remnantStateOf(f) })); if (f.rc?.[a.sub]) this._send(ws, JSON.stringify({ t: 'sd', k: 'rcpt', r: f.rc[a.sub] })); return; }   // SD9a: and its receipt again
+      if (f?.fell) { this._send(ws, JSON.stringify({ t: 'sd', ...SD_SEAM.stateOf(f) })); if (f.rc?.[a.sub]) this._send(ws, JSON.stringify({ t: 'sd', k: 'rcpt', r: f.rc[a.sub] })); return; }   // SD9a: and its receipt again
       const fresh = !f || f.lost || now - f.lastTickAt >= SD_LOST_MS;
-      if (fresh) f = this._sdFight = newRemnantFight(s, (f?.fi ?? 0) + 1, now, sdMarksOf(s));   // SD18a: its Hollow's marks
+      if (fresh) f = this._sdFight = SD_SEAM.new({ s, fi: (f?.fi ?? 0) + 1, now, mk: sdMarksOf(s) });   // SD18a: its Hollow's marks
       const known = !!f.players[a.sub];
       const present = new Set();
       for (const [, b] of this._all()) if (b.sub && b.id) present.add(b.sub);
@@ -7628,8 +7626,8 @@ export class Room {
       // that signs none. A claim of 60 from a level-5 character brought a level-60 share (34,125 health) into the Remnant,
       // and a claim of 1 from a level-60 one earned the feat's whole roll for 63 points dealt
       const lv = Number.isSafeInteger(a.cl) && a.cl >= 1 ? a.cl : m.lv;
-      if (!joinRemnant(f, a.sub, a.name ?? '', lv, now, present)) { no(f.ended ? SD_NO_WORDS[1] : SD_NO_WORDS[2]); return; }
-      this._send(ws, JSON.stringify({ t: 'sd', ...remnantStateOf(f), me: 1 }));   // SD8c: `me` - the page blows into a fight that answered it alone
+      if (!SD_SEAM.join(f, a.sub, a.name ?? '', lv, now, present)) { no(f.ended ? SD_NO_WORDS[1] : SD_NO_WORDS[2]); return; }
+      this._send(ws, JSON.stringify({ t: 'sd', ...SD_SEAM.stateOf(f), me: 1 }));   // SD8c: `me` - the page blows into a fight that answered it alone
       this._trailSeed(ws, a, now);   // AUDIT INT11
       await this._sdFightSave(f, now, fresh || !known);   // AUDIT SD: a known fighter's `in` again is no write (the gate's AUDIT WB A3)
       await this._sdFightArm(now);
@@ -7655,7 +7653,7 @@ export class Room {
     if (m.k === 'ehit') this._sdFightFan(applyEchoHit(f, a.sub, m.e, m.d, m.r, pose, now, m.q));
     else if (m.k === 'xhit') this._sdFightFan(applyHeartHit(f, a.sub, m.c, m.d, m.r, pose, now, m.q));
     else {
-      applyRemnantHit(f, a.sub, m.d, m.r, pose, now, m.q);
+      SD_SEAM.hit(f, a.sub, m.d, m.r, pose, now, m.q);
       if (f.fell && !f.said) { await this._sdFightFall(f, now); return; }
     }
     if (!f.fell && !f.lost && !(this._sdBeatArmedTo > now)) { this._sdBeatArmedTo = now + BRAIN_TICK_MS; await this._sdFightArm(now); }
@@ -7673,9 +7671,9 @@ export class Room {
       // INT12: ITS BLOWS JUDGED HERE first, on the census as the count has it - one life: a fall by the count, enforced,
       // is the realm's own (_sdMarkFallenAt), and no death rises again here
       const line = this._bodyLine(), bodies = this._sdFightBodies(f, now), census = () => bodyCensus(f, bodies, now, line.body, line.enforce, { lives: false });   // AUDIT INT11: read once a beat
-      await this._bodyCount('sd', f, judgeRemnant(f, census(), now), now, line.body, (sub) => this._sdMarkFallenAt(f.s, sub));
+      await this._bodyCount('sd', f, SD_SEAM.judge(f, census(), now), now, line.body, (sub) => this._sdMarkFallenAt(f.s, sub));
       this._bodyTell('sd', f, now);   // AUDIT INT11: a fall its game has not taken, told again
-      this._sdFightFan(stepRemnant(f, now, this._bodiesBare(census()), rand01));
+      this._sdFightFan(SD_SEAM.step(f, now, this._bodiesBare(census()), rand01));
       if (f.fell && !f.said) await this._sdFightFall(f, now);
       else if (f.said && !f.told) await this._sdTellFellOnce(f, now);
       await this._sdFightSave(f, now, !!f.lost);
@@ -7698,8 +7696,8 @@ export class Room {
     // half the fight), minted before the fall is said and kept with it
     const key = await this._receiptKeyOf(), nowS = Math.floor(now / 1000);
     f.rc = {};
-    for (const sub of Object.keys(f.players).filter((x) => earned(f, x))) {
-      try { f.rc[sub] = await mintSdReceipt({ d: f.s, s: sub, c: rand32(), x: earnedBy(f, sub), l: f.players[sub].lv, ...this._bodyMeasureOf(f, sub, earned) }, key, { subtle: crypto.subtle, nowS }); }   // INT14: the count's measure
+    for (const sub of Object.keys(f.players).filter((x) => SD_SEAM.earned(f, x))) {
+      try { f.rc[sub] = await mintSdReceipt({ d: f.s, s: sub, c: rand32(), x: earnedBy(f, sub), l: f.players[sub].lv, ...this._bodyMeasureOf(f, sub, SD_SEAM.earned) }, key, { subtle: crypto.subtle, nowS }); }   // INT14: the count's measure
       catch (e) { console.warn('[sd] receipt refused', e?.message ?? e); }
     }
     f.said = true;   // kept before it is said

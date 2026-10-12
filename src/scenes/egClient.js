@@ -50,6 +50,7 @@ import { EG_ENGINES, EG_ENGINE_REACH_M } from '../net/egFragLaw.js';
 import { egClockNew, egClockDue, egClockHeard, egClockOffset, egClockHalfRtt } from '../net/egClock.js';   // EG-H1: the shared clock, corrected
 import { bodySayer } from '../net/bossBody.js';   // EG-H1: my body, in my own word
 import { egRideOf, egRideAt } from '../net/egFair.js';   // EG-H1: RIDDEN POSES
+import { EG_SWAP_WAIT_MS } from './egSwap.js';   // EG-H3 (EG10): how long a new circle's step waits on its build
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -139,6 +140,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   /** my admission to the breach I answered: `{ b, z }`; the welcome it went to the room under */
   let admit = null, inFor = -1;
   let answering = false, swapping = false, leaving = false;
+  /** EG-H3 (EG10): when the step into a new circle began waiting on its build still in flight (0: not waiting) */
+  let swapWaitAt = 0;
   let downAt = -Infinity, downH = 0, placedH = 0, endSeen = null, endAt = 0, homeAskAt = -Infinity;
   let keysAt = -Infinity, claimAt = -Infinity, rdSeen = 0, callSaid = '';
   let door = null, doorH = 0, portal = null;
@@ -284,12 +287,13 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     const [sx, , z] = dungeonToRealm(p[0], p[1], p[2]);
     return { slot: egSlotAt(sx), sx, z };
   }
-  /** Stood on hall `h`'s arrival plate, facing down its course. */
-  function placeOn(h, E) {
+  /** Stood on hall `h`'s arrival plate, facing down its course - under the veil's flash, unless a closed veil is over the
+   *  step already (`flash` false - EG-H3's swap). */
+  function placeOn(h, E, flash = true) {
     const spec = egHallOf(E.seed, h, E.geo ?? 0);
     if (!spec.arrive) return false;
     const at = egToDungeon(spec, spec.arrive.x, spec.arrive.y + 0.1, spec.arrive.z);
-    veil()?.flash?.('hourIn');
+    if (flash) veil()?.flash?.('hourIn');
     return !!modes()?.egPlace?.(at, 0);
   }
   /** The Redoubt's way home: its door at the Court's heart (an exit door - the dungeon's own press and name). */
@@ -313,18 +317,27 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (leaving) return;
     leaving = true;
     dropDoor();
+    swapWaitAt = 0; modes()?.egSwapDrop?.();   // EG-H3: the swap's build forgotten with the breach
     veil()?.flash?.('hourHome');
     if (text) say(text);
     if (!modes()?.egLeave?.()) leaving = false;
   }
-  /** A new circle: out under the veil and into the next, built as the first was. */
+  /** A new circle. EG-H3 (EG10's THE SWAP): stood in place under the veil from the level its rest built (the mode
+   *  machine's egSwapCircle - no exterior, no landing), waiting at most EG_SWAP_WAIT_MS on a build still in flight; a
+   *  build not ready by then, or none offered, and it is the old step: out under the veil and into the next, built as
+   *  the first was. */
   async function swapTo(E, c) {
     if (swapping || answering) return;
+    const r = { b: E.b, seed: E.seed, c, geo: E.geo ?? 0 };
+    const built = modes()?.egPrebuild?.(r) ?? null;
+    if (built === 'building') { if (!swapWaitAt) swapWaitAt = now(); if (now() - swapWaitAt < EG_SWAP_WAIT_MS) return; }
+    swapWaitAt = 0;
     swapping = true;
     try {
       const back = modes()?.egHallReturn?.() ?? null;
       placedH = 0; downH = 0; dropDoor();
       await modes()?.stepThroughFire?.(async () => {
+        if (built === 'ready' && modes()?.egSwapCircle?.(r)) { if (!witness && placeOn(E.h, E, false)) placedH = E.h; return true; }   // EG-H3: THE SWAP - the built level stood in place, my feet on its first plate (a witness's body stays held)
         modes()?.forceExitToExterior?.();
         if (back) landAt(back);
         return modes()?.enterEgHall?.({ b: E.b, seed: E.seed, c, geo: E.geo ?? 0, site: site() });
@@ -353,6 +366,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     // THE POTION LAW: two restoring potions a hall, refilled at each wake and at the rest
     if ((E.sg === 'trial' || E.sg === 'rest') && potionHall !== `${E.h}:${E.sg === 'rest' ? 'r' : 't'}`) { potionHall = `${E.h}:${E.sg === 'rest' ? 'r' : 't'}`; potions = EG_POTIONS_PER_HALL; }
     const c = egCircleOfHall(E.h);
+    if (E.sg === 'rest' && c === M.egHallCircle?.()) M.egPrebuild?.({ b: E.b, seed: E.seed, c: c + 1, geo: E.geo ?? 0 });   // EG-H3 (EG10): THE SWAP'S BUILD - the next circle's level made while the Court rests
     if (c !== M.egHallCircle?.()) { if (E.sg === 'arrive') swapTo(E, c); return; }
     if (witness) { witnessFrame(E); return; }
     const at = standing();
