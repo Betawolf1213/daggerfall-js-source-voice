@@ -939,6 +939,42 @@ every region; `holyDayOf` against the old law restated, over 4,000 drawn cycles 
 filter and sort, asked of the world once a town. Mutants: `tools/mutants/holydays.json`, 6, all dead; `lw13.json`'s
 LW13-holy-region re-aimed at the line that passes every region's day.
 
+## TRIP-PICKS — a traveller's road choices, the same answer for less
+
+*A player (2026-10-12): "vamos checar se da para melhorar o loading, eu vou abrir o jogo e voce mede o tempo que
+demorou e por que" - the installed client (0.1.8217, an online character) captured from the process's launch into the
+world through the debugging port: browser Tracing on one connection, the page's CPU profile, network and console on
+another.*
+
+**Found.** From the character's click to the first world frame took 11.5 s (most of it the boot's network, its own
+change); the first world frame then froze 2.7 s, and after two seconds of play the frames froze 2.8 s more - the Living
+World planning its roads' day (`livingTown.js _roadsOf` -> the host's `tripsOf` -> `trips.js visitorsOf` -> `memoTrip`
+-> `ownTrip`), what HOLY-DAYS left standing. Of those 5.5 s, ~3.7 s were one part of `ownTrip`, made again for every trip
+of every traveller of every town the roads asked: the towns near filtered by the job's ring and `roadBound`, each one
+weighed, `seed.js pickWeighted` walking the `{ mapId: weight }` object's keys (1.5 s of it by itself), and the towns
+nearer than the pick sorted by distance with a `Math.hypot` at each comparison. None of it is the traveller's: the ring,
+the weights and the order are the town's, the job's and the trip world's.
+
+**The fix.** `trips.js roadChoices` keeps them by the trip world (a WeakMap, as `templesNear`), the town and the job:
+the towns in reach, each one's weight in the order `pickWeighted` reads the object's keys, their total summed in that
+order, and the towns by distance (the farther first, then the lower map id). `roadOrder` draws off them: `pickChoice` is
+`pickWeighted`'s draw over the kept list (no draw taken when no weight is above zero), and the nearer towns are the kept
+order filtered, which is the old sort's - the sort is stable, and the kept order filtered keeps it. `ownTrip` asks
+`roadOrder`. The Living World's trips are every client's alike, so nothing may move: every answer is the old one.
+
+**Measured.** In node 22 over the suite's synthetic map (`test/lwRoads.mjs` synthMap, 14 x 14 towns three pixels apart
+and a far haven, their regions spread over 62, with dives and the sea; `townsNear` kept as the host keeps it), every
+town's trips for 90 days and every town's visitors for 20, cold, five runs: the same 133,851 trips and 17,067 visits to
+the byte on both (a digest of every trip's id, kind, goal, times and party, and every visit's times); the whole
+2,008 -> 1,344 ms best; `ownTrip`, `pickWeighted` and the distance sort 3.9 s -> 0.95 s of the five runs' profile
+(`roadChoices` 0.24 s of it). In the client this is ~3.7 s of the 5.5 s frozen after the first frame; at the node
+run's share, ~2.8 s of it should go. Not measured: the installed client on this branch.
+
+Pins: `test/trippicks.test.js` (2) - `roadOrder` against the old law restated, for every town of a mixed map (gaps,
+jitter, ties of distance, three regions, courts and temples, ids out of the grid's order), every job and an unlisted
+one, 12 draws each, the dice left where the old law left them; `roadChoices` asked of the world once a town and a job,
+another job and another world asking for themselves. Mutants: `tools/mutants/trippicks.json`, 7, all dead.
+
 ## For the owner
 
 - **The A/B this branch owes**: on a machine with the data, `ARENA2_PATH=... node tools/frameProbe.mjs knight night`
