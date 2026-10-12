@@ -70,7 +70,7 @@ import { EG_SWAP_WAIT_MS } from './egSwap.js';   // EG-H3 (EG10): how long a new
 import { egSpireHudModel, drawEgSpireHud, egArrivalCard, egArrivalShown, drawEgArrivalCard, egFormFactor, egGainText, egPressInForce, egChipWarnings, egDoorMarker, egPadUp, egPadAct, egPadPrompts, EG_PAD_DIRS, EG_GAIN_MS, EG_CHIP_WARNINGS } from '../ui/egSpireHud.js';
 import { egBeatMemo, egBeatWatch, egBeatPlan, egFirstDue, egRehearsalDue, egFirstRead, egFirstWrite, egBuzz, egBeatUnder, egPerilsNew, egRuneChime, EG_PRES_TEXT, EG_BEAT_SOUNDS } from '../ui/egBeats.js';
 import { egAbsentStep, egPartyRows, egPartyDeco, egRoadOf, EG_NUMERALS } from '../ui/egParty.js';
-import { egAccessNow } from '../ui/egAccess.js';
+import { egAccessNow, egAllyLookSet } from '../ui/egAccess.js';
 import { egRecapKeep, egAskText } from '../ui/egHud.js';
 import { EG_LORDS, EG_LAST_WORD_MS } from '../net/egLaw.js';
 import { isEnhanced } from '../systems/uiSkin.js';
@@ -200,6 +200,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   let portalSet = null;
   const portals = () => (portalSet ??= renderer?.createBillboardBatch ? createPortalSet({ renderer, audio }) : null);
   const inSpire = () => modes()?.egHallBreach?.() != null;
+  // EG-ZG (Elite-Gates.md section 25.4): THE QUIET COMPANY's allies - another player's spell effects at 60% with no light of
+  // their own during a trial, read by the spell engine every host shares (scenes/hostMagic.js through ui/egAccess.js)
+  egAllyLookSet(() => { if (!inSpire()) return null; const q = egQuietCompany(link.state()?.sg); return { alpha: q.allyAlpha, glow: q.allyGlow }; });
   /** EG-F: the call heard (its horn sounded once a breach), my answer under way (the portal open for it, or the step), the
    *  start window standing, the relay's public half (base64url) and its import. */
   let hornFor = '', answeredFor = '', startWin = null, rk = null, rkKey = null;

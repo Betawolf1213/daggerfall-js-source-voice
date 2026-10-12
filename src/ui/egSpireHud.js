@@ -34,6 +34,11 @@
 //   ACCESSIBILITY (section 25.7, ui/egAccess.js): the danger palette's red on the chip, reduced motion's stillness (no
 //     pulse, no flight, no rise), and the beats' words in a polite live region.
 //
+// EG-ZG (2026-10-12, sections 13.2, 25.5 - world/egTelegraph.js the law): THE MARKS AS SIGILS - my own on the HUD (each
+// its own shape, a soul-mark's gem with its seconds, a flame's and a snowflake's rim tinted - never a line of text), every
+// companion's over their head (`drawEgSigils`, placed by the fight where the camera sees them); THE ECLIPSE'S CHIP, *The
+// Eclipse - 5*, while it is told.
+//
 // One node each, UPDATED, NOT REBUILT, hidden with the HUD. The models are pure.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
@@ -48,6 +53,7 @@ import { titleCardModel, TITLE_CARD_CSS, TITLE_CARD_STYLE_ID } from './gateTitle
 import { DEFAULT_TEXT_COLOR, DEFAULT_SHADOW_COLOR } from './nativePanel.js';
 import { PIXEL_FONT_CSS } from './pixelifyFive.js';
 import { injectEnhancedFonts } from './enhancedStyle.js';
+import { egSigilsOf, egEclipseAt, egEclipseChip } from '../world/egTelegraph.js';   // EG-ZG: the marks' sigils, the Eclipse's chip
 
 // ── the layouts (section 27.1) ────────────────────────────────────────────────────────────────────────────────
 /** A phone is a screen whose short side is this or less (CSS px - the party panel's and the arena's own line). */
@@ -287,7 +293,7 @@ export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, p
   const watching = witness || !!mine?.wit;
   const memento = me ? (E.mm ?? []).find((q) => q[0] === me) : null;
   const witLine = watching ? (mine?.recall ? (memento ? `Your Memento lies in Hall ${memento[1]}. You will be called back at Redoubt ${egCircleOfHall(E.h)}.` : `You will be called back at Redoubt ${egCircleOfHall(E.h)}.`) : `${EG_TEXT.fallen} /breach forsake leaves for good.`) : '';
-  const marks = (E.fight?.mk ?? []).filter((m) => m[0] === me && m[2] > now).map((m) => `${EG_MARK_NAMES[m[1]] ?? ''} ${Math.ceil((m[2] - now) / 1000)}s`);
+  const marks = me ? egSigilsOf(E.fight?.mk ?? [], me, now) : [];   // EG-ZG: sigils, never a line of text
   const n = E.co.length;
   return {
     ff, chip: egCountChip(E, now), rel: run ? EG_PRES_TEXT.reliquaries(run.rel) : '', relInChip: L.relInChip,
@@ -296,7 +302,8 @@ export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, p
     recall: mine && mine.alive && !mine.home && !mine.recall ? EG_PRES_TEXT.recallSpent : '',   // my last life (PARTY8-B's law: a fact when it is actionable)
     dec: L.dec === 'card' ? [] : dec, decFold: L.dec === 'fold' && dec.length > 0 ? EG_PRES_TEXT.decrees(dec.length) : '', foldOpen,
     objective: E.sg === 'trial' && !watching ? egObjectiveOf(spec) : '', progress: E.sg === 'trial' && !watching ? egProgressText(spec, E.fight?.pg) : '',
-    stage: watching ? witLine : stageLine(E, now), marks: marks.join(' - '),
+    stage: watching ? witLine : stageLine(E, now), marks, marksSaid: marks.map((m) => `${EG_MARK_NAMES[m.k] ?? ''} ${m.secs}s`).join(' - '),
+    eclipse: E.sg === 'trial' || E.sg === 'closing' ? egEclipseChip(egEclipseAt(spec, now / 1000)) : '',   // EG-ZG (section 25.5): *The Eclipse - 5*, while the place's hazards run (the fight's own stages)
     lord: egLordBar(E)?.court ? egLordBar(E) : null, lordH: L.lordH,   // only in a Court (a Proving Walk's champion has none)
     gain, first, door, live, touch: touch ? egTouchButtons({ witness: watching, rest: E.sg === 'rest' }) : [],
   };
@@ -337,7 +344,14 @@ export const EG_SPIRE_CSS = `
 .eg-dec:empty, .eg-obj:empty, .eg-stage:empty, .eg-marks:empty, .eg-first:empty, .eg-prog:empty { display: none; }
 .eg-obj { font-size: 15px; }
 .eg-prog { display: block; font-size: 12px; opacity: 0.85; }
-.eg-marks { color: var(--eg-danger); }
+.eg-marks { color: var(--eg-danger); display: flex; gap: 5px; align-items: center; }
+.eg-sig { display: inline-flex; align-items: center; gap: 2px; }
+.eg-sig svg { width: 18px; height: 18px; filter: drop-shadow(0 0 1px #000) drop-shadow(0 0 3px rgba(0,0,0,0.8)); }
+.eg-sig b { font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.eg-eclipse { color: var(--eg-danger); }
+.eg-sigils { position: fixed; inset: 0; pointer-events: none; z-index: 29; color: var(--eg-danger, #ff3d47); text-shadow: 1px 1px 0 #000; }
+.eg-sigrow { position: absolute; transform: translate(-50%, -100%); display: flex; gap: 3px; white-space: nowrap; }
+.eg-sigrow .eg-sig svg { width: 22px; height: 22px; }
 .eg-first { color: #b9d0ff; font-style: italic; }
 .eg-fold { pointer-events: auto; font: inherit; color: inherit; background: rgba(12,14,18,0.78); border: 1px solid #5a5446; padding: 2px 8px; cursor: pointer; }
 .eg-fold:empty { display: none; }
@@ -384,7 +398,8 @@ function build(doc) {
   const count = el('div', 'eg-chip eg-count'), glyph = el('span', 'eg-glyph'), time = el('span', 'eg-time'), why = el('span', 'eg-why');
   count.append(glyph, time, why);
   const rel = el('div', 'eg-chip eg-rel'), standing = el('div', 'eg-chip eg-standing'), potion = el('div', 'eg-chip eg-potion'), recall = el('div', 'eg-chip eg-recall');
-  chips.append(count, rel, standing, potion, recall);
+  const eclipse = el('div', 'eg-chip eg-eclipse');   // EG-ZG: *The Eclipse - 5*
+  chips.append(count, rel, standing, potion, recall, eclipse);
   const gain = el('div', 'eg-gain'), dec = el('div', 'eg-dec'), fold = el('button', 'eg-fold');
   const obj = el('div', 'eg-obj'), objLine = el('span', 'eg-objline'), prog = el('span', 'eg-prog');
   obj.append(objLine, prog);
@@ -399,7 +414,7 @@ function build(doc) {
   live.setAttribute?.('aria-live', 'polite');
   root.append(col, lord, door, touch, live);
   (doc.body ?? doc.documentElement)?.append(root);
-  P = { col, chips, count, glyph, time, why, rel, standing, potion, recall, gain, dec, fold, obj, objLine, prog, stage, marks, first, lord, lordName, fill, door, arrow, doorText, touch, live };
+  P = { col, chips, count, glyph, time, why, rel, standing, potion, recall, eclipse, gain, dec, fold, obj, objLine, prog, stage, marks, first, lord, lordName, fill, door, arrow, doorText, touch, live };
 }
 
 /**
@@ -426,12 +441,16 @@ export function drawEgSpireHud(model, { hidden = false, doc = globalThis.documen
   const chipCls = `eg-chip eg-count${c ? ` ${c.tone}` : ''}${c?.pulse ? ' pulse' : ''}${c?.held ? ' held' : ''}${c?.seal ? ' seal' : ''}`;
   if (chipCls !== shown.chipCls) { shown.chipCls = chipCls; P.count.className = chipCls; P.count.setAttribute?.('aria-label', c?.label ?? ''); }
   put('rel', P.rel, model.relInChip ? '' : model.rel); put('standing', P.standing, model.standing); put('potion', P.potion, model.potion); put('recall', P.recall, model.recall);
+  put('eclipse', P.eclipse, model.eclipse);   // EG-ZG
   const gk = model.gain ? `${model.gain.text}@${model.gain.at ?? 0}` : '';
   if (gk !== shown.gainKey) { shown.gainKey = gk; P.gain.textContent = model.gain?.text ?? ''; P.gain.className = `eg-gain${model.gain?.blue ? ' blue' : ''}${model.gain ? ' fly' : ''}`; }
   put('dec', P.dec, model.decFold && !model.foldOpen ? '' : model.dec.join(' - '));
   if (model.decFold !== shown.decKey) { shown.decKey = model.decFold; P.fold.textContent = model.decFold; if (!P.fold.egWired) { P.fold.egWired = true; P.fold.addEventListener?.('click', () => onFold()); } }
   put('obj', P.objLine, model.objective); put('prog', P.prog, model.progress);
-  put('stage', P.stage, model.stage); put('marks', P.marks, model.marks); put('first', P.first, model.first); put('live', P.live, model.live);
+  put('stage', P.stage, model.stage); put('first', P.first, model.first); put('live', P.live, model.live);
+  // EG-ZG: my marks as their sigils (each its own shape), their names said to a screen reader
+  const mh = (model.marks ?? []).map(egSigilHtml).join('');
+  if (shown.vals.marks !== mh) { shown.vals.marks = mh; P.marks.innerHTML = mh; P.marks.setAttribute?.('aria-label', model.marksSaid ?? ''); }
   // the lord's bar
   const L = model.lord;
   const lordCls = `eg-lord${L ? ' on' : ''}`;
@@ -457,6 +476,64 @@ export function drawEgSpireHud(model, { hidden = false, doc = globalThis.documen
     P.touch.replaceChildren?.();
     for (const b of model.touch) { const n = doc.createElement('button'); n.className = `eg-touch-${b.id}`; n.textContent = b.label; n.addEventListener?.('click', () => onTouch(b.id)); P.touch.append(n); }
   }
+}
+
+// ── EG-ZG: THE MARKS AS SIGILS (sections 13.2 and 25.5) ─────────────────────────────────────────────────────────
+/** Each sigil's drawing (world/egTelegraph.js EG_SIGILS): a 24-unit box, filled even-odd in the palette's danger
+ *  (`currentColor`), its keyline dark - or its rim's tint for Fire- and Frost-touched. Each its own shape. */
+export const EG_SIGIL_PATHS = Object.freeze({
+  tooth: 'M3 3h7v4h4v4h4v4h3v6h-7v-4h-4v-4H6V9H3z',
+  gem: 'M7 3h10l4 6-9 12L3 9z',
+  flame: 'M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 1.5-5 3-6.5 0 2.5 1 4 2.5 4.5C10.5 9 11 5 12 2z',
+  flake: 'M11 2h2v20h-2zM2 11h20v2H2zM4.9 6.3l1.4-1.4 12.8 12.8-1.4 1.4zM17.7 4.9l1.4 1.4L6.3 19.1l-1.4-1.4z',
+  chain: 'M2 12a5 5 0 0 1 5-5h4v3H7a2 2 0 0 0 0 4h4v3H7a5 5 0 0 1-5-5zM13 7h4a5 5 0 0 1 0 10h-4v-3h4a2 2 0 0 0 0-4h-4zM8 11h8v2H8z',
+  cage: 'M4 3h16v2H4zM4 19h16v2H4zM5 5h2v14H5zM9 5h2v14H9zM13 5h2v14h-2zM17 5h2v14h-2z',
+  ring: 'M12 2a10 10 0 1 1 0 20a10 10 0 1 1 0-20zM12 6a6 6 0 1 0 0 12a6 6 0 1 0 0-12z',
+  eye: 'M1 12C4 6 8 4 12 4s8 2 11 8c-3 6-7 8-11 8S4 18 1 12zM12 8a4 4 0 1 0 0 8a4 4 0 1 0 0-8z',
+  knot: 'M5 4l15 15-2 2L3 6zM19 4l2 2L6 21l-2-2z',
+});
+/** One sigil's markup (world/egTelegraph.js egSigilsOf's `{ sigil, secs, rim }`): its shape, and a soul-mark's seconds
+ *  beside its gem. Pure. */
+export function egSigilHtml(s) {
+  const d = EG_SIGIL_PATHS[s?.sigil];
+  if (!d) return '';
+  return `<span class="eg-sig eg-sig-${s.sigil}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}" fill="currentColor" fill-rule="evenodd" stroke="${s.rim ? rgbCss(s.rim) : '#140606'}" stroke-width="${s.rim ? 1.8 : 1.2}"/></svg>${s.sigil === 'gem' ? `<b>${s.secs | 0}</b>` : ''}</span>`;
+}
+let sigRoot = null, sigDoc = null;
+const sigRows = new Map();
+/**
+ * THE MARKS OVER HEADS: each marked companion's sigils where the camera sees their head (`list` - scenes/egFight.js's
+ * `[{ key, x, y, marks }]`, x and y the screen's 0..1), in the palette's `danger` ([r, g, b]); null or empty hides them.
+ * One row a member, moved and rewritten only when it changes, hidden with the HUD.
+ * @param {Array<{ key: string, x: number, y: number, marks: any[] }>|null} list
+ * @param {{ hidden?: boolean, doc?: any, danger?: ReadonlyArray<number>|null }} [o]
+ */
+export function drawEgSigils(list, { hidden = false, doc = globalThis.document, danger = null } = {}) {
+  const want = !hidden && !!list?.length;
+  if (!sigRoot) {
+    if (!want || !doc?.createElement) return;
+    ensureStyle(doc);
+    sigDoc = doc;   // the rows are made in the document the layer was
+    sigRoot = doc.createElement('div');
+    sigRoot.className = 'eg-sigils';
+    (doc.body ?? doc.documentElement)?.append(sigRoot);
+  }
+  if (!want || !list) { if (sigRoot.style.display !== 'none') sigRoot.style.display = 'none'; return; }
+  if (sigRoot.style.display === 'none') sigRoot.style.display = '';
+  const c = danger ? rgbCss(danger) : '';
+  if (c && sigRoot.egDanger !== c) { sigRoot.egDanger = c; sigRoot.style.setProperty?.('--eg-danger', c); }
+  const seen = new Set();
+  for (const it of list) {
+    seen.add(it.key);
+    let row = sigRows.get(it.key);
+    if (!row) { row = sigDoc.createElement('div'); row.className = 'eg-sigrow'; row.egHtml = ''; sigRoot.append(row); sigRows.set(it.key, row); }
+    const html = it.marks.map(egSigilHtml).join('');
+    if (row.egHtml !== html) { row.egHtml = html; row.innerHTML = html; }
+    const l = `${(it.x * 100).toFixed(2)}%`, t = `${(it.y * 100).toFixed(2)}%`;
+    if (row.style.left !== l) row.style.left = l;
+    if (row.style.top !== t) row.style.top = t;
+  }
+  for (const [k, row] of sigRows) if (!seen.has(k)) { row.remove?.(); sigRows.delete(k); }
 }
 
 /** Draw the arrival card for a shown card (egArrivalShown; null hides it). */

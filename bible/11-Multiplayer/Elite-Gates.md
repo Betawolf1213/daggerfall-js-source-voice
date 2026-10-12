@@ -1258,13 +1258,12 @@ audit39. Everything else is painted in code into the band's archives (section 25
 ### 11.7 Fighting in a fragment
 
 - **Fight floors.** Blows land only on flat **fight floors** (`floors[].fight`), each a polygon at one height.
-  - Today the telegraph pass (`src/render/gateTelegraph.js`) draws each shape on one plane at one height:
-    `TELEGRAPH_LIFT` (0.05 m) over the court frame's origin (`centre`). A shape on a higher ledge hides under it; on a
-    lower one it floats.
-  - EG6b widens it: each fight floor is triangulated once (a static buffer). For each shape and each floor it touches,
-    the floor's triangles are clipped on the CPU to the shape's bounds into one dynamic buffer a frame, and the vertex
-    shader reads them at the floor's height plus the lift. At most 32 shape-floor draws a frame, in THE TELEGRAPH
-    BUDGET's order (section 25.4).
+  - The telegraph pass (`src/render/gateTelegraph.js`) draws a Spire shape on each fight floor it covers, never on one
+    plane at the court frame's origin (where a shape on a higher ledge hid and on a lower one floated): each fight floor
+    is triangulated once, for each shape and each floor it touches the floor's triangles are clipped on the CPU to the
+    shape's bounds into one dynamic buffer a frame, and the vertex shader reads them at the floor's height plus
+    `TELEGRAPH_LIFT`. At most 32 shape-floor draws a frame, in THE TELEGRAPH BUDGET's order (section 25.4). Built by
+    EG-ZG (its record, below).
   - Stairs, slopes, ledges and inner platforms are traversal ground. No lord or add aims a blow at a member standing
     there; only the place's own hazards reach them, each drawn by its own pass on its own surface.
 - **Walls bound the escape.** `perilAt` and `wayOut` (`src/scenes/gateCourt.js`) search 24 bearings
@@ -4674,3 +4673,135 @@ and draws what they choose.
   (`egBandUp`) and builds its waystones (`egLookBuild`). The old circle's look mesh is freed with its circle mesh.
 - The fight's wind-up barks keep EG-H1's feint gate (the wind once the wind-up is past `EG_FEINT_AT`, never on a
   feint), and Watchfire's early outlines draw after the ordered blows. The fight's clock is the breach's corrected one.
+
+### EG-ZG - 2026-10-12 - THE TELEGRAPHS AS WRITTEN
+
+Closes the gap audit's rows 22, 23, 24, 27 and 30 (Mac: "I said I want everything"): EG6b's telegraphs per fight
+floor (section 11.7), section 25.5's grammars and section 25.2's Spire pools, what THE QUIET COMPANY still owed
+(section 25.4), the Shade's rim lights (section 25.6) and WEIGHT (section 25.8) - EG-G2's "not built" for the allies,
+the Vestige ring and the rim lights, EG-G1's eighth departure for the shakes, and EG-H1's ninth for the client's
+arrow. The law is one new module, `world/egTelegraph.js`; the gate's own telegraph draw is unchanged byte for byte.
+
+**What shipped, by piece.**
+
+- **THE TELEGRAPHS PER FIGHT FLOOR** (`world/egTelegraph.js` `egFightFloors`, `egClipTris`, `egShapeYs`,
+  `egFloorPlan`; `render/gateTelegraph.js` `drawFloors`).
+  - Each fight floor (`spec.fl`) is triangulated once a hall: a disc into its drawn rim's 48 sides, a lane into its
+    rectangle and two round ends, the floor test's own capsule (`net/egLaw.js` `egOnFight`).
+  - Each frame, each shape goes on every floor it covers. The floor's triangles are clipped on the CPU to the shape's
+    bounds (`telegraphBounds`, Sutherland-Hodgman, fanned back to triangles) into one buffer, uploaded once.
+  - A shape lands only at the heights the relay judges it at: the floors whose plan holds its anchor within 1 m (its
+    centre, a lane's two ends, each of a discs' points - `net/bossRef.js` `floorsUnder`'s rule). A blow on the court
+    never draws on the balcony 3.6 m over it, whatever its bounds cover. The whole floor's and the spokes' draw on every
+    floor.
+  - At most 32 shape-floor draws a frame (`EG_FLOOR_DRAWS_MAX`), taken in THE TELEGRAPH BUDGET's order: mine and every
+    shape whose field holds my feet first, then the blows by `egShapeOrder`'s rank (`sh.order` - a CHECK's havens keep
+    their CHECK's), then the nearest my feet. Mine draw last, on top.
+  - The Spire's vertex stage (`TELEGRAPH_VS_SPIRE`) is made from the gate's text by asserted swaps, as EG-G2's fragment
+    stage is: a floor's triangle is read in the court's frame at `uFloorY` plus the lift. With nothing set it lays the
+    gate's quad where the gate lays it.
+  - `drawFloors` lends each floor's triangles to the gate's own `draw` for the call (its vertex array, its count, and
+    the floor's circle as its court), so the line, the fill, the fog floor and every grammar are the gate's code. The
+    quad and the uniforms are put back after.
+  - A shape with its own surface draws its quad at that height (`sh.y`): a span's Vent and Pendulum, a traversal hazard
+    (a fire fall, the hammer line), a Vestige's ring, a Drop's dust. In a hall with no fight floor every shape is the
+    quad over the hall's court, as before.
+- **THE GRAMMARS** (`TELEGRAPH_POOL_SPIRE`, pools laid into the Spire's fragment stage by one more asserted swap).
+  - *A Spire pool* (pool 4): burning ground takes the band's ramp darkened (`egPoolRgb` - the fire-sea's, the Cairn's
+    slate violet, the Shade's quicksilver, the Wellhead's molten, at half), its element's grain, the floor darkened
+    under it, and a dashed rim in the palette's danger. Never `POOL_COLOR`, never blue.
+  - *The pull-apart tether* (pool 5): the Wraith's Drain, the Blood Tether and a soul-wisp's hold on me. A red line the
+    pair's length, chevrons pointing out from its middle and flowing outward, and a tick across it at the break. It
+    thins toward the break (`egPullLook`). One of mine gone at 85% of its break or more snaps with the crystals'
+    shatter, pitched high.
+  - *The stay-close tether* (pool 6): Morvayn's Chaining. Chain links, every other turned; slack and dim under 6 m, taut
+    and throbbing from 6 to 8 m (at most 3 Hz - `egChainLook`). Pinned: the two patterns never share a lit place.
+  - *Chained*: *Chained to Mira - 6.8/8 m* stands under the crosshair (`egChainWords`).
+  - *The peril arrow* (`egPerilOf`). It finds the soonest blow still to land on my feet - the relay's blows, a Rampart's
+    told vents and the fragments' told hazards - never a whole floor's. Its way out is searched along the gate's 24
+    bearings over MY fight floor only; a bearing stops at a wall, an open edge or another floor's height. A bearing that
+    also clears every other pending shape is preferred over a nearer one that does not. It draws through the gate's own
+    readout (`ui/gateGroundView.js`): *Smash - move!*, the rim rising in the palette's danger, the arrow turned as the
+    screen is. Under a CHECK with no light in reach the words are its order, *Stand in the light!*, with no arrow.
+    Nothing shows on traversal ground, where no blow lands.
+  - *The marks over heads*: each mark is its own sigil in Dagon red (`EG_SIGILS`, `ui/egSpireHud.js`
+    `EG_SIGIL_PATHS`): a hound's tooth, a gem with its seconds, a flame and a snowflake with their rims tinted, a chain,
+    a cage, the challenge's ring, an eye, a knot.
+    - A companion's sigils hang over their head where the camera sees it (`drawEgSigils`, placed by the fight).
+    - Mine stand on my HUD as sigils, their names given to a screen reader. The HUD's line of text is gone.
+  - *The Eclipse*: each moon-shaft is a haven from 6 s out (as before). The HUD's chips show *The Eclipse - 5*
+    (`egEclipseChip`). A wind rises once from 3 s out (Daggerfall's AmbientWindBlow1), and the toll sounds once at the
+    strike. Over the last 2 s every fight floor darkens, to 62% at the strike, the moon-shafts kept (pool 8,
+    `egEclipseDark`).
+- **THE QUIET COMPANY'S REST**. During a trial the Spire's client says so through one seam (`ui/egAccess.js`
+  `egAllyLookSet` / `egAllyLook`, from `egQuietCompany`'s 60% and no light). The spell engine every host shares reads it
+  for another player's spell (`scenes/hostMagic.js` `spellVisual`):
+  - the Morrowind casting effects and bolt draw at 60% (`scenes/mwMagicFx.js`; `render/vfxGpu.js` `vfxFade` - the
+    quads' alpha where the blend reads it, all four where it adds the source as it is);
+  - the classic missile flat draws translucent (the billboards' blended phase, `CONCEAL_MODE.reveal`);
+  - its impact is the classic flash alone, translucent (`scenes/hitEffects.js` `showImpactFlash`'s `conceal`) - no
+    bloom, no chunks, no burst in light, no camera kick;
+  - a touch throws no spray of light, and a peer's Light spell is put out (`peerCandles`).
+  - A Vestige aura (Bastion, the Spire's Standard - `egAuraHolders`) is one thin Battlemage-blue ring of 0.6 m at each
+    living holder's feet, on the ground they stand on (pool 7).
+- **THE SHADE'S RIM LIGHT** (`egRimOf`): in the Shade every foe's outline glows moon-silver. The glint is the wind-up
+  glint's own (`systems/hitFlash.js` `setBatchGlint`): the sprite's outline, and the body lifted a little toward it. The
+  dormant Lurker and any friend are left dark.
+- **WEIGHT**.
+  - The heavy blows shake the screen at their landing (`EG_HEAVY_SHAKE`, `egHeavyShake`): Savage, Gore and Whirl within
+    10 m, Smash and the Maul within 8, by the gate's `LAND_SHAKE` law, never for a feint.
+  - The shake goes through the port's one shaker (`betterAmbience.weaponKick`, under the player's maxShake). Reduced
+    motion (the row or the system's) stills it, and Technique camera motion scales it (`egShakeMotion`).
+  - My own hits flash a foe fully, anyone else's at 0.4 (`egBodyFlash`, the gate's `GATE_FLASH_COURT`). The relay's word
+    of a drop within 400 ms of my own blow is my blow's echo, never a second flash.
+  - A Drop the course asked for lands on a designed thud and dust, never on a hop on its landing (`egDropUnder`). The
+    thud is Daggerfall's BodyFall and DungeonDoorClose, pitched down; the dust is a broken ring thrown out across the
+    landing. While I fall onto one, the span says so (`scenes/egSpan.js` `overDrop`) and the dungeon arm plays no
+    FallHard grunt for that landing.
+
+**The four hosts.**
+- `src/scenes/dungeonContext.js` - WIRED: its hard-landing branch asks the span's `overDrop` first. Nothing else moved:
+  the fight's floor plan, the grammars and the HUD are the breach client's, drawn in the pass the arm already calls
+  (`egClient.drawPass`).
+- `src/scenes/world.js` - FLAGGED, nothing to wire: the fight's two new seams default to what world.js would hand it.
+  `shake` is the port's one shaker (`betterAmbience.weaponKick`, imported by the fight as `scenes/hostMagic.js` imports
+  it). `yaw` is read off the view the world pass already hands `drawPass` (`egViewYaw`, world/mat4.js lookAt's -z).
+  Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED, nothing to wire: the span rides before the motor there already, so `overDrop`
+  is set before the landing it speaks for.
+- `src/scenes/exterior.js` - FLAGGED: offline, no breach (section 28).
+
+**Departures, said plainly.**
+- **Done another way:**
+  - fight floors are discs and lanes in the law (`spec.fl`), not polygons, so a floor is triangulated as the floor test
+    reads it: a disc's 48 sides and a lane's capsule;
+  - a lane floor's circle (the court the pass clips by and the whole floor's line follows) is the one through its ends,
+    so on a lane floor the whole floor's line stands only at its two ends;
+  - "the screen darkens" is the fight floors darkening, every moon-shaft kept. Walls and sky stay as they are: that is
+    the telegraph pass's own floor, and no new pass was added;
+  - the chain's chip, *6.8/8 m*, stands in the words under the crosshair beside *Chained to Mira*, not as a chip of its
+    own;
+  - an ally's impact is its classic flash alone, translucent. The bloom, the chunks and the burst in light are not drawn
+    at 60% but left out, since they are the impact's own light;
+  - an ally's Morrowind particles that blend nothing (opaque streams) stay whole: their alpha is never read.
+- **Not built:**
+  - `port:allyEffects` stays off the shelf. It governs allies' hit numbers alone, and the port draws none
+    (`ui/hitNumbers.js`).
+  - The Eclipse's toll is the bell's, not a band's own made sound.
+- **Not verified without a browser and the game's data:** nothing was played in the live game. The shaders were run
+  through `test/glsl.mjs`, the pass through a recording GL, and the fight against the director's own words.
+
+**Pins.**
+- `test/egz_telegraph.test.js` (13).
+- `tools/mutants/egz_telegraph.json` (74, every one dead). One survived the first run - the sigils hung at a
+  companion's eye rather than over the head - and was killed by pinning their height (EG_SIGIL_UP_M over the eye).
+- Judged again over the files this slice touched: every record of `eglook.json` (12), `egpres_hud.json` (34),
+  `egfrag.json` (11), `egspan.json` (9), `egint.json` (3), `mwspellfx1.json` (4), `fieldgun20.json` (2) and
+  `egplay.json` (1) aimed at the fight, the HUD, the shelf, the span, the Morrowind effects or the flashes (76, every
+  one dead).
+- PIN MOVED: `test/audit26_render.test.js` F033 reads the impact flash's spawn, its entry and `showImpactFlash` with
+  `conceal` in their tails (null by default - an ally's flash translucent in a trial); the blood defaults and the
+  unscaled, unnudged flash are pinned as they were.
+- No other pin moved. EG-G2's lab (`src/tools/spireLab.js`) still draws through the pass's plain `draw`, which is
+  unchanged. `RELAY_VERSION` is untouched (nothing in the relay's graph moved), and `ACCOUNT_VERSION` stays `acct121`.
+- New src module for the Ledger's ELITE-GATES row: `src/world/egTelegraph.js`.
