@@ -205,9 +205,12 @@ test('AUDIT WBX2 M7 the stone asks for a player sealed in it at every stand - it
   assert.match(read('src/scenes/gatePool.js'), /const f = feet\(\);\n {4}if \(f && g && inGateRoot\(place, f\)\) landBefore\(g\);/);
 });
 
-test('AUDIT WBX2 M9 the sweep reads its cursors in one storage read (AUDIT RAID R2: four now - the raid receipts\' too; AUDIT SERPENT S5: five - the serpent receipts\'; SD9a: six - the Hour\'s)', () => {
+test('AUDIT WBX2 M9 the sweep reads its cursors in one storage read (AUDIT RAID R2: four now - the raid receipts\' too; AUDIT SERPENT S5: five - the serpent receipts\'; SD9a: six - the Hour\'s; EG-ZA: seven - the Elite Breach\'s held receipts)', () => {
   const idx = read('server/src/index.js');
-  assert.match(idx, /const cur = \(await this\.state\.storage\.get\(\['sweep:acct', 'sweep:party', 'sweep:gaterc', 'sweep:raidrc', 'sweep:serpentrc', 'sweep:sdrc'\]\)\);/);
+  // PIN MOVED (EG-ZA, bible/11-Multiplayer/Elite-Gates.md section 23 step 5): the hub holds a breach's receipts under
+  // `egrc:<sub>` and its sweep is the gate's, widened by one prefix - its cursor joins the one read
+  assert.match(idx, /const cur = \(await this\.state\.storage\.get\(\['sweep:acct', 'sweep:party', 'sweep:gaterc', 'sweep:raidrc', 'sweep:serpentrc', 'sweep:sdrc', 'sweep:egrc'\]\)\);/);
+  assert.doesNotMatch(idx, /storage\.get\('sweep:egrc'\)/);
   assert.doesNotMatch(idx, /storage\.get\('sweep:gaterc'\)/);
   assert.doesNotMatch(idx, /storage\.get\('sweep:raidrc'\)/);
   assert.doesNotMatch(idx, /storage\.get\('sweep:serpentrc'\)/);

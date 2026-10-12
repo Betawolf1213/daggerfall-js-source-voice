@@ -4674,3 +4674,128 @@ and draws what they choose.
   (`egBandUp`) and builds its waystones (`egLookBuild`). The old circle's look mesh is freed with its circle mesh.
 - The fight's wind-up barks keep EG-H1's feint gate (the wind once the wind-up is past `EG_FEINT_AT`, never on a
   feint), and Watchfire's early outlines draw after the ordered blows. The fight's clock is the breach's corrected one.
+### EG-ZA - 2026-10-12 - A KEY IS NEVER LOST, AND THE RECEIPTS SAY EVERYTHING
+
+The last wave (Mac: *"I said I want everything"*). Sections 21, 22 and 23, with section 20's boards. It closes EG-PLAY's
+departure 7 (the hub keeps no receipts) and EG-H2's departure 5 (the hub retrying `EG_INTERNAL_OPEN`, `{k:'void', z}`,
+the unknown room's tombstone, a `force` deploy voiding live breaches). It also closes three of EG-E2's departures: the
+relay minting no `td`, a company being the claimers rather than the receipt's `co`, and THE SEAL's ranking. And it builds
+section 22's tick.
+
+**What shipped, by piece.**
+
+- **The open, retried** (`server/src/index.js` `_egOpen`). The hub tells the breach's room its open `EG_OPEN_HUB_TRIES`
+  (3) times while the room does not answer. The room answers the same order with the record it kept, so a retry is
+  harmless. Once the hub has kept the call for the company's hellos, it tells the room the call went out (a new internal
+  door, `EG_INTERNAL_CALLED`; the room keeps `B.called`).
+- **An end with no hall woken is a void** (`net/egBrain.js` `egEnd`). It is never the opener's `'empty'` unless the
+  room was told its call went out. A voided breach's opener who never entered is owed the `v` by the end itself. The
+  law pin's void (EG-H2) now gets its `v` the same way.
+- **A void is the room's** (`EG_INTERNAL_VOID`, `_egVoidInternal`). The hub asks for it in three cases:
+  - an open the room refused (another order holds the room, or the room voided this one);
+  - an open the room never answered after its tries;
+  - THE DRAIN's refusal. Before, the hub minted that void itself, and the order could still open a breach once the road
+    reopened.
+  An order the room never took is written into the room's tombstone first (`egdone`, `net/egDurable.js` `egDoneWith`).
+  Only then is its `v` minted, once: asked again, the room answers the same receipt, and the order is never opened
+  after. If the signing fails, the order is still spent, and its void is minted when asked again.
+  The breach the room took is voided only while nothing has begun (`egVoidable`: no call out, no hall woken, no member
+  in). Otherwise the hub says *the breach took the key*, because its own receipts settle the stake.
+- **A client's void** (`{k:'void', z}`, to the hub - `_egVoid`). The hub checks the open order whatever its age
+  (`net/identityToken.js` `verifyEgOpenAnyAge`, `verifyStakeOrderAnyAge`'s way) and that it is this socket's account's.
+  A void more than `EG_VOID_MAX_S` (7 days) after the order's issue is refused (*the void is too old*), by the hub and
+  by the room's own door. Then the hub asks the room.
+- **The tombstone** is kept `EG_VOID_MAX_S` (EG_DONE_MAX orders at most). An ended breach's own order is written into
+  it at the end. The room's one alarm is then the tombstone's end, after which the room forgets the breach and the
+  tombstone (`_egDoneTick`). A room the hub never opened writes nothing but a void's tombstone, and arms only its end.
+- **The receipts, held at the hub** (`egrc:<sub>`; `EG_INTERNAL_RCPT`, `_egRcInternal`). Every receipt a room mints is
+  told to the hub, with the accounts whose socket stands in the room:
+  - a member online at the hub but out of the room is handed theirs at once; one in the room only by the room;
+  - every hello is handed the held ones (`_egReceiptTo`) until the account says the service counted it
+    (`{k:'claimed', b, q, w}`). The copy is then remembered as spent for the receipt's own life (`egRcSpent` - the gate's
+    AUDIT WBX2 M3 law), so a tell that comes after revives nothing;
+  - one entry per receipt (`egRcId`: breach, kind, Redoubt), the newest kept, at most `EG_RC_KEEP` (16), each for its
+    own life (`egRcFold`); the hub's sweep is the gate's, widened by one prefix.
+  The room keeps each owed receipt (`B.rq`) until the hub has it, tells again `EG_RC_TELL_MS` (5 s) later when the hub
+  did not answer, and an ended breach beats on for it.
+- **THE FORCE VOID** (`.github/workflows/relay-deploy.yml`). A `force` dispatch deploys with
+  `--var EG_VOID_BEFORE:<epoch ms>`. A breach's room woken under that stamp whose breach opened before it ends the
+  breach as a void, the law pin's way (`egForceVoided` in `egResume`): the entered members' ends say `void`, the opener
+  who never entered is handed the `v`, and the Redoubts taken stay. The next deploy carries no stamp.
+- **THE TICK** (`egTickAt`, `egTrialRuns`). The room's beat is `EG_BEAT_TRIAL_MS` (BRAIN_TICK_MS, pinned equal) only while
+  a trial runs with its company in the room. Otherwise it is `EG_BEAT_SLOW_MS` (1 s), or sooner at the stage's own end
+  (`su`), so no stage ends late. There is no beat while the arch rises: the room's first beat is the open. Every gap
+  stays under `EG_GAP_MS`, so THE TIME law gives nothing back for it (pinned: no `gv` over a slow stretch).
+- **The receipts' table, whole** (`net/egReceipt.js`, `net/egBrain.js`).
+  - An end (`x`) carries `td` once a hall is cleared, and `co`.
+  - A Redoubt (`w`) carries `sh`, the member's share of the circle's damage in thousandths of the living members'
+    whole.
+  - It carries `m`, THE FAIR TRAIL's measures over the circle (`measureFold`). Each hall's trail is folded as it closes,
+    and the Court's own at the fall; a crossing keeps its bound (`cmin`) as it reaches the end plate. The six numbers:
+    crossings, the quickest crossing as a share of its bound (%), the most blind share (%), breaks, the fastest
+    stretch (cm/s), and crossings whose door was the room's wake's.
+  - It carries `co`.
+  - `egReceiptValid` reads each field on its own kind and refuses any other shape.
+  - The worst case of every field (a 40-character account, every list full) stays inside `EG_RECEIPT_MAX`. Only the
+    Vestiges and the Reliquaries are trimmed.
+- **THE COMPANY'S PACKING, said plainly.** Eight 40-character accounts would be about 460 characters on the wire, and a
+  worst-case Redoubt has about 170 to spare. So `co` is `[n, tag]`: the entrants' count and the first twelve hex
+  (48 bits) of a 64-bit FNV-1a over their accounts, sorted and comma-joined (`egCompanyTag`). Every member's receipt
+  of one breach says the same tag.
+- **The service** (`server-account/src/eg.js` `egReceiptRest`; migration 0111 extended - `eg_runs.co_n`, `co_h`,
+  `eg_redoubts.sh`, `m`; `ACCOUNT_VERSION` stays `acct121`).
+  - A recorded `w` keeps its share and its measures on its row. The measures are for staff and gate nothing until EG21.
+  - A recorded `x` keeps its company.
+  - The boards read `td` where the receipt says it (EG-E2 already did; the relay now mints it).
+  - The Descent keys a company by `co` (`egHonours.js` `egDescentCompanies`). The same company is one row whoever of it
+    claimed; two companies that share their claimers are two rows; the company's size is the company's own. An end
+    from before this is keyed by its claimers, as before.
+- **This screen's half** (`scenes/egClient.js`, `net/online.js`).
+  - The stake an open takes is kept on the device (`EG_STAKES_KEY`) until a call or a receipt answers it.
+  - If neither comes within `EG_VOID_WAIT_MS` (60 s - the hub's own tries are done by then), its void is asked of the
+    hub, again every `EG_VOID_ASK_MS`, across reloads. A void refused is let go.
+  - Its `v`, claimed, restacks the key: *The Spire did not open. Your key is returned.*
+  - Each receipt the service has counted is said to the hub (`claimed`).
+  - The presence link now hears a receipt from the hub, and says `void` and `claimed` to the hub alone.
+
+**Where it departs from the page, said plainly.**
+
+1. The page's frame table has `{k:'void', z}` going client -> room. It goes to the hub, which asks the room by an
+   internal door. A room the hub never opened admits no hello, and the hub holds the void for the opener's hellos.
+2. The room trusts the claims the hub verified (`{ s, eb, ez, i }`), as it trusts the hub's verified open. The room
+   checks the age again itself.
+3. `co` is a count and a tag, not the subs (above). The Descent row names the members who claimed. It cannot name one
+   who never did.
+4. `m` is the circle's six measures, not one hall's. `sh` is thousandths of the living members' damage that circle.
+5. The hub holds every receipt, not only those for members with no socket in the room. It hands a member in the room
+   nothing (the room did), but holds the receipt for their hellos.
+6. The service's clock (a stake spent after `EG_VOID_MAX_S` with no receipt naming it) is not written. A stake no
+   receipt settles stays `held`. That costs nothing: its key was taken at the open, its `eg_live` lapses on its own,
+   and the relay refuses a void past `EG_VOID_MAX_S`.
+7. A member's word still arms a beat at once (a vote, a step through the door); only the room's own tick keeps the
+   law. A closing with a foe standing in it (a Kyn Mimic's Lurker) beats as a trial.
+8. THE FORCE VOID is a Worker variable the deploy sets, not an asked door. EG-H2's departure 2 gives the reason: an
+   unauthenticated ask would let anyone void a breach.
+9. THE SEAL's ranking needs no case of its own. A sealed run ends at the sealed Redoubt's Court, its `td` the seconds to
+   that Court's fall, so the Descent's order (the deepest hall, then the fewest seconds) ranks sealed runs by their
+   seconds. The relay mints no `'seal'` end while `EG_OPEN` is 4.
+
+**The four hosts.**
+
+- `src/scenes/world.js` - unchanged, nothing owed. The client's hub and presence links are wired already (`online.onEg`,
+  the hub link's `onEg`), and everything here runs inside `egClient.frame` and `word`.
+- `src/scenes/worldModes.js`, `src/scenes/dungeonContext.js` - unchanged; they stand no stake and no receipt.
+- `src/scenes/exterior.js` - unchanged; the bench is offline (section 28).
+
+**Pins.**
+
+- `test/egz_keys.test.js` (9). `tools/mutants/egz_keys.json` (64, every one dead).
+- PIN MOVED:
+  - `egplay_relay`'s `EG_KINDS` (`void`, `claimed`), and its ended breach's alarm (its tombstone's end, a week on);
+  - `egdur_relay`'s drain and cap (the room holds the order's tombstone and no breach);
+  - `egeco_herald`'s ended room (its tombstone's alarm);
+  - `auditwbx2`'s sweep cursors (seven, `sweep:egrc`).
+- Eleven records of other slices re-aimed by content, every one judged again and dead: `egeco`, `egeco_honours` (two),
+  `egeco_relay` (four), `egmade` (three) and `egplay`.
+- `RELAY_VERSION` `world197`, unshipped, rehashed: `net/egBrain.js` imports `net/egReceipt.js`, so the graph's walk
+  swaps it ahead of `net/egDurable.js`. No `EG_SPEC` change, so no new `EG_LAWS` entry. No new src module.

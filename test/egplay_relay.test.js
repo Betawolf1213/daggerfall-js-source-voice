@@ -10,6 +10,7 @@ import { Room } from '../server/src/index.js';
 import worker from '../server/src/index.js';
 import { fakeRooms, fakeRoom } from './fakeRoom.mjs';
 import { SOCIAL_ROOM, EG_KEY, egCallKey, validEgOut, validEgIn, EG_KINDS, EG_OUT_KINDS, relaySupportsEg, EG_RELAY_MIN, parseClient } from '../src/net/wire.js';
+import { EG_VOID_MAX_S } from '../src/net/egDurable.js';   // EG-ZA: the tombstone's life
 import { egRoomKey, egHallOf, EG_SEALED_MS, EG_GATHER_MS, EG_SPEC } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { readEgReceipt } from '../src/net/egReceipt.js';
@@ -52,7 +53,7 @@ async function withBreach(fn, { party = false } = {}) {
 }
 
 test('EG-PLAY THE WIRE (EG-FULL): a breach\'s words each way, projected and bounded - the open (its order and the landing), the admission, the door, the way home, a blow on a body by its number, a Vestige picked, a vote, a Cantrip, the Sutler, a ping, a bequest, forsaking, the Orrery\'s turn, a fall said; the call, the state, a stage, the company of ten fields, a fall, a Redoubt, a receipt, the end, a refusal; the fight in the Spire\'s own words (a body\'s thirteen, a blow\'s FULL shape stamp, a zone, a tether, a mark) and the run\'s; a relay before it is sent nothing (mutants: an open with no landing; a company of nine; a stamp out of bounds; a body\'s row cut short)', () => {
-  assert.deepEqual([...EG_KINDS], ['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec']);   // EG-FULL LAYER THREE: `use` - an engine worked; PIN MOVED (EG-H1): `vt` a member's word of its body and `clk` the shared clock's ping (test/egint_relay.test.js pins them); PIN MOVED (EG-H2): `spec` - a hall of the breach's own law asked (Elite-Gates.md section 22)
+  assert.deepEqual([...EG_KINDS], ['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed']);   // EG-FULL LAYER THREE: `use` - an engine worked; PIN MOVED (EG-H1): `vt` a member's word of its body and `clk` the shared clock's ping (test/egint_relay.test.js pins them); PIN MOVED (EG-H2): `spec` - a hall of the breach's own law asked (Elite-Gates.md section 22); PIN MOVED (EG-ZA): `void` a stake no call answered and `claimed` a held receipt counted, both to the hub (test/egz_keys.test.js pins them)
   for (const k of ['call', 'st', 'efs', 'ead', 'eb', 'ez', 'etx', 'emk', 'offer', 'ask', 'rise', 'eheal']) assert.ok(EG_OUT_KINDS.includes(k), k);
   assert.equal(validEgIn({ k: 'open', z: 'v1.abc.def' }), null, 'an open names where its company answers from');
   assert.deepEqual(validEgIn({ k: 'open', z: 'v1.abc.def', site: SITE, junk: 1 }), { k: 'open', z: 'v1.abc.def', site: SITE });
@@ -199,7 +200,12 @@ test('EG-PLAY ONE LIFE (EG-FULL, section 16.5): a death in the breach is the mem
     const c = readEgReceipt(r.r);
     assert.deepEqual([c.q, c.why, c.b, c.s, c.z], ['x', 'wipe', B, 'acct-mac', 'z'.repeat(20)]);
     eg.alarm.at = null;
-    assert.equal(await eg.room._egTick(), false, 'an ended breach beats no more');
+    // PIN MOVED (EG-ZA, Elite-Gates.md section 23 "The tombstone"): an ended breach's director beats no more - its room's one
+    // alarm is its tombstone's end, a week on (EG_VOID_MAX_S), when the breach is forgotten
+    const before = structuredClone(eg.store.get(EG_KEY));
+    assert.equal(await eg.room._egTick(), true, 'an ended breach keeps its tombstone');
+    assert.ok(eg.alarm.at >= Date.now() + EG_VOID_MAX_S * 1000 - 5000, 'its alarm the tombstone\'s end, a week on - no beat');
+    assert.deepEqual(eg.store.get(EG_KEY), before, 'and the director never stepped');
   });
 });
 

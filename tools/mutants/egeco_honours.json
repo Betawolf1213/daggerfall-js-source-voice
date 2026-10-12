@@ -173,8 +173,8 @@
   {
     "name": "EGECO2-runs-td-unread",
     "file": "server-account/src/egHonours.js",
-    "old": "SELECT b, account, h, COALESCE(td, t) AS secs, n, fl, at FROM eg_runs",
-    "new": "SELECT b, account, h, t AS secs, n, fl, at FROM eg_runs",
+    "old": "SELECT b, account, h, COALESCE(td, t) AS secs, n, fl, at, co_n, co_h FROM eg_runs",
+    "new": "SELECT b, account, h, t AS secs, n, fl, at, co_n, co_h FROM eg_runs",
     "tests": [
       "test/egeco_board.test.js"
     ]
@@ -245,8 +245,8 @@
   {
     "name": "EGECO2-company-keyed-by-order",
     "file": "server-account/src/egHonours.js",
-    "old": "const key = [...c.players].sort().join(',');",
-    "new": "const key = c.players.join(',');",
+    "old": ": [...c.players].sort().join(',');",
+    "new": ": c.players.join(',');",
     "tests": [
       "test/egeco_board.test.js"
     ]

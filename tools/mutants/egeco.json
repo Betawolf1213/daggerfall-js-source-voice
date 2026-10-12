@@ -29,8 +29,8 @@
   {
     "name": "EGECO-the-feats-left-off",
     "file": "src/net/egBrain.js",
-    "old": "...(lk ? { lk, ft } : {}) });",
-    "new": "});",
+    "old": ", ...(lk ? { lk, ft } : {}),\n      sh: total",
+    "new": ",\n      sh: total",
     "tests": [
       "test/egeco_feats.test.js"
     ]

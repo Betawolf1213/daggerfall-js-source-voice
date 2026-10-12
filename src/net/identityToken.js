@@ -732,6 +732,18 @@ export function egOrderValid(c) {
     && c.ewg.every((d) => Number.isSafeInteger(d) && d >= 0 && d <= 31) && new Set(c.ewg).size === c.ewg.length)) return false;
   return true;
 }
+/** EG-ZA (2026-10-12; bible/11-Multiplayer/Elite-Gates.md sections 22 and 23, "A key's loss"): VERIFY AN OPEN ORDER
+ *  WHATEVER ITS AGE - a breach's void (`{k:'void', z}`): an open past its minute can never be opened, so a stake it names
+ *  that the room never took is the opener's to have back. The signature and the claims are checked as ever; only the
+ *  clock is the order's own (verifyStakeOrderAnyAge's way); how old a void may be is the room's (EG_VOID_MAX_S). */
+export async function verifyEgOpenAnyAge(token, publicKey, { subtle }) {
+  if (!(typeof token === 'string' && token.length <= TOKEN_MAX_CHARS)) return { ok: false, why: 'shape' };
+  const raw = bytesFromB64url(token.split('.')[1] ?? '');
+  let i = null;
+  try { i = raw ? JSON.parse(dec.decode(raw))?.i : null; } catch { i = null; }
+  if (!Number.isSafeInteger(i)) return { ok: false, why: 'shape' };
+  return openSealed(token, publicKey, { subtle, nowS: i, skewS: 0, valid: (c) => orderValid(c) && c.o === 'egopen' });
+}
 /** EG-PLAY: MINT AN ELITE BREACH ORDER - `o` 'egopen' (the open: `rh` 1 for a Rehearsal) or 'egadmit' (a member's
  *  admission). */
 export async function mintEgOrder({ o, s, eb, ez, ew = 0, rh = undefined, ewg = undefined }, privateKey, { subtle, nowS, ttlS = ORDER_TTL_S }) {

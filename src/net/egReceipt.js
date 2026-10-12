@@ -14,6 +14,18 @@
 //         vs the member's Vestiges ('w')   rl the Reliquaries its end opens ('x')   fl its falls   lb a Court felled alone
 //         wg the breach's Wager decrees (both kinds - EG-E3: the end's too, for the boards)
 //         an the pages of the Annals the breach gave the member ('x'; EG-E3 mints it, EG-E2 bounds it - a bitmask, bit p for net/egAnnals.js's page p)
+//         td seconds from Hall 1's wake to the deepest hall's door ('x', once a hall is cleared - EG-ZA)
+//         sh the member's share of the circle's damage, thousandths ('w')   m the circle's measures, six whole numbers ('w')
+//         co the company: its entrants' count and a 48-bit tag of their accounts, sorted (both kinds - egCompanyTag)
+//
+// EG-ZA (2026-10-12, Mac: "I said I want everything"; Elite-Gates.md sections 20, 21 and 23's table): THE FIELDS THE
+// TABLE ASKED THAT NOTHING MINTED. `td` on the end (the Descent's seconds - the director kept it and said it only to the
+// herald), `sh` and `m` on a Redoubt (the share dealt; THE FAIR TRAIL's measures, which rode no receipt), `co` on both.
+// THE COMPANY'S PACKING: eight 40-character accounts are some 460 characters on the wire, and a worst-case Redoubt has
+// about 170 to spare, so `co` is `[n, tag]` - the entrants' count and twelve hex of a 64-bit FNV-1a over their accounts
+// sorted and comma-joined (egCompanyTag). Every member's receipt of one breach says the same tag, so the service groups
+// a company by it (the Descent's rows - server-account/src/egHonours.js) without the receipt naming anyone else; it
+// cannot list a member who never claimed, and the row names those who did.
 //
 // EG-E3 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 23): THE BOUND IS THE
 // MINT'S. Every reader refuses a receipt past EG_RECEIPT_MAX (readEgReceipt, verifyEgReceipt, the wire's `rcpt` -
@@ -45,6 +57,28 @@ export const EG_END_WHYS = Object.freeze(['fall', 'home', 'tear', 'wipe', 'last'
 export const EG_RECEIPT_TRIMS = Object.freeze(['vs', 'rl']);
 /** EG-E2: the bound on an end's `an` - one bit a page, thirty pages (net/egAnnals.js EG_ANNALS). */
 export const EG_ANNALS_BITS_MAX = 2 ** 30 - 1;
+/** EG-ZA: a share's whole (`sh`, thousandths), a measure's bound (`m`, each of its EG_MEASURES), the company tag's hex. */
+export const EG_SHARE_WHOLE = 1000;
+export const EG_MEASURES = 6;
+export const EG_MEASURE_MAX = 999_999;
+export const EG_CO_TAG_HEX = 12;
+const CO_TAG_RE = new RegExp(`^[0-9a-f]{${EG_CO_TAG_HEX}}$`);
+const FNV64_OFFSET = 0xcbf29ce484222325n, FNV64_PRIME = 0x100000001b3n, U64 = (1n << 64n) - 1n;
+/**
+ * EG-ZA: THE COMPANY ON A RECEIPT (`co`) - `[n, tag]`: how many accounts, and the first EG_CO_TAG_HEX hex of a 64-bit
+ * FNV-1a over them sorted and comma-joined (UTF-8). The same company says the same tag whatever its order. Pure.
+ * @param {string[]} subs
+ * @returns {[number, string]}
+ */
+export function egCompanyTag(subs) {
+  let h = FNV64_OFFSET;
+  for (const b of enc.encode([...subs].map(String).sort().join(','))) h = ((h ^ BigInt(b)) * FNV64_PRIME) & U64;
+  return [subs.length, h.toString(16).padStart(16, '0').slice(0, EG_CO_TAG_HEX)];
+}
+/** Is `co` a company a receipt may carry - one to eight accounts and a tag? */
+export const egCompanyValid = (/** @type {any} */ co) => Array.isArray(co) && co.length === 2 && int(co[0], 1, 8) && typeof co[1] === 'string' && CO_TAG_RE.test(co[1]);
+/** Is `m` a breach's measures a receipt may carry - EG_MEASURES whole numbers, each 0..EG_MEASURE_MAX? */
+export const egMeasuresValid = (/** @type {any} */ m) => Array.isArray(m) && m.length === EG_MEASURES && m.every((n) => int(n, 0, EG_MEASURE_MAX));
 const enc = new TextEncoder();
 const dec = new TextDecoder();
 const BREACH_RE = /^[0-9a-f]{16}$/;
@@ -76,6 +110,11 @@ export function egReceiptValid(c) {
   // EG-E2: the pages of the Annals the member was given (`an`, bit p page p of net/egAnnals.js's thirty), an end's alone -
   // the account keeps them (server-account/src/egHonours.js, `players.eg_annals`)
   if (c.an !== undefined && (c.q !== 'x' || !int(c.an, 0, EG_ANNALS_BITS_MAX))) return false;
+  // EG-ZA: the company (both kinds), the Descent's seconds (an end's), the share dealt and the measures (a Redoubt's)
+  if (c.co !== undefined && !egCompanyValid(c.co)) return false;
+  if (c.td !== undefined && (c.q !== 'x' || !int(c.td, 0, 7 * 24 * 3600))) return false;
+  if (c.sh !== undefined && (c.q !== 'w' || !int(c.sh, 0, EG_SHARE_WHOLE))) return false;
+  if (c.m !== undefined && (c.q !== 'w' || !egMeasuresValid(c.m))) return false;
   if (c.q === 'w') return int(c.w, 1, 19_999) && c.why === undefined;
   return EG_END_WHYS.includes(c.why) && c.w === undefined;
 }

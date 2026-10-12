@@ -18,6 +18,7 @@ import { egHallOf, egRoomKey, EG_SEALED_MS, EG_OPEN, EG_BANDS } from '../src/net
 import { ARENA_SEASON_S } from '../src/net/arenaLaw.js';
 import { SOCIAL_ROOM, EG_KEY } from '../src/net/wire.js';
 import { fakeRooms } from './fakeRoom.mjs';
+import { EG_VOID_MAX_S } from '../src/net/egDurable.js';   // EG-ZA: the tombstone's life
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const HOOK = 'https://discord.com/api/webhooks/123456789012345678/abc_DEF-123';
@@ -246,7 +247,7 @@ test('EG-E3 relay: THE ROOM TELLS THE HUB - an ended breach\'s room beats on unt
     const eg = breach('0123456789abcdef', [rdEv(1, 10, { at: now() }), { i: 2, at: now(), k: 'lb', n: 'Mara', lk: 'ilthys', c: 5 }, dcEv(3, 50, 6680, 5, { at: now() })]);
     await eg.fire();
     assert.equal(eg.store.get(EG_KEY).hq.length, 0, 'told, and taken off the breach');
-    assert.equal(eg.alarm.at, null, 'the breach beats no more');
+    assert.equal(eg.alarm.at, now() + EG_VOID_MAX_S * 1000, 'the breach beats no more - PIN MOVED (EG-ZA, Elite-Gates.md section 23 "The tombstone"): its room\'s one alarm is its tombstone\'s end, a week on');
     const st = hub.store.get(EG_HERALD_KEY);
     assert.deepEqual(st.q.map((p) => p.kind), ['first', 'lb', 'top']);
     assert.equal(hub.alarm.at, now(), 'the hub\'s alarm armed now');

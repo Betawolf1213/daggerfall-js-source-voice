@@ -422,8 +422,8 @@
   },
   {
     "name": "EGDUR-the-opener-keeps-its-stake",
-    "file": "server/src/index.js",
-    "old": "      if (!B.mem?.[B.s]) B.owe.push({ sub: B.s, claims: { q: 'v', b: B.b, s: B.s, z: B.ez } });\n",
+    "file": "src/net/egBrain.js",
+    "old": "  if (why === 'void' && !B.mem[B.s]?.in) owe(B, B.s, { q: 'v' });",
     "new": "",
     "tests": [
       "test/egdur_relay.test.js"
@@ -459,8 +459,8 @@
   {
     "name": "EGDUR-the-cap-unread",
     "file": "server/src/index.js",
-    "old": "|| Object.keys(await this._egLiveOf(now)).length >= EG_LIVE_MAX) { await this._egShut(ws, c, now); return; }",
-    "new": "|| false) { await this._egShut(ws, c, now); return; }",
+    "old": "|| Object.keys(await this._egLiveOf(now)).length >= EG_LIVE_MAX) { await this._egShut(ws, a, c, now); return; }",
+    "new": "|| false) { await this._egShut(ws, a, c, now); return; }",
     "tests": [
       "test/egdur_relay.test.js"
     ]
@@ -468,8 +468,8 @@
   {
     "name": "EGDUR-a-shut-road-keeps-the-stake",
     "file": "server/src/index.js",
-    "old": "      this._send(ws, JSON.stringify({ t: 'eg', k: 'rcpt', r }));\n    } catch (e) { console.warn('[hub] eg void refused'",
-    "new": "    } catch (e) { console.warn('[hub] eg void refused'",
+    "old": "      this._send(ws, JSON.stringify({ t: 'eg', k: 'rcpt', r }));\n    }\n    return ans?.body ?? null;",
+    "new": "    }\n    return ans?.body ?? null;",
     "tests": [
       "test/egdur_relay.test.js"
     ]

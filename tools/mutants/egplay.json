@@ -93,8 +93,8 @@
   {
     "name": "EGPLAY-a-counted-receipt-kept",
     "file": "src/scenes/egClient.js",
-    "old": "        if (egClaimDone(a)) drop();",
-    "new": "        void egClaimDone;",
+    "old": "        if (egClaimDone(a)) { drop(); hub()",
+    "new": "        if (false) { drop(); hub()",
     "tests": [
       "test/egplay_client.test.js"
     ]

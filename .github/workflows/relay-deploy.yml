@@ -243,15 +243,27 @@ jobs:
             sleep 15
           done
 
+      # EG-ZA (bible/11-Multiplayer/Elite-Gates.md section 22): A FORCE DEPLOY VOIDS EVERY LIVE ELITE BREACH, never spends
+      # its keys. The deploy stamps the Worker with the moment before it goes (`EG_VOID_BEFORE`, epoch ms): a breach's room
+      # woken under the stamp whose breach opened before it ends it as a void (src/net/egDurable.js egForceVoided) - the
+      # entered members' end receipts say `void` and its opener who never entered is handed the void itself, so every stake
+      # comes back and the Redoubts taken stay. The next deploy carries no stamp.
       - name: Deploy
         if: steps.live.outputs.version != steps.ver.outputs.version
         working-directory: server
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          FORCE: ${{ github.event.inputs.force }}
         run: |
           echo "deploying ${{ steps.ver.outputs.version }} over ${{ steps.live.outputs.version }}"
           echo "every connected player's socket is about to drop and reconnect"
-          npx --yes wrangler@4 deploy
+          if [ "$FORCE" = "true" ]; then
+            stamp=$(date +%s%3N)
+            echo "a FORCE deploy: every Elite Breach opened before ${stamp} is voided as its room wakes (its stakes returned, its Redoubts kept)"
+            npx --yes wrangler@4 deploy --var "EG_VOID_BEFORE:${stamp}"
+          else
+            npx --yes wrangler@4 deploy
+          fi
 
       # AND PROVE IT LANDED. The client's own deploy has been verified BY
       # CONTENT since U60 (`tools/verify-deploy.mjs`, whose header says HTTP

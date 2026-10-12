@@ -29,6 +29,13 @@
 // the hall's hazards, net/bossRef.js; a fall told `bd`), the room's own heals restored to it (egCountHeals), the member's
 // own word believed (egBodyWord); Watchfire's company told each committed blow early (watchOf).
 //
+// EG-ZA (2026-10-12, Mac: "I said I want everything"; sections 20, 21, 22 and 23): THE RECEIPTS SAY EVERYTHING - an end
+// carries `td` (the Descent's seconds, which only the herald heard) and `co` (the company - net/egReceipt.js
+// egCompanyTag); a Redoubt carries `sh` (the member's share of the circle's damage, thousandths), `m` (THE FAIR TRAIL's
+// measures over the circle, folded as each trail closes - measureFold) and `co`. And A KEY IS NEVER LOST: a breach that
+// ends with no hall woken is a void - never the opener's 'empty', unless the room was told its call went out
+// (`B.called`) - and an opener who never entered is owed the void itself (egEnd).
+//
 // Pure: a record and a beat in, frames out. Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT_MS, EG_CLOSING_SPAN_MS, EG_CLOSING_COUNT_MS, EG_STAIR_HOLD_MS, EG_REST_MS,
   EG_WAKE_RING_MS, EG_ABSENT_TRIAL_MS, EG_LAST_WORD_MS, EG_REDOUBT_HOLD_MS, EG_COUNT_CAP_MS, egHallOf, egCircleOfHall, egFirstHallOf, egStartHall, egTimes, egAdmits, egCountNew, egCountLeft, egCountRun, egCountHold,
@@ -49,7 +56,8 @@ import { orreryOf, orreryFresh, orreryJudge, orreryShortest } from './sdBrain.js
 import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gateBrain.js';
 // EG-H1 (EG8d): WHAT THE RELAY JUDGES - THE FAIR TRAIL and its time law (net/egFair.js), one judge for every shape and the
 // hall's own hazards (net/bossRef.js), and the body counted (net/bossBody.js) - the member's one life
-import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt } from './egFair.js';
+import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt, egCrossMinMs } from './egFair.js';
+import { egCompanyTag, EG_SHARE_WHOLE, EG_MEASURES, EG_MEASURE_MAX } from './egReceipt.js';   // EG-ZA: the company, the share and the measures a receipt carries
 import { judgeShapes, judgePlace } from './bossRef.js';
 import { bodyStruck, bodySaid, bodyHealed, bodyLife } from './bossBody.js';
 
@@ -223,6 +231,9 @@ const local = (spec, b) => (b && egInHall(spec, b.sx, b.z) ? { sub: b.sub, x: eg
 
 /** A receipt owed - its seed the room's own draw. */
 function owe(B, sub, claims) { B.owe.push({ sub, claims: { b: B.b, s: sub, z: B.ez, ...claims } }); }
+/** EG-ZA: THE COMPANY a receipt carries (`co` - net/egReceipt.js egCompanyTag): the breach's entrants, in no order (the
+ *  opener alone when none entered). */
+const companyOf = (B) => { const E = entrants(B).map(([sub]) => sub); return egCompanyTag(E.length ? E : [B.s]); };
 /** A member's end receipt (`x`), once: why it ended, the deepest hall cleared, the Reliquaries it opens (a good end), its
  *  falls. */
 function oweEnd(B, sub, why, now) {
@@ -233,7 +244,35 @@ function oweEnd(B, sub, why, now) {
   owe(B, sub, { q: 'x', h: B.cleared, t: B.wk ? secs(now - B.wk) : 0, n: Object.values(B.mem).filter((x) => x.in).length, ew: B.ew, l: m?.lv ?? 1, why,
     ...(good && m?.rel?.length ? { rl: m.rel.slice(0, 64) } : {}), fl: m?.falls ?? 0, ...(B.rh ? { rh: 1 } : {}),
     // EG-E3: the Wager (the boards rank a wagered breach on the Depths alone) and the Annals' pages the breach gave
-    ...(B.wg?.length ? { wg: [...B.wg] } : {}), ...(m?.pages ? { an: m.pages } : {}) });
+    ...(B.wg?.length ? { wg: [...B.wg] } : {}), ...(m?.pages ? { an: m.pages } : {}),
+    // EG-ZA (section 23's table): the seconds from Hall 1's wake to the deepest hall's door, once one is cleared (the
+    // Descent's second key - section 20), and the company
+    ...(B.cleared > 0 ? { td: B.td ?? 0 } : {}), co: companyOf(B) });
+}
+/**
+ * EG-ZA: A MEMBER'S FAIR TRAIL FOLDED INTO ITS CIRCLE'S MEASURES (`m.mz` - a Redoubt's `m`, section 21: "its measures ride
+ * the receipt"), once a trail: `[crossings, the quickest crossing as a share of its bound (%, 0 none), the most blind
+ * share (%), breaks, the fastest stretch (cm/s), crossings whose door was the room's wake's]` - net/egFair.js
+ * egFairMeasure's six, over the circle. A trail that judged nothing folds nothing.
+ * @param {any} m @param {any} A
+ */
+function measureFold(m, A) {
+  if (!m || !A || A.mzd || !(A.span > 0)) return;
+  A.mzd = 1;
+  const z = (m.mz ??= new Array(EG_MEASURES).fill(0));
+  if (A.cross > 0) {
+    z[0]++;
+    if (A.cmin > 0) { const pct = Math.round((100 * A.cross) / A.cmin); z[1] = z[1] > 0 ? Math.min(z[1], pct) : pct; }
+    if (A.wake) z[5]++;
+  }
+  z[2] = Math.max(z[2], Math.round(100 * (A.cross > 0 ? A.cblind : A.blind / A.span)));
+  z[3] += A.brks; z[4] = Math.max(z[4], A.fast);
+}
+/** EG-ZA: a member's circle's measures as its Redoubt's receipt carries them (each held to EG_MEASURE_MAX), begun again. */
+function measuresOut(m) {
+  const z = (m.mz ?? new Array(EG_MEASURES).fill(0)).map((n) => Math.max(0, Math.min(EG_MEASURE_MAX, Math.round(n))));
+  m.mz = null;
+  return z;
 }
 /** EG-E3: a hall cleared (the door, or a Court's fall) - the deepest the breach holds, and its seconds from Hall 1's wake
  *  (`td`, the Descent's second key - section 20). */
@@ -300,9 +339,12 @@ export function egHome(B, sub, now, out) {
   out.push({ k: 'co', co: egCompanyOf(B) }, { k: 'esay', w: 'home', n: m.name });
   return true;
 }
-/** THE END (section 22): every member still in it owed its end, said to all. */
+/** THE END (section 22): every member still in it owed its end, said to all. EG-ZA ("A key's loss"): an end with no hall
+ *  ever woken is a void - never the opener's 'empty', unless the room was told its call went out (`B.called`) and nobody
+ *  answered - and an opener who never entered a voided breach is owed the void itself (`v`, its stake back). */
 export function egEnd(B, why, now, out) {
   if (B.end) return;
+  if (!(B.wk > 0) && !(why === 'empty' && B.called)) why = 'void';
   B.end = why; B.endAt = now; B.sg = 'end'; B.sa = now; B.su = 0;
   B.cnt = egCountHold(B.cnt, now);
   if (B.F) egGone(B.F, egBodiesOf(B.F, EG_ROLE.add), EG_GONE.crumbled, '', now, out);
@@ -310,6 +352,7 @@ export function egEnd(B, why, now, out) {
   B.asks = [];
   for (const [sub, m] of Object.entries(B.mem)) if (m.in && !m.home && !m.x && (m.alive || !m.forsaken)) oweEnd(B, sub, m.alive ? why : (why === 'home' ? 'fall' : why), now);
   if (why === 'empty' && !B.mem[B.s]) oweEnd(B, B.s, 'empty', now);   // the opener's stake settles even when nobody came
+  if (why === 'void' && !B.mem[B.s]?.in) owe(B, B.s, { q: 'v' });   // EG-ZA: and a voided breach's opener who never entered has the stake straight back
   // EG-E3: THE DESCENT'S CANDIDATE (section 20) - a breach begun at Hall 1, unwagered and no Rehearsal, told the herald:
   // the hub keeps the season's best a bracket, and says a new top
   if (!B.rh && !B.ew && !(B.wg ?? []).length && B.cleared > 0) {
@@ -653,10 +696,16 @@ function redoubt(B, now, rng, out) {
   if (B.covenant) B.cnt = egCountHold(B.cnt, now);
   // EG-E: the lord's feats, judged at its fall (net/egFeats.js) - said on each earner's receipt with the lord's key
   const lk = specOf(B).lord ?? '', ft = B.F ? egFeatBits(lk, B.F, { covenant: B.covenant, now }) : 0;
+  // EG-ZA (section 23's table): each earner's share of the circle's damage (thousandths), its circle's measures (the Court's
+  // own trail folded first) and the company
+  const co = companyOf(B);
   for (const [sub, m] of earners) {
-    owe(B, sub, { q: 'w', w, h: B.h, t: secs(now - B.wk), n: earners.length, ew: B.ew, l: m.lv, vs: (m.vs ?? []).slice(0, 32), fl: m.falls ?? 0, ...(lone ? { lb: 1 } : {}), ...(B.wg?.length ? { wg: B.wg } : {}), ...(lk ? { lk, ft } : {}) });
+    measureFold(m, fairOfMember(B, sub));
+    owe(B, sub, { q: 'w', w, h: B.h, t: secs(now - B.wk), n: earners.length, ew: B.ew, l: m.lv, vs: (m.vs ?? []).slice(0, 32), fl: m.falls ?? 0, ...(lone ? { lb: 1 } : {}), ...(B.wg?.length ? { wg: B.wg } : {}), ...(lk ? { lk, ft } : {}),
+      sh: total > 0 ? Math.max(0, Math.min(EG_SHARE_WHOLE, Math.round((EG_SHARE_WHOLE * m.dc) / total))) : 0, m: measuresOut(m), co });
     m.rel = [...(m.rel ?? []), w];
   }
+  for (const m of Object.values(B.mem)) { m.mz = null; if (m.fair) m.fair.mzd = 1; }   // the circle's measures begun again for every member (an earner's said above), no trail of this circle folded into the next
   // EG-E3: THE HERALD'S NEWS - a Valkynaz's Redoubt (the hub says every tenth, the first tenth ever as First of the Spire,
   // and a band passed whose seal a deploy lifted), and a Court felled alone, once a member a breach
   if (valk) heraldOwe(B, now, { k: 'rd', w, h: B.h, t: secs(now - B.wk), o: B.o ?? '', by: earners.map(([, m]) => m.name ?? '') });
@@ -1236,11 +1285,11 @@ export function egPoseIn(B, sub, p, t) {
     const k = fairKey(B, m);
     // a trail begins on the arrival plate (or where a recall stood it): a first pose anywhere else is a step the law never
     // saw - a break, so a member who left the plate in the gather's last seconds holds nothing until it stands on an island
-    if (m.fair?.k !== k) { m.fair = { ...egFairNew(B.h), k, cbHeld: 0 }; if (!egOnArrive(spec, x, z, 2) && m.roseH !== B.h) { m.fair.brk = 1; m.fair.brks = 1; m.fair.why = 'start'; } }
+    if (m.fair?.k !== k) { measureFold(m, m.fair); m.fair = { ...egFairNew(B.h), k, cbHeld: 0 }; if (!egOnArrive(spec, x, z, 2) && m.roseH !== B.h) { m.fair.brk = 1; m.fair.brks = 1; m.fair.why = 'start'; } }   // EG-ZA: the trail it closes folded into the circle's measures
     const A = m.fair;
     egFairPose(A, spec, { x, y, z, ride, cl: !!p.cl }, t);
     if (spec.fork && z >= spec.fork.z && x >= (spec.fork.lowX + spec.fork.x) / 2) A.road = 1;
-    if (egAtDoor(spec, x, z)) egFairCross(A, t, A.road);
+    if (egAtDoor(spec, x, z)) { egFairCross(A, t, A.road); if (A.cross > 0 && A.cmin == null) A.cmin = egCrossMinMs(spec, A.road); }   // EG-ZA: the crossing's bound kept with it (its hall's spec is this one)
     if (A.sup && y < A.sup[2] + EG_VOID_Y) { if (!A.cbHeld) { A.cbHeld = 1; m.cbOwe = (m.cbOwe ?? 0) + 1; } }
     else if (A.sup && A.sup[0] === t) A.cbHeld = 0;
   }

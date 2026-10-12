@@ -24,9 +24,33 @@
 //     second one, and no client can compute one ahead (the leak AUDIT SD III R4 moved the Hour's honours off).
 //   THE COST - at most EG_LIVE_MAX breaches live at once (the hub's list, `eglive`).
 //
+// EG-ZA (2026-10-12, Mac: "I said I want everything"; Elite-Gates.md sections 22 and 23 - "A key's loss", THE COST's
+// tick): A KEY IS NEVER LOST, the law the hub and the breach's room keep (server/src/index.js `_egOpen`, `_egVoid`,
+// `_egVoidInternal`, `_egRcInternal`, `_egTick`):
+//   THE OPEN RETRIED - the hub tells a breach's room its open EG_OPEN_HUB_TRIES times (the room answers the same order
+//     with the record it kept: idempotent on `ez`), and once the room is told the call went out (EG_INTERNAL_CALLED,
+//     `B.called`) the breach may end `'empty'`; with no hall woken and no call out, its end is a void (net/egBrain.js
+//     egEnd). An open the room never took is voided BY THE ROOM (EG_INTERNAL_VOID): it writes the order into its
+//     tombstone first (`egdone`, EG_DONE_KEY) and mints the `v` once, so the order can never be accepted after and a
+//     void asked again is the same receipt. A client holding a stake no call answered asks it (`{k:'void', z}`, to the
+//     hub, which asks the room). A void past EG_VOID_MAX_S since the order's issue is refused; the tombstone - the
+//     voided orders' and the ended breach's - is kept that long, and then the room forgets the breach.
+//   THE RECEIPTS HELD - every receipt a room mints is told the hub (EG_INTERNAL_RCPT, told again EG_RC_TELL_MS on while
+//     the hub has not answered - an ended breach beats on for it) and kept there under `egrc:<sub>` (egRcFold: one entry
+//     a receipt, the newest of its kind, EG_RC_KEEP at most, each for its own life) until its account says the service
+//     has counted it (`{k:'claimed', b, q, w}`) - handed to every hello meanwhile, so a member offline at the end has
+//     theirs when they come back.
+//   THE FORCE VOID - a `force` relay deploy stamps the Worker (`EG_VOID_BEFORE`, ms - .github/workflows/relay-deploy.yml):
+//     a room woken under it whose breach opened before the stamp ends it as a void, the law pin's way (egResume).
+//   THE TICK (section 22, THE COST) - a breach's beat is BRAIN_TICK_MS (EG_BEAT_TRIAL_MS) only while a trial runs with
+//     its company in the room, EG_BEAT_SLOW_MS otherwise (never past the stage's own deadline, so no stage ends late),
+//     and none while the arch rises: its next beat is the open (egTickAt). Every gap stays under EG_GAP_MS, so THE TIME
+//     law gives nothing back for it.
+//
 // Pure (the receipt seed asks the platform's SubtleCrypto, handed in). In the relay bundle. Not a DFU member. Ledger A
 // (ELITE-GATES).
 import { EG_LAST_WORD_MS, egCountHold, egCountRun } from './egLaw.js';
+import { EG_ROLE, EG_FL } from './egBodies.js';
 
 /** A beat gap past this is given back (ms - the gate's CHECKPOINT_MS: the beat runs every quarter or whole second). */
 export const EG_GAP_MS = 2000;
@@ -87,13 +111,14 @@ export function egGiveBack(B, gap, now) {
 /**
  * A ROOM WOKE (its record read from storage at `now`): the law pin first (`'void'` - the caller ends the breach), then a
  * breach between trials HOLDS from its last beat (`'hold'`), one mid-trial has the gap given back (`'gave'`), or nothing
- * (null - before the first wake, or within EG_GAP_MS). `B.tk` is the last beat's instant (the room stamps it).
- * @param {any} B @param {number} now
+ * (null - before the first wake, or within EG_GAP_MS). `B.tk` is the last beat's instant (the room stamps it). EG-ZA:
+ * `voidBefore` a `force` deploy's stamp (ms, 0 none) - a breach opened before it is a void too (egForceVoided).
+ * @param {any} B @param {number} now @param {number} [voidBefore]
  * @returns {'void'|'hold'|'gave'|null}
  */
-export function egResume(B, now) {
+export function egResume(B, now, voidBefore = 0) {
   if (!B || B.end) return null;
-  if (!egLawKnown(B.egv)) return 'void';
+  if (!egLawKnown(B.egv) || egForceVoided(B, voidBefore)) return 'void';   // EG-ZA: and THE FORCE VOID - a breach live at a `force` deploy's stamp
   if (!(B.wk > 0)) { B.tk = now; return null; }
   const last = Number.isFinite(B.tk) && B.tk <= now ? B.tk : now;
   if (B.hold) return 'hold';   // woken again inside a hold: its release gives the whole gap back
@@ -156,4 +181,90 @@ export async function egReceiptSeed(rs, sub, R, kind, subtle) {
   const key = await subtle.importKey('raw', raw, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const mac = new Uint8Array(await subtle.sign('HMAC', key, new TextEncoder().encode(`${sub}|${R}|${kind}`)));
   return ((mac[0] << 24) | (mac[1] << 16) | (mac[2] << 8) | mac[3]) >>> 0;
+}
+
+// ── EG-ZA: A KEY IS NEVER LOST (sections 22 and 23) ─────────────────────────────────────────────────────────────────
+/** How long a void may be asked after its order was issued, and how long a room keeps its tombstone (s - the
+ *  HOLDEM_STAKE_VOID_S precedent: a week, the receipts' own life). */
+export const EG_VOID_MAX_S = 7 * 24 * 3600;
+/** Where a breach's room keeps its tombstone: `{ until, z: [[ez, why, r]] }` - each order it voided (`r` the void it
+ *  minted, handed again to a void asked again) and the breach's own order at its end. */
+export const EG_DONE_KEY = 'egdone';
+/** The most orders one tombstone names (a room is opened by one order; the rest are voids asked of it). */
+export const EG_DONE_MAX = 8;
+/** How often the hub tells a breach's room its open before it asks the room to void the order instead. */
+export const EG_OPEN_HUB_TRIES = 3;
+/** The internal doors (HCC-PARK's law - the public worker forwards /room/<key> alone): the hub asking a room to void an
+ *  order, telling a room its call went out, and a room telling the hub the receipts it minted. */
+export const EG_INTERNAL_VOID = '/internal/eg/void';
+export const EG_INTERNAL_CALLED = '/internal/eg/called';
+export const EG_INTERNAL_RCPT = '/internal/eg/rcpt';
+/** The hub's key for an account's held receipts (swept as `gaterc:` is), the most it holds, and how soon a room whose
+ *  hub did not take its receipts tells it again (ms) - and the most a room keeps owed to the hub. */
+export const EG_RC_PREFIX = 'egrc:';
+export const egRcKey = (/** @type {string} */ sub) => `${EG_RC_PREFIX}${sub}`;
+export const EG_RC_KEEP = 16;
+export const EG_RC_TELL_MS = 5000;
+export const EG_RC_OWED_MAX = 64;
+/** A receipt's identity among its account's held ones: its breach, its kind and its Redoubt (0 for an end or a void) -
+ *  the same receipt minted again (a woken room's) is the same entry. */
+export const egRcId = (/** @type {any} */ c) => `${c.b}:${c.q}:${Number.isSafeInteger(c.w) ? c.w : 0}`;
+/**
+ * THE HUB'S HELD RECEIPTS FOLDED: `kept` (an account's `egrc:` list - `{ id, r, e }`, or `{ id, spent: 1, e }` where its
+ * account has said the service counted it) with `add` (`{ id, r, e }` newly told) at `nowS`: one entry an identity, the
+ * newer receipt of it kept, never over a spent mark; the expired dropped; the newest EG_RC_KEEP kept. Pure.
+ * @param {any} kept @param {Array<{id: string, r: string, e: number, spent?: number}>} add @param {number} nowS
+ */
+export function egRcFold(kept, add, nowS) {
+  const by = new Map();
+  for (const x of [...(Array.isArray(kept) ? kept : []), ...add]) {
+    if (!x || typeof x.id !== 'string' || !(Number.isSafeInteger(x.e) && x.e > nowS) || (!x.spent && typeof x.r !== 'string')) continue;
+    if (by.get(x.id)?.spent) continue;
+    by.delete(x.id);
+    by.set(x.id, x);
+  }
+  return [...by.values()].slice(-EG_RC_KEEP);
+}
+/** An account's word that the service counted receipt `id`: its held copy forgotten, REMEMBERED AS SPENT until `e` (the
+ *  gate's AUDIT WBX2 M3 law - the word may come before the room's own tell, and must stand over it). Pure. */
+export const egRcSpent = (/** @type {any} */ kept, /** @type {string} */ id, /** @type {number} */ nowS, /** @type {number} */ e) => egRcFold((Array.isArray(kept) ? kept : []).filter((x) => x?.id !== id), [{ id, spent: 1, e, r: '' }], nowS);
+/** The receipts an account's hello is handed: every held one still good. Pure. */
+export const egRcLive = (/** @type {any} */ kept, /** @type {number} */ nowS) => (Array.isArray(kept) ? kept : []).filter((x) => x && !x.spent && typeof x.r === 'string' && x.e > nowS).map((x) => x.r);
+/**
+ * A ROOM'S TOMBSTONE with order `ez` written (`why` 'void' with the receipt `r` it minted, or the breach's end) at `nowS`:
+ * kept EG_VOID_MAX_S from now. Pure - a new record.
+ * @param {any} done @param {string} ez @param {string} why @param {string|null} r @param {number} nowS
+ */
+export function egDoneWith(done, ez, why, r, nowS) {
+  const z = (Array.isArray(done?.z) ? done.z : []).filter((e) => Array.isArray(e) && e[0] !== ez);
+  return { until: nowS + EG_VOID_MAX_S, z: [...z, [ez, why, r ?? '']].slice(-EG_DONE_MAX) };
+}
+/** The tombstone's entry for order `ez` (`[ez, why, r]`), or null. */
+export const egDoneOf = (/** @type {any} */ done, /** @type {string} */ ez) => (Array.isArray(done?.z) ? done.z.find((e) => Array.isArray(e) && e[0] === ez) ?? null : null);
+/**
+ * MAY A ROOM VOID breach `B` on its opener's ask (EG_INTERNAL_VOID naming `B.ez`): only while nothing has begun - no call
+ * told out (`called`), no hall woken, no member entered, not ended. Otherwise the breach's own receipts settle its stake.
+ * @param {any} B
+ */
+export const egVoidable = (B) => !!B && !B.end && !B.called && !(B.wk > 0) && !Object.values(B.mem ?? {}).some((m) => m?.in);
+/** THE FORCE VOID: breach `B` was live when a `force` deploy stamped the Worker at `before` (ms) - opened before it, not
+ *  ended. */
+export const egForceVoided = (/** @type {any} */ B, /** @type {number} */ before) => Number.isSafeInteger(before) && before > 0 && !!B && !B.end && B.op < before;
+
+// ── EG-ZA: THE TICK (section 22, THE COST) ───────────────────────────────────────────────────────────────────────────
+/** A beat while a trial runs (the gate's BRAIN_TICK_MS - pinned equal), and otherwise (ms). */
+export const EG_BEAT_TRIAL_MS = 250;
+export const EG_BEAT_SLOW_MS = 1000;
+/** Does a trial run in breach `B` - its trial, or a closing whose fight still stands a foe (a Kyn Mimic's Lurker)? */
+export const egTrialRuns = (/** @type {any} */ B) => !!B && !B.end && (B.sg === 'trial' || (B.sg === 'closing' && (B.F?.bodies ?? []).some((t) => t.role !== EG_ROLE.obj && t.hp > 0 && !(t.fl & EG_FL.friend) && !(t.fl & EG_FL.fell))));
+/**
+ * WHEN BREACH `B`'s NEXT BEAT FALLS at `now` (`here`: a member's socket is in the room): EG_BEAT_TRIAL_MS while a trial
+ * runs with its company here; while the arch rises (`wait`) none until the open (`su`); otherwise EG_BEAT_SLOW_MS, or
+ * sooner at the stage's own end (`su`), never sooner than a trial's beat.
+ * @param {any} B @param {number} now @param {boolean} here
+ */
+export function egTickAt(B, now, here) {
+  if (B.sg === 'wait') return Math.max(now + EG_BEAT_TRIAL_MS, B.su);
+  if (here && egTrialRuns(B)) return now + EG_BEAT_TRIAL_MS;
+  return B.su > now ? Math.min(now + EG_BEAT_SLOW_MS, Math.max(now + EG_BEAT_TRIAL_MS, B.su)) : now + EG_BEAT_SLOW_MS;
 }
