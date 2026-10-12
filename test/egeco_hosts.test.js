@@ -13,7 +13,7 @@ const read = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 
 test('EG-E THE HOSTS (sections 15, 19, 20, 25.4): the claim with its character and the Weir Key restack; the Panoply sink at the Broker by its records; `/breach board`; the Reprieve\'s allies within its reach and the death saves held to a breach\'s next Redoubt; the auras quiet in a trial; the fight on the breach\'s corrected clock (mutants: the character dropped; the sink unpassed; the Redoubt never told; the auras drawn in a trial)', () => {
   const w = read('src/scenes/world.js'), c = read('src/scenes/egClient.js');
-  assert.match(w, /account: \{ \.\.\._accountEg, claim: \(r\) => _accountEg\.claim\(r, characterIdOf\(playerEntity\)\)\.then\(weirHeard\) \}/);
+  assert.match(w, /account: \{ \.\.\._accountEg, claim: \(r\) => _accountEg\.claim\(r, characterIdOf\(playerEntity\)\)\.then\(weirHeard\) \}, now: egNow, entity: playerEntity, player, cam,   \/\//, 'the client still handed its player, its body and its camera, before the line\'s words');
   assert.match(w, /panoply: _accountEg \? panoplyDeps : null,/);
   assert.match(w, /mint: \(p\) => panoplyPieceById\(p\)/);
   assert.match(w, /redoubt: \(\) => spireRedoubtTaken\(\),/);

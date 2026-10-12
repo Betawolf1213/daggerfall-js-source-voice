@@ -35,9 +35,18 @@
 //     sounds and lines and the first-time lines (ui/egBeats.js), the party rows (ui/egParty.js - the party panel's
 //     `setSpire`), the pad's d-pad and the touch buttons for the panel and the witness, the haptics, the danger palette
 //     and reduced motion (ui/egAccess.js), and THE RECAP whole (the last five kept).
+//   EG-F (2026-10-12, Mac: "I said I want everything"; sections 5, 6.3 and 6.4): THE ARCH AND THE CALL - the key's
+//     refusals in the page's order (scenes/egArch.js egKeyRefusal, over the host's facts), THE START WINDOW before any key
+//     is staked (ui/egStartWindow.js - the preflight `/v1/eg/starts`, its choice and Wager carried by the open), THE ARCH
+//     (scenes/egArch.js, the host's pool: the company's from the call, a stranger's from the cell - each fed here), THE
+//     CALL's horn, its one line and its prompt (scenes/egCall.js), the answer's portal at my feet - stepping into it is the
+//     admission - and the opener's step through the arch; the opener's landing before the arch; the late line.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember } from '../net/egLink.js';
+import { egKeyRefusal } from './egArch.js';   // EG-F: the key's refusals, in the page's order
+import { egCallPromptModel, soundEgHorn, EG_CALL_KEYS } from './egCall.js';   // EG-F: the call's prompt and horn
+import { importPublicKeyB64 } from '../net/identityToken.js';   // EG-F: the relay's public half, for a stranger's arch
 import { egHallOf, egCircleOfHall, egSlotOfHall, egSlotAt, egLocalX, egAtDoor, egPhase, egTimes, egCountText, EG_TEXT, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR } from '../net/egLaw.js';
 import { readEgReceipt } from '../net/egReceipt.js';
 import { dungeonToRealm } from '../net/sdBrain.js';
@@ -90,6 +99,8 @@ export const EG_END_TEXT = Object.freeze({
   rehearsal: EG_TEXT.rehearsalDone, void: 'The breach failed to hold. Your key is returned.', forsake: 'You forsake the breach.',
   seal: 'The way down is sealed. The halls are yours.',
 });
+/** EG-F: no arch's clearing (one empty list, so the host's memo of the clearing set holds). */
+const NO_CLEARS = Object.freeze([]);
 /** A gift's words (`egot`). */
 /** EG-FULL LAYER THREE: the relay's object types by number (net/egLords.js EG_OBJ) - the spans read Grath's islands and
  *  the false walls by name (systems/spireKit.js spireObjs). */
@@ -139,10 +150,20 @@ function requestId() {
  *   say: (text: string) => void, mid?: (text: string) => void, veil?: () => any, site: () => any, wire: () => any, landAt: (l: any) => boolean,
  *   hurt: (n: number) => void, store?: any, saved?: () => void, hudHidden?: () => boolean, fight?: (link: any) => any, renderer?: any, audio?: any,
  *   peers?: () => { sub: string, pos: number[] }[], heal?: ((p: number, why: string) => void) | null,
- *   paid?: ((c: any, data: any) => void) | null, win?: any, redoubt?: ((rd: number) => void) | null, board?: (() => any) | null }} deps
+ *   paid?: ((c: any, data: any) => void) | null, win?: any, redoubt?: ((rd: number) => void) | null, board?: (() => any) | null,
+ *   keyFacts?: (() => any) | null, startWindow?: ((o: any) => any) | null, party?: () => { sub: string, name: string }[], questDue?: () => boolean,
+ *   callPortal?: any, arches?: any, prompt?: any, windowUp?: () => boolean, feet?: () => (number[]|null), probes?: () => any }} deps
+ *   EG-F: `keyFacts` the host's facts for the key's refusals (scenes/egArch.js egKeyRefusal - `site` the arch's site on the
+ *   wire where it would stand, null with no room); `startWindow` opens the start window (ui/egStartWindow.js; none: Hall 1
+ *   at once); `party` my party's members; `questDue` whether a quest falls due inside the last word; `callPortal` the
+ *   call's portal (scenes/egCall.js createEgCallPortal; none: the answer steps in at once); `arches` the arch pool
+ *   (scenes/egArch.js); `prompt` the call's strip; `windowUp` a window over the screen; `feet` my feet in the scene;
+ *   `probes` the ground and wall probes a portal's place asks.
  */
 export function createEgClient({ modes, online, hub, account, now: hostNow, entity, player, cam, say, mid = () => {}, veil = () => null, site, wire, landAt, hurt,
-  store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null, peers = () => [], heal = null, paid = null, win = globalThis.window, redoubt = null, board = null }) {
+  store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null, peers = () => [], heal = null, paid = null, win = globalThis.window, redoubt = null, board = null,
+  keyFacts = null, startWindow = null, party = () => [], questDue = () => false, callPortal = null, arches = null, prompt = null, windowUp = () => false,
+  feet = () => null, probes = () => ({}) }) {
   // EG-H1: THE SHARED CLOCK, CORRECTED (section 10.8; net/egClock.js) - the host's clock until the room has answered a ping,
   // then this machine's wall clock plus the median offset; the breach's link, its fight and every time here read it
   const clock = egClockNew();
@@ -172,6 +193,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   let portalSet = null;
   const portals = () => (portalSet ??= renderer?.createBillboardBatch ? createPortalSet({ renderer, audio }) : null);
   const inSpire = () => modes()?.egHallBreach?.() != null;
+  /** EG-F: the call heard (its horn sounded once a breach), my answer under way (the portal open for it, or the step), the
+   *  start window standing, the relay's public half (base64url) and its import. */
+  let hornFor = '', answeredFor = '', startWin = null, rk = null, rkKey = null;
 
   // ── the keys ────────────────────────────────────────────────────────────────────────────────────────
   /** The pack's keys set to the account's balance (a face, never the count). */
@@ -184,29 +208,34 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (!me() || account?.guest?.()) return;
     const a = await account.keys();
     if (a?.ok) restack(a.data?.keys);
+    if (a?.ok && typeof a.data?.rk === 'string') rk = a.data.rk;   // EG-F: the relay's public half
   }
-  /** Why the key will not turn here, or null. */
+  /** EG-F: THE RELAY'S PUBLIC HALF, imported once it is heard (a stranger's arch is believed only when the hub's signature
+   *  over it verifies - net/egCallSig.js). Null until then. */
+  async function relayKey() {
+    if (!rk) return null;
+    if (rkKey?.b64 !== rk) rkKey = { b64: rk, key: importPublicKeyB64(rk, { subtle: globalThis.crypto.subtle }).catch(() => null) };
+    return rkKey.key;
+  }
+  /** Why the key will not turn here, or null - EG-F: the page's eight in its order (scenes/egArch.js egKeyRefusal), over
+   *  the host's facts (the holds, the water, a boat, a location's footprint, a Dagon's Breach near, the arch's room) and
+   *  this client's own (online, a guest, a breach held, an open in flight, the hub's road, an arch near). */
   function openRefusal() {
-    const M = modes();
-    if (!online()) return EG_TEXT.cold;
-    if (!me() || account?.guest?.()) return EG_TEXT.guest;
-    if (inSpire()) return EG_TEXT.held;
-    if ((M?.mode ?? 'exterior') !== 'exterior') return EG_TEXT.sky;
-    if (opening) return EG_TEXT.opening;
-    const E = link.state();
-    if (E.call && egPhase({ openedAt: E.call.op }, now()) !== 'ended' && E.call.co.some((r) => r[0] === me())) return EG_TEXT.held;
-    if (!hub()?.egOk) return EG_TEXT.shut;
-    return null;
+    const M = modes(), E = link.state(), f = keyFacts?.() ?? null;
+    const callHeld = !!E.call && egPhase({ openedAt: E.call.op }, now()) !== 'ended' && E.call.co.some((r) => r[0] === me());
+    return egKeyRefusal({ ...(f ?? {}), online: !!online(), guest: !me() || !!account?.guest?.(), exterior: (M?.mode ?? 'exterior') === 'exterior' && !inSpire(),
+      held: inSpire() || callHeld, opening: !!opening, shut: !hub()?.egOk, nearArch: !!arches?.near?.(feet()), room: f ? !!f.site : true });
   }
-  /** THE OPEN: a key staked (or the Rehearsal taken) and its order handed to the hub. */
-  async function open(rh) {
+  /** THE OPEN: a key staked (or the Rehearsal taken) and its order handed to the hub. EG-F: from the start window's
+   *  choice - its start Redoubt `ew` and its Wager `wg` - and the arch's site where it will stand (the host's facts). */
+  async function open(rh, { ew = 0, wg = [] } = {}) {
     const rq = requestId();
     opening = { rq, rh, z: null, site: null, tries: 0, sentAt: -Infinity };
-    const a = await account.open(rq, rh);
-    if (!a?.ok) { opening = null; say(egRefusalText(a?.error)); return false; }
+    const a = await account.open(rq, rh, { ew, wg });
+    if (!a?.ok) { opening = null; say(a?.error === 'start' ? EG_TEXT.notStart(ew) : egRefusalText(a?.error)); return false; }
     restack(a.data?.keys);
     opening.z = a.data?.order ?? null; opening.b = a.data?.b ?? null;
-    opening.site = wire();
+    opening.site = keyFacts?.()?.site ?? wire();
     if (!opening.z || !opening.site) { opening = null; say(EG_TEXT.shut); return false; }
     sendOpen();
     return true;
@@ -223,13 +252,32 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (E.call && E.call.co.some((r) => r[0] === me()) && egPhase({ openedAt: E.call.op }, now()) === 'open' && !inSpire()) { answer(); return EG_TEXT.opens; }
     const no = openRefusal();
     if (no) return no;
+    if (startWindow) { askStart(); return ''; }   // EG-F: the start window asks where first (its preflight's answer opens it)
     open(false);
     return EG_TEXT.opening;
   }
+  /** EG-F: THE START WINDOW (section 5) - the preflight (`/v1/eg/starts`: each member of my party's starts, my keys, the
+   *  day's Rehearsal), then the window; its choice is the open, every refusal asked again when it lands. */
+  async function askStart() {
+    if (startWin) return;
+    startWin = { asking: true };
+    const members = [{ sub: me(), name: '' }, ...(party() ?? []).filter((m) => m && m.sub !== me())].slice(0, 8);
+    let a = null;
+    try { a = await account.starts?.(members.map((m) => m.sub)); } catch { a = null; }
+    if (!a?.ok) { startWin = null; say(egRefusalText(a?.error)); return; }
+    if (typeof a.data?.rk === 'string') rk = a.data.rk;
+    restack(a.data?.keys);
+    const mine = (party() ?? []).find((m) => m.sub === me());
+    if (mine) members[0].name = mine.name;
+    startWin = startWindow({ keys: a.data?.keys ?? 0, me: me(), members, starts: a.data?.starts ?? {}, rehearsal: !!a.data?.rehearsal, questDue: !!questDue(), say,
+      onChoose: (c) => { startWin = null; const no2 = openRefusal(); if (no2) { say(no2); return; } open(!!c.rh, { ew: c.ew | 0, wg: c.wg ?? [] }); say(EG_TEXT.opening); },
+      onCancel: () => { startWin = null; } }) ?? null;
+  }
 
   // ── the call and the answer ───────────────────────────────────────────────────────────────────────────
-  /** THE ANSWER: my admission, and the step under the veil into the first circle. */
-  async function answer() {
+  /** THE ANSWER: my admission, and the step under the veil into the first circle. EG-F: `viaArch` the arch stepped through
+   *  (the opener's door, and any of the company's who walked to it) - no portal asked. */
+  async function answer(viaArch = false) {
     const E = link.state(), c = E.call, M = modes(), t = now();
     if (!c) { say('No breach calls you. A Weir Key opens one; /breach rehearse opens the day\'s Rehearsal.'); return false; }
     if (!c.co.some((r) => r[0] === me())) { say(EG_TEXT.outside(c.o)); return false; }
@@ -243,20 +291,44 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     try {
       if (admit?.b !== c.b) {
         const a = await account.admit(c.b);
-        if (!a?.ok) { say(egRefusalText(a?.error)); return false; }
+        if (!a?.ok) { say(a?.error === 'start' ? EG_TEXT.notStart(c.ew ?? 0) : egRefusalText(a?.error)); return false; }   // EG-F: no carries
         admit = { b: c.b, z: a.data?.order ?? null };
         inFor = -1;
       }
       if (!admit.z) { say(EG_TEXT.shut); return false; }
-      placedH = 0; downH = 0; endSeen = null; rdSeen = 0; leaving = false;
-      const went = await modes()?.stepThroughFire?.(() => modes()?.enterEgHall?.({ b: c.b, seed: c.seed, c: 1, geo: E.geo ?? 0, site: site() }), 'hourIn');
-      if (!went) say(EG_TEXT.shut);
-      return !!went;
+      // EG-F (section 6.4): THE PORTAL AT MY FEET - stepping into it is the admission (the arch's own step is one already)
+      if (callPortal && !viaArch) {
+        const f = feet();
+        const p = f ? callPortal.open(f, cam?.yaw ?? 0, probes()) : { refused: 'ground' };
+        if (!p.at) { say(EG_TEXT.room); return false; }
+        answeredFor = c.b;
+        return true;
+      }
+      return await stepIn(c, E);
     } finally { answering = false; }
+  }
+  /** THE STEP IN: under the veil into the breach's first circle (EG-F: the start's - a deeper start's own), the opener
+   *  landed before the arch when they come out (section 6.4), everyone else where they answered from. */
+  async function stepIn(c, E = link.state()) {
+    placedH = 0; downH = 0; endSeen = null; rdSeen = 0; leaving = false;
+    answeredFor = c.b;
+    const landing = c.os === me() ? arches?.landing?.(c.b) ?? null : null;
+    const went = await modes()?.stepThroughFire?.(() => modes()?.enterEgHall?.({ b: c.b, seed: c.seed, c: (c.ew ?? 0) + 1, geo: E.geo ?? 0, site: site(), ...(landing ? { landing } : {}) }), 'hourIn');
+    if (!went) { answeredFor = ''; say(EG_TEXT.shut); }
+    return !!went;
+  }
+  /** EG-F: the call's portal stepped into - my admission, the step under the veil. */
+  function portalEntered() {
+    const c = link.state().call;
+    callPortal?.clear?.();
+    if (!c || c.b !== admit?.b || inSpire()) return false;
+    stepIn(c);
+    return true;
   }
   /** A refusal the hub or the room said. */
   function refused(w) {
     if (opening && !inSpire() && w === 'the breach is closed' && opening.tries < EG_OPEN_TRIES) { opening.sentAt = Date.now() - EG_OPEN_RETRY_MS + 1000; return; }
+    if (w === 'the breach is closed' && answeredFor && link.state().call?.b === answeredFor) { say(EG_TEXT.late(link.state().call.o)); answeredFor = ''; callPortal?.clear?.(); return true; }   // EG-F: answered after the first hall woke - the late line, said instead
     if (w === 'the order is spent' || w === 'the order is not yours') admit = admit ? { ...admit, z: null } : null;
   }
 
@@ -657,7 +729,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         const key = `${w.b}`;
         if (callSaid !== key && w.co.some((r) => r[0] === me())) {
           callSaid = key;
-          say(w.os === me() ? `Your ${w.rh ? 'Rehearsal' : 'Elite Breach'} rises. It opens in ${egCountText(egTimes({ openedAt: w.op }).openAt - now())} - type /breach then to step through.` : `${EG_TEXT.call(w.o || 'Your company')} It opens in ${egCountText(egTimes({ openedAt: w.op }).openAt - now())} - type /breach then to step through.`);
+          // EG-F (section 6.4): the horn, and ONE line - "<opener> opens an Elite Breach." (the prompt says the rest)
+          if (hornFor !== key) { hornFor = key; soundEgHorn(audio); }
+          say(w.os === me() ? `Your ${w.rh ? 'Rehearsal' : 'Elite Breach'} rises. It opens in ${egCountText(egTimes({ openedAt: w.op }).openAt - now())} - type /breach then to step through.` : EG_TEXT.call(w.o || 'Your company'));
         }
       }
       if (w.k === 'fall' && w.s !== me()) say(`${EG_TEXT.falls(w.n || 'A companion')}${w.fin ? ' The Spire will not take them back.' : ''}`);
@@ -711,8 +785,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** A key while the Spire's panel stands (1-6 a card or an option, Y/N a yes-or-no choice, Enter closes the recap) or
      *  while I watch (Q and E change whom). Answers whether it took the key. */
     key(e) {
-      if (!inSpire() && !recap) return false;
       const code = e?.code ?? '';
+      if (!inSpire() && EG_CALL_KEYS.includes(code) && this.promptModel()?.answerable) { answer(); return true; }   // EG-F: the call's prompt - Enter, the pad's A
+      if (!inSpire() && !recap) return false;
       if (recap && (code === 'Enter' || code === 'Escape' || EG_PAD_DIRS[code] === 'up')) { recap = null; drawEgPanel(null); return true; }
       if (!inSpire()) return false;
       const E = link.state(), o = online(), m = /^Digit([1-6])$/.exec(code);
@@ -765,6 +840,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         if (c != null && !o?.sendEg?.('clk', { c, h: egClockHalfRtt(clock) })) clock.sent.delete(c);
         if (!witness && entity.health > 0 && entity.maxHealth > 0 && egMemberOf(E, me())?.in) sayBody(entity.health / entity.maxHealth, Date.now());
       }
+      this.callFrame(t);   // EG-F: the arch, the call's prompt and portal, the sight lines
       if (inSpire()) {
         spireFrame(E, t);
         pushStep();
@@ -855,7 +931,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** The pages of the Annals this breach has given me (their numbers). */
     annals: () => [...annals].sort((a, b) => a - b),
     /** Online gone: every piece put away (the call kept - it is the hub's). */
-    away() { fight?.leave(); dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } },
+    away() { fight?.leave(); dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } callPortal?.clear?.(); prompt?.draw?.(null); startWin?.close?.(); startWin = null; },   // EG-F: and the call's portal, its prompt, the start window
     /** EG-H1: the breach's shared clock (relay ms) and its offset to this machine's wall clock (null before the room has
      *  answered a ping) - the host's spans and its fight read it (scenes/world.js's `egNow`, the spans' anchored clock). */
     sharedNow: () => now(),
@@ -864,6 +940,48 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     ridePl: () => ridePl(),
     /** Registered as the key's opener (systems/weirKey.js). */
     claimKeys() { setWeirKeyOpener(() => useKey()); },
+    // ── EG-F: THE ARCH AND THE CALL (sections 5, 6.3, 6.4) ──────────────────────────────────────────────────────────
+    /** The call's prompt as it stands now (scenes/egCall.js egCallPromptModel), or null. */
+    promptModel() {
+      const E = link.state();
+      return egCallPromptModel({ call: E.call, me: me(), now: now(), inSpire: inSpire(), answered: !!answeredFor && answeredFor === E.call?.b && (!!callPortal?.standing?.() || answering || inSpire()),
+        exterior: (modes()?.mode ?? 'exterior') === 'exterior', windowUp: !!windowUp(), wk: E.b === E.call?.b ? E.wk : 0 });
+    },
+    /** One frame of the door: the company's arch fed from the call (to its wake and end), the call's portal stepped into
+     *  or not, the prompt drawn, the arches' sight lines said. */
+    callFrame(t = now()) {
+      const E = link.state();
+      if (answeredFor && E.call?.b !== answeredFor && !inSpire()) answeredFor = '';
+      arches?.call?.(E.call, { wk: E.b === E.call?.b ? E.wk : 0, end: E.end && E.b === E.call?.b ? t : 0 });   // the pool keeps it to its life
+      if (callPortal) {
+        const f = !inSpire() && (modes()?.mode ?? 'exterior') === 'exterior' ? feet() : null;
+        callPortal.tick(f);   // a portal closed unused leaves the prompt to stand again (promptModel's `answered` asks it)
+      }
+      for (const line of arches?.sights?.(feet()) ?? []) say(line);
+      prompt?.draw?.(this.promptModel());
+    },
+    /** The arch's door for the company (scenes/egArch.js onStep): its open fire stepped through, or pressed. */
+    archStep(b) { const c = link.state().call; if (c && c.b === b && !inSpire()) answer(true); },
+    /** The call's portal stepped into (scenes/egCall.js createEgCallPortal onEnter). */
+    portalEntered,
+    /** The relay's public half, imported (the arch pool's `verifyKey`). */
+    relayKey,
+    /** THE TIMERS ROW (systems/eventTimers.js `elite`): the call I hold - its opening, a Rehearsal's, the hall the company
+     *  stands in and the count's end (held: now plus what is left) - or null. */
+    timers() {
+      const E = link.state(), c = E.call;
+      if (!c || !c.co.some((r) => r[0] === me())) return null;
+      const deep = E.b === c.b && E.h > 0;
+      return { op: c.op, rh: c.rh, h: deep ? E.h : 0, until: deep ? (E.ca > 0 ? E.ca + E.cl : now() + E.cl) : null, end: E.b === c.b ? E.end : null };
+    },
+    /** The arches' clearings (world/gateClearance.js gateClearSet's members). */
+    archClears: () => arches?.clears?.() ?? NO_CLEARS,
+    /** My arch on the compass, and on the held map. */
+    archCompass: () => arches?.compass?.() ?? null,
+    archMapMark: () => arches?.mapMark?.() ?? null,
+    /** My arch for my foes frame (`ea`), and a stranger's heard on theirs. */
+    archWord: (near) => arches?.word?.(near) ?? null,
+    archHeard: (peer, raw, from) => arches?.heard?.(peer, raw, from) ?? Promise.resolve(false),
     restack,
     // EG-G1 (section 27): the seams the host reads
     /** The party rows in the party panel's terms (ui/egParty.js egPartyDeco), or null outside a breach. */

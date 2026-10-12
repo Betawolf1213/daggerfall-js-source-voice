@@ -68,6 +68,7 @@
 //   POST /v1/eg/sink     { piece } -> { ok, piece, week, purse }   (EG-E1: the Broker's Panoply piece, once a week for 20 embers - guest 403, piece 400, bought / short 409)
 //   POST /v1/eg/board    {} -> { ok, season, descent: { alone, few, company }, depths, deepest, proclamation, best }   (EG-E2: the Elite Breach's three boards - egHonours.js)
 //   POST /v1/eg/find     { tier } -> { found, keys, asks }   (EG-E3: a dungeon elite's find - 'super' | 'elite' | 'regular', the service's die, 6 asks a tier a day, 2 keys a week)
+//   POST /v1/eg/starts   { subs } -> { starts: { [sub]: [w, ..., 0] | null }, keys, rehearsal, rk }   (EG-F: the start window's preflight - which starts each member may make)
 //   POST /v1/gate/claim  { receipt, region?, character? } -> { recorded, stones, closed, seat? }   (WB12d: the row's embers, AUDIT WB12d A4; SEAT1b: `seat` the kill's influence)
 // MARKS1, Marks - an account's alone, behind MARKS_OPEN (marks.js); `rid` the act's own id:
 //   POST /v1/marks/balance {}                               -> { balance, today, bank }
@@ -211,6 +212,7 @@ import { claimSd, sdRecordOf } from './sds.js';   // SD9b: the Hours broken
 import { egKeysOf, openEg, admitEg, claimEg, rollWeirKey, findEg } from './eg.js';   // EG-PLAY: the Elite Breach - the Weir Keys, the open, the admission, the claim; EG-E3: a dungeon elite's find
 import { egBoardOf, withEgHonours } from './egHonours.js';   // EG-E2: the Elite Breach's boards, and Spire Champion on the row
 import { egSink } from './egEconomy.js';   // EG-E1: the Broker's Panoply sink
+import { startsEg } from './egStarts.js';   // EG-F: the start window's preflight
 import { readReceipt } from '../../src/net/gateReceipt.js';   // EG-PLAY: a recorded kill's rite (`r`), for its Weir Key's odds
 /** EG-PLAY: did the fighter who carries this gate receipt break the rite (its `r`)? Read after the claim verified it. */
 const readGateRite = (r) => readReceipt(r)?.r === 1;
@@ -401,6 +403,7 @@ const EG_STATUS = Object.freeze({
   guest: 403, 'not-yours': 403, unproven: 403,
   live: 409, short: 409, rehearsed: 409, spent: 409, capped: 409,   // EG-E3: a find past its day's asks
   bought: 409,   // EG-E1: the week's Panoply piece already bought
+  start: 403,   // EG-F: a start the account may not make (no carries)
 });
 const MARKS_STATUS = Object.freeze({
   'marks-need-account': 403, 'marks-closed': 403, 'marks-young': 403, 'not-developer': 403, 'guild-rank': 403, 'guilds-need-account': 403,
@@ -1142,7 +1145,8 @@ const service = {
       if (path.startsWith('/v1/eg/')) {
         if (request.method !== 'POST') return no('method', 405, origin);
         const act = {
-          '/v1/eg/keys': async () => egKeysOf(ctx, who.player),
+          '/v1/eg/keys': async () => ({ ...(await egKeysOf(ctx, who.player)), rk: String(env.GATE_PUBLIC_KEY ?? '') || null }),   // EG-F: and the relay's public half - a stranger's arch verified (egStarts.js)
+          '/v1/eg/starts': async () => startsEg(ctx, who.player, body, String(env.GATE_PUBLIC_KEY ?? '') || null),   // EG-F: the start window's preflight
           '/v1/eg/open': async () => openEg(ctx, who.player, body, await signingKey(env, subtle)),
           '/v1/eg/admit': async () => admitEg(ctx, who.player, body, await signingKey(env, subtle)),
           // EG-E1: what a Redoubt pays - the Marks' switch (`env`) and the claiming character, its guild's deed
@@ -1154,7 +1158,7 @@ const service = {
         if (!act) return no('not-found', 404, origin);
         const r = await act();
         if ('error' in r) return json({ error: r.error, ...(r.why ? { why: r.why } : {}), ...(typeof r.b === 'string' ? { b: r.b } : {}), ...(Number.isSafeInteger(r.keys) ? { keys: r.keys } : {}),
-          ...(typeof r.piece === 'string' ? { piece: r.piece } : {}), ...(Number.isSafeInteger(r.purse) ? { purse: r.purse, price: r.price } : {}) }, EG_STATUS[r.error] ?? 400, origin);   // EG-E1: the sink's - which piece, the purse and the price
+          ...(Number.isSafeInteger(r.w) ? { w: r.w } : {}), ...(typeof r.piece === 'string' ? { piece: r.piece } : {}), ...(Number.isSafeInteger(r.purse) ? { purse: r.purse, price: r.price } : {}) }, EG_STATUS[r.error] ?? 400, origin);   // EG-E1: the sink's - which piece, the purse and the price
         if (path === '/v1/eg/claim' && r.recorded === true && r.q === 'w' && r.paid === true) await grantSpoils(ctx.db, who.player.id);   // INT5: a signed win's spoils, the budget's fill (EG-E1: a Redoubt the week pays)
         return json(r, 200, origin);
       }

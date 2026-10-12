@@ -31,7 +31,7 @@
 //
 // Pure: a record and a beat in, frames out. Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT_MS, EG_CLOSING_SPAN_MS, EG_CLOSING_COUNT_MS, EG_STAIR_HOLD_MS, EG_REST_MS,
-  EG_WAKE_RING_MS, EG_ABSENT_TRIAL_MS, EG_LAST_WORD_MS, EG_REDOUBT_HOLD_MS, EG_COUNT_CAP_MS, egHallOf, egCircleOfHall, egFirstHallOf, egTimes, egAdmits, egCountNew, egCountLeft, egCountRun, egCountHold,
+  EG_WAKE_RING_MS, EG_ABSENT_TRIAL_MS, EG_LAST_WORD_MS, EG_REDOUBT_HOLD_MS, EG_COUNT_CAP_MS, egHallOf, egCircleOfHall, egFirstHallOf, egStartHall, egTimes, egAdmits, egCountNew, egCountLeft, egCountRun, egCountHold,
   egInHall, egLocalX, egOnArrive, egAtDoor, egOnFight, egSpecDigest, egGeoOf, egSeed, egProclamationOf, egKeepOnFight, EG_VOID_Y, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR } from './egLaw.js';
 import { EG_ROLE, EG_FL, EG_GONE, EG_STATE_EVERY_MS, egFightNew, egFightState, egCarry, egMovesOut, egHpOut, egBlowsStep, egHitBody, egGone, egHas, egSetFl, egBodiesOf, egBodyById, egHpTeam, egRaise, egWalk, egAim, egTethersOut, egMarksOut, egStruck } from './egBodies.js';
 import { EG_KIND, egLegionStep, egLegionRaise, egWaveKinds, egWaveSize, egAddSlain, egSquad, egFromBehind } from './egLegion.js';
@@ -212,7 +212,8 @@ export function egStateOf(B, now) {
     dc: egDecreesInForce(B), pr: B.pr ?? '', wg: [...(B.wg ?? [])], td: B.tide ?? '', sr: [...(B.strata ?? [])], geo: egGeo(B),
     ms: Object.entries(B.mem).filter(([, m]) => m.in).map(([sub, m]) => egRunOf(sub, m)),
     ca2: B.cache ? B.cache.k : '', mm: B.mementos.map((q) => [q.s, q.h, Math.round(q.x * 100) / 100, Math.round(q.z * 100) / 100, q.by ?? '']),
-    rp: Math.round(B.resp), sp: B.sur, as: (B.asks ?? []).map((a) => [a.q, [...a.o], a.until]) };
+    rp: Math.round(B.resp), sp: B.sur, as: (B.asks ?? []).map((a) => [a.q, [...a.o], a.until]),
+    ...(B.site ? { site: B.site } : {}) };   // EG-F (section 6.3): the arch's site, the room's to keep - the cast-out's landing with the arch gone
 }
 /** The hall's fight's whole word (`efs`), or null when it holds none. */
 export function egFightStateOf(B, now = Date.now()) { return B.F ? egFightState(B.F, now) : null; }
@@ -755,7 +756,7 @@ export function egStep(B, now, bodies, rng) {
   asksStep(B, now, rng, out);
   const T = egTimes(clockRec(B)), alive = bodies.filter((b) => { const m = B.mem[b.sub]; return m && m.in && m.alive && !m.home && !b.dead; });
   if (B.sg === 'wait') {
-    if (now >= B.su) { B.h = 1; B.sg = 'arrive'; B.sa = now; B.su = T.admitUntil; B.pulledAt = now; out.push(egStageWord(B, now)); }
+    if (now >= B.su) { B.h = egStartHall(B.ew); B.sg = 'arrive'; B.sa = now; B.su = T.admitUntil; B.pulledAt = now; out.push(egStageWord(B, now)); }   // EG-F: a deeper start's first hall (section 16.6)
     return out;
   }
   const spec = specOf(B);

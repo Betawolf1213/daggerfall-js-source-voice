@@ -5480,6 +5480,8 @@ export const egCallKey = (sub) => `egcall:${sub}`;
 const EG_ORDER_RE = /^v1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/;
 const EG_ORDER_MAX = 1024;
 const EG_RECEIPT_RE = /^e1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*$/;
+/** EG-F: the hub's signature over a call's arch fields on the wire (net/egCallSig.js signEgCall - 64 bytes, base64url). */
+export const EG_CALL_SG_RE = /^[A-Za-z0-9_-]{86}$/;
 const EG_RECEIPT_WIRE_MAX = 640;
 const EG_B_RE = /^[0-9a-f]{16}$/;
 /** A hall number's bound on the wire, a count's (ms - the last word), a company's size, a coordinate's (m), a body's
@@ -5497,8 +5499,10 @@ const egMs = (v) => v === 0 || gateMs(v);
 const egXZ = (v) => finite(v) && Math.abs(v) <= EG_XZ_MAX;
 const egId = (s) => typeof s === 'string' && ID_RE.test(s);
 const egText = (s, max = 64) => (typeof s === 'string' && s.length <= max ? sanitizeName(s) : null);
-/** Where a member answered from (the landing): its map pixel and its place there, the MapsFile frame. */
-function egSite(s) {
+/** Where a member answered from (the landing): its map pixel and its place there, the MapsFile frame. EG-F: the arch's
+ *  site - its pixel, its foot in that pixel's own frame (metres from the pixel's corner, the gate's spot's frame - the
+ *  height the world frame's) and its turn; exported for the cell's arch word (scenes/egArch.js validEgArchWord). */
+export function egSite(s) {
   if (!s || typeof s !== 'object' || !intIn(s.px, 0, 999) || !intIn(s.py, 0, 499)) return null;
   if (![s.x, s.y, s.z].every((v) => finite(v) && Math.abs(v) <= 1e7) || !finite(s.yaw) || Math.abs(s.yaw) > 8) return null;
   return { px: s.px, py: s.py, x: s.x, y: s.y, z: s.z, yaw: s.yaw };
@@ -5610,7 +5614,11 @@ export function validEgOut(m) {
       const co = egCompany(m.co, false), site = egSite(m.site);
       if (typeof m.b !== 'string' || !EG_B_RE.test(m.b) || typeof m.o !== 'string' || typeof m.os !== 'string' || !ID_RE.test(m.os)) return null;
       if (!intIn(m.seed, 0, 0xffffffff) || !gateMs(m.op) || !(m.rh === 0 || m.rh === 1) || !co || !site) return null;
-      return { k: 'call', b: m.b, o: sanitizeName(m.o), os: m.os, seed: m.seed, op: m.op, rh: m.rh, co, site };
+      // EG-F (section 6.4): the start Redoubt, the Wager, and the hub's signature over the arch's fields (net/egCallSig.js -
+      // '' unsigned: a stranger then stands no arch); a call that says none of them is EG-PLAY's, read as Hall 1, no Wager
+      const ew = intIn(m.ew, 0, 999) ? m.ew : 0, sg = typeof m.sg === 'string' && EG_CALL_SG_RE.test(m.sg) ? m.sg : '';
+      const wg = Array.isArray(m.wg) && m.wg.length <= 3 && m.wg.every((x) => intIn(x, 0, 31)) ? [...m.wg] : [];
+      return { k: 'call', b: m.b, o: sanitizeName(m.o), os: m.os, seed: m.seed, op: m.op, rh: m.rh, co, site, ew, wg, sg };
     }
     case 'st': {
       const st = egStage(m), co = egCompany(m.co, true);
@@ -5625,7 +5633,8 @@ export function validEgOut(m) {
       if (!sr || (m.pr != null && !/^[a-z]{0,16}$/.test(m.pr)) || (m.td != null && !/^[a-z]{0,16}$/.test(m.td)) || (m.ca2 != null && !/^[a-z]{0,8}$/.test(m.ca2))) return null;
       const wg = Array.isArray(m.wg) && m.wg.length <= 3 && m.wg.every((x) => intIn(x, 0, 31)) ? [...m.wg] : [];
       return { k: 'st', b: m.b, seed: m.seed, egv: m.egv, op: m.op, wk: m.wk, ...st, co, rd: m.rd, rh: m.rh, dg: m.dg, end: m.end ?? null,
-        dc, pr: m.pr ?? '', wg, td: m.td ?? '', sr, geo: m.geo ?? 0, ms, ca2: m.ca2 ?? '', mm, rp: m.rp ?? 0, sp: m.sp ?? 0, as };
+        dc, pr: m.pr ?? '', wg, td: m.td ?? '', sr, geo: m.geo ?? 0, ms, ca2: m.ca2 ?? '', mm, rp: m.rp ?? 0, sp: m.sp ?? 0, as,
+        site: egSite(m.site) };   // EG-F (section 6.3): the arch's site, kept by the room - a cast-out member with no landing of its own lands there
     }
     case 'sg': { const st = egStage(m); return st ? { k: 'sg', ...st } : null; }
     case 'co': { const co = egCompany(m.co, true); return co ? { k: 'co', co } : null; }

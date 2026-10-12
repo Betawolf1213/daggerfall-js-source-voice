@@ -154,3 +154,10 @@ CREATE TABLE IF NOT EXISTS eg_finds (
   FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS idx_eg_finds_week ON eg_finds (account, wk);
+-- EG-F (2026-10-12, the Elite Gates arc) - THE START WINDOW AND THE WAGER (bible/11-Multiplayer/Elite-Gates.md sections 5,
+-- 16.6 and 18). A stake keeps where its breach starts and what it wagered: `ew` the start Redoubt (0 Hall 1 - every
+-- admission is held to it, no carries), `wg` the Wager (its decrees' numbers joined by commas, '' none). Admissions find
+-- a breach's stake by its id.
+ALTER TABLE eg_stakes ADD COLUMN ew INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE eg_stakes ADD COLUMN wg TEXT NOT NULL DEFAULT '';
+CREATE INDEX IF NOT EXISTS idx_eg_stakes_b ON eg_stakes (b);

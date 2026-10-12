@@ -26,6 +26,7 @@ export const EG_STATE_EMPTY = Object.freeze({
   dc: Object.freeze([]), pr: '', wg: Object.freeze([]), td: '', sr: Object.freeze([]), geo: 0, ms: Object.freeze([]), ca2: '', mm: Object.freeze([]), rp: 0, sp: 0, as: Object.freeze([]),
   fight: EG_FIGHT_EMPTY, offer: null, tally: Object.freeze({}), asked: Object.freeze({}), got: Object.freeze([]), rises: Object.freeze([]), pings: Object.freeze([]), heals: Object.freeze([]), pz: null,
   falls: Object.freeze([]), redoubt: null, no: null, heardAt: 0,
+  site: null,   // EG-F: the arch's site as the room keeps it (the cast-out's landing with the arch gone)
 });
 /** How many falls, beats, gifts and pings the state keeps for the screen to say. */
 export const EG_FALLS_KEPT = 8;
@@ -96,6 +97,7 @@ export function foldEg(s, w, now) {
       const same = s.b === w.b;
       return { ...(same ? s : EG_STATE_EMPTY), call: same ? s.call : null, b: w.b, seed: w.seed, egv: w.egv, op: w.op, wk: w.wk, ...stageOf(w), co: w.co, rd: w.rd, rh: w.rh, dg: w.dg, end: w.end,
         dc: w.dc, pr: w.pr, wg: w.wg, td: w.td, sr: w.sr, geo: w.geo, ms: w.ms, ca2: w.ca2, mm: w.mm, rp: w.rp, sp: w.sp, as: w.as,
+        site: w.site ?? (same ? s.site : null),   // EG-F
         fight: same && s.fight.h === w.h ? s.fight : EG_FIGHT_EMPTY, heardAt: now };
     }
     case 'sg': return { ...s, ...stageOf(w), fight: w.h === s.fight.h ? s.fight : EG_FIGHT_EMPTY, offer: w.sg === 'rest' ? s.offer : null, heardAt: now };
@@ -137,7 +139,8 @@ export const egLivingCount = (s) => s.co.filter((c) => c[3] === 1 && c[4] === 0 
 /**
  * THE LINK: `word(w)` folds a word (a receipt handed on to `onReceipt`, a refusal said once), `state()`, `now()` (the
  * relay's clock), `clear()` (out of the breach: the state forgotten, the call kept while it stands).
- * @param {{ now: () => number, say?: (text: string) => void, onReceipt?: (r: string) => void, onRefused?: (word: string) => void }} deps
+ * @param {{ now: () => number, say?: (text: string) => void, onReceipt?: (r: string) => void, onRefused?: (word: string) => (boolean|void) }} deps
+ *   EG-F: `onRefused` answering true has said the refusal its own way, and the link says nothing more.
  */
 export function createEgLink({ now, say = () => {}, onReceipt = () => {}, onRefused = () => {} }) {
   let s = EG_STATE_EMPTY;
@@ -146,7 +149,7 @@ export function createEgLink({ now, say = () => {}, onReceipt = () => {}, onRefu
       if (!w) return;
       if (w.k === 'rcpt') { onReceipt(w.r); return; }
       s = foldEg(s, w, now());
-      if (w.k === 'no') { onRefused(w.m); say(w.m.charAt(0).toUpperCase() + w.m.slice(1) + '.'); }
+      if (w.k === 'no' && !onRefused(w.m)) say(w.m.charAt(0).toUpperCase() + w.m.slice(1) + '.');   // EG-F: a refusal the client words itself (the late line) is said once, in its words
     },
     state: () => /** @type {any} */ (s),
     now,

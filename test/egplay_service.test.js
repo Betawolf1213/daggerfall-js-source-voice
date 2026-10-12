@@ -27,7 +27,9 @@ const keysOf = (S, id) => S.env.DB._raw.prepare('SELECT eg_keys AS k FROM player
 test('EG-PLAY THE KEYS: a fresh account holds none and may not stake (`unproven`); its first breach closed rolls one, certain (the gate claim answers `weir`); the open stakes it and signs an egopen order the relay verifies; the same request id asked again is the same breach, never a second key (mutants: the open without the stake; the request id ignored; the order unsigned)', async (t) => {
   const { S, me } = await stood(t);
   const k0 = (await S.call('/v1/eg/keys', {}, me.secret)).body;
-  assert.deepEqual(k0, { keys: 0, live: null, rehearsal: true, proven: false, redoubts: 0, sink: { week: arenaWeekOf(T0), piece: null }, annals: 0, feats: {} }, 'PIN MOVED (EG-E2): and what the account keeps of the Spire - the Annals\' pages and each lord\'s feats (egHonours.js egRecordOf)');   // PIN MOVED (EG-E1): and the week's Panoply sink (server-account/src/egEconomy.js egSinkOf)
+  // PIN MOVED (EG-F, 2026-10-12): the keys' answer carries the relay's public half too (`rk`, GATE_PUBLIC_KEY - the key a
+  // stranger's arch is verified with, bible/11-Multiplayer/Elite-Gates.md section 6.3)
+  assert.deepEqual(k0, { keys: 0, live: null, rehearsal: true, proven: false, redoubts: 0, sink: { week: arenaWeekOf(T0), piece: null }, annals: 0, feats: {}, rk: S.env.GATE_PUBLIC_KEY }, 'PIN MOVED (EG-E2): and what the account keeps of the Spire - the Annals\' pages and each lord\'s feats (egHonours.js egRecordOf)');   // PIN MOVED (EG-E1): and the week's Panoply sink (server-account/src/egEconomy.js egSinkOf)
   assert.deepEqual((await S.call('/v1/eg/open', { rq: RQ }, me.secret)).body, { error: 'unproven' });
   const g = (await S.claim(me, 700, T0)).body;
   assert.deepEqual(g.weir, { found: true, keys: 1 }, 'the first breach closed gives the Spire once');
@@ -142,7 +144,7 @@ test('EG-PLAY THE PITY: five recorded gate kills in a row with no key, and the s
 
 test('EG-PLAY THE ORDERS AND THE RECEIPT, PURE: egopen and egadmit join ORDER_KINDS with their own exclusive fields (a stake carrying `eb` is refused, an admit carrying `rh`); e1 carries `q`, never an identity\'s `k`; the live bound is the law\'s last word (mutants: a breach field on another kind; the Rehearsal on an admit)', async () => {
   assert.ok(ORDER_KINDS.includes('egopen') && ORDER_KINDS.includes('egadmit'));
-  assert.deepEqual([...EG_ORDER_FIELDS], ['eb', 'ez', 'ew', 'rh']);
+  assert.deepEqual([...EG_ORDER_FIELDS], ['eb', 'ez', 'ew', 'rh', 'ewg'], 'PIN MOVED (EG-F): `ewg`, the open\'s Wager, joins its own fields');
   const base = { s: 'acct-1234', i: 100, e: 160 };
   assert.ok(orderValid({ o: 'egopen', ...base, eb: '0123456789abcdef', ez: 'z'.repeat(16), ew: 0, rh: 1 }));
   assert.ok(!orderValid({ o: 'egadmit', ...base, eb: '0123456789abcdef', ez: 'z'.repeat(16), ew: 0, rh: 1 }), 'an admission is never a Rehearsal');

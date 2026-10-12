@@ -362,6 +362,7 @@ export const ROUTES = new Set([
   '/v1/eg/board',   // EG-E2: the Elite Breach's three boards - the Descent, the Depths, the Deepest Redoubts
   '/v1/eg/sink',   // EG-E1: the Broker's Panoply piece, once an account a week, for 20 embers
   '/v1/eg/find',   // EG-E3: a dungeon elite's find - the service's die at the tier's odds, capped a day and a week
+  '/v1/eg/starts',   // EG-F: the start window's preflight - which starts each member of the opener's party may make
   // MARKS1: Marks (marks.js) - an account's balance, the Bank's exchange (Marks for gold, never the other way), a
   // guild's Marks treasury, and the developers' weekly report. Every one behind a session, an account's alone.
   // SILVER-FINDS: and a loot find (the service's dice, the day's count).

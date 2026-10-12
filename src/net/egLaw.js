@@ -151,6 +151,8 @@ export const egSlotOfHall = (h) => ((h - 1) % 5) + 1;
 export const egIsCourt = (h) => h % 5 === 0;
 /** A circle's first hall. */
 export const egFirstHallOf = (c) => 5 * (c - 1) + 1;
+/** EG-F (section 16.6): THE FIRST HALL OF A BREACH THAT STARTS AT REDOUBT `ew` - the next circle's first (Hall 1 for 0). */
+export const egStartHall = (ew) => (Number.isSafeInteger(ew) && ew > 0 ? egFirstHallOf(ew + 1) : 1);
 
 /** THE BANDS (section 7): every 25 halls the torn halls fall further down the legions' road - the Broken Galleries, the
  *  Soul Cairn, the Shade Perilous, and the Havoc Wellhead, which never ends. */
@@ -1085,6 +1087,28 @@ export const EG_TEXT = Object.freeze({
   near: 'Another breach stands near.',
   held: 'You hold a breach already.',
   shut: "The Spire's road is shut. Try again soon.",
+  // ── EG-F (2026-10-12; section 5): the key's refusals EG-PLAY's arm lacked (3, 4 and 8, in the page's order), the start
+  // window's words, the arch's plaque - scenes/egArch.js, ui/egStartWindow.js, scenes/egCall.js ──
+  holds: Object.freeze({ busy: 'You cannot turn the key right now.', duel: 'You cannot open a breach in a duel.', siege: 'The wards of this battle hold the key cold.',
+    enemies: 'You cannot open a breach with enemies nearby.', journey: 'You cannot open a breach while you travel.' }),
+  water: 'The key will not turn in the water.',
+  aboard: 'The key will not turn aboard a boat.',
+  within: (place) => `Not within ${place}.`,
+  room: 'There is no room for it here.',
+  startHall: 'Hall 1',
+  startRedoubt: (w, band) => `Redoubt ${w} - ${band}`,
+  stake: (n) => `Weir Keys: ${n} - one will be staked.`,
+  without: (names) => `Go without ${names}?`,
+  questDue: 'A quest falls due before the breach can close.',
+  notStart: (w) => `You have not taken Redoubt ${w} this season.`,
+  wager: (names) => (names ? `The Wager: ${names}` : 'The Wager: none'),
+  wagerDone: 'Done',
+  wagerFamily: 'The Wager takes one decree of a family.',
+  wagerFull: 'The Wager takes three decrees at most.',
+  plaqueSub: 'The Battlespire',
+  company: (opener) => `${opener}'s company`,
+  sight: 'an Elite Breach',
+  // ── end EG-F ──
   rust: 'The key turns to rust.',
   noKeys: 'You hold no Weir Key.',
   guest: 'Sign in to open an Elite Breach.',

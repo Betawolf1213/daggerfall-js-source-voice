@@ -147,8 +147,8 @@
   {
     "name": "GATE-CLEAR-the-old-clearing's-cost-forgotten-at-the-turn",
     "file": "src/world/gateClearance.js",
-    "old": "if (p.gateRefused || reachNearGate(p.wodReach, clear, p.px, p.py)) again.push(p);",
-    "new": "if (reachNearGate(p.wodReach, clear, p.px, p.py)) again.push(p);",
+    "old": "if ((gone && p.gateRefused) || come.some((c) => reachNearGate(p.wodReach, c, p.px, p.py))) again.push(p);",
+    "new": "if (come.some((c) => reachNearGate(p.wodReach, c, p.px, p.py))) again.push(p);",
     "tests": [
       "test/gateclear.test.js"
     ]

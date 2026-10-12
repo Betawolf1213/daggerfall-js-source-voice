@@ -708,28 +708,35 @@ export async function remainsDigest(/** @type {any[]} */ records, { subtle }) {
 /* ═══ EG-PLAY: THE ELITE BREACH'S ORDERS (bible/11-Multiplayer/Elite-Gates.md section 23) ══════════════════════════
  *
  * A breach is a real relay instance, so its door is the service's word, never the client's: `{o:'egopen', s, eb, ez,
- * ew, rh?, i, e}` - account `s` has staked a Weir Key (or spent the day's Rehearsal, `rh` 1) for breach `eb` under order
- * `ez`, starting at Redoubt `ew`; `{o:'egadmit', s, eb, ez, ew, i, e}` - account `s` may enter breach `eb`. The hub
- * opens the breach on the first; its room spends each `ez` once.
+ * ew, rh?, ewg?, i, e}` - account `s` has staked a Weir Key (or spent the day's Rehearsal, `rh` 1) for breach `eb` under
+ * order `ez`, starting at Redoubt `ew`, under the Wager `ewg` (EG-F: its decrees' numbers); `{o:'egadmit', s, eb, ez,
+ * ew, i, e}` - account `s` may enter breach `eb`, which starts at `ew`. The hub opens the breach on the first; its room
+ * spends each `ez` once.
  */
 /** An Elite Breach order's fields - no other order kind carries one. */
-export const EG_ORDER_FIELDS = Object.freeze(['eb', 'ez', 'ew', 'rh']);
+export const EG_ORDER_FIELDS = Object.freeze(['eb', 'ez', 'ew', 'rh', 'ewg']);   // EG-F: `ewg` the open's Wager (the page's `wg` is INT9's remains guild - REMAINS_FIELDS - so the order's rides `ewg`)
 /** A breach id, an order id, the deepest start Redoubt an order may name. */
 export const EG_ORDER_BREACH_RE = /^[0-9a-f]{16}$/;
 export const EG_ORDER_ZID_RE = /^[a-z0-9]{16,32}$/;
 export const EG_ORDER_START_MAX = 999;
+/** EG-F: the most decrees an open's Wager carries (net/egStartLaw.js EG_WAGER_MAX, pinned equal). */
+export const EG_ORDER_WAGER_MAX = 3;
 /** Whether a claim set's breach fields are an Elite Breach order's (`rh` an open's alone). */
 export function egOrderValid(c) {
   if (typeof c.eb !== 'string' || !EG_ORDER_BREACH_RE.test(c.eb) || typeof c.ez !== 'string' || !EG_ORDER_ZID_RE.test(c.ez)) return false;
   if (!Number.isSafeInteger(c.ew) || c.ew < 0 || c.ew > EG_ORDER_START_MAX) return false;
   if (c.rh !== undefined && !(c.o === 'egopen' && c.rh === 1)) return false;
+  // EG-F (section 18): THE WAGER on an open alone - one to EG_ORDER_WAGER_MAX decree numbers, distinct (the service
+  // holds their families apart - net/egStartLaw.js egWagerOf); never on a Rehearsal
+  if (c.ewg !== undefined && !(c.o === 'egopen' && c.rh === undefined && Array.isArray(c.ewg) && c.ewg.length >= 1 && c.ewg.length <= EG_ORDER_WAGER_MAX
+    && c.ewg.every((d) => Number.isSafeInteger(d) && d >= 0 && d <= 31) && new Set(c.ewg).size === c.ewg.length)) return false;
   return true;
 }
 /** EG-PLAY: MINT AN ELITE BREACH ORDER - `o` 'egopen' (the open: `rh` 1 for a Rehearsal) or 'egadmit' (a member's
  *  admission). */
-export async function mintEgOrder({ o, s, eb, ez, ew = 0, rh = undefined }, privateKey, { subtle, nowS, ttlS = ORDER_TTL_S }) {
+export async function mintEgOrder({ o, s, eb, ez, ew = 0, rh = undefined, ewg = undefined }, privateKey, { subtle, nowS, ttlS = ORDER_TTL_S }) {
   if (!Number.isSafeInteger(nowS)) throw new TypeError('mintEgOrder needs an integer epoch-seconds clock');
-  const claims = { o, s, eb, ez, ew, ...(rh === 1 ? { rh } : {}), i: nowS, e: nowS + ttlS };
+  const claims = { o, s, eb, ez, ew, ...(rh === 1 ? { rh } : {}), ...(Array.isArray(ewg) && ewg.length ? { ewg: [...ewg] } : {}), i: nowS, e: nowS + ttlS };   // EG-F: and the open's Wager
   if (!orderValid(claims)) throw new TypeError('mintEgOrder refused an order it could not verify');
   return sealClaims(claims, privateKey, subtle);
 }

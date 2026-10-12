@@ -133,6 +133,10 @@ export const REFUSALS = Object.freeze({
   // EG-E3: a dungeon elite's find (server-account/src/eg.js findEg)
   tier: 'That is no dungeon the Spire knows.',
   capped: 'The dungeons have given all they will today.',
+  // EG-F: the start window's refusals (server-account/src/eg.js, egStarts.js)
+  start: 'You may not start a breach that deep this season.',
+  wager: 'The Spire could not read that Wager.',
+  subs: 'The Spire could not read that company.',
   body: 'The account service could not read that request.',
   method: 'The account service refused that request.',
   // The two the ROUTER refuses with, before any account is looked at.
@@ -1385,7 +1389,10 @@ export function accountEg({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
   const post = waitedPost({ fetch, storage }, waitMs);
   return {
     keys: () => post('/v1/eg/keys', {}),
-    open: (rq, rh = false) => post('/v1/eg/open', { rq, ...(rh ? { rh: 1 } : {}) }),
+    // EG-F: the open carries the start window's choice - its start Redoubt `ew` and its Wager `wg` (none: Hall 1, no Wager)
+    open: (rq, rh = false, { ew = 0, wg = [] } = {}) => post('/v1/eg/open', { rq, ...(rh ? { rh: 1 } : {}), ...(ew > 0 ? { ew } : {}), ...(wg?.length ? { wg: [...wg] } : {}) }),
+    /** EG-F: the start window's preflight - which starts each member of my party (`subs`) may make. */
+    starts: (subs) => post('/v1/eg/starts', { subs: [...subs] }),
     admit: (b) => post('/v1/eg/admit', { b }),
     board: () => post('/v1/eg/board', {}),   // EG-E2: the three boards (server-account/src/egHonours.js egBoardOf)
     claim: (receipt, character = null) => post('/v1/eg/claim', { receipt, ...(typeof character === 'string' && character ? { character } : {}) }),   // EG-E1: the claiming character - its guild's deed

@@ -142,6 +142,7 @@ on:
       - "src/net/egSpanLaw.js"
       - "src/net/egFragLaw.js"
       - "src/net/egPay.js"
+      - "src/net/egStartLaw.js"
       - "src/net/sdMarks.js"
       - "src/net/postLaw.js"
       - "src/systems/wind.js"
