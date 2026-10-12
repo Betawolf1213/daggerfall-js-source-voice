@@ -11,6 +11,7 @@
 //         n the earning entrants   ew the start Redoubt   l the level the breach froze   rh 1 for a Rehearsal
 //         why how the member's breach ended ('x' alone)   i issued, epoch seconds   e expires (i + EG_RECEIPT_TTL_S)
 //         lk the Redoubt's lord, ft its feats ('w'; EG-E - net/egFeats.js: three bits)
+//         an the Annals' pages the member was given ('x'; EG-E2 - a bit a page, net/egAnnals.js)
 //
 // ONE KEY, NEVER CONFUSED: GATE_SIGNING_KEY signs it as it signs every relay receipt, and the version is inside the
 // signed bytes, so `e1` is refused by every other verifier and theirs by this one. The kind rides `q` - never `k`, an
@@ -28,6 +29,8 @@ export const EG_RECEIPT_MAX = 640;
 /** The kinds, and how a member's breach may end. */
 export const EG_RECEIPT_KINDS = Object.freeze(['w', 'x', 'v']);
 export const EG_END_WHYS = Object.freeze(['fall', 'home', 'tear', 'wipe', 'last', 'empty', 'void', 'gone', 'rehearsal']);
+/** EG-E2: the bound on an end's `an` - one bit a page, thirty pages (net/egAnnals.js EG_ANNALS). */
+export const EG_ANNALS_BITS_MAX = 2 ** 30 - 1;
 const enc = new TextEncoder();
 const dec = new TextDecoder();
 const BREACH_RE = /^[0-9a-f]{16}$/;
@@ -53,6 +56,9 @@ export function egReceiptValid(c) {
   // EG-E: a Redoubt's lord (`lk`) and its feats (`ft`, three bits - net/egFeats.js), where it says them
   if (c.lk !== undefined && (typeof c.lk !== 'string' || !/^[a-z]{1,16}$/.test(c.lk))) return false;
   if (c.ft !== undefined && !int(c.ft, 0, 7)) return false;
+  // EG-E2: the pages of the Annals the member was given (`an`, bit p page p of net/egAnnals.js's thirty), an end's alone -
+  // the account keeps them (server-account/src/egHonours.js, `players.eg_annals`)
+  if (c.an !== undefined && (c.q !== 'x' || !int(c.an, 0, EG_ANNALS_BITS_MAX))) return false;
   if (c.q === 'w') return int(c.w, 1, 19_999) && c.why === undefined;
   return EG_END_WHYS.includes(c.why) && c.w === undefined;
 }

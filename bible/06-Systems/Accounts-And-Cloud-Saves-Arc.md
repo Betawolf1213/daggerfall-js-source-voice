@@ -4014,6 +4014,24 @@ unique different version of the aura, a title named Hour's First, and each the g
   has 11 mutants, all dead.
 
 
+## EG-E2 — the Spire's titles and auras (2026-10-12, acct121, world197)
+
+The Elite Breach's honours (`bible/11-Multiplayer/Elite-Gates.md` section 19, THE HONOURS; its EG-E2 record at the end
+of section 20), added as every honour is: the ids last in `identityToken.js` `TITLES` and `AURAS` (the relay's bundle -
+`world197`, unshipped, rehashed), the branches in `titles.js` `titlesHeld`/`aurasHeld`, the words and colours in
+`ui/playerBadge.js` (`SPIRE_*`), a look each in `render/auraRing.js`. No glyph (the widest token stays inside the hello).
+- **Titles** (13): `spirewalker` Spirewalker, `beaconlighter` Beacon-Lighter, `kynbane` Kynbane, `unfallen` The Unfallen,
+  `lonebeacon` The Lone Beacon, `battlemage` Battlemage of the Spire, `wellheadwalker` Wellhead-Walker, `mastergallery`
+  Master of the Galleries, `mastercairn` Master of the Cairn, `mastershade` Master of the Shade, `masterwellhead` Master
+  of the Wellhead - the first eleven bits on `players.eg_honours` (`server-account/src/egHonours.js` `EG_HONOUR`), written
+  at a recorded Redoubt and held for good; `spirechampion` Spire Champion, read onto the row (`eg`) from `eg_champions`
+  through the season after a Descent bracket's top ten; `spirefirst` First of the Spire, by name (`EG_FIRST_HANDLES`,
+  empty until the first company takes Redoubt 10 - Hour's First's law).
+- **Auras** (3): `beaconlight` Beaconlight (Kynbane's: gold-white motes), `burningstair` The Burning Stair
+  (Wellhead-Walker's: falling embers), `firstlight` Firstlight (First of the Spire's: a dawn-white ring) - each with its
+  title, in its title's paint (`AURA_PAINT`), never sold.
+- Pins: `test/egeco_honours.test.js`; every pinned list of the titles and auras moved (PIN MOVED).
+
 ## RAID4 — the towns defended (2026-09-28, acct17)
 
 Mac, on World Events - Raiding Parties online: "3. We can also add renown and it's own atheric + armor sets". The relay

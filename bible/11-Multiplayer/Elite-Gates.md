@@ -2381,6 +2381,45 @@ heralds, it posts to the gate's webhook and falls back to the gate's role, pingi
 
 An opening is never heralded: a company's breach is its own.
 
+**EG-E2 record (2026-10-12): the feats, the Annals, the honours and the boards.** The account's half of section 19's
+honours and this section's boards, in `server-account/src/egHonours.js` (claim-time logic apart from `claimEg`, one seam
+an arm: its statements appended to the arm's batch, and a `w`'s new honours merged into the answer).
+- **The feats.** A `w` receipt's `lk` and `ft` kept a lord at a time (`eg_feats`, the bits OR'ed), never a Rehearsal's.
+  A band's lords' feats all held (`egBandMastered`) are its Master, written on the row by the claim that completes it.
+- **The Annals.** An end's `an` (a bit a page, `EG_ANNALS_BITS_MAX`; `net/egReceipt.js` takes it on an `x` alone, so
+  `world197` is rehashed) OR'ed into `players.eg_annals` - a Rehearsal's too: a page is lore, not pay. `/v1/eg/keys`
+  answers `annals` and `feats`.
+- **The honours** on `players.eg_honours` (`EG_HONOUR`), written at a recorded `w` and guarded by its own row: a Redoubt
+  at or past 2, 5, 10, 15 and 20 holds Spirewalker, Beacon-Lighter, Kynbane (and Beaconlight), Battlemage of the Spire
+  (`battlemage`) and Wellhead-Walker (and The Burning Stair); the Unfallen asks Redoubt 10 with `fl` 0 and `ew` 0; the
+  Lone Beacon `lb` 1; the four Masters (`mastergallery`, `mastercairn`, `mastershade`, `masterwellhead`). Spire Champion
+  (`spirechampion`) is read onto the row as the Iliac Champion is (`withEgHonours`, `withEgHonoursAll`: the token's and
+  the wardrobe's doors, a letter's, a notice's, a board's names); First of the Spire (`spirefirst`, with Firstlight) is a
+  list in config, `EG_FIRST_HANDLES`, empty until the first company takes Redoubt 10. The thirteen titles and three
+  auras join `TITLES` and `AURAS` last, each its words and colour (`ui/playerBadge.js` `SPIRE_*`), each aura a look of its
+  own kind (`render/auraRing.js`: 8 Beaconlight's beacons lit in turn and gold-white motes rising, 9 The Burning Stair's
+  burning steps turning down and its embers falling, 10 Firstlight's dawn-white ring). No glyph.
+- **The boards**, `/v1/eg/board` (`egBoardOf`): the ends' rows carry `n`, `ew`, `wg`, `fl`, `td`, `rh` and the season of
+  the receipt's issue. The Descent's brackets, its company rows (the accounts that ended one breach, the same company's
+  best breach alone, the flame when none fell), the Depths and the Deepest Redoubts, each `topWithMe` (now exported from
+  `arena.js`, and taking a row's test where a row is a company); the week's Proclamation in words, each Descent row its
+  breach's; the caller's best. Each bracket's top ten at a season's end are kept in `eg_champions` the first time a read
+  in the new season finds the last one unkept - no cron. `accountEg(...).board()` asks it.
+- **The board window** (`ui/egBoardWindow.js`): `egBoardLines`, the enhanced panel and the classic skin's two DFU
+  pickers; `openEgBoard` opens either. The host wires it.
+- **Departures, said plainly:**
+  - the Descent's seconds are the receipt's `td` where it says one, else its `t` (seconds to the member's end) - the
+    relay mints no `td` yet; a company is the accounts that claimed an end of one breach, not the receipt's `co`;
+  - a Descent row's Proclamation is its company's first claim's week, not the open's;
+  - THE SEAL's ranking (a run ranked by its seconds to the sealed Redoubt) is not special-cased;
+  - First of the Spire's mailbox send is not written (the list is empty);
+  - THE QUIET COMPANY: `render/auraRing.js` has no quiet seam - the hosts draw every aura they gather - so a cosmetic
+    aura still draws during a trial; the host owes it;
+  - the herald's lines for a new top of the Descent and for First of the Spire are not here.
+- **Pins.** `test/egeco_honours.test.js` (8) and `test/egeco_board.test.js` (5); `tools/mutants/egeco_honours.json`
+  (63, every one dead); every pinned list of the titles and auras moved (PIN MOVED); `RELAY_VERSION` `world197`
+  rehashed (unshipped); `ACCOUNT_VERSION` stays `acct121` (0111 extended, unshipped).
+
 ## 21. Integrity - what the relay judges
 
 The gate's trust law, kept whole, and where it was not enough for one life, widened:

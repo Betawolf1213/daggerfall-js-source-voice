@@ -317,8 +317,8 @@
   {
     "name": "SERAPHWINGS-the-vocabulary-without-the-wings",
     "file": "src/net/identityToken.js",
-    "old": "'shadowcloak', 'seraphwings', 'resonance', 'turninghour', 'firsthour']);",
-    "new": "'shadowcloak', 'resonance', 'turninghour', 'firsthour']);",
+    "old": "'shadowcloak', 'seraphwings', 'resonance', 'turninghour', 'firsthour', 'beaconlight', 'burningstair', 'firstlight']);",
+    "new": "'shadowcloak', 'resonance', 'turninghour', 'firsthour', 'beaconlight', 'burningstair', 'firstlight']);",
     "tests": [
       "test/seraphwings.test.js"
     ],
@@ -336,8 +336,8 @@
   {
     "name": "SERAPHWINGS-the-paint",
     "file": "src/ui/playerBadge.js",
-    "old": "shadowcloak: 'shadowfang', seraphwings: 'founder', resonance: 'crystalfist', turninghour: 'hourbreaker', firsthour: 'hoursfirst' });",
-    "new": "shadowcloak: 'shadowfang', seraphwings: 'developer', resonance: 'crystalfist', turninghour: 'hourbreaker', firsthour: 'hoursfirst' });",
+    "old": "shadowcloak: 'shadowfang', seraphwings: 'founder', resonance: 'crystalfist', turninghour: 'hourbreaker', firsthour: 'hoursfirst', beaconlight: 'kynbane', burningstair: 'wellheadwalker', firstlight: 'spirefirst' });",
+    "new": "shadowcloak: 'shadowfang', seraphwings: 'developer', resonance: 'crystalfist', turninghour: 'hourbreaker', firsthour: 'hoursfirst', beaconlight: 'kynbane', burningstair: 'wellheadwalker', firstlight: 'spirefirst' });",
     "tests": [
       "test/seraphwings.test.js"
     ],

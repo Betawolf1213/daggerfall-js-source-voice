@@ -61,10 +61,11 @@
 // WB5b, the gates closed. The caller is the account the receipt names:
 //   POST /v1/serpent/claim { receipt, character, name?, cid? } -> { recorded, slain, renown, spoils, order, marks? }   (SERPENT1: a sea serpent's receipt; SERPENT-SET: `marks` its silver where it recorded)
 //   POST /v1/sd/claim    { receipt } -> { recorded, slot?, title?, aura?, broken }   (SD9b: a Brass Remnant's receipt - an Hour broken; Hourbreaker and The Turning Hour rolled on its first write)
-//   POST /v1/eg/keys     {} -> { keys, live, rehearsal, proven, redoubts }   (EG-PLAY: the Weir Keys held, the live breach)
+//   POST /v1/eg/keys     {} -> { keys, live, rehearsal, proven, redoubts, annals, feats }   (EG-PLAY: the Weir Keys held, the live breach; EG-E2: the Annals' pages kept, each lord's feats)
 //   POST /v1/eg/open     { rq, rh? } -> { order, b, ez, keys, until, rh }   (EG-PLAY: a key staked - or the day's Rehearsal - and the open order signed; idempotent on `rq`)
 //   POST /v1/eg/admit    { b } -> { order, b }   (EG-PLAY: a member's admission order; one live breach an account)
-//   POST /v1/eg/claim    { receipt } -> { recorded, q, b, w?, keys }   (EG-PLAY: an `e1` - a Redoubt taken, a member's end, a void)
+//   POST /v1/eg/claim    { receipt } -> { recorded, q, b, w?, keys, honours? }   (EG-PLAY: an `e1` - a Redoubt taken, a member's end, a void; EG-E2: the titles a Redoubt newly granted)
+//   POST /v1/eg/board    {} -> { ok, season, descent: { alone, few, company }, depths, deepest, proclamation, best }   (EG-E2: the Elite Breach's three boards - egHonours.js)
 //   POST /v1/gate/claim  { receipt, region?, character? } -> { recorded, stones, closed, seat? }   (WB12d: the row's embers, AUDIT WB12d A4; SEAT1b: `seat` the kill's influence)
 // MARKS1, Marks - an account's alone, behind MARKS_OPEN (marks.js); `rid` the act's own id:
 //   POST /v1/marks/balance {}                               -> { balance, today, bank }
@@ -206,6 +207,7 @@ import { claimRaid, raidRecordOf } from './raids.js';   // RAID4: the towns defe
 import { claimSerpent, serpentRecordOf } from './serpents.js';   // SERPENT1: the serpents slain
 import { claimSd, sdRecordOf } from './sds.js';   // SD9b: the Hours broken
 import { egKeysOf, openEg, admitEg, claimEg, rollWeirKey } from './eg.js';   // EG-PLAY: the Elite Breach - the Weir Keys, the open, the admission, the claim
+import { egBoardOf, withEgHonours } from './egHonours.js';   // EG-E2: the Elite Breach's boards, and Spire Champion on the row
 import { readReceipt } from '../../src/net/gateReceipt.js';   // EG-PLAY: a recorded kill's rite (`r`), for its Weir Key's odds
 /** EG-PLAY: did the fighter who carries this gate receipt break the rite (its `r`)? Read after the claim verified it. */
 const readGateRite = (r) => readReceipt(r)?.r === 1;
@@ -824,6 +826,7 @@ const service = {
       const honoursCtx = { ...ctx, db: env.DB };
       if (ARENA_HONOUR_PATHS.has(path)) who.player = await withArenaHonours(honoursCtx, who.player, nowS);
       if (ARENA_HONOUR_PATHS.has(path)) who.player = await withIliacHonours(honoursCtx, who.player, nowS);   // CARDS10: and Iliac Hand's season #1 (iliac.js), on the same doors
+      if (ARENA_HONOUR_PATHS.has(path)) who.player = await withEgHonours(honoursCtx, who.player, nowS);   // EG-E2: and the Spire Champions - the last season's Descent's top tens (egHonours.js)
 
       if (path === '/v1/auth/token' && request.method === 'POST') {
         const key = await signingKey(env, subtle);
@@ -1139,6 +1142,7 @@ const service = {
           '/v1/eg/open': async () => openEg(ctx, who.player, body, await signingKey(env, subtle)),
           '/v1/eg/admit': async () => admitEg(ctx, who.player, body, await signingKey(env, subtle)),
           '/v1/eg/claim': async () => claimEg(ctx, who.player, body.receipt, await gatePublicKey(env, subtle)),
+          '/v1/eg/board': async () => egBoardOf({ ...ctx, db: env.DB }, who.player, env),   // EG-E2: the three boards - on the binding, as a #1's count is (the last season's champions may be written here)
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();
