@@ -682,8 +682,8 @@
   {
     "name": "AUDIT625-D2-the-source-a-breach",
     "file": "src/ui/haulCards.js",
-    "old": "serpent: 'Serpent slain' });",
-    "new": "serpent: 'Breach closed' });",
+    "old": "serpent: 'Serpent slain', eg:",
+    "new": "serpent: 'Breach closed', eg:",
     "why": "a serpent's silver carded as a breach's",
     "tests": [
       "test/audit625_serpent.test.js"

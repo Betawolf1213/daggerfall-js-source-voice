@@ -75,6 +75,9 @@ export const EG_PUSH_MPS = 3;
 export const EG_PUSH_DT_MAX = 0.1;
 export const EG_PUSH_MAX_M = 8;
 export const EG_RING_PAD = 0.3;
+/** EG-E: a Redoubt's spoils leave the Court's heart this high over its floor, and rest this far inside its ring (m). */
+export const EG_BEACON_SPEW_UP = 2.2;
+export const EG_BEACON_RIM_M = 1.5;
 /** The witness's camera: behind and over the watched member (m). */
 export const EG_WITNESS_BACK = 4;
 export const EG_WITNESS_UP = 1.5;
@@ -107,10 +110,11 @@ function requestId() {
  * @param {{ modes: () => any, online: () => any, hub: () => any, account: any, now: () => number, entity: any, player: any, cam: any,
  *   say: (text: string) => void, mid?: (text: string) => void, veil?: () => any, site: () => any, wire: () => any, landAt: (l: any) => boolean,
  *   hurt: (n: number) => void, store?: any, saved?: () => void, hudHidden?: () => boolean, fight?: (link: any) => any, renderer?: any, audio?: any,
- *   peers?: () => { sub: string, pos: number[] }[], heal?: ((p: number, why: string) => void) | null }} deps
+ *   peers?: () => { sub: string, pos: number[] }[], heal?: ((p: number, why: string) => void) | null,
+ *   paid?: ((c: any, data: any) => void) | null }} deps
  */
 export function createEgClient({ modes, online, hub, account, now, entity, player, cam, say, mid = () => {}, veil = () => null, site, wire, landAt, hurt,
-  store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null, peers = () => [], heal = null }) {
+  store = null, saved = () => {}, hudHidden = () => false, fight: makeFight = () => null, renderer = null, audio = null, peers = () => [], heal = null, paid = null }) {
   const link = createEgLink({ now, say, onReceipt: (r) => claimAdd(r), onRefused: (w) => refused(w) });
   let fight = null;
   /** an open in flight: its request id, the service's order, whether the hub took it */
@@ -246,6 +250,10 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
         const a = await account.claim(r);
         if (a?.ok && Number.isSafeInteger(a.data?.keys)) restack(a.data.keys);
         if (a?.ok && a.data?.recorded && a.data.q === 'w') say(`Redoubt ${a.data.w} is yours.`);
+        // EG-E (section 19): WHAT IT PAID - the service's word on a Redoubt's receipt (the week's pay, the pity's passes,
+        // the Marks, the deed, the embers), and the spoils it rolls; a re-claim answers the same (`again`), a guest's its
+        // gold alone. Never for a Rehearsal (the service pays none).
+        if (a?.ok && c.q === 'w' && c.rh !== 1 && (a.data?.recorded || a.data?.again || a.data?.why === 'guest')) paid?.(c, a.data);
         if (egClaimDone(a)) drop();
       }
     } finally { flushing = false; }
@@ -581,6 +589,17 @@ export function createEgClient({ modes, online, hub, account, now, entity, playe
     diedHere: () => inSpire(),
     /** The breach as held (tests). */
     state: () => link.state(),
+    /** EG-E: where a Redoubt's spoils leave from - the Court's heart of hall `h`, over its floor, and the floor they are
+     *  kept to (world/gateSpew.js keepLaunch's `{ centre, r, floorY }`) - while I stand in that hall; null anywhere else
+     *  (the spoils go straight into the pack). */
+    beaconAt(h) {
+      const E = link.state(), at = inSpire() ? standing() : null;
+      if (!E?.seed || !at || at.slot !== egSlotOfHall(h)) return null;
+      const spec = egHallOf(E.seed, h, E.geo ?? 0), r = spec.ring, f = spec.fight ?? spec.end;
+      if (!r || !f) return null;
+      const floor = egToDungeon(spec, r.x, f.y ?? 0, r.z);
+      return { at: [floor[0], floor[1] + EG_BEACON_SPEW_UP, floor[2]], keep: { centre: floor, r: Math.max(2, r.r - EG_BEACON_RIM_M), floorY: floor[1] } };
+    },
     /** EG-FULL LAYER THREE: the hall's errand objects as the relay keeps them (systems/spireKit.js spireObjs - the spans
      *  stand Grath's islands and the false walls by them). */
     objs() {

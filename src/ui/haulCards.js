@@ -171,7 +171,7 @@ export function findHaul(found, kind) {
 }
 
 /** A combat claim's source, as its silver card says it. SERPENT-SET: a serpent slain. */
-export const CLAIM_SOURCE = Object.freeze({ gate: 'Breach closed', raid: 'Town defended', serpent: 'Serpent slain' });
+export const CLAIM_SOURCE = Object.freeze({ gate: 'Breach closed', raid: 'Town defended', serpent: 'Serpent slain', eg: 'Redoubt taken' });   // EG-E: an Elite Breach's Redoubt
 /**
  * A COUNTED CLAIM'S SILVER AS ITS CARDS (a raid's, a gate's or - SERPENT-SET - a serpent's answer: net/marksBook.js
  * claimLines' own data): its strike (the day's combat bar on it, or the cap's muted card), the guild deed it completed

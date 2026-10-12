@@ -409,6 +409,7 @@ import { createSerpentClaims } from '../net/serpentClaims.js';   // SERPENT1: it
 import { createSdClaims } from '../net/sdClaims.js';   // SD9b: the Hour's receipts carried to the account service
 import { readSdReceipt } from '../net/sdReceipt.js';   // SD9e: my Hour receipt, read for its spoils
 import { SD_SPOILS_KEYS, SD_SPOILS_RECORDS_MAX, SD_SPOILS_TEXT, sdSpoilsDay, sdSpoilsSlot, sdSpoilsList } from '../systems/sdSpoils.js';   // SD9e: the Brass Remnant's spoils
+import { egSpoilsDay, egSpoilsList, EG_SPOILS_TEXT } from '../systems/egSpoils.js';   // EG-E: a Redoubt's spoils
 import { createSdSpoils, clearOfPillars } from './sdSpoils.js';   // SD9e: thrown from where it fell; AUDIT SD: the way home clear of the arena's pillars
 import { slainLine, serpentBossOf, serpentBossById, sameSerpentSite, SERPENT_NATIVE_PER_M } from '../net/serpentLaw.js';   // SERPENT1: the hub's word of its kill, in the chat (AUDIT SERPENT S1: my own site's alone)
 import { createGateCourt, courtSaySeconds } from './gateCourt.js';   // WB4: the fight on this screen - the boss drawn, heard and read, and his blows on me
@@ -24963,6 +24964,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       peerAt: (sub) => egPeers().find((q) => q.sub === sub)?.pos ?? null,   // EG-FULL: a tether's far end on a companion
     }),
     peers: () => egPeers(),   // EG-FULL: the witness's eye follows a living companion
+    paid: (c, d) => egSpoilsPaid(c, d),   // EG-E: what a Redoubt paid - its spoils, its Marks and deed
   }) : null;
   /** EG-FULL: my company's other members where this screen draws them (the room's poses, by account - net/social.js
    *  accountOfPeer: the company is my party). */
@@ -24982,7 +24984,37 @@ export async function bootWorld(canvas, renderer, params, status) {
   registerSpireObjs(egClient ? () => egClient.objs() : null);   // EG-FULL LAYER THREE: Grath's islands fall, the false walls stand, as the relay says
   registerSpireAct(egClient ? (key) => egClient.act(key) : null);   // EG-FULL LAYER THREE: an Orrery stone turned, an engine worked
   egClient?.claimKeys();   // the Weir Key's use is this screen's open
-  const egFrame = () => { try { egClient?.frame(); } catch (e) { console.warn('[eg] frame', e?.message ?? e); } };
+  let _egSpoilsIn = false;
+  const egFrame = () => {
+    try { egClient?.frame(); } catch (e) { console.warn('[eg] frame', e?.message ?? e); }
+    // EG-E: a Redoubt's spoils in the Hour's pool (egSpoilsPaid) - flying in the Spire; what the floor still holds gathered
+    // as I leave it, the Hour's own way (sdSpoilsBurst.leave)
+    const inSpire = modes?.egHallBreach?.() != null;
+    try { if (inSpire) sdSpoilsPool?.frame(); else if (_egSpoilsIn) { sdSpoilsPool?.gather(); saveSoon.changed(); } } catch (e) { console.warn('[eg] spoils', e?.message ?? e); }
+    _egSpoilsIn = inSpire;
+  };
+  /** EG-E (Elite-Gates.md section 19): WHAT A REDOUBT PAID - the account service's word on my Redoubt receipt (scenes/
+   *  egClient.js `paid`): its Marks and the guild's deed as a haul card; its spoils (systems/egSpoils.js - rolled on the
+   *  receipt's seed at the level the breach admitted, the lord's arm and card by its key, the Panoply's pity as the
+   *  service forced it), thrown from the Court's heart when I stand in that Redoubt, else straight into the pack - in the
+   *  Hour's pool (the Spire is a dungeon's frame as the Hour is, and the two are never stood in at once), once a receipt
+   *  and account. A Redoubt taken again this week pays its gold alone, and a guest's (no name the service records) too. */
+  function egSpoilsPaid(c, d) {
+    if (!c || !Number.isSafeInteger(c.c) || !Number.isSafeInteger(c.w)) return;
+    if (d?.marks || d?.deed) { showHaul(claimHauls(d, 'eg')); for (const line of marksBook?.claimLines(d, 'eg') ?? []) chatNotice(line); }
+    const guest = d?.why === 'guest', goldOnly = guest || d?.paid === false;
+    const level = spoilsLevel(playerEntity.level ?? 1, c.l);
+    const o = { lord: typeof c.lk === 'string' ? c.lk : '', pity: Array.isArray(d?.pity) ? d.pity.filter((p) => p === 0 || p === 1) : [], goldOnly };
+    const day = egSpoilsDay(c.b, c.w), roll = () => egSpoilsList(c.c, level, c.w, o);
+    const text = guest ? EG_SPOILS_TEXT.guest : goldOnly ? EG_SPOILS_TEXT.goldOnly(c.w) : EG_SPOILS_TEXT.granted(c.w);
+    const at = egClient?.beaconAt?.(c.h) ?? null;
+    if (at) {
+      const f = player.feetAt(), bearing = Math.atan2(f[0] - at.at[0], f[2] - at.at[2]);
+      if (sdSpoilsPool.spew({ day, seed: c.c, level, at: at.at, bearing, acct: c.s, keep: at.keep, roll })) chatNotice(goldOnly ? text : EG_SPOILS_TEXT.spilled);
+      return;
+    }
+    spoilsLock(() => sdSpoilsPool.grant({ day, acct: c.s, roll, text })).catch((e) => console.warn('[eg] spoils', e?.message ?? e));
+  }
   /** The host frame's breach lines, out of it (PERF-V8): with no online frame the breach's fight and tracker put away; in
    *  a breach the court's law, after the court's own lines have set it. */
   const egCourtFrame = () => {
@@ -25788,7 +25820,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   }) : null;
   /** SD9e: the floor a press, a plaque and the ray ask of - the Hour's pool in the Hour, the court's anywhere else (the two
    *  are never stood in at once). */
-  const floorPool = () => (modes?.sdRealmSlot?.() != null ? sdSpoilsPool : spoilsPool);
+  const floorPool = () => (modes?.sdRealmSlot?.() != null || modes?.egHallBreach?.() != null ? sdSpoilsPool : spoilsPool);   // EG-E: the Spire's Redoubts throw into the Hour's pool
   /** INT11/INT12: THE RELAY'S COUNT HAS FALLEN ME (`bd` - a gate's court's or the Hour's word, once its BOSS_BODY line
    *  enforces; net/bossBody.js): a death, the relay's word, whatever this machine's health says - the zone referee's own
    *  door (forcePlayerDeath: no death save, no AvoidDeath). Heard in the fight it came from alone (`inFight`). */
@@ -29965,8 +29997,8 @@ export async function bootWorld(canvas, renderer, params, status) {
     egHost: () => egClient?.fight()?.hostTargets() ?? null,   // EG-PLAY: the legion
     egHostHit: (hit) => !!egClient?.fight()?.hostHit(hit),
     egBatches: () => egClient?.batches() ?? [],   // EG-PLAY: the hall's bodies and the way home's portal
-    egLights: () => egClient?.lights() ?? [],   // EG-PLAY: the fight's glows, before the Spire's lamps
-    drawEgFight: ({ proj, view, eye }) => { if (egClient?.drawPass(proj, view, eye, performance.now() / 1000, courtFogNow())) renderer.markForeignPass(); },   // EG-PLAY: the telegraphs, vents and rifts
+    egLights: () => [...(egClient?.lights() ?? []), ...(sdSpoilsPool?.lights() ?? [])],   // EG-PLAY: the fight's glows, before the Spire's lamps; EG-E: and a Redoubt's spoils'
+    drawEgFight: ({ proj, view, eye }) => { const t = performance.now() / 1000, fog = courtFogNow(); const a = !!egClient?.drawPass(proj, view, eye, t, fog), b = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog); if (a || b) renderer.markForeignPass(); },   // EG-PLAY: the telegraphs, vents and rifts; EG-E: a Redoubt's spoils' lines
     egWayHome: () => egClient?.wayHome(),   // EG-PLAY: a Redoubt's way home, pressed
     egCastBack: () => egClient?.castBack(),   // EG-PLAY: the void's cost
     egGateOpen: (h) => !!egClient?.gateOpen(h),   // EG-PLAY: a Rampart's portcullis, stood or sunk
