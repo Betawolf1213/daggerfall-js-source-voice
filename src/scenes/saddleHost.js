@@ -18,6 +18,7 @@ import { drawEnhancedSaddle, hideEnhancedSaddle, enhancedSaddleMounted } from '.
 import { upkeepReach } from '../systems/upkeepRuntime.js';
 import { activeWagonItem } from '../systems/wagonKinds.js';
 import { wagonWord } from '../systems/wagonUpkeep.js';
+import { rideWalks } from '../systems/transport.js';   // HORSE-WALK: the walk the motor takes, the host's word (never on the road)
 
 /** The pace's smoothing, seconds (a frame's metres jitter with its length). */
 export const SADDLE_SPEED_TAU = 0.35;
@@ -64,6 +65,7 @@ export function createSaddleHost({ upkeep, runtime, items, wagonKg, wagonLimit, 
     return {
       mode, name: rt?.hasHorseName ? rt.horseName : '', wagonName: w ? wagonWord(w) : '',
       speed, galloping: mode === 'Horse' && galloping,
+      walks: mode === 'Horse' && rideWalks(mode),   // HORSE-WALK: the ride's own pace a walk - the word the motor reads, so the panel says what it does
       horse: base.horse, wagon: cart ? base.wagon : null, oats: base.oats, apples: base.apples, kits: base.kits,
       load: cart && limit > 0 ? { kg: wagonKg(), limit } : null,
       near: true, wagonNear: r.wagonNear,

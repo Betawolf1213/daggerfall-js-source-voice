@@ -207,6 +207,7 @@ export function createMountRig({
         paused: ridePaused,
         movingLessThanHalfSpeed: player.movingLessThanHalfSpeed,
         running: player.isRunning,
+        walking: !!player.rideWalking,   // HORSE-WALK: the walk's slow clop and its slower nod
         soundVolume: ridingVolumeScale(),   // AUDIT-TO1 J1: 0 for the length of an accelerated journey
       });
       if (r.neigh) audio.playOneShot(SOUND.AnimalHorse, RIDING_VOLUME_SCALE);

@@ -320,7 +320,8 @@ export function mwViewFrame({ fpEye, feet, yaw, pitch, heightScale = null, rayca
   // from) stands down - one line here rather than one in each of the four hosts.
   eotbBody.standDown();
   // RIDE-POV: the saddle first, before any queued notch can cross out of the head - COATS3D: unless the body sits a
-  // 3D horse (the host's `horse`: the ridden horse's look, on a horse and not the cart), which it can be seen on
+  // 3D horse (the host's `horse`: the ridden horse's look, on a horse and not the cart - and HORSE-WALK's `slow`, the
+  // motor's slow ride, which holds it under the gallop), which it can be seen on
   // AUDIT COATS3D A8: the horse stands under the eye, not under the capsule's feet - swimming mounted (the eye at
   // SWIM_RIDE_EYE_HEIGHT) it sinks into the water with its rider, and mounting (the eye rising to the saddle's over the
   // height action) it rises under them: never a first-person eye inside its back. SINK_SLACK keeps a step's bob out.
@@ -572,7 +573,7 @@ function stepOwnHorse(horse, feet, yaw, dt) {
     if (v < HORSE_TELEPORT) groundSpeed += (v - groundSpeed) * Math.min(1, dt / SPEED_EASE);
   }
   lastFeet = [feet[0], feet[1], feet[2]];
-  horseRig.step(ownHorse, { feet: horseFeetUnder(feet, yaw), yaw, speed: groundSpeed, dt, look: horse.look | 0 });
+  horseRig.step(ownHorse, { feet: horseFeetUnder(feet, yaw), yaw, speed: groundSpeed, dt, look: horse.look | 0, gallops: !horse.slow });   // HORSE-WALK: the host's slow ride (motor.js slowRide) never gallops
   const seat = horseRig.seat(ownHorse);
   ownSaddle = seat ? { feet: lastFeet, seat, yaw, lean: gaitShare(ownHorse.gait, 'gallop') } : null;
   return !!ownSaddle;

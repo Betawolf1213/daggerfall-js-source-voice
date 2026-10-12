@@ -6,7 +6,7 @@ stamina, feeding them grows your bond and improves their stats. Every horse shou
 
 A departure of the port's own, the enhanced lane's alone: Features, World tab, Travel - **Horse care**
 (`systems/upkeepSwitch.js` horseCareOn, the `horseCare` pref), on by default and forced on online (every horse in a
-room under the one law). Off, a horse is DFU's: no stats, no gallop of its own, nothing to feed.
+room under the one law). Off, a horse is DFU's: no stats, no walk or gallop of its own, nothing to feed.
 
 ## The law (`systems/steedCare.js`)
 
@@ -18,7 +18,7 @@ so every horse born before STEED1 has had its stats all along, and every client 
 
 | Stat | What it does |
 |---|---|
-| Speed | the ride's pace - the motor's ride base (and its gallop) times 0.85 + 0.003 a point: 1 at 50, held to [0.85, 1.15] (`steedSpeedScale`) |
+| Speed | the ride's pace - its walk and its gallop (THE WALK) times 0.85 + 0.003 a point: 1 at 50, held to [0.85, 1.15] (`steedSpeedScale`) |
 | Stamina | its breath: STAMINA_BASE 40 + 1.2 a point (`breathMax` - 100 at 50) |
 | Endurance | how slowly a gallop spends the breath (x 1.25 - Endurance / 200) and how fast it comes back (x 0.75 + Endurance / 200) |
 | Strength | a wagon's pace under its load: 1 - load x (0.3 - 0.002 x Strength), never under 0.75 - the team's mean (`teamDraftScale`) |
@@ -79,10 +79,10 @@ switch turned off - a horse is never fed back a span from a minute another chara
 
 ### Breath (`stepBreath`, kept in memory by the horse's seed - a gallop's breath is not a thing to save)
 
-A gallop spends it; at nought the horse is WINDED and will not gallop until WINDED_UNTIL (30%) is back. It comes back at
-a walk or standing (BREATH_BACK 2.2 a second at Endurance 50), half as fast under a rider at the ride's own pace,
-slower hungry, and whole across any span skipped. An average horse gallops some thirty seconds and is back to 30% in
-about fifteen.
+A gallop spends it; at nought the horse is WINDED and will not gallop until WINDED_UNTIL (30%) is back. It comes back
+standing or with its rider off it (BREATH_BACK 2.2 a second at Endurance 50), half as fast under a rider at its own pace
+(RIDDEN_BACK - the walk, since HORSE-WALK), slower hungry, and whole across any span skipped. An average horse gallops
+some thirty seconds and is back to 30% in about fifteen.
 
 ## The gallop (`systems/transport.js` setGallopGate)
 
@@ -92,12 +92,87 @@ says no (a town), no; where it says yes or says nothing, the horse gallops on it
 starving. The gallop is the horse's breath, not the rider's fatigue: the hosts' activity bag (`running`) leaves a
 gallop under horse care out of DFU's running band (`upkeepRuntime.js` riderPaysGallop).
 
+## The walk (HORSE-WALK, 2026-10-12)
+
+The owner: "I want to make it where when youre riding a horse, it walks by default and to gallop you must shift to
+sprint, just like when you are walking as a character". DFU's horse has one pace, GetBaseSpeed's riding arm on
+dfRideBase (375): 10.8 m/s at Speed 50, which every picture already drew as a gallop (Eye Of The Beholder's table
+gallops past 10 m/s, `player/eotbBillboard.js` GALLOP_SPEED; the Courser from 5, `world/horseModel.js` HORSE_GAIT_FROM);
+and the run galloped it faster still. Under horse care a horse WALKS, and the run gallops it:
+
+| | The law | Speed 50, Running 50, a horse of Speed 50 |
+|---|---|---|
+| The walk - the default | GetBaseSpeed's riding arm on DFU's own walk base, dfWalkBase (150), undragged as every ride arm is: (Speed + 150) / 39.5 | 5.1 m/s, 18 km/h |
+| The gallop - Run held, on its breath | GetRunSpeed's riding arm, as ever: (Speed + 375) / 39.5 x (1.35 + Running / 200) | 17.2 m/s, 62 km/h |
+
+Both times the horse's Speed (the motor's rideSpeedScale, below). The walk is the horse's BASE, as a walk is its
+rider's on foot, so what measures against GetBaseSpeed reads it so: IsMovingLessThanHalfSpeed - the stealth check's
+gate, the clop's - is false at a walk and true at a sneak (the walk halved, less a classic unit), exactly as on foot. A
+walking rider is no stealthier than a walking traveller.
+
+`systems/transport.js` setRideWalk / rideWalks is horse care's word, the gallop gate's twin; `systems/upkeepRuntime.js`
+rideWalks gives it wherever horse care rules the gallop - horse care on, a horse, the one ridden born (without its stats
+the gate defers to the mod, and the walk to DFU); `player/motor.js` takes it (`_rideBaseNow` - the walk's base, in the
+speed's riding arm and the half-speed base; `rideWalking` - the step's gait; `slowRide` - walked, or under half its
+base). Off horse care a horse is DFU's - one pace, no run in the saddle, the mod's gallop where it rules: a walk with no
+gallop to shift into would hold its rider to it. A cart rolls on its own base. A winded or starving horse, and one in a
+town Roleplay & Realism keeps from galloping, walk with Run held; autorun's latched run gallops whenever the breath
+allows.
+
+**IN A TOWN IT WALKS** (AUDIT HORSE-WALK, 2026-10-12). Roleplay & Realism ships Galloping In Towns off
+(`systems/modSettings.js`), so in a town the mod's CanRun says no and the horse walks with Run held: 5.1 m/s at Speed
+50, where its rider runs 8.1 on foot and DFU's ride was 10.8. Out of town Run gallops it, and the mod's Galloping In
+Towns gallops it in a town too. Kept as the two laws stand, the owner's walk under the mod's town, with no pace
+invented between them: the one there is, DFU's ride, is the pace every picture draws as a gallop, in the town the mod
+keeps a gallop out of. The Horses tutorial says so ("outside towns": the stable that sells a horse stands in a town, so
+a first ride starts in one), pinned through the mod's own CanRun line, lifted from `systems/rrInstall.js` and run
+(`test/horsewalk.test.js`, IN A TOWN). A cart rolls on DFU's cart base, 7.6 m/s at Speed 50: above the walk and under
+the gallop, as it always stood under DFU's ride.
+
+**ON THE ROAD THE RIDE KEEPS ITS PACE** (AUDIT HORSE-WALK, 2026-10-12, the owner: "Ensure the overworld speed isnt
+affected"). The Overworld moves the real body under the travel clock (`06-Systems/Travel-View.md`), so its ground speed
+is the motor's pace times the clock - and a walk would have halved a horse's (TV0's ~650 m/s at x60 to ~300), slowed a
+journey's, and let a band's chase (5.2 m/s at the world's scale) close on a rider. So the walk is never the road's:
+under the Overworld's view (rising, up or falling) and while a Travel Options journey's autopilot drives the motor - the
+view's journeys, its journey held on the ground at x1, First-Person Travel's, a party's - the horse rides the ride's own
+pace and gallops on Run exactly as before the walk (`scenes/world.js` rideOnTheRoad, over the walk's install; a
+journey's panel left up over a stopped journey is no road). The clock, its governor and the pace dials read no pace of
+the body's and are untouched; the steering's reach and the ground's lookahead read the motor's, the ride's again. The
+fixed city (`scenes/exterior.js`) stands no Overworld and runs no journey.
+
+What reads the gait:
+
+- **The riding sprite and its clop** (`systems/riding.js`, `player/mountRig.js`): a walk is DFU's slow horse - the slow
+  clop at half the volume - as a STATE, not the half-speed edge (a ride that starts at a walk never crosses the line,
+  and UpdateMode mounts on the fast clop); its sprite nods on WALK_FRAME_TIME, 0.25 s - twice DFU's 0.125, a cycle the
+  ground DFU's own ride covered in one of its. The gallop keeps every DFU arm: the fast clop off the edge, 1.2 pitch,
+  0.125 s.
+- **The others' clop**: the pose's `hs` carries the slow ride (`scenes/world.js`'s latch reads `slowRide`), and a peer's
+  animator plays it as the rider's own plays the walk - a state (`net/remotePlayers.js`, AUDIT HORSE-WALK: on the edge
+  alone, a peer first seen at a walk or mounting into one clopped fast until a first gallop) - with the gallop's 1.2
+  pitch off the pose's gallop bit (mv 2; every peer's gallop had been heard at 1.0 since STEED1). So a peer hears my
+  walk and my gallop as I do. The wire is unchanged; an older client swaps on the edge alone.
+- **The 3D horse** (`06-Systems/Horse-Coats.md`, The 3D horse): a slow ride never gallops (`world/horseModel.js`
+  gaitFor's `gallops`) - the player's off the host's word (`horse.slow`, `player/mwView.js`), a peer's off its pose's
+  `hs` (`net/peerBodies.js`). Daggerfall's walk stands on the gallop's own edge, inside its hold either way, so the gait
+  was its history's: a trot from a stand, a slow-motion gallop after a gallop. Held under, it trots - the Courser's
+  stride that carries 5 m/s (its walk covers 0.67).
+- **Eye Of The Beholder's rider** draws MoveHorse at the walk and GallopHorse at the gallop, by its own speed law.
+- **The saddle panel** says Walking (`ui/enhancedSaddle.js` saddleGait - the very word the motor reads, `transport.js`
+  rideWalks, through `scenes/saddleHost.js`), Galloping on the run, Trotting at DFU's ride (horse care off).
+- **The head's bob** is DFU's Horse style at the walk, by its velocity; the gallop's is Running's (HeadBobber's order).
+- **The words**: the Features row, and the Horses tutorial ("Your horse walks; hold {Run} to gallop outside towns" -
+  IN A TOWN IT WALKS, above).
+
+Unchanged: the Overworld's and a journey's pace (above), the breath's law (under a rider at its own pace, now the walk,
+half back), the gallop's gate and pace, fast travel's times (DFU's TravelTimeCalculator), a following or waiting horse.
+
 ## The motor (`player/motor.js` rideSpeedScale)
 
 The hosts hand the motor its ride's pace each frame, before its step (`upkeep.rideScale`): a horse's Speed; a wagon's
-soundness (WAGONS4) times its team's Strength under its load. It scales the ride base, the gallop and the half-speed
-base IsMovingLessThanHalfSpeed reads; it never touches a walk. The fastest horse's gallop at Speed 100 is under the
-hitch's jump (HITCH_JUMP_SPEED 30).
+soundness (WAGONS4) times its team's Strength under its load. It scales the ride's walk (THE WALK), the gallop and the
+half-speed base IsMovingLessThanHalfSpeed reads; it never touches a walk on foot. The fastest horse's gallop at Speed
+100 is under the hitch's jump (HITCH_JUMP_SPEED 30).
 
 ## The Stable page (`ui/holdingsPages.js`)
 
@@ -142,12 +217,14 @@ templates - so online a Stable sells oats as it did offline from the first (`sys
 
 ## The four hosts
 
-`scenes/world.js` and `scenes/exterior.js` build the upkeep (`createUpkeep`) before Horse Cart and Cargo's runtime,
-set the gallop gate, register the oats' Use, hand the motor its pace and the frame's upkeep its odometer's metres, the
-HUD its bar and the Stable page its acts. `scenes/worldModes.js` (interiors) and `scenes/dungeonContext.js` (dungeons)
-stand no transport - a building or a dungeon puts the rider on foot (`transport.js` dismountOnTransition) - and are
-named, not wired.
+`scenes/world.js` and `scenes/exterior.js` build the upkeep (`createUpkeep`) before Horse Cart and Cargo's runtime, set
+the walk (`setRideWalk`, HORSE-WALK - world.js's never on the road, the Overworld's and the journeys' host) and the
+gallop gate, hand the 3D horse the motor's slow ride, register the oats' Use, hand the motor its pace and the frame's
+upkeep its odometer's metres, the HUD its bar and the Stable page its acts. `scenes/worldModes.js` (interiors) and
+`scenes/dungeonContext.js` (dungeons) stand no transport - a building or a dungeon puts the rider on foot
+(`transport.js` dismountOnTransition) - and are named, not wired.
 
 Pinned: `test/steed1_horsecare.test.js`; mutants `tools/mutants/steed1.json`, and HORSE-LIVES's and UPKEEP-ONLINE's
-`tools/mutants/wagonmend.json`. The saddle panel and the page's polish:
+`tools/mutants/wagonmend.json`. THE WALK: `test/horsewalk.test.js`; mutants `tools/mutants/horsewalk.json` (42, all
+dead). The saddle panel and the page's polish:
 `test/steedui_saddle.test.js`; mutants `tools/mutants/steedui.json`.

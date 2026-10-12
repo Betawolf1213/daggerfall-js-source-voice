@@ -669,14 +669,15 @@ export class PeerBodies {
   }
 
   /** COATS3D: a peer on a HORSE (the pose's `rd`; never the cart, never a beast) sits the 3D horse - its own, in the look
-   *  the pose names (`rc`), stepped at the body's pace under its feet, its seat the body's saddle (player/seatPose.js) as
-   *  the player's own is (player/mwView.js). Null, and the horse let go, off one or where the rig is not up. */
+   *  the pose names (`rc`), stepped at the body's pace under its feet (HORSE-WALK: held under the gallop while the pose's
+   *  `hs` says a slow ride), its seat the body's saddle (player/seatPose.js) as the player's own is (player/mwView.js).
+   *  Null, and the horse let go, off one or where the rig is not up. */
   _saddle(b, shown, f, dt) {
     const rig = this._horses();
     if (!rig?.ready() || shown.rd !== POSE_RIDE.Horse || peerIsWolf(shown) || shown.wb) { this._unhorse(b); return null; }
     b.horse ??= rig.horse(seedOf(b.id));
     if (!b.horse) return null;
-    rig.step(b.horse, { feet: horseFeetUnder(f, b.yaw), yaw: b.yaw, speed: b.speed ?? 0, dt, look: shown.rc | 0 });
+    rig.step(b.horse, { feet: horseFeetUnder(f, b.yaw), yaw: b.yaw, speed: b.speed ?? 0, dt, look: shown.rc | 0, gallops: !shown.hs });   // HORSE-WALK: the pose's slow ride (its `hs` - walked, or under half) never gallops
     const seat = rig.seat(b.horse);
     return seat ? { feet: [f[0], f[1], f[2]], seat, yaw: b.yaw, lean: gaitShare(b.horse.gait, 'gallop') } : null;
   }

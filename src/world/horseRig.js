@@ -159,9 +159,10 @@ export function createHorseRig({ renderer, fetchJson = (u) => fetch(u).then((r) 
 
   /** One frame of a horse: its gait stepped at `speed` (m/s, its ground speed), its pose written and uploaded, and
    *  where it stands - its feet (the rig's origin on the ground) and its heading (the way it faces, the motor's yaw:
-   *  0 down +Z, as every body's). */
-  function step(h, { feet, yaw, speed = 0, dt = 0, look = 0 }) {
-    stepHorseGait(h.gait, bake, speed, dt, h.seed);
+   *  0 down +Z, as every body's). `gallops` false: its rider holds it to a slow ride (HORSE-WALK - horseModel.js
+   *  gaitFor); a horse no one rides gallops as its speed says. */
+  function step(h, { feet, yaw, speed = 0, dt = 0, look = 0, gallops = true }) {
+    stepHorseGait(h.gait, bake, speed, dt, h.seed, gallops);
     writeHorsePalette(bake, h.gait, h.pal, h.scratch);
     renderer.updateSkinPalette(h.mesh, h.pal);
     h.look = horseLookCode(horseLookOfCode(look | 0));

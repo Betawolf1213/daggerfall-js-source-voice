@@ -852,8 +852,8 @@
   {
     "name": "WILDROAD-the-window-alone-the-road",
     "file": "src/scenes/world.js",
-    "old": "!!(travelOptions?.isTravelActive && travelOptions.state?.autopilot)",
-    "new": "!!travelOptions?.isTravelActive",
+    "old": "(!!(travelOptions?.isTravelActive && travelOptions.state?.autopilot) || !!travelView?.active)",
+    "new": "(!!travelOptions?.isTravelActive || !!travelView?.active)",
     "tests": [
       "test/fb1004e_road.test.js"
     ],

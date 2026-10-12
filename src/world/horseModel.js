@@ -36,7 +36,8 @@ export const HORSE_GAITS = Object.freeze(['idle', 'walk', 'trot', 'gallop']);
 /** The speed (metres a second) each gait starts at. The walk covers 0.67 m/s at its own rate, the trot 1.93 and the
  *  gallop 10.3 (the bake's measures); the owner's rig has no canter, so between a quick trot and the gallop the
  *  gallop plays slow. A ridden horse's speed is Daggerfall's (motor.js rideSpeed: about 10.8 m/s at speed 50 - a
- *  gallop at its own rate). */
+ *  gallop at its own rate) - and under horse care a walk (HORSE-WALK: about 5 m/s, a trot under its rider's word,
+ *  gaitFor's `gallops`) or the gallop on the ride base (about 17). */
 export const HORSE_GAIT_FROM = Object.freeze({ idle: 0, walk: 0.2, trot: 1.3, gallop: 5 });
 /** A gait is held this share past its edges either way, so a horse at an edge's speed does not flicker between two. */
 export const GAIT_HOLD = 0.15;
@@ -48,15 +49,21 @@ export const GAIT_FADE = 0.25;
 /**
  * The gait a horse going `speed` plays, from `current`: the highest whose start it has reached, but a gait already
  * playing is kept until the speed is GAIT_HOLD past its edge.
+ * HORSE-WALK: `gallops` false - a ridden horse its rider holds to a slow ride (motor.js slowRide: walked, or under half
+ * its base) - puts the gallop out of reach, and a gallop playing ends at once. Daggerfall's walk (about 5 m/s) stands
+ * on the gallop's own edge, inside the hold either way, so the gait would be its history's: a trot from a stand, a
+ * slow-motion gallop after a gallop. The stride that carries it is the trot's.
  * @param {number} speed
  * @param {string} [current]
+ * @param {boolean} [gallops]
  */
-export function gaitFor(speed, current = 'idle') {
+export function gaitFor(speed, current = 'idle', gallops = true) {
   const v = Number.isFinite(speed) ? Math.max(0, speed) : 0;
+  const top = gallops ? HORSE_GAITS.length - 1 : HORSE_GAITS.indexOf('trot');
   let k = 0;
-  for (let i = 1; i < HORSE_GAITS.length; i++) if (v >= HORSE_GAIT_FROM[HORSE_GAITS[i]]) k = i;
+  for (let i = 1; i <= top; i++) if (v >= HORSE_GAIT_FROM[HORSE_GAITS[i]]) k = i;
   const c = HORSE_GAITS.indexOf(current);
-  if (c < 0 || k === c) return HORSE_GAITS[k];
+  if (c < 0 || c > top || k === c) return HORSE_GAITS[k];
   if (k > c && v < HORSE_GAIT_FROM[HORSE_GAITS[c + 1]] * (1 + GAIT_HOLD)) return current;
   if (k < c && v > HORSE_GAIT_FROM[HORSE_GAITS[c]] * (1 - GAIT_HOLD)) return current;
   return HORSE_GAITS[k];
@@ -78,11 +85,11 @@ export function horseGait() {
 /**
  * One step of a horse's gait: going `speed` m/s for `dt` seconds. A new gait comes in at the phase the old one was
  * at (a footfall where a footfall was) and fades in over GAIT_FADE. `seed` starts a horse's idle at its own place, so
- * a stable of horses does not breathe together.
+ * a stable of horses does not breathe together. `gallops` false: its rider holds it to a slow ride (gaitFor).
  */
-export function stepHorseGait(g, bake, speed, dt, seed = 0) {
+export function stepHorseGait(g, bake, speed, dt, seed = 0, gallops = true) {
   const step = Number.isFinite(dt) && dt > 0 ? Math.min(dt, 0.25) : 0;
-  const want = gaitFor(speed, g.gait);
+  const want = gaitFor(speed, g.gait, gallops);
   if (want !== g.gait) {
     const was = bake.gaits[g.gait], now = bake.gaits[want];
     g.clock[want] = was && now ? (g.clock[g.gait] / was.duration) * now.duration : 0;

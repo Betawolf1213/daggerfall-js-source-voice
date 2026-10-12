@@ -235,6 +235,11 @@ in). Each frame a horse's GAIT is stepped (`stepHorseGait`): idle, walk from 0.2
 a gait held 15 % past its edge; it plays at the rate its stride covers the ground (`gaitRate`, clamped - past it the
 hooves slide rather than the legs blur), a new gait comes in at the old one's phase and fades in over a quarter
 second. The rig has no canter, so between a quick trot and Daggerfall's ride the gallop plays slow.
+HORSE-WALK (2026-10-12, `06-Systems/Horse-Care.md` THE WALK): a horse its rider holds to a slow ride - walked, or under
+half its base (`player/motor.js` slowRide, the host's `horse.slow`; a peer's pose's `hs`) - never plays the gallop
+(`gaitFor`'s `gallops`), and a gallop playing ends at once. Horse care's walk, about 5 m/s, stands on the gallop's own
+edge, inside its hold either way: a horse left galloping at it galloped on in slow motion. Held under, it trots. A horse
+no one rides keeps the speed's gait.
 
 A horse alone is drawn as the Morrowind body is - a picture through the sprite pass at the arm's dial
 (`characterSprite.js` drawRigSpriteBox, MW_ARM_PIXEL). A horse under a rider is in the RIDER's picture: `also`, more

@@ -85,7 +85,9 @@ names the departure (TV1, 2026-09-28).
    well under one a second (PERF-EXT24: 3-6 ms of build a frame). At ground level fog
    hides the edge; from above the unbuilt pixels are holes. Hence Mac's call 3: the cap
    is MEASURED (TV2), not guessed, and the builder may take a bigger slice while the view
-   is up (no combat, no HUD work).
+   is up (no combat, no HUD work). HORSE-WALK (2026-10-12) keeps that horse at that pace:
+   horse care's walk is never the road's - under the view and on a journey the ride keeps
+   its own pace (`06-Systems/Horse-Care.md` THE WALK, ON THE ROAD THE RIDE KEEPS ITS PACE).
 2. **Online the clock cannot be sped up.** WORLD5: the clock is computed from wall time
    and nobody keeps it. Offline the cap speeds the calendar too (Travel Options' law);
    online it speeds the body only, as TO-ONLINE's journey already does. At the cap a pose

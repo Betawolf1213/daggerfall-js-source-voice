@@ -14,8 +14,8 @@
 // Each frame the host hands `tick` what its motor did: the transport (`mode`), whether it galloped (the run on a horse,
 // moving), how far it rolled (its odometer's metres since the last frame), on a road or not, the wagon's load, and
 // whether the wagon went with it (driven, or its team following). The motor asks `rideScale(mode)` for its ride's pace
-// and transport.js's gallop gate asks `gallopGate`; the HUD asks `bar()`; the Stable card `model()` and `act()`; the
-// Enhanced Plus saddle panel (ui/enhancedSaddle.js) `saddle(mode)` and `act()`.
+// and transport.js's gallop gate asks `gallopGate`, its walk `rideWalks` (HORSE-WALK); the HUD asks `bar()`; the Stable
+// card `model()` and `act()`; the Enhanced Plus saddle panel (ui/enhancedSaddle.js) `saddle(mode)` and `act()`.
 //
 // A horse's breath is kept here, by its seed (no field: a gallop's breath is not a thing to save), and comes back whole
 // over any span of the clock skipped (steedCare.js SKIP_MINUTES - a rest, a wait, a journey, a load).
@@ -150,6 +150,14 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
     const st = steedStats(horse, now());
     if (!st) return base;
     return canGallop(breathOf(horse), st.hunger);
+  }
+
+  /** transport.js's walk (HORSE-WALK): the horse walks unless it gallops wherever horse care rules its gallop - horse
+   *  care on, a horse, the one ridden born (its stats; gallopGate defers to the mod without them). Else false: DFU's
+   *  ride base. @param {string} mode */
+  function rideWalks(mode) {
+    if (!horseCare() || mode !== 'Horse') return false;
+    return !!steedStats(ridden(), now());
   }
 
   /** Whether the rider pays the gallop's fatigue (DFU's running band): not when horse care has the horse pay it in
@@ -303,7 +311,7 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
   }
 
   return {
-    tick, rideScale, gallopGate, riderPaysGallop, bar, journey, thrown, model, saddle, act,
+    tick, rideScale, gallopGate, rideWalks, riderPaysGallop, bar, journey, thrown, model, saddle, act,
     /** The yard's price to mend the wagon driven (`away` it is not at the yard), or 0. */
     mendPrice: (away = false) => { const w = activeWagonItem(pack()); return w ? mendPrice(w, { away }) : 0; },
     /** Tests: the ridden horse's breath. */

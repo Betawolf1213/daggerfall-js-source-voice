@@ -54,7 +54,7 @@
     "old": "      if (rideBase != null) speed *= this._rideScale();   // STEED1: a gallop at the horse's own pace\n", "new": "      if (rideBase != null) speed *= 1;\n",
     "tests": ["test/steed1_horsecare.test.js"] },
   { "name": "STEED1-the-half-speed-base-unscaled", "file": "src/player/motor.js",
-    "old": "rideSpeed(this.stats.speed, rideBaseFor(this.transportMode)) * this._rideScale() : this._refreshWalkSpeed();", "new": "rideSpeed(this.stats.speed, rideBaseFor(this.transportMode)) : this._refreshWalkSpeed();",
+    "old": "rideSpeed(this.stats.speed, this._rideBaseNow()) * this._rideScale() : this._refreshWalkSpeed();", "new": "rideSpeed(this.stats.speed, this._rideBaseNow()) : this._refreshWalkSpeed();",
     "tests": ["test/steed1_horsecare.test.js"] },
   { "name": "STEED1-the-team-mean-unread", "file": "src/systems/upkeepRuntime.js",
     "old": "strengths.reduce((a, b) => a + b, 0) / strengths.length", "new": "strengths[0]",

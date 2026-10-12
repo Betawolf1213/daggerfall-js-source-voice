@@ -357,7 +357,7 @@ import {
 // CAPSULE_RADIUS inside its constructor, never at module level.
 import { PlayerMoveScanner } from './moveScanner.js';
 import { getBool } from '../systems/settings.js';   // AUDIT 28 W5: Controls/ToggleSneak (StartGameBehaviour :277)
-import { TRANSPORT_MODES, isRiding, rideBaseFor, canRunUnlessRiding } from '../systems/transport.js';   // TR1: the mount's speed, run and climb laws
+import { TRANSPORT_MODES, isRiding, rideBaseFor, canRunUnlessRiding, rideWalks } from '../systems/transport.js';   // TR1: the mount's speed, run and climb laws; HORSE-WALK: horse care's walk
 import { timeScale } from '../systems/timeScale.js';   // TO1: Unity's Time.fixedDeltaTime rides Time.timeScale (see update())
 import { CLIMB_MOVE_KINDS, CLIMB_MOVE_RISE_MAX, CLIMB_MOVE_TIME_MAX } from '../net/wire.js';   // CLIMB6: a move on the wire, its kinds and bounds the wire's
 import { clampToRing } from '../net/duelSession.js';   // AUDIT DUEL1 D4: the ring's one clamp
@@ -587,6 +587,7 @@ export class PlayerMotor {
     this.waterSurfaceY = null;   // the current block's water surface (world y), null when dry
     this.swimSpeedScale = 1;     // DW-D: Iliac Puddle No More's swim speed multiplier (a walk speed modifier while swimming - swimSpeedNow)
     this.rideSpeedScale = 1;     // STEED1/WAGONS4: the ride's pace - a horse's Speed, a wagon's soundness and its team's Strength (systems/upkeepRuntime.js rideScale; 1 with both off)
+    this.rideWalking = false;    // HORSE-WALK: the step's ride took the walk (horse care's horse, not galloping) - the gait the clop, the riding sprite's clock, the 3D horse and the saddle panel read
     this.jumped = false;         // set for the frame a jump actually starts (fatigue/tally consumer)
     this.crouching = false;      // P12: toggled via input.crouch (edge); standing needs headroom
     this._pkCrouchRestore = false; // A low mantle's temporary stance, distinct from the player's crouch toggle.
@@ -688,6 +689,9 @@ export class PlayerMotor {
   /** PlayerMotor.IsRiding (:138) - the one question every consumer
    *  asks of the transport mode. */
   get riding() { return isRiding(this.transportMode); }
+  /** HORSE-WALK: THE SLOW RIDE - under half its base (IsMovingLessThanHalfSpeed: a sneak in the saddle) or walked. The
+   *  slow clop's word the pose's `hs` carries (systems/riding.js), and the 3D horse's: a slow ride never gallops. */
+  get slowRide() { return !!(this.movingLessThanHalfSpeed || this.rideWalking); }
 
   /** AUDIT 64 F3: InputManager.ToggleAutorun (InputManager.cs:542-545)
    *  - the latch PlayerSpeedChanger.ToggleRun flips (:85-93) and the
@@ -791,11 +795,16 @@ export class PlayerMotor {
     return walkSpeed(this.stats.speed) * (this.swimSpeedScale > 0 ? this.swimSpeedScale : 1);
   }
   /** IsMovingLessThanHalfSpeed's base (PlayerMotor.cs:176-180): GetWalkSpeed crouched, else GetBaseSpeed - which,
-   *  uncrouched, is the ride base on a mount and RefreshWalkSpeed off one. */
+   *  uncrouched, is the ride base on a mount (HORSE-WALK: the walk, where horse care walks it) and RefreshWalkSpeed off
+   *  one. */
   _halfSpeedBase() {
     if (this.crouching) return walkSpeed(this.stats.speed);
-    return isRiding(this.transportMode) ? rideSpeed(this.stats.speed, rideBaseFor(this.transportMode)) * this._rideScale() : this._refreshWalkSpeed();
+    return isRiding(this.transportMode) ? rideSpeed(this.stats.speed, this._rideBaseNow()) * this._rideScale() : this._refreshWalkSpeed();
   }
+  /** HORSE-WALK: the classic base GetBaseSpeed's riding arm adds - DFU's own walk base where horse care walks the horse
+   *  (transport.js rideWalks), so the walk is its base as a walk is on foot and a pace under half of it is a sneak's;
+   *  else the mode's ride base (rideBaseFor). GetRunSpeed's riding arm never reads it: the gallop is the ride base's. */
+  _rideBaseNow() { return rideWalks(this.transportMode) ? DF_WALK_BASE : rideBaseFor(this.transportMode); }
   /** STEED1/WAGONS4: the ride's pace scale, a finite positive number (1 for anything else). */
   _rideScale() { const k = this.rideSpeedScale; return Number.isFinite(k) && k > 0 ? k : 1; }
   /** GetSwimSpeed(GetBaseSpeed()) - LevitateMotor's swim: GetBaseSpeed skips the crouch arm while it swims. */
@@ -1050,6 +1059,7 @@ export class PlayerMotor {
   setTransportMode(mode) {
     const was = this.riding;
     this.transportMode = mode;
+    this.rideWalking = false;   // HORSE-WALK: the next step's speed derives it for the new mode
     if (this.riding === was) return;
     this.heightAction = this.riding ? 'mount' : 'dismount';
     this.heightTimerMax = this.riding ? HEIGHT_TIMER_MEDIUM : HEIGHT_TIMER_FAST;
@@ -3175,6 +3185,10 @@ export class PlayerMotor {
     // TR1: the mode's base, when there is one. GetBaseSpeed tests
     // CROUCH first and riding second, so the order here is DFU's.
     const rideBase = (!this.crouching && isRiding(this.transportMode)) ? rideBaseFor(this.transportMode) : null;
+    // HORSE-WALK: horse care's horse WALKS unless it gallops - GetBaseSpeed's riding arm on the walk's base
+    // (_rideBaseNow), the run on the ride base as ever (GetRunSpeed's riding arm). DFU's ride, which every picture
+    // already drew as a gallop (eotbBillboard.js GALLOP_SPEED, horseModel.js HORSE_GAIT_FROM), is the gallop's base now.
+    this.rideWalking = rideBase != null && !this.isRunning && rideWalks(this.transportMode);
     if (this.isRunning) {
       speed = runSpeed(this.stats.speed, this.stats.running, this.crouching, rideBase);
       if (rideBase != null) speed *= this._rideScale();   // STEED1: a gallop at the horse's own pace
@@ -3185,7 +3199,7 @@ export class PlayerMotor {
       // TR-AUDIT F-E4: TR1's first cut put the ride arm beside the
       // sneak instead of under it, so a sneaking rider trotted.
       speed = rideBase != null
-        ? rideSpeed(this.stats.speed, rideBase) * this._rideScale()   // STEED1/WAGONS4: the horse's pace, the wagon's
+        ? rideSpeed(this.stats.speed, this._rideBaseNow()) * this._rideScale()   // STEED1/WAGONS4: the horse's pace, the wagon's; HORSE-WALK: a walk where horse care walks it
         : (this.crouching ? crouchSpeed(this.stats.speed) : this._refreshWalkSpeed());   // DW-D: GetBaseSpeed's walk arm is RefreshWalkSpeed
       if (this.isSneaking) speed = sneakSpeed(speed);
     }

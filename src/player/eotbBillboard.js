@@ -344,7 +344,9 @@ export const isFootstepFrame = (frame, riding = false) => frame % (riding ? 4 : 
  * UNARMED - the setting doing its job. In the saddle the gallop is a
  * SPEED, not a run flag: `|MoveDirection.xz| > 10` (IL_43e9-IL_4429),
  * which every horse clears at a walk (DFU's ride base is 375 classic
- * units, 10.8 m/s at SPD 50) and a cart never does.
+ * units, 10.8 m/s at SPD 50) and a cart never does. HORSE-WALK: horse
+ * care's horse walks on DFU's walk base (about 5 m/s), under it - so its
+ * walk draws MoveHorse and its gallop (the run) GallopHorse.
  */
 export const GALLOP_SPEED = 10;
 /** |PlayerMotor.MoveDirection.xz| as the table reads it: the applied speed, times the diagonal's .7071 (PlayerMotor's

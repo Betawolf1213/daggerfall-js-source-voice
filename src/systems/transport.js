@@ -16,6 +16,7 @@
 //     BONUS: baseRunSpeed IS baseSpeed, so the 1.35 + Running/200
 //     multiplier applies to the ride speed rather than the walk one.
 //   PlayerSpeedChanger.CanRunUnlessRiding (:137-140).
+//   (HORSE-WALK, the port's own: horse care walks a horse - rideWalks.)
 //   PlayerEntity.Update (:311) - the running skill does NOT tally
 //     while mounted.
 //   ClimbingMotor (:398) - no climbing from a saddle.
@@ -89,6 +90,16 @@ export const canRunUnlessRiding = (mode) => {
   const mods = _canRun?.(mode) ?? null;
   return _gallop?.(mode, mods) ?? mods ?? !isRiding(mode);
 };
+// HORSE-WALK (2026-10-12, the owner: "when youre riding a horse, it walks by default and to gallop you must shift to
+// sprint, just like when you are walking as a character" - bible/06-Systems/Horse-Care.md, THE WALK): HORSE CARE'S WORD
+// ON THE RIDE'S PACE - `(mode)` answers true where the ride WALKS: GetBaseSpeed's riding arm on DFU's own walk base
+// (the motor's DF_WALK_BASE, undragged as every ride arm is), the run the gallop the gate above lets it. Anything but
+// true keeps DFU's ride base. Only where horse care rules the gallop - off it a horse is DFU's (one pace, no run in the
+// saddle, the mod's gallop where it rules), and a walk with no gallop to shift into would hold a rider to it. One a
+// host (systems/upkeepRuntime.js).
+let _walk = null;
+export function setRideWalk(fn) { _walk = typeof fn === 'function' ? fn : null; }
+export const rideWalks = (mode) => isRiding(mode) && _walk?.(mode) === true;
 
 /** HandleTransition (:196-202): a building or dungeon interior puts
  *  you back on foot. Anything else leaves the mode alone. */

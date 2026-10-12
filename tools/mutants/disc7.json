@@ -227,8 +227,8 @@
   {
     "name": "DISC7-peer-clop-ignores-the-bit",
     "file": "src/net/remotePlayers.js",
-    "old": "movingLessThanHalfSpeed: !moving || !!peer.shown.hs });",
-    "new": "movingLessThanHalfSpeed: !moving });",
+    "old": "walking: !!peer.shown.hs, running: peer.shown.mv === 2 });",
+    "new": "walking: false, running: peer.shown.mv === 2 });",
     "tests": [
       "test/disc7.test.js"
     ]

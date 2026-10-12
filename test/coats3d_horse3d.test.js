@@ -393,7 +393,7 @@ test('COATS3D by source: the view keeps the saddle and lifts RIDE-POV astride; t
   assert.match(v, /if \(saddled && ownSaddle\) feet = \[feet\[0\], feet\[1\] \+ Math\.max\(0, ownSaddle\.seat\[1\] - feet\[1\] - SEAT_PELVIS_HEIGHT \* heightScale\), feet\[2\]\];\n\s*const eye = mwCamera\.eye\(\{ fpEye, feet,/, 'the third-person camera about the rider\'s head');
   for (const h of ['world', 'exterior']) {
     const s = rd(`src/scenes/${h}.js`);
-    assert.match(s, /horse: player\.transportMode === TRANSPORT_MODES\.Horse \? \{ look: riddenHorseLook\(playerEntity\.items \?\? \[\]\) \} : null,/, `${h}: the horse, never the cart, in its look`);
+    assert.match(s, /horse: player\.transportMode === TRANSPORT_MODES\.Horse \? \{ look: riddenHorseLook\(playerEntity\.items \?\? \[\]\), slow: player\.slowRide \} : null,/, `${h}: the horse, never the cart, in its look (PIN MOVED, HORSE-WALK: and the motor's slow ride, which holds it under the gallop)`);
     assert.match(s, /saddle: mwViewSaddle\(\),/, `${h}: the body's saddle in its camera`);
     assert.match(s, /mwViewAttachHorse\(renderer\);/, `${h}: the rig attached`);
     assert.match(s, /hcc\.draw3d\(canvas, \{ eye[^\n]*proj, view/, `${h}: the pool's 3D horses in the body pass`);

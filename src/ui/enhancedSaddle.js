@@ -46,13 +46,16 @@ const WAGON_TONE = Object.freeze({ sound: 'ok', worn: 'ok', rickety: 'warn', fai
 const HUNGER_TONE = Object.freeze({ fed: 'ok', hungry: 'warn', starving: 'low' });
 
 /**
- * The gait's word: standing, galloping, else the ride's own pace - a horse trots, a wagon rolls.
+ * The gait's word: standing, galloping, else the ride's own pace - a horse horse care walks walks (HORSE-WALK), DFU's
+ * horse trots, a wagon rolls.
  * @param {string} mode - 'Horse' | 'Cart' @param {number|null|undefined} speed - m/s @param {boolean} [galloping]
+ * @param {boolean} [walks] - the ride's own pace is a walk (upkeepRuntime.js rideWalks)
  */
-export function saddleGait(mode, speed, galloping = false) {
+export function saddleGait(mode, speed, galloping = false, walks = false) {
   if (!Number.isFinite(speed) || /** @type {number} */ (speed) < STANDING_MPS) return 'Standing';
   if (mode === 'Horse' && galloping) return 'Galloping';
-  return mode === 'Cart' ? 'Rolling' : 'Trotting';
+  if (mode === 'Cart') return 'Rolling';
+  return walks ? 'Walking' : 'Trotting';
 }
 /** The pace in kilometres an hour, whole; '' with none known. @param {number|null|undefined} speed - m/s */
 export const saddleSpeedText = (speed) => (Number.isFinite(speed) ? `${Math.round(Math.max(0, /** @type {number} */ (speed)) * 3.6)} km/h` : '');
@@ -283,7 +286,8 @@ function makeButtons(doc, list, hooks) {
 /**
  * The panel's frame. `state`: { saddle: the host's read (or null - nothing to show), covered, touch, mouseFree,
  * freeKey (the free-mouse key's label), keyOf(action) -> its key's label }. The saddle's read: { mode 'Horse'|'Cart',
- * name, wagonName, speed (m/s), galloping, horse, wagon, oats, apples, kits (upkeepRuntime.js saddle), load { kg, limit }
+ * name, wagonName, speed (m/s), galloping, walks (HORSE-WALK: its own pace a walk), horse, wagon, oats, apples, kits
+ * (upkeepRuntime.js saddle), load { kg, limit }
  * | null, near, wagonNear, cargo (null: no wagon to open; else whether it can be reached), view, hcc }. `hooks`: feed,
  * treat, kit, cargo, stable, view, dismount. Returns the root, or null when nothing stands.
  */
@@ -304,7 +308,7 @@ export function drawEnhancedSaddle(state = {}, hooks = {}, { doc = globalThis.do
   if (last.rootClass !== rootClass) { last.rootClass = rootClass; parts.root.className = rootClass; }
   const title = saddleTitle(s);
   if (last.title !== title) { last.title = title; parts.name.textContent = title; }
-  const gait = [saddleGait(s.mode, s.speed, s.galloping), saddleSpeedText(s.speed)].filter(Boolean).join(' · ');
+  const gait = [saddleGait(s.mode, s.speed, s.galloping, s.walks), saddleSpeedText(s.speed)].filter(Boolean).join(' · ');
   if (last.gait !== gait) { last.gait = gait; parts.gait.textContent = gait; }
   const hint = saddleHint(s, state);
   const hintWarn = !!(s.horse?.winded || s.horse?.hungerKey === 'starving' || s.wagon?.stateKey === 'failing');

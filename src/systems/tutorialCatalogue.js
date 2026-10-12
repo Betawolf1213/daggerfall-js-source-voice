@@ -255,7 +255,7 @@ export const TUTORIALS = Object.freeze([
     id: 'horse', group: 'travel', title: 'Horses', trigger: 'When you first choose how to travel.',
     body: [
       'Every town has a stable that sells horses. {Transport} picks how you travel: on foot, on horseback or by cart.',
-      '{HorseMount} gets on and off. {HorseSummon} calls your horse and wagon to you.',
+      '{HorseMount} gets on and off. Your horse walks; hold {Run} to gallop outside towns. {HorseSummon} calls your horse and wagon to you.',
     ],
   }),
   page({

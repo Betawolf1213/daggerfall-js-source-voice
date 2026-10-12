@@ -245,7 +245,7 @@
   {
     "name": "B2-latch-reads-the-stop",
     "file": "src/scenes/world.js",
-    "old": "_hsLatch = !!player.movingLessThanHalfSpeed; }",
+    "old": "_hsLatch = player.slowRide; }",
     "new": "_hsLatch = true; }",
     "tests": [
       "test/disc7.test.js"

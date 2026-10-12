@@ -1056,9 +1056,15 @@ export class RemotePlayers {
     // AUDIT DISC7 B3: a rider whose poses stopped (a tab in the background, a crash, a stall) stands - `visible` keeps
     // them for up to PEER_TIMEOUT_MS on their last pose, and a frozen gallop clopped in place for all of it
     const stale = typeof poseAgeMs === 'function' && poseAgeMs(peer) > PEER_RIDE_STALE_MS;
-    // DISC7: the rider's own half-speed flag off the pose (`hs`) - standing reads true, as the motor's own does
+    // DISC7: the rider's own half-speed flag off the pose (`hs`) - standing reads true, as the motor's own does (AUDIT
+    // HORSE-WALK: the bit is read once, as the slow ride's state, below)
     const moving = !!peer.shown.mv && !stale;
-    const out = r.anim.update(Math.max(0, dt), { mode, standingStill: !moving, movingLessThanHalfSpeed: !moving || !!peer.shown.hs });
+    // AUDIT HORSE-WALK: `hs` is the rider's SLOW RIDE (player/motor.js slowRide - walked, or under half its base), which
+    // their own animator plays as a state, not the edge (systems/riding.js `walking`) - so here too: on the edge alone a
+    // peer first seen at a walk, or mounting into one, never crossed it and clopped fast for as long as they walked. And
+    // the gallop's pitch off the pose's gallop bit (mv 2), as the rider's own run gives theirs - every peer's gallop was
+    // heard at 1.0 since horse care made the gallop reachable (STEED1)
+    const out = r.anim.update(Math.max(0, dt), { mode, standingStill: !moving, movingLessThanHalfSpeed: !moving, walking: !!peer.shown.hs, running: peer.shown.mv === 2 });
     const at = this._feet(peer, toScene);
     r.at = at;
     // AUDIT DISC7 B4: past earshot nothing is made - no panner and no source for a rider nobody can hear (the

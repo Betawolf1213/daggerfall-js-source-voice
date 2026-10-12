@@ -347,13 +347,14 @@ export const FEATURES = Object.freeze([
   }),
   // STEED1 (2026-10-11, the owner: "Horse should have stamina, feeding them grows your bond and improves their stats.
   // Every horse should have different stats"): HORSE CARE (bible/06-Systems/Horse-Care.md, systems/steedCare.js). On by
-  // default; online every horse is under it, so the lane forces it on there.
+  // default; online every horse is under it, so the lane forces it on there. HORSE-WALK (2026-10-12): its horse walks
+  // unless the run gallops it.
   Object.freeze({
     id: 'horse-care',
     group: 'world',
     title: 'Horse care',
-    note: 'Every horse has its own Speed, Stamina, Endurance and Strength, and gallops on its breath. Feeding it grows your '
-      + 'bond and every stat with it, and a hungry horse is weaker; online it is always on.',
+    note: 'Every horse has its own Speed, Stamina, Endurance and Strength, and walks unless you hold Run to gallop on its '
+      + 'breath. Feeding it grows your bond and every stat with it, and a hungry horse is weaker; online it is always on.',
     effect: 'Takes effect at once.',
     kinds: Object.freeze(['enhanced']),
     control: Object.freeze({ store: 'prefs', key: 'horseCare', initial: true, online: true }),   // systems/upkeepSwitch.js HORSE_CARE_PREF
