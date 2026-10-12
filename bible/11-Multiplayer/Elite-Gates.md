@@ -1233,6 +1233,10 @@ Two sources, one record:
      JSON beside the mesh;
    - **each fragment its own bake script and byte-for-byte test**, as every bake in the port has;
    - **each fragment its own `.fbx`**. The gate's 8.6 MB whole-scene source (1,905 meshes) is the warning.
+   - built by EG6c: `tools/fragBake.mjs`, the record's reader in `net/egFragLaw.js`, the registries
+     (`net/egHeroFrags.js`, `world/egHeroFragModel.js`) and a reference fragment of the port's own. How Mac names a
+     fragment's art and markers so the bake accepts it is the EG6c record's (below); laying his into the halls waits for
+     them.
 
 **One kit of mesh tools.** Today every made level carries its own box, extrude and pack helpers (`packFaces` in
 `src/world/gateArena.js`, `packRealmFaces` and `quadFacing` in `src/world/sdRealm.js`, `away` in
@@ -3781,8 +3785,9 @@ Grath's falling isles, and the solver's median check.
 
 **Departures, said plainly** (each still owed to its slice):
 - **The relay half's own departures:**
-  - a fragment's law lives in the spec's own fields, not a separate record with `sockets`, polygon `floors` and a legion
-    `graph`. A passage's mouth and exit are its `z0` and `z1`; its floors are rectangles. The legion walks straight to
+  - a code-built fragment's law lives in the spec's own fields, not a separate record with `sockets`, polygon `floors` and a
+    legion `graph` (an authored fragment's law is that record since EG6c - `net/egFragLaw.js` `egFragRecordFault` - but no
+    hall lays one yet). A passage's mouth and exit are its `z0` and `z1`; its floors are rectangles. The legion walks straight to
     its mark, kept to the fight floors as it was, so an arch's walls do not yet turn it;
   - the Sluice takes its share at once rather than flooding a channel for 6 s;
   - the Moon-Mirror blinds the Divers but does not yet light a branch;
@@ -3796,7 +3801,8 @@ Grath's falling isles, and the solver's median check.
 - **Still owed by EG-D:**
   - the moving pieces' instanced pass, the cull and the measured budgets;
   - `world/meshKit.js` and `world/pseudoArchives.js`;
-  - the authored hero fragments;
+  - the authored hero fragments laid into the halls (EG6c built their bake, its reader, their registries and a reference
+    fragment - its record, below);
   - the pieces' last tells (the Rail's track, the Gust's streamers, the waystones lit).
 
 **Pins.**
@@ -5871,3 +5877,221 @@ motion, the hall held centred and the band's chime are unchanged.
 - `bible/07-Rendering/Rendering.md`'s row for the stair's pass says the fall is modelled.
 - `RELAY_VERSION` untouched: nothing in the relay's graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
 - New in `src/`: `src/world/egUnderside.js`. The Ledger's ELITE-GATES row gains it at the lead's merge.
+
+### EG6c - 2026-10-12 - HERO FRAGMENTS: THE BAKE AND ONE REFERENCE FRAGMENT
+
+Mac authors the hero fragments in Blender (section 11.6, "Authored hero fragments (EG6c, as Mac authors them)"). This slice
+builds what turns his scene into a fragment: the bake, the law half's reader, where a baked fragment is registered, and
+one reference fragment of the port's own standing in for his until they arrive. It keeps section 10.5's ceiling clamp and
+section 11.5's volumes-apart rejection as far as one fragment's bake can keep them. Two of layer three's sentences are
+narrowed. "Still owed by EG-D: the authored hero fragments" now owes only their laying, which waits for his. Its departure
+that "a fragment's law lives in the spec's own fields, not a separate record" now holds for the code-built kits alone.
+
+**What shipped, by piece.**
+
+- **THE BAKE** (`tools/fragBake.mjs`, new). `bakeFrag(fbxBytes, spec)` turns one fragment's scene into its two halves:
+  - it walks the scene with `tools/shipBake.mjs` `sceneObjects`, which refuses by name an export in other axes, any
+    transform past T*R*S and a mirroring one;
+  - it cuts each polygon with `fillFace` (Blender 5.1's cut, or refused) and welds each art object's normals and UVs on the
+    authored triple with `tools/fbxMesh.mjs` `layerReader` and `cornerWelder`, so a UV seam or a hard edge keeps its split;
+  - it writes one sub-mesh for each band dress record, lowest first, and bakes the named markers to section 11.5's record.
+  The record must pass `net/egFragLaw.js` `egFragRecordFault`, and THE TIMED SOLVER must prove its inner course. Its spec
+  (`{ id, kit, class, variant, play, source }`) names the fragment, its library kit, its class, which hero of the kit it is
+  and a chamber's play; its band, reverb, light and engine follow from the kit (`EG_FRAGS`). Each half is written one key
+  a line (`fragJson`), and a re-bake gives the same bytes. `node tools/fragBake.mjs --list <in.fbx>` prints every object
+  as the bake reads it.
+- **ONE DFU MEMBER, ONE EXPORT** (the page's "export from them what you need"):
+  - `tools/fbxMesh.mjs` exports `layerReader` and the weld it used inline, `cornerWelder`. `bakeMesh` welds through it,
+    and every Morrowind bake keeps its bytes;
+  - `tools/shipBake.mjs` `sceneObjects` gives each object it reads its Geometry (`geo`) and `normal`, which places a normal
+    as the object's vertices are placed (the inverse transpose of its T*R*S and the file's frame). The ships and the gate
+    never ask for either;
+  - the binary FBX writer moved whole out of `test/fbxmesh.test.js` into `tools/fbxWrite.mjs`, so the fixture and the
+    reference are written by one writer.
+- **THE FRAME.** A scene point (X, Y, Z) is the fragment's (X, Z, Y), measured from the middle of the mouth's bottom edge.
+  The swap is a mirror in the numbers, the same one `tools/bakeGate.mjs` uses to keep Mac's model his own in the
+  left-handed world: each triangle is wound back through it, so (b - a) x (c - a) faces out along its normals, and each
+  normal goes through it as a vector. The law half is in whole centimetres, rounded half away from zero, so a mouth stands
+  exactly at its own middle. The mesh is in metres to 0.1 mm.
+- **THE LAW HALF, READ** (the EG6c section of `net/egFragLaw.js`, at its end). Section 11.5's record (the header lists its
+  fields), with this reader:
+  - `egFragRecordFault` checks the version, whole numbers, the kit's band, class and reverb, a chamber's play and fight
+    floor, the sockets, floors, ramps, open edges, ceilings, the walk graph, the anchors, every hazard's shape
+    (`EG_HAZARD_SHAPES`) and law (`egHazardLawful`: THE WIDTH RULE, THE WIND-UP FLOOR), the course, alcoves, lights, the
+    budget (`EG_FRAG_BUDGET`, section 11.9's starting bounds) and the proof;
+  - `egFragCeilAt`, `egFragApart`, `egFragBoxAt` and `egFragSwept` answer what a laying asks;
+  - `egFragSteps` and `egFragHazards` give the record as a hall spec's steps and hazards, in metres and seconds and placed
+    at an origin.
+  The section decides in integers and calls none of section 9's banned functions (a source sweep). Nothing the relay runs
+  calls it yet.
+- **THE CEILING CLAMP AT BAKE TIME** (sections 10.5, 11.7 and 11.8). Every floor stands either wholly under a ceiling or
+  wholly open to the sky, because the motor's clamp extrudes a floor to one ceiling.
+  - The ceiling over a floor keeps its class's headroom (`EG_FRAG_HEADROOM_CM`): 3.5 m in a passage or a shaft, 6 m in a
+    chamber. A ramp keeps 3.5 m at every corner.
+  - The ceiling over every inner piece's whole travel keeps THE FAST BUILD's flight clear: its 2.68 m apex and the
+    capsule's 1.8 m, 4.5 m together. So the clamp never cuts short a flight the solver proved. Pinned at 4.4 m (refused)
+    and 4.5 m (stands).
+- **VOLUMES STAND APART AT BAKE TIME** (section 11.5).
+  - The record's `box` covers every drawn vertex, every marker, every opening's snapped width, every hazard's plan (an
+    Eclipse's havens' reach among them) and every inner piece's travel. The reader refuses a record whose law stands
+    outside it, so a laying that keeps boxes `EG_FRAG_APART_CM` (2 m) apart (`egFragApart`) keeps the whole fragment
+    apart.
+  - The mouth is the box's -Z face and every exit its +Z face, to `EG_FRAG_SOCKET_TOL_CM` (10 cm), so the course meets
+    the fragment at its sockets.
+  - An inner course with no ground before or after it is refused.
+- **THE REFERENCE FRAGMENT**:
+  - `tools/egRefFragScene.mjs` writes it from numbers alone: no game data, no third-party art, no trigonometry. It is
+    written as Blender's FBX exporter writes a scene: object origins at their middles, -90 degrees about X, a scale of
+    100, normals and UVs by polygon vertex, and materials by polygon. Its SceneInfo names its writer (`FRAG_REF_WRITER`),
+    never a Blender;
+  - it is a 30 m Oblivion Caverns passage whose vault is open to the burning sky over its chasm. It has a threshold and a
+    fight floor of two faces before the chasm, two ledges and a Drift across it, and a fight floor after it with a stair
+    up to a Caster's balcony. Its two exits are one from the floor and one from the balcony, 1.5 m up. It also has a fire
+    fall, a surge, falling basalt, an alcove behind the west wall, three lights, a seven-node walk graph that does not
+    cross the chasm, and an 18-triangle collider proxy;
+  - every marker kind and every anchor kind stand in it. Its art is 128 triangles in seven dress records (including smooth
+    posts with a UV seam);
+  - `tools/bakeEgRefFrag.mjs` is its own bake script, which every fragment of Mac's will copy. The .fbx and both halves are
+    committed under `src/assets/egfrags/`.
+- **WHERE A BAKED FRAGMENT IS REGISTERED** (decided with section 11.6):
+  - its **pictures** take no number of their own. Each art face wears a record of its band's dress (`world/egBandArt.js`
+    `EG_DRESS`), and the bake refuses any other material. It draws under its band's archive, which the one registry already
+    holds (`world/pseudoArchives.js` `EG_BAND_ARCHIVES` - its header says so), so an authored fragment cannot collide
+    with anything;
+  - its **mesh** goes through the one mesh kit: `world/meshKit.js` gains `mesh`, which writes a baked mesh's triangles
+    into a record's bucket, moved to where the fragment is laid, with its own normals and UVs. A hero fragment packs with
+    the hall's code-built shapes into one model. `world/egHeroFragModel.js` (new) registers the mesh halves beside their
+    own bake's law (`egHeroFragMeshes`), and `egHeroFragInto`, `egHeroFragModel` and `egHeroFragCollider` lay them;
+  - its **law** is registered in `net/egHeroFrags.js` (new). `egHeroFragRegistry` holds every record to the reader at
+    import, and `egHeroFragLaws(kit)` gives the fragments a hall may lay: none today, because the reference (variant
+    `reference`) is laid by no hall.
+
+**How Mac authors a fragment** (the bake accepts exactly this - `tools/fragBake.mjs`'s header says it too):
+
+- **The file.** One fragment per `.fbx`, exported from Blender 5.1 with the FBX exporter's defaults (binary, Forward -Z,
+  Up Y). Export the markers too: do not limit the export to visible or selected objects if they are hidden. Objects are
+  root objects (no parent), their rotation mode XYZ Euler, with no negative scale (apply it with Ctrl+A).
+- **The frame.** 1 Blender unit is 1 m and Z is up. The course runs along +Y: the mouth at the -Y end, the exits at the +Y
+  end, X across. Nothing of the fragment may stand more than 10 cm behind its mouth or past its exits.
+- **The art.** Any object whose name is not a marker word is art. Every face wears a material named for one of its band's
+  dress records: `floor`, `brass`, `root`, `arena`, `cobble`, `edge`, `molten` or `pillar` (a Blender copy suffix such as
+  `pillar.001` is fine). Every art object has normals and a UV map; it is smooth where he smooths it and mapped as he maps
+  it. At most 12,000 triangles and 12 draws.
+- **The markers.** Each is a mesh object; its name says what it is and its geometry says where. A label is letters,
+  digits, `_` and `-`, and any name may end in Blender's `.001`.
+
+  | name | geometry | what it says |
+  |---|---|---|
+  | `floor.<label>`, `floor.fight.<label>` | a flat plane, any faces (its outline is the floor), one outline, no hole | a traversal floor; a fight floor |
+  | `ramp.<label>` | a sloped plane | a stair or slope, each corner at its own height |
+  | `ceil.<label>` | a flat plane over the floors it roofs | a ceiling (a floor under none is open to the sky; never half under one) |
+  | `open.<label>` | a box over floor edges (to 10 cm) | those edges open (to the void, a ramp, a lower floor); every other edge is a wall, except where one floor runs on into another at its height |
+  | `socket.in` | an upright plane across the course | the mouth (one) - its width and height the opening's, at least 3.5 m high |
+  | `socket.out.<label>` | the same | an exit (one or more; one may stand higher - a Low Road goes down) |
+  | `node.<label>` | a disc on the ground | a walk-graph node (its middle; half its width its reach) |
+  | `edge.<label>` | a strip from one node's disc to another's (its ends within a metre of their heights) | a walk-graph edge |
+  | `anchor.<kind>.<label>` | a small box | `rift`, `caster`, `lurker`, `niche`, `engine` or `hazard` - the middle of its foot |
+  | `hazard.<kind>.<label>[.per<ms>][.ph<ms>]` | its kind's shape: one rectangle along its length (`fall`, `surge`, `slag`); one disc each, one size (`basalt`, `hammer`, `hammerline`); one rectangle each, falling along +Y (`cascade`); the swing's rectangle (`wisp`, `per` required); a plane at its line (`mist`); a disc (`tide`); the moon-shafts' ring as a disc (`eclipse`) | a hazard on the shared clock; a lane's bite the capsule inside its rectangle |
+  | `course.<kind>.<label>[.amp<cm>][.per<ms>][.ph<ms>][.beat<n>]` | a box, its top the piece's top | an inner piece: a Drift and a Rail say `amp` and `per`; a Pendulum, a Vent and a Gust `per`; a Drum `amp` (it rolls at the law's 2.0 m/s); a Moon branch `ph` and `beat` (cm); a Beat `beat` (ms); a slag crossing's clock is the law's; a ledge or still piece says none |
+  | `alcove.<seam\|jump>.<lumen\|shard\|page>.<label>` | a box to one side of the course | an alcove (its floor's middle) |
+  | `light.<band\|lava\|moon>.<label>` | a small box | a light (its middle) - at most four |
+  | `collider.<label>` | low-poly faces | the collider's proxy (at most 3,000 triangles), never the drawn mesh |
+- **Its bake.** Copy `tools/bakeEgRefFrag.mjs` and give it its spec (`id`, its kit in `EG_FRAGS`, a class the kit has, a
+  `variant` of its own, a chamber's `play`, its `source`). Commit the .fbx under `src/assets/egfrags/source/` with its two
+  halves beside it, and add a byte-for-byte test (the reference's is `test/eg6c_bake.test.js`'s first). Register the law
+  in `net/egHeroFrags.js` and the mesh in `world/egHeroFragModel.js`, and name the three files in `test/doctrine.test.js`'s
+  allow-list.
+- **What the bake refuses, by name.** It refuses:
+  - an export no Blender 5.1 wrote;
+  - a marker name it cannot read;
+  - a floor or ceiling that is not flat, is not one outline, or has a hole;
+  - a socket that is not upright, or a second mouth;
+  - an edge that misses its nodes;
+  - an open marker that opens no edge, or an alcove on the course's line;
+  - a hazard not in its kind's shape, or of two sizes;
+  - art without the band's dress, normals or a UV map;
+  - a record its reader faults: THE CEILING CLAMP, the volume and its faces, THE WIDTH RULE, the budget;
+  - an inner course the solver does not prove.
+  A refused scene is fixed in Blender, never patched by the bake.
+
+**Departures, said plainly.**
+
+1. A hazard's record is in the hall spec's own fields (`sh`, `spots`, `lanes`, `path`, `ring`, `r`, with `period` and
+   `phase`), not section 11.5's `{ kind, shape, size, at, period, windup, pct }`. Its wind-up, share and element are its
+   kind's law (`EG_HAZARDS`) and are never copied into a record that could disagree.
+2. A ramp's `poly` carries each corner's height (`[x, y, z]`): `{ poly, y0, y1 }` cannot say which way a slope rises.
+   Anchors are `[x, y, z]` (a code-built plan's are `[x, z]`).
+3. The record adds `kit` (its band, reverb, light and engine follow), `box` (its volume) and `bake` (its source and the
+   source's sha256). `play` is a list (a chamber's "at least one of").
+4. `proof.crossSlow` is the median crossing over start phases at THE SPAN BUILD (THE MEDIAN's measure), not a slowest
+   crossing. The crossing's bound at THE FAST BUILD (section 10.5's `EG_CROSS_MIN`) is not in the record.
+5. The ceiling clamp at bake time is a refusal, not a clamp. THE TIMED SOLVER models no ceiling, so a ceiling lower than
+   the fast build's 4.5 m over any inner piece's travel is refused instead, and no flight the solver proved is cut short.
+   The page names no headroom for a shaft; a shaft keeps a passage's 3.5 m.
+6. A lane's rectangle is the capsule inside it. The law's lanes are capsules (`net/egShape.js` `egInShape`), so the line
+   is drawn in by half the width at each end and the bite never passes what Mac drew.
+7. Section 11.5 names `open` edges without saying how they are authored. An edge is opened by an `open.*` box over it, or
+   by one floor running on into another at its height. A ramp meeting a floor needs an `open` marker.
+8. Volumes stand apart as far as one fragment can be held to it: the box holds everything, and the sockets stand on its
+   faces. Laying it is left to the laying (below): the 2 m test against the hall's other boxes (`egFragApart`), a Low
+   Road's vault 3 m under the lowest underside above it, and a piece's hanging underside (`SD_ROOT_DEPTH`).
+9. The collider proxy is authored (`collider.*`), not derived. Section 11.6's "no drawn vertex inside the proxy" is not
+   checked at bake time.
+10. The reference's file names the port's own writer, which the bake accepts by name without asking a Blender's cut.
+    Every other file must be Blender 5.1's.
+11. `EG_FRAG_BUDGET` is section 11.9's starting bounds; EG6b's measurement on SwiftShader and a reference phone has not
+    fixed them.
+12. An inner piece's size is as authored (not `EG_STEP`'s), and its clock is the name's wherever the law leaves it free.
+
+**Not built - the owner item, for when Mac's fragments arrive.** Laying an authored fragment into a hall, which needs:
+- `net/egLaw.js` to choose one (`egHeroFragLaws`) in place of a kit's passage or chamber;
+- its polygon fight floors in the spec (`spec.fl` is discs and lanes today, and `net/egFair.js`, `net/egFloor.js` and
+  `net/egWalkGraph.js` read no polygon);
+- its sockets joined to the course (a joined piece's w and h within 0.1 m), its box kept 2 m from every other volume and a
+  Low Road's vault 3 m under the lowest underside;
+- its steps and hazards laid (`egFragSteps`, `egFragHazards`) and its walk graph walked by the legion;
+- its own clamp from its floors and ceilings (`world/egHall.js` `egFragZones`), its mesh laid through `egHeroFragInto`, and
+  its proxy in the hall's collider buckets.
+That is a spec law (`EG_SPEC` 6) and a relay version. Law 4 and law 5 lay what they laid: the 800-hall hashes in
+`test/egz_frag.test.js` and `test/egseam_law.test.js` stand. The reference is laid by none.
+
+**Not verified without a browser and the game's data:**
+- the reference's mesh was never drawn. It was checked in node only: its triangles' winding against its normals, its
+  sub-meshes, and the kit's pack;
+- whether Blender's UVs (v up) lie on the band's painted records as a modeller expects was never checked; the port's own
+  meshes run v up too;
+- no export of Mac's was baked, because none exists yet. The reference is written the way his exports are (the ships',
+  the gate's), and the bake reads them through the same `sceneObjects`.
+
+**The four hosts.**
+- `src/scenes/world.js` - FLAGGED: untouched. No authored fragment is laid yet, so no host draws one; nothing was added to
+  `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED: untouched.
+- `src/scenes/dungeonContext.js` - FLAGGED: untouched.
+- `src/scenes/exterior.js` - FLAGGED: the bench is offline and holds no Elite Breach.
+
+**Pins.**
+- `test/eg6c_bake.test.js` (12), `test/eg6c_law.test.js` (6).
+- `tools/mutants/eg6c.json` (203, every one dead). Eleven survived the first run. New assertions killed ten of them:
+  - a flat ramp;
+  - a floor's edge midpoints left unasked (now a ceiling notched over one);
+  - a node standing on a ramp;
+  - a piece past the box's far end;
+  - a corner meeting four edges (a bow-tie floor);
+  - a four-cornered marker that is not a rectangle (a trapezoid);
+  - a spec naming no kit;
+  - an edge end meeting two nodes;
+  - a material Blender copied (`molten.001`);
+  - a baked mesh's normals (now every corner is compared, not only the first).
+  The eleventh was an equivalent mutant (the crossing test turned: a point's crossings to its left and to its right have
+  the same parity), re-aimed at the crossings' count, which a point whose line crosses the outline twice now pins.
+- Judged again over the files this slice touched: every record aimed at `tools/fbxMesh.mjs`, `tools/shipBake.mjs`,
+  `src/net/egFragLaw.js`, `src/world/meshKit.js` and `src/world/pseudoArchives.js` in `egfrag.json`, `egz_frag.json`,
+  `eglook.json`, `egz_sound.json`, `galleon.json`, `auditgalleon_bake.json`, `auditgalleon2_bake.json`, `gatefbx.json`,
+  `ships2_bake.json` and `mwebony1.json` (106, every one dead).
+- PIN MOVED: `test/fbxmesh.test.js` imports its writer from `tools/fbxWrite.mjs` (its 12 tests and every bake's bytes
+  unchanged); `test/doctrine.test.js`'s allow-list names the reference's three files.
+- `RELAY_VERSION` `world198`, unshipped, rehashed in place (`net/egFragLaw.js` moved). `ACCOUNT_VERSION` stays `acct121`;
+  no migration.
+- The Port-Ledger's ELITE-GATES row names `net/egHeroFrags.js` and `world/egHeroFragModel.js`: the doctrine gate (every
+  Ledger A cite in `src/` has a Ledger row naming its file) failed without them.

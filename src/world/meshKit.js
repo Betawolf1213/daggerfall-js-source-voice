@@ -18,7 +18,9 @@
 //   extrude         a 2D profile (u across, v up) carried along a straight segment - a kerb, a rail, a beam;
 //   lathe           a profile of [r, y] turned about the y axis - a column drum, a lamp's head, a bell;
 //   sweep           a profile carried along a polyline with a frame a vertex (parallel transport, no twist) - a track,
-//                   a chain, a pipe.
+//                   a chain, a pipe;
+//   mesh            EG6c: a BAKED mesh's triangles (an authored hero fragment's mesh half - tools/fragBake.mjs), moved to
+//                   where it is laid, its own normals and UVs kept.
 // The court and the Hour may move onto it later; that is not required (section 11.6). Its first users are the Spire's
 // own look (world/egLook.js): the waystones' lamps, the slag's crust, the Rail's track ties.
 //
@@ -196,6 +198,25 @@ export function createMeshKit({ start = MESH_KIT_START } = {}) {
         }
         along += len;
       }
+      return kit;
+    },
+    /**
+     * EG6c - A BAKED MESH: `count` triangles of `src` (`{ positions, normals, uvs, indices }` - an authored hero fragment's
+     * mesh half, tools/fragBake.mjs) from index `start`, into record `rec`, each vertex moved by `at` (where the fragment
+     * is laid, the hall's frame) - its own normals and UVs kept (smooth where Mac smoothed it, mapped as he mapped it),
+     * wound as it was baked (out). So an authored fragment packs with the hall's code-built shapes (section 11.6).
+     */
+    mesh(rec, src, { start = 0, count = src.indices.length / 3, at = [0, 0, 0] } = {}) {
+      const g = bucket(rec);
+      grow(g, count * 3);
+      for (let k = start; k < start + count * 3; k++) {
+        const v = src.indices[k], i = g.v * 3, j = g.v * 2;
+        g.p[i] = src.positions[v * 3] + at[0]; g.p[i + 1] = src.positions[v * 3 + 1] + at[1]; g.p[i + 2] = src.positions[v * 3 + 2] + at[2];
+        g.n[i] = src.normals[v * 3]; g.n[i + 1] = src.normals[v * 3 + 1]; g.n[i + 2] = src.normals[v * 3 + 2];
+        g.uv[j] = src.uvs[v * 2]; g.uv[j + 1] = src.uvs[v * 2 + 1];
+        g.v++;
+      }
+      verts += count * 3;
       return kit;
     },
     get vertexCount() { return verts; },
