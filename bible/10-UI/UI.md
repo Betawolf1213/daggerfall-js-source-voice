@@ -27,7 +27,8 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and STEED-UI's SADDLE PANEL (`enhancedSaddle.js`: the horse and the wagon under the compass on Enhanced Plus, the helm panel's kind; `10-UI/Controls.md`)
 - and TEXT-FONT (`textFont.js`: the enhanced skin's words in a face the player picks - Sans, Monospace, OpenDyslexic or an installed font) and the CHAT'S COLOURS (`chatColours.js`: each channel's, name's and @mention's colour, light and page pairs held to 4.5:1 - `06-Systems/Community-Arc.md`)
 - and EG-PLAY's TRACKER (`egHud.js`: an Elite Breach's call, THE COUNT, the hall, its stage and the company; `11-Multiplayer/Elite-Gates.md` section 31)
-350 modules
+- and EG-G1's four (`egSpireHud.js`: the Spire's HUD by form factor, THE COUNT CHIP, the arrival card, the objective, the door's marker, the lord's bar, touch and the pad; `egBeats.js`: every event's sight, sound and words, the first breach's lines; `egParty.js`: the company's state on the party rows; `egAccess.js`: the danger palette, the fill and reduced motion; `11-Multiplayer/Elite-Gates.md` section 27)
+354 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.

@@ -11436,6 +11436,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   function makePartyPanel(social) {
     partyPanel = createPartyPanel({ social, art: { fetchBytes, palette }, here: () => _partyPose });
     partyPanel.setCompanions(partyCompanions);   // COMPANION-KIT
+    partyPanel.setSpire(() => egClient?.partyRows() ?? null);   // EG-G1 (Elite-Gates.md section 27.4): the company's state on the party rows in a breach
     return partyPanel;
   }
   function companionPanelFrame() {
@@ -19034,6 +19035,9 @@ export async function bootWorld(canvas, renderer, params, status) {
     cardTable: () => !!modes?.cardSeated?.(),   // CARDS-TOUCH: seated at a card table, the finger is the table's (ui/touch.js)
     cardHeld: () => !!modes?.cardPressHeld?.(),   // AUDIT CARDS-6 E1: a finger the cards took is never the stick (ui/touch.js)
   };
+  // EG-G1 (bible/11-Multiplayer/Elite-Gates.md section 27.8): THE SPIRE'S D-PAD - while its panel, a witness's eye or its
+  // recap stands, the pad's d-pad is theirs through the helm's own door (ui/gamepadInput.js HELM_DPAD), the helm's otherwise
+  { const helm = inputHooks.helm, eg = () => { try { return !!egClient?.padUp(); } catch { return false; } }; inputHooks.helm = { up: () => eg() || helm.up(), gesture: (dir, kind) => (eg() ? egClient.padGesture(dir, kind) : helm.gesture(dir, kind)), prompts: () => (eg() ? egClient.padPrompts() : helm.prompts()) }; }
   const touch = attachTouch(canvas, inputHooks);
   const gamepad = attachGamepad(canvas, inputHooks);   // GP1: null without the Gamepad API
 
@@ -24495,7 +24499,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     const w = a?.ok ? a.data?.weir : null;
     if (w && Number.isSafeInteger(w.keys)) {
       egClient?.restack(w.keys);
-      if (w.found) chatNotice("You find a Weir Key - one of the Spire's portal keys. Use it to open an Elite Breach.");
+      if (w.found) { chatNotice("You find a Weir Key - one of the Spire's portal keys. Use it to open an Elite Breach."); egClient?.beat('key'); }   // EG-G1: the Rare chime (section 27.5)
     }
     return a;
   };

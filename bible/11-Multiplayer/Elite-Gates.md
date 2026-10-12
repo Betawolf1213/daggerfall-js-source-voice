@@ -3651,3 +3651,166 @@ The economy layer's first piece, the one the relay must judge: **FEATS OF THE SP
 
 **Pins.** `test/egeco_feats.test.js` (2) and `tools/mutants/egeco.json` (6, every one dead). `RELAY_VERSION` `world197`,
 rehashed with `net/egFeats.js` in its graph.
+
+### EG-G1 - 2026-10-12 - THE HUD, THE BEATS AND THE FIRST BREACH
+
+Closes the HUD's half of layer one's fifth departure: the arrival card, the first-time lines, the accessibility settings
+and touch and the pad, with the HUD, the panel and the recap no longer plain DOM text. The score, the mix and the band
+art stay the look's (EG16, EG17).
+
+**What shipped, by piece.**
+
+- **The HUD by form factor** (`ui/egSpireHud.js`, section 27.1). `egFormFactor` reads the screen: a short side of 560 px
+  or less is a phone, upright or sideways. It is pinned at 1280x720, 390x844 and 844x390. `EG_LAYOUTS` gives each
+  layout its parts:
+  - a desk: the count's chip and the Reliquaries' beside the compass, the decrees under them, the potion pip, how many
+    stand, and the objective chip;
+  - a phone held upright: one 18 px tabular chip (the count and the Reliquaries), and the decrees folded to a tappable
+    *2 decrees*;
+  - a phone held sideways: the count's chip and a 44 px lord's bar, with the decrees on the arrival card.
+
+  The hall and its band are on the arrival card alone, and the company's state on the party rows. Every part reads
+  `--hud-scale`, copied off `.hud` as the arena's bar does. The HUD is DOM in both skins, like the gate's bar, the
+  arena's and the sea's: it is a readout, not one of DFU's windows. The classic skin dresses it in DFU's own text colour
+  and shadow (`ui/nativePanel.js` DEFAULT_TEXT_COLOR and DEFAULT_SHADOW_COLOR) over the gate's classic face. The
+  enhanced skin uses its pixel face on the kit's plates. Inside a breach the old tracker (`ui/egHud.js`) gives way to it,
+  and stays the call's outside.
+- **THE COUNT CHIP** (`egCountChip`, section 27.2).
+  - mm:ss in tabular figures: gold above 10:00, white to 2:00, red below, and a 1 Hz pulse in a running count's last
+    30 s.
+  - *Held* with a pause glyph while the count holds. The reason is shown on the chip and never said: the Redoubt, a
+    respite (the room's `respite` line still running), the door or the stair (`egHoldWhy`). The Redoubt's rest no longer
+    says *The Redoubt holds the count* on the screen.
+  - The last word's figure with a seal glyph when it is nearer than the count.
+  - Gains fly in for 2.6 s (`egGainText`): *+15:00*, *+10:00 - the Covenant's Press* while the Press stands, *+3:00 -
+    the last word* when the last word cut it, *+1:00* for THE GOLD RUN, and *Surplus +1* in blue.
+  - The warnings come once a count, and a Redoubt that raises the count never arms one again (`egChipWarnings`): *The
+    Covenant presses. Five minutes.* at 5:00, a toll at 1:00 and at 0:10, and *The count will not hold through the next
+    Court.* `egCourtNeedMs` takes section 18's model for the last one: 140 s for each trial left (this one counted
+    whole), 26 s for the Court's approach, and the lord's `ttkRef`.
+- **The arrival card, the objective, the door, the lord's bar** (section 27.3).
+  - The card (`egArrivalCard`): the hall's name over *Hall 12 - the Broken Galleries*, the objective beneath, the
+    twist's line, and the decrees in force. A band's first hall (or the breach's own first) shows its band's name and
+    line. A Court shows *Hall 15 - the Court* and the lord's card. It stands 4.8 s on the gate title card's own sheet,
+    on a node of its own: the gate's card belongs to the fight (a lord's wake and fall).
+  - The objective chip carries its progress (`egProgressText`).
+  - The door's marker (`egDoorMarker`): the way down's bearing off my facing, on the screen's edge while it is not ahead,
+    with its metres (*The way down - 42 m*), shown through the closing.
+  - The lord's bar (`egLordBar`): the first true lord awake (never a mirror or a friend), its health and its phase.
+- **The party rows** (`ui/egParty.js`; `ui/partyPanel.js` gains `setSpire`, section 27.4). Each member's row shows:
+  - their numeral, I to VIII, in Battlemage blue;
+  - a cracked gold sigil on the portrait once their recall is spent;
+  - a grey row with an eye for a witness, an arch for home, and a struck-through name for the forsaken;
+  - an amber ring draining the 180 s for a body this screen holds no pose of in a trial (`egAbsentStep`);
+  - a mote where their Memento lies, and on whoever carries one;
+  - *High Road* or *Low Road* in the place line while the company stands split at a fork (`egRoadOf`, by the steps'
+    own `road`);
+  - Fire-touched and Frost-touched as sigils.
+
+  The panel is told the rows in its own terms (`egPartyDeco`: a numeral, the classes, a mark, a title, the ring's share
+  and a place line). It paints only what moved, and gives its own place line back when the split ends.
+- **Every event seen, heard and said** (`ui/egBeats.js` `EG_BEATS`, section 27.5).
+  - The table is pinned: its seventeen events in order, each with its sight, its sound and its words, and who already
+    says them (the fight's beat line, the client's chat line, the veil's own close, the score's SPIRREDT), so no line is
+    said twice.
+  - The sounds are Daggerfall's own records, played as the Hour plays them: the bell 107 (pitched for a toll, a low toll
+    and a bell), the chime 364 (the Rare chime, `playRareDrop`'s MakeItem), the drums 374, the fanfare 32, the door 25,
+    the cauldron's chord 365, and the void's moan 66 for the Steps' rewind.
+  - THE WATCH (`egBeatWatch`) hears what the room newly said and replays nothing it saw at its first look: the beat
+    lines, the falls, a gift, a Redoubt, a wake's twist and fork, and the last word.
+  - A cast-back shows *-10%* where it cost anything. A Weir Key found rings the Rare chime.
+- **THE RECAP, whole** (`ui/egHud.js` `egRecapModel`, section 27.6).
+  - The depth (the hall, the Redoubt, the band) and the time from Hall 1's wake.
+  - Why it ended, in the client's end words.
+  - A strip per circle: its halls' glyphs, its lord and its falls.
+  - Each member: numeral, falls, the recall kept or spent, and how they left.
+  - The Vestiges, and the Accords held with any companion.
+  - The Reliquaries open only by walking home or the last word, one each 400 ms with the Rare chime.
+  - A member who walks home reads it too, not only the end's company.
+  - The last five runs are kept on the device (`eg.recaps`).
+- **The first breach** (section 27.7). `EG_TEXT_FIRST` holds the nine lines verbatim. Each is said at its first occurrence
+  and never before it applies:
+  - the count's at the first running trial;
+  - the door's at a span's closing;
+  - the void's at the first cast-back;
+  - the fork's at a forked span's wake;
+  - fury's at a lord's;
+  - the decrees' at the first decree ask;
+  - the recall's at the first fall that is not final;
+  - the Memento's when one first lies;
+  - home's at the first Redoubt's rest.
+
+  Each is said once a device, in the chat and under the objective (`egFirstDue`, the bits kept as `eg.first`). The
+  Rehearsal's own teaching line is said once: *A Rehearsal: Halls 1 to 5, the count and one life. Nothing is won here,
+  and nothing is lost.*
+- **Touch and the pad** (section 27.8).
+  - While the panel, a witness's eye or the recap stands, the pad's d-pad is theirs (`egPadAct`): left and right choose
+    a card or an option (the panel marks it), up takes, and down says no. A witness's left and right change whom they
+    watch, and a held down forsakes (asked twice). Any press closes the recap.
+  - The classic skin's pad sends its own codes. On Enhanced Plus the world host composes the gamepad's helm door, so the
+    prompt bar says the Spire's rows (`egPadPrompts`).
+  - Touch buttons for the witness's eye and forsaking, and for the way home at a rest (`egTouchButtons`). The panel's
+    cards and choices were buttons already.
+  - Haptics behind the touch layer's own `touchHaptics`: 15 ms as the Beat underfoot enters its last 0.4 s, 30 ms on a
+    blow newly aimed at my feet, and a pad's dual rumble for the same two (`egBeatUnder`, `egPerilsNew`, `egBuzz`).
+- **Accessibility** (`ui/egAccess.js`, section 25.7). Three of the port's own rows sit on the prefs shelf, under Settings >
+  Accessibility:
+  - `port:reducedMotion` in Motion: the row or the system's setting stills the chip's pulse, the gains' flight and the
+    card's rise;
+  - `port:dangerPalette` in a new Danger shapes section: Standard; High contrast (the danger edge magenta [1.0, 0.15,
+    0.75], safety white-gold, the hazard cyan); Deutan-Protan; and Tritan. Each colour-blind preset is pinned to separate
+    every pair by 40 delta E under its simulation (Machado 2009 at full severity, `egCvd`), where Standard does not;
+  - `port:telegraphFill` in the same section: the fill's light 50-100%, with the line kept whole.
+
+  All three are each player's own online (`systems/onlineLane.js` ONLINE_PLAYERS_OWN_PREFS names the one switch).
+
+  The fight's telegraph pass draws every shape through `egAccessShape`, and the chip's red is the palette's danger. The
+  Examination's runes chime as each lights, pitched up its numeral (`egRuneChime`), and the numeral goes to the HUD's
+  polite live region, where every beat's words go for a screen reader.
+- **Words** (section 27.9). Every new line is worded once in `EG_PRES_TEXT`, `EG_TEXT_FIRST` and `EG_BAND_LINES`. The
+  last word's end line is now the table's *The last word. The breach closes.*
+
+**Where EG-G1 departs from this page, said plainly.**
+
+1. The first-time lines are once a device (`eg.first`), not an account's service bits. The bits are the account
+   service's to add, and a new device says each line once more.
+2. The new words are not in `EG_TEXT`. `net/egLaw.js` is in the relay's bundle, so a client's word there would move the
+   relay's law hash for nothing the relay reads. They are in `ui/egBeats.js` instead.
+3. The arrival card wears `ui/gateTitleCard.js`'s sheet on a node of its own, because that module's one card is the
+   fight's.
+4. The recap shows no share and no healing per member, because the room's words carry neither (the share rides EG-E's
+   receipts). The board's line shows when the herald hands one (`board`), and today nothing does. The damage chart at a
+   lord's fall (`ui/gateDamageChart.js`) is not shown, because the room puts no Spire damage table on the wire.
+5. The door has its screen-edge marker, its metres, its sound and the fight's words. Its compass mark on the enhanced
+   HUD's strip, the beam and the closing's ring are the look's (EG16).
+6. The absent ring reads this screen's silence: no pose of theirs in my room, the same silence the relay counts. The
+   wire carries no absence word, and `net/egBrain.js` is unchanged.
+7. Touch's three motor changes are not built: the Jump press that slides into look, the upward flick, and the stick at
+   full throw on spans. They are the touch layer's own motor (`ui/touch.js`) and stay EG10's. The pad reaches the
+   panel's cards and choices, not the Surplus's two buttons.
+8. The palette's colours ride `uEdgeCol` and `uColor`. High contrast's double keyline, hatch and chevrons, and the
+   hazard's dashes, need a new style bit in the telegraph shader (EG16). `port:allyEffects` (THE QUIET COMPANY) is not
+   built, because the Spire's passes draw no allies' spell effects or hit numbers to quiet. The HUD and the card read
+   reduced motion. The stair (EG10's swap) and the heavy blows' shakes (none in the Spire yet) are to read
+   `egReducedMotion` when they are built.
+9. The beats play through `audio.playOneShot`, not THE SPIRE MIX's critical bus (EG17). SPIRREDT is the score's.
+10. The party rows decorate the party panel's cards, so a company member who has left the party is not on them. My own
+    recall shows on my chip.
+11. A Weir Key found rings the Rare chime. The *Weir Key* banner is the loot banner's, and a restacked key does not pass
+    through it.
+12. Nothing here has run in a browser, because the build container holds no Daggerfall data. The drawing is pinned
+    against a fake document, and the client against the director's own words.
+
+**The four hosts.**
+- `src/scenes/world.js` - WIRED. The party panel's `setSpire` seam, the pad's d-pad composed into the gamepad's helm door
+  (`inputHooks.helm`), and a Weir Key found's chime. Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED. It has nothing to wire: the HUD is the breach client's, drawn from the online
+  frame in every mode.
+- `src/scenes/dungeonContext.js` - FLAGGED, for the same reason.
+- `src/scenes/exterior.js` - FLAGGED as section 28 has it: offline, no breach.
+
+**Pins.** `test/egpres_hud.test.js` (10) and `tools/mutants/egpres_hud.json` (64, every one dead). The EG-PLAY, EG-FULL
+and fragment pins pass unchanged. The tracker's inside reading (`egHudModel` with `inSpire`) is kept as their words, and
+the Spire's HUD draws the same facts in their own places. No other record's quoted line moved. `RELAY_VERSION` is
+unchanged, because nothing in the relay's graph moved. The Ledger's ELITE-GATES row (section A) gains `ui/egSpireHud.js`,
+`ui/egBeats.js`, `ui/egParty.js` and `ui/egAccess.js` at the lead's merge.
