@@ -1286,9 +1286,12 @@ audit39. Everything else is painted in code into the band's archives (section 25
     the Rampart's vents, and the Warden's Charge (3.5 m) where the Spire throws it. The Armsmaster's Riposte becomes a
     cone of 5 m.
   - Pinned: every shape kind's counted share, swept over bearings, is at least 25%.
-- **The legion walks the graph.**
+- **The legion walks the graph, and the lords with it.**
   - Ground kinds walk a fragment's graph from node to node (a search over a dozen nodes), as the Rampart's legion
     walks its line.
+  - Every lord and champion walks it too: straight within the piece of the fight ground it stands on, over the graph
+    to a goal past it (an arch's gap, a stair, a bridge). A lord's run (a Charge, a Lunge) ends at an arch's wall and
+    never climbs a ledge's face, and no run is aimed at a member on a floor of another height.
   - Harriers hover along the graph, never through rock.
   - Lurkers wait at `anchors.lurker`, Casters stand at `anchors.caster` (raised where the chamber has a second floor),
     and rifts open at `anchors.rift`.
@@ -4025,10 +4028,6 @@ one Orrery judge, and a new circle is stood in place from a level built while th
    trails)` is that call. `new` takes the brain's own birth record, not a `profile`. `hit` answers each brain's own
    answer (the damage taken, or the serpent's words).
 2. The gate's crystals, host and heals and the Remnant's Echoes and Hearts stay each brain's own blows beside the seam.
-3. **The Spire's lords are not written to the seam.** They are a hall's fight inside the breach's director
-   (`net/egBrain.js` over `net/egBodies.js` and `net/egLords.js`), stepped in one beat with the legion and the place's
-   hazards, and they share the gate's hand and purse (`spendBlow`, `spendPurse`). A seam for each lord would split that
-   beat between two hosts in a file another slice was changing. The seam is the room-level contract.
 4. The trails keep y for section 11.7's per-floor judge, which is not built. `posAt` and `posAfter` still hand the
    judges two coordinates.
 5. The motes (`render/sdMotes.js`) still read the Hour's `SD_COURSE_END`, baked into their shader. Their sky is the
@@ -5221,8 +5220,6 @@ not yet turn it", EG-H1's departures 3, 10 and 11, and EG-E's departure for the 
    no field, so `EG_SPEC` and `EG_LAWS` stand. EG-ZC's bump for the fragments is its own, and nothing here asks for one.
    Its nodes are only those the geometry implies. A passage's two floors are two regions; a chamber's ring has no node
    inside its floor.
-2. The lords walk as before: their own walks go straight to a goal kept on the fight floor. Section 11.7 names the
-   legion. FLAGGED for the lords: a champion in an arch's chamber still walks through the wall.
 3. The wire carries no body's height. A body's floor is its region in plan. A screen draws every body at the fight
    centre's height plus its hover (`scenes/egFight.js`), so a span's Harrier over a course that has climbed or dropped
    draws at the plates' height. FLAGGED to the look.
@@ -5637,3 +5634,139 @@ peers, the tell, the reverb's crossfade and TEXTURE.356 are closed here.
 - PIN MOVED: `test/audit39_render.test.js` (the fire walls take GetFireWallColors32). `bible/06-Systems/Systems.md` counts
   517 modules. `bible/07-Rendering/Rendering.md` and `Rendering-Arc.md` say GetFireWallColors32 shipped.
 - `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
+
+### EG5 + EG-ZK - 2026-10-12 - THE FIGHT PROFILE, AND THE LORDS ON THE SEAM AND THE GRAPH
+
+Mac: "I said I want everything". EG5's last piece of the hall law, the fight's profile (section 14, "The merge" and "The
+profile"), and the Spire's lords as sections 11.7 and 13.1 write them: on the boss seam, and walking the hall's graph. All
+relay law. It closes EG-H3's departure 3 and EG-ZB's departure 2; both sentences are deleted.
+
+**What shipped, by piece.**
+
+- **THE MERGE** (`net/egLaw.js`, `EG_DECREES`). The lord family's four decrees carry a `law`: rank I's and rank II's,
+  each number in thousandths (`EG_LAW_UNIT`, 1000), so the law file still decides in integers.
+  - Rank I is read off the gate's own trials (`net/gateMods.js` `gateTrialOf`, imported and never copied):
+    - Colossal's `sizeX` and `hpX`;
+    - Unyielding's `hitX`;
+    - Vengeful's `dmgX`;
+    - Grudge-Bearer's `threatPick` and `threatDecay`.
+  - Unyielding's `shieldX` 2 is the trial's 6 s over the gate's `SHIELD_MS`, in place of its `shieldMs`.
+  - Colossal's `radiusX` 1.2 is the page's own: the Slam becomes 8.4 m, not the gate's 8.5.
+  - Rank II's numbers are the page's.
+  - No other family carries a law. The other families are read by rank where they act (the legion, the director, the
+    spans).
+- **THE FOLD** (`egLawFold`). `net/sdMarks.js` `sdMarksLaw`'s rule, over laws in thousandths: a key ending in X
+  multiplies (rounded to the thousandth), and any other key is the last law's that names it. Every X-keyed number is x1
+  where no law names it (`EG_LAW_X_KEYS`, from the table).
+- **THE PROFILE** (`egFightProfile`, `validEgDecrees`).
+  - `egFightProfile(decrees)` folds a circle's decrees (`[[id, rank], ...]`, the state's word) in the order of their
+    numbers. It answers `{ dc, key, law }`: the decrees sorted, the cache's key (the sorted decree string, `id:rank,...`)
+    and the law as numbers. It is frozen.
+  - The validator takes at most `EG_DECREES_MAX` (9) pairs, each a known decree at rank 1 or 2, none twice, and answers
+    a fresh copy. Anything else is the fight with no decree.
+  - The cache is bounded at `EG_PROFILE_CACHE_MAX` (256) and drops the least recently asked.
+  - The gate's `validGateMods` is not touched. The wire's own nine (`net/wire.js` `egDecreesW`) stand as EG-PLAY laid
+    them.
+- **THE LORDS' LAW READS IT** (`net/egLords.js` `egLordLaw`). The ranks in force (`F.D`) become the profile's list, and
+  the gate's `THREAT_PICK` and `THREAT_DECAY` stand where no decree names a threat.
+  - Before the change, every one of the 81 rank sets of the four was checked against the hand fold it replaces: each
+    number is the same double.
+  - Nothing else in the lords moved. Colossal's radii and health, Unyielding's ward and its blows, Vengeful's share
+    inside the one `EG_SHARE_X_MAX` with depth and fury, and Grudge-Bearer's threat were all already applied, and are
+    now pinned in a fight the director stands.
+- **THE LORDS ON THE SEAM** (`net/egLords.js` `EG_SEAM`, `egLordsFight`; section 13.1). There is ONE plug of
+  `net/bossSeam.js` for every lord and champion, never a seam per lord. Its fight is the lords' view of the hall's one
+  fight: `{ F, spec, ctx, now }`, made by the director for each call.
+  - `new`: a Court's lord (the Twins, both) or a champion, stood asleep (`egLordsNew`), with the bodies stood as
+    `stood`.
+  - `join`: the director's admission (`o.admits`) while a lord stands. The company is the hall's, sized at its wake
+    (`egFightNew`), so a join brings no share.
+  - `hit`: the gate's hand and purse (`egHitBody`) times the lord's own weight (`egLordHitX`), and what lands is told to
+    the lord (`egLordHit`).
+  - `step`: the lords' beat (`egLordsStep`).
+  - `stateOf`: the whole fight at the view's clock (`egFightState`).
+  - `judge`: the fight's blows on the shared-time trails (`net/bossRef.js` `judgeShapes`). These are the lords' and
+    their legion's blows on one floor, as the gate's judge takes its host's.
+  - `earned`: a Redoubt's receipt at the lords' fall, for half an even share of the circle's damage (`EG_EARN_SHARE`)
+    or a part in three of its halls (`EG_EARN_HALLS`) among the living company.
+  - The director (`net/egBrain.js`) calls each member inside its one beat with the legion and the hazards. It never
+    calls a lord's own function past the seam:
+    - six births;
+    - the join and the hit of a member's blow on a lord (`egBlow`);
+    - the Court's beat and the other halls' beats (`trial`);
+    - the state at a hello, at the wake and every `EG_STATE_EVERY_MS`;
+    - the census's judge (`egCount`);
+    - the Redoubt's earners (`redoubt`).
+  - The seam is a contract the director calls, not a second host. `net/egLords.js` imports the board, so
+    `RELAY_GRAPH`'s walk is unchanged.
+- **THE FRAMES, BYTE FOR BYTE.** Every frame the director says was hashed on the tree before (b4af2365) and again after
+  the seam, with test/egfull_relay.test.js's own auto-player:
+  - the thirteen lords, each met at its own Court and fought to its fall;
+  - the six-circle breach.
+  All fourteen hashes were unchanged.
+- **THE LORDS WALK THE GRAPH** (`lordWalk`, `runTo`, `oneLevel`; section 11.7). The legion's `walkGraph` and `walkAir`
+  are exported from `net/egLegion.js`.
+  - Within the region of the fight ground it stands in (a disc, a lane, an arch's half), a lord walks straight, as it
+    always walked: `egWalk`, stopped short and kept on the floor.
+  - To a goal past that region (an island across a bridge, a floor up its stair, the far side of an arch's wall) it
+    walks over the hall's walk graph as the legion does: through the gap, up the stair, along the bridge.
+  - This holds for the approach, Grath's Scent and the Colossus's route. The Mother of Dusk flies about the rock.
+  - The node a graph walk headed to is a way on only while the lord still walks to it. A blow's stop, a run's end, a
+    leap or a straight walk since leaves no way on, so a lord set down beside an arch's wall never walks straight to the
+    far gap node. A node it stands at is reached.
+  - A lord's RUN (a row's `run`: the champions' Charge, the Armsmaster's Lunge, the Night-Stalker's Night Lunge) ends at
+    an arch's wall with its body clear, as the Breaker's does. A run that would end on a floor of another height ends on
+    the region it began in. No run is chosen at a member on another floor's height (`oneLevel`); the lord walks the
+    graph to them instead.
+  - After the graph, eight lords say the same frames as before: the Spellmaster, the Armsmaster, the Cairn-Keeper, the
+    Mother of Dusk, the Night-Stalker, Seyth, the Colossus and Garoth. Their grounds are one region each.
+  - The other five walk the graph now, and every one still falls: Grath's islands, Ilthys's balconies, the Twins'
+    courts and walkway, Morvayn's soul-bridge and the Wyrm's perches.
+  - test/egfull_relay.test.js is green, unchanged.
+
+**Departures, said plainly.**
+
+1. `join` brings no share. Section 13.2's "added as the gate adds its fighters" is the company sized at the hall's wake,
+   as EG-FULL built it. A member who comes into a hall after its wake fights a lord sized without them. The share
+   retired at a fall and restored at the recall (section 13.2) is still not built.
+2. `egFightProfile` keys and folds the lord family alone. The other families' decrees are in its key, but carry no law.
+3. Colossal's `sizeX` is in the profile, and no lord reads it. The body's drawn scale is the client's (`egBossLook` by its
+   key), the wire carries no scale, and the relay's radius stays the look's. FLAGGED to the look.
+4. A lord walks straight within its region, kept on the fight floor as before, not to the region's own inset as a
+   legion walker is. This is why eight lords' frames are byte for byte.
+5. A run's stamp (its lane) still spans an arch's wall as the Breaker's does: the run ends at the wall, but the shape
+   is the blow's.
+6. A champion's Markynaz decree (`L.decree`) still replaces the circle's lord decrees for its fight (`F.mem.law`), as
+   EG-FULL wrote it. It does not fold with them.
+7. Found, not fixed: the legion's `walkGraph` (`net/egWalkGraph.js` `egWalkNext`) keeps a walker's last node as a way on
+   after the walker was set down elsewhere (a Breaker's run cut at a wall). A walker so placed beside an
+   arch's wall can walk straight to the far gap node. The lords validate their node. The legion's is EG-ZB's to close.
+
+**The four hosts.**
+
+- `src/scenes/world.js` - FLAGGED: not touched. This is relay law, and the screens draw what the relay says.
+- `src/scenes/worldModes.js` - FLAGGED: unchanged.
+- `src/scenes/dungeonContext.js` - FLAGGED: unchanged.
+- `src/scenes/exterior.js` - FLAGGED: offline (section 28).
+
+**Not verified without a browser and the game's data:** the lords' new walks were checked as the relay's frames on real
+specs, not watched on a screen; the screens carry each walk as they always have.
+
+**Pins.**
+
+- `test/eg5_profile.test.js` (5): the merge, the fold, the validator and the cache, the lords' law, and the laws on a
+  lord in a real fight.
+- `test/egz_lords.test.js` (5): the seam and the director's calls, every member frame for frame on real fights, a
+  champion through an arch, Grath along his bridges, and a champion up a stair with no run up a ledge.
+- `tools/mutants/eg5.json` (40, every one dead). Two survived the first run and were killed by new assertions:
+  - the cache first-in-first-out: the oldest asked again must stay;
+  - Grudge-Bearer forgetting: its record was re-aimed at the whole decay (the guard alone is equivalent under a law of
+    no decay).
+- `tools/mutants/egz_lords.json` (35: 33 dead, 2 equivalent - the Colossus's route over a one-lane forge and the Mother's
+  flight over a glade with no rock). Survivors of the first run were killed by new assertions:
+  - a blow through the seam on a body that is no lord (a fresh purse, so the seam and not the hand refuses it);
+  - a node kept after the lord was set down.
+  Two records on a level-only keep were dropped with the keep: the straight walk keeps the old floor.
+- Judged again over the files this slice touched: `egz_legion.json`, `egz_recap.json`, `egint.json` and `egseam.json`
+  (285, every one dead).
+- `RELAY_VERSION` `world198` was rehashed in place; no file joined its graph. `ACCOUNT_VERSION` stays `acct121`.
