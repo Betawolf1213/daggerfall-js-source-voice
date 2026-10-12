@@ -5443,6 +5443,9 @@ export function validSdFoundTell(b) {
 // EG-ZJ (2026-10-12; sections 11.7, 22 and 23): THE FIGHT WHOLE ON THE WIRE - a body's row carries its feet and its walk's
 // end's height (`y`, `ty`), and its state as the room said it with since when (`st`, `sa`); each walk (`emv`) its height
 // and its end's; the whole fight (`efs`) the zones still to burn (`zs`), so a member who joins mid-fight holds the company's.
+//
+// EG-ZQ (2026-10-12; section 14, Colossal): a body's row carries its size (`sz`, thousandths of its look's - a Colossal lord's),
+// so every screen draws the lord at the size the relay judges it by.
 
 /** What a client may say: `open` to the hub (EG-ZA: and `void` and `claimed`); the rest to a breach's room (EG-ZF: `heal`). */
 export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed', 'heal']);   // EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
@@ -5537,13 +5540,19 @@ function egStage(m) {
   if (!intIn(m.cl, 0, EG_COUNT_WIRE_MAX) || !egMs(m.ca) || !egMs(m.hw) || !egMs(m.dn)) return null;
   return { h: m.h, sg: m.sg, sa: m.sa, su: m.su, cl: m.cl, ca: m.ca, hw: m.hw, dn: m.dn };
 }
-/** A body (net/egBodies.js egBodyWire): `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa]` - EG-ZJ: its feet and
- *  its walk's end's height (a coordinate's bound, whole centimetres on the room's side), its state as said (an object's
- *  `eob`, a lord's phase) and since when. */
+/** EG-ZQ (Elite-Gates.md section 14, Colossal): a body's size on the wire, thousandths of its look's - 0 its look's own, else
+ *  within these (Colossal's rank II, the largest the law folds, is 1400: net/egLaw.js EG_DECREES, pinned under it - wire.js
+ *  imports no law of the Spire's). */
+export const EG_SIZE_WIRE_MIN = 500;
+export const EG_SIZE_WIRE_MAX = 2000;
+/** A body (net/egBodies.js egBodyWire): `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz]` - EG-ZJ: its feet
+ *  and its walk's end's height (a coordinate's bound, whole centimetres on the room's side), its state as said (an object's
+ *  `eob`, a lord's phase) and since when; EG-ZQ: its size (0, or EG_SIZE_WIRE_MIN..EG_SIZE_WIRE_MAX thousandths). */
 function egBody(t) {
-  if (!Array.isArray(t) || t.length !== 17 || !intIn(t[0], 1, 1e9) || !intIn(t[1], 0, 2) || !intIn(t[2], 0, 99) || !intIn(t[3], 0, 99)) return null;
+  if (!Array.isArray(t) || t.length !== 18 || !intIn(t[0], 1, 1e9) || !intIn(t[1], 0, 2) || !intIn(t[2], 0, 99) || !intIn(t[3], 0, 99)) return null;
   if (!egXZ(t[4]) || !egXZ(t[5]) || !intIn(t[6], 0, EG_HP_MAX) || !intIn(t[7], 1, EG_HP_MAX) || !intIn(t[8], 0, 0xffff) || !egXZ(t[9]) || !egXZ(t[10]) || !finite(t[11]) || t[11] < 0 || t[11] > 30 || !egMs(t[12])) return null;
   if (!egXZ(t[13]) || !egXZ(t[14]) || !intIn(t[15], 0, 99) || !egMs(t[16])) return null;
+  if (t[17] !== 0 && !intIn(t[17], EG_SIZE_WIRE_MIN, EG_SIZE_WIRE_MAX)) return null;
   return [...t];
 }
 const egBodies = (a, max = EG_WIRE_BODIES_MAX) => { if (!Array.isArray(a) || a.length > max) return null; const out = a.map(egBody); return out.every(Boolean) ? out : null; };

@@ -15,6 +15,8 @@
 // the room last said it (`ws`, since `wsAt` - an object's `eob`, a lord's phase once it wakes, its fall); and the whole
 // fight (`efs`) carries the live zones (`zs`) and each walk carried to its own instant, so a member who joins or reloads
 // mid-fight sees what the company sees at once.
+// EG-ZQ (2026-10-12; sections 13.2 and 14): a lord's SIZE on the wire (`sz` - Colossal's, net/egLords.js stand), and the fight
+// keeps the company it woke with by account (`subs`) - each lord's fighters, whose shares its health is.
 //
 // A BODY: `{ i, role (0 lord, 1 add, 2 object), k (the lord's, the kind's, the object's number), pt (a part: the twin, a
 // mirror, a rune's numeral), x, z, y (EG-ZJ: its feet), mv, hp, max, fl (flags), r (its radius), ws/wsAt (EG-ZJ: its state as
@@ -54,13 +56,14 @@ const dist = (ax, az, bx, bz) => Math.hypot(ax - bx, az - bz);
 
 /**
  * A HALL'S FIGHT, fresh at its wake: its hall, kind, circle and band, the living company that sizes it (`n`, their levels,
- * the company's reference damage `team` and its mean), its depth's weight, and nothing yet standing.
- * @param {any} spec @param {number} now @param {number[]} lvs
+ * the company's reference damage `team` and its mean), its depth's weight, and nothing yet standing. EG-ZQ (section 13.2):
+ * `subs` the company's accounts, in the order of their levels - each lord's fighters (net/egLords.js egLordsShare).
+ * @param {any} spec @param {number} now @param {number[]} lvs @param {string[]} [subs]
  */
-export function egFightNew(spec, now, lvs) {
+export function egFightNew(spec, now, lvs, subs = []) {
   const L = lvs.length ? lvs : [1], team = L.reduce((s, lv) => s + dpsRef(lv), 0);
   return egFightBind({
-    h: spec.h, kind: spec.kind, variant: spec.variant, c: spec.c, band: spec.band, el: EG_BANDS[spec.band]?.el ?? 'fire', n: L.length, lvs: L, team, mean: team / L.length, X: egDepthX(spec.c),
+    h: spec.h, kind: spec.kind, variant: spec.variant, c: spec.c, band: spec.band, el: EG_BANDS[spec.band]?.el ?? 'fire', n: L.length, lvs: L, subs: lvs.length ? [...subs] : [], team, mean: team / L.length, X: egDepthX(spec.c),
     wokeAt: now, seq: 0, bl: 0, bodies: [], blows: [], held: [], tethers: [], marks: [], pg: {}, hSent: '', hAt: 0, stateAt: now, moves: [],
     /** a lord's or a hall's own memory (the brains keep their state here) */
     mem: {},
@@ -97,18 +100,19 @@ export function egWalkY(m, now) {
 /** Every body carried to `now` (its place set from its walk; EG-ZJ: and its height). */
 export function egCarry(F, now) { for (const b of F.bodies) if (b.mv) { const [x, z] = egBodyAt(b, now); b.x = x; b.z = z; b.y = egWalkY(b.mv, now); } }
 /**
- * A body's array on the wire: `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa]`. EG-ZJ (sections 22 and 23):
- * `y` its feet and `ty` its walk's end's (whole centimetres - the wire's heights are the law's), `st` its state as the room
+ * A body's array on the wire: `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz]`. EG-ZJ (sections 22 and
+ * 23): `y` its feet and `ty` its walk's end's (whole centimetres - the wire's heights are the law's), `st` its state as the room
  * last said it and `sa` since when (`ws`, `wsAt` - egSaid: an object's `eob`, a lord's phase and its fall; 0 for none). With
  * `now` (the whole fight's word) its walk is said carried to that instant - its place and height then, its `at` now - so a
- * screen that hears it there draws it where the room holds it, never its walk's head start again.
+ * screen that hears it there draws it where the room holds it, never its walk's head start again. EG-ZQ (section 14): `sz`
+ * its size, thousandths of its look's (a Colossal lord's 1250, at rank II 1400 - net/egLords.js stand; 0 its look's own).
  * @param {any} b @param {number} [now]
  */
 export function egBodyWire(b, now = 0) {
   const m = b.mv, live = !!m && now > 0;
   const [x, z] = live ? egBodyAt(b, now) : [b.x, b.z], y = live ? egWalkY(m, now) : b.y ?? 0;
   return [b.i, b.role, b.k, b.pt ?? 0, r2(x), r2(z), Math.max(0, Math.ceil(b.hp)), Math.ceil(b.max), b.fl | 0, m ? m.tx : r2(x), m ? m.tz : r2(z), m ? m.v : 0, m ? (live ? now : m.at) : 0,
-    r2(y), m ? m.ty : r2(y), b.ws ?? 0, b.wsAt ?? 0];
+    r2(y), m ? m.ty : r2(y), b.ws ?? 0, b.wsAt ?? 0, b.sz ?? 0];
 }
 /** EG-ZJ (section 22): A BODY'S STATE as the room says it, kept on the body (`ws`, and since when, `wsAt`) so the whole fight
  *  carries it to a member who joins (egBodyWire): an object's (`eob` - a Grath island cracked 1 and fallen 2, a soul-gem's

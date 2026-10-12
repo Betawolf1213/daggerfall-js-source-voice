@@ -26,19 +26,25 @@
 // Grath's bridges - never through a wall or over the void; a run (a Charge, a Lunge) cut at an arch's wall and never up a
 // ledge's face, and never run at a member on another floor's height.
 //
+// EG-ZQ (2026-10-12; sections 13.2 and 14): THE SHARES - every lord's health is its fighters' shares (egLordsShare, moved by the
+// seam's join: a member the hall did not wake with brings one, a fallen member's is retired at the fall and restored at the
+// recall - the gate's retireShare/restoreShare); the Markynaz's decree folded with the circle's (egMarkynazDecree); and
+// Colossal's size on the lord's body and on the wire (`sz`).
+//
 // The errands' objects (runes, gems, anchors, banners, hearts, seals, braziers, pillars, standards, havens) are bodies
 // of role 2: struck ones carry health, stood-on ones a state (`pg` says each errand's progress). Marks on members and
 // tethers are the fight's (net/egBodies.js egMark, F.tethers).
 //
 // Pure: a fight and a beat in, frames out. In the relay bundle. Not a DFU member. Ledger A (ELITE-GATES).
 import { PHASE_AT, SHIELD_MS, THREAT_PICK, THREAT_DECAY, HIT_KINDS, STUN_MS, STUN_HIT_X } from './gateBrain.js';
+import { dpsRef, retireShare, restoreShare } from './gateBrain.js';   // EG-ZQ (section 13.2): a lord's shares - the gate's level claim, its retirement and its return
 import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpTeam, egBodiesOf, egBodyById, egMark, egUnmark, egMarkOf, egShareX, egCut, egSaid, egObSay, EG_TELL_LEAD_MS, EG_FEINT_AT } from './egBodies.js';   // EG-ZJ: egSaid, egObSay - a body's state kept as said
 import { egHitBody, egFightState } from './egBodies.js';   // EG-ZK: the seam's blow (the gate's hand and purse) and the fight's state
 import { shDisc, shLane, shLaneAt, shCone, shRing, shAll, shOut, egErrandMs, egBlowFrom } from './egShape.js';
-import { EG_LORDS, EG_DECREE_BY_KEY, egKeepOnFight, egFightProfile } from './egLaw.js';
+import { EG_LORDS, EG_DECREES, EG_DECREE_BY_KEY, EG_LAW_UNIT, egKeepOnFight, egFightProfile } from './egLaw.js';
 import { EG_KIND, egLegionRaise, egWaveKinds, egWaveSize, egFromBehind, egFromFront } from './egLegion.js';
 import { walkGraph, walkAir } from './egLegion.js';   // EG-ZK (section 11.7): the lords walk the graph and fly about the rock
-import { egFightView, egWalkGraph, egRegionAt, egKeepInRegion, egArchCut, egWalkFeet, EG_LEVEL_M, EG_NODE_REACH_M } from './egWalkGraph.js';   // EG-ZK: the fight ground's graph and its regions; a run cut at an arch's wall
+import { egFightView, egWalkGraph, egRegionAt, egKeepInRegion, egArchCut, egWayOn, EG_LEVEL_M } from './egWalkGraph.js';   // EG-ZK: the fight ground's graph and its regions; a run cut at an arch's wall. EG-ZQ: the way on kept only while walked
 import { bossSeam } from './bossSeam.js';   // EG-ZK (section 13.1): the Spire's lords written to the boss seam
 import { judgeShapes } from './bossRef.js';   // EG-ZK: the seam's judge - the Spire's one (EG-H1)
 
@@ -107,12 +113,76 @@ export function egLordLaw(D = {}) {
   const L = egFightProfile(dc).law;
   return { ...L, threatPick: L.threatPick ?? THREAT_PICK, threatDecay: L.threatDecay ?? THREAT_DECAY };
 }
+/** The lord family's decrees in their order (section 14 - net/egLaw.js EG_DECREES, never a second list). */
+const LORD_DECREES = Object.freeze(EG_DECREES.filter((d) => d.fam === 'lord').map((d) => d.key));
+/**
+ * EG-ZQ (sections 8.5 and 14) - THE GRAND DUKE'S DECREE: the lord-family decree a Markynaz lays on his own fight in hall `h`,
+ * to fold with the decrees the fight already bears (`D`, its ranks): the family's four in their order from the hall's own,
+ * the first the fight does not bear - one decree is never borne twice (net/egLaw.js validEgDecrees), and his card names one
+ * the company does not already face. None when the fight bears all four.
+ * @param {any} D @param {number} h
+ * @returns {string|null}
+ */
+export function egMarkynazDecree(D, h) {
+  for (let k = 0; k < LORD_DECREES.length; k++) { const key = LORD_DECREES[(h + k) % LORD_DECREES.length]; if (!(D?.[key] > 0)) return key; }
+  return null;
+}
+
+// ── the shares (section 13.2) ────────────────────────────────────────────────────────────────────────────
+/**
+ * A LORD'S FIGHTERS: each member's share of its health (`{ share, retired }`, the gate's own record - net/gateBrain.js
+ * retireShare/restoreShare move it), kept on the lord (`fs`) from the first share it moves - the company the hall woke
+ * with (`F.subs`, at `F.lvs`), each `per` x its reference damage (`dpsRef`), `per` the lord's health per unit of the
+ * company's reference damage as it was stood (ttkRef, a champion's EG_PROVE_HP_S x the depth, Colossal, a twin's part,
+ * a stratum's 0.6), so its shares sum to its health.
+ */
+function sharesOf(F, L) {
+  if (L.fs) return L.fs;
+  L.per = L.max / Math.max(1, F.team);
+  L.fs = {};
+  (F.subs ?? []).forEach((s, j) => { L.fs[s] = { share: L.per * dpsRef(F.lvs[j]), retired: false }; });
+  return L.fs;
+}
+/**
+ * EG-ZQ (2026-10-12; section 13.2, THE LAW EVERY LORD KEEPS; EG-ZK's departure 1) - A MEMBER'S SHARE OF THE LORDS, as the boss
+ * seam's `join` moves it: while the director admits `sub` (living, in the breach and its hall) its share stands in every
+ * lord's health; refused (fallen), it is out. So -
+ *   a member the hall did not wake with brings `per` x its reference damage to each lord, at the fraction the lord stands
+ *     at (the gate's law for a newcomer: a late arrival never heals a lord) - a share brought as a retired one restored;
+ *   a fallen member's share is RETIRED at the fall (retireShare), at the fraction the lord stands at - seven members never
+ *     face a lord sized for eight - and RESTORED (restoreShare) when it is admitted again (the recall): the director's
+ *     seen-and-restore step joins the living alone, so it never restores a fallen share;
+ *   the last share in a lord is never retired: a lord sized for nobody would stand at nought (and fall as nought), and the
+ *     company's wipe ends the breach first.
+ * A mirror or an image carries no share (its health its own). A share moved keeps an errand's held threshold at its fraction
+ * and says the whole fight at the beat's end (`F.stateAt`), so every bar's health and its max move together. Answers
+ * whether any share moved.
+ * @param {any} F @param {string} sub @param {number} lv @param {boolean} admits
+ */
+export function egLordsShare(F, sub, lv, admits) {
+  let moved = false;
+  for (const L of F.bodies) {
+    if (L.role !== EG_ROLE.lord || egHas(L, EG_FL.mirror)) continue;
+    const fs = sharesOf(F, L), max0 = L.max;
+    let p = fs[sub];
+    if (admits && !p) p = fs[sub] = { share: L.per * dpsRef(lv), retired: true };
+    if (admits) restoreShare(L, p);
+    else if (p && Object.values(fs).some((q) => q !== p && !q.retired)) retireShare(L, p);
+    if (L.max === max0) continue;
+    moved = true;
+    if (L.hpFloor != null) L.hpFloor = Math.round((L.hpFloor * L.max) / max0);
+  }
+  if (moved) F.stateAt = 0;
+  return moved;
+}
 
 // ── the engine ───────────────────────────────────────────────────────────────────────────────────────────
-/** A lord body stood (asleep until its hall wakes it). */
+/** A lord body stood (asleep until its hall wakes it). EG-ZQ (section 14, Colossal; EG5's departure 3): at the fight's law's
+ *  size (`sizeX` - its mirrors and images with it), its body's radius and its size on the wire (`sz`, thousandths of its look's
+ *  - 0 its look's own; net/egBodies.js egBodyWire), so every screen draws, aims at and strikes it there. */
 function stand(F, spec, key, x, z, hp, now, out, o = {}) {
-  const look = egBossLook(key, o.pt ?? 0);
-  return egBodyNew(F, EG_ROLE.lord, egBossNo(key), x, z, hp, { pt: o.pt ?? 0, r: bodyR(look.scale), fl: o.fl ?? 0, now, out, key, ph: 1, up2: false, nextAt: Infinity, threat: {}, ward: 0, stunUntil: 0, yaw: Math.PI, lastBlow: '', run: 0, cds: {}, ...o.extra });
+  const look = egBossLook(key, o.pt ?? 0), size = (F.mem.law ?? egLordLaw()).sizeX;
+  return egBodyNew(F, EG_ROLE.lord, egBossNo(key), x, z, hp, { pt: o.pt ?? 0, r: bodyR(look.scale * size), sz: size === 1 ? 0 : Math.round(size * EG_LAW_UNIT), fl: o.fl ?? 0, now, out, key, ph: 1, up2: false, nextAt: Infinity, threat: {}, ward: 0, stunUntil: 0, yaw: Math.PI, lastBlow: '', run: 0, cds: {}, ...o.extra });
 }
 /** The lord bodies of the fight (the living). */
 export const egLordsOf = (F) => egBodiesOf(F, EG_ROLE.lord);
@@ -143,20 +213,16 @@ const regionOf = (view, G, x, z, y = NaN, hint = -1) => /** @type {number} */ (e
  * wall - over the hall's walk graph as the legion walks it (net/egLegion.js walkGraph): through the arch's gap, up the stair,
  * along the bridge, never through a wall and never over the void. EG-ZJ (section 23): its feet as a legion walker's - a
  * straight walk ending on the ground there (egWalk), a graph walk climbing its stair (walkGraph), a node it reached its
- * region's floor (net/egWalkGraph.js egWalkFeet).
+ * region's floor (net/egWalkGraph.js egWayOn).
  */
 function lordWalk(F, spec, L, gx, gz, stop, speed, now, gy = NaN) {
   const view = egFightView(spec);
   if (!view?.fl?.length) { egWalk(F, L, gx, gz, stop, speed, now, spec, L.r); return; }
   const G = egWalkGraph(view);
   // the node a graph walk headed to is a way on only while the lord still walks to it: a blow's stop, a run's end, a leap, a
-  // blink or a straight walk since leaves none (net/egWalkGraph.js egWalkNext would walk to it straight from where it stands);
-  // one it stands at is reached - its region is the lord's now (a stair's top, its upper floor's)
-  const wn = Number.isInteger(L.wn) && L.wn >= 0 ? G.nodes[L.wn] : null;
-  if (wn && !(L.mv && Math.abs(L.mv.tx - wn.x) <= 0.011 && Math.abs(L.mv.tz - wn.z) <= 0.011)) {
-    if (Math.hypot(wn.x - L.x, wn.z - L.z) <= EG_NODE_REACH_M) { L.fr = wn.rg; L.y = egWalkFeet(view, L)?.[0] ?? L.y; }   // EG-ZJ: its feet on that floor, as the legion's (net/egLegion.js walkGraph)
-    L.wn = -1;
-  }
+  // blink or a straight walk since leaves none; one it stands at is reached - its region the lord's now (a stair's top, its
+  // upper floor's), its feet on that floor. EG-ZQ: the graph's own rule (net/egWalkGraph.js egWayOn), the legion's too
+  egWayOn(view, L, G);
   const from = regionOf(view, G, L.x, L.z, NaN, L.fr), to = regionOf(view, G, gx, gz, gy);
   if (from === to) { egWalk(F, L, gx, gz, stop, speed, now, spec, L.r); return; }
   walkGraph(F, view, L, gx, gz, stop, speed, now, gy);
@@ -234,7 +300,10 @@ const fieldOf = (cx, cz, R) => { const pts = []; for (let a = 0; a < 360; a += 3
  * @param {any} F @param {any} spec @param {string} key @param {number} now @param {any[]} out @param {{ decrees?: any, n: number, at?: number[] }} ctx
  */
 export function egLordsNew(F, spec, key, now, out, ctx) {
-  const law = egLordLaw(ctx.decrees ?? {});
+  // EG-ZQ (sections 8.5 and 14; EG5's departure 6): the Markynaz's own decree FOLDS with the circle's lord decrees through the
+  // fight's profile (net/egLaw.js egFightProfile) - never in their place - and he is stood under it
+  const decree = key === 'markynaz' ? egMarkynazDecree(ctx.decrees, F.h) : null;
+  const law = egLordLaw(decree ? { ...(ctx.decrees ?? {}), [decree]: 1 } : ctx.decrees ?? {});
   F.mem.law = law;
   const champ = key === 'kynreeve' || key === 'kynmarcher' || key === 'markynaz';
   const hp = (champ ? EG_PROVE_HP_S : egTtkRef(F.c)) * F.team * (champ ? F.X : 1) * law.hpX;
@@ -247,7 +316,7 @@ export function egLordsNew(F, spec, key, now, out, ctx) {
     return [a, b];
   }
   const L = stand(F, spec, key, x, z, hp, now, out, champ ? { extra: { champ: 1 } } : {});
-  if (key === 'markynaz') { const pick = ['colossal', 'unyielding', 'vengeful', 'grudge'][F.h % 4]; F.mem.law = egLordLaw({ [pick]: 1 }); L.decree = pick; }
+  if (decree) L.decree = decree;
   if (key === 'kynmarcher') for (const [sx, sz] of spotsOr(spec, L, 'standard', 3, 9).slice(0, 3)) obj(F, 'standard', sx, sz, egHpTeam(F, 4), now, out, { r: 0.8 });
   if (EG_LORDS[key]?.fly) egSetFl(F, L, EG_FL.fly, true, out);
   return [L];
@@ -1042,8 +1111,10 @@ export const EG_EARN_HALLS = 3;
  *                                                     bodies stood its `stood`
  *   join(f, sub, name, lv, now, present, o)           whether `sub` fights the lords: the director's admission (`o.admits` -
  *                                                     living, in the breach and its hall; a witness never fights) while a
- *                                                     lord stands - the company is the hall's, sized at its wake
- *                                                     (net/egBodies.js egFightNew), so a join brings no share
+ *                                                     lord stands. EG-ZQ (section 13.2): and its share of every lord's
+ *                                                     health with it (egLordsShare) - a member the hall did not wake with
+ *                                                     brings its share, a fallen one's is retired (the director joins it
+ *                                                     unadmitted at its fall) and restored when it is admitted again
  *   hit(f, sub, d, r, pose, now, seq, o)              a member's blow on lord `o.i`: the gate's hand and purse (egHitBody - the
  *                                                     member's purse `o.p`, the Vestiges' weight `o.x`, the bucket's `o.bx`)
  *                                                     times the lord's own (egLordHitX), and what lands told the lord
@@ -1062,7 +1133,7 @@ export const EG_EARN_HALLS = 3;
  */
 export const EG_SEAM = bossSeam('eg', {
   new: ({ F, spec, key, now, out, decrees = {}, n = F.n, at = undefined }) => ({ ...egLordsFight(F, spec, { decrees, n }, now), stood: egLordsNew(F, spec, key, now, out, { decrees, n, at }) }),
-  join: (f, sub, name, lv, now, present = null, o = {}) => !!o.admits && egLordsOf(f.F).length > 0,
+  join: (f, sub, name, lv, now, present = null, o = {}) => { const up = egLordsOf(f.F).length > 0; if (up) egLordsShare(f.F, sub, lv, !!o.admits); return !!o.admits && up; },   // EG-ZQ: its share in while admitted, out at its fall
   hit: (f, sub, d, r, pose, now, seq = null, o = {}) => {
     const L = egBodyById(f.F, o.i);
     if (!L || L.role !== EG_ROLE.lord) return { got: 0, b: null };

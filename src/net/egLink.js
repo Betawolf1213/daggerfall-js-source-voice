@@ -22,6 +22,7 @@
 //     object's, a lord's phase and fall), and the zones still burning - the whole fight (`efs`) folded over what this screen
 //     already holds of each body (when it rose, its hurt), so a member who joins or reloads mid-fight holds the company's
 //     fight at once and the fight said again every two seconds never stands its bodies anew.
+//   EG-ZQ (2026-10-12; section 14): a lord's size (`sz`, Colossal's) kept on its body.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_ROLE, EG_FL, egWalkY } from './egBodies.js';   // EG-ZJ: a lord's fall, a walk's height (the room's own law)
@@ -44,17 +45,18 @@ export const EG_SAYS_KEPT = 12;
 export const EG_GONE_KEPT = 48;
 const stageOf = (w) => ({ h: w.h, sg: w.sg, sa: w.sa, su: w.su, cl: w.cl, ca: w.ca, hw: w.hw, dn: w.dn });
 /**
- * A body as the state keeps it, from its wire array `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa]`.
+ * A body as the state keeps it, from its wire array `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz]`.
  * EG-ZJ (sections 11.7, 22 and 23): its feet `y` and its walk's end's (`mv.ty`); its state as the room said it - an object's
  * (`st`, since `stAt` - its `eob`), a lord's phase once it wakes (`ph`; 0 asleep) and, fallen (EG_FL.fell), its fall
  * (`fellAt`); `born` when it rose (`ead` - now; a body this screen first hears whole has stood all along, `born` 0, and never
  * rises again); `had` the body this screen already holds, whose own memory it keeps - when it rose, when it was last hurt and
- * whether by my blow.
+ * whether by my blow. EG-ZQ (section 14): a lord's size over its look's (`sz` - Colossal's; 1 its look's own), which the screen
+ * draws it at (scenes/egFight.js egLookOf).
  */
 export function egBodyOf(t, now, had = null, born = now) {
   const b = { i: t[0], role: t[1], k: t[2], pt: t[3], x: t[4], z: t[5], y: t[13] ?? 0, hp: t[6], max: t[7], fl: t[8], mv: t[11] > 0 ? { x: t[4], z: t[5], tx: t[9], tz: t[10], v: t[11], at: t[12], y: t[13] ?? 0, ty: t[14] ?? t[13] ?? 0 } : null, born: had ? had.born : born };
   if (t[1] === EG_ROLE.obj) { b.st = t[15] ?? 0; b.stAt = t[16] ?? 0; }
-  else if (t[1] === EG_ROLE.lord) { b.ph = t[15] ?? 0; if ((t[8] & EG_FL.fell) !== 0) b.fellAt = t[16] || had?.fellAt || now; }
+  else if (t[1] === EG_ROLE.lord) { b.ph = t[15] ?? 0; b.sz = t[17] > 0 ? t[17] / 1000 : 1; if ((t[8] & EG_FL.fell) !== 0) b.fellAt = t[16] || had?.fellAt || now; }
   if (had?.hurtAt != null) b.hurtAt = had.hurtAt;
   if (had?.mineAt != null) b.mineAt = had.mineAt;
   return b;

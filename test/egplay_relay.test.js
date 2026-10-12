@@ -52,7 +52,7 @@ async function withBreach(fn, { party = false } = {}) {
   } finally { Date.now = realNow; }
 }
 
-test('EG-PLAY THE WIRE (EG-FULL): a breach\'s words each way, projected and bounded - the open (its order and the landing), the admission, the door, the way home, a blow on a body by its number, a Vestige picked, a vote, a Cantrip, the Sutler, a ping, a bequest, forsaking, the Orrery\'s turn, a fall said; the call, the state, a stage, the company of ten fields, a fall, a Redoubt, a receipt, the end, a refusal; the fight in the Spire\'s own words (a body\'s seventeen, a blow\'s FULL shape stamp, a zone, a tether, a mark) and the run\'s; a relay before it is sent nothing (mutants: an open with no landing; a company of nine; a stamp out of bounds; a body\'s row cut short)', () => {
+test('EG-PLAY THE WIRE (EG-FULL): a breach\'s words each way, projected and bounded - the open (its order and the landing), the admission, the door, the way home, a blow on a body by its number, a Vestige picked, a vote, a Cantrip, the Sutler, a ping, a bequest, forsaking, the Orrery\'s turn, a fall said; the call, the state, a stage, the company of ten fields, a fall, a Redoubt, a receipt, the end, a refusal; the fight in the Spire\'s own words (a body\'s eighteen, a blow\'s FULL shape stamp, a zone, a tether, a mark) and the run\'s; a relay before it is sent nothing (mutants: an open with no landing; a company of nine; a stamp out of bounds; a body\'s row cut short)', () => {
   assert.deepEqual([...EG_KINDS], ['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed', 'heal']);   // EG-FULL LAYER THREE: `use` - an engine worked; PIN MOVED (EG-H1): `vt` a member's word of its body and `clk` the shared clock's ping (test/egint_relay.test.js pins them); PIN MOVED (EG-H2): `spec` - a hall of the breach's own law asked (Elite-Gates.md section 22); PIN MOVED (EG-ZA): `void` a stake no call answered and `claimed` a held receipt counted, both to the hub (test/egz_keys.test.js pins them)   // PIN MOVED (EG-ZF, merged): `heal`
   for (const k of ['call', 'st', 'efs', 'ead', 'eb', 'ez', 'etx', 'emk', 'offer', 'ask', 'rise', 'eheal']) assert.ok(EG_OUT_KINDS.includes(k), k);
   assert.equal(validEgIn({ k: 'open', z: 'v1.abc.def' }), null, 'an open names where its company answers from');
@@ -73,9 +73,9 @@ test('EG-PLAY THE WIRE (EG-FULL): a breach\'s words each way, projected and boun
   assert.equal(validEgOut({ k: 'call', b: B, o: 'Mac', os: 'acct-mac', seed: 7, op: T0, rh: 0, co: co(9), site: SITE }), null, 'a company of nine');
   assert.ok(validEgOut({ k: 'co', co: [['acct-mac', 'Mac', 1, 1, 0, 1, 0, 0, 0, 1]] }));
   assert.equal(validEgOut({ k: 'co', co: [['acct-mac', 'Mac', 1, 1, 0, 1]] }), null, 'the company\'s full row is ten');
-  const body = [1, 0, 3, 0, 2.5, 40, 900, 1000, 1, 2.5, 40, 0, T0, 2.3, 2.3, 1, T0];   // PIN MOVED (EG-ZJ): a body's feet, its walk's end's height, its state and since when - seventeen
+  const body = [1, 0, 3, 0, 2.5, 40, 900, 1000, 1, 2.5, 40, 0, T0, 2.3, 2.3, 1, T0, 0];   // PIN MOVED (EG-ZJ): a body's feet, its walk's end's height, its state and since when - seventeen; PIN MOVED (EG-ZQ): its size, eighteen
   assert.ok(validEgOut({ k: 'efs', h: 3, wk: T0, b: [body], bl: [], tx: [], mk: [], pg: {} }));
-  assert.equal(validEgOut({ k: 'efs', h: 3, wk: T0, b: [body.slice(0, 16)], bl: [], tx: [], mk: [], pg: {} }), null, 'a body\'s row cut short');
+  assert.equal(validEgOut({ k: 'efs', h: 3, wk: T0, b: [body.slice(0, 17)], bl: [], tx: [], mk: [], pg: {} }), null, 'a body\'s row cut short');
   const blow = { k: 'eb', i: 4, o: 1, s: [['d', 2, 40, 3]], at: T0 + 1500, wu: 1500, p: 0.2, b: 4, el: 'fire', nm: 'Fire-fall', ch: 0, pu: 0, sp: 0 };
   assert.ok(validEgOut(blow));
   assert.equal(validEgOut({ ...blow, s: [['d', 2, 999, 3]] }), null, 'a stamp past the hall\'s bound');

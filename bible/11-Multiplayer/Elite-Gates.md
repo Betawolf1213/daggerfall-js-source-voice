@@ -734,7 +734,8 @@ A walkway 90-160 m long over the void: 3-4.5 m wide for a company of up to four,
 - **Bastions** every 35-45 m: fight floors (r 6) off the walkway's side, where the march halts and Breakers enter. The
   back of an eight-member line always has somewhere to fight.
 - **Casters** stand on `1 + ceil(n/3)` pillars beside it, 10-18 m out, throwing discs. Reach them by short side spans,
-  or answer them with arrows and spells.
+  or answer them with arrows and spells. A Caster keeps to its pillar, whatever the pillar's plan meets: one whose plan
+  meets a bastion's has a lip onto it, and no Caster steps off (EG-ZQ).
 - **Breakers** charge ACROSS the walkway from the side spans, never along it. A lane along a walkway would leave no
   floor to escape to (AUDIT EG0 G4). Their push is 6 m, and a push off the edge is a cast-back, not a death.
 - **Waystones** every 30 m, lit gold when they are a member's cast-back point: a push off the edge returns them to the
@@ -789,7 +790,8 @@ band's **champion** stands: a Kynreeve in the Galleries, a Kynmarcher in the Cai
   - **the Kynmarcher, the Citadel**: he plants three standards, each 4 s of the company's reference damage; each
     standing standard takes 20% off every blow on him;
   - **the Markynaz, the Grand Duke's Decree**: he lays one lord-family decree (section 14) on his own fight, named on
-    his card.
+    his card. It folds with the circle's lord decrees through the fight's profile (section 14), never in their place: the
+    one his hall's number draws from the four, or the next his fight does not already bear.
 - Its fall opens a second span, whose end is the door.
 - From circle 2, one proving court in three is a chamber: the Fallen Stacks' broken dome, with two balconies (section
   11.4).
@@ -854,6 +856,12 @@ hall's sky holds the Spire's broken underside, drawn smaller with each band, so 
 - its fragments: each one's kind, class, socket and seed, and so its law half (section 11.5);
 - its cache's kind, its engines and its alcoves (sections 11.10, 17);
 - its decrees, as numbers.
+
+**Its units.** The spec says its positions in metres, from the law's centimetres, all but one field: a spot's `y` (where a
+spot carries one: a fragment's anchors, a balcony's spot, the Low Road's niche) is said in centimetres, as the law lays it.
+Seed 1's Hall 22 has Lurker spots at `y` -760 over floors at -7.6 m. Nothing reads it, since every body's feet are the fight
+ground's (section 11.7). Saying it in metres is a spec law of its own (`EG_SPEC`, section 22), made by the first slice that
+reads a spot's height; until then a reader divides by 100 (EG-ZQ's record says why).
 
 The relay reads it to run the hall's brains: where a court's clamp is, where a rift stands, the walkway's line, where
 a platform is at time *t*. Every client reads it to build the hall (`buildEgHallModel(spec)`,
@@ -1298,6 +1306,9 @@ audit39. Everything else is painted in code into the band's archives (section 25
   - Every lord and champion walks it too: straight within the piece of the fight ground it stands on, over the graph
     to a goal past it (an arch's gap, a stair, a bridge). A lord's run (a Charge, a Lunge) ends at an arch's wall and
     never climbs a ledge's face, and no run is aimed at a member on a floor of another height.
+  - A walker set down off its walk (a charge cut at an arch's wall, a push, a pull, a lord's leap or blink) keeps no way
+    on: its next walk is chosen from where it stands, so it never walks straight to a node past a wall. One rule for the
+    legion and the lords (`net/egWalkGraph.js` `egWayOn`, EG-ZQ).
   - Harriers hover along the graph, never through rock.
   - Lurkers wait at `anchors.lurker`, Casters stand at `anchors.caster` (raised where the chamber has a second floor),
     and rifts open at `anchors.rift`.
@@ -1494,6 +1505,10 @@ byte. The Spire's lords are written to it. The gate's brain already exports the 
   (`ABSENT_RETIRE_MS`), and the Remnant restores the share of every body in its arena, alive or fallen. The Spire
   retires a fallen member's share at the fall and restores it at the recall; its seen-and-restore step skips the
   fallen, or the next tick would restore the share. Seven members never face a lord sized for eight.
+  - Built by EG-ZQ (its record, below), through the boss seam's `join`. The members a hall can gain mid-fight are those a
+    Memento calls back into it (a member is admitted only in the open window, before the first wake: section 6.1). Each
+    brings its share at the fraction the lord stands at, as the gate adds a fighter. The last share in a lord is never
+    retired.
 - **The bucket**: the gate's (`BUCKET_RATE_X` 3, `BUCKET_DEPTH_X` 15, `HIT_CAP_X` 12), each member's times their
   Vestiges' factors (section 15): the client-declared at most 1.25, the relay-established at most 1.6, and **together
   at most `EG_BUCKET_ALL_MAX` 1.6**.
@@ -1784,7 +1799,8 @@ ending in `X` multiplies; any other is overridden by the last mark that names it
 recasts the four boss-general trials as X-keyed laws:
 
 - Colossal: `sizeX` 1.25, `hpX` 1.25, `radiusX` 1.2 (II: 1.4, 1.4, 1.3). The Slam becomes 8.4 m (floor 1.71 s); the
-  floor lengthens every wind-up it widens;
+  floor lengthens every wind-up it widens. The lord stands at its size: its body's radius, and a body's row on the wire
+  (`sz`), which every screen draws it at (EG-ZQ);
 - Unyielding: `shieldX` 2, `hitX` 0.85 (II: 3, 0.75), in place of the trial's `shieldMs`;
 - Vengeful: `dmgX` 1.25 (II: 1.4). Every share multiplier, depth's, fury's and Vengeful's, together is at most 1.5;
 - Grudge-Bearer: `threatPick` 0.85, `threatDecay` 0 (II: `threatPick` 0.95).
@@ -2765,10 +2781,11 @@ admission never depends on seeing it.
 **Poses.** A pose on a moving piece carries `pl` and its offset (RIDDEN POSES, section 10.8); the field joins
 `validPose`, a relay version (EG8).
 
-**The fight's bodies.** A body's row is `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa]`: its feet and its
-walk's end's height in whole centimetres (the law's, section 9), and its state as the room last said it with since when. A
-walk (`emv`) is `[i, x, z, tx, tz, v, at, y, ty]`. The whole fight (`efs`) carries the zones still to burn (`zs`). Every
-height rides a word the fight already says, so the frames stay as many as they were. EG-ZJ.
+**The fight's bodies.** A body's row is `[i, role, k, pt, x, z, hp, max, fl, tx, tz, v, at, y, ty, st, sa, sz]`: its feet and
+its walk's end's height in whole centimetres (the law's, section 9), and its state as the room last said it with since when.
+A walk (`emv`) is `[i, x, z, tx, tz, v, at, y, ty]`. The whole fight (`efs`) carries the zones still to burn (`zs`). Every
+height rides a word the fight already says, so the frames stay as many as they were. EG-ZJ. A lord's size rides its row too
+(`sz`, thousandths of its look's: Colossal's 1250, at rank II 1400; 0 its look's own; bounded 500-2000 on the wire). EG-ZQ.
 
 **Frames** (`{t:'eg', k, ...}`; `EG_KINDS` and `EG_OUT_KINDS` in `src/net/wire.js`, each with its validator):
 
@@ -6133,7 +6150,7 @@ relay law. It closes EG-H3's departure 3 and EG-ZB's departure 2; both sentences
   - `new`: a Court's lord (the Twins, both) or a champion, stood asleep (`egLordsNew`), with the bodies stood as
     `stood`.
   - `join`: the director's admission (`o.admits`) while a lord stands. The company is the hall's, sized at its wake
-    (`egFightNew`), so a join brings no share.
+    (`egFightNew`).
   - `hit`: the gate's hand and purse (`egHitBody`) times the lord's own weight (`egLordHitX`), and what lands is told to
     the lord (`egLordHit`).
   - `step`: the lords' beat (`egLordsStep`).
@@ -6179,21 +6196,11 @@ relay law. It closes EG-H3's departure 3 and EG-ZB's departure 2; both sentences
 
 **Departures, said plainly.**
 
-1. `join` brings no share. Section 13.2's "added as the gate adds its fighters" is the company sized at the hall's wake,
-   as EG-FULL built it. A member who comes into a hall after its wake fights a lord sized without them. The share
-   retired at a fall and restored at the recall (section 13.2) is still not built.
-2. `egFightProfile` keys and folds the lord family alone. The other families' decrees are in its key, but carry no law.
-3. Colossal's `sizeX` is in the profile, and no lord reads it. The body's drawn scale is the client's (`egBossLook` by its
-   key), the wire carries no scale, and the relay's radius stays the look's. FLAGGED to the look.
-4. A lord walks straight within its region, kept on the fight floor as before, not to the region's own inset as a
+1. `egFightProfile` keys and folds the lord family alone. The other families' decrees are in its key, but carry no law.
+2. A lord walks straight within its region, kept on the fight floor as before, not to the region's own inset as a
    legion walker is. This is why eight lords' frames are byte for byte.
-5. A run's stamp (its lane) still spans an arch's wall as the Breaker's does: the run ends at the wall, but the shape
+3. A run's stamp (its lane) still spans an arch's wall as the Breaker's does: the run ends at the wall, but the shape
    is the blow's.
-6. A champion's Markynaz decree (`L.decree`) still replaces the circle's lord decrees for its fight (`F.mem.law`), as
-   EG-FULL wrote it. It does not fold with them.
-7. Found, not fixed: the legion's `walkGraph` (`net/egWalkGraph.js` `egWalkNext`) keeps a walker's last node as a way on
-   after the walker was set down elsewhere (a Breaker's run cut at a wall). A walker so placed beside an
-   arch's wall can walk straight to the far gap node. The lords validate their node. The legion's is EG-ZB's to close.
 
 **The four hosts.**
 
@@ -6954,15 +6961,6 @@ shaft. Each sentence is deleted where it stood.
    instant.
 8. `server/src/index.js` is unchanged: its hello already sent `st` and the whole fight.
 
-**Found, not changed** (FLAGGED, outside this slice):
-- A Rampart pillar whose plan overlaps a bastion's (161 of 3,336 pillar spots over seeds 1-30) has a lip onto the bastion,
-  and the walk graph steps a pinned Caster off it (one way, within EG_DROP_M). Over 23 such Ramparts of seeds 1-6, 19 of 69
-  pinned Casters walked off their pillars within 50 s, at the PR head as now, so EG-ZB's "it now stays on its pillar"
-  holds only where the pillar stands alone. The screens now draw the step down at the lip. FLAGGED to the legion.
-- The spec's spots carry their `y` in centimetres: `net/egLaw.js` puts every spot's `x` and `z` into metres but not its
-  `y`. Seed 1's Hall 22 has Lurker spots at `y` -760 over floors at -7.6 m. Nothing reads a spot's `y` today, and this
-  slice reads the fight ground instead. Mending it is a law change (`EG_SPEC`). FLAGGED to the law.
-
 **The four hosts.**
 - `src/scenes/world.js` - FLAGGED, nothing to wire: the fight draws its bodies in the pass the host already calls, and
   `feet`, `peerAt` and the link are as they were. Nothing was added to `function frame(now)`.
@@ -6996,4 +6994,143 @@ seen in the live game.
   relay's graph, since `net/egBodies.js` imports it. Rehashed in place again at the merge, over EG-ZI's `toll` and EG5 +
   EG-ZK's seam. `ACCOUNT_VERSION` is untouched (`acct121` when this slice was cut, `acct122` since the lead's merge of
   main), and there is no migration.
+- No new src module. The Port-Ledger's ELITE-GATES row is the lead's.
+
+### EG-ZQ - 2026-10-12 - THE RELAY'S LAST DEBTS
+
+Mac: "I said I want everything". Six debts the relay's slices found and recorded, each built to the page: the legion's stale
+node (EG5 + EG-ZK's departure 7), the Rampart's pinned Casters (EG-ZJ's finding), the lords' shares (section 13.2; EG5 +
+EG-ZK's departure 1), Colossal's size (EG5 + EG-ZK's departure 3), the Markynaz's decree (EG5 + EG-ZK's departure 6) and the
+spots' heights (EG-ZJ's finding). All relay law but the size, which every screen draws. Each sentence is deleted where it
+stood: EG5 + EG-ZK's departures 1, 3, 6 and 7, its "so a join brings no share", and EG-ZJ's "Found, not changed" with both
+its bullets. EG5 + EG-ZK's departures left are renumbered 1 to 3.
+
+**What shipped, by piece.**
+
+- **THE WAY ON, KEPT ONLY WHILE IT IS WALKED** (`net/egWalkGraph.js` `egWayOn`; section 11.7).
+  - EG-ZK's rule for the lords is the graph's own now, in one function. The node a walker headed to (`b.wn`) is a way on
+    only while its walk (`b.mv`) still goes to it. A walker set down since keeps none: a Breaker's charge cut at an arch's
+    wall (`net/egBodies.js` `egPlace`), a push, a pull, a lord's blow, leap or blink, or a straight walk elsewhere. A node
+    it stands at (within `EG_NODE_REACH_M`) is reached: its region and its floor are the walker's.
+  - Both walkers ask it. The legion asks before each step over the graph (`net/egLegion.js` `walkGraph`). The lords ask
+    before they choose a straight walk or the graph (`net/egLords.js` `lordWalk`), and the function replaces their inline
+    copy, line for line, feet included.
+  - `egWalkNext` itself is unchanged. A walker handed a node with no walk keeps it, as EG-ZB's graph test walks one by hand.
+  - Checked on seed 77's Hall 14, a Rift-Yard's chamber whose arch splits its floor. A Lurker walks to a member past the
+    arch, through the gap, and heads for the gap's far node. Set down back beside the wall on its own half, its next walk
+    went before straight to that node, across the wall. It now goes back to the gap's near node and on through the gap.
+- **A PINNED CASTER KEEPS TO ITS PILLAR** (`egWalkNext`'s `b.pinned`; sections 8.3 and 12).
+  - A pinned walker's goal is kept inside the region it stands in, and no way off is walked, whatever the region's edge
+    overlaps or overlies. The pin is the director's own (`net/egBrain.js` `standFight`, every Rampart Caster stood on a
+    pillar). The lip stays the graph's: an unpinned walker on such a pillar still steps off it.
+  - Measured with the director over every Rampart of seeds 1-6, the company marching the walkway end to end for 50 s.
+    Before, with a company of two, all 22 pinned Casters on a pillar whose plan meets a bastion's walked off it (237 pinned
+    in all; none of the rest left). With a company of eight, all 51 of 474 did. After, none of either. EG-ZJ's count (19
+    of 69 over 23 Ramparts) was taken with another company and walk.
+- **THE LORDS' SHARES** (`net/egLords.js` `egLordsShare`, through `EG_SEAM.join`; section 13.2).
+  - A lord's health is its fighters' shares. Each lord's share for a member is `per` x the member's reference damage
+    (`dpsRef`, the gate's level claim). `per` is the lord's health per unit of the company's reference damage as it was
+    stood: `ttkRef(c)`, a champion's `EG_PROVE_HP_S` x the depth, Colossal's health, a twin's part, a stratum's 0.6.
+  - The fight keeps the company it woke with by account (`F.subs`, `net/egBodies.js` `egFightNew`). Each lord seeds its
+    shares from it when it first moves one, so its shares sum to its health.
+  - The seam's `join` moves a member's share. Admitted, a member the hall did not wake with brings its share at the
+    fraction the lord stands at: a share brought as a retired one and restored, the gate's `joinFight` law through its own
+    `restoreShare`. A retired share comes back the same way. Refused, a member's share is retired (`retireShare`), at the
+    fraction. The last share in a lord is never retired.
+  - The director joins members three times (`net/egBrain.js`): at a blow on a lord (EG-ZK's join); in the seen-and-restore
+    step, every living member in the hall each beat of a trial while a lord stands (the fallen are never in it); and at a
+    fall (`egFall`), unadmitted.
+  - A member who can join a hall's lords mid-fight is one a Memento calls back into it after it fell before the wake. The
+    breach admits nobody after its open window (section 6.1).
+  - A mirror or an image carries no share. An errand's held threshold (the Spellmaster's Examination) keeps its fraction of
+    its lord's health. A share moved says the whole fight at the beat's end, so every bar's health and its max move
+    together.
+  - Pinned on a Proving Walk of the first circle, with members of levels 40, 20 and 30 (reference damage 45, 25 and 35).
+    The champion stood for the first two is 2800 (shares 1800 and 1000). Bled to 60%, the third is called back by a
+    Memento and brings its 1400 at 60%: 4200, and the whole fight is said again at once. The second falls: 3200, still 60%.
+    Seen as a witness for two seconds, nothing comes back. Recalled, it is 4200 again.
+- **THE COLOSSAL'S SIZE ON THE WIRE** (section 14).
+  - A lord is stood at the fight's law's `sizeX` (`net/egLords.js` `stand`), and so are its mirrors and images. Its body's
+    radius is `bodyR` of its look's scale times the size, and its size rides its body (`sz`, thousandths of its look's; 0 at
+    its look's own).
+  - On the wire a body's row is eighteen, `[..., st, sa, sz]` (`net/egBodies.js` `egBodyWire`). `validEgOut` takes 0, or
+    `EG_SIZE_WIRE_MIN` to `EG_SIZE_WIRE_MAX` (500 to 2000). Colossal's rank II, 1400, is the most the law folds, pinned under
+    the bound.
+  - The screen keeps a lord's size (`net/egLink.js` `egBodyOf`, 1 at its look's own) and draws it at its look's scale times
+    it (`scenes/egFight.js` `egLookOf`, the one read in that file). Its reach to the lord (the target's radius from the
+    look's scale) is the radius the relay judges by.
+  - The first Court's Grath stands at 3.0 with no decree, 3.75 under Colossal (1250, radius 2.25) and 4.2 under Colossal II
+    (1400, radius 2.52). The Slam's radius already followed `radiusX`.
+- **THE GRAND DUKE'S DECREE FOLDS** (`net/egLords.js` `egMarkynazDecree`; sections 8.5 and 14).
+  - The Markynaz lays the lord-family decree his hall draws: the four in their order (`EG_DECREES`, never a second list)
+    from his hall's number, or the next his fight does not already bear, round the four, or none when it bears all four.
+    One decree is never borne twice, and his card names one the company does not already face.
+  - It folds with the circle's lord decrees through the fight's profile (`egFightProfile`), and he is stood under the fold,
+    its health and its size with it. Before, his decree replaced the circle's, and his health was the circle's law's alone
+    (he was born before his decree).
+  - Seed 1's Hall 68, the Shade's Proving Walk, under Vengeful II: he lays Colossal, his hall's own, and his fight runs by
+    both (shares x1.4, health x1.25, size x1.25). Under Colossal he lays Unyielding.
+- **A SPOT'S HEIGHT, SAID** (section 9; `net/egLaw.js`'s `spot`). Decided: documented at the producer and in section 9, not
+  mended under a new spec law. A spot's `y` stays the law's centimetres while its `x` and `z` are said in metres. The reasons:
+  - Nothing reads the field. Every body's feet are the fight ground's (EG-ZJ), so no hall a player stands in changes.
+  - A law of its own would be a third kept seven days beside laws 4 and 5 (section 22), every pin of the law's number would
+    move, and parallel slices would contend for the next number. It would buy nothing.
+  - It would not spare the first reader the centimetres either. Breaches opened under laws 4 and 5 are kept for their
+    seven days, and their spots stay centimetres, so that reader handles both units whatever this slice did.
+  - So the slice that first reads a spot's height mends it under its own law, in the same change. Until then a reader
+    divides by 100, as `spot`'s comment and section 9 now say.
+
+**Departures, said plainly.**
+1. The shares move the lords' health alone. The legion's waves, the errands' objects and a Valkynaz's mirrors stay sized by
+   the company the hall woke with (`F.team`, `F.n`).
+2. In a Clan Feud the Markynaz stands after the Court's lord. His decree folds into the one fight's law from his birth, so
+   every lord's blows, ward and threat bear it, while the Court's lord keeps the health and size it was stood with.
+3. A share brought or restored moves the beat after its member is first seen in the hall: within 250 ms of its rising at
+   the niche, not at the recall's own word. A fall's moves at once.
+4. The last share in a lord is never retired. The gate keeps the fraction in `idle` for that case, but the Spire's lord
+   would stand at nought and read as fallen; the company's wipe ends the breach first.
+5. A spot's `y` stays in centimetres, said so at the producer and in section 9 (decided above).
+6. The way-on rule is asked by the walkers, not inside `egWalkNext`, which a hand-walked test body calls with no walk.
+
+**Found, not changed** (FLAGGED, outside this slice):
+- The Markynaz's decree is not named on his card, as section 8.5 says it is. `L.decree` lives on the relay's body, and no
+  word carries it and no screen says it. A screen can name it with no new word: `egMarkynazDecree` is pure, and the room's
+  state carries the decrees in force (`st`'s `dc`) and the hall. FLAGGED to the screen (`scenes/egClient.js`,
+  `scenes/egFight.js`).
+
+**The four hosts.**
+- `src/scenes/world.js` - FLAGGED, nothing to wire: the fight draws its bodies in the pass the host already calls.
+  Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED: untouched.
+- `src/scenes/dungeonContext.js` - FLAGGED: untouched.
+- `src/scenes/exterior.js` - FLAGGED: offline, no breach (section 28).
+`scenes/egFight.js` is no host; its one line is the size's read.
+
+**Not verified without a browser and the game's data:** a Colossal lord drawn larger, and a lord's bar as a share moves,
+were checked through the wire, the screen's fold and `egLookOf` in node, not seen in the live game.
+
+**Pins.**
+- `test/egz_relay.test.js` (6): the way on, the pillar, the shares, the size on the wire, the Grand Duke's decree, a spot's
+  height.
+- `tools/mutants/egz_relay.json` (45, every one dead).
+- Re-aimed by content (mutantdrift), and judged again:
+  - `egz_lords.json`: EGZK-a-witness-joined and EGZK-joined-to-the-fallen onto the seam's join's answer;
+    EGZK-the-graphs-walk-kept and EGZK-a-reached-node-forgotten onto `egWayOn`.
+  - `egz_state.json`: EGZJ-row-height-unrounded, EGZJ-row-walk-end-height-dropped and EGZJ-row-state-unsaid onto the row
+    of eighteen; EGZJ-wire-row-of-thirteen onto the validator's eighteen; EGZJ-link-lord-phase-dropped onto the lord's
+    branch, which now reads its size; EGZJ-lord-top-reached-feet-left-on-the-stair onto `egWayOn`.
+- Judged again: `eg5.json` (40), `egz_lords.json` (35: 33 dead, its 2 equivalent as recorded), `egz_state.json` (96),
+  `egz_legion.json` (56) and `egz_rules.json` (78) - every one as recorded. And every record of the lists aimed at the fight's
+  modules this slice touched (`net/egBodies.js`, `egLords.js`, `egLegion.js`, `egWalkGraph.js`, `egLink.js`,
+  `scenes/egFight.js`) or within ten lines of its changes in `net/egBrain.js`, `net/egLaw.js` and `net/wire.js`:
+  `egint.json` (14), `egz_recap.json` (5), `egz_frag.json` (3), `egfull.json` (2), `eg6a.json` (1) and `egplay.json` (1) - 26,
+  every one dead.
+- PIN MOVED:
+  - `test/egz_lords.test.js`: the director's joins, three;
+  - `test/egz_state.test.js`: a body's row of eighteen, in eight assertions, two titles and a comment;
+  - `test/egplay_relay.test.js`: a body's eighteen, cut short at seventeen;
+  - `test/egz_stair.test.js`: its two hand-built rows.
+- `RELAY_VERSION` `world198`, unshipped, rehashed in place; no file joined its graph. `ACCOUNT_VERSION` is untouched
+  (`acct122`), and there is no migration. `EG_SPEC` is 5 and `EG_LAWS` are as they were.
+- The 25-seed sweep (`tools/egSpanSolve.mjs --sweep --golden`, bands 0-3): every course crossed (95, 111, 108 and 109).
 - No new src module. The Port-Ledger's ELITE-GATES row is the lead's.

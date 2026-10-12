@@ -20,8 +20,8 @@
   {
     "name": "EGZK-a-witness-joined",
     "file": "src/net/egLords.js",
-    "old": "=> !!o.admits && egLordsOf(f.F).length > 0,",
-    "new": "=> egLordsOf(f.F).length > 0,",
+    "old": "return !!o.admits && up; }",
+    "new": "return up; }",
     "tests": [
       "test/egz_lords.test.js"
     ]
@@ -29,8 +29,8 @@
   {
     "name": "EGZK-joined-to-the-fallen",
     "file": "src/net/egLords.js",
-    "old": "=> !!o.admits && egLordsOf(f.F).length > 0,",
-    "new": "=> !!o.admits,",
+    "old": "return !!o.admits && up; }",
+    "new": "return !!o.admits; }",
     "tests": [
       "test/egz_lords.test.js"
     ]
@@ -201,17 +201,17 @@
   },
   {
     "name": "EGZK-the-graphs-walk-kept",
-    "file": "src/net/egLords.js",
-    "old": "if (wn && !(L.mv && Math.abs(L.mv.tx - wn.x) <= 0.011 && Math.abs(L.mv.tz - wn.z) <= 0.011)) {",
-    "new": "if (false) {",
+    "file": "src/net/egWalkGraph.js",
+    "old": "if (!wn || (b.mv && Math.abs(b.mv.tx - wn.x) <= 0.011 && Math.abs(b.mv.tz - wn.z) <= 0.011)) return;",
+    "new": "if (!wn || true) return;",
     "tests": [
       "test/egz_lords.test.js"
     ]
   },
   {
     "name": "EGZK-a-reached-node-forgotten",
-    "file": "src/net/egLords.js",
-    "old": "    if (Math.hypot(wn.x - L.x, wn.z - L.z) <= EG_NODE_REACH_M) { L.fr = wn.rg; L.y = egWalkFeet(view, L)?.[0] ?? L.y; }   // EG-ZJ: its feet on that floor, as the legion's (net/egLegion.js walkGraph)\n",
+    "file": "src/net/egWalkGraph.js",
+    "old": "  if (Math.hypot(wn.x - b.x, wn.z - b.z) <= EG_NODE_REACH_M) { b.fr = wn.rg; b.y = cm(view.fl[G.rg[wn.rg].f]?.y ?? 0); }\n",
     "new": "\n",
     "tests": [
       "test/egz_lords.test.js"
