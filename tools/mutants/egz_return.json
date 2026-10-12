@@ -506,8 +506,8 @@
   {
     "name": "EGZ-stale-dash-kept",
     "file": "src/scenes/egFight.js",
-    "old": "{ sl.mine = false; sl.cut = false; }",
-    "new": "{ sl.mine = false; }",
+    "old": "{ sl.mine = false; sl.cut = false; sl.y = NaN;",
+    "new": "{ sl.mine = false; sl.y = NaN;",
     "tests": [
       "test/egz_return.test.js"
     ]

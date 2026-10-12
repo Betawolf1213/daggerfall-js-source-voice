@@ -56,6 +56,22 @@ export function egAccessNow(win = globalThis.window) {
   return { palette: egPaletteOf(getPref(EG_ACCESS_PREFS.palette)), fill: egFillOf(getPref(EG_ACCESS_PREFS.fill)), still: egReducedMotion(win) };
 }
 
+// ── EG-ZG: THE QUIET COMPANY'S ALLIES (section 25.4) ────────────────────────────────────────────────────────────
+/** How this screen draws another player's spell effects now: `{ alpha, glow }` while the Spire's client says a trial quiets
+ *  them (scenes/egClient.js - world/egLook.js egQuietCompany's 60% and no light of their own), or null - as they always
+ *  were. The one seam the spell engine every host shares reads (scenes/hostMagic.js: a peer's casting effects, bolt,
+ *  missile and flash at the share, none of its light); `port:allyEffects` governs allies' hit numbers alone, which the port
+ *  never draws. */
+let allyLookFn = null;
+/** The Spire's client's word (null: none). */
+export function egAllyLookSet(fn) { allyLookFn = typeof fn === 'function' ? fn : null; }
+/** The quiet share now, or null (no word, or a word of nothing quieted - full and lit). */
+export function egAllyLook() {
+  let q = null;
+  try { q = allyLookFn?.() ?? null; } catch { q = null; }
+  return q && (q.alpha < 1 || q.glow < 1) ? q : null;
+}
+
 // ── the simulation the colour-blind presets are pinned under ──────────────────────────────────────────────────
 /** Machado, Oliveira and Fernandes (2009), severity 1.0, on linear RGB. */
 export const EG_CVD = Object.freeze({

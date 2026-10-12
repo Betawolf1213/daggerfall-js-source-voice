@@ -42,6 +42,9 @@
 // and its crust (a bucket, the cooled top over the still-glowing sides, THE EDGE LINE round it) while it holds, shaking its
 // last second; its spill's bite is the fight's (scenes/egFight.js - the place's hazard on my own feet). A Moon branch the
 // Moon-Mirror lights (the relay's haven over it - systems/spireKit.js spireObjs `lit`) stands while lit, beam or none.
+// EG-ZG (2026-10-12, Elite-Gates.md section 25.8 - WEIGHT): A DROP'S LANDING is the fight's designed thud and dust
+// (scenes/egFight.js), never DFU's hard-landing grunt: while my body falls onto a Drop the course asked for, `overDrop`
+// says so, and the dungeon arm plays no FallHard for that landing (scenes/dungeonContext.js reportActivity).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
@@ -56,6 +59,7 @@ import { egPieceAt, egPendAt, egPendHits, EG_PEND_HALF, EG_DROP_WALL_H, EG_CRUMB
 import { egSlagState, egSlagX, EG_SLAG_SPOUTS, EG_SLAG_CRUST_S, EG_SLAG_WARN_S } from '../net/egSpanLaw.js';   // EG-ZC: the Cooling Slag
 import { egInShape } from '../net/egShape.js';   // EG-ZC: a lit branch under the mirror's haven
 import { egTubeEdge, EG_ENGINES } from '../net/egFragLaw.js';
+import { egOverDrop } from '../world/egTelegraph.js';   // EG-ZG: a Drop's landing, the law
 import { egNicheBoxes, egIsleDisc } from '../world/egHall.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
 import { spireFooting, spireWake, spireObjs, spireAct } from '../systems/spireKit.js';
@@ -242,6 +246,8 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
   let draws = null;
   /** where my feet last stood on a floor or a solid step, and how high that floor was (the void's measure) */
   let safe = null, safeY = 0;
+  /** EG-ZG: whether my body, this frame before the motor, falls onto a Drop the course asked for */
+  let overDrop = false;
   const band = egBandOfCircle(c);   // EG-G2: every piece in its band's dress (the Steps' own faces keep the Hour's - world/egBandArt.js)
   const make = (model) => { if (!model || !renderer?.createMesh) return null; try { return renderer.createMesh(egBandDress(model, band)); } catch (e) { console.warn('[eg] a span would not build', e?.message ?? e); return null; } };
   const play = (rec, vol, pitch = 1) => { try { audio?.playOneShot?.(rec, vol, pitch); } catch { /* no sound */ } };
@@ -547,8 +553,10 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
         const dx = on.T[0] - on.was[0], dy = on.T[1] - on.was[1], dz = on.T[2] - on.was[2];
         if (dx || dy || dz) body.carryBy?.(dx, dy, dz);
       }
+      overDrop = false;
       if (!live || !body?.pos) return null;
       const [rx, ry, rz] = dungeonToRealm(body.pos[0], body.pos[1], body.pos[2]);
+      if (!body.grounded) { const hs = specs.find((q) => Math.abs(rx - q.x0) <= 40); overDrop = !!hs && egOverDrop(hs, rx - hs.x0, ry, rz); }   // EG-ZG (section 25.8)
       const footing = spireFooting();
       // THE GUST (section 10.3): the Steps' breath over a Gust section of the hall I stand in, Iron Footing taking its share
       if (dt > 0 && footing < 1) {
@@ -575,6 +583,9 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
     },
     /** Where the void would cast me back to now (the dungeon's frame), or null - and set it (a pull's landing). */
     safe: () => safe,
+    /** EG-ZG (section 25.8): am I falling onto a Drop the course asked for (this frame, before the motor)? Its landing is the
+     *  fight's thud and dust - the dungeon arm plays no hard-landing grunt for it. */
+    overDrop: () => overDrop,
     setSafe(p) { safe = p ? [p[0], p[1], p[2]] : null; safeY = p ? p[1] : 0; },
     /** The hands this circle offers the activation ray (an Orrery stone's handles, an engine) - after the stand. */
     targets: () => (draws ? targetList : []),
