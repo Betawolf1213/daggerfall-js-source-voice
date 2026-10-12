@@ -124,7 +124,9 @@ test('DECOR2c the placer sets a mount ON the surface: its heading the surface\'s
   assert.deepEqual([moved.state().yaw, moved.state().scale], [-30, 2], 'a mount moved starts at its own spin');
   const statue = { key: 'own:2', kind: 'own', model: null, flat: [202, 5], item: { t: 265, g: 10 }, light: null };
   const stood = createDecorPlacer(statue, { free: true }).pieceAt([12, 1.5, 13], [10, 0, 10], 's1', [0, 0, -1], 0);
-  assert.deepEqual([stood.pos, stood.rot], [[2, 1.5, 3], [0, 0, 0]], 'a thing that stands stands where the eye meets the room');
+  // WALL-CLEAR (FIELD BUGS 2026-10-12b, PIN MOVED): it stood ON the wall's point, half of it inside the wall - it
+  // stands at the eye's height, clear of the wall by DECOR_WALL_GAP (this one's size unread: no reach of its own)
+  assert.deepEqual([stood.pos, stood.rot], [[2, 1.5, 2.98], [0, 0, 0]], 'a thing that stands stands where the eye meets the room, clear of the wall');
 });
 
 // ─── THE ROOM ────────────────────────────────────────────────────────────────────────────────────────────────────────

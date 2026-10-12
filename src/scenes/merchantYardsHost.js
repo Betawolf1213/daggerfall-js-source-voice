@@ -22,6 +22,11 @@
 // the trade window, the Sell row opens it to sell to the yard; Info names the keeper; Steal takes nothing. A press on a
 // horse or a wagon on show opens the Buy as the keeper's does. The window is the host's (`open`).
 //
+// CARP-YARD (2026-10-12): THE JOINERY - its carpenter at the gate, and its WORKBENCH: a press on the carpenter, the
+// board or the bench (the plaque's one row, Workbench) is Carpentry at the bench - the host's Stores page (`bench`); and
+// the bench is the station the Stores page asks after while the player's feet are within YARD_REACH of it
+// (`workbenchNear`). Steal takes nothing there either.
+//
 // NOTHING HERE IS SAVED OR SENT: where a yard stands is the town's layout, who keeps it its map id - every client stands
 // the same yard with the same keeper.
 //
@@ -36,7 +41,7 @@
 // scenes/dungeonContext.js - stands no street: nothing here reaches it.
 //
 // Not a DFU member. Ledger A (MERCHANT-YARDS).
-import { YARD_KINDS, YARD_TEXT, YARD_ROWS, yardName, validYardKind, yardRowsFor } from '../systems/merchantYards.js';
+import { YARD_KINDS, YARD_TEXT, YARD_ROWS, YARD_BENCH_ROW, CARPENTER_STEAL_TEXT, yardName, validYardKind, yardRowsFor } from '../systems/merchantYards.js';
 import { WAGON_KINDS } from '../systems/wagonKinds.js';
 import { YARD_FOOT } from '../world/merchantYardSites.js';
 import { buildYardModel, signBoxOf, yardPoints } from '../world/merchantYardModels.js';
@@ -63,6 +68,8 @@ export const YARD_REACH = STATIC_NPC_ACTIVATION_DISTANCE;
 /** A keeper's body, metres: half its side and its height (the collider's box, the eye's). */
 export const KEEPER_HALF = 0.3;
 export const KEEPER_HEIGHT = 1.85;
+/** CARP-YARD: how far over or under a joinery's floor the feet may stand and still be at its workbench, metres. */
+export const YARD_BENCH_RISE = 2;
 /** YARDS-FOUND: how far over a yard's ground its Overworld mark stands - over its sheds' roofs and its gate's beam. */
 export const YARD_MARK_LIFT = 4;
 /** What a wagon on show says it carries (its hover's line). */
@@ -122,7 +129,7 @@ function turnedBox(cx, cz, forward, size, center) {
  *   horseArt?: (() => boolean)|null, showWagon?: ((r: any, texRemap: any, position: number[], rotation: number[], kind: string) => boolean)|null,
  *   wagonBox?: ((kind: string) => (number[]|null))|null,
  *   open?: (site: any, mode: 'Buy'|'Sell', name?: string) => boolean, say?: (text: string) => void, midText?: (text: string) => void,
- *   now?: () => number, mend?: (site: any) => boolean,
+ *   now?: () => number, mend?: (site: any) => boolean, bench?: (site: any) => boolean,
  * }} deps  `sites` every yard standing this frame, the scene's x, z of its middle and the frame's vertical compensation
  *   (`comp` - a change re-reads the ground); `horseArt()` true once the standing horse's views are uploaded (the HCC
  *   pool's own loader); `showWagon`/`wagonBox` the HCC pool's wagon of a kind - drawn, and its box ([x0, y0, z0, x1,
@@ -134,6 +141,7 @@ export function createMerchantYards({
   eye = () => null, feet = () => null, horseArt = null, showWagon = null, wagonBox = null,
   open = () => false, say = () => {}, midText = () => {}, now = () => performance.now(),
   mend = () => false,   // WAGONS4: (site) => the host's wright - the wagon driven mended for gold (scenes/world.js mendAtYard)
+  bench = () => false,   // CARP-YARD: (site) => the host's Stores page at the joinery's workbench (scenes/world.js openYardBench)
 }) {
   /** The yards standing, by key: their site, where their middle stands, their matrix, their collider, their flats. */
   /** @type {Map<string, any>} */
@@ -266,11 +274,15 @@ export function createMerchantYards({
     yardToScene(y.at, y.site.yaw, k[0], 0, k[1], b.origin);
   }
   function poseHorses(y, cam) {
-    if (!y.horses.length || !renderer?.createBillboardBatch || !horseArt?.()) return;
+    if (!y.horses.length) return;
     const a = (y.site.yaw * Math.PI) / 180, c = Math.cos(a), s = Math.sin(a);
+    // STAND-HORSE: where each stands and faces whether or not its picture is up - the 3D horse stands there too
     for (const h of y.horses) {
       yardToScene(y.at, y.site.yaw, h.x, 0, h.z, h.pos);
       h.fwd[0] = h.forward[0] * c + h.forward[1] * s; h.fwd[1] = 0; h.fwd[2] = -h.forward[0] * s + h.forward[1] * c;
+    }
+    if (!renderer?.createBillboardBatch || !horseArt?.()) return;
+    for (const h of y.horses) {
       const view = horseViewFor(calculateHorseOrientation(cam ?? h.pos, h.pos, h.fwd));
       if (!view) continue;
       if (!h.batch) { h.batch = renderer.createBillboardBatch(HORSE_ARCHIVE, horseStillRecord(0), { w: HORSE_BILLBOARD_WIDTH, h: HORSE_BILLBOARD_HEIGHT }, [[0, 0, 0]]); h.batch.origin = [0, 0, 0]; }
@@ -363,6 +375,15 @@ export function createMerchantYards({
         offer(personActor(y, y._mwLook, b.origin, eyeAt, dt), b);
       }
     },
+    /** STAND-HORSE (bible/04-Characters/Morrowind-NPCs.md section 28): each standing yard's horses offered to the
+     *  host's standing horses (world/standingHorses.js) - where it stands, the way it faces, the bay its sprite is drawn
+     *  in (look 0, the art's own), its billboard. @param {{ offer: Function }} horses */
+    offerHorses(horses) {
+      for (const y of yards.values()) {
+        if (!y.at) continue;
+        y.horses.forEach((h, i) => horses.offer(h, h.pos, Math.atan2(h.fwd[0], h.fwd[2]), 0, h.batch, 1 + i));
+      }
+    },
     /** The keepers and the horses, for the host's flats. */
     batches() {
       _batches.length = 0;
@@ -384,6 +405,7 @@ export function createMerchantYards({
           const add = (what, b) => out.push({ key: `yard:${y.key}|${what}`, aabb: yardBoxToScene(y.at, y.site.yaw, b), distance: RAY_DISTANCE, reach: YARD_REACH });
           add('keeper', [k[0] - KEEPER_HALF, 0, k[1] - KEEPER_HALF, k[0] + KEEPER_HALF, KEEPER_HEIGHT, k[1] + KEEPER_HALF]);
           add('sign', signBoxOf(y.site.kind));
+          if (P.bench) add('bench', P.bench);   // CARP-YARD: the joinery's workbench
           P.horses.forEach((h, i) => { const r = Math.max(HORSE_BOX_SIZE[0], HORSE_BOX_SIZE[2]) / 2; add(`horse.${i}`, [h[0] - r, 0, h[1] - r, h[0] + r, HORSE_BOX_SIZE[1], h[1] + r]); });
           y.wagons.forEach((w, i) => { if (w.box) add(`wagon.${i}`, w.box); });
           return out;
@@ -398,6 +420,7 @@ export function createMerchantYards({
       const p = partOf(key);
       if (!p) return null;
       const K = YARD_KINDS[p.y.site.kind];
+      if (p.what === 'bench') return { title: 'Workbench', subs: [p.y.name, K.trade], actions: [YARD_BENCH_ROW] };   // CARP-YARD
       if (p.what === 'horse') return { title: 'Horse', subs: [p.y.name, YARD_TEXT.ask(K.keeper)], actions: [YARD_ROWS[0]] };
       if (p.what === 'wagon') {
         const w = p.y.wagons[p.i];
@@ -416,7 +439,8 @@ export function createMerchantYards({
         say(p.what === 'keeper' ? presentNpcInfoText(`${p.y.site.keeper?.name ?? ''}, the ${K.keeper.toLowerCase()}`) : presentNpcInfoText(p.y.name));
         return true;
       }
-      if (verb == null && mode === 'steal') { midText(YARD_TEXT.steal); return true; }
+      if (verb == null && mode === 'steal') { midText(p.y.site.kind === 'carpenter' ? CARPENTER_STEAL_TEXT : YARD_TEXT.steal); return true; }
+      if (p.y.site.kind === 'carpenter') return bench(p.y.site) !== false;   // CARP-YARD: the joinery's one row - its workbench
       if (verb === 'mend' && p.y.site.kind === 'transport' && (p.what === 'keeper' || p.what === 'sign')) return mend(p.y.site) !== false;   // WAGONS4: the wright
       const trade = verb === 'sell' && (p.what === 'keeper' || p.what === 'sign') ? 'Sell' : 'Buy';
       if (!open(p.y.site, trade, p.y.name)) midText(YARD_TEXT.shut);   // AUDIT MERCHANT-YARDS Y5: the counter named for its keeper
@@ -436,6 +460,23 @@ export function createMerchantYards({
         out.push({ key: `yard:${y.key}`, at: [y.at[0], y.at[1] + YARD_MARK_LIFT, y.at[2]], label: y.name, kind: `yard ${y.site.kind}` });
       }
       return out;
+    },
+    /**
+     * CARP-YARD: THE JOINERY WHOSE WORKBENCH THE FEET `f` (the scene's) STAND AT - its bench's middle within YARD_REACH
+     * across the ground and the feet no more than YARD_BENCH_RISE over or under its floor - or null. The station the
+     * Stores page asks after in the street (scenes/world.js workbenchHere).
+     * @param {number[]|null} f
+     */
+    workbenchNear(f) {
+      if (!f) return null;
+      for (const y of yards.values()) {
+        const b = y.at ? yardPoints(y.site.kind).bench : null;
+        if (!b) continue;
+        const m = yardToScene(y.at, y.site.yaw, (b[0] + b[3]) / 2, 0, (b[2] + b[5]) / 2);
+        const dx = f[0] - m[0], dz = f[2] - m[2];
+        if (dx * dx + dz * dz <= YARD_REACH * YARD_REACH && Math.abs(f[1] - y.at[1]) <= YARD_BENCH_RISE) return y.site;
+      }
+      return null;
     },
     /** For the tests and the probes. */
     state: () => [...yards.values()].map((y) => ({ key: y.key, kind: y.site.kind, at: y.at, collider: y.colAt !== null, name: y.name, wagons: y.wagonsIn, horses: y.horses.filter((h) => h.batch).length, keeper: !!y.keeperBatch })),

@@ -64,6 +64,7 @@ import { ChoiceWindow } from '../ui/talkWindow.js';
 import { buildBuildingDirectory, questorCandidateBuildings, TOPIC_CATEGORIES, whereIsAnswer, reactionTier012, buildingHint } from '../systems/talkTopics.js';
 import { yardDirectoryRows } from '../systems/merchantYards.js';   // YARDS-FOUND: the town's yards in its directory
 import { portDirectoryRows, FOUND_KIND_ORDER, FOUND_TALK_GROUPS, lettersOnMap } from '../systems/portPlaces.js';   // SHIPYARDS-FOUND: and a port town's shipyard, crew hall, lighthouse and docks - the found places' one order
+import { OPENED_SHOP_TYPES, OPENED_SHOP_GROUPS } from '../world/buildingNames.js';   // PROF-FOUND: the shops the port opened, asked after
 import { LIST_ITEM_TYPE, QUESTION_TYPE } from '../systems/topicTree.js';   // TK-vi: the window's rows are the tree's ListItems; B6: the Work question type
 import { discoverBuilding } from '../systems/discovery.js';   // T4: %loc's mark side effect
 import { getNameBankOfRegion, fullName as nameHelperFullName, GENDERS } from '../characters/nameHelper.js';   // MACRO-6: %fn/%mn in the engine-less answer
@@ -1047,6 +1048,7 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
    *  one pipeline for the native window's rows and the keyed Where-is chain. */
   const directoryByCategory = () => [
     ...TOPIC_CATEGORIES.map((c) => ({ label: c.caption, buildings: directory.filter((b) => b.buildingType === c.type) })),
+    ...OPENED_SHOP_TYPES.map((t) => ({ label: OPENED_SHOP_GROUPS[t], buildings: directory.filter((b) => b.buildingType === t) })),   // PROF-FOUND: the Furniture Store after DFU's shops, as the tree lays it
     ...FOUND_KIND_ORDER.map((k) => ({ label: FOUND_TALK_GROUPS[k], buildings: directory.filter((b) => b.yard === k) })),   // YARDS-FOUND: the tree's own groups, after the shops - SHIPYARDS-FOUND: the port's four after the yards' two
   ].filter((c) => c.buildings.length);
   /** The pre-engine fallback: T3c's flat category directory. */

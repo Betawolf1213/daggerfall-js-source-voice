@@ -39,6 +39,7 @@ import { sdSeed, sdRng } from './sdBrain.js';
 import { egSpanProof, egRoadCross, EG_SPAN_RUN_MPS } from './egSpanLaw.js';   // EG-FULL: THE TIMED SOLVER - a course it refuses is laid again
 import { egFragPassage, egFragChamber, egSetPiece, egSetPieceOf, EG_PASSAGE_KITS, EG_CHAMBER_KITS, EG_FRAGS } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments
 import { egFragShaft, EG_SHAFT_KITS, EG_SLAG_LAW, EG_SLAG_STEP } from './egFragLaw.js';   // EG-ZC: the shafts, the slag's law and its crust
+import { gateTrialOf } from './gateMods.js';   // EG5: the gate's boss-general trials the lord family recasts (a leaf - it imports nothing)
 
 /** The spec law's number - a change to any draw below changes it (and the relay's version with it). EG-ZC: 5, the last
  *  fragments (the law before kept - net/egDurable.js EG_LAWS). */
@@ -93,6 +94,18 @@ export const EG_GATHER_MS = 8000;
 export const EG_CLOSING_FIGHT_MS = 20_000;
 export const EG_CLOSING_SPAN_MS = 45_000;
 export const EG_DOOR_REACH_M = 3;
+/** EG-ZI - THE LATE WAKE (section 7): after this many halls in a row that a member woke late (the hall woke before its
+ *  `here`), the gather waits only this long after the pull for them. */
+export const EG_LATE_HALLS = 2;
+export const EG_LATE_ARRIVE_MS = 10_000;
+/** EG-ZI - THE PULL'S TOLL (section 10.6): a share of the body for each quarter of the road still ahead of a member's
+ *  furthest fair point, at most this many quarters; waived for a member who reached new ground (an island, a fragment's
+ *  floor) this long before the pull; the halls it is paid after - those whose closing is the span's, the road crossed in
+ *  it (the Span, the Deepway, a Brink, the Proving Walk's second span). */
+export const EG_TOLL_STEP = 0.05;
+export const EG_TOLL_QUARTERS = 4;
+export const EG_TOLL_WAIVE_MS = 15_000;
+export const EG_TOLL_KINDS = Object.freeze(['span', 'deepway', 'brink', 'proving']);
 /** The Court's wake ring: the lord wakes when every living member stands in it, or this long after the first does. */
 export const EG_WAKE_RING_MS = 20_000;
 /** The void's cost (section 8): a tenth of the body's health, never below a quarter of it. */
@@ -263,7 +276,14 @@ export const EG_CHAMPIONS = Object.freeze([
 ]);
 
 // ── the decrees (section 14) ─────────────────────────────────────────────────────────────────────────────
-/** EVERY DECREE: its number, its family, its name, its line. */
+/** A decree law's numbers are thousandths: 1000 is x1 (an X-keyed law's), 850 a threat pick of 0.85. */
+export const EG_LAW_UNIT = 1000;
+/** A decree's law by rank - `[rank I's, rank II's]`, frozen. */
+const lawRanks = (one, two) => Object.freeze([Object.freeze(one), Object.freeze(two)]);
+/** EG5: a gate trial's numbers (net/gateMods.js GATE_TRIALS - read, never copied), and a number in thousandths. */
+const trial = (k) => /** @type {any} */ (gateTrialOf(k));
+const milli = (v) => Math.round(v * EG_LAW_UNIT);
+/** EVERY DECREE: its number, its family, its name, its line (and the lord family's `law` - section 14's merge). */
 export const EG_DECREE_FAMILIES = Object.freeze(['blows', 'legion', 'ground', 'covenant', 'lord']);
 export const EG_DECREES = Object.freeze([
   Object.freeze({ id: 0, key: 'chained', fam: 'blows', name: 'Chained Blows', line: 'The legion\'s blows chain a second shape.' }),
@@ -281,10 +301,15 @@ export const EG_DECREES = Object.freeze([
   Object.freeze({ id: 12, key: 'sparks', fam: 'ground', name: 'Wellhead Sparks', line: 'Sparks rise and burst.' }),
   Object.freeze({ id: 13, key: 'press', fam: 'covenant', name: "The Covenant's Press", line: 'The next Redoubt gives less time.' }),
   Object.freeze({ id: 14, key: 'ashen', fam: 'covenant', name: 'Ashen Vigil', line: 'The next rest heals less.' }),
-  Object.freeze({ id: 15, key: 'colossal', fam: 'lord', name: 'Colossal', line: 'The lord stands larger.' }),
-  Object.freeze({ id: 16, key: 'unyielding', fam: 'lord', name: 'Unyielding', line: 'The lord\'s ward holds longer.' }),
-  Object.freeze({ id: 17, key: 'vengeful', fam: 'lord', name: 'Vengeful', line: 'The lord strikes harder.' }),
-  Object.freeze({ id: 18, key: 'grudge', fam: 'lord', name: 'Grudge-Bearer', line: 'The lord never forgets.' }),
+  // EG5 (2026-10-12; section 14, THE MERGE): the lord family's four are the gate's boss-general trials (net/gateMods.js
+  // GATE_TRIALS) RECAST AS X-KEYED LAWS - `law` its rank I's (the trial's own numbers) and its rank II's (the page's), each
+  // in thousandths (EG_LAW_UNIT: the law decides in integers); a key ending in X multiplies, any other is the last decree's
+  // that names it (egLawFold). Colossal's radii are the page's 1.2 (the Slam 8.4 m, not the gate's 8.5); Unyielding's ward is
+  // x2, the trial's 6 s over the gate's SHIELD_MS 3 s, in place of its `shieldMs`
+  Object.freeze({ id: 15, key: 'colossal', fam: 'lord', name: 'Colossal', line: 'The lord stands larger.', law: lawRanks({ sizeX: milli(trial('colossal').size), hpX: milli(trial('colossal').hp), radiusX: 1200 }, { sizeX: 1400, hpX: 1400, radiusX: 1300 }) }),
+  Object.freeze({ id: 16, key: 'unyielding', fam: 'lord', name: 'Unyielding', line: 'The lord\'s ward holds longer.', law: lawRanks({ shieldX: 2000, hitX: milli(trial('unyielding').hit) }, { shieldX: 3000, hitX: 750 }) }),
+  Object.freeze({ id: 17, key: 'vengeful', fam: 'lord', name: 'Vengeful', line: 'The lord strikes harder.', law: lawRanks({ dmgX: milli(trial('vengeful').dmg) }, { dmgX: 1400 }) }),
+  Object.freeze({ id: 18, key: 'grudge', fam: 'lord', name: 'Grudge-Bearer', line: 'The lord never forgets.', law: lawRanks({ threatPick: milli(trial('grudge').threatPick), threatDecay: milli(trial('grudge').threatDecay) }, { threatPick: 950, threatDecay: 0 }) }),
 ]);
 export const EG_DECREE_BY_KEY = Object.freeze(Object.fromEntries(EG_DECREES.map((d) => [d.key, d])));
 /** How many families a circle draws (section 14): none in the first, then one more every second circle, four at most. */
@@ -301,6 +326,73 @@ export const egGeoOf = (decrees) => {
   for (const [id, rank] of decrees ?? []) { if (id === EG_DECREE_BY_KEY.gale.id) g = Math.max(g, rank); if (id === EG_DECREE_BY_KEY.crumbling.id) cr = Math.max(cr, rank); }
   return g + 3 * cr;
 };
+
+
+/** EG5 (2026-10-12; section 14, THE PROFILE): the most decrees a circle bears - four drawn, a Bargain's, the Proclamation
+ *  and three wagered (the frames' nine: net/wire.js `egDecreesW`). */
+export const EG_DECREES_MAX = 9;
+/** The X-keyed laws' keys (each x1 where no decree names it): the lord family's, from the table. */
+export const EG_LAW_X_KEYS = Object.freeze([...new Set(EG_DECREES.flatMap((d) => (/** @type {any} */ (d).law ?? []).flatMap((L) => Object.keys(L))).filter((k) => k.endsWith('X')))]);
+/**
+ * THE PROFILE'S VALIDATOR: a circle's decrees as the state says them (`[[id, rank], ...]` - net/egRun.js egDecreesInForce) -
+ * at most EG_DECREES_MAX, each a known decree at rank 1 or 2, none twice. Answers a fresh copy, or null.
+ * @param {unknown} dc
+ * @returns {Array<[number, number]>|null}
+ */
+export function validEgDecrees(dc) {
+  if (!Array.isArray(dc) || dc.length > EG_DECREES_MAX) return null;
+  const seen = new Set(), out = [];
+  for (const p of dc) {
+    if (!Array.isArray(p) || p.length !== 2 || !Number.isInteger(p[0]) || !EG_DECREES[p[0]] || (p[1] !== 1 && p[1] !== 2) || seen.has(p[0])) return null;
+    seen.add(p[0]);
+    out.push([p[0], p[1]]);
+  }
+  return out;
+}
+/** How many profiles are kept (the least recently asked dropped first): the Spire's decree sets are not a bounded few, as
+ *  the gate's 185 and the Hour's 216 are. */
+export const EG_PROFILE_CACHE_MAX = 256;
+const _profiles = new Map();
+/**
+ * THE FOLD (section 14, "The merge" - net/sdMarks.js sdMarksLaw's rule): laws in thousandths, in their order - a key ending
+ * in X multiplies (rounded to the thousandth), any other is the last law's that names it; each X-keyed number x1
+ * (EG_LAW_UNIT) where none names it. Answers the folded law, in thousandths. Pure.
+ * @param {ReadonlyArray<Readonly<Record<string, number>>|undefined|null>} laws
+ */
+export function egLawFold(laws) {
+  /** @type {Record<string, number>} */
+  const acc = {};
+  for (const k of EG_LAW_X_KEYS) acc[k] = EG_LAW_UNIT;
+  for (const L of laws) for (const [k, v] of Object.entries(L ?? {})) acc[k] = k.endsWith('X') ? Math.round(((acc[k] ?? EG_LAW_UNIT) * v) / EG_LAW_UNIT) : v;
+  return acc;
+}
+/**
+ * EG5 - THE FIGHT'S PROFILE (section 14): what a circle's decrees `dc` make of the fight its lords run by - net/sdRemnant.js
+ * sdFightProfile's fold: every decree's law (egLawFold), in the order of its number. Answers `{ dc, key, law }`:
+ * the decrees sorted (null for none), the cache's key (the sorted decree string, `id:rank,...`), and `law` - every
+ * X-keyed number (x1 where none names it) and each other a decree named, as numbers (net/egLords.js egLordLaw reads it,
+ * with the gate's own threat where none is named). An invalid list is the fight with no decree. Pure, frozen, and kept
+ * (LRU, EG_PROFILE_CACHE_MAX) - only the lord family's four carry a law; the other families are read by rank where they
+ * act (the legion, the director, the spans).
+ * @param {unknown} dc
+ */
+export function egFightProfile(dc) {
+  const ok = validEgDecrees(dc) ?? [];
+  ok.sort((a, b) => a[0] - b[0]);
+  const key = ok.map(([id, rank]) => `${id}:${rank}`).join(',');
+  const had = _profiles.get(key);
+  if (had) { _profiles.delete(key); _profiles.set(key, had); return had; }   // the most recently asked kept last
+  const acc = egLawFold(ok.map(([id, rank]) => /** @type {any} */ (EG_DECREES[id]).law?.[rank - 1]));
+  /** @type {Record<string, number>} */
+  const law = {};
+  for (const [k, v] of Object.entries(acc)) law[k] = v / EG_LAW_UNIT;
+  const P = Object.freeze({ dc: ok.length ? Object.freeze(ok.map((p) => Object.freeze(p))) : null, key, law: Object.freeze(law) });
+  if (_profiles.size >= EG_PROFILE_CACHE_MAX) _profiles.delete(_profiles.keys().next().value);
+  _profiles.set(key, P);
+  return P;
+}
+/** How many profiles the cache holds now (its bound's pin). */
+export const egProfilesKept = () => _profiles.size;
 
 /** Halls stand this far apart across x in a circle's level (m) - far past the fog, so a hall never sees the next. */
 export const EG_HALL_PITCH = 500;

@@ -31,9 +31,11 @@ function rig({ onRoad = () => false } = {}) {
 test('RATE-LAW: a route runs at its LEG\'s rate - a road x100, a track x100, the open ground x60 - asked of the clock as each leg begins and only on a change, and said on the panel (mutants: the leg\'s kind unread, a track off the road, the clock asked every frame)', () => {
   dialAtTop();
   const { to, ui, asked, w, frame } = rig();
-  const legs = [{ x: 501, y: 250, kind: 'road' }, { x: 502, y: 250, kind: 'track' }, { x: 503, y: 250, kind: 'open' }, { x: 504, y: 250, kind: 'road' }];
+  // ROAD-BRIDGE: the open leg is a run of three pixels (legs fold a straight run) - one open pixel between two road legs
+  // is the road's (test/tvsmooth1.test.js)
+  const legs = [{ x: 501, y: 250, kind: 'road' }, { x: 502, y: 250, kind: 'track' }, { x: 505, y: 250, kind: 'open' }, { x: 506, y: 250, kind: 'road' }];
   // a PLACE's route (AUDIT-D1: a spot's last stretch asks the host's lanes - test/ratelawfix.test.js)
-  assert.equal(to.beginTravelAlongRoute({ legs, summary: { pixel: { x: 505, y: 250 }, name: 'There', mapId: 7 } }), true);
+  assert.equal(to.beginTravelAlongRoute({ legs, summary: { pixel: { x: 507, y: 250 }, name: 'There', mapId: 7 } }), true);
   assert.deepEqual(asked, [TRAVEL_ROAD_RATE], 'the first leg, a road: x100');
   assert.deepEqual([ui.timeAcceleration, ui.onRoad], [100, true]);
   frame(); frame();
@@ -44,7 +46,7 @@ test('RATE-LAW: a route runs at its LEG\'s rate - a road x100, a track x100, the
   assert.deepEqual([asked.at(-1), ui.onRoad], [100, true], 'a track is a road to the rate');
   walkTo(502);
   assert.deepEqual([asked.at(-1), ui.timeAcceleration, ui.onRoad], [TRAVEL_OPEN_RATE, 60, false], 'the open ground: x60');
-  walkTo(503);
+  walkTo(505);
   assert.deepEqual([asked.at(-1), ui.onRoad], [100, true], 'back on a road: x100');
   assert.deepEqual(asked, [100, 60, 100], 'asked three times over four legs - only where the ground changed');
 });

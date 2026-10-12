@@ -750,8 +750,8 @@
   {
     "name": "PROF4-workbench-no-linen",
     "file": "src/ui/profPages.js",
-    "old": "      if (sale?.counter === 'furnisher' && have < inp.n && bench.kind === 'shop') counterBuy(",
-    "new": "      if (sale?.counter === 'smith' && have < inp.n && bench.kind === 'shop') counterBuy(",
+    "old": "      if (sale?.counter === 'furnisher' && have < inp.n && bench.kind === 'shop' && !bench.yard) counterBuy(",
+    "new": "      if (sale?.counter === 'smith' && have < inp.n && bench.kind === 'shop' && !bench.yard) counterBuy(",
     "tests": [
       "test/prof4_client.test.js"
     ]

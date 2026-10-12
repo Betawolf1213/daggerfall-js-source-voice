@@ -332,7 +332,7 @@ test('GP1 the hosts and the tiers: all four hosts attach the pad on the touch la
   for (const h of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeon.js', 'src/scenes/interior.js']) {
     const s = rd(h);
     assert.match(s, /const touch = attachTouch\(canvas, inputHooks\);\s*\n\s*const gamepad = attachGamepad\(canvas, inputHooks\);/, `${h}: the pad on the finger's hooks`);
-    assert.match(s, /gamepad\?\.tick\(dt\);[^\n]*\n(\s*\/\/[^\n]*\n)*\s*if \(!/, `${h}: ticked before the paused gate`);
+    assert.match(s, /gamepad\?\.tick\(dt\);[^\n]*\n(\s*\/\/[^\n]*\n)*(\s*const frameLook = \(\) => \{   \/\/ PERF-V8[^\n]*\n)?\s*if \(!/, `${h}: ticked before the paused gate`);   // PIN MOVED (MWNPC19): the world host's look step a PERF-V8 closure (`frameLook`)
   }
   for (const h of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeon.js']) assert.match(rd(h), /mv\.analog = touch\?\.axes\(\) \?\? gamepad\?\.axes\(\) \?\? null;/, h);
   for (const k of ['Controls/EnableController', 'Controls/JoystickLookSensitivity', 'Controls/JoystickCursorSensitivity', 'Controls/JoystickMovementThreshold', 'Controls/JoystickDeadzone']) {

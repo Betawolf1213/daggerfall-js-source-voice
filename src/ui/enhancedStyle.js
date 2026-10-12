@@ -41,6 +41,7 @@ import { pageHas } from '../systems/pageQuery.js';   // PERF-URL: the page's que
 import { paceControlsCss } from './travelPaceControls.js';   // PACE-DIALS: the Overworld block's speed dials
 import { SERPENT_RING_MAP_CSS } from './serpentMapMark.js';   // SERPENT-TIMERS: the sea serpent's row marked in its waters' own colour
 import { SD_RING_MAP_CSS } from './sdMapMark.js';   // SD2c: the Super dungeon's row in its omen's brass
+import { TIER_MARKS, tierMarkCss } from './lootTierMarks.js';   // LOOT-MARKS: the quick loot's tier gem and wash
 import { SUPPORT_MARKS_CSS } from './supportAsks.js';   // SUPPORT1: the asks' marks - the door's icons and the website's corner, one drawing
 
 /**
@@ -2565,6 +2566,7 @@ ${SUPPORT_MARKS_CSS}
 .px-timerswin .tm-row.live .tm-count { color: #9fe8b4; }
 .px-timerswin .tm-when { font-size: 11px; color: var(--dim); white-space: nowrap; }
 .px-timerswin .tm-empty { color: var(--dim); font-size: 13px; }
+.px-timerswin .tm-door { flex: 0 0 auto; }   /* EG-ZM: a row's door (the Elite rows' Boards) beside its clock */
 /* AUDIT TIMERS1 UI-4: STONE'S LIGHT GROUND (AUDIT MERGE-PLUS D3's law) - the window takes the theme's panel, and Stone's
    light grey left the dim words at 2.6:1 and the where line at 3.0; lifted past 4.5:1 over a hard black drop. */
 :root[data-plus-theme="stone"] .px-timerswin { --dim: #e2dccd; --brass: #ffd98a; text-shadow: 1px 1px 0 rgba(5,6,8,0.85); }
@@ -2985,8 +2987,18 @@ html.plus-pad-prompts-visible .px-over > .px-stage:not(.px-acctstage):not(.px-ti
 .tview { position: fixed; inset: 0; z-index: 4; pointer-events: none;
   font-family: var(--data); color: var(--bone); transition: opacity 120ms linear; }
 .tview-you { position: absolute; left: 0; top: 0; width: 0; height: 0; will-change: transform; }
-.tview-ring { position: absolute; left: -15px; top: -9px; width: 30px; height: 18px; border-radius: 50%;
-  border: 2px solid var(--brass); box-shadow: 0 0 6px rgba(192,138,62,0.55), inset 0 0 4px rgba(0,0,0,0.6); }
+/* TV-SMOOTH (2026-10-12, Mac: "the circle and the line where he walks to can be visually improved"): the ring sits on
+   the ground - a dark rim under the brass so it reads on snow and sand alike, a faint glow pooled inside it, and one
+   soft ring breathing out of it (still for a player who asks the system for less motion); 26 x 16 (Mac: "make the
+   circle around the player a bit smaller"). Its box is its border's too
+   (border-box): centred ON the feet, where the old content box sat 2 px right of and below them. */
+.tview-ring { position: absolute; left: -13px; top: -8px; width: 26px; height: 16px; border-radius: 50%; box-sizing: border-box;
+  border: 2px solid var(--brass);
+  background: radial-gradient(ellipse at center, rgba(192,138,62,0.28) 0%, rgba(192,138,62,0.08) 55%, rgba(192,138,62,0) 72%);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.6), 0 0 8px rgba(192,138,62,0.6), inset 0 0 0 1px rgba(0,0,0,0.45); }
+.tview-ring::after { content: ''; position: absolute; inset: -2px; border-radius: 50%; box-sizing: border-box;
+  border: 2px solid rgba(232,190,110,0.9); pointer-events: none; animation: tview-ring-breath 1.8s ease-out infinite; }
+@keyframes tview-ring-breath { 0% { transform: scale(1); opacity: 0.85; } 100% { transform: scale(1.7); opacity: 0; } }
 .tview-chev { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; }
 .tview-chev::before { content: ''; position: absolute; left: 4px; top: -13px; border-left: 5px solid transparent;
   border-right: 5px solid transparent; border-bottom: 9px solid var(--brass); filter: drop-shadow(0 1px 1px #000); }
@@ -2997,9 +3009,13 @@ html.plus-pad-prompts-visible .px-over > .px-stage:not(.px-acctstage):not(.px-ti
    TV2's route line stays an SVG under it (a dark casing, the brass line dashed over it). */
 .tview-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .tview-route { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.tview-route-casing { fill: none; stroke: rgba(0,0,0,0.55); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
-.tview-route-line { fill: none; stroke: var(--brass); stroke-width: 2.5; stroke-dasharray: 9 6; stroke-linecap: round;
-  stroke-linejoin: round; }
+/* OW-DOTS (Mac: "give the travel to lines a more dotted approach"): the way is a trail of gold DOTS, each on its own
+   dark rim. OW-DOTS-GROUND (Mac: "the dotted lines dont look still"): each dot is a point on the land the view projects
+   (scenes/travelView.js routeGroundDots), drawn as a zero-length stroke whose round caps make it a dot - the rim the
+   casing's wider cap under it - so they stand where they lie while the traveller walks over them. */
+.tview-route-casing { fill: none; stroke: rgba(0,0,0,0.6); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.tview-route-line { fill: none; stroke: #e8be6e; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+@media (prefers-reduced-motion: reduce) { .tview-ring::after { animation: none; } }
 .tview-trip { font-size: 11.5px; color: var(--brass); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* OW-BLOCK (2026-09-29, the player: "the whole bar in the top is too much ... a light weight block menu ... as much free
    screen as possible", "put the overworld block to the right"): THE OVERWORLD'S BLOCK - one compact column in the bottom-right corner,
@@ -5162,6 +5178,10 @@ ${paceControlsCss('tview')}
    shadow and takes no room). */
 .wplaque-row.sel { background: rgba(125,116,96,0.28); box-shadow: inset 2px 0 0 var(--brass);
   margin: 0 calc(-1 * var(--wp-pad-x)); padding: 0 var(--wp-pad-x); }
+/* LOOT-MARKS (2026-10-12, a player's video: "seeing rarity in the quickloot is quite hard"): a rolled row's tier as a
+   gem of its own colour before the name and a wash of it under the row (ui/lootTierMarks.js); the lit row keeps its
+   brass band under the wash, its bar beside it. */
+${tierMarkCss({ wash: (k) => TIER_MARKS[k], washAlpha: 0.2, edge: '#0b0805', selGround: 'rgba(125,116,96,0.28)' })}
 /* AUDIT DISC7 A4: a refused verb (the F-card's disabled row): its reason in its name, italic in the card's own lighter bone (SOC C12's 4.9:1), never dimmed by opacity */
 .wplaque-row.off { font-style: italic; color: #c8c2b4; }
 /* ...and the line that says what the keys do, under the list. */

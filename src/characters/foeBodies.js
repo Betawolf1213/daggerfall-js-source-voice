@@ -49,6 +49,8 @@ function mix(h) {
  *  @param {any} f */
 export function foeSeed(f) {
   if (f._mwSeedWire != null) return f._mwSeedWire;
+  const own = ownPerson(f);   // FB1012d ALLY-RACE: a person of their own is drawn as themselves, never as this stand
+  if (own != null) return own;
   if (f._mwSeed != null) return f._mwSeed;
   const at = f.marker ?? null;
   let h = mix((f.mobileType | 0) + 0x9e3779b9);
@@ -59,6 +61,20 @@ export function foeSeed(f) {
     if (p) for (const v of [p[0], p[2]]) h = mix(h ^ (Math.round((v || 0) * 10) | 0));   // AUDIT MW-NPC II K4: and where he stood - two owners' number 3s are two men
   }
   return (f._mwSeed = h);
+}
+/** FB1012d ALLY-RACE (bible/01-Overview/Field-Bugs-2026-10-12d.md; the owner: "companions when morrowind attached switches
+ *  character race"): A PERSON OF THEIR OWN. foeSeed's stand law - its species and where it stood, or its number and
+ *  feet - drew a companion afresh at every stand: every door, dungeon, fast travel, load and sweep stood him in a new
+ *  body of the Bay's (a Breton hand a Nord through the next door, a Wood Elf through the one after). One whose person is
+ *  their own is drawn as that person, wherever and however often a body stands for them: a companion the layer stood
+ *  (scenes/crewAshore.js stamps `person` on every body it stands - a crew hand his own, a sworn revenant its record's),
+ *  and a revenant come back for the player (its record's `person` on its stamp - systems/revenant.js revenantPerson,
+ *  minted off the body it was born in), so the one that kneels is the one that follows. It is the seed: every machine
+ *  reads it off the wire (`ls`) as a foe's own, so the room sees the same man. Null: a foe of the place, drawn off where
+ *  it stood. @param {any} f */
+export function ownPerson(f) {
+  const p = f?.person ?? f?.entity?.revenant?.person;
+  return Number.isInteger(p) && p >= 0 && p <= 0xffffffff ? p : null;
 }
 const pick = (list, h) => list[h % list.length];
 

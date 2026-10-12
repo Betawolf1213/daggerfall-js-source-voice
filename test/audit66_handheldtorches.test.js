@@ -224,9 +224,11 @@ test('AUDIT 66 F7: a dropped torch loses the click to a door, a board and a stat
     // HARD2: the fix moved from two hand-written copies into one law.
     // The host now feeds the door's distance to the race and reads the
     // answer; the LAW itself is tested below, against the module.
-    assert.match(src, /doorDistance: modes\.exteriorActivationDistance\(cam\.pos, useFwd\),/, `${host}: the door's distance goes into the race`);
+    // PIN MOVED (ALLY-YIELDS, bible/01-Overview/Field-Bugs-2026-10-12d.md): the door goes in as its pick, reach and all
+    // (`door:`); the race reads its distance off it - still one pick of the door set a press
+    assert.match(src, /door: modes\.exteriorActivationHit\(cam\.pos, useFwd\),/, `${host}: the door's pick goes into the race`);
     assert.match(src, /const _torchNearest = _race\.torchWins;/, `${host}: and the torch arm reads the race's answer`);
-    assert.equal((src.match(/modes\.exteriorActivationDistance\(cam\.pos, useFwd\)/g) ?? []).length, 1, `${host}: exactly one call a frame`);
+    assert.equal((src.match(/modes\.exteriorActivation(?:Hit|Distance)\(cam\.pos, useFwd\)/g) ?? []).length, 1, `${host}: exactly one call a frame`);
   }
   // F7 itself, against the law: a torch far down the crosshair must not
   // take the click a door at arm's length is owed.

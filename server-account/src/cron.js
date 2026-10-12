@@ -24,6 +24,9 @@
 //   a rate window a day past its start (RATE_ROW_KEEP_S - the longest window any bucket counts is an hour), a session
 //   idle past SESSION_IDLE_S (the very bound resolveSession refuses it at), an invitation past GUILD_INVITE_TTL_S
 //   (the bound every read of one asks).
+//   EG-ZM (bible/11-Multiplayer/Elite-Gates.md section 23, "The clock"): and the one settlement no read makes - a Weir
+//   Key's stake no receipt ever settled, spent once nothing can name it (eg.js spendLapsedStakes, EG_STAKE_CLOCK_S past its
+//   end) and its opener told in the mailbox.
 //
 // WHAT IS NOT PRUNED, AND WHY (the audit asked; read against the code, SCALE4b's record):
 //   - the act receipts (prof_withdrawals, prof_choices, guild_store_moves and their kind): a client keeps an
@@ -63,6 +66,7 @@ import { utcDay } from '../../src/net/marksLaw.js';
 import { arenaSeasonOf } from '../../src/net/arenaLaw.js';
 import { REALM_FINDINGS_KEEP_S, REALM_WEALTH_KEEP_S } from './review.js';   // INT2/INT5: the judge's record's keeping
 import { WILD_FALLS_KEEP_S } from './wild.js';   // INT9: a death's drop's keeping
+import { spendLapsedStakes } from './eg.js';   // EG-ZM: the Weir Key's stake's clock
 
 /** The two schedules - wrangler.toml's [triggers] crons name exactly these (test/scale4b.test.js holds the two to
  *  each other). The hour's minute is off the hour, where every other Worker's cron lands. */
@@ -185,6 +189,9 @@ export const HOUR_JOBS = Object.freeze([
   // while it is not, every trader's hours are marked as they pass (markPatronsShut), so opening it pays none of them -
   // behind `dev` too: no read reckons then (reckonPatrons asks the switch itself)
   ['patrons', async (ctx, env) => (marketOpenFor(null, env) ? (await reckonPatrons(ctx, {}, env)).sold : markPatronsShut(ctx))],
+  // EG-ZM (bible/11-Multiplayer/Elite-Gates.md section 23): a Weir Key's stake no receipt settled, spent by the clock once
+  // nothing can name it, its opener's letter in the same transaction - a page a statement pair, asked again while full
+  ['eg-stakes', (ctx) => rounds(() => spendLapsedStakes(ctx.db, ctx.nowS, SWEEP_ROWS), SWEEP_ROWS, ctx.budget)],
 ]);
 
 /** The jobs a schedule runs - none for a schedule this service does not keep (said, so a trigger renamed in

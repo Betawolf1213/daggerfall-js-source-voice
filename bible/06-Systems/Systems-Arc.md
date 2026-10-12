@@ -320,7 +320,11 @@ magic skills (Destruction/Restoration/Alteration/Thaumaturgy/
 Illusion). CONSUMERS: the cast gate, the HUD readied line, and the
 spellbook all show/spend the LIVE skill-scaled cost - a Destruction
 novice pays more for the same Shock than a master, who bottoms at
-the floor.
+the floor. SPELL-COST-PAST (2026-10-12, `01-Overview/Field-Bugs-2026-10-12c.md`):
+online, a skill past 100 prices a spell at its cost at 100 times
+100 / skill (`skillScaledCost`) - DFU's `110 - skill` went under
+nothing past 110, and a mastered school with gear cast everything
+for the floor.
 
 ## S11 (save/load - the player snapshot): SHIPPED
 

@@ -69,7 +69,7 @@ import { mobilePersonName, lootPileName } from '../systems/worldTooltips.js';   
 import { wagonHoverName } from '../player/eotbWagon.js';   // WORLD-HOVER M6: the cart's word, beside its producer
 import { waterSourceHoverName } from '../systems/survival/items.js';   // WORLD-HOVER M6: a water source's word, beside its producer
 import { mwViewFrame, mwViewWheel, mwViewDrawBody, mwViewFootstep, mwViewAttachWagon, mwViewDrawWagon, mwViewWagonTargets, setEotbCartYields, mwViewWagonActivate, mwViewFirstPerson } from '../player/mwView.js';   // MW-D25: the Morrowind camera; AUDIT-EOTB2: the sprite's stride
-import { mwViewAttachHorse, mwViewSaddle } from '../player/mwView.js';   // COATS3D: the 3D horse under the Morrowind body - its rig, the saddle the body sits
+import { mwViewAttachHorse, mwViewSaddle, mwViewHorseRig } from '../player/mwView.js';   // COATS3D: the 3D horse under the Morrowind body - its rig, the saddle the body sits
 import { PITCH_LIMIT } from '../player/mwCamera.js';   // MW-D30: camera.cpp:323-331's own clamp
 import { getStaticDoors } from '../world/staticDoors.js';
 import { createDataPipeline } from './dataPipeline.js';
@@ -119,7 +119,9 @@ import { loadSeasonsTextures, seasonsInstalled } from '../systems/seasonsIliacBa
 import { isBulletinBoard, isCityGate, CITY_GATE_OPEN_MODEL_ID, CITY_GATE_CLOSED_MODEL_ID } from '../world/rmbLayout.js';   // RMBLayout.cs:1013-1017 - the one model id a town sign wears; :1007-1011 - the two a city gate wears
 import { makeCityGate, updateCityGate } from '../world/cityGate.js';   // AUDIT 64 F14: DaggerfallCityGate
 import { staticBuildingBox, staticBuildingWorldAabb } from '../world/staticBuildings.js';   // AUDIT 64 F11: RMBLayout's StaticBuilding array
-import { collectExteriorNpcs, exteriorNpcRecord } from '../characters/exteriorNpcs.js';   // C2 / AUDIT 26: RMBLayout's street StaticNPCs
+import { collectExteriorNpcs, exteriorNpcRecord } from '../characters/exteriorNpcs.js';
+import { createStandingHorses, isStandingHorseFlat } from '../world/standingHorses.js';   // STAND-HORSE: the location's town horses as the 3D horse
+import { isStandFlat, standFlatId, standFlatRecord } from '../world/standFlats.js';   // STAND-FLAT: a town horse and a person's flat no StaticNPC holds, a batch each   // C2 / AUDIT 26: RMBLayout's street StaticNPCs
 import { drawnFlat } from '../characters/nudeFlats.js';   // NUDE-FLATS: Show Nudity off draws a nude figure's clothed stand-in
 import { CityLightAnimator, SUN_RIG_COLOR, INDIRECT_LIGHT_COLOR, INDIRECT_LIGHT_RANGE, exteriorAmbient, indirectLightScale, isCityLightsOn, isNight, parseTimeOfDay, sunDirection, sunScale, windowStyleForTime, viewOutLight } from '../world/worldClock.js';
 import { audio } from '../systems/audio.js';
@@ -174,7 +176,7 @@ import { createCityGuards } from './cityGuards.js';   // G1
 // below for what stands foes in it on this route.
 import { createExteriorFoes } from './exteriorFoes.js';
 import { createPopulationLane } from '../characters/npcBodies.js'; import { folkActor } from '../characters/folkBodies.js';   // MWNPC7: the walkers in Morrowind bodies
-import { personLook, personActor } from '../characters/peopleBodies.js'; import { staticNpcData } from '../characters/staticNpc.js';   // MWNPC8c: and its standing people
+import { personLook, personActor, figureLook } from '../characters/peopleBodies.js'; import { staticNpcData } from '../characters/staticNpc.js';   // MWNPC8c: and its standing people
 import { createArrestFlow } from './arrestFlow.js';   // G2
 import { makeInView } from '../player/cameraView.js';   // AUDIT 17e F24
 import { pickActivatableHit, pickQuestFoe, pickFoe, peacefulFoePass } from '../player/activate.js';   // G3: corpse loot; QG1/ROAD-G G2: the foe-click door; TI1: the lock-on pick
@@ -656,6 +658,10 @@ export async function bootExterior(canvas, renderer, params, status) {
   // MWNPC8c (section 13c): AND ITS STANDING PEOPLE - each a batch of their own (the NPC pass), read as the buildings'
   // are (their StaticNPC data with the location's region race, their faction's row)
   const standPeople = createPopulationLane({ laneName: 'people', renderer, collider: () => collider });
+  // STAND-FLAT / STAND-HORSE (section 28): the location's town horses as the 3D horse, and its people no StaticNPC holds
+  // read as a placed figure is (FLATS.CFG's sex and caption, the location's region race)
+  const standingHorses = createStandingHorses({ renderer });
+  const standFigureCtx = { get flats() { return pipeline.flatsFile?.() ?? null; }, get race() { return REGION_RACES[dfLocation.regionIndex] + 1; } };
   const standLook = (pn) => {
     if (pn._mwLook !== undefined) return pn._mwLook;
     const dict = townTalk.factionDict ?? null;
@@ -675,6 +681,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   const springs = [];   // SURV3: the mod's water sources - fountains, wells, the dry fountain, the troughs - {pos, dry}
   const ambientAnimals = [];    // A4: archive-201 town animals as audio sources
   const exteriorNpcFlats = [];  // AUDIT 26 (F019): the flats RMBLayout stands as StaticNPCs
+  const locStandFlats = [];  // STAND-FLAT / STAND-HORSE: the town horses and the people no StaticNPC holds - a batch each
   const bulletinBoards = [];    // the blocks' BULLETIN BOARDS (model 41739), world-frame boxes
   const cityGates = [];         // AUDIT 64 F14: {gate, entry, matrix, bucketKey} - DaggerfallCityGate's placements
   /** AUDIT 64 F11: RMBLayout's StaticBuilding array (:864-882) - ONE
@@ -835,7 +842,10 @@ export async function bootExterior(canvas, renderer, params, status) {
       // MWNPC8c: a PERSON stands ALONE - a batch of their own, minted with their identity in the NPC pass below - so their
       // Morrowind body can take their place; every other flat groups as it did (AUDIT TACT B3: and a person is no cover,
       // their batch making none)
-      if (!_people.has(flat)) {
+      // STAND-FLAT / STAND-HORSE (section 28): a town horse or a person no StaticNPC holds stands alone as well (201 was
+      // never cover, nor a person)
+      if (!_people.has(flat) && isStandFlat(flat.archive, flat.record)) locStandFlats.push({ archive: flat.archive, record: flat.record, x: flat.x + b.originX, y: flat.y, z: flat.z + b.originZ });
+      else if (!_people.has(flat)) {
         const key = drawnFlat(flat.archive, flat.record).join('_');   // NUDE-FLATS: base-anchored, so the stand-in stands where the figure did
         if (!flatGroups.has(key)) flatGroups.set(key, []);
         flatGroups.get(key).push([flat.x + b.originX, hillSeat && isNatureArchive(flat.archive) ? seatNatureFlat(hillSeat, flat.x, flat.z, NATURE_FLATS_Y) : flat.y, flat.z + b.originZ]);   // TREES-SEATED: on the plane or a drawn mound (this host's ground is the plane)
@@ -1231,6 +1241,24 @@ export async function bootExterior(canvas, renderer, params, status) {
       person.standBatch = batch;
     }
     exteriorNpcs.push(person);
+  }
+  // STAND-FLAT / STAND-HORSE (section 28): each town horse and each person no StaticNPC holds a batch of their own, minted
+  // as the group's plain picture was - a person's picture the clothed stand-in's under NUDE-FLATS, the born flat their
+  // identity (world/standFlats.js's record)
+  const standFlats = [];
+  for (const sf of locStandFlats) {
+    const [da, dr] = isStandingHorseFlat(sf.archive, sf.record) ? [sf.archive, sf.record] : drawnFlat(sf.archive, sf.record);
+    const t = textureFiles.get(da) ?? await getTexture(da);
+    if (!t || dr >= t.recordCount) continue;
+    uploadRecord(da, dr);
+    const size = billboardSize(t, dr);
+    const centers = [[sf.x, sf.y, sf.z]];
+    const batch = renderer.createBillboardBatch(da, dr, size, centers);
+    batch._box = flatBatchAabb(centers, size);   // EV3
+    armFlatAnim(batch, t, da, dr, flatAnims, uploadRecordFrame);
+    billboardBatches.push(batch);
+    flatCount++;
+    standFlats.push(standFlatRecord(sf, batch, standFlatId(`loc${dfLocation.mapTableData?.mapId ?? 0}`, sf.x, sf.z)));
   }
 
   // Camera.
@@ -5492,6 +5520,7 @@ export async function bootExterior(canvas, renderer, params, status) {
           exteriorFoePool(), collider, reach, getInteractionMode(), playerEntity, {
             nearerThan,
             doorBehind: _race.doorDistance,   // TACT3d / AUDIT TACT C7: a peaceful guard is no door, in this host too
+            behind: _race.next,   // FB1012d ALLY-YIELDS: what the press takes past a companion - this host stands none, and asks as world.js does
             hud: (t) => townTalk.say(t),
             modal: (t) => townTalk.showOverlay(new ActionTextBox(String(t).split('\n'))),
             makeEnemiesHostile: _makeEnemiesHostile,
@@ -5519,7 +5548,7 @@ export async function bootExterior(canvas, renderer, params, status) {
           horseCart: _hccPick,   // HCC
           camp: _campPick,   // SURV3
           water: _springPick,   // SURV3
-          doorDistance: modes.exteriorActivationDistance(cam.pos, useFwd),
+          door: modes.exteriorActivationHit(cam.pos, useFwd),   // FB1012d ALLY-YIELDS: the door set's pick, its reach with it (`doorDistance` is its distance)
           personDistances: _livePersons.map((p) => rayPersonDistance(cam.pos, useFwd, p.pos)),
         });
         const _lootPick = _race.loot, _dropPick = _race.drop;
@@ -6040,7 +6069,16 @@ export async function bootExterior(canvas, renderer, params, status) {
       if (look) standPeople.offer(personActor(pn, look, pn._mwFeet ??= [pn.x, pn.y, pn.z], eye, townTalk.overlayActive ? 0 : dt), pn.standBatch);
       else pn.standBatch.castOnly = false;
     }
+    // STAND-FLAT / STAND-HORSE (section 28): the people no StaticNPC holds on the same lane, the town horses the 3D horse
+    standingHorses.begin(mwViewHorseRig(), eye);
+    for (const sf of standFlats) {
+      if (sf.kind === 'horse') { standingHorses.offer(sf, sf.feet, sf.yaw, sf.look, sf.batch, sf.seed); continue; }
+      const look = _peopleOn ? figureLook(sf, standFigureCtx) : null;
+      if (look) standPeople.offer(personActor(sf, look, sf._mwFeet ??= [sf.x, sf.y, sf.z], eye, townTalk.overlayActive ? 0 : dt), sf.batch);
+      else sf.batch.castOnly = false;
+    }
     standPeople.draw(canvas, proj, view, eye, townTalk.overlayActive ? 0 : dt);
+    if (standingHorses.end(dt, { proj, view })) standingHorses.draw(canvas, { eye, proj, view });
     _visBatches.length = 0; _castBatches.length = 0;
     for (const b of billboardBatches) {
       if (cullOn && aabbOutside(_planes, b._box)) {

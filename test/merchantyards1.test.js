@@ -253,7 +253,7 @@ test('MERCHANT-YARDS THE SIGN READS FROM THE STREET AND FROM THE YARD - its pict
   assert.deepEqual([m[8], m[10]].map((v) => Math.round(v)), [1, 0]);
 });
 
-test('MERCHANT-YARDS THE ART: ten pictures, opaque, the same on every client; each board its emblem and its word, every letter drawn', () => {
+test('MERCHANT-YARDS THE ART: every picture (ten; CARP-YARD: fourteen, the joinery\'s four), opaque, the same on every client; each board its emblem and its word, every letter drawn', () => {
   const art = yardArt(), again = yardArt();
   assert.deepEqual(art.map(([r]) => r), Object.values(YARD_REC));
   for (const [i, [rec, img]] of art.entries()) {

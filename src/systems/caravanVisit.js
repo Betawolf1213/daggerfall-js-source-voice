@@ -20,11 +20,15 @@
 // the room's pieces, `{ v, p }`, each through the decor law (net/decorLaw.js decorPieceOf) and kept as the save keeps
 // them - unturned (systems/caravanRoom.js turnCaravanScene) - and only as many as fit the small frame
 // (CARAVAN_DECOR_BYTES). Nothing a piece holds rides it: a visitor sees the pieces, never what the storage keeps.
+// WAGONS2-BASE (2026-10-12, from play: "it keeps the overhead lighting for visitors ... if it's taken out ... that
+// others don't still see it"): beside them, `h`, the room's own pieces its owner took out (scenes/decorBase.js's keys -
+// the lantern and its light among them), as an online home's room hands out its `hidden` list; an older document
+// carries none, and an older client reads past it.
 //
 // Pure: no DOM, no renderer, no clock. Not a DFU member. Ledger A (WAGONS2).
 import { HOME_ENTRIES, HOME_ENTRY_DEFAULT, homeEntryOk, homeMayEnter } from '../net/homeLaw.js';
 import { GUILD_TAG_RE } from '../net/guildLaw.js';
-import { decorPieceOf, DECOR_CAP } from '../net/decorLaw.js';
+import { decorPieceOf, DECOR_CAP, DECOR_BASE_KEY_RE, DECOR_HIDDEN_CAP } from '../net/decorLaw.js';
 import { MAX_FRAME_BYTES } from '../net/wire.js';
 import { activeWagonItem, wagonKindOf, isWagonItem } from './wagonKinds.js';
 
@@ -80,11 +84,18 @@ export const CARAVAN_VISIT_TEXT = Object.freeze({
 export const CARAVAN_DECOR_V = 1;
 export const CARAVAN_DECOR_BYTES = MAX_FRAME_BYTES - 512;
 
+/** The room's own pieces taken out, as a document carries them: each a base key the decor law takes (DECOR_BASE_KEY_RE),
+ *  once, at most DECOR_HIDDEN_CAP - anything else is none. */
+const caravanHiddenOf = (raw) => [...new Set((Array.isArray(raw) ? raw : []).filter((k) => typeof k === 'string' && DECOR_BASE_KEY_RE.test(k)))].slice(0, DECOR_HIDDEN_CAP);
+
 /** THE ROOM'S DOCUMENT: `pieces` (as the save keeps them - unturned) through the decor law, in their order, as many as
- *  fit CARAVAN_DECOR_BYTES (and DECOR_CAP); a piece the law refuses is left out. */
-export function caravanDecorDoc(pieces) {
+ *  fit CARAVAN_DECOR_BYTES (and DECOR_CAP); a piece the law refuses is left out. `hidden` (WAGONS2-BASE), the room's own
+ *  pieces taken out (scenes/decorBase.js hidden()), rides as `h` - counted first, a key a dozen bytes and the room's
+ *  own pieces few, so the lantern taken out is never the word that does not fit. */
+export function caravanDecorDoc(pieces, hidden = []) {
   const p = [];
-  let bytes = 32;
+  const h = caravanHiddenOf(hidden);
+  let bytes = 32 + JSON.stringify(h).length;
   for (const raw of Array.isArray(pieces) ? pieces : []) {
     if (p.length >= DECOR_CAP) break;
     const piece = decorPieceOf(raw);
@@ -94,10 +105,15 @@ export function caravanDecorDoc(pieces) {
     bytes += n;
     p.push(piece);
   }
-  return { v: CARAVAN_DECOR_V, p };
+  return { v: CARAVAN_DECOR_V, p, h };
 }
 /** A document as a visitor reads it: its pieces through the decor law (unturned), or null - no document. */
 export function readCaravanDecor(doc) {
   if (!doc || typeof doc !== 'object' || Array.isArray(doc) || doc.v !== CARAVAN_DECOR_V || !Array.isArray(doc.p)) return null;
   return doc.p.slice(0, DECOR_CAP).map(decorPieceOf).filter(Boolean);
+}
+/** WAGONS2-BASE: the room's own pieces a document says its owner took out - none for no document, or an older one. */
+export function readCaravanHidden(doc) {
+  if (!doc || typeof doc !== 'object' || Array.isArray(doc) || doc.v !== CARAVAN_DECOR_V) return [];
+  return caravanHiddenOf(doc.h);
 }

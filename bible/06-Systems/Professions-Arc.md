@@ -1795,7 +1795,10 @@ instruction), and what was found (FACT):
   item flat (TEXTURE.254, the metal's own, a new ore Lodestone's; a boulder's loose stone Lodestone's), a small
   cluster at the piece's foot, as PROF1's patches are the herb's own flat (law 6). VEIN-WASH
   (`01-Overview/Field-Bugs-2026-10-11d.md`): an ore on a picture another ore shares wears its own wash
-  (`scenes/mineHost.js` ORE_WASH - 4.8's "tinted per ore"); Lead and Lodestone keep DFU's colours.
+  (`scenes/mineHost.js` ORE_WASH - 4.8's "tinted per ore"); Lead keeps DFU's colours. VEIN-HUE
+  (`01-Overview/Field-Bugs-2026-10-12b.md`): every wash is its hue at full spread, Lodestone wears one of its own (the
+  boulder's loose stone is its lump, unwashed), and a washed vein's wash is its colour (`ORE_DYE`, `uBatchDye`: the
+  lit flat's brightness in the wash's hue), not a multiply over the picture's own.
 - **The dungeon veins** (section 6): `1 + hash % 4` a dungeon a UTC day, a dungeon named by DFU's own identity
   (`MapTableData.MapId & 0xfffff`, `mapsFile.js`), the id `dvein:<id>:<day>:<slot>`. Their table: Silver 3, Gold 4,
   Dwarven Scrap 4, Platinum 5, Adamantium 6, and Moonstone 4 in a Woodlands or HauntedWoodlands dungeon (4.1's deep
@@ -4077,6 +4080,50 @@ A4, `prof12_client` R2-C2, `prof3_client` wiring. Re-aimed by content, each stil
   the dish and the Potent potion measured, the anvil's box. `tools/mutants/craft5.json` (24, all dead). PIN MOVED:
   `prof3_law` (a kit's record its quality), `prof3_service` (a kit's craft answered a quality), `repair_rate` (the
   anvil's kit line), and the account version's pins (acct93).
+
+## 42. PROF-FOUND - the station shops found as every shop is (BUILT 2026-10-12)
+
+Mac: "Ensure all the professions new stores are flagged on the town map and you can ask NPCs where they are".
+
+**What stood (MEASURED).** The stations' shops are the interior host's station questions (`scenes/worldModes.js`
+forgeHere .. enchantHere): the forge a Weaponsmith's or an Armorer's, the workbench a Furniture Store's, the loom a
+Clothing Store's, the mason's bench a General Store's, the jeweller's bench a Pawn Shop's or a Gem Store's, the alchemy
+station an Alchemist's, the enchanting station a Mages Guild hall (Cooking asks a fire, not a shop). Eight of the nine
+types were already on the Where-is page under DFU's own groups and drawn as shops (or, the guild hall, in the temple's
+colour) on both town maps. The ninth was not: the **Furniture Store** - a shop classic never opened, opened by the port
+as the furnisher's counter (DECOR2b) and Carpentry's workbench (PROF4, section 25). DFU keeps its type off the Where-is
+page (TalkManager CheckBuildingTypeInSkipList, `systems/topicTree.js` and `systems/talkTopics.js`, both verbatim) and
+groups its automap byte (8, its type plus one) with the houses (ExteriorAutomap.cs:1482-1541), so a player hunting a
+workbench saw a house and could ask nobody.
+
+**As built.** One law, `world/buildingNames.js` OPENED_SHOP_TYPES (the Furniture Store) and OPENED_SHOP_GROUPS
+("Furniture stores", worded as DFU's groups are):
+
+- **The Where-is page**: `systems/topicTree.js` assembleTopicListLocation stands a group for each opened shop the town
+  holds, after DFU's shops and before the yards and a port's places (YARDS-FOUND, SHIPYARDS-FOUND) - its Previous List
+  head, each store asked as any building is (LocalBuilding, its key: the knowledge roll, "%di of here", "Let me just
+  mark it on your map", which discovers it so the map names it). Its own variable, as the yards': C#'s shared one flows
+  into the General section and the palace arm untouched. Without an engine, `scenes/townTalk.js` directoryByCategory
+  lays the same group in the same place. DFU's skip list and TOPIC_CATEGORIES stay as they are.
+- **The town maps**: `ui/townQuarters.js` moves the opened shops' bytes (OPENED_SHOP_BYTES, made by byteOfType - the
+  `+ 1`'s one home now, quarterOfType reads it too) out of DFU's house group into its shop group, so the classic window
+  paints a Furniture Store in the shop's colour and the enhanced sheet washes it and letters its name in a shop's ink.
+  The discovery law is kept: a store is named once it is entered or an NPC marks it, as every shop is.
+
+THE FOUR HOSTS (PROF-FOUND): `scenes/world.js` and `scenes/exterior.js` - WIRED, both build their talk and their town
+map from the shared modules (createTownTalk, createTownMapWindow); `scenes/worldModes.js` - WIRED, its interiors' talk
+asks the host's same tree; `scenes/dungeonContext.js` - no town.
+
+Pinned: `test/proffound1.test.js` (5) - every station's shop type, read off the interior host, asked after and drawn as
+built ground; the group's place, head and rows; the answer's compass, roll and mark; the bytes, the classic window's
+colour and the sheet's ink; the fallback's order. `tools/mutants/proffound1.json` (9, all dead). Re-aimed:
+`tools/mutants/em34.json` EM7-2 (the plus-one's drift, now byteOfType's). Not seen in a real town (no ARENA2 here).
+Ledger A (PROF-FOUND).
+
+CARP-YARD (the same day, Mac: "Let's also redesign their buildings like we did with stables, etc"): Carpentry also has
+an open-air place of its own, the JOINERY - a third yard beside each city's and town's Stable and Wagon Yard. Its
+workbench is a station at the furnisher's fee (`03-World/Merchant-Yards.md` CARP-YARD). The Furniture Store and its
+bench stand as they were.
 
 ## Appendix A - a day of a gatherer
 

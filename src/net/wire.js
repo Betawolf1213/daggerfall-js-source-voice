@@ -5437,6 +5437,9 @@ export function validSdFoundTell(b) {
 // a lord's blow told early to a Watchfire holder's company (`tell` - the blow's own fields and `sh`, the lead shown) and a
 // told blow THE UNION FLOOR held (`untell`). A pose on a moving piece carries `pl` (validPose - RIDDEN POSES).
 //
+// EG-ZI (2026-10-12; Elite-Gates.md section 10.6): THE PULL'S TOLL said to its member (`toll` - `q` the quarters of its
+// road still ahead, 1..EG_TOLL_WIRE_MAX, `h` the hall it was pulled from).
+//
 // EG-ZJ (2026-10-12; sections 11.7, 22 and 23): THE FIGHT WHOLE ON THE WIRE - a body's row carries its feet and its walk's
 // end's height (`y`, `ty`), and its state as the room said it with since when (`st`, `sa`); each walk (`emv`) its height
 // and its end's; the whole fight (`efs`) the zones still to burn (`zs`), so a member who joins mid-fight holds the company's.
@@ -5445,7 +5448,10 @@ export function validSdFoundTell(b) {
 export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed', 'heal']);   // EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
 /** What the hub and a breach's room say back. */
 export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail', 'tell', 'untell']);   // EG-H1: Watchfire's `tell`, the union floor's `untell`
-export const EG_RUN_KINDS = Object.freeze(['offer', 'ask', 'asked', 'tally', 'egot', 'run', 'rise', 'eping', 'pz', 'eheal']);
+export const EG_RUN_KINDS = Object.freeze(['offer', 'ask', 'asked', 'tally', 'egot', 'run', 'rise', 'eping', 'pz', 'eheal', 'toll']);   // EG-ZI: `toll` the pull's toll, to its member
+/** EG-ZI (Elite-Gates.md section 10.6): the most quarters a pull's toll says (net/egLaw.js EG_TOLL_QUARTERS - pinned equal:
+ *  wire.js imports no law of the Spire's). */
+export const EG_TOLL_WIRE_MAX = 4;
 export const EG_OUT_KINDS = Object.freeze(['call', 'st', 'sg', 'co', 'fall', 'rd', 'rcpt', 'end', 'no', 'bd', 'clk', 'spec', ...EG_FIGHT_KINDS, ...EG_RUN_KINDS]);   // EG-H1: `bd` the count's fall of me, `clk` the clock's answer
 /** A hall's stages as the wire says them (section 7): before the first hall (`wait` - the arch rising, sealed, open),
  *  the arrival and gather, the trial, the closing (its door open), a Redoubt's rest, the end. */
@@ -5734,6 +5740,7 @@ export function validEgOut(m) {
     case 'eping': return egId(m.s) && egXZ(m.x) && egXZ(m.z) && intIn(m.w, 0, 2) ? { k: 'eping', s: m.s, x: m.x, z: m.z, w: m.w, wit: m.wit === 1 ? 1 : 0 } : null;
     case 'pz': return Array.isArray(m.st) && m.st.length === 6 && m.st.every((h) => intIn(h, 0, 11)) && intIn(m.f, 0, 99) && intIn(m.lit, 0, 6) ? { k: 'pz', st: [...m.st], f: m.f, lit: m.lit, ok: m.ok === 1 ? 1 : 0, x: m.x === 1 ? 1 : 0, by: egText(m.by ?? '', 48) ?? '' } : null;
     case 'eheal': return finite(m.p) && m.p >= -1 && m.p <= 1 ? { k: 'eheal', p: m.p, why: typeof m.why === 'string' && /^[a-z]{0,12}$/.test(m.why) ? m.why : '' } : null;
+    case 'toll': return intIn(m.q, 1, EG_TOLL_WIRE_MAX) && intIn(m.h, 1, EG_HALL_WIRE_MAX) ? { k: 'toll', q: m.q, h: m.h } : null;   // EG-ZI: the pull's toll - its quarters of the road, the hall it was taken from
     default: return null;
   }
 }

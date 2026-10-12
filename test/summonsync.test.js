@@ -17,6 +17,7 @@ import { isPrivateQuestFoe } from '../src/scenes/questFoeHost.js';   // CURSE-SY
 import { PARTY_ME, noteFighter, foeFighters, partyFoeLoses, partyFoeHeals, partyFoeHits, _resetPartyScaleForTests } from '../src/systems/partyScale.js';
 import { indexText } from './bibleIndex.mjs';
 import { foeSeed, applyWireLook } from '../src/characters/foeBodies.js';   // AUDIT MW-NPC II K3: the dungeon context's look seed, in the mounted scope
+import { partyOnlyQuestShare } from '../src/scenes/questFoeHost.js';   // QUEST-OWNER: the dungeon's quest seam, narrowed to the party (ownShare)
 
 const D = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
 const AST = acorn.parse(D, { ecmaVersion: 'latest', sourceType: 'module' });
@@ -69,6 +70,7 @@ function side(self, { layout = [], own = [], authority = true } = {}) {
   const share = {
     tagOf: (f) => (f.questBehaviour?.targetSymbol?.name && !f.questBehaviour.private ? { q: QUEST, s: f.questBehaviour.targetSymbol.name } : null),
     accepts: (from) => PARTY.has(self) && PARTY.has(from),
+    partyPeer: (id) => PARTY.has(self) && PARTY.has(id),   // QUEST-OWNER: the world host's seam carries it (world.js questShareSeam), and the dungeon's narrowing asks it
     peerMayHit: (peerId) => PARTY.has(peerId),
     onPuppetHurt() {}, onPuppetDied() {},
     behaviourFor: (tag) => { const b = { questUID: 7, targetSymbol: { name: tag.s } }; bound.push(b); return b; },
@@ -76,7 +78,7 @@ function side(self, { layout = [], own = [], authority = true } = {}) {
   };
   const state = {
     foeSeed, applyWireLook,   // AUDIT MW-NPC II K3: the records' look seed (roomRecord, applyFoeRecord, the puppets' stands)
-    opts: { selfId: () => self, questShare: () => share },
+    partyOnlyQuestShare, opts: { selfId: () => self, questShare: () => share },
     _layoutFoes: layout.length, foes, _authority: authority, _ctxDead: false, _locationKey: 'dungeon:7',
     _ownSeq: 0, _ownFrameSeq: 0, _ownGen: 0, _ownPups: new Map(), _ownPending: new Map(), _ownOwners: new Map(), _ownPendLoose: new Set(), _ownAdopted: new Map(), _ownKept: new Map(),
     FOE_HEALTH_MAX, FOE_LEVEL_MAX, CELL_FRAME_RECORDS_MAX, QUEST_PUPPETS_MAX, CELL_LOOSE_PUPPETS, LOOSE_PUPPETS_MAX, HIT_DMG_MAX: 10000, FOES_FRAME_MAX,
@@ -245,10 +247,10 @@ test('SUMMON-SYNC: my loose stand hunts every player in the room - my quest foe 
   const line = D.slice(at, D.indexOf('\n', at));
   const arrow = line.slice(line.indexOf('(streamed = false'), line.lastIndexOf(' : null,'));
   const summon = loose(), vamp = questFoe('_vampire_'), stray = foe(), lay = foe();
-  const share = { tagOf: (f) => (f.questBehaviour ? { q: QUEST, s: '_vampire_' } : null), peerMayHit: (id) => PARTY.has(id) };
+  const share = { tagOf: (f) => (f.questBehaviour ? { q: QUEST, s: '_vampire_' } : null), peerMayHit: (id) => PARTY.has(id), partyPeer: (id) => PARTY.has(id) };   // QUEST-OWNER: the seam's party door
   const peers = [{ id: 'mmm-0002' }, { id: 'bob-0005' }];
   const cands = mount(`${declSrc('isRoomFoe')}\n${declSrc('ownShare')}\n${declSrc('ownQuestTag')}\n${declSrc('ownLoose')}\nreturn ${arrow};`,
-    { foes: [lay, summon, vamp, stray], _layoutFoes: 1, _authority: false, opts: { questShare: () => share }, peerCandidates: () => peers });
+    { foes: [lay, summon, vamp, stray], _layoutFoes: 1, _authority: false, partyOnlyQuestShare, opts: { questShare: () => share }, peerCandidates: () => peers });
   const ids = (rec, streamed = false) => cands(streamed, rec).filter((c) => !c.ai).map((c) => c.id);
   assert.deepEqual(ids(summon), ['mmm-0002', 'bob-0005'], 'my loose stand: everyone in the room');
   assert.deepEqual(ids(vamp), ['mmm-0002'], 'my quest foe: its party');
@@ -266,7 +268,7 @@ test('SUMMON-SYNC: my loose stand is weighed by who fights it, counted by me who
   const pup = foe({ _ownFrom: 'bob-0005', _ownI: 3, _pupLoose: true, _fightN: 3 });
   const d = mount(`${declSrc('isRoomFoe')}\n${declSrc('ownShare')}\n${declSrc('ownQuestTag')}\n${declSrc('ownLoose')}\n${declSrc('ownRides')}\n${strip(D.slice(a, b))}
     return { _sharedFoe, _runsFoe, fightN, _weighHit, door: (foe, healthDamage, bypassShield = false, _whole = false) => { ${door[0]} } };`,
-  { foes: [foe(), summon, ally, pup], _layoutFoes: 1, _authority: false, opts: { questShare: () => ({ tagOf: () => null }) }, playerEntity: { maxHealth: 100 }, partyFoeLoses, partyFoeHits, partyFoeHeals, foeFighters, performance });
+  { foes: [foe(), summon, ally, pup], _layoutFoes: 1, _authority: false, partyOnlyQuestShare, opts: { questShare: () => ({ tagOf: () => null }) }, playerEntity: { maxHealth: 100 }, partyFoeLoses, partyFoeHits, partyFoeHeals, foeFighters, performance });
   const now = performance.now();
   for (const who of [PARTY_ME, 'bob-0005', 'carl-0003', 'dave-0004']) { noteFighter(summon, who, now); noteFighter(ally, who, now); noteFighter(pup, who, now); }
   assert.deepEqual([d._sharedFoe(summon), d._runsFoe(summon), d.fightN(summon)], [true, true, 4], 'mine: shared, run here, four fight it');

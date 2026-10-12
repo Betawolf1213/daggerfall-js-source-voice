@@ -14,7 +14,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import {
-  HOME_VOTE_UP, HOME_VOTE_DOWN, HOME_VOTES_MAX, HOME_VOTES_WINDOW_S, HOME_VOTE_AGE_S, homeVoteOk, homeShunned, homeDecorShown, homeScoreText, homeVotesLine,
+  HOME_VOTE_UP, HOME_VOTE_DOWN, HOME_SHUN_AT, HOME_VOTES_MAX, HOME_VOTES_WINDOW_S, HOME_VOTE_AGE_S, homeVoteOk, homeShunned, homeDecorShown, homeScoreText, homeVotesLine,
   homeVotedLine, HOME_SHUNNED_LINE, homeMyVoteOf, homeVoteRefusalLine, HOME_VOTE_GONE_LINE, homeShunnedInsiderLine, decorStaysShunned,
 } from '../src/net/homeVoteLaw.js';
 import { WITNESS } from '../src/net/nodeLaw.js';
@@ -50,23 +50,31 @@ async function town(t) {
     raw.prepare('INSERT INTO guild_members (player, char_id, guild_id, rank, name, joined_at) VALUES (?, ?, ?, ?, ?, ?)').run(memberId, charId, 'g1', 3, 'Cid', T0);
     raw.prepare('UPDATE homes SET guild_id = ? WHERE map_id = 7 AND building_key = 300').run('g1');
   };
-  return { svc, raw, owner, ownerChar: home.character, aged, vote, read, hall };
+  /** HOME-SHUN: the town votes the home down to HOME_SHUN_AT - five more accounts a week old, each one vote down. */
+  const shun = async (bk = 300, owner = 'Olga') => {
+    for (let i = 0; i < -HOME_SHUN_AT; i++) assert.equal((await vote(aged(await svc.registered(`Down${bk}x${i}`)), -1, bk, owner)).status, 200);
+  };
+  return { svc, raw, owner, ownerChar: home.character, aged, vote, read, hall, shun };
 }
 
-test('HOME-VOTE the law: a vote is -1, +1 or 0 (taken back); a home is shunned below zero, never at it; its decor stands for its insiders (its owner\'s account, a hall\'s guild - the account\'s, AUDIT A5) whatever its score and for everyone else unless shunned; a shunned home\'s hired trader stands (AUDIT B2); the bars are 30 votes an hour and an account a week old (AUDIT A1); the words (mutants: zero shunned, the owner hidden, a member hidden, the kin hidden, a visitor shown, the trader hidden)', () => {
+test('HOME-VOTE the law: a vote is -1, +1 or 0 (taken back); a home is shunned at five votes down net, never above it (HOME-SHUN: it was one); its decor stands for its insiders (its owner\'s account, a hall\'s guild - the account\'s, AUDIT A5) whatever its score and for everyone else unless shunned; a shunned home\'s hired trader stands (AUDIT B2); the bars are 30 votes an hour and an account a week old (AUDIT A1); the words (mutants: zero shunned, the owner hidden, a member hidden, the kin hidden, a visitor shown, the trader hidden)', () => {
   for (const v of [HOME_VOTE_UP, HOME_VOTE_DOWN, 0]) assert.equal(homeVoteOk(v), true, String(v));
   for (const v of [2, -2, 0.5, '1', null, undefined]) assert.equal(homeVoteOk(v), false, String(v));
-  assert.equal(homeShunned(-1), true);
+  assert.equal(HOME_SHUN_AT, -5, 'HOME-SHUN');
+  for (const n of [-1, -2, -3, -4]) assert.equal(homeShunned(n), false, `HOME-SHUN: ${n} still shown, so still seen to be voted up`);
+  assert.equal(homeShunned(-5), true);
+  assert.equal(homeShunned(-6), true);
   assert.equal(homeShunned(0), false, 'none, or as many up as down: shown');
   assert.equal(homeShunned(3), false);
   assert.equal(homeShunned('x'), false, 'no number: none');
   assert.equal(homeDecorShown(null), true, 'not an online home');
   assert.equal(homeDecorShown(visitor()), true);
-  assert.equal(homeDecorShown(visitor({ score: -1 })), false, 'shunned, to a visitor');
-  assert.equal(homeDecorShown(visitor({ score: -4, mine: true, own: true })), true, 'the owner always');
-  assert.equal(homeDecorShown(visitor({ score: -4, mine: true })), true, 'the owner\'s other characters too');
-  assert.equal(homeDecorShown(visitor({ score: -4, hall: { name: 'The Hand' }, member: true })), true, 'a hall\'s member');
-  assert.equal(homeDecorShown(visitor({ score: -4, hall: { name: 'The Hand' }, insider: true })), true, 'AUDIT A5: another character of a member\'s account');
+  assert.equal(homeDecorShown(visitor({ score: -1 })), true, 'HOME-SHUN: one vote down hides nothing');
+  assert.equal(homeDecorShown(visitor({ score: -5 })), false, 'shunned, to a visitor');
+  assert.equal(homeDecorShown(visitor({ score: HOME_SHUN_AT, mine: true, own: true })), true, 'the owner always');
+  assert.equal(homeDecorShown(visitor({ score: HOME_SHUN_AT, mine: true })), true, 'the owner\'s other characters too');
+  assert.equal(homeDecorShown(visitor({ score: HOME_SHUN_AT, hall: { name: 'The Hand' }, member: true })), true, 'a hall\'s member');
+  assert.equal(homeDecorShown(visitor({ score: HOME_SHUN_AT, hall: { name: 'The Hand' }, insider: true })), true, 'AUDIT A5: another character of a member\'s account');
   assert.equal(decorStaysShunned({ station: 'vendor' }), true, 'AUDIT B2: a shop');
   assert.equal(decorStaysShunned({ station: 'alchemy' }), false);
   assert.equal(decorStaysShunned({}), false);
@@ -110,13 +118,14 @@ test('HOME-VOTE the door: a visitor reads two vote rows saying what each press d
     { code: 'KeyU', label: 'U - Take back your vote up', vote: 0 }, { code: 'KeyD', label: 'D - Vote down', vote: -1 }]);
   assert.deepEqual(homeVoteChoices(visitor()).map((c) => c.vote), [1, -1], 'AUDIT D2: U is up');
   assert.deepEqual(homeVoteLines(visitor()), [], 'no votes, no line');
-  assert.deepEqual(homeVoteLines(visitor({ score: -2, myVote: -1 })), ['Votes: -2 - you voted down', HOME_SHUNNED_LINE]);
+  assert.deepEqual(homeVoteLines(visitor({ score: -5, myVote: -1 })), ['Votes: -5 - you voted down', HOME_SHUNNED_LINE]);
+  assert.deepEqual(homeVoteLines(visitor({ score: -4, myVote: -1 })), ['Votes: -4 - you voted down'], 'HOME-SHUN: not yet shunned');
   assert.deepEqual(homeVoteLines(visitor({ score: 0, myVote: 1 })), ['Votes: 0 - you voted up'], 'AUDIT D5: one\'s vote said where the score nets to zero');
   assert.deepEqual(homeVoteLines(visitor({ score: 2 })), ['Votes: +2']);
   assert.deepEqual(homeVoteLines(visitor({ own: true, mine: true, score: 2 })), ['Votes: +2'], 'the owner reads its score');
   assert.deepEqual(homeVoteLines(visitor({ own: true, mine: true })), [], 'AUDIT D5: and nothing where nobody voted');
-  assert.equal(homeVoteLines(visitor({ own: true, mine: true, score: -1 }))[0], homeShunnedInsiderLine(-1, false));
-  assert.equal(homeVoteLines(visitor({ hall: { name: 'H' }, member: true, score: -1 }))[0], homeShunnedInsiderLine(-1, true));
+  assert.equal(homeVoteLines(visitor({ own: true, mine: true, score: -5 }))[0], homeShunnedInsiderLine(-5, false));
+  assert.equal(homeVoteLines(visitor({ hall: { name: 'H' }, member: true, score: -5 }))[0], homeShunnedInsiderLine(-5, true));
 });
 
 test('HOME-VOTE the service: an account a week old votes and the score is its votes summed, kept on the home\'s row - one a home (a second changes it), taken back by 0; never on its own home, never a guest\'s, never a home nobody holds (404 - AUDIT D7), never a word that is no vote; the town\'s homes carry the score and the reader\'s own vote (mutants: two votes an account, the owner votes, the score unsaid, the vote unsaid, the score unkept)', async (t) => {
@@ -177,7 +186,7 @@ test('HOME-VOTE AUDIT the service\'s bars: an account registered less than a wee
 });
 
 test('HOME-VOTE AUDIT A3: the service hands a shunned home\'s room to anyone but its insiders as Daggerfall furnished it - no placed piece but its hired trader, nothing taken out - and says no look of it; its owner reads all of it (mutants: the room handed out, the trader withheld, the look said)', async (t) => {
-  const { svc, raw, owner, ownerChar, aged, vote, read } = await town(t);
+  const { svc, raw, owner, ownerChar, aged, vote, read, shun } = await town(t);
   const place = (id, over = {}) => raw.prepare(`INSERT INTO home_decor (map_id, building_key, id, model, flat_archive, flat_record, place, placed_at, paid, yard)
     VALUES (7, 300, ?, 41000, NULL, NULL, ?, ?, 0, 0)`).run(id, JSON.stringify({ pos: [1, 0, 1], rot: [0, 0, 0], scale: 1, light: null, storage: false, paid: 0, ...over }), T0);
   place('chair');
@@ -193,6 +202,8 @@ test('HOME-VOTE AUDIT A3: the service hands a shunned home\'s room to anyone but
   assert.equal((await room(bob)).pieces.length, 3, 'shown: all of it');
   assert.deepEqual((await read(bob)).look, { walls: { set: 'manor', climate: 'swamp' } }, 'and its paint');
   await vote(bob, -1);
+  assert.equal((await room(bob)).pieces.length, 3, 'HOME-SHUN: one vote down hides nothing');
+  await shun();
   const bare = await room(bob);
   assert.deepEqual(bare.pieces.map((p) => p.id), ['trader'], 'shunned: its trader alone - AUDIT HOME-VOTE II A1: the one with goods on sale, never a licence bought for a statue');
   assert.deepEqual(bare.hidden, [], 'nothing taken out');
@@ -217,7 +228,7 @@ test('HOME-VOTE the registry over the real door (AUDIT D3, D8): the town read th
   assert.deepEqual(r, { ok: true, vote: -1, score: -1 }, 'through the real route');
   assert.equal(homes.homeAt(7, 300).score, -1, 'shown at once');
   assert.equal(homes.homeAt(7, 300).myVote, -1);
-  assert.equal(homeDecorShown(homes.homeAt(7, 300)), false, 'shunned, to this reader');
+  assert.equal(homeDecorShown(homes.homeAt(7, 300)), true, 'HOME-SHUN: one vote down hides nothing, to this reader');
   assert.ok(homes.version() > v0, 'the doors read again');
   assert.deepEqual(told, [], 'no home of mine');
   await settle(); await settle();
@@ -229,6 +240,14 @@ test('HOME-VOTE the registry over the real door (AUDIT D3, D8): the town read th
   assert.deepEqual(await homes.vote(7, 301, -1), { ok: false, error: 'no-home' });
   await settle(); await settle();
   assert.ok(asks > before, '`no-home`: the town asked again');
+  // HOME-SHUN: the service's own `no-home` - a house this page read, sold under it - re-asks too (on 301 the page held no
+  // owner and asked before it sent; this one reaches the service, which refuses it)
+  raw.prepare("UPDATE homes SET owner_name = 'Zed' WHERE map_id = 7 AND building_key = 300").run();
+  before = asks;
+  assert.deepEqual(await homes.vote(7, 300, 1), { ok: false, error: 'no-home' });
+  await settle(); await settle();
+  assert.ok(asks > before, 'the service\'s `no-home`: the town asked again');
+  raw.prepare("UPDATE homes SET owner_name = 'Olga' WHERE map_id = 7 AND building_key = 300").run();
   hall(bob.id, 'c-other');   // AUDIT D8: the account's other character is in the hall's guild
   await homes.ensure(7, { force: true });
   await settle();
@@ -248,8 +267,8 @@ test('HOME-VOTE the registry over the real door (AUDIT D3, D8): the town read th
   void raw;
 });
 
-test('HOME-VOTE the yard: a home voted below zero stands no yard for a visitor - its pieces taken down - and stands them again once its votes climb; its owner\'s yard stands whatever its score (mutants: the yard unasked)', async () => {
-  const home = { score: -1 };
+test('HOME-VOTE the yard: a home voted down to HOME_SHUN_AT stands no yard for a visitor - its pieces taken down - and stands them again once its votes climb; its owner\'s yard stands whatever its score (mutants: the yard unasked)', async () => {
+  const home = { score: HOME_SHUN_AT };
   const w = yardWorld({ pieces: [yardPiece({ flat: [209, 0], scale: 1 })], home });
   await w.run();
   assert.equal(live(w.made).length, 0, 'shunned: nothing stands');
@@ -358,7 +377,7 @@ test('HOME-VOTE AUDIT II the door: a hall\'s member with a vote cast before they
 });
 
 test('HOME-VOTE AUDIT II the pins lane D found missing: the score triggers touch their own home alone (D4); a hall says its score to everyone and its paint to its guild, shunned (D5); the bar is an hour (D6); the words themselves (D8); a week to the second, a guest refused by the vote itself, `bad-vote` a 400, a take-back of nothing answered, the voter\'s votes gone with the voter (D9) (mutants: a trigger town-wide, the hall\'s score unsaid, the hall\'s paint from its guild, the window a minute, the words swapped or blank, the age bar off by one, the guest unguarded, the status moved, the voter\'s cascade dropped)', async (t) => {
-  const { svc, raw, aged, vote, read, hall } = await town(t);
+  const { svc, raw, aged, vote, read, hall, shun } = await town(t);
   // D4: a second home in the town keeps its own score through a vote, a change and a take-back
   const zed = aged(await svc.registered('Zed'));
   assert.equal((await svc.seatHome(zed, { mapId: 7, buildingKey: 301, region: 17, price: 5000 })).status, 200);
@@ -371,12 +390,12 @@ test('HOME-VOTE AUDIT II the pins lane D found missing: the score triggers touch
   await vote(bob, 0);
   assert.deepEqual(scores(), [[300, 0], [301, 0]], 'gone');
   // D5: a shunned hall - its score said to a stranger, its paint to its own guild alone
-  await vote(bob, -1);
   const cid = aged(await svc.registered('Cid'));
   hall(cid.id);
+  await shun(300, HALL);
   raw.prepare('UPDATE homes SET look = ? WHERE map_id = 7 AND building_key = 300').run(JSON.stringify({ walls: { set: 'manor', climate: 'swamp' } }));
   const seen = await read(bob);
-  assert.equal(seen.score, -1, 'D5: a hall says its score');
+  assert.equal(seen.score, HOME_SHUN_AT, 'D5: a hall says its score');
   assert.equal('look' in seen, false, 'and no paint to a stranger');
   assert.deepEqual((await read(cid)).look, { walls: { set: 'manor', climate: 'swamp' } }, 'D5: its paint to its guild');
   // D6: an hour

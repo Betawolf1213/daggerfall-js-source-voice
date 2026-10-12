@@ -24,10 +24,12 @@
 // (test/egseam_law.test.js) hold every word a court, a realm and a cell say to what they said before it.
 //
 // What the seam does not take: the gate's crystals, host and heals and the Remnant's Echoes and Hearts are each brain's
-// own blows beside its boss (`applyCrystalHit`, `applyHostHit`, `applyEchoHit`, `applyHeartHit`) and stay so; the
-// Spire's lords are a hall's fight stepped inside the breach's director (net/egBrain.js, net/egLords.js) with its legion
-// and its place, not a room's - they share the gate's hand and purse (`spendBlow`, `spendPurse`) rather than this seam
-// (the record's departure, EG-H3).
+// own blows beside its boss (`applyCrystalHit`, `applyHostHit`, `applyEchoHit`, `applyHeartHit`) and stay so.
+//
+// EG-ZK (2026-10-12; section 13.1, "The Spire's lords are written to it"): THE SPIRE'S LORDS keep the contract too, ONE plug
+// for every lord and champion (net/egLords.js EG_SEAM - it imports this board, so the relay's graph walks as before). The
+// breach's director (net/egBrain.js) calls it inside its one beat with the legion and the place's hazards: the seam is a
+// contract the director calls, not a second host.
 //
 // Pure: a plug board, no state. Not a DFU member. Ledger A (ELITE-GATES).
 import { newFight, joinFight, applyHit, stepBrain, stateOf, earned } from './gateBrain.js';

@@ -1233,6 +1233,10 @@ Two sources, one record:
      JSON beside the mesh;
    - **each fragment its own bake script and byte-for-byte test**, as every bake in the port has;
    - **each fragment its own `.fbx`**. The gate's 8.6 MB whole-scene source (1,905 meshes) is the warning.
+   - built by EG6c: `tools/fragBake.mjs`, the record's reader in `net/egFragLaw.js`, the registries
+     (`net/egHeroFrags.js`, `world/egHeroFragModel.js`) and a reference fragment of the port's own. How Mac names a
+     fragment's art and markers so the bake accepts it is the EG6c record's (below); laying his into the halls waits for
+     them.
 
 **One kit of mesh tools.** Today every made level carries its own box, extrude and pack helpers (`packFaces` in
 `src/world/gateArena.js`, `packRealmFaces` and `quadFacing` in `src/world/sdRealm.js`, `away` in
@@ -1286,17 +1290,20 @@ audit39. Everything else is painted in code into the band's archives (section 25
     the Rampart's vents, and the Warden's Charge (3.5 m) where the Spire throws it. The Armsmaster's Riposte becomes a
     cone of 5 m.
   - Pinned: every shape kind's counted share, swept over bearings, is at least 25%.
-- **The legion walks the graph.**
+- **The legion walks the graph, and the lords with it.**
   - Ground kinds walk a fragment's graph from node to node (a search over a dozen nodes), as the Rampart's legion
     walks its line.
+  - Every lord and champion walks it too: straight within the piece of the fight ground it stands on, over the graph
+    to a goal past it (an arch's gap, a stair, a bridge). A lord's run (a Charge, a Lunge) ends at an arch's wall and
+    never climbs a ledge's face, and no run is aimed at a member on a floor of another height.
   - Harriers hover along the graph, never through rock.
   - Lurkers wait at `anchors.lurker`, Casters stand at `anchors.caster` (raised where the chamber has a second floor),
     and rifts open at `anchors.rift`.
   - Divers dive only in fragments open to the sky.
   - Every body's feet ride the wire: the fight ground under it (a graph walker's region, a stair climbed as it goes, a lip
     stepped off at once), a flier at its mark's height (the floor under the mark, or past that floor's band the mark's own
-    feet). Every screen draws, strikes at and hears each body there, never at the hall's own height. Built by EG-ZJ (its
-    record, below).
+    feet). A lord's and a champion's ride it as a legion walker's do. Every screen draws, strikes at and hears each body
+    there, never at the hall's own height. Built by EG-ZJ (its record, below).
 - **The fragment keeps its own clamp.** Climbing and wall-runs would carry a player up a chamber's walls, and a safe
   perch over the fight would make traversal's immunity a ranged build's fortress. So each floor polygon is extruded to
   its `ceil` (to the motor's arena ring `ceilAbove` where it is open to the sky) as the motor's clamp
@@ -3293,7 +3300,7 @@ its band's art: no slice ships a placeholder. EG8 to EG12 ship behind `EG_OPEN=f
 | **EG0a** | AUDIT EG0 | the bible |
 | **EG0b** | the fragments (sections 11 and 8.8 as first written) | the bible |
 | **EG0c** | AUDIT EG II, the polish pass | the bible |
-| **EG-PLAY** | THE ELITE BREACH, PLAYABLE: the slice the user asked for before the rest - the smallest Elite Breach that plays online end to end, cut through EG2, EG5, EG8, EG9-EG12 and EG14's `w` arm (its record, below, says what each piece took and left) | client, relay (world196), service (acct121) |
+| **EG-PLAY** | THE ELITE BREACH, PLAYABLE: the slice the user asked for before the rest - the smallest Elite Breach that plays online end to end, cut through EG2, EG5, EG8, EG9-EG12 and EG14's `w` arm (its record, below, says what each piece took and left) | client, relay (world196), service (acct122) |
 | **EG1** | THE GATE'S TIERS: `systems/gateTier.js`, `GATE_TIER_TEXT`, the Regular tier's words unchanged; THE REGISTRY: `world/pseudoArchives.js`, every port archive in it, and its collision test | client |
 | **EG2** | THE WEIR KEY: template 575 and its art; the balance (migration); the rolls in `claimGate` (which gains `rand`) and `claimSd`; the pity; `/v1/eg/find`, the killer's ask and the caps; `/v1/eg/keys`; the restack, new; the launch gift (a send migration) | client, service |
 | **EG3** | THE BOSS SEAM: `net/bossSeam.js`; the gate, the Remnant and the serpent re-plugged, frames and pins unchanged; the trails keep y | relay (a version) |
@@ -3536,7 +3543,7 @@ to the next circle.
 `test/egplay_client.test.js` (11 - the client played against the relay's real Room, from the key to the Redoubt, the
 way home and the next circle). Mutants: `tools/mutants/egplay.json` (20), every one dead. Records of other arcs whose
 quoted lines moved, re-aimed by content: the bound list's (`auditrealm`, `cards8`, `loot9`, `portal1`, `wallet1` - 575
-joins it), the account version's (`br5`, `crafthold`, `fb1004d_knight_house`, `tech1`, `gatekeys` - acct121, acct116, acct118 then acct119 on the branch, renumbered past main's acct116 to acct120 at the merges), the order kinds'
+joins it), the account version's (`br5`, `crafthold`, `fb1004d_knight_house`, `tech1`, `gatekeys` - acct122, acct116, acct118, acct119 then acct121 on the branch, renumbered past main's acct116 to acct121 at the merges), the order kinds'
 (`guild1c`, `seat2a2`) and the relay version's (`soc1` - world195, then world196 past COATS1, then world197 past CHAT-LANG, then world198 past BAL8). The Ledger: section A's ELITE-GATES row
 (`01-Overview/Port-Ledger.md`), naming every file.
 
@@ -3681,8 +3688,7 @@ Closes layer one's first departure for the pieces.
 **What EG-D still owes**: the fragment kits beyond the Oblivion Caverns passage (the Ossuary, the Gloam Thicket, the
 Forge Gut and the rest of section 11.2) with their signature hazards; the set-piece passages; THE FORK (the High Road and
 the Low Road); the fragment law record (`net/egFragLaw.js`); engines, alcoves and the Annals; Grath's falling isles. Also
-the pieces' remaining tells (the Rail's dashed track, the Gust's streamers, the waystones lit) and the solver's median
-check.
+the solver's median check.
 
 **Pins.** `test/egfull_span.test.js` (6) and `tools/mutants/egspan.json` (19, every one dead). `RELAY_VERSION` stays
 `world196` (renumbered past main's COATS1 `world195` at the merge; `world197` past CHAT-LANG's `world196` at the next, `world198` past BAL8's `world197` at a later one), unshipped, rehashed with `net/egSpanLaw.js` in its graph.
@@ -3795,8 +3801,9 @@ Grath's falling isles, and the solver's median check.
 
 **Departures, said plainly** (each still owed to its slice):
 - **The relay half's own departures:**
-  - a fragment's law lives in the spec's own fields, not a separate record with `sockets`, polygon `floors` and a legion
-    `graph`. A passage's mouth and exit are its `z0` and `z1`; its floors are rectangles. The legion walks straight to
+  - a code-built fragment's law lives in the spec's own fields, not a separate record with `sockets`, polygon `floors` and a
+    legion `graph` (an authored fragment's law is that record since EG6c - `net/egFragLaw.js` `egFragRecordFault` - but no
+    hall lays one yet). A passage's mouth and exit are its `z0` and `z1`; its floors are rectangles. The legion walks straight to
     its mark, kept to the fight floors as it was, so an arch's walls do not yet turn it;
   - the Sluice takes its share at once rather than flooding a channel for 6 s;
   - the Moon-Mirror blinds the Divers but does not yet light a branch;
@@ -3809,8 +3816,8 @@ Grath's falling isles, and the solver's median check.
 - **Still owed by EG-D:**
   - the moving pieces' instanced pass, the cull and the measured budgets;
   - `world/meshKit.js` and `world/pseudoArchives.js`;
-  - the authored hero fragments;
-  - the pieces' last tells (the Rail's track, the Gust's streamers, the waystones lit).
+  - the authored hero fragments laid into the halls (EG6c built their bake, its reader, their registries and a reference
+    fragment - its record, below);
 
 **Pins.**
 - `test/egfrag_law.test.js` (9), `test/egfrag_relay.test.js` (5), `test/egfrag_client.test.js` (6).
@@ -3935,8 +3942,7 @@ wait. A blow's word now never shows less than its whole wind-up, however late it
 8. The feint's dashed fade is the look's (EG16): its mark still fades over 0.15 s as before.
 9. The span's own Pendulums and Vents stand on traversal ground no aimed blow reaches, so they share no union set. The
    client's arrow (section 11.7) is not built.
-10. The census applies no Vestige. A plain blow's whole `p` is counted, its points never; a holder's halving is its own
-    word, believed back as a mend.
+10. A plain blow's whole `p` is counted, its points never.
 11. A fire fall and the hammer line (`trav`) stay the screens' alone; a soul-wisp's drain is not counted.
 12. Found, not fixed: a breach in a trial cannot be checkpointed. The trial keeps the legion's callbacks on the fight
     (`F.legionCtx`), which storage cannot clone - the durability slice's.
@@ -4038,10 +4044,6 @@ one Orrery judge, and a new circle is stood in place from a level built while th
    trails)` is that call. `new` takes the brain's own birth record, not a `profile`. `hit` answers each brain's own
    answer (the damage taken, or the serpent's words).
 2. The gate's crystals, host and heals and the Remnant's Echoes and Hearts stay each brain's own blows beside the seam.
-3. **The Spire's lords are not written to the seam.** They are a hall's fight inside the breach's director
-   (`net/egBrain.js` over `net/egBodies.js` and `net/egLords.js`), stepped in one beat with the legion and the place's
-   hazards, and they share the gate's hand and purse (`spendBlow`, `spendPurse`). A seam for each lord would split that
-   beat between two hosts in a file another slice was changing. The seam is the room-level contract.
 4. The trails keep y for section 11.7's per-floor judge, which is not built. `posAt` and `posAfter` still hand the
    judges two coordinates.
 5. The motes (`render/sdMotes.js`) still read the Hour's `SD_COURSE_END`, baked into their shader. Their sky is the
@@ -4641,7 +4643,6 @@ and draws what they choose.
   - the cull covers the pieces, islands and seals (all `noShadow`), not the circle's one static mesh;
   - a haven is a pool (`TELEGRAPH_POOL_HAVEN`), not a new telegraph kind;
   - a lord's wake is its own 2-bar song (SPIRWAKE), a fourteenth name beside the page's table;
-  - a band's textures stay up for the session once stood, never freed at the breach's end;
   - the Steps' own pieces (the Crumble, the Beat with its twelve dial frames, the Drift and the riser) keep the Hour's
     art: their faces are tells, swapped frame by frame through the Hour's archive.
 - **Not verified without a browser and the game's data:**
@@ -4733,7 +4734,7 @@ pillar and the witness's sight.
     0.6 s (whole at once under reduced motion), and keeps 0.6 of itself through any haze, so it is seen hall-wide.
   - The closing's ring lies at the door's reach (`EG_DOOR_REACH_M` 3 m, where `down` is heard), in every hall kind. Its
     arc is the closing's seconds left, from the relay's own stage word (`sa`, `su`); the spent arc stays at a quarter.
-  - The door's mark on the enhanced compass is `egDoorCompass`, through the client's `archCompass` (departure 6).
+  - The door's mark on the enhanced compass is `egDoorCompass`, through the client's `archCompass` (departure 5).
 - **THE REDOUBT'S LIGHTS** (sections 16.2 and 27.5).
   - THE BEACON climbs at the court's heart 1.5 s after the Redoubt's word (`rd`'s `at` - the relay says it on the step
     the lords fell). It stands at the place the spoils are thrown from (`beaconAt`'s own), 90 m tall, climbing over
@@ -4765,24 +4766,21 @@ pillar and the witness's sight.
 1. **The pull keeps the veil's flash** (section 27.5's table). It goes shut at once in the stair's own look, with the
    hall held and the band's chime, and opens in the 0.8 s dither. It never closes first, because the pull is the
    room's, taken at once.
-2. **The fall is a picture on the veil's canvas.** The underside falls away overhead and embers streak up, but the
-   world's camera does not fall past a mesh of the underside. The hall's own sky (`render/egSkyPass.js`) shows the
-   underside once the step lands.
-3. **The fall's least hold can keep a fast swap waiting** by the difference between its work and 1.2 s. It is never
+2. **The fall's least hold can keep a fast swap waiting** by the difference between its work and 1.2 s. It is never
    longer than the Hour's veil every step used before (pinned).
-4. **The hall held is a DOM label over the veil**, in the classic face (Cormorant, the arrival card's gold) on both
+3. **The hall held is a DOM label over the veil**, in the classic face (Cormorant, the arrival card's gold) on both
    skins, and hidden from screen readers (the arrival card's words reach the live region).
-5. **A witness's stair does not cross-dissolve with the member it watches.** A witness sees the company's stair.
-6. **The door's compass mark rides the arch's gold slot.** The world host's frame already hands the enhanced compass
+4. **A witness's stair does not cross-dissolve with the member it watches.** A witness sees the company's stair.
+5. **The door's compass mark rides the arch's gold slot.** The world host's frame already hands the enhanced compass
    `arch: egClient?.archCompass()`, the gate's diamond in the Spire's gold. The arch stands only in the open world, so
    in the Spire the slot is the door's, and no host line moved. The classic compass carries neither, because EG-F's
    ninth departure stands: the classic HUD's options drop the arch.
-7. **The beacon's 1.5 s is timed from the Redoubt's word, not from SPIRREDT's chord.** The score's own clock is
+6. **The beacon's 1.5 s is timed from the Redoubt's word, not from SPIRREDT's chord.** The score's own clock is
    EG-G2's.
-8. **The witness's sight speaks the twist in the chat**, with no HUD line. A ping's cooldown is not shown: the relay
+7. **The witness's sight speaks the twist in the chat**, with no HUD line. A ping's cooldown is not shown: the relay
    refuses a ping inside 3 s, and the screen says nothing.
-9. **Blue is the same in every palette.** The palettes move the danger, the safety and the hazard only.
-10. **Nothing here has run in a browser**, because the build container holds no Daggerfall data. The two shaders were
+8. **Blue is the same in every palette.** The palettes move the danger, the safety and the hazard only.
+9. **Nothing here has run in a browser**, because the build container holds no Daggerfall data. The two shaders were
     evaluated through `test/glsl.mjs`, the passes run over a recording GL, and the client played against the relay's
     own words through the wire.
 
@@ -4886,15 +4884,13 @@ beats on `audio.playOneShot`).
 2. "A counted member" is the device's record of the room's count. A device with no record (another browser, cleared
    storage) is offered the way back on the service's word alone, and the room decides: a member it never counted is
    refused at the hello past the window, and that refusal lets the record go.
-3. A device with no record knows no seed. It stands circle 1 of seed 0 until the room's word, then rebuilds the right
-   circle in place (a moment of the wrong circle under the veil). The account service keeps no seed.
-4. The last island is the client's own record of still ground, written at most each second, not the relay's last
+3. The last island is the client's own record of still ground, written at most each second, not the relay's last
    pose. A page whose socket only dropped never left the circle, and stays where its own motor holds it.
-5. The drain is a backdrop's saturation (the HUD keeps its colour), and the dither goes through black. Neither is a
+4. The drain is a backdrop's saturation (the HUD keeps its colour), and the dither goes through black. Neither is a
    cross-dissolve of two frames. The sink starts from the first-person eye where I fell (`cam.pos`), in either view.
-6. THE FALL's words are the client's (`EG_FALL_TEXT` in ui/egSpireHud.js). `net/egLaw.js` is in the relay's bundle, so
+5. THE FALL's words are the client's (`EG_FALL_TEXT` in ui/egSpireHud.js). `net/egLaw.js` is in the relay's bundle, so
    only the final line is `EG_TEXT.fallen`.
-7. The spans' clock is taken again past 5 ms. anchoredClock's own slack (1 s) would never take the correction, which is
+6. The spans' clock is taken again past 5 ms. anchoredClock's own slack (1 s) would never take the correction, which is
    a one-way latency of tens of milliseconds.
 
 **The four hosts.**
@@ -5017,14 +5013,11 @@ section 22's tick.
 4. `m` is the circle's six measures, not one hall's. `sh` is thousandths of the living members' damage that circle.
 5. The hub holds every receipt, not only those for members with no socket in the room. It hands a member in the room
    nothing (the room did), but holds the receipt for their hellos.
-6. The service's clock (a stake spent after `EG_VOID_MAX_S` with no receipt naming it) is not written. A stake no
-   receipt settles stays `held`. That costs nothing: its key was taken at the open, its `eg_live` lapses on its own,
-   and the relay refuses a void past `EG_VOID_MAX_S`.
-7. A member's word still arms a beat at once (a vote, a step through the door); only the room's own tick keeps the
+6. A member's word still arms a beat at once (a vote, a step through the door); only the room's own tick keeps the
    law. A closing with a foe standing in it (a Kyn Mimic's Lurker) beats as a trial.
-8. THE FORCE VOID is a Worker variable the deploy sets, not an asked door. EG-H2's departure 2 gives the reason: an
+7. THE FORCE VOID is a Worker variable the deploy sets, not an asked door. EG-H2's departure 2 gives the reason: an
    unauthenticated ask would let anyone void a breach.
-9. THE SEAL's ranking needs no case of its own. A sealed run ends at the sealed Redoubt's Court, its `td` the seconds to
+8. THE SEAL's ranking needs no case of its own. A sealed run ends at the sealed Redoubt's Court, its `td` the seconds to
    that Court's fall, so the Descent's order (the deepest hall, then the fewest seconds) ranks sealed runs by their
    seconds. The relay mints no `'seal'` end while `EG_OPEN` is 4.
 
@@ -5125,7 +5118,7 @@ and the Hollow Trunk among them), and the engines as the page wrote them. Spec l
 - **One pull.** The page pulls each road at its own closing's end (the door frame's `ul`). The company is pulled once, at
   the later road's end, and the stage word's `su` says it - no `ul` on the wire.
 - **The shafts are the Deepway's.** The Low Road still goes down by its Drop (section 11.4 allows "a Drop or a shaft").
-  A shaft keeps no alcoves or vignettes, and the camera's 20-degree bias over a shaft's drop (section 11.8) is not built.
+  A shaft keeps no alcoves or vignettes.
 - **Not verified without a browser and the game's data:** the crusts, sheets, spouts and shafts were checked by their
   meshes, colliders and draws in node, never seen in the live game.
 
@@ -5232,30 +5225,26 @@ not yet turn it", EG-H1's departures 3, 10 and 11, and EG-E's departure for the 
    no field, so `EG_SPEC` and `EG_LAWS` stand. EG-ZC's bump for the fragments is its own, and nothing here asks for one.
    Its nodes are only those the geometry implies. A passage's two floors are two regions; a chamber's ring has no node
    inside its floor.
-2. The lords walk as before: their own walks go straight to a goal kept on the fight floor. Section 11.7 names the
-   legion. FLAGGED for the lords: a champion in an arch's chamber still walks through the wall.
-3. The Harriers' body-block is a Harrier hovering at its member, not a collider: the motor collides with no add.
-4. The fight ground beyond `spec.fl` is a span's islands and plates and a Rampart's pillars and winch plates. Bridges
+2. The Harriers' body-block is a Harrier hovering at its member, not a collider: the motor collides with no add.
+3. The fight ground beyond `spec.fl` is a span's islands and plates and a Rampart's pillars and winch plates. Bridges
    and side spans stay traversal ground. On a span a member is aimed at within 0.5 m of it; elsewhere the fight's old
    4 m stands.
-5. The hunt is for the halls whose trial is one fight on its floor, and only after the member has stood on the fight
+4. The hunt is for the halls whose trial is one fight on its floor, and only after the member has stood on the fight
    ground this hall:
    - an approach crossed is never hunted;
    - a Deepway (its passages crossed between floors) and a Brink are not hunted;
    - a span has its shadows instead.
    The mark's 30 s is renewed while the hunt lasts.
-6. An object standing off the fight floor (a false wall) is still struck from beside it: a seal in a wall is no fight.
-7. The census's Vestiges:
-   - Lifeline is not applied: a heal one member casts on another rides ALLY-CAST's `cast` frame, which the relay
-     forwards unread;
+5. An object standing off the fight floor (a false wall) is still struck from beside it: a seal in a wall is no fight.
+6. The census's Vestiges:
    - the reductions are summed and capped at 30%, on blows alone (not hazards, drains or cast-backs);
    - Featherstep is applied though section 21 leaves it to "the rest restores it": its cost is a number the relay holds;
    - Iron Footing needs no term: a push it resists makes no cast-back, and the poses say so.
-8. The Forge Line's hammers count their 20% (the screens' share), not a cast-back's cost.
-9. Only Grath's signature reads a catch: the page gives no other place's example. The Spellmaster's "no rune missed"
+7. The Forge Line's hammers count their 20% (the screens' share), not a cast-back's cost.
+8. Only Grath's signature reads a catch: the page gives no other place's example. The Spellmaster's "no rune missed"
    is its none-failed. The others keep their beats.
-10. A span's Divers dive ground 6 m across within their lane. A Diver in any other hall keeps its old rule (its member
-    3 m inside the floor).
+9. A span's Divers dive ground 6 m across within their lane. A Diver in any other hall keeps its old rule (its member
+   3 m inside the floor).
 
 **The four hosts.**
 
@@ -5621,9 +5610,6 @@ peers, the tell, the reverb's crossfade and TEXTURE.356 are closed here.
   - the Weir Key's picture is a stand-in of its archive on the texture door (its build answers the painted picture), the
     port's other painted art's way.
 - **Not built:**
-  - occluders between the camera and the body dithering out (`setDissolve`): the circle is one mesh, so no part of it can
-    dissolve alone;
-  - the shaft ledge's 20 degree pitch bias and the camera's rise over a drop;
   - `hit` and `ahit` refused off the fight floors, and the Harriers' hunt of a member off them for more than 6 s - the
     relay's half of section 11.7, gap row 7;
   - the haptics and the pad's rumble of section 27.8 stand as EG-G1 built them.
@@ -5645,6 +5631,1012 @@ peers, the tell, the reverb's crossfade and TEXTURE.356 are closed here.
 - PIN MOVED: `test/audit39_render.test.js` (the fire walls take GetFireWallColors32). `bible/06-Systems/Systems.md` counts
   517 modules. `bible/07-Rendering/Rendering.md` and `Rendering-Arc.md` say GetFireWallColors32 shipped.
 - `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
+
+### EG-ZI - 2026-10-12 - THE DIRECTOR'S LAST RULES: THE TOLL, THE LATE WAKE, LIFELINE
+
+Mac: "I said I want everything". The director's three rules no slice had built: section 10.6's toll (the pull moved
+everyone at no cost), section 7's late wake (the gather waited `EG_ARRIVE_MAX_MS` for everyone, always) and section 21's
+Lifeline in the census. It closes EG-ZB's departure 8 for Lifeline and the last of EG-H1's departure 10 (the census now
+applies every Vestige section 21 names); both sentences are deleted above.
+
+**What shipped, by piece.**
+
+- **THE PULL'S TOLL** (`net/egBrain.js` `egTollOf`, `tollStep`; `net/egLaw.js` `EG_TOLL_STEP`, `EG_TOLL_QUARTERS`,
+  `EG_TOLL_WAIVE_MS`, `EG_TOLL_KINDS`; section 10.6).
+  - At a crossed hall's pull (`EG_TOLL_KINDS`: the Span, the Deepway, a Brink, the Proving Walk - the halls whose closing
+    is the span's 45 s), each living member is told its toll before the pull's stage: `{k:'toll', q, h}`, to it alone.
+  - `q` is the quarters of its road still ahead of its furthest fair point, every quarter begun counted whole, 5% of its
+    health each, at most four. The road is the hall's +z from the arrival plate to the end plate, in whole centimetres.
+  - Nothing is owed by a member who stepped through the door (`downH`), who stood at it on a fair trail (`A.atEnd`, set
+    by `egPoseIn` where the crossing is measured), or who reached new ground in its last 15 s (`A.fnew`). Only the idle
+    pay, and trying and falling short costs less than standing still.
+  - A member the relay judged no fair pose of in the hall stands at the arrival plate: the whole road.
+- **THE FURTHEST FAIR POINT** (`net/egFair.js` `farther`, `groundAt`; the trail's `far`, `fnew`, `seen`, `atEnd`).
+  - After every pose of a fair trail, a held pose (still ground, a piece, the end plate) with no break since the last
+    island moves `far`. A pose in the air, or one a broken stretch reached, moves nothing.
+  - Still ground first stood on so this hall is new ground, `fnew` its instant: an island, a court, a balcony, a
+    passage's floor, a walkway, a bridge, a stair. The arrival plate, a piece and the end plate are never new ground.
+  - `groundAt` is `egSupportAt`'s own first reads, keyed (`a` the arrival plate, `e` the end plate, `d<i>`, `b<i>`,
+    `l<i>`, `r<i>`), and `egSupportAt` now asks it. Its answers are unchanged, and the client's last island
+    (`islandFrame`) reads them as before.
+- **THE TOLL COUNTED** (`egCountHeals`). The room's census reads `toll` as it fans it, as it reads the fray's lash. The
+  share is taken off the member's count as a blow is (`bodyStruck`, into the census's thousandths `cs[3]`), never the
+  last of it. A witness's count is untouched.
+- **THE TOLL PAID AND SAID** (`scenes/egClient.js` `payToll`, beside the void's `castBack`; `ui/egBeats.js`
+  `EG_PRES_TEXT.toll`, `tollLine`; section 27.5's row: *The Spire pulls you down.* and the toll).
+  - The screen pays it as it pays the void's cost: its share of my health through the host's hurt door, never the last
+    of it, once a hall, and only inside the Spire.
+  - It says it: *-15%* on the screen, as the cast-back's *-10%*, and *The Spire takes its toll: 15% of your health.* in
+    the chat beside the pull's own line.
+- **THE WIRE** (`net/wire.js`): `toll` joins `EG_RUN_KINDS`, its quarters held to 1..`EG_TOLL_WIRE_MAX` (4, pinned equal
+  to the law's `EG_TOLL_QUARTERS` - wire.js imports no law of the Spire's) and its hall to the hall bound. It is never a
+  member's word.
+- **THE LATE WAKE** (`net/egBrain.js` `wake`, `arriveWait`; `net/egLaw.js` `EG_LATE_HALLS`, `EG_LATE_ARRIVE_MS`;
+  section 7).
+  - Each wake counts a living member late (`m.late`) when the hall woke before its `here`; a hall it said `here` in
+    begins the count again.
+  - The gather waits `EG_LATE_ARRIVE_MS` (10 s) after the pull, not 30 s, once every living member still owed has woken
+    late in the two halls before. A member owed who is not late keeps the whole wait for the company.
+  - The stage's end (`su`) is said as it moves: at the pull, at the next circle's first hall, and in the arrive stage as
+    members arrive and only the late are left.
+  - **A late `here`, heard.** A member the hall woke without says `here` when it reaches the arrival plate in the trial
+    or the closing, and its trail is judged from there. Before, the director heard `here` only in the arrive stage, so
+    a member who woke late was never judged in that hall: its door, its caches and its toll read no trail of it.
+- **LIFELINE IN THE CENSUS** (`net/egBrain.js` `egHeal`, `egCensusDr`, `EG_LIFELINE_UNDER`, `EG_LIFELINE_MS`,
+  `EG_HEAL_WORD_MS`, `EG_LIFELINE_LOOK_MS`; sections 15 and 21).
+  - The room hears `heal` since EG-ZF (`egHeal`). A believed heal of a Lifeline holder's on a member under 30% opens a
+    window on that member's blows (`m.ll`: `[from, until, share]`), at the healer's rank: 20, 30 or 40%.
+  - "Under 30%" is read three ways: its count now, the count seen so at a beat (`egCount` notes `m.lowAt`), or its own
+    word of its body saying so (`egBodyWord` notes it too). The look back is the heal word's second and a beat
+    (`EG_LIFELINE_LOOK_MS`). The word comes up to `EG_HEAL_SEND_MS` (pinned equal to `EG_HEAL_WORD_MS`) after the heal,
+    by when the member's own word may have stood its count up.
+  - A healer counts only where its own credit rose: a heal not believed, the member's own heal, or a healer of no
+    breach opens nothing.
+  - `egCensusDr` spares a blow landing inside a window by the strongest window's share, inside the census's 30%. Windows
+    a blow can no longer be judged in (`EG_TRAIL_MS`) are let go, and four are kept at most.
+  - The stale comment ("the ALLY-CAST frame, which the relay forwards unread") is gone.
+
+**Departures, said plainly.**
+
+1. **The road** is measured along the hall's +z, on either road of a fork. The Low Road's bridges across and back (which
+   `egCrossMinMs` adds to its bound) are no length of the toll's.
+2. **Every quarter begun is counted whole.** "Each quarter of their road still ahead" is read as the page's first clause
+   asks: a member pulled a step short of the end pays one quarter.
+3. **The toll never takes the last of a member's health**: the screen keeps a point and the census a hundredth, as the
+   fray's lash does. The page names no floor, and a toll that killed would be a fall mid-stair, which belongs to no hall.
+4. **"A new island, or a fragment's node"** is new still ground of the support law, first stood on fairly this hall. The
+   fragment record's `graph` is not carried (EG-ZB's departure 1), so a fragment's floors and stairs stand for its
+   nodes.
+5. **The halls tolled** are those whose closing is the span's (`door`'s own group): the Span (section 7), the Deepway
+   (section 8.8), a Brink and the Proving Walk, whose roads are crossed in the same 45 s. A fight's and a Court's pull
+   costs nothing.
+6. **A member never judged in the hall** (a socket that sent no pose there since its `here`) pays from the arrival
+   plate. The fair trail believes such a member for a credit; the toll, which is a cost, does not.
+7. **"Woke late"** is the hall woken before the member's `here`. "The wait for them" is 10 s once every member still owed
+   is such a one. The count runs on across a Redoubt: a Court is a hall.
+8. **The late `here`** is a change to integrity, done here because the toll reads the trail. A member who woke late is
+   now judged from the plate, where before nothing it did in that hall was.
+9. **Lifeline's window** runs from the heal word's second back (`now - EG_HEAL_WORD_MS`) to 3 s past the word: every blow
+   that could land inside the 3 s of a heal the word says, 4 s at most, in the struck member's favour as every judge of
+   the relay's is (`BODY_MARGIN`). The word carries no heal's instant.
+10. **Two Lifelines at once** take the strongest, never a sum. Section 15's stacking is for auras, and Lifeline is none.
+11. **The toll's words** are `EG_PRES_TEXT`'s (the client's), not `EG_TEXT`'s, as EG-G1's beats are. A word in `EG_TEXT`
+    would move the relay's law hash for a line the relay never says. The toll plays no sound of its own: the pull's row's
+    sound is the veil's close.
+12. **Not built:** Lifeline's other half, the receiver's client taking its blows less. No screen applies a word-Vestige
+    (Bastion, Steadfast Line, Lifeline) today. The census applies them all now, so a holder's count is spared what its
+    body would be; a body that took the whole blow says less than the count, which claims nothing.
+
+**The four hosts.**
+
+- `src/scenes/world.js` - FLAGGED, nothing to wire. The toll is paid through the `hurt` seam world.js already hands the
+  client (*the void is a setback, never a death*), and said through its `say` and `mid`. Nothing was added to
+  `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED: unchanged. The toll is paid where the client hears the room's word, in every
+  mode, and the pull's step to the next plate is the client's own, as before.
+- `src/scenes/dungeonContext.js` - FLAGGED: unchanged.
+- `src/scenes/exterior.js` - FLAGGED: offline, no breach (section 28).
+
+**Not verified without a browser and the game's data:** nothing was played in the live game. The toll was paid on the
+stub screen of `test/egz_recap.test.js`'s harness. The pull, its frames and the census's share ran in the relay's real
+Room (`test/fakeRoom.mjs`), and the late wake and Lifeline against the director.
+
+**Pins.**
+
+- `test/egz_rules.test.js` (7): the furthest fair point, the toll's law, the pull's toll, the wire and the screen, the
+  late wake, Lifeline in the census, and the real Room.
+- `tools/mutants/egz_rules.json` (78, every one dead).
+- Re-aimed by content, both dead: `egint.json`'s EGINT-the-end-plate-an-island and `egz_legion.json`'s
+  EGZ-a-fallen-segment-holding. `egSupportAt`'s still ground is now `groundAt`'s, read by key.
+- Judged again over the files this slice touched: every record of `egint.json` (33), `egz_legion.json` (30),
+  `egz_recap.json` (31), `egplay.json` (9), `egpres_hud.json` (23), `egfull.json` (15), `egeco.json` (3) and
+  `egz_return.json` (43) aimed at `net/egFair.js`, `net/egBrain.js`, `scenes/egClient.js` or `ui/egBeats.js` (187, every
+  one dead). No record of any list aims at a changed line of `net/egLaw.js` or `net/wire.js`.
+- No pin moved. `RELAY_VERSION` `world198` is rehashed in place (unshipped): `net/egLaw.js`, `net/egFair.js`,
+  `net/egBrain.js` and `net/wire.js` moved, and nothing joined the bundle. `ACCOUNT_VERSION` stays `acct121`; no
+  migration. No new file in `src/`, so the Ledger's ELITE-GATES row is unchanged.
+
+### EG-ZO - 2026-10-12 - THE FALL PAST THE SPIRE'S UNDERSIDE
+
+Mac: "I said I want everything". Section 7's stair, the full fall a company sees at a band's first hall (Hall 1, each Brink
+and a Brink start), is now a camera falling past a modelled underside of the Spire. EG-ZE painted it as a picture on the
+veil's canvas. This closes EG-ZE's departure 2: its sentence is deleted, the departures after it are renumbered, and the
+record's own pointer to its old sixth moves with them. The 0.8 s veil at every other step, the plain cut under reduced
+motion, the hall held centred and the band's chime are unchanged.
+
+**What shipped, by piece.**
+
+- **THE UNDERSIDE MODELLED** (`world/egUnderside.js`, new).
+  - It is built with the arc's one mesh kit (`world/meshKit.js`: its quads, triangles, prisms, lathes and extrusions).
+    It has 2,660 triangles and a sub-mesh for each of its four records (`EG_UNDERSIDE_RECORDS`): the floor's flags, the
+    band's metal, the undersides' strata and the walls' ashlar. Each sits under the band's own archive
+    (`world/egBandArt.js`), the band the step falls into.
+  - THE PLAN (`egUndersidePlan`) is seeded and the same for every band, because the Spire is one:
+    - the torn floor, 44 m across its ragged rim (32 corners, 10% either way) and 4.5 m thick, its broken edge the walls'
+      ashlar;
+    - the rock torn up with it, hanging 40 m under it in eight rings. The rings narrow by the rock's taper
+      (`egUndersideRockR`), are jittered, and are cake-stepped, each ledge facing down into the deep's light. The top
+      ring follows the rim inward, so the floor's underside never folds;
+    - ten spires of rock, 14 to 30 m long, bent away and broken at the tip by the islands' own law
+      (`egUndersideSpireRing`, after `world/sdIslandModel.js` spireRing);
+    - six galleries' broken floors jutting from the flank;
+    - the colonnade of the hall above, seven columns hanging upside down under the rim;
+    - six girders of the band's metal welded through the rock.
+  - Nothing stands over the floor, and nothing is wider than its rim. The strata run by depth (the undersides' record
+    top to tip: the torn lip, the courses, the works, the haze), and every broken tip is in the haze.
+  - `egBandArtOf(band, rec)` (`world/egBandArt.js`) paints one of a band's pictures alone, the same pixels as its whole
+    dress (`egBandArt` now reads it record by record). The fall paints four. It never paints the walkways' tesserae, which
+    took 92 ms of a band's ~100 ms dress, measured in node.
+- **THE FALL'S CAMERA** (`EG_FALL`, `egFallDepth`, `egFallPitch`, `egFallEye`, `egFallCamera`).
+  - The eye steps off the torn floor's rim (58 m from the axis, an eye's height over the floor) and faces the axis.
+  - It falls from rest toward 44 m/s against the void's drag, v (t - tau (1 - e^(-t/tau))) with tau 0.7 s, and drifts
+    0.8 m outward for each metre fallen.
+  - Its eyes rise from 11.5 degrees down (the void opening under it) to 24 degrees up (the underside climbing away
+    overhead). The raise is eased over the stair's own 2.8 s: 0.8 s in, the 1.2 s least hold, 0.8 s out
+    (`world/egLights.js` EG_STAIR_VEIL, `EG_FALL_SPAN`). It is still at both ends, and nothing else turns.
+  - As timed, the eye is among the spires as the veil shuts (0.8 s, 14 m fallen) and below the last stone as the least
+    hold ends (2.0 s, 57 m down against the main tip's 46). It never comes within 10 m of the rock, and the underside
+    stays on the screen, climbing it, through the longest hold the veil allows (20 s).
+- **THE STAIR'S PASS** (`render/egStairPass.js`).
+  - In the fall, the triangle paints the band's void along the falling camera's rays (`fallRay`; the ray basis is
+    `render/sdSky.js` sdSkyBasisInto's): the deep below rising to meet the faller, and embers streaking up past the eye.
+  - The painted underside (`undersideEdge` and its black) is gone. With it went the picture's own reversed edge,
+    `smoothstep(edge + 0.03, edge, e)`, which SD20c's sweep could not read because its edges were not literals.
+  - EG-ZE's fix stands as written: `c += DEEP[b] * 0.35 * k * smoothstep(0.0, 1.0, -e);`.
+  - THE UNDERSIDE'S PROGRAM (`EG_UNDERSIDE_VS`, `EG_UNDERSIDE_FS`) draws the model through the camera, depth-tested and
+    written, with back faces culled.
+  - It is lit by the place alone (`EG_UNDERSIDE_LOOK`): the deep from below, the horizon all round, the zenith from above,
+    and the Shade's moon where `render/egSkyPass.js` stands it.
+  - It melts into the band's void with distance (0.004 a metre). Both programs paint the same void (`EG_VOID_GLSL`). It is
+    dithered in and out with the veil and posterized as the stair is.
+  - `upload(parts)` builds the program the first time and keeps it with the pass. A program that will not build is never
+    tried again, and the void is drawn alone.
+  - The upload makes a vertex array, three vertex buffers, the pack's Uint32 index buffer and a picture a record (nearest
+    up close, mipmapped, the strata clamped top to tip). An `EgUnderside` owns them, and its `destroy` frees every one,
+    once. An upload that fails part way frees what it made.
+- **THE VEIL** (`ui/gateVeil.js`).
+  - Its canvas asks for a depth buffer. The fire's and the Hour's looks never test against it.
+  - A fall taken starts its own underside (`fallTake`). The underside is made a slice a tick (`fallSlice`: the rock, the
+    spires, the wreck, the pack, then four pictures), from the stair's first frame. That is eight ticks, about 0.13 s of
+    the 0.8 s closing, and the upload is one more slice.
+  - No slice runs in the tick the veil shuts in, because that tick's end runs the step's own work: THE SWAP.
+  - The fall is drawn every frame through the falling camera on the stair's own clock, with the hall held centred over it.
+  - EVERY ALLOCATION HAS AN OWNER. `fallFree` empties the slot first, then frees the underside, on every exit:
+    - the veil opened;
+    - a look that is not this fall taken (a flash);
+    - another band's fall;
+    - the veil destroyed, before the pass that drew it.
+- **THE SWAP UNDER IT** (`scenes/egClient.js`, unchanged). The step into Hall 26 is EG-H3's circle swap in place (the next
+  circle built during the rest, `egSwapCircle`) under the full fall. Played with a real veil, the swap stands while the
+  veil is shut, after the underside stood, in a tick that made none of it, and the underside is drawn on through the hold.
+
+**The four hosts.**
+- `src/scenes/world.js` - FLAGGED: untouched. The veil is the world host's (`host.gateVeil`), and the fall needs nothing of
+  its frame.
+- `src/scenes/worldModes.js` - FLAGGED: untouched. `stepThroughFire(go, look, opts)` hands the veil the step's look, and
+  the swap in place runs inside it as before.
+- `src/scenes/dungeonContext.js` - FLAGGED: it has nothing to wire.
+- `src/scenes/exterior.js` - FLAGGED, as section 28 has it: offline, no breach.
+
+**Departures, said plainly.**
+- **The fall's camera is the stair's own, on the veil's canvas** (its own GL context, a third of the pixels), not the
+  world's camera. Under the veil the world's place is being torn down and stood again (THE SWAP), and the veil keeps
+  drawing while the place beyond is built. A fall in the world's renderer would draw the hall being swapped, and would
+  need the hosts' frames.
+- **The fall is faster than a body falls**: from rest at v/tau (63 m/s per second) toward 44 m/s, so the underside is
+  passed inside the 1.2 s least hold.
+- **The underside has no light of its own.** Its metal's rubbed glint (the band's emission picture) is not uploaded, so
+  the deep alone lights it, as SD-LOOK's structure is lit.
+- **One underside for every band**, dressed in each band's stone. The hall's sky (`render/egSkyPass.js`) still paints the
+  underside as a shape, smaller each band, once the step lands.
+- **The fall's first frames show the void alone**: about eight frames, while the dither has taken a sliver of the screen.
+  Nothing of the fall is made during the rest. Its parts are made in the closing's first frames, which no swap's work
+  shares, and freed as it ends.
+- **Not verified without a browser and the game's data.** Nothing here has run in a browser. The shaders were evaluated
+  through `test/glsl.mjs`, the pass and the veil ran over a recording GL, and the client was played with a real veil
+  against the relay's own words. The fall's look (the stone in the deep's light, the haze, the motion's comfort) has not
+  been seen.
+
+**Pins.**
+- `test/egz_fall.test.js` (7).
+- `tools/mutants/egz_fall.json` (79, every one dead). Two survived the first run, a freed underside drawn and one freed
+  twice. Both were hidden by `destroy` clearing its lists, which also left `live` meaning nothing. `destroy` now rests on
+  `live` alone, and the draw's pin reads that nothing of a freed underside is drawn.
+- PIN MOVED: `test/egz_stair.test.js`. The stair's build is refused by the stair's own text (`stairScene`), and its shader
+  test no longer holds the picture's underside. `tools/mutants/egz_stair.json` loses the two records aimed at that
+  picture (EGZ-the-underside-never-falls, EGZ-the-underside-never-black).
+- Judged again over the three files this slice touched that other lists aim at (`render/egStairPass.js`,
+  `ui/gateVeil.js`, `world/egBandArt.js`): 51 records in six lists (`auditwb_sound` 3, `eglook` 5, `egz_stair` 21, `sd11d` 4, `sd25_look` 10, `wb6c` 8), every
+  one dead.
+- `bible/07-Rendering/Rendering.md`'s row for the stair's pass says the fall is modelled.
+- `RELAY_VERSION` untouched: nothing in the relay's graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
+- New in `src/`: `src/world/egUnderside.js`. The Ledger's ELITE-GATES row gains it at the lead's merge.
+
+### EG6c - 2026-10-12 - HERO FRAGMENTS: THE BAKE AND ONE REFERENCE FRAGMENT
+
+Mac authors the hero fragments in Blender (section 11.6, "Authored hero fragments (EG6c, as Mac authors them)"). This slice
+builds what turns his scene into a fragment: the bake, the law half's reader, where a baked fragment is registered, and
+one reference fragment of the port's own standing in for his until they arrive. It keeps section 10.5's ceiling clamp and
+section 11.5's volumes-apart rejection as far as one fragment's bake can keep them. Two of layer three's sentences are
+narrowed. "Still owed by EG-D: the authored hero fragments" now owes only their laying, which waits for his. Its departure
+that "a fragment's law lives in the spec's own fields, not a separate record" now holds for the code-built kits alone.
+
+**What shipped, by piece.**
+
+- **THE BAKE** (`tools/fragBake.mjs`, new). `bakeFrag(fbxBytes, spec)` turns one fragment's scene into its two halves:
+  - it walks the scene with `tools/shipBake.mjs` `sceneObjects`, which refuses by name an export in other axes, any
+    transform past T*R*S and a mirroring one;
+  - it cuts each polygon with `fillFace` (Blender 5.1's cut, or refused) and welds each art object's normals and UVs on the
+    authored triple with `tools/fbxMesh.mjs` `layerReader` and `cornerWelder`, so a UV seam or a hard edge keeps its split;
+  - it writes one sub-mesh for each band dress record, lowest first, and bakes the named markers to section 11.5's record.
+  The record must pass `net/egFragLaw.js` `egFragRecordFault`, and THE TIMED SOLVER must prove its inner course. Its spec
+  (`{ id, kit, class, variant, play, source }`) names the fragment, its library kit, its class, which hero of the kit it is
+  and a chamber's play; its band, reverb, light and engine follow from the kit (`EG_FRAGS`). Each half is written one key
+  a line (`fragJson`), and a re-bake gives the same bytes. `node tools/fragBake.mjs --list <in.fbx>` prints every object
+  as the bake reads it.
+- **ONE DFU MEMBER, ONE EXPORT** (the page's "export from them what you need"):
+  - `tools/fbxMesh.mjs` exports `layerReader` and the weld it used inline, `cornerWelder`. `bakeMesh` welds through it,
+    and every Morrowind bake keeps its bytes;
+  - `tools/shipBake.mjs` `sceneObjects` gives each object it reads its Geometry (`geo`) and `normal`, which places a normal
+    as the object's vertices are placed (the inverse transpose of its T*R*S and the file's frame). The ships and the gate
+    never ask for either;
+  - the binary FBX writer moved whole out of `test/fbxmesh.test.js` into `tools/fbxWrite.mjs`, so the fixture and the
+    reference are written by one writer.
+- **THE FRAME.** A scene point (X, Y, Z) is the fragment's (X, Z, Y), measured from the middle of the mouth's bottom edge.
+  The swap is a mirror in the numbers, the same one `tools/bakeGate.mjs` uses to keep Mac's model his own in the
+  left-handed world: each triangle is wound back through it, so (b - a) x (c - a) faces out along its normals, and each
+  normal goes through it as a vector. The law half is in whole centimetres, rounded half away from zero, so a mouth stands
+  exactly at its own middle. The mesh is in metres to 0.1 mm.
+- **THE LAW HALF, READ** (the EG6c section of `net/egFragLaw.js`, at its end). Section 11.5's record (the header lists its
+  fields), with this reader:
+  - `egFragRecordFault` checks the version, whole numbers, the kit's band, class and reverb, a chamber's play and fight
+    floor, the sockets, floors, ramps, open edges, ceilings, the walk graph, the anchors, every hazard's shape
+    (`EG_HAZARD_SHAPES`) and law (`egHazardLawful`: THE WIDTH RULE, THE WIND-UP FLOOR), the course, alcoves, lights, the
+    budget (`EG_FRAG_BUDGET`, section 11.9's starting bounds) and the proof;
+  - `egFragCeilAt`, `egFragApart`, `egFragBoxAt` and `egFragSwept` answer what a laying asks;
+  - `egFragSteps` and `egFragHazards` give the record as a hall spec's steps and hazards, in metres and seconds and placed
+    at an origin.
+  The section decides in integers and calls none of section 9's banned functions (a source sweep). Nothing the relay runs
+  calls it yet.
+- **THE CEILING CLAMP AT BAKE TIME** (sections 10.5, 11.7 and 11.8). Every floor stands either wholly under a ceiling or
+  wholly open to the sky, because the motor's clamp extrudes a floor to one ceiling.
+  - The ceiling over a floor keeps its class's headroom (`EG_FRAG_HEADROOM_CM`): 3.5 m in a passage or a shaft, 6 m in a
+    chamber. A ramp keeps 3.5 m at every corner.
+  - The ceiling over every inner piece's whole travel keeps THE FAST BUILD's flight clear: its 2.68 m apex and the
+    capsule's 1.8 m, 4.5 m together. So the clamp never cuts short a flight the solver proved. Pinned at 4.4 m (refused)
+    and 4.5 m (stands).
+- **VOLUMES STAND APART AT BAKE TIME** (section 11.5).
+  - The record's `box` covers every drawn vertex, every marker, every opening's snapped width, every hazard's plan (an
+    Eclipse's havens' reach among them) and every inner piece's travel. The reader refuses a record whose law stands
+    outside it, so a laying that keeps boxes `EG_FRAG_APART_CM` (2 m) apart (`egFragApart`) keeps the whole fragment
+    apart.
+  - The mouth is the box's -Z face and every exit its +Z face, to `EG_FRAG_SOCKET_TOL_CM` (10 cm), so the course meets
+    the fragment at its sockets.
+  - An inner course with no ground before or after it is refused.
+- **THE REFERENCE FRAGMENT**:
+  - `tools/egRefFragScene.mjs` writes it from numbers alone: no game data, no third-party art, no trigonometry. It is
+    written as Blender's FBX exporter writes a scene: object origins at their middles, -90 degrees about X, a scale of
+    100, normals and UVs by polygon vertex, and materials by polygon. Its SceneInfo names its writer (`FRAG_REF_WRITER`),
+    never a Blender;
+  - it is a 30 m Oblivion Caverns passage whose vault is open to the burning sky over its chasm. It has a threshold and a
+    fight floor of two faces before the chasm, two ledges and a Drift across it, and a fight floor after it with a stair
+    up to a Caster's balcony. Its two exits are one from the floor and one from the balcony, 1.5 m up. It also has a fire
+    fall, a surge, falling basalt, an alcove behind the west wall, three lights, a seven-node walk graph that does not
+    cross the chasm, and an 18-triangle collider proxy;
+  - every marker kind and every anchor kind stand in it. Its art is 128 triangles in seven dress records (including smooth
+    posts with a UV seam);
+  - `tools/bakeEgRefFrag.mjs` is its own bake script, which every fragment of Mac's will copy. The .fbx and both halves are
+    committed under `src/assets/egfrags/`.
+- **WHERE A BAKED FRAGMENT IS REGISTERED** (decided with section 11.6):
+  - its **pictures** take no number of their own. Each art face wears a record of its band's dress (`world/egBandArt.js`
+    `EG_DRESS`), and the bake refuses any other material. It draws under its band's archive, which the one registry already
+    holds (`world/pseudoArchives.js` `EG_BAND_ARCHIVES` - its header says so), so an authored fragment cannot collide
+    with anything;
+  - its **mesh** goes through the one mesh kit: `world/meshKit.js` gains `mesh`, which writes a baked mesh's triangles
+    into a record's bucket, moved to where the fragment is laid, with its own normals and UVs. A hero fragment packs with
+    the hall's code-built shapes into one model. `world/egHeroFragModel.js` (new) registers the mesh halves beside their
+    own bake's law (`egHeroFragMeshes`), and `egHeroFragInto`, `egHeroFragModel` and `egHeroFragCollider` lay them;
+  - its **law** is registered in `net/egHeroFrags.js` (new). `egHeroFragRegistry` holds every record to the reader at
+    import, and `egHeroFragLaws(kit)` gives the fragments a hall may lay: none today, because the reference (variant
+    `reference`) is laid by no hall.
+
+**How Mac authors a fragment** (the bake accepts exactly this - `tools/fragBake.mjs`'s header says it too):
+
+- **The file.** One fragment per `.fbx`, exported from Blender 5.1 with the FBX exporter's defaults (binary, Forward -Z,
+  Up Y). Export the markers too: do not limit the export to visible or selected objects if they are hidden. Objects are
+  root objects (no parent), their rotation mode XYZ Euler, with no negative scale (apply it with Ctrl+A).
+- **The frame.** 1 Blender unit is 1 m and Z is up. The course runs along +Y: the mouth at the -Y end, the exits at the +Y
+  end, X across. Nothing of the fragment may stand more than 10 cm behind its mouth or past its exits.
+- **The art.** Any object whose name is not a marker word is art. Every face wears a material named for one of its band's
+  dress records: `floor`, `brass`, `root`, `arena`, `cobble`, `edge`, `molten` or `pillar` (a Blender copy suffix such as
+  `pillar.001` is fine). Every art object has normals and a UV map; it is smooth where he smooths it and mapped as he maps
+  it. At most 12,000 triangles and 12 draws.
+- **The markers.** Each is a mesh object; its name says what it is and its geometry says where. A label is letters,
+  digits, `_` and `-`, and any name may end in Blender's `.001`.
+
+  | name | geometry | what it says |
+  |---|---|---|
+  | `floor.<label>`, `floor.fight.<label>` | a flat plane, any faces (its outline is the floor), one outline, no hole | a traversal floor; a fight floor |
+  | `ramp.<label>` | a sloped plane | a stair or slope, each corner at its own height |
+  | `ceil.<label>` | a flat plane over the floors it roofs | a ceiling (a floor under none is open to the sky; never half under one) |
+  | `open.<label>` | a box over floor edges (to 10 cm) | those edges open (to the void, a ramp, a lower floor); every other edge is a wall, except where one floor runs on into another at its height |
+  | `socket.in` | an upright plane across the course | the mouth (one) - its width and height the opening's, at least 3.5 m high |
+  | `socket.out.<label>` | the same | an exit (one or more; one may stand higher - a Low Road goes down) |
+  | `node.<label>` | a disc on the ground | a walk-graph node (its middle; half its width its reach) |
+  | `edge.<label>` | a strip from one node's disc to another's (its ends within a metre of their heights) | a walk-graph edge |
+  | `anchor.<kind>.<label>` | a small box | `rift`, `caster`, `lurker`, `niche`, `engine` or `hazard` - the middle of its foot |
+  | `hazard.<kind>.<label>[.per<ms>][.ph<ms>]` | its kind's shape: one rectangle along its length (`fall`, `surge`, `slag`); one disc each, one size (`basalt`, `hammer`, `hammerline`); one rectangle each, falling along +Y (`cascade`); the swing's rectangle (`wisp`, `per` required); a plane at its line (`mist`); a disc (`tide`); the moon-shafts' ring as a disc (`eclipse`) | a hazard on the shared clock; a lane's bite the capsule inside its rectangle |
+  | `course.<kind>.<label>[.amp<cm>][.per<ms>][.ph<ms>][.beat<n>]` | a box, its top the piece's top | an inner piece: a Drift and a Rail say `amp` and `per`; a Pendulum, a Vent and a Gust `per`; a Drum `amp` (it rolls at the law's 2.0 m/s); a Moon branch `ph` and `beat` (cm); a Beat `beat` (ms); a slag crossing's clock is the law's; a ledge or still piece says none |
+  | `alcove.<seam\|jump>.<lumen\|shard\|page>.<label>` | a box to one side of the course | an alcove (its floor's middle) |
+  | `light.<band\|lava\|moon>.<label>` | a small box | a light (its middle) - at most four |
+  | `collider.<label>` | low-poly faces | the collider's proxy (at most 3,000 triangles), never the drawn mesh |
+- **Its bake.** Copy `tools/bakeEgRefFrag.mjs` and give it its spec (`id`, its kit in `EG_FRAGS`, a class the kit has, a
+  `variant` of its own, a chamber's `play`, its `source`). Commit the .fbx under `src/assets/egfrags/source/` with its two
+  halves beside it, and add a byte-for-byte test (the reference's is `test/eg6c_bake.test.js`'s first). Register the law
+  in `net/egHeroFrags.js` and the mesh in `world/egHeroFragModel.js`, and name the three files in `test/doctrine.test.js`'s
+  allow-list.
+- **What the bake refuses, by name.** It refuses:
+  - an export no Blender 5.1 wrote;
+  - a marker name it cannot read;
+  - a floor or ceiling that is not flat, is not one outline, or has a hole;
+  - a socket that is not upright, or a second mouth;
+  - an edge that misses its nodes;
+  - an open marker that opens no edge, or an alcove on the course's line;
+  - a hazard not in its kind's shape, or of two sizes;
+  - art without the band's dress, normals or a UV map;
+  - a record its reader faults: THE CEILING CLAMP, the volume and its faces, THE WIDTH RULE, the budget;
+  - an inner course the solver does not prove.
+  A refused scene is fixed in Blender, never patched by the bake.
+
+**Departures, said plainly.**
+
+1. A hazard's record is in the hall spec's own fields (`sh`, `spots`, `lanes`, `path`, `ring`, `r`, with `period` and
+   `phase`), not section 11.5's `{ kind, shape, size, at, period, windup, pct }`. Its wind-up, share and element are its
+   kind's law (`EG_HAZARDS`) and are never copied into a record that could disagree.
+2. A ramp's `poly` carries each corner's height (`[x, y, z]`): `{ poly, y0, y1 }` cannot say which way a slope rises.
+   Anchors are `[x, y, z]` (a code-built plan's are `[x, z]`).
+3. The record adds `kit` (its band, reverb, light and engine follow), `box` (its volume) and `bake` (its source and the
+   source's sha256). `play` is a list (a chamber's "at least one of").
+4. `proof.crossSlow` is the median crossing over start phases at THE SPAN BUILD (THE MEDIAN's measure), not a slowest
+   crossing. The crossing's bound at THE FAST BUILD (section 10.5's `EG_CROSS_MIN`) is not in the record.
+5. The ceiling clamp at bake time is a refusal, not a clamp. THE TIMED SOLVER models no ceiling, so a ceiling lower than
+   the fast build's 4.5 m over any inner piece's travel is refused instead, and no flight the solver proved is cut short.
+   The page names no headroom for a shaft; a shaft keeps a passage's 3.5 m.
+6. A lane's rectangle is the capsule inside it. The law's lanes are capsules (`net/egShape.js` `egInShape`), so the line
+   is drawn in by half the width at each end and the bite never passes what Mac drew.
+7. Section 11.5 names `open` edges without saying how they are authored. An edge is opened by an `open.*` box over it, or
+   by one floor running on into another at its height. A ramp meeting a floor needs an `open` marker.
+8. Volumes stand apart as far as one fragment can be held to it: the box holds everything, and the sockets stand on its
+   faces. Laying it is left to the laying (below): the 2 m test against the hall's other boxes (`egFragApart`), a Low
+   Road's vault 3 m under the lowest underside above it, and a piece's hanging underside (`SD_ROOT_DEPTH`).
+9. The collider proxy is authored (`collider.*`), not derived. Section 11.6's "no drawn vertex inside the proxy" is not
+   checked at bake time.
+10. The reference's file names the port's own writer, which the bake accepts by name without asking a Blender's cut.
+    Every other file must be Blender 5.1's.
+11. `EG_FRAG_BUDGET` is section 11.9's starting bounds; EG6b's measurement on SwiftShader and a reference phone has not
+    fixed them.
+12. An inner piece's size is as authored (not `EG_STEP`'s), and its clock is the name's wherever the law leaves it free.
+
+**Not built - the owner item, for when Mac's fragments arrive.** Laying an authored fragment into a hall, which needs:
+- `net/egLaw.js` to choose one (`egHeroFragLaws`) in place of a kit's passage or chamber;
+- its polygon fight floors in the spec (`spec.fl` is discs and lanes today, and `net/egFair.js`, `net/egFloor.js` and
+  `net/egWalkGraph.js` read no polygon);
+- its sockets joined to the course (a joined piece's w and h within 0.1 m), its box kept 2 m from every other volume and a
+  Low Road's vault 3 m under the lowest underside;
+- its steps and hazards laid (`egFragSteps`, `egFragHazards`) and its walk graph walked by the legion;
+- its own clamp from its floors and ceilings (`world/egHall.js` `egFragZones`), its mesh laid through `egHeroFragInto`, and
+  its proxy in the hall's collider buckets.
+That is a spec law (`EG_SPEC` 6) and a relay version. Law 4 and law 5 lay what they laid: the 800-hall hashes in
+`test/egz_frag.test.js` and `test/egseam_law.test.js` stand. The reference is laid by none.
+
+**Not verified without a browser and the game's data:**
+- the reference's mesh was never drawn. It was checked in node only: its triangles' winding against its normals, its
+  sub-meshes, and the kit's pack;
+- whether Blender's UVs (v up) lie on the band's painted records as a modeller expects was never checked; the port's own
+  meshes run v up too;
+- no export of Mac's was baked, because none exists yet. The reference is written the way his exports are (the ships',
+  the gate's), and the bake reads them through the same `sceneObjects`.
+
+**The four hosts.**
+- `src/scenes/world.js` - FLAGGED: untouched. No authored fragment is laid yet, so no host draws one; nothing was added to
+  `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED: untouched.
+- `src/scenes/dungeonContext.js` - FLAGGED: untouched.
+- `src/scenes/exterior.js` - FLAGGED: the bench is offline and holds no Elite Breach.
+
+**Pins.**
+- `test/eg6c_bake.test.js` (12), `test/eg6c_law.test.js` (6).
+- `tools/mutants/eg6c.json` (203, every one dead). Eleven survived the first run. New assertions killed ten of them:
+  - a flat ramp;
+  - a floor's edge midpoints left unasked (now a ceiling notched over one);
+  - a node standing on a ramp;
+  - a piece past the box's far end;
+  - a corner meeting four edges (a bow-tie floor);
+  - a four-cornered marker that is not a rectangle (a trapezoid);
+  - a spec naming no kit;
+  - an edge end meeting two nodes;
+  - a material Blender copied (`molten.001`);
+  - a baked mesh's normals (now every corner is compared, not only the first).
+  The eleventh was an equivalent mutant (the crossing test turned: a point's crossings to its left and to its right have
+  the same parity), re-aimed at the crossings' count, which a point whose line crosses the outline twice now pins.
+- Judged again over the files this slice touched: every record aimed at `tools/fbxMesh.mjs`, `tools/shipBake.mjs`,
+  `src/net/egFragLaw.js`, `src/world/meshKit.js` and `src/world/pseudoArchives.js` in `egfrag.json`, `egz_frag.json`,
+  `eglook.json`, `egz_sound.json`, `galleon.json`, `auditgalleon_bake.json`, `auditgalleon2_bake.json`, `gatefbx.json`,
+  `ships2_bake.json` and `mwebony1.json` (106, every one dead).
+- PIN MOVED: `test/fbxmesh.test.js` imports its writer from `tools/fbxWrite.mjs` (its 12 tests and every bake's bytes
+  unchanged); `test/doctrine.test.js`'s allow-list names the reference's three files.
+- `RELAY_VERSION` `world198`, unshipped, rehashed in place (`net/egFragLaw.js` moved). `ACCOUNT_VERSION` stays `acct121`;
+  no migration.
+- The Port-Ledger's ELITE-GATES row names `net/egHeroFrags.js` and `world/egHeroFragModel.js`: the doctrine gate (every
+  Ledger A cite in `src/` has a Ledger row naming its file) failed without them.
+
+### EG5 + EG-ZK - 2026-10-12 - THE FIGHT PROFILE, AND THE LORDS ON THE SEAM AND THE GRAPH
+
+Mac: "I said I want everything". EG5's last piece of the hall law, the fight's profile (section 14, "The merge" and "The
+profile"), and the Spire's lords as sections 11.7 and 13.1 write them: on the boss seam, and walking the hall's graph. All
+relay law. It closes EG-H3's departure 3 and EG-ZB's departure 2; both sentences are deleted.
+
+**What shipped, by piece.**
+
+- **THE MERGE** (`net/egLaw.js`, `EG_DECREES`). The lord family's four decrees carry a `law`: rank I's and rank II's,
+  each number in thousandths (`EG_LAW_UNIT`, 1000), so the law file still decides in integers.
+  - Rank I is read off the gate's own trials (`net/gateMods.js` `gateTrialOf`, imported and never copied):
+    - Colossal's `sizeX` and `hpX`;
+    - Unyielding's `hitX`;
+    - Vengeful's `dmgX`;
+    - Grudge-Bearer's `threatPick` and `threatDecay`.
+  - Unyielding's `shieldX` 2 is the trial's 6 s over the gate's `SHIELD_MS`, in place of its `shieldMs`.
+  - Colossal's `radiusX` 1.2 is the page's own: the Slam becomes 8.4 m, not the gate's 8.5.
+  - Rank II's numbers are the page's.
+  - No other family carries a law. The other families are read by rank where they act (the legion, the director, the
+    spans).
+- **THE FOLD** (`egLawFold`). `net/sdMarks.js` `sdMarksLaw`'s rule, over laws in thousandths: a key ending in X
+  multiplies (rounded to the thousandth), and any other key is the last law's that names it. Every X-keyed number is x1
+  where no law names it (`EG_LAW_X_KEYS`, from the table).
+- **THE PROFILE** (`egFightProfile`, `validEgDecrees`).
+  - `egFightProfile(decrees)` folds a circle's decrees (`[[id, rank], ...]`, the state's word) in the order of their
+    numbers. It answers `{ dc, key, law }`: the decrees sorted, the cache's key (the sorted decree string, `id:rank,...`)
+    and the law as numbers. It is frozen.
+  - The validator takes at most `EG_DECREES_MAX` (9) pairs, each a known decree at rank 1 or 2, none twice, and answers
+    a fresh copy. Anything else is the fight with no decree.
+  - The cache is bounded at `EG_PROFILE_CACHE_MAX` (256) and drops the least recently asked.
+  - The gate's `validGateMods` is not touched. The wire's own nine (`net/wire.js` `egDecreesW`) stand as EG-PLAY laid
+    them.
+- **THE LORDS' LAW READS IT** (`net/egLords.js` `egLordLaw`). The ranks in force (`F.D`) become the profile's list, and
+  the gate's `THREAT_PICK` and `THREAT_DECAY` stand where no decree names a threat.
+  - Before the change, every one of the 81 rank sets of the four was checked against the hand fold it replaces: each
+    number is the same double.
+  - Nothing else in the lords moved. Colossal's radii and health, Unyielding's ward and its blows, Vengeful's share
+    inside the one `EG_SHARE_X_MAX` with depth and fury, and Grudge-Bearer's threat were all already applied, and are
+    now pinned in a fight the director stands.
+- **THE LORDS ON THE SEAM** (`net/egLords.js` `EG_SEAM`, `egLordsFight`; section 13.1). There is ONE plug of
+  `net/bossSeam.js` for every lord and champion, never a seam per lord. Its fight is the lords' view of the hall's one
+  fight: `{ F, spec, ctx, now }`, made by the director for each call.
+  - `new`: a Court's lord (the Twins, both) or a champion, stood asleep (`egLordsNew`), with the bodies stood as
+    `stood`.
+  - `join`: the director's admission (`o.admits`) while a lord stands. The company is the hall's, sized at its wake
+    (`egFightNew`), so a join brings no share.
+  - `hit`: the gate's hand and purse (`egHitBody`) times the lord's own weight (`egLordHitX`), and what lands is told to
+    the lord (`egLordHit`).
+  - `step`: the lords' beat (`egLordsStep`).
+  - `stateOf`: the whole fight at the view's clock (`egFightState`).
+  - `judge`: the fight's blows on the shared-time trails (`net/bossRef.js` `judgeShapes`). These are the lords' and
+    their legion's blows on one floor, as the gate's judge takes its host's.
+  - `earned`: a Redoubt's receipt at the lords' fall, for half an even share of the circle's damage (`EG_EARN_SHARE`)
+    or a part in three of its halls (`EG_EARN_HALLS`) among the living company.
+  - The director (`net/egBrain.js`) calls each member inside its one beat with the legion and the hazards. It never
+    calls a lord's own function past the seam:
+    - six births;
+    - the join and the hit of a member's blow on a lord (`egBlow`);
+    - the Court's beat and the other halls' beats (`trial`);
+    - the state at a hello, at the wake and every `EG_STATE_EVERY_MS`;
+    - the census's judge (`egCount`);
+    - the Redoubt's earners (`redoubt`).
+  - The seam is a contract the director calls, not a second host. `net/egLords.js` imports the board, so
+    `RELAY_GRAPH`'s walk is unchanged.
+- **THE FRAMES, BYTE FOR BYTE.** Every frame the director says was hashed on the tree before (b4af2365) and again after
+  the seam, with test/egfull_relay.test.js's own auto-player:
+  - the thirteen lords, each met at its own Court and fought to its fall;
+  - the six-circle breach.
+  All fourteen hashes were unchanged.
+- **THE LORDS WALK THE GRAPH** (`lordWalk`, `runTo`, `oneLevel`; section 11.7). The legion's `walkGraph` and `walkAir`
+  are exported from `net/egLegion.js`.
+  - Within the region of the fight ground it stands in (a disc, a lane, an arch's half), a lord walks straight, as it
+    always walked: `egWalk`, stopped short and kept on the floor.
+  - To a goal past that region (an island across a bridge, a floor up its stair, the far side of an arch's wall) it
+    walks over the hall's walk graph as the legion does: through the gap, up the stair, along the bridge.
+  - This holds for the approach, Grath's Scent and the Colossus's route. The Mother of Dusk flies about the rock.
+  - The node a graph walk headed to is a way on only while the lord still walks to it. A blow's stop, a run's end, a
+    leap or a straight walk since leaves no way on, so a lord set down beside an arch's wall never walks straight to the
+    far gap node. A node it stands at is reached.
+  - A lord's RUN (a row's `run`: the champions' Charge, the Armsmaster's Lunge, the Night-Stalker's Night Lunge) ends at
+    an arch's wall with its body clear, as the Breaker's does. A run that would end on a floor of another height ends on
+    the region it began in. No run is chosen at a member on another floor's height (`oneLevel`); the lord walks the
+    graph to them instead.
+  - After the graph, eight lords say the same frames as before: the Spellmaster, the Armsmaster, the Cairn-Keeper, the
+    Mother of Dusk, the Night-Stalker, Seyth, the Colossus and Garoth. Their grounds are one region each.
+  - The other five walk the graph now, and every one still falls: Grath's islands, Ilthys's balconies, the Twins'
+    courts and walkway, Morvayn's soul-bridge and the Wyrm's perches.
+  - test/egfull_relay.test.js is green, unchanged.
+
+**Departures, said plainly.**
+
+1. `join` brings no share. Section 13.2's "added as the gate adds its fighters" is the company sized at the hall's wake,
+   as EG-FULL built it. A member who comes into a hall after its wake fights a lord sized without them. The share
+   retired at a fall and restored at the recall (section 13.2) is still not built.
+2. `egFightProfile` keys and folds the lord family alone. The other families' decrees are in its key, but carry no law.
+3. Colossal's `sizeX` is in the profile, and no lord reads it. The body's drawn scale is the client's (`egBossLook` by its
+   key), the wire carries no scale, and the relay's radius stays the look's. FLAGGED to the look.
+4. A lord walks straight within its region, kept on the fight floor as before, not to the region's own inset as a
+   legion walker is. This is why eight lords' frames are byte for byte.
+5. A run's stamp (its lane) still spans an arch's wall as the Breaker's does: the run ends at the wall, but the shape
+   is the blow's.
+6. A champion's Markynaz decree (`L.decree`) still replaces the circle's lord decrees for its fight (`F.mem.law`), as
+   EG-FULL wrote it. It does not fold with them.
+7. Found, not fixed: the legion's `walkGraph` (`net/egWalkGraph.js` `egWalkNext`) keeps a walker's last node as a way on
+   after the walker was set down elsewhere (a Breaker's run cut at a wall). A walker so placed beside an
+   arch's wall can walk straight to the far gap node. The lords validate their node. The legion's is EG-ZB's to close.
+
+**The four hosts.**
+
+- `src/scenes/world.js` - FLAGGED: not touched. This is relay law, and the screens draw what the relay says.
+- `src/scenes/worldModes.js` - FLAGGED: unchanged.
+- `src/scenes/dungeonContext.js` - FLAGGED: unchanged.
+- `src/scenes/exterior.js` - FLAGGED: offline (section 28).
+
+**Not verified without a browser and the game's data:** the lords' new walks were checked as the relay's frames on real
+specs, not watched on a screen; the screens carry each walk as they always have.
+
+**Pins.**
+
+- `test/eg5_profile.test.js` (5): the merge, the fold, the validator and the cache, the lords' law, and the laws on a
+  lord in a real fight.
+- `test/egz_lords.test.js` (5): the seam and the director's calls, every member frame for frame on real fights, a
+  champion through an arch, Grath along his bridges, and a champion up a stair with no run up a ledge.
+- `tools/mutants/eg5.json` (40, every one dead). Two survived the first run and were killed by new assertions:
+  - the cache first-in-first-out: the oldest asked again must stay;
+  - Grudge-Bearer forgetting: its record was re-aimed at the whole decay (the guard alone is equivalent under a law of
+    no decay).
+- `tools/mutants/egz_lords.json` (35: 33 dead, 2 equivalent - the Colossus's route over a one-lane forge and the Mother's
+  flight over a glade with no rock). Survivors of the first run were killed by new assertions:
+  - a blow through the seam on a body that is no lord (a fresh purse, so the seam and not the hand refuses it);
+  - a node kept after the lord was set down.
+  Two records on a level-only keep were dropped with the keep: the straight walk keeps the old floor.
+- Judged again over the files this slice touched: `egz_legion.json`, `egz_recap.json`, `egint.json` and `egseam.json`
+  (285, every one dead).
+- `RELAY_VERSION` `world198` was rehashed in place; no file joined its graph. `ACCOUNT_VERSION` stays `acct121`.
+
+### EG-ZM - 2026-10-12 - THE LOOSE ENDS: THE RETURN'S SEED, THE BOARD'S DOORS, THE STAKE'S CLOCK, THE LEDGER ROW
+
+Four loose ends of the last wave (Mac: *"I said I want everything"*). It closes EG-ZD's departure for a device with no
+record (its way back stood circle 1 of seed 0 under the veil until the room's word), section 20's board window *"reached
+from the Timers row and from the start window"* (EG14's window had one door, `/breach board`), EG-ZA's departure for the
+service's clock (a stake no receipt settles stayed `held`), and the ELITE-GATES row of the Port-Ledger, which still
+named a retired ward and the Hour's art.
+
+**What shipped, by piece.**
+
+- **THE RETURN'S SEED** (`scenes/egClient.js`, section 22).
+  - A way back the device knows only from the account service's `live` is a record with no opening (`op` 0), so no seed
+    and no hall. Its step goes under the veil and is held there until the room's first word.
+  - The word is heard by a listener on my own identity (`egSeedListen`). It is an `OnlineSession` made of my primary
+    session's url, id, secret, name, look and token minter, with `presence: false`: no pose, so it stands no body in the
+    breach and sends nothing but its hello and its heartbeat (`net/caravanVisitLink.js`'s way). The room answers its
+    hello as it answers any member's, with the breach's `st`, or refuses it in words (`net/egBrain.js` egAdmitWord).
+  - The `st` is folded as the link folds it (`net/egLink.js` foldEg) and kept on the record (`backFrame`): the seed, the
+    opening, the geometry, the hall. The circle stood is the record's, so it is the room's: for a breach begun at
+    Redoubt 1 under a Crumbling Wager, Hall 6's circle 2 in the Wager's geometry, never circle 1 of seed 0, and nothing is
+    rebuilt once my own socket says hello.
+  - The listener is left at its answer, before the circle stands. The relay keeps one socket an account in a breach's
+    room (`server/src/index.js:"if (egRoom && who.subject) for"`), so my own socket's hello is never refused as a
+    replacement of it.
+  - A refusal in the room's own words (the order, the company, the fallen, home, a breach closed - `roomRefused`, now the
+    one law spireFrame's terminal close reads too) is said, and the way back is let go and marked over. A refusal that
+    is not the room's (the relay's, for want of a sign-in) says the road is shut and keeps the way back.
+  - No word within `EG_BACK_SEED_WAIT_MS` (12 s: the listener's own wait for its token, `TOKEN_WAIT_MS`, and four seconds
+    for the socket, the hello and the answer) opens the veil where I stood: *The Spire does not answer. Type /breach to
+    try again.* The way back is kept, and asked again it waits again. The online frame gone (`away`) ends the wait the
+    same way, and a session with no relay address is silent at once.
+  - The frame settles the wait (`seedFrame`), the wait's slot emptied before the step is told.
+- **THE BOARD'S DOORS** (section 20).
+  - **One door.** `ui/egBoardWindow.js` `createEgBoardDoor`, the world host's `egBoardDoor`, opens the boards in the skin
+    worn (the enhanced panel; the classic skin's DFU pickers on the mode's slot), one at a time: asked again, the boards
+    standing are closed and out of the slot before the next go in. A window on its way out of the mode's slot - a pause
+    face handed off, done but not yet drained - gives the slot up to the classic picker; a live window keeps it.
+    `/breach board` goes through it.
+  - **The Timers row** (`systems/eventTimers.js`, `ui/enhancedTimers.js`, `ui/enhancedMenu.js`). The timers source carries
+    the door (`doors.board`). Where it does, every Elite row carries `door: 'board'`: my breach's, and the boards' own
+    season, an Elite row of its own (*The Spire's season 2 ends*, at the arena season's end - `net/arenaLaw.js` - when
+    each Descent bracket's top ten are kept as Spire Champions), so the door stands with no breach of mine. The window
+    draws it as a *Boards* button beside the row's clock, a button as the window's Close is, so a tap and the pad's walk
+    of the pause face reach it alike. A press reads the source's door at the press, and the pause face hands its place on
+    first, as the sheet's doors do (`handoff`; a door that opened nothing resumes).
+  - **The start window** (`ui/egStartWindow.js`). Its last row is *The Boards of the Spire* (`EG_BOARD_TEXT.title`), with
+    keys or with the Rehearsal alone. Picked, the list leaves the slot before the boards open, and comes back once they
+    close (once, however often their close is told; at once where none opened; never after the window ended). It is a row
+    of DFU's list picker on the classic skin and of the skin's own picker on the enhanced, with their own touch and pad.
+- **THE STAKE'S CLOCK** (`server-account/src/eg.js` spendLapsedStakes, `server-account/src/cron.js` `eg-stakes`; section
+  23).
+  - **When.** A stake still `held` `EG_STAKE_CLOCK_S` past its `until` is spent by the service's hourly clock. That is
+    the void's window (`EG_VOID_WINDOW_S`, the relay's `EG_VOID_MAX_S` pinned equal) and a receipt's life
+    (`EG_RECEIPT_TTL_S`): an order is signed at the latest at its stake's `until` (an open asked again re-signs it only
+    while the stake holds), its void may be minted a week after, and that void is carried a week more. Past the bound
+    nothing can name the stake.
+  - **What the key becomes.** Spent: it stays taken, as any spent stake's does. A clock never returns a key.
+  - **What the player is told.** A letter in the mailbox (`server_post`, the post the pause face's envelope reads), from
+    the developers, one a stake (`spire-stake-<order id>`, INSERT OR IGNORE over 0093's index, so a letter already there
+    never holds the clock): *The Weir Key you staked on 2027-01-15 opened a breach that never sent word back: no Redoubt,
+    no end and no void reached the Spire's ledger in the time a key waits for one. That key is spent. It does not
+    return.* A Rehearsal's stake held no key: it is spent and says nothing.
+  - **How.** The stakes due are asked in one statement, a page of `SWEEP_ROWS`, the oldest first (a quiet hour asks no
+    more), then spent with their letters in one transaction, each only while it is still held: a receipt claimed between
+    the ask and the spending settles its stake its own way. The job asks again while a page is full. The held stakes are
+    asked by their own index (migration 0111 extended: `idx_eg_stakes_held` on `(state, until)`), never a walk of every
+    stake ever staked.
+- **THE LEDGER ROW** (`bible/01-Overview/Port-Ledger.md`, ELITE-GATES). `characters/playerEntity.js` holds one Levitate
+  ward (EG-H2 retired `registerSpireLevitateWard`); `world/egHall.js` wears its band's dress (EG-G2's
+  `world/egBandArt.js`), not the Hour's art; `server-account/src/egEconomy.js` and `server-account/src/egStarts.js` are
+  named, and the stake's clock on `server-account/src/cron.js`.
+
+**Departures, said plainly.**
+
+1. The clock waits fourteen days past the stake's end (`EG_STAKE_CLOCK_S`), not the page's seven days
+   (`EG_VOID_MAX_S`). A void can be minted up to seven days past its order's issue and carried seven days more, so a
+   stake spent at seven would lose the key such a void returns, and a key is never lost to an infrastructure fault.
+2. The service keeps its own void window (`EG_VOID_WINDOW_S`), pinned equal to the relay's: `net/egDurable.js` is the
+   relay's and outside the account Worker's bundle (`EG_LAST_WORD_S`'s precedent in the same file).
+3. The player is told by a letter in the mailbox, not a line in the game: the clock runs on the service, days after the
+   player last played, and the post is the one place the service speaks to an account between sessions. The words are
+   fixed here, as First of the Spire's are.
+4. The way back's veil is chosen before the room has spoken, so a device with no record steps under the stair of the
+   record's start (Hall 1's full fall) whatever hall the room says. A record that knows its seed waits for nothing, as
+   before, and a circle it had wrong is still rebuilt in place.
+5. For the length of the wait a second socket stands on my identity in the breach's room. It holds no pose, so the room
+   counts no body of it; it is gone before my own socket says hello.
+6. The Timers row's door hangs on the boards' own season as well as on my breach's row: a Timers window with no breach of
+   mine had no Elite row to carry it. The season row stands only where the door does.
+7. The Timers window is the enhanced pause face's (TIMERS1). On the classic skin it is reached where the enhanced pause
+   opens on either skin (the mailbox's door, the family's pages); its door opens the boards in the skin worn.
+
+**The four hosts.**
+- `src/scenes/world.js` - WIRED: `egBoardDoor` (`createEgBoardDoor` over `openEgBoard` and the mode's slot -
+  `topWindow`, `mountWindow`, `closeWindow`), and through it `/breach board`'s `board`, the timers source's `doors` and
+  the start window's `board`. The return's listener is the breach client's own (it builds from the `online` it is
+  already handed). Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED: untouched. Its interiors' pause face reads the world host's timers source, which
+  carries the door; the classic boards mount through its own `mountWindow`, `closeWindow` and `topWindow`.
+- `src/scenes/dungeonContext.js` - FLAGGED: untouched; its pause face reads the same source through worldModes, and its
+  slot takes the boards' pickers as it takes any window.
+- `src/scenes/exterior.js` - FLAGGED: offline - no timers source, no breach, no boards (section 28).
+
+**Not verified without a browser and the game's data:** the listener's hello ran against the relay's real Room through
+a bridged socket, not a deployed relay; the Timers button and the start window's row were driven on a stub DOM and fake
+pickers, not seen on either skin; the letter was read through the real Worker's mailbox routes, not the pause face's
+envelope.
+
+**Pins.**
+- `test/egz_ends_return.test.js` (3), `test/egz_ends_board.test.js` (3), `test/egz_ends_stake.test.js` (2).
+- `tools/mutants/egz_ends.json` (73: 71 dead, 2 equivalent as recorded - the wait's slot emptied before its step is
+  told, and the Timers shape naming a row's door, which the season row's coming and going moves anyway). Six survived the
+  first run and were answered: three were the return's target read twice (the room's word written into the record and
+  then into the step), so the step now stands the record's circle, as it always did, and the record is pinned; a
+  settled stake long due and a page of one were pinned; the shape's became the second equivalent.
+- PIN MOVED: `test/egz_return.test.js` (EG-ZD's device with no record is now a record whose seed is not the room's -
+  still rebuilt in place); `test/egeco_hosts.test.js` (`/breach board` through the one door); `test/auditscale.test.js`
+  D7 (a quiet world's hour is twenty-three statements, the stake clock's one ask the twenty-third).
+- Re-aimed by content: `egz_stair.json`'s EGZ-the-way-back-under-the-hour (the way back's step now waits under its veil
+  before it stands the circle).
+- Judged again over the files this slice touched (`scenes/egClient.js`, `systems/eventTimers.js`, `ui/egStartWindow.js`,
+  `ui/egBoardWindow.js`, `ui/enhancedTimers.js`, `server-account/src/eg.js`, `cron.js` and `post.js`): 232 records of
+  `auditlwii2_service`, `auditscale`, `cap_off`, `egarch`, `egeco`, `egeco_honours`, `egeco_pay`, `egeco_relay`,
+  `egfrag`, `egfull`, `egint`, `eglook`, `egmade`, `egplay`, `egpres_hud`, `egseam`, `egz_frag`, `egz_keys`,
+  `egz_recap`, `egz_return`, `egz_sound`, `egz_stair`, `lw15`, `scale4b`, `sd19`, `sd2c`, `serpent2` and `serverpost`.
+  Every one is dead.
+- `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; migration 0111
+  extended (unshipped).
+- No new src module. The ELITE-GATES ledger row corrected (above).
+
+### EG-ZN - 2026-10-12 - THE CAMERA IN THE SPIRE, AND THE BAND TEXTURES' OWNER
+
+(Mac: *"I said I want everything"*.) Closes the last two lines of section 11.8 that no layer built - the occluders between
+the camera and the body dithered out, and the shaft ledge's pitch bias with the camera's rise over the drop - and section
+29's owner of the band textures. EG-ZH's two "Not built" lines for the camera, EG-ZC's "the camera's 20-degree bias over a
+shaft's drop is not built" and EG-G2's "a band's textures stay up for the session once stood" are retired here.
+
+**What shipped, by piece.**
+
+- **THE OCCLUDERS MARKED** (`world/egHall.js` `buildEgCircleModel`, `egOccluderRuns`; section 11.6's mesh half). The
+  circle stays one mesh, one upload and one draw of a sub-mesh a record. As it is laid, every piece of rock the camera may
+  stand behind is marked (`occluderMarker`):
+  - a passage's or a shaft's every wall run and its vault;
+  - each box of its kit's dress (the Stacks' bookcases, the Colonnade's drums, the Ossuary's ribs and arches, the Gloam's
+    trunks, the Forge's pipes and anvils);
+  - a niche's walls and lid (never its floor), each vignette, a ring wall (a chamber's, a court's, a pit's tiers) a segment
+    at a time, the Forge's long walls a side at a time, an arch's walls, the end plate's posts and lintel, and each slag
+    spout with its lip.
+  Each piece is `{ b, r }` - its box, and its runs of the mesh's own indices (`model.occluders`) - read off the packed
+  mesh. The floors, bands, lanes, plates, islands, ramps and the magma stay the circle's ground. A circle holds 18 to 141
+  pieces, about a thousand of its 21,000 to 28,600 triangles. The swap's worker build carries them with the model
+  (`world/egCircleParts.js`, which builds through `buildEgCircleModel`, unchanged).
+- **THE DITHER PASS** (`scenes/egOcclude.js`, new - a helper the mode machine calls, not a fifth host; `render/renderer.js`
+  `meshView`; `scenes/worldModes.js` `egOccludeFrame`, `egCircleDraw`):
+  - THE RAY: each frame in third person, a segment from the eye to the body's pivot (the lane's own focal) and one to its
+    chest (`EG_OCCLUDE_CHEST_M`, 0.9 m over the render feet), each stopped `EG_OCCLUDE_BODY_M` (0.3 m) short of the body,
+    is tried against every piece's box and then against its own triangles, from either face (`egSegBox`, `egSegTri`,
+    `egOccludersHit`). Only the occluders' own triangles are kept for it.
+  - THE EASE (`egOccludeEase`): a piece the ray crosses dithers out to `EG_OCCLUDE_KEEP` (a quarter - 4 of bayer4's 16)
+    over `EG_OCCLUDE_FADE_S` (0.2 s), and back the same way once the ray is clear.
+  - THE DRAW: while nothing dithers, the circle's draw is the dungeon loop's own, untouched. While pieces dither, the pass
+    runs after the frame's beginFrame and the cull, before the dynamic draws:
+    - it takes the circle's draw for the frame (`hidden`);
+    - it records the whole mesh's shadow as the loop would (`recordShadowMesh` - the lanterns' caches see the record they
+      always saw);
+    - it draws the rest of the mesh as a view of its own buffers with the pieces' runs cut out;
+    - it draws each share's pieces as one view under `setDissolve` (SHIP-FADE's ordered dither), adjacent runs as one
+      range, and sets the dissolve back to whole after.
+  - Nothing is uploaded. A view (`meshView`) is its mesh's VAO with no buffer of its own, never handed to destroyMesh, and
+    none is made of a dead mesh or of a view. The pass keeps its views per set (at most `EG_OCCLUDE_VIEWS_MAX`, 64) and
+    lets them go with the circle.
+  - First person, a witness's eye (`host.egWitness`) and the decorator's free camera try nothing; whatever dithered comes
+    back whole.
+  - THE SWAP keeps its shape. The stand and the swap hand the pass the circle's mesh and its model (`egOcc.set`) and push
+    the circle's one draw (`egCircleDraw`). The slot is emptied first: the pass lets the old circle go (`egOcc.clear`)
+    before its mesh is freed, and a circle that will not build leaves the pass holding nothing.
+- **THE BUDGET, MEASURED** (node, 60 circles: seeds 7, 99 and 12345, circles 1 to 20, as EG-G2 measured the pieces):
+  - while nothing stands between, the circle is one draw of a sub-mesh a record, as before: a mean of 7.15 GL draws, at
+    worst 8;
+  - with any one piece dithering, it costs at most two draws more for each record the piece touches: a mean of 9.15, at
+    worst 12;
+  - the frame's circle and batched pieces together (`scenes/egPieceBatch.js` through `scenes/egSpan.js`, every copy in
+    view) run a mean of 20.7 GL draws, at worst 30, whole, and at most 34 with the worst single piece dithering - under
+    the Hour's 82 (23.8, 35 and 39 since the merge with EG-ZL, whose tells are kinds of the batch).
+- **THE SHAFT'S LEDGE** (`world/egHall.js` `egShaftLedgeAt`, `EG_SHAFT_LEDGE_M`, `EG_SHAFT_WAY`; `egFragZones` now carries
+  a zone's `shaft`, `zB` and `yB`). A body stands on a shaft's ledge facing a drop while its feet are in a zone the law
+  marks `shaft`, short of the foot and at least 0.5 m over the foot's height: the rim, every flight down to the Drop, and
+  the air between them. The Drop's landing, the Slag Chute's crust, the foot and every other zone are none. Every shaft
+  leaves facing +Z (`net/egFragLaw.js` egFragShaft), so its way down is +z in the hall's frame and the dungeon's.
+- **THE SHAFT'S CAMERA** (`player/mwView.js` `setSpireShaft`, `spireShaftFacing`, `spireShaftEase`, `spireShaftPitch`,
+  `spireShaftPivot`, `spireShaftLook`; told by `scenes/egClient.js` `shaftWay`):
+  - facing the way down (the look's bearing within 60 degrees, `SPIRE_SHAFT_FACE_IN`, and held to 75,
+    `SPIRE_SHAFT_FACE_OUT`), the camera's pitch biases `SPIRE_SHAFT_PITCH` (20 degrees) under the look's, and its pivot
+    rises `SPIRE_SHAFT_RISE_M` (1 m) by the bias's share, eased over `SPIRE_SHAFT_EASE_S` (0.5 s) as the facing comes and
+    goes. The orbit carries the eye up its arc too: the real Morrowind camera's eye stands the metre and its distance times
+    sin 20 degrees higher, looking down the shaft;
+  - both lanes lay it on their own eye before their casts (the Morrowind camera's focal, Eye Of The Beholder's head), so
+    the casts guard the leaned eye;
+  - reduced motion (the shelf's row or the system's - `ui/egAccess.js` egReducedMotion, the client's `stillNow`) lays it
+    whole at once, as the stair cuts; first person and out of the Spire take none, at once; the pitch never passes the
+    camera's own limit (`PITCH_LIMIT`);
+  - the frame's eye answers the camera's own forward (`look`), and the dungeon arm's view looks along it after the aim is
+    taken (`aimView`, AUDIT CLIMB-ARC F10's order), so the player's aim, the listener and the casts keep the player's look.
+- **THE BAND TEXTURES' OWNER** (`scenes/worldModes.js` `egBandsDown`; section 29: "band textures are cached per band and
+  freed at the breach's end"):
+  - each band's dress goes up once a breach - at a circle's stand, or a prebuild while the Court rests (EG-G2's `egBandUp`,
+    unchanged) - and the swap in place uploads nothing;
+  - at the breach's end every band it put up is freed: each record's albedo (`releaseTexture`, every variant) and its
+    emission (`evictEmissionTexture`), from GL. It is refused while a circle stands, since its draws still wear them. The
+    Hour's own art (`SD_REALM_ARCHIVE` - the Steps' faces, and the Hour's) is kept for the session;
+  - the breach client says when (`scenes/egClient.js`): on the first frame out of the Spire that is no swap's or answer's
+    step under way (`!swapping && !answering`, the reverb's own rule). So the way home, the tear, the last fall's walk out,
+    forsaking, a void, a refused or lost socket and leaving the Spire any other way all free it, and the old step under
+    the veil (out and in again) keeps it. A reload ends the page's GL context with every texture in it; a reload's return
+    uploads again at its stand and frees again at its end.
+
+**The four hosts.**
+
+- `src/scenes/worldModes.js` - WIRED:
+  - the dither pass after the cull (`egOccludeFrame`), before the dynamic draws;
+  - the circle's draw through `egCircleDraw` at its stand and its swap;
+  - the pass handed each circle and cleared first;
+  - the view along the camera's own forward after the aim;
+  - `egBandsDown`, and the doors `egBandsDown` and `egOccluders`.
+- `src/scenes/world.js` - FLAGGED: untouched. The breach client it builds carries both words. Its exterior frame's
+  `mwViewFrame` answers no `look`, since the client's word is null outside the Spire. Nothing was added to
+  `function frame(now)`.
+- `src/scenes/dungeonContext.js` - FLAGGED: untouched. The circle's draw rides its `dynamicDraws` as it did; the pass runs
+  in the mode machine's dungeon arm.
+- `src/scenes/exterior.js` - FLAGGED: the bench holds no Elite Breach, and its `mwViewFrame` never meets a Spire word.
+
+**Departures, said plainly.**
+
+- **Done another way:**
+  - the occluders are runs of the circle's one mesh drawn through views, not meshes of their own. A draw of their own
+    would cost each piece's records in every frame; the views cost them only while something dithers;
+  - a piece is one solid the builder lays (a wall run, a vault, a bookcase, a ring wall's segment), not a whole fragment,
+    so the ray dithers what it crosses and the rest of the rock stands;
+  - a dithering piece keeps a quarter of its fragments, not none, so the rock still reads as rock with the body through it;
+  - a dithering piece's shadow stays whole (it is recorded with the whole mesh), so no lantern redraws as the camera turns;
+  - the facing's cone, the ease and the rise are the port's numbers: the page gives the 20 degrees alone;
+  - "a shaft's ledge" is the rim, every flight down to the Drop and the air between them: each has a drop before it;
+  - reduced motion lays the bias whole at once rather than leaving it off, as the stair cuts rather than skipping;
+  - the band textures are freed on the client's first frame out of the Spire, not by the room's end word, so a member who
+    leaves early frees them early; the Hour's art the Spire also wears is the session's.
+- **Not verified without a browser and the game's data:** the dither was drawn on a recording GL (its draws and
+  `uDissolveCut` read), never seen; the shaft's camera was never flown (the Morrowind camera's eye computed in node, the
+  sprite lane's by its source); the frees were read off the renderer's own maps and GL's `deleteTexture`.
+
+**Pins.**
+
+- `test/egz_camera.test.js` (3), `test/egz_camera_host.test.js` (2), `test/egz_camera_budget.test.js` (1),
+  `test/egz_camera_shaft.test.js` (4).
+- `tools/mutants/egz_camera.json` (103: 98 dead, 5 kept as equivalent, each with its why - two prefilters of the ray,
+  Moller-Trumbore's early out, the marker's empty-piece guard and a share forgotten at whole). Four survived the first run;
+  two were killed by new assertions (a niche's floor marked; a ray past a triangle's far edge) and two are the equivalents
+  above.
+- Re-aimed by content (mutantdrift): `eglook.json`'s EGLOOK-hall-circle-undressed, onto the circle's `const model`. Judged
+  again over the text this slice changed: `benchcam1.json` (2), `eglook.json` (2), `egseam.json` (4), `egz_frag.json` (1)
+  and `egz_sound.json` (2) - 11, every one dead; and every record of every list on `world/egHall.js` and
+  `player/mwView.js` (82), every one dead.
+- PIN KEPT by order: the shaft's two lines stand above the Morrowind lane's saddle line, and the view's lean below the
+  climb's feel, so COATS3D's and CLIMB4's source pins read their lines as they were.
+- PIN MOVED: `test/egswap_client.test.js` (the swap's rig hands the stand's own source `createEgOccluders` and
+  `EG_DRESS_RECORDS`); `test/egz_body.test.js` (a zone carries `shaft`, `zB` and `yB`).
+- `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
+- New in `src/`: `src/scenes/egOcclude.js`. The Port-Ledger's ELITE-GATES row is left to the merge.
+
+### EG-ZL - 2026-10-12 - THE PIECES' TELLS ON THE SPANS
+
+(Mac: *"I said I want everything"*.) Section 10.3's tells for the pieces the Spire lays, section 10.8's ghost slab, and
+section 25's look on them (the five lights, THE EDGE LINE's gold, the fog floor, reduced motion and the danger palettes).
+It closes what `scenes/egSpan.js`'s header said EG-PLAY left - "the Steps' look parts (the pendulums, the dissolve, the
+chunks, the ghosts' pass, the waystones); a Beat shows its glyph frames, a Crumble falls whole" - and the stale "still
+owed" lines for the pieces' tells in layer two's and layer three's records, which EG-G2's tracks, streamers and Rampart
+waystones had already answered. All of it is client-only: nothing in the relay's graph moved.
+
+**What shipped, by piece.**
+
+- **A KIND THAT TURNS** (`scenes/egPieceBatch.js` `add(..., { turns })`, `remap`, `copyVertex`). A Drift's hang, a
+  Crumble's chunks and a Gust island's banner turn as well as move. A kind added `turns` writes each copy through its
+  slot's whole matrix: every vertex turned and moved, every normal turned. Its cull sphere's centre is turned with it,
+  and a copy is re-laid when any of its twelve numbers moves. A kind that only moves keeps EG-G2's law, line for line.
+  A kind's draw takes one picture map (`remap`, before the build or after), so the copies one frame of law shows alike
+  share one draw.
+- **THE GHOSTS, A CIRCLE'S** (`render/sdStepsPass.js` `sdStepsPassVs`, `sdStepsPassFs`, `SdStepsPass(gl, ghosts, { max,
+  slab, fogFloor })`; `scenes/egSpan.js` `drawPass`). The Hour's own pass draws the circle's gone Beats and my fallen
+  Crumbles (a bone bridge's too), outlined where they return, each with its hand running back to the return. Its count is
+  the circle's (`EG_GHOSTS_MAX` 48; the most any of 640 circles measured lays is 31). It keeps the Spire's fog floor
+  (`world/egLook.js` `EG_FOG_FLOOR`, section 25.6). Built without the three, its text and its buffer are the Hour's byte
+  for byte. The pass is built the first time it draws and freed at the span's clear. The breach client draws it in its
+  own pass under the lines (`scenes/egClient.js` `drawPass`, through `dungeonContext.egSpanDraw`).
+- **A BEAT** (section 10.3: "a sector sweeping through the solid time; the last 0.4 s white, faltering at most 2.5 Hz; a
+  gold ghost while it is gone").
+  - A kind a beat (`beatKind`). The pieces of one beat show one frame, so their one draw wears one picture map.
+  - Across its solid time the Steps' dial runs frame by frame (`scenes/sdSteps.js` `SD_BEAT_FRAMES`): its hand goes back
+    to XII and the ticks still ahead stay lit.
+  - Over its last 0.4 s it burns the place's own white and dissolves out a stage each `SD_BEAT_OUT_STAGE_S`. Over its
+    first `SD_BEAT_IN_S` it dithers back in.
+  - THE DISSOLVE IS MADE IN THE PICTURE (`world/egBandArt.js` `egBeatWarnArt`, `egBeatBackArt`, `egDissolveArt`,
+    `egBeatTellMaps`). Each stage is the Steps' dial with exactly the cells its stage keeps (`SD_BEAT_DISSOLVE.keep` of
+    16, by the ordered dither, cells of the Steps' own three texels). The rest is a hole and dark. They are uploaded as
+    cutouts (the renderer's RW1 holes) under the band block's second archive (`egTellArchive`, 38242 for the Galleries -
+    the block's "own later records").
+  - The warning's light is the danger palette's hazard (`ui/egAccess.js`): white, or High contrast's cyan with its rim
+    line dashed four texels on and four off (`world/sdStepsArt.js` `beatArt`'s `warn` and `dash`; the Hour's own art is
+    unchanged byte for byte). Its falter is the Steps' blink law's - shown 0.2 s, then out.
+  - Gone, its gold ghost.
+- **MY CRUMBLE** (and a bone bridge, the Crumble's law; section 10.3: "three crack stages, and the rewind as it
+  returns"). The Steps' own look (`scenes/sdSteps.js` `crumbleLook`) on the Spire's Crumbles:
+  - my foot on it grinds where it stands (`AmbientGrind`);
+  - its three crack stages flare across the shake (a kind a stage, `SD_CRUMBLE_STAGES`), and its grit pours;
+  - fallen, its plate is gone and its chunks (two on a phone) fall, drift and tumble by the Steps' own law
+    (`sdChunkWays`, `sdChunkMatrix` - exported, the Hour reads them too), out of sight past `SD_CRUMBLE_SEEN`;
+  - its ghost counts the return; in the last `SD_CHUNK.rewind` the chunks fly back up, eased out;
+  - whole again, they click home (the clunk pitched 2.6) and it shudders.
+- **A DRIFT'S HANG** (`egHangModel(band)`; section 10.3: "hangs on two chains from an anchor 18 m up (an arch rib, a
+  ribcage, a moon-shard, a crane hook), leaning as it swings").
+  - Two chains of links, every other turned a quarter, hang on the Steps' pendulum's own line (`SD_PENDULUM.foot` either
+    side of the deck's middle, clear of a body at its edge) from brackets on the deck's sides up to the pivot
+    `SD_PENDULUM.len` over it, in the band's metal.
+  - The band's anchor: the Galleries' broken marble arch rib with gold leaf on its crown, the Cairn's bone ribcage, the
+    Shade's moon-shard, the Wellhead's iron crane hook on its cable.
+  - The whole turns about the pivot by `pendulumAngle` of the law's own swing, as the Hour's pendulums do. A kind a
+    hall, so only the halls in view re-lay their swinging copies.
+- **THE ISLANDS' WAYSTONES** (section 10.3: "Islands carry the Steps' waystone, lit gold while it is a member's cast-back
+  point"). The Steps' waystone stands on every island at the Steps' own place beside its landing
+  (`world/sdStepsModel.js` `sdWaystonesOf`). Its rune is lit while my cast-back point (`safe`, a pull's landing too)
+  stands on its island, edge to edge, and dark otherwise (`SD_WAYSTONE_DARK`) - one at a time, none on a plate.
+- **THE GUST'S BANNERS AND ITS WIND** (section 10.3: "a streamer banner on every island pointing the push 1 s ahead; the
+  wind rising (`AmbientWindMoanDeep`)"). The Steps' vane stands on each island of a Gust section (`sdVaneAt`'s place on
+  it), swung by the breath's own clock (`vaneYawInto`) to point the coming push a second ahead. The wind and the vane's
+  clack sound once a gust while I stand over the section or its islands, and nowhere else.
+- **A GHOST SLAB** (section 10.8: "A peer on a crumble the viewer has seen fall is drawn on a ghost slab").
+  - `net/online.js` tells `rideAt` of every drawn peer in the Spire. A peer on no ride is told and never moved; a
+    ridden one is still moved on its copy.
+  - The breach client hands a peer on no ride to the spans (`scenes/egClient.js` `rideDraw`,
+    `dungeonContext.egSpanPeer`, `scenes/egSpan.js` `peerOn`).
+  - A peer whose drawn feet stand on a Crumble fallen under my own foot - on its top within the capsule, within the
+    ride's height band (`net/egFair.js` `EG_RIDE_DOWN_M`, `EG_RIDE_UP_M`) - lights that ghost's top (`EG_GHOST_SLAB`:
+    0.35 of the ghost's light, held 0.3 s past the peer's last word). The peer is drawn standing on it, not on air.
+- **THE RAIL'S TRACK TICKED AT EACH END** (`world/egLook.js` `egCircleEdges`; section 10.3: "a dashed gold track between
+  its plates, ticked at each end"). Across each side's track, at each end of its travel, a tick one dash long at the
+  track's own depth, in the same gold. A Drum's track is ticked the same.
+- **A DROP'S WALL LIT** (`world/egHall.js` `EG_DROP_LAMP`; section 10.3: "the landing's edge line, gold; the wall's face
+  lit"). A lamp of the circle's own light stands over each Drop's landing, 1.5 m before its far wall's face and 4.5 m up
+  it, so the wall a body carried too far meets is seen from the takeoff.
+- **REDUCED MOTION** (section 25.7: "It, or the system's setting, governs ... the shakes"). The row or the system's
+  setting stills every piece's shake the spans draw: a Crumble's shake and its shudder home, a slag crust's last second,
+  Grath's cracked isles. The cracks, the falter, the dissolve and the light still tell.
+- **Measured** (EG-G2's measure: node, 60 circles - seeds 7, 99 and 12345, circles 1 to 20; before at b4af2365):
+  - a circle's GL draws with every copy in view: 13.5 on average (worst 23) before, 16.6 (worst 28) after. With the tells
+    at their worst - every Crumble of a circle fallen under my foot, its chunks in the air - 18.8 (worst 31). EG-G2's own
+    bound, at most 48 a circle, holds;
+  - from Hall 2's plate down its course (seven circles, 300 frames each): 11.0 GL draws on average (worst 15) before, 12.8
+    (worst 19) after - the new kinds are a beat's second draw, a hall's hang, the waystones lit and dark, and a Crumble's
+    stages, chunks and grit only while they show;
+  - the dynamic draws a circle stands (each kind one, drawn or not): 9.1 (worst 14) before, 19.5 (worst 29) after. A
+    Falling Wall's circle stands 21 where a draw a piece would stand 208 (EG-G2's tenth, held);
+  - the ride and the cull together (seven circles, Hall 2's eye, the two trees run in turn five times): a median frame of
+    0.006 ms before and 0.011 ms after, a mean of 0.015 ms and 0.036 ms (node, on a machine shared with other work).
+
+**The four hosts.**
+- `src/scenes/dungeonContext.js` - WIRED: `egSpanDraw(proj, view, fog)` (the spans' ghosts and slabs) and
+  `egSpanPeer(x, y, z)` (a peer's drawn feet), beside EG-G2's `egSpanCull`. The ghosts' pass is freed by the span's
+  clear on every path that clears it (its teardown, `egRecircle`'s swap).
+- `src/scenes/world.js` - FLAGGED: untouched. The ghosts draw in the breach client's pass, which `drawEgFight` already
+  calls. The peer's word rides net/online.js's `rideAt`, which the client sets.
+- `src/scenes/worldModes.js` - FLAGGED: untouched. Its cull before the dynamic draws (`egSpanCull`) already culls the
+  new kinds.
+- `src/scenes/exterior.js` - FLAGGED: the bench is offline and holds no Elite Breach.
+
+**Departures, said plainly.**
+- **Done another way:**
+  - the Beat's dissolve is made in its picture (cutouts), not by swapping in the Hour's cut meshes. A kind of Beats stays
+    one batched draw; the four stage meshes would have cost about 13,000 vertices a copy;
+  - a Beat's frames run a kind a beat. Every circle measured lays its Beats on two beats, half a cycle apart, so a
+    circle's Beats are two draws where they were one;
+  - a Beat's warning frames (its frame 10 and its falter) are painted for the Spire with the palette's hazard; frames 0
+    to 9 stay the Hour's own, their dim ember inlay with them (EG-G2's "the Steps' own pieces keep the Hour's art");
+  - the anchor rocks with its chains, as the Hour's gear rocks with its rods, so a Drift's hang is one turning copy;
+    its tilt is at most asin(2 / 18), 6.4 degrees;
+  - the Gust's "streamer banner" is the Steps' own vane on each Gust island (the Hour's tell for the same breath), beside
+    EG-G2's streamers across the section;
+  - "the wall's face lit" is a lamp of the circle's own light before it, not a lit face: gold on a wall would say "it
+    holds" (section 25.2);
+  - the Beat's pictures are the session's: uploaded once a renderer for each band and palette, never freed at a clear -
+    the band dress's own law (EG-G2), so a swap uploads nothing again. The ghosts' pass, the batch's meshes and every
+    tell's slot are the span's and are freed at its clear;
+  - the ghost slab is the ghost's own top, filled in its gold at 0.35 of its light, while the peer's word holds (0.3 s);
+  - the Gust's wind is the page's AmbientWindMoanDeep (66), where the Hour's breath blows AmbientWindBlow1 (70).
+- **Not built:**
+  - the band's glyph on a Beat's face: the page names no glyph a band, so the Steps' dial stands for "a sector
+    sweeping through the solid time";
+  - the Gust's "streaks at the screen's edge": a screen-space overlay; the streamers and the banners carry its tell;
+  - a peer on a Sinking Stair flight I have sunk: the page names the Crumble alone.
+- **Not verified without a browser and the game's data:** nothing was seen on a screen. The shaders were run through
+  `test/glsl.mjs`, the passes through a recording GL, and the pieces through a counting renderer. The cutout dissolve,
+  the chains and the anchors were never looked at, and the frame times are node's, not a phone's.
+
+**Pins.**
+- `test/egz_tells.test.js` (9).
+- `tools/mutants/egz_tells.json` (65, every one dead on the first run).
+- Re-aimed by content (mutantdrift): `egseam.json`'s EGSEAM-the-ghosts-past-the-most (`ghosts.slice(0, max)`) and
+  `sd25_steps.json`'s SD25-S9-every-ghost-a-beat-plate (the ghost's `edges`).
+- Judged again over the files this slice touched: `egfrag.json`, `eglook.json`, `egplay.json`, `egseam.json`,
+  `egz_frag.json`, `egz_stair.json`, `sd25_steps.json`, `egspan.json`, `egz_telegraph.json` and `sd25_look.json` (592: 591
+  dead, and `sd25_look.json`'s SD25-the-street-off-its-palette equivalent as recorded).
+- PIN MOVED: `test/egswap_client.test.js` - a band's Beats' pictures go up once a session with its dress, never by a swap.
+- `RELAY_VERSION` is untouched (nothing in the relay's graph moved), and `ACCOUNT_VERSION` stays `acct121`; no migration.
+- No new src module. The Port-Ledger's ELITE-GATES row is left to the merge (it names every file touched).
 
 ### EG-ZJ - 2026-10-12 - THE FIGHT WHOLE ON THE WIRE
 
@@ -5726,6 +6718,43 @@ shaft. Each sentence is deleted where it stood.
     Armsmaster's Court laid at 2.3 m (Seed 1's Hall 30), the Lurkers past a Deepway's shaft (its floors 5.7-8.1 m down), a
     false wall in an alcove under the course.
 
+**At the merge** (the PR's head at 17491139: EG-ZI, EG-ZO, EG6c, main's #840-#851, EG5 + EG-ZK, EG-ZM, EG-ZN and EG-ZL):
+- **THE LORDS ON THE SEAM WALK ON THEIR FEET.** EG5 + EG-ZK put every lord and champion on the boss seam (`EG_SEAM`) and
+  walking the hall's graph by the legion's own `walkGraph` and `walkAir`, now exported from `net/egLegion.js` with this
+  slice's heights in them. So a lord's feet ride the wire as a legion walker's do:
+  - a straight walk within its region ends on the ground there (`egWalk`'s `egFeetAt`): a lord on a raised Court walks
+    at the Court's height;
+  - a walk over the graph climbs its stair and drops at its lip (`walkGraph`'s `egWalkFeet`): Grath along his bridges on
+    islands laid at 2.3 m (Seed 1's Hall 60), a champion up a chamber's stair (Seed 31337's Hall 43);
+  - a leap, a run's end or a blink lands on the ground there (`egPlace`), and the Mother of Dusk circles at the ground
+    under her goal (`walkAir` with no mark: the flier's own rule).
+  One line was changed for it (`lordWalk`). EG-ZK takes a node as reached within `EG_NODE_REACH_M` (0.7 m) even when a
+  blow stopped the lord short of it. That lord's region became the floor above while its feet stayed on the stair. Its
+  feet are now set on that region's floor (`egWalkFeet`), as `walkGraph` sets a legion walker's. Without it, the
+  Kynmarcher stopped 0.4 m short of its stair's top at 3.71 m and then walked the floor above at 3.84 m and 3.96 m,
+  never at 4.
+- **THE OBJECTS' WORDS THROUGH THE SEAM.** The seven `egObSay` words and a lord's wake, phase and fall (`egSaid`) sit in
+  the lords' own law, which the seam plugs. The seam's `stateOf` is `egFightState`, so the whole fight the director says
+  (`egFightStateOf`) carries every row at its instant, its feet, its state and the zones still to burn. The joiner's
+  test runs Grath's Court through the seam unchanged.
+- **EG-ZK'S FRAMES, BYTE FOR BYTE, DO NOT HOLD.** EG-ZK hashed every frame the director says, with
+  test/egfull_relay.test.js's auto-player (the thirteen lords each to its fall, and the six-circle breach), and found
+  all fourteen unchanged against b4af2365. Eight lords whose grounds are one region each said the same frames as before.
+  Over this slice that cannot hold: every body's row is seventeen and every walk nine, and the whole fight's walks are
+  carried to its instant. What holds was measured at the merge with the same auto-player, on EG-ZK's head and on the
+  merged tree. With the heights taken off (a row's `y`, `ty`, `st` and `sa`, a walk's `y` and `ty`, the whole fight's
+  `zs` and its walks' `at`), all fourteen runs say the same frames, as many, word for word. Every lord's walk, blow,
+  place and fall is EG-ZK's own. test/egz_lords.test.js (each seam member the lords' own law, frame for frame) is
+  unchanged and green.
+- **EG-ZB'S DEPARTURES.** EG-ZK closed its departure 2 (the lords walking as before), this slice its 3 and EG-ZI its 8's
+  Lifeline. All three sentences are deleted, and the departures left are renumbered 1 to 9. The records name each by its
+  number when it closed.
+- EG-ZC's shaft sentence lost its camera clause to EG-ZN (the camera's bias over a shaft's drop, built) and its
+  telegraphs to this slice. "A shaft keeps no alcoves or vignettes." stands.
+- EG-ZI's `toll` word rides beside the fight's words in `net/wire.js`, and its toll, late wake and Lifeline sit in
+  `net/egBrain.js` beside this slice's `specOf` and spots. Nothing of either moved the other.
+- `ACCOUNT_VERSION` is `acct122`, renumbered by the lead's merge of main's #840-#851. This slice touches no account law.
+
 **Departures, said plainly.**
 1. The heights ride the words the fight already says, the body's row and the walk, with no frame of their own. A row grows
    by its four fields: 8 bytes at a floor's 0, at most 33 at the wire's bounds. A walk grows by its two. Over 60 s of a
@@ -5769,10 +6798,11 @@ checked against the director's own words, the screen's batches, targets and soun
 seen in the live game.
 
 **Pins.**
-- `test/egz_state.test.js` (6): the feet's law, the director, the screen, the joiner, a reload in the real Room, the
-  shaft's telegraphs.
-- `tools/mutants/egz_state.json` (94, every one dead). One survived the first run - the pinned Casters raised at
-  a spot's height again - and was killed by finding a Rampart whose pillars given to a company of two share a bastion's plan.
+- `test/egz_state.test.js` (7): the feet's law, the director, the lords on the seam (added at the merge), the screen, the
+  joiner, a reload in the real Room, the shaft's telegraphs.
+- `tools/mutants/egz_state.json` (96, every one dead; two added at the merge: a lord's straight walk at the hall's 0, and
+  its feet left on the stair at its top). One survived the first run - the pinned Casters raised at a spot's height
+  again - and was killed by finding a Rampart whose pillars given to a company of two share a bastion's plan.
 - Re-aimed by content (mutantdrift): `egz_frag.json`'s EGZ-the-breach-s-law-forgotten (onto `specOf`'s own line) and
   `egz_legion.json`'s EGZ-ground-walkers-straight (onto `walkGraph`'s). Judged again, every record of the lists aimed at
   the fight's modules this slice touched (`net/egBodies.js`, `egLegion.js`, `egLords.js`, `egWalkGraph.js`, `egLink.js`,
@@ -5782,6 +6812,11 @@ seen in the live game.
   `egspan.json` (2) - 132, every one dead.
 - PIN MOVED: `test/egplay_relay.test.js` (a body's row of seventeen, cut short at sixteen); `test/egz_stair.test.js` (its
   two hand-built rows of seventeen).
+- At the merge: `egz_lords.json`'s EGZK-a-reached-node-forgotten re-aimed by content onto `lordWalk`'s line, which now
+  sets the feet too. Judged again on the merged tree: `egz_state.json` (96), `eg5.json` (40), `egz_lords.json` (35: 33
+  dead, its 2 equivalent as recorded) and `egz_rules.json` (78) - every one as recorded.
 - `RELAY_VERSION` `world198`, unshipped, rehashed in place: `net/egWalkGraph.js` now walks before `net/egLegion.js` in the
-  relay's graph, since `net/egBodies.js` imports it. `ACCOUNT_VERSION` stays `acct121`, and there is no migration.
+  relay's graph, since `net/egBodies.js` imports it. Rehashed in place again at the merge, over EG-ZI's `toll` and EG5 +
+  EG-ZK's seam. `ACCOUNT_VERSION` is untouched (`acct121` when this slice was cut, `acct122` since the lead's merge of
+  main), and there is no migration.
 - No new src module. The Port-Ledger's ELITE-GATES row is the lead's.

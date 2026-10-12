@@ -146,7 +146,7 @@
   {
     "name": "LPT1-A1-wash-kept",
     "file": "src/render/renderer.js",
-    "old": "      if (this._bbTintOn) { gl.uniform3f(this.bbUBatchTint, 1, 1, 1); this._bbTintOn = false; }\n",
+    "old": "      if (this._bbTintOn) { gl.uniform3f(this.bbUBatchTint, 1, 1, 1); gl.uniform1f(this.bbUBatchDye, 0); this._bbTintOn = false; }\n",
     "new": "",
     "tests": [
       "test/lpt1_lowpolytrees.test.js"

@@ -2,7 +2,7 @@
   {
     "name": "HOME-VOTE-zero-shunned",
     "file": "src/net/homeVoteLaw.js",
-    "old": "export const homeShunned = (score) => homeScoreOf(score) < 0;",
+    "old": "export const homeShunned = (score) => homeScoreOf(score) <= HOME_SHUN_AT;",
     "new": "export const homeShunned = (score) => homeScoreOf(score) <= 0;",
     "tests": [
       "test/homevote.test.js"
@@ -929,5 +929,25 @@
       "test/homevote.test.js"
     ],
     "note": "AUDIT HOME-VOTE II D1: a list folded but never drawn kept the Info box from asking."
+  },
+  {
+    "name": "HOME-SHUN-one-vote-hides",
+    "file": "src/net/homeVoteLaw.js",
+    "old": "export const HOME_SHUN_AT = -5;",
+    "new": "export const HOME_SHUN_AT = -1;",
+    "tests": [
+      "test/homevote.test.js"
+    ],
+    "note": "HOME-SHUN: one account's vote down hides a new house again"
+  },
+  {
+    "name": "HOME-SHUN-the-bar-itself-shown",
+    "file": "src/net/homeVoteLaw.js",
+    "old": "export const homeShunned = (score) => homeScoreOf(score) <= HOME_SHUN_AT;",
+    "new": "export const homeShunned = (score) => homeScoreOf(score) < HOME_SHUN_AT;",
+    "tests": [
+      "test/homevote.test.js"
+    ],
+    "note": "HOME-SHUN: a home at five down still shown"
   }
 ]

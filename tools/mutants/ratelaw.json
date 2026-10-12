@@ -25,8 +25,8 @@
   {
     "name": "RATE-leg-kind-unread",
     "file": "src/systems/travelOptions.js",
-    "old": "      return !!leg && ROAD_LEG_KINDS.includes(leg.kind);",
-    "new": "      return !!leg;",
+    "old": "      return !!leg && (ROAD_LEG_KINDS.includes(leg.kind) || bridgedRoadLeg(r.legs, at));   // ROAD-BRIDGE",
+    "new": "      return !!leg;   // ROAD-BRIDGE",
     "tests": [
       "test/travel_speed_preference.test.js"
     ]

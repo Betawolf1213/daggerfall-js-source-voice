@@ -43,6 +43,12 @@ and `auditparty8.json` (23, one record re-aimed by content), all dead.
 | C4 | nit | The host's wiring was pinned by text alone; a load's hold taken mid-journey (to be let go the same step - a hold and a release said) survived. | The host's own lines executed (C1, C2, C3); the mutant recorded, dead. |
 | C5 = T6 | nit | The record's numbers: "eight to ten holds ... six or seven falls" is the free climb's 8 and 7; the classic climb's 59 to 62 rolls are chance's for the rest (6 to 16 holds, 4 to 8 falls); "no start of any kind" (a move under way finishes); the furniture 1.625 m over the floor, not 1.58; the stair 1.975 m short, not 1.9; and the standalone `scenes/dungeon.js` builds a motor too (it writes no time scale). | Said as measured. |
 
+**HOLD-SOLO REVERTED 2026-10-12 (HOLD-SHARED).** H1-H5 above, and H2's and H6's stands below, went with it: the Hold keys its shared room again, so
+there is no solo dungeon to choose (H1), to remember (H2), to refuse a staff `/tp` into (H3), to hear the clock for (H4)
+or to say alone (H5). Their 13 records left `tools/mutants/fb1007b.json` (46 now); its START-CELL and PH1 records
+re-aimed at `test/holdshared.test.js`, and `auditparty8.json`'s AP-hud-place-by-words back on withMe's last line.
+`01-Overview/Field-Bugs-2026-10-07b.md` HOLD-SOLO.
+
 ## Stood, and why
 
 - **F3 - a tower home bought before the fix (Mac's call).** The towers are House6, which the home market sells. On the

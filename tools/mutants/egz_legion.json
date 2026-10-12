@@ -416,8 +416,8 @@
   {
     "name": "EGZ-a-fallen-segment-holding",
     "file": "src/net/egFair.js",
-    "old": "&& on(b.y) && !bandFallen(spec, b, z, hw, tS * 1000)) return EG_HOLD.island;",
-    "new": "&& on(b.y)) return EG_HOLD.island;",
+    "old": "&& on(b.y) && !bandFallen(spec, b, z, hw, tS * 1000)) return `b${i}`; }",
+    "new": "&& on(b.y)) return `b${i}`; }",
     "tests": [
       "test/egz_legion.test.js"
     ]

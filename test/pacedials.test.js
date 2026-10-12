@@ -49,7 +49,7 @@ test('PACE-DIALS: x100 is chosen on a road alone - refused off it - and the jour
   assert.equal(setTravelPace('nonsense', 10), null);
 });
 
-test('PACE-DIALS: THE ROAD RULE - leaving a road takes every dial at x100 to x60 at once, and it never climbs back by itself; the panels are told either way', () => {
+test('PACE-DIALS: THE ROAD RULE - leaving a road runs every dial at x100 at x60 at once (a cap, PACE-KEEP: the choice is kept and the next road gives it back); the panels are told either way', () => {
   fresh();
   const heard = [];
   onTravelPace((p, why) => heard.push([why, p.speed, p.foe]));
@@ -58,16 +58,18 @@ test('PACE-DIALS: THE ROAD RULE - leaving a road takes every dial at x100 to x60
   setTravelPace('speed', 100); setTravelPace('foe', 100);
   assert.deepEqual({ ...travelPace() }, { speed: 100, foe: 100 });
   setPaceGround(false);
-  assert.deepEqual({ ...travelPace() }, { speed: 60, foe: 60 }, 'off the road: x60 at once, both dials');
-  assert.deepEqual(heard.pop(), ['ground', 60, 60]);
+  assert.deepEqual([paceNow('speed'), paceNow('foe')], [60, 60], 'off the road: x60 at once, both dials');
+  assert.equal(paceRateOn(false), 60, 'the journey off the road runs x60');
+  assert.deepEqual({ ...travelPace() }, { speed: 100, foe: 100 }, 'PACE-KEEP: the choice is never rewritten');
+  assert.deepEqual(heard.pop(), ['ground', 100, 100], 'the panels are told (they paint paceNow, the rate in force)');
   setPaceGround(true);
-  assert.deepEqual({ ...travelPace() }, { speed: 60, foe: 60 }, 'the next road does not lift it back - x100 is chosen again there');
-  assert.deepEqual(heard.at(-1), ['ground', 60, 60], 'the + is told it may rise again');
+  assert.deepEqual([paceNow('speed'), paceNow('foe')], [100, 100], 'PACE-KEEP: the next road gives the x100 back - a moment of open ground between two road pixels cost a journey its x100 for the rest of the trip');
+  assert.deepEqual(heard.at(-1), ['ground', 100, 100], 'the + is told it may rise again');
   const told = heard.length;
   setPaceGround(true);
   assert.equal(heard.length, told, 'the same ground again says nothing');
   setTravelPace('speed', 40); setPaceGround(false);
-  assert.equal(travelPace().speed, 40, 'a dial under x60 is left where it is');
+  assert.equal(paceNow('speed'), 40, 'a dial under x60 is left where it is');
 });
 
 test('PACE-DIALS: Near enemies - the foes\' floor is the player\'s dial (5..60, x100 on a road), ENEMY-PACE\'s x5 its default, never over the ask', () => {

@@ -212,7 +212,7 @@ import { ARENA_PUPPET_OWNER } from '../net/arenaLaw.js';   // ARENA4: the relay'
 import { calculateCastCost } from '../systems/spellcost.js';
 import { snapshotPlayer, restorePlayer, composeSessionState, restoreSessionState , copyEffectEntry } from '../systems/save.js';   // B4: the ONE quest+talk composer
 import { saveSlot, loadSlot, quickLoadSlot, QUICK_SAVE_NAME, requestScreenshot, slotLoaded } from '../systems/saveSlots.js';   // SAV4: the quicksave is a SLOT named QuickSave; SS1: the shot arms here, the HOST loop delivers it
-import { bindQuestFoeHost, placeFoeEnv, entityOccupancy } from './questFoeHost.js';
+import { bindQuestFoeHost, placeFoeEnv, entityOccupancy, partyOnlyQuestShare } from './questFoeHost.js';   // QUEST-OWNER: a quest's foe underground is its owner's party's alone
 import { puppetLead } from './puppetLead.js';   // DESYNC-ZERO: a moving puppet leads its last word
 import { validQuestTags, questMarkerYields, QUEST_PUPPETS_MAX, validLooseSeqs, companionNames } from './exteriorFoes.js';   // QUEST-PARTY phase 3c: the party's quest words and the marker's law, one home   // B1: quest foes ride this pool   // RE1: the placement ring's env over this host's collider
 import { placeFoeFreely, PLACE_FOE_DEFAULTS, sceneMarkerMover } from '../systems/quest/sceneMount.js';   // RE1: FoeSpawner.PlaceFoeFreely, the one home; AUDIT III E1: its numbers, a joiner's spot held to them; TOTEM-CAGE: GetDaggerfallMarker's motion
@@ -5362,7 +5362,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // named elsewhere, its owner's leave, a quiet owner, a room change)
   const _ownKept = new Map();
   const ownPupKey = (from, i) => `${from}:${i}`;
-  const ownShare = () => opts.questShare?.() ?? null;
+  const ownShare = () => partyOnlyQuestShare(opts.questShare?.() ?? null);   // QUEST-OWNER (questFoeHost.js): seen, struck and hunted by its owner's party alone underground
   /** QUEST-PARTY phase 3c: the party's word on MY quest foe past the layout - { q, s } while its quest is shared. */
   const ownQuestTag = (f) => (!f || f._ownFrom != null || isRoomFoe(f) ? null : f.questBehaviour ? (ownShare()?.tagOf?.(f) ?? null) : (f._keptTag ?? null));   // AUDIT (pre-merge) Q3: a taken foe my copy has no quest for keeps its partner's word
   /** SUMMON-SYNC: MY loose stand past the run (spawnLooseFoe's mark) - no quest's, no room's, nobody else's. */
@@ -10354,6 +10354,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     egSpanSafe(p) { egSpan?.setSafe(p); },
     egRecircle(r) { return egRecircle(r); },   // EG-H3 (EG10): THE SWAP - a new circle's spans in this same level
     egSpanCull(proj, view) { return egSpan?.cull(proj, view) ?? 0; },   // EG-G2 (Elite-Gates.md section 11.9): the spans' pieces culled against this frame's frustum, before the draws
+    egSpanDraw(proj, view, fog) { return !!egSpan?.drawPass(proj, view, fog); },   // EG-ZL (Elite-Gates.md sections 10.3 and 10.8): the spans' ghosts and a peer's ghost slab, in the breach client's pass (scenes/egClient.js drawPass)
+    egSpanPeer(x, y, z) { return !!egSpan?.peerOn(x, y, z); },   // EG-ZL (section 10.8): a peer's drawn feet on a Crumble I have seen fall - its ghost slab (scenes/egClient.js rideDraw)
     /** AUDIT SD II (L2 F10): the Shattered Hour's hall and arena posed BEFORE the world pass draws them (the mode machine's
      *  dungeon arm, with no window up, as the Steps are ridden before the motor): the Orrery's hall stood, its word heard,
      *  its hands turned (SD6c); the Brass Remnant stood, my `in`, its bodies placed (SD8c). Posed in drawFoes, after the

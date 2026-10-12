@@ -27,7 +27,7 @@
     "old": "  if (item?.templateIndex === TRANSPORT_HORSE || item?.templateIndex === TRANSPORT_SMALL_CART) return 'transport';", "new": "",
     "tests": ["test/wagons4_upkeep.test.js"] },
   { "name": "WAGONS4-the-mend-row-on-the-stable", "file": "src/systems/merchantYards.js",
-    "old": "(validYardKind(kind) === 'transport' ? [...YARD_ROWS, YARD_MEND_ROW] : [...YARD_ROWS])", "new": "[...YARD_ROWS, YARD_MEND_ROW]",
+    "old": "validYardKind(kind) === 'transport' ? [...YARD_ROWS, YARD_MEND_ROW] : [...YARD_ROWS]);", "new": "[...YARD_ROWS, YARD_MEND_ROW]);",
     "tests": ["test/wagons4_upkeep.test.js"] },
   { "name": "WAGONS4-the-kit-not-spent", "file": "src/systems/upkeepRuntime.js",
     "old": "      if ((kit.stackCount ?? 1) > 1) kit.stackCount--; else list.splice(list.indexOf(kit), 1);\n", "new": "\n",

@@ -306,15 +306,6 @@
     ]
   },
   {
-    "name": "EGZ-the-underside-never-falls",
-    "file": "src/render/egStairPass.js",
-    "old": "return mix(${f4(EG_STAIR_LOOK.edge0)}, ${f4(EG_STAIR_LOOK.edge1)}, fallen(t))",
-    "new": "return mix(${f4(EG_STAIR_LOOK.edge0)}, ${f4(EG_STAIR_LOOK.edge1)}, 0.0)",
-    "tests": [
-      "test/egz_stair.test.js"
-    ]
-  },
-  {
     "name": "EGZ-the-cut-moves",
     "file": "src/render/egStairPass.js",
     "old": "(mode < 1.5 ? t * 0.8 : 0.0)",
@@ -346,15 +337,6 @@
     "file": "src/render/egStairPass.js",
     "old": "c *= ${f4(EG_STAIR_LOOK.veilDim)};",
     "new": "",
-    "tests": [
-      "test/egz_stair.test.js"
-    ]
-  },
-  {
-    "name": "EGZ-the-underside-never-black",
-    "file": "src/render/egStairPass.js",
-    "old": "if (e > edge) c = vec3(0.012, 0.010, 0.012)",
-    "new": "if (e > edge + 9.0) c = vec3(0.012, 0.010, 0.012)",
     "tests": [
       "test/egz_stair.test.js"
     ]
@@ -767,8 +749,8 @@
   {
     "name": "EGZ-the-way-back-under-the-hour",
     "file": "src/scenes/egClient.js",
-    "old": "geo: R.geo, site: site() }), step.look, step.opts);",
-    "new": "geo: R.geo, site: site() }), 'hourIn');",
+    "old": "      }, step.look, step.opts);\n      if (!went) {\n        returning = null; answeredFor = '';",
+    "new": "      }, 'hourIn');\n      if (!went) {\n        returning = null; answeredFor = '';",
     "tests": [
       "test/egz_return.test.js"
     ]

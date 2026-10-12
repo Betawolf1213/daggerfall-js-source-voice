@@ -10,6 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import './modsOff.js';
 import { PARTY_ME, noteFighter, foeFighters, partyFoeLoses, partyFoeHeals, partyFoeHits, _resetPartyScaleForTests } from '../src/systems/partyScale.js';
+import { partyOnlyQuestShare } from '../src/scenes/questFoeHost.js';   // QUEST-OWNER: the dungeon's quest seam, narrowed to the party (ownShare)
 
 const D = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, ' ').replace(/\/\/[^\n]*/g, ' ');
@@ -28,7 +29,7 @@ function helpers() {
 const tagOf = (f) => (f.questBehaviour && !f.questBehaviour.private ? { q: 'M0B00Y16', s: '_vampire_' } : null);
 function side(authority, foes, layout = 1) {
   const h = helpers();
-  const scope = { foes, _layoutFoes: layout, _authority: authority, opts: { questShare: () => ({ tagOf }) }, playerEntity: { maxHealth: 100 }, partyFoeLoses, partyFoeHits, partyFoeHeals, foeFighters, performance };
+  const scope = { foes, _layoutFoes: layout, _authority: authority, partyOnlyQuestShare, opts: { questShare: () => ({ tagOf }) }, playerEntity: { maxHealth: 100 }, partyFoeLoses, partyFoeHits, partyFoeHeals, foeFighters, performance };
   return mount(h.src, scope, `return { _sharedFoe, _runsFoe, fightN, _weighHit, healFoe, door: (foe, healthDamage, bypassShield = false, _whole = false) => { ${h.door} } };`);
 }
 const mk = (over = {}) => ({ entity: { health: 100, maxHealth: 200 }, ...over });

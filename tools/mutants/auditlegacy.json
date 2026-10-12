@@ -42,7 +42,9 @@
     "new": "    if (!p || !deps.entity?.chargenDone || !isAlive(p) || p.retired != null) return;",
     "tests": [
       "test/auditlegacy.test.js"
-    ]
+    ],
+    "equivalent": true,
+    "why": "FB1012d HEIR-CLONE (bible/01-Overview/Field-Bugs-2026-10-12d.md): writeCurrent now writes only the person who IS the character in the world (playedHere), so with the past played back the line's current is the past itself (dead or retired - the same line's own guards) or another member, whose character it is not: `past` here is belt-and-braces, kept because it says why before the character is asked. The pin's law (the dead never written into the heir) still holds, and test/fb1012d_familytree.test.js kills the guard that now carries it."
   },
   {
     "name": "AUDIT-LEGACY-A3-a-second-house",

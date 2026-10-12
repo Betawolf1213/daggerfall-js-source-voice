@@ -678,5 +678,59 @@
     "tests": [
       "test/wagons2_visit.test.js"
     ]
+  },
+  {
+    "name": "WAGONS2-BASE-the-list-dropped",
+    "file": "src/systems/caravanVisit.js",
+    "old": "  return { v: CARAVAN_DECOR_V, p, h };",
+    "new": "  return { v: CARAVAN_DECOR_V, p, h: [] };",
+    "tests": [
+      "test/wagons2_visit.test.js"
+    ]
+  },
+  {
+    "name": "WAGONS2-BASE-a-bad-key-published",
+    "file": "src/systems/caravanVisit.js",
+    "old": "filter((k) => typeof k === 'string' && DECOR_BASE_KEY_RE.test(k))",
+    "new": "filter((k) => typeof k === 'string')",
+    "tests": [
+      "test/wagons2_visit.test.js"
+    ]
+  },
+  {
+    "name": "WAGONS2-BASE-uncapped",
+    "file": "src/systems/caravanVisit.js",
+    "old": "DECOR_BASE_KEY_RE.test(k)))].slice(0, DECOR_HIDDEN_CAP);",
+    "new": "DECOR_BASE_KEY_RE.test(k)))];",
+    "tests": [
+      "test/wagons2_visit.test.js"
+    ]
+  },
+  {
+    "name": "WAGONS2-BASE-an-older-document-misread",
+    "file": "src/systems/caravanVisit.js",
+    "old": "Array.isArray(doc) || doc.v !== CARAVAN_DECOR_V) return [];",
+    "new": "Array.isArray(doc)) return [];",
+    "tests": [
+      "test/wagons2_visit.test.js"
+    ]
+  },
+  {
+    "name": "WAGONS2-BASE-the-guest-keeps-the-lantern",
+    "file": "src/scenes/worldModes.js",
+    "old": "      interiorCtx.base?.setHidden(readCaravanHidden(doc));",
+    "new": "",
+    "tests": [
+      "test/wagons2_visit.test.js"
+    ]
+  },
+  {
+    "name": "WAGONS2-BASE-the-owner-says-nothing-out",
+    "file": "src/scenes/worldModes.js",
+    "old": "interiorCabin.turn).decor, interiorCtx.base?.hidden() ?? []);",
+    "new": "interiorCabin.turn).decor);",
+    "tests": [
+      "test/wagons2_visit.test.js"
+    ]
   }
 ]

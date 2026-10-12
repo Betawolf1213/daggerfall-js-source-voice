@@ -53,20 +53,29 @@ export function layRope(rope, a, b) {
  * ROPE.maxStep, at most ROPE.maxSteps of them - a longer frame's rest is dropped, not caught up), `scale` the drawn
  * scale (the Overworld's grown rig: its gravity and its leap grow with it, so a grown rope hangs as the small one does).
  */
+/** PERF-ROPE (2026-10-12, an allocation profile of a player's live client walking the overworld's coast: the moving
+ *  teams' harnesses were some 7% of what the page allocated, ~1 ms a frame): A ROPE STEPS IN PLACE - its ends kept in
+ *  its own arrays, each sub-step's ends in one pair for every rope, and a length as a root of its squares (Math.hypot
+ *  of three boxed its every answer, ten iterations of eight links a sub-step). The rope is the one it was, to within
+ *  a float's rounding (test/perfrope.test.js holds it to the old law). */
+const _ea = [0, 0, 0], _eb = [0, 0, 0];
+const len3 = (x, y, z) => Math.sqrt(x * x + y * y + z * z);
+const keep3 = (to, v) => { to[0] = v[0]; to[1] = v[1]; to[2] = v[2]; };
+
 export function stepRope(rope, a, b, dt, scale = 1) {
   const s = scale > 0 ? scale : 1;
-  const leapt = !rope.laid || Math.hypot(a[0] - rope.a[0], a[1] - rope.a[1], a[2] - rope.a[2]) > ROPE.leap * s || Math.hypot(b[0] - rope.b[0], b[1] - rope.b[1], b[2] - rope.b[2]) > ROPE.leap * s;
-  if (leapt || !(dt > 0)) { if (leapt) layRope(rope, a, b); else { pinEnds(rope, a, b); rope.a = [...a]; rope.b = [...b]; } return rope; }
+  const leapt = !rope.laid || len3(a[0] - rope.a[0], a[1] - rope.a[1], a[2] - rope.a[2]) > ROPE.leap * s || len3(b[0] - rope.b[0], b[1] - rope.b[1], b[2] - rope.b[2]) > ROPE.leap * s;
+  if (leapt || !(dt > 0)) { if (leapt) layRope(rope, a, b); else { pinEnds(rope, a, b); keep3(rope.a, a); keep3(rope.b, b); } return rope; }
   const steps = Math.min(ROPE.maxSteps, Math.max(1, Math.ceil(dt / ROPE.maxStep)));
   const h = Math.min(dt, ROPE.maxStep * steps) / steps;
   const { n, p, q } = rope;
-  const span = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
+  const span = len3(b[0] - a[0], b[1] - a[1], b[2] - a[2]);
   const link = (span * (ROPE[rope.kind]?.slack ?? ROPE.trace.slack)) / (n - 1);
   const a0 = rope.a, b0 = rope.b;
   for (let st = 1; st <= steps; st++) {
     const t = st / steps;
-    const ea = [a0[0] + (a[0] - a0[0]) * t, a0[1] + (a[1] - a0[1]) * t, a0[2] + (a[2] - a0[2]) * t];
-    const eb = [b0[0] + (b[0] - b0[0]) * t, b0[1] + (b[1] - b0[1]) * t, b0[2] + (b[2] - b0[2]) * t];
+    const ea = _ea, eb = _eb;
+    for (let k = 0; k < 3; k++) { ea[k] = a0[k] + (a[k] - a0[k]) * t; eb[k] = b0[k] + (b[k] - b0[k]) * t; }
     for (let i = 1; i < n - 1; i++) {
       for (let k = 0; k < 3; k++) {
         const o = i * 3 + k, v = (p[o] - q[o]) * ROPE.damping;
@@ -79,7 +88,7 @@ export function stepRope(rope, a, b, dt, scale = 1) {
       for (let i = 0; i < n - 1; i++) {
         const o = i * 3, u = o + 3;
         const dx = p[u] - p[o], dy = p[u + 1] - p[o + 1], dz = p[u + 2] - p[o + 2];
-        const len = Math.hypot(dx, dy, dz);
+        const len = len3(dx, dy, dz);
         if (!(len > 1e-9)) continue;
         const wa = i === 0 ? 0 : 1, wb = i + 1 === n - 1 ? 0 : 1;
         if (!(wa + wb)) continue;
@@ -89,7 +98,7 @@ export function stepRope(rope, a, b, dt, scale = 1) {
       }
     }
   }
-  rope.a = [a[0], a[1], a[2]]; rope.b = [b[0], b[1], b[2]];
+  keep3(rope.a, a); keep3(rope.b, b);
   return rope;
 }
 function pinEnds(rope, a, b) {

@@ -100,5 +100,7 @@
 
   { "name": "EGZJ-slag-on-the-floors", "file": "src/world/egTelegraph.js", "old": "EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? hz.y ?? 0 : NaN", "new": "EG_HAZARDS[hz?.kind]?.aim === 'trav' ? hz.y ?? 0 : NaN", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-traversal-on-the-floors", "file": "src/world/egTelegraph.js", "old": "EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? hz.y ?? 0 : NaN", "new": "hz?.kind === 'slag' ? hz.y ?? 0 : NaN", "tests": ["test/egz_state.test.js"] },
-  { "name": "EGZJ-surface-at-nought", "file": "src/world/egTelegraph.js", "old": "EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? hz.y ?? 0 : NaN", "new": "EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? 0 : NaN", "tests": ["test/egz_state.test.js"] }
+  { "name": "EGZJ-surface-at-nought", "file": "src/world/egTelegraph.js", "old": "EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? hz.y ?? 0 : NaN", "new": "EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? 0 : NaN", "tests": ["test/egz_state.test.js"] },
+  { "name": "EGZJ-lord-straight-walk-at-nought", "file": "src/net/egLords.js", "old": "if (from === to) { egWalk(F, L, gx, gz, stop, speed, now, spec, L.r); return; }", "new": "if (from === to) { egWalk(F, L, gx, gz, stop, speed, now, spec, L.r, false, 0); return; }", "tests": ["test/egz_state.test.js"] },
+  { "name": "EGZJ-lord-top-reached-feet-left-on-the-stair", "file": "src/net/egLords.js", "old": "{ L.fr = wn.rg; L.y = egWalkFeet(view, L)?.[0] ?? L.y; }", "new": "{ L.fr = wn.rg; }", "tests": ["test/egz_state.test.js"] }
 ]

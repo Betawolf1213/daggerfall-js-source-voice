@@ -298,6 +298,47 @@ test('EG-ZJ EVERY BODY ON ITS FEET, BY THE DIRECTOR (section 23; EG-ZB\'s depart
   for (const m of [...walksOf(D.frames), ...walksOf(S.frames)]) for (const v of m.slice(7)) assert.ok(cmExact(v), `whole centimetres (${v})`);
 });
 
+test('EG-ZJ THE LORDS\' WALKS ON THE SEAM CARRY THEIR FEET (EG5 + EG-ZK\'s lordWalk over net/egLegion.js walkGraph, merged; sections 11.7 and 23): Grath woken on his islands laid above the hall\'s height hunts the company over his bridges to the island he is not on, and every walk and place the frames say for him - his straight walks on an island, his walks along the graph, his Leap\'s landing - is at the islands\' height, never the hall\'s 0; the Proving Walk\'s Kynmarcher walks to its stair\'s foot at its floor\'s height, climbs with its walk ending on the floor 4 m up - its top reached though a blow stopped it short on the stair, its feet that floor\'s as a legion walker\'s are, and it walks there at that height - its row in the whole fight, as the seam says it, on that floor (mutants: a lord\'s straight walk at the hall\'s 0; its top reached, its feet left on the stair)', () => {
+  // Grath on his islands, above the hall's 0
+  const { seed: gs, s: gc } = findSpec((q) => q.kind === 'court' && q.lord === 'hound' && q.fl.every((f) => f.y > 1));
+  const gy = gc.fl[0].y;
+  assert.ok(gc.fl.every((f) => f.y === gy), 'his islands and bridges at one height');
+  const G = breachAt(gs, gc.h), L = G.B.F.bodies.find((b) => b.role === EG_ROLE.lord);
+  assert.equal(L.key, 'hound');
+  for (const sub of ['acct-0', 'acct-1']) G.at(sub, gc.ring.x, gc.ring.z, gy);
+  for (let k = 0; k < 80 && !L.up2; k++) G.step();
+  assert.ok(L.up2, 'he woke');
+  const isleOf = (x, z) => gc.spots.isle.findIndex((s) => Math.hypot(x - s.x, z - s.z) <= 11);
+  const far = gc.spots.isle.filter((s, j) => j !== isleOf(L.x, L.z)).sort((a, b) => Math.hypot(b.x - L.x, b.z - L.z) - Math.hypot(a.x - L.x, a.z - L.z))[0];
+  G.at('acct-0', far.x, far.z, gy); G.at('acct-1', far.x + 1, far.z, gy);
+  const g0 = G.frames.length, from = isleOf(L.x, L.z);
+  for (let k = 0; k < 240; k++) G.step();
+  const his = walksOf(G.frames.slice(g0)).filter((m) => m[0] === L.i);
+  assert.ok(his.some((m) => m[5] > 0) && isleOf(L.x, L.z) !== from, `he came over to their island (${L.x}, ${L.z})`);
+  const bridgeEnd = (x, z) => gc.spots.bridge.some((e) => Math.hypot(x - e.x, z - e.z) < 2 || Math.hypot(x - e.bx, z - e.bz) < 2);
+  assert.ok(his.some((m) => m[5] > 0 && bridgeEnd(m[3], m[4])), 'along a bridge, by its ends');
+  for (const m of walksOf(G.frames).filter((w) => w[0] === L.i)) assert.ok(m[7] === gy && m[8] === gy, `his walk at his islands' height (${m[7]} to ${m[8]})`);
+  for (const t of rowsOf(G.frames).filter((r) => r[0] === L.i)) assert.ok(t[13] === gy && t[14] === gy, `his row at it (${t[13]})`);
+  assert.equal(egFightStateOf(G.B, G.now()).b.find((t) => t[0] === L.i)[13], gy, 'the whole fight says him there');
+  // a champion up a chamber's stair
+  const S = breachAt(31337, 43, { n: 1 }), K = S.B.F.bodies.find((b) => b.role === EG_ROLE.lord), q = S.spec.ramps[0], up = S.spec.fl.find((f) => f.t === 'd' && f.y > 3);
+  assert.ok(K.key === 'kynmarcher' && q && up, 'the champion, its stair and the floor above');
+  const low = egFeetAt(egFightView(S.spec), K.x, K.z);
+  S.at('acct-0', up.x + 3.5, up.z, up.y);
+  const s0 = S.frames.length;
+  for (let k = 0; k < 60; k++) S.step();
+  const kw = walksOf(S.frames.slice(s0)).filter((m) => m[0] === K.i && m[5] > 0);
+  const foot = kw.find((m) => m[3] === q.ax && m[4] === q.az), climb = kw.find((m) => m[3] === q.bx && m[4] === q.bz);
+  assert.ok(foot && foot[7] === low && foot[8] === low, `to the stair's foot on its floor (${foot?.slice(7)} at ${low})`);
+  const climbs = kw.filter((m) => m[3] === q.bx && m[4] === q.bz);
+  assert.ok(climb && climbs.every((m, j) => m[8] === up.y && m[7] >= (j ? climbs[j - 1][7] : low) && m[7] < up.y), `up the stair from its feet on it, rising, its walk ending on the floor above (${climbs.map((m) => m.slice(7))} for ${up.y})`);
+  // its top reached (within a node's reach, though a blow stopped it short on the stair), its feet are that floor's, as a
+  // legion walker's are: every walk on the floor above at its height from its first step
+  const above = kw.filter((m) => !(m[3] === q.bx && m[4] === q.bz) && Math.hypot(m[3] - up.x, m[4] - up.z) <= up.r);
+  assert.ok(above.length > 0 && above.every((m) => m[7] === up.y && m[8] === up.y), `on the floor above, at its height (${above.map((m) => m.slice(7))})`);
+  assert.equal(egFightStateOf(S.B, S.now()).b.find((t) => t[0] === K.i)[13], up.y, 'the whole fight says it there');
+});
+
 /** A fight on the screen over a link's state (`state()`) at `clock.t` - the renderer's batches and the texture door stood in, its 3D sounds
  *  heard (`heard`). */
 function screen(state, clock, heard = []) {

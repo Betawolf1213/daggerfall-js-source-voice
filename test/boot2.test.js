@@ -91,5 +91,5 @@ test('BOOT2: the entry\'s static reach touches neither hub and stays under the c
     'RW1: the rooms\' art a leaf, the windows\' block reading only the path it already stands on');
   assert.deepEqual(importsOf('src/render/skinPalette.js'), [], 'MWNPC1: the palette\'s shape a leaf');
   assert.deepEqual(importsOf('src/render/horizonHaze.js'), [], 'FAR-SEA1: the horizon\'s haze a leaf');
-  assert.ok(reach.size <= 75, `the entry statically reaches ${reach.size} files - BOOT2 measured 43, PERF-URL 61, ECOTONE1 66, WINDFALL1 69, RW1 73, MWNPC1 74, FAR-SEA1 75, and holds the ceiling at 75`);
+  assert.ok(reach.size <= 76, `the entry statically reaches ${reach.size} files - BOOT2 measured 43, PERF-URL 61, ECOTONE1 66, WINDFALL1 69, RW1 73, MWNPC1 74, FAR-SEA1 75, LOOT-MARKS 76 (ui/lootTierMarks.js, a leaf of no imports: the enhanced sheet's quick-loot tier marks), and holds the ceiling at 76`);
 });

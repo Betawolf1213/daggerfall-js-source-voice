@@ -22,7 +22,7 @@
 import { wildHere } from './wildZone.js';   // PVPDUNGEONS (the owner: "Only 1 revenant allowed to summon in the zone")
 /** PVPDUNGEONS: how many sworn revenants may stand at the player's side in the open zone. */
 export const WILD_REVENANTS_MAX = 1;
-import { swornRevenants, revenantCompanionUpdate, revenantRecord, REVENANT_HEALTH_PER_RANK, REVENANT_DAMAGE_PER_RANK, setSwornLeftListener, revenantBetrays } from './revenant.js';
+import { swornRevenants, revenantCompanionUpdate, revenantRecord, REVENANT_HEALTH_PER_RANK, REVENANT_DAMAGE_PER_RANK, setSwornLeftListener, revenantBetrays, revenantPerson } from './revenant.js';   // FB1012d ALLY-RACE: its person
 import { registerCompanionCount, companionsWithYou, COMPANION_SLOTS } from './companionSlots.js';
 import { addItem, addGoldPieces, isGoldPieces } from './inventory.js';   // a released one's pack, handed back
 import { LOYALTY, DEVOTED, movedLoyalty, isDevoted, sameKin, BETRAY, mayBetray } from './revenantFeud.js';
@@ -176,6 +176,7 @@ function memberOf(r) {
   m.items = r.companion?.items ?? [];
   m.rank = r.rank;
   m.personality = r.personality;
+  m.person = revenantPerson(r);   // FB1012d ALLY-RACE: the one person it was born as - the layer stands every body of it so (crewAshore.js companionPerson)
   return m;
 }
 /**

@@ -2,8 +2,8 @@
 // EG-E2 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 20, THE BOARD WINDOW):
 // THE ELITE BREACH'S BOARDS ON THE SCREEN - the three boards as tabs (the Descent's three brackets, the Depths and the
 // Deepest Redoubts), each a top ten with the member's own row pinned at the foot, a company's names, the Unfallen's
-// flame, each breach's Proclamation, this week's, and "Your best: Hall 47 - 1:44:12". The host opens it from the Timers
-// row and from `/breach board` (openEgBoard - not wired here).
+// flame, each breach's Proclamation, this week's, and "Your best: Hall 47 - 1:44:12". EG-ZM: the host opens it through
+// ONE door (createEgBoardDoor) from `/breach board`, the Timers row's Elite entries and the start window.
 //
 // THREE HALVES. `egBoardLines(board, tab)` is pure: the service's answer (server-account/src/egHonours.js egBoardOf) as
 // the lines a tab shows - every word decided here. The ENHANCED skin paints them in one DOM panel outside the window
@@ -217,4 +217,28 @@ export function openEgBoard({ doc = globalThis.document, classic = false, fetchB
     else if (win && shown === 'lines') showLines();   // a tab's lines up while the board was read: shown again, read
   });
   return handle;
+}
+
+/**
+ * EG-ZM (2026-10-12, Elite-Gates.md section 20 - "reached from the Timers row and from the start window"): THE BOARDS' ONE
+ * DOOR - every way in (`/breach board`, the Timers row's Elite entries, the start window) opens the boards here. `open(o)`
+ * opens them (the host's openEgBoard, its skin and its service) with this door's `mountWindow`, `closeWindow` and
+ * `onClosed` laid over; `slot` is the host's mode slot - `top()` its occupant, `mount(w)` (false: refused), `close(w)`.
+ *   - ONE AT A TIME: asked again, the boards standing are closed first - out of the slot before the next go in (their own
+ *     close is once, so boards their own door already closed are closed again to no effect).
+ *   - A WINDOW ON ITS WAY OUT gives the slot up: the pause face a Timers door handed off is done but not yet drained from
+ *     the mode's slot, and the classic skin's picker would be refused behind it.
+ * The door answers the boards it opened, or null; `onClosed` is told once, however they close.
+ * @param {{ open: (o: { mountWindow: (w: any) => boolean, closeWindow: (w: any) => void, onClosed: () => void }) => any,
+ *   slot: { top: () => any, mount: (w: any) => any, close: (w: any) => void } }} deps
+ * @returns {(onClosed?: (() => void) | null) => any}
+ */
+export function createEgBoardDoor({ open, slot }) {
+  let standing = null;
+  const mountWindow = (w) => { const top = slot.top(); if (top?.done) slot.close(top); return !!slot.mount(w); };
+  return (onClosed = null) => {
+    standing?.close();
+    standing = open({ mountWindow, closeWindow: slot.close, onClosed: () => onClosed?.() });
+    return standing;
+  };
 }

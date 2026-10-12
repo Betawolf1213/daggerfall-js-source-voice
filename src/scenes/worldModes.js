@@ -71,7 +71,7 @@ import { CARAVAN_SCENE_NAME, CARAVAN_TEXT, readCaravanRoom, isCaravanRoom, turnC
 import { wagonItemName } from '../systems/wagonKinds.js';   // WAGONS2 (FINAL AUDIT): a marked wagon's name on the keyed shelf
 import { wagonLoadedHeld } from '../systems/tradePack.js';   // WAGONS2 (AUDIT): the wagon a loaded store hangs on - FINAL AUDIT: the pack's one law
 import { caravanPaintRows } from '../systems/wagonLooks.js';   // WAGONS2: the caravan's inside, painted from the decorator
-import { caravanDecorDoc, readCaravanDecor } from '../systems/caravanVisit.js';   // WAGONS2-VISIT: what a caravan's owner placed, said to its room and stood for its visitor
+import { caravanDecorDoc, readCaravanDecor, readCaravanHidden } from '../systems/caravanVisit.js';   // WAGONS2-VISIT: what a caravan's owner placed, said to its room and stood for its visitor
 import { caravanKeyOf } from '../net/privateInterior.js';   // WAGONS2-VISIT: a caravan's own room
 import { INTERIOR_SHELL_BUCKET } from './decorBase.js';   // HOME-DOORS: a doorway is an opening in the shell's walls   // AUDIT 63 F22: AddFlats' RandomTreasure arm lives with the walk that finds its markers
 import { advanceMachinery, mountMachineryChild, machineryChildPos, MILL_SOUND } from '../world/windmills.js';   // WM4b: the machinery's moving parts; WM4c: its hum
@@ -120,6 +120,8 @@ import { realmArt } from '../world/sdRealmArt.js';   // SD5a: its art, made in c
 import { isEgHall, egHallLocation, egHallBlocks, buildEgCircleModel, egCircleColliderTris, egCircleLights, egLightsWith, egHallLighting, egGateParts, EG_HALL_FOG } from '../world/egHall.js';   // EG-PLAY: an Elite Breach's circle, a made level as the Hour is
 import { egRoomKey, egCircleSpecs, egBandOfCircle, EG_TEXT } from '../net/egLaw.js';   // EG-PLAY: its room, its halls, its words
 import { createEgSwap } from './egSwap.js';   // EG-H3 (EG10): THE SWAP'S BUILD - the next circle's level made while the Court rests
+import { createEgOccluders, EG_OCCLUDE_CHEST_M } from './egOcclude.js';   // EG-ZN (section 11.8): the occluders between the camera and the body dithered out
+import { EG_DRESS_RECORDS } from '../world/egBandArt.js';   // EG-ZN (section 29): the band dress's records, freed at the breach's end
 import { madeLevelOf } from '../systems/madeLevel.js';   // EG-H2 (Elite-Gates.md section 24): which made level stands under the player - one law
 import { egBandArt, egBandArchive } from '../world/egBandArt.js';   // EG-G2: each band's own dress, painted in code
 import { buildEgLookModel } from '../world/egLook.js';   // EG-G2: the waystones lit (world/meshKit.js)
@@ -278,7 +280,7 @@ import { expandGuildRows } from '../systems/guildServiceActions.js';   // MACROS
 import { hallAccessAnytime } from '../systems/guildServices.js';
 import { resolveVariantGuild } from '../systems/guildVariants.js';
 import { getBool, getInt } from '../systems/settings.js';   // R1: InstantRepairs / AllowMagicRepairs go LIVE
-import { isStartDungeon, isTutorialHold } from '../systems/startDungeon.js';   // PH1: the classic start's own cell; HOLD-SOLO: Privateer's Hold, the shipped one's (AUDIT FB1007b H1)
+import { isStartDungeon, isPrivateersHold, HOLD_ONCE_TEXT } from '../systems/startDungeon.js';   // PH1: Privateer's Hold - the classic start's own cell; HOLD-ONCE: the Hold itself, by its map id
 import { reviveForPlay } from '../systems/deathRespawn.js';   // PH1: the in-place respawn's own heal, the SAME fraction world.js's own online respawn uses
 import { reducedRepairCost } from '../systems/guildServices.js';   // R1: FightersGuild.ReducedRepairCost finds its caller
 import {
@@ -7053,8 +7055,14 @@ export function createWorldModes(host) {
    *  The host passes ITS ray (the tap's, or the crosshair's) so the two
    *  picks are measured along one line, as DFU's one raycast is. AUDIT 65 MC-2: it answers for a door the player cannot REACH as well as one they can, because DFU's single ray HIT that door - the foe behind it was never the enemy check's subject, and tryEnter refuses out loud. It used to answer Infinity there and the foe ate the click. */
   function exteriorActivationDistance(eye = player.eye, dir = eyeDir()) {
-    if (mode !== 'exterior') return Infinity;
-    return pickActivatableHit(eye, dir, exteriorActivationTargets().targets, baseCollider())?.distance ?? Infinity;
+    return exteriorActivationHit(eye, dir)?.distance ?? Infinity;
+  }
+  /** FB1012d ALLY-YIELDS: ...and that activatable's own pick, its reach beside its distance - the street's press hands it
+   *  to the race (activationRace.js `door`), whose `next` asks whether it answers from here before a companion standing
+   *  in front of it may take the press. Null off the street, or with nothing under the ray. */
+  function exteriorActivationHit(eye = player.eye, dir = eyeDir()) {
+    if (mode !== 'exterior') return null;
+    return pickActivatableHit(eye, dir, exteriorActivationTargets().targets, baseCollider());
   }
 
   /**
@@ -8595,6 +8603,7 @@ export function createWorldModes(host) {
       reach, getInteractionMode(), playerEntity, {
         nearerThan,
         doorBehind: doorDistanceOf(eye, dir, targets, interiorCtx.collider),   // TACT3d; AUDIT TACT C5: a DOOR behind him, never the shelf the ladder would open
+        behind: _pick,   // FB1012d ALLY-YIELDS: the ladder's winner (read when the arm runs) - my companion yields to it where it answers
         hud: (t) => say(t),
         modal: (t) => mountInterior(new ActionTextBox(String(t).split('\n'))),
         makeEnemiesHostile: () => makeEnemiesHostile(interiorEnemyDatabase()),
@@ -9203,16 +9212,42 @@ export function createWorldModes(host) {
   }
   /** EG-PLAY: AN ELITE BREACH'S CIRCLE stood into its built context (world/egHall.js), the Hour's way: the Hour's art
    *  uploaded once a session (the Steps' faces wear it) and the circle's band's own dress beside it (EG-G2 - world/
-   *  egBandArt.js, once a session a band), the circle's mesh made once a circle
+   *  egBandArt.js, once a breach a band - EG-ZN), the circle's mesh made once a circle
    *  and among the context's draws, its floors and walls on the collider (the spawn lands on its first plate), each
    *  Rampart's portcullis its own draw and a moving bucket (sunk once its door opens - the outer host's word), and the
-   *  Redoubt's way home a target the press takes. */
+   *  Redoubt's way home a target the press takes. EG-ZN: the circle's occluders handed to their dither pass with it. */
   const EG_BUCKET = 'eg:hall';
   let _egMesh = null, _egMeshKey = '', _egArt = false, _egLamps = [], _egLookMesh = null;
-  const _egBands = new Set();   // EG-G2: the bands whose dress is up this session
+  const _egBands = new Set();   // EG-G2: the bands whose dress is up this breach (EG-ZN: freed at its end - egBandsDown)
   /** @type {Array<{ h: number, gpu: any, T: number[], draw: any }>} */
   let _egGates = [];
-  /** EG-G2: a circle's band's dress uploaded under its own archive, once a session a band - its stand and THE SWAP's
+  /** EG-ZN (section 11.8): THE OCCLUDERS DITHERED - the circle's rock a camera ray to my body crosses (scenes/egOcclude.js),
+   *  over the circle's own mesh and its one draw. */
+  const egOcc = createEgOccluders({ renderer });
+  /** EG-ZN: the circle's draw in the context's list - the one the dither pass hides while it draws the circle itself. */
+  let _egDraw = null;
+  /** EG-ZN: the circle's draw made and pushed, and the dither pass told (a stand's and a swap's alike). */
+  function egCircleDraw(ctx) {
+    _egDraw = _egMesh ? { gpu: _egMesh, object: { matrix: identity() } } : null;
+    if (_egDraw) ctx.dynamicDraws.push(_egDraw);
+    egOcc.stand(_egDraw);
+  }
+  /** EG-ZN (section 29 - EVERY ALLOCATION HAS AN OWNER: "band textures are cached per band and freed at the breach's end"):
+   *  every band's dress this breach put up, freed - each record's albedo (every variant under it) and its emission - at the
+   *  breach's end: the client's word on the first frame out of the Spire that is no swap's or answer's step (scenes/
+   *  egClient.js), so a swap in place and the old step under the veil upload nothing. Refused while a circle stands (its
+   *  draws still wear them). Answers how many textures it freed. */
+  function egBandsDown() {
+    if (!_egBands.size || (mode === 'dungeon' && isEgHall(dungeonLoc))) return 0;
+    let n = 0;
+    for (const band of _egBands) {
+      const arch = egBandArchive(band);
+      for (const rec of EG_DRESS_RECORDS) { if (renderer?.releaseTexture?.(arch, rec)) n++; if (renderer?.evictEmissionTexture?.(`${arch}_${rec}`)) n++; }
+    }
+    _egBands.clear();
+    return n;
+  }
+  /** EG-G2: a circle's band's dress uploaded under its own archive, once a breach a band (EG-ZN) - its stand and THE SWAP's
    *  alike (the swap's level is built off the main thread and names the band's archive; the art is uploaded here). */
   function egBandUp(c) {
     const band = egBandOfCircle(c);
@@ -9231,16 +9266,17 @@ export function createWorldModes(host) {
       const glow = { white: true };
       try { for (const [rec, art] of realmArt()) { renderer.uploadTexture(SD_REALM_ARCHIVE, rec, art.albedo); renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission, glow); } } catch (e) { console.warn('[eg] the Spire\'s art would not upload', e?.message ?? e); }
     }
-    egBandUp(eh.c);   // EG-G2 (section 25.1): the circle's band's dress under its own archive, once a session a band
+    egBandUp(eh.c);   // EG-G2 (section 25.1): the circle's band's dress under its own archive, once a breach a band (EG-ZN)
     if (_egMeshKey !== key) {
+      egOcc.clear();   // EG-ZN: the dither pass lets the old circle go before it is freed
       if (_egMesh) { try { renderer?.destroyMesh?.(_egMesh); } catch { /* gone */ } }
       _egMesh = null; _egMeshKey = key;
-      try { _egMesh = renderer?.createMesh ? renderer.createMesh(buildEgCircleModel(eh.seed, eh.c, eh.geo ?? 0)) : null; } catch (e) { console.warn('[eg] the circle would not build', e?.message ?? e); _egMesh = null; }
+      try { const model = buildEgCircleModel(eh.seed, eh.c, eh.geo ?? 0); _egMesh = renderer?.createMesh ? renderer.createMesh(model) : null; if (_egMesh) egOcc.set(_egMesh, model); } catch (e) { console.warn('[eg] the circle would not build', e?.message ?? e); _egMesh = null; }   // EG-ZN: its occluders with it
       if (_egLookMesh) { try { renderer?.destroyMesh?.(_egLookMesh); } catch { /* gone */ } }   // EG-G2: the look's own mesh (the waystones), once a circle
       _egLookMesh = egLookBuild(eh.seed, eh.c, eh.geo ?? 0);
       _egLamps = egCircleLights(eh.seed, eh.c, eh.geo ?? 0);
     }
-    if (_egMesh) ctx.dynamicDraws.push({ gpu: _egMesh, object: { matrix: identity() } });
+    egCircleDraw(ctx);   // EG-ZN: the circle's one draw, the dither pass's to hide while it draws the circle itself
     if (_egLookMesh) ctx.dynamicDraws.push({ gpu: _egLookMesh, object: { matrix: identity() }, noShadow: true });   // EG-G2
     const tris = egCircleColliderTris(eh.seed, eh.c, eh.geo ?? 0), n = tris.length / 3;
     const idx = n > 65535 ? new Uint32Array(n) : new Uint16Array(n);
@@ -9297,13 +9333,14 @@ export function createWorldModes(host) {
     if (!parts) return false;
     const ctx = dungeonCtx, mesh = _egMesh, gates = _egGates, gone = new Set([mesh, _egLookMesh, ...gates.map((g) => g.gpu)].filter(Boolean));   // EG-G2: and the look's mesh
     _egMesh = null; _egMeshKey = ''; _egGates = []; _egLookMesh = null;
+    egOcc.clear(); _egDraw = null;   // EG-ZN: the dither pass lets the old circle go - its views and its draw - before it is freed
     for (let i = ctx.dynamicDraws.length - 1; i >= 0; i--) if (gone.has(ctx.dynamicDraws[i]?.gpu)) ctx.dynamicDraws.splice(i, 1);
     ctx.collider.removeBucket(EG_BUCKET);
     for (const g of gates) ctx.collider.removeBucket(`eg:gate:${g.h}`);
     for (const m of gone) { try { renderer?.destroyMesh?.(m); } catch { /* gone */ } }
-    try { _egMesh = renderer?.createMesh ? renderer.createMesh(parts.model) : null; } catch (e) { console.warn('[eg] the circle would not build', e?.message ?? e); _egMesh = null; }
+    try { _egMesh = renderer?.createMesh ? renderer.createMesh(parts.model) : null; if (_egMesh) egOcc.set(_egMesh, parts.model); } catch (e) { console.warn('[eg] the circle would not build', e?.message ?? e); _egMesh = null; }   // EG-ZN: its occluders built with it, off the main thread
     _egMeshKey = parts.key; _egLamps = parts.lamps;
-    if (_egMesh) ctx.dynamicDraws.push({ gpu: _egMesh, object: { matrix: identity() } });
+    egCircleDraw(ctx);   // EG-ZN: the circle's one draw, the dither pass's
     egBandUp(r.c); _egLookMesh = egLookBuild(r.seed >>> 0, r.c, (r.geo ?? 0) | 0);   // EG-G2: the new circle's band's dress (up already from its prebuild) and its waystones
     if (_egLookMesh) ctx.dynamicDraws.push({ gpu: _egLookMesh, object: { matrix: identity() }, noShadow: true });
     const n = parts.tris.length / 3, idx = n > 65535 ? new Uint32Array(n) : new Uint16Array(n);
@@ -9315,6 +9352,15 @@ export function createWorldModes(host) {
     return true;
   }
   // ── EG-H3 end ──────────────────────────────────────────────────────────────────────────────────────────────────────
+  /** EG-ZN (2026-10-12, Elite-Gates.md section 11.8): THE OCCLUDERS DITHERED, this frame - after its beginFrame (the shadow
+   *  record open) and before the dynamic draws: the circle's rock a ray from the third-person eye to my body (its pivot and
+   *  its chest) crosses dithered out, the rest of the circle drawn whole (scenes/egOcclude.js). First person, a witness's
+   *  eye and a free camera try nothing, and whatever was dithering comes back whole. */
+  function egOccludeFrame(mwv, dt) {
+    const feet = mwv?.thirdPerson && mwv.focal && !host.egWitness?.() && !decorTool.flying() ? player.bodyFeetAt?.() ?? player.feetAt() : null;
+    egOcc.frame(feet ? { eye: mwv.eye, points: [mwv.focal, [feet[0], feet[1] + EG_OCCLUDE_CHEST_M, feet[2]]], dt } : { dt });
+    egOcc.draw(dungeonCtx?.texRemap ?? null);
+  }
   /** EG-PLAY: A BODY STOOD ELSEWHERE IN THE CIRCLE (a pull to the next hall's plate, the void's cast-back) - the action
    *  teleport's way (its settle, the eye with it), facing `yaw`, and the spans told where the void would cast it back to. */
   function egPlace(at, yaw = null) {
@@ -9369,7 +9415,11 @@ export function createWorldModes(host) {
     mapTableData: loc.mapTableData && { ...loc.mapTableData },
     dungeon: loc.dungeon && { ...loc.dungeon, blocks: loc.dungeon.blocks?.map((b) => ({ ...b })) },
   });
-  async function tryEnterDungeon(hit, entries, { preferEnterMarker = false, fromLoad = false } = {}) {
+  async function tryEnterDungeon(hit, entries, { preferEnterMarker = false, fromLoad = false, holdOpen = false } = {}) {
+    // HOLD-ONCE (2026-10-12, asked: "Let's make it where players outside of privateers hold cannot re enter"): online,
+    // Privateer's Hold is entered once - by the new game's start (or a save made inside it, or staff landing by a player
+    // there: `holdOpen`); its door, a Recall to an anchor set inside and a quest's transfer are refused. Offline, DFU's.
+    if (!fromLoad && !holdOpen && host.dungeonOnline?.() && isPrivateersHold(hit?.dfLocation)) { say(HOLD_ONCE_TEXT); return false; }
     return gatedTransition(async (live) => {   // AUDIT 68 X3-transition-build-race
       // PVPDUNGEONS: the zone's tier rules - the hub's word on my lock is awaited INSIDE the gate (AUDIT 68 X3: awaited
       // before it, a teleport, a recall or a load during the hub's four seconds did not stale the door, and the dungeon
@@ -9900,7 +9950,7 @@ export function createWorldModes(host) {
    *  candidates the exit landing is computed from. The classic start
    *  used to boot scenes/dungeon.js, which has no exit path at all, so
    *  Privateer's Hold was a sealed box: the whole reason this exists. */
-  async function startInDungeon({ locationKey = null, fromLoad = false } = {}) {
+  async function startInDungeon({ locationKey = null, fromLoad = false, holdOpen = false } = {}) {   // HOLD-ONCE: `holdOpen` - the new game's start and a staff landing may enter Privateer's Hold online
     const entries = doorTargets();
     // CRUX1 (2026-09-22, "the final dungeon mission is unbeatable"):
     // AND WITHOUT A DOOR. DFU's StartDungeonInterior(location) builds
@@ -9925,7 +9975,7 @@ export function createWorldModes(host) {
     // DE1: this is StartDungeonInterior, not the door transition - the
     // player is placed inside without ever walking through, so the
     // ENTER marker wins and the facing is plain north.
-    return tryEnterDungeon(hit, entries, { preferEnterMarker: true, fromLoad });   // MAP-KEEP: a save's own dungeon, entered on the load arm
+    return tryEnterDungeon(hit, entries, { preferEnterMarker: true, fromLoad, holdOpen });   // MAP-KEEP: a save's own dungeon, entered on the load arm
   }
 
   function tryExitDungeon({ pressCast = false, interact = false, actClick = false } = {}) {
@@ -9976,6 +10026,7 @@ export function createWorldModes(host) {
       reach, getInteractionMode(), playerEntity, {
         nearerThan,
         doorBehind: doorDistanceOf(eye, dir, targets, dungeonCtx.collider),   // AUDIT TACT C7: a castle's peaceful guard is no door either
+        behind: _pick,   // FB1012d ALLY-YIELDS: the ladder's winner, underground - my companion yields to it where it answers
         openCompanion: (rec) => !!host.openCompanionPack?.(rec),   // COMPANION-KIT: my companion's pack, underground
         openFate: (rec) => !!host.openRevenantFate?.(rec),   // REVENANT-FATE: a beaten revenant's choice, underground
         openLiving: (rec) => !!host.openLivingDiver?.(rec),   // LW14: a company of the living world's door, underground
@@ -10671,6 +10722,7 @@ export function createWorldModes(host) {
     const view = betterAmbience.view(lookAt(mwv.eye, [mwv.eye[0] + fwd[0], mwv.eye[1] + fwd[1], mwv.eye[2] + fwd[2]], [0, 1, 0]));   // BA1: the shaker sits between the follower and the camera
     const aimView = view.slice();   // AUDIT CLIMB-ARC F10: the view the player aims with, before the climb's feel
     host.climbFeel?.view(view, !decorTool.flying() && !mwv.thirdPerson);   // CLIMB4: the climb's pitch, roll and eye - first person, never the decorator's free camera
+    if (mwv.look && !decorTool.flying() && !cardSeat) view.set(betterAmbience.view(lookAt(mwv.eye, [mwv.eye[0] + mwv.look[0], mwv.eye[1] + mwv.look[1], mwv.eye[2] + mwv.look[2]], [0, 1, 0])));   // EG-ZN (Elite-Gates.md section 11.8): over a shaft's ledge the camera looks along its own biased pitch (player/mwView.js) - after the aim is taken, which keeps the player's, and the climb's feel (first person's alone)
     host.reportFrame?.(proj, view);   // AUDIT 62 F16/F28: TI1's tap ray and lock dot ride the host's last frame, and only its EXTERIOR render wrote one
     const camRight = new Float32Array([Math.cos(cam.yaw), 0, -Math.sin(cam.yaw)]);
 
@@ -10774,6 +10826,7 @@ export function createWorldModes(host) {
         host.drawPeerBodies?.({ proj, view, eye: mwv.eye });   // MWBODY1: the others' bodies, after the player's own
       } finally { renderer.flushCharacterSpriteBatch?.(); }   // MWNPC2: every body's picture in one bind of the sprite target
       if (isEgHall(dungeonLoc)) dungeonCtx.egSpanCull?.(proj, view);   // EG-G2: the Spire's pieces batched a kind and culled against this frame's frustum (scenes/egPieceBatch.js) - every one noShadow, so the shadow record never moves with a cull
+      if (isEgHall(dungeonLoc)) egOccludeFrame(mwv, dt);   // EG-ZN (section 11.8): the rock between the camera and my body dithered out
       if (dungeonCtx.staticBatch) renderer.drawMesh(dungeonCtx.staticBatch, BATCH_IDENTITY, null);   // PERF5: the level's static models, one call per texture
       for (const d of dungeonCtx.drawList) if (!d._batched) renderer.drawMesh(d.mesh, d.matrix, d.texRemap ?? dungeonCtx.texRemap);   // AUDIT PRE-MERGE 1003 W4: a climate-free model's own table
       for (const d of dungeonCtx.dynamicDraws) if (!d.hidden && !d.culled) renderer.drawMesh(d.gpu, d.object.matrix, d.texRemap ?? dungeonCtx.texRemap, d.noShadow ? DRAW_NO_SHADOW : DRAW_SHADOW);   // AUDIT SD II (L2 F11): a draw that says it is hidden (the Hour's gone steps and bodies) is no draw, and no shadow's record; SD-LOOK: a draw's own texRemap (a state's records), `noShadow` (a part that turns rebuilds no cube) and `culled` (a stage out of sight) - each read only where a draw carries it
@@ -12846,7 +12899,7 @@ export function createWorldModes(host) {
      *  caravanDecorDoc: the pieces as the save keeps them, unturned) - null anywhere else, a visit included. */
     myCaravanDecor() {
       if (mode !== 'interior' || !interiorCtx || !isCaravanRoom(interiorCabin) || privateVisitRoom) return null;
-      return caravanDecorDoc(turnCaravanScene({ decor: interiorDecor.list() }, interiorCabin.turn).decor);
+      return caravanDecorDoc(turnCaravanScene({ decor: interiorDecor.list() }, interiorCabin.turn).decor, interiorCtx.base?.hidden() ?? []);   // WAGONS2-BASE: and what I took out of the room - its keys need no turn
     },
     /** WAGONS2-VISIT: WHAT A CARAVAN'S OWNER PLACED, STOOD FOR ITS VISITOR - the document its room `room` said
      *  (systems/caravanVisit.js readCaravanDecor), turned with the caravan as it stands here and stood whole (the owner's
@@ -12854,6 +12907,7 @@ export function createWorldModes(host) {
     applyCaravanDecor(room, doc) {
       if (!caravanGuestHere() || !interiorCtx || room !== privateVisitRoom) return false;
       interiorDecor.set(turnCaravanScene({ decor: readCaravanDecor(doc) ?? [] }, -interiorCabin.turn).decor);
+      interiorCtx.base?.setHidden(readCaravanHidden(doc));   // WAGONS2-BASE: the room's own pieces its owner took out (the lantern and its light) are out for its guest too
       return true;
     },
     /** WAGONS2-VISIT: the caravan I visit has moved on or gone (net/caravanVisitLink.js) - stood outside behind its door,
@@ -12930,7 +12984,7 @@ export function createWorldModes(host) {
     // ONLINE1: what the host needs to name the room - the mounted dungeon's
     // location, the interior's building; null in the exterior
     // ARENA4: the floor's instance standing a relay's bout is that bout's room (`arena:b<id>`)
-    roomIdentity: () => (mode === 'dungeon' ? (isGateArena(dungeonLoc) ? { kind: 'gate', day: dungeonLoc.gate } : isSdRealm(dungeonLoc) ? { kind: 'sd', s: dungeonLoc.sdRealm } : isEgHall(dungeonLoc) ? { kind: 'eg', b: dungeonLoc.egBreach } : isArenaFloor(dungeonLoc) && dungeonLoc.arenaBout ? { kind: 'arena', o: dungeonLoc.arenaBout } : { kind: 'dungeon', mapId: dungeonLoc?.mapTableData?.mapId ?? null, regionIndex: dungeonLoc?.regionIndex ?? -1, name: dungeonLoc?.name ?? '', size: builtDungeonSize(dungeonLoc), ...(isTutorialHold(dungeonLoc) ? { solo: true } : {}) })   // WB3b: the court's room is its gate's own; SD-ONLINE: a dungeon's room is its layout's (the size it was BUILT at); HOLD-SOLO (FIELD BUGS 2026-10-07b): the tutorial dungeon is every character's own - `solo`, which world.js keys no room (AUDIT FB1007b H1: the shipped start's, never a setting's)
+    roomIdentity: () => (mode === 'dungeon' ? (isGateArena(dungeonLoc) ? { kind: 'gate', day: dungeonLoc.gate } : isSdRealm(dungeonLoc) ? { kind: 'sd', s: dungeonLoc.sdRealm } : isEgHall(dungeonLoc) ? { kind: 'eg', b: dungeonLoc.egBreach } : isArenaFloor(dungeonLoc) && dungeonLoc.arenaBout ? { kind: 'arena', o: dungeonLoc.arenaBout } : { kind: 'dungeon', mapId: dungeonLoc?.mapTableData?.mapId ?? null, regionIndex: dungeonLoc?.regionIndex ?? -1, name: dungeonLoc?.name ?? '', size: builtDungeonSize(dungeonLoc) })   // WB3b: the court's room is its gate's own; SD-ONLINE: a dungeon's room is its layout's (the size it was BUILT at); HOLD-SHARED (2026-10-12): Privateer's Hold keys its shared room as every dungeon does (HOLD-SOLO's `solo` reverted)
       : mode === 'interior' ? { kind: 'interior', buildingKey: interiorBuilding?.buildingKey ?? 0, layout: _visitLayout, ...(interiorCabin ? { boatUid: interiorCabin.uid } : {}), ...(_intShared?.owned ? { private: true, privateRoom: privateVisitRoom } : {}) } : null),   // personal interiors share presence in an owner-specific room, never world memory/loot
     get dungeonLocation() { return dungeonLoc; },   // B2: playerInside's dungeon arm
     /** X7: the Identify SPELL's window (Identify.cs:71-76 pushes the
@@ -13058,6 +13112,8 @@ export function createWorldModes(host) {
     egLeave: () => { if (mode !== 'dungeon' || !isEgHall(dungeonLoc) || !dungeonCtx) return false; pendingDungeonExit = true; return true; },   // EG-PLAY: out of the breach at the top of the next frame, to where it was answered from (returnLanding's `from`)
     egHallReturn: () => (mode === 'dungeon' && isEgHall(dungeonLoc) ? dungeonReturn?.from ?? null : null),   // EG-PLAY: where a death or a new circle stands me outside
     egPrebuild, egSwapCircle, egSwapDrop: () => egSwap.drop(),   // EG-H3 (EG10): THE SWAP - the next circle built while the Court rests, stood in place; the build forgotten at the breach's end
+    egBandsDown,   // EG-ZN (section 29): the band textures freed at the breach's end (the client's word, out of the Spire)
+    egOccluders: () => egOcc.stats(),   // EG-ZN (section 11.8): the occluders' dither pass as it stands (probes, tests)
     enterArenaFloor, enterArenaUndercroft, arenaFloorStage, arenaPitStage, standOnArenaMark, leaveArenaFloor,   // ARENA6: a session's fighter to its mark and back, and out of the instance   // ARENA2: the floor's instance, the fighters' hall, the instance as a bout's stage
     enterAbyss,   // OH-D: the pit's way down
     /** OH-E: RemoveBorrowedQuestResources - every QuestResourceBehaviour under the live dungeon destroyed: the quest
@@ -14052,6 +14108,7 @@ export function createWorldModes(host) {
     enterCaravanRoom,   // WAGONS1
     tryEnter,
     exteriorActivationDistance,   // AUDIT 63 F33 (review): the rival distance the living-foe arm must beat
+    exteriorActivationHit,   // FB1012d ALLY-YIELDS: ...and its pick, reach and all, for the race's `next`
     exteriorHoverPick,   // WORLD-HOVER: the plaque's winner, raced exactly as the press's is
     exteriorHoverName,   // ...and what that winner is called
     openYardTrade,   // MERCHANT-YARDS: a yard's counter, opened from the street (scenes/world.js merchantYards' `open`)

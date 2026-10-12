@@ -101,8 +101,8 @@
   {
     "name": "LW13-holy-region",
     "file": "src/systems/livingWorld/companies.js",
-    "old": "      if (id && holidayRegion(id) !== 0xFF) return { town: t, day: d, id };",
-    "new": "      if (id) return { town: t, day: d, id };",
+    "old": "    if (!row || row.region === 0xFF) continue;   // never a day every region keeps",
+    "new": "    if (!row) continue;",
     "tests": [
       "test/lw13_companies.test.js"
     ]

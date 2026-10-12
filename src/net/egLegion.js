@@ -96,8 +96,9 @@ export const EG_HUNT_LEAVE_M = 1.5;
 /** EG-ZB (section 11.7): A GROUND WALKER'S WALK over the hall's graph (net/egWalkGraph.js egWalkNext) - to its next node, or to
  *  its goal `stop` short; said as net/egBodies.js egWalk says a walk (the point already kept on its region). EG-ZJ (section
  *  23): its FEET the graph's (net/egWalkGraph.js egWalkFeet) - set on the floor of a region it has just come into (a lip
- *  stepped off, a portal, a stair's top), its walk ending on its next node's floor (a stair climbed as it goes). */
-function walkGraph(F, view, a, gx, gz, stop, speed, now, gy = NaN) {
+ *  stepped off, a portal, a stair's top), its walk ending on its next node's floor (a stair climbed as it goes). EG-ZK: every
+ *  lord's and champion's walk too (net/egLords.js lordWalk) - so a lord's feet ride the graph as the legion's do. */
+export function walkGraph(F, view, a, gx, gz, stop, speed, now, gy = NaN) {
   const fr = a.fr, [x, z, last] = egWalkNext(view, a, gx, gz, gy, a.r ?? 0.6), H = egWalkFeet(view, a);
   if (H && a.fr !== fr) a.y = H[0];
   egWalk(F, a, x, z, last ? stop : 0, speed, now, view, 0, true, H ? H[1] : NaN);
@@ -112,8 +113,9 @@ export function egAirY(view, m, a) {
   return Math.round((f ? f.y ?? 0 : m.y) * 100) / 100;
 }
 /** EG-ZB: A FLIER'S WAY through the air about the rock (net/egWalkGraph.js egAirNext) - to its next way, or to its goal
- *  (kept out of a passage's rock) `stop` short. EG-ZJ: at its mark's height (egAirY - `m` the mark, its `y` the height). */
-function walkAir(F, view, a, gx, gz, stop, speed, now, m = null) {
+ *  (kept out of a passage's rock) `stop` short. EG-ZJ: at its mark's height (egAirY - `m` the mark, its `y` the height). EG-ZK:
+ *  a flying lord's too (net/egLords.js). */
+export function walkAir(F, view, a, gx, gz, stop, speed, now, m = null) {
   const [tx, tz] = egAirKeep(view, gx, gz), [x, z] = egAirNext(view, a.x, a.z, tx, tz);
   egWalk(F, a, x, z, x === tx && z === tz ? stop : 0, speed, now, view, 0, true, egAirY(view, m ?? { x: gx, z: gz }, a));
 }

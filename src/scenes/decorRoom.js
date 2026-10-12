@@ -49,6 +49,7 @@ import { preloadTextureRecord } from '../systems/textureReplacement.js';   // MO
 import { writeDecalQuad, clearDecalQuad, DECAL_FLOATS } from '../combat/bloodDecals.js';
 import { decorIsDoor } from '../systems/decorDoorways.js';   // HOME-DOORS: a door piece hangs as one of the room's own doors
 import { drawnFlat } from '../characters/nudeFlats.js';   // NUDE-DECOR: a nude figure stands as its clothed stand-in while Show Nudity is off
+import { StaticBatchBuilder, keyResolver } from '../render/staticBatch.js';   // YARD-MERGE: a yard's models as one mesh, as a town's statics are
 
 /** How far the eye reaches a placed piece - the room's own furniture's reach (a bed's, a shelf's: 128 units). */
 export const DECOR_REACH = DEFAULT_ACTIVATION_DISTANCE;
@@ -97,6 +98,63 @@ export function drawSeen(r, cull, box, mesh, m, remap = null, o = undefined) {
   if (seen === DECOR_SKIP) return false;
   (seen === DECOR_SHADOW ? castOnly(r) : r).drawMesh(mesh, m, remap, o);
   return seen === DECOR_DRAW;
+}
+
+/**
+ * YARD-MERGE (2026-10-12, a capture standing in Daggerfall: 1,878 draw calls a frame, about 360 of them the yards' pieces,
+ * every piece a draw a texture of its model; and 185 of the yards' flats handed to the billboard pass, 86 pictures among
+ * them, each its own draw): A POOL'S MODELS MERGED INTO ONE MESH - PERF4's static batch over the pieces standing, one
+ * draw a texture for the whole pool - AND ITS FLATS OF ONE PICTURE INTO ONE BATCH (decorFlatMergeKey), as a town's flats
+ * of one record are one batch of many quads. A pool its host lets merge (`merge` - the town's yards; a room's host
+ * gives none) merges once it has stood unchanged DECOR_MERGE_SETTLE_MS (a town's yards stand piece by piece as their
+ * models land: one merge, not one a landing) and its host's budget allows (`merge.take()` - a town of yards merges one a
+ * frame, never all in the frame it streams in). A piece standing after the merge draws on its own until the next; a
+ * piece taken out, moved or replaced lets the merge go at once - every piece draws on its own again until the pool settles.
+ */
+export const DECOR_MERGE_SETTLE_MS = 500;
+/** YARD-MERGE: the fewest models a merge is made of - one piece is one draw a texture either way. */
+export const DECOR_MERGE_MIN = 2;
+/** YARD-MERGE: the texture key a merged sub-mesh keeps - its own `${archive}_${record}`, unresolved: the merge draws through
+ *  the host's remap as each piece did (a yard's town's climate, written into its pixel's table as its pieces land). */
+const RAW_KEY = keyResolver(null);
+/** YARD-MERGE: whether a standing entry goes into a merge from origin `o` - a model standing (its triangles, normals and
+ *  texture coordinates in hand: the merge's own needs, world.js's), no door, and standing from `o` itself (a merge is
+ *  made relative to one origin and moved by the recentre as one). Pure. */
+export function decorMergeable(e, o) {
+  const cpu = e?.mesh;
+  return !!(e.gpu && !e.door && cpu?.positions && cpu.indices && cpu.normals && cpu.uvs && cpu.subMeshes?.length
+    && e.o[0] === o[0] && e.o[1] === o[1] && e.o[2] === o[2]);
+}
+/** YARD-MERGE: the entries' models as ONE mesh in createMesh's shape, relative to origin `o` - each piece's own matrix
+ *  less `o` (drawn back at `o`: decorMergeMatrix), grouped by its unresolved texture key. Null for nothing to merge. Pure. */
+export function mergeDecorModels(entries, o) {
+  const b = new StaticBatchBuilder();
+  for (const e of entries) {
+    const local = Float32Array.from(e.matrix);
+    local[12] -= o[0]; local[13] -= o[1]; local[14] -= o[2];
+    b.add(e.mesh, local, RAW_KEY);
+  }
+  return b.finish();
+}
+/** YARD-MERGE: the matrix a merge made relative to `o` is drawn with. */
+export const decorMergeMatrix = (o) => trs(o[0], o[1], o[2], 0, 0, 0);
+/** YARD-MERGE: what a flat's batch may carry and still join another's - none of the looks a batch is drawn with alone. */
+const FLAT_ALONE = ['frame', 'lptProto', 'tint', 'dye', 'conceal', 'hitFlash', 'glint', 'dissolve', 'noShadow', 'selfCard', 'castOnly', 'tip', 'eliteGlow', 'dwColumn'];
+/**
+ * YARD-MERGE: THE GROUP A STANDING FLAT JOINS, from origin `o` - its picture, its drawn size (a mirrored one's width
+ * negative) and its lean (the sway and Windfall's share its batch was given): flats of one key are one batch of many quads,
+ * as a town's flats of one record are. None (null) for a flat drawn alone: no batch yet, a mount (the decal pass's), a
+ * figure (the people lane's), an animated one (its animator's, frame by frame), a batch of more than one quad, dynamic,
+ * scaled a flat at a time (a tree Low Poly Trees stands) or carrying any look of its own; nor one standing from another
+ * origin. Pure.
+ */
+export function decorFlatMergeKey(e, o) {
+  const b = e?.batch;
+  if (!b || e.anims || e.mount || decorIsFigure(e.piece)) return null;
+  if (b._quads !== 1 || b._dyn || b._scales) return null;
+  for (const k of FLAT_ALONE) if (b[k] != null) return null;
+  if (e.o[0] !== o[0] || e.o[1] !== o[1] || e.o[2] !== o[2]) return null;
+  return `${b.archive}|${b.record}|${b.size.w}|${b.size.h}|${b.sway ?? 0}|${b.windfall ?? 0}`;
 }
 
 /** Where a lit piece's light hangs above its base: a TEXTURE.210 light where the room's own light of that record hangs
@@ -218,13 +276,69 @@ export function decorMatrix(piece, origin) {
  *                  above the piece's base it hangs - or null for none. `size` is the drawn picture's, null until it
  *                  stands. None for a room: a piece gives the light it carries (`piece.light`), where the room hangs it
  *                  (decorLightLift's height; a mount's at its centre)
+ *   merge         - YARD-MERGE: `{ take() -> boolean, now() -> ms }` - the host lets the pool's models merge (take: whether
+ *                  its budget allows one this frame), or null: every piece its own draw, as a room's
  */
 export function createDecorRoom({
   meshes, renderer, getTexture, uploadRecord, uploadRecordFrame, flatAnims = () => null, collider, origin, roomLights = () => null,
-  mwPicture = null, later = setTimeout, doors = null, prepareModel = null, standFlat = null, lampOf = null,
+  mwPicture = null, later = setTimeout, doors = null, prepareModel = null, standFlat = null, lampOf = null, merge = null,
 }) {
-  /** @type {Map<string, {piece: any, o: number[], gpu: any, box: any, wbox?: number[] | null, cpu: any, matrix: Float32Array, batch: any, anims: any, size: any, light: any, mount: any, door: any, release?: any}>} */
+  /** @type {Map<string, {piece: any, o: number[], gpu: any, box: any, wbox?: number[] | null, cpu: any, mesh?: any, merged?: boolean, matrix: Float32Array, batch: any, anims: any, size: any, light: any, mount: any, door: any, release?: any}>} */
   const standing = new Map();
+  // YARD-MERGE: the pool's merge - { gpu, matrix, box, wbox, n } - and when the pool last changed
+  /** @type {{gpu: any, matrix: Float32Array, box: number[], wbox: number[] | null, n: number} | null} */
+  let merged = null;
+  /** YARD-MERGE: the flats' groups - one batch of many quads each, and the entries it stands for
+   *  @type {{batch: any, members: any[]}[]} */
+  let flatGroups = [];
+  let mergedAt = [0, 0, 0];   // the origin the merges stand from (a recentre moves them by the difference)
+  let mergeDue = false;
+  let changedAt = 0;
+  const changed = () => { if (merge) { mergeDue = true; changedAt = merge.now(); } };
+  /** YARD-MERGE: the merges let go - every piece in them drawn on its own again. */
+  function unmerge() {
+    if (!merged && !flatGroups.length) return;
+    for (const e of standing.values()) e.merged = false;
+    if (merged) renderer?.destroyMesh?.(merged.gpu);
+    for (const g of flatGroups) renderer?.destroyBillboardBatch?.(g.batch);
+    merged = null;
+    flatGroups = [];
+  }
+  /** YARD-MERGE: the pool merged afresh (the old merges let go first) - its mergeable models one mesh (none for fewer
+   *  than DECOR_MERGE_MIN), and its flats of one key one batch each (a key of one flat stays its own). */
+  function remerge() {
+    mergeDue = false;
+    unmerge();
+    const o = origin?.() ?? [0, 0, 0];
+    mergedAt = [o[0], o[1], o[2]];
+    const into = [];
+    /** @type {Map<string, any[]>} */
+    const keyed = new Map();
+    for (const e of standing.values()) {
+      if (decorMergeable(e, o)) { into.push(e); continue; }
+      const k = decorFlatMergeKey(e, o);
+      if (k == null) continue;
+      const g = keyed.get(k);
+      if (g) g.push(e); else keyed.set(k, [e]);
+    }
+    if (into.length >= DECOR_MERGE_MIN && renderer?.createMesh) {
+      const mesh = mergeDecorModels(into, o);
+      if (mesh) {
+        merged = { gpu: renderer.createMesh(mesh), matrix: decorMergeMatrix(o), box: localAabb(mesh.positions), wbox: null, n: into.length };
+        for (const e of into) e.merged = true;
+      }
+    }
+    if (!renderer?.createBillboardBatch) return;
+    for (const members of keyed.values()) {
+      if (members.length < 2) continue;
+      const b0 = members[0].batch;
+      const batch = renderer.createBillboardBatch(b0.archive, b0.record, b0.size, members.map((e) => [o[0] + e.piece.pos[0], o[1] + e.piece.pos[1], o[2] + e.piece.pos[2]]));
+      if (b0.sway != null) batch.sway = b0.sway;
+      if (b0.windfall != null) batch.windfall = b0.windfall;
+      flatGroups.push({ batch, members });
+      for (const e of members) e.merged = true;
+    }
+  }
   /** MWNPC18 (AUDIT MWNPC16-18 D4): the standing entries that are figures - one of Daggerfall's people */
   const figs = new Set();
   const models = new Map();   // model id -> Promise<{gpu, cpu, box}>
@@ -310,6 +424,8 @@ export function createDecorRoom({
   }
   function unmount(entry) {
     if (!entry) return;
+    if (entry.merged) unmerge();   // YARD-MERGE: a merged piece going takes the merges with it
+    if (entry.gpu || entry.batch) changed();
     figs.delete(entry);   // MWNPC18
     if (entry.door) { doors?.remove?.(entry.piece.id); entry.door = null; }   // HOME-DOORS: the room's door, taken down
     collider?.()?.removeBucket?.(decorKeyOf(entry.piece.id));
@@ -348,6 +464,7 @@ export function createDecorRoom({
       entry.batch = got.batch;
       entry.size = got.size;
       entry.release = got.release ?? null;
+      changed();   // YARD-MERGE: a flat standing - the pool's to merge once it settles
     }, () => {});
     return true;
   }
@@ -384,6 +501,8 @@ export function createDecorRoom({
         if (decorIsDoor(piece) && doors && m.cpu?.positions && m.cpu?.indices) { entry.door = doors.add(piece, m, entry.matrix) ?? null; if (entry.door) return; }
         const solid = () => {
           entry.gpu = m.gpu;
+          entry.mesh = m.cpu;   // YARD-MERGE: its triangles, for the pool's merge
+          changed();
           if (m.cpu?.positions && m.cpu?.indices) { entry.cpu = m.cpu; collider?.()?.addMesh?.(decorKeyOf(piece.id), m.cpu.positions, m.cpu.indices, entry.matrix); }
         };
         // DECOR-OUTDOOR: the host's own law first (a yard's town's climate swaps) - the piece stands once it is in place,
@@ -413,6 +532,7 @@ export function createDecorRoom({
         entry.batch = renderer.createBillboardBatch(da, dr, drawn, [[at[0] + piece.pos[0], at[1] + piece.pos[1], at[2] + piece.pos[2]]]);
         const anims = flatAnims?.() ?? null;
         if (!pic && armFlatAnim(entry.batch, f.t, a, r, anims, uploadRecordFrame ?? null)) entry.anims = anims;   // FA1: a lamp's flame moves as the room's own do
+        changed();   // YARD-MERGE: a flat standing - the pool's to merge once it settles
         mountLight(entry, at, decorLightLift(piece, entry.size));
       });
     }
@@ -449,6 +569,11 @@ export function createDecorRoom({
         c?.addMesh?.(decorKeyOf(e.piece.id), e.cpu.positions, e.cpu.indices, e.matrix);
       }
     }
+    // YARD-MERGE: the merges stand from the origin as their pieces now do - moved as one, nothing merged again
+    if (merged) { merged.matrix = decorMergeMatrix(o); merged.wbox = null; }
+    const d = [o[0] - mergedAt[0], o[1] - mergedAt[1], o[2] - mergedAt[2]];
+    if (d[0] || d[1] || d[2]) for (const g of flatGroups) { const b = g.batch.origin ?? [0, 0, 0]; g.batch.origin = [b[0] + d[0], b[1] + d[1], b[2] + d[2]]; }
+    mergedAt = [o[0], o[1], o[2]];
   }
 
   /** Replace every piece (a visit's load). */
@@ -471,8 +596,16 @@ export function createDecorRoom({
    *  box (no triangles to measure) is drawn, as before; a room's host gives none - a building is drawn whole. */
   function draw(r = renderer, texRemap = null, cull = null) {
     let n = 0;
+    // YARD-MERGE: merged again once the pool has settled and its host's budget allows; drawn by the same verdict, its box
+    // the whole merge's, through the same remap - and its pieces not drawn on their own
+    if (mergeDue && merge && merge.now() - changedAt >= DECOR_MERGE_SETTLE_MS && merge.take()) remerge();
+    if (merged) {
+      const seen = cull ? cull(merged.wbox ??= transformedAabb(merged.box, merged.matrix)) : DECOR_DRAW;
+      if (seen === DECOR_SHADOW) r?.recordShadowMesh?.(merged.gpu, merged.matrix, texRemap);
+      else if (seen === DECOR_DRAW) { r?.drawMesh?.(merged.gpu, merged.matrix, texRemap); n += merged.n; }
+    }
     for (const e of standing.values()) {
-      if (!e.gpu) continue;
+      if (!e.gpu || e.merged) continue;
       const seen = cull && e.box ? cull(e.wbox ??= transformedAabb(e.box, e.matrix)) : DECOR_DRAW;
       if (seen === DECOR_SKIP) continue;
       if (seen === DECOR_SHADOW) { r?.recordShadowMesh?.(e.gpu, e.matrix, texRemap); continue; }
@@ -480,8 +613,8 @@ export function createDecorRoom({
     }
     return n;
   }
-  /** The flats' batches, for the host's billboard pass. */
-  const batches = () => [...standing.values()].map((e) => e.batch).filter(Boolean);
+  /** The flats' batches, for the host's billboard pass (YARD-MERGE: a merged flat's group's, once). */
+  const batches = () => batchesSeen([]);
   /** MWNPC18: the figures standing (decorIsFigure - one of Daggerfall's people), each its entry - its piece and the batch
    *  that draws it - for the host's people lane (offerDecorFigures). AUDIT MWNPC16-18 D4: kept as they are put and
    *  taken down (`figs`), into one list the room keeps - every piece of every room walked a frame, into a new array,
@@ -491,12 +624,15 @@ export function createDecorRoom({
   /** YARD-RANGE: the flats' batches pushed onto `out`, each only while it is no smaller from `eye` than `minAngle`
    *  (decorPieceSeen) - no eye, every one. A town's yards answer theirs every frame, so nothing is made but the push. */
   function batchesSeen(out, eye = null, minAngle = 0) {
+    const seen = (e) => {
+      if (!eye || !e.size) return true;
+      const p = e.piece.pos;
+      return decorPieceSeen(Math.max(Math.abs(e.size.w), e.size.h) / 2, e.o[0] + p[0] - eye[0], e.o[1] + p[1] - eye[1], e.o[2] + p[2] - eye[2], minAngle);
+    };
+    // YARD-MERGE: a group's batch while any of its flats is big enough to see - its flats not again on their own
+    for (const g of flatGroups) if (g.members.some(seen)) out.push(g.batch);
     for (const e of standing.values()) {
-      if (!e.batch) continue;
-      if (eye && e.size) {
-        const p = e.piece.pos;
-        if (!decorPieceSeen(Math.max(Math.abs(e.size.w), e.size.h) / 2, e.o[0] + p[0] - eye[0], e.o[1] + p[1] - eye[1], e.o[2] + p[2] - eye[2], minAngle)) continue;
-      }
+      if (!e.batch || e.merged || !seen(e)) continue;
       out.push(e.batch);
     }
     return out;

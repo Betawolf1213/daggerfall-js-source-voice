@@ -74,8 +74,8 @@
   {
     "name": "EGINT-the-end-plate-an-island",
     "file": "src/net/egFair.js",
-    "old": "return d.role === 'end' ? EG_HOLD.still : EG_HOLD.island;",
-    "new": "return EG_HOLD.island;",
+    "old": "  if (g) return g === 'e' ? EG_HOLD.still : EG_HOLD.island;",
+    "new": "  if (g) return EG_HOLD.island;",
     "tests": [
       "test/egint_relay.test.js"
     ]

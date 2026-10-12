@@ -30,12 +30,23 @@
 // Stone and metal are structure and do not glow (SD-LOOK's rule): the metal keeps SD_BRASS_EDGE_GLOW on its rubbed rows
 // alone, the edge line its SD_EDGE_GLOW, the liquid its capped light; every other record's emission is black.
 //
+// EG-ZL (2026-10-12, sections 10.3, 25.2 and 25.7): THE BAND'S TELL RECORDS, under the band block's second archive (its
+// own later records - world/pseudoArchives.js): a Beat's last 0.4 s burning the place's own white - the Steps' own dial at
+// frame 10 and its falter (world/sdStepsArt.js beatArt) with the warning's light the danger palette's hazard colour
+// (ui/egAccess.js - white, or High contrast's cyan, dashed) - dissolving out through the ordered dither, and its first
+// frame dithering back in: the Steps' dissolve made in the picture (a cutout - the renderer's RW1 holes), so a kind of
+// Beats stays one batched draw. Painted once a palette, as a span asks for it.
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { SD_RAMP } from './sdLook.js';
-import { rng, noiseField, image, putTexel, blendRgb, scale, ramp, step, bevel, rivet, paletteOf, quantize } from './sdPixelKit.js';
+import { rng, noiseField, image, putTexel, blendRgb, scale, ramp, step, bevel, rivet, paletteOf, quantize, BAYER4 } from './sdPixelKit.js';
 import { SD_ART_SIZE, SD_ROOT_ART_H, SD_BRASS_EDGE_GLOW, SD_EDGE_GLOW } from './sdRealmArt.js';
 import { EG_BAND_ARCHIVES } from './pseudoArchives.js';
 import { SD_REALM_ARCHIVE } from './sdRealm.js';
+import { beatArt, SD_STEPS_RECORD, SD_BEAT_EMBER_FRAME, SD_STEPS_ATLAS, SD_STEP_BEVEL } from './sdStepsArt.js';   // EG-ZL: the Beat's warning, the place's white
+import { SD_BEAT_DISSOLVE } from './sdStepsModel.js';
+import { SD_BEAT_SIZE } from './sdSteps.js';
+import { EG_DANGER_PALETTE_KEYS, egPaletteOf } from '../ui/egAccess.js';
 
 /** THE RECORDS each band paints (the Hour's own numbers - world/sdRealm.js - and the liquid's new 33). */
 export const EG_DRESS = Object.freeze({ floor: 0, brass: 1, root: 2, arena: 4, cobble: 31, edge: 32, molten: 33, pillar: 56 });
@@ -224,15 +235,26 @@ function pillarArt(band) {
   return { albedo, emission };
 }
 
+/** Each record's painter, by record. */
+const PAINTERS = Object.freeze({
+  [EG_DRESS.floor]: floorArt, [EG_DRESS.brass]: metalArt, [EG_DRESS.root]: rootArt, [EG_DRESS.arena]: arenaArt,
+  [EG_DRESS.cobble]: walkArt, [EG_DRESS.edge]: edgeArt, [EG_DRESS.molten]: moltenArt, [EG_DRESS.pillar]: pillarArt,
+});
 /** Every picture band `band` (0-3) wears, by record: `[record, { albedo, emission }]` - what a host uploads under the
  *  band's archive (egBandArchive) before it draws the band's halls. Pure: the same pixels every call. */
 /** @returns {Array<[number, { albedo: import('./sdPixelKit.js').Img, emission: import('./sdPixelKit.js').Img }]>} */
 export function egBandArt(band) {
-  const b = Math.max(0, Math.min(3, band | 0));
-  return [
-    [EG_DRESS.floor, floorArt(b)], [EG_DRESS.brass, metalArt(b)], [EG_DRESS.root, rootArt(b)], [EG_DRESS.arena, arenaArt(b)],
-    [EG_DRESS.cobble, walkArt(b)], [EG_DRESS.edge, edgeArt()], [EG_DRESS.molten, moltenArt(b)], [EG_DRESS.pillar, pillarArt(b)],
-  ];
+  return EG_DRESS_RECORDS.map((rec) => egBandArtOf(band, rec));
+}
+/** EG-ZO (2026-10-12, Elite-Gates.md section 7): ONE of band `band`'s pictures, `[record, { albedo, emission }]` - painted
+ *  alone, for a pass that wears a few of the band's records (the Spire's underside on the stair - world/egUnderside.js:
+ *  its walkways' tesserae, the costliest picture by far, are never painted for a fall that wears none). The same pixels
+ *  egBandArt paints for that record. Pure. A record the band does not paint throws.
+ *  @returns {[number, { albedo: import('./sdPixelKit.js').Img, emission: import('./sdPixelKit.js').Img }]} */
+export function egBandArtOf(band, rec) {
+  const paint = PAINTERS[rec];
+  if (!paint) throw new Error(`the band paints no record ${rec}`);
+  return [rec, paint(Math.max(0, Math.min(3, band | 0)))];
 }
 /** The palette each band's pictures are forced into (the law's check: nothing off it). */
 export function egBandPalette(band) {
@@ -254,4 +276,74 @@ export function egBandDress(model, band) {
   const archive = egBandArchive(band);
   for (const sm of model?.subMeshes ?? []) if (sm.textureArchive === SD_REALM_ARCHIVE && EG_DRESS_RECORDS.includes(sm.textureRecord)) sm.textureArchive = archive;
   return model;
+}
+
+// ── EG-ZL: THE BAND'S TELL RECORDS ──────────────────────────────────────────────────────────────────────────────
+/** Band `band`'s tell archive: the second of its block (world/pseudoArchives.js EG_BAND_BLOCK - its own later records). */
+export const egTellArchive = (band) => egBandArchive(band) + 1;
+/** A Beat's dissolve cell in its picture's own texels: the Steps' cell (world/sdStepsModel.js SD_BEAT_DISSOLVE.cell) over a
+ *  texel of the plate's top (its inset width across the atlas's top cell). */
+export const EG_DISSOLVE_TEXELS = Math.round(SD_BEAT_DISSOLVE.cell / ((SD_BEAT_SIZE.w - 2 * SD_STEP_BEVEL) / SD_STEPS_ATLAS.top[2]));
+/** The Beat's records in the tell archive: a danger palette's four warning stages (ui/egAccess.js EG_DANGER_PALETTE_KEYS
+ *  order - its dial at frame 10 keeping SD_BEAT_DISSOLVE.keep[0] and [1] of 16 cells, then its falter keeping [2] and [3]),
+ *  and the dial's first frame dithering back in (keeping [0], [1], [2] - the stage the return reads first is the thinnest). */
+export const EG_BEAT_TELL_RECORDS = Object.freeze({
+  warn: Object.freeze(EG_DANGER_PALETTE_KEYS.map((_, v) => Object.freeze(SD_BEAT_DISSOLVE.keep.map((_, k) => v * SD_BEAT_DISSOLVE.keep.length + k)))),
+  back: Object.freeze([0, 1, 2].map((k) => EG_DANGER_PALETTE_KEYS.length * SD_BEAT_DISSOLVE.keep.length + k)),
+});
+/**
+ * A PICTURE DISSOLVED (the Steps' dissolve, in the picture - world/sdStepsModel.js buildBeatDissolve cuts the plate's cells
+ * out of its mesh; here a cell's texels go to nothing, a picture the renderer cuts, `{ cutout: true }`): `art`'s cells of
+ * EG_DISSOLVE_TEXELS kept `keep` of every 16 by the ordered dither (world/sdPixelKit.js BAYER4) - the rest clear in its
+ * albedo (a hole) and dark in its light. Pure.
+ * @param {{ albedo: import('./sdPixelKit.js').Img, emission: import('./sdPixelKit.js').Img }} art @param {number} keep
+ */
+export function egDissolveArt(art, keep) {
+  const W = art.albedo.width, H = art.albedo.height, a = Uint8Array.from(art.albedo.colors), e = Uint8Array.from(art.emission.colors), C = EG_DISSOLVE_TEXELS;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    if (BAYER4[((Math.floor(y / C) & 3) << 2) | (Math.floor(x / C) & 3)] < keep) continue;
+    const i = (y * W + x) * 4;
+    a[i + 3] = 0; e[i] = 0; e[i + 1] = 0; e[i + 2] = 0;
+  }
+  return { albedo: { width: W, height: H, colors: a }, emission: { width: W, height: H, colors: e } };
+}
+/** A palette's index (Standard for anything else). */
+const paletteIndex = (key) => Math.max(0, EG_DANGER_PALETTE_KEYS.indexOf(egPaletteOf(key).key));
+const _warnArt = new Map();
+/**
+ * A BEAT'S LAST 0.4 S in palette `key`'s hazard (sections 10.3 and 25.2: "the last 0.4 s white"; section 25.7: "the
+ * place's hazard dashed cyan" under High contrast) - `[[record, { albedo, emission }], ...]`, the four stages it dissolves
+ * out through: the Steps' dial at frame 10, then its falter (world/sdStepsArt.js beatArt, the warning's light the
+ * palette's, a hatching palette's rim line dashed), each dissolved. Pure, and painted once a palette.
+ */
+export function egBeatWarnArt(key) {
+  const v = paletteIndex(key);
+  let out = _warnArt.get(v);
+  if (!out) {
+    const P = egPaletteOf(key), warn = P.hazard.map((c) => Math.round(c * 255)), dash = P.hatch === 1;
+    const frame = beatArt(SD_BEAT_EMBER_FRAME, false, undefined, { warn, dash }), falter = beatArt(SD_BEAT_EMBER_FRAME + 1, true, undefined, { warn, dash });
+    // its light faltered over the warning's second half (the Steps' falter: once at SD_BEAT_BLINK_HZ, shown 0.2 s then out)
+    out = Object.freeze(SD_BEAT_DISSOLVE.keep.map((keep, k) => [EG_BEAT_TELL_RECORDS.warn[v][k], egDissolveArt(k < SD_BEAT_DISSOLVE.keep.length / 2 ? frame : falter, keep)]));
+    _warnArt.set(v, out);
+  }
+  return out;
+}
+let _backArt = null;
+/** A BEAT COMING BACK: the Steps' dial at its first frame dithering in over SD_BEAT_IN_S - `[[record, art], ...]`, its three
+ *  stages (every palette's). Pure, and painted once. */
+export function egBeatBackArt() {
+  if (!_backArt) { const first = beatArt(0); _backArt = Object.freeze([0, 1, 2].map((k) => [EG_BEAT_TELL_RECORDS.back[k], egDissolveArt(first, SD_BEAT_DISSOLVE.keep[k])])); }
+  return _backArt;
+}
+/** The picture maps a Beat's draw takes on band `band` in palette `key` (a draw's texRemap - the Steps' dial record onto the
+ *  tell archive's): `{ warn: [its four stages out], back: [its three stages in, the thinnest last] }`, made once each. */
+const _tellMaps = new Map();
+export function egBeatTellMaps(band, key) {
+  const v = paletteIndex(key), k = `${band | 0}:${v}`;
+  let m = _tellMaps.get(k);
+  if (!m) {
+    const from = `${SD_REALM_ARCHIVE}_${SD_STEPS_RECORD.beat[0]}`, to = (rec) => new Map([[from, `${egTellArchive(band)}_${rec}`]]);
+    _tellMaps.set(k, m = Object.freeze({ warn: Object.freeze(EG_BEAT_TELL_RECORDS.warn[v].map(to)), back: Object.freeze(EG_BEAT_TELL_RECORDS.back.map(to)) }));
+  }
+  return m;
 }

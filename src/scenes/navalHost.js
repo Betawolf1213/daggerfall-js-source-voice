@@ -221,6 +221,26 @@ export const BLAST_SHAKE = 3.2;
  *  the CPU, their rigging stepped as a near one's). */
 export const NEAR_LIFE_M = 600;
 export const FAR_LIFE_EVERY = 4;
+/** NAV-FAR-AI (2026-10-12, a player's live client walking the coast: the captains of the sea's ships were 12% of the
+ *  main thread and some 29% of what it allocated - every ship of mine, every frame, the adopted ones hundreds of km off
+ *  among them): A FAR CAPTAIN KEEPS HER WATCH EVERY FAR_LIFE_EVERY FRAMES, on the time she missed (never more than
+ *  FRAME_STEP_S at once, the sea's own step) - past FAR_WATCH_M of the eye, where she stands no hull to be seen
+ *  (PEER_HULL_FAR_M), afloat and in no fight (hers, or one that targets her), nor lashed to a prize. Her damage, her
+ *  fires and her sinking keep every frame's clock. */
+export const FAR_WATCH_M = 5500;
+/** NAV-FAR-AI: a far captain's frame between her watches - nothing fired, nothing run out. */
+const NO_WATCH = Object.freeze({ volleys: Object.freeze([]), barrels: Object.freeze([]), grapple: null, runOuts: Object.freeze([]) });
+/**
+ * NAV-FAR-AI: WHETHER ONE OF MY SEA'S CAPTAINS KEEPS A FAR WATCH - past FAR_WATCH_M of the eye, afloat, in no fight of
+ * her own (engage or board), lashed to no prize, and no ship's target in a fight (`fought()`, asked last: the targets
+ * of every ship in one).
+ * @param {any} e a sea entry @param {number[]|null} eye @param {() => Set<string>} fought
+ */
+export function watchesFar(e, eye, fought) {
+  const s = e.ship;
+  return !!eye && s.damage.state === SHIP_STATES.afloat && s.mode !== 'engage' && s.mode !== 'board' && !s.lashed
+    && Math.hypot(s.pos[0] - eye[0], s.pos[2] - eye[2]) > FAR_WATCH_M && !fought().has(e.id);
+}
 /** PEER-HULL-RANGE: ANOTHER'S SHIP FAR OFF STANDS NO HULL HERE. Every peer in the room says their sea in their word
  *  (applyWord), so a client held every player's ships wherever they sailed - 30-40 of them, most 80-700 km off - and
  *  Come Sail Away's pool walked and baked each one every frame (scenes/comeSailAwayPool.js frame: her objects' walk and
@@ -234,6 +254,25 @@ export const FAR_LIFE_EVERY = 4;
  *  has closed (test/peerhullrange.test.js); the ships this is for were 80-700 km off, so the frame's saving is the same. */
 export const PEER_HULL_NEAR_M = 5000;
 export const PEER_HULL_FAR_M = 5500;
+/** OWN-HULL-RANGE (2026-10-12, a player's live client travelling the overworld: 14 hulls 9-727 km off, 90 -> 37 FPS
+ *  while they stood - their sails baked, their particles drawn, their rigging stepped every frame): MY OWN SEA'S SHIP FAR
+ *  OFF STANDS NO HULL EITHER. A ship with no owner is this tab's - the traffic, the raiders, the packets, a port's moored
+ *  ships, a bounty's quarry, the legends - and every ship a peer leaves behind (releaseOwner adopts them wherever they
+ *  lie, so PEER-HULL-RANGE's 80-700 km came back as mine). Her record sails, fights, burns and sinks as ever (the
+ *  captains, the director and the damage read her record, never her hull); her hull waits past the same edges - but
+ *  for what still reads her BY her hull wherever she is (`hullKept`). */
+/**
+ * OWN-HULL-RANGE: WHETHER ONE OF MY OWN SEA'S SHIPS KEEPS HER HULL, however far: bodies on her deck, the boarding I am
+ * in, a prize not yet settled (`claimPrize` moves her deck by her hull), a fight - hers (`mode` engage or board,
+ * afloat) or one that targets her (`fought`, the targets of every ship in one): a shot lands only on a hull
+ * (`targets`) and a galley rams only one (`checkShipRams`), so a fight between hull-less ships would never end.
+ * @param {any} e a sea entry @param {{ fought: Set<string>, boardingId?: string|null }} at
+ */
+export function hullKept(e, { fought, boardingId = null }) {
+  const s = e.ship;
+  return !!e.deck?.length || (boardingId != null && boardingId === e.id) || (!!e.prize && !e.prize.fate)
+    || (s.damage.state === SHIP_STATES.afloat && (s.mode === 'engage' || s.mode === 'board')) || fought.has(e.id);
+}
 /**
  * AUDIT NAV1 (the presentation, #14) - THE SEA AT A GLANCE (one card for the ship within 6 degrees of the look was all
  * the sea said, and a pirate turning on me said nothing). A TAG over each ship within NAVAL_TAG_RANGE of the eye and
@@ -1964,15 +2003,23 @@ export function createNavalHost(deps) {
     seenVolleys.delete(owner);
   }
 
-  /** PEER-HULL-RANGE: a ship whose hull stands - mine always, another's within PEER_HULL_NEAR_M of the eye. */
-  const peerHullNear = (e, eye) => !e.owner || !eye || dist2d(e.ship.pos, eye) <= PEER_HULL_NEAR_M;
-  /** PEER-HULL-RANGE: another's ship past PEER_HULL_FAR_M of the eye gives her hull back to the pool - never one I
-   *  board, nor one with bodies on her deck - and buildOne stands it again as she comes within PEER_HULL_NEAR_M. */
+  /** OWN-HULL-RANGE, NAV-FAR-AI: the ships some ship in a fight targets (a fight's other half, hull or not) - a hull
+   *  kept far off, and a captain who keeps every frame's watch. */
+  const foughtIds = () => { const t = new Set(); for (const x of sea.values()) if (engagedOf(x.ship) && x.ship.target != null) t.add(x.ship.target); return t; };
+  /** PEER-HULL-RANGE: a ship whose hull stands - within PEER_HULL_NEAR_M of the eye; OWN-HULL-RANGE: and one of my own
+   *  sea's that something reads by her hull (hullKept), wherever she is. */
+  const peerHullNear = (e, eye, fought) => !eye || dist2d(e.ship.pos, eye) <= PEER_HULL_NEAR_M
+    || (!e.owner && hullKept(e, { fought, boardingId: boarding?.shipId ?? null }));
+  /** PEER-HULL-RANGE: a ship past PEER_HULL_FAR_M of the eye gives her hull back to the pool - never one I board, nor
+   *  one with bodies on her deck; OWN-HULL-RANGE: mine too, but for what hullKept keeps - and buildOne stands it again as
+   *  she comes within PEER_HULL_NEAR_M. */
   function shedFarHulls(eye) {
     if (!eye) return;
+    let fought = null;
     for (const e of sea.values()) {
-      if (!e.owner || !e.boat || e.deck?.length || boarding?.shipId === e.id) continue;
+      if (!e.boat || e.deck?.length || boarding?.shipId === e.id) continue;
       if (dist2d(e.ship.pos, eye) <= PEER_HULL_FAR_M) continue;
+      if (!e.owner && hullKept(e, { fought: (fought ??= foughtIds()), boardingId: boarding?.shipId ?? null })) continue;   // OWN-HULL-RANGE
       deps.pool.remove(e.boat);
       e.boat = null;
       // AUDIT PEER-HULL-RANGE: what her record remembered of that hull goes with it (poseShip's canvas by height, the
@@ -1989,8 +2036,9 @@ export function createNavalHost(deps) {
   function buildOne() {
     if (!deps.pool?.ready?.()) return;
     const eye = deps.look?.()?.origin ?? deps.feet();
+    let fought = null;
     for (const e of sea.values()) {
-      if (e.boat || !peerHullNear(e, eye)) continue;   // PEER-HULL-RANGE
+      if (e.boat || !peerHullNear(e, eye, (fought ??= foughtIds()))) continue;   // PEER-HULL-RANGE, OWN-HULL-RANGE
       try {
         e.boat = deps.pool.spawnSeaNow(new Boat(e.ship.hull, e.ship.variant));
         if (e.boat) {
@@ -4355,6 +4403,22 @@ export function createNavalHost(deps) {
     }
   }
 
+  /** NAV-FAR-AI: her captain's step this frame - every frame near, in a fight, lashed or not afloat; past FAR_WATCH_M of
+   *  the eye every FAR_LIFE_EVERY frames on the time she missed (a far captain's leftover kept for her first frame near). */
+  function keepWatch(e, d, world, eye, fought) {
+    const s = e.ship;
+    const owed = e.watchDt ?? 0;
+    // the time she missed is never more than FRAME_STEP_S at once (the sea's own step): owed and this frame's together
+    // past it, what she owes is kept first, and this frame's waits for her next watch
+    if (owed > 0 && owed + d > FRAME_STEP_S) { e.watchDt = d; return stepCaptain(s, { ...world, dt: owed }); }
+    if (!watchesFar(e, eye, fought)) { e.watchDt = 0; return stepCaptain(s, owed > 0 ? { ...world, dt: owed + d } : world); }
+    e.watchDt = owed + d;
+    e.watchN = ((e.watchN ?? e.n) + 1) % FAR_LIFE_EVERY;   // each ship on her own frame of the stride (her number's)
+    if (e.watchN !== 0) return NO_WATCH;
+    e.watchDt = 0;
+    return stepCaptain(s, { ...world, dt: owed + d });
+  }
+
   function stepSea(d, seaY, boat) {
     clock += d;
     // my boats: their clocks, the brace, their fires
@@ -4446,13 +4510,16 @@ export function createNavalHost(deps) {
       night,   // SHIP-WATCH: the dark hours - a lit ship seen far, a dark one close
     };
     life.night = night;   // SHIP-WATCH: a merchantman waits at her berth for the morning; a pirate lurks nearer the mouth
+    // NAV-FAR-AI: the eye the far captains are measured from, and the ships a fight targets
+    const watchEye = deps.look?.()?.origin ?? deps.feet();
+    let fought = null;
     for (const e of [...sea.values()]) {
       if (e.owner) continue;
       const s = e.ship;
       if (s.damage.state === SHIP_STATES.sunk) { quarryGone(e); drop(e); continue; }
       const was = s.damage.state;
       if (boarding?.shipId === e.id) { const change = s.damage.step(d, clock); if (change) stateChanged(e, was, change, e.fireBy ?? null); continue; }
-      const out = stepCaptain(s, world);
+      const out = keepWatch(e, d, world, watchEye, () => (fought ??= foughtIds()));
       if (e.fromHarbour && s.errand?.kind !== 'moored') { departedOf(e.fromHarbour, where().day ?? 0).add(s.seed); e.fromHarbour = null; }   // SHIP-LIFE: sailed - not stood at her berth again today
       // AUDIT CAPTAIN'S SEA D17: a legend of the night is abroad between dusk and dawn alone - day come, she sails out of
       // the world once no fight holds her (she fought on in the sun)
@@ -4546,7 +4613,14 @@ export function createNavalHost(deps) {
     }
     for (const b of myBoats()) list.push({ ship: null, movable: false, pos: b.GameObject.position, yaw: yawOfRot(b.GameObject.rotation), hull: b.hull });
     if (list.length < 2) return;
+    // NAV-COST (2026-10-12): a hull on the flat made once a pass (again once it is shoved), and two whose centres stand
+    // farther apart than twice their reaches never measured - every pair of the sea's was, every frame, two new flats
+    // each, and nearly all of them hundreds of km apart. hullOverlap's answer for them is null: a hull's half extent
+    // along any axis is under its half length and half width together, and one of A's own axes holds at least 1/sqrt 2
+    // of the distance between the centres - so past twice the reaches some axis separates them.
+    const flatOf = (x) => (x.flat ??= flatHull(x.pos, x.yaw, x.hull));
     const shove = (x, v) => {
+      x.flat = null;
       x.ship.pos[0] += v[0]; x.ship.pos[2] += v[1];
       const l = Math.hypot(v[0], v[1]) || 1, f = forwardOfYaw(x.ship.yaw);
       const into = -(f[0] * v[0] + f[2] * v[1]) / l;   // her heading into what she met
@@ -4556,7 +4630,9 @@ export function createNavalHost(deps) {
       for (let j = i + 1; j < list.length; j++) {
         const A = list[i], B = list[j];
         if (!A.movable && !B.movable) continue;
-        const push = hullOverlap(flatHull(A.pos, A.yaw, A.hull), flatHull(B.pos, B.yaw, B.hull));
+        const a = flatOf(A), b = flatOf(B), reach = 2 * (a.hl + a.hw + b.hl + b.hw), dx = b.c[0] - a.c[0], dz = b.c[1] - a.c[1];
+        if (dx * dx + dz * dz > reach * reach) continue;
+        const push = hullOverlap(a, b);
         if (!push) continue;
         if (A.movable && B.movable) { shove(A, [push[0] / 2, push[1] / 2]); shove(B, [-push[0] / 2, -push[1] / 2]); }
         else if (A.movable) shove(A, push);

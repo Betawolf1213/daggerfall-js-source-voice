@@ -103,14 +103,35 @@ export function spawnPlateauFloor(woods, px, py) {
   return (sum / (HEIGHTMAP_DIMENSION * HEIGHTMAP_DIMENSION)) * MAX_TERRAIN_HEIGHT;
 }
 
+/**
+ * WILD-DRY (2026-10-12, a player's live client: the map's first open froze 6.7 s - the zone's giants' walking ground,
+ * systems/wildGiants.js cellsOf, asks every pixel of the zone whether it is dry, and each answer read the whole
+ * 129 x 129 kernel): WHETHER THE PLATEAU ON (px, py) STANDS OVER SPAWN_DRY_ELEVATION - `spawnPlateauFloor(...) >
+ * SPAWN_DRY_ELEVATION` to the bit, read only until it is certain. Every sample is in [0, 1] (sampleKernel's clamp01),
+ * so the running sum never falls - and a float sum of non-negatives never falls either, nor do the division and the
+ * product by positive constants - so once the column's running average is over the line, the whole one is; and a pixel
+ * that never gets there is answered by the very sum spawnPlateauFloor makes, in its very order. `kernelOf` the kernel's
+ * maker (the pins count its reads).
+ */
+export function spawnGroundDry(woods, px, py, kernelOf = sampleKernel) {
+  const k = kernelOf(woods, px, py, HEIGHTMAP_DIMENSION, false);
+  const n = HEIGHTMAP_DIMENSION * HEIGHTMAP_DIMENSION;
+  let sum = 0;
+  for (let x = 0; x < HEIGHTMAP_DIMENSION; x++) {
+    for (let y = 0; y < HEIGHTMAP_DIMENSION; y++) sum += k(x, y);
+    if ((sum / n) * MAX_TERRAIN_HEIGHT > SPAWN_DRY_ELEVATION) return true;
+  }
+  return false;
+}
+
 /** Would a ruin on (px, py) stand on dry ground? Kept per pixel: the height map does not change under a session, and
- *  the build and the Overworld's far found spawns both ask. */
+ *  the build and the Overworld's far found spawns both ask. WILD-DRY: answered by spawnGroundDry. */
 export function createSpawnGround(woods) {
   const dry = new Map();
   return (px, py) => {
     const key = py * 1000 + px;
     let d = dry.get(key);
-    if (d === undefined) dry.set(key, d = spawnPlateauFloor(woods, px, py) > SPAWN_DRY_ELEVATION);
+    if (d === undefined) dry.set(key, d = spawnGroundDry(woods, px, py));
     return d;
   };
 }

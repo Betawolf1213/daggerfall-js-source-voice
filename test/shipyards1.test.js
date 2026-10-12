@@ -59,7 +59,7 @@ test('SHIPYARDS THE TOWNS: a city, a town or a village the port\'s harbour law c
 });
 
 test('SHIPYARDS-FOUND THE KEYS: the found places\' one order - the yards\' two, then the port\'s four - each a directory key no Daggerfall building holds; the Stable and the Wagon Yard keep the keys they had (mutants: the order or the base moved)', () => {
-  assert.deepEqual([...FOUND_KIND_ORDER], [...YARD_KIND_ORDER, ...PORT_PLACE_ORDER]);
+  assert.deepEqual([...FOUND_KIND_ORDER], [...YARD_KIND_ORDER, ...PORT_PLACE_ORDER, 'carpenter']);   // PIN MOVED (CARP-YARD, 2026-10-12): the joinery after the port's four - every key before it kept
   assert.deepEqual(YARD_KIND_ORDER.map(foundBuildingKey), [YARD_KEY_BASE, YARD_KEY_BASE + 1], 'the yards\' own keys');
   assert.deepEqual(PORT_PLACE_ORDER.map(foundBuildingKey), [2, 3, 4, 5].map((i) => YARD_KEY_BASE + i));
   assert.equal(foundBuildingKey('tavern'), -1);

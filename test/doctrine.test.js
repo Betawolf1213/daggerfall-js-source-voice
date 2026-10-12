@@ -575,6 +575,13 @@ const PUBLIC_ALLOWLIST = new Map([
   // test/gatefbx.test.js holds it to the bytes. Its pictures carry no file: world/gateArt.js paints them at load.
   ['src/assets/gate/source/Oblivion_Gate.fbx', "SUPPLIED - Mac's Blender export of his Oblivion models' scene, the gate (Cube.1688) among them (2026-10-09), committed so oblivionGate.json is a DERIVATION the gate can re-run"],
   ['src/assets/gate/oblivionGate.json', 'SUPPLIED - Oblivion_Gate.fbx\'s gate baked to the gate\'s frame by tools/bakeGate.mjs; geometry only, no ARENA2 data'],
+  // EG6c (2026-10-12, Elite-Gates.md section 11.6): THE REFERENCE HERO FRAGMENT - the port's own stand-in for Mac's
+  // authored fragments, a scene written from numbers alone by tools/egRefFragScene.mjs (no image, no game data, no
+  // third-party art) and committed as the .fbx tools/fragBake.mjs bakes; tools/bakeEgRefFrag.mjs re-makes its two halves,
+  // and test/eg6c_bake.test.js holds the scene and both halves to their bytes.
+  ['src/assets/egfrags/source/egRefFrag.fbx', 'OURS - the reference hero fragment\'s scene, written by tools/egRefFragScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
+  ['src/assets/egfrags/egRefFrag.law.json', 'OURS - egRefFrag.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgRefFrag.mjs; numbers only'],
+  ['src/assets/egfrags/egRefFrag.mesh.json', 'OURS - egRefFrag.fbx\'s mesh half baked by tools/bakeEgRefFrag.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
   // WAGONS1 (2026-10-09, Mac: "Here are 3 new models that will need to be textured"): MAC'S THREE WAGONS, supplied as
   // four saves of one Blender scene ("wagons.blend") - the newest committed whole, as the ships' scenes are.
   // tools/bakeWagons.mjs re-makes the three JSONs from it (tools/shipBake.mjs), and test/wagons1_bake.test.js holds them

@@ -743,8 +743,8 @@
   {
     "name": "RVN5-stand-unstamped",
     "file": "src/systems/revenant.js",
-    "old": "edge: adaptEdge(r.learned, r.weak), sigBlow: signatureStamp(r) });",
-    "new": "edge: adaptEdge(r.learned, r.weak), sigBlow: null });",
+    "old": "edge: adaptEdge(r.learned, r.weak), sigBlow: signatureStamp(r), person: revenantPerson(r) });",
+    "new": "edge: adaptEdge(r.learned, r.weak), sigBlow: null, person: revenantPerson(r) });",
     "tests": [
       "test/rvn5_sig.test.js"
     ]
