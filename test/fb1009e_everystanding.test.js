@@ -4,7 +4,7 @@
 // we be able to see most or all organizations? I personally feel that could be a setting".
 //
 // The Standing page listed the player's memberships alone (systems/affiliations.js). With the Interface tab's Character
-// sheet row on (prefs `standingAll`, off by default), it lists every organization's reputation from the live faction
+// sheet row on (prefs `standingAll`, on by default - STANDING-ON), it lists every organization's reputation from the live faction
 // store (systems/factionStanding.js). `01-Overview/Field-Bugs-2026-10-09e.md`.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -61,8 +61,8 @@ test('EVERY-STANDING: every organization by group - the guilds and temples the p
   assert.equal(ORG_STANDING_GROUPS.length, 7);
 });
 
-test('EVERY-STANDING: off by default - the page as it was; on, the Standing page draws each group under its divider, a row its name and a signed number', async () => {
-  assert.equal(PREF_DEFAULTS.standingAll, false);
+test('EVERY-STANDING: on by default (STANDING-ON); on, the Standing page draws each group under its divider, a row its name and a signed number', async () => {
+  assert.equal(PREF_DEFAULTS.standingAll, true);   // STANDING-ON (Mac, 2026-10-11)
   const menu = read('src/ui/enhancedMenu.js');
   assert.match(menu, /statsGuilds\(detail, playerEntity\);\s*\n\s*if \(getPref\('standingAll'\)\) statsEveryStanding\(detail, playerEntity\);/);
   assert.match(menu, /out\.push\(prefRow\('standingAll', 'Every faction\\'s standing',/);

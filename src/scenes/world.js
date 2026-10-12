@@ -125,7 +125,7 @@ import { travellerRoster, mintResident } from '../systems/livingWorld/census.js'
 import { townTrips, visitorsOf as tripVisitorsOf, awayOf as tripAwayOf, placeCycle, setsOut, newsOf, paceScale, NEWS_DAYS, diversAt, cycleOf, handsOn, nativeDry, divesIn, TRIP_REACH_PX } from '../systems/livingWorld/trips.js';   // LW3: the roads, pure; LW4: the places' cycles, the town's news; LW7: a townsperson's cycle, a trip's hand deaths; LW-DRY: the ground a party stops on
 import { createDryGround } from '../world/dryGround.js';   // LW-DRY: the height map's own dry ground, every client's alike
 import { placeAt, turnKey } from '../systems/livingWorld/lives.js';   // LW4: who holds a traveller's place
-import { peoplePage, residentOfId } from '../systems/livingWorld/people.js';   // LW7c: the chronicle's People page; AUDIT FB1010 C1: a betrothed as the census mints them
+import { peoplePage, residentOfId, regardBadge } from '../systems/livingWorld/people.js';   // LW7c: the chronicle's People page; AUDIT FB1010 C1: a betrothed as the census mints them
 import { troubleOf, troubledTrip } from '../systems/livingWorld/trouble.js';   // LW4: trouble on the road
 import { foeWord } from '../systems/livingWorld/lines.js';   // LW4: a foe's word for the town's talk and a mark
 import { portPackets, berthOf, sailorAt, crewsAshore } from '../systems/livingWorld/portCrews.js';   // LW5: the Bay's sailors
@@ -2554,6 +2554,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   const precipOpts = { enhanced: sky.enhanced, countCap: Number(params.get('rain')) || null };
   if (sky.pixelSnow) precipOpts.pixelSnow = sky.pixelSnow;   // DS1: Dynamic Skies' InitSnow - the pixel snow replacement, when its switch is on
   let precip = precipMode ? new PrecipitationRenderer(renderer.gl, precipOpts) : null;
+  const wxEye32 = new Float32Array(3);   // RAIN-LEAK: the falling weather's eye, filled each frame - never a fresh array a frame
   // PERF-WARM: the renderer's on-demand programs, and the rain's whole
   // renderer, paid for at idle rather than on the frame that first needs
   // them. The rain is the expensive one: a weather change builds a
@@ -3525,6 +3526,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     caught: (p) => livingIndoors?.caught(p) ?? null,
     toned: (p, tone) => livingIndoors?.town()?.toned(p, tone) ?? null,
     moment: (p) => livingIndoors?.town()?.moment?.(p) ?? null,   // LW6c: a household at home handed a keepsake
+    regardCard: (p) => livingIndoors?.town()?.regardCard?.(p) ?? null,   // AUDIT PLAIN-UI C2: the talk panel's regard, indoors too
   };
   const livingTownOfMap = (mapId) => {
     for (const p of built.values()) if (p.population instanceof LivingTown && (p.population.o.town.mapId >>> 0) === (mapId >>> 0)) return p.population;
@@ -3582,6 +3584,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   // the person's town on the road: the roads' layer answers a refusal and notes a word (townTalk's `livingTalk` door)
   const _livingRoadsDoor = { refuses: (p) => livingRoads?.refuses(p) ?? null, talked: (p) => livingRoads?.talked(p) ?? null, caught: (p) => livingRoadCaught(p), roadside: true };
   _livingRoadsDoor.toned = (p, tone) => livingRoads?.toned(p, tone) ?? null;   // LW7: a word's tone on the road too
+  _livingRoadsDoor.regardCard = (p) => livingRoads?.regardCard(p) ?? null;   // AUDIT PLAIN-UI C2: the talk panel's regard on the road and below (a diver's door)
   /** @type {ReturnType<typeof createLivingRoads> | null} */
   let livingRoads = null;
   // LW11 (bible/06-Systems/Living-World-II.md): THE CARAVAN'S DOOR - the counter, the deeds and their reports, the hold-up
@@ -7661,6 +7664,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // LW2: the living world's two doors - an enemy's refusal, and a word noted in the resident's regard (the body's
     // own town answers both: systems/livingWorld/livingTown.js)
     livingTalk: { refuses: (person) => person?.living?.town?.refuses(person) ?? null, talked: (person) => person?.living?.town?.talked(person), caught: (person) => person?.living?.town?.caught?.(person),
+      regard: (person) => regardBadge(person?.living?.town?.regardCard?.(person) ?? null),   // PLAIN-UI: the talk panel's regard badge
       kin: (person, talk) => legacyMeetKin(person, talk),   // LEGACY-HOME: one of the player's line, met
       offers: (person, talk) => (livingWorldOn() ? caravanHostOf().offers(person, talk) || (_mode() === 'dungeon' && !!livingDivers?.offers(person, talk)) : false) },   // LW11: a caravan's merchant, a pedlar, a carter asks first; LW14: a company below - AUDIT LW-II-2 D4: below alone (one met there and left holding never answers the street's talk)
     legacyTopics: (person) => legacyTopicRows(person),   // LEGACY5: courting, the proposal, the wedding, the family
@@ -7751,7 +7755,6 @@ export async function bootWorld(canvas, renderer, params, status) {
     lookPitch: () => cam.pitch, lookYaw: () => cam.yaw, groundHeightAt: (x, z) => heightAt(x, z),
     enhancedRiding: () => (rrRidingOn() ? { terrainFollowing: rrRidingSetting('followTerrainEnabled') === true, softenFollow: rrRidingSetting('followTerrainSoftenFactor') ?? 8 } : null),
     horseCart: () => hccRuntimeOn(),   // HCC: TrailingWagonTransportWindow's gate and route (declared below; read at open)
-    cartRefusal: () => upkeep.brokenWhy(),   // WAGONS4: the classic window's Cart row, a broken wagon dark (declared below; read at open)
   });
   // RR2: the seams EnhancedRiding's component reads off the scene - in a town (PlayerGPS.IsPlayerInTown(true)), the transport mode
   setRrHostSeams({ inTown: () => _isPlayerInTownStrict(), transportMode: () => player.transportMode, riding: () => player.riding });
@@ -8497,7 +8500,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       hasCart: () => hasTransport(TRANSPORT_SMALL_CART), hasHorse: () => hasTransport(TRANSPORT_HORSE),
       isOnShip: () => isOnShip(playerEntity, playerEntity.boardShipPosition ?? null, playerTravelPixel()),
     },
-    teamShort: () => wagonTeamShort(playerEntity.items ?? []) ?? upkeep.brokenWhy(),   // WAGONS3: a pair's wagon takes its pair; WAGONS4: and a broken one goes nowhere - refused at every door a short team is
+    teamShort: () => wagonTeamShort(playerEntity.items ?? []),   // WAGONS3: a pair's wagon takes its pair
     player: { position: hccPlayerCentre, forward: hccForward, movement: () => ({ position: hccPlayerCentre(), forward: hccForward() }) },
     gps: {
       worldX: () => state.worldCoords(player.pos).x, worldZ: () => state.worldCoords(player.pos).z,
@@ -17571,7 +17574,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       // Yard sell both (MERCHANT-YARDS; DFU's General Store did), so the
       // calculator's transport modifier is real.
       hasHorse: () => hasTransport(TRANSPORT_HORSE),
-      hasCart: () => hasTransport(TRANSPORT_SMALL_CART) && !upkeep.brokenWhy(),   // WAGONS4: a broken wagon is no journey's transport
+      hasCart: () => hasTransport(TRANSPORT_SMALL_CART),
       // `DaggerfallBankManager.OwnsShip || GuildManager.FreeShipTravel()`
       // (DaggerfallTravelPopUp.cs:219), read at OnPush like the two
       // above. FreeShipTravel is base-false everywhere and overridden
@@ -22888,7 +22891,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     peerName: (id) => peerName(id),
     selfId: () => online?.id ?? '',
     near: tradeNear,   // the ONE range rule (TRADE_RANGE_M metres), asked by the ask, the accept, the lock, the confirm and every frame of a live trade
-    escrow: realmSession ? realmTradeEscrow({ session: realmSession, checkpoint: () => onlineCheckpoint() }) : null,   // REALM P2.1: both confirms hand the commit to the realm, which moves the goods between the two records at once - the checkpoint first, while the goods are still in the pack
+    escrow: realmSession ? realmTradeEscrow({ session: realmSession, checkpoint: () => onlineCheckpoint(), heldSaid: () => tradeHeldNotice(null, realmSession.tradeHeld, realmSession.tradeHeldWhy) }) : null,   // REALM P2.1: both confirms hand the commit to the realm, which moves the goods between the two records at once - the checkpoint first, while the goods are still in the pack
     open: (session) => {
       tradeWin = createPlayerTradeWindow(session, { items: () => (playerEntity.items ??= []), entity: playerEntity, gold: () => tradePack.gold(),
         rows: (id, pick) => townTalk.lines(id, pick) });   // AUDIT TRADE-INFO D2: an artifact's powers are its TEXT.RSC words, as the pack's card reads them
@@ -33680,9 +33683,6 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
             wagonGoes: mode === TRANSPORT_MODES.Cart || !!hccRuntimeOn()?.view?.()?.teamFollowing,
           });
           saddleHost.motion(gamePaused() ? 0 : dt, metres, galloping);   // STEED-UI: the saddle panel's pace and gait
-          // AUDIT WAGONS4: the classic cart broken down under its driver (Horse Cart and Cargo off) - afoot beside it, its line
-          // said as it broke; the mod's own reconcileTeam parks its team and stands its driver down
-          if (mode === TRANSPORT_MODES.Cart && !hccRuntimeOn() && upkeep.brokenWhy()) setTransportModeHere(TRANSPORT_MODES.Foot);
         }
         // PlayerHeightChanger reads `OnExteriorWater == Swimming` and
         // only that (:127, :294, :326, :550) - WaterWalking never sinks
@@ -35395,12 +35395,13 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // the wisps - writes no depth, so every pass drawn AFTER it painted over it: the grass field and the halls' banners
     // stood in front of rain falling nearer the eye. It is drawn once the opaque world is whole (below, after the banners).
     const drawFalling = () => {
+      wxEye32[0] = wxEye[0]; wxEye32[1] = wxEye[1]; wxEye32[2] = wxEye[2];   // RAIN-LEAK: filled here, not in the frame - PERF-V8's bytecode ceiling
       const precipShown = enhancedFront ? fx.shown : precipMode;
       if (precipShown === 'sand') {
         // WEATHER2d: THE SANDSTORM'S SAND - the wisps' program in the sand's look, the front's intensity its
         // strength, on the one wind's rate and travel; the rain program never draws it
         if (sand && !_dwPrecipOff) {
-          sand.draw({ on: true, strength01: fx.intensity, windV: wd.windV, step: wd.step, gust: wd.gust }, proj, view, new Float32Array(wxEye), now / 1000);
+          sand.draw({ on: true, strength01: fx.intensity, windV: wd.windV, step: wd.step, gust: wd.gust }, proj, view, wxEye32, now / 1000);
           renderer.markForeignPass();
         }
       } else if (precipShown && precip) {   // W1 review: the gate is the MODE, never the object - the renderer outlives a clear-up
@@ -35429,7 +35430,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         // click is a Travel Options journey, whose DisableWeatherAndSound stood the particles down while the rain loop
         // played on - but the Overworld's journey is SEEN, the world going on under it, so what falls keeps falling there
         if ((!_travelWeatherOff || tvf) && !_dwPrecipOff) {
-          precip.draw(precipShown, proj, view, new Float32Array(wxEye), camRight, now / 1000);
+          precip.draw(precipShown, proj, view, wxEye32, camRight, now / 1000);
           renderer.markForeignPass();   // EV6: so did the rain
         }
       }
@@ -35437,7 +35438,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       // rain and before the grass, on the same integrated wind; a foreign
       // pass like the rain. Their row is read every frame.
       if (wisps && wd.on && wispsOn() && !_dwAirOff) {
-        wisps.draw(wd, proj, view, new Float32Array(wxEye), now / 1000);
+        wisps.draw(wd, proj, view, wxEye32, now / 1000);
         renderer.markForeignPass();
       }
     };

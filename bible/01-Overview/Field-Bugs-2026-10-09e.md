@@ -8,7 +8,7 @@ words beside them: "Also increase the accuracy and fidelity of the tamerial inga
 | 1 | "Mining veins" - "I mined about 200-300 veins of iron, but there were not a single vein of silver, gold, platinum or mithril in the mountains ... maybe Mountain area and MountainWoods area are bugged" (Boar) | the law: a vein on ground no three players had vouched for was held to tier 2, and the Mountain's table holds Iron alone at 1-2 | the cap raised to 3 for veins (UNWITNESSED-ORE) - the owner's to revert, below |
 | 2 | "Missing quest location house - An Item On Loan" - "The residence I'm supposed to go to is either missing or under a hill", Guyunyyra Greenham of The Masterhouse Residence in Gentle Redeemer of Akatosh (Black Feather Meadowlark) | Beautiful Villages' `TEMPASD1` stands its House2 #6 inside two of the author's hills - AUDIT FB1005 T3's one walled door, carried as the pack's own | fixed (HILL-HOUSE) - not seen in the game, below |
 | 3 | "Desktop client in-game map icons and text too small on high resolutions" - "For the record I'm using a 2k monitor" (Foofding) | the held map inked its names and glyphs in fixed paper pixels and its chrome in fixed CSS pixels, on a paper fitted to the screen | fixed (MAP-SCALE) - not proven on the reporter's monitor |
-| 4 | "Could we have a setting to see our reputation with every guild/kingdoms?" - expelled from the Mages Guild, "I can't see how is my standing with them" (Faetasi) | the Standing page listed the player's memberships alone | done, off by default (EVERY-STANDING) |
+| 4 | "Could we have a setting to see our reputation with every guild/kingdoms?" - expelled from the Mages Guild, "I can't see how is my standing with them" (Faetasi) | the Standing page listed the player's memberships alone | done (EVERY-STANDING); on by default since STANDING-ON (2026-10-11) |
 | 5 | the owner: "increase the accuracy and fidelity of the tamerial ingame map. Its not properly traced" | the trace read the picker's borders as straits and the painting's dabs as lakes, fitted the Bay where the picture is never drawn, and inked the pixels' staircase | done (TAMRIEL4) - `03-World/Tamriel.md` |
 
 ## UNWITNESSED-ORE: a vein on unvouched ground holds Silver (1)
@@ -82,7 +82,8 @@ moved (PIN MOVED); `tools/mutants/fb1009e_mapscale.json` (10, all dead).
 guilds the player BELONGS to (`systems/affiliations.js`, DFU's ShowAffiliationsDialog). An expelled member's guild is no
 membership, so the one number the way back in reads was nowhere on the screen. The reporter asked for it as a setting,
 "since with many temples and knight orders, some people could feel the menu bloated": the Interface tab's Character
-sheet row, "Every faction's standing" (prefs `standingAll`, off by default - the page as it was). On, the page lists
+sheet row, "Every faction's standing" (prefs `standingAll`; shipped off, on by default since STANDING-ON - Mac,
+2026-10-11: "should be on by default"; the shelf writes no default, so only a player who pressed it off keeps Off). On, the page lists
 every organization's reputation from the live faction store under its divider (`systems/factionStanding.js`
 standingGroups): the four guilds, the eight temples by the god their membership reads, the ten knightly orders, the
 kingdoms (FACTION.TXT's Province type - every region's ruler and the Empire, 45; no Random Ruler), the fourteen covens,

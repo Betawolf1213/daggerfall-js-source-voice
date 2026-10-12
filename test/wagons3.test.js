@@ -558,7 +558,7 @@ test('WAGONS3 TWO HORSES TO PULL A PAIR\'S WAGON: short of its pair the wagon is
   // the hosts hand the runtime the word and the pool the count
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const s = rd(host);
-    assert.match(s, /teamShort: \(\) => wagonTeamShort\(playerEntity\.items \?\? \[\]\)(?: \?\? upkeep\.brokenWhy\(\))?,/, host);   // PIN MOVED (WAGONS4): and a broken wagon goes nowhere
+    assert.match(s, /teamShort: \(\) => wagonTeamShort\(playerEntity\.items \?\? \[\]\),/, host);   // PIN MOVED (WAGONS4, then back at WAGON-MEND: no wagon is ever broken)
     assert.match(s, /horses: \(\) => horseCountOf\(playerEntity\.items \?\? \[\]\),/, host);
   }
 });

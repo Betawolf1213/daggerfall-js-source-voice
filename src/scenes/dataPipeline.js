@@ -242,11 +242,11 @@ export function createDataPipeline({ renderer, arch, palette, fetch = fetchBytes
       // style off it, so a lit lantern draws its own texels instead of
       // sitting at scene ambient beside the light it casts.
       renderer.uploadEmissionTexture(archive, record, color32, { white: true, replacement });
-    } else if (!t.vendor && !swap && isInteriorGlassArchive(archive) && renderer.uploadGlassMask) {
-      // RW1: A BUILDING INTERIOR'S OWN GLASS (render/realWindows.js interiorGlassMask - the rule's one home): a record of
-      // an interior set whose bitmap carries the glass index, its mask cut by the exterior arm's own reader. Never a
-      // mod's picture: its texels are not the classic bitmap's, and its glass is its own to declare.
-      const glass = interiorGlassMask(archive, bitmap, (b) => t.getWindowColors32(b));
+    } else if (!t.vendor && isInteriorGlassArchive(archive) && renderer.uploadGlassMask) {
+      // RW1: A BUILDING INTERIOR'S OWN GLASS (world/interiorGlass.js interiorGlassMask - the rule's one home): a building
+      // set's window wall, its panes read off the classic bitmap against its twin wall. GLASS-ALL: a pack's picture of it
+      // too, cut by the classic mask as the exterior arm cuts a pack's window - a repaint keeps the window where it was.
+      const glass = interiorGlassMask(archive, record, bitmap, (r) => (r < t.recordCount ? t.getDFBitmap(r, 0) : null));
       if (glass) renderer.uploadGlassMask(archive, record, glass, { replacement });
     }
     return variant;   // DW3: the icon drawers read the GL texture by `${archive}_${record}${variant}`

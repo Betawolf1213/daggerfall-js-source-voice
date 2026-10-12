@@ -40,8 +40,9 @@ export const PREF_DEFAULTS = Object.freeze({
   mapScale: 'auto',
   // EVERY-STANDING (FIELD BUGS 2026-10-09e, "Could we have a setting to see our reputation with every guild/kingdoms?"):
   // the character sheet's Standing page lists every organization's standing, not only the player's memberships
-  // (systems/factionStanding.js).
-  standingAll: false,
+  // (systems/factionStanding.js). STANDING-ON (2026-10-11, Mac: "should be on by default"): on - the shelf writes no
+  // default (PREF1), so a player who never pressed the row moves with it, and one who pressed it off keeps their Off.
+  standingAll: true,
   // HUD-MOVE (2026-10-01, Mac: "make chat, hp mana stamina bar segment and all the element moveable and add a reset UI
   // and lock UI in the settings (lock should be on by default)"): the Enhanced Plus HUD's own layout. `hudLocked` is the
   // lock (on: nothing moves, the HUD is pointer-transparent as ever); `hudLayout` is { id: { x, y } }, each piece's

@@ -23,8 +23,8 @@
 // has holes wherever its alpha is under a half, in every solid pass and in the shadows' too.
 //
 // Which interior texels are glass: an exterior window record drawn inside a building (DFU lays interiors out with the
-// same window table - DaggerfallInterior.cs:473/:517/:1270 apply WindowStyle.Disabled to them), and a building
-// interior's own texture whose record carries the palette's 0xff texels (world/interiorGlass.js). A context that is not
+// same window table - DaggerfallInterior.cs:473/:517/:1270 apply WindowStyle.Disabled to them), and the panes of a
+// building interior set's window wall (world/interiorGlass.js - GLASS-ALL, read off the data). A context that is not
 // ARENA2's declares its own glass with renderer.uploadGlassMask (white = glass) or with a cutout picture.
 //
 // Not a DFU member: the port's own presentation (Port-Doctrine, the renderer rebuilt on our stack).

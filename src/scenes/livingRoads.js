@@ -752,6 +752,15 @@ export function createLivingRoads(deps) {
       deps.relations?.()?.note(id, kind, dayOf(deps.clock()));
       return id;
     },
+    /** AUDIT PLAIN-UI C2 (bible/10-UI/Plain-Words.md): a road body's regard as the talk panel shows it - the one its
+     *  refusal reads (LW13: a company's word is its head's), on the same day; null for no resident or no relations. */
+    regardCard(person) {
+      const id = person?.living?.id;
+      const rel = deps.relations?.();
+      if (!id || !rel) return null;
+      const whom = companyAt(id, deps.clock())?.head?.id ?? id, day = dayOf(deps.clock());
+      return { regard: rel.regard(whom, day), standing: rel.standing(whom, day) };
+    },
     /** ... and an enemy will not talk. */
     refuses(person) {
       const id = person?.living?.id;

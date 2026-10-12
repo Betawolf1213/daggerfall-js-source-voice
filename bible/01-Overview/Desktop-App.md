@@ -274,6 +274,23 @@ still name the installer's version and the commit. `test/rel8_updates.test.js`
 (7, over git histories the test makes - this checkout is shallow, as CI's
 are), `tools/mutants/rel8.json` (21: 19 dead, 2 equivalent as recorded).
 
+**REL9 (2026-10-12, Mac: "The install client isnt updating"): THE MAC
+LEG BUILDS WITH A 4GB HEAP.** Read off GitHub the day this was written:
+app-v0.1.8020 (2026-10-11 22:14) was the last release, and every
+release-desktop run after it failed on ONE leg - `build (macos-latest)`,
+`npm run build`, "JavaScript heap out of memory" at ~2GB (runs 493, 498
+and 499 read whole; every run between failed or was cancelled). V8 sizes its default heap
+off the machine: the ubuntu and windows runners have 16GB and built the
+same commit; the macos-latest runner has 7GB and stopped at ~2GB, which
+the site's build had outgrown. REL4 publishes only when the whole matrix
+passed, so no release was cut, and every installed copy - updater and
+notice alike - correctly found nothing newer than 0.1.8020. The build
+job's env now sets `NODE_OPTIONS: --max-old-space-size=4096` for every
+leg (what the 16GB legs already had; inside the Mac runner's 7GB), and
+the next merge cuts the release the stalled ones would have.
+`test/audit_install2.test.js` (E-54's test), `tools/mutants/rel9.json`
+(2).
+
 
 `.github/workflows/release-desktop.yml` cuts a release through any
 of three doors: pushing a tag shaped `app-v*`, a workflow_dispatch

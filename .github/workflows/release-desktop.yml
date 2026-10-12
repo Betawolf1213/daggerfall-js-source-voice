@@ -154,6 +154,14 @@ jobs:
       # No signing identities exist; without this electron-builder
       # hunts for one on macOS and fails the build looking.
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      # REL9: the site build outgrew V8's default heap on the Mac leg. The
+      # default is sized off the runner's memory - macos-latest has 7GB and
+      # stopped at ~2GB, ubuntu/windows have 16GB and passed - so from
+      # app-v0.1.8020 on every Mac leg died in `vite build` (JavaScript heap
+      # out of memory), the publish job (REL4: only when the whole matrix
+      # passed) never ran, and no copy had an update to take. 4GB on every
+      # leg: what the 16GB legs already had, inside the Mac runner's 7GB.
+      NODE_OPTIONS: --max-old-space-size=4096
     steps:
       - uses: actions/checkout@v4
         with:

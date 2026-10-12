@@ -35,10 +35,11 @@ test('OW-WEATHER: under the Overworld the falling weather and the wind wrap roun
   const w = rd('src/scenes/world.js');
   assert.match(w, /const mwv = tvf \? \{ \.\.\.mwv0, eye: tvf\.eye \}/, 'the frame\'s eye under the view is the view\'s');
   assert.match(w, /\n {4}const wxEye = tvf \? mwv\.eye : cam\.pos;\n/, 'the weather\'s eye: the view\'s under it, the head\'s on the ground');
+  assert.match(w, /\n {4}const drawFalling = \(\) => \{\n {6}wxEye32\[0\] = wxEye\[0\]; wxEye32\[1\] = wxEye\[1\]; wxEye32\[2\] = wxEye\[2\];/, 'copied into the one array as the falling weather is drawn (RAIN-LEAK)');
   for (const [what, re] of [
-    ['the sand', /sand\.draw\(\{ on: true, strength01: fx\.intensity, windV: wd\.windV, step: wd\.step, gust: wd\.gust \}, proj, view, new Float32Array\(wxEye\), now \/ 1000\);/],
-    ['the rain and the snow', /precip\.draw\(precipShown, proj, view, new Float32Array\(wxEye\), camRight, now \/ 1000\);/],
-    ['the wisps', /wisps\.draw\(wd, proj, view, new Float32Array\(wxEye\), now \/ 1000\);/],
+    ['the sand', /sand\.draw\(\{ on: true, strength01: fx\.intensity, windV: wd\.windV, step: wd\.step, gust: wd\.gust \}, proj, view, wxEye32, now \/ 1000\);/],
+    ['the rain and the snow', /precip\.draw\(precipShown, proj, view, wxEye32, camRight, now \/ 1000\);/],
+    ['the wisps', /wisps\.draw\(wd, proj, view, wxEye32, now \/ 1000\);/],
   ]) assert.match(w, re, what);
   const at = w.indexOf('    const wxEye = ');
   assert.ok(at > w.indexOf('    const mwv = tvf ?') && at < w.indexOf("if (precipShown === 'sand') {"), 'after the frame\'s eye, before the first draw');

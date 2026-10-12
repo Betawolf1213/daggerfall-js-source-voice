@@ -219,8 +219,8 @@ function steedLines(el, meter, h, care, act) {
   out.push(row);
   return out;
 }
-/** STEED-UI: a wagon's state's bar tone - sound and worn the kit's verdigris, rickety its plain, failing and broken blood. */
-const WAGON_METER_TONE = Object.freeze({ sound: 'verdigris', worn: 'verdigris', rickety: '', failing: 'blood', broken: 'blood' });
+/** STEED-UI: a wagon's state's bar tone - sound and worn the kit's verdigris, rickety its plain, failing blood. */
+const WAGON_METER_TONE = Object.freeze({ sound: 'verdigris', worn: 'verdigris', rickety: '', failing: 'blood' });
 /** STEED-UI: what a Wagon Yard asks to make it whole - at the yard, and with its wright going out to it. */
 export const mendLine = (w) => (w.mend > 0 ? `A Wagon Yard makes it whole for ${w.mend} gold - ${w.mendAway} if its wright must go out to it.` : 'A town’s Wagon Yard mends it.');
 /** WAGONS4: the wagon's soundness on its card - its condition, its state's word, and a kit's act. STEED-UI: its bar in
@@ -228,7 +228,7 @@ export const mendLine = (w) => (w.mend > 0 ? `A Wagon Yard makes it whole for ${
 function wagonLines(el, meter, w, care, act) {
   const out = [];
   out.push(holdingMeter(el, meter, 'Repair', w.share * 100, 100, WAGON_METER_TONE[w.stateKey] ?? 'verdigris'));
-  const advice = w.stateKey === 'broken' ? 'Broken down - it goes nowhere until it is mended.' : w.stateKey === 'failing' ? 'Failing - slow, and close to breaking down.'
+  const advice = w.stateKey === 'failing' ? 'Failing - its team pulls it at its slowest.'
     : w.stateKey === 'rickety' ? 'Rickety - its team pulls it slower.' : w.stateKey === 'worn' ? 'Worn - a Wagon Yard can make it whole.' : 'Sound.';
   out.push(el('span', `hld-sub${w.tone ? ' hld-why' : ''}`, `${advice} ${mendLine(w)}`));
   if (w.kitWorks) {
@@ -369,8 +369,7 @@ export function drawStablePage(detail, rerender, { el, divider, meter = null } =
     if (v && v.limit > 0) extra.push(holdingMeter(el, meter, 'Load', v.kg, v.limit, 'thin'));
     if (care?.wagonUpkeep && care.wagon) extra.push(...wagonLines(el, meter, care.wagon, care, act));   // WAGONS4: its soundness, and a kit
     if (m.paint) extra.push(choiceRow(el, LOOK_TEXT.paint, m.paint, (i) => act('paint', i)));   // WAGONS2: its outside's paints, a button each - pressed, painted
-    const wagonWords = care?.wagonUpkeep && care.wagon?.stateKey === 'broken' ? { ...words.wagon, state: 'Broken', tone: 'is-lost' } : words.wagon;   // WAGONS4: broken down, whatever else it is
-    list.append(card(el, { art: WAGON_ART, glyph: '☸', name: stableWagonName(m.kind), words: wagonWords, sub: m.kind && m.kind !== 'cart' ? WAGON_KINDS[m.kind]?.name ?? null : null, extra, rerender }).item);   // WAGONS1: the wagon driven, by its kind
+    list.append(card(el, { art: WAGON_ART, glyph: '☸', name: stableWagonName(m.kind), words: words.wagon, sub: m.kind && m.kind !== 'cart' ? WAGON_KINDS[m.kind]?.name ?? null : null, extra, rerender }).item);   // WAGONS1: the wagon driven, by its kind
   }
   detail.append(list);
   // THE ACTS - the pair's, as the mod's summon is (both answer together)

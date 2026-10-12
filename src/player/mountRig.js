@@ -70,7 +70,6 @@ export function createMountRig({
   // rides at DFU's own 1.
   ridingVolumeScale = () => 1,
   horseCart = null,   // HCC: () => the Horse Cart and Cargo runtime, or null - TrailingWagonTransportWindow's gate and route
-  cartRefusal = () => null,   // WAGONS4: () => why the wagon goes nowhere (broken), or null - the classic window's Cart row dark (the mod's runtime asks its own teamShort)
 }) {
   const animator = new RidingAnimator();   // TR2: the mount's frames, loop and neigh
   // RR2: the terrain ring (EnhancedRiding.cs:26-31) and the pitch floor the
@@ -180,7 +179,7 @@ export function createMountRig({
       const rt = horseCart?.() ?? null;
       showOverlay(enhancedWindow(new TransportWindow({
         hasHorse: rt ? !!rt.canMountHorseFromTransportWindow() : hasHorse(playerEntity.items ?? []),
-        hasCart: rt ? !!rt.canUseCartFromTransportWindow() : hasCart(playerEntity.items ?? []) && !cartRefusal(),   // WAGONS4: a broken wagon no row
+        hasCart: rt ? !!rt.canUseCartFromTransportWindow() : hasCart(playerEntity.items ?? []),
         // TR4: the row is live when a ship is owned - AND when this
         // host can actually sail it. A fixed city has nowhere to sail
         // to, so the row goes dark rather than opening onto nothing.

@@ -1215,7 +1215,9 @@ of the board for better organization, instruction and readability"**.
   given up); the Works; HOW THE SEAT WAR WORKS, five steps folded under one line - Pledge, Earn, Claim, Siege, Hold -
   its counts the law's own (`ui/seatTab.js` seatGuide: the claim's line and fee, the Tourney's margin, the account's
   cap, the pledge's regions, the members' wait - AUDIT 657 D6; the Reckoning's and the Turning's hours as the week line
-  says them); and the Chronicle. Who sees each lever is unchanged.
+  says them); and the Chronicle. Who sees each lever is unchanged. PLAIN-UI (2026-10-12, a player: "extremely vague ...
+  doesnt explain anything") moved the guide up under the Charter, open for a reader not yet in the region's war, beside
+  a What this is panel with the reader's next step and a folded Words on this board (`10-UI/Plain-Words.md`).
 
 Code: the files above, `ui/workTab.js`, `ui/vendorTab.js`, `net/townSeatLaw.js` (the tab's own two lines) and
 `ui/enhancedPlusStyle.js` (NOTICE_CSS, PROF_CSS). Pins: `test/board_ui.test.js` (10); the pins whose words were cut

@@ -1838,6 +1838,17 @@ export class LivingTown {
     return this.residents.find((r) => r.id === place)?.home ?? null;
   }
 
+  /** PLAIN-UI (bible/10-UI/Plain-Words.md): a body's resident's regard of the character as the talk panel shows it -
+   *  `{ regard, standing }` on the day refuses() reads, or null for a body that is no resident or a character with no
+   *  relations. */
+  regardCard(person) {
+    const id = person?.living?.id;
+    const rel = this.o.relations?.();
+    if (!id || !rel) return null;
+    const day = this.dayOf(this._liveMinute());
+    return { regard: rel.regard(id, day), standing: rel.standing(id, day) };
+  }
+
   /** What a body's resident says instead of talking, when they count the player an enemy - else null. */
   refuses(person) {
     const id = person?.living?.id;

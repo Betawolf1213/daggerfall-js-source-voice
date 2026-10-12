@@ -101,7 +101,7 @@ export function stableHorses(mapId, day, { owned = [], priced = false } = {}) {
 /** What a yard sells - its whole stock, minted as a shelf mints a row (setItemFields, mintCondition): the Stable a
  *  Horse (STEED1: three of them, on the town's day - stableHorses) and a sack of oats; the Wagon Yard the Small Cart, the
  *  Open Wagon and the Caravan, in WAGON_KIND_ORDER, and a Wagon Repair Kit. The oats and the kits only where they may be
- *  sold (online once UPKEEP_ITEMS_ONLINE is on - systems/upkeepItemRows.js). A fresh list each call.
+ *  sold (online while UPKEEP_ITEMS_ONLINE is on - systems/upkeepItemRows.js). A fresh list each call.
  *  @param {string} kind @param {{ mapId?: number, day?: number, online?: boolean, owned?: Set<number>|number[], priced?: boolean }} [o] */
 export function yardStock(kind, { mapId = 0, day = 0, online = false, owned = [], priced = false } = {}) {
   const mint = (it) => mintCondition(setItemFields(it));

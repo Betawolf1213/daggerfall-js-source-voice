@@ -910,9 +910,9 @@ data.
 
 ## WAGONS4 - upkeep (2026-10-11)
 
-Every kind wears as it rolls and on a journey, slows as it wears, and broken goes nowhere until a Wagon Yard's wright or
-a Wagon Repair Kit mends it - the condition its item always carried (`06-Systems/Wagon-Upkeep.md`). A broken wagon is
-the hosts' `teamShort` beside WAGONS3's short team, refused at every door that one is. The team pulling a wagon pulls
+Every kind wears as it rolls and on a journey and slows as it wears, until a Wagon Yard's wright or a Wagon Repair Kit
+mends it - the condition its item always carried (`06-Systems/Wagon-Upkeep.md`). WAGON-MEND (2026-10-12): worn as far
+as wear takes it, a wagon is Failing - slow, never broken, still driven. The team pulling a wagon pulls
 it at its horses' mean Strength under its load (`06-Systems/Horse-Care.md`, STEED1).
 
 ## The relay

@@ -2843,6 +2843,26 @@ html.plus-pad-prompts-visible .px-over > .px-stage:not(.px-acctstage):not(.px-ti
   background: #0a0c11; flex: 0 0 auto; }
 .talk-who h2 { font: inherit; font-size: 20px; letter-spacing: 0.08em; text-transform: uppercase; margin: 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 2px 2px 0 rgba(0,0,0,0.8); }
+.talk-named { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+/* PLAIN-UI (bible/10-UI/Plain-Words.md): a living resident's regard under their name - the standing, a bar from -100 to
+   +100 with its middle marked, and the number; the standing's colour on the name and the mark */
+.talk-regard { display: flex; align-items: center; align-self: flex-start; gap: 8px; font: inherit; font-size: 14px; letter-spacing: 0.06em;
+  cursor: pointer; background: none; border: 0; padding: 2px 0; min-height: 24px; text-align: left; }
+/* AUDIT PLAIN-UI U10: the badge says it can be pressed - a mark after the number, the name underlined under a pointer */
+.talk-regard-value::after { content: ' ?'; color: #9c937d; }
+.talk-regard:hover .talk-regard-name, .talk-regard:focus-visible .talk-regard-name { text-decoration: underline dotted; }
+.talk-regard:focus-visible { outline: 1px dashed currentColor; outline-offset: 2px; }
+.talk-regard-words { grid-column: 1 / -1; margin: 0; font-size: 14px; line-height: 1.45; color: #c9bfa3; max-height: 4.4em; overflow-y: auto; max-width: 72ch; }   /* AUDIT PLAIN-UI C5: a short screen keeps its conversation; U9: a line a reader can follow */
+.talk-regard-name { text-transform: uppercase; }
+.talk-regard-bar { position: relative; width: 96px; height: 6px; flex: 0 0 auto; background: rgba(0,0,0,0.55);
+  box-shadow: inset 0 0 0 1px rgba(125,116,96,0.55); }
+.talk-regard-bar::before { content: ''; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: rgba(216,207,174,0.45); }
+.talk-regard-bar i { position: absolute; top: -3px; width: 4px; height: 12px; margin-left: -2px; background: currentColor; }
+.talk-regard-value { color: #d8cfae; }
+.talk-regard.friend { color: #8fd6a0; }
+.talk-regard.neutral { color: #c9bfa3; }
+.talk-regard.enemy { color: #e9a06a; }
+.talk-regard.hostile { color: #ef7b6b; }
 .talk-tone { display: flex; gap: 2px; }
 .talk-tone button, .talk-mode, .talk-cat, .talk-row, .talk-back { font: inherit; background: none; border: 0;
   color: #d8cfae; cursor: pointer; text-shadow: 2px 2px 0 rgba(0,0,0,0.8); transition: none; }

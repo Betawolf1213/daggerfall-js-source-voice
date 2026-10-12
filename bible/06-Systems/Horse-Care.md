@@ -43,7 +43,9 @@ first seen, and a minute's grazing never makes an offered horse's record mismatc
 | Hungry | its food run out | -10 | x 0.7 |
 | Starving | two days on (STARVING_AFTER) | -25, and no gallop | x 0.4 |
 
-It never dies of it. A starving horse's bond fades two points a day - kept as the time it has starved, and taken off
+It never dies of it - nor of anything else: HORSE-LIVES (2026-10-12, the owner: "Horses shouldnt die") pins it -
+a year with its owner and no food leaves it in the pack, starving, its stats held to 1, its bond to nought, ridden at
+Speed's floor; a sack of oats and it is fed again. A starving horse's bond fades two points a day - kept as the time it has starved, and taken off
 ONCE, when its food clock next moves (a meal, the stable, grazing), so it is never counted twice. A horse first seen (a
 purchase, a horse owned before STEED1) comes fed twelve hours ahead.
 
@@ -133,9 +135,10 @@ YARD_OATS_STACK.
 ## Online
 
 The fields ride the wire as every item field does (`systems/itemFields.js` horseBond 1..1000, horseFed 1 up; the item
-law holds them to DFU's Horse alone). The new templates follow REST6's law, SHIP BEFORE ANYONE CAN SEE ONE:
-UPKEEP_ITEMS_ONLINE is false for the release that ships them, so online no Stable sells oats yet - an online horse eats
-apples by hand, and every horse's keep is the same law.
+law holds them to DFU's Horse alone). The new templates followed REST6's law, SHIP BEFORE ANYONE CAN SEE ONE:
+UPKEEP_ITEMS_ONLINE was false for the release that shipped them (#791). UPKEEP-ONLINE (2026-10-12, the owner: "We
+never added oats or repair kits to the new horse/wagon system") turned it on - every release since has carried the
+templates - so online a Stable sells oats as it did offline from the first (`systems/upkeepItemRows.js`).
 
 ## The four hosts
 
@@ -145,5 +148,6 @@ HUD its bar and the Stable page its acts. `scenes/worldModes.js` (interiors) and
 stand no transport - a building or a dungeon puts the rider on foot (`transport.js` dismountOnTransition) - and are
 named, not wired.
 
-Pinned: `test/steed1_horsecare.test.js`; mutants `tools/mutants/steed1.json`. The saddle panel and the page's polish:
+Pinned: `test/steed1_horsecare.test.js`; mutants `tools/mutants/steed1.json`, and HORSE-LIVES's and UPKEEP-ONLINE's
+`tools/mutants/wagonmend.json`. The saddle panel and the page's polish:
 `test/steedui_saddle.test.js`; mutants `tools/mutants/steedui.json`.

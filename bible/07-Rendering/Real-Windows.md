@@ -39,10 +39,10 @@ the target is freed. World.js walks VIEW_RINGS = 1 ring of pixels.
 
 ## Which interior texels are glass, and the door for a room that is not ARENA2's
 An exterior window record drawn inside a building is glass (DFU lays interiors out with the same table under
-WindowStyle.Disabled). A building interior set's record (`BUILDING_INTERIOR_SETS`) whose bitmap carries 24+ texels of
-0xff and no more than 60% of them is declared glass by the pipeline's last arm (`world/interiorGlass.js`
-`interiorGlassMask`, after the
-auto-emissive arm, never a mod's picture). A context that is not ARENA2's has two doors:
+WindowStyle.Disabled). A building interior set's WINDOW WALL - record 2, read against its twin wall, record 1 - has
+its panes declared glass by the pipeline's last arm (`world/interiorGlass.js` `interiorGlassMask`, after the
+auto-emissive arm; a pack's picture of it too, cut by the classic mask): the rule, read off a real ARENA2, is GLASS-ALL
+below. A context that is not ARENA2's has two doors:
 `renderer.uploadTexture(archive, record, color32, { cutout: true })` - every solid pass discards the texels under half
 alpha (drawMesh, a static batch's sub-mesh, the shadow casters' replay); indoors the hole shows the street, or with the
 street off the sky - and `renderer.uploadGlassMask(archive, record, mask)` (white texels glass, never an emission).
@@ -64,9 +64,7 @@ kill door.
   records keep the R2 'day' style as before.
 
 ## Unverified (no ARENA2 in the container)
-FLAGGED in `src/world/interiorGlass.js`: interior glass read off 0xff in a building interior's own records, and DFU's
-window records drawn indoors taken as glass - `node tools/windowGlassScan.mjs <ARENA2> [--all]` lists the candidates.
-The rooms' scale against real window tiles, the view out's cost in a real town, and the clip box (the door's matrix
+The interior glass is no longer among them (GLASS-ALL, below: a real ARENA2 read). The rooms' scale against real window tiles, the view out's cost in a real town, and the clip box (the door's matrix
 naming the building's model) were seen only in `tools/realWindowsProbe.mjs`'s synthetic street (SwiftShader).
 
 ## The caravan (WAGONS2)
@@ -152,3 +150,37 @@ stands at HEAD, not the view out's).
   the pass running while the player moves. Bounded (VIEW_SCALE,
   VIEW_MAX_SIDE, one pass a frame); an occlusion query on the glass is the
   fix, not made blind here.
+
+## GLASS-ALL (2026-10-11): the interior glass, read off the data
+
+Mac: "Windows inside interiors are not see through", then "Bruh all windows should be see through". The renderer was
+not the fault - `tools/realWindowsProbe.mjs`'s room, re-run at HEAD on both lanes, cut its declared glass to the street
+- the RULE was. RW1 read interior glass off palette index 0xff, unverified; against a real ARENA2 (DaggerfallGameFiles,
+read in a scratch folder and never committed - Port-Doctrine) `node tools/windowGlassScan.mjs` found it in ONE window
+of the 36 building interior archives (the temple's stained glass, 063) and took eight records of TEXTURE.237 and .240,
+the paperdoll's clothes, which share the sets' numbers. Every other window wall's glass is plain palette colour, so
+nothing was cut and every pane stood opaque.
+
+What the data says. Each building interior set (`BUILDING_INTERIOR_SETS`, in the four climates an interior is laid out
+in - ApplyClimate's bases 0, 100, 300, 400; never 2xx) is five records: a wall twice (0 and 1), a WINDOW WALL (2 - the
+same wall with a window in it), a floor and a ceiling. ARCH3D's 882 interior models hold 97 that wear a window wall.
+The two castles break the layout: the desert castle (011) has no window, the mountain castle's (111) is record 1
+against record 0 - and no building interior wears a castle set. The glass is the window wall's NEW art (where it
+differs from its twin) painted in the palette's blue run, 96-109 (the sky's blue down to the slate a pane is shaded
+with); where a window carries no glass, the opening's fill (a farm's and a village's hole in a desert wall, 222 and
+223; the castles' arched opening, 86, and arrow slit, 216); and the glass index wherever it stands.
+
+The rule (`world/interiorGlass.js` windowGlassTexels, one home - the pipeline and the scan tool ask it): a texel is
+glass when it is the glass index, or new against the twin, in the ramp and in dense new art (80% of the 5 x 5 square
+about it - a twin wall differs from its window wall by a speckle of noise, and 428's wall panels are painted in the
+same blues); then only the panes are kept - a texel with three glass neighbours, joined across lead three texels wide,
+24 of them to a window - with their edges. The lead of a lattice and the frame are other colours and stay: the street
+is seen through the panes. Every window wall of the 36 has its glass found (35 - 011 has none to find), none of the
+clothes; the counts are pinned (`test/windows1_view.test.js`, gated on `ARENA2_PATH`). Two known looks: 440 (the swamp
+manor) paints the band its window stands in with the glass's own blues, so the band opens with it, a wide window; 128
+and 140 (the mountain farm and manor) shade their panes with grey strokes in the lattice's own greys, which stay.
+
+The pipeline's arm now asks it of a pack's picture of a window wall too (it was `!swap`), cut by the classic mask as
+the exterior arm cuts a pack's window - a repaint keeps the window where it stood. Pins: `test/windows1_view.test.js`
+V8 (a synthetic window wall - its panes, its lead, its frame, the wall's speckle, a half-repainted wall and a stray blob)
+and the gated corpus test; mutants `tools/mutants/windows1.json` GLASS-ALL-* (13, all dead).

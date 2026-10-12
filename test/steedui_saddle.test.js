@@ -73,7 +73,7 @@ test('STEED-UI the meters: the breath a bar while ridden (Winded in words, short
   const cart = S({ mode: 'Cart', horse: null, wagon: { name: 'Caravan', state: 'Rickety', stateKey: 'rickety', share: 0.2, kitWorks: true }, load: { kg: 300, limit: 400 } });
   assert.deepEqual(keys(cart), ['wagon', 'load']);
   assert.deepEqual(by(cart, 'wagon'), { key: 'wagon', label: 'Caravan', share: 0.2, text: 'Rickety 20%', tone: 'warn' });
-  assert.deepEqual(by({ ...cart, wagon: { ...cart.wagon, state: 'Broken', stateKey: 'broken', share: 0 } }, 'wagon').text, 'Broken');
+  assert.deepEqual(by({ ...cart, wagon: { ...cart.wagon, state: 'Failing', stateKey: 'failing', share: 0 } }, 'wagon'), { key: 'wagon', label: 'Caravan', share: 0, text: 'Failing 0%', tone: 'low' }, 'WAGON-MEND: at its worst, Failing - no Broken');
   assert.deepEqual(by({ ...cart, wagon: { ...cart.wagon, state: 'Sound', stateKey: 'sound', share: 0.9 } }, 'wagon').tone, 'ok');
   assert.deepEqual(by(cart, 'load'), { key: 'load', label: 'Load', share: 0.75, text: '300/400 kg', tone: 'ok' });
   assert.deepEqual([by({ ...cart, load: { kg: 380, limit: 400 } }, 'load').tone, by({ ...cart, load: { kg: 500, limit: 400 } }, 'load').tone, by({ ...cart, load: { kg: 500, limit: 400 } }, 'load').share], ['warn', 'low', 1]);
@@ -122,7 +122,7 @@ test('STEED-UI the line under the title: what the horse needs first - winded, st
   assert.equal(saddleHint(S({ horse: { ...S().horse, winded: true, hungerKey: 'starving' } }), { touch: true }), 'Winded - ease off and let it breathe', 'winded first, under a finger too');
   assert.equal(saddleHint(S({ horse: { ...S().horse, hungerKey: 'starving' } }), {}), 'Starving - it will not gallop until it eats');
   assert.equal(saddleHint(S({ mode: 'Cart', horse: { ...S().horse, hungerKey: 'starving' } }), {}), 'Starving - feed your horse');
-  assert.equal(saddleHint(S({ mode: 'Cart', wagon: { name: 'Open Wagon', stateKey: 'failing' } }), { mouseFree: true }), 'The open wagon is failing - mend it before it breaks');
+  assert.equal(saddleHint(S({ mode: 'Cart', wagon: { name: 'Open Wagon', stateKey: 'failing' } }), { mouseFree: true }), 'The open wagon is failing - mend it to get its pace back');
 });
 
 test('STEED-UI the panel on a page: mounted under the compass, titled, its gait and pace, its meters and buttons; a key hint on a button with a key (none on a finger); a click answers its hook, a dark one nothing; covered it hides, uncovered it stands again updated in place - made again only when its set changes; nothing to read, it goes (mutants: STEEDUI-covered, STEEDUI-rebuilt-every-frame, STEEDUI-dark-presses)', () => {
@@ -354,7 +354,7 @@ test('STEED-UI the Stable page, polished: the bond a bar to the next word with t
     assert.equal(card.stateKey, 'rickety');
     assert.ok(card.mend > 0 && card.mendAway === Math.round(card.mend * 1.5), 'fetched: half again');
     assert.match(text, new RegExp(`Rickety - its team pulls it slower\\. A Wagon Yard makes it whole for ${card.mend} gold - ${card.mendAway} if its wright must go out to it\\.`));
-    assert.ok(meters.some(([now, max, tone]) => max === 100 && tone === '' && Math.abs(now - card.share * 100) < 0.1), 'rickety: its bar plain (sound and worn verdigris, failing and broken blood)');
+    assert.ok(meters.some(([now, max, tone]) => max === 100 && tone === '' && Math.abs(now - card.share * 100) < 0.1), 'rickety: its bar plain (sound and worn verdigris, failing blood)');
   } finally { setHoldingsProvider(null); }
   // the words alone
   assert.equal(statWhy({ born: 50 }, 0, 0, 'Fed'), 'Born 50');

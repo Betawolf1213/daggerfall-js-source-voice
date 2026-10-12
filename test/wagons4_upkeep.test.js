@@ -1,17 +1,16 @@
 // WAGONS4 (2026-10-11, the owner: "Wagons have durability and require upkeep to keep from breaking down and becoming
 // unusable") - WAGON UPKEEP (bible/06-Systems/Wagon-Upkeep.md): the law (systems/wagonUpkeep.js) - a wagon's soundness
 // off the condition it always carried, what wears it, what mends it and what it costs; the runtime's wear by the metres
-// rolled and the journey's days (systems/upkeepRuntime.js); a broken wagon refused at every door a short team is
-// (systems/horseCart.js teamShort, the hosts' second word), its load still reached, its horse still ridden; the Wagon
-// Yard's Mend (systems/merchantYards.js, scenes/merchantYardsHost.js, scenes/world.js mendAtYard) and its kits; a smith's
+// rolled and the journey's days (systems/upkeepRuntime.js); WAGON-MEND (2026-10-12): no wagon ever broken - worn to
+// Failing at the worst, slow and still driven; the Wagon Yard's Mend (systems/merchantYards.js, scenes/merchantYardsHost.js, scenes/world.js mendAtYard) and its kits; a smith's
 // counter refusing a horse and a wagon (systems/repairService.js); and the hosts wiring it.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  wagonCondition, wagonConditionMax, wagonSoundness, wagonState, WAGON_STATES, isBrokenWagon, rollWear, journeyWear, wearWagon,
-  createWearAccount, mendPrice, mendWagon, kitMendWagon, wagonBrokenWhy, wagonPace, WAGON_UPKEEP_TEXT, WEAR_A_KM, OFFROAD, LOAD_WEAR,
+  wagonCondition, wagonConditionMax, wagonSoundness, wagonState, WAGON_STATES, rollWear, journeyWear, wearWagon, WEAR_FLOOR,
+  createWearAccount, mendPrice, mendWagon, kitMendWagon, wagonPace, WAGON_UPKEEP_TEXT, WEAR_A_KM, OFFROAD, LOAD_WEAR,
   KIND_WEAR, JOURNEY_WEAR_A_DAY, JOURNEY_WEAR_MAX, THROWN_WEAR, MEND_SHARE, MEND_LEAST, MEND_FETCH, KIT_MEND, WAGON_KIT_CEILING, KIT_MINUTES,
 } from '../src/systems/wagonUpkeep.js';
 import { createUpkeep, registerUpkeepUses } from '../src/systems/upkeepRuntime.js';
@@ -29,19 +28,18 @@ import { repairsObjectsTarget } from '../src/systems/enchantments.js';
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const wagon = (kind = 'cart', condition = null) => { const w = mintCondition(setItemFields(newWagonItem(kind))); if (condition != null) w.currentCondition = condition; return w; };
 
-test('WAGONS4 SOUNDNESS: the condition every wagon carried all along (template 93\'s 1400) - none carried is whole; Sound from 60%, Worn from 30, Rickety from 10 (its team 0.85 the pace), Failing (0.7), Broken at nought alone (mutants: the thresholds, the pace, broken at a point left)', () => {
+test('WAGONS4 SOUNDNESS: the condition every wagon carried all along (template 93\'s 1400) - none carried is whole; Sound from 60%, Worn from 30, Rickety from 10 (its team 0.85 the pace), Failing (0.7) under it - WAGON-MEND: and no lower, a wagon a save holds at nought Failing too (mutants: WAGON-MEND-a-state-under-failing)', () => {
   const w = wagon();
   assert.deepEqual([wagonConditionMax(w), wagonCondition(w), wagonSoundness(w)], [1400, 1400, 1]);
   assert.equal(wagonCondition({ templateIndex: 93 }), 1400, 'a wagon minted before its condition was: whole');
-  assert.deepEqual(WAGON_STATES.map((s) => [s.key, s.min, s.pace]), [['sound', 0.6, 1], ['worn', 0.3, 1], ['rickety', 0.1, 0.85], ['failing', 1e-9, 0.7], ['broken', 0, 0]]);
+  assert.deepEqual(WAGON_STATES.map((s) => [s.key, s.min, s.pace]), [['sound', 0.6, 1], ['worn', 0.3, 1], ['rickety', 0.1, 0.85], ['failing', 0, 0.7]]);
   const at = (c) => wagonState(wagon('cart', c)).key;
-  assert.deepEqual([1400, 840, 839, 420, 419, 140, 139, 1, 0].map(at), ['sound', 'sound', 'worn', 'worn', 'rickety', 'rickety', 'failing', 'failing', 'broken']);
-  assert.deepEqual([isBrokenWagon(wagon('cart', 0)), isBrokenWagon(wagon('cart', 1)), isBrokenWagon({ templateIndex: 94 })], [true, false, false]);
-  assert.deepEqual([wagonPace(wagon('cart', 150)), wagonPace(wagon('cart', 100)), wagonPace({ templateIndex: 94 })], [0.85, 0.7, 1]);
+  assert.deepEqual([1400, 840, 839, 420, 419, 140, 139, 1, 0].map(at), ['sound', 'sound', 'worn', 'worn', 'rickety', 'rickety', 'failing', 'failing', 'failing']);
+  assert.deepEqual([wagonPace(wagon('cart', 150)), wagonPace(wagon('cart', 100)), wagonPace(wagon('cart', 0)), wagonPace({ templateIndex: 94 })], [0.85, 0.7, 0.7, 1]);
 });
 
-test('WAGONS4 WEAR: a kilometre of road 1% of whole, off it 2.5 times, a full load 1.75 times, the bigger wagons built heavier (0.85, 0.7); points come off whole, the metres owed kept; a journey 1% a day to 20%, never to breaking; the watch\'s throw 10% (mutants: the road unread, the load, the kind, the account\'s remainder, the floor)', () => {
-  assert.deepEqual([WEAR_A_KM, OFFROAD, LOAD_WEAR, JOURNEY_WEAR_A_DAY, JOURNEY_WEAR_MAX, THROWN_WEAR], [0.01, 2.5, 0.75, 0.01, 0.2, 0.1]);
+test('WAGONS4 WEAR: a kilometre of road 1% of whole, off it 2.5 times, a full load 1.75 times, the bigger wagons built heavier (0.85, 0.7); points come off whole, the metres owed kept; a journey 1% a day to 20%; the watch\'s throw 10%; WAGON-MEND: no wear under its last point (mutants: the road unread, the load, the kind, the account\'s remainder, WAGON-MEND-worn-to-nought)', () => {
+  assert.deepEqual([WEAR_A_KM, OFFROAD, LOAD_WEAR, JOURNEY_WEAR_A_DAY, JOURNEY_WEAR_MAX, THROWN_WEAR, WEAR_FLOOR], [0.01, 2.5, 0.75, 0.01, 0.2, 0.1, 1]);
   assert.deepEqual(KIND_WEAR, { cart: 1, openWagon: 0.85, caravan: 0.7 });
   assert.equal(rollWear(1000), 0.01);
   assert.equal(rollWear(1000, { road: false }), 0.025);
@@ -58,25 +56,29 @@ test('WAGONS4 WEAR: a kilometre of road 1% of whole, off it 2.5 times, a full lo
   // a journey: by the day, to its cap, never to nought
   assert.deepEqual([journeyWear(0), journeyWear(5), journeyWear(30)], [0, 0.05, 0.2]);
   const old = wagon('cart', 10);
-  const j = wearWagon(old, journeyWear(30), { floor: 1 });
+  const j = wearWagon(old, journeyWear(30));
   assert.equal(old.currentCondition, 1, 'a journey always arrives');
   assert.deepEqual([j.before.key, j.after.key], ['failing', 'failing']);
-  assert.equal(wearWagon(old, journeyWear(30), { floor: 1 }), null, 'at its floor: no more');
-  assert.equal(wearWagon(wagon('cart', 50), THROWN_WEAR).after.key, 'broken', 'a throw can break one');
+  assert.equal(wearWagon(old, journeyWear(30)), null, 'at its floor: no more');
+  const thrown = wagon('cart', 50), t = wearWagon(thrown, THROWN_WEAR);
+  assert.deepEqual([thrown.currentCondition, t.after.key], [1, 'failing'], 'WAGON-MEND: a throw never breaks one');
+  assert.equal(wearWagon(wagon('cart', 0), 0.5), null, 'a wagon a save holds at nought: no lower');
   assert.equal(wearWagon({ templateIndex: 94 }, 0.5), null, 'a horse is no wagon');
   const fresh = { group: 'Transportation', templateIndex: 93 };
   wearWagon(fresh, 0.5);
   assert.deepEqual([fresh.maxCondition, fresh.currentCondition], [1400, 700], 'its condition minted where it carried none');
-  // a 100 km haul of the caravan, half loaded on the road, breaks it
+  // a 100 km haul of the caravan, half loaded on the road, wears it to its last point - and it rolls on, worn no lower
   const caravan = wagon('caravan'), acc2 = createWearAccount();
   let km = 0;
-  while (!isBrokenWagon(caravan) && km < 1000) { acc2.add(caravan, rollWear(100, { kind: 'caravan', load: 0.5 })); km += 0.1; }
-  assert.ok(km > 90 && km < 120, `a caravan half loaded breaks some 104 km of road from new (${km.toFixed(1)})`);
+  while (caravan.currentCondition > WEAR_FLOOR && km < 1000) { acc2.add(caravan, rollWear(100, { kind: 'caravan', load: 0.5 })); km += 0.1; }
+  assert.ok(km > 90 && km < 120, `a caravan half loaded is worn to its last point some 104 km of road from new (${km.toFixed(1)})`);
+  for (let i = 0; i < 1000; i++) acc2.add(caravan, rollWear(100, { kind: 'caravan', load: 0.5 }));
+  assert.deepEqual([caravan.currentCondition, wagonState(caravan).key, wagonPace(caravan)], [1, 'failing', 0.7], 'a hundred km more: Failing, still rolling');
 });
 
-test('WAGONS4 MENDING: the Wagon Yard makes it whole for 12% of its kind\'s value (40 at the least) by what it lacks, half again sent out to it; a kit a quarter of whole to 60% at most - a broken wagon too - an hour\'s work (mutants: the share, the least, the fetch, the ceiling, the kit\'s step)', () => {
+test('WAGONS4 MENDING: the Wagon Yard makes it whole for 12% of its kind\'s value (40 at the least) by what it lacks, half again sent out to it; a kit a quarter of whole to 60% at most - a wagon a save holds at nought too - an hour\'s work (mutants: the share, the least, the fetch, the ceiling, the kit\'s step)', () => {
   assert.deepEqual([MEND_SHARE, MEND_LEAST, MEND_FETCH, KIT_MEND, WAGON_KIT_CEILING, KIT_MINUTES], [0.12, 40, 0.5, 0.25, 0.6, 60]);
-  assert.equal(mendPrice(wagon('caravan', 0)), Math.round(0.12 * WAGON_KINDS.caravan.value), 'whole from broken: 3000');
+  assert.equal(mendPrice(wagon('caravan', 0)), Math.round(0.12 * WAGON_KINDS.caravan.value), 'whole from nought: 3000');
   assert.equal(mendPrice(wagon('caravan', 700)), 1500);
   assert.equal(mendPrice(wagon('caravan', 700), { away: true }), 2250);
   assert.equal(mendPrice(wagon('openWagon', 0)), 1080);
@@ -93,37 +95,25 @@ test('WAGONS4 MENDING: the Wagon Yard makes it whole for 12% of its kind\'s valu
   assert.deepEqual(kitMendWagon({ templateIndex: 94 }), { ok: false, text: WAGON_UPKEEP_TEXT.noWagon });
 });
 
-test('WAGONS4 BROKEN, IT GOES NOWHERE: the word the hosts hand the mod\'s runtime beside a short team\'s - the transport window\'s Cart row dark, the press refused, a team pulling stops where it is (parked, its horse in harness) - while its load is still reached and its horse still ridden away (mutants: the word dropped, the reconcile)', () => {
-  const items = [{ group: 'Transportation', templateIndex: 94, horseSeed: 5 }, wagon('cart')];
-  assert.equal(wagonBrokenWhy(items), null);
-  assert.equal(wagonBrokenWhy([items[0]]), null, 'no wagon: no word');
+test('WAGON-MEND NEVER BROKEN, IT ALWAYS GOES (2026-10-12, the owner: "wagons shouldnt entirely break down to become unusable"): a wagon at its last point - or one a save holds at nought - is driven, its team at the failing pace, every door open; the hosts compose no broken word beside the short team\'s (mutants: WAGON-MEND-a-state-under-failing, WAGON-MEND-worn-to-nought)', () => {
+  const items = [{ group: 'Transportation', templateIndex: 94, horseSeed: 5 }, wagon('cart', 0)];
   const u = createUpkeep({ items: () => items, now: () => 1e6, wagonUpkeep: () => true });
   const { w, rt, step } = makeWorld();
-  const host = () => { w.short = wagonTeamShort(items) ?? u.brokenWhy(); };   // the hosts' own composition
+  const host = () => { w.short = wagonTeamShort(items); };   // the hosts' own composition
   host(); step(2);
-  assert.equal(rt.tryUseTransport(TRANSPORT.Cart).succeeded, true, 'sound: driven');
+  assert.equal(w.short, null, 'nothing short');
+  assert.equal(rt.canUseTransport(TRANSPORT.Cart).allowed, true, 'the window\'s Cart row lit');
+  assert.equal(rt.tryUseTransport(TRANSPORT.Cart).succeeded, true, 'at nought: driven');
   for (let i = 0; i < 20; i++) { w.pos[2] += 0.1; host(); step(); }
-  assert.equal(w.mode, TRANSPORT.Cart);
-  // it breaks under its driver
-  items[1].currentCondition = 0;
-  host(); step(1);
-  const why = WAGON_UPKEEP_TEXT.broken('Small Cart');
-  assert.equal(u.brokenWhy(), why);
-  assert.equal(w.mode, TRANSPORT.Foot, 'afoot');
-  assert.deepEqual([rt._state().Mode, rt._state().HorseMode], [WAGON_MODE.Deployed, HORSE_MODE.HitchedToWagon], 'parked where it broke, its horse in harness');
-  assert.equal(w.said.at(-1), why);
-  const can = rt.canUseTransport(TRANSPORT.Cart);
-  assert.deepEqual([can.allowed, can.denialMessage], [false, why], 'the window\'s Cart row dark, said why');
-  assert.equal(rt.tryUseTransport(TRANSPORT.Cart).succeeded, false);
-  assert.equal(rt.canAccessWagonInventory().allowed, true, 'its load still there to take');
-  w.pos = [rt.view().horse.position[0] + 1.2, 0.9, rt.view().horse.position[2]]; step(1);
-  assert.equal(rt.tryUseTransport(TRANSPORT.Horse).succeeded, true, 'its horse ridden off for help');
-  // mended: driven again
-  mendWagon(items[1]); host();
-  assert.equal(u.brokenWhy(), null);
-  const off = createUpkeep({ items: () => items, now: () => 1e6, wagonUpkeep: () => false });
-  items[1].currentCondition = 0;
-  assert.equal(off.brokenWhy(), null, 'the switch off: no breakdown');
+  assert.equal(w.mode, TRANSPORT.Cart, 'and still on its bench');
+  assert.equal(u.rideScale('Cart'), 0.7, 'its team at the failing pace');
+  for (let i = 0; i < 100; i++) u.tick(0.016, { mode: 'Cart', metres: 10, road: false, load: 1, wagonGoes: true });
+  assert.equal(wagonCondition(items[1]), 0, 'worn no lower than a save held it');
+  items[1].currentCondition = 1;
+  for (let i = 0; i < 100; i++) u.tick(0.016, { mode: 'Cart', metres: 10, road: false, load: 1, wagonGoes: true });
+  assert.deepEqual([wagonCondition(items[1]), u.rideScale('Cart')], [1, 0.7], 'at its last point: worn no lower, still rolling');
+  assert.equal('brokenWhy' in u, false, 'no broken word for a host to compose');
+  for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/player/mountRig.js']) assert.equal(/brokenWhy|cartRefusal/.test(rd(host)), false, host);
 });
 
 test('WAGONS4 THE RUNTIME\'S WEAR: the driven wagon worn by the metres its team pulls it (driven, or following) - on the road or off, by its load - and nothing when it stays; its state\'s step down said once; a journey\'s days and the watch\'s throw; the cart\'s pace by its state (mutants: the wear when it stays, the road unread, the words every frame)', () => {
@@ -156,9 +146,10 @@ test('WAGONS4 THE RUNTIME\'S WEAR: the driven wagon worn by the metres its team 
   u.journey(30);
   assert.equal(wagonCondition(w), 1, 'a journey always arrives - never broken on the road');
   w.currentCondition = 100;
+  const before = said.length;
   u.thrown();
-  assert.equal(wagonCondition(w), 0, 'thrown: 10% of whole off');
-  assert.ok(said.includes(WAGON_UPKEEP_TEXT.brokeNow('Small Cart')));
+  assert.equal(wagonCondition(w), 1, 'thrown: 10% of whole off - WAGON-MEND: to its last point, never to nought');
+  assert.equal(said.length, before, 'failing to failing: nothing more said');
   assert.equal(u.mendPrice(), 40); assert.equal(u.mendPrice(true), 60);
   on = false;
   w.currentCondition = 1400;
@@ -210,42 +201,28 @@ test('WAGONS4 A SMITH MENDS NO HORSE AND NO WAGON: a wagon left at a smith\'s co
   assert.match(rd('src/scenes/worldModes.js'), /: refusal === 'transport' \? \[TRANSPORT_CANNOT_BE_REPAIRED_TEXT\]/);
 });
 
-test('WAGONS4 THE SWITCH AND THE HOSTS: a Features row beside horse care, on by default and forced on online; the hosts hand the runtime the broken word beside the short team\'s, the classic window its Cart row, a journey\'s fare no cart, the watch\'s throw its wear (mutants: each door dropped)', () => {
+test('WAGONS4 THE SWITCH AND THE HOSTS: a Features row beside horse care, on by default and forced on online; the hosts hand the runtime the wear - the odometer\'s, a journey\'s days, the watch\'s throw (mutants: each door dropped)', () => {
   const f = FEATURES.find((x) => x.id === 'wagon-upkeep');
   assert.deepEqual([f.group, f.kinds, f.control.key, f.control.initial, f.control.online], ['world', ['enhanced'], 'wagonUpkeep', true, true]);
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const s = rd(host);
-    assert.match(s, /teamShort: \(\) => wagonTeamShort\(playerEntity\.items \?\? \[\]\) \?\? upkeep\.brokenWhy\(\),/, host);
+    assert.match(s, /teamShort: \(\) => wagonTeamShort\(playerEntity\.items \?\? \[\]\),/, host);
     assert.match(s, /wagonGoes: mode === TRANSPORT_MODES\.Cart \|\| !!hccRuntimeOn\(\)\?\.view\?\.\(\)\?\.teamFollowing,/, `${host}: worn while it rolls with me`);
   }
   const w = rd('src/scenes/world.js');
-  assert.match(w, /hasCart: \(\) => hasTransport\(TRANSPORT_SMALL_CART\) && !upkeep\.brokenWhy\(\),/, 'a broken wagon no journey\'s transport');
   assert.match(w, /const upkeepWagonWent = hccOn\(\) \? !!hccRuntimeOn\(\)\?\.wagonGoesOnJourney\?\.\(\) : hasTransport\(TRANSPORT_SMALL_CART\);/);
   assert.match(w, /playerTicker\.advance\(computed\.minutes\);\n\s*if \(upkeepWagonWent\) upkeep\.journey\(travelDays\(computed\.minutes\)\);/, 'the journey\'s days on the wagon that went');
   assert.match(w, /thrown: \(\) => upkeep\.thrown\(\),/);
   assert.match(rd('src/scenes/wagonWardenHost.js'), /notify\(\[WARDEN_TEXT\.thrown\(town\), WARDEN_TEXT\.fetch\]\);\n\s*thrown\(\);/);
-  assert.match(rd('src/player/mountRig.js'), /hasCart: rt \? !!rt\.canUseCartFromTransportWindow\(\) : hasCart\(playerEntity\.items \?\? \[\]\) && !cartRefusal\(\),/);
   // the item law: wear is condition alone - a marked wagon's value never falls under its kind's floor
   const worn = wagon('caravan', 0);
   assert.equal(worn.value, WAGON_KINDS.caravan.value);
 });
 
-test('AUDIT WAGONS4 BROKEN, GOING NOWHERE, EVERY LANE: a broken wagon\'s pace is none (the motor rolls it nowhere); with Horse Cart and Cargo off the classic cart broken under its driver puts them afoot beside it (the mod\'s own reconcileTeam does it with the mod on); and no held Repairs Objects ever mends a wagon or a horse - the Wagon Yard\'s and the kit\'s alone (mutants: AUDIT-WAGONS4-broken-rolls, AUDIT-WAGONS4-classic-bench, AUDIT-WAGONS4-enchantment-mends)', () => {
-  const w = wagon('cart', 0);
-  const items = [w, { group: 'Transportation', templateIndex: 94, horseSeed: 7 }];
-  const u = createUpkeep({ items: () => items, now: () => 1_000_000, wagonUpkeep: () => true });
-  assert.equal(u.rideScale('Cart', 0), 0, 'broken: no pace');
-  w.currentCondition = 50;
-  assert.ok(u.rideScale('Cart', 0) > 0, 'failing: slow, but it rolls');
-  for (const [host, set] of [['src/scenes/world.js', 'setTransportModeHere'], ['src/scenes/exterior.js', 'mountRig.setMode']]) {
-    const src = rd(host);
-    const at = src.indexOf('saddleHost.motion(gamePaused() ? 0 : dt, metres, galloping);');
-    const line = src.indexOf(`if (mode === TRANSPORT_MODES.Cart && !hccRuntimeOn() && upkeep.brokenWhy()) ${set}(TRANSPORT_MODES.Foot);`);
-    assert.ok(at > 0 && line > at && line - at < 400, `${host}: the classic bench, in the frame's upkeep`);
-  }
+test('AUDIT WAGONS4 NO HELD REPAIRS OBJECTS: the enchantment\'s pick passes a wagon and a horse by - the Wagon Yard\'s and the kit\'s alone (mutants: AUDIT-WAGONS4-enchantment-mends)', () => {
   const sword = { group: 'Weapons', templateIndex: 113, currentCondition: 900, maxCondition: 1000 };
-  const broken = wagon('caravan', 0);
+  const worn = wagon('caravan', 1);
   const sore = { group: 'Transportation', templateIndex: 94, currentCondition: 10, maxCondition: 100 };
-  assert.equal(repairsObjectsTarget([broken, sore, sword]), sword, 'past the wagon and the horse, to the sword');
-  assert.equal(repairsObjectsTarget([broken, sore]), null);
+  assert.equal(repairsObjectsTarget([worn, sore, sword]), sword, 'past the wagon and the horse, to the sword');
+  assert.equal(repairsObjectsTarget([worn, sore]), null);
 });

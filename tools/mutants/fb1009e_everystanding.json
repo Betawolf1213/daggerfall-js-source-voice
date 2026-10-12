@@ -42,10 +42,10 @@
     "tests": ["test/fb1009e_everystanding.test.js"]
   },
   {
-    "name": "EVERY-STANDING-on-by-default",
+    "name": "STANDING-ON-off-by-default",
     "file": "src/systems/uiPrefs.js",
-    "old": "  standingAll: false,",
-    "new": "  standingAll: true,",
+    "old": "  standingAll: true,",
+    "new": "  standingAll: false,",
     "tests": ["test/fb1009e_everystanding.test.js"]
   }
 ]

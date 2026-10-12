@@ -40,9 +40,9 @@ export const SADDLE_ACTIONS = Object.freeze({ mount: 'HorseMount', view: 'Toggle
 export const STANDING_MPS = 0.3;
 /** A breath under this share reads short (upkeepRuntime.js BREATH_LOW's twin, kept here so the panel imports no law). */
 export const SADDLE_BREATH_LOW = 0.25;
-/** The wagon's states' tones (wagonUpkeep.js WAGON_STATES): sound and worn read well, rickety warns, failing and broken
- *  read short. */
-const WAGON_TONE = Object.freeze({ sound: 'ok', worn: 'ok', rickety: 'warn', failing: 'low', broken: 'low' });
+/** The wagon's states' tones (wagonUpkeep.js WAGON_STATES): sound and worn read well, rickety warns, failing reads
+ *  short. */
+const WAGON_TONE = Object.freeze({ sound: 'ok', worn: 'ok', rickety: 'warn', failing: 'low' });
 const HUNGER_TONE = Object.freeze({ fed: 'ok', hungry: 'warn', starving: 'low' });
 
 /**
@@ -89,7 +89,7 @@ export function saddleMeters(s) {
     out.push({ key: 'bond', label: 'Bond', share: Math.max(0, Math.min(1, share)), text: h.tier, tone: 'bond', title: h.next ? `${Math.floor(h.bond)} of ${h.next.at} to ${h.next.name}` : `${h.tier} - the bond is whole` });
   }
   const w = s.wagon;
-  if (w) out.push({ key: 'wagon', label: w.name, share: w.share, text: w.stateKey === 'broken' ? 'Broken' : `${w.state} ${pct(w.share)}`, tone: WAGON_TONE[w.stateKey] ?? 'ok' });
+  if (w) out.push({ key: 'wagon', label: w.name, share: w.share, text: `${w.state} ${pct(w.share)}`, tone: WAGON_TONE[w.stateKey] ?? 'ok' });
   const ld = s.load;
   if (ld && ld.limit > 0) {
     const share = ld.kg / ld.limit;
@@ -135,7 +135,7 @@ export function saddleHint(s, state = {}) {
   const h = s.horse, w = s.wagon;
   if (h?.winded) return 'Winded - ease off and let it breathe';
   if (h?.hungerKey === 'starving') return s.mode === 'Horse' ? 'Starving - it will not gallop until it eats' : 'Starving - feed your horse';
-  if (w?.stateKey === 'failing') return `The ${w.name.toLowerCase()} is failing - mend it before it breaks`;
+  if (w?.stateKey === 'failing') return `The ${w.name.toLowerCase()} is failing - mend it to get its pace back`;
   if (state.touch) return '';
   const parts = [];
   const run = state.keyOf?.(SADDLE_ACTIONS.run) ?? '';

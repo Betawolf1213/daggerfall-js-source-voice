@@ -2538,7 +2538,7 @@ export class Renderer {
   /** VC7b: the haze march's door - `?haze=off` (syncLightingLane reads it). */
   setHaze(on) { this._hazeWanted = !!on; if (this._airPass) this._airPass.hazeOn = this._hazeWanted; }
   /** EL1: the in-scatter gain folded with the fog's density (zero with the fog off, so clear air glows nowhere). */
-  _scatterGain() { const lane = this._lane; return lane ? lane.scatter * lane.scatterDensity(this._fogMode, this._fogDensity, this._fogRange[0], this._fogRange[1]) : 0; }
+  _scatterGain() { const lane = this._lane; return lane ? lane.scatter * Math.min(lane.scatterDensity(this._fogMode, this._fogDensity, this._fogRange[0], this._fogRange[1]), lane.scatterDensityMax ?? Infinity) : 0; }   // UW-GLOW: the glow's density capped (EL_SCATTER_DENSITY_MAX) - the haze's extinction (prepare's `haze`) is not
   /** VOL1: does the air pass draw this frame's glow - a world frame the pass was prepared for and has not yet resolved
    *  (AUDIT VOL1: `fresh` - a frame that is not the world's, the water lab's say, and a world draw after the resolve keep
    *  the lane's own glow), with the door open, outside a sprite pass, a bake and a panel. */

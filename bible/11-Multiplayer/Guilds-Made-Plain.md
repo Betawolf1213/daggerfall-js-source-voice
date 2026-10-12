@@ -54,9 +54,11 @@ twenty-five of the Chapters. The depth is not what makes it hard. Four things ar
    above the cards, every member's Merit line above those, with nothing saying which chapter a line belonged to past
    its own sentence - and nothing at all saying what a band DOES to a hall.
 
-What is already plain, and stays as it is: the board's Seat tab (BOARD-UI, 2026-10-06: panels by name, the week on a
-strip, "How the seat war works" folded under its line, the holder's orders shown to the holder's Officers alone) - the
-progressive disclosure this arc would have asked for is already there.
+The board's Seat tab was held already plain here (BOARD-UI, 2026-10-06: panels by name, the week on a strip, "How the
+seat war works" folded under its line). A player said otherwise the next day ("extremely vague ... doesnt explain
+anything"): the guide stood folded below the first screen, and most of the tab's words were defined nowhere on it.
+PLAIN-UI (`10-UI/Plain-Words.md`) put what a seat is, the reader's next step, the guide and the tab's words first, and
+How chapters work over the Work tab's chapter cards.
 
 ## 2. The laws this arc keeps
 

@@ -29,7 +29,7 @@ import {
 } from './steedCare.js';
 import {
   wagonState, wagonSoundness, wagonCondition, wagonConditionMax, rollWear, journeyWear, createWearAccount, wearWagon,
-  wagonBrokenWhy, wagonPace, mendPrice, kitMendWagon, wagonWord, WAGON_UPKEEP_TEXT, THROWN_WEAR, WAGON_KIT_CEILING,
+  wagonPace, mendPrice, kitMendWagon, wagonWord, WAGON_UPKEEP_TEXT, THROWN_WEAR, WAGON_KIT_CEILING,
 } from './wagonUpkeep.js';
 import { isWagonKitItem, UPKEEP_ITEM } from './upkeepItemRows.js';
 import { registerItemUseHandler } from './itemTemplates.js';
@@ -63,11 +63,11 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
   const breathOf = (horse) => { const s = horse?.horseSeed | 0; if (!breaths.has(s)) breaths.set(s, freshBreath()); return /** @type {{ spent: number, winded: boolean }} */ (breaths.get(s)); };
   const ridden = () => activeHorseItem(pack());
 
-  /** A wagon's state moved down a step: said, once - Rickety, Failing, Broken. */
+  /** A wagon's state moved down a step: said, once - Rickety, Failing. */
   function sayWorn(item, after) {
     if (!after || after.key === 'sound' || after.key === 'worn') return;
     const name = wagonWord(item);
-    say(after.key === 'broken' ? WAGON_UPKEEP_TEXT.brokeNow(name) : after.key === 'failing' ? WAGON_UPKEEP_TEXT.failing(name) : WAGON_UPKEEP_TEXT.rickety(name));
+    say(after.key === 'failing' ? WAGON_UPKEEP_TEXT.failing(name) : WAGON_UPKEEP_TEXT.rickety(name));
   }
 
   /**
@@ -129,7 +129,7 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
     if (mode === 'Cart') {
       let k = 1;
       const w = activeWagonItem(its);
-      if (wagonUpkeep() && w) k *= wagonPace(w);   // AUDIT WAGONS4: a broken wagon's is none - it goes nowhere
+      if (wagonUpkeep() && w) k *= wagonPace(w);   // WAGON-MEND: a failing wagon's the slowest - and every wagon rolls
       if (horseCare() && w) {
         const team = horsesIn(its).slice(0, wagonHorsesOf(wagonKindOf(w)));
         const strengths = team.map((h) => steedStats(h, t)?.stats.strength).filter((v) => Number.isFinite(v));
@@ -166,14 +166,11 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
     return { amount, low: b.winded || amount < BREATH_LOW || st.hunger === 'starving' };
   }
 
-  /** WAGONS4: why the wagon goes nowhere (broken), or null - the hosts' teamShort's second word. */
-  const brokenWhy = () => (wagonUpkeep() ? wagonBrokenWhy(pack()) : null);
-
-  /** A journey on the travel map of `days`, the wagon with it: worn by the day, never to breaking. */
+  /** A journey on the travel map of `days`, the wagon with it: worn by the day. */
   function journey(days) {
     if (!wagonUpkeep()) return null;
     const w = activeWagonItem(pack());
-    const r = w ? wearWagon(w, journeyWear(days), { floor: 1 }) : null;
+    const r = w ? wearWagon(w, journeyWear(days)) : null;
     if (r && r.after.key !== r.before.key) sayWorn(w, r.after);
     return r;
   }
@@ -306,7 +303,7 @@ export function createUpkeep({ items, now, horseCare = () => false, wagonUpkeep 
   }
 
   return {
-    tick, rideScale, gallopGate, riderPaysGallop, bar, brokenWhy, journey, thrown, model, saddle, act,
+    tick, rideScale, gallopGate, riderPaysGallop, bar, journey, thrown, model, saddle, act,
     /** The yard's price to mend the wagon driven (`away` it is not at the yard), or 0. */
     mendPrice: (away = false) => { const w = activeWagonItem(pack()); return w ? mendPrice(w, { away }) : 0; },
     /** Tests: the ridden horse's breath. */

@@ -160,7 +160,7 @@ import { vendorPageShown, VENDOR_PAGE_SECTIONS, drawVendorPage } from './vendorP
 import { REVENANT_PAGE_SECTIONS, revenantPageShown, drawRevenantsPage } from './revenantPage.js';
 import { COMPANION_PAGE_SECTIONS, companionPageShown, drawCompanionsPage, resetCompanionRoster } from './companionRoster.js';   // COMPANION-ROSTER: the sworn and the slots
 import { STABLE_PAGE_SECTIONS, stablePageShown, drawStablePage, resetHoldingsPages } from './holdingsPages.js';   // HOLDINGS: the horse and the wagon
-import { FAMILY_PAGE_SECTIONS, drawTreePage, drawHousePage, drawHallPage, resetFamilyPages, disarmFamilyPages, sheetHouse } from './familyPages.js';   // LEGACY3: Project Legacy's Family tab; LEGACY-SHEET: the house on the Stats page
+import { FAMILY_PAGE_SECTIONS, drawTreePage, drawHousePage, drawHallPage, drawGuidePage, resetFamilyPages, disarmFamilyPages, sheetHouse } from './familyPages.js';   // LEGACY3: Project Legacy's Family tab; LEGACY-SHEET: the house on the Stats page
 import { legacyOn } from '../systems/legacy/settings.js';   // LEGACY3: ...drawn while the mod is on
 import { FLEET_PAGE_SECTIONS, fleetPageShown, drawFleetPage, resetFleetPage } from './fleetPage.js';   // HOLDINGS: the ships
 import { CAPTAIN_PAGE_SECTIONS, captainPageShown, drawCaptainPage } from './captainPage.js';   // CAPT-LOG: the captain's standing and log
@@ -358,7 +358,7 @@ let journalCleanArmed = null;   // JOURNAL-CLEAN: 'f:<index>' (Remove) | 'clear'
 let questShowHidden = false;    // JOURNAL-CLEAN: the rail's "Show hidden" - whether the hidden quests are drawn, in their own section
 let questShelfSaid = null;      // QUEST-SHELF: the last Abandon / Reclaim's words, said under the quest until the next press
 let statsSec = 'character'; // PX6: the Stats page's rail - character | attributes | skills | standing
-let famSec = 'tree';       // LEGACY3: the Family page's rail - tree | house | hall
+let famSec = 'tree';       // LEGACY3: the Family page's rail - tree | house | hall | guide
 let holdSec = 'stable';     // HOLDINGS: the Holdings page's rail - stable | fleet | companions | revenants | stores | collections
 let statsAllSkills = false; // PX6: the Miscellaneous disclosure, the sheet's own gesture
 let sysSec = 'save';        // PX7: the System page's rail - which pane fills the detail
@@ -4240,8 +4240,9 @@ function pauseFamily(body) {
   // first, as the Fleet's doors do, and comes back if the act did nothing
   // AUDIT LEGACY U4: a refused act is refused on the card before the press (switchRefusal, mantleRefusal); one refused
   // after it (a save that would not take) is said on the HUD by the host, and the world resumes under it
-  const kit = { el, divider: pxDivider, door: (fn) => { onAction('handoff'); const r = fn(); if (!r?.ok) onAction('resume'); return r; } };
-  ({ tree: drawTreePage, house: drawHousePage, hall: drawHallPage })[famSec](detail, render, kit);
+  const kit = { el, divider: pxDivider, door: (fn) => { onAction('handoff'); const r = fn(); if (!r?.ok) onAction('resume'); return r; },
+    goto: (id) => { famSec = id; disarmFamilyPages(); render(); } };   // AUDIT PLAIN-UI U8: the tree's way to How it works
+  ({ tree: drawTreePage, house: drawHousePage, hall: drawHallPage, guide: drawGuidePage })[famSec](detail, render, kit);   // PLAIN-UI: How it works
   wrap.append(detail);
   body.append(wrap);
 }

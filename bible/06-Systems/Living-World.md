@@ -2014,3 +2014,7 @@ ways only through world.js.
 - `scenes/dungeonContext.js` - WIRED through the host (LW6): its own loose stand (`spawnLooseFoe` allied, `removeLooseFoe`)
   and its abyss seam's `location()` (LW-FIX1) carry the companies met in it; (LW6b) its resting places (`restingSpots`) and its pile
   (`layRemains`, `pileNear`) the fallen of a dive; it keeps no town population.
+
+## PLAIN-UI - the regard on the talk panel (2026-10-12)
+
+A player: "Where's the UI for relationship in the talk window?" The enhanced talk panel shows a living resident's regard under their name - the standing in the People page's words, a bar from -100 to +100 and the number - and, on a press, what it is and what moves it (`src/systems/livingWorld/people.js` `regardBadge`; the card the body's own door's - `src/systems/livingWorld/livingTown.js` `regardCard` on the street, the indoor door's at home, `src/scenes/livingRoads.js` `regardCard` on the road and below, AUDIT PLAIN-UI C2). The classic face is DFU's window and draws none. The record: `10-UI/Plain-Words.md`.

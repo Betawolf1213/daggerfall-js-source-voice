@@ -19494,8 +19494,8 @@ hourglass is: `ui/enhancedPost.js`.
 
 A player expelled from the Mages Guild: "since I don't am part of the guild anymore, I can't see how is my standing with
 them ... I personally feel that could be a setting". The enhanced Standing page listed the guilds the player belongs to
-alone. With the Interface tab's Character sheet row on, "Every faction's standing" (prefs `standingAll`, off by
-default), it lists every organization's reputation from the live faction store under its divider
+alone. With the Interface tab's Character sheet row on, "Every faction's standing" (prefs `standingAll`, on by
+default since STANDING-ON, 2026-10-11 - Mac: "should be on by default"), it lists every organization's reputation from the live faction store under its divider
 (`systems/factionStanding.js` standingGroups, drawn by `enhancedMenu.js` statsEveryStanding): the guilds, the temples,
 the knightly orders, the kingdoms, the covens, the vampire clans, the Daedric Princes - a membership under Guilds above,
 with its rank, never twice. The classic skin's sheet is untouched. The record: `01-Overview/Field-Bugs-2026-10-09e.md`.

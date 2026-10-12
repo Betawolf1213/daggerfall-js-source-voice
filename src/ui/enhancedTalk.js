@@ -100,6 +100,9 @@ export function talkPanelModel(model) {
   const whereIs = model._talkOption === 'whereIs';
   return {
     npcName: model.hooks.npcName ?? '',
+    // PLAIN-UI (bible/10-UI/Plain-Words.md): how a living resident regards the player, as the host words it
+    // (systems/livingWorld/people.js regardBadge) - null for anyone else
+    regard: model.hooks.regard?.() ?? null,
     tone: model.hooks.tone?.() ?? 1,
     option: model._talkOption,
     category: model._lastCategory,
@@ -129,6 +132,7 @@ let logEl = null;
 let listEl = null;
 let lastLogCount = -1;
 let lastTopicsKey = null;
+let regardOpen = false;  // PLAIN-UI: the regard badge's words shown (a press on the badge)
 
 /** Every press: through the model, then a fresh picture; and when the
  *  press was Goodbye, the exit - INSIDE the gesture, so the host's
@@ -170,7 +174,25 @@ function render() {
   faceCanvas = el('canvas', 'talk-face');
   faceCanvas.hidden = true;
   faceKey = null;
-  who.append(faceCanvas, el('h2', null, m.npcName));
+  const named = el('div', 'talk-named');
+  named.append(el('h2', null, m.npcName));
+  // PLAIN-UI: the resident's regard - its standing, a bar from -100 to +100 and the number; what it means on hover and
+  // to a reader (the line's own label)
+  if (m.regard) {
+    const r = el('button', `talk-regard ${m.regard.standing}`);
+    r.type = 'button';
+    r.title = m.regard.words;
+    r.setAttribute('aria-expanded', String(regardOpen));
+    r.setAttribute('aria-label', `${m.regard.label}, ${m.regard.value}. What this means`);
+    r.onclick = () => { regardOpen = !regardOpen; render(); };   // a press says what it means - a finger has no hover
+    const bar = el('span', 'talk-regard-bar');
+    const mark = el('i');
+    mark.style.left = `${(m.regard.share * 100).toFixed(1)}%`;
+    bar.append(mark);
+    r.append(el('span', 'talk-regard-name', m.regard.label), bar, el('span', 'talk-regard-value', m.regard.value));
+    named.append(r);
+  }
+  who.append(faceCanvas, named);
   head.append(who);
   const tones = el('div', 'talk-tone');
   TONE_LABELS.forEach((label, i) => {
@@ -183,6 +205,7 @@ function render() {
   const bye = el('button', 'act door-goodbye', 'Goodbye');
   bye.onclick = () => act(() => model.press('goodbye'));
   head.append(bye);
+  if (m.regard && regardOpen) head.append(el('p', 'talk-regard-words', m.regard.words));   // PLAIN-UI: the badge, in words
   panel.append(head);
 
   // ── main: the conversation and the topics
@@ -305,7 +328,7 @@ export function mountEnhancedTalk(hostEl, d = {}) {
   onExit = d.onExit ?? (() => {});
   relock = d.relock ?? (() => {});
   faceKey = null; faceCanvas = null; logEl = null; listEl = null;
-  lastLogCount = -1; lastTopicsKey = null;
+  lastLogCount = -1; lastTopicsKey = null; regardOpen = false;
   render();
   return {
     render,

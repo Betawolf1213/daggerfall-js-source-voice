@@ -124,6 +124,35 @@ test('STEED1 HUNGER: fed, hungry the moment its food runs out, starving two days
   assert.ok(STEED_STATS.every((k) => steedStats(strong, T0).stats[k] <= 100));
 });
 
+test('HORSE-LIVES (2026-10-12, the owner: "Horses shouldnt die"): no keep and no span kills a horse - a year with its owner and no food leaves it in the pack, starving and slow, its stats held to 1 and its bond to nought, ridden at Speed\'s floor and valid to the item law; a sack of oats and it is fed again; left waiting or stabled it never starves at all', () => {
+  const YEAR = 365 * MINUTES_A_DAY;
+  let t = T0;
+  const h = horse(1, { horseFed: T0, horseBond: 40 });
+  const items = [h];
+  const u = createUpkeep({ items: () => items, now: () => t, horseCare: () => true });
+  u.tick(0.016, { mode: 'Horse' });
+  for (let d = 1; d <= 365; d++) { t = T0 + d * MINUTES_A_DAY; u.tick(0.016, { mode: 'Horse' }); }
+  assert.deepEqual([items.length, items[0], t - T0], [1, h, YEAR], 'a year on: still the pack\'s');
+  const st = steedStats(h, t);
+  assert.equal(st.hunger, 'starving');
+  assert.ok(STEED_STATS.every((k) => st.stats[k] >= 1), 'its stats held to 1');
+  assert.equal(bondAt(h, t), 0, 'its bond faded to nought, no lower');
+  assert.ok(u.rideScale('Horse') >= 0.85, 'ridden, at Speed\'s floor at the worst');
+  assert.equal(u.gallopGate('Horse', null), false, 'starving: no gallop - and nothing worse');
+  assert.deepEqual(itemFindings(h), [], 'the item law keeps it');
+  items.push(oats());
+  assert.equal(feedHorse(items, h, 'oats', t).ok, true);
+  assert.equal(steedStats(h, t).hunger, 'fed', 'a sack and it is fed again');
+  for (const where of ['waiting', 'stabled']) {
+    let tw = T0;
+    const w = horse(3, { horseFed: T0 });
+    const keep = createUpkeep({ items: () => [w], now: () => tw, horseCare: () => true, where: () => where });
+    keep.tick(0.016);
+    for (let d = 1; d <= 30; d++) { tw = T0 + d * MINUTES_A_DAY; keep.tick(0.016); }
+    assert.notEqual(steedStats(w, tw).hunger, 'starving', `${where}: never starving`);
+  }
+});
+
 test('STEED1 THE KEEP: a horse first seen comes fed; the stable feeds its own; a horse left waiting grazes - hungry, never starving; one with its owner through a span skipped eats the packs\' oats each time its food runs out, the bond grown as by hand - out of oats, it goes hungry (mutants: the stable unread, the grazing floor, the span\'s meals, the `since`)', () => {
   const a = horse(5);
   const r0 = tendHorses([a], T0);
@@ -392,8 +421,8 @@ test('STEED1 THE ITEM: `horseBond` (tenths, 1..1000) and `horseFed` (a minute, 1
   assert.match(itemStatRows(oats()).map((r) => r.text).join(' '), /A day’s food for a horse/);
   assert.deepEqual(UPKEEP_ITEM, { Oats: 1710, WagonKit: 1711 });
   assert.deepEqual(UPKEEP_ITEM_ROWS.map((r) => [r.index, r.name, r.rarity, r.stackable]), [[1710, 'Sack of Oats', 20, true], [1711, 'Wagon Repair Kit', 20, true]]);
-  assert.equal(UPKEEP_ITEMS_ONLINE, false, 'REST6\'s law: the release that ships the templates puts none on an online shelf');
-  assert.deepEqual([upkeepItemsAvailable(false), upkeepItemsAvailable(true)], [true, false]);
+  assert.equal(UPKEEP_ITEMS_ONLINE, true, 'UPKEEP-ONLINE: the templates shipped with #791 and every release since - online the yards sell them');
+  assert.deepEqual([upkeepItemsAvailable(false), upkeepItemsAvailable(true)], [true, true]);
   assert.deepEqual(itemFindings({ ...oats(5), value: 4 }), []);
 });
 
@@ -456,7 +485,6 @@ test('STEED1 THE HOSTS (world.js, exterior.js): the upkeep built before the mod\
     assert.match(s, /steed: [^\n]*upkeep\.bar\(player\.transportMode\) : null,/, `${host}: the HUD's bar`);
     assert.match(s, /upkeep, pass: upkeepPass \}\),/, `${host}: the Stable page's upkeep and its hour`);
     assert.match(s, /const upkeepPass = \(n\) => \{ playerTicker\.advance\(n\); runEncounterTick\(/, `${host}: the hour, one home - the Stable page's, the kit's Use, the saddle panel's (STEED-UI)`);
-    assert.match(s, /cartRefusal: \(\) => upkeep\.brokenWhy\(\),/, host);
   }
   assert.match(rd('src/ui/hud.js'), /drawGripBar\(renderer, canvas, art, grip \?\? steed, s\);/, 'the classic HUD: the horse\'s breath in the grip\'s place');
   assert.match(rd('src/ui/enhancedHud.js'), /const gr = opts\.grip \?\? opts\.steed \?\? null;\n\s*const gripWord = opts\.grip \? 'Grip' : 'Horse';/, 'the enhanced HUD: under the horse\'s word');

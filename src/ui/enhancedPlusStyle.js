@@ -1161,14 +1161,16 @@ export const NOTICE_CSS = `/* ── NOTICE1: THE NOTICE BOARD ── */
 .notice-card.seal-bounty, .notice-read.seal-bounty { --seal: #161311; }
 .notice-card.hidden { opacity: 0.6; }
 /* BOARD-UI: whatever stands on the cork itself stands on a dark panel - the cork's grain under bone ink read 3:1 */
-.notice-empty { grid-column: 1 / -1; margin: 0; padding: 10px 12px; font-size: 13px; line-height: 1.5; color: #e6dccb; font-style: italic;
+.notice-empty { grid-column: 1 / -1; margin: 0; padding: 10px 12px; font-size: 15px; line-height: 1.5; color: #e6dccb; font-style: italic;
   background: rgba(12,10,8,0.72); border-left: 2px solid rgba(192,138,62,0.6); }
-.notice-panel { margin: 0 0 12px; padding: 10px 12px; font-size: 13px; line-height: 1.5; color: #e9e1cf;
+.notice-panel { margin: 0 0 12px; padding: 12px 14px; font-size: 15px; line-height: 1.55; color: #e9e1cf;
   background: rgba(12,10,8,0.8); border: 1px solid rgba(192,138,62,0.32); }
-.notice-panel > h3, .notice-panel > summary { margin: 0 0 8px; font-family: inherit; font-size: 12px; font-weight: normal; letter-spacing: 0.14em;
+.notice-panel > h3, .notice-panel > summary { margin: 0 0 8px; font-family: inherit; font-size: 14px; font-weight: normal; letter-spacing: 0.14em;
   text-transform: uppercase; color: #f3cf86; }
-.notice-panel > summary { margin: 0; cursor: pointer; }
-.notice-panel[open] > summary { margin-bottom: 8px; }
+/* AUDIT PLAIN-UI U3: a fold's line a finger's target (44px with its padding, drawn where it stood) and a ring of its own */
+.notice-panel > summary { margin: -11px 0; padding: 11px 0; cursor: pointer; }
+.notice-panel[open] > summary { margin-bottom: -3px; }
+.notice-panel > summary:focus-visible { outline: 2px dashed #f3cf86; outline-offset: 2px; }
 .notice-panel p { margin: 0 0 6px; }
 .notice-panel p:last-child { margin-bottom: 0; }
 .notice-read { position: relative; max-width: 640px; margin: 0 auto; padding: 22px 20px 18px; color: #2a1f12;
@@ -1199,9 +1201,9 @@ export const NOTICE_CSS = `/* ── NOTICE1: THE NOTICE BOARD ── */
 .notice-poster .notice-banner { width: 30px; align-self: center; }
 /* SEAT1b: the Seat tab - the week's clock, the standings (each guild under its banner, the reader's own marked), the
    reader's own lines and the levers (ui/seatTab.js). BOARD-UI: each part its own panel, under its own name */
-.notice-seat-week, .notice-seat-mine { margin: 0 0 6px; font-size: 13px; color: #e9e1cf; }
+.notice-seat-week, .notice-seat-mine { margin: 0 0 6px; font-size: 15px; color: #e9e1cf; }
 .notice-standings { list-style: none; margin: 0 0 8px; padding: 0; display: flex; flex-direction: column; gap: 4px; }
-.notice-standing { display: grid; grid-template-columns: 22px minmax(0, 1fr); align-items: center; gap: 2px 10px; padding: 6px 10px; font-size: 14px;
+.notice-standing { display: grid; grid-template-columns: 22px minmax(0, 1fr); align-items: center; gap: 2px 10px; padding: 6px 10px; font-size: 15px;
   color: #f3ead8; background: rgba(255,255,255,0.04); border-left: 2px solid transparent; }
 .notice-standing.mine { border-left-color: #f3cf86; background: rgba(243,207,134,0.1); }
 .notice-standing .notice-banner { width: auto; height: 32px; grid-row: 1 / span 2; justify-self: center; }
@@ -1212,32 +1214,45 @@ export const NOTICE_CSS = `/* ── NOTICE1: THE NOTICE BOARD ── */
 .notice-seat-levers .notice-input { width: 7em; }
 .notice-seat-drakes { width: 7em; }
 /* SEAT1c: this week's battle, and the Chronicle */
-.notice-seat-battle { margin: 0 0 6px; font-size: 14px; color: #f3e36a; }
-.notice-chronicle { margin: 0 0 8px; padding: 0 0 0 4px; list-style: none; font-size: 13px; color: #e6dccb; line-height: 1.5; }
+.notice-seat-battle { margin: 0 0 6px; font-size: 15px; color: #f3e36a; }
+.notice-chronicle { margin: 0 0 8px; padding: 0 0 0 4px; list-style: none; font-size: 14px; color: #e6dccb; line-height: 1.5; }
 .notice-chronicle li { display: flex; align-items: baseline; gap: 8px; padding: 2px 0; }
 .seat-head { display: flex; align-items: center; gap: 12px; }
 .seat-head .notice-banner { width: auto; height: 56px; }
-.seat-head .seat-charter { margin: 0; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; color: #f3cf86; }
+.seat-head .seat-charter { margin: 0; font-size: 17px; letter-spacing: 0.08em; text-transform: uppercase; color: #f3cf86; }
 .seat-phases { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; padding: 0; list-style: none; }
-.seat-phases li { padding: 2px 10px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #9d9180; border: 1px solid rgba(192,138,62,0.25); }
+.seat-phases li { padding: 3px 10px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #9d9180; border: 1px solid rgba(192,138,62,0.25); }
 .seat-phases li.on { color: #1d150b; background: #f3cf86; border-color: #f3cf86; }
 .seat-guide ol { margin: 0; padding: 0 0 0 20px; }
 .seat-guide li { margin: 0 0 6px; }
 .seat-guide b { color: #f3cf86; font-weight: normal; }
+/* PLAIN-UI (bible/10-UI/Plain-Words.md): what the seat is and the reader's next step, first; the board's words under the
+   guide, each word in brass over its meaning. The chapters' guide and words on the Work tab wear the same (board-) */
+.seat-about { margin: 0 0 8px; }
+.seat-next { margin: 0; padding: 6px 10px; color: #f3ead8; background: rgba(243,207,134,0.1); border-left: 2px solid #f3cf86; }
+.seat-next .seat-next-pledge { display: block; margin-top: 8px; }
+.board-guide ol { margin: 0; padding: 0 0 0 22px; }
+.board-guide li { margin: 0 0 8px; }
+.board-guide li:last-child { margin-bottom: 0; }
+.board-guide b, .board-words dt { color: #f3cf86; font-weight: normal; }
+.board-words dl { margin: 0; display: grid; grid-template-columns: minmax(8em, max-content) minmax(0, 1fr); gap: 6px 14px; }
+.board-words dd { margin: 0; }
 .seat-who { min-width: 0; }
 .seat-who p { margin: 0 0 4px; }
 .notice-standing .seat-nobanner { grid-row: 1 / span 2; }
-.notice-seat-towers { padding: 4px 10px; font-size: 13px; color: #e9e1cf; }
+.notice-seat-towers { padding: 4px 10px; font-size: 15px; color: #e9e1cf; }
 .notice-seat-fight, .notice-seat-royal, .notice-seat-politics { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
 .notice-seat-fight p, .notice-seat-royal p, .notice-seat-politics p { margin: 0; }
 .notice-seat-politics { margin-top: 10px; }
-.notice-seat-works > .notice-seat-head { margin: 0 0 8px; font-family: inherit; font-size: 12px; font-weight: normal; letter-spacing: 0.14em;
+.notice-seat-works > .notice-seat-head { margin: 0 0 8px; font-family: inherit; font-size: 14px; font-weight: normal; letter-spacing: 0.14em;
   text-transform: uppercase; color: #f3cf86; }
 .notice-seat-works-line, .notice-seat-works-stock { margin: 0 0 6px; }
 .notice-seat-works .act { margin: 0 0 8px; }
 @media (max-width: 720px) {
   .notice-shell { padding: 8px; }
   .notice-cork { padding: 10px; }
+  .board-words dl { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .board-words dd { margin: 0 0 8px; }
   .notice-grid { grid-template-columns: 1fr; }
   .notice-head { flex-wrap: wrap; }
   .notice-title h2 { font-size: 17px; letter-spacing: 0.08em; }
@@ -1535,14 +1550,14 @@ export const PROF_CSS = `/* ── PROF1: THE PROFESSIONS ── */
 .notice-writ .writ-take { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 6px; font-size: 12px; color: #5a4630; }
 .notice-writ.done { opacity: 0.62; }
 /* BOARD-UI: the day's count over the cards, on its own dark strip */
-.notice-worktoday { margin: 0 4px 12px; padding: 6px 10px; font-size: 13px; letter-spacing: 0.04em; color: #e9e1cf;
+.notice-worktoday { margin: 0 4px 12px; padding: 6px 10px; font-size: 15px; letter-spacing: 0.04em; color: #e9e1cf;
   background: rgba(12,10,8,0.72); border-left: 2px solid rgba(192,138,62,0.6); }
 /* CHAP3a: the account's Merit in a chapter here, under the day's count, on the guild seal's strip */
-.notice-merit { margin: -8px 4px 12px; padding: 4px 10px; font-size: 12px; letter-spacing: 0.03em; color: #e9e1cf;
+.notice-merit { margin: -8px 4px 12px; padding: 4px 10px; font-size: 14px; letter-spacing: 0.03em; color: #e9e1cf;
   background: rgba(12,10,8,0.6); border-left: 2px solid rgba(120,150,190,0.6); }
 /* CHAP3b: a chapter of the region, its band and Strength, under the Merit lines */
 .notice-merit + .notice-chapter, .notice-worktoday + .notice-chapter { margin-top: -8px; }
-.notice-chapter { margin: 0 4px 12px; padding: 4px 10px; font-size: 12px; letter-spacing: 0.03em; color: #d8cfbb;
+.notice-chapter { margin: 0 4px 12px; padding: 4px 10px; font-size: 14px; letter-spacing: 0.03em; color: #d8cfbb;
   background: rgba(12,10,8,0.5); border-left: 2px solid rgba(79,111,143,0.5); }
 /* GUILD3d (bible/11-Multiplayer/Guilds-Made-Plain.md): a chapter's card - one panel a chapter, its lines on the panel's
    own dark ground (no strip of their own), its band's effects the brightest line, its duties the quietest */

@@ -803,7 +803,8 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
     // LW2: a resident of the living world who counts the player an enemy has no words for them - said on the HUD's
     // middle line, as the activation's other refusals are; DFU's walkers have no memory to refuse from
     const refusal = livingTalk?.refuses?.(target.person) ?? null;
-    if (refusal) { setMidScreenText(refusal); return; }
+    // AUDIT PLAIN-UI U11: the refusal says where the resident stands - an enemy's badge was the one no panel ever opened on
+    if (refusal) { const b = livingTalk?.regard?.(target.person) ?? null; setMidScreenText(b ? `${refusal} (${b.label}, ${b.value})` : refusal); return; }
     // LW6c: a household's moment before the words - the keepsake of one of theirs the deep kept, carried home (the
     // body's town's: livingTown.js moment, the room's door): their words on the parchment, the conversation another time
     const moment = target.person?.living?.town?.moment?.(target.person) ?? null;
@@ -974,6 +975,9 @@ export function createTownTalk({ renderer, canvas, fetchBytes, playerEntity, reg
         tone: () => tone,
         setTone: (t2) => { tone = t2; },
         npcName,   // AUDIT 18 F5: the NPC's OWN name, not the People faction
+        // PLAIN-UI (bible/10-UI/Plain-Words.md): a living resident's regard of the player, for the enhanced panel's badge -
+        // null for anyone else (the classic face draws DFU's TALK01I0 and nothing it has no rect for)
+        regard: () => (_toneTarget ? livingTalk?.regard?.(_toneTarget) ?? null : null),
         // AUDIT 63 F5: OnPop's `PlayerEntity.Notebook.AddNote(
         // copiedEntries)` (DaggerfallTalkWindow.cs:319). townTalk holds
         // no notebook, so the sink is the host's - set beside

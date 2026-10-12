@@ -11,7 +11,7 @@
   {
     "name": "OW-WEATHER-the-rain-left-on-the-head",
     "file": "src/scenes/world.js",
-    "old": "precip.draw(precipShown, proj, view, new Float32Array(wxEye)",
+    "old": "precip.draw(precipShown, proj, view, wxEye32",
     "new": "precip.draw(precipShown, proj, view, new Float32Array(cam.pos)",
     "tests": [
       "test/fb1001_overworld.test.js"

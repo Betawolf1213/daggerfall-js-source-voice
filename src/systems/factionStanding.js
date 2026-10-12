@@ -9,8 +9,8 @@
 // The enhanced pause menu's Standing page shows the five social groups, the law region by region, and the guilds the
 // player BELONGS to (systems/affiliations.js - DFU's ShowAffiliationsDialog, one row a membership). An expelled
 // member's guild is no membership, so the one number the way back in reads (Guild.GetReputation, the faction's own -
-// systems/guilds.js) was nowhere on the screen. With the setting on (prefs `standingAll`, off by default - the page
-// as it was), the page lists every organization's reputation from the player's live faction store (factionRep.js, the
+// systems/guilds.js) was nowhere on the screen. With the setting on (prefs `standingAll`, on by default since
+// STANDING-ON, 2026-10-11), the page lists every organization's reputation from the player's live faction store (factionRep.js, the
 // clone of FACTION.TXT the guild ranks read): the four guilds, the eight temples by the god their membership reads
 // (guildVariants.js DIVINES, as the temples' own ranks do), the ten knightly orders (ORDERS), the kingdoms (FACTION.TXT's
 // Province type - the rulers of every region and the Empire), the witches' covens, the vampire clans and the Daedric

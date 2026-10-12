@@ -11,7 +11,7 @@
 // character's own hand deaths (relations.js HAND_KINDS), told by their place and the name they bore.
 import { mintResident, travellerRoster } from './census.js';
 import { companyOfPlace, namedIn } from './companies.js';   // LW13: the companies the known walk with
-import { regardStanding } from './relations.js';
+import { regardStanding, FRIEND_AT, ENEMY_AT, HOSTILE_AT, REGARD_MAX } from './relations.js';
 import { placeKeyOf } from './lives.js';
 
 /** A resident's id, read: the town's map id, the roll, the slot and the generation (null: the census's own). */
@@ -95,4 +95,27 @@ export function personWords(p) {
     : p.standing === 'enemy' ? 'An enemy - they will not speak to you.' : 'Knows you.';
   const seen = p.days === 0 ? 'Seen today.' : p.days === 1 ? 'Last seen yesterday.' : `Last seen ${p.days} days ago.`;
   return `${said} ${seen}`;
+}
+
+/** PLAIN-UI (bible/10-UI/Plain-Words.md; a player: "Where's the UI for relationship in the talk window?"): each standing's
+ *  name on the talk panel's badge. */
+export const STANDING_NAMES = Object.freeze({ friend: 'Friend', neutral: 'Known', enemy: 'Enemy', hostile: 'Hostile' });   // the Chronicle's People page's words
+/**
+ * PLAIN-UI: THE TALK PANEL'S REGARD BADGE for a resident spoken with - `card` the town's answer (`{ regard, standing }`,
+ * livingTown.js regardCard), null for one the living world does not hold (no badge). `label` the standing's name,
+ * `value` the regard signed ("+45"), `share` where it stands from -100 to +100 (0 to 1, the bar), and `words` what it
+ * is and what moves it. Pure.
+ * @param {{ regard: number, standing: string } | null} card
+ */
+export function regardBadge(card) {
+  if (!card || !Number.isFinite(card.regard)) return null;
+  // AUDIT PLAIN-UI W6: toward nought, as the standing reads it - a regard of 39.5 (a half day's easing) read "Known +40"
+  // beside "A friend from +40", and Courtship stayed hidden (marriage.js reads the regard unrounded)
+  const r = Math.trunc(card.regard) || 0;
+  const standing = /** @type {keyof typeof STANDING_NAMES} */ (Object.hasOwn(STANDING_NAMES, card.standing) ? card.standing : regardStanding(r));
+  return {
+    standing, label: STANDING_NAMES[standing], value: `${r > 0 ? '+' : ''}${r}`, share: (r + REGARD_MAX) / (2 * REGARD_MAX),
+    words: `How they regard you: ${r > 0 ? '+' : ''}${r}, from -${REGARD_MAX} to +${REGARD_MAX}. A friend from +${FRIEND_AT}; an enemy from ${ENEMY_AT}, who will not speak to you; hostile from ${HOSTILE_AT}. `
+      + 'Talking once a day, a polite word and fighting at their side raise it; a blunt word, a crime they see, a blow and - worst - one of their own struck down lower it. It fades toward nothing on days you are apart.',
+  };
 }

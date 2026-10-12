@@ -178,7 +178,7 @@ test('BOARD-UI the market\'s speed: the board reads the Materials view the momen
   await opened;
 });
 
-test('BOARD-UI the Seat tab: its parts each on a panel under its name, in order - the Charter, This week (the phase on its strip), the battle, the standings (a challenger\'s bar toward what it needs), your guild, How the seat war works (five steps, the law\'s own numbers), the Chronicle; the works read beside the standings (mutants: a panel unnamed; the strip\'s phase; the bar\'s target; the guide\'s numbers; the works read after)', async () => {
+test('BOARD-UI the Seat tab: its parts each on a panel under its name, in order - the Charter, What this is, How the seat war works (five steps, the law\'s own numbers), Words on this board (PLAIN-UI: the three first), This week (the phase on its strip), the battle, the standings (a challenger\'s bar toward what it needs), your guild, the Chronicle; the works read beside the standings (mutants: a panel unnamed; the strip\'s phase; the bar\'s target; the guide\'s numbers; the works read after)', async () => {
   const ANT = { key: 3021, name: 'Anticlere', region: 21, tier: 'palace', pixel: [402, 151] };
   const SH = { id: 'g1', name: 'The Silver Hand', tag: 'SH', heraldry: null };
   const EO = { id: 'g2', name: 'Ebon Oath', tag: 'EO', heraldry: null };
@@ -200,7 +200,9 @@ test('BOARD-UI the Seat tab: its parts each on a panel under its name, in order 
   answer({ data, error: null });
   await tick();
   const named = byClass(host, 'notice-panel').map((p) => (['H3', 'SUMMARY'].includes(p.children[0]?.tagName) ? p.children[0].textContent : null)).filter(Boolean);
-  assert.deepEqual(named, [SEAT_PANELS.week, SEAT_PANELS.battle, SEAT_PANELS.standings, SEAT_PANELS.mine, SEAT_PANELS.guide, SEAT_PANELS.chronicle]);
+  // PLAIN-UI (PIN MOVED, bible/10-UI/Plain-Words.md): what the seat is, how its war works and its words stand first -
+  // the guide stood folded under the whole tab, past every number it explains
+  assert.deepEqual(named, [SEAT_PANELS.about, SEAT_PANELS.guide, SEAT_PANELS.words, SEAT_PANELS.week, SEAT_PANELS.battle, SEAT_PANELS.standings, SEAT_PANELS.mine, SEAT_PANELS.chronicle]);
   assert.match(byClass(host, 'seat-head')[0].textContent, /^The Charter of Anticlere: held by the Silver Hand <SH>Held by the Silver Hand <SH> since week 3\./);
   assert.deepEqual(byClass(host, 'seat-phases')[0].children.map((li) => [li.textContent, li.className === 'on']), [['Muster', false], ['Reckoning', true], ['Turning', false]]);
   // the bars: past the holder's defence of 8,000 (the claim's 6,000 is less) - never on the holder's own row
@@ -211,9 +213,10 @@ test('BOARD-UI the Seat tab: its parts each on a panel under its name, in order 
   assert.equal(bar(rows[0]).children[0].style.width, '100.0%');
   assert.equal(bar(rows[2]).children[0].style.width, `${((1500 / 8001) * 100).toFixed(1)}%`);
   assert.equal(bar(rows[2]).getAttribute('title'), '1,500 of 8,001 to win a Right of Siege');
-  // the guide: five steps, folded, its numbers the law's
+  // the guide: five steps, folded for a reader whose guild is pledged in the region (PLAIN-UI), its numbers the law's
   const guide = byClass(host, 'seat-guide')[0];
   assert.equal(guide.tagName, 'DETAILS');
+  assert.equal(guide.open, false, 'the reader\'s guild is in this war: the guide folded');
   assert.equal(guide.querySelectorAll('li').length, 5);
   const steps = seatGuide(ANT);
   assert.deepEqual(steps.map(([n]) => n), ['Pledge', 'Earn', 'Claim', 'Siege', 'Hold']);

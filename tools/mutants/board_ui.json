@@ -220,8 +220,8 @@
   {
     "name": "BOARD-UI-the-guide-unfolded",
     "file": "src/ui/seatTab.js",
-    "old": "const guide = /** @type {any} */ (el('details', 'notice-panel seat-guide'));",
-    "new": "const guide = /** @type {any} */ (el('section', 'notice-panel seat-guide'));",
+    "old": "  const d = make('details', cls);",
+    "new": "  const d = make('section', cls);",
     "tests": [
       "test/board_ui.test.js"
     ]

@@ -3,13 +3,13 @@
 // (renderer.outsideViewFrame - a bracket that puts back everything it sets), cropped to the screen rectangle the glass
 // covered last frame, kept while the camera is still, painted as the interior frame's background inside that
 // rectangle (renderer.setGlassView), the glass texels cut to it. An interior's glass is DFU's window table drawn
-// indoors, an interior set's 0xff texels (FLAGGED - unverified without the player's data), a declared mask
+// indoors, the panes of an interior set's window wall (GLASS-ALL, read off a real ARENA2), a declared mask
 // (renderer.uploadGlassMask), or a cutout picture's holes (uploadTexture { cutout: true }) - the caravan's door. Pinned by
 // execution over a recording GL; the hosts' wiring by their text.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { setFrameTarget, frameTarget } from '../src/render/renderTarget.js';
@@ -22,8 +22,9 @@ import {
   VIEW_MAX_SIDE, VIEW_BUCKET, viewOutDue, VIEW_MAX_AGE_MS, VIEW_RELEASE_MS, createViewOut, viewOutFrame, viewRays,
   viewSkyFrom,
 } from '../src/render/realWindows.js';
-import { interiorGlassMask, isInteriorGlassArchive, GLASS_INDEX, GLASS_MIN_TEXELS, GLASS_MAX_SHARE, glassMaskFromAlpha, glassTexelCount } from '../src/world/interiorGlass.js';
+import { interiorGlassMask, interiorWindowOf, isInteriorGlassArchive, GLASS_INDEX, GLASS_RAMP, INTERIOR_WINDOW, glassMaskFromAlpha, glassTexelCount } from '../src/world/interiorGlass.js';
 import { perspective, lookAt, mirrorProjectionX, identity, multiply } from '../src/world/mat4.js';
+import { TextureFile } from '../src/formats/textureFile.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8');
@@ -346,21 +347,75 @@ test('RW1 view V7: a cutout picture - { cutout: true } marks the texture (a late
   assert.ok(!/tex\.a/.test(model) && model.split('${RW_MAIN_CUTOUT}').length === 2, 'the classic FS reads no alpha but through the block\'s one line, behind its flag');
 });
 
-test('RW1 view V8: which interior texels are glass - a building interior\'s own record whose bitmap carries enough of the glass index and no more than a pane\'s share, never a dungeon\'s, a crypt\'s or an exterior set\'s; the pipeline asks it after the emissive arm and never of a mod\'s picture (mutants: a dungeon set taken, the count or share bounds, the arm before the emissive one)', () => {
-  const bm = (n, size = 64 * 64) => { const data = new Uint8Array(size); for (let i = 0; i < n; i++) data[i * 7 % size] = GLASS_INDEX; return { width: 64, height: 64, data }; };
-  const cut = (b) => ({ glass: b.data.filter((v) => v === GLASS_INDEX).length });
+test('RW1 view V8 (GLASS-ALL): which interior texels are glass - a building set\'s window wall (record 2, its twin record 1; the castles apart) in a climate an interior is laid out in, its new art against the twin in the glass ramp, the panes kept and the lead, the frame, the wall\'s speckle, a half-repainted wall and a stray blob left; the pipeline asks it after the emissive arm, of a pack\'s picture too (mutants: windows1.json GLASS-ALL-*)', () => {
+  // a synthetic window wall, rows top-down as getDFBitmap gives them: a wall of 50, a frame of 75, a 20 x 20 pane of
+  // the ramp's 104 with a lead line of 120 every fifth texel, speckle of 104 on the wall, a 2 x 2 blob of 104 in new art
+  const W = 64, H = 128;
+  const twin = { width: W, height: H, data: new Uint8Array(W * H).fill(50) };
+  const win = { width: W, height: H, data: twin.data.slice() };
+  const put = (x, y, v) => { win.data[y * W + x] = v; };
+  for (let y = 37; y < 63; y++) for (let x = 17; x < 43; x++) put(x, y, 75);
+  for (let y = 40; y < 60; y++) for (let x = 20; x < 40; x++) put(x, y, x % 5 === 0 || y % 5 === 0 ? 120 : 104);
+  for (const [x, y] of [[5, 5], [60, 10], [5, 100], [50, 120]]) put(x, y, 104);
+  for (let y = 90; y < 99; y++) for (let x = 2; x < 11; x++) put(x, y, 75);
+  for (const [x, y] of [[5, 93], [6, 93], [5, 94], [6, 94]]) put(x, y, 104);
+  for (let y = 100; y < 114; y++) for (let x = 44; x < 58; x++) if ((x + y) % 2 === 0) put(x, y, 104);   // a wall repainted in the ramp, half its texels new (428's panels)
+  const of = (r) => (r === 1 ? twin : r === 0 ? twin : null);
+  const at = (m, x, y) => m.colors[((H - 1 - y) * W + x) * 4] > 127;   // the mask's rows are bottom-up, getWindowColors32's
+  const m = interiorGlassMask(316, 2, win, of);
+  assert.equal(glassTexelCount(m), 16 * 16, 'the pane\'s sixteen cells of sixteen, and nothing else');
+  assert.ok(at(m, 21, 41) && at(m, 39, 59), 'a cell\'s texels are glass');
+  assert.ok(!at(m, 25, 41) && !at(m, 21, 45), 'the lead stays');
+  assert.ok(!at(m, 18, 38), 'the frame stays');
+  assert.ok(!at(m, 5, 5) && !at(m, 60, 10), 'the wall\'s speckle stays - the art is not dense about it');
+  assert.ok(!at(m, 5, 93), 'a stray blob stays - a window holds more glass');
+  assert.ok(!at(m, 44, 100) && !at(m, 50, 106), 'a wall half repainted stays - the new art is not dense');
+  assert.equal(interiorGlassMask(316, 2, win, () => null), null, 'no twin: no new art to read');
+  assert.equal(interiorGlassMask(316, 2, twin, of), null, 'the wall as its twin: no window in it');
+  const ff = { width: W, height: H, data: twin.data.slice() };
+  for (let y = 10; y < 20; y++) for (let x = 10; x < 20; x++) ff.data[y * W + x] = GLASS_INDEX;
+  assert.equal(glassTexelCount(interiorGlassMask(363, 2, ff, of)), 100, 'the glass index is glass where it stands - the temple\'s stained glass');
+  const grey = { width: W, height: H, data: win.data.map((v) => (v === 104 ? 121 : v)) };
+  assert.equal(interiorGlassMask(316, 2, grey, of), null, 'a pane off the ramp is not glass');
+  assert.equal(interiorGlassMask(316, 1, win, of), null, 'the twin wall is no window');
+  assert.equal(interiorGlassMask(322, 2, win, of), null, 'a dungeon set');
+  assert.equal(interiorGlassMask(237, 2, win, of), null, 'TEXTURE.237 is the paperdoll\'s clothing, not a 2xx interior');
+  assert.equal(interiorGlassMask(11, 2, win, of), null, 'the desert castle has no window');
+  assert.ok(interiorGlassMask(111, 1, win, (r) => (r === 0 ? twin : null)), 'the mountain castle\'s window is record 1 against record 0');
+  assert.deepEqual([interiorWindowOf(16), interiorWindowOf(416), interiorWindowOf(11), interiorWindowOf(111)], [INTERIOR_WINDOW, INTERIOR_WINDOW, null, { record: 1, twin: 0 }]);
+  assert.deepEqual(INTERIOR_WINDOW, { record: 2, twin: 1 });
+  assert.deepEqual(GLASS_RAMP, [96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 86, 216, 222, 223]);
   for (const a of [16, 116, 316, 416, 44, 60, 63, 66, 11, 28, 37, 40]) assert.ok(isInteriorGlassArchive(a), `${a}: a building's interior`);
-  for (const a of [19, 22, 23, 24, 25, 45, 47, 48, 68, 41, 12, 14, 9, 504, 1210, -16]) assert.equal(isInteriorGlassArchive(a), false, `${a}: no street window in it`);
-  assert.deepEqual(interiorGlassMask(316, bm(GLASS_MIN_TEXELS), cut), { glass: GLASS_MIN_TEXELS }, 'a pane');
-  assert.equal(interiorGlassMask(316, bm(GLASS_MIN_TEXELS - 1), cut), null, 'too few: a speck of a colour');
-  assert.equal(interiorGlassMask(316, bm(Math.floor(GLASS_MAX_SHARE * 4096) + 1), cut), null, 'too many: a colour, not a pane');
-  assert.ok(interiorGlassMask(316, bm(Math.floor(GLASS_MAX_SHARE * 4096)), cut));
-  assert.equal(interiorGlassMask(322, bm(200), cut), null, 'a dungeon set');
+  for (const a of [19, 22, 23, 24, 25, 45, 47, 48, 68, 41, 12, 14, 9, 504, 1210, -16, 216, 237, 240]) assert.equal(isInteriorGlassArchive(a), false, `${a}: no building's window wall in it`);
   const p = rd('src/scenes/dataPipeline.js');
   const emissive = p.indexOf('renderer.uploadEmissionTexture(archive, record, color32, { white: true, replacement });');
-  const arm = p.indexOf('} else if (!t.vendor && !swap && isInteriorGlassArchive(archive) && renderer.uploadGlassMask) {');
+  const arm = p.indexOf('} else if (!t.vendor && isInteriorGlassArchive(archive) && renderer.uploadGlassMask) {');
   assert.ok(emissive > 0 && arm > emissive && arm - emissive < 200, 'the last arm, after the auto-emissive one (a fireplace keeps its glow)');
-  assert.match(p.slice(arm, arm + 800), /const glass = interiorGlassMask\(archive, bitmap, \(b\) => t\.getWindowColors32\(b\)\);\n\s+if \(glass\) renderer\.uploadGlassMask\(archive, record, glass, \{ replacement \}\);/);
+  assert.match(p.slice(arm, arm + 800), /const glass = interiorGlassMask\(archive, record, bitmap, \(r\) => \(r < t\.recordCount \? t\.getDFBitmap\(r, 0\) : null\)\);\n\s+if \(glass\) renderer\.uploadGlassMask\(archive, record, glass, \{ replacement \}\);/);
+});
+
+test('GLASS-ALL (ARENA2): every building set\'s window wall in the four climates an interior is laid out in has its glass found - the desert castle none, the paperdoll\'s TEXTURE.237 none (skipped without ARENA2_PATH)', (t) => {
+  const A = process.env.ARENA2_PATH;
+  if (!A || !existsSync(join(A, 'TEXTURE.016'))) return t.skip('ARENA2_PATH not set');
+  const found = {};
+  for (const base of [0, 100, 300, 400]) for (const set of [11, 16, 28, 37, 40, 44, 60, 63, 66]) {
+    const a = base + set, name = `TEXTURE.${String(a).padStart(3, '0')}`;
+    const tf = new TextureFile();
+    assert.ok(tf.load(new Uint8Array(readFileSync(join(A, name))), name), name);
+    for (let r = 0; r < tf.recordCount; r++) {
+      const g = interiorGlassMask(a, r, tf.getDFBitmap(r, 0), (q) => (q < tf.recordCount ? tf.getDFBitmap(q, 0) : null));
+      if (g) found[`${a}#${r}`] = glassTexelCount(g);
+    }
+  }
+  assert.deepEqual(found, {
+    '16#2': 676, '28#2': 245, '37#2': 912, '40#2': 676, '44#2': 676, '60#2': 1530, '63#2': 739, '66#2': 337,
+    '111#1': 1089, '116#2': 901, '128#2': 414, '137#2': 683, '140#2': 393, '144#2': 901, '160#2': 1634, '163#2': 402, '166#2': 774,
+    '311#2': 1387, '316#2': 638, '328#2': 643, '337#2': 680, '340#2': 699, '344#2': 699, '360#2': 1419, '363#2': 740, '366#2': 682,
+    '411#2': 1042, '416#2': 748, '428#2': 663, '437#2': 680, '440#2': 2025, '444#2': 690, '460#2': 1041, '463#2': 300, '466#2': 710,
+  });
+  const clothes = new TextureFile();
+  clothes.load(new Uint8Array(readFileSync(join(A, 'TEXTURE.237'))), 'TEXTURE.237');
+  for (let r = 0; r < clothes.recordCount; r++) assert.equal(interiorGlassMask(237, r, clothes.getDFBitmap(r, 0), (q) => clothes.getDFBitmap(q, 0)), null, `237#${r}`);
 });
 
 test('RW1 view V9: the interior\'s merge keeps a sphere a model per sub-mesh, so a window measured on the screen is its own model\'s and not the room\'s, and a pixel\'s merge keeps none (mutants: the pieces off, a piece\'s sphere wrong)', () => {

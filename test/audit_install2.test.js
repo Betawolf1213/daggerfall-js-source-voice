@@ -549,4 +549,6 @@ test('R2-E (E-32..E-42, E-52..E-54): the shell\'s and the workflow\'s wiring the
   assert.match(stepsOf(build.text).find((s) => nameOf(s) === 'Stamp the version'), /\n {8}if: needs\.version\.outputs\.version != ''\n/);
   // E-54: no signing identity is hunted for on the Mac leg
   assert.match(build.text, /\n {4}env:\n(?: {6}#[^\n]*\n)* {6}CSC_IDENTITY_AUTO_DISCOVERY: 'false'\n/);
+  // REL9: every leg builds the site with a 4GB heap - the Mac runner's default (~2GB) died in vite build and no release published
+  assert.match(build.text, /\n {4}env:\n(?: {6}[^\n]*\n)*? {6}NODE_OPTIONS: --max-old-space-size=4096\n(?: {6}[^\n]*\n)* {4}steps:\n/);
 });

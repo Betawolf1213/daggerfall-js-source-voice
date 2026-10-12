@@ -30,6 +30,7 @@ const SHOTS = [
   ['notices', 'Notices', null],
   ['read', 'Notices', 'read'],
   ['work', 'Work', null],
+  ['work-guide', 'Work', 'open'],   // PLAIN-UI: How chapters work, unfolded
   ['market', 'Market', null],
   ['market-picked', 'Market', 'pick'],
   ['market-mine', 'Market', 'view:mine'],
@@ -37,6 +38,7 @@ const SHOTS = [
   ['vendors', 'Vendors', null],
   ['guilds', 'Guilds', null],
   ['seat', 'Seat', null],
+  ['seat-guide', 'Seat', 'open'],   // PLAIN-UI: How the seat war works and the board's words, unfolded
 ].filter(([n]) => !ONLY || n.startsWith(ONLY));
 
 for (const [W, H, width] of [[1280, 800, 'desktop'], [390, 760, 'phone']]) for (const skin of SKINS) {
@@ -183,6 +185,12 @@ for (const [W, H, width] of [[1280, 800, 'desktop'], [390, 760, 'phone']]) for (
       await new Promise((r) => setTimeout(r, 200));
       if (step === 'read') document.querySelector('.notice-card')?.click();
       if (step === 'pick') document.querySelector('.market-row')?.click();
+      if (step === 'open') {
+        const folds = [...document.querySelectorAll('.notice-cork details')];
+        for (const d of folds) if (!d.open) d.querySelector('summary')?.click();
+        await new Promise((r) => setTimeout(r, 60));
+        document.querySelector('.notice-cork details')?.scrollIntoView({ block: 'start' });
+      }
       if (step?.startsWith('view:')) {
         const v = step.slice(5);
         const want = { mine: 'My listings', orders: 'Orders' }[v] ?? v;
