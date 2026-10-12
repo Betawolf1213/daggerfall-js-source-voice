@@ -9215,7 +9215,8 @@ export function createWorldModes(host) {
    *  egBandArt.js, once a breach a band - EG-ZN), the circle's mesh made once a circle
    *  and among the context's draws, its floors and walls on the collider (the spawn lands on its first plate), each
    *  Rampart's portcullis its own draw and a moving bucket (sunk once its door opens - the outer host's word), and the
-   *  Redoubt's way home a target the press takes. EG-ZN: the circle's occluders handed to their dither pass with it. */
+   *  Redoubt's way home a target the press takes. EG-ZN: the circle's occluders handed to their dither pass with it.
+   *  EG-ZP: and the whole circle let go with the context it stands in (egCircleDown). */
   const EG_BUCKET = 'eg:hall';
   let _egMesh = null, _egMeshKey = '', _egArt = false, _egLamps = [], _egLookMesh = null;
   const _egBands = new Set();   // EG-G2: the bands whose dress is up this breach (EG-ZN: freed at its end - egBandsDown)
@@ -9231,6 +9232,25 @@ export function createWorldModes(host) {
     _egDraw = _egMesh ? { gpu: _egMesh, object: { matrix: identity() } } : null;
     if (_egDraw) ctx.dynamicDraws.push(_egDraw);
     egOcc.stand(_egDraw);
+  }
+  /** EG-ZP (section 29 - EVERY ALLOCATION HAS AN OWNER: "every exit path ... frees the hall's meshes, colliders, riders"):
+   *  THE CIRCLE LET GO from context `ctx` - its mesh, its look's mesh (the waystones) and each Rampart's portcullis freed
+   *  from the renderer, their draws taken out of the context's list, and its floors' and walls' bucket and each portcullis's
+   *  moving one off its collider. Every slot is emptied first and the dither pass told next (it lets the circle's views go
+   *  before the mesh under them is freed); the meshes go last, so a second call frees nothing twice. THE SWAP lets the old
+   *  circle go through it, and the context's own end runs it - the stand hands it to the context (dungeonContext.js
+   *  addTeardown), so the way home, the tear, a fall's walk out, forsaking, a void, a load or a teleport out, an abandoned
+   *  build and the old step under the veil each free the circle once, before the band textures' owner frees the dress it
+   *  wore (egBandsDown, refused while a circle stands). Answers how many meshes it freed. */
+  function egCircleDown(ctx) {
+    const mesh = _egMesh, gates = _egGates, gone = new Set([mesh, _egLookMesh, ...gates.map((g) => g.gpu)].filter(Boolean));   // EG-G2: and the look's mesh
+    _egMesh = null; _egMeshKey = ''; _egGates = []; _egLookMesh = null; _egLamps = [];
+    egOcc.clear(); _egDraw = null;   // EG-ZN: the dither pass lets the old circle go - its views and its draw - before it is freed
+    for (let i = ctx.dynamicDraws.length - 1; i >= 0; i--) if (gone.has(ctx.dynamicDraws[i]?.gpu)) ctx.dynamicDraws.splice(i, 1);
+    ctx.collider.removeBucket(EG_BUCKET);
+    for (const g of gates) ctx.collider.removeBucket(`eg:gate:${g.h}`);
+    for (const m of gone) { try { renderer?.destroyMesh?.(m); } catch { /* gone */ } }
+    return gone.size;
   }
   /** EG-ZN (section 29 - EVERY ALLOCATION HAS AN OWNER: "band textures are cached per band and freed at the breach's end"):
    *  every band's dress this breach put up, freed - each record's albedo (every variant under it) and its emission - at the
@@ -9267,6 +9287,7 @@ export function createWorldModes(host) {
       try { for (const [rec, art] of realmArt()) { renderer.uploadTexture(SD_REALM_ARCHIVE, rec, art.albedo); renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission, glow); } } catch (e) { console.warn('[eg] the Spire\'s art would not upload', e?.message ?? e); }
     }
     egBandUp(eh.c);   // EG-G2 (section 25.1): the circle's band's dress under its own archive, once a breach a band (EG-ZN)
+    ctx.addTeardown?.(() => egCircleDown(ctx));   // EG-ZP (section 29): the circle let go with the context it stands in - every way that context ends
     if (_egMeshKey !== key) {
       egOcc.clear();   // EG-ZN: the dither pass lets the old circle go before it is freed
       if (_egMesh) { try { renderer?.destroyMesh?.(_egMesh); } catch { /* gone */ } }
@@ -9331,13 +9352,8 @@ export function createWorldModes(host) {
     if (mode !== 'dungeon' || !isEgHall(dungeonLoc) || !dungeonCtx || !r || r.b !== dungeonLoc.egBreach || !Number.isSafeInteger(r.c)) return false;
     const parts = egSwap.take(r.seed, r.c, r.geo ?? 0);
     if (!parts) return false;
-    const ctx = dungeonCtx, mesh = _egMesh, gates = _egGates, gone = new Set([mesh, _egLookMesh, ...gates.map((g) => g.gpu)].filter(Boolean));   // EG-G2: and the look's mesh
-    _egMesh = null; _egMeshKey = ''; _egGates = []; _egLookMesh = null;
-    egOcc.clear(); _egDraw = null;   // EG-ZN: the dither pass lets the old circle go - its views and its draw - before it is freed
-    for (let i = ctx.dynamicDraws.length - 1; i >= 0; i--) if (gone.has(ctx.dynamicDraws[i]?.gpu)) ctx.dynamicDraws.splice(i, 1);
-    ctx.collider.removeBucket(EG_BUCKET);
-    for (const g of gates) ctx.collider.removeBucket(`eg:gate:${g.h}`);
-    for (const m of gone) { try { renderer?.destroyMesh?.(m); } catch { /* gone */ } }
+    const ctx = dungeonCtx;
+    egCircleDown(ctx);   // EG-ZP: the old circle let go by the one teardown every way out takes - its slots emptied, the dither pass told, its draws, buckets and meshes freed
     try { _egMesh = renderer?.createMesh ? renderer.createMesh(parts.model) : null; if (_egMesh) egOcc.set(_egMesh, parts.model); } catch (e) { console.warn('[eg] the circle would not build', e?.message ?? e); _egMesh = null; }   // EG-ZN: its occluders built with it, off the main thread
     _egMeshKey = parts.key; _egLamps = parts.lamps;
     egCircleDraw(ctx);   // EG-ZN: the circle's one draw, the dither pass's

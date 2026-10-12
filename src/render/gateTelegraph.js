@@ -520,7 +520,7 @@ const NO_FOG_RANGE = new Float32Array([0, 1]);
  *   THE HAVEN GRAMMAR (section 25.5) - a pool of its own, TELEGRAPH_POOL_HAVEN: gold and lit (never the darkened floor
  *     burning ground is), its line bright, a dark keyline outside it and chevrons flowing inward to its heart - so a haven
  *     never relies on gold against red (a deuteranopia pair);
- *   EG-ZD (2026-10-12, section 13.2 - EG-H1's departure 8): THE FEINT'S DASHED FADE - `uLook` 4 (world/egLook.js
+ *   EG-ZD (2026-10-12, section 13.2 - an EG-H1 departure retired): THE FEINT'S DASHED FADE - `uLook` 4 (world/egLook.js
  *     EG_LOOK_BIT.dash): a cut blow's whole mark broken into stripes as it fades, Feud-Arc section 7.3's own grammar
  *     (render/foeTelegraph.js TELL5 - `step(0.5, fract((across + along) * 2.5))`, here across the court's own axes the
  *     hatch's other way), so a feint reads dashed and never as a blow still to come.

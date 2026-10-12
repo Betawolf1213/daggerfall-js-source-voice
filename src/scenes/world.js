@@ -25113,6 +25113,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     paid: (c, d) => egSpoilsPaid(c, d),   // EG-E: what a Redoubt paid - its spoils, its Marks and deed
     redoubt: () => spireRedoubtTaken(),   // EG15: a Redoubt taken - every death save held to it recovers (Elite-Gates.md section 15)
     board: () => egBoardDoor(),   // EG-E2: `/breach board` - EG-ZM: through the boards' one door
+    accountOf: (id) => social?.accountOfPeer?.(id) ?? null,   // EG-ZP (Elite-Gates.md section 15): a heal word's healer by account - its Lifeline (the company is my party, as egPeers reads it)
   }) : null;
   /** EG-FULL: my company's other members where this screen draws them (the room's poses, by account - net/social.js
    *  accountOfPeer: the company is my party). */

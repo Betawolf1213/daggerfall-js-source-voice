@@ -22,7 +22,7 @@
 // shape aimed at another member filled at THE QUIET COMPANY's 0.55 and mine drawn last with a brighter rim; THE SPIRE MIX
 // (systems/egMix.js): a personal sting for a lord's blow or a CHECK on my feet (an add's at most one each 1.5 s), the score
 // ducked under the critical bus, the legion's wind-up barks capped four a kind, nearest first.
-// EG-ZD (2026-10-12, Mac: "I said I want everything"; section 13.2, EG-H1's departure 8): THE FEINT'S DASHED FADE - a cut
+// EG-ZD (2026-10-12, Mac: "I said I want everything"; section 13.2, an EG-H1 departure retired): THE FEINT'S DASHED FADE - a cut
 // blow's fill frozen where the cut found it and its whole mark dashed as it fades over TELL_FEINT_FADE (ai/blowShapes.js -
 // Feud-Arc section 7.3's own number), the Spire stage's `uLook` 4 (world/egLook.js EG_LOOK_BIT.dash); and the mix handed to
 // the breach's client (`mix`), so the HUD's beats ride its critical bus (section 26).
@@ -36,6 +36,10 @@
 // fight runs (systems/egMix.js `peers`), WATCHFIRE'S TELL at pitch 1.4 where each told blow will land, once a blow (`tell`);
 // and THE CAVERNS' FIRE FALLS in Daggerfall's own TEXTURE.356 (world/egHall.js egFireFallFlames) while each burns, its
 // frames at the billboards' rate (render/flatAnimation.js GENERAL_FPS).
+// EG-ZP (2026-10-12, sections 15 and 21): THE RECEIVER'S VESTIGES - a blow on me spared what the relay's census spares it
+// (net/egBrain.js egCensusDr, called on what this screen holds - egShieldDr): Bastion near me, my Steadfast Line, my
+// Lifeline windows (egLifelineOpen, opened by scenes/egClient.js as my heal word goes), my Challenger's Oath and my
+// Immovable, together never past 30% - so my body and the room's count of it take the same blow.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../net/gateBrain.js';
@@ -73,6 +77,10 @@ import { egPaletteBits, egQuietCompany, EG_FOG_FLOOR } from '../world/egLook.js'
 import { createSpireMix } from '../systems/egMix.js';   // EG-G2: THE SPIRE MIX - personal stings, the critical bus, the barks' cap
 import { EG_LOOK_BIT } from '../world/egLook.js';   // EG-ZD: a cut feint's dashed fade
 import { TELL_FEINT_FADE } from '../ai/blowShapes.js';   // EG-ZD (section 13.2): the feint's fade - Feud-Arc section 7.3's one number
+import { egCensusDr, EG_HEAL_WORD_MS, EG_LIFELINE_MS } from '../net/egBrain.js';   // EG-ZP (sections 15 and 21): THE CENSUS'S VESTIGES, the relay's own law; Lifeline's window
+import { EG_TRAIL_MS } from '../net/egFair.js';   // EG-ZP: how long the census keeps a trail - and a Lifeline window
+import { egFightView } from '../net/egWalkGraph.js';   // EG-ZP: the hall's fight ground, the census's floor
+import { egRunOfMember } from '../net/egLink.js';   // EG-ZP: each member's Vestiges and Mastery
 
 /** The objects' types by number (net/egLords.js EG_OBJ), and which are struck (drawn as crystals) - the rest are stood on. */
 const OBJ_KEY = Object.freeze(Object.fromEntries(Object.entries(EG_OBJ).map(([k, v]) => [v, k])));
@@ -234,6 +242,51 @@ export function egLookOf(b, band) {
   return null;
 }
 
+// ── EG-ZP (2026-10-12, sections 15 and 21): THE RECEIVER'S VESTIGES - a blow on me spared as the relay's census spares it ──
+/**
+ * EG-ZP: THE BREACH THE CENSUS READS, AS THIS SCREEN HOLDS IT - the record net/egBrain.js egCensusDr asks (`{ h, mem }`):
+ * the hall, and each member of the company the room says (`co`) as its row stands (in, alive, gone home), with the
+ * Vestiges and the Mastery its run says (`ms`), and on mine `ll`, my Lifeline windows (egLifelineOpen). Pure.
+ * @param {any} E the breach's state (net/egLink.js) @param {string|null} me @param {number[][]} ll
+ */
+export function egShieldBreach(E, me, ll) {
+  /** @type {Record<string, any>} */
+  const mem = {};
+  for (const c of E?.co ?? []) {
+    const m = egMemberOf(E, c[0]), run = egRunOfMember(E, c[0]);
+    mem[c[0]] = { in: m?.in, alive: m?.alive, home: m?.home, vs: run.vs, mast: run.mast, ...(c[0] === me ? { ll } : {}) };
+  }
+  return { h: E?.h ?? 0, mem };
+}
+/**
+ * EG-ZP - THE RECEIVER'S VESTIGES (section 15; section 21's census): the share of blow `bl` on me the company's Vestiges
+ * spare - Challenger's Oath, Bastion, Steadfast Line, Immovable and Lifeline, together never past 30% - by the relay's
+ * census's own law (net/egBrain.js egCensusDr, called, never copied) over what this screen holds: the breach and its runs
+ * (`E`), the hall's fight (`F` - its lords) and spec (its fight floors), my trail (`tr`, the census's own
+ * `[t, x, y, z, h]` in the hall's frame) and each companion where it stands at the blow's landing (`at(sub)` - `[x, y, z]`
+ * in the hall's frame, or null: unseen, as the census counts no member it holds no pose of), and my Lifeline windows
+ * (`ll`). Pure.
+ * @param {any} E @param {any} F @param {any} spec @param {{at: number, o?: number}} bl @param {string|null} me
+ * @param {number[][]} tr @param {(sub: string) => (number[]|null)} at @param {number[][]} ll
+ */
+export function egShieldDr(E, F, spec, bl, me, tr, at, ll) {
+  const B = egShieldBreach(E, me, ll), bodies = [{ sub: me ?? '', tr }];   // mine first: the census reads a member's first trail
+  for (const sub of Object.keys(B.mem)) {
+    const p = at(sub);
+    if (p) bodies.push({ sub, tr: [[bl.at, p[0], p[1], p[2], B.h]] });
+  }
+  return egCensusDr(B, F, egFightView(spec), { sub: me ?? '', at: bl.at, o: bl.o ?? 0 }, bodies);
+}
+/**
+ * EG-ZP - LIFELINE'S WINDOW ON MY BLOWS (section 15; the census's own - net/egBrain.js egHeal): my heal word said with a
+ * Lifeline holder's heal in it while I stood under 30% (scenes/egClient.js) opens `[from, until, share]` - from the
+ * word's second back (EG_HEAL_WORD_MS) to EG_LIFELINE_MS past it, `at` the word's arrival at the room as my corrected
+ * clock reckons it - at the healer's rank's share. Windows no blow can still be judged in (EG_TRAIL_MS) are let go and
+ * the last four kept, as the census keeps them. Pure.
+ * @param {number[][]} ll @param {number} v @param {number} at
+ */
+export const egLifelineOpen = (ll, v, at) => [...ll.filter((w) => w[1] >= at - EG_TRAIL_MS), [at - EG_HEAL_WORD_MS, at + EG_LIFELINE_MS, v]].slice(-4);
+
 /**
  * @param {{ renderer?: any, gl?: any, getTexture?: any, uploadRecordFrame?: any, audio?: any, link: any, now: () => number,
  *   cam?: () => number[]|null, feet?: () => number[]|null, player?: () => any, me?: () => string|null, save?: (e: any, el: string) => number,
@@ -286,6 +339,11 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   let floors = [], floorBuf = null, lastPlan = null, lastPeril = null, lastGround = null, viewYaw = null, groundUp = false, sigilsUp = false, dropFrom = null, dropOn = null;
   const _pending = [], _sigils = [], _vp = new Float32Array(16), eclipseHeard = new Set(), dusts = [];
   let pullsWas = new Map(), pullsNow = new Map();
+  /** EG-ZP (sections 15 and 21): my trail in the hall's frame (the census's own `[t, x, y, z, h]`, its last EG_TRAIL_MS) and
+   *  my Lifeline windows (egLifelineOpen) - THE RECEIVER'S VESTIGES read both at a blow on me */
+  const trail = [];
+  /** @type {number[][]} */
+  let ll = [];
 
   const play3 = (cue, at) => { if (!cue || !audio || !at) return; try { if (cue.id != null) audio.play3dId?.(cue.id, at, cue.volume, { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch }); else audio.play3d?.(cue.clip, at, cue.volume, { maxDistance: cue.reach, distanceModel: 'linear', pitch: cue.pitch }); } catch { /* a sound is never the fight */ } };
   /** EG-ZG: a sound of my own (a Drop's thud, the Eclipse's wind and toll) - `{ rec, vol, pitch }`, the engine's one-shot. */
@@ -338,13 +396,17 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     eclipseHeard.clear(); dusts.length = 0; dropFrom = null; dropOn = null; pullsWas = new Map();
     beat = null; saysSeen = E.fight.says.length; wokeSeen = 0; gustSeen = 0;
   }
-  /** A blow on me landed - its share of my health and its base, through my saving throw against its element. */
-  function landShare(pct, base, el, name) {
+  /** A blow on me landed - its share of my health and its base, through my saving throw against its element. EG-ZP: less
+   *  the share `dr` my company's Vestiges spare a blow (spared). */
+  function landShare(pct, base, el, name, dr = 0) {
     const e = player();
     if (!e || !(e.health > 0) || !(pct > 0)) return;
-    const raw = strikeDamage(pct, e.maxHealth, base), dmg = el ? savedShare(raw, save(e, el)) : raw;
+    const k = 1 - dr, raw = strikeDamage(pct * k, e.maxHealth, base * k), dmg = el ? savedShare(raw, save(e, el)) : raw;
     if (dmg > 0) strike(dmg, { fire: el === 'fire', el, name });
   }
+  /** EG-ZP: the share of blow `bl` on me my company's Vestiges spare (egShieldDr - the census's own law) - each companion
+   *  where this screen draws them, at their feet (the pose stands at the eye). */
+  const spared = (E, F, bl) => egShieldDr(E, F, spec, bl, me(), trail, (sub) => { const p = peerAt(sub); return p && centre ? [p[0] - centre[0], p[1] - PEER_EYE_M - centre[1], p[2] - centre[2]] : null; }, ll);
   /** One body drawn: its look's sprite at its act's frame, at its place. */
   function drawBody(b, t, blow) {
     const look = egLookOf(b, band);
@@ -716,6 +778,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       auraRings(E);   // EG-ZG (section 25.4)
       dropStep(t);   // EG-ZG (section 25.8)
       const f = myFeet(), e = player(), standing = !!f && !!e && e.health > 0, d0f = feet(), fy = d0f && centre ? d0f[1] - centre[1] : 0;
+      if (standing) { trail.push([t, f[0], fy, f[1], hall]); while (trail.length > 1 && trail[1][0] <= t - EG_TRAIL_MS) trail.shift(); }   // EG-ZP: my trail, the census's shape
       if (!F) { groundFrame(t, standing ? f : null, fy, null); snapFrame(); drawGateTitleCard(titleCardModel(beat, t), { hidden: hudHidden() }); return; }
       const blowBy = new Map();
       for (const bl of F.blows) if (bl.o && (!blowBy.has(bl.o) || blowBy.get(bl.o).at < bl.at) && t < bl.at + 700) blowBy.set(bl.o, bl);
@@ -748,7 +811,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         if (!bl.cut && t < bl.at) _pending.push(bl);   // EG-ZG: the peril arrow's
         if (!judged.has(bl.i) && !bl.cut && standing) {
           const v = egBlowVerdict(bl, f[0], f[1], t);
-          if (v !== 'wait') { judged.add(bl.i); if (v === 'hit') { landShare(bl.p, bl.b, bl.el, bl.nm); if (bl.pu > 0) { const s = bl.s[0]; const ox = s[0] === 'l' ? s[3] - s[1] : f[0] - s[1], oz = s[0] === 'l' ? s[4] - s[2] : f[1] - s[2], d = Math.hypot(ox, oz) || 1; push(ox / d, oz / d, bl.pu); } } }
+          if (v !== 'wait') { judged.add(bl.i); if (v === 'hit') { landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl)); if (bl.pu > 0) { const s = bl.s[0]; const ox = s[0] === 'l' ? s[3] - s[1] : f[0] - s[1], oz = s[0] === 'l' ? s[4] - s[2] : f[1] - s[2], d = Math.hypot(ox, oz) || 1; push(ox / d, oz / d, bl.pu); } } }
         }
         if (!landedSet.has(bl.i) && t >= bl.at && t - bl.at < 1500) {
           landedSet.add(bl.i); const s = bl.s[0]; if (s && s.length >= 3) play3(BOSS_CUES.quake, toDungeon(s[1], 1, s[2]));
@@ -845,6 +908,11 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     peril: () => lastPeril,
     ground: () => lastGround,
     sigils: () => _sigils,
+    /** EG-ZP (section 15's Lifeline, this screen's half): a Lifeline holder's heal said for me while I stood under 30%
+     *  (scenes/egClient.js) - its window opened on my blows at share `v`, `at` the word's arrival at the room. */
+    lifeline(v, at) { if (v > 0 && Number.isFinite(at)) ll = egLifelineOpen(ll, v, at); },
+    /** EG-ZP (tests): my Lifeline windows and my trail's length. */
+    shield: () => ({ ll: ll.map((w) => [...w]), trail: trail.length }),
     /** The count's words for a tracker that asks. */
     countText: (ms) => egCountText(ms),
     /** Out of the breach: everything put away. */
@@ -856,6 +924,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       if (groundUp) { drawGateGround(null); groundUp = false; }   // EG-ZG: the peril arrow's readout
       if (sigilsUp) { drawEgSigils(null); sigilsUp = false; }
       hall = 0; spec = null; centre = null; beat = null;
+      trail.length = 0; ll = [];   // EG-ZP
       _batches.length = 0; _lights.length = 0; _targets.length = 0; _crystals.length = 0; _shapes.length = 0;
       floors = []; lastPlan = null; lastPeril = null; lastGround = null; _sigils.length = 0; dusts.length = 0;
     },
