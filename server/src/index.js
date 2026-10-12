@@ -312,6 +312,12 @@ import { mintSdReceipt, readSdReceipt, SD_RECEIPT_TTL_S } from '../../src/net/sd
 import { isEgRoom, egRoomKey, egBreachOfRoom, EG_SEALED_MS, EG_ADMIT_MAX_MS } from '../../src/net/egLaw.js';
 import { egBreachNew, egEnter, egAdmitWord, egStep, egBlow, egDown, egHome, egWord, egStateOf, egFightStateOf, egLive } from '../../src/net/egBrain.js';
 import { mintEgReceipt } from '../../src/net/egReceipt.js';
+// EG-H1 (EG8d, 2026-10-12; bible/11-Multiplayer/Elite-Gates.md section 21): WHAT THE RELAY JUDGES - each member's pose at its
+// SHARED time (net/egFair.js's time law) onto its socket's trail and THE FAIR TRAIL, the Spire's blows and hazards judged on
+// those trails and the body counted, ENFORCED in the Spire (net/egBrain.js egCount - the member's one life), the room's
+// heals restored to it, the member's own word of its body (`vt`), the shared clock's ping answered (`clk`)
+import { egPoseIn, egCount, egCountHeals, egBodyWord, egFairWoke, EG_BODY_ENFORCE } from '../../src/net/egBrain.js';
+import { egPoseClock, egPoseShared, egTrailPush } from '../../src/net/egFair.js';
 import { egGate, EG_INTERNAL_OPEN, EG_KEY, egCallKey, validEgOpenTell, EG_BRAIN_MIN } from './relay.js';
 
 // AUDIT WORLD34 D4: the relay names itself in /health. SLAM13 (AUDIT SLAM A5): the name lives in net/wire.js, so the
@@ -2581,6 +2587,7 @@ export class Room {
     if (posed && this._duelRef?.bouts.size) { duelPose(this._duelRef, a.sub, m.p, now); await this._duelBeat(now); }
     if (posed && this._wildRef?.fighters.has(a.sub)) { wildPose(this._wildRef, a.sub, m.p, now); await this._wildBeat(now); }   // INT9: the zone's believed place, and a fall waiting on a pick
     if (posed && this._trailing(a)) this._trailPose(ws, m.p, now);   // INT11: where a boss fight's body stood, as its poses came - AUDIT INT11: its socket's, in a fight that lives
+    if (posed && isEgRoom(a.key) && typeof a.sub === 'string' && a.sub) this._egPoseIn(ws, a, m.p, now);   // EG-H1: a breach member's pose at its shared time - its trail and THE FAIR TRAIL
     if (posed && a.vid && a.ly && isGateRoom(a.key)) this._hubUpOwe(a.vid, 'p', m.p);   // SCALE5d part two: a court copy's pose is the court's too - where its body stands, and its trail
     if (posed && isCellRoom(a.key) && this._refereesPoses() !== this._rfSaid) this._rfSay();   // SCALE5b: a referee begun or ended here - the halos told
     // AUDIT-SEATS T2 (Seats-Arc 6.6: "no body drawn to fighters, no collider, excluded from every banner count, a free
@@ -3473,7 +3480,7 @@ export class Room {
       // EG-PLAY: AN ELITE BREACH - the open, to the hub alone (the service's signed order); a member's admission, door, way
       // home and blows, to its breach's room alone (anywhere else junk), on the breach's own bucket
       const now = Date.now();
-      if (!this._spend(ws, now, egGate, 'egBucket', 'egDrops', 'too many breach frames')) return;
+      if (m.k === 'vt' ? !this._spend(ws, now, bodyWordRelayGate, 'bodyBucket', 'bodyDrops', 'too many body words') : !this._spend(ws, now, egGate, 'egBucket', 'egDrops', 'too many breach frames')) return;   // EG-H1: a body's word on a bucket of its own (AUDIT INT15's law)
       if (m.k === 'open') {
         if (!isSocialRoom(a.key) || typeof a.sub !== 'string' || !a.sub) { this._junk(ws); return; }
         try { await this._egOpen(ws, a, m, now); } catch (e) { console.warn('[hub] eg open failed', e?.message ?? e); }
@@ -7217,7 +7224,7 @@ export class Room {
   // each receipt the breach owes (`e1`, net/egReceipt.js).
   /** The breach this room holds - the instance's, else storage's; null for a room the hub never opened. */
   async _egOf() {
-    if (this._eg === undefined) { const v = await this.state.storage.get(EG_KEY); if (this._eg === undefined) this._eg = v && typeof v === 'object' && typeof v.b === 'string' ? v : null; }
+    if (this._eg === undefined) { const v = await this.state.storage.get(EG_KEY); if (this._eg === undefined) { this._eg = v && typeof v === 'object' && typeof v.b === 'string' ? v : null; if (this._eg) egFairWoke(this._eg, Date.now()); } }   // EG-H1: read from storage, a wake - a hall woken before it opens its door on a saved fair trail, or the first arrival (section 21)
     return this._eg;
   }
   /** The breach to storage - every CHECKPOINT_MS from the beat, at once on a stage, a fall, an admission or the end. */
@@ -7245,10 +7252,47 @@ export class Room {
     }
     return [...newest.values()].map((b) => { const p = this._egPose(b.pose); return { sub: b.sub, sx: p.sx, z: p.z, dead: !!b.pose.dd, at: b.eAt ?? now }; });
   }
+  // ── EG-H1 (EG8d): WHAT THE RELAY JUDGES (net/egFair.js, net/egBrain.js; Elite-Gates.md section 21) ──
+  /** The line the Spire's count runs by: the hub's BOSS_BODY body line (its depth, its pace) - its enforcement the Spire's
+   *  own (EG_BODY_ENFORCE), whatever the gate's says. */
+  _egLine() { return this._bodyLine().body; }
+  /**
+   * A MEMBER'S POSE at its SHARED time (net/egFair.js egPoseShared - its own `ts` plus its socket's offset, the least
+   * `arrival - ts` over its last poses): onto its SOCKET's trail in the hall's own frame (a ridden pose at its piece's clock
+   * position - net/egBrain.js egPoseIn, which feeds THE FAIR TRAIL). In memory alone, as INT11's trails are: a woken
+   * instance knows no trail, and judges no body it does not know.
+   */
+  _egPoseIn(ws, a, p, now) {
+    const B = this._eg;
+    if (!B || B.end || !B.mem?.[a.sub] || !p) return;
+    const clocks = (this._egClocks ??= new Map());
+    let c = clocks.get(ws);
+    if (!c) { clocks.set(ws, c = egPoseClock()); if (clocks.size > 64) clocks.delete(clocks.keys().next().value); }
+    const t = egPoseShared(c, p.ts, now);
+    if (t == null) return;   // out of order: it judges nothing
+    const [sx, y, z] = dungeonToRealm(p.x, p.y ?? 0, p.z);
+    const at = egPoseIn(B, a.sub, { sx, y, z, pl: p.pl ?? null, cl: p.cl ?? 0 }, t);
+    if (!at) return;
+    const trails = (this._egTrailsBy ??= new Map());
+    const tr = trails.get(ws) ?? [];
+    trails.delete(ws); trails.set(ws, egTrailPush(tr, [t, at.x, at.y, at.z, at.h]));
+    if (trails.size > 64) trails.delete(trails.keys().next().value);
+  }
+  /** The members' shared-time trails for the count - each one's NEWEST socket speaking for it (the gate's law). */
+  _egTrails(B) {
+    const newest = new Map();
+    for (const [ws, b] of this._all()) {
+      if (!b.id || !b.sub || !B.mem?.[b.sub]) continue;
+      const had = newest.get(b.sub);
+      if (!had || (b.since ?? 0) >= (had[1].since ?? 0)) newest.set(b.sub, [ws, b]);
+    }
+    return [...newest.values()].map(([ws, b]) => ({ sub: b.sub, tr: this._egTrailsBy?.get(ws) ?? [] }));
+  }
   /** The breach's frames to everyone in the room, in order - EG-FULL: a frame carrying `to` (a member's offer, a gift, a
    *  recall) to that member's sockets alone, its `to` taken off. */
   _egFan(frames) {
     if (!frames.length) return;
+    if (this._eg) egCountHeals(this._eg, frames, Date.now(), this._egLine());   // EG-H1: what the room heals, the count is restored by
     const all = [], mine = new Map();
     for (const fr of frames) {
       if (typeof fr.to === 'string') { const { to, ...rest } = fr; mine.set(to, [...(mine.get(to) ?? []), JSON.stringify({ t: 'eg', ...rest })]); }
@@ -7341,6 +7385,8 @@ export class Room {
       await this._egArm(now + BRAIN_TICK_MS);
       return;
     }
+    if (m.k === 'clk') { this._send(ws, JSON.stringify({ t: 'eg', k: 'clk', c: m.c, now: Date.now() })); if (Number.isInteger(m.h)) { const all = (this._egClocks ??= new Map()); let c = all.get(ws); if (!c) all.set(ws, c = egPoseClock()); c.h = m.h; } return; }   // EG-H1: the shared clock's ping, answered at once (section 10.8); the delay its corrected clock measured places its poses (net/egFair.js egPoseShared)
+    if (m.k === 'vt') { egBodyWord(B, a.sub, m.v, now, this._egLine(), EG_BODY_ENFORCE); return; }   // EG-H1: its body, in its own word
     if (m.k === 'down') { if (egDown(B, a.sub, m.h, pose, now)) await this._egArm(now + BRAIN_TICK_MS); return; }
     if (m.k === 'home') {
       const out = [];
@@ -7366,7 +7412,7 @@ export class Room {
     if (!B || (B.end && !B.owe?.length)) return false;
     const now = Date.now();
     try {
-      const out = egStep(B, now, this._egBodies(B, now), rand01);
+      const out = [...egCount(B, now, this._egTrails(B), this._egLine(), EG_BODY_ENFORCE), ...egStep(B, now, this._egBodies(B, now), rand01)];   // EG-H1: the body counted first - a fall by it is the beat's own
       this._egFan(out);
       await this._egMint(B, now);
       await this._egSave(B, now, out.some((f) => f.k === 'sg' || f.k === 'rd' || f.k === 'end' || f.k === 'fall' || f.k === 'rise' || f.k === 'offer'));

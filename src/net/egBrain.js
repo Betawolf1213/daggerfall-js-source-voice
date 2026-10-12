@@ -22,16 +22,23 @@
 // false walls, THE FORK's High Road cache and Low Road niche and foes and its closing, the Clan Pit's Honour Horn, the
 // fragments' Lurkers, a lord's page of the Annals (net/egAnnals.js).
 //
+// EG-H1 (EG8d, 2026-10-12, Mac: "I said I want everything"; section 21): WHAT THE RELAY JUDGES - each member's pose fed
+// to THE FAIR TRAIL at its shared time (egPoseIn, net/egFair.js), every pose-gated credit asking it (the door, `down`, a
+// cache, THE GOLD RUN, a niche, a Memento, the Vault, the High Road's cache), a second break refusing a member's hits a
+// while; THE BODY COUNTED and enforced - the relay's count is the member's one life (egCount: one judge for every shape and
+// the hall's hazards, net/bossRef.js; a fall told `bd`), the room's own heals restored to it (egCountHeals), the member's
+// own word believed (egBodyWord); Watchfire's company told each committed blow early (watchOf).
+//
 // Pure: a record and a beat in, frames out. Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT_MS, EG_CLOSING_SPAN_MS, EG_CLOSING_COUNT_MS, EG_STAIR_HOLD_MS, EG_REST_MS,
   EG_WAKE_RING_MS, EG_ABSENT_TRIAL_MS, EG_LAST_WORD_MS, EG_REDOUBT_HOLD_MS, EG_COUNT_CAP_MS, egHallOf, egCircleOfHall, egFirstHallOf, egTimes, egAdmits, egCountNew, egCountLeft, egCountRun, egCountHold,
-  egInHall, egLocalX, egOnArrive, egAtDoor, egOnFight, egSpecDigest, egGeoOf, egSeed, egProclamationOf, egKeepOnFight } from './egLaw.js';
+  egInHall, egLocalX, egOnArrive, egAtDoor, egOnFight, egSpecDigest, egGeoOf, egSeed, egProclamationOf, egKeepOnFight, EG_VOID_Y, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR } from './egLaw.js';
 import { EG_ROLE, EG_FL, EG_GONE, EG_STATE_EVERY_MS, egFightNew, egFightState, egCarry, egMovesOut, egHpOut, egBlowsStep, egHitBody, egGone, egHas, egSetFl, egBodiesOf, egBodyById, egHpTeam, egRaise, egWalk, egAim, egTethersOut, egMarksOut, egStruck } from './egBodies.js';
 import { EG_KIND, egLegionStep, egLegionRaise, egWaveKinds, egWaveSize, egAddSlain, egSquad, egFromBehind } from './egLegion.js';
 import { EG_OBJ, egLordsNew, egLordsWake, egLordsStep, egLordsAwake, egLordsFell, egLordsOf, egLordHit, egLordHitX, egObjBroken, egObjsOf, zoneOut, egStun } from './egLords.js';
 import { egAsk, egVote, egAskResult, egAsksDue, egDecreesAsk, egDecreesChosen, egDecreeRanks, egDecreesInForce, egBargainDecree, egTideOf, egStratumAt, egOffers, egPick, egPicksClose, egSurplus,
   egLoseNewest, egCacheDraw, egGive, egBuy, egVestigeX, egThreatX, egFadeOn, egMarkFoe, egRunOf, EG_CANTRIPS, EG_LUMEN_ADD, EG_LUMEN_RIFT } from './egRun.js';
-import { egVOf } from './egVestige.js';
+import { egVOf, egAccordsOf } from './egVestige.js';
 import { shDisc, shLane, egInShape } from './egShape.js';
 import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half
 import { egAnnalsNext, egAnnalsLordPage } from './egAnnals.js';
@@ -39,6 +46,11 @@ import { egFeatBits } from './egFeats.js';   // EG-E: the lords' feats, judged a
 import { arenaWeekOf } from './arenaLaw.js';   // EG-E: the Proclamation's week, the arena's (Monday to Monday from the season epoch)
 import { orreryOf, orreryFresh, orreryStep, orreryShortest, SD_STONE_SETTLE_MS } from './sdBrain.js';
 import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gateBrain.js';
+// EG-H1 (EG8d): WHAT THE RELAY JUDGES - THE FAIR TRAIL and its time law (net/egFair.js), one judge for every shape and the
+// hall's own hazards (net/bossRef.js), and the body counted (net/bossBody.js) - the member's one life
+import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt } from './egFair.js';
+import { judgeShapes, judgePlace } from './bossRef.js';
+import { bodyStruck, bodySaid, bodyHealed, bodyLife } from './bossBody.js';
 
 /** The rifts together hold this many seconds of the company's reference damage (section 8.1); a Wellspring's great
  *  rift and each anchor; a Rampart's gate's Ward-Bearers; a Muster's standard; a captive's chains; a Holdfast's hold. */
@@ -132,6 +144,31 @@ const memberName = (B, sub) => B.mem[sub]?.name ?? B.co.find((c) => c.sub === su
 export const egGeo = (B) => egGeoOf(egDecreesInForce(B));
 /** The hall the company stands in. */
 const specOf = (B) => egHallOf(B.seed, B.h, egGeo(B));
+// ── EG-H1 (EG8d): THE FAIR TRAIL'S DOOR - bible/11-Multiplayer/Elite-Gates.md section 21 ───────────────────────────────
+/** A member's fair trail is its hall's and its life's: a new hall, or a fall, begins it again. */
+const fairKey = (B, m) => `${B.h}:${m.falls ?? 0}`;
+/** A member's fair trail in this hall and this life, or null (none judged yet - the law judges poses, never their absence). */
+const fairOfMember = (B, sub) => { const m = B.mem[sub], A = m?.fair; return A && A.k === fairKey(B, m) ? A : null; };
+/** EVERY POSE-GATED CREDIT NEEDS A FAIR TRAIL from the last island (section 21): the door, `down`, a cache, THE GOLD RUN, a
+ *  niche, a Memento carried, the Reliquary Vault, the High Road's cache (net/egFair.js egFairOk). */
+const fairOf = (B, sub) => egFairOk(fairOfMember(B, sub));
+/**
+ * Who opens an arrival's door (a span, a Brink, a Deepway's way down): a member at the end plate whose trail is fair. After
+ * the room was woken mid-hall (`fwake` - its trails the saved ones, egFairWoke), failing that, the first arrival - its
+ * measure says so (`wake`): a hall woken after every member passed the last island never deadlocks. Null: no door yet.
+ */
+function doorOpener(B, spec, inHall) {
+  const at = inHall.filter((b) => egAtDoor(spec, b.x, b.z));
+  const fair = at.find((b) => fairOf(B, b.sub));
+  if (fair || !at.length) return fair ?? null;
+  if (!(B.fwake > 0 && B.hw > 0 && B.hw < B.fwake)) return null;
+  const A = fairOfMember(B, at[0].sub);
+  if (A) A.wake = 1;
+  return at[0];
+}
+/** EG-H1: the room was woken (a new instance read the breach from storage) - after it, a hall woken before it opens its
+ *  door on the first arrival when no saved trail is fair (doorOpener). */
+export function egFairWoke(B, now) { if (B && !B.end) B.fwake = now; }
 
 /** May `sub` enter breach `B` at `now` - null, or the refusal's words (net/wire.js EG_NO_WORDS). */
 export function egAdmitWord(B, sub, now) {
@@ -228,7 +265,7 @@ export function egForsake(B, sub, now, out) {
 function recall(B, sub, pct, at, now, out) {
   const m = B.mem[sub];
   if (!m || m.alive || m.forsaken || !(m.recall > 0)) return false;
-  m.alive = 1; m.wit = 0; m.recall = 0; m.seenAt = now;
+  m.alive = 1; m.wit = 0; m.recall = 0; m.seenAt = now; m.roseH = B.h;   // EG-H1: its fair trail begins where it is called back
   egLoseNewest(m);
   B.mementos = B.mementos.filter((q) => q.s !== sub);
   out.push({ k: 'rise', to: sub, s: sub, p: pct, x: at[0], z: at[1], h: B.h }, { k: 'co', co: egCompanyOf(B) }, { k: 'esay', w: 'recalled', n: m.name });
@@ -428,8 +465,8 @@ function fragStep(B, F, spec, now, inHall, here, rng, out) {
       } else { egGive(mm, a.holds); out.push({ k: 'egot', to: b.sub, w: a.holds }); }
       out.push({ k: 'run', r: egRunOf(b.sub, mm) });
     }
-    for (const q of spec.spots.hcache ?? []) if (!took.hc && dist(b.x, b.z, q.x, q.z) <= EG_HCACHE_REACH_M) { took.hc = 1; egGive(mm, 'rel', egCircleOfHall(B.h)); out.push({ k: 'egot', to: b.sub, w: 'rel' }, { k: 'esay', w: 'hcache', n: mm.name }, { k: 'run', r: egRunOf(b.sub, mm) }); }
-    for (const q of spec.spots.lniche ?? []) if (!took.ln && dist(b.x, b.z, q.x, q.z) <= EG_ALCOVE_REACH_M) { took.ln = 1; egGive(mm, 'shard'); out.push({ k: 'eheal', p: EG_NICHE_HEAL, why: 'niche', to: b.sub }, { k: 'egot', to: b.sub, w: 'shard' }, { k: 'esay', w: 'niche', n: mm.name }, { k: 'run', r: egRunOf(b.sub, mm) }); }
+    for (const q of spec.spots.hcache ?? []) if (!took.hc && dist(b.x, b.z, q.x, q.z) <= EG_HCACHE_REACH_M && fairOf(B, b.sub)) { took.hc = 1; egGive(mm, 'rel', egCircleOfHall(B.h)); out.push({ k: 'egot', to: b.sub, w: 'rel' }, { k: 'esay', w: 'hcache', n: mm.name }, { k: 'run', r: egRunOf(b.sub, mm) }); }
+    for (const q of spec.spots.lniche ?? []) if (!took.ln && dist(b.x, b.z, q.x, q.z) <= EG_ALCOVE_REACH_M && fairOf(B, b.sub)) { took.ln = 1; egGive(mm, 'shard'); out.push({ k: 'eheal', p: EG_NICHE_HEAL, why: 'niche', to: b.sub }, { k: 'egot', to: b.sub, w: 'shard' }, { k: 'esay', w: 'niche', n: mm.name }, { k: 'run', r: egRunOf(b.sub, mm) }); }
     if (!F.lowUp && B.sg === 'trial' && onLowRoad(spec, b)) {
       F.lowUp = 1;
       const foes = spec.spots.lowfoe ?? [];
@@ -748,7 +785,7 @@ function cacheStep(B, spec, inHall, now, rng, out) {
   if (!C || !at || C.lost) return;
   for (const b of inHall) {
     const m = B.mem[b.sub];
-    if (!m || C.took[b.sub] || dist(b.x, b.z, at.x, at.z) > EG_TOUCH_M) continue;
+    if (!m || C.took[b.sub] || dist(b.x, b.z, at.x, at.z) > EG_TOUCH_M || !fairOf(B, b.sub)) continue;   // EG-H1: a fair trail's
     if (b.x != null) m.atEndH = B.h;
     if (C.mimic) { C.mimic = 0; C.lost = 1; if (!B.F) B.F = egFightNew(spec, now, living(B).map(([, x]) => x.lv)); const [lk] = egLegionRaise(B.F, [EG_KIND.lurker], [[at.x, at.z]], now, out); if (lk) egSetFl(B.F, lk, EG_FL.dormant, false, out); out.push({ k: 'esay', w: 'mimic' }); return; }
     C.took[b.sub] = 1;
@@ -764,7 +801,7 @@ function mementoStep(B, spec, inHall, now, out) {
   for (const q of B.mementos) {
     if (!q.by) {
       if (q.h !== B.h) continue;
-      const c = inHall.find((b) => dist(b.x, b.z, q.x, q.z) <= EG_MEMENTO_REACH);
+      const c = inHall.find((b) => dist(b.x, b.z, q.x, q.z) <= EG_MEMENTO_REACH && fairOf(B, b.sub));   // EG-H1: carried on a fair trail
       if (c) { q.by = c.sub; out.push({ k: 'esay', w: 'memento', n: memberName(B, c.sub), t: memberName(B, q.s) }, egStateOf(B, now)); }
       continue;
     }
@@ -772,7 +809,7 @@ function mementoStep(B, spec, inHall, now, out) {
     if (!c) continue;
     q.x = c.x; q.z = c.z; q.h = B.h;
     const niche = niches.find(([x, z]) => dist(c.x, c.z, x, z) <= EG_MEMENTO_REACH + 0.5);
-    if (niche) recall(B, q.s, EG_MEMENTO_PCT, [niche[0], niche[1] + 1.5], now, out);
+    if (niche && fairOf(B, q.by)) recall(B, q.s, EG_MEMENTO_PCT, [niche[0], niche[1] + 1.5], now, out);
   }
 }
 
@@ -809,9 +846,9 @@ function trial(B, spec, now, inHall, rng, out) {
   // the Span, the Brink: the door opens on the first living member at the far plate; a fragment's Lurkers and the Low
   // Road's foes at their work meanwhile
   if (spec.kind === 'span' || spec.kind === 'brink') {
-    for (const b of inHall) for (const o of egObjsOf(F, 'vault')) if (dist(b.x, b.z, o.x, o.z) <= 3 && !(o.took ??= {})[b.sub]) { o.took[b.sub] = 1; egGive(B.mem[b.sub], 'rel', egCircleOfHall(B.h)); out.push({ k: 'egot', to: b.sub, w: 'rel' }); }
+    for (const b of inHall) for (const o of egObjsOf(F, 'vault')) if (dist(b.x, b.z, o.x, o.z) <= 3 && fairOf(B, b.sub) && !(o.took ??= {})[b.sub]) { o.took[b.sub] = 1; egGive(B.mem[b.sub], 'rel', egCircleOfHall(B.h)); out.push({ k: 'egot', to: b.sub, w: 'rel' }); }
     if (egBodiesOf(F, EG_ROLE.add).length) egLegionStep(F, spec, now, here, rng, out, legionCtx);
-    if (inHall.some((b) => egAtDoor(spec, b.x, b.z))) door(B, spec, now, out, inHall);
+    if (doorOpener(B, spec, inHall)) door(B, spec, now, out, inHall);   // EG-H1: a fair arrival opens it (section 21)
     egMovesOut(F, out);
     return;
   }
@@ -928,11 +965,11 @@ function trial(B, spec, now, inHall, rng, out) {
   }
   if (kind !== 'court' && egLordsOf(F).length) egLordsStep(F, spec, now, here, rng, out, lordCtx);
   if (kind === 'deepway' && F.chamberDone && !F.saidDone) { F.saidDone = 1; out.push({ k: 'esay', w: 'chamberdone' }); }
-  if (kind === 'deepway' && F.chamberDone && inHall.some((b) => egAtDoor(spec, b.x, b.z))) { door(B, spec, now, out); return; }
+  if (kind === 'deepway' && F.chamberDone && doorOpener(B, spec, inHall)) { door(B, spec, now, out); return; }   // EG-H1: a fair arrival
   if (F.captive && !egObjsOf(F, 'chain').length) { F.captive = 0; for (const [sub, m] of living(B)) { egGive(m, 'cant', 1, rng); out.push({ k: 'egot', to: sub, w: 'cant' }); } out.push({ k: 'esay', w: 'freed' }); }
   hazards(B, F, spec, now, here, rng, out);
   egLegionStep(F, spec, now, here, rng, out, legionCtx);
-  egBlowsStep(F, spec, now, here, out);
+  egBlowsStep(F, spec, now, here, out, watchOf(B));   // EG-H1: Watchfire's company told each committed blow early
   // the census: where a landing found a member's pose (section 21's measure - the struck member's own machine resolves it)
   for (const bl of F.blows) if (!bl.counted && now >= bl.at) { bl.counted = 1; for (const m of egStruck(bl, here)) { const mm = B.mem[m.sub]; if (mm) mm.struck = (mm.struck ?? 0) + 1; if (bl.o && egLordsOf(F).some((L) => L.i === bl.o) && mm) mm.lordLandedAt = now; } }
   egMovesOut(F, out);
@@ -1006,7 +1043,7 @@ export function egBlow(B, sub, m, pose, now) {
   const mm = B.mem[sub], F = B.F;
   if (!mm || !mm.in || !mm.alive || mm.home || B.sg !== 'trial' || !F || !pose || m.k !== 'hit') return out;
   const spec = specOf(B), p = local(spec, { sub, sx: pose.sx, z: pose.z, dead: false });
-  if (!p) return out;
+  if (!p || egFairRefuses(fairOfMember(B, sub), now)) return out;   // EG-H1: a second break of the fair trail in a hall refuses its hits a while
   const body = egBodyById(F, m.i);
   if (!body) return out;
   const here = Object.entries(B.mem).filter(([, x]) => x.alive && x.in && x.pose).map(([s, x]) => ({ sub: s, x: x.pose.x, z: x.pose.z }));
@@ -1063,7 +1100,7 @@ export function egDown(B, sub, h, pose, now) {
   const mm = B.mem[sub];
   if (!mm || !mm.in || !mm.alive || mm.home || B.sg !== 'closing' || h !== B.h || !pose) return false;
   const spec = specOf(B), p = local(spec, { sub, sx: pose.sx, z: pose.z, dead: false });
-  if (!p || !egAtDoor(spec, p.x, p.z, 2)) return false;
+  if (!p || !egAtDoor(spec, p.x, p.z, 2) || !fairOf(B, sub)) return false;   // EG-H1: a step through the door on a fair trail
   mm.downH = h;
   return true;
 }
@@ -1135,6 +1172,109 @@ export function egWord(B, sub, m, pose, now, rng) {
     default: break;
   }
   return out;
+}
+/** EG-H1: the Watchfire holders among the living (section 15) - each one's lead at its rank and the Long Sight holders it
+ *  keeps Far Watch with (net/egBodies.js egTellTo). */
+function watchOf(B) {
+  const L = living(B).filter(([, m]) => m.pose), out = [];
+  for (const [sub, m] of L) {
+    const v = egVOf(m.vs, 'watchfire');
+    if (!(v > 0)) continue;
+    const ls = L.filter(([, m2]) => egVOf(m2.vs, 'longsight') > 0 && egAccordsOf(m.vs, m2.vs).some((A) => A.key === 'farwatch')).map(([, m2]) => [m2.pose.x, m2.pose.z]);
+    out.push({ sub, x: m.pose.x, z: m.pose.z, lead: Math.round(v * 1000), ls });
+  }
+  return out;
+}
+/**
+ * EG-H1 - A MEMBER'S POSE in its breach's room, at its SHARED time `t` (net/egFair.js egPoseShared - the room's every pose):
+ * where it stands in the hall's own frame - a ridden pose (`pl`) at its piece's clock position, its offset held to the
+ * piece's top (RIDDEN POSES, section 10.8) - fed to THE FAIR TRAIL while the member is in a trial or its closing, from its
+ * arrival on this hall (`here`) to its step through the door (`down`): a pose between them belongs to no crossing, and one
+ * sent mid-stair to no hall. A fall past EG_VOID_Y under its last support owes the count a cast-back (egCount). Answers the
+ * point for the room's shared-time trail (`{x, y, z, h}`), or null (no hall's, a witness's, a member out).
+ * @param {any} B @param {string} sub @param {{sx: number, y: number, z: number, pl?: number[]|null, cl?: number}} p @param {number} t
+ */
+export function egPoseIn(B, sub, p, t) {
+  const m = B.mem[sub];
+  if (!m || !m.in || !m.alive || m.home || B.end || !(B.h > 0) || B.sg === 'wait' || B.sg === 'rest') return null;
+  const spec = specOf(B);
+  if (!egInHall(spec, p.sx, p.z, 4)) return null;
+  let x = egLocalX(spec, p.sx), y = p.y, z = p.z, ride = false;
+  if (Array.isArray(p.pl) && egRideHolds(spec, p.pl)) { const q = egRideAt(spec, p.pl, t / 1000); if (q) { [x, y, z] = q; ride = true; } }
+  if ((B.sg === 'trial' || B.sg === 'closing') && m.hereH === B.h && m.downH !== B.h) {
+    const k = fairKey(B, m);
+    // a trail begins on the arrival plate (or where a recall stood it): a first pose anywhere else is a step the law never
+    // saw - a break, so a member who left the plate in the gather's last seconds holds nothing until it stands on an island
+    if (m.fair?.k !== k) { m.fair = { ...egFairNew(B.h), k, cbHeld: 0 }; if (!egOnArrive(spec, x, z, 2) && m.roseH !== B.h) { m.fair.brk = 1; m.fair.brks = 1; m.fair.why = 'start'; } }
+    const A = m.fair;
+    egFairPose(A, spec, { x, y, z, ride, cl: !!p.cl }, t);
+    if (spec.fork && z >= spec.fork.z && x >= (spec.fork.lowX + spec.fork.x) / 2) A.road = 1;
+    if (egAtDoor(spec, x, z)) egFairCross(A, t, A.road);
+    if (A.sup && y < A.sup[2] + EG_VOID_Y) { if (!A.cbHeld) { A.cbHeld = 1; m.cbOwe = (m.cbOwe ?? 0) + 1; } }
+    else if (A.sup && A.sup[0] === t) A.cbHeld = 0;
+  }
+  return { x, y, z, h: B.h };
+}
+/** EG14, after EG8d (EG-H1 lands it - section 21): THE BODY COUNT IS ENFORCED in `eg:` rooms whatever the gate's BOSS_BODY
+ *  line says - the relay's count is the member's one life. The line's depth and pace stay the hub's. */
+export const EG_BODY_ENFORCE = true;
+/**
+ * EG-H1 - THE BODY COUNTED in the Spire (net/bossBody.js; section 21): the hall's blows judged on the living members'
+ * shared-time trails (net/bossRef.js judgeShapes), its own hazards at their landing (judgePlace), and each cast-back a
+ * pose owed (egPoseIn - a tenth of the whole, never below a quarter), each kept in the member's census (`cs`: blows struck,
+ * hazards struck, cast-backs, the thousandths counted) and taken off its count (bodyStruck - a plain blow's share; an
+ * element's is seen and never counted). A count at nothing under enforcement is the member's FALL - one life (egFall: the
+ * witness, the Memento, the final fall's receipt) - and is told to it (`bd`, `to` it). Answers the frames.
+ * @param {any} B @param {number} now @param {Array<{sub: string, tr?: number[][]}>} bodies each living member's trail
+ * (`[t, x, y, z, h]` - the hall's frame, shared ms) @param {{depth: number, perS: number}} line @param {boolean} [enforce]
+ */
+export function egCount(B, now, bodies, line, enforce = EG_BODY_ENFORCE) {
+  const out = [];
+  if (B.end || !(B.h > 0) || (B.sg !== 'trial' && B.sg !== 'closing')) return out;
+  const spec = specOf(B), F = B.F;
+  const live = bodies.filter((b) => { const m = B.mem[b.sub]; return m && m.in && m.alive && !m.home; });
+  const hits = [...judgeShapes(F, live, now, spec), ...judgePlace(F, spec, B.hw, live, now)];
+  for (const b of live) {
+    const m = B.mem[b.sub];
+    for (; (m.cbOwe ?? 0) > 0; m.cbOwe--) hits.push({ sub: b.sub, share: Math.min(EG_CAST_BACK_LOSS, Math.max(0, (m.bd?.v ?? 1) - EG_CAST_BACK_FLOOR)), i: 0, k: 2 });
+  }
+  for (const h of hits) {
+    const m = B.mem[h.sub];
+    if (!m?.alive) continue;
+    const cs = (m.cs ??= [0, 0, 0, 0]);
+    cs[h.k]++; cs[3] += Math.round(h.share * 1000);
+    if (!(h.share > 0) || !bodyStruck(m, h.share, now, line) || !enforce) continue;
+    const tr = live.find((b) => b.sub === h.sub)?.tr, at = tr?.length ? tr[tr.length - 1] : null;
+    egFall(B, h.sub, now, out, at && at[4] === B.h ? { x: at[1], z: at[3] } : null);
+    out.push({ k: 'bd', to: h.sub });
+  }
+  return out;
+}
+/**
+ * EG-H1 - THE ROOM'S OWN HEALS ON THE COUNT (section 21's census: what the relay heals it restores, so no holder drains its
+ * budget or skews the measure): a rest's whole heal stands each living member's count whole (bodyLife), a share heals it
+ * (bodyHealed - a Rally, a Mending, a niche), the fray's lash takes its share and never the last of it, and a recall's word
+ * (`rise`) stands its member at its share - a new life. The frames the room fans, read; the counts moved in place.
+ * @param {any} B @param {any[]} frames @param {number} now @param {{depth: number, perS: number}} line @param {boolean} [enforce]
+ */
+export function egCountHeals(B, frames, now, line, enforce = EG_BODY_ENFORCE) {
+  for (const f of frames) {
+    if (f.k === 'rise' && B.mem[f.s]) { const m = B.mem[f.s]; bodyLife(m, now, line); m.bd.v = Math.max(0.01, Math.min(1, f.p)); continue; }
+    if (f.k !== 'eheal' || !Number.isFinite(f.p)) continue;
+    for (const [sub, m] of living(B)) {
+      if (f.to && f.to !== sub) continue;
+      if (f.why === 'rest' && f.p >= 1) bodyLife(m, now, line);
+      else if (f.p > 0) bodyHealed(m, f.p, now, line, { enforce });
+      else if (f.p < 0 && m.bd) m.bd.v = Math.max(0.01, m.bd.v + f.p);   // the lash: a setback, never a death
+    }
+  }
+}
+/** EG-H1 - A MEMBER'S OWN WORD OF ITS BODY (`vt`, thousandths - net/bossBody.js bodySaid, INT15's pace): a mend it claims
+ *  believed out of its budget; from a member the breach does not count alive, not heard. */
+export function egBodyWord(B, sub, v, now, line, enforce = EG_BODY_ENFORCE) {
+  const m = B.mem[sub];
+  if (!m || !m.in || !m.alive || m.home || B.end) return false;
+  return bodySaid(m, v / 1000, now, line, { enforce });
 }
 /** Is the breach still running at `now` (its room's beat wanted)? */
 export const egLive = (B, now) => !!B && !B.end && now < B.op + EG_LAST_WORD_MS;

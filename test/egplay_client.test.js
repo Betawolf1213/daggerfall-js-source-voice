@@ -111,11 +111,13 @@ async function withPlay(fn) {
   const frame = async (ms = 300) => { client.frame(); await settle(); if (ws && mode === 'dungeon') await eg.pose(ws, pose()); await beat(ms); pump(); await settle(); };
   const enter = async () => { ws = eg.connect(); await eg.hello(ws, 'peer-mac', pose(), { kind: 'linked', tokenSub: ME, charLevel: 20 }); pump(); await settle(); };
   const standAt = (sx, z, y = 0) => { player.pos = realmToDungeon(sx, y, z); };
+  // EG-H1: a member WALKS to a credit - THE FAIR TRAIL (net/egFair.js) refuses a step through the door from a teleport
+  const walkTo = async (sx, z, y = 0) => { const [x0, , z0] = dungeonToRealm(player.pos[0], player.pos[1], player.pos[2]), n = Math.max(1, Math.ceil(Math.hypot(sx - x0, z - z0) / 2)); for (let k = 1; k <= n; k++) { standAt(x0 + ((sx - x0) * k) / n, z0 + ((z - z0) * k) / n, y); await frame(250); } };
   const rec = () => eg.room._eg ?? eg.store.get(EG_KEY);   // the room's live record (its storage is a checkpoint)
   try {
     await quiet(async () => {
       macHub = hub.connect(); await hub.hello(macHub, 'peer-mac', null, { name: 'Mac', acct: ME, asecret: 'secret-of-acct-mac', kind: 'linked' });
-      await fn({ client, said, mids, asked, entity, player, modes, exitDoors, store, settle, pump, beat, frame, enter, standAt, rec, eg, hub, presence, step: (ms) => { clock += ms; }, now: () => clock, ws: () => ws });
+      await fn({ client, said, mids, asked, entity, player, modes, exitDoors, store, settle, pump, beat, frame, enter, standAt, walkTo, rec, eg, hub, presence, step: (ms) => { clock += ms; }, now: () => clock, ws: () => ws });
     });
   } finally { Date.now = realNow; }
 }
@@ -135,7 +137,7 @@ async function intoFirstHall(P) {
 
 test('EG-PLAY THE CLIENT ON THE RELAY: the Weir Key turned stakes it and hands the hub its order; the hub\'s call is said and kept; /breach before the open is told the time, after it admits me and steps me in under the veil; inside, my admission goes to the room once; the company gathered on the plate wakes the hall; the rifts broken through the fight\'s own seam open the door, my step through it is said and the pull stands me on Hall 2\'s plate (mutants: the open never sent; the call unheard; the step taken while it is sealed; the admission never said; the pull never stood)', async () => {
   await withPlay(async (P) => {
-    const { client, said, asked, settle, step, beat, enter, frame, rec, standAt, player } = P;
+    const { client, said, asked, settle, step, beat, enter, frame, rec, standAt, walkTo, player } = P;
     assert.equal(client.useKey(), EG_TEXT.opening);
     await settle();
     assert.equal(asked.open.length, 1);
@@ -185,8 +187,9 @@ test('EG-PLAY THE CLIENT ON THE RELAY: the Weir Key turned stakes it and hands t
     }
     assert.equal(rec().sg, 'closing', 'the last rift closed opens the door');
     assert.equal(client.state().sg, 'closing');
-    // the door: my step through it, then the pull
-    standAt(spec.x0 + spec.end.x, spec.end.z);
+    // the door: my step through it, then the pull - PIN MOVED (EG-H1): walked there, not stood there (THE FAIR TRAIL refuses a
+    // step through the door from a teleport - test/egint_relay.test.js pins it)
+    await walkTo(spec.x0 + spec.end.x, spec.end.z);
     await frame(300);
     for (let i = 0; i < 4 && rec().h === 1; i++) await frame(300);
     assert.deepEqual([rec().h, rec().sg], [2, 'arrive'], 'my step through the door pulls the company');

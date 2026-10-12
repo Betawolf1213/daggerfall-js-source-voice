@@ -1573,7 +1573,7 @@ export function wire2Batch(items) {
 /** A pose the room will relay, or null. */
 export function validPose(p) {
   if (!p || typeof p !== 'object') return null;
-  const { x, y, z, yaw, pitch, mv, wd, an, as, am, sr, cn, cr, ce, ar, fk, rd, rv, rc, hs, lh, wb, dd, hl, lt, lc, hk, hp, hb, hq, hu, uq, cv, cl, cw, ck, cy, cd, st, ts } = p;
+  const { x, y, z, yaw, pitch, mv, wd, an, as, am, sr, cn, cr, ce, ar, fk, rd, rv, rc, hs, lh, wb, dd, hl, lt, lc, hk, hp, hb, hq, hu, uq, cv, cl, cw, ck, cy, cd, st, ts, pl } = p;
   if (![x, y, z, yaw, pitch].every(finite)) return null;
   if (Math.abs(x) > POSE_BOUND || Math.abs(z) > POSE_BOUND || Math.abs(y) > POSE_Y_BOUND) return null;
   // ONCRASH1 (2026-09-15, Mac: "reports of player browser crashing when
@@ -1657,6 +1657,7 @@ export function validPose(p) {
     // otherwise: a hold, and the ground, keep their bytes.
     ...climbOf(cl, cw, ck, cy, cd),
     ...seatOf(st),   // CARDS2b: seated at a card table, and the table's top - omitted standing
+    ...riddenOf(pl),   // EG-H1: RIDDEN POSES - a pose on an Elite Breach's moving piece, its index and its offset from the piece's top
     // SCALE2b: the send time - an integer inside POSE_TS_MOD, or nothing (never clamped: a clamped time would order
     // every later pose behind it). OMITTED when absent (validLook's `class` law).
     ...(Number.isInteger(ts) && ts >= 0 && ts < POSE_TS_MOD ? { ts } : {}),
@@ -1691,6 +1692,14 @@ function peerFxOf(hk, hp, hb, hq, hu, uq) {
   if (u) { out.hu = u; out.uq = uint(uq, 100) ?? 20; }   // PEERFX2: and what that blow cost, 0-100 (the splash's size)
   return out;
 }
+/** EG-H1 (EG8d; bible/11-Multiplayer/Elite-Gates.md section 10.8 - RIDDEN POSES): a pose on an Elite Breach's moving piece
+ *  (a Drift, a Rail, a Drum) carries `pl` - `[i, dx, dy, dz]`, the piece's index in its hall's course and the body's offset
+ *  from the piece's top (m, to the cm) at the sender's time - so a receiver draws it on the piece at its own clock and the
+ *  relay judges it on the piece's clock position (net/egFair.js egRideAt). OMITTED off a piece (validLook's `class` law); a
+ *  field out of bounds is no ride, never clamped into one. */
+export const POSE_RIDE_OFF_MAX = 8;
+const riddenOf = (pl) => (Array.isArray(pl) && pl.length === 4 && Number.isInteger(pl[0]) && pl[0] >= 0 && pl[0] <= 255 && pl.slice(1).every((v) => finite(v) && Math.abs(v) <= POSE_RIDE_OFF_MAX)
+  ? { pl: [pl[0], Math.round(pl[1] * 100) / 100, Math.round(pl[2] * 100) / 100, Math.round(pl[3] * 100) / 100] } : {});
 /** CARDS2b (bible/11-Multiplayer/Tavern-Cards.md section 12): the most the seat's `st` says - the table's top above the
  *  sitter's feet in 5 cm steps (player/seatPose.js SEAT_TOP_STEP), so 40 is two metres. */
 export const POSE_SEAT_TOP_MAX = 40;
@@ -5420,13 +5429,19 @@ export function validSdFoundTell(b) {
 // `down`, `home`, `pick`, `surplus`, `vote`, `cant`, `buy`, `lping`, `ping`, `bequest`, `forsake`, `pz`, `use` (EG-FULL
 // LAYER THREE: a fragment's engine worked - and `egot` 'page', a page of the Annals found). Every time is the
 // relay's clock; every point the hall's own frame.
+//
+// EG-H1 (EG8d, 2026-10-12; bible/11-Multiplayer/Elite-Gates.md sections 21, 10.8 and 15): WHAT THE RELAY JUDGES - a
+// member's own word of its body (`vt`, thousandths: the body counted, enforced in the Spire - net/egBrain.js egBodyWord) and
+// the shared clock's ping (`clk` and its answer, the relay's `now` - net/egClock.js); the count's fall (`bd`, to the fallen);
+// a lord's blow told early to a Watchfire holder's company (`tell` - the blow's own fields and `sh`, the lead shown) and a
+// told blow THE UNION FLOOR held (`untell`). A pose on a moving piece carries `pl` (validPose - RIDDEN POSES).
 
 /** What a client may say: `open` to the hub; the rest to a breach's room. */
-export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use']);
+export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk']);   // EG-H1: `vt` my body, `clk` the shared clock's ping
 /** What the hub and a breach's room say back. */
-export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail']);
+export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail', 'tell', 'untell']);   // EG-H1: Watchfire's `tell`, the union floor's `untell`
 export const EG_RUN_KINDS = Object.freeze(['offer', 'ask', 'asked', 'tally', 'egot', 'run', 'rise', 'eping', 'pz', 'eheal']);
-export const EG_OUT_KINDS = Object.freeze(['call', 'st', 'sg', 'co', 'fall', 'rd', 'rcpt', 'end', 'no', ...EG_FIGHT_KINDS, ...EG_RUN_KINDS]);
+export const EG_OUT_KINDS = Object.freeze(['call', 'st', 'sg', 'co', 'fall', 'rd', 'rcpt', 'end', 'no', 'bd', 'clk', ...EG_FIGHT_KINDS, ...EG_RUN_KINDS]);   // EG-H1: `bd` the count's fall of me, `clk` the clock's answer
 /** A hall's stages as the wire says them (section 7): before the first hall (`wait` - the arch rising, sealed, open),
  *  the arrival and gather, the trial, the closing (its door open), a Redoubt's rest, the end. */
 export const EG_STAGES = Object.freeze(['wait', 'arrive', 'trial', 'closing', 'rest', 'end']);
@@ -5579,6 +5594,8 @@ export function validEgIn(m) {
     case 'bequest': return intIn(m.v, 0, 99) ? { k: 'bequest', v: m.v } : null;
     case 'pz': return intIn(m.i, 0, 5) && (m.a === 1 || m.a === -1) ? { k: 'pz', i: m.i, a: m.a } : null;
     case 'use': return intIn(m.i, 0, 7) ? { k: 'use', i: m.i } : null;   // LAYER THREE: an engine worked (section 11.10)
+    case 'vt': return intIn(m.v, 0, BODY_WORD_MAX) ? { k: 'vt', v: m.v } : null;   // EG-H1: my body's share, thousandths (INT11's word)
+    case 'clk': return intIn(m.c, 0, 0x7fffffff) ? { k: 'clk', c: m.c, ...(intIn(m.h, 0, 5000) ? { h: m.h } : {}) } : null;   // EG-H1: a ping of the shared clock by its number, and the one-way delay my corrected clock measured (ms)
     default: return null;
   }
 }
@@ -5618,6 +5635,8 @@ export function validEgOut(m) {
     case 'rcpt': return typeof m.r === 'string' && m.r.length <= EG_RECEIPT_WIRE_MAX && EG_RECEIPT_RE.test(m.r) ? { k: 'rcpt', r: m.r } : null;
     case 'end': return EG_END_WORDS.includes(m.why) && gateMs(m.at) ? { k: 'end', why: m.why, at: m.at } : null;
     case 'no': return EG_NO_WORDS.includes(m.m) ? { k: 'no', m: m.m } : null;
+    case 'bd': return { k: 'bd' };   // EG-H1: no fields - the fall is mine, the socket's own
+    case 'clk': return intIn(m.c, 0, 0x7fffffff) && gateMs(m.now) ? { k: 'clk', c: m.c, now: m.now } : null;   // EG-H1: the relay's clock as it answered my ping
     // ── the fight ──
     case 'efs': {
       const b = egBodies(m.b), bl = egList(m.bl ?? [], egBlowW, EG_WIRE_BLOWS_MAX), tx = egList(m.tx ?? [], egTether), mk = egList(m.mk ?? [], egMarkW);
@@ -5630,6 +5649,8 @@ export function validEgOut(m) {
     case 'efl': return intIn(m.i, 1, 1e9) && intIn(m.fl, 0, 0xffff) ? { k: 'efl', i: m.i, fl: m.fl } : null;
     case 'eb': { const b = egBlowW(m); return b ? { k: 'eb', ...b } : null; }
     case 'ecut': return intIn(m.i, 1, 1e9) ? { k: 'ecut', i: m.i } : null;
+    case 'tell': { const b = egBlowW(m); return b && intIn(m.sh, 1, 400) ? { k: 'tell', ...b, sh: m.sh } : null; }   // EG-H1: Watchfire's early outline, its lead shown (ms)
+    case 'untell': return intIn(m.i, 1, 1e9) ? { k: 'untell', i: m.i } : null;
     case 'etx': { const t = egList(m.t, egTether); return t ? { k: 'etx', t } : null; }
     case 'emk': { const mk = egList(m.m, egMarkW); return mk ? { k: 'emk', m: mk } : null; }
     case 'eph': return intIn(m.i, 1, 1e9) && intIn(m.ph, 1, 3) ? { k: 'eph', i: m.i, ph: m.ph } : null;

@@ -9,8 +9,9 @@ import assert from 'node:assert/strict';
 import { egBandOfCircle, egBandOfHall, egFirstHallOf, egCirclePlan, egCircleOf, egVariantsOf, egBossOf, egHallOf, egCircleSpecs, egGeoOf, egOnFight, egOnArrive, egAtDoor, egIsCourt,
   lawIsqrt, EG_BANDS, EG_BRINK_HALLS, EG_VARIANTS, EG_TWISTS, EG_TWIST_ON, EG_LORDS, EG_BAND_LORDS, EG_VALKYNAZ, EG_DECREES, EG_DECREE_FAMILIES, EG_DECREE_BY_KEY, EG_HALL_LEN_MAX,
   EG_BAND_PIECES } from '../src/net/egLaw.js';
-import { egStampOk, egInShape, egInBlow, egEscapeM, egWidthOk, egWindupFloorMs, egFloorWindup, egBlowOf, egBlowVerdict, egUnionHolds, egShapeOrder, shDisc, shLane, shCone, shRing, shAll, shOut,
+import { egStampOk, egInShape, egInBlow, egEscapeM, egWidthOk, egWindupFloorMs, egFloorWindup, egBlowOf, egBlowVerdict, egShapeOrder, shDisc, shLane, shCone, shRing, shAll, shOut,
   EG_ESCAPE_MPS, EG_REACT_S, EG_WIDTH_MIN, EG_SHAPES_DRAWN_MAX } from '../src/net/egShape.js';
+import { egUnionHolds } from '../src/net/egFloor.js';   // PIN MOVED: EG-H1 moved THE UNION FLOOR to net/egFloor.js, where the page says it lives - its law unchanged
 import { runSpeed } from '../src/player/motor.js';
 import { GATE_COURT_BOUND } from '../src/net/wire.js';
 import { EG_FRAG_PIECES } from '../src/net/egFragLaw.js';

@@ -1043,7 +1043,7 @@ export function egKeepOnFight(spec, x, z, inset = 0) {
   }
   return best ?? [x, z];
 }
-/** Hall `spec`'s fight floor as a test (net/egShape.js egUnionHolds' `onFloor`). */
+/** Hall `spec`'s fight floor as a test (net/egFloor.js egUnionHolds' `onFloor` - EG-H1 moved it there). */
 export const egFloorTest = (spec) => (x, z) => egOnFight(spec, x, z);
 /** A FALLING WALL's fallen edge at `now` (section 8.3): the walkway behind it is gone - 20 s after the wake, 1.5 m/s. */
 export const egWallFallenZ = (spec, wokeAt, now) => (spec.variant === 'fallingwall' && spec.walk && wokeAt > 0 ? spec.walk.z0 + Math.max(0, now - wokeAt - EG_WALL_FALL_AFTER_MS) * (EG_WALL_FALL_MPS / 1000) : -Infinity);

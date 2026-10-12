@@ -231,8 +231,8 @@
   {
     "name": "EGFRAG-the-cache-given-twice",
     "file": "src/net/egBrain.js",
-    "old": "if (!took.hc && dist(b.x, b.z, q.x, q.z) <= EG_HCACHE_REACH_M) { took.hc = 1;",
-    "new": "if (!took.hc && dist(b.x, b.z, q.x, q.z) <= EG_HCACHE_REACH_M) {",
+    "old": "if (!took.hc && dist(b.x, b.z, q.x, q.z) <= EG_HCACHE_REACH_M && fairOf(B, b.sub)) { took.hc = 1;",
+    "new": "if (!took.hc && dist(b.x, b.z, q.x, q.z) <= EG_HCACHE_REACH_M && fairOf(B, b.sub)) {",
     "tests": [
       "test/egfrag_relay.test.js"
     ]

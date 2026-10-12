@@ -25,8 +25,8 @@
 //
 // Pure: a fight and a beat in, frames out. In the relay bundle. Not a DFU member. Ledger A (ELITE-GATES).
 import { PHASE_AT, SHIELD_MS, THREAT_PICK, THREAT_DECAY, HIT_KINDS, STUN_MS, STUN_HIT_X } from './gateBrain.js';
-import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpTeam, egBodiesOf, egBodyById, egMark, egUnmark, egMarkOf, egShareX, egCut } from './egBodies.js';
-import { shDisc, shLane, shLaneAt, shCone, shRing, shAll, shOut, egErrandMs } from './egShape.js';
+import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpTeam, egBodiesOf, egBodyById, egMark, egUnmark, egMarkOf, egShareX, egCut, EG_TELL_LEAD_MS, EG_FEINT_AT } from './egBodies.js';
+import { shDisc, shLane, shLaneAt, shCone, shRing, shAll, shOut, egErrandMs, egBlowFrom } from './egShape.js';
 import { EG_LORDS, egKeepOnFight } from './egLaw.js';
 import { EG_KIND, egLegionRaise, egWaveKinds, egWaveSize, egFromBehind, egFromFront } from './egLegion.js';
 
@@ -130,8 +130,10 @@ function lordBlow(F, spec, L, stamps, B, here, now, out, o = {}) {
   const scale = (s) => (law.radiusX === 1 || o.ch ? s : s[0] === 'd' ? shDisc(s[1], s[2], s[3] * law.radiusX) : s[0] === 'c' ? shCone(s[1], s[2], s[3], s[4] * law.radiusX, s[5]) : s[0] === 'l' ? shLane(s[1], s[2], s[3], s[4], s[5] * law.radiusX) : s);
   const p = o.ch ? B.p : B.p * egShareX(F.c, (F.mem.furyX ?? 1) * law.dmgX * (L.shareX ?? 1));
   const at = now + (o.delay ?? 0) + B.wu;
-  const blow = egAim(F, spec, { o: L.i, s: stamps.map(scale), at, wu: B.wu + (o.delay ?? 0), p, b: B.b, el: B.el === undefined ? null : B.el, nm: B.nm, ch: o.ch ? 1 : 0, pu: B.pu ?? 0, sp: B.sp ?? 0 }, o.ch ? [] : here, now, out);
-  if (blow && o.feint) (F.mem.feints ??= []).push([blow.i, now + Math.round(blow.wu * 0.55)]);
+  // EG-H1 (section 15): every lord's chosen blow COMMITTED EG_TELL_LEAD_MS before its wind-up begins (net/egBodies.js egAim's
+  // `lead` - told early to a Watchfire holder's company meanwhile); a CHECK keeps its fixed time
+  const blow = egAim(F, spec, { o: L.i, s: stamps.map(scale), at, wu: B.wu + (o.delay ?? 0), p, b: B.b, el: B.el === undefined ? null : B.el, nm: B.nm, ch: o.ch ? 1 : 0, pu: B.pu ?? 0, sp: B.sp ?? 0 }, o.ch ? [] : here, now, out, o.ch ? 0 : EG_TELL_LEAD_MS);
+  if (blow && o.feint) (F.mem.feints ??= []).push([blow.i]);   // EG-H1: cut at FEINT_AT of its OWN wind-up, however late its word went
   return blow;
 }
 /** A chained second shape under fury (from its second step): the same stamps, landing max(wind-up, floor + 0.3 s, 1 s)
@@ -139,7 +141,8 @@ function lordBlow(F, spec, L, stamps, B, here, now, out, o = {}) {
 function furyChain(F, spec, L, blow, here, now, out) {
   if (!blow || (F.mem.furySteps ?? 0) < 2 || blow.ch) return;
   const gap = Math.max(blow.wu, 1000);
-  egAim(F, spec, { o: L.i, s: blow.s, at: blow.at + gap, wu: blow.at + gap - now, p: blow.p, b: blow.b, el: blow.el, nm: `${blow.nm} (fury)`, pu: blow.pu, sp: blow.sp }, here, now, out);
+  // EG-H1: committed with the first and said with it (its landing the first's plus the gap - the lead already in it)
+  egAim(F, spec, { o: L.i, s: blow.s, at: blow.at + gap - EG_TELL_LEAD_MS, wu: blow.at + gap - EG_TELL_LEAD_MS - now, p: blow.p, b: blow.b, el: blow.el, nm: `${blow.nm} (fury)`, pu: blow.pu, sp: blow.sp }, here, now, out, EG_TELL_LEAD_MS);
 }
 /** A lord's ward raised for `ms` (Unyielding's law - longer). */
 function ward(F, L, ms, now, out) { const law = F.mem.law ?? egLordLaw(); L.ward = Math.max(L.ward, now + ms * law.shieldX); egSetFl(F, L, EG_FL.ward, true, out); }
@@ -216,8 +219,10 @@ export const egLordsFell = (F) => !!F.mem.lordsFell;
  */
 export function egLordsStep(F, spec, now, here, rng, out, ctx) {
   const law = F.mem.law ?? egLordLaw();
-  for (const [i, at] of F.mem.feints ?? []) if (now >= at) egCut(F, i, out);
-  F.mem.feints = (F.mem.feints ?? []).filter(([, at]) => now < at);
+  // EG-H1: a feint cut at EG_FEINT_AT of its own wind-up once its word is out (`ecut` - the page's `cut`); one committed,
+  // pending or held waits for its word, and one dropped is forgotten
+  for (const [i] of F.mem.feints ?? []) { const b = F.blows.find((x) => x.i === i); if (b && now >= egBlowFrom(b) + Math.round(b.wu * EG_FEINT_AT)) egCut(F, i, out); }
+  F.mem.feints = (F.mem.feints ?? []).filter(([i]) => F.blows.some((b) => b.i === i) || (F.pend ?? []).some((q) => q.b.i === i) || F.held.some((h) => h.b?.i === i));
   const lords = egLordsOf(F);
   if (!lords.some((L) => L.up2)) return;
   // FURY (section 13.2) and THE COVENANT'S WEIGHT (section 18)
@@ -280,11 +285,11 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     const made = B.make(F, spec, L, target, here, rng, now, out, ctx);
     const blow = made?.stamps ? lordBlow(F, spec, L, made.stamps, { ...B, ...(made.B ?? {}) }, here, now, out, { feint: made.feint, ch: B.ch, delay: made.delay }) : null;
     if (blow) furyChain(F, spec, L, blow, here, now, out);
-    if (made?.extra) for (const e of made.extra) { const b2 = lordBlow(F, spec, L, e.stamps, { ...B, ...e.B }, here, now, out, { delay: e.delay ?? 0 }); if (b2 && e.feint) (F.mem.feints ??= []).push([b2.i, now + Math.round(b2.wu * 0.55)]); }
+    if (made?.extra) for (const e of made.extra) { const b2 = lordBlow(F, spec, L, e.stamps, { ...B, ...e.B }, here, now, out, { delay: e.delay ?? 0 }); if (b2 && e.feint) (F.mem.feints ??= []).push([b2.i]); }
     L.cds[B.nm] = now + (B.cd ?? 0);
     L.run = B.nm === L.lastBlow ? L.run + 1 : 1; L.lastBlow = B.nm;
-    const wu = (blow?.wu ?? B.wu) + (made?.delay ?? 0);
-    L.atk = { at: now + wu, until: now + wu + (B.sp ?? 0) + (B.rec ?? 900), to: made?.to ?? null };
+    const wu = (blow?.wu ?? B.wu) + (made?.delay ?? 0), landAt = blow ? blow.at : now + wu;   // EG-H1: the committed blow's own landing (its lead in it)
+    L.atk = { at: landAt, until: landAt + (B.sp ?? 0) + (B.rec ?? 900), to: made?.to ?? null };
   }
 }
 

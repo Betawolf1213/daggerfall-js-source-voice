@@ -682,6 +682,11 @@ export class OnlineSession {
     this.onSd = null;             // SD3: (word, room) => void - the hub's word of the Super dungeon (its record), projected by the wire's validSdOut
     this.onSdHall = null;         // SD6b: (word, room) => void - the realm's word of its Orrery (the stones, the fray, the dial, the Concord), from my own realm alone
     this.onEg = null;             // EG-PLAY: (word, room) => void - an Elite Breach's word (net/wire.js validEgOut): the hub's call, my own breach room's state, fights and receipts
+    /** EG-H1 (bible/11-Multiplayer/Elite-Gates.md section 10.8 - RIDDEN POSES): () => [i, dx, dy, dz] | null - my pose's ride on
+     *  a breach's moving piece, laid on each pose I say (scenes/egClient.js ridePl); and (pose) => void - a peer's drawn place
+     *  moved onto its ride at my shared clock (rideDraw). Null outside the Spire. */
+    this.poseRide = null;
+    this.rideAt = null;
     this.onSdFight = null;        // SD8b: (word, room) => void - the realm's word of its fight (net/wire.js validSdOut's fight kinds), from my own realm alone
     this.onSdReceipt = null;      // SD9a: (receipt, room) => void - my Hour receipt (an `h1`), from my own realm at the fall or from the hub
     this.onWatch = null;          // SEAT1b: (receipt, claims) => void - the Watch's tick the relay signed for my account in my own cell (net/watchReceipt.js), carried to the account service by the seats' book
@@ -1695,10 +1700,11 @@ export class OnlineSession {
     const w = validEgIn({ ...fields, k, ...(k === 'in' ? { bv: EG_BRAIN_V } : {}) });
     if (!w || !this.egOk || this.status !== 'open' || !this._ws || !this._welcomed.has(this._ws)) return false;
     if (k === 'open' ? !isSocialRoom(this.room) : !isEgRoom(this.room)) return false;
-    const gate = egGate(this._egBucket, this._now());
+    const body = k === 'vt', gate = body ? bodyWordGate(this._egBodyBucket, this._now()) : egGate(this._egBucket, this._now());   // EG-H1: my body's word on a bucket of its own (AUDIT INT15's law)
     if (!gate.pass) return false;
     try { this._ws.send(JSON.stringify({ t: 'eg', ...w })); } catch { return false; }
-    this._egBucket = gate.bucket; this.stats.sent++;
+    if (body) this._egBodyBucket = gate.bucket; else this._egBucket = gate.bucket;
+    this.stats.sent++;
     return true;
   }
   /** RAID-ROLL: the towns table to the hub that asked for it by its pinned hash (`raid` `tw`), in pieces the wire's own
@@ -2056,7 +2062,8 @@ export class OnlineSession {
     // is due (HALO-THIN, haloPoseDue); AUDIT WORLD6b-iii(b) A5: through every OPEN socket, my own cell's down or not (the
     // halos rode out nothing while the fan sat behind the primary's send), and then whole
     if (!(this._ws && this.status === 'open') && ![...this._halo.values()].some((h) => h.status === 'open' && h.ws)) return false;   // nowhere to say it: nothing stamped
-    const out = { ...pose, ts: this._stampTs() };   // SCALE2b: one send time for every room's copy - that is what lets a listener order them
+    const pl = this.poseRide?.() ?? null;   // EG-H1: RIDDEN POSES - my ride on a breach's moving piece, when I stand on one
+    const out = { ...pose, ...(pl ? { pl } : {}), ts: this._stampTs() };   // SCALE2b: one send time for every room's copy - that is what lets a listener order them
     let went = this._send({ t: 'pose', p: out });
     // HALO-THIN: a halo hears the pose when it is due - every one while my own cell's socket took none, the host says a
     // referee may stand in a halo, the halo's own cell says one does (SCALE5b's `rf`, the relay's word of its duels, Wild
@@ -3600,6 +3607,7 @@ export class OnlineSession {
       if (!was || s.x !== was.x || s.y !== was.y || s.z !== was.z) p.drawnAt = now;
       else if (s.mv && now - p.drawnAt >= SHOWN_MOVE_HOLD_MS) s.mv = 0;   // AUDIT 637 C3: the sender's own edge (world.js: moving while now < moved + the hold)
       p.shown = p.drawn = s;
+      if (s.pl && this.rideAt) { const r = { ...s }; this.rideAt(r); p.shown = r; }   // EG-H1: a ridden peer drawn on its piece at my clock (its walk's place left as it was)
     }
   }
 
