@@ -17,7 +17,14 @@
 //   THE COVENANT'S PATIENCE - a count spent while a Court's lord is awake: fury at once and the Covenant's Weight every
 //           30 s (30% to all, a 3.0 s wind-up - a CHECK).
 // The lords' decrees (section 14's lord family) fold into each lord as X-keyed laws: Colossal (radii x1.2, health
-// x1.25), Unyielding (ward x2, blows on it x0.85), Vengeful (shares x1.25), Grudge-Bearer (threat 0.85, no decay).
+// x1.25), Unyielding (ward x2, blows on it x0.85), Vengeful (shares x1.25), Grudge-Bearer (threat 0.85, no decay) - EG5:
+// the fight's profile folds them (net/egLaw.js egFightProfile), and egLordLaw reads it.
+//
+// EG-ZK (2026-10-12; sections 11.7 and 13.1): every lord and champion ON THE BOSS SEAM (EG_SEAM, below - one plug, which the
+// breach's director calls inside its one beat), and WALKING THE HALL'S GRAPH as the legion does (net/egWalkGraph.js): straight
+// within the piece of the fight ground it stands on, over the graph past it - through an arch's gap, up a stair, along
+// Grath's bridges - never through a wall or over the void; a run (a Charge, a Lunge) cut at an arch's wall and never up a
+// ledge's face, and never run at a member on another floor's height.
 //
 // The errands' objects (runes, gems, anchors, banners, hearts, seals, braziers, pillars, standards, havens) are bodies
 // of role 2: struck ones carry health, stood-on ones a state (`pg` says each errand's progress). Marks on members and
@@ -26,9 +33,14 @@
 // Pure: a fight and a beat in, frames out. In the relay bundle. Not a DFU member. Ledger A (ELITE-GATES).
 import { PHASE_AT, SHIELD_MS, THREAT_PICK, THREAT_DECAY, HIT_KINDS, STUN_MS, STUN_HIT_X } from './gateBrain.js';
 import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpTeam, egBodiesOf, egBodyById, egMark, egUnmark, egMarkOf, egShareX, egCut, EG_TELL_LEAD_MS, EG_FEINT_AT } from './egBodies.js';
+import { egHitBody, egFightState } from './egBodies.js';   // EG-ZK: the seam's blow (the gate's hand and purse) and the fight's state
 import { shDisc, shLane, shLaneAt, shCone, shRing, shAll, shOut, egErrandMs, egBlowFrom } from './egShape.js';
-import { EG_LORDS, egKeepOnFight } from './egLaw.js';
+import { EG_LORDS, EG_DECREE_BY_KEY, egKeepOnFight, egFightProfile } from './egLaw.js';
 import { EG_KIND, egLegionRaise, egWaveKinds, egWaveSize, egFromBehind, egFromFront } from './egLegion.js';
+import { walkGraph, walkAir } from './egLegion.js';   // EG-ZK (section 11.7): the lords walk the graph and fly about the rock
+import { egFightView, egWalkGraph, egRegionAt, egKeepInRegion, egArchCut, EG_LEVEL_M, EG_NODE_REACH_M } from './egWalkGraph.js';   // EG-ZK: the fight ground's graph and its regions; a run cut at an arch's wall
+import { bossSeam } from './bossSeam.js';   // EG-ZK (section 13.1): the Spire's lords written to the boss seam
+import { judgeShapes } from './bossRef.js';   // EG-ZK: the seam's judge - the Spire's one (EG-H1)
 
 /** Every boss on the wire, by number (`k` of a lord body): the thirteen, then the three champions. */
 export const EG_BOSS_KEYS = Object.freeze(['hound', 'spellmaster', 'armsmaster', 'ilthys', 'cairnkeeper', 'twins', 'morvayn', 'dusk', 'stalker', 'seyth', 'colossus', 'wyrm', 'garoth', 'kynreeve', 'kynmarcher', 'markynaz']);
@@ -83,15 +95,17 @@ const dist = (ax, az, bx, bz) => Math.hypot(ax - bx, az - bz);
 const r2 = (v) => Math.round(v * 100) / 100;
 
 // ── the lords' decrees, as laws (section 14) ─────────────────────────────────────────────────────────────
-/** The lord-family decrees in force: `{ colossal, unyielding, vengeful, grudge }` ranks 0-2. */
+/**
+ * THE LORDS' LAW under the decrees in force (`D` the fight's ranks, `{ key: rank }` - net/egRun.js egDecreeRanks; a word
+ * that is no decree, the Wellhead's `feud`, is none): EG5, the fight's profile (net/egLaw.js egFightProfile - the four
+ * boss-general trials recast as X-keyed laws and folded), where the gate's own targeting stands for a threat no decree
+ * names (THREAT_PICK, THREAT_DECAY). Fresh each call: the fight keeps its own (`F.mem.law`).
+ */
 export function egLordLaw(D = {}) {
-  const c = D.colossal ?? 0, u = D.unyielding ?? 0, v = D.vengeful ?? 0, g = D.grudge ?? 0;
-  return {
-    radiusX: c >= 2 ? 1.3 : c ? 1.2 : 1, hpX: c >= 2 ? 1.4 : c ? 1.25 : 1, sizeX: c >= 2 ? 1.4 : c ? 1.25 : 1,
-    shieldX: u >= 2 ? 3 : u ? 2 : 1, hitX: u >= 2 ? 0.75 : u ? 0.85 : 1,
-    dmgX: v >= 2 ? 1.4 : v ? 1.25 : 1,
-    threatPick: g >= 2 ? 0.95 : g ? 0.85 : THREAT_PICK, threatDecay: g ? 0 : THREAT_DECAY,
-  };
+  const dc = [];
+  for (const [k, rank] of Object.entries(D ?? {})) { const d = EG_DECREE_BY_KEY[k]; if (d && rank > 0) dc.push([d.id, rank >= 2 ? 2 : 1]); }
+  const L = egFightProfile(dc).law;
+  return { ...L, threatPick: L.threatPick ?? THREAT_PICK, threatDecay: L.threatDecay ?? THREAT_DECAY };
 }
 
 // ── the engine ───────────────────────────────────────────────────────────────────────────────────────────
@@ -118,6 +132,50 @@ function pickTarget(L, here, rng, law) {
   for (const m of here) { const v = L.threat[m.sub] ?? 0; if (v > t) { t = v; top = m; } }
   if (top && rng() < law.threatPick) return top;
   return here[Math.floor(rng() * here.length)];
+}
+/** The region of the walk graph `G` a point stands in (net/egWalkGraph.js egRegionAt - `hint` the body's own when it holds it). */
+const regionOf = (view, G, x, z, y = NaN, hint = -1) => /** @type {number} */ (egRegionAt(view, G, x, z, y, Number.isInteger(hint) ? hint : -1)[0]);
+/**
+ * EG-ZK (section 11.7; EG-ZB's departure 2 closed): A LORD'S WALK to (gx, gz), `stop` short, at `speed` (`gy` the goal's
+ * height when known - a member's feet). Within the region of the fight ground it stands in (net/egWalkGraph.js - a disc, a
+ * lane, an arch's half), straight as a lord always walked (net/egBodies.js egWalk: stopped short, then kept its body's
+ * radius on the floor); to a goal past it - an island across a bridge, a floor up its stair, the far side of an arch's
+ * wall - over the hall's walk graph as the legion walks it (net/egLegion.js walkGraph): through the arch's gap, up the stair,
+ * along the bridge, never through a wall and never over the void.
+ */
+function lordWalk(F, spec, L, gx, gz, stop, speed, now, gy = NaN) {
+  const view = egFightView(spec);
+  if (!view?.fl?.length) { egWalk(F, L, gx, gz, stop, speed, now, spec, L.r); return; }
+  const G = egWalkGraph(view);
+  // the node a graph walk headed to is a way on only while the lord still walks to it: a blow's stop, a run's end, a leap, a
+  // blink or a straight walk since leaves none (net/egWalkGraph.js egWalkNext would walk to it straight from where it stands);
+  // one it stands at is reached - its region is the lord's now (a stair's top, its upper floor's)
+  const wn = Number.isInteger(L.wn) && L.wn >= 0 ? G.nodes[L.wn] : null;
+  if (wn && !(L.mv && Math.abs(L.mv.tx - wn.x) <= 0.011 && Math.abs(L.mv.tz - wn.z) <= 0.011)) {
+    if (Math.hypot(wn.x - L.x, wn.z - L.z) <= EG_NODE_REACH_M) L.fr = wn.rg;
+    L.wn = -1;
+  }
+  const from = regionOf(view, G, L.x, L.z, NaN, L.fr), to = regionOf(view, G, gx, gz, gy);
+  if (from === to) { egWalk(F, L, gx, gz, stop, speed, now, spec, L.r); return; }
+  walkGraph(F, view, L, gx, gz, stop, speed, now, gy);
+}
+/** EG-ZK (section 11.7): do lord `L` and member `m` (its feet's height `y` when known) stand on floors of one height? */
+function oneLevel(view, L, m) {
+  if (!view?.fl?.length) return true;
+  const G = egWalkGraph(view), a = regionOf(view, G, L.x, L.z, NaN, L.fr), b = regionOf(view, G, m.x, m.z, m.y);
+  return Math.abs((view.fl[G.rg[a].f].y ?? 0) - (view.fl[G.rg[b].f].y ?? 0)) <= EG_LEVEL_M;
+}
+/** EG-ZK (section 11.7): a lord's RUN (a row's `run` - the champions' Charge, the Armsmaster's Lunge, the Night-Stalker's) to
+ *  `to`: one that meets an arch's wall ends at it, its body clear of the wall - the Breaker's law (net/egLegion.js,
+ *  net/egWalkGraph.js egArchCut) - and none runs up or down a ledge's face: a run that would end on a floor of another height
+ *  ends on the region it began in. A leap or a blink is no run. */
+function runTo(view, L, to) {
+  const cut = egArchCut(view, L.x, L.z, to[0], to[1]);
+  let end = cut ? [cut[0], cut[1] - Math.sign(to[1] - L.z) * (L.r + 0.4)] : to;
+  if (!view?.fl?.length) return end;
+  const G = egWalkGraph(view), from = regionOf(view, G, L.x, L.z, NaN, L.fr), at = regionOf(view, G, end[0], end[1], NaN, from);
+  if (Math.abs((view.fl[G.rg[at].f].y ?? 0) - (view.fl[G.rg[from].f].y ?? 0)) > EG_LEVEL_M) end = egKeepInRegion(view, G, from, end[0], end[1], L.r);
+  return end;
 }
 const nearest = (x, z, here) => { let best = null, bd = Infinity; for (const m of here) { const d = dist(x, z, m.x, m.z); if (d < bd) { bd = d; best = m; } } return best; };
 
@@ -225,6 +283,7 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
   F.mem.feints = (F.mem.feints ?? []).filter(([i]) => F.blows.some((b) => b.i === i) || (F.pend ?? []).some((q) => q.b.i === i) || F.held.some((h) => h.b?.i === i));
   const lords = egLordsOf(F);
   if (!lords.some((L) => L.up2)) return;
+  const view = egFightView(spec);   // EG-ZK (section 11.7): the fight ground a lord's run is cut on
   // FURY (section 13.2) and THE COVENANT'S WEIGHT (section 18)
   const ttk = egTtkRef(F.c);
   if (!F.mem.furyAt && (ctx.covenant || now - (F.mem.lordWokeAt ?? now) >= EG_FURY_RATIO * ttk * 1000) && !lords.some((L) => L.champ)) {
@@ -272,12 +331,13 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     const target = L.key === 'kynreeve' ? (here.reduce((b, m) => ((L.threat[m.sub] ?? 0) > (L.threat[b?.sub] ?? -1) ? m : b), null) ?? nearest(L.x, L.z, here)) : (L.tg && now - (L.tgAt ?? 0) < 4000 ? here.find((m) => m.sub === L.tg) : null) ?? pickTarget(L, here, rng, law);
     if (!target) { egStop(F, L, now); continue; }
     if (L.tg !== target.sub) { L.tg = target.sub; L.tgAt = now; }
-    if (now < L.nextAt) { if (!egHas(L, EG_FL.fly) && L.key !== 'colossus' && dist(L.x, L.z, target.x, target.z) > L.r + 4) egWalk(F, L, target.x, target.z, L.r + 1, L.speed ?? 3.4, now, spec, L.r); continue; }
+    if (now < L.nextAt) { if (!egHas(L, EG_FL.fly) && L.key !== 'colossus' && dist(L.x, L.z, target.x, target.z) > L.r + 4) lordWalk(F, spec, L, target.x, target.z, L.r + 1, L.speed ?? 3.4, now, target.y); continue; }
     const kit = KITS[L.key];
-    const blows = (kit?.blows ?? []).filter((b) => (b.ph ?? 1) <= L.ph && (!b.when || b.when(F, L, target, here, ctx)) && now >= (L.cds[b.nm] ?? 0) && dist(L.x, L.z, target.x, target.z) - L.r <= (b.range ?? 40) && dist(L.x, L.z, target.x, target.z) - L.r >= (b.minGap ?? 0));
+    const blows = (kit?.blows ?? []).filter((b) => (b.ph ?? 1) <= L.ph && (!b.when || b.when(F, L, target, here, ctx)) && now >= (L.cds[b.nm] ?? 0) && dist(L.x, L.z, target.x, target.z) - L.r <= (b.range ?? 40) && dist(L.x, L.z, target.x, target.z) - L.r >= (b.minGap ?? 0)
+      && (!b.run || oneLevel(view, L, target)));   // EG-ZK: a run reaches no member on another floor's height - the lord walks the graph to them
     const fresh = blows.filter((b) => b.nm !== L.lastBlow || L.run < 2);
     const can = fresh.length ? fresh : blows;
-    if (!can.length) { if (!egHas(L, EG_FL.fly) && L.key !== 'colossus') egWalk(F, L, target.x, target.z, L.r + 1, L.speed ?? 3.4, now, spec, L.r); continue; }
+    if (!can.length) { if (!egHas(L, EG_FL.fly) && L.key !== 'colossus') lordWalk(F, spec, L, target.x, target.z, L.r + 1, L.speed ?? 3.4, now, target.y); continue; }
     let x = rng() * can.reduce((s, b) => s + (b.w ?? 1), 0), B = can[can.length - 1];
     for (const c of can) { x -= c.w ?? 1; if (x < 0) { B = c; break; } }
     egStop(F, L, now);
@@ -289,7 +349,7 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     L.cds[B.nm] = now + (B.cd ?? 0);
     L.run = B.nm === L.lastBlow ? L.run + 1 : 1; L.lastBlow = B.nm;
     const wu = (blow?.wu ?? B.wu) + (made?.delay ?? 0), landAt = blow ? blow.at : now + wu;   // EG-H1: the committed blow's own landing (its lead in it)
-    L.atk = { at: landAt, until: landAt + (B.sp ?? 0) + (B.rec ?? 900), to: made?.to ?? null };
+    L.atk = { at: landAt, until: landAt + (B.sp ?? 0) + (B.rec ?? 900), to: made?.to && B.run ? runTo(view, L, made.to) : made?.to ?? null };
   }
 }
 
@@ -346,7 +406,7 @@ const gateKit = (el) => [
 const champKit = () => [
   { ...CLEAVE, range: 7, w: 3, make: (F, spec, L, t) => ({ stamps: [shCone(L.x, L.z, Math.atan2(t.x - L.x, t.z - L.z), 9, 110)] }) },
   { ...SLAM, range: 4, w: 2, make: (F, spec, L) => ({ stamps: [shDisc(L.x, L.z, 7)] }) },
-  { ...CHARGE, range: 40, minGap: 8, w: 2, sp: 900, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z), [ex, ez] = egKeepOnFight(spec, L.x + Math.sin(yaw) * 22, L.z + Math.cos(yaw) * 22, L.r); return { stamps: [shLane(L.x, L.z, ex, ez, 4)], to: [ex, ez] }; } },
+  { ...CHARGE, range: 40, minGap: 8, w: 2, sp: 900, run: 1, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z), [ex, ez] = egKeepOnFight(spec, L.x + Math.sin(yaw) * 22, L.z + Math.cos(yaw) * 22, L.r); return { stamps: [shLane(L.x, L.z, ex, ez, 4)], to: [ex, ez] }; } },
 ];
 
 /** THE KITS: each lord's blows (`make` its stamps), and its signature's hooks - `wake`, `phase`, `tick`, `hit`. */
@@ -401,7 +461,7 @@ const KITS = {
             L.atk = { at: now + 1200, until: now + 2400 };
             lordBlow(F, spec, L, [shDisc(m.x, m.z, 3)], { nm: 'Maul', wu: 1200, p: 0.35, b: 10, el: null }, here, now, out);
             hunt.until = now;
-          } else egWalk(F, L, m.x, m.z, 0.5, 5.2, now, spec, L.r);
+          } else lordWalk(F, spec, L, m.x, m.z, 0.5, 5.2, now, m.y);   // EG-ZK: hunted over the bridges, never the magma
         }
       }
       // phase 2: the bridges burn by turns - each told 3 s, burning 12 s
@@ -461,7 +521,7 @@ const KITS = {
   // ── THE LAST ARMSMASTER: a fight about the duel ──
   armsmaster: {
     blows: [
-      { nm: 'Lunge', wu: 1000, rec: 900, p: 0.4, b: 12, range: 10, minGap: 3, w: 3, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z); return { stamps: [shLaneAt(L.x, L.z, yaw, 10, 4)], to: egKeepOnFight(spec, L.x + Math.sin(yaw) * 8, L.z + Math.cos(yaw) * 8, L.r) }; } },
+      { nm: 'Lunge', wu: 1000, rec: 900, p: 0.4, b: 12, range: 10, minGap: 3, w: 3, run: 1, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z); return { stamps: [shLaneAt(L.x, L.z, yaw, 10, 4)], to: egKeepOnFight(spec, L.x + Math.sin(yaw) * 8, L.z + Math.cos(yaw) * 8, L.r) }; } },
       { nm: 'Whirl', wu: 1300, rec: 1100, p: 0.45, b: 12, range: 3, w: 2, make: (F, spec, L) => ({ stamps: [shDisc(L.x, L.z, 4)] }) },
       { nm: 'Guard', wu: 600, rec: 200, p: 0, b: 0, range: 8, w: 1, cd: 9000, make: (F, spec, L, t, here, rng, now, out) => { L.guardUntil = now + 600; egSetFl(F, L, EG_FL.lit, true, out); return null; } },
     ],
@@ -651,7 +711,7 @@ const KITS = {
     tick(F, spec, L, now, here, rng, out) {
       const f = mainDisc(spec, L);
       // she circles over the glade, out of a blade's reach, until her anchors are broken
-      if (egHas(L, EG_FL.fly) && !egHas(L, EG_FL.grounded) && !L.atk) { const t = now / 4000; egWalk(F, L, f.x + Math.sin(t) * (f.r - 4), f.z + Math.cos(t) * (f.r - 4), 0.5, 6, now, spec, 0, true); }
+      if (egHas(L, EG_FL.fly) && !egHas(L, EG_FL.grounded) && !L.atk) { const t = now / 4000; walkAir(F, egFightView(spec), L, f.x + Math.sin(t) * (f.r - 4), f.z + Math.cos(t) * (f.r - 4), 0.5, 6, now); }
       if (!egObjsOf(F, 'anchor').length && !egHas(L, EG_FL.grounded) && !F.mem.groundedUntil) {
         F.mem.groundedUntil = now + 30_000; L.groundedUntil = now + 30_000;
         egSetFl(F, L, EG_FL.grounded, true, out);
@@ -678,7 +738,7 @@ const KITS = {
   stalker: {
     blows: [
       { nm: 'Shadow Strike', wu: 1300, rec: 900, p: 0.4, b: 12, range: 6, w: 3, make: (F, spec, L, t) => ({ stamps: [shCone(L.x, L.z, Math.atan2(t.x - L.x, t.z - L.z), 6, 110)] }) },
-      { nm: 'Night Lunge', wu: 1200, rec: 1000, p: 0.4, b: 12, range: 12, minGap: 3, w: 2, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z); return { stamps: [shLaneAt(L.x, L.z, yaw, 12, 4)], to: egKeepOnFight(spec, L.x + Math.sin(yaw) * 10, L.z + Math.cos(yaw) * 10, L.r) }; } },
+      { nm: 'Night Lunge', wu: 1200, rec: 1000, p: 0.4, b: 12, range: 12, minGap: 3, w: 2, run: 1, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z); return { stamps: [shLaneAt(L.x, L.z, yaw, 12, 4)], to: egKeepOnFight(spec, L.x + Math.sin(yaw) * 10, L.z + Math.cos(yaw) * 10, L.r) }; } },
     ],
     wake(F, spec, L, now) { F.mem.vanishAt = now + 12_000; F.mem.tetherAt = now + 20_000; },
     phase(F, spec, L, ph, now, here, rng, out) { if (ph === 2) say(out, 'phase', { t: 'Three Shadows.' }); if (ph === 3) say(out, 'phase', { t: 'Blood Moon.' }); },
@@ -776,7 +836,7 @@ const KITS = {
     tick(F, spec, L, now, here, rng, out, ctx) {
       // it walks its fixed route down the forge, its hearts riding its back
       const [z0, z1] = F.mem.route;
-      if (!(L.stunUntil > now) && !L.atk) { const goal = (L.dir ?? 0) === 0 ? z1 : z0; if (Math.abs(L.z - goal) < 1) L.dir = (L.dir ?? 0) === 0 ? Math.PI : 0; egWalk(F, L, L.x, (L.dir ?? 0) === 0 ? z1 : z0, 0.5, 1.6, now, spec, L.r); }
+      if (!(L.stunUntil > now) && !L.atk) { const goal = (L.dir ?? 0) === 0 ? z1 : z0; if (Math.abs(L.z - goal) < 1) L.dir = (L.dir ?? 0) === 0 ? Math.PI : 0; lordWalk(F, spec, L, L.x, (L.dir ?? 0) === 0 ? z1 : z0, 0.5, 1.6, now); }
       for (const h of egObjsOf(F, 'heart')) { h.x = r2(L.x + h.off[0]); h.z = r2(L.z + h.off[1]); }
       // the Rails rise along its flank every 15 s (8 s up) - the hearts are struck only from them
       if (now >= F.mem.railAt) { F.mem.railAt = now + 15_000; F.mem.railUntil = now + 8000; out.push({ k: 'erail', until: now + 8000 }); }
@@ -958,3 +1018,62 @@ export function egObjBroken(F, spec, o, name, now, out) {
 }
 /** May an object be struck (a ward on it - a heart off its Rails, a stood-on errand)? */
 export const egObjStruck = (o) => !egHas(o, EG_FL.ward) && o.role === EG_ROLE.obj;
+
+// ── the boss seam (section 13.1) ─────────────────────────────────────────────────────────────────────────
+/** EG-ZK: THE LORDS' VIEW of a hall's one fight, as the seam holds it - the fight's record `F` (net/egBodies.js: the lords are
+ *  its bodies of role 0, beside its legion and its errands' objects), the hall's spec, the beat's context (the lords'
+ *  `{ decrees, n, covenant }`; a Redoubt's living company `co`) and its clock. The director makes one for each call: the
+ *  fight is one record, the view no second. */
+export const egLordsFight = (F, spec, ctx = {}, now = 0) => ({ F, spec, ctx, now });
+/** A Redoubt's receipt is earned by a share of the circle's damage at least this part of an even one, or a part in this many of
+ *  its halls (section 19). */
+export const EG_EARN_SHARE = 0.5;
+export const EG_EARN_HALLS = 3;
+/**
+ * EG-ZK (2026-10-12, Mac: "I said I want everything"; section 13.1, "The Spire's lords are written to it"): THE SPIRE'S LORDS
+ * ON THE BOSS SEAM (net/bossSeam.js) - the seven members the gate's Warden, the Brass Remnant and the Sea Serpent keep, kept
+ * by every lord and champion of the Spire through ONE plug, never a seam a lord: the breach's director (net/egBrain.js)
+ * still steps them in its one beat with the legion and the place's hazards, and calls the seam there - the seam is the
+ * contract it calls, not a second host. Its fight `f` is the lords' view of the hall's fight (egLordsFight).
+ *   new({ F, spec, key, now, out, decrees, n, at })  a Court's lord (the Twins, both), a champion: stood asleep in the
+ *                                                     hall's fight (egLordsNew), its words in `out` - answers the view, the
+ *                                                     bodies stood its `stood`
+ *   join(f, sub, name, lv, now, present, o)           whether `sub` fights the lords: the director's admission (`o.admits` -
+ *                                                     living, in the breach and its hall; a witness never fights) while a
+ *                                                     lord stands - the company is the hall's, sized at its wake
+ *                                                     (net/egBodies.js egFightNew), so a join brings no share
+ *   hit(f, sub, d, r, pose, now, seq, o)              a member's blow on lord `o.i`: the gate's hand and purse (egHitBody - the
+ *                                                     member's purse `o.p`, the Vestiges' weight `o.x`, the bucket's `o.bx`)
+ *                                                     times the lord's own (egLordHitX), and what lands told the lord
+ *                                                     (egLordHit - `o.name`, `o.here`, `o.threatX`, its words in `o.out`) -
+ *                                                     answers egHitBody's `{ got, b }`
+ *   step(f, now, bodies, rng) -> frames[]             the lords' beat over the census (egLordsStep, `f.ctx` its context)
+ *   stateOf(f)                                        the whole fight at the view's clock (`efs`), as a joiner is told it
+ *   judge(f, bodies, now) -> [{sub, share, ...}]      the fight's blows on the relay's shared-time trails (net/bossRef.js
+ *                                                     judgeShapes, `f.spec` its fight ground) - the lords' and their
+ *                                                     legion's, one floor, as the gate's judge takes its host's
+ *   earned(f, sub)                                    a Redoubt's receipt owed at the lords' fall: a share of the circle's
+ *                                                     damage at least EG_EARN_SHARE of an even one, or a part in
+ *                                                     EG_EARN_HALLS of its halls, among the living company `f.ctx.co`
+ * Every member is the lords' own law handed exactly the arguments the director handed it before, so every lord's frames are
+ * the frames it said before the seam (test/egz_lords.test.js).
+ */
+export const EG_SEAM = bossSeam('eg', {
+  new: ({ F, spec, key, now, out, decrees = {}, n = F.n, at = undefined }) => ({ ...egLordsFight(F, spec, { decrees, n }, now), stood: egLordsNew(F, spec, key, now, out, { decrees, n, at }) }),
+  join: (f, sub, name, lv, now, present = null, o = {}) => !!o.admits && egLordsOf(f.F).length > 0,
+  hit: (f, sub, d, r, pose, now, seq = null, o = {}) => {
+    const L = egBodyById(f.F, o.i);
+    if (!L || L.role !== EG_ROLE.lord) return { got: 0, b: null };
+    const res = egHitBody(f.F, f.spec, o.p, o.i, d, r, pose, now, seq, (o.x ?? 1) * egLordHitX(f.F, L, sub, pose, r, now), o.bx ?? 1);
+    if (res.got && res.b) egLordHit(f.F, f.spec, res.b, sub, o.name ?? '', res.got, pose, now, o.here ?? [], o.out ?? [], { threatX: o.threatX ?? 1 });
+    return res;
+  },
+  step: (f, now, bodies, rng) => { const out = []; egLordsStep(f.F, f.spec, now, bodies, rng, out, f.ctx); return out; },
+  stateOf: (f) => egFightState(f.F, f.now),
+  judge: (f, bodies, now) => judgeShapes(f.F, bodies, now, f.spec),
+  earned: (f, sub) => {
+    if (!f.F || !egLordsFell(f.F)) return false;
+    const co = f.ctx?.co ?? [], total = co.reduce((s, [, m]) => s + m.dc, 0), n = Math.max(1, co.length), m = co.find(([s]) => s === sub)?.[1];
+    return !!m && (m.dc >= (total * EG_EARN_SHARE) / n || m.act >= EG_EARN_HALLS);
+  },
+});

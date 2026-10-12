@@ -58,9 +58,10 @@ import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT
   EG_WAKE_RING_MS, EG_ABSENT_TRIAL_MS, EG_LAST_WORD_MS, EG_REDOUBT_HOLD_MS, EG_COUNT_CAP_MS, egHallOf, egCircleOfHall, egFirstHallOf, egStartHall, egTimes, egAdmits, egCountNew, egCountLeft, egCountRun, egCountHold,
   egInHall, egLocalX, egOnArrive, egAtDoor, egOnFight, egSpecDigest, egGeoOf, egSeed, egProclamationOf, egKeepOnFight, EG_VOID_Y, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR } from './egLaw.js';
 import { EG_LATE_HALLS, EG_LATE_ARRIVE_MS, EG_TOLL_STEP, EG_TOLL_QUARTERS, EG_TOLL_WAIVE_MS, EG_TOLL_KINDS } from './egLaw.js';   // EG-ZI: the late wake and the pull's toll (sections 7 and 10.6)
-import { EG_ROLE, EG_FL, EG_GONE, EG_STATE_EVERY_MS, egFightNew, egFightState, egCarry, egMovesOut, egHpOut, egBlowsStep, egHitBody, egGone, egHas, egSetFl, egBodiesOf, egBodyById, egHpTeam, egRaise, egWalk, egAim, egTethersOut, egMarksOut, egStruck, egMark, egUnmark, egMarkOf, egBodyAt } from './egBodies.js';
+import { EG_ROLE, EG_FL, EG_GONE, EG_STATE_EVERY_MS, egFightNew, egCarry, egMovesOut, egHpOut, egBlowsStep, egHitBody, egGone, egHas, egSetFl, egBodiesOf, egBodyById, egHpTeam, egRaise, egWalk, egAim, egTethersOut, egMarksOut, egStruck, egMark, egUnmark, egMarkOf, egBodyAt } from './egBodies.js';
 import { EG_KIND, EG_LEGION_KINDS, EG_DIVER_WAIT_R, egIsleAhead, egLegionStep, egLegionRaise, egWaveKinds, egWaveSize, egAddSlain, egSquad, egFromBehind } from './egLegion.js';
-import { EG_OBJ, egLordsNew, egLordsWake, egLordsStep, egLordsAwake, egLordsFell, egLordsOf, egLordHit, egLordHitX, egObjBroken, egObjsOf, zoneOut, egStun } from './egLords.js';
+import { EG_OBJ, egLordsWake, egLordsAwake, egLordsFell, egLordsOf, egObjBroken, egObjsOf, zoneOut, egStun } from './egLords.js';
+import { EG_SEAM, egLordsFight } from './egLords.js';   // EG-ZK (section 13.1): every lord through THE BOSS SEAM, called inside the one beat
 import { egAsk, egVote, egAskResult, egAsksDue, egDecreesAsk, egDecreesChosen, egDecreeRanks, egDecreesInForce, egBargainDecree, egTideOf, egStratumAt, egOffers, egPick, egPicksClose, egSurplus,
   egLoseNewest, egCacheDraw, egGive, egBuy, egVestigeX, egThreatX, egFadeOn, egMarkFoe, egRunOf, EG_CANTRIPS, EG_LUMEN_ADD, EG_LUMEN_RIFT } from './egRun.js';
 import { egVOf, egAccordsOf, egRankOf, EG_MASTERIES, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX, EG_DR_MAX } from './egVestige.js';
@@ -77,7 +78,7 @@ import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './
 // hall's own hazards (net/bossRef.js), and the body counted (net/bossBody.js) - the member's one life
 import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt, egCrossMinMs, egFallenAt, egTrailAt, egFightFloorAt, EG_POSE_NEAR_MS, EG_SUPPORT_UP_M, EG_SUPPORT_DOWN_M } from './egFair.js';
 import { egCompanyTag, EG_SHARE_WHOLE, EG_MEASURES, EG_MEASURE_MAX } from './egReceipt.js';   // EG-ZA: the company, the share and the measures a receipt carries
-import { judgeShapes, judgePlace } from './bossRef.js';
+import { judgePlace } from './bossRef.js';
 import { bodyStruck, bodySaid, bodyHealed, bodyLife } from './bossBody.js';
 // EG-ZB (2026-10-12; sections 8.2, 11.7, 19 and 21): THE LEGION HUNTS - the fight ground and the walk graph (net/egWalkGraph.js),
 // the span's legion, the hunt, the census's drains and its Vestiges, who a place's blow caught
@@ -287,7 +288,7 @@ export function egStateOf(B, now) {
     ...(B.site ? { site: B.site } : {}) };   // EG-F (section 6.3): the arch's site, the room's to keep - the cast-out's landing with the arch gone
 }
 /** The hall's fight's whole word (`efs`), or null when it holds none. */
-export function egFightStateOf(B, now = Date.now()) { return B.F ? egFightState(B.F, now) : null; }
+export function egFightStateOf(B, now = Date.now()) { return B.F ? EG_SEAM.stateOf(egLordsFight(B.F, null, {}, now)) : null; }   // EG-ZK: the seam's state
 
 /** A member's body in the hall's own frame, or null when it stands in no part of hall `spec` - EG-ZB: its feet's height
  *  `y` with it where the pose said one (the fight floor a body stands on is read by it - section 11.7). */
@@ -439,7 +440,7 @@ function wake(B, now, rng, out) {
   B.F = standFight(B, spec, now, rng, out);
   egTallyWake(B.F, spec.kind);   // EG-ZF: a Court lays its damage chart
   out.push(egStageWord(B, now), egStateOf(B, now));
-  if (B.F) out.push(egFightState(B.F, now));
+  if (B.F) out.push(EG_SEAM.stateOf(egLordsFight(B.F, spec, {}, now)));
 }
 /** A wave's spots about (x, z), `r` out, kept to the fight floor. */
 function ringSpots(spec, x, z, r, k, rng) {
@@ -520,7 +521,7 @@ function standFight(B, spec, now, rng, out) {
     P.obj = 'orrery'; P.st = [...F.lock.st]; P.lit = 0; P.f = 0;
   } else if (spec.kind === 'proving') {
     const key = spec.champ ?? 'kynreeve';
-    egLordsNew(F, spec, key, now, out, { decrees: F.D, n });
+    EG_SEAM.new({ F, spec, key, now, out, decrees: F.D, n });
     egLordsWake(F, spec, now, out, { n });
     const k = 1 + Math.ceil(n / 3);
     egLegionRaise(F, egWaveKinds(F, rng, k), ringSpots(spec, spec.foe.x, spec.foe.z, 5, k, rng), now, out, { wave: 1 });
@@ -529,7 +530,7 @@ function standFight(B, spec, now, rng, out) {
     const ch = spec.spots.chamber?.[0];
     F.chamber = ch?.obj ?? 0;
     if (F.chamber === 0) { const k = Math.min(egRiftsFor(n), spec.rifts.length); for (const q of spec.rifts.slice(0, k)) egRaiseObj(F, 'rift', q.x, q.z, egHpTeam(F, EG_RIFT_TEAM_S, k), now, out, { r: 1.3 }); F.halfCap = 1; P.obj = 'rifts'; }
-    else if (F.chamber === 1) { egLordsNew(F, spec, spec.champ ?? 'kynreeve', now, out, { decrees: F.D, n }); egLordsWake(F, spec, now, out, { n }); P.obj = 'champion'; }
+    else if (F.chamber === 1) { EG_SEAM.new({ F, spec, key: spec.champ ?? 'kynreeve', now, out, decrees: F.D, n }); egLordsWake(F, spec, now, out, { n }); P.obj = 'champion'; }
     else { const e = spec.spots.engine?.[0]; if (e) egRaiseObj(F, 'engine', e.x, e.z, 0, now, out, { r: 3 }); F.engineHeld = 0; P.obj = 'engine'; P.hold = 0; }
   } else if (spec.kind === 'scriptorium') {
     out.push({ k: 'eheal', p: 0.3 });
@@ -539,11 +540,11 @@ function standFight(B, spec, now, rng, out) {
     const key = spec.lord;
     const sev = B.sever ? 1 : 0;
     B.sever = 0;
-    egLordsNew(F, spec, key, now, out, { decrees: F.D, n });
-    if (F.D.feud && spec.foe) { const champ = ['kynreeve', 'kynmarcher', 'markynaz', 'markynaz'][spec.band]; egLordsNew(F, spec, champ, now, out, { decrees: F.D, n, at: [spec.foe.x + 6, spec.foe.z] }); }
+    EG_SEAM.new({ F, spec, key, now, out, decrees: F.D, n });
+    if (F.D.feud && spec.foe) { const champ = ['kynreeve', 'kynmarcher', 'markynaz', 'markynaz'][spec.band]; EG_SEAM.new({ F, spec, key: champ, now, out, decrees: F.D, n, at: [spec.foe.x + 6, spec.foe.z] }); }
     if ((B.strata ?? []).includes('twincourt') || (B.strata ?? []).includes('oldmasters')) {
       const second = (B.strata ?? []).includes('oldmasters') ? (key === 'spellmaster' ? 'armsmaster' : 'spellmaster') : ['hound', 'cairnkeeper', 'dusk', 'colossus'][(spec.c + 1) % 4];
-      if (second !== key) { const [b] = egLordsNew(F, spec, second, now, out, { decrees: F.D, n, at: [spec.foe.x - 6, spec.foe.z] }); if (b) { b.hp = b.max = Math.round(b.max * 0.6); for (const a of egLordsOf(F)) if (a !== b) { a.hp = a.max = Math.round(a.max * 0.6); } } }
+      if (second !== key) { const [b] = EG_SEAM.new({ F, spec, key: second, now, out, decrees: F.D, n, at: [spec.foe.x - 6, spec.foe.z] }).stood; if (b) { b.hp = b.max = Math.round(b.max * 0.6); for (const a of egLordsOf(F)) if (a !== b) { a.hp = a.max = Math.round(a.max * 0.6); } } }
     }
     F.sever = sev;
     F.ringAt = 0;
@@ -554,7 +555,7 @@ function standFight(B, spec, now, rng, out) {
   if (spec.twist === 'ghost' && spec.fight) egLegionRaise(F, [EG_KIND.ghost], [[spec.arrive.x + 2, spec.arrive.z + 2]], now, out);
   if (spec.twist === 'captive') { for (const c of spec.spots.chain ?? []) egRaiseObj(F, 'chain', c.x, c.z, egHpTeam(F, EG_CHAIN_S), now, out, { r: 0.8 }); F.captive = 1; }
   if (spec.twist === 'bargain' && egBargainOpen(B)) egAsk(B, 'bargain', [1], now, out);
-  if (F.D.vigil && spec.kind !== 'proving' && spec.kind !== 'court' && spec.arrive) { const champ = ['kynreeve', 'kynmarcher', 'markynaz', 'markynaz'][spec.band]; egLordsNew(F, spec, champ, now, out, { decrees: F.D, n, at: [spec.arrive.x, spec.arrive.z + 3] }); egLordsWake(F, spec, now, out, { n }); }
+  if (F.D.vigil && spec.kind !== 'proving' && spec.kind !== 'court' && spec.arrive) { const champ = ['kynreeve', 'kynmarcher', 'markynaz', 'markynaz'][spec.band]; EG_SEAM.new({ F, spec, key: champ, now, out, decrees: F.D, n, at: [spec.arrive.x, spec.arrive.z + 3] }); egLordsWake(F, spec, now, out, { n }); }
   if ((F.D.warband || B.tide === 'warband') && spec.fight && spec.kind !== 'court') egSquad(F, ringSpots(spec, spec.fight.x, spec.fight.z, 6, 4, rng), now, out);
   F.sparkAt = now + 20_000; F.ashAt = now + 12_000; F.packAt = now + 30_000;
   fragStand(B, F, spec, now, out);
@@ -833,7 +834,7 @@ function redoubt(B, now, rng, out) {
   if (B.rh) { egEnd(B, 'rehearsal', now, out); return; }
   const dm = egChartOf(B);   // EG-ZF (section 27.6): THE DAMAGE CHART at the lord's fall, said with the Redoubt
   const w = egCircleOfHall(B.h), L = living(B), total = L.reduce((s, [, m]) => s + m.dc, 0), n = Math.max(1, L.length);
-  const earners = L.filter(([, m]) => m.dc >= total / (2 * n) || m.act >= 3);
+  const earned = egLordsFight(B.F, specOf(B), { co: L }, now), earners = L.filter(([sub]) => EG_SEAM.earned(earned, sub));   // EG-ZK: the seam's earning
   const valk = w % 5 === 0;
   B.rd = w; B.rdAt = now;
   const lone = L.length === 1 && Object.values(B.mem).filter((m) => m.in).length >= 4;
@@ -1202,10 +1203,10 @@ function trial(B, spec, now, inHall, rng, out) {
       }
     }
     const said0 = out.length;
-    egLordsStep(F, spec, now, here, rng, out, lordCtx);
+    out.push(...EG_SEAM.step(egLordsFight(F, spec, lordCtx, now), now, here, rng));   // EG-ZK: the lords' beat, through the seam
     tallySays(F, out, said0);
   }
-  if (kind !== 'court' && egLordsOf(F).length) egLordsStep(F, spec, now, here, rng, out, lordCtx);
+  if (kind !== 'court' && egLordsOf(F).length) out.push(...EG_SEAM.step(egLordsFight(F, spec, lordCtx, now), now, here, rng));
   if (kind === 'deepway' && F.chamberDone && !F.saidDone) { F.saidDone = 1; out.push({ k: 'esay', w: 'chamberdone' }); }
   if (kind === 'deepway' && F.chamberDone && doorOpener(B, spec, inHall)) { door(B, spec, now, out); return; }   // EG-H1: a fair arrival
   if (F.captive && !egObjsOf(F, 'chain').length) { F.captive = 0; for (const [sub, m] of living(B)) { egGive(m, 'cant', 1, rng); out.push({ k: 'egot', to: sub, w: 'cant' }); } out.push({ k: 'esay', w: 'freed' }); }
@@ -1223,7 +1224,7 @@ function fightTail(F, now, out) {
   egHpOut(F, now, out);
   if (F.mem.txDirty) { F.mem.txDirty = 0; egTethersOut(F, out); }
   if (F.mem.mkDirty) { F.mem.mkDirty = 0; egMarksOut(F, out); }
-  if (now - F.stateAt >= EG_STATE_EVERY_MS) { F.stateAt = now; out.push(egFightState(F, now)); }
+  if (now - F.stateAt >= EG_STATE_EVERY_MS) { F.stateAt = now; out.push(EG_SEAM.stateOf(egLordsFight(F, null, {}, now))); }
 }
 /**
  * EG-ZB (section 8.2): THE SPAN'S LEGION - Harriers shadow the company along the course and, from the Shade, Divers wait at
@@ -1368,11 +1369,14 @@ export function egBlow(B, sub, m, pose, now) {
   mm.pose = p;
   const vx = egVestigeX(B, sub, p, body, m.r, now, here);
   let mult = vx.x;
-  if (body.role === EG_ROLE.lord) mult *= egLordHitX(F, body, sub, p, m.r, now);
   if (body.role === EG_ROLE.add && egHas(body, EG_FL.shielded) && (body.shield ?? 0) > 0 && !egFromBehind(body, p.x, p.z)) mult = 0;
   if (body.role === EG_ROLE.obj && body.t === 'heart' && egHas(body, EG_FL.ward)) mult = 0;
   if (body.role === EG_ROLE.add && body.k === EG_KIND.binder && body.cast) body.cast.dmg += m.d;
-  const r = egHitBody(F, spec, mm, m.i, m.d, m.r, p, now, m.q, mult, vx.bx);
+  // EG-ZK (section 13.1): A BLOW ON A LORD THROUGH THE SEAM - joined (the director's admission, a lord standing), then the
+  // gate's hand and purse times the lord's own weight, and what lands told the lord (its words in `out`)
+  const said0 = out.length, lf = body.role === EG_ROLE.lord ? egLordsFight(F, spec, {}, now) : null;
+  if (lf && !EG_SEAM.join(lf, sub, mm.name, mm.lv, now, null, { admits: mm.alive && mm.in && !mm.home })) return out;
+  const r = lf ? EG_SEAM.hit(lf, sub, m.d, m.r, p, now, m.q, { i: m.i, p: mm, x: mult, bx: vx.bx, name: mm.name, here, out, threatX: egThreatX(mm) }) : egHitBody(F, spec, mm, m.i, m.d, m.r, p, now, m.q, mult, vx.bx);
   const got = r.got;
   // a Shielded elite (section 8.7): its shield - a quarter of its health - takes the blows from behind first
   if (got && body.role === EG_ROLE.add && (body.shield ?? 0) > 0) { const soak = Math.min(body.shield, got); body.shield -= soak; body.hp += soak; if (body.shield <= 0) egSetFl(F, body, EG_FL.shielded, false, out); }
@@ -1382,9 +1386,8 @@ export function egBlow(B, sub, m, pose, now) {
   if (m.r >= 0 && m.r <= 2) mm.kinds[m.r] = (mm.kinds[m.r] ?? 0) + 1;
   egMarkFoe(mm, body, m.r, now);
   egFadeOn(mm, now);
-  const b = r.b, said0 = out.length;
+  const b = r.b;
   if (b.role === EG_ROLE.lord) {
-    egLordHit(F, spec, b, sub, mm.name, got, p, now, here, out, { threatX: egThreatX(mm) });
     if (b.hp <= 0 && Object.values(B.mem).filter((x) => x.in).length >= 4 && living(B).length === 1) B.loneBeacon = sub;
   } else if (b.role === EG_ROLE.add) {
     if (b.k === EG_KIND.binder && b.cast && b.cast.dmg >= b.cast.max) { b.cast = null; F.pg.raise = null; out.push({ k: 'esay', w: 'raisebroken' }); }
@@ -1551,7 +1554,7 @@ function litOn(F, spec, x, y, z, t) {
 export const EG_BODY_ENFORCE = true;
 /**
  * EG-H1 - THE BODY COUNTED in the Spire (net/bossBody.js; section 21): the hall's blows judged on the living members'
- * shared-time trails (net/bossRef.js judgeShapes), its own hazards at their landing (judgePlace), and each cast-back a
+ * shared-time trails (net/bossRef.js judgeShapes - EG-ZK: the boss seam's judge), its own hazards at their landing (judgePlace), and each cast-back a
  * pose owed (egPoseIn - a tenth of the whole, never below a quarter), each kept in the member's census (`cs`: blows struck,
  * hazards struck, cast-backs, the thousandths counted) and taken off its count (bodyStruck - a plain blow's share; an
  * element's is seen and never counted). A count at nothing under enforcement is the member's FALL - one life (egFall: the
@@ -1570,7 +1573,7 @@ export function egCount(B, now, bodies, line, enforce = EG_BODY_ENFORCE) {
   if (B.end || !(B.h > 0) || (B.sg !== 'trial' && B.sg !== 'closing')) return out;
   const spec = specOf(B), F = B.F, view = egFightView(spec);
   const live = bodies.filter((b) => { const m = B.mem[b.sub]; return m && m.in && m.alive && !m.home; });
-  const hits = [...judgeShapes(F, live, now, view), ...judgePlace(F, view, B.hw, live, now), ...censusDrains(F, view, live, now)];
+  const hits = [...EG_SEAM.judge(egLordsFight(F, view, {}, now), live, now), ...judgePlace(F, view, B.hw, live, now), ...censusDrains(F, view, live, now)];   // EG-ZK: the fight's blows by the seam's judge
   for (const b of live) {
     const m = B.mem[b.sub];
     for (; (m.cbOwe ?? 0) > 0; m.cbOwe--) hits.push({ sub: b.sub, share: Math.min(egCastBackCost(m.vs), Math.max(0, (m.bd?.v ?? 1) - EG_CAST_BACK_FLOOR)), i: 0, k: 2 });
