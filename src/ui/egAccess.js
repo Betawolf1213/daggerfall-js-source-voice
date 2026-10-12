@@ -1,16 +1,19 @@
 // @ts-check
 // EG-G1 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 25.7): THE SPIRE'S
 // ACCESSIBILITY - three of the port's own rows on the prefs shelf (systems/uiPrefs.js), drawn under Settings >
-// Accessibility (ui/settingsMap.js), and the law that reads them:
+// Accessibility (ui/settingsMap.js), and the law that reads them - the one home of each (EG-G2's look reads them here):
 //   `port:dangerPalette` - Standard, High contrast, Deutan-Protan, Tritan: the danger edge, the safety gold and the place's
-//     white hazard each its preset's colour. High contrast draws the danger edge magenta ([1.0, 0.15, 0.75]), safety a
-//     solid white-gold and the hazard cyan; the two colour-blind presets are pinned to separate under simulation
-//     (`egCvd` - Machado, Oliveira and Fernandes 2009 at full severity, in linear light, measured in CIELAB). The colours
-//     ride the telegraph pass's existing `uEdgeCol` and `uColor` (render/gateTelegraph.js) through `egAccessShape`;
-//   `port:telegraphFill` - a danger fill's light, 50-100%: the fill's colour scaled, the line left whole (the pass adds
-//     the fill as `uColor * inner` and the line as `uEdgeCol * line`, so the line never dims with it);
+//     white hazard each its preset's colour. High contrast draws the danger edge magenta ([1.0, 0.15, 0.75]) with a double
+//     keyline and a hatch, safety a solid white-gold and the hazard cyan; the two colour-blind presets are pinned to
+//     separate under simulation (`egCvd` - Machado, Oliveira and Fernandes 2009 at full severity, in linear light,
+//     measured in CIELAB). The colours ride the Spire's telegraph stage's `uEdgeCol` and `uColor`, its keyline and hatch
+//     the stage's style bit (render/gateTelegraph.js TELEGRAPH_FS_SPIRE; world/egLook.js egPaletteBits), laid on each
+//     frame's shapes by scenes/egFight.js egLookShapes;
+//   `port:telegraphFill` - a danger fill's light, 50-100%: the stage's `uFillK`, the line left whole;
+//   (`port:allyEffects` - Full or Quiet, THE QUIET COMPANY's allies' hit numbers - is not on the shelf: the port draws
+//     only the player's own numbers (ui/hitNumbers.js), so the row would govern nothing);
 //   `port:reducedMotion` - the system's `prefers-reduced-motion` or this row: the count chip's pulse, the gains' flight,
-//     the arrival card's rise and the absent's draining ring stand still (ui/egSpireHud.js).
+//     the arrival card's rise and the absent's draining ring stand still (ui/egSpireHud.js), and the stair is a plain cut.
 // The larger HUD is the port's own `--hud-scale` (port:hudScale), which every part of the Spire's HUD reads; the beats'
 // words go to a polite live region for a screen reader.
 //
@@ -18,8 +21,9 @@
 import { getPref } from '../systems/uiPrefs.js';
 
 /** The danger palettes (section 25.7): each its danger edge, its safety gold, its place's hazard, and whether the
- *  shader's double keyline and 45-degree hatch are asked (EG16's style bit - the colours ride today). Standard is the
- *  five lights' own (section 25.2): TELEGRAPH_EDGE_DAGON's crimson, the way's gold, the hazard's white. */
+ *  Spire stage's double keyline (`keyline` 2) and 45-degree hatch are asked (world/egLook.js egPaletteBits - EG16's
+ *  style bit). Standard is the five lights' own (section 25.2): TELEGRAPH_EDGE_DAGON's crimson, the way's gold, the
+ *  hazard's white. */
 export const EG_DANGER_PALETTES = Object.freeze({
   standard: Object.freeze({ key: 'standard', name: 'Standard', danger: Object.freeze([1.0, 0.24, 0.28]), safety: Object.freeze([1.0, 0.82, 0.38]), hazard: Object.freeze([0.95, 0.95, 1.0]), keyline: 1, hatch: 0 }),
   contrast: Object.freeze({ key: 'contrast', name: 'High contrast', danger: Object.freeze([1.0, 0.15, 0.75]), safety: Object.freeze([1.0, 0.95, 0.7]), hazard: Object.freeze([0.2, 0.95, 1.0]), keyline: 2, hatch: 1 }),
@@ -32,17 +36,6 @@ export const EG_FILL_MIN = 0.5;
 export const EG_FILL_MAX = 1;
 /** The shelf's keys (systems/uiPrefs.js PREF_DEFAULTS). */
 export const EG_ACCESS_PREFS = Object.freeze({ palette: 'dangerPalette', fill: 'telegraphFill', motion: 'reducedMotion' });
-/** The pass's two edges the Spire draws (render/gateTelegraph.js TELEGRAPH_EDGE_DAGON and TELEGRAPH_EDGE) and its safe
- *  edge (TELEGRAPH_EDGE_SAFE) - pinned equal by test/egpres_access.test.js, not imported (the law runs without GL). */
-export const EG_EDGE_DANGER = Object.freeze([Object.freeze([1.0, 0.24, 0.28]), Object.freeze([1.0, 0.36, 0.05])]);
-export const EG_EDGE_SAFE = Object.freeze([0.72, 0.95, 1.0]);
-
-const same = (a, b) => !!a && !!b && Math.abs(a[0] - b[0]) < 1e-3 && Math.abs(a[1] - b[1]) < 1e-3 && Math.abs(a[2] - b[2]) < 1e-3;
-/** The way's gold (scenes/egFight.js GOLD) and a white hazard (its PEND_COLOR, the fragments' shimmer): a fill read as
- *  safety or as the place's hazard. */
-const isGold = (c) => same(c, EG_DANGER_PALETTES.standard.safety);
-const isWhite = (c) => !!c && c[0] >= 0.9 && c[1] >= 0.9 && c[2] >= 0.9;
-
 /** The palette a key names (Standard for anything else). */
 export const egPaletteOf = (key) => EG_DANGER_PALETTES[key] ?? EG_DANGER_PALETTES.standard;
 /** A fill's light, clamped to 50-100% (100% for anything not a number). */
@@ -61,24 +54,6 @@ export function egReducedMotion(win = globalThis.window, pref = getPref(EG_ACCES
 /** The three settings as the draws read them now: `{ palette, fill, still }`. */
 export function egAccessNow(win = globalThis.window) {
   return { palette: egPaletteOf(getPref(EG_ACCESS_PREFS.palette)), fill: egFillOf(getPref(EG_ACCESS_PREFS.fill)), still: egReducedMotion(win) };
-}
-
-/**
- * One telegraph shape in the palette's colours (pure): a danger edge takes the palette's danger, the safe edge and a
- * gold fill its safety, a white fill its hazard, and a danger shape's fill its light at `fill`. Standard at full light
- * answers the shape itself; otherwise `out` (a scratch the caller keeps) is filled and answered - the shape is never
- * written.
- * @param {any} sh render/gateTelegraph.js's shape @param {any} out @param {{ palette?: any, fill?: number }} [a]
- */
-export function egAccessShape(sh, out, { palette = EG_DANGER_PALETTES.standard, fill = 1 } = {}) {
-  const P = palette ?? EG_DANGER_PALETTES.standard;
-  const danger = EG_EDGE_DANGER.some((e) => same(sh.edge, e));
-  if (P.key === 'standard' && !(danger && fill < 1)) return sh;
-  Object.assign(out, sh);
-  out.edge = danger ? P.danger : same(sh.edge, EG_EDGE_SAFE) ? P.safety : sh.edge;
-  out.color = isGold(sh.color) ? P.safety : isWhite(sh.color) ? P.hazard : sh.color;
-  if (danger && fill < 1 && out.color === sh.color) out.color = [sh.color[0] * fill, sh.color[1] * fill, sh.color[2] * fill];
-  return out;
 }
 
 // ── the simulation the colour-blind presets are pinned under ──────────────────────────────────────────────────

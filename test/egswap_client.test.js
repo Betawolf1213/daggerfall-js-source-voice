@@ -22,6 +22,9 @@ import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egGateParts, 
 import { realmArt } from '../src/world/sdRealmArt.js';
 import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
 import { identity } from '../src/world/mat4.js';
+import { egBandOfCircle } from '../src/net/egLaw.js';   // EG-G2 (merged): the band's dress and the waystones go up with a swapped circle
+import { egBandArt, egBandArchive } from '../src/world/egBandArt.js';
+import { buildEgLookModel } from '../src/world/egLook.js';
 import { Collider } from '../src/player/collider.js';
 
 const SEED = 0x5eed1234;
@@ -155,9 +158,9 @@ function swapRig({ workerFactory = () => syncWorker() } = {}) {
     `${dcSrc}\nreturn { egSpanRide, egRecircle, get egSpan() { return egSpan; } };`)(createEgSpan, renderer, null, loc, dynamicDraws, collider, { sdClock: () => 10 }, true);
   const ctx = { dynamicDraws, collider, addActivationNamer() {}, egRecircle: (r) => dc.egRecircle(r) };
   const host = { egGateOpen: () => false };
-  const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'getState',
+  const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'getState',
     `let mode = 'dungeon', dungeonLoc = getState().loc, dungeonCtx = getState().ctx;\n${wmSrc.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap(getState().swapDeps);')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egGatesFrame, set mode(m) { mode = m; }, get lamps() { return _egLamps; }, get gates() { return _egGates; }, get meshKey() { return _egMeshKey; }, egSwap };`)(
-    host, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT,
+    host, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel,
     () => ({ loc, ctx, swapDeps: { workerFactory } }));
   const body = { pos: realmToDungeon(0, 0.05, 1.5), grounded: true, height: 1.8 };
   const count = () => ({ live: live.size, buckets: [...collider._buckets.keys()].sort(), draws: dynamicDraws.length, hallTris: collider._buckets.get('eg:hall')?.tris.length ?? 0 });
@@ -184,7 +187,9 @@ test('EG10 THE SWAP IN PLACE, EXECUTED - THE FREE PINS (scenes/worldModes.js egS
   const seen = new Set(base.buckets);
   for (let c = 2; c <= 21; c++) {
     assert.equal(R.wm.egPrebuild({ ...eh, c }), 'ready', 'built during the rest (the worker answered)');
+    const t0 = R.textures;
     assert.equal(R.wm.egSwapCircle({ ...eh, c }), true, `circle ${c} stood in place`);
+    assert.equal(R.textures, t0, 'no texture uploaded by a swap - a new band\'s dress went up while the Court rested (EG-G2, merged)');
     R.dc.egSpanRide(0.016, R.body, true);
     assert.equal(R.loc.egCircle, c, 'the level renamed');
     const now = R.count();
@@ -202,7 +207,9 @@ test('EG10 THE SWAP IN PLACE, EXECUTED - THE FREE PINS (scenes/worldModes.js egS
   assert.equal(R.wm.egSwapCircle(eh), true);
   R.dc.egSpanRide(0.016, R.body, true);
   assert.deepEqual(R.count(), base, 'twenty swaps and back: the live meshes, the buckets and the draws at their baseline');
-  assert.equal(R.textures, tex, 'no texture uploaded by a swap');
+  const bandTex = (b) => [...egBandArt(b)].length * 2;   // an albedo and an emission a record
+  const bands = new Set(Array.from({ length: 21 }, (_, i) => egBandOfCircle(i + 1)));
+  assert.equal(R.textures, tex + [...bands].filter((b) => b !== egBandOfCircle(1)).reduce((n, b) => n + bandTex(b), 0), 'each band\'s dress uploaded once a session, at a prebuild, never by a swap');
   assert.equal(R.made - R.freed, base.live);
   assert.equal(R.wm.meshKey, egCircleKey(SEED, 1));
 });

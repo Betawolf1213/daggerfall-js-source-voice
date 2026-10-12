@@ -507,15 +507,48 @@ export function telegraphQuadOver(shape, k, courts = COURTS, R = COURT_R) {
 
 const NO_FOG_RANGE = new Float32Array([0, 1]);
 
+/**
+ * EG-G2 (2026-10-12, bible/11-Multiplayer/Elite-Gates.md sections 25.6 and 25.7 - EG16): THE SPIRE'S TELEGRAPH, the gate's
+ * own fragment stage with three things more, made from TELEGRAPH_FS's text (each needle asserted - the gate's program is
+ * the same bytes it was, and every pin on it stands):
+ *   READABLE IN THE FOG - `uFogFloor` (floor, within, ease): within `within` metres a shape keeps a fog visibility of at
+ *     least `floor`, eased out past it (world/egLook.js egFogKept - the same numbers), so the Shade's fog and the Cairn's
+ *     haze never fade a warning;
+ *   `port:telegraphFill` - `uFillK`, the fill's opacity (0.5 to 1); the line is never thinned by it;
+ *   `port:dangerPalette`'s style bit - `uLook`: 1 a second dark keyline outside the first, 2 a 45-degree hatch through the
+ *     fill (world/egLook.js EG_LOOK_BIT). Its colours ride the pass's existing uEdgeCol and uColor;
+ *   THE HAVEN GRAMMAR (section 25.5) - a pool of its own, TELEGRAPH_POOL_HAVEN: gold and lit (never the darkened floor
+ *     burning ground is), its line bright, a dark keyline outside it and chevrons flowing inward to its heart - so a haven
+ *     never relies on gold against red (a deuteranopia pair).
+ */
+export function spireTelegraphFs(fs) {
+  const swap = (src, needle, put) => { if (!src.includes(needle)) throw new Error(`spireTelegraphFs: the gate's shader lost ${needle}`); return src.replace(needle, put); };
+  let out = swap(fs, 'uniform vec3 uCamPos;\n', 'uniform vec3 uCamPos;\nuniform vec3 uFogFloor;   // EG-G2: floor, within, ease (m)\nuniform float uFillK;     // EG-G2: the fill\'s opacity\nuniform int uLook;        // EG-G2: 1 the double keyline, 2 the hatch\n');
+  out = swap(out, '  float f = uAlpha * fogFactorAt(vWorld);\n', '  float kept = uFogFloor.x * (1.0 - smoothstep(uFogFloor.y, uFogFloor.y + uFogFloor.z, distance(vWorld, uCamPos)));\n  float f = uAlpha * max(fogFactorAt(vWorld), kept);\n  float keyl2 = (uLook & 1) != 0 ? (1.0 - fin) * (1.0 - smoothstep(9.0 * aa, 13.0 * aa, edge)) * smoothstep(7.0 * aa, 9.0 * aa, edge) : 0.0;\n  float hatch = (uLook & 2) != 0 ? 0.55 + 0.45 * step(0.5, fract((vCourt.x + vCourt.y) * 1.1785)) : 1.0;\n');
+  out = swap(out, '  // THE FILL - eased in behind the line', '  if (uPool == 3) {\n    // EG-G2 (section 25.5): A HAVEN - gold and lit, its line bright, a dark keyline outside it, chevrons flowing in to its heart\n    float a8 = atan(rel.x, rel.y) / 6.283185307179586 * 8.0;\n    float chev = step(0.5, fract(s * 3.0 - abs(fract(a8) - 0.5) * 1.4 + uSince * 0.8));\n    vec3 lit = uColor * (fin * (0.14 + 0.16 * chev) + core * 0.9 + glow * 0.15);\n    o = vec4(lit * f, (fin * 0.1 + keyl * 0.85) * f);\n    return;\n  }\n  // THE FILL - eased in behind the line');
+  out = swap(out, '  float inner = (fin * 0.10 + filled * (0.20 + 0.55 * T2) + lip * 0.35 + fin * (0.05 + 0.07 * uT) * g) * inFade;\n', '  float inner = (fin * 0.10 + filled * (0.20 + 0.55 * T2) + lip * 0.35 + fin * (0.05 + 0.07 * uT) * g) * inFade * uFillK * hatch;\n');
+  out = swap(out, '  float a = fin * (0.22 + 0.18 * filled) * inFade + keyl * 0.55;\n', '  float a = fin * (0.22 + 0.18 * filled) * inFade * uFillK + keyl * 0.55 + keyl2 * 0.75;\n');
+  return out;
+}
+/** EG-G2: THE HAVEN GRAMMAR's pool - the Spire's stage alone draws it (the gate's own reads it as a blow, and is never
+ *  handed one). */
+export const TELEGRAPH_POOL_HAVEN = 3;
+/** EG-G2: the Spire's fragment stage (spireTelegraphFs over the gate's). */
+export const TELEGRAPH_FS_SPIRE = spireTelegraphFs(TELEGRAPH_FS);
+/** EG-G2: what the Spire's pass draws a shape with when the shape says nothing: no fog floor, the whole fill, no bits. */
+const NO_FOG_FLOOR = Object.freeze([0, 0, 1]);
+
 export class GateTelegraphRenderer {
-  constructor(gl) {
+  /** @param {WebGL2RenderingContext} gl @param {{ spire?: boolean }} [o] - EG-G2: `spire`, the Spire's stage (TELEGRAPH_FS_SPIRE) */
+  constructor(gl, { spire = false } = {}) {
     this.gl = gl;
-    const prog = buildProgram(gl, TELEGRAPH_VS, TELEGRAPH_FS);
+    this.spire = !!spire;
+    const prog = buildProgram(gl, TELEGRAPH_VS, this.spire ? TELEGRAPH_FS_SPIRE : TELEGRAPH_FS);
     this.program = prog;
     this.u = {};
     for (const n of ['uVP', 'uCentre', 'uCourt', 'uLo', 'uHi', 'uLift', 'uKind', 'uOrigin', 'uYaw', 'uR', 'uHalfArc', 'uBody', 'uEnd', 'uHalfW', 'uR0', 'uR1', 'uPts', 'uCount',
       'uT', 'uFlash', 'uAlpha', 'uColor', 'uEdgeCol', 'uFloorR', 'uStyle', 'uSince', 'uSpan', 'uAfter', 'uPool', 'uRunS', 'uLineW', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos',
-      'uOnWalk', 'uWalkA', 'uWalkU', 'uWalkLen', 'uWalkC0', 'uWalkC1']) this.u[n] = gl.getUniformLocation(prog, n);
+      'uOnWalk', 'uWalkA', 'uWalkU', 'uWalkLen', 'uWalkC0', 'uWalkC1', ...(this.spire ? ['uFogFloor', 'uFillK', 'uLook'] : [])]) this.u[n] = gl.getUniformLocation(prog, n);
     const verts = telegraphQuad();
     this.count = verts.length / 2;
     const vao = gl.createVertexArray();
@@ -596,6 +629,7 @@ export class GateTelegraphRenderer {
     gl.uniform1f(U.uFogDensity, fog?.density ?? 0);
     gl.uniform2fv(U.uFogRange, fog?.range ?? NO_FOG_RANGE);
     gl.uniform3fv(U.uCamPos, fog?.camPos ?? eye ?? centre);
+    if (this.spire) { const ff = shape.fogFloor ?? NO_FOG_FLOOR; gl.uniform3f(U.uFogFloor, ff[0], ff[1], ff[2]); gl.uniform1f(U.uFillK, shape.fillK ?? 1); gl.uniform1i(U.uLook, shape.look ?? 0); }   // EG-G2
     gl.bindVertexArray(this.vao);
     gl.enable(gl.BLEND); gl.blendFuncSeparate(gl.ONE, gl.ONE_MINUS_SRC_ALPHA, gl.ZERO, gl.ONE);   // WB13a: light added, the floor under a fill darkened - the frame's alpha untouched
     gl.depthMask(false);

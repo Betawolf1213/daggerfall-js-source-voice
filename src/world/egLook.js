@@ -1,0 +1,258 @@
+// @ts-check
+// EG-G2 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 25 - THE LOOK, EG16 - and
+// what EG-D still owed the screen): THE SPIRE'S LOOK AS LAW - every number the Spire's own passes draw by, pure, so a test
+// holds each one and a pass only draws it:
+//   THE EDGE LINE (section 25.3) - every edge a member could fall from, as segments: each plate's, island's and court's
+//     rim (the drawn rim's own 48 sides - world/sdRealm.js SD_ISLAND_SIDES - so the line never cuts inside the stone or
+//     floats past it), each bridge's, walkway's and lane's two sides; never a passage's walled floor (its walls are its
+//     kerbs), and never a piece that moves (its own line rides its mesh - scenes/egSpan.js);
+//   THE PIECES' LAST TELLS (layer two's "still owed"): the Rail's and the Drum's dashed track under its whole travel, the
+//     Gust's streamers across its section from the breath's rise through the gust (the Steps' own breathSeen), the
+//     waystones lit (their own mesh - buildEgLookModel - with a gold cap that holds by emission, never a lamp of the cap);
+//   THE STAIR (section 7) - the full fall at a band's first hall, the veil's dither everywhere else, a plain cut under
+//     reduced motion;
+//   THE SKIES (section 25.8's arch and stair, EG16's "the Spire's underside in every sky, smaller each band");
+//   THE DANGER PALETTES' STYLE BIT (section 25.7 - the palettes themselves, the fill and the allies' row are the shelf's,
+//     ui/egAccess.js, their one home: the colours ride the telegraph stage's uEdgeCol and uColor, the keyline and the
+//     hatch its new style bit) and THE QUIET COMPANY (section 25.4);
+//   READABLE IN THE DARK AND THE FOG (section 25.6) - the fog floor every telegraph, edge line and white hazard keeps;
+//   THE LAB CHECK (section 25.2) - the colour science that tells the five lights apart under ?grey, deuteranopia,
+//     protanopia and tritanopia, at 10 m and 30 m of the band's fog.
+//
+// Not a DFU member. Ledger A (ELITE-GATES).
+import { egCircleSpecs, egBandOfCircle, EG_BRINK_HALLS } from '../net/egLaw.js';
+import { egMistAt } from '../net/egFragLaw.js';
+import { egTubeBand, egWallBand, egIsleDisc, egToDungeon } from './egHall.js';
+import { SD_ISLAND_SIDES } from './sdRealm.js';
+import { SD_STEP_THICK, breathSeen } from './sdSteps.js';
+import { createMeshKit } from './meshKit.js';
+import { EG_DRESS, egBandArchive } from './egBandArt.js';
+import { EG_CVD } from '../ui/egAccess.js';   // the colour-vision matrices' one home (the shelf's pins and the lab check read the same)
+
+// ── THE EDGE LINE ──────────────────────────────────────────────────────────────────────────────────────────────
+/** THE EDGE LINE (section 25.3): 2 px on a desktop, 3 on a phone (a screen this short or less); its gold's display
+ *  luminance (0.3-0.45 - the ambient rung, never a signal's); how far over its floor it lies (m). It never pulses. */
+export const EG_EDGE_LINE = Object.freeze({ px: 2, phonePx: 3, phoneH: 720, luma: 0.38, lift: 0.02, color: Object.freeze([1.0, 0.78, 0.4]) });
+/** The line's width (px) on a drawing buffer `h` tall. */
+export const egEdgeLinePx = (h) => (h > 0 && h <= EG_EDGE_LINE.phoneH ? EG_EDGE_LINE.phonePx : EG_EDGE_LINE.px);
+/** The line's colour at its luminance: the gold scaled so its display luminance is EG_EDGE_LINE.luma (linear rgb). */
+export const egEdgeLineColor = () => { const g = EG_EDGE_LINE.color, l = 0.2126 * g[0] + 0.7152 * g[1] + 0.0722 * g[2], k = EG_EDGE_LINE.luma / l; return [g[0] * k, g[1] * k, g[2] * k]; };
+/** A line segment's kinds (the pass's `aM.z`): the edge line, a track's dash, a streamer. */
+export const EG_LINE_KIND = Object.freeze({ edge: 0, track: 1, streamer: 2 });
+/** A track's dash and its gap (m), and its depth under its piece's top. */
+export const EG_TRACK = Object.freeze({ dash: 0.5, under: SD_STEP_THICK + 0.12 });
+
+/**
+ * THE CIRCLE'S EDGES - every segment of THE EDGE LINE and every track, in the dungeon's frame: `{ edge, track }`, each a
+ * Float32Array of [ax, ay, az, bx, by, bz] six floats a segment. Pure: one seed and one circle, one set of lines.
+ */
+export function egCircleEdges(seed, c, geo = 0) {
+  const edge = [], track = [];
+  const seg = (out, a, b) => out.push(a[0], a[1], a[2], b[0], b[1], b[2]);
+  for (const spec of egCircleSpecs(seed, c, geo)) {
+    const lift = EG_EDGE_LINE.lift;
+    // the rims: every plate, island, court, bastion, balcony - never Grath's isles (they fall: the spans' own)
+    for (const d of spec.discs) {
+      if (egIsleDisc(spec, d)) continue;
+      for (let k = 0; k < SD_ISLAND_SIDES; k++) {
+        const a0 = (k / SD_ISLAND_SIDES) * Math.PI * 2, a1 = ((k + 1) / SD_ISLAND_SIDES) * Math.PI * 2;
+        seg(edge, egToDungeon(spec, d.x + Math.cos(a0) * d.r, (d.y ?? 0) + lift, d.z + Math.sin(a0) * d.r), egToDungeon(spec, d.x + Math.cos(a1) * d.r, (d.y ?? 0) + lift, d.z + Math.sin(a1) * d.r));
+      }
+    }
+    // the bands' two sides - a passage's floor is walled (its kerbs), a Falling Wall's and a Collapsing Tube's move
+    for (const b of spec.bands) {
+      if (b.role === 'cave' || egWallBand(spec, b) || egTubeBand(b)) continue;
+      const y = b.y + 0.124 + lift;
+      for (const s of [-1, 1]) seg(edge, egToDungeon(spec, b.x + s * b.halfW, y, b.z0), egToDungeon(spec, b.x + s * b.halfW, y, b.z1));
+    }
+    for (const l of spec.lanes ?? []) {
+      const dx = l.bx - l.ax, dz = l.bz - l.az, len = Math.hypot(dx, dz) || 1, nx = -dz / len, nz = dx / len, y = (l.y ?? 0) + lift;
+      for (const s of [-1, 1]) seg(edge, egToDungeon(spec, l.ax + s * nx * l.hw, y, l.az + s * nz * l.hw), egToDungeon(spec, l.bx + s * nx * l.hw, y, l.bz + s * nz * l.hw));
+    }
+    // THE TRACKS: a Rail's and a Drum's whole travel, under both its sides
+    for (const s of spec.steps) {
+      if ((s.kind !== 'rail' && s.kind !== 'drum') || !(s.amp > 0)) continue;
+      const y = s.y - EG_TRACK.under, z0 = s.z - s.amp - s.d / 2, z1 = s.z + s.amp + s.d / 2;
+      for (const side of [-1, 1]) seg(track, egToDungeon(spec, s.x + side * (s.w / 2 - 0.2), y, z0), egToDungeon(spec, s.x + side * (s.w / 2 - 0.2), y, z1));
+    }
+  }
+  return { edge: new Float32Array(edge), track: new Float32Array(track) };
+}
+
+/** THE GUST'S STREAMERS (section 10.3's tell, layer two's "still owed"): how many a section, their length (m), their
+ *  speed across the course (m/s) and how high over the course they fly. */
+export const EG_STREAMERS = Object.freeze({ n: 7, len: 2.2, mps: 9, lo: 0.5, hi: 1.9, reach: 7 });
+/** Each hall's Gust sections - the stretch its Gust pieces stand in, an island's reach either side - in the hall's frame:
+ *  `[{ spec, x, y, z0, z1 }]` (scenes/egSpan.js's own reach). */
+export function egGustSections(specs) {
+  const out = [];
+  for (const spec of specs) {
+    const gs = spec.steps.filter((q) => q.kind === 'gust');
+    if (gs.length) out.push({ spec, x: gs.reduce((a, q) => a + q.x, 0) / gs.length, y: Math.min(...gs.map((q) => q.y)), z0: Math.min(...gs.map((q) => q.z - q.d / 2)) - 4, z1: Math.max(...gs.map((q) => q.z + q.d / 2)) + 4 });
+  }
+  return out;
+}
+const _breath = { dir: 0, k: 0 };
+/**
+ * The streamers at `t` (the realm's anchored seconds - the gust's own clock) into `out` (six floats a segment, the
+ * dungeon's frame, after them `alpha` per segment in `alphas`): blowing the way the breath will, from its rise through
+ * the gust - none between. Answers how many. A frame makes nothing.
+ * @param {ReturnType<typeof egGustSections>} sections @param {number} t @param {Float32Array} out @param {Float32Array} alphas
+ */
+export function egStreamersAt(sections, t, out, alphas) {
+  breathSeen(t, _breath);
+  if (!_breath.dir) return 0;
+  const S = EG_STREAMERS, a = Math.min(1, _breath.k * 3) * (1 - Math.max(0, _breath.k - 0.85) / 0.15);
+  let n = 0;
+  for (const g of sections) for (let i = 0; i < S.n; i++) {
+    if ((n + 1) * 6 > out.length) return n;
+    const z = g.z0 + ((i + 0.5) / S.n) * (g.z1 - g.z0), y = g.y + S.lo + ((i * 0.618) % 1) * (S.hi - S.lo);
+    const run = 2 * S.reach + S.len, x0 = -S.reach + (((t * S.mps + i * 3.7) % run) + run) % run - S.len;   // each its own lane, coming round
+    const xa = _breath.dir > 0 ? x0 : -x0, xb = xa + _breath.dir * S.len;
+    const A = egToDungeon(g.spec, g.x + xa, y, z), B = egToDungeon(g.spec, g.x + xb, y, z);
+    out.set([A[0], A[1], A[2], B[0], B[1], B[2]], n * 6);
+    alphas[n] = a;
+    n++;
+  }
+  return n;
+}
+
+/** THE WAYSTONES LIT (section 8.3, layer two's "still owed"): a stone post bolted to the walkway's outer side (off the
+ *  walk - nothing to stumble on, no collider owed), hanging `below` under the deck and standing `h` over it, and a gold
+ *  cap that holds by its own light. */
+export const EG_WAYSTONE = Object.freeze({ side: 0.5, h: 1.1, below: 0.9, cap: 0.36, capH: 0.22, off: 0.3 });
+/**
+ * THE LOOK'S OWN MESH for a circle (renderer.createMesh's shape, in the band's dress - built with world/meshKit.js): each
+ * Rampart's waystones beside the walkway. Null when the circle has none.
+ */
+export function buildEgLookModel(seed, c, geo = 0) {
+  const kit = createMeshKit(), W = EG_WAYSTONE;
+  for (const spec of egCircleSpecs(seed, c, geo)) {
+    for (const w of spec.waystones ?? []) {
+      const side = (spec.walk ? spec.walk.halfW : 0) + W.off + W.side / 2;
+      const p = egToDungeon(spec, w.x + side, 0, w.z), h = W.side / 2;
+      kit.box(EG_DRESS.pillar, [p[0] - h, p[1] - W.below, p[2] - h], [p[0] + h, p[1] + W.h, p[2] + h]);
+      const q = W.cap / 2;
+      kit.box(EG_DRESS.edge, [p[0] - q, p[1] + W.h, p[2] - q], [p[0] + q, p[1] + W.h + W.capH, p[2] + q], { skip: ['bottom'] });
+    }
+  }
+  return kit.vertexCount ? kit.pack(egBandArchive(egBandOfCircle(c))) : null;
+}
+
+// ── THE MIST ───────────────────────────────────────────────────────────────────────────────────────────────────
+/** THE MIST (section 11.2): its top stops `below` metres under the landing it serves (the law's surge rises EG_MIST.rise
+ *  over its floor, which lies that far under the landing - net/egFragLaw.js), its colour (linear - the Cairn's pale
+ *  violet-grey), the margin a sheet runs past what it covers (m). */
+export const EG_MIST = Object.freeze({ below: 0.3, rise: 3, color: Object.freeze([0.5, 0.5, 0.58]), pad: 3 });
+/**
+ * Each mist surge of a circle as a sheet (the hall's frame): `[{ spec, hz, x0, z0, x1, z1 }]` - over its Mist Stair's
+ * passage (the cave of kit `mist` its surge begins at), or over the Sinking Stair's flights (the `sink` steps past it).
+ */
+export function egMistSheets(specs) {
+  const out = [];
+  for (const spec of specs) for (const hz of spec.hazards ?? []) {
+    if (hz.kind !== 'mist') continue;
+    const q = spec.caves.find((c) => c.kit === 'mist' && hz.z >= c.z0 - 1 && hz.z <= c.z1);
+    if (q) { out.push({ spec, hz, x0: q.x - q.halfW, z0: q.z0, x1: q.x + q.halfW, z1: q.z1 }); continue; }
+    const fl = spec.steps.filter((t) => t.kind === 'sink' && t.z >= hz.z - 1);
+    if (!fl.length) continue;
+    const P = EG_MIST.pad;
+    out.push({ spec, hz, x0: Math.min(...fl.map((t) => t.x - t.w / 2)) - P, z0: Math.min(...fl.map((t) => t.z - t.d / 2)) - P, x1: Math.max(...fl.map((t) => t.x + t.w / 2)) + P, z1: Math.max(...fl.map((t) => t.z + t.d / 2)) + P });
+  }
+  return out;
+}
+/** The sheets at `t` (the shared clock, s) in the scene's frame: `{ rect: [x0, z0, x1, z1], y, alpha }` - its line the
+ *  surge's (net/egFragLaw.js egMistAt), never past EG_MIST.below under its landing; none while the mist lies low. */
+export function egMistSheetsAt(sheets, t) {
+  const out = [];
+  for (const m of sheets) {
+    const line = egMistAt(m.hz, t);
+    if (!(line > 0.05)) continue;
+    const top = Math.min(line, EG_MIST.rise - EG_MIST.below);
+    const a = egToDungeon(m.spec, m.x0, m.hz.y + top, m.z0), b = egToDungeon(m.spec, m.x1, m.hz.y + top, m.z1);
+    out.push({ rect: [Math.min(a[0], b[0]), Math.min(a[2], b[2]), Math.max(a[0], b[0]), Math.max(a[2], b[2])], y: a[1], alpha: Math.min(1, line / 1.5) });
+  }
+  return out;
+}
+
+// ── THE STAIR ──────────────────────────────────────────────────────────────────────────────────────────────────
+/** THE STAIR (section 7): the veil's dither each way (s), and the halls that open a band (the full fall plays there). */
+export const EG_STAIR = Object.freeze({ dither: 0.8, bandFirst: Object.freeze([1, ...EG_BRINK_HALLS]) });
+/** How a step down to hall `h` is shown: 'fall' (the full fall past the Spire's underside - a band's first hall), 'veil'
+ *  (the dither in and out with the band's chime, the hall's number held), or 'cut' (a plain dither cut - reduced motion,
+ *  the port's own setting or the system's). */
+export const egStairOf = (h, reduced = false) => (reduced ? 'cut' : EG_STAIR.bandFirst.includes(h) ? 'fall' : 'veil');
+
+// ── THE SKIES ──────────────────────────────────────────────────────────────────────────────────────────────────
+/**
+ * THE SKIES (EG16): each band's sky in linear rgb - its zenith, its horizon, the deep below (the Galleries' fire-sea, the
+ * Cairn's sea of mist, the Shade's dark, the Wellhead's molten glow), its moon, its embers' rate - and THE SPIRE'S
+ * UNDERSIDE overhead in every one, smaller each band as the halls fall further down the legions' road: its angular radius
+ * (radians) and how far it leans from the zenith toward the course (+z).
+ */
+export const EG_SKIES = Object.freeze([
+  Object.freeze({ zenith: Object.freeze([0.05, 0.012, 0.01]), horizon: Object.freeze([0.42, 0.12, 0.04]), deep: Object.freeze([0.85, 0.28, 0.05]), moon: 0, embers: 1.0, underside: 0.34, lean: 0.18 }),
+  Object.freeze({ zenith: Object.freeze([0.02, 0.018, 0.035]), horizon: Object.freeze([0.16, 0.15, 0.22]), deep: Object.freeze([0.42, 0.44, 0.5]), moon: 0, embers: 0.15, underside: 0.22, lean: 0.24 }),
+  Object.freeze({ zenith: Object.freeze([0.004, 0.004, 0.008]), horizon: Object.freeze([0.03, 0.032, 0.05]), deep: Object.freeze([0.01, 0.01, 0.015]), moon: 1, embers: 0, underside: 0.13, lean: 0.3 }),
+  Object.freeze({ zenith: Object.freeze([0.03, 0.01, 0.006]), horizon: Object.freeze([0.3, 0.07, 0.02]), deep: Object.freeze([1.0, 0.36, 0.06]), moon: 0, embers: 1.6, underside: 0.07, lean: 0.36 }),
+]);
+/** A circle's sky. */
+export const egSkyOf = (c) => EG_SKIES[egBandOfCircle(c)];
+
+// ── THE DANGER PALETTES, THE FILL, THE QUIET COMPANY ───────────────────────────────────────────────────────────
+/** The telegraph pass's style bits (render/gateTelegraph.js uLook): the double keyline, the 45° hatch in the fill. */
+export const EG_LOOK_BIT = Object.freeze({ keyline2: 1, hatch: 2 });
+/** The style bits a shelf palette lays on (ui/egAccess.js EG_DANGER_PALETTES - `keyline` 2 the double keyline, `hatch`
+ *  the 45-degree hatch). Pure. */
+export const egPaletteBits = (P) => ((P?.keyline ?? 1) >= 2 ? EG_LOOK_BIT.keyline2 : 0) | (P?.hatch ? EG_LOOK_BIT.hatch : 0);
+/**
+ * THE QUIET COMPANY (section 25.4), during a trial: cosmetic auras at nothing (back on the plates, at the rests and in
+ * the recap), allies' effects at 60% with no light of their own, allies' numbers off unless the shelf says Full, a
+ * Vestige aura one thin blue ring of 0.6 m, a shape aimed at another member filled at 0.55, another's Watchfire lines
+ * only for blows within 12 m. `stage` the hall's (net/egLink.js `sg`); `full` the shelf's `allyEffects` is Full.
+ */
+export function egQuietCompany(stage, full = true) {
+  const trial = stage === 'trial';
+  return { auras: trial ? 0 : 1, allyAlpha: trial ? 0.6 : 1, allyGlow: trial ? 0 : 1, allyNumbers: !trial || full, vestigeRing: 0.6, aimedOther: trial ? 0.55 : 1, watchfireM: trial ? 12 : Infinity };
+}
+
+// ── READABLE IN THE DARK AND THE FOG ───────────────────────────────────────────────────────────────────────────
+/** Section 25.6: within `within` metres every telegraph, edge line and white hazard keeps a fog visibility of at least
+ *  `floor`, eased out over `ease` past it. */
+export const EG_FOG_FLOOR = Object.freeze({ floor: 0.85, within: 30, ease: 4 });
+/** The fog visibility a Spire signal keeps at `d` metres where the world's own is `f` (0-1). Pure - the shaders' text
+ *  reads the same numbers (render/egLinePass.js, render/gateTelegraph.js uFogFloor). */
+export function egFogKept(f, d) {
+  const F = EG_FOG_FLOOR, t = Math.max(0, Math.min(1, (d - F.within) / F.ease)), ease = 1 - t * t * (3 - 2 * t);
+  return Math.max(f, F.floor * ease);
+}
+
+// ── THE LAB CHECK (section 25.2) ───────────────────────────────────────────────────────────────────────────────
+export { EG_CVD };   // Machado, Oliveira and Fernandes (2009), full severity, on linear rgb (ui/egAccess.js)
+/** A linear colour seen under a colour vision deficiency ('deutan', 'protan', 'tritan'), or in grey ('grey' - ?grey's
+ *  luminance), clamped. */
+export function egSeen(c, how) {
+  if (how === 'grey') { const l = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; return [l, l, l]; }
+  const M = EG_CVD[how];
+  if (!M) return [c[0], c[1], c[2]];
+  const cl = (v) => Math.max(0, Math.min(1, v));
+  return [cl(M[0] * c[0] + M[1] * c[1] + M[2] * c[2]), cl(M[3] * c[0] + M[4] * c[1] + M[5] * c[2]), cl(M[6] * c[0] + M[7] * c[1] + M[8] * c[2])];
+}
+/** A linear colour through `d` metres of exponential fog of `density` toward `fog`, its visibility floored by THE FOG
+ *  FLOOR when `kept` (a Spire signal - egFogKept). */
+export function egThroughFog(c, d, density, fog, kept = false) {
+  let f = Math.exp(-density * d);
+  if (kept) f = egFogKept(f, d);
+  return [c[0] * f + fog[0] * (1 - f), c[1] * f + fog[1] * (1 - f), c[2] * f + fog[2] * (1 - f)];
+}
+/** CIE L*a*b* of a linear rgb colour (D65). */
+export function egLab(c) {
+  const X = 0.4124 * c[0] + 0.3576 * c[1] + 0.1805 * c[2], Y = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2], Z = 0.0193 * c[0] + 0.1192 * c[1] + 0.9505 * c[2];
+  const f = (t) => (t > 216 / 24389 ? Math.cbrt(t) : (24389 / 27 * t + 16) / 116);
+  const fx = f(X / 0.95047), fy = f(Y), fz = f(Z / 1.08883);
+  return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
+}
+/** How far apart two linear colours read (CIE76 ΔE). */
+export const egDeltaE = (a, b) => { const p = egLab(a), q = egLab(b); return Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]); };
+/** THE LAB CHECK's threshold: two lights told apart at a glance (ΔE), and in grey by luminance alone (L* apart). */
+export const EG_LAB = Object.freeze({ deltaE: 12, greyL: 8 });

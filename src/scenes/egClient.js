@@ -43,11 +43,11 @@
 //     admission - and the opener's step through the arch; the opener's landing before the arch; the late line.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
-import { createEgLink, egMemberOf, egRunOfMember } from '../net/egLink.js';
+import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
 import { egKeyRefusal } from './egArch.js';   // EG-F: the key's refusals, in the page's order
 import { egCallPromptModel, soundEgHorn, EG_CALL_KEYS } from './egCall.js';   // EG-F: the call's prompt and horn
 import { importPublicKeyB64 } from '../net/identityToken.js';   // EG-F: the relay's public half, for a stranger's arch
-import { egHallOf, egCircleOfHall, egSlotOfHall, egSlotAt, egLocalX, egAtDoor, egPhase, egTimes, egCountText, EG_TEXT, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR } from '../net/egLaw.js';
+import { egHallOf, egCircleOfHall, egSlotOfHall, egSlotAt, egLocalX, egAtDoor, egPhase, egTimes, egCountText, egBandOfCircle, EG_TEXT, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR, EG_BAND_LORDS, EG_VALKYNAZ } from '../net/egLaw.js';
 import { egOnFight, egSpecGive, EG_SPEC } from '../net/egLaw.js';   // EG-H2 (section 10.7): the fight floor, and off it the Spire's traversal ground; (section 22) a hall given, the law I draw
 import { readEgReceipt } from '../net/egReceipt.js';
 import { dungeonToRealm } from '../net/sdBrain.js';
@@ -76,6 +76,8 @@ import { EG_LORDS, EG_LAST_WORD_MS } from '../net/egLaw.js';
 import { isEnhanced } from '../systems/uiSkin.js';
 import { isTouchDevice } from '../ui/touchDevice.js';
 import { getPref } from '../systems/uiPrefs.js';
+import { createEgLookDraw } from './egLookDraw.js';   // EG-G2: the Spire's sky, mist and lines (section 25)
+import { egQuietCompany } from '../world/egLook.js';
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -201,6 +203,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   /** EG-F: the call heard (its horn sounded once a breach), my answer under way (the portal open for it, or the step), the
    *  start window standing, the relay's public half (base64url) and its import. */
   let hornFor = '', answeredFor = '', startWin = null, rk = null, rkKey = null;
+  // EG-G2 (2026-10-12, Elite-Gates.md sections 25 and 26): THE LOOK (scenes/egLookDraw.js - built the first time a hall is
+  // drawn, released on every way out) and THE SCORE's view of this breach (systems/egScore.js - world.js plays it)
+  let look = null;
+  const lookOf = () => (look ??= renderer?.gl ? createEgLookDraw({ gl: renderer.gl }) : null);
+  /** The circle this screen stands in, told to the look. */
+  const lookCircle = (E) => { const L = lookOf(); if (L && E.b && E.h > 0) L.setCircle(E.seed, egCircleOfHall(E.h), E.geo ?? 0); return L; };
 
   // ── the keys ────────────────────────────────────────────────────────────────────────────────────────
   /** The pack's keys set to the account's balance (a face, never the count). */
@@ -885,6 +893,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       } else {
         presAway();   // EG-G1
         if (fight) { fight.leave(); }
+        if (look) { look.release(); look = null; }   // EG-G2: the look's passes, freed on every way out
         if (leaving || (E.end && E.b)) { leaving = false; link.forget(); }
         if (door || portal) dropDoor();
       }
@@ -898,7 +907,31 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     fight: () => (inSpire() ? fight : null),
     lights: () => (inSpire() ? fight?.lights() ?? [] : []),
     batches: () => (inSpire() ? [...(fight?.batches() ?? []), ...(portalSet?.batches() ?? [])] : []),
-    drawPass: (proj, view, eye, seconds, fog) => (inSpire() ? !!fight?.drawPass(proj, view, eye, seconds, fog) : false),
+    drawPass(proj, view, eye, seconds, fog) {
+      if (!inSpire()) return false;
+      // EG-G2 (section 25.6): the mist first, the hall's fight over it, THE EDGE LINE and the tells last - on the shared clock
+      const L = lookCircle(link.state()), ts = now() / 1000;
+      const under = !!L?.drawUnder(proj, view, eye, ts, fog);
+      const drew = !!fight?.drawPass(proj, view, eye, seconds, fog);
+      const over = !!L?.drawOver(proj, view, eye, ts, fog);
+      return under || drew || over;
+    },
+    /** EG-G2: THE SPIRE'S SKY (render/egSkyPass.js) in the host's sky slot - the band's void and the Spire's underside. */
+    drawSky(proj, view, eye, seconds, fog, gain = 1) { return inSpire() ? !!lookCircle(link.state())?.drawSky(proj, view, seconds, fog, gain) : false; },
+    /** EG-G2: THE SCORE's view of this breach (systems/egScore.js createSpireScoreHost) - `{ place, ctx }`, or null outside
+     *  the Spire: the hall's stage and kind, its lord and its phase, THE COUNT while it runs, a set piece, the end. */
+    scoreView() {
+      if (!inSpire()) return null;
+      const E = link.state(), t = now();
+      if (!E.b || !(E.h > 0)) return null;
+      const spec = egHallOf(E.seed, E.h, E.geo ?? 0), band = egBandOfCircle(egCircleOfHall(E.h)), lord = spec.kind === 'court' ? EG_LORDS[spec.lord] ?? null : null;
+      const F = E.fight?.h === E.h ? E.fight : null, phase = F ? Math.max(1, ...F.phases.map((p) => p.ph | 0)) : 1;
+      const valkKey = EG_VALKYNAZ[band], bandLord = lord ?? EG_LORDS[EG_BAND_LORDS[band]?.[0]];
+      return {
+        place: { band, sg: E.sg, kind: spec.kind, lord: spec.lord ?? null, valk: !!lord?.valk, phase, countLeft: E.ca > 0 ? egCountAt(E, t) : NaN, set: !!spec.tube || spec.kind === 'brink', sinceWake: E.hw > 0 ? t - E.hw : Infinity, end: !!E.end },
+        ctx: { band, motif: bandLord?.motif ?? 0, valk: EG_LORDS[valkKey]?.motif ?? 3, seed: E.seed >>> 0 },
+      };
+    },
     /** THE VOID'S COST (section 8): a tenth of my health, never below a quarter of it. */
     castBack() {
       const max = entity.maxHealth ?? 0, cut = Math.min(EG_CAST_BACK_LOSS * max, Math.max(0, entity.health - EG_CAST_BACK_FLOOR * max));
@@ -932,9 +965,10 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     },
     /** The breach as held (tests). */
     state: () => link.state(),
-    /** EG-E2/section 25.4, THE QUIET COMPANY: during a trial in the Spire the cosmetic auras draw at nothing (the host's
-     *  aura gather asks it) - every light on the floor is the fight's. */
-    quiet: () => inSpire() && link.state()?.sg === 'trial',
+    /** EG-E2/EG-G2 (section 25.4), THE QUIET COMPANY: during a trial in the Spire the cosmetic auras draw at nothing - the
+     *  host's aura gather asks it, by the look's own law (world/egLook.js egQuietCompany); back on the plates, at the
+     *  rests and in the recap. Every light on the floor is the fight's. */
+    quiet: () => inSpire() && egQuietCompany(link.state()?.sg, true).auras === 0,
     /** EG-E: where a Redoubt's spoils leave from - the Court's heart of hall `h`, over its floor, and the floor they are
      *  kept to (world/gateSpew.js keepLaunch's `{ centre, r, floorY }`) - while I stand in that hall; null anywhere else
      *  (the spoils go straight into the pack). */
@@ -976,7 +1010,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** The pages of the Annals this breach has given me (their numbers). */
     annals: () => [...annals].sort((a, b) => a - b),
     /** Online gone: every piece put away (the call kept - it is the hub's). */
-    away() { fight?.leave(); dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } callPortal?.clear?.(); prompt?.draw?.(null); startWin?.close?.(); startWin = null; },   // EG-F: and the call's portal, its prompt, the start window
+    away() { fight?.leave(); if (look) { look.release(); look = null; } dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } callPortal?.clear?.(); prompt?.draw?.(null); startWin?.close?.(); startWin = null; },   // EG-F: and the call's portal, its prompt, the start window; EG-G2: the look released
     /** EG-H1: the breach's shared clock (relay ms) and its offset to this machine's wall clock (null before the room has
      *  answered a ping) - the host's spans and its fight read it (scenes/world.js's `egNow`, the spans' anchored clock). */
     sharedNow: () => now(),

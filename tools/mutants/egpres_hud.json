@@ -433,29 +433,31 @@
   },
   {
     "name": "EGPRES-a-fill-dimming-the-line",
-    "file": "src/ui/egAccess.js",
-    "old": "out.edge = danger ? P.danger :",
-    "new": "out.edge = danger ? [P.danger[0] * fill, P.danger[1] * fill, P.danger[2] * fill] :",
+    "file": "src/scenes/egFight.js",
+    "old": "sh.edge = sh.mine ? brighter(pal.danger) : pal.danger;",
+    "new": "sh.edge = sh.mine ? brighter(pal.danger) : pal.danger.map((v) => v * fill);",
     "tests": [
-      "test/egpres_hud.test.js"
+      "test/egpres_hud.test.js",
+      "test/eglook_lines.test.js"
     ]
   },
   {
     "name": "EGPRES-the-gold-read-as-danger",
-    "file": "src/ui/egAccess.js",
-    "old": "out.color = isGold(sh.color) ? P.safety :",
-    "new": "out.color = isGold(sh.color) ? P.danger :",
+    "file": "src/scenes/egFight.js",
+    "old": "if (sameRgb(sh.color, GOLD)) sh.color = pal.safety;",
+    "new": "if (sameRgb(sh.color, GOLD)) sh.color = pal.danger;",
     "tests": [
       "test/egpres_hud.test.js"
     ]
   },
   {
     "name": "EGPRES-the-fill-never-dimmed",
-    "file": "src/ui/egAccess.js",
-    "old": "if (danger && fill < 1 && out.color === sh.color) out.color =",
-    "new": "if (false) out.color =",
+    "file": "src/scenes/egFight.js",
+    "old": "sh.fillK = fill * (",
+    "new": "sh.fillK = 1 * (",
     "tests": [
-      "test/egpres_hud.test.js"
+      "test/egpres_hud.test.js",
+      "test/eglook_lines.test.js"
     ]
   },
   {
@@ -605,8 +607,8 @@
   {
     "name": "EGPRES-the-pass-drawn-past-the-palette",
     "file": "src/scenes/egFight.js",
-    "old": "pass.draw(egAccessShape(sh, accSh, acc), proj,",
-    "new": "pass.draw(sh, proj,",
+    "old": "egLookShapes(_shapes, egAccessNow(), stageNow);",
+    "new": ";",
     "tests": [
       "test/egpres_hud.test.js"
     ]

@@ -39,7 +39,7 @@
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
-import { egCircleSpecs, egWallFallenZ, EG_VOID_Y, EG_BELT_MPS } from '../net/egLaw.js';
+import { egCircleSpecs, egWallFallenZ, egBandOfCircle, EG_VOID_Y, EG_BELT_MPS } from '../net/egLaw.js';
 import { buildStepModel, stepTris } from '../world/sdStepsModel.js';
 import { SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_STEP_THICK, gustAt } from '../world/sdSteps.js';
 import { ensureSdStepsArt } from './sdSteps.js';
@@ -51,7 +51,18 @@ import { egTubeEdge, EG_ENGINES } from '../net/egFragLaw.js';
 import { egNicheBoxes, egIsleDisc } from '../world/egHall.js';
 import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js';
 import { spireFooting, spireWake, spireObjs, spireAct } from '../systems/spireKit.js';
+import { egBandDress } from '../world/egBandArt.js';   // EG-G2: the band's dress on every piece
+import { createEgPieceBatch, EG_BATCH_CULL_PAD } from './egPieceBatch.js';   // EG-G2: one draw a kind, culled
+import { meshKitBounds } from '../world/meshKit.js';
+import { spherePlanes, sphereInPlanes } from '../render/bounds.js';
 
+/** EG-G2: the cull's view-projection and planes, kept (a frame makes nothing). */
+const _vp = new Float32Array(16), _planes = new Float32Array(24);
+/** `out` = a x b, column-major 4x4. */
+function mul4(out, a, b) {
+  for (let c = 0; c < 4; c++) for (let r = 0; r < 4; r++) out[c * 4 + r] = a[r] * b[c * 4] + a[4 + r] * b[c * 4 + 1] + a[8 + r] * b[c * 4 + 2] + a[12 + r] * b[c * 4 + 3];
+  return out;
+}
 /** Where a gone step's bucket waits (far under every floor). */
 export const EG_STEP_GONE_Y = -400;
 /** The bucket every step of a circle stands as. */
@@ -200,7 +211,8 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
   let draws = null;
   /** where my feet last stood on a floor or a solid step, and how high that floor was (the void's measure) */
   let safe = null, safeY = 0;
-  const make = (model) => { if (!model || !renderer?.createMesh) return null; try { return renderer.createMesh(model); } catch (e) { console.warn('[eg] a span would not build', e?.message ?? e); return null; } };
+  const band = egBandOfCircle(c);   // EG-G2: every piece in its band's dress (the Steps' own faces keep the Hour's - world/egBandArt.js)
+  const make = (model) => { if (!model || !renderer?.createMesh) return null; try { return renderer.createMesh(egBandDress(model, band)); } catch (e) { console.warn('[eg] a span would not build', e?.message ?? e); return null; } };
   const play = (rec, vol, pitch = 1) => { try { audio?.playOneShot?.(rec, vol, pitch); } catch { /* no sound */ } };
   const meshKey = (s) => STEP_MESH_KIND[s.kind] ?? `${s.kind === 'drop' ? 'drop' : 'slab'}:${s.w}x${s.d}`;
   const modelOf = (s) => (STEP_MESH_KIND[s.kind] ? buildStepModel(STEP_MESH_KIND[s.kind]) : s.kind === 'drop' ? egDropModel(s.w, s.d) : egSlabModel(s.w, s.d));
@@ -211,7 +223,25 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
     const gs = spec.steps.filter((q) => q.kind === 'gust');
     if (gs.length) gusts.push({ spec, z0: Math.min(...gs.map((q) => q.z - q.d / 2)) - 4, z1: Math.max(...gs.map((q) => q.z + q.d / 2)) + 4 });
   }
-  let pendMesh = null;
+  /** EG-G2: the circle's pieces batched (scenes/egPieceBatch.js), or null (no renderer that moves vertices - a draw a piece) */
+  let batch = null;
+  /** @type {Map<string, any>} the batched kinds' models */
+  const models = new Map();
+  /** A piece of mesh kind `mk` stood: in the batch (its slot, the draw it replaces), or as its own draw - its model once a
+   *  kind either way. Answers the slot or draw its pose writes, or null. */
+  const place = (mk, modelFn) => {
+    if (batch) {
+      if (!models.has(mk)) models.set(mk, egBandDress(modelFn(), band));
+      const slot = { object: { matrix: new Float32Array(16) }, hidden: false };
+      return batch.add(mk, models.get(mk), slot) ? slot : null;
+    }
+    if (!meshes.has(mk)) meshes.set(mk, make(modelFn()));
+    const gpu = meshes.get(mk);
+    if (!gpu) return null;
+    const d = { gpu, object: { matrix: new Float32Array(16) }, noShadow: true, texRemap: null };
+    draws.push(d);
+    return d;
+  };
   /** @type {any[]} */
   let targetList = [];
   /** THE FALLING WALLS: each hall's walkway as segments, each its bucket, its draw and the moment it fell */
@@ -356,34 +386,27 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
       if (draws) return false;
       draws = dynamicDraws;
       ensureSdStepsArt(renderer);
+      // EG-G2 (section 11.9): with a renderer that moves a mesh's vertices, every piece of a kind is one batched draw
+      // (scenes/egPieceBatch.js - the slot each pose writes is the draw it replaced); without one, a draw a piece as before
+      batch = renderer?.createMesh && renderer?.updateMeshVertices ? createEgPieceBatch({ renderer }) : null;
       for (const st of steps) {
         const mk = meshKey(st.s);
-        if (!meshes.has(mk)) meshes.set(mk, make(modelOf(st.s)));
-        const gpu = meshes.get(mk);
-        if (gpu) { st.draw = { gpu, object: { matrix: new Float32Array(16) }, noShadow: true, texRemap: null }; draws.push(st.draw); }
-        if (st.s.kind === 'pend') {
-          pendMesh ??= make(egPendModel());
-          if (pendMesh) { st.pend = { gpu: pendMesh, object: { matrix: new Float32Array(16) }, noShadow: true, texRemap: null }; draws.push(st.pend); }
-        }
+        st.draw = place(mk, () => modelOf(st.s));
+        if (st.s.kind === 'pend') st.pend = place('pend', () => egPendModel());
         const { positions, indices } = trisOf(st.s);
         try { collider?.addMesh?.(st.key, positions, indices, identity(), () => st.T); } catch (e) { console.warn('[eg] a step\'s collider', e?.message ?? e); }
       }
       for (const g of tubes) {
-        const mk = `wall:${g.w}x${g.d}`;
-        if (!meshes.has(mk)) meshes.set(mk, make(egSlabModel(g.w, g.d)));
-        const lk = `lid:${g.w}x${g.d}:${g.spec.h}`;
-        if (!meshes.has(lk)) meshes.set(lk, make(tubeLidModel(g.w, g.d, (g.spec.caves.find((q) => q.z0 <= g.z0 && q.z1 >= g.z1)?.height ?? 5.2))));
-        const gpu = meshes.get(mk), lid = meshes.get(lk);
-        if (gpu) { g.draw = { gpu, object: { matrix: new Float32Array(16) }, noShadow: true, texRemap: null }; draws.push(g.draw); }
-        if (lid) { g.lid = { gpu: lid, object: { matrix: new Float32Array(16) }, noShadow: true, texRemap: null }; draws.push(g.lid); }
+        g.draw = place(`wall:${g.w}x${g.d}`, () => egSlabModel(g.w, g.d));
+        g.lid = place(`lid:${g.w}x${g.d}:${g.spec.h}`, () => tubeLidModel(g.w, g.d, (g.spec.caves.find((q) => q.z0 <= g.z0 && q.z1 >= g.z1)?.height ?? 5.2)));
         const { positions, indices } = egSlabTris(g.w, g.d);
         try { collider?.addMesh?.(g.key, positions, indices, identity(), () => g.T); } catch (e) { console.warn('[eg] a tube segment\'s collider', e?.message ?? e); }
       }
       for (const g of isles) {
         const f = faces();
         realmIsland(f, g.spec.x0 + g.d.x, g.d.z, g.d.r, SD_REALM_ARENA_RECORD, { y: g.d.y, bands: Math.max(2, Math.round(g.d.r / 4)) });
-        const gpu = make(packRealmFaces(f));
-        if (gpu) { meshes.set(g.key, gpu); g.draw = { gpu, object: { matrix: identity() }, noShadow: true, texRemap: null }; draws.push(g.draw); }
+        const model = packRealmFaces(f), gpu = make(model);
+        if (gpu) { meshes.set(g.key, gpu); g.draw = { gpu, object: { matrix: identity() }, noShadow: true, texRemap: null, sphere: meshKitBounds(model.positions) }; draws.push(g.draw); }
         const tris = [];
         for (let k = 0; k < SD_ISLAND_SIDES; k++) {
           const a0 = (k / SD_ISLAND_SIDES) * Math.PI * 2, a1 = ((k + 1) / SD_ISLAND_SIDES) * Math.PI * 2;
@@ -396,7 +419,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
       for (const g of seals) {
         const { model, tris } = sealParts(g.door, g.side, g.a.y + 0);
         const gpu = make(model);
-        if (gpu) { meshes.set(g.key, gpu); g.draw = { gpu, object: { matrix: identity() }, noShadow: true, texRemap: null }; draws.push(g.draw); }
+        if (gpu) { meshes.set(g.key, gpu); g.draw = { gpu, object: { matrix: identity() }, noShadow: true, texRemap: null, sphere: meshKitBounds(model.positions) }; draws.push(g.draw); }
         const indices = new Uint16Array(tris.length / 3);
         for (let k = 0; k < indices.length; k++) indices[k] = k;
         try { collider?.addMesh?.(g.key, tris, indices, identity(), () => g.T); } catch (e) { console.warn('[eg] a false wall\'s collider', e?.message ?? e); }
@@ -409,15 +432,32 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
       }
       targetList = list;
       for (const g of walls) {
-        const mk = `wall:${g.w}x${g.d}`;
-        if (!meshes.has(mk)) meshes.set(mk, make(egSlabModel(g.w, g.d)));
-        const gpu = meshes.get(mk);
-        if (gpu) { g.draw = { gpu, object: { matrix: new Float32Array(16) }, noShadow: true, texRemap: null }; draws.push(g.draw); }
+        g.draw = place(`wall:${g.w}x${g.d}`, () => egSlabModel(g.w, g.d));
         const { positions, indices } = egSlabTris(g.w, g.d);
         try { collider?.addMesh?.(g.key, positions, indices, identity(), () => g.T); } catch (e) { console.warn('[eg] a wall segment\'s collider', e?.message ?? e); }
       }
+      batch?.build(draws);
       return true;
     },
+    /**
+     * EG-G2 - THE CULL (section 11.9), this frame, before the dungeon's draws (scenes/worldModes.js): the batched pieces'
+     * copies against the frustum (`proj` x `view`), and each island's and false wall's own draw `culled` outside it. Every
+     * one is `noShadow`, so no shadow record moves with it. Answers how many batched kinds draw.
+     */
+    cull(proj, view) {
+      if (!draws) return 0;
+      let planes = null;
+      if (proj && view) { mul4(_vp, proj, view); planes = spherePlanes(_vp, _planes); }
+      for (const g of [...isles, ...seals]) {
+        const d = g.draw;
+        if (!d?.sphere) continue;
+        const M = d.object.matrix, c = d.sphere.centre;
+        d.culled = !!planes && !sphereInPlanes(planes, c[0] + M[12], c[1] + M[13], c[2] + M[14], d.sphere.r + EG_BATCH_CULL_PAD);
+      }
+      return batch ? batch.cull(planes) : 0;
+    },
+    /** The batch's measure (tests, the budget): kinds, copies, what the last cull drew; null with no batch. */
+    batchStats: () => batch?.stats() ?? null,
     /**
      * One frame, BEFORE the motor: `t` the realm's anchored seconds, `body` the motor, `live` whether it runs this frame.
      * Answers the landing of a cast-back (the dungeon's frame) - the last floor or solid step my feet stood on - or null.
@@ -491,8 +531,8 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0 }
     clear() {
       for (const m of meshes.values()) if (m) { try { renderer?.destroyMesh?.(m); } catch { /* gone */ } }
       meshes.clear();
-      if (pendMesh) { try { renderer?.destroyMesh?.(pendMesh); } catch { /* gone */ } }
-      pendMesh = null;
+      batch?.clear(); batch = null;   // EG-G2: the batched kinds' meshes
+      models.clear();
       for (const st of steps) { st.draw = null; st.pend = null; }
       for (const g of walls) g.draw = null;
       for (const g of tubes) { g.draw = null; g.lid = null; }

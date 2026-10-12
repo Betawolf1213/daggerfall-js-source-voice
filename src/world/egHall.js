@@ -20,15 +20,18 @@
 // EG-FULL, LAYER THREE (section 11.6): every fragment's mesh half off its law (net/egFragLaw.js) - each passage's walls
 // and vault in its kit's dress, broken at its alcoves with the niche behind; the chambers' arches, stairs and vignettes;
 // each fragment's lights. A Collapsing Tube's floor and vault and Grath's islands are the spans' (scenes/egSpan.js).
-// The Hour's art dresses them (world/sdRealmArt.js: its stone, its brass, its bronze plates, its basalt, its gold edge
-// line) - EG16's white marble and gold is the Spire's own look, to come; said so in the arc's record.
+// EG-G2 (2026-10-12, section 25.1 - THE BAND'S DRESS): built with the Hour's records (world/sdRealm.js) and moved onto the
+// circle's band's own archive (world/egBandArt.js egBandDress): white marble and gold leaf in the Galleries, slate violet
+// and bone in the Cairn, black glass and moon-silver in the Shade, basalt and iron in the Wellhead. The magma and the fire
+// channels wear the band's liquid (EG_DRESS.molten), no longer the edge line's gold.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { realmToDungeon } from '../net/sdBrain.js';
 import { faces } from './gateModel.js';
 import { realmIsland, packRealmFaces, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_COBBLE_RECORD, SD_ISLAND_SIDES } from './sdRealm.js';
-import { egCircleSpecs, EG_TEXT } from '../net/egLaw.js';
+import { egCircleSpecs, egBandOfCircle, EG_TEXT } from '../net/egLaw.js';
 import { EG_FRAGS } from '../net/egFragLaw.js';
+import { egBandDress, EG_DRESS } from './egBandArt.js';   // EG-G2: the band's dress
 
 /** The made location's id (the Hour's is 0x7ffff200, the court's 0x7ffff000), its one block's name and index. */
 export const EG_HALL_LOCATION_ID = 0x7ffff300;
@@ -171,7 +174,7 @@ function caveModel(f, spec, q) {
       boxD(f, wallRec, Math.min(a[0], c[0]), a[1], a[2], Math.max(a[0], c[0]), c[1], c[2], true, 0.5);
     }
     // the fire running down the wall's foot - a glowing channel the length of each floor (the Caverns, the Forge)
-    if (kit === 'caverns' || kit === 'deep' || kit === 'forge') for (const [z0, z1, y] of [[q.z0, q.zA, q.y], [q.zB, q.z1, q.yB ?? q.y]]) { const g0 = D(X + s * (w - 0.35), y + 0.01, z0), g1 = D(X + s * (w - 0.05), y + 0.01, z1); quadTo(f, SD_REALM_EDGE_RECORD, [Math.min(g0[0], g1[0]), g0[1], g0[2]], [Math.max(g0[0], g1[0]), g0[1], g0[2]], [Math.max(g0[0], g1[0]), g1[1], g1[2]], [Math.min(g0[0], g1[0]), g1[1], g1[2]], [0, 1, 0]); }
+    if (kit === 'caverns' || kit === 'deep' || kit === 'forge') for (const [z0, z1, y] of [[q.z0, q.zA, q.y], [q.zB, q.z1, q.yB ?? q.y]]) { const g0 = D(X + s * (w - 0.35), y + 0.01, z0), g1 = D(X + s * (w - 0.05), y + 0.01, z1); quadTo(f, EG_DRESS.molten, [Math.min(g0[0], g1[0]), g0[1], g0[2]], [Math.max(g0[0], g1[0]), g0[1], g0[2]], [Math.max(g0[0], g1[0]), g1[1], g1[2]], [Math.min(g0[0], g1[0]), g1[1], g1[2]], [0, 1, 0]); }
   }
   if (!open && !sky && !q.tube) { const a = D(X - w - 0.6, yHi + q.height, q.z0), c = D(X + w + 0.6, yHi + q.height + 1.0, q.z1); boxD(f, SD_REALM_ROOT_RECORD, a[0], a[1], a[2], c[0], c[1], c[2], true, 0.5); }   // a Collapsing Tube's vault falls with its floor (scenes/egSpan.js)
   // THE KIT'S DRESS - every piece outside the walk (against the walls, overhead, or past the floor's edge)
@@ -264,13 +267,13 @@ function decoModel(f, spec, d) {
     }
   } else if (d.t === 'magma') {
     const y = d.y ?? -1.5, r = d.r;
-    quadTo(f, SD_REALM_EDGE_RECORD, P(d.x - r, y, d.z - r), P(d.x + r, y, d.z - r), P(d.x + r, y, d.z + r), P(d.x - r, y, d.z + r), [0, 1, 0], [[0, 0], [r / 4, 0], [r / 4, r / 4], [0, r / 4]]);
+    quadTo(f, EG_DRESS.molten, P(d.x - r, y, d.z - r), P(d.x + r, y, d.z - r), P(d.x + r, y, d.z + r), P(d.x - r, y, d.z + r), [0, 1, 0], [[0, 0], [r / 4, 0], [r / 4, r / 4], [0, r / 4]]);   // EG-G2: the band's liquid
   } else if (d.t === 'hall') {
     for (const sgn of [-1, 1]) { const x = d.x + sgn * d.hw; quadTo(f, SD_REALM_PILLAR_RECORD, P(x, (d.y ?? 0) - 0.5, d.z0), P(x, (d.y ?? 0) - 0.5, d.z1), P(x, (d.y ?? 0) + d.h, d.z1), P(x, (d.y ?? 0) + d.h, d.z0), [-sgn, 0, 0], [[0, 0], [(d.z1 - d.z0) / 2, 0], [(d.z1 - d.z0) / 2, d.h / 2], [0, d.h / 2]]); }
   }
 }
-/** THE CIRCLE'S HALLS, as one mesh (renderer.createMesh's model - the Hour's archive's records). `geo` the circle's span
- *  decrees (net/egLaw.js egGeoOf) - the same specs the relay judges. */
+/** THE CIRCLE'S HALLS, as one mesh (renderer.createMesh's model), in the circle's band's dress (EG-G2 - world/egBandArt.js).
+ *  `geo` the circle's span decrees (net/egLaw.js egGeoOf) - the same specs the relay judges. */
 export function buildEgCircleModel(seed, c, geo = 0) {
   const f = faces();
   for (const spec of egCircleSpecs(seed, c, geo)) {
@@ -289,7 +292,7 @@ export function buildEgCircleModel(seed, c, geo = 0) {
     for (const d of spec.deco ?? []) if (d.t === 'arch') for (const [x0, y0, z0, x1, y1, z1] of archParts(spec, d)) boxD(f, SD_REALM_PILLAR_RECORD, x0, y0, z0, x1, y1, z1, true, 0.5);
     for (const q of spec.ramps ?? []) { const [a, b, c, e] = rampCorners(spec, q); quadTo(f, SD_REALM_FLOOR_RECORD, a, b, c, e, [0, 1, 0]); quadTo(f, SD_REALM_ROOT_RECORD, a, b, [b[0], b[1] - 0.6, b[2]], [a[0], a[1] - 0.6, a[2]], [0, -1, 0]); }
   }
-  return packRealmFaces(f);
+  return egBandDress(packRealmFaces(f), egBandOfCircle(c));
 }
 
 /** THE CIRCLE'S FLOORS AND WALLS, FOR THE COLLIDER (the dungeon's frame; both faces are one to the collider): its discs,
@@ -372,7 +375,7 @@ export function egGateParts(spec) {
   const a = egToDungeon(spec, -g.halfW, 0, g.z - 0.15), c = egToDungeon(spec, g.halfW, 4.2, g.z + 0.15);
   const P = (x, y, z) => [x, y, z];
   for (const z of [a[2], c[2]]) tris.push(...P(a[0], 0, z), ...P(c[0], 0, z), ...P(c[0], 4.2, z), ...P(a[0], 0, z), ...P(c[0], 4.2, z), ...P(a[0], 4.2, z));
-  return { model: packRealmFaces(f), tris: new Float32Array(tris) };
+  return { model: egBandDress(packRealmFaces(f), spec.band ?? 0), tris: new Float32Array(tris) };
 }
 
 /** THE CIRCLE'S LAMPS (the light list's shape, the dungeon's frame): two by each plate, round each court's rim, along the

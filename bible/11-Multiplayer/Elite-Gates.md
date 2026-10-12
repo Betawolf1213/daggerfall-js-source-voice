@@ -4183,7 +4183,9 @@ art stay the look's (EG16, EG17).
 
   All three are each player's own online (`systems/onlineLane.js` ONLINE_PLAYERS_OWN_PREFS names the one switch).
 
-  The fight's telegraph pass draws every shape through `egAccessShape`, and the chip's red is the palette's danger. The
+  The fight lays the palette and the fill on every shape before its telegraph pass (EG-G2's `egLookShapes` in
+  `scenes/egFight.js`, reading `egAccessNow` - this module is the palettes' one home), and the chip's red is the
+  palette's danger. The
   Examination's runes chime as each lights, pitched up its numeral (`egRuneChime`), and the numeral goes to the HUD's
   polite live region, where every beat's words go for a screen reader.
 - **Words** (section 27.9). Every new line is worded once in `EG_PRES_TEXT`, `EG_TEXT_FIRST` and `EG_BAND_LINES`. The
@@ -4208,7 +4210,8 @@ art stay the look's (EG16, EG17).
    full throw on spans. They are the touch layer's own motor (`ui/touch.js`) and stay EG10's. The pad reaches the
    panel's cards and choices, not the Surplus's two buttons.
 8. The palette's colours ride `uEdgeCol` and `uColor`. High contrast's double keyline, hatch and chevrons, and the
-   hazard's dashes, need a new style bit in the telegraph shader (EG16). `port:allyEffects` (THE QUIET COMPANY) is not
+   hazard's dashes, need a new style bit in the telegraph shader (EG16; EG-G2 built it - `TELEGRAPH_FS_SPIRE`'s `uLook`,
+   the bits `egPaletteBits` reads off this palette). `port:allyEffects` (THE QUIET COMPANY) is not
    built, because the Spire's passes draw no allies' spell effects or hit numbers to quiet. The HUD and the card read
    reduced motion. The stair (EG10's swap) and the heavy blows' shakes (none in the Spire yet) are to read
    `egReducedMotion` when they are built.
@@ -4466,3 +4469,208 @@ dead), with twenty-nine records of other arcs re-aimed (`audit27h`, `audit_seats
 `bounty1`, `egplay`, `fb1011b`, `gatecrowd`, `gatefbx`, `macd`, `sd11c`, `sd12_onelife`, `sd20f`, `sd21_alone`,
 `sd27_audit`, `sd5a`, `sd7b`, `wb3b`), every one dead. `RELAY_VERSION` `world197`, unshipped, rehashed with
 `net/egDurable.js` in its graph.
+### EG-G2 - 2026-10-12 - THE LOOK AND THE SOUND
+
+Closes EG1's two rows, EG16 (all but the arch's skin, which is the arch's slice's), EG17, and what EG-D still owed the
+screen: the band art, `world/meshKit.js`, `world/pseudoArchives.js`, the moving pieces' pass with its cull and measured
+budgets, the Rail's dashed track, the Gust's streamers, the waystones lit, the mist drawn, and the band's dress where
+the Hour's records stood. Section 25.7's settings rows are the HUD slice's (EG-G1): this slice reads their shelf keys
+and draws what they choose.
+
+- **THE GATE'S TIERS** (`systems/gateTier.js`, a leaf importing nothing). `GATE_TIERS`, `GATE_TIER_TEXT` (Regular
+  *Dagon's Breach*, the words it always had; Elite *Elite Breach*; Super *Abyss Breach*, reserved), `GATE_TIER_SUB`
+  (*The Battlespire*), `gateTier(x)` (an `eg:` room key, a record of kind `eg` or one with a band is Elite; a record of
+  kind `gate` or one with a day is Regular; nothing reads as Super), `gateTierText`, `eliteBreachPlaque({ opener, mine
+  })` (another's company named, never your own), `gateSightLine(metres, direction)` (to the nearest 10 m, never under
+  10), `eliteTimerText`. No reader of the Regular gate's words moved to it: the HUD's and the arch's slices are its
+  readers.
+- **THE REGISTRY** (`world/pseudoArchives.js`). Every archive the port numbers past TEXTURE.511 - 34 numbered blocks and
+  8 string keys - with its owner, its kind (port, mod, data or synthetic) and what it holds; `pseudoArchiveCollisions`,
+  `pseudoArchiveOwner`, `pseudoArchiveFree`. Its test sweeps `src/` both ways: every `*ARCHIVE*` number past 511 is
+  registered at its own value under its own owner, every registered block is found in its owner, and no two collide. The
+  Spire's own: `EG_BAND_ARCHIVES` (38241, 38251, 38261, 38271, a block of 9 a band) and `EG_ARCH_ARCHIVES` (38281 to
+  38289, held for the arch's skin).
+- **THE BAND ART** (`world/egBandArt.js`). Each band's ramps (stone, vein, metal, accent, liquid; five steps each)
+  painted in code with SD-LOOK's kit (ordered dither, bevels, quantised ramps) into eight records under the band's
+  archive: floor (0), brass (1), root (2), arena (4), cobble (31), edge (32), molten (33), pillar (56). The Galleries
+  are marble and gold leaf with Battlemage blue over the fire-sea; the Cairn slate violet and bone in soul-light; the
+  Shade black glass and moon-silver over quicksilver; the Wellhead SD-LOOK's basalt and iron over the molten. The gold
+  edge glows at `SD_EDGE_GLOW` and the brass at `SD_BRASS_EDGE_GLOW`. The liquid's light is held at or under luma 0.45
+  in every band (`egMoltenGlow`, section 11.9: magma never outshines a telegraph). `egBandDress(model, band)` moves only
+  those eight records' sub-meshes from the Hour's archive to the band's. It dresses the circle's model, the gate's parts
+  and every span piece, batched or drawn alone. The magma floor (Grath's Court) and the Caverns' fire channels moved
+  from the edge gold (32) to the band's liquid (33). The dungeon arm uploads a band's art the first time a session
+  stands one of its halls, its light white.
+- **THE MESH KIT** (`world/meshKit.js`). `createMeshKit()`: `tri`, `quad`, `box`, `prism`, `extrude`, `lathe` and
+  `sweep`, every face wound to face out, one sub-mesh a record, 32-bit indices, `pack(archive)`;
+  `meshKitBounds(positions)` (box, centre, radius). Its first reader is the waystones' model.
+- **THE PIECES' PASS** (`scenes/egPieceBatch.js`, read by `scenes/egSpan.js`). Each kind of moving piece (a slab, a
+  pendulum, a tube, a lid, a wall) is one mesh holding every copy, drawn through the renderer's own mesh program
+  (`createMesh`, `updateMeshVertices`). Each slot reads the pose the law already writes (`object.matrix`, `hidden`; a
+  matrix of zeros is a gone piece), so not one line of the law's posing changed. Each frame `cull(planes)` re-lays only
+  the copies whose place or sight changed, uploads a kind only when one did, parks a copy out of sight 4000 m below and
+  hides a kind with nothing in view. Every piece is `noShadow`, so a cull never moves the shadow record. Grath's islands
+  and the seals keep their own draws, now culled by their bounding spheres. The dungeon arm calls the cull
+  (`dungeonContext.egSpanCull`) on the frame's own view and projection, before it draws the level and its movers.
+  **Measured** (node, 60 circles: seeds 7, 99 and 12345, circles 1 to 20):
+  - the circle's dynamic draws fell from a mean of 53.4 (worst 152) to 8.4 (worst 13);
+  - its GL draw calls (a sub-mesh each, the islands and seals counted) from 115.5 (worst 343) to 17.6 (worst 32), every
+    copy in view;
+  - the ride and the cull together cost 0.19 ms a frame on average and 0.32 ms at worst (seven circles, hall 2's eye).
+- **THE EDGE LINE** (`world/egLook.js` `egCircleEdges`, `render/egLinePass.js`). Screen-width quads, 2 px wide (3 px on
+  a screen 720 px tall or less), gold at luma 0.38, lifted 0.02 m. They run along every disc's rim, every band's long
+  edges (not a cave's, a wall's or a tube's) and the lanes; a falling island's disc has none. The Rail's dashed track
+  (0.5 m dashes, under its run) and the Drum's are drawn in the same pass. Every line keeps section 25.6's fog floor.
+- **THE LAST TELLS.**
+  - The Gust's streamers (`egGustSections`, `egStreamersAt`): from the breath law, only while the wind blows, flowing
+    its way, at most 64.
+  - The waystones lit (`buildEgLookModel`): a post beside each walkway, its cap in the edge's gold, in the band's dress.
+  - The mist drawn (`egMistSheets`, `egMistSheetsAt`, `render/egMistPass.js`): a pale sheet from 0.3 m under the walk,
+    rising to its law's line, feathered at its rim, dithered, in the fog.
+- **THE SKIES** (`render/egSkyPass.js`, `EG_SKIES`). Each band's zenith, horizon and deep, the Galleries' and the
+  Wellhead's embers, the Shade's moon and its stars, and the Spire's underside overhead: a black mass leaning toward the
+  course, its ragged rim lit from below by the deep, smaller each band (0.34, 0.22, 0.13 and 0.07 radians). It is drawn
+  in the dungeon arm's sky slot, where the Hour's sky stood, in the Spire's haze (`drawEgSky`, world.js).
+- **THE STAIR.** The law alone: `egStairOf(h, reduced)` - the band's first hall and each Brink fall, every other hall
+  veils, and reduced motion cuts.
+- **THE TELEGRAPH PASS** (`render/gateTelegraph.js`). `GateTelegraphRenderer(gl, { spire: true })` builds the Spire's
+  shader from the gate's text by asserted swaps; the gate's own shader is unchanged byte for byte. The swaps add:
+  - section 25.6's fog floor: 0.85 within 30 m, eased out over 4 m;
+  - the fill's scale (`port:telegraphFill`, 50 to 100%);
+  - the double keyline and the hatch, as a palette asks;
+  - THE HAVEN GRAMMAR (`TELEGRAPH_POOL_HAVEN`, pool 3): gold and lit, its line bright, a dark keyline outside, chevrons
+    flowing in to its heart.
+  The fight (`egLookShapes` in `scenes/egFight.js`) draws the danger edge in the palette's colour, brighter on a shape
+  aimed at you, and draws your shapes last. In a trial it fills a shape aimed at another member at 0.55. It draws a
+  haven in the palette's safety and the place's own hazard in the palette's hazard colour.
+- **THE DANGER PALETTES** (EG-G1's `EG_DANGER_PALETTES` in `ui/egAccess.js`, their one home - the merge folded this
+  slice's own table into it, and its style bits are `egPaletteBits`): Standard, High contrast (magenta, a double keyline
+  and a hatch), Deutan-Protan and Tritan. The lab check (`egLab`, `egSeen`, `egThroughFog`) tells apart the danger edge from the magma
+  and from a burning pool, a haven from a danger fill, and the place's white from gold and from the void: at least ΔE 12
+  apart at 10 m and 30 m of each band's fog, in colour and under the colour-blind simulation (Machado 2009) each palette
+  is meant for. In grey the place's white stands at least 8 apart in L* from the danger edge; the shelf's colour-blind
+  pins (40 delta E under each preset's own simulation) hold on the same colours. The look reads the shelf's
+  `dangerPalette` and `telegraphFill` (`egAccessNow`, the fill 0.5-1 as the row stores it). `port:allyEffects` is not
+  on the shelf: the port draws no allies' hit numbers to hide (`ui/hitNumbers.js` draws only the player's own), so the
+  row would govern nothing.
+- **THE QUIET COMPANY** (`egQuietCompany(stage, full)`). In a trial no cosmetic aura is gathered, drawn or lit (the
+  client's `quiet`, which world.js's `auraFrame` asks - one seam with EG-E2's), and a shape aimed at another member is
+  filled at 0.55.
+- **THE SCORE** (`systems/egScore.js`). Fourteen made songs at section 26's tempos and lengths, made as the Hour's and
+  the Warden's are (`makeSong`, 60 ticks a beat, looping on the bar line). They are in E Phrygian, the Redoubt's hymn in
+  E major. The fanfare is broken and mended; each band's motif is in its yard's brass, and each lord's four bars run in
+  its Court's three songs and its Valkynaz's. The halls play their three variants in the seed's order.
+  `spireScoreFor(place)` is the law, and THE PRIORITY TABLE (`EG_SCORE_PRIORITY`) is pinned: the end, a Valkynaz, a
+  Redoubt, the count's last two minutes, a lord's wake, a Court, a set piece, a yard, a hall, then the ambience alone.
+  `createSpireScoreHost` is the world host's seam: `hourScoreFrame` asks it first. It registers a breach's songs when
+  the breach's context changes, plays the law's song or fades to the band's ambience, and times the end from its first
+  note. Measured by `tools/egScoreProbe.mjs` through the real SongPlayer (25 checks, every one passed): every song
+  sounding, and pressed through one player with a duck under a Court; peaks under the -1 dBFS ceiling at the highest
+  MusicVolume; the war louder by phase (the Courts -16.0, -14.9 and -14.3 dBFS, the Valkynaz -15.1, the count -14.4);
+  the Galleries' halls -19.1 and the Redoubt -17.9, under the fights; the end -17.7, decaying to -43 in its last
+  seconds. The first run found the end song looping before the law let it go, so `SPIRE_END_MS` came down to 36 s and
+  `SPIRE_WAKE_MS` to 3.4 s, each inside its song (pinned).
+- **THE SPIRE MIX** (`systems/egMix.js`, `SongPlayer.duck`, `music.duck`).
+  - A personal sting for a lord's blow or a CHECK on your feet always, for an add's at most once each 1.5 s, judged once
+    a blow.
+  - The critical bus ducks the score 6 dB for 300 ms. The duck rides the song's own level, back over 0.12 s, so it never
+    fights a fade.
+  - The barks are capped at four a kind, nearest first; a critical one is never culled.
+- **THE LAB** (`spire.html`, `src/tools/spireLab.js`, registered with Vite). It draws a circle as the dungeon arm does
+  (the cull before the draws, the sky, the mist, the telegraphs, the lines), each band from the plate, the course, the
+  Court, over the pieces, at the rim, at the sky and down a misted shaft, in any palette and fill, with the line pass
+  off (`?lines=off`) or the shapes off (`?shape=off`) for a probe's comparison. `tools/spireLabProbe.mjs` (Chromium on
+  SwiftShader, waiting on the lab's frame counter, 33 checks) holds:
+  - every view of every band lit, with no GL error. The Shade's views are held to a third of the others' lit share: its
+    floors are the page's black glass under a dark sky, and from afar only its lines and its silver read;
+  - the pieces in a handful of draws, the other halls culled from the plate;
+  - from over the circle, THE EDGE LINE's gold where the frame without the line pass has none (957 to 2,186 pixels a
+    band);
+  - the underside darkening the zenith (90 to 99%);
+  - the mist covering its shaft;
+  - the danger disc in each palette's own hue, where the frame with no shapes has none.
+  Every check passed here, each part in its last run: the views, the skies and the mist in the first run; the Shade's
+  views, the lines and the palettes after the changes their first runs asked for. The first runs failed the Shade's far
+  views on the lit share and the Tritan disc on a colour test too narrow for a blended edge; the line check, made at the
+  rim, found the line gold on the gilt and was moved to the view from above.
+
+**The four hosts.**
+- `src/scenes/world.js` - WIRED:
+  - the Spire's score first in `hourScoreFrame`;
+  - `drawEgSky` beside the fight's pass;
+  - the auras quiet in a trial;
+  - the music handed to the fight for THE SPIRE MIX.
+  Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - WIRED:
+  - a band's art uploaded once a session;
+  - the waystones' mesh among the circle's draws;
+  - the cull before the dynamic draws;
+  - the Spire's sky in the sky slot (the Hour's no more over the Spire).
+- `src/scenes/dungeonContext.js` - WIRED: `egSpanCull(proj, view)`.
+- `src/scenes/exterior.js` - FLAGGED: the bench is offline and holds no Elite Breach.
+
+**Departures, said plainly.**
+- **Not built:**
+  - the slag's crust (law kind `slag`) is still laid by no kit: laying it moves the relay bundle's law, which this slice
+    left alone;
+  - the stair's fall and veil are law only (`egStairOf`); drawing them is the swap's screen (EG10);
+  - THE QUIET COMPANY is wired for the auras and the fills alone. Allies' effects at 60% with no light, allies' numbers,
+    the Vestige ring and the 12 m Watchfire lines are law with no reader;
+  - the mix's peers at -4 dB and Watchfire's tell at pitch 1.4 are numbers in `EG_MIX` with no reader. The reverb's
+    crossfade is not built;
+  - the Shade's foe rim lights and the fire falls' texture (TEXTURE.356) are not ported;
+  - the arch's skin is the arch's slice's.
+- **Done another way:**
+  - the moving pieces are batched on the CPU (only moved copies re-laid), not drawn with per-instance matrices on the
+    GPU: the renderer has no instanced path, and the batch measured inside the budget;
+  - the cull covers the pieces, islands and seals (all `noShadow`), not the circle's one static mesh;
+  - a haven is a pool (`TELEGRAPH_POOL_HAVEN`), not a new telegraph kind;
+  - a lord's wake is its own 2-bar song (SPIRWAKE), a fourteenth name beside the page's table;
+  - a band's textures stay up for the session once stood, never freed at the breach's end;
+  - the Steps' own pieces (the Crumble, the Beat with its twelve dial frames, the Drift and the riser) keep the Hour's
+    art: their faces are tells, swapped frame by frame through the Hour's archive.
+- **Not verified without a browser and the game's data:**
+  - nothing was played in the live game with ARENA2. The look was seen only in the lab on SwiftShader: plates, courses,
+    Courts, skies, rims, mist and palettes;
+  - the draw budget was measured on node's counts and the lab's batch stats, not as frame time on a phone;
+  - the songs were measured through the real player in Chromium, not heard on a sound card.
+
+**Pins.**
+- `test/eglook_registry.test.js` (4), `test/eglook_art.test.js` (4), `test/eglook_pieces.test.js` (5),
+  `test/eglook_lines.test.js` (8), `test/eglook_score.test.js` (6), `test/eglook_hosts.test.js` (4).
+- `tools/mutants/eglook.json` (82, every one dead; six survived the first run and were killed by new assertions: the
+  fight's pass built as the Spire's, the barks through the cap, every critical bark kept past it, a Valkynaz's song only
+  in its Court, the lords' brass harder each phase, a band's art uploaded once a session).
+- Judged again over the files this slice touched: `egspan.json`, `egfull.json`, `egplay.json`, `egfrag.json` and
+  `wb13a.json` (143, every one dead). `wb13a.json`'s WB13a-the-last-moment-flooding-the-shape was re-aimed by content,
+  since the Spire's swap quotes its line; `SongPlayer.duck` stands above `fadeTo`, so DISC20-B's record applies as
+  written.
+- `test/tv4_weather_above.test.js`'s AUDIT DEEP R-1 names the three new fogged passes as drawn in an Elite Breach alone,
+  never under the travel view.
+- PIN MOVED for the Spire's sky, one more foreign pass and one more seam in the world host:
+  `test/audit18_bible_docs.test.js` (36 passes), `test/farring.test.js`, `test/glstate.test.js` and `test/perf2.test.js`
+  (29 seams). PIN MOVED for the lab: `test/moduleload_smoke.test.js` lists `src/tools/spireLab.js` among the browser
+  tools that read `location` at load (14). PIN MOVED for the score: `test/sd13_score.test.js` and
+  `test/sd20d_audio.test.js` run `hourScoreFrame` from world.js's text with the Spire's host beside it, holding nothing
+  out of an Elite Breach. Systems.md counts 512 modules.
+- The whole suite, run here (26,732 tests): every failure this slice caused is fixed - the pins above, a reversed
+  smoothstep in the sky's shader (SD20c's sweep) and a registry line that named the Oblivion Gate (WB12a's guard). One
+  failure stands at the base commit, not this slice's: doctrine's Ledger-row check names `src/net/egPay.js` and
+  `src/systems/egLordArms.js`, left to the Ledger's owner.
+- `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`.
+- The Port-Ledger's rows are left to the merge.
+
+**The merge (EG-G2 into the arc beside EG-G1, EG-H1, EG-H2 and EG-H3).**
+
+- One home for the shelf. EG-G1 and this slice each built the danger palettes. The palettes, the fill and reduced
+  motion are EG-G1's (`ui/egAccess.js`, the rows under Settings > Accessibility); this slice's own table and
+  `egLookPrefs` are gone. The fight lays them on through `egLookShapes(shapes, egAccessNow(), stage)`. The fill goes
+  to the Spire stage's `uFillK` (the row stores 0.5-1, never 50-100), and EG-G1's `egAccessShape` is gone with it.
+  Both labs (EG-G1's 40 delta E under each preset's own simulation, this slice's fog-and-magma check) hold on the
+  shelf's colours, and the colour-vision matrices are `ui/egAccess.js`'s `EG_CVD`, read by both.
+- One seam for the quiet company. EG-E2's `quiet()` and this slice's `quietAuras()` were the same rule twice. The
+  client's `quiet` now reads `egQuietCompany`, and `auraFrame` asks it, so a trial's auras are not gathered, drawn or lit.
+- THE SWAP (EG-H3) stands a new circle in place, without `standEgHall`. It now uploads the new circle's band dress
+  (`egBandUp`) and builds its waystones (`egLookBuild`). The old circle's look mesh is freed with its circle mesh.
+- The fight's wind-up barks keep EG-H1's feint gate (the wind once the wind-up is past `EG_FEINT_AT`, never on a
+  feint), and Watchfire's early outlines draw after the ordered blows. The fight's clock is the breach's corrected one.

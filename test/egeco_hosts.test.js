@@ -25,7 +25,7 @@ test('EG-E THE HOSTS (sections 15, 19, 20, 25.4): the claim with its character a
   // the client's half: the Redoubt told once a rest, the board's command, the trial's quiet
   assert.match(c, /if \(rdSeen !== E\.h\) \{ rdSeen = E\.h; redoubt\?\.\(E\.rd\);/);
   assert.match(c, /if \(a === 'board' \|\| a === 'boards'\) \{ if \(!board\?\.\(\)\) say\(/);
-  assert.match(c, /quiet: \(\) => inSpire\(\) && link\.state\(\)\?\.sg === 'trial',/);
+  assert.match(c, /quiet: \(\) => inSpire\(\) && egQuietCompany\(link\.state\(\)\?\.sg, true\)\.auras === 0,/);   // PIN MOVED (EG-G2, merged): by the look's law
 });
 
 test('EG-E3 THE FIND\'S HOST DOORS (section 5): the owner\'s death names the striker the foes stream carries (`by: foe._killedBy`), so a joiner\'s kill is the joiner\'s ask; the joiner\'s record door asks through egFindStruck; the world host registers the find online with the dungeon\'s tier (mutants: the striker unnamed; the joiner\'s door unwired; the seam never registered)', async () => {

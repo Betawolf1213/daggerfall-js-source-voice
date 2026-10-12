@@ -49,8 +49,8 @@
   {
     "name": "WB13a-the-last-moment-flooding-the-shape",
     "file": "src/render/gateTelegraph.js",
-    "old": "  float inner = (fin * 0.10 + filled * (0.20 + 0.55 * T2) + lip * 0.35 + fin * (0.05 + 0.07 * uT) * g) * inFade;",
-    "new": "  float inner = (fin * 0.10 + filled * (0.20 + 0.55 * T2) + lip * 0.35 + fin * (0.05 + 0.07 * uT) * g) * inFade + 0.8 * fin * now;",
+    "old": "  float inner = (fin * 0.10 + filled * (0.20 + 0.55 * T2) + lip * 0.35 + fin * (0.05 + 0.07 * uT) * g) * inFade;\n  // THE THROB, on the line alone",
+    "new": "  float inner = (fin * 0.10 + filled * (0.20 + 0.55 * T2) + lip * 0.35 + fin * (0.05 + 0.07 * uT) * g) * inFade + 0.8 * fin * now;\n  // THE THROB, on the line alone",
     "tests": [
       "test/wb13a_telegraphs.test.js"
     ]

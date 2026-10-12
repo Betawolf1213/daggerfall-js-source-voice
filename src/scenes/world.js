@@ -431,6 +431,8 @@ import { createDeadlandsAir } from './deadlandsAir.js';   // WB6b: and their air
 import { createGateVeil } from '../ui/gateVeil.js';   // WB6c: the step through the gate - a vortex of fire in and out
 import { gateScoreSongs, createCourtScore, GATE_SONGS, SCORE_SILENCE } from '../systems/gateScore.js';   // WB7: the Warden's score - the court's own music
 import { sdScoreSongs, createHourScore, sdScorePlace, SD_SCORE_SILENCE } from '../systems/sdScore.js';   // SD13: the Hour's own score
+import { createSpireScoreHost } from '../systems/egScore.js';   // EG-G2: the Spire's own score (Elite-Gates.md section 26)
+import { EG_HALL_FOG } from '../world/egHall.js';   // EG-G2: the Spire's haze, its sky's gain
 import { createSpoilsPool, spoilsStore, recoverSpoils, spoilsLevel, SPOILS_TEXT, SPOILS_SPENT_RESEND_MS } from './spoilsPool.js';
 import { breachBookFor, BREACH_BOOK_TEXT } from '../systems/breachBook.js';   // WB12c: the first ember brings the Guild's book
 import { bossPlace } from '../world/gateBoss.js';   // AUDIT WBX F3: where he fell - a charge's head, a leap's flight - frozen by the link's fold   // WB5: a fallen boss's spoils, spewed, glowing and taken
@@ -25020,7 +25022,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     hurt: (n) => { if (playerEntity.health > 0) { hurtPlayer(playerEntity, n, { bypassShield: true, spare: () => {} }); flashPlayerDamage(n); } },   // the void is a setback, never a death
     store: appStorage(), saved: () => saveSoon.changed(), hudHidden: () => gamePaused() || !!townTalk.hudHidden, renderer, audio,
     fight: (link) => createEgFight({
-      renderer, gl: renderer.gl, getTexture, uploadRecordFrame, audio, link, now: () => (egClient ? egClient.sharedNow() : egNow()), cam: () => cam.pos,   // EG-H1: the fight on the breach's corrected clock
+      renderer, gl: renderer.gl, getTexture, uploadRecordFrame, audio, music, link, now: () => (egClient ? egClient.sharedNow() : egNow()), cam: () => cam.pos,   // EG-H1: the fight on the breach's corrected clock; EG-G2: the music for THE SPIRE MIX's duck
       feet: () => (playerSpawned && modes?.egHallBreach?.() != null ? player.feetAt() : null), player: () => playerEntity,
       save: (e, el) => egSave(e, el),   // the throw against a blow's element, the gate's
       strike: (d, how) => modes?.dungeonCtx?.strikePlayer?.(d, how), say: (text) => egMid(text),
@@ -25365,12 +25367,14 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  death); where I stand held a few metres past each change (A10, sdScorePlace's `was`). */
   let _hourScoreHeld = false, _hourScoreMade = false, _hourPlace = null;
   const _hourScore = createHourScore();
+  const _spireScore = createSpireScoreHost({ music, now: () => Date.now() + _sharedOffsetMs });   // EG-G2: the Spire's score holds the music before the Hour's (systems/egScore.js)
   const sdScoreWhere = () => {
     if ((modes?.mode ?? 'exterior') !== 'dungeon') return (_hourPlace = null);
     if (modes?.sdRealmSlot?.() != null) { const [x, , z] = sdDungeonToRealm(player.pos[0], player.pos[1], player.pos[2]); return (_hourPlace = sdScorePlace(x, z, _hourPlace)); }
     return (_hourPlace = modes?.dungeonLocation?.superTier ? 'hollow' : null);
   };
   const hourScoreFrame = () => {
+    if (_spireScore.frame(egClient?.scoreView?.() ?? null)) return true;   // EG-G2: in an Elite Breach the Spire's score is the music
     const place = sdScoreWhere();
     if (place == null) {
       if (_hourScoreHeld && (modes?.stepping || modes?.transitioning)) return true;   // A1: the world moving under the veil
@@ -30122,6 +30126,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     egBatches: () => egClient?.batches() ?? [],   // EG-PLAY: the hall's bodies and the way home's portal
     egLights: () => [...(egClient?.lights() ?? []), ...(sdSpoilsPool?.lights() ?? [])],   // EG-PLAY: the fight's glows, before the Spire's lamps; EG-E: and a Redoubt's spoils'
     drawEgFight: ({ proj, view, eye }) => { const t = performance.now() / 1000, fog = courtFogNow(); const a = !!egClient?.drawPass(proj, view, eye, t, fog), b = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog); if (a || b) renderer.markForeignPass(); },   // EG-PLAY: the telegraphs, vents and rifts; EG-E: a Redoubt's spoils' lines
+    drawEgSky: ({ proj, view, eye }) => { if (egClient?.drawSky(proj, view, eye, deadlandsSeconds(), courtFogNow(), skyGain(renderer._fogColor, EG_HALL_FOG.color))) renderer.markForeignPass(); },   // EG-G2: the Spire's own sky (render/egSkyPass.js) - the band's void, the Spire's underside
     egWayHome: () => egClient?.wayHome(),   // EG-PLAY: a Redoubt's way home, pressed
     egCastBack: () => egClient?.castBack(),   // EG-PLAY: the void's cost
     egGateOpen: (h) => !!egClient?.gateOpen(h),   // EG-PLAY: a Rampart's portcullis, stood or sunk

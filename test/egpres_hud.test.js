@@ -14,10 +14,10 @@ import {
 } from '../src/ui/egSpireHud.js';
 import { EG_BEATS, EG_BEAT_KEYS, EG_BEAT_SOUNDS, egRuneChime, egBeatPlan, egBeatMemo, egBeatWatch, EG_TEXT_FIRST, EG_FIRST_KEYS, egFirstDue, egRehearsalDue, egFirstRead, EG_FIRST_KEY, EG_PRES_TEXT, EG_HAPTICS, egBuzz, egBeatUnder, egPerilsNew, EG_BEAT_WARN_S } from '../src/ui/egBeats.js';
 import { egAbsentStep, egPartyRows, egPartyDeco, egRoadOf, EG_NUMERALS } from '../src/ui/egParty.js';
-import { EG_DANGER_PALETTES, EG_DANGER_PALETTE_KEYS, egAccessShape, egCvdDistance, egReducedMotion, egFillOf, EG_EDGE_DANGER, EG_EDGE_SAFE } from '../src/ui/egAccess.js';
+import { EG_DANGER_PALETTES, EG_DANGER_PALETTE_KEYS, egCvdDistance, egReducedMotion, egFillOf } from '../src/ui/egAccess.js';
 import { egRecapModel, egRecapKeep, egRecapsKept, EG_RECAPS_KEPT, drawEgPanel, egPanelModel } from '../src/ui/egHud.js';
 import { createEgClient } from '../src/scenes/egClient.js';
-import { EG_SAY } from '../src/scenes/egFight.js';
+import { EG_SAY, egLookShapes } from '../src/scenes/egFight.js';
 import { egBreachNew, egEnter, egStateOf } from '../src/net/egBrain.js';
 import { egHallOf, egCountText, EG_TEXT, EG_SEALED_MS, EG_LAST_WORD_MS, EG_ABSENT_TRIAL_MS, EG_TWIST_LINES, EG_DECREE_BY_KEY } from '../src/net/egLaw.js';
 import { EG_STATE_EMPTY } from '../src/net/egLink.js';
@@ -26,7 +26,7 @@ import { egTtkRef, EG_OBJ } from '../src/net/egLords.js';
 import { EG_BEAT_CYCLE_S, EG_BEAT_SOLID_S } from '../src/net/egSpanLaw.js';
 import { validEgOut } from '../src/net/wire.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
-import { TELEGRAPH_EDGE, TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE } from '../src/render/gateTelegraph.js';
+import { TELEGRAPH_EDGE_DAGON, TELEGRAPH_EDGE_SAFE } from '../src/render/gateTelegraph.js';
 import { DEFAULT_TEXT_COLOR, DEFAULT_SHADOW_COLOR } from '../src/ui/nativePanel.js';
 import { whereIs } from '../src/ui/settingsMap.js';
 import { PREF_DEFAULTS, setPref } from '../src/systems/uiPrefs.js';
@@ -502,8 +502,6 @@ test('EG-G1 ACCESSIBILITY (section 25.7): the danger palette - High contrast\'s 
   assert.deepEqual(EG_DANGER_PALETTE_KEYS, ['standard', 'contrast', 'deutan', 'tritan']);
   assert.deepEqual(EG_DANGER_PALETTES.contrast.danger, [1.0, 0.15, 0.75]);
   assert.deepEqual(EG_DANGER_PALETTES.standard.danger, [...TELEGRAPH_EDGE_DAGON]);
-  assert.deepEqual(EG_EDGE_DANGER.map((e) => [...e]), [[...TELEGRAPH_EDGE_DAGON], [...TELEGRAPH_EDGE]]);
-  assert.deepEqual([...EG_EDGE_SAFE], [...TELEGRAPH_EDGE_SAFE]);
   // separated under simulation: each pair of a colour-blind preset 40 delta E apart for the eyes it is for
   const pairs = (P) => [[P.danger, P.safety], [P.danger, P.hazard], [P.safety, P.hazard]];
   for (const [key, kinds] of [['deutan', ['protan', 'deutan']], ['tritan', ['tritan']]]) {
@@ -511,17 +509,18 @@ test('EG-G1 ACCESSIBILITY (section 25.7): the danger palette - High contrast\'s 
   }
   assert.ok(egCvdDistance(EG_DANGER_PALETTES.standard.danger, EG_DANGER_PALETTES.standard.safety, 'deutan') < 40, 'why the preset exists');
   assert.ok(egCvdDistance(EG_DANGER_PALETTES.standard.safety, EG_DANGER_PALETTES.standard.hazard, 'tritan') < 40);
-  // a shape recoloured
-  const blow = { edge: TELEGRAPH_EDGE_DAGON, color: [1.0, 0.45, 0.1], alpha: 1 }, out = {};
-  assert.equal(egAccessShape(blow, out, { palette: EG_DANGER_PALETTES.standard, fill: 1 }), blow, 'Standard at full light: the shape itself');
-  const dim = egAccessShape(blow, out, { palette: EG_DANGER_PALETTES.standard, fill: 0.5 });
-  assert.deepEqual(dim.color, [0.5, 0.225, 0.05]); assert.deepEqual([...dim.edge], [...TELEGRAPH_EDGE_DAGON], 'the line whole');
-  assert.deepEqual(blow.color, [1.0, 0.45, 0.1], 'the shape never written');
-  const hc = egAccessShape(blow, {}, { palette: EG_DANGER_PALETTES.contrast, fill: 1 });
-  assert.deepEqual(hc.edge, EG_DANGER_PALETTES.contrast.danger);
-  const haven = egAccessShape({ edge: TELEGRAPH_EDGE_SAFE, color: [1.0, 0.82, 0.38], alpha: 1 }, {}, { palette: EG_DANGER_PALETTES.contrast, fill: 0.5 });
-  assert.deepEqual([haven.edge, haven.color], [EG_DANGER_PALETTES.contrast.safety, EG_DANGER_PALETTES.contrast.safety], 'safety never dimmed, never danger');
-  const pend = egAccessShape({ edge: TELEGRAPH_EDGE_DAGON, color: [0.95, 0.95, 1.0], alpha: 1 }, {}, { palette: EG_DANGER_PALETTES.contrast, fill: 1 });
+  // a shape recoloured - PIN MOVED (merged with EG-G2): the look is laid on by the fight's egLookShapes, from the shelf
+  // (one home - its fill the Spire stage's uFillK, so the colour and the line stay whole)
+  const blow = () => ({ edge: TELEGRAPH_EDGE_DAGON, color: [1.0, 0.45, 0.1], alpha: 1, pool: 0, mine: true });
+  const [std] = egLookShapes([blow()], { palette: EG_DANGER_PALETTES.standard, fill: 1 }, 'closing');
+  assert.equal(std.fillK, 1);
+  const [dim] = egLookShapes([blow()], { palette: EG_DANGER_PALETTES.standard, fill: 0.5 }, 'closing');
+  assert.equal(dim.fillK, 0.5, 'the fill at the player\'s light'); assert.deepEqual(dim.color, [1.0, 0.45, 0.1], 'its colour its own');
+  const [hc] = egLookShapes([{ ...blow(), mine: false }], { palette: EG_DANGER_PALETTES.contrast, fill: 1 }, 'closing');
+  assert.deepEqual(hc.edge, EG_DANGER_PALETTES.contrast.danger, 'the line the palette\'s, whole');
+  const [haven] = egLookShapes([{ edge: TELEGRAPH_EDGE_SAFE, color: [1.0, 0.82, 0.38], alpha: 1 }], { palette: EG_DANGER_PALETTES.contrast, fill: 0.5 }, 'closing');
+  assert.deepEqual([haven.edge, haven.color, haven.fillK], [EG_DANGER_PALETTES.contrast.safety, EG_DANGER_PALETTES.contrast.safety, 1], 'safety never dimmed, never danger');
+  const [pend] = egLookShapes([{ edge: TELEGRAPH_EDGE_DAGON, color: [0.95, 0.95, 1.0], alpha: 1 }], { palette: EG_DANGER_PALETTES.contrast, fill: 1 }, 'closing');
   assert.deepEqual(pend.color, EG_DANGER_PALETTES.contrast.hazard, 'the place\'s white hazard cyan');
   assert.deepEqual([egFillOf(0.2), egFillOf(0.7), egFillOf('x'), egFillOf(3)], [0.5, 0.7, 1, 1]);
   // reduced motion
@@ -532,7 +531,7 @@ test('EG-G1 ACCESSIBILITY (section 25.7): the danger palette - High contrast\'s 
   assert.deepEqual([PREF_DEFAULTS.dangerPalette, PREF_DEFAULTS.telegraphFill, PREF_DEFAULTS.reducedMotion], ['standard', 1, false]);
   assert.deepEqual([whereIs('port:reducedMotion')?.section.id, whereIs('port:dangerPalette')?.section.id, whereIs('port:telegraphFill')?.section.id], ['motion', 'danger', 'danger']);
   assert.ok(['port:reducedMotion', 'port:dangerPalette', 'port:telegraphFill'].every((k) => whereIs(k)?.tab.id === 'accessibility'));
-  assert.match(rd('src/scenes/egFight.js'), /pass\.draw\(egAccessShape\(sh, accSh, acc\), proj/, 'the fight\'s pass drawn through it');
+  assert.match(rd('src/scenes/egFight.js'), /egLookShapes\(_shapes, egAccessNow\(\), stageNow\);/, 'the fight\'s shapes laid on from the shelf before the pass');
   // the HUD honours the palette and the stillness
   destroyEgSpireHud();
   const doc = fakeDocument();
