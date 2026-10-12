@@ -24983,6 +24983,14 @@ export async function bootWorld(canvas, renderer, params, status) {
   registerSpireAct(egClient ? (key) => egClient.act(key) : null);   // EG-FULL LAYER THREE: an Orrery stone turned, an engine worked
   egClient?.claimKeys();   // the Weir Key's use is this screen's open
   const egFrame = () => { try { egClient?.frame(); } catch (e) { console.warn('[eg] frame', e?.message ?? e); } };
+  /** The host frame's breach lines, out of it (PERF-V8): with no online frame the breach's fight and tracker put away; in
+   *  a breach the court's law, after the court's own lines have set it. */
+  const egCourtFrame = () => {
+    if (!(onlineOn && playerSpawned)) egClient?.away();
+    if (modes?.egHallBreach?.() != null) setCourtRules(true);
+  };
+  /** The witness's eye (section 16.5), behind a living companion - the host frame's view, moved when it is. */
+  const egWitnessEye = (/** @type {{ eye: any }} */ v) => { if (egClient?.witnessing()) { const c = { pos: v.eye }; if (egClient.witnessEye(c, cam.yaw)) v.eye = c.pos; } };
   let _omenClockAt = null;   // AUDIT WB C4: when the relay's clock was first read this session (the omen's fallback wait)
   const gateOmen = params.has('online') ? createGateOmen({
     now: () => Date.now() + _sharedOffsetMs,
@@ -33024,10 +33032,9 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     sdAirFrame();   // SD14b: and the Hour's, the same way
     if (onlineOn && playerSpawned && (seatOut() || townTalk.overlay instanceof DeathScreen || modes?.deathUp?.())) { siegeHud?.hide(); siegeNpcs?.leave(); }   // AUDIT SEATS-2 C4: the dead and a tab out of the seat draw no battle - the online frame returns before its tick
     arenaFrame(dt);   // ARENA2: the bout on the city's floor or the instance's - before the modal return, so the instance's runs too
-    if (!(onlineOn && playerSpawned)) egClient?.away();   // EG-PLAY: no online frame - the breach's fight and tracker put away
     setCourtRules(modes?.gateArenaDay?.() != null);
     if (modes?.sdRealmSlot?.() != null) setCourtRules(true);   // SD5a: nor in the Shattered Hour - the court's law (Super-Dungeons.md section 7)   // WBX6: the Deadlands keep no regeneration - set before any magic round of this frame, cleared the frame the court is gone
-    if (modes?.egHallBreach?.() != null) setCourtRules(true);   // EG-PLAY: nor in an Elite Breach - the court's law (Elite-Gates.md section 16)
+    egCourtFrame();   // EG-PLAY: no online frame - the breach's fight and tracker put away; in an Elite Breach, the court's law (Elite-Gates.md section 16)
     // LOAD1: THE LOADING SCREEN STANDS WHILE THE WORLD IS MOVED - AUDIT 68 S22's one question (every mover's latch, the
     // teleport core's window, the abyss) and a door's build in this host's modes. Above the mode's return, so every
     // drawn frame asks; below the video's wait (AUDIT 39 #160's head, and AUDIT 28 W7's tick on the frame's dt) - a
@@ -34334,7 +34341,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       seaReach: csaHelm ? csaSeaReach(csaHelm) : 0,   // #3
     });
     if (yards?.flying()) { const c = { pos: mwv0.eye }; yards.cameraOverride(c); mwv0.eye = c.pos; }   // HOME-YARD: the decorator's free eye, while a piece is placed outside (no travel view is up then)
-    if (egClient?.witnessing()) { const c = { pos: mwv0.eye }; if (egClient.witnessEye(c, cam.yaw)) mwv0.eye = c.pos; }   // EG-FULL: the witness's eye, behind a living companion
+    egWitnessEye(mwv0);   // EG-FULL: the witness's eye, behind a living companion
     // TV1: THE TRAVEL VIEW'S EYE, when it is up - risen out of the body's own camera (`ownEye`, the one the frame would
     // draw) and blended back into it on the way down. Every reader below that asks where the picture is taken from
     // reads `mwv.eye`; the fog and the sun's cascades measure from the traveller's head (renderer.setFocus - a frame's:

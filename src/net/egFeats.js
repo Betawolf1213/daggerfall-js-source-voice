@@ -1,0 +1,69 @@
+// @ts-check
+// EG-E (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 19, FEATS OF THE SPIRE):
+// THE LORDS' FEATS - three a lord, each a thing to master, not only survive, judged by the relay at the lord's fall from
+// what its Court saw, and said on the Redoubt's `w` receipt (`ft`, three bits, with the lord's key `lk`) for the account
+// service to keep (`eg_feats`): the first, UNBROKEN - no member fell in the Court; the second, SWIFT - the lord felled
+// within EG_FEAT_SWIFT_MS of its wake; the third, the lord's own signature (the table below: Grath Scorched twice, the
+// Examinations passed with none failed, the Twin Lords falling within 3 s of each other, ...). A band's feats, all held,
+// are its Master's title (section 19's honours - server-account/src/eg.js).
+//
+// Pure. Not a DFU member. Ledger A (ELITE-GATES).
+
+/** A lord felled this soon after its wake is SWIFT (ms). */
+export const EG_FEAT_SWIFT_MS = 180_000;
+/** The Twin Lords' signature: both fall this close together (ms). */
+export const EG_FEAT_TWINS_MS = 3000;
+
+/**
+ * Each lord's signature feat: its name, its words, and its test over the Court's counted beats (`said` - each `esay` key
+ * the Court spoke, counted), its fight (`F`) and the breach's state (`ctx`).
+ * @type {Readonly<Record<string, Readonly<{ name: string, what: string, test: (said: Record<string, number>, F: any, ctx: { covenant?: number, now: number }) => boolean }>>>}
+ */
+export const EG_FEAT_SIGNS = Object.freeze({
+  hound: Object.freeze({ name: 'Burnt Paws', what: 'Grath Scorched twice', test: (s) => (s.scorched ?? 0) >= 2 }),
+  spellmaster: Object.freeze({ name: 'Perfect Marks', what: 'every Examination passed, none failed', test: (s) => (s.passed ?? 0) >= 1 && !(s.failed > 0) }),
+  armsmaster: Object.freeze({ name: 'Every Challenge Met', what: 'two Challenges met', test: (s) => (s.challengewon ?? 0) >= 2 }),
+  ilthys: Object.freeze({ name: 'No Ground Conceded', what: 'three of her banners broken', test: (s) => (s.broken ?? 0) >= 3 }),
+  cairnkeeper: Object.freeze({ name: 'The Tithe Paid', what: 'the Keeper laid bare twice', test: (s) => (s.bare ?? 0) >= 2 }),
+  twins: Object.freeze({ name: 'Together', what: 'the Twin Lords falling within 3 s of each other', test: (s, F, ctx) => (F.mem?.twinFellAt ?? 0) > 0 && ctx.now - F.mem.twinFellAt <= EG_FEAT_TWINS_MS }),
+  morvayn: Object.freeze({ name: 'Unchained', what: 'two soul-chainings endured', test: (s) => (s.chaining ?? 0) >= 2 }),
+  dusk: Object.freeze({ name: 'Wings Clipped', what: 'the Mother of Dusk dragged down twice', test: (s) => (s.grounded ?? 0) >= 2 }),
+  stalker: Object.freeze({ name: 'Blood Unbound', what: 'two Blood Tethers broken', test: (s) => (s.tetherbroken ?? 0) >= 2 }),
+  seyth: Object.freeze({ name: 'Through the Long Night', what: 'two Eclipses endured', test: (s) => (s.eclipse ?? 0) >= 2 }),
+  colossus: Object.freeze({ name: 'Hearts Stilled', what: 'into its Breakdown with no heart relit', test: (s) => !(s.relit > 0) && (s.phase ?? 0) >= 2 }),
+  wyrm: Object.freeze({ name: 'Brought to Earth', what: 'the Wyrm landed twice', test: (s) => (s.landed ?? 0) >= 2 }),
+  garoth: Object.freeze({ name: 'Before the Covenant', what: 'Garoth felled before the Covenant pressed', test: (s, F, ctx) => !ctx.covenant }),
+});
+/** The feats' common names (bits 0 and 1). */
+export const EG_FEAT_UNBROKEN = 'Unbroken';
+export const EG_FEAT_SWIFT = 'Swift';
+/** The bands' lords (section 13.3), whose feats, all held, are the band's Master. */
+export const EG_FEAT_BANDS = Object.freeze([
+  Object.freeze(['hound', 'spellmaster', 'armsmaster', 'ilthys']), Object.freeze(['cairnkeeper', 'twins', 'morvayn']),
+  Object.freeze(['dusk', 'stalker', 'seyth']), Object.freeze(['colossus', 'wyrm', 'garoth']),
+]);
+/** All three of a lord's feats. */
+export const EG_FEATS_ALL = 0b111;
+
+/**
+ * THE FEATS AT A LORD'S FALL: its three bits - Unbroken (no member fell in the Court), Swift (felled within
+ * EG_FEAT_SWIFT_MS of its wake), its signature. 0 for a key with no feats (a champion).
+ * @param {string} lord @param {any} F the Court's fight (`said`, `fellThisHall`, `lordAt`, `mem`) @param {{ covenant?: number, now: number }} ctx
+ */
+export function egFeatBits(lord, F, ctx) {
+  const S = EG_FEAT_SIGNS[lord];
+  if (!S || !F) return 0;
+  let bits = 0;
+  if (!((F.fellThisHall ?? 0) > 0)) bits |= 1;
+  if ((F.lordAt ?? 0) > 0 && ctx.now - F.lordAt <= EG_FEAT_SWIFT_MS) bits |= 2;
+  if (S.test(F.said ?? {}, F, ctx)) bits |= 4;
+  return bits;
+}
+/** The words of a lord's feat `k` (0 Unbroken, 1 Swift, 2 its signature). */
+export function egFeatName(lord, k) {
+  if (k === 0) return EG_FEAT_UNBROKEN;
+  if (k === 1) return EG_FEAT_SWIFT;
+  return EG_FEAT_SIGNS[lord]?.name ?? '';
+}
+/** Does `held` (lord key to its bits) hold every feat of band `b`'s lords? */
+export const egBandMastered = (held, b) => (EG_FEAT_BANDS[b] ?? []).every((k) => ((held?.[k] ?? 0) & EG_FEATS_ALL) === EG_FEATS_ALL);

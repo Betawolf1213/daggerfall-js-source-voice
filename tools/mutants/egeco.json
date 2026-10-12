@@ -1,0 +1,56 @@
+[
+  {
+    "name": "EGECO-a-fall-still-unbroken",
+    "file": "src/net/egFeats.js",
+    "old": "  if (!((F.fellThisHall ?? 0) > 0)) bits |= 1;",
+    "new": "  bits |= 1;",
+    "tests": [
+      "test/egeco_feats.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-a-slow-fall-swift",
+    "file": "src/net/egFeats.js",
+    "old": "ctx.now - F.lordAt <= EG_FEAT_SWIFT_MS) bits |= 2;",
+    "new": "ctx.now - F.lordAt <= EG_FEAT_SWIFT_MS * 10) bits |= 2;",
+    "tests": [
+      "test/egeco_feats.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-one-scorch-enough",
+    "file": "src/net/egFeats.js",
+    "old": "test: (s) => (s.scorched ?? 0) >= 2 }",
+    "new": "test: (s) => (s.scorched ?? 0) >= 1 }",
+    "tests": [
+      "test/egeco_feats.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-the-feats-left-off",
+    "file": "src/net/egBrain.js",
+    "old": "...(lk ? { lk, ft } : {}) });",
+    "new": "});",
+    "tests": [
+      "test/egeco_feats.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-a-fourth-bit",
+    "file": "src/net/egReceipt.js",
+    "old": "  if (c.ft !== undefined && !int(c.ft, 0, 7)) return false;",
+    "new": "  if (c.ft !== undefined && !int(c.ft, 0, 15)) return false;",
+    "tests": [
+      "test/egeco_feats.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-the-says-uncounted",
+    "file": "src/net/egBrain.js",
+    "old": "  for (let k = from; k < out.length; k++) if (out[k]?.k === 'esay') {",
+    "new": "  for (let k = from; k < from; k++) if (out[k]?.k === 'esay') {",
+    "tests": [
+      "test/egeco_feats.test.js"
+    ]
+  }
+]

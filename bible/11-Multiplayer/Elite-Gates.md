@@ -3628,3 +3628,26 @@ Grath's falling isles, and the solver's median check.
   and `egplay.json` (20), every one dead.
 - `RELAY_VERSION` `world197` (renumbered past main's CHAT-LANG `world196` at this layer's merge), unshipped, rehashed with
   `net/egFragLaw.js` and `net/egAnnals.js` in its graph.
+
+### EG-E (first part) - 2026-10-12 - THE LORDS' FEATS
+
+The economy layer's first piece, the one the relay must judge: **FEATS OF THE SPIRE** (section 19), in `net/egFeats.js`
+(relay bundle, importing nothing).
+- **Three feats a lord**:
+  - **Unbroken**: no member fell in the Court;
+  - **Swift**: felled within `EG_FEAT_SWIFT_MS` (3 minutes) of its wake;
+  - **its own signature**, read off the Court's beats as the relay counts them (`tallySays` in `net/egBrain.js`, over
+    the lords' step and the members' blows). Grath must be Scorched twice; the Spellmaster's Examinations passed with
+    none failed; two of the Armsmaster's Challenges met; three of Ilthys' banners broken; the Cairn-Keeper laid bare
+    twice; the Twin Lords falling within 3 s of each other; two of Morvayn's soul-chainings endured; the Mother of
+    Dusk dragged down twice; two Blood Tethers broken; two of Seyth's Eclipses endured; the Colossus into its
+    Breakdown with no heart relit; the Wyrm landed twice; Garoth felled before the Covenant pressed.
+- **On the receipt.** At a Redoubt each earner's `w` receipt names the lord (`lk`) and its feats (`ft`, three bits).
+  `net/egReceipt.js` refuses either out of shape. A band's lords' feats, all held, are its Master
+  (`egBandMastered`): the title is the service's, with the rest of the economy.
+- **Departure.** The page's examples (Grath with no member caught by a burning bridge; the Examination with no rune
+  missed at *n* = 8) need the relay to know who a place's blow caught, which it does not yet keep. Each signature is a
+  beat the relay already counts.
+
+**Pins.** `test/egeco_feats.test.js` (2) and `tools/mutants/egeco.json` (6, every one dead). `RELAY_VERSION` `world197`,
+rehashed with `net/egFeats.js` in its graph.

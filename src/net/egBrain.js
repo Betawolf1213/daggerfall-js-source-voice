@@ -35,6 +35,7 @@ import { egVOf } from './egVestige.js';
 import { shDisc, shLane, egInShape } from './egShape.js';
 import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half
 import { egAnnalsNext, egAnnalsLordPage } from './egAnnals.js';
+import { egFeatBits } from './egFeats.js';   // EG-E: the lords' feats, judged at a lord's fall
 import { orreryOf, orreryFresh, orreryStep, orreryShortest, SD_STONE_SETTLE_MS } from './sdBrain.js';
 import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gateBrain.js';
 
@@ -587,8 +588,10 @@ function redoubt(B, now, rng, out) {
   const lone = L.length === 1 && Object.values(B.mem).filter((m) => m.in).length >= 4;
   const gain = B.covenant ? 0 : redoubtGain(B, now);
   if (B.covenant) B.cnt = egCountHold(B.cnt, now);
+  // EG-E: the lord's feats, judged at its fall (net/egFeats.js) - said on each earner's receipt with the lord's key
+  const lk = specOf(B).lord ?? '', ft = B.F ? egFeatBits(lk, B.F, { covenant: B.covenant, now }) : 0;
   for (const [sub, m] of earners) {
-    owe(B, sub, { q: 'w', w, h: B.h, t: secs(now - B.wk), n: earners.length, ew: B.ew, l: m.lv, vs: (m.vs ?? []).slice(0, 32), fl: m.falls ?? 0, ...(lone ? { lb: 1 } : {}), ...(B.wg?.length ? { wg: B.wg } : {}) });
+    owe(B, sub, { q: 'w', w, h: B.h, t: secs(now - B.wk), n: earners.length, ew: B.ew, l: m.lv, vs: (m.vs ?? []).slice(0, 32), fl: m.falls ?? 0, ...(lone ? { lb: 1 } : {}), ...(B.wg?.length ? { wg: B.wg } : {}), ...(lk ? { lk, ft } : {}) });
     m.rel = [...(m.rel ?? []), w];
   }
   if (valk) B.resp += EG_RESPITE_VALK_MS;
@@ -918,7 +921,9 @@ function trial(B, spec, now, inHall, rng, out) {
         }
       }
     }
+    const said0 = out.length;
     egLordsStep(F, spec, now, here, rng, out, lordCtx);
+    tallySays(F, out, said0);
   }
   if (kind !== 'court' && egLordsOf(F).length) egLordsStep(F, spec, now, here, rng, out, lordCtx);
   if (kind === 'deepway' && F.chamberDone && !F.saidDone) { F.saidDone = 1; out.push({ k: 'esay', w: 'chamberdone' }); }
@@ -1020,7 +1025,7 @@ export function egBlow(B, sub, m, pose, now) {
   if (m.r >= 0 && m.r <= 2) mm.kinds[m.r] = (mm.kinds[m.r] ?? 0) + 1;
   egMarkFoe(mm, body, m.r, now);
   egFadeOn(mm, now);
-  const b = r.b;
+  const b = r.b, said0 = out.length;
   if (b.role === EG_ROLE.lord) {
     egLordHit(F, spec, b, sub, mm.name, got, p, now, here, out, { threatX: egThreatX(mm) });
     if (b.hp <= 0 && Object.values(B.mem).filter((x) => x.in).length >= 4 && living(B).length === 1) B.loneBeacon = sub;
@@ -1036,7 +1041,13 @@ export function egBlow(B, sub, m, pose, now) {
     else if (b.t === 'anchor') { egObjBroken(F, spec, b, mm.name, now, out); (F.brokenAnchors ??= []).push([b.x, b.z]); }
     else egObjBroken(F, spec, b, mm.name, now, out);
   }
+  if (spec.kind === 'court') tallySays(F, out, said0);   // EG-E: a banner broken, a lord stunned - the feats count them
   return out;
+}
+/** EG-E: a Court's beats counted as they are spoken (its lord's feats read them at its fall - net/egFeats.js). */
+function tallySays(F, out, from) {
+  if (!F) return;
+  for (let k = from; k < out.length; k++) if (out[k]?.k === 'esay') { F.said ??= {}; F.said[out[k].w] = (F.said[out[k].w] ?? 0) + 1; }
 }
 /** An add slain: its lumen to the slayer, its decrees (net/egLegion.js egAddSlain), its words. */
 function addDied(B, F, spec, a, sub, mm, now, here, out) {

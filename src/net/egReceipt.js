@@ -10,6 +10,7 @@
 //         w the Redoubt ('w')   h the hall ('w': its Court; 'x': the deepest cleared)   t seconds since the first wake
 //         n the earning entrants   ew the start Redoubt   l the level the breach froze   rh 1 for a Rehearsal
 //         why how the member's breach ended ('x' alone)   i issued, epoch seconds   e expires (i + EG_RECEIPT_TTL_S)
+//         lk the Redoubt's lord, ft its feats ('w'; EG-E - net/egFeats.js: three bits)
 //
 // ONE KEY, NEVER CONFUSED: GATE_SIGNING_KEY signs it as it signs every relay receipt, and the version is inside the
 // signed bytes, so `e1` is refused by every other verifier and theirs by this one. The kind rides `q` - never `k`, an
@@ -49,6 +50,9 @@ export function egReceiptValid(c) {
   if (c.q === 'v') return Object.keys(c).every((f) => ['q', 'b', 's', 'z', 'i', 'e'].includes(f));
   if (!int(c.c, 0, 0xffffffff) || !int(c.h, 0, 99_999) || !int(c.t, 0, 7 * 24 * 3600) || !int(c.n, 0, 8) || !int(c.ew, 0, 999) || !int(c.l, 1, 999)) return false;
   if (c.rh !== undefined && c.rh !== 1) return false;
+  // EG-E: a Redoubt's lord (`lk`) and its feats (`ft`, three bits - net/egFeats.js), where it says them
+  if (c.lk !== undefined && (typeof c.lk !== 'string' || !/^[a-z]{1,16}$/.test(c.lk))) return false;
+  if (c.ft !== undefined && !int(c.ft, 0, 7)) return false;
   if (c.q === 'w') return int(c.w, 1, 19_999) && c.why === undefined;
   return EG_END_WHYS.includes(c.why) && c.w === undefined;
 }
