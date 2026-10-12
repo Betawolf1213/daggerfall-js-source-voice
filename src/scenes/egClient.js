@@ -74,6 +74,9 @@
 //     mouth, let go on every way out); THE FRAGMENT'S OWN CLAMP on my motor while I stand in one (world/egHall.js
 //     egFragArena - `player.arena`, set where no other arena holds me); the cameras eased back out of the rock
 //     (player/mwView.js setSpireCamera) and the touch layer's Spire branch (ui/touch.js setTouchSpire), both told here.
+//   EG-ZI (2026-10-12, Mac: "I said I want everything"; section 10.6): THE PULL'S TOLL - the room's `toll` paid beside the
+//     void's cost (payToll: its quarters' share of my health through the hurt door, never the last of it) and said with the
+//     pull, its share on the screen and its line in the chat.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
@@ -82,6 +85,7 @@ import { egCallPromptModel, soundEgHorn, EG_CALL_KEYS } from './egCall.js';   //
 import { importPublicKeyB64 } from '../net/identityToken.js';   // EG-F: the relay's public half, for a stranger's arch
 import { egHallOf, egCircleOfHall, egSlotOfHall, egSlotAt, egLocalX, egAtDoor, egPhase, egTimes, egCountText, egBandOfCircle, EG_TEXT, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR, EG_BAND_LORDS, EG_VALKYNAZ } from '../net/egLaw.js';
 import { egOnFight, egSpecGive, EG_SPEC } from '../net/egLaw.js';   // EG-H2 (section 10.7): the fight floor, and off it the Spire's traversal ground; (section 22) a hall given, the law I draw
+import { EG_TOLL_STEP } from '../net/egLaw.js';   // EG-ZI (section 10.6): the pull's toll, a quarter's share
 import { readEgReceipt } from '../net/egReceipt.js';
 import { EG_VOID_MAX_S } from '../net/egDurable.js';   // EG-ZA: how long a stake's void may be asked
 import { dungeonToRealm } from '../net/sdBrain.js';
@@ -965,6 +969,19 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (cost) beatNow('castBack'); else playSound(EG_BEAT_SOUNDS.rewind);
     teach(['void']);
   }
+  /** EG-ZI (section 10.6): THE PULL'S TOLL, paid as the void's cost is (castBack): `q` quarters of the road I did not cross,
+   *  EG_TOLL_STEP of my health each, through the hurt door and never the last of it; said with the pull (section 27.5's
+   *  row: *The Spire pulls you down.* and the toll) - its share on the screen and its line in the chat, once a hall. */
+  let tollH = 0;
+  function payToll(q, h) {
+    if (witness || !(entity.health > 0) || !inSpire() || h === tollH) return;
+    tollH = h;
+    const cut = Math.min(Math.round(q * EG_TOLL_STEP * (entity.maxHealth ?? 0)), entity.health - 1);
+    if (cut > 0) hurt(cut);
+    mid(EG_PRES_TEXT.toll(q));
+    say(EG_PRES_TEXT.tollLine(q));
+    pres.live = EG_PRES_TEXT.tollLine(q);
+  }
   /** The recap's Reliquaries open one each 400 ms, each with the Rare chime (section 27.6); the run kept. */
   function recapOpened() { pres.rel = 0; pres.relAt = Date.now(); egRecapKeep(store, recap); }
   /** My feet in the hall's frame, or null. */
@@ -1188,6 +1205,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (w.k === 'fall' && w.s === me() && !witness) enterWitness(now(), true, w.fin);
       if (w.k === 'rise' && w.s === me()) riseAt(w);
       if (w.k === 'eheal') applyHeal(w.p, w.why);
+      if (w.k === 'toll') payToll(w.q, w.h);   // EG-ZI: the pull's toll (section 10.6)
       if (w.k === 'egot' && w.w === 'page' && EG_ANNALS[w.p]) { annals.add(w.p); say(`A page of the Annals of 3E 398 - ${EG_ANNALS[w.p][0]}: ${EG_ANNALS[w.p][1]}`); }
       else if (w.k === 'egot' && EG_GOT_TEXT[w.w]) say(EG_GOT_TEXT[w.w]);
       if (w.k === 'rd') say(w.cov ? `${EG_TEXT.redoubt(w.w)}: the Covenant has spoken - this Redoubt is the last.` : `${EG_TEXT.redoubt(w.w)}: the count gains ${egCountText(Math.max(0, w.g ?? 0))}.`);

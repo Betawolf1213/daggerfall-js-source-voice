@@ -93,6 +93,18 @@ export const EG_GATHER_MS = 8000;
 export const EG_CLOSING_FIGHT_MS = 20_000;
 export const EG_CLOSING_SPAN_MS = 45_000;
 export const EG_DOOR_REACH_M = 3;
+/** EG-ZI - THE LATE WAKE (section 7): after this many halls in a row that a member woke late (the hall woke before its
+ *  `here`), the gather waits only this long after the pull for them. */
+export const EG_LATE_HALLS = 2;
+export const EG_LATE_ARRIVE_MS = 10_000;
+/** EG-ZI - THE PULL'S TOLL (section 10.6): a share of the body for each quarter of the road still ahead of a member's
+ *  furthest fair point, at most this many quarters; waived for a member who reached new ground (an island, a fragment's
+ *  floor) this long before the pull; the halls it is paid after - those whose closing is the span's, the road crossed in
+ *  it (the Span, the Deepway, a Brink, the Proving Walk's second span). */
+export const EG_TOLL_STEP = 0.05;
+export const EG_TOLL_QUARTERS = 4;
+export const EG_TOLL_WAIVE_MS = 15_000;
+export const EG_TOLL_KINDS = Object.freeze(['span', 'deepway', 'brink', 'proving']);
 /** The Court's wake ring: the lord wakes when every living member stands in it, or this long after the first does. */
 export const EG_WAKE_RING_MS = 20_000;
 /** The void's cost (section 8): a tenth of the body's health, never below a quarter of it. */

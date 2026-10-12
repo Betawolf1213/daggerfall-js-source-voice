@@ -3922,8 +3922,7 @@ wait. A blow's word now never shows less than its whole wind-up, however late it
 8. The feint's dashed fade is the look's (EG16): its mark still fades over 0.15 s as before.
 9. The span's own Pendulums and Vents stand on traversal ground no aimed blow reaches, so they share no union set. The
    client's arrow (section 11.7) is not built.
-10. The census applies no Vestige. A plain blow's whole `p` is counted, its points never; a holder's halving is its own
-    word, believed back as a mend.
+10. A plain blow's whole `p` is counted, its points never.
 11. A fire fall and the hammer line (`trav`) stay the screens' alone; a soul-wisp's drain is not counted.
 12. Found, not fixed: a breach in a trial cannot be checkpointed. The trial keeps the legion's callbacks on the fight
     (`F.legionCtx`), which storage cannot clone - the durability slice's.
@@ -5238,8 +5237,6 @@ not yet turn it", EG-H1's departures 3, 10 and 11, and EG-E's departure for the 
    The mark's 30 s is renewed while the hunt lasts.
 7. An object standing off the fight floor (a false wall) is still struck from beside it: a seal in a wall is no fight.
 8. The census's Vestiges:
-   - Lifeline is not applied: a heal one member casts on another rides ALLY-CAST's `cast` frame, which the relay
-     forwards unread;
    - the reductions are summed and capped at 30%, on blows alone (not hazards, drains or cast-backs);
    - Featherstep is applied though section 21 leaves it to "the rest restores it": its cost is a number the relay holds;
    - Iron Footing needs no term: a push it resists makes no cast-back, and the poses say so.
@@ -5637,3 +5634,127 @@ peers, the tell, the reverb's crossfade and TEXTURE.356 are closed here.
 - PIN MOVED: `test/audit39_render.test.js` (the fire walls take GetFireWallColors32). `bible/06-Systems/Systems.md` counts
   517 modules. `bible/07-Rendering/Rendering.md` and `Rendering-Arc.md` say GetFireWallColors32 shipped.
 - `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
+
+### EG-ZI - 2026-10-12 - THE DIRECTOR'S LAST RULES: THE TOLL, THE LATE WAKE, LIFELINE
+
+Mac: "I said I want everything". The director's three rules no slice had built: section 10.6's toll (the pull moved
+everyone at no cost), section 7's late wake (the gather waited `EG_ARRIVE_MAX_MS` for everyone, always) and section 21's
+Lifeline in the census. It closes EG-ZB's departure 8 for Lifeline and the last of EG-H1's departure 10 (the census now
+applies every Vestige section 21 names); both sentences are deleted above.
+
+**What shipped, by piece.**
+
+- **THE PULL'S TOLL** (`net/egBrain.js` `egTollOf`, `tollStep`; `net/egLaw.js` `EG_TOLL_STEP`, `EG_TOLL_QUARTERS`,
+  `EG_TOLL_WAIVE_MS`, `EG_TOLL_KINDS`; section 10.6).
+  - At a crossed hall's pull (`EG_TOLL_KINDS`: the Span, the Deepway, a Brink, the Proving Walk - the halls whose closing
+    is the span's 45 s), each living member is told its toll before the pull's stage: `{k:'toll', q, h}`, to it alone.
+  - `q` is the quarters of its road still ahead of its furthest fair point, every quarter begun counted whole, 5% of its
+    health each, at most four. The road is the hall's +z from the arrival plate to the end plate, in whole centimetres.
+  - Nothing is owed by a member who stepped through the door (`downH`), who stood at it on a fair trail (`A.atEnd`, set
+    by `egPoseIn` where the crossing is measured), or who reached new ground in its last 15 s (`A.fnew`). Only the idle
+    pay, and trying and falling short costs less than standing still.
+  - A member the relay judged no fair pose of in the hall stands at the arrival plate: the whole road.
+- **THE FURTHEST FAIR POINT** (`net/egFair.js` `farther`, `groundAt`; the trail's `far`, `fnew`, `seen`, `atEnd`).
+  - After every pose of a fair trail, a held pose (still ground, a piece, the end plate) with no break since the last
+    island moves `far`. A pose in the air, or one a broken stretch reached, moves nothing.
+  - Still ground first stood on so this hall is new ground, `fnew` its instant: an island, a court, a balcony, a
+    passage's floor, a walkway, a bridge, a stair. The arrival plate, a piece and the end plate are never new ground.
+  - `groundAt` is `egSupportAt`'s own first reads, keyed (`a` the arrival plate, `e` the end plate, `d<i>`, `b<i>`,
+    `l<i>`, `r<i>`), and `egSupportAt` now asks it. Its answers are unchanged, and the client's last island
+    (`islandFrame`) reads them as before.
+- **THE TOLL COUNTED** (`egCountHeals`). The room's census reads `toll` as it fans it, as it reads the fray's lash. The
+  share is taken off the member's count as a blow is (`bodyStruck`, into the census's thousandths `cs[3]`), never the
+  last of it. A witness's count is untouched.
+- **THE TOLL PAID AND SAID** (`scenes/egClient.js` `payToll`, beside the void's `castBack`; `ui/egBeats.js`
+  `EG_PRES_TEXT.toll`, `tollLine`; section 27.5's row: *The Spire pulls you down.* and the toll).
+  - The screen pays it as it pays the void's cost: its share of my health through the host's hurt door, never the last
+    of it, once a hall, and only inside the Spire.
+  - It says it: *-15%* on the screen, as the cast-back's *-10%*, and *The Spire takes its toll: 15% of your health.* in
+    the chat beside the pull's own line.
+- **THE WIRE** (`net/wire.js`): `toll` joins `EG_RUN_KINDS`, its quarters held to 1..`EG_TOLL_WIRE_MAX` (4, pinned equal
+  to the law's `EG_TOLL_QUARTERS` - wire.js imports no law of the Spire's) and its hall to the hall bound. It is never a
+  member's word.
+- **THE LATE WAKE** (`net/egBrain.js` `wake`, `arriveWait`; `net/egLaw.js` `EG_LATE_HALLS`, `EG_LATE_ARRIVE_MS`;
+  section 7).
+  - Each wake counts a living member late (`m.late`) when the hall woke before its `here`; a hall it said `here` in
+    begins the count again.
+  - The gather waits `EG_LATE_ARRIVE_MS` (10 s) after the pull, not 30 s, once every living member still owed has woken
+    late in the two halls before. A member owed who is not late keeps the whole wait for the company.
+  - The stage's end (`su`) is said as it moves: at the pull, at the next circle's first hall, and in the arrive stage as
+    members arrive and only the late are left.
+  - **A late `here`, heard.** A member the hall woke without says `here` when it reaches the arrival plate in the trial
+    or the closing, and its trail is judged from there. Before, the director heard `here` only in the arrive stage, so
+    a member who woke late was never judged in that hall: its door, its caches and its toll read no trail of it.
+- **LIFELINE IN THE CENSUS** (`net/egBrain.js` `egHeal`, `egCensusDr`, `EG_LIFELINE_UNDER`, `EG_LIFELINE_MS`,
+  `EG_HEAL_WORD_MS`, `EG_LIFELINE_LOOK_MS`; sections 15 and 21).
+  - The room hears `heal` since EG-ZF (`egHeal`). A believed heal of a Lifeline holder's on a member under 30% opens a
+    window on that member's blows (`m.ll`: `[from, until, share]`), at the healer's rank: 20, 30 or 40%.
+  - "Under 30%" is read three ways: its count now, the count seen so at a beat (`egCount` notes `m.lowAt`), or its own
+    word of its body saying so (`egBodyWord` notes it too). The look back is the heal word's second and a beat
+    (`EG_LIFELINE_LOOK_MS`). The word comes up to `EG_HEAL_SEND_MS` (pinned equal to `EG_HEAL_WORD_MS`) after the heal,
+    by when the member's own word may have stood its count up.
+  - A healer counts only where its own credit rose: a heal not believed, the member's own heal, or a healer of no
+    breach opens nothing.
+  - `egCensusDr` spares a blow landing inside a window by the strongest window's share, inside the census's 30%. Windows
+    a blow can no longer be judged in (`EG_TRAIL_MS`) are let go, and four are kept at most.
+  - The stale comment ("the ALLY-CAST frame, which the relay forwards unread") is gone.
+
+**Departures, said plainly.**
+
+1. **The road** is measured along the hall's +z, on either road of a fork. The Low Road's bridges across and back (which
+   `egCrossMinMs` adds to its bound) are no length of the toll's.
+2. **Every quarter begun is counted whole.** "Each quarter of their road still ahead" is read as the page's first clause
+   asks: a member pulled a step short of the end pays one quarter.
+3. **The toll never takes the last of a member's health**: the screen keeps a point and the census a hundredth, as the
+   fray's lash does. The page names no floor, and a toll that killed would be a fall mid-stair, which belongs to no hall.
+4. **"A new island, or a fragment's node"** is new still ground of the support law, first stood on fairly this hall. The
+   fragment record's `graph` is not carried (EG-ZB's departure 1), so a fragment's floors and stairs stand for its
+   nodes.
+5. **The halls tolled** are those whose closing is the span's (`door`'s own group): the Span (section 7), the Deepway
+   (section 8.8), a Brink and the Proving Walk, whose roads are crossed in the same 45 s. A fight's and a Court's pull
+   costs nothing.
+6. **A member never judged in the hall** (a socket that sent no pose there since its `here`) pays from the arrival
+   plate. The fair trail believes such a member for a credit; the toll, which is a cost, does not.
+7. **"Woke late"** is the hall woken before the member's `here`. "The wait for them" is 10 s once every member still owed
+   is such a one. The count runs on across a Redoubt: a Court is a hall.
+8. **The late `here`** is a change to integrity, done here because the toll reads the trail. A member who woke late is
+   now judged from the plate, where before nothing it did in that hall was.
+9. **Lifeline's window** runs from the heal word's second back (`now - EG_HEAL_WORD_MS`) to 3 s past the word: every blow
+   that could land inside the 3 s of a heal the word says, 4 s at most, in the struck member's favour as every judge of
+   the relay's is (`BODY_MARGIN`). The word carries no heal's instant.
+10. **Two Lifelines at once** take the strongest, never a sum. Section 15's stacking is for auras, and Lifeline is none.
+11. **The toll's words** are `EG_PRES_TEXT`'s (the client's), not `EG_TEXT`'s, as EG-G1's beats are. A word in `EG_TEXT`
+    would move the relay's law hash for a line the relay never says. The toll plays no sound of its own: the pull's row's
+    sound is the veil's close.
+12. **Not built:** Lifeline's other half, the receiver's client taking its blows less. No screen applies a word-Vestige
+    (Bastion, Steadfast Line, Lifeline) today. The census applies them all now, so a holder's count is spared what its
+    body would be; a body that took the whole blow says less than the count, which claims nothing.
+
+**The four hosts.**
+
+- `src/scenes/world.js` - FLAGGED, nothing to wire. The toll is paid through the `hurt` seam world.js already hands the
+  client (*the void is a setback, never a death*), and said through its `say` and `mid`. Nothing was added to
+  `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED: unchanged. The toll is paid where the client hears the room's word, in every
+  mode, and the pull's step to the next plate is the client's own, as before.
+- `src/scenes/dungeonContext.js` - FLAGGED: unchanged.
+- `src/scenes/exterior.js` - FLAGGED: offline, no breach (section 28).
+
+**Not verified without a browser and the game's data:** nothing was played in the live game. The toll was paid on the
+stub screen of `test/egz_recap.test.js`'s harness. The pull, its frames and the census's share ran in the relay's real
+Room (`test/fakeRoom.mjs`), and the late wake and Lifeline against the director.
+
+**Pins.**
+
+- `test/egz_rules.test.js` (7): the furthest fair point, the toll's law, the pull's toll, the wire and the screen, the
+  late wake, Lifeline in the census, and the real Room.
+- `tools/mutants/egz_rules.json` (78, every one dead).
+- Re-aimed by content, both dead: `egint.json`'s EGINT-the-end-plate-an-island and `egz_legion.json`'s
+  EGZ-a-fallen-segment-holding. `egSupportAt`'s still ground is now `groundAt`'s, read by key.
+- Judged again over the files this slice touched: every record of `egint.json` (33), `egz_legion.json` (30),
+  `egz_recap.json` (31), `egplay.json` (9), `egpres_hud.json` (23), `egfull.json` (15), `egeco.json` (3) and
+  `egz_return.json` (43) aimed at `net/egFair.js`, `net/egBrain.js`, `scenes/egClient.js` or `ui/egBeats.js` (187, every
+  one dead). No record of any list aims at a changed line of `net/egLaw.js` or `net/wire.js`.
+- No pin moved. `RELAY_VERSION` `world198` is rehashed in place (unshipped): `net/egLaw.js`, `net/egFair.js`,
+  `net/egBrain.js` and `net/wire.js` moved, and nothing joined the bundle. `ACCOUNT_VERSION` stays `acct121`; no
+  migration. No new file in `src/`, so the Ledger's ELITE-GATES row is unchanged.
