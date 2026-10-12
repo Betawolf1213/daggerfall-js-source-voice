@@ -39,15 +39,15 @@
 //
 // Not a DFU member. Ledger A (SUPER-DUNGEONS).
 import { realmToDungeon, SD_REALM_ORIGIN } from '../net/sdBrain.js';
-import { SD_STEPS_COURSE, SD_BEAT_HALF, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_GUST_EVERY, stepAt, beatStands, beatBlinks, crumbleAfter, gustAt, breathSeen, inBreath, inVoid, spanAt, castBackTo } from '../world/sdSteps.js';
+import { SD_COURSE, SD_BEAT_HALF, SD_BEAT_CYCLE, SD_BEAT_SOLID, SD_BEAT_BLINK, SD_CRUMBLE_DELAY, SD_CRUMBLE_BACK, SD_CRUMBLE_FALL_G, SD_GUST_EVERY, stepAt, beatStands, beatBlinks, crumbleAfter, gustAt, breathSeen, inBreath, inVoid, spanAt, castBackTo } from '../world/sdSteps.js';
 import {
-  SD_STEP_KINDS, SD_BREATH, SD_PENDULUM, SD_BEAT_DISSOLVE, SD_GRIT, SD_WAYSTONES, SD_VANE, buildStepModel, stepTris, buildChecksModel, checkFloorTris, buildBreathModel,
+  SD_STEP_KINDS, SD_BREATH, SD_PENDULUM, SD_BEAT_DISSOLVE, SD_GRIT, SD_WAYSTONES, SD_VANE, sdWaystonesOf, sdVaneAt, buildStepModel, stepTris, buildChecksModel, checkFloorTris, buildBreathModel,
   buildBeatDissolve, buildPendulum, pendulumAngle, buildCrumbleChunks, buildGritModel, buildWaystoneModel, buildVaneModel, vaneYawInto,
 } from '../world/sdStepsModel.js';
 import { stepsArt, SD_STEPS_RECORD } from '../world/sdStepsArt.js';
 import { SD_REALM_ARCHIVE } from '../world/sdRealm.js';
 import { identity } from '../world/mat4.js';
-import { SdStepsPass, SD_GHOST_STEPS, SD_GHOST } from '../render/sdStepsPass.js';
+import { SdStepsPass, SD_GHOST_STEPS, SD_GHOSTS_MAX, SD_GHOST, sdGhostStepsOf } from '../render/sdStepsPass.js';
 import { SD_SKY_STEPS } from '../render/sdSky.js';
 import { isTouchDevice } from '../ui/touchDevice.js';
 
@@ -134,17 +134,21 @@ const hide = (d) => { if (d && !d.hidden) { d.object.matrix.fill(0); d.hidden = 
 
 /**
  * The Unmoored Steps.
- * @param {{ renderer?: any, audio?: any, ending?: string | null, lite?: boolean }} deps - SD-LOOK S9: `ending` the Hollow's Ending
+ * @param {{ renderer?: any, audio?: any, ending?: string | null, lite?: boolean, course?: any }} deps - SD-LOOK S9: `ending` the Hollow's Ending
  *   (net/sdMarks.js SD_ENDINGS' id), its sign on the vane's fin; `lite` the phone's tier (ui/touchDevice.js isTouchDevice -
- *   its own by default): two chunks a Crumble step, not four, and the pendulums' gears without teeth
+ *   its own by default): two chunks a Crumble step, not four, and the pendulums' gears without teeth; EG-H3 (EG4):
+ *   `course` the course it rides (net/egSpanLaw.js courseOf's record - the Hour's by default), its ghosts at most
+ *   SD_GHOSTS_MAX
  */
-export function createSdSteps({ renderer = null, audio = null, ending = null, lite = isTouchDevice() } = {}) {
+export function createSdSteps({ renderer = null, audio = null, ending = null, lite = isTouchDevice(), course = SD_COURSE } = {}) {
+  const ghosts = course === SD_COURSE ? SD_GHOST_STEPS : sdGhostStepsOf(course).slice(0, SD_GHOSTS_MAX);
+  const waystones = course === SD_COURSE ? SD_WAYSTONES : sdWaystonesOf(course), vaneAt = course === SD_COURSE ? SD_VANE.at : sdVaneAt(course);
   /** Each step: the law's record, its bucket's key and place (`T`, the dungeon's frame - the collider reads it at every
    *  query) and last frame's (`was`), whether it stands solid now and stood so then, its draw, and the realm's second my
    *  foot first stood on it (a Crumble step's - null untouched). SD-LOOK S9: its ghost's slot (render/sdStepsPass.js; -1
    *  none), its pendulum's draw (the Drift's), its chunks' and its grit's draws and when it was last whole again (the
    *  Crumble's). */
-  const steps = SD_STEPS_COURSE.map((s) => ({ s, key: sdStepKey(s.i), T: [0, SD_STEP_GONE_Y, 0], was: [0, SD_STEP_GONE_Y, 0], solid: false, wasSolid: false, draw: null, touched: null, ghost: SD_GHOST_STEPS.indexOf(s), pend: null, chunks: null, grit: null, back: -Infinity }));
+  const steps = course.steps.map((s) => ({ s, key: sdStepKey(s.i), T: [0, SD_STEP_GONE_Y, 0], was: [0, SD_STEP_GONE_Y, 0], solid: false, wasSolid: false, draw: null, touched: null, ghost: ghosts.indexOf(s), pend: null, chunks: null, grit: null, back: -Infinity }));
   const byKey = new Map(steps.map((st) => [st.key, st]));
   const lastStep = steps[steps.length - 1];
   /** @type {Map<string, any>} */
@@ -165,7 +169,7 @@ export function createSdSteps({ renderer = null, audio = null, ending = null, li
   const stoneDraws = [];
   /** @type {Array<{ at: ReadonlyArray<number>, ox: number, oz: number, kx: number, kz: number, w: number, g: number }>} */
   let chunkWays = [];
-  const ghostStep = new Float32Array(SD_GHOST_STEPS.length * 4), ghostState = new Float32Array(SD_GHOST_STEPS.length * 4);
+  const ghostStep = new Float32Array(SD_GHOSTS_MAX * 4), ghostState = new Float32Array(SD_GHOSTS_MAX * 4);
 
   const make = (model) => { if (!model || !renderer?.createMesh) return null; try { return renderer.createMesh(model); } catch (e) { console.warn('[sd] the Steps would not build', e?.message ?? e); return null; } };
   const drop = (mesh) => { if (mesh) { try { renderer?.destroyMesh?.(mesh); } catch { /* gone */ } } };
@@ -302,9 +306,9 @@ export function createSdSteps({ renderer = null, audio = null, ending = null, li
       draws = dynamicDraws;
       ensureSdStepsArt(renderer);
       for (const kind of SD_STEP_KINDS) { const m = make(buildStepModel(kind)); if (m) meshes.set(kind, m); }
-      checksMesh = make(buildChecksModel());
+      checksMesh = make(buildChecksModel(course));
       if (checksMesh) draws.push({ gpu: checksMesh, object: { matrix: identity() } });
-      breathMesh = make(buildBreathModel());
+      breathMesh = make(buildBreathModel(course));
       if (breathMesh) { breathDraw = { gpu: breathMesh, object: { matrix: new Float32Array(16) }, hidden: true, noShadow: true }; draws.push(breathDraw); }
       // SD-LOOK S9: the parts that show what each step will do - every one that moves casting nothing
       dissolve = SD_BEAT_DISSOLVE.keep.map((k) => make(buildBeatDissolve(k)));
@@ -329,10 +333,10 @@ export function createSdSteps({ renderer = null, audio = null, ending = null, li
         try { collider?.addMesh?.(st.key, positions, indices, identity(), () => st.T); } catch (e) { console.warn('[sd] a step\'s collider', e?.message ?? e); }
       }
       stoneMesh = make(buildWaystoneModel());
-      if (stoneMesh) for (const w of SD_WAYSTONES) { const d = { gpu: stoneMesh, object: { matrix: translate(new Float32Array(16), ...realmToDungeon(w[0], w[1], w[2])) }, noShadow: true, texRemap: null }; stoneDraws.push(d); draws.push(d); }
+      if (stoneMesh) for (const w of waystones) { const d = { gpu: stoneMesh, object: { matrix: translate(new Float32Array(16), ...realmToDungeon(w[0], w[1], w[2])) }, noShadow: true, texRemap: null }; stoneDraws.push(d); draws.push(d); }
       vaneMesh = make(buildVaneModel(ending));
-      if (vaneMesh) { vaneDraw = { gpu: vaneMesh, object: { matrix: new Float32Array(16) }, noShadow: true }; yawAbout(vaneDraw.object.matrix, 0, ...realmToDungeon(SD_VANE.at[0], SD_VANE.at[1], SD_VANE.at[2])); draws.push(vaneDraw); }
-      const tris = checkFloorTris(), idx = [];
+      if (vaneMesh) { vaneDraw = { gpu: vaneMesh, object: { matrix: new Float32Array(16) }, noShadow: true }; yawAbout(vaneDraw.object.matrix, 0, ...realmToDungeon(vaneAt[0], vaneAt[1], vaneAt[2])); draws.push(vaneDraw); }
+      const tris = checkFloorTris(course), idx = [];
       for (let k = 0; k < tris.length / 3; k++) idx.push(k);
       try { collider?.addMesh?.(SD_CHECKS_KEY, tris, idx, identity()); } catch (e) { console.warn('[sd] the checkpoints\' floors', e?.message ?? e); }
       return true;
@@ -361,11 +365,11 @@ export function createSdSteps({ renderer = null, audio = null, ending = null, li
       }
       if (!live || !body?.pos) return null;
       const ry = body.pos[1] - SD_REALM_ORIGIN[1], rz = body.pos[2] - SD_REALM_ORIGIN[2];   // AUDIT SD II (L2 F9): the realm's frame, net/sdBrain.js dungeonToRealm's own sum
-      const span = spanAt(rz);
+      const span = spanAt(rz, course);
       if (body.grounded) lastSpan = on ? on.s.span : span;   // AUDIT SD II (L4 F1): the span I last stood in
       // the Warp's breath, and its wind the second before it - SD-LOOK S9: the vane's clack with it
       const g = gustAt(t, _gust);
-      if (g.push && inBreath(rz) && dt > 0) body.collider?.move?.(body.pos, g.push * Math.min(dt, BREATH_DT_MAX), 0, 0, body.height, !!body.grounded && !body.jumping);
+      if (g.push && inBreath(rz, course) && dt > 0) body.collider?.move?.(body.pos, g.push * Math.min(dt, BREATH_DT_MAX), 0, 0, body.height, !!body.grounded && !body.jumping);
       const gust = Math.floor(t / SD_GUST_EVERY);
       if (g.warn && span === 2 && lastWarned !== gust) { lastWarned = gust; play(SD_STEPS_SOUNDS.wind, 0.9); play(SD_STEPS_SOUNDS.clack, 0.45, 2.2); }
       // the Beat's tick: a half beat gone by, and its steps come back
@@ -380,7 +384,7 @@ export function createSdSteps({ renderer = null, audio = null, ending = null, li
       // cast forward to the next checkpoint); and any fall, wherever it crosses (castBackTo takes none to A)
       if (inVoid(ry)) {
         play(SD_STEPS_SOUNDS.moan, 1);
-        return realmToDungeon(...castBackTo(lastSpan));
+        return realmToDungeon(...castBackTo(lastSpan, course));
       }
       return null;
     },
@@ -388,7 +392,7 @@ export function createSdSteps({ renderer = null, audio = null, ending = null, li
      *  draw, render/sdStepsPass.js, made the first time), in `fog`. Answers whether it drew (the host marks a foreign pass). */
     drawPass(proj, view, fog = null) {
       if (!draws || !renderer?.gl) return false;
-      if (!passTried) { passTried = true; try { pass = new SdStepsPass(renderer.gl); } catch (e) { console.warn('[sd] the Steps\' ghosts would not build', e?.message ?? e); pass = null; } }
+      if (!passTried) { passTried = true; try { pass = new SdStepsPass(renderer.gl, ghosts); } catch (e) { console.warn('[sd] the Steps\' ghosts would not build', e?.message ?? e); pass = null; } }
       if (!pass) return false;
       const vp = renderer._worldViewportPx;   // the world image (px) - read, never copied: a frame makes nothing
       return pass.draw(proj, view, ghostStep, ghostState, fog, renderer.lightingLane ? SD_SKY_STEPS.lane : SD_SKY_STEPS.classic, vp?.[2] ?? 0, vp?.[3] ?? 0);

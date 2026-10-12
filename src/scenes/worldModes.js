@@ -119,6 +119,7 @@ import { isSdRealm, sdRealmLocation, sdRealmBlocks, buildRealmModel, realmCollid
 import { realmArt } from '../world/sdRealmArt.js';   // SD5a: its art, made in code
 import { isEgHall, egHallLocation, egHallBlocks, buildEgCircleModel, egCircleColliderTris, egCircleLights, egLightsWith, egHallLighting, egGateParts, EG_HALL_FOG } from '../world/egHall.js';   // EG-PLAY: an Elite Breach's circle, a made level as the Hour is
 import { egRoomKey, egCircleSpecs, EG_TEXT } from '../net/egLaw.js';   // EG-PLAY: its room, its halls, its words
+import { createEgSwap } from './egSwap.js';   // EG-H3 (EG10): THE SWAP'S BUILD - the next circle's level made while the Court rests
 import { SD_HOUR_GRADE } from '../world/sdLook.js';   // SD-LOOK: the Hour's grade on the lane
 /** SD-LOOK: the dungeon arm's two draw options for its dynamic draws (render/renderer.js drawMesh), made once - the hot
  *  loop makes nothing. */
@@ -9227,15 +9228,7 @@ export function createWorldModes(host) {
     _egGates = [];
     for (const spec of egCircleSpecs(eh.seed, eh.c, eh.geo ?? 0)) {
       const parts = egGateParts(spec);
-      if (!parts) continue;
-      let gpu = null;
-      try { gpu = renderer?.createMesh ? renderer.createMesh(parts.model) : null; } catch { gpu = null; }
-      const g = { h: spec.h, gpu, T: [0, 0, 0], draw: gpu ? { gpu, object: { matrix: identity() } } : null };
-      if (g.draw) ctx.dynamicDraws.push(g.draw);
-      const gi = new Uint16Array(parts.tris.length / 3);
-      for (let i = 0; i < gi.length; i++) gi[i] = i;
-      ctx.collider.addMesh(`eg:gate:${spec.h}`, parts.tris, gi, identity(), () => g.T);
-      _egGates.push(g);
+      if (parts) egGateStand(ctx, spec.h, parts);   // EG-H3: the one gate stand (the swap's too)
     }
     ctx.addActivationNamer((key) => (typeof key === 'string' && key.startsWith('exit:') ? { title: EG_TEXT.wayHome } : null));   // the Redoubt's way home is the level's one exit door, stood by the outer host (before the dungeon exit's own namer)
   }
@@ -9247,6 +9240,56 @@ export function createWorldModes(host) {
       if (g.draw) g.draw.hidden = open;
     }
   }
+  // ── EG-H3 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md sections 7 and 31, EG10):
+  // THE SWAP - a new circle stood IN PLACE from the level its rest built (scenes/egSwap.js, off the main thread - world/
+  // egCircleWorker.js): the old circle's mesh, portcullises, floors and spans freed, the new one's uploaded and laid, the
+  // circle renamed on the level. No exterior pixel, no landing, no world-cell hello, no new context: the presence socket
+  // stays the breach's (`{kind: 'eg', b}`). A build not ready when the step is due leaves the step the old way, out under
+  // the veil and in again (scenes/egClient.js swapTo). ─────────────────────────────────────────────────────────────────
+  const egSwap = createEgSwap();
+  /** A Rampart's portcullis stood into the context (`parts` world/egHall.js egGateParts's): its own draw and a moving
+   *  bucket, sunk once its door opens (egGatesFrame). */
+  function egGateStand(ctx, h, parts) {
+    let gpu = null;
+    try { gpu = renderer?.createMesh ? renderer.createMesh(parts.model) : null; } catch { gpu = null; }
+    const g = { h, gpu, T: [0, 0, 0], draw: gpu ? { gpu, object: { matrix: identity() } } : null };
+    if (g.draw) ctx.dynamicDraws.push(g.draw);
+    const gi = new Uint16Array(parts.tris.length / 3);
+    for (let i = 0; i < gi.length; i++) gi[i] = i;
+    ctx.collider.addMesh(`eg:gate:${h}`, parts.tris, gi, identity(), () => g.T);
+    _egGates.push(g);
+  }
+  /** The next circle's level asked of the swap's build (`r` { b, seed, c, geo }) - only inside that breach's circle;
+   *  answers its state ('ready', 'building', or null: none offered - the step will be the old way). */
+  function egPrebuild(r) {
+    if (mode !== 'dungeon' || !isEgHall(dungeonLoc) || !r || r.b !== dungeonLoc.egBreach || !Number.isSafeInteger(r.c)) return null;
+    return egSwap.want(r.seed, r.c, r.geo ?? 0);
+  }
+  /** THE SWAP ITSELF (under the veil the client has closed): circle `r.c` stood in this same level from its built parts -
+   *  false (nothing touched) when it is not built, or this is not that breach's circle. The slot emptied before what was
+   *  in it is freed. */
+  function egSwapCircle(r) {
+    if (mode !== 'dungeon' || !isEgHall(dungeonLoc) || !dungeonCtx || !r || r.b !== dungeonLoc.egBreach || !Number.isSafeInteger(r.c)) return false;
+    const parts = egSwap.take(r.seed, r.c, r.geo ?? 0);
+    if (!parts) return false;
+    const ctx = dungeonCtx, mesh = _egMesh, gates = _egGates, gone = new Set([mesh, ...gates.map((g) => g.gpu)].filter(Boolean));
+    _egMesh = null; _egMeshKey = ''; _egGates = [];
+    for (let i = ctx.dynamicDraws.length - 1; i >= 0; i--) if (gone.has(ctx.dynamicDraws[i]?.gpu)) ctx.dynamicDraws.splice(i, 1);
+    ctx.collider.removeBucket(EG_BUCKET);
+    for (const g of gates) ctx.collider.removeBucket(`eg:gate:${g.h}`);
+    for (const m of gone) { try { renderer?.destroyMesh?.(m); } catch { /* gone */ } }
+    try { _egMesh = renderer?.createMesh ? renderer.createMesh(parts.model) : null; } catch (e) { console.warn('[eg] the circle would not build', e?.message ?? e); _egMesh = null; }
+    _egMeshKey = parts.key; _egLamps = parts.lamps;
+    if (_egMesh) ctx.dynamicDraws.push({ gpu: _egMesh, object: { matrix: identity() } });
+    const n = parts.tris.length / 3, idx = n > 65535 ? new Uint32Array(n) : new Uint16Array(n);
+    for (let i = 0; i < n; i++) idx[i] = i;
+    ctx.collider.addMesh(EG_BUCKET, parts.tris, idx, identity());
+    for (const g of parts.gates) egGateStand(ctx, g.h, g);
+    ctx.egRecircle?.({ seed: r.seed >>> 0, c: r.c, geo: r.geo ?? 0 });   // the spans: the old circle's freed, the new one's stood at the next ride
+    dungeonLoc.egCircle = r.c; dungeonLoc.egGeo = (r.geo ?? 0) | 0;
+    return true;
+  }
+  // ── EG-H3 end ──────────────────────────────────────────────────────────────────────────────────────────────────────
   /** EG-PLAY: A BODY STOOD ELSEWHERE IN THE CIRCLE (a pull to the next hall's plate, the void's cast-back) - the action
    *  teleport's way (its settle, the eye with it), facing `yaw`, and the spans told where the void would cast it back to. */
   function egPlace(at, yaw = null) {
@@ -12986,6 +13029,7 @@ export function createWorldModes(host) {
     egPlace,   // EG-PLAY: stood elsewhere in the circle - a pull to the next hall's plate
     egLeave: () => { if (mode !== 'dungeon' || !isEgHall(dungeonLoc) || !dungeonCtx) return false; pendingDungeonExit = true; return true; },   // EG-PLAY: out of the breach at the top of the next frame, to where it was answered from (returnLanding's `from`)
     egHallReturn: () => (mode === 'dungeon' && isEgHall(dungeonLoc) ? dungeonReturn?.from ?? null : null),   // EG-PLAY: where a death or a new circle stands me outside
+    egPrebuild, egSwapCircle, egSwapDrop: () => egSwap.drop(),   // EG-H3 (EG10): THE SWAP - the next circle built while the Court rests, stood in place; the build forgotten at the breach's end
     enterArenaFloor, enterArenaUndercroft, arenaFloorStage, arenaPitStage, standOnArenaMark, leaveArenaFloor,   // ARENA6: a session's fighter to its mark and back, and out of the instance   // ARENA2: the floor's instance, the fighters' hall, the instance as a bout's stage
     enterAbyss,   // OH-D: the pit's way down
     /** OH-E: RemoveBorrowedQuestResources - every QuestResourceBehaviour under the live dungeon destroyed: the quest

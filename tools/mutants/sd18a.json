@@ -373,8 +373,8 @@
   {
     "name": "SD18A-a-fight-unmarked",
     "file": "server/src/index.js",
-    "old": "newRemnantFight(s, (f?.fi ?? 0) + 1, now, sdMarksOf(s));",
-    "new": "newRemnantFight(s, (f?.fi ?? 0) + 1, now);",
+    "old": "SD_SEAM.new({ s, fi: (f?.fi ?? 0) + 1, now, mk: sdMarksOf(s) });",
+    "new": "SD_SEAM.new({ s, fi: (f?.fi ?? 0) + 1, now });",
     "tests": [
       "test/sd18a_marks.test.js"
     ]

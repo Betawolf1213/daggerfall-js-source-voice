@@ -335,8 +335,8 @@
   {
     "name": "SD25-S9-the-slow-frame-taken",
     "file": "src/scenes/sdFx.js",
-    "old": "t - wasAt < SD_REWIND_SEEN.gap ? sdCastBackSeen(wasY, rx, ry, rz) : -1",
-    "new": "sdCastBackSeen(wasY, rx, ry, rz)",
+    "old": "t - wasAt < SD_REWIND_SEEN.gap ? sdCastBackSeen(wasY, rx, ry, rz, course) : -1",
+    "new": "sdCastBackSeen(wasY, rx, ry, rz, course)",
     "tests": [
       "test/sd25_steps.test.js"
     ]

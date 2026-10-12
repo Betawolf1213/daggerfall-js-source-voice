@@ -37,7 +37,7 @@ import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGIN
 import { egAnnalsNext, egAnnalsLordPage } from './egAnnals.js';
 import { egFeatBits } from './egFeats.js';   // EG-E: the lords' feats, judged at a lord's fall
 import { arenaWeekOf } from './arenaLaw.js';   // EG-E: the Proclamation's week, the arena's (Monday to Monday from the season epoch)
-import { orreryOf, orreryFresh, orreryStep, orreryShortest, SD_STONE_SETTLE_MS } from './sdBrain.js';
+import { orreryOf, orreryFresh, orreryJudge, orreryShortest } from './sdBrain.js';
 import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gateBrain.js';
 
 /** The rifts together hold this many seconds of the company's reference damage (section 8.1); a Wellspring's great
@@ -1124,8 +1124,8 @@ export function egWord(B, sub, m, pose, now, rng) {
       const F = B.F;
       if (!mm.alive || !F?.orrery || B.sg !== 'trial' || !p) break;
       const stone = egObjsOf(F, 'stone').find((o) => o.pt === m.i);
-      if (!stone || dist(p.x, p.z, stone.x, stone.z) > 3.5 || now - (F.lockLast[m.i] ?? 0) < SD_STONE_SETTLE_MS) break;
-      const res = orreryStep(F.orrery, F.lock, m.i, m.a === -1 ? -1 : 1);
+      if (!stone || dist(p.x, p.z, stone.x, stone.z) > 3.5) break;
+      const res = orreryJudge(F.orrery, F.lock, F.lockLast, m.i, m.a === -1 ? -1 : 1, now);   // EG-H3 (EG4): the Hour's one judge - the settle and the turn (no rights: a company is one thread)
       if (!res) break;
       F.lock = { st: res.st, f: res.f, ok: res.ok, lit: res.lit }; F.lockLast[m.i] = now; F.turns++;
       if (res.x) { for (const [s2] of living(B)) out.push({ k: 'eheal', p: -0.25, why: 'fray', to: s2 }); F.turns = 0; }
