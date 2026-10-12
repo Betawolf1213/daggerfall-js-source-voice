@@ -23,7 +23,7 @@ import { realmArt } from '../src/world/sdRealmArt.js';
 import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
 import { identity } from '../src/world/mat4.js';
 import { egBandOfCircle } from '../src/net/egLaw.js';   // EG-G2 (merged): the band's dress and the waystones go up with a swapped circle
-import { egBandArt, egBandArchive } from '../src/world/egBandArt.js';
+import { egBandArt, egBandArchive, EG_BEAT_TELL_RECORDS } from '../src/world/egBandArt.js';
 import { buildEgLookModel } from '../src/world/egLook.js';
 import { Collider } from '../src/player/collider.js';
 
@@ -208,8 +208,11 @@ test('EG10 THE SWAP IN PLACE, EXECUTED - THE FREE PINS (scenes/worldModes.js egS
   R.dc.egSpanRide(0.016, R.body, true);
   assert.deepEqual(R.count(), base, 'twenty swaps and back: the live meshes, the buckets and the draws at their baseline');
   const bandTex = (b) => [...egBandArt(b)].length * 2;   // an albedo and an emission a record
+  // PIN MOVED (EG-ZL, Elite-Gates.md section 10.3): a band's Beats' own pictures (its warning in the palette, its return -
+  // world/egBandArt.js EG_BEAT_TELL_RECORDS) go up with its first span that lays a Beat, once a session as its dress does
+  const tellTex = (b) => (Array.from({ length: 21 }, (_, i) => i + 1).some((c) => egBandOfCircle(c) === b && egCircleSpecs(SEED, c).some((s) => s.steps.some((q) => q.kind === 'beat'))) ? (EG_BEAT_TELL_RECORDS.warn[0].length + EG_BEAT_TELL_RECORDS.back.length) * 2 : 0);
   const bands = new Set(Array.from({ length: 21 }, (_, i) => egBandOfCircle(i + 1)));
-  assert.equal(R.textures, tex + [...bands].filter((b) => b !== egBandOfCircle(1)).reduce((n, b) => n + bandTex(b), 0), 'each band\'s dress uploaded once a session, at a prebuild, never by a swap');
+  assert.equal(R.textures, tex + [...bands].filter((b) => b !== egBandOfCircle(1)).reduce((n, b) => n + bandTex(b) + tellTex(b), 0), 'each band\'s dress (and its Beats\' pictures) uploaded once a session, never by a swap');
   assert.equal(R.made - R.freed, base.live);
   assert.equal(R.wm.meshKey, egCircleKey(SEED, 1));
 });

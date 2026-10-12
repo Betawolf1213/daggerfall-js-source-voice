@@ -10354,6 +10354,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     egSpanSafe(p) { egSpan?.setSafe(p); },
     egRecircle(r) { return egRecircle(r); },   // EG-H3 (EG10): THE SWAP - a new circle's spans in this same level
     egSpanCull(proj, view) { return egSpan?.cull(proj, view) ?? 0; },   // EG-G2 (Elite-Gates.md section 11.9): the spans' pieces culled against this frame's frustum, before the draws
+    egSpanDraw(proj, view, fog) { return !!egSpan?.drawPass(proj, view, fog); },   // EG-ZL (Elite-Gates.md sections 10.3 and 10.8): the spans' ghosts and a peer's ghost slab, in the breach client's pass (scenes/egClient.js drawPass)
+    egSpanPeer(x, y, z) { return !!egSpan?.peerOn(x, y, z); },   // EG-ZL (section 10.8): a peer's drawn feet on a Crumble I have seen fall - its ghost slab (scenes/egClient.js rideDraw)
     /** AUDIT SD II (L2 F10): the Shattered Hour's hall and arena posed BEFORE the world pass draws them (the mode machine's
      *  dungeon arm, with no window up, as the Steps are ridden before the motor): the Orrery's hall stood, its word heard,
      *  its hands turned (SD6c); the Brass Remnant stood, my `in`, its bodies placed (SD8c). Posed in drawFoes, after the

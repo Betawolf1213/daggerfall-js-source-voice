@@ -23,7 +23,8 @@
 // THE SPIRE'S (section 25.1). The page reserved 38231-38279 "free today from 38231 (after the merchant yard's 38221)",
 // but the harbour's art took 38231 (world/portArt.js PORT_ARCHIVE) before the page was built. So the four bands keep the
 // page's numbers (38241, 38251, 38261, 38271 - a block of nine each, the first painted, the rest held for the band's own
-// later records), and the arch, the key and the beacon's block moves past them, to 38281-38289. Said in the arc's record.
+// later records: EG-ZL paints its Beats' pictures under the second - world/egBandArt.js egTellArchive), and the arch, the
+// key and the beacon's block moves past them, to 38281-38289. Said in the arc's record.
 //
 // A leaf: no imports. Not a DFU member. Ledger A (ELITE-GATES).
 

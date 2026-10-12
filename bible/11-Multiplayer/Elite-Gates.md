@@ -3667,8 +3667,7 @@ Closes layer one's first departure for the pieces.
 **What EG-D still owes**: the fragment kits beyond the Oblivion Caverns passage (the Ossuary, the Gloam Thicket, the
 Forge Gut and the rest of section 11.2) with their signature hazards; the set-piece passages; THE FORK (the High Road and
 the Low Road); the fragment law record (`net/egFragLaw.js`); engines, alcoves and the Annals; Grath's falling isles. Also
-the pieces' remaining tells (the Rail's dashed track, the Gust's streamers, the waystones lit) and the solver's median
-check.
+the solver's median check.
 
 **Pins.** `test/egfull_span.test.js` (6) and `tools/mutants/egspan.json` (19, every one dead). `RELAY_VERSION` stays
 `world196` (renumbered past main's COATS1 `world195` at the merge; `world197` past CHAT-LANG's `world196` at the next, `world198` past BAL8's `world197` at a later one), unshipped, rehashed with `net/egSpanLaw.js` in its graph.
@@ -3796,8 +3795,7 @@ Grath's falling isles, and the solver's median check.
 - **Still owed by EG-D:**
   - the moving pieces' instanced pass, the cull and the measured budgets;
   - `world/meshKit.js` and `world/pseudoArchives.js`;
-  - the authored hero fragments;
-  - the pieces' last tells (the Rail's track, the Gust's streamers, the waystones lit).
+  - the authored hero fragments.
 
 **Pins.**
 - `test/egfrag_law.test.js` (9), `test/egfrag_relay.test.js` (5), `test/egfrag_client.test.js` (6).
@@ -5637,3 +5635,147 @@ peers, the tell, the reverb's crossfade and TEXTURE.356 are closed here.
 - PIN MOVED: `test/audit39_render.test.js` (the fire walls take GetFireWallColors32). `bible/06-Systems/Systems.md` counts
   517 modules. `bible/07-Rendering/Rendering.md` and `Rendering-Arc.md` say GetFireWallColors32 shipped.
 - `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`; no migration.
+
+### EG-ZL - 2026-10-12 - THE PIECES' TELLS ON THE SPANS
+
+(Mac: *"I said I want everything"*.) Section 10.3's tells for the pieces the Spire lays, section 10.8's ghost slab, and
+section 25's look on them (the five lights, THE EDGE LINE's gold, the fog floor, reduced motion and the danger palettes).
+It closes what `scenes/egSpan.js`'s header said EG-PLAY left - "the Steps' look parts (the pendulums, the dissolve, the
+chunks, the ghosts' pass, the waystones); a Beat shows its glyph frames, a Crumble falls whole" - and the stale "still
+owed" lines for the pieces' tells in layer two's and layer three's records, which EG-G2's tracks, streamers and Rampart
+waystones had already answered. All of it is client-only: nothing in the relay's graph moved.
+
+**What shipped, by piece.**
+
+- **A KIND THAT TURNS** (`scenes/egPieceBatch.js` `add(..., { turns })`, `remap`, `copyVertex`). A Drift's hang, a
+  Crumble's chunks and a Gust island's banner turn as well as move. A kind added `turns` writes each copy through its
+  slot's whole matrix: every vertex turned and moved, every normal turned. Its cull sphere's centre is turned with it,
+  and a copy is re-laid when any of its twelve numbers moves. A kind that only moves keeps EG-G2's law, line for line.
+  A kind's draw takes one picture map (`remap`, before the build or after), so the copies one frame of law shows alike
+  share one draw.
+- **THE GHOSTS, A CIRCLE'S** (`render/sdStepsPass.js` `sdStepsPassVs`, `sdStepsPassFs`, `SdStepsPass(gl, ghosts, { max,
+  slab, fogFloor })`; `scenes/egSpan.js` `drawPass`). The Hour's own pass draws the circle's gone Beats and my fallen
+  Crumbles (a bone bridge's too), outlined where they return, each with its hand running back to the return. Its count is
+  the circle's (`EG_GHOSTS_MAX` 48; the most any of 640 circles measured lays is 31). It keeps the Spire's fog floor
+  (`world/egLook.js` `EG_FOG_FLOOR`, section 25.6). Built without the three, its text and its buffer are the Hour's byte
+  for byte. The pass is built the first time it draws and freed at the span's clear. The breach client draws it in its
+  own pass under the lines (`scenes/egClient.js` `drawPass`, through `dungeonContext.egSpanDraw`).
+- **A BEAT** (section 10.3: "a sector sweeping through the solid time; the last 0.4 s white, faltering at most 2.5 Hz; a
+  gold ghost while it is gone").
+  - A kind a beat (`beatKind`). The pieces of one beat show one frame, so their one draw wears one picture map.
+  - Across its solid time the Steps' dial runs frame by frame (`scenes/sdSteps.js` `SD_BEAT_FRAMES`): its hand goes back
+    to XII and the ticks still ahead stay lit.
+  - Over its last 0.4 s it burns the place's own white and dissolves out a stage each `SD_BEAT_OUT_STAGE_S`. Over its
+    first `SD_BEAT_IN_S` it dithers back in.
+  - THE DISSOLVE IS MADE IN THE PICTURE (`world/egBandArt.js` `egBeatWarnArt`, `egBeatBackArt`, `egDissolveArt`,
+    `egBeatTellMaps`). Each stage is the Steps' dial with exactly the cells its stage keeps (`SD_BEAT_DISSOLVE.keep` of
+    16, by the ordered dither, cells of the Steps' own three texels). The rest is a hole and dark. They are uploaded as
+    cutouts (the renderer's RW1 holes) under the band block's second archive (`egTellArchive`, 38242 for the Galleries -
+    the block's "own later records").
+  - The warning's light is the danger palette's hazard (`ui/egAccess.js`): white, or High contrast's cyan with its rim
+    line dashed four texels on and four off (`world/sdStepsArt.js` `beatArt`'s `warn` and `dash`; the Hour's own art is
+    unchanged byte for byte). Its falter is the Steps' blink law's - shown 0.2 s, then out.
+  - Gone, its gold ghost.
+- **MY CRUMBLE** (and a bone bridge, the Crumble's law; section 10.3: "three crack stages, and the rewind as it
+  returns"). The Steps' own look (`scenes/sdSteps.js` `crumbleLook`) on the Spire's Crumbles:
+  - my foot on it grinds where it stands (`AmbientGrind`);
+  - its three crack stages flare across the shake (a kind a stage, `SD_CRUMBLE_STAGES`), and its grit pours;
+  - fallen, its plate is gone and its chunks (two on a phone) fall, drift and tumble by the Steps' own law
+    (`sdChunkWays`, `sdChunkMatrix` - exported, the Hour reads them too), out of sight past `SD_CRUMBLE_SEEN`;
+  - its ghost counts the return; in the last `SD_CHUNK.rewind` the chunks fly back up, eased out;
+  - whole again, they click home (the clunk pitched 2.6) and it shudders.
+- **A DRIFT'S HANG** (`egHangModel(band)`; section 10.3: "hangs on two chains from an anchor 18 m up (an arch rib, a
+  ribcage, a moon-shard, a crane hook), leaning as it swings").
+  - Two chains of links, every other turned a quarter, hang on the Steps' pendulum's own line (`SD_PENDULUM.foot` either
+    side of the deck's middle, clear of a body at its edge) from brackets on the deck's sides up to the pivot
+    `SD_PENDULUM.len` over it, in the band's metal.
+  - The band's anchor: the Galleries' broken marble arch rib with gold leaf on its crown, the Cairn's bone ribcage, the
+    Shade's moon-shard, the Wellhead's iron crane hook on its cable.
+  - The whole turns about the pivot by `pendulumAngle` of the law's own swing, as the Hour's pendulums do. A kind a
+    hall, so only the halls in view re-lay their swinging copies.
+- **THE ISLANDS' WAYSTONES** (section 10.3: "Islands carry the Steps' waystone, lit gold while it is a member's cast-back
+  point"). The Steps' waystone stands on every island at the Steps' own place beside its landing
+  (`world/sdStepsModel.js` `sdWaystonesOf`). Its rune is lit while my cast-back point (`safe`, a pull's landing too)
+  stands on its island, edge to edge, and dark otherwise (`SD_WAYSTONE_DARK`) - one at a time, none on a plate.
+- **THE GUST'S BANNERS AND ITS WIND** (section 10.3: "a streamer banner on every island pointing the push 1 s ahead; the
+  wind rising (`AmbientWindMoanDeep`)"). The Steps' vane stands on each island of a Gust section (`sdVaneAt`'s place on
+  it), swung by the breath's own clock (`vaneYawInto`) to point the coming push a second ahead. The wind and the vane's
+  clack sound once a gust while I stand over the section or its islands, and nowhere else.
+- **A GHOST SLAB** (section 10.8: "A peer on a crumble the viewer has seen fall is drawn on a ghost slab").
+  - `net/online.js` tells `rideAt` of every drawn peer in the Spire. A peer on no ride is told and never moved; a
+    ridden one is still moved on its copy.
+  - The breach client hands a peer on no ride to the spans (`scenes/egClient.js` `rideDraw`,
+    `dungeonContext.egSpanPeer`, `scenes/egSpan.js` `peerOn`).
+  - A peer whose drawn feet stand on a Crumble fallen under my own foot - on its top within the capsule, within the
+    ride's height band (`net/egFair.js` `EG_RIDE_DOWN_M`, `EG_RIDE_UP_M`) - lights that ghost's top (`EG_GHOST_SLAB`:
+    0.35 of the ghost's light, held 0.3 s past the peer's last word). The peer is drawn standing on it, not on air.
+- **THE RAIL'S TRACK TICKED AT EACH END** (`world/egLook.js` `egCircleEdges`; section 10.3: "a dashed gold track between
+  its plates, ticked at each end"). Across each side's track, at each end of its travel, a tick one dash long at the
+  track's own depth, in the same gold. A Drum's track is ticked the same.
+- **A DROP'S WALL LIT** (`world/egHall.js` `EG_DROP_LAMP`; section 10.3: "the landing's edge line, gold; the wall's face
+  lit"). A lamp of the circle's own light stands over each Drop's landing, 1.5 m before its far wall's face and 4.5 m up
+  it, so the wall a body carried too far meets is seen from the takeoff.
+- **REDUCED MOTION** (section 25.7: "It, or the system's setting, governs ... the shakes"). The row or the system's
+  setting stills every piece's shake the spans draw: a Crumble's shake and its shudder home, a slag crust's last second,
+  Grath's cracked isles. The cracks, the falter, the dissolve and the light still tell.
+- **Measured** (EG-G2's measure: node, 60 circles - seeds 7, 99 and 12345, circles 1 to 20; before at b4af2365):
+  - a circle's GL draws with every copy in view: 13.5 on average (worst 23) before, 16.6 (worst 28) after. With the tells
+    at their worst - every Crumble of a circle fallen under my foot, its chunks in the air - 18.8 (worst 31). EG-G2's own
+    bound, at most 48 a circle, holds;
+  - from Hall 2's plate down its course (seven circles, 300 frames each): 11.0 GL draws on average (worst 15) before, 12.8
+    (worst 19) after - the new kinds are a beat's second draw, a hall's hang, the waystones lit and dark, and a Crumble's
+    stages, chunks and grit only while they show;
+  - the dynamic draws a circle stands (each kind one, drawn or not): 9.1 (worst 14) before, 19.5 (worst 29) after. A
+    Falling Wall's circle stands 21 where a draw a piece would stand 208 (EG-G2's tenth, held);
+  - the ride and the cull together (seven circles, Hall 2's eye, the two trees run in turn five times): a median frame of
+    0.006 ms before and 0.011 ms after, a mean of 0.015 ms and 0.036 ms (node, on a machine shared with other work).
+
+**The four hosts.**
+- `src/scenes/dungeonContext.js` - WIRED: `egSpanDraw(proj, view, fog)` (the spans' ghosts and slabs) and
+  `egSpanPeer(x, y, z)` (a peer's drawn feet), beside EG-G2's `egSpanCull`. The ghosts' pass is freed by the span's
+  clear on every path that clears it (its teardown, `egRecircle`'s swap).
+- `src/scenes/world.js` - FLAGGED: untouched. The ghosts draw in the breach client's pass, which `drawEgFight` already
+  calls. The peer's word rides net/online.js's `rideAt`, which the client sets.
+- `src/scenes/worldModes.js` - FLAGGED: untouched. Its cull before the dynamic draws (`egSpanCull`) already culls the
+  new kinds.
+- `src/scenes/exterior.js` - FLAGGED: the bench is offline and holds no Elite Breach.
+
+**Departures, said plainly.**
+- **Done another way:**
+  - the Beat's dissolve is made in its picture (cutouts), not by swapping in the Hour's cut meshes. A kind of Beats stays
+    one batched draw; the four stage meshes would have cost about 13,000 vertices a copy;
+  - a Beat's frames run a kind a beat. Every circle measured lays its Beats on two beats, half a cycle apart, so a
+    circle's Beats are two draws where they were one;
+  - a Beat's warning frames (its frame 10 and its falter) are painted for the Spire with the palette's hazard; frames 0
+    to 9 stay the Hour's own, their dim ember inlay with them (EG-G2's "the Steps' own pieces keep the Hour's art");
+  - the anchor rocks with its chains, as the Hour's gear rocks with its rods, so a Drift's hang is one turning copy;
+    its tilt is at most asin(2 / 18), 6.4 degrees;
+  - the Gust's "streamer banner" is the Steps' own vane on each Gust island (the Hour's tell for the same breath), beside
+    EG-G2's streamers across the section;
+  - "the wall's face lit" is a lamp of the circle's own light before it, not a lit face: gold on a wall would say "it
+    holds" (section 25.2);
+  - the Beat's pictures are the session's: uploaded once a renderer for each band and palette, never freed at a clear -
+    the band dress's own law (EG-G2), so a swap uploads nothing again. The ghosts' pass, the batch's meshes and every
+    tell's slot are the span's and are freed at its clear;
+  - the ghost slab is the ghost's own top, filled in its gold at 0.35 of its light, while the peer's word holds (0.3 s);
+  - the Gust's wind is the page's AmbientWindMoanDeep (66), where the Hour's breath blows AmbientWindBlow1 (70).
+- **Not built:**
+  - the band's glyph on a Beat's face: the page names no glyph a band, so the Steps' dial stands for "a sector
+    sweeping through the solid time";
+  - the Gust's "streaks at the screen's edge": a screen-space overlay; the streamers and the banners carry its tell;
+  - a peer on a Sinking Stair flight I have sunk: the page names the Crumble alone.
+- **Not verified without a browser and the game's data:** nothing was seen on a screen. The shaders were run through
+  `test/glsl.mjs`, the passes through a recording GL, and the pieces through a counting renderer. The cutout dissolve,
+  the chains and the anchors were never looked at, and the frame times are node's, not a phone's.
+
+**Pins.**
+- `test/egz_tells.test.js` (9).
+- `tools/mutants/egz_tells.json` (65, every one dead on the first run).
+- Re-aimed by content (mutantdrift): `egseam.json`'s EGSEAM-the-ghosts-past-the-most (`ghosts.slice(0, max)`) and
+  `sd25_steps.json`'s SD25-S9-every-ghost-a-beat-plate (the ghost's `edges`).
+- Judged again over the files this slice touched: `egfrag.json`, `eglook.json`, `egplay.json`, `egseam.json`,
+  `egz_frag.json`, `egz_stair.json`, `sd25_steps.json`, `egspan.json`, `egz_telegraph.json` and `sd25_look.json` (592: 591
+  dead, and `sd25_look.json`'s SD25-the-street-off-its-palette equivalent as recorded).
+- PIN MOVED: `test/egswap_client.test.js` - a band's Beats' pictures go up once a session with its dress, never by a swap.
+- `RELAY_VERSION` is untouched (nothing in the relay's graph moved), and `ACCOUNT_VERSION` stays `acct121`; no migration.
+- No new src module. The Port-Ledger's ELITE-GATES row is left to the merge (it names every file touched).

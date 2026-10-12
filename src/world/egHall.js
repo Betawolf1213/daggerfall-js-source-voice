@@ -47,6 +47,10 @@ const UNITS_PER_M = 40;
 /** The door's posts and lintel (m), a lamp's head and reach, the walkway's lamp pitch. */
 export const EG_DOOR = Object.freeze({ halfW: 1.6, post: 0.5, h: 4.2, lintel: 0.6 });
 export const EG_LAMP = Object.freeze({ h: 2.6, range: 14, color: Object.freeze([1.0, 0.78, 0.42]), lava: Object.freeze([1.0, 0.45, 0.12]), moon: Object.freeze([0.62, 0.7, 1.0]), pitch: 24 });
+/** EG-ZL - A DROP'S WALL LIT (section 10.3's tell: "the landing's edge line, gold; the wall's face lit"): a lamp over the
+ *  landing, `h` up its far wall and `off` out from its face (m) - the wall a body carried too far meets, seen from the
+ *  takeoff before the jump. */
+export const EG_DROP_LAMP = Object.freeze({ h: 4.5, off: 1.5 });
 /** The made level's fog and light: the Hour's brass haze, a little deeper - the Spire hangs in a darker void. */
 export const EG_HALL_FOG = Object.freeze({ mode: 'exp', density: 0.006, color: Object.freeze([0.12, 0.08, 0.07]) });
 
@@ -409,7 +413,7 @@ export function egGateParts(spec) {
 }
 
 /** THE CIRCLE'S LAMPS (the light list's shape, the dungeon's frame): two by each plate, round each court's rim, along the
- *  walkway, the fire in each passage's channels. */
+ *  walkway, the fire in each passage's channels; EG-ZL: one before each Drop's far wall (EG_DROP_LAMP). */
 export function egCircleLights(seed, c, geo = 0) {
   const out = [];
   const lamp = (p, color = EG_LAMP.color, range = Number(EG_LAMP.range)) => out.push({ x: p[0], y: p[1], z: p[2], range, color: [...color] });
@@ -419,6 +423,7 @@ export function egCircleLights(seed, c, geo = 0) {
       for (let k = 0; k < n; k++) { const a = (k / n) * Math.PI * 2 + Math.PI / 4; lamp(egToDungeon(spec, d.x + Math.cos(a) * (d.r - 1), d.y + EG_LAMP.h, d.z + Math.sin(a) * (d.r - 1))); }
     }
     if (spec.walk) for (let z = spec.walk.z0 + 8; z < spec.walk.z1; z += EG_LAMP.pitch) for (const s of [-1, 1]) lamp(egToDungeon(spec, s * (spec.walk.halfW + 0.3), EG_LAMP.h, z));
+    for (const s of spec.steps) if (s.kind === 'drop') lamp(egToDungeon(spec, s.x, s.y + EG_DROP_LAMP.h, s.z + s.d / 2 - EG_DROP_LAMP.off));   // EG-ZL: a Drop's wall lit
     // EG-FULL LAYER THREE: each fragment's own lights (net/egFragLaw.js) - the lava's orange, the kit's own colour, the moon
     for (const [x, y, z, kind] of spec.lights ?? []) {
       const kit = (spec.frags ?? []).find((q) => z >= q.z0 - 1 && z <= q.z1 + 1)?.kit;

@@ -317,8 +317,8 @@
   {
     "name": "SD25-S9-every-ghost-a-beat-plate",
     "file": "src/render/sdStepsPass.js",
-    "old": "for (const [a, b] of stepEdges(s.kind)) put(a, b, slot, 0);",
-    "new": "for (const [a, b] of stepEdges('beat')) put(a, b, slot, 0);",
+    "old": "const edges = stepEdges(s.kind);",
+    "new": "const edges = stepEdges('beat');",
     "tests": [
       "test/sd25_steps.test.js"
     ]
