@@ -553,8 +553,8 @@
   {
     "name": "EGPRES-a-yes-or-no-one-option",
     "file": "src/scenes/egClient.js",
-    "old": "n: egAskText(a[0], a[1]).opts.length, ask: a }",
-    "new": "n: a[1].length, ask: a }",
+    "old": "n: egAskText(a[0], a[1]).opts.length, cards: 0, ask: a }",
+    "new": "n: a[1].length, cards: 0, ask: a }",
     "tests": [
       "test/egpres_hud.test.js"
     ]

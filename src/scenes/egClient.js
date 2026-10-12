@@ -41,6 +41,18 @@
 //     (scenes/egArch.js, the host's pool: the company's from the call, a stranger's from the cell - each fed here), THE
 //     CALL's horn, its one line and its prompt (scenes/egCall.js), the answer's portal at my feet - stepping into it is the
 //     admission - and the opener's step through the arch; the opener's landing before the arch; the late line.
+//   EG-ZD (2026-10-12, Mac: "I said I want everything"; sections 22, 16.5, 10.8, 26 and 27.8): BACK INTO THE SPIRE, AND THE
+//     FALL - THE WAY BACK (section 22, slice EG10): the breach I stood in kept on the device (EG_BACK_KEY - its seed, its
+//     hall, whether the room counted me, my last island); once the account service's keys answer says it is still live
+//     (`live`), *Return to the Spire* is offered (the call's strip, `/breach`, the key's use) - never refused as late, a
+//     hello as an entrant (no new order: the room re-admits a counted member - net/egBrain.js egAdmitWord) - and I arrive
+//     in the circle the company holds (a circle or a seed my record had wrong rebuilt in place, EG-H3's swap), resumed at
+//     my last island in a trial and at the hall's arrival plate between trials. THE FALL (section 16.5): the camera sinks,
+//     the colour drains, the FALLEN card and *Reliquaries lost*, then the witness view dithers in (ui/egSpireHud.js
+//     egFallModel - reduced motion cuts). THE SPANS' CLOCK (section 10.8): the corrected shared clock as the host's
+//     anchored seconds (`spanSeconds`) and its milliseconds (`breachNow`) while I stand in the breach. THE BEATS ON THE
+//     CRITICAL BUS (section 26): every HUD beat's sound through THE SPIRE MIX (the fight's, over the host's music -
+//     systems/egMix.js `beat`). THE PAD reaches the Surplus's two buttons after the cards (section 27.8).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
@@ -78,6 +90,12 @@ import { isTouchDevice } from '../ui/touchDevice.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { createEgLookDraw } from './egLookDraw.js';   // EG-G2: the Spire's sky, mist and lines (section 25)
 import { egQuietCompany } from '../world/egLook.js';
+// EG-ZD: THE WAY BACK, THE FALL, THE SPANS' CLOCK, THE BEATS ON THE CRITICAL BUS
+import { egFallModel, drawEgFall, EG_FALL_MS, EG_FALL_TEXT } from '../ui/egSpireHud.js';
+import { egReducedMotion } from '../ui/egAccess.js';
+import { egSupportAt, EG_HOLD } from '../net/egFair.js';
+import { anchoredClock } from '../render/deadlands.js';
+import { createSpireMix } from '../systems/egMix.js';
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -98,6 +116,33 @@ export const EG_HOME_CONFIRM_MS = 6000;
  *  what a member whose law is not the breach's is told, once a breach. */
 export const EG_SPEC_ASK_MS = 3000;
 export const EG_LAW_TEXT = 'This breach keeps another law. The Spire sends you its halls.';
+/** EG-ZD (section 22): THE WAY BACK - where the device keeps the breach I stood in, how often my last island is written
+ *  there at most (ms), and its words. */
+export const EG_BACK_KEY = 'eg.back';
+export const EG_BACK_WRITE_MS = 1000;
+export const EG_BACK_TEXT = Object.freeze({
+  offer: 'Your breach still stands. Type /breach to return to the Spire.',
+  prompt: 'Your breach still stands - return to the Spire',
+  button: 'Return',
+  back: 'You return to the Spire.',
+});
+/** EG-ZD (section 10.8): the spans' anchored seconds are taken again when the corrected offset moves more than this (ms) -
+ *  a burst's median that wanders a millisecond never steps a platform. */
+export const EG_SPAN_REANCHOR_MS = 5;
+/**
+ * EG-ZD: a way back read off the device, or null when it is none (pure): `{ b, seed, op, geo, ew, rh, h, in, li, wf }` -
+ * the breach (16 hex), its seed, its opening, its geometry, its start, a Rehearsal, the hall last stood in, whether the
+ * room counted me (`in`), my last island (`[h, x, y, z]`, the hall's frame) and the falls whose screen I have seen. A
+ * breach marked over (`{ b, x: 1 }`) is none.
+ */
+export function egBackOf(v) {
+  let r = v;
+  if (typeof v === 'string') { try { r = JSON.parse(v); } catch { return null; } }
+  if (!r || typeof r !== 'object' || typeof r.b !== 'string' || !/^[0-9a-f]{16}$/.test(r.b) || r.x === 1) return null;   // `x` a breach over for me
+  const n = (x) => (Number.isSafeInteger(x) && x >= 0 ? x : 0);
+  const li = Array.isArray(r.li) && r.li.length === 4 && Number.isSafeInteger(r.li[0]) && r.li[0] > 0 && r.li.slice(1).every(Number.isFinite) ? r.li.slice(0, 4) : null;
+  return { b: r.b, seed: n(r.seed) >>> 0, op: Number.isFinite(r.op) ? r.op : 0, geo: n(r.geo), ew: n(r.ew), rh: r.rh === 1 ? 1 : 0, h: n(r.h), in: r.in === 1 ? 1 : 0, li, wf: n(r.wf) };
+}
 /** The end's words, by why it ended. */
 export const EG_END_TEXT = Object.freeze({
   fall: EG_TEXT.fallen, home: 'You walk home. The Redoubts you took are kept.', tear: EG_TEXT.torn,
@@ -207,6 +252,49 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   // drawn, released on every way out) and THE SCORE's view of this breach (systems/egScore.js - world.js plays it)
   let look = null;
   const lookOf = () => (look ??= renderer?.gl ? createEgLookDraw({ gl: renderer.gl }) : null);
+  // EG-ZD (section 22): THE WAY BACK - the record (the device's, EG_BACK_KEY), the breach the service last said is live
+  // (undefined until it has answered), the breach the offer was said for, when the record was last written, a return in
+  // flight (its breach), the seed the circle standing was built from, my Reliquaries while I stood (a fall's cost)
+  let wayBack = null, backLive = /** @type {string|null|undefined} */ (undefined), backSaid = '', backWroteAt = -Infinity, backDirty = false, returning = /** @type {string|null} */ (null), circleSeed = /** @type {number|null} */ (null), relHeld = 0;
+  /** the breach the room will not take me back into (its end, my way home, forsaking, its refusal) - kept on the device as
+   *  `{ b, x: 1 }`, so the service's `live` (held until my end receipt is claimed or it lapses) never offers it again */
+  let backOver = '';
+  try { const raw = JSON.parse(store?.getItem?.(EG_BACK_KEY) || 'null'); wayBack = egBackOf(raw); backOver = raw?.x === 1 && typeof raw.b === 'string' ? raw.b : ''; } catch { wayBack = null; }
+  /** The record to the device - at once (`force`), else at most each EG_BACK_WRITE_MS. */
+  function backKeep(force = false) {
+    if (!wayBack) return;
+    if (!force && Date.now() - backWroteAt < EG_BACK_WRITE_MS) { backDirty = true; return; }
+    backWroteAt = Date.now(); backDirty = false;
+    try { store?.setItem?.(EG_BACK_KEY, JSON.stringify(wayBack)); } catch { /* the session's alone */ }
+  }
+  /** The breach is over for me (its end, my way home, forsaking, a room that will not take me back): the record let go, the
+   *  breach marked over on the device. */
+  function backDrop(b = wayBack?.b ?? returning ?? '') {
+    wayBack = null; returning = null;
+    if (b) backOver = b;
+    try { store?.setItem?.(EG_BACK_KEY, backOver ? JSON.stringify({ b: backOver, x: 1 }) : ''); } catch { /* the session's alone */ }
+  }
+  /** The account service's word on my live breach (`/v1/eg/keys` `live`): a record of another breach, or of none, is over;
+   *  a live breach this device holds no record of is kept as one (its seed the room's word once I stand in it). */
+  function backHeard(live) {
+    backLive = live && typeof live.b === 'string' ? live.b : null;
+    if (inSpire()) return;
+    if (wayBack && wayBack.b !== backLive) backDrop();
+    if (!wayBack && backLive && backLive !== backOver && /^[0-9a-f]{16}$/.test(backLive)) wayBack = { b: backLive, seed: 0, op: 0, geo: 0, ew: 0, rh: 0, h: 0, in: 0, li: null, wf: 0 };
+  }
+  /** May I go back into my breach now: outside it, the service saying it lives, and either counted by its room or with no
+   *  call of it still open to answer (the call's own answer is its door while it stands). */
+  function returnable() {
+    if (!wayBack || backLive !== wayBack.b || inSpire() || returning || leaving) return false;
+    const E = link.state(), c = E.call;
+    return !!wayBack.in || !(c?.b === wayBack.b && egPhase({ openedAt: c.op, wokeAt: E.b === c.b ? E.wk : 0 }, now()) === 'open');
+  }
+  /** EG-ZD (section 10.8): THE SPANS' ANCHORED SECONDS on the corrected clock - render/deadlands.js anchoredClock's law (never
+   *  stepping back between anchors), taken again when the offset moves past EG_SPAN_REANCHOR_MS. */
+  let spanClock = null, spanOff = 0;
+  /** EG-ZD (section 26): THE SPIRE MIX the beats ride - the fight's (over the host's music), else this screen's own. */
+  let ownMix = null;
+  const bus = () => fight?.mix?.() ?? (ownMix ??= createSpireMix({ audio, now }));
   /** The circle this screen stands in, told to the look. */
   const lookCircle = (E) => { const L = lookOf(); if (L && E.b && E.h > 0) L.setCircle(E.seed, egCircleOfHall(E.h), E.geo ?? 0); return L; };
 
@@ -217,11 +305,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (restackWeirKeys(entity.items, n)) saved();
   }
   async function askKeys() {
+    if (!me() || account?.guest?.()) return;   // EG-ZD: asked once signed in (a reloaded page signs in after its first frame)
     keysAt = Date.now();
-    if (!me() || account?.guest?.()) return;
     const a = await account.keys();
     if (a?.ok) restack(a.data?.keys);
     if (a?.ok && typeof a.data?.rk === 'string') rk = a.data.rk;   // EG-F: the relay's public half
+    if (a?.ok) backHeard(a.data?.live ?? null);   // EG-ZD (section 22): the account's live breach - THE WAY BACK
   }
   /** EG-F: THE RELAY'S PUBLIC HALF, imported once it is heard (a stranger's arch is believed only when the hub's signature
    *  over it verifies - net/egCallSig.js). Null until then. */
@@ -262,6 +351,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
    *  answered instead. */
   function useKey() {
     const E = link.state();
+    if (returnable()) { answer(); return EG_BACK_TEXT.back; }   // EG-ZD: my breach still stands - the key takes me back
     if (E.call && E.call.co.some((r) => r[0] === me()) && egPhase({ openedAt: E.call.op }, now()) === 'open' && !inSpire()) { answer(); return EG_TEXT.opens; }
     const no = openRefusal();
     if (no) return no;
@@ -292,6 +382,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
    *  (the opener's door, and any of the company's who walked to it) - no portal asked. */
   async function answer(viaArch = false) {
     const E = link.state(), c = E.call, M = modes(), t = now();
+    if (returnable() && (!c || c.b === wayBack.b)) return returnIn();   // EG-ZD (section 22): THE WAY BACK - never refused as late
     if (!c) { say('No breach calls you. A Weir Key opens one; /breach rehearse opens the day\'s Rehearsal.'); return false; }
     if (!c.co.some((r) => r[0] === me())) { say(EG_TEXT.outside(c.o)); return false; }
     if (inSpire()) return false;
@@ -328,7 +419,32 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     const landing = c.os === me() ? arches?.landing?.(c.b) ?? null : null;
     const went = await modes()?.stepThroughFire?.(() => modes()?.enterEgHall?.({ b: c.b, seed: c.seed, c: (c.ew ?? 0) + 1, geo: E.geo ?? 0, site: site(), ...(landing ? { landing } : {}) }), 'hourIn');
     if (!went) { answeredFor = ''; say(EG_TEXT.shut); }
+    else {
+      // EG-ZD (section 22): THE WAY BACK kept from the first step - the room's count of me, my hall and my last island follow
+      circleSeed = c.seed >>> 0;
+      if (wayBack?.b !== c.b) wayBack = { b: c.b, seed: c.seed >>> 0, op: c.op, geo: E.geo ?? 0, ew: c.ew ?? 0, rh: c.rh ? 1 : 0, h: 0, in: 0, li: null, wf: 0 };
+      backOver = ''; backKeep(true);
+    }
     return !!went;
+  }
+  /** EG-ZD (section 22): THE WAY BACK - a hello as an entrant (no new order: the room re-admits a member it counts), under the
+   *  veil into the circle of the hall my record last stood in (the start's, before any); the room's word on where the company
+   *  stands puts me there (spireFrame). */
+  async function returnIn() {
+    const M = modes(), R = wayBack;
+    if (!R) return false;
+    if ((M?.mode ?? 'exterior') !== 'exterior') { say(EG_TEXT.indoors); return false; }
+    if (answering || M?.stepping || !(entity.health > 0)) return false;
+    answering = true;
+    try {
+      placedH = 0; downH = 0; endSeen = null; rdSeen = 0; leaving = false;
+      answeredFor = R.b; returning = R.b;
+      const went = await M?.stepThroughFire?.(() => M?.enterEgHall?.({ b: R.b, seed: R.seed, c: R.h > 0 ? egCircleOfHall(R.h) : R.ew + 1, geo: R.geo, site: site() }), 'hourIn');
+      if (!went) { returning = null; answeredFor = ''; say(EG_TEXT.shut); return false; }
+      circleSeed = R.seed >>> 0;
+      say(EG_BACK_TEXT.back);
+      return true;
+    } finally { answering = false; }
   }
   /** EG-F: the call's portal stepped into - my admission, the step under the veil. */
   function portalEntered() {
@@ -397,6 +513,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (flash) veil()?.flash?.('hourIn');
     return !!modes()?.egPlace?.(at, 0);
   }
+  /** EG-ZD (section 22): stood back on my last island (`li` - `[h, x, y, z]`, the hall's frame) under the veil's flash. */
+  function placeAt(E, li) {
+    const spec = egHallOf(E.seed, li[0], E.geo ?? 0);
+    veil()?.flash?.('hourIn');
+    return !!modes()?.egPlace?.(egToDungeon(spec, li[1], li[2] + 0.1, li[3]), 0);
+  }
   /** The Redoubt's way home: its door at the Court's heart (an exit door - the dungeon's own press and name). */
   function standDoor(E) {
     if (door && doorH === E.h) return;
@@ -416,7 +538,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   /** Out of the breach the dungeon's own way: to where I answered from, under the veil's flash. */
   function walkOut(text) {
     if (leaving) return;
-    leaving = true;
+    leaving = true; returning = null;   // EG-ZD: a return in flight ends with the walk out
     dropDoor();
     swapWaitAt = 0; modes()?.egSwapDrop?.();   // EG-H3: the swap's build forgotten with the breach
     veil()?.flash?.('hourHome');
@@ -443,21 +565,31 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         if (back) landAt(back);
         return modes()?.enterEgHall?.({ b: E.b, seed: E.seed, c, geo: E.geo ?? 0, site: site() });
       }, 'hourIn');
+      if (modes()?.egHallCircle?.() === c) circleSeed = E.seed >>> 0;   // EG-ZD: the circle standing is the breach's own now
     } finally { swapping = false; }
   }
   /** One frame in the Spire. */
   function spireFrame(E, t) {
     const M = modes(), o = online();
-    if (o?.terminal) { if (!leaving && entity.health > 0 && !M?.deathUp?.()) walkOut(typeof o.error === 'string' && /breach|order|fallen|home|company/i.test(o.error) ? `${o.error.charAt(0).toUpperCase()}${o.error.slice(1).replace(/\.$/, '')}.` : EG_TEXT.shut); return; }
+    if (o?.terminal) {
+      if (!leaving && entity.health > 0 && !M?.deathUp?.()) {
+        const said = typeof o.error === 'string' && /breach|order|fallen|home|company/i.test(o.error);
+        if (said) backDrop(M?.egHallBreach?.() ?? undefined); else keysAt = -Infinity;   // EG-ZD (section 22): a room that refused me lets the way back go; a socket lost asks the service again
+        walkOut(said ? `${o.error.charAt(0).toUpperCase()}${o.error.slice(1).replace(/\.$/, '')}.` : EG_TEXT.shut);
+      }
+      return;
+    }
     if (!E.b || E.b !== M?.egHallBreach?.()) return;
     // my admission, once: a member the room already counts is never asked again
     const mine = egMemberOf(E, me());
     if (mine && !mine.in && admit?.b === E.b && admit.z && o?.welcomes !== inFor && o?.sendEg?.('in', { z: admit.z, lv: Math.max(1, entity.level | 0) })) inFor = o.welcomes;
-    if (mine && mine.forsaken) { if (!leaving) { witness = null; walkOut(EG_END_TEXT.forsake); } return; }
+    backFrame(E, mine);   // EG-ZD (section 22): THE WAY BACK kept as the room says it
+    if (mine?.alive) relHeld = egRunOfMember(E, me()).rel;   // EG-ZD (section 16.5): what a fall would cost
+    if (mine && mine.forsaken) { if (!leaving) { witness = null; backDrop(E.b); walkOut(EG_END_TEXT.forsake); } return; }
     if (mine && !mine.alive && !witness && !leaving) enterWitness(t, false);
-    if (mine && mine.home) { witness = null; if (!leaving && endSeen !== 'home') { endSeen = 'home'; recap = egRecapModel(E, me(), log, t, { whyText: EG_END_TEXT.home, why: 'home' }); recapUntil = Date.now() + 30_000; recapOpened(); } walkOut(null); return; }   // EG-G1: a member who walks home reads the recap too (section 27.6)
+    if (mine && mine.home) { witness = null; backDrop(E.b); if (!leaving && endSeen !== 'home') { endSeen = 'home'; recap = egRecapModel(E, me(), log, t, { whyText: EG_END_TEXT.home, why: 'home' }); recapUntil = Date.now() + 30_000; recapOpened(); } walkOut(null); return; }   // EG-G1: a member who walks home reads the recap too (section 27.6)
     if (E.end) {
-      if (endSeen !== E.end) { endSeen = E.end; endAt = t; mid(EG_END_TEXT[E.end] ?? EG_TEXT.ended); recap = egRecapModel(E, me(), log, t, { whyText: EG_END_TEXT[E.end] ?? '' }); recapUntil = Date.now() + 30_000; recapOpened(); }
+      if (endSeen !== E.end) { endSeen = E.end; endAt = t; backDrop(E.b); mid(EG_END_TEXT[E.end] ?? EG_TEXT.ended); recap = egRecapModel(E, me(), log, t, { whyText: EG_END_TEXT[E.end] ?? '' }); recapUntil = Date.now() + 30_000; recapOpened(); }
       if (t - endAt >= EG_END_WALK_MS) { if (witness) { witness = null; entity.health = Math.max(1, entity.health); } walkOut(null); }
       return;
     }
@@ -469,7 +601,15 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if ((E.sg === 'trial' || E.sg === 'rest') && potionHall !== `${E.h}:${E.sg === 'rest' ? 'r' : 't'}`) { potionHall = `${E.h}:${E.sg === 'rest' ? 'r' : 't'}`; potions = EG_POTIONS_PER_HALL; }
     const c = egCircleOfHall(E.h);
     if (E.sg === 'rest' && c === M.egHallCircle?.()) M.egPrebuild?.({ b: E.b, seed: E.seed, c: c + 1, geo: E.geo ?? 0 });   // EG-H3 (EG10): THE SWAP'S BUILD - the next circle's level made while the Court rests
-    if (c !== M.egHallCircle?.()) { if (E.sg === 'arrive') swapTo(E, c); return; }
+    // EG-ZD (section 22): a circle - or a seed - my record had wrong is rebuilt in place on a return, as a new circle is
+    if (c !== M.egHallCircle?.() || (circleSeed != null && circleSeed !== E.seed >>> 0)) { if (E.sg === 'arrive' || returning === E.b) swapTo(E, c); return; }
+    // EG-ZD (section 22): BACK IN - resumed at my last island in a trial (the dropped socket's rule), at the hall's arrival
+    // plate between trials (a reload's); a witness's body is held as it was
+    if (returning === E.b) {
+      returning = null;
+      const li = wayBack?.li;
+      if (!witness && mine?.alive && (E.sg === 'trial' && li && li[0] === E.h ? placeAt(E, li) : placeOn(E.h, E))) placedH = E.h;
+    }
     if (witness) { witnessFrame(E); return; }
     const at = standing();
     if (!at) return;
@@ -477,6 +617,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     // THE PULL: the hall the company stands in is not the one my feet are in - to its plate
     if ((E.sg === 'arrive' || E.sg === 'trial') && placedH !== E.h && at.slot !== egSlotOfHall(E.h)) { if (placeOn(E.h, E)) { placedH = E.h; say(EG_TEXT.pulled); } }
     else if (at.slot === egSlotOfHall(E.h)) placedH = E.h;
+    if (E.sg === 'trial') islandFrame(E, t);   // EG-ZD (section 22): my last island, for a return
     // THE DOOR: the closing's step through it, said while I stand in it
     if (E.sg === 'closing' && at.slot === egSlotOfHall(E.h) && downH !== E.h && egAtDoor(spec, egLocalX(spec, at.sx), at.z, 1) && t - downAt >= EG_DOWN_EVERY_MS) {
       downAt = t;
@@ -488,19 +629,53 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     else if (door) dropDoor();
   }
 
+  /** EG-ZD (section 22): THE WAY BACK kept as the room says it - its seed, its opening, whether it counts me, the hall the
+   *  company stands in (written when any of them moves); a breach stood in with no record of it kept from here; a breach over
+   *  for me (ended, walked home from, forsaken, refused) never kept again. */
+  function backFrame(E, mine) {
+    if (E.b === backOver) return;   // over for me (its end, my way home, forsaking, a refusal): never kept again
+    if (!mine?.in && wayBack?.b !== E.b) return;
+    if (wayBack?.b !== E.b) wayBack = { b: E.b, seed: E.seed >>> 0, op: E.op, geo: E.geo ?? 0, ew: 0, rh: E.rh ? 1 : 0, h: 0, in: 0, li: null, wf: 0 };
+    const was = `${wayBack.seed}:${wayBack.op}:${wayBack.geo}:${wayBack.in}:${wayBack.h}`;
+    wayBack.seed = E.seed >>> 0; wayBack.op = E.op; wayBack.geo = E.geo ?? 0;
+    if (mine?.in) wayBack.in = 1;
+    if (E.h > 0) wayBack.h = E.h;
+    if (`${wayBack.seed}:${wayBack.op}:${wayBack.geo}:${wayBack.in}:${wayBack.h}` !== was) backKeep(true);
+    else if (backDirty) backKeep();
+  }
+  /** EG-ZD (section 22): MY LAST ISLAND in a trial - still ground under my feet in the company's hall (net/egFair.js egSupportAt,
+   *  EG_HOLD.island: a plate, an island, a passage's floor, a bridge, a ramp, a fight floor), never a piece or the end plate;
+   *  kept on the record at most each EG_BACK_WRITE_MS. */
+  function islandFrame(E, t) {
+    if (wayBack?.b !== E.b) return;
+    const F = feetInHall(E);
+    if (!F || egSupportAt(F.spec, F.x, F.y, F.z, t / 1000) !== EG_HOLD.island) return;
+    const L = wayBack.li, r2 = (v) => Math.round(v * 100) / 100;
+    if (L && L[0] === E.h && Math.hypot(L[1] - F.x, L[3] - F.z) < 0.5) return;
+    wayBack.li = [E.h, r2(F.x), r2(F.y), r2(F.z)];
+    backKeep(!L || L[0] !== E.h);
+  }
+
   // ── the witness (section 16.5) ──────────────────────────────────────────────────────────────────────────
   /** THE FALL: the body put away under the hall (no blow reaches it, the void never casts it back), the room told, the
-   *  camera handed to a living member. */
-  function enterWitness(t, said) {
+   *  camera handed to a living member. EG-ZD (section 16.5): THE FALL, my own screen (ui/egSpireHud.js egFallModel - the eye
+   *  sinking where I fell, the colour drained, the card with whether a Redoubt can call me back and the Reliquaries lost,
+   *  the witness view dithered in), once a fall: a fall whose screen this device saw (a reload's return) is not shown again.
+   *  `fin` the room's word that it is final (its `fall`), else read off my row. */
+  function enterWitness(t, said, fin = null) {
     const E = link.state();
     if (witness || !inSpire()) return;
-    witness = { at: t, idx: 0, watched: null, hold: null };
     const mine = egMemberOf(E, me());
+    const counted = !!mine && !mine.alive, falls = mine?.falls ?? 0, n = counted ? falls : falls + 1;
+    const final = fin != null ? !!fin : !mine?.recall || n >= 2;
+    const seen = wayBack?.b === E.b && wayBack.wf >= n;
+    witness = { at: t, idx: 0, watched: null, hold: null, fall: seen ? null : { at: t, final, lost: relHeld, eye: Array.isArray(cam?.pos) ? [...cam.pos] : null } };
+    if (wayBack?.b === E.b && n > wayBack.wf) { wayBack.wf = n; backKeep(true); }
     if (mine?.alive && !said) online()?.sendEg?.('fell');
     entity.health = Math.max(1, entity.maxHealth ?? 1);
     const spec = E.h > 0 ? egHallOf(E.seed, E.h, E.geo ?? 0) : null;
     if (spec?.arrive) { const p = egToDungeon(spec, spec.arrive.x, spec.arrive.y - 60, spec.arrive.z); witness.hold = p; }
-    mid(`FALLEN. ${mine?.recall ? 'The next Redoubt can call you back.' : 'The Spire will not take you back.'}`);
+    pres.live = `${EG_FALL_TEXT.main}. ${final ? EG_FALL_TEXT.final : EG_FALL_TEXT.first}`;   // EG-ZD: the card's words for a screen reader (the card itself is aria-hidden)
     for (const h of log.slice(-1)) h.fall = true;
   }
   /** EG-H1 - THE RELAY'S COUNT HAS FALLEN ME (`bd`, net/bossBody.js - enforced in the Spire, section 21): in the Spire a fall,
@@ -610,7 +785,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     gain: null, first: '', firstAt: 0, live: '', card: null, cardH: 0, cardAt: 0, cardFirst: true, prevSp: -1, focus: 0, foldOpen: false, rel: 0, relAt: 0, touch: /** @type {boolean|null} */ (null) };
   /** How long a teaching line stands under the objective (ms). */
   const FIRST_SHOW_MS = 9000;
-  const playSound = (S) => { if (!S?.rec && S?.rec !== 0) return; try { audio?.playOneShot?.(S.rec, S.vol, S.pitch); } catch { /* a sound is never the breach */ } };
+  const playSound = (S) => { if (!S?.rec && S?.rec !== 0) return; try { bus().beat(S); } catch { /* a sound is never the breach */ } };   // EG-ZD (section 26): on THE SPIRE MIX's critical bus
   /** One beat (section 27.5): its sound, its line on the screen and in the chat where nobody says it already. */
   function beatNow(k, w = {}) {
     const plan = egBeatPlan(k, w);
@@ -646,10 +821,10 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   }
   /** The choices the pad moves among: the offer's cards, else the newest open choice's options. */
   function choices(E) {
-    if (E.offer?.v?.length) return { kind: 'offer', n: E.offer.v.length, ask: null };
+    if (E.offer?.v?.length) return { kind: 'offer', n: E.offer.v.length + ((E.sp ?? 0) > 0 ? 2 : 0), cards: E.offer.v.length, ask: null };   // EG-ZD (section 27.8): and a Surplus's two buttons
     const open = (E.as ?? []).filter((q) => q[2] > now());
     const a = open.at(-1);
-    return a ? { kind: 'ask', n: egAskText(a[0], a[1]).opts.length, ask: a } : { kind: null, n: 0, ask: null };
+    return a ? { kind: 'ask', n: egAskText(a[0], a[1]).opts.length, cards: 0, ask: a } : { kind: null, n: 0, cards: 0, ask: null };
   }
   const padCtx = () => { const E = link.state(); return { recap: !!recap, panel: inSpire() && !E.end && choices(E).n > 0, witness: inSpire() && !!witness }; };
   const hudScaleNow = () => { try { return /** @type {any} */ (globalThis.document?.querySelector?.('.hud'))?.style?.getPropertyValue?.('--hud-scale') || ''; } catch { return ''; } };
@@ -684,6 +859,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (E.h > 0 && E.h !== pres.cardH && (E.sg === 'arrive' || E.sg === 'trial')) { pres.cardH = E.h; pres.cardAt = t; pres.card = egArrivalCard(E, { first: pres.cardFirst }); pres.cardFirst = false; if (pres.card) pres.live = `${pres.card.main}. ${pres.card.sub}`; }
     const acc = egAccessNow(win);
     drawEgArrivalCard(egArrivalShown(pres.card, pres.cardAt, t), { hidden: hudHidden(), still: acc.still });
+    // EG-ZD (section 16.5): THE FALL, my own screen - until the witness view stands
+    if (witness?.fall && t - witness.fall.at >= EG_FALL_MS) witness.fall = null;
+    drawEgFall(witness?.fall ? egFallModel(witness.fall, t, { still: acc.still }) : null, { hidden: hudHidden(), danger: rgbCss(acc.palette.danger) });
     // THE PARTY ROWS' absent ring: who of the company this screen holds no pose of
     pres.absent = egAbsentStep(pres.absent, E, me(), new Set(peers().map((q) => q.sub)), t);
     // THE TOUCH OF IT: the Beat underfoot in its last 0.4 s, a blow newly aimed at my feet
@@ -707,7 +885,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       onTouch: (id) => touchAct(id), onFold: () => { pres.foldOpen = !pres.foldOpen; } });
   }
   /** Out of the halls: the HUD and the card put away. */
-  function presAway() { drawEgSpireHud(null); drawEgArrivalCard(null); }
+  function presAway() { drawEgSpireHud(null); drawEgArrivalCard(null); drawEgFall(null); }   // EG-ZD: and THE FALL
   /** A d-pad press while it is the Spire's (the pad's own codes on the classic skin, the prompt bar's gestures on Plus). */
   function padGesture(dir, kind) {
     const ctx = padCtx(), act = egPadAct(dir, kind, ctx);
@@ -718,6 +896,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (act.k === 'forsake') { api.command('forsake'); return true; }
     const P = choices(E);
     if (act.k === 'focus' && P.n > 0) { pres.focus = (pres.focus + act.d + P.n) % P.n; return true; }
+    if (act.k === 'take' && P.kind === 'offer' && pres.focus >= P.cards) { o?.sendEg?.('surplus', { use: pres.focus - P.cards }); return true; }   // EG-ZD: a fourth card (0) or a reroll (1)
     if (act.k === 'take' && P.kind === 'offer') { const card = E.offer.v[pres.focus]; if (card != null) o?.sendEg?.('pick', { v: card }); return true; }
     if (act.k === 'take' && P.ask) { voted[P.ask[0]] = pres.focus; o?.sendEg?.('vote', { q: P.ask[0], y: pres.focus }); return true; }
     if (act.k === 'no') return api.vote('no');
@@ -778,7 +957,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         }
       }
       if (w.k === 'fall' && w.s !== me()) say(`${EG_TEXT.falls(w.n || 'A companion')}${w.fin ? ' The Spire will not take them back.' : ''}`);
-      if (w.k === 'fall' && w.s === me() && !witness) enterWitness(now(), true);
+      if (w.k === 'fall' && w.s === me() && witness?.fall) witness.fall.final = !!w.fin;   // EG-ZD: the room's word on whether it was the last
+      if (w.k === 'fall' && w.s === me() && !witness) enterWitness(now(), true, w.fin);
       if (w.k === 'rise' && w.s === me()) riseAt(w);
       if (w.k === 'eheal') applyHeal(w.p, w.why);
       if (w.k === 'egot' && w.w === 'page' && EG_ANNALS[w.p]) { annals.add(w.p); say(`A page of the Annals of 3E 398 - ${EG_ANNALS[w.p][0]}: ${EG_ANNALS[w.p][1]}`); }
@@ -850,6 +1030,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     witnessing: () => !!witness,
     /** The witness's eye: behind and over the member watched (the camera's override). Answers whether it took the eye. */
     witnessEye(c, yaw = 0) {
+      // EG-ZD (section 16.5): THE FALL's own eye - where I fell, sinking - until the witness view dithers in
+      const F = witness?.fall?.eye ? egFallModel(witness.fall, now(), { still: egReducedMotion(win) }) : null;
+      if (F?.eye === 'fall') { const e = witness.fall.eye; c.pos = [e[0], e[1] - F.sink, e[2]]; return true; }
       if (!witness?.watched) return false;
       const p = peers().find((q) => q.sub === witness.watched);
       if (!p?.pos) return false;
@@ -883,6 +1066,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         if (c != null && !o?.sendEg?.('clk', { c, h: egClockHalfRtt(clock) })) clock.sent.delete(c);
         if (!witness && entity.health > 0 && entity.maxHealth > 0 && egMemberOf(E, me())?.in) sayBody(entity.health / entity.maxHealth, Date.now());
       }
+      if (returnable() && backSaid !== wayBack.b) { backSaid = wayBack.b; say(EG_BACK_TEXT.offer); }   // EG-ZD (section 22): THE WAY BACK offered, once
       this.callFrame(t);   // EG-F: the arch, the call's prompt and portal, the sight lines
       if (inSpire()) {
         spireFrame(E, t);
@@ -1015,6 +1199,21 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
      *  answered a ping) - the host's spans and its fight read it (scenes/world.js's `egNow`, the spans' anchored clock). */
     sharedNow: () => now(),
     clockOffset: () => egClockOffset(clock),
+    /** EG-ZD (section 10.8): THE BREACH'S CLOCK for the host (scenes/world.js `egNow`) - the corrected shared clock (relay ms)
+     *  while I stand in the breach and the room has answered a ping, else null (the host's welcome-offset clock stands). */
+    breachNow() { const off = egClockOffset(clock); return inSpire() && off != null ? Date.now() + off : null; },
+    /** EG-ZD (section 10.8): THE SPANS' ANCHORED SECONDS for the host (scenes/world.js `deadlandsSeconds`, the spans' and the
+     *  sky's clock) on the corrected shared clock while I stand in the breach, else null - render/deadlands.js anchoredClock,
+     *  taken again when the offset moves past EG_SPAN_REANCHOR_MS. */
+    spanSeconds() {
+      const off = egClockOffset(clock);
+      if (!inSpire() || off == null) return null;
+      if (!spanClock || Math.abs(off - spanOff) > EG_SPAN_REANCHOR_MS) { spanOff = off; spanClock = anchoredClock({ perf: () => performance.now(), wall: () => Date.now() + spanOff }); }
+      return spanClock();
+    },
+    /** EG-ZD (section 22): THE WAY BACK as this screen holds it (tests), and whether it is offered now. */
+    backRecord: () => wayBack,
+    returnable: () => returnable(),
     /** EG-H1: my ride's `pl` now (tests; net/online.js reads it through `poseRide`). */
     ridePl: () => ridePl(),
     /** Registered as the key's opener (systems/weirKey.js). */
@@ -1023,6 +1222,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** The call's prompt as it stands now (scenes/egCall.js egCallPromptModel), or null. */
     promptModel() {
       const E = link.state();
+      // EG-ZD (section 22): THE WAY BACK on the call's strip - its own words and button, answered as the call is
+      if (returnable()) { if (windowUp()) return null; return (modes()?.mode ?? 'exterior') === 'exterior' ? { text: EG_BACK_TEXT.prompt, answerable: true, button: EG_BACK_TEXT.button, left: 0 } : { text: EG_TEXT.indoors, answerable: false, left: 0 }; }
       return egCallPromptModel({ call: E.call, me: me(), now: now(), inSpire: inSpire(), answered: !!answeredFor && answeredFor === E.call?.b && (!!callPortal?.standing?.() || answering || inSpire()),
         exterior: (modes()?.mode ?? 'exterior') === 'exterior', windowUp: !!windowUp(), wk: E.b === E.call?.b ? E.wk : 0 });
     },

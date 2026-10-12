@@ -4674,3 +4674,115 @@ and draws what they choose.
   (`egBandUp`) and builds its waystones (`egLookBuild`). The old circle's look mesh is freed with its circle mesh.
 - The fight's wind-up barks keep EG-H1's feint gate (the wind once the wind-up is past `EG_FEINT_AT`, never on a
   feint), and Watchfire's early outlines draw after the ordered blows. The fight's clock is the breach's corrected one.
+### EG-ZD - 2026-10-12 - BACK INTO THE SPIRE, AND THE FALL
+
+The last wave's (EG-Z) slice for section 22's way back (EG10's return), section 16.5's FALL screen, section 10.8's clock
+on the host, section 13.2's dashed feint, section 27.8's Surplus on the pad and section 26's critical bus for the beats
+(Mac: "I said I want everything"). It closes EG-H1's world.js host flag (`egNow` and the spans' anchored clock on the
+welcome's offset), its departure 8 (the feint's fade), and EG-G1's departures 7 (the Surplus's two buttons) and 9 (the
+beats on `audio.playOneShot`).
+
+**What shipped, by piece.**
+
+- **THE WAY BACK** (`scenes/egClient.js`, section 22).
+  - The breach I stood in is kept on the device (`EG_BACK_KEY` `eg.back`, read by `egBackOf`): its id, its seed, its
+    opening, its geometry, its start, the hall the company last stood in, whether the room counted me (`in`), my last
+    island (`li`, `[h, x, y, z]` in the hall's frame) and the falls whose screen this device has shown (`wf`). It is
+    written at the first step in, again whenever the room's word moves any of it, and the island at most each
+    `EG_BACK_WRITE_MS` (1 s, the last one kept for the next write).
+  - The client now reads the account's `live` breach from the account service's keys answer (`/v1/eg/keys`, which has
+    always answered it). A record of another breach, or of none, is let go on that word. A live breach the device holds no record of is kept as one, with
+    its seed the room's to say.
+  - Once the service says the breach lives, a member outside it is offered *Your breach still stands. Type /breach to
+    return to the Spire.* once, in the chat. The call's strip (`scenes/egCall.js`) says *Your breach still stands -
+    return to the Spire* with a *Return* button. Enter, the pad's A, the strip's button, `/breach` and the Weir Key's
+    use all answer it.
+  - Answering is never refused as late (`returnIn`). It asks no admission of the service and sends no order: it is a
+    hello as an entrant, which the room answers by re-admitting a member it counts (`net/egBrain.js` egAdmitWord,
+    unchanged). The step goes under the veil into the circle of the hall the record last stood in.
+  - A call still open, to a member the room never counted, stays the call's own door, never the way back.
+  - In the circle, the room's word puts me where the company stands. A circle or a seed the record had wrong is rebuilt
+    in place at once, by EG-H3's swap, whatever the stage. I resume on my last island in a trial (still ground under
+    my feet in the company's hall, by `net/egFair.js` egSupportAt: a plate, an island, a passage's floor, a bridge, a
+    ramp or a fight floor). Between trials I resume on the hall's arrival plate. A witness's body is held as it was.
+  - The record is let go at the breach's end, at my way home, at forsaking, and when the room refuses me back (its
+    refusal's words). The breach is then marked over on the device (`{ b, x: 1 }`), so the service's `live`, which
+    stands until my end receipt is claimed or lapses, never offers it again. A socket merely lost keeps the record, and
+    the service is asked again at once, so the way back is offered on the walk out.
+  - The keys are asked once the account is signed in. A reloaded page signs in after its first frame, and the ask
+    used to wait ten minutes from that frame.
+- **THE FALL** (`ui/egSpireHud.js` `egFallModel`, `drawEgFall`, `egDitherCss`; section 16.5). A fall in the Spire is now
+  its own screen, not mid-screen text:
+  - the camera sinks 1.2 m (`EG_FALL_SINK_M`) over 1.2 s from my eye where I fell, eased, as the screen drains to a
+    fifth of its colour (`EG_FALL_SAT`, a backdrop's saturation over the world - the HUD above it keeps its colour);
+  - the gate's title card's sheet, on a node of its own, reads *FALLEN* over *The next Redoubt can call you back.* or
+    *The Spire will not take you back.* (no recall left, or the room's `fall` saying `fin`), and *Reliquaries lost: N*
+    in the palette's red (the Reliquaries held while I stood) only when any were held;
+  - 2.5 s later the witness view dithers in: an ordered 2x2 dither through black in quarters over 0.6 s, the eye handed
+    to the witness's orbit at its darkest;
+  - reduced motion (`egReducedMotion`): no sink, the colour cut at once, the card still, the witness view cut in;
+  - the card's words go to the HUD's live line (the card is aria-hidden), and a fall this device has shown is not shown
+    again after a reload;
+  - the company's low toll is clip 107 at the page's pitch 0.42 (EG-G1's table had 0.55).
+- **THE SPANS' CLOCK** (section 10.8). The breach's client hands the host the corrected shared clock while I stand in
+  the breach and the room has answered a ping: `breachNow()` in ms and `spanSeconds()` as anchored seconds
+  (render/deadlands.js anchoredClock's law, taken again when the corrected offset moves past `EG_SPAN_REANCHOR_MS`,
+  5 ms). The world host reads them first, `deadlandsSeconds` (the dungeon arm's `sdClock` - the spans and the Spire's
+  sky) and `egNow`, with the welcome's offset elsewhere and before an answer. Both are host functions beside the old
+  ones, outside `function frame(now)`.
+- **THE FEINT'S DASHED FADE** (`scenes/egFight.js`, `render/gateTelegraph.js`, section 13.2). A cut blow's fill stays
+  where the cut found it, and its mark fades over `EG_FEINT_FADE_MS` (ai/blowShapes.js TELL_FEINT_FADE, Feud-Arc section
+  7.3's one number, in place of a literal 150). It is drawn dashed: the Spire stage's `uLook` 4 (`world/egLook.js`
+  `EG_LOOK_BIT.dash`), TELL5's stripes across the court's axes. An honest blow, or a zone in a slot a feint held, is
+  never dashed.
+- **THE PAD AND THE SURPLUS** (section 27.8). With a Surplus to spend, the pad's left and right run past the offer's
+  cards to the Surplus's two buttons: up on the first spends a fourth card, on the second a reroll. The panel
+  (`ui/egHud.js`) marks the one chosen.
+- **THE BEATS ON THE CRITICAL BUS** (`systems/egMix.js` `beat`, section 26). Every HUD beat's sound (a door, a fall's
+  toll, the count's tolls, a rune's chime, the recap's Rare chime, a Weir Key found) is played through THE SPIRE MIX:
+  the one-shot, and the score ducked 6 dB for 300 ms, never culled. In the breach it is the fight's mix, over the host's
+  music (the fight hands it on, `mix()`). Elsewhere it is the client's own, with no music to duck.
+
+**Where EG-ZD departs from this page, said plainly.**
+
+1. The world host's offer is the call's strip, its chat line and `/breach`, not a button of its own: the strip already
+   stands for the call, and the way back is answered the call's way.
+2. "A counted member" is the device's record of the room's count. A device with no record (another browser, cleared
+   storage) is offered the way back on the service's word alone, and the room decides: a member it never counted is
+   refused at the hello past the window, and that refusal lets the record go.
+3. A device with no record knows no seed. It stands circle 1 of seed 0 until the room's word, then rebuilds the right
+   circle in place (a moment of the wrong circle under the veil). The account service keeps no seed.
+4. The last island is the client's own record of still ground, written at most each second, not the relay's last
+   pose. A page whose socket only dropped never left the circle, and stays where its own motor holds it.
+5. The drain is a backdrop's saturation (the HUD keeps its colour), and the dither goes through black. Neither is a
+   cross-dissolve of two frames. The sink starts from the first-person eye where I fell (`cam.pos`), in either view.
+6. THE FALL's words are the client's (`EG_FALL_TEXT` in ui/egSpireHud.js). `net/egLaw.js` is in the relay's bundle, so
+   only the final line is `EG_TEXT.fallen`.
+7. The spans' clock is taken again past 5 ms. anchoredClock's own slack (1 s) would never take the correction, which is
+   a one-way latency of tens of milliseconds.
+
+**The four hosts.**
+- `src/scenes/world.js` - WIRED: `deadlandsSeconds` (now `deadlandsShared` with the breach's seconds first) and
+  `egNow` read the breach's corrected clock. Nothing was added to `function frame(now)`.
+- `src/scenes/worldModes.js` - FLAGGED: it has nothing to wire. The spans read the host's seconds through its `sdClock`,
+  and the way back stands the circle through its own `enterEgHall`, `egSwapCircle`, `egPrebuild` and `egPlace`.
+- `src/scenes/dungeonContext.js` - FLAGGED, for the same reason (`egSpanRide` reads `opts.sdClock`).
+- `src/scenes/exterior.js` - FLAGGED as section 28 has it: offline, no breach.
+
+**Pins.**
+- `test/egz_return.test.js` (7).
+- `tools/mutants/egz_return.json` (71, every one dead). Four survived earlier runs. The island's write kept for the
+  next survived until a pin wrote two islands within one spacing. The breach's end, my way home and forsaking each
+  guarded the record a second time, after the over mark already guarded it; those three guards were redundant code,
+  and they were removed with their records.
+- Moved, each with a PIN MOVED note: `egfull_client` (the witness's eye read after THE FALL has run), `wb6b_deadlands_life`
+  and `sd5b_sky` (the Deadlands' anchored clock is `deadlandsShared`, with an Elite Breach's corrected clock read first).
+- Re-aimed by content and judged again: `egplay.json`'s EGPLAY-the-next-circle-never-built (the swap's line now also
+  takes a return) and `egpres_hud.json`'s EGPRES-a-yes-or-no-one-option (the choices now say their cards).
+- Judged again over the files this slice touched (`scenes/egClient.js`, `scenes/egFight.js`, `ui/egSpireHud.js`,
+  `systems/egMix.js`, `render/gateTelegraph.js`, `world/egLook.js`, `ui/egHud.js`, `ui/egBeats.js`, `scenes/egCall.js`):
+  180 records of `egpres_hud`, `eglook`, `egarch`, `wb13a`, `egfull`, `egint`, `egplay`, `audit_wb9`, `wb4`, `egseam`,
+  `egfrag`, `egmade`, `wb8c`, `egspan`, `sd8d`, `wb9e`, `auditwbx`, `egeco`, `sd11d`, `wb9b` and `wbx`. Every one is dead.
+- `RELAY_VERSION` untouched: nothing in the relay's import graph moved. `ACCOUNT_VERSION` stays `acct121`, with no
+  migration.
+- The Port-Ledger's ELITE-GATES row is the lead's. No new src file.

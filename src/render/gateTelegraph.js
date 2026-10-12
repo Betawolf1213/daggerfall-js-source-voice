@@ -519,7 +519,11 @@ const NO_FOG_RANGE = new Float32Array([0, 1]);
  *     fill (world/egLook.js EG_LOOK_BIT). Its colours ride the pass's existing uEdgeCol and uColor;
  *   THE HAVEN GRAMMAR (section 25.5) - a pool of its own, TELEGRAPH_POOL_HAVEN: gold and lit (never the darkened floor
  *     burning ground is), its line bright, a dark keyline outside it and chevrons flowing inward to its heart - so a haven
- *     never relies on gold against red (a deuteranopia pair).
+ *     never relies on gold against red (a deuteranopia pair);
+ *   EG-ZD (2026-10-12, section 13.2 - EG-H1's departure 8): THE FEINT'S DASHED FADE - `uLook` 4 (world/egLook.js
+ *     EG_LOOK_BIT.dash): a cut blow's whole mark broken into stripes as it fades, Feud-Arc section 7.3's own grammar
+ *     (render/foeTelegraph.js TELL5 - `step(0.5, fract((across + along) * 2.5))`, here across the court's own axes the
+ *     hatch's other way), so a feint reads dashed and never as a blow still to come.
  */
 export function spireTelegraphFs(fs) {
   const swap = (src, needle, put) => { if (!src.includes(needle)) throw new Error(`spireTelegraphFs: the gate's shader lost ${needle}`); return src.replace(needle, put); };
@@ -528,6 +532,7 @@ export function spireTelegraphFs(fs) {
   out = swap(out, '  // THE FILL - eased in behind the line', '  if (uPool == 3) {\n    // EG-G2 (section 25.5): A HAVEN - gold and lit, its line bright, a dark keyline outside it, chevrons flowing in to its heart\n    float a8 = atan(rel.x, rel.y) / 6.283185307179586 * 8.0;\n    float chev = step(0.5, fract(s * 3.0 - abs(fract(a8) - 0.5) * 1.4 + uSince * 0.8));\n    vec3 lit = uColor * (fin * (0.14 + 0.16 * chev) + core * 0.9 + glow * 0.15);\n    o = vec4(lit * f, (fin * 0.1 + keyl * 0.85) * f);\n    return;\n  }\n  // THE FILL - eased in behind the line');
   out = swap(out, '  float inner = (fin * 0.10 + filled * (0.20 + 0.55 * T2) + lip * 0.35 + fin * (0.05 + 0.07 * uT) * g) * inFade;\n', '  float inner = (fin * 0.10 + filled * (0.20 + 0.55 * T2) + lip * 0.35 + fin * (0.05 + 0.07 * uT) * g) * inFade * uFillK * hatch;\n');
   out = swap(out, '  float a = fin * (0.22 + 0.18 * filled) * inFade + keyl * 0.55;\n', '  float a = fin * (0.22 + 0.18 * filled) * inFade * uFillK + keyl * 0.55 + keyl2 * 0.75;\n');
+  out = swap(out, '  o = vec4(rgb * f, clamp(a, 0.0, 1.0) * f);\n}', '  if ((uLook & 4) != 0) { float dsh = step(0.5, fract((vCourt.x - vCourt.y) * 2.5)); rgb *= dsh; a *= dsh; }   // EG-ZD: a feint cut - dashed as it fades\n  o = vec4(rgb * f, clamp(a, 0.0, 1.0) * f);\n}');
   return out;
 }
 /** EG-G2: THE HAVEN GRAMMAR's pool - the Spire's stage alone draws it (the gate's own reads it as a blow, and is never

@@ -12,6 +12,9 @@
 //     sounds are the online layer's, net/peerFx.js, and no Watchfire tell is sounded yet: said in the arc's record);
 //   the reverb is the hall's (section 11.9 - its own slice).
 // The law is pure (egStingWanted, egBarkCull); `createSpireMix` is its seam over the engine and the music.
+// EG-ZD (2026-10-12, Mac: "I said I want everything"; section 26, EG-G1's departure 9): THE BEATS ON THE CRITICAL BUS -
+//   the HUD's beats (ui/egBeats.js EG_BEAT_SOUNDS: a door, a fall's low toll, a Redoubt's, the count's tolls, a rune's
+//   chime, the recap's Rare chime) ride it too (`beat`): their one-shot through the engine, the score ducked, never culled.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { BOSS_CUES } from '../world/gateBoss.js';
@@ -47,7 +50,8 @@ export function egBarkCull(barks, ear, per = EG_MIX.barksPerKind) {
 
 /**
  * THE MIX'S SEAM: `sting(kind, at)` (a personal sting at my feet, ducking the score), `critical()` (the duck alone),
- * `barks(list, ear, play)` (the cap, each kept bark played by `play`), `peerVolume(v)`.
+ * `barks(list, ear, play)` (the cap, each kept bark played by `play`), `beat(S)` (EG-ZD: a HUD beat's one-shot on the
+ * critical bus), `peerVolume(v)`.
  * @param {{ audio?: any, music?: any, now?: () => number }} deps
  */
 export function createSpireMix({ audio = null, music = null, now = () => Date.now() } = {}) {
@@ -72,6 +76,16 @@ export function createSpireMix({ audio = null, music = null, now = () => Date.no
       const kept = egBarkCull(list, ear);
       for (const b of kept) { try { play(b); } catch { /* never the fight */ } if (b.critical) mix.critical(); }
       return kept.length;
+    },
+    /** EG-ZD: A BEAT ON THE CRITICAL BUS - `S` its record, volume and pitch (ui/egBeats.js EG_BEAT_SOUNDS' shape), played as a
+     *  one-shot (systems/audio.js playOneShot - the Hour's own way) and the score ducked under it. Never culled. Answers
+     *  whether it was played. */
+    beat(S) {
+      if (!S || !Number.isInteger(S.rec)) return false;
+      let played = false;
+      try { if (audio?.playOneShot) { audio.playOneShot(S.rec, S.vol ?? 1, S.pitch ?? 1); played = true; } } catch { /* a sound is never the breach */ }
+      mix.critical();
+      return played;
     },
     /** A peer's sound's volume in the Spire. */
     peerVolume: (v) => v * egDbGain(EG_MIX.peerDb),

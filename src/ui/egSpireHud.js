@@ -33,6 +33,12 @@
 //     DEFAULT_SHADOW_COLOR) over the gate's classic face, the enhanced skin in its pixel face on the kit's plates.
 //   ACCESSIBILITY (section 25.7, ui/egAccess.js): the danger palette's red on the chip, reduced motion's stillness (no
 //     pulse, no flight, no rise), and the beats' words in a polite live region.
+//   EG-ZD (2026-10-12, Mac: "I said I want everything"; section 16.5): THE FALL, a fallen member's own screen in place of
+//     the death screen (`egFallModel`, `drawEgFall`): the camera sinks for 1.2 s as the screen drains to a fifth of its
+//     colour, then the gate's title card's sheet (ui/gateTitleCard.js) reads *FALLEN* - *The next Redoubt can call you
+//     back.* or *The Spire will not take you back.* - with *Reliquaries lost: N* in the palette's red where any were held,
+//     and 2.5 s later the witness view dithers in (an ordered 2x2 dither through black, the eye handed over at its
+//     darkest). Reduced motion: no sink, the colour cut, the card still, the witness view cut in.
 //
 // One node each, UPDATED, NOT REBUILT, hidden with the HUD. The models are pure.
 //
@@ -370,7 +376,7 @@ function ensureStyle(doc) {
   if (doc.getElementById && !doc.getElementById(EG_SPIRE_STYLE_ID)) {
     const st = doc.createElement('style');
     st.id = EG_SPIRE_STYLE_ID;
-    st.textContent = EG_SPIRE_CSS;
+    st.textContent = EG_SPIRE_CSS + EG_FALL_CSS;   // EG-ZD: and THE FALL's
     (doc.head ?? doc.body)?.append(st);
     if (doc.head) injectEnhancedFonts(doc);
   }
@@ -485,9 +491,106 @@ export function drawEgArrivalCard(m, { hidden = false, doc = globalThis.document
   if (m.alpha !== cardShown.alpha) { cardShown.alpha = m.alpha; card.style.opacity = String(m.alpha); }
 }
 
+// ── EG-ZD: THE FALL (section 16.5) ─────────────────────────────────────────────────────────────────────────────
+/** THE FALL's beats (ms): the camera sinks as the colour drains, the card stands, the witness view dithers in; the whole. */
+export const EG_FALL_SINK_MS = 1200;
+export const EG_FALL_CARD_MS = 2500;
+export const EG_FALL_DITHER_MS = 600;
+export const EG_FALL_MS = EG_FALL_SINK_MS + EG_FALL_CARD_MS + EG_FALL_DITHER_MS;
+/** How far the camera sinks (m, from the eye toward the floor), and the colour the screen drains to (a fifth of it). */
+export const EG_FALL_SINK_M = 1.2;
+export const EG_FALL_SAT = 0.2;
+/** The dither's levels past none: an ordered 2x2 dither's quarters (its cells darkened in Bayer's order). */
+export const EG_FALL_DITHER_STEPS = 4;
+const BAYER2 = Object.freeze([[0, 0], [1, 1], [1, 0], [0, 1]]);
+/** THE FALL's words (the client's alone - net/egLaw.js EG_TEXT is the relay's bundle's; its final line is the law's). */
+export const EG_FALL_TEXT = Object.freeze({ main: 'Fallen', first: 'The next Redoubt can call you back.', final: EG_TEXT.fallen, lost: (n) => `Reliquaries lost: ${n}` });
+/**
+ * THE FALL at `now` (pure), or null before it and once the witness view stands: `fall` is `{ at, final, lost }` - when it
+ * began, whether it was the last (no recall left), the Reliquaries it cost. Answers `{ phase, sink, sat, eye, veil, card }`:
+ * the phase ('sink' | 'card' | 'dither'); how far the camera has sunk (m); the screen's colour (1 whole, EG_FALL_SAT at its
+ * least); whose eye the screen is ('fall' - the fallen's own, sinking - or 'witness'); the dither's darkness (0-1, in
+ * quarters); the card (`{ key, main, sub, lost, alpha, fresh }`, ui/gateTitleCard.js titleCardModel's fade) or null.
+ * `still` (reduced motion): no sink, the colour cut at once, the card never rising, the witness view cut in, no dither.
+ * @param {{ at: number, final?: boolean, lost?: number }|null} fall @param {number} now @param {{ still?: boolean }} [o]
+ */
+export function egFallModel(fall, now, { still = false } = {}) {
+  if (!fall || !Number.isFinite(fall.at)) return null;
+  const u = now - fall.at;
+  if (!(u >= 0) || u >= EG_FALL_MS) return null;
+  const S = EG_FALL_SINK_MS, C = S + EG_FALL_CARD_MS, k = Math.min(1, u / S);
+  const phase = u < S ? 'sink' : u < C ? 'card' : 'dither';
+  let sat = still ? EG_FALL_SAT : 1 - (1 - EG_FALL_SAT) * k, eye = 'fall', veil = 0;
+  if (phase === 'dither') {
+    const d = (u - C) / EG_FALL_DITHER_MS;
+    if (still || d >= 0.5) { eye = 'witness'; sat = 1; }
+    if (!still) veil = Math.round((d < 0.5 ? d * 2 : (1 - d) * 2) * EG_FALL_DITHER_STEPS) / EG_FALL_DITHER_STEPS;
+  }
+  const m = titleCardModel({ kind: 'fall', at: fall.at + S, until: fall.at + C + EG_FALL_DITHER_MS / 2, main: EG_FALL_TEXT.main, sub: fall.final ? EG_FALL_TEXT.final : EG_FALL_TEXT.first }, now);
+  return {
+    phase, sink: still ? 0 : Math.round(EG_FALL_SINK_M * (1 - (1 - k) ** 3) * 1000) / 1000, sat: Math.round(sat * 1000) / 1000, eye, veil,
+    card: m ? { key: m.key, main: m.main, sub: m.sub, lost: (fall.lost ?? 0) > 0 ? EG_FALL_TEXT.lost(fall.lost) : '', alpha: m.alpha, fresh: m.fresh && !still } : null,
+  };
+}
+/** The cells of an ordered 2x2 dither darkened at `level` (0-1, in quarters), in Bayer's order (pure). */
+export const egDitherCells = (level) => BAYER2.slice(0, Math.max(0, Math.min(4, Math.round(level * EG_FALL_DITHER_STEPS))));
+/** The dither's veil as a CSS background (pure): none, the whole screen black, or a 2x2 cell pattern at 4 px a cell. */
+export function egDitherCss(level) {
+  const cells = egDitherCells(level);
+  if (!cells.length) return 'none';
+  if (cells.length >= 4) return '#000';
+  const rects = cells.map(([x, y]) => `<rect x='${x}' y='${y}' width='1' height='1'/>`).join('');
+  return `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='2' height='2' shape-rendering='crispEdges'>${rects}</svg>`)}") 0 0 / 8px 8px repeat`;
+}
+export const EG_FALL_CSS = `
+.eg-fall { position: fixed; inset: 0; pointer-events: none; z-index: 29; }
+.eg-fall-drain, .eg-fall-veil { position: absolute; inset: 0; }
+.eg-fall-veil { image-rendering: pixelated; }
+.eg-fall-lost { font-size: 18px; letter-spacing: 0.06em; min-height: 22px; color: #ff5a3a; }
+.eg-fall-lost:empty { display: none; }`;
+let fall = null, fallP = null, fallCard = null;
+const FALL_SHOWN = () => ({ vis: '', sat: -1, veil: -1, main: null, sub: null, lost: null, alpha: -1, cls: '', cardVis: '', danger: '' });
+let fallShown = FALL_SHOWN();
+/**
+ * Draw THE FALL for a model (egFallModel; null takes it down): the screen's colour drained behind everything (a
+ * backdrop's saturation - the HUD above it keeps its own), the dither's veil, and the card on a node of its own wearing
+ * the gate's title card's sheet (the gate's card is the fight's), hidden with the HUD. `danger` the palette's red (CSS).
+ * @param {any} m @param {{ hidden?: boolean, doc?: any, danger?: string }} [o]
+ */
+export function drawEgFall(m, { hidden = false, doc = globalThis.document, danger = '' } = {}) {
+  if (!fall) {
+    if (!m || !doc?.createElement) return;
+    if (doc.getElementById && !doc.getElementById(TITLE_CARD_STYLE_ID)) { const st = doc.createElement('style'); st.id = TITLE_CARD_STYLE_ID; st.textContent = TITLE_CARD_CSS; (doc.head ?? doc.body)?.append(st); }
+    ensureStyle(doc);
+    const el = (cls) => { const n = doc.createElement('div'); n.className = cls; return n; };
+    fall = el('eg-fall');
+    fall.setAttribute?.('aria-hidden', 'true');   // the HUD's live line says it in words
+    fallP = { drain: el('eg-fall-drain'), veil: el('eg-fall-veil') };
+    fall.append(fallP.drain, fallP.veil);
+    fallCard = el('wb-title-card eg-fall-card');
+    fallCard.setAttribute?.('aria-hidden', 'true');
+    Object.assign(fallP, { kicker: el('wb-title-kicker'), main: el('wb-title-main'), rule: el('wb-title-rule'), sub: el('wb-title-sub'), lost: el('eg-fall-lost') });
+    fallCard.append(fallP.kicker, fallP.main, fallP.rule, fallP.sub, fallP.lost);
+    (doc.body ?? doc.documentElement)?.append(fall, fallCard);
+  }
+  const vis = m ? 'on' : 'off';
+  if (vis !== fallShown.vis) { fallShown.vis = vis; fall.style.display = m ? '' : 'none'; }
+  const C = m && !hidden ? m.card : null, cardVis = C ? 'on' : 'off';
+  if (cardVis !== fallShown.cardVis) { fallShown.cardVis = cardVis; fallCard.style.display = C ? '' : 'none'; }
+  if (!m) return;
+  if (m.sat !== fallShown.sat) { fallShown.sat = m.sat; const f = m.sat < 1 ? `saturate(${m.sat})` : ''; fallP.drain.style.backdropFilter = f; fallP.drain.style.webkitBackdropFilter = f; }
+  if (m.veil !== fallShown.veil) { fallShown.veil = m.veil; fallP.veil.style.background = egDitherCss(m.veil); }
+  if (danger && danger !== fallShown.danger) { fallShown.danger = danger; fallP.lost.style.color = danger; }
+  if (!C) return;
+  for (const k of ['main', 'sub', 'lost']) if (C[k] !== fallShown[k]) { fallShown[k] = C[k]; fallP[k].textContent = C[k]; }   // the room's word can make it the last while it stands
+  const cls = `wb-title-card eg-fall-card on${C.fresh ? ' in' : ''}`;
+  if (cls !== fallShown.cls) { fallShown.cls = cls; fallCard.className = cls; }
+  if (C.alpha !== fallShown.alpha) { fallShown.alpha = C.alpha; fallCard.style.opacity = String(C.alpha); }
+}
+
 /** The page is going (a test's reset): the nodes leave with it. */
 export function destroyEgSpireHud() {
-  root?.remove?.(); card?.remove?.();
-  root = null; P = null; card = null; cardP = null;
-  shown = SHOWN(); cardShown = { key: '', alpha: -1, vis: '', cls: '' };
+  root?.remove?.(); card?.remove?.(); fall?.remove?.(); fallCard?.remove?.();   // EG-ZD: and THE FALL's
+  root = null; P = null; card = null; cardP = null; fall = null; fallP = null; fallCard = null;
+  shown = SHOWN(); cardShown = { key: '', alpha: -1, vis: '', cls: '' }; fallShown = FALL_SHOWN();
 }

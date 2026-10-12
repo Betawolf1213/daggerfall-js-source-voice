@@ -322,7 +322,7 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
     panel.append(row);
     if (model.offer.surplus > 0) {
       const sr = doc.createElement('div'); sr.className = 'eg-cards eg-ask';
-      for (const [use, label] of /** @type {[number, string][]} */ ([[0, `Spend a Surplus: a fourth card (${model.offer.surplus})`], [1, 'Spend a Surplus: reroll']])) { const b = doc.createElement('button'); b.textContent = label; b.addEventListener?.('click', () => onSurplus(use)); sr.append(b); }
+      for (const [use, label] of /** @type {[number, string][]} */ ([[0, `Spend a Surplus: a fourth card (${model.offer.surplus})`], [1, 'Spend a Surplus: reroll']])) { const b = doc.createElement('button'); if (focus === model.offer.cards.length + use) b.className = 'eg-focus'; b.textContent = label; b.addEventListener?.('click', () => onSurplus(use)); sr.append(b); }   // EG-ZD (section 27.8): the pad reaches the Surplus's two buttons, after the cards
       panel.append(sr);
     }
   }
