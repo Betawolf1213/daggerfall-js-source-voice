@@ -158,7 +158,7 @@ export async function egRecordOf(db, id) {
 // ── THE BOARDS ───────────────────────────────────────────────────────────────────────────────────────────────────
 
 /** The season's ends the Descent may rank: unwagered, begun at Hall 1, no Rehearsal, a hall cleared. */
-const DESCENT_SQL = 'SELECT b, account, h, COALESCE(td, t) AS secs, n, fl, at FROM eg_runs WHERE season = ?1 AND rh = 0 AND ew = 0 AND wg = 0 AND h >= 1 ORDER BY at ASC, account ASC';
+const DESCENT_SQL = 'SELECT b, account, h, COALESCE(td, t) AS secs, n, fl, at, co_n, co_h FROM eg_runs WHERE season = ?1 AND rh = 0 AND ew = 0 AND wg = 0 AND h >= 1 ORDER BY at ASC, account ASC';   // EG-ZA: and the receipt's company
 /** Each account's deepest hall this season, from any start - its start Redoubt and its Wager with it. */
 const DEPTHS_SQL = `SELECT account, h, ew, wg, at FROM (
     SELECT account, h, ew, wg, at, ROW_NUMBER() OVER (PARTITION BY account ORDER BY h DESC, at ASC, b ASC) AS rn
@@ -176,24 +176,29 @@ const descentOrder = (a, b) => b.h - a.h || a.t - b.t || a.at - b.at || (a.key <
  * THE DESCENT'S COMPANIES from a season's ends (DESCENT_SQL's rows), ranked: one row a company - the accounts that ended
  * one breach (in the order they ended it), its deepest hall its deepest member's and its seconds the fewest of those
  * there, its size the receipts' (or its members', where more), the Unfallen's flame when no member fell - and the same
- * company's best breach alone. Pure.
+ * company's best breach alone. EG-ZA (section 20, "Who counts"): a company is the receipt's `co` where it says one -
+ * every member's receipt of a breach carries the same tag of its entrants - so the same company is one row whoever of it
+ * claimed, and two companies that share their claimers are two; an end from before it is keyed by its claimers, as it
+ * was. THE SEAL's ranking needs no case of its own: a sealed run ends at the sealed Redoubt's Court, its `td` the
+ * seconds to that Court's fall, so the deepest hall then the fewest seconds ranks every sealed run by its seconds. Pure.
  * @param {any[]} rows
  */
 export function egDescentCompanies(rows) {
   const by = new Map();
   for (const r of rows) {
     let c = by.get(r.b);
-    if (!c) by.set(r.b, (c = { players: [], h: 0, t: Infinity, n: 0, fell: 0, at: Infinity }));
+    if (!c) by.set(r.b, (c = { players: [], h: 0, t: Infinity, n: 0, fell: 0, at: Infinity, co: '' }));
     if (!c.players.includes(r.account)) c.players.push(r.account);
     const h = int(r.h), secs = int(r.secs);
     if (h > c.h) { c.h = h; c.t = secs; } else if (h === c.h) c.t = Math.min(c.t, secs);
-    c.n = Math.max(c.n, int(r.n));
+    c.n = Math.max(c.n, int(r.n), int(r.co_n));
     c.fell += int(r.fl);
     c.at = Math.min(c.at, int(r.at));
+    if (!c.co && typeof r.co_h === 'string' && r.co_h) c.co = `${int(r.co_n)}:${r.co_h}`;
   }
   const best = new Map();
   for (const c of by.values()) {
-    const key = [...c.players].sort().join(',');
+    const key = c.co ? `co:${c.co}` : [...c.players].sort().join(',');
     const row = { key, players: c.players.slice(0, EG_COMPANY_MAX), h: c.h, t: c.t, n: Math.max(c.n, c.players.length), flame: c.fell === 0, at: c.at };
     const had = best.get(key);
     if (!had || descentOrder(row, had) < 0) best.set(key, row);

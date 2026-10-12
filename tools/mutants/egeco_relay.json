@@ -65,8 +65,8 @@
   {
     "name": "EGECO3-wager-off-the-end",
     "file": "src/net/egBrain.js",
-    "old": "    ...(B.wg?.length ? { wg: [...B.wg] } : {}), ...(m?.pages ? { an: m.pages } : {}) });",
-    "new": "    ...(m?.pages ? { an: m.pages } : {}) });",
+    "old": "    ...(B.wg?.length ? { wg: [...B.wg] } : {}), ...(m?.pages ? { an: m.pages } : {}),\n",
+    "new": "    ...(m?.pages ? { an: m.pages } : {}),\n",
     "tests": [
       "test/egeco_receipts.test.js"
     ]
@@ -74,8 +74,8 @@
   {
     "name": "EGECO3-pages-off-the-end",
     "file": "src/net/egBrain.js",
-    "old": "    ...(B.wg?.length ? { wg: [...B.wg] } : {}), ...(m?.pages ? { an: m.pages } : {}) });",
-    "new": "    ...(B.wg?.length ? { wg: [...B.wg] } : {}) });",
+    "old": "    ...(B.wg?.length ? { wg: [...B.wg] } : {}), ...(m?.pages ? { an: m.pages } : {}),\n",
+    "new": "    ...(B.wg?.length ? { wg: [...B.wg] } : {}),\n",
     "tests": [
       "test/egeco_receipts.test.js"
     ]
@@ -326,8 +326,8 @@
   {
     "name": "EGECO3-ended-news-untold",
     "file": "server/src/index.js",
-    "old": "    if (!B || (B.end && !B.owe?.length && !B.hq?.length)) return false;",
-    "new": "    if (!B || (B.end && !B.owe?.length)) return false;",
+    "old": "    if (!B || (B.end && !B.owe?.length && !B.hq?.length && !B.rq?.length)) return this._egDoneTick(B);",
+    "new": "    if (!B || (B.end && !B.owe?.length && !B.rq?.length)) return this._egDoneTick(B);",
     "tests": [
       "test/egeco_herald.test.js"
     ]
@@ -335,7 +335,7 @@
   {
     "name": "EGECO3-ended-room-unarmed",
     "file": "server/src/index.js",
-    "old": "      await this.state.storage.setAlarm(Math.max(now + 1000, this._egTellAt ?? 0));   // EG-E3: told again, until the hub has it\n      return true;",
+    "old": "      await this.state.storage.setAlarm(Math.max(now + 1000, Math.min(B.hq?.length ? (this._egTellAt ?? 0) : Infinity, B.rq?.length ? (this._egRcAt ?? 0) : Infinity)));\n      return true;",
     "new": "      return false;",
     "tests": [
       "test/egeco_herald.test.js"

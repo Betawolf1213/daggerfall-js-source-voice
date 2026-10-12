@@ -175,6 +175,22 @@ export async function admitEg({ db, nowS, subtle, rand }, player, body, key) {
   return { order, b };
 }
 
+/**
+ * EG-ZA (2026-10-12; bible/11-Multiplayer/Elite-Gates.md sections 20, 21 and 23's table): WHAT THE REST OF A RECEIPT SAYS,
+ * kept on the row its claim wrote (each guarded by that row, so only a recorded receipt writes): a Redoubt's `sh` (its
+ * share of the circle's damage, thousandths) and `m` (THE FAIR TRAIL's measures over the circle - JSON, for staff; they
+ * gate nothing until EG21); an end's company `co` (`[n, tag]` - net/egReceipt.js egCompanyTag), by which the Descent keeps
+ * a company one row (egHonours.js egDescentCompanies). A receipt from before the relay minted them writes nothing.
+ * @param {any} db @param {{ id: string }} player @param {any} c the verified claims
+ */
+export function egReceiptRest(db, player, c) {
+  if (c.q === 'w' && (c.sh !== undefined || c.m !== undefined)) {
+    return [db.prepare('UPDATE eg_redoubts SET sh = ?4, m = ?5 WHERE b = ?1 AND account = ?2 AND w = ?3 AND sh IS NULL AND m IS NULL')
+      .bind(c.b, player.id, c.w, Number.isSafeInteger(c.sh) ? c.sh : null, Array.isArray(c.m) ? JSON.stringify(c.m) : null)];
+  }
+  if (c.q === 'x' && Array.isArray(c.co)) return [db.prepare('UPDATE eg_runs SET co_n = ?3, co_h = ?4 WHERE b = ?1 AND account = ?2').bind(c.b, player.id, int(c.co[0]), String(c.co[1]))];
+  return [];
+}
 /** A stake given back, once: the key to its opener (a Rehearsal's held none) and the stake marked returned - one
  *  transaction, the key moved only while the stake still held. */
 const returnStake = (db, ez, mercy = false) => [
@@ -212,6 +228,7 @@ export async function claimEg({ db, nowS, subtle, rand }, player, receipt, publi
       spendStake(db, c.z),   // the stake is spent by the breach's first Redoubt
       ...pay.statements,
       ...egHonourStatements(db, player, c, nowS),   // EG-E2: the lord's feats kept (egHonours.js)
+      ...egReceiptRest(db, player, c),   // EG-ZA: the share dealt and the circle's measures on the row
     ]);
     recorded = Number(row?.meta?.changes ?? 0) > 0;
     said = await pay.answer(recorded, paid.slice(0, pay.statements.length));   // the pay's own results (the honours' follow them)
@@ -234,6 +251,7 @@ export async function claimEg({ db, nowS, subtle, rand }, player, receipt, publi
       db.prepare('UPDATE players SET eg_live_b = NULL, eg_live_until = 0 WHERE id = ?1 AND eg_live_b = ?2').bind(player.id, c.b),
       ...settle,
       ...egHonourStatements(db, player, c, nowS),   // EG-E2: the end as the boards rank it, the Annals' pages kept (egHonours.js)
+      ...egReceiptRest(db, player, c),   // EG-ZA: the company, as the Descent keeps a company one row
     ]);
     recorded = Number(row?.meta?.changes ?? 0) > 0;
     said = await egReliquariesOf({ db, nowS }, player, c);   // EG-E1: the Reliquaries it opens, by the week's pay

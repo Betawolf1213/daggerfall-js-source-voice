@@ -1699,7 +1699,7 @@ export class OnlineSession {
   sendEg(k, fields = {}) {
     const w = validEgIn({ ...fields, k, ...(k === 'in' ? { bv: EG_BRAIN_V } : {}) });
     if (!w || !this.egOk || this.status !== 'open' || !this._ws || !this._welcomed.has(this._ws)) return false;
-    if (k === 'open' ? !isSocialRoom(this.room) : !isEgRoom(this.room)) return false;
+    if (k === 'open' || k === 'void' || k === 'claimed' ? !isSocialRoom(this.room) : !isEgRoom(this.room)) return false;   // EG-ZA: a stake's void and a counted receipt's word, the hub's as the open is
     const body = k === 'vt', gate = body ? bodyWordGate(this._egBodyBucket, this._now()) : egGate(this._egBucket, this._now());   // EG-H1: my body's word on a bucket of its own (AUDIT INT15's law)
     if (!gate.pass) return false;
     try { this._ws.send(JSON.stringify({ t: 'eg', ...w })); } catch { return false; }
@@ -3022,7 +3022,7 @@ export class OnlineSession {
     } else if (m.t === 'eg') {
       // EG-PLAY: an Elite Breach's word - the call from the hub, everything else from the breach room I stand in alone
       const r = validEgOut(m);
-      if (r && (isSocialRoom(room) ? r.k === 'call' || r.k === 'no' : room === this.room && isEgRoom(room))) this._deliver('eg', () => this.onEg?.(r, room));
+      if (r && (isSocialRoom(room) ? r.k === 'call' || r.k === 'no' || r.k === 'rcpt' : room === this.room && isEgRoom(room))) this._deliver('eg', () => this.onEg?.(r, room));   // EG-ZA: and a receipt the hub holds for me (a void it asked, my breach's receipts at my hello)
     } else if (m.t === 'watch') {
       // SEAT1b (Seats-Arc 4.2): THE WATCH'S TICK - my own cell's alone (the relay ticks the socket that stands there, never a
       // halo's), a well-formed `k1` receipt or nothing; what it is worth is the account service's to say

@@ -60,6 +60,11 @@
 //     anchored seconds (`spanSeconds`) and its milliseconds (`breachNow`) while I stand in the breach. THE BEATS ON THE
 //     CRITICAL BUS (section 26): every HUD beat's sound through THE SPIRE MIX (the fight's, over the host's music -
 //     systems/egMix.js `beat`). THE PAD reaches the Surplus's two buttons after the cards (section 27.8).
+//   EG-ZA (2026-10-12, Mac: "I said I want everything"; sections 22 and 23, "A key's loss"): A KEY IS NEVER LOST, this
+//     screen's half - the stake an open took kept on the device (EG_STAKES_KEY) until a call or a receipt answers it, and
+//     past EG_VOID_WAIT_MS with neither its void asked of the hub (`void`, again every EG_VOID_ASK_MS, across reloads); a
+//     receipt the hub holds for me heard at my hello like any other; and each receipt the service has counted said to the
+//     hub (`claimed`), which forgets its copy.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
@@ -69,6 +74,7 @@ import { importPublicKeyB64 } from '../net/identityToken.js';   // EG-F: the rel
 import { egHallOf, egCircleOfHall, egSlotOfHall, egSlotAt, egLocalX, egAtDoor, egPhase, egTimes, egCountText, egBandOfCircle, EG_TEXT, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR, EG_BAND_LORDS, EG_VALKYNAZ } from '../net/egLaw.js';
 import { egOnFight, egSpecGive, EG_SPEC } from '../net/egLaw.js';   // EG-H2 (section 10.7): the fight floor, and off it the Spire's traversal ground; (section 22) a hall given, the law I draw
 import { readEgReceipt } from '../net/egReceipt.js';
+import { EG_VOID_MAX_S } from '../net/egDurable.js';   // EG-ZA: how long a stake's void may be asked
 import { dungeonToRealm } from '../net/sdBrain.js';
 import { egToDungeon } from '../world/egHall.js';
 import { restackWeirKeys, setWeirKeyOpener } from '../systems/weirKey.js';
@@ -110,6 +116,18 @@ import { createSpireMix } from '../systems/egMix.js';
 export const EG_CLAIMS_KEY = 'eg.claims';
 export const EG_CLAIMS_MAX = 16;
 export const EG_CLAIM_RETRY_MS = 60_000;
+/** EG-ZA: where a stake no call has answered waits on the device (`{ b, z, at }` - its breach, its open's signed order,
+ *  the second it was staked), the most kept, how long after its stake a void is first asked (the hub's own tries of the
+ *  room's open and void are done by then - net/egDurable.js EG_OPEN_HUB_TRIES at ROOM_CALL_MS each) and how often again
+ *  (ms); one is kept EG_VOID_MAX_S at most (the room refuses an older void). */
+export const EG_STAKES_KEY = 'eg.stakes';
+export const EG_STAKES_MAX = 4;
+export const EG_VOID_WAIT_MS = 60_000;
+export const EG_VOID_ASK_MS = 60_000;
+/** EG-ZA: how often the frame looks at the kept stakes at most (ms) - never a parse of the device's store every frame. */
+export const EG_STAKE_LOOK_MS = 5000;
+/** EG-ZA: a stake handed back (its void claimed) - the words. */
+export const EG_VOID_TEXT = 'The Spire did not open. Your key is returned.';
 /** How often a step through the door is said again while I stand in it, how long the end's words stand before the walk
  *  out, how often the balance is asked while online, how often a hub that has not taken an open is asked again. */
 export const EG_DOWN_EVERY_MS = 1000;
@@ -348,6 +366,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (!a?.ok) { opening = null; say(a?.error === 'start' ? EG_TEXT.notStart(ew) : egRefusalText(a?.error)); return false; }
     restack(a.data?.keys);
     opening.z = a.data?.order ?? null; opening.b = a.data?.b ?? null;
+    if (opening.z && opening.b) stakeKeep({ b: opening.b, z: opening.z, at: Math.floor(Date.now() / 1000) });   // EG-ZA: kept until a call or a receipt answers it
     opening.site = keyFacts?.()?.site ?? wire();
     if (!opening.z || !opening.site) { opening = null; say(EG_TEXT.shut); return false; }
     sendOpen();
@@ -470,6 +489,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   /** A refusal the hub or the room said. */
   function refused(w) {
     if (opening && w === 'the road is shut') { opening = null; return; }   // EG-H2 (section 22): THE DRAIN - the hub handed the stake back (its void receipt), no retry
+    if (w === 'the breach took the key' || w === 'the void is too old') { if (voidFor) stakeDrop((s) => s.z === voidFor); voidFor = ''; return true; }   // EG-ZA: the breach's own receipts settle it, or it is past asking - a background ask, said nothing
     if (opening && !inSpire() && w === 'the breach is closed' && opening.tries < EG_OPEN_TRIES) { opening.sentAt = Date.now() - EG_OPEN_RETRY_MS + 1000; return; }
     if (w === 'the breach is closed' && answeredFor && link.state().call?.b === answeredFor) { say(EG_TEXT.late(link.state().call.o)); answeredFor = ''; callPortal?.clear?.(); return true; }   // EG-F: answered after the first hall woke - the late line, said instead
     if (w === 'the order is spent' || w === 'the order is not yours') admit = admit ? { ...admit, z: null } : null;
@@ -483,6 +503,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     const list = store ? kept() : memo;
     if (!list.includes(r)) list.push(r);
     if (store) keep(list); else memo = list.slice(-EG_CLAIMS_MAX);
+    // EG-ZA: a receipt naming a stake I hold answers it - a void hands it back, any other is the breach's own
+    const c = readEgReceipt(r);
+    if (c?.s === me()) {
+      if (stakeDrop((s) => s.b === c.b) && c.q === 'v') say(EG_VOID_TEXT);
+      if (c.q === 'v' && opening?.b === c.b) opening = null;
+    }
     flush();
   }
   let flushing = false;
@@ -504,9 +530,43 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         // the Marks, the deed, the embers), and the spoils it rolls; a re-claim answers the same (`again`), a guest's its
         // gold alone. Never for a Rehearsal (the service pays none).
         if (a?.ok && c.q === 'w' && c.rh !== 1 && (a.data?.recorded || a.data?.again || a.data?.why === 'guest')) paid?.(c, a.data);
-        if (egClaimDone(a)) drop();
+        if (egClaimDone(a)) { drop(); hub()?.sendEg?.('claimed', { b: c.b, q: c.q, w: c.q === 'w' ? c.w : 0 }); }   // EG-ZA: the hub forgets its held copy
       }
     } finally { flushing = false; }
+  }
+
+  // ── EG-ZA: the stakes (sections 22 and 23, "A key's loss") ───────────────────────────────────────────────────
+  /** the stakes kept on the device (`{ b, z, at }`), those past EG_VOID_MAX_S let go; the memo without a store */
+  let stakesMemo = [], voidAt = -Infinity, voidFor = '', stakeLookAt = -Infinity;
+  const stakesKept = () => {
+    let v = stakesMemo;
+    if (store) { try { v = JSON.parse(store.getItem?.(EG_STAKES_KEY) ?? '[]'); } catch { v = []; } }
+    const nowS = Math.floor(Date.now() / 1000);
+    return Array.isArray(v) ? v.filter((s) => s && typeof s.b === 'string' && typeof s.z === 'string' && Number.isSafeInteger(s.at) && nowS - s.at <= EG_VOID_MAX_S) : [];
+  };
+  const stakesKeep = (list) => {
+    stakesMemo = list.slice(-EG_STAKES_MAX);
+    if (store) { try { store.setItem?.(EG_STAKES_KEY, JSON.stringify(stakesMemo)); } catch { /* the session's alone */ } }
+  };
+  /** A stake an open took, kept until a call or a receipt answers it. */
+  function stakeKeep(st) { stakesKeep([...stakesKept().filter((s) => s.b !== st.b), st]); }
+  /** The stakes `pred` names let go - answers whether any was. */
+  function stakeDrop(pred) {
+    const list = stakesKept(), left = list.filter((s) => !pred(s));
+    if (left.length !== list.length) stakesKeep(left);
+    return left.length !== list.length;
+  }
+  /** A STAKE NO CALL HAS ANSWERED (its open never took, the page reloaded mid-open, the hub's own void unanswered): past
+   *  EG_VOID_WAIT_MS its void asked of the hub - one at a time, every EG_VOID_ASK_MS - and never while its open still tries. */
+  function stakeFrame() {
+    if (!store && !stakesMemo.length) return;
+    const t = Date.now();
+    if (t - voidAt < EG_VOID_ASK_MS || t - stakeLookAt < EG_STAKE_LOOK_MS) return;
+    stakeLookAt = t;
+    const st = stakesKept().find((s) => t - s.at * 1000 >= EG_VOID_WAIT_MS && s.b !== opening?.b && s.b !== link.state().call?.b);
+    if (!st) return;
+    voidAt = t;
+    if (hub()?.sendEg?.('void', { z: st.z })) voidFor = st.z;
   }
 
   // ── the halls ─────────────────────────────────────────────────────────────────────────────────────────
@@ -995,6 +1055,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (w.k === 'spec') { lawTook(w); return; }   // EG-H2: a hall of the breach's own law
       if (w.k === 'call') {
         if (opening && w.os === me()) opening = null;
+        if (w.os === me()) stakeDrop((s) => s.b === w.b);   // EG-ZA: the room took it - its own receipts settle the stake
         const key = `${w.b}`;
         if (callSaid !== key && w.co.some((r) => r[0] === me())) {
           callSaid = key;
@@ -1100,6 +1161,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       const t = now(), E = link.state();
       if (Date.now() - keysAt >= EG_KEYS_EVERY_MS) askKeys();
       if (Date.now() - claimAt >= EG_CLAIM_RETRY_MS) flush();
+      stakeFrame();   // EG-ZA: a stake no call answered, its void asked
       if (opening?.z) sendOpen();
       if (opening && opening.tries >= EG_OPEN_TRIES && Date.now() - opening.sentAt > EG_OPEN_RETRY_MS * 2) { opening = null; say(EG_TEXT.shut); }
       if (E.call && !inSpire() && egPhase({ openedAt: E.call.op }, t) === 'ended' && !E.wk) link.forget();

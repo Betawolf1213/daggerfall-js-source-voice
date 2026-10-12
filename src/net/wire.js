@@ -5436,8 +5436,8 @@ export function validSdFoundTell(b) {
 // a lord's blow told early to a Watchfire holder's company (`tell` - the blow's own fields and `sh`, the lead shown) and a
 // told blow THE UNION FLOOR held (`untell`). A pose on a moving piece carries `pl` (validPose - RIDDEN POSES).
 
-/** What a client may say: `open` to the hub; the rest to a breach's room. */
-export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec']);   // EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping
+/** What a client may say: `open` to the hub (EG-ZA: and `void` and `claimed`); the rest to a breach's room. */
+export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed']);   // EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
 /** What the hub and a breach's room say back. */
 export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail', 'tell', 'untell']);   // EG-H1: Watchfire's `tell`, the union floor's `untell`
 export const EG_RUN_KINDS = Object.freeze(['offer', 'ask', 'asked', 'tally', 'egot', 'run', 'rise', 'eping', 'pz', 'eheal']);
@@ -5448,7 +5448,7 @@ export const EG_STAGES = Object.freeze(['wait', 'arrive', 'trial', 'closing', 'r
 /** How a breach ends (the `end` frame's `why`, net/egReceipt.js EG_END_WHYS' room half). */
 export const EG_END_WORDS = Object.freeze(['tear', 'wipe', 'gone', 'last', 'empty', 'rehearsal', 'void', 'home']);
 /** The room's refusals, in words. */
-export const EG_NO_WORDS = Object.freeze(['the breach is closed', 'the breach answers only to its company', 'the order is spent', 'you have fallen', 'you went home', 'the order is not yours', 'the road is shut']);   // EG-H2: THE DRAIN's refusal at the hub (its stake handed back)
+export const EG_NO_WORDS = Object.freeze(['the breach is closed', 'the breach answers only to its company', 'the order is spent', 'you have fallen', 'you went home', 'the order is not yours', 'the road is shut', 'the breach took the key', 'the void is too old']);   // EG-H2: THE DRAIN's refusal at the hub (its stake handed back); EG-ZA: a void refused - the breach took the order (its own receipts settle the stake), or it is past EG_VOID_MAX_S
 /** The beats a room names (`esay`'s `w` - the client words each: scenes/egFight.js EG_SAY). */
 export const EG_SAY_KEYS = Object.freeze(['wake', 'fury', 'covenant', 'covenantrest', 'stunned', 'scent', 'scorched', 'phase', 'images', 'examination', 'cage', 'passed', 'failed', 'challenge', 'challengewon',
   'challengeend', 'conquest', 'muster', 'tithe', 'bare', 'twinfell', 'twinraised', 'crossing', 'chaining', 'grounded', 'anchors', 'vanish', 'tether', 'tetherbroken', 'eclipse', 'mirrors', 'relit', 'landed',
@@ -5601,6 +5601,8 @@ export function validEgIn(m) {
     case 'vt': return intIn(m.v, 0, BODY_WORD_MAX) ? { k: 'vt', v: m.v } : null;   // EG-H1: my body's share, thousandths (INT11's word)
     case 'clk': return intIn(m.c, 0, 0x7fffffff) ? { k: 'clk', c: m.c, ...(intIn(m.h, 0, 5000) ? { h: m.h } : {}) } : null;   // EG-H1: a ping of the shared clock by its number, and the one-way delay my corrected clock measured (ms)
     case 'spec': return intIn(m.h, 1, EG_HALL_WIRE_MAX) ? { k: 'spec', h: m.h } : null;   // EG-H2: a hall asked of its breach's own law
+    case 'void': return egOrder(m.z) ? { k: 'void', z: m.z } : null;   // EG-ZA: my open's order, a stake no call answered (the hub asks its room)
+    case 'claimed': return typeof m.b === 'string' && EG_B_RE.test(m.b) && ['w', 'x', 'v'].includes(m.q) && intIn(m.w ?? 0, 0, 19_999) ? { k: 'claimed', b: m.b, q: m.q, w: m.w ?? 0 } : null;   // EG-ZA: a receipt of mine the service counted (the hub forgets its copy)
     default: return null;
   }
 }

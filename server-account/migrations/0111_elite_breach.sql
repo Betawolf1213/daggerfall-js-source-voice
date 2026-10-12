@@ -161,3 +161,14 @@ CREATE INDEX IF NOT EXISTS idx_eg_finds_week ON eg_finds (account, wk);
 ALTER TABLE eg_stakes ADD COLUMN ew INTEGER NOT NULL DEFAULT 0;
 ALTER TABLE eg_stakes ADD COLUMN wg TEXT NOT NULL DEFAULT '';
 CREATE INDEX IF NOT EXISTS idx_eg_stakes_b ON eg_stakes (b);
+-- EG-ZA (2026-10-12, Mac: "I said I want everything") - THE RECEIPTS SAY EVERYTHING (bible/11-Multiplayer/Elite-Gates.md
+-- sections 20, 21 and 23's table). The relay now mints what the table asked: an end's `td` (eg_runs.td, above, was
+-- already read where a receipt said it) and its company, `co` - the entrants' count and a 48-bit tag of their accounts
+-- (src/net/egReceipt.js egCompanyTag), which every member's receipt of one breach says alike - by which the Descent keeps
+-- a company one row (server-account/src/egHonours.js egDescentCompanies); a Redoubt's `sh` (the member's share of the
+-- circle's damage, thousandths) and `m` (THE FAIR TRAIL's six measures over the circle, JSON - read by staff, gating
+-- nothing until EG21) beside it.
+ALTER TABLE eg_runs ADD COLUMN co_n INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE eg_runs ADD COLUMN co_h TEXT;
+ALTER TABLE eg_redoubts ADD COLUMN sh INTEGER;
+ALTER TABLE eg_redoubts ADD COLUMN m TEXT;

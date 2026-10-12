@@ -12,7 +12,7 @@ import worker from '../server/src/index.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { SOCIAL_ROOM, EG_KEY, validEgOut, validEgIn } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, egCountLeft, egSpecGive, egSpecForget, EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_LAST_WORD_MS, EG_ARRIVE_MAX_MS, EG_ADMIT_MAX_MS } from '../src/net/egLaw.js';
-import { EG_LAWS, EG_LAW_KEEP_DAYS, EG_GAP_MS, EG_REJOIN_MS, EG_LIVE_MAX, EG_LIVE_KEY, EG_LIVE_PATH, egLawKnown, egReceiptSeed, egGiveBack, egResume, egHoldDone, egRelease, egBeatGap, egBetween } from '../src/net/egDurable.js';
+import { EG_LAWS, EG_LAW_KEEP_DAYS, EG_GAP_MS, EG_REJOIN_MS, EG_LIVE_MAX, EG_LIVE_KEY, EG_LIVE_PATH, egLawKnown, egReceiptSeed, egGiveBack, egResume, egHoldDone, egRelease, egBeatGap, egBetween, EG_DONE_KEY } from '../src/net/egDurable.js';
 import { egBreachNew } from '../src/net/egBrain.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { readEgReceipt } from '../src/net/egReceipt.js';
@@ -182,7 +182,10 @@ test('EG-H2 THE LIVE LIST, THE DRAIN AND THE COST (section 22): the hub keeps ea
     const B2 = 'fedcba9876543210';
     mac.sent.length = 0;
     await hub.raw(mac, JSON.stringify({ t: 'eg', k: 'open', z: await openOrder(B2, 'y'.repeat(20)), site: SITE }));
-    assert.equal(world.made.has(egRoomKey(B2)), false, 'no room opened on a shut road');
+    // PIN MOVED (EG-ZA, Elite-Gates.md section 23): the void is the ROOM's - it writes the order into its tombstone first,
+    // so the order can never open a breach once the road reopens; no breach stands in it
+    assert.equal(world.room(egRoomKey(B2)).store.has(EG_KEY), false, 'no breach opened on a shut road');
+    assert.deepEqual(world.room(egRoomKey(B2)).store.get(EG_DONE_KEY)?.z?.map((e) => e.slice(0, 2)), [['y'.repeat(20), 'void']], 'the order spent in its tombstone');
     assert.deepEqual(egs(mac).filter((m) => m.k === 'no').map((m) => m.m), ['the road is shut']);
     const v = readEgReceipt(egs(mac).find((m) => m.k === 'rcpt')?.r);
     assert.deepEqual(v && [v.q, v.b, v.s, v.z], ['v', B2, 'acct-mac', 'y'.repeat(20)], 'the stake handed straight back');
@@ -194,7 +197,7 @@ test('EG-H2 THE LIVE LIST, THE DRAIN AND THE COST (section 22): the hub keeps ea
     hub.room._egLive = undefined;
     mac.sent.length = 0;
     await hub.raw(mac, JSON.stringify({ t: 'eg', k: 'open', z: await openOrder(B2, 'x'.repeat(20)), site: SITE }));
-    assert.equal(world.made.has(egRoomKey(B2)), false, 'none past the cap');
+    assert.equal(world.room(egRoomKey(B2)).store.has(EG_KEY), false, 'none past the cap');   // PIN MOVED (EG-ZA): its tombstone alone
     assert.equal(readEgReceipt(egs(mac).find((m) => m.k === 'rcpt')?.r)?.q, 'v');
     // a breach past its last word leaves the list as it is read
     await hub.state.storage.put(EG_LIVE_KEY, { [B]: { egv: EG_SPEC, until: Date.now() - 1 } });
