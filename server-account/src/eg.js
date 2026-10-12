@@ -36,6 +36,7 @@
 import { verifyEgReceipt } from '../../src/net/egReceipt.js';
 import { mintEgOrder } from '../../src/net/identityToken.js';
 import { utcDay } from '../../src/net/marksLaw.js';
+import { egHonourStatements, egHonoursAnswer, egRecordOf } from './egHonours.js';   // EG-E2: the feats, the Annals, the honours
 
 /** The odds a recorded gate kill rolls a key, a fighter who broke the rite, an Hour; the kills in a row the pity waits. */
 export const EG_KEY_ODDS = 1 / 6;
@@ -67,15 +68,15 @@ async function playerRow(db, id) {
 }
 
 /**
- * THE BALANCE AND THE LIVE BREACH - `{ keys, live, rehearsal, proven, redoubts }`: the Weir Keys held, the breach the
- * account is in (`{b, until}`, or null), whether the day's Rehearsal is still free, whether it may stake a key, and the
- * Redoubts it has taken.
+ * THE BALANCE AND THE LIVE BREACH - `{ keys, live, rehearsal, proven, redoubts, annals, feats }`: the Weir Keys held, the
+ * breach the account is in (`{b, until}`, or null), whether the day's Rehearsal is still free, whether it may stake a
+ * key, and the Redoubts it has taken; EG-E2: the Annals' pages it keeps and each lord's feats (egHonours.js egRecordOf).
  * @param {{ db: any, nowS: number }} ctx @param {{ id: string }} player
  */
 export async function egKeysOf({ db, nowS }, player) {
   const row = await playerRow(db, player.id);
   const rd = await db.prepare('SELECT COUNT(*) AS n FROM eg_redoubts WHERE account = ?1').bind(player.id).first();
-  return { keys: int(row?.eg_keys), live: liveOf(row, nowS), rehearsal: int(row?.eg_rh_day) !== utcDay(nowS), proven: await proven(db, player.id), redoubts: int(rd?.n) };
+  return { keys: int(row?.eg_keys), live: liveOf(row, nowS), rehearsal: int(row?.eg_rh_day) !== utcDay(nowS), proven: await proven(db, player.id), redoubts: int(rd?.n), ...(await egRecordOf(db, player.id)) };
 }
 
 /**
@@ -152,7 +153,8 @@ const spendStake = (db, ez) => db.prepare("UPDATE eg_stakes SET state = 'spent' 
 /**
  * THE CLAIM: an `e1` receipt verified with the relay's public half and naming `player`. Answers `{ recorded, q, ...,
  * keys }` (`recorded` false with `why: 'claimed'` for one already counted, `why: 'guest'` for a guest), or `{ error }` -
- * `no-gate-key`, `receipt` (`why` the rung), `not-yours`.
+ * `no-gate-key`, `receipt` (`why` the rung), `not-yours`. EG-E2: a `w` that grants an honour the account did not hold
+ * says it - `honours`, the titles (egHonours.js egHonoursAnswer).
  * @param {{ db: any, nowS: number, subtle: SubtleCrypto }} ctx
  * @param {{ id: string, handle?: string|null }} player @param {unknown} receipt @param {CryptoKey|null} publicKey
  */
@@ -163,13 +165,15 @@ export async function claimEg({ db, nowS, subtle }, player, receipt, publicKey) 
   const c = v.claims;
   if (c.s !== player.id) return { error: 'not-yours' };
   if (!player.handle) return { recorded: false, why: 'guest', q: c.q };
-  let recorded = false;
+  let recorded = false, honours = {};
   if (c.q === 'w') {
     const [row] = await db.batch([
       db.prepare('INSERT OR IGNORE INTO eg_redoubts (b, account, w, h, t, at) VALUES (?1, ?2, ?3, ?4, ?5, ?6)').bind(c.b, player.id, c.w, c.h, c.t, nowS),
       spendStake(db, c.z),   // the stake is spent by the breach's first Redoubt
+      ...egHonourStatements(db, player, c, nowS),   // EG-E2: the lord's feats kept (egHonours.js)
     ]);
     recorded = Number(row?.meta?.changes ?? 0) > 0;
+    honours = await egHonoursAnswer(db, player, c);   // EG-E2: the honours it grants, written on the row; the new ones answered
   } else if (c.q === 'x') {
     // the stake: a void gives it back; the first breach's mercy gives it back once ever when the breach took no
     // Redoubt; any other end spends it
@@ -187,6 +191,7 @@ export async function claimEg({ db, nowS, subtle }, player, receipt, publicKey) 
       db.prepare('INSERT OR IGNORE INTO eg_runs (b, account, h, why, t, at) VALUES (?1, ?2, ?3, ?4, ?5, ?6)').bind(c.b, player.id, c.h, c.why, c.t, nowS),
       db.prepare('UPDATE players SET eg_live_b = NULL, eg_live_until = 0 WHERE id = ?1 AND eg_live_b = ?2').bind(player.id, c.b),
       ...settle,
+      ...egHonourStatements(db, player, c, nowS),   // EG-E2: the end as the boards rank it, the Annals' pages kept (egHonours.js)
     ]);
     recorded = Number(row?.meta?.changes ?? 0) > 0;
   } else {
@@ -196,7 +201,7 @@ export async function claimEg({ db, nowS, subtle }, player, receipt, publicKey) 
     recorded = true;
   }
   const keys = int((await playerRow(db, player.id))?.eg_keys);
-  return recorded ? { recorded: true, q: c.q, b: c.b, ...(c.q === 'w' ? { w: c.w } : {}), keys } : { recorded: false, why: 'claimed', q: c.q, keys };
+  return recorded ? { recorded: true, q: c.q, b: c.b, ...(c.q === 'w' ? { w: c.w } : {}), keys, ...honours } : { recorded: false, why: 'claimed', q: c.q, keys, ...honours };
 }
 
 /**

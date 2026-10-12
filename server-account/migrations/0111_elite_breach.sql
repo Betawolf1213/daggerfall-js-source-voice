@@ -67,3 +67,40 @@ CREATE INDEX IF NOT EXISTS idx_eg_runs_account ON eg_runs (account);
 -- THE LAUNCH GIFT (section 5): every account that has closed a Dagon's Breach (a recorded kill, never the rite alone)
 -- holds one key when this lands.
 UPDATE players SET eg_keys = eg_keys + 1 WHERE EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = players.id AND g.earned != 'rite');
+-- EG-E2 (2026-10-12, Mac: "I said I want everything"; Elite-Gates.md sections 19 and 20) - THE FEATS, THE ANNALS, THE
+-- HONOURS AND THE BOARDS (server-account/src/egHonours.js).
+--   eg_annals   the Annals of 3E 398's pages the account was given (bit p page p - net/egAnnals.js), OR'ed at each end
+--   eg_honours  the Spire's honours (egHonours.js EG_HONOUR: Spirewalker ... the four Masters), OR'ed at a recorded
+--               non-Rehearsal Redoubt, held for good
+ALTER TABLE players ADD COLUMN eg_annals INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE players ADD COLUMN eg_honours INTEGER NOT NULL DEFAULT 0;
+-- THE ENDS AS THE BOARDS RANK THEM: the company's size (`n`), the start Redoubt (`ew`), the Wager (`wg`, 1 wagered), the
+-- falls (`fl`), the seconds from Hall 1's wake to the deepest hall's door (`td`, where the receipt says it), a
+-- Rehearsal's (`rh`, never on a board) and the arena season of the receipt's issue (`season`).
+ALTER TABLE eg_runs ADD COLUMN n INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE eg_runs ADD COLUMN ew INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE eg_runs ADD COLUMN wg INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE eg_runs ADD COLUMN fl INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE eg_runs ADD COLUMN td INTEGER;
+ALTER TABLE eg_runs ADD COLUMN rh INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE eg_runs ADD COLUMN season INTEGER NOT NULL DEFAULT 0;
+CREATE INDEX IF NOT EXISTS idx_eg_runs_season ON eg_runs (season, h);
+-- THE FEATS: one row an (account, lord) - the lord's three feat bits (net/egFeats.js) the account has held, OR'ed.
+CREATE TABLE IF NOT EXISTS eg_feats (
+  account TEXT NOT NULL,
+  lord    TEXT NOT NULL,
+  bits    INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (account, lord),
+  FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE
+);
+-- SPIRE CHAMPION: one row a (season, Descent bracket, account) - each bracket's top ten companies at the season's end,
+-- every member, holding the title through the next season; written the first time a read in the new season finds the
+-- last one unkept.
+CREATE TABLE IF NOT EXISTS eg_champions (
+  season  INTEGER NOT NULL,
+  bracket TEXT NOT NULL,
+  account TEXT NOT NULL,
+  PRIMARY KEY (season, bracket, account),
+  FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_eg_champions_account ON eg_champions (account);

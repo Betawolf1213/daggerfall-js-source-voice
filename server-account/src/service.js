@@ -359,6 +359,7 @@ export const ROUTES = new Set([
   '/v1/eg/open',   // EG-PLAY: a key staked and the open order signed
   '/v1/eg/admit',   // EG-PLAY: a member's admission order
   '/v1/eg/claim',   // EG-PLAY: an Elite Breach's receipt - a Redoubt taken, a member's end, a void
+  '/v1/eg/board',   // EG-E2: the Elite Breach's three boards - the Descent, the Depths, the Deepest Redoubts
   // MARKS1: Marks (marks.js) - an account's balance, the Bank's exchange (Marks for gold, never the other way), a
   // guild's Marks treasury, and the developers' weekly report. Every one behind a session, an account's alone.
   // SILVER-FINDS: and a loot find (the service's dice, the day's count).

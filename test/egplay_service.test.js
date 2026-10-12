@@ -26,7 +26,7 @@ const keysOf = (S, id) => S.env.DB._raw.prepare('SELECT eg_keys AS k FROM player
 test('EG-PLAY THE KEYS: a fresh account holds none and may not stake (`unproven`); its first breach closed rolls one, certain (the gate claim answers `weir`); the open stakes it and signs an egopen order the relay verifies; the same request id asked again is the same breach, never a second key (mutants: the open without the stake; the request id ignored; the order unsigned)', async (t) => {
   const { S, me } = await stood(t);
   const k0 = (await S.call('/v1/eg/keys', {}, me.secret)).body;
-  assert.deepEqual(k0, { keys: 0, live: null, rehearsal: true, proven: false, redoubts: 0 });
+  assert.deepEqual(k0, { keys: 0, live: null, rehearsal: true, proven: false, redoubts: 0, annals: 0, feats: {} }, 'PIN MOVED (EG-E2): and what the account keeps of the Spire - the Annals\' pages and each lord\'s feats (egHonours.js egRecordOf)');
   assert.deepEqual((await S.call('/v1/eg/open', { rq: RQ }, me.secret)).body, { error: 'unproven' });
   const g = (await S.claim(me, 700, T0)).body;
   assert.deepEqual(g.weir, { found: true, keys: 1 }, 'the first breach closed gives the Spire once');

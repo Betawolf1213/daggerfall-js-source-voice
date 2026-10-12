@@ -106,6 +106,21 @@ export const TITLE_TEXT = Object.freeze({
   formermaster: 'Former Master',
   highmaster: 'High Master',      // CHAP6e: a Master's in its chapter's Ascendancy - GUILD3e: while its chapter stands Ascendant
   seasonmaster: 'Season Master',  // CHAP6e: a Season's Master's, kept for good
+  // EG-E2 (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 19, THE HONOURS): the Spire's thirteen, in the table's
+  // order - earned in the Elite Breach (server-account/src/egHonours.js), never bought
+  spirewalker: 'Spirewalker',
+  beaconlighter: 'Beacon-Lighter',
+  kynbane: 'Kynbane',
+  unfallen: 'The Unfallen',
+  lonebeacon: 'The Lone Beacon',
+  battlemage: 'Battlemage of the Spire',
+  wellheadwalker: 'Wellhead-Walker',
+  mastergallery: 'Master of the Galleries',
+  mastercairn: 'Master of the Cairn',
+  mastershade: 'Master of the Shade',
+  masterwellhead: 'Master of the Wellhead',
+  spirechampion: 'Spire Champion',
+  spirefirst: 'First of the Spire',
 });
 
 /** WB9g (2026-09-30, Mac: "an animated burning ground aura that circles the ground where your character stands"): AN
@@ -119,6 +134,9 @@ export const AURA_TEXT = Object.freeze({
   resonance: 'Crystal Resonance',   // CRYSTAL-FIST: the Crystal Fist's ring of purple squares rising and falling, granted with the title
   turninghour: 'The Turning Hour',   // SD9c: the Brass Remnant's wheel of brass gears and gold light, one kill in eight
   firsthour: 'The First Hour',   // HOURS-FIRST: The Turning Hour in the first dawn's light, Hour's First's own, granted with the title
+  beaconlight: 'Beaconlight',   // EG-E2: Kynbane's gold-white motes, granted with the title
+  burningstair: 'The Burning Stair',   // EG-E2: Wellhead-Walker's falling embers, granted with the title
+  firstlight: 'Firstlight',   // EG-E2: First of the Spire's dawn-white ring, granted with the title by name
 });
 
 /** SHADOW-FANG (2026-09-26, Mac): "SirMcMobdon gets a brand new
@@ -196,6 +214,18 @@ export const HOUR_LIGHT = Object.freeze([1, 0.945, 0.769, 1]);      // #fff1c4
 export const HOUR_DAWN = Object.freeze([0.902, 0.553, 0.443, 1]);   // #e68d71
 export const HOUR_PEARL = Object.freeze([1, 0.851, 0.659, 1]);       // #ffd9a8
 export const HOUR_SUN = Object.freeze([1, 0.969, 0.918, 1]);         // #fff7ea
+/** EG-E2 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 19, THE HONOURS): THE
+ *  SPIRE'S COLOURS, named once - the three titles whose auras are drawn in them read them here, as the auras do
+ *  (render/auraRing.js SPIRE_RGB): the beacon's flame and its white heart (Beacon-Lighter; Kynbane's Beaconlight, its
+ *  motes), the Kyn's blood (Kynbane), the Wellhead's ember and its coal (Wellhead-Walker; The Burning Stair), and the
+ *  dawn and its gold (First of the Spire; Firstlight, its ring). */
+export const SPIRE_BEACON = Object.freeze([1, 0.902, 0.62, 1]);        // #ffe69e - paler and whiter than the Crowned's gold
+export const SPIRE_BEACON_WHITE = Object.freeze([1, 0.976, 0.902, 1]); // #fff9e6
+export const SPIRE_KYN = Object.freeze([0.69, 0.157, 0.118, 1]);       // #b0281e - darker and bloodier than the Developer's red
+export const SPIRE_EMBER = Object.freeze([0.941, 0.416, 0.208, 1]);    // #f06a35 - redder than the Gatebreaker's fire
+export const SPIRE_COAL = Object.freeze([0.62, 0.122, 0.039, 1]);      // #9e1f0a
+export const SPIRE_DAWN = Object.freeze([0.992, 0.886, 0.816, 1]);     // #fde2d0 - a blush of dawn, paler than Hour's First's rose gold
+export const SPIRE_DAWN_GOLD = Object.freeze([1, 0.792, 0.522, 1]);    // #ffca85
 
 /** A title's colour, RGBA 0..1 - the same shape SOC4's PARTY_GREEN is
  *  in, so `nameLayer.cssRgba` turns it into CSS and `drawText` takes it
@@ -259,6 +289,23 @@ export const TITLE_RGBA = Object.freeze({
   // aged to slate, the colour of a banner kept on a hall's wall
   highmaster: Object.freeze([0.365, 0.612, 0.925, 1]),      // #5d9cec
   seasonmaster: Object.freeze([0.435, 0.561, 0.722, 1]),    // #6f8fb8
+  // EG-E2: THE SPIRE'S THIRTEEN, none another title's - the Spire's dusk for its first step, the beacon's flame, the Kyn's
+  // blood, an unbroken ivory, a lone cold star, the Imperial Battlemages' blue, the Wellhead's ember; each band's Master
+  // its own ground's (the Galleries' old gilt, the Cairn's soul-gems, the Shade's night, the Wellhead's forge); the
+  // Champion's jade, and the first dawn for the first company
+  spirewalker: Object.freeze([0.62, 0.659, 0.8, 1]),        // #9ea8cc
+  beaconlighter: SPIRE_BEACON,
+  kynbane: SPIRE_KYN,
+  unfallen: Object.freeze([0.902, 0.882, 0.812, 1]),        // #e6e1cf
+  lonebeacon: Object.freeze([0.788, 0.894, 1, 1]),          // #c9e4ff
+  battlemage: Object.freeze([0.31, 0.4, 0.769, 1]),         // #4f66c4
+  wellheadwalker: SPIRE_EMBER,
+  mastergallery: Object.freeze([0.788, 0.647, 0.353, 1]),   // #c9a55a
+  mastercairn: Object.freeze([0.541, 0.859, 0.89, 1]),      // #8adbe3
+  mastershade: Object.freeze([0.424, 0.373, 0.682, 1]),     // #6c5fae
+  masterwellhead: Object.freeze([0.831, 0.333, 0.165, 1]),  // #d4552a
+  spirechampion: Object.freeze([0.275, 0.839, 0.549, 1]),   // #46d68c
+  spirefirst: SPIRE_DAWN,
 });
 
 /** SHADOW-FANG: A TITLE DRAWN AS A GRADIENT - its stops, RGBA 0..1, left
@@ -556,7 +603,7 @@ export const badgeClass = (kind, key) => `${kind}-${key}`;
  *  the Gatebreaker's, the Oblivion Ward the Aegis of Oblivion's, the Golden Radiance the Primarch's (PRIMARCH), the Holo
  *  Shadow Cloak the Shadow Fang's black and crimson (SHADOW-CLOAK), the Seraph Wings the Founder's gold - the wings' own, where
  *  the developer's paint is a red (SERAPH-WINGS), the Crystal Resonance the Crystal Fist's purple (CRYSTAL-FIST). A pin walks AURA_TEXT and requires an entry. */
-export const AURA_PAINT = Object.freeze({ dagonfire: 'gatebreaker', oblivionward: 'aegis', radiance: 'primarch', shadowcloak: 'shadowfang', seraphwings: 'founder', resonance: 'crystalfist', turninghour: 'hourbreaker', firsthour: 'hoursfirst' });   // HOURS-FIRST: The First Hour in Hour's First's rose gold
+export const AURA_PAINT = Object.freeze({ dagonfire: 'gatebreaker', oblivionward: 'aegis', radiance: 'primarch', shadowcloak: 'shadowfang', seraphwings: 'founder', resonance: 'crystalfist', turninghour: 'hourbreaker', firsthour: 'hoursfirst', beaconlight: 'kynbane', burningstair: 'wellheadwalker', firstlight: 'spirefirst' });   // HOURS-FIRST: The First Hour in Hour's First's rose gold; EG-E2: the Spire's three each in its title's paint
 /** SHADOW-FANG: `titlePaint`'s properties as CSS declarations, the colour
  *  left to the button (its border is drawn in it) - so a gradient title's
  *  word on the card is the SAME paint as over a head, not a second one. */

@@ -21,7 +21,7 @@ const FIGHTERS = 41, MAGES = 40, THIEVES = 42, ANTICLERE = 21, DAGGERFALL = 17;
 
 test('CHAP4c the vocabulary: three chapter title ids, last in the closed list; each rides with the seats\' claim and only beside one; the relay stamps and reads it back (mutants: an id dropped, the claim\'s law, the relay\'s carry)', () => {
   assert.deepEqual([...CHAPTER_TITLES].slice(0, 3), ['chaptermaster', 'chapterofficer', 'formermaster']);   // PIN MOVED (CHAP6e): two more after them (test/chap6e_titles.test.js)
-  assert.deepEqual(TITLES.slice(-5, -2), ['chaptermaster', 'chapterofficer', 'formermaster']);   // PIN MOVED (CHAP6e): two more after them
+  assert.deepEqual(TITLES.slice(-18, -15), ['chaptermaster', 'chapterofficer', 'formermaster']);   // PIN MOVED (CHAP6e): two more after them; PIN MOVED (EG-E2): and the Spire's thirteen after those
   assert.deepEqual([...TITLES.filter(titleClaimed)], [...SEAT_TITLES, ...CHAPTER_TITLES]);
   const base = { v: 1, s: 'acct-c4c', n: 'Alda', k: 'linked', i: 1000, e: 1060 };
   assert.equal(claimsValid({ ...base, t: 'chaptermaster', ts: [4121, 3] }), true);

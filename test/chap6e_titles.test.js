@@ -29,7 +29,7 @@ const ZERO = WEEK - 21;
 
 test('CHAP6e the vocabulary: a High Master and a Season\'s Master, last in the closed list, each riding with the seats\' claim; the relay stamps and reads it back (mutants: an id dropped, the claim\'s law)', () => {
   assert.deepEqual([...CHAPTER_TITLES], ['chaptermaster', 'chapterofficer', 'formermaster', 'highmaster', 'seasonmaster']);
-  assert.deepEqual(TITLES.slice(-2), ['highmaster', 'seasonmaster']);
+  assert.deepEqual(TITLES.slice(-15, -13), ['highmaster', 'seasonmaster']);   // PIN MOVED (EG-E2): the Spire's thirteen after them
   assert.deepEqual([...TITLES.filter(titleClaimed)], [...SEAT_TITLES, ...CHAPTER_TITLES]);
   const base = { v: 1, s: 'acct-c6e', n: 'Alda', k: 'linked', i: 1000, e: 1060 };
   assert.equal(claimsValid({ ...base, t: 'highmaster', ts: [4121, 3] }), true);

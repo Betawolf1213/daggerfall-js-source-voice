@@ -89,6 +89,7 @@ import { TITLES, GLYPHS, AURAS, SEAT_TITLES, CHAPTER_TITLES } from '../../src/ne
 import { insigniaHeld, insigniaKeys } from '../../src/net/insignia.js';   // WB9g: the Broker's insignia - a title and an aura bought
 import { patreonTitlesOf } from './patreon.js';   // PATREON-LINK: a Patreon tier's title, held by the pledge
 import { SD_HONOUR_TITLE, SD_HONOUR_AURA } from './sds.js';   // SD9b: the Hour's grants on the row
+import { EG_HONOUR, EG_HONOUR_TITLES, EG_HONOUR_AURA, EG_CHAMPION_TITLE, EG_FIRST_TITLE, EG_FIRST_AURA } from './egHonours.js';   // EG-E2: the Spire's honours on the row
 
 /** THE FOUNDER CUTOFF, and it is a date rather than a count because
  *  "all current players" is a statement about a MOMENT. Everyone who
@@ -160,6 +161,15 @@ export const isHoursFirst = (player, env) =>
   && hoursFirstHandles(env).has(player.handle.toLowerCase());
 /** HOURS-FIRST: the aura Hour's First carries - The Turning Hour in the first dawn's light (render/auraRing.js). */
 export const HOURS_FIRST_AURA = 'firsthour';
+/** EG-E2 (2026-10-12, bible/11-Multiplayer/Elite-Gates.md section 19, THE HONOURS): FIRST OF THE SPIRE - the first company
+ *  ever to take Redoubt 10, by name, granted as Hour's First is: a list in config (wrangler.toml EG_FIRST_HANDLES, empty
+ *  until that company comes), held while listed, never a guest's. The title and its aura, Firstlight. */
+export function egFirstHandles(env) {
+  return handleList(env?.EG_FIRST_HANDLES);
+}
+export const isSpireFirst = (player, env) =>
+  typeof player?.handle === 'string' && !!player.handle
+  && egFirstHandles(env).has(player.handle.toLowerCase());
 
 /** How long the sprout stays on a new account: two weeks, in seconds,
  *  spelled as the arithmetic rather than as 1209600 so a reader can
@@ -327,6 +337,12 @@ export function titlesHeld(player, env) {
   // held for good. A guest's kill is never written, so a guest row holds none
   if (typeof player?.handle === 'string' && player.handle && (Number(player?.sd_honours) & SD_HONOUR_TITLE)) held.push('hourbreaker');
   if (isHoursFirst(player, env)) held.push('hoursfirst');   // HOURS-FIRST: by name
+  // EG-E2: THE SPIRE'S - the honours a recorded Redoubt wrote on the row (egHonours.js, `eg_honours`), held for good; a
+  // guest's claim is never written. Spire Champion while the row says a Descent bracket's top ten held it last season
+  // (`eg`, egHonours.js withEgHonours); First of the Spire by name
+  if (typeof player?.handle === 'string' && player.handle) for (const t of EG_HONOUR_TITLES) if (Number(player?.eg_honours) & EG_HONOUR[t]) held.push(t);
+  if (player?.eg?.champion === true) held.push(EG_CHAMPION_TITLE);
+  if (isSpireFirst(player, env)) held.push(EG_FIRST_TITLE);
   return held;
 }
 
@@ -346,6 +362,10 @@ export function aurasHeld(player, env) {
   // claimSd, `sd_honours`), held for good; a registered account's alone, as Hourbreaker is
   if (typeof player?.handle === 'string' && player.handle && (Number(player?.sd_honours) & SD_HONOUR_AURA)) held.push('turninghour');
   if (isHoursFirst(player, env) && !held.includes(HOURS_FIRST_AURA)) held.push(HOURS_FIRST_AURA);   // HOURS-FIRST: with the title, by name
+  // EG-E2: the Spire's two auras with their titles' bits (Kynbane's Beaconlight, Wellhead-Walker's The Burning Stair), a
+  // registered account's alone; Firstlight with First of the Spire, by name
+  if (typeof player?.handle === 'string' && player.handle) for (const [t, a] of Object.entries(EG_HONOUR_AURA)) if ((Number(player?.eg_honours) & EG_HONOUR[t]) && !held.includes(a)) held.push(a);
+  if (isSpireFirst(player, env) && !held.includes(EG_FIRST_AURA)) held.push(EG_FIRST_AURA);
   for (const a of insigniaKeys(player?.insignia, 'aura')) if (!held.includes(a)) held.push(a);
   return held;
 }

@@ -1369,7 +1369,8 @@ export function accountSds({ fetch, storage }) {
 /**
  * EG-PLAY: THE ELITE BREACH (server-account/src/eg.js) through the one door - the Weir Keys the account holds and its live
  * breach (`keys`), the open that stakes one (`open` - idempotent on its request id `rq`; `rh` the day's Rehearsal, no
- * key), a member's admission (`admit`) and a receipt the relay signed (`claim`). Every answer is `call`'s shape, waited
+ * key), a member's admission (`admit`), a receipt the relay signed (`claim`) and, EG-E2, the three boards (`board` - the
+ * Descent's brackets, the Depths, the Deepest Redoubts: ui/egBoardWindow.js reads it). Every answer is `call`'s shape, waited
  * for ACCOUNT_ACT_WAIT_MS at most; no session is `no-session`, never a throw. `me()` the signed-in account's id - the
  * receipts this device may offer are its alone (AUDIT WB A9's law); `guest()` whether it is a guest's.
  */
@@ -1380,6 +1381,7 @@ export function accountEg({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
     open: (rq, rh = false) => post('/v1/eg/open', { rq, ...(rh ? { rh: 1 } : {}) }),
     admit: (b) => post('/v1/eg/admit', { b }),
     claim: (receipt) => post('/v1/eg/claim', { receipt }),
+    board: () => post('/v1/eg/board', {}),   // EG-E2: the three boards (server-account/src/egHonours.js egBoardOf)
     me: () => storedSession(storage)?.id ?? null,
     guest: () => (storedSession(storage)?.kind ?? null) === 'guest',
   };
