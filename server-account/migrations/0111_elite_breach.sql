@@ -104,3 +104,37 @@ CREATE TABLE IF NOT EXISTS eg_champions (
   FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE
 );
 CREATE INDEX IF NOT EXISTS idx_eg_champions_account ON eg_champions (account);
+-- EG-E1 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 19) - WHAT A REDOUBT
+-- PAYS, AND THE BROKER'S PANOPLY SINK (server-account/src/egEconomy.js).
+--
+-- A Redoubt's number pays once an account an arena week (src/net/arenaLaw.js arenaWeekOf); taken again that week it pays
+-- its gold alone. The row says what the claim that wrote it paid, so a claim asked again answers the same:
+--   wk      the arena week the row was claimed in (-1: a row from before EG-E1)
+--   paid    1 for the account's first row of that Redoubt that week (never a Rehearsal's)
+--   stones  the Deadlands Embers it paid (src/net/egPay.js egEmbersOf - a Valkynaz's, and a first this season); the
+--           insignia's and the sink's purse (accounts.js EMBERS_EARNED_SQL) counts them
+--   nonce   the claim that wrote it (the service's own draw - a refused re-claim of the same receipt carries none): the
+--           Marks, the guild's deed, the pity and the key are written only while the row this claim wrote stands
+--   forced  the Panoply passes the pity forced, a bit a pass
+--   wkey    1 when a Valkynaz's Redoubt found its Weir Key
+ALTER TABLE eg_redoubts ADD COLUMN wk INTEGER NOT NULL DEFAULT -1;
+ALTER TABLE eg_redoubts ADD COLUMN paid INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE eg_redoubts ADD COLUMN stones INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE eg_redoubts ADD COLUMN nonce TEXT;
+ALTER TABLE eg_redoubts ADD COLUMN forced INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE eg_redoubts ADD COLUMN wkey INTEGER NOT NULL DEFAULT 0;
+CREATE INDEX IF NOT EXISTS idx_eg_redoubts_pay ON eg_redoubts (account, w, wk, paid);
+--   eg_pity     the Panoply passes in a row that drew no piece (EG_PANOPLY_PITY of them, and the next is forced)
+--   eg_valk_wk  the arena week a Valkynaz's Redoubt last found the account a Weir Key (at most one a week)
+ALTER TABLE players ADD COLUMN eg_pity INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE players ADD COLUMN eg_valk_wk INTEGER NOT NULL DEFAULT -1;
+-- THE SINK: one Panoply piece of the buyer's choosing, once an account an arena week, for EG_SINK_EMBERS embers out of the
+-- insignia's purse (`insignia_spent`) - one row a (account, week).
+CREATE TABLE IF NOT EXISTS eg_sink (
+  account TEXT NOT NULL,
+  wk      INTEGER NOT NULL,
+  piece   TEXT NOT NULL,
+  at      INTEGER NOT NULL,
+  PRIMARY KEY (account, wk),
+  FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE
+);

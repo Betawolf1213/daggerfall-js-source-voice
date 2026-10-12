@@ -2337,6 +2337,69 @@ Galleries*, *of the Cairn*, *of the Shade*, *of the Wellhead*.
 earned, never bought. The Broker's insignia stay the gate's. Cosmetic auras draw at nothing during a trial (THE QUIET
 COMPANY, section 25.4).
 
+**EG-E1 record (2026-10-12): what a Redoubt pays.** The account service pays a Redoubt's `w` receipt at its claim, by
+the pay law `net/egPay.js`, and the Broker sells the Panoply's sink. File by file:
+
+- **`server-account/src/egEconomy.js`** (new) holds the pay. `egRedoubtPay` gives claimEg the Redoubt's row, its pay's
+  statements for the claim's own batch, and its answer. The service decides everything in SQL, in that one batch:
+  - **the week's pay**: the row is paid only when the account has no paid row of that Redoubt in that arena week, and a
+    Rehearsal is never paid. Every payment is written only while the row this claim stamped with its own nonce stands
+    paid (the service's draw, as a raid's and a serpent's claims stamp theirs), so a refused re-claim of the same
+    receipt carries none. Two claims racing take one week's pay between them;
+  - **embers**: `egEmbersOf` is written to the row's `stones`. A first this season is a Redoubt with no paid row since
+    the season's first week (`egSeasonWeek0`);
+  - **the pity**: the row's forced passes and the account's new count are both read off `players.eg_pity` as the batch
+    finds it. The passes are counted in order, so at nine a Valkynaz's first pass misses to ten and its second is
+    forced;
+  - **a Valkynaz's key**: 1 in 4 by the service's own die (eg.js `drawUnder`). The row is marked (`wkey`) only while the
+    week has given the account no key (`players.eg_valk_wk`), and the key is counted only by a row so marked.
+
+  `egReliquariesOf` answers an end's Reliquaries. `egSinkOf` and `egSink` are the sink.
+- **`server-account/src/eg.js`**: claimEg passes `{ env, character }` through and splices the pay into the `w` arm's
+  batch. A Redoubt's answer is `{ recorded, q: 'w', b, w, keys, paid, again?, marks, deed, embers, purse, weir, pity }`.
+  A receipt carried again is `claimed` and `again`, with the pay its row keeps. `egKeysOf` answers the week's sale too
+  (`sink: { week, piece }`).
+- **`server-account/src/marks.js`** and **`src/net/marksLaw.js`**: `MARKS_FAUCETS.eg` strikes 20
+  (`EG_PAY_MARKS`). `eg` joins `MARKS_COMBAT.kinds`, inside the day's 150 with the gates', the raids' and the
+  serpents'. `eg` is a mint in `MARKS_KINDS`. `CLAIM_GUARDS.eg` reads the row's nonce and its pay. The line id is
+  `egStrikeRid` (`eg:<week>:<Redoubt>`), so the ledger's UNIQUE (actor, rid) holds a Redoubt's silver to once a week.
+  A guild's deed is the gate's law on the event `eg:<breach>:<Redoubt>`.
+- **`server-account/src/accounts.js`**: `EMBERS_EARNED_SQL` (exported now) adds the Redoubts' `stones`, so the
+  insignia and the sink spend the Spire's embers.
+- **The end's Reliquaries (section 16.3).** A Reliquary's roll is the client's, off the end receipt's seed, but only the
+  service knows which circles pay this week. The `x` claim answers `rl`: those of the relay's circles, one entry a
+  Reliquary, whose Redoubt this breach recorded paid. A circle whose Redoubt this breach never recorded opens when no
+  breach of the account was paid for it this week. A Rehearsal's end opens none.
+- **The sink.** `POST /v1/eg/sink { piece }` (one of `EG_PANOPLY_IDS`) is one conditional UPDATE in the insignia's way:
+  `insignia_spent + 20`, where the purse covers it and no `eg_sink` row stands this week. The week's row is written by
+  that write alone. It answers `{ ok, piece, week, purse }`, or refuses `guest` 403, `piece` 400, `bought` 409 (which
+  piece) or `short` 409 (the purse and the price). It is in `ROUTES`, the eg act map, `EG_STATUS` and the route comment.
+- **`server-account/src/index.js`**: the claim takes `{ receipt, character }`. INT5's `grantSpoils` fires only for a
+  recorded, paid Redoubt.
+- **Migration 0111** (EG-PLAY's, unshipped) gains a block of its own:
+  - `eg_redoubts`: `wk`, `paid`, `stones`, `nonce`, `forced`, `wkey`;
+  - `players`: `eg_pity`, `eg_valk_wk`;
+  - the table `eg_sink (account, wk, piece, at)`.
+- **The client**:
+  - `net/accountClient.js`: `accountEg(...).claim(receipt, character)`, `.sink(piece)`, and the words `bought` and
+    `piece`;
+  - `systems/sigilBroker.js` `panoplySale`, the insignia's two halves. The host's `mint` comes first (a piece it cannot
+    make is never paid for). Then the embers leave the pack before the service is asked. A refusal gives them back. A
+    lost answer is asked after (`held`). A held sale adds the piece, with no Broker price on it, and is saved;
+  - `ui/brokerWindow.js`: "The Battlemage's Panoply" under the insignia (`panoplyRows`, the nine pieces by section 19's
+    names). It shows the price and "One a week", and its Buy says why not ("Need 15 more", "Bought", "Next week"). A
+    sale in flight holds every other;
+  - the combat cap's words name the Redoubts (`MARKS_TEXT.cappedEg`, `CLAIM_SOURCE.eg`, `HAUL_CAPPED_TEXT`, the Bank's
+    card).
+- **Departures.** The `nonce` is the service's own draw, never the receipt's `c`: a nonce read off the receipt would
+  pass a refused re-claim of that receipt, which is AUDIT SILVER-WAYS A1's hole. The pity counts the Redoubt's own
+  passes. A Reliquary's roll is the client's, unwitnessed, and moves no count. The world host's wiring is the lead's
+  (FLAGGED): the claim's `character`, `weirHeard` on the `w` answer, the Panoply's `mint` and the Broker's `panoply`
+  deps. `scenes/world.js` was not touched, and the other three hosts carry no Broker or claim.
+
+**Pins.** `test/egeco_service.test.js` (12) and `test/egeco_broker.test.js` (3). `tools/mutants/egeco_pay.json`
+(58, every one dead). `ACCOUNT_VERSION` stays `acct121`: the migration is EG-PLAY's, unshipped.
+
 ## 20. The boards and the herald
 
 **The boards** (`/v1/eg/board`, `egBoardOf`). The season is the arena's (`arenaSeasonOf`, eight weeks). Rows come from

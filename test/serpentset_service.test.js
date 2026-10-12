@@ -42,7 +42,7 @@ async function stand(extra = {}) {
 test('SERPENT-SET the law: a serpent strikes 40 silver, a ship that stood half; it is a combat faucet, under the day\'s 150 with the gates and the raids - the ceiling unmoved; its line a mint (mutants: the amount; the stood share; the cap\'s kinds)', () => {
   assert.deepEqual(MARKS_FAUCETS.serpent, { amount: 40, stood: 0.5 });
   assert.deepEqual([serpentStrikeOf('dealt'), serpentStrikeOf('stood'), serpentStrikeOf(undefined)], [40, 20, 40]);
-  assert.deepEqual(MARKS_COMBAT, { kinds: ['gate', 'raid', 'serpent'], perDay: 150 });
+  assert.deepEqual(MARKS_COMBAT, { kinds: ['gate', 'raid', 'serpent', 'eg'], perDay: 150 });   // PIN MOVED (EG-E1): the Spire's Redoubts under the same cap, the ceiling unmoved
   assert.equal(SERPENT_EMBERS, 1);
 });
 
@@ -105,8 +105,12 @@ test('SERPENT-SET the insignia: the purse counts a serpent\'s embers with a brea
   const aura = INSIGNIA.find((o) => o.kind === 'aura');
   const short = await s.call('/v1/account/insignia', { item: aura.id }, ann.secret);
   assert.deepEqual([short.status, short.body.error], [409, 'short']);
-  assert.match(src('server-account/src/accounts.js'), /const EMBERS_EARNED_SQL = '\(\(SELECT COALESCE\(SUM\(stones\), 0\) FROM gate_kills WHERE account = \?1\) \+ \(SELECT COALESCE\(SUM\(stones\), 0\) FROM serpent_kills WHERE account = \?1\)\)';/);
+  // PIN MOVED (EG-E1): the Spire's embers join the one sum (eg_redoubts `stones`), and the Broker's Panoply sink spends from
+  // it as the insignia do (server-account/src/egEconomy.js reads the same sum, imported - never a second spelling of it)
+  assert.match(src('server-account/src/accounts.js'), /export const EMBERS_EARNED_SQL = '\(\(SELECT COALESCE\(SUM\(stones\), 0\) FROM gate_kills WHERE account = \?1\) \+ \(SELECT COALESCE\(SUM\(stones\), 0\) FROM serpent_kills WHERE account = \?1\) \+ \(SELECT COALESCE\(SUM\(stones\), 0\) FROM eg_redoubts WHERE account = \?1\)\)';/);
   assert.equal((src('server-account/src/accounts.js').match(/\$\{EMBERS_EARNED_SQL\}/g) ?? []).length, 2, 'the purse and the sale, one sum');
+  assert.equal((src('server-account/src/egEconomy.js').match(/\$\{EMBERS_EARNED_SQL\}/g) ?? []).length, 3, 'EG-E1: the sink\'s sale and the purse it answers, the same sum');
+  assert.doesNotMatch(src('server-account/src/egEconomy.js'), /FROM serpent_kills/, 'EG-E1: the sum imported, never spelt again');
 });
 
 test('SERPENT-SET the silver: a serpent counted strikes 40 (a ship that stood 20), said as `marks` with the day\'s combat bar; under the one cap with the gates - the day\'s last strike what it has left, then `cap`; claimed twice, struck once; its line `serpent:<day>` (mutants: the guard unread; the cap apart; the amount)', async () => {

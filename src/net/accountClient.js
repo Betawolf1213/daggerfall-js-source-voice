@@ -161,6 +161,8 @@ export const REFUSALS = Object.freeze({
   'no-glyph': 'The account service does not know that glyph. The game may need updating.',   // GLYPH-WEAR
   'no-insignia': 'The Broker does not sell that any more. The game may need updating.',
   owned: 'Your account already owns that.',
+  bought: 'You have bought from the Panoply this week. Come back next week.',   // EG-E1: the Broker's Panoply sink, once a week (server-account/src/egEconomy.js egSink)
+  piece: 'The Broker does not sell that piece. The game may need updating.',
   short: 'Your account has too few embers for that.',   // WB12a; WB13b: the card says the rule; AUDIT WB12d (A4): a rite's ember counts, and is no breach closed
   guest: 'Insignia need a registered account. Add a username and password first.',
   // ARENA4, the banners (server-account/src/arena.js arenaTeam)
@@ -1369,10 +1371,12 @@ export function accountSds({ fetch, storage }) {
 /**
  * EG-PLAY: THE ELITE BREACH (server-account/src/eg.js) through the one door - the Weir Keys the account holds and its live
  * breach (`keys`), the open that stakes one (`open` - idempotent on its request id `rq`; `rh` the day's Rehearsal, no
- * key), a member's admission (`admit`), a receipt the relay signed (`claim`) and, EG-E2, the three boards (`board` - the
- * Descent's brackets, the Depths, the Deepest Redoubts: ui/egBoardWindow.js reads it). Every answer is `call`'s shape, waited
- * for ACCOUNT_ACT_WAIT_MS at most; no session is `no-session`, never a throw. `me()` the signed-in account's id - the
- * receipts this device may offer are its alone (AUDIT WB A9's law); `guest()` whether it is a guest's.
+ * key), a member's admission (`admit`) and a receipt the relay signed (`claim` - EG-E1: with the claiming character, its
+ * guild's deed). EG-E1: the Broker's Panoply piece (`sink` - one of EG_PANOPLY_IDS, once an account an arena week; the
+ * week's sale rides `keys`' `sink`); EG-E2: the three boards (`board` - the Descent's brackets, the Depths, the Deepest
+ * Redoubts: ui/egBoardWindow.js reads it). Every answer is `call`'s shape, waited for ACCOUNT_ACT_WAIT_MS at most; no session
+ * is `no-session`, never a throw. `me()` the signed-in account's id - the receipts this device may offer are its alone
+ * (AUDIT WB A9's law); `guest()` whether it is a guest's.
  */
 export function accountEg({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
   const post = waitedPost({ fetch, storage }, waitMs);
@@ -1380,8 +1384,9 @@ export function accountEg({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
     keys: () => post('/v1/eg/keys', {}),
     open: (rq, rh = false) => post('/v1/eg/open', { rq, ...(rh ? { rh: 1 } : {}) }),
     admit: (b) => post('/v1/eg/admit', { b }),
-    claim: (receipt) => post('/v1/eg/claim', { receipt }),
     board: () => post('/v1/eg/board', {}),   // EG-E2: the three boards (server-account/src/egHonours.js egBoardOf)
+    claim: (receipt, character = null) => post('/v1/eg/claim', { receipt, ...(typeof character === 'string' && character ? { character } : {}) }),   // EG-E1: the claiming character - its guild's deed
+    sink: (piece) => post('/v1/eg/sink', { piece }),   // EG-E1: the Broker's Panoply piece, once a week
     me: () => storedSession(storage)?.id ?? null,
     guest: () => (storedSession(storage)?.kind ?? null) === 'guest',
   };

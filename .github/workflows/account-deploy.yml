@@ -141,6 +141,7 @@ on:
       - "src/net/sdBrain.js"
       - "src/net/egSpanLaw.js"
       - "src/net/egFragLaw.js"
+      - "src/net/egPay.js"
       - "src/net/sdMarks.js"
       - "src/net/postLaw.js"
       - "src/systems/wind.js"

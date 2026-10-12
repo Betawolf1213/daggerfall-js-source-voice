@@ -407,9 +407,10 @@
   {
     "name": "SERPENT-SET-purse-gates-alone",
     "file": "server-account/src/accounts.js",
-    "old": "const EMBERS_EARNED_SQL = '((SELECT COALESCE(SUM(stones), 0) FROM gate_kills WHERE account = ?1) + (SELECT COALESCE(SUM(stones), 0) FROM serpent_kills WHERE account = ?1))';",
-    "new": "const EMBERS_EARNED_SQL = '((SELECT COALESCE(SUM(stones), 0) FROM gate_kills WHERE account = ?1))';",
+    "old": "const EMBERS_EARNED_SQL = '((SELECT COALESCE(SUM(stones), 0) FROM gate_kills WHERE account = ?1) + (SELECT COALESCE(SUM(stones), 0) FROM serpent_kills WHERE account = ?1) + (SELECT COALESCE(SUM(stones), 0) FROM eg_redoubts WHERE account = ?1))';",
+    "new": "const EMBERS_EARNED_SQL = '((SELECT COALESCE(SUM(stones), 0) FROM gate_kills WHERE account = ?1) + (SELECT COALESCE(SUM(stones), 0) FROM eg_redoubts WHERE account = ?1))';",
     "why": "the sea's embers refused at the counter",
+    "note": "EG-E1 (PIN MOVED): the Spire's embers join the one sum - re-aimed by content; the sea's term alone dropped.",
     "tests": [
       "test/serpentset_service.test.js"
     ]
@@ -457,9 +458,10 @@
   {
     "name": "SERPENT-SET-cap-apart",
     "file": "src/net/marksLaw.js",
-    "old": "kinds: Object.freeze(['gate', 'raid', 'serpent']), perDay: 150 }",
-    "new": "kinds: Object.freeze(['gate', 'raid']), perDay: 150 }",
+    "old": "kinds: Object.freeze(['gate', 'raid', 'serpent', 'eg']), perDay: 150 }",
+    "new": "kinds: Object.freeze(['gate', 'raid', 'eg']), perDay: 150 }",
     "why": "the serpents outside the day's cap - and every serpent strike counted for nothing toward it",
+    "note": "EG-E1 (PIN MOVED): the Spire's Redoubts under the same cap - re-aimed by content; the serpents alone dropped.",
     "tests": [
       "test/serpentset_service.test.js"
     ]

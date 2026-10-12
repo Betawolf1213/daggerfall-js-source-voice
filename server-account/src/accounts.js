@@ -441,8 +441,10 @@ export async function equipGlyph({ db, nowS }, player, env, glyph, on) {
 }
 
 /** SERPENT-SET: every ember account ?1's kills paid, in SQL - its gates' rows' `stones` and (migration 0083) its serpents'
- *  (SERPENT_EMBERS a receipt): the gate's currency is a serpent's hoard's too, and the purse below counts both. */
-const EMBERS_EARNED_SQL = '((SELECT COALESCE(SUM(stones), 0) FROM gate_kills WHERE account = ?1) + (SELECT COALESCE(SUM(stones), 0) FROM serpent_kills WHERE account = ?1))';
+ *  (SERPENT_EMBERS a receipt): the gate's currency is a serpent's hoard's too, and the purse below counts both. EG-E1
+ *  (bible/11-Multiplayer/Elite-Gates.md section 19): and the Redoubts' the week paid (eg_redoubts `stones` - egEconomy.js),
+ *  so the insignia and the Broker's Panoply sink (egEconomy.js egSink) spend the Spire's embers from the one purse. */
+export const EMBERS_EARNED_SQL = '((SELECT COALESCE(SUM(stones), 0) FROM gate_kills WHERE account = ?1) + (SELECT COALESCE(SUM(stones), 0) FROM serpent_kills WHERE account = ?1) + (SELECT COALESCE(SUM(stones), 0) FROM eg_redoubts WHERE account = ?1))';
 /** WB9g: what the account's own closed gates could still pay for - one Sigil Stone a gate closed (gate_kills, WB5b),
  *  less what its insignia already cost (`insignia_spent`). Never below 0. WB12d: a row's own `stones` - two with the
  *  faithful's rite broken, one for the rite alone (migration 0066). SERPENT-SET: and a serpent's (EMBERS_EARNED_SQL). */
