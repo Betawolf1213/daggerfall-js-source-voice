@@ -52,5 +52,41 @@
     "tests": [
       "test/egeco_feats.test.js"
     ]
+  },
+  {
+    "name": "EGECO-a-lords-arm-only-rare",
+    "file": "src/systems/egLordArms.js",
+    "old": "  applyRarity(item, 'legendary', rolls);",
+    "new": "  applyRarity(item, 'rare', rolls);",
+    "tests": [
+      "test/egeco_spoils.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-the-ladders-name-kept",
+    "file": "src/systems/egLordArms.js",
+    "old": "  item.name = arm.name;\n",
+    "new": "",
+    "tests": [
+      "test/egeco_spoils.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-a-base-swapped",
+    "file": "src/systems/egLordArms.js",
+    "old": "twins: Object.freeze({ name: 'Rivalry', template: W['Dai-Katana'] }),",
+    "new": "twins: Object.freeze({ name: 'Rivalry', template: W.Katana }),",
+    "tests": [
+      "test/egeco_spoils.test.js"
+    ]
+  },
+  {
+    "name": "EGECO-a-lords-card-rarer",
+    "file": "src/systems/bossCards.js",
+    "old": "  dusk: 200, stalker: 200, seyth: 200, colossus: 200, wyrm: 200, garoth: 200,",
+    "new": "  dusk: 200, stalker: 100, seyth: 200, colossus: 200, wyrm: 200, garoth: 200,",
+    "tests": [
+      "test/egeco_spoils.test.js"
+    ]
   }
 ]

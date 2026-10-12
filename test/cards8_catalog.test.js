@@ -120,9 +120,9 @@ test('CARDS8 the holdings: the Iliac Bay\'s places, each with its own rule', () 
 
 test('CARDS8 the first set, counted by kind and tier - a card added is a card meant', () => {
   const by = (key) => ILIAC_CARDS.reduce((m, c) => ({ ...m, [c[key]]: (m[c[key]] ?? 0) + 1 }), {});
-  assert.deepEqual(by('kind'), { unit: 60, spell: 14, prince: 11 });   // PIN MOVED (CARDS9): the three bosses' own, units
-  assert.deepEqual(by('tier'), { common: 26, magic: 23, rare: 13, legendary: 12, aetheric: 5, artifact: 6 });
-  assert.equal(ILIAC_CARDS.length, 85);
+  assert.deepEqual(by('kind'), { unit: 73, spell: 14, prince: 11 });   // PIN MOVED (CARDS9): the three bosses' own, units; PIN MOVED (EG-E): the Battlespire's thirteen lords', units
+  assert.deepEqual(by('tier'), { common: 26, magic: 23, rare: 13, legendary: 12, aetheric: 18, artifact: 6 });   // PIN MOVED (EG-E): the lords' thirteen, aetheric
+  assert.equal(ILIAC_CARDS.length, 98);   // PIN MOVED (EG-E): the lords' thirteen
 });
 
 test('CARDS8 power and cost follow what the thing is in the game', () => {
@@ -137,7 +137,8 @@ test('CARDS8 power and cost follow what the thing is in the game', () => {
   assert.deepEqual(ILIAC_CARDS.filter((x) => x.cost === 1 && x.kind !== 'spell').map((x) => x.id).sort(),
     ['giant-bat', 'imp', 'mages-guild-apprentice', 'rat', 'thieves-guild-filcher']);
   // The legendary-or-higher cards: the Princes, the artifacts, and the Bay's few legends.
-  assert.deepEqual(ILIAC_CARDS.filter((x) => rank(x.tier) >= rank('legendary') && x.kind === 'unit').map((x) => x.id), ['ancient-vampire', 'ancient-lich', 'king-gothryd', 'valkynaz-ruhn', 'sethrakul', 'brass-remnant']);   // PIN MOVED (CARDS9): the bosses' own, aetheric
+  assert.deepEqual(ILIAC_CARDS.filter((x) => rank(x.tier) >= rank('legendary') && x.kind === 'unit').map((x) => x.id), ['ancient-vampire', 'ancient-lich', 'king-gothryd', 'valkynaz-ruhn', 'sethrakul', 'brass-remnant',
+    'eg-grath', 'eg-spellmaster', 'eg-armsmaster', 'eg-ilthys', 'eg-cairnkeeper', 'eg-twins', 'eg-morvayn', 'eg-dusk', 'eg-stalker', 'eg-seyth', 'eg-colossus', 'eg-wyrm', 'eg-garoth']);   // PIN MOVED (CARDS9): the bosses' own, aetheric; PIN MOVED (EG-E): the Battlespire's lords', aetheric
 });
 
 test('CARDS8 the starter deck: thirty, clean by the deck\'s law, common and magic alone', () => {
@@ -155,6 +156,6 @@ test('AUDIT CARDS-5: the catalog\'s rules are the ones looked at - every card\'s
   const { createHash } = await import('node:crypto');
   const rec = (c) => [c.id, c.name, c.kind, c.cost, c.power, c.tier, c.tags, c.fx];
   const body = JSON.stringify({ cards: ILIAC_CARDS.map(rec), locations: ILIAC_LOCATIONS.map(rec), starter: STARTER_DECK });
-  assert.deepEqual([ILIAC_CARDS.length, ILIAC_LOCATIONS.length, STARTER_DECK.length], [85, 11, 30]);   // PIN MOVED (CARDS9): the bosses' three
-  assert.equal(createHash('sha256').update(body).digest('hex'), '0c59ec4a45e4c81a3e95b960d6b758169cb097b445f6c300924ef5f8640ea1d4');   // PIN MOVED (CARDS9): the bosses' three cards
+  assert.deepEqual([ILIAC_CARDS.length, ILIAC_LOCATIONS.length, STARTER_DECK.length], [98, 11, 30]);   // PIN MOVED (CARDS9): the bosses' three; PIN MOVED (EG-E): the lords' thirteen
+  assert.equal(createHash('sha256').update(body).digest('hex'), '247741ef0a4917c0539a7a6ddec29ca64763f62af6797ab535c080c7ac1dd8f4');   // PIN MOVED (CARDS9): the bosses' three cards; PIN MOVED (EG-E): the Battlespire's thirteen lords' cards
 });
