@@ -67,3 +67,19 @@ CREATE INDEX IF NOT EXISTS idx_eg_runs_account ON eg_runs (account);
 -- THE LAUNCH GIFT (section 5): every account that has closed a Dagon's Breach (a recorded kill, never the rite alone)
 -- holds one key when this lands.
 UPDATE players SET eg_keys = eg_keys + 1 WHERE EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = players.id AND g.earned != 'rite');
+-- EG-E3 (2026-10-12, Mac: "I said I want everything") - THE DUNGEON'S FIND (bible/11-Multiplayer/Elite-Gates.md
+-- section 5). No relay witnesses an ordinary dungeon, so an elite's killer asks and the service rolls - bounded: one row
+-- an account's asks of a tier (`super`, `elite`, `regular`) a real UTC day (`asks`, at most EG_FIND_PER_DAY -
+-- server-account/src/eg.js findEg) and the keys they found (`found`), `wk` the arena week the day falls in (finds pay
+-- at most EG_FIND_KEYS_PER_WEEK keys a week, summed by it).
+CREATE TABLE IF NOT EXISTS eg_finds (
+  account TEXT NOT NULL,
+  day     INTEGER NOT NULL,
+  tier    TEXT NOT NULL,
+  wk      INTEGER NOT NULL,
+  asks    INTEGER NOT NULL DEFAULT 0,
+  found   INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (account, day, tier),
+  FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_eg_finds_week ON eg_finds (account, wk);

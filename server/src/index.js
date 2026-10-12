@@ -312,6 +312,11 @@ import { mintSdReceipt, readSdReceipt, SD_RECEIPT_TTL_S } from '../../src/net/sd
 import { isEgRoom, egRoomKey, egBreachOfRoom, EG_SEALED_MS, EG_ADMIT_MAX_MS } from '../../src/net/egLaw.js';
 import { egBreachNew, egEnter, egAdmitWord, egStep, egBlow, egDown, egHome, egWord, egStateOf, egFightStateOf, egLive } from '../../src/net/egBrain.js';
 import { mintEgReceipt } from '../../src/net/egReceipt.js';
+// EG-E3 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 20): net/egHerald.js
+// JOINS THE BUNDLE - the Spire's herald (its posts, the hub's reckoning of the Descent's tops, First of the Spire and the
+// seals said; pure - it imports gateHerald.js, egLaw.js and arenaLaw.js, all here). A breach's room tells the hub its news
+// (EG_INTERNAL_HERALD), and the hub posts off its alarm beside the other heralds.
+import { EG_INTERNAL_HERALD, EG_HERALD_KEY, EG_HERALD_KEEP_MS, EG_HERALD_TELL_MS, validEgHeraldTell, readEgHeraldState, egHeraldFold, egHeraldNext, egHeraldPost } from '../../src/net/egHerald.js';
 import { egGate, EG_INTERNAL_OPEN, EG_KEY, egCallKey, validEgOpenTell, EG_BRAIN_MIN } from './relay.js';
 
 // AUDIT WORLD34 D4: the relay names itself in /health. SLAM13 (AUDIT SLAM A5): the name lives in net/wire.js, so the
@@ -788,6 +793,7 @@ export class Room {
     if (path === SD_INTERNAL_LIVE) return this._sdLiveInternal();   // SD3: the Worker or a realm asking the hub its record
     if (path === SD_INTERNAL_FELL) return this._sdFellInternal(request);   // SD8b: a realm telling the hub its Remnant fell
     if (path === EG_INTERNAL_OPEN) return this._egOpenInternal(request);   // EG-PLAY: the hub opening a breach's room
+    if (path === EG_INTERNAL_HERALD) return this._egHeraldInternal(request);   // EG-E3: a breach's room telling the hub its news, for the herald
     if (path === HOLDEM_INTERNAL_VOID) return this._holdemVoidInternal(request);   // AUDIT SCALE II R3-3 (c): a layer's void, spent by its place
     const key = roomOf(new URL(request.url).pathname);
     if (!key || (key.startsWith('owned:') && !privateInteriorOf(key))) return json({ error: 'no such private room' }, 404);
@@ -2247,7 +2253,7 @@ export class Room {
     // SCALE5d part two: a court's copy syncs as a shard does. AUDIT SCALE II R2-4: its name read back from its storage when
     // its sockets say none, and the alarm kept while anything is still owed the bus (a last leave on a woken instance)
     if (await this._hubKeyOf()) { this._hubSyncAt = 0; await this._hubUpFlush(); if (this.state.getWebSockets().length || this._up.length || this._upRetry) await this.state.storage.setAlarm(Date.now() + HUB_SYNC_MS); return; }
-    if (await this.state.storage.get('hub')) { await this._relayCfgOf(); await this._sweepHub(Date.now()); await this._heraldBeat(Date.now()); await this._serpentHeraldBeat(Date.now()); await this._sdBeat(Date.now()); await this._sdHeraldBeat(Date.now()); return; }   // AUDIT SOC A3: the hub's alarm is its sweep, whoever is in the room; DISCORD-GATES: and its herald's posts; SERPENT2: and the serpent's; SD3: and the Super dungeon's director; SD-HERALD: and its herald's, after the director's moves
+    if (await this.state.storage.get('hub')) { await this._relayCfgOf(); await this._sweepHub(Date.now()); await this._heraldBeat(Date.now()); await this._egHeraldBeat(Date.now()); await this._serpentHeraldBeat(Date.now()); await this._sdBeat(Date.now()); await this._sdHeraldBeat(Date.now()); return; }   // AUDIT SOC A3: the hub's alarm is its sweep, whoever is in the room; DISCORD-GATES: and its herald's posts; SERPENT2: and the serpent's; SD3: and the Super dungeon's director; SD-HERALD: and its herald's, after the director's moves; EG-E3: and the Spire's, after the gate's
     // AUDIT 68 X8-park-registry-unbounded: an owner's registry (HCC-PARK) is one object per account and character a
     // client names - its word goes PARK_TTL_MS after it was said, as the cell's record it points at does
     const reg = await this.state.storage.get('reg');
@@ -6885,6 +6891,48 @@ export class Room {
     } catch (e) { console.warn('[herald] abyss beat failed', e?.message ?? e); await this._hubArm(now + HERALD_RETRY_MS); }
   }
 
+  // ───────────────────────────── EG-E3: THE SPIRE'S HERALD ─────────────────────────────
+  // net/egHerald.js. The gate's channel and door (_heraldOf, _heraldSend); its own record (EG_HERALD_KEY: the posts owed,
+  // First of the Spire's flag, the bands said, the season's Descent tops, the news folded), the news a breach's room tells
+  // (EG_INTERNAL_HERALD) folded into it by the herald's law, and the posts it owes posted off the hub's alarm.
+  /** THE HUB'S HALF: a breach's news, folded once into the herald's record - the reckoning kept with no herald too (the
+   *  first company ever, the season's tops), the posts owed only with one - and the alarm armed now when one is newly
+   *  owed. */
+  async _egHeraldInternal(request) {
+    let body = null;
+    try { body = await request.json(); } catch { /* refused below */ }
+    const tell = validEgHeraldTell(body);
+    if (!tell) return json({ ok: false }, 400);
+    const now = Date.now(), herald = !!this._heraldOf();
+    const had = readEgHeraldState(await this.state.storage.get(EG_HERALD_KEY));
+    const st = egHeraldFold(had, tell, { nowMs: now, post: herald });
+    await this.state.storage.put({ [EG_HERALD_KEY]: st, hub: 1 });
+    if (herald && st.n > had.n) await this._hubArm(now);   // a post newly owed: now (one waiting on a retry keeps its time)
+    return json({ ok: true });
+  }
+  /** THE SPIRE'S HERALD'S BEAT, on the hub's alarm after the gate's: each post owed posted in its order, one no longer news
+   *  let go, and the alarm armed HERALD_RETRY_MS on for a post Discord did not take. What went is taken off the record
+   *  as storage holds it NOW - news folded while Discord answered is kept. */
+  async _egHeraldBeat(now) {
+    if (!this._heraldOf()) return;
+    try {
+      const done = new Set();
+      let retry = null;
+      for (;;) {
+        const { p, gone } = egHeraldNext(readEgHeraldState(await this.state.storage.get(EG_HERALD_KEY)), done, now);
+        for (const i of gone) done.add(i);
+        if (!p) break;
+        if (!(await this._heraldSend(egHeraldPost(p)))) { retry = now + HERALD_RETRY_MS; break; }
+        done.add(p.i);
+      }
+      if (done.size) {
+        const cur = readEgHeraldState(await this.state.storage.get(EG_HERALD_KEY));
+        await this.state.storage.put(EG_HERALD_KEY, { ...cur, q: cur.q.filter((p) => !done.has(p.i)) });
+      }
+      if (retry !== null) await this._hubArm(retry);
+    } catch (e) { console.warn('[herald] spire beat failed', e?.message ?? e); await this._hubArm(now + HERALD_RETRY_MS); }
+  }
+
   // ───────────────────────────── SD3: THE SUPER DUNGEON ─────────────────────────────
   // bible/11-Multiplayer/Super-Dungeons.md sections 2-4 and 14. THE HUB keeps the one record (SD_KEY) and moves it on with
   // net/sdLaw.js's moves on its alarm, beside the sweep and the heralds: the first beat (a hub with no record waits
@@ -7363,18 +7411,42 @@ export class Room {
    *  the alarm is the room's other duties' then. */
   async _egTick() {
     const B = await this._egOf();
-    if (!B || (B.end && !B.owe?.length)) return false;
+    if (!B || (B.end && !B.owe?.length && !B.hq?.length)) return false;   // EG-E3: an ended breach beats on while the hub has not had its news
     const now = Date.now();
     try {
       const out = egStep(B, now, this._egBodies(B, now), rand01);
       this._egFan(out);
       await this._egMint(B, now);
+      await this._egHeraldTell(B, now);   // EG-E3: the herald's news, to the hub
       await this._egSave(B, now, out.some((f) => f.k === 'sg' || f.k === 'rd' || f.k === 'end' || f.k === 'fall' || f.k === 'rise' || f.k === 'offer'));
     } catch (e) { console.warn('[eg] beat failed', e?.message ?? e); }
-    if (B.end) { await this._egSave(B, now, true); return false; }
+    if (B.end) {
+      await this._egSave(B, now, true);
+      if (!B.hq?.length) return false;
+      await this.state.storage.setAlarm(Math.max(now + 1000, this._egTellAt ?? 0));   // EG-E3: told again, until the hub has it
+      return true;
+    }
     const here = [...this._all()].some(([, b]) => b.id);
     await this.state.storage.setAlarm(here ? now + BRAIN_TICK_MS : Math.min(now + 1000, B.sg === 'wait' ? Math.max(now + BRAIN_TICK_MS, B.su) : now + 1000));
     return true;
+  }
+  /** EG-E3: THE HERALD'S NEWS, TOLD THE HUB (EG_INTERNAL_HERALD): the breach's own list (`B.hq`, the director's - its
+   *  Valkynaz Redoubts, a Court felled alone, its end as a Descent candidate), each piece kept until the hub has it (the
+   *  hub folds news told twice once) and let go once it is no news; a hub that did not answer told again
+   *  EG_HERALD_TELL_MS on, never on every beat (a tell waits ROOM_CALL_MS at most, and the beat with it). A relay built
+   *  without the binding has no hub to tell. */
+  async _egHeraldTell(B, now) {
+    if (!B.hq?.length || now < (this._egTellAt ?? 0)) return;
+    B.hq = B.hq.filter((e) => now < e.at + EG_HERALD_KEEP_MS);
+    const rooms = this.env?.ROOMS;
+    if (!rooms?.idFromName || !rooms?.get) B.hq = [];
+    if (!B.hq.length) return;
+    const ev = B.hq;
+    const res = await this._egPost(SOCIAL_ROOM, EG_INTERNAL_HERALD, { b: B.b, ev });
+    if (!res?.ok) { this._egTellAt = now + EG_HERALD_TELL_MS; return; }
+    const told = new Set(ev.map((e) => e.i));
+    B.hq = (B.hq ?? []).filter((e) => !told.has(e.i));
+    await this._egSave(B, Date.now(), true);
   }
   /** One POST to another object's internal door (ROOM_CALL_MS bounded) - its JSON answer, or null. */
   async _egPost(key, path, body) {

@@ -11,6 +11,16 @@
 //         n the earning entrants   ew the start Redoubt   l the level the breach froze   rh 1 for a Rehearsal
 //         why how the member's breach ended ('x' alone)   i issued, epoch seconds   e expires (i + EG_RECEIPT_TTL_S)
 //         lk the Redoubt's lord, ft its feats ('w'; EG-E - net/egFeats.js: three bits)
+//         vs the member's Vestiges ('w')   rl the Reliquaries its end opens ('x')   fl its falls   lb a Court felled alone
+//         wg the breach's Wager decrees (both kinds - EG-E3: the end's too, for the boards)
+//         an the pages of the Annals the breach gave the member ('x'; EG-E3 - a bitmask, bit p for net/egAnnals.js's page p)
+//
+// EG-E3 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md section 23): THE BOUND IS THE
+// MINT'S. Every reader refuses a receipt past EG_RECEIPT_MAX (readEgReceipt, verifyEgReceipt, the wire's `rcpt` -
+// net/wire.js EG_RECEIPT_WIRE_MAX, the same 640), and a Redoubt's `w` with 32 Vestiges, a Wager, its lord and feats and a
+// long account id passed it: the relay signed it and nobody could read it. The mint now holds every receipt inside it,
+// trimming its optional lists oldest first - the Vestiges (`vs`), then the Reliquaries (`rl`) - and never a claim the
+// service pays by (test/egeco_receipts.test.js: the worst case, every id at its longest).
 //
 // ONE KEY, NEVER CONFUSED: GATE_SIGNING_KEY signs it as it signs every relay receipt, and the version is inside the
 // signed bytes, so `e1` is refused by every other verifier and theirs by this one. The kind rides `q` - never `k`, an
@@ -27,12 +37,20 @@ export const EG_RECEIPT_TTL_S = 7 * 24 * 3600;
 export const EG_RECEIPT_MAX = 640;
 /** The kinds, and how a member's breach may end. */
 export const EG_RECEIPT_KINDS = Object.freeze(['w', 'x', 'v']);
-export const EG_END_WHYS = Object.freeze(['fall', 'home', 'tear', 'wipe', 'last', 'empty', 'void', 'gone', 'rehearsal']);
+// EG-E3: and the two the relay mints that the list lacked - a witness forsaking (net/egBrain.js egForsake) and THE SEAL
+// (section 13.3, a good end) - whose receipts mintEgReceipt refused, so a forsaken member's stake and end were never said
+export const EG_END_WHYS = Object.freeze(['fall', 'home', 'tear', 'wipe', 'last', 'empty', 'void', 'gone', 'rehearsal', 'forsake', 'seal']);
+/** EG-E3: the optional lists the mint may trim to keep a receipt inside EG_RECEIPT_MAX, in the order it trims them -
+ *  each oldest first (a Vestige is appended as it is taken, a Reliquary as its Redoubt falls). */
+export const EG_RECEIPT_TRIMS = Object.freeze(['vs', 'rl']);
 const enc = new TextEncoder();
 const dec = new TextDecoder();
 const BREACH_RE = /^[0-9a-f]{16}$/;
 const ZID_RE = /^[a-z0-9]{16,32}$/;
 const int = (v, lo, hi) => Number.isSafeInteger(v) && v >= lo && v <= hi;
+/** A signed receipt's length for a body of `n` characters: `e1.` + the body + `.` + the signature's 86. */
+const SIG64_LEN = Math.ceil((SIG_BYTES * 4) / 3);
+const signedLen = (n) => EG_RECEIPT_V.length + 1 + n + 1 + SIG64_LEN;
 
 /**
  * Everything a well-formed breach receipt's claims must be, before any signature is considered. Another signed shape's
@@ -68,7 +86,15 @@ export async function mintEgReceipt(what, privateKey, { subtle, nowS }) {
   if (!Number.isSafeInteger(nowS)) throw new TypeError('mintEgReceipt needs an integer epoch-seconds clock');
   const claims = { ...what, i: nowS, e: nowS + EG_RECEIPT_TTL_S };
   if (!egReceiptValid(claims)) throw new TypeError('mintEgReceipt refused a claim set it could not verify');
-  const body = _b64url.encode(enc.encode(JSON.stringify(claims)));
+  // EG-E3: THE BOUND - measured as the signed receipt's (an unsigned one trims alike), the lists trimmed oldest first
+  let body = _b64url.encode(enc.encode(JSON.stringify(claims)));
+  for (const k of EG_RECEIPT_TRIMS) {
+    while (signedLen(body.length) > EG_RECEIPT_MAX && Array.isArray(claims[k]) && claims[k].length) {
+      claims[k] = claims[k].slice(1);
+      body = _b64url.encode(enc.encode(JSON.stringify(claims)));
+    }
+  }
+  if (signedLen(body.length) > EG_RECEIPT_MAX) throw new TypeError('mintEgReceipt could not keep a receipt inside its bound');
   if (!privateKey) return `${EG_RECEIPT_V}.${body}.`;
   const sig = new Uint8Array(await subtle.sign({ name: 'Ed25519' }, privateKey, enc.encode(`${EG_RECEIPT_V}.${body}`)));
   return `${EG_RECEIPT_V}.${body}.${_b64url.encode(sig)}`;

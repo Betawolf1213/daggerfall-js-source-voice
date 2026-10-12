@@ -65,6 +65,7 @@
 //   POST /v1/eg/open     { rq, rh? } -> { order, b, ez, keys, until, rh }   (EG-PLAY: a key staked - or the day's Rehearsal - and the open order signed; idempotent on `rq`)
 //   POST /v1/eg/admit    { b } -> { order, b }   (EG-PLAY: a member's admission order; one live breach an account)
 //   POST /v1/eg/claim    { receipt } -> { recorded, q, b, w?, keys }   (EG-PLAY: an `e1` - a Redoubt taken, a member's end, a void)
+//   POST /v1/eg/find     { tier } -> { found, keys, asks }   (EG-E3: a dungeon elite's find - 'super' | 'elite' | 'regular', the service's die, 6 asks a tier a day, 2 keys a week)
 //   POST /v1/gate/claim  { receipt, region?, character? } -> { recorded, stones, closed, seat? }   (WB12d: the row's embers, AUDIT WB12d A4; SEAT1b: `seat` the kill's influence)
 // MARKS1, Marks - an account's alone, behind MARKS_OPEN (marks.js); `rid` the act's own id:
 //   POST /v1/marks/balance {}                               -> { balance, today, bank }
@@ -205,7 +206,7 @@ import { contractRegionOfRaid } from '../../src/net/writLaw.js';   // CHAP2b: th
 import { claimRaid, raidRecordOf } from './raids.js';   // RAID4: the towns defended
 import { claimSerpent, serpentRecordOf } from './serpents.js';   // SERPENT1: the serpents slain
 import { claimSd, sdRecordOf } from './sds.js';   // SD9b: the Hours broken
-import { egKeysOf, openEg, admitEg, claimEg, rollWeirKey } from './eg.js';   // EG-PLAY: the Elite Breach - the Weir Keys, the open, the admission, the claim
+import { egKeysOf, openEg, admitEg, claimEg, rollWeirKey, findEg } from './eg.js';   // EG-PLAY: the Elite Breach - the Weir Keys, the open, the admission, the claim; EG-E3: a dungeon elite's find
 import { readReceipt } from '../../src/net/gateReceipt.js';   // EG-PLAY: a recorded kill's rite (`r`), for its Weir Key's odds
 /** EG-PLAY: did the fighter who carries this gate receipt break the rite (its `r`)? Read after the claim verified it. */
 const readGateRite = (r) => readReceipt(r)?.r === 1;
@@ -390,11 +391,11 @@ const GUILD_STATUS = Object.freeze({
  *  the finds of an account not yet a week registered) 403, no guild 404, short or capped 409, the hour's acts spent
  *  429, a bad shape 400 (the default). */
 /** EG-PLAY: each Elite Breach refusal's status - the service without its key 503, not this account's (a guest, another's
- *  receipt) 403, a breach held or no key to stake 409, a bad shape 400 (the default). */
+ *  receipt) 403, a breach held or no key to stake 409, a bad shape 400 (the default). EG-E3: a find's day spent 409. */
 const EG_STATUS = Object.freeze({
   'no-signing-key': 503, 'no-gate-key': 503,
   guest: 403, 'not-yours': 403, unproven: 403,
-  live: 409, short: 409, rehearsed: 409, spent: 409,
+  live: 409, short: 409, rehearsed: 409, spent: 409, capped: 409,
 });
 const MARKS_STATUS = Object.freeze({
   'marks-need-account': 403, 'marks-closed': 403, 'marks-young': 403, 'not-developer': 403, 'guild-rank': 403, 'guilds-need-account': 403,
@@ -1139,6 +1140,7 @@ const service = {
           '/v1/eg/open': async () => openEg(ctx, who.player, body, await signingKey(env, subtle)),
           '/v1/eg/admit': async () => admitEg(ctx, who.player, body, await signingKey(env, subtle)),
           '/v1/eg/claim': async () => claimEg(ctx, who.player, body.receipt, await gatePublicKey(env, subtle)),
+          '/v1/eg/find': async () => findEg(ctx, who.player, body),   // EG-E3: a dungeon elite's find
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act();

@@ -130,6 +130,9 @@ export const REFUSALS = Object.freeze({
   rehearsed: 'You have rehearsed the Spire today. A Weir Key opens it again.',
   spent: 'That breach is spent.',
   breach: 'That breach is not one the Spire knows.',
+  // EG-E3: a dungeon elite's find (server-account/src/eg.js findEg)
+  tier: 'That is no dungeon the Spire knows.',
+  capped: 'The dungeons have given all they will today.',
   body: 'The account service could not read that request.',
   method: 'The account service refused that request.',
   // The two the ROUTER refuses with, before any account is looked at.
@@ -1380,6 +1383,7 @@ export function accountEg({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
     open: (rq, rh = false) => post('/v1/eg/open', { rq, ...(rh ? { rh: 1 } : {}) }),
     admit: (b) => post('/v1/eg/admit', { b }),
     claim: (receipt) => post('/v1/eg/claim', { receipt }),
+    find: (tier) => post('/v1/eg/find', { tier }),   // EG-E3: a dungeon elite's find (section 5) - `{ found, keys, asks }`
     me: () => storedSession(storage)?.id ?? null,
     guest: () => (storedSession(storage)?.kind ?? null) === 'guest',
   };

@@ -2381,6 +2381,84 @@ heralds, it posts to the gate's webhook and falls back to the gate's role, pingi
 
 An opening is never heralded: a company's breach is its own.
 
+**EG-E3 record (2026-10-12): the herald, the receipts' bound and the dungeon's find.** (Mac: *"I said I want
+everything"*.)
+
+- **The herald** is `net/egHerald.js`: pure builders on `gateHerald.js`'s `heraldName` and `heraldList`, every post
+  `allowed_mentions: { parse: [] }`.
+  - **The posts**: *Mac's company took Redoubt 10 of the Battlespire (Hall 50) in 1:51:20.* for every tenth Redoubt;
+    *First of the Spire*; *the Lone Beacon*; *A new top of the Descent (the Few)*; *The way below the Galleries is open.*
+  - **The news.** The director keeps its news on the breach (`B.hq`, numbered): every Valkynaz Redoubt, a Court felled
+    by the one member standing of four or more (once a member a breach), and the end of a breach begun at Hall 1,
+    unwagered and not a Rehearsal, as a Descent candidate. A candidate carries the deepest hall and `td`, the seconds
+    from Hall 1's wake to that hall's door (`clearHall`, at the door and at a Court's fall).
+  - **The tell.** The breach's room tells the hub on a new internal door, `EG_INTERNAL_HERALD`, the way the gate's kill
+    is told. An ended breach beats on until the hub has its news. A hub that does not answer is told again
+    `EG_HERALD_TELL_MS` (5 s) later, never on every beat, because each tell can wait `ROOM_CALL_MS`.
+  - **The hub.** It folds each tell once, by breach and number (`egHeraldFold`), into its own record (`egherald`):
+    - the posts owed, at most 16;
+    - First of the Spire's flag, held for good;
+    - the bands open when the hub first heard of the Spire, and the last band said;
+    - each bracket's best this season (the arena's `arenaSeasonOf`);
+    - the news already folded.
+
+    The hub posts off its alarm, after the gate's herald, in order. A post Discord refuses goes again `HERALD_RETRY_MS`
+    later, and one an hour old (`EG_HERALD_KEEP_MS`) is let go. A hub with no webhook keeps the reckoning and owes
+    nothing, so a webhook added later never calls the second company first.
+  - **THE SEAL** is coded as `EG_OPEN` in `net/egLaw.js`, the number of bands a deploy opens. EG-FULL laid all four
+    bands, so `EG_OPEN` is 4, no band is sealed, and no seal post can be owed today. A deploy that seals a band and a
+    later one that opens it are both needed for the post.
+- **This slice's own choices**:
+  - First of the Spire is posted *instead of* that breach's Redoubt 10 post, never beside it.
+  - A Descent top shallower than Hall 10 (`EG_HERALD_TOP_HALL`) is recorded but not posted. Every early-season breach
+    is a new top, and the channel would get one post per hall.
+  - There is no `egRole` setting. Nothing in the Spire pings anyone, so a role setting would do nothing.
+- **The receipts** (`net/egReceipt.js`):
+  - `EG_END_WHYS` gains `'forsake'` and `'seal'`. The relay already minted a forsaking (`egForsake`), and the mint
+    threw on it, so a forsaken member's end receipt and stake were never sent.
+  - **THE BOUND IS THE MINT'S.** `mintEgReceipt` measures every receipt at its signed length. If a receipt is over
+    `EG_RECEIPT_MAX` (640, the wire's `EG_RECEIPT_WIRE_MAX` too), it trims the optional lists, oldest first, in the
+    order `EG_RECEIPT_TRIMS` gives: the Vestiges (`vs`), then the Reliquaries (`rl`). It never trims a claim the
+    service pays by. A claim set that no trim can fit is refused, never signed long.
+  - In the worst case (a 40-character account, a 32-character order, a 16-letter lord, the Wager, the feats), a `w`
+    keeps 19 of its 32 Vestiges and an `x` keeps 22 of its 64 Reliquaries. Without the lists, about 170 characters are
+    left under the bound: a `co` of eight 40-character subs (section 20) will not fit until the bound rises.
+  - The end receipt (`q: 'x'`) now carries `wg`, the breach's Wager (as its `w` does), and `an`, the Annals pages the
+    breach gave the member. `an` is the director's own per-member bitmask (`m.pages`: bit p is `net/egAnnals.js` page
+    p, set at an alcove's page and at a lord's first fall). It is only minted when non-zero.
+  - Today `egReceiptValid` ignores any field it does not name, except the shapes it refuses (`n0`, `k`, `o`, `d`, `x`,
+    `r`, `y`). `an` is validated by another slice.
+- **The dungeon's find** is `POST /v1/eg/find` `{ tier }` (`server-account/src/eg.js` `findEg`). It answers
+  `{ found, keys, asks }` or one of the eg routes' refusals: `guest`, `tier`, `unproven`, or `capped` (409, with the
+  balance). The two new words each have a sentence in `REFUSALS` (`net/accountClient.js`).
+  - **The tiers** are the port's own (`systems/dungeonTier.js`): `super` (the player's Abyss Dungeon) 1 in 60, `elite`
+    1 in 150, `regular` 1 in 400, rolled on the service's own die.
+  - **The caps**: the ask is counted before the die, 6 a tier per account per real UTC day (`EG_FIND_PER_DAY`). Finds
+    pay at most 2 keys an arena week (`EG_FIND_KEYS_PER_WEEK`), and the key and the find's mark are written in one
+    transaction.
+  - **Storage**: the table `eg_finds`, added to migration 0111 (`ACCOUNT_VERSION` stays `acct121`).
+  - **The client** door is `accountEg(...).find(tier)`, and the client logic is `systems/egFind.js`:
+    - `registerEgFind({ ask, tierNow, selfId, online, say, throwKey })` registers a death handler (`eg-find`) for the
+      owner's kills;
+    - it answers `{ death, struck, dispose }`;
+    - the owner asks for its own kill (the striker `null`, or its own id) and leaves a joiner's kill to the joiner,
+      whose record door calls `struck`;
+    - each body is asked about once;
+    - `egFindThrow` throws one key onto the body, as `dropFoeCard` throws a card, and restacks the pack to the balance
+      minus that key.
+- **THE FOUR HOSTS.** `scenes/dungeonContext.js` is the one host with a dungeon's foes online. WIRING OWED (the lead's):
+  - the owner's `raiseEnemyDeath` passes `by: foe._killedBy`;
+  - the joiner's record door, where `r.v` names `selfId` and `reportPlayerKill(f.entity, REMOTE_KILL)` runs, calls
+    `struck(f.entity)`;
+  - `world.js` registers the find with `ask: (t) => _accountEg.find(t)`, `tierNow` the current dungeon's
+    `dungeonTier` online, and `throwKey: (e, n) => { egFindThrow(e, playerEntity.items, n); saved(); }`.
+
+  `scenes/exterior.js`, `scenes/world.js`'s streaming exterior and `scenes/worldModes.js`'s interiors stand no dungeon
+  foe (`tierNow()` is null there), so nothing is owed in them.
+- **Pins**: `test/egeco_herald.test.js` (9), `test/egeco_receipts.test.js` (3), `test/egeco_find.test.js` (4), and
+  `tools/mutants/egeco_relay.json` (72, every one dead). `RELAY_VERSION` `world197` is re-hashed with
+  `net/egHerald.js` in its graph.
+
 ## 21. Integrity - what the relay judges
 
 The gate's trust law, kept whole, and where it was not enough for one life, widened:

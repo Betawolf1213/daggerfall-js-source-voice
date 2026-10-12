@@ -166,6 +166,11 @@ export const egBandOfHall = (h) => (h <= 25 ? 0 : h <= 50 ? 1 : h <= 75 ? 2 : 3)
 export const egBandOfCircle = (c) => egBandOfHall(egFirstHallOf(c));
 /** The Brink halls: the first hall of each band below the first (section 8.9). */
 export const EG_BRINK_HALLS = Object.freeze([26, 51, 76]);
+/** EG-E3 (2026-10-12, Mac: "I said I want everything"; section 13.3, THE SEAL): how many bands this deploy opens, from the
+ *  top - a band past them is sealed, and a deploy that raises the number lifts its seal (the herald says the first breach
+ *  through it: net/egHerald.js, which keeps what the hub first saw open). EG-FULL laid all four bands, so all four are
+ *  open and no breach ends at a seal today: the director's `'seal'` end is for a deploy that opens fewer. */
+export const EG_OPEN = EG_BANDS.length;
 
 /** The hall kinds (section 8) - the six, the Court, the Brink, and the Scriptorium (a twist in slot 3). */
 export const EG_HALL_KINDS = Object.freeze(['yard', 'span', 'proving', 'rampart', 'court', 'athenaeum', 'deepway', 'brink', 'scriptorium']);
