@@ -4040,7 +4040,7 @@ HACKED-GOLD, ETHER-NODES, AUDIT ETHER-OW and MINE-PERKS' `acct126`), and one mig
 - **AUDIT EG III**: a void after a Redoubt returns the key, a voided Rehearsal gives the day's back, the first breach's
   mercy judged at the end, an admission's `eg_live` ending at its stake's `until`.
 
-## EG-E2 — the Spire's titles and auras (2026-10-12, under EG-PLAY's account version: acct121 then, acct127 since the merges; world197 then, world200 since)
+## EG-E2 — the Spire's titles and auras (2026-10-12, under EG-PLAY's account version: acct121 then, acct127 since the merges; world197 then, world201 since)
 
 The Elite Breach's honours (`bible/11-Multiplayer/Elite-Gates.md` section 19, THE HONOURS; its EG-E2 record at the end
 of section 20), added as every honour is: the ids last in `identityToken.js` `TITLES` and `AURAS` (the relay's bundle -

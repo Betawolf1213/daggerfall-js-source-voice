@@ -62,6 +62,9 @@ export function releaseNodes(...nodes) {
 }
 /** The panning model every positional source takes (see AudioEngine._panner). */
 export const PANNING_MODEL = 'HRTF';
+/** AUDIT GATHER-FEEL F7: how long a voice taken back (play3dVoice's `stop`) takes to fade to nothing (s) - a stop at its
+ *  level pops. */
+export const VOICE_FADE_S = 0.08;
 
 /** PEERFX1: one observer of every one-shot (index, volume) - the online layer hears "a blow landed on me" here
  *  (net/peerFx.js isHurtClip). Null offline. */
@@ -758,6 +761,43 @@ export class AudioEngine {
       (this._far ??= []).push({ pan, off: [pos[0] - L.x, pos[1] - L.y, pos[2] - L.z], until: this.ctx.currentTime + buf.duration / pitch, src, gain, tag: far === true ? null : far });
     }
     return buf.duration;   // A3: the ambient channel's busy clock
+  }
+
+  /** AUDIT GATHER-FEEL F7: A POSITIONAL SHOT A SCENE CAN TAKE BACK - play3d's own, answering a handle (null where it
+   *  plays nothing): `stop(seconds)` fades it to nothing over `seconds` (a stop at its level pops) and lets its chain go;
+   *  `onEnd` is told when it has ended, run out or stopped. A felled tree a refused harvest stands again was heard
+   *  falling on for two seconds and more, its ground struck under it standing (systems/gatherSounds.js `hush`).
+   *  @param {number|string} index @param {number[]} pos @param {number} [volume]
+   *  @param {{ refDistance?: number, maxDistance?: number, distanceModel?: string, pitch?: number, onEnd?: () => void }} [opts] */
+  play3dVoice(index, pos, volume = 1, { refDistance = 1, maxDistance = 500, distanceModel = 'inverse', pitch = 1, onEnd = null } = {}) {
+    if (!this._ready()) return null;
+    const buf = this._buffer(index);
+    if (!buf) return null;
+    const ctx = this.ctx;
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.playbackRate.value = pitch;
+    const pan = this._panner(pos, { refDistance, maxDistance, distanceModel });
+    const gain = ctx.createGain();
+    gain.gain.value = volume;
+    src.connect(gain).connect(pan).connect(this._out());
+    let ended = false;
+    src.onended = () => { if (ended) return; ended = true; releaseNodes(src, gain, pan); onEnd?.(); };
+    src.start();
+    return {
+      stop(seconds = VOICE_FADE_S) {
+        if (ended) return;
+        try {
+          const t = ctx.currentTime;
+          gain.gain.cancelScheduledValues(t);
+          gain.gain.setValueAtTime(gain.gain.value, t);
+          gain.gain.linearRampToValueAtTime(0, t + seconds);
+          src.stop(t + seconds + 0.02);
+        } catch {
+          try { src.stop(); } catch { /* already stopped */ }
+        }
+      },
+    };
   }
 
   /** AUDIT SD IV (A5): A PLACE'S FAR SHOTS LET GO WITH IT - each `far` one-shot played under `tag` and still sounding

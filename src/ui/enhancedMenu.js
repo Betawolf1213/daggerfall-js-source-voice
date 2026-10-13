@@ -2920,10 +2920,11 @@ function portRowsGame({ pause = false } = {}) {
   return [row, techniqueMotionRow()];
 }
 /** TECH-FX (bible/05-Combat/Weapon-Techniques.md THE FEEL): how much a weapon technique moves the screen - every device,
- *  both skins; Settings > Accessibility > Motion lists it (ui/settingsMap.js). */
+ *  both skins; Settings > Accessibility > Motion lists it (ui/settingsMap.js). GATHER-FEEL II: and a gathering tool's
+ *  landed blow (systems/gatherBlow.js gatherBlowFeel - the springs' one door), on the enhanced skin. */
 function techniqueMotionRow() {
   const row = choiceRow('techniqueMotion', 'Technique camera motion',
-    'How much a weapon technique shakes and tilts the view and dips your hands.',
+    'How much a weapon technique shakes and tilts the view and dips your hands - and, on the Enhanced skin, how far a tool\'s blow dips them as you gather.',
     [[1, 'Full'], [0.75, '75%'], [0.5, 'Half'], [0.25, 'Low'], [0, 'Off']]);
   if (row?.dataset) { row.dataset.opt = 'techniqueMotion'; row.dataset.pref = 'techniqueMotion'; }   // ORG2: the map finds it by its key
   return row;
@@ -3050,7 +3051,7 @@ function peerSpritesCard() {
   c.append(el('h3', null, t('menu.peers.title', 'Other players')));
   c.append(el('p', 'meta', t('menu.peers.blurb', 'Players without a Morrowind body show as their chosen sprite, or their class.')));   // DISC23-B: the chosen set first, the class only for a player without one
   c.append(prefRow('peerClassSprites', t('menu.peers.sprite', 'Animated sprite'), t('menu.peers.spriteNote', 'On: the sprite above. Off: the paperdoll.'), { home: true }));
-  c.append(prefRow('peerAttackSounds', t('menu.peers.attack', 'Attack sounds'), t('menu.peers.attackNote', 'Hear other players\u2019 weapon swings.'), { home: true }));   // PEER-FS1: the two peer-sound switches, beside the sprite one
+  c.append(prefRow('peerAttackSounds', t('menu.peers.attack', 'Attack sounds'), t('menu.peers.attackNote', 'Hear other players\u2019 weapon swings, and their tools as they gather.'), { home: true }));   // PEER-FS1: the two peer-sound switches, beside the sprite one; PEER-ACTS: a gathering tool's blow is a swing, and the act's other beats its hands' work (net/remotePlayers.js _syncGatherSound)
   c.append(prefRow('peerFootsteps', t('menu.peers.footsteps', 'Footstep sounds'), t('menu.peers.footstepsNote', 'Hear other players\u2019 footsteps.'), { home: true }));
   // PEER-RANGE (2026-10-10, the owner: "the rendering of players far out is contributing to poor performance"): far
   // players, not drawn - the near tier is inside a player's shot (200 m), and the row says so; the row reads the law's own

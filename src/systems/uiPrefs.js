@@ -103,7 +103,7 @@ export const PREF_DEFAULTS = Object.freeze({
   padCursorAssist: true,
   // TECH-FX (bible/05-Combat/Weapon-Techniques.md THE FEEL): how much a weapon technique moves the screen - its camera
   // springs, its shake and the hands' dip (combat/techniqueFx.js techniqueMotion); 0 moves nothing on the screen (its
-  // burst and its sound stay)
+  // burst and its sound stay). GATHER-FEEL II: and a gathering tool's landed blow (systems/gatherBlow.js gatherBlowFeel)
   techniqueMotion: 1,
   // EG-G1 (bible/11-Multiplayer/Elite-Gates.md section 25.7): THE SPIRE'S ACCESSIBILITY (ui/egAccess.js) - the danger
   // palette ('standard' | 'contrast' | 'deutan' | 'tritan'), a danger fill's light (0.5-1), and reduced motion (the

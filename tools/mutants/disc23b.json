@@ -110,7 +110,7 @@
   {
     "name": "D23B-no-stance",
     "file": "src/net/peerRiders.js",
-    "old": "const standing = (pose) => chooseTable({ stopped: !peerMoving(pose), sheathed: !pose.wd, spellcasting: !!pose.sr, usingBow: pose.wd === 2 });",
+    "old": "const standing = (pose) => chooseTable({ stopped: !peerMoving(pose), ...walkerHands(pose) });",
     "new": "const standing = (pose) => chooseTable({ stopped: !peerMoving(pose) });",
     "tests": [
       "test/disc23b_eotb_sprites.test.js"

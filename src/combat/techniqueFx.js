@@ -128,6 +128,21 @@ function kick(ch, peak) {
 }
 
 /**
+ * THE SPRINGS' ONE DOOR: a moment's camera (`c`, as TECH_FX's rows speak it - the screen's own degrees and metres) and
+ * its hands' dip (`hands.y`, screen heights, down), kicked at `m` of their peaks. A technique's moment comes through it
+ * (techniqueCue), and GATHER-FEEL II's landed blow - an axe in the trunk, a pick on the stone (systems/gatherBlow.js
+ * gatherBlowFeel) - so both ride the one set of springs every host's view already folds (player/climbFeel.js), and the
+ * roll's mirror is said once. Nothing at m 0 or below.
+ * @param {{ pitch?: number, roll?: number, eye?: number, fov?: number }|null|undefined} c
+ * @param {{ y?: number }|null|undefined} hands @param {number} [m]
+ */
+export function kickFx(c, hands, m = 1) {
+  if (!(m > 0)) return;
+  if (c) { kick(FX_CH.pitch, (c.pitch ?? 0) * DEG * m); kick(FX_CH.roll, -(c.roll ?? 0) * DEG * m); kick(FX_CH.eye, (c.eye ?? 0) * m); kick(FX_CH.fov, (c.fov ?? 0) * m); }
+  if (hands?.y > 0) kick(FX_CH.hands, hands.y * m);   // a dip only (FX_CH)
+}
+
+/**
  * A MOMENT. `id` the technique, `moment` one of release / hit / loose / shaft / close, `door` the host's technique door
  * (`fx(recipe, at, o)`, `shake(k)`, `sound(clip, volume, pitch)` - each optional), `place` the burst's where
  * (`{ at, ground, yaw, dir, to, len, r, spin, half }`; null: no burst). Answers whether the technique has the moment.
@@ -140,9 +155,7 @@ export function techniqueCue(id, moment, door = null, place = null) {
   if (!row) return false;
   const m = techniqueMotion();
   if (m > 0) {
-    const c = row.cam;
-    if (c) { kick(FX_CH.pitch, (c.pitch ?? 0) * DEG * m); kick(FX_CH.roll, -(c.roll ?? 0) * DEG * m); kick(FX_CH.eye, (c.eye ?? 0) * m); kick(FX_CH.fov, (c.fov ?? 0) * m); }
-    if (row.hands?.y > 0) kick(FX_CH.hands, row.hands.y * m);   // a dip only (FX_CH)
+    kickFx(row.cam, row.hands, m);   // GATHER-FEEL II: the springs' one door
     if (row.shake) door?.shake?.(row.shake * m);
   }
   if (row.burst && place?.at) door?.fx?.(row.burst, place.at, row.r != null ? { ...place, r: row.r } : place);

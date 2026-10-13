@@ -359,7 +359,7 @@
   {
     "name": "AUDIT29-C5-shut-mid-act-stuck",
     "file": "src/scenes/gatherHost.js",
-    "old": "        if (act) { act.act.cancel(); act = null; }   // AUDIT 29 C5",
+    "old": "        if (act) { letGo(act); act.act.cancel(); act = null; }   // AUDIT 29 C5",
     "new": "        // AUDIT 29 C5",
     "tests": [
       "test/audit29_host.test.js"

@@ -24,11 +24,13 @@
 //
 // The toasts' law is pure (`createToastQueue`); the rest is the DOM the
 // host's frame feeds. One owner: the host builds it online and disposes
-// it with the page.
+// it with the page. The HUD draws and says nothing aloud: GATHER-FEEL
+// (2026-10-13) moved the acts' sounds, which it said as it drew the
+// reticle, to the gathering's ear (systems/gatherSounds.js), which hears
+// them where they happen and when the blow lands.
 // ═══════════════════════════════════════════════════════════════════
 import { PROF_CSS } from './enhancedPlusStyle.js';
-import { buildActReticle, marksOf, actCues, FOCAL_FALLBACK } from './profReticle.js';   // PROF-RETICLE: the act on the crosshair
-import { profCue } from '../systems/profSounds.js';   // PROF-SCENES: every cue a sound too
+import { buildActReticle, marksOf, FOCAL_FALLBACK } from './profReticle.js';   // PROF-RETICLE: the act on the crosshair
 
 /** The toasts: four at most, three seconds each (PROF0 8). */
 export const PROF_TOASTS_MAX = 4;
@@ -136,7 +138,7 @@ export function createProfHud({ doc = globalThis.document, anchor = null } = {})
      * act, moved every frame, round the crosshair's middle (`anchor`). `label` the act's words (the key it holds,
      * ACT-CLICK's press); `byUse` - TOUCH-HOLD: a tool's Use (or a press - PROF-MENU) holds the act, no key to name.
      * The node's name is the menu's and the plaque's; the act carries no title (`title` taken and set by). Every cue
-     * its sound too.
+     * its sound too - the ear's (scenes/gatherHost.js feeds it the same act, GATHER-FEEL).
      */
     setMeter(act, label = '', { byUse = false } = {}) {
       if (!act) { meter.hidden = true; meter.replaceChildren(); panel = null; return; }
@@ -144,9 +146,8 @@ export function createProfHud({ doc = globalThis.document, anchor = null } = {})
       seat();
       const st = act.state;
       const which = marksOf(act);
-      if (!panel || panel.act !== act || panel.which !== which) { panel = { act, which, ui: buildActReticle(doc, meter, act), prev: {} }; actCues(panel.prev, st); }
+      if (!panel || panel.act !== act || panel.which !== which) { panel = { act, which, ui: buildActReticle(doc, meter, act) }; }
       panel.ui.update(act, { label, byUse, reduced: reduced(), focal });
-      for (const c of actCues(panel.prev, st)) profCue(c);
       // the act's flashes - a blow on the glint, a Clean Cut, a bruise, the tug - on the reticle itself, whole
       const flags = ['prof-meter', 'prof-reticle', `prof-kind-${which}`];
       if (st.bruised) flags.push('bruised');
@@ -156,8 +157,6 @@ export function createProfHud({ doc = globalThis.document, anchor = null } = {})
       const c = flags.join(' ');
       if (meter.className !== c) meter.className = c;
     },
-    /** PROF-SCENES: a cue said outright - an act's clean finish, which its last frame cannot see. */
-    cue(name) { profCue(name); },
     /** A line on the right; `keep` (GATHER-SAID) outlasts the unkept past four. */
     toast(text, o) { queue.push(text, o); },
     /** The rank's banner. */

@@ -12687,6 +12687,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         built: () => built, pixelTranslation: (x, y, out) => state.pixelTranslation(x, y, out),
         pixelInfo: (x, y) => { try { return { climate: maps.getClimateIndex(x, y), region: maps.getRegionIndexAt(x, y) }; } catch { return null; } }, settled: (pos) => { const wc = state.worldCoords(pos), p = worldCoordToMapPixel(wc.x, wc.z), loc = locationIndex.get(`${p.x},${p.y}`); return !!loc?.exterior?.exteriorData && isPlayerInTown(loc.mapTableData?.locationType, { mustBeInLocationRect: true, mustBeOutside: true, inLocationRect: isInLocationRect(wc.x, wc.z, locationWorldRect(loc, p.x, p.y)), inside: false }); },   // SETTLE-STAND: the acts' own settlement check (Foraging's 'town'), asked of a node's place
         nowMs: () => Date.now() + _sharedOffsetMs, haul: (entries) => showHaul(entries),   // HAUL-CARDS: a harvest's goods and XP as one card (the enhanced skin's)
+        audio,   // GATHER-FEEL: the bus the gathering's ear says the acts on (systems/gatherSounds.js) - in the street, a dungeon and a building alike, the one host's
         marks: marksBook,   // SILVER-FINDS: a harvest's find said, its balance kept
         eye: () => ({ pos: cam.pos, dir: [Math.sin(cam.yaw) * Math.cos(cam.pitch), Math.sin(cam.pitch), Math.cos(cam.yaw) * Math.cos(cam.pitch)] }),
         // AUDIT 29 C1: a node seen - the eye's ray to it through the place's collider (the street's, or the dungeon's own)
@@ -29704,6 +29705,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       hl: waistLanternPoseBit(playerEntity.lightSource),   // HT-WAIST-NET: a lit lantern hung at the waist, so the others' Morrowind bodies hang it at the hip - absent otherwise, the wire's omission law
       lc: hasActiveEffect(playerEntity, 'light') ? 1 : undefined,   // PEERLIGHT2: my Light spell burns, so the others hang its candle before me - absent otherwise
       lt: torchPoseByte(playerEntity),   // PEERLIGHT1: my lit torch/lantern/candle, so it lights the others' world around me - absent while nothing burns
+      ...(gatherHost?.poseAct() ?? {}),   // PEER-ACTS: my gathering act and its beats (scenes/gatherHost.js poseAct), so the others see me swing, kneel and throw and hear each beat - absent until I gather
       ...climbPoseOf(player),   // CLIMB5: my climb and the way my body faces on it, so the others turn me to the wall, pose me off the ground and hear me climb - absent off the wall
     };   // the wire's move bit: 1 walking, 2 running (the peers' bodies pick the clip off it)
     if (seated) arm.st = seated.st;   // CARDS2b: seated, and the table's top above the feet - absent standing, the wire's omission law
@@ -30384,7 +30386,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const id = ctx?.profIdentity?.();
       gatherHost.enterDungeon({
         id: id?.id ?? null, climate: id?.climate ?? null, region: id?.region ?? null, wall: (m, b) => ctx.veinWall(m, b),
-        stand: (a, r, s, c) => ctx.standProfFlats(a, r, s, c), drop: (b) => ctx.dropProfFlats(b),
+        stand: (a, r, s, c, o) => ctx.standProfFlats(a, r, s, c, o), drop: (b) => ctx.dropProfFlats(b),   // VEIN-CRACKS: `o` a chunks' dynamic batch
       });
     },
     profPress: () => gatherHost?.press() ?? false,
@@ -34609,6 +34611,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
       betterAmbience.rebase();   // BA1: the same anchor, the mod's own machine
       remotePlayers?.rebaseFootsteps?.();   // PEER-BUZZ: and every peer's - their strides are measured in scene units now, so they recentre with the rest
       remotePlayers?.rebaseSounds?.(r.offset);   // AUDIT DISC7 B6: and the riders' loops, in the frame the listener moves in
+      gatherHost?.rebase(r.offset);   // AUDIT GATHER-FEEL: and the gathering's ear - a net's place, a blow in the air - with the land
       _dwSwimSound.rebase(r.offset);   // DW-D: the swim's odometer too - a recentre is not a stroke
       if (_partyRestVoteOrigin) { _partyRestVoteOrigin[0] += r.offset[0]; _partyRestVoteOrigin[1] += r.offset[1]; _partyRestVoteOrigin[2] += r.offset[2]; }   // AUDIT PARTY-REST: PARTY-REST16's origin is a scene point too - unshifted, a crossing read as a 819-unit walk and cancelled the vote
       mwViewRebase(r.offset);   // EOTB-IL: FloatingOrigin.OnPositionUpdate - the sprite camera's smoothing follows the origin
