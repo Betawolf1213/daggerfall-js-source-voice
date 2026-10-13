@@ -126,6 +126,10 @@ export function egFloorWindup(wu, stamps, check = false) {
   for (const s of stamps) f = Math.max(f, egWindupFloorMs(s));
   return Math.max(wu, f);
 }
+/** A CHAINED SHAPE'S GAP (sections 13.2 and 14 - Chained Blows, fury's chain): a chained shape lands `max(the blow's own
+ *  wind-up, the chained stamp's wind-up floor + 0.3 s, 1.0 s)` after the shape before it, so it never counts down faster
+ *  than the same blow alone (ms). */
+export const egChainGapMs = (wu, stamp) => Math.max(wu, egWindupFloorMs(stamp) + 300, 1000);
 /** A lone runner's route at the escape build plus the errand floor's 1.5 s (THE ERRAND FLOOR, section 13.2), ms. */
 export const egErrandMs = (routeM) => Math.ceil(((routeM / EG_ESCAPE_MPS + 1.5) * 1000) / 10) * 10;
 

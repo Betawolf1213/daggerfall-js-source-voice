@@ -171,7 +171,8 @@ import { foldEg, EG_STATE_EMPTY } from '../net/egLink.js';
 import { egRoomKey } from '../net/egLaw.js';
 import { egShaftLedgeAt } from '../world/egHall.js';   // EG-ZN (section 11.8): the shaft's ledge the camera leans over
 import { setSpireShaft } from '../player/mwView.js';   // EG-ZN (section 11.8): the shaft's camera
-import { EG_LIFELINE_UNDER, EG_LIFELINE_LOOK_MS } from '../net/egBrain.js';   // EG-ZP (section 15): Lifeline's 30%, and how far back the census looks for it
+import { EG_LIFELINE_UNDER, EG_LIFELINE_LOOK_MS } from '../net/egBrain.js';
+import { egLifelineMin } from '../net/egBrain.js';   // AUDIT EG III: a heal worth a Lifeline window, the census's own   // EG-ZP (section 15): Lifeline's 30%, and how far back the census looks for it
 import { egCastBackCost } from '../net/egBrain.js';   // EG-ZR (section 15's Featherstep): a cast-back's cost, the census's own
 import { spireHolderStep } from '../systems/spireVestiges.js';   // EG-ZR: THE VESTIGES ON THEIR HOLDER
 import { spireBodyMax } from '../systems/renownLayer.js';   // EG-ZR: the body the room's shares are of (Stoneskin's cushion over it)
@@ -1317,7 +1318,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
    *  body among them), at the word's arrival at the room as my corrected clock reckons it (the shared clock and the half
    *  round trip it measured). */
   function lifelineSaid(h) {
-    const t = now(), v = egLifelineOf(link.state(), me(), h.map(([by]) => accountOf(by)));
+    const min = egLifelineMin(Math.max(1, entity.level | 0));   // AUDIT EG III: a heal worth a window, as the census asks it (my level, as my hello says it)
+    const t = now(), v = egLifelineOf(link.state(), me(), h.filter(([, n]) => n >= min).map(([by]) => accountOf(by)));
     if (v > 0 && t - lowAt <= EG_LIFELINE_LOOK_MS) fight?.lifeline?.(v, t + egClockHalfRtt(clock));
   }
   /** THE BOARD'S LINE from my end's claim (server-account/src/egHonours.js egStandingOf), on that breach's recap - the one

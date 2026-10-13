@@ -186,7 +186,8 @@ test('EG-ZP LIFELINE\'S WINDOW, THE CENSUS\'S OWN (scenes/egFight.js egLifelineO
   let ll = [];
   const R = C.t + 1000;
   for (const dt of [0, 10, 20, 30, 40, EG_LIFELINE_MS + EG_TRAIL_MS + 100]) {
-    egHeal(B, me, [[by, 1]], R + dt, LINE, false);
+    egBodyWord(B, me, 100, R + dt, LINE, false);   // PIN MOVED (AUDIT EG III): a heal worth a window lifts the count; its own word keeps it seen low
+    egHeal(B, me, [[by, 30]], R + dt, LINE, false);
     ll = egLifelineOpen(ll, v, R + dt);
     assert.deepEqual(ll, B.mem[me].ll, `the census's windows at +${dt}`);
   }
@@ -265,9 +266,13 @@ test('EG-ZP LIFELINE, THE RECEIVER\'S HALF (scenes/egClient.js lifelineSaid; sec
     assert.deepEqual(word, { k: 'heal', h: [['peer-ann', 100]] });
     assert.deepEqual(ll(), [win(at)], 'Lifeline II, from the word\'s arrival');
     assert.deepEqual(last(), census(word, at + 100), 'the census\'s window for the same word, to the millisecond');
-    // a healer without it; my own; a stranger's; a peer this screen cannot name - none
+    // a healer without it; my own; a stranger's; a peer this screen cannot name - none (PIN MOVED, AUDIT EG III: the heals below a
+    // window's worth, 30 points where they were 10 - net/egBrain.js egLifelineMin)
     const was = last();
-    for (const id of ['peer-bob', 'peer-me', 'peer-who', 'peer-nobody']) { entity.health = 200; S.frame(); client.healedBy(id, 10); S.say(); assert.deepEqual(last(), was, `${id}: none`); }
+    for (const id of ['peer-bob', 'peer-me', 'peer-who', 'peer-nobody']) { entity.health = 200; S.frame(); client.healedBy(id, 30); S.say(); assert.deepEqual(last(), was, `${id}: none`); }
+    // AUDIT EG III: Ann's heal short of a window's worth (net/egBrain.js egLifelineMin, at my level - the census's own rule): none
+    entity.health = 200; S.frame(); client.healedBy('peer-ann', 10); S.say();
+    assert.deepEqual(last(), was, 'ten points, short of the minimum: none');
     // over 30% all along: none
     S.step(EG_LIFELINE_LOOK_MS + 1);
     entity.health = 900; S.frame();
@@ -276,7 +281,7 @@ test('EG-ZP LIFELINE, THE RECEIVER\'S HALF (scenes/egClient.js lifelineSaid; sec
     // 30% itself is not under it (the census's `v < 0.3`)
     S.step(EG_LIFELINE_LOOK_MS + 1);
     entity.health = 1000 * EG_LIFELINE_UNDER; S.frame();
-    entity.health += 10; client.healedBy('peer-ann', 10); S.say();
+    entity.health += 30; client.healedBy('peer-ann', 30); S.say();
     assert.deepEqual(last(), was, '30% at a frame and before the heal: not under');
     // under before the heal that lifted me, never seen so at a frame: the heal's own low
     S.step(EG_LIFELINE_LOOK_MS + 1);
@@ -287,7 +292,7 @@ test('EG-ZP LIFELINE, THE RECEIVER\'S HALF (scenes/egClient.js lifelineSaid; sec
     S.step(EG_LIFELINE_LOOK_MS + 1);
     entity.health = 250; S.frame();
     entity.health = 800; S.step(EG_LIFELINE_LOOK_MS - EG_HEAL_SEND_MS);
-    client.healedBy('peer-ann', 10);
+    client.healedBy('peer-ann', 30);
     const at3 = S.say();
     assert.deepEqual(last(), win(at3), 'seen low a second and a beat before the word: within the census\'s look back');
     // and a moment past it: none (the census's own boundary - egBodyWord's low, egHeal a second and a beat and a moment later)
@@ -295,14 +300,14 @@ test('EG-ZP LIFELINE, THE RECEIVER\'S HALF (scenes/egClient.js lifelineSaid; sec
     S.step(EG_LIFELINE_LOOK_MS + 1);
     entity.health = 250; S.frame();
     entity.health = 800; S.step(EG_LIFELINE_LOOK_MS - EG_HEAL_SEND_MS + 1);
-    client.healedBy('peer-ann', 10); S.say();
+    client.healedBy('peer-ann', 30); S.say();
     assert.deepEqual(last(), was2, 'a moment past the look back: none');
     // the host names a healer by its account as it names the company's poses (scenes/world.js - net/social.js accountOfPeer)
     assert.match(readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8'), /createEgClient\(\{[\s\S]*?accountOf: \(id\) => social\?\.accountOfPeer\?\.\(id\) \?\? null,[\s\S]*?\}\) : null;/, 'world.js hands the client its peers\' accounts');
     const q = B.mem['acct-2'], tl = C.t + 900_000;
     q.vs = []; bodyStruck(q, 0.1, tl - 10, LINE);
     egBodyWord(B, 'acct-2', 250, tl, LINE);
-    egHeal(B, 'acct-2', [['acct-1', 10]], tl + EG_LIFELINE_LOOK_MS + 1, LINE, false);
+    egHeal(B, 'acct-2', [['acct-1', 30]], tl + EG_LIFELINE_LOOK_MS + 1, LINE, false);
     assert.equal(q.ll, undefined, 'the census\'s boundary, the same');
   } finally { S.done(); }
 });

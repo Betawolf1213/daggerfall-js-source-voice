@@ -457,8 +457,8 @@ The answer goes to `/v1/eg/open` (section 23), which stakes one key.
 - **Outside the company.** Touching the arch: *The breach answers only to <opener>'s company.*
 - **One breach at a time** for every account, opener or member, enforced by the service's `eg_live` (section 23).
 - **The absent.** A member whose socket is gone keeps their body at its last pose (the socket flap rule, section 22).
-  - They are counted fallen only after **180 s gone in a trial** (`EG_ABSENT_TRIAL_S`). Absence on the stair or at a
-    rest never counts. A reload, or a slow machine on the stair, is not a fall.
+  - They are counted fallen only after **180 s gone in a trial** (`EG_ABSENT_TRIAL_S`), counted from the trial's wake.
+    Absence on the stair or at a rest never counts. A reload, or a slow machine on the stair, is not a fall.
   - An absent body is never chosen as a target. A shape aimed at another member still lands on it, so a tab closed
     before a blow is not a life saved.
   - Their party row shows an amber ring draining the 180 s (section 27.4).
@@ -683,7 +683,8 @@ Wellhead the legions came through, each a standing body.
   not a faster blow: NOTHING GETS FASTER binds every wind-up and every piece, and the waves' cadence is depth's own
   knob (section 18).
 - **The legion's cap**: no more than `min(14, 2 + ceil(1.5n) + floor((c-1)/5))` standing. A rift whose wave would pass
-  the cap holds it, and the next wave is one body larger. A company of eight stands at 14 from circle 1; depth reaches
+  the cap holds it, and the next wave is one body larger (once, however long it held). Every other wave pours what the
+  room under the cap holds of it (section 12). A company of eight stands at 14 from circle 1; depth reaches
   it through decrees and kinds, never more bodies (the telegraph budget, section 25.4, is why).
 - **The end**: the last rift closed. Every add still standing crumbles (the host's `adie`), and the door opens.
 
@@ -1433,8 +1434,8 @@ player's data and the budget allow. Every blow is a shape the telegraph pass dra
 | 3 | **Breaker** | winds a charge at a member, runs it, pushes | Daedroth (27) | r 0.8, h 2.4 | 3.0 m/s; the charge 12 m/s | Charge: lane w 4 x 14, 25% + 8, push 6 m (1.1 s / 0.79 s) |
 | 4 | **Caster** | stands off 10-18 m, on a raised anchor where the hall has one, and throws at a member every 6-9 s | Fire Daedra (26); Lich (32) in the Cairn | r 0.6, h 2.2 | 2.0 m/s | Bolt: disc r 3 at the member's feet, 20% + 6, the element, leaving a pool (`POOLS` hellfire's) (1.6 s / 0.94 s) |
 | 5 | **Diver** | flies at 6-10 m, circles, dives a lane at a member; never onto ground narrower than the lane plus 2 m (6 m) | Harpy (13), Dragonling (34) | r 0.6 | 6.0 m/s | Dive: lane w 4 x 10, 18% + 5 (1.0 s / 0.79 s) |
-| 6 | **Lurker** | dormant until a member passes within 6 m (an ambush), then slow and heavy | Gargoyle (22); Iron Atronach (36) in the Wellhead | r 0.9, h 2.6 | 2.2 m/s | Smash: disc r 3, 30% + 10 (1.3 s / 0.94 s) |
-| 7 | **Binder** | stands back and raises the last fallen add of its wave once, a 6 s cast broken by a blow worth a tenth of its health | Ancient Lich (33) | r 0.6, h 2.2 | 1.2 m/s | none: the raise |
+| 6 | **Lurker** | dormant until a member passes within 6 m (an ambush) or a blow lands on it, then slow and heavy | Gargoyle (22); Iron Atronach (36) in the Wellhead | r 0.9, h 2.6 | 2.2 m/s | Smash: disc r 3, 30% + 10 (1.3 s / 0.94 s) |
+| 7 | **Binder** | stands back and raises the last fallen add of its wave once, a 6 s cast broken by blows that land a tenth of its health in it (the hand's and the purse's, never the claim) | Ancient Lich (33) | r 0.6, h 2.2 | 1.2 m/s | none: the raise |
 | 8 | **Wraith** | drifts in and tethers the nearest member on a fight floor: 3% of max health a second while within 8 m, broken by putting 10 m between | Wraith (23), Ghost (18) | r 0.5 | 2.5 m/s | Drain: a tether (the pull-apart grammar, section 25.5) |
 
 **ROLE READS.** Kill priority in every horde mode is read from silhouette, so among the legion's kinds one sprite never
@@ -1458,7 +1459,12 @@ frame), and resisted by the Iron Footing Vestige. Near an edge it is a cast-back
   hall's mean reference damage). It is shared over a wave where the kind is a team's, through `hostTeamHpFor`, and
   scaled by the depth `x (1 + 0.04(c-1))`.
 - **Size**: a wave counts the living company, as the gate's do, clamped by kind.
-- **Cadence and cap**: the hall's (section 8.1), the cadence quickening with depth (section 18).
+- **Cadence and cap**: the hall's (section 8.1), the cadence quickening with depth (section 18). Every wave is held to
+  the room under the cap (`egLegionRoom`, `net/egLegion.js`): the hall's, a lord's fury's and its summons', Hunting
+  Pack's, and a Kynval squad (its first affixes kept). A friend (the Ghost, the Deserter) is no foe under it.
+- **Fade** (section 15): every kind picks among the members it sees, never one in its Fade, but an Unshaken elite
+  (section 8.7). A shape aimed at another still lands on a Faded member, and a dormant Lurker wakes at anyone's
+  nearness.
 - **Targets**: an absent body is never chosen (section 6.1).
 
 **Unlocks by band**:
@@ -1778,7 +1784,7 @@ card.
 | | **Vengeful Shades** | a slain add's shade follows its slayer at 3 m/s for 6 s, then bursts: a disc of r 2, 1.0 s (floor 0.79 s), 10% | 15% |
 | **legion** | **Hunting Pack** | Harriers on every hall, a wave every 30 s | a wave every 20 s |
 | | **Swarm-Mother** | every wave carries a Binder (from the Cairn) | two Binders |
-| | **Kyn's Vigil** | every hall's trial begins with the band's champion on the arrival plate | with its escort doubled |
+| | **Kyn's Vigil** | every hall's trial begins with the band's champion on the arrival plate, with its escort (`1 + ceil(n/3)`, section 8.5); never in a Proving Walk or a Court (their own stand there), the Scriptorium (no trial), a span or a Brink (a crossing: its plate is the crossing's start, and a champion keeps to the fight ground, so it could follow no one) | with its escort doubled |
 | | **Kyn's Rally** | a slain add gives its wave's living +10% health, up to three stacks, shown as pips over them | +15% a stack |
 | | **Soul-Pools** | a slain add leaves a pool (r 2.5) for 8 s that heals adds 3% a second unless a member stands in it | r 3.5 |
 | **ground** | **Ashfall** | fire falls on court discs: a meteor's disc every 12 s | every 8 s |
@@ -1875,7 +1881,7 @@ as their save. Every Vestige that raises damage on a relay foe does so through t
 | | **Fallen's Due** | when an ally falls, the living deal +10 / 15 / 20% for the rest of the hall | relay |
 | | **Steadfast Line** | with three allies within 8 m, you take 5 / 10 / 15% less | client, from poses; the relay's census applies it too |
 | | **Mender's Grace** | heals you cast on allies +15 / 25 / 35% | the receiver's client, from the room's word (ALLY-CAST's law) |
-| | **Lifeline** | a heal you cast on an ally under 30% gives them 3 s of 20 / 30 / 40% less from blows | the receiver's client; the relay's census applies it too |
+| | **Lifeline** | a heal you cast on an ally under 30% gives them 3 s of 20 / 30 / 40% less from blows - a heal believed at a twentieth of a reference body or more (`EG_LIFELINE_MIN`), so no point's heal holds it open | the receiver's client; the relay's census applies it too |
 
 The Redoubt's card shows the circle's damage chart with the gate's Healed column (`src/ui/gateDamageChart.js`,
 GATE-HEAL), so a company of eight sees what its healer did.
@@ -1888,7 +1894,7 @@ every Valkynaz Redoubt; a member holds one at a time, and taking another replace
 | **Stone** | **Immovable** | stand still for 1 s on a fight floor, and blows on you deal 25% less and pushes do nothing until you move | client; the relay's census applies it too |
 | **Blade** | **Counterstroke** | a melee blow on a lord within 0.6 s after one of its blows lands within 6 m of you deals x1.4 | relay (it knows both), inside the 1.6 cap |
 | **Hunt** | **Spotter** | your arrows wake Lurkers at any range, and a woken or struck foe is marked +10% for 8 s | relay |
-| **Arcana** | **Spillover** | a spell's overkill on an add carries to the nearest add within 6 m | relay (host hits) |
+| **Arcana** | **Spillover** | a spell's overkill on an add carries to the nearest add within 6 m | relay (host hits); the carry out of the member's purse, within its blow's cap |
 | **Fellowship** | **Spirebridge** | once a span, a gold bridge over the next gap for the company, for 6 s | the room's word; known to the fair trail, and the crossing's bounds are solved with it |
 
 **Accords.** Two members within 10 m, holding a named pair from two different families, gain an Accord while they
@@ -2117,7 +2123,8 @@ something the company can see coming; none of it outlives the breach.
 ### 17.2 Cantrips
 
 Run-only consumables. A member holds up to three and may use one anywhere outside a lord's shield (`{k:'cant', i}`,
-the relay's word):
+the relay's word) - every lord's (the second Twin's too), and the stair and the rest are anywhere. Sight alone is kept
+where no hall's fight stands, since there is nothing to show:
 
 | Cantrip | what |
 |---|---|
@@ -7540,13 +7547,6 @@ census now counts.
 - **THE OFFER'S CARD NAMES ITS ACCORD** (section 15: "*Takes an Accord with Mira's Hunter's Mark.*"; `ui/egHud.js`
   `egPanelModel`, `drawEgPanel`; `EG_PRES_TEXT.takesAccord`). A card whose Vestige I do not hold, with a living companion
   holding the other half, says so under its line in the Vestiges' blue: each companion, each Accord.
-
-**Found, not changed** (FLAGGED, outside this slice):
-- SPILLOVER (Arcana's Mastery: "a spell's overkill on an add carries to the nearest add within 6 m", relay host hits) is
-  applied nowhere, and no record flags it. `net/egRun.js` names it in no factor, and `net/egBrain.js` `egBlow` carries no
-  overkill. FLAGGED to the relay, where `hostHits` is its seam.
-- SPOTTER's first half ("your arrows wake Lurkers at any range") is applied nowhere: a dormant Lurker wakes only by a member's
-  nearness (`net/egLegion.js`). Its mark is applied (`net/egRun.js` `egMarkFoe`). FLAGGED to the relay.
 
 **The four hosts.**
 

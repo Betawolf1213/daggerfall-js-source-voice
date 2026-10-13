@@ -31,7 +31,7 @@
 // cache, THE GOLD RUN, a niche, a Memento, the Vault, the High Road's cache), a second break refusing a member's hits a
 // while; THE BODY COUNTED and enforced - the relay's count is the member's one life (egCount: one judge for every shape and
 // the hall's hazards, net/bossRef.js; a fall told `bd`), the room's own heals restored to it (egCountHeals), the member's
-// own word believed (egBodyWord); Watchfire's company told each committed blow early (watchOf).
+// own word believed (egBodyWord); Watchfire's company told each committed blow early (egWatchOf).
 //
 // EG-ZA (2026-10-12, Mac: "I said I want everything"; sections 20, 21, 22 and 23): THE RECEIPTS SAY EVERYTHING - an end
 // carries `td` (the Descent's seconds, which only the herald heard) and `co` (the company - net/egReceipt.js
@@ -67,15 +67,18 @@ import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT
 import { EG_LATE_HALLS, EG_LATE_ARRIVE_MS, EG_TOLL_STEP, EG_TOLL_QUARTERS, EG_TOLL_WAIVE_MS, EG_TOLL_KINDS } from './egLaw.js';   // EG-ZI: the late wake and the pull's toll (sections 7 and 10.6)
 import { EG_ROLE, EG_FL, EG_GONE, EG_STATE_EVERY_MS, egFightNew, egFightBind, egCarry, egMovesOut, egHpOut, egBlowsStep, egHitBody, egGone, egHas, egSetFl, egBodiesOf, egBodyById, egHpTeam, egRaise, egWalk, egAim, egTethersOut, egMarksOut, egStruck, egMark, egUnmark, egMarkOf, egBodyAt } from './egBodies.js';
 import { EG_KIND, EG_LEGION_KINDS, EG_DIVER_WAIT_R, egIsleAhead, egAirY, egLegionStep, egLegionRaise, egWaveKinds, egWaveSize, egAddSlain, egSquad, egFromBehind } from './egLegion.js';
+import { egLegionRoom, egLegionCapOf, egEscortOf, egLurkerWake } from './egLegion.js';   // AUDIT EG III: the room under the legion's cap, a champion's escort, a struck Lurker's wake
 import { EG_OBJ, egLordsWake, egLordsAwake, egLordsFell, egLordsOf, egObjBroken, egObjsOf, zoneOut, egStun } from './egLords.js';
 import { EG_SEAM, egLordsFight } from './egLords.js';   // EG-ZK (section 13.1): every lord through THE BOSS SEAM, called inside the one beat
 import { egAsk, egVote, egAskResult, egAsksDue, egDecreesAsk, egDecreesChosen, egDecreeRanks, egDecreesInForce, egBargainDecree, egTideOf, egStratumAt, egOffers, egPick, egPicksClose, egSurplus,
   egLoseNewest, egCacheDraw, egGive, egBuy, egVestigeX, egThreatX, egFadeOn, egMarkFoe, egRunOf, EG_CANTRIPS, EG_LUMEN_ADD, EG_LUMEN_RIFT } from './egRun.js';
-import { egVOf, egAccordsOf, egRankOf, EG_MASTERIES, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX, EG_DR_MAX } from './egVestige.js';
+import { egVOf, egRankOf, EG_MASTERIES, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX, EG_DR_MAX } from './egVestige.js';
 import { egHymnOf, EG_HYMN_MS } from './egVestige.js';   // EG-ZR (section 15's Accord): Shield-Hymn's pair and its seconds
 import { egResonance, egAccordMates, EG_STORM_N, EG_STORM_M, EG_FAR_M, EG_KINDLED_M, EG_WALL_X, EG_ECHO_Q } from './egVestige.js';   // EG-ZS: the capstones, the Accords
+import { EG_M_ID, EG_SWEEP_M, EG_SPILL_M, EG_COUNTER_M } from './egVestige.js';   // AUDIT EG III: Sweeping Arc's, Spillover's and Counterstroke's numbers
 import { egEchoShare, egCompanyAt } from './egRun.js';   // EG-ZS: an Echo's share; the company the pair law reads at a blow
 import { shDisc, shLane, egInShape } from './egShape.js';
+import { egBlowNear } from './egFloor.js';   // AUDIT EG III: Counterstroke's reach from a lord's blow
 import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL, EG_MIRROR_REACH_M, EG_MIRROR_LIT_R, EG_HAZARDS, egWispAt } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half (EG-ZC: the Moon-Mirror's branch; EG-ZB: the census's drains)
 import { EG_BODY_R } from './egSpanLaw.js';   // EG-ZC: a lit branch's top, the capsule about it
 import { egAnnalsNext, egAnnalsLordPage } from './egAnnals.js';
@@ -84,6 +87,7 @@ import { arenaWeekOf } from './arenaLaw.js';   // EG-E: the Proclamation's week,
 import { EG_HERALD_TELL_MAX } from './egHerald.js';   // EG-E3: the herald's news, kept on the breach for the hub
 import { orreryOf, orreryFresh, orreryJudge, orreryShortest } from './sdBrain.js';
 import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './gateBrain.js';
+import { HIT_CAP_X, spendPurse } from './gateBrain.js';   // AUDIT EG III: Spillover's carry, within its blow's cap and out of the purse
 // EG-H1 (EG8d): WHAT THE RELAY JUDGES - THE FAIR TRAIL and its time law (net/egFair.js), one judge for every shape and the
 // hall's own hazards (net/bossRef.js), and the body counted (net/bossBody.js) - the member's one life
 import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt, egCrossMinMs, egFallenAt, egTrailAt, egFightFloorAt, EG_POSE_NEAR_MS, EG_SUPPORT_UP_M, EG_SUPPORT_DOWN_M } from './egFair.js';
@@ -120,15 +124,19 @@ export const EG_ASHFALL_EVERY_MS = 6000;
 /** The High Road's cache and the Low Road's niche reach (m). */
 export const EG_HCACHE_REACH_M = 2.5;
 export const EG_SCRIPTORIUM_MS = 30_000;
+/** AUDIT EG III - the halls Kyn's Vigil stands no champion in (section 14): a Proving Walk's and a Court's (a champion or a lord
+ *  of their own), the Scriptorium (no trial), a span and a Brink (a crossing, its arrival plate the crossing's start - a lord
+ *  keeps to the fight ground, and a span's islands are not joined: it could follow no one). */
+export const EG_VIGIL_NONE = Object.freeze(['proving', 'court', 'scriptorium', 'span', 'brink']);
 /** How often each rift pours a wave at circle c (section 8.1 - never under nine seconds), a Rampart's march, a Court's
  *  escort, an Athenaeum's pressure, Hunting Pack's (ms). */
 export const egWaveEveryMs = (c) => Math.max(9000, 20_000 - 500 * (c - 1));
 export const EG_MARCH_EVERY_MS = 12_000;
 export const EG_ESCORT_EVERY_MS = 25_000;
 export const EG_LOCK_EVERY_MS = 15_000;
-/** The rifts a company of n living members faces, and the legion's cap (section 8.1). */
+/** The rifts a company of n living members faces (section 8.1); the legion's cap is net/egLegion.js's (egLegionCap). */
 export const egRiftsFor = (n) => Math.max(3, Math.min(5, 2 + Math.ceil(n / 3)));
-export const egLegionCap = (n, c) => Math.min(14, 2 + Math.ceil(1.5 * n) + Math.floor((c - 1) / 5));
+export { egLegionCap, EG_STANDING_MAX } from './egLegion.js';
 /** THE RESPITE BUDGET (section 6.2): fifteen minutes a breach, ten more each Valkynaz Redoubt; spent in two-minute pieces. */
 export const EG_RESPITE_BUDGET_MS = 900_000;
 export const EG_RESPITE_VALK_MS = 600_000;
@@ -147,8 +155,6 @@ export const EG_RD_RECALL_MS = 4500;
 export const EG_RD_WINDOW_MS = 6000;
 /** A cache is taken within this of it (m), a stood-on errand (a plate, a winch) within this. */
 export const EG_TOUCH_M = 2.5;
-/** The most of the legion standing at once on the wire. */
-export const EG_STANDING_MAX = 16;
 /** EG-ZB (section 11.7): a member off the fight floors this long in a fight is HUNTED by the Harriers (ms) - its mark
  *  (Hunted, net/egBodies.js mark 7) said this long at a time, a pair rising for the hunt where no Harrier stands; in the
  *  halls whose trial is one fight on its floor (a span's legion shadows instead, a Deepway's passages are crossed, a
@@ -183,6 +189,12 @@ export const EG_WISP_AGAIN_MS = 6000;
  *  count seen low within it and a beat more stood low for the heal. */
 export const EG_LIFELINE_UNDER = 0.3;
 export const EG_LIFELINE_MS = 3000;
+/** AUDIT EG III: a healer's heal opens a Lifeline window only when what was believed of it is at least this share of its
+ *  member's reference body (net/gateBrain.js healRef - the heal bucket's) - a point's heal word holds no window open; the
+ *  receiver's screen asks the same of its word (scenes/egClient.js lifelineSaid). */
+export const EG_LIFELINE_MIN = 0.05;
+/** AUDIT EG III: the points a healer's heal on a member of level `lv` is believed at, at least, to open a Lifeline window. */
+export const egLifelineMin = (lv) => EG_LIFELINE_MIN * healRef(clampLv(lv));
 export const EG_HEAL_WORD_MS = 1000;
 export const EG_LIFELINE_LOOK_MS = EG_HEAL_WORD_MS + BRAIN_TICK_MS;
 /** The names the gate's old frames gave (kept for the tracker's words). */
@@ -537,7 +549,7 @@ function standFight(B, spec, now, rng, out) {
     const key = spec.champ ?? 'kynreeve';
     EG_SEAM.new({ F, spec, key, now, out, decrees: F.D, n });
     egLordsWake(F, spec, now, out, { n });
-    const k = 1 + Math.ceil(n / 3);
+    const k = egEscortOf(n);
     egLegionRaise(F, egWaveKinds(F, rng, k), ringSpots(spec, spec.foe.x, spec.foe.z, 5, k, rng), now, out, { wave: 1 });
     P.obj = 'champion';
   } else if (spec.kind === 'deepway') {
@@ -569,7 +581,14 @@ function standFight(B, spec, now, rng, out) {
   if (spec.twist === 'ghost' && spec.fight) egLegionRaise(F, [EG_KIND.ghost], [[spec.arrive.x + 2, spec.arrive.z + 2]], now, out);
   if (spec.twist === 'captive') { for (const c of spec.spots.chain ?? []) egRaiseObj(F, 'chain', c.x, c.z, egHpTeam(F, EG_CHAIN_S), now, out, { r: 0.8 }); F.captive = 1; }
   if (spec.twist === 'bargain' && egBargainOpen(B)) egAsk(B, 'bargain', [1], now, out);
-  if (F.D.vigil && spec.kind !== 'proving' && spec.kind !== 'court' && spec.arrive) { const champ = ['kynreeve', 'kynmarcher', 'markynaz', 'markynaz'][spec.band]; EG_SEAM.new({ F, spec, key: champ, now, out, decrees: F.D, n, at: [spec.arrive.x, spec.arrive.z + 3] }); egLordsWake(F, spec, now, out, { n }); }
+  // KYN'S VIGIL (section 14): the band's champion on the arrival plate with its escort (section 8.5's, doubled at rank II) -
+  // AUDIT EG III: in every hall with a trial and no champion or lord of its own: never a Proving Walk's or a Court's, never the
+  // Scriptorium's quiet; a span's and a Brink's crossing never stand it (their fight returns above - EG_VIGIL_NONE)
+  if (F.D.vigil && !EG_VIGIL_NONE.includes(spec.kind) && spec.arrive) {
+    const champ = ['kynreeve', 'kynmarcher', 'markynaz', 'markynaz'][spec.band], at = [spec.arrive.x, spec.arrive.z + 3], k = egEscortOf(n) * (F.D.vigil >= 2 ? 2 : 1);
+    EG_SEAM.new({ F, spec, key: champ, now, out, decrees: F.D, n, at }); egLordsWake(F, spec, now, out, { n });
+    egLegionRaise(F, egWaveKinds(F, rng, k), ringSpots(spec, at[0], at[1], 5, k, rng), now, out, { wave: 1 });
+  }
   if ((F.D.warband || B.tide === 'warband') && spec.fight && spec.kind !== 'court') egSquad(F, ringSpots(spec, spec.fight.x, spec.fight.z, 6, 4, rng), now, out);
   F.sparkAt = now + 20_000; F.ashAt = now + 12_000; F.packAt = now + 30_000;
   fragStand(B, F, spec, now, out);
@@ -961,8 +980,10 @@ export function egStep(B, now, bodies, rng) {
     m.seenAt = Math.max(m.seenAt, b.at ?? now);
     if (b.dead) egFall(B, b.sub, now, out, spec0 ? local(spec0, b) : null);
   }
-  if (B.sg === 'trial') for (const [sub, m] of living(B)) if (now - m.seenAt > EG_ABSENT_TRIAL_MS) egFall(B, sub, now, out, null);
-  if (B.wk && !living(B).length) { egEnd(B, 'wipe', now, out); return out; }
+  // AUDIT EG III (section 6.1: "Absence on the stair or at a rest never counts"): a trial's absence counts from its wake
+  if (B.sg === 'trial') for (const [sub, m] of living(B)) if (now - Math.max(m.seenAt, B.hw) > EG_ABSENT_TRIAL_MS) egFall(B, sub, now, out, null);
+  // no living member: a WIPE - or, at a rest, where the way home is the only way out, every member GONE (section 23's `end`)
+  if (B.wk && !living(B).length) { egEnd(B, B.sg === 'rest' ? 'gone' : 'wipe', now, out); return out; }
   asksStep(B, now, rng, out);
   const T = egTimes(clockRec(B)), alive = bodies.filter((b) => { const m = B.mem[b.sub]; return m && m.in && m.alive && !m.home && !b.dead; });
   if (B.sg === 'wait') {
@@ -1071,13 +1092,21 @@ function trial(B, spec, now, inHall, rng, out) {
   const view = egFightView(spec), span = spec.kind === 'span';
   const here = span ? inHall.filter((b) => egGroundAt(view, b.x, b.y, b.z, EG_SPAN_GROUND_PAD_M)) : inHall.filter((b) => egOnFight(view, b.x, b.z, 4));
   const D = F.D ?? {};
-  const cap = Math.max(0, Math.min(EG_STANDING_MAX, Math.floor(egLegionCap(F.n, F.c) / (F.halfCap ? 2 : 1))) - egBodiesOf(F, EG_ROLE.add).filter((a) => !egHas(a, EG_FL.friend)).length);
-  const wave = (spots, k = egWaveSize(F.n), o = {}) => {
-    const n = Math.min(k, cap);
-    if (n <= 0 || !spots.length) return [];
+  // A WAVE POURED within THE LEGION'S CAP (section 8.1 - AUDIT EG III: the room under it read live, egLegionRoom, so the
+  // beat's every wave takes its room from what is left, never the whole): a rift's (`src`, its key) whose wave would pass the
+  // cap HOLDS IT, and its next wave is one body larger (once, however long it held - `F.mem.grow`); any other wave pours what
+  // the room holds of it
+  const wave = (spots, k = egWaveSize(F.n), src = null) => {
+    if (!spots.length) return [];
+    const grow = (F.mem.grow ??= {}), size = k + (src != null && grow[src] ? 1 : 0), room = egLegionRoom(F);
+    if (src != null) {
+      if (room < Math.min(size + (D.swarm ?? 0), egLegionCapOf(F))) { grow[src] = 1; return []; }
+      delete grow[src];
+    }
+    if (Math.min(size, room) <= 0) return [];
     F.waveNo = (F.waveNo ?? 0) + 1;
-    const kinds = egWaveKinds(F, rng, n, { swarm: D.swarm ?? 0, waveNo: F.waveNo, sky: !spec.chamber });
-    return egLegionRaise(F, kinds, spots, now, out, { wave: F.waveNo, ...o });
+    const kinds = egWaveKinds(F, rng, size, { swarm: D.swarm ?? 0, waveNo: F.waveNo, sky: !spec.chamber, room });
+    return egLegionRaise(F, kinds, spots, now, out, { wave: F.waveNo });
   };
   fragStep(B, F, spec, now, inHall, here, rng, out);
   // EG-ZQ (section 13.2): THE SEEN-AND-RESTORE STEP - every living member in the hall joins the lords through the seam, its
@@ -1089,7 +1118,7 @@ function trial(B, spec, now, inHall, rng, out) {
     decrees: D,
     anchor: spec.kind === 'court' ? (() => { const L0 = egLordsOf(F)[0]; return L0 ? [L0.x, L0.z] : null; })() : null,
     fadeOf: (sub, t) => (B.mem[sub]?.fadeUntil ?? 0) > t,
-    pool: (x, z, r, from, ms, p, b, el, kind = 'burn') => zoneOut(F, kind, shDisc(x, z, r), from, from + ms, out, { p, b, el }),
+    pool: poolTo(F, out),
     rally: F.rally,
     sapGoal: (a) => sapperGoal(F, spec, a),
     sapAt: (a) => sapperReach(F, spec, a, now, out),
@@ -1106,10 +1135,10 @@ function trial(B, spec, now, inHall, rng, out) {
     for (const b of inHall) for (const o of egObjsOf(F, 'vault')) if (dist(b.x, b.z, o.x, o.z) <= 3 && fairOf(B, b.sub) && !(o.took ??= {})[b.sub]) { o.took[b.sub] = 1; egGive(B.mem[b.sub], 'rel', egCircleOfHall(B.h)); out.push({ k: 'egot', to: b.sub, w: 'rel' }); }
     // EG-ZB (section 8.2): THE SPAN'S LEGION - the Harriers shadow every member in the hall and bite only those on its fight
     // ground; from the Shade the Divers wait at its islands
-    if (span) spanLegion(F, view, now, inHall, cap, out);
+    if (span) spanLegion(F, view, now, inHall, egLegionRoom(F), out);
     if (egBodiesOf(F, EG_ROLE.add).length) egLegionStep(F, view, now, here, rng, out, span ? { ...legionCtx, span: 1, shadow: inHall, isles: view.fl.filter((f) => f.g === 'island' || f.g === 'plate') } : legionCtx);
     if (doorOpener(B, spec, inHall)) door(B, spec, now, out, inHall);   // EG-H1: a fair arrival opens it (section 21)
-    if (span) { egBlowsStep(F, view, now, here, out, watchOf(B)); fightTail(F, now, out); }
+    if (span) { egBlowsStep(F, view, now, here, out, egWatchOf(B)); fightTail(F, now, out); }
     else egMovesOut(F, out);
     return;
   }
@@ -1122,7 +1151,7 @@ function trial(B, spec, now, inHall, rng, out) {
       if (spring) egSetFl(F, spring, EG_FL.ward, anchors.length > 0, out);
       F.pg.anchors = anchors.length;
       if (!spring) { door(B, spec, now, out); return; }
-      if (now >= F.waveAt) { F.waveAt = now + egWaveEveryMs(F.c); wave(ringSpots(spec, spring.x, spring.z, 3, egWaveSize(F.n), rng)); }
+      if (now >= F.waveAt) { F.waveAt = now + egWaveEveryMs(F.c); wave(ringSpots(spec, spring.x, spring.z, 3, egWaveSize(F.n), rng), egWaveSize(F.n), spring.i); }
     } else if (v === 'muster') {
       const std = egBodiesOf(F, EG_ROLE.add, EG_KIND.standard)[0];
       if (!std) { door(B, spec, now, out); return; }
@@ -1139,7 +1168,7 @@ function trial(B, spec, now, inHall, rng, out) {
       }
       F.pg.hold = Math.min(F.holdNeed, F.holdMs); F.pg.relic = F.relic;
       if (F.holdMs >= F.holdNeed) { door(B, spec, now, out); return; }
-      if (now >= F.waveAt) { F.waveAt = now + egWaveEveryMs(F.c); for (const q of F.riftSpots) wave([[q.x, q.z]], Math.ceil(egWaveSize(F.n) / 2)); }
+      if (now >= F.waveAt) { F.waveAt = now + egWaveEveryMs(F.c); for (const [j, q] of F.riftSpots.entries()) wave([[q.x, q.z]], Math.ceil(egWaveSize(F.n) / 2), `h${j}`); }
     } else {
       const standing = rifts.filter((o) => o.hp > 0);
       F.pg.rifts = [standing.length, rifts.length + (F.closed ?? 0)];
@@ -1154,9 +1183,9 @@ function trial(B, spec, now, inHall, rng, out) {
       }
       if (now >= F.waveAt && standing.length) {
         F.waveAt = now + egWaveEveryMs(F.c);
-        for (const q of standing) { const toward = Math.atan2(spec.fight.x - q.x, spec.fight.z - q.z), k = Math.max(1, Math.ceil(egWaveSize(F.n) / 2)), spots = []; for (let i = 0; i < k; i++) { const a = toward + (i - (k - 1) / 2) * 0.6; spots.push([q.x + Math.sin(a) * 2.2, q.z + Math.cos(a) * 2.2]); } wave(spots, k); }
+        for (const q of standing) { const toward = Math.atan2(spec.fight.x - q.x, spec.fight.z - q.z), k = Math.max(1, Math.ceil(egWaveSize(F.n) / 2)), spots = []; for (let i = 0; i < k; i++) { const a = toward + (i - (k - 1) / 2) * 0.6; spots.push([q.x + Math.sin(a) * 2.2, q.z + Math.cos(a) * 2.2]); } wave(spots, k, q.i); }
         // a Sapper walks to a closed rift to open it again
-        if (F.closedSpots?.length && cap > 0) { const [s] = egLegionRaise(F, [EG_KIND.sapper], [[standing[0].x, standing[0].z]], now, out, { wave: F.waveNo }); if (s) s.goal = F.closedSpots[0]; }
+        if (F.closedSpots?.length && egLegionRoom(F) > 0) { const [s] = egLegionRaise(F, [EG_KIND.sapper], [[standing[0].x, standing[0].z]], now, out, { wave: F.waveNo }); if (s) s.goal = F.closedSpots[0]; }
       }
     }
   } else if (kind === 'rampart') {
@@ -1182,7 +1211,7 @@ function trial(B, spec, now, inHall, rng, out) {
       wave(spots, k);
       // a Breaker across from a bastion's side
       const bast = spec.discs.filter((d) => d.role === 'bastion');
-      if (bast.length && cap > 1) { const d = bast[Math.floor(rng() * bast.length)]; egLegionRaise(F, [EG_KIND.breaker], [[d.x, d.z]], now, out, { wave: F.waveNo }); }
+      if (bast.length && egLegionRoom(F) > 0) { const d = bast[Math.floor(rng() * bast.length)]; egLegionRaise(F, [EG_KIND.breaker], [[d.x, d.z]], now, out, { wave: F.waveNo }); }
     }
   } else if (kind === 'athenaeum') {
     F.pg.st = [...F.lock.st]; F.pg.f = F.lock.f; F.pg.lit = F.lock.lit ?? 0;
@@ -1216,7 +1245,7 @@ function trial(B, spec, now, inHall, rng, out) {
         if (L0) {
           wave(ringSpots(spec, L0.x, L0.z, 12, egWaveSize(F.n), rng));
           // a Sapper for the lord - none in its first phase under Severance
-          if (!(F.sever && L0.ph === 1) && cap > 0) { const [s] = egLegionRaise(F, [EG_KIND.sapper], ringSpots(spec, L0.x, L0.z, 16, 1, rng), now, out, { wave: F.waveNo }); if (s) s.lordGoal = L0.i; }
+          if (!(F.sever && L0.ph === 1) && egLegionRoom(F) > 0) { const [s] = egLegionRaise(F, [EG_KIND.sapper], ringSpots(spec, L0.x, L0.z, 16, 1, rng), now, out, { wave: F.waveNo }); if (s) s.lordGoal = L0.i; }
         }
       }
     }
@@ -1231,9 +1260,16 @@ function trial(B, spec, now, inHall, rng, out) {
   hazards(B, F, spec, now, here, rng, out);
   legionCtx.hunted = huntStep(B, F, view, spec, now, inHall, out);   // EG-ZB (section 11.7): off the floors past six seconds, hunted
   egLegionStep(F, view, now, here, rng, out, legionCtx);
-  egBlowsStep(F, view, now, here, out, watchOf(B));   // EG-H1: Watchfire's company told each committed blow early
+  egBlowsStep(F, view, now, here, out, egWatchOf(B));   // EG-H1: Watchfire's company told each committed blow early
   // the census: where a landing found a member's pose (section 21's measure - the struck member's own machine resolves it)
-  for (const bl of F.blows) if (!bl.counted && now >= bl.at) { bl.counted = 1; for (const m of egStruck(bl, here)) { const mm = B.mem[m.sub]; if (mm) mm.struck = (mm.struck ?? 0) + 1; if (bl.o && egLordsOf(F).some((L) => L.i === bl.o) && mm) mm.lordLandedAt = now; } }
+  for (const bl of F.blows) {
+    if (bl.counted || now < bl.at) continue;
+    bl.counted = 1;
+    for (const m of egStruck(bl, here)) { const mm = B.mem[m.sub]; if (mm) mm.struck = (mm.struck ?? 0) + 1; }
+    // AUDIT EG III - COUNTERSTROKE ARMED (section 15: "after one of its blows lands within 6 m of you"): every member on the
+    // floor within EG_COUNTER_M of a lord's blow as it landed, struck or not
+    if (bl.o && egLordsOf(F).some((L) => L.i === bl.o)) for (const m of here) if (B.mem[m.sub] && egBlowNear(bl, m.x, m.z) <= EG_COUNTER_M) B.mem[m.sub].lordLandedAt = bl.at;
+  }
   fightTail(F, now, out);
 }
 /** The fight's words a beat ends with: the walks, the health, the tethers and marks that moved, the whole fight now and then. */
@@ -1303,7 +1339,7 @@ function huntStep(B, F, view, spec, now, inHall, out) {
     if ((F.hunt ??= {})[b.sub]) continue;
     F.hunt[b.sub] = now;
     const stand = egBodiesOf(F, EG_ROLE.add).filter((a) => !egHas(a, EG_FL.friend));
-    const room = Math.min(EG_STANDING_MAX, egLegionCap(F.n, F.c)) - stand.length;
+    const room = egLegionRoom(F);
     if (stand.some((a) => a.k === EG_KIND.harrier) || room <= 0) continue;
     const [kx, kz] = egKeepOnFight(view, b.x, b.z, 1);
     egLegionRaise(F, Array(Math.min(EG_HUNT_RAISE, room)).fill(EG_KIND.harrier), [[kx, kz]], now, out, { wave: 0 });
@@ -1319,7 +1355,7 @@ function hazards(B, F, spec, now, here, rng, out) {
     const m = here[Math.floor(rng() * here.length)];
     egAim(F, spec, { o: 0, s: [shDisc(m.x, m.z, 4)], at: now + 1800, wu: 1800, p: 0.15, b: 4, el: 'fire', nm: 'Ashfall' }, here, now, out);
   }
-  if (D.sparks && now >= F.sparkAt) {
+  if (D.sparks && spec.fight && now >= F.sparkAt) {   // AUDIT EG III: a hall with no fight floor (the Scriptorium) raises none
     F.sparkAt = now + 20_000;
     const k = D.sparks >= 2 ? F.n : Math.ceil(F.n / 2);
     for (const [x, z] of ringSpots(spec, spec.fight.x, spec.fight.z, spec.fight.r * 0.6, k, rng)) { const o = egRaiseObj(F, 'spark', x, z, 1, now, out, { r: 0.6 }); if (o) o.burst = now + 8000; }
@@ -1327,8 +1363,8 @@ function hazards(B, F, spec, now, here, rng, out) {
   for (const o of egObjsOf(F, 'spark')) if (now >= o.burst) { egGone(F, [o], EG_GONE.crumbled, '', now, out); egAim(F, spec, { o: 0, s: [shDisc(o.x, o.z, 2.5)], at: now + 1200, wu: 1200, p: 0.15, b: 4, el: 'shock', nm: 'Spark' }, here, now, out); }
   if (D.pack && now >= F.packAt && spec.fight) {
     F.packAt = now + (D.pack >= 2 ? 20_000 : 30_000);
-    const spots = ringSpots(spec, spec.fight.x, spec.fight.z, spec.fight.r - 2, egWaveSize(F.n), rng);
-    egLegionRaise(F, spots.map(() => EG_KIND.harrier), spots, now, out, { wave: 900 + (F.waveNo ?? 0) });
+    const spots = ringSpots(spec, spec.fight.x, spec.fight.z, spec.fight.r - 2, egWaveSize(F.n), rng).slice(0, egLegionRoom(F));   // AUDIT EG III: within the legion's cap
+    if (spots.length) egLegionRaise(F, spots.map(() => EG_KIND.harrier), spots, now, out, { wave: 900 + (F.waveNo ?? 0) });
   }
   if (D.soulpools) for (const z of (F.zones ?? []).filter((q) => q.kind === 'soul' && q.until > now)) {
     const s = z.s, holds = (x, zz) => Math.hypot(x - s[1], zz - s[2]) <= s[3];
@@ -1393,7 +1429,6 @@ export function egBlow(B, sub, m, pose, now) {
   const dm = m.q >= EG_ECHO_Q && m.q < 2 * EG_ECHO_Q ? m.d * egEchoShare(B, sub, p, here) : m.d;
   if (body.role === EG_ROLE.add && egHas(body, EG_FL.shielded) && (body.shield ?? 0) > 0 && !egFromBehind(body, p.x, p.z)) mult = 0;
   if (body.role === EG_ROLE.obj && body.t === 'heart' && egHas(body, EG_FL.ward)) mult = 0;
-  if (body.role === EG_ROLE.add && body.k === EG_KIND.binder && body.cast) body.cast.dmg += dm;
   // EG-ZK (section 13.1): A BLOW ON A LORD THROUGH THE SEAM - joined (the director's admission, a lord standing), then the
   // gate's hand and purse times the lord's own weight, and what lands told the lord (its words in `out`)
   const said0 = out.length, lf = body.role === EG_ROLE.lord ? egLordsFight(F, spec, {}, now) : null;
@@ -1403,6 +1438,7 @@ export function egBlow(B, sub, m, pose, now) {
   // a Shielded elite (section 8.7): its shield - a quarter of its health - takes the blows from behind first
   if (got && body.role === EG_ROLE.add && (body.shield ?? 0) > 0) { const soak = Math.min(body.shield, got); body.shield -= soak; body.hp += soak; if (body.shield <= 0) egSetFl(F, body, EG_FL.shielded, false, out); }
   if (!got || !r.b) return out;
+  if (r.b.role === EG_ROLE.add) egLurkerWake(F, r.b, now, out);   // AUDIT EG III: a blow landing on a dormant Lurker wakes it (Spotter's arrows at any range so - section 15)
   mm.dh += got; mm.dc += got;
   egTallyBlow(mm, F, sub, got, r.b.role === EG_ROLE.lord);   // EG-ZF: the recap's damage, and a Court's chart
   if (m.r >= 0 && m.r <= 2) mm.kinds[m.r] = (mm.kinds[m.r] ?? 0) + 1;
@@ -1413,10 +1449,8 @@ export function egBlow(B, sub, m, pose, now) {
   if (b.role === EG_ROLE.lord) {
     if (b.hp <= 0 && Object.values(B.mem).filter((x) => x.in).length >= 4 && living(B).length === 1) B.loneBeacon = sub;
   } else if (b.role === EG_ROLE.add) {
-    if (b.k === EG_KIND.binder && b.cast && b.cast.dmg >= b.cast.max) { b.cast = null; F.pg.raise = null; out.push({ k: 'esay', w: 'raisebroken' }); }
-    // Sweeping Arc (relay): a melee blow splashes to adds within 3 m of its target
-    const sweep = egVOf(mm.vs, 'sweeping');
-    if (sweep && m.r === HIT_KINDS.Melee) for (const a of egBodiesOf(F, EG_ROLE.add)) if (a !== b && !egHas(a, EG_FL.friend) && !egHas(a, EG_FL.ward) && dist(a.x, a.z, b.x, b.z) <= 3) { a.hp -= got * sweep; if (a.hp <= 0) addDied(B, F, spec, a, sub, mm, now, here, out); }
+    // AUDIT EG III: a Binder's raise is broken by what LANDS on it over its cast - the hand and the purse's, never the claim
+    if (b.k === EG_KIND.binder && b.cast && (b.cast.dmg += got) >= b.cast.max) { b.cast = null; F.pg.raise = null; out.push({ k: 'esay', w: 'raisebroken' }); }
     if (b.hp <= 0) addDied(B, F, spec, b, sub, mm, now, here, out);
   } else if (b.role === EG_ROLE.obj && b.hp <= 0) {
     if (b.t === 'fwall') { egGone(F, [b], EG_GONE.slain, mm.name, now, out); if (F.alc) F.alc[b.alc] = 1; out.push({ k: 'esay', w: 'seam', n: mm.name }); }   // LAYER THREE: a false wall falls - its alcove open
@@ -1424,7 +1458,7 @@ export function egBlow(B, sub, m, pose, now) {
     else if (b.t === 'anchor') { egObjBroken(F, spec, b, mm.name, now, out); (F.brokenAnchors ??= []).push([b.x, b.z]); }
     else egObjBroken(F, spec, b, mm.name, now, out);
   }
-  hostHits(B, F, spec, sub, mm, { r: m.r, q: m.q, bx: vx.bx }, b, got, p, now, here, out);   // EG-ZS: Bladestorm, Deadeye, Kindled Steel
+  hostHits(B, F, spec, sub, mm, { r: m.r, q: m.q, bx: vx.bx, d: dm * mult }, b, got, p, now, here, out);   // EG-ZS: Bladestorm, Deadeye, Kindled Steel (AUDIT EG III: Sweeping Arc, Spillover)
   if (spec.kind === 'court') tallySays(F, out, said0);   // EG-E: a banner broken, a lord stunned - the feats count them
   return out;
 }
@@ -1439,9 +1473,31 @@ export function egBlow(B, sub, m, pose, now) {
  *   - KINDLED STEEL (Searing Edge with Overcharge: "the Edge holder's melee fire splashes 2 m"): a landed melee blow of a
  *     Searing Edge holder standing within EG_ACCORD_M of a mate holding Overcharge (net/egVestige.js egAccordMates) splashes
  *     its fire - the Edge's points - on every other foe within EG_KINDLED_M of the target.
+ * AUDIT EG III:
+ *   - SWEEPING ARC ("melee blows splash 20 / 35 / 50% to adds within 3 m of the target"): a landed melee blow - on any body,
+ *     a lord's and an object's too - strikes every other add within EG_SWEEP_M of the target, where each stands as it landed,
+ *     its share of what landed;
+ *   - SPILLOVER (Arcana's Mastery: "a spell's overkill on an add carries to the nearest add within 6 m"): a landed spell that
+ *     fells an add carries what its claim (`w.d`, the blow's factors in it) held past the add's health - within the blow's own
+ *     cap, out of the member's purse - to the nearest other add within EG_SPILL_M of it, once.
  */
 function hostHits(B, F, spec, sub, mm, w, b, got, p, now, here, out) {
   const r = w.r, foes = () => F.bodies.filter((a) => a !== b && (a.role === EG_ROLE.add || a.role === EG_ROLE.lord));
+  const sweep = r === HIT_KINDS.Melee ? egVOf(mm.vs, 'sweeping') : 0;
+  if (sweep > 0) {
+    const [bx, bz] = egBodyAt(b, now);
+    for (const a of F.bodies.filter((q) => q !== b && q.role === EG_ROLE.add)) { const [ax, az] = egBodyAt(a, now); if (dist(ax, az, bx, bz) <= EG_SWEEP_M) hostStrike(B, F, spec, a, got * sweep, w, sub, mm, p, now, here, out); }
+  }
+  if (r === HIT_KINDS.Spell && mm.mast === EG_M_ID.spillover && b.role === EG_ROLE.add && !(b.hp > 0) && w.d > got) {
+    const [bx, bz] = egBodyAt(b, now);
+    let to = null, bd = Infinity;
+    for (const a of F.bodies.filter((q) => q !== b && q.role === EG_ROLE.add && q.hp > 0 && !egHas(q, EG_FL.friend) && !egHas(q, EG_FL.ward) && !egHas(q, EG_FL.hidden))) {
+      const [ax, az] = egBodyAt(a, now), d = dist(ax, az, bx, bz);
+      if (d <= EG_SPILL_M && d < bd) { bd = d; to = a; }
+    }
+    const left = to ? Math.min(w.d, HIT_CAP_X * dpsRef(mm.lv) * (w.bx ?? 1)) - got : 0;
+    if (left > 0) hostStrike(B, F, spec, to, spendPurse(mm, left, to.hp, now, w.bx ?? 1), w, sub, mm, p, now, here, out);
+  }
   if (r === HIT_KINDS.Melee && egResonance(mm.vs).includes('blade') && (mm.storm = (mm.storm ?? 0) + 1) % EG_STORM_N === 0) {
     for (const a of foes()) { const [ax, az] = egBodyAt(a, now); if (dist(ax, az, p.x, p.z) <= EG_STORM_M) hostStrike(B, F, spec, a, got, w, sub, mm, p, now, here, out); }
   }
@@ -1490,13 +1546,16 @@ function tallySays(F, out, from) {
   if (!F) return;
   for (let k = from; k < out.length; k++) if (out[k]?.k === 'esay') { F.said ??= {}; F.said[out[k].w] = (F.said[out[k].w] ?? 0) + 1; }
 }
-/** An add slain: its lumen to the slayer, its decrees (net/egLegion.js egAddSlain), its words. */
+/** An add slain: its lumen to the slayer, its decrees (net/egLegion.js egAddSlain), its words. AUDIT EG III: a pool it leaves
+ *  (Soul-Pools) is said in this blow's own frames (`out`), never the last beat's, already fanned. */
 function addDied(B, F, spec, a, sub, mm, now, here, out) {
   if (!F.bodies.includes(a)) return;
   egGone(F, [a], EG_GONE.slain, mm.name, now, out);
   mm.lumen = (mm.lumen ?? 0) + EG_LUMEN_ADD;
-  egAddSlain(F, spec, a, sub, now, here, out, F.legionCtx ?? { decrees: F.D });
+  egAddSlain(F, spec, a, sub, now, here, out, { ...(F.legionCtx ?? { decrees: F.D }), pool: poolTo(F, out) });
 }
+/** A pool laid in `out`'s frames (a Caster's Bolt, a Searing strike, Soul-Pools - net/egLegion.js's `ctx.pool`). */
+const poolTo = (F, out) => (x, z, r, from, ms, p, b, el, kind = 'burn') => zoneOut(F, kind, shDisc(x, z, r), from, from + ms, out, { p, b, el });
 /** A member's step through the door (`down`): in the closing of hall `h`, from a living member standing at it. Answers
  *  whether it was believed. */
 export function egDown(B, sub, h, pose, now) {
@@ -1526,9 +1585,11 @@ export function egWord(B, sub, m, pose, now, rng) {
     case 'vote': if (egVote(B, sub, m.q, m.y)) { const a = B.asks.find((x) => x.q === m.q); out.push({ k: 'tally', q: m.q, v: Object.values(a.v) }); } break;
     case 'cant': {
       const i = m.i, id = mm.cant?.[i];
-      if (!mm.alive || id == null || B.sg === 'rest') break;
-      const L0 = B.F ? egLordsOf(B.F)[0] : null;
-      if (L0 && (L0.ward > now || egHas(L0, EG_FL.ward))) break;
+      // AUDIT EG III (section 17.2: "anywhere outside a lord's shield"): refused while any lord standing holds its shield (the
+      // second Twin's too) - the rest and the stair among the anywhere; Sight alone is kept where no hall's fight stands to show
+      if (!mm.alive || id == null || !EG_CANTRIPS[id]) break;
+      if (B.F && egLordsOf(B.F).some((L) => L.ward > now || egHas(L, EG_FL.ward))) break;
+      if (EG_CANTRIPS[id].key === 'sight' && !B.F) break;
       mm.cant = mm.cant.filter((_, j) => j !== i);
       const C = EG_CANTRIPS[id];
       if (C.key === 'mending') out.push({ k: 'eheal', p: 0.15, why: 'mending' });
@@ -1577,13 +1638,15 @@ export function egWord(B, sub, m, pose, now, rng) {
   return out;
 }
 /** EG-H1: the Watchfire holders among the living (section 15) - each one's lead at its rank and the Long Sight holders it
- *  keeps Far Watch with (net/egBodies.js egTellTo). */
-function watchOf(B) {
+ *  keeps Far Watch with (net/egBodies.js egTellTo). AUDIT EG III: FAR WATCH by THE PAIR LAW (net/egVestige.js egAccordMates) -
+ *  another member holding Long Sight within EG_ACCORD_M of the holder, never the holder itself. */
+export function egWatchOf(B) {
   const L = living(B).filter(([, m]) => m.pose), out = [];
+  const ms = L.map(([sub, m]) => ({ sub, vs: m.vs ?? [], x: m.pose.x, z: m.pose.z }));
   for (const [sub, m] of L) {
     const v = egVOf(m.vs, 'watchfire');
     if (!(v > 0)) continue;
-    const ls = L.filter(([, m2]) => egVOf(m2.vs, 'longsight') > 0 && egAccordsOf(m.vs, m2.vs).some((A) => A.key === 'farwatch')).map(([, m2]) => [m2.pose.x, m2.pose.z]);
+    const mates = egAccordMates(ms, sub, 'farwatch', 'b'), ls = ms.filter((q) => mates.includes(q.sub)).map((q) => [q.x, q.z]);
     out.push({ sub, x: m.pose.x, z: m.pose.z, lead: Math.round(v * 1000), ls });
   }
   return out;
@@ -1851,9 +1914,11 @@ export function egHeal(B, sub, pairs, now, line, enforce = EG_BODY_ENFORCE) {
   const got = egTallyHeal(B, sub, pairs, now);
   if (got > 0) bodyHealed(B.mem[sub], got / healRef(B.mem[sub].lv) / egCountWhole(B.mem[sub].vs), now, line, { enforce });   // EG-ZS: a share of the whole, Stoneskin's cushion in it
   if (under && got > 0) {
-    // the strongest Lifeline among the healers whose heal was believed (its credit rose)
+    // the strongest Lifeline among the healers whose heal was believed (its credit rose) - AUDIT EG III: by a heal worth a
+    // window (EG_LIFELINE_MIN of the member's reference body)
     let v = 0;
-    list.forEach(([by], i) => { const q = B.mem[by]; if (q && (q.ht ?? 0) > had[i]) v = Math.max(v, egVOf(q.vs, 'lifeline')); });
+    const min = egLifelineMin(m.lv);
+    list.forEach(([by], i) => { const q = B.mem[by]; if (q && (q.ht ?? 0) - had[i] >= min) v = Math.max(v, egVOf(q.vs, 'lifeline')); });
     if (v > 0) m.ll = [...(m.ll ?? []).filter((w) => w[1] >= now - EG_TRAIL_MS), [now - EG_HEAL_WORD_MS, now + EG_LIFELINE_MS, v]].slice(-4);
   }
   return got;
