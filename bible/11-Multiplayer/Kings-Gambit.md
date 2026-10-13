@@ -2,7 +2,7 @@
 
 **Status: DESIGN RECORD, DECIDED (the owner, 2026-10-13: "Make the best and most detailed decisions. We also have
 permission") - section 10 answers section 9 and decides every point the record had left open. KG1 SHIPPED (the law,
-section 11).** The owner handed over a
+section 11); KG2 SHIPPED (the innkeeper's play, section 12).** The owner handed over a
 Daggerfall Unity mod, `thekingsgambit.dfmod`, and asked how to build it as a new minigame on the Iliac Bay card system -
 the tavern card table `Tavern-Cards.md` built: the table and its seat, the deck of the Iliac Bay, Iliac Hand's painted
 cards, the regulars, the panel, the relay's tables. Sections 1-2 read the mod off its assembly; sections 3-7 lay it on
@@ -467,7 +467,7 @@ Each ships alone and is verifiable without the next.
 | Slice | What it builds |
 |---|---|
 | **KG1** SHIPPED (section 11) | THE LAW: `net/kingsGambit.js` - the board and its build, hazards, units and roster, the deployment, the turn, a blow, potions, the end (a seat's view: none to make, section 11); pins deepEqual against section 2's tables, whole games on a fixed source, mutants. |
-| **KG2** | THE INNKEEPER'S PLAY: `systems/gambitPatrons.js` - AiAction, TryEscape, AiBlunder, AutoFill, the tiers over a regular's seed. MEASURE: each tier against an Auto-filled 300 over seeded games. |
+| **KG2** SHIPPED (section 12) | THE INNKEEPER'S PLAY: `systems/gambitPatrons.js` - AiAction, TryEscape, AiBlunder, AutoFill, the tiers over a regular's seed. MEASURE: each tier against an Auto-filled 300 over seeded games. |
 | **KG-SET** | The nine creatures painted into the set (section 10.3) - cards, emblems, Iliac Hand's numbers and text, FOE_CARDS rows (so their foes drop them, CARDS9), Iliac Hand's balance measured again; a relay version (the catalog is relay law). Before KG3, whose grid shows every unit's card. |
 | **KG3** | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result), the stake and the regulars' night's purse; the panel's words through the text core, `t(key, en)`, each new key with its drafts in all 25 languages (L10N4's rule - the law keeps keys, section 11); the board a flat mat with the pieces as their cards - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
 | **KG4** | THE BOARD ON THE CLOTH: walls, pillars and water built; the hazards' drawn effects; the pieces' motion; the press as a cell; the lab (`cards.html` with a King's Gambit table) and its probe; the frame cost on the phone probe, as CARDS3c measured it. |
@@ -603,7 +603,10 @@ point the record had left open. A number marked MEASURE is the first guess its s
 - A REGULAR'S NIGHT: a regular pays out at most 15 times the tier's least stake a game day, net of what they won back -
   three wins at the highest bet: Amateur 150, Seasoned 750, Veteran 3,000, Grandmaster 15,000 - and past it plays for
   fun until tomorrow. It is a book on the character's save (`gambitPurses`), bounded as the Hold'em regulars' book is (24
-  taverns, the oldest day first out). MEASURE (KG2, KG3): the bound, against the tiers' measured win rates.
+  taverns, the oldest day first out). MEASURE (KG2, KG3): the bound, against the tiers' measured win rates. MEASURED
+  (KG2, section 12): THE BOUND STANDS. It binds where a player is the stronger - a careful player nets about 48 gold a
+  game off an Amateur at the highest bet (150 a day in some three games) and about 115 off a Seasoned regular (750 in
+  some seven) - and nowhere else: a Veteran takes a careful player's 249 a game on average, a Grandmaster 3,530.
 - THE SAVE: refused while a stake is down, at both of `world.js`'s doors (worldQuickSave and the pause's savingPrevented).
 - THE BEATS: the mod's own - 0.9 s to a turn's end, 1.2 s for the regular's pause before and between actions, 0.55 s
   between an online opponent's two actions, 1.3 s before the result's banner.
@@ -657,7 +660,8 @@ The owner: **"Make the best and most detailed decisions. We also have permission
   `roundToInt`, imported, not ported a second time. A cell's index, a blow's roll and InRange take names of their own
   (`cellIndex`, `blowRoll`, `targetInRange`) beside `render/volumetricClouds.js`'s `cellOf`, `net/gateStrike.js`'s
   `blowOf` and `net/wire.js`'s `inRange`, three different things; the [0, 1) draw (NextDouble, Random.value) is the
-  module's own, unexported, as `net/gateLaw.js`'s `unit` is. The ratchet stays at 42.
+  module's own, unexported, as `net/gateLaw.js`'s `unit` is (KG2 exports it as `nextDouble`: the regulars' choices
+  draw through it, section 12). The ratchet stays at 42.
 - **THE WORDS ARE THE CLIENT'S** (L10N4, `test/l10n4_hardcoded.test.js`, which counted the layouts' five names in this
   file once main's localization arc came in): the law keeps a layout's key (`pillared-hall`, ... `open-field`) and its
   floor tones, never its name. The mod's names (section 2.1) are words a player reads, so KG3's panel says them through
@@ -694,3 +698,85 @@ The owner: **"Make the best and most detailed decisions. We also have permission
   (0xFFFFFFFF) taken.
 - **Not yet:** the innkeeper's play (KG2), the nine cards (KG-SET), the table (KG3) and everything after.
 - **Ledger:** section A row THE KING'S GAMBIT.
+
+## 12. KG2 (2026-10-13): the innkeeper's play
+
+The owner: **"Do KG2"**.
+
+- **THE PLAY** (`src/systems/gambitPatrons.js`): pure and DOM-free, the regulars' own half - the relay never plays one
+  (online is two players, section 5.8) - read off the law (`net/kingsGambit.js`: GetReachable, InRange, FoesInRange,
+  PathMap), as the Iliac Hand's regulars read theirs (`systems/iliacPatrons.js`). Its exports:
+  - the tiers: `GAMBIT_TIERS` (Tiers - each its key, least stake, points, potions and blunders), `tierFor` (TierFor),
+    `GAMBIT_TIER_HASH`, `GAMBIT_TIER_BANDS`;
+  - the deal: `regularArmy` and `dealRegular` (StartBattle, then BeginMatch);
+  - the play: `regularAction` (AiAction - AiBlunder, the potion, TryEscape, the best blow, the best move) and its
+    weights (`GAMBIT_BLUNDER_STRIKE`, `GAMBIT_POTION_LINE`, `GAMBIT_BLOW_WEIGHTS`, `GAMBIT_MOVE_WEIGHTS`,
+    `GAMBIT_HAZARD_PENALTY`, `GAMBIT_JITTER`), and `regularStep` (AiTurnRoutine's step).
+- **THE TIER IS THE SEED'S** (section 10.5): TierFor's hash over the regular's seed (`scenes/worldModes.js`
+  regularSeeds, a uint32), read as the int32 the C# multiplies - the product wrapped, the remainder made positive. Over
+  200,000 seeds the tiers fall 40, 35, 18 and 7 in a hundred, the mod's bands. A tier is its key and its numbers: its
+  name and blurb (section 2.7) are words a player reads, so KG3's panel says them through the text core (section 11).
+  The mod's own menu ("Play the computer for gold") drew a tier at random; it is not carried - the regulars in the free
+  chairs are the opponents (section 10.5).
+- **THE DEAL**: the regular's army Auto-filled to his tier's points (`regularArmy`), then the board (`newGambit`) - one
+  source, in the mod's order; the player three potions and 300 points, the regular his tier's.
+- **HIS CHOICES' DRAWS**: a `rand32` handed in, standing for Unity's shared Random - Random.value is the law's
+  `nextDouble` at float32 (exported for it), Random.Range(0, n) `drawBelow(n)` - in AiAction's order: the blunder's draw
+  every action (a Grandmaster's too, whose chance is 0); a blunder's piece, then its strike's draw only when it has a foe
+  in range, then its foe or its cell; an escape's draw on each clear cell; a blow's on each pair, piece by piece and foe
+  by foe; a move's on each cell each piece reaches, in GetReachable's order.
+- **AT FLOAT32, AS THE C# KEEPS IT**: the blunder's chance is Random.value against the tier's float - raw draw
+  1503238464 is the last Amateur blunder, and 1503238465 rounds up to 0.35f and is none (a float64 port would take 89
+  draws for blunders the mod does not; the Seasoned's edge is 644245087, the Veteran's 214748360); the potion's share
+  of health against its line (9 of 30 is a Mage at its 0.3f, and drinks); every score.
+- **A STEP IS ONE ACTION**: `regularStep` takes his choice through `gambitAct` (a blow's roll off the game's own
+  source), or ends his turn when he finds none or the law refuses it (the routine's actionsLeft = 0 and QueueTurnEnd).
+  EnemyPause - 1.2 s before and between his actions - is the table's clock (KG3).
+- **WHAT THE PORT FOUND, KEPT AS THE MOD HAS IT** (the mod's innkeeper plays a person, who ends what follows):
+  - A KING NEVER WALKS AT A FOE: it moves only to flee one within four steps, or off a hazard. Two kings alone stand
+    where they are for good.
+  - THE HAZARD DANCE: the escape comes before the blow. A piece whose one cell in range of a foe holds an active hazard
+    steps onto it (in range, 50, less the hazard's 40, is 10 - over three steps nearer, 9), and on its turn's last action
+    steps off again before it strikes; two pieces played by these rules, across such a cell, take turns at it for good.
+    A player strikes from the hazard and takes the bite.
+  - A STEP THAT GAINS NOTHING STILL MOVES on any draw above 0 (the score is 0 plus the jitter): a blocked piece wanders.
+    Only a draw of exactly 0 leaves it standing.
+  - A MOVE NEVER ENDS ON AN ACTIVE HAZARD TO COME NEARER: it costs 40, more than three steps nearer are worth (9). A
+    piece may pass over one, but a run of them longer than its reach holds a regular's piece back for good (the hazards
+    never go, and at fourteen no more are laid).
+  - Two of the mod's numbers decide nothing at a step either side: the king's 20 in range (a cell in range scores at
+    most 60 without it, at least 70 less the same hazards with it) and the jitter's 0.1 (every move's score lies on a
+    half-point grid, so a draw under 0.5 only breaks ties). Kept as the mod has them; the mutants record why.
+- **MEASURED** (`tools/kgMeasure.mjs`, 1,000 seeded games a tier, `node tools/kgMeasure.mjs`): the regular against an
+  Auto-filled 300 and three potions, both seats played by `regularStep`. Two ends the rules never reach are counted
+  apart - the two kings alone, and a game past 200 rounds (the hazard dance; no decided game of 1,200 measured ran past
+  68). Each tier's wins, the player's, the two apart, and the regular's share of the decided games:
+
+  | tier | against a careful player (no blunder) | against a careless one (15% blunders, a Seasoned regular's) |
+  |---|---|---|
+  | Amateur | 1.7 / 97.4 / 0.9 + 0.0 - 1.7% of the decided | 5.9 / 90.4 / 3.7 + 0.0 - 6.1% |
+  | Seasoned | 20.6 / 66.6 / 12.8 + 0.0 - 23.6% | 43.9 / 42.8 / 13.3 + 0.0 - 50.6% |
+  | Veteran | 56.2 / 31.3 / 12.4 + 0.1 - 64.2% | 78.5 / 14.3 / 7.2 + 0.0 - 84.6% |
+  | Grandmaster | 80.3 / 9.7 / 3.9 + 6.1 - 89.2% | 95.0 / 3.6 / 1.4 + 0.0 - 96.3% |
+
+  The tiers rise as the mod meant them to: a careless player beats an Amateur nine games in ten and loses to a
+  Grandmaster nineteen in twenty. A Seasoned regular is the careless player's own play on the same 300 points and
+  three potions, and wins half the decided games against him (50.6%) - the measure's own check. The decided games run
+  21 to 32 rounds on average. Against the careful player 62 games of 4,000 ran past 200 rounds: 60 of them the
+  Grandmaster's, in the dance, and two a blocked piece wandering (one the Grandmaster's, one the Veteran's - a Guard
+  rooms side room whose doorways hold active hazards). A player who blunders breaks every one: none of 4,000.
+- **THE NIGHT'S PURSE** (section 10.7), against these: the bound stands as decided - see 10.7.
+- **Pins:** `test/kg2_patrons.test.js`, 10 tests: the Tiers table and TierFor against a BigInt reckoning of the C#'s
+  int32 (4,008 seeds, a band's every edge, the shares over 200,000); the deal and its order of draws; a blunder (each
+  tier's float32 edge, the strike's draw taken only with a foe in range, a Grandmaster's draw taken); the potion's
+  lines and its tie; an escape (a clear cell, a king's farthest, the last action, a warning's none); the best blow; the
+  best move (a step nearer, the hazards, into range, the king's 20 against a higher draw, a ranged piece's distance
+  against a higher draw, a king's flight, the first of a true tie); THE WEIGHTS AT THEIR EDGES - each of the mod's
+  numbers deciding a choice on a board built for it: a corridor sealed by a row of walls for a fleeing king, water with
+  one bridge for a ranged piece's long walk (16 steps, then 20 and 19); a step; and the measure's first sixteen games
+  a tier, tally for tally.
+- **Mutants:** `tools/mutants/kg2.json`, 95: 92 dead, 3 equivalent as recorded (the king's 20 at 19 and 21, the jitter
+  at 0.2 - each record says why; KG2-move-king-none and KG2-jitter-bridges, the changes that do move a choice, die). The
+  first run's 20 survivors were the weights the scenarios' margins left loose; THE WEIGHTS AT THEIR EDGES pins them.
+- **Not yet:** the nine cards (KG-SET), the table (KG3) and everything after.
+- **Ledger:** section A row THE KING'S GAMBIT - THE INNKEEPER'S PLAY.

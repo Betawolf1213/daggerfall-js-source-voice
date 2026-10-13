@@ -238,8 +238,9 @@ export function autoFill(army, budget, rand32) {
   return out;
 }
 
-/** NextDouble, and Unity's Random.value: a [0, 1) draw off a 32-bit source. @param {() => number} rand32 */
-const nextDouble = (rand32) => (rand32() >>> 0) / 4294967296;
+/** NextDouble, and Unity's Random.value: a [0, 1) draw off a 32-bit source - the law's, and the regulars' choices'
+ *  (systems/gambitPatrons.js, KG2). @param {() => number} rand32 */
+export const nextDouble = (rand32) => (rand32() >>> 0) / 4294967296;
 
 // ── THE BOARD ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
