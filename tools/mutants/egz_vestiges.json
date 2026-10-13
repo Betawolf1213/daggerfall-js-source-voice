@@ -385,12 +385,12 @@
   {
     "name": "EGZR-echo-full",
     "file": "src/scenes/egFight.js",
-    "old": "d: Math.max(1, Math.round(dmg * EG_ECHO_SHARE)), r });",
-    "new": "d: dmg, r });",
+    "old": "sendHit({ i, q: q + EG_ECHO_Q, d: dmg, r });",
+    "new": "sendHit({ i, q: q + EG_ECHO_Q, d: Math.max(1, Math.round(dmg / 2)), r });",
     "tests": [
       "test/egz_vestiges.test.js"
     ],
-    "why": "an echo at full"
+    "why": "the screen halving an Echo (EG-ZS: claimed at the cast's whole, the relay takes its share)"
   },
   {
     "name": "EGZR-echo-same-number",
@@ -404,7 +404,7 @@
   },
   {
     "name": "EGZR-echo-q",
-    "file": "src/scenes/egFight.js",
+    "file": "src/net/egVestige.js",
     "old": "export const EG_ECHO_Q = 0x40000000;",
     "new": "export const EG_ECHO_Q = 0x40000001;",
     "tests": [
@@ -575,8 +575,8 @@
   {
     "name": "EGZR-footing-immovable-unread",
     "file": "src/scenes/egClient.js",
-    "old": "const footing = () => (fight?.immovable?.() ? 1 :",
-    "new": "const footing = () => (false ? 1 :",
+    "old": "return fight?.immovable?.() || egResonance(vs).includes('stone') ? 1 :",
+    "new": "return false || egResonance(vs).includes('stone') ? 1 :",
     "tests": [
       "test/egz_vestiges_hymn.test.js"
     ],
@@ -585,8 +585,8 @@
   {
     "name": "EGZR-footing-immovable-share",
     "file": "src/scenes/egClient.js",
-    "old": "const footing = () => (fight?.immovable?.() ? 1 :",
-    "new": "const footing = () => (fight?.immovable?.() ? 0.9 :",
+    "old": "return fight?.immovable?.() || egResonance(vs).includes('stone') ? 1 :",
+    "new": "return fight?.immovable?.() || egResonance(vs).includes('stone') ? 0.9 :",
     "tests": [
       "test/egz_vestiges_hymn.test.js"
     ],
@@ -615,8 +615,8 @@
   {
     "name": "EGZR-mender-share",
     "file": "src/scenes/egClient.js",
-    "old": "return v > 0 ? healMine(entity, n * v) : 0;",
-    "new": "return v > 0 ? healMine(entity, n) : 0;",
+    "old": "return k > 0 ? healMine(entity, n * k) : 0;",
+    "new": "return k > 0 ? healMine(entity, n) : 0;",
     "tests": [
       "test/egz_vestiges.test.js"
     ],

@@ -263,7 +263,7 @@
   {
     "name": "EGZ-brain-the-count-unmended",
     "file": "src/net/egBrain.js",
-    "old": "if (got > 0) bodyHealed(B.mem[sub], got / healRef(B.mem[sub].lv), now, line, { enforce });",
+    "old": "if (got > 0) bodyHealed(B.mem[sub], got / healRef(B.mem[sub].lv) / egCountWhole(B.mem[sub].vs), now, line, { enforce });",
     "new": "void healRef;",
     "tests": [
       "test/egz_recap.test.js"

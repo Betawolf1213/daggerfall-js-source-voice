@@ -52,6 +52,8 @@ import { egHallOf, egCircleOfHall, egSlotOfHall, egCountText, egObjectiveOf, EG_
 import { egCountAt, egLivingCount, egMemberOf, egRunOfMember } from '../net/egLink.js';
 import { EG_ROLE, EG_FL } from '../net/egBodies.js';
 import { EG_BOSS_KEYS, egBossName, egTtkRef } from '../net/egLords.js';
+import { egMarkynazDecree } from '../net/egLords.js';   // EG-ZS (section 8.5): the decree the Markynaz lays, named on his card
+import { EG_CHAMPIONS } from '../net/egLaw.js';   // EG-ZS: the champion's signature's title
 import { egProgressText, EG_MARK_NAMES, EG_POTIONS_PER_HALL } from './egHud.js';
 import { EG_PRES_TEXT, EG_BAND_LINES } from './egBeats.js';
 import { EG_PARTY_CSS } from './egParty.js';
@@ -194,8 +196,26 @@ export function egArrivalCard(E, { first = false } = {}) {
     twist: spec.twist ? EG_TWIST_LINES[spec.twist] ?? '' : '',
     dec: dec.length ? dec.join(' - ') : '',
     band: bandCard ? EG_BAND_LINES[spec.band] ?? '' : '',
+    lays: egMarkynazLine(E, spec),
   };
 }
+/**
+ * EG-ZS (section 8.5: "he lays one lord-family decree (section 14) on his own fight, named on his card"; EG-ZQ's "Found, not
+ * changed") - THE MARKYNAZ'S DECREE ON HIS CARD: in a hall the law stands him in (a Proving Walk, a Deepway's champion's
+ * chamber - the spec's `champ`), *The Grand Duke's Decree: Colossal* - the one the relay lays as it stands him at the wake
+ * (net/egLords.js egMarkynazDecree, pure), reckoned from the decrees the room says in force (`dc`, the ranks the fight takes at
+ * its wake) and the hall's number, with no new word. '' anywhere else, and when his fight bears all four. Pure.
+ * @param {any} E @param {any} spec
+ */
+export function egMarkynazLine(E, spec) {
+  if (spec?.champ !== 'markynaz') return '';
+  const D = Object.fromEntries((E?.dc ?? []).map(([id, rank]) => [EG_DECREES[id]?.key, rank]).filter(([k]) => k));
+  const key = egMarkynazDecree(D, E.h), C = EG_CHAMPIONS.find((c) => c.key === 'markynaz');
+  return key && C ? EG_PRES_TEXT.champDecree(C.title, EG_DECREE_BY_KEY[key]?.name ?? '') : '';
+}
+/** The card's words for a screen reader (the card itself is aria-hidden): the hall and its objective - EG-ZS: and the decree
+ *  the Markynaz lays, where his card names one. Pure. */
+export const egArrivalLive = (card) => `${card.main}. ${card.sub}${card.lays ? ` ${card.lays}.` : ''}`;
 /** The card's fade over its stand (the gate card's law - ui/gateTitleCard.js titleCardModel), or null. */
 export function egArrivalShown(card, at, now) {
   if (!card) return null;
@@ -348,6 +368,7 @@ export const EG_SPIRE_CSS = `
 @keyframes eg-gain-in { from { opacity: 0; transform: translateY(-10px); } }
 .eg-dec, .eg-obj, .eg-stage, .eg-marks, .eg-first { font-size: 13px; line-height: 1.3; }
 .eg-dec:empty, .eg-obj:empty, .eg-stage:empty, .eg-marks:empty, .eg-first:empty, .eg-prog:empty { display: none; }
+.eg-card-lays:empty { display: none; }
 .eg-obj { font-size: 15px; }
 .eg-prog { display: block; font-size: 12px; opacity: 0.85; }
 .eg-marks { color: var(--eg-danger); display: flex; gap: 5px; align-items: center; }
@@ -552,8 +573,8 @@ export function drawEgArrivalCard(m, { hidden = false, doc = globalThis.document
     const el = (cls) => { const n = doc.createElement('div'); n.className = cls; return n; };
     card = el('wb-title-card eg-card');
     card.setAttribute?.('aria-hidden', 'true');   // the live line says it in words
-    cardP = { kicker: el('wb-title-kicker'), main: el('wb-title-main'), rule: el('wb-title-rule'), sub: el('wb-title-sub'), twist: el('wb-title-sub eg-card-twist'), dec: el('wb-title-sub eg-card-dec'), band: el('wb-title-sub eg-card-band') };
-    card.append(cardP.kicker, cardP.main, cardP.rule, cardP.sub, cardP.twist, cardP.dec, cardP.band);
+    cardP = { kicker: el('wb-title-kicker'), main: el('wb-title-main'), rule: el('wb-title-rule'), sub: el('wb-title-sub'), twist: el('wb-title-sub eg-card-twist'), dec: el('wb-title-sub eg-card-dec'), band: el('wb-title-sub eg-card-band'), lays: el('wb-title-sub eg-card-lays') };   // EG-ZS: the Markynaz's decree
+    card.append(cardP.kicker, cardP.main, cardP.rule, cardP.sub, cardP.lays, cardP.twist, cardP.dec, cardP.band);
     (doc.body ?? doc.documentElement)?.append(card);
   }
   const vis = want ? 'on' : 'off';
@@ -561,7 +582,7 @@ export function drawEgArrivalCard(m, { hidden = false, doc = globalThis.document
   if (!want || !m) return;
   if (m.key !== cardShown.key) {
     cardShown.key = m.key;
-    for (const k of ['kicker', 'main', 'sub', 'twist', 'dec', 'band']) cardP[k].textContent = m[k] ?? '';
+    for (const k of ['kicker', 'main', 'sub', 'lays', 'twist', 'dec', 'band']) cardP[k].textContent = m[k] ?? '';
   }
   const cls = `wb-title-card eg-card on${m.fresh && !still ? ' in' : ''}`;
   if (cls !== cardShown.cls) { cardShown.cls = cls; card.className = cls; }

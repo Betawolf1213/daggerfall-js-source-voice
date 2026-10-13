@@ -54,6 +54,11 @@
 // its member stood under 30%, spares that member's blows for 3 s - egHeal, egCensusDr).
 // EG-ZR (2026-10-12; section 15): SHIELD-HYMN IN THE CENSUS - Rally's heal at a door with a Bastion holder within 10 m of
 // another member holding Rally gives the company that Bastion for 4 s (egHymnStep, read by egCensusDr).
+// EG-ZS (2026-10-12; section 15, EG-ZR's "Not built"): THE MASTERIES AND THE ACCORDS ON THE RELAY - BLADESTORM, DEADEYE and
+// KINDLED STEEL struck by the room itself (hostHits, hostStrike, egBehind), an Echo's claim taken at its share (net/egRun.js
+// egEchoShare - War-Chorus whole), Ambush spent by the blow after a Fade, a mark's layer kept (Hammer and Anvil); and in the
+// census STONESKIN COUNTED (egCountWhole: a holder's count is of its whole body, the cushion with it, so it falls where its
+// screen does) and LIVING WALL on the room's heals (egWallOf).
 //
 // Pure: a record and a beat in, frames out. Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_ARRIVE_MAX_MS, EG_CLOSING_FIGHT_MS, EG_CLOSING_SPAN_MS, EG_CLOSING_COUNT_MS, EG_STAIR_HOLD_MS, EG_REST_MS,
@@ -68,6 +73,8 @@ import { egAsk, egVote, egAskResult, egAsksDue, egDecreesAsk, egDecreesChosen, e
   egLoseNewest, egCacheDraw, egGive, egBuy, egVestigeX, egThreatX, egFadeOn, egMarkFoe, egRunOf, EG_CANTRIPS, EG_LUMEN_ADD, EG_LUMEN_RIFT } from './egRun.js';
 import { egVOf, egAccordsOf, egRankOf, EG_MASTERIES, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX, EG_DR_MAX } from './egVestige.js';
 import { egHymnOf, EG_HYMN_MS } from './egVestige.js';   // EG-ZR (section 15's Accord): Shield-Hymn's pair and its seconds
+import { egResonance, egAccordMates, EG_STORM_N, EG_STORM_M, EG_FAR_M, EG_KINDLED_M, EG_WALL_X, EG_ECHO_Q } from './egVestige.js';   // EG-ZS: the capstones, the Accords
+import { egEchoShare, egCompanyAt } from './egRun.js';   // EG-ZS: an Echo's share; the company the pair law reads at a blow
 import { shDisc, shLane, egInShape } from './egShape.js';
 import { EG_ENGINES, EG_ENGINE_REACH_M, EG_ENGINE_CD_MS, EG_ENGINE_PCT, EG_ENGINE_TELL_MS, EG_ALCOVE_REACH_M, EG_NICHE_HEAL, EG_MIRROR_REACH_M, EG_MIRROR_LIT_R, EG_HAZARDS, egWispAt } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' relay half (EG-ZC: the Moon-Mirror's branch; EG-ZB: the census's drains)
 import { EG_BODY_R } from './egSpanLaw.js';   // EG-ZC: a lit branch's top, the capsule about it
@@ -1380,14 +1387,18 @@ export function egBlow(B, sub, m, pose, now) {
   mm.pose = p;
   const vx = egVestigeX(B, sub, p, body, m.r, now, here);
   let mult = vx.x;
+  // EG-ZS (section 15): an Arcane Echo's claim is its cast's whole (a blow numbered EG_ECHO_Q past its cast's, which is under it -
+  // scenes/egFight.js: from EG_ECHO_Q to twice it, as the wire's `q` holds); the room takes its share - half, or the whole in
+  // War-Chorus (net/egRun.js egEchoShare)
+  const dm = m.q >= EG_ECHO_Q && m.q < 2 * EG_ECHO_Q ? m.d * egEchoShare(B, sub, p, here) : m.d;
   if (body.role === EG_ROLE.add && egHas(body, EG_FL.shielded) && (body.shield ?? 0) > 0 && !egFromBehind(body, p.x, p.z)) mult = 0;
   if (body.role === EG_ROLE.obj && body.t === 'heart' && egHas(body, EG_FL.ward)) mult = 0;
-  if (body.role === EG_ROLE.add && body.k === EG_KIND.binder && body.cast) body.cast.dmg += m.d;
+  if (body.role === EG_ROLE.add && body.k === EG_KIND.binder && body.cast) body.cast.dmg += dm;
   // EG-ZK (section 13.1): A BLOW ON A LORD THROUGH THE SEAM - joined (the director's admission, a lord standing), then the
   // gate's hand and purse times the lord's own weight, and what lands told the lord (its words in `out`)
   const said0 = out.length, lf = body.role === EG_ROLE.lord ? egLordsFight(F, spec, {}, now) : null;
   if (lf && !EG_SEAM.join(lf, sub, mm.name, mm.lv, now, null, { admits: mm.alive && mm.in && !mm.home })) return out;
-  const r = lf ? EG_SEAM.hit(lf, sub, m.d, m.r, p, now, m.q, { i: m.i, p: mm, x: mult, bx: vx.bx, name: mm.name, here, out, threatX: egThreatX(mm) }) : egHitBody(F, spec, mm, m.i, m.d, m.r, p, now, m.q, mult, vx.bx);
+  const r = lf ? EG_SEAM.hit(lf, sub, dm, m.r, p, now, m.q, { i: m.i, p: mm, x: mult, bx: vx.bx, name: mm.name, here, out, threatX: egThreatX(mm) }) : egHitBody(F, spec, mm, m.i, dm, m.r, p, now, m.q, mult, vx.bx);
   const got = r.got;
   // a Shielded elite (section 8.7): its shield - a quarter of its health - takes the blows from behind first
   if (got && body.role === EG_ROLE.add && (body.shield ?? 0) > 0) { const soak = Math.min(body.shield, got); body.shield -= soak; body.hp += soak; if (body.shield <= 0) egSetFl(F, body, EG_FL.shielded, false, out); }
@@ -1395,7 +1406,8 @@ export function egBlow(B, sub, m, pose, now) {
   mm.dh += got; mm.dc += got;
   egTallyBlow(mm, F, sub, got, r.b.role === EG_ROLE.lord);   // EG-ZF: the recap's damage, and a Court's chart
   if (m.r >= 0 && m.r <= 2) mm.kinds[m.r] = (mm.kinds[m.r] ?? 0) + 1;
-  egMarkFoe(mm, body, m.r, now);
+  egMarkFoe(mm, body, m.r, now, sub);   // EG-ZS: the mark keeps who laid it (Hammer and Anvil)
+  mm.amb = 0;   // EG-ZS: Ambush's first blow after a Fade is spent
   egFadeOn(mm, now);
   const b = r.b;
   if (b.role === EG_ROLE.lord) {
@@ -1412,8 +1424,66 @@ export function egBlow(B, sub, m, pose, now) {
     else if (b.t === 'anchor') { egObjBroken(F, spec, b, mm.name, now, out); (F.brokenAnchors ??= []).push([b.x, b.z]); }
     else egObjBroken(F, spec, b, mm.name, now, out);
   }
+  hostHits(B, F, spec, sub, mm, { r: m.r, q: m.q, bx: vx.bx }, b, got, p, now, here, out);   // EG-ZS: Bladestorm, Deadeye, Kindled Steel
   if (spec.kind === 'court') tallySays(F, out, said0);   // EG-E: a banner broken, a lord stunned - the feats count them
   return out;
+}
+/**
+ * EG-ZS (section 15; EG-ZR's "Not built") - THE HOST HITS a landed blow of member `sub`'s brings (`b` its target, `got` what
+ * landed, `p` where it was struck from), struck by the room itself (hostStrike):
+ *   - BLADESTORM (Blade's capstone: "every fifth melee blow strikes every foe within 3 m"): every EG_STORM_N-th landed melee
+ *     blow of a member resonating in Blade (`mm.storm`, counted over the breach) strikes every other foe within EG_STORM_M of
+ *     the member as the blow landed;
+ *   - DEADEYE (Hunt's: "an arrow from beyond 12 m pierces the add behind its target"): a landed arrow of a member resonating in
+ *     Hunt, from beyond EG_FAR_M of its target, strikes the first add its line meets past the target (egBehind) as it landed;
+ *   - KINDLED STEEL (Searing Edge with Overcharge: "the Edge holder's melee fire splashes 2 m"): a landed melee blow of a
+ *     Searing Edge holder standing within EG_ACCORD_M of a mate holding Overcharge (net/egVestige.js egAccordMates) splashes
+ *     its fire - the Edge's points - on every other foe within EG_KINDLED_M of the target.
+ */
+function hostHits(B, F, spec, sub, mm, w, b, got, p, now, here, out) {
+  const r = w.r, foes = () => F.bodies.filter((a) => a !== b && (a.role === EG_ROLE.add || a.role === EG_ROLE.lord));
+  if (r === HIT_KINDS.Melee && egResonance(mm.vs).includes('blade') && (mm.storm = (mm.storm ?? 0) + 1) % EG_STORM_N === 0) {
+    for (const a of foes()) { const [ax, az] = egBodyAt(a, now); if (dist(ax, az, p.x, p.z) <= EG_STORM_M) hostStrike(B, F, spec, a, got, w, sub, mm, p, now, here, out); }
+  }
+  if (r === HIT_KINDS.Shaft && egResonance(mm.vs).includes('hunt')) {
+    const [bx, bz] = egBodyAt(b, now), a = dist(bx, bz, p.x, p.z) > EG_FAR_M ? egBehind(F, b, p, now) : null;
+    if (a) hostStrike(B, F, spec, a, got, w, sub, mm, p, now, here, out);
+  }
+  const fire = r === HIT_KINDS.Melee ? egVOf(mm.vs, 'searing') : 0;
+  if (fire > 0 && egAccordMates(egCompanyAt(B, sub, p, here), sub, 'kindled', 'a').length) {
+    const [bx, bz] = egBodyAt(b, now);
+    for (const a of foes()) { const [ax, az] = egBodyAt(a, now); if (dist(ax, az, bx, bz) <= EG_KINDLED_M) hostStrike(B, F, spec, a, fire, w, sub, mm, p, now, here, out); }
+  }
+}
+/**
+ * EG-ZS - A HOST HIT (section 15's "relay host hits"): `n` of member `sub`'s blow `w` (`{ r, q, bx }` - its kind, its number,
+ * its bucket's factor) struck by the room itself on foe `a`. An add takes it as Sweeping Arc's splash strikes one (its fall the
+ * slayer's). A lord takes it through THE BOSS SEAM's one `hit`, as every blow on a lord goes (section 13.1 - net/egLords.js
+ * EG_SEAM): riding the blow's own token (its number), out of the member's purse, by the lord's own weight (a ward, a flyer out
+ * of a blade's reach, Unyielding's) and told the lord (its threat, its kit, its fall). A friend, a ward, a hidden body or one
+ * already down takes none. Answers what landed.
+ */
+function hostStrike(B, F, spec, a, n, w, sub, mm, p, now, here, out) {
+  if (!(n > 0) || !(a.hp > 0) || egHas(a, EG_FL.friend) || egHas(a, EG_FL.ward) || egHas(a, EG_FL.hidden)) return 0;
+  if (a.role === EG_ROLE.add) { a.hp -= n; if (a.hp <= 0) addDied(B, F, spec, a, sub, mm, now, here, out); return n; }
+  return EG_SEAM.hit(egLordsFight(F, spec, {}, now), sub, n, w.r, p, now, w.q, { i: a.i, p: mm, x: 1, bx: w.bx, name: mm.name, here, out, threatX: egThreatX(mm) }).got;
+}
+/**
+ * EG-ZS - DEADEYE'S LINE (section 15): the first add the line from `p` through target `b` meets past the target - its centre
+ * within its own radius of the line, beyond the target - never the target, a friend, a ward or a hidden body. Null for none.
+ * @param {any} F @param {any} b @param {{ x: number, z: number }} p @param {number} now
+ */
+export function egBehind(F, b, p, now) {
+  const [bx, bz] = egBodyAt(b, now), L = dist(bx, bz, p.x, p.z);
+  if (!(L > 0)) return null;
+  const ux = (bx - p.x) / L, uz = (bz - p.z) / L;
+  let best = null, bestT = Infinity;
+  for (const a of F.bodies) {
+    if (a === b || a.role !== EG_ROLE.add || !(a.hp > 0) || egHas(a, EG_FL.friend) || egHas(a, EG_FL.ward) || egHas(a, EG_FL.hidden)) continue;
+    const [ax, az] = egBodyAt(a, now), t = (ax - p.x) * ux + (az - p.z) * uz, off = Math.abs((ax - p.x) * uz - (az - p.z) * ux);
+    if (t > L && off <= (a.r ?? 0.6) && t < bestT) { best = a; bestT = t; }
+  }
+  return best;
 }
 /** EG-E: a Court's beats counted as they are spoken (its lord's feats read them at its fall - net/egFeats.js). */
 function tallySays(F, out, from) {
@@ -1587,7 +1657,7 @@ export function egCount(B, now, bodies, line, enforce = EG_BODY_ENFORCE) {
   const hits = [...EG_SEAM.judge(egLordsFight(F, view, {}, now), live, now), ...judgePlace(F, view, B.hw, live, now), ...censusDrains(F, view, live, now)];   // EG-ZK: the fight's blows by the seam's judge
   for (const b of live) {
     const m = B.mem[b.sub];
-    for (; (m.cbOwe ?? 0) > 0; m.cbOwe--) hits.push({ sub: b.sub, share: Math.min(egCastBackCost(m.vs), Math.max(0, (m.bd?.v ?? 1) - EG_CAST_BACK_FLOOR)), i: 0, k: 2 });
+    for (; (m.cbOwe ?? 0) > 0; m.cbOwe--) hits.push({ sub: b.sub, share: Math.min(egCastBackCost(m.vs), Math.max(0, (m.bd?.v ?? 1) * egCountWhole(m.vs) - EG_CAST_BACK_FLOOR)), i: 0, k: 2 });   // EG-ZS: the floor's quarter of the body without the cushion, as the screen's
   }
   for (const h of hits) {
     const m = B.mem[h.sub];
@@ -1596,7 +1666,7 @@ export function egCount(B, now, bodies, line, enforce = EG_BODY_ENFORCE) {
     if (F && h.nm) { const c = ((F.cg ??= {})[h.nm] ??= []); if (!c.includes(h.sub)) c.push(h.sub); }
     const cs = (m.cs ??= [0, 0, 0, 0]);
     cs[h.k]++; cs[3] += Math.round(h.share * 1000);
-    if (!(h.share > 0) || !bodyStruck(m, h.share, now, line) || !enforce) continue;
+    if (!(h.share > 0) || !bodyStruck(m, h.share / egCountWhole(m.vs), now, line) || !enforce) continue;   // EG-ZS: off the whole, Stoneskin's cushion in it
     const tr = live.find((b) => b.sub === h.sub)?.tr, at = tr?.length ? tr[tr.length - 1] : null;
     egFall(B, h.sub, now, out, at && at[4] === B.h ? { x: at[1], z: at[3] } : null);
     out.push({ k: 'bd', to: h.sub });
@@ -1607,6 +1677,20 @@ export function egCount(B, now, bodies, line, enforce = EG_BODY_ENFORCE) {
 /** EG-ZB (section 15's Featherstep, in the census): what a cast-back costs a member's count - a tenth, Featherstep's 8, 6 or
  *  4% by rank (the floor's quarter is egCount's). */
 export const egCastBackCost = (vs) => { const r = egRankOf(vs, 'featherstep'); return r ? EG_FEATHER_CAST[r - 1] : EG_CAST_BACK_LOSS; };
+/** EG-ZS - STONESKIN IN THE CENSUS (section 15; EG-ZR's open issue for EG14, closed and its sentence deleted): A MEMBER'S WHOLE in
+ *  shares of the body without Stoneskin's cushion - 1, and its rank's share more for a holder (1.25 at III). Every share the
+ *  room takes - a blow's, a hazard's, a drain's, the void's, the toll's, the lash's - is of the body without the cushion, as
+ *  the screen takes it (systems/renownLayer.js spireBodyMax), so it comes off the count over this: the count stays a share
+ *  of the whole, as the screen's maximum, the member's own word, the room's heals and a recall are, and a holder falls by it
+ *  where its screen falls. */
+export const egCountWhole = (vs) => 1 + egVOf(vs, 'stoneskin');
+/** EG-ZS - LIVING WALL, THE CENSUS'S HALF (section 15's Accord, Stoneskin with Mender's Grace - "heals on the Stoneskin holder
+ *  +10%"): whether member `sub` stands in it now - holding Stoneskin within EG_ACCORD_M of another living member holding
+ *  Mender's Grace, on the poses the director holds of this hall (net/egVestige.js egAccordMates). */
+export function egWallOf(B, sub) {
+  const ms = living(B).filter(([, q]) => q.pose?.h === B.h).map(([s, q]) => ({ sub: s, vs: q.vs ?? [], x: q.pose.x, z: q.pose.z }));
+  return egAccordMates(ms, sub, 'livingwall', 'a').length > 0;
+}
 /**
  * EG-ZR - SHIELD-HYMN, THE CENSUS'S HALF (section 15's Accord, Bastion with Rally - "Rally's heal also gives the company 4 s
  * of Bastion's protection"; section 21: the census applies Bastion): as Rally's heal is said at a door, the Bastion holders
@@ -1711,7 +1795,9 @@ function censusDrains(F, view, bodies, now) {
  * (bodyHealed - a Rally, a Mending, a niche), the fray's lash takes its share and never the last of it, and a recall's word
  * (`rise`) stands its member at its share - a new life. EG-ZI: THE PULL'S TOLL (`toll`, to its member) is counted as a blow
  * is (bodyStruck, in the census's thousandths) - its quarters' share, and as the lash never the last of the count. The
- * frames the room fans, read; the counts moved in place.
+ * frames the room fans, read; the counts moved in place. EG-ZS: the toll and the lash are shares of the body without
+ * Stoneskin's cushion, taken off the whole (egCountWhole); a heal on a Stoneskin holder in LIVING WALL counts its share more
+ * (egWallOf), as the holder's screen heals it (scenes/egClient.js applyHeal).
  * @param {any} B @param {any[]} frames @param {number} now @param {{depth: number, perS: number}} line @param {boolean} [enforce]
  */
 export function egCountHeals(B, frames, now, line, enforce = EG_BODY_ENFORCE) {
@@ -1720,9 +1806,9 @@ export function egCountHeals(B, frames, now, line, enforce = EG_BODY_ENFORCE) {
     if (f.k === 'toll') {
       const m = B.mem[f.to];
       if (!m?.in || !m.alive || m.home || !(f.q > 0)) continue;
-      const share = Math.min(f.q * EG_TOLL_STEP, Math.max(0, (m.bd?.v ?? 1) - 0.01));
+      const W = egCountWhole(m.vs), share = Math.min(f.q * EG_TOLL_STEP, Math.max(0, (m.bd?.v ?? 1) * W - 0.01));   // EG-ZS: of the body without the cushion
       if (!(share > 0)) continue;
-      bodyStruck(m, share, now, line);
+      bodyStruck(m, share / W, now, line);
       (m.cs ??= [0, 0, 0, 0])[3] += Math.round(share * 1000);
       continue;
     }
@@ -1730,8 +1816,8 @@ export function egCountHeals(B, frames, now, line, enforce = EG_BODY_ENFORCE) {
     for (const [sub, m] of living(B)) {
       if (f.to && f.to !== sub) continue;
       if (f.why === 'rest' && f.p >= 1) bodyLife(m, now, line);
-      else if (f.p > 0) bodyHealed(m, f.p, now, line, { enforce });
-      else if (f.p < 0 && m.bd) m.bd.v = Math.max(0.01, m.bd.v + f.p);   // the lash: a setback, never a death
+      else if (f.p > 0) bodyHealed(m, f.p * (egWallOf(B, sub) ? 1 + EG_WALL_X : 1), now, line, { enforce });   // EG-ZS: LIVING WALL - its share more on a Stoneskin holder standing in it
+      else if (f.p < 0 && m.bd) m.bd.v = Math.max(0.01, m.bd.v + f.p / egCountWhole(m.vs));   // the lash: a setback, never a death (EG-ZS: of the body without the cushion)
     }
   }
 }
@@ -1763,7 +1849,7 @@ export function egHeal(B, sub, pairs, now, line, enforce = EG_BODY_ENFORCE) {
   const under = !!m && ((m.bd?.v ?? 1) < EG_LIFELINE_UNDER || now - (m.lowAt ?? -Infinity) <= EG_LIFELINE_LOOK_MS);
   const had = list.map(([by]) => B.mem[by]?.ht ?? 0);
   const got = egTallyHeal(B, sub, pairs, now);
-  if (got > 0) bodyHealed(B.mem[sub], got / healRef(B.mem[sub].lv), now, line, { enforce });
+  if (got > 0) bodyHealed(B.mem[sub], got / healRef(B.mem[sub].lv) / egCountWhole(B.mem[sub].vs), now, line, { enforce });   // EG-ZS: a share of the whole, Stoneskin's cushion in it
   if (under && got > 0) {
     // the strongest Lifeline among the healers whose heal was believed (its credit rose)
     let v = 0;

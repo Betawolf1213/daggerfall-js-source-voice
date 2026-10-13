@@ -10,11 +10,15 @@
 //   CACHES, CANTRIPS, LUMEN AND THE SUTLER (section 17), the Mementos and the niches (section 16.5);
 //   THE RELAY'S VESTIGES - the factors a blow takes from what the room can see (Long Sight, Culling Edge, Spire's
 //     Standard, Fallen's Due, Hunter's Mark, Counterstroke, Spotter), capped by THE TRUST LAW (net/egVestige.js).
+// EG-ZS (2026-10-12, section 15; EG-ZR's "Not built"): and the Accords a blow takes from where the company stands (net/egVestige.js
+// egAccordMates) - HAMMER AND ANVIL (a foe the mate's mark is on, +8% from the oath's holder) and AMBUSH (the first blow after a
+// Fade, near the Standard's holder, +15%), inside the caps; and an ARCANE ECHO's share (egEchoShare: half, or whole in WAR-CHORUS).
 //
 // Pure: a breach record (net/egBrain.js) and a beat in, frames out. In the relay bundle. Not a DFU member. Ledger A
 // (ELITE-GATES).
 import { EG_DECREES, EG_DECREE_FAMILIES, EG_DECREE_BY_KEY, egDecreeCount, egDecreeRanksUp, egBandOfCircle } from './egLaw.js';
 import { egOfferOf, egTake, egVOf, egRankOf, egDeclaredX, egCapX, egResonance, EG_SHARDS_PER, EG_FADE_CD_S } from './egVestige.js';
+import { egAccordMates, EG_FAR_M, EG_HAMMER_X, EG_AMBUSH_X, EG_ECHO_SHARE } from './egVestige.js';   // EG-ZS: the Accords' pair law and numbers
 import { HIT_KINDS } from './gateBrain.js';
 
 /** The company's word stays open this long (ms). */
@@ -240,7 +244,7 @@ export function egVestigeX(B, sub, pose, body, r, now, here) {
   const vs = m.vs ?? [];
   let x = 1;
   const d = body && pose ? Math.hypot(pose.x - body.x, pose.z - body.z) : 0;
-  if (r !== HIT_KINDS.Melee && d > 12) x *= 1 + egVOf(vs, 'longsight');
+  if (r !== HIT_KINDS.Melee && d > EG_FAR_M) x *= 1 + egVOf(vs, 'longsight');
   const isAdd = body?.role === 1;
   const fallenDue = Math.max(0, ...Object.values(B.mem).filter((o) => o.alive && o.in).map((o) => egVOf(o.vs, 'fallensdue')));
   const dueOn = (B.F?.fellThisHall ?? 0) > 0;
@@ -254,22 +258,45 @@ export function egVestigeX(B, sub, pose, body, r, now, here) {
   if (mk) x *= 1 + mk;
   // Counterstroke (a Mastery): a melee blow on a lord within 0.6 s after one of its blows landed within 6 m
   if (m.mast === 101 && r === HIT_KINDS.Melee && body?.role === 0 && (m.lordLandedAt ?? -Infinity) + 600 >= now) x *= 1.4;
+  // EG-ZS - THE ACCORDS ON A BLOW (section 15, every one the relay's, inside the caps): HAMMER AND ANVIL - a foe marked by a
+  // mate holding Hunter's Mark (`marked.by`) takes its share more from the oath's holder standing with it; AMBUSH - the first
+  // blow after a Fade (`m.amb`, egFadeOn), within 10 m of a mate holding the Standard
+  const ms = egCompanyAt(B, sub, pose, here);
+  if (mk && body.marked.by && egAccordMates(ms, sub, 'hammer', 'a').includes(body.marked.by)) x *= 1 + EG_HAMMER_X;
+  if (m.amb && egAccordMates(ms, sub, 'ambush', 'a').length) x *= 1 + EG_AMBUSH_X;
   const bx = egDeclaredX(vs);
   return { x: egCapX(x, bx), bx };
 }
+/** EG-ZS: the company as the pair law reads it (net/egVestige.js egAccordMates) at a member's blow - each living member in the
+ *  breach where the room last holds it (`here`), the striker where its blow stands (`pose`), each with its Vestiges. */
+export function egCompanyAt(B, sub, pose, here) {
+  const ms = here.filter((o) => o.sub !== sub).map((o) => ({ sub: o.sub, vs: B.mem[o.sub]?.vs ?? [], x: o.x, z: o.z }));
+  return pose ? [{ sub, vs: B.mem[sub]?.vs ?? [], x: pose.x, z: pose.z }, ...ms] : ms;
+}
+/**
+ * EG-ZS - AN ARCANE ECHO'S SHARE (section 15: "a damage spell repeats at half"; WAR-CHORUS, Arcane Echo with Spire's Standard:
+ * "within 10 m of the Standard, an Echo repeats at full"): the share of an Echo's claim (a blow numbered past
+ * net/egVestige.js EG_ECHO_Q - scenes/egFight.js sends the cast's whole) the room takes - EG_ECHO_SHARE, or the whole while its
+ * holder stands within EG_ACCORD_M of a mate holding the Standard, where the room holds the company. Never a factor above 1,
+ * so inside the caps; a client that claims an Echo at full gains nothing the room does not see.
+ */
+export const egEchoShare = (B, sub, pose, here) => (egAccordMates(egCompanyAt(B, sub, pose, here), sub, 'warchorus', 'a').length ? 1 : EG_ECHO_SHARE);
 /** A member's threat on a lord - Challenger's Oath's and Rooted's (relay). */
 export const egThreatX = (m) => Math.max(1, egVOf(m?.vs, 'oath')) * (egResonance(m?.vs).includes('stone') ? 2 : 1);
-/** Fade (relay): after a strike, adds lose the striker for its seconds, once every EG_FADE_CD_S. */
+/** Fade (relay): after a strike, adds lose the striker for its seconds, once every EG_FADE_CD_S. EG-ZS: and Ambush armed - the
+ *  holder's next blow is the first after a Fade (`amb`, spent by net/egBrain.js egBlow). */
 export function egFadeOn(m, now) {
   const v = egVOf(m?.vs, 'fade');
   if (!v || now < (m.fadeCdAt ?? 0)) return;
   m.fadeUntil = now + v * 1000; m.fadeCdAt = now + EG_FADE_CD_S * 1000;
+  m.amb = 1;
 }
-/** A first arrow's mark (Hunter's Mark) or a struck foe's (Spotter) on a body. */
-export function egMarkFoe(m, body, r, now) {
+/** A first arrow's mark (Hunter's Mark) or a struck foe's (Spotter) on a body. EG-ZS: the mark keeps who laid it (`by` - Hammer
+ *  and Anvil reads it). */
+export function egMarkFoe(m, body, r, now, by = '') {
   const hm = egVOf(m?.vs, 'huntersmark');
-  if (hm && r === HIT_KINDS.Shaft && !(body.marked?.until > now)) body.marked = { x: hm, until: now + 8000 };
-  if (m?.mast === 102 && !(body.marked?.until > now)) body.marked = { x: 0.1, until: now + 8000 };
+  if (hm && r === HIT_KINDS.Shaft && !(body.marked?.until > now)) body.marked = { x: hm, until: now + 8000, by };
+  if (m?.mast === 102 && !(body.marked?.until > now)) body.marked = { x: 0.1, until: now + 8000, by };
 }
 /** The member's run as the state says it: `[sub, rl, lumen, shards, tonics, cantrips, vestiges, mastery]`. */
 export const egRunOf = (sub, m) => [sub, (m.rel ?? []).length, m.lumen ?? 0, m.shards ?? 0, m.tonics ?? 0, [...(m.cant ?? [])], (m.vs ?? []).map((p) => [...p]), m.mast ?? -1];
