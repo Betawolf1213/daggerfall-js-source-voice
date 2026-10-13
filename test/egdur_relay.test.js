@@ -263,7 +263,9 @@ test('EG-H2 THE LAW PIN (section 22): a member\'s `spec` answered with its hall 
     const ann = (V.rc['acct-ann'] ?? []).map(readEgReceipt).find((c) => c.q === 'x');
     assert.equal(ann?.why, 'void', 'the member\'s end says void - its stake returned');
     const mac = (V.rc['acct-mac'] ?? []).map(readEgReceipt);
-    assert.deepEqual(mac.map((c) => [c.q, c.z]), [['v', 'z'.repeat(20)]], 'the opener who never entered handed the void itself');
+    // PIN MOVED (AUDIT EG IV, lane3 #11): it held the void alone - the opener the first wake found outside is owed their end
+    // then ('empty', nothing cleared), and the void after it still hands the stake back (a void returns a stake held or spent)
+    assert.deepEqual(mac.map((c) => [c.q, c.z, c.why ?? '', c.h ?? 0]), [['x', 'z'.repeat(20), 'empty', 0], ['v', 'z'.repeat(20), '', 0]], 'the opener who never entered handed the void itself');
   }, { party: true });
 });
 

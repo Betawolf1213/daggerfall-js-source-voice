@@ -79,9 +79,9 @@ test('EG-E3 THE BOUND, THE WORST CASE: every id at its longest (a 40-character a
   assert.deepEqual(ux.rl, cx.rl);
   // the Vestiges before the Reliquaries, in the law's order
   assert.deepEqual([...EG_RECEIPT_TRIMS], ['vs', 'rl']);
-  const both = readEgReceipt(await mintEgReceipt({ ...x, vs }, null, { subtle, nowS }));
-  assert.deepEqual(both.vs, [], 'every Vestige gone before a Reliquary');
-  assert.deepEqual(both.rl, cx.rl.slice(cx.rl.length - both.rl.length));
+  // PIN MOVED (AUDIT EG IV, lane3 #7): an end carrying the Vestiges too (`{ ...x, vs }`) was minted here, every Vestige
+  // trimmed before a Reliquary - a shape the mint never makes, which the receipt now refuses (each list its kind's alone)
+  await assert.rejects(mintEgReceipt({ ...x, vs }, null, { subtle, nowS }), /could not verify/, 'an end carries no Vestiges');
   // a receipt under the bound is minted as it was asked
   const small = readEgReceipt(await sign({ ...w, vs: vs.slice(0, 5) }, nowS));
   assert.deepEqual(small.vs, vs.slice(0, 5));

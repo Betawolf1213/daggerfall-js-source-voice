@@ -987,12 +987,14 @@ export async function gateRecordOf({ db }, playerId) {
  * `struck` beside a Drakes strike), `{ recorded: false, why: 'claimed', stones, closed }` (AUDIT WB12d A1: the row's
  * embers, a fighter's `r` made good), `{ recorded: false, why: 'guest', closed }`, or `{ error }` -
  * `no-gate-key` (this service holds no public half), `receipt` (not a receipt the relay signed, or expired - `why`
- * says which rung), `not-yours` (another account's).
+ * says which rung), `not-yours` (another account's). AUDIT EG IV (lane3 #16): `weir` the Weir Key's statement for the claims
+ * (eg.js egGateWeir), set in the batch directly after the row - the row it answered rides a recorded kill's answer as
+ * `weirRow` (null where it rolled nothing); never for the rite alone.
  * @param {{ db: any, nowS: number, subtle: SubtleCrypto }} ctx
  * @param {{ id: string, handle?: string|null }} player the session's account
  * @param {unknown} receipt @param {CryptoKey|null} publicKey
  */
-export async function claimGate({ db, nowS, subtle }, player, receipt, publicKey, { strike = null, region = null, deeds = null } = {}) {
+export async function claimGate({ db, nowS, subtle }, player, receipt, publicKey, { strike = null, region = null, deeds = null, weir = null } = {}) {
   if (!publicKey) return { error: 'no-gate-key' };
   const v = await verifyReceipt(receipt, publicKey, { subtle, nowS });
   if (!v.ok) return { error: 'receipt', why: v.why };
@@ -1013,11 +1015,15 @@ export async function claimGate({ db, nowS, subtle }, player, receipt, publicKey
   // SILVER-WAYS: the guild's deed (marks.js deedStatements - its mark and its strike, by the gate_kills row this claim
   // wrote), in the same batch; never for the rite alone, which is no breach closed
   const deed = c.x === 'rite' ? null : deeds?.(c.d) ?? null;
-  const [r, m, ...d] = stmt || deed ? await db.batch([kill, ...(stmt ? [stmt] : [db.prepare('SELECT 0')]), ...(deed ?? [])]) : [await kill.run(), null];
+  // AUDIT EG IV (lane3 #16): the Weir Key's roll directly after the row, in its transaction (eg.js egGateWeir - `changes()`
+  // the row's): never the rite's
+  const roll = c.x === 'rite' ? null : weir?.(c) ?? null;
+  const [r, ...rest] = stmt || deed || roll ? await db.batch([kill, ...(roll ? [roll] : []), ...(stmt ? [stmt] : [db.prepare('SELECT 0')]), ...(deed ?? [])]) : [await kill.run(), null];
+  const w = roll ? rest.shift() : null, [m, ...d] = rest;
   const recorded = Number(r?.meta?.changes ?? 0) > 0;
   const struck = !!stmt && Number(m?.meta?.changes ?? 0) > 0;
   const deedStruck = !!deed && Number(d[1]?.meta?.changes ?? 0) > 0;
-  if (recorded) return { recorded, day: c.d, stones: embers, ...(c.x === 'rite' ? { rite: true } : {}), ...(stmt ? { struck } : {}), ...(deed ? { deedStruck } : {}), ...(await gateRecordOf({ db }, player.id)) };
+  if (recorded) return { recorded, day: c.d, stones: embers, ...(c.x === 'rite' ? { rite: true } : {}), ...(stmt ? { struck } : {}), ...(deed ? { deedStruck } : {}), ...(roll ? { weirRow: w?.results?.[0] ?? null } : {}), ...(await gateRecordOf({ db }, player.id)) };
   // AUDIT WB12d (A1): A FIGHTER'S `r` COUNTED AT ONE EMBER - a service from before acct62 took the receipt as a plain one
   // and kept its row - is made good when the receipt is claimed again (the game keeps an `r` receipt until a service
   // that answers its embers has counted it). One row a (day, account), one receipt a kill: the row is this receipt's

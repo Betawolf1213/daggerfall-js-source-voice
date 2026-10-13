@@ -48,9 +48,10 @@
 //
 // ═══ THE STAKE'S CLOCK (EG-ZM) ═════════════════════════════════════
 //
-// Section 23: the key is never returned by a clock - a clock SPENDS. A stake no receipt has settled (no Redoubt, no end of
-// the opener's, no void claimed) is spent by the service's own hourly clock (cron.js) once nothing can name it any more -
-// EG_STAKE_CLOCK_S past its `until` - and its opener is told so in the mailbox, one letter a stake (EG_STAKE_POST). Its
+// Section 23: the key is never returned by a clock - a clock SPENDS. A stake no receipt has settled (no Redoubt, no void
+// claimed, no end of the opener's - or only the one the first breach's mercy held it on) is spent by the service's own
+// hourly clock (cron.js) once nothing can name it any more - EG_STAKE_CLOCK_S past its `until` - and its opener is told so
+// in the mailbox, one letter a stake (EG_STAKE_POST; AUDIT EG IV: EG_STAKE_POST_HELD's words where the mercy held it). Its
 // key stays taken, as any spent stake's does; a Rehearsal's held none and says nothing.
 //
 // EVERY CLOCK IS AN ARGUMENT, as in accounts.js.
@@ -114,6 +115,34 @@ export const EG_STAKE_POST = Object.freeze({
     `- ${POST_SENDER}`,
   ].join('\n'),
 });
+/** AUDIT EG IV (lane3 #6; sections 5 and 23): THE LETTER for a stake the first breach's mercy held - its opener's own end
+ *  reached the ledger (its row on `eg_runs`), and the stake waited for the word that the breach ended with no Redoubt taken
+ *  (`nr`), which no claim brought: a member who never claimed it, or a breach that took a Redoubt nobody earned. The words
+ *  EG_STAKE_POST's are untrue there; its subject and batch are the same. */
+export const EG_STAKE_POST_HELD = Object.freeze({
+  body: [
+    'The Weir Key you staked on {day} was held for the first breach\'s mercy, which gives a key back when a first breach ends with no Redoubt taken. Your own end reached the Spire\'s ledger, but no word that the breach ended with no Redoubt taken came in the time a key waits for one.',
+    '',
+    'That key is spent. It does not return.',
+    '',
+    `- ${POST_SENDER}`,
+  ].join('\n'),
+});
+/** AUDIT EG IV (lane3 #4, lane9 #24; section 5, "The launch gift"): THE LAUNCH GIFT'S LETTER - the key migration 0112 adds
+ *  to every account with a recorded Dagon's Breach kill, worded in the mailbox by the same migration (server_post, batch
+ *  `spire-launch`, HOURS-FIRST's send - 0094), its words these (test/egaudit4_net_service.test.js holds the migration's
+ *  statement to them). It carries no item: the key is the balance's, already counted. */
+export const EG_LAUNCH_POST = Object.freeze({
+  batch: 'spire-launch',
+  subject: 'From the Battlespire',
+  body: [
+    'For the Dagon\'s Breach you closed, the Battlespire sends you a Weir Key - one of its portal keys, surrendered to the Kyn in 3E 398. It is already in your pack.',
+    '',
+    'Use it under open sky, away from any town, to open an Elite Breach: your party is called with you, and the Spire\'s halls go down as deep as you can take them.',
+    '',
+    `- ${POST_SENDER}`,
+  ].join('\n'),
+});
 /** EG-ZF (section 27.7): the first-time lines' bits the account keeps - sixteen, room past the page's nine and the
  *  Rehearsal's own (src/ui/egBeats.js EG_FIRST_KEYS, EG_FIRST_REHEARSAL_BIT). */
 export const EG_FIRST_BITS_MAX = 0xffff;
@@ -169,7 +198,9 @@ export async function egFirstSay({ db }, player, body) {
  * closed, no Redoubt taken), `live` (a breach held - `b` which), `short` (no key), `rehearsed` (today's Rehearsal
  * spent). EG-F (sections 5, 16.6 and 18): `ew` the start Redoubt the start window chose and `wg` its Wager - refused
  * `start` (`w`: not one the opener may start at - egStarts.js) and `wager` (not up to three decrees of three families);
- * a Rehearsal starts at Hall 1 with no Wager. Both ride the stake and the order (`ew`, `ewg`).
+ * a Rehearsal starts at Hall 1 with no Wager. Both ride the stake and the order (`ew`, `ewg`). AUDIT EG IV (lane3 #1):
+ * `again` 1 asks only for the stake `rq` already took - its order signed as of the stake's `at` (a void's, never an open's),
+ * `at` with it - or `none` (no key taken), `spent` (settled).
  * @param {{ db: any, nowS: number, subtle: SubtleCrypto, rand: (b: Uint8Array) => Uint8Array }} ctx
  * @param {{ id: string, handle?: string|null }} player @param {any} body @param {CryptoKey|null} key
  */
@@ -183,7 +214,18 @@ export async function openEg({ db, nowS, subtle, rand }, player, body, key) {
   if (!Number.isSafeInteger(ew) || ew < 0 || ew > 999 || (rh && ew !== 0)) return { error: 'start', w: Number.isSafeInteger(ew) ? ew : 0 };
   if (!wg || (rh && wg.length)) return { error: 'wager' };
   // ASKED AGAIN: the same breach back, while its stake still holds
-  const had = await db.prepare('SELECT ez, b, rh, until, state, ew, wg FROM eg_stakes WHERE account = ?1 AND rq = ?2').bind(player.id, rq).first();
+  const had = await db.prepare('SELECT ez, b, rh, at, until, state, ew, wg FROM eg_stakes WHERE account = ?1 AND rq = ?2').bind(player.id, rq).first();
+  // AUDIT EG IV (lane3 #1; sections 22 and 23, "A key's loss"): AN OPEN WHOSE ANSWER WAS LOST, ASKED AFTER (`again`: 1 - the
+  // device kept the request id before it asked): the stake that request took, or `none` - it never takes a key itself. The
+  // order is signed as of the stake's own `at` (its issue the open's), so it opens nothing (it lived a minute) and its void
+  // is the room's to mint for EG_VOID_MAX_S from the open, as any void is - the stake's clock waits that out
+  if (body?.again === 1) {
+    if (!had) return { error: 'none' };
+    if (had.state !== 'held') return { error: 'spent' };
+    const row = await playerRow(db, player.id);
+    const order = await mintEgOrder({ o: 'egopen', s: player.id, eb: had.b, ez: had.ez, ew: int(had.ew), rh: int(had.rh) === 1 ? 1 : undefined, ewg: wagerOfRow(had.wg) }, key, { subtle, nowS: int(had.at) });
+    return { order, b: had.b, ez: had.ez, keys: int(row?.eg_keys), until: int(had.until), rh: int(had.rh), at: int(had.at) };
+  }
   if (had) {
     if (had.state !== 'held' || int(had.until) <= nowS) return { error: 'spent' };
     const row = await playerRow(db, player.id);
@@ -300,7 +342,8 @@ async function mercyMay(db, ez, stake) {
 /**
  * EG-ZM (section 23, "The clock"): THE STAKE'S CLOCK, ONE PAGE - at most `limit` stakes still `held` EG_STAKE_CLOCK_S past
  * their `until`, the oldest first, asked in one statement (a quiet world's hour asks no more), then spent in one
- * transaction with their openers' letters (EG_STAKE_POST - a key's stake alone; INSERT OR IGNORE over 0093's one-a-batch
+ * transaction with their openers' letters (EG_STAKE_POST - a key's stake alone, EG_STAKE_POST_HELD's words where its opener's
+ * own end held it for the first breach's mercy - AUDIT EG IV; INSERT OR IGNORE over 0093's one-a-batch
  * index, so a letter already there never holds the clock), each only while it is still held - a receipt claimed between
  * the ask and the spending settles it its own way. The key is not given back: a spent stake's key stays taken. Answers how
  * many it spent (cron.js asks again while a page is full).
@@ -311,9 +354,10 @@ export async function spendLapsedStakes(db, nowS, limit) {
   if (!due.length) return 0;
   const ez = JSON.stringify(due.map((r) => r.ez));
   const [, spent] = await db.batch([
+    // AUDIT EG IV (lane3 #6): a stake its opener's own end held for the mercy (that end's row on eg_runs) says so
     db.prepare(`INSERT OR IGNORE INTO server_post (id, to_id, batch, sender, subject, body, item, sent_at)
-      SELECT lower(hex(randomblob(12))), account, ?2 || ez, ?3, ?4, replace(?5, '{day}', strftime('%Y-%m-%d', at, 'unixepoch')), NULL, ?6
-      FROM eg_stakes WHERE state = 'held' AND rh = 0 AND ez IN (SELECT value FROM json_each(?1))`).bind(ez, EG_STAKE_POST.batch, POST_SENDER, EG_STAKE_POST.subject, EG_STAKE_POST.body, nowS),
+      SELECT lower(hex(randomblob(12))), account, ?2 || ez, ?3, ?4, replace(CASE WHEN EXISTS (SELECT 1 FROM eg_runs r WHERE r.b = eg_stakes.b AND r.account = eg_stakes.account) THEN ?7 ELSE ?5 END, '{day}', strftime('%Y-%m-%d', at, 'unixepoch')), NULL, ?6
+      FROM eg_stakes WHERE state = 'held' AND rh = 0 AND ez IN (SELECT value FROM json_each(?1))`).bind(ez, EG_STAKE_POST.batch, POST_SENDER, EG_STAKE_POST.subject, EG_STAKE_POST.body, nowS, EG_STAKE_POST_HELD.body),
     db.prepare("UPDATE eg_stakes SET state = 'spent' WHERE state = 'held' AND ez IN (SELECT value FROM json_each(?1))").bind(ez),
   ]);
   return Number(spent?.meta?.changes ?? 0);
@@ -387,24 +431,37 @@ export async function claimEg({ db, nowS, subtle, rand }, player, receipt, publi
 }
 
 /**
- * THE KEY ROLLED AT A CLAIM THE SERVICE ALREADY VERIFIED (section 5) - after a recorded Dagon's Breach kill (`kind`
- * 'gate': one in six, one in four with the rite broken, the first kill certain, the pity after EG_KEY_PITY misses) or a
- * recorded Hour ('sd': one in three). The draw is this service's own (`rand` - nothing the page can read). Answers `{
- * found, keys }`.
+ * THE KEY ROLLED AT A CLAIM THE SERVICE ALREADY VERIFIED (section 5) - a recorded Hour ('sd': one in three), after its row.
+ * The draw is this service's own (`rand` - nothing the page can read). Answers `{ found, keys }`. AUDIT EG IV (lane3 #16):
+ * a Dagon's Breach kill's key is rolled here no longer, after its claim - it rides the claim's own batch (egGateWeir).
  * @param {{ db: any, rand?: (b: Uint8Array) => Uint8Array }} ctx @param {{ id: string }} player
- * @param {{ kind: 'gate'|'sd', rite?: boolean }} what
+ * @param {{ kind: 'sd' }} what
  */
-export async function rollWeirKey({ db, rand }, player, { kind, rite = false }) {
-  const row = await playerRow(db, player.id);
-  let found;
-  if (kind === 'gate') {
-    const k = await db.prepare("SELECT COUNT(*) AS n FROM gate_kills WHERE account = ?1 AND earned != 'rite'").bind(player.id).first();
-    found = int(k?.n) === 1 || int(row?.eg_key_miss) >= EG_KEY_PITY || drawUnder(rand, rite ? EG_KEY_ODDS_RITE : EG_KEY_ODDS);
-  } else found = drawUnder(rand, EG_KEY_ODDS_SD);
-  const after = await db.prepare(`UPDATE players SET eg_keys = eg_keys + ?2, eg_key_miss = CASE WHEN ?3 = 1 THEN eg_key_miss ELSE (CASE WHEN ?2 = 1 THEN 0 ELSE eg_key_miss + 1 END) END WHERE id = ?1 RETURNING eg_keys`)
-    .bind(player.id, found ? 1 : 0, kind === 'gate' ? 0 : 1).first();
+export async function rollWeirKey({ db, rand }, player, { kind }) {
+  const found = kind === 'sd' && drawUnder(rand, EG_KEY_ODDS_SD);
+  const after = await db.prepare('UPDATE players SET eg_keys = eg_keys + ?2 WHERE id = ?1 RETURNING eg_keys').bind(player.id, found ? 1 : 0).first();
   return { found, keys: int(after?.eg_keys) };
 }
+/**
+ * AUDIT EG IV (lane3 #16; section 5): A DAGON'S BREACH KILL'S WEIR KEY, IN ITS CLAIM'S OWN BATCH - the statement accounts.js
+ * claimGate sets directly after its `gate_kills` INSERT OR IGNORE, for a verified receipt's claims `c` (never the rite's):
+ * - written only by the claim that wrote that row (`changes()`, the INSERT's) and in its transaction, so a failure between
+ *   them can no longer lose the roll (the account's certain first key among them), and a claim asked again rolls nothing;
+ * - THE FIRST decided by that row: no recorded kill of the account's before it in the table's own order (its rowid, as
+ *   mercyMay decides "before") - two receipts claimed at once each counted the other's row and neither was the first;
+ * - one in six (one in four for a fighter who broke the rite, `r`), this service's die drawn before the batch; THE PITY
+ *   after EG_KEY_PITY recorded kills in a row with none (`eg_key_miss`, reset by a key).
+ * RETURNING the balance and the misses after it - a key found leaves none (egGateWeirAnswer).
+ * @param {{ db: any, rand?: (b: Uint8Array) => Uint8Array }} ctx @param {{ id: string }} player
+ */
+export function egGateWeir({ db, rand }, player) {
+  const found = `(?3 = 1 OR eg_key_miss >= ?4 OR NOT EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = ?1 AND g.earned != 'rite' AND g.rowid < (SELECT k.rowid FROM gate_kills k WHERE k.day = ?2 AND k.account = ?1)))`;
+  return (/** @type {any} */ c) => db.prepare(`UPDATE players SET eg_keys = eg_keys + (CASE WHEN ${found} THEN 1 ELSE 0 END), eg_key_miss = CASE WHEN ${found} THEN 0 ELSE eg_key_miss + 1 END
+    WHERE id = ?1 AND changes() > 0 RETURNING eg_keys, eg_key_miss`).bind(player.id, c.d, drawUnder(rand, c.r === 1 ? EG_KEY_ODDS_RITE : EG_KEY_ODDS) ? 1 : 0, EG_KEY_PITY);
+}
+/** AUDIT EG IV (lane3 #16): what egGateWeir's statement answered (its row - claimGate's `weirRow`), as the claim says it:
+ *  `{ found, keys }` - a key found leaves no miss - or null where it rolled nothing. */
+export const egGateWeirAnswer = (/** @type {any} */ row) => (row && Number.isSafeInteger(Number(row.eg_keys)) ? { found: int(row.eg_key_miss) === 0, keys: int(row.eg_keys) } : null);
 /**
  * EG-E3: THE DUNGEON'S FIND (section 5) - an elite foe fallen in a dungeon online, asked by its killer's client with the
  * dungeon's tier (`{ tier }`, a key of EG_FIND_ODDS). The ask is counted before the die (a lost roll spends it too), at

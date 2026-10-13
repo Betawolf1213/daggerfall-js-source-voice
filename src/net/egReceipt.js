@@ -56,6 +56,10 @@ export const EG_END_WHYS = Object.freeze(['fall', 'home', 'tear', 'wipe', 'last'
 /** EG-E3: the optional lists the mint may trim to keep a receipt inside EG_RECEIPT_MAX, in the order it trims them -
  *  each oldest first (a Vestige is appended as it is taken, a Reliquary as its Redoubt falls). */
 export const EG_RECEIPT_TRIMS = Object.freeze(['vs', 'rl']);
+/** AUDIT EG IV (lane3 #7): the most Vestiges a Redoubt's receipt carries, and Reliquaries an end's (the mint's own slices -
+ *  net/egBrain.js owe, oweEnd). */
+export const EG_RECEIPT_LIST_MAX = 32;
+export const EG_RECEIPT_RELS_MAX = 64;
 /** EG-E2: the bound on an end's `an` - one bit a page, thirty pages (net/egAnnals.js EG_ANNALS). */
 export const EG_ANNALS_BITS_MAX = 2 ** 30 - 1;
 /** EG-ZA: a share's whole (`sh`, thousandths), a measure's bound (`m`, each of its EG_MEASURES), the company tag's hex. */
@@ -118,6 +122,17 @@ export function egReceiptValid(c) {
   if (c.m !== undefined && (c.q !== 'w' || !egMeasuresValid(c.m))) return false;
   // AUDIT EG III (lane3 #6): an end's word that its breach ended with no Redoubt taken - 1 or absent, an end's alone
   if (c.nr !== undefined && (c.q !== 'x' || c.nr !== 1)) return false;
+  // AUDIT EG IV (lane3 #7): EVERY FIELD ON ITS OWN KIND, AS THE MINT MAKES IT (net/egBrain.js owe, oweEnd) - the falls (`fl`,
+  // a second fall is final), a Court felled alone (`lb`, a Redoubt's), the Vestiges (`vs`, a Redoubt's: `[id, rank]` pairs,
+  // EG_RECEIPT_LIST_MAX), the Reliquaries (`rl`, an end's: the Redoubts they fell at, EG_RECEIPT_RELS_MAX), the Wager (`wg`,
+  // at most three decrees) and a Redoubt's lord and feats (`lk`, `ft`); the service reads several of them (a wagered row,
+  // the falls, the Lone Beacon), and every other shape was taken
+  if (c.fl !== undefined && !int(c.fl, 0, 2)) return false;
+  if (c.lb !== undefined && (c.q !== 'w' || c.lb !== 1)) return false;
+  if (c.vs !== undefined && (c.q !== 'w' || !Array.isArray(c.vs) || c.vs.length > EG_RECEIPT_LIST_MAX || !c.vs.every((p) => Array.isArray(p) && p.length === 2 && int(p[0], 0, 99) && int(p[1], 1, 3)))) return false;
+  if (c.rl !== undefined && (c.q !== 'x' || !Array.isArray(c.rl) || c.rl.length > EG_RECEIPT_RELS_MAX || !c.rl.every((w) => int(w, 1, 19_999)))) return false;
+  if (c.wg !== undefined && (!Array.isArray(c.wg) || c.wg.length > 3 || !c.wg.every((d) => int(d, 0, 31)))) return false;
+  if ((c.lk !== undefined || c.ft !== undefined) && c.q !== 'w') return false;
   if (c.q === 'w') return int(c.w, 1, 19_999) && c.why === undefined;
   return EG_END_WHYS.includes(c.why) && c.w === undefined;
 }

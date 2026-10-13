@@ -321,14 +321,17 @@ test('AUDIT EG III #3 A HEALER\'S PART (section 16.1: "healed others for at leas
   const took = S.B.ctk;
   assert.ok(Math.abs(took - 0.4) < 1e-9, `what the company took (${took})`);
   const pts = (share) => share * healRef(S.B.mem[me].lv);
-  assert.ok(egHeal(S.B, me, [[healer, pts(took / 16)]], t + 1000, LINE) > 0, 'believed');
+  // PIN MOVED (AUDIT EG IV, lane3 #3): egHeal was asked with the receiver's word alone - a healer's part is now corroborated
+  // by the room's relayed cast (`cast`, its seventh: server/src/index.js _egCastSaw); here the room saw the healer cast
+  const saw = (by) => by === healer;
+  assert.ok(egHeal(S.B, me, [[healer, pts(took / 16)]], t + 1000, LINE, undefined, saw) > 0, 'believed');
   assert.ok(Math.abs(S.B.mem[healer].hh - took / 16) < 1e-9, 'its part a share of the receiver\'s body');
   pullNow(S);
   assert.equal(S.B.mem[healer].act, 1, 'a sixteenth of what was taken: a part');
   const T = breach(2, 1);
   T.toTrial();
   T.B.ctk = 0.4;
-  egHeal(T.B, 'acct-0', [['acct-1', 0.4 / 17 * healRef(40)]], T.now(), LINE);
+  egHeal(T.B, 'acct-0', [['acct-1', 0.4 / 17 * healRef(40)]], T.now(), LINE, undefined, () => true);   // PIN MOVED (AUDIT EG IV): the room saw the cast
   pullNow(T);
   assert.equal(T.B.mem['acct-1'].act, 0, 'a seventeenth: none');
 });

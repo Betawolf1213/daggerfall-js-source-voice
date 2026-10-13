@@ -43,8 +43,15 @@ function d1() {
         async first() { return stmt.get(...args) ?? null; },
         async all() { return { results: stmt.all(...args) }; },
         async run() { const r = stmt.run(...args); return { meta: { changes: Number(r.changes) } }; },
+        _result() { const results = stmt.all(...args); return { results, meta: { changes: /^\s*(INSERT|UPDATE|DELETE|REPLACE)\b/i.test(sql) ? Number(db.prepare('SELECT changes() AS c').get().c) : 0 } }; },
       };
       return api;
+    },
+    // AUDIT EG IV (lane3 #16): a recorded kill's claim is one batch now - its Weir Key's roll rides it (server-account/src/
+    // eg.js egGateWeir), as D1's batch is one transaction
+    async batch(list) {
+      db.exec('BEGIN');
+      try { const out = list.map((st) => st._result()); db.exec('COMMIT'); return out; } catch (e) { db.exec('ROLLBACK'); throw e; }
     },
   };
 }

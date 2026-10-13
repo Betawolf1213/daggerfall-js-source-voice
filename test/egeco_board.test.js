@@ -45,7 +45,7 @@ test('EG-E2 THE DESCENT: three brackets by the company\'s size; only unwagered b
   await end(S, T, A, breach(), { h: 12, td: 900 });
   await end(S, T, B, breach(), { h: 12, t: 800 });   // no `td`: its `t`
   await end(S, T, C, breach(), { h: 15, td: 2000 });
-  await end(S, T, D, breach(), { h: 40, wg: ['chained', 'pack'] });   // wagered: the Depths alone
+  await end(S, T, D, breach(), { h: 40, wg: [1, 4] });   // wagered: the Depths alone - PIN MOVED (AUDIT EG IV, lane3 #7): `['chained', 'pack']`, words the mint never writes and the receipt now refuses; the Wager's decrees by number, as net/egBrain.js oweEnd mints them
   await end(S, T, E, breach(), { h: 40, ew: 2 });   // a deep start: the Depths alone
   await end(S, T, R, breach(), { h: 5, rh: 1, why: 'rehearsal' });   // a Rehearsal: nowhere
   const fb = breach();

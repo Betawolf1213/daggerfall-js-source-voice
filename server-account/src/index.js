@@ -68,8 +68,8 @@
 //   POST /v1/sd/claim    { receipt } -> { recorded, slot?, title?, aura?, broken }   (SD9b: a Brass Remnant's receipt - an Hour broken; Hourbreaker and The Turning Hour rolled on its first write)
 //   POST /v1/eg/keys     {} -> { keys, live, rehearsal, proven, redoubts, sink, annals, feats, first }   (EG-PLAY: the Weir Keys held, the live breach; EG-E1: `sink` the week's Panoply sale, { week, piece }; EG-E2: the Annals' pages kept, each lord's feats; EG-ZF: the first-time lines shown - and First of the Spire's letter, once, to an account its list names)
 //   POST /v1/eg/first    { bits } -> { first }   (EG-ZF: the first-time lines a client showed, OR'ed onto the account - guest 403, bits 400)
-//   POST /v1/eg/open     { rq, rh? } -> { order, b, ez, keys, until, rh }   (EG-PLAY: a key staked - or the day's Rehearsal - and the open order signed; idempotent on `rq`)
-//   POST /v1/eg/admit    { b } -> { order, b }   (EG-PLAY: a member's admission order; one live breach an account)
+//   POST /v1/eg/open     { rq, rh?, ew?, wg?, again? } -> { order, b, ez, keys, until, rh, at? }   (EG-PLAY: a key staked - or the day's Rehearsal - and the open order signed; idempotent on `rq`; EG-F: `ew` the start Redoubt, `wg` the Wager; AUDIT EG IV: `again` 1 the stake `rq` took asked after a lost answer - its order as of its `at`, none taken; refused guest 403, unproven 403, start 403 (`w`), rq/wager 400, live 409 (`b`), short 409 (`keys`), rehearsed 409, spent 409, none 404)
+//   POST /v1/eg/admit    { b } -> { order, b }   (EG-PLAY: a member's admission order; one live breach an account; refused guest 403, breach 400 (no stake opened it), spent 409 (its stake settled or its open window past), start 403 (`w`), live 409 (`b`))
 //   POST /v1/eg/claim    { receipt, character? } -> { recorded, q, b, w?, keys, ... }   (EG-PLAY: an `e1` - a Redoubt taken, a member's end, a void; EG-E1: a Redoubt's `paid`, `again`, `marks`, `deed`, `embers`, `purse`, `weir`, `pity`, an end's `rl`; EG-ZF: an end's `board`, the member's standing - { k: 'descent', br, rank } or { k: 'depths', rank }; EG-E2: `honours`, the titles a Redoubt newly granted)
 //   POST /v1/eg/sink     { piece } -> { ok, piece, week, purse }   (EG-E1: the Broker's Panoply piece, once a week for 20 embers - guest 403, piece 400, bought / short 409)
 //   POST /v1/eg/board    {} -> { ok, season, descent: { alone, few, company }, depths, deepest, proclamation, best }   (EG-E2: the Elite Breach's three boards - egHonours.js)
@@ -216,13 +216,10 @@ import { contractRegionOfRaid } from '../../src/net/writLaw.js';   // CHAP2b: th
 import { claimRaid, raidRecordOf } from './raids.js';   // RAID4: the towns defended
 import { claimSerpent, serpentRecordOf } from './serpents.js';   // SERPENT1: the serpents slain
 import { claimSd, sdRecordOf } from './sds.js';   // SD9b: the Hours broken
-import { egKeysOf, openEg, admitEg, claimEg, rollWeirKey, findEg, egFirstSay } from './eg.js';   // EG-PLAY: the Elite Breach - the Weir Keys, the open, the admission, the claim; EG-E3: a dungeon elite's find
+import { egKeysOf, openEg, admitEg, claimEg, rollWeirKey, findEg, egFirstSay, egGateWeir, egGateWeirAnswer } from './eg.js';   // EG-PLAY: the Elite Breach - the Weir Keys, the open, the admission, the claim; EG-E3: a dungeon elite's find
 import { egBoardOf, withEgHonours } from './egHonours.js';   // EG-E2: the Elite Breach's boards, and Spire Champion on the row
 import { egSink } from './egEconomy.js';   // EG-E1: the Broker's Panoply sink
 import { startsEg } from './egStarts.js';   // EG-F: the start window's preflight
-import { readReceipt } from '../../src/net/gateReceipt.js';   // EG-PLAY: a recorded kill's rite (`r`), for its Weir Key's odds
-/** EG-PLAY: did the fighter who carries this gate receipt break the rite (its `r`)? Read after the claim verified it. */
-const readGateRite = (r) => readReceipt(r)?.r === 1;
 import { voteHome } from './homeVotes.js';   // HOME-VOTE: a town's word on a player's house
 import { claimHome, releaseHome, setHomeEntry, homesInTown, homesOf, setHomeLook, homeLayoutsKept, arenaMoveHome, arenaMovesOf, arenaMoveSeen, holdDeed, inheritHome } from './homes.js';   // HOME1: the online homes' routes; HOME-LOOK: its outside; WD3: the towns' layouts; ARENA4b: the homes the arena displaced, moved; FIELD BUGS 2026-10-04d KNIGHT-HOUSE: a deed held
 import { roomsOf, offerRoom, withdrawRoom, rentRoom, collectRent } from './rent.js';   // HOME-RENT: a home's rooms, rented
@@ -411,6 +408,7 @@ const EG_STATUS = Object.freeze({
   live: 409, short: 409, rehearsed: 409, spent: 409, capped: 409,   // EG-E3: a find past its day's asks
   bought: 409,   // EG-E1: the week's Panoply piece already bought
   start: 403,   // EG-F: a start the account may not make (no carries)
+  none: 404,   // AUDIT EG IV (lane3 #1): an open asked again (`again`) whose request id took no key
 });
 const MARKS_STATUS = Object.freeze({
   'marks-need-account': 403, 'marks-closed': 403, 'marks-young': 403, 'not-developer': 403, 'guild-rank': 403, 'guilds-need-account': 403,
@@ -1065,6 +1063,7 @@ const service = {
         const r = await claimGate(ctx, who.player, body.receipt, await gatePublicKey(env, subtle), {
           strike: (d) => gateStrikeStatement(ctx, who.player, env, d), region: body.region ?? null,
           deeds: (d) => deedStatements(ctx, who.player, env, { kind: 'gate', event: deedEvent('gate', d), character, guard: [d] }),
+          weir: egGateWeir(ctx, who.player),   // AUDIT EG IV (lane3 #16): the Weir Key's roll in the claim's own batch (eg.js)
         });
         // AUDIT WB A5: a refused receipt says WHICH rung refused it - the client keeps one the service can mend (its key
         // not the relay's pair, a clock) and lets go of one it cannot
@@ -1074,7 +1073,7 @@ const service = {
         // (marks.js gateStrikeStatement: 50 under SILVER-WAYS' day's combat cap with the raids', the gate's own day its
         // line's id); `marks` null where Marks are not this account's
         const answer = { ...r };
-        delete answer.day; delete answer.struck; delete answer.deedStruck;   // the service's own: the line's day and whether the batch struck
+        delete answer.day; delete answer.struck; delete answer.deedStruck; delete answer.weirRow;   // the service's own: the line's day and whether the batch struck (AUDIT EG IV: and the key's row)
         if (r.recorded && !r.rite && r.deedStruck !== undefined) answer.deed = await deedAnswer(db, who.player, deedEvent('gate', r.day), r.deedStruck);   // SILVER-WAYS: where a deed was this claim's to try
         // SEAT1b (Seats-Arc 4.2): a kill recorded now is influence for the account's war-guild where it pledged in the
         // region the claim named (`seat` the answer: counted, or why not - the kill stands either way). WB12d: the rite
@@ -1083,8 +1082,9 @@ const service = {
         // CHAP2b (Chapters-Arc 3.3, 4): and the guilds the character is a member of on its Roll that keep a chapter there
         // remember it (npcReceipts.js - after the kill's row, never instead of it)
         if (r.recorded && !r.rite && body.region != null) answer.chapters = await creditReceipt(ctx, who.player, env, { character: body.character ?? null, kind: 'gate', id: r.day, region: body.region });
-        // EG-PLAY: a recorded breach closed rolls a Weir Key (eg.js rollWeirKey - the service's own die, after the row)
-        if (r.recorded && !r.rite) answer.weir = await rollWeirKey(ctx, who.player, { kind: 'gate', rite: readGateRite(body.receipt) });
+        // EG-PLAY: a recorded breach closed rolls a Weir Key - the service's own die; AUDIT EG IV (lane3 #16): in the claim's
+        // own batch, the first decided by the row it wrote (eg.js egGateWeir), its row said here
+        if (r.recorded && !r.rite) answer.weir = egGateWeirAnswer(r.weirRow);
         return json(r.recorded && !r.rite ? { ...answer, marks: await gateStrikeAnswer(ctx, who.player, env, !!r.struck, r.day) } : answer, 200, origin);   // AUDIT WB12d (A2): the rite alone strikes no Drakes, and says none
       }
 

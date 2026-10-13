@@ -380,7 +380,7 @@
   {
     "name": "EGA3-count-heal-unkept",
     "file": "src/net/egBrain.js",
-    "old": "  if (got > 0) list.forEach(([by], i) => { const q = B.mem[by], d = (q?.ht ?? 0) - had[i]; if (d > 0) q.hh = (q.hh ?? 0) + d / healRef(B.mem[sub].lv); });\n",
+    "old": "  if (got > 0) list.forEach(([by], i) => { const q = B.mem[by], d = (q?.ht ?? 0) - had[i]; if (d > 0 && cast(by)) q.hh = (q.hh ?? 0) + d / healRef(B.mem[sub].lv); });   // AUDIT EG IV (lane3 #3): a healer the room saw cast on this member alone\n",
     "new": "",
     "tests": [
       "test/egaudit3_count.test.js"
@@ -389,8 +389,8 @@
   {
     "name": "EGA3-count-heal-in-points",
     "file": "src/net/egBrain.js",
-    "old": "if (d > 0) q.hh = (q.hh ?? 0) + d / healRef(B.mem[sub].lv); });",
-    "new": "if (d > 0) q.hh = (q.hh ?? 0) + d; });",
+    "old": "if (d > 0 && cast(by)) q.hh = (q.hh ?? 0) + d / healRef(B.mem[sub].lv); });",
+    "new": "if (d > 0 && cast(by)) q.hh = (q.hh ?? 0) + d; });",
     "tests": [
       "test/egaudit3_count.test.js"
     ]

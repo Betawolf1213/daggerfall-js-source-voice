@@ -516,8 +516,8 @@
   {
     "name": "EGZA-client-claimed-never-said",
     "file": "src/scenes/egClient.js",
-    "old": "{ drop(); hub()?.sendEg?.('claimed', { b: c.b, q: c.q, w: c.q === 'w' ? c.w : 0 }); }",
-    "new": "{ drop(); }",
+    "old": "{ drop(); countedAdd(c); hub()?.sendEg?.('claimed', { b: c.b, q: c.q, w: c.q === 'w' ? c.w : 0 }); }",
+    "new": "{ drop(); countedAdd(c); }",
     "tests": [
       "test/egz_keys.test.js"
     ]

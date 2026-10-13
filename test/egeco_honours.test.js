@@ -11,6 +11,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { standService, T0 } from './accountDb.mjs';
 import { mintEgReceipt, egReceiptValid, EG_ANNALS_BITS_MAX } from '../src/net/egReceipt.js';
+import { EG_RECEIPT_TTL_S } from '../src/net/egReceipt.js';   // AUDIT EG IV (lane3 #13): a season's champions kept once its late ends are claimed
 import { TITLES, AURAS, mintToken, verifyToken } from '../src/net/identityToken.js';
 import { readAura } from '../src/net/wire.js';
 import { arenaSeasonOf, arenaSeasonEndsS } from '../src/net/arenaLaw.js';
@@ -136,8 +137,13 @@ test('EG-E2 SPIRE CHAMPION: each Descent bracket\'s top ten companies at a seaso
   const cb = breach();
   for (const who of co) await S.call('/v1/eg/claim', { receipt: await mintEgReceipt({ q: 'x', b: cb, s: who.id, z: 'z'.repeat(16), c: 3, h: 12, t: 800, n: 3, ew: 0, l: 9, why: 'home' }, S.gatePriv, { subtle, nowS: now() }) }, who.secret);
   assert.equal(await wears(S, solos[0], 'spirechampion'), false, 'nobody holds it in the season being run');
-  // THE NEXT SEASON: its first read keeps the last one's top tens
+  // THE NEXT SEASON: its first read keeps the last one's top tens - PIN MOVED (AUDIT EG IV, lane3 #13): at its first minute
+  // they were kept; now the standing is worn as it is until the season is a receipt's life past its end, and kept then
   at(arenaSeasonEndsS(season) + 60);
+  _resetEgHonoursCache();
+  assert.ok(await wears(S, solos[0], 'spirechampion'), 'the first alone holds it at once');
+  assert.equal(S.env.DB._raw.prepare('SELECT COUNT(*) AS n FROM eg_champions WHERE season = ?').get(season).n, 0, 'worn, not yet kept');
+  at(arenaSeasonEndsS(season) + EG_RECEIPT_TTL_S + 60);
   _resetEgHonoursCache();
   assert.ok(await wears(S, solos[0], 'spirechampion'), 'the first alone holds it');
   assert.ok(await wears(S, solos[9], 'spirechampion'), 'the tenth');
