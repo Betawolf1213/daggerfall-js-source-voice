@@ -32,7 +32,7 @@
   {
     "name": "OW5b-D2-index-trusted",
     "file": "src/scenes/world.js",
-    "old": "    if (loc?.spawned && _spawnLedger.expired(key, _spawnClock()) && !_insideSpawn(key)) {",
+    "old": "    if (loc?.spawned && !loc.wildHall && _spawnLedger.expired(key, _spawnClock()) && !_insideSpawn(key)) {",
     "new": "    if (false) {",
     "tests": [
       "test/spawneddungeons.test.js"
@@ -52,8 +52,8 @@
   {
     "name": "OW5b-D2-gone-while-standing",
     "file": "src/scenes/world.js",
-    "old": "return _spawnLedger.expired(key, _spawnClock()) && !_insideSpawn(key) && built.get(key)?.location == null; };",
-    "new": "return _spawnLedger.expired(key, _spawnClock()) && !_insideSpawn(key); };",
+    "old": "return b ? b.location == null : _spawnLedger.expired(key, _spawnClock()); };",
+    "new": "return _spawnLedger.expired(key, _spawnClock()); };",
     "tests": [
       "test/tv6_dungeons.test.js"
     ],

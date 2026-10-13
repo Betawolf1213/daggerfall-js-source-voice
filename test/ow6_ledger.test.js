@@ -13,19 +13,19 @@ import { readFileSync } from 'node:fs';
 
 import {
   OW_BAND_LIFE_MS, OW_RAIDER_LIFE_MS, OW_BAND_CELL_PX, OW_RAIDER_CELL_PX, OW_WORLD_SALT, OW_SPAWN_CHANCE, OW_CELL_MARGIN_PX,
-  OW_ROW_KEEP_MS, OW_ROW_KEEP_MIN, OW_ROW_SLACK_MIN, OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, OW_CELL_SPENT_MAX, OW_CELL_ROWS_MAX,
+  OW_GENERAL_TTL_MIN, OW_CLEARED_TTL_MIN, OW_REBIRTH_MIN, owRowUntil, OW_ROW_SLACK_MIN, OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, OW_CELL_SPENT_MAX, OW_CELL_ROWS_MAX,
   owIdKind, owIdLife, owIdLive, owIdUntil, owIdPixel, owLifeMs, owCellSquare, owIdInCell, owRowInCell, owSpawnsDungeon,
   owRowKey, owRowSane, owRowFits, newOwLedger, owLedgerEmpty, owLedgerOf, owFoldSpent, owFoldRows, owRowsBehind, owPrune,
   toWelcome,
 } from '../src/net/overworldLaw.js';
 import {
   parseClient, validOwIn, validOwOut, owGate, owRoomGate, relaySupportsOverworld, OW_RELAY_MIN, OW_HZ_MAX, OW_BURST_MAX,
-  OW_ROOM_HZ_MAX, OW_KINDS, OW_LEDGER_KEY, OW_BAND_ID_RE, OW_RAIDER_ID_RE, owWireRow, cellOfRoom, RELAY_VERSION,
-  worldRoom, WORLD_CELL, PIXEL_UNITS, DROP_STRIKES_MAX, sharedClassicMinutes, ONLINE_MINUTES_PER_MS,
+  OW_ROOM_HZ_MAX, OW_KINDS, OW_LEDGER_KEY, OW_BAND_ID_RE, OW_RAIDER_ID_RE, owWireRow, cellOfRoom, isCellRoom, RELAY_VERSION,
+  worldRoom, WORLD_CELL, PIXEL_UNITS, DROP_STRIKES_MAX, sharedClassicMinutes, wallMsForClassicMinutes, ONLINE_MINUTES_PER_MS,
 } from '../src/net/wire.js';
 import { BAND_LIFE_MS, BAND_CELL_PX, BAND_ID_RE, bandsNear, bandPixelOf, wanderAt, BAND_WANDER_MPS } from '../src/systems/travelBands.js';
 import { RAIDER_LIFE_MS, RAIDER_CELL_PX, RAIDER_SAIL_MPS, raidersNear, pixelOfNative } from '../src/systems/seaRaiders.js';
-import { WORLD_SALT, ANY_SPAWN_CHANCE, spawnsDungeon, createSpawnLedger } from '../src/world/spawnedDungeons.js';
+import { WORLD_SALT, ANY_SPAWN_CHANCE, spawnsDungeon, createSpawnLedger, GENERAL_TTL_MINUTES, CLEARED_TTL_MINUTES, REBIRTH_TTL_MINUTES, spawnDeath } from '../src/world/spawnedDungeons.js';
 import { RAID_SLACK_MINUTES } from '../src/net/raidLaw.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { OnlineSession } from '../src/net/online.js';
@@ -57,8 +57,12 @@ const firstSpawn = (xs, y) => { for (const x of xs) if (spawnsDungeon(WORLD_SALT
 const EDGE = firstSpawn([88, 89, 90, 91, 92, 93, 94, 95], 200);
 const BEYOND = firstSpawn([87, 86, 85, 84, 83, 82, 81, 80], 200);
 const ON = { x: PX * PIXEL_UNITS + 16384, y: 0, z: (499 - PY) * PIXEL_UNITS + 16384, yaw: 0, pitch: 0 };
+/** SPAWN-REBIRTH: the longest a row is kept - an uncleared spawn's seven days and the wait before it stands again -
+ *  in classic minutes, and in real ms of the shared clock. */
+const LIFE = OW_GENERAL_TTL_MIN + OW_REBIRTH_MIN;
+const LIFE_MS = LIFE / ONLINE_MINUTES_PER_MS;
 
-test('OW6L law: THE PINNED COPIES are their homes\' own - the lives, the cells, the band\'s id shape, the salt and the chance - and the spawn roll agrees with spawnsDungeon on every pixel of the map; the keep is sixty real days of the shared clock, the slack two clocks\' skew (mutants: a life, a cell, the chance or the salt off; the roll off its lane)', () => {
+test('OW6L law: THE PINNED COPIES are their homes\' own - the lives, the cells, the band\'s id shape, the salt and the chance - and the spawn roll agrees with spawnsDungeon on every pixel of the map; SPAWN-REBIRTH: the two clocks and the wait are the spawn ledger\'s, the wait twenty-four real hours of the shared clock, the slack two clocks\' skew (mutants: a life, a cell, the chance or the salt off; the roll off its lane; a clock or the wait off)', () => {
   assert.equal(OW_BAND_LIFE_MS, BAND_LIFE_MS, 'travelBands.js BAND_LIFE_MS');
   assert.equal(OW_RAIDER_LIFE_MS, RAIDER_LIFE_MS, 'seaRaiders.js RAIDER_LIFE_MS');
   assert.equal(OW_BAND_CELL_PX, BAND_CELL_PX);
@@ -70,9 +74,13 @@ test('OW6L law: THE PINNED COPIES are their homes\' own - the lives, the cells, 
   let off = 0;
   for (let px = 0; px < 1000; px++) for (let py = 0; py < 500; py++) if (owSpawnsDungeon(px, py) !== spawnsDungeon(WORLD_SALT, px, py)) off++;
   assert.equal(off, 0, 'the relay\'s roll is the world\'s, pixel for pixel');
-  assert.equal(OW_ROW_KEEP_MS, 60 * 24 * 3600 * 1000);
-  assert.equal(OW_ROW_KEEP_MIN, sharedClassicMinutes(T0 + OW_ROW_KEEP_MS) - M0, 'the wire\'s minutes-per-ms law');
-  assert.equal(OW_ROW_KEEP_MIN, OW_ROW_KEEP_MS * ONLINE_MINUTES_PER_MS);
+  assert.equal(OW_GENERAL_TTL_MIN, GENERAL_TTL_MINUTES, 'spawnedDungeons.js GENERAL_TTL_MINUTES');
+  assert.equal(OW_CLEARED_TTL_MIN, CLEARED_TTL_MINUTES, 'spawnedDungeons.js CLEARED_TTL_MINUTES');
+  assert.equal(OW_REBIRTH_MIN, REBIRTH_TTL_MINUTES, 'spawnedDungeons.js REBIRTH_TTL_MINUTES');
+  assert.equal(OW_REBIRTH_MIN, sharedClassicMinutes(T0 + 24 * 3600 * 1000) - M0, 'the wait is twenty-four real hours - the wire\'s minutes-per-ms law');
+  for (const r of [[1, 1, 0], [1, 1, 0, 0], [1, 1, 0, 6 * 1440], [1, 1, 500, 900]]) {
+    assert.equal(owRowUntil(r), spawnDeath({ seen: r[2], cleared: r[3] }) + REBIRTH_TTL_MINUTES, `a row's end is its spawn's death and the wait: ${r}`);
+  }
   assert.equal(OW_ROW_SLACK_MIN, RAID_SLACK_MINUTES);
   const r = raidersNear({ at: { x: PX, y: PY }, ms: T0, open: () => true, sea: () => true });
   assert.ok(r.length && r.every((x) => owIdKind(x.id) === 'raider'), 'seaRaiders.js\'s own ids are raiders\' ids');
@@ -190,15 +198,17 @@ test('OW6L law: THE ROWS, MIN-MERGED - a row is its pixel\'s earliest first sigh
   assert.ok(!owRowSane([EMPTY[0], EMPTY[1], 5]), 'a pixel the roll leaves empty');
   assert.ok(!owRowSane([x, y, 5, 4]), 'cleared before it was seen');
   for (const bad of [[x, y], [x, y, -1], [x, y, NaN], [1000, 1, 5], [x, 500, 5], [x + 0.5, y, 5], [x, y, 5, 6, 7], 'x', null]) assert.ok(!owRowSane(bad), JSON.stringify(bad));
-  // fit: the keep's window, and the slack
-  assert.deepEqual(owRowFits([x, y, M0 - OW_ROW_KEEP_MIN], M0), [x, y, M0 - OW_ROW_KEEP_MIN], 'the keep\'s first minute');
-  assert.equal(owRowFits([x, y, M0 - OW_ROW_KEEP_MIN - 1], M0), null, 'past the keep: dropped');
+  // fit: a life not yet over (SPAWN-REBIRTH), and the slack
+  assert.deepEqual(owRowFits([x, y, M0 - LIFE + 1], M0), [x, y, M0 - LIFE + 1], 'the life\'s last minute');
+  assert.equal(owRowFits([x, y, M0 - LIFE], M0), null, 'its spawn stood again: dropped');
+  assert.deepEqual(owRowFits([x, y, M0 - LIFE + 1, M0 - OW_CLEARED_TTL_MIN - OW_REBIRTH_MIN + 1], M0), [x, y, M0 - LIFE + 1, M0 - OW_CLEARED_TTL_MIN - OW_REBIRTH_MIN + 1], 'cleared: the short clock\'s life\'s last minute');
+  assert.equal(owRowFits([x, y, M0 - LIFE + 1, M0 - OW_CLEARED_TTL_MIN - OW_REBIRTH_MIN], M0), null, 'the short clock ends a life first');
   assert.deepEqual(owRowFits([x, y, M0 + OW_ROW_SLACK_MIN], M0), [x, y, M0], 'a clock a little ahead is taken at now');
   assert.equal(owRowFits([x, y, M0 + OW_ROW_SLACK_MIN + 1], M0), null, 'one further is no clock');
   assert.deepEqual(owRowFits([x, y, M0 - 5, M0 + 1], M0), [x, y, M0 - 5, M0]);
   assert.equal(owRowFits([x, y, M0 - 5, M0 + OW_ROW_SLACK_MIN + 1], M0), null);
   assert.equal(owRowFits([EMPTY[0], EMPTY[1], M0], M0), null); assert.equal(owRowFits([x, y, M0], NaN), null);
-  assert.deepEqual(owFoldRows(newOwLedger(), [[x, y, M0 - OW_ROW_KEEP_MIN - 1], [EMPTY[0], EMPTY[1], M0], 'x'], M0), [], 'nothing a ledger may take');
+  assert.deepEqual(owFoldRows(newOwLedger(), [[x, y, M0 - LIFE], [EMPTY[0], EMPTY[1], M0], 'x'], M0), [], 'nothing a ledger may take');
 });
 
 test('OW6L law: THE BOUNDS AND THE PRUNE - OW_CELL_ROWS_MAX rows, the oldest first sight out first; a row past the keep and a spent id past its end pruned (answered: something went); the welcome is the live ledger, bounded, and never touches it; a stored ledger reads back only what is well formed (mutants: the rows unbounded; the newest sight dropped; the prune never answering; the welcome stale)', () => {
@@ -213,10 +223,10 @@ test('OW6L law: THE BOUNDS AND THE PRUNE - OW_CELL_ROWS_MAX rows, the oldest fir
   // the prune
   const p = newOwLedger();
   owFoldSpent(p, [bandIn(0), raiderIn()], T0);
-  owFoldRows(p, [[...S1, M0 - 10], [...S2, M0 - OW_ROW_KEEP_MIN + 5]], M0);
+  owFoldRows(p, [[...S1, M0 - 10], [...S2, M0 - LIFE + 5]], M0);
   assert.equal(owPrune(p, T0), false, 'nothing due');
   const w = toWelcome(p, T0);
-  assert.deepEqual(w, { sp: [bandIn(0), raiderIn()], dg: [[...S1, M0 - 10], [...S2, M0 - OW_ROW_KEEP_MIN + 5]] });
+  assert.deepEqual(w, { sp: [bandIn(0), raiderIn()], dg: [[...S1, M0 - 10], [...S2, M0 - LIFE + 5]] });
   const t1 = owIdUntil(bandIn(0));
   assert.deepEqual(toWelcome(p, t1).sp, [raiderIn()], 'the welcome says the live alone...');
   assert.equal(p.sp.length, 2, '...and touches nothing');
@@ -237,6 +247,26 @@ test('OW6L law: THE BOUNDS AND THE PRUNE - OW_CELL_ROWS_MAX rows, the oldest fir
     { sp: [[bandIn(0), 5]], dg: { [owRowKey(...S1)]: [...S1, 7] } });
   const copy = owLedgerOf(p);
   assert.deepEqual(copy, p); assert.notEqual(copy.dg[owRowKey(...S1)], p.dg[owRowKey(...S1)], 'a copy, never the live rows');
+});
+
+test('SPAWN-REBIRTH relay law: a row is kept until its spawn stands again and not a minute past - the fold lets it go before it folds, so a later life\'s first entry is taken whole and never min-merged into the life before (the cell no longer keeps a spawn gone sixty real days); the prune and the welcome hold the same end (mutants: the old life kept; the wait off; the prune at the old keep)', () => {
+  const [x, y] = S1;
+  const led = newOwLedger();
+  owFoldRows(led, [[x, y, M0 - LIFE + 10]], M0);
+  assert.deepEqual(led.dg[owRowKey(x, y)], [x, y, M0 - LIFE + 10], 'a life near its end, held');
+  assert.deepEqual(owFoldRows(led, [[x, y, M0 + 9]], M0 + 9), [], 'a minute before its end, a later entry is the same life\'s: nothing new');
+  assert.deepEqual(owFoldRows(led, [[x, y, M0 + 10]], M0 + 10), [[x, y, M0 + 10]], 'its spawn stood again: the new life\'s first entry, whole');
+  assert.deepEqual(led.dg[owRowKey(x, y)], [x, y, M0 + 10]);
+  const at = (min) => wallMsForClassicMinutes(min);
+  assert.equal(owPrune(led, at(M0 + 10 + LIFE - 1)), false, 'kept to the new life\'s last minute');
+  assert.equal(toWelcome(led, at(M0 + 10 + LIFE - 1)).dg.length, 1);
+  assert.equal(toWelcome(led, at(M0 + 10 + LIFE)).dg.length, 0, 'the welcome says none once it is over');
+  assert.equal(owPrune(led, at(M0 + 10 + LIFE)), true, 'and the prune lets it go');
+  assert.deepEqual(led.dg, {});
+  const cleared = newOwLedger();
+  owFoldRows(cleared, [[x, y, M0 - 100, M0 - 50]], M0);
+  assert.equal(owPrune(cleared, at(M0 - 50 + OW_CLEARED_TTL_MIN + OW_REBIRTH_MIN - 1)), false);
+  assert.equal(owPrune(cleared, at(M0 - 50 + OW_CLEARED_TTL_MIN + OW_REBIRTH_MIN)), true, 'a cleared spawn stands again two days and the wait after its clear');
 });
 
 // ═══ THE WIRE ════════════════════════════════════════════════════════════════════════════════════
@@ -277,7 +307,7 @@ test('OW6L wire: the `ow` word - after a hello, projected by validOwIn, the whol
   assert.equal(rpass, OW_ROOM_HZ_MAX);
   assert.equal(OW_RELAY_MIN, 127, 'world125 (VOICE1, reverted) and world126 (DISCORD-GATES\' branch) are never reused');
   assert.deepEqual(['world124', 'world125', 'world126', 'world127', 'world130', 'junk', null].map(relaySupportsOverworld), [false, false, false, true, true, false, false]);
-  assert.equal(RELAY_VERSION, 'world198');   // PIN MOVED: world198, EG-PLAY (the room of an Elite Breach - the hub opening it and calling its company, its halls and their director, its own fight, its receipts; world195 on its branch, renumbered past COATS1, CHAT-LANG and BAL8 at the merges); PIN MOVED: world197, BAL8 (the PvP referee and its one harm ceiling - every fighter, blows and casts together at most 180 in any 5 s); PIN MOVED: world196, CHAT-LANG (the language channels joined the whitelist) over world195, COATS1 (the horse look: rc on a mounted pose, hc on a parked word; world194 on its branch, renumbered past SLIM-FRAME at the merge); PIN MOVED: world194, SLIM-FRAME (the place on the second wire in its own units - every height in metres to the centimetre, the x and z of a dungeon, a town and a building too, those of a cell in whole world units); PIN MOVED: world193, SERPENT4 (the sea serpent reworked - its waters open until it dives, hands strike it with their own weapons, a party shares the kill, its girth; its law version 3 - world192 on its branch, renumbered past SCALE5c at the merge); PIN MOVED: world192 (past WARDEN1, world191 on main, at the merge), SCALE5c (the hub split sixteen ways - the shards hold the sockets, the bus runs every law over a virtual socket for each; a search of everyone online by name, and the guild online on every shard); PIN MOVED: world191, SCALE5b (the second wire - batched slim poses, a channel roster and a beat in one frame - the relay hygiene, its metrics and run-time settings, the halo referee word); PIN MOVED: world190, AUDIT MW-NPC II (the foe look on the wire - world188, then world189, on its branch, renumbered past INT11-INT14 and SCALE5a at the merges); PIN MOVED: world189, SCALE5a (the hub's hello and leave without a walk of every socket; a busy refusal's token unread); PIN MOVED: world188, INT11-INT14 (the INTEGRITY arc's lane 3 - world186 on its branch, renumbered past SD-HERALD's world186 and WAGONS1's world187 at the merge); CHAP4c moved it on last (world183: the chapters' seats' titles - five ids and their claim on the token; NOT YET DEPLOYED - world177, world178, world179, world180, world181 then world182 on its branch, renumbered past THE WROTHGARIAN ZONE's, TAVERN CARDS', HOURS-FIRST's, TAVERN-TABLES', TV-BEYOND's and CARDS10's at the merges of main); CARDS10 moved it on (world182: Iliac Hand's season board, its champion's title in the token's vocabulary); TV-BEYOND moved it on (world181: the world's pixels on the wire Tamriel's, not the Bay's); TAVERN-TABLES moved it on (world180: the gold table an index - two card tables a tavern); HOURS-FIRST moved it on (world179: Hour's First and The First Hour in the token's vocabulary); TAVERN CARDS moved it on (world178: the card tables); THE WROTHGARIAN ZONE moved it on (world177: the open zone, its halls and its giants); SUPER-DUNGEONS moved it on (world176: the Super Dungeons arc, one version - SD-ONLINE first: a dungeon re-laid at the size the world gives it, small or medium, stands in a room of its own, so a page that lays it whole shares no stream and no memory with it; world171 on its branch, renumbered past CRYSTAL-FIST's world171 at one merge and past WATCH-FIX's world172, SERPENT3's world173 and LEGACY7's world174 at the next, and past TEXT-F1's world175 at the one after; TEXT-F1 moved it on (world175: the words a player types starred in sanitizeChat and wordsLine, a custom class the filter catches dropped from a look); LEGACY7 moved it on (world174: the house on the token and the row - world172 on its branch, renumbered past WATCH-FIX's world172 and SERPENT3's world173 at the merge); SERPENT3 moved it on (world173: the sea serpent brain swims every leg it shows - no leap - a slept fight taken up where it was and a blow judged where it struck; its law version 2; world171 on its branch, renumbered past CRYSTAL-FIST's world171 and WATCH-FIX's world172 at the merges); WATCH-FIX moved it on (world172: the foe record names the living-world resident a watchman stands for, `lr`); CRYSTAL-FIST moved it on (world171: the Crystal Fist's title and glyph and the Crystal Resonance's aura join the token's vocabulary - a relay before it refuses Flylighter's token; world170 on its branch, renumbered past FEUD's world170 at the merge); FEUD moved it on (world170: the foe record's wind-ups, staggers and blow classes and a revenant's adaptations, weakness, last stand, band follower, blows and signature - TELL8, AUDIT TELL, RVN13 and FEUD WIRE, world162-world165 on its branch, renumbered past main's world169 at its merge); AUDIT ARENA-LADDER moved it on (world169: the arena ladder audit - elite champions, telegraphed blows, a judging floor and the attempt ticket - world167 on its branch, renumbered past SHADOW-CLOAK and SERAPH-WINGS at the merges); SERAPH-WINGS moved it on (world168: the Seraph Wings join the aura vocabulary of the token - a relay before it refuses the token of a developer wearing them); SHADOW-CLOAK moved it on (world167: the Holo Shadow Cloak joins the token's aura vocabulary - a relay before it refuses SirMcMobdon's token once they wear it; world165 on its branch, renumbered past SERPENT1 and SERPENT2 at the merges); SERPENT2 moved it on (world166: the serpent herald - a serpent site word to the hub, its bells and its kill posted to Discord); SERPENT1 moved it on (world165: the serpent frame - a sea serpent fight in the cell of its site; world162 on its branch, renumbered past PRIMARCH (world162) and SUNBABY1 (world163), then PARTY-LEAD (world164), at the merges); PARTY-LEAD moved it on (world164: the hub's party.lead act - a leader hands the lead to a member); SUNBABY1 moved it on (world163: the hub's live events gain the sun baby's word - LIVE_EVENTS, no frame changes shape); PRIMARCH moved it on (world162: the Primarch's title and glyph and the Golden Radiance's aura join the token's vocabulary - a relay before it refuses GA00250's token); GUILD2 moved it on (world161: no wire change - the guild and heraldry laws moved under the relay); AEGIS moved it on (world160: the Aegis of Oblivion's title and glyph and the Oblivion Ward's aura join the token's vocabulary - a relay before it refuses Sureme's token); ARENA4 moved it on (world155: the arena rooms - the hall queue, the refereed bouts, the stands - and the arena titles and laurel on the token - world142 on its branch, renumbered past main's FRIENDS-SYNC, ELITE FOES, the Seats arc, WB12, GLYPH-WEAR, REVENANT-WIRE and BROKER-CAGE (world142-world154) at the merge); BROKER-CAGE moved it on (world154: the rite word says every one of the faithful fell, and the hub says the Broker cage open); REVENANT-WIRE moved it on (world153: the foe record carries a revenant's name, nm, and a beaten one's kneel, burning and oath, yd/ex/sp); GLYPH-WEAR moved it on (world152); WB12 moved it on (world151: Dagon's Breach - its words in the omen's lines and the herald's posts, the faithful's rite - main's CLIMB5 and CLIMB6, FRIENDS-SYNC, ELITE FOES and the Seats arc took world141-world150 first); before it SEAT2b part two (b) moved it on (world150: the works in battle); SEASON1 part two, the banner ribbon moved it on (world149: the banner ribbon - the Seats arc's six relays renumbered past main's HERALD, LOOT7, WB11 and CLIMB5 (world138-world141) at the merge); CROWN1 part two moved it on (world148: the Royal Tourney); SEAT2a moved it on (world147: the siege battle); PVP-REF moved it on (world146: the refereed siege room); SEAT1c moved it on (world145: the seats' titles and glyphs - five generic title ids, a `ts` claim beside them, four glyphs); SEAT1b moved it on (world144: the Watch's tick - a `watch` frame carrying a `k1` receipt the relay signs, net/watchReceipt.js); ELITE FOES moved it on (world143: the foe record carries an elite foe, z, so a puppet stands as one); before it FRIENDS-SYNC moved it on (world142: the hub account is the signed-in player - the token subject - and a browser profile list is merged into it once); before it CLIMB5 and CLIMB6 moved it on (world141: the pose's climb - `cl`, `cw` and a move's `ck`, `cy`, `cd`); before it WB11 moved it on (world140: the host of the Legion-Lord - the `ahit` blow on one of it, the words `ad`, `amv`, `aatk`, `ah` and `adie` of the room, `lg` in the state, `a` in a chart row, the brain law 5; GATE-HEAL's `heal` and a chart row's `hl` with it - main's HERALD and LOOT7 took world138 and world139 first); before it LOOT7 moved it on (world139: the street foe record field `cp`, a champion trait - HERALD took world138 first); before it HERALD moved it on (world138: `herald` joins the titles and glyphs a token carries, the Patreon tier between Disciple and Hierophant); before it KEPT-KILL moved it on (world137: the party pose field `qk`, the kills of quest foes a member held for a partner, counted by every copy of the quest); before it GATE-UX moved it on (world136: the damage chart made at the kill - every challenger and their part, ranked, on the `fell` word of the court and on the fall in the state (`dm`)); before it WB9 moved it on (world135: the three courts of the Warden and the Reckoning of Dagon - his court and the walkways laid in the state (`ct`, `xa`), the crystals, their breaking and the stun (`cx`, `cxh`, `cxb`, `stun`, `su`, `rk`) and a blow on a crystal (`xhit`), judged and fanned by the relay - main's PARTY-MAP took world134 first); before it PARTY-MAP moved it on (world134: the `amap` frame, the automap rows a Shared Cartography caster reveals, to the party alone); before it SOFTCAP1 moved it on (world133: the party pose `cl`, a member character level for mentor mode); before it STRIKE-SHARED moved it on (world132: the strike spell on a hit and the trapper on a dead foe, both read by the clients alone); before it MERGE 2 moved it on (world131: the professions branch, BOUNTY1 + AUDIT 28 - `bq` and `lv` on the party pose, `k`, `a` and `t` on a bounty row - world125 on its branch, never deployed, a number VOICE1 took on main); before it REALM-DOOR moved it on (world130: the door refuses a token the account service signed as naming no realm character); before it PENITENT's badge vocabulary (world129); before it THE MERGE with PR 418: WB8 moved it on last (world128 - world126 on its branch, one relay past OW6L's world127); relaySupportsOverworld holds past it
+  assert.equal(RELAY_VERSION, 'world199');   // PIN MOVED: world199, EG-PLAY (the room of an Elite Breach - the hub opening it and calling its company, its halls and their director, its own fight, its receipts; world195 on its branch, renumbered past COATS1, CHAT-LANG, BAL8 and SPAWN-REBIRTH at the merges); PIN MOVED: world198, SPAWN-REBIRTH (a cell keeps the row of a spawned dungeon until it stands again, never sixty real days); PIN MOVED: world197, BAL8 (the PvP referee and its one harm ceiling - every fighter, blows and casts together at most 180 in any 5 s); PIN MOVED: world196, CHAT-LANG (the language channels joined the whitelist) over world195, COATS1 (the horse look: rc on a mounted pose, hc on a parked word; world194 on its branch, renumbered past SLIM-FRAME at the merge); PIN MOVED: world194, SLIM-FRAME (the place on the second wire in its own units - every height in metres to the centimetre, the x and z of a dungeon, a town and a building too, those of a cell in whole world units); PIN MOVED: world193, SERPENT4 (the sea serpent reworked - its waters open until it dives, hands strike it with their own weapons, a party shares the kill, its girth; its law version 3 - world192 on its branch, renumbered past SCALE5c at the merge); PIN MOVED: world192 (past WARDEN1, world191 on main, at the merge), SCALE5c (the hub split sixteen ways - the shards hold the sockets, the bus runs every law over a virtual socket for each; a search of everyone online by name, and the guild online on every shard); PIN MOVED: world191, SCALE5b (the second wire - batched slim poses, a channel roster and a beat in one frame - the relay hygiene, its metrics and run-time settings, the halo referee word); PIN MOVED: world190, AUDIT MW-NPC II (the foe look on the wire - world188, then world189, on its branch, renumbered past INT11-INT14 and SCALE5a at the merges); PIN MOVED: world189, SCALE5a (the hub's hello and leave without a walk of every socket; a busy refusal's token unread); PIN MOVED: world188, INT11-INT14 (the INTEGRITY arc's lane 3 - world186 on its branch, renumbered past SD-HERALD's world186 and WAGONS1's world187 at the merge); CHAP4c moved it on last (world183: the chapters' seats' titles - five ids and their claim on the token; NOT YET DEPLOYED - world177, world178, world179, world180, world181 then world182 on its branch, renumbered past THE WROTHGARIAN ZONE's, TAVERN CARDS', HOURS-FIRST's, TAVERN-TABLES', TV-BEYOND's and CARDS10's at the merges of main); CARDS10 moved it on (world182: Iliac Hand's season board, its champion's title in the token's vocabulary); TV-BEYOND moved it on (world181: the world's pixels on the wire Tamriel's, not the Bay's); TAVERN-TABLES moved it on (world180: the gold table an index - two card tables a tavern); HOURS-FIRST moved it on (world179: Hour's First and The First Hour in the token's vocabulary); TAVERN CARDS moved it on (world178: the card tables); THE WROTHGARIAN ZONE moved it on (world177: the open zone, its halls and its giants); SUPER-DUNGEONS moved it on (world176: the Super Dungeons arc, one version - SD-ONLINE first: a dungeon re-laid at the size the world gives it, small or medium, stands in a room of its own, so a page that lays it whole shares no stream and no memory with it; world171 on its branch, renumbered past CRYSTAL-FIST's world171 at one merge and past WATCH-FIX's world172, SERPENT3's world173 and LEGACY7's world174 at the next, and past TEXT-F1's world175 at the one after; TEXT-F1 moved it on (world175: the words a player types starred in sanitizeChat and wordsLine, a custom class the filter catches dropped from a look); LEGACY7 moved it on (world174: the house on the token and the row - world172 on its branch, renumbered past WATCH-FIX's world172 and SERPENT3's world173 at the merge); SERPENT3 moved it on (world173: the sea serpent brain swims every leg it shows - no leap - a slept fight taken up where it was and a blow judged where it struck; its law version 2; world171 on its branch, renumbered past CRYSTAL-FIST's world171 and WATCH-FIX's world172 at the merges); WATCH-FIX moved it on (world172: the foe record names the living-world resident a watchman stands for, `lr`); CRYSTAL-FIST moved it on (world171: the Crystal Fist's title and glyph and the Crystal Resonance's aura join the token's vocabulary - a relay before it refuses Flylighter's token; world170 on its branch, renumbered past FEUD's world170 at the merge); FEUD moved it on (world170: the foe record's wind-ups, staggers and blow classes and a revenant's adaptations, weakness, last stand, band follower, blows and signature - TELL8, AUDIT TELL, RVN13 and FEUD WIRE, world162-world165 on its branch, renumbered past main's world169 at its merge); AUDIT ARENA-LADDER moved it on (world169: the arena ladder audit - elite champions, telegraphed blows, a judging floor and the attempt ticket - world167 on its branch, renumbered past SHADOW-CLOAK and SERAPH-WINGS at the merges); SERAPH-WINGS moved it on (world168: the Seraph Wings join the aura vocabulary of the token - a relay before it refuses the token of a developer wearing them); SHADOW-CLOAK moved it on (world167: the Holo Shadow Cloak joins the token's aura vocabulary - a relay before it refuses SirMcMobdon's token once they wear it; world165 on its branch, renumbered past SERPENT1 and SERPENT2 at the merges); SERPENT2 moved it on (world166: the serpent herald - a serpent site word to the hub, its bells and its kill posted to Discord); SERPENT1 moved it on (world165: the serpent frame - a sea serpent fight in the cell of its site; world162 on its branch, renumbered past PRIMARCH (world162) and SUNBABY1 (world163), then PARTY-LEAD (world164), at the merges); PARTY-LEAD moved it on (world164: the hub's party.lead act - a leader hands the lead to a member); SUNBABY1 moved it on (world163: the hub's live events gain the sun baby's word - LIVE_EVENTS, no frame changes shape); PRIMARCH moved it on (world162: the Primarch's title and glyph and the Golden Radiance's aura join the token's vocabulary - a relay before it refuses GA00250's token); GUILD2 moved it on (world161: no wire change - the guild and heraldry laws moved under the relay); AEGIS moved it on (world160: the Aegis of Oblivion's title and glyph and the Oblivion Ward's aura join the token's vocabulary - a relay before it refuses Sureme's token); ARENA4 moved it on (world155: the arena rooms - the hall queue, the refereed bouts, the stands - and the arena titles and laurel on the token - world142 on its branch, renumbered past main's FRIENDS-SYNC, ELITE FOES, the Seats arc, WB12, GLYPH-WEAR, REVENANT-WIRE and BROKER-CAGE (world142-world154) at the merge); BROKER-CAGE moved it on (world154: the rite word says every one of the faithful fell, and the hub says the Broker cage open); REVENANT-WIRE moved it on (world153: the foe record carries a revenant's name, nm, and a beaten one's kneel, burning and oath, yd/ex/sp); GLYPH-WEAR moved it on (world152); WB12 moved it on (world151: Dagon's Breach - its words in the omen's lines and the herald's posts, the faithful's rite - main's CLIMB5 and CLIMB6, FRIENDS-SYNC, ELITE FOES and the Seats arc took world141-world150 first); before it SEAT2b part two (b) moved it on (world150: the works in battle); SEASON1 part two, the banner ribbon moved it on (world149: the banner ribbon - the Seats arc's six relays renumbered past main's HERALD, LOOT7, WB11 and CLIMB5 (world138-world141) at the merge); CROWN1 part two moved it on (world148: the Royal Tourney); SEAT2a moved it on (world147: the siege battle); PVP-REF moved it on (world146: the refereed siege room); SEAT1c moved it on (world145: the seats' titles and glyphs - five generic title ids, a `ts` claim beside them, four glyphs); SEAT1b moved it on (world144: the Watch's tick - a `watch` frame carrying a `k1` receipt the relay signs, net/watchReceipt.js); ELITE FOES moved it on (world143: the foe record carries an elite foe, z, so a puppet stands as one); before it FRIENDS-SYNC moved it on (world142: the hub account is the signed-in player - the token subject - and a browser profile list is merged into it once); before it CLIMB5 and CLIMB6 moved it on (world141: the pose's climb - `cl`, `cw` and a move's `ck`, `cy`, `cd`); before it WB11 moved it on (world140: the host of the Legion-Lord - the `ahit` blow on one of it, the words `ad`, `amv`, `aatk`, `ah` and `adie` of the room, `lg` in the state, `a` in a chart row, the brain law 5; GATE-HEAL's `heal` and a chart row's `hl` with it - main's HERALD and LOOT7 took world138 and world139 first); before it LOOT7 moved it on (world139: the street foe record field `cp`, a champion trait - HERALD took world138 first); before it HERALD moved it on (world138: `herald` joins the titles and glyphs a token carries, the Patreon tier between Disciple and Hierophant); before it KEPT-KILL moved it on (world137: the party pose field `qk`, the kills of quest foes a member held for a partner, counted by every copy of the quest); before it GATE-UX moved it on (world136: the damage chart made at the kill - every challenger and their part, ranked, on the `fell` word of the court and on the fall in the state (`dm`)); before it WB9 moved it on (world135: the three courts of the Warden and the Reckoning of Dagon - his court and the walkways laid in the state (`ct`, `xa`), the crystals, their breaking and the stun (`cx`, `cxh`, `cxb`, `stun`, `su`, `rk`) and a blow on a crystal (`xhit`), judged and fanned by the relay - main's PARTY-MAP took world134 first); before it PARTY-MAP moved it on (world134: the `amap` frame, the automap rows a Shared Cartography caster reveals, to the party alone); before it SOFTCAP1 moved it on (world133: the party pose `cl`, a member character level for mentor mode); before it STRIKE-SHARED moved it on (world132: the strike spell on a hit and the trapper on a dead foe, both read by the clients alone); before it MERGE 2 moved it on (world131: the professions branch, BOUNTY1 + AUDIT 28 - `bq` and `lv` on the party pose, `k`, `a` and `t` on a bounty row - world125 on its branch, never deployed, a number VOICE1 took on main); before it REALM-DOOR moved it on (world130: the door refuses a token the account service signed as naming no realm character); before it PENITENT's badge vocabulary (world129); before it THE MERGE with PR 418: WB8 moved it on last (world128 - world126 on its branch, one relay past OW6L's world127); relaySupportsOverworld holds past it
   assert.ok(relaySupportsOverworld(RELAY_VERSION), 'this build\'s relay keeps the ledger');
   assert.equal(OW_LEDGER_KEY, 'ow:led'); assert.ok(!OW_LEDGER_KEY.startsWith('world:'), 'never under the prefix a cell\'s alarm sweeps');
 });
@@ -343,7 +373,7 @@ test('OW6L relay: WHAT IT CHECKS - a word in any room but a cell is junk; an id 
     assert.deepEqual(ows(b).at(-1), { t: 'ow', k: 'dg', rows: [[...EDGE, M0 - 5]] }, 'a dungeon in the margin is this cell\'s to hear');
     step(300);
     await say(a, { k: 'sp', ids: [bandIn(0, T0 - 2 * BAND_LIFE_MS)] });
-    await say(a, { k: 'dg', rows: [[...S2, M0 - OW_ROW_KEEP_MIN - 1]] });
+    await say(a, { k: 'dg', rows: [[...S2, M0 - LIFE]] });
     await say(a, { k: 'dg', rows: [[...S2, M0 + OW_ROW_SLACK_MIN + 3]] });
     assert.equal(a.meters.junk, had, 'out of its time: dropped, never struck');
     assert.equal(ows(b).length, 1, 'and nothing said');
@@ -360,9 +390,9 @@ test('OW6L relay: A LATER HELLO\'S WELCOME carries the cell\'s ledger (`ow`: the
     const a = r.connect(); await r.hello(a, 'peer-0001', ON);
     assert.equal('ow' in welcomeOf(a), false, 'an empty ledger: no field');
     await say(a, { k: 'sp', ids: [bandIn(0), raiderIn()] });
-    await say(a, { k: 'dg', rows: [[...S1, M0 - 50, M0 - 20], [...S2, M0 - OW_ROW_KEEP_MIN + 1]] });
+    await say(a, { k: 'dg', rows: [[...S1, M0 - 50, M0 - 20], [...S2, M0 - LIFE + 1]] });
     const b = r.connect(); await r.hello(b, 'peer-0002', ON);
-    assert.deepEqual(welcomeOf(b).ow, { sp: [bandIn(0), raiderIn()], dg: [[...S1, M0 - 50, M0 - 20], [...S2, M0 - OW_ROW_KEEP_MIN + 1]] }, 'the whole ledger, to a later hello');
+    assert.deepEqual(welcomeOf(b).ow, { sp: [bandIn(0), raiderIn()], dg: [[...S1, M0 - 50, M0 - 20], [...S2, M0 - LIFE + 1]] }, 'the whole ledger, to a later hello');
     const place = world.room('dungeon:m123456');
     const d = place.connect(); await place.hello(d, 'peer-0004', { x: 1, y: 0, z: 1, yaw: 0, pitch: 0 });
     assert.equal('ow' in welcomeOf(d), false, 'no other room has one');
@@ -378,7 +408,7 @@ test('OW6L relay: A LATER HELLO\'S WELCOME carries the cell\'s ledger (`ow`: the
     assert.deepEqual(welcomeOf(e).ow, { sp: [raiderIn()], dg: [[...S1, M0 - 50, M0 - 20]] });
     assert.deepEqual(r.store.get(OW_LEDGER_KEY).sp.map((x) => x[0]), [raiderIn()], 'and written back pruned');
     await r.drop(e);
-    set(owIdUntil(raiderIn()) + OW_ROW_KEEP_MS);
+    set(owIdUntil(raiderIn()) + LIFE_MS);
     r.wake();
     const g = r.connect(); await r.hello(g, 'peer-0006', ON);
     assert.equal('ow' in welcomeOf(g), false, 'all of it past its time');
@@ -533,7 +563,7 @@ function ledgerHost({ online, clockMin = M0, ms = T0 } = {}) {
     _bandSpent: new Set(), _bandChase: new Map(), _bandPeer: new Map(), tvRaid: { spent: new Set(), chase: new Map(), peer: new Map() }, tvDng: { at: {} },
   };
   const scope = {
-    online: d.online, _spawnLedger: d._spawnLedger, _spawnClock: () => d.clockMin, bandNowMs: () => d.ms, raidNowMs: () => d.ms,
+    online: d.online, _spawnLedger: d._spawnLedger, _spawnClock: () => d.clockMin, bandNowMs: () => d.ms, raidNowMs: () => d.ms, isCellRoom,   // AUDIT SPAWN-REBIRTH F1: what is owed waits for a cell
     BAND_LIFE_MS, RAIDER_LIFE_MS, bandLifeOf, raiderLifeOf, _bandSpent: d._bandSpent, _bandChase: d._bandChase, _bandPeer: d._bandPeer,
     tvRaid: d.tvRaid, tvDng: d.tvDng, performance: { now: () => d.t },
     locationIndex: d.locationIndex = new Map(),   // SD2b (PIN MOVED): the first-sight door asks the index whether its pixel holds a Hollow - never noted
@@ -547,7 +577,7 @@ function ledgerHost({ online, clockMin = M0, ms = T0 } = {}) {
 test('OW6L host run: WHAT I SPEND AND MY SPAWNS\' CLOCKS ARE OWED TO THE CELL until it takes them - a spent band or raider, a spawn\'s first sight (and never a sight already in my ledger), its clear; said a second apart at most, what the cell did not take said again, nothing said to a relay that keeps no ledger (and nothing lost); a spent id of a life gone and a row owed too long let go (mutants: the first sight unsaid, the rest dropped, an old relay spoken to)', () => {
   const sent = [];
   let take = Infinity;
-  const online = { owOk: false, sendOverworld: (k, payload) => { const went = payload.slice(0, take); sent.push([k, went]); return went; } };
+  const online = { owOk: false, room: CELL, sendOverworld: (k, payload) => { const went = payload.slice(0, take); sent.push([k, went]); return went; } };
   const h = ledgerHost({ online });
   const key = `${S1[0]},${S1[1]}`;
   h._spawnSeen(key);
@@ -582,8 +612,25 @@ test('OW6L host run: WHAT I SPEND AND MY SPAWNS\' CLOCKS ARE OWED TO THE CELL un
   assert.deepEqual(h.owed(), { sp: [], dg: [] }, 'both let go');
 });
 
+test('AUDIT SPAWN-REBIRTH F1 host run: A FIRST ENTRY MADE UNDERGROUND REACHES THE CELL - owed while my socket stands in the dungeon\'s room, where nothing is said, it is never let go there however long the run, and is said from the cell I come out in; its keep counted from there (mutants: let go underground; the keep counted from the entry)', () => {
+  const sent = [];
+  const online = { owOk: true, room: 'dungeon:m123456', sendOverworld: (k, payload) => { if (!isCellRoom(online.room)) return []; sent.push([k, payload]); return payload; } };
+  const h = ledgerHost({ online });
+  const key = `${S1[0]},${S1[1]}`;
+  h.d.t = 1_000;
+  h._spawnSeen(key);   // the first-entry door, at the dungeon's build - the socket already in its room
+  assert.deepEqual(h.owed().dg, [key]);
+  for (let t = 2_000; t <= 1_000 + 3 * h.OW_SAY_KEEP_MS; t += 60_000) h.overworldLedgerFrame(t);
+  assert.deepEqual(sent, [], 'nothing said from the dungeon\'s room');
+  assert.deepEqual(h.owed().dg, [key], 'and the row still owed, three keeps on');
+  online.room = CELL;
+  h.overworldLedgerFrame(1_000 + 3 * h.OW_SAY_KEEP_MS + h.OW_SAY_MS);
+  assert.deepEqual(sent, [['dg', [[...S1, M0]]]], 'out in the cell: the cell hears the run began');
+  assert.deepEqual(h.owed().dg, [], 'taken');
+});
+
 test('OW6L host run: THE CELL\'S WORD HEARD - a spent band is spent here and its chase ends, a spent raider too; a row min-merged into my spawn ledger, the Overworld\'s dungeons read again only when it moved (mutants: a band unspent, a raider taken for a band, the list never re-read)', () => {
-  const h = ledgerHost({ online: { owOk: true, sendOverworld: () => [] } });
+  const h = ledgerHost({ online: { owOk: true, room: CELL, sendOverworld: () => [] } });
   h.d._bandChase.set(bandIn(0), {}); h.d._bandPeer.set(bandIn(0), {}); h.d.tvRaid.chase.set(raiderIn(), {});
   h.overworldLedgerHeard({ k: 'sp', ids: [bandIn(0), raiderIn()] });
   assert.ok(h.d._bandSpent.has(bandIn(0)) && !h.d._bandChase.has(bandIn(0)) && !h.d._bandPeer.has(bandIn(0)), 'the band: spent, its chase ended');
@@ -597,6 +644,11 @@ test('OW6L host run: THE CELL\'S WORD HEARD - a spent band is spent here and its
   h.overworldLedgerHeard({ k: 'dg', rows: [[...S1, M0 - 50]] });
   assert.notEqual(h.d.tvDng.at, null, 'a later sight moves nothing, and nothing is read again');
   assert.deepEqual(h.d._spawnLedger.wireRow(key), [...S1, M0 - 100]);
+  // SPAWN-REBIRTH: heard at my clock - a row of a life that is over is none (an old relay's sixty-day keep, a stale save)
+  const key2 = `${S2[0]},${S2[1]}`;
+  h.overworldLedgerHeard({ k: 'dg', rows: [[...S2, M0 - LIFE]] });
+  assert.equal(h.d._spawnLedger.wireRow(key2), null, 'a spawn that has stood again is not ended by its old life\'s clocks');
+  assert.notEqual(h.d.tvDng.at, null, 'and nothing is read again');
 });
 
 test('OW6L END TO END: A spends a band and first sees a spawn; the relay\'s cell keeps both; B, standing in the cell, hears them; C, walking in later, is told in its welcome - each through its own host\'s heard door (mutants anywhere on the way)', async () => {
@@ -604,7 +656,7 @@ test('OW6L END TO END: A spends a band and first sees a spawn; the relay\'s cell
     const a = r.connect(), b = r.connect();
     await r.hello(a, 'peer-0001', ON); await r.hello(b, 'peer-0002', ON);
     const pending = [];
-    const bridge = { owOk: true, sendOverworld: (k, payload) => { pending.push(say(a, k === 'sp' ? { k, ids: payload } : { k, rows: payload })); return payload; } };
+    const bridge = { owOk: true, room: CELL, sendOverworld: (k, payload) => { pending.push(say(a, k === 'sp' ? { k, ids: payload } : { k, rows: payload })); return payload; } };
     const A = ledgerHost({ online: bridge }), B = ledgerHost({ online: bridge }), C = ledgerHost({ online: bridge });
     const key = `${S2[0]},${S2[1]}`;
     A._spawnSeen(key); A.owSaySpent(bandIn(3));
@@ -623,11 +675,12 @@ test('OW6L END TO END: A spends a band and first sees a spawn; the relay\'s cell
   });
 });
 
-test('OW6L host wiring: a band\'s spend and a raider\'s owe themselves to the cell; the spawn\'s one first-sight door is the roll\'s and the dungeon\'s; the clear owes its row; the session\'s word is heard; what is owed is said every online frame; a load forgets it (mutants: any of them unwired)', () => {
+test('OW6L host wiring: a band\'s spend and a raider\'s owe themselves to the cell; the spawn\'s one first-entry door is the dungeon\'s (SPAWN-REBIRTH: never the roll\'s); the clear owes its row; the session\'s word is heard; what is owed is said every online frame; a load forgets it (mutants: any of them unwired)', () => {
   const W = rd('src/scenes/world.js');
   assert.match(W, /function bandSpend\(id\) \{\n\s*_bandSpent\.add\(id\);\n\s*owSaySpent\(id\);/);
   assert.match(W, /function seaRaidSpend\(id\) \{\n\s*tvRaid\.spent\.add\(id\);\n\s*owSaySpent\(id\);/);
-  assert.match(W, /_spawnSeen\(key\);   \/\/ TTL1: first sight starts the seven-day clock/);
+  const roll = W.slice(W.indexOf('  const spawnedDungeonAt = (px, py) => {'), W.indexOf('\n  };\n', W.indexOf('  const spawnedDungeonAt = (px, py) => {')));
+  assert.ok(roll.length > 0 && !/_spawnSeen\(/.test(roll), 'SPAWN-REBIRTH: a pixel streaming in starts no clock - its spawn stands, nobody has entered it');
   assert.match(W, /onDungeonSpawned: \(\) => \{ const p = playerTravelPixel\(\); _spawnSeen\(`\$\{p\.x\},\$\{p\.y\}`\); \},/);
   assert.doesNotMatch(W, /_spawnLedger\.note\(key, _spawnClock\(\)\);   \/\/ TTL1/, 'no other first-sight door');
   assert.match(W, /_spawnLedger\.clear\(key, _spawnClock\(\)\);\n\s*owSayRow\(key\);/);
@@ -635,5 +688,5 @@ test('OW6L host wiring: a band\'s spend and a raider\'s owe themselves to the ce
   assert.match(W, /hccParkTick\(now\);[^\n]*\n\s*overworldLedgerFrame\(now\);/);
   const reset = W.slice(W.indexOf('  function overworldLoadReset() {'), W.indexOf('\n  }\n', W.indexOf('  function overworldLoadReset() {')));
   assert.match(reset, /travelView\?\.exit\('load', true\);[^\n]*\n\s*_owSay\.sp\.clear\(\); _owSay\.dg\.clear\(\);/, 'the load forgets what was owed - after the view\'s exit, the last thing that could owe');
-  assert.ok(W.indexOf('  const _owSay = ') < W.indexOf('  const spawnedDungeonAt = '), 'BOOT-TDZ: declared ahead of the roll that says its first sight');
+  assert.ok(W.indexOf('  const _owSay = ') < W.indexOf('  const spawnedDungeonAt = '), 'BOOT-TDZ: declared ahead of the roll (a save loaded into a spawn enters it during the boot)');
 });

@@ -82,8 +82,8 @@
   {
     "name": "OW4D2-gone-while-inside",
     "file": "src/scenes/world.js",
-    "old": "return _spawnLedger.expired(key, _spawnClock()) && !_insideSpawn(key) && built.get(key)?.location == null; };",
-    "new": "return _spawnLedger.expired(key, _spawnClock()) && built.get(key)?.location == null; };",
+    "old": "if (_insideSpawn(key)) return false; const b = built.get(key);",
+    "new": "const b = built.get(key);",
     "tests": [
       "test/tv6_dungeons.test.js"
     ],

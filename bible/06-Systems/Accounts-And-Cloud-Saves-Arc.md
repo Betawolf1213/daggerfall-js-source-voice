@@ -4018,7 +4018,7 @@ unique different version of the aura, a title named Hour's First, and each the g
   has 11 mutants, all dead.
 
 
-## EG-E2 — the Spire's titles and auras (2026-10-12, acct121, acct122 past BAL9, acct124 past NAME-AS and HACKED-GOLD, world197, world198 past BAL8)
+## EG-E2 — the Spire's titles and auras (2026-10-12, acct121, acct122 past BAL9, acct124 past NAME-AS and HACKED-GOLD, world197, world198 past BAL8, world199 past SPAWN-REBIRTH)
 
 The Elite Breach's honours (`bible/11-Multiplayer/Elite-Gates.md` section 19, THE HONOURS; its EG-E2 record at the end
 of section 20), added as every honour is: the ids last in `identityToken.js` `TITLES` and `AURAS` (the relay's bundle -

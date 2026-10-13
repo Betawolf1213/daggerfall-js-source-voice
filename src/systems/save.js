@@ -1281,7 +1281,8 @@ export function composeSessionState({ questBridge = null, talk = null, spawnLedg
     // ONE world host that owns `locationIndex`; the dungeon host
     // forwards the same object in, so a save made underground carries
     // it too. Null in the standalone ?dungeon scene, which has no
-    // overworld and therefore no spawns.
+    // overworld and therefore no spawns. SPAWN-REBIRTH: never a row
+    // whose spawn has stood again - the ledger's toJSON leaves it out.
     spawns: spawnLedger ? spawnLedger.toJSON() : null,
   };
 }
@@ -1374,9 +1375,10 @@ export function restoreSessionState(extras, { questBridge = null, talk = null, e
   // a pre-QS save and another character's never carry a stale kind.
   restoreQuickslotSaveData(extras?.quickslots ?? null);
   // TTL1: a save with no ledger LOADS AN EMPTY ONE, the same arm its
-  // neighbours take. That is not a loss: an unknown spawn is noted on
-  // the next build of its pixel and simply starts its seven days over,
-  // which is what every pre-TTL1 save has to mean.
+  // neighbours take. That is not a loss: an unknown spawn is noted when
+  // it is next entered (SPAWN-REBIRTH: never on its pixel's build) and
+  // simply starts its seven days over, which is what every pre-TTL1
+  // save has to mean - and the cell's welcome says the clocks it holds.
   spawnLedger?.load(extras?.spawns ?? null);
   if (extras?.talk && talk) {
     talk.mill.restoreSaveData(extras.talk);

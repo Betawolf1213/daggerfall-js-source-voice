@@ -150,7 +150,7 @@ test('RW1 view V3: when the street is drawn - no glass on screen draws nothing (
   assert.equal(calls.at(-1), 'released');
 });
 
-test('RW1 view V4: the view out\'s pass is a bracket - it draws into its own target under the cropped lens on the classic set with no shadow recording, the exterior\'s kept light and the host\'s clock over it, the building box on, the hooks run and the skipped mesh left out - and afterwards the frame target, the lights, the fog, the window style, the clear and the camera are as they were (mutants: a restore lost, the box left on, the skip ignored, the hooks not run)', () => {
+test('RW1 view V4: the view out\'s pass is a bracket - it draws into its own target under the cropped lens on the classic set with no shadow recording, the exterior\'s kept light and the host\'s clock over it, no pane clip without a watched frame\'s panes (PANE-CLIP), the hooks run and the skipped mesh left out - and afterwards the frame target, the lights, the fog, the window style, the clear and the camera are as they were (mutants: a restore lost, the skip ignored, the hooks not run)', () => {
   const log = [];
   const r = recordingRenderer(log);
   r.uploadTexture(9, 4, px, { opaque: true });
@@ -179,7 +179,6 @@ test('RW1 view V4: the view out\'s pass is a bracket - it draws into its own tar
   r._frameFbo = laneFbo; setFrameTarget(laneFbo);
   log.length = 0;
   const ok = r.outsideViewFrame([-0.5, -0.5, 0.5, 0.5], proj, view, {
-    clip: [-3, 0, -3, 3, 4, 3],
     setup: (rr) => { rr.setWindowEmission(windowEmissionRGB('night')); return new Float32Array([0, 0.5, 0.86]); },
     draw: (info) => {
       inside = { ambient: [...r._ambient], fogMode: r._fogMode, emission: [...r._windowEmission], lights: [...r._pointLights], shadows: r._shadows, air: r._air, rooms: r._rw.rooms, proj: [...info.proj], light: [...r._lightDir], indirect: r._indirect[3] };
@@ -209,8 +208,7 @@ test('RW1 view V4: the view out\'s pass is a bracket - it draws into its own tar
   assert.ok(log.some((c) => c[0] === 'framebufferRenderbuffer' && c[4] === t.rb), 'a depth of its own');
   const draws = log.filter((c) => c[0] === 'bindVertexArray').map((c) => c[1]?.id);
   assert.ok(draws.includes('wallvao') && !draws.includes('wagonvao'), 'the skipped mesh is left out of the pass');
-  const clip = uploads(log, 'uViewClipMax');
-  assert.deepEqual(clip[0], [3, 4, 3, 1], 'the building\'s box on'); assert.deepEqual(clip.at(-1), [0, 0, 0, 0], 'and off after');
+  assert.ok(!uploads(log, 'uPaneOn').some((u) => u[0] === 1), 'no watched frame met glass: no pane clips the street (PANE-CLIP - test/fb1012g_paneclip.test.js)');
   // after the pass
   assert.equal(r._ambient, roomAmb, 'the room\'s light back'); assert.equal(r._fogMode, 2, 'its fog');
   assert.equal(r._fogColor, roomFog); assert.equal(r._windowEmission, roomEm, 'its window style');
@@ -434,9 +432,9 @@ test('RW1 view V9: the interior\'s merge keeps a sphere a model per sub-mesh, so
   assert.match(rd('src/scenes/interiorContext.js'), /const staticBuilder = new StaticBatchBuilder\(\{ pieces: true \}\);/);
 });
 
-test('RW1 view V10: THE FOUR HOSTS, the interior arm - the view out is asked once the room\'s light and air are set (its bracket puts them back), before the room\'s lamps and its beginFrame, and painted right after that beginFrame, never in the dungeon arm; world.js and exterior.js hand a street that leaves the player\'s building out; dungeonContext.js draws no view out (FLAGGED there: a dungeon has no window to the street) (mutants: the order swapped, a host without its street, the dungeon arm painting)', () => {
+test('RW1 view V10: THE FOUR HOSTS, the interior arm - the view out is asked once the room\'s light and air are set (its bracket puts them back), before the room\'s lamps and its beginFrame, and painted right after that beginFrame, never in the dungeon arm; world.js and exterior.js hand a street with the player\'s building in it (PANE-CLIP: the renderer leaves out the room\'s side of the glass); dungeonContext.js draws no view out (FLAGGED there: a dungeon has no window to the street) (mutants: the order swapped, a host without its street, the dungeon arm painting)', () => {
   const wm = rd('src/scenes/worldModes.js');
-  const vo = wm.indexOf('const _rwView = viewOutFrame(viewOut, { renderer, mode: realWindowsMode(), proj, view, now: performance.now(), scene: host.outsideView?.(exteriorDoor?.matrix ?? null) ?? null });');
+  const vo = wm.indexOf('const _rwView = viewOutFrame(viewOut, { renderer, mode: realWindowsMode(), proj, view, now: performance.now(), scene: host.outsideView?.() ?? null });');
   const light = wm.indexOf('renderer.setLighting(new Float32Array(isNight(skyMinutes() % 1440) ? INTERIOR_NIGHT_AMBIENT : INTERIOR_AMBIENT), 0);');
   const fog = wm.indexOf("renderer.setFog('exp', 0.001, 0, 0, new Float32Array([0, 0, 0]));", light);
   const lamps = wm.indexOf('renderer.setPointLights(_itLit.data, null, _itLit.colors);\n    renderer.everyLightCasts();', vo);
@@ -450,7 +448,8 @@ test('RW1 view V10: THE FOUR HOSTS, the interior arm - the view out is asked onc
   assert.ok(!rd('src/scenes/dungeonContext.js').includes('outsideViewFrame') && !rd('src/scenes/dungeonContext.js').includes('setGlassView'), 'the dungeon host draws no view out');
   for (const host of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     const s = rd(host);
-    assert.match(s, /const outsideView = \(doorMatrix\) => \(\{\n\s+clip: outsideViewClip\(doorMatrix\),/, `${host}: the street leaves the building out`);
+    assert.match(s, /const outsideView = \(\) => \(\{\n\s+setup: \(r\) => \{/, `${host}: the street, and no box - FIELD BUGS 2026-10-12g PANE-CLIP (it left out the building's own other wing and a neighbour's wall against it)`);
+    assert.doesNotMatch(s, /outsideViewClip|VIEW_CLIP_PAD/, `${host}: the building's box is gone`);
     assert.match(s, /return sunDirection\(clockMinute\);/, `${host}: the clock's sun`);
   }
   assert.match(rd('src/scenes/world.js'), /if \(ring > VIEW_RINGS\) continue;/, 'the streamed world walks VIEW_RINGS out');

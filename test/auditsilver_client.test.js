@@ -181,5 +181,6 @@ test('AUDIT SILVER-WAYS D7: the frame\'s costs - the signed-in account read once
   assert.equal(out.length, 1, 'emptied first');
   const w = src('src/scenes/world.js');
   assert.match(w, /const _lodeMarks = \[\], _lodesUp = \[\], _lodeTr = \[0, 0, 0\], _lodePool = \[\];/);
-  assert.match(w, /const tr = state\.pixelTranslation\(l\.x, l\.y, _lodeTr\), m = _lodePool\[_lodeMarks\.length\] \?\?= \{ profession: 'mining', at: \[0, 0, 0\], d: 0, reach: 1 \};/);
+  // PIN MOVED (FIELD BUGS 2026-10-12g LODE-MARK): the far mark in its own colour, 'motherlode'
+  assert.match(w, /const tr = state\.pixelTranslation\(l\.x, l\.y, _lodeTr\), m = _lodePool\[_lodeMarks\.length\] \?\?= \{ profession: 'motherlode', at: \[0, 0, 0\], d: 0, reach: 1 \};/);
 });

@@ -31,8 +31,11 @@ depth taken to 2400 m, cropped so the rectangle is the pass's whole clip space; 
 and redrawn every 250 ms. The pass is a bracket (the panel's shape, everything put back in a `finally`): the lane is
 suspended (a picture through glass is drawn on the classic set - no shadow maps, no light grid, no air pass), the
 shadow pass records nothing, the street's light is the last exterior frame's (kept by `setWindowRooms`) with the
-host's clock over it, the building the player stands in is left out by its model's box (`uViewClipMin/Max`), the
-neighbours' windows show their rooms. After the interior's `beginFrame`, `renderer.setGlassView` paints the picture
+host's clock over it, nothing on the room's side of a pane is drawn (PANE-CLIP, `01-Overview/Field-Bugs-2026-10-12g.md`:
+the last watched frame's glass and cutout sub-meshes drawn again, depth alone, under the view out's lens -
+`renderer._rwDrawPanes`, the depth read on unit 22 - and a street fragment at or before that depth discarded; the
+building's own walls seen from inside are back faces, so its other wing, a second model of it and a neighbour's wall
+against it are drawn, as the reporter at The Savage Goat expected), the neighbours' windows show their rooms. After the interior's `beginFrame`, `renderer.setGlassView` paints the picture
 (and the sky - the fog colour to a deeper zenith - where the street drew nothing) inside the rectangle only, as the
 frame's background, and cuts the glass texels inside it; the interior draws over it with normal depth. Unwanted 10 s,
 the target is freed. World.js walks VIEW_RINGS = 1 ring of pixels.
@@ -64,8 +67,10 @@ kill door.
   records keep the R2 'day' style as before.
 
 ## Unverified (no ARENA2 in the container)
-The interior glass is no longer among them (GLASS-ALL, below: a real ARENA2 read). The rooms' scale against real window tiles, the view out's cost in a real town, and the clip box (the door's matrix
-naming the building's model) were seen only in `tools/realWindowsProbe.mjs`'s synthetic street (SwiftShader).
+The interior glass is no longer among them (GLASS-ALL, below: a real ARENA2 read). The rooms' scale against real window tiles, the view out's cost in a real town, and the pane clip
+on a real building (PANE-CLIP) were seen only in `tools/realWindowsProbe.mjs`'s synthetic street (SwiftShader) - its
+`inside-wing` shot stands a wall of the building past the glass (35208 of its pixels seen through the panes, none at
+HEAD's box) and one before it (none seen, either way).
 
 ## The caravan (WAGONS2)
 

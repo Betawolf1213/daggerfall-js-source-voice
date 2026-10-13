@@ -67,8 +67,8 @@
   {
     "name": "GUIDE1-target-law-draws-the-engine-roll",
     "file": "src/ui/questLens.js",
-    "old": "  const place = lastPlaceMentionedInMessage(message, QUIET_ROLL);",
-    "new": "  const place = lastPlaceMentionedInMessage(message);",
+    "old": "  let place = lastPlaceMentionedInMessage(message, QUIET_ROLL);",
+    "new": "  let place = lastPlaceMentionedInMessage(message);",
     "tests": [
       "test/guide1_questLens.test.js"
     ]
@@ -121,7 +121,7 @@
   {
     "name": "GUIDE1-town-named-unsaid",
     "file": "src/ui/questLens.js",
-    "old": "  const named = onMap === true || here || said.has(MACRO_TYPES.NameMacro2) || said.has(MACRO_TYPES.NameMacro3);",
+    "old": "  const named = onMap === true || here || !!moved || said.has(MACRO_TYPES.NameMacro2) || said.has(MACRO_TYPES.NameMacro3);",
     "new": "  const named = true;",
     "tests": [
       "test/guide1_questLens.test.js"
@@ -130,8 +130,8 @@
   {
     "name": "GUIDE1-town-underfoot-unnamed",
     "file": "src/ui/questLens.js",
-    "old": "  const named = onMap === true || here || said.has(MACRO_TYPES.NameMacro2) || said.has(MACRO_TYPES.NameMacro3);",
-    "new": "  const named = onMap === true || said.has(MACRO_TYPES.NameMacro2) || said.has(MACRO_TYPES.NameMacro3);",
+    "old": "  const named = onMap === true || here || !!moved || said.has(MACRO_TYPES.NameMacro2) || said.has(MACRO_TYPES.NameMacro3);",
+    "new": "  const named = onMap === true || !!moved || said.has(MACRO_TYPES.NameMacro2) || said.has(MACRO_TYPES.NameMacro3);",
     "tests": [
       "test/guide1_questLens.test.js"
     ]
@@ -148,8 +148,8 @@
   {
     "name": "GUIDE1-region-said-ignored",
     "file": "src/ui/questLens.js",
-    "old": "    regionName: onMap === true || here || said.has(MACRO_TYPES.NameMacro4) ? (",
-    "new": "    regionName: onMap === true || here ? (",
+    "old": "    regionName: onMap === true || here || moved || said.has(MACRO_TYPES.NameMacro4) ? (",
+    "new": "    regionName: onMap === true || here || moved ? (",
     "tests": [
       "test/guide1_questLens.test.js"
     ]

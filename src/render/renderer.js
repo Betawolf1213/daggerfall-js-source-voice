@@ -18,7 +18,7 @@ import { COLUMN_GLSL } from './columnGlsl.js';   // DW-F: the water column's sha
 // then. The imports hoist and the leaves have no imports of their own, so
 // this is already guaranteed - the lines stand where they read as the rule.
 import { buildProgram } from './glProgram.js';   // AUDIT 68 S17-gl-program-dup: the one compile and link
-import { realWindowsGlsl, RW_MAIN_DERIVS, RW_MAIN_CUTOUT, RW_MAIN_GLASS, RW_MAIN_ROOM, GLASS_NONE, GLASS_EXTERIOR, GLASS_INTERIOR, winModeFor, roomLightFor, sphereNdcRect, cropProjection, viewTargetSize, viewSkyFrom, viewRays, VIEW_BG_VS, VIEW_BG_FS } from './realWindows.js';   // RW1: the real windows - the rooms, the glass, the view out
+import { realWindowsGlsl, RW_MAIN_DERIVS, RW_MAIN_CUTOUT, RW_MAIN_GLASS, RW_MAIN_ROOM, GLASS_NONE, GLASS_EXTERIOR, GLASS_INTERIOR, winModeFor, roomLightFor, sphereNdcRect, cropProjection, viewTargetSize, viewSkyFrom, viewRays, VIEW_BG_VS, VIEW_BG_FS, VIEW_PANES_MAX, VIEW_PANE_UNIT, VIEW_PANE_VS, VIEW_PANE_FS } from './realWindows.js';   // RW1: the real windows - the rooms, the glass, the view out
 import { frameTarget, setFrameTarget } from './renderTarget.js';   // RW1: the view out's pass hands the frame target back as it found it (EL4's restore)
 import { CLIP_SENTINEL } from '../world/terrainSurface.js';   // FAR-CLIP1: the byte the terrain's clip variant discards - the TileMap format's module, already in this file's closure (waterCorners.js)
 /** AUDIT TECH-FX: the screen offset before any is set - one, frozen (Renderer `screenOffset`). */
@@ -1731,11 +1731,11 @@ export class Renderer {
     this.glassMasks = new Map();
     this._cutoutArt = new WeakSet();
     this._rw = { rooms: false, watch: false, live: false, rect: new Float32Array(4), rectGen: 0 };
-    this._rwAcc = { n: 0, holes: false, rect: [1, 1, -1, -1] };
+    this._rwAcc = { n: 0, holes: false, rect: [1, 1, -1, -1], panes: [], np: 0 };   // PANE-CLIP: and the glass's sub-meshes, for the view out's pane depth
     this.outsideViewDraws = new Set();
     this.outsideViewSkip = new Set();
     this._rwExterior = null; this._rwTarget = null; this._rwOutside = null; this._rwBg = null; this._rwEmptyVao = null;   // made on the first ask
-    this._rwPv = null; this._rwQ = null; this._rwClipOn = false; this._rwViewDraws = 0;
+    this._rwPv = null; this._rwQ = null; this._rwPanes = []; this._rwPaneN = 0; this._rwPaneOn = false; this._rwPaneProg = null; this._rwViewDraws = 0;
     // The value last uploaded to the solid program's uEmissionColor
     // (uniforms are program state, so this survives a program switch).
     this._emissionColorUp = null;
@@ -2351,7 +2351,7 @@ export class Renderer {
       mode: gl.getUniformLocation(this.program, 'uWinMode'), cut: gl.getUniformLocation(this.program, 'uCutout'),
       rect: gl.getUniformLocation(this.program, 'uGlassRect'), lamp: gl.getUniformLocation(this.program, 'uRoomLamp'),
       day: gl.getUniformLocation(this.program, 'uRoomDay'),
-      clipMin: gl.getUniformLocation(this.program, 'uViewClipMin'), clipMax: gl.getUniformLocation(this.program, 'uViewClipMax'),
+      pane: gl.getUniformLocation(this.program, 'uPaneDepth'), paneOn: gl.getUniformLocation(this.program, 'uPaneOn'),   // PANE-CLIP
     };
     this._rwModeUp = -1; this._rwCutUp = -1; this._rwRectUp = -1; this._rwLightE = null; this._rwLightA = null;
     // Character program (C4b): rig vertex-color path, same scene
@@ -5271,6 +5271,14 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     this._activeTexture(gl.TEXTURE0);
     this._proj = proj;
     this._view = view;
+    // FIELD BUGS 2026-10-12g BATCH-SHUT: a body batch no pass flushed is let go as the frame begins - its pictures are one
+    // frame's loss. Left open, every later pass's begin joined it and its flush only stepped the depth down: no
+    // Morrowind body drew again until a reload
+    const sb = this._spriteBatch;
+    if (sb?.open) {
+      sb.open = false; sb.depth = 0; sb.items.length = 0;
+      if (!this._spriteBatchLeft) { this._spriteBatchLeft = true; console.warn('[mw] a character batch was left open - shut at the frame\'s start'); }
+    }
     this._rwFrame();   // RW1: the rooms and the glass are a frame's - an exterior host asks for rooms after this (setWindowRooms), an interior for its glass (setGlassView)
   }
 
@@ -5528,7 +5536,17 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     gl.bindRenderbuffer(gl.RENDERBUFFER, rb);
     gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, w, h);
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-    t = this._rwTarget = { fbo: gl.createFramebuffer(), tex, rb, allocW: w, allocH: h, w, h, attached: false, proj: new Float32Array(16), pv: new Float32Array(16), planes: new Float32Array(24), fog: null };
+    // PANE-CLIP: the panes' depth - a texture the street's fragments read (texelFetch: NEAREST, no compare), its own framebuffer
+    const paneTex = gl.createTexture();
+    this._bindTex0(paneTex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT24, w, h, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    this._bindTex0(null);
+    t = this._rwTarget = { fbo: gl.createFramebuffer(), tex, rb, allocW: w, allocH: h, w, h, attached: false, proj: new Float32Array(16), pv: new Float32Array(16), planes: new Float32Array(24), fog: null,
+      paneFbo: gl.createFramebuffer(), paneTex, paneAttached: false };
     return t;
   }
 
@@ -5550,6 +5568,43 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     this._rwTarget = null;
     const gl = this.gl;
     gl.deleteFramebuffer(t.fbo); gl.deleteTexture(t.tex); gl.deleteRenderbuffer(t.rb);
+    gl.deleteFramebuffer(t.paneFbo); gl.deleteTexture(t.paneTex);   // PANE-CLIP
+  }
+
+  /** PANE-CLIP (FIELD BUGS 2026-10-12g): THE PANES' DEPTH - the last watched frame's glass and cutout sub-meshes, depth
+   *  alone, under the view out's lens and into its own texture (cleared to the far plane: no pane). Answers whether any
+   *  drew. A pane whose mesh was let go since (the room left) is passed over. */
+  _rwDrawPanes(t, pv) {
+    const n = this._rwPaneN;
+    if (!n) return false;
+    this._close2D();   // PERF-2D: the baseline back (outsideViewFrame closed it already - the law is each drawer's own)
+    const gl = this.gl;
+    const P = (this._rwPaneProg ??= this._rwPaneProgram());
+    gl.bindFramebuffer(gl.FRAMEBUFFER, t.paneFbo);
+    if (!t.paneAttached) { gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, t.paneTex, 0); t.paneAttached = true; }
+    gl.viewport(0, 0, t.w, t.h);
+    gl.depthMask(true); gl.enable(gl.DEPTH_TEST); gl.disable(gl.CULL_FACE);
+    gl.clearDepth(1); gl.clear(gl.DEPTH_BUFFER_BIT);
+    this._use(P.p);
+    gl.uniformMatrix4fv(P.pv, false, pv);
+    let drew = 0;
+    for (let i = 0; i < n; i++) {
+      const p = this._rwPanes[i];
+      if (!gl.isVertexArray(p.vao)) continue;
+      gl.uniformMatrix4fv(P.model, false, p.m);
+      this._bindVao(p.vao);
+      gl.drawElements(gl.TRIANGLES, p.count, gl.UNSIGNED_INT, p.start * 4);
+      this.stats.draws++;
+      drew++;
+    }
+    gl.enable(gl.CULL_FACE);
+    return drew > 0;
+  }
+
+  /** PANE-CLIP: the panes' program, built on the first view out that has panes. */
+  _rwPaneProgram() {
+    const p = this._buildProgram(VIEW_PANE_VS, VIEW_PANE_FS), gl = this.gl;
+    return { p, pv: gl.getUniformLocation(p, 'uPV'), model: gl.getUniformLocation(p, 'uModel') };
   }
 
   /**
@@ -5563,7 +5618,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
    * host's street, then every `outsideViewDraws` hook. The neighbours' windows show their rooms. Answers whether a
    * picture was made.
    * @param {number[]} rect @param {Float32Array} proj @param {Float32Array} view
-   * @param {{ setup?: (r: Renderer) => (ArrayLike<number> | void), clip?: ArrayLike<number> | null, draw: (info: { renderer: Renderer, proj: Float32Array, view: Float32Array, pv: Float32Array, planes: Float32Array, eye: number[] }) => void }} scene
+   * @param {{ setup?: (r: Renderer) => (ArrayLike<number> | void), draw: (info: { renderer: Renderer, proj: Float32Array, view: Float32Array, pv: Float32Array, planes: Float32Array, eye: number[] }) => void }} scene
    */
   outsideViewFrame(rect, proj, view, scene) {
     this._close2D();   // PERF-2D: the baseline back, before anything that needs it
@@ -5591,6 +5646,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     try {
       if (this._lane) { this._lane = null; this._installWorldSet(this._classicSet); }
       this._air = null; this._shadows = null;
+      const panes = this._rwDrawPanes(t, mat4Multiply(cropProj, view, t.pv));   // PANE-CLIP: before the street's own target is bound
       gl.bindFramebuffer(gl.FRAMEBUFFER, t.fbo);
       if (!t.attached) {
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t.tex, 0);
@@ -5619,11 +5675,14 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       gl.viewport(0, 0, t.w, t.h);
       this._worldViewportPx = [0, 0, t.w, t.h];   // a pass that restores "the world's" viewport restores this one
       this._rw.rooms = true;   // the neighbours' windows show their rooms
-      const box = scene.clip ?? null;   // the building the player stands in: its shell would stand between the glass and the street
-      if (box && this.rwLocs?.clipMax) {
-        gl.uniform4f(this.rwLocs.clipMin, box[0], box[1], box[2], 0);
-        gl.uniform4f(this.rwLocs.clipMax, box[3], box[4], box[5], 1);
-        this._rwClipOn = true;
+      // PANE-CLIP: nothing on the room's side of a pane - the building's own walls between the eye and the glass (a room
+      // that reaches past its shell); its walls past the glass seen from inside are back faces, its other wing is drawn
+      if (panes && this.rwLocs?.paneOn) {
+        this._use(this.program);
+        this._activeTexture(gl.TEXTURE0 + VIEW_PANE_UNIT); gl.bindTexture(gl.TEXTURE_2D, t.paneTex); this._activeTexture(gl.TEXTURE0);
+        gl.uniform1i(this.rwLocs.pane, VIEW_PANE_UNIT);
+        gl.uniform1f(this.rwLocs.paneOn, 1);
+        this._rwPaneOn = true;
       }
       mat4Multiply(cropProj, view, t.pv);
       spherePlanes(t.pv, t.planes);
@@ -5635,7 +5694,11 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     } catch (e) {
       console.warn('[real windows] the view out could not be drawn', e?.message ?? e);
     } finally {
-      if (this._rwClipOn) { this._use(this.program); gl.uniform4f(this.rwLocs.clipMax, 0, 0, 0, 0); this._rwClipOn = false; }   // the box is the pass's alone
+      if (this._rwPaneOn) {   // the panes are the pass's alone: off, the sampler back on unit 0 (a picture is always bound there), the unit emptied
+        this._use(this.program); gl.uniform1f(this.rwLocs.paneOn, 0); gl.uniform1i(this.rwLocs.pane, 0);
+        this._activeTexture(gl.TEXTURE0 + VIEW_PANE_UNIT); gl.bindTexture(gl.TEXTURE_2D, null); this._activeTexture(gl.TEXTURE0);
+        this._rwPaneOn = false;
+      }
       // RW1 (AUDIT): the draw-state baseline every entry point assumes (endPanelFrame's) - a throw mid-pass in a blended
       // phase left the depth mask off, and the next frame's depth clear did nothing
       gl.colorMask(true, true, true, true); gl.depthMask(true); gl.disable(gl.BLEND); gl.enable(gl.DEPTH_TEST); gl.enable(gl.CULL_FACE);
@@ -5728,6 +5791,8 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
    *  hole - then forgotten. Null when it met none. */
   takeGlassRect() {
     const a = this._rwAcc;
+    // PANE-CLIP: the frame's panes are the next view out's - the two lists trade places, nothing is minted
+    if (a) { const kept = this._rwPanes; this._rwPanes = a.panes; this._rwPaneN = a.n ? a.np : 0; a.panes = kept; a.np = 0; }
     if (!a || !a.n) { if (a) a.holes = false; return null; }
     const out = { rect: [a.rect[0], a.rect[1], a.rect[2], a.rect[3]], holes: a.holes };
     a.n = 0; a.holes = false; a.rect[0] = 1; a.rect[1] = 1; a.rect[2] = -1; a.rect[3] = -1;
@@ -5736,7 +5801,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
 
   /** RW1: one sub-mesh's window mode and its picture's cutout, sent only when they change (two uniforms, shadowed per
    *  installed program), and - in a watched frame - its glass measured. */
-  _rwSubMesh(sm, modelMatrix) {
+  _rwSubMesh(sm, modelMatrix, mesh = null) {
     const L = this.rwLocs;
     if (!L) return;
     const gl = this.gl, rw = this._rw;
@@ -5746,7 +5811,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     else if (mode === 3 && this._rwRectUp !== rw.rectGen) { gl.uniform4fv(L.rect, rw.rect); this._rwRectUp = rw.rectGen; }
     if (mode !== this._rwModeUp) { gl.uniform1f(L.mode, mode); this._rwModeUp = mode; }
     if (cut !== this._rwCutUp) { gl.uniform1f(L.cut, cut); this._rwCutUp = cut; }
-    if (rw?.watch && (kind !== GLASS_NONE || cut)) this._rwWatch(sm, modelMatrix, !!cut);
+    if (rw?.watch && (kind !== GLASS_NONE || cut)) this._rwWatch(sm, modelMatrix, !!cut, mesh);
   }
 
   /** RW1: the rooms' light for this frame's window style and ambient (realWindows.js roomLightFor), sent once per
@@ -5763,9 +5828,10 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
 
   /** RW1: a glass or cutout sub-mesh in a watched frame - its spheres (a static batch's pieces, one a model, or the
    *  sub-mesh's own) through the frame's view-projection, into the rectangle the next view out is cropped to. */
-  _rwWatch(sm, m, holes) {
+  _rwWatch(sm, m, holes, mesh = null) {
     const a = this._rwAcc, pv = this._rwPv;
     if (!a || !pv) return;
+    const n0 = a.n;
     const s = sm.pieces ?? sm._bounds;
     const sc = Math.max(Math.hypot(m[0], m[1], m[2]), Math.hypot(m[4], m[5], m[6]), Math.hypot(m[8], m[9], m[10]));
     const q = (this._rwQ ??= [0, 0, 0, 0]);
@@ -5780,6 +5846,12 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       if (r[2] > a.rect[2]) a.rect[2] = r[2]; if (r[3] > a.rect[3]) a.rect[3] = r[3];
       a.n++;
       if (holes) a.holes = true;
+    }
+    // PANE-CLIP: a sub-mesh on screen is kept for the view out's pane depth - its VAO, its range and its matrix
+    if (a.n > n0 && mesh?.vao && a.np < VIEW_PANES_MAX) {
+      const p = (a.panes[a.np] ??= { vao: null, start: 0, count: 0, m: new Float32Array(16) });
+      p.vao = mesh.vao; p.start = sm.startIndex; p.count = sm.primitiveCount * 3; p.m.set(m);
+      a.np++;
     }
   }
 
@@ -8073,7 +8145,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
         gl.uniform3fv(this.uEmissionColor, this._c3(emisColor));   // EL1
         this._emissionColorUp = emisColor;
       }
-      if (sm._evWin || sm._evCut || this._rwModeUp !== 0 || this._rwCutUp !== 0) this._rwSubMesh(sm, modelMatrix);   // RW1: the window mode and the cutout, sent when they change
+      if (sm._evWin || sm._evCut || this._rwModeUp !== 0 || this._rwCutUp !== 0) this._rwSubMesh(sm, modelMatrix, wire ? null : mesh);   // RW1: the window mode and the cutout, sent when they change
       this._bindEmission(sm._evEmis);   // PERF-TEX: skipped when it is already the one on the unit, which it usually is
       this._bindTex0(tex);   // PERF-TEX3: a bundle whose sub-meshes repeat an archive re-bound the same texture every time
       if (wire) {

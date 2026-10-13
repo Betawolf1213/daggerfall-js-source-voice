@@ -78,7 +78,7 @@ import { setAmbientTextHost, tickAmbientText } from '../systems/ambientText.js';
 import { setDefaultEnchantCtx } from '../systems/enchantments.js';   // AUDIT 58 (f2/hosts): the session's ONE enchant ctx - this host mounted none
 import { createEnchantCtx, standLooseFoe, LOOSE_FOE_PLACE_ATTEMPTS } from './hostEnchant.js';   // FS1 (wave D): the ONE ctx body + SD1's loose-foe placement
 import { windowEmissionRGB } from '../render/windowEmission.js';
-import { realWindowsMode, VIEW_CLIP_PAD, clockFogColor } from '../render/realWindows.js';   // RW1: the rooms behind the glass, and the street a building's glass looks out on
+import { realWindowsMode, clockFogColor } from '../render/realWindows.js';   // RW1: the rooms behind the glass, and the street a building's glass looks out on
 import { CITY_LIGHT_COLOR, CITY_LIGHT_RANGE, LIGHTS_ARCHIVE, collectCityLights, nearestLights } from '../world/cityLights.js';
 import { isHearthFlat } from '../systems/survival/hearth.js';   // HEARTH1: which of those lanterns is a fire you could cook on
 import { syncLightingLane, lanternColor } from '../render/enhancedLighting.js';   // EL1
@@ -4272,25 +4272,9 @@ export async function bootExterior(canvas, renderer, params, status) {
 
   // RW1 (render/realWindows.js): THE STREET THROUGH A BUILDING'S GLASS - world.js's twin over this host's one town: its
   // models, its ground and its flats culled to the glass's own frustum, the clock's light over the street the last
-  // frame kept, and the building the player stands in left out by its box (the model the door's matrix stands).
-  let _rwClipDoor = null, _rwClip = null;
-  const outsideViewClip = (doorMatrix) => {
-    if (doorMatrix === _rwClipDoor) return _rwClip;
-    _rwClipDoor = doorMatrix; _rwClip = null;
-    if (!doorMatrix) return null;
-    let best = -1;
-    for (const d of drawList) {
-      const m = d.matrix, b = d.box;
-      if (!m || !b || Math.abs(m[12] - doorMatrix[12]) > 0.01 || Math.abs(m[13] - doorMatrix[13]) > 0.01 || Math.abs(m[14] - doorMatrix[14]) > 0.01) continue;
-      const vol = (b[3] - b[0]) * (b[4] - b[1]) * (b[5] - b[2]);
-      if (vol <= best) continue;
-      best = vol;
-      _rwClip = [b[0] - VIEW_CLIP_PAD, b[1] - VIEW_CLIP_PAD, b[2] - VIEW_CLIP_PAD, b[3] + VIEW_CLIP_PAD, b[4] + VIEW_CLIP_PAD, b[5] + VIEW_CLIP_PAD];
-    }
-    return _rwClip;
-  };
-  const outsideView = (doorMatrix) => ({
-    clip: outsideViewClip(doorMatrix),
+  // frame kept, the building the player stands in drawn with the rest (PANE-CLIP: the renderer leaves out the room's
+  // side of each pane).
+  const outsideView = () => ({
     setup: (r) => {   // the clock's light: an hour spent indoors is an hour later outside
       const clockMinute = minuteNow();
       const keptFog = r._fogColor, keptSun = r._sunScale;   // RW1 (AUDIT): the air the street was kept in, at the light it was kept at

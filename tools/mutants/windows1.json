@@ -257,12 +257,12 @@
     ]
   },
   {
-    "name": "RW1-box-left-on",
+    "name": "PANE-CLIP-left-on",
     "file": "src/render/renderer.js",
-    "old": "      if (this._rwClipOn) { this._use(this.program); gl.uniform4f(this.rwLocs.clipMax, 0, 0, 0, 0); this._rwClipOn = false; }   // the box is the pass's alone",
-    "new": "",
+    "old": "        this._use(this.program); gl.uniform1f(this.rwLocs.paneOn, 0); gl.uniform1i(this.rwLocs.pane, 0);",
+    "new": "        this._use(this.program);",
     "tests": [
-      "test/windows1_view.test.js"
+      "test/fb1012g_paneclip.test.js"
     ]
   },
   {

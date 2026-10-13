@@ -359,6 +359,25 @@ const REPLAYABLE_ONE_TIME_ACTIONS = new Set(['TeleportPc', 'GivePc', 'TrainPc', 
  *  left, so the set stays within twice the live behaviours at an amortised O(1) per registration. */
 const BEHAVIOUR_SWEEP_MIN = 64;
 
+/** FIELD BUGS 2026-10-12g QUEST-TOWN ("'Open a Chest' quest doesn't record the town you need to go to": "The town is
+ *  mentioned in the first message you get ... but not in the text in the quest list, and it doesn't show up as a quest
+ *  location on the map either"). In DFU a `local` place is always the town the quest was given in - N0B00Y16's log names
+ *  "a local merchant" and no town - but where the town mods took a kind away the port takes the site in the nearest
+ *  town that has one (place.js NEAR-SITE), and only the offer's popup said which. That town is on the travel map from
+ *  the quest's start, as a `reveal` would put it, so the lens's where-line, the map and the compass can point at it.
+ *  A best-effort reveal (RevealLocation's own seam): a name the world will not resolve is passed over. */
+export function revealNearSites(quest) {
+  const world = quest?.hooks?.world;
+  if (!world?.discoverLocation) return 0;
+  let n = 0;
+  for (const r of quest.resources?.values?.() ?? []) {
+    const sd = r?.isPlace ? r.siteDetails : null;
+    if (!sd?.nearSite) continue;
+    try { world.discoverLocation(sd.regionName, sd.locationName); n++; } catch { /* the reveal is the map's, best-effort */ }
+  }
+  return n;
+}
+
 export class QuestMachine {
   constructor(deps = {}) {
     this.deps = deps;
@@ -667,6 +686,7 @@ export class QuestMachine {
     if (this.quests.has(quest.uid)) throw new Error('An item with the same key has already been added.');
     this.quests.set(quest.uid, quest);
     this.deps.onQuestStarted?.(quest);
+    revealNearSites(quest);   // FIELD BUGS 2026-10-12g QUEST-TOWN: its town on the map, once the quest is the machine's
     if (this.lastNPCClicked != null) {
       this.assignQuestResourceBehaviour(this.lastNPCClickedHost ?? null, this.lastNPCClicked);
     }

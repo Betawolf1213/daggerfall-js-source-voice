@@ -3586,7 +3586,8 @@ export class Room {
     }
     if (m.t === 'ow') {
       // OW6L: A WORD ON THE CELL'S OVERWORLD LEDGER - the bands and raiders its speaker spent, the spawned dungeons it
-      // first saw or cleared (net/overworldLaw.js) - to the cell it stands in, whose object keeps the ledger. On its own
+      // first entered or cleared (net/overworldLaw.js; SPAWN-REBIRTH: each row kept until its spawn stands again) - to the
+      // cell it stands in, whose object keeps the ledger. On its own
       // bucket (the same strikes), in a cell alone (anywhere else junk: a correct client says none there)
       const now = Date.now();
       if (!this._spend(ws, now, owGate, 'owBucket', 'owDrops', 'too many overworld frames')) return;

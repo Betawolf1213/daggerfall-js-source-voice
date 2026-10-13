@@ -263,7 +263,8 @@ export function sightLineOf(what, metres, direction) {
 //
 // So there are TWO clocks and a spawn dies on whichever runs out first:
 // a SHORT one that starts when the place is emptied, and a LONG one
-// that has been running since it was first seen. Clearing a dungeon
+// that has been running since it was first entered (SPAWN-REBIRTH below:
+// it ran from the pixel's first build, entered or not). Clearing a dungeon
 // does not extend its life - a spawn cleared on day 6 of its seven is
 // gone on day 7, not day 8 - which is why both are tested and the
 // answer is an OR rather than a fork.
@@ -277,28 +278,66 @@ export function sightLineOf(what, metres, direction) {
 
 /** Emptied, and left alone this long: gone. */
 export const CLEARED_TTL_DAYS = 2;
-/** ...and never more than this from first sight, cleared or not. */
+/** ...and never more than this from first entry, cleared or not. */
 export const GENERAL_TTL_DAYS = 7;
 export const CLEARED_TTL_MINUTES = CLEARED_TTL_DAYS * MINUTES_PER_DAY;
 export const GENERAL_TTL_MINUTES = GENERAL_TTL_DAYS * MINUTES_PER_DAY;
 
+// ---------------------------------------------------------------- SPAWN-REBIRTH
+//
+// THE LOCKOUT (2026-10-12, a player's report, "Overworld Persistence Causes Permanent Regional Depletion of Procedural &
+// Elite Dungeons", and Mac: "Do all 3"). Three laws together emptied a region for good:
+//   1. the long clock started when a pixel STREAMED IN (spawnedDungeonAt noted every spawn within the terrain distance),
+//      so walking a road started seven days - fourteen real hours online, at the shared clock's 12x - on every dungeon
+//      three pixels either side of it, entered or not;
+//   2. a dead spawn never came back: its roll is a pure hash of the pixel, so AUDIT OW5b D2 kept its row as a tombstone,
+//      and the cell's ledger (net/overworldLaw.js) kept that row sixty real days for everyone in the cell;
+//   3. the save kept every row forever, so a character's own tombstones outlived the cell's - and its min-merge refused
+//      a later life another player started (a later first entry never lowers an earlier one).
+// So: the long clock starts on ENTRY (world.js onDungeonSpawned, the one first-entry door - a dungeon nobody went into
+// stands); a dead spawn STANDS AGAIN REBIRTH_TTL_DAYS after it died, the same dungeon on fresh clocks; and a row whose
+// spawn has stood again is nobody's - the ledger, the cell and the save all let it go.
+
+/** A dead spawn's pixel stands empty this long, then the same dungeon stands again on fresh clocks. Twelve game days -
+ *  twenty-four real hours on the online clock (net/wire.js ONLINE_MINUTES_PER_MS: twelve game minutes a real one). */
+export const REBIRTH_TTL_DAYS = 12;
+export const REBIRTH_TTL_MINUTES = REBIRTH_TTL_DAYS * MINUTES_PER_DAY;
+
 /**
- * Has this spawn's time run out by `now` (classic minutes)?
+ * When a spawn's life ends (classic minutes): the earlier of its two clocks - two days from its first clearing, seven
+ * from its first entry. NaN for a record no clock has started.
+ */
+export function spawnDeath(rec) {
+  if (!rec) return NaN;
+  const a = Number.isFinite(rec.cleared) ? rec.cleared + CLEARED_TTL_MINUTES : Infinity;
+  const b = Number.isFinite(rec.seen) ? rec.seen + GENERAL_TTL_MINUTES : Infinity;
+  const d = Math.min(a, b);
+  return Number.isFinite(d) ? d : NaN;
+}
+
+/** SPAWN-REBIRTH: has this record's spawn died AND stood again by `now` - its death REBIRTH_TTL_MINUTES behind? Then the
+ *  record is of a life that is over: nothing of it holds the pixel. */
+export function spawnReborn(rec, now) {
+  const d = spawnDeath(rec);
+  return Number.isFinite(d) && Number.isFinite(now) && now - d >= REBIRTH_TTL_MINUTES;
+}
+
+/**
+ * Has this spawn's time run out by `now` (classic minutes) - and not yet come round again?
  *
- * A record is `{ seen, cleared }` - when the pixel was first built, and
- * when the place was first emptied (absent until it is). Nothing is
- * expired by a clock that has not run: a record with no `seen` is one
- * this ledger has never met.
+ * A record is `{ seen, cleared }` - when the place was first entered (SPAWN-REBIRTH: it was when the pixel was first
+ * built), and when it was first emptied (absent until it is). Nothing is expired by a clock that has not run: a record
+ * with no `seen` is one this ledger has never met. SPAWN-REBIRTH: nor is one whose spawn has stood again.
  *
  * A NEGATIVE ELAPSED IS NEVER EXPIRY. Loading an older save winds the
  * clock BACK, and a spawn whose record outlived the load would
  * otherwise read as astronomically old and vanish on sight.
  */
 export function spawnExpired(rec, now) {
-  if (!rec || !Number.isFinite(now)) return false;
-  if (Number.isFinite(rec.cleared) && now - rec.cleared >= CLEARED_TTL_MINUTES) return true;
-  if (Number.isFinite(rec.seen) && now - rec.seen >= GENERAL_TTL_MINUTES) return true;
-  return false;
+  // AUDIT SPAWN-REBIRTH F8: the two clocks are spawnDeath's alone (they were written twice, here and there): dead from
+  // its death, back REBIRTH_TTL_MINUTES after it
+  const d = spawnDeath(rec);
+  return Number.isFinite(d) && Number.isFinite(now) && now >= d && now - d < REBIRTH_TTL_MINUTES;
 }
 
 /**
@@ -314,20 +353,34 @@ export function spawnExpired(rec, now) {
  * a pixel (net/overworldLaw.js - `[px, py, seen, cleared?]`, the clocks
  * in shared classic minutes) and MIN-MERGES what its players say, the
  * `dg` word of net/wire.js's `ow` frame. This client says its own row
- * when a spawn is first seen and when it is cleared (`wireRow` below,
+ * when a spawn is first entered and when it is cleared (`wireRow` below,
  * through net/online.js sendOverworld), and folds in every row the cell
- * says (`merge`: the earliest sight and the earliest clear win, so a
+ * says (`merge`: the earliest entry and the earliest clear win, so a
  * spawn's clocks only ever run out sooner) - its cell's welcome hands
  * the whole of it to a player who walks in later.
+ *
+ * SPAWN-REBIRTH: a row whose spawn has stood again (spawnReborn) is of a life that is over. It is as good as no row:
+ * `note` and `clear` start the new life's clocks over it, `has` and `expired` read it as none, `merge` neither takes one
+ * nor lets one stand in the way of a later life's row, and the save leaves it out (`toJSON`, at the clock the ledger
+ * was last asked at since it was made or loaded - none asked, every row kept: an offline session never reads these
+ * clocks).
  */
 export function createSpawnLedger() {
   /** @type {Map<string, {seen:number, cleared?:number}>} */
   const rows = new Map();
+  // SPAWN-REBIRTH: the clock the last call carried - what the save judges a life over by. AUDIT SPAWN-REBIRTH F4: the
+  // LAST, never the highest (a clock read fast before the shared offset landed, then corrected, left every row its high
+  // mark had passed out of the next save), and a load forgets it (the rows it judged are gone)
+  let last = NaN;
+  const at = (now) => { if (Number.isFinite(now)) last = now; return now; };
+  /** The row a key holds at `now` - none for one whose spawn has stood again. */
+  const live = (key, now) => { const r = rows.get(key); return r && !spawnReborn(r, now) ? r : null; };
   return {
-    /** First sight starts the long clock; later sights do not restart it. */
+    /** First entry starts the long clock; later entries do not restart it. SPAWN-REBIRTH: unless the spawn has died and
+     *  stood again since - then this is the new life's first entry. */
     note(key, now) {
-      if (!key || !Number.isFinite(now)) return null;
-      let r = rows.get(key);
+      if (!key || !Number.isFinite(at(now))) return null;
+      let r = live(key, now);
       if (!r) { r = { seen: now }; rows.set(key, r); }
       return r;
     },
@@ -336,19 +389,24 @@ export function createSpawnLedger() {
      *  days, or a cleared spawn beside a road would never die. */
     clear(key, now) {
       if (!key || !Number.isFinite(now)) return null;
-      const r = rows.get(key) ?? this.note(key, now);
+      const r = this.note(key, now);
       if (r && !Number.isFinite(r.cleared)) r.cleared = now;
       return r;
     },
-    expired: (key, now) => spawnExpired(rows.get(key), now),
-    /** OW6L: a row HEARD - the cell's word (net/online.js onOverworld's `dg`) - MIN-MERGED in: the earlier first sight
+    expired: (key, now) => spawnExpired(rows.get(key), at(now)),
+    /** SPAWN-REBIRTH: does this ledger hold a row of the spawn's CURRENT life at `now` - one that is no first entry? */
+    has: (key, now) => !!live(key, at(now)),
+    /** OW6L: a row HEARD - the cell's word (net/online.js onOverworld's `dg`) - MIN-MERGED in: the earlier first entry
      *  and the earlier clear of the two are kept, a row this ledger never met is made, and nothing is ever raised (a
      *  heard clock only runs a spawn out sooner). A non-finite `seen` is no row at all; a non-finite `cleared` is none.
-     *  Answers whether anything changed. */
-    merge(key, seen, cleared) {
+     *  SPAWN-REBIRTH: at `now`, a heard row whose spawn has stood again is taken as none, and one this ledger holds is
+     *  replaced by the later life's (min-merged, a life gone by would end the new one on the old one's clocks). Answers
+     *  whether anything changed. */
+    merge(key, seen, cleared, now = NaN) {
       if (!key || !Number.isFinite(seen)) return false;
-      const r = rows.get(key);
       const clear = Number.isFinite(cleared) ? cleared : null;
+      if (spawnReborn(clear === null ? { seen } : { seen, cleared: clear }, at(now))) return false;
+      const r = live(key, now);
       if (!r) { rows.set(key, clear === null ? { seen } : { seen, cleared: clear }); return true; }
       let moved = false;
       if (seen < r.seen) { r.seen = seen; moved = true; }
@@ -368,10 +426,12 @@ export function createSpawnLedger() {
     /** Gone for good: the pixel is free to be empty from here. */
     forget(key) { return rows.delete(key); },
     get size() { return rows.size; },
-    /** The whole ledger, for a save to carry and a test to read. */
-    toJSON: () => [...rows].map(([k, r]) => [k, r.seen, ...(Number.isFinite(r.cleared) ? [r.cleared] : [])]),
+    /** The whole ledger, for a save to carry and a test to read. SPAWN-REBIRTH: less the rows whose spawn has stood again
+     *  by the clock the ledger was last asked at - a save carries no life that is over. */
+    toJSON: () => [...rows].filter(([, r]) => !spawnReborn(r, last)).map(([k, r]) => [k, r.seen, ...(Number.isFinite(r.cleared) ? [r.cleared] : [])]),
     load(rowsIn) {
       rows.clear();
+      last = NaN;   // AUDIT SPAWN-REBIRTH F4
       for (const [k, seen, cleared] of rowsIn ?? []) {
         if (typeof k === 'string' && Number.isFinite(seen)) rows.set(k, Number.isFinite(cleared) ? { seen, cleared } : { seen });
       }

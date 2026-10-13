@@ -33,7 +33,8 @@ import { QuestResourceBehaviour } from '../systems/quest/resourceBehaviour.js';
 import { questNameIn } from '../systems/quest/machine.js';   // AUDIT CURSE-SYNC: IsProtectedQuest's name test, one home
 import { applySpell } from '../systems/effects.js';
 import { GENDERS } from '../characters/nameHelper.js';
-import { mendedFoeSpot } from '../systems/quest/markerCuration.js';   // SEALED-SAVE (FIELD BUGS 2026-10-05c): a saved quest foe follows its moved marker
+import { mendedFoeSpot } from '../systems/quest/markerCuration.js';
+import { placeFoeFreely, PLACE_FOE_DEFAULTS, MARKER_FLOOR_REACH } from '../systems/quest/sceneMount.js';   // SHOP-RATS: the ring, and the room's own spots after it   // SEALED-SAVE (FIELD BUGS 2026-10-05c): a saved quest foe follows its moved marker
 
 export function questFoeGender(foe) { return foe.gender === GENDERS.Female ? 'female' : 'male'; }
 
@@ -110,6 +111,46 @@ export function bindQuestFoeHost(f, behaviour, pool) {
  *  collider's triangle soup (its own comment says so), where Unity's
  *  OverlapSphere sees their capsules - the caller supplies foe and
  *  player proximity. */
+/** FIELD BUGS 2026-10-12g SHOP-RATS ("Starter quests keep breaking": "Quests that spawn enemies inside of shops like the
+ *  rat quests from the fighters guild keep spawning nothing"). DFU's interior arm is PlaceFoeFreely alone
+ *  (CreateFoe.PlaceFoeBuildingInterior, "Always place foes around player rather than use spawn points"): a bearing just
+ *  outside the view, at least 5 m clear plus 1.25 m, every tick and never anything else. A shop's counter and shelves
+ *  seldom leave that run - at the counter, facing the keeper, none ever - so the wave waits forever, no later wave can
+ *  start, and the encounter event it raises each tick breaks every rest. The ring is tried first, as DFU tries it; a foe
+ *  it has missed ROOM_RING_MISSES times (three seconds of the machine's ten ticks) takes a near ring that does not mind
+ *  the view, then the room's own markers - its enter, rest, quest and treasure spots - the farthest within the ring's
+ *  reach first, a floor under it and the spot clear, as the ring's own test point is. A DEPARTURE (Port-Ledger). */
+export const ROOM_RING_MISSES = 30;
+/** ...the near ring: half DFU's least distance, the view not minded (the spawner's own `lineOfSightCheck: false`). */
+export const ROOM_NEAR_RING = Object.freeze({ minDistance: 2.5, lineOfSightCheck: false });
+
+/** The room's spot for a quest foe the ring cannot place: of `spots` ([x, y, z] in the room's frame, a marker's floor),
+ *  the farthest from the player within the ring's reach that has a floor under it and is clear - its test point, as
+ *  placeFoeFreely answers one - or null. */
+export function roomMarkerSpot(env, spots) {
+  const C = PLACE_FOE_DEFAULTS, me = env.playerPosition;
+  const d2 = (p) => (p[0] - me.x) ** 2 + (p[2] - me.z) ** 2;
+  const list = (spots ?? []).filter((p) => d2(p) <= C.maxDistance ** 2).sort((a, b) => d2(b) - d2(a));
+  for (const p of list) {
+    const floor = env.raycast({ x: p[0], y: p[1] + 0.2, z: p[2] }, { x: 0, y: -1, z: 0 }, MARKER_FLOOR_REACH);
+    if (!floor) continue;
+    const t = { x: floor.point.x, y: floor.point.y + C.separationDistance, z: floor.point.z };
+    if (env.overlapSphere?.(t, C.overlapSphereRadius)) continue;
+    return t;
+  }
+  return null;
+}
+
+/** A building's quest foe, placed: DFU's ring; after ROOM_RING_MISSES misses on this pending foe (`handle.ringMisses`),
+ *  the near ring, then the room's spots. Null: try again next tick. */
+export function placeRoomQuestFoe(env, handle, spots) {
+  const ring = placeFoeFreely(env);
+  if (ring) return ring;
+  handle.ringMisses = (handle.ringMisses ?? 0) + 1;
+  if (handle.ringMisses < ROOM_RING_MISSES) return null;
+  return placeFoeFreely(env, ROOM_NEAR_RING) ?? roomMarkerSpot(env, spots);
+}
+
 export function placeFoeEnv({ collider, playerFeet, playerYawRad, fovDegrees, rolls = Math.random, isOccupied = null }) {
   const toObj = (p) => ({ x: p[0], y: p[1], z: p[2] });
   return {

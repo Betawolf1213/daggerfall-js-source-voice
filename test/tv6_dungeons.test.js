@@ -10,7 +10,7 @@ import {
 import { LOCATION_TYPES, CLIMATES, getMapPixelID } from '../src/formats/mapsFile.js';
 import { TV_FAR_RANGE } from '../src/systems/travelFarPlaces.js';
 import { ARRIVAL_BUFFER } from '../src/systems/travelAutopilot.js';
-import { spawnedMapId, spawnsDungeon, createSpawnLedger, GENERAL_TTL_MINUTES } from '../src/world/spawnedDungeons.js';
+import { spawnedMapId, spawnsDungeon, createSpawnLedger, GENERAL_TTL_MINUTES, REBIRTH_TTL_MINUTES } from '../src/world/spawnedDungeons.js';
 import { planRoute, routeLegs, routeDrawPoints, routeGround, TV_MOUNTAIN_CLIMATE, TV_STEEP_RISE } from '../src/systems/travelRoute.js';
 
 // PIN MOVED (AUDIT OW5 G2): the Overworld's own lines are said through tvSay - held at the scale they are said at
@@ -455,6 +455,12 @@ test('AUDIT OW4 D2/D4 host: a spawn is GONE by the feature\'s own test (the ledg
   assert.equal(gone(5, 6), false, 'AUDIT OW5b D2: standing on built ground, it stands until that ground is built again');
   built.set('5,6', { location: null });   // FIELD BUGS 29h (SPAWN-PLATE): the ground built again with the clock run out - empty
   assert.equal(gone(5, 6), true, 'built EMPTY is gone - no plate over bare grass, no walk to it');
+  // AUDIT SPAWN-REBIRTH F2: the build's word both ways - its time over, a spawn stands again off the built ground, never
+  // on a pixel built empty while it was dead (the plate and the walk over bare grass, 29h the other way round)
+  clock = GENERAL_TTL_MINUTES + REBIRTH_TTL_MINUTES;
+  assert.equal(gone(5, 6), true, 'its time over, its pixel built empty while it was dead: still none on that ground');
+  built.clear();
+  assert.equal(gone(5, 6), false, 'off the built ground: the clocks - it stands again');
   built.clear();
   clock = NaN;
   assert.equal(gone(5, 6), false, 'a clock not yet running expires nothing');
@@ -506,7 +512,7 @@ test('AUDIT OW4 D5/D3 host: every write to the index after the boot\'s fill bump
   const ledger = createSpawnLedger(), index = new Map(), unroaded = new Set();
   let clock = 0;
   const env = new Function('d', `let _locIndexGen = 0; const { params, spawnsDungeon, _spawnSalt, maps, CLIMATES, _spawnGround, terrainGen, pathFreePixel, _spawnLedger, _spawnClock, _insideSpawn,
-    locationIndex, _spawnCloneAt, _spawnUnroaded, owSayRow, wildMaskOf, wildInside, wildHallStand } = d; ${seen[1]} ${s[1]} return { at: spawnedDungeonAt, gen: () => _locIndexGen };`)({
+    locationIndex, _spawnCloneAt, _spawnUnroaded, owSayRow, wildMaskOf, wildInside, wildHallStand } = d; ${seen[1]} ${s[1]} return { at: spawnedDungeonAt, enter: _spawnSeen, gen: () => _locIndexGen };`)({
     params: { has: () => true }, spawnsDungeon: () => true, _spawnSalt: 1, maps: { getClimateIndex: () => 231 }, CLIMATES, _spawnGround: () => true, terrainGen: { roads: () => ({}) },
     pathFreePixel: () => true, _spawnLedger: ledger, _spawnClock: () => clock, _insideSpawn: () => false, locationIndex: index,
     _spawnCloneAt: (x, y) => spawnLoc(x, y), _spawnUnroaded: unroaded, owSayRow: () => {},
@@ -514,6 +520,7 @@ test('AUDIT OW4 D5/D3 host: every write to the index after the boot\'s fill bump
   });
   assert.equal(env.at(7, 8).name, 'Old Keep (7,8)');
   assert.deepEqual([env.gen(), index.has('7,8')], [1, true], 'stood: bumped');
+  env.enter('7,8');   // PIN MOVED (SPAWN-REBIRTH, Field-Bugs-2026-10-12h.md): standing a spawn starts no clock - entering it does
   clock = GENERAL_TTL_MINUTES;
   assert.equal(env.at(7, 8), null);
   assert.deepEqual([env.gen(), index.has('7,8')], [2, false], 'expired: bumped');

@@ -114,6 +114,7 @@ test('ARENA2 move: the hosts\' doors - furniture to the furnishings, the rest to
   assert.match(w, /giveOwn: arenaGiveOwn,\n\s+refund: arenaRefund,/);
   assert.match(w, /const a = playerEntity\.bankAccounts\[goldRegion\(playerEntity\.bankAccounts, ARENA_REGION\)\] \?\? null;/);
   const m = rd('src/scenes/worldModes.js');
-  assert.match(m, /if \(!target && c\.crate && c\.items\?\.length\) \{\n\s+const o = buildingOrigin\(\), f = player\.pos;\n\s+data\.droppedPiles = \[\.\.\.\(data\.droppedPiles \?\? \[\]\), \{ pos: \[f\[0\] - o\[0\], f\[1\] - o\[1\], f\[2\] - o\[2\]\], items: c\.items\.map\(\(it\) => \(\{ \.\.\.it \}\)\) \}\];/);
+  // PIN MOVED (FIELD BUGS 2026-10-12g HOLD-KEPT): the crate's arm is every chest record's that no chest stands for
+  assert.match(m, /if \(!target && kind === 'container' && c\.items\?\.length\) \{\n\s+const o = buildingOrigin\(\), f = player\.pos;\n\s+data\.droppedPiles = \[\.\.\.\(data\.droppedPiles \?\? \[\]\), \{ pos: \[f\[0\] - o\[0\], f\[1\] - o\[1\], f\[2\] - o\[2\]\], items: c\.items\.map\(\(it\) => \(\{ \.\.\.it \}\)\) \}\];/);
   assert.ok(!/renameScene\(/.test(rd('src/systems/arenaMove.js')), 'the old places are never renamed onto the new house');
 });

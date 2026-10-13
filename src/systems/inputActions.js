@@ -1308,7 +1308,8 @@ function storage() {
  *  and no way BACK, because the way back is itself a binding. So the
  *  default is restored and the removal mark lifted - the narrowest
  *  repair that cannot strand anyone, applied at the one door every
- *  load comes through. */
+ *  load comes through. Only onto a FREE default (KEEP-CLICK): a key
+ *  the player gave another action is theirs to keep. */
 export const UNLOSEABLE_ACTIONS = Object.freeze(['SwingWeapon', 'ActivateCenterObject', 'MoveForwards', 'MoveBackwards', 'MoveLeft', 'MoveRight']);
 
 /** The codes an action answers to right now, across both dicts. */
@@ -1338,6 +1339,11 @@ export function repairUnloseableBindings(store) {
     if (actionIsReachable(store, action)) continue;
     const def = DEFAULT_BINDINGS.find(([, a]) => a === action);
     if (!def) continue;
+    // FIELD BUGS 2026-10-12g KEEP-CLICK: never a key another action holds. SetBinding steals, and this ran on every
+    // boot: Swing on Left Click with Activate (mouse) cleared came back Activate's, Swing on nothing - the very
+    // stranding this pass exists to stop, written back to the file, and a cascade on the next boots. DFU's own
+    // autofill (TestSetBinding) fills only a free code; a player who gave the key away keeps their layout.
+    if (actionsForCode(store, def[0]).length) continue;
     // The removal mark is DFU's "keep it unbound" and it is exactly what
     // stopped the autofill pass putting this back - but lifting it here
     // by hand is dead code: SetBinding's own first act is

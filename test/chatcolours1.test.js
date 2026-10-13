@@ -106,7 +106,7 @@ test('CHAT-LANG wire: one channel per language, keyed by its code under its own 
   assert.equal(LANG_RELAY_MIN, 196);   // world192 on its branch, renumbered past main's world192-world195 at the port
   assert.equal(relaySupportsLang('world195'), false);
   assert.equal(relaySupportsLang('world196'), true);
-  assert.equal(RELAY_VERSION, 'world198', 'PIN MOVED: world198, EG-PLAY (the room of an Elite Breach; world195 on its branch, renumbered past COATS1, CHAT-LANG and BAL8 at the merges) over world197, BAL8 (the PvP referee and its one harm ceiling) - CHAT-LANG\'s language channels are world196\'s and stay open past it');
+  assert.equal(RELAY_VERSION, 'world199');   // PIN MOVED: world199, EG-PLAY (the room of an Elite Breach - the hub opening it and calling its company, its halls and their director, its own fight, its receipts; world195 on its branch, renumbered past COATS1, CHAT-LANG, BAL8 and SPAWN-REBIRTH at the merges); PIN MOVED: world198, SPAWN-REBIRTH (a cell keeps the row of a spawned dungeon until it stands again, never sixty real days); PIN MOVED: world197, BAL8 (the PvP referee and its one harm ceiling) over world196, CHAT-LANG
   assert.match(rd('src/net/online.js'), /if \(primary\) this\.langOk = relaySupportsLang\(relayV\);/);
 });
 

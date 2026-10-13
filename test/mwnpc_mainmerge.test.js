@@ -217,11 +217,11 @@ test('WAGONS2 x MWNPC5c: a companion drawn grown on a wagon under the Overworld 
 
 test('RW1 x MWNPC8b/8c: the view out through a building\'s glass draws no Morrowind body, so every flat it draws is shown - a standing person\'s never left cast-only by the street frame\'s last mark (by source: both exterior hosts\' view outs; the interiors\' host draws its exterior host\'s, and a dungeon has no glass)', () => {
   const world = rd('src/scenes/world.js');
-  const out = world.slice(world.indexOf('  const drawOutsideStreet = (r, planes) => {'), world.indexOf('  const outsideView = (doorMatrix) => ({'));
+  const out = world.slice(world.indexOf('  const drawOutsideStreet = (r, planes) => {'), world.indexOf('  const outsideView = () => ({'));
   assert.match(out, /fb\.origin = t;\n(\s*\/\/[^\n]*\n)*\s*fb\.castOnly = false;\n\s*flats\.push\(fb\);/, 'world.js: each flat shown before it joins the view out\'s draw');
   assert.ok(out.indexOf('fb.castOnly = false;') < out.indexOf('r.drawBillboards(flats'), 'and before the draw');
   const ext = rd('src/scenes/exterior.js');
-  const extOut = ext.slice(ext.indexOf('  const outsideView = (doorMatrix) => ({'), ext.indexOf('  var modes = createWorldModes({'));
+  const extOut = ext.slice(ext.indexOf('  const outsideView = () => ({'), ext.indexOf('  var modes = createWorldModes({'));
   assert.match(extOut, /const flats = billboardBatches\.filter\([^\n]*\n\s*for \(const b of flats\) b\.castOnly = false;[^\n]*\n\s*if \(flats\.length\) r\.drawBillboards\(flats,/, 'exterior.js: the same');
   // the people are in what the view outs draw: the street's standing people's batches are the pixel's (world.js) and the
   // town's (exterior.js) flats - so a mark left on them is a person missing from the glass

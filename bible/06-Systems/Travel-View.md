@@ -1709,7 +1709,9 @@ CAMP-SIGHT, CAMP-TRAVEL, CAMP-NOTIMER, TTL1, WORLD1's "True persistance"); the d
   fought was back for whoever came later in its life - and the spawn ledger was each client's own (TTL1's own note: two
   players disagreed for days whether a spawn stood). Each CELL ROOM now keeps a ledger: the spent ids (their own life
   and the next), and a row a spawned pixel - `[px, py, seen, cleared?]` in shared classic minutes, MIN-MERGED, so the
-  earliest sight and the earliest clear anyone had win (the spawn ledger's `merge`), kept sixty real days. A player's
+  earliest sight and the earliest clear anyone had win (the spawn ledger's `merge`), kept sixty real days (SPAWN-REBIRTH,
+  2026-10-12, `01-Overview/Field-Bugs-2026-10-12h.md`: a row is a first ENTRY now, kept until its spawn stands again -
+  its death and twenty-four real hours - and the same dungeon stands then on fresh clocks). A player's
   spends and first sights and clears are owed to the cell until it takes them (world.js `overworldLedgerFrame`: said a
   second apart, what was not taken said again, nothing to an older relay), and every change is said to everyone in the
   cell - and the whole ledger to a player who walks in later, in its welcome (a halo's too, for the seam). The relay

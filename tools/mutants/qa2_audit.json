@@ -115,8 +115,8 @@
   {
     "name": "QA2A-gate-reseat",
     "file": "src/systems/quest/place.js",
-    "old": "    if (!found.length && this.scope === Scopes.Local && this._modsTookKind(world, location, p2, p3)) found = this._nearTownSites(world, location, p2, p3)?.found ?? [];",
-    "new": "    if (!found.length && this.scope === Scopes.Local) found = this._nearTownSites(world, location, p2, p3)?.found ?? [];",
+    "old": "    if (!found.length && this.scope === Scopes.Local && this._modsTookKind(world, location, p2, p3)) { found = this._nearTownSites(world, location, p2, p3)?.found ?? []; nearSite = found.length > 0; }",
+    "new": "    if (!found.length && this.scope === Scopes.Local) { found = this._nearTownSites(world, location, p2, p3)?.found ?? []; nearSite = found.length > 0; }",
     "tests": [
       "test/qa2_nearsite.test.js"
     ],
@@ -376,8 +376,8 @@
   {
     "name": "QA2A-reseat-remote",
     "file": "src/systems/quest/place.js",
-    "old": "    if (!found.length && this.scope === Scopes.Local && this._modsTookKind(world, location, p2, p3)) found = this._nearTownSites(world, location, p2, p3)?.found ?? [];",
-    "new": "    if (!found.length && this._modsTookKind(world, location, p2, p3)) found = this._nearTownSites(world, location, p2, p3)?.found ?? [];",
+    "old": "    if (!found.length && this.scope === Scopes.Local && this._modsTookKind(world, location, p2, p3)) { found = this._nearTownSites(world, location, p2, p3)?.found ?? []; nearSite = found.length > 0; }",
+    "new": "    if (!found.length && this._modsTookKind(world, location, p2, p3)) { found = this._nearTownSites(world, location, p2, p3)?.found ?? []; nearSite = found.length > 0; }",
     "tests": [
       "test/qa2_nearsite.test.js"
     ],

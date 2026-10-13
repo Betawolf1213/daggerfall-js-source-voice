@@ -222,6 +222,88 @@ test('TTL1: the ledger round-trips through a save', async () => {
   assert.equal(M.load(null), 0, 'a save with no ledger loads an empty one');
 });
 
+// ── SPAWN-REBIRTH: A DEAD SPAWN STANDS AGAIN ──────────────────────
+//
+// A player's lockout report (2026-10-12) and Mac: "Do all 3" - the long
+// clock starts on ENTRY, a dead spawn stands again twenty-four real
+// hours after it died, and no ledger keeps a life that is over.
+
+test('SPAWN-REBIRTH: a spawn dies on the earlier of its clocks and stands again REBIRTH_TTL_DAYS later - twenty-four real hours of the online clock; expired means dead and not yet back', async () => {
+  const { spawnDeath, spawnReborn, spawnExpired, REBIRTH_TTL_DAYS, REBIRTH_TTL_MINUTES, GENERAL_TTL_MINUTES } = await import('../src/world/spawnedDungeons.js');
+  const { MINUTES_PER_DAY } = await import('../src/systems/gameDate.js');
+  const { ONLINE_MINUTES_PER_MS } = await import('../src/net/wire.js');
+  assert.equal(REBIRTH_TTL_DAYS, 12);
+  assert.equal(REBIRTH_TTL_MINUTES, 12 * MINUTES_PER_DAY, 'a day is the clock\'s own');
+  assert.equal(REBIRTH_TTL_MINUTES, 24 * 3600 * 1000 * ONLINE_MINUTES_PER_MS, 'twenty-four real hours online');
+  const D = (n) => n * MINUTES_PER_DAY;
+  assert.equal(spawnDeath({ seen: 0 }), D(7), 'never cleared: seven days from its first entry');
+  assert.equal(spawnDeath({ seen: 0, cleared: D(1) }), D(3), 'cleared on day one: two days on');
+  assert.equal(spawnDeath({ seen: 0, cleared: D(6) }), D(7), 'cleared on day six: the long clock still ends it first');
+  assert.ok(Number.isNaN(spawnDeath(null)) && Number.isNaN(spawnDeath({})), 'no clock started: no death');
+  assert.equal(spawnReborn({ seen: 0 }, D(19) - 1), false);
+  assert.equal(spawnReborn({ seen: 0 }, D(19)), true, 'seven days, then twelve');
+  assert.equal(spawnReborn({ seen: 0, cleared: D(1) }, D(15) - 1), false);
+  assert.equal(spawnReborn({ seen: 0, cleared: D(1) }, D(15)), true, 'cleared: two days, then twelve');
+  assert.equal(spawnReborn({ seen: 0 }, NaN), false, 'no clock: nothing comes back');
+  assert.equal(spawnReborn({ seen: D(50) }, D(1)), false, 'a clock wound back is no wait served');
+  assert.equal(spawnExpired({ seen: 0 }, GENERAL_TTL_MINUTES + REBIRTH_TTL_MINUTES - 1), true, 'dead the whole wait');
+  assert.equal(spawnExpired({ seen: 0 }, GENERAL_TTL_MINUTES + REBIRTH_TTL_MINUTES), false, 'and back when it is over');
+  assert.equal(spawnExpired({ seen: 0, cleared: D(1) }, D(15)), false);
+});
+
+test('SPAWN-REBIRTH: the ledger reads a life that is over as no row - an entry starts the new life over it, a clear too; has() asks for the current life alone', async () => {
+  const { createSpawnLedger, GENERAL_TTL_MINUTES, CLEARED_TTL_MINUTES, REBIRTH_TTL_MINUTES } = await import('../src/world/spawnedDungeons.js');
+  const back = GENERAL_TTL_MINUTES + REBIRTH_TTL_MINUTES;
+  const L = createSpawnLedger();
+  L.note('5,5', 0);
+  assert.equal(L.has('5,5', back - 1), true, 'dead, waiting: its row is the current life\'s');
+  assert.equal(L.note('5,5', back - 1).seen, 0, 'an entry inside the wait starts nothing');
+  assert.equal(L.has('5,5', back), false, 'stood again: the old row is no row');
+  assert.equal(L.has('9,9', 0), false, 'a pixel never met');
+  assert.equal(L.note('5,5', back + 3).seen, back + 3, 'the new life\'s first entry');
+  assert.equal(L.expired('5,5', back + 3 + GENERAL_TTL_MINUTES - 1), false);
+  assert.equal(L.expired('5,5', back + 3 + GENERAL_TTL_MINUTES), true, 'on its own seven days');
+  assert.equal(L.size, 1);
+  const M = createSpawnLedger();
+  M.note('1,2', 0); M.clear('1,2', 10);
+  const r = M.clear('1,2', 10 + CLEARED_TTL_MINUTES + REBIRTH_TTL_MINUTES);
+  assert.deepEqual([r.seen, r.cleared], [10 + CLEARED_TTL_MINUTES + REBIRTH_TTL_MINUTES, 10 + CLEARED_TTL_MINUTES + REBIRTH_TTL_MINUTES], 'cleared in a new life: both its clocks are the new life\'s');
+});
+
+test('SPAWN-REBIRTH: merge at a clock - a heard row of a life that is over is taken as none, and a held one gives way to a later life\'s row (the report\'s veteran, who refused a newer player\'s spawn for good); without a clock it min-merges as OW6L did', async () => {
+  const { createSpawnLedger, GENERAL_TTL_MINUTES, REBIRTH_TTL_MINUTES } = await import('../src/world/spawnedDungeons.js');
+  const back = GENERAL_TTL_MINUTES + REBIRTH_TTL_MINUTES;
+  const vet = createSpawnLedger();
+  vet.note('4,4', 0);
+  assert.equal(vet.merge('4,4', back + 100, undefined, back + 200), true, 'a later life\'s first entry is taken over the veteran\'s old row');
+  assert.deepEqual(vet.toJSON(), [['4,4', back + 100]]);
+  assert.equal(vet.merge('4,4', 0, undefined, back + 200), false, 'a heard row of a life that is over is none - it never ends the new one');
+  assert.deepEqual(vet.toJSON(), [['4,4', back + 100]]);
+  assert.equal(vet.merge('8,8', 0, 5, 5 + back), false, 'nor is it made where none is held');
+  assert.equal(vet.size, 1);
+  const old = createSpawnLedger();
+  old.note('4,4', 0);
+  assert.equal(old.merge('4,4', back + 100), false, 'no clock: min-merged as OW6L did - the earlier entry kept');
+  assert.deepEqual(old.toJSON(), [['4,4', 0]]);
+});
+
+test('SPAWN-REBIRTH: a save carries no life that is over - toJSON leaves out every row whose spawn has stood again by the clock the ledger was last asked at, and keeps them all when no clock was asked since it was made or loaded (AUDIT SPAWN-REBIRTH F4: the last clock, never a high mark; a load forgets it)', async () => {
+  const { createSpawnLedger, GENERAL_TTL_MINUTES, REBIRTH_TTL_MINUTES } = await import('../src/world/spawnedDungeons.js');
+  const back = GENERAL_TTL_MINUTES + REBIRTH_TTL_MINUTES;
+  const rows = [['1,1', 0], ['2,2', 500], ['3,3', 0, 1]];
+  const L = createSpawnLedger();
+  L.load(rows);
+  assert.deepEqual(L.toJSON(), rows, 'no clock asked (an offline session never reads these): every row kept');
+  L.expired('9,9', back + 100);
+  assert.deepEqual(L.toJSON(), [['2,2', 500]], 'asked at a later clock: the lives that are over are left out');
+  assert.equal(L.size, 3, 'the rows themselves are held until a new life replaces them');
+  L.expired('9,9', 50);
+  assert.deepEqual(L.toJSON(), rows, 'AUDIT F4: the clock last asked - a clock read fast and corrected leaves no row out on its high mark');
+  L.expired('9,9', back + 100);
+  L.load(rows);
+  assert.deepEqual(L.toJSON(), rows, 'AUDIT F4: a load forgets the clock - nothing judged until it is asked again');
+});
+
 test('TTL1 by source: expiry is checked on the pixel build, and never while the player is in it', async () => {
   const { readFileSync } = await import('node:fs');
   const w = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
@@ -230,9 +312,9 @@ test('TTL1 by source: expiry is checked on the pixel build, and never while the 
   assert.match(fn, /_spawnLedger\.expired\(key, _spawnClock\(\)\) && !_insideSpawn\(key\)/, 'both clocks AND the creator\'s "no player in it"');
   assert.match(fn, /_locIndexGen \+= 1;[^\n]*\n\s*locationIndex\.delete\(key\);\s*\n\s*return null;/, 'expired: the location goes, the pixel is empty land');
   assert.ok(!/_spawnLedger\.forget\(key\)/.test(fn), 'AUDIT OW5b D2: and the row STAYS - its clocks keep it gone; forgotten, the pure roll stood the same dungeon again on a fresh seven days');
-  assert.match(fn, /_spawnSeen\(key\);/, 'first sight starts the long clock - through the one first-sight door (OW6L)');
+  assert.doesNotMatch(fn, /_spawnSeen\(/, 'SPAWN-REBIRTH: standing a spawn starts no clock - a pixel streaming in is nobody entering it');
   const seenAt = w.indexOf('  function _spawnSeen(key) {');
-  assert.match(w.slice(seenAt, w.indexOf('\n  }\n', seenAt)), /_spawnLedger\.note\(key, _spawnClock\(\)\);/, 'which notes the ledger');
+  assert.match(w.slice(seenAt, w.indexOf('\n  }\n', seenAt)), /const now = _spawnClock\(\);\n\s*const fresh = !_spawnLedger\.has\(key, now\);\n\s*_spawnLedger\.note\(key, now\);/, 'the first-entry door notes the ledger - a row of a life that is over is no row (SPAWN-REBIRTH)');
   // the boot builds the player's OWN pixel through this function before
   // `playerTicker` is declared - a temporal dead zone `?.` cannot save
   assert.match(w, /let _spawnClock = \(\) => NaN;/, 'the clock is ASKED, not read: until the ticker stands every ledger call is a no-op');
@@ -248,6 +330,7 @@ test('TTL1 by source: expiry is checked on the pixel build, and never while the 
   const k = w.indexOf('const _noteSpawnCleared = () => {');
   const cleared = w.slice(k, w.indexOf('\n  };\n', k));
   assert.match(cleared, /if \(!locationIndex\.get\(key\)\?\.spawned\) return;/, 'a real dungeon being cleared never invents a ledger row');
+  assert.match(cleared, /if \(locationIndex\.get\(key\)\.wildHall\) return;/, 'AUDIT SPAWN-REBIRTH F6: nor a Wild Zone hall being cleared - its day is the hub\'s');
   assert.match(cleared, /_spawnLedger\.clear\(key, _spawnClock\(\)\)/);
   assert.match(w, /onDungeonCleared: _noteSpawnCleared,/, 'the host answers the context');
   assert.match(w, /onDungeonSpawned: \(\) => \{ const p = playerTravelPixel\(\); _spawnSeen\(`\$\{p\.x\},\$\{p\.y\}`\); \},/, 'entering one starts the long clock too - a save loaded straight into a spawn was never built through buildPixelNow this session');
@@ -307,17 +390,19 @@ test('TTL1 by source: both hosts carry the ledger, so a save made underground ke
 
 // AUDIT OW5b D2 (TTL1, the creator's rule relayed by Mac: "Spawned Dungeons should expire/removed after 2 ingame days when
 // cleared ... and after 7 ingame days in general"): spawnedDungeonAt and the build's own ask lifted out of world.js and
-// RUN - an expired spawn is REMOVED and stays removed, however often its pixel is asked or built.
-test('AUDIT OW5b D2 host run: A SPAWN PAST ITS TIME IS GONE FOR GOOD - the build\'s probe and the build itself both ask, and neither stands it again on a fresh clock; one the index still holds is taken out at its pixel\'s next build; never while the player is in it; a real place always wins', async () => {
+// RUN - an expired spawn is REMOVED and stays removed, however often its pixel is asked or built. SPAWN-REBIRTH (2026-10-12,
+// a player's lockout report; Mac: "Do all 3"): standing a spawn starts no clock - entering it does - and it stays removed
+// until REBIRTH_TTL_DAYS after it died, when the same dungeon stands again with no clock running.
+test('AUDIT OW5b D2 host run (SPAWN-REBIRTH): A SPAWN PAST ITS TIME IS GONE UNTIL IT STANDS AGAIN - standing it starts no clock, entering it does; past its time the build\'s probe and the build itself both leave its pixel empty, neither standing it again on a fresh clock; the wait over, the same dungeon stands with no clock running and the next entry starts the new life\'s; never while the player is in it; a real place always wins', async () => {
   const { readFileSync } = await import('node:fs');
-  const { createSpawnLedger, GENERAL_TTL_MINUTES } = await import('../src/world/spawnedDungeons.js');
+  const { createSpawnLedger, GENERAL_TTL_MINUTES, REBIRTH_TTL_MINUTES } = await import('../src/world/spawnedDungeons.js');
   const w = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
   const i = w.indexOf('  const spawnedDungeonAt = (px, py) => {');
   const spawned = w.slice(i, w.indexOf('\n  };\n', i) + 5);
   const j = w.indexOf('  function _locationToBuild(px, py) {');
   const build = w.slice(j, w.indexOf('\n  }\n', j) + 4);
   const k = w.indexOf('  function _spawnSeen(key) {');
-  const seen = w.slice(k, w.indexOf('\n  }\n', k) + 4);   // OW6L: the one first-sight door, run as it stands
+  const seen = w.slice(k, w.indexOf('\n  }\n', k) + 4);   // OW6L: the one first-entry door, run as it stands
   assert.ok(i > 0 && j > 0 && k > 0, 'all three lifted');
   const run = ({ inside = false } = {}) => {
     const d = { now: 0, inside, index: new Map(), ledger: createSpawnLedger(), owed: [] };
@@ -333,26 +418,50 @@ test('AUDIT OW5b D2 host run: A SPAWN PAST ITS TIME IS GONE FOR GOOD - the build
       ${seen}
       ${spawned}
       ${build}
-      return { spawnedDungeonAt, _locationToBuild, gen: () => _locIndexGen };`)(d, createSpawnLedger);
+      return { spawnedDungeonAt, _locationToBuild, _spawnSeen, gen: () => _locIndexGen };`)(d, createSpawnLedger);
     return { d, ...host };
   };
   const h = run();
-  const first = h._locationToBuild(7, 9);
-  assert.equal(first?.name, 'Old Keep', 'first sight: stood, its seven days begun');
-  assert.equal(h.d.ledger.toJSON()[0][1], 0);
+  assert.equal(h._locationToBuild(7, 9)?.name, 'Old Keep', 'first build: stood');
+  assert.equal(h.d.ledger.size, 0, 'SPAWN-REBIRTH: streamed in with nobody in it - no clock started');
+  assert.deepEqual(h.d.owed, [], 'and nothing owed to the cell');
+  h.d.now = GENERAL_TTL_MINUTES * 3;
+  assert.equal(h._locationToBuild(7, 9)?.name, 'Old Keep', 'never entered: it stands however long the road beside it is walked');
+  const t0 = h.d.now;
+  h._spawnSeen('7,9');   // the first-entry door (world.js onDungeonSpawned)
+  assert.deepEqual(h.d.ledger.toJSON(), [['7,9', t0]], 'entered: its seven days begun');
   assert.deepEqual(h.d.owed, ['7,9'], 'and its row owed to the cell (OW6L)');
-  h.d.now = GENERAL_TTL_MINUTES + 1;
+  h.d.now = t0 + GENERAL_TTL_MINUTES;
   const gen = h.gen();
   assert.equal(h._locationToBuild(7, 9), null, 'held in the index, past its time: its pixel built empty');
   assert.equal(h.d.index.has('7,9'), false, 'out of the index');
   assert.ok(h.gen() > gen, 'the index\'s generation moved (AUDIT OW4 D5)');
   assert.equal(h._locationToBuild(7, 9), null, 'the probe asked again: still empty');
   assert.equal(h.spawnedDungeonAt(7, 9), null, 'the build\'s own ask: still empty - never the same dungeon on a fresh clock');
-  h.d.now += 30 * 1440;
-  assert.equal(h._locationToBuild(7, 9), null, 'a month on: gone for good');
+  h.d.now = t0 + GENERAL_TTL_MINUTES + REBIRTH_TTL_MINUTES - 1;
+  assert.equal(h._locationToBuild(7, 9), null, 'a minute short of the wait: still empty');
   assert.equal(h.d.ledger.size, 1, 'its row kept - the tombstone the save carries');
+  h.d.now += 1;
+  assert.equal(h._locationToBuild(7, 9)?.name, 'Old Keep', 'SPAWN-REBIRTH: the wait over, the same dungeon stands again');
+  assert.deepEqual(h.d.ledger.toJSON(), [], 'its old life is no row a save carries');
+  h.d.owed.length = 0;
+  h.d.now += 5;
+  h._spawnSeen('7,9');
+  assert.deepEqual(h.d.ledger.toJSON(), [['7,9', h.d.now]], 'the next entry starts the new life\'s clocks');
+  assert.deepEqual(h.d.owed, ['7,9'], 'and the cell hears them');
+  // AUDIT SPAWN-REBIRTH F6: a Wild Zone hall is `spawned` too, and its day is the hub's - its entry starts no spawn's clock,
+  // and a row an older build left for its pixel never takes it out
+  const hall = run();
+  hall.d.index.set('9,9', { name: 'Elite Hall (9,9)', spawned: true, wildHall: { ring: 1, key: '9,9' } });
+  hall._spawnSeen('9,9');
+  assert.equal(hall.d.ledger.size, 0, 'entering a hall starts no clock');
+  assert.deepEqual(hall.d.owed, [], 'and owes the cell nothing');
+  hall.d.ledger.note('9,9', 0);
+  hall.d.now = GENERAL_TTL_MINUTES + 1;
+  assert.equal(hall._locationToBuild(9, 9)?.name, 'Elite Hall (9,9)', 'a row past its seven days never takes a hall out');
   const inside = run({ inside: true });
   inside._locationToBuild(3, 3);
+  inside._spawnSeen('3,3');
   inside.d.now = GENERAL_TTL_MINUTES + 1;
   assert.equal(inside._locationToBuild(3, 3)?.name, 'Old Keep', 'nobody\'s dungeon expires under its own explorer');
   const real = run();

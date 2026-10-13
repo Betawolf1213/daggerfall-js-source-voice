@@ -2624,7 +2624,9 @@ not one.
   use interior spawn points at all; it calls PlaceFoeFreely, and says
   why: "Spawn points work well for 'interior hunt' quests but less so
   for 'directly attack the player'. Feel just placing freely will
-  yield best results overall."
+  yield best results overall." SHOP-RATS (`01-Overview/Field-Bugs-2026-10-12g.md`) keeps that ring first, every
+  tick, and gives a foe it has missed thirty times a near ring that does not mind the view, then the room's own
+  markers - a shop's counter and shelves left DFU's ring no room at all (a departure, Port-Ledger).
 - **`enemiesNearby`** was a literal `false` at three consumers (the
   rest deps, restDecision, the exhaustion collapse). It is now ONE
   scan through the shared `areEnemiesNearby` over this host's own
@@ -2789,7 +2791,8 @@ area (CreateFoe.cs:195-212) and every branch places.
 building's own transform and nothing else - DFU's own comment refuses
 the interior spawn nodes for exactly this case ("Always place foes
 around player rather than use spawn points") - which is the same member
-`tryPlaceInteriorQuestFoe` has stood quest foes through since IF.
+`tryPlaceInteriorQuestFoe` has stood quest foes through since IF (first: SHOP-RATS's fallback stands behind it for
+a quest's foe alone).
 `worldModes.standInteriorLooseFoe` is that member, over this building's
 collider, with the occupancy test walking BOTH of its pools (DFU's gate
 is a bare `Physics.OverlapSphere`, :317-321, so a watchman blocks a

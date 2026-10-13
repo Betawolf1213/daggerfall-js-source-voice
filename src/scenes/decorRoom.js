@@ -702,6 +702,19 @@ export function createDecorRoom({
     for (const [id, list] of held) if (list.length) out[id] = list.map((it) => ({ ...it }));
     return out;
   }
+  /** HOLD-KEPT (FIELD BUGS 2026-10-12g): what the pieces the service no longer has held - `served` is its whole list,
+   *  every piece it has (read by this build or not) - taken out of the record whole, for the caller to set down. A record
+   *  for a piece no one will ever stand again is otherwise kept, and out of reach, for good. */
+  function takeUnserved(served) {
+    const standing = new Set((served ?? []).map((p) => p?.id).filter((id) => typeof id === 'string'));
+    const out = [];
+    for (const [id, list] of [...held]) {
+      if (standing.has(id) || !list.length) continue;
+      held.delete(id);
+      out.push(...list);
+    }
+    return out;
+  }
   /** Restore what the pieces hold from a scene's record (a record written before DECOR1 holds none). */
   function setItems(record) {
     held = new Map();
@@ -777,7 +790,7 @@ export function createDecorRoom({
 
   return {
     put, remove, set, restand, destroyAll, draw, batches, batchesSeen, figures, drawMounts, lights, pushLights, targets, pieceOf, list, size: () => standing.size,
-    itemsOf, holdsAny, itemsSnapshot, setItems, keep, kept: () => kept,
+    itemsOf, holdsAny, itemsSnapshot, setItems, takeUnserved, keep, kept: () => kept,
     ownOf, keepOwn, takeOwn, ownSnapshot, setOwn, ownIds, refreshMounts, mountPicture, standPicture, onRefresh,
   };
 }

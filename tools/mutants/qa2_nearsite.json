@@ -44,7 +44,7 @@
   {
     "name": "QA2-near-reseat-unread",
     "file": "src/systems/quest/place.js",
-    "old": "    if (!found.length && this.scope === Scopes.Local && this._modsTookKind(world, location, p2, p3)) found = this._nearTownSites(world, location, p2, p3)?.found ?? [];",
+    "old": "    if (!found.length && this.scope === Scopes.Local && this._modsTookKind(world, location, p2, p3)) { found = this._nearTownSites(world, location, p2, p3)?.found ?? []; nearSite = found.length > 0; }",
     "new": "",
     "tests": ["test/qa2_nearsite.test.js"]
   },

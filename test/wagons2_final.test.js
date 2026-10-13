@@ -243,7 +243,7 @@ test('RW1 x WAGONS2 (FINAL AUDIT) THE VIEW OUT IN THE WEATHER: the street behind
 
 test('RW1 x WAGONS2 (FINAL AUDIT) THE SEA IN THE VIEW OUT: Deep Waters (on by default) as the street frame draws it - a pure-ocean pixel kept for its seafloor (its ground and its water sheet hidden), the floors\' foreign programs told to the renderer, and the carved sea\'s top drawn last, culled by the pass\'s own pixels rather than the street frame\'s visibility (a harbour-front window showed the bed dry and the open sea as sky) (mutants: the ocean pixel dropped, the sea\'s top left out, the street\'s visibility read)', () => {
   const w = read('src/scenes/world.js');
-  const street = w.slice(w.indexOf('const drawOutsideStreet = (r, planes) => {'), w.indexOf('const outsideView = (doorMatrix) => ({'));
+  const street = w.slice(w.indexOf('const drawOutsideStreet = (r, planes) => {'), w.indexOf('const outsideView = () => ({'));
   assert.match(street, /\n\s+ground\.push\(p\);   \/\/ FINAL AUDIT/, 'every pixel the pass sees, a pure-ocean one too');
   assert.match(street, /for \(const cell of ground\) if \(!cell\.deepWaters\?\.hide\) r\.drawTerrain\(/, 'its ground hidden');
   assert.match(street, /if \(!p\.water \|\| p\.deepWaters\?\.hide\) continue;/, 'its water sheet with it');

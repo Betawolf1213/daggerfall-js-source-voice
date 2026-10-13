@@ -65,7 +65,7 @@
   {
     "name": "OW6L-the-keeps-window-open-below",
     "file": "src/net/overworldLaw.js",
-    "old": "  if (seen < nowMin - OW_ROW_KEEP_MIN || seen > nowMin + OW_ROW_SLACK_MIN) return null;",
+    "old": "  if (owRowUntil(w) <= nowMin || seen > nowMin + OW_ROW_SLACK_MIN) return null;",
     "new": "  if (seen > nowMin + OW_ROW_SLACK_MIN) return null;",
     "tests": [
       "test/ow6_ledger.test.js"
@@ -74,8 +74,8 @@
   {
     "name": "OW6L-no-slack-for-a-clock-ahead",
     "file": "src/net/overworldLaw.js",
-    "old": "  if (seen < nowMin - OW_ROW_KEEP_MIN || seen > nowMin + OW_ROW_SLACK_MIN) return null;",
-    "new": "  if (seen < nowMin - OW_ROW_KEEP_MIN || seen > nowMin) return null;",
+    "old": "  if (owRowUntil(w) <= nowMin || seen > nowMin + OW_ROW_SLACK_MIN) return null;",
+    "new": "  if (owRowUntil(w) <= nowMin || seen > nowMin) return null;",
     "tests": [
       "test/ow6_ledger.test.js"
     ]

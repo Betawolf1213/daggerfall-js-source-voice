@@ -269,7 +269,8 @@ its clock:
 - **the nightfall words:** the sky's rate; this changes;
 - **`ownTimeLeftText`'s "of play":** your clock's rate, TimeScale 12; unchanged;
 - **`gateCourt.js COURT_ROUND_MS`:** a magic round, your clock's; unchanged;
-- **`overworldLaw.js OW_ROW_KEEP_MIN`:** the event clock's; unchanged;
+- **`overworldLaw.js OW_REBIRTH_MIN`:** the event clock's; unchanged (SPAWN-REBIRTH, 2026-10-12: it replaced
+  `OW_ROW_KEEP_MIN`, the sixty-day keep - `01-Overview/Field-Bugs-2026-10-12h.md`);
 - **the gate panel's local times** (`sharedWallMs`): the event clock's inverse; unchanged;
 - **the drawn weather's step:** the sky feed measures `dt` in game minutes for the weather's ease
   (`WEATHER_EASE_MINUTES`), the cloud drift (`WIND_SECONDS_PER_MINUTE`, written as 60 / 12), the wind

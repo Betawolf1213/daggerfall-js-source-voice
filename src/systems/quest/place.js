@@ -280,11 +280,12 @@ export class Place extends QuestResource {
     }
     // QUEST-AUDIT II NEAR-SITE: a LOCAL site whose town the mods took its kind from - the nearest town's (AUDIT QA2: only
     // what the mods took away, _modsTookKind)
-    if (!found.length && this.scope === Scopes.Local && this._modsTookKind(world, location, p2, p3)) found = this._nearTownSites(world, location, p2, p3)?.found ?? [];
+    let nearSite = false;   // QUEST-TOWN: a site re-seated in another town is marked as the first seat's is
+    if (!found.length && this.scope === Scopes.Local && this._modsTookKind(world, location, p2, p3)) { found = this._nearTownSites(world, location, p2, p3)?.found ?? []; nearSite = found.length > 0; }
     // AUDIT PRE-MERGE 1003 WD2: a building with no marker to carry them to is none (_collectQuestSitesOfBuildingType never offers one)
     const next = found.length ? this._carryAssignments(held, found[this._range(found.length)]) : null;
     if (!next) return this._unseat(held);
-    this.siteDetails = { ...next, questUID: held.questUID ?? next.questUID, magicNumberIndex: held.magicNumberIndex ?? 0 };
+    this.siteDetails = { ...next, questUID: held.questUID ?? next.questUID, magicNumberIndex: held.magicNumberIndex ?? 0, ...(nearSite ? { nearSite: true } : {}) };
     this._stampSiteLayout();
     return true;
   }
@@ -460,7 +461,9 @@ export class Place extends QuestResource {
       const near = this._nearTowns && this._modsTookKind(world, location, asked.p2, asked.p3) ? this._nearTownSites(world, location, asked.p2, asked.p3) : null;
       if (near) {
         this.p2 = near.houseFallback ? -1 : asked.p2;
-        this.siteDetails = near.found[this._range(near.found.length)];
+        // FIELD BUGS 2026-10-12g QUEST-TOWN: marked as taken in another town - the travel map is shown it at the quest's
+        // start and the quest's lens points at it (machine.js revealNearSites, ui/questLens.js entryTarget)
+        this.siteDetails = { ...near.found[this._range(near.found.length)], nearSite: true };
         return;
       }
       throw new Error(`Could not find local site for ${this.symbol.original} with P2=${this.p2} in ${location.regionName}/${location.name}.`);

@@ -56,7 +56,7 @@ import { registerCastSpeedMod } from './castSpeed.js';   // CAST-SPEED: the cast
 import { registerSpellPowerMod, registerSpellPierceMod } from './spellPower.js';   // BAL9c: potency and the arcane three's doors onto a damage spell
 import { hasSpecialAbility, SPECIAL_ABILITY, restIgnoresNoRegen } from './rest.js';   // BAL9c: a career that cannot regenerate magicka, rest's own gate
 import { registerPlayerBlowLanded, pendingPlayerBlow, REACH_RISE_M, registerSpireRedoubt, spireRoomNow } from './sigilSetPowers.js';   // EG-ZH: the Spire's recovery - the breach the player stands in, and the Redoubt's door
-import { playerDoor, paidBack } from './playerDoor.js';   // BAL5: a blow paid back never kills
+import { playerDoor, paidBack, oweFoe } from './playerDoor.js';   // BAL5: a blow paid back never kills; OPEN-HAND: a follow-up owed to a relay's body
 import { careerTolerance, EFFECT_FLAGS } from './spellcast.js';
 import { lootRarityOn, validAffix, powerOf, registerLegendaryFind, readLines } from './lootRarity.js';   // GEM1: readLines, law 6's reading
 import { equipTableOf } from './equip.js';
@@ -280,7 +280,9 @@ const recordOf = (door, entity) => door?.foes().find((f) => f.entity === entity)
 function again(target, damage) {
   const door = playerDoor();
   const f = recordOf(door, target);
-  if (f && !f.dead) door.hurtFoe(f, Math.max(1, Math.round(damage)));
+  const n = Math.max(1, Math.round(damage));
+  if (f) { if (!f.dead) door.hurtFoe(f, n); return; }
+  oweFoe(target, n);   // FIELD BUGS 2026-10-12g OPEN-HAND: a body the relay runs (the gate's Warden) - its host's claim carries it
 }
 /** Chain Lightning: the nearest other foe within `metres` of the struck one takes `amount` as shock. */
 function arc(target, amount, metres) {

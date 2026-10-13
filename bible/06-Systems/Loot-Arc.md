@@ -432,7 +432,7 @@ sentence, a `kind` and its numbers. The card and the tooltip say it after the en
 | Warp-Edge | Many Endings | Each of its blows that lands strikes again, one time in ten, for the same damage |
 | The Visor of King Lysandus | The Ghost-King's Vigil | When a hurt leaves you under a third of your health, you are healed 20% of it. Recovers in 60 s |
 | The Wayrest Courier's Treads | Courier's Haste | A kill fortifies your Speed by 20 for two magic rounds. Recovers in 10 s |
-| Gauntlets of the Rose | Open Hand | Each of your bare-handed blows that lands strikes again for the same damage |
+| Gauntlets of the Rose | Open Hand | Each of your bare-handed blows that lands strikes again for half its damage (BAL7; on the gate's Warden too since FIELD BUGS 2026-10-12g OPEN-HAND) |
 | The Mountain's Root | Bedrock | Each foe's blow that lands on you lessens the blows after it by 4% for 6 s, up to five times |
 | The Raven's Wings | Raven's Evasion | A foe's blow is turned aside whole 15 times in a hundred |
 | The Night Mother's Embrace | Sweet Mother's Kiss | Your weapon blows deal +50% damage to a foe under a quarter of its health |

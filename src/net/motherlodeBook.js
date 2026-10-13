@@ -153,6 +153,8 @@ export function createMotherlodeBook({ door, character, me, nowS, onChange = () 
       for (const l of state.lodes) {
         if (state.day !== today) break;
         // AUDIT SILVER-WAYS D7: the names made only for a line said
+        // FIELD BUGS 2026-10-12g LODE-MARK: never to an account whose Motherlode today is found - it stands for them nowhere
+        if (state.found) break;
         if (t >= l.opensAt - ahead && t < l.opensAt && !said.has(`warn|${l.key}`)) {
           said.add(`warn|${l.key}`);
           say(MOTHERLODE_TEXT.warn(oreName(l.material), regionName(l.region), Math.max(1, Math.ceil((l.opensAt - t) / 60))));
@@ -199,6 +201,19 @@ export function createMotherlodeBook({ door, character, me, nowS, onChange = () 
       const t = nowS();
       if (state.day !== Math.floor(t / 86400)) return out;
       for (const l of state.lodes) if (standing(l, t)) out.push(l);
+      return out;
+    },
+    /** FIELD BUGS 2026-10-12g LODE-MARK: what the compass marks - every Motherlode standing now, and every one the
+     *  warning has told of that is still to break ground ("Look for it on your compass" was said before anything stood
+     *  to mark), into `out` as standingAll's. */
+    markedAll(out = []) {
+      meNow();
+      out.length = 0;
+      const t = nowS();
+      if (state.day !== Math.floor(t / 86400) || state.found) return out;
+      for (const l of state.lodes) {
+        if (standing(l, t) || (said.has(`warn|${l.key}`) && t < l.opensAt && (l.struck ?? 0) < MOTHERLODE_STRIKERS)) out.push(l);
+      }
       return out;
     },
     /** A lode by its node key. */

@@ -431,7 +431,8 @@ import { ItemMakerWindow, preloadItemMakerArt, itemMakerArtLoaded, ITEM_RECTS, r
 import { createPotion, getMagicItemTemplates, LOOT_NEWER_TEXT } from '../systems/loot.js';   // M2: ItemBuilder.CreatePotion, one minter; G4: the MAGIC.DEF registry
 import { SITE_TYPES } from '../systems/quest/place.js';
 import { placeFoeFreely, questStandBox, rideSceneMarker, markerScenePosition, siteMarkerSpots, standSpot, MARKER_FLOOR_REACH } from '../systems/quest/sceneMount.js';   // B1: CreateFoe's raycast ring, finally called; TOTEM-CAGE: a stand's box where it IS; QUEST-MARKERS: the building's backstop
-import { placeFoeEnv, entityOccupancy, questFoeGender, reviveQuestBehaviour as reviveQuestBehaviourFromSave, heldSpots, holdSpotWhile, restandMendedQuestFoe } from './questFoeHost.js';   // B1 (PlaceFoeFreely reads the fieldOfView import below)   // AUDIT 63 F24: SerializableEnemy.cs:206-217 re-adds the component on restore
+import { chestIdentity, matchChests } from './chestRecords.js';   // HOLD-KEPT: a house chest's record by which chest it is
+import { placeFoeEnv, placeRoomQuestFoe, entityOccupancy, questFoeGender, reviveQuestBehaviour as reviveQuestBehaviourFromSave, heldSpots, holdSpotWhile, restandMendedQuestFoe } from './questFoeHost.js';   // B1 (PlaceFoeFreely reads the fieldOfView import below)   // AUDIT 63 F24: SerializableEnemy.cs:206-217 re-adds the component on restore
 import { standLooseFoe } from './hostEnchant.js';   // ROAD-G G1: SoulBound's break release / the Sanguine Rose, inside a building
 import { ENEMY_BASICS, enemyDisplayName } from '../characters/enemyBasics.js';   // MERGE: FinalizeFoe's Flying lift reads the behaviour flag // WORLD-HOVER H2: GetLocalizedEnemyName - Entity.Name for a live one (.cs:310)
 import { openDoorsStep, foeFrameDt } from '../characters/enemyMotor.js';   // AUDIT 63 F42: EnemyMotor.OpenDoors (EnemyMotor.cs:1424-1442), which lives in the motor and runs wherever an enemy does
@@ -1944,7 +1945,10 @@ export function createWorldModes(host) {
   /**
    * IF: CreateFoe's INTERIOR arm - PlaceFoeBuildingInterior
    * (CreateFoe.cs:220-234), which is PlaceFoeFreely over this
-   * building's collider. The dungeon arm's twin, to the term.
+   * building's collider. The dungeon arm's twin, to the term - until
+   * the ring has missed this foe ROOM_RING_MISSES times: then the near
+   * ring and the room's own markers (SHOP-RATS, FIELD BUGS 2026-10-12g:
+   * a shop's counter and shelves leave DFU's ring no room at all).
    */
   function tryPlaceInteriorQuestFoe(handle) {
     if (!interiorCtx || !interiorFoes) return false;   // retry next machine tick, verbatim
@@ -1956,7 +1960,7 @@ export function createWorldModes(host) {
       fovDegrees: fieldOfView() * 180 / Math.PI,       // the law speaks DEGREES
       isOccupied: entityOccupancy((f) => f.ai?.feet, () => [...interiorFoePool(), ...heldSpots(interiorCtx.collider)], feet),   // AUDIT 58 (review): DFU's gate is `Physics.OverlapSphere(testPoint, 0.65f)` (CreateFoe.cs:317-321) - ANY collider, so the watch is in the test too; QUEST-WAVE: and the spots in flight
     });
-    const spot = placeFoeFreely(env);
+    const spot = placeRoomQuestFoe(env, handle, interiorCtx.markers?.map((m) => [m.x, m.y, m.z]));
     if (!spot) return false;
     const foe = handle.foe;
     // FinalizeFoe (:341-359): a FLYING foe is lifted 1.5 off the test
@@ -4552,6 +4556,7 @@ export function createWorldModes(host) {
         containerType: LOOT_CONTAINER_TYPES.HouseContainers, key: `container:${i}`, items: c.items ?? null,
         stockedDate: c.stockedDate ?? 0,
         openedOn: c.openedOn ?? 0,   // UXB1-O: the searched lid survives the walk out of the door, as the stock does
+        ...chestIdentity(c, buildingOrigin()),   // HOLD-KEPT (scenes/chestRecords.js): which chest it is - its model and where it stands in the building - not its place in a list
       })),
     ];
     // AUDIT 39 (#32): the whole door record, not the state word alone.
@@ -4675,15 +4680,19 @@ export function createWorldModes(host) {
       data = restoreCachedScene(sceneCache(), layoutSceneName(name, _visitLayout));
       if (!data) return;
     }
+    const chestOf = matchChests(data.lootContainers, interiorCtx.containers, buildingOrigin());   // HOLD-KEPT: a chest by what it is, not where it fell in the list
+    let setDown = 0;
     for (const c of data.lootContainers) {
       const [kind, i] = c.key.split(':');
-      const target = kind === 'shelf' ? interiorCtx.shelves?.[+i] : interiorCtx.containers?.[+i];
+      const target = kind === 'shelf' ? interiorCtx.shelves?.[+i] : chestOf.get(c);
       // ARENA2: A HOUSE THE ARENA MOVED brought its chests', its storage pieces' and its floor's things in its first
       // container (systems/arenaMove.js emptyArenaScene, `crate`): a house with none has them set down as a crate where
-      // its owner first walks in - a pile of their own, in the building's frame, cached with the floor from here on
-      if (!target && c.crate && c.items?.length) {
+      // its owner first walks in - a pile of their own, in the building's frame, cached with the floor from here on.
+      // HOLD-KEPT: and so is what any chest held that no chest of this visit stands for - never dropped
+      if (!target && kind === 'container' && c.items?.length) {
         const o = buildingOrigin(), f = player.pos;
         data.droppedPiles = [...(data.droppedPiles ?? []), { pos: [f[0] - o[0], f[1] - o[1], f[2] - o[2]], items: c.items.map((it) => ({ ...it })) }];
+        if (!c.crate) setDown++;
         continue;
       }
       // `items: null` is a shelf that was never opened - restoring it
@@ -4698,6 +4707,7 @@ export function createWorldModes(host) {
       if (target) target.stockedDate = c.stockedDate ?? 0;
       if (target && kind === 'container') target.openedOn = c.openedOn ?? 0;   // UXB1-O: a record cached before it carries none - never searched
     }
+    if (setDown) say('What a chest here held, where no chest stands now, was set down at your feet.');   // HOLD-KEPT
     interiorCtx.guildShelves = data.guildShelves ?? {};   // GUILD-SHELF: a stale day's shelf is left for guildShelf to replace at the next open
     // #32: through the system's own restore, which settles the matrix
     // and the collider bucket (syncRestored) - a door restored open
@@ -5156,6 +5166,17 @@ export function createWorldModes(host) {
     if (back.length) say(ownBackLines(back, (n) => (n === 1 ? 'One of your things no longer stood here, and came back to your pack.' : `${n} of your things no longer stood here, and came back to your pack.`)));
     return back.length;
   }
+  /** HOLD-KEPT (FIELD BUGS 2026-10-12g): WHAT A STORAGE PIECE HELD THAT THE SERVICE NO LONGER HAS - one taken away while
+   *  the room's things looked empty (a visit of another layout, a list not yet stood) - set down at the owner's feet and
+   *  said. The pieces are the service's to say (its whole list, every piece it has, read or not); what they held is the
+   *  save's, and it was kept, unreachable, under an id no piece would ever stand for again. */
+  function decorSetDownHeld(served) {
+    const items = interiorDecor.takeUnserved(served);
+    if (!items.length) return 0;
+    interiorDropped.dropPile(items, interiorDropFeet());
+    say(items.length === 1 ? 'A thing kept in a piece that no longer stands here was set down at your feet.' : `${items.length} things kept in pieces that no longer stand here were set down at your feet.`);
+    return items.length;
+  }
   /** DECOR1d: what a placement is paid with - the purse, then the region's bank account (HOME1's homes' own order);
    *  DECOR1e: and what a removal or a shrink gives back, into the purse. */
   function decorWallet() {
@@ -5193,6 +5214,7 @@ export function createWorldModes(host) {
         const pieces = r.data.pieces.map(decorPieceOf).filter((p) => p && (shown || decorStaysShunned(p)));   // AUDIT B2: its trader stands
         interiorDecor.set(pieces);
         if (interiorHome?.own) decorReturnStrays(pieces);   // DECOR2a: the owner's own things the room no longer stands
+        if (interiorHome?.own && !_sceneHeldForLayout) decorSetDownHeld(r.data.pieces);   // HOLD-KEPT: and what a piece the service no longer has held
         if (!shown) { interiorCtx?.base?.setHidden([]); return; }   // HOME-VOTE: the room as Daggerfall furnished it
         interiorCtx?.base?.setHidden(Array.isArray(r.data.hidden) ? r.data.hidden : []);   // BASE-HIDE: the room its owner cleared, for everyone
       },
@@ -10927,10 +10949,10 @@ export function createWorldModes(host) {
     renderer.setIndirectLight(NO_INDIRECT_POS, 0, NO_INDIRECT_COLOR);
     renderer.setFog('exp', 0.001, 0, 0, new Float32Array([0, 0, 0]));
     // RW1 (render/realWindows.js): THE VIEW OUT - the street through this building's glass, drawn by the exterior host
-    // (host.outsideView: its lights, its pixels, this building left out) into a target of its own, before this frame's
+    // (host.outsideView: its lights, its pixels; PANE-CLIP keeps the room's side of the glass out) into a target of its own, before this frame's
     // lamps and its beginFrame; a bracket, so the room's light just set is put back as it was; cropped to the glass the
     // last frame met, kept while the camera is still
-    const _rwView = viewOutFrame(viewOut, { renderer, mode: realWindowsMode(), proj, view, now: performance.now(), scene: host.outsideView?.(exteriorDoor?.matrix ?? null) ?? null });
+    const _rwView = viewOutFrame(viewOut, { renderer, mode: realWindowsMode(), proj, view, now: performance.now(), scene: host.outsideView?.() ?? null });
     // AUDIT 26 F001: DaggerfallInterior lays out EVERY interior mesh
     // with WindowStyle.Disabled - individual models (:473), the
     // combined static batch (:517) and action doors (:1270) - and

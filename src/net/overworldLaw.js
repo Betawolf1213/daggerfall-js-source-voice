@@ -11,16 +11,18 @@
 //     its own life and the next (the client's own bandPrune: a band two lives gone is nobody's), OW_CELL_SPENT_MAX of
 //     them, the oldest out first.
 //   - THE SPAWNED DUNGEONS' CLOCKS (world/spawnedDungeons.js TTL1: a spawn is gone two game days after it was cleared,
-//     seven after it was first seen). The roll that stands one on a pixel is a pure hash every client shares; its two
-//     clocks were each client's own, so two players disagreed whether one was gone. The ledger keeps a row a pixel -
-//     `[px, py, seen, cleared?]`, shared classic minutes - and MIN-MERGES: the earliest first sight and the earliest clear
-//     anyone has said. So a spawn's clocks only ever run out sooner, never wind back, and every machine that folds the
-//     same rows, in any order, holds the same row. OW_CELL_ROWS_MAX of them (the oldest first sight out first), each let
-//     go OW_ROW_KEEP_MIN after its first sight - sixty real days, long past both clocks, so a spawn that went stays gone.
+//     seven after it was first entered - SPAWN-REBIRTH: it was first SEEN, its pixel streamed in). The roll that stands
+//     one on a pixel is a pure hash every client shares; its two clocks were each client's own, so two players disagreed
+//     whether one was gone. The ledger keeps a row a pixel - `[px, py, seen, cleared?]`, shared classic minutes, `seen`
+//     the first entry - and MIN-MERGES: the earliest first entry and the earliest clear anyone has said. So a spawn's
+//     clocks only ever run out sooner, never wind back, and every machine that folds the same rows, in any order, holds
+//     the same row. OW_CELL_ROWS_MAX of them (the oldest first entry out first), each let go when its spawn stands again
+//     (owRowUntil: OW_REBIRTH_MIN after it died). SPAWN-REBIRTH: they were kept sixty real days, so a spawn that went
+//     stayed gone for everyone in the cell that long, and a region walked once stood empty for two months.
 //
 // WHAT THE RELAY CAN CHECK, it checks: an id's shape, and its life - this one or the last, on the relay's own clock; a
 // row's pixel on the map and its SPAWN ROLL (a pixel the roll leaves empty holds no dungeon, and the roll is pure), its
-// clear no earlier than its first sight, both inside the keep's window; and every pixel - an id's cell origin, a row's
+// clear no earlier than its first entry, its life not yet over (SPAWN-REBIRTH: owRowUntil); and every pixel - an id's cell origin, a row's
 // own - inside the receiving cell's square widened by OW_CELL_MARGIN_PX (a band met at the seam, a dungeon a pixel over
 // the edge). WHAT IT CANNOT: whether a band was fought, and when a pixel was first seen - those are the players'
 // machines' word (co-op's law: the relay has no world to see them in); and with no map files it cannot say a pixel is
@@ -34,8 +36,8 @@
 // byte this file reaches is the relay's deploy - test/ow6_ledger.test.js holds each copy to its home.
 //
 // Not a DFU member: Daggerfall has no other players, and no Overworld.
-import { WORLD_CELL, ONLINE_MINUTES_PER_MS, sharedClassicMinutes, cellOfRoom, OW_BAND_ID_RE, OW_RAIDER_ID_RE, OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, OW_CELL_SPENT_MAX, OW_CELL_ROWS_MAX, owWireRow } from './wire.js';
-import { gateHash } from './gateLaw.js';   // the spawned dungeons' hash (world/spawnedDungeons.js hash32) - the relay's one copy
+import { WORLD_CELL, sharedClassicMinutes, cellOfRoom, OW_BAND_ID_RE, OW_RAIDER_ID_RE, OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, OW_CELL_SPENT_MAX, OW_CELL_ROWS_MAX, owWireRow } from './wire.js';
+import { gateHash, GATE_DAY_MINUTES } from './gateLaw.js';   // the spawned dungeons' hash (world/spawnedDungeons.js hash32) - the relay's one copy; a game day's minutes
 import { RAID_SLACK_MINUTES } from './raidLaw.js';   // ten real seconds of two clocks' skew (WORLD5)
 
 export { OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX, OW_CELL_SPENT_MAX, OW_CELL_ROWS_MAX };
@@ -56,10 +58,16 @@ export const OW_SPAWN_CHANCE = 0.30 + 0.10;
 /** How far past its cell's square an id's or a row's pixel may lie, map pixels - a band met at the seam (its cell is
  *  two pixels, its walk a pixel more), a raider's cell origin (six pixels, and a chase), a dungeon over the edge. */
 export const OW_CELL_MARGIN_PX = 8;
-/** How long a row is kept after its first sight: sixty real days, in shared classic minutes (the wire's
- *  ONLINE_MINUTES_PER_MS - 720 game days, long past GENERAL_TTL's seven). */
-export const OW_ROW_KEEP_MS = 60 * 24 * 60 * 60 * 1000;
-export const OW_ROW_KEEP_MIN = OW_ROW_KEEP_MS * ONLINE_MINUTES_PER_MS;
+/** SPAWN-REBIRTH: a spawn's two clocks and the wait before the same dungeon stands again, classic minutes
+ *  (world/spawnedDungeons.js GENERAL_TTL_MINUTES, CLEARED_TTL_MINUTES and REBIRTH_TTL_MINUTES - pinned equal). The wait is
+ *  twenty-four real hours of the shared clock (the wire's ONLINE_MINUTES_PER_MS). */
+export const OW_GENERAL_TTL_MIN = 7 * GATE_DAY_MINUTES;
+export const OW_CLEARED_TTL_MIN = 2 * GATE_DAY_MINUTES;
+export const OW_REBIRTH_MIN = 12 * GATE_DAY_MINUTES;
+/** SPAWN-REBIRTH: WHEN A ROW STOPS MATTERING, classic minutes - its spawn's death (the earlier of its two clocks) plus
+ *  OW_REBIRTH_MIN, when the same dungeon stands again on fresh clocks (spawnedDungeons.js spawnReborn). A row is kept
+ *  until then and not a minute past it. @param {number[]} r a wire row */
+export const owRowUntil = (r) => Math.min(r[2] + OW_GENERAL_TTL_MIN, Number.isFinite(r[3]) ? r[3] + OW_CLEARED_TTL_MIN : Infinity) + OW_REBIRTH_MIN;
 /** A row's clock may run this far ahead of the relay's (classic minutes) - two machines' skew, taken as the relay's now. */
 export const OW_ROW_SLACK_MIN = RAID_SLACK_MINUTES;
 
@@ -133,7 +141,7 @@ export const owSpawnsDungeon = (px, py) => gateHash(OW_WORLD_SALT, px, py, 1) / 
 export const owRowKey = (px, py) => `${px},${py}`;
 /**
  * Could an honest machine say this row? Its shape (net/wire.js owWireRow), a pixel whose roll holds a spawn, and a clear
- * no earlier than its first sight. One that could not is junk, and struck - never merely dropped.
+ * no earlier than its first entry. One that could not is junk, and struck - never merely dropped.
  * @param {unknown} r
  */
 export function owRowSane(r) {
@@ -141,16 +149,18 @@ export function owRowSane(r) {
   return !!w && owSpawnsDungeon(w[0], w[1]) && (w.length < 4 || w[3] >= w[2]);
 }
 /**
- * A row as the ledger may take it at the shared clock `nowMin` (classic minutes): sane, its first sight inside
- * [nowMin - OW_ROW_KEEP_MIN, nowMin] and its clear inside [seen, nowMin] - a clock up to OW_ROW_SLACK_MIN ahead is taken
- * at nowMin (never later: the merge keeps the earliest, and the relay's now is the latest any clock can mean) - or null
- * (out of its time: dropped, never struck - a stale save, a clock at the edge).
+ * A row as the ledger may take it at the shared clock `nowMin` (classic minutes): sane, of a spawn that has not stood
+ * again by nowMin (SPAWN-REBIRTH: owRowUntil past nowMin - it was a first sight inside sixty real days), its first entry
+ * no later than nowMin and its clear inside [seen, nowMin] - a clock up to OW_ROW_SLACK_MIN ahead is taken at nowMin
+ * (never later: the merge keeps the earliest, and the relay's now is the latest any clock can mean) - or null (out of
+ * its time: dropped, never struck - a stale save, a life that is over, a clock at the edge).
  * @param {unknown} r @param {number} nowMin @returns {number[]|null}
  */
 export function owRowFits(r, nowMin) {
   if (!owRowSane(r) || !Number.isFinite(nowMin)) return null;
-  const [px, py, seen, cleared = null] = owWireRow(r);
-  if (seen < nowMin - OW_ROW_KEEP_MIN || seen > nowMin + OW_ROW_SLACK_MIN) return null;
+  const w = owWireRow(r);
+  const [px, py, seen, cleared = null] = w;
+  if (owRowUntil(w) <= nowMin || seen > nowMin + OW_ROW_SLACK_MIN) return null;
   if (cleared !== null && cleared > nowMin + OW_ROW_SLACK_MIN) return null;
   const s = Math.min(seen, nowMin);
   return cleared === null ? [px, py, s] : [px, py, s, Math.min(cleared, nowMin)];
@@ -168,7 +178,7 @@ export function owRowFits(r, nowMin) {
 export const newOwLedger = () => ({ sp: [], dg: {} });
 /** Does a ledger hold nothing? @param {OwLedger} led */
 export const owLedgerEmpty = (led) => !led || (!led.sp.length && !Object.keys(led.dg).length);
-/** The oldest first sights out, down to OW_CELL_ROWS_MAX; answers whether any went. @param {OwLedger} led */
+/** The oldest first entries out, down to OW_CELL_ROWS_MAX; answers whether any went. @param {OwLedger} led */
 function capRows(led) {
   const keys = Object.keys(led.dg);
   if (keys.length <= OW_CELL_ROWS_MAX) return false;
@@ -223,16 +233,18 @@ export function owFoldSpent(led, ids, nowMs) {
 }
 
 /**
- * THE ROWS, FOLDED IN - MIN-MERGE: each row that fits its time (owRowFits) keeps the earliest first sight and the
- * earliest clear the ledger has ever heard for its pixel; a row it has never held is taken whole. Rows past the keep are
- * let go first, and the oldest first sights past OW_CELL_ROWS_MAX after. Answers the rows that CHANGED, as they stand now
- * (each pixel once) - what the cell fans; a row that told the ledger nothing new is not among them.
+ * THE ROWS, FOLDED IN - MIN-MERGE: each row that fits its time (owRowFits) keeps the earliest first entry and the
+ * earliest clear the ledger has ever heard for its pixel; a row it has never held is taken whole. Rows whose spawn has
+ * stood again are let go first (SPAWN-REBIRTH: so every row that fits is of the life the ledger holds, or of a pixel it
+ * holds none for - one that fits stood no earlier than the held one's end, which is past), and the oldest first entries
+ * past OW_CELL_ROWS_MAX after. Answers the rows that CHANGED, as they stand now (each pixel once) - what the cell fans; a
+ * row that told the ledger nothing new is not among them.
  * @param {OwLedger} led @param {unknown} rows @param {number} nowMin @returns {number[][]}
  */
 export function owFoldRows(led, rows, nowMin) {
   const changed = new Map();
   if (!led || !Array.isArray(rows) || !Number.isFinite(nowMin)) return [];
-  for (const [k, r] of Object.entries(led.dg)) if (r[2] < nowMin - OW_ROW_KEEP_MIN) delete led.dg[k];
+  for (const [k, r] of Object.entries(led.dg)) if (owRowUntil(r) <= nowMin) delete led.dg[k];
   for (const r of rows.slice(0, OW_WORD_ROWS_MAX)) {
     const w = owRowFits(r, nowMin);
     if (!w) continue;
@@ -273,7 +285,8 @@ export function owRowsBehind(led, rows, changed = []) {
 }
 
 /**
- * The ledger PRUNED at the shared clock `nowMs`: the spent past their end, the rows past the keep, and the bounds.
+ * The ledger PRUNED at the shared clock `nowMs`: the spent past their end, the rows whose spawn has stood again, and the
+ * bounds.
  * Answers whether anything went (the relay writes it back).
  * @param {OwLedger} led @param {number} nowMs
  */
@@ -283,7 +296,7 @@ export function owPrune(led, nowMs) {
   const sp = led.sp.filter((e) => e[1] > nowMs).slice(-OW_CELL_SPENT_MAX);
   let dropped = sp.length !== led.sp.length;
   led.sp = sp;
-  for (const [k, r] of Object.entries(led.dg)) if (r[2] < nowMin - OW_ROW_KEEP_MIN) { delete led.dg[k]; dropped = true; }
+  for (const [k, r] of Object.entries(led.dg)) if (owRowUntil(r) <= nowMin) { delete led.dg[k]; dropped = true; }
   return capRows(led) || dropped;
 }
 
@@ -295,6 +308,6 @@ export function owPrune(led, nowMs) {
 export function toWelcome(led, nowMs) {
   const nowMin = sharedClassicMinutes(nowMs);
   const sp = (led?.sp ?? []).filter((e) => e[1] > nowMs).slice(-OW_CELL_SPENT_MAX).map((e) => e[0]);
-  const dg = Object.values(led?.dg ?? {}).filter((r) => r[2] >= nowMin - OW_ROW_KEEP_MIN).slice(0, OW_CELL_ROWS_MAX).map((r) => r.slice());
+  const dg = Object.values(led?.dg ?? {}).filter((r) => owRowUntil(r) > nowMin).slice(0, OW_CELL_ROWS_MAX).map((r) => r.slice());
   return { sp, dg };
 }

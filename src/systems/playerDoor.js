@@ -29,6 +29,25 @@ export function setPlayerDoor(door) { _door = door && typeof door === 'object' ?
 /** The scene the player stands in, or null before a host has run a frame. */
 export const playerDoor = () => _door;
 
+// FIELD BUGS 2026-10-12g OPEN-HAND ("Im doing less dmg with the Rose gauntlets then I do without them"): a follow-up blow
+// on the body a blow of mine just struck (Open Hand's second, for half; Many Endings' echo) lands through the struck
+// foe's own record - and the gate's Warden, his crystals, his host and the Remnant are no foe record of any host: the
+// relay runs them, and every blow of mine on one goes out as ONE claim, the relay's caps deciding what lands. Such a
+// blow is OWED here, by the struck body, and the host's door that sends the claim takes it (dungeonContext.js landOnBoss,
+// landOnCrystal, landOnHost) - one frame, one blow token. A player's body takes none (BAL8: the referee's blow alone).
+const _owed = new WeakMap();
+/** A follow-up blow of `n` on a body no foe record holds, owed to the claim the blow that struck it sends. */
+export function oweFoe(entity, n) {
+  if (entity && typeof entity === 'object' && n > 0) _owed.set(entity, (_owed.get(entity) ?? 0) + n);
+}
+/** What is owed `entity`, taken - 0 for nothing. */
+export function takeOwed(entity) {
+  if (!entity || typeof entity !== 'object') return 0;
+  const n = _owed.get(entity) ?? 0;
+  _owed.delete(entity);
+  return n;
+}
+
 /** BAL5 (bible/05-Combat/Balance-Arc.md section 11): what a blow PAID BACK may take from foe record `f` - `n`, but never
  *  its last point. A foe's own blow turned back on it (the loot's thorns, Spite of the Spurned) wounds and never kills:
  *  the kill is the player's to take, so standing still is no way to win a fight. A whole point is left whatever the

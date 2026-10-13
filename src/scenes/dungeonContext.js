@@ -331,6 +331,7 @@ import { isBedModel } from '../systems/rrRealism.js';   // FIELD BUGS 2026-10-05
 import { SCENE_CHANGE_TUTORIAL_MS } from '../ui/tutorialPopup.js';   // TUT1: the popups' handler, registered by this host (the four hosts' rule) - its doors' first touches pop their pages
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import { isStartDungeon } from '../systems/startDungeon.js';   // TUT1: the starting cave is the welcome tour's
+import { takeOwed } from '../systems/playerDoor.js';   // FIELD BUGS 2026-10-12g OPEN-HAND: a follow-up blow owed a body the relay runs, sent in its blow's one claim
 
 
 
@@ -4285,7 +4286,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     return out;
   }
   /** A blow's number on a crystal, out to the relay through the court's door; answers whether it went. */
-  const landOnCrystal = (cr, damage, r) => (sdRemnant ? sdRemnant.heartHit({ c: cr.crystal, d: damage, r }) : !!opts.onCrystalHit?.({ c: cr.crystal, d: damage, r }));   // SD8c: a Heart's, to the realm
+  const landOnCrystal = (cr, damage, r) => { damage += takeOwed(cr.entity); return sdRemnant ? sdRemnant.heartHit({ c: cr.crystal, d: damage, r }) : !!opts.onCrystalHit?.({ c: cr.crystal, d: damage, r }); };   // SD8c: a Heart's, to the realm; OPEN-HAND: and the follow-up the blow owes
   /** A swing of mine that met a crystal: the glass rings (the court voices it - scenes/gateCourt.js), the number out. */
   function swingOnCrystal(cr, damage) {
     if (damage > 0) landOnCrystal(cr, damage, HIT_KINDS.Melee);
@@ -4323,7 +4324,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     return out;
   }
   /** A blow's number on one of his host, out to the relay through the court's door; answers whether it went. */
-  const landOnHost = (hb, damage, r) => (sdRemnant ? sdRemnant.echoHit({ i: hb.host, d: damage, r }) : !!opts.onHostHit?.({ i: hb.host, d: damage, r }));   // SD8c: an Echo's, to the realm
+  const landOnHost = (hb, damage, r) => { damage += takeOwed(hb.entity); return sdRemnant ? sdRemnant.echoHit({ i: hb.host, d: damage, r }) : !!opts.onHostHit?.({ i: hb.host, d: damage, r }); };   // SD8c: an Echo's, to the realm; OPEN-HAND: and the follow-up the blow owes
   /** Its middle, where a blow on it sounds and splashes. */
   const hostChest = (hb) => [hb.ai.feet[0], hb.ai.feet[1] + hb.ai.centreOffset, hb.ai.feet[2]];
   /** A swing of mine that met one of his host (resolveHit's own verdict and number): a zero blow's parry as its mobile
@@ -4377,7 +4378,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     return _arenaSpellQ;
   };
   /** A blow's number on my opponent, out to the referee (ARENA4b: with its sequence); answers whether it went. */
-  const landOnRival = (rb, damage, kind) => !!opts.onArenaHit?.({ i: rb.rival, d: damage, kind, w: playerWeapon.strikingWeapon?.templateIndex ?? -1, m: playerWeapon.strikingWeapon?.material ?? 0, q: _arenaQ });
+  const landOnRival = (rb, damage, kind) => (takeOwed(rb.entity), !!opts.onArenaHit?.({ i: rb.rival, d: damage, kind, w: playerWeapon.strikingWeapon?.templateIndex ?? -1, m: playerWeapon.strikingWeapon?.material ?? 0, q: _arenaQ }));   // OPEN-HAND: what a follow-up owed a player is dropped - BAL8, the referee's blow alone
   /** A swing of mine that met my opponent: the parry's ring for none, else the hit's sound and blood at them and the
    *  number out (their own screen bleeds as the relay's health falls). */
   function swingOnRival(rb, damage, lookDir) {
@@ -4416,6 +4417,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   function wardTurns(boss) { audio.play3d(SOUND.Parry6, bossChest(boss), ENEMY_HIT_VOLUME, { maxDistance: 24 }); }
   /** A blow's number on him, out to the relay through the court's door; answers whether it went. */
   function landOnBoss(boss, damage, r) {
+    damage += takeOwed(boss.entity);   // FIELD BUGS 2026-10-12g OPEN-HAND: Open Hand's second blow (Many Endings' echo) in the blow's one claim
     if (boss.warded) { wardTurns(boss); return false; }
     return sdRemnant ? sdRemnant.hit({ d: damage, r }) : !!opts.onBossHit?.({ d: damage, r });   // SD8c: the Remnant's, to the realm
   }

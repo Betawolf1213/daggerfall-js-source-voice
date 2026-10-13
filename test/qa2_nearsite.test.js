@@ -20,6 +20,8 @@ import { mapPixelToLongitudeLatitude } from '../src/formats/mapsFile.js';
 import { BUILDING_TYPES } from '../src/world/buildingNames.js';
 import { loadTables, rmbBlock, town, typeAtKey, mark, SPAWN, ITEM } from './fb1004dTowns.mjs';
 import { fakeBlocks } from './wd3Fakes.mjs';
+import { readFileSync } from 'node:fs';
+import { entryTarget } from '../src/ui/questLens.js';   // FIELD BUGS 2026-10-12g QUEST-TOWN
 
 loadTables();
 const BV = 'beautiful-villages';
@@ -348,5 +350,54 @@ test('AUDIT QA2: NEAR-SITE\'s nearest town is the nearest by the travel reckonin
     }, [17, 0]);
     const q = quest(m.machine, ['Place _chem_ local apothecary']);
     assert.equal(townOf(m, q.getPlace({ name: 'chem' }).siteDetails), 'Makaka-Ij');
+  } finally { _resetLayoutPins(); _resetWorldDataReplacement(); }
+});
+
+// FIELD BUGS 2026-10-12g QUEST-TOWN ("'Open a Chest' quest doesn't record the town you need to go to": "The town is mentioned
+// in the first message you get ('... the finest locksmiths in Gothhead...') but not in the text in the quest list, and it
+// doesn't show up as a quest location on the map either"). N0B00Y16's `Place _shop_ local pawnshop` taken by NEAR-SITE in
+// the nearest town that has one; its log names "a local merchant" and no town. bible/01-Overview/Field-Bugs-2026-10-12g.md.
+const chestQuest = () => readFileSync(new URL('../vendor/dfu-quests/Quests/N0B00Y16.txt', import.meta.url), 'utf8').replace(/^\uFEFF/, '')
+  .replace('group Spellcaster remote', 'group Questor').replace('group Pawnbroker female', 'group Questor').split(/\r?\n/);   // the rig's factions: questors all
+test('QUEST-TOWN a local site NEAR-SITE takes in another town is marked so; the quest\'s start puts that town on the travel map; the log entry that names its merchant points at it, the town and the region named - and a site in the quest\'s own town is DFU\'s, unmarked, unrevealed, its entry pointing nowhere (mutants: the mark never written; the reveal never made; the lens not following the merchant; the town not named)', () => {
+  const { PawnShop } = BUILDING_TYPES;
+  const homes = [house(House1, 20), house(House2, 22), house(House3, 24)];
+  const regions = (own) => ({ 17: [
+    { name: 'Aldleigh', px: [100, 100], buildings: own ? [shop(PawnShop, 9), ...homes] : homes, mod: true, classic: [shop(PawnShop, 9), ...homes] },
+    { name: 'Gothhead', px: [104, 103], buildings: [shop(PawnShop, 12)] },
+  ] });
+  try {
+    const m = mapOf(regions(false), [17, 0]);
+    const revealed = [];
+    m.world.discoverLocation = (r, n) => revealed.push(`${n}|${r}`);
+    const q = m.machine.parseQuestForLists(chestQuest(), 0, { rolls: () => 0 });
+    assert.ok(q, 'the quest parses');
+    const shopSite = q.getPlace({ name: 'shop' }).siteDetails;
+    assert.equal(shopSite.locationName, 'Gothhead', 'the pawnshop the mods took, in the nearest town that has one');
+    assert.equal(shopSite.nearSite, true, 'marked as taken in another town');
+    assert.deepEqual(revealed, [], 'an offer refused reveals nothing');
+    m.machine.startQuestImmediate(q);
+    assert.deepEqual(revealed, ['Gothhead|Region 17'], 'started: on the travel map');
+    m.machine.tick();
+    assert.equal(q.getPerson({ name: 'merchant' }).assignedPlaceSymbol?.name, 'shop', 'the startup placed the merchant');
+    const t = entryTarget(q.getMessage(1020), { canFindPlace: () => true, currentLocationName: () => 'Aldleigh' });
+    assert.equal(t?.symbol, 'shop', '"a local merchant" points at the merchant\'s shop');
+    assert.equal(t.locationName, 'Gothhead', 'its town named in the quest list');
+    assert.ok(t.regionName, 'and its region');
+    assert.deepEqual(t.find, { regionIndex: 17, regionName: 'Region 17', locationName: 'Gothhead' }, 'the map\'s diamond and the compass have it');
+    const off = entryTarget(q.getMessage(1020), { canFindPlace: () => false, currentLocationName: () => 'Aldleigh' });
+    assert.equal(off.locationName, 'Gothhead', 'its town named even before the map has it - the entry names nothing else to look for');
+    assert.ok(off.regionName);
+    assert.equal(off.find, null, 'and no box for a place the map lacks');
+    // DFU's own: a pawnshop in the quest's town
+    const o = mapOf(regions(true), [17, 0]);
+    const seen = [];
+    o.world.discoverLocation = (r, n) => seen.push(n);
+    const oq = o.machine.parseQuestForLists(chestQuest(), 0, { rolls: () => 0 });
+    assert.equal(oq.getPlace({ name: 'shop' }).siteDetails.locationName, 'Aldleigh');
+    assert.equal(oq.getPlace({ name: 'shop' }).siteDetails.nearSite, undefined, 'unmarked');
+    o.machine.startQuestImmediate(oq); o.machine.tick();
+    assert.deepEqual(seen, [], 'nothing revealed');
+    assert.equal(entryTarget(oq.getMessage(1020), { canFindPlace: () => true, currentLocationName: () => 'Aldleigh' }), null, 'a Person is not a place to go - DFU\'s');
   } finally { _resetLayoutPins(); _resetWorldDataReplacement(); }
 });

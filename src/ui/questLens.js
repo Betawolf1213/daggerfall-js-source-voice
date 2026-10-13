@@ -207,7 +207,12 @@ function saidOf(message, symbolName) {
 export function entryTarget(message, where = {}) {
   // A raw token array (a host's filed entry, a test's fixture) has no resources to name: it points nowhere.
   if (typeof message?.getTextTokens !== 'function') return null;
-  const place = lastPlaceMentionedInMessage(message, QUIET_ROLL);
+  let place = lastPlaceMentionedInMessage(message, QUIET_ROLL);
+  // FIELD BUGS 2026-10-12g QUEST-TOWN: an entry that names no place, but names a person who stands at a site taken in
+  // another town (place.js NEAR-SITE - DFU's `local` is always this town, and the entry says "a local merchant"), points
+  // at that site, its town named: the quest list's where-line, the map's diamond and the compass have it
+  const moved = place ? null : movedSiteOf(message);
+  if (moved) place = moved;
   const site = place?.siteDetails ?? null;
   if (!site?.locationName) return null;
   const said = saidOf(message, place.symbol?.name);
@@ -217,7 +222,7 @@ export function entryTarget(message, where = {}) {
   // AUDIT GUIDE W2: "(you are here)" is a CLAIM, and a player cannot stand in a place their map lacks - a place of the
   // same name elsewhere is not it: never claimed where the map says no (and never lets that name the place)
   const here = hereByName && onMap !== false;
-  const named = onMap === true || here || said.has(MACRO_TYPES.NameMacro2) || said.has(MACRO_TYPES.NameMacro3);
+  const named = onMap === true || here || !!moved || said.has(MACRO_TYPES.NameMacro2) || said.has(MACRO_TYPES.NameMacro3);
   const regionIndex = patchRegionIndex(site.regionIndex ?? 0, site.regionName ?? '');   // :455-456's legacy-save workaround, both sides of the seam
   return {
     symbol: place.symbol?.name ?? null,
@@ -225,7 +230,7 @@ export function entryTarget(message, where = {}) {
     locationName: named ? site.locationName : null,
     // AUDIT GUIDE W1: the region only where the entry says it or DFU's find-place box would (the place on the map, or
     // the player in it) - the town's own name (`__p_`) never unlocks it
-    regionName: onMap === true || here || said.has(MACRO_TYPES.NameMacro4) ? (REGION_NAMES[regionIndex] ?? site.regionName ?? null) : null,
+    regionName: onMap === true || here || moved || said.has(MACRO_TYPES.NameMacro4) ? (REGION_NAMES[regionIndex] ?? site.regionName ?? null) : null,
     buildingName: said.has(MACRO_TYPES.NameMacro1) ? (site.buildingName ?? null) : null,
     // GUIDE8's Town tier (AUDIT DELVE, systems/questGuidance.js): the building the entry NAMES (its `_p_`, as the name
     // above), by its town's map id and its key - what the town map rings and the compass points at while the player is
@@ -236,6 +241,18 @@ export function entryTarget(message, where = {}) {
     here,
     find: onMap === true && !hereByName ? { regionIndex: site.regionIndex ?? 0, regionName: site.regionName ?? '', locationName: site.locationName } : null,
   };
+}
+
+/** QUEST-TOWN: the Place a person the message names stands at (`place npc ... at`), where NEAR-SITE took it in another
+ *  town - the last such, as lastPlaceMentionedInMessage takes the last place - or null. */
+function movedSiteOf(message) {
+  let out = null;
+  for (const r of getMessageResources(message, QUIET_ROLL) ?? []) {
+    if (!r?.isPerson || !r.assignedPlaceSymbol) continue;
+    const p = message.parentQuest?.getPlace?.(r.assignedPlaceSymbol);
+    if (p?.siteDetails?.nearSite) out = p;
+  }
+  return out;
 }
 
 /** Internal_Strings `locationInRegionProvince`, "{0} in {1} province" -

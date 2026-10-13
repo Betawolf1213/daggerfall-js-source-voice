@@ -441,7 +441,7 @@
   {
     "name": "AUDIT-GUIDE-W1-the-town-unlocks-the-region",
     "file": "src/ui/questLens.js",
-    "old": "    regionName: onMap === true || here || said.has(MACRO_TYPES.NameMacro4) ? (",
+    "old": "    regionName: onMap === true || here || moved || said.has(MACRO_TYPES.NameMacro4) ? (",
     "new": "    regionName: named || said.has(MACRO_TYPES.NameMacro4) ? (",
     "tests": [
       "test/audit_guide.test.js",

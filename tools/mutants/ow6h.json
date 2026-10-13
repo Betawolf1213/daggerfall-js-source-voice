@@ -12,7 +12,7 @@
   {
     "name": "OW6H-sight-always-said",
     "file": "src/scenes/world.js",
-    "old": "    const fresh = !_spawnLedger.wireRow(key);",
+    "old": "    const fresh = !_spawnLedger.has(key, now);",
     "new": "    const fresh = true;",
     "tests": [
       "test/ow6_ledger.test.js"

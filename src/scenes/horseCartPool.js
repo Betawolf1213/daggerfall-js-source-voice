@@ -744,14 +744,18 @@ export function createHorseCartPool({
   function drawVeiled3d() {
     const rig = horses3d?.(), c = _cam3d;
     if (!rig || !c) return 0;
-    let n = 0;
+    let n = 0, open = false;
     const own = !!renderer?.beginCharacterSpriteBatch && !renderer.characterSpriteBatchOpen;
-    for (const e of _h3d.values()) {
-      if (e.frame !== _frameNo || !e.conceal) continue;
-      if (own && !n) renderer.beginCharacterSpriteBatch();
-      if (rig.draw(e.horse, c.canvas, { proj: c.proj, view: c.view, eye: c.eye, up: c.up, conceal: e.conceal })) n++;
-    }
-    if (own && n) renderer.flushCharacterSpriteBatch();
+    // FIELD BUGS 2026-10-12g BATCH-SHUT: opened once, flushed in a finally. A batch opened for a horse that did not draw
+    // (out of view) was never flushed, and one opened twice was flushed once: the batch stood open, every later body
+    // pass joined it, and no Morrowind body - the player's own, every NPC's, foe's, peer's and horse's - drew again
+    try {
+      for (const e of _h3d.values()) {
+        if (e.frame !== _frameNo || !e.conceal) continue;
+        if (own && !open) { renderer.beginCharacterSpriteBatch(); open = true; }
+        if (rig.draw(e.horse, c.canvas, { proj: c.proj, view: c.view, eye: c.eye, up: c.up, conceal: e.conceal })) n++;
+      }
+    } finally { if (open) renderer.flushCharacterSpriteBatch(); }
     return n;
   }
 
