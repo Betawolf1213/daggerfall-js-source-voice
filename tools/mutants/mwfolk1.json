@@ -1,0 +1,262 @@
+[
+  {
+    "name": "MWFOLK1-no-picture-wears-its-outfit",
+    "file": "src/characters/folkBodies.js",
+    "old": "  if (own && spriteSex(person.archive) === gender && !WARDROBE_BEAST_RACES.includes(race)) return",
+    "new": "  if (false && own && spriteSex(person.archive) === gender && !WARDROBE_BEAST_RACES.includes(race)) return",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "Every walker dressed by the wardrobe again: the eleven outfits made for their pictures never worn."
+  },
+  {
+    "name": "MWFOLK1-a-woman-in-a-mans-picture",
+    "file": "src/characters/folkBodies.js",
+    "old": "  if (own && spriteSex(person.archive) === gender && !WARDROBE_BEAST_RACES.includes(race)) return",
+    "new": "  if (own && !WARDROBE_BEAST_RACES.includes(race)) return",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "A woman walking on a man's sprite wears his tunic and hose, made for a man's body."
+  },
+  {
+    "name": "MWFOLK1-boots-on-a-beast",
+    "file": "src/characters/folkBodies.js",
+    "old": "  if (own && spriteSex(person.archive) === gender && !WARDROBE_BEAST_RACES.includes(race)) return",
+    "new": "  if (own && spriteSex(person.archive) === gender) return",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "A Khajiit or an Argonian resident on an outfit's sprite wears its boots, which Morrowind puts on no beast's feet."
+  },
+  {
+    "name": "MWFOLK1-every-picture-a-mans",
+    "file": "src/characters/folkBodies.js",
+    "old": "    if (t.female.includes(archive)) return 'female';",
+    "new": "    if (t.female.includes(archive)) return 'male';",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "The hooded Redguard woman's picture read as a man's: she never wears her dress."
+  },
+  {
+    "name": "MWFOLK1-the-sleeves-hide-no-forearm",
+    "file": "src/characters/ownClothingModels.js",
+    "old": "  outfit(385, ['cuirass', 'groin', ...PAIR('upper arm', 'forearm', 'upper leg', 'knee', 'ankle', 'foot')]),",
+    "new": "  outfit(385, ['cuirass', 'groin', ...PAIR('upper arm', 'upper leg', 'knee', 'ankle', 'foot')]),",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "385's long sleeve closes round the forearm and the skin under it still stands - a forearm through the sleeve wherever it is snug."
+  },
+  {
+    "name": "MWFOLK1-a-hood-over-the-hair",
+    "file": "src/characters/ownClothingModels.js",
+    "old": "  outfit(388, ['cuirass', 'groin', 'hair', ...PAIR('upper leg', 'knee', 'ankle', 'foot')]),",
+    "new": "  outfit(388, ['cuirass', 'groin', ...PAIR('upper leg', 'knee', 'ankle', 'foot')]),",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "The green hood drawn over the hair: whatever hair the face walked to stands through it."
+  },
+  {
+    "name": "MWFOLK1-the-bodice-covers-nothing",
+    "file": "src/characters/ownClothingModels.js",
+    "old": "  outfit(398, ['groin', 'hair', ...PAIR('foot')], ['chest']),",
+    "new": "  outfit(398, ['groin', 'hair', ...PAIR('foot')]),",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "The hooded woman's open bodice read as no chest covered: the modesty weld puts a shirt under her dress."
+  },
+  {
+    "name": "MWFOLK1-any-id-an-outfit",
+    "file": "src/characters/ownClothingModels.js",
+    "old": "  for (const o of Object.values(TOWNSFOLK_OUTFITS)) if (o.id === id) return o;",
+    "new": "  for (const o of Object.values(TOWNSFOLK_OUTFITS)) return o;",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "An id the table does not hold - relay data - dresses its body in the first outfit."
+  },
+  {
+    "name": "MWFOLK1-the-outfit-never-added",
+    "file": "src/formats/mwItemMap.js",
+    "old": "  if (outfitAdd) adds.push(outfitAdd);   // MW-FOLK1",
+    "new": "",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "The outfit hides the skin it covers and draws nothing over it: a body with holes for a tunic."
+  },
+  {
+    "name": "MWFOLK1-the-second-outfit-drawn",
+    "file": "src/formats/mwItemMap.js",
+    "old": "      if (outfitAdd) { notes.push(`outfit ${o.id}: a second outfit - the first (${outfitAdd.recordId}) is the one drawn`); continue; }",
+    "new": "",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "A second outfit replaces the first without a word, its hides added to the first's."
+  },
+  {
+    "name": "MWFOLK1-hidden-in-the-first-person",
+    "file": "src/formats/mwItemMap.js",
+    "old": "      for (const h of o.hides) claim(ARMO_PART.findIndex((r) => r.name === h), prio, null, outfitAdd);",
+    "new": "      for (const h of o.hides) claim(ARMO_PART.findIndex((r) => r.name === h), prio, null);",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "The outfit's hides are the first person's too, which draws no outfit: holes where the arm should be."
+  },
+  {
+    "name": "MWFOLK1-a-shirt-under-the-dress",
+    "file": "src/formats/mwItemMap.js",
+    "old": "  if (show || !args.female || worn.shadows.includes('chest') || worn.covers.includes('chest')) return worn;",
+    "new": "  if (show || !args.female || worn.shadows.includes('chest')) return worn;",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "The modesty weld blind to an outfit's covers: a shirt composed under the hooded woman's bodice."
+  },
+  {
+    "name": "MWFOLK1-the-wolf-in-a-tunic",
+    "file": "src/net/peerBodies.js",
+    "old": "  const o = wolf ? null : lookOutfit(look);",
+    "new": "  const o = lookOutfit(look);",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "A werewolf's body asked to wear its person's outfit over the robe."
+  },
+  {
+    "name": "MWFOLK1-one-body-two-outfits",
+    "file": "src/net/peerBodies.js",
+    "old": "lookKey(look)) + npcKeyOf(look) + outfitKeyOf(look);",
+    "new": "lookKey(look)) + npcKeyOf(look);",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "The body key blind to the outfit: a walker re-rolled from one sprite to another keeps the last one's clothes."
+  },
+  {
+    "name": "MWFOLK1-a-hood-is-no-cap",
+    "file": "src/combat/fpArm.js",
+    "old": "const capsHead = (a) => a.partName === 'head' || a.partName === 'hair' || (a.hides ?? []).some((h) => h === 'head' || h === 'hair');",
+    "new": "const capsHead = (a) => a.partName === 'head' || a.partName === 'hair';",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "A hood that drew is not read as covering the hair: the hair is assembled again through it."
+  },
+  {
+    "name": "MWFOLK1-every-outfit-one-key",
+    "file": "src/combat/fpArm.js",
+    "old": "`${p.kind || 'armor'}:${p.templateIndex ?? p.id}:${p.material ?? ''}:${p.dye ?? ''}`",
+    "new": "`${p.kind || 'armor'}:${p.templateIndex}:${p.material ?? ''}:${p.dye ?? ''}`",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "Every outfit one equip key: a body that changed outfits is never rebuilt."
+  },
+  {
+    "name": "MWFOLK1-the-card-calls-it-armour",
+    "file": "src/combat/fpArm.js",
+    "old": "      : p.kind === 'outfit' ? `outfit ${p.id}`   // MW-FOLK1: a townsperson's whole outfit",
+    "new": "      : p.kind === 'never' ? `outfit ${p.id}`   // MW-FOLK1: a townsperson's whole outfit",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "The paperdoll card names an outfit 'armor undefined' and finds no reason for one that did not draw."
+  },
+  {
+    "name": "MWFOLK1-the-note-says-helm",
+    "file": "src/combat/fpArm.js",
+    "old": "missing.push(`${cap?.partName === 'outfit' ? cap.slot : 'helm'}: none of it bound",
+    "new": "missing.push(`${'helm'}: none of it bound",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "A hood that bound nothing reported as a helm."
+  },
+  {
+    "name": "MWFOLK1-the-arm-falls-at-the-old-angle",
+    "file": "tools/bakeTownsfolk.mjs",
+    "old": "    const want = Math.asin(PACK_ARM_FALL / Math.hypot(H[0] - U[0], H[2] - U[2]));",
+    "new": "    const want = Math.atan2(PACK_ARM_FALL, Math.abs(H[0] - U[0]));",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "The arm's turn read off its run alone: the wrist 0.505 under the shoulder, not PACK_ARM_FALL."
+  },
+  {
+    "name": "MWFOLK1-retails-clavicle-kept",
+    "file": "tools/bakeTownsfolk.mjs",
+    "old": "    const Ra = rotY(-sgn * a);",
+    "new": "    const Ra = rotY(0);",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "The clavicle left at retail's fall: every sleeve bound 3 units over the arm it animates."
+  },
+  {
+    "name": "MWFOLK1-the-hoods-not-raised",
+    "file": "tools/bakeTownsfolk.mjs",
+    "old": "  if (!up.size) return mesh;",
+    "new": "  return mesh;",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "The hoods where the T-posed scene's head was: the game's scalp stands through them."
+  },
+  {
+    "name": "MWFOLK1-a-hood-read-as-a-collar",
+    "file": "tools/bakeTownsfolk.mjs",
+    "old": "  if (min[2] > 112 && Math.max(-min[0], max[0]) < 12) return 'hood';",
+    "new": "  if (min[2] > 112 && Math.max(-min[0], max[0]) < 8) return 'hood';",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "A hood classed as the torso's: weighted to the spine, it stays behind when the head turns."
+  },
+  {
+    "name": "MWFOLK1-the-teal-hood-green",
+    "file": "tools/bakeTownsfolk.mjs",
+    "old": "  outfit(389, 'Breton_Male.028', [[0, 'tunic_nord1'], [1, 'hose_bretonnpc']]),",
+    "new": "  outfit(389, 'Breton_Male.028', [[0, 'tunic_nord2'], [1, 'hose_bretonnpc']]),",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "389 in 388's green: two sprites, one outfit, the teal his picture wears lost."
+  },
+  {
+    "name": "MWFOLK1-the-cut-edge-lost",
+    "file": "tools/fbxStrip.mjs",
+    "old": "      const k = newPV.has(e) ? e : firstKept.get(key(e));",
+    "new": "      const k = newPV.has(e) ? e : undefined;",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "An edge a cut polygon shared with one that stays dropped with it: the polygon left is missing an edge."
+  },
+  {
+    "name": "MWFOLK1-the-cut-vertices-kept",
+    "file": "tools/fbxStrip.mjs",
+    "old": "  const usedV = [...new Set(keptPV.map(vOf))].sort((a, b) => a - b);",
+    "new": "  const usedV = Array.from({ length: verts.length / 3 }, (_, i) => i);",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "A cut that keeps every vertex: the groin's points still in the file, used by nothing."
+  },
+  {
+    "name": "MWFOLK1-a-whole-object-cut",
+    "file": "tools/fbxStrip.mjs",
+    "old": "    throw new Error(mats[0] === material ? `${label}: every polygon wears material ${material} - drop the object instead` : `${label}: no polygon wears material ${material} - nothing to cut`);",
+    "new": "    throw new Error(`${label}: no polygon wears material ${material} - nothing to cut`);",
+    "tests": [
+      "test/mwfolk1.test.js"
+    ],
+    "note": "A cut of an object's only material told it has nothing to cut, when the object itself should go."
+  }
+]

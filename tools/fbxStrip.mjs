@@ -28,8 +28,22 @@
 // A removed object takes with it what hangs ONLY from it - its geometry, its node attribute, a material no kept
 // object wears, that material's textures, their videos. An object parented under a removed one is refused by name
 // rather than orphaned.
+//
+// ═══ A CUT: ONE MATERIAL'S POLYGONS OUT OF AN OBJECT THAT STAYS ═══
+//
+//     node tools/fbxStrip.mjs <in.fbx> <out.fbx> --cut=<Model>:<material>[,...]
+//
+// MW-FOLK1 (2026-10-13, the owner's townsfolk outfits). An outfit can carry, joined into its own object, a piece of the
+// body it was made on: the 385 outfit (`Breton_Male.018`) holds 61 polygons of a Morrowind groin under its tunic, worn
+// in material slot 6 - Morrowind's own tx_b_n_generic_m_g00 - and dropping the object would drop the outfit. A cut
+// takes out the polygons that wear that slot, with every vertex, normal and UV only they used, and rewrites the
+// object's Geometry arrays - and nothing else: the slot itself stays (no polygon wears it), so every polygon left keeps
+// its material's index, and every array left keeps its order. An edge a cut polygon shared with one that stays is
+// kept, written from the polygon that stays. A Geometry holding anything this tool does not know how to cut (another
+// layer, another mapping) is refused by name rather than half cut.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { deflateSync } from 'node:zlib';
 import { readFbx, childrenNamed, nodeAt, objectName } from './fbxRead.mjs';
 import { isMain } from './lib/isMain.mjs';
 
@@ -92,12 +106,139 @@ function pair(raw, decoded, path = '') {
 /** An object's id as one key, whatever width the reader handed it back in. */
 const idKey = (v) => String(v);
 
+/** MW-FOLK1: the array types a cut re-writes - the reader's widths (tools/fbxRead.mjs ARRAY), written back. */
+const ARRAY_WRITE = {
+  d: [8, (b, v, o) => b.writeDoubleLE(v, o)],
+  f: [4, (b, v, o) => b.writeFloatLE(v, o)],
+  i: [4, (b, v, o) => b.writeInt32LE(v, o)],
+  l: [8, (b, v, o) => b.writeBigInt64LE(BigInt(v), o)],
+};
+
+/** A one-array record's property bytes with new values - its type code and its encoding (raw, or deflated) kept. */
+function arrayProps(rec, values) {
+  const t = String.fromCharCode(rec.props[0]);
+  const w = ARRAY_WRITE[t];
+  if (!w || rec.numProps !== 1) throw new Error(`"${rec.name}" is not one array of a type a cut re-writes`);
+  const encoding = rec.props.readUInt32LE(5);
+  const data = Buffer.alloc(values.length * w[0]);
+  values.forEach((v, k) => w[1](data, v, k * w[0]));
+  const body = encoding === 1 ? deflateSync(data) : data;
+  const head = Buffer.alloc(13);
+  head[0] = rec.props[0];
+  head.writeUInt32LE(values.length, 1);
+  head.writeUInt32LE(encoding, 5);
+  head.writeUInt32LE(body.length, 9);
+  return Buffer.concat([head, body]);
+}
+
+/** What a cut knows a Geometry, and each of its layer elements, to hold - anything else is refused by name. */
+const CUT_GEOMETRY = new Set(['Properties70', 'GeometryVersion', 'Vertices', 'PolygonVertexIndex', 'Edges', 'LayerElementNormal', 'LayerElementUV', 'LayerElementMaterial', 'Layer']);
+const CUT_LAYER = new Set(['Version', 'Name', 'MappingInformationType', 'ReferenceInformationType']);
+
 /**
- * Strip the named Models (by their Blender object name) out of an FBX, with what hangs only from them.
- * Returns `{ bytes, dropped: [{ kind, name, id }] }`. Throws on a name that is not a Model of the file, on an object
- * parented under a removed one, and on a footer this tool does not recognise.
+ * MW-FOLK1: cut out of a raw Geometry record (paired with its decoded twin) the polygons that wear material slot
+ * `material`, with every vertex, normal and UV only they used (see the header). Each array left keeps its order and its
+ * encoding. Answers how many polygons and vertices it took.
  */
-export function stripFbx(bytes, { drop = [] } = {}) {
+function cutGeometry(geo, material, label) {
+  for (const c of geo.children) if (!CUT_GEOMETRY.has(c.name)) throw new Error(`${label}: its Geometry holds "${c.name}", which a cut does not know - refused rather than half cut`);
+  const one = (parent, name) => {
+    const r = parent.children.filter((c) => c.name === name);
+    if (r.length !== 1) throw new Error(`${label}: ${r.length} "${name}" records where a cut reads one`);
+    return r[0];
+  };
+  const value = (parent, name) => one(parent, name).decoded.props[0];
+  const vertsRec = one(geo, 'Vertices');
+  const pviRec = one(geo, 'PolygonVertexIndex');
+  const verts = vertsRec.decoded.props[0];
+  const pvi = pviRec.decoded.props[0];
+  const polys = [];
+  const polyOf = new Int32Array(pvi.length);
+  for (let k = 0, s = 0; k < pvi.length; k++) {
+    polyOf[k] = polys.length;
+    if (pvi[k] < 0) { polys.push([s, k]); s = k + 1; }
+  }
+  if (!polys.length || polys.at(-1)[1] !== pvi.length - 1) throw new Error(`${label}: its PolygonVertexIndex does not close its last polygon`);
+
+  const matEl = one(geo, 'LayerElementMaterial');
+  for (const c of matEl.children) if (!CUT_LAYER.has(c.name) && c.name !== 'Materials') throw new Error(`${label}: its LayerElementMaterial holds "${c.name}"`);
+  const matsRec = one(matEl, 'Materials');
+  const mats = matsRec.decoded.props[0];
+  // one material for the whole object (AllSame): every polygon wears it, or none does
+  if (value(matEl, 'MappingInformationType') === 'AllSame') {
+    throw new Error(mats[0] === material ? `${label}: every polygon wears material ${material} - drop the object instead` : `${label}: no polygon wears material ${material} - nothing to cut`);
+  }
+  if (value(matEl, 'MappingInformationType') !== 'ByPolygon' || value(matEl, 'ReferenceInformationType') !== 'IndexToDirect') {
+    throw new Error(`${label}: its materials are not mapped ByPolygon, IndexToDirect - a cut reads no other`);
+  }
+  if (mats.length !== polys.length) throw new Error(`${label}: ${mats.length} material indices for ${polys.length} polygons`);
+  const keep = mats.map((m) => m !== material);
+  const cut = keep.filter((k) => !k).length;
+  if (!cut) throw new Error(`${label}: no polygon wears material ${material} - nothing to cut`);
+  if (cut === polys.length) throw new Error(`${label}: every polygon wears material ${material} - drop the object instead`);
+  const keptPV = polys.flatMap(([s, e], p) => (keep[p] ? Array.from({ length: e - s + 1 }, (_, i) => s + i) : []));
+  const newPV = new Map(keptPV.map((k, n) => [k, n]));
+
+  // THE VERTICES the polygons left use, in their order; the polygons re-pointed at them
+  const vOf = (k) => (pvi[k] < 0 ? ~pvi[k] : pvi[k]);
+  const usedV = [...new Set(keptPV.map(vOf))].sort((a, b) => a - b);
+  const vTo = new Map(usedV.map((u, n) => [u, n]));
+  vertsRec.props = arrayProps(vertsRec, usedV.flatMap((u) => verts.slice(u * 3, u * 3 + 3)));
+  pviRec.props = arrayProps(pviRec, keptPV.map((k) => (pvi[k] < 0 ? ~vTo.get(~pvi[k]) : vTo.get(pvi[k]))));
+  matsRec.props = arrayProps(matsRec, mats.filter((_, p) => keep[p]));
+
+  // THE EDGES, each written as the polygon corner it starts at: an edge a polygon left still has is kept, from that
+  // polygon's corner where its own was cut; an edge only cut polygons had goes with them
+  const edgesRec = geo.children.find((c) => c.name === 'Edges');
+  if (edgesRec) {
+    const next = (k) => { const [s, e] = polys[polyOf[k]]; return k === e ? s : k + 1; };
+    const key = (k) => { const a = vOf(k), b = vOf(next(k)); return a < b ? `${a},${b}` : `${b},${a}`; };
+    const firstKept = new Map();
+    for (const k of keptPV) if (!firstKept.has(key(k))) firstKept.set(key(k), k);
+    const out = [];
+    for (const e of edgesRec.decoded.props[0]) {
+      const k = newPV.has(e) ? e : firstKept.get(key(e));
+      if (k !== undefined) out.push(newPV.get(k));
+    }
+    if (new Set(out).size !== out.length) throw new Error(`${label}: an edge listed twice once cut - its Edges are not one a cut understands`);
+    edgesRec.props = arrayProps(edgesRec, out);
+  }
+
+  // EACH CORNER'S LAYER - its normals, its UVs: direct values per corner kept, or an index per corner into a table
+  // kept to the entries still used, in their order
+  const corners = (el, valueName, width, wName) => {
+    for (const c of el.children) if (!CUT_LAYER.has(c.name) && ![valueName, `${valueName}Index`, wName].includes(c.name)) throw new Error(`${label}: its ${el.name} holds "${c.name}"`);
+    if (value(el, 'MappingInformationType') !== 'ByPolygonVertex') throw new Error(`${label}: its ${el.name} is not mapped ByPolygonVertex - a cut reads no other`);
+    const ref = value(el, 'ReferenceInformationType');
+    const valuesRec = one(el, valueName);
+    const values = valuesRec.decoded.props[0];
+    const wRec = wName ? el.children.find((c) => c.name === wName) : null;
+    let keepAt;
+    if (ref === 'Direct') keepAt = keptPV;
+    else if (ref === 'IndexToDirect') {
+      const idxRec = one(el, `${valueName}Index`);
+      const idx = idxRec.decoded.props[0];
+      if (idx.length !== pvi.length || idx.some((i) => i < 0)) throw new Error(`${label}: its ${valueName}Index is not one entry a corner`);
+      keepAt = [...new Set(keptPV.map((k) => idx[k]))].sort((a, b) => a - b);
+      const to = new Map(keepAt.map((u, n) => [u, n]));
+      idxRec.props = arrayProps(idxRec, keptPV.map((k) => to.get(idx[k])));
+    } else throw new Error(`${label}: its ${el.name} is referenced ${ref} - a cut reads Direct or IndexToDirect`);
+    valuesRec.props = arrayProps(valuesRec, keepAt.flatMap((u) => values.slice(u * width, u * width + width)));
+    if (wRec) wRec.props = arrayProps(wRec, keepAt.map((u) => wRec.decoded.props[0][u]));
+  };
+  for (const el of geo.children.filter((c) => c.name === 'LayerElementNormal')) corners(el, 'Normals', 3, 'NormalsW');
+  for (const el of geo.children.filter((c) => c.name === 'LayerElementUV')) corners(el, 'UV', 2, null);
+  return { polygons: cut, vertices: verts.length / 3 - usedV.length };
+}
+
+/**
+ * Strip the named Models (by their Blender object name) out of an FBX, with what hangs only from them, and (MW-FOLK1)
+ * CUT out of a Model that stays the polygons wearing one material slot (`cut`: `[{ object, material }]` - see the
+ * header). Returns `{ bytes, dropped: [{ kind, name, id }], cut: [{ object, material, polygons, vertices }] }`. Throws
+ * on a name that is not a Model of the file, on an object parented under a removed one, on a cut of a removed object
+ * or of a Geometry another object shares, and on a footer this tool does not recognise.
+ */
+export function stripFbx(bytes, { drop = [], cut = [] } = {}) {
   const buf = Buffer.from(bytes);
   const tree = readFbx(buf);
   const raw = rawRecords(buf);
@@ -137,6 +278,18 @@ export function stripFbx(bytes, { drop = [] } = {}) {
 
   objectsRaw.children = objectsRaw.children.filter((r) => !gone.has(idKey(r.decoded.props[0])));
   connRaw.children = connRaw.children.filter((r) => r.name !== 'C' || !(gone.has(idKey(r.decoded.props[1])) || gone.has(idKey(r.decoded.props[2]))));
+
+  // MW-FOLK1: THE CUTS - each object's one Geometry, re-written less one material's polygons
+  const cuts = cut.map(({ object, material }) => {
+    const label = `"${object}"`;
+    const model = objectsRaw.children.find((r) => r.name === 'Model' && objectName(r.decoded.props[1]) === object);
+    if (!model) throw new Error(`no Model named ${label} in this FBX${drop.includes(object) ? ' once its drop is made - a dropped object has nothing to cut' : ''}`);
+    const id = idKey(model.decoded.props[0]);
+    const geos = links.filter((l) => l.parent === id && byId.get(l.child)?.name === 'Geometry').map((l) => l.child);
+    if (geos.length !== 1) throw new Error(`${label} has ${geos.length} Geometry records - a cut reads one`);
+    if (links.some((l) => l.child === geos[0] && l.parent !== id && byId.get(l.parent)?.name === 'Model')) throw new Error(`${label}'s Geometry is another object's too - a cut would cut both`);
+    return { object, material, ...cutGeometry(byId.get(geos[0]), material, label) };
+  });
 
   // THE DEFINITIONS COUNT THE OBJECTS: each ObjectType's Count, and the section's own total.
   const definitions = raw.top.find((r) => r.name === 'Definitions');
@@ -196,7 +349,7 @@ export function stripFbx(bytes, { drop = [] } = {}) {
   const v = Buffer.alloc(4); v.writeUInt32LE(raw.version, 0); push(v);
   push(Buffer.alloc(120));
   push(FOOT_MAGIC);
-  return { bytes: Buffer.concat(out), dropped };
+  return { bytes: Buffer.concat(out), dropped, cut: cuts };
 }
 
 /** The Mesh Models of an FBX by name - what a strip keeps, for the record. */
@@ -209,14 +362,20 @@ if (isMain(import.meta.url)) {
   const args = process.argv.slice(2);
   const files = args.filter((a) => !a.startsWith('--'));
   const dropArg = args.find((a) => a.startsWith('--drop='))?.slice('--drop='.length) ?? '';
-  if (files.length !== 2 || !dropArg) {
-    console.error('usage: node tools/fbxStrip.mjs <in.fbx> <out.fbx> --drop=<Model>[,<Model>...]');
+  const cutArg = args.find((a) => a.startsWith('--cut='))?.slice('--cut='.length) ?? '';
+  const cut = cutArg.split(',').map((s) => s.trim()).filter(Boolean).map((s) => {
+    const at = s.lastIndexOf(':');
+    return { object: s.slice(0, at), material: Number(s.slice(at + 1)) };
+  });
+  if (files.length !== 2 || (!dropArg && !cut.length) || cut.some((c) => !c.object || !Number.isInteger(c.material))) {
+    console.error('usage: node tools/fbxStrip.mjs <in.fbx> <out.fbx> [--drop=<Model>[,<Model>...]] [--cut=<Model>:<material>[,...]]');
     process.exit(2);
   }
-  const { bytes, dropped } = stripFbx(readFileSync(files[0]), { drop: dropArg.split(',').map((s) => s.trim()).filter(Boolean) });
+  const r = stripFbx(readFileSync(files[0]), { drop: dropArg.split(',').map((s) => s.trim()).filter(Boolean), cut });
   mkdirSync(dirname(files[1]), { recursive: true });
-  writeFileSync(files[1], bytes);
-  console.log(`${files[0]} -> ${files[1]}  ${bytes.length} bytes`);
-  for (const d of dropped) console.log(`  dropped ${d.kind} "${d.name}"`);
-  console.log(`  kept: ${meshModelNames(bytes).join(', ')}`);
+  writeFileSync(files[1], r.bytes);
+  console.log(`${files[0]} -> ${files[1]}  ${r.bytes.length} bytes`);
+  for (const d of r.dropped) console.log(`  dropped ${d.kind} "${d.name}"`);
+  for (const c of r.cut) console.log(`  cut "${c.object}" material ${c.material}: ${c.polygons} polygons, ${c.vertices} vertices`);
+  console.log(`  kept: ${meshModelNames(r.bytes).join(', ')}`);
 }

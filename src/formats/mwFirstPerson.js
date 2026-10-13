@@ -172,6 +172,7 @@ import { getTextKeyTime, animVelocity } from './mwAnim.js';
 import { mat33Mul } from './mwNifMesh.js';   // AUDIT 68 S11-affine-dup: the one row-major 3x3 product
 import { batchMoves, posePartBatch, nodeAffineAt, nodeClockAt, clockFor } from './mwPartClock.js';   // MW-BOW1: a part's own clock
 import { applyClimbRig } from '../combat/climbRig.js';   // CLIMB6: the climb's pose on the rig's own bones
+import { ownFacePools } from '../characters/ownHeadModels.js';   // MW-HEADS1: the port's own heads and hairs - a race's pools where it has them
 
 /** The four parts allowed to fall back to a third-person mesh when the
  *  first-person record is missing (rule 3 / npcanimation.cpp:1217-1253).
@@ -1654,8 +1655,14 @@ export function armReport(parts, race, female) {
  */
 /** MW-D35: the race-and-sex's head and hair pools, id-sorted - THE
  *  SAME pools playerBodyRows walks, exposed so the matcher measures
- *  exactly the candidates the walk would have chosen among. */
+ *  exactly the candidates the walk would have chosen among.
+ *  MW-HEADS1: where the port carries its own heads and hairs for the race
+ *  and sex (characters/ownHeadModels.js - the Breton men's), THOSE are the
+ *  pools, in place of the data's: every door that chooses a face - the NPC
+ *  walk, the curated table, the measured match - chooses among them. */
 export function facePools(parts, race, female) {
+  const own = ownFacePools(race, female);
+  if (own) return { heads: own.heads, hairs: own.hairs };
   const want = String(race || '').toLowerCase();
   const pool = (slot) => {
     const forSlot = (parts ?? []).filter((p) => p.race === want && p.slot === slot

@@ -188,7 +188,8 @@ test('MWNPC17d the build reads the hint: each garment its rung and pick, the hea
   assert.equal(peerBodyKey(player), peerBodyKey({ ...player }), 'a player\'s key as it was');
   assert.equal(npcKeyOf(player), '');
   for (const bad of [{ seed: -1, tier: 0, lo: 0, hi: 3 }, { seed: 1.5, tier: 0, lo: 0, hi: 3 }, { seed: 1, tier: 4, lo: 0, hi: 3 }, { seed: 2 ** 32, tier: 0, lo: 0, hi: 3 }, { seed: 1, tier: 0 }, { seed: 1, tier: 1, lo: 2, hi: 3 }, { seed: 1, tier: 2, lo: 0, hi: 1 }, { seed: 1, tier: 1, lo: -1, hi: 3 }, 'x', null]) assert.equal(npcHintOf({ npc: bad }), null, `a hint read as data: ${JSON.stringify(bad)}`);
-  assert.match(rd('src/net/peerBodies.js'), /: lookKey\(look\)\) \+ npcKeyOf\(look\);\n {4}_bodyLookKeys\.set\(look, k\);/, 'the hint in the memo: one key a look, never a string a frame');
+  // PIN MOVED (MW-FOLK1): the memo's key carries a townsperson's outfit after the hint, both inside it
+  assert.match(rd('src/net/peerBodies.js'), /: lookKey\(look\)\) \+ npcKeyOf\(look\) \+ outfitKeyOf\(look\);\n {4}_bodyLookKeys\.set\(look, k\);/, 'the hint in the memo: one key a look, never a string a frame');
   // a beast: Morrowind dresses no Khajiit or Argonian in shoes, boots or a helm
   const kit = dressPerson({ role: 'knight', gender: 'male', seed: 4 });
   const helmed = { ...kit, items: [...kit.items.filter((it) => it.equipSlot !== EQUIP_SLOTS.Head), { templateIndex: ARMOR_ENUM.Helm, group: 'Armor', equipSlot: EQUIP_SLOTS.Head, material: ARMOR_MATERIAL.Steel }] };
@@ -204,14 +205,15 @@ test('MWNPC17d the build reads the hint: each garment its rung and pick, the hea
   }
   assert.ok(peerBuildOpts({ race: 'Nord', gender: 'male', faceIndex: 0, items: helmed.items, npc: kit.npc }).armor.some((p) => p.templateIndex === ARMOR_ENUM.Helm), 'a Nord keeps his helm');
   assert.equal(beastWorn([1], 'Breton')[0], 1, 'no beast: the list itself');
-  // the walk: each slot its own step, over the race's pools
+  // the walk: each slot its own step, over the race's pools. PIN MOVED (MW-HEADS1): a Nord's - the data's pools of a
+  // race the port carries no heads for; a Breton man walks the port's own (test/mwheads1.test.js)
   const parts = [];
-  for (let i = 0; i < 8; i++) parts.push({ id: `b_n_breton_m_head_0${i}`, race: 'breton', slot: 'head', skin: true, playable: true, firstPerson: false, female: false });
-  for (let i = 0; i < 6; i++) parts.push({ id: `b_n_breton_m_hair_0${i}`, race: 'breton', slot: 'hair', skin: true, playable: true, firstPerson: false, female: false });
-  const face = (walk) => { const rows = playerBodyRows(parts, 'breton', false, { faceIndex: 0, walk }); return ['head', 'hair'].map((s) => rows.find((r) => r.slot === s).record.id); };
-  assert.deepEqual(face({ head: 3, hair: 4 }), ['b_n_breton_m_head_03', 'b_n_breton_m_hair_04']);
-  assert.deepEqual(face({ head: 11, hair: 13 }), ['b_n_breton_m_head_03', 'b_n_breton_m_hair_01'], 'each modulo its own pool');
-  assert.deepEqual(face(null), ['b_n_breton_m_head_00', 'b_n_breton_m_hair_00'], 'no walk: the face index\'s, as before');
+  for (let i = 0; i < 8; i++) parts.push({ id: `b_n_nord_m_head_0${i}`, race: 'nord', slot: 'head', skin: true, playable: true, firstPerson: false, female: false });
+  for (let i = 0; i < 6; i++) parts.push({ id: `b_n_nord_m_hair_0${i}`, race: 'nord', slot: 'hair', skin: true, playable: true, firstPerson: false, female: false });
+  const face = (walk) => { const rows = playerBodyRows(parts, 'nord', false, { faceIndex: 0, walk }); return ['head', 'hair'].map((s) => rows.find((r) => r.slot === s).record.id); };
+  assert.deepEqual(face({ head: 3, hair: 4 }), ['b_n_nord_m_head_03', 'b_n_nord_m_hair_04']);
+  assert.deepEqual(face({ head: 11, hair: 13 }), ['b_n_nord_m_head_03', 'b_n_nord_m_hair_01'], 'each modulo its own pool');
+  assert.deepEqual(face(null), ['b_n_nord_m_head_00', 'b_n_nord_m_hair_00'], 'no walk: the face index\'s, as before');
   const pairs = new Set(seeds(400).map((s) => face(npcFaceOf(npcHint(s, 0))).join()));
   assert.equal(pairs.size, 48, 'a race\'s heads times its hairs, every pair reached');
   assert.match(rd('src/combat/fpArm.js'), /\} else if \(npcFace\) \{\n {6}faceMatch = \{ head: null, hair: null, reasons: \['an NPC: its head and hair walked off its seed'\] \};/, 'an NPC is no portrait: nothing measured');
@@ -219,16 +221,18 @@ test('MWNPC17d the build reads the hint: each garment its rung and pick, the hea
 
 test('MWNPC17e BARELY ANY TWO ALIKE: two hundred of one street - one race, one sex, one sprite - resolved as the build resolves them, garment records, head and hair; the same two hundred without the hint (the resolution before MWNPC17: a garment by its type and dye, a face by its index) are far fewer (mutants: the pick off; the walk off)', () => {
   const C = clothes();
+  // PIN MOVED (MW-HEADS1): a Nord street - the data's 8 heads and 6 hairs of a race the port carries none for; a Breton
+  // man's face is the port's own three and three (test/mwheads1.test.js)
   const parts = [];
-  for (let i = 0; i < 8; i++) parts.push({ id: `h${i}`, race: 'breton', slot: 'head', skin: true, playable: true, firstPerson: false, female: false });
-  for (let i = 0; i < 6; i++) parts.push({ id: `r${i}`, race: 'breton', slot: 'hair', skin: true, playable: true, firstPerson: false, female: false });
+  for (let i = 0; i < 8; i++) parts.push({ id: `h${i}`, race: 'nord', slot: 'head', skin: true, playable: true, firstPerson: false, female: false });
+  for (let i = 0; i < 6; i++) parts.push({ id: `r${i}`, race: 'nord', slot: 'hair', skin: true, playable: true, firstPerson: false, female: false });
   const seen = (look) => {
     const o = peerBuildOpts(look);
     const worn = o.armor.filter((p) => p.kind === 'clothing').map((p) => mwClothingRecord(C, p.name, { dye: p.dye, colourOf, tier: p.tier ?? null, pick: p.pick ?? null }).record?.id ?? '-');
-    const rows = playerBodyRows(parts, 'breton', false, { faceIndex: look.faceIndex, walk: o.npcFace ?? null });
+    const rows = playerBodyRows(parts, 'nord', false, { faceIndex: look.faceIndex, walk: o.npcFace ?? null });
     return [...worn.sort(), rows.find((r) => r.slot === 'head').record.id, rows.find((r) => r.slot === 'hair').record.id].join('|');
   };
-  const people = seeds(200, 77).map((s) => { const d = dressPerson({ role: 'commoner', gender: 'male', seed: s, cut: 'pants' }); return { race: 'Breton', gender: 'male', faceIndex: s % 10, items: d.items, npc: d.npc }; });
+  const people = seeds(200, 77).map((s) => { const d = dressPerson({ role: 'commoner', gender: 'male', seed: s, cut: 'pants' }); return { race: 'Nord', gender: 'male', faceIndex: s % 10, items: d.items, npc: d.npc }; });
   const distinct = new Set(people.map(seen));
   assert.ok(distinct.size >= 196, `two hundred commoners, ${distinct.size} distinct to the eye`);
   // the same two hundred without the hint - the resolution before this slice: far fewer

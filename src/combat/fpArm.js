@@ -1423,7 +1423,8 @@ export function wornVerdicts(pieces, worn) {
   for (const p of pieces ?? []) {
     const label = p.kind === 'clothing'
       ? (p.name ?? `garment ${p.templateIndex}`)
-      : `armor ${p.templateIndex} (material ${p.material ?? 0})`;
+      : p.kind === 'outfit' ? `outfit ${p.id}`   // MW-FOLK1: a townsperson's whole outfit
+        : `armor ${p.templateIndex} (material ${p.material ?? 0})`;
     const dressed = (worn?.adds ?? []).filter((a) => a.piece === p).map((a) => a.slot);
     const reason = (worn?.notes ?? []).find((n) => n.startsWith(label.split(' (')[0]) || (p.kind !== 'clothing' && n.startsWith(`armor ${p.templateIndex}:`)));
     rows.push({ label, dressed, reason: dressed.length ? null : (reason ?? 'no part reached the rig') });
@@ -1434,7 +1435,7 @@ export function wornVerdicts(pieces, worn) {
 export function wornEquipKeyOf(pieces) {
   // MW-D37: the dye is part of a garment's identity now - a re-dyed
   // shirt resolves to a different MW shirt, so it is a change.
-  return (pieces ?? []).map((p) => `${p.kind || 'armor'}:${p.templateIndex}:${p.material ?? ''}:${p.dye ?? ''}`).join('|');
+  return (pieces ?? []).map((p) => `${p.kind || 'armor'}:${p.templateIndex ?? p.id}:${p.material ?? ''}:${p.dye ?? ''}`).join('|');   // MW-FOLK1: an outfit by its id
 }
 
 export function fpWeaponKey(item, hasAmmo) {
@@ -1844,30 +1845,36 @@ export function ownBodyPaths(add, rows) {
 
 /** ...and what the binder takes beside the add's own mesh: those bodies' bytes out of the loaded archives, and the part
  *  it is fitted onto (MW-BRIG3 `fitTo`). Nothing at all for an add that is not skinned from the body. */
-/**
- * HEAD-HELD (FIELD BUGS 2026-10-12b, "morrowind NPCs missing heads" - Boistun, a knight in iron, a nub of neck at his
- * collar): THE SKIN ROWS A HELM HID AND NEVER COVERED. composeWornArmor hides the head and the hair a helm takes
- * (worn.shadows) before the helm's own mesh is read or bound, and a helm that bound nothing - its mesh not in the
- * archives, no shape its bone takes, a parse that threw: each only a note - left the neck alone above the collar. A worn
- * add whose part is the head's or the hair's covers them only if a piece of it bound (`pieces`, the assembly's); when
- * none did, the rows they hid come back - the never-traps law, "every miss is a note and the skin stands". Never the
- * wolf's (its hair is its head's own law, WEREWOLF1). Rows in the skin rows' shape ({ slot, bones, model }).
- */
-export function bareHeadRows(rows, worn, pieces, werewolf = false) {
-  if (werewolf) return [];
-  const hidden = ['head', 'hair'].filter((slot) => (worn?.shadows ?? []).includes(slot));
-  if (!hidden.length) return [];
-  const caps = new Set((worn?.adds ?? []).filter((a) => a.partName === 'head' || a.partName === 'hair').map((a) => a.slot));
-  if ((pieces ?? []).some((p) => caps.has(p.slot))) return [];
-  return (rows ?? []).filter((r) => r.record && hidden.includes(r.slot)).map((r) => ({ slot: r.slot, bones: PART_BONES[r.slot] ?? [], model: r.record.model }));
-}
-
 export function ownBodyPart(add, rows, find) {
   if (!add.skinFrom) return {};
   return {
     skinFrom: ownBodyPaths(add, rows).map((b) => ({ slot: b.slot, bytes: nifBytes(find(b.path), b.path) })).filter((b) => b.bytes),
     fitTo: add.fitTo ?? null,
   };
+}
+
+/** HEAD-HELD: a worn add that covers the head and the hair it hid - a helm's head or hair part, or (MW-FOLK1) an add
+ *  that hides them from a part of its own, a townsperson's hood (`hides`). */
+const capsHead = (a) => a.partName === 'head' || a.partName === 'hair' || (a.hides ?? []).some((h) => h === 'head' || h === 'hair');
+
+/**
+ * HEAD-HELD (FIELD BUGS 2026-10-12b, "morrowind NPCs missing heads" - Boistun, a knight in iron, a nub of neck at his
+ * collar): THE SKIN ROWS A HELM HID AND NEVER COVERED. composeWornArmor hides the head and the hair a helm takes
+ * (worn.shadows) before the helm's own mesh is read or bound, and a helm that bound nothing - its mesh not in the
+ * archives, no shape its bone takes, a parse that threw: each only a note - left the neck alone above the collar. A worn
+ * add whose part is the head's or the hair's covers them only if a piece of it bound (`pieces`, the assembly's); when
+ * none did, the rows they hid come back - the never-traps law, "every miss is a note and the skin stands". MW-FOLK1:
+ * and so does an add that HIDES them from another part - a townsperson's hooded outfit, whose hood is no head or hair
+ * part but hides the hair under it (`hides`): it covers them as a helm does, once a piece of it bound. Never the
+ * wolf's (its hair is its head's own law, WEREWOLF1). Rows in the skin rows' shape ({ slot, bones, model }).
+ */
+export function bareHeadRows(rows, worn, pieces, werewolf = false) {
+  if (werewolf) return [];
+  const hidden = ['head', 'hair'].filter((slot) => (worn?.shadows ?? []).includes(slot));
+  if (!hidden.length) return [];
+  const caps = new Set((worn?.adds ?? []).filter(capsHead).map((a) => a.slot));
+  if ((pieces ?? []).some((p) => caps.has(p.slot))) return [];
+  return (rows ?? []).filter((r) => r.record && hidden.includes(r.slot)).map((r) => ({ slot: r.slot, bones: PART_BONES[r.slot] ?? [], model: r.record.model }));
 }
 
 /**
@@ -1997,7 +2004,8 @@ async function buildTpBody({
       if (again?.ok) {
         arm = again;
         skinRows.push(...bare);
-        missing.push(`helm: none of it bound - the ${bare.map((r) => r.slot).join(' and ')} drawn bare`);
+        const cap = worn.adds.find(capsHead);
+        missing.push(`${cap?.partName === 'outfit' ? cap.slot : 'helm'}: none of it bound - the ${bare.map((r) => r.slot).join(' and ')} drawn bare`);   // MW-FOLK1: a hood's outfit by its own name
       }
     }
     hangHipLight(arm);   // HT-WAIST: the hook and the anchor, once, on the assembled skeleton

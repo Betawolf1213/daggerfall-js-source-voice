@@ -2014,7 +2014,10 @@ ten colours over ten faces.
   outfit their sprite shows (`folkBodies.js` FOLK_DRESS: the commoner, the
   tradesman, the traveller and the robed scholar - and the CUT their picture
   shows, a robe, a skirt or breeches, so the body that replaces a picture at
-  its range wears what the picture wore). A still picture by its kind
+  its range wears what the picture wore). (AMENDED BY MW-FOLK1, 2026-10-13: a
+  walker whose picture has an outfit of the port's own - eleven of the
+  twenty-four - wears that outfit and no garment of the wardrobe's;
+  `04-Characters/Townsfolk-Outfits.md`.) A still picture by its kind
   (`rosterBodies.js` STILL_WARDROBE - a priest at the door in robes). The
   street's guard keeps the watch's uniform; foes and rosters keep their kit.
 - HOW WELL. A wealth TIER per role, on Morrowind's own clothing ladder - the
@@ -2062,7 +2065,10 @@ and foeBodies as before.
 NOT HERE. A noble's sprite shows one cut and their body may wear another
 where the role has both (a gown and a blouse and skirt): only the walkers'
 and the priests' pictures name their cut. Faces beyond a race's own BODY
-records (Morrowind's NPC heads are what the data carries).
+records (Morrowind's NPC heads are what the data carries) - but the port's
+own (AMENDED BY MW-HEADS1, 2026-10-13: the Breton men's three heads and three
+hairs stand in place of the data's, and the walk reaches their nine pairs;
+`04-Characters/Own-Heads.md`).
 
 PROVEN. `test/mwnpc17_wardrobe.test.js` (5): every role and sex dressed by its
 own table over hundreds of seeds - pure, its garments and dyes, one top or
