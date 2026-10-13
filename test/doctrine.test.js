@@ -582,6 +582,16 @@ const PUBLIC_ALLOWLIST = new Map([
   ['src/assets/egfrags/source/egRefFrag.fbx', 'OURS - the reference hero fragment\'s scene, written by tools/egRefFragScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
   ['src/assets/egfrags/egRefFrag.law.json', 'OURS - egRefFrag.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgRefFrag.mjs; numbers only'],
   ['src/assets/egfrags/egRefFrag.mesh.json', 'OURS - egRefFrag.fbx\'s mesh half baked by tools/bakeEgRefFrag.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
+  // EG-HERO (the Soul Cairn, 2026-10-13, the owner: "You have to author the fragments"): THE OSSUARY AND THE MIST STAIR, the
+  // Cairn's hero fragments, each a scene written from numbers alone by its tools/egHero*Scene.mjs (no image, no game data,
+  // no third-party art) and baked by its tools/bakeEgHero*.mjs; test/eghero_cairn.test.js holds each scene and both halves
+  // to their bytes.
+  ['src/assets/egfrags/source/egheroOssuary.fbx', 'OURS - the Ossuary\'s scene, written by tools/egHeroOssuaryScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
+  ['src/assets/egfrags/egheroOssuary.law.json', 'OURS - egheroOssuary.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgHeroOssuary.mjs; numbers only'],
+  ['src/assets/egfrags/egheroOssuary.mesh.json', 'OURS - egheroOssuary.fbx\'s mesh half baked by tools/bakeEgHeroOssuary.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
+  ['src/assets/egfrags/source/egheroMistStair.fbx', 'OURS - the Mist Stair\'s scene, written by tools/egHeroMistStairScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
+  ['src/assets/egfrags/egheroMistStair.law.json', 'OURS - egheroMistStair.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgHeroMistStair.mjs; numbers only'],
+  ['src/assets/egfrags/egheroMistStair.mesh.json', 'OURS - egheroMistStair.fbx\'s mesh half baked by tools/bakeEgHeroMistStair.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
   // WAGONS1 (2026-10-09, Mac: "Here are 3 new models that will need to be textured"): MAC'S THREE WAGONS, supplied as
   // four saves of one Blender scene ("wagons.blend") - the newest committed whole, as the ships' scenes are.
   // tools/bakeWagons.mjs re-makes the three JSONs from it (tools/shipBake.mjs), and test/wagons1_bake.test.js holds them

@@ -7780,3 +7780,148 @@ census now counts.
   they were.
 - The 25-seed sweep is not run: no course, span law or hall spec moved.
 - No new src module; the Port-Ledger's ELITE-GATES row is unchanged.
+
+### EG-HERO (the Soul Cairn) - 2026-10-13 - THE OSSUARY AND THE MIST STAIR
+
+The owner, 2026-10-13: *"You have to author the fragments"*. The hero fragments section 11.6 left to Mac in Blender are the
+port's to author, in code. This record is the Soul Cairn's two (section 11.2's row is each one's brief). Each is a scene written
+from numbers by a script, as `tools/egRefFragScene.mjs` writes the reference: no game data, no third-party art, no
+trigonometry, IEEE arithmetic alone. Each is written as the `.fbx` that `tools/fragBake.mjs` bakes, baked by its own bake
+script, registered beside the reference, and held to its bytes and its laws by `test/eghero_cairn.test.js`. Laying them into
+the halls is another slice's (spec law 7). This one makes them layable.
+
+**THE OSSUARY** (`egheroOssuary`; kit `ossuary`, class passage, variant `ossuary`; Stoneroom, its engine the soul-bell).
+
+- **What it is.** "The vaults of the dead: ribcage bridges, skull pillars, soul-gem niches where Binders stand." A nave of
+  slate under a segmental barrel vault, springing at 5.9 m with its crown at 7.94 m and ribbed in bone over each pair of
+  skull pillars. The pillars are octagonal piers girt with two bulging courses of skulls. Between them are burial bays with
+  skulls on their sills and shelves:
+  - four bays hold soul-gems in halos of soul-light, a Binder's place before each (`anchor.caster`);
+  - one holds the soul-bell, hung from a bone yoke (`anchor.engine`);
+  - one holds the sealed loculus (the alcove);
+  - one holds the Battlemage's bier (`anchor.niche`).
+
+  Over the chasm the vault is broken open to the sky. Out of the chasm's walls the ribcage of something vast arches over the
+  bridges to a bone sternum, and the bone bridges are its spine. Soul-light pools 9 m down. The whole is a block of slate
+  hung in the void. It has buttresses behind its piers and a recessed face at each end with a bone portal standing proud of
+  it. Its root hangs below.
+- **Its envelope** is `net/egFragLaw.js` `egFragPassage('ossuary')`'s, so a hall can lay it where it lays the code-built one:
+  - 6 m across and 28 m long;
+  - the mouth and its one exit are each 6 m by the kit's 5.6 m, at the floor's height (yB 0);
+  - its fight floors are Y 0..9 and 19..28 (zA, zB), each wholly under a 5.6 m ceiling;
+  - three bone bridges cross the chasm: 2.6 m across, 2.4 m deep and 70 cm apart. Each is crossed inside the Crumble's
+    0.7 s (0.59 s at the span build);
+  - its two soul-wisps are on the kit's own clocks, 9 s and 11 s, each a figure of eight over a fight floor;
+  - its box is 12.7 m by 24.9 m by 28 m.
+- **Its art.** 9,830 triangles in seven draws: floor, brass (bone), root, cobble, edge, molten (soul-light) and pillar. The
+  collider is a 20-triangle proxy: the floors, the walls' plane, the chasm's faces, and the vault as two planes over each
+  floor.
+- **Its law.**
+  - Two fight floors, two ceilings at 5.6 m, and four open edges: the mouth, both lips and the exit.
+  - A walk graph of ten nodes and eight edges, a spine and a cross on each floor, none over the chasm.
+  - Anchors: four casters, two lurkers, the niche, the engine, and the wisps' two hazard anchors.
+  - One alcove, a seam holding a page of the Annals. Three band lights: one over each floor and one in the chasm.
+  - Its proof: crossFast 1,701 ms, crossSlow 1,701 ms, 4 moves.
+- **Its files:**
+  - `tools/egHeroOssuaryScene.mjs` and `tools/bakeEgHeroOssuary.mjs`;
+  - `src/assets/egfrags/source/egheroOssuary.fbx`;
+  - `src/assets/egfrags/egheroOssuary.law.json` and `.mesh.json`.
+
+**THE MIST STAIR** (`egheroMistStair`; kit `mist`, class shaft, variant `mist-stair`; Cave, no engine).
+
+- **What it is.** "Stairs wound down a pit of mist." From a vaulted threshold the shaft opens into an oval pit, 13 m across
+  at its widest:
+  - its walls are lined in slate ashlar down to the mist's line, and below it raw rock falls to a pool of soul-light 14 m
+    under the rim;
+  - the four flights stand on stone piers that rise out of the deep, each strutted to its wall and banded in bone at its
+    neck;
+  - round the walls wind the stubs of an older stair, down the west wall from the rim and back along the east wall into the
+    mist;
+  - a ring of soul-crystals marks the mist's own line;
+  - at the foot, a low tunnel leads on to the exit.
+
+  The whole is a crag of slate whose sides bow with the pit, mapped as an island's underside from its rim to its keel. It has
+  a bone portal at each end in a recessed face.
+- **Its envelope** is `egFragShaft('mist')`'s:
+  - 8 m across (its halfW 400);
+  - its rim is `EG_SHAFT_RIM_CM` (3 m) deep under `EG_SHAFT_HEIGHT_CM` (6.5 m), and the mouth is 8 m by 6.5 m;
+  - four flights (the kit lays three or four), each `EG_SHAFT_FLIGHT_CM` 0.9 m under the last and 2.6 m after it (inside
+    the kit's 2.4-2.8 m). The ledges are 2.4 m by 2 m and swing 1.5 m to each side of the line;
+  - a Drop of 4 m (inside `EG_SHAFT_DROP_CM`'s 3-4.5 m) onto its 6 m landing;
+  - the foot is `EG_SHAFT_FOOT_CM` (3 m) at the landing's height, 7.6 m down;
+  - the exit is 8 m by 4.6 m, in a tunnel whose ceiling stands 4.6 m over the foot. That is the fast build's 4.5 m over the
+    landing, which the foot's ceiling touches;
+  - the mist's line is 3 m under the foot, the kit's own;
+  - its floors are traversal ground, because a shaft's blows land on none of it;
+  - its box is 17 m by 30.3 m by 33 m.
+- **Its art.** 5,542 triangles in the same seven draws. The collider is an 18-triangle proxy: the rim, the foot, the
+  shaft's walls' plane, the pit's ends and both ceilings. The pit is open to the sky, so no proxy roofs it.
+- **Its law.**
+  - Two floors, two ceilings (6.5 m over the rim, 4.6 m over the foot), and four open edges: the mouth, the pit's lip, the
+    foot's edge onto the landing and the exit.
+  - A walk graph of six nodes and four edges, on the rim and on the foot, never down the pit.
+  - One hazard anchor at the pit's deep.
+  - The mist (`hazard.mist`, its phase 6 s).
+  - One alcove, a seam holding lumen in the rim's east wall. Four band lights: the rim, the pit, the foot and the deep.
+  - Its proof: crossFast 4,937 ms, crossSlow 4,937 ms, 6 moves, well inside `EG_SHAFT_MAX_S`.
+- **Its files:**
+  - `tools/egHeroMistStairScene.mjs` and `tools/bakeEgHeroMistStair.mjs`;
+  - `src/assets/egfrags/source/egheroMistStair.fbx`;
+  - `src/assets/egfrags/egheroMistStair.law.json` and `.mesh.json`.
+
+**Shared by both.**
+
+- `tools/egHeroKit.mjs` gains the Cairn's shared pieces, one block at its end: `mirrorX`/`onSide` (a west twin wound back),
+  `boxOn`, `faceTo` (a face wound to a wanted side), `octahedron`, `cuts` (the rows surfaces that meet are cut at, so their
+  edges meet vertex to vertex) and `walkStrip`.
+- The registries:
+  - `net/egHeroFrags.js` `EG_HERO_FRAGS` and `world/egHeroFragModel.js` `EG_HERO_FRAG_MESHES` register both;
+  - `egHeroFragLaws('ossuary')` and `egHeroFragLaws('mist')` now answer each kit's hero;
+  - `test/doctrine.test.js`'s allow-list names the six asset files.
+- **THE EDGE LINE** runs on every walkable rim: every open edge of every floor carries the edge record's strip, 15 cm wide,
+  1 cm over its floor. The inner pieces are the span's own, edged by its own set (`scenes/egSpan.js`).
+- Every wall pushes outward from the envelope, never inward and never onto a floor.
+
+**Departures, said plainly.**
+
+1. **Written in code, not modelled in Blender.** The cost is the kit's shapes and nothing past them. There is no sculpted
+   detail: a skull is an eight-sided lump of two rings, the skull courses are bulges on an octagonal lathe, rock is fbm
+   pushed outward, and no face is hand-shaped. The Ossuary's broken edge is noise on a cut, not a fracture someone drew.
+2. **No drawn vertex inside the proxy** is read, in the test, as no drawn vertex inside the walk the proxy bounds:
+   - walled on both sides, floored below and roofed above by a proxy face;
+   - nothing drawn in a floor's prism up to its ceiling, on an inner piece's 4.5 m flight, or over a gap between pieces.
+
+   A chasm or a pit is floored by no proxy face, so it bounds no walk. The Ossuary's ribcage stands there, clear of the
+   bridges' flight (no rib nearer than 1.88 m to the line under 4.5 m).
+3. **The Ossuary's vault springs at 5.9 m, over the kit's 5.6 m.** The ceiling clamp keeps 5.6 m, so the bone ribs under
+   the barrel stay over the floor's prism. The drawn headroom is 5.73 m over the floors and 6.2 m over the bridges, measured
+   on the drawn mesh.
+4. **UVs run as the reference's do** (v up, a tile every 2 m on stone; the band's painted rows meet v 0 at a face's foot),
+   except on rock that falls into the void. There the root's picture runs from its lip, at v 0 under the floor's level or
+   the mist's line, to its tip. The Hour's undersides lay it the same way. The preview tool's `1 - v` shows those faces
+   upside down.
+5. **The registry pin moved.** `test/eg6c_law.test.js` held `Object.keys(EG_HERO_FRAGS)` to the reference alone. It now
+   holds the reference first, and each band's test pins its own heroes.
+6. **The proxy is authored, not derived** (EG6c departure 9). Neither fragment is laid by any hall yet.
+
+**The four hosts.** `scenes/exterior.js`, `scenes/world.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js`: none is
+touched. No hall lays a hero fragment until the laying slice does, so no host draws one.
+
+**Pins.**
+
+- `test/eghero_cairn.test.js` (9):
+  - bytes and re-bakes; read and registered;
+  - each envelope against the code-built planner;
+  - THE TIMED SOLVER's proof and THE ENVELOPE's gaps and steps;
+  - the budget;
+  - the edge line on every rim, and gold on nothing else;
+  - no drawn vertex inside the proxy or the walk, and the drawn headroom;
+  - the kit's shared pieces.
+- `tools/mutants/eghero_cairn.json` (25, every one dead). Among them: a rib swung into the bridges' flight, a pillar stood
+  in the nave, the vault let down, a lip left unlined, a bridge too deep for the Crumble, a fifth light, a flight past the
+  step down, a gap stretched, a pier wider than its flight, the foot's tunnel let down. Also the specs' variant and class,
+  each registry left without its fragment, the kit's pieces, and the code-built kit's own numbers (`EG_SHAFT_FLIGHT_CM`,
+  the Ossuary's height and piece, the mist's line).
+- `RELAY_VERSION` stays `world199`: no relay byte moved, because `net/egHeroFrags.js` is in no relay import graph.
+  `ACCOUNT_VERSION` stays `acct124`.
+- The Port-Ledger's ELITE-GATES row names the new files.
