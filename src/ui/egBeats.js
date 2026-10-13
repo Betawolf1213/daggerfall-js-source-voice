@@ -41,6 +41,9 @@ export const EG_PRES_TEXT = Object.freeze({
   // EG-ZI (section 10.6): the pull's toll - its share on the screen, as the cast-back's, and its line with the pull's
   toll: (q) => `-${tollPct(q)}%`,
   tollLine: (q) => `The Spire takes its toll: ${tollPct(q)}% of your health.`,
+  // EG-ZS (section 8.5): the decree the Markynaz lays, on his card; (section 15) the Accord an offer's card would take
+  champDecree: (title, decree) => `${title}: ${decree}`,
+  takesAccord: (name, vestige) => `Takes an Accord with ${name}'s ${vestige}.`,
   divides: 'The way divides.',
   lastWord: 'The last word. The breach closes.',
   held: 'Held',

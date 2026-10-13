@@ -24,6 +24,7 @@
 import { egHallOf, egCircleOfHall, egSlotOfHall, egPhase, egTimes, egCountText, egObjectiveOf, EG_TEXT, EG_COUNT_START_MS, EG_LAST_WORD_MS, EG_BANDS, EG_DECREES, EG_TWIST_NAMES } from '../net/egLaw.js';
 import { egCountAt, egLivingCount, egMemberOf, egRunOfMember } from '../net/egLink.js';
 import { egCardText, egAccordsOf, EG_VESTIGES, EG_M_BY_ID } from '../net/egVestige.js';
+import { egCardAccords } from '../net/egVestige.js';   // EG-ZS (section 15): the Accord an offer's card would take
 import { EG_CANTRIPS } from '../net/egRun.js';
 import { injectEnhancedFonts } from './enhancedStyle.js';
 import { chartShare, chartNumber } from './gateDamageChart.js';   // EG-ZF: the share and the numbers as the gate's chart says them
@@ -69,6 +70,7 @@ export const EG_HUD_CSS = `
 .eg-panel button.eg-focus { border-color: #6f9dff; box-shadow: 0 0 0 1px #6f9dff; }
 .eg-panel button b { display: block; color: #ffe9cf; }
 .eg-panel button small { display: block; color: #cdb79e; font-size: 13px; margin-top: 2px; }
+.eg-panel button small.eg-accord { color: #8fb4ff; font-style: italic; }
 .eg-panel .eg-ask { margin-top: 10px; }
 .eg-panel .eg-note { margin-top: 8px; font-size: 13px; color: #b9a084; }
 @media (max-width: 640px) { .eg-hud { top: 16%; right: 8px; padding: 7px 10px 8px; } .eg-hud-title { font-size: 15px; } .eg-hud-count { font-size: 21px; } .eg-hud-line { font-size: 13px; } .eg-panel { top: 8%; } }
@@ -180,7 +182,11 @@ export function egAskText(q, o) {
 export function egPanelModel(E, me, now, voted = {}) {
   if (!E?.b || E.end) return null;
   const run = me ? egRunOfMember(E, me) : null;
-  const offer = E.offer?.v?.length ? { cards: E.offer.v.map((c, j) => ({ key: j + 1, card: c, ...egCardText(c, run?.vs ?? []) })), n: E.offer.n, surplus: E.sp ?? 0 } : null;
+  // EG-ZS (section 15: "The offer card names it: *Takes an Accord with Mira's Hunter's Mark.*"): each living companion's
+  // Vestiges, by name, for the Accord a card would take with them (net/egVestige.js egCardAccords)
+  const mates = (E.co ?? []).filter((c) => c[0] !== me).map((c) => [egMemberOf(E, c[0]), egRunOfMember(E, c[0]).vs]).filter(([m]) => m?.in && m.alive && !m.home).map(([m, vs]) => [m.name, vs]);
+  const accord = (c) => egCardAccords(c, run?.vs ?? [], mates).map((a) => EG_PRES_TEXT.takesAccord(a.name, a.with)).join(' ');
+  const offer = E.offer?.v?.length ? { cards: E.offer.v.map((c, j) => ({ key: j + 1, card: c, ...egCardText(c, run?.vs ?? []), accord: accord(c) })), n: E.offer.n, surplus: E.sp ?? 0 } : null;
   const asks = (E.as ?? []).filter((a) => a[2] > now).map(([q, o, until]) => ({ q, ...egAskText(q, o), left: until - now, mine: voted[q] ?? null, tally: E.tally?.[q] ?? [] }));
   if (!offer && !asks.length) return null;
   return { offer, asks };
@@ -367,6 +373,7 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
       const t = doc.createElement('b'); t.textContent = `${c.key}. ${c.name}`;
       const s = doc.createElement('small'); s.textContent = c.line;
       b.append(t, s);
+      if (c.accord) { const a = doc.createElement('small'); a.className = 'eg-accord'; a.textContent = c.accord; b.append(a); }   // EG-ZS: the Accord it takes
       b.addEventListener?.('click', () => onPick(c.card));
       row.append(b);
     }

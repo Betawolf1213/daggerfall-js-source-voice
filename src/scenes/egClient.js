@@ -103,6 +103,11 @@
 //     void's, the toll's, the lash's) of the body without Stoneskin's cushion (systems/renownLayer.js spireBodyMax);
 //     Immovable's push half (a push does nothing while the fight's `immovable` holds); SHIELD-HYMN's word (Rally's heal) to
 //     the fight at the door's opening; and MENDER'S GRACE, the receiver's half (menderGrace - a caster's heal on me more).
+//   EG-ZS (2026-10-12, section 15's resonance and Accords; EG-ZR's "Not built"): ROOTED's immunity to push (the whole push off
+//     while I resonate in Stone, as Immovable's); RALLYING CRY handed to the holder (the door's instant and whether a living
+//     member resonates in Fellowship - systems/spireVestiges.js refreshes my Second Wind); and LIVING WALL, the screen's half
+//     (a heal on me, the room's or a companion's, its share more while I hold Stoneskin within 10 m of a companion holding
+//     Mender's Grace where my screen draws them - scenes/egFight.js accordMates; the census counts the room's the same).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
@@ -120,6 +125,7 @@ import { restackWeirKeys, setWeirKeyOpener } from '../systems/weirKey.js';
 import { egHudModel, drawEgHud, egPanelModel, drawEgPanel, egRecapModel, EG_POTIONS_PER_HALL } from '../ui/egHud.js';
 import { EG_CANTRIPS } from '../net/egRun.js';
 import { egVOf } from '../net/egVestige.js';
+import { egResonance, EG_WALL_X } from '../net/egVestige.js';   // EG-ZS: Rooted's and Rallying Cry's resonance; Living Wall's share
 import { fillVitalSigns } from '../systems/statMods.js';
 import { createPortalSet } from './portalFx.js';
 import { EG_ROLE } from '../net/egBodies.js';
@@ -131,7 +137,7 @@ import { bodySayer } from '../net/bossBody.js';   // EG-H1: my body, in my own w
 import { egRideOf, egRideAt } from '../net/egFair.js';   // EG-H1: RIDDEN POSES
 import { EG_SWAP_WAIT_MS } from './egSwap.js';   // EG-H3 (EG10): how long a new circle's step waits on its build
 // EG-G1: THE HUD, THE BEATS AND THE FIRST BREACH (bible/11-Multiplayer/Elite-Gates.md section 27)
-import { egSpireHudModel, drawEgSpireHud, egArrivalCard, egArrivalShown, drawEgArrivalCard, egFormFactor, egGainText, egPressInForce, egChipWarnings, egDoorMarker, egPadUp, egPadAct, egPadPrompts, EG_PAD_DIRS, EG_GAIN_MS, EG_CHIP_WARNINGS } from '../ui/egSpireHud.js';
+import { egSpireHudModel, drawEgSpireHud, egArrivalCard, egArrivalLive, egArrivalShown, drawEgArrivalCard, egFormFactor, egGainText, egPressInForce, egChipWarnings, egDoorMarker, egPadUp, egPadAct, egPadPrompts, EG_PAD_DIRS, EG_GAIN_MS, EG_CHIP_WARNINGS } from '../ui/egSpireHud.js';
 import { egBeatMemo, egBeatWatch, egBeatPlan, egFirstDue, egRehearsalDue, egFirstRead, egFirstWrite, egBuzz, egBeatUnder, egPerilsNew, egRuneChime, EG_PRES_TEXT, EG_BEAT_SOUNDS } from '../ui/egBeats.js';
 import { egAbsentStep, egPartyRows, egPartyDeco, egRoadOf, EG_NUMERALS } from '../ui/egParty.js';
 import { egAccessNow, egAllyLookSet } from '../ui/egAccess.js';
@@ -1009,10 +1015,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     mid(w.p >= 1 ? 'The Redoubt calls you back.' : 'A Memento calls you back.');
   }
   /** The room's heal (a rest, a Rally, a Mending, the Scriptorium; the fray's lash negative): its share of my health, and
-   *  at a rest my magicka and fatigue too. A lash is a setback through the hurt door, never a death. */
+   *  at a rest my magicka and fatigue too. A lash is a setback through the hurt door, never a death. EG-ZS: LIVING WALL - a
+   *  heal its share more while I stand in it on my screen (wall), as the census counts it (net/egBrain.js egWallOf). */
   function applyHeal(p, why) {
     if (witness || !(entity.health > 0) || !inSpire()) return;
     if (why === 'rest' && p >= 1) { fillVitalSigns(entity); return; }
+    if (p > 0 && wall()) p *= 1 + EG_WALL_X;
     if (heal) { heal(p, why); return; }
     const max = entity.maxHealth ?? 0;
     if (p < 0) { const cut = Math.min(Math.round(-p * spireBodyMax(entity)), entity.health - 1); if (cut > 0) hurt(cut); return; }   // EG-ZR: of the body without Stoneskin's cushion
@@ -1027,15 +1035,23 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     const E = link.state(), m = egMemberOf(E, me());
     if (!E.b || E.end || !m?.in || !m.alive || m.home) return null;
     const run = egRunOfMember(E, me());
-    return { vs: run.vs, mast: run.mast, b: E.b, h: E.h | 0 };
+    // EG-ZS: RALLYING CRY - the hall's door's instant (the room's `dn`, 0 before it opens) and whether a living member of the
+    // company resonates in Fellowship
+    const cry = (E.co ?? []).some((c) => { const q = egMemberOf(E, c[0]); return !!q?.in && q.alive && !q.home && egResonance(egRunOfMember(E, c[0]).vs).includes('fellowship'); });
+    return { vs: run.vs, mast: run.mast, b: E.b, h: E.h | 0, dn: E.dn ?? 0, cry };
   }
+  /** EG-ZS - LIVING WALL on my screen (section 15's Accord, Stoneskin with Mender's Grace: "heals on the Stoneskin holder +10%"):
+   *  I hold Stoneskin within 10 m of a living companion holding Mender's Grace where my screen draws us (scenes/egFight.js
+   *  accordMates - the pair law, net/egVestige.js egAccordMates). */
+  const wall = () => (fight?.accordMates?.('livingwall', 'a')?.length ?? 0) > 0;
 
   // ── THE PUSH, THE CAGE AND THE RING (section 9.3: "applied by the struck client as the Steps' gust is") ────────────
   /** a push owed: its unit way in the hall's frame (the dungeon's axes - world/egHall.js egToDungeon) and metres left */
   let pushX = 0, pushZ = 0, pushLeft = 0, pushAt = 0;
   /** Iron Footing's share off a push (net/egVestige.js - by: 'client'). EG-ZR: the whole of it while I stand Immovable
-   *  (section 15: "pushes do nothing until you move" - the fight's `immovable`, the census's own stillness). */
-  const footing = () => (fight?.immovable?.() ? 1 : egVOf(egRunOfMember(link.state(), me()).vs, 'ironfooting'));
+   *  (section 15: "pushes do nothing until you move" - the fight's `immovable`, the census's own stillness). EG-ZS: and while I
+   *  resonate in Stone - ROOTED, "immune to push" (Stone's capstone; its threat is the relay's - net/egRun.js egThreatX). */
+  const footing = () => { const vs = egRunOfMember(link.state(), me()).vs; return fight?.immovable?.() || egResonance(vs).includes('stone') ? 1 : egVOf(vs, 'ironfooting'); };
   /** A push of `m` metres along (dx, dz), carried out at the Steps' breath's speed by the collider's own move (scenes/
    *  sdSteps.js's - no edge stops it: near one it is a cast-back). */
   function pushBy(dx, dz, m) {
@@ -1207,7 +1223,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (W.words) { const line = W.words(); mid(line); say(line); pres.live = line; }
     }
     // THE ARRIVAL CARD
-    if (E.h > 0 && E.h !== pres.cardH && (E.sg === 'arrive' || E.sg === 'trial')) { pres.cardH = E.h; pres.cardAt = t; pres.card = egArrivalCard(E, { first: pres.cardFirst }); pres.cardFirst = false; if (pres.card) pres.live = `${pres.card.main}. ${pres.card.sub}`; }
+    if (E.h > 0 && E.h !== pres.cardH && (E.sg === 'arrive' || E.sg === 'trial')) { pres.cardH = E.h; pres.cardAt = t; pres.card = egArrivalCard(E, { first: pres.cardFirst }); pres.cardFirst = false; if (pres.card) pres.live = egArrivalLive(pres.card); }   // EG-ZS: the card's words, the Markynaz's decree with them
     const acc = egAccessNow(win);
     drawEgArrivalCard(egArrivalShown(pres.card, pres.cardAt, t), { hidden: hudHidden(), still: acc.still });
     // EG-ZD (section 16.5): THE FALL, my own screen - until the witness view stands
@@ -1724,11 +1740,13 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
      *  client, from the room's word (ALLY-CAST's law)"): another's heal of `n` points just landed on me (scenes/world.js
      *  onCast - the health that moved), `id` its caster's peer id in the room: its Mender's Grace, as the room says the
      *  caster's run, heals me its share of it more (egMenderOf). Answers the points added - none outside the Spire, as a
-     *  witness, or of a caster the room counts no run of. */
+     *  witness, or of a caster the room counts no run of. EG-ZS: and LIVING WALL's share of the whole heal more while I stand in
+     *  it (`wall`) - any companion's heal, the heal word carrying it to the census as it carries Mender's Grace. */
     menderGrace(id, n) {
       if (!inSpire() || witness || !(n > 0) || !(entity.health > 0) || typeof id !== 'string') return 0;
-      const v = egMenderOf(link.state(), me(), accountOf(id));
-      return v > 0 ? healMine(entity, n * v) : 0;
+      const who = accountOf(id), v = egMenderOf(link.state(), me(), who);
+      const k = who && who !== me() && wall() ? (1 + v) * (1 + EG_WALL_X) - 1 : v;   // EG-ZS: LIVING WALL - its share of a companion's heal, Mender's Grace in it, more
+      return k > 0 ? healMine(entity, n * k) : 0;
     },
     /** EG-ZH: the hall's reverb as held (tests). */
     reverbState: () => reverb.state(),

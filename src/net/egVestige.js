@@ -13,6 +13,9 @@
 // EG-ZR (2026-10-12): the numbers section 15 gives no rank (Momentum's stack, Second Wind's and Bloodied Fury's lines, an
 // Echo's share, Shield-Hymn's seconds, an Accord's reach) and Shield-Hymn's pair (egHymnOf), each declared once here - the
 // holder's screen (systems/spireVestiges.js, scenes/egFight.js) and the relay's census (net/egBrain.js) import them.
+// EG-ZS (2026-10-12): the capstones' and the Accords' numbers (Bladestorm's fifth blow and its reach, Spellweave's fourth spell,
+// the reach "beyond 12 m", Hammer and Anvil's, Ambush's and Living Wall's shares, Kindled Steel's splash, an Echo's number)
+// and THE PAIR LAW every Accord but Shield-Hymn is read by (egAccordMates), declared once here beside egHymnOf.
 
 export const EG_V_FAMILIES = Object.freeze(['stone', 'blade', 'hunt', 'arcana', 'fellowship']);
 export const EG_V_FAMILY_NAMES = Object.freeze({ stone: 'Stone', blade: 'Blade', hunt: 'Hunt', arcana: 'Arcana', fellowship: 'Fellowship' });
@@ -37,6 +40,23 @@ export const EG_BLOODIED_UNDER = 0.5;
 export const EG_ECHO_SHARE = 0.5;
 export const EG_HYMN_MS = 4000;
 export const EG_ACCORD_M = 10;
+/** EG-ZS (section 15's capstones): Bladestorm strikes at every EG_STORM_N-th melee blow, every foe within EG_STORM_M (m) of its
+ *  holder; Spellweave's every EG_WEAVE_N-th damage spell costs nothing; Long Sight and Deadeye read an arrow or a spell from
+ *  beyond EG_FAR_M (m). */
+export const EG_STORM_N = 5;
+export const EG_STORM_M = 3;
+export const EG_WEAVE_N = 4;
+export const EG_FAR_M = 12;
+/** EG-ZS (section 15's Accords): Hammer and Anvil's share on a marked foe, Ambush's on the first blow after a Fade, Living
+ *  Wall's on a heal; Kindled Steel's splash (m). */
+export const EG_HAMMER_X = 0.08;
+export const EG_AMBUSH_X = 0.15;
+export const EG_WALL_X = 0.1;
+export const EG_KINDLED_M = 2;
+/** EG-ZR, moved here by EG-ZS: an Arcane Echo is a blow of its own on the relay, numbered this far past the cast it repeats
+ *  (scenes/egFight.js sends it; the relay knows an Echo by it and takes its share - net/egRun.js egEchoShare) - the bodies one
+ *  cast meets share their echo's number as they share the cast's (the wire's `q` holds to 0x7fffffff). */
+export const EG_ECHO_Q = 0x40000000;
 
 /**
  * EVERY VESTIGE: its number, family, name, its three ranks' values (`v`), what applies it (`by`: 'client' - the holder's
@@ -140,6 +160,39 @@ export const egCapX = (relayX, declaredX) => Math.min(EG_RELAY_X_MAX, relayX, EG
 export function egHymnOf(ms) {
   const rally = ms.filter((m) => egRankOf(m.vs, 'rally') > 0);
   return ms.filter((b) => egRankOf(b.vs, 'bastion') > 0 && rally.some((r) => r.sub !== b.sub && Math.hypot(r.x - b.x, r.z - b.z) <= EG_ACCORD_M)).map((b) => b.sub);
+}
+/**
+ * EG-ZS - THE PAIR LAW (section 15's Accords: "Two members within 10 m, holding a named pair from two different families, gain
+ * an Accord while they stand together"): the members of the company `ms` (`{ sub, vs, x, z }` - each where it stands) who
+ * stand within EG_ACCORD_M of member `me` and hold Accord `key` with it - `me` holding the Vestige the Accord names on side
+ * `as` (EG_ACCORDS' `a` or `b`), each of them the other side's. An Accord is two members', so `me` is never its own mate.
+ * The relay (net/egRun.js egVestigeX and egEchoShare, net/egBrain.js) and each screen (scenes/egFight.js accordMates) read
+ * Hammer and Anvil, Ambush, Kindled Steel, Living Wall and War-Chorus by it, each on the places it holds. Pure.
+ * @param {Array<{ sub: string, vs: number[][], x: number, z: number }>} ms @param {string} me @param {string} key @param {'a'|'b'} [as]
+ * @returns {string[]}
+ */
+export function egAccordMates(ms, me, key, as = 'a') {
+  const A = EG_ACCORDS.find((x) => x.key === key), m = ms.find((x) => x.sub === me);
+  if (!A || !m || !(egRankOf(m.vs, A[as]) > 0)) return [];
+  const other = as === 'a' ? A.b : A.a;
+  return ms.filter((o) => o.sub !== me && egRankOf(o.vs, other) > 0 && Math.hypot(o.x - m.x, o.z - m.z) <= EG_ACCORD_M).map((o) => o.sub);
+}
+/**
+ * EG-ZS (section 15: "The offer card names it: *Takes an Accord with Mira's Hunter's Mark.*"): the Accords a card would take -
+ * a Vestige not yet held (`vs` mine), with each companion of `co` (`[name, vs]` - the living company but me) who holds the
+ * Accord's other half: `[{ key, name, with }]`, the Accord, the companion's name and the Vestige they hold. A Mastery, or a
+ * Vestige held already, takes none. Pure.
+ * @param {number} card @param {number[][]} vs @param {Array<[string, number[][]]>} co
+ */
+export function egCardAccords(card, vs, co) {
+  const V = card < 100 ? EG_VESTIGES[card] : null;
+  if (!V || egRankOf(vs, V.key) > 0) return [];
+  const out = [];
+  for (const A of EG_ACCORDS) {
+    const other = A.a === V.key ? A.b : A.b === V.key ? A.a : null;
+    if (other) for (const [name, ovs] of co) if (egRankOf(ovs, other) > 0) out.push({ key: A.key, name, with: EG_V_BY_KEY[other].name });
+  }
+  return out;
 }
 /** Accords a pair of members hold (by their Vestiges). */
 export function egAccordsOf(vsA, vsB) {

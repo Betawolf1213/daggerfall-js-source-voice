@@ -22,9 +22,20 @@
 // The holder - `{ entity, vs, mast, b, h }`, its Vestiges as the room says its run - is handed in every frame by the
 // breach's client (scenes/egClient.js, spireHolderStep): null outside the Spire, as a witness, or once the room counts me
 // out, and every door here then answers as if nothing were held. Every number is net/egVestige.js's, never declared again.
+// EG-ZS (2026-10-12, section 15's resonance; EG-ZR's "Not built"): two capstones' client halves -
+//   SPELLWEAVE (Arcana's)  every fourth damage spell costs nothing - my damage spells counted as each leaves the hands
+//                   (systems/playerCasts.js registerPlayerCastListener), the next priced at nothing when it is the fourth
+//                   (systems/spellcost.js registerSpellFreeCast - the ready, the spend and the book's figure all read it);
+//   RALLYING CRY (Fellowship's)  every Second Wind in the company refreshes when a hall's door opens - the holder's `dn` (the
+//                   door's instant, the room's) and `cry` (a living member of the company resonating in Fellowship) handed in
+//                   with it; a Second Wind spent in this hall is mine again from the door.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { egVOf, EG_SECOND_WIND_UNDER, EG_MOMENTUM_STEP } from '../net/egVestige.js';
+import { egResonance, EG_WEAVE_N } from '../net/egVestige.js';   // EG-ZS: Spellweave's resonance and its fourth spell
+import { registerSpellFreeCast } from './spellcost.js';   // EG-ZS: Spellweave's free cast
+import { registerPlayerCastListener } from './playerCasts.js';   // EG-ZS: my casts, told as they leave the hands
+import { isDamageHealthEffect } from './spellcast.js';   // EG-ZS: a damage spell (Damage Health, its continuous twin)
 import { HIT_KINDS } from '../net/gateBrain.js';
 import { registerEntityFold, computeEntityMods, newMods, EMPTY_MODS } from './entityMods.js';
 import { RESIST_ELEMENTS } from './lootRarity.js';   // the five elements the resistance channel names (EG15's Bearing reads them too)
@@ -41,6 +52,8 @@ export const SPIRE_VESTIGES = 'spire-vestiges';
 let _held = null;
 /** Spellbane's value the fold last answered (a change folds the entity again); the breach's hall Second Wind was spent in */
 let _bane = 0, _wind = '';
+/** EG-ZS: the door Rallying Cry last refreshed Second Wind at (`b:h:dn`); my damage spells cast while Spellweave was mine */
+let _cried = '', _woven = 0;
 
 /** The holder's value of a Vestige (0 none, or nothing held, or another entity). */
 const heldV = (key, entity = _held?.entity) => (_held && entity === _held.entity ? egVOf(_held.vs, key) : 0);
@@ -48,11 +61,14 @@ const heldV = (key, entity = _held?.entity) => (_held && entity === _held.entity
 /**
  * THE HOLDER, THIS FRAME (scenes/egClient.js, every frame and at `away`): `holder` - `{ vs, mast, b, h }` while I stand
  * alive in the breach the room counts me in, null otherwise. Stoneskin's points put on the entity (or taken off - the
- * fraction kept), and Spellbane's fold folded again when its value moved; every other door reads the holder live.
- * @param {any} entity @param {{ vs: number[][], mast: number, b: string, h: number } | null} holder
+ * fraction kept), and Spellbane's fold folded again when its value moved; every other door reads the holder live. EG-ZS:
+ * RALLYING CRY - with `cry` (a living member of my company resonates in Fellowship) and the hall's door open (`dn`, its instant
+ * on the room's clock), a Second Wind spent in this hall is mine again, once a door.
+ * @param {any} entity @param {{ vs: number[][], mast: number, b: string, h: number, dn?: number, cry?: boolean } | null} holder
  */
 export function spireHolderStep(entity, holder) {
   _held = holder && entity ? { entity, vs: holder.vs ?? [], mast: holder.mast ?? -1, b: holder.b ?? '', h: holder.h | 0 } : null;
+  if (_held && holder?.cry === true && holder.dn > 0 && _cried !== `${_held.b}:${_held.h}:${holder.dn}`) { _cried = `${_held.b}:${_held.h}:${holder.dn}`; _wind = ''; }
   if (!entity) return;
   const skin = heldV('stoneskin', entity);
   setSpireHp(entity, skin ? Math.round(spireBodyMax(entity) * skin) : 0);
@@ -108,11 +124,27 @@ function secondWind(entity, { before, after, saved = false }) {
   healMine(entity, max * v);
 }
 
+/** EG-ZS - SPELLWEAVE (Arcana's capstone: "every fourth damage spell costs nothing"): a damage spell is one with a Damage Health
+ *  effect or its continuous twin (systems/spellcast.js isDamageHealthEffect); while the holder resonates in Arcana each of mine
+ *  that leaves the hands is counted (over the breach - `_woven` restarts in another), and the next is priced at nothing when it
+ *  is the fourth, the eighth... (the ready captures the price, so the spend is nothing too). */
+const damageSpell = (spell) => Array.isArray(spell?.effects) && spell.effects.some(isDamageHealthEffect);
+const weaves = (entity) => !!_held && entity === _held.entity && egResonance(_held.vs).includes('arcana');
+let _weaveB = '';
+const weaveFree = (entity, spell) => weaves(entity) && damageSpell(spell) && _weaveB === _held?.b && _woven % EG_WEAVE_N === EG_WEAVE_N - 1;
+function weaveCast(entity, spell) {
+  if (!weaves(entity) || !damageSpell(spell)) return;
+  if (_weaveB !== _held?.b) { _weaveB = _held?.b ?? ''; _woven = 0; }
+  _woven++;
+}
+
 registerEntityFold(SPIRE_VESTIGES, baneFold);
 registerSpellCostMod(SPIRE_VESTIGES, focusCost);
 registerShieldSoakMod(SPIRE_VESTIGES, weaverSoak);
 registerRunSpeedMod(SPIRE_VESTIGES, fleetRun);
 registerPlayerHurtListener(SPIRE_VESTIGES, secondWind);
+registerSpellFreeCast(SPIRE_VESTIGES, weaveFree);   // EG-ZS
+registerPlayerCastListener(SPIRE_VESTIGES, weaveCast);   // EG-ZS
 
 /** Tests only: nothing held, nothing spent. */
-export function _resetSpireVestigesForTests() { _held = null; _bane = 0; _wind = ''; }
+export function _resetSpireVestigesForTests() { _held = null; _bane = 0; _wind = ''; _cried = ''; _woven = 0; _weaveB = ''; }

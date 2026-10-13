@@ -91,7 +91,8 @@ import { egCensusDr, EG_HEAL_WORD_MS, EG_LIFELINE_MS } from '../net/egBrain.js';
 import { EG_TRAIL_MS } from '../net/egFair.js';   // EG-ZP: how long the census keeps a trail - and a Lifeline window
 import { egFightView } from '../net/egWalkGraph.js';   // EG-ZP: the hall's fight ground, the census's floor
 import { egRunOfMember } from '../net/egLink.js';   // EG-ZP: each member's Vestiges and Mastery
-import { egVOf, egHymnOf, EG_ECHO_SHARE, EG_BLOODIED_UNDER, EG_HYMN_MS } from '../net/egVestige.js';   // EG-ZR (section 15): the holder's Vestiges, Shield-Hymn's pair
+import { egVOf, egHymnOf, EG_BLOODIED_UNDER, EG_HYMN_MS } from '../net/egVestige.js';   // EG-ZR (section 15): the holder's Vestiges, Shield-Hymn's pair
+import { egAccordMates, EG_ECHO_Q } from '../net/egVestige.js';   // EG-ZS (section 15): the pair law; an Echo's number
 import { egHolderBlow } from '../systems/spireVestiges.js';   // EG-ZR: a blow of mine with the Vestiges I hold
 import { spireBodyMax } from '../systems/renownLayer.js';   // EG-ZR: Stoneskin's cushion over the body a share is of
 
@@ -136,9 +137,10 @@ export function egToldAt(bl, feet = null) {
   for (const s of bl?.s ?? []) if (s && (s[0] === 'd' || s[0] === 'l' || s[0] === 'c' || s[0] === 'r') && Number.isFinite(s[1]) && Number.isFinite(s[2])) return [s[1], s[2]];
   return feet ? [feet[0], feet[1]] : null;
 }
-/** EG-ZR: an Arcane Echo is a blow of its own on the relay (its own hand), numbered this far past the cast it repeats - the
- *  bodies one cast meets share their echo's number as they share the cast's (the wire's `q` holds to 0x7fffffff). */
-export const EG_ECHO_Q = 0x40000000;
+/** EG-ZR: an Arcane Echo is a blow of its own on the relay (its own hand), numbered EG_ECHO_Q past the cast it repeats - the
+ *  bodies one cast meets share their echo's number as they share the cast's. EG-ZS: the number is the law's (net/egVestige.js -
+ *  the relay knows an Echo by it), said here as before. */
+export { EG_ECHO_Q };
 /** A zone's and a drain's tick (ms); a body's fall's length; how long after its landing a blow's shape lingers. */
 export const EG_TICK_MS = 1000;
 const FALL_MS = 1200;
@@ -372,6 +374,16 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   const myFeet = () => { const f = feet(); return f && centre ? [f[0] - centre[0], f[2] - centre[2]] : null; };
   /** EG-ZR: a companion's feet in the hall's frame where this screen draws it (its pose stands at the eye), or null. */
   const peerFeet = (sub) => { const p = peerAt(sub); return p && centre ? [p[0] - centre[0], p[1] - PEER_EYE_M - centre[1], p[2] - centre[2]] : null; };
+  /** EG-ZR (Shield-Hymn's `rally`), shared by EG-ZS's `accordMates`: the living company the room counts where this screen
+   *  stands it - me at my feet, each companion where it is drawn - as the pair laws read it (`{ sub, vs, x, z }`). */
+  function companyHere() {
+    const E = link.state(), sub = me(), ms = [];
+    for (const c of E.co ?? []) {
+      const m = egMemberOf(E, c[0]), q = c[0] === sub ? null : peerFeet(c[0]), p = c[0] === sub ? myFeet() : q && [q[0], q[2]];
+      if (m?.in && m.alive && !m.home && p) ms.push({ sub: c[0], vs: egRunOfMember(E, c[0]).vs, x: p[0], z: p[1] });
+    }
+    return ms;
+  }
 
   function texture(mobile) {
     const archive = ENEMY_BASICS[mobile]?.maleTexture;
@@ -899,10 +911,11 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       const dmg = Math.round(egHolderBlow(vs, d, r, { stacks: mom.i === i ? mom.n : 0, low: !!e && e.health < e.maxHealth * EG_BLOODIED_UNDER }));
       if (!sendHit({ i, q, d: dmg, r })) return false;
       if (q !== mom.q) mom = { i, n: mom.i === i ? mom.n + 1 : 1, q };   // a blow builds one stack, on the first body it met
-      // ARCANE ECHO: a damage spell repeats at half, its share of casts - one roll a cast, a blow of its own on each body
+      // ARCANE ECHO: a damage spell repeats, its share of casts - one roll a cast, a blow of its own on each body. EG-ZS: claimed
+      // at the cast's whole; the relay takes its share - half, or the whole in War-Chorus (net/egRun.js egEchoShare)
       if (r === HIT_KINDS.Spell) {
         if (q !== echo.q) { const v = egVOf(vs, 'echo'); echo = { q, on: v > 0 && rand() < v }; }
-        if (echo.on) sendHit({ i, q: q + EG_ECHO_Q, d: Math.max(1, Math.round(dmg * EG_ECHO_SHARE)), r });
+        if (echo.on) sendHit({ i, q: q + EG_ECHO_Q, d: dmg, r });
       }
       return true;
     },
@@ -956,16 +969,15 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
      * EG_HYMN_MS, which egShieldDr reads with the census's own law. A door with no such pair leaves the last to lapse.
      */
     rally(at) {
-      const E = link.state(), sub = me();
       if (!Number.isFinite(at) || !centre) return;
-      const ms = [];
-      for (const c of E.co ?? []) {
-        const m = egMemberOf(E, c[0]), q = c[0] === sub ? null : peerFeet(c[0]), p = c[0] === sub ? myFeet() : q && [q[0], q[2]];
-        if (m?.in && m.alive && !m.home && p) ms.push({ sub: c[0], vs: egRunOfMember(E, c[0]).vs, x: p[0], z: p[1] });
-      }
-      const hy = egHymnOf(ms);
+      const hy = egHymnOf(companyHere());
       if (hy.length) hymn = [at, at + EG_HYMN_MS, hy];
     },
+    /** EG-ZS - THE PAIR LAW ON THIS SCREEN (section 15's Accords; net/egVestige.js egAccordMates): the living companions within
+     *  10 m of me holding Accord `key` with me (`as` my side of it) where this screen stands us - the screen's half of Living
+     *  Wall (scenes/egClient.js). None before the hall stands.
+     * @param {string} key @param {'a'|'b'} [as] */
+    accordMates(key, as = 'a') { return centre ? egAccordMates(companyHere(), me() ?? '', key, as) : []; },
     /** EG-ZR (tests): Shield-Hymn's window on this screen, or null. */
     hymn: () => (hymn ? [hymn[0], hymn[1], [...hymn[2]]] : null),
     /** EG-ZR - IMMOVABLE'S OTHER HALF (section 15: "pushes do nothing until you move"): do I stand still EG_IMMOVABLE_MS on a

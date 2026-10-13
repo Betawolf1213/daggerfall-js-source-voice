@@ -226,7 +226,7 @@
   {
     "name": "EGZI-brain-census-toll-unread",
     "file": "src/net/egBrain.js",
-    "old": "      bodyStruck(m, share, now, line);\n      (m.cs ??= [0, 0, 0, 0])[3] += Math.round(share * 1000);",
+    "old": "      bodyStruck(m, share / W, now, line);\n      (m.cs ??= [0, 0, 0, 0])[3] += Math.round(share * 1000);",
     "new": "      (m.cs ??= [0, 0, 0, 0])[3] += Math.round(share * 1000);",
     "tests": ["test/egz_rules.test.js"]
   },
@@ -240,8 +240,8 @@
   {
     "name": "EGZI-brain-census-toll-the-last",
     "file": "src/net/egBrain.js",
-    "old": "const share = Math.min(f.q * EG_TOLL_STEP, Math.max(0, (m.bd?.v ?? 1) - 0.01));",
-    "new": "const share = f.q * EG_TOLL_STEP;",
+    "old": "share = Math.min(f.q * EG_TOLL_STEP, Math.max(0, (m.bd?.v ?? 1) * W - 0.01));",
+    "new": "share = f.q * EG_TOLL_STEP;",
     "tests": ["test/egz_rules.test.js"]
   },
   {

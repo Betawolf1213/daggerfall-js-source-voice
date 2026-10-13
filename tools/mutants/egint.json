@@ -218,7 +218,7 @@
   {
     "name": "EGINT-a-heal-ignored",
     "file": "src/net/egBrain.js",
-    "old": "      else if (f.p > 0) bodyHealed(m, f.p, now, line, { enforce });",
+    "old": "      else if (f.p > 0) bodyHealed(m, f.p * (egWallOf(B, sub) ? 1 + EG_WALL_X : 1), now, line, { enforce });",
     "new": "      else if (f.p > 0) void 0;",
     "tests": [
       "test/egint_relay.test.js"
@@ -227,7 +227,7 @@
   {
     "name": "EGINT-the-cast-back-uncapped",
     "file": "src/net/egBrain.js",
-    "old": "hits.push({ sub: b.sub, share: Math.min(egCastBackCost(m.vs), Math.max(0, (m.bd?.v ?? 1) - EG_CAST_BACK_FLOOR)), i: 0, k: 2 });",
+    "old": "hits.push({ sub: b.sub, share: Math.min(egCastBackCost(m.vs), Math.max(0, (m.bd?.v ?? 1) * egCountWhole(m.vs) - EG_CAST_BACK_FLOOR)), i: 0, k: 2 });",
     "new": "hits.push({ sub: b.sub, share: egCastBackCost(m.vs), i: 0, k: 2 });",
     "tests": [
       "test/egint_relay.test.js"

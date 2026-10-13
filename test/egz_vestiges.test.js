@@ -409,7 +409,7 @@ test('EG-ZR FEATHERSTEP (crumbles wait +0.2 / 0.35 / 0.5 s; cast-backs cost 8 / 
 });
 
 // ── THE BLOW ─────────────────────────────────────────────────────────────────────────────────────────────────────────
-test('EG-ZR A BLOW OF MINE ON A SPIRE BODY (systems/spireVestiges.js egHolderBlow at scenes/egFight.js hostHit): Searing Edge\'s fire on a melee blow alone; Momentum +4% a stack on one body to its rank\'s cap, a stack a blow on the first body it met, a blow on another starting again; Bloodied Fury under half my health; Overcharge on a spell alone - the claim the relay\'s bucket takes; an Arcane Echo repeats a spell at half on each body it met, one roll a cast, a blow of its own past EG_ECHO_Q (mutants: each Vestige unapplied or on the wrong kind; the stacks uncapped, unbuilt, built per body or never reset; half health\'s line; the echo\'s share, roll, number or a roll a body)', () => {
+test('EG-ZR A BLOW OF MINE ON A SPIRE BODY (systems/spireVestiges.js egHolderBlow at scenes/egFight.js hostHit): Searing Edge\'s fire on a melee blow alone; Momentum +4% a stack on one body to its rank\'s cap, a stack a blow on the first body it met, a blow on another starting again; Bloodied Fury under half my health; Overcharge on a spell alone - the claim the relay\'s bucket takes; an Arcane Echo repeats a spell on each body it met, claimed whole (EG-ZS: the relay takes its share), one roll a cast, a blow of its own past EG_ECHO_Q (mutants: each Vestige unapplied or on the wrong kind; the stacks uncapped, unbuilt, built per body or never reset; half health\'s line; the echo\'s share, roll, number or a roll a body)', () => {
   const vsAll = [[vId('searing'), 3], [vId('momentum'), 1], [vId('bloodied'), 3], [vId('overcharge'), 3]];
   assert.equal(egHolderBlow(vsAll, 100, HIT_KINDS.Melee), 109);
   assert.equal(egHolderBlow(vsAll, 100, HIT_KINDS.Shaft), 100);
@@ -453,14 +453,15 @@ test('EG-ZR A BLOW OF MINE ON A SPIRE BODY (systems/spireVestiges.js egHolderBlo
   e.health = 500;
   fight.frame();
   assert.deepEqual(hit(lord.i, 100, HIT_KINDS.Shaft), [[lord.i, 104, 1]], 'at half: not under it');
-  // a spell: Overcharge I, and the Echo - its roll under 22% repeats it at half, once a cast on each body it met
+  // a spell: Overcharge I, and the Echo - its roll under 22% repeats it, once a cast on each body it met (EG-ZS: claimed at the
+  // cast's whole - the relay takes its share, half or War-Chorus's whole: test/egz_mastery_accords.test.js)
   roll = 0.21; rolls.length = 0;
   fight.frame();
   sent.length = 0;
   assert.equal(fight.hostHit({ i: lord.i, d: 100, r: HIT_KINDS.Spell }), true);
   assert.equal(fight.hostHit({ i: add.i, d: 100, r: HIT_KINDS.Spell }), true);
   const q = sent[0].q;
-  assert.deepEqual(sent.map((h) => [h.i, h.q, h.d]), [[lord.i, q, 117], [lord.i, q + EG_ECHO_Q, 59], [add.i, q, 108], [add.i, q + EG_ECHO_Q, 54]], 'Overcharge I and two stacks on the lord, Overcharge alone on the add; the echo at half on both');
+  assert.deepEqual(sent.map((h) => [h.i, h.q, h.d]), [[lord.i, q, 117], [lord.i, q + EG_ECHO_Q, 117], [add.i, q, 108], [add.i, q + EG_ECHO_Q, 108]], 'Overcharge I and two stacks on the lord, Overcharge alone on the add; the echo claimed whole on both');
   assert.equal(rolls.length, 1, 'one roll a cast');
   for (const h of sent) assert.ok(validEgIn({ k: 'hit', ...h }), 'the wire takes each');
   roll = 0.22;
