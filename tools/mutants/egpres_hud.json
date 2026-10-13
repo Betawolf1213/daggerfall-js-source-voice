@@ -481,7 +481,7 @@
   {
     "name": "EGPRES-the-reliquaries-opened-by-a-tear",
     "file": "src/ui/egHud.js",
-    "old": "opened: why === 'home' || why === 'last' ? run?.rel ?? 0 : 0",
+    "old": "opened: EG_OPEN_ENDS.includes(why) ? run?.rel ?? 0 : 0",
     "new": "opened: run?.rel ?? 0",
     "tests": [
       "test/egpres_hud.test.js"

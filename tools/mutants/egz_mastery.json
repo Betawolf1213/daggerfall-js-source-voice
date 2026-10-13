@@ -196,8 +196,8 @@
   {
     "name": "EGZS-mark-layer-unkept",
     "file": "src/net/egRun.js",
-    "old": "body.marked = { x: hm, until: now + 8000, by };",
-    "new": "body.marked = { x: hm, until: now + 8000 };",
+    "old": "body.marked = { x: hm, until: now + EG_MARK_MS, by };",
+    "new": "body.marked = { x: hm, until: now + EG_MARK_MS };",
     "tests": [
       "test/egz_mastery_accords.test.js"
     ],
@@ -206,8 +206,8 @@
   {
     "name": "EGZS-mark-layer-unsaid",
     "file": "src/net/egBrain.js",
-    "old": "egMarkFoe(mm, body, m.r, now, sub);",
-    "new": "egMarkFoe(mm, body, m.r, now);",
+    "old": "egMarkFoe(mm, body, m.r, now, sub, far);",
+    "new": "egMarkFoe(mm, body, m.r, now, '', far);",
     "tests": [
       "test/egz_mastery_accords.test.js"
     ],

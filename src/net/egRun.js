@@ -19,8 +19,9 @@
 import { EG_DECREES, EG_DECREE_FAMILIES, EG_DECREE_BY_KEY, egDecreeCount, egDecreeRanksUp, egBandOfCircle } from './egLaw.js';
 import { egOfferOf, egTake, egVOf, egDeclaredX, egCapX, egResonance, EG_SHARDS_PER, EG_FADE_CD_S } from './egVestige.js';
 import { egAccordMates, EG_FAR_M, EG_HAMMER_X, EG_AMBUSH_X, EG_ECHO_SHARE } from './egVestige.js';   // EG-ZS: the Accords' pair law and numbers
-import { EG_V_BY_KEY, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX, EG_M_ID, EG_COUNTER_MS, EG_COUNTER_X } from './egVestige.js';   // AUDIT EG III: the Standard's aura, Counterstroke's numbers - declared once
+import { EG_V_BY_KEY, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX, EG_M_ID, EG_COUNTER_MS, EG_COUNTER_X, EG_MARK_MS } from './egVestige.js';   // AUDIT EG III: the Standard's aura, Counterstroke's numbers, a mark's life - declared once
 import { HIT_KINDS } from './gateBrain.js';
+import { EG_RUN_REL_MAX } from './wire.js';   // AUDIT EG III (lane2 #1): the Reliquaries' circles a run's row carries
 
 /** The company's word stays open this long (ms). */
 export const EG_ASK_MS = 10_000;
@@ -296,11 +297,14 @@ export function egFadeOn(m, now) {
   m.amb = 1;
 }
 /** A first arrow's mark (Hunter's Mark) or a struck foe's (Spotter) on a body. EG-ZS: the mark keeps who laid it (`by` - Hammer
- *  and Anvil reads it). */
-export function egMarkFoe(m, body, r, now, by = '') {
+ *  and Anvil reads it). AUDIT EG III (lane2 #6; section 21): each reads an arrow (`r`, the client's word) from beyond EG_FAR_M
+ *  of the foe (`d`, between the poses) - where no melee blow reaches, so a forged kind gains nothing a real one would not. */
+export function egMarkFoe(m, body, r, now, by = '', d = 0) {
+  if (r !== HIT_KINDS.Shaft || !(d > EG_FAR_M)) return;
   const hm = egVOf(m?.vs, 'huntersmark');
-  if (hm && r === HIT_KINDS.Shaft && !(body.marked?.until > now)) body.marked = { x: hm, until: now + 8000, by };
-  if (m?.mast === 102 && !(body.marked?.until > now)) body.marked = { x: 0.1, until: now + 8000, by };
+  if (hm && !(body.marked?.until > now)) body.marked = { x: hm, until: now + EG_MARK_MS, by };
+  if (m?.mast === EG_M_ID.spotter && !(body.marked?.until > now)) body.marked = { x: 0.1, until: now + EG_MARK_MS, by };
 }
-/** The member's run as the state says it: `[sub, rl, lumen, shards, tonics, cantrips, vestiges, mastery]`. */
-export const egRunOf = (sub, m) => [sub, (m.rel ?? []).length, m.lumen ?? 0, m.shards ?? 0, m.tonics ?? 0, [...(m.cant ?? [])], (m.vs ?? []).map((p) => [...p]), m.mast ?? -1];
+/** The member's run as the state says it: `[sub, rl, lumen, shards, tonics, cantrips, vestiges, mastery, circles]` - AUDIT EG III
+ *  (lane2 #1): `circles` each Reliquary's (the newest EG_RUN_REL_MAX), the rest's stake line's (ui/egHud.js egStakeText). */
+export const egRunOf = (sub, m) => [sub, (m.rel ?? []).length, m.lumen ?? 0, m.shards ?? 0, m.tonics ?? 0, [...(m.cant ?? [])], (m.vs ?? []).map((p) => [...p]), m.mast ?? -1, (m.rel ?? []).slice(-EG_RUN_REL_MAX)];

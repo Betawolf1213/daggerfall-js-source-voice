@@ -164,8 +164,8 @@
   {
     "name": "EGINT-down-on-any-trail",
     "file": "src/net/egBrain.js",
-    "old": "  if (!p || !egAtDoor(spec, p.x, p.z, 2) || !fairOf(B, sub)) return false;",
-    "new": "  if (!p || !egAtDoor(spec, p.x, p.z, 2)) return false;",
+    "old": "  if (!p || !egAtDoor(spec, p.x, p.z) || !fairOf(B, sub)) return false;",
+    "new": "  if (!p || !egAtDoor(spec, p.x, p.z)) return false;",
     "tests": [
       "test/egint_relay.test.js"
     ]

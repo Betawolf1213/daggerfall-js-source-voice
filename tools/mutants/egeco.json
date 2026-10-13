@@ -92,8 +92,8 @@
   {
     "name": "EGECO-the-second-pass-on-the-first-seed",
     "file": "src/systems/egSpoils.js",
-    "old": "    passes.push(rollPass(egPassSeed(seed, p), lv, w, p, { lord, forced: pity.includes(p), seed0: seed >>> 0 }));",
-    "new": "    passes.push(rollPass(egPassSeed(seed, 0), lv, w, p, { lord, forced: pity.includes(p), seed0: seed >>> 0 }));",
+    "old": "    passes.push(rollPass(egPassSeed(seed, p), lv, w, { lord, panoply: pity.includes(p) || egPanoplyHit(seed >>> 0, w, p) }));",
+    "new": "    passes.push(rollPass(egPassSeed(seed, 0), lv, w, { lord, panoply: pity.includes(p) || egPanoplyHit(seed >>> 0, w, p) }));",
     "tests": [
       "test/egeco_spoils.test.js"
     ]
@@ -146,8 +146,8 @@
   {
     "name": "EGECO-the-panoply-off-the-spoils-stream",
     "file": "src/systems/egSpoils.js",
-    "old": "  if (o.forced || egPanoplyHit(o.seed0, w, pass)) {",
-    "new": "  if (o.forced || which * 4 < 1) {",
+    "old": "  if (o.panoply) {",
+    "new": "  if (o.panoply || which * 4 < 1) {",
     "tests": [
       "test/egeco_spoils.test.js"
     ]
@@ -155,8 +155,8 @@
   {
     "name": "EGECO-the-pity-ignored",
     "file": "src/systems/egSpoils.js",
-    "old": "  if (o.forced || egPanoplyHit(o.seed0, w, pass)) {",
-    "new": "  if (egPanoplyHit(o.seed0, w, pass)) {",
+    "old": "panoply: pity.includes(p) || egPanoplyHit(seed >>> 0, w, p) }",
+    "new": "panoply: egPanoplyHit(seed >>> 0, w, p) }",
     "tests": [
       "test/egeco_spoils.test.js"
     ]

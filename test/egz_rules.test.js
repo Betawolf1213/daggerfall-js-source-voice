@@ -286,10 +286,10 @@ test('EG-ZI THE LATE WAKE (section 7): a hall woken before a member\'s `here` co
   assert.deepEqual([B.h, B.su - B.pulledAt], [11, EG_ARRIVE_MAX_MS], 'one not late twice: the whole wait');
 });
 
-test('EG-ZI LIFELINE IN THE CENSUS (sections 15 and 21; EG-ZB\'s departure 8 closed): a believed heal of a Lifeline holder\'s on a member under 30% - its count, or seen so within the heal word\'s second and a beat (its own word\'s or the count\'s) - spares that member\'s blows 20 / 30 / 40% by the healer\'s rank, from the word\'s second back to 3 s past it, the strongest window\'s, inside the census\'s 30%; a heal not believed, a healer without it, or a member not under 30% opens none; windows a blow can no longer be judged in let go (mutants: Lifeline unapplied; the rank misread; the window\'s ends; the look back; the word unread; the count unread; the strongest summed; an unbelieved heal; the windows kept for ever)', () => {
+test('EG-ZI LIFELINE IN THE CENSUS (sections 15 and 21; EG-ZB\'s departure 8 closed): a believed heal of a Lifeline holder\'s on a member under 30% - its count, or seen so within the heal word\'s second and a beat (its own word\'s or the count\'s) - spares that member\'s blows 20 / 25 / 30% by the healer\'s rank, from the word\'s second back to 3 s past it, the strongest window\'s, inside the census\'s 30%; a heal not believed, a healer without it, or a member not under 30% opens none; windows a blow can no longer be judged in let go (mutants: Lifeline unapplied; the rank misread; the window\'s ends; the look back; the word unread; the count unread; the strongest summed; an unbelieved heal; the windows kept for ever)', () => {
   assert.deepEqual([EG_LIFELINE_UNDER, EG_LIFELINE_MS, EG_HEAL_WORD_MS, EG_LIFELINE_LOOK_MS], [0.3, 3000, 1000, 1000 + BRAIN_TICK_MS]);
   assert.equal(EG_HEAL_WORD_MS, EG_HEAL_SEND_MS, 'the heal word\'s second is the client\'s');
-  assert.deepEqual(EG_VESTIGES.find((V) => V.key === 'lifeline').v, [0.2, 0.3, 0.4]);
+  assert.deepEqual(EG_VESTIGES.find((V) => V.key === 'lifeline').v, [0.2, 0.25, 0.3]);   // PIN MOVED (AUDIT EG III, lane2 #5): every rank under the census's 30%, III at it
   const S = breach(4, 1), { B } = S;
   for (let k = 0; k < 200 && B.sg !== 'trial'; k++) S.step();
   const spec = S.spec(), view = egFightView(spec), f = spec.fl[0], subs = Object.keys(B.mem);
@@ -312,11 +312,11 @@ test('EG-ZI LIFELINE IN THE CENSUS (sections 15 and 21; EG-ZB\'s departure 8 clo
   // EG III: every heal from here a window's worth - net/egBrain.js EG_LIFELINE_MIN)
   B.mem[other].vs = [[vId('lifeline'), 2]];
   egHeal(B, me, [[healer, 40], [other, 40]], t + 100, LINE);
-  assert.equal(B.mem[me].ll.at(-1)[2], 0.3, 'Lifeline II of the two');
+  assert.equal(B.mem[me].ll.at(-1)[2], 0.25, 'Lifeline II of the two');
   B.mem[me].ll = [[t, t + 3000, 0.2], [t, t + 3000, 0.2]];
   assert.equal(dr(me, t + 10), 0.2, 'the strongest window, not their sum');
-  B.mem[me].ll = [[t, t + 3000, 0.4]];
-  assert.equal(dr(me, t + 10), EG_DR_MAX, 'Lifeline III inside the 30%');
+  B.mem[me].ll = [[t, t + 3000, 0.3]];
+  assert.equal(dr(me, t + 10), EG_DR_MAX, 'Lifeline III at the 30%');
   // a healer without it, a heal not believed, a member not under 30%
   B.mem[me].ll = [];
   B.mem[other].vs = [];
@@ -357,7 +357,7 @@ test('EG-ZI LIFELINE IN THE CENSUS (sections 15 and 21; EG-ZB\'s departure 8 clo
   egBodyWord(q, 'acct-0', 900, tc + 100, LINE);
   assert.ok(q.mem['acct-0'].bd.v > EG_LIFELINE_UNDER, 'its word stood it up');
   egHeal(q, 'acct-0', [['acct-1', 40]], tc + 1000, LINE);
-  assert.equal(q.mem['acct-0'].ll.at(-1)[2], 0.4, 'Lifeline III from the count seen low');
+  assert.equal(q.mem['acct-0'].ll.at(-1)[2], 0.3, 'Lifeline III from the count seen low');
   // the windows let go once no blow in them can still be judged, and four kept at most
   const tw = tc + 1000;
   for (let k = 1; k <= 5; k++) egHeal(q, 'acct-0', [['acct-1', 40]], tw + k * 10, LINE);

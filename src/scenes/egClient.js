@@ -780,6 +780,11 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         // gold alone. Never for a Rehearsal (the service pays none).
         if (a?.ok && c.q === 'w' && c.rh !== 1 && (a.data?.recorded || a.data?.again || a.data?.why === 'guest')) paid?.(c, a.data);
         if (a?.ok && c.q === 'x' && a.data?.board) boardHeard(c.b, a.data.board);   // EG-ZF (section 27.6): the board's line on the recap
+        // AUDIT EG III (section 16.3): an end's Reliquaries - those the service opens (`rl`) rolled and given (`paid`, the host's
+        // pool), the recap's count theirs; a Redoubt the service paid already this week (`paid` false) told the room, whose
+        // circle's Reliquaries then give 20 lumen each (net/egBrain.js `wkpaid`)
+        if (a?.ok && c.q === 'x' && Array.isArray(a.data?.rl)) { openedHeard(c.b, a.data.rl.length); if (a.data.rl.length) paid?.(c, a.data); }
+        if (a?.ok && c.q === 'w' && a.data?.paid === false && (a.data.recorded || a.data.again) && link.state().b === c.b && !link.state().end) online()?.sendEg?.('wkpaid', { w: c.w });
         if (egClaimDone(a)) { drop(); hub()?.sendEg?.('claimed', { b: c.b, q: c.q, w: c.q === 'w' ? c.w : 0 }); }   // EG-ZA: the hub forgets its held copy
       }
     } finally { flushing = false; }
@@ -949,7 +954,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     else if (at.slot === egSlotOfHall(E.h)) placedH = E.h;
     if (E.sg === 'trial') islandFrame(E, t);   // EG-ZD (section 22): my last island, for a return
     // THE DOOR: the closing's step through it, said while I stand in it
-    if (E.sg === 'closing' && at.slot === egSlotOfHall(E.h) && downH !== E.h && egAtDoor(spec, egLocalX(spec, at.sx), at.z, 1) && t - downAt >= EG_DOWN_EVERY_MS) {
+    // AUDIT EG III (section 7): within EG_DOOR_REACH_M, the ring's - the relay's one number; said again each second while I stand in it
+    if (E.sg === 'closing' && at.slot === egSlotOfHall(E.h) && downH !== E.h && egAtDoor(spec, egLocalX(spec, at.sx), at.z) && t - downAt >= EG_DOWN_EVERY_MS) {
       downAt = t;
       if (o?.sendEg?.('down', { h: E.h })) mid('You wait at the door for your company.');
     }
@@ -1457,6 +1463,13 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     const min = egLifelineMin(Math.max(1, entity.level | 0));   // AUDIT EG III: a heal worth a window, as the census asks it (my level, as my hello says it)
     const t = now(), v = egLifelineOf(link.state(), me(), h.filter(([, n]) => n >= min).map(([by]) => accountOf(by)));
     if (v > 0 && t - lowAt <= EG_LIFELINE_LOOK_MS) fight?.lifeline?.(v, t + egClockHalfRtt(clock));
+  }
+  /** AUDIT EG III (section 16.3): the Reliquaries my end's claim opened, on that breach's recap - the service's count over
+   *  the room's, the one-by-one count held to it. */
+  function openedHeard(b, n) {
+    if (recap?.b !== b || recap.opened === n) return;
+    recap = { ...recap, opened: n, reliquaries: n };
+    pres.rel = Math.min(pres.rel, n);
   }
   /** THE BOARD'S LINE from my end's claim (server-account/src/egHonours.js egStandingOf), on that breach's recap - the one
    *  standing, the one kept, and one still to be made. */

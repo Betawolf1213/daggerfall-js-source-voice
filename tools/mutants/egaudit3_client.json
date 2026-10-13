@@ -480,8 +480,8 @@
   {
     "name": "EGA3C-tonic-kind-unknown",
     "file": "src/net/wire.js",
-    "old": "'claimed', 'heal', 'tonic', 'mast']);",
-    "new": "'claimed', 'heal', 'mast']);",
+    "old": "'claimed', 'heal', 'tonic', 'mast', 'wkpaid']);",
+    "new": "'claimed', 'heal', 'mast', 'wkpaid']);",
     "tests": [
       "test/egaudit3_client_tonic.test.js",
       "test/egplay_relay.test.js"

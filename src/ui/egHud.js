@@ -26,6 +26,9 @@
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { egHallOf, egCircleOfHall, egSlotOfHall, egPhase, egTimes, egCountText, egObjectiveOf, EG_TEXT, EG_COUNT_START_MS, EG_LAST_WORD_MS, EG_BANDS, EG_DECREES, EG_TWIST_NAMES } from '../net/egLaw.js';
+import { EG_OPEN_ENDS } from '../net/egLaw.js';   // AUDIT EG III (section 16.3): the ends that open the Reliquaries
+import { egPanoplyIn, egValkRedoubt } from '../net/egPay.js';   // AUDIT EG III: the rest's stake line - a Reliquary's Panoply odds
+import { EG_RELIQUARY_PANOPLY_X } from '../systems/egSpoils.js';
 import { egCountAt, egLivingCount, egMemberOf, egRunOfMember } from '../net/egLink.js';
 import { egCardText, egAccordsOf, EG_VESTIGES, EG_M_BY_ID } from '../net/egVestige.js';
 import { egCardAccords } from '../net/egVestige.js';   // EG-ZS (section 15): the Accord an offer's card would take
@@ -115,6 +118,22 @@ function stageLines(E, spec, now) {
     default: return { line: '', sub: '' };
   }
 }
+/**
+ * AUDIT EG III (section 16.3) - THE STAKE, as the rest card shows it: *4 Reliquaries - 1 Valkynaz - a Panoply piece about 1 in
+ * 2.* - `rw` each Reliquary's circle (net/egRun.js egRunOf's): how many, how many of a Valkynaz's Redoubt, and the odds that at
+ * least one holds a Panoply piece, each at EG_RELIQUARY_PANOPLY_X times its Redoubt's (net/egPay.js egPanoplyIn) - *likely*
+ * past two in three, where "about 1 in 1" would say nothing. '' for none.
+ * Pure.
+ * @param {number[]} rw
+ */
+export function egStakeText(rw) {
+  const ws = (Array.isArray(rw) ? rw : []).filter((w) => Number.isSafeInteger(w) && w >= 1);
+  if (!ws.length) return '';
+  const valk = ws.filter((w) => egValkRedoubt(w)).length;
+  const none = ws.reduce((p, w) => p * Math.max(0, 1 - EG_RELIQUARY_PANOPLY_X / egPanoplyIn(w)), 1);
+  const k = Math.round(1 / Math.max(1e-9, 1 - none));
+  return [`${ws.length} ${ws.length === 1 ? 'Reliquary' : 'Reliquaries'}`, valk ? `${valk} Valkynaz` : '', k >= 2 ? `a Panoply piece about 1 in ${k}` : 'a Panoply piece likely'].filter(Boolean).join(' - ');
+}
 /** The company's rows (section 27.4): each member's numeral and name, a cracked recall, a witness's eye, home, forsaken. */
 export function egCompanyRows(E) {
   return E.co.map((c) => {
@@ -154,7 +173,7 @@ export function egHudModel(E, me, now, { inSpire = false, witness = false, potio
       kicker: `${E.rh ? `${EG_TEXT.name} - Rehearsal` : EG_TEXT.name}${spec ? ` - ${EG_BANDS[spec.band]?.name ?? ''}` : ''}`,
       title: spec ? `Circle ${egCircleOfHall(E.h)} - Hall ${egSlotOfHall(E.h)}: ${spec.name}` : 'The Battlespire',
       count: E.sg === 'end' ? '' : `${held ? 'Held ' : ''}${seal ? 'Last word ' : ''}${ms(shown)}`, countCls,
-      line: witLine || line, sub: witLine ? '' : sub, company: n > 1 ? `${standing} of ${n} standing\n${egCompanyRows(E)}` : '',
+      line: witLine || line, sub: witLine ? '' : E.sg === 'rest' && run?.rw?.length ? `${egStakeText(run.rw)}. ${sub}` : sub, company: n > 1 ? `${standing} of ${n} standing\n${egCompanyRows(E)}` : '',
       run: runLine, dec: dec.length ? `Decrees: ${dec.join(', ')}` : '', mark: marks.join(' - '),
     };
   }
@@ -220,8 +239,9 @@ export function egPanelModel(E, me, now, voted = {}) {
  *  EG-G1 (2026-10-12, section 27.6 completed): the depth as its parts (`depth` - the hall, the Redoubt, the band), why it
  *  ended in words (`whyText`, the client's end words), a strip per circle (`strip` - its halls' glyphs, its lord, its
  *  falls), the company member by member (`members` - numeral, name, falls, the recall kept or spent, how they left), the
- *  Accords I held with any companion (`accords`), the Reliquaries opened (`opened` - home or the last word open them; a
- *  tear, a wipe and a fall lose them) and the board's line (`board`).
+ *  Accords I held with any companion (`accords`), the Reliquaries opened (`opened` - the way home, THE SEAL, the last word
+ *  and a void open them, net/egLaw.js EG_OPEN_ENDS; a tear, a wipe and a fall lose them - AUDIT EG III: the service's count
+ *  once the end's claim answers it, scenes/egClient.js openedHeard) and the board's line (`board`).
  *  EG-ZF (2026-10-12, section 27.6): each member's share of the company's damage (`share`, the gate chart's words - "34%")
  *  and what they healed in others (`healed`), off the room's `ds` (null both where the room said none); the board's line
  *  from the end's claim (`board`, egBoardLine); the breach it was (`b` - the board's line finds its recap by it). */
@@ -253,7 +273,7 @@ export function egRecapModel(E, me, log, now, { whyText = '', board = '', why = 
       return { numeral: ROMAN[n] ?? String(n), name, falls: falls ?? 0, recall: recall === 1 ? 'held' : 'spent', left: forsaken ? 'forsaken' : home ? 'home' : inn !== 1 ? 'away' : wit || !alive ? 'fallen' : 'standing',
         share: ds.size ? chartShare(t?.[1] ?? 0, dealt) : null, healed: ds.size ? t?.[2] ?? 0 : null };
     }),
-    accords, opened: why === 'home' || why === 'last' ? run?.rel ?? 0 : 0, board,
+    accords, opened: EG_OPEN_ENDS.includes(why) ? run?.rel ?? 0 : 0, board,   // AUDIT EG III: THE SEAL and a void open them too
   };
 }
 /** EG-G1 (section 27.6): THE LAST FIVE RUNS, kept on the device - each recap as it ended, newest last. */
@@ -385,7 +405,7 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
     }
   } else if (recap) {
     panel.append(h('The breach is over'));
-    for (const line of [recap.title, `Time: ${recap.time} - ${recap.why}`, `Reliquaries opened: ${recap.why === 'home' || recap.why === 'last' ? recap.reliquaries : 0}`, ...recap.circles, recap.company, recap.vestiges.length ? `Vestiges: ${recap.vestiges.join(', ')}` : '']) {
+    for (const line of [recap.title, `Time: ${recap.time} - ${recap.why}`, `Reliquaries opened: ${recap.opened ?? 0}`, ...recap.circles, recap.company, recap.vestiges.length ? `Vestiges: ${recap.vestiges.join(', ')}` : '']) {
       if (!line) continue;
       const p = doc.createElement('div'); p.className = 'eg-note'; p.style.whiteSpace = 'pre-line'; p.textContent = line; panel.append(p);
     }

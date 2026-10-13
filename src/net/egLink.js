@@ -174,10 +174,11 @@ export function egMemberOf(s, sub) {
   const t = s.co.find((c) => c[0] === sub);
   return t ? { sub: t[0], name: t[1], n: t[2], alive: t[3] === 1, home: t[4] === 1, in: t[5] === 1, wit: t[6] === 1, forsaken: t[7] === 1, falls: t[8] ?? 0, recall: t[9] === 1 } : null;
 }
-/** A member's run (`{ rel, lumen, shards, tonics, cant, vs, mast }`), or an empty one. */
+/** A member's run (`{ rel, lumen, shards, tonics, cant, vs, mast, rw }`), or an empty one - AUDIT EG III: `rw` each Reliquary's
+ *  circle (net/egRun.js egRunOf). */
 export function egRunOfMember(s, sub) {
   const r = s.ms.find((x) => x[0] === sub);
-  return r ? { rel: r[1], lumen: r[2], shards: r[3], tonics: r[4], cant: r[5], vs: r[6], mast: r[7] } : { rel: 0, lumen: 0, shards: 0, tonics: 0, cant: [], vs: [], mast: -1 };
+  return r ? { rel: r[1], lumen: r[2], shards: r[3], tonics: r[4], cant: r[5], vs: r[6], mast: r[7], rw: Array.isArray(r[8]) ? r[8] : [] } : { rel: 0, lumen: 0, shards: 0, tonics: 0, cant: [], vs: [], mast: -1, rw: [] };
 }
 /** How many of the company live and have entered, and how many have entered at all. */
 export const egLivingCount = (s) => s.co.filter((c) => c[3] === 1 && c[4] === 0 && c[5] === 1).length;

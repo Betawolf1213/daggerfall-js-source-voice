@@ -303,7 +303,7 @@ test('AUDIT EG III A HEAL WORTH A LIFELINE WINDOW (section 15\'s Lifeline, in th
   egHeal(B, 'acct-0', [['acct-1', Math.ceil(min) - 1]], now, LINE);
   assert.equal(me.ll, undefined, 'a point short of the minimum: none');
   egHeal(B, 'acct-0', [['acct-1', Math.ceil(min)]], now + 10, LINE);
-  assert.deepEqual(me.ll, [[now + 10 - 1000, now + 10 + 3000, 0.4]], 'the minimum: Lifeline III\'s window');
+  assert.deepEqual(me.ll, [[now + 10 - 1000, now + 10 + 3000, 0.3]], 'the minimum: Lifeline III\'s window');   // PIN MOVED (AUDIT EG III's merge with the count group, lane2 #5): Lifeline III is 30% (20 / 25 / 30)
   // believed through the bucket: a claim past it, believed short of the minimum, opens none
   const T = court(), tm = T.B.mem['acct-0'];
   T.B.mem['acct-1'].vs = [[vId('lifeline'), 1]];

@@ -99,13 +99,16 @@ export const EG_LAST_WORD_MS = EG_LAST_WORD_MIN * EG_GAME_MIN_MS;
 /** A Redoubt's rest (the count held). */
 export const EG_REST_S = 90;
 export const EG_REST_MS = EG_REST_S * 1000;
-/** The closing runs the count its first seconds, then holds it; the pull to the next wake holds it at most this long. */
+/** The closing runs the count its first seconds, then holds it. The pull to the next wake holds it too, and needs no bound
+ *  of its own (AUDIT EG III, lane2 #18): the wait wakes the hall EG_ARRIVE_MAX_MS after the pull whoever is missing, and a
+ *  gather begun before it runs its EG_GATHER_MS whole, so the hold lasts at most the two together (38 s). */
 export const EG_CLOSING_COUNT_S = 15;
 export const EG_CLOSING_COUNT_MS = EG_CLOSING_COUNT_S * 1000;
-export const EG_STAIR_HOLD_S = 40;
-export const EG_STAIR_HOLD_MS = EG_STAIR_HOLD_S * 1000;
 /** A hall's stages (section 7): the longest the gather waits after the pull, the gather after the last `here`, the
- *  closing after a fight and after a span, how near the door a step through is believed. */
+ *  closing after a fight and after a span, how near the door a step through is said and believed - AUDIT EG III (lane2
+ *  #11): ONE NUMBER, the closing ring's radius (world/egLights.js EG_CLOSING_RING), the screen's `down` (scenes/egClient.js)
+ *  and the relay's (net/egBrain.js egDown), never a pad; the screen says it again every second while it stands there, so
+ *  a pose the relay holds a beat behind is heard at the next. */
 export const EG_ARRIVE_MAX_MS = 30_000;
 export const EG_GATHER_MS = 8000;
 export const EG_CLOSING_FIGHT_MS = 20_000;
@@ -158,6 +161,10 @@ export function egPhase(rec, now) {
 }
 /** Does the breach still take members through its door at `now` (its open window, before the first wake)? */
 export const egAdmits = (rec, now) => egPhase(rec, now) === 'open';
+/** THE GOOD ENDS (section 16.3): a member's end that opens its Reliquaries - the way home, THE SEAL, the last word and a
+ *  void (THE COVENANT'S PATIENCE ends a breach as the way home). A fall, the tear, a wipe and forsaking lose them. AUDIT
+ *  EG III (lane2 #1): one list - the end receipt's `rl` (net/egBrain.js) and the recap's count (ui/egHud.js) read it. */
+export const EG_OPEN_ENDS = Object.freeze(['home', 'seal', 'last', 'void']);
 
 /**
  * THE COUNT (section 6.2) as the relay keeps it: what is `left` (ms) and, while it runs, the instant it last began to
@@ -170,12 +177,19 @@ export const egCountLeft = (c, now) => (c.at > 0 ? Math.max(0, c.left - Math.max
 export const egCountRun = (c, now) => (c.at > 0 ? c : { left: c.left, at: now });
 /** The count held at `now`, what is left kept. */
 export const egCountHold = (c, now) => (c.at > 0 ? { left: egCountLeft(c, now), at: 0 } : c);
-/** A Redoubt taken at `now`: EG_REDOUBT_HOLD_MS more, never past the cap nor the last word (`lastWordLeft`, ms) -
- *  `remaining = min(remaining + hold, cap, lastWord - elapsed)`. It runs or holds as it did. */
-export function egCountRedoubt(c, now, lastWordLeft) {
-  const left = Math.max(0, Math.min(egCountLeft(c, now) + EG_REDOUBT_HOLD_MS, EG_COUNT_CAP_MS, lastWordLeft));
+/** A Redoubt's hold under THE COVENANT'S PRESS at rank `press` (section 14): EG_REDOUBT_HOLD_MS (fifteen minutes), two
+ *  thirds of it at rank I (ten), a third at rank II (five). Pure. */
+export const egRedoubtHold = (press = 0) => (press >= 2 ? EG_REDOUBT_HOLD_MS / 3 : press ? (EG_REDOUBT_HOLD_MS * 2) / 3 : EG_REDOUBT_HOLD_MS);
+/** A Redoubt taken at `now`: `hold` more (egRedoubtHold), never past the cap nor the last word (`lastWordLeft`, ms) -
+ *  `remaining = min(remaining + hold, cap, lastWord - elapsed)`. It runs or holds as it did. AUDIT EG III (lane2 #2): THE
+ *  ONE LAW - the director's Redoubt (net/egBrain.js redoubtGain) takes its time here; what the cap turns away is its
+ *  Surplus's (egCountOver). */
+export function egCountRedoubt(c, now, lastWordLeft, hold = EG_REDOUBT_HOLD_MS) {
+  const left = Math.max(0, Math.min(egCountLeft(c, now) + hold, EG_COUNT_CAP_MS, lastWordLeft));
   return { left, at: c.at > 0 ? now : 0 };
 }
+/** What the cap turns away from `add` more on the count at `now` (ms) - THE SURPLUS's to bank (section 6.2). Pure. */
+export const egCountOver = (c, now, add) => Math.max(0, egCountLeft(c, now) + add - EG_COUNT_CAP_MS);
 /** The count as the chip says it: `m:ss`, the minutes uncapped (1:05:00 never - the cap is thirty). */
 export function egCountText(ms) {
   const s = Math.max(0, Math.ceil(ms / 1000));
