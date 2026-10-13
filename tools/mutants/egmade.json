@@ -260,7 +260,7 @@
   {
     "name": "EGMADE-the-spec-never-asked",
     "file": "src/scenes/egClient.js",
-    "old": "    if (!E.b || !(E.egv > 0) || E.egv === EG_SPEC || !(E.h > 0) || E.end) return;",
+    "old": "    if (!E.b || !lawForeign(E) || !(E.h > 0) || E.end) return;",
     "new": "    return;",
     "tests": [
       "test/egmade_law.test.js"
@@ -278,8 +278,8 @@
   {
     "name": "EGMADE-the-circle-never-rebuilt",
     "file": "src/scenes/egClient.js",
-    "old": "{ lawBuilt = `${E.b}:${c}`; swapTo(E, c); }",
-    "new": "{ lawBuilt = `${E.b}:${c}`; }",
+    "old": "    if (await swapTo(E, c)) lawBuilt = key;",
+    "new": "    lawBuilt = key;",
     "tests": [
       "test/egmade_law.test.js"
     ]

@@ -38,6 +38,8 @@ export const EG_OCCLUDE_CHEST_M = 0.9;
 /** The most views kept for one circle before the cache is let go (a view is a few small objects - no GL object). */
 export const EG_OCCLUDE_VIEWS_MAX = 64;
 const NO_SHADOW = Object.freeze({ noShadow: true });
+/** AUDIT EG III (lane4 #10): the ray's unit way, one scratch for every segment tried (egOccludersHit is synchronous). */
+const _dir = [0, 0, 0];
 
 /**
  * Whether the segment from `o` along the unit `d` for `len` crosses triangle `k` of `T` (nine floats a triangle - its three
@@ -76,18 +78,21 @@ export function egSegBox(o, d, len, b) {
 /**
  * The occluders a camera ray crosses: the indices of `pieces` (each `{ b, at, n }` - its box, and its `n` triangles from
  * triangle `at` of `T`) that a segment from `eye` to any of `points` - stopped EG_OCCLUDE_BODY_M short of it - crosses,
- * in the pieces' order, each once. Pure.
+ * in the pieces' order, each once. Pure. AUDIT EG III (lane4 #10): `out` and `seen` the caller's own to fill (emptied and
+ * cleared here - a frame's pass hands its scratch, never a new list a frame); none, and they are made.
  * @param {Array<{ b: number[], at: number, n: number }>} pieces @param {Float32Array} T @param {number[]} eye @param {number[][]} points
+ * @param {number[]} [out] @param {Uint8Array|null} [seen]
  */
-export function egOccludersHit(pieces, T, eye, points) {
-  const out = [];
+export function egOccludersHit(pieces, T, eye, points, out = [], seen = null) {
+  out.length = 0;
   if (!eye || !points?.length) return out;
-  const seen = new Uint8Array(pieces.length);
+  if (!seen || seen.length < pieces.length) seen = new Uint8Array(pieces.length); else seen.fill(0, 0, pieces.length);
+  const d = _dir;
   for (const p of points) {
     if (!p) continue;
     const dx = p[0] - eye[0], dy = p[1] - eye[1], dz = p[2] - eye[2], full = Math.hypot(dx, dy, dz), len = full - EG_OCCLUDE_BODY_M;
     if (!(len > 0)) continue;
-    const d = [dx / full, dy / full, dz / full];
+    d[0] = dx / full; d[1] = dy / full; d[2] = dz / full;
     for (let i = 0; i < pieces.length; i++) {
       if (seen[i]) continue;
       const q = pieces[i];
@@ -139,6 +144,10 @@ export function createEgOccluders({ renderer = null } = {}) {
   let T = new Float32Array(0);
   /** each dithering piece's share kept (1 whole) */
   const share = new Map();
+  /** AUDIT EG III (lane4 #10): the frame's scratch - the pieces the ray crosses (and as a set), the seen marks, the draw's
+   *  dithering pieces - kept, never made a frame */
+  const _hits = [], _hitSet = new Set(), _act = [];
+  let _seen = new Uint8Array(0);
   const views = new Map();
   const viewOf = (key, ids, cut) => {
     let v = views.get(key);
@@ -179,7 +188,11 @@ export function createEgOccluders({ renderer = null } = {}) {
      * @param {{ eye?: number[] | null, points?: number[][] | null, dt?: number }} f
      */
     frame({ eye = null, points = null, dt = 0 } = {}) {
-      const hit = new Set(mesh ? egOccludersHit(pieces, T, eye, points) : []);
+      if (!share.size && (!mesh || !eye || !points?.length)) return 0;   // AUDIT EG III (lane4 #10): first person, a witness, nothing dithering - nothing tried, nothing made
+      if (_seen.length < pieces.length) _seen = new Uint8Array(pieces.length);
+      const hit = _hitSet;
+      hit.clear();
+      if (mesh) for (const i of egOccludersHit(pieces, T, eye, points, _hits, _seen)) hit.add(i);
       for (const i of hit) share.set(i, egOccludeEase(share.get(i) ?? 1, true, dt));
       for (const [i, k] of share) if (!hit.has(i)) { const v = egOccludeEase(k, false, dt); if (v >= 1) share.delete(i); else share.set(i, v); }
       let n = 0;
@@ -194,7 +207,10 @@ export function createEgOccluders({ renderer = null } = {}) {
      */
     draw(texRemap = null) {
       lastDraws = 0;
-      const act = [...share].filter(([, k]) => k < 1);
+      if (!share.size) { unhide(); return 0; }   // AUDIT EG III (lane4 #10): the common frame - nothing dithers, nothing made
+      const act = _act;
+      act.length = 0;
+      for (const e of share) if (e[1] < 1) act.push(e);
       if (!act.length || !draw || !mesh || mesh._dead || !renderer?.meshView || !renderer.setDissolve) { unhide(); return 0; }
       const M = draw.object?.matrix, remap = draw.texRemap ?? texRemap;
       const ids = act.map(([i]) => i).sort((a, b) => a - b);

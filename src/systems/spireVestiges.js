@@ -15,7 +15,8 @@
 //                   registerShieldSoakMod), a party mate's Shield on me as it was;
 //   FLEETFOOT       run speed +4 / 7 / 10% - the run's modifiers (player/motor.js registerRunSpeedMod);
 //   FEATHERSTEP     my crumbles wait +0.2 / 0.35 / 0.5 s (scenes/egSpan.js reads spireCrumbleWait); its cast-back cost is
-//                   the census's own law (net/egBrain.js egCastBackCost, scenes/egClient.js castBack);
+//                   the census's own law (net/egBrain.js egCastBackCost, scenes/egClient.js castBack); AUDIT EG III (lane1
+//                   #5): LONG STEP, the Cantrip, +0.5 s more for one span on the same reading (the holder's `ls`);
 //   and ON A BLOW of mine on a Spire body - SEARING EDGE, MOMENTUM, BLOODIED FURY, OVERCHARGE (egHolderBlow) and ARCANE
 //   ECHO's repeat - at the one door every such blow leaves by (scenes/egFight.js hostHit), where the relay's bucket, grown
 //   by the declared factor (net/egVestige.js egDeclaredX), meets the claim.
@@ -48,8 +49,13 @@ import { healMine } from './playerHeal.js';
 /** The registries' one name. */
 export const SPIRE_VESTIGES = 'spire-vestiges';
 
-/** @type {{ entity: any, vs: number[][], mast: number, b: string, h: number } | null} the holder this frame */
+/** @type {{ entity: any, vs: number[][], mast: number, b: string, h: number, ls?: boolean } | null} the holder this frame */
 let _held = null;
+/** AUDIT EG III (lane4 #10): the holder handed in last, and the entity - the same again is the same holder, made once */
+let _from = null, _fromEntity = null;
+/** AUDIT EG III (lane1 #5) - LONG STEP (section 17.2: "your crumbles wait +0.5 s for one span (private, as crumbles are)"):
+ *  the half second more, while the breach's client says it holds (the holder's `ls`). */
+export const EG_LONG_STEP_S = 0.5;
 /** Spellbane's value the fold last answered (a change folds the entity again); the breach's hall Second Wind was spent in */
 let _bane = 0, _wind = '';
 /** EG-ZS: the door Rallying Cry last refreshed Second Wind at (`b:h:dn`); my damage spells cast while Spellweave was mine */
@@ -63,11 +69,12 @@ const heldV = (key, entity = _held?.entity) => (_held && entity === _held.entity
  * alive in the breach the room counts me in, null otherwise. Stoneskin's points put on the entity (or taken off - the
  * fraction kept), and Spellbane's fold folded again when its value moved; every other door reads the holder live. EG-ZS:
  * RALLYING CRY - with `cry` (a living member of my company resonates in Fellowship) and the hall's door open (`dn`, its instant
- * on the room's clock), a Second Wind spent in this hall is mine again, once a door.
- * @param {any} entity @param {{ vs: number[][], mast: number, b: string, h: number, dn?: number, cry?: boolean } | null} holder
+ * on the room's clock), a Second Wind spent in this hall is mine again, once a door. AUDIT EG III: the same holder handed in
+ * again (the client's memo - lane4 #10) is the one held, made once; `ls` LONG STEP holding (lane1 #5).
+ * @param {any} entity @param {{ vs: number[][], mast: number, b: string, h: number, dn?: number, cry?: boolean, ls?: boolean } | null} holder
  */
 export function spireHolderStep(entity, holder) {
-  _held = holder && entity ? { entity, vs: holder.vs ?? [], mast: holder.mast ?? -1, b: holder.b ?? '', h: holder.h | 0 } : null;
+  if (holder !== _from || entity !== _fromEntity) { _from = holder; _fromEntity = entity; _held = holder && entity ? { entity, vs: holder.vs ?? [], mast: holder.mast ?? -1, b: holder.b ?? '', h: holder.h | 0, ...(holder.ls === true ? { ls: true } : {}) } : null; }
   if (_held && holder?.cry === true && holder.dn > 0 && _cried !== `${_held.b}:${_held.h}:${holder.dn}`) { _cried = `${_held.b}:${_held.h}:${holder.dn}`; _wind = ''; }
   if (!entity) return;
   const skin = heldV('stoneskin', entity);
@@ -78,8 +85,9 @@ export function spireHolderStep(entity, holder) {
 /** The holder as this frame has it (tests). */
 export const spireHeld = () => _held;
 
-/** FEATHERSTEP: how much longer my crumbles wait (s) - 0 with none held. */
-export const spireCrumbleWait = () => heldV('featherstep');
+/** FEATHERSTEP: how much longer my crumbles wait (s) - 0 with none held. AUDIT EG III (lane1 #5): and LONG STEP's half second
+ *  while it holds. */
+export const spireCrumbleWait = () => heldV('featherstep') + (_held?.ls ? EG_LONG_STEP_S : 0);
 
 /**
  * A BLOW OF THE HOLDER'S ON A SPIRE BODY (section 15's client Vestiges on a blow): `d` what the game's own law dealt, `r` its
@@ -147,4 +155,4 @@ registerSpellFreeCast(SPIRE_VESTIGES, weaveFree);   // EG-ZS
 registerPlayerCastListener(SPIRE_VESTIGES, weaveCast);   // EG-ZS
 
 /** Tests only: nothing held, nothing spent. */
-export function _resetSpireVestigesForTests() { _held = null; _bane = 0; _wind = ''; _cried = ''; _woven = 0; _weaveB = ''; }
+export function _resetSpireVestigesForTests() { _held = null; _from = null; _fromEntity = null; _bane = 0; _wind = ''; _cried = ''; _woven = 0; _weaveB = ''; }

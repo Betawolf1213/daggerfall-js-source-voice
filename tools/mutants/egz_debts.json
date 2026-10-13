@@ -2,8 +2,8 @@
   {
     "name": "EGZP-share-unapplied",
     "file": "src/scenes/egFight.js",
-    "old": "const k = 1 - dr, raw = strikeDamage(",
-    "new": "const k = 1, raw = strikeDamage(",
+    "old": "const k = (1 - dr) * x, raw = strikeDamage(",
+    "new": "const k = x, raw = strikeDamage(",
     "tests": [
       "test/egz_debts.test.js"
     ]
@@ -31,8 +31,8 @@
   {
     "name": "EGZP-blow-unshielded",
     "file": "src/scenes/egFight.js",
-    "old": "landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl));",
-    "new": "landShare(bl.p, bl.b, bl.el, bl.nm);",
+    "old": "landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part * egTouchedX(F, bl, me(), t));",
+    "new": "landShare(bl.p, bl.b, bl.el, bl.nm, 0, part * egTouchedX(F, bl, me(), t));",
     "tests": [
       "test/egz_debts.test.js"
     ]

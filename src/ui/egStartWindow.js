@@ -91,14 +91,32 @@ export function egWagerToggle(wager, id) {
 }
 
 /**
+ * AUDIT EG III (lane4 #12) - THE QUESTION'S DOOR (the start window's `ask`): DFU's YesNo box (`makeBox({ rows, onYes, onNo })`
+ * - ui/yesNoBox.js YesNoBoxWindow) shown on the host's overlay (`show`); a box disposed unanswered - put out of its slot by
+ * another window (scenes/townTalk.js showOverlay disposes the outgoing occupant and tells it nothing) - answers `onGone`,
+ * once. An answered box is done before it is disposed (its arm first), so it never answers twice.
+ * @param {(win: any) => void} show @param {(o: { rows: string[], onYes: () => void, onNo: () => void }) => any} makeBox
+ */
+export function egStartAsk(show, makeBox) {
+  return (lines, onYes, onNo, onGone = () => {}) => {
+    const box = makeBox({ rows: lines, onYes, onNo });
+    const dispose = typeof box.dispose === 'function' ? box.dispose.bind(box) : () => {};
+    box.dispose = () => { dispose(); if (!box.done) { box.done = true; onGone(); } };
+    show(box);
+  };
+}
+
+/**
  * THE WINDOW, OPENED: the main list (egStartRows) over the host's `openList(labels, onPick, onCancel) -> handle`, the
  * Wager's list in its place when asked, the one question through `ask(lines, onYes, onNo)`, and the choice handed to
  * `onChoose({ ew, wg, rh })` ONCE. Answers `{ close(), state() }`. EG-ZM: `board(onClosed)` the boards' door (the host's -
  * scenes/world.js, ui/egBoardWindow.js openEgBoard), which answers the boards it opened or null: picked, the list leaves
  * the slot first and comes back once the boards close (or at once, where none opened), unless the window ended meanwhile.
+ * AUDIT EG III (lane4 #12): the question's fourth arm, `onGone` - its box taken off the screen unanswered (another window in
+ * its slot - egStartAsk) - ends the window as a cancel does, so `onCancel` is told and nothing waits on it.
  * @param {{ keys: number, me: string, members: { sub: string, name: string }[], starts: Record<string, number[]|null>, rehearsal?: boolean, questDue?: boolean,
  *   openList: (labels: string[], onPick: (i: number) => void, onCancel: () => void) => any, closeList: (handle: any) => void,
- *   ask: (lines: string[], onYes: () => void, onNo: () => void) => void, say?: (text: string) => void,
+ *   ask: (lines: string[], onYes: () => void, onNo: () => void, onGone?: () => void) => void, say?: (text: string) => void,
  *   onChoose: (c: { ew: number, wg: number[], rh: boolean }) => void, onCancel?: () => void, board?: ((onClosed: () => void) => any) | null }} o
  */
 export function openEgStartWindow(o) {
@@ -132,7 +150,7 @@ export function openEgStartWindow(o) {
     if (!r.missing.length) { choose({ ew: r.ew, wg: [...wager], rh: false }); return; }
     // asked once: going on without the members who cannot make this start
     shut();
-    o.ask([EG_TEXT.without(egNamesText(r.missing))], () => choose({ ew: r.ew, wg: [...wager], rh: false }), () => { if (!done) showMain(); });
+    o.ask([EG_TEXT.without(egNamesText(r.missing))], () => choose({ ew: r.ew, wg: [...wager], rh: false }), () => { if (!done) showMain(); }, cancel);
   }
   function pickWager(i) {
     const r = rows[i];

@@ -1552,6 +1552,7 @@ export function egWord(B, sub, m, pose, now, rng) {
     case 'bequest': if (!mm.alive && (mm.vs ?? []).some((q) => q[0] === m.v)) mm.bequest = m.v; break;
     case 'forsake': egForsake(B, sub, now, out); break;
     case 'fell': if (mm.alive && B.h > 0) egFall(B, sub, now, out, p); break;
+    case 'tonic': if (mm.alive && (mm.tonics ?? 0) > 0) { mm.tonics--; out.push({ k: 'eheal', p: 0.25, why: 'tonic', to: sub }, { k: 'run', r: egRunOf(sub, mm) }); } break;   // AUDIT EG III (lane1 #5): A SPIRE TONIC drunk (section 17.1) - its share of health (the census's - egCountHeals) and of magicka (the member's screen), one of the run's spent
     case 'use': {
       // EG-FULL LAYER THREE: an engine worked (section 11.10) - within 2 m, once in 30 s (the Shelf once)
       const F = B.F, e = (spec?.engines ?? [])[m.i];

@@ -19,6 +19,7 @@ import { egBandArt, egBandArchive, EG_DRESS_RECORDS } from '../src/world/egBandA
 import { createEgOccluders } from '../src/scenes/egOcclude.js';
 import { buildEgLookModel } from '../src/world/egLook.js';
 import { Collider } from '../src/player/collider.js';
+import { egBeatTellDown } from '../src/scenes/egSpan.js';   // AUDIT EG III (lane4 #4): the band dress's owner frees the Beats' pictures too
 
 const SEED = 12345;
 const B = '0123456789abcdef';
@@ -55,10 +56,10 @@ function rig() {
     releaseTexture: (a, r) => { log.push(['tex', `${a}_${r}`]); return true; }, evictEmissionTexture: (k) => { log.push(['glow', k]); return true; },
   };
   const st = { loc: { egBreach: B, egSeed: SEED, egCircle: 4, egGeo: 0 } };
-  wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'st',
+  wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'egBeatTellDown', 'st',
     `let mode = 'dungeon', dungeonLoc = st.loc, dungeonCtx = null;\n${src.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap({ workerFactory: st.worker });')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egBandsDown, egCircleDown, egOcc, set ctx(c) { dungeonCtx = c; }, set mode(m) { mode = m; },
       get mesh() { return _egMesh; }, get look() { return _egLookMesh; }, get gates() { return _egGates; }, get lamps() { return _egLamps; }, get key() { return _egMeshKey; }, get draw() { return _egDraw; } };`)(
-    { egGateOpen: () => false }, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS,
+    { egGateOpen: () => false }, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, egBeatTellDown,   // PIN MOVED (AUDIT EG III lane4 #4): egBandsDown frees the Beats' pictures with the dress
     Object.assign(st, { worker: syncWorker }));
   return { wm, st, live, log, get made() { return made; }, get twice() { return twice; }, get heldAtFree() { return heldAtFree; } };
 }

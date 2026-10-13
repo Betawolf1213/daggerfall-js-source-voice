@@ -5449,7 +5449,7 @@ export function validSdFoundTell(b) {
 // so every screen draws the lord at the size the relay judges it by.
 
 /** What a client may say: `open` to the hub (EG-ZA: and `void` and `claimed`); the rest to a breach's room (EG-ZF: `heal`). */
-export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed', 'heal']);   // EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
+export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed', 'heal', 'tonic']);   // AUDIT EG III (lane1 #5): `tonic` a Spire Tonic drunk; EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
 /** What the hub and a breach's room say back. */
 export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail', 'tell', 'untell']);   // EG-H1: Watchfire's `tell`, the union floor's `untell`
 export const EG_RUN_KINDS = Object.freeze(['offer', 'ask', 'asked', 'tally', 'egot', 'run', 'rise', 'eping', 'pz', 'eheal', 'toll']);   // EG-ZI: `toll` the pull's toll, to its member
@@ -5630,6 +5630,7 @@ export function validEgIn(m) {
     case 'home': return { k: 'home' };
     case 'forsake': return { k: 'forsake' };
     case 'fell': return { k: 'fell' };
+    case 'tonic': return { k: 'tonic' };   // AUDIT EG III (lane1 #5): a Spire Tonic of my run drunk (section 17.1 - the room heals it)
     case 'hit': return intIn(m.i, 1, 1e9) && intIn(m.q, 0, 0x7fffffff) && finite(m.d) && m.d >= 1 && m.d <= 1e6 && intIn(m.r, 0, 2) ? { k: 'hit', i: m.i, q: m.q, d: m.d, r: m.r } : null;
     case 'pick': return intIn(m.v, 0, 199) ? { k: 'pick', v: m.v } : null;
     case 'surplus': return m.use === 0 || m.use === 1 ? { k: 'surplus', use: m.use } : null;

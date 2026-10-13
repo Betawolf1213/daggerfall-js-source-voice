@@ -124,6 +124,7 @@ import { createEgOccluders, EG_OCCLUDE_CHEST_M } from './egOcclude.js';   // EG-
 import { EG_DRESS_RECORDS } from '../world/egBandArt.js';   // EG-ZN (section 29): the band dress's records, freed at the breach's end
 import { madeLevelOf } from '../systems/madeLevel.js';   // EG-H2 (Elite-Gates.md section 24): which made level stands under the player - one law
 import { egBandArt, egBandArchive } from '../world/egBandArt.js';   // EG-G2: each band's own dress, painted in code
+import { egBeatTellDown } from './egSpan.js';   // AUDIT EG III (lane4 #4): the Beats' pictures, freed with the band dress
 import { buildEgLookModel } from '../world/egLook.js';   // EG-G2: the waystones lit (world/meshKit.js)
 import { SD_HOUR_GRADE } from '../world/sdLook.js';   // SD-LOOK: the Hour's grade on the lane
 /** SD-LOOK: the dungeon arm's two draw options for its dynamic draws (render/renderer.js drawMesh), made once - the hot
@@ -9275,13 +9276,15 @@ export function createWorldModes(host) {
     return gone.size;
   }
   /** EG-ZN (section 29 - EVERY ALLOCATION HAS AN OWNER: "band textures are cached per band and freed at the breach's end"):
-   *  every band's dress this breach put up, freed - each record's albedo (every variant under it) and its emission - at the
+   *  every band's dress this breach put up (AUDIT EG III lane4 #4: and its Beats' pictures, scenes/egSpan.js egBeatTellDown),
+   *  freed - each record's albedo (every variant under it) and its emission - at the
    *  breach's end: the client's word on the first frame out of the Spire that is no swap's or answer's step (scenes/
    *  egClient.js), so a swap in place and the old step under the veil upload nothing. Refused while a circle stands (its
    *  draws still wear them). Answers how many textures it freed. */
   function egBandsDown() {
-    if (!_egBands.size || (mode === 'dungeon' && isEgHall(dungeonLoc))) return 0;
-    let n = 0;
+    if (mode === 'dungeon' && isEgHall(dungeonLoc)) return 0;
+    let n = egBeatTellDown(renderer);   // AUDIT EG III (lane4 #4): every Beat's pictures the breach's spans put up (scenes/egSpan.js) - nothing held, nothing done
+    if (!_egBands.size) return n;
     for (const band of _egBands) {
       const arch = egBandArchive(band);
       for (const rec of EG_DRESS_RECORDS) { if (renderer?.releaseTexture?.(arch, rec)) n++; if (renderer?.evictEmissionTexture?.(`${arch}_${rec}`)) n++; }
@@ -10756,6 +10759,7 @@ export function createWorldModes(host) {
       spherecast: (o, r, d, m) => { const h = player.collider?.sphereCast?.(o, r, d, m)?.dist; return Number.isFinite(h) ? h : null; },   // MAC-A: castSphere's seam beside the ray - the camera's two obstacle guards are sphere casts (camera.cpp:186, :200)
     });
     if (decorTool.flying()) mwv.eye = cam.pos;   // DECOR1d: the free camera looks from its own eye, never over the body's shoulder
+    if (mode === 'dungeon' && isEgHall(dungeonLoc)) host.egWitnessEye?.(mwv, dt, (o, r, d, m) => { const h = player.collider?.sphereCast?.(o, r, d, m)?.dist; return Number.isFinite(h) ? h : null; });   // AUDIT EG III (lane6 #1, Elite-Gates.md section 16.5): THE WITNESS VIEW's eye and THE FALL's sink - the Spire's frame is this one; damped, and colliding with this context's own rock
     if (cardSeat) mwv.eye = cam.pos;   // CARDS2: seated, the seat's own view - first person (Tavern-Cards.md section 2)
     const view = betterAmbience.view(lookAt(mwv.eye, [mwv.eye[0] + fwd[0], mwv.eye[1] + fwd[1], mwv.eye[2] + fwd[2]], [0, 1, 0]));   // BA1: the shaker sits between the follower and the camera
     const aimView = view.slice();   // AUDIT CLIMB-ARC F10: the view the player aims with, before the climb's feel

@@ -335,7 +335,7 @@ export function createGateVeil({ doc = globalThis.document, raf = (f) => globalT
     cover(look = 'fire', opts = undefined) {
       if (!build()) return Promise.resolve(false);
       const t = now();
-      if (phase === 'idle') takeLook(look, opts);
+      if (phase === 'idle' || phase === 'opening') takeLook(look, opts);   // AUDIT EG III (lane4 #13): a cover asked while the last step's veil still opens closes in ITS OWN look - a closing or a shut veil keeps the one it closed with
       if (phase === 'shut') { wait = 0; return Promise.resolve(true); }
       if (phase === 'idle' || phase === 'opening') {
         // from where it stands: the closing's own clock set back to the moment its front was here

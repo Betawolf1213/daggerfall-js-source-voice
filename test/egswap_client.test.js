@@ -409,7 +409,7 @@ test('EG10 THE HOSTS WIRED: the mode machine builds the swap and hands the clien
   assert.match(WM, /if \(parts\) egGateStand\(ctx, spec\.h, parts\);/);
   assert.match(WM, /for \(const g of parts\.gates\) egGateStand\(ctx, g\.h, g\);/);
   assert.match(DC, /egRecircle\(r\) \{ return egRecircle\(r\); \},/);
-  assert.match(E, /if \(E\.sg === 'rest' && c === M\.egHallCircle\?\.\(\)\) M\.egPrebuild\?\.\(\{ b: E\.b, seed: E\.seed, c: c \+ 1, geo: E\.geo \?\? 0 \}\);/);
+  assert.match(E, /if \(E\.sg === 'rest' && c === M\.egHallCircle\?\.\(\) && !lawForeign\(E\)\) M\.egPrebuild\?\.\(\{ b: E\.b, seed: E\.seed, c: c \+ 1, geo: E\.geo \?\? 0 \}\);/);   // PIN MOVED (AUDIT EG III lane4 #3): never under another law (test/egaudit3_client.test.js pins it)
   assert.match(E, /if \(built === 'ready' && modes\(\)\?\.egSwapCircle\?\.\(r\)\) \{ if \(!witness && placeOn\(E\.h, E, false\)\) placedH = E\.h; return true; \}/);
   assert.ok(E.indexOf("modes()?.egSwapCircle?.(r)") < E.indexOf('modes()?.forceExitToExterior?.();'), 'the swap before the old step');
   assert.ok(isEgHall({ egBreach: B, egCircle: 2, dungeon: { recordElement: { header: { locationId: 0x7ffff300 } } } }));

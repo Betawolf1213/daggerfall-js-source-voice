@@ -349,7 +349,7 @@ import { egRoomKey, EG_TEXT } from '../net/egLaw.js';   // EG-PLAY: an Elite Bre
 import { createEgClient } from './egClient.js';   // EG-PLAY: the breach on this screen - the key, the call, the halls, the receipts
 import { createEgArchPool, egArchPlace, egArchSite, EG_ARCH_GATE_NEAR_M } from './egArch.js';   // EG-F: the Elite Breach's arch - its pool, its place, its site; a Dagon's Breach near
 import { createEgCallPortal, createEgCallPrompt } from './egCall.js';   // EG-F: the call's portal at my feet, and its prompt
-import { openEgStartWindow } from '../ui/egStartWindow.js';   // EG-F: the start window, over DFU's list picker
+import { openEgStartWindow, egStartAsk } from '../ui/egStartWindow.js';   // EG-F: the start window, over DFU's list picker; AUDIT EG III (lane4 #12): its question's door
 import { gateClearSet } from '../world/gateClearance.js';   // EG-F: the gate's clearing and every standing arch's, one set
 import { EG_LAST_WORD_MIN } from '../net/egLaw.js';   // EG-F: a quest falling due inside a breach's last word
 import { createEgFight } from './egFight.js';   // EG-PLAY: a hall's fight
@@ -25141,7 +25141,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       return null;
     },
     closeList: (win) => { if (win) modes?.closeWindow?.(win); },
-    ask: (lines, onYes, onNo) => townTalk.showOverlay(new YesNoBoxWindow({ rows: lines, onYes, onNo })),
+    ask: egStartAsk((w) => townTalk.showOverlay(w), (o) => new YesNoBoxWindow(o)),   // AUDIT EG III (lane4 #12): a box put out of its slot unanswered ends the window
   });
   const egClient = params.has('online') ? createEgClient({
     modes: () => modes, online: () => online, hub: () => socialLink(), account: { ..._accountEg, claim: (r) => _accountEg.claim(r, characterIdOf(playerEntity)).then(weirHeard) }, now: egNow, entity: playerEntity, player, cam,   // EG-E1: a claim carries the claiming character (its guild's deed) and its Weir Key restacks
@@ -25243,7 +25243,9 @@ export async function bootWorld(canvas, renderer, params, status) {
     if (!(onlineOn && playerSpawned)) egClient?.away();
   };
   /** The witness's eye (section 16.5), behind a living companion - the host frame's view, moved when it is. */
-  const egWitnessEye = (/** @type {{ eye: any }} */ v) => { if (egClient?.witnessing()) { const c = { pos: v.eye }; if (egClient.witnessEye(c, cam.yaw)) v.eye = c.pos; } };
+  const egWitnessEye = (/** @type {{ eye: any }} */ v, dt = 0, cast = null) => { if (egClient?.witnessing()) { const c = { pos: v.eye }; if (egClient.witnessEye(c, cam.yaw, { dt, cast })) v.eye = c.pos; } };   // AUDIT EG III (lane6 #1): the frame's dt and the host's sphere cast - damped and colliding (section 16.5)
+  /** AUDIT EG III (lane4 #10): the Spire's lights a frame - one list, refilled. */
+  const _egLightList = [], NO_EG_LIGHTS = Object.freeze([]);
   let _omenClockAt = null;   // AUDIT WB C4: when the relay's clock was first read this session (the omen's fallback wait)
   const gateOmen = params.has('online') ? createGateOmen({
     now: () => Date.now() + _sharedOffsetMs,
@@ -30243,11 +30245,13 @@ export async function bootWorld(canvas, renderer, params, status) {
     egHost: () => egClient?.fight()?.hostTargets() ?? null,   // EG-PLAY: the legion
     egHostHit: (hit) => !!egClient?.fight()?.hostHit(hit),
     egBatches: () => egClient?.batches() ?? [],   // EG-PLAY: the hall's bodies and the way home's portal
-    egLights: () => [...(egClient?.lights() ?? []), ...(sdSpoilsPool?.lights() ?? [])],   // EG-PLAY: the fight's glows, before the Spire's lamps; EG-E: and a Redoubt's spoils'
+    egLights: () => { _egLightList.length = 0; for (const L of egClient?.lights() ?? NO_EG_LIGHTS) _egLightList.push(L); for (const L of sdSpoilsPool?.lights() ?? NO_EG_LIGHTS) _egLightList.push(L); return _egLightList; },   // EG-PLAY: the fight's glows, before the Spire's lamps; EG-E: and a Redoubt's spoils' - AUDIT EG III (lane4 #10): one list refilled a frame
     drawEgFight: ({ proj, view, eye }) => { const t = performance.now() / 1000, fog = courtFogNow(); const a = !!egClient?.drawPass(proj, view, eye, t, fog), b = !!sdSpoilsPool?.drawPass(proj, view, eye, t, fog); if (a || b) renderer.markForeignPass(); },   // EG-PLAY: the telegraphs, vents and rifts; EG-E: a Redoubt's spoils' lines
     drawEgSky: ({ proj, view, eye }) => { if (egClient?.drawSky(proj, view, eye, deadlandsSeconds(), courtFogNow(), skyGain(renderer._fogColor, EG_HALL_FOG.color))) renderer.markForeignPass(); },   // EG-G2: the Spire's own sky (render/egSkyPass.js) - the band's void, the Spire's underside
     egWayHome: () => egClient?.wayHome(),   // EG-PLAY: a Redoubt's way home, pressed
     egCastBack: () => egClient?.castBack(),   // EG-PLAY: the void's cost
+    egWitness: () => !!egClient?.witnessing(),   // AUDIT EG III (lane4 #1, lane6 #1): a witness's body, held under the hall - the spans never cast it back, the dither pass tries nothing for it
+    egWitnessEye: (v, dt, cast) => egWitnessEye(v, dt, cast),   // AUDIT EG III (lane6 #1): THE WITNESS VIEW's eye and THE FALL's sink in the dungeon arm - the Spire's frame - damped and colliding (section 16.5)
     egGateOpen: (h) => !!egClient?.gateOpen(h),   // EG-PLAY: a Rampart's portcullis, stood or sunk
     sdFight: () => sdFightLink,   // SD8c: the Last Moment's fight as the page holds it, for the arena's set
     sdFightIn: () => !!online?.sendSdIn?.(playerEntity.level),   // SD8c: my `in` - my level, my game's brain

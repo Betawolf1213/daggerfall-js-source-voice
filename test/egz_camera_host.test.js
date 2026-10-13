@@ -21,6 +21,7 @@ import { SD_REALM_ARCHIVE } from '../src/world/sdRealm.js';
 import { identity } from '../src/world/mat4.js';
 import { buildEgLookModel } from '../src/world/egLook.js';
 import { Collider } from '../src/player/collider.js';
+import { egBeatTellDown } from '../src/scenes/egSpan.js';   // AUDIT EG III (lane4 #4): the band dress's owner frees the Beats' pictures too
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const WM = rd('src/scenes/worldModes.js');
@@ -76,9 +77,9 @@ function hostRig() {
   const st = { mode: 'dungeon', witness: false, feet: [0, 0, 0] };
   const host = { egGateOpen: () => false, egWitness: () => st.witness };
   const player = { bodyFeetAt: () => st.feet, feetAt: () => st.feet };
-  const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'EG_OCCLUDE_CHEST_M', 'player', 'decorTool', 'st',
+  const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'EG_OCCLUDE_CHEST_M', 'player', 'decorTool', 'egBeatTellDown', 'st',
     `let dungeonLoc = st.loc, dungeonCtx = st.ctx;\nObject.defineProperty(st, 'm', { get: () => mode });\nlet mode = 'dungeon';\nst.setMode = (m) => { mode = m; };\n${region.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap({ workerFactory: st.worker });')}\n${pass}\nreturn { standEgHall, egPrebuild, egSwapCircle, egBandsDown, egOccludeFrame, egOcc, get draw() { return _egDraw; }, get mesh() { return _egMesh; } };`)(
-    host, r, (l) => !!l?.egBreach && l.dungeon?.recordElement?.header?.locationId === 0x7ffff300, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, EG_OCCLUDE_CHEST_M, player, { flying: () => !!st.flying },
+    host, r, (l) => !!l?.egBreach && l.dungeon?.recordElement?.header?.locationId === 0x7ffff300, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, EG_OCCLUDE_CHEST_M, player, { flying: () => !!st.flying }, egBeatTellDown,   // PIN MOVED (AUDIT EG III lane4 #4): egBandsDown frees the Beats' pictures with the dress (scenes/egSpan.js)
     Object.assign(st, { loc, ctx, worker: syncWorker }));
   return { r, calls, wm, ctx, loc, st, shadows, fail, get live() { return live; } };
 }

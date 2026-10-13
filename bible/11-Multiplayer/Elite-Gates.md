@@ -1385,6 +1385,12 @@ audit39. Everything else is painted in code into the band's archives (section 25
 - **Freed on every exit**: the swap, the tear, the way home, a fall, forsaking, a void and a reload each free the hall's
   meshes, telegraph buffers and reverb buffers; the band's textures are freed at the breach's end. Pinned: after ten
   halls and every exit kind, the live mesh and texture counts return to baseline.
+- **The frame's lists** (AUDIT EG III): the breach client's frame keeps its lists - the occluders' pass tries and makes
+  nothing in first person or with nothing dithering, the fight leaves once, the spans' Iron Footing asks the census only
+  of Immovable's holder, and the client's batches, errand objects and holder and the world host's Spire lights are made
+  again only when the room's word moves. Left as they are, a few small objects a frame each: the slag lanes'
+  `realmToDungeon` arrays, `ui/egAccess.js` `egAccessNow`'s answer (asked several times a frame), the mode machine's
+  `extraBillboards` join in a hall, and the occluders' Map entries while a piece dithers.
 
 ### 11.10 Engines, alcoves and the Annals
 
@@ -2815,6 +2821,7 @@ height rides a word the fight already says, so the frames stay as many as they w
 | `{k:'ask', q, opts}` / `{k:'vote', q, y}` | room -> all / member -> room | the company's word: decrees, a Bargain, a respite, Ready |
 | `{k:'lping', x, z, kind}` | member -> room | a living member's ping, every 3 s (*here*, *danger*, *mine*; section 16.4) |
 | `{k:'buy', i}` | member -> room | a purchase from the Sutler (section 17.3) |
+| `{k:'tonic'}` | member -> room | a Spire Tonic drunk (section 17.1): one of the run's spent, and `{k:'eheal', p: 0.25, why: 'tonic'}` to that member alone - its health through the census, its magicka on its screen (AUDIT EG III) |
 | `{k:'mast'}` | member -> room | a Mastery used (Spirebridge, section 15) |
 | `{k:'ping', x, z, kind}` / `{k:'bequest', v}` / `{k:'forsake'}` | witness -> room | the witness's acts |
 | `{k:'home'}` | member -> room | the way home, confirmed |
@@ -3226,7 +3233,8 @@ rules. Every player-facing line is a constant in `EG_TEXT`, worded once and pinn
 - `src/scenes/worldModes.js` - WIRED: `swapEgHall(spec)` beside `enterSdRealm`; `standEgHall(ctx)` beside
   `standSdRealm` (meshes, collider buckets, lights and the hall's fragments, through `egHallParts`); the next hall's
   build during the closing; every swap under `stepThroughFire`; each fragment's clamp; the cull; `madeLevelOf`; the
-  AvoidDeath hook.
+  AvoidDeath hook; the witness's eye and THE FALL's sink in the dungeon arm, off the world host's `egWitnessEye` and
+  `egWitness` (AUDIT EG III).
 - `src/scenes/dungeonContext.js` - WIRED: the span's riders (`sdStepsRide`, generalised in EG4) and RIDDEN POSES; no
   foes stream in a made level (every foe is the relay's); the AvoidDeath hook.
 - `src/scenes/exterior.js` - FLAGGED: the `?exterior` bench is offline. There is no Elite Breach there, and the key says
@@ -3242,9 +3250,12 @@ wired or flagged.
 - **THE FOUR HOSTS RULE**: section 28, and every slice record names all four.
 - **THE MODAL CONTRACT**: `worldModes.frame()`'s Spire branch returns the same type from every exit, and EG10 pins it in
   a test.
-- **THE NATIVE-WINDOW RULE**: on the classic skin, the start window is DFU's list picker (section 5). The rest window,
-  the Vestige offer, the company's word, the confirm, the board window and the recap are each built from DFU windows
-  named per element in their slice's record, or do not draw on the classic skin until they are looked up.
+- **THE NATIVE-WINDOW RULE**: on the classic skin, the start window is DFU's list picker and its one question DFU's YesNo
+  box (section 5), and the board window DFU's pickers (EG-ZM). The Vestige offer, the company's word and the recap are one
+  DOM panel (`ui/egHud.js` `drawEgPanel`) on both skins, its rows text: a departure from the rule, said here (AUDIT EG III)
+  - no DFU window holds three cards, a timed vote or the recap's strip. There is no rest window (the rest is the
+  Redoubt's sequence, on the HUD), and the confirm is a second press of the same word within `EG_HOME_CONFIRM_MS` (the way
+  home, forsaking), asked on the mid-screen line.
 - **THE ONE CONSTRUCTION SEAM**: `egHallParts(spec)` builds every hall's model, collider buckets and riders together
   (section 9), and `madeLevelOf` is the one law of the made levels' rules (section 24).
 - **ONE DFU MEMBER, ONE EXPORT**:
@@ -3259,9 +3270,12 @@ wired or flagged.
   tools/mutants/, every mutant dead; laws are pinned with deepEqual against their tables, never inequalities.
 - **TEST THE SHAPE THE PRODUCER MINTS**: receipts, orders, specs, fragments and courses are tested as
   `mintEgReceipt`, `identityToken`, `egHallOf`, `egFragOf` and `courseOf` mint them, never as hand-built literals.
-- **THE SLOT IS EMPTIED BEFORE THE OCCUPANT IS TOLD**: the start window, the rest window, the Vestige offer, the
-  company's word and the confirm are overlays. Each is closed by the room's `st` or `end`, with the slot nulled first
-  and one callback.
+- **THE SLOT IS EMPTIED BEFORE THE OCCUPANT IS TOLD**: the start window is the arc's one overlay - its list on the mode
+  machine's window slot, its question on the host's overlay - each slot emptied before its occupant is told, its choice
+  made once however many doors call it, and a question put out of its slot unanswered ending it as a cancel
+  (`ui/egStartWindow.js` `egStartAsk`, AUDIT EG III). It ends by its own choice, a cancel, or the online frame going
+  (`away`), never by the room's word. The panel is redrawn from the room's state each frame and taken down when the state
+  holds nothing for it.
 - **ASYNC NEVER DROPS**:
   - the open is single-flight on `rq`, and the hub's forward is retried on `ez`;
   - claims are coalesced per (breach, Redoubt, kind);
@@ -4476,7 +4490,9 @@ re-aimed by content, every one dead.
 4. **One generator.** The relay and the client keep the current law's generator alone, so "seven days of EG_SPEC" is the
    table and the void. A future spec change keeps its predecessor in EG_LAWS (with its generator) for seven days, or goes
    through THE DRAIN. A client rebuilds a circle drawn before its given halls came, under the veil. Its next circle draws
-   from them at once.
+   from them at once. Under another law the client offers no worker's build (AUDIT EG III): the swap's worker
+   (`world/egCircleWorker.js`) never holds the halls given, so every circle of such a breach steps the old way, from this
+   thread's halls, and the rebuild is counted done only once its step has run.
 5. **Not built here:** THE FAIR TRAIL, the clock correction, the ridden poses (EG-H's rest); a `force` deploy voiding live
    breaches by name; the hub retrying `EG_INTERNAL_OPEN`; `{k:'void', z}` from a client holding a stake the room never
    took; the unknown room's tombstone (EG8a/EG8b's key-loss paths).
@@ -4542,7 +4558,8 @@ and draws what they choose.
     copy in view;
   - the ride and the cull together cost 0.19 ms a frame on average and 0.32 ms at worst (seven circles, hall 2's eye).
 - **THE EDGE LINE** (`world/egLook.js` `egCircleEdges`, `render/egLinePass.js`). Screen-width quads, 2 px wide (3 px on
-  a screen 720 px tall or less), gold at luma 0.38, lifted 0.02 m. They run along every disc's rim, every band's long
+  a screen 720 px tall or less), gold at luma 0.38 (under any danger palette but the Standard, its safety at that luma,
+  and the tracks and streamers its hazard - AUDIT EG III), lifted 0.02 m. They run along every disc's rim, every band's long
   edges (not a cave's, a wall's or a tube's) and the lanes; a falling island's disc has none. The Rail's dashed track
   (0.5 m dashes, under its run) and the Drum's are drawn in the same pass. Every line keeps section 25.6's fog floor.
 - **THE LAST TELLS.**
@@ -6606,9 +6623,10 @@ waystones had already answered. All of it is client-only: nothing in the relay's
     EG-G2's streamers across the section;
   - "the wall's face lit" is a lamp of the circle's own light before it, not a lit face: gold on a wall would say "it
     holds" (section 25.2);
-  - the Beat's pictures are the session's: uploaded once a renderer for each band and palette, never freed at a clear -
-    the band dress's own law (EG-G2), so a swap uploads nothing again. The ghosts' pass, the batch's meshes and every
-    tell's slot are the span's and are freed at its clear;
+  - the Beat's pictures are the breach's: uploaded once a renderer for each band and palette, never freed at a clear - the
+    band dress's own law, so a swap uploads nothing again - and freed with that dress at the breach's end (AUDIT EG III:
+    `scenes/egSpan.js` `egBeatTellDown`, called by `egBandsDown`; EG-ZN had retired the session law this line cited). The
+    ghosts' pass, the batch's meshes and every tell's slot are the span's and are freed at its clear;
   - the ghost slab is the ghost's own top, filled in its gold at 0.35 of its light, while the peer's word holds (0.3 s);
   - the Gust's wind is the page's AmbientWindMoanDeep (66), where the Hour's breath blows AmbientWindBlow1 (70).
 - **Not built:**

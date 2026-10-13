@@ -551,7 +551,7 @@
   {
     "name": "EGSWAP-the-build-never-asked",
     "file": "src/scenes/egClient.js",
-    "old": "    if (E.sg === 'rest' && c === M.egHallCircle?.()) M.egPrebuild?.(",
+    "old": "    if (E.sg === 'rest' && c === M.egHallCircle?.() && !lawForeign(E)) M.egPrebuild?.(",
     "new": "    if (false) M.egPrebuild?.(",
     "tests": [
       "test/egswap_client.test.js"
@@ -578,8 +578,8 @@
   {
     "name": "EGSWAP-the-wait-unbounded",
     "file": "src/scenes/egClient.js",
-    "old": "if (now() - swapWaitAt < EG_SWAP_WAIT_MS) return; }",
-    "new": "return; }",
+    "old": "if (now() - swapWaitAt < EG_SWAP_WAIT_MS) return false; }",
+    "new": "return false; }",
     "tests": [
       "test/egswap_client.test.js"
     ]

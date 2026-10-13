@@ -66,9 +66,11 @@ export function createEgLookDraw({ gl = null } = {}) {
       mist ??= build('mist', () => (gl ? new EgMistPass(gl) : null));
       return !!mist?.draw(proj, view, eye, at, EG_MIST.color, ts, fog);
     },
-    /** THE LINES, last: the circle's edges and tracks, and the Gust's streamers on the shared clock `ts` (s). */
-    drawOver(proj, view, eye, ts, fog = null) {
+    /** THE LINES, last: the circle's edges and tracks, and the Gust's streamers on the shared clock `ts` (s). AUDIT EG III
+     *  (lane4 #5): `pal` the danger palette they are drawn in (render/egLinePass.js palette). */
+    drawOver(proj, view, eye, ts, fog = null, pal = null) {
       if (!key || !lines) return false;
+      lines.palette(pal);
       const n = sections.length ? egStreamersAt(sections, ts, streamers, alphas) : 0;
       return lines.draw(proj, view, eye, ts, fog, streamers, n, alphas);
     },

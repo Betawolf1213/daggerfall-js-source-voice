@@ -36,8 +36,10 @@ import { EG_CVD } from '../ui/egAccess.js';   // the colour-vision matrices' one
 export const EG_EDGE_LINE = Object.freeze({ px: 2, phonePx: 3, phoneH: 720, luma: 0.38, lift: 0.02, color: Object.freeze([1.0, 0.78, 0.4]) });
 /** The line's width (px) on a drawing buffer `h` tall. */
 export const egEdgeLinePx = (h) => (h > 0 && h <= EG_EDGE_LINE.phoneH ? EG_EDGE_LINE.phonePx : EG_EDGE_LINE.px);
-/** The line's colour at its luminance: the gold scaled so its display luminance is EG_EDGE_LINE.luma (linear rgb). */
-export const egEdgeLineColor = () => { const g = EG_EDGE_LINE.color, l = 0.2126 * g[0] + 0.7152 * g[1] + 0.0722 * g[2], k = EG_EDGE_LINE.luma / l; return [g[0] * k, g[1] * k, g[2] * k]; };
+/** The line's colour at its luminance: the gold scaled so its display luminance is EG_EDGE_LINE.luma (linear rgb). AUDIT EG
+ *  III (lane4 #5, sections 25.2 and 25.7): `pal` the danger palette (ui/egAccess.js) - the Standard keeps the line's own gold,
+ *  any other its safety, at the same luminance. */
+export const egEdgeLineColor = (pal = null) => { const g = pal && pal.key !== 'standard' && Array.isArray(pal.safety) ? pal.safety : EG_EDGE_LINE.color, l = 0.2126 * g[0] + 0.7152 * g[1] + 0.0722 * g[2], k = EG_EDGE_LINE.luma / l; return [g[0] * k, g[1] * k, g[2] * k]; };
 /** A line segment's kinds (the pass's `aM.z`): the edge line, a track's dash, a streamer. */
 export const EG_LINE_KIND = Object.freeze({ edge: 0, track: 1, streamer: 2 });
 /** A track's dash and its gap (m), and its depth under its piece's top. */
