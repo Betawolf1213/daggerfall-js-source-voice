@@ -2,8 +2,8 @@
   {
     "name": "PERF-ON3-a-sorted-every-ask",
     "file": "src/net/roster.js",
-    "old": "  if (!same) {\n    const out = Object.freeze(",
-    "new": "  if (true) {\n    const out = Object.freeze(",
+    "old": "  if (!same) {\n    const sorted = rows.slice().sort(byNameThenTag);",
+    "new": "  if (true) {\n    const sorted = rows.slice().sort(byNameThenTag);",
     "tests": ["test/perfon3.test.js"],
     "note": "AUDIT 637 (re-aimed by content): A6 makes the answer before it commits the listing, so the block opens on the answer now."
   },

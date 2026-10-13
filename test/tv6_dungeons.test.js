@@ -164,7 +164,7 @@ test('TV6 readout: an undiscovered dungeon is an unnamed mark - its own look, a 
 test('TV6 host: the dungeons gathered once, listed on a pixel or a find, marked found (a far plate, a journey) or not (the lair); the find on the enhanced interface outdoors, through the port\'s own store, said on the screen', () => {
   const w = rd('src/scenes/world.js');
   // PIN MOVED (AUDIT OW5 J4): and the pixel's own box the approach keeps within
-  assert.match(w, /import \{ dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M \} from '\.\.\/systems\/travelDungeons\.js';/);
+  assert.match(w, /import \{ TV_DUNGEON_TYPES, dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M \} from '\.\.\/systems\/travelDungeons\.js';/);
   assert.match(w, /_tvDungeonRows \?\?= dungeonRows\(mapDict\)/, 'AUDIT OW3 D3: gathered once off the map rows');
   assert.doesNotMatch(w, /\?\?= dungeon\w*\(locationIndex\)/, 'AUDIT OW3 D3: never a one-time snapshot of the live index');
   assert.match(w, /if \(tvDng\.at && tvDng\.at\.x === at\.x && tvDng\.at\.y === at\.y && tvDng\.dg === dg && tvDng\.grid === grid && tvDng\.n === n\) return tvDng\.list;/, 'kept between pixels and finds (and while the grid and the index hold)');

@@ -4999,6 +4999,16 @@
   "tr": "5c3433e7997e",
   "by": "claude-in-session"
  },
+ "menu.font.installed": {
+  "en": "00d357f18c41",
+  "tr": "952997c0aa64",
+  "by": "claude-in-session"
+ },
+ "menu.font.pickBelow": {
+  "en": "5cc591407368",
+  "tr": "9c0fa74c5459",
+  "by": "claude-in-session"
+ },
  "menu.foot.build": {
   "en": "80754af91bfb",
   "tr": "80754af91bfb",
@@ -9509,6 +9519,16 @@
   "tr": "5914e59812ee",
   "by": "claude-in-session"
  },
+ "pause.journal.questFoe": {
+  "en": "6f870792023e",
+  "tr": "ee34147649f4",
+  "by": "claude-in-session"
+ },
+ "pause.journal.questSlain": {
+  "en": "4dfbbf873662",
+  "tr": "6d9b9e4dff59",
+  "by": "claude-in-session"
+ },
  "pause.journal.remove": {
   "en": "e963907dac5c",
   "tr": "9b4acdcbfc97",
@@ -9592,6 +9612,16 @@
  "pause.journal.share": {
   "en": "71650d6cfd0e",
   "tr": "4228901a5431",
+  "by": "claude-in-session"
+ },
+ "pause.journal.shelfItemsBack": {
+  "en": "06581fd0825f",
+  "tr": "adbb017ff254",
+  "by": "claude-in-session"
+ },
+ "pause.journal.shelfItemsFree": {
+  "en": "f4b232467448",
+  "tr": "257df1730596",
   "by": "claude-in-session"
  },
  "pause.journal.showHidden": {

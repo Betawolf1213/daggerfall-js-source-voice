@@ -1383,7 +1383,7 @@ function drawMarks(marks, vw, vh, dpr, feet = null) {
       g.lineWidth = 1.5; g.strokeStyle = C.brass; g.stroke();
     } else if (look === 'band' || look === 'raider') {   // OW-GLYPHS: monsters on the move - a skull in the enemy's red
       skullGlyph(g, x, y);
-    } else if (look === 'lair' || (look === 'far' && /\bdungeon\b/.test(m.kind ?? ''))) {   // OW-GLYPHS: a dungeon - its arch, an unfound lair's red, a found one's brass
+    } else if (look === 'lair' || ((look === 'far' || look === 'place') && /\bdungeon\b/.test(m.kind ?? ''))) {   // OW-DUNGEON-DOT: and a found one's plate in the grid   // OW-GLYPHS: a dungeon - its arch, an unfound lair's red, a found one's brass
       dungeonGlyph(g, x, y);
     } else if (look === 'party' || look === 'traveller') {   // OW-GLYPHS: a player - a bust, my party's green, a stranger's verdigris; a crowd two
       if (/\bcrowd\b/.test(m.kind ?? '')) crowdGlyph(g, x, y); else personGlyph(g, x, y);

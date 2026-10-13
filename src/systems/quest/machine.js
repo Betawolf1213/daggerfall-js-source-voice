@@ -483,6 +483,7 @@ export class QuestMachine {
   _buildHooks() {
     return {
       showPopup: (q, tokens) => this.deps.showPopup?.(q, tokens),
+      questFoeKilled: (q, foe, n) => this.deps.questFoeKilled?.(q, foe, n),   // QUEST-NOTE: a quest's foe fell
       showPrompt: (q, message, respond) => this.deps.showPrompt?.(q, message, respond),
       // QG1: PromptMulti's 2-4 button box - BUTTONS.RCI record
       // numbers out, the clicked record number back
@@ -1591,6 +1592,9 @@ export class QuestMachine {
     const now = Math.floor(this.deps.nowSeconds?.() ?? 0);
     quest.shelvedAt = now !== 0 ? now : 1;   // 0 reads as never set aside
     quest.shelvedSites = [...new Set(this.siteLinks.filter((l) => l.questUID === quest.uid).map((l) => l.placeSymbol?.name).filter(Boolean))];
+    // QUEST-SHELF-DROP: the items the pack holds now - set aside, the quest holds none, and the player may throw them
+    // away (itemTransfer.js questTransferRefused); reclaimed, each that is gone is handed back
+    quest.shelvedItems = [...quest.resources.values()].filter((r) => r?.isItem && !r.madePermanent && this.deps.carriesQuestItem?.(r)).map((r) => r.symbol.name);
     this.siteLinks = this.siteLinks.filter((l) => l.questUID !== quest.uid);
     for (const [factionID, owner] of [...this.factionListeners]) if (owner?.parentQuest === quest) this.factionListeners.delete(factionID);
     for (const task of quest.tasks.values()) {
@@ -1627,9 +1631,11 @@ export class QuestMachine {
     const now = Math.floor(this.deps.nowSeconds?.() ?? 0);
     const away = Math.max(0, now - quest.shelvedAt);
     const sites = quest.shelvedSites ?? [];
+    const carried = quest.shelvedItems ?? [];
     const data = JSON.parse(JSON.stringify(quest.getSaveData()));
     data.shelvedAt = null;
     data.shelvedSites = null;
+    data.shelvedItems = null;
     shiftQuestStamps(data, away, { own: true });
     const standing = this._liveBehaviours(quest.uid);   // its audit: relinked at once, as a resync's are (AUDIT DISC7 C2)
     quest.restoreSaveData({ ...data, uid: quest.uid }, this._saveResolvers());
@@ -1639,8 +1645,17 @@ export class QuestMachine {
     }
     for (const b of standing) b.relinkToLiveQuest?.();
     this.deps.relinkQuestTopics?.(quest);   // and its talk topics (AUDIT 68 S29-share-topics): 'where is' reads the live Person
+    // QUEST-SHELF-DROP: an item the pack held as it was set aside and has not now (thrown away while the quest was not
+    // running) is handed back, its own quest item, so the quest can still be finished
+    let returned = 0;
+    for (const name of carried) {
+      const res = quest.getItem?.({ name });
+      if (!res?.daggerfallUnityItem || this.deps.carriesQuestItem?.(res)) continue;
+      this.deps.giveItemToPlayer?.(structuredClone(res.daggerfallUnityItem));
+      returned++;
+    }
     this.deps.forceTopicListsUpdate?.();
-    return { ok: true, quest };
+    return { ok: true, quest, returned };
   }
 
   /**

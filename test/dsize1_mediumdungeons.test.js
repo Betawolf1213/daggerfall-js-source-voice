@@ -211,7 +211,7 @@ test('DSIZE1 E1 (SD-ONLINE, PIN MOVED): a quest stamped at another size, loaded 
   q.resources.set('boss', { symbol: sym('boss'), isFoe: true, spawnCount: 1, killCount: 0, parentQuest: q, questResourceBehaviour: null });
   q.tasks.set('_go_', { actions: [{ typeName: 'PlaceFoe', foeSymbol: sym('boss'), placeSymbol: sym('dun'), marker: -1, isComplete: true }] });
   assert.equal(relayOnlineDungeons(m), 1, 'one quest re-laid');
-  assert.deepEqual(dun.siteDetails.questSpawnMarkers.map((k) => [k.dungeonX, k.dungeonZ, k.markerID]), [[0, 0, 101], [1, 0, 203]], 'the room\'s build\'s markers');
+  assert.deepEqual(dun.siteDetails.questSpawnMarkers.map((k) => [k.dungeonX, k.dungeonZ, k.markerID]), [[0, 0, 101]], 'the room\'s build\'s markers (QUEST-CAPS: the medium build\'s cap B1 left out - place.js questCapsSkipped)');
   assert.deepEqual(dun.siteDetails.questItemMarkers.map((k) => [k.dungeonX, k.markerID]), [[0, 102]]);
   assert.deepEqual(dun.siteDetails.selectedMarker.targetResources.map((t) => t.name), ['boss'], 'the boss stands on the room\'s build\'s marker');
   assert.equal(dun.siteDetails.selectedMarker.dungeonZ, 0, '...a marker the room\'s build has');

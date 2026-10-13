@@ -151,6 +151,9 @@ export function placeRoomQuestFoe(env, handle, spots) {
   return placeFoeFreely(env, ROOM_NEAR_RING) ?? roomMarkerSpot(env, spots);
 }
 
+/** QUEST-BACKFACE: the dungeon context's geometry bucket (dungeonContext.js addMesh('dungeon', ...)). */
+const DUNGEON_GEOMETRY_BUCKET = 'dungeon';
+
 export function placeFoeEnv({ collider, playerFeet, playerYawRad, fovDegrees, rolls = Math.random, isOccupied = null }) {
   const toObj = (p) => ({ x: p[0], y: p[1], z: p[2] });
   return {
@@ -161,7 +164,25 @@ export function placeFoeEnv({ collider, playerFeet, playerYawRad, fovDegrees, ro
     raycast: (origin, dir, maxDist) => {
       const o = [origin.x, origin.y, origin.z];
       const d = [dir.x, dir.y, dir.z];
-      const h = collider.raycastHit(o, d, maxDist);
+      // QUEST-BACKFACE (2026-10-14, Dudey's dev with a spawn debugger: "there isnt even a spawn point ... its just
+      // droping the spawn location in general instead of find a spot"): UNITY'S RAYCAST NEVER HITS A MESH COLLIDER'S
+      // BACK FACE, and the port's collider is two-sided (it says so: `back`). A ring ray that slipped out through a seam
+      // took its "open area" point in the rock, and the floor probe there struck the TOP of a hall's ceiling - a back
+      // face - and the foe stood on it, outside every hall (CreateFoe, an encounter, a summon). A back-face hit is passed
+      // through, as Unity's ray passes it: the cast goes on beyond it for what is left of its reach. The DUNGEON's own
+      // geometry alone (its bucket, 'dungeon' - the winding dungeonFires.js colliderFireProbe reads a floor by): a
+      // building's or the street's models answer as they always did.
+      const pastBack = (r) => r.back === true && r.key === DUNGEON_GEOMETRY_BUCKET;
+      let h = collider.raycastHit(o, d, maxDist);
+      let travelled = 0;
+      for (let k = 0; k < 8 && pastBack(h) && Number.isFinite(h.dist); k++) {
+        travelled = h.dist + 0.01;   // h.dist is measured from `o` (the re-cast adds what it had travelled)
+        if (travelled >= maxDist) { h = { dist: Infinity, normal: null, back: false }; break; }
+        const o2 = [o[0] + d[0] * travelled, o[1] + d[1] * travelled, o[2] + d[2] * travelled];
+        const h2 = collider.raycastHit(o2, d, maxDist - travelled);
+        h = { ...h2, dist: Number.isFinite(h2.dist) ? h2.dist + travelled : Infinity };
+      }
+      if (pastBack(h)) h = { dist: Infinity, normal: null, back: false };
       let dist = h.dist;
       let normal = h.normal;
       // THE ANALYTIC FLOOR IS GROUND TOO (the guards-run-in-place

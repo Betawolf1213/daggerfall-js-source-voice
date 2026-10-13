@@ -62,7 +62,7 @@ import { isEnhanced } from '../systems/uiSkin.js';
 import { audio } from '../systems/audio.js';
 import { SOUND } from '../systems/soundClips.js';
 import { SKILL_NAMES } from '../systems/skills.js';
-import { localizedText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
+import { localizedText, t } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; QUEST-NOTE: the port's own words
 import { bindings } from './input.js';
 import { codeForAction } from '../systems/inputActions.js';   // LV2: the inverse read, one home
 import { buttonText } from '../systems/controlsConfig.js';    // GetButtonText - the key as a player sees it
@@ -80,6 +80,12 @@ import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first tou
 export const NOTICE_LEVEL = 'level';
 export const NOTICE_SKILL = 'skill';
 export const NOTICE_MASTERY = 'mastery';
+/** QUEST-NOTE: a quest's word - its foe fallen (a player, 2026-10-13: "Would it be possible to implement kill/quest
+ *  notifications?"). News, as a skill's row is. */
+export const NOTICE_QUEST = 'quest';
+export const questSlainTitle = () => t('pause.journal.questSlain', 'Quest target slain');   // L10N4: read when it is drawn
+/** QUEST-NOTE: who fell, as the notice and the chat name it - the Foe's own name, else its type's, else the quest's foe. */
+export const questFoeName = (foe) => String(foe?.displayName || foe?.typeName || t('pause.journal.questFoe', 'Your quest\'s foe')).trim();
 
 /** How long an announcement holds before it goes (or, for the level,
  *  before it folds down to the standing line). Skyrim's own
@@ -145,6 +151,11 @@ export class LevelNotices {
   announceLevel(level, now) {
     this.announcedLevel = level ?? null;
     return this._push(NOTICE_LEVEL, NOTICE_LEVEL, RISEN_TITLE, level != null ? `Level ${level}` : '', now);
+  }
+
+  /** QUEST-NOTE: a quest's word - a title and a line under it, keyed by `key` so a second word of one quest updates it. */
+  announceQuest(key, title, sub, now) {
+    return this._push(NOTICE_QUEST, `quest:${key}`, title, sub, now);
   }
 
   /** A skill rose (PlayerEntity.RaiseSkills' skillImprove moment). */
@@ -283,6 +294,18 @@ export function announceLevelUp(entity, { say = null, open = null, now = nowMs()
   return true;
 }
 
+/** QUEST-NOTE: A QUEST'S FOE FELL - on the enhanced strip a row in the mastery's brass ("Quest target slain", who and
+ *  for which quest, its count where there are several); on the classic skin the HUD's line. */
+export function announceQuestFoeSlain({ who, quest, done = 1, of = 1, key = null }, { say = null, now = nowMs(), doc = DOC } = {}) {
+  const count = of > 1 ? ` (${Math.min(done, of)}/${of})` : '';
+  if (!isEnhanced() || !doc) {
+    say?.(`${who} slain${count}.${quest ? ` (${quest})` : ''}`);
+    return false;
+  }
+  levelNotices.announceQuest(key ?? `${quest}|${who}`, questSlainTitle(), `${who}${count}${quest ? ` · ${quest}` : ''}`, now);
+  return true;
+}
+
 /** A skill rose. The classic lane keeps the popup line it has always
  *  had; the enhanced one takes it out of the column and puts it on the
  *  strip, where it reads as a change to the CHARACTER rather than as
@@ -383,7 +406,7 @@ function rowNode(doc, r) {
   // (touch, or the freed cursor); the pause window's Stats page carries the same door for everyone else.
   const clickable = r.kind === NOTICE_LEVEL && codeForAction(bindings(), 'CharacterSheet') != null;
   const n = doc.createElement(clickable ? 'button' : 'div');
-  n.className = `lv-note lv-note-${r.kind}${r.standing ? ' lv-standing' : ''}${clickable ? ' lv-clickable' : ''}${r.fading ? ' lv-fading' : ''}`;
+  n.className = `lv-note lv-note-${r.kind}${r.kind === NOTICE_QUEST ? ' lv-note-mastery' : ''}${r.standing ? ' lv-standing' : ''}${clickable ? ' lv-clickable' : ''}${r.fading ? ' lv-fading' : ''}`;
   // SKILL2: the strip is rebuilt whenever a row comes or goes, so a row
   // already fading resumes its fade where it was instead of restarting it.
   if (r.fading && n.style) n.style.animationDelay = `-${Math.round(r.fadeElapsed ?? 0)}ms`;
@@ -394,7 +417,7 @@ function rowNode(doc, r) {
   }
   const gem = doc.createElement('span');
   gem.className = 'lv-note-gem';
-  gem.textContent = r.kind === NOTICE_SKILL ? '▲' : '✦';
+  gem.textContent = r.kind === NOTICE_SKILL ? '▲' : r.kind === NOTICE_QUEST ? '⚔' : '✦';
   const body = doc.createElement('span');
   body.className = 'lv-note-body';
   const t = doc.createElement('span');

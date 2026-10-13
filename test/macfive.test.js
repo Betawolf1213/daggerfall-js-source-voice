@@ -147,7 +147,10 @@ test('PL3: the look gate holds a lock a door just won inside its gesture, and re
     assert.equal(dom.exits, 0, 'within the grace the lock the gesture won is kept');
     assert.equal(globalThis.document.pointerLockElement, dom.canvas);
     gate(false);
-    assert.equal(dom.requests, 2, 'the falling edge asks again - the browser answers a held lock with nothing');
+    assert.equal(dom.requests, 1, 'CLICK-STUTTER: the falling edge asks nothing of a lock the canvas still holds (the browser answered a held lock with nothing, and the ask cost a pointerlockchange)');
+    globalThis.document.pointerLockElement = null;   // the lock lost under the window
+    gate(true); gate(false);
+    assert.equal(dom.requests, 2, '...and asks again for one it lost');
     assert.ok(RELOCK_GRACE_MS < 250, 'a grace, not a hold: a window that really opens releases on the next frame past it');
     assert.match(read('src/player/pointerLock.js'), /if \(held\) \{ if \(nowMs\(\) - _lastRequestAt > RELOCK_GRACE_MS\) releaseLook\(\); \}/);
     // the seams by source

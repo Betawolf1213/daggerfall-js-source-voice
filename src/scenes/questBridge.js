@@ -231,7 +231,7 @@ export const QUEST_CTX_CONTRACT = Object.freeze([
   'noteMinutes', 'notePlace',   // L10N5: a notebook header's render data
   'offerReward', 'onQuestEnded', 'onQuestStarted', 'ownMinutes', 'partySize', 'playSong',
   'playSound', 'playVideo', 'playerEntity', 'playerHasItem',
-  'playerRaceName', 'questClockStepMax', 'questFoeInstances', 'questWhere',   // GUIDE4: the host's two questions for the lens's look
+  'playerRaceName', 'questClockStepMax', 'questFoeInstances', 'questFoeKilled', 'questWhere',   // GUIDE4: the host's two questions for the lens's look
   'raiseTime', 'raisedSeconds', 'regionPriceAdjustment', 'releaseQuestItem',
   'relinkQuestTopics', 'removeItemFromPlayer', 'removeNpcQuestor',
   'removeProgressRumors', 'removeQuestInfoTopics', 'removeQuestRumors',
@@ -345,6 +345,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
     addGold: (n) => ctx.addGold?.(n),
     addHUDText: (t) => ctx.addHUDText?.(t),
     showPopup: (q, tokens) => ctx.showPopup?.(q, tokens),
+    questFoeKilled: (q, foe, n) => ctx.questFoeKilled?.(q, foe, n),   // QUEST-NOTE: a quest's foe fell
     showPrompt: (q, message, respond) => ctx.showPrompt?.(q, message, respond),
     // QG1: PromptMulti's box - 2-4 BUTTONS.RCI records, the click
     // answering the record number back (the action routes by value)
@@ -630,7 +631,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
       abandon(id) {
         const r = machine.shelveQuest(Number(id), { refuse: refuseRaid });
         if (r.ok && questTracker.pinned != null && Number(questTracker.pinned) === Number(id)) questTracker.pinned = null;
-        return { ...r, quest: undefined, text: r.ok ? `Abandoned: ${r.quest.displayName || r.quest.questName}. Reclaim it from your journal.` : shelfRefusalText(r.reason) };
+        return { ...r, quest: undefined, text: r.ok ? `Abandoned: ${r.quest.displayName || r.quest.questName}. Reclaim it from your journal.${r.quest.shelvedItems?.length ? ` ${t('pause.journal.shelfItemsFree', 'Its items may be thrown away now - reclaimed, they come back.')}` : ''}` : shelfRefusalText(r.reason) };
       },
       /** QUEST-SHELF: RECLAIM - the quest back as it was (machine.js reclaimQuest), on the journal's page: one the player
        *  had hidden is shown again (its audit - taken up again, it was put where no row showed it). Answers
@@ -638,7 +639,7 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
       reclaim(id) {
         const r = machine.reclaimQuest(Number(id));
         if (r.ok) notebook?.unhideQuest?.(id);
-        return { ...r, quest: undefined, text: r.ok ? `Reclaimed: ${r.quest.displayName || r.quest.questName}.` : shelfRefusalText(r.reason) };
+        return { ...r, quest: undefined, text: r.ok ? `Reclaimed: ${r.quest.displayName || r.quest.questName}.${r.returned ? ` ${t('pause.journal.shelfItemsBack', '{n, plural, one {Its item is back in your pack.} other {Its items are back in your pack.}}', { n: r.returned })}` : ''}` : shelfRefusalText(r.reason) };
       },
       /** QUEST-SHELF: whether the quest may be abandoned now - the journal draws the button only where it is. */
       canAbandon: (id) => machine.shelveRefusal(Number(id), { refuse: refuseRaid }) === null,
