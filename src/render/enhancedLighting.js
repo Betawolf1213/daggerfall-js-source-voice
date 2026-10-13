@@ -70,6 +70,7 @@ import { CLOUD_SHADOW_GLSL } from './cloudShadow.js';   // AUDIT 68 S16-el-cloud
 import { CLUSTER_X, CLUSTER_Y, CLUSTER_Z, CLUSTER_LIST_W, clustersOn } from './lightClusters.js';   // LC1: the grid the lantern loop walks, and its door   // EL6: the dither at the encode - the port's one Bayer
 import { SHADE_DARK } from '../systems/concealDraw.js';   // AUDIT-EL F14: the shade's pull toward black, interpolated as the classic BB_FS does   // EL3: the ambient occlusion image by screen position, and its kill door; EL4: the adapted exposure
 import { FLAT_DISSOLVE_GLSL } from '../systems/dissolve.js';   // DISSOLVE: the classic BB_FS's own
+import { FLAT_CRACK_GLSL } from '../systems/veinCrack.js';   // VEIN-CRACKS: the classic BB_FS's own
 import { HIT_FLASH_GLSL, ELITE_GLOW_GLSL, GLINT_GLSL } from '../systems/hitFlash.js';   // HITFLASH1: the struck-red term, the classic BB_FS's own
 import { pageParam } from '../systems/pageQuery.js';   // PERF-URL: the page's query, parsed once a search
 import { ecotoneGlsl } from './ecotoneGlsl.js';   // ECOTONE1: the ground's share of its neighbours, both terrain programs' one chunk
@@ -645,6 +646,7 @@ uniform float uEliteGlow;  // ELITE FOES
 uniform float uEliteTime;  // ELITE FOES: the embers' clock
 uniform vec4 uGlint;  // TELL2: a wind-up's glint (render/renderer.js BB_FS) - rgb in display colour, decoded below
 uniform vec4 uDissolve;  // DISSOLVE: the burn's share and its edge (systems/dissolve.js)
+uniform vec2 uCrack;  // VEIN-CRACKS: a worked vein's share and its seed (systems/veinCrack.js)
 uniform vec3 uBatchTint;  // ARENA5: the batch's own wash (batch.tint), in display colour - decoded below as every colour the lane takes
 uniform float uBatchDye;  // VEIN-HUE: how far the wash is the flat's colour (render/renderer.js BB_FS)
 uniform vec3 uTint;
@@ -670,6 +672,7 @@ ${HIT_FLASH_GLSL}
 ${ELITE_GLOW_GLSL}
 ${GLINT_GLSL}
 ${FLAT_DISSOLVE_GLSL}
+${FLAT_CRACK_GLSL}
 out vec4 outColor;
 void main() {
   vec2 uv = vUV;
@@ -692,7 +695,7 @@ ${LPT_FS_TEXEL}  if (tex.a < ((uSpectral == 1 || uConceal.x > 0.0) ? 0.1 : 0.5))
   }
   if (dissolveGone(uv)) discard;   // DISSOLVE: burnt away, or not yet through its portal
   vec3 emission = elDecode(emissionTexel);   // SPRITE-GRAD: sampled above the cut
-  vec3 albedo = max(elDecode(tex.rgb) - emission, vec3(0.0));
+  vec3 albedo = max(elDecode(tex.rgb * veinCrackShade(uv)) - emission, vec3(0.0));   // VEIN-CRACKS: a worked vein's seams, the classic lane's law - AUDIT GATHER-FEEL V4: the shade the texel's display colour takes there, then decoded with it (on the linear albedo a seam stood at half the classic's dark)
   vec3 base = vBBBase + vec3(0.0, 0.5, 0.0);   // EL2: the shadow is read a half unit up the sprite's base, once for the whole flat
   // PERF-SUN2: a flat has no normal, so there is no n.L to gate on - but
   // there is still uBBSun, which is the sun's whole share of the tint

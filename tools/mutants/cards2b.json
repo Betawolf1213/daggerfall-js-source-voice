@@ -200,8 +200,8 @@
   {
     "name": "SB-wire-no-news",
     "file": "src/net/wire.js",
-    "old": "    || (a.st | 0) !== (b.st | 0);   // CARDS2b",
-    "new": "    ;   // CARDS2b",
+    "old": "    || (a.st | 0) !== (b.st | 0)   // CARDS2b",
+    "new": "    // CARDS2b",
     "tests": [
       "test/cards2b_seated.test.js"
     ]

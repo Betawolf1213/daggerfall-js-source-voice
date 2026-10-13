@@ -785,6 +785,7 @@ import { BLOOD_ABSORB_ENCODED, INK_DEPTH } from '../combat/bloodArt.js';
 import { glslFloat } from './airPass.js';   // AUDIT BLOOD3 F9: a dial at a whole number is an INT literal in GLSL, and vec3 * int does not compile   // BLOOD3: the film's absorption - the classic mark takes the depth, the lane takes the sheen too
 import { SHADE_DARK } from '../systems/concealDraw.js';   // ECV1 / AUDIT 65 PN-3: the shade's pull toward black, interpolated into BB_FS below - the shader restated 0.12 as a second literal. The LEAF, not systems/combatVisuals.js, which re-exports it: that module's graph would take this file's closure from 13 modules to 69
 import { FLAT_DISSOLVE_GLSL } from '../systems/dissolve.js';   // DISSOLVE: a sprite burnt away, or gathered through a portal (a leaf)
+import { FLAT_CRACK_GLSL } from '../systems/veinCrack.js';   // VEIN-CRACKS: a worked vein's cracks (a leaf)
 import { HIT_FLASH_GLSL, ELITE_GLOW_GLSL, GLINT_GLSL, TELL_GLINT_PAD } from '../systems/hitFlash.js';   // HITFLASH1: the struck-red term, shared with the lane's billboard shader and the sprite quad (a LEAF, no imports)
 
 const BB_FS = `#version 300 es
@@ -802,6 +803,7 @@ uniform float uEliteGlow;  // ELITE FOES: the glow's pulse, 0 off (batch.eliteGl
 uniform float uEliteTime;  // ELITE FOES: seconds, for the embers
 uniform vec4 uGlint;  // TELL2: a wind-up's glint - rgb the blow's colour, a its strength (0 off; batch.glint)
 uniform vec4 uDissolve;  // DISSOLVE: x the share gone (0 whole, 1 gone), yzw the edge's colour (systems/dissolve.js)
+uniform vec2 uCrack;  // VEIN-CRACKS: x the share worked (0 whole), y the pattern's seed (systems/veinCrack.js)
 uniform vec3 uBatchTint;  // ARENA5: the batch's own wash (batch.tint), white for every flat but the arena crowd's half in a banner's colours
 uniform float uBatchDye;  // VEIN-HUE: how far the wash is the flat's colour rather than a multiply (batch.dye, 0..1; 0 for every flat but an ore's)
 uniform vec3 uTint; // time-of-day: ambient (+ the moon's half); VC4: the sun's half rides uBBSun so a cloud's shadow can take it
@@ -824,6 +826,7 @@ ${HIT_FLASH_GLSL}
 ${ELITE_GLOW_GLSL}
 ${GLINT_GLSL}
 ${FLAT_DISSOLVE_GLSL}
+${FLAT_CRACK_GLSL}
 void main() {
   // ECV1: a chameleoned foe ripples - a slow horizontal wobble across
   // the sprite, phased per foe - so it reads as blending in, not as a
@@ -875,7 +878,7 @@ ${LPT_FS_TEXEL}  // Spectral flats keep their 180-alpha translucency (blended pa
   // every missile, impact flash and fire daedra at ~2.3x albedo, clipped
   // to white. The clamp is ours; a negative albedo has no meaning here.
   vec3 emission = emissionTexel;   // SPRITE-GRAD: sampled above the cut
-  vec3 albedo = max(tex.rgb - emission, vec3(0.0));
+  vec3 albedo = max(tex.rgb - emission, vec3(0.0)) * veinCrackShade(uv);   // VEIN-CRACKS: a worked vein's seams, lit as the ore is
   // R12: the indirect term, attenuation-only like the lantern term
   // (billboards have no normal).
   float iD = length(uIndirect.xyz - vBBWorld);
@@ -1831,6 +1834,7 @@ export class Renderer {
     this._bbColumnOn = 0;   // LA-COST1 x DW-F: the billboard program's uColumnOn as last sent (the frame block resets it)
     this._bbTipOn = false;   // PROF4: the billboard program's uTip as last sent - a falling tree's (the frame block resets it)
     this._bbDissolveOn = false;   // DISSOLVE: the billboard program's uDissolve as last sent (the frame block resets it)
+    this._bbCrackOn = false;   // VEIN-CRACKS: the billboard program's uCrack as last sent (the frame block resets it)
     this._bbGlintOn = false;   // TELL2: the billboard program's uGlint as last sent - a glinting batch's (the frame block resets it to none)
     this._bbTintOn = false;   // ARENA5: the billboard program's uBatchTint as last sent - a washed batch's (the frame block resets it to white)
     this._heldFlats = [];   // GRASS-PORTAL: the blended flats a host held back for a later call (holdBlended / drawHeld)
@@ -2438,6 +2442,7 @@ export class Renderer {
     this.bbUConceal = gl.getUniformLocation(this.bbProgram, 'uConceal');   // ECV1
     this.bbUHitFlash = gl.getUniformLocation(this.bbProgram, 'uHitFlash');   // HITFLASH1
     this.bbUDissolve = gl.getUniformLocation(this.bbProgram, 'uDissolve');   // DISSOLVE
+    this.bbUCrack = gl.getUniformLocation(this.bbProgram, 'uCrack');   // VEIN-CRACKS
     this.bbUEliteGlow = gl.getUniformLocation(this.bbProgram, 'uEliteGlow');   // ELITE FOES
     this.bbUGlint = gl.getUniformLocation(this.bbProgram, 'uGlint');   // TELL2: a wind-up's glint
     this.bbUEliteTime = gl.getUniformLocation(this.bbProgram, 'uEliteTime');   // ELITE FOES: the embers' clock
@@ -6551,7 +6556,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       _arena: arena, _q0: q0, _ibOff: q0 * BB_QUAD_INDEX_BYTES,
       _scales: scales ?? null, lptProto: undefined, farH: undefined,
       _place: count > 1 && !dynamic ? placementGrid(centers) : null,
-      _box: undefined, sway: undefined, windfall: undefined, tip: undefined, conceal: undefined, hitFlash: undefined, eliteGlow: undefined, eliteTime: undefined, elitePad: undefined, glint: undefined, dissolve: undefined, tint: undefined, dye: undefined, noShadow: undefined, selfCard: undefined, _dead: undefined, _moveScratch: undefined, dwColumn: undefined,
+      _box: undefined, sway: undefined, windfall: undefined, tip: undefined, conceal: undefined, hitFlash: undefined, eliteGlow: undefined, eliteTime: undefined, elitePad: undefined, glint: undefined, dissolve: undefined, crack: undefined, tint: undefined, dye: undefined, noShadow: undefined, selfCard: undefined, _dead: undefined, _moveScratch: undefined, dwColumn: undefined,
       castOnly: undefined,
       _bbKey: undefined, _bbKeyId: undefined, _bbKeyRecord: undefined, _bbKeyFrame: undefined, _bbKeyArchive: undefined,
       _shGen: undefined, _shAx: NaN, _shAy: NaN, _shAz: NaN, _shSeen: undefined, _shOx: NaN, _shOy: NaN, _shOz: NaN, _shFrame: undefined,
@@ -7787,6 +7792,8 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       this._bbTipOn = false;
       gl.uniform4f(this.bbUDissolve, 0, 0, 0, 0);   // DISSOLVE: every flat whole until a burning one says otherwise - the shadow below is only true if this is sent
       this._bbDissolveOn = false;
+      gl.uniform2f(this.bbUCrack, 0, 0);   // VEIN-CRACKS: every flat whole until a worked vein's batch says otherwise
+      this._bbCrackOn = false;
       gl.uniform4f(this.bbUGlint, 0, 0, 0, 0);   // TELL2: no glint until a winding-up foe's batch says otherwise
       this._bbGlintOn = false;
       gl.uniform3f(this.bbUBatchTint, 1, 1, 1);   // ARENA5: every flat unwashed until a washed batch says otherwise
@@ -7889,6 +7896,8 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       if (eg !== 0) gl.uniform1f(this.bbUEliteTime, (performance.now() / 1000) % 3600);   // the embers' and the corpses' pulse clock (one clock, every elite batch)
       const dv = b.dissolve;   // DISSOLVE: a body burning away or gathering through a portal ([share, r, g, b]); every other batch whole
       if (dv || this._bbDissolveOn) { gl.uniform4f(this.bbUDissolve, dv ? dv[0] : 0, dv ? dv[1] : 0, dv ? dv[2] : 0, dv ? dv[3] : 0); this._bbDissolveOn = !!dv; }
+      const ck = b.crack;   // VEIN-CRACKS: a worked vein's ([share, seed]); every other batch whole - sent when a cracked batch comes or goes
+      if (ck || this._bbCrackOn) { gl.uniform2f(this.bbUCrack, ck ? ck[0] : 0, ck ? ck[1] : 0); this._bbCrackOn = !!ck; }
       const tn = b.tint;   // ARENA5: a batch's wash ([r, g, b]); every other batch white - sent when a washed batch comes or goes
       if (tn || this._bbTintOn) { gl.uniform3f(this.bbUBatchTint, tn ? tn[0] : 1, tn ? tn[1] : 1, tn ? tn[2] : 1); gl.uniform1f(this.bbUBatchDye, tn ? b.dye ?? 0 : 0); this._bbTintOn = !!tn; }   // VEIN-HUE: its dye with it
       const lc = b.lptProto && this._lpt?.cut.has(b.lptProto) ? 1 : 0;   // LPT1: a far picture gives way to its 3D tree near the eye - sent when that changes between batches
@@ -7927,6 +7936,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       if (lastGlow !== 0) { gl.uniform1f(this.bbUEliteGlow, 0); lastGlow = 0; }
       if (this._bbPadOn) { gl.uniform4f(this.bbUElitePad, 0, 0, 0, 0); this._bbPadOn = false; }
       if (this._bbDissolveOn) { gl.uniform4f(this.bbUDissolve, 0, 0, 0, 0); this._bbDissolveOn = false; }
+      if (this._bbCrackOn) { gl.uniform2f(this.bbUCrack, 0, 0); this._bbCrackOn = false; }   // VEIN-CRACKS: the trees take no vein's seams
       if (this._bbTintOn) { gl.uniform3f(this.bbUBatchTint, 1, 1, 1); gl.uniform1f(this.bbUBatchDye, 0); this._bbTintOn = false; }
       if (this._bbColumnOn) { gl.uniform1f(bc.uColumnOn, 0); this._bbColumnOn = 0; }
       this._drawLowPolyTrees();

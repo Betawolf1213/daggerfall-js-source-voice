@@ -180,5 +180,11 @@
  "raiders": "pillards",
  "mute": "réduire au silence",
  "abandon (a quest)": "abandonner",
- "reclaim (a quest)": "reprendre"
+ "reclaim (a quest)": "reprendre",
+ "deck (cards)": "paquet",
+ "hand (cards held)": "main",
+ "turn (a card game's)": "tour",
+ "committed (a turn locked in)": "validé",
+ "ranked (game)": "classée",
+ "panel (interface)": "panneau"
 }

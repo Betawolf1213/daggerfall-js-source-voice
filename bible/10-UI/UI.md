@@ -28,7 +28,8 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and TEXT-FONT (`textFont.js`: the enhanced skin's words in a face the player picks - Sans, Monospace, OpenDyslexic or an installed font) and the CHAT'S COLOURS (`chatColours.js`: each channel's, name's and @mention's colour, light and page pairs held to 4.5:1 - `06-Systems/Community-Arc.md`) and the QUICK LOOT'S TIER MARKS (`lootTierMarks.js`: a rolled row's gem of its tier's colour and the wash under it, on both looks) and the TAB DIAL'S CLASSIC DOORS (`dialClassicArt.js`: under DFO Grimoire the dial wears the player's own face and the HUD bar's star, sack and scroll, read off their ARENA2, the four the same height) and the MENUS' PICTURES (`menuGlyphs.js`: a 12x12 glyph each for the decorator's kinds, views and presses and the Stores page's stations, typed as rows, drawn in the word's own colour - `10-UI/Menu-Order.md`) and the MENUS' PIECE PICTURES (`menuPicture.js`: a material's or a piece's own item picture for a menu's row, the host's to hand over)
 - and TEMP-UI's PACK TEMPERATURE (`temperatureCard.js`: the felt temperature on the enhanced pack's figure, a wearable's card and the Stats side - live, over the minute law's own sum; `06-Systems/Climates-Calories.md` TEMP-UI)
 - and MINE-PERKS' MOTHERLODES ON THE MAPS (`lodeMapMark.js`: a Motherlode Sense's day's Motherlodes, each a circle on its pixel with its ore and, until it rises, its hour, on both maps and the Overworld; `06-Systems/Professions-Arc.md` 43)
-357 modules
+- and CARDS-PLUS's CARD PANEL KIT (`cardPanelKit.js`: the chrome both card tables' panels wear, and the kit cut to them on the classic skin; `11-Multiplayer/Tavern-Cards.md` section 38)
+358 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.

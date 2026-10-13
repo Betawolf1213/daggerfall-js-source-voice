@@ -299,6 +299,7 @@ test('PROF4 host: the tree targeted, E starts the Wood-Axe\'s ring (DFU\'s War A
     assert.deepEqual([asked[0].node, asked[0].kind, asked[0].act.clean, asked[0].act.cuts, asked[0].act.chops], [n.key, 'logs', true, 3, 3], 'three Clean Cuts: a clean ring');
     assert.equal(axe.currentCondition, 49, 'the Wood-Axe worn by one');
     assert.ok(said.includes('+3 Oak Logs and Resin to your Stores'), 'the Resin said with the logs (GATHER-SAID: one line)');
+    host.tick(CHOP_ACT.swingS);   // GATHER-FEEL (PIN MOVED): the last chop's blow lands - the tree falls then
     for (let i = 0; i < 4; i++) { host.tick(0.016); await tick(); }
     const fall = made.find((b) => b.tip);
     assert.ok(fall, 'the tree falls');
@@ -491,8 +492,9 @@ test('PROF4 wiring: a built pixel keeps its forest (the tree flats by World of D
   assert.match(d, /const ours = row && row\.owner === player\.id && Number\(row\.template\) === p\.item\.t && Number\(row\.listed\) === 0 && !elsewhere;/);   // AUDIT 30 S6: and not on the market, and not standing twice
   assert.match(d, /delete plain\.mk;/);
   const g = src('src/scenes/gatherHost.js');
-  assert.match(g, /for \(const k of kinds\) k\.stood\?\.\(entry, rec\.nodes\.filter\(\(n\) => n\.kind === k\.id\)\);/);
-  assert.match(g, /for \(const f of k\.gone\(n\) \? \(k\.goneFlatsOf\?\.\(n, entry\) \?\? \[\]\) : k\.flatsOf\(n\)\) \{/);
+  // PIN MOVED (AUDIT GATHER-FEEL F1): the kinds told which nodes' last blow is still in the air, and a node gone once it has landed
+  assert.match(g, /for \(const k of kinds\) k\.stood\?\.\(entry, rec\.nodes\.filter\(\(n\) => n\.kind === k\.id\), landingOn\);/);
+  assert.match(g, /for \(const f of shownGone\(k, n\) \? \(k\.goneFlatsOf\?\.\(n, entry\) \?\? \[\]\) : k\.flatsOf\(n\)\) \{/);
   // AUDIT 30 A5: the node as its pixel stands now, the fall's failure its own
   assert.match(g, /const now = s\?\.nodes\.find\(\(x\) => x\.key === a\.node\.key\) \?\? null;\n\s*if \(now && k\.felled\) \{\n\s*try \{ Promise\.resolve\(k\.felled\(now, \{ entry: s\.entry, from: deps\.eye\(\)\.pos, tr: deps\.pixelTranslation\(a\.px, a\.py, \[0, 0, 0\]\) \}\)\)\.catch/);
 });

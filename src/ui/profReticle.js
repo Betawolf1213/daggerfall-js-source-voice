@@ -31,8 +31,9 @@
 // does not bring it back - the mark shows the number). The rules, the
 // timings and what the service is told stay the acts' (systems/
 // herbAct.js, mineAct.js, chopAct.js, traceAct.js, fishAct.js). Built
-// ONCE an act and moved every frame; every cue a shape AND a sound
-// (actCues, systems/profSounds.js).
+// ONCE an act and moved every frame; every cue a shape AND a sound -
+// the sound the gathering's ear's (systems/gatherSounds.js actBeats,
+// GATHER-FEEL: the cues it read off the act, `actCues`, moved there).
 // ═══════════════════════════════════════════════════════════════════
 import { BASKET_SPOTS } from '../systems/herbAct.js';
 import { MINE_POINTS } from '../systems/mineAct.js';
@@ -363,33 +364,6 @@ export const marksOf = (act) => {
   return st.kind;
 };
 const MARKS = { mine: mineMarks, chop: chopMarks, hold: holdMarks, basket: basketMarks, trace: traceMarks, fish: fishMarks };
-
-/**
- * THE CUES an act's frame says, read off its state against the last frame's (`prev`, mutated to this one): a blow on
- * the glint rings, a plain one strikes; a Clean Cut rings, a plain chop strikes; a find ticks, a miss slips; a bruise
- * slips; a point passed ticks, a slip slips; the net thrown swings, lands with a splash, the tug splashes, the haul's
- * start ticks. Names for systems/profSounds.js. Pure.
- * @param {any} prev @param {any} st @returns {string[]}
- */
-export function actCues(prev, st) {
-  const out = [];
-  if (!st) return out;
-  if (st.kind === 'mine' && st.strikes > (prev.strikes ?? 0)) out.push(st.last === 'glint' ? 'glint' : 'strike');
-  if (st.kind === 'chop' && st.chops > (prev.chops ?? 0)) out.push(st.last === 'clean' ? 'glint' : 'strike');
-  if (st.kind === 'basket' && st.hits.length > (prev.hits ?? 0)) out.push(st.hits[st.hits.length - 1] ? 'tick' : 'slip');
-  if (st.kind === 'steady' && st.bruised && !prev.bruised) out.push('slip');
-  if (st.kind === 'trace' && !st.gentle) {
-    if (st.tracing && st.reached > (prev.reached ?? 0)) out.push('tick');
-    if (st.slips > (prev.slips ?? 0)) out.push('slip');
-  }
-  if (st.kind === 'fish' && prev.phase && st.phase !== prev.phase) {
-    const cue = { fly: 'swing', wait: 'splash', tug: 'tug', haul: 'tick' }[st.phase];
-    if (cue) out.push(cue);
-  }
-  prev.strikes = st.strikes; prev.chops = st.chops; prev.hits = st.hits?.length; prev.bruised = st.bruised;
-  prev.reached = st.tracing ? st.reached : 0; prev.slips = st.slips; prev.phase = st.phase;
-  return out;
-}
 
 /**
  * Build an act's marks into `root` (emptied first): the marks about the crosshair's middle, the count and the hint

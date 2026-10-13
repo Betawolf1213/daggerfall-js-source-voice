@@ -182,8 +182,8 @@
  {
   "name": "MWNPC4-peer-dead-arms",
   "file": "src/net/peerBodies.js",
-  "old": "    if (this._react(b, shown)) { b.swing = shown.an | 0; b.cast = shown.cn | 0; b.pending = null; b.held = false; return; }",
-  "new": "    if (this._react(b, shown)) { b.swing = shown.an | 0; b.cast = shown.cn | 0; b.pending = null; b.held = false; }",
+  "old": "    if (this._react(b, shown)) { b.swing = shown.an | 0; b.cast = shown.cn | 0; b.pending = null; b.held = false; peerGatherSwing(b.gather ??= {}, shown); return; }",
+  "new": "    if (this._react(b, shown)) { b.swing = shown.an | 0; b.cast = shown.cn | 0; b.pending = null; b.held = false; peerGatherSwing(b.gather ??= {}, shown); }",
   "tests": [
    "test/mwnpc4_npclane.test.js"
   ]
@@ -191,8 +191,8 @@
  {
   "name": "MWNPC4-peer-dead-counts-not-followed",
   "file": "src/net/peerBodies.js",
-  "old": "    if (this._react(b, shown)) { b.swing = shown.an | 0; b.cast = shown.cn | 0; b.pending = null; b.held = false; return; }",
-  "new": "    if (this._react(b, shown)) { b.pending = null; b.held = false; return; }",
+  "old": "    if (this._react(b, shown)) { b.swing = shown.an | 0; b.cast = shown.cn | 0; b.pending = null; b.held = false; peerGatherSwing(b.gather ??= {}, shown); return; }",
+  "new": "    if (this._react(b, shown)) { b.pending = null; b.held = false; peerGatherSwing(b.gather ??= {}, shown); return; }",
   "tests": [
    "test/mwnpc4_npclane.test.js"
   ]

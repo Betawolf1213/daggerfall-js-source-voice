@@ -153,5 +153,11 @@
  "Breach": "Breccia",
  "Ascend": "Ascendi",
  "abandon (a quest)": "abbandonare",
- "reclaim (a quest)": "riprendere"
+ "reclaim (a quest)": "riprendere",
+ "deck (cards)": "mazzo",
+ "hand (cards held)": "mano",
+ "turn (a card game's)": "turno",
+ "committed (a turn locked in)": "confermato",
+ "ranked (game)": "classificata",
+ "panel (interface)": "pannello"
 }

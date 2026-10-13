@@ -38,8 +38,9 @@ const UNDERGROUND = Object.freeze({ inside: true, insideDungeon: true, insideCas
 const wall = (marker, bearing) => [Math.sin(bearing) * 2, 1.2, Math.cos(bearing) * 2];
 
 /** The gathering host underground, its book a real one over a scripted door: `rank` Mining, a Pick-Axe unless `pick`
- *  is false, the dungeon entered and its veins stood. */
-async function underground({ rank = 0, pick = true } = {}) {
+ *  is false, the dungeon entered and its veins stood. `lit` - the row the loot plaque has lit over a key (PROF-MENU's
+ *  `lit`), the plaque standing; none, no plaque. */
+async function underground({ rank = 0, pick = true, lit = null } = {}) {
   const day = utcDayOfMs(NOON * 1000);
   const tracks = [{ profession: 'mining', xp: xpForRank(rank), rank, specs: { 50: null, 100: null } }];
   const door = {
@@ -63,6 +64,7 @@ async function underground({ rank = 0, pick = true } = {}) {
     eye: () => ({ pos: [feet[0], feet[1] + 1.6, feet[2]], dir: [Math.sin((view.yaw * Math.PI) / 180) * Math.cos((view.pitch * Math.PI) / 180), Math.sin((view.pitch * Math.PI) / 180), Math.cos((view.yaw * Math.PI) / 180) * Math.cos((view.pitch * Math.PI) / 180)] }),
     view: () => view, feet: () => feet, entity: () => entity, keyLabel: () => 'E', input: () => ({ held: false, attack: false, choice: false }),
     active: () => false, activeDungeon: () => true,
+    ...(lit ? { plaque: () => true, lit: (key) => lit(key) } : {}),
   });
   setForagingHost({ world: () => UNDERGROUND });
   await book.refresh();
@@ -98,6 +100,17 @@ test('VEIN-NEED: the report, reproduced - Silver at Mining 0: E passes the press
     assert.deepEqual([...t.said], ['Mine Silver: needs Mining 25 - your Mining is 0']);
     assert.equal(t.host.sayNeed(), false, 'one press, one line');
     assert.equal(t.said.length, 1);
+  } finally { setForagingHost(null); }
+});
+
+test('VEIN-NEED: the row the plaque has lit keeps its need too - E on a lit refused row passes the press on, and with nothing else under the ray the vein says what it needs (GATHER-FEEL\'s re-judge: PROF-MENU\'s fallback answers the unlit press alone, so the lit one was unpinned - mutant: the refused row keeps nothing)', async () => {
+  try {
+    const t = await underground({ rank: 0, lit: (key) => (key.startsWith('prof:') ? 'ore' : null) });
+    t.face(t.veins[0]);
+    assert.equal(t.host.press(), false, 'not ready: the press goes on');
+    assert.deepEqual([...t.said], []);
+    assert.equal(t.host.sayNeed(), true, 'the vein speaks');
+    assert.deepEqual([...t.said], ['Mine Silver: needs Mining 25 - your Mining is 0']);
   } finally { setForagingHost(null); }
 });
 

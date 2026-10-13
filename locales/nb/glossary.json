@@ -22,5 +22,11 @@
  "dmg": "skade",
  "abandon (a quest)": "oppgi",
  "reclaim (a quest)": "ta opp igjen",
- "Motherlode": "Hovedåre"
+ "Motherlode": "Hovedåre",
+ "deck (cards)": "kortstokk",
+ "hand (cards held)": "hånd",
+ "turn (a card game's)": "tur",
+ "committed (a turn locked in)": "bekreftet",
+ "ranked (game)": "rangert",
+ "panel (interface)": "panel"
 }

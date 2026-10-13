@@ -22,5 +22,11 @@
  "dmg": "Schaden",
  "abandon (a quest)": "aufgeben",
  "reclaim (a quest)": "zurückholen",
- "Motherlode": "Hauptader"
+ "Motherlode": "Hauptader",
+ "deck (cards)": "Deck",
+ "hand (cards held)": "Hand",
+ "turn (a card game's)": "Zug",
+ "committed (a turn locked in)": "bestätigt",
+ "ranked (game)": "gewertet",
+ "panel (interface)": "Panel"
 }

@@ -133,6 +133,10 @@ export const MELEE_NUM_FRAMES = { Idle: 1, StrikeDown: 5, StrikeDownLeft: 5, Str
 // FPSWeapon.cs verbatim hit frames: damage lands when
 // currentFrame == GetHitFrame().
 export const HIT_FRAME_MELEE = 2;
+// GATHER-FEEL (2026-10-13): the share of a melee strike its blow lands at - the hit frame of the strike's five. A
+// gathering act's tool swings DFU's strike (scenes/treeHost.js axeHandFrame, scenes/mineHost.js pickHandFrame), so its
+// blow lands there too (systems/chopAct.js, mineAct.js `landsIn`).
+export const MELEE_HIT_SHARE = HIT_FRAME_MELEE / MELEE_NUM_FRAMES.StrikeDown;
 export const HIT_FRAME_BOW = 5;
 export const BOW_SOUND_FRAME = 4;                  // swing sound fires here
 export const BOW_DRAWN_HOLD_FRAME = 3;             // fully drawn; drawback holds here

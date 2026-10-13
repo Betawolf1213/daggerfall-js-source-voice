@@ -13936,8 +13936,8 @@ departure (`Port-Ledger.md` section A, PROFESSIONS).
 - **FORAGE0 law 6's online exception**: online, Foraging's six tools shelve whatever its switch says
   (`systems/foragingInstall.js`).
 - **The switch**: `PROFESSIONS_OPEN` in `server-account/wrangler.toml` - shipped at `dev`.
-- **Not built here** (PROF0 22): the hover, the pad's and touch's own act buttons, the pose's activity field, the held
-  map's worked patches, the Morrowind lane's sickle (FLAGGED), nodes in the fixed city (FLAGGED).
+- **Not built here** (PROF0 22): the hover, the pad's and touch's own act buttons, the held map's worked patches, the
+  Morrowind lane's sickle (FLAGGED), nodes in the fixed city (FLAGGED).
 
 `test/prof1_law.test.js` (14), `test/prof1_service.test.js` (13), `test/prof1_client.test.js` (15);
 `tools/mutants/prof1.json`, 58 mutations, 58 dead.

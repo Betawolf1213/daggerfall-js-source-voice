@@ -83,6 +83,7 @@ import { POSE_RIDE } from './wire.js';   // COATS3D: a peer on a horse
 import { HORSE_SEAT } from '../world/horseRig.js';   // COATS3D: the 3D horse's seat, over the rider's feet
 import { gaitShare } from '../world/horseModel.js';
 import { JUMP_UNITS, stepPeerPace } from './peerPace.js'; import { peerBodyYaw, peerClimbing, peerMoving, PeerClimbTrack } from './peerClimb.js';   // HT-WAIST-BACK: the pace law, lifted - the walkers' lanterns swing off it too; CLIMB5: the climb's facing and pose
+import { gatherActOf, peerGatherTool, peerGatherSwing, peerKneeling, GATHER_POSE_STRIKES } from './peerGather.js';   // PEER-ACTS: a gathering act's tool, blow and kneel
 
 
 /** The most peers in a Morrowind body at once; the rest keep the paperdoll. */
@@ -327,6 +328,7 @@ export function peerCamera(shown, feet, speed = 0, cam = null, yaw = peerBodyYaw
   c.move.forward = moving ? 1 : 0;
   c.move.running = shown.mv === 2;
   c.move.speed = moving ? speed : 0;
+  c.sneaking = peerKneeling(shown);   // PEER-ACTS: kneeling at an act (a herb, the Basket's search, the knife at a body) - the rig's crouched idle, Morrowind's own (it has no kneel)
   return c;
 }
 
@@ -537,6 +539,7 @@ export class PeerBodies {
         if (b.far || dt > 0 || !this._buildInRange) { b.posed = false; b.stale = false; b.owed = false; }   // AUDIT PEER-CADENCE F2: far (or a frozen frame) - whatever skin stands is stale by the time it is stepped again
         if (b.swing != null) { b.swing = peer.shown.an | 0; b.cast = peer.shown.cn | 0; b.pending = null; }
         if (b.hit != null) { b.hit = peer.shown.ht | 0; if ((peer.shown.dd | 0) !== b.dead) b.dead = null; }   // MWNPC4: and the reactions - a recoil out of sight is not played, a death out of sight is a corpse on waking   // AUDIT WORLD C7: not arming (far, or frozen) - the counts follow, so a blow out of sight is not replayed on waking
+        if (b.gather) peerGatherSwing(b.gather, peer.shown);   // AUDIT GATHER-FEEL W3: and the act's beats (PEER-ACTS) - C7's law: a tool's blow out of sight is no strike on waking
       }
     }
     this._stepDue(dt);
@@ -769,14 +772,20 @@ export class PeerBodies {
    *  wd stays 2, exactly as weaponRig withholds it while the machine sits in StrikeUp. */
   _arm(b, shown, look = null) {
     // MWNPC4: a dead body takes no weapon, no spell and no swing - its counts follow, so nothing is replayed if it stands
-    if (this._react(b, shown)) { b.swing = shown.an | 0; b.cast = shown.cn | 0; b.pending = null; b.held = false; return; }
-    const drawn = !!shown.wd;
+    if (this._react(b, shown)) { b.swing = shown.an | 0; b.cast = shown.cn | 0; b.pending = null; b.held = false; peerGatherSwing(b.gather ??= {}, shown); return; }   // PEER-ACTS: and its act's
+    // PEER-ACTS (GATHER-FEEL II): A GATHERING ACT HOLDS ITS TOOL. While the pose names an act, the hand holds the act's
+    // tool - the classic lane's own stand-in weapon (net/peerGather.js GATHER_POSE_TOOLS: the War Axe for the Wood-Axe,
+    // the Warhammer for the Pick-Axe, the Tanto for the Sickle, the Dagger for the knife), drawn; an act of the bare hand,
+    // the Basket or the net draws nothing (hands at work hold no sword), as the gatherer's own hand puts its weapon down
+    const act = gatherActOf(shown);
+    const tool = act ? peerGatherTool(shown) : null;
+    const drawn = act ? !!tool : !!shown.wd;
     b.rig.setSheathed?.(!drawn);
     // DISC12 (Discord: "Weapons when swapped into left hand dont work showing fists"): THE HAND IN USE. The body was
     // built holding the look's RIGHT hand, always, so a peer fighting left-handed stood with the wrong weapon or a fist.
     // The pose says the hand (`lh`); the weapon follows it through setWeapon, the arm's own door, when the arm is quiet.
     if (look && !look.creature) {   // MWNPC9: a creature's claws are its body
-      const want = b.wolf ? null : peerWeaponOf(look, shown);   // WEREWOLF1: the wolf's hands are its claws
+      const want = b.wolf ? null : tool ?? peerWeaponOf(look, shown);   // WEREWOLF1: the wolf's hands are its claws; PEER-ACTS: the act's tool before the look's weapon
       if (want !== b.weapon && (want?.templateIndex !== b.weapon?.templateIndex || want?.equipSlot !== b.weapon?.equipSlot)
         && (b.rig.upperBodyReady?.() ?? true) && b.rig.setWeapon?.(want, { hasAmmo: !!shown.am }) !== false) { b.weapon = want; b.ammo = shown.am ? 1 : 0; }
     }
@@ -793,8 +802,14 @@ export class PeerBodies {
     // light rides the wire (MW-D51) - this one is in no hand.
     b.rig.setHipLight?.(!b.wolf && !!shown.hl);   // WEREWOLF1: and hangs nothing at the hip
     const an = shown.an | 0, cn = shown.cn | 0;
+    // PEER-ACTS: what the act's pose begins - a tool's blow, the net's throw - its first sight none, as the counts' is
+    const acted = peerGatherSwing(b.gather ??= {}, shown);
     if (b.swing == null) { b.swing = an; b.cast = cn; }
     else {
+      // PEER-ACTS: a tool's blow is the strike the gatherer's own hand draws it with (scenes/treeHost.js axeHandFrame's,
+      // mineHost.js pickHandFrame's), kept until the rig takes it as a swing's is (C3) - a swing of the weapon this same
+      // pose (none rides an act) is taken over it below
+      if (acted === 'blow' && tool && GATHER_POSE_STRIKES[/** @type {keyof typeof GATHER_POSE_STRIKES} */ (act)]) b.pending = { strike: GATHER_POSE_STRIKES[/** @type {keyof typeof GATHER_POSE_STRIKES} */ (act)], hold: false, left: PENDING_FRAMES, blow: null };
       if (an !== b.swing) {
         b.swing = an;
         if (b.held) {

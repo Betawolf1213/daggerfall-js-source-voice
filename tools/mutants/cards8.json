@@ -202,6 +202,7 @@
     "old": "    else if (inDeck >= held) _said =",
     "new": "    else if (false) _said =",
     "tests": [
+      "test/auditcards5_ui.test.js",
       "test/auditrealm.test.js",
       "test/cards7_rules.test.js",
       "test/cards8_binder.test.js",

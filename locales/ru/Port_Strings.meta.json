@@ -2889,6 +2889,91 @@
   "tr": "b876f50c0b2e",
   "by": "claude-in-session"
  },
+ "cards.iliac.foe.committed": {
+  "en": "82606b0cf26d",
+  "tr": "232ace934ab3",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.foe.counts": {
+  "en": "7a7a65c1d1bb",
+  "tr": "63d2aa6560d8",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.hand.empty": {
+  "en": "89dd7b2a8624",
+  "tr": "252ce3fe438c",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.setup.against": {
+  "en": "2b8e4144e6c8",
+  "tr": "70bd385673b5",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.setup.deck": {
+  "en": "aba4884b57b4",
+  "tr": "46a421a1aff0",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.setup.keeps": {
+  "en": "62e926669ee7",
+  "tr": "6b3b48231ccb",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.setup.keepsWhy": {
+  "en": "59c744dd49f1",
+  "tr": "2a71601f1a78",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.setup.paid": {
+  "en": "9b89f1a5fc7c",
+  "tr": "e5e1bffa6132",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.setup.ranked": {
+  "en": "092579473a08",
+  "tr": "02008d67296d",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.setup.rankedWhy": {
+  "en": "6c15d7a3e807",
+  "tr": "f6b6a2387b23",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.track.turn": {
+  "en": "368e8081b781",
+  "tr": "12bd3bba62f1",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.verdict.drawn": {
+  "en": "947700044009",
+  "tr": "90021e0dc9a2",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.verdict.lost": {
+  "en": "34660a5de9ae",
+  "tr": "63d42605faf2",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.verdict.void": {
+  "en": "6f6077ad429f",
+  "tr": "ff7e84bcc345",
+  "by": "claude-in-session"
+ },
+ "cards.iliac.verdict.won": {
+  "en": "e71f1539a41b",
+  "tr": "e01c452f0e9a",
+  "by": "claude-in-session"
+ },
+ "cards.table.fold.hide": {
+  "en": "c9cbe37a6f28",
+  "tr": "3acbabb80954",
+  "by": "claude-in-session"
+ },
+ "cards.table.fold.show": {
+  "en": "be636809558b",
+  "tr": "3ab5ba496f67",
+  "by": "claude-in-session"
+ },
  "chronicle.quests.abandon": {
   "en": "4ff9809f333c",
   "tr": "afa22504c24d",
@@ -3830,8 +3915,8 @@
   "by": "claude-in-session"
  },
  "features.enhancedSounds.note": {
-  "en": "96af68cb8c24",
-  "tr": "2ce2d0e43168",
+  "en": "3bd846fda933",
+  "tr": "0e098028fb47",
   "by": "claude-in-session"
  },
  "features.enhancedSounds.title": {
@@ -5685,8 +5770,8 @@
   "by": "claude-in-session"
  },
  "menu.peers.attackNote": {
-  "en": "baed5ece553d",
-  "tr": "f65972c034de",
+  "en": "c23377041c1d",
+  "tr": "6c036b873fc6",
   "by": "claude-in-session"
  },
  "menu.peers.blurb": {
@@ -11987,6 +12072,11 @@
  "prof.work.yours.writ": {
   "en": "ce32bc277933",
   "tr": "8e30b4c0cdc2",
+  "by": "claude-in-session"
+ },
+ "sea.board.cargoVoid": {
+  "en": "ab24e7cbf348",
+  "tr": "9b4e4afeb991",
   "by": "claude-in-session"
  },
  "sea.chart.anIsle": {

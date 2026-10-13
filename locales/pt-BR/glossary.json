@@ -146,5 +146,11 @@
  "Recoil": "Recuo",
  "Step": "Passo",
  "abandon (a quest)": "abandonar",
- "reclaim (a quest)": "recuperar"
+ "reclaim (a quest)": "recuperar",
+ "deck (cards)": "baralho",
+ "hand (cards held)": "mão",
+ "turn (a card game's)": "turno",
+ "committed (a turn locked in)": "confirmado",
+ "ranked (game)": "ranqueada",
+ "panel (interface)": "painel"
 }

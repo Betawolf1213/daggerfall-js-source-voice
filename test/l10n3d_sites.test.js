@@ -118,6 +118,7 @@ const ROUTED = {
   'src/ui/enhancedMenu.js': 20,
   'src/ui/enhancedRest.js': 2,
   'src/ui/guildServiceWindows.js': 3,
+  'src/ui/iliacTableHud.js': 1,
   'src/ui/itemMakerWindow.js': 1,
   'src/ui/joystickControlsWindow.js': 1,
   'src/ui/levelNotice.js': 1,

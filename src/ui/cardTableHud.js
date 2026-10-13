@@ -1,8 +1,10 @@
 // @ts-check
 // CARDS4 (2026-10-07, bible/11-Multiplayer/Tavern-Cards.md section 14): THE CARD TABLE'S PANEL - the port's own enhanced
 // panel, no DFU window behind it (Daggerfall has no card games), so the native-window rule's DFU citations have nothing
-// to cite; it keeps the enhanced skin's dark plate and gold. It does NOT pause the world: the patrons play on while it
-// stands, as the table does (a DOM panel outside the window stack, the decor panel's own pattern - ui/decorPanel.js).
+// to cite. CARDS-PLUS (section 38): it wears the Enhanced Plus stone-and-brass kit and the game's face whichever skin is
+// worn (ui/cardPanelKit.js - this sheet writes geometry and words, the kit paints). It does NOT pause the world: the
+// patrons play on while it stands, as the table does (a DOM panel outside the window stack, the decor panel's own
+// pattern - ui/decorPanel.js).
 //
 // TWO HALVES. `cardHudModel` is pure: the table's view (systems/cardTableSession.js view(), legal()) as the rows,
 // cards and buttons the panel shows - every label and every enabled flag decided here, pinned by
@@ -13,6 +15,8 @@ import { rankOf, suitOf, isCard } from '../net/cardLaw.js';
 import { SUIT_CROWNS, rankLabel, cardTitle, paintFace, paintBack } from '../render/cardFaces.js';   // CARDS-BAY: the suits' one home
 import { BUY_IN_MIN_BB, BUY_IN_START_BB } from '../systems/cardTableSession.js';   // the buy-in's one home (AUDIT CARDS-2 L10)
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
+import { cardPanelChromeCss, dressCardPanel, foldWords } from './cardPanelKit.js';   // CARDS-PLUS: the kit and the face, both panels' one home
+import { PIXELIFY_FIVE_FACE } from './pixelifyFive.js';   // FIX-D: the face's five, carried by every sheet that sets it
 
 /** A card as the panel shows it (CARDS-BAY): its own painted face (`card`), the words a page without a canvas writes
  *  - `{text: 'K Daggerfall'}` in the crown's colour - and what the hover says; or a face-down card. */
@@ -192,44 +196,42 @@ export function eventLine(e, names, you = -1) {
 const STYLE_ID = 'dfcards-style';
 /** The keys a range input answers. */
 const SLIDER_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown']);
-const CSS = `
-.dfcards{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:13;box-sizing:border-box;min-width:min(520px,calc(100vw - 32px));max-width:min(760px,calc(100vw - 32px));
-  background:rgba(18,14,10,.92);border:1px solid #8a6a2c;border-radius:6px;color:#e8dcc0;font:14px/1.35 Georgia,serif;padding:10px 14px;
-  box-shadow:0 6px 24px rgba(0,0,0,.6)}
+/** CARDS-PLUS: the panel's own sheet - its place, its seats, its cards and its board; the chrome (the window's box, the
+ *  header band, the line, the presses, the log) is ui/cardPanelKit.js's, and every surface's paint is the kit's by role
+ *  (ui/enhancedFrame.js FRAME_ROLES: the window, a seat a panel, the board a well, the pot a chip, the presses). A state
+ *  the kit does not know - your seat, the one to act, the winner's - is said here with a leading body, to outweigh the
+ *  role it stands in. AUDIT CARDS-PLUS C3/C4: an edge here is a width and a style, never a colour (the pot's
+ *  `border:2px solid` outweighed the kit's chip and painted it brass); the board wraps its pot under the river's five
+ *  cards on a phone; the panel scrolls inside the screen's height - the chrome's, both panels' (six seats and a log, or a
+ *  landscape phone's touch-sized presses, stood its title and its fold off the top - B2). A theme or the DFO Grimoire
+ *  dress that repaints a seat's role re-says its states in its own colours (B1, B7). */
+export const CARD_TABLE_CSS = `
+${PIXELIFY_FIVE_FACE}
+${cardPanelChromeCss('.dfcards')}
+.dfcards{left:50%;bottom:18px;transform:translateX(-50%);box-sizing:border-box;min-width:min(520px,calc(100vw - 32px));max-width:min(760px,calc(100vw - 32px))}
 @media (min-width:1000px){.dfcards{left:auto;right:16px;transform:none;min-width:0;width:430px}}
-.dfcards h3{margin:0 0 4px;font-size:15px;color:#e2b85a;font-weight:normal;letter-spacing:.04em;display:flex;align-items:center;gap:8px}
-.dfcards h3 .ttl{flex:1 1 auto;min-width:0}
-.dfcards h3 .fold{flex:none;width:22px;height:22px;line-height:20px;text-align:center;border:1px solid #6a5222;border-radius:3px;color:#c8b48a;cursor:pointer;user-select:none;font-size:15px}
-.dfcards h3 .fold:hover,.dfcards h3 .fold:focus-visible{color:#f0dfb0;border-color:#e2b85a;outline:none}
-.dfcards.collapsed .note,.dfcards.collapsed .seats,.dfcards.collapsed .board,.dfcards.collapsed .log{display:none}
-.dfcards .note{font-size:12px;color:#b9a77f;margin-bottom:6px}
-.dfcards .seats{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
-.dfcards .seat{flex:1 1 90px;min-width:0;border:1px solid #4a3a1c;border-radius:4px;padding:4px 6px;background:rgba(40,30,18,.7)}
-.dfcards .seat.you{border-color:#e2b85a}.dfcards .seat.to-act{box-shadow:0 0 0 2px #e2b85a inset}
-.dfcards .seat.folded,.dfcards .seat.gone,.dfcards .seat.out{opacity:.45}
-.dfcards .seat .nm{font-size:13px}.dfcards .seat .st{font-size:12px;color:#c8b48a}
-.dfcards .cards{display:flex;gap:4px;align-items:center;min-height:30px}
-.dfcards .card{display:inline-block;min-width:26px;padding:3px 4px;border-radius:3px;background:#f4ecd8;color:#1a1a1a;text-align:center;font:bold 14px Georgia,serif}
-.dfcards .card.painted{padding:0;min-width:0;width:32px;height:45px;background:none;line-height:0}.dfcards .card.painted canvas{width:32px;height:45px;border-radius:3px}.dfcards .card.back{background:repeating-linear-gradient(45deg,#5a1e1e,#5a1e1e 4px,#7a2a2a 4px,#7a2a2a 8px)}
-.dfcards .board{display:flex;gap:8px;align-items:center;margin:6px 0}
-.dfcards .board .pot{margin-left:auto;color:#e2b85a}
-.dfcards .msg{margin:4px 0;color:#efe3c4;padding:3px 0 3px 8px;border-left:3px solid transparent}
-.dfcards .msg.warn{color:#f3c7a8;border-left-color:#c0502a;background:rgba(120,40,20,.25)}
-.dfcards .msg.wait{color:#d8cba8;border-left-color:#8a6a2c;font-style:italic}
-.dfcards .msg.turn{color:#f6e6b4;border-left-color:#e2b85a}
-.dfcards .log{font-size:12px;color:#a8977a;max-height:64px;overflow-y:auto;border-top:1px solid #3a2c14;margin-top:6px;padding-top:4px}
-.dfcards .log div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.dfcards .acts{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
+.dfcards.collapsed .seats,.dfcards.collapsed .board{display:none}
+.dfcards .seats{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 6px}
+.dfcards .seat{flex:1 1 90px;min-width:0;padding:4px 6px 5px;border-width:2px;border-style:solid}
+body .dfcards .seat.you{border-color:#f3cf86 #7a5424 #5c3f1a #c08a3e}
+body .dfcards .seat.to-act{box-shadow:0 0 0 1px #050608,inset 0 0 0 1px rgba(243,207,134,.85),0 0 10px rgba(243,207,134,.35)}
+body .dfcards .seat.won{border-color:#f3cf86 #7a5424 #5c3f1a #c08a3e;background-color:rgba(84,62,22,.85)}
+.dfcards .seat.folded,.dfcards .seat.gone,.dfcards .seat.out{opacity:.5}
+.dfcards .seat .nm{font-size:13px;color:#efe8d6;overflow-wrap:anywhere;text-shadow:1px 1px 0 #050608}
+.dfcards .seat.you .nm,.dfcards .seat.won .nm{color:#f3cf86}
+.dfcards .seat .st{font-size:12px;color:var(--cp-word);font-variant-numeric:tabular-nums}
+.dfcards .cards{display:flex;gap:4px;align-items:center;min-height:45px;margin-top:3px}
+.dfcards .card-face{display:inline-block;min-width:26px;padding:3px 4px;background:#f4ecd8;color:#1a1a1a;text-align:center;font-size:14px;box-shadow:0 0 0 1px #050608}
+.dfcards .card-face.painted{padding:0;min-width:0;width:32px;height:45px;background:none;line-height:0;box-shadow:0 0 0 1px #050608,2px 2px 0 rgba(0,0,0,.45)}
+.dfcards .card-face.painted canvas{display:block;width:32px;height:45px}
+.dfcards .card-face.back{background:repeating-linear-gradient(45deg,#5a1e1e,#5a1e1e 4px,#7a2a2a 4px,#7a2a2a 8px)}
+.dfcards .board{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;margin:0 0 6px;padding:5px 6px;border-width:2px;border-style:solid}
+.dfcards .board .cards{margin:0}
+.dfcards .board .pot{margin-left:auto;padding:2px 8px;border-width:2px;border-style:solid;font-size:13px;color:#f3cf86;white-space:nowrap;text-shadow:1px 1px 0 #050608}
 .dfcards .slide{display:flex;flex-wrap:wrap;gap:6px;align-items:center;flex:1 1 100%}
-.dfcards .slide .amt{min-width:72px;color:#f0dfb0;font-variant-numeric:tabular-nums}
-.dfcards button{background:#3a2c14;color:#f0dfb0;border:1px solid #8a6a2c;border-radius:3px;padding:4px 10px;font:14px Georgia,serif;cursor:pointer}
-.dfcards button:hover:not(:disabled),.dfcards button:focus-visible{border-color:#e2b85a;outline:none}
-.dfcards button[data-kind=primary]{background:#5a4214;border-color:#e2b85a;color:#fff2cc}
-.dfcards button[data-kind=quiet]{background:transparent;margin-left:auto}
-.dfcards button.pick{padding:2px 8px;font-size:12px;background:rgba(40,30,18,.7)}
-.dfcards button:disabled{opacity:.4;cursor:default}
-.dfcards input[type=range]{width:min(160px,40vw);flex:1 1 120px;accent-color:#e2b85a}
-.dfcards .seat.won{border-color:#e2b85a;background:rgba(80,60,20,.7)}
+.dfcards .slide .amt{min-width:72px;color:#f3cf86;font-variant-numeric:tabular-nums;text-shadow:1px 1px 0 #050608}
+.dfcards button.pick{padding:1px 8px;font-size:12px}
+.dfcards input[type=range]{width:min(160px,40vw);flex:1 1 120px}
 `;
 /** CARDS-PANEL: the action buttons drawn heavier - the press that moves the game on - and the one that leaves, lighter. */
 const PRIMARY_ACTS = new Set(['deal', 'check', 'call']);
@@ -250,9 +252,10 @@ export function createCardTableHud({ onPress, doc = document }) {
   noteFirstUse('tavern-cards');   // TUT1: the first seat at a card table
   if (doc?.getElementById && !doc.getElementById(STYLE_ID)) {
     const s = doc.createElement('style');
-    s.id = STYLE_ID; s.textContent = CSS;
+    s.id = STYLE_ID; s.textContent = CARD_TABLE_CSS;
     (doc.head ?? doc.body)?.append(s);
   }
+  dressCardPanel(doc);   // CARDS-PLUS: the kit on the classic skin, the face on every skin
   const root = doc.createElement('div');
   root.className = 'dfcards';
   swallowPresses(root);
@@ -273,7 +276,7 @@ export function createCardTableHud({ onPress, doc = document }) {
     const box = el('div', 'cards');
     for (const c of list) {
       const cv = painted(c);
-      const n = el('span', `card${cv ? ' painted' : ''}${c.back ? ' back' : ''}`, cv ? null : c.text);
+      const n = el('span', `card-face${cv ? ' painted' : ''}${c.back ? ' back' : ''}`, cv ? null : c.text);   // CARDS-PLUS: its own word - the bare .card is a settings card's
       if (cv) n.append(cv);
       if (c.colour && n.style) n.style.color = c.colour;
       n.title = c.title;
@@ -294,14 +297,18 @@ export function createCardTableHud({ onPress, doc = document }) {
   /** CARDS-PANEL: the header's fold - the seats, the board, the note and the log put away so the cloth shows; the line
    *  and the buttons stay. The panel's own choice, kept across its repaints. */
   const foldToggle = () => {
-    const t = el('span', 'fold', collapsed ? '+' : '−');
-    t.setAttribute?.('role', 'button'); t.setAttribute?.('tabindex', '0');
-    t.setAttribute?.('aria-expanded', String(!collapsed));
-    t.title = collapsed ? 'Show the table' : 'Hide the table';
-    const flip = () => { collapsed = !collapsed; root.className = `dfcards${collapsed ? ' collapsed' : ''}`; t.textContent = collapsed ? '+' : '−'; t.title = collapsed ? 'Show the table' : 'Hide the table'; t.setAttribute?.('aria-expanded', String(!collapsed)); };
-    t.addEventListener('click', flip);
-    t.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault?.(); e.stopPropagation?.(); flip(); } });
-    return t;
+    const fold = el('span', 'fold', collapsed ? '+' : '−');
+    fold.setAttribute?.('role', 'button'); fold.setAttribute?.('tabindex', '0');
+    const say = () => {
+      fold.textContent = collapsed ? '+' : '−';
+      foldWords(fold, collapsed);
+      fold.setAttribute?.('aria-expanded', String(!collapsed));
+    };
+    say();
+    const flip = () => { collapsed = !collapsed; root.className = `dfcards${collapsed ? ' collapsed' : ''}`; say(); };
+    fold.addEventListener('click', flip);
+    fold.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault?.(); e.stopPropagation?.(); flip(); } });
+    return fold;
   };
   return {
     root,
@@ -313,10 +320,10 @@ export function createCardTableHud({ onPress, doc = document }) {
       if (key === shownKey && msgEl) { msgEl.textContent = m.message; return; }
       shownKey = key;
       root.replaceChildren();
-      const head = el('h3', '');
-      head.append(el('span', 'ttl', m.title), foldToggle());
+      const head = el('h3', 'tablehead');   // CARDS-PLUS: the kit's header band
+      head.append(el('span', 'tabletitle', m.title), foldToggle());
       root.append(head);
-      if (m.note) root.append(el('div', 'note', m.note));
+      if (m.note) root.append(el('div', 'tablenote', m.note));
       if (m.seats) {
         const seats = el('div', 'seats');
         for (const s of m.seats) {
@@ -333,7 +340,7 @@ export function createCardTableHud({ onPress, doc = document }) {
       }
       msgEl = el('div', `msg${m.tone ? ` ${m.tone}` : ''}`, m.message);
       root.append(msgEl);
-      const acts = el('div', 'acts');
+      const acts = el('div', 'tableacts');
       if (m.buyIn) {
         const row = el('div', 'slide');
         const range = el('input');

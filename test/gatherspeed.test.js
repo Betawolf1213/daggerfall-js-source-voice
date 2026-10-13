@@ -233,7 +233,7 @@ function rig() {
   let input = { held: false, attack: false, choice: false };
   const host = createGatherHost({
     book, hud, kinds: [herbKind({ book }), mineKind({ book })],
-    renderer: { createBillboardBatch: (a, r, size, centers) => ({ centers: centers.length }), destroyBatch: () => {} }, getTexture: async () => ({ recordCount: 999 }), uploadRecord: () => {},
+    renderer: { createBillboardBatch: (a, r, size, centers, o) => ({ centers: centers.length, dynamic: !!o?.dynamic }), destroyBatch: () => {} }, getTexture: async () => ({ recordCount: 999 }), uploadRecord: () => {},
     billboardSize: () => ({ w: 0.3, h: 0.3 }), flatBatchAabb: () => [0, 0, 0, 0, 0, 0],
     built: () => built, pixelTranslation: (x, y, out) => { out[0] = 0; out[1] = 0; out[2] = 0; return out; },
     pixelInfo: () => ({ climate: WOODS, region: GLENUMBRA }), nowMs: () => clock.ms,
@@ -246,7 +246,7 @@ function rig() {
     const at = aimAt([feet[0], feet[1] + 1.6, feet[2]], [x, y + (node.lift ?? 0.3), z], { yaw: 0, pitch: 0 });
     view.yaw = -at.yaw; view.pitch = -at.pitch;
   };
-  const centers = () => entry.batches.reduce((a, b) => a + (b.centers ?? 0), 0);
+  const centers = () => entry.batches.reduce((a, b) => a + (b.dynamic ? 0 : b.centers ?? 0), 0);   // PIN MOVED (VEIN-CRACKS, GATHER-FEEL II, 2026-10-13): a blow's chunks are a dynamic batch on the pixel's list, no node's flats
   /** The act played to its end at `v`: the press, then a strike each swing. */
   const work = (v) => {
     face(v);
@@ -254,6 +254,7 @@ function rig() {
     assert.equal(host.press(), true);
     for (let i = 0; i < 8 && host.acting(); i++) { input = { held: false, attack: true, choice: false }; host.tick(MINE_ACT.swingS + 0.01); input = { held: false, attack: false, choice: false }; host.tick(0.01); }
     assert.equal(host.acting(), false, 'the act played to its end');
+    host.tick(MINE_ACT.swingS);   // GATHER-FEEL (PIN MOVED): the act's end is its last blow LANDING - the node goes then
   };
   return { host, book, said, entry, gate, clock, storage, centers, work };
 }

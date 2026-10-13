@@ -150,5 +150,11 @@
  "raid": "nájezd",
  "Hours (Brass Remnant)": "Hodiny",
  "abandon (a quest)": "vzdát se",
- "reclaim (a quest)": "získat zpět"
+ "reclaim (a quest)": "získat zpět",
+ "deck (cards)": "balíček",
+ "hand (cards held)": "ruka",
+ "turn (a card game's)": "tah",
+ "committed (a turn locked in)": "potvrzeno",
+ "ranked (game)": "hodnocená",
+ "panel (interface)": "panel"
 }

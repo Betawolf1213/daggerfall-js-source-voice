@@ -63,7 +63,7 @@ function rig({ answer = null, clear = null } = {}) {
   let input = { held: false, attack: false, choice: false };
   const host = createGatherHost({
     book, hud, kinds: [herbKind({ book }), mineKind({ book })],
-    renderer: { createBillboardBatch: (a, r, size, centers) => ({ centers: centers.length }), destroyBatch: () => {} }, getTexture: async () => ({ recordCount: 999 }), uploadRecord: () => {},
+    renderer: { createBillboardBatch: (a, r, size, centers, o) => ({ centers: centers.length, dynamic: !!o?.dynamic }), destroyBatch: () => {} }, getTexture: async () => ({ recordCount: 999 }), uploadRecord: () => {},
     billboardSize: () => ({ w: 0.3, h: 0.3 }), flatBatchAabb: () => [0, 0, 0, 0, 0, 0],
     built: () => built, pixelTranslation: (x, y, out) => { out[0] = origin[0]; out[1] = origin[1]; out[2] = origin[2]; return out; },
     pixelInfo: () => ({ climate: WOODS, region: GLENUMBRA }), nowMs: () => clock.ms,
@@ -189,11 +189,12 @@ test('AUDIT 29 C4: a kept harvest answered through the pump says its rank\'s ris
     const v = await ready(t);
     t.face(v);
     t.host.tick(0.016);
-    const centers = () => t.entry.batches.reduce((a, b) => a + (b.centers ?? 0), 0);
+    const centers = () => t.entry.batches.reduce((a, b) => a + (b.dynamic ? 0 : b.centers ?? 0), 0);   // PIN MOVED (VEIN-CRACKS, GATHER-FEEL II, 2026-10-13): a blow's chunks are a dynamic batch on the pixel's list, no node's flats
     for (let i = 0; i < 4; i++) await tick();
     const drawnBefore = centers();
     assert.equal(t.host.press(), true);
     for (let i = 0; i < 8 && t.host.acting(); i++) { t.setInput({ attack: true }); t.host.tick(MINE_ACT.swingS + 0.01); t.setInput({}); t.host.tick(0.01); }
+    t.host.tick(MINE_ACT.swingS);   // GATHER-FEEL (PIN MOVED): the last strike's blow lands - its node goes then, not on the press
     for (let i = 0; i < 6; i++) await tick();
     assert.equal(t.book.pendingHarvests, 1, 'kept - its first ask unanswered');
     assert.ok(!t.said.some((x) => /Mining 24 -> 25/.test(x)));

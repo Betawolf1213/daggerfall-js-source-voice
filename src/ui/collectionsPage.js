@@ -13,7 +13,10 @@
 //     binder's own page (ui/cardBinderPage.js), drawn here.
 //
 // Dressed by the stone-and-brass kit's roles as the other Holdings pages are (ui/enhancedFrame.js FRAME_ROLES) - this
-// sheet writes geometry and the words' colours alone.
+// sheet writes geometry and the words' colours alone. CARDS-PLUS (2026-10-13, bible/11-Multiplayer/Tavern-Cards.md
+// section 38): until then that sentence was a claim the roles did not keep - none named the switch, the codex's rows or
+// the binder's filters, chips and decks, and this sheet's own `background` and border colours painted over any that
+// might; the switch and the binder's presses are the kit's tiles now, a codex row its list line, a deck its panel.
 
 import { codexRows, codexSets, codexCount } from '../systems/lootCodex.js';
 import { lootRarityOn, powerLine, legendaryById, affixLine } from '../systems/lootRarity.js';
@@ -42,14 +45,13 @@ export function setCollectionsPart(/** @type {string} */ part) { if (COLLECTION_
 
 export const COLLECTION_PAGE_CSS = `
 .px-sys .coll-parts { display: flex; gap: 6px; margin: 2px 0 10px; }
-.px-sys .coll-part { padding: 4px 12px; border-width: 2px; border-style: solid; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #b8b0a0; cursor: pointer; background: transparent; }
+.px-sys .coll-part { padding: 4px 12px; border-width: 2px; border-style: solid; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #b8b0a0; cursor: pointer; }
 .px-sys .coll-part.on { color: #f3cf86; }
 .px-sys .codex-list { display: flex; flex-direction: column; gap: 4px; margin: 4px 0 10px; }
-.px-sys .codex-line { display: flex; justify-content: space-between; gap: 10px; padding: 5px 9px; border-width: 1px; border-style: solid; text-align: left; cursor: pointer; background: transparent; }
+.px-sys .codex-line { display: flex; justify-content: space-between; gap: 10px; padding: 5px 9px 6px; border-width: 0 0 1px; border-style: solid; text-align: left; cursor: pointer; }
 .px-sys .codex-line .nm { font-size: 13px; color: #8b8578; }
 .px-sys .codex-line.found .nm { color: #e07a2e; }
 .px-sys .codex-line .sub { font-size: 11px; color: #8b8578; text-align: right; }
-.px-sys .codex-line.on { border-color: #e07a2e; }
 .px-sys .codex-whole { margin: 2px 0 10px 12px; font-size: 12px; color: #e9e4d9; }
 .px-sys .codex-whole li { margin: 2px 0; }
 .px-sys .codex-set { font-size: 12px; color: #bfe8ff; margin: 2px 0 8px; }

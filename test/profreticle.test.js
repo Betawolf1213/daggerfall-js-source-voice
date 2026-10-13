@@ -10,7 +10,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createProfHud } from '../src/ui/profHud.js';
-import { buildActReticle, actCues, marksOf, offsetOf, reachPx, HINT_MS, FOCAL_FALLBACK, NOTCH_PX, BASKET_SPREAD } from '../src/ui/profReticle.js';
+import { buildActReticle, marksOf, offsetOf, reachPx, HINT_MS, FOCAL_FALLBACK, NOTCH_PX, BASKET_SPREAD } from '../src/ui/profReticle.js';
 import { reticleAnchor } from '../src/ui/worldPlaque.js';
 import { PROF_CUES, profCue, setProfCueSink } from '../src/systems/profSounds.js';
 import { PROF_CSS } from '../src/ui/enhancedPlusStyle.js';
@@ -251,37 +251,22 @@ test('PROF-RETICLE hint: one line under the crosshair, faded once it has stood H
   assert.equal(FOCAL_FALLBACK, 500);
 });
 
-test('PROF-RETICLE cues: every change a sound - a blow on the glint rings, a plain one strikes; a Clean Cut rings; a find ticks, a miss slips; a bruise slips once; a point passed ticks, a slip slips; the net swings, splashes, tugs and hauls; the HUD says them as it draws, and a clean finish rings (mutants: a cue lost or crossed)', () => {
-  const prev = {};
-  assert.deepEqual(actCues(prev, { kind: 'mine', strikes: 0 }), []);
-  assert.deepEqual(actCues(prev, { kind: 'mine', strikes: 1, last: 'glint' }), ['glint']);
-  assert.deepEqual(actCues(prev, { kind: 'mine', strikes: 2, last: 'plain' }), ['strike']);
-  assert.deepEqual(actCues({}, { kind: 'chop', chops: 1, last: 'clean' }), ['glint']);
-  assert.deepEqual(actCues({ hits: 0 }, { kind: 'basket', hits: [true] }), ['tick']);
-  assert.deepEqual(actCues({ hits: 1 }, { kind: 'basket', hits: [true, false] }), ['slip']);
-  const st = {};
-  assert.deepEqual(actCues(st, { kind: 'steady', bruised: true }), ['slip']);
-  assert.deepEqual(actCues(st, { kind: 'steady', bruised: true }), [], 'once');
-  assert.deepEqual(actCues({ reached: 0, slips: 0 }, { kind: 'trace', tracing: true, reached: 1, slips: 0 }), ['tick']);
-  assert.deepEqual(actCues({ reached: 2, slips: 0 }, { kind: 'trace', tracing: false, reached: 0, slips: 1 }), ['slip']);
-  const f = {};
-  assert.deepEqual(actCues(f, { kind: 'fish', phase: 'wind' }), []);
-  assert.deepEqual(['fly', 'wait', 'tug', 'haul'].map((phase) => actCues(f, { kind: 'fish', phase })), [['swing'], ['splash'], ['tug'], ['tick']]);
+test('PROF-RETICLE cues (PIN MOVED, GATHER-FEEL): the HUD draws the act and says nothing aloud - its cues are the gathering\'s ear\'s now (systems/gatherSounds.js, test/gatherfeel.test.js), which keeps DFU\'s own table for the classic skin (mutants: the table\'s hits cut to one)', () => {
   const heard = [];
   setProfCueSink((clip, vol) => heard.push([clip, vol]), () => 0);
   const hud = createProfHud({ doc: document });
   try {
     const a = createMineAct({ tier: 2, rng: cycle() });
     hud.setMeter(a);
-    assert.deepEqual(heard, [], 'nothing yet');
     a.tick(0.1, { attack: true, aim: { yaw: 0, pitch: 0 } });
     hud.setMeter(a);
-    assert.deepEqual(heard, [[PROF_CUES.strike.clips[0], PROF_CUES.strike.volume]]);
-    hud.cue('clean');
-    assert.deepEqual(heard.at(-1), [SOUND.ActivateLockUnlock, PROF_CUES.clean.volume]);
+    assert.deepEqual(heard, [], 'a strike drawn, nothing said by the HUD');
+    assert.equal(typeof hud.cue, 'undefined', 'no door to say a cue through');
   } finally { hud.dispose(); setProfCueSink(null, null); }
   assert.equal(profCue('nothing'), false);
   assert.deepEqual(PROF_CUES.strike.clips, [SOUND.Hit1, SOUND.Hit1 + 1, SOUND.Hit1 + 2, SOUND.Hit1 + 3, SOUND.Hit1 + 4], 'DFU\'s five hit clips');
+  assert.deepEqual(PROF_CUES.clean.clips, [SOUND.ActivateLockUnlock]);
+  assert.doesNotMatch(src('src/ui/profHud.js'), /profCue|profSounds/, 'the HUD imports no voice');
 });
 
 test('PROF-RETICLE host: the marks stand round the crosshair\'s middle and read the frame\'s lens (the anchor\'s focal); the world gives it reticleAnchor through fieldOfView; the last frame drawn before the act ends, a clean finish rung; the sheet appended after the old meter\'s rules, no plate, still forms under reduced motion (mutants: each wire cut)', () => {
@@ -301,7 +286,7 @@ test('PROF-RETICLE host: the marks stand round the crosshair\'s middle and read 
   assert.match(w, /const hud = createProfHud\(\{ anchor: \(\) => reticleAnchor\(canvas, fieldOfView\(\)\) \}\);/);
   const g = src('src/scenes/gatherHost.js');
   assert.match(g, /else if \(act\.act\.state\.done\) \{ hud\.setMeter\(act\.act, act\.label \?\? '', \{ byUse: act\.heldByUse === true \}\); finish\(act\); \}/);
-  assert.match(g, /if \(a\.clean\) hud\.cue\?\.\('clean'\);/);
+  assert.match(g, /if \(a\.clean\) ear\.say\('clean', null, \{ of: a\.act \}\);/);   // PIN MOVED (GATHER-FEEL): the clean finish the ear's, as its last blow lands - PIN MOVED again (AUDIT GATHER-FEEL LANDING): riding that blow's machine
   assert.ok(PROF_CSS.indexOf(PROF_ACT_CSS) > PROF_CSS.indexOf('.prof-meter { position: fixed; left: 50%; top: 50%;'), 'after the old meter\'s rules');
   assert.match(PROF_ACT_CSS, /\.prof-meter\.prof-reticle \{ position: fixed; left: var\(--rx, 50%\); top: var\(--ry, 50%\); transform: translate\(-50%, -50%\);/);
   assert.match(PROF_ACT_CSS, /padding: 0; margin: 0; background: none; border: 0; box-shadow: none;/, 'no plate');

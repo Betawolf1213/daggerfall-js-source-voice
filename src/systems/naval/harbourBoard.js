@@ -14,7 +14,8 @@
 //   hunt      CONTRACT_NEED.hunt pirate ships ended - sunk or taken - in the crown's waters
 //   delivery  a cargo carried to another port's harbourmaster by her term (a day for every DELIVERY_PX_DAY map pixels
 //             and DELIVERY_DAYS_BASE more), in the hold of the boat that took it on: she lies to that port's quay and
-//             it is delivered; she is wrecked and it is lost
+//             it is delivered; she is wrecked and it is lost. A port with the sea beside it (`deliveryPort` - FIELD
+//             BUGS 2026-10-13c PORT-TOWNS: a cargo went to a capital in the mountains)
 //   salvage   a merchantman gone down off the port: CONTRACT_NEED.salvage casks of her cargo hauled out of the sea where she
 //             went down (her casks float there once the captain is near)
 //   survey    the Admiralty's measure of the shipping in the crown's waters: CONTRACT_NEED.survey ships studied through the
@@ -36,6 +37,7 @@ import { classById, shipNames, SHIP_CLASSES } from './navalShips.js';
 import { HULL_PRICES } from '../comeSailAwayHulls.js';
 import { MINUTES_PER_DAY } from '../gameDate.js';   // a day of the captain's clock (minutes)
 import { hashKey } from '../../net/wire.js';   // FNV-1a over a string: a port's key on the board's stream (SLAM10's one home)
+import { coastalAt } from '../../net/fortLaw.js';   // FIELD BUGS 2026-10-13c PORT-TOWNS: the coast's one law - the sea beside a town
 export { hashKey };
 
 export const HARBOUR_CONTRACT_KINDS = Object.freeze(['bounty', 'hunt', 'delivery', 'salvage', 'survey']);
@@ -130,6 +132,18 @@ export function siteFor(port, r, seaAt, band = SITE_PX) {
   return null;
 }
 
+/**
+ * A PORT A CARGO GOES TO (FIELD BUGS 2026-10-13c PORT-TOWNS): one of the board's ports with the sea beside it - its own
+ * map pixel or one of the eight about it (`seaAt`; net/fortLaw.js coastalAt, the coast's one law) - where a ship lies
+ * within the berth's reach, a map pixel (scenes/world.js navalPortHere). Travel Options lists the region capitals among
+ * its harbours (MAPS.BSA's 0x10 mark - the coast's own bits, the low four, name sides of a place the sea lies on, every
+ * one of the 304 that carry one, and no capital carries one), and 31 of them stand with no sea within six pixels;
+ * Daggerfall, Sentinel and Wayrest stand two off it.
+ * No sea law, no port. Pure.
+ * @param {{ px: number, py: number } | null | undefined} p @param {((px: number, py: number) => boolean) | null | undefined} seaAt
+ */
+export const deliveryPort = (p, seaAt) => !!p && coastalAt(p.px, p.py, seaAt);
+
 /** A bounty's quarry: the strongest pirate within two levels of the captain's (never the flagship before level 12). */
 export function bountyClass(level, r) {
   const pool = SHIP_CLASSES.filter((c) => c.faction === 'pirate' && c.minLevel <= Math.max(1, level | 0) + 2 && (!c.flagship || level >= 12));
@@ -140,7 +154,7 @@ export function bountyClass(level, r) {
 
 /**
  * THE BOARD a port posts on a day: BOARD_OFFERS and its rank's more, each kind in turn off the board's stream (a kind
- * the port cannot post - a site with no open water, a delivery with no port far enough - is passed over). Each offer
+ * the port cannot post - a site with no open water, a delivery with no port far enough on the sea - is passed over). Each offer
  * `{ id, kind, crown, port, title, words, pay, standing, days, need?, target?, to?, cargo? }`; `taken` the ids already
  * taken off it.
  * @param {{ port: { key: string, name: string, px: number, py: number }, crown: string, day: number, level?: number,
@@ -191,7 +205,7 @@ function offerOf(kind, { id, port, crown, level, pay, ports, seaAt, regionIndex,
       pay: payOf('hunt', { level, need, pay }), standing: STANDING_DONE.hunt * need, days: TERM_DAYS.hunt, need };
   }
   if (kind === 'delivery') {
-    const far = (ports ?? []).filter((p) => p && p.key !== port.key && cheb(p, port) >= DELIVERY_PX_MIN).sort((a, b) => cheb(a, port) - cheb(b, port) || (a.key < b.key ? -1 : 1));
+    const far = (ports ?? []).filter((p) => p && p.key !== port.key && cheb(p, port) >= DELIVERY_PX_MIN && deliveryPort(p, seaAt)).sort((a, b) => cheb(a, port) - cheb(b, port) || (a.key < b.key ? -1 : 1));
     if (!far.length) return null;
     const to = far[Math.floor(r() * Math.min(far.length, 6)) % far.length];
     const d = cheb(to, port);
@@ -234,8 +248,10 @@ export function takeContract(offer, { now, boat = null }) {
  *   { type: 'berth', port, boat }                                a boat lying to a port's quay
  *   { type: 'wrecked', boat }                                    a boat of the captain's wrecked
  *   { type: 'lost', bounty }                                     a bounty's quarry gone down by another hand
- * Answers 'done', 'failed', 'void' (AUDIT CAPTAIN'S SEA B4: a bounty whose quarry no hand of the captain's can end now) or
- * null (her progress moved or not, in `c.done`).
+ *   { type: 'unported', port }                                   a port's key that is no port a cargo goes to (`deliveryPort`)
+ * Answers 'done', 'failed', 'void' (AUDIT CAPTAIN'S SEA B4: a bounty whose quarry no hand of the captain's can end now;
+ * FIELD BUGS 2026-10-13c PORT-TOWNS: a cargo held for a place that is no port - taken off a board that read a tomb or an
+ * inland capital as one) or null (her progress moved or not, in `c.done`).
  * @param {any} c @param {any} ev
  */
 export function advance(c, ev) {
@@ -251,6 +267,7 @@ export function advance(c, ev) {
   }
   if (c.kind === 'salvage') return ev.type === 'haul' && ev.site === c.id ? count() : null;
   if (c.kind === 'delivery') {
+    if (ev.type === 'unported') return ev.port === c.to?.key ? 'void' : null;   // FIELD BUGS 2026-10-13c PORT-TOWNS
     if (c.boat == null || ev.boat !== c.boat) return null;
     if (ev.type === 'wrecked') return 'failed';
     return ev.type === 'berth' && ev.port === c.to?.key ? 'done' : null;

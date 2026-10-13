@@ -317,6 +317,7 @@ export function lerpPose(from, to, t) {
     ...(to.st ? { st: to.st } : {}),   // CARDS2b: the seat - discrete, omitted standing as the wire omits it
     ...(to.cv ? { cv: to.cv } : {}),   // INVIS-NET: the concealment - discrete, omitted when there is none as the wire omits it
     ...(to.cl ? { cl: to.cl, ...(Number.isFinite(to.cw) ? { cw: to.cw } : {}), ...(to.ck ? { ck: to.ck, ...(Number.isFinite(to.cy) ? { cy: to.cy } : {}), ...(to.cd ? { cd: to.cd } : {}) } : {}) } : {}),   // CLIMB6: the move's kind, lip and time, whole   // CLIMB5: the climb and its facing - whole (the body eases its own yaw), omitted off the wall as the wire omits it
+    ...(to.ga ? { ga: to.ga, ...(to.gm ? { gm: to.gm } : {}) } : {}), ...(to.gb ? { gb: to.gb } : {}),   // PEER-ACTS: the gathering act and the net's throw, and the beats on their own - discrete, omitted at none as the wire omits them
   };
 }
 

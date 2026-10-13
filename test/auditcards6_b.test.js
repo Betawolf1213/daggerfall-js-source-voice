@@ -266,7 +266,11 @@ test('AUDIT CARDS-6 B5: the forfeits\' book is written on the game day the card 
   assert.deepEqual(Object.values(entity.iliacForfeits).map((e) => e.day), [6], 'booked on day 6');
   assert.deepEqual(forfeitsFor(entity.iliacForfeits, Object.keys(entity.iliacForfeits)[0], 6), [name]);
   ig.press('again');
-  assert.match(text(ig.g.hud.root), new RegExp(`${name} \\(\\w+\\) - has paid a card tonight`), 'the panel open since day 5 knows he paid on day 6');
+  // PIN MOVED (CARDS-PLUS, Tavern-Cards section 38): a regular is a tile of the setup now - the name and temper on its
+  // first line, what the regular has paid under it - so the pin reads that tile, not one sentence of the whole panel
+  const tile = every(ig.g.hud.root).find((n) => String(n.className).split(' ').includes('opt') && text(n).startsWith(`${name} (`));
+  assert.ok(tile, 'the regular\'s tile');
+  assert.match(text(tile), new RegExp(`^${name} \\(\\w+\\)has paid a card tonight$`), 'the panel open since day 5 knows the regular paid on day 6');
   h.api.standFromCardTable();
 });
 
