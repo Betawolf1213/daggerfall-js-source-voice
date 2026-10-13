@@ -609,9 +609,7 @@
     "new": "king: 19,",
     "tests": [
       "test/kg2_patrons.test.js"
-    ],
-    "equivalent": true,
-    "why": "the king's 20 decides only between two cells in range, and without it the most a cell in range scores is 60 (50 + 0.5 x 20, the walk counted to 20) while with it the least is 70 less the same hazards: the hazards' differences (8, 32, 40) and a ranged piece's spacing (at most 9.5 between two cells) never bring the two within one point of each other, so 19 or 21 moves no choice. KG2-move-king-none (0) moves one, and dies."
+    ]
   },
   {
     "name": "KG2-move-king-up",
@@ -620,9 +618,7 @@
     "new": "king: 21,",
     "tests": [
       "test/kg2_patrons.test.js"
-    ],
-    "equivalent": true,
-    "why": "as KG2-move-king: no two cells' scores come within a point of each other across the king's 20, so 21 moves no choice"
+    ]
   },
   {
     "name": "KG2-move-space",
@@ -748,9 +744,7 @@
     "new": "GAMBIT_JITTER = 0.2;",
     "tests": [
       "test/kg2_patrons.test.js"
-    ],
-    "equivalent": true,
-    "why": "the jitter only breaks ties: every move's score lies on a half-point grid (reach 50, the king's 20, a ranged piece's 0.5 a step, 3 and 5 a step, -100, the hazards' 8 and 40) and an escape's on whole steps, so a draw below 0.5 never carries one score past another - 0.1 or 0.2, the same cell. KG2-jitter-bridges (0.6) is the jitter that can, and dies."
+    ]
   },
   {
     "name": "KG2-hazard-warning",
@@ -818,8 +812,8 @@
   {
     "name": "KG2-step-ending",
     "file": "src/systems/gambitPatrons.js",
-    "old": "if (!state || state.over || state.turn !== side || state.ending || state.actions <= 0) return null;",
-    "new": "if (!state || state.over || state.turn !== side) return null;",
+    "old": "if (!state || state.over || state.turn !== side || state.ending || state.actions <= 0 || !playable(tier)) return null;",
+    "new": "if (!state || state.over || state.turn !== side || !playable(tier)) return null;",
     "tests": [
       "test/kg2_patrons.test.js"
     ]
@@ -856,6 +850,123 @@
     "file": "src/systems/gambitPatrons.js",
     "old": "reach: 50, king: 20,",
     "new": "reach: 50, king: 0,",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-bite-per-kind",
+    "file": "src/systems/gambitPatrons.js",
+    "old": "p.hp <= KG_HAZARD_DAMAGE[h.kind]",
+    "new": "p.hp <= KG_HAZARD_DAMAGE.fire",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-escape-boxed-stops",
+    "file": "src/systems/gambitPatrons.js",
+    "old": "if (cell) return { type: 'move', piece: p.id, col: cell[0], row: cell[1] };",
+    "new": "if (cell) return { type: 'move', piece: p.id, col: cell[0], row: cell[1] }; else break;",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-escape-last-first",
+    "file": "src/systems/gambitPatrons.js",
+    "old": "  for (const p of mine) {\n    const h = hazardAt",
+    "new": "  for (const p of mine.slice().reverse()) {\n    const h = hazardAt",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-move-score-f64",
+    "file": "src/systems/gambitPatrons.js",
+    "old": "score = f32(score + f32(value(rand32) * f32(GAMBIT_JITTER)));",
+    "new": "score = score + value(rand32) * GAMBIT_JITTER;",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-escape-score-f64",
+    "file": "src/systems/gambitPatrons.js",
+    "old": "const score = f32((p.king ? near : -near) + f32(value(rand32) * f32(GAMBIT_JITTER)));",
+    "new": "const score = (p.king ? near : -near) + value(rand32) * GAMBIT_JITTER;",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-blow-score-f64",
+    "file": "src/systems/gambitPatrons.js",
+    "old": "let score = f32(p.atk + value(rand32));",
+    "new": "let score = p.atk + nextDouble(rand32);",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-strike-coin-f64",
+    "file": "src/systems/gambitPatrons.js",
+    "old": "value(rand32) < f32(GAMBIT_BLUNDER_STRIKE)",
+    "new": "nextDouble(rand32) < GAMBIT_BLUNDER_STRIKE",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-blunder-foe-index",
+    "file": "src/systems/gambitPatrons.js",
+    "old": "foes[drawBelow(foes.length, rand32)]",
+    "new": "foes[foes.length - 1 - drawBelow(foes.length, rand32)]",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-step-unchecked",
+    "file": "src/systems/gambitPatrons.js",
+    "old": "  try { cmd = regularAction(state, side, tier, checkedRand32(aiRand)); } catch { return null; }",
+    "new": "  cmd = regularAction(state, side, tier, aiRand);",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-action-any-tier",
+    "file": "src/systems/gambitPatrons.js",
+    "old": "  if (!state || !playable(tier)) return null;",
+    "new": "  if (!state) return null;",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-step-any-tier",
+    "file": "src/systems/gambitPatrons.js",
+    "old": "state.actions <= 0 || !playable(tier)) return null;",
+    "new": "state.actions <= 0) return null;",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-measure-kings-stopped",
+    "file": "tools/kgMeasure.mjs",
+    "old": "    if (st.round > rounds) return { end: st.pieces.every((p) => p.king) ? 'kings' : 'long', rounds: st.round };",
+    "new": "    if (st.round > rounds) return { end: 'long', rounds: st.round };\n    if (st.pieces.every((p) => p.king)) return { end: 'kings', rounds: st.round };",
+    "tests": [
+      "test/kg2_patrons.test.js"
+    ]
+  },
+  {
+    "name": "KG2-measure-seeds-unmixed",
+    "file": "tools/kgMeasure.mjs",
+    "old": "export const gameSeed = (seed, g) => mix32((Math.imul(seed, 1000003) + Math.imul(g, 7919) + 1) >>> 0) || 1;",
+    "new": "export const gameSeed = (seed, g) => (Math.imul(seed, 1000003) + Math.imul(g, 7919) + 1) >>> 0;",
     "tests": [
       "test/kg2_patrons.test.js"
     ]

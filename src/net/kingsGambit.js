@@ -193,11 +193,12 @@ export function armyCost(ids) {
 /**
  * Why an army may not take the board - 'shape' (not a list of integers), 'empty', 'units' (more than KG_MAX_UNITS),
  * 'unit' (an id the roster does not hold), 'points' (it costs more than `budget`) - or null. ParseArmy's law, and
- * TryAdd's bounds (StartBattle asks for one unit at least).
+ * TryAdd's bounds (StartBattle asks for one unit at least). Every index is read: a hole in a list is no integer (AUDIT
+ * KG A3 - `every` steps over a hole, so `[0, , 1]` passed and the deployment threw).
  * @param {any} ids @param {number} [budget]
  */
 export function armyRefusal(ids, budget = KG_POINT_BUDGET) {
-  if (!Array.isArray(ids) || !ids.every(Number.isInteger)) return 'shape';
+  if (!Array.isArray(ids) || !Array.from(ids).every(Number.isInteger)) return 'shape';
   if (!ids.length) return 'empty';
   if (ids.length > KG_MAX_UNITS) return 'units';
   if (!ids.every((id) => BY_ID.has(id))) return 'unit';
@@ -212,33 +213,41 @@ export function canRecruit(army, id, budget = KG_POINT_BUDGET) {
 }
 
 /**
- * AUTO-FILL (AutoFill): `army` topped up toward `budget`, as a new list. While it holds fewer than KG_MAX_UNITS, and for
- * at most KG_AUTOFILL_ROUNDS rounds: the units the points left still buy (none: stop); while it holds fewer than
- * KG_AUTOFILL_RANGED ranged units, one time in two (KG_AUTOFILL_LEAN) only the ranged among them, if there are any; two
- * drawn at random from those, the dearer kept (the first on a tie). `rand32` stands for Unity's shared Random -
- * Random.value is rand32 / 2^32, Random.Range(0, n) drawBelow(n). The player's Auto-fill and a regular's army alike.
- * @param {number[]} army @param {number} budget @param {() => number} rand32
+ * AUTO-FILL (AutoFill): `army` topped up toward `budget`, as a new list - or null for a source that is not one (the
+ * law's checked source, checkedRand32: AUDIT KG A2 - one stuck at a draw drawBelow throws back spun for ever). While it
+ * holds fewer than KG_MAX_UNITS, and for at most KG_AUTOFILL_ROUNDS rounds: the units the points left still buy (none:
+ * stop); while it holds fewer than KG_AUTOFILL_RANGED ranged units, one time in two (KG_AUTOFILL_LEAN) only the ranged
+ * among them, if there are any; two drawn at random from those, the dearer kept (the first on a tie). `rand32` stands
+ * for Unity's shared Random - Random.value is nextDouble at float32, compared with the C#'s 0.5f (AUDIT KG A1: raw
+ * draws 2147483584 to 2147483647 round up to 0.5f and do not lean), Random.Range(0, n) drawBelow(n). The player's
+ * Auto-fill and a regular's army alike.
+ * @param {number[]} army @param {number} budget @param {() => number} source
+ * @returns {number[]|null}
  */
-export function autoFill(army, budget, rand32) {
+export function autoFill(army, budget, source) {
   const out = army.slice();
+  const rand32 = checkedRand32(source);
   let money = budget - armyCost(out);
-  for (let round = 0; out.length < KG_MAX_UNITS && round < KG_AUTOFILL_ROUNDS; round++) {
-    let list = KG_ROSTER.filter((u) => u.cost <= money);
-    if (!list.length) break;
-    if (out.filter((id) => rosterUnit(id)?.ranged).length < KG_AUTOFILL_RANGED && nextDouble(rand32) < KG_AUTOFILL_LEAN) {
-      const ranged = list.filter((u) => u.ranged);
-      if (ranged.length) list = ranged;
+  try {
+    for (let round = 0; out.length < KG_MAX_UNITS && round < KG_AUTOFILL_ROUNDS; round++) {
+      let list = KG_ROSTER.filter((u) => u.cost <= money);
+      if (!list.length) break;
+      if (out.filter((id) => rosterUnit(id)?.ranged).length < KG_AUTOFILL_RANGED && f32(nextDouble(rand32)) < f32(KG_AUTOFILL_LEAN)) {
+        const ranged = list.filter((u) => u.ranged);
+        if (ranged.length) list = ranged;
+      }
+      let u = list[drawBelow(list.length, rand32)];
+      const v = list[drawBelow(list.length, rand32)];
+      if (v.cost > u.cost) u = v;
+      out.push(u.id);
+      money -= u.cost;
     }
-    let u = list[drawBelow(list.length, rand32)];
-    const v = list[drawBelow(list.length, rand32)];
-    if (v.cost > u.cost) u = v;
-    out.push(u.id);
-    money -= u.cost;
-  }
+  } catch { return null; }
   return out;
 }
 
-/** NextDouble, and Unity's Random.value: a [0, 1) draw off a 32-bit source - the law's, and the regulars' choices'
+/** NextDouble: a [0, 1) draw off a 32-bit source - the law's (a blow's roll), and Unity's Random.value at float32, where
+ *  it is [0, 1] as Unity's is (the top 128 draws round to 1): Auto-fill's lean, and the regulars' choices
  *  (systems/gambitPatrons.js, KG2). @param {() => number} rand32 */
 export const nextDouble = (rand32) => (rand32() >>> 0) / 4294967296;
 
@@ -425,8 +434,13 @@ function placeArmy(/** @type {GambitPiece[]} */ pieces, /** @type {number[]} */ 
 
 /** @typedef {GambitBoard & {layout: string, turn: number, actions: number, round: number, potions: number[], ending: boolean, over: {winner: number, fallen: number}|null}} GambitState */
 
-/** The source, checked: a 32-bit draw, at most KG_RAND_DRAWS_MAX of them, or it throws. @param {any} source */
-function checked(source) {
+/** The two sides, the host's and the guest's. */
+const SIDES = Object.freeze([0, 1]);
+
+/** THE SOURCE, CHECKED: a 32-bit draw, at most KG_RAND_DRAWS_MAX of them, or it throws ('rand32') - so a step that
+ *  draws through it is refused rather than spun for ever. The law's every step, and the regulars' (gambitPatrons.js
+ *  regularStep). @param {any} source @returns {() => number} */
+export function checkedRand32(source) {
   let draws = 0;
   return () => {
     const v = source();
@@ -444,12 +458,13 @@ function checked(source) {
  * @returns {GambitState|null}
  */
 export function newGambit({ armies, rand32: source, potions = [KG_POTIONS_PER_SIDE, KG_POTIONS_PER_SIDE], budgets = [KG_POINT_BUDGET, KG_POINT_BUDGET] }) {
+  // each side read by its index, as armyRefusal reads a list: `every` and `some` step over a hole (AUDIT KG A3)
   if (!Array.isArray(armies) || armies.length !== 2 || typeof source !== 'function') return null;
-  if (!Array.isArray(budgets) || budgets.length !== 2 || !budgets.every((b) => Number.isInteger(b) && b >= 0 && b <= KG_BUDGET_MAX)) return null;
-  if (!Array.isArray(potions) || potions.length !== 2 || !potions.every((n) => Number.isInteger(n) && n >= 0 && n <= KG_POTIONS_MAX)) return null;
-  if (armies.some((a, s) => armyRefusal(a, budgets[s]) !== null)) return null;
+  if (!Array.isArray(budgets) || budgets.length !== 2 || !SIDES.every((s) => Number.isInteger(budgets[s]) && budgets[s] >= 0 && budgets[s] <= KG_BUDGET_MAX)) return null;
+  if (!Array.isArray(potions) || potions.length !== 2 || !SIDES.every((s) => Number.isInteger(potions[s]) && potions[s] >= 0 && potions[s] <= KG_POTIONS_MAX)) return null;
+  if (SIDES.some((s) => armyRefusal(armies[s], budgets[s]) !== null)) return null;
   let map;
-  try { map = buildMap(checked(source)); } catch { return null; }
+  try { map = buildMap(checkedRand32(source)); } catch { return null; }
   /** @type {GambitPiece[]} */ const pieces = [];
   const next = { n: 0 };
   placeArmy(pieces, armies[0], 0, next);
@@ -589,7 +604,7 @@ export function gambitAct(state, side, cmd, rand32) {
   /** @type {any[]} */ const events = [];
   let u = 0;
   if (cmd.type === 'attack') {
-    try { u = nextDouble(checked(rand32)); } catch { return { refused: 'rand' }; }
+    try { u = nextDouble(checkedRand32(rand32)); } catch { return { refused: 'rand' }; }
   }
   /** @type {GambitState} */ const st = structuredClone(state);
   if (cmd.type === 'end') {
@@ -660,7 +675,7 @@ export function finishTurn(state, rand32) {
       if (armed.length) events.push({ t: 'armed', cells: armed });
       if (st.hazards.length + 2 <= KG_MAX_HAZARDS) {
         let laid;
-        try { laid = spawnHazardPair(st, false, checked(rand32)); } catch { return { refused: 'rand' }; }
+        try { laid = spawnHazardPair(st, false, checkedRand32(rand32)); } catch { return { refused: 'rand' }; }
         if (laid) {
           const [a, b] = st.hazards.slice(-2);
           events.push({ t: 'warning', kind: a.kind, cells: [[a.col, a.row], [b.col, b.row]] });

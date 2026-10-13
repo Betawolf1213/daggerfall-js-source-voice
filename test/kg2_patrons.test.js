@@ -23,7 +23,7 @@ const [AMATEUR, SEASONED, VETERAN, GRANDMASTER] = G.GAMBIT_TIERS;
 const CLEAR = V(0.9);
 
 /** A game on an open board (every cell floor, no hazard): the host's army `host`, the regular's (the guest's) `guest`,
- *  his turn with `actions` left. Pieces: the host's king 0, its units from 1 dearest first; then the guest's king and
+ *  the regular's turn with `actions` left. Pieces: the host's king 0, its units from 1 dearest first; then the guest's king and
  *  units. */
 function board(host, guest, { actions = 2, potions = [3, 3] } = {}) {
   const st = K.newGambit({ armies: [host, guest], rand32: xorshift(1), potions, budgets: [K.KG_BUDGET_MAX, K.KG_BUDGET_MAX] });
@@ -84,7 +84,7 @@ test('KG2 THE TIERS: the mod\'s Tiers table by key and number (its words the cli
   count.forEach((n, i) => assert.ok(Math.abs(n / 200000 - [0.40, 0.35, 0.18, 0.07][i]) < 0.005, `tier ${i}: ${n}`));
 });
 
-test('KG2 THE DEAL: the regular\'s army Auto-filled to his tier\'s points first, then the board; his potions his tier\'s', () => {
+test('KG2 THE DEAL: the regular\'s army Auto-filled to the tier\'s points first, then the board; the regular\'s potions the tier\'s', () => {
   for (const tier of G.GAMBIT_TIERS) {
     for (let seed = 1; seed <= 8; seed++) {
       const army = G.regularArmy(tier, xorshift(seed));
@@ -104,19 +104,20 @@ test('KG2 THE DEAL: the regular\'s army Auto-filled to his tier\'s points first,
   assert.deepEqual(G.dealRegular({ army: [0, 128], tier: AMATEUR, rand32: xorshift(9) }).potions, [3, 2]);
   assert.equal(G.dealRegular({ army: new Array(13).fill(0), tier: SEASONED, rand32: xorshift(9) }), null, 'an army the law refuses deals nothing');
   assert.equal(G.dealRegular({ army: [31, 31, 31, 31, 31], tier: SEASONED, rand32: xorshift(9) }), null, 'nor one past the player\'s 300');
+  assert.equal(G.dealRegular({ army: [0, 128], tier: SEASONED, rand32: () => 0xFFFFFFFF }), null, 'nor a stuck source - refused, never spun (AUDIT KG A2)');
 });
 
 test('KG2 A BLUNDER (AiBlunder): by the tier\'s chance at float32, drawn every action; a random piece strikes one time in two', () => {
-  // the host's king 0 and Rat 1, the regular's king 2 and Rat 3 - his Rat beside the host's
+  // the host's king 0 and Rat 1, the regular's king 2 and Rat 3 - the regular's Rat beside the host's
   const st = board([0], [0]);
   at(st, 1, 7, 11);
   at(st, 3, 7, 10);
-  // a blunder: his Rat (the second of his two), a strike (0.25 < 0.5), at its one foe
+  // a blunder: the regular's Rat (the second of two pieces), a strike (0.25 < 0.5), at its one foe
   assert.deepEqual(choose(st, AMATEUR, [V(0.3), R(1, 2), V(0.25), R(0, 1)]), { type: 'attack', piece: 3, target: 1 });
   // no strike (0.5): the walk - a cell it reaches, at random
   const cells = K.reachable(st, K.pieceById(st, 3));
   assert.deepEqual(choose(st, AMATEUR, [V(0.3), R(1, 2), V(0.5), R(2, cells.length)]), { type: 'move', piece: 3, col: cells[2][0], row: cells[2][1] });
-  // his king, with no foe in range, walks - and the strike's draw is never taken
+  // the regular's king, with no foe in range, walks - and the strike's draw is never taken
   const kc = K.reachable(st, K.pieceById(st, 2));
   assert.deepEqual(choose(st, AMATEUR, [V(0.3), R(0, 2), R(4, kc.length)]), { type: 'move', piece: 2, col: kc[4][0], row: kc[4][1] });
   // a king walled in, no foe in range: no blunder to make, no action
@@ -134,9 +135,15 @@ test('KG2 A BLUNDER (AiBlunder): by the tier\'s chance at float32, drawn every a
   assert.deepEqual(choose(st, VETERAN, [214748361, V(0.5)]), { type: 'attack', piece: 3, target: 1 });
   // a Grandmaster never blunders, and the draw is taken all the same
   assert.deepEqual(choose(st, GRANDMASTER, [V(0), V(0.5)]), { type: 'attack', piece: 3, target: 1 });
+  // THE STRIKE'S COIN IS RANDOM.VALUE AT FLOAT32 too (AUDIT KG B2): raw 2147483647 rounds up to 0.5f, no strike - it walks
+  assert.deepEqual(choose(st, AMATEUR, [V(0.3), R(1, 2), 2147483647, R(2, cells.length)]), { type: 'move', piece: 3, col: cells[2][0], row: cells[2][1] });
+  // and its foe is drawn by its place among those in range (AUDIT KG B2): the host's king beside the Rat as well, drawn first
+  at(st, 0, 6, 10);
+  assert.deepEqual(choose(st, AMATEUR, [V(0.3), R(1, 2), V(0.25), R(0, 2)]), { type: 'attack', piece: 3, target: 0 });
+  assert.deepEqual(choose(st, AMATEUR, [V(0.3), R(1, 2), V(0.25), R(1, 2)]), { type: 'attack', piece: 3, target: 1 });
 });
 
-test('KG2 THE POTION: while he holds one, for the piece with the least share of its health at or below its line', () => {
+test('KG2 THE POTION: while one is held, for the piece with the least share of its health at or below its line', () => {
   // the regular's king 2, Mage 3 (30 health) and Rat 4 (12), far from the host's
   const st = board([0], [0, 128]);
   const [king, mage, rat] = [2, 3, 4].map((id) => K.pieceById(st, id));
@@ -146,7 +153,7 @@ test('KG2 THE POTION: while he holds one, for the piece with the least share of 
   assert.deepEqual(choose(st, SEASONED, [CLEAR]), { type: 'potion', piece: 3 }, 'the Mage at exactly three tenths (0.3f at float32) drinks');
   mage.hp = 10;
   assert.deepEqual(choose(st, SEASONED, [CLEAR]), { type: 'potion', piece: 2 }, 'the king at exactly a half drinks');
-  // above every line, or none held: the next rule - his Rat beside the host's strikes
+  // above every line, or none held: the next rule - the regular's Rat beside the host's strikes
   king.hp = 36;
   rat.hp = 4;
   at(st, 1, 7, 11);
@@ -201,13 +208,40 @@ test('KG2 AN ESCAPE (TryEscape): off an active hazard that would kill, or any on
   const boxed = fresh(8);
   for (const [c, r] of K.reachable(boxed, K.pieceById(boxed, 3))) lay(boxed, c, r, 'spikes', false);
   assert.deepEqual(choose(boxed, SEASONED, [CLEAR, V(0)]), { type: 'attack', piece: 3, target: 1 }, 'cornered, it strikes');
+  // THE BITE IS ITS OWN KIND'S (AUDIT KG B2): a Rat with 7 on spikes (6) lives through it - no escape before the last
+  // action, the blow comes first - where fire's 8 would kill it
+  const spikes = board([0], [0]);
+  at(spikes, 1, 7, 6);
+  at(spikes, 3, 7, 5).hp = 7;
+  lay(spikes, 7, 5, 'spikes');
+  assert.deepEqual(choose(spikes, SEASONED, [CLEAR, V(0)]), { type: 'attack', piece: 3, target: 1 });
+  // A BOXED PIECE GIVES WAY TO THE NEXT (AUDIT KG B2: TryEscape answers false and the loop goes on): the regular's first Rat
+  // on fire with every cell it reaches under a warning, the second on fire beside a clear field - the second steps off
+  const two = board([0], [0, 0]);
+  at(two, 1, 11, 5);
+  at(two, 3, 2, 4).hp = 8;
+  lay(two, 2, 4, 'fire');
+  for (const [c, r] of K.reachable(two, K.pieceById(two, 3))) lay(two, c, r, 'poison', false);
+  at(two, 4, 11, 4).hp = 8;
+  lay(two, 11, 4, 'fire');
+  const clear4 = K.reachable(two, K.pieceById(two, 4)).filter(([c, r]) => !K.hazardAt(two, c, r));
+  assert.deepEqual(choose(two, SEASONED, [CLEAR, ...jitters(clear4)]), { type: 'move', piece: 4, col: 12, row: 5 });
+  // TWO THAT CAN STEP OFF: the first in the pieces' order does (AUDIT KG B2)
+  const pair = board([0], [0, 0]);
+  at(pair, 1, 7, 9);
+  at(pair, 3, 2, 4).hp = 8;
+  lay(pair, 2, 4, 'fire');
+  at(pair, 4, 11, 4).hp = 8;
+  lay(pair, 11, 4, 'fire');
+  const clear3 = K.reachable(pair, K.pieceById(pair, 3)).filter(([c, r]) => !K.hazardAt(pair, c, r));
+  assert.deepEqual(choose(pair, SEASONED, [CLEAR, ...jitters(clear3)]), { type: 'move', piece: 3, col: 5, row: 4 });
 });
 
 test('KG2 THE BEST BLOW: attack and a draw, 40 more at the king, 30 more for a kill - a draw a pair, the first kept on a tie', () => {
   // host: king 0, Daedra Lord 1, Daedra Lord 2; the regular: king 3, Daedra Lord 4, Rat 5
   const st = board([31, 31], [31, 0]);
-  at(st, 4, 3, 5); at(st, 1, 3, 6);    // his Lord over the host's first Lord
-  at(st, 5, 10, 5); at(st, 0, 10, 6);  // his Rat over the host's king
+  at(st, 4, 3, 5); at(st, 1, 3, 6);    // the regular's Lord over the host's first Lord
+  at(st, 5, 10, 5); at(st, 0, 10, 6);  // the regular's Rat over the host's king
   at(st, 2, 0, 12); at(st, 3, 7, 0);
   // 40 + u for the Lord's blow, 2 + 40 + u for the Rat's at the king: the king, whatever the draws
   assert.deepEqual(choose(st, SEASONED, [CLEAR, V(0.99), V(0)]), { type: 'attack', piece: 5, target: 0 });
@@ -224,13 +258,13 @@ test('KG2 THE BEST BLOW: attack and a draw, 40 more at the king, 30 more for a k
 });
 
 test('KG2 THE BEST MOVE: into range (more at the king, a ranged piece keeping its distance), else nearer; a king flees; above 0 alone', () => {
-  // the host's Rat 1 at (7, 9) and king 0 at (7, 12); the regular's king 2 at (7, 0), his Rat 3 at (7, 3)
+  // the host's Rat 1 at (7, 9) and king 0 at (7, 12); the regular's king 2 at (7, 0), Rat 3 at (7, 3)
   const st = board([0], [0]);
   at(st, 1, 7, 9);
   at(st, 3, 7, 3);
-  /** His draws: the blunder's, then a jitter for every cell each of his pieces (2, then 3) reaches. */
+  /** The regular's draws: the blunder's, then a jitter for every cell each of the regular's pieces (2, then 3) reaches. */
   const draws = (s, wins) => [CLEAR, ...[2, 3].flatMap((id) => jitters(K.reachable(s, K.pieceById(s, id)), wins))];
-  // nearer by three steps (9): his king, unalarmed nine steps off, never moves (-100)
+  // nearer by three steps (9): the regular's king, unalarmed nine steps off, never moves (-100)
   assert.deepEqual(choose(st, SEASONED, draws(st)), { type: 'move', piece: 3, col: 7, row: 6 });
   // an active hazard on it (-40): two steps nearer (6) instead
   lay(st, 7, 6, 'fire');
@@ -249,7 +283,7 @@ test('KG2 THE BEST MOVE: into range (more at the king, a ranged piece keeping it
   at(into, 3, 7, 5);
   assert.deepEqual(choose(into, SEASONED, draws(into)), { type: 'move', piece: 3, col: 7, row: 8 });
   // THE HAZARD DANCE's first step: an active hazard on the one cell in range - 50 less 40 is 10, over two steps nearer
-  // (6); on the turn's last action he steps off it again before he strikes (the escape, above)
+  // (6); on the turn's last action the Rat steps off it again before it strikes (the escape, above)
   lay(into, 7, 8, 'fire');
   assert.deepEqual(choose(into, SEASONED, draws(into)), { type: 'move', piece: 3, col: 7, row: 8 });
   into.hazards = [];
@@ -265,7 +299,7 @@ test('KG2 THE BEST MOVE: into range (more at the king, a ranged piece keeping it
   at(mage, 3, 7, 3);
   const high = (s, id, cell) => K.reachable(s, K.pieceById(s, id)).map(([c, r]) => (c === cell[0] && r === cell[1] ? V(0.9) : V(0)));
   assert.deepEqual(choose(mage, SEASONED, [CLEAR, ...high(mage, 2, [-1, -1]), ...high(mage, 3, [7, 6])]), { type: 'move', piece: 3, col: 7, row: 5 });
-  // A KING ALARMED: a foe within four steps - he flees by the gain times 5; the Rat taken off the board
+  // A KING ALARMED: a foe within four steps - it flees by the gain times 5; the Rat taken off the board
   const flee = board([0], [0]);
   flee.pieces = flee.pieces.filter((p) => p.id !== 3);
   at(flee, 1, 7, 9);
@@ -283,12 +317,13 @@ test('KG2 THE WEIGHTS AT THEIR EDGES: each of the mod\'s numbers decides a choic
     for (let c = 0; c < K.KG_COLS; c++) st.tiles[K.cellIndex(c, 1)] = K.KG_TILE.wall;
     return st;
   };
-  /** His draws: the blunder's, then one a cell for each piece in his pieces' order, `x` for the cells named. */
+  /** The regular's draws: the blunder's, then one a cell for each of the regular's pieces in order, `x` for the cells named. */
   const drawn = (st, named = {}) => [CLEAR, ...st.pieces.filter((p) => p.side === 1).flatMap((p) => K.reachable(st, p)
     .map(([c, r]) => V(named[`${p.id}:${c},${r}`] ?? 0)))];
 
-  // THE KING FLEES BY 5 A STEP, A STEP NEARER IS 3: his king in the corridor at (1, 0), the host's first Rat at (4, 0) -
-  // one step away to (0, 0) is all he has (5); his Rat in the hall two steps nearer the host's second Rat (6), the third
+  // THE KING FLEES BY 5 A STEP, A STEP NEARER IS 3: the regular's king in the corridor at (1, 0), the host's first Rat at
+  // (4, 0) - one step away to (0, 0) is all it has (5); the regular's Rat in the hall two steps nearer the host's second
+  // Rat (6), the third
   // step's cell under an active hazard. The king's draw is the higher, and the Rat's 6 still carries.
   const flee1 = sealed([0, 0], [0]);
   at(flee1, 3, 1, 0); at(flee1, 1, 4, 0);
@@ -296,8 +331,8 @@ test('KG2 THE WEIGHTS AT THEIR EDGES: each of the mod\'s numbers decides a choic
   lay(flee1, 7, 7, 'fire');
   assert.deepEqual(choose(flee1, SEASONED, drawn(flee1, { '3:0,0': 0.9 })), { type: 'move', piece: 4, col: 7, row: 6 });
 
-  // THE DANCE'S 10 AGAINST A KING'S TWO STEPS AWAY (10): drawn alike but for one, the draw decides - his king at (2, 0)
-  // flees to (0, 0); his Rat's one cell in range, (7, 8), under an active hazard (50 - 40)
+  // THE DANCE'S 10 AGAINST A KING'S TWO STEPS AWAY (10): drawn alike but for one, the draw decides - the regular's king at
+  // (2, 0) flees to (0, 0); the regular's Rat's one cell in range, (7, 8), under an active hazard (50 - 40)
   const dance = sealed([0, 0], [0]);
   at(dance, 3, 2, 0); at(dance, 1, 5, 0);
   at(dance, 4, 7, 5); at(dance, 2, 7, 9); at(dance, 0, 0, 12);
@@ -305,15 +340,15 @@ test('KG2 THE WEIGHTS AT THEIR EDGES: each of the mod\'s numbers decides a choic
   assert.deepEqual(choose(dance, SEASONED, drawn(dance, { '3:0,0': 0.5 })), { type: 'move', piece: 3, col: 0, row: 0 });
   assert.deepEqual(choose(dance, SEASONED, drawn(dance, { '4:7,8': 0.5 })), { type: 'move', piece: 4, col: 7, row: 8 });
 
-  // ONLY ABOVE 0 MOVES: his Rat in the corridor, no foe walks to it - every step gains nothing; drawn 0, no move; any draw
+  // ONLY ABOVE 0 MOVES: the regular's Rat in the corridor, no foe walks to it - every step gains nothing; drawn 0, no move; any draw
   // above 0 and it wanders
   const idle = sealed([0], [0]);
   at(idle, 3, 5, 0);
   assert.equal(choose(idle, SEASONED, drawn(idle)), null);
   assert.deepEqual(choose(idle, SEASONED, drawn(idle, { '3:6,0': 0.5 })), { type: 'move', piece: 3, col: 6, row: 0 });
 
-  // ACROSS WATER, A RANGED PIECE'S WALK: row 6 water but a bridge at (14, 6). The host's Rat at (8, 7); his Mage at (5, 3)
-  // reaches three cells in range of it, each a walk of 16 - with a warning on each, 50 + 8 - 8 = 50 - and his Rat, in the
+  // ACROSS WATER, A RANGED PIECE'S WALK: row 6 water but a bridge at (14, 6). The host's Rat at (8, 7); the regular's Mage at
+  // (5, 3) reaches three cells in range of it, each a walk of 16 - with a warning on each, 50 + 8 - 8 = 50 - and the Rat, in the
   // south, steps beside the host's Rat for a clean 50: drawn alike, the draw decides
   const across = (named) => {
     const st = board([0], [128, 0]);
@@ -326,14 +361,14 @@ test('KG2 THE WEIGHTS AT THEIR EDGES: each of the mod\'s numbers decides a choic
   assert.deepEqual(across({ '3:7,4': 0.5, '4:8,8': 0.25 }), { type: 'move', piece: 3, col: 7, row: 4 });
   assert.deepEqual(across({ '3:7,4': 0.25, '4:8,8': 0.5 }), { type: 'move', piece: 4, col: 8, row: 8 });
 
-  // THE WALK IS COUNTED TO 20: the host's Rat at (6, 7), his Mage at (6, 2) - in range at (6, 3) and (5, 4), walks of 20
+  // THE WALK IS COUNTED TO 20: the host's Rat at (6, 7), the regular's Mage at (6, 2) - in range at (6, 3) and (5, 4), walks of 20
   // (60), and at (6, 4), a walk of 19 (59.5), drawn highest
   const far = board([0], [128]);
   for (let c = 0; c < K.KG_COLS - 1; c++) far.tiles[K.cellIndex(c, 6)] = K.KG_TILE.water;
   at(far, 1, 6, 7); at(far, 3, 6, 2);
   assert.deepEqual(choose(far, SEASONED, drawn(far, { '3:6,4': 0.9, '3:6,3': 0.5 })), { type: 'move', piece: 3, col: 6, row: 3 });
 
-  // THE BLOW'S 40 AT THE KING: his Ancient Lich (42) at a host Daedra Lord, his Rat (2) at the host's king - 42 + u
+  // THE BLOW'S 40 AT THE KING: the regular's Ancient Lich (42) at a host Daedra Lord, its Rat (2) at the host's king - 42 + u
   // against 2 + 40 + u: the draws decide, either way
   const blows = (named) => {
     const st = board([31], [33, 0]);
@@ -343,7 +378,7 @@ test('KG2 THE WEIGHTS AT THEIR EDGES: each of the mod\'s numbers decides a choic
   };
   assert.deepEqual(blows({ lich: 0.5, rat: 0.6 }), { type: 'attack', piece: 4, target: 0 });
   assert.deepEqual(blows({ lich: 0.6, rat: 0.5 }), { type: 'attack', piece: 3, target: 1 });
-  // THE BLOW'S 30 FOR A KILL: his Dreugh (32) at a host Daedra Lord, his Rat (2) at the host's Rat on 2 health
+  // THE BLOW'S 30 FOR A KILL: the regular's Dreugh (32) at a host Daedra Lord, its Rat (2) at the host's Rat on 2 health
   const kills = (named) => {
     const st = board([31, 0], [41, 0]);
     at(st, 4, 3, 5); at(st, 1, 3, 6);
@@ -355,20 +390,75 @@ test('KG2 THE WEIGHTS AT THEIR EDGES: each of the mod\'s numbers decides a choic
   assert.deepEqual(kills({ dreugh: 0.6, rat: 0.5 }), { type: 'attack', piece: 4, target: 1 });
 });
 
-test('KG2 A STEP (AiTurnRoutine without its clock): two actions, then his turn ending; none found ends it; not his, nothing', () => {
+test('KG2 AT FLOAT32: every score is rounded as the C# keeps it, and the rounding decides - the king\'s 20 and the jitter\'s 0.1 included', () => {
+  // A score is rounded to float32 once its jitter is added, so two cells of one score compare their draws on float32's
+  // grid at that score's size - and a weight that moves the score across a power of two, or a jitter twice as large,
+  // turns a tie (the first kept) into an order, or back (AUDIT KG B1: the record had called the king's 20 at 19 or 21,
+  // and the jitter at 0.2, changes no choice could see).
+  const drawn = (st, named) => [CLEAR, ...st.pieces.filter((p) => p.side === 1).flatMap((p) => K.reachable(st, p)
+    .map(([c, r]) => named[`${p.id}:${c},${r}`] ?? 0))];
+  // THE JITTER'S 0.1: three cells tie at 3 (the best move's board) - raw 2147483648 on (7, 4) and 2147484289 on (6, 5)
+  // round to one score at 0.1, and (7, 4), the first, is kept; at 0.2 (exactly twice 0.1f) they part
+  const three = board([0], [0]);
+  at(three, 1, 7, 9);
+  at(three, 3, 7, 3);
+  lay(three, 7, 6, 'fire', false);
+  lay(three, 7, 5, 'fire');
+  assert.deepEqual(choose(three, SEASONED, drawn(three, { '3:7,4': 2147483648, '3:6,5': 2147484289 })), { type: 'move', piece: 3, col: 7, row: 4 });
+  // THE KING'S 20: the host's king alone at (7, 9), the regular's Mage at (6, 5). Every cell the Mage reaches in range of
+  // the king lies under a warning to `edge` steps off and an active hazard past it, so the best are the cells `edge` off
+  // (62 + edge / 2). Their draws, raw 2147483648 and 2147532672, part at 63.5 and tie at 64 - so the second is taken at
+  // three steps (the king's 21 would tie them, at 64.5) and the first at four (its 19 would part them, at 63)
+  const mage = (edge) => {
+    const st = board([0], [128]);
+    st.pieces = st.pieces.filter((p) => p.id !== 1);
+    at(st, 0, 7, 9);
+    at(st, 3, 6, 5);
+    const m = K.pieceById(st, 3), best = [];
+    for (const [c, r] of K.reachable(st, m)) {
+      if (!K.targetInRange(st, m, c, r, K.pieceById(st, 0))) continue;
+      const d = K.distance(c, r, 7, 9);
+      lay(st, c, r, 'spikes', d > edge);
+      if (d === edge) best.push(`3:${c},${r}`);
+    }
+    return choose(st, SEASONED, drawn(st, { [best[0]]: 2147483648, [best[1]]: 2147532672 }));
+  };
+  assert.deepEqual(mage(3), { type: 'move', piece: 3, col: 6, row: 7 });
+  assert.deepEqual(mage(4), { type: 'move', piece: 3, col: 7, row: 5 });
+  // AN ESCAPE'S SCORE: the regular's king on spikes with 6 (no potion), two clear cells nine steps from the host's Rat -
+  // raw 4212559656 and 4212586870 make one score at 9 (9.0980816), and (8, 3), the first, is kept
+  const king = board([0], [0], { potions: [3, 0] });
+  king.pieces = king.pieces.filter((p) => p.id !== 3);
+  at(king, 1, 7, 11);
+  at(king, 0, 0, 12);
+  at(king, 2, 7, 5).hp = 6;
+  lay(king, 7, 5, 'spikes');
+  for (const [c, r] of K.reachable(king, K.pieceById(king, 2))) if (!(r === 3 && (c === 6 || c === 8))) lay(king, c, r, 'poison', false);
+  assert.deepEqual(choose(king, SEASONED, [CLEAR, 4212559656, 4212586870]), { type: 'move', piece: 2, col: 8, row: 3 });
+  // A BLOW'S SCORE: the regular's Dreugh (32) between two host Daedra Lords - 32.5 and 32 + 0.5 + 2^-20 are one float32
+  const blow = board([31, 31], [41]);
+  at(blow, 4, 5, 5); at(blow, 1, 4, 5); at(blow, 2, 6, 5); at(blow, 3, 7, 0);
+  assert.deepEqual(choose(blow, SEASONED, [CLEAR, 2 ** 31, 2 ** 31 + 4096]), { type: 'attack', piece: 4, target: 1 });
+});
+
+test('KG2 A STEP (AiTurnRoutine without its clock): two actions, then the turn ending; none found ends it; not the regular\'s, nothing', () => {
   const st = board([0], [0]);
   at(st, 1, 7, 11);
   at(st, 3, 7, 10);
-  // his Rat strikes the host's twice (2, then 2 again - a Rat's blow at any roll); the turn is ending after
+  // the regular's Rat strikes the host's twice (2, then 2 again - a Rat's blow at any roll); the turn is ending after
   const one = G.regularStep(st, 1, SEASONED, script([CLEAR, V(0)]), script([V(0)]));
   assert.deepEqual(one.cmd, { type: 'attack', piece: 3, target: 1 });
   assert.equal(one.state.actions, 1);
   const two = G.regularStep(one.state, 1, SEASONED, script([CLEAR, V(0)]), script([V(0)]));
   assert.deepEqual(two.cmd, { type: 'attack', piece: 3, target: 1 });
   assert.equal(two.state.ending, true);
-  assert.equal(G.regularStep(two.state, 1, SEASONED, script([]), script([])), null, 'his turn is ending');
-  assert.equal(G.regularStep(st, 0, SEASONED, script([]), script([])), null, 'not his turn');
-  assert.equal(G.regularStep({ ...st, over: { winner: 0, fallen: 1 } }, 1, SEASONED, script([]), script([])), null, 'the game over');
+  // not the regular's to take: no step, and no draw taken - from sources that would choose a blow if asked (a dry
+  // source would answer null anyway, now that a broken source takes no step)
+  for (const [state, side, why] of [[two.state, 1, 'the turn is ending'], [st, 0, 'not the regular\'s turn'], [{ ...st, over: { winner: 0, fallen: 1 } }, 1, 'the game over']]) {
+    const src = script([CLEAR, V(0)]);
+    assert.equal(G.regularStep(state, side, SEASONED, src, script([V(0)])), null, why);
+    assert.equal(src.left(), 2, `${why}: no draw taken`);
+  }
   // no action found: End turn
   const lone = board([0], [0]);
   lone.pieces = lone.pieces.filter((p) => p.id !== 3);
@@ -380,6 +470,20 @@ test('KG2 A STEP (AiTurnRoutine without its clock): two actions, then his turn e
   const broken = G.regularStep(st, 1, SEASONED, script([CLEAR, V(0)]), () => 1.5);
   assert.deepEqual(broken.cmd, { type: 'end' });
   assert.equal(K.pieceById(broken.state, 1).hp, 12);
+  // A CHOICES' SOURCE THAT IS NO SOURCE TAKES NO STEP - never a turn passed in silence (AUDIT KG B8): a draw that is no
+  // 32-bit draw, one that runs dry, and one stuck past the law's bound (a stuck source spun drawBelow for ever)
+  assert.equal(G.regularStep(st, 1, SEASONED, () => 1.5, script([])), null);
+  assert.equal(G.regularStep(st, 1, SEASONED, script([CLEAR]), script([])), null);
+  let stuck = 0;
+  const blunderer = board([0], [0]);
+  assert.equal(G.regularStep(blunderer, 1, AMATEUR, () => (stuck++ ? 0xFFFFFFFF : V(0.3)), script([])), null);
+  assert.ok(stuck <= K.KG_RAND_DRAWS_MAX + 1, 'refused at the bound');
+  // A TIER THE PLAY CANNOT READ TAKES NO STEP (AUDIT KG B8): a key for a tier, a share that is no number - each would
+  // have played a Grandmaster's game unseen (`x < NaN` is false)
+  for (const tier of ['amateur', { blunder: NaN }, { blunder: '0.35' }, { blunder: 1.5 }, null]) {
+    assert.equal(G.regularStep(st, 1, tier, script([CLEAR, V(0)]), script([V(0)])), null, JSON.stringify(tier));
+    assert.equal(G.regularAction(st, 1, tier, script([CLEAR, V(0)])), null);
+  }
 });
 
 test('KG2 MEASURED, in miniature (tools/kgMeasure.mjs): each tier against an Auto-filled 300 - the record\'s run, sixteen games a tier', () => {
@@ -387,15 +491,25 @@ test('KG2 MEASURED, in miniature (tools/kgMeasure.mjs): each tier against an Aut
   // moves them (the record's 1,000-game figures are the same command's: section 12)
   const tallies = G.GAMBIT_TIERS.map((tier) => measureTier(tier, { games: 16, seed: 1 }));
   assert.deepEqual(tallies, [
-    { regular: 1, player: 15, kings: 0, long: 0, rounds: 387 },
-    { regular: 4, player: 11, kings: 1, long: 0, rounds: 492 },
-    { regular: 5, player: 6, kings: 4, long: 1, rounds: 370 },
-    { regular: 15, player: 1, kings: 0, long: 0, rounds: 548 },
+    { regular: 1, player: 15, kings: 0, long: 0, rounds: 375, longest: 33 },
+    { regular: 2, player: 12, kings: 2, long: 0, rounds: 398, longest: 43 },
+    { regular: 10, player: 4, kings: 2, long: 0, rounds: 436, longest: 53 },
+    { regular: 11, player: 1, kings: 2, long: 2, rounds: 363, longest: 48 },
   ]);
   const won = tallies.map((t) => t.regular);
   assert.ok(won.every((w, i) => i === 0 || w >= won[i - 1]), `a higher tier wins no less: ${won}`);
-  // the same seed, the same game; a long one is stopped at its cap
+  // the same seed, the same game; a game undecided at the cap is counted by what stands - armies (the Grandmaster's
+  // dance), or the two kings alone
   assert.deepEqual(playRegular(VETERAN, gameSeed(1, 3)), playRegular(VETERAN, gameSeed(1, 3)));
-  const long = Array.from({ length: 16 }, (_, g) => playRegular(VETERAN, gameSeed(1, g))).find((r) => r.end === 'long');
-  assert.deepEqual(long, { end: 'long', rounds: 201 });
+  assert.deepEqual(playRegular(GRANDMASTER, gameSeed(1, 0)), { end: 'long', rounds: 201 });
+  assert.deepEqual(playRegular(SEASONED, gameSeed(1, 6)), { end: 'kings', rounds: 201 });
+  // TWO KINGS ALONE ARE PLAYED ON (AUDIT KG B3): the kings stand alone from round 48, and the regular's blunders walk
+  // its king to its fall at round 189 - a game the first measure had stopped at 48 and set apart
+  assert.deepEqual(playRegular(SEASONED, gameSeed(1, 40)), { end: 'player', rounds: 189 });
+  // the games' seeds mixed (AUDIT KG B5): neighbouring games' first draws no longer near one another
+  const firsts = Array.from({ length: 2000 }, (_, g) => xorshift(gameSeed(1, g))() / 2 ** 32);
+  const mean = firsts.reduce((a, b) => a + b) / firsts.length;
+  let lag = 0, sq = 0;
+  for (let g = 0; g < firsts.length; g++) { sq += (firsts[g] - mean) ** 2; if (g) lag += (firsts[g] - mean) * (firsts[g - 1] - mean); }
+  assert.ok(Math.abs(lag / sq) < 0.1, `lag-1 correlation ${(lag / sq).toFixed(3)}`);
 });

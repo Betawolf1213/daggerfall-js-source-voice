@@ -9,13 +9,15 @@
 // THE SCRIPTED DRAWS. The law's Rand(a, b) is a + drawBelow(b - a), and drawBelow answers its draw modulo b - a. Every
 // scripted draw below is the value wanted PLUS 1009 times the modulus (R), so the script answers the law's value under
 // the law's own bound and a different one under any bound a mutant might write - a range is pinned, not only its value.
-// 1009 is a prime: a thousand was not, and a bound mutated to 4 or 5 divided its offset away (three survivors).
+// 1009 is a prime: a thousand was not, and a bound mutated to 4 or 5 divided its offset away (three survivors). One
+// bound still reads the value alike - a divisor of the law's own modulus, for a value under that divisor (AUDIT KG A11:
+// the moat's Rand(2, 6) read as Rand(2, 4) at its bridge 3) - so each such range is drawn at a value past its divisors too.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import * as K from '../src/net/kingsGambit.js';
 
-/** The raw draw that Rand(a, b) answers `v` with - under drawBelow's modulus b - a, and no neighbour of it (a prime
- *  multiple of the modulus: no modulus under 1009 but the law's own divides it away). */
+/** The raw draw that Rand(a, b) answers `v` with - under drawBelow's modulus b - a, and under no other modulus below 1009
+ *  but a divisor of b - a, for a `v - a` under that divisor (the offset is a prime multiple of the modulus). */
 const R = (v, a, b) => (v - a) + 1009 * (b - a);
 /** A source that answers `xs` in turn and throws when it runs dry. */
 const script = (xs) => { let i = 0; const f = () => { if (i >= xs.length) throw new Error(`script ran dry at ${i}`); return xs[i++]; }; f.left = () => xs.length - i; return f; };
@@ -121,6 +123,8 @@ test('KG1 THE MOD\'S NUMBERS: the board, the hazards, the army, the units, the t
   assert.deepEqual([K.KG_AUTOFILL_ROUNDS, K.KG_AUTOFILL_RANGED, K.KG_AUTOFILL_LEAN], [200, 2, 0.5]);
   assert.deepEqual(K.KG_CENTER_OUT, [7, 6, 8, 5, 9, 4, 10, 3, 11, 2, 12, 1, 13, 0, 14]);
   assert.deepEqual(K.KG_COMMANDS, ['move', 'attack', 'potion', 'end']);
+  // and the port's own bounds on what a caller may hand the law: the potions, the budget, the draws a step may take
+  assert.deepEqual([K.KG_POTIONS_MAX, K.KG_BUDGET_MAX, K.KG_RAND_DRAWS_MAX], [9, 10_000, 100_000]);
   // the mod's names (Pillared hall, Guard rooms, Ruined keep, Moat and bridges, Open field) are the client's to say
   assert.deepEqual(K.KG_LAYOUTS, [
     { key: 'pillared-hall', floor: [[0.27, 0.27, 0.3], [0.36, 0.36, 0.4]] },
@@ -155,6 +159,8 @@ test('KG1 THE ARMY\'S LAW: its cost, its refusals, a recruit\'s room - ParseArmy
   assert.equal(K.armyCost([]), 0);
   assert.equal(K.armyRefusal(null), 'shape');
   assert.equal(K.armyRefusal([0, 1.5]), 'shape');
+  // eslint-disable-next-line no-sparse-arrays
+  assert.equal(K.armyRefusal([0, , 1]), 'shape', 'a hole is no integer (AUDIT KG A3: every() stepped over it)');
   assert.equal(K.armyRefusal([]), 'empty');
   assert.equal(K.armyRefusal(new Array(13).fill(0)), 'units');
   assert.equal(K.armyRefusal(new Array(12).fill(0)), null, 'twelve is the most');
@@ -192,6 +198,18 @@ test('KG1 AUTO-FILL on a scripted source: the lean to ranged one time in two, tw
   const twelve = new Array(12).fill(0);
   assert.deepEqual(K.autoFill(twelve, 300, script([])), twelve);
   assert.notEqual(K.autoFill(twelve, 300, script([])), twelve, 'a new list');
+  // THE LEAN IS RANDOM.VALUE AT FLOAT32 against the C#'s 0.5f (AUDIT KG A1): raw 2147483583 is under it and leans - 22
+  // points buy one of the four ranged callings, the Mage the second - and 2147483584 rounds up to 0.5f and does not: any
+  // of the seventeen units 22 buys, the Centaur the ninth
+  assert.deepEqual(K.autoFill([], 22, script([2147483583, R(1, 0, 4), R(1, 0, 4)])), [128]);
+  assert.deepEqual(K.autoFill([], 22, script([2147483584, R(8, 0, 17), R(8, 0, 17)])), [8]);
+  // A SOURCE THAT IS NO SOURCE fills nothing (AUDIT KG A2): a draw that is no 32-bit draw, one that runs dry, and one
+  // stuck where drawBelow throws every draw back - refused at the law's bound, not spun for ever
+  assert.equal(K.autoFill([], 300, () => 1.5), null);
+  assert.equal(K.autoFill([], 300, script([0])), null);
+  let stuck = 0;
+  assert.equal(K.autoFill([], 300, () => { stuck++; return 0xFFFFFFFF; }), null);
+  assert.ok(stuck <= K.KG_RAND_DRAWS_MAX + 1, 'refused at the bound');
   // a real source: always lawful, at most the budget
   const rnd = xorshift(7);
   for (let i = 0; i < 400; i++) {
@@ -214,7 +232,7 @@ test('KG1 THE BOARD: the Pillared hall from scripted draws - its pillars, two ch
 test('KG1 THE BOARD: Guard rooms sealed by its chunks is thrown away; the Moat and bridges after it, its chunks refused on water', () => {
   const src = script([...SEALED,
     R(3, 0, 4), R(3, 2, 6), ...chunk(4, 3, 2), ...chunk(10, 5, 3), ...chunk(6, 6, 0),
-    ...pair(0, 3, 'fire'), ...pair(5, 4, 'spikes'), ...pair(13, 5, 'poison')]);
+    ...pair(0, 3, 'fire'), ...miss(0, 6), ...pair(5, 4, 'spikes'), ...pair(13, 5, 'poison')]);   // (0, 6) is water: no hazard (AUDIT KG A8)
   const map = K.buildMap(src);
   assert.equal(map.layout, 'moat-and-bridges');
   assert.deepEqual(picture(map.tiles), [
@@ -234,6 +252,11 @@ test('KG1 THE BOARD: Guard rooms sealed by its chunks is thrown away; the Moat a
   ]);
   assert.deepEqual(map.hazards.map((h) => [h.col, h.row, h.kind]), [[0, 3, 'fire'], [14, 9, 'fire'], [5, 4, 'spikes'], [9, 8, 'spikes'], [13, 5, 'poison'], [1, 7, 'poison']]);
   assert.equal(src.left(), 0, 'the sealed try drew its whole build before it was thrown away');
+  // a moat bridged at 4 - past 2, the one divisor of its range's modulus (AUDIT KG A11)
+  const moat4 = K.buildMap(script([R(3, 0, 4), R(4, 2, 6), ...chunk(1, 3, 0), ...chunk(1, 3, 0), ...chunk(1, 3, 0),
+    ...pair(0, 3, 'fire'), ...pair(5, 4, 'spikes'), ...pair(13, 5, 'poison')]));
+  assert.equal(moat4.layout, 'moat-and-bridges');
+  assert.equal(picture(moat4.tiles)[6], '~~~~.~~.~~.~~~~');
 });
 
 test('KG1 THE BOARD: a Guard rooms kept, a Ruined keep\'s every chunk shape, thirty failures lay the Open field', () => {
@@ -282,6 +305,9 @@ test('KG1 THE BOARD: a Guard rooms kept, a Ruined keep\'s every chunk shape, thi
   assert.ok(field.tiles.every((t) => t === K.KG_TILE.floor));
   assert.deepEqual(field.hazards.map((h) => [h.col, h.row, h.kind, h.active]), [[2, 3, 'spikes', true], [12, 9, 'spikes', true], [4, 5, 'fire', true], [10, 7, 'fire', true], [7, 3, 'poison', true], [7, 9, 'poison', true]]);
   assert.equal(src.left(), 0);
+  // and dealt: the thirty failures' 519 draws are a lawful game's, well inside the law's bound on a step's draws
+  const dealt = K.newGambit({ armies: [[0], [0]], rand32: script([...Array(30).fill(SEALED).flat(), ...pair(2, 3, 'spikes'), ...pair(4, 5, 'fire'), ...pair(7, 3, 'poison')]) });
+  assert.equal(dealt?.layout, 'open-field');
 });
 
 test('KG1 MapIsPlayable: the head\'s king cell reached, and 97% of the floor at float32 - a pocket board either side of it', () => {
@@ -339,6 +365,14 @@ test('KG1 A NEW GAME refuses what the law does not take, and a source that is no
   assert.equal(K.newGambit({ ...ok, rand32: null }), null);
   assert.equal(K.newGambit({ ...ok, rand32: () => 1.5 }), null, 'not an integer');
   assert.equal(K.newGambit({ ...ok, rand32: () => -1 }), null);
+  assert.equal(K.newGambit({ ...ok, rand32: () => -4294967295 }), null, 'negative, though its low 32 bits read 1');
+  // a hole is no army, no budget and no potion count - each side is read by its index (AUDIT KG A3)
+  /* eslint-disable no-sparse-arrays */
+  assert.equal(K.newGambit({ ...ok, armies: [[0, , 1], [0]] }), null);
+  assert.equal(K.newGambit({ ...ok, armies: [, [0]] }), null);
+  assert.equal(K.newGambit({ ...ok, potions: [, 3] }), null);
+  assert.equal(K.newGambit({ ...ok, budgets: [, 300] }), null);
+  /* eslint-enable no-sparse-arrays */
   assert.equal(K.newGambit({ ...ok, rand32: () => 2 ** 32 }), null);
   const top = xorshift(5);
   let first = true;
@@ -386,6 +420,15 @@ test('KG1 InRange and HasLineOfSight: melee at 1, ranged 1-4 along a sight line 
   st.tiles[K.cellIndex(4, 9)] = K.KG_TILE.wall;
   assert.equal(K.targetInRange(st, mage, 2, 10, lord), false, 'four, behind a wall');
   assert.equal(K.gambitRefusal(st, 0, { type: 'attack', piece: 2, target: 4 }), 'range');
+  // the sight line binds from two cells on (AUDIT KG A9): up the Mage's column, a wall on (2, 9) between it and a foe
+  // two cells off and three
+  st.tiles[K.cellIndex(2, 9)] = K.KG_TILE.wall;
+  standAt(st, 4, 2, 8);
+  assert.equal(K.targetInRange(st, mage, 2, 10, lord), false, 'two, behind a wall');
+  standAt(st, 4, 2, 7);
+  assert.equal(K.targetInRange(st, mage, 2, 10, lord), false, 'three, behind a wall');
+  st.tiles[K.cellIndex(2, 9)] = K.KG_TILE.floor;
+  assert.equal(K.targetInRange(st, mage, 2, 10, lord), true, 'three, in sight');
   standAt(st, 4, 2, 9);
   assert.equal(K.targetInRange(st, mage, 2, 10, lord), true, 'adjacent needs no sight line');
   standAt(st, 4, 2, 5);
@@ -404,6 +447,10 @@ test('KG1 InRange and HasLineOfSight: melee at 1, ranged 1-4 along a sight line 
 
 test('KG1 A BLOW: attack x (0.8 + 0.4u) at float32, half to even, at least 1 - the one draw it takes, its kill, its shot', () => {
   assert.deepEqual([[10, 0], [42, 0], [10, 0.9999999], [1, 0], [2, 0], [5, 0.25], [7, 0.5]].map(([a, u]) => K.blowRoll(a, u)), [8, 34, 12, 1, 2, 4, 7]);
+  // THE MULTIPLIER IS FLOAT32 AT EVERY STEP (AUDIT KG A6), on two real attacks: a Lich's 38 at raw 28256319 makes 30.500002,
+  // 31 - a float64 multiplier makes exactly 30.5, the even 30; a Gargoyle's 28 at raw 38348481 makes exactly 22.5, the
+  // even 22 - a draw left unrounded makes 22.500002, 23
+  assert.deepEqual([K.blowRoll(38, 28256319 / 2 ** 32), K.blowRoll(28, 38348481 / 2 ** 32)], [31, 22]);
   const st = open([128, 33], [31]);
   standAt(st, 1, 7, 2);   // the Ancient Lich beside the Daedra Lord (7, 1)
   const src = script([0]);
@@ -420,6 +467,10 @@ test('KG1 A BLOW: attack x (0.8 + 0.4u) at float32, half to even, at least 1 - t
   assert.deepEqual(kill.events, [{ t: 'attack', side: 0, piece: 2, target: 4, damage: 9, killed: true, shot: true }]);
   assert.equal(K.pieceById(kill.state, 4), null, 'the Rat is gone');
   assert.equal(kill.state.over, null, 'the guest\'s king stands');
+  // a ranged piece's blow at one cell is no shot - the mod's bolt flies past 1 alone (AUDIT KG A5)
+  const s3 = open([128, 33], [0]);
+  standAt(s3, 2, 7, 2);   // the Mage beside the guest's Rat (7, 1)
+  assert.deepEqual(act(s3, 0, { type: 'attack', piece: 2, target: 4 }, script([V(0.5)])).events, [{ t: 'attack', side: 0, piece: 2, target: 4, damage: 9, killed: false, shot: false }]);
   // a broken source refuses the blow and changes nothing
   assert.deepEqual(K.gambitAct(s2, 0, { type: 'attack', piece: 2, target: 4 }, () => 'x'), { refused: 'rand' });
   assert.deepEqual(K.gambitAct(s2, 0, { type: 'attack', piece: 2, target: 4 }), { refused: 'rand' });
@@ -438,6 +489,15 @@ test('KG1 POTIONS: a hurt piece of one\'s own heals the least of 30 and what it 
   K.pieceById(b, 1).hp = 90;
   assert.equal(act(b, 0, { type: 'potion', piece: 1 }).events[0].healed, 10, 'what it lacks');
   assert.equal(K.gambitRefusal(b, 0, { type: 'potion', piece: 3 }), 'piece', 'the other side\'s');
+  // THE GUEST'S POTIONS ARE ITS OWN (AUDIT KG A10): it drinks from its count, and is refused on its own none while the
+  // host still holds three
+  const g = open([33], [31], { potions: [3, 1] });
+  const guestTurn = K.finishTurn(act(g, 0, { type: 'end' }).state).state;
+  K.pieceById(guestTurn, 3).hp = 50;   // the guest's Daedra Lord
+  const drink = act(guestTurn, 1, { type: 'potion', piece: 3 });
+  assert.deepEqual([drink.events, drink.state.potions], [[{ t: 'potion', side: 1, piece: 3, healed: 30 }], [3, 0]]);
+  K.pieceById(drink.state, 3).hp = 50;
+  assert.equal(K.gambitRefusal(drink.state, 1, { type: 'potion', piece: 3 }), 'potions');
 });
 
 test('KG1 THE TURN: the host first, two actions, the turn ending until its end is taken; End turn; refusals change nothing', () => {
@@ -509,13 +569,19 @@ test('KG1 THE TURN\'S END: hazards bite the side that moved alone, active alone;
   full.hazards.pop();   // twelve: room for a pair - fourteen
   const r4b = K.finishTurn(act(K.finishTurn(act(full, 0, { type: 'end' }).state).state, 1, { type: 'end' }).state, script(pair(3, 3, 'fire')));
   assert.equal(r4b.state.hazards.length, 14);
-  // a pair that finds no cell in forty tries lays nothing
+  // a pair that finds no cell in forty tries lays nothing - every one of the forty drawn (AUDIT KG A7) - and one that
+  // finds its cell at the fortieth lays it
   const busy = structuredClone(r3.state);
-  const none = K.finishTurn(act(K.finishTurn(act(busy, 0, { type: 'end' }).state).state, 1, { type: 'end' }).state, script(Array(40).fill(miss(7, 6)).flat()));
-  assert.equal(none.events.some((e) => e.t === 'warning'), false);
+  const toRound4 = (tries) => K.finishTurn(act(K.finishTurn(act(busy, 0, { type: 'end' }).state).state, 1, { type: 'end' }).state, tries);
+  const forty = script(Array(40).fill(miss(7, 6)).flat());
+  assert.equal(toRound4(forty).events.some((e) => e.t === 'warning'), false);
+  assert.equal(forty.left(), 0, 'forty tries drawn');
+  const fortieth = script([...Array(39).fill(miss(7, 6)).flat(), ...pair(3, 3, 'fire')]);
+  assert.deepEqual(toRound4(fortieth).events.find((e) => e.t === 'warning'), { t: 'warning', kind: 'fire', cells: [[3, 3], [11, 9]] });
+  assert.equal(fortieth.left(), 0);
 });
 
-test('KG1 THE END: a king\'s fall ends it - by a blow or by a bite - the guest\'s fall read first; nothing is taken after', () => {
+test('KG1 THE END: a king\'s fall ends it - by a blow or by a bite, either felling one side alone; nothing is taken after', () => {
   const st = open([33], [0]);
   standAt(st, 1, 6, 0);   // the Ancient Lich beside the guest's king (7, 0)
   K.pieceById(st, 2).hp = 10;
