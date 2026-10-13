@@ -29,6 +29,10 @@
 //   RALLYING CRY (Fellowship's)  every Second Wind in the company refreshes when a hall's door opens - the holder's `dn` (the
 //                   door's instant, the room's) and `cry` (a living member of the company resonating in Fellowship) handed in
 //                   with it; a Second Wind spent in this hall is mine again from the door.
+// AUDIT EG III (2026-10-13, section 27.5's last rows): THE HOLDER'S NEWS - a Second Wind taken (its points), Spellweave's free
+// spell leaving the hands and Rallying Cry giving back a spent Second Wind, each kept for the breach client to say as a beat on
+// THE SPIRE MIX (`spireVestigeNews`, drained by scenes/egClient.js; let go with the holder), and whether my next damage spell
+// is Spellweave's free one (`spireWeaveReady` - its chip).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { egVOf, EG_SECOND_WIND_UNDER, EG_MOMENTUM_STEP } from '../net/egVestige.js';
@@ -54,6 +58,8 @@ let _held = null;
 let _bane = 0, _wind = '';
 /** EG-ZS: the door Rallying Cry last refreshed Second Wind at (`b:h:dn`); my damage spells cast while Spellweave was mine */
 let _cried = '', _woven = 0;
+/** AUDIT EG III: what the holder's doors did since the breach client last asked (`{ k, t }` - a key of ui/egBeats.js EG_BEATS) */
+const _news = [];
 
 /** The holder's value of a Vestige (0 none, or nothing held, or another entity). */
 const heldV = (key, entity = _held?.entity) => (_held && entity === _held.entity ? egVOf(_held.vs, key) : 0);
@@ -68,7 +74,12 @@ const heldV = (key, entity = _held?.entity) => (_held && entity === _held.entity
  */
 export function spireHolderStep(entity, holder) {
   _held = holder && entity ? { entity, vs: holder.vs ?? [], mast: holder.mast ?? -1, b: holder.b ?? '', h: holder.h | 0 } : null;
-  if (_held && holder?.cry === true && holder.dn > 0 && _cried !== `${_held.b}:${_held.h}:${holder.dn}`) { _cried = `${_held.b}:${_held.h}:${holder.dn}`; _wind = ''; }
+  if (!_held) _news.length = 0;   // AUDIT EG III: nothing held, nothing to say
+  if (_held && holder?.cry === true && holder.dn > 0 && _cried !== `${_held.b}:${_held.h}:${holder.dn}`) {
+    _cried = `${_held.b}:${_held.h}:${holder.dn}`;
+    if (_wind === `${_held.b}:${_held.h}`) _news.push({ k: 'rallyingCry' });   // AUDIT EG III: a wind spent in this hall given back, said
+    _wind = '';
+  }
   if (!entity) return;
   const skin = heldV('stoneskin', entity);
   setSpireHp(entity, skin ? Math.round(spireBodyMax(entity) * skin) : 0);
@@ -121,7 +132,8 @@ function secondWind(entity, { before, after, saved = false }) {
   const line = max * EG_SECOND_WIND_UNDER, hall = `${_held?.b}:${_held?.h}`;
   if (!(before >= line && after < line) || _wind === hall) return;
   _wind = hall;
-  healMine(entity, max * v);
+  const healed = healMine(entity, max * v);
+  _news.push({ k: 'secondWind', t: healed > 0 ? healed : 0 });   // AUDIT EG III: said as Shed Skin says its heal
 }
 
 /** EG-ZS - SPELLWEAVE (Arcana's capstone: "every fourth damage spell costs nothing"): a damage spell is one with a Damage Health
@@ -135,8 +147,15 @@ const weaveFree = (entity, spell) => weaves(entity) && damageSpell(spell) && _we
 function weaveCast(entity, spell) {
   if (!weaves(entity) || !damageSpell(spell)) return;
   if (_weaveB !== _held?.b) { _weaveB = _held?.b ?? ''; _woven = 0; }
+  if (_woven % EG_WEAVE_N === EG_WEAVE_N - 1) _news.push({ k: 'spellweave' });   // AUDIT EG III: the free one left the hands
   _woven++;
 }
+/** AUDIT EG III: is my next damage spell Spellweave's free one (its chip) - the price door's own reading of a damage spell (a
+ *  Damage Health effect, systems/spellcast.js isDamageHealthEffect's first). */
+const DAMAGE_SPELL = Object.freeze({ effects: Object.freeze([Object.freeze({ type: 4, subType: 0 })]) });
+export const spireWeaveReady = () => !!_held && weaveFree(_held.entity, DAMAGE_SPELL);
+/** AUDIT EG III: THE HOLDER'S NEWS since the last ask, drained (scenes/egClient.js says each as a beat). */
+export const spireVestigeNews = () => _news.splice(0);
 
 registerEntityFold(SPIRE_VESTIGES, baneFold);
 registerSpellCostMod(SPIRE_VESTIGES, focusCost);
@@ -147,4 +166,4 @@ registerSpellFreeCast(SPIRE_VESTIGES, weaveFree);   // EG-ZS
 registerPlayerCastListener(SPIRE_VESTIGES, weaveCast);   // EG-ZS
 
 /** Tests only: nothing held, nothing spent. */
-export function _resetSpireVestigesForTests() { _held = null; _bane = 0; _wind = ''; _cried = ''; _woven = 0; _weaveB = ''; }
+export function _resetSpireVestigesForTests() { _held = null; _bane = 0; _wind = ''; _cried = ''; _woven = 0; _weaveB = ''; _news.length = 0; }

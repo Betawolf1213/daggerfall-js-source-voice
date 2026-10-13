@@ -45,6 +45,10 @@
 // companion's over their head (`drawEgSigils`, placed by the fight where the camera sees them); THE ECLIPSE'S CHIP, *The
 // Eclipse - 5*, while it is told.
 //
+// AUDIT EG III (2026-10-13, sections 15 and 27.5): THE HOLDER'S CHIPS - in the Vestiges' blue beside the count's, a chip for each
+// timed window on me with its seconds (Lifeline, Shield-Hymn), Spellweave's free spell while it stands and each Accord while its
+// pair stands within 10 m (ui/egBeats.js egHolderWatch, handed in by the breach client as `held`).
+//
 // One node each, UPDATED, NOT REBUILT, hidden with the HUD. The models are pure.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
@@ -308,9 +312,10 @@ export function egPadPrompts({ recap = false, panel = false, witness = false } =
  * witness's line, my marks, the lord's bar, the touch buttons - and what the client hands in: a gain in flight, a
  * teaching line, the door's marker, a live line for a screen reader.
  * @param {any} E @param {string|null} me @param {number} now
- * @param {{ ff?: string, witness?: boolean, potions?: number, gain?: { text: string, blue?: boolean }|null, first?: string, door?: any, live?: string, touch?: boolean, foldOpen?: boolean }} [o]
+ * AUDIT EG III: `held` the holder's chips (`{ k, text }` - ui/egBeats.js egHolderWatch), none for a witness.
+ * @param {{ ff?: string, witness?: boolean, potions?: number, gain?: { text: string, blue?: boolean }|null, first?: string, door?: any, live?: string, touch?: boolean, foldOpen?: boolean, held?: { k: string, text: string }[] }} [o]
  */
-export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, potions = EG_POTIONS_PER_HALL, gain = null, first = '', door = null, live = '', touch = false, foldOpen = false } = {}) {
+export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, potions = EG_POTIONS_PER_HALL, gain = null, first = '', door = null, live = '', touch = false, foldOpen = false, held = [] } = {}) {
   if (!E?.b || !(E.h > 0) || E.end) return null;
   const L = EG_LAYOUTS[ff] ?? EG_LAYOUTS.desktop;
   const spec = egHallOf(E.seed, E.h, E.geo ?? 0);
@@ -332,6 +337,7 @@ export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, p
     eclipse: E.sg === 'trial' || E.sg === 'closing' ? egEclipseChip(egEclipseAt(spec, now / 1000)) : '',   // EG-ZG (section 25.5): *The Eclipse - 5*, while the place's hazards run (the fight's own stages)
     lord: egLordBar(E)?.court ? egLordBar(E) : null, lordH: L.lordH,   // only in a Court (a Proving Walk's champion has none)
     gain, first, door, live, touch: touch ? egTouchButtons({ witness: watching, rest: E.sg === 'rest' }) : [],
+    held: watching ? [] : held,   // AUDIT EG III: the holder's chips
   };
 }
 
@@ -376,6 +382,9 @@ export const EG_SPIRE_CSS = `
 .eg-sig svg { width: 18px; height: 18px; filter: drop-shadow(0 0 1px #000) drop-shadow(0 0 3px rgba(0,0,0,0.8)); }
 .eg-sig b { font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .eg-eclipse { color: var(--eg-danger); }
+.eg-heldrow { display: contents; }
+.eg-chip.eg-held { color: #6f9dff; }
+.eg-spire.enhanced .eg-chip.eg-held, .eg-spire.classic .eg-chip.eg-held { border-color: #6f9dff; }
 .eg-sigils { position: fixed; inset: 0; pointer-events: none; z-index: 29; color: var(--eg-danger, #ff3d47); text-shadow: 1px 1px 0 #000; }
 .eg-sigrow { position: absolute; transform: translate(-50%, -100%); display: flex; gap: 3px; white-space: nowrap; }
 .eg-sigrow .eg-sig svg { width: 22px; height: 22px; }
@@ -404,7 +413,7 @@ ${EG_PARTY_CSS}`;
 
 let root = null, P = null;
 let card = null, cardP = null;
-const SHOWN = () => ({ cls: '', vals: {}, chipCls: '', lordW: '', doorL: '', doorT: '', doorR: '', touchKey: null, decKey: null, gainKey: null, danger: '', scale: '' });
+const SHOWN = () => ({ cls: '', vals: {}, chipCls: '', lordW: '', doorL: '', doorT: '', doorR: '', touchKey: null, decKey: null, gainKey: null, danger: '', scale: '', heldKey: '' });
 let shown = SHOWN(), cardShown = { key: '', alpha: -1, vis: '', cls: '' };
 
 function ensureStyle(doc) {
@@ -426,7 +435,8 @@ function build(doc) {
   count.append(glyph, time, why);
   const rel = el('div', 'eg-chip eg-rel'), standing = el('div', 'eg-chip eg-standing'), potion = el('div', 'eg-chip eg-potion'), recall = el('div', 'eg-chip eg-recall');
   const eclipse = el('div', 'eg-chip eg-eclipse');   // EG-ZG: *The Eclipse - 5*
-  chips.append(count, rel, standing, potion, recall, eclipse);
+  const held = el('span', 'eg-heldrow');   // AUDIT EG III: the holder's chips
+  chips.append(count, rel, standing, potion, recall, eclipse, held);
   const gain = el('div', 'eg-gain'), dec = el('div', 'eg-dec'), fold = el('button', 'eg-fold');
   const obj = el('div', 'eg-obj'), objLine = el('span', 'eg-objline'), prog = el('span', 'eg-prog');
   obj.append(objLine, prog);
@@ -441,7 +451,7 @@ function build(doc) {
   live.setAttribute?.('aria-live', 'polite');
   root.append(col, lord, door, touch, live);
   (doc.body ?? doc.documentElement)?.append(root);
-  P = { col, chips, count, glyph, time, why, rel, standing, potion, recall, eclipse, gain, dec, fold, obj, objLine, prog, stage, marks, first, lord, lordName, fill, door, arrow, doorText, touch, live };
+  P = { col, chips, count, glyph, time, why, rel, standing, potion, recall, eclipse, held, gain, dec, fold, obj, objLine, prog, stage, marks, first, lord, lordName, fill, door, arrow, doorText, touch, live };
 }
 
 /**
@@ -469,6 +479,13 @@ export function drawEgSpireHud(model, { hidden = false, doc = globalThis.documen
   if (chipCls !== shown.chipCls) { shown.chipCls = chipCls; P.count.className = chipCls; P.count.setAttribute?.('aria-label', c?.label ?? ''); }
   put('rel', P.rel, model.relInChip ? '' : model.rel); put('standing', P.standing, model.standing); put('potion', P.potion, model.potion); put('recall', P.recall, model.recall);
   put('eclipse', P.eclipse, model.eclipse);   // EG-ZG
+  // AUDIT EG III: the holder's chips, rebuilt only when what they say changes
+  const hk = (model.held ?? []).map((c) => `${c.k}=${c.text}`).join('|');
+  if (hk !== shown.heldKey) {
+    shown.heldKey = hk;
+    P.held.replaceChildren?.();
+    for (const c of model.held ?? []) { const n = doc.createElement('div'); n.className = `eg-chip eg-held eg-held-${c.k.replace(/[^a-zA-Z0-9-]/g, '-')}`; n.textContent = c.text; P.held.append(n); }
+  }
   const gk = model.gain ? `${model.gain.text}@${model.gain.at ?? 0}` : '';
   if (gk !== shown.gainKey) { shown.gainKey = gk; P.gain.textContent = model.gain?.text ?? ''; P.gain.className = `eg-gain${model.gain?.blue ? ' blue' : ''}${model.gain ? ' fly' : ''}`; }
   put('dec', P.dec, model.decFold && !model.foldOpen ? '' : model.dec.join(' - '));

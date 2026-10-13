@@ -301,10 +301,12 @@ test('EG-G1 THE PARTY ROWS (section 27.4): each member\'s numeral in Battlemage 
   assert.notEqual(card.where.textContent, 'High Road', 'the place line given back');
 });
 
-test('EG-G1 EVERY EVENT IS SEEN, HEARD AND SAID (section 27.5, EG_BEATS pinned): the seventeen events in the table\'s order, each its sight, its sound off DAGGER.SND and its words; a fight\'s words are the fight\'s own beat lines; a beat\'s line said once - by the fight, the client\'s chat or itself; THE WATCH hears each new word once and replays nothing it saw at its first look (mutants: a sound dropped; a line said twice; the watch replaying a reload\'s old words)', () => {
-  assert.deepEqual(EG_BEAT_KEYS, ['castBack', 'pull', 'door', 'cache', 'fork', 'niche', 'memento', 'goldRun', 'phase', 'fall', 'recall', 'redoubt', 'key', 'orrery', 'twist', 'home', 'lastWord']);
-  assert.deepEqual(EG_BEAT_KEYS.map((k) => EG_BEATS[k].sound), ['rewind', 'veil', 'door', 'chime', null, 'softChime', 'bell', 'fanfare', 'drum', 'lowToll', 'chime', 'score', 'rare', 'chord', null, null, 'toll']);
-  assert.deepEqual(Object.fromEntries(Object.entries(EG_BEAT_SOUNDS).map(([k, v]) => [k, v.rec ?? v.by])), { rewind: 66, veil: 'veil', door: 25, chime: 364, softChime: 364, bell: 107, fanfare: 32, drum: 374, lowToll: 107, toll: 107, rare: 364, chord: 365, score: 'score' });
+test('EG-G1 EVERY EVENT IS SEEN, HEARD AND SAID (section 27.5, EG_BEATS pinned): the twenty-eight events in the table\'s order (AUDIT EG III, PIN MOVED: the Vestiges\' eleven rows after the seventeen), each its sight, its sound off DAGGER.SND and its words; a fight\'s words are the fight\'s own beat lines; a beat\'s line said once - by the fight, the client\'s chat or itself; THE WATCH hears each new word once and replays nothing it saw at its first look (mutants: a sound dropped; a line said twice; the watch replaying a reload\'s old words)', () => {
+  assert.deepEqual(EG_BEAT_KEYS, ['castBack', 'pull', 'door', 'cache', 'fork', 'niche', 'memento', 'goldRun', 'phase', 'fall', 'recall', 'redoubt', 'key', 'orrery', 'twist', 'home', 'lastWord',
+    'secondWind', 'rally', 'lifeline', 'shieldHymn', 'spellweave', 'rallyingCry', 'bladestorm', 'deadeye', 'accord', 'accordLapse', 'resonance']);
+  assert.deepEqual(EG_BEAT_KEYS.map((k) => EG_BEATS[k].sound), ['rewind', 'veil', 'door', 'chime', null, 'softChime', 'bell', 'fanfare', 'drum', 'lowToll', 'chime', 'score', 'rare', 'chord', null, null, 'toll',
+    'chime', 'chime', 'softChime', 'softChime', 'softChime', 'chime', 'sweep', 'pierce', 'softChime', null, 'chord']);
+  assert.deepEqual(Object.fromEntries(Object.entries(EG_BEAT_SOUNDS).map(([k, v]) => [k, v.rec ?? v.by])), { rewind: 66, veil: 'veil', door: 25, chime: 364, softChime: 364, bell: 107, fanfare: 32, drum: 374, lowToll: 107, toll: 107, rare: 364, chord: 365, score: 'score', sweep: 105, pierce: 3 });
   // the fight's own words
   assert.equal(EG_BEATS.door.words(), EG_SAY.door());
   assert.equal(EG_BEATS.goldRun.words(), EG_SAY.goldrun());

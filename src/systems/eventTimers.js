@@ -104,10 +104,10 @@ export function eventTimerRows(src) {
   // EG-ZM (Elite-Gates.md section 20, THE BOARD WINDOW - "reached from the Timers row"): where the host hands the boards'
   // door, every Elite row carries it, and the boards' own season - the arena's eight weeks (net/arenaLaw.js) - stands as an
   // Elite row of its own, so the door is there with no breach of mine: its end, when each Descent bracket's top ten are kept
-  // as Spire Champions through the next.
+  // as Spire Champions through the next season (AUDIT EG III: its words, section 20's own).
   if (typeof src?.doors?.board === 'function') {
     const season = arenaSeasonOf(Math.floor(now / 1000));
-    coming(`elite:season:${season}`, 'elite', `The Spire's season ${season} ends`, arenaSeasonEndsS(season) * 1000, null, 'Each Descent bracket\'s top ten hold Spire Champion through the next');
+    coming(`elite:season:${season}`, 'elite', `The Spire's season ${season} ends`, arenaSeasonEndsS(season) * 1000, null, 'Each Descent bracket\'s top ten hold the title Spire Champion through the next season');
     for (const r of rows) if (r.kind === 'elite') r.door = 'board';
   }
 

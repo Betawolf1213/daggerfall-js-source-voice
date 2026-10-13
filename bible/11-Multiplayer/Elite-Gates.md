@@ -1335,7 +1335,8 @@ audit39. Everything else is painted in code into the band's archives (section 25
   - 3.5 m gives both their whole offset with room for a ledge's step. No fragment asks for a crouch.
 - **The camera in rock.** In the Spire both cameras pull in at once against a wall and ease back out over 0.25 s,
   never snapping. Occluders between the camera and the body dither out (`setDissolve`). On a shaft's ledge facing a
-  drop, the pitch biases 20° down and the camera rises to look over the edge, so the landing is seen, not the back.
+  drop, the pitch biases 20° down and the camera rises to look over the edge, so the landing is seen, not the back;
+  under reduced motion it never biases at all.
 - **The collider** takes the proxy (section 11.6) in one bucket per fragment: `addMesh`, then `removeBucket` at the
   hall's end.
 - **The clamp** is the fragment's own (section 11.7), never the made levels' analytic clamps (the Hour's
@@ -1892,7 +1893,8 @@ every Valkynaz Redoubt; a member holds one at a time, and taking another replace
 | **Fellowship** | **Spirebridge** | once a span, a gold bridge over the next gap for the company, for 6 s | the room's word; known to the fair trail, and the crossing's bounds are solved with it |
 
 **Accords.** Two members within 10 m, holding a named pair from two different families, gain an Accord while they
-stand together. The offer card names it: *Takes an Accord with Mira's Hunter's Mark.* Every Accord is applied by the
+stand together. The offer card names it and says what it does: *Takes an Accord with Mira's Hunter's Mark. Hammer and
+Anvil: A foe the mark's holder marked takes +8% from the oath's holder.* Every Accord is applied by the
 relay, inside the caps:
 
 | Accord | the pair | what |
@@ -1931,6 +1933,10 @@ for the breach:
 - **Hunt, Deadeye**: an arrow from beyond 12 m pierces the add behind its target;
 - **Arcana, Spellweave**: every fourth damage spell costs nothing;
 - **Fellowship, Rallying Cry**: Rally's heal and every Second Wind in the company refresh when a hall's door opens.
+
+A card that would be a member's third different Vestige of a family says so in the Vestiges' blue: *Completes Stone:
+Rooted. Immune to push, and your threat doubles.* A capstone is said as it is first reached (*Stone resonates: Rooted.*,
+section 27.5), and the recap lists the capstones held (section 27.6).
 
 **Death saves.** Divine Grace (`src/systems/lootPowers.js`, `lootDeathSave`, registered with
 `registerPlayerDeathSave`), The Hour Turns (the Brass of Numidium's) and Unbroken (Malacath's)
@@ -2457,7 +2463,9 @@ nothing to scout (section 30).
 **The board window**, reached from the Timers row and from the start window: the three boards as tabs, the member's own
 row pinned at the foot (`topWithMe`), the company's names, the flame, and *Your best: Hall 47 - 1:44:12*. The classic
 skin builds it from DFU windows, as the start window uses DaggerfallListPickerWindow (`src/ui/listPicker.js`);
-`src/ui/iliacTableHud.js`, one DOM panel outside the window stack, is the precedent for the enhanced skin only.
+`src/ui/iliacTableHud.js`, one DOM panel outside the window stack, is the precedent for the enhanced skin only. That
+panel is still an enhanced door (`enhanced-egboard`, on the enhanced doors' stack), so a pad's cursor drives it, Tab puts it
+away and Back closes it.
 
 **The herald** (`net/egHerald.js`: pure builders, as `src/net/gateHerald.js` is). Like the Hour's and the serpent's
 heralds, it posts to the gate's webhook and falls back to the gate's role, pinging no one:
@@ -3159,6 +3167,28 @@ Sight, sound and words, for each (`EG_BEATS`, pinned):
 | a twist | the arrival card's second line | - | its line |
 | another walks home | their row's arch | - | *<name> walks home.* |
 | the last word | the chip's seal | a toll | *The last word. The breach closes.* |
+| a Second Wind | the health bar's rise | a chime | *Second Wind! 350 health returns.* |
+| Rally's heal | the health bar's rise | a chime | *Rally! The company heals 14%.* |
+| a Lifeline window on me | its blue chip and its seconds | a soft chime | *Lifeline! 30% less from blows for 3 seconds.* |
+| a Shield-Hymn window on me | its blue chip and its seconds | a soft chime | *Shield-Hymn! Bastion's guard for 4 seconds.* |
+| Spellweave's free spell | its blue chip while the next is free, the book's 0 | a soft chime | *Spellweave! The spell costs nothing.* |
+| Rallying Cry's refresh | the door's beam | a chime | *Rallying Cry! Your Second Wind is ready again.* |
+| a Bladestorm | the struck foes' flash | the low swing, lower | *Bladestorm!* |
+| a Deadeye | the pierced add's flash | the bow's loose, higher | *Deadeye! The arrow runs through.* |
+| an Accord forms | its blue chip while the pair stands | a soft chime | *Kindled Steel, with Mira.* |
+| an Accord lapses | its chip gone | - | *Kindled Steel lapses.* |
+| resonance reached | the card's blue line before it, the recap's capstones | a chord | *Stone resonates: Rooted.* |
+
+A cast-back and the toll say what they took of the health bar: the quarter's floor, the last point the toll never takes
+and Stoneskin's cushion all make it less than the law's share, and a toll that takes nothing says nothing. The Vestiges'
+rows are the holder's alone, on the screen and never in the chat, each on THE SPIRE MIX's critical bus:
+
+- the relay tells a Bladestorm's or a Deadeye's striker alone (`esay` `storm` and `deadeye`, `s` the striker), and only
+  when it struck another foe; Kindled Steel's splash, which comes with every melee blow its pair lands, is said by its
+  Accord's chip and its forming, never blow by blow;
+- an Accord stands by the pair law where the screen draws the company (`accordMates`); its forming and its lapsing are each
+  said once a hall, and the first look in a hall only learns what stands, so a company gathering at a plate says nothing;
+- a window's chip reads its whole seconds left, and Shield-Hymn's shows only while another's Bastion guards me.
 
 ### 27.6 THE RECAP
 
@@ -3167,7 +3197,7 @@ A run of up to three hours never ends on a receipt alone. On `end`, and for a me
 - the depth (the hall, the Redoubt, the band), the time from Hall 1's wake, and why it ended;
 - a strip per circle: the hall kinds' glyphs, the lord, the falls marked;
 - the company: each member's share, healing, falls, recall and how they left;
-- the Vestiges held, and the Accords;
+- the Vestiges held, the capstones, and the Accords;
 - the Reliquaries opening one each 400 ms with the Rare chime;
 - the board's line: *The Descent, the Few: 14th*.
 
@@ -6241,6 +6271,8 @@ named a retired ward and the Hour's art.
     opening, the geometry, the hall. The circle stood is the record's, so it is the room's: for a breach begun at
     Redoubt 1 under a Crumbling Wager, Hall 6's circle 2 in the Wager's geometry, never circle 1 of seed 0, and nothing is
     rebuilt once my own socket says hello.
+  - The step waits under the plain veil held over *The Spire* (AUDIT EG III: it fell as Hall 1, the Galleries' fall and
+    its name, whatever hall the company held). The veil keeps the first band's tint, since the record knows no band.
   - The listener is left at its answer, before the circle stands. The relay keeps one socket an account in a breach's
     room (`server/src/index.js:"if (egRoom && who.subject) for"`), so my own socket's hello is never refused as a
     replacement of it.
@@ -6248,9 +6280,10 @@ named a retired ward and the Hour's art.
     one law spireFrame's terminal close reads too) is said, and the way back is let go and marked over. A refusal that
     is not the room's (the relay's, for want of a sign-in) says the road is shut and keeps the way back.
   - No word within `EG_BACK_SEED_WAIT_MS` (12 s: the listener's own wait for its token, `TOKEN_WAIT_MS`, and four seconds
-    for the socket, the hello and the answer) opens the veil where I stood: *The Spire does not answer. Type /breach to
-    try again.* The way back is kept, and asked again it waits again. The online frame gone (`away`) ends the wait the
-    same way, and a session with no relay address is silent at once.
+    for the socket, the hello and the answer) opens the veil where I stood: *The Spire does not answer. Try the return
+    again.* (AUDIT EG III: it told a touch or pad player to type `/breach`.) The way back is kept, and asked again it
+    waits again. The online frame gone (`away`) ends the wait the same way, and a session with no relay address is silent
+    at once.
   - The frame settles the wait (`seedFrame`), the wait's slot emptied before the step is told.
 - **THE BOARD'S DOORS** (section 20).
   - **One door.** `ui/egBoardWindow.js` `createEgBoardDoor`, the world host's `egBoardDoor`, opens the boards in the skin
@@ -6418,9 +6451,9 @@ shaft's drop is not built" and EG-G2's "a band's textures stay up for the sessio
     sin 20 degrees higher, looking down the shaft;
   - both lanes lay it on their own eye before their casts (the Morrowind camera's focal, Eye Of The Beholder's head), so
     the casts guard the leaned eye;
-  - reduced motion (the shelf's row or the system's - `ui/egAccess.js` egReducedMotion, the client's `stillNow`) lays it
-    whole at once, as the stair cuts; first person and out of the Spire take none, at once; the pitch never passes the
-    camera's own limit (`PITCH_LIMIT`);
+  - reduced motion (the shelf's row or the system's - `ui/egAccess.js` egReducedMotion, the client's `stillNow`) lays none
+    (AUDIT EG III: it laid it whole at once, a snap section 11.8 refuses); first person and out of the Spire take none, at
+    once; the pitch never passes the camera's own limit (`PITCH_LIMIT`);
   - the frame's eye answers the camera's own forward (`look`), and the dungeon arm's view looks along it after the aim is
     taken (`aimView`, AUDIT CLIMB-ARC F10's order), so the player's aim, the listener and the casts keep the player's look.
 - **THE BAND TEXTURES' OWNER** (`scenes/worldModes.js` `egBandsDown`; section 29: "band textures are cached per band and
@@ -6462,7 +6495,8 @@ shaft's drop is not built" and EG-G2's "a band's textures stay up for the sessio
   - a dithering piece's shadow stays whole (it is recorded with the whole mesh), so no lantern redraws as the camera turns;
   - the facing's cone, the ease and the rise are the port's numbers: the page gives the 20 degrees alone;
   - "a shaft's ledge" is the rim, every flight down to the Drop and the air between them: each has a drop before it;
-  - reduced motion lays the bias whole at once rather than leaving it off, as the stair cuts rather than skipping;
+  - reduced motion leaves the bias off (AUDIT EG III), so a still screen never sees the landing over a shaft's edge
+    unless the player looks;
   - the band textures are freed on the client's first frame out of the Spire, not by the room's end word, so a member who
     leaves early frees them early; the Hour's art the Spire also wears is the session's.
 - **Not verified without a browser and the game's data:** the dither was drawn on a recording GL (its draws and
@@ -6868,8 +6902,8 @@ shaft. Each sentence is deleted where it stood.
     - the zones are the room's.
     A lord's flags fallen lay it down at once (`efl` - a Twin's first fall says no `efell`), and raised again it stands.
   - Engines' cooldowns are not carried: no screen draws one (the engine's subtitle says "once in 30 seconds" whatever its
-    cooldown). The Gutterdark, the Rails and a gust are not carried either: no screen draws the first two, and a gust is a
-    moment's push.
+    cooldown, and the Shelf's says only "Work it" - AUDIT EG III: it topples once). The Gutterdark, the Rails and a gust
+    are not carried either: no screen draws the first two, and a gust is a moment's push.
 - **THE SHAFT'S TELEGRAPHS** (`world/egTelegraph.js` `egHazardSurface`; `scenes/egFight.js`).
   - A fragment hazard's own surface is its height when it is of the traversal ground (`aim` 'trav') or the Cooling Slag's
     spill. The spill's lanes pour over a crossing's crust, which is a step of the course and never a fight floor, and over

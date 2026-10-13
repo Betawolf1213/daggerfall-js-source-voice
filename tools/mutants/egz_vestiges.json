@@ -555,12 +555,13 @@
   {
     "name": "EGZR-castback-said-tenth",
     "file": "src/scenes/egClient.js",
-    "old": "castBackBeat(cut > 0, share);",
+    "old": "castBackBeat(cut > 0, Math.round(cut) / (entity.maxHealth || 1));",
     "new": "castBackBeat(cut > 0);",
     "tests": [
       "test/egz_vestiges.test.js"
     ],
-    "why": "every cast-back said -10%"
+    "why": "every cast-back said -10%",
+    "note": "AUDIT EG III: re-aimed by content - the cast-back says what it took"
   },
   {
     "name": "EGZR-castback-word-unsaid",
@@ -825,12 +826,13 @@
   {
     "name": "EGZR-wind-once-forgotten",
     "file": "src/systems/spireVestiges.js",
-    "old": "  _wind = hall;\n  healMine(entity, max * v);",
-    "new": "  healMine(entity, max * v);",
+    "old": "  _wind = hall;\n  const healed = healMine(entity, max * v);",
+    "new": "  const healed = healMine(entity, max * v);",
     "tests": [
       "test/egz_vestiges.test.js"
     ],
-    "why": "once a hall forgotten"
+    "why": "once a hall forgotten",
+    "note": "AUDIT EG III: re-aimed by content - the heal's points kept for its beat"
   },
   {
     "name": "EGZR-wind-hall-unread",

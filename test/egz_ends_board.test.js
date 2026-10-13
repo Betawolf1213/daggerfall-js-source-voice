@@ -43,7 +43,7 @@ test('EG-ZM THE TIMERS ROW\'S DOOR (section 20): where the host hands the boards
     [`elite:${op}`, 'Elite Breach opens', false, op + EG_SEALED_MS, 'board'],
     ['elite:season:2', 'The Spire\'s season 2 ends', false, arenaSeasonEndsS(2) * 1000, 'board'],
   ], 'my breach\'s row and the season\'s, each with the door');
-  assert.deepEqual(elite[1], { id: 'elite:season:2', kind: 'elite', title: 'The Spire\'s season 2 ends', where: null, detail: 'Each Descent bracket\'s top ten hold Spire Champion through the next', live: false, at: arenaSeasonEndsS(2) * 1000, until: null, door: 'board' });
+  assert.deepEqual(elite[1], { id: 'elite:season:2', kind: 'elite', title: 'The Spire\'s season 2 ends', where: null, detail: 'Each Descent bracket\'s top ten hold the title Spire Champion through the next season', live: false, at: arenaSeasonEndsS(2) * 1000, until: null, door: 'board' });
   assert.ok(rows.filter((r) => r.kind !== 'elite').length > 3 && rows.filter((r) => r.kind !== 'elite').every((r) => !('door' in r)), 'no other row carries a door');
   // the season's last second and the next's first
   const end = arenaSeasonEndsS(2) * 1000;

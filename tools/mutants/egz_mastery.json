@@ -377,12 +377,13 @@
   {
     "name": "EGZS-storm-about-target",
     "file": "src/net/egBrain.js",
-    "old": "if (dist(ax, az, p.x, p.z) <= EG_STORM_M) hostStrike(",
-    "new": "if (dist(ax, az, b.x, b.z) <= EG_STORM_M) hostStrike(",
+    "old": "if (dist(ax, az, p.x, p.z) <= EG_STORM_M) n += hostStrike(",
+    "new": "if (dist(ax, az, b.x, b.z) <= EG_STORM_M) n += hostStrike(",
     "tests": [
       "test/egz_mastery.test.js"
     ],
-    "why": "the storm about the target"
+    "why": "the storm about the target",
+    "note": "AUDIT EG III: re-aimed by content - the storm counts what it struck"
   },
   {
     "name": "EGZS-storm-target-again",
@@ -998,12 +999,13 @@
   {
     "name": "EGZS-offer-unsaid",
     "file": "src/ui/egHud.js",
-    "old": "...egCardText(c, run?.vs ?? []), accord: accord(c) }",
-    "new": "...egCardText(c, run?.vs ?? []), accord: '' }",
+    "old": "...egCardText(c, run?.vs ?? []), accord: accord(c),",
+    "new": "...egCardText(c, run?.vs ?? []), accord: '',",
     "tests": [
       "test/egz_mastery_accords.test.js"
     ],
-    "why": "no card names its Accord"
+    "why": "no card names its Accord",
+    "note": "AUDIT EG III: re-aimed by content - the card says the capstone it completes beside it"
   },
   {
     "name": "EGZS-offer-undrawn",

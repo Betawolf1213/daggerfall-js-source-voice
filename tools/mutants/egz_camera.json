@@ -786,11 +786,12 @@
   {
     "name": "EGZN-shaft-still-eased",
     "file": "src/player/mwView.js",
-    "old": "  if (still) return want;\n",
+    "old": "  if (still) return 0;\n",
     "new": "\n",
     "tests": [
       "test/egz_camera_shaft.test.js"
-    ]
+    ],
+    "note": "AUDIT EG III: re-aimed by content - reduced motion lays no bias (it laid it whole at once)"
   },
   {
     "name": "EGZN-shaft-ease-pace",

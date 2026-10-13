@@ -516,12 +516,13 @@
   },
   {
     "name": "EGPRES-the-cost-shown-without-a-cost",
-    "note": "EG-ZR (PIN MOVED): re-aimed by content - the cast-back's beat carries Featherstep's cost (its share)",
+    "note": "EG-ZR (PIN MOVED): re-aimed by content - the cast-back's beat carries Featherstep's cost (its share); AUDIT EG III (PIN MOVED): re-aimed by content - the cast-back's beat carries what it took of the health bar; its share now what was taken (0 at the floor), so the floor's cast-back is pinned to say nothing by test/egaudit3_pres.test.js too",
     "file": "src/scenes/egClient.js",
-    "old": "castBackBeat(cut > 0, share);",
-    "new": "castBackBeat(true, share);",
+    "old": "castBackBeat(cut > 0, Math.round(cut) / (entity.maxHealth || 1));",
+    "new": "castBackBeat(true, Math.round(cut) / (entity.maxHealth || 1));",
     "tests": [
-      "test/egpres_hud.test.js"
+      "test/egpres_hud.test.js",
+      "test/egaudit3_pres.test.js"
     ]
   },
   {

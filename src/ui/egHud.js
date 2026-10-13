@@ -20,11 +20,16 @@
 // line from the end's claim (`egBoardLine` - *The Descent, the Few: 14th*), and the lord's fall's chart as the gate's own
 // chart reads one (`egChartFell` - ui/gateDamageChart.js damageChartModel).
 //
+// AUDIT EG III (2026-10-13, section 15's resonance and Accords): an offer's card says the capstone a third Vestige of its family
+// completes (`egCardCompletes` - *Completes Stone: Rooted.* and what Rooted does, in the Vestiges' blue) and what each Accord it
+// takes does; the recap lists the capstones held.
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { egHallOf, egCircleOfHall, egSlotOfHall, egPhase, egTimes, egCountText, egObjectiveOf, EG_TEXT, EG_COUNT_START_MS, EG_LAST_WORD_MS, EG_BANDS, EG_DECREES, EG_TWIST_NAMES } from '../net/egLaw.js';
 import { egCountAt, egLivingCount, egMemberOf, egRunOfMember } from '../net/egLink.js';
 import { egCardText, egAccordsOf, EG_VESTIGES, EG_M_BY_ID } from '../net/egVestige.js';
 import { egCardAccords } from '../net/egVestige.js';   // EG-ZS (section 15): the Accord an offer's card would take
+import { egResonance, egRankOf, EG_ACCORDS, EG_CAPSTONES, EG_V_FAMILY_NAMES } from '../net/egVestige.js';   // AUDIT EG III: the capstone a card completes, what an Accord does
 import { EG_CANTRIPS } from '../net/egRun.js';
 import { injectEnhancedFonts } from './enhancedStyle.js';
 import { chartShare, chartNumber } from './gateDamageChart.js';   // EG-ZF: the share and the numbers as the gate's chart says them
@@ -71,6 +76,7 @@ export const EG_HUD_CSS = `
 .eg-panel button b { display: block; color: #ffe9cf; }
 .eg-panel button small { display: block; color: #cdb79e; font-size: 13px; margin-top: 2px; }
 .eg-panel button small.eg-accord { color: #8fb4ff; font-style: italic; }
+.eg-panel button small.eg-cap { color: #8fb4ff; }
 .eg-panel .eg-ask { margin-top: 10px; }
 .eg-panel .eg-note { margin-top: 8px; font-size: 13px; color: #b9a084; }
 @media (max-width: 640px) { .eg-hud { top: 16%; right: 8px; padding: 7px 10px 8px; } .eg-hud-title { font-size: 15px; } .eg-hud-count { font-size: 21px; } .eg-hud-line { font-size: 13px; } .eg-panel { top: 8%; } }
@@ -176,6 +182,23 @@ export function egAskText(q, o) {
   return { title: q, opts: o.map(String) };
 }
 /**
+ * AUDIT EG III (section 15's resonance: "Three different Vestiges of one family ... grant that family's capstone"): the line a
+ * card says when taking it completes a family - a Vestige I do not hold, of a family I hold exactly two different Vestiges of:
+ * *Completes Stone: Rooted.* and what the capstone does; '' for any other card (a Mastery, a rank, a family short or complete).
+ * Pure.
+ * @param {number} card @param {number[][]} vs mine
+ */
+export function egCardCompletes(card, vs) {
+  const V = card < 100 ? EG_VESTIGES[card] : null;
+  if (!V || egRankOf(vs, V.key) > 0) return '';
+  const had = (vs ?? []).filter(([id]) => EG_VESTIGES[id]?.fam === V.fam).length;   // three or more: the family resonates already
+  if (had !== 2) return '';
+  const C = EG_CAPSTONES[V.fam];
+  return EG_PRES_TEXT.completes(EG_V_FAMILY_NAMES[V.fam], C.name, C.line);
+}
+/** AUDIT EG III (section 15's Accords): what Accord `key` does, in its own words, or ''. Pure. */
+export const egAccordDoes = (key) => { const A = EG_ACCORDS.find((x) => x.key === key); return A ? EG_PRES_TEXT.accordDoes(A.name, A.line) : ''; };
+/**
  * THE PANEL's model, or null: my Vestige offer (each card's name, rank and line; how many I may take), the company's
  * word open (each choice, its options, its time left, my answer), a Surplus to spend. Pure.
  */
@@ -185,8 +208,9 @@ export function egPanelModel(E, me, now, voted = {}) {
   // EG-ZS (section 15: "The offer card names it: *Takes an Accord with Mira's Hunter's Mark.*"): each living companion's
   // Vestiges, by name, for the Accord a card would take with them (net/egVestige.js egCardAccords)
   const mates = (E.co ?? []).filter((c) => c[0] !== me).map((c) => [egMemberOf(E, c[0]), egRunOfMember(E, c[0]).vs]).filter(([m]) => m?.in && m.alive && !m.home).map(([m, vs]) => [m.name, vs]);
-  const accord = (c) => egCardAccords(c, run?.vs ?? [], mates).map((a) => EG_PRES_TEXT.takesAccord(a.name, a.with)).join(' ');
-  const offer = E.offer?.v?.length ? { cards: E.offer.v.map((c, j) => ({ key: j + 1, card: c, ...egCardText(c, run?.vs ?? []), accord: accord(c) })), n: E.offer.n, surplus: E.sp ?? 0 } : null;
+  // AUDIT EG III: and what each Accord does, once a card
+  const accord = (c) => { const told = new Set(); return egCardAccords(c, run?.vs ?? [], mates).map((a) => { const first = !told.has(a.key); told.add(a.key); return `${EG_PRES_TEXT.takesAccord(a.name, a.with)}${first ? ` ${egAccordDoes(a.key)}` : ''}`; }).join(' '); };
+  const offer = E.offer?.v?.length ? { cards: E.offer.v.map((c, j) => ({ key: j + 1, card: c, ...egCardText(c, run?.vs ?? []), accord: accord(c), completes: egCardCompletes(c, run?.vs ?? []) })), n: E.offer.n, surplus: E.sp ?? 0 } : null;
   const asks = (E.as ?? []).filter((a) => a[2] > now).map(([q, o, until]) => ({ q, ...egAskText(q, o), left: until - now, mine: voted[q] ?? null, tally: E.tally?.[q] ?? [] }));
   if (!offer && !asks.length) return null;
   return { offer, asks };
@@ -218,6 +242,7 @@ export function egRecapModel(E, me, log, now, { whyText = '', board = '', why = 
     circles: circles.filter(Boolean).map((hs, j) => `Circle ${j + 1}: ${hs.map((h) => h.glyph).join(' ')}${hs.some((h) => h.fall) ? ' (a fall)' : ''}`),
     company: egCompanyRows(E),
     vestiges: (run?.vs ?? []).map(([id, r]) => `${EG_VESTIGES[id]?.name ?? ''} ${ROMAN[r]}`).concat(run && run.mast >= 100 ? [`${EG_M_BY_ID[run.mast]?.name ?? ''} (Mastery)`] : []),
+    capstones: egResonance(run?.vs ?? []).map((f) => EG_CAPSTONES[f].name),   // AUDIT EG III (section 27.6): the capstones held
     reliquaries: run?.rel ?? 0,
     // EG-G1: the page's fields
     depth: { h: E.h, rd: E.rd, band }, whyText,
@@ -351,7 +376,8 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
     const lines = [words.recapDepth(recap.depth.h, recap.depth.rd, recap.depth.band), `${words.recapTime(recap.time)} - ${recap.whyText || recap.why}`, opened,
       ...recap.strip.map((c) => `Circle ${c.c}: ${c.glyphs.join(' ')}${c.lord ? ` - ${c.lord}` : ''}${c.falls ? ` (${c.falls === 1 ? 'a fall' : `${c.falls} falls`})` : ''}`),
       ...recap.members.map((m) => egRecapMemberLine(m, { left: words.recapLeft, recall: words.recapRecall, share: words.recapShare, healed: words.recapHealed })),
-      recap.vestiges.length ? `Vestiges: ${recap.vestiges.join(', ')}` : '', recap.accords.length ? `${words.recapAccords}: ${recap.accords.join(', ')}` : '', recap.board];
+      recap.vestiges.length ? `Vestiges: ${recap.vestiges.join(', ')}` : '', recap.capstones?.length ? `${words.recapCapstones}: ${recap.capstones.join(', ')}` : '',   // AUDIT EG III: the capstones
+      recap.accords.length ? `${words.recapAccords}: ${recap.accords.join(', ')}` : '', recap.board];
     for (const line of lines) {
       if (!line) continue;
       if (typeof line !== 'string') { panel.append(line); continue; }
@@ -373,6 +399,7 @@ export function drawEgPanel(model, { hidden = false, doc = globalThis.document, 
       const t = doc.createElement('b'); t.textContent = `${c.key}. ${c.name}`;
       const s = doc.createElement('small'); s.textContent = c.line;
       b.append(t, s);
+      if (c.completes) { const k = doc.createElement('small'); k.className = 'eg-cap'; k.textContent = c.completes; b.append(k); }   // AUDIT EG III: the capstone it completes
       if (c.accord) { const a = doc.createElement('small'); a.className = 'eg-accord'; a.textContent = c.accord; b.append(a); }   // EG-ZS: the Accord it takes
       b.addEventListener?.('click', () => onPick(c.card));
       row.append(b);

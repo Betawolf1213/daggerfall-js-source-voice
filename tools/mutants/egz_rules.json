@@ -508,8 +508,9 @@
   {
     "name": "EGZI-client-toll-nothing-hurt",
     "file": "src/scenes/egClient.js",
-    "old": "    if (cut > 0) hurt(cut);\n    mid(EG_PRES_TEXT.toll(q));",
-    "new": "    hurt(cut);\n    mid(EG_PRES_TEXT.toll(q));",
+    "note": "AUDIT EG III: re-aimed by content - a toll of nothing neither hurts nor is said",
+    "old": "    if (!(cut > 0)) return;   // AUDIT EG III: nothing taken, nothing said\n",
+    "new": "",
     "tests": ["test/egz_rules.test.js"]
   },
   {
@@ -529,22 +530,25 @@
   {
     "name": "EGZI-client-toll-unsaid-on-the-screen",
     "file": "src/scenes/egClient.js",
-    "old": "    mid(EG_PRES_TEXT.toll(q));\n",
+    "note": "AUDIT EG III: re-aimed by content - the toll says what it took",
+    "old": "    mid(EG_PRES_TEXT.toll(took));\n",
     "new": "",
     "tests": ["test/egz_rules.test.js"]
   },
   {
     "name": "EGZI-client-toll-unsaid-in-the-chat",
     "file": "src/scenes/egClient.js",
-    "old": "    say(EG_PRES_TEXT.tollLine(q));\n",
+    "note": "AUDIT EG III: re-aimed by content - the toll says what it took",
+    "old": "    say(EG_PRES_TEXT.tollLine(took));\n",
     "new": "",
     "tests": ["test/egz_rules.test.js"]
   },
   {
     "name": "EGZI-beats-toll-percent",
     "file": "src/ui/egBeats.js",
-    "old": "const tollPct = (q) => Math.round(q * EG_TOLL_STEP * 100);",
-    "new": "const tollPct = (q) => Math.round(q * EG_TOLL_STEP * 1000);",
+    "note": "AUDIT EG III: re-aimed by content - the toll's words take what it took",
+    "old": "toll: (share) => `-${pctOf(share)}%`,",
+    "new": "toll: (share) => `-${pctOf(share * 10)}%`,",
     "tests": ["test/egz_rules.test.js"]
   }
 ]

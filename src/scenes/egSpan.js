@@ -929,7 +929,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       const st = /^egstone:\d+:(\d):([fb])$/.exec(key);
       if (st) return { title: `Orrery stone ${Number(st[1]) + 1}`, subs: [st[2] === 'f' ? 'Turn it forward an hour' : 'Turn it back an hour'] };
       const en = /^egengine:(\d+):(\d+)$/.exec(key);
-      if (en) { const spec = specs.find((q) => q.h === Number(en[1])), e = spec?.engines?.[Number(en[2])], E = e ? EG_ENGINES[e.kind] : null; if (E) return { title: E.name.charAt(0).toUpperCase() + E.name.slice(1), subs: [E.what, 'Work it - once in 30 seconds'] }; }
+      if (en) { const spec = specs.find((q) => q.h === Number(en[1])), e = spec?.engines?.[Number(en[2])], E = e ? EG_ENGINES[e.kind] : null; if (E) return { title: E.name.charAt(0).toUpperCase() + E.name.slice(1), subs: [E.what, E.once ? 'Work it' : 'Work it - once in 30 seconds'] }; }   // AUDIT EG III: the Shelf topples once
       return null;
     },
     /** Every Collapsing Tube segment and every island as they stand (tests). */

@@ -176,6 +176,8 @@ import { egCastBackCost } from '../net/egBrain.js';   // EG-ZR (section 15's Fea
 import { spireHolderStep } from '../systems/spireVestiges.js';   // EG-ZR: THE VESTIGES ON THEIR HOLDER
 import { spireBodyMax } from '../systems/renownLayer.js';   // EG-ZR: the body the room's shares are of (Stoneskin's cushion over it)
 import { healMine } from '../systems/playerHeal.js';   // EG-ZR: Mender's Grace's heal, the one heal a power gives
+import { spireVestigeNews, spireWeaveReady } from '../systems/spireVestiges.js';   // AUDIT EG III (section 27.5): the holder's news, said; Spellweave's chip
+import { egHolderNow, egHolderWatch, egHolderMemo } from '../ui/egBeats.js';   // AUDIT EG III: the holder's chips and the beats they bring
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -221,7 +223,8 @@ export const EG_BACK_TEXT = Object.freeze({
   prompt: 'Your breach still stands - return to the Spire',
   button: 'Return',
   back: 'You return to the Spire.',
-  silent: 'The Spire does not answer. Type /breach to try again.',   // EG-ZM: no word from the room under the veil
+  silent: 'The Spire does not answer. Try the return again.',   // EG-ZM: no word from the room under the veil (AUDIT EG III: in no one input's words)
+  spire: 'The Spire',   // AUDIT EG III: the stair's label for a way back that knows no hall
 });
 /** EG-ZM (section 22): how long a way back that knows no seed holds its step under the veil for the room's first word
  *  (ms) - the listener's own wait for its token (net/online.js TOKEN_WAIT_MS, past which its hello goes without one and is
@@ -628,7 +631,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     try {
       placedH = 0; downH = 0; endSeen = null; rdSeen = 0; leaving = false;
       answeredFor = R.b; returning = R.b;
-      const step = egStairStep(R.h > 0 ? R.h : egStartHall(R.ew ?? 0), stillNow());   // EG-ZE (merged): the way back under the stair, as every step into the Spire
+      const step = egStairStep(R.h > 0 ? R.h : egStartHall(R.ew ?? 0), stillNow(), !(R.op > 0));   // EG-ZE (merged): the way back under the stair, as every step into the Spire
+      if (!(R.op > 0)) step.opts.label = EG_BACK_TEXT.spire;   // AUDIT EG III: no record of the hall - the plain veil, never Hall 1's fall or its name
       let heard = null;
       const went = await M?.stepThroughFire?.(async () => {
         if (!(R.op > 0)) {   // EG-ZM: no seed known - the room's first word first, under the veil
@@ -1097,6 +1101,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     pingAt: 0, sightH: 0 };   // EG-ZE: the newest ping heard, the hall the witness's sight was said for
   /** How long a teaching line stands under the objective (ms). */
   const FIRST_SHOW_MS = 9000;
+  /** AUDIT EG III: the holder's watch (ui/egBeats.js egHolderWatch). */
+  const holdMemo = egHolderMemo();
   const playSound = (S) => { if (!S?.rec && S?.rec !== 0) return; try { bus().beat(S); } catch { /* a sound is never the breach */ } };   // EG-ZD (section 26): on THE SPIRE MIX's critical bus
   /** One beat (section 27.5): its sound, its line on the screen and in the chat where nobody says it already. */
   function beatNow(k, w = {}) {
@@ -1143,10 +1149,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (witness || !(entity.health > 0) || !inSpire() || h === tollH) return;
     tollH = h;
     const cut = Math.min(Math.round(q * EG_TOLL_STEP * spireBodyMax(entity)), entity.health - 1);   // EG-ZR: of the body without Stoneskin's cushion
-    if (cut > 0) hurt(cut);
-    mid(EG_PRES_TEXT.toll(q));
-    say(EG_PRES_TEXT.tollLine(q));
-    pres.live = EG_PRES_TEXT.tollLine(q);
+    if (!(cut > 0)) return;   // AUDIT EG III: nothing taken, nothing said
+    hurt(cut);
+    const took = cut / (entity.maxHealth || 1);   // AUDIT EG III: said as what it took of the health bar
+    mid(EG_PRES_TEXT.toll(took));
+    say(EG_PRES_TEXT.tollLine(took));
+    pres.live = EG_PRES_TEXT.tollLine(took);
   }
   /** The recap's Reliquaries open one each 400 ms, each with the Rare chime (section 27.6); the run kept. */
   function recapOpened() { pres.rel = 0; pres.relAt = Date.now(); egRecapKeep(store, recap); }
@@ -1246,8 +1254,13 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     const ff = egFormFactor({ w: win?.innerWidth ?? 1280, h: win?.innerHeight ?? 720 });
     const P = choices(E);
     pres.focus = P.n > 0 ? Math.min(pres.focus, P.n - 1) : 0;
+    // AUDIT EG III (sections 15 and 27.5): THE VESTIGES SEEN, HEARD AND SAID - the holder's news (Second Wind, Spellweave's free
+    // spell, Rallying Cry's refresh), and the holder's chips with the beats they bring (a window opened, an Accord formed or lapsed)
+    for (const n of spireVestigeNews()) beatNow(n.k, n);
+    const held = egHolderWatch(holdMemo, egHolderNow(witness ? null : fight, E, me(), spireWeaveReady()), t, E.h);
+    for (const b of held.beats) beatNow(b.k, b);
     const model = egSpireHudModel(E, me(), t, { ff, witness: !!witness, potions, gain: pres.gain && t - pres.gain.at < EG_GAIN_MS ? pres.gain : null,
-      first: pres.first && t - pres.firstAt < FIRST_SHOW_MS ? pres.first : '', door, live: pres.live, touch: pres.touch ??= isTouchDevice(win), foldOpen: pres.foldOpen });
+      first: pres.first && t - pres.firstAt < FIRST_SHOW_MS ? pres.first : '', door, live: pres.live, touch: pres.touch ??= isTouchDevice(win), foldOpen: pres.foldOpen, held: held.chips });
     drawEgSpireHud(model, { hidden: hudHidden(), skin: isEnhanced() ? 'enhanced' : 'classic', still: acc.still, danger: rgbCss(acc.palette.danger), scale: hudScaleNow(),
       onTouch: (id) => touchAct(id), onFold: () => { pres.foldOpen = !pres.foldOpen; } });
   }
@@ -1385,6 +1398,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (w.k === 'rise' && w.s === me()) riseAt(w);
       if (w.k === 'eheal') applyHeal(w.p, w.why);
       if (w.k === 'eheal' && w.why === 'rally') fight?.rally?.(now() - egClockHalfRtt(clock));   // EG-ZR: SHIELD-HYMN - at the door's opening, the word's way here taken off
+      if (w.k === 'eheal' && w.why === 'rally' && w.p > 0 && !witness && entity.health > 0 && inSpire()) beatNow('rally', { t: w.p });   // AUDIT EG III (section 27.5): Rally's heal seen, heard and said
       if (w.k === 'toll') payToll(w.q, w.h);   // EG-ZI: the pull's toll (section 10.6)
       if (w.k === 'egot' && w.w === 'page' && EG_ANNALS[w.p]) { annals.add(w.p); say(`A page of the Annals of 3E 398 - ${EG_ANNALS[w.p][0]}: ${EG_ANNALS[w.p][1]}`); }
       else if (w.k === 'egot' && EG_GOT_TEXT[w.w]) say(EG_GOT_TEXT[w.w]);
@@ -1558,7 +1572,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     castBack() {
       const share = egCastBackCost(egRunOfMember(link.state(), me()).vs), max = spireBodyMax(entity), cut = Math.min(share * max, Math.max(0, entity.health - EG_CAST_BACK_FLOOR * max));
       if (cut > 0) hurt(Math.round(cut));
-      castBackBeat(cut > 0, share);   // EG-G1: -10% on the screen, the Steps' rewind, and the first time its line
+      castBackBeat(cut > 0, Math.round(cut) / (entity.maxHealth || 1));   // EG-G1: -10% on the screen, the Steps' rewind, and the first time its line; AUDIT EG III: what it took of the health bar
     },
     /** THE WAY HOME (a Redoubt's rest): pressed once, asked; pressed again, walked. */
     wayHome() {
