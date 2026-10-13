@@ -20,6 +20,11 @@ import EG_REF_FRAG_LAW from '../assets/egfrags/egRefFrag.law.json' with { type: 
 // tools/bakeEgHeroMistStair.mjs (test/eghero_cairn.test.js)
 import EG_HERO_OSSUARY_LAW from '../assets/egfrags/egheroOssuary.law.json' with { type: 'json' };
 import EG_HERO_MIST_STAIR_LAW from '../assets/egfrags/egheroMistStair.law.json' with { type: 'json' };
+// EG-HERO (2026-10-13, the owner: "You have to author the fragments"): the Shade Perilous's two heroes, authored in code
+// (tools/egHeroGloamScene.mjs, tools/egHeroEclipseScene.mjs) and baked as Mac's would be - the Gloam Thicket's passage and
+// the Eclipse Vault's chamber (test/eghero_shade.test.js).
+import EG_HERO_GLOAM_LAW from '../assets/egfrags/egheroGloam.law.json' with { type: 'json' };
+import EG_HERO_ECLIPSE_LAW from '../assets/egfrags/egheroEclipse.law.json' with { type: 'json' };
 
 /** The variant of the reference fragment - the stand-in no hall lays. */
 export const EG_HERO_REFERENCE = 'reference';
@@ -33,8 +38,13 @@ export function egHeroFragRegistry(laws) {
   })));
 }
 /** EVERY BAKED FRAGMENT'S LAW HALF, by its id. */
-export const EG_HERO_FRAGS = egHeroFragRegistry([EG_REF_FRAG_LAW,
-  EG_HERO_OSSUARY_LAW, EG_HERO_MIST_STAIR_LAW]);
+export const EG_HERO_FRAGS = egHeroFragRegistry([
+  EG_REF_FRAG_LAW,
+  EG_HERO_OSSUARY_LAW,
+  EG_HERO_MIST_STAIR_LAW,
+  EG_HERO_GLOAM_LAW,
+  EG_HERO_ECLIPSE_LAW,
+]);
 
 /** The hero fragments of kit `kit` a hall may lay - every one of that kit registered (in `frags`, the registry by
  *  default) but the reference. */

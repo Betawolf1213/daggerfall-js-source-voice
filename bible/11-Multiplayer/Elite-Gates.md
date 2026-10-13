@@ -7991,3 +7991,176 @@ touched. No hall lays a hero fragment until the laying slice does, so no host dr
 - `RELAY_VERSION` stays `world199`: no relay byte moved, because `net/egHeroFrags.js` is in no relay import graph.
   `ACCOUNT_VERSION` stays `acct124`.
 - The Port-Ledger's ELITE-GATES row names the new files.
+
+### EG-HERO (the Shade Perilous) - 2026-10-13 - THE GLOAM THICKET AND THE ECLIPSE VAULT
+
+The owner, 2026-10-13: *"You have to author the fragments"*. The hero fragments section 11.6 left to Mac's Blender are the
+port's to author, in code. This record is the Shade Perilous's two: the Gloam Thicket's passage and the Eclipse Vault's
+chamber. Each is a scene written from numbers by a script, exactly as `tools/egRefFragScene.mjs` writes the reference. Each
+is written as Blender's exporter writes one, baked by `tools/fragBake.mjs` as one of Mac's would be, registered beside the
+reference, and held to its bytes. Laying them into the halls (spec law 7) is another record's; the four authoring records
+and that one are merged by the coordinator.
+
+**What shipped, by piece.**
+
+- **THE GLOAM THICKET** (`egheroGloam`: kit `gloam`, class `passage`, variant `gloam`, no play). *"A wood of black glass,
+  its branches the platforms, moonbeams the only light."*
+  - **Its envelope** is the kit's code-built passage (`net/egFragLaw.js` `egFragPassage('gloam')`):
+    - a mouth 7 m wide and 6.5 m high on the course's line (`halfW` 350, `height` 650), 28 m long (`len` 2800);
+    - one exit at its far end, at the floor's height (`yB` 0);
+    - open to the moon, as the kit's Thicket is (no vault - its `ceil` is null);
+    - its chasm crossed on Moon branches alone (`EG_FRAG_PIECES.gloam`), the beams' origin at the chasm's near lip (the
+      kit's `beat`, its `zA`).
+    - Its box is [-658, -940, -5, 687, 1312, 2800] cm: no wider than 14 m, so a Low Road's passage 15 m off the High Road
+      keeps its 2 m.
+  - **Its art** is 10,354 triangles in 7 draws, in the Shade's dress (`world/egBandArt.js` `EG_DRESS`):
+    - two landings in glades of the thicket, widening from the mouth's 7 m to 9.2 m. Their floors are black-glass flags
+      (floor), their torn undersides hang into the dark (root, its lip at v 0 as `world/sdRealm.js` maps the Hour's);
+    - the thicket's walls on both sides, a mass of black-glass shards (cobble). They are pushed OUTWARD by noise from the
+      floors' outlines, never inward and never onto a floor, down past the chasm into the deep and up to 7.4-9.8 m, and
+      broken once for the alcove's hollow;
+    - seventeen black-glass trunks (floor's flags stretched along them into bark, its hairlines their grain). The
+      landings' trunks stand behind their outlines with roots hanging under the landings; the chasm's stand in the mere,
+      clear of the course;
+    - each trunk forks at its crown into limbs. One arches in over the passage (a vault of boughs at 9-12 m, its middle
+      left open to the moon), one rises, and the landings' trunks reach one out over the thicket. Moon-glass leaves (silver
+      shards, brass) hang at the limbs' tips, and the mouth's and the exit's trunks are bound in moon-silver;
+    - four boughs reach from the chasm's trunks up into the outer third of each Moon branch, under its top. The branch
+      itself is the scenes' to stand (`net/egSpanLaw.js` `moon`, the gold rim the lit one's);
+    - a mere of quicksilver 9.2 m down in the chasm (molten, under its luminance law, `egMoltenGlow`);
+    - the Moon-Mirror (the kit's engine, `EG_ENGINES.mirror`) on its pedestal against the near landing's east wall;
+    - THE EDGE LINE (edge) on the mouth, both lips and the exit - the landings' only open edges.
+  - **Its law** is two fight floors (the landings, 5.5 m and 5 m deep). Their mouth, lips and exit are opened. Beyond
+    them:
+    - four Moon branches alternate sides (`ph` 2000, `beat` 550), proven by THE TIMED SOLVER: crossed in 3,681 ms at
+      best and 5,081 ms at the median, in 5 moves. Each branch is solid 2.8 s of every 4;
+    - a walk graph of eight nodes and ten edges, none across the chasm;
+    - two Lurkers, a Caster, the Battlemage's niche, and the Moon-Mirror's engine at its pedestal;
+    - a seam alcove (a hollow between two trunks) holding a Vestige shard, and three moonlights - moonbeams the only light;
+    - no hazard, because its signature is its course;
+    - a 154-triangle collider proxy: the landings, the walls along their outlines and beside the chasm, the lips, and a
+      box about each trunk standing inside the walls.
+  - **Its files**: `tools/egHeroGloamScene.mjs` (the scene, and the shapes the Shade's two share - `sheet`, `tube`,
+    `strip`, `moonMirror`), `tools/bakeEgHeroGloam.mjs`, `src/assets/egfrags/source/egheroGloam.fbx`,
+    `src/assets/egfrags/egheroGloam.law.json`, `src/assets/egfrags/egheroGloam.mesh.json`.
+- **THE ECLIPSE VAULT** (`egheroEclipse`: kit `eclipse`, class `chamber`, variant `eclipse`, play `balcony` and `engine`).
+  *"A dark hall crossed by moving shafts of moonlight."*
+  - **Its envelope** is the kit's code-built chamber as the Deepway lays it: `net/egLaw.js` calls
+    `egFragChamber('eclipse', r, R)` with `R = 1600`.
+    - Its fight floor is the court's disc of 16 m, its middle 20 m in - where the hall's `court` puts it, `edge + 400 + R`.
+    - The mouth is at the slot's start and the exit 4 m past the floor's far rim, 40 m apart. Both are 6 m wide and 7 m
+      high, on the course's line and the floor's height.
+    - THE ECLIPSE stands on that floor in the kit's ring (`EG_ECLIPSE_RING_M`).
+    - Its play is the balcony's second fight floor on two stairs where Casters stand, and the Moon-Mirror
+      (`EG_PLAYS`, `EG_ENGINES.mirror`).
+    - Its box is [-2090, -910, -5, 2090, 2025, 4005] cm.
+  - **Its art** is 7,060 triangles in 7 draws:
+    - a round hall of black-glass ashlar (pillar), its walls on the floors' outlines and worn outward a little by noise.
+      Their outer face is solid from without at 18.1 m;
+    - engaged columns at the rim's odd corners and the gatehouses' jambs, black glass fluted, their capitals moon-silver;
+    - a dome (root) whose ring is OPEN: the moon-slot, an annulus from 7 to 11.2 m out, straight over the ring the
+      moon-shafts walk, its lips moon-silver and moon-glass shards hung under them. The light the Eclipse spares falls
+      from where the eye sees the moon;
+    - twelve ribs spring from the walls and fly across the slot to the dome's cap. Under the cap hangs THE ECLIPSE itself:
+      a black disc in a silver corona on three chains;
+    - the fight floor in court plates (arena), a silver ring inlaid where the moon-shafts walk, the eclipse's emblem at
+      its middle;
+    - two gatehouses with pointed arches, the mouth's and the exit's;
+    - two galleries in bays behind the rim, east and west, 3.5 m up. Each is reached by a stair of fourteen steps rising
+      along the wall, the galleries' fronts and the stairs' stringers banded in silver so they read from the floor;
+    - the Moon-Mirror in a recess of the north-east wall, the alcove's recess in the south-west, and the hall's torn
+      underside hanging into the void (root).
+  - **Its law** is three fight floors and two traversal ones:
+    - the court's disc, its 24 corners on the 16 m circle except where the gatehouses' and the stairs' chords cut it,
+      and the two galleries (350 cm);
+    - the two thresholds under the gatehouses, traversal as the code-built court's bridge is, and two stairs (ramps, 0 to
+      350 cm);
+    - the vault's ceiling at 10 m and the gatehouses' at 7 m - a chamber's 6 m over every floor (THE CEILING CLAMP), and
+      the galleries' 6.5 m;
+    - fourteen open edges: the mouth and the exit, the galleries' fronts and stair-heads, the stairs' feet, and the
+      thresholds running on into the disc;
+    - THE ECLIPSE: its moon-shafts' ring a disc of 9 m about the floor's middle, phase 12 s. Its nearest haven's edge is
+      at most 14.5 m from any point of any floor at any moment of its 40 s, inside section 11.2's 20 m;
+    - four rifts set in the walls, two Lurkers, a Caster on each gallery, the Battlemage's niche, and the Moon-Mirror's
+      engine in its recess;
+    - a walk graph of nineteen nodes and twenty-four edges, one graph over the floor, up both stairs and onto both
+      galleries;
+    - a seam alcove holding a page of the Annals, and four lights: three moonlights under the slot, the band's own over
+      the eclipse;
+    - a 120-triangle proxy: the floors and the stairs, the walls along the outlines, the galleries' fronts, the stairs'
+      inner sides and the two ceilings.
+  - **Its files**: `tools/egHeroEclipseScene.mjs`, `tools/bakeEgHeroEclipse.mjs`,
+    `src/assets/egfrags/source/egheroEclipse.fbx`, `src/assets/egfrags/egheroEclipse.law.json`,
+    `src/assets/egfrags/egheroEclipse.mesh.json`.
+- **REGISTERED**: both law halves in `net/egHeroFrags.js` `EG_HERO_FRAGS` (each held to the reader at import, laid by its
+  kit's halls through `egHeroFragLaws` - a hero, never the reference), both mesh halves in `world/egHeroFragModel.js`
+  `EG_HERO_FRAG_MESHES` beside them. `test/doctrine.test.js`'s allow-list names the six files.
+
+**Departures, said plainly.**
+
+1. **Written in code, not modelled in Blender.** Every shape is the kit's sheet, tube, lathe, sweep and level face, from
+   tables and an integer hash, and that costs something:
+   - no sculpted detail past those shapes - no carved capital, no hand-cut shard, no knot in a bough;
+   - the noise is value noise: it pushes walls out in soft lumps, never chisels;
+   - the UVs are the shapes' own (a tile every 1.25-2 m on the walls and floors, bark stretched along the trunks), never a
+     hand-laid unwrap, so a seam falls where a shape closes and not always where the eye does not rest;
+   - each file's SceneInfo names the reference's writer (`FRAG_REF_WRITER`), which wrote it - so the bake asks no
+     Blender's cut of its faces.
+2. **The Thicket's chasm is longer than the kit's.** It is 17.5 m between landings of 5.5 m and 5 m, where the kit's is
+   13 m between landings of 7.5 m. THE MEDIAN refuses the kit's own 13 m crossed alone: its median, 3.7 s, is past 1.6 x its
+   fastest, 2.2 s. The kit's course is proven only inside a hall's whole road. A hero's inner course is proven alone at bake
+   time, and four branches over 17.5 m prove at 1.38.
+3. **The Thicket's landings are glades.** They widen to 9.2 m inside the kit's 7 m mouth, and its box is 13.5 m across.
+4. **The Vault is one size.** It is the Deepway's chamber, R 16 m. A Rift-Yard's court is 22-26 m and a proving court's
+   14 m, and whether a laying fits it to either is the laying's.
+5. **The Vault's galleries stand in bays behind the rim.** The code-built balcony is a disc overlapping the court; here
+   the fight floor keeps its whole disc. The stairs' chords and the gatehouses' chords are cut from it, and the thresholds
+   are traversal, as the code-built court's bridge is.
+6. **The branches are the scenes'.** The art draws the boughs that hold the Moon branches, never the branches: a branch is
+   solid only under its beam, and egSpan stands it so. The bough under a gone branch hangs as its stub.
+7. **The Moon-Mirror stands off the floor.** Its pedestal is outside the floors' outlines (a recess in the Vault, against
+   the east wall in the Thicket); its engine anchor is at the pedestal, within its 2 m reach of the floor's rim.
+8. **"No drawn vertex inside the proxy" is measured, not derived** (the EG6c record's departure 9 left it unchecked). The
+   test holds it as the space the proxy leaves a body:
+   - each floor's outline 2 cm in, from 2 cm over it to 2 cm under its lowest ceiling (4.5 m where open);
+   - each ramp's outline over its surface;
+   - each inner piece's footprint and the gaps between, 4.5 m up.
+9. **The Eclipse's 20 m is straight-line.** It is measured to the nearest haven's edge over every floor point every metre
+   and every 2 s of the cycle. A gallery's member drops 3.5 m to the floor, under the fall's 5 m.
+10. **THE EDGE LINE on a stair is drawn a tread at a time**, each one on its tread, at most a rise under the law's slope. A
+    floor that runs on into another at its height carries none, because no member falls there.
+11. **The preview flips v.** Its renderer (scratch tooling, not committed) samples v up; the art is authored with the
+    game's v (0 the picture's first row - no `UNPACK_FLIP_Y`), as `world/sdRealm.js` maps its root record. Only the root
+    record's undersides care.
+
+**Not verified without a browser and the game's data:**
+- neither mesh was drawn by the renderer. They were drawn by a software rasteriser in node with the band's own painted
+  dress (its persp, exit, side, top and cutaway views, and eye-level views from the mouth, the near lip and the floor);
+- whether the moonlights light the moon-slot's ring as the shafts walk it - they are static lights; the shafts are the
+  telegraph's havens.
+
+**The four hosts.**
+- `src/scenes/world.js` - FLAGGED: untouched. No hero is laid here, so no host draws one.
+- `src/scenes/worldModes.js` - FLAGGED: untouched.
+- `src/scenes/dungeonContext.js` - FLAGGED: untouched.
+- `src/scenes/exterior.js` - FLAGGED: the bench is offline and holds no Elite Breach.
+
+**Pins.**
+- `test/eghero_shade.test.js` (4 declared, 14 run). Every rule reads the producer's own bake of its scene written again:
+  - the scene and both halves are its committed bytes, twice;
+  - the reader accepts it, and both registries hold it;
+  - its winding and its budget;
+  - THE EDGE LINE on every walkable rim, and no drawn vertex in the space the proxy leaves;
+  - the Thicket's envelope, law and solver's proof, and the Vault's envelope, law and Eclipse.
+- `tools/mutants/eghero_shade.json` (28, every one dead), aimed at:
+  - the scenes - a branch, the beams' phase and origin, an edge line, the mirror onto a landing, a wall pushed inward, a
+    walk edge across the chasm, a point folded to a sliver, normals unflipped, a trunk on a floor, a gallery's height, the
+    vault's ceiling, the ring, the Eclipse's phase, a stair's lines, a gallery's line, a column on a gallery, a stair off
+    the graph, the dome inside out;
+  - the bake scripts' specs, and the registries;
+  - the law's ring, a beam's reach and the budget, and the bake's moon clock;
+  - the test's own 20 m sweep.
+- PIN MOVED: `test/eg6c_law.test.js` - the registry's keys are the reference's and the two heroes'.
+- `RELAY_VERSION` stays `world199`: no file of the relay's bundle moved, and `net/egHeroFrags.js` is in no relay import
+  graph yet. `ACCOUNT_VERSION` stays `acct124`, with no migration. `EG_SPEC` and `EG_LAWS` are as they were.
+- The Port-Ledger's ELITE-GATES row names the four tools and the assets.
