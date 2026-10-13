@@ -14,7 +14,7 @@ import { egHallOf, egCircleOfHall, EG_SEALED_MS } from '../src/net/egLaw.js';
 import { egBreachNew, egEnter, egStep, egStateOf, egBlow, egCountHeals, egWallOf } from '../src/net/egBrain.js';
 import { egFightState, egRaise, egBodyAt, EG_ROLE } from '../src/net/egBodies.js';
 import { EG_KIND, egLegionRaise } from '../src/net/egLegion.js';
-import { egLordsOf, egLordHitX } from '../src/net/egLords.js';
+import { egLordsOf, egLordHitX, egLordsWake } from '../src/net/egLords.js';
 import { EG_V_BY_KEY, EG_ECHO_Q, EG_HAMMER_X, EG_AMBUSH_X, EG_WALL_X, EG_ECHO_SHARE, EG_FADE_CD_S } from '../src/net/egVestige.js';
 import { HIT_KINDS } from '../src/net/gateBrain.js';
 import { bodyStruck } from '../src/net/bossBody.js';
@@ -151,6 +151,7 @@ test('EG-ZS KINDLED STEEL (section 15: Searing Edge with Overcharge - "the Edge 
   // a lord within 2 m of the target: by its own weight
   const L = court(vs, { 'acct-0': [15.32, 67.5], 'acct-1': [12, 66] });
   const lord = egLordsOf(L.B.F)[0], [lx, lz] = egBodyAt(lord, L.now()), [A4] = L.adds([[lx, lz - 1.9]]);
+  egLordsWake(L.B.F, L.spec, L.now(), [], { n: 3 });   // PIN MOVED (AUDIT EG IV, lane1 #3): a lord asleep takes no blow - woken where he stands (his kit's own wake); before, struck asleep
   const hp0 = lord.hp, w = egLordHitX(L.B.F, lord, 'acct-0', { x: 15.32, z: 67.5 }, HIT_KINDS.Melee, L.now() + 300);
   L.blow('acct-0', A4.i, 20, HIT_KINDS.Melee);
   assert.ok(w > 0 && near(hp0 - lord.hp, 6 * w, 1e-6), `the lord 1.9 m from the target takes the fire by its weight (${hp0 - lord.hp})`);
@@ -182,7 +183,9 @@ test('EG-ZS WAR-CHORUS AND AN ECHO\'S SHARE (section 15: Arcane Echo with Spire\
   F.blow('acct-0', A2.i, 100, HIT_KINDS.Spell, 2 * EG_ECHO_Q);
   assert.ok(near(h - A2.hp, 100), 'nor one twice EG_ECHO_Q or past it (no cast is numbered from EG_ECHO_Q)');
   // an Echo on a lord: the seam's blow takes the room's share too
-  const lord = egLordsOf(F.B.F)[0], hl = lord.hp, w = egLordHitX(F.B.F, lord, 'acct-0', { x: 0, z: 41 }, HIT_KINDS.Spell, F.now() + 300);
+  const lord = egLordsOf(F.B.F)[0];
+  egLordsWake(F.B.F, F.spec, F.now(), [], { n: 3 });   // PIN MOVED (AUDIT EG IV, lane1 #3): a lord asleep takes no blow - woken where he stands; before, struck asleep (a member outside his ring)
+  const hl = lord.hp, w = egLordHitX(F.B.F, lord, 'acct-0', { x: 0, z: 41 }, HIT_KINDS.Spell, F.now() + 300);
   F.blow('acct-0', lord.i, 100, HIT_KINDS.Spell, 904 + EG_ECHO_Q);
   assert.ok(w > 0 && near(hl - lord.hp, 100 * EG_ECHO_SHARE * w, 1e-6), `the lord takes the Echo's half by its weight (${hl - lord.hp})`);
   // the Binder's raise counts the Echo at the room's share

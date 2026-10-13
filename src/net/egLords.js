@@ -37,6 +37,14 @@
 // route; Grath's Gore twice as often alone; Morvayn's shared blow in the seam's judge (egChainShared); the aspects
 // (egLordAspect); the gate's rows read from ATTACKS, the Meteor's burning ground with them.
 //
+// AUDIT EG IV (2026-10-13; sections 8.6, 13.2, 13.3, 13.4 and 18): a fight of two lords falls when BOTH have (Clan Feud's champion,
+// the Twin Court, the Old Masters under the Twins' law - egLordsPair); an errand's held threshold strictly above its phase line
+// (egHoldHp); a lord asleep takes no blow; a mirror turns no phase and runs no kit; an errand's failure blow lands on the member
+// it names (`on`); the Last Lesson's last ring kept; Gore never along a bridge; the Haven Nova's route measured over the whole
+// floor; Garoth's borrowed signature his own (its mirrors, no Eclipse, chains of two) and his Clan Muster called at the turn
+// holding the next threshold; fury beside a champion; one phase card a fight; the Last Charge's third back as the next falls;
+// the Crossing and Burning Perch thrown as lord blows.
+//
 // The errands' objects (runes, gems, anchors, banners, hearts, seals, braziers, pillars, standards, havens) are bodies
 // of role 2: struck ones carry health, stood-on ones a state (`pg` says each errand's progress). Marks on members and
 // tethers are the fight's (net/egBodies.js egMark, F.tethers).
@@ -55,6 +63,7 @@ import { walkGraph, walkAir } from './egLegion.js';   // EG-ZK (section 11.7): t
 import { egFightView, egWalkGraph, egRegionAt, egKeepInRegion, egArchCut, egWayOn, EG_LEVEL_M } from './egWalkGraph.js';   // EG-ZK: the fight ground's graph and its regions; a run cut at an arch's wall. EG-ZQ: the way on kept only while walked
 import { bossSeam } from './bossSeam.js';   // EG-ZK (section 13.1): the Spire's lords written to the boss seam
 import { judgeShapes } from './bossRef.js';   // EG-ZK: the seam's judge - the Spire's one (EG-H1)
+import { SD_ECHO_PAIR_MS } from './sdRemnant.js';   // AUDIT EG IV (lane1 #32; section 13.3): the Twins' window is the Echoes' law, read
 
 /** Every boss on the wire, by number (`k` of a lord body): the thirteen, then the three champions. */
 export const EG_BOSS_KEYS = Object.freeze(['hound', 'spellmaster', 'armsmaster', 'ilthys', 'cairnkeeper', 'twins', 'morvayn', 'dusk', 'stalker', 'seyth', 'colossus', 'wyrm', 'garoth', 'kynreeve', 'kynmarcher', 'markynaz']);
@@ -87,6 +96,19 @@ export function egTtkRef(c) {
 /** The champion's health (section 8.5), a twin's share of a lord's, a mirror's (section 13.4). */
 export const EG_PROVE_HP_S = 40;
 export const EG_TWIN_SHARE = 0.55;
+/** AUDIT EG IV (lane1 #32; section 13.3) - THE TWINS' WINDOW: the Echoes' own (net/sdRemnant.js SD_ECHO_PAIR_MS, 15 s), and the
+ *  one court's (*n* <= 2) longer one. */
+export const EG_TWIN_ONE_MS = 20_000;
+/** AUDIT EG IV (lane1 #2; section 13.2) - AN ERRAND'S HELD THRESHOLD: the least health a lord of max `max` keeps while an errand
+ *  holds the threshold `at` (a fraction) - STRICTLY above its line, so a lord held there never reads as past it (`Math.round`
+ *  rounding down left a lord under the line: the Spellmaster turned his third phase inside the Examination and stood at its
+ *  floor for ever) - as the phase's own test reads it (health / max over the line), whatever the float. A fall's threshold (`at`
+ *  0) holds one point. */
+export function egHoldHp(max, at) {
+  let h = Math.floor(max * at) + 1;
+  while (h / max <= at) h++;
+  return h;
+}
 /** AUDIT EG III - FIRE-TOUCHED AND FROST-TOUCHED (section 13.3, the Twin Lords): the marks a twin's blow leaves on a member
  *  (net/egBodies.js egMarksOut's 2 and 3 - Vael's, Isk's), how long from its landing, and the weight each lends (+25% dealt to
  *  the other twin here, egLordHitX; +25% taken from the marking twin on the struck screen). */
@@ -208,7 +230,7 @@ export function egLordsShare(F, sub, lv, admits) {
     else if (p && Object.values(fs).some((q) => q !== p && !q.retired)) retireShare(L, p);
     if (L.max === max0) continue;
     moved = true;
-    if (L.hpFloor != null) L.hpFloor = Math.round((L.hpFloor * L.max) / max0);
+    if (L.hpFloor != null) L.hpFloor = egHoldHp(L.max, L.hold ?? L.hpFloor / max0);   // AUDIT EG IV (lane1 #2): the held line at the new max, still strictly above it
   }
   if (moved) F.stateAt = 0;
   return moved;
@@ -295,7 +317,7 @@ const nearest = (x, z, here) => { let best = null, bd = Infinity; for (const m o
 function lordBlow(F, spec, L, stamps, B, here, now, out, o = {}) {
   const law = F.mem.law ?? egLordLaw();
   const scale = (s) => (law.radiusX === 1 || o.ch ? s : s[0] === 'd' ? shDisc(s[1], s[2], s[3] * law.radiusX) : s[0] === 'c' ? shCone(s[1], s[2], s[3], s[4] * law.radiusX, s[5]) : s[0] === 'l' ? shLane(s[1], s[2], s[3], s[4], s[5] * law.radiusX) : s);
-  const p = o.ch ? B.p : B.p * egShareX(F.c, (F.mem.furyX ?? 1) * law.dmgX * (L.shareX ?? 1));
+  const p = o.ch ? B.p : B.p * egShareX(F.c, (L.champ ? 1 : F.mem.furyX ?? 1) * law.dmgX * (L.shareX ?? 1));   // AUDIT EG IV (lane1 #20): a champion beside a lord in fury keeps its own shares
   const at = now + (o.delay ?? 0) + B.wu;
   const nm = (B.ak && F.mem.asp && gateAspectOf(F.mem.asp)?.names?.[B.ak]) || B.nm;
   // EG-H1 (section 15): every lord's chosen blow COMMITTED EG_TELL_LEAD_MS before its wind-up begins (net/egBodies.js egAim's
@@ -308,7 +330,7 @@ function lordBlow(F, spec, L, stamps, B, here, now, out, o = {}) {
 /** A chained second shape under fury (from its second step): the same stamps, landing THE CHAINED GAP after the first -
  *  max(wind-up, floor + 0.3 s, 1 s) (AUDIT EG III: net/egShape.js egChainGapMs, Chained Blows' own rule). */
 function furyChain(F, spec, L, blow, here, now, out) {
-  if (!blow || (F.mem.furySteps ?? 0) < 2 || blow.ch) return;
+  if (!blow || (F.mem.furySteps ?? 0) < 2 || blow.ch || L.champ) return;
   const gap = egChainGapMs(blow.wu, blow.s);
   // EG-H1: committed with the first and said with it (its landing the first's plus the gap - the lead already in it)
   egAim(F, spec, { o: L.i, s: blow.s, at: blow.at + gap - EG_TELL_LEAD_MS, wu: blow.at + gap - EG_TELL_LEAD_MS - now, p: blow.p, b: blow.b, el: blow.el, nm: `${blow.nm} (fury)`, pu: blow.pu, sp: blow.sp }, here, now, out, EG_TELL_LEAD_MS);
@@ -318,12 +340,26 @@ function ward(F, L, ms, now, out) { const law = F.mem.law ?? egLordLaw(); L.ward
 /** A lord stunned (the crystals' law: STUN_MS on its knees, every blow STUN_HIT_X heavier). */
 export function egStun(F, L, ms, now, out) { L.stunUntil = Math.max(L.stunUntil, now + ms); L.atk = null; egStop(F, L, now); egSetFl(F, L, EG_FL.stun, true, out); out.push({ k: 'esay', w: 'stunned', n: egBossName(L.key, L.pt) }); }
 const say = (out, w, extra = {}) => out.push({ k: 'esay', w, ...extra });
-/** A haven blow's wind-up: the errand floor over the longest route to the nearest haven (section 13.3). */
-function havenWu(havens, field) {
+/** AUDIT EG IV (lane1 #9): the grid THE HAVEN NOVA's route is measured on (m). */
+export const EG_HAVEN_GRID_M = 0.5;
+/**
+ * AUDIT EG IV (lane1 #9; section 13.3, THE ERRAND FLOOR) - THE HAVEN NOVA'S ROUTE: the farthest any point of the court's disc
+ * (`f` - its heart, `r`) stands from the nearest haven's edge (`havens` `[[x, z, r], ...]`), measured over the WHOLE disc - its
+ * rim every 2 degrees and a grid of EG_HAVEN_GRID_M inside it, the heart among the grid's points - plus the grid's half diagonal: a route grows at most a
+ * metre a metre, so no point between the samples lies farther, and the measure is never under the truth (the old sample of
+ * twelve bearings at three radii missed the heart - 10 m from four havens - and gave it 2.42 s for its 2.94).
+ * @param {number[][]} havens @param {{x: number, z: number, r: number}} f
+ */
+export function egHavenRouteM(havens, f) {
+  const far = (x, z) => { let best = Infinity; for (const h of havens) best = Math.min(best, Math.max(0, dist(x, z, h[0], h[1]) - h[2])); return best; };
   let worst = 0;
-  for (const [x, z] of field) { let best = Infinity; for (const h of havens) best = Math.min(best, Math.max(0, dist(x, z, h[0], h[1]) - h[2])); worst = Math.max(worst, best); }
-  return egErrandMs(worst);
+  for (let a = 0; a < 360; a += 2) worst = Math.max(worst, far(f.x + Math.sin((a * Math.PI) / 180) * f.r, f.z + Math.cos((a * Math.PI) / 180) * f.r));
+  const g = EG_HAVEN_GRID_M, k = Math.floor(f.r / g);
+  for (let i = -k; i <= k; i++) for (let j = -k; j <= k; j++) if ((i * g) ** 2 + (j * g) ** 2 <= f.r * f.r) worst = Math.max(worst, far(f.x + i * g, f.z + j * g));
+  return worst + g / Math.SQRT2;
 }
+/** A haven blow's wind-up: the errand floor over the longest route to the nearest haven (section 13.3). */
+const havenWu = (havens, f) => egErrandMs(egHavenRouteM(havens, f));
 /** The fight floor's main disc (its first) - or one about the lord where a lord fights on another's ground (a Twin
  *  Court's, the Old Masters'). */
 const mainDisc = (spec, L) => spec.fl?.find((f) => f.t === 'd') ?? { x: L.x, z: L.z, r: 18 };
@@ -334,8 +370,6 @@ function spotsOr(spec, L, role, k, rr) {
   const f = mainDisc(spec, L), R = Math.min(rr, Math.max(2, f.r - 1.5));
   return Array.from({ length: k }, (_, j) => egKeepOnFight(spec, f.x + Math.sin((j / k) * 2 * Math.PI + Math.PI / 4) * R, f.z + Math.cos((j / k) * 2 * Math.PI + Math.PI / 4) * R, 1));
 }
-/** Sample points over a floor disc (for an errand's longest route). */
-const fieldOf = (cx, cz, R) => { const pts = []; for (let a = 0; a < 360; a += 30) for (const f of [0.35, 0.7, 1]) pts.push([cx + Math.sin((a * Math.PI) / 180) * R * f, cz + Math.cos((a * Math.PI) / 180) * R * f]); return pts; };
 
 /**
  * THE LORDS STOOD for a hall: a Court's lord (or the Twins, both), a Proving Walk's champion, a Kyn's Vigil's champion on
@@ -358,6 +392,7 @@ export function egLordsNew(F, spec, key, now, out, ctx) {
     const a = stand(F, spec, 'twins', courts[0].x, courts[0].z, hp * EG_TWIN_SHARE, now, out, { pt: 0 });
     const b = stand(F, spec, 'twins', one ? courts[0].x + 6 : courts[1].x, one ? courts[0].z + 4 : courts[1].z, hp * EG_TWIN_SHARE, now, out, { pt: 1 });
     F.mem.twins = { a: a.i, b: b.i, crossAt: 0, one };
+    egLordsPair(F, a, b, one ? EG_TWIN_ONE_MS : SD_ECHO_PAIR_MS);
     return [a, b];
   }
   const L = stand(F, spec, key, x, z, hp, now, out, champ ? { extra: { champ: 1 } } : {});
@@ -365,6 +400,27 @@ export function egLordsNew(F, spec, key, now, out, ctx) {
   if (key === 'kynmarcher') for (const [sx, sz] of spotsOr(spec, L, 'standard', 3, 9).slice(0, 3)) obj(F, 'standard', sx, sz, egHpTeam(F, 4), now, out, { r: 0.8 });
   if (EG_LORDS[key]?.fly) egSetFl(F, L, EG_FL.fly, true, out);
   return [L];
+}
+/**
+ * AUDIT EG IV (lane1 #1; sections 13.3 and 18) - A PAIR UNDER THE TWINS' LAW: lords `a` and `b` must fall within `ms` of each
+ * other, or the survivor raises the other at half (the Echoes' law) - the Twin Lords (egLordsNew: 15 s, 20 s in one court), and the
+ * Old Masters' Spellmaster and Armsmaster (the director pairs them, net/egBrain.js standFight). Any other lords of one fight fall
+ * plainly: the fight is won when every one has.
+ * @param {any} F @param {any} a @param {any} b @param {number} [ms]
+ */
+export function egLordsPair(F, a, b, ms = SD_ECHO_PAIR_MS) { F.mem.pair = { a: a.i, b: b.i, ms }; }
+/**
+ * The fight's pair under the Twins' law, or null: the one paired (egLordsPair - the Twins, the Old Masters the director pairs), or
+ * a fight that bears the Old Masters (`F.mem.oldMasters`, the director's word for the stratum's Court) - its Spellmaster and
+ * Armsmaster, else its first two lords that are neither a champion nor a mirror - at SD_ECHO_PAIR_MS (kept once found).
+ * @param {any} F
+ */
+export function egLordsPairOf(F) {
+  if (F.mem.pair || !F.mem.oldMasters) return F.mem.pair ?? null;
+  const lords = F.bodies.filter((b) => b.role === EG_ROLE.lord && !b.champ && !egHas(b, EG_FL.mirror));
+  const sm = lords.find((b) => b.key === 'spellmaster'), am = lords.find((b) => b.key === 'armsmaster'), [a, b] = sm && am ? [sm, am] : lords;
+  if (a && b) egLordsPair(F, a, b);
+  return F.mem.pair ?? null;
 }
 /** The lords woken (the Court's wake ring, a champion's hall): each chooses its first blow EG_LORD_WAKE_MS later. */
 export function egLordsWake(F, spec, now, out, ctx) {
@@ -413,16 +469,19 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
   const view = egFightView(spec);   // EG-ZK (section 11.7): the fight ground a lord's run is cut on
   // FURY (section 13.2) and THE COVENANT'S WEIGHT (section 18)
   const ttk = egTtkRef(F.c);
-  if (!F.mem.furyAt && (ctx.covenant || now - (F.mem.lordWokeAt ?? now) >= EG_FURY_RATIO * ttk * 1000) && !lords.some((L) => L.champ)) {
+  // AUDIT EG IV (lane1 #20): fury is the fight's LORDS' - a champion beside them (Clan Feud's) neither turns to it nor holds it
+  // back, and a fight of champions alone (a Proving Walk's, a Vigil's) has none
+  const furious = lords.filter((L) => !L.champ);
+  if (!F.mem.furyAt && furious.length && (ctx.covenant || now - (F.mem.lordWokeAt ?? now) >= EG_FURY_RATIO * ttk * 1000)) {
     F.mem.furyAt = now; F.mem.furySteps = 0;
-    for (const L of lords) egSetFl(F, L, EG_FL.fury, true, out);
-    say(out, 'fury', { n: egBossName(lords[0].key, 0) });
+    for (const L of furious) egSetFl(F, L, EG_FL.fury, true, out);
+    say(out, 'fury', { n: egBossName(furious[0].key, 0) });
   }
-  if (F.mem.furyAt && now >= (F.mem.furyNext ?? F.mem.furyAt + EG_FURY_EVERY_MS)) {
+  if (F.mem.furyAt && furious.length && now >= (F.mem.furyNext ?? F.mem.furyAt + EG_FURY_EVERY_MS)) {
     F.mem.furyNext = now + EG_FURY_EVERY_MS;
     F.mem.furySteps = (F.mem.furySteps ?? 0) + 1;
     F.mem.furyX = Math.min(1.5, (F.mem.furyX ?? 1) + EG_FURY_STEP);
-    const L0 = lords[0], spots = [];
+    const L0 = furious[0], spots = [];
     for (let k = 0; k < egWaveSize(ctx.n); k++) { const a = rng() * Math.PI * 2; spots.push(egKeepOnFight(spec, L0.x + Math.sin(a) * 9, L0.z + Math.cos(a) * 9, 1)); }
     egLegionRaise(F, egWaveKinds(F, rng, spots.length, { waveNo: (F.mem.waves = (F.mem.waves ?? 0) + 1) }), spots, now, out, { wave: 1000 + F.mem.waves });
   }
@@ -441,16 +500,19 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     L.thAt = now;
     if (L.ward && now >= L.ward) { L.ward = 0; egSetFl(F, L, EG_FL.ward, !!F.mem.wardHeld?.[L.i], out); }
     if (L.stunUntil && now >= L.stunUntil) { L.stunUntil = 0; egSetFl(F, L, EG_FL.stun, false, out); }
-    // a phase's turn
+    // a phase's turn - AUDIT EG IV (lane1 #4): never a mirror's (Seyth's, an image): a mirror is no lord's phase, so it lays no
+    // Long Night and wards itself at no threshold; nor does it run its kit's signature (the true lord runs it)
+    const mirror = egHas(L, EG_FL.mirror);
     const frac = L.hp / L.max;
     const want = frac <= PHASE_AT[1] ? 3 : frac <= PHASE_AT[0] ? 2 : 1;
-    if (want > L.ph && !L.champ) {
+    if (want > L.ph && !L.champ && !mirror) {
       L.ph = want; egSaid(L, want, now);
       ward(F, L, SHIELD_MS, now, out);
       out.push({ k: 'eph', i: L.i, ph: L.ph });
       KITS[L.key]?.phase?.(F, spec, L, L.ph, now, here, rng, out, ctx);
     }
-    KITS[L.key]?.tick?.(F, spec, L, now, here, rng, out, ctx);
+    if (!mirror) KITS[L.key]?.tick?.(F, spec, L, now, here, rng, out, ctx);
+    pairTick(F, L, now, out);
     if (!(L.hp > 0)) continue;
     if (L.stunUntil > now || egHas(L, EG_FL.hidden)) continue;
     if (L.atk) { if (now < L.atk.until) continue; if (L.atk.to) egPlace(F, L, L.atk.to[0], L.atk.to[1], now); L.atk = null; L.nextAt = Math.max(L.nextAt, now + EG_LORD_BREATH_MS); }
@@ -479,6 +541,60 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     const wu = (blow?.wu ?? B.wu) + (made?.delay ?? 0), landAt = blow ? blow.at : now + wu;   // EG-H1: the committed blow's own landing (its lead in it)
     L.atk = { at: landAt, until: landAt + (B.sp ?? 0) + (B.rec ?? 900), to: made?.to && B.run ? runTo(view, L, made.to) : made?.to ?? null };
   }
+  errandsGive(F, here, ctx);   // AUDIT EG IV (lane1 #15): every errand standing given its member
+}
+
+/** AUDIT EG IV (lane1 #15; section 13.2): the errands given by numeral - the objects a member stands on or breaks, each to one
+ *  member - and the most a fight says (`pg.as`). */
+export const EG_ERRANDS_GIVEN = Object.freeze(['rune', 'seal', 'anchor', 'banner', 'brazier', 'heart', 'pillar', 'standard']);
+export const EG_GIVEN_MAX = 12;
+/**
+ * AUDIT EG IV (lane1 #15; section 13.2) - ERRANDS BY NUMERAL: "the relay gives every errand to the nearest unassigned living
+ * member and draws it with their numeral". Each beat, over the members in the hall (`here`, numbered by the company's numerals -
+ * `ctx.nums`, the director's; a fight without them numbers its company in order):
+ *   - each errand object (EG_ERRANDS_GIVEN - runes in their order, the rest as they rose) keeps the member it was given while
+ *     both stand; one ungiven goes to the nearest member holding none yet - once every member holds one, the round begins
+ *     again (one member stands several runes in turn);
+ *   - an errand for two groups splits the numerals at ceil(n/2): the Soul Tithe's gems (the first half of the gems standing to
+ *     the first group, each member its group's nearest) and the Twin Lords, from n = 3 (the first group to Vael, the second to
+ *     Isk);
+ * said on the fight's progress (`pg.as`, `[[body, numeral], ...]`, at most EG_GIVEN_MAX, the whole fight said at once when it
+ * moves), which each screen draws over the body as *III - Mira* (scenes/egFight.js). Pure; draws no die.
+ */
+function errandsGive(F, here, ctx) {
+  const nums = ctx.nums ?? Object.fromEntries((F.subs ?? []).map((s, j) => [s, j + 1]));
+  const live = here.filter((m) => nums[m.sub] > 0).sort((a, b) => nums[a.sub] - nums[b.sub]);
+  const old = F.mem.given ?? {}, given = {}, held = {};
+  const half = Math.ceil(live.length / 2), group = (m) => (nums[m.sub] <= nums[live[half - 1]?.sub] ? 0 : 1);
+  const nearest = (o, pool) => { let best = null, bd = Infinity; for (const m of pool) { const d = dist(o.x, o.z, m.x, m.z); if (d < bd - 1e-9) { bd = d; best = m; } } return best; };
+  const objs = F.bodies.filter((b) => b.role === EG_ROLE.obj && b.hp > 0 && EG_ERRANDS_GIVEN.includes(b.t)).sort((a, b) => (a.t === 'rune' && b.t === 'rune' ? a.pt - b.pt : a.i - b.i));
+  for (const o of objs) { const m = live.find((x) => x.sub === old[o.i]); if (m) { given[o.i] = m.sub; held[m.sub] = (held[m.sub] ?? 0) + 1; } }
+  for (const o of objs) {
+    if (given[o.i] || !live.length) continue;
+    const least = Math.min(...live.map((m) => held[m.sub] ?? 0)), m = nearest(o, live.filter((x) => (held[x.sub] ?? 0) === least));
+    given[o.i] = m.sub; held[m.sub] = (held[m.sub] ?? 0) + 1;
+  }
+  // the two groups' errands: each member to its group's nearest gem; the Twins' company split between them
+  const gems = egObjsOf(F, 'gem'), gh = Math.ceil(gems.length / 2), T = F.mem.twins;
+  const pairs = Object.entries(given).map(([i, sub]) => [Number(i), nums[sub]]), gemOf = {};
+  if (gems.length) for (const m of live) {
+    const mine = gems.filter((g, j) => (j < gh ? 0 : 1) === group(m)), keep = (mine.length ? mine : gems).find((g) => g.i === F.mem.gemOf?.[m.sub]);
+    const g = keep ?? nearest(m, mine.length ? mine : gems);   // kept while it stands, so a member's gem never flickers as it walks
+    if (g) { gemOf[m.sub] = g.i; pairs.push([g.i, nums[m.sub]]); }
+  }
+  if (T && !T.one && live.length >= 3) for (const m of live) pairs.push([group(m) ? T.b : T.a, nums[m.sub]]);
+  F.mem.given = given; F.mem.gemOf = gemOf;
+  const as = pairs.slice(0, EG_GIVEN_MAX), key = JSON.stringify(as);
+  if (key !== JSON.stringify(F.pg.as ?? [])) { F.pg.as = as; F.stateAt = 0; }
+}
+
+/** AUDIT EG IV (lane1 #1; section 13.3, the Echoes' law) - THE PAIR'S WINDOW (egLordsPair): a lord of the pair standing while its
+ *  mate has lain fallen past the window raises it at half - the Twins' raise, the Old Masters' alike. */
+function pairTick(F, L, now, out) {
+  const P = egLordsPairOf(F);
+  if (!P || !F.mem.twinFellAt || !(L.hp > 0) || (L.i !== P.a && L.i !== P.b) || now - F.mem.twinFellAt <= P.ms) return;
+  const dead = egBodyById(F, L.i === P.a ? P.b : P.a);
+  if (dead && !(dead.hp > 0)) { dead.hp = Math.round(dead.max / 2); egSetFl(F, dead, EG_FL.fell, false, out); F.mem.twinFellAt = 0; say(out, 'twinraised', { n: egBossName(dead.key, dead.pt) }); }
 }
 
 /** A grounding's weight (the Mother of Dusk dragged down, the Wyrm landed), a Scorch's (Grath stunned on a burning bridge or a
@@ -491,10 +607,12 @@ export const EG_KNEEL_HIT_X = 1.5;
  * a stun's STUN_HIT_X (a Scorch's stun weighs its own x1.3), a grounding's x1.3 and a kneel's x1.5, never their product (the
  * Breakdown's kneel is a stun's stillness at the kneel's x1.5, Grath Scorched x1.3 - section 13.3's numbers); the Kynreeve's
  * Shield-Wall (front 75% less, behind 30% more), the Kynmarcher's standards (20% off each standing), a twin's Touched (+25% on
- * the other), Unyielding's x0.85; a ward refuses it (0), and a flyer is out of a blade's reach.
+ * the other), Unyielding's x0.85; a ward refuses it (0), and a flyer is out of a blade's reach. AUDIT EG IV (lane1 #3; section
+ * 8.6): a lord ASLEEP refuses it too - it wakes with its ring (the fastest member never meets it alone), so no blow from beyond
+ * its ring, nor a burst before it wakes, lands on it.
  */
 export function egLordHitX(F, L, sub, pose, r, now) {
-  if (L.ward > now || egHas(L, EG_FL.ward)) return 0;
+  if (!L.up2 || L.ward > now || egHas(L, EG_FL.ward)) return 0;
   if (egHas(L, EG_FL.fly) && !egHas(L, EG_FL.grounded) && r === HIT_KINDS.Melee) return 0;
   const law = F.mem.law ?? egLordLaw();
   let x = law.hitX, st = 1;
@@ -515,14 +633,20 @@ export function egLordHitX(F, L, sub, pose, r, now) {
 export function egLordHit(F, spec, L, sub, name, got, pose, now, here, out, ctx = {}) {
   if (L.hpFloor != null && L.hp < L.hpFloor) { got -= L.hpFloor - L.hp; L.hp = L.hpFloor; }
   L.threat[sub] = (L.threat[sub] ?? 0) + got * (ctx.threatX ?? 1);
-  KITS[L.key]?.hit?.(F, spec, L, sub, got, pose, now, here, out, ctx);
+  if (!egHas(L, EG_FL.mirror)) KITS[L.key]?.hit?.(F, spec, L, sub, got, pose, now, here, out, ctx);   // AUDIT EG IV (lane1 #10): a mirror's blow is no duel's
   if (L.hp > 1e-6) return;
   L.hp = 0;
   if (egHas(L, EG_FL.mirror)) { egGone(F, [L], EG_GONE.slain, name, now, out); KITS[L.key]?.mirrorDown?.(F, L, now, out); return; }
   L.fellAt = now; egSaid(L, L.ph, now);   // EG-ZJ: its fall's instant on the wire
   egSetFl(F, L, EG_FL.fell, true, out);
+  // AUDIT EG IV (lane1 #1; sections 13.3 and 18): the fight falls when EVERY lord of it has - Clan Feud's champion beside the Court's
+  // lord, the Twin Court's two, the Old Masters - and a pair under the Twins' law (egLordsPair) opens its window at the first fall
   const left = egLordsOf(F).filter((x) => !egHas(x, EG_FL.mirror) && x.hp > 0);
-  if (L.key === 'twins' && left.length) { F.mem.twinFellAt = now; say(out, 'twinfell', { n: egBossName('twins', L.pt) }); return; }
+  if (left.length) {
+    const P = egLordsPairOf(F), mate = P && (L.i === P.a || L.i === P.b) ? egBodyById(F, L.i === P.a ? P.b : P.a) : null;
+    if (mate && mate.hp > 0) { F.mem.twinFellAt = now; say(out, 'twinfell', { n: egBossName(L.key, L.pt) }); }
+    return;
+  }
   F.mem.lordsFell = 1;
   for (const m of egLordsOf(F).filter((x) => egHas(x, EG_FL.mirror))) egGone(F, [m], EG_GONE.crumbled, '', now, out);
   out.push({ k: 'efell', i: L.i, at: now, n: name });
@@ -547,6 +671,8 @@ const champKit = () => [
   { ...CHARGE, sp: ATTACKS.charge.active, run: 1, make: (F, spec, L, t) => { const yaw = Math.atan2(t.x - L.x, t.z - L.z), [ex, ez] = egKeepOnFight(spec, L.x + Math.sin(yaw) * ATTACKS.charge.len, L.z + Math.cos(yaw) * ATTACKS.charge.len, L.r); return { stamps: [shLane(L.x, L.z, ex, ez, 4)], to: [ex, ez] }; } },
 ];
 
+/** AUDIT EG IV (lane9 #16; section 13.4): Garoth's third phase card - the older signature he borrows, by its own name. */
+export const EG_GAROTH_SIG_CARDS = Object.freeze({ ilthys: 'The Conquest.', morvayn: 'The Chaining.', seyth: 'The Mirrorcourt.' });
 /** THE KITS: each lord's blows (`make` its stamps), and its signature's hooks - `wake`, `phase`, `tick`, `hit`. */
 const KITS = {
   // ── the Proving champions (section 8.5) ──
@@ -557,7 +683,9 @@ const KITS = {
   // ── GRATH, THE HOUND: a fight about ground ──
   hound: {
     blows: [
-      { nm: 'Gore', wu: 1300, rec: 1000, p: 0.4, b: 12, pu: 6, range: 18, minGap: 4, w: 3, w1: 6, make: (F, spec, L, t) => ({ stamps: [laneTo(L, t, 18, 4)] }) },
+      // AUDIT EG IV (lane1 #8; section 13.3: "No lane is ever laid along a bridge"): on his own ground Grath gores only a member on
+      // the island he stands on - never down a bridge at one on it, nor across the magma along one to the next island
+      { nm: 'Gore', wu: 1300, rec: 1000, p: 0.4, b: 12, pu: 6, range: 18, minGap: 4, w: 3, w1: 6, when: (F, L, t) => !egObjsOf(F, 'isle').length || (islandOf(F, L) != null && islandOf(F, L) === islandOf(F, t)), make: (F, spec, L, t) => ({ stamps: [laneTo(L, t, 18, 4)] }) },
       { nm: 'Savage', wu: 1200, rec: 900, p: 0.45, b: 12, range: 6, w: 3, make: (F, spec, L, t) => ({ stamps: [shCone(L.x, L.z, Math.atan2(t.x - L.x, t.z - L.z), 7, 110)] }) },
       { nm: 'Leap', wu: 1500, rec: 1500, p: 0.45, b: 12, range: 60, minGap: 14, w: 2, cd: 8000, when: (F, L, t) => islandOf(F, t) != null && islandOf(F, t) !== islandOf(F, L), make: (F, spec, L, t, here, rng, now, out) => {
         const from = islandOf(F, L), to = egObjsOf(F, 'isle').find((o) => o.i === islandOf(F, t));
@@ -622,7 +750,7 @@ const KITS = {
       { nm: 'Haven Nova', wu: 4000, rec: 1000, p: 0.6, b: 0, el: 'shock', ch: true, range: 99, w: 1, cd: 22_000, make: (F, spec, L, t, here, rng, now) => {
         const all = spotsOr(spec, L, 'haven', 4, 13).map(([x, z]) => [x, z, 3]), k = Math.max(2, Math.min(4, Math.ceil(here.length / 2) + 1)), havens = all.slice(0, k);
         const f = mainDisc(spec, L);
-        return { stamps: [shOut(havens)], B: { wu: havenWu(havens, fieldOf(f.x, f.z, f.r)) } };
+        return { stamps: [shOut(havens)], B: { wu: havenWu(havens, f) } };
       } },
       { nm: 'Arcane Lattice', wu: 1400, rec: 800, p: 0.35, b: 10, el: 'shock', range: 99, w: 2, cd: 12_000, make: (F, spec, L, t) => {
         const f = mainDisc(spec, L), yaw = Math.atan2(t.x - L.x, t.z - L.z) + Math.PI / 2, ux = Math.sin(yaw), uz = Math.cos(yaw), vx = Math.cos(yaw), vz = -Math.sin(yaw);
@@ -679,7 +807,8 @@ const KITS = {
       if (L.ph >= 3 && F.mem.lessonR > 12 && now >= F.mem.lessonAt) {
         F.mem.lessonR -= 1; F.mem.lessonAt = now + 6000;
         const f = mainDisc(spec, L);
-        zoneOut(F, 'burn', shRing(f.x, f.z, F.mem.lessonR, f.r + 4), now, now + 6000, out, { p: 0.08, b: 3, el: elOf(F, 'fire') });
+        // AUDIT EG IV (lane1 #7): each ring burns until the next closes it; the last (r 12) stands to the fight's end
+        zoneOut(F, 'burn', shRing(f.x, f.z, F.mem.lessonR, f.r + 4), now, F.mem.lessonR > 12 ? now + 6000 : now + EG_ZONE_FIGHT_MS, out, { p: 0.08, b: 3, el: elOf(F, 'fire') });
       }
     },
   },
@@ -715,7 +844,7 @@ const KITS = {
         F.mem.chargeAt = now + 20_000;
         const third = (F.mem.third = ((F.mem.third ?? -1) + 1) % 3), yaw = (third * 2 * Math.PI) / 3;
         egAim(F, spec, { o: L.i, s: [shCone(f.x, f.z, yaw, f.r + 1, 120)], at: now + 5000, wu: 5000, p: 0.1, b: 0, el: null, nm: 'The Floor Falls', ch: 1 }, [], now, out);
-        zoneOut(F, 'void', shCone(f.x, f.z, yaw, f.r + 1, 118), now + 5000, now + 20_000, out);
+        zoneOut(F, 'void', shCone(f.x, f.z, yaw, f.r + 1, 118), now + 5000, now + 25_000, out);   // AUDIT EG IV (lane1 #24): it rises as the next third FALLS (25 s on), never at its telling
       }
     },
   },
@@ -756,7 +885,8 @@ const KITS = {
           else t.gem = 0;
           if (now >= t.until && t.left > 0) {
             t.left = 0; egUnmark(F, t.sub, 1); F.mem.mkDirty = 1;
-            if (m) { egAim(F, spec, { o: L.i, s: [shDisc(m.x, m.z, 2)], at: now + 600, wu: 600, p: 0.3, b: 0, el: elOf(F, 'poison'), nm: 'Soul Burst', ch: 1 }, [], now, out); egLegionRaise(F, L.ph >= 3 ? [EG_KIND.wraith, EG_KIND.wraith] : [EG_KIND.wraith], [[m.x + 2, m.z]], now, out); }
+            // AUDIT EG IV (lane1 #5): it bursts on the member whose soul it was, wherever they stand
+            if (m) { egAim(F, spec, { o: L.i, s: [shDisc(m.x, m.z, 2)], at: now + 600, wu: 600, p: 0.3, b: 0, el: elOf(F, 'poison'), nm: 'Soul Burst', ch: 1, on: [m.sub] }, [], now, out); egLegionRaise(F, L.ph >= 3 ? [EG_KIND.wraith, EG_KIND.wraith] : [EG_KIND.wraith], [[m.x + 2, m.z]], now, out); }
           }
         }
         if (T.every((t) => t.left <= 0)) F.mem.tithe = null;
@@ -777,7 +907,8 @@ const KITS = {
     // +25% to the other (egLordHitX)
     landed(F, L, bl, struck) { for (const m of struck) egMark(F, m.sub, L.pt === 1 ? EG_MARK_FROST : EG_MARK_FIRE, bl.at + EG_TOUCH_MS); if (struck.length) F.mem.mkDirty = 1; },
     phase(F, spec, L, ph, now, here, rng, out) {
-      if (ph === 2) say(out, 'phase', { t: 'Rivalry.' });
+      // AUDIT EG IV (lane1 #23): each twin turns its own phase, the card is said once a fight (Both Courts Burn's already was)
+      if (ph === 2 && !F.mem.twinsRivalry) { F.mem.twinsRivalry = 1; say(out, 'phase', { t: 'Rivalry.' }); }
       if (ph === 3 && !F.mem.twinsBurn) {
         F.mem.twinsBurn = 1;
         const courts = spec.lord === 'twins' ? spec.spots.court ?? [] : [];
@@ -793,16 +924,15 @@ const KITS = {
       if (L === a && !T.one && now >= T.crossAt && a && b && a.hp > 0 && b.hp > 0) {
         T.crossAt = now + 60_000;
         const w = spec.fl?.find((f) => f.t === 'l');
-        if (w) egAim(F, spec, { o: a.i, s: [shLane(w.ax, w.az, w.bx, w.bz, 6)], at: now + 3000, wu: 3000, p: 0.35, b: 10, el: 'fire', nm: 'The Crossing' }, here, now, out);
-        T.swapAt = now + 3000;
+        // AUDIT EG IV (lane1 #26; section 13.2): a lord's blow like any other - its share by the depth, fury and Vengeful, its word
+        // committed with the lead, the union floor over it - and they change courts as it lands
+        const cross = w ? lordBlow(F, spec, a, [shLane(w.ax, w.az, w.bx, w.bz, 6)], { nm: 'The Crossing', wu: 3000, p: 0.35, b: 10, el: 'fire' }, here, now, out) : null;
+        T.swapAt = cross ? cross.at : now + 3000;
         say(out, 'crossing');
       }
       if (L === a && T.swapAt && now >= T.swapAt && a && b) { T.swapAt = 0; const ax = a.x, az = a.z; egPlace(F, a, b.x, b.z, now); egPlace(F, b, ax, az, now); }
-      // the Echoes' law: fallen apart by more than the window, the survivor raises the other at half
-      if (F.mem.twinFellAt && L.hp > 0 && now - F.mem.twinFellAt > (T.one ? 20_000 : 15_000)) {
-        const dead = [a, b].find((x) => x && !(x.hp > 0));
-        if (dead) { dead.hp = Math.round(dead.max / 2); egSetFl(F, dead, EG_FL.fell, false, out); F.mem.twinFellAt = 0; say(out, 'twinraised', { n: egBossName('twins', dead.pt) }); }
-      }
+      // the Echoes' law (fallen apart by more than the window, the survivor raises the other at half): AUDIT EG IV, the pair's
+      // own (egLordsPair, pairTick - SD_ECHO_PAIR_MS, EG_TWIN_ONE_MS in one court), the Old Masters' with it
     },
   },
 
@@ -816,10 +946,11 @@ const KITS = {
     wake(F, spec, L, now) { F.mem.chainAt = now + 15_000; },
     phase(F, spec, L, ph, now, here, rng, out) { if (ph === 3) { F.mem.ritesAt = now + 5000; say(out, 'phase', { t: 'The Last Rites.' }); } },
     tick(F, spec, L, now, here, rng, out, ctx) {
-      // THE CHAINING: pairs bound for 20 s - stretched past 8 m, both take 30% (a CHECK); an odd member to a Wraith
+      // THE CHAINING: pairs bound for 20 s - stretched past 8 m, both take 30% (a CHECK); an odd member to a Wraith. AUDIT EG IV
+      // (lane1 #10): chains of three are the Last Rites' - Morvayn's own third phase, never Garoth's borrowed Chaining
       if (now >= (F.mem.chainAt ?? Infinity)) {
         F.mem.chainAt = now + 35_000; F.mem.chainUntil = now + 20_000;
-        const size = L.ph >= 3 ? 3 : 2, order = [...here].sort(() => rng() - 0.5), chains = [];
+        const size = L.key === 'morvayn' && L.ph >= 3 ? 3 : 2, order = [...here].sort(() => rng() - 0.5), chains = [];
         while (order.length >= size) chains.push(order.splice(0, size).map((m) => m.sub));
         F.tethers = F.tethers.filter((t) => t[2] !== 2);
         for (const c of chains) for (let j = 1; j < c.length; j++) F.tethers.push([c[0], c[j], 2, 800]);
@@ -834,7 +965,8 @@ const KITS = {
         const ms = c.map((s) => here.find((m) => m.sub === s)).filter(Boolean);
         for (let j = 1; j < ms.length; j++) if (dist(ms[0].x, ms[0].z, ms[j].x, ms[j].z) > 8 && now >= (F.mem.snapAt ?? 0)) {
           F.mem.snapAt = now + 3000;
-          egAim(F, spec, { o: L.i, s: [shDisc(ms[0].x, ms[0].z, 1.5), shDisc(ms[j].x, ms[j].z, 1.5)], at: now + 400, wu: 400, p: 0.3, b: 0, el: elOf(F, 'poison'), nm: 'The Chain Snaps', ch: 1 }, [], now, out);
+          // AUDIT EG IV (lane1 #5): the snap lands on the PAIR it names (`on`), wherever they run - its discs only mark them
+          egAim(F, spec, { o: L.i, s: [shDisc(ms[0].x, ms[0].z, 2), shDisc(ms[j].x, ms[j].z, 2)], at: now + 400, wu: 400, p: 0.3, b: 0, el: elOf(F, 'poison'), nm: 'The Chain Snaps', ch: 1, on: [ms[0].sub, ms[j].sub] }, [], now, out);
         }
       }
       if (L.ph >= 3 && now >= (F.mem.ritesAt ?? Infinity)) { F.mem.ritesAt = now + 20_000; egLegionRaise(F, [EG_KIND.wraith, EG_KIND.wraith], (spec.spots.court ?? []).map((c) => [c.x, c.z]), now, out); }
@@ -936,7 +1068,8 @@ const KITS = {
     phase(F, spec, L, ph, now, here, rng, out) { if (ph === 3) { out.push({ k: 'edark', until: now + 600_000 }); say(out, 'phase', { t: 'The Long Night.' }); } },
     mirrorDown(F, L, now) { F.mem.mirrorsAt = now + 20_000; },
     tick(F, spec, L, now, here, rng, out) {
-      const f = mainDisc(spec, L), S = spec.spots.shafts?.[0] ?? { x: f.x, z: f.z, r: Math.min(12, f.r - 4) };
+      // AUDIT EG IV (lane1 #10): THE ECLIPSE is the Eclipse Vault's - Seyth's own ground's; Garoth borrows the Mirrorcourt alone
+      const f = mainDisc(spec, L), S = L.key === 'seyth' ? spec.spots.shafts?.[0] ?? { x: f.x, z: f.z, r: Math.min(12, f.r - 4) } : null;
       if (S) F.pg.shafts = moonShafts(S, now);
       // THE ECLIPSE: every 40 s everyone outside the moon-shafts takes 30% (a CHECK; havens from 6 s out)
       if (S && now >= (F.mem.eclipseAt ?? Infinity)) {
@@ -951,7 +1084,7 @@ const KITS = {
         F.mem.mirrorsAt = Infinity;
         for (let k = egLordsOf(F).filter((x) => egHas(x, EG_FL.mirror)).length; k < 2; k++) {
           const a = rng() * Math.PI * 2, [x, z] = egKeepOnFight(spec, f.x + Math.sin(a) * 10, f.z + Math.cos(a) * 10, 2);
-          const mi = stand(F, spec, 'seyth', x, z, egHpTeam(F, 8), now, out, { pt: 1 + k, fl: EG_FL.mirror });
+          const mi = stand(F, spec, L.key, x, z, egHpTeam(F, 8), now, out, { pt: 1 + k, fl: EG_FL.mirror });   // AUDIT EG IV (lane1 #10): the true lord's mirrors - his look, his name, his kit (Garoth's under Garoth)
           if (mi) { mi.up2 = true; mi.nextAt = now + 2000; mi.shareX = 0.5; }
         }
         say(out, 'mirrors');
@@ -1033,10 +1166,15 @@ const KITS = {
     ],
     wake(F, spec, L, now) { F.mem.challengeAt = Infinity; F.mem.garothSig = ['ilthys', 'morvayn', 'seyth'][Math.floor(F.c / 5) % 3]; },
     phase(F, spec, L, ph, now, here, rng, out, ctx) {
-      // THE CLAN MUSTER: each phase turn calls an honour duel (the Armsmaster's ring law; none at n = 1)
-      if (ctx.n >= 2) F.mem.challengeAt = now + 3500;
-      if (ph === 3) { say(out, 'phase', { t: 'The older signature.' }); KITS[F.mem.garothSig]?.wake?.(F, spec, L, now, out, ctx); }
+      // THE CLAN MUSTER: each phase turn calls an honour duel (the Armsmaster's ring law; none at n = 1). AUDIT EG IV (lane1 #21;
+      // section 13.2's signature errand): called AT the turn, inside its ward, and the next threshold held until the duel ends -
+      // the third phase's next is his fall
+      if (ctx.n >= 2) { F.mem.challengeAt = now; L.hold = ph >= 3 ? 0 : PHASE_AT[1]; L.hpFloor = egHoldHp(L.max, L.hold); }
+      // AUDIT EG IV (lane9 #16): the third phase's card names the older signature it borrows
+      if (ph === 3) { say(out, 'phase', { t: EG_GAROTH_SIG_CARDS[F.mem.garothSig] ?? '' }); KITS[F.mem.garothSig]?.wake?.(F, spec, L, now, out, ctx); }
     },
+    // AUDIT EG IV (lane1 #10): his borrowed Mirrorcourt's mirrors are his, and return as Seyth's do
+    mirrorDown(F, L, now, out) { KITS[F.mem.garothSig]?.mirrorDown?.(F, L, now, out); },
     hit(F, spec, L, sub, got, pose, now, here, out) { const ch = F.mem.challenge; if (ch && ch.subs.includes(sub)) { ch.dealt += got; if (ch.dealt >= L.max / 10) endChallenge(F, L, now, out, true); } },
     tick(F, spec, L, now, here, rng, out, ctx) {
       challengeTick(F, spec, L, now, here, rng, out, ctx, 15_000, true);
@@ -1046,6 +1184,9 @@ const KITS = {
 };
 
 // ── the signatures' helpers ──────────────────────────────────────────────────────────────────────────────
+/** AUDIT EG IV (lane1 #7): a zone that stands "to the fight's end" (the Last Lesson's last ring) - an hour, past any Court the
+ *  count and the last word allow. */
+export const EG_ZONE_FIGHT_MS = 3_600_000;
 /** A zone on the floor (`ez`): 'burn' (a pool - its share a tick), 'void' (the floor gone - a cast-back), 'soul' (a
  *  Soul-Pool), 'haven' - over `s` from `from` to `until`. */
 export function zoneOut(F, kind, s, from, until, out, o = {}) {
@@ -1085,7 +1226,7 @@ function examination(F, spec, L, now, here, rng, out, ctx) {
   const order = spots.map((_, j) => j).sort(() => rng() - 0.5);
   spots.forEach((p, j) => obj(F, 'rune', p[0], p[1], 0, now, out, { r: 1.6, pt: order.indexOf(j) + 1 }));
   F.mem.exam = { kind: 'runes', next: 1, k, until: now + (10 + 4 * Math.max(0, k - n)) * 1000 };
-  L.hpFloor = Math.round(L.max * PHASE_AT[1]);
+  L.hold = PHASE_AT[1]; L.hpFloor = egHoldHp(L.max, L.hold);   // AUDIT EG IV (lane1 #2): strictly above the third phase's line, never at it
   say(out, 'examination');
 }
 /** THE FINAL EXAMINATION (phase 3): a member caged 8 s; the company breaks clamp(n-1, 1, 3) seals (n = 1: three within 6 m). */
@@ -1116,7 +1257,7 @@ function errandTick(F, spec, L, now, here, rng, out) {
       F.mem.exam = null; egGone(F, seals, EG_GONE.crumbled, '', now, out);
       const m = E.bound ? here.find((x) => x.sub === E.bound) : here[0];
       if (E.bound) egUnmark(F, E.bound, 5); F.mem.mkDirty = 1;
-      if (m) egAim(F, spec, { o: L.i, s: [shDisc(m.x, m.z, 2)], at: now + 800, wu: 800, p: 0.7, b: 0, el: elOf(F, 'shock'), nm: 'The Cage Closes', ch: 1 }, [], now, out);
+      if (m) egAim(F, spec, { o: L.i, s: [shDisc(m.x, m.z, 2)], at: now + 800, wu: 800, p: 0.7, b: 0, el: elOf(F, 'shock'), nm: 'The Cage Closes', ch: 1, on: [m.sub] }, [], now, out);   // AUDIT EG IV (lane1 #5): on the bound, freed from the cage or not
       say(out, 'failed');
     }
   }
@@ -1148,6 +1289,7 @@ function endChallenge(F, L, now, out, early) {
   for (const s of ch.subs) egUnmark(F, s, 6);
   F.mem.challenge = null; F.mem.mkDirty = 1; F.pg.ring = null;
   F.mem.challengeAt = L.key === 'garoth' ? Infinity : now + 30_000;
+  if (L.key === 'garoth') L.hpFloor = null;   // AUDIT EG IV (lane1 #21): the duel over, the threshold it held is free
   egGone(F, egObjsOf(F, 'brazier'), EG_GONE.crumbled, '', now, out);
   out.push({ k: 'esay', w: early ? 'challengewon' : 'challengeend' });
 }
@@ -1162,7 +1304,9 @@ export function egObjBroken(F, spec, o, name, now, out) {
   // AUDIT EG III - BURNING PERCHES (section 13.3, the Wyrm's phase 2): the pillar it leaves erupts - the one broken under it,
   // where it stood, as it leaves it (a disc of r 6, 2.0 s)
   const W = o.t === 'pillar' ? egLordsOf(F).find((L) => L.key === 'wyrm' && L.perch === o.i && L.ph === 2) : null;
-  if (W) egAim(F, spec, { o: W.i, s: [shDisc(o.x, o.z, 6)], at: now + 2000, wu: 2000, p: 0.45, b: 12, el: elOf(F, 'fire'), nm: 'Burning Perch' }, [], now, out);
+  // AUDIT EG IV (lane1 #26): the Wyrm's own blow (lordBlow - its depth, fury and Vengeful; committed with the lead, so THE UNION
+  // FLOOR judges it when its word is due, over the beat's members - net/egBodies.js egBlowsStep)
+  if (W) lordBlow(F, spec, W, [shDisc(o.x, o.z, 6)], { nm: 'Burning Perch', wu: 2000, p: 0.45, b: 12, el: 'fire' }, [], now, out);
   if (o.t === 'heart' && egLordsOf(F)[0]?.ph >= 2) {
     const mate = egObjsOf(F, 'heart').find((h) => h.pair === o.pair);
     (F.mem.pairBroke ??= {});

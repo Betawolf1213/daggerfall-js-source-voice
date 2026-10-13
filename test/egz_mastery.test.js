@@ -14,7 +14,7 @@ import { validEgOut, validEgIn } from '../src/net/wire.js';
 import { egHallOf, egCircleOfHall, EG_SEALED_MS, EG_DECREE_BY_KEY } from '../src/net/egLaw.js';
 import { egBreachNew, egEnter, egStep, egStateOf, egStageWord, egBlow, egCount, egCountHeals, egBodyWord, egHeal, egCountWhole, egBehind } from '../src/net/egBrain.js';
 import { egAim, egFightState, egRaise, egBodyAt, egSetFl, EG_ROLE, EG_FL } from '../src/net/egBodies.js';
-import { egLordsOf, egLordHitX, EG_OBJ } from '../src/net/egLords.js';
+import { egLordsOf, egLordHitX, egLordsWake, EG_OBJ } from '../src/net/egLords.js';
 import { egThreatX } from '../src/net/egRun.js';
 import { shDisc } from '../src/net/egShape.js';
 import { EG_V_BY_KEY, EG_ACCORDS, egAccordMates, egCardAccords, EG_STORM_N, EG_STORM_M, EG_WEAVE_N, EG_FAR_M, EG_HAMMER_X, EG_AMBUSH_X, EG_WALL_X, EG_KINDLED_M, EG_ECHO_Q } from '../src/net/egVestige.js';
@@ -284,6 +284,7 @@ test('EG-ZS BLADESTORM, THE RELAY\'S HALF (section 15, Blade\'s capstone: "every
   const L = court({ 'acct-0': [15.32, 70.99], 'acct-1': [-6, 41], 'acct-2': [-6, 46] }, [[EG_DECREE_BY_KEY.unyielding.id, 1]]);
   L.B.mem['acct-0'].vs = [[vId('searing'), 1], [vId('culling'), 1], [vId('sweeping'), 1], [vId('oath'), 1]];   // the Oath: threat x1.5
   const lord = egLordsOf(L.B.F)[0], [A3] = adds(L, [[15.32, 72.6]]);
+  egLordsWake(L.B.F, L.spec, L.now(), [], { n: 3 });   // PIN MOVED (AUDIT EG IV, lane1 #3): a lord asleep takes no blow - Grath woken (his kit's own wake) where he stands; before, he was struck asleep
   assert.ok(near(Math.hypot(...egBodyAt(lord, L.now()).map((v, j) => v - [15.32, 70.99][j])), 2, 1e-6), 'the lord 2 m off me');
   for (let k = 0; k < 4; k++) blow(L, 'acct-0', A3.i, 20, HIT_KINDS.Melee, [15.32, 70.99]);
   const hp0 = lord.hp, th0 = lord.threat['acct-0'] ?? 0, w = egLordHitX(L.B.F, lord, 'acct-0', { x: 15.32, z: 70.99 }, HIT_KINDS.Melee, L.now());

@@ -88,7 +88,7 @@ const HARDCODED = {
   'src/net/egHerald.js': 13,
   'src/net/egLaw.js': 189,   // EG-HERO-LAY: +16, the hero fit's refusals (net/egLaw.js egHeroTrials' `why`) - the relay's law read by a test and a hero's author, never said to a player, kept as egFragLaw.js's record faults are
   'src/net/egLegion.js': 11,
-  'src/net/egLords.js': 53,
+  'src/net/egLords.js': 55,   // AUDIT EG IV (the lords' group): +2, Garoth's third-phase card names the older signature he borrows (EG_GAROTH_SIG_CARDS - three names for the one 'The older signature.') - the arc's English, owed its localization wave with the rest
   'src/net/egRun.js': 18,
   'src/net/egSpanLaw.js': 12,
   'src/net/egVestige.js': 60,
@@ -243,7 +243,7 @@ const HARDCODED = {
   'src/scenes/egArch.js': 2,
   'src/scenes/egCall.js': 1,
   'src/scenes/egClient.js': 63,
-  'src/scenes/egFight.js': 62,
+  'src/scenes/egFight.js': 63,   // AUDIT EG IV (the lords' group): +1, the Rampart's `gateheld` beat (EG_SAY - the march holds the gate)
   'src/scenes/egSpan.js': 5,
   'src/scenes/etherHost.js': 9,
   'src/scenes/exterior.js': 15,
@@ -579,7 +579,7 @@ const HARDCODED = {
   'src/ui/egBeats.js': 85,
   'src/ui/egBoardWindow.js': 15,
   'src/ui/egHud.js': 37,
-  'src/ui/egSpireHud.js': 14,
+  'src/ui/egSpireHud.js': 15,   // AUDIT EG IV (the lords' group): +1, an errand's numerals' markup (egSigilHtml's `given` - a template the scan counts; its words are the company's numerals and names)
   'src/ui/egStartWindow.js': 5,
   'src/ui/enhancedAccount.js': 8,
   'src/ui/enhancedBook.js': 1,

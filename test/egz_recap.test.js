@@ -254,6 +254,11 @@ test('EG-ZF relay (real Room): A MEMBER\'S `heal` - each healer the socket in th
       await eg.raw(socks['acct-ann'], JSON.stringify({ t: 'eg', k: 'heal', h: [['peer-acct-mac', 25]] }));
       assert.deepEqual([R().mem['acct-ann'].ht, R().mem['acct-mac'].ht], [60, 25], 'each healer credited; a stranger\'s id and its own nothing');
       assert.deepEqual(R().F.tl['acct-ann'][5], 60, 'and on the Court\'s chart');
+      // PIN MOVED (AUDIT EG IV, lane1 #3): a lord asleep takes no blow - the company steps into the wake ring and wakes it first
+      // (before, Mac struck it asleep, the company on the arrival plate)
+      for (const ws of Object.values(socks)) await eg.pose(ws, poseAt(spec, spec.ring.x, spec.ring.z));
+      await beat(1000);
+      assert.ok(R().F.bodies.some((b) => b.role === 0 && b.up2), 'the lord woke');
       // Mac's blows on the lord through the room's own word, from behind it - each the director's believed share
       const lord = R().F.bodies.find((b) => b.role === 0);
       let q = 1, dealt = 0, best = 0, blows = 0;

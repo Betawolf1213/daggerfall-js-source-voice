@@ -12,7 +12,7 @@ import { egBreachNew, egEnter, egStep, egBlow, egWord, egHome, egHeal, egCensusD
 import { EG_ABSENT_TRIAL_MS } from '../src/net/egLaw.js';
 import { EG_ROLE, EG_FL, egRaise, egAim, egSetFl, egHas, egBodyAt } from '../src/net/egBodies.js';
 import { EG_KIND, egLegionRaise, egSquad } from '../src/net/egLegion.js';
-import { egLordsOf, egLordsFell } from '../src/net/egLords.js';
+import { egLordsOf, egLordsFell, egLordsWake } from '../src/net/egLords.js';
 import { egVestigeX, EG_CANTRIPS } from '../src/net/egRun.js';
 import { shDisc } from '../src/net/egShape.js';
 import { EG_V_BY_KEY, EG_M_ID, EG_MASTERIES, EG_SWEEP_M, EG_MARK_MS, EG_COUNTER_MS, EG_COUNTER_X, EG_COUNTER_M, EG_SPILL_M, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX } from '../src/net/egVestige.js';
@@ -105,6 +105,9 @@ test('AUDIT EG III SWEEPING ARC THROUGH THE HOST HITS (section 15: "melee blows 
   const S = court({ at: { 'acct-0': [15.32, 70.99], 'acct-1': [-6, 41], 'acct-2': [-6, 46] } }), { B } = S;
   const me = B.mem['acct-0'];
   me.vs = [[vId('sweeping'), 3]];
+  // PIN MOVED (AUDIT EG IV, lane1 #3): a lord asleep takes no blow, so Grath is woken (his kit's own wake) before acct-0 strikes him
+  // from beside him on his island - before, this struck him asleep, the company outside his wake ring
+  egLordsWake(B.F, S.spec, S.now(), [], { n: 3 });
   const lord = egLordsOf(B.F)[0], [lx, lz] = egBodyAt(lord, S.now());
   const [A, X, H, W, Fr] = adds(S, [[lx + 2.9, lz], [lx - 3.1, lz], [lx, lz + 2], [lx, lz - 2], [lx + 1, lz + 1]]);
   egSetFl(B.F, H, EG_FL.hidden, true, []); egSetFl(B.F, W, EG_FL.ward, true, []); egSetFl(B.F, Fr, EG_FL.friend, true, []);

@@ -403,6 +403,7 @@ export const EG_SPIRE_CSS = `
 .eg-sigils { position: fixed; inset: 0; pointer-events: none; z-index: 29; color: var(--eg-danger, #ff3d47); text-shadow: 1px 1px 0 #000; }
 .eg-sigrow { position: absolute; transform: translate(-50%, -100%); display: flex; gap: 3px; white-space: nowrap; }
 .eg-sigrow .eg-sig svg { width: 22px; height: 22px; }
+.eg-sigrow .eg-sig-given { color: #6f9dff; }
 .eg-first { color: #b9d0ff; font-style: italic; }
 .eg-fold { pointer-events: auto; font: inherit; color: inherit; background: rgba(12,14,18,0.78); border: 1px solid #5a5446; padding: 2px 8px; cursor: pointer; }
 .eg-fold:empty { display: none; }
@@ -554,6 +555,7 @@ export const EG_SIGIL_PATHS = Object.freeze({
 /** One sigil's markup (world/egTelegraph.js egSigilsOf's `{ sigil, secs, rim }`): its shape, and a soul-mark's seconds
  *  beside its gem. Pure. */
 export function egSigilHtml(s) {
+  if (s?.sigil === 'given') return `<span class="eg-sig eg-sig-given"><b>${String(s.text ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)}</b></span>`;   // AUDIT EG IV (lane1 #15): an errand's members by numeral (scenes/egFight.js egGivenWords), in Battlemage blue
   const d = EG_SIGIL_PATHS[s?.sigil];
   if (!d) return '';
   return `<span class="eg-sig eg-sig-${s.sigil}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}" fill="currentColor" fill-rule="evenodd" stroke="${s.rim ? rgbCss(s.rim) : '#140606'}" stroke-width="${s.rim ? 1.8 : 1.2}"/></svg>${s.sigil === 'gem' ? `<b>${s.secs | 0}</b>` : ''}</span>`;

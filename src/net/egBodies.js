@@ -27,7 +27,7 @@
 // Pure: a record and a beat in, frames out. In the relay bundle. Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, MELEE_REACH, POSE_SLACK, MOVE_RESAY_M, MOVE_RESAY_MS, HP_SEND_MS, HOST_HP_MIN, dpsRef, spendBlow, spendPurse } from './gateBrain.js';
 import { egKeepOnFight, egOnFight, egFloorTest, EG_BANDS } from './egLaw.js';
-import { egBlowOf, egInBlow, EG_BLOWS_MAX } from './egShape.js';
+import { egBlowOf, egInBlow, egBlowOn, EG_BLOWS_MAX } from './egShape.js';
 import { egUnionHolds, egPlaceLandings, egBlowNear, EG_UNION_HOLD_TICKS } from './egFloor.js';   // EG-H1: THE UNION FLOOR where the page says it lives, the place's landings in its set, Watchfire's reach
 import { egFightView, egFeetAt } from './egWalkGraph.js';   // EG-ZJ: the fight ground a body's feet stand on
 
@@ -300,8 +300,9 @@ export function egBlowsStep(F, spec, now, here, out, watch = []) {
 export const EG_FEINT_AT = 0.55;
 /** A blow cut (a feint, at FEINT_AT - section 13.2): gone, said. */
 export function egCut(F, i, out) { F.blows = F.blows.filter((b) => b.i !== i); out.push({ k: 'ecut', i }); }
-/** The members a landed blow struck, by the relay's own reckoning of their poses (the census - section 21). */
-export const egStruck = (blow, here) => here.filter((m) => egInBlow(blow, m.x, m.z));
+/** The members a landed blow struck, by the relay's own reckoning of their poses (the census - section 21). AUDIT EG IV (lane1
+ *  #5): a blow that names its members, those of them in the hall (net/egShape.js egBlowOn). */
+export const egStruck = (blow, here) => here.filter((m) => egBlowOn(blow, m.sub, m.x, m.z));
 
 /** The health of every body that moved since last said, at most every HP_SEND_MS (`ehp`). */
 export function egHpOut(F, now, out, force = false) {

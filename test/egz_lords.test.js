@@ -9,7 +9,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { egHallOf, egOnFight, EG_SEALED_MS } from '../src/net/egLaw.js';
-import { egBreachNew, egEnter, egStep } from '../src/net/egBrain.js';
+import { egBreachNew, egEnter, egStep, champRing } from '../src/net/egBrain.js';
 import { EG_SEAM, EG_EARN_SHARE, EG_EARN_HALLS, egLordsFight, egLordsNew, egLordsStep, egLordHit, egLordHitX, egLordsOf, egLordsFell } from '../src/net/egLords.js';
 import { egFightNew, egFightState, egHitBody, egBodyById } from '../src/net/egBodies.js';
 import { BOSS_SEAM_KEYS } from '../src/net/bossSeam.js';
@@ -42,6 +42,15 @@ function breachAt(seed, h, { n = 1 } = {}) {
   for (let k = 0; k < 60 && B.sg !== 'trial'; k++) step();
   assert.equal(B.sg, 'trial', `hall ${h} woke`);
   return { B, spec, pos, frames, step, at, here, now: () => now };
+}
+/** PIN MOVED (AUDIT EG IV, lane1 #11; section 8.5: "It wakes at the wake ring"): a Proving Walk's champion stands asleep until the
+ *  company stands in its court's ring (net/egBrain.js champRing) - the member steps in at the court's heart, a beat, and the
+ *  champion is awake where it stood. Before, every champion here woke with the hall. */
+function wokenAtRing(S, L) {
+  const r = champRing(S.spec);
+  S.at('acct-0', r.x, r.z, 0);
+  S.step();
+  assert.ok(L.up2, 'the champion woke at its ring');
 }
 /** Where a body was set down after blow `bl`'s word (its run's end: the first walk of no speed said after it). */
 function placeAfter(frames, i, bl) {
@@ -183,6 +192,7 @@ test('EG-ZK A CHAMPION IN AN ARCH\'S CHAMBER GOES THROUGH THE ARCH (section 11.7
   for (let j = 1; j < back.length; j++) assert.equal(egArchCut(D.spec, back[j - 1][0], back[j - 1][1], back[j][0], back[j][1]), null, `never through the wall (${back[j - 1]} -> ${back[j]})`);
   // a Charge at a member across the wall, from beside it: the run ends at the wall
   const C = breachAt(1, 23), K = egLordsOf(C.B.F)[0];
+  wokenAtRing(C, K);
   C.at('acct-0', 8, 38);
   K.x = 8; K.z = 51; K.mv = null; K.nextAt = C.now() + 250;
   let charge = null;
@@ -234,6 +244,7 @@ test('EG-ZK A CHAMPION UP THE STAIR, AND NO RUN UP A LEDGE\'S FACE (sections 11.
   const S = breachAt(31337, 43);
   const L = egLordsOf(S.B.F)[0], q = S.spec.ramps[0], up = S.spec.fl.find((f) => f.t === 'd' && f.y > 3);
   assert.ok(L.key === 'kynmarcher' && q && up, 'the champion, its stair and its upper floor');
+  wokenAtRing(S, L);
   S.at('acct-0', up.x + 3.5, up.z, up.y);
   const from = [L.x, L.z], k0 = S.frames.length;
   let topAt = 0;
@@ -245,6 +256,7 @@ test('EG-ZK A CHAMPION UP THE STAIR, AND NO RUN UP A LEDGE\'S FACE (sections 11.
   assert.ok(!S.frames.slice(k0).some((f) => f.k === 'eb' && f.o === L.i && f.nm === 'Charge'), 'no Charge at a member on another height');
   // a Charge along its own floor at a member under the ledge's lip: its run would end up on the ledge, and ends below it
   const C = breachAt(31337, 43), K = egLordsOf(C.B.F)[0], lower = C.spec.fl.find((f) => f.t === 'd' && f.y === 0);
+  wokenAtRing(C, K);
   C.at('acct-0', lower.x + 13, lower.z, 0);
   K.x = lower.x - 5.5; K.z = lower.z; K.mv = null; K.nextAt = C.now() + 250;
   let charge = null;

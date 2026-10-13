@@ -245,8 +245,8 @@
   {
     "name": "EGA3-gore-not-doubled",
     "file": "src/net/egLords.js",
-    "old": "minGap: 4, w: 3, w1: 6, make",
-    "new": "minGap: 4, w: 3, make",
+    "old": "minGap: 4, w: 3, w1: 6, when",
+    "new": "minGap: 4, w: 3, when",
     "tests": [
       "test/egaudit3_lords.test.js"
     ]

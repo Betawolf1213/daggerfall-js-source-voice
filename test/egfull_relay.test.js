@@ -130,9 +130,12 @@ test('EG-FULL THE FALL, THE MEMENTO AND THE RECALL (section 16.5): a member\'s o
   const { B, frames } = play({ n: 2, seed: 5, until: (b) => b.rd >= 2 && b.sg === 'trial', hook: (b, now, pos, act) => {
     const m1 = b.mem['acct-1'];
     if (!fellAt && b.sg === 'trial' && b.h === 2) { act('acct-1', { k: 'fell' }); fellAt = now; }
-    if (fellAt && !m1.alive && struck === null && b.F?.bodies.some((x) => x.hp > 0 && !(x.fl & (2 | 16 | 128)))) {
+    // PIN MOVED (AUDIT EG IV, lane1 #3): a lord asleep takes no blow, so the struck body is one a living member's blow lands on -
+    // never a champion still asleep in its court (before, the Proving Walk's sleeping Kynreeve was struck)
+    const open = (x) => x.hp > 0 && !(x.fl & (2 | 16 | 128)) && !(x.role === 0 && !x.up2);
+    if (fellAt && !m1.alive && struck === null && b.F?.bodies.some(open)) {
       // the witness stands where the living striker stands (behind the body, in reach) - only its fall can refuse the blow
-      const t = b.F.bodies.find((x) => x.hp > 0 && !(x.fl & (2 | 16 | 128))), hp = t.hp, sp = egHallOf(b.seed, b.h, 0);
+      const t = b.F.bodies.find(open), hp = t.hp, sp = egHallOf(b.seed, b.h, 0);
       const at = { sx: sp.x0 + t.x - Math.sin(t.yaw ?? 0) * 1.5, z: t.z - Math.cos(t.yaw ?? 0) * 1.5 };
       egBlow(b, 'acct-1', { k: 'hit', i: t.i, q: 7_777, d: 500, r: 0 }, at, now);
       const witnessHp = t.hp;

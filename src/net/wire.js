@@ -5514,7 +5514,9 @@ export const EG_SAY_KEYS = Object.freeze(['wake', 'fury', 'covenant', 'covenantr
   // niche, the High Road's cache, the Low Road taken
   'seam', 'engine', 'horn', 'hornwon', 'hornfoul', 'niche', 'hcache', 'lowroad',
   // AUDIT EG III (Elite-Gates.md section 27.5): Bladestorm and Deadeye struck - said to their striker (`s`), its screen's beat
-  'storm', 'deadeye']);
+  'storm', 'deadeye',
+  // AUDIT EG IV (Elite-Gates.md section 8.3): a Rampart's march holding its gate - its Ward-Bearers warded
+  'gateheld']);
 /** The gifts a member is told of (`egot`'s `w`). */
 export const EG_GOT_WORDS = Object.freeze(['shard', 'tonic', 'cant', 'lumen', 'rel', 'longstep', 'page']);   // LAYER THREE: 'page' - a page of the Annals (`p`)
 /** The zones' kinds (`ez`). */
@@ -5607,7 +5609,8 @@ function egBlowW(m) {
   if (!gateMs(m.at) || !intIn(m.wu, 0, 30_000) || !finite(m.p) || m.p < 0 || m.p > 10 || !finite(m.b) || m.b < 0 || m.b > 999) return null;
   if (m.el != null && !['fire', 'frost', 'shock', 'poison', 'magic'].includes(m.el)) return null;
   if (!(m.ch === 0 || m.ch === 1) || !finite(m.pu) || m.pu < 0 || m.pu > 20 || !intIn(m.sp, 0, 60_000)) return null;
-  return { i: m.i, o: m.o, s: m.s.map((s) => [...s]), at: m.at, wu: m.wu, p: m.p, b: m.b, el: m.el ?? null, nm: egText(m.nm ?? '', 48) ?? '', ch: m.ch, pu: m.pu, sp: m.sp };
+  if (m.on != null && !(Array.isArray(m.on) && m.on.length >= 1 && m.on.length <= 8 && m.on.every(egId))) return null;   // AUDIT EG IV (lane1 #5): the members a failure blow names (net/egShape.js egBlowOn)
+  return { i: m.i, o: m.o, s: m.s.map((s) => [...s]), at: m.at, wu: m.wu, p: m.p, b: m.b, el: m.el ?? null, nm: egText(m.nm ?? '', 48) ?? '', ch: m.ch, pu: m.pu, sp: m.sp, ...(m.on != null ? { on: [...m.on] } : {}) };
 }
 /** A zone (net/egLords.js zoneOut). */
 function egZone(m) {
