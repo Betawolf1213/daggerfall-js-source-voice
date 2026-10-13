@@ -55,6 +55,7 @@ test('PEER-BUZZ, driven: the floating-origin recentre is not a stride - world.js
   assert.equal(played.length, before + 1, 'unrebased, the jump counts as walked distance and fires - which is what the rebase exists to stop');
   // by source: the seam and the call
   assert.match(rd('src/net/remotePlayers.js'), /const step = fm\.update\(f, \{ grounded: true, swimming: false, levitating: false, onFoot: !shown\.rd, standingStill: !peerMoving\(shown\), halfSpeed: false \}, set\);/, 'the SCENE point');   // CLIMB5: no stride on the wall (climb5.test.js C4)
-  assert.match(rd('src/net/remotePlayers.js'), /rebaseFootsteps\(\) \{\s*for \(const fm of this\._footsteps\.values\(\)\) fm\.rebase\(\);\s*(?:this\._climbSounds\.rebase\(\);[^\n]*\n\s*)?\}/);
+  // PIN MOVED (GATHER-FEEL II, PEER-ACTS): and the gathering's held places, as the climb's - a blow in the air, a net's place
+  assert.match(rd('src/net/remotePlayers.js'), /rebaseFootsteps\(\) \{\s*for \(const fm of this\._footsteps\.values\(\)\) fm\.rebase\(\);\s*(?:this\._climbSounds\.rebase\(\);[^\n]*\n\s*)?(?:this\._gatherSounds\.rebase\(\);[^\n]*\n\s*)?\}/);
   assert.match(rd('src/scenes/world.js'), /footsteps\.rebase\(\);\s*\n\s*betterAmbience\.rebase\(\);[^\n]*\n\s*remotePlayers\?\.rebaseFootsteps\?\.\(\);/, 'called in the recentre block, beside the local machine\'s rebase');
 });

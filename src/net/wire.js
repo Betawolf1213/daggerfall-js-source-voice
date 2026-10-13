@@ -1359,7 +1359,8 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world199';   // AUDIT ETHER-OW C2-1 (2026-10-13, bible/01-Overview/Audit-Ether-OW.md; NOT YET DEPLOYED): THE WATCH'S GROUND, ONE HOME - the relay's mint asks net/watchReceipt.js watchPixelOk (the Bay's map, whole pixels) where it wrote the bounds itself; the account service's receipt check and the Motherlodes' site read the same law, so a Motherlode stands only where a receipt can name its pixel. The relay's answers are as they were: a new bundle, so a new name (SLAM8).
+export const RELAY_VERSION = 'world200';   // PEER-ACTS (2026-10-13, GATHER-FEEL II; Mac: "Do the not done" - bible/06-Systems/Professions-Arc.md 5.1 "Others see it" and section 45; NOT YET DEPLOYED; world199 on its branch, renumbered past main's AUDIT ETHER-OW world199 at the merge): THE POSE CARRIES A GATHERING ACT - `ga` the act (POSE_GATHER_ACTS: the axe at a trunk, the pick at a stone, a kneel by hand, with the sickle, with the Basket, with the knife, the net wound, flying, waiting, tugged, hauled) and `gm` the net's throw in whole metres, absent off an act; `gb` the beats (a count and the last beat's kind), on its own as `hk` is; validPose bounds them (a code past the table no act, a count of none no beat), poseChanged sends them at once. An older relay's validPose drops them: the others see and hear nothing of an act, as before.
+// world199:   AUDIT ETHER-OW C2-1 (2026-10-13, bible/01-Overview/Audit-Ether-OW.md; NOT YET DEPLOYED): THE WATCH'S GROUND, ONE HOME - the relay's mint asks net/watchReceipt.js watchPixelOk (the Bay's map, whole pixels) where it wrote the bounds itself; the account service's receipt check and the Motherlodes' site read the same law, so a Motherlode stands only where a receipt can name its pixel. The relay's answers are as they were: a new bundle, so a new name (SLAM8).
 // world198:   SPAWN-REBIRTH (2026-10-12, bible/01-Overview/Field-Bugs-2026-10-12h.md; NOT YET DEPLOYED): A CELL KEEPS A SPAWNED DUNGEON'S ROW UNTIL IT STANDS AGAIN - net/overworldLaw.js owRowUntil (its death, the earlier of its two clocks, and OW_REBIRTH_MIN, twenty-four real hours), never OW_ROW_KEEP_MIN's sixty real days; the fold lets a life that is over go before it folds, so a later life's first entry is taken whole; the prune and the welcome read the same end.
 // world197:   BAL8 (2026-10-12, bible/05-Combat/Balance-Arc.md section 14; NOT YET DEPLOYED): ONE HARM CEILING FOR EVERY STRIKER - the PvP referee (net/siegeRef.js SIEGE_HARM, refereeBlow and refereeCast: the duel's, the siege's and the Wild Zone's) holds a fighter's blows and casts together to at most 180 in any 5 s, the casts' own ceiling.
 // world196:   CHAT-LANG (2026-10-11, the players: "More chat channels per-language"; NOT YET DEPLOYED; world192 on its branch - renumbered past main's world192-world195 at the port): the language channels, `chat:lang.<code>` for each CHAT_LANGS row, joined CHAT_ROOMS - the relay opens them as it opens a region's; nothing else in the law moved. The client's Language tab waits for this relay (LANG_RELAY_MIN)
@@ -1504,7 +1505,8 @@ export function poseChanged(a, b, eps = 0.01) {
     || (a.cv | 0) !== (b.cv | 0)   // INVIS-NET: a player vanishing (or coming back) is news at once, as a draw is
     || (a.cl | 0) !== (b.cl | 0) || ((a.cl | 0) > 0 && Math.abs(wrapAngle((a.cw ?? 0) - (b.cw ?? 0))) > eps)   // CLIMB5: a hold taken or let go, a move begun, goes out at once - and the body turning on the wall, as a turn does
     || (a.ck | 0) !== (b.ck | 0) || (a.cy | 0) !== (b.cy | 0)   // CLIMB6: a move of another kind, or on another lip, is another move - at once
-    || (a.st | 0) !== (b.st | 0);   // CARDS2b: sitting down or standing up goes out at once, as a mount does
+    || (a.st | 0) !== (b.st | 0)   // CARDS2b: sitting down or standing up goes out at once, as a mount does
+    || (a.ga | 0) !== (b.ga | 0) || (a.gb | 0) !== (b.gb | 0) || (a.gm | 0) !== (b.gm | 0);   // PEER-ACTS: an act begun, a beat, the net thrown - at once, as a swing
 }
 
 /** SCALE5b (2026-10-10, Mac: "lets now tackle the bigger work ... really future proof our archetecture while also
@@ -1574,7 +1576,7 @@ export function wire2Batch(items) {
 /** A pose the room will relay, or null. */
 export function validPose(p) {
   if (!p || typeof p !== 'object') return null;
-  const { x, y, z, yaw, pitch, mv, wd, an, as, am, sr, cn, cr, ce, ar, fk, rd, rv, rc, hs, lh, wb, dd, hl, lt, lc, hk, hp, hb, hq, hu, uq, cv, cl, cw, ck, cy, cd, st, ts } = p;
+  const { x, y, z, yaw, pitch, mv, wd, an, as, am, sr, cn, cr, ce, ar, fk, rd, rv, rc, hs, lh, wb, dd, hl, lt, lc, hk, hp, hb, hq, hu, uq, cv, cl, cw, ck, cy, cd, st, ga, gb, gm, ts } = p;
   if (![x, y, z, yaw, pitch].every(finite)) return null;
   if (Math.abs(x) > POSE_BOUND || Math.abs(z) > POSE_BOUND || Math.abs(y) > POSE_Y_BOUND) return null;
   // ONCRASH1 (2026-09-15, Mac: "reports of player browser crashing when
@@ -1658,9 +1660,34 @@ export function validPose(p) {
     // otherwise: a hold, and the ground, keep their bytes.
     ...climbOf(cl, cw, ck, cy, cd),
     ...seatOf(st),   // CARDS2b: seated at a card table, and the table's top - omitted standing
+    // PEER-ACTS (GATHER-FEEL II, 2026-10-13): `ga` the player's GATHERING ACT and `gm` the net's throw, and `gb` the
+    // beats - its own, as `hk` is, so a beat counted as an act ends rides the pose that ends it (gatherOf) - so the
+    // others see the swing, the kneel and the throw and hear each beat at the act's place (net/peerGather.js). OMITTED
+    // at 0 (validLook's `class` law): a player who never gathered keeps the bytes it had.
+    ...gatherOf(ga, gb, gm),
     // SCALE2b: the send time - an integer inside POSE_TS_MOD, or nothing (never clamped: a clamped time would order
     // every later pose behind it). OMITTED when absent (validLook's `class` law).
     ...(Number.isInteger(ts) && ts >= 0 && ts < POSE_TS_MOD ? { ts } : {}),
+  };
+}
+/** PEER-ACTS (GATHER-FEEL II): how many acts the pose's `ga` can name - its code is the index + 1 into the client's
+ *  table (net/peerGather.js GATHER_POSE_ACTS, pinned to this count: the names are the client's, the bound the law's);
+ *  the least and the most `gb` says - 1 to 255 beats counted, round and round, each times 16 with the last beat's kind
+ *  under it (the client's GATHER_POSE_BEATS, at most 16); and the longest throw `gm` names, whole metres (the net flies
+ *  3-12 - net/professionLaw.js FISH_ACT). */
+export const POSE_GATHER_ACTS = 11;
+export const POSE_GATHER_BEAT_MIN = 16;
+export const POSE_GATHER_BEAT_MAX = 255 * 16 + 15;
+export const POSE_GATHER_THROW_MAX = 15;
+/** PEER-ACTS: the pose's gathering act and beats, bounded - each absent at none. A code no act has is no act (never
+ *  clamped into one: a code is an act, and the highest is no nearer one than another), and a count of none is no beat;
+ *  a throw is the act's, dropped without it, and dropped out of bounds, the act kept. */
+function gatherOf(ga, gb, gm) {
+  const act = Number.isInteger(ga) && ga >= 1 && ga <= POSE_GATHER_ACTS;
+  return {
+    ...(act ? { ga } : {}),
+    ...(Number.isInteger(gb) && gb >= POSE_GATHER_BEAT_MIN && gb <= POSE_GATHER_BEAT_MAX ? { gb } : {}),
+    ...(act && Number.isInteger(gm) && gm >= 1 && gm <= POSE_GATHER_THROW_MAX ? { gm } : {}),
   };
 }
 /** CLIMB6: the moves a pose can name (`ck` is the index + 1 - player/motor.js climbPoseOf mints it). */

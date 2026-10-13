@@ -162,12 +162,12 @@
  {
   "name": "GATHER-SPEED-act-end-stands-nothing",
   "file": "src/scenes/gatherHost.js",
-  "old": "    fallNow(a);\n  }",
-  "new": "  }",
+  "old": "    if (a.landing) { a.landing = false; fallNow(a); }",
+  "new": "    if (a.landing) { a.landing = false; }",
   "tests": [
    "test/gatherspeed.test.js"
   ],
-  "note": "the node goes on the answer, not the act's end"
+  "note": "the node goes on the answer, not the act's end (GATHER-FEEL: the act's end is its last blow landing - its swing's hit frame)"
  },
  {
   "name": "GATHER-SPEED-refusal-left-down",

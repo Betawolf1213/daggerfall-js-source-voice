@@ -155,7 +155,9 @@ test('audit39r R17: emission CANCELS the lighting it replaces, it does not ride 
   const s = src('src/render/renderer.js');
   for (const name of ['FS', 'BB_FS']) {
     const body = shaderBody(s, name);
-    assert.match(body, /vec3 albedo = max\(tex\.rgb - emission, vec3\(0\.0\)\);/,
+    // PIN MOVED (GATHER-FEEL II, VEIN-CRACKS): a worked vein's crack may take the flat's albedo down after the emission
+    // is cancelled out of it (systems/veinCrack.js veinCrackShade - 1 for every flat but a cracked vein's)
+    assert.match(body, /vec3 albedo = max\(tex\.rgb - emission, vec3\(0\.0\)\)(?: \* veinCrackShade\(uv\))?;/,
       `${name} lights albedo - emission`);
     assert.ok(!/tex\.rgb \*/.test(body) && !/\* tex\.rgb/.test(body),
       `${name}: no light term multiplies the RAW albedo any more`);

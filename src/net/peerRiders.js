@@ -38,6 +38,7 @@ import {
 import { quadHalfDiagonal } from '../render/bounds.js';   // AUDIT FLICKER R1: a sprite's reach, as the batch was made with
 import { stepPeerPace } from './peerPace.js';   // HT-WAIST-BACK: the pace off the drawn pose, MWBODY1's law
 import { peerBodyYaw, peerMoving } from './peerClimb.js';   // CLIMB5: a walker on the wall faces it and takes no stride
+import { gatherActOf, peerGatherTool, peerGatherSwing } from './peerGather.js';   // PEER-ACTS: a walker at a gathering act
 
 /** The table a riding pose shows: standing, walking, galloping (EOTB's three mounted tables). */
 export const rideTable = (mv) => (mv === 2 ? 'GallopHorse' : mv === 1 ? 'MoveHorse' : 'IdleHorse');
@@ -337,6 +338,16 @@ export const WALK_ONE_SHOTS = Object.freeze([
   Object.freeze({ field: 'ar', table: 'AttackRanged', frames: () => forwardFrames(frameCount('AttackRanged')), tick: () => RANGED_TICK }),
   Object.freeze({ field: 'cn', table: 'AttackSpell', frames: () => forwardFrames(frameCount('AttackSpell')), tick: () => SPELL_TICK }),
 ]);
+/** PEER-ACTS (GATHER-FEEL II): the stroke of the melee clip (WALK_ONE_SHOTS' AttackMelee, meleeStrokeFrames' blow) a
+ *  gathering act's moment plays - a tool's blow the second, the chop (two chops on the axes and hammers, an overhead one
+ *  on a sword), the net's throw the first, a sweep of the arm. A set draws its own weapon: the tool is not its art. */
+export const WALK_GATHER_STROKES = Object.freeze({ blow: 1, throw: 0 });
+/** PEER-ACTS: a walker's hands, as its standing table reads them - at a gathering act the act's (ready while it holds a
+ *  tool, sheathed while its hands hold none - the bare hand, the Basket, the net - and never a bow drawn nor a spell
+ *  readied), else the pose's own (its drawn flag, its readied spell, its drawn bow). Pure. */
+export const walkerHands = (pose) => (gatherActOf(pose)
+  ? { sheathed: !peerGatherTool(pose), spellcasting: false, usingBow: false }
+  : { sheathed: !pose.wd, spellcasting: !!pose.sr, usingBow: pose.wd === 2 });
 
 /**
  * DISC23-B (2026-09-24, Gryphoth on Discord: "a way to change our sprite in general instead of it defaulting depending
@@ -375,7 +386,7 @@ export function createPeerWalkers({ renderer = null, urlFor = eotbSpriteUrl, dec
   const lit = [];
 
   /** The pose's own standing table (EOTB chooseTable, the mod's default ReadyStance - the sender's is not on the wire). */
-  const standing = (pose) => chooseTable({ stopped: !peerMoving(pose), sheathed: !pose.wd, spellcasting: !!pose.sr, usingBow: pose.wd === 2 });   // CLIMB5: on the wall, standing - a shimmy is no walk
+  const standing = (pose) => chooseTable({ stopped: !peerMoving(pose), ...walkerHands(pose) });   // CLIMB5: on the wall, standing - a shimmy is no walk; PEER-ACTS: the act's hands at one
 
   /**
    * One frame: `peers`, `toScene`, `eye`, `right` and `dt` as the riders' sync; `skip(id)` a peer another layer
@@ -393,7 +404,7 @@ export function createPeerWalkers({ renderer = null, urlFor = eotbSpriteUrl, dec
       if (!pose || !Number.isInteger(set) || pose.rd || pose.wb || pose.dd || skip(peer.id)) continue;
       seen.add(peer.id);
       let r = walkers.get(peer.id);
-      if (!r) { r = { table: null, frame: 0, clock: 0, shot: null, last: null, batch: null, batchKey: null, size: null, xml: null, mirror: false, lantern: null, pace: 0, paceFeet: null, veil: null }; walkers.set(peer.id, r); }
+      if (!r) { r = { table: null, frame: 0, clock: 0, shot: null, last: null, gather: {}, batch: null, batchKey: null, size: null, xml: null, mirror: false, lantern: null, pace: 0, paceFeet: null, veil: null }; walkers.set(peer.id, r); }   // PEER-ACTS: `gather` the act as last seen
       layer.veil(r, conceal(peer.id));   // INVIS-LOOK: a concealed walker is drawn translucent
       // a new swing, shaft or cast plays its clip once - the FIRST sight of a peer is not an edge (their counters are
       // whatever a session of swinging left them at)
@@ -406,6 +417,13 @@ export function createPeerWalkers({ renderer = null, urlFor = eotbSpriteUrl, dec
         }
       }
       r.last = { an: pose.an | 0, ar: pose.ar | 0, cn: pose.cn | 0 };
+      // PEER-ACTS: a tool's blow and the net's throw play their stroke of the melee clip once - an act's first sight none
+      const acted = peerGatherSwing(r.gather, pose);
+      if (acted) {
+        const o = /** @type {typeof WALK_ONE_SHOTS[number]} */ (WALK_ONE_SHOTS.find((w) => w.table === 'AttackMelee'));
+        const frames = o.frames(WALK_GATHER_STROKES[acted]);
+        if (frames.length) { r.shot = { table: o.table, tick: o.tick(frames), frames, i: 0 }; r.table = o.table; r.frame = frames[0]; r.clock = 0; }
+      }
       const step = Math.max(0, dt);
       if (r.shot) {
         r.clock += step;

@@ -630,8 +630,8 @@
   {
     "name": "PROF4-logs-never-taken",
     "file": "src/scenes/treeHost.js",
-    "old": "<= LOGS_TAKE_M) { drop(lg.entry, lg.batch); logsLying.splice(i, 1); }",
-    "new": "< 0) { drop(lg.entry, lg.batch); logsLying.splice(i, 1); }",
+    "old": "<= LOGS_TAKE_M) { drop(lg.entry, lg.batch); logsLying.splice(i, 1); say?.('logs'); }",
+    "new": "< 0) { drop(lg.entry, lg.batch); logsLying.splice(i, 1); say?.('logs'); }",
     "tests": [
       "test/prof4_client.test.js"
     ]
@@ -648,8 +648,8 @@
   {
     "name": "PROF4-host-no-stump",
     "file": "src/scenes/gatherHost.js",
-    "old": "      for (const f of k.gone(n) ? (k.goneFlatsOf?.(n, entry) ?? []) : k.flatsOf(n)) {",
-    "new": "      for (const f of k.gone(n) ? [] : k.flatsOf(n)) {",
+    "old": "      for (const f of shownGone(k, n) ? (k.goneFlatsOf?.(n, entry) ?? []) : k.flatsOf(n)) {",
+    "new": "      for (const f of shownGone(k, n) ? [] : k.flatsOf(n)) {",
     "tests": [
       "test/prof4_client.test.js"
     ]
@@ -657,7 +657,7 @@
   {
     "name": "PROF4-host-never-sinks",
     "file": "src/scenes/gatherHost.js",
-    "old": "    for (const k of kinds) k.stood?.(entry, rec.nodes.filter((n) => n.kind === k.id));   // PROF4: the felled trees sunk\n",
+    "old": "    for (const k of kinds) k.stood?.(entry, rec.nodes.filter((n) => n.kind === k.id), landingOn);   // PROF4: the felled trees sunk - AUDIT GATHER-FEEL F1: never one whose felling chop is still in the air\n",
     "new": "",
     "tests": [
       "test/prof4_client.test.js"

@@ -10303,13 +10303,14 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
      *  foes' clearance rays are the precedent (expandEliteEnemies, above). Null when no wall answers. */
     veinWall(marker, bearing) { return profVeinWall(marker, bearing); },
     /** PROF2: flats the professions stand here (a vein's ore), owned with the dungeon's own - freed by destroy() with the
-     *  rest, or dropped first when the host re-stands them. */
-    async standProfFlats(archive, record, scale, centers) {
+     *  rest, or dropped first when the host re-stands them. VEIN-CRACKS (GATHER-FEEL II): `dynamic`, a blow's chunks - a
+     *  batch the gathering host moves every frame (renderer.moveBillboardBatch). */
+    async standProfFlats(archive, record, scale, centers, { dynamic = false } = {}) {
       const t = await getTexture(archive);
       if (!t || record >= t.recordCount) return null;
       uploadRecord(archive, record);
       const base = billboardSize(t, record);
-      const batch = renderer.createBillboardBatch(archive, record, { w: base.w * scale, h: base.h * scale }, centers);
+      const batch = renderer.createBillboardBatch(archive, record, { w: base.w * scale, h: base.h * scale }, centers, { dynamic });
       billboardBatches.push(batch);
       return batch;
     },

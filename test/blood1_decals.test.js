@@ -2058,7 +2058,7 @@ test('MAC-BUG W6 by source: the decal has a LANE TWIN, the flat’s model on the
   // it decodes on its own, because the curve is not linear.
   assert.match(EL_DECAL_FS, /vec3 albedo = elDecode\(vColor\.rgb\)\s*\n\s*\* exp\(vec3\([\d., ]+\) \* \(1\.0 - thick\)\)\s*\n\s*\* mix\(1\.0, [\d.]+, clamp\(vWet, 0\.0, 1\.0\)\);/, 'the tint decodes on its own (BLOOD1 AUDIT 3), the film rides it, and a wet mark darkens (AUDIT BLOOD3 F5)');
   assert.doesNotMatch(EL_DECAL_FS, /elDecode\(t\.rgb\)/, 'the ink is not a colour any more, so there is nothing of it left to decode');
-  assert.match(EL_BB_FS, /vec3 albedo = max\(elDecode\(tex\.rgb\) - emission, vec3\(0\.0\)\);/, '(the flat decodes its texel - the comparison is against something real)');
+  assert.match(EL_BB_FS, /vec3 albedo = max\(elDecode\(tex\.rgb(?: \* veinCrackShade\(uv\))?\) - emission, vec3\(0\.0\)\);/, '(the flat decodes its texel - the comparison is against something real)');   // PIN MOVED again (AUDIT GATHER-FEEL V4): the crack's shade taken on the display colour the flat decodes   // PIN MOVED (GATHER-FEEL II, VEIN-CRACKS): a worked vein's crack takes the decoded albedo down after it (gf2_veincracks.test.js V3)
   // BLOOD AUDIT 4: the SURFACE's terms on the lane too - elPointLit and
   // elIndirectLit (N.L, the lantern's map, the contact shadow, the
   // glint), which is what the mesh under the mark takes

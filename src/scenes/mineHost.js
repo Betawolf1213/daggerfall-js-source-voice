@@ -456,6 +456,17 @@ export function mineKind({ book, lodes = null, marks = null }) {
     /** AUDIT MINE-PERKS: a Prospector's marks walk PROSPECT_M and keep room for its veins (PROSPECT_REACH) */
     markReach: ({ specs }) => (specs('mining')[50] === 'prospector' ? PROSPECT_REACH : null),
     tools: Object.freeze([FT.PickAxe]),   // TOOL-USE: the Pick-Axe's Use at a vein or a boulder is E there
+    goneSound: 'rubble',   // GATHER-FEEL: a vein or a boulder heard worked out as its last blow lands
+    /** VEIN-CRACKS (GATHER-FEEL II): a vein or a boulder cracks as its blows land (systems/veinCrack.js) and sheds chunks
+     *  of its own picture - its ore's record, its wash and its colour, as its flats wear them - that fall to the ground
+     *  it stands on (a dungeon's vein on its floor at its wall's foot, MINE-PERKS). */
+    cracks: true,
+    chunkOf: (n, entry = null) => ({
+      archive: ORE_FLAT_ARCHIVE, record: mineRecord(n), tint: mineWash(n), dye: mineWash(n) ? ORE_DYE : 0, floor: n.local[1],
+      // AUDIT GATHER-FEEL V3: a street node's ground anywhere about it - its pixel's own heightmap, the ground its foot was
+      // found on (a dungeon's vein stands on its one floor - its foot, no pixel's ground)
+      ground: n.what !== 'dvein' && entry?.samples ? (x, z) => groundAt(entry.samples, x, z) : null,
+    }),
     where: (n) => (n.what === 'dvein' ? null : actChecksRefusal(GROUND_WHERE, GROUND_WHERE_WORDS)),   // SETTLE-SAID: a dungeon's vein asks no settlement (DUNGEON_SKIP)
     /** PROF-MENU: the menu's title - the boulder, or the vein's ore. */
     nodeName: mineNodeName,

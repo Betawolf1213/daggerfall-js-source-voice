@@ -173,8 +173,8 @@
   {
     "name": "WEREWOLF1-peer-wolf-holds-the-sword",
     "file": "src/net/peerBodies.js",
-    "old": "      const want = b.wolf ? null : peerWeaponOf(look, shown);",
-    "new": "      const want = peerWeaponOf(look, shown);",
+    "old": "      const want = b.wolf ? null : tool ?? peerWeaponOf(look, shown);",
+    "new": "      const want = tool ?? peerWeaponOf(look, shown);",
     "tests": [
       "test/werewolf1.test.js"
     ]

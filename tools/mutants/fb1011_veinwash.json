@@ -38,8 +38,8 @@
   {
     "name": "VEIN-WASH-e-the-wash-off-the-key",
     "file": "src/scenes/gatherHost.js",
-    "old": "const gk = `${f.record}:${f.scale}:${f.tint ?? ''}:${f.dye ?? 0}`;",
-    "new": "const gk = `${f.record}:${f.scale}:${f.dye ?? 0}`;",
+    "old": "const gk = `${f.record}:${f.scale}:${f.tint ?? ''}:${f.dye ?? 0}${lone ? `#${n.key}` : ''}`;",
+    "new": "const gk = `${f.record}:${f.scale}:${f.dye ?? 0}${lone ? `#${n.key}` : ''}`;",
     "tests": [
       "test/fb1011_veinwash.test.js"
     ]

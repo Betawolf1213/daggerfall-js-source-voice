@@ -241,3 +241,41 @@ test('MWT2 the emission reaches the GPU: the arm pack carries it per vertex and 
   // C4b's note said "no emission" and was true of the voxel rigs alone.
   assert.doesNotMatch(rend, /C4b - no emission/, 'the note that made this a rule was retired with the hole');
 });
+
+// AUDIT GATHER-FEEL II (2026-10-13, the re-judge of every record on the files GATHER-FEEL II moved): the by-source pin
+// above matches `vertexAttribPointer(4, 3, gl.FLOAT, false, stride, 44)` ANYWHERE in the renderer, and MWNPC1's skinned
+// mesh (createSkinnedCharacterMesh) carries the same line - so the rigid mesh's own offset was unguarded, and
+// MWT2-the-attribute-is-never-enabled-so-the-channel-reads-the-constant survived (on the base commit too). Driven now.
+import { Renderer as Renderer_MWT2 } from '../src/render/renderer.js';
+/** A GL that answers everything and records the attribute pointers it is handed: [index, size, stride, offset]. */
+function pointerGl_MWT2() {
+  const pointers = [];
+  const gl = new Proxy({}, {
+    get(_, k) {
+      if (k === 'drawingBufferWidth') return 320;
+      if (k === 'drawingBufferHeight') return 200;
+      if (k === 'TEXTURE0') return 33984;
+      switch (k) {
+        case 'vertexAttribPointer': return (index, size, type, norm, stride, offset) => pointers.push([index, size, stride, offset]);
+        case 'getProgramParameter': case 'getShaderParameter': return () => true;
+        case 'getAttribLocation': return () => 0;
+        case 'getParameter': return () => new Float32Array(4);
+        default:
+          if (typeof k !== 'string') return undefined;
+          if (k.startsWith('create')) return () => ({});
+          if (k.toUpperCase() === k) return 1;
+          return () => null;
+      }
+    },
+  });
+  return { pointers, canvas: { getContext: () => gl, clientWidth: 320, clientHeight: 200, width: 320, height: 200 } };
+}
+
+test('MWT2 the rigid mesh\'s own channels, driven: createCharacterMesh points attribute 4 at the three floats after the UV of a fourteen-float Morrowind stream; a stream without its emission (eleven) and a voxel rig\'s (nine) never enable it, reading the constant zero (mutant: the emission\'s offset the UV\'s - the by-source pin passed on the skinned mesh\'s twin line)', () => {
+  const { pointers, canvas } = pointerGl_MWT2();
+  const ren = new Renderer_MWT2(canvas);
+  const channels = (opts, floats) => { pointers.length = 0; ren.createCharacterMesh(new Float32Array(floats * 3), opts); return pointers.map((p) => [...p]); };
+  assert.deepEqual(channels({ uv: true }, 14), [[0, 3, 56, 0], [1, 3, 56, 12], [2, 3, 56, 24], [3, 2, 56, 36], [4, 3, 56, 44]], 'position, colour, normal, UV - and the emission after them');
+  assert.deepEqual(channels({ uv: true, emissive: false }, 11), [[0, 3, 44, 0], [1, 3, 44, 12], [2, 3, 44, 24], [3, 2, 44, 36]], 'no emission in the stream: no channel');
+  assert.deepEqual(channels({}, 9), [[0, 3, 36, 0], [1, 3, 36, 12], [2, 3, 36, 24]], 'a voxel rig: the VAO it always got');
+});

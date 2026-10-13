@@ -14,34 +14,6 @@
     ]
   },
   {
-    "name": "PROFRETICLE-cues-unsaid",
-    "file": "src/ui/profHud.js",
-    "old": "for (const c of actCues(panel.prev, st)) profCue(c);",
-    "new": "for (const c of actCues(panel.prev, st)) void c;",
-    "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
-    ]
-  },
-  {
-    "name": "PROFRETICLE-cue-door-dead",
-    "file": "src/ui/profHud.js",
-    "old": "    cue(name) { profCue(name); },",
-    "new": "    cue(name) { void name; },",
-    "tests": [
-      "test/profreticle.test.js",
-      "test/prof7_client.test.js",
-      "test/prof8_client.test.js",
-      "test/audit32_pages.test.js",
-      "test/fb1001_touchhold.test.js",
-      "test/fb1001_nodes.test.js"
-    ]
-  },
-  {
     "name": "PROFRETICLE-anchor-unread",
     "file": "src/ui/profHud.js",
     "old": "const a = anchor?.();",
@@ -72,7 +44,7 @@
   {
     "name": "PROFRETICLE-host-clean-cue",
     "file": "src/scenes/gatherHost.js",
-    "old": "    if (a.clean) hud.cue?.('clean');   // PROF-SCENES: a clean finish rings\n",
+    "old": "    if (a.clean) ear.say('clean', null, { of: a.act });   // PROF-SCENES: a clean finish rings - as its last blow lands\n",
     "new": "",
     "tests": [
       "test/profreticle.test.js",

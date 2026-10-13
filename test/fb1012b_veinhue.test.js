@@ -78,7 +78,7 @@ test('VEIN-HUE a washed vein\'s wash is its colour, not a multiply: the flats ca
   const host = read('src/scenes/gatherHost.js');
   assert.match(host, /if \(tint && dye\) batch\.dye = dye;/);
   assert.match(host, /if \(b && f\.tint && f\.dye\) b\.dye = f\.dye;/);
-  assert.match(host, /const gk = `\$\{f\.record\}:\$\{f\.scale\}:\$\{f\.tint \?\? ''\}:\$\{f\.dye \?\? 0\}`;/);
+  assert.match(host, /const gk = `\$\{f\.record\}:\$\{f\.scale\}:\$\{f\.tint \?\? ''\}:\$\{f\.dye \?\? 0\}\$\{lone \? `#\$\{n\.key\}` : ''\}`;/);   // PIN MOVED (VEIN-CRACKS, GATHER-FEEL II, 2026-10-13): a worked node's flats stand apart - the dye still in the key
   const classic = mainOf(read('src/render/renderer.js').split('const BB_FS = `')[1].split('`;')[0]);
   const el = mainOf(EL_BB_FS), cs = mainOf(classicShadowLane().bbFs);
   for (const [name, m, luma, wash] of [['BB_FS', classic, 'vec3(0.299, 0.587, 0.114)', 'uBatchTint'], ['EL_BB_FS', el, 'vec3(0.2126, 0.7152, 0.0722)', 'elDecode(uBatchTint)'], ['classic shadows', cs, 'vec3(0.2126, 0.7152, 0.0722)', 'elDecode(uBatchTint)']]) {
