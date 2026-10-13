@@ -29,7 +29,7 @@
   {
     "name": "SURV5-a-full-stomach-eats-again",
     "file": "src/systems/survival/tavernMenu.js",
-    "old": "  if (hunger < worth) return { ok: false, text: TAVERN_MENU_TEXT.tooFull, minutes: MEAL_MINUTES };",
+    "old": "  if (hunger < worth) { s.lastAte = end; return { ok: false, text: TAVERN_MENU_TEXT.tooFull, minutes: MEAL_MINUTES }; }",
     "new": "",
     "tests": [
       "test/surv5_ui.test.js"
@@ -38,7 +38,7 @@
   {
     "name": "SURV5-a-long-hunger-banks-the-whole-gap",
     "file": "src/systems/survival/tavernMenu.js",
-    "old": "  if (hunger > worth + NEED.PECKISH_AT) s.lastAte = now - NEED.PECKISH_AT;",
+    "old": "  if (hunger > worth + NEED.PECKISH_AT) s.lastAte = end - NEED.PECKISH_AT;",
     "new": "",
     "tests": [
       "test/surv5_ui.test.js"
@@ -56,8 +56,8 @@
   {
     "name": "SURV5-a-wine-is-a-soft-drink",
     "file": "src/systems/survival/tavernMenu.js",
-    "old": "  if (/wine|port/.test(n)) return 'wine';",
-    "new": "  if (/wine|port/.test(n)) return 'soft';",
+    "old": "  mid: list(0, 0, 10, 12, 15, 20, 30),",
+    "new": "  mid: list(0, 0, 10, 12, 15, 0, 30),",
     "tests": [
       "test/surv5_ui.test.js"
     ]
@@ -74,8 +74,8 @@
   {
     "name": "SURV5-the-strip-shows-a-met-need",
     "file": "src/systems/survival/status.js",
-    "old": "    const w = table[stage];\n    if (!w) return;",
-    "new": "    const w = table[stage] ?? [stage, 'warn'];",
+    "old": "    const text = table[stage];\n    if (!text) return;",
+    "new": "    const text = table[stage] ?? String(stage);",
     "tests": [
       "test/surv5_ui.test.js"
     ]
@@ -83,8 +83,8 @@
   {
     "name": "SURV5-the-vampire-is-told-of-hunger",
     "file": "src/systems/survival/status.js",
-    "old": "  if (vampire) return [STATUS_TEXT.vampire];",
-    "new": "",
+    "old": "  if (vampire) lines.push(STATUS_TEXT.vampire);\n  else {",
+    "new": "  if (vampire) lines.push(STATUS_TEXT.vampire);\n  {",
     "tests": [
       "test/surv5_ui.test.js"
     ]

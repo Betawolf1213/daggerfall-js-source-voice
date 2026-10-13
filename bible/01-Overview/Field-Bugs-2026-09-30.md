@@ -180,13 +180,19 @@ the red, the Casual loan owed through three. No source of the mod's (the bundle 
 - **MENU-CLIMATE** - the port's own fault: `MENU_KEY_BY_CLIMATE` was written 224-233 over climates that run 223 (Ocean)
   to 232 (Haunted Woodlands), so every climate served the menu of the one before it - Sentinel's desert the bay's
   bananas, the mountains the desert's camel milk, the Ocean the default. Keyed by the enum's names now, each the menu its
-  number was written for. `test/fb0930_cc_menuclimate.test.js` (2).
+  number was written for. `test/fb0930_cc_menuclimate.test.js` (2). [AUDIT C&C I8 (2026-10-12): the table is the mod's
+  own climate fallback now, behind the region (`regionMenuDay`) - the Ocean the default, the mountains the North's.]
 - **ROOF-SHELTER**: inside a building the natural temperature is the milder of the street's own now and the roofed half
   (a tie the roof's) - a roof never makes it hotter or colder than the street. The desert inn at 23:00 reads 5, at noon
   27 (warm); a mountain inn keeps its roof's -30 against a street of -60. Underground unchanged.
-  `test/fb0930_cc_roof.test.js` (3).
+  `test/fb0930_cc_roof.test.js` (3). [AUDIT C&C T4 (2026-10-12): the milder by size picked across nought, and a
+  warmer street read colder inside - it is the street's own reading softened to the roof's size now, never across
+  nought and never harsher than the street. T9: the mod's published source reads the climate, the season and the hour
+  indoors, with no weather and no halving, and charges no temperature indoors at all.]
 - **CLOTHES-BREATHE**: above a natural ten (the warm word's line) clothing counts at half its warmth, truncated, before
-  the wet eats it; the cold and armour unchanged. `test/fb0930_cc_breathe.test.js` (2).
+  the wet eats it; the cold and armour unchanged. `test/fb0930_cc_breathe.test.js` (2). [AUDIT TEMP-UI E7
+  (2026-10-12): the half came at once, so a warmer world read cooler - it eases in now, a degree less a degree past
+  ten, never past half.]
 - **WARM-SAID**: leaving scorching for a stage that is not red says "You are cooling down.", leaving freezing or deadly
   cold "You are warming up.", and a soaking dried "You have dried off." - once a recovery, the improving stages still
   silent. A Woodlands winter soak, then an inn: "You are warming up." at 22 minutes, "You have dried off." at 79, and

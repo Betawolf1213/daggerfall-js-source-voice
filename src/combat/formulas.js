@@ -596,9 +596,9 @@ export function calculateAttackDamage(attacker, target, { weapon = null, damageM
   // at the tail is past the block the roll is made in.
   let struckPart = -1;
   const report = (damage) => {
-    // DUEL1: a duel opponent's blow is resolved on the DEFENDER's machine with a stub of the striker's sheet
-    // (combat/duelCombat.js duelStub - `isPlayer`, and `peer`): its numbers are the striker's HUD's, never the
-    // defender's, which would pop them as if the defender had struck
+    // DUEL1: a blow between players is rolled with a stub of the striker's sheet (combat/duelCombat.js duelStub -
+    // `isPlayer`, and `peer`) - since INT8 on the striker's own machine, against a neutral stand-in (AUDIT C&C H5): the
+    // stub's report stays quiet, and the host says a miss and the referee's word a hit (reportPlayerAttack, below)
     if (_playerAttackHook && attacker.isPlayer && !attacker.peer) {
       try { _playerAttackHook({ ...notes, damage, attacker, target, weapon }); } catch { /* a HUD is not the formula's problem */ }
     }
@@ -853,9 +853,10 @@ export function registerAttackResolutionListener(name, fn) { if (typeof fn === '
  *  backstab). Reporting only - registered by the enhanced HUD, never by
  *  the classic skin, and no formula reads it. */
 export function setPlayerAttackHook(fn) { _playerAttackHook = fn ?? null; }
-/** DUEL1: a duel blow's resolution, reported through the same seam on the STRIKER's machine. The formula ran on the
- *  DEFENDER's (net/duelSession.js - the defender resolves every blow), whose report stays quiet there (`peer`); the
- *  answer it sent back ({ hit, damage }) is this one's to show. */
+/** DUEL1: a blow between players, reported through the same seam on the STRIKER's machine. Since INT8 the formula runs
+ *  there, on the striker's stub (`peer`, whose own report stays quiet) against a neutral stand-in (AUDIT C&C H5), and the
+ *  host shows a miss at once and a hit at the referee's word ({ hit, damage } - scenes/world.js); the dungeon's court
+ *  boss shows a spell's number through it too (HN1). [DUEL1's defender resolved every blow and sent this answer back.] */
 export function reportPlayerAttack(r) {
   if (!_playerAttackHook || !r) return;
   try { _playerAttackHook({ critical: false, backstab: false, ineffective: false, ...r }); } catch { /* a HUD is not the duel's problem */ }

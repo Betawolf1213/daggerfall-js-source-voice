@@ -169,6 +169,10 @@ export const FATIGUE_MULTIPLIER = 64;
 export function maxFatigue(entity) {
   return (liveStat(entity, 'strength') + liveStat(entity, 'endurance')) * FATIGUE_MULTIPLIER;
 }
+/** DaggerfallEntity.SetFatigue's clamp, the one every fatigue write takes: [0, MaxFatigue]. AUDIT C&C N5: the hosts'
+ *  drains clamped at nought alone, so a pool a lapsed boon or a Fortify's end had left over its new ceiling (8,320 in
+ *  7,680) stayed over it through every drain. */
+export const clampFatigue = (entity, v) => Math.max(0, Math.min(maxFatigue(entity), v));
 
 /** DaggerfallEntity.FillVitalSigns (:442-447), verbatim: all three
  *  pools to their maxima. AUDIT 26 F038 gave it one home - DFU calls

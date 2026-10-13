@@ -58,8 +58,8 @@ test('PACK-PHONE: under the column layout the character region gives way and scr
 test('PACK-PHONE: on a touch phone - TI3\'s pair, upright under 641px or on its side under 541px tall - the body hides until the header\'s Body shows it, the worn panels take the width and keep every act, the overall figure goes with the body it heads, and the tab strip is one row that scrolls sideways (mutants: the phone on its side missed; a tablet taken for a phone; the body always hidden; the panels keeping the doll\'s column; no Body button; the Body button on the desk; the header\'s buttons at LAYOUT1\'s width; the name uncut; the three-by-three strip)', () => {
   const { at, text } = block(PHONE);
   assert.ok(at > block(STACKED).at, 'after the stacked rules it builds on');
-  assert.match(text, /\n {2}\.pack-shell:not\(\.showdoll\) \.wornmap-doll, \.pack-shell:not\(\.showdoll\) \.wornmap \.wornac-total \{ display: none; \}/,
-    'the doll (art or the Avatar plaque) and the overall figure at its head, until Body');
+  assert.match(text, /\n {2}\.pack-shell:not\(\.showdoll\) \.wornmap-doll, \.pack-shell:not\(\.showdoll\) \.wornmap \.wornac-total, \.pack-shell:not\(\.showdoll\) \.wornmap \.worntemp-total \{ display: none; \}/,
+    'the doll (art or the Avatar plaque) and the overall figure at its head - and TEMP-UI\'s felt temperature beside it - until Body');   // PIN MOVED (TEMP-UI)
   assert.match(text, /\n {2}\.pack-shell:not\(\.showdoll\) \.charcol \.wornmap \{ grid-template-columns: minmax\(0, 1fr\) 0 minmax\(0, 1fr\); column-gap: 6px; \}/,
     'the doll\'s column closes up');
   // NOTHING WORN GOES OUT OF REACH: the rule names the doll and the plaque, never a panel, a socket or the shelf

@@ -134,11 +134,23 @@ test('SURV-ART: the DOM door draws a vendored record, right way up', async () =>
 
     // requestIcon itself: a vendored archive answers, and a record
     // past the end is refused rather than fetched
-    const { requestIcon } = await import('../src/ui/textureCanvas.js');
+    const { requestIcon, loadIcon } = await import('../src/ui/textureCanvas.js');
     assert.equal(requestIcon(539, 0, { scale: 1 }), null, 'cold, as every requestIcon is');
     await new Promise((r) => setTimeout(r, 0));
     assert.equal(requestIcon(539, 0, { scale: 1 }), 'data:image/png;base64,STUB', 'and warm on the next repaint');
-    assert.equal(requestIcon(539, 7, { scale: 1 }), null, 'a record the archive has not got');
+    // AUDIT C&C R21: REFUSED, NEVER FETCHED - DW3's swap arm draws a vendored record too, so the refusal is the one
+    // thing the vendor arm does that nothing else would: without it a record past the end went to the classic archive,
+    // and the palette and a TEXTURE.539 that is no file were asked of the network (this file's own process, so the
+    // icon door's palette is unasked until here)
+    const fetched = [];
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = async (url) => { fetched.push(String(url)); throw new Error('no network in a pin'); };
+    try {
+      assert.equal(await loadIcon(539, 7, { scale: 1 }), null, 'a record the archive has not got');
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+    assert.deepEqual(fetched, [], 'refused, not fetched');
   } finally {
     delete globalThis.document;
     clearVendorTextures();
@@ -160,7 +172,8 @@ test('SURV-ART: both doors keep the arm that reaches the vendored art', () => {
   // the DOM door's vendor arm stands BEFORE getArchive, or the fetch
   // that cannot succeed caches the miss first
   const dom = read('src/ui/textureCanvas.js');
-  assert.ok(dom.indexOf('if (isVendorArchive(archive)) {') < dom.indexOf('getArchive(archive).then('), 'the vendor arm comes first');
+  const vendorAt = dom.indexOf('if (isVendorArchive(archive)) {'), classicAt = dom.indexOf('getArchive(archive).then(');
+  assert.ok(vendorAt >= 0 && classicAt >= 0 && vendorAt < classicAt, 'the vendor arm comes first');   // PIN MOVED (AUDIT C&C R21): both lines found - it passed at -1 with the arm gone
   assert.match(dom, /const canvas = color32Canvas\(img, \{ scale \}\);/, 'and draws the decoded PNG without a palette');
 });
 

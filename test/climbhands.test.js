@@ -2,9 +2,10 @@
 // away from the wall" / "mirrored" / "Definitely animate the arms for when you are climbing, or shifting left to right
 // climbing/on a ledge"): THE CLASSIC LANE'S HANDS ON THE WALL. Design: bible/03-World/Parkour-Arc.md (CLIMB-HANDS).
 // THE LAW EXECUTES: which climbs draw hands, the two fists (the painting a left hand, the right its mirror - thumbs in),
-// never a cut sleeve, the look off the wall (the angled arm alone, as painted looked right, mirrored left), a stopped
-// shimmy's hand onto its stone, the free climb's one hand at a time, a catch's hands coming up, the trembling grip, the
-// hands off the wall; the draw; and the wiring by source. AUDIT CLIMB-HANDS's pins: test/auditclimbhands.test.js.
+// never a cut sleeve, the look off the wall (the angled arm alone - CLIMB-HANDS II: the right arm, mirrored, looked right;
+// the left as painted looked left), a stopped shimmy's hand onto its stone, the free climb's one hand at a time, a
+// catch's hands coming up, the trembling grip, the hands off the wall; the draw; and the wiring by source. AUDIT
+// CLIMB-HANDS's pins: test/auditclimbhands.test.js; CLIMB-HANDS II's (the hands on the wall): test/climbhands2.test.js.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -49,20 +50,24 @@ test('CLIMB-HANDS the hold: two fists come up from below, the left as painted an
   assert.equal(out.reach, null, 'facing the wall, no reach');
 });
 
-test('CLIMB-HANDS looking away: past LOOK_FROM_DEG both fists drop out and the reaching arm alone comes up on that side - as painted to the right, mirrored to the left', () => {
+test('CLIMB-HANDS looking away: past LOOK_FROM_DEG the hand on that side lets go and the reaching arm alone comes up there - the right arm (mirrored) looked right, the left as painted looked left', () => {
   const near = settle(new ClimbHands(), hang(), { yaw: (HANDS.LOOK_FROM_DEG - 5) * DEG });
   assert.equal(near.reach, null, 'a glance along the wall is no reach');
-  assert.equal(near.grips.length, 2);
+  // PIN MOVED (CLIMB-HANDS II, Mac: "the hands should stay on whatever your climbing"): the fists are on the wall, so a
+  // glance this far along it has carried the far one's stone out of the view - the near one holds on (was: both, fixed)
+  assert.deepEqual(near.grips.map((g) => g.side), ['R'], 'the near fist still on its stone, the far one\'s gone off the side');
   const right = settle(new ClimbHands(), hang(), { yaw: 85 * DEG });
   assert.ok(right.reach, 'turned right: the reach');
-  assert.deepEqual([right.reach.side, right.reach.flip], ['R', false]);
-  assert.ok(right.reach.x >= 0 && right.reach.x < 10 && right.reach.x + right.reach.w / 2 < NATIVE_W / 2, 'looked right: at the LEFT edge, reaching across (Mac: "look left and right are on the wrong side of the screen")');
+  // PIN MOVED (CLIMB-HANDS II, Mac: "The single arm out is also inverted for both directions"): looked right, the RIGHT
+  // arm - the painting (a left arm) mirrored - up from the right edge (was: the left arm, as painted, from the left edge)
+  assert.deepEqual([right.reach.side, right.reach.flip], ['R', true]);
+  assert.ok(right.reach.x + right.reach.w <= NATIVE_W && right.reach.x + right.reach.w > NATIVE_W - 10 && right.reach.x + right.reach.w / 2 > NATIVE_W / 2, 'looked right: at the right edge');
   assert.equal(right.reach.w, 190, 'the size it was drawn at before (Mac: "they need to be the originasl size")');
   assert.ok(Math.abs(right.reach.w / right.reach.h - REACH_ART.w / REACH_ART.h) < 1e-9);
   assert.equal(right.grips.length, 0, 'the angled arm alone - no fist (Mac: "Only use the angled arm")');
   const left = settle(new ClimbHands(), hang(), { yaw: -85 * DEG });
-  assert.deepEqual([left.reach.side, left.reach.flip], ['L', true], 'turned left: mirrored');
-  assert.ok(left.reach.x + left.reach.w <= NATIVE_W && left.reach.x + left.reach.w > NATIVE_W - 10 && left.reach.x + left.reach.w / 2 > NATIVE_W / 2, 'looked left: at the right edge');
+  assert.deepEqual([left.reach.side, left.reach.flip], ['L', false], 'turned left: the left arm, as painted');
+  assert.ok(left.reach.x >= 0 && left.reach.x < 10 && left.reach.x + left.reach.w / 2 < NATIVE_W / 2, 'looked left: at the left edge');
   assert.equal(left.grips.length, 0);
   // on the free climb too, and a move in flight keeps the hold's hands
   assert.ok(settle(new ClimbHands(), climb(), { yaw: 90 * DEG }).reach);
@@ -156,7 +161,7 @@ test('CLIMB-HANDS the draw: Mac\'s two paintings, loaded once, each box a screen
   assert.equal(uploads.length, 1, 'only what is drawn is asked for');
   assert.equal(quads.length, 1, 'the reach alone');
   const reach = quads.find((q) => q.tex.key.includes('reach'));
-  assert.equal(reach.uv, undefined, 'to the right: as painted');
+  assert.deepEqual(reach.uv, { u0: 1, v0: 0, u1: 0, v1: 1 }, 'looked right: the right arm, the painting mirrored');   // PIN MOVED (CLIMB-HANDS II): was as painted
   for (let i = 0; i < 60; i++) hands.update(1 / 60, hang(), { yaw: 0 });
   hands.draw(canvas);
   await new Promise((r) => setTimeout(r, 0));
@@ -170,7 +175,9 @@ test('CLIMB-HANDS the draw: Mac\'s two paintings, loaded once, each box a screen
 
 test('CLIMB-HANDS by source: the rig steps the law on the frame\'s climb and draws it on the classic lane under the spell hands\' vetoes, above the sheathe gates; the paintings are on the allow-list', () => {
   const rig = rd('src/combat/weaponRig.js');
-  assert.match(rig, /_climbLower = climbLowerStep\(_climbLower, climbing \|\| \(handsLane && climbHands\.showing\(\)\), dt\);\n\s*climbHands\.update\(dt, handsLane && _climbLower >= CLIMB_HANDS_AFTER \? \(camNow\?\.climb \?\? null\) : null, camNow \?\? \{\}\);/);
+  // PIN MOVED (CLIMB-HANDS II): the view the law is handed is the look and the frame's world lens (climbhands2.test.js
+  // drives it through the rig)
+  assert.match(rig, /_climbLower = climbLowerStep\(_climbLower, climbing \|\| \(handsLane && climbHands\.showing\(\)\), dt\);\n(?:\s*\/\/[^\n]*\n)*\s*const handsClimb = handsLane && _climbLower >= CLIMB_HANDS_AFTER \? \(camNow\?\.climb \?\? null\) : null;\n\s*const handsLens = handsClimb \|\| climbHands\.law\.present > 0 \? climbLens\(cv\(\), \{ fov: fieldOfView\(\), viewport: renderer\?\.worldViewportRect \?\? null, aspect: renderer\?\.worldProjAspect \?\? null, offsetHeight: weaponOffsetHeight\(\) \}\) : null;\n\s*climbHands\.update\(dt, handsClimb, \{ yaw: camNow\?\.yaw, pitch: camNow\?\.pitch, lens: handsLens \}\);/);
   assert.match(rig, /if \(c && !paralyzed && !fpArm\.active\(\) && !eotbHidesWeapon\(\) && !sheetWindowUp\(\)\) climbHands\.draw\(c, \{ tint: fpTint \}\);/);
   assert.ok(rig.indexOf('climbHands.draw(c') < rig.indexOf('const torchOnly = !shown()'), 'above the sheathe gates');
   const doctrine = rd('test/doctrine.test.js');

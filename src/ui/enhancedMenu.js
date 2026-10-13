@@ -100,6 +100,7 @@ import { drawShotsPane, releaseShotsPane } from './shotsPane.js';   // LOAD1: th
 import { TEST_PRESETS, TEST_RIDE, TEST_SEA, TEST_LOOT } from '../systems/testRoom.js';   // TR3: the one home the pane shows; TSR4: the ride; LR3: the loot ladder
 import { mwRaceId } from '../formats/mwNpc.js';
 import { EQUIP_SLOTS, equipTableOf } from '../systems/equip.js';
+import { boonStatRows } from './temperatureCard.js';   // AUDIT C&C B11: the Attributes page names the boons that raise them
 import { dfWornEquipment } from '../formats/mwItemMap.js';
 import { ARMOR_ENUM } from '../combat/enemyEquipment.js';
 import { morrowindDataCount, morrowindDataCounted, countMorrowindArchives, assetPickerOpen, textureStoreRegistered, textureStoreSettled } from '../scenes/dataSource.js';   // MAC1: the boot door counts the store itself; AUDIT 65 XL-6: by NAME - it never reads a stored file   // MW-IMPORT: the attach door; MWFIX: and the modal it opens owns the keyboard
@@ -4540,11 +4541,21 @@ function statsEffects(detail) {
   }
 }
 
-/** ATTRIBUTES: the eight, each with a meter on the classic 100. */
+/** ATTRIBUTES: the eight, each with a meter on the classic 100 - and, AUDIT C&C B11 (2026-10-12), in Climates &
+ *  Calories' Boons tier the boons that raise them, named under them (ui/temperatureCard.js boonStatRows, the pack's
+ *  Stats side's one source): a 55 that a meal made says so where it shows. */
 function statsAttributes(detail, m) {
   detail.append(pxDivider('Attributes'));
   for (const a of m.attributes) {
     detail.append(meterRow(a.key[0].toUpperCase() + a.key.slice(1), a.value, 100, ''));
+  }
+  const boons = boonStatRows(playerEntity);
+  if (!boons.length) return;
+  detail.append(pxDivider('Boons'));
+  for (const [k, v] of boons) {
+    const r = el('div', 'px-stat');
+    r.append(el('span', 'k', k), el('span', 'v', v));
+    detail.append(r);
   }
 }
 

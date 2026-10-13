@@ -93,8 +93,9 @@
  {
   "name": "SURV7-the-dungeon-fire-warms-nobody",
   "file": "src/scenes/dungeonContext.js",
-  "old": "      byFire: !!(_fpFeet && camps.byFire(_fpFeet)),\n      resting: !!playerEntity.isResting, sleeping: playerEntity.isResting && !playerEntity.isLoitering ? (playerEntity.restKind ?? 'rough') : null,\n    };\n  };\n  const _survivalGate = installSurvivalGate",
-  "new": "      byFire: false,\n      resting: !!playerEntity.isResting, sleeping: playerEntity.isResting && !playerEntity.isLoitering ? (playerEntity.restKind ?? 'rough') : null,\n    };\n  };\n  const _survivalGate = installSurvivalGate",
+  "old": "      byFire: !!(_fpFeet && camps.byFire(_fpFeet)),",
+  "new": "      byFire: false,",
+  "note": "AUDIT C&C (lens T): re-aimed by content - the castle's word now follows the fire's line, so the record names the fire's line alone, the only one in the file.",
   "tests": [
    "test/surv7_feed.test.js"
   ]

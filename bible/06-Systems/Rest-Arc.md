@@ -127,8 +127,9 @@ spot for a Bedroll. Climates & Calories off, the rest kinds still decide nothing
 - **The night interval.** A night passes at most once per **120 lived minutes of the character's clock** - ten real
   minutes of play, since lived time runs at TimeScale 12 - counted from the last night (OPEN 2). Inside it a rest is a
   **short rest**: the yield's healing lands, no clock moves, nothing ages [REST-SLEEP1: and the sleep need is paid as a
-  night of its kind pays it - As built]. The status widget shows **Rested** (a buff
-  tile, its minutes left at its foot, as NEED-TIER's need tiles say their stage) while the interval runs.
+  night of its kind pays it - As built]. The status widget shows **Next night** (a buff
+  tile, its minutes left at its foot, as NEED-TIER's need tiles say their stage) while the interval runs [AUDIT C&C,
+  2026-10-12: named "Rested" until then - online in Boons it stood beside the Well rested boon, a bank of sleep].
 - **Why a night and not zero.** Section 7's census found 29 systems that read rested time. Under a night each keeps
   DFU's meaning - a buff wears off overnight, a disease takes its day, hunger grows, a room's night is spent, a
   guild's wait counts - and the interval bounds how fast anyone can sleep through them: at 600 own minutes per ten
@@ -487,7 +488,8 @@ QCLOCK-WORLD's clock, online only - the gate is the quest hooks' `sharedClock`, 
 - **R** rests at the rest point in reach; with none: "Find a fire or a bed to rest, or lay out a bedroll." In a
   dungeon with fires it adds the nearest's bearing on the compass.
 - **The channel ring** at the reticle, "Resting..."; broken: "Your rest is interrupted."
-- **The status widget**: **Rested** (a buff tile, its minutes left at its foot) through the night interval.
+- **The status widget**: **Next night** (a buff tile, its minutes left at its foot) through the night interval - "Rested"
+  until AUDIT C&C (`06-Systems/Climates-Calories.md`), which renamed it beside Boons' Well rested.
 - **The rest window** online: gone. Offline: unchanged.
 - **The Online pane** (`src/ui/enhancedMenu.js`) says it: rest at fires and beds; a rest is a night; quest waits and
   deadlines as OPEN 12 settles.

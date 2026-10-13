@@ -29,8 +29,8 @@
   {
     "name": "UI3-a-need-that-costs-framed-amber",
     "file": "src/ui/hudStatus.js",
-    "old": "kind: c.level === 'danger' ? 'danger' : 'warn'",
-    "new": "kind: 'warn'",
+    "old": ": c.level === 'danger' ? 'danger' : 'warn'",
+    "new": ": 'warn'",
     "tests": [
       "test/ui3_status.test.js"
     ]

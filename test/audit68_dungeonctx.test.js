@@ -13,7 +13,7 @@ import { attemptSoulTrap, fillEmptyTrap, peerSoulTrapOf, SOUL_TRAP_TEMPLATE } fr
 import { applySpell } from '../src/systems/effects.js';
 import { inflictPoison, POISONS } from '../src/systems/poisons.js';
 import { runMagicRoundsFor } from '../src/systems/worldTick.js';
-import { killIfAnyLiveStatZero } from '../src/systems/statMods.js';
+import { killIfAnyLiveStatZero, clampFatigue, maxFatigue } from '../src/systems/statMods.js';   // AUDIT C&C N5: the drain's clamp, the real law
 import { decayEnemyAlert, setEnemyAlert, ALERT_DECAY_MINUTES } from '../src/systems/encounters.js';
 import { PLAYER_TARGET, resetAllyTeamOnPlayerAttack, isLocalPlayerTarget } from '../src/characters/enemyTargets.js';
 import { ENEMY_BASICS } from '../src/characters/enemyBasics.js';
@@ -33,6 +33,7 @@ import { effectiveLevel } from '../src/systems/mentorMode.js';   // SOFTCAP2: th
 import { blowClassOf } from '../src/ai/puppetBlows.js';   // AUDIT FEUD: the hit door builds a blow's class whenever its weakness rides (the real one - no wind-up here, no weakness: none)
 import { feudWeakBlow } from '../src/systems/feudLedger.js';   // AUDIT FEUD: ...asked of the real test (none registered here: no weakness)
 import { ARENA_PUPPET_OWNER } from '../src/net/arenaLaw.js';   // ARENA4: the kill door's puppet test, the real owner word (no puppet here)
+import { markOutCold } from '../src/systems/survival/needs.js';   // AUDIT C&C N2: the dungeon's collapse marks its hour
 
 const D = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
 const AST = acorn.parse(D, { ecmaVersion: 'latest', sourceType: 'module' });
@@ -174,13 +175,15 @@ test('AUDIT 68 S19-damagefoe-dead-reentry: a corpse takes no blow - a second hur
 function exhaustionHarness() {
   const log = { collapses: 0 };
   const state = {
-    playerEntity: { fatigue: 100, health: 50, maxHealth: 50, magicka: 0, maxMagicka: 0 },
+    playerEntity: { fatigue: 100, health: 50, maxHealth: 50, magicka: 0, maxMagicka: 0, stats: { strength: 50, endurance: 50 } },   // AUDIT C&C N5: a body's stats - its pool is live
     surfacePlayer: () => {}, areEnemiesNearby: () => false, foes: [], _activity: { swimming: false },
     exhaustionOutcome: () => { log.collapses++; return { kind: 'rest', textId: 1, health: 0, fatigue: 0, magicka: 0 }; },
     EXHAUSTED_IN_WATER: 'water', rscLines: () => ['You collapse from exhaustion.'], ActionTextBox,
-    classicMinutesRef: { value: 1000 }, maxFatigue: () => 100, tallySkill: () => {}, SKILLS: { Medical: 0 },
+    classicMinutesRef: { value: 1000 }, maxFatigue, tallySkill: () => {}, SKILLS: { Medical: 0 },
     hurtEntity: () => {}, fatigueLossMultiplierFor: () => 1, makeWindowStack, pauseWhileOpen,
     activeOverlay: null, _ctxDead: false, opts: {},   // opts: CSA-J's OnPlayerDeath door, none here
+    markOutCold,   // AUDIT C&C N2: the collapse's hour marked a night on the ground for the needs (the real law)
+    clampFatigue,   // AUDIT C&C N5: SetFatigue's clamp (the real law)
   };
   state.advanceOwnMinutes = (n) => { state.classicMinutesRef.value += n; };   // TIME3: the collapse's hour is a counted raise of the same clock
   const i = D.indexOf('let _exhausted');

@@ -74,8 +74,8 @@
   {
     "name": "SURVTIERS-casual-rough-hour-halved",
     "file": "src/systems/survival/difficulty.js",
-    "old": "    roughRest: { recovery: 1, encounters: 1, stiffHours: 0 },",
-    "new": "    roughRest: { recovery: 0.5, encounters: 1, stiffHours: 0 },",
+    "old": "    roughRest: { recovery: 1, encounters: 1, stiffHours: 0 },\n    roughSleepFloor: null,   // the sleep-debt",
+    "new": "    roughRest: { recovery: 0.5, encounters: 1, stiffHours: 0 },\n    roughSleepFloor: null,   // the sleep-debt",
     "tests": [
       "test/survtiers.test.js"
     ]
@@ -83,8 +83,8 @@
   {
     "name": "SURVTIERS-casual-rough-asks-twice",
     "file": "src/systems/survival/difficulty.js",
-    "old": "    roughRest: { recovery: 1, encounters: 1, stiffHours: 0 },",
-    "new": "    roughRest: { recovery: 1, encounters: 2, stiffHours: 0 },",
+    "old": "    roughRest: { recovery: 1, encounters: 1, stiffHours: 0 },\n    roughSleepFloor: null,   // the sleep-debt",
+    "new": "    roughRest: { recovery: 1, encounters: 2, stiffHours: 0 },\n    roughSleepFloor: null,   // the sleep-debt",
     "tests": [
       "test/survtiers.test.js"
     ]
@@ -92,8 +92,8 @@
   {
     "name": "SURVTIERS-casual-stiff-morning",
     "file": "src/systems/survival/difficulty.js",
-    "old": "    roughRest: { recovery: 1, encounters: 1, stiffHours: 0 },",
-    "new": "    roughRest: { recovery: 1, encounters: 1, stiffHours: 4 },",
+    "old": "    roughRest: { recovery: 1, encounters: 1, stiffHours: 0 },\n    roughSleepFloor: null,   // the sleep-debt",
+    "new": "    roughRest: { recovery: 1, encounters: 1, stiffHours: 4 },\n    roughSleepFloor: null,   // the sleep-debt",
     "tests": [
       "test/survtiers.test.js"
     ]
@@ -101,8 +101,8 @@
   {
     "name": "SURVTIERS-casual-sleep-floor",
     "file": "src/systems/survival/difficulty.js",
-    "old": "    roughSleepFloor: null,",
-    "new": "    roughSleepFloor: 'tired',",
+    "old": "    roughSleepFloor: null,   // the sleep-debt",
+    "new": "    roughSleepFloor: 'tired',   // the sleep-debt",
     "tests": [
       "test/survtiers.test.js"
     ]
@@ -137,8 +137,9 @@
   {
     "name": "SURVTIERS-default-is-hard",
     "file": "src/systems/survival/difficulty.js",
-    "old": "export const SURVIVAL_DEFAULT = 'casual';",
+    "old": "export const SURVIVAL_DEFAULT = 'boons';",
     "new": "export const SURVIVAL_DEFAULT = 'hard';",
+    "note": "BOONS-DEFAULT (2026-10-13): re-aimed by content - the default is Boons.",
     "tests": [
       "test/survtiers.test.js"
     ]
@@ -173,8 +174,9 @@
   {
     "name": "SURVTIERS-row-default-hard",
     "file": "src/systems/features.js",
-    "old": "store: 'prefs', key: 'survival', initial: 'casual', online: 'player',",
+    "old": "store: 'prefs', key: 'survival', initial: 'boons', online: 'player',",
     "new": "store: 'prefs', key: 'survival', initial: 'hard', online: 'player',",
+    "note": "BOONS-DEFAULT (2026-10-13): re-aimed by content - the row's default is Boons.",
     "tests": [
       "test/survtiers.test.js"
     ]
@@ -209,8 +211,8 @@
   {
     "name": "SURVTIERS-heat-band-ignored",
     "file": "src/systems/survival/needs.js",
-    "old": "  const tempRed = !warmedByFire && (temp.felt >= rules.stamina.hotFrom || temp.felt <= rules.stamina.coldFrom);",
-    "new": "  const tempRed = !warmedByFire && abs >= 20;",
+    "old": "  const tempRed = !warmed && (temp.felt >= rules.stamina.hotFrom || temp.felt <= rules.stamina.coldFrom);",
+    "new": "  const tempRed = !warmed && abs >= 20;",
     "tests": [
       "test/survtiers.test.js"
     ]
@@ -490,8 +492,8 @@
   {
     "name": "SURVTIERS-drink-reads-the-permanent-endurance",
     "file": "src/systems/survival/needs.js",
-    "old": "survivalStatMods(s, temp, now, { endurance: liveStat(entity, 'endurance'), rules, vampire })",
-    "new": "survivalStatMods(s, temp, now, { endurance, rules, vampire })",
+    "old": "survivalStatMods(s, temp, now, { endurance: liveStat(entity, 'endurance'), rules, vampire, beast })",
+    "new": "survivalStatMods(s, temp, now, { endurance, rules, vampire, beast })",
     "tests": [
       "test/survtiers.test.js"
     ]
@@ -499,8 +501,8 @@
   {
     "name": "SURVTIERS-the-half-hour-falls-to-night",
     "file": "src/systems/survival/temperature.js",
-    "old": "  const h = ((Math.floor(hour ?? 12)) % 24 + 24) % 24;",
-    "new": "  const h = ((hour ?? 12) % 24 + 24) % 24;",
+    "old": "  const h = ((Math.floor(hour ?? 12)) % 24 + 24) % 24;\n  const m = NIGHT_MULT[climateIndex] ?? 1;",
+    "new": "  const h = ((hour ?? 12) % 24 + 24) % 24;\n  const m = NIGHT_MULT[climateIndex] ?? 1;",
     "tests": [
       "test/survtiers.test.js"
     ]
@@ -546,7 +548,7 @@
   {
     "name": "SURVTIERS-the-kitchen-sells-casual-a-waste",
     "file": "src/systems/survival/tavernMenu.js",
-    "old": "  if (row?.kind === 'food' && !(rules ?? HARD_RULES).wastedMeal && now - (s?.lastAte ?? now) < (row.worth ?? 0)) return",
+    "old": "  if (row?.kind === 'food' && !(rules ?? HARD_RULES).wastedMeal && mealHunger(s, now) < (row.worth ?? 0)) return",
     "new": "  if (false) return",
     "tests": [
       "test/survtiers.test.js"
@@ -555,8 +557,8 @@
   {
     "name": "SURVTIERS-the-kitchen-refuses-at-the-worth",
     "file": "src/systems/survival/tavernMenu.js",
-    "old": "now - (s?.lastAte ?? now) < (row.worth ?? 0)) return",
-    "new": "now - (s?.lastAte ?? now) <= (row.worth ?? 0)) return",
+    "old": "mealHunger(s, now) < (row.worth ?? 0)) return",
+    "new": "mealHunger(s, now) <= (row.worth ?? 0)) return",
     "tests": [
       "test/survtiers.test.js"
     ]
@@ -640,17 +642,18 @@
     "name": "ENDLESS-off-refuses-a-camp-again",
     "file": "src/scenes/camps.js",
     "old": "    // ENDLESS PROVISIONS: no arc gate - a camp is stood in every tier (`seen`, above); the camp law's own checks below\n",
-    "new": "    if (!survivalOn()) { say(CAMP_TEXT.arcOff); return false; }\n",
+    "new": "    if (!survivalOn()) { say('Turn Climates & Calories on to make camp.'); return false; }\n",
     "tests": [
       "test/auditsurv.test.js"
     ],
-    "note": "REST6 (PIN MOVED): re-aimed by content."
+    "note": "REST6 (PIN MOVED): re-aimed by content. AUDIT C&C I10: the refusal's constant (CAMP_TEXT.arcOff) is deleted - the mutant says its words as a literal."
   },
   {
     "name": "SURVTIERS-fireNear-is-the-tiers-again",
     "file": "src/scenes/camps.js",
-    "old": "  const fireNear = (pos) => !!nearestFire(camps.map((c) => c.rec), pos, now())",
+    "old": "  const fireNear = (pos) => !!nearestFire(seen().map((c) => c.rec), pos, now())",
     "new": "  const fireNear = (pos) => !!nearestFire(shown().map((c) => c.rec), pos, now())",
+    "note": "AUDIT C&C (lens I): re-aimed by content - the place reads the camps in sight in every tier (seen), so a deck camp hidden with her boat answers no reach; the tiers' shown() is still the mutant.",
     "tests": [
       "test/auditsurv.test.js"
     ]
@@ -775,8 +778,8 @@
   {
     "name": "SURVTIERS-the-fire-cools-the-heat-too",
     "file": "src/systems/survival/needs.js",
-    "old": "  const warmedByFire = !!(rules.stamina.fireWarms && env.byFire && temp.felt < 0);",
-    "new": "  const warmedByFire = !!(rules.stamina.fireWarms && env.byFire);",
+    "old": "export const warmedByFire = (rules, env, felt) => !!((rules ?? HARD_RULES).stamina.fireWarms && env?.byFire && felt < 0);",
+    "new": "export const warmedByFire = (rules, env, felt) => !!((rules ?? HARD_RULES).stamina.fireWarms && env?.byFire);",
     "tests": [
       "test/survtiers.test.js"
     ]
@@ -784,7 +787,7 @@
   {
     "name": "SURVTIERS-a-jump-can-kill-with-the-heat",
     "file": "src/systems/survival/needs.js",
-    "old": "const bite = Math.max(1, Math.trunc((abs - 40) / 10));\n      if (!replay) sinks.hurt?.(bite);\n      else if ((entity.health ?? 0) > HEALTH_FLOOR) sinks.hurt?.(Math.min(bite, (entity.health ?? 0) - HEALTH_FLOOR));",
+    "old": "const bite = Math.max(1, Math.trunc((abs - 40) / 10));\n      if (!replay && !landing) sinks.hurt?.(bite);\n      else if ((entity.health ?? 0) > HEALTH_FLOOR) sinks.hurt?.(Math.min(bite, (entity.health ?? 0) - HEALTH_FLOOR));",
     "new": "const bite = Math.max(1, Math.trunc((abs - 40) / 10));\n      sinks.hurt?.(bite);",
     "tests": [
       "test/survtiers.test.js"

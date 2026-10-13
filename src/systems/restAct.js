@@ -51,7 +51,7 @@ export const REST_ACT_TEXT = Object.freeze({
   meditating: 'Meditating by the candle...',   // REST6: the Meditation Candle's kneel
   noVote: 'Online there is no vote: rest at a fire, a tent or a bed, and your party within 15 m rests with you.',   // AUDIT REST: /ready online
   nextNight: (minutes) => `A night can pass again in ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`,
-  rested: 'Rested',
+  rested: 'Next night',   // AUDIT C&C (lens S): the interval's tile (ui/hudStatus.js) - "Rested" stood beside Boons' Well rested
   carried: (name) => `${name} rests here, and you rest with them through the night.`,   // REST5: a member's night, carried
   carriedShort: (name) => `${name} rests here, and you rest a while with them.`,
   carriedSkipped: (name) => `${name} rests here - you are too busy to rest with them.`,
@@ -88,7 +88,7 @@ export function nightDue(entity, ownNow) {
   return ownNow < at || ownNow - at >= NIGHT_INTERVAL_MINUTES;
 }
 
-/** Real minutes until a night may pass again (0 when one may now) - the Rested tile's foot. */
+/** Real minutes until a night may pass again (0 when one may now) - the Next night tile's foot. */
 export function nightRealMinutesLeft(entity, ownNow) {
   if (nightDue(entity, ownNow)) return 0;
   return Math.max(1, Math.ceil((NIGHT_INTERVAL_MINUTES - (ownNow - entity.restNightAt)) / OWN_MINUTES_PER_REAL_MINUTE));

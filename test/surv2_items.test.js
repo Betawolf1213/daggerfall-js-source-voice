@@ -70,7 +70,7 @@ test('SURV2: minting - condition as uses, a stack for rations only, a full skin 
   assert.equal(skin.name, 'Waterskin');
   assert.equal(unitWeightInKg(skin), 2.5, 'half a kilo of skin and two of water');
   assert.equal(unitWeightInKg(createSurvivalItem(TEMPLATE.Waterskin, { water: 0 })), 0.5);
-  assert.equal(createSurvivalItem(TEMPLATE.Waterskin, { water: 0 }).name, 'Waterskin', 'named by its template at the mint - the shelf sells it empty under its own name');
+  assert.equal(createSurvivalItem(TEMPLATE.Waterskin, { water: 0 }).name, 'Empty Waterskin', 'AUDIT C&C I11 (PIN MOVED): named by its water at the mint, as a drink names it - the shelf sells it empty and says so');
   assert.equal(itemWeight(sack), 3.0, 'three sacks of rations');
   const kit = createSurvivalItem(TEMPLATE.Campfire, { condition: 2 });
   assert.equal(kit.currentCondition, 2);
@@ -193,11 +193,13 @@ test('SURV2: the general store shelves provisions (no horse or cart since MERCHA
   assert.ok(!poor.some((i) => i.templateIndex === TEMPLATE.CampingEquipment), 'a poor store on a bad roll has no camping gear');
   assert.equal(poor.filter((i) => i.templateIndex === TEMPLATE.Campfire).length, 4, 'but Campfires - REST2: two to four, the rest\'s own tool');
   const kit = startingProvisions();
-  assert.deepEqual(kit.map((i) => i.templateIndex), [TEMPLATE.Rations, TEMPLATE.Waterskin, TEMPLATE.CampingEquipment, TEMPLATE.Campfire]);
+  // AUDIT C&C I7 (PIN MOVED): the mod's own start dresses the character - its Formal cloak and Shoes (a man's, with no
+  // character handed) between the skin and the gear, as NewCharEffects adds them
+  assert.deepEqual(kit.map((i) => i.templateIndex), [TEMPLATE.Rations, TEMPLATE.Waterskin, 155, 147, TEMPLATE.CampingEquipment, TEMPLATE.Campfire]);
   assert.equal(kit[0].stackCount, 2);
   assert.equal(waterIn(kit[1]), 2.0);
-  assert.equal(kit[2].currentCondition, CAMPING_USES / 2, 'worn gear');
-  assert.equal(kit[3].currentCondition, CAMPFIRE_USES, 'REST2: a full Campfire, not two lights of a kit');
+  assert.equal(kit[4].currentCondition, CAMPING_USES / 2, 'worn gear');
+  assert.equal(kit[5].currentCondition, CAMPFIRE_USES, 'REST2: a full Campfire, not two lights of a kit');
   const e = { items: [] };
   seedStartingEquipment(e);
   assert.ok(e.items.some((i) => i.templateIndex === 113), 'the dagger');
@@ -277,7 +279,7 @@ test('SURV2: by source - the pipeline stands a vendor archive in, the weight law
   assert.match(read('src/systems/inventory.js'), /if \(Number\.isFinite\(item\.water\) && item\.water > 0\) base \+= item\.water;/);
   assert.match(read('src/systems/useItem.js'), /if \(isSurvivalItem\(item\)\) out = useSurvivalItem\(item, collection, \{ entity, now: nowMinute, rolls, currentDay: Math\.trunc\(nowMinute \/ 1440\), inflict: inflictDisease, rules: survivalRules\(\) \?\? SURVIVAL_RULES\.casual, offMeal: survivalRules\(\) == null \}\);[^\n]*\n[\s\S]*?else if \(isBook\(item\)\)/);   // PIN MOVED (ENDLESS PROVISIONS): Off, offMeal   // SURV-TIERS: the live tier decides the meal's sickness (AUDIT SURV-TIERS: Off eats as Casual - never sickened)
   assert.match(read('src/systems/shopStock.js'), /if \(survivalOn\(\)\) for \(const it of provisionsStock\(quality, rolls, \{ campfires: shelfIndex === 0 \}\)\) items\.push\(it\);/);   // AUDIT REST II H8 (PIN MOVED): the Campfires on the counter's shelf alone
-  assert.match(read('src/systems/equip.js'), /if \(survivalOn\(\)\) for \(const it of startingProvisions\(\)\) entity\.items\.push\(it\);/);
+  assert.match(read('src/systems/equip.js'), /if \(survivalOn\(\)\) for \(const it of startingProvisions\(entity\)\) entity\.items\.push\(it\);/);   // AUDIT C&C I7 (PIN MOVED): the kit takes the character - its wardrobe for the start's shoes and cloak
   // CORPSE-FOOD (2026-09-23, Mac: "It needs to be accessible with people with it on"): offline the one switch; online
   // the body's food is the room's (survival/switch.js corpseFoodOn - survtiers3 drives it)
   assert.match(read('src/systems/worldTick.js'), /installSurvivalIcons\(\);[^\n]*\n\s*installSurvivalLoot\(\{ enabled: corpseFoodOn \}\);/, 'the corpse\'s food is off with the one switch - offline');
@@ -289,8 +291,8 @@ test('SURV2: by source - the pipeline stands a vendor archive in, the weight law
   // wrote the system itself and so carries it on the prefs shelf - a
   // distinction no player can see. What this pin owns is unchanged:
   // the row declares the key and the default, once (RF4).
-  // SURV-TIERS: the default is a tier now - Casual, on - and the player still owns the switch, Off included
-  assert.match(read('src/systems/features.js'), /key: 'survival', initial: 'casual', online: 'player',/, 'the row owns the key and the default: on (Casual), and the player owns the switch');
+  // SURV-TIERS: the default is a tier now - on - and the player still owns the switch, Off included. BOONS-DEFAULT: Boons
+  assert.match(read('src/systems/features.js'), /key: 'survival', initial: 'boons', online: 'player',/, 'the row owns the key and the default: on (Boons), and the player owns the switch');   // PIN MOVED
 });
 
 // ═══ AUDIT VC6 (2026-09-18): THE DROP ROLLS ON THE POOL'S OWN STREAM ══

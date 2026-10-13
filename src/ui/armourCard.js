@@ -74,11 +74,23 @@ export const tenth = (x) => Math.round(x * 10) / 10;
  *  wearer read through (its career, its stats, its Renown's sets), the table its own - so the sum lands on the
  *  stand-in and the wearer's own `_mods` is never written. */
 function foldedPoints(entity, slots) {
+  return modsForSlots(entity, slots).armorParts;
+}
+/** AUDIT C&C S6 (decision D4): A PIECE AS ITS CARD KNOWS IT. An unidentified piece's card says "Unidentified" and names
+ *  no line and no power, so the stand-in a comparison wears carries neither: no affixes and no power ids (a Legendary's
+ *  record, a Rare's imprint, a Gilded's - systems/lootPowers.js reads them). The copy had dropped the lines and kept the
+ *  ids, so the unidentified Wrothgar Pass Mantle's card counted its hidden Mountain-Born and not its hidden lining (a
+ *  mountain night read -85 to -53, where the cloak it shows is -85 to -73). An identified piece is itself. */
+export const asKnown = (item) => (itemIsIdentified(item) ? item : { ...item, affixes: [], legendary: null, imprint: null, gilded: null });
+/** The entity's folded channels (systems/entityMods.js computeEntityMods) as they WOULD stand over another slot table -
+ *  a stand-in wearing `slots`, the entity untouched. TEMP-UI: ONE CONSTRUCTION SEAM - the armour's points above and the
+ *  wardrobe's warmth (ui/temperatureCard.js) read a wear that has not happened through this one fold. */
+export function modsForSlots(entity, slots) {
   const eq = createEquipTable();
   slots.forEach((it, i) => { eq.slots[i] = it ?? null; });
   const standIn = Object.create(entity);
   standIn.equip = eq;
-  return computeEntityMods(standIn).armorParts;
+  return computeEntityMods(standIn);
 }
 
 /**
@@ -89,9 +101,9 @@ function foldedPoints(entity, slots) {
  *   replaces  what the wear would take off, in EquipItem's own order (wearLeavers), each piece once
  *   parts     every part the piece covers (armorBodyParts) and every part the wear moves, as the doll's number now and
  *             after: DFU's table with each leaver given back and the piece taken off (UpdateEquippedArmorValues), and the
- *             folds' points over the table it would leave. AN UNIDENTIFIED PIECE'S AFFIXES ARE LEFT OUT: its card says
- *             "Unidentified" and no affix, so its comparison says no more (the affixes work once worn, and the doll
- *             shows them then, as DFU's doll shows an unidentified item's powers).
+ *             folds' points over the table it would leave. AN UNIDENTIFIED PIECE'S AFFIXES AND POWERS ARE LEFT OUT
+ *             (asKnown): its card says "Unidentified" and no affix, so its comparison says no more (they work once
+ *             worn, and the doll shows them then, as DFU's doll shows an unidentified item's powers).
  *   overall   the overall figure now and after, where any part is listed
  *   damage    a weapon against the weapon it would replace - the one in its own slot, else one it takes off with it (a
  *             two-hander's other hand) - by the card's own Damage row; null with no weapon to set it against
@@ -116,7 +128,7 @@ export function wearComparison(entity, item) {
   // the port's points, over the table as it stands and over the table the wear would leave
   const slotsThen = [...table];
   for (const s of leavers) slotsThen[s] = null;
-  slotsThen[slot] = itemIsIdentified(item) ? item : { ...item, affixes: [] };
+  slotsThen[slot] = asKnown(item);   // AUDIT C&C S6: an unidentified piece's stand-in as its card knows it
   const pointsNow = foldedPoints(entity, table);
   const pointsThen = foldedPoints(entity, slotsThen);
   const before = dollArmour(entity);
@@ -140,6 +152,7 @@ export function wearComparison(entity, item) {
   const tableNow = struckBodyPartTable();
   return {
     slot, replaces, parts, damage, hands,
+    worn: slotsThen,   // TEMP-UI: the table the wear would leave - the card's temperature reads it (ui/temperatureCard.js)
     overall: parts.length ? { before: overallArmour(before, tableNow), after: overallArmour(after, tableNow) } : null,
   };
 }

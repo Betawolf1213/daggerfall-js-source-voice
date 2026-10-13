@@ -70,7 +70,8 @@ test('RR1 the record: the manifest, the switches (27 keys - 26 on the pane, figh
       assert.equal(keys[name].description, k.Description, `${name}: the mod's own words`);
       const expected = typeof k.Value === 'string' ? (k.Value === 'True' ? true : k.Value === 'False' ? false : Number(k.Value)) : k.Value;
       if (name === 'shipPorts') { assert.equal(expected, true); assert.equal(keys[name].default, false, 'SHIP-PORTS: a recorded departure from the mod\'s defaults - the boat stays reachable from anywhere until a player asks for the port rule'); n++; continue; }
-      if (name === 'equipDamage') { assert.equal(expected, true); assert.equal(keys[name].default, false, 'WEAR-VANILLA: the other recorded departure - armour wears at DFU\'s rate, not x5'); n++; continue; }
+      if (name === 'equipDamage') { assert.equal(expected, true); assert.equal(keys[name].default, false, 'WEAR-VANILLA: the second recorded departure - armour wears at DFU\'s rate, not x5'); n++; continue; }
+      if (name === 'EnhancedRiding.GallopingInTowns') { assert.equal(expected, false); assert.equal(keys[name].default, true, 'TOWN-GALLOP: the third recorded departure - a horse gallops in a town as out of one, and nothing holds it to the walk there'); n++; continue; }
       assert.equal(keys[name].default, expected, `${name}: the mod's own default`);
       n++;
     }

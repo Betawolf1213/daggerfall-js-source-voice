@@ -129,7 +129,7 @@ test('SURV7: by source - the four hosts feed their env (the roof, the floor, the
   for (const [name, src] of [['world', world], ['exterior', ext]]) {
     assert.match(src, /const survivalEnvNow = \(\) => \{/, `${name}: the reader`);
     assert.match(src, /insideBuilding: m === 'interior', insideDungeon: m === 'dungeon',/, `${name}: the mode's flags`);
-    assert.match(src, /inSunlight: m === 'exterior' && !isNight\(minuteNow\(\)\) && \(weather === 'sunny' \|\| weather === 'cloudy'\),/, `${name}: the sun`);
+    assert.match(src, /inSunlight: m === 'exterior' && sunlit\(\{ hour, weather, sheltered \}\),/, `${name}: the sun - AUDIT C&C's one law (temperature.js sunlit), the replay's too, none under a tent's canvas (I2)`);
     assert.match(src, /byFire: m === 'exterior' && camps\.byFire\(feet\),/, `${name}: the fire`);
     assert.match(src, /sleeping: playerEntity\.isResting && !playerEntity\.isLoitering \? \(playerEntity\.restKind \?\? 'rough'\) : null,/, `${name}: the sleep and its kind`);
     assert.match(src, /fireResist: elementalResistanceChance\(playerEntity, ELEMENTS\.Fire\), frostResist: elementalResistanceChance\(playerEntity, ELEMENTS\.Frost\),/, `${name}: the resistances`);
@@ -153,7 +153,7 @@ test('SURV7: by source - the four hosts feed their env (the roof, the floor, the
   // one thing in that line the room now answers for itself.
   assert.match(modes, /survivalEnv: \(\) => \(mode === 'interior' && host\.survivalEnv \? \{ \.\.\.host\.survivalEnv\(\), insideBuilding: true, insideDungeon: false, inSunlight: false, swimming: false, byFire: interiorCamps\.byFire\(player\.pos\) \} : null\),/, 'interior: the roof, and its own fire');
   assert.match(modes, /survivalEnv: \(\) => host\.survivalEnv\?\.\(\) \?\? null,/, 'the dungeon gets the outer reader');
-  assert.match(dc, /insideBuilding: false, insideDungeon: true, inSunlight: false, swimming: false, transport: false,/, 'dungeon: the floor');
+  assert.match(dc, /insideBuilding: false, insideDungeon: true, inSunlight: false, swimming: !!_activity\.swimming, transport: false,/, 'dungeon: the floor, and its own water');   // PIN MOVED (AUDIT TEMP-UI E2): the dungeon's swim was a hard-coded false
   assert.match(dc, /byFire: !!\(_fpFeet && camps\.byFire\(_fpFeet\)\),/, 'dungeon: its own fire');
   assert.match(dc, /survival: survivalFeed\(playerEntity, survivalEnvNow\(\), \{ say: \(msg\) => hudText\.add\(msg\) \}\),/, 'dungeon: its own tick feeds');
   assert.match(dc, /installSurvivalGate\(registerPreventRestCondition, \(\) => playerEntity, survivalEnvNow\);/, 'dungeon: its own gate');
@@ -172,7 +172,7 @@ test('SURV7: by source - the four hosts feed their env (the roof, the floor, the
 test('AUDIT-FIELD: `resting` holds the needs\' per-minute harms and NOT one accrual - the law TO-FIELD sits an accelerated journey on', () => {
   const env = { ...ENV_DEFAULTS, insideBuilding: false, climateIndex: 231, month: 6, weather: 'sunny', inSunlight: true };
   const run = (resting) => {
-    const e = { stats: { endurance: 50, strength: 50 }, health: 50, maxHealth: 50, items: [], raceId: 1 };
+    const e = { stats: { endurance: 50, strength: 50 }, health: 50, maxHealth: 50, fatigue: 6400, items: [], raceId: 1 };   // AUDIT C&C N2: a body's pool, as every producer mints one - a jump leaves its last point
     let fatigue = 0, hurt = 0;
     const sinks = { drainFatigue: (n) => { fatigue += n; }, restoreFatigue: () => {}, hurt: (n) => { hurt += n; }, say: () => {} };
     // start hungry, thirsty and sleepless so every harm arm is LIVE -

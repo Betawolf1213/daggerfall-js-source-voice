@@ -587,7 +587,7 @@ test('WW1: the rig runs the clone beside the machine - the late update after the
   assert.match(rig, /const look = takeFrameLook\(\);/, 'the look read once a frame'); assert.match(rig, /look: lookAxes, swingHeld: _held, cursorActive: cursorActive\(\), camera: camThunk,/, 'WIDGET-LOOK: as DFU\'s look axes (test/fb1003_widgetlook.test.js)');
   // SW1: the shield's coroutines resume on the same edge, in the same finally
   assert.match(rig, /try \{ return onUiScreen\(renderer, cv\(\), \(\) => drawInner\(\{ paralyzed \}\)\); \} finally \{ widget\.endOfFrame\(\); shield\.endOfFrame\(\); \}/, 'WaitForEndOfFrame resumes after the draw (RETRO-UI: drawn on the UI screen)');
-  assert.match(rig, /fpArm\.setScreenTransform\(widgetOn\(\) \? \(base\) => widget\.armsTransform\(base\) : null\);/);
+  assert.match(rig, /fpArm\.setScreenTransform\(widgetOn\(\) && !armsClimb \? \(base\) => widget\.armsTransform\(base\) : null\);/);   // PIN MOVED (CLIMB-HANDS II): not on arms whose hands are on the stone
   // MAC-I: every sprite in this seam takes the frame's TINT now (FPSWeapon.Tint, off the room's light);
   // the ORDER and the returns are what this pin holds, and neither moved.
   // SW1b: the shield's verdict moved ABOVE the gate (its poses live in the frames `shown()` calls hidden), so the

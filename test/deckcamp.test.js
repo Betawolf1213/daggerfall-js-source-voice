@@ -14,6 +14,7 @@ import { createSurvivalItem } from '../src/systems/survival/items.js';
 import { TEMPLATE } from '../src/systems/survival/food.js';
 import { setWorldMinutes } from '../src/systems/worldTick.js';
 import { outOfDeck } from '../src/systems/naval/navalDeck.js';
+import { createRestItem, REST_ITEM } from '../src/systems/restItems.js';
 
 const read = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 const close = (a, b, eps = 1e-6) => a.every((v, i) => Math.abs(v - b[i]) <= eps);
@@ -215,4 +216,40 @@ test('DECK-CAMP THE WORLD\'S WIRING by source: the pool handed the boats; the bo
   assert.ok(rideAt > 0 && rideAt < quaysAt && quaysAt < w.indexOf('quays?.draw(renderer);'), 'after she moved, before the lights and the world pass');
   assert.match(read('src/scenes/comeSailAwayPeers.js'), /hasBoat: \(owner, uid\) => !!live\.get\(owner\)\?\.boats\?\.some\(\(b\) => b\.uid === uid\),/);
   for (const f of ['src/scenes/exterior.js', 'src/scenes/dungeonContext.js']) assert.ok(!/campDeck|deck: \{ at:/.test(read(f)), `${f}: no deck`);
+});
+
+test('AUDIT C&C (lens I): A CAMP OUT OF SIGHT ANSWERS NO REACH - a deck camp hidden with her boat stands at its last posed point, and the rest\'s place (fireNear) still found its fire there: a night slept as a camp\'s beside a fire nobody could see; nor is a hidden fire fed, tended or a night spent at it from there - she stands again, and it answers again (mutants: the place reads every camp; the feed, the tending and the night read one out of sight)', async () => {
+  setWorldMinutes(1000);
+  const h = host();
+  const kit = createSurvivalItem(TEMPLATE.Campfire, { condition: 2 });
+  h.entity.items.push(kit);
+  h.camps.placeItem(kit, h.entity.items);
+  await settle();
+  h.camps.ride(0.1);
+  const fire = h.camps.camps[0];
+  h.state.feet = [...fire.rec.pos];
+  assert.equal(h.camps.fireNear(h.state.feet), true, 'standing with her: a fire to sleep by');
+  h.boat.state = 'hidden';
+  h.camps.ride(0.1);
+  assert.equal(fire.hidden, true);
+  assert.equal(h.camps.fireNear(h.state.feet), false, 'out of sight with her: no fire at the point she was last seen');
+  // the feed: no fire of mine in reach to take the stick
+  const wood = createRestItem(REST_ITEM.Firewood);
+  h.entity.items.push(wood);
+  assert.equal(h.camps.placeItem(wood, h.entity.items), false, 'the Firewood finds no fire');
+  assert.equal(fire.rec.wear, 2, 'and feeds none');
+  // the tending of a rest at a camp, and the night's charge
+  h.entity.isResting = true; h.entity.restKind = 'camp';
+  const lit = fire.rec.litUntil;
+  setWorldMinutes(lit - 30);
+  h.camps.tend();
+  assert.equal(fire.rec.litUntil, lit, 'a hidden fire is not tended');
+  h.entity.isResting = false; h.entity.restKind = null;
+  assert.equal(h.camps.spendNightNear(h.state.feet), false, 'and no night is spent at it');
+  assert.equal(fire.rec.wear, 2);
+  // she stands again: the fire answers again, and is fed
+  h.boat.state = 'stand';
+  h.camps.ride(0.1);
+  assert.equal(h.camps.fireNear(h.state.feet), true, 'back with her');
+  assert.equal(h.camps.placeItem(wood, h.entity.items), true, 'fed');
 });

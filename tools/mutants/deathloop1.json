@@ -204,8 +204,8 @@
   {
     "name": "the-cold-becomes-survivable",
     "file": "src/systems/survival/needs.js",
-    "old": "const bite = Math.max(1, Math.trunc((abs - 40) / 10));\n      if (!replay) sinks.hurt?.(bite);",
-    "new": "const bite = Math.max(1, Math.trunc((abs - 40) / 10));\n      if (!replay) hurtFloored(bite);",
+    "old": "const bite = Math.max(1, Math.trunc((abs - 40) / 10));\n      if (!replay && !landing) sinks.hurt?.(bite);",
+    "new": "const bite = Math.max(1, Math.trunc((abs - 40) / 10));\n      if (!replay && !landing) hurtFloored(bite);",
     "tests": [
       "test/deathloop1.test.js"
     ]

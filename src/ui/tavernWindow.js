@@ -64,7 +64,7 @@ import { audio } from '../systems/audio.js';   // F145: the ButtonClick roster
 import { SOUND } from '../systems/soundClips.js';
 import { firstHotkey } from '../systems/dialogShortcuts.js';   // A8: the DaggerfallShortcut table
 import { survivalOn, survivalRules } from '../systems/survival/switch.js';   // SURV5: the mod's menu stands in for DFU's while the arc is on; SURV-TIERS: the tier prices the drink
-import { tavernMenu, tavernEat, tavernDrink, tavernOrder, tavernWater, blackout, TAVERN_MENU_TEXT } from '../systems/survival/tavernMenu.js';   // INN-WATER: tavernWater, the fountain's law at the bar
+import { tavernMenu, tavernEat, tavernDrink, tavernOrder, tavernWater, tavernRefresh, blackout, blackoutWaking, TAVERN_MENU_TEXT } from '../systems/survival/tavernMenu.js';   // INN-WATER: tavernWater, the fountain's law at the bar; AUDIT C&C I6: tavernRefresh, the drink's fatigue and magicka; I4: blackoutWaking, the line under the sky
 import { survivalOf } from '../systems/survival/needs.js';
 import { stiffen, REST_KIND } from '../systems/survival/rest.js';
 import {
@@ -143,7 +143,13 @@ export const OWN_TIME_ROOM_NOTE = ' - a rest spends it, logging off does not.';
  *   worldNow()        -> LIVED1: the WORLD's clock, for the calendar
  *                        (Heart's Day, a meal's holiday) and the
  *                        kitchen's hours; defaults to now(), the one
- *                        clock offline
+ *                        clock offline. AUDIT C&C: and the survival
+ *                        menu's free drinks (I8) and the blackout's
+ *                        dawn (I4), read where the sky stands
+ *   regionIndex()     -> AUDIT C&C I8: PlayerGPS.CurrentRegionIndex,
+ *                        the survival menu's first key (regionMenuDay)
+ *                        - handed as climateIndex() is; none (-1) is
+ *                        the climate's to key
  */
 export class TavernWindow {
   constructor(hooks) {
@@ -285,7 +291,8 @@ export class TavernWindow {
   _survivalFood() {
     const h = this.hooks;
     const now = h.now();
-    const menu = tavernMenu({ climateIndex: h.climateIndex(), quality: h.quality?.() ?? 5, hour: Math.trunc((((h.worldNow?.() ?? now) % 1440) + 1440) % 1440 / 60) });   // LIVED1: the kitchen keeps the sky's hours
+    // AUDIT C&C I8: the region keys the menu first (regionMenuDay), and the world's calendar pours the holidays' drinks
+    const menu = tavernMenu({ climateIndex: h.climateIndex(), regionIndex: h.regionIndex?.() ?? -1, quality: h.quality?.() ?? 5, minutes: h.worldNow?.() ?? now, hour: Math.trunc((((h.worldNow?.() ?? now) % 1440) + 1440) % 1440 / 60) });   // LIVED1: the kitchen keeps the sky's hours
     // AUDIT SURV C/D: before six the kitchen refuses in the mod's two words and the drinks still pour (the picker
     // follows the refusal); the Drinks divider is not a door out - a header pick keeps the picker up
     const box = {
@@ -306,11 +313,16 @@ export class TavernWindow {
         const r = row.kind === 'food' ? tavernEat(s, now, row.worth) : row.kind === 'water' ? tavernWater(h.entity, now) : tavernDrink(s, row.strength, { endurance, rules });
         h.advanceMinutes?.(r.minutes);
         h.entity.lastTimePlayerAteOrDrankAtTavern = now;
+        tavernRefresh(h.entity, r);   // AUDIT C&C I6: the drink's fatigue and magicka, after its quarter hour
         let b = null;
         if (r.blackout) {
-          b = blackout(s, now + r.minutes, { endurance });
+          // AUDIT C&C I4: the night runs to the SKY's six from where it stands after the drink - offline the one clock,
+          // online the world's, which the character's own minutes never move (LIVED1) - and the waking says dawn only
+          // under a dawn sky
+          b = blackout(s, h.worldNow?.() ?? now + r.minutes, { endurance });
           stiffen(h.entity, now + r.minutes + b.minutes, REST_KIND.Rough, rules);   // the night on the boards is a rough one (SURV4), at the tier's price
           h.advanceMinutes?.(b.minutes);
+          b.text = blackoutWaking(h.worldNow?.() ?? now + r.minutes + b.minutes);
         }
         return [{ rows: b ? [...line(r.text), ...line(b.text)] : line(r.text) }];   // AUDIT SURV-TIERS (the third pass): and the waking
       },

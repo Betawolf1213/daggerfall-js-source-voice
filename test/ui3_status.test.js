@@ -87,7 +87,7 @@ test('UI3 the spells, bundle by bundle (AUDIT UI C3/C5): a party mate\'s gift is
 });
 
 test('UI3 the needs\' glyphs: every need the strip can raise has one - the temperature\'s by the way it runs, the cold words (read off the chips\' own table) a snowflake and the warm ones the sun (mutants: every temperature a sun; a need left without a glyph)', () => {
-  for (const [w, [text]] of Object.entries(HUD_NEED_WORDS.temp)) {
+  for (const [w, text] of Object.entries(HUD_NEED_WORDS.temp)) {   // PIN MOVED (AUDIT C&C S5): the table is words alone
     assert.equal(needGlyph({ key: 'temp', text }), ['cold', 'freezing', 'deadly cold'].includes(w) ? 'cold' : 'hot', text);
   }
   for (const key of [...Object.keys(HUD_NEED_WORDS).filter((k) => k !== 'temp'), 'stiff', 'drunk']) {
@@ -140,8 +140,8 @@ test('UI3 the diseases\' names are the seventeen the table carries, in its order
 
 // ── THE GLYPHS ──────────────────────────────────────────────────────
 
-test('UI3 the glyphs: thirteen (REST1 the Rested campfire; TELL9 the bleed\'s two drops; WILD1 the open zone\'s blades), each on the 16px grid the classic\'s spell icons use, every letter in its palette, every lit pixel outlined in the kit\'s black (no lit pixel touches the empty), drawn as runs, one source a name (mutants: a pixel unoutlined; a letter with no colour; the runs one rect a pixel)', () => {
-  assert.deepEqual(Object.keys(STATUS_GLYPHS).sort(), ['bleed', 'cold', 'disease', 'drunk', 'hot', 'hunger', 'poison', 'rested', 'sleep', 'stiff', 'thirst', 'wet', 'wild']);   // WILD1: and the open zone's crossed blades   // REST1: and the Rested campfire; PIN MOVED (TELL9: the bleed's own icon)
+test('UI3 the glyphs: sixteen (REST1 the Rested campfire; TELL9 the bleed\'s two drops; WILD1 the open zone\'s blades; SURV-BOONS Thriving\'s sparkle and the Hearth\'s flame; TEMP-UI the thermometer), each on the 16px grid the classic\'s spell icons use, every letter in its palette, every lit pixel outlined in the kit\'s black (no lit pixel touches the empty), drawn as runs, one source a name (mutants: a pixel unoutlined; a letter with no colour; the runs one rect a pixel)', () => {
+  assert.deepEqual(Object.keys(STATUS_GLYPHS).sort(), ['bleed', 'cold', 'disease', 'drunk', 'hearth', 'hot', 'hunger', 'poison', 'rested', 'sleep', 'stiff', 'thermo', 'thirst', 'thriving', 'wet', 'wild']);   // SURV-BOONS: and Thriving's sparkle; TEMP-UI: and the HUD plate's thermometer   // WILD1: and the open zone's crossed blades   // REST1: and the Rested campfire; PIN MOVED (TELL9: the bleed's own icon)
   for (const [name, g] of Object.entries(STATUS_GLYPHS)) {
     assert.equal(g.rows.length, 16, `${name}: 16 rows`);
     let lit = 0;

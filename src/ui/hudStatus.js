@@ -24,9 +24,15 @@
 //   - a NEED (Climates & Calories - survival/status.js
 //     survivalHudChips): the port's own pixel glyph for what the
 //     classic art has no icon for - hunger, thirst, sleep, wet, hot,
-//     cold, stiff, drunk - framed amber while it is felt and red while
-//     it costs (the chips' own two levels: RED MEANS IT COSTS), how bad
-//     at its foot ("2/3", NEED-TIER);
+//     cold, stiff, drunk - framed amber while it is felt and red where
+//     the live tier charges for it (the chips' own two levels, read off
+//     the tier in force - survival/status.js needLevel: RED MEANS IT
+//     COSTS), a costing one marked and said so besides (AUDIT C&C S14),
+//     how bad at its foot ("2/3", NEED-TIER); and in the Boons tier
+//     (SURV-BOONS) a BOON, framed green as a buff - the need's own glyph
+//     for the need it rewards, a flame of its own for the hearth (REST1's
+//     Next night is the campfire) and a gold sparkle for Thriving, a Well
+//     rested bank's hours at its foot;
 //   - a POISON and a DISEASE, shown at last - on the Status box's own
 //     law (systems/healthStatus.js): a poison once it has left its
 //     waiting, a disease once its incubation is over and by the name
@@ -44,7 +50,7 @@
 // instead, as tall as the diamond (statPlace).
 // ═══════════════════════════════════════════════════════════════════
 import { DISEASE_NAMES } from '../systems/diseases.js';
-import { HUD_NEED_WORDS } from '../systems/survival/status.js';
+import { HUD_NEED_WORDS, levelSaid } from '../systems/survival/status.js';
 
 /** A tile's side: a 16px picture at two to one inside a 2px frame. */
 export const STAT_TILE = 36;
@@ -145,6 +151,30 @@ export const STATUS_GLYPHS = Object.freeze({
     '.kffffffffffk...', '.kkfffffaffkk...', '..kbbaaaaaakkkk.', '..kccccccccaaak.',
     '..kbbaaaaaaakak.', '..kbbaaaaaaakak.', '..kbbaaaaaaakak.', '..kbbaaaaaaaaak.',
     '..kcccccccckkkk.', '..kbbaaaaaak....', '..kbbaaaaaak....', '..kkkkkkkkkk....',
+  ] }),
+  // TEMP-UI: a thermometer - the HUD's temperature plate while the reading is comfortable (the sun and the snowflake
+  // stand for the two ways out of it). AUDIT C&C D6: its column in the plate's own bone, neutral - it was red, the
+  // colour that says a reading costs, on the one reading that is comfortable
+  thermo: Object.freeze({ pal: { g: '#cfd4dc', w: '#eef2f6', r: '#b8ab8c', h: '#efe6cf', t: '#a8b0bc' }, rows: [
+    '......kkkk......', '......kggk......', '.....kkwwkk.....', '.....kgwwgkk....',
+    '.....kgwwgtk....', '.....kgwwgkk....', '.....kgrrgtk....', '.....kgrrgkk....',
+    '.....kgrrgtk....', '.....kgrrgkk....', '....kkrrrrkk....', '....krhrrrrk....',
+    '....krrrrrrk....', '....kkrrrrkk....', '.....kkrrkk.....', '......kkkk......',
+  ] }),
+  // AUDIT SURV-BOONS C7: a flame, no logs - the Hearth boon (a lit fire beside a waking player), told apart from REST1's
+  // Rested campfire, which can stand beside it online
+  hearth: Object.freeze({ pal: { o: '#ff7a2a', y: '#ffc84a', w: '#fff6c8' }, rows: [
+    '................', '......kkk.......', '.....kkok.......', '.....kookk......',
+    '....kkoookkkk...', '....kooookkokk..', '...kkoooookookk.', '...kooooyoooook.',
+    '..kkoooyyyooook.', '..koooyyyyyoook.', '..kooyyywyyyook.', '..kooyywwwyyook.',
+    '..kkoyywwwyyokk.', '...kkoyyyyyokk..', '....kkoooookk...', '.....kkkkkkk....',
+  ] }),
+  // SURV-BOONS: a four-point sparkle in gold - Thriving, the boon of a body kept fed, watered and rested at once
+  thriving: Object.freeze({ pal: { a: '#ffd24a', b: '#fff6c8', c: '#c8902a' }, rows: [
+    '................', '................', '......kkkk......', '......kaak......',
+    '......kaak......', '.....kkaakk.....', '..kkkkaaaakkkk..', '..kaaaabbaccck..',
+    '..kaaaabbcccck..', '..kkkkaacckkkk..', '.....kkcckk.....', '......kcck......',
+    '......kcck......', '......kkkk......', '................', '................',
   ] }),
   // a skull, in the poison's green
   poison: Object.freeze({ pal: { a: '#8fd46a', b: '#d4ffc0', c: '#4f9a3a' }, rows: [
@@ -252,8 +282,9 @@ let _coldWords = null;
 /** A need chip's glyph: its own key's, and the temperature's by which way it runs - the cold words (read off the
  *  chips' own table, never restated) a snowflake, the warm ones the sun. */
 export function needGlyph(chip) {
+  if (typeof chip?.glyph === 'string') return Object.hasOwn(STATUS_GLYPHS, chip.glyph) ? chip.glyph : null;   // SURV-BOONS: a boon names its own
   if (chip?.key === 'temp') {
-    _coldWords ??= new Set(['cold', 'freezing', 'deadly cold'].map((w) => HUD_NEED_WORDS.temp[w][0]));
+    _coldWords ??= new Set(['cold', 'freezing', 'deadly cold'].map((w) => HUD_NEED_WORDS.temp[w]));
     return _coldWords.has(chip.text) ? 'cold' : 'hot';
   }
   return Object.hasOwn(STATUS_GLYPHS, chip?.key) ? chip.key : null;
@@ -262,7 +293,7 @@ export function needGlyph(chip) {
 /**
  * @typedef {{ key: string, kind: 'buff'|'debuff'|'set'|'warn'|'danger'|'more', name: string, foot: string|null,
  *   blink: boolean, item: boolean, recovering: boolean, spell: number|null, glyph: string|null, set: string|null,
- *   bundle: number|null, endable: boolean }} StatusTile
+ *   bundle: number|null, endable: boolean, say: string|null, cost: boolean }} StatusTile
  */
 /**
  * The widget's tiles, in the order the foot row read them: the spells (mine, then others'), the set powers, the
@@ -276,7 +307,7 @@ export function needGlyph(chip) {
 export function statusTiles({ spells = [], powers = [], afflictions = [], needs = [], rested = null, zone = null } = {}) {
   /** @type {StatusTile[]} */
   const out = [];
-  const tile = (t) => out.push({ foot: null, blink: false, item: false, recovering: false, spell: null, glyph: null, set: null, bundle: null, endable: false, ...t });
+  const tile = (t) => out.push({ foot: null, blink: false, item: false, recovering: false, spell: null, glyph: null, set: null, bundle: null, endable: false, say: null, cost: false, ...t });
   // WILD1: the open zone first - where the player stands is the first thing a glance should say there
   if (zone) tile({ key: 'wild', kind: 'danger', name: String(zone.name ?? ''), glyph: 'wild', foot: zone.foot ?? null });
   spells.forEach((e, i) => tile({
@@ -293,9 +324,17 @@ export function statusTiles({ spells = [], powers = [], afflictions = [], needs 
   for (const a of afflictions) tile({ key: a.key, kind: 'debuff', name: a.name, glyph: a.glyph, foot: a.foot ?? null, blink: !!a.blink });   // TELL9: a bleed's ticks
   // NEED-TIER: and how bad, at its foot ("2/3" - Hungry of Peckish, Hungry, Starving), as a spell's rounds are: the glyph
   // is one picture for every stage and the name goes where there is no room, so the foot is what says it there
-  for (const c of needs) tile({ key: `need:${c.key}`, kind: c.level === 'danger' ? 'danger' : 'warn', name: String(c.text ?? ''), glyph: needGlyph(c), foot: c.tier ? `${c.tier}/${c.of}` : null });
-  // REST1: Rested - the night interval's real minutes left at its foot (systems/restAct.js nightRealMinutesLeft), a buff
-  if (rested?.minutes > 0) tile({ key: 'rested', kind: 'buff', name: 'Rested', foot: `${rested.minutes}m`, glyph: 'rested' });
+  // SURV-BOONS: and a boon (level 'boon') is a buff, its own foot (a Well rested bank's hours) where it has one
+  // AUDIT C&C S14: and a need says its level in words (`say`, the tile's title and label) and is marked where it costs
+  // (`cost`) - the frame's colour was the only thing that told a costing need from a felt one
+  for (const c of needs) {
+    tile({ key: `need:${c.key}`, kind: c.level === 'boon' ? 'buff' : c.level === 'danger' ? 'danger' : 'warn', name: String(c.text ?? ''), glyph: needGlyph(c), foot: c.foot != null ? String(c.foot) : c.tier ? `${c.tier}/${c.of}` : null,
+      say: c.level === 'boon' ? null : levelSaid(String(c.text ?? ''), c.level), cost: c.level === 'danger' });
+  }
+  // REST1: the night interval's real minutes left at its foot (systems/restAct.js nightRealMinutesLeft), a buff.
+  // AUDIT C&C (lens S): named "Next night" (REST_ACT_TEXT.rested, held equal by its pin) - REST1's "Rested" stood online
+  // beside Boons' Well rested, a bank of sleep and not a countdown; this is the wait until a night can pass again
+  if (rested?.minutes > 0) tile({ key: 'rested', kind: 'buff', name: 'Next night', foot: `${rested.minutes}m`, glyph: 'rested' });
   return out;
 }
 
@@ -371,5 +410,5 @@ export function statOverflow(tiles, { rows, columns }) {
   if (tiles.length <= room) return tiles;
   const shown = tiles.slice(0, room - 1);
   const more = tiles.length - shown.length;
-  return [...shown, { key: 'more', kind: 'more', name: `${more} more`, foot: `+${more}`, blink: false, item: false, recovering: false, spell: null, glyph: null, set: null, bundle: null, endable: false }];   // BUFF-END: "+N" ends nothing
+  return [...shown, { key: 'more', kind: 'more', name: `${more} more`, foot: `+${more}`, blink: false, item: false, recovering: false, spell: null, glyph: null, set: null, bundle: null, endable: false, say: null, cost: false }];   // BUFF-END: "+N" ends nothing
 }

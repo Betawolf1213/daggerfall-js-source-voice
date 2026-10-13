@@ -12,7 +12,7 @@ import {
   NEED, DRAIN, WELL_FED_MINUTES, HEALTH_FLOOR, newSurvival, survivalOf, survivalMinute, runSurvivalMinutes, survivalStatMods, applySurvivalMods, SURVIVAL_TEXT,
 } from '../src/systems/survival/needs.js';
 import { temperatureWord, hourTemperature, WEATHER_TEMP } from '../src/systems/survival/temperature.js';
-import { HUD_NEED_WORDS, survivalHudChips } from '../src/systems/survival/status.js';
+import { HUD_NEED_WORDS, survivalHudChips, needLevel } from '../src/systems/survival/status.js';
 import { REST_COST, REST_TEXT_SURVIVAL, STIFF_HOURS, restCost, restHour, stiffen } from '../src/systems/survival/rest.js';
 import { survivalFeed, installSurvivalGate, survivalGateOn } from '../src/systems/survival/env.js';
 import { TEMPLATE, FOOD, FOOD_STAGE, eatLaw } from '../src/systems/survival/food.js';
@@ -42,9 +42,9 @@ import { withDom } from './invdrag.mjs';
 // Something that introduces mechanics, leaves some out and is overall
 // not a punished experience for players", then "Off, Casual, Hard" and
 // "I want this to be a smart and thorough difficulty design. No band
-// aids". The survival switch is three tiers on one key, and every law
-// that charges the player reads its tier's rules (survival/
-// difficulty.js). These pins hold the design, not the numbers alone:
+// aids". The survival switch is tiers on one key (three that day; SURV-BOONS
+// made four), and every law that charges the player reads its tier's rules
+// (survival/difficulty.js). These pins hold the design, not the numbers alone:
 // Hard is the arc as it stood; Casual is the same world with five rules
 // on what it costs - stamina only, red stages only, borrowed down to half
 // the pool at most and repaid when the need is met, nothing refused,
@@ -102,20 +102,20 @@ afterEach(() => { _resetForTests(); setWorldMinutes(0); clearPreventRestConditio
 /** The first meal on the menu both windows show at TAVERN_NOW (23:00, the tier's list - quality 10). */
 const TAVERN_MEAL = tavernMenu({ climateIndex: 232, quality: 10, hour: 23 }).rows.findIndex((r) => r.kind === 'food');
 
-test('SURV-TIERS: one key, three tiers - the row, the table and the shelf agree; Casual is the default and every tier, Off included, is the player\'s online', () => {
+test('SURV-TIERS: one key, four tiers - the row, the table and the shelf agree; Boons is the default (BOONS-DEFAULT - Casual until then) and every tier, Off included, is the player\'s online', () => {
   const row = FEATURES.find((f) => f.id === 'mod-climates-calories');
   const c = row.control;
   assert.equal(c.key, SURVIVAL_PREF);
   // AUDIT SURV-TIERS: each segment writes its tier's STORED value (Off the old switch's own false), in the table's order
   assert.deepEqual(c.tiers.map(([v]) => v), SURVIVAL_TIER_IDS.map((t) => SURVIVAL_STORED[t]), 'the bar\'s segments write the table\'s stored values');
   assert.deepEqual(c.tiers.map(([v]) => tierOfStored(v)), [...SURVIVAL_TIER_IDS], '...which read back as the tiers, in order');
-  assert.deepEqual(c.tiers.map(([, label]) => label), ['Off', 'Casual', 'Hard']);
+  assert.deepEqual(c.tiers.map(([, label]) => label), ['Off', 'Boons', 'Casual', 'Hard']);   // PIN MOVED (SURV-BOONS): the fourth tier, the gentlest first after Off
   // AUDIT SURV-TIERS: the note is two sentences, as FT15's title asks (FT15 itself counts only characters)
   assert.equal(row.note.split(/(?<=[.!?])\s+(?=[A-Z\u2018\u201c"'(])/).length, 2, `the note is two sentences: ${row.note}`);
   assert.equal(c.tiers[0][0], false, 'Off is stored as the switch always stored it');
-  assert.equal(new Set(c.tiers.map(([v]) => String(v))).size, 3, 'the bar matches a stored value by its string - three distinct strings');
-  assert.equal(c.initial, SURVIVAL_STORED[SURVIVAL_DEFAULT]); assert.equal(SURVIVAL_DEFAULT, 'casual');
-  assert.equal(FEATURE_PREF_DEFAULTS.survival, 'casual', 'the shelf takes its default from the row (RF4)');
+  assert.equal(new Set(c.tiers.map(([v]) => String(v))).size, 4, 'the bar matches a stored value by its string - four distinct strings');   // PIN MOVED (SURV-BOONS)
+  assert.equal(c.initial, SURVIVAL_STORED[SURVIVAL_DEFAULT]); assert.equal(SURVIVAL_DEFAULT, 'boons');   // PIN MOVED (BOONS-DEFAULT, 2026-10-13, Mac: "make boons the default")
+  assert.equal(FEATURE_PREF_DEFAULTS.survival, 'boons', 'the shelf takes its default from the row (RF4)');
   assert.deepEqual(Object.keys(SURVIVAL_RULES), SURVIVAL_TIER_IDS.filter((t) => t !== SURVIVAL_OFF), 'every tier but Off has rules');
   // online: the player's, by name - "still let it be able to be turned off for online"
   assert.equal(c.online, 'player');
@@ -124,10 +124,11 @@ test('SURV-TIERS: one key, three tiers - the row, the table and the shelf agree;
   // a tier is a whole answer: both carry the same fields, frozen through
   const shape = (o) => Object.entries(o).map(([k, v]) => (v && typeof v === 'object' ? `${k}{${shape(v)}}` : k)).sort().join(',');
   assert.equal(shape(CASUAL), shape(HARD), 'no field one tier forgot');
+  assert.equal(shape(SURVIVAL_RULES.boons), shape(HARD), '...Boons included (SURV-BOONS)');
   assert.ok(Object.isFrozen(CASUAL) && Object.isFrozen(CASUAL.stamina) && Object.isFrozen(HARD.roughRest) && Object.isFrozen(SURVIVAL_STORED), 'frozen through');
   // the reads
   assert.equal(rulesForTier('off'), null); assert.equal(rulesForTier('nonsense'), null); assert.equal(rulesForTier(false), null);
-  assert.equal(rulesForTier('casual'), CASUAL); assert.equal(rulesForTier('hard'), HARD);
+  assert.equal(rulesForTier('casual'), CASUAL); assert.equal(rulesForTier('hard'), HARD); assert.equal(rulesForTier('boons'), SURVIVAL_RULES.boons);
   for (const t of SURVIVAL_TIER_IDS) { assert.equal(isStoredTier(SURVIVAL_STORED[t]), true, t); assert.equal(tierOfStored(SURVIVAL_STORED[t]), t); }
   for (const v of [true, undefined, null, 0, '', 3, 'off', 'false', 'Casual', {}]) {
     assert.equal(isStoredTier(v), false, `${JSON.stringify(v)} is stored by no tier`);
@@ -139,13 +140,13 @@ test('SURV-TIERS: one key, three tiers - the row, the table and the shelf agree;
 
 test('SURV-TIERS: the switch - on is anything but Off; the live rules are the tier\'s; a stored value that is no tier reads as the default, the rule the Features bar draws it by', () => {
   _resetForTests();
-  assert.equal(survivalTier(), 'casual'); assert.equal(survivalOn(), true); assert.equal(survivalRules(), CASUAL);
+  assert.equal(survivalTier(), 'boons'); assert.equal(survivalOn(), true); assert.equal(survivalRules(), SURVIVAL_RULES.boons);   // PIN MOVED (BOONS-DEFAULT)
   setPref(SURVIVAL_PREF, 'hard'); assert.equal(survivalTier(), 'hard'); assert.equal(survivalRules(), HARD); assert.equal(survivalOn(), true);
   setPref(SURVIVAL_PREF, false); assert.equal(survivalTier(), 'off'); assert.equal(survivalOn(), false); assert.equal(survivalRules(), null);
   // BLOOD AUDIT 5's rule (ui/enhancedMenu.js tileStates): a value that is no tier shows as the default - so the laws
   // read it the same way, and the bar and the game can never disagree about which tier is live
   for (const junk of [true, 'off', 'Hard', 2]) {
-    setPref(SURVIVAL_PREF, junk); assert.equal(survivalTier(), 'casual', `${JSON.stringify(junk)} names no tier`);
+    setPref(SURVIVAL_PREF, junk); assert.equal(survivalTier(), SURVIVAL_DEFAULT, `${JSON.stringify(junk)} names no tier`);   // BOONS-DEFAULT: the default, by name
   }
   const menu = read('src/ui/enhancedMenu.js');
   assert.match(menu, /const fallback = Math\.max\(0, c\.tiers\.findIndex\(\(\[v\]\) => String\(v\) === String\(c\.default \?\? c\.initial\)\)\);/, 'the bar\'s own fallback is the row\'s default');
@@ -167,16 +168,16 @@ test('SURV-TIERS: the shelf - Off is the old switch\'s own false, so a shelf wri
     withShelf(shelf());
     assert.equal(survivalTier(), 'off', 'and it stays Off across every reload after');
     withShelf({});
-    assert.equal(survivalTier(), 'casual', 'a player who never touched the switch stored nothing, and moves to Casual with the default');
+    assert.equal(survivalTier(), 'boons', 'a player who never touched the switch stored nothing, and moves with the default - Boons since BOONS-DEFAULT');   // PIN MOVED
     withShelf({ survival: 'hard' });
     assert.equal(survivalTier(), 'hard', 'a chosen tier is kept');
-    setPref(SURVIVAL_PREF, 'casual');
+    setPref(SURVIVAL_PREF, SURVIVAL_STORED[SURVIVAL_DEFAULT]);   // BOONS-DEFAULT: the default, by name
     assert.equal(shelf().survival, undefined, 'choosing the default back stores nothing (PREF1: the default is not a choice)');
     // AUDIT SURV-TIERS: the bar matches a stored value by its STRING, so a hand-edited 'false' drew Off while the laws
     // ran the default - the load drops every value that names no tier, and the two read one answer
     for (const junk of [true, 'false', 'off', 'Hard', 7]) {
       withShelf({ survival: junk });
-      assert.equal(survivalTier(), 'casual', `${JSON.stringify(junk)} names no tier - the default`);
+      assert.equal(survivalTier(), SURVIVAL_DEFAULT, `${JSON.stringify(junk)} names no tier - the default`);   // BOONS-DEFAULT: by name
       setPref('showFps', true);
       assert.equal(Object.hasOwn(shelf(), 'survival'), false, `${JSON.stringify(junk)} was dropped at the load`);
     }
@@ -200,7 +201,7 @@ test('SURV-TIERS: Hard is the arc as it stood - the rough rest, the drains, the 
   assert.equal(restCost('bed', CASUAL), REST_COST.bed); assert.equal(restCost('camp', CASUAL), REST_COST.camp, 'a bed and a camp cost the same in every tier');
   const needs = read('src/systems/survival/needs.js');
   assert.match(needs, /const rules = deps\.rules \?\? HARD_RULES;/);
-  assert.match(needs, /export function survivalStatMods\(s, temp, now, \{ endurance = 50, rules = HARD_RULES, vampire = false \} = \{\}\)/);
+  assert.match(needs, /export function survivalStatMods\(s, temp, now, \{ endurance = 50, rules = HARD_RULES, vampire = false, beast = false \} = \{\}\)/);   // AUDIT C&C N4: and the beast, fed as the mod reads it
 });
 
 test('SURV-TIERS: Casual is five rules written out - stamina only, red stages only, borrowed down to half the pool and repaid, nothing refused, rolled against you or wasted', () => {
@@ -214,8 +215,9 @@ test('SURV-TIERS: RED MEANS IT COSTS - Casual charges each need at exactly the s
   // the temperature: the band's edges ARE the red words' edges, every degree from -150 to 150
   for (let felt = -150; felt <= 150; felt++) {
     const word = temperatureWord(felt);
-    const red = HUD_NEED_WORDS.temp[word]?.[1] === 'danger';
+    const red = needLevel('temp', word, { rules: CASUAL, felt }) === 'danger';   // PIN MOVED (AUDIT C&C S5): the HUD's level is the tier's (needLevel), read by Casual's rules
     assert.equal(felt >= CASUAL.stamina.hotFrom || felt <= CASUAL.stamina.coldFrom, red, `felt ${felt} (${word})`);
+    assert.equal(red, ['scorching', 'freezing', 'deadly cold'].includes(word), `felt ${felt}: Casual's band IS its red words`);
   }
   // hunger, thirst, sleep: one comfortable minute at each stage - the charge is there iff the chip is red
   const stages = [
@@ -231,7 +233,8 @@ test('SURV-TIERS: RED MEANS IT COSTS - Casual charges each need at exactly the s
   ];
   const now = 20001;   // not a harm tick
   for (const [need, stage, set, rate] of stages) {
-    const red = HUD_NEED_WORDS[need][stage][1] === 'danger';
+    const red = needLevel(need, stage, { rules: CASUAL }) === 'danger';   // PIN MOVED (AUDIT C&C S5): what the HUD says in Casual
+    assert.ok(HUD_NEED_WORDS[need][stage], `${need}:${stage} has a word`);
     assert.equal(rate != null, red, `${need}:${stage} - the table above says what the HUD says`);
     const e = body(); const log = [];
     set(survivalOf(e, now), now);
@@ -253,7 +256,8 @@ test('SURV-TIERS: RED MEANS IT COSTS - Casual charges each need at exactly the s
       const e = body(); const log = [];
       survivalOf(e, now);
       const temp = survivalMinute(e, now, { climateIndex, month, hour, weather }, minuteDeps(e, log, rules, { worn: feet }));
-      const tax = feet === barefoot && rules === HARD && temp.abs > STATS.endurance / 2 ? DRAIN.bareFeet : 0;
+      // AUDIT C&C D5 (PIN MOVED): the bare feet read the natural temperature (the clothes shoe no foot) against the live endurance - this body's own
+      const tax = feet === barefoot && rules === HARD && Math.abs(temp.natTemp) > STATS.endurance / 2 ? DRAIN.bareFeet : 0;
       const want = (costs(temp.felt) ? DRAIN.heatPer20 * Math.trunc(temp.abs / 20) : 0) + tax;
       if (drains(log) !== want) assert.fail(`${rules.id}: felt ${temp.felt} (${temperatureWord(temp.felt)}) at climate ${climateIndex}/${month}/${hour}/${weather}${feet === barefoot ? ', barefoot' : ''} charged ${drains(log)}, not ${want}`);
       walked++;
@@ -543,13 +547,15 @@ test('SURV-TIERS: the tavern - the house asks after the gold and before the coin
   assert.deepEqual(tavernOrder(s(), 0, drink(35)), { ok: true }, 'no rules is Hard');
   assert.deepEqual(tavernOrder(s(), 0, drink(35), { endurance: 50, rules: null }), { ok: true }, 'null is no rules too');
   assert.deepEqual(tavernOrder(s(), 0, drink(35), { endurance: 50, rules: CASUAL }), tavernPour(s(), 35, { endurance: 50, rules: CASUAL }), 'a drink is the pour\'s question');
-  // AUDIT SURV-TIERS: the meal - tavernEat's own test (the hunger under the meal's worth) asked before the coin
+  // AUDIT SURV-TIERS: the meal - tavernEat's own test (the hunger under the meal's worth) asked before the coin.
+  // PIN MOVED (AUDIT C&C I3): at the meal's END, its half hour passed first as TavernFood passes it - 170 now and the
+  // half hour is a meal's worth of 200
   const meal = { kind: 'food', worth: 200, price: 5 };
   const ateAgo = (hunger) => ({ ...newSurvival(0), lastAte: 1000 - hunger });
-  assert.deepEqual(tavernOrder(ateAgo(199), 1000, meal, { rules: CASUAL }), { ok: false, text: TAVERN_MENU_TEXT.fullForMeal }, 'Casual will not sell a meal to a stomach too full for it');
-  assert.deepEqual(tavernOrder(ateAgo(200), 1000, meal, { rules: CASUAL }), { ok: true }, 'a meal\'s worth of hunger buys it');
-  assert.equal(tavernEat(ateAgo(200), 1000, 200).ok, true, '...and the law eats exactly what the order sells');
-  assert.equal(tavernEat(ateAgo(199), 1000, 200).ok, false);
+  assert.deepEqual(tavernOrder(ateAgo(169), 1000, meal, { rules: CASUAL }), { ok: false, text: TAVERN_MENU_TEXT.fullForMeal }, 'Casual will not sell a meal to a stomach too full for it');
+  assert.deepEqual(tavernOrder(ateAgo(170), 1000, meal, { rules: CASUAL }), { ok: true }, 'a meal\'s worth of hunger buys it');
+  assert.equal(tavernEat(ateAgo(170), 1000, 200).ok, true, '...and the law eats exactly what the order sells');
+  assert.equal(tavernEat(ateAgo(169), 1000, 200).ok, false);
   assert.deepEqual(tavernOrder(ateAgo(0), 1000, meal, { rules: HARD }), { ok: true }, 'Hard sells it and wastes it (the mod\'s quirk, kept)');
   assert.deepEqual(tavernOrder(ateAgo(0), 1000, meal, { rules: null }), { ok: true }, 'and null rules are Hard\'s, for the meal too');
   assert.deepEqual(tavernOrder(ateAgo(0), 1000, { kind: 'header' }, { rules: CASUAL }), { ok: true }, 'a row that is neither asks nothing');
@@ -638,7 +644,7 @@ test('SURV-TIERS: composed - the feed hands the live tier\'s rules, and a Casual
     equip: { slots: new Array(27).fill(null) },
   });
   _resetForTests(); clearPreventRestConditions();
-  assert.equal(survivalFeed(tickerPlayer(), BLIZZARD).deps.rules, CASUAL, 'the default tier rides the feed');
+  assert.equal(survivalFeed(tickerPlayer(), BLIZZARD).deps.rules, SURVIVAL_RULES.boons, 'the default tier rides the feed');   // PIN MOVED (BOONS-DEFAULT)
   const run = (tier) => {
     _resetForTests(); setPref(SURVIVAL_PREF, tier); setWorldMinutes(3 * 1440 + 2 * 60);
     const p = tickerPlayer();

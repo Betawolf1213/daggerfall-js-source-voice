@@ -514,16 +514,18 @@ RECORDED, NOT CHANGED:
   and Wildfire among them. A refereed fight bounds every cast whatever it cost (INT10, and section 14's ceiling).
 - **Every fist** - a vampire's, a monk's and, since BAL6-CLAWS, the beast's - stays ungated: DFU's rule.
 - **The referees' fist bounds** (BAL6-GAUNTLETS, read again by AUDIT CLAWS). Both clip a claim, never refuse it. The
-  duel, the siege, the Royal Tourney, a siege work and the wild zone roll on the stand-in of `combat/duelCombat.js`,
-  whose sheet holds every stat and skill at 100: there the siege's bound (`net/siegeRef.js` siegeBlowMax: the bare
+  duel, the siege, the Royal Tourney, a siege work and the wild zone roll through the striker's sheet of
+  `combat/duelCombat.js` (duelAttackerOf - against the neutral stand-in since AUDIT C&C H5), which holds every stat and
+  skill at 100 at most: there the siege's bound (`net/siegeRef.js` siegeBlowMax: the bare
   hand's 21 at skill 100 and the bonuses at their caps, x2) holds a beast in Daedric gauntlets with every bonus at its
   cap - 55 of its 56 before the critical and 110 of 112 after under the overhaul, 52 in DFU's core. The arena strikes
   through the real entity, and its cap (`net/arenaLaw.js`: a bare hand's 41 at the softcap's 200, ARENA_MOD_MAX's 20,
   x2) already clips a level-30 beast's top critical, the beast's +30 Critical Strike taking the overhaul's multiplier
   past x2 (x2.3 at 130): a Khajiit hand-to-hand expert's bare critical 127 (5 clipped), in Daedric 140 (18). Both are
   the relay's, and neither moved here.
-- **The silver-to-hit of a beast in a refereed fight**: every referee rolls a striker's claim against the striker's own
-  stand-in, so the beast's defence never counts there - reading it would make the beast stronger in PvP, not weaker.
+- **The silver-to-hit of a beast in a refereed fight**: every referee's claim is rolled on a stand-in, never the beast
+  (the striker's own sheet until AUDIT C&C H5, a neutral one since), so the beast's defence never counts there -
+  reading it would make the beast stronger in PvP, not weaker.
 - **The wereboar** is the werewolf in another skin (the same advantages, claws and change), as in DFU.
 
 Pinned: `test/bal6_curses.test.js` (6) by execution - the advantages through liveStat and skillValue in both forms, at
@@ -556,7 +558,8 @@ still 6; `tools/mutants/auditclaws.json` 22 of 22 dead, `bal6.json` 26 of 26):
   beast in Daedric gauntlets claimed exactly what a bare-clawed one did there, while the arena (the host's own blow)
   and every fight with a foe carried the metal. FIXED: the sheet carries the law's word (`cm`, read off the striker's
   own entity), the stub carries it as `clawMetal`, and the law reads it - never the gauntlets themselves, because the
-  striker rolls against a stand-in of its own sheet, which would wear them as the defender's armour. The client's
+  striker rolled against a stand-in of its own sheet, which would have worn them as the defender's armour (AUDIT C&C H5:
+  a neutral stand-in since, which carries no `cm`; the stub has no equip table either way). The client's
   alone: since INT8 the sheet never goes on the wire (a strike carries its rolled `d`), and the referees' bounds hold
   the claim (RECORDED above).
 - **MEDIUM - A2: a load kept the last game's beast form.** `systems/save.js` restorePlayer writes a save onto the same
@@ -675,8 +678,11 @@ BAL2's law for the foes - one rule for every striker - had not reached the refer
 1. **A caster had a ceiling and a blade did not.** INT10 holds a caster to 3 damaging casts of 60 in 5 s (180, 36 a
    second); a blade or a bare hand was held to 4 blows a second and one blow's bucket (`siegeBlowMax`, ~110), which no
    measured blow came near (the highest of 40,000 was 54). Every refereed lane equalises vitality (300 + 2 x Renown) and
-   rolls a striker's claim against its own stand-in, so offence alone decides it: a kitted monk 45.8 a second (a fighter
-   felled in 8.3 s), a kitted sword 26.5, the mage at its ceiling 36 (10.6 s).
+   rolls a striker's claim against a stand-in, so offence alone decides it: a kitted monk 45.8 a second (a fighter
+   felled in 8.3 s), a kitted sword 26.5, the mage at its ceiling 36 (10.6 s). [AUDIT C&C H5: these were measured on
+   the striker's own sheet as the stand-in, which cancelled every attribute it brought; on the neutral stand-in a
+   high-attribute striker lands more - a level-20 sheet's starting Shortsword 60.18% to 72.24% of swings, 4.51 to 5.98
+   a swing - inside the same window, SIEGE_HARM's 180 in 5 s.]
 2. **The arena's rival faced nowhere.** `scenes/world.js` arenaRivalBody hands the rival's stand-in `yaw: 0`, and the
    swing's door and the shaft's read a backstab off it - every blow or arrow from its -z side tripled, whatever way the
    rival faced (about double the damage a second over a bout). The duel's, the siege's and the zone's referees roll no
@@ -696,7 +702,8 @@ rival's -z side. Not moved: the arena's own bucket (`net/arenaLaw.js` ARENA_BUCK
 RECORDED, NOT CHANGED:
 
 - **A refereed fight reads no defence** - not the defender's armour, Dodging, guards, sets or Shield spells; vitality
-  is equal and every claim is rolled against the striker's own stand-in. Reading the defender's kit in PvP is a design
+  is equal and every claim is rolled against a neutral stand-in (the striker's own sheet until AUDIT C&C H5). Reading
+  the defender's kit - or its attributes, which the INSPECT1 card carries unsigned - in PvP is a design
   of its own (a signed defence, as INT7 signed the arms), not a balance pass.
 - **The Warden is backstabbed by a crowd** (`dungeonContext.js` reads his facing): a rogue behind him reaches ~67 a
   second, inside his per-player bucket (75 at level 20). Its own call - the rogue's role, or a watchful boss.

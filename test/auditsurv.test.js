@@ -230,7 +230,7 @@ test('AUDIT SURV C: what the player is told - a vampire\'s strip has no hunger o
   assert.equal(isSurvivalItem(skin), true);
   assert.match(ENHANCED_CSS, /\.hud-stat:empty\s*\{\s*display:\s*none;?\s*\}/, 'no gap for an empty widget (UI3: the needs are its tiles)');
   const hud = read('src/ui/enhancedHud.js');
-  assert.match(hud, /survivalHudChips\(vitals, Math\.floor\(ownMinutes\(\)\), \{ vampire: !!liveVampirism\(vitals\), endurance: liveStat\(vitals, 'endurance'\) \}\)/);   // LIVED1: the needs read the character's own clock
+  assert.match(hud, /survivalHudChips\(vitals, Math\.floor\(ownMinutes\(\)\), \{ vampire: !!liveVampirism\(vitals\), endurance: liveStat\(vitals, 'endurance'\), rules: survivalRules\(\), live \}\)/);   // PIN MOVED (AUDIT SURV-BOONS C14): and the live tier   // LIVED1: the needs read the character's own clock   // PIN MOVED (AUDIT C&C S5/S9): the live tier's rules, and the frame's one live reading
   // Mac (review): "Hide wear for non wearables. Same for use for non-usables"
   const wearer = { equip: null, activeEffects: [] };
   assert.equal(localPrimaryAct(skin, wearer), null, 'no slot takes a waterskin: no Wear');
@@ -305,7 +305,7 @@ test('AUDIT SURV B: the camps - the sweep spares them and the scene cache carrie
   const said = [];
   const offPool = createCamps({ entity, camera: () => ({ feet: [0, 0, 0], yaw: 0 }), say: (l) => said.push(l) });
   offPool.placeItem(createSurvivalItem(TEMPLATE.Campfire), [createSurvivalItem(TEMPLATE.Campfire)]);
-  assert.ok(!said.includes(CAMP_TEXT.arcOff), 'Off no longer refuses a camp with "turn Climates & Calories on" - the placing runs the camp law\'s own checks');
+  assert.deepEqual(said, [CAMP_TEXT.noGround], 'Off no longer refuses a camp with "turn Climates & Calories on" - the placing runs the camp law\'s own checks (AUDIT C&C I10, PIN MOVED: that refusal\'s constant is deleted, so the pin holds the word the camp law says instead)');
   _resetForTests();
   assert.deepEqual([pool.byFire([1, 0, 1]), pool.byFire([20, 0, 20]), tents()], [true, true, 1], 'on again, every kept camp is back where it was');
   setWorldMinutes(0);

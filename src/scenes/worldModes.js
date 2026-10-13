@@ -95,9 +95,10 @@ import { registerPresenter, hudText } from '../systems/notify.js';   // ENH-NOTI
 import { toggleStatusReadout } from '../ui/statusBox.js';   // STATUS-LIVE: the Status readout, one composer for all four hosts
 import { liveVampirism } from '../systems/racialLive.js';   // SURV5: the vampire's one status line
 import { survivalOn } from '../systems/survival/switch.js';
+import { markOutCold } from '../systems/survival/needs.js';   // AUDIT C&C N2: the collapse's hour a night on the ground
 import { makeOpenBookHook } from '../ui/bookDoor.js';   // BS1: the shelf pick opens the reader; EB1: through the reader's one door
 import { populateBookshelf, bookshelfAccess, bookshelfTitles, isBookshelfBuilding } from '../systems/bookshelf.js';   // BS1
-import { maxFatigue, liveStat } from '../systems/statMods.js';   // AUDIT 23 (C5); U40: strength for MaxEncumbrance
+import { maxFatigue, liveStat, clampFatigue } from '../systems/statMods.js';   // AUDIT 23 (C5); U40: strength for MaxEncumbrance; AUDIT C&C N5: SetFatigue's clamp
 import { entityMaxEncumbrance } from '../combat/formulas.js';   // U40: the letter-of-credit gate
 import { nearestLights, capFadePairs } from '../world/cityLights.js';   // LA-AUDIT A5: the dungeon's cap fades
 import { withPlayerLights } from './magicCandle.js';   // X11/T1: the lights the PLAYER carries ride every host's light array
@@ -1209,11 +1210,11 @@ export function createWorldModes(host) {
   // point of poison stood the player up and conceded a game for keeps with no press of his; one that kills still stands
   // him up (the dead do not sit at cards - cardGameFrame)
   registerPlayerHurtListener('cards-seat', (_e, hurt) => { if (cardSeat && hurt.after < hurt.before && !tickInFlight()) standFromCardTable(); });
-  // AUDIT LIVED1b K1: DFU's popup guard, online (world.js onExhaustedExterior's twin says why)
+  // AUDIT LIVED1b K1: DFU's popup guard - AUDIT C&C N2/H1: in both lanes (world.js onExhaustedExterior's twin says why)
   let _exhaustedBox = null;
   const exhaustedShowing = () => !!_exhaustedBox && !_exhaustedBox.done && interiorWindows.containsWindow(_exhaustedBox);
   function onExhaustedInterior() {
-    if (_inExhaustion || (sharedClockOn() && exhaustedShowing())) return;
+    if (_inExhaustion || exhaustedShowing()) return;   // AUDIT C&C N2/H1: DFU's popup guard in both lanes (world.js's twin)
     _inExhaustion = true;
     host.csaOnPlayerDeath?.();   // CSA-J (the audit): PlayerEntity.OnExhausted -> ComeSailAway.OnPlayerDeath, indoors too
     try {
@@ -1233,6 +1234,7 @@ export function createWorldModes(host) {
       _exhaustedBox = new ActionTextBox(out.inWater ? [EXHAUSTED_IN_WATER] : ['You collapse from exhaustion.']);
       mountInterior(_exhaustedBox);
       if (out.kind === 'rest') {
+        markOutCold(playerEntity);   // AUDIT C&C N2: the needs feel the hour as a night on the ground (world.js's twin)
         interiorTicker.advance(60);
         playerEntity.health = Math.min(playerEntity.maxHealth, playerEntity.health + out.health);
         playerEntity.fatigue = Math.min(maxFatigue(playerEntity), (playerEntity.fatigue ?? 0) + out.fatigue);
@@ -1245,7 +1247,7 @@ export function createWorldModes(host) {
   }
   const drainInteriorFatigue = (n) => {
     if (n <= 0) return;
-    playerEntity.fatigue = Math.max(0, (playerEntity.fatigue ?? 0) - n);
+    playerEntity.fatigue = clampFatigue(playerEntity, (playerEntity.fatigue ?? 0) - n);   // AUDIT C&C N5: SetFatigue's clamp, the ceiling too
     if (playerEntity.fatigue <= 0 && playerEntity.health > 0) onExhaustedInterior();
   };
   const presentInteriorDeath = () => {
@@ -5541,8 +5543,11 @@ export function createWorldModes(host) {
       }),
       // SetHealth, through the entity's own ceiling.
       heal: (n) => { playerEntity.health = Math.min(playerEntity.maxHealth, playerEntity.health + n); },
-      // SURV5: the mod's menu - the climate keys it, the tavern's quality tiers it, a meal or a drink takes its minutes
-      // off this host's clock (a blackout the night; online the character's own, LIVED1), the endurance bands the drink
+      // SURV5: the mod's menu - the region keys it and the climate where the region names none (AUDIT C&C I8: the mod's
+      // regionMenuDay, PlayerGPS.CurrentRegionIndex then CurrentClimateIndex), the tavern's quality tiers it, a meal or a
+      // drink takes its minutes off this host's clock (a blackout the night to the sky's six, AUDIT C&C I4; online the
+      // character's own, LIVED1), the endurance bands the drink
+      regionIndex: () => host.currentRegionIndex?.() ?? -1,
       climateIndex: () => host.climateIndex?.() ?? 232,
       advanceMinutes: (n) => interiorTicker.advance(n),
       endurance: () => liveStat(playerEntity, 'endurance'),

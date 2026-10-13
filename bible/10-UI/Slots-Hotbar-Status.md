@@ -157,7 +157,13 @@ grows UP from the caption and can never meet the diamond. One tile an effect, in
   while it is felt and red while it costs (the chips' own two levels: red means it costs); how bad at its foot, its
   stage of its own ladder - "2/3" for Hungry of Peckish, Hungry, Starving (NEED-TIER 2026-10-02, Mac: "the debuffs you
   get from Climates and Calories no longer show the severity": the glyph is one picture for every stage and the name
-  goes where there is no room, so the foot says it there; Stiff, one stage, has none);
+  goes where there is no room, so the foot says it there; Stiff, one stage, has none); in the Boons tier (SURV-BOONS,
+  2026-10-12) no need is red - nothing there costs - but the drink, which stands before the boons;
+- a BOON (Climates & Calories on Boons, `survivalHudChips`' level 'boon'): a green buff tile on the need's own glyph for
+  the need it rewards (Well fed the drumstick, Quenched the drop, Well rested the moon - its bank's whole hours at its
+  foot), a gold sparkle for Thriving and a flame for the Hearth (not REST1's campfire, which may stand beside it);
+- and, off the widget, THE TEMPERATURE PLATE (TEMP-UI, 2026-10-12): at the compass's right end, the felt temperature
+  live, its word and a scale, in the temperature chip's own level (`06-Systems/Climates-Calories.md` TEMP-UI);
 - a POISON and a DISEASE, shown at last (a skull, a spore), on the Status box's own law (`systems/healthStatus.js`):
   ONE tile, "Poisoned", once any poison has left its waiting and until its damage has healed (the game names no poison:
   "You have been poisoned."); a tile a disease once its incubation is over, by the name its own contracted message

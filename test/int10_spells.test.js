@@ -2,8 +2,9 @@
 // do it properly"): SPELLS BETWEEN PLAYERS CAPPED BY THE REFEREE, AS THE ARENA'S ARE. DUEL1 and WILD1 handed a player's
 // spell to its target's own machine (the whole spell, at the caster's claimed level) - a crafted client's Damage Health
 // was whatever it said, and a target that never applied one never took it. Since INT8 and INT9 every place one player's
-// spell meets another's is a referee's: the caster's own machine counts the harm on a stand-in of its own sheet
-// (combat/siegeCombat.js siegeSpellNumbers) and sends a number, and the relay clips it to one cast's most and bounds the
+// spell meets another's is a referee's: the caster's own machine counts the harm on a stand-in - a neutral one since
+// AUDIT C&C H5 (combat/duelCombat.js duelStandIn), the caster's own sheet before it, so its race and willpower saved
+// against its own spell (combat/siegeCombat.js siegeSpellNumbers) - and sends a number, and the relay clips it to one cast's most and bounds the
 // rate - the duel's, the open zone's, a siege's and the arena's alike - and no target's machine applies a peer's harm at
 // all. And a Royal Tourney's bout, blows alone, takes no cast (the relay refereed a crafted client's as a siege's).
 import { test } from 'node:test';
@@ -51,7 +52,7 @@ test('INT10 ONE CAP: a cast between players is clipped to one cast\'s most and b
   assert.match(rd('src/net/wildRef.js'), /\? refereeCast\(a\.f, t\.f, \{ from: a\.pose, at: t\.pose, d \}, now\)/);
 });
 
-test('INT10 EVERY PATH A REFEREE\'S: the caster sends a number counted on its own sheet - a duel\'s, the open zone\'s (a dungeon of it too), a siege\'s - and no target\'s machine applies a peer\'s harm: a peer\'s cast at me is a gift\'s families alone (mutants: a spell sent whole for its target to apply; the receiver\'s gift filter gone)', () => {
+test('INT10 EVERY PATH A REFEREE\'S: the caster sends a number counted on its own machine - a duel\'s, the open zone\'s (a dungeon of it too), a siege\'s - and no target\'s machine applies a peer\'s harm: a peer\'s cast at me is a gift\'s families alone (mutants: a spell sent whole for its target to apply; the receiver\'s gift filter gone)', () => {
   const w = rd('src/scenes/world.js');
   assert.ok(w.includes("const n = duelMgr.blow('spell', { p: campToWire(player.feetAt()), d: siegeCastClamp(harm, false) });"), 'the duel\'s');
   assert.ok(w.includes("const n = wildFight.blow(peerId, 'spell', { p: campToWire(player.feetAt()), d: siegeCastClamp(harm, false) });"), 'the zone\'s');

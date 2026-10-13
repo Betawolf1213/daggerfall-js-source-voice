@@ -2312,11 +2312,33 @@ export const ARMOUR_CSS = `
   color: #efe8d6; background: rgba(5,6,8,0.8); border: 1px solid rgba(192,138,62,0.8); border-radius: 7px 7px 1px 1px;
   text-shadow: 1px 1px 0 #050608; }
 .pack-shell .equipped .worncount ~ .wornhood { right: 20px; }
-.pack-shell .wornmap .wornac-total { position: absolute; left: 4px; top: 4px; z-index: 2; display: flex; flex-direction: column;
+/* AUDIT C&C S1: THE PLAQUES' ROW - the figure's first cell named whole (ui/enhancedInventory.js: '1 / 2 / 2 / 3'; on
+   '1 / 2' an absolutely placed grid child's end lines ran to the map's edge, and the Felt plaque's right corner stood on
+   the R-Weapon panel), the Armour plaque at its left and the Felt plaque at its right, the Felt one under the Armour one
+   where the figure is too narrow for both in a line; it takes no press, the plaques their own (their titles) */
+.pack-shell .wornmap .wornplaques { position: absolute; left: 4px; right: 4px; top: 4px; z-index: 2; display: flex; flex-wrap: wrap;
+  justify-content: space-between; align-items: flex-start; gap: 4px; pointer-events: none; }
+.pack-shell .wornplaques > * { pointer-events: auto; }
+.pack-shell .wornmap .wornac-total { position: relative; display: flex; flex-direction: column;
   align-items: center; gap: 1px; padding: 2px 5px 3px; white-space: nowrap; background: rgba(5,6,8,0.8);
   border: 2px solid rgba(192,138,62,0.8); box-shadow: 0 0 0 1px #050608; text-shadow: 1px 1px 0 #050608; }
 .pack-shell .wornac-total .k { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #a89f88; }
 .pack-shell .wornac-total .v { font-size: 16px; line-height: 1; color: #f3cf86; font-variant-numeric: tabular-nums; }
+/* TEMP-UI: THE FELT TEMPERATURE, the Armour plaque's twin at the row's other end (ui/temperatureCard.js) - its number in
+   the way the reading runs (bone comfortable, ice cold, amber hot) and its frame in the strip's levels (amber felt, red
+   where the live tier charges for it - AUDIT C&C S5), as the HUD's plate, and marked where it costs (AUDIT C&C S14) */
+.pack-shell .wornmap .worntemp-total { position: relative; display: flex; flex-direction: column;
+  align-items: center; gap: 1px; padding: 2px 5px 3px; white-space: nowrap; background: rgba(5,6,8,0.8);
+  border: 2px solid rgba(192,138,62,0.8); box-shadow: 0 0 0 1px #050608; text-shadow: 1px 1px 0 #050608; }
+.pack-shell .worntemp-total[data-level="warn"] { border-color: #f3cf86; }
+.pack-shell .worntemp-total[data-level="danger"] { border-color: #ff9a7a; }
+.pack-shell .worntemp-total[data-level="danger"]::after { content: '!'; position: absolute; top: -7px; right: -7px; min-width: 7px;
+  padding: 1px 2px; font-size: 11px; line-height: 1; text-align: center; color: rgb(243,239,44); background: rgba(5,6,8,0.92);
+  border: 1px solid #ff9a7a; text-shadow: 1px 1px 0 rgb(93,77,12); }
+.pack-shell .worntemp-total .k { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #a89f88; }
+.pack-shell .worntemp-total .v { font-size: 16px; line-height: 1; color: #efe6cf; font-variant-numeric: tabular-nums; }
+.pack-shell .worntemp-total[data-side="cold"] .v { color: #9ec3ff; }
+.pack-shell .worntemp-total[data-side="hot"] .v { color: #ffc35a; }
 .card .cmp { margin: 8px 0 0; padding-top: 6px; border-top: 2px solid rgba(5,6,8,0.45); box-shadow: inset 0 1px 0 rgba(163,152,128,0.16); }
 .card .cmp .cmp-head, .pack-shell .card .cmp p.cmp-head { margin: 0 0 4px; font-size: 11px; letter-spacing: 0.1em;
   text-transform: uppercase; text-align: center; color: #a89f88; }

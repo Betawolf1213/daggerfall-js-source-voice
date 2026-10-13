@@ -161,7 +161,7 @@ export function restAloneText(mineOn) {
 //    building alone, so a member asleep in their rented room slept every party mate anywhere in the house - one with a
 //    room spent a night of it, one without slept free.
 //  - IT SLEPT A MEMBER BY THE FIRE ROUGH. A carried night read the member's OWN spot, and a fire's reach is 4 m where
-//    the party's is 15: a mate at 5 m woke "You slept poorly on the bare ground." in Casual (the default tier, the
+//    the party's is 15: a mate at 5 m woke "You slept poorly on the bare ground." in Casual (then the default tier, the
 //    sleep paid at the rough rate) and in Hard at half the night's healing and stiff, beside a rester who woke full.
 //    PARTY-REST4 (per-request: "party member MUST heal their health near the leader") had closed exactly this for the
 //    mirror; the night now carries the rester's spot (its stamp says it - restAct.js nightStamp) and a member sleeps

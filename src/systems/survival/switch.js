@@ -22,7 +22,7 @@ import { SURVIVAL_OFF, tierOfStored, rulesForTier } from './difficulty.js';
 import { isOnlinePage } from '../onlineLane.js';   // CORPSE-FOOD: a leaf too - it imports nothing
 
 export const SURVIVAL_PREF = 'survival';
-/** 'off', 'casual' or 'hard'. */
+/** 'off', 'boons', 'casual' or 'hard' (SURV-BOONS). */
 export const survivalTier = () => tierOfStored(getPref(SURVIVAL_PREF));
 export const survivalOn = () => survivalTier() !== SURVIVAL_OFF;
 /** The live tier's rules (difficulty.js SURVIVAL_RULES), or null when the arc is off. */

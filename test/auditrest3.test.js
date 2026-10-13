@@ -210,11 +210,13 @@ test('AUDIT REST III A2, A3: a tent\'s Stoke is its owner\'s - a friend\'s cold 
   const { campMenu, CAMP_KIND } = await import('../src/systems/survival/camp.js');
   const keys = (rows) => rows.map((r) => r.key);
   const coldTent = { kind: CAMP_KIND.Tent, wear: 30, litUntil: 5 };
-  assert.deepEqual(keys(campMenu(coldTent, 10, false, { online: true })), ['cook'], 'a friend\'s cold tent: its embers, as a friend\'s cold fire');
-  assert.deepEqual(keys(campMenu(coldTent, 10, true, { online: true })), ['stoke', 'rest', 'cook', 'pack'], 'mine: Stoke, then the Rest that stokes it');
-  assert.deepEqual(keys(campMenu({ ...coldTent, wear: 0 }, 10, true, { online: true })), ['cook', 'pack'], 'worn out: neither');
-  assert.deepEqual(keys(campMenu({ kind: CAMP_KIND.Fire, fuel: true, wear: 6, litUntil: 5 }, 10, true, { online: true })), ['stoke', 'cook', 'pack'], 'a cold Campfire still offers no rest (relight it first)');
-  assert.deepEqual(keys(campMenu(coldTent, 10, true)), ['rest', 'cook', 'stoke', 'pack'], 'offline (every camp mine): as it was');
+  // AUDIT C&C I11 (PIN MOVED): a cold camp offers no Cook (the cooking list only refused at it) - each cold list is
+  // the one it was less its Cook
+  assert.deepEqual(keys(campMenu(coldTent, 10, false, { online: true })), [], 'a friend\'s cold tent: nothing, as a friend\'s cold fire');
+  assert.deepEqual(keys(campMenu(coldTent, 10, true, { online: true })), ['stoke', 'rest', 'pack'], 'mine: Stoke, then the Rest that stokes it');
+  assert.deepEqual(keys(campMenu({ ...coldTent, wear: 0 }, 10, true, { online: true })), ['pack'], 'worn out: neither');
+  assert.deepEqual(keys(campMenu({ kind: CAMP_KIND.Fire, fuel: true, wear: 6, litUntil: 5 }, 10, true, { online: true })), ['stoke', 'pack'], 'a cold Campfire still offers no rest (relight it first)');
+  assert.deepEqual(keys(campMenu(coldTent, 10, true)), ['rest', 'stoke', 'pack'], 'offline (every camp mine): as it was, less its Cook');
   assert.deepEqual(keys(campMenu({ ...coldTent, litUntil: 99 }, 10, false, { online: true })), ['rest', 'cook'], 'a friend\'s lit tent: rest and cook');
 });
 

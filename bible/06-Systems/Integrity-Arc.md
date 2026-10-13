@@ -406,8 +406,10 @@ receipt's carrier); `scenes/dungeonContext.js` and `scenes/worldModes.js` NO DUE
 
 ### INT10 - every spell between players capped
 
-Every place one player's spell meets another's is a referee's: the caster's own machine counts the harm on a stand-in of
-its own sheet (`combat/siegeCombat.js` siegeSpellNumbers) and sends a number, and the relay clips it - a duel's, the
+Every place one player's spell meets another's is a referee's: the caster's own machine counts the harm on a stand-in
+(`combat/siegeCombat.js` siegeSpellNumbers - a neutral one, `combat/duelCombat.js` duelStandIn, since AUDIT C&C H5: it
+was a stand-in of the caster's own sheet, so its own race and willpower saved against its own spell) and sends a
+number, and the relay clips it - a duel's, the
 zone's and a siege's on `refereeCast` (`SIEGE_CASTS`: three a five-second window, sixty at most), the arena's on its own
 law pinned equal. No target's machine applies a peer's harm: a peer's cast at a player is a gift's families alone
 (`systems/allyCast.js`). A Royal Tourney's bout is blows alone - the relay refused a heal between its two but refereed a

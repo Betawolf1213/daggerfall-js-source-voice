@@ -70,14 +70,15 @@ test('REST2 a night spends one charge; the last leaves the Campfire cold, standi
   assert.deepEqual(spendCampNight(newCamp({ id: 'x', kind: CAMP_KIND.Fire, pos: [0, 0, 0], now: 0, wear: 0 }), 0), { spent: false, empty: true });
 });
 
-test('REST2 the rows: rest and cook at any fire; your cold Campfire with fuel relights; yours picks up; a friend\'s rests and cooks only', () => {
+test('REST2 the rows: rest at any fire and cook at a lit one (AUDIT C&C I11); your cold Campfire with fuel relights; yours picks up; a friend\'s rests and cooks only', () => {
   const lit = { ...newCamp({ id: 'a', kind: CAMP_KIND.Fire, pos: [0, 0, 0], now: 0, wear: 5 }), fuel: true };   // AUDIT REST-PARTY B5: a Campfire's own fuel (placeCampItem marks it)
   assert.deepEqual(campMenu(lit, 10, true).map((r) => r.key), ['rest', 'cook', 'pack']);
   assert.equal(campMenu(lit, 10, true).at(-1).text, CAMP_TEXT.menuPickUp);
   assert.deepEqual(campMenu(lit, 10, false).map((r) => r.key), ['rest', 'cook']);
   const cold = { ...lit, litUntil: 0 };
-  assert.deepEqual(campMenu(cold, 10, true).map((r) => r.text), [CAMP_TEXT.menuRest, CAMP_TEXT.menuCook, CAMP_TEXT.menuRelight, CAMP_TEXT.menuPickUp]);
-  assert.deepEqual(campMenu({ ...cold, wear: 0 }, 10, true).map((r) => r.key), ['rest', 'cook', 'pack'], 'no fuel: no relight');
+  // AUDIT C&C I11 (PIN MOVED): a cold fire offers no Cook - the cooking list only refused at it; its Relight lights it
+  assert.deepEqual(campMenu(cold, 10, true).map((r) => r.text), [CAMP_TEXT.menuRest, CAMP_TEXT.menuRelight, CAMP_TEXT.menuPickUp]);
+  assert.deepEqual(campMenu({ ...cold, wear: 0 }, 10, true).map((r) => r.key), ['rest', 'pack'], 'no fuel: no relight');
 });
 
 function pool(entity, said = []) {
@@ -95,7 +96,7 @@ test('REST2 the pool: online a Campfire stands with the arc Off; a night at your
   const off = pool(entity, said);
   // PIN MOVED (ENDLESS PROVISIONS, 2026-10-04: a camp is every tier's): offline with the arc Off a Campfire stands too
   assert.equal(off.placeItem(entity.items[0], entity.items), true, 'offline with the arc Off: the Campfire stands');
-  assert.notEqual(said.at(-1), CAMP_TEXT.arcOff);
+  assert.equal(said.at(-1), CAMP_TEXT.lit, 'and says its lighting - AUDIT C&C I10 (PIN MOVED): the Off refusal it was held apart from is deleted, never said since ENDLESS PROVISIONS');
   setSharedClock(() => 1000);
   const p = pool(entity, said);
   assert.equal(p.placeItem(entity.items[0], entity.items), true, 'online: the rest\'s tool, the arc Off');
@@ -122,7 +123,10 @@ test('REST2 the pool: online a Campfire stands with the arc Off; a night at your
 test('REST2 a world fire rests too: its plaque rows are Rest and Cook; online the lit Rest rests', () => {
   setSharedClock(() => 1000);
   const said = [];
-  const p = createCamps({ hearths: () => [{ pos: [0, 0, 0], record: 1 }], entity: { items: [] }, say: (l) => said.push(l), openRest: () => said.push('REST') });
+  // AUDIT C&C (lens I, PIN MOVED): the Rest row asks the rest's place first (camps.js restAtHearth), so the fixture
+  // stands a hearth as its collectors mint one ({x, y, z} at the flame, the sprite's foot and size) and the player beside
+  // it - the reach itself is test/auditcc_items.test.js's
+  const p = createCamps({ hearths: () => [{ x: 0, y: 0, z: 0, foot: -1.6, w: 0.8, h: 1.6 }], camera: () => ({ feet: [1, -1.6, 0], yaw: 0 }), entity: { items: [] }, say: (l) => said.push(l), openRest: () => said.push('REST') });
   assert.deepEqual(p.hoverName('hearth:0').actions.map((a) => a.id), ['rest', 'cook']);
   p.activate('hearth:0', 'grab', 'rest');
   assert.equal(said.at(-1), 'REST');

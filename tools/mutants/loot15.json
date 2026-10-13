@@ -335,15 +335,6 @@
     "note": "Re-aimed by content (AUDIT LOOT II A2): as the frost record - a spell's fire resistance survives the wardrobe's context."
   },
   {
-    "name": "LOOT15-the-minute-drops-the-host",
-    "file": "src/systems/survival/needs.js",
-    "old": "...wardrobeCtx(deps.ctx, entity._mods) };",
-    "new": "...wardrobeCtx(null, entity._mods) };",
-    "tests": [
-      "test/loot15_garments.test.js"
-    ]
-  },
-  {
     "name": "LOOT15-fall-cap-off",
     "file": "src/scenes/shared.js",
     "old": "export const WARDROBE_FALL_MOST = 75;",

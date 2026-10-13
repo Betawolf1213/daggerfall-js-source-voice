@@ -255,11 +255,12 @@
   {
     "name": "LOOT14-the-minute-never-dressed",
     "file": "src/systems/survival/needs.js",
-    "old": ", ...wardrobeCtx(deps.ctx, entity._mods) };",
+    "old": ", ...wardrobeCtx(mods) };",
     "new": " };",
     "tests": [
       "test/loot14_wardrobe.test.js"
-    ]
+    ],
+    "note": "Re-aimed by content (AUDIT C&C, lens R decision 5): wardrobeCtx's unread host argument deleted."
   },
   {
     "name": "LOOT14-the-shirt-over-the-potion",

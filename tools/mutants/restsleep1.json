@@ -92,8 +92,8 @@
   {
     "name": "RESTSLEEP1-the-sleeper-stays-awake-since-yesterday",
     "file": "src/systems/survival/needs.js",
-    "old": "  s.awakeSince = now;\n}",
-    "new": "  s.awakeSince = s.awakeSince ?? now;\n}",
+    "old": "  s.awakeSince = now;\n  // SURV-BOONS: a night in a bed",
+    "new": "  s.awakeSince = s.awakeSince ?? now;\n  // SURV-BOONS: a night in a bed",
     "tests": [
       "test/restsleep1_shortrest.test.js",
       "test/surv1_model.test.js"

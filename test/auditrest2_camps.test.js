@@ -239,18 +239,20 @@ test('AUDIT REST II H11: Firewood feeds the emptiest Campfire in the pack that h
   assert.equal(said.at(-1), REST_ITEM_TEXT.firewoodNone, 'no Campfire: the none word');
 });
 
-test('AUDIT REST II H12: online a cold camp offers no Rest - it is no rest point, and the row only refused with "Find a fire or a bed" - and its own act leads (Relight, Stoke), the row a click takes; a friend\'s cold fire says its embers; offline the list is as it was, and the pool reads the lane (mutants: the cold arm off; the lane unpassed)', () => {
+test('AUDIT REST II H12: online a cold camp offers no Rest - it is no rest point, and the row only refused with "Find a fire or a bed" - and its own act leads (Relight, Stoke), the row a click takes; a friend\'s cold fire offers nothing (AUDIT C&C I11 re-aim: its one row was a Cook that only refused); offline the list is as it was, and the pool reads the lane (mutants: the cold arm off; the lane unpassed)', () => {
   const coldFire = { kind: CAMP_KIND.Fire, fuel: true, wear: 6, litUntil: 5 };
   const litFire = { ...coldFire, litUntil: 99 };
   const coldTent = { kind: CAMP_KIND.Tent, wear: 30, litUntil: 5 };
   const keys = (rows) => rows.map((r) => r.key);
-  assert.deepEqual(keys(campMenu(coldFire, 10, true, { online: true })), ['stoke', 'cook', 'pack'], 'my cold Campfire: Relight first');
+  // AUDIT C&C I11 (PIN MOVED): a cold fire offers no Cook - the cooking list only refused at it - so each cold list
+  // below is the one it was less its Cook; a lit one keeps it
+  assert.deepEqual(keys(campMenu(coldFire, 10, true, { online: true })), ['stoke', 'pack'], 'my cold Campfire: Relight first');
   assert.equal(campMenu(coldFire, 10, true, { online: true })[0].text, CAMP_TEXT.menuRelight);
-  assert.deepEqual(keys(campMenu({ ...coldFire, wear: 0 }, 10, true, { online: true })), ['cook', 'pack'], 'no fuel: pick it up');
-  assert.deepEqual(keys(campMenu(coldFire, 10, false, { online: true })), ['cook'], 'a friend\'s cold fire: its embers');
-  assert.deepEqual(keys(campMenu(coldTent, 10, true, { online: true })), ['stoke', 'rest', 'cook', 'pack'], 'a cold tent: Stoke first (AUDIT REST III A3 re-aim: its Rest kept - it stokes the tent first)');
+  assert.deepEqual(keys(campMenu({ ...coldFire, wear: 0 }, 10, true, { online: true })), ['pack'], 'no fuel: pick it up');
+  assert.deepEqual(keys(campMenu(coldFire, 10, false, { online: true })), [], 'a friend\'s cold fire: nothing to do at it');
+  assert.deepEqual(keys(campMenu(coldTent, 10, true, { online: true })), ['stoke', 'rest', 'pack'], 'a cold tent: Stoke first (AUDIT REST III A3 re-aim: its Rest kept - it stokes the tent first)');
   assert.deepEqual(keys(campMenu(litFire, 10, true, { online: true })), ['rest', 'cook', 'pack'], 'lit: as ever');
-  assert.deepEqual(keys(campMenu(coldFire, 10, true)), ['rest', 'cook', 'stoke', 'pack'], 'offline: as it was');
+  assert.deepEqual(keys(campMenu(coldFire, 10, true)), ['rest', 'stoke', 'pack'], 'offline: as it was, less the cold fire\'s Cook');
   const c = rd('src/scenes/camps.js');
   assert.equal((c.match(/campMenu\(c\.rec, now\(\), mine\(c\), \{ online: sharedClockOn\(\) \}\)/g) ?? []).length, 3, 'the hover, the plaque and the list all read the lane');
   assert.equal((c.match(/campMenu\(/g) ?? []).length, 3);

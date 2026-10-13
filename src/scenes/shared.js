@@ -66,7 +66,7 @@ import { quietNights } from '../systems/encounters.js';   // CAMP-ROLL: a camp m
 import { carriedRestKind } from '../systems/partyRestLaw.js';   // CAMP-ROLL: and is slept at the better of their spot and mine
 import { survivalFeed, installSurvivalGate } from '../systems/survival/env.js';   // SURV7: the needs' feed and the gate, composed from the entity   // ROAD-B B5: TickRest's per-frame poll (:357-360, :407-410)
 import { createNearbyScan, updateNearbyObjects, detectedMarkers, hasLiveDetector } from '../systems/nearbyObjects.js';   // X4: the Detect scan
-import { liveStat, maxFatigue } from '../systems/statMods.js';
+import { liveStat, maxFatigue, clampFatigue } from '../systems/statMods.js';
 import { FALL_DAMAGE_THRESHOLD, FALL_HP_PER_METRE, CAPSULE_HEIGHT } from '../player/motor.js';   // AUDIT 62 F23: the standing capsule, the senses context's headless default
 import { FOOTSTEP_VOLUME } from '../systems/footsteps.js';   // AUDIT 58: PlayerFootsteps.FootstepVolumeScale (:30), which its one-shots carry too
 import { flashPlayerDamage } from '../ui/damageFlash.js';   // AUDIT 24 (wave 39): ShowPlayerDamage
@@ -1595,7 +1595,7 @@ export function createPlayerTicker(entity, { say = () => {}, onLevelUp = null, o
     drainFatigue: (n, a = null) => {
       if (a?.bundleDuel) n = Math.min(n, Math.max(0, (entity.fatigue ?? 0) - 1));   // AUDIT DUEL1 B3: a duel opponent's fatigue damage over time leaves 1 - the collapse at 0 can kill
       if (n <= 0) return;
-      entity.fatigue = Math.max(0, (entity.fatigue ?? 0) - n);
+      entity.fatigue = clampFatigue(entity, (entity.fatigue ?? 0) - n);   // AUDIT C&C N5: SetFatigue's clamp, the ceiling too
       // AUDIT 23 (C5: hosts-5 = entity-3) - DaggerfallEntity.cs:360-366:
       // EVERY fatigue write clamps and, at 0 with health left, raises
       // OnExhausted - the collapse was dungeon-only; the host passes

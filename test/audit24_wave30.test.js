@@ -231,13 +231,15 @@ test('audit24 wave30: the host ticker exposes the ONE set of player sinks, exhau
   // The rider's nymph/lamia arm is FatigueDamage - "every 1 pt of health
   // damage = 2 pts of fatigue damage" - and a pool that minted its own drain
   // would write the field and miss DaggerfallEntity's OnExhausted.
-  const entity = { health: 20, maxHealth: 20, fatigue: 500 * 64, level: 2, skills: {}, isPlayer: true, activeEffects: [] };
+  // AUDIT C&C N5 (PIN MOVED): a body with its stats, as every producer mints one - the drain lands inside the pool
+  // (SetFatigue's clamp), and a stat-less fixture's pool is nought; 500 points was past any pool there is (200 x 64)
+  const entity = { health: 20, maxHealth: 20, fatigue: 200 * 64, stats: { strength: 100, endurance: 100 }, level: 2, skills: {}, isPlayer: true, activeEffects: [] };
   let collapsed = 0;
   const ticker = createPlayerTicker(entity, { onExhausted: () => { collapsed++; } });
   assert.ok(ticker.sinks && typeof ticker.sinks.drainFatigue === 'function', 'the sinks are reachable');
 
   onMonsterHit({ careerIndex: MOBILE_TYPES.Nymph }, entity, 7, { sinks: ticker.sinks });
-  assert.equal(entity.fatigue, 500 * 64 - 7 * 2 * FATIGUE_MULTIPLIER, 'damage x2 x64, DamageFatigueFromSource\'s stored units');
+  assert.equal(entity.fatigue, 200 * 64 - 7 * 2 * FATIGUE_MULTIPLIER, 'damage x2 x64, DamageFatigueFromSource\'s stored units');
   assert.equal(collapsed, 0);
 
   onMonsterHit({ careerIndex: MOBILE_TYPES.Lamia }, entity, 5000, { sinks: ticker.sinks });

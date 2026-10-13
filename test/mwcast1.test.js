@@ -212,7 +212,7 @@ test('MW-CAST1: the rig holds the release for the arm on screen, draws the casti
     for (let i = 0; i < 200; i++) fpsSpellCasting.tick(0.05);
   }
   const rig = src('src/combat/weaponRig.js');
-  assert.match(rig, /const armCasts = fpArm\.active\(\) && \(spellArmed\(\) \|\| fpsSpellCasting\.isPlayingAnim \|\| fpArm\.castInFlight\(\)\);\n\s+if \(paralyzed \|\| \(!shown\(\) && !torchOnly && !sheetOnly && !shieldRect && !gunSliding && !armCasts\)\) return;/,
+  assert.match(rig, /const armCasts = fpArm\.active\(\) && \(spellArmed\(\) \|\| fpsSpellCasting\.isPlayingAnim \|\| fpArm\.castInFlight\(\)\);\n(?:\s*\/\/[^\n]*\n)*\s*const armsClimb = fpArm\.active\(\) && !!fpArm\.climbPosed\?\.\(\);\n\s+if \(paralyzed \|\| \(!shown\(\) && !torchOnly && !sheetOnly && !shieldRect && !gunSliding && !armCasts && !armsClimb\)\) return;/,   // PIN MOVED (CLIMB-HANDS II): the climbing arms' leg beside the casting arm's
     'the casting arm is not returned past');
   const world = src('src/scenes/world.js');
   assert.match(world, /startCastAnim: \(sp, onRelease\) => !!\(modes\?\.liveArm\?\.\(\)\?\.rig \?\? weaponRig\)\?\.castSpellAnim\?\.\(sp\?\.rangeType, sp\?\.element, onRelease\),/,

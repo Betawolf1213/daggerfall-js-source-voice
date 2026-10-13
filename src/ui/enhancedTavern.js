@@ -43,7 +43,7 @@ import {
   rentalDecision, rentRoom, canEat, eatOrDrink,
 } from '../systems/tavern.js';
 import { survivalOn, survivalRules } from '../systems/survival/switch.js';   // SURV-TIERS: the tier prices the drink
-import { tavernMenu, tavernEat, tavernDrink, tavernOrder, tavernWater, blackout } from '../systems/survival/tavernMenu.js';   // INN-WATER: tavernWater, the fountain's law at the bar
+import { tavernMenu, tavernEat, tavernDrink, tavernOrder, tavernWater, tavernRefresh, blackout, blackoutWaking } from '../systems/survival/tavernMenu.js';   // INN-WATER: tavernWater, the fountain's law at the bar; AUDIT C&C I6: tavernRefresh; I4: blackoutWaking
 import { survivalOf } from '../systems/survival/needs.js';
 import { stiffen, REST_KIND } from '../systems/survival/rest.js';
 import { cardPackPrice, buyCardPack } from '../systems/cardSources.js';   // CARDS9: the keeper's packs
@@ -226,7 +226,8 @@ function pickClassic(i, now) {
 function openSurvivalMenu() {
   const h = deps;
   const now = h.now();
-  const m = tavernMenu({ climateIndex: h.climateIndex(), quality: h.quality?.() ?? 5, hour: Math.trunc((((h.worldNow?.() ?? now) % 1440) + 1440) % 1440 / 60) });   // LIVED1: the kitchen keeps the sky's hours
+  // AUDIT C&C I8: the region keys the menu first (regionMenuDay), and the world's calendar pours the holidays' drinks
+  const m = tavernMenu({ climateIndex: h.climateIndex(), regionIndex: h.regionIndex?.() ?? -1, quality: h.quality?.() ?? 5, minutes: h.worldNow?.() ?? now, hour: Math.trunc((((h.worldNow?.() ?? now) % 1440) + 1440) % 1440 / 60) });   // LIVED1: the kitchen keeps the sky's hours
   menu = { rows: m.rows, pick: (i) => pickSurvival(m.rows[i], now) };
   // AUDIT SURV-TIERS (the second pass): before six the kitchen refuses in the mod's two words and the DRINKS STILL
   // POUR - the classic window's picker follows its refusal (AUDIT SURV C/D), and this one returned on the words and
@@ -251,11 +252,14 @@ function pickSurvival(row, now) {
   const r = row.kind === 'food' ? tavernEat(s, now, row.worth) : row.kind === 'water' ? tavernWater(h.entity, now) : tavernDrink(s, row.strength, { endurance, rules });
   h.advanceMinutes?.(r.minutes);
   h.entity.lastTimePlayerAteOrDrankAtTavern = now;
+  tavernRefresh(h.entity, r);   // AUDIT C&C I6: the drink's fatigue and magicka, after its quarter hour
   let b = null;
   if (r.blackout) {
-    b = blackout(s, now + r.minutes, { endurance });
+    // AUDIT C&C I4: the night to the SKY's six from where it stands after the drink, and dawn said only under a dawn sky
+    b = blackout(s, h.worldNow?.() ?? now + r.minutes, { endurance });
     stiffen(h.entity, now + r.minutes + b.minutes, REST_KIND.Rough, rules);
     h.advanceMinutes?.(b.minutes);
+    b.text = blackoutWaking(h.worldNow?.() ?? now + r.minutes + b.minutes);
   }
   menu = null;
   say(b ? [...line(r.text), ...line(b.text)] : line(r.text));   // AUDIT SURV-TIERS (the third pass): and the waking, as the classic window says it

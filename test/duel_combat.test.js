@@ -33,7 +33,8 @@ const AXE = 127;     // an Axe's - a weapon whose skill slot is NOT the long bla
 /** The strike a striker's own game rolls (scenes/world.js duelStrikeOut, siegeStrikeOut): its sheet, its weapon, its
  *  swing. PIN MOVED (INT8, bible/06-Systems/Integrity-Arc.md lane 2): this was the frame a striker's host SENT, through
  *  the relay's law, for the DEFENDER to resolve - a sheet rides no wire now (the referee clips the striker's number), and
- *  the same strike is rolled on the striker's own machine against a stand-in of its own sheet. */
+ *  the same strike is rolled on the striker's own machine against the neutral stand-in (AUDIT C&C H5: a stand-in of
+ *  its own sheet, until then - combat/duelCombat.js duelStandIn). */
 function strikeFrom(attacker, weapon, { by = 'melee', sw = 'StrikeDown', at } = {}) {
   const w = duelWeaponOf(weapon);
   return { by, a: duelAttackerOf(attacker, weapon), ...(w ? { w } : {}), sw, ...(at ? { at } : {}) };
@@ -177,7 +178,9 @@ test('DUEL1 hosts by source: the swing reaches my opponent before any pool and i
   // own blow out is a number rolled at home for the relay to clip
   assert.match(w, /hurt: \(n\) => \{ if \(n > 0\) hurtPlayer\(playerEntity, n\); \},/);
   assert.equal(/_duelScope|duelSpare|registerDuelFell|duelBlowIn/.test(w), false, 'no defender\'s half left');
-  assert.match(w, /const r = resolveDuelStrike\(\{ by, a, \.\.\.\(w \? \{ w \} : \{\}\), \.\.\.\(sw \? \{ sw \} : \{\}\), \.\.\.at \}, duelStub\(a\)\.stub\);/, 'rolled on my own sheet');
+  // PIN MOVED (AUDIT C&C H5): rolled against the neutral stand-in - the stub of my own sheet it was rolled against
+  // cancelled every attribute I brought and charged me for my own luck (test/auditcc_pvp.test.js)
+  assert.match(w, /const r = resolveDuelStrike\(\{ by, a, \.\.\.\(w \? \{ w \} : \{\}\), \.\.\.\(sw \? \{ sw \} : \{\}\), \.\.\.at \}, duelStandIn\(\)\);/, 'rolled on my own sheet against the neutral stand-in');
   assert.match(w, /const n = duelMgr\.blow\('strike', \{ by, p: campToWire\(player\.feetAt\(\)\), d: Math\.trunc\(r\.dmg\),/, 'sent as a number');
   assert.match(w, /const n = duelMgr\.blow\('spell', \{ p: campToWire\(player\.feetAt\(\)\), d: siegeCastClamp\(harm, false\) \}\);/, 'a spell\'s harm, counted at home');
   // NAV-H (2026-09-28): a hostile ship in reach joined the same doors, after the duel and the foes

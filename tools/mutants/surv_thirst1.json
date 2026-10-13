@@ -20,8 +20,8 @@
   {
     "name": "THIRST1-it-leaves-the-last-five-points-and-cannot-kill",
     "file": "src/systems/survival/needs.js",
-    "old": "      const bite = Math.max(1, Math.trunc((s.thirst - NEED.THIRST_HARM + 10) / 10));\n      if (!replay) sinks.hurt?.(bite);",
-    "new": "      const bite = Math.max(1, Math.trunc((s.thirst - NEED.THIRST_HARM + 10) / 10));\n      if (!replay && (entity.health ?? 0) > HEALTH_FLOOR) sinks.hurt?.(bite);",
+    "old": "      const bite = Math.max(1, Math.trunc((s.thirst - NEED.THIRST_HARM + 10) / 10));\n      if (!replay && !landing) sinks.hurt?.(bite);",
+    "new": "      const bite = Math.max(1, Math.trunc((s.thirst - NEED.THIRST_HARM + 10) / 10));\n      if (!replay && !landing && (entity.health ?? 0) > HEALTH_FLOOR) sinks.hurt?.(bite);",
     "tests": [
       "test/surv1_model.test.js"
     ]
@@ -56,7 +56,7 @@
   {
     "name": "THIRST1-a-jump-kills-on-arrival-again",
     "file": "src/systems/survival/needs.js",
-    "old": "      const bite = Math.max(1, Math.trunc((s.thirst - NEED.THIRST_HARM + 10) / 10));\n      if (!replay) sinks.hurt?.(bite);\n      else if ((entity.health ?? 0) > HEALTH_FLOOR) sinks.hurt?.(Math.min(bite, (entity.health ?? 0) - HEALTH_FLOOR));",
+    "old": "      const bite = Math.max(1, Math.trunc((s.thirst - NEED.THIRST_HARM + 10) / 10));\n      if (!replay && !landing) sinks.hurt?.(bite);\n      else if ((entity.health ?? 0) > HEALTH_FLOOR) sinks.hurt?.(Math.min(bite, (entity.health ?? 0) - HEALTH_FLOOR));",
     "new": "      const bite = Math.max(1, Math.trunc((s.thirst - NEED.THIRST_HARM + 10) / 10));\n      sinks.hurt?.(bite);",
     "tests": [
       "test/surv1_model.test.js"
@@ -65,8 +65,8 @@
   {
     "name": "THIRST1-the-replayed-bite-is-not-clamped-to-the-floor",
     "file": "src/systems/survival/needs.js",
-    "old": "      const bite = Math.max(1, Math.trunc((s.thirst - NEED.THIRST_HARM + 10) / 10));\n      if (!replay) sinks.hurt?.(bite);\n      else if ((entity.health ?? 0) > HEALTH_FLOOR) sinks.hurt?.(Math.min(bite, (entity.health ?? 0) - HEALTH_FLOOR));",
-    "new": "      const bite = Math.max(1, Math.trunc((s.thirst - NEED.THIRST_HARM + 10) / 10));\n      if (!replay) sinks.hurt?.(bite);\n      else if ((entity.health ?? 0) > HEALTH_FLOOR) sinks.hurt?.(bite);",
+    "old": "      const bite = Math.max(1, Math.trunc((s.thirst - NEED.THIRST_HARM + 10) / 10));\n      if (!replay && !landing) sinks.hurt?.(bite);\n      else if ((entity.health ?? 0) > HEALTH_FLOOR) sinks.hurt?.(Math.min(bite, (entity.health ?? 0) - HEALTH_FLOOR));",
+    "new": "      const bite = Math.max(1, Math.trunc((s.thirst - NEED.THIRST_HARM + 10) / 10));\n      if (!replay && !landing) sinks.hurt?.(bite);\n      else if ((entity.health ?? 0) > HEALTH_FLOOR) sinks.hurt?.(bite);",
     "tests": [
       "test/surv1_model.test.js"
     ]

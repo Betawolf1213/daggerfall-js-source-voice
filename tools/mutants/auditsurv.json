@@ -57,17 +57,18 @@
   {
     "name": "AUDITSURV-a-hood-shades-below-nothing",
     "file": "src/systems/survival/temperature.js",
-    "old": "  if (natural > 30 && inSunlight && hood) warmth = Math.max(0, warmth - HOOD_SHADE);",
-    "new": "  if (natural > 30 && inSunlight && hood) warmth -= HOOD_SHADE;",
+    "old": "  const pure = Math.max(0, warmth);   // AUDIT SURV D: never below nothing, as the law says\n",
+    "new": "  const pure = warmth;   // AUDIT SURV D: never below nothing, as the law says\n",
     "tests": [
-      "test/auditsurv.test.js"
+      "test/auditsurv.test.js",
+      "test/auditcc.test.js"
     ]
   },
   {
     "name": "AUDITSURV-the-temperature-note-has-its-own-bands",
     "file": "src/systems/survival/needs.js",
-    "old": "  const word = tw === 'scorching' ? 'scorching' : tw === 'hot' ? 'hot' : tw === 'warm' ? 'warm' : tw === 'deadly cold' ? 'deadly' : tw === 'freezing' ? 'freezing' : tw === 'cold' ? 'cold' : null;",
-    "new": "  const word = temp.felt > 50 ? 'burning' : temp.felt > 30 ? 'scorching' : temp.felt > 20 ? 'hot' : temp.felt > 10 ? 'warm' : temp.felt < -50 ? 'deadly' : temp.felt < -30 ? 'freezing' : temp.felt < -20 ? 'cold' : null;",
+    "old": "export const tempStage = (felt) => TEMP_STAGE[temperatureWord(felt)] ?? null;",
+    "new": "export const tempStage = (felt) => (felt > 50 ? 'burning' : felt > 30 ? 'scorching' : felt > 20 ? 'hot' : felt > 10 ? 'warm' : felt < -50 ? 'deadly' : felt < -30 ? 'freezing' : felt < -20 ? 'cold' : null);",
     "tests": [
       "test/auditsurv.test.js"
     ]
@@ -185,8 +186,8 @@
   {
     "name": "AUDITSURV-the-hud-drunk-band-ignores-the-endurance",
     "file": "src/systems/survival/status.js",
-    "old": "  if (s.drunk > endurance / 2) out.push({ key: 'drunk', text: s.drunk > endurance - 10 ? 'Very drunk' : 'Drunk', level: s.drunk > endurance - 10 ? 'danger' : 'warn', tier: s.drunk > endurance - 10 ? 2 : 1, of: 2 });",
-    "new": "  if (s.drunk > 0) out.push({ key: 'drunk', text: s.drunk > 40 ? 'Very drunk' : 'Drunk', level: s.drunk > 40 ? 'danger' : 'warn', tier: s.drunk > 40 ? 2 : 1, of: 2 });",
+    "old": "  const drunk = s.drunk > endurance / 2 ? { key: 'drunk', text: s.drunk > endurance - 10 ? 'Very drunk' : 'Drunk', level: s.drunk > endurance - 10 ? 'danger' : 'warn', tier: s.drunk > endurance - 10 ? 2 : 1, of: 2 } : null;",
+    "new": "  const drunk = s.drunk > 0 ? { key: 'drunk', text: s.drunk > 40 ? 'Very drunk' : 'Drunk', level: s.drunk > 40 ? 'danger' : 'warn', tier: s.drunk > 40 ? 2 : 1, of: 2 } : null;",
     "tests": [
       "test/auditsurv.test.js"
     ]
@@ -231,7 +232,7 @@
   {
     "name": "AUDITSURV-a-restored-save-drops-the-record",
     "file": "src/systems/save.js",
-    "old": "  entity.survival = snap.survival && typeof snap.survival === 'object' ? { ...snap.survival, notes: {} } : null;",
+    "old": "  entity.survival = snap.survival && typeof snap.survival === 'object' ? { ...snap.survival, notes: savedNotes(snap.survival) } : null;",
     "new": "  entity.survival = null;",
     "tests": [
       "test/auditsurv.test.js"
@@ -240,12 +241,12 @@
   {
     "name": "AUDITSURV-the-chargen-kit-carries-no-provisions",
     "file": "src/systems/startingGear.js",
-    "old": "for (const it of startingProvisions()) { addItem(entity.items, it); added.push(it); }",
+    "old": "for (const it of startingProvisions(entity)) { addItem(entity.items, it); added.push(it); }",
     "new": "{ }",
     "tests": [
       "test/auditsurv.test.js"
     ],
-    "note": "PIN MOVED (AUDIT REST-PARTY): REST2's online-Campfire `else` follows this line, so dropping the whole line no longer parsed; the loop alone is emptied."
+    "note": "PIN MOVED (AUDIT REST-PARTY): REST2's online-Campfire `else` follows this line, so dropping the whole line no longer parsed; the loop alone is emptied. AUDIT C&C I7: re-aimed by content - the kit's producer is handed the character (its wardrobe for the start's shoes and cloak)."
   },
   {
     "name": "AUDITSURV-bare-feet-cost-blood-every-minute",

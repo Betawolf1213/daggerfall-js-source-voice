@@ -8,14 +8,14 @@ import { SURVIVAL_RULES, SURVIVAL_STORED, SURVIVAL_OFF } from '../src/systems/su
 import { SURVIVAL_PREF } from '../src/systems/survival/switch.js';
 import {
   newSurvival, survivalOf, survivalMinute, runSurvivalMinutes, pauseSurvival, survivalStatMods, hungerMinutes,
-  awakeHours, drinkWater, settleLoan, ALIGN_GRACE_MINUTES, SURVIVAL_TEXT, NEED, WELL_FED_MINUTES,
+  awakeHours, drinkWater, settleLoan, ALIGN_GRACE_MINUTES, SURVIVAL_TEXT, NEED, WELL_FED_MINUTES, STAGE_REPEAT_MINUTES,
 } from '../src/systems/survival/needs.js';
 import { survivalHudChips, survivalStatusLines, STATUS_TEXT } from '../src/systems/survival/status.js';
 import { REST_KIND, REST_TEXT_SURVIVAL } from '../src/systems/survival/rest.js';
 import { TEMPLATE, FOOD, eatLaw } from '../src/systems/survival/food.js';
 import { createSurvivalItem, useSurvivalItem, SURVIVAL_USE_TEXT, startingProvisions } from '../src/systems/survival/items.js';
 import { CAMP_TEXT, TENT_MODEL, FIRE_LIGHT_RANGE, FIRE_MINUTES, BY_FIRE_REACH } from '../src/systems/survival/camp.js';
-import { TAVERN_MENU_TEXT, blackout } from '../src/systems/survival/tavernMenu.js';
+import { TAVERN_MENU_TEXT, blackout, blackoutWaking } from '../src/systems/survival/tavernMenu.js';
 import { createCamps, CAMP_LIGHT_REACH, CAMP_LIGHTS_MAX } from '../src/scenes/camps.js';
 import { createRestDeps, createPlayerTicker } from '../src/scenes/shared.js';
 import { TavernWindow } from '../src/ui/tavernWindow.js';
@@ -214,8 +214,12 @@ test('the third pass: a stage line is said when the need WORSENS, never on the w
   assert.equal(e.survival.notes.thirst, 'thirsty');
   const stageLines = (l) => said(l).filter((t) => [SURVIVAL_TEXT.thirsty, SURVIVAL_TEXT.parched, SURVIVAL_TEXT.dehydrated].includes(t));
   assert.deepEqual(stageLines(log), [], 'a drink from Dehydrated does not say "You are getting thirsty" (the loan\'s repaid line may speak: the red lifted)');
-  // ...and getting worse again is said
+  // ...and getting worse again is said - AUDIT C&C N6 (PIN MOVED): once the line heard at minute 1 is half an hour old
+  // (STAGE_REPEAT_MINUTES); within it, it is not said again (a body at a boundary heard it at every step across)
   e.survival.thirst = 100; survivalMinute(e, 3, INDOORS, minuteDeps(e, log, CASUAL));
+  assert.deepEqual(stageLines(log), [], 'Dehydrated again two minutes on: heard lately');
+  e.survival.thirst = 70; survivalMinute(e, 4, INDOORS, minuteDeps(e, log, CASUAL));
+  e.survival.thirst = 100; survivalMinute(e, 1 + STAGE_REPEAT_MINUTES, INDOORS, minuteDeps(e, log, CASUAL));
   assert.deepEqual(stageLines(log), [SURVIVAL_TEXT.dehydrated], 'Dehydrated again is news');
   // the temperature: deadly to comfortable says nothing; then the heat, the other side, is said
   e = body(); log = [];
@@ -254,10 +258,10 @@ test('the third pass: beside a lit fire in Casual the cold is felt, not paid - i
   assert.deepEqual(survivalHudChips(warm, 0).filter((c) => c.key === 'temp').map((c) => [c.text, c.level]), [['Warm', 'warn']], 'Warm, the Cold\'s twin');
   const vamp = body(); Object.assign(survivalOf(vamp, 0), { thirst: 110 });
   assert.equal(survivalHudChips(vamp, 0, { vampire: true }).some((c) => c.key === 'thirst'), false, 'a vampire\'s frozen thirst shows no chip');
-  // and Drenched is RED as a warning - it costs through the felt temperature, not a stamina charge of its own - while
-  // Soaked stays amber (status.js HUD_NEED_WORDS; lens D found the red unpinned)
+  // and Drenched is AMBER, as Soaked is (PIN MOVED, AUDIT C&C S5 decision D2: it costs through the felt temperature,
+  // which has its own chip, never a charge of its own - it had stood red as a warning; status.js needLevel)
   const wetChip = (wet) => { const w = body(); Object.assign(survivalOf(w, 0), { wet }); return survivalHudChips(w, 0).find((c) => c.key === 'wet'); };
-  assert.deepEqual([wetChip(NEED.WET_DRENCHED), wetChip(NEED.WET_SOAKED)].map((c) => [c.text, c.level]), [['Drenched', 'danger'], ['Soaked', 'warn']]);
+  assert.deepEqual([wetChip(NEED.WET_DRENCHED), wetChip(NEED.WET_SOAKED)].map((c) => [c.text, c.level]), [['Drenched', 'warn'], ['Soaked', 'warn']]);
 });
 
 test('the third pass: the words - one "waterskin", the empty skin names the sources that fill one, and Rations eat at the first Peckish minute; no meal writes a marker in the future', () => {
@@ -286,7 +290,9 @@ test('the third pass: a Casual rough night that leaves the sleeper short says so
 });
 
 test('the third pass: a Hard blackout says the waking - the classic window\'s box carries it after the fall, and the law hands it', () => {
-  assert.deepEqual(blackout({ drunk: 60 }, 23 * 60, { endurance: 50 }).text, TAVERN_MENU_TEXT.woke);
+  // PIN MOVED (AUDIT C&C I4): the law hands the waking under the sky the sleeper wakes to (blackoutWaking) - offline the
+  // night carries the one clock to six
+  assert.deepEqual(blackoutWaking(23 * 60 + blackout({ drunk: 60 }, 23 * 60, { endurance: 50 }).minutes), TAVERN_MENU_TEXT.woke);
   setPref(SURVIVAL_PREF, 'hard');
   const now = 1440 * 10 + 23 * 60;
   const entity = { name: 'Mac', goldPieces: 100, health: 20, maxHealth: 40, stats: { endurance: 50 }, rentedRooms: [], items: [], activeEffects: [], lastTimePlayerAteOrDrankAtTavern: 0, survival: { ...newSurvival(now), drunk: 45 } };

@@ -289,11 +289,14 @@ export function loadPrefs() {
         // needs nothing - and it can only hold `false`, since `true` was
         // the default and PREF1's shelf writes no default: a player who
         // turned the arc off stays Off, and one who never touched it
-        // stored nothing and moves to Casual with the default, as Mac
-        // asked. AUDIT SURV-TIERS: anything else on the key (a hand-edited
-        // `true`, a corrupted value) names no tier and is dropped HERE, so
+        // stored nothing and moves with the default (Casual then, as Mac
+        // asked; Boons since BOONS-DEFAULT). AUDIT SURV-TIERS: anything else
+        // on the key (a hand-edited `true`, a corrupted value) names no
+        // tier and is dropped HERE, so
         // the Features bar - which matches a stored value by its string -
         // and the laws read the one default rather than two answers.
+        // SURV-BOONS (2026-10-12): a fourth tier, Boons, stored by name -
+        // isStoredTier reads the table, so it is kept like the others.
         if (p.survival !== undefined && !isStoredTier(p.survival)) _prefs.survival = PREF_DEFAULTS.survival;
       }
     }

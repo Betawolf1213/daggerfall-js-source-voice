@@ -95,8 +95,9 @@ Read against the C#:
   false`; a host that cannot say where it stands (`portTown` null)
   hands the question back to DFU's HasShip rather than refusing.
   **SHIP-PORTS (2026-09-23): `shipPorts` ships OFF here, ON in the
-  mod** - one of two departures from the mod's defaults (`equipDamage`,
-  WEAR-VANILLA 2026-10-01, is the other). The day the merge
+  mod** - one of three departures from the mod's defaults (`equipDamage`,
+  WEAR-VANILLA 2026-10-01, and `EnhancedRiding.GallopingInTowns`,
+  TOWN-GALLOP 2026-10-13 - EnhancedRiding below, are the others). The day the merge
   landed, Sir McMobdon on Discord: "cant access my boat anymore"; the
   module restricts the Ship row to a port town (Hazelnut's list with
   Travel Options on), every boat owner lost the classic
@@ -178,7 +179,15 @@ its arms to `rrInstall.js`.
 - **EnhancedRiding** (EnhancedRiding.cs). `CanRunUnlessRidingCart`
   (:95-99) on `transport.setCanRunOverride`: no gallop with the cart
   nor in a town unless GallopingInTowns (the host's `inTown`, `riding`,
-  `transportMode` reads on `setRrHostSeams`). RealisticMovement
+  `transportMode` reads on `setRrHostSeams`). **TOWN-GALLOP (2026-10-13,
+  Mac: "Remove forced horse walking in towns"): GallopingInTowns ships
+  ON here, OFF in the mod** - off, the run was refused in every town,
+  and under horse care's walk (HORSE-WALK, `06-Systems/Horse-Care.md`)
+  a horse walked a town with Run held; on, a town is ridden as the road
+  is, and the trample below is reachable there, as the mod pairs the
+  two. No tile ever reached the switch (FT14), so no saved value is
+  reset; online the room reads the port's on (ONLINE_WHOLE_MODS). The
+  cart never runs, as ever. RealisticMovement
   (:128-136) on `moveAxes.setAxisLimitsProvider`: back 0.5 / sideways
   0.4 riding (a cart 0.2 / 0.1), 1 on foot. The terrain sample
   (:139-146) - `Atan2(here - ahead, 1) * 100` into a ring of 16 - lives

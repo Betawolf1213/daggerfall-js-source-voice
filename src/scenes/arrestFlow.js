@@ -46,6 +46,7 @@ import { advanceOwnMinutes, MINUTES_PER_DAY, ownMinutes, trustedWorldMinutes } f
 import { banish, grantGrace, warningDue, noteWarning } from '../systems/standing.js';   // REP3: a banishment's term; REP1: the grace an answered law gives; WATCH-KNOWS: a first offence warned
 import { setSyntheticTimeIncrease } from '../systems/effectBroker.js';   // AUDIT 63 F13: DaggerfallCourtWindow_OnEndPrisonTime (EntityEffectBroker.cs:841-842)
 import { fillVitalSigns } from '../systems/statMods.js';
+import { alignSurvival } from '../systems/survival/needs.js';   // AUDIT C&C N3/H2: the prison feeds, waters and rests its prisoner
 import { registerPlayerDamageVeto } from '../characters/playerEntity.js';   // ARREST-SHIELD: the one damage door consults this flow while a trial is up online
 import { SEVERE_PUNISHMENT_EXECUTED } from '../systems/encounters.js';   // F99: the court's own two bits
 import { PrisonScreenWindow, CourtScreenWindow } from '../ui/prisonScreen.js';   // the serving-time presentation (SwitchToPrisonScreen + UpdatePrisonScreen)   // ROAD-B B5: Setup's courtPanel, the backdrop the trial stands on
@@ -613,6 +614,13 @@ export function createArrestFlow({
           // refill is their price again, as DFU pays it, in both lanes; the
           // floor it replaced is inside the refill (a full pool is above it).
           fillVitalSigns(playerEntity);
+          // AUDIT C&C (2026-10-12, N3/H2): AND THE NEEDS LEAVE PRISON FED, WATERED AND RESTED. The days above are a bare
+          // move of the clock, so the first frame out walked the sentence's last two days (the needs' catch-up) AFTER this
+          // refill, awake and unfed, in the street's weather: a Hard ten-day sentence let out into snow left 5 health, no
+          // stamina, -20 from every attribute, Starving, Exhausted and Drenched. The prison kept its prisoner (as DFU's
+          // refill and the mod's own reset say): the needs start fresh at the minute the sentence ends (needs.js
+          // alignSurvival - WORLD5's law for an absence), and the walk resumes from there.
+          if (playerEntity.survival) alignSurvival(playerEntity, Math.floor(ownMinutes()), null);
         }),
       // The window closes into state 100 with InPrison false, which is
       // ReleaseFromPrison (:318) - and repositionPlayer was set back

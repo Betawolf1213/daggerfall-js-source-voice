@@ -12,7 +12,7 @@ import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
-  tavernMenu, tavernOrder, tavernWater, innWaterPrice, menuKeyFor, menuTier, drinkMenuFor, drinkKind, TAVERN_MENU_TEXT,
+  tavernMenu, tavernOrder, tavernWater, innWaterPrice, menuKeyFor, menuTier, TAVERN_DRINKS, DRINK_MENUS, DRINK_ALCOHOL, TAVERN_MENU_TEXT,
 } from '../src/systems/survival/tavernMenu.js';
 import { newSurvival, NEED } from '../src/systems/survival/needs.js';
 import { createSurvivalItem, SURVIVAL_USE_TEXT } from '../src/systems/survival/items.js';
@@ -59,15 +59,17 @@ test('INN-WATER: every menu carries the water - one row under the drinks header,
     assert.equal(rows.length, 1, `${ci}/${quality}/${hour}: one water row`);
     const at = m.rows.findIndex((r) => r.kind === 'water');
     assert.equal(m.rows[at - 1].kind, 'header', 'first under the drinks header');
-    const drinks = drinkMenuFor(menuKeyFor(ci))[menuTier(quality)];
-    const soft = drinks.filter((k) => drinkKind(k.name) === 'soft').map((k) => k.price);
+    // PIN MOVED (AUDIT C&C I8): the list the mod pours (DoDrinks' switch over its key, the climate's here) and its soft
+    // drinks by their alcohol - nought at their place in the tier (DRINK_ALCOHOL) - not by a name the port guessed at
+    const tier = menuTier(quality), drinks = TAVERN_DRINKS[DRINK_MENUS[tier][menuKeyFor(ci)]];
+    const soft = drinks.filter((k, i) => DRINK_ALCOHOL[tier][i] === 0).map((k) => k.price);
     const price = Math.min(...soft);
     assert.ok(soft.length > 0, 'every list the mod pours has a soft drink');
     assert.deepEqual(rows[0], { text: `${String(price).padStart(2)} gold   Fill your waterskins`, kind: 'water', name: 'Fill your waterskins', price }, `${ci}/${quality}/${hour}: the cheapest soft drink's price`);
   }
-  const d = (name, price) => ({ name, price });
-  assert.equal(innWaterPrice([d('Ale', 1), d('Goats Milk', 3), d('Mint Tea', 4)]), 3, 'the cheapest SOFT drink, not the cheapest drink');
-  assert.equal(innWaterPrice([d('Rum', 4), d('Ale', 2), d('Red Wine', 9)]), 2, 'a list with no soft drink: its cheapest drink');
+  const d = (name, price, strength) => ({ name, price, strength });   // PIN MOVED (AUDIT C&C I8): a row carries its alcohol
+  assert.equal(innWaterPrice([d('Ale', 1, 10), d('Goats Milk', 3, 0), d('Mint Tea', 4, 0)]), 3, 'the cheapest SOFT drink, not the cheapest drink');
+  assert.equal(innWaterPrice([d('Rum', 4, 25), d('Ale', 2, 10), d('Red Wine', 9, 20)]), 2, 'a list with no soft drink: its cheapest drink');
 });
 
 test('INN-WATER: the report - a parched traveller in a desert inn fills an empty skin and a half one at the classic window: paid, both full, the thirst quenched, the fountain\'s words, no time passed (mutants: the classic window pours a drink for the water; the water costs a quarter hour; the fill leaves the thirst; the classic window never names the skins; no water row)', () => {

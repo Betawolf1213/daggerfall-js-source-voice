@@ -378,10 +378,10 @@ export function seedStartingEquipment(entity) {
   entity.items.push(dagger);
   equipItem(entity, dagger);
   // SURV2: a new character sets out with provisions - two sacks of
-  // rations, a full waterskin, worn camping gear and a fire kit with
-  // two lights left (survival/items.js startingProvisions; the mod's
-  // own OnStartGame kit, plus the port's fire). Casual and Hard alone, by decision (Mac, 2026-09-23: "No, not off.. theres no reason to have it in off" - SURV-KIT, withdrawn).
-  if (survivalOn()) for (const it of startingProvisions()) entity.items.push(it);
+  // rations, a full waterskin, the road's cloak and shoes, worn camping
+  // gear and a full Campfire (survival/items.js startingProvisions; the
+  // mod's own start, plus the port's fire). Every tier with the arc on - Boons, Casual and Hard - never Off, by decision (Mac, 2026-09-23: "No, not off.. theres no reason to have it in off" - SURV-KIT, withdrawn). AUDIT C&C I7: it said a fire kit with two lights left (REST2 made it a full Campfire) and "Casual and Hard alone" (Boons has the kit).
+  if (survivalOn()) for (const it of startingProvisions(entity)) entity.items.push(it);
 }
 
 /** AC-COMPARE (FIELD BUGS 2026-09-29d): WHAT A WEAR TAKES OFF - EquipItem's three unequip arms

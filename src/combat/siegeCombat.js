@@ -39,8 +39,9 @@ export const SIEGE_DISMOUNT_TEXT = 'No horse is ridden on a battlefield - you go
 /**
  * THE NUMBERS A SPELL CARRIES TO THE REFEREE: `{ harm, heal }` - what its harmful families (duelSpellOf) deal at once (at
  * its own range, its save rolled as any caster's spell's) and what its Heal Health restores (as ALLY-CAST's receiver
- * lands a gift: a self-cast, no save), landed through `apply` (systems/effects.js applySpell) at `level` on `standIn` (a
- * body of the caster's own sheet - the target's protections are not a number this client has; the referee clips), `caster`
+ * lands a gift: a self-cast, no save), landed through `apply` (systems/effects.js applySpell) at `level` on `standIn` (the
+ * neutral one, combat/duelCombat.js duelStandIn - AUDIT C&C H5: a body of the caster's own sheet saved against its spell
+ * with its own willpower and race; the target's protections are not a number this client has; the referee clips), `caster`
  * the casting entity. Whole numbers, never negative; a spell that throws counts nothing. The stand-in keeps nothing.
  * @param {any} sp @param {number} level @param {any} standIn @param {any} [caster]
  * @param {{ apply?: Function, rolls?: () => number }} [o]

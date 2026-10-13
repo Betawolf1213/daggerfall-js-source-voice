@@ -113,10 +113,11 @@ test('AUDIT LIVED1b K1 (K2): a collapse fired from inside a round walks its hour
   assert.equal(inside, true);
   assert.equal(ticks, 2, 'the window in hand, then the hour\'s own walk');
   assert.equal(e.lastGameMinutes, Math.floor(ownMinutes()), 'walked this frame');
-  // the hosts' guard, where the handler lives
-  assert.match(rd('src/scenes/world.js'), /function onExhaustedExterior\(\) \{\s*if \(_inExhaustion \|\| \(sharedClockOn\(\) && exhaustedShowing\(\)\)\) return;/);
+  // the hosts' guard, where the handler lives - AUDIT C&C N2/H1: in both lanes, as DFU's own (and exterior.js has it now)
+  assert.match(rd('src/scenes/world.js'), /function onExhaustedExterior\(\) \{\s*if \(_inExhaustion \|\| exhaustedShowing\(\)\) return;/);
+  assert.match(rd('src/scenes/exterior.js'), /function onExhaustedExterior\(\) \{\s*if \(_inExhaustion \|\| exhaustedShowing\(\)\) return;/);
   assert.match(rd('src/scenes/world.js'), /_exhaustedBox = new ActionTextBox\(lines\);\s*townTalk\.pushOverlay\(_exhaustedBox\);/);
-  assert.match(rd('src/scenes/worldModes.js'), /function onExhaustedInterior\(\) \{\s*if \(_inExhaustion \|\| \(sharedClockOn\(\) && exhaustedShowing\(\)\)\) return;/);
+  assert.match(rd('src/scenes/worldModes.js'), /function onExhaustedInterior\(\) \{\s*if \(_inExhaustion \|\| exhaustedShowing\(\)\) return;/);
   assert.match(rd('src/scenes/worldModes.js'), /_exhaustedBox = new ActionTextBox\([^\n]*\);\s*mountInterior\(_exhaustedBox\);/);
   assert.match(rd('src/scenes/world.js'), /const exhaustedShowing = \(\) => !!_exhaustedBox && !_exhaustedBox\.done && townTalk\.containsOverlay\(_exhaustedBox\);/, 'the box, while it stands');
   assert.match(rd('src/scenes/worldModes.js'), /const exhaustedShowing = \(\) => !!_exhaustedBox && !_exhaustedBox\.done && interiorWindows\.containsWindow\(_exhaustedBox\);/);
@@ -136,7 +137,11 @@ test('AUDIT LIVED1b S1 (F2, K2): an online checkpoint waits while a raise waits 
   setWorldMinutes(1000);
   e.lastGameMinutes = 500;
   assert.equal(ownWalkWaiting(e), false, 'offline, never: the host saves on its own, as before');
-  assert.match(rd('src/scenes/world.js'), /checkpointAllowed\(\{ online: !!online, spawned: playerSpawned, seatOut: seatOut\(\), duel: !!duelMgr\?\.duel, walkWaiting: ownWalkWaiting\(playerEntity\) \}\)/, 'the host asks');
+  // each gate by its own line - AUDIT C&C (the list's run): the zone's death checkpoint (WILD1) copied the gate, and one
+  // pattern held either copy, so the realm checkpoint's could lose its walk under a pin that still passed
+  const world = rd('src/scenes/world.js');
+  assert.match(world, /if \(!checkpointAllowed\(\{ online: !!online, spawned: playerSpawned, seatOut: seatOut\(\), duel: !!duelMgr\?\.duel, walkWaiting: ownWalkWaiting\(playerEntity\) \}\)\) return false;/, 'the host asks');
+  assert.match(world, /const allowed = checkpointAllowed\(\{ online: !!online, spawned: playerSpawned, seatOut: seatOut\(\), duel: !!duelMgr\?\.duel, walkWaiting: ownWalkWaiting\(playerEntity\) \}\);/, 'and the zone\'s death checkpoint, the same gate');
 });
 
 test('AUDIT LIVED1b P3 (A4, K3): the world\'s arms walk what no walk covered - a fast machine clock at the boot, a correction forward then back: every lived world minute once, none twice', () => {
@@ -491,7 +496,11 @@ test('AUDIT LIVED1b P1: a party mirror\'s night walks the follower\'s own watch 
 });
 
 test('AUDIT LIVED1b R4: a character born online takes the skill check\'s stamp at the character\'s own clock, as DFU\'s AssignCharacter does at Now', () => {
-  assert.match(rd('src/scenes/world.js'), /finishChargen\(playerEntity, r, sbi\);\s*(?:\/\/[^\n]*\n\s*)*if \(sharedClockOn\(\)\) playerEntity\.lastSkillCheckTime = Math\.floor\(ownMinutes\(\)\);/);
+  // each birth by its own lines - AUDIT C&C (the list's run): the legacy heir's (LEGACY1) copied the stamp, and one
+  // pattern held either copy, so the wizard's could go under a pin that still passed
+  const world = rd('src/scenes/world.js');
+  assert.match(world, /setLoadingAside\('window', false\);[^\n]*\n\s*finishChargen\(playerEntity, r, sbi\);\s*(?:\/\/[^\n]*\n\s*)*if \(sharedClockOn\(\)\) playerEntity\.lastSkillCheckTime = Math\.floor\(ownMinutes\(\)\);/, 'the wizard');
+  assert.match(world, /if \(!r\) \{ legacyBirthFailed\([^\n]*\n\s*finishChargen\(playerEntity, r, sbi\);\s*if \(sharedClockOn\(\)\) playerEntity\.lastSkillCheckTime = Math\.floor\(ownMinutes\(\)\);/, 'the heir, as the wizard\'s');
 });
 
 test('AUDIT LIVED1b U1-U8, D3: the words - two rows on the classic panel, one rounding per job, the parchment\'s own "due by", the offline card as it was, the play never rounded down, logging off', () => {

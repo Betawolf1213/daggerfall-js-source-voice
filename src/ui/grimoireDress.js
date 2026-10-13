@@ -75,6 +75,10 @@ export const grimoireBackdrop = () => (Object.hasOwn(GRIMOIRE_BACKDROPS, getPref
  *  colour mixed down with the ink - 40% (the sigil's lighter teal 35%) keeps its hue and reads at 4.5:1 or better on the cream page. */
 export const RARITY_INK = Object.freeze({ magic: '#1f4f9e', rare: '#5c4600', legendary: '#9a4210', aetheric: '#1d6a86', artifact: '#5e2a96', gilded: '#7a4a00' });
 export const SET_INK = 'color-mix(in srgb, var(--set, #4fb8a8) 40%, #120a04)';
+/** AUDIT C&C S4: the felt temperature's colours deepened to read on the page - the Plus plaque's ice and amber as inks
+ *  (4.9:1 and 4.6:1 on the cream, the magic and the gilded tones' own), and its felt frame in the Plus warn's dark edge
+ *  (4.2:1); a comfortable reading is written in the ink and a costing one framed in the pack's red. */
+export const TEMP_INK = Object.freeze({ cold: '#1f4f9e', hot: '#7a4a00', warn: '#7a5424' });
 export const SIGIL_INK = 'color-mix(in srgb, var(--sigil, #72f0d8) 35%, #120a04)';
 /** The pack's tones, sampled off its own pictures. */
 export const GRIM_TONES = Object.freeze({
@@ -910,6 +914,12 @@ ${at(R.tile, ':active')} { box-shadow: 0 0 0 1px ${T.outline}, inset 2px 3px 0 r
 /* CHIP - a small plaque of the desk's wood, never pressed */
 ${at(R.chip)} { background: ${WOOD(0.12)}; color: ${T.cream}; text-shadow: ${WORD_ON_WOOD};
   border-color: ${T.woodLit} #2a180a ${T.outline} ${T.woodMid}; box-shadow: 0 0 0 1px ${T.outline}, 2px 2px 0 rgba(0,0,0,0.35); }
+/* AUDIT C&C S4: ...and the HUD's temperature plate, a chip of this wood, keeps its levels on it - the status tiles' own
+   amber and red (ui/enhancedStyle.js .hst-cell.warn / .danger, which this dress leaves as they are). The wood's frame
+   above outweighed the plate's level rules (three classes to two), and the plate wore the same wood felt, costing or
+   comfortable */
+${G} .hud-temp[data-level="warn"] { border-color: #f3cf86 #7a5424 #7a5424 #f3cf86; }
+${G} .hud-temp[data-level="danger"] { border-color: #ff9a7a #b53a2e #b53a2e #ff9a7a; }
 
 /* WELL - sunk into the board: a dark hollow with the light caught on its far lip */
 ${at(R.well)} { background-color: rgba(22,13,6,0.9); color: ${T.cream};
@@ -1352,7 +1362,7 @@ ${G} .wplaque, ${G} .wplaque-stats { background: ${v('page')} 0 0 / 355px auto r
 ${G} .sf-head h3 { color: ${T.red} !important; text-shadow: none !important; }
 ${G} .sf-head p, ${G} .sf-chips-k, ${G} .sf-err { color: ${T.ink} !important; text-shadow: none !important; opacity: 1 !important; }
 ${G} .sf-foot { color: ${T.inkSoft} !important; text-shadow: none !important; opacity: 1 !important; }
-${G} .statflip-btn, ${G} .wornac-total { background: ${v('page')} 0 0 / 355px auto repeat, rgba(227,201,149,0.96) !important; color: ${T.ink} !important;
+${G} .statflip-btn, ${G} .wornac-total, ${G} .worntemp-total { background: ${v('page')} 0 0 / 355px auto repeat, rgba(227,201,149,0.96) !important; color: ${T.ink} !important;
   text-shadow: none !important; opacity: 1 !important; border: 2px solid ${T.outline} !important; border-radius: 0 !important;
   box-shadow: inset 0 0 0 1px rgba(255,240,205,0.35), 2px 2px 0 rgba(0,0,0,0.45) !important; }
 ${G} .statflip-btn { padding: 2px 10px !important; }
@@ -1368,8 +1378,17 @@ ${G} .pack-shell .statflip .sf-page { max-width: 100% !important; min-width: 0 !
 ${G} .pack-shell .statflip .sf-tiles { grid-template-columns: repeat(auto-fit, minmax(min(100%, 84px), 1fr)) !important; }
 ${G} .pack-shell .statflip .sf-tile { min-width: 0 !important; overflow-wrap: break-word; }
 ${G} .statflip-btn:hover, ${G} .statflip-btn:focus-visible { color: ${T.red} !important; }
-${G} .wornac-total .k { color: ${T.inkSoft} !important; text-shadow: none !important; opacity: 1 !important; }
+${G} .wornac-total .k, ${G} .worntemp-total .k { color: ${T.inkSoft} !important; text-shadow: none !important; opacity: 1 !important; }
 ${G} .wornac-total .v { color: ${T.red} !important; text-shadow: none !important; opacity: 1 !important; }
+/* AUDIT C&C S4: the Felt plaque's number in the way its reading runs and its frame in its level, as the Plus plaque wears
+   them, in inks deepened for the page (TEMP_INK) - the Armour plaque's red ink painted every reading the colour of a
+   cost; and its costing mark (AUDIT C&C S14) inked on a scrap of the page */
+${G} .worntemp-total .v { color: ${T.ink} !important; text-shadow: none !important; opacity: 1 !important; }
+${G} .worntemp-total[data-side="cold"] .v { color: ${TEMP_INK.cold} !important; }
+${G} .worntemp-total[data-side="hot"] .v { color: ${TEMP_INK.hot} !important; }
+${G} .worntemp-total[data-level="warn"] { border-color: ${TEMP_INK.warn} !important; }
+${G} .worntemp-total[data-level="danger"] { border-color: ${T.red} !important; }
+${G} .worntemp-total[data-level="danger"]::after { color: ${T.red}; background: ${T.cream}; border-color: ${T.red}; text-shadow: none; }
 /* ...and written on it in ink (Dudey, of the quick loot: "no one can read that" - the HUD's pale outlined letters were
    left on the paper): every word dark and flat, the lit row in red, a tier's colour deepened to read on paper */
 ${G} :is(.wplaque, .wplaque-stats), ${G} :is(.wplaque, .wplaque-stats) * { color: ${T.ink} !important; text-shadow: none !important; -webkit-text-stroke: 0 !important; }

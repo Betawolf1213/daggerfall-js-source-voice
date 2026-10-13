@@ -165,7 +165,7 @@
   {
     "name": "ACCOMPARE-the-unidentified-piece-read-whole",
     "file": "src/ui/armourCard.js",
-    "old": "slotsThen[slot] = itemIsIdentified(item) ? item : { ...item, affixes: [] };",
+    "old": "slotsThen[slot] = asKnown(item);",
     "new": "slotsThen[slot] = item;",
     "tests": [
       "test/fb0929d_accompare.test.js"
@@ -291,7 +291,7 @@
   {
     "name": "ACCOMPARE-the-plaque-never-stands",
     "file": "src/ui/enhancedInventory.js",
-    "old": "  map.append(plaque);\n",
+    "old": "  plaques.append(armourPlaque(deps.entity));\n",
     "new": "",
     "tests": [
       "test/fb0929d_accompare.test.js"

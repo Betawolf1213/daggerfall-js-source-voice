@@ -935,7 +935,7 @@ function tickPlayerMinutesOnce({
   // for the HUD.
   let felt = null;
   if (survival && nowMinutes > lastMinutes) {
-    felt = runSurvivalMinutes(entity, lastMinutes, nowMinutes, survival.env ?? {}, { ...(survival.deps ?? {}), sinks: survival.deps?.sinks ?? sinks, rolls });
+    felt = runSurvivalMinutes(entity, lastMinutes, nowMinutes, survival.env ?? {}, { ...(survival.deps ?? {}), sinks: survival.deps?.sinks ?? sinks, rolls, skyFollows: !_sharedClock });   // AUDIT C&C E5: offline the sky is this clock, and a jump's minutes are felt at their own hour
   } else if (!survival) {
     clearSurvivalMods(entity);   // AUDIT SURV A: the mod off (or a host with no reader) leaves no drain behind
     if (!survivalOn() && nowMinutes > lastMinutes) pauseSurvival(entity, lastMinutes, nowMinutes);   // AUDIT SURV-TIERS: Off's minutes are nobody's needs (needs.js pauseSurvival) - a host with no reader while the arc is ON keeps WORLD5's clocks

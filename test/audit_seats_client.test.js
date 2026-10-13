@@ -32,7 +32,7 @@ import { createSiegeHerald, heraldMarks, heraldDue, fightAnnouncement, SIEGE_HER
 import { siegeBlowKind, siegeCastClamp, siegeSpellNumbers, siegeSpellBarred, SIEGE_SPELL_BARRED_TEXT, SIEGE_BARRED_EFFECTS } from '../src/combat/siegeCombat.js';
 import { SIEGE_HIT, SIEGE_CASTS, siegeRoomKey, royalRoomKey } from '../src/net/siegeRef.js';
 import { applySpell } from '../src/systems/effects.js';
-import { duelStub, duelAttackerOf } from '../src/combat/duelCombat.js';
+import { duelStandIn } from '../src/combat/duelCombat.js';
 import { createPlayerMagic } from '../src/scenes/hostMagic.js';
 import { registerLevitateWard, levitateWarded, setStaffPowers, registerFreeFlight } from '../src/characters/playerEntity.js';
 import { applyMotorEffectFlags } from '../src/scenes/shared.js';
@@ -570,7 +570,7 @@ test('AUDIT-SEATS G5 A SHAFT, A SPELL AND THE WARDS: an arrow\'s blow is a shaft
   assert.deepEqual([siegeBlowKind('arrow'), siegeBlowKind('melee'), siegeBlowKind(undefined)], [SIEGE_HIT.Shaft, SIEGE_HIT.Melee, SIEGE_HIT.Melee]);
   assert.deepEqual([siegeCastClamp(500), siegeCastClamp(500, true), siegeCastClamp(12.4), siegeCastClamp(-3), siegeCastClamp('x', true)], [SIEGE_CASTS.damageMax, SIEGE_CASTS.healMax, 12, 0, 0]);
   const me = { level: 10, raceId: 1, stats: { strength: 50, intelligence: 50, willpower: 50, agility: 50, endurance: 50, personality: 50, speed: 50, luck: 50 }, skills: new Array(40).fill(50), health: 100, maxHealth: 100, career: {}, activeEffects: [], items: [], equipTable: {} };
-  const stub = () => duelStub(duelAttackerOf(me)).stub;
+  const stub = () => duelStandIn();   // PIN MOVED (AUDIT C&C H5): the stand-in the hosts hand - a stub of my own sheet, until then
   const fire = { name: 'Fire', element: 0, rangeType: 2, effects: [eff(4, 0, 25)] };
   const heal = { name: 'Heal', element: 4, rangeType: 1, effects: [eff(10, 8, 30)] };
   const lowRoll = () => 0.01;   // a roll that saves against a spell landed at range

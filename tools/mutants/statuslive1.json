@@ -64,7 +64,7 @@
     "new": "    ...statusInfoRows(lines, macroContext),\n    ...healthStatusRows(entity, lines),",
     "tests": ["test/statuslive.test.js", "test/statusinfo.test.js"] },
   { "name": "the-survival-page-is-dropped", "file": "src/ui/statusBox.js",
-    "old": "  if (survival) rows.push('', ...survivalStatusRows(entity, survival.minutes, survival));",
+    "old": "  if (survival) rows.push('', ...survivalStatusRows(entity, survival.minutes, { rules: survivalRules(), ...survival }));",
     "new": "",
     "tests": ["test/statuslive.test.js", "test/surv5_ui.test.js"] },
   { "name": "the-panel-promises-a-click-it-does-not-honour", "file": "src/ui/enhancedNotice.js",

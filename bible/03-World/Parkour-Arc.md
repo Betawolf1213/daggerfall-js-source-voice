@@ -849,6 +849,8 @@ retail-shaped `xbase_anim_sh.nif` (Weapon Sheathing).
 - **First person** (`fpArm.js`): the arms are drawn in their own 60-degree lens, so each hand is put on its screen ray to
   the stone at a depth the arm reaches (`climbRequestToFirstPerson`, `RAY_REACH` 0.9). The weapon, the arrow and the torch
   are hidden while the hands are on the stone, and the weapon rig neither lowers nor returns them (`climbPosed`).
+  [CLIMB-HANDS II: it did return them whenever the weapon was not drawn - the arm's gate was `shown()`, the weapon's -
+  so a sheathed climber's arms were never on the screen; below.]
 - **Third person** maps the world targets into the rig's space under the body's feet and yaw
   (`climbRequestToRig`). The own body and every peer's body take the same law. A peer's track is rebuilt from its
   pose (`PeerClimbTrack`), and a move in flight reaches the others as `ck`/`cy`/`cd` on the wire (`climbOf`: a kind
@@ -947,8 +949,9 @@ by `combat/weaponRig.js`.
   screen (`climbRigInput` now says `classic`), and a leap's free flight draws none. On the classic lane only (not under the
   Morrowind arms), under the spell hands' vetoes and the held map's, above every sheathe gate: the hands hold the stone
   whatever is drawn. The weapon still lowers away under them (CLIMB4).
-- **The layout**: on DFU's 320x200 design surface, scaled like FPSWeapon. Two fists `GRIP_H` 150 tall, `GRIP_APART` 52 off
-  the middle, each sleeve `BOTTOM_SLACK` 34 under the bottom edge. No lift goes past that slack, so the cut sleeve never shows.
+- **The layout** [CLIMB-HANDS II: `GRIP_APART` 93, and the fists pinned to the wall, below]: on DFU's 320x200 design
+  surface, scaled like FPSWeapon. Two fists `GRIP_H` 150 tall, `GRIP_APART` 52 off the middle, each sleeve `BOTTOM_SLACK` 34
+  under the bottom edge. No lift goes past that slack, so the cut sleeve never shows.
 - **The animation** [AUDIT CLIMB-HANDS: superseded - the hands now run ClimbPose's own gaits and windows, below]: the hands come up quickly onto the wall and drop away a little slower. A hang sways on the arms. The
   shimmy lifts the hand the body goes toward and reaches that way, then the other closes up after it, a grip every
   `PARKOUR_HAND_SPAN`, the parkour law's span; a stop finishes onto the nearer grip. The free climb goes hand over hand, a
@@ -956,8 +959,9 @@ by `combat/weaponRig.js`.
   the hold and the weight lands on them; a mantle and a vault press down and let go over the top; a lower brings them up over
   the edge; a corner carries them round; a wall run reaches high. A grip under `PARKOUR_GRIP_LOW` trembles, harder the lower.
   Looking more than 50 degrees down, the hands go out of view.
-- **Looking away**: turned off the wall's face (from `LOOK_FROM_DEG` 40 to whole at `LOOK_FULL_DEG` 75, read off the wall's
-  normal), both fists drop out of the view and the reaching arm alone comes up anchored at one side of the screen (Mac: *"it needs to sit on the left/right side of the screen respectively"*; `REACH_W` 190 - a cut at 150 to keep it in its half was too small, Mac: *"they need to be the originasl size"*): looked right, at the left edge as painted, reaching across to the right; looked left, its mirror at the right edge (Mac: *"look left and right are on the wrong side of the screen"* - the first placement had each on the side looked to). It feels a little for a hold
+- **Looking away** [CLIMB-HANDS II: the arm of the side looked to, from that side - the right arm, mirrored, looked
+  right; the hand on its side lets go, the other stays on the stone; below]: turned off the wall's face (from
+  `LOOK_FROM_DEG` 40 to whole at `LOOK_FULL_DEG` 75, read off the wall's normal), both fists drop out of the view and the reaching arm alone comes up anchored at one side of the screen (Mac: *"it needs to sit on the left/right side of the screen respectively"*; `REACH_W` 190 - a cut at 150 to keep it in its half was too small, Mac: *"they need to be the originasl size"*): looked right, at the left edge as painted, reaching across to the right; looked left, its mirror at the right edge (Mac: *"look left and right are on the wrong side of the screen"* - the first placement had each on the side looked to). It feels a little for a hold
   (Mac, 2026-10-02: *"For look right/left dont use the hand aiming straight up. Only use the angled arm"* - the first cut
   kept the other fist holding at its edge). A move in flight keeps the hold's hands.
 - **Pinned**: `test/climbhands.test.js` (8).
@@ -1069,12 +1073,83 @@ changed motor and pose: 100 dead (two records re-aimed: the catch's speed, the s
 
 - **In game:** checked on contact sheets of the law's boxes (every state, frame by frame), not yet on a real install.
 - **The view's spring:** the hands follow the body's choreography and are camera-locked, as the Morrowind arms are: the
-  feel's dip, sway and roll move the view, not the hands.
+  feel's dip, sway and roll move the view, not the hands. [CLIMB-HANDS II: the look now carries them - pinned to the wall
+  through the view's turn and pitch; the feel's view-only dip, sway and roll still move the view and not them, as they
+  move the view and not the Morrowind arms' rays.]
 
 ### Records
 
 `test/auditclimbhands.test.js` (23), `test/climbhands.test.js` (8: three rewritten for the gaits),
 `tools/mutants/climbhands.json`.
+
+## CLIMB-HANDS II (2026-10-13): THE HANDS ON THE WALL, NOT ON THE SCREEN - SHIPPED
+
+Mac: *"With climbing. The sprite hands should be spread out more and the morrowind model should use climbing hands in first
+person. Additionally, the hands should stay on whatever your climbing and not rotate with the screen. The only one that
+should rotate with the screen is the single arm out. The single arm out is also inverted for both directions"*. Read
+against the arc's own record: the paintings are the classic lane's (CLIMB-HANDS: *"for the first person view (not
+morrowind)"*) and the Morrowind lane climbs on the Morrowind body (CLIMB6: *"use the morrowind model to get correct
+animations for everything"*), so "the morrowind model should use climbing hands" is CLIMB6's arms on the stone, which the
+first person never drew. Four findings, each pinned (`test/climbhands2.test.js`):
+
+- **The spread.** At `GRIP_APART` 52 the two fists' boxes met in the middle of the screen. It is 93 now, and not a tuned
+  number: the 3D body's wrists on the lip (`POSE.HANDS_APART`, `FACE_BACK` less `WRIST_OUT` ahead of the eye) as DFU's own
+  lens (defaults.ini's `FieldOfView`, 65 degrees vertical) shows them on the 320x200 surface - the two lanes' hands as far
+  apart in the picture.
+- **The fists were the screen's.** Laid out on the design surface and nothing else, they stayed put while a turn slid
+  the wall under them, and a look up or down did the same. Each fist's place is now the picture square to the climb's
+  frame and level - the frame being the body's facing on the climb (the snapshot's `yaw`, the motor's eased turn to the
+  wall, `bodyYawFor`), else its wall's - and its grip (`GRIP_AT` of its height down from the top, on the glove: the
+  painting's own pixel says so) is pinned there through the world's own lens (`climbLens`: the setting's field of view on
+  the strip the world was drawn into - a docked large HUD's shorter one, the retro pillarbox's place - brought back through
+  the hands' own scale and their lift on the bar) by the view's turn and pitch off that frame (`pinToView`). The turn is
+  exact - a rotation of the eye moves a point the same at any distance - so a fist goes where its stone goes and leaves the
+  view with it; so is the pitch, up and down the screen, while across it leaves the point on the column the level view
+  has it on (the true picture spreads a point toward the sides near the top and bottom of the view, where the paintings'
+  arms cannot follow). Up the screen the fists go only as far as the sleeve's slack (`BOTTOM_SLACK`, where the paintings'
+  arms end): looked down, they rise with the wall to it and wait, and steeply down (`DOWN_FROM_DEG`) they go out of the
+  view as before. That bound is also what keeps a hand gone under the edge - a pull-up's over the top - under it whatever
+  the look. The slack's clamp, AUDIT CLIMB-HANDS's one recorded equivalent ("no motion reaches it"), is load-bearing now: a
+  look down lifts the fists into it, and its mutant dies. The rig hands the law the frame's look and lens
+  (`weaponRig.js`, asked only while there are hands to lay out).
+- **The single arm out was the other hand's.** Looked right, the left arm (the painting as it is) came up in the left
+  half and reached across; looked left, its mirror on the right. The painting is a left arm - its pixels say so: the
+  sleeve comes in along its bottom's left, the open hand is up at its right - so looked right it is now drawn mirrored,
+  the right arm up from the right edge reaching in across the view, and looked left as painted from the left edge. It
+  alone is the screen's: neither the turn nor the pitch moves it (the search's sway, as before). The hand on its side lets
+  go of the stone as it comes up, in the same measure (the arm's own ease); the other holds on, and is on the wall the
+  moment the view comes back to it, where both fists used to rise again from below. Mac's earlier *"Only use the angled
+  arm"* still holds: the far hand's stone has carried its box out of the view before the look reaches `LOOK_FROM_DEG`, on
+  every field of view the setting allows and every screen shape (pinned from 4:3 to 32:9 at 60 to 120 degrees).
+- **The Morrowind arms climbed on an empty screen.** CLIMB6 poses them on the climb in first person - the hands on the
+  stone, on the screen where the stone is - but the weapon rig drew the arm only past `shown()`, the WEAPON's predicate.
+  Climbing sheathed, the everyday case, the arm never drew, and the sprite lane's hands are the classic lane's
+  (`!fpArm.active()`): the Morrowind lane climbed on an empty screen. The arms on the climb are the arm gate's sixth
+  exception, on the rule the torch's, the held sheet's, the shield's, the sliding gun's and the casting hands' each
+  followed - a thing that is not a drawn weapon does not wait on the weapon's gate - and open it exactly where the arm
+  paints the climb (`climbPosed`: first person, the pose's weight on the hands, no sheet in them), the same answer the
+  lowering under it reads; the arm hides the weapon, the arrow and the torch while it climbs, as it did. And the Weapon
+  Widget's channels are not laid over the arms while their hands are on the stone: Inertia made them lag the look, and
+  Bob's sway is the weapon's.
+
+**What it leaves as it was.** The Morrowind arms' exit from the climb is CLIMB4's and CLIMB6's: at the climb's end the
+posed arms are gone in a frame (a weapon drawn, its arms rise back from below as the lowering eases off). A pull-up's and
+a vault's hands have let go by then; a let-go from the hang still cuts, on either stance. The view's feel (the dip, the
+sway, the roll) still moves the view and not the hands, on both lanes.
+
+**Not yet seen in game.** Checked on contact sheets of the law's boxes with Mac's two paintings over a wall grid
+projected through the same lens (every turn, look and the reach), not on a real install; the Morrowind arms' gate by the
+rig's own draw with the arm stubbed.
+
+**Records**: `test/climbhands2.test.js` (9). Pins moved, each marked: `test/climbhands.test.js` (the look away, the
+draw's mirror, the rig's line), `test/auditclimbhands.test.js` (A16), the arm gate's line in `test/mwcast1.test.js`,
+`test/ht1_handheldtorches.test.js`, `test/map3_heldpose.test.js` and `test/thunderlock.test.js`, and the widget's in
+`test/ww1_weaponwidget.test.js`. **Mutants**: `tools/mutants/climbhands2.json` (21, all dead; the first run left two
+alive - the depth guard behind the eye, which the first pin's point also tripped the pitch guard on, and the slack's bound
+on a gone hand, whose first pin looked down too little for a pull-up's exit to show it - each pinned since);
+`tools/mutants/climbhands.json` re-run whole (68, all dead - four records re-aimed by content, each still putting back
+the behaviour its name says, and the slack's clamp no longer equivalent); the arm gate's three records in
+`tools/mutants/mwcast1.json`, `sw1.json` and `torchvis.json` re-aimed at the line that now carries six legs (all dead).
 
 ## AUDIT CLIMB-DUNGEON (FIELD BUGS 2026-10-02): THE CLIMB IN DAGGERFALL'S DUNGEONS
 
@@ -1121,5 +1196,6 @@ the leaning top past 50 degrees, and a 2 m by 0.4 m niche whose lintel the hang 
 - **Real geometry**: `test/climbreal.test.js`'s real half ran with the freeware ARENA2 (`tools/fetch-data.sh`) during
   AUDIT CLIMB-ARC and AUDIT CLIMB-FIELD and passed. The full real-data suite has not been run end to end, and the
   climb has still not been looked at in a browser on a real town.
-- **CLIMB6 in game**: the climb on the Morrowind body is pinned and shaped, but not yet looked at on a real install.
+- **CLIMB6 in game**: the climb on the Morrowind body is pinned and shaped, but not yet looked at on a real install -
+  nor, until CLIMB-HANDS II opened the arm's gate to it, ever drawn in first person for a climber with no weapon out.
 - **The relay**: world141 is not yet deployed; until it is, the others see a climber as before.

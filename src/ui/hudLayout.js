@@ -35,6 +35,10 @@ export const HUD_PIECES = Object.freeze([
   // (its own press, beside the X); a dress that draws a compass with a top and a bottom (DFO Grimoire's, hung from the
   // screen's top) stands it up again when it is turned. The flag rides the piece's layout and Reset clears it
   { id: 'compass', sel: '.hud .hud-compass', name: 'Compass', len: true, turn: true },
+  // AUDIT C&C S3: the temperature plate stands INSIDE the compass in the page (ui/enhancedHud.js, off its right end) but
+  // is its own piece, as the status widget is the quick block's - the compass's move and size undone on it, its own X:
+  // the compass's X hid the plate with it while the plate's own part stood on
+  { id: 'temp', sel: '.hud .hud-temp', name: 'Temperature', inside: 'compass' },
   // `dummy`: hidden until there is something to show (no foe targeted) - while unlocked it stands as a preview to move
   { id: 'foe', sel: '.hud .hud-foe', name: 'Target bar', dummy: true, len: true },
   { id: 'hotbar', sel: '.hud .hb', name: 'Hotbar' },
@@ -124,6 +128,8 @@ ${MOVED} { translate: var(--hmx, 0px) var(--hmy, 0px); scale: var(--hms, 1); }
 [data-hm-off][data-hm-edit] { opacity: 0.35 !important; filter: grayscale(1) !important; outline-color: #8b8578 !important; }
 /* the quick block turned off leaves the buffs (their own piece) standing, unless they are off too */
 .hud-quick[data-hm-off]:not([data-hm-edit]) .hud-stat[data-hm]:not([data-hm-off]) { visibility: visible !important; }
+/* AUDIT C&C S3: ...and the compass turned off leaves the temperature plate (its own piece) standing, unless it is off too */
+.hud-compass[data-hm-off]:not([data-hm-edit]) .hud-temp[data-hm]:not([data-hm-off]) { visibility: visible !important; }
 /* LENGTH (only once a piece's length is changed - the sheet's own widths, small-screen ones too, stand until then) */
 .hud .hud-bars[data-hm-len] .hud-vital .hud-track, .hud .hud-bars .hud-vital[data-hm-len] .hud-track {
   width: calc(min(190px, 23vw) * var(--hml-g, 1) * var(--hml-b, 1)) !important; }

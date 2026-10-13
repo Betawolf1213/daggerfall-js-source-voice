@@ -32,13 +32,13 @@ const deps = (said, extra = {}) => ({ worn: kit(), ctx: { raceId: RACES.Redguard
 const live = (e, from, mins, env, d) => { let t = null; for (let m = from + 1; m <= from + mins; m++) t = survivalMinute(e, m, env, d); return t; };
 const woods = (hour, weather, inside = false) => ({ climateIndex: CLIMATES.Woodlands, month: EVENING_STAR, hour, weather, insideBuilding: inside });
 
-test('WARM-SAID: the report - a Woodlands winter soak, then an inn: the snow says drenched and deadly cold once each; indoors the thaw says "You are warming up." once as it leaves the red and the drying says "You have dried off." once at dry - the stages between say nothing (mutants: no recovery line; said every minute it improves; the wet dried at wet; freezing not red; the lines swapped)', () => {
+test('WARM-SAID: the report - a Woodlands winter soak, then an inn: the rain says drenched and deadly cold once each; indoors the thaw says "You are warming up." once as it leaves the red and the drying says "You have dried off." once at dry - the stages between say nothing (mutants: no recovery line; said every minute it improves; the wet dried at wet; freezing not red; the lines swapped)', () => {
   const e = body(); const said = [];
   let now = EVENING_STAR * 30 * 1440 + 10 * 60;
   e.survival = { ...newSurvival(now), lastMinute: now };
-  live(e, now, 360, woods(12, 'snow'), deps(said)); now += 360;
+  live(e, now, 360, woods(12, 'rain'), deps(said)); now += 360;   // AUDIT C&C T2: rain, through a cloak drawn hood down (the mod's snow keeps any cloak dry)
   assert.equal(wetStage(e.survival.wet), 'drenched');
-  assert.equal(temperatureWord(e.survival.felt), 'deadly cold', `six hours in the snow: ${e.survival.felt}`);
+  assert.equal(temperatureWord(e.survival.felt), 'deadly cold', `six hours in the rain: ${e.survival.felt}`);
   assert.deepEqual(said.filter((t) => [SURVIVAL_TEXT.drenched, SURVIVAL_TEXT.deadly].includes(t)).length, 2, 'each worst stage said once');
   said.length = 0;
   let warmedAt = null, driedAt = null;

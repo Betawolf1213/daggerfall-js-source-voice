@@ -38,8 +38,8 @@
   {
     "name": "TAVERN-DRINK-the-quarter-hour-lost",
     "file": "src/systems/survival/tavernMenu.js",
-    "old": "  return { text: TAVERN_MENU_TEXT.fortified, blackout: false, minutes: DRINK_MINUTES };",
-    "new": "  return { text: TAVERN_MENU_TEXT.fortified, blackout: false, minutes: 0 };",
+    "old": "  return { text: TAVERN_MENU_TEXT.refreshed, blackout: false, minutes: DRINK_MINUTES, fatigue: SOFT_DRINK_FATIGUE, magicka: 0 };",
+    "new": "  return { text: TAVERN_MENU_TEXT.refreshed, blackout: false, minutes: 0, fatigue: SOFT_DRINK_FATIGUE, magicka: 0 };",
     "tests": [
       "test/fb0930_cc_drink.test.js"
     ]

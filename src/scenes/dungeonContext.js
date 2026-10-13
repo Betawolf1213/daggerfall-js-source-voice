@@ -71,7 +71,7 @@ import { liveVampirism } from '../systems/racialLive.js';   // SURV5: the vampir
 import { survivalOn } from '../systems/survival/switch.js';
 import { survivalFeed, installSurvivalGate, uninstallSurvivalGate } from '../systems/survival/env.js';   // SURV7: the needs' feed and the rest gate; AUDIT SURV B/C: and off the seam at the teardown
 import { registerPreventRestCondition, unregisterPreventRestCondition } from '../systems/restSession.js';   // SURV7: the gate's seam
-import { runSurvivalMinutes } from '../systems/survival/needs.js';   // AUDIT SURV B: the dungeon's rest pays its night asleep
+import { runSurvivalMinutes, markOutCold } from '../systems/survival/needs.js';   // AUDIT SURV B: the dungeon's rest pays its night asleep; AUDIT C&C N2: the collapse's hour a night on the ground
 import { addCorpseFood } from '../systems/survival/loot.js';   // CORPSE-FOOD: a joiner's copy of a body rolls its own food
 import { dateFromClassicMinutes } from '../systems/gameDate.js';   // SURV7: the env's month
 import { playerEntity, surfacePlayer, hurtPlayer as hurtEntity, damageShieldPool, setDeathPresenter, setAvoidDeathHook, staffFly, levitateWarded } from '../characters/playerEntity.js';   // AUDIT 58: DecreaseHealth's shield hook is the BASE class's, so every entity's door owes it
@@ -191,7 +191,7 @@ import { isEquipped } from '../systems/equip.js';   // DR1: FilterLocalItems' `!
 import { totalGoldAmount } from '../systems/court.js';   // DR1: the trade screen's gold strip - AUDIT 58: PlayerEntity.GetGoldAmount (:1313-1316), coins PLUS letters
 import { isAzurasStarEquipped, registerFoeDoor } from '../systems/artifactEffects.js';   // V3: the Star's kill capture; AUDIT PSCALE1 DOORS-2: Namira's reflection through this pool's door
 import { applySpell, hasActiveEffect, isEntityWaterWalking, entityIsParalyzed, maxFatigue, applyEnemyMotorEffectFlags, concealmentFlags, concealFlagsOfBits, isSoulTrapEffect, spellSways } from '../systems/effects.js';   // A5: the enemy Levitate arm, the foe-target concealment closure + EntityConcealmentBehaviour's visual
-import { liveStat, killIfAnyLiveStatZero } from '../systems/statMods.js';
+import { liveStat, killIfAnyLiveStatZero, clampFatigue } from '../systems/statMods.js';   // AUDIT C&C N5: SetFatigue's clamp
 import { breathStep } from '../systems/breath.js';
 import { onMonsterHit, SPIDER_TOUCH_SPELL_INDEX } from '../systems/diseases.js';
 import { inflictPoison } from '../systems/poisons.js';
@@ -3190,7 +3190,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   let _restFromBed = false;   // CSA-J (the audit): the rest press is a bed's - BedActivation's gate has no GiveOffer rung (RoleplayRealism.cs:487-525)
   function drainFatigue(n) {
     if (n <= 0) return;
-    playerEntity.fatigue = Math.max(0, (playerEntity.fatigue ?? 0) - n);
+    playerEntity.fatigue = clampFatigue(playerEntity, (playerEntity.fatigue ?? 0) - n);   // AUDIT C&C N5: SetFatigue's clamp, the ceiling too
     surfacePlayer();
     if (playerEntity.fatigue <= 0 && playerEntity.health > 0 && !exhaustedShowing()) onExhausted();
   }
@@ -3223,6 +3223,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // AUDIT 68 S19-exhaustion-latch-stuck: a PUSH (ROAD-B B5) - DaggerfallUI.MessageBox never asks what else is open.
     if (lines) { _exhaustedBox = new ActionTextBox(lines); pushDungeonWindow(_exhaustedBox); }
     if (out.kind === 'rest') {
+      markOutCold(playerEntity);   // AUDIT C&C N2: the hour the next frame walks is a night on the ground for the needs (world.js's twin)
       advanceOwnMinutes(60);   // RaiseTime(1 hour) - the round loop catches up the magic rounds; TIME3: counted, as every raise is
       playerEntity.health = Math.min(playerEntity.maxHealth, playerEntity.health + out.health);
       playerEntity.fatigue = Math.min(maxFatigue(playerEntity), (playerEntity.fatigue ?? 0) + out.fatigue);
@@ -4100,16 +4101,20 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   // sweep here: in a world room a camp is the room's, as an opened chest is.
   // SURV7 - THE SURVIVAL ENV, underground: the outer host's reading
   // (the climate, the month, the resistances) with the flags this host
-  // owns - the floor, no sun or water, the fire on the floor; the
-  // standalone scene has no outer host and reads the clock itself.
+  // owns - the floor, no sun, the fire on the floor, and its own water
+  // (AUDIT TEMP-UI E2: a swim in a flooded hall soaked nobody - the
+  // swimming here was a hard-coded false); the standalone scene has no
+  // outer host and reads the clock itself.
   const survivalEnvNow = () => {
     const outer = opts.survivalEnv?.() ?? null;
     const wm = skyMinutes();   // LIVED1: the month and the hour the air is felt at are the sky's; TIME1: its own clock
     return {
       climateIndex: 232, month: dateFromClassicMinutes(wm).month, hour: (((wm % 1440) + 1440) % 1440) / 60,
       ...(outer ?? {}),
-      insideBuilding: false, insideDungeon: true, inSunlight: false, swimming: false, transport: false,
+      insideBuilding: false, insideDungeon: true, inSunlight: false, swimming: !!_activity.swimming, transport: false,
+      submerged: _submergedNow,   // AUDIT C&C (lens T D3): the head under the hall's water soaks at once; a swim on its surface wades (env.js)
       byFire: !!(_fpFeet && camps.byFire(_fpFeet)),
+      castle: !!(_fpFeet && castleBlockAt(_fpFeet[0], _fpFeet[2])),   // AUDIT C&C (lens T): a palace's hall reads as the mod's Dungeon() reads it, and says so - not "Underground"
       resting: !!playerEntity.isResting, sleeping: playerEntity.isResting && !playerEntity.isLoitering ? (playerEntity.restKind ?? 'rough') : null,
     };
   };

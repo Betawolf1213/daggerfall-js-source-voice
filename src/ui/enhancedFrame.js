@@ -191,7 +191,7 @@ export const FRAME_ROLES = {
     'body .dfnaval-choice'],   // NAV-F: the captor's three choices - the one taken brass
   // HOLDINGS: where a holding is (`.hld-state`)
   chip: ['body .rvncard-rank', '.px-sys .rvn-rank', '.px-sys .hld-state', '.px-sys .fam-chip',   // LEGACY3: a person's state
-     'body .rvncard-mood', '.px-sys .rvn-mood', '.pack-shell .fate-mood', '.px-sys .cmp-rank', '.px-sys .cmp-mood', '.hud-qspell', '.pack-shell .sf-tile', '.pack-shell .sf-pill', '.hud-qstag', '.hud-readied', '.lv-note-key',   // (UI3: the effect and need chips are the status widget's tiles now)
+     'body .rvncard-mood', '.px-sys .rvn-mood', '.pack-shell .fate-mood', '.px-sys .cmp-rank', '.px-sys .cmp-mood', '.hud-qspell', '.hud-temp', '.pack-shell .sf-tile', '.pack-shell .sf-pill', '.hud-qstag', '.hud-readied', '.lv-note-key',   // (UI3: the effect and need chips are the status widget's tiles now)
     '.shell .subbtn .count', '.hb .hb-caption',
     'body .dfnaval-chip', 'body .dfnaval-gun',   // NAV-F: the plate's fire/brace chips and the battery rose - readouts, never pressed
     'body .arena-timer', 'body .arena-tag',

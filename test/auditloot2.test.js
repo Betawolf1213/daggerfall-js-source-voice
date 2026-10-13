@@ -99,7 +99,7 @@ test('AUDIT LOOT II A2: a Legendary garment\'s degrees come off the felt number 
   const robes = () => LR.applyRarity(garment(rec.templates[0]), 'legendary', () => 0, [rec]);
   const robed = wear(player(), robes()), twin = wear(player(), { ...robes(), legendary: null });
   const night = { climateIndex: CLIMATES.Desert, month: 0, hour: 2, weather: 'sunny', insideBuilding: false };
-  const worn = (e, env) => felt(env, wardrobeCtx({}, e._mods), e.equip.slots);
+  const worn = (e, env) => felt(env, wardrobeCtx(e._mods), e.equip.slots);
   assert.ok(worn(twin, night) < 0, 'a desert night is cold');
   assert.equal(worn(robed, night), worn(twin, night), 'the robes leave it as it was');
   assert.equal(worn(robed, HOT), Math.max(0, worn(twin, HOT) - 20), 'and take their twenty off the noon');

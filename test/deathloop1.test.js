@@ -310,8 +310,8 @@ test('DEATHLOOP2: survival exposure is left LETHAL - the design is not what was 
   // AUDIT SURV-TIERS (the second pass): unfloored in the minute the player STANDS in; a REPLAYED minute (a jump) is
   // floored, SURV-THIRST1's law for the other harm that kills - so a fast travel cannot arrive dead, and the next
   // live minute in the heat or the cold still can
-  assert.match(needs, /if \(rules\.health && abs > NEED\.DAMAGE_AT && !sleeping && harmTick\) \{\n\s*const bite = Math\.max\(1, Math\.trunc\(\(abs - 40\) \/ 10\)\);\n\s*if \(!replay\) sinks\.hurt\?\.\(bite\);/,
-    'the temperature harm reaches sinks.hurt unfloored, as designed');
+  assert.match(needs, /if \(rules\.health && abs > NEED\.DAMAGE_AT && !sleeping && harmTick\) \{\n\s*const bite = Math\.max\(1, Math\.trunc\(\(abs - 40\) \/ 10\)\);\n\s*if \(!replay && !landing\) sinks\.hurt\?\.\(bite\);/,
+    'the temperature harm reaches sinks.hurt unfloored, as designed - in a minute LIVED (PIN MOVED, AUDIT TEMP-UI E6: a jump\'s landing minute floors too, or the arrival killed one landing in ten)');
   assert.match(needs, /they are not meant to kill, and this one is/,
     'and the departure is stated where it is taken');
   // the floored helper is still used by the harms that are NOT meant to kill

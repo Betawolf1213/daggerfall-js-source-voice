@@ -10,7 +10,7 @@
 import { test, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { tavernMenu, tavernDrink, DRINK_STRENGTH, DRINK_MINUTES, TAVERN_MENU_TEXT } from '../src/systems/survival/tavernMenu.js';
+import { tavernMenu, tavernDrink, DRINK_ALCOHOL, DRINK_MINUTES, TAVERN_MENU_TEXT } from '../src/systems/survival/tavernMenu.js';
 import { survivalOf, thirstStage, NEED, SURVIVAL_TEXT } from '../src/systems/survival/needs.js';
 import { SURVIVAL_RULES } from '../src/systems/survival/difficulty.js';
 import { SURVIVAL_PREF } from '../src/systems/survival/switch.js';
@@ -58,7 +58,7 @@ test('TAVERN-DRINK: the report - a dehydrated Casual traveller buys one soft dri
   w._food();
   const drink = softDrink();
   const out = w.flow.top.onPick(w.flow.top.picker.indexOf(drink.text));
-  assert.equal(out[0].rows[0].text, TAVERN_MENU_TEXT.fortified, 'poured and said');
+  assert.equal(out[0].rows[0].text, TAVERN_MENU_TEXT.refreshed, 'poured and said');   // PIN MOVED (AUDIT C&C I6): a soft drink refreshes - "fortifies" was said over the milk
   assert.equal(p.goldPieces, 100 - drink.price, 'paid for');
   assert.equal(Math.floor(ownMinutes()), INN_AT + DRINK_MINUTES, 'the quarter hour stands');
   assert.equal(thirstStage(p.survival.thirst), 'fine', `one drink leaves the red and the thirst (${p.survival.thirst.toFixed(1)} after its quarter hour)`);
@@ -68,17 +68,21 @@ test('TAVERN-DRINK: the report - a dehydrated Casual traveller buys one soft dri
   assert.ok(said.includes(SURVIVAL_TEXT.repaid), 'and the strength returning is said');
 });
 
-test('TAVERN-DRINK: every kind quenches whole - milk, ale, wine and spirit alike; the drunk counter by kind and the quarter hour stand, and Hard\'s blackout is still past the endurance (mutants: only a soft drink quenches; the drink takes forty again; the drink quenches nothing; the quench drops the drink\'s count; the quarter hour lost)', () => {
-  for (const [kind, strength] of Object.entries(DRINK_STRENGTH)) {
+test('TAVERN-DRINK: every kind quenches whole - milk, ale, wine and spirit alike; the drunk counter by its alcohol and the quarter hour stand, and Hard\'s blackout is still past the endurance (mutants: only a soft drink quenches; the drink takes forty again; the drink quenches nothing; the quench drops the drink\'s count; the quarter hour lost)', () => {
+  // PIN MOVED (AUDIT C&C I8): a drink counts its own alcohol, the mod's by its place in its list (DRINK_ALCOHOL), not a
+  // kind the port guessed from its name - every alcohol the mod's lists pour, nought (the soft ones) to forty
+  const alcohols = [...new Set(Object.values(DRINK_ALCOHOL).flat())].sort((a, b) => a - b);
+  assert.deepEqual(alcohols, [0, 10, 12, 15, 20, 25, 30, 40]);
+  for (const strength of alcohols) {
     const s = { thirst: NEED.THIRST_MAX, drunk: 5 };
     const r = tavernDrink(s, strength, { endurance: 50, rules: SURVIVAL_RULES.casual });
-    assert.equal(s.thirst, 0, `${kind}: the thirst whole`);
-    assert.equal(s.drunk, 5 + strength, `${kind}: counted by its kind`);
-    assert.equal(r.minutes, DRINK_MINUTES, `${kind}: a quarter hour`);
+    assert.equal(s.thirst, 0, `${strength}: the thirst whole`);
+    assert.equal(s.drunk, 5 + strength, `${strength}: counted by its alcohol`);
+    assert.equal(r.minutes, DRINK_MINUTES, `${strength}: a quarter hour`);
   }
   const s = { thirst: 60, drunk: 20 };
-  const r = tavernDrink(s, DRINK_STRENGTH.spirit, { endurance: 50, rules: SURVIVAL_RULES.hard });
-  assert.deepEqual([s.thirst, s.drunk, r.blackout], [0, 55, true], 'Hard: a spirit past the endurance quenches and blacks out');
+  const r = tavernDrink(s, 40, { endurance: 50, rules: SURVIVAL_RULES.hard });
+  assert.deepEqual([s.thirst, s.drunk, r.blackout], [0, 60, true], 'Hard: a Nereid Wine past the endurance quenches and blacks out');
   const dry = { thirst: 0, drunk: 0 };
   tavernDrink(dry, 0);
   assert.equal(dry.thirst, 0, 'no thirst stays no thirst');
@@ -95,9 +99,9 @@ test('TAVERN-DRINK: the enhanced window pours the same law - one ale from Dehydr
       const view = mountEnhancedTavern(host, { entity: p, ...hooksOn(p), onExit: () => {} });
       const text = (n) => (n.textContent || '') + n.children.map(text).join(' ');
       dom.doc.querySelectorAll('.tavern-act').find((b) => b.textContent === 'Food & drink').onclick();
-      const ale = tavernMenu({ climateIndex: CLIMATES.Desert, quality: 10, hour: 13 }).rows.find((r) => r.kind === 'drink' && r.strength === DRINK_STRENGTH.ale);
+      const ale = tavernMenu({ climateIndex: CLIMATES.Desert, quality: 10, hour: 13 }).rows.find((r) => r.kind === 'drink' && r.strength === 10);   // PIN MOVED (AUDIT C&C I8): the South's Beer, alcoMid's 10
       dom.doc.querySelectorAll('.tavern-row').find((r) => text(r).includes(ale.name)).onclick();
-      assert.ok(p.survival.drunk > 0 && p.survival.drunk <= DRINK_STRENGTH.ale, `the ale counted (${p.survival.drunk} - its quarter hour sobers a point a ten minutes)`);
+      assert.ok(p.survival.drunk > 0 && p.survival.drunk <= 10, `the ale counted (${p.survival.drunk} - its quarter hour sobers a point a ten minutes)`);
       assert.equal(thirstStage(p.survival.thirst), 'fine', 'and quenched whole');
       assert.equal(p.survival.borrowed, undefined, 'the loan back in the same pick');
       view?.unmount?.();

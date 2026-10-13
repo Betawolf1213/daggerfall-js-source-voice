@@ -101,8 +101,8 @@
   {
     "name": "PACK-PHONE-the-body-always-hidden",
     "file": "src/ui/enhancedStyle.js",
-    "old": "  .pack-shell:not(.showdoll) .wornmap-doll, .pack-shell:not(.showdoll) .wornmap .wornac-total { display: none; }",
-    "new": "  .pack-shell .wornmap-doll, .pack-shell .wornmap .wornac-total { display: none; }",
+    "old": "  .pack-shell:not(.showdoll) .wornmap-doll, .pack-shell:not(.showdoll) .wornmap .wornac-total, .pack-shell:not(.showdoll) .wornmap .worntemp-total { display: none; }",
+    "new": "  .pack-shell .wornmap-doll, .pack-shell .wornmap .wornac-total, .pack-shell .wornmap .worntemp-total { display: none; }",
     "tests": [
       "test/fb0930_packphone.test.js"
     ]

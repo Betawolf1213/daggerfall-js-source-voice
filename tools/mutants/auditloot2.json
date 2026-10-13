@@ -24,7 +24,8 @@
     "new": "    frostResist: (ctx?.frostResist ?? 0) + (Number(mods.coldDegrees) || 0), fireResist: (ctx?.fireResist ?? 0) + (Number(mods.heatDegrees) || 0),",
     "tests": [
       "test/auditloot2.test.js",
-      "test/loot15_garments.test.js"
+      "test/loot15_garments.test.js",
+      "test/tempui.test.js"
     ]
   },
   {

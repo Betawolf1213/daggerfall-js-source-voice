@@ -30,7 +30,8 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and EG-E2's BOARD WINDOW (`egBoardWindow.js`: the Elite Breach's three boards as tabs - the Descent's brackets, the Depths, the Deepest Redoubts - an enhanced panel and the classic skin's DFU pickers; `11-Multiplayer/Elite-Gates.md` section 20)
 - and EG-G1's four (`egSpireHud.js`: the Spire's HUD by form factor, THE COUNT CHIP, the arrival card, the objective, the door's marker, the lord's bar, touch and the pad; `egBeats.js`: every event's sight, sound and words, the first breach's lines; `egParty.js`: the company's state on the party rows; `egAccess.js`: the danger palette, the fill and reduced motion; `11-Multiplayer/Elite-Gates.md` section 27)
 - and EG-F's START WINDOW and ARCH MARK (`egStartWindow.js`: where a Weir Key's breach starts - the stake, the choices and the company's ticks, the Wager, the Rehearsal, over DFU's list picker; `egArchMapMark.js`: the company's arch on the held map, in its gold; `11-Multiplayer/Elite-Gates.md` section 31, EG-F)
-359 modules
+- and TEMP-UI's PACK TEMPERATURE (`temperatureCard.js`: the felt temperature on the enhanced pack's figure, a wearable's card and the Stats side - live, over the minute law's own sum; `06-Systems/Climates-Calories.md` TEMP-UI)
+360 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.

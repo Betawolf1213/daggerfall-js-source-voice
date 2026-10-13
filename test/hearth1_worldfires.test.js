@@ -144,7 +144,9 @@ test('HEARTH1: a world fire is nobody’s - it opens the cooking list and nothin
   // REST2 (bible/06-Systems/Rest-Arc.md): AND, ONLINE, RESTED AT. A rest online is an act at a fire (systems/restAct.js),
   // so a brazier's rows are Rest and Cook - the plaque's lit one, or their list without a plaque; offline it cooks, as
   // HEARTH1 had it. [SUPERSEDES "cannot be rested at as an ACT", for the online lane.]
-  assert.match(c, /if \(mode === 'info' \|\| mode === 'dialogue'\) \{ say\(CAMP_TEXT\.seeHearth\); return true; \}[\s\S]{0,400}?if \(lit === 'rest'\) \{ openRest\?\.\(null\); return true; \}\s*\n\s*if \(lit === 'cook' \|\| !sharedClockOn\(\)\) \{ openCook\(null\); return true; \}/,
+  // AUDIT C&C (lens I, PIN MOVED): the Rest row asks the place's reach first (`restAtHearth`) - test/auditcc_items.test.js
+  // drives it from the plaque and from the list.
+  assert.match(c, /if \(mode === 'info' \|\| mode === 'dialogue'\) \{ say\(CAMP_TEXT\.seeHearth\); return true; \}[\s\S]{0,400}?if \(lit === 'rest'\) \{ restAtHearth\(\); return true; \}\s*\n\s*if \(lit === 'cook' \|\| !sharedClockOn\(\)\) \{ openCook\(null\); return true; \}/,
     'named, or cooked on - REST2: or, online, rested at');
   assert.ok(CAMP_TEXT.seeHearth && CAMP_TEXT.seeHearth !== CAMP_TEXT.seeFire, 'and it says it is not your campfire');
   // openCook takes a NULL camp for it, and skips the burn-down test a
@@ -206,7 +208,7 @@ test('HEARTH1: warmth and drying follow, because they are the same reader', asyn
   assert.ok(warm.felt > cold.felt, 'a fire is warmer than no fire');
   assert.equal(cold.fire, 0, 'no fire is no term');
   assert.equal(warm.fire, 15, 'and it is the law’s own fifteen degrees, not a new number');
-  assert.match(read('src/systems/survival/needs.js'), /if \(env\.byFire \|\| env\.insideBuilding\) dry \+= 2;/, 'the drying rides the same flag');
+  assert.match(read('src/systems/survival/needs.js'), /if \(env\.byFire \|\| env\.insideBuilding \|\| env\.sheltered\) dry \+= 2;/, 'the drying rides the same flag (AUDIT C&C I2, PIN MOVED: and a rest at a tent\'s roof)');
 });
 
 

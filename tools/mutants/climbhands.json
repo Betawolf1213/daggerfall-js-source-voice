@@ -41,31 +41,34 @@
   {
     "name": "CLIMBHANDS-reach-mirrored-wrong",
     "file": "src/combat/climbHands.js",
-    "old": "flip: side === 'L' };",
-    "new": "flip: side === 'R' };",
+    "old": "flip: side === 'R' };",
+    "new": "flip: side === 'L' };",
     "tests": [
       "test/climbhands.test.js",
-      "test/auditclimbhands.test.js"
+      "test/auditclimbhands.test.js",
+      "test/climbhands2.test.js"
     ]
   },
   {
     "name": "CLIMBHANDS-reach-on-the-look-side",
     "file": "src/combat/climbHands.js",
-    "old": "const x = side === 'R' ? xl : NATIVE_W - xl - rw;",
-    "new": "const x = side === 'L' ? xl : NATIVE_W - xl - rw;",
+    "old": "const x = side === 'R' ? NATIVE_W - xl - rw : xl;",
+    "new": "const x = side === 'R' ? xl : NATIVE_W - xl - rw;",
     "tests": [
       "test/climbhands.test.js",
-      "test/auditclimbhands.test.js"
+      "test/auditclimbhands.test.js",
+      "test/climbhands2.test.js"
     ]
   },
   {
     "name": "CLIMBHANDS-fists-stay-looking-away",
     "file": "src/combat/climbHands.js",
-    "old": "y += smooth(a) * OUT;",
-    "new": "y += 0;",
+    "old": "y += enter + gone + smooth(this.letGo[s]) * OUT;",
+    "new": "y += enter + gone;",
     "tests": [
       "test/climbhands.test.js",
-      "test/auditclimbhands.test.js"
+      "test/auditclimbhands.test.js",
+      "test/climbhands2.test.js"
     ]
   },
   {
@@ -95,10 +98,9 @@
     "new": "y = y;   // never lifted past the sleeve's slack",
     "tests": [
       "test/climbhands.test.js",
-      "test/auditclimbhands.test.js"
-    ],
-    "equivalent": true,
-    "why": "Belt and braces: no motion reaches the slack - the free climb's highest reach (half the duty's stride, 30.7 px) and the tremble's 2.4 px stay under BOTTOM_SLACK's 34; the shimmy's lift with the landing's swing under 25. Kept so a retuned constant cannot show the cut sleeve."
+      "test/auditclimbhands.test.js",
+      "test/climbhands2.test.js"
+    ]
   },
   {
     "name": "CLIMBHANDS-mirror-uv-dropped",
@@ -413,11 +415,12 @@
   {
     "name": "AUDIT-CLIMBHANDS-fists-up-with-the-arm",
     "file": "src/combat/climbHands.js",
-    "old": "const a = this.look, side = this.side;",
-    "new": "const a = this.arm, side = this.side;",
+    "old": "const t = s === this.side ? this.look : 0;",
+    "new": "const t = s === this.side ? this.arm : 0;",
     "tests": [
       "test/climbhands.test.js",
-      "test/auditclimbhands.test.js"
+      "test/auditclimbhands.test.js",
+      "test/climbhands2.test.js"
     ]
   },
   {

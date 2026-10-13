@@ -175,7 +175,8 @@ Pre-existing survivors met on the way, each judged again alone on main and survi
 - none is in a file or a test this branch touches but the first two: `loot16.json` LOOT16-a-row-of-nothing (Bad
 Reactions From fits every piece, so the curse's row filter is never empty), `auditmap.json` glide-unclamped,
 `audit625.json` AUDIT625-D3-a-range-the-tools-cannot-read, `auditsetc.json` AUDIT-SET-the-card-never-fitted,
-`loot18.json` LOOT18-the-counter-at-a-buy, `loot15.json` LOOT15-the-minute-drops-the-host, `legacy7.json`
+`loot18.json` LOOT18-the-counter-at-a-buy, `loot15.json` LOOT15-the-minute-drops-the-host (equivalent; retired by
+AUDIT C&C with the unread argument it named), `legacy7.json`
 LEGACY7-model-rewritten and `legacy7wed.json` LEGACY7W-partner-dead-or-lineless; and `auditlegacy3.json`
 AUDIT-LEGACY-III-A2-newer-save-drops-the-stores-facts does not parse on main either. Records this branch's lines moved,
 re-aimed by content: `loot16.json` LOOT16-wire-uncarried, -the-curse-said-unknown, -the-curse-never-said, -lift-unknown

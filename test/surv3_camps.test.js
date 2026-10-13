@@ -131,8 +131,9 @@ test('SURV3: by the fire - within four of a LIT fire, anyone\'s; the eye\'s word
   assert.equal(campInfoText(lit, FIRE_MINUTES, true), CAMP_TEXT.seeEmbers);
   assert.deepEqual(campMenu(lit, 10, true).map((r) => r.key), ['rest', 'cook', 'pack']);
   assert.deepEqual(campMenu(lit, 10, false).map((r) => r.key), ['rest', 'cook'], 'another\'s fire is not yours to put out');
-  assert.deepEqual(campMenu(cold, 10, true).map((r) => r.key), ['rest', 'cook', 'stoke', 'pack'], 'a cold tent offers its fire');
-  assert.equal(campMenu(cold, 10, true)[3].text, CAMP_TEXT.menuPack); assert.equal(campMenu(lit, 10, true)[2].text, CAMP_TEXT.menuPickUp, 'REST2: your Campfire is picked up, not stamped out');
+  // AUDIT C&C I11 (PIN MOVED): a cold fire offers no Cook - the cooking list only refused at it
+  assert.deepEqual(campMenu(cold, 10, true).map((r) => r.key), ['rest', 'stoke', 'pack'], 'a cold tent offers its fire, and no cooking on its embers');
+  assert.equal(campMenu(cold, 10, true)[2].text, CAMP_TEXT.menuPack); assert.equal(campMenu(lit, 10, true)[2].text, CAMP_TEXT.menuPickUp, 'REST2: your Campfire is picked up, not stamped out');
 });
 
 test('SURV3: the wire - a camp as its owner says it, the door every record comes in by, an owner\'s word replacing theirs alone', () => {
@@ -239,8 +240,8 @@ test('SURV3: the pool - the eye names it, the menu rests, stokes, cooks and pack
   setWorldMinutes(2000 + FIRE_MINUTES + 1);
   h.camps.tick(0.1);
   h.camps.activate(key, 'grab');
-  assert.deepEqual(h.overlays.at(-1).items, [CAMP_TEXT.menuRest, CAMP_TEXT.menuCook, CAMP_TEXT.menuStoke, CAMP_TEXT.menuPack]);
-  h.overlays.at(-1)._pick(2);
+  assert.deepEqual(h.overlays.at(-1).items, [CAMP_TEXT.menuRest, CAMP_TEXT.menuStoke, CAMP_TEXT.menuPack], 'AUDIT C&C I11 (PIN MOVED): burnt down, no Cook - its Stoke lights it');
+  h.overlays.at(-1)._pick(1);
   assert.equal(h.said.at(-1), CAMP_TEXT.stoked); assert.equal(h.camps.lights().length, 1, 'the flame is back');
   // the save's rows and their restore, in the host's frame
   const snap = h.camps.snapshot((p) => [p[0] + 100, p[1], p[2]]);

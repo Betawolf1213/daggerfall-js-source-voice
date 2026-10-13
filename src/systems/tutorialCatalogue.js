@@ -255,7 +255,7 @@ export const TUTORIALS = Object.freeze([
     id: 'horse', group: 'travel', title: 'Horses', trigger: 'When you first choose how to travel.',
     body: [
       'Every town has a stable that sells horses. {Transport} picks how you travel: on foot, on horseback or by cart.',
-      '{HorseMount} gets on and off. Your horse walks; hold {Run} to gallop outside towns. {HorseSummon} calls your horse and wagon to you.',
+      '{HorseMount} gets on and off. Your horse walks; hold {Run} to gallop. Don\'t gallop into people in town: trampling them is a crime. {HorseSummon} calls your horse and wagon to you.',
     ],
   }),
   page({
@@ -404,10 +404,12 @@ export const TUTORIALS = Object.freeze([
     ],
   }),
   page({
-    id: 'survival', group: 'livelihood', title: 'Hunger and Cold', trigger: 'When you first get hungry, cold or tired.',
+    // AUDIT C&C S13: the words true - the page opens on the first need's tile of any kind (enhancedHud.js: the wet, the
+    // warm, the drink and the stiff morning too), and the tiles stand at the screen's left edge, not beside the bars
+    id: 'survival', group: 'livelihood', title: 'Hunger and Cold', trigger: 'When a need first shows on your screen.',
     body: [
-      'You need food, water, warmth and sleep. Icons next to your bars show what you are short on.',
-      'Survival can be Off, Casual (the default) or Hard. On Hard, needs can hurt you and make you sick. Change it in Settings > Features.',
+      'You need food, water, warmth and sleep. Icons at the screen\'s left edge show what you are short on, and on Boons what you have earned.',
+      'Survival can be Off, Boons (the default), Casual or Hard. On Boons, needs met give bonuses; on Hard, needs can hurt you and make you sick. Change it in Settings > Features.',
     ],
   }),
 

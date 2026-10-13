@@ -19,12 +19,13 @@
   },
   {
     "name": "SURV2-a-mouldy-food-keeps-the-fresh-picture",
-    "file": "src/systems/survival/items.js",
+    "file": "src/systems/survival/food.js",
     "old": "    item.worldTextureArchive = item.templateIndex;\n    item.worldTextureRecord = s === FOOD_STAGE.Mouldy ? 0 : 1;",
     "new": "",
     "tests": [
       "test/surv2_items.test.js"
-    ]
+    ],
+    "note": "AUDIT C&C I5: re-aimed by content - the dress law moved from survival/items.js to food.js (dressFood), so every stage change reaches it."
   },
   {
     "name": "SURV2-eating-does-not-take-one-off-the-stack",

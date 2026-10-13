@@ -72,7 +72,7 @@ test('B5: the EXHAUSTION box pushes in all three hosts that can collapse', () =>
     /_exhaustedBox = new ActionTextBox\(out\.inWater \? \[EXHAUSTED_IN_WATER\] : \['You collapse from exhaustion\.'\]\);\s*mountInterior\(_exhaustedBox\);/);
   assert.match(src('src/scenes/world.js'), /_exhaustedBox = new ActionTextBox\(lines\);\s*townTalk\.pushOverlay\(_exhaustedBox\);/, 'src/scenes/world.js: the outdoor collapse');
   for (const f of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
-    if (f === 'src/scenes/exterior.js') assert.match(src(f), /townTalk\.pushOverlay\(new ActionTextBox\(lines\)\);/, `${f}: the outdoor collapse`);
+    if (f === 'src/scenes/exterior.js') assert.match(src(f), /_exhaustedBox = new ActionTextBox\(lines\);\s*townTalk\.pushOverlay\(_exhaustedBox\);/, `${f}: the outdoor collapse (kept for DFU's popup guard - AUDIT C&C N2/H1)`);
     assert.equal(/if \(!townTalk\.overlay\) townTalk\.showOverlay\(new ActionTextBox\(lines\)\);/.test(src(f)), false,
       `${f}: the refusal is GONE, not merely bypassed`);
   }
@@ -88,7 +88,7 @@ test('B5: the EXHAUSTION box pushes in all three hosts that can collapse', () =>
   // OnExhausted and an unbounded stack of pushed message boxes -
   // unpinned in both until here.
   for (const f of ['src/scenes/worldModes.js', 'src/scenes/world.js', 'src/scenes/exterior.js']) {
-    assert.match(src(f), /if \(_inExhaustion(?: \|\| \(sharedClockOn\(\) && exhaustedShowing\(\)\))?\) return;/, `${f}: the re-entrancy latch (AUDIT LIVED1b K1: and online the box's guard beside it)`);
+    assert.match(src(f), /if \(_inExhaustion \|\| exhaustedShowing\(\)\) return;/, `${f}: the re-entrancy latch, and DFU's box guard beside it (AUDIT LIVED1b K1; AUDIT C&C N2/H1: in both lanes, all three hosts)`);
   }
 });
 

@@ -355,7 +355,8 @@ laddered, AUDIT 625's laws whole.
 `src/systems/survival/temperature.js` `clothingWarmth` counts the lining with the cloth (`gear` - halved in the heat, eaten by the
 wet as the cloth is); `feltTemperature` passes it and takes the weather's soaking down by the weatherproofing, at most
 `GEAR_DRY_MOST` (75%) - a river, a wade and a dive soak you whatever you wear; `wardrobeCtx` lays the fold's numbers on
-the felt temperature's context (the degrees on the host's own frost and fire resistance), and `survival/needs.js`
+the felt temperature's context (the degrees beside the host's own frost and fire resistance - on it until AUDIT LOOT II
+A2, below), and `survival/needs.js`
 `survivalMinute` spreads it in. **The cap**: a garment below Legendary ranks `GARMENT_UNDER_SUPPLY`, under a supply and
 over a plain piece (`capRank` - LOOT-EASE's line kept verbatim beneath).
 
@@ -389,8 +390,9 @@ hood-capable piece alone (`survival/temperature.js` `hoodCapable`, HOOD-SAID's o
 
 **The powers, through the seams that ran.** `src/systems/lootPowers.js` `wardrobeFold` is an entity fold, registered
 beside the kit's seams - mine alone, nothing with the switch off, a power once however many pieces carry it. Desert-Born
-and Mountain-Born fold `heatDegrees` and `coldDegrees`, which `wardrobeCtx` lays on the host's own fire and frost
-resistance: the felt temperature's own law, on the natural reading and the clothes' alike. The Long Road folds
+and Mountain-Born fold `heatDegrees` and `coldDegrees`, which `wardrobeCtx` hands beside the host's own fire and frost
+resistance, and `feltTemperature` takes off the felt number on its own side alone (AUDIT LOOT II A2, below - they had
+been laid on the resistance, the natural reading and the clothes' alike). The Long Road folds
 `fatigueLess` and `fallLess`, which `src/scenes/shared.js` `fatigueLossMultiplierFor` (laid over PROF9's tart) and
 `applyFallLanding` read, held to `WARDROBE_FATIGUE_MOST` (50%) and `WARDROBE_FALL_MOST` (75%) for a mod's power, a
 negative nothing. Royal Bearing folds +5 into each `standing` channel, which DRESS1 reads under `GEAR_STANDING_CAP`.
@@ -412,7 +414,9 @@ needs; DRESS1's five a group and the nobility to its cap; the hood up and down; 
 the caps and a negative; once with an imprinted gown; a peer's copy, a foe, off nothing); Stendarr's Mercy on a
 Restoration, a Destruction and a mixed spell, and the port's price unmodded; survival Off said on a climate power's
 line, never on Royal Bearing's; the codex's rows and hints, the imprint offered to a shirt, a gown and a hooded cloak,
-a sword none, and the wire. `tools/mutants/loot15.json` (46, all dead).
+a sword none, and the wire. `tools/mutants/loot15.json` (45, all dead; a forty-sixth, AUDIT SURV-BOONS lens D's, was
+equivalent - the minute law's host argument, which `wardrobeCtx` never read - and AUDIT C&C deleted the argument and
+the record).
 
 ### LOOT16 - cursed finds, and the temple's lifting (2026-10-07)
 
@@ -668,7 +672,8 @@ nineteen of the lanes' are fixed, three are stated, and two of the fixes state w
   dead lines). `scenes/shared.js` `playerFallDamage` is the bill's one home - DFU's, the Long Road off it - and both
   landings read it.
 - **A2 - the Wayfarer's Robes chilled a cold night.** Desert-Born's twenty rode the felt temperature's fire resistance,
-  and Climates & Calories resists the own warmth (the clothes', the armour's, the race's) as heat: the robes alone in the
+  and Climates & Calories then resisted the own warmth (the clothes', the armour's, the race's) as heat - the world's
+  alone since AUDIT TEMP-UI E1, `06-Systems/Climates-Calories.md`: the robes alone in the
   Alik'r at 02:00 in January read -45 for -33, and a temperate night -40, freezing, for -28. `survival/temperature.js`
   `wardrobeCtx` hands the degrees beside the host's resistances, and `feltTemperature` takes each off the felt number
   on its own side alone, toward comfortable and never past it - the twenty the line says (in the heat it had been up to

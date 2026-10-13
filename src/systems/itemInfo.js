@@ -48,7 +48,7 @@ import { maskText } from '../net/nameFilter.js';   // TEXT-F1: a name a player t
 import { isWalletItem, WALLET_CARD_LINES } from './walletItem.js';   // WALLET1: the wallet's card
 import { isIliacCard, isCardBinder, iliacCardName, iliacCardLines, BINDER_CARD_LINES, isCardPack, CARD_PACK_LINES } from './iliacItems.js';   // CARDS8: a card's name and lines, the binder's
 import { isSurvivalItem, isCampingEquipment, isCampfireKit, isSkillet } from './survival/items.js';   // SURV5: the survival items' own info box
-import { isFood, foodOf, foodStage, foodSatiety, isWaterskin, waterIn, WATERSKIN_CAPACITY_KG, STAGE_WORDS } from './survival/food.js';   // ROAD-U: the identity DFU reads off the item's own record
+import { isFood, foodOf, foodStage, foodSatiety, isWaterskin, waterIn, WATERSKIN_CAPACITY_KG, STAGE_WORDS, FOOD_STAGE } from './survival/food.js';   // ROAD-U: the identity DFU reads off the item's own record
 import { makerMark, PROVENANCE_RE } from '../net/recipeLaw.js';   // AUDIT 30 C7: a maker's mark as the law writes it
 
 /** The thirteen ids GetItemInfo names as constants (:750-762). */
@@ -723,7 +723,8 @@ export function survivalInfoTokens(item) {
   const out = [{ text: isIliacCard(item) ? iliacCardName(item) : shownItemName(item) ?? t?.name ?? '', center: true }, { text: `Weight: ${unitWeightInKg(item).toFixed(2)} kilograms`, center: true }];   // CARDS8: a card's name is its catalog's
   if (isFood(item)) {
     const s = foodStage(item);
-    out.push({ text: `Nourishes for ${foodSatiety(item)} minutes${s > 0 ? ` (${STAGE_WORDS[s].toLowerCase()})` : ''}`, center: true });
+    // AUDIT C&C I5: a putrid food cannot be eaten (food.js eatLaw), and its card said "Nourishes for 36 minutes (putrid)"
+    out.push({ text: s >= FOOD_STAGE.Putrid ? 'Putrid - too disgusting to force down.' : `Nourishes for ${foodSatiety(item)} minutes${s > 0 ? ` (${STAGE_WORDS[s].toLowerCase()})` : ''}`, center: true });
     if (foodOf(item)?.raw) out.push({ text: 'Raw - cook it at a fire.', center: true });
   } else if (isWaterskin(item)) out.push({ text: `Water: ${waterIn(item).toFixed(1)} of ${WATERSKIN_CAPACITY_KG.toFixed(1)} kg`, center: true });
   else if (isCampingEquipment(item)) out.push({ text: `${item.currentCondition ?? 0} use${item.currentCondition === 1 ? '' : 's'} left`, center: true });

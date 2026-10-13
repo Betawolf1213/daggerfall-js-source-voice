@@ -590,7 +590,7 @@ export const MOD_SETTINGS = Object.freeze({
       'EnhancedRiding.RealisticMovement': Object.freeze({ default: true, description: 'Makes the horse and cart movement backwards and sideways more realistic and limited.' }),
       'EnhancedRiding.followTerrainEnabled': Object.freeze({ default: true, description: 'Enables terrain following when riding.' }),
       'EnhancedRiding.followTerrainSoftenFactor': Object.freeze({ default: 8, min: 0, max: 32, description: 'Scale factor to soften terrain gradient following. (0=none, 32=max soften)' }),
-      'EnhancedRiding.GallopingInTowns': Object.freeze({ default: false, description: 'Enables galloping (sprinting) while riding horses in towns.' }),
+      'EnhancedRiding.GallopingInTowns': Object.freeze({ default: true, description: 'Enables galloping (sprinting) while riding horses in towns.' }),   // TOWN-GALLOP (2026-10-13, Mac: "Remove forced horse walking in towns"): the mod ships this OFF, the port ships it ON - off, the mod's CanRun refused the run in every town, and horse care's horse walked there with Run held (HORSE-WALK); the room's too (onlineLane.js ONLINE_WHOLE_MODS reads this default); no tile ever reached the switch (FT14), so no saved off stands to reset; TrampleCivilians, the mod's own, rides with it; recorded on the RR page
       'EnhancedRiding.TrampleCivilians': Object.freeze({ default: true, description: 'Enables the crime of trampling innocent townsfolk when galloping in a town. Be careful!' }),
       // RefinedTraining (RR2)
       'RefinedTraining.refinedTraining': Object.freeze({ default: true, description: 'Enable refined skill training service.' }),

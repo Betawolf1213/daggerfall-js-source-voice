@@ -87,8 +87,9 @@ some thirty seconds and is back to 30% in about fifteen.
 ## The gallop (`systems/transport.js` setGallopGate)
 
 The run key on a horse is the gallop. DFU forbids a run in the saddle (CanRunUnlessRiding); Roleplay & Realism's
-Enhanced Riding allows it outside towns (`rrCanRunRiding`). Horse care's word comes after the mod's: where the mod
-says no (a town), no; where it says yes or says nothing, the horse gallops on its breath - never winded, never
+Enhanced Riding allows it outside towns, and inside them under its Galloping In Towns, which the port ships on
+(`rrCanRunRiding`; TOWN-GALLOP, below). Horse care's word comes after the mod's: where the mod says no (a town, with
+Galloping In Towns off), no; where it says yes or says nothing, the horse gallops on its breath - never winded, never
 starving. The gallop is the horse's breath, not the rider's fatigue: the hosts' activity bag (`running`) leaves a
 gallop under horse care out of DFU's running band (`upkeepRuntime.js` riderPaysGallop).
 
@@ -115,19 +116,26 @@ rideWalks gives it wherever horse care rules the gallop - horse care on, a horse
 the gate defers to the mod, and the walk to DFU); `player/motor.js` takes it (`_rideBaseNow` - the walk's base, in the
 speed's riding arm and the half-speed base; `rideWalking` - the step's gait; `slowRide` - walked, or under half its
 base). Off horse care a horse is DFU's - one pace, no run in the saddle, the mod's gallop where it rules: a walk with no
-gallop to shift into would hold its rider to it. A cart rolls on its own base. A winded or starving horse, and one in a
-town Roleplay & Realism keeps from galloping, walk with Run held; autorun's latched run gallops whenever the breath
-allows.
+gallop to shift into would hold its rider to it. A cart rolls on its own base. A winded or starving horse walks with Run
+held, as does one in a town wherever Roleplay & Realism's Galloping In Towns is off (the mod's own default - the port
+ships it on, below); autorun's latched run gallops whenever the breath allows.
 
-**IN A TOWN IT WALKS** (AUDIT HORSE-WALK, 2026-10-12). Roleplay & Realism ships Galloping In Towns off
-(`systems/modSettings.js`), so in a town the mod's CanRun says no and the horse walks with Run held: 5.1 m/s at Speed
-50, where its rider runs 8.1 on foot and DFU's ride was 10.8. Out of town Run gallops it, and the mod's Galloping In
-Towns gallops it in a town too. Kept as the two laws stand, the owner's walk under the mod's town, with no pace
-invented between them: the one there is, DFU's ride, is the pace every picture draws as a gallop, in the town the mod
-keeps a gallop out of. The Horses tutorial says so ("outside towns": the stable that sells a horse stands in a town, so
-a first ride starts in one), pinned through the mod's own CanRun line, lifted from `systems/rrInstall.js` and run
-(`test/horsewalk.test.js`, IN A TOWN). A cart rolls on DFU's cart base, 7.6 m/s at Speed 50: above the walk and under
-the gallop, as it always stood under DFU's ride.
+**IN A TOWN IT GALLOPS TOO** (TOWN-GALLOP, 2026-10-13, Mac: "Remove forced horse walking in towns"). Roleplay &
+Realism ships Galloping In Towns off, and AUDIT HORSE-WALK kept the owner's walk under the mod's town: there the mod's
+CanRun said no, so the horse walked with Run held - 5.1 m/s at Speed 50, where its rider runs 8.1 on foot - and online,
+where horse care is forced on, every rider walked every town. The port ships the switch ON (`systems/modSettings.js`,
+the mod's third recorded departure - `06-Systems/Roleplay-Realism.md`), so a town is ridden as the road is: the walk
+unless Run gallops it, on its breath. The room reads it on too (Roleplay & Realism is the room's whole -
+`systems/onlineLane.js` ONLINE_WHOLE_MODS reads the port's default). No tile ever reached the switch (FT14 took the Mods
+pane before RR2 brought it), so no player holds a saved off, and nothing is reset. The mod's trample rides with the
+gallop into a town, as the mod pairs the two (TrampleCivilians, shipped on; `systems/rrRidingHost.js`): a gallop into a
+townsperson tramples them - Assault, and the watch called - and the Horses tutorial says so ("Don't gallop into people
+in town: trampling them is a crime"). Pinned through the mod's own CanRun line, lifted from `systems/rrInstall.js` and
+run over the real upkeep and motor (`test/horsewalk.test.js`, IN A TOWN): as the port ships it, Run gallops a horse in a
+town and its release walks it; the room's on whatever a player saved; and the mod's own rule, Galloping In Towns off,
+walks it in a town with Run held and gallops it out of one. A cart is unchanged - the mod never lets it run, in a town
+or out - and rolls on DFU's cart base, 7.6 m/s at Speed 50: above the walk and under the gallop, as it always stood under
+DFU's ride.
 
 **ON THE ROAD THE RIDE KEEPS ITS PACE** (AUDIT HORSE-WALK, 2026-10-12, the owner: "Ensure the overworld speed isnt
 affected"). The Overworld moves the real body under the travel clock (`06-Systems/Travel-View.md`), so its ground speed
@@ -161,8 +169,8 @@ What reads the gait:
 - **The saddle panel** says Walking (`ui/enhancedSaddle.js` saddleGait - the very word the motor reads, `transport.js`
   rideWalks, through `scenes/saddleHost.js`), Galloping on the run, Trotting at DFU's ride (horse care off).
 - **The head's bob** is DFU's Horse style at the walk, by its velocity; the gallop's is Running's (HeadBobber's order).
-- **The words**: the Features row, and the Horses tutorial ("Your horse walks; hold {Run} to gallop outside towns" -
-  IN A TOWN IT WALKS, above).
+- **The words**: the Features row, and the Horses tutorial ("Your horse walks; hold {Run} to gallop. Don't gallop into
+  people in town: trampling them is a crime." - IN A TOWN IT GALLOPS TOO, above).
 
 Unchanged: the Overworld's and a journey's pace (above), the breath's law (under a rider at its own pace, now the walk,
 half back), the gallop's gate and pace, fast travel's times (DFU's TravelTimeCalculator), a following or waiting horse.
@@ -225,6 +233,7 @@ upkeep its odometer's metres, the HUD its bar and the Stable page its acts. `sce
 (`transport.js` dismountOnTransition) - and are named, not wired.
 
 Pinned: `test/steed1_horsecare.test.js`; mutants `tools/mutants/steed1.json`, and HORSE-LIVES's and UPKEEP-ONLINE's
-`tools/mutants/wagonmend.json`. THE WALK: `test/horsewalk.test.js`; mutants `tools/mutants/horsewalk.json` (42, all
-dead). The saddle panel and the page's polish:
+`tools/mutants/wagonmend.json`. THE WALK: `test/horsewalk.test.js`; mutants `tools/mutants/horsewalk.json` (40, all
+dead - TOWN-GALLOP retired the town walk's two with their law) and TOWN-GALLOP's `tools/mutants/towngallop.json` (7,
+all dead). The saddle panel and the page's polish:
 `test/steedui_saddle.test.js`; mutants `tools/mutants/steedui.json`.

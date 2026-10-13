@@ -11,8 +11,8 @@
   {
     "name": "SURV1-wet-clothes-keep-their-warmth",
     "file": "src/systems/survival/temperature.js",
-    "old": "  warmth = Math.max(0, warmth - Math.min(wet, WET_MAX));",
-    "new": "  warmth = Math.max(0, warmth);",
+    "old": "  warmth = Math.max(0, pure - Math.min(wet, WET_MAX));",
+    "new": "  warmth = Math.max(0, pure);",
     "tests": [
       "test/surv1_model.test.js"
     ]
@@ -29,8 +29,8 @@
   {
     "name": "SURV1-a-dungeon-is-the-sky",
     "file": "src/systems/survival/temperature.js",
-    "old": "  if (env.insideDungeon) natTemp = dungeonTemperature(natTemp);",
-    "new": "",
+    "old": "  const air = env.insideDungeon ? dungeonTemperature(natural) : natural;",
+    "new": "  const air = natural;",
     "tests": [
       "test/surv1_model.test.js"
     ]
@@ -38,8 +38,8 @@
   {
     "name": "SURV1-the-drink-cools-a-vampire",
     "file": "src/systems/survival/temperature.js",
-    "old": "  if (felt > 9 && ctx.hasWater && !ctx.vampire) felt = Math.max(felt - WATER_COOLS, 0);",
-    "new": "  if (felt > 9 && ctx.hasWater) felt = Math.max(felt - WATER_COOLS, 0);",
+    "old": "  if (felt > 9 && ctx.hasWater && !ctx.vampire) felt = Math.max(felt - WATER_COOLS, 9);",
+    "new": "  if (felt > 9 && ctx.hasWater) felt = Math.max(felt - WATER_COOLS, 9);",
     "tests": [
       "test/surv1_model.test.js"
     ]
@@ -119,7 +119,7 @@
   {
     "name": "SURV1-the-stage-line-repeats-every-minute",
     "file": "src/systems/survival/needs.js",
-    "old": "  if (stage === was) return;\n  const sev = STAGE_SEVERITY[family], now = sev[stage] ?? 0, before = was ? sev[was] ?? 0 : 0;\n  if (Math.sign(now) !== Math.sign(before) || Math.abs(now) > Math.abs(before)) say?.(text);",
+    "old": "  if (stage === was) return;\n  const sev = STAGE_SEVERITY[family], at = sev[stage] ?? 0, before = was ? sev[was] ?? 0 : 0;\n  // AUDIT C&C N6: and not again while the stage's line was heard lately (STAGE_REPEAT_MINUTES)\n  const heard = `${family}@${stage}`;\n  if ((Math.sign(at) !== Math.sign(before) || Math.abs(at) > Math.abs(before)) && !heardLately(s, heard, now)) { s.notes[heard] = now; say?.(text); }",
     "new": "  say?.(text);",
     "tests": [
       "test/surv1_model.test.js"

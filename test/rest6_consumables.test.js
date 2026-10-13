@@ -174,7 +174,7 @@ test('REST6 the Ember Jar: a one-night fire for 180 minutes, one off the stack; 
   assert.deepEqual([r.camp.kind, r.camp.wear, r.camp.jar, r.camp.litUntil], [CAMP_KIND.Fire, 1, true, 280]);
   assert.equal(jar.stackCount, 1);
   assert.deepEqual(campMenu(r.camp, 150, true).map((x) => x.key), ['rest', 'cook'], 'no pick-up');
-  assert.deepEqual(campMenu(r.camp, 300, true).map((x) => x.key), ['rest', 'cook'], 'and no relight');
+  assert.deepEqual(campMenu(r.camp, 300, true).map((x) => x.key), ['rest'], 'and no relight - AUDIT C&C I11 (PIN MOVED): nor a Cook at its embers, which only refused');
   assert.equal(campExpired(r.camp, 279), false);
   assert.equal(campExpired(r.camp, 280), true, 'swept with its embers');
   assert.equal(campExpired({ ...newCamp({ id: 'c', kind: CAMP_KIND.Fire, pos: [0, 0, 0], now: 0, wear: 0 }), fuel: true }, 10_000), false, 'a Campfire stands cold');

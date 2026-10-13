@@ -103,7 +103,7 @@
   {
     "name": "SURVTIERS3-a-cold-tent-rests-cold",
     "file": "src/scenes/camps.js",
-    "old": "      if (mine(c) && c.rec.kind === CAMP_KIND.Tent && !fireLit(c.rec, now())) { stokeFire(c.rec, now()); remount(c); say(CAMP_TEXT.stoked); onChanged?.(); }",
+    "old": "      if (canStoke(c.rec, now(), mine(c)) && stokeFire(c.rec, now())) { remount(c); say(c.rec.kind === CAMP_KIND.Fire ? CAMP_TEXT.relit : CAMP_TEXT.stoked); onChanged?.(); }",
     "new": "",
     "tests": [
       "test/survtiers3.test.js"
@@ -159,8 +159,8 @@
   {
     "name": "SURVTIERS3-every-stage-change-speaks",
     "file": "src/systems/survival/needs.js",
-    "old": "  if (Math.sign(now) !== Math.sign(before) || Math.abs(now) > Math.abs(before)) say?.(text);",
-    "new": "  say?.(text);",
+    "old": "  if ((Math.sign(at) !== Math.sign(before) || Math.abs(at) > Math.abs(before)) && !heardLately(s, heard, now)) { s.notes[heard] = now; say?.(text); }",
+    "new": "  if (!heardLately(s, heard, now)) { s.notes[heard] = now; say?.(text); }",
     "tests": [
       "test/survtiers3.test.js"
     ]
@@ -187,7 +187,7 @@
   {
     "name": "SURVTIERS3-the-fire-warms-nobody-on-the-strip",
     "file": "src/systems/survival/needs.js",
-    "old": "  if (warmedByFire) s.warmed = true; else if (s.warmed) delete s.warmed;",
+    "old": "  if (warmed) s.warmed = true; else if (s.warmed) delete s.warmed;",
     "new": "",
     "tests": [
       "test/survtiers3.test.js"
@@ -244,8 +244,8 @@
   {
     "name": "SURVTIERS3-a-vampire-starves-in-hard",
     "file": "src/systems/survival/needs.js",
-    "old": "    const starve = vampire ? 0 : starvingDays(hungerMinutes(s, now));",
-    "new": "    const starve = starvingDays(hungerMinutes(s, now));",
+    "old": "    const starve = vampire || beast ? 0 : starvingDays(hungerMinutes(s, now));",
+    "new": "    const starve = beast ? 0 : starvingDays(hungerMinutes(s, now));",
     "tests": [
       "test/survtiers3.test.js"
     ]
@@ -253,8 +253,8 @@
   {
     "name": "SURVTIERS3-the-minute-law-forgets-the-vampire",
     "file": "src/systems/survival/needs.js",
-    "old": "{ endurance: liveStat(entity, 'endurance'), rules, vampire }",
-    "new": "{ endurance: liveStat(entity, 'endurance'), rules }",
+    "old": "{ endurance: liveStat(entity, 'endurance'), rules, vampire, beast }",
+    "new": "{ endurance: liveStat(entity, 'endurance'), rules, beast }",
     "tests": [
       "test/survtiers3.test.js"
     ]
@@ -280,8 +280,8 @@
   {
     "name": "SURVTIERS3-the-warmed-cold-stays-red",
     "file": "src/systems/survival/status.js",
-    "old": "    if (warmedBy(s, word) && out.at(-1)?.key === 'temp') out.at(-1).level = 'warn';",
-    "new": "",
+    "old": "  if (key === 'temp') return tires && !warmed && (felt >= r.stamina.hotFrom || felt <= r.stamina.coldFrom) ? 'danger' : 'warn';",
+    "new": "  if (key === 'temp') return tires && (felt >= r.stamina.hotFrom || felt <= r.stamina.coldFrom) ? 'danger' : 'warn';",
     "tests": [
       "test/survtiers3.test.js"
     ]
@@ -289,8 +289,8 @@
   {
     "name": "SURVTIERS3-the-page-says-deadly-cold-by-the-fire",
     "file": "src/systems/survival/status.js",
-    "old": "lines.push(warmedBy(s, word) ? STATUS_TEXT.warmedByFire : STATUS_TEXT.temp(word));",
-    "new": "lines.push(STATUS_TEXT.temp(word));",
+    "old": "lines.push(warmedBy(s, word) ? STATUS_TEXT.warmedByFire : STATUS_TEXT.temp(word), ",
+    "new": "lines.push(STATUS_TEXT.temp(word), ",
     "tests": [
       "test/survtiers3.test.js"
     ]
@@ -298,7 +298,7 @@
   {
     "name": "SURVTIERS3-no-warm-chip",
     "file": "src/systems/survival/status.js",
-    "old": "warm: ['Warm', 'warn'], ",
+    "old": "warm: 'Warm', ",
     "new": "",
     "tests": [
       "test/survtiers3.test.js"
@@ -373,8 +373,8 @@
   {
     "name": "SURVTIERS3-the-blackout-has-no-morning",
     "file": "src/systems/survival/tavernMenu.js",
-    "old": "  return { minutes: wake - now, text: TAVERN_MENU_TEXT.woke };",
-    "new": "  return { minutes: wake - now };",
+    "old": "export const blackoutWaking = (sky) => (Math.trunc((((sky % 1440) + 1440) % 1440) / 60) === BLACKOUT_WAKE_HOUR ? TAVERN_MENU_TEXT.woke : TAVERN_MENU_TEXT.wokeNoDawn);",
+    "new": "export const blackoutWaking = () => undefined;",
     "tests": [
       "test/survtiers3.test.js"
     ]
@@ -494,13 +494,14 @@
     ]
   },
   {
-    "name": "SURVTIERS3-drenched-is-amber",
+    "name": "SURVTIERS3-drenched-is-red",
     "file": "src/systems/survival/status.js",
-    "old": "drenched: ['Drenched', 'danger']",
-    "new": "drenched: ['Drenched', 'warn']",
+    "old": "  return 'warn';   // the wet",
+    "new": "  return stage === 'drenched' ? 'danger' : 'warn';   // the wet",
     "tests": [
       "test/survtiers3.test.js"
-    ]
+    ],
+    "why": "AUDIT C&C S5 (decision D2): Drenched red again - it costs nothing of its own (its cost is the felt temperature's, whose chip says so); the record flipped with the law, it had been the amber mutant of a red Drenched"
   },
   {
     "name": "SURVTIERS3-a-flavour-line-repeats-every-minute",

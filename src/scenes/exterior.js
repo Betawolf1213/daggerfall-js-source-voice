@@ -10,6 +10,7 @@ import { effectiveLevel } from '../systems/mentorMode.js';   // SOFTCAP2: mentor
 import { dfmodGroundLayers } from '../systems/dfmodTextures.js';   // GROUND1: an attached mod's terrain tile set
 import { getFloat } from '../systems/settings.js';   // AUDIT 28 W1: NightAmbientLightScale
 import { markPuddleWater, carryPuddleMask } from '../world/puddleMask.js';   // WATER-PUDDLE: the puddle is the art's
+import { dilateCoastalClimate } from '../world/terrainHelper.js';   // AUDIT C&C (lens T): ReadyCheck's coastal repair, as the streaming host runs it
 import { WORLD_FRAME } from '../render/renderer.js';   // AUDIT-EL F5
 import { windmillsOn } from '../world/windmills.js';   // WM3: the Windmills pack's switch
 import { wodOn, wodLightColors } from '../world/worldOfDaggerfall.js';   // WOD4: the mod's switch and its per-light colours
@@ -153,7 +154,7 @@ import { ActionTextBox } from '../ui/actionText.js';   // AUDIT 23 (C5): the col
 import { toggleStatusReadout } from '../ui/statusBox.js';   // STATUS-LIVE: the Status readout, one composer for all four hosts
 import { statusReadoutTakesAction } from '../systems/statusReadout.js';   // STATUS-LIVE: ...and the yield this host's own key ladder owes, which never reaches routeAction
 import { liveStat } from '../systems/statMods.js';
-import { maxFatigue } from '../systems/statMods.js';   // AUDIT 23 (C5)
+import { maxFatigue, clampFatigue } from '../systems/statMods.js';   // AUDIT 23 (C5); AUDIT C&C N5: SetFatigue's clamp
 import { FootstepMachine, pickFootstepSet } from '../systems/footsteps.js';   // FS-slice
 import { immersiveFootsteps } from '../systems/immersiveFootsteps.js';
 import { betterAmbience, classicFootstepAllowed } from '../systems/betterAmbience.js';   // BA1: Better Ambience - the shake, the dungeon's fog and light, the reverb, the indoor rain, its own stride   // IF1: Immersive Footsteps owns the stride and the three landing sounds once its clips are in (DisableVanillaFootsteps)
@@ -168,6 +169,8 @@ import { createLefayMonument } from './lefayMonumentHost.js'; import { isLefayTo
 import { createCamps } from './camps.js'; import { PORTAL_TEXT } from '../systems/portalStone.js';   // SURV3: the camps this host stands; PORTAL1: the street's own refusal
 import { drinkAtSource, isWaterSourceFlat, isDrySourceFlat, WATER_SOURCE_MODELS, DRY_SOURCE_TEXT } from '../systems/survival/items.js';   // SURV3: the mod's water sources
 import { survivalOn } from '../systems/survival/switch.js';   // HT1: Handheld Torches' dropped lights, thrown torches and burning foes   // AUDIT 24 (wave 39): EnemyBlood.ShowBloodSplash
+import { sunlit } from '../systems/survival/temperature.js';   // AUDIT C&C: the sun's one law - this reader's minute, and a jump's replay its own
+import { markOutCold } from '../systems/survival/needs.js';   // AUDIT C&C N2: the collapse's hour a night on the ground
 import { liveLycanthropy } from '../systems/lycanthropy.js';   // SURV7: the env's lycanthrope and beast-form flags
 import { elementalResistanceChance, ELEMENTS } from '../systems/spellcast.js';   // SURV7: the env's fire and frost resistances
 import { createCityGuards } from './cityGuards.js';   // G1
@@ -363,6 +366,10 @@ export async function bootExterior(canvas, renderer, params, status) {
   arch.load(archBytes);
   const maps = new MapsFile();
   maps.load(mapsBytes, climateBytes, politicBytes);
+  // AUDIT C&C (lens T): StreamingWorld.ReadyCheck's coastal repair, as world.js runs it - DFU reads every climate after
+  // it (PlayerGPS.CurrentClimateIndex), and this host read the raw buffer: a coastal town whose own pixel is raw Ocean
+  // read the sea's nought (E4) here and its land's climate in the streaming world.
+  dilateCoastalClimate(maps, 2);
   // QX1 - THE QUEST PACK, loaded WITH the rest of the location's data
   // and not later. The bridge itself cannot be built until the clock,
   // the talk seam and the guard pool exist, far down this boot, but
@@ -1281,8 +1288,12 @@ export async function bootExterior(canvas, renderer, params, status) {
   // this host's context (guards as the nearby enemies, the one clock's
   // day, outside). Function-hoisted: cityGuards/townTalk close later.
   let _inExhaustion = false;
+  // AUDIT C&C N2/H1: DFU's popup guard (PlayerEntity.cs:2385-2391 displayingExhaustedPopup), in both lanes - this host
+  // had none at all, so a drain to nothing under the collapse's box collapsed the body again (world.js's twin says why)
+  let _exhaustedBox = null;
+  const exhaustedShowing = () => !!_exhaustedBox && !_exhaustedBox.done && townTalk.containsOverlay(_exhaustedBox);
   function onExhaustedExterior() {
-    if (_inExhaustion) return;
+    if (_inExhaustion || exhaustedShowing()) return;
     _inExhaustion = true;
     try {
       const out = exhaustionOutcome({
@@ -1309,9 +1320,11 @@ export async function bootExterior(canvas, renderer, params, status) {
       // the inventory, the map and the spellbook alike, and the
       // refusal meant the one message that explains the lost hour (or
       // the drowning) was dropped.
-      townTalk.pushOverlay(new ActionTextBox(lines));
+      _exhaustedBox = new ActionTextBox(lines);
+      townTalk.pushOverlay(_exhaustedBox);
       if (out.kind === 'rest') {
         // CAMP-REST: the forced hour is spent through the tick as a rest, never replayed as walking time (no group roll)
+        markOutCold(playerEntity);   // AUDIT C&C N2: the needs feel the hour as a night on the ground (world.js's twin)
         playerTicker.advance(60);   // RaiseTime(1 hour); the latch holds re-entry
         runEncounterTick(walkMode ? player.pos : cam.pos, true);
         playerEntity.health = Math.min(playerEntity.maxHealth, playerEntity.health + out.health);
@@ -1327,7 +1340,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   // C14: the swing's own fatigue drain rides the same collapse law.
   const drainExteriorFatigue = (n) => {
     if (n <= 0) return;
-    playerEntity.fatigue = Math.max(0, (playerEntity.fatigue ?? 0) - n);
+    playerEntity.fatigue = clampFatigue(playerEntity, (playerEntity.fatigue ?? 0) - n);   // AUDIT C&C N5: SetFatigue's clamp, the ceiling too
     surfacePlayer();
     if (playerEntity.fatigue <= 0 && playerEntity.health > 0) onExhaustedExterior();
   };
@@ -1340,13 +1353,15 @@ export async function bootExterior(canvas, renderer, params, status) {
     const wm = skyMinutes();   // TIME1: the air's month and hour are the sky's
     const weather = currentWeather();
     const lyc = liveLycanthropy(playerEntity);
+    const hour = (((wm % 1440) + 1440) % 1440) / 60;
+    const sheltered = m === 'exterior' && !!playerEntity.isResting && !!camps.tentNear(feet);   // AUDIT C&C I2: a rest at a tent sleeps under its roof
     return {
       climateIndex: locClimateIndex,
-      month: dateFromClassicMinutes(wm).month, hour: (((wm % 1440) + 1440) % 1440) / 60, weather,
+      month: dateFromClassicMinutes(wm).month, hour, weather,
       insideBuilding: m === 'interior', insideDungeon: m === 'dungeon',
-      inSunlight: m === 'exterior' && !isNight(minuteNow()) && (weather === 'sunny' || weather === 'cloudy'),
+      inSunlight: m === 'exterior' && sunlit({ hour, weather, sheltered }),   // AUDIT C&C: the sun's one law, the replay's too
       swimming: m === 'exterior' && !!player.isPlayerSwimming, transport: !!player.riding,
-      byFire: m === 'exterior' && camps.byFire(feet),
+      byFire: m === 'exterior' && camps.byFire(feet), sheltered,
       resting: !!playerEntity.isResting, sleeping: playerEntity.isResting && !playerEntity.isLoitering ? (playerEntity.restKind ?? 'rough') : null,
       lycanthrope: !!lyc, beastForm: !!lyc?.isTransformed,
       fireResist: elementalResistanceChance(playerEntity, ELEMENTS.Fire), frostResist: elementalResistanceChance(playerEntity, ELEMENTS.Frost),

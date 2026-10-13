@@ -181,7 +181,7 @@ import { ActionTextBox } from '../ui/actionText.js';   // AUDIT 23 (C5)
 import { isTombstoneModel, searchKey, searchCooldownLeft, markSearched, SEARCHED_TEXT, rollSearchOutcome, pickSearchUndead, rollSearchElite, searchMessage, mintSearchFind, setSearchClock, SEARCH_FOES_PER_PLAYER, SEARCH_FOE_SPACING } from '../systems/searchables.js';   // SEARCH1: a graveyard's headstones
 import { toggleStatusReadout } from '../ui/statusBox.js';   // STATUS-LIVE: the Status readout, one composer for all four hosts
 import { statusReadoutTakesAction } from '../systems/statusReadout.js';   // STATUS-LIVE: ...and the yield this host's own key ladder owes, which never reaches routeAction
-import { maxFatigue, FATIGUE_MULTIPLIER, liveStat, STAT_KEYS_ORDER } from '../systems/statMods.js';   // AUDIT 23 (C5); AUDIT SOC B5: the party pose's fatigue in the digits a sheet shows
+import { maxFatigue, FATIGUE_MULTIPLIER, liveStat, STAT_KEYS_ORDER, clampFatigue } from '../systems/statMods.js';   // AUDIT 23 (C5); AUDIT SOC B5: the party pose's fatigue in the digits a sheet shows
 // V5: resting above ground. RestWindow and RestSession have been
 // finished since U7; what was missing was a host outside the dungeon
 // that opens one, and CanRest's whole town half.
@@ -331,7 +331,8 @@ import { wearCondition, wearOf, WEAR_WHOLE } from '../net/marketLaw.js';   // PR
 import { commissionFilledBy } from '../net/writLaw.js';   // AUDIT 31 L8: a piece that answers a commission, the law's own test
 
 import { unseenText } from '../net/boardLaw.js';   // NOTICE1: the count over a board
-import { alignSurvival } from '../systems/survival/needs.js';   // SURV7: the needs' markers at an arrival
+import { alignSurvival, markOutCold } from '../systems/survival/needs.js';   // SURV7: the needs' markers at an arrival; AUDIT C&C N2: the collapse's hour a night on the ground
+import { sunlit } from '../systems/survival/temperature.js';   // AUDIT C&C: the sun's one law - this reader's minute, and a jump's replay its own
 import { liveLycanthropy } from '../systems/lycanthropy.js';   // SURV7: the env's lycanthrope and beast-form flags
 import { elementalResistanceChance, ELEMENTS, BODY_CAPSULE_RADIUS, EFFECT_FLAGS, savingThrow } from '../systems/spellcast.js';   // SURV7: the env's fire and frost resistances; WB4: the saving throw a boss's fire meets   // DW-E3: a foe's controller, as a fish's probe meets it
 import { createTownWatch, runTownWatchFrame } from '../systems/townWatch.js';   // DISC19-F: the watch defends the town
@@ -917,7 +918,7 @@ import { createFestivalStage, festivalBannerAnchors, festivalLanternsOf } from '
 import { drawBanner } from '../ui/heraldryArt.js';   // GUILD1d: ...its heraldry painted on it
 import { heraldryLookup } from '../ui/heraldrySwatch.js';   // HERALDRY-SHOWN: a guild's heraldry by its tag, off what this client holds
 import { AuraRingRenderer, auraWearers, auraLookOf, auraBeastStep, auraMotionStep, auraCapeStep, auraSpriteBones, auraSpritePosed, auraWingLights, CLOAK_BONES, AURA_KINDLE_S, AURA_FORGET_S } from '../render/auraRing.js'; import { peerBodyYaw } from '../net/peerClimb.js';   // WB9g: Dagon's Fire at a wearer's feet; SHADOW-CLOAK: a peer's facing, the cloak's front (on this line, so no cite below it moves)
-import { duelAttackerOf, duelWeaponOf, duelSwingOf, resolveDuelStrike, duelWearDamage, duelStub, duelSpellOf } from '../combat/duelCombat.js';   // DUEL1: the blow between two duellists - INT8/INT9: the striker's half alone, the relay referees
+import { duelAttackerOf, duelWeaponOf, duelSwingOf, resolveDuelStrike, duelWearDamage, duelStandIn, duelSpellOf } from '../combat/duelCombat.js';   // DUEL1: the blow between two duellists - INT8/INT9: the striker's half alone, the relay referees (AUDIT C&C H5: against the neutral stand-in)
 import { createPageWindow, pageView } from '../ui/pageWindow.js';   // JOURNAL1: a page another player holds out, read and kept
 import { PageOffers, pageOfferText, pageShownText, pageTooFarText, keptPageTokens, keptLetterTokens, letterOfPage, PAGE_UNSUPPORTED_TEXT, PAGE_NO_READERS_TEXT, PAGE_GONE_TEXT } from '../net/journalPage.js';   // JOURNAL1: a page of the journal shown, and one shown to me kept
 import { quickslotTag, quickslotHand, tagText, actionKeyWord } from '../ui/quickslotTags.js';   // JOURNAL1: the F-menu's own key, named off the live bindings
@@ -7440,12 +7441,12 @@ export async function bootWorld(canvas, renderer, params, status) {
   // AUDIT LIVED1b K1: DFU's popup guard (PlayerEntity.cs:2385-2391 displayingExhaustedPopup - "Somnalius poison after
   // first exhaustion drop. Subsequent exhaustion events would otherwise stack on popup per poison round remaining"), as
   // the dungeon's has been since AUDIT 68 S19: while the collapse's box stands, a drain to nothing collapses nobody
-  // again. Online, where the hour's rounds now run under that box (the ticker walks J's raise at once); offline the
-  // hour still nests inside the latch below, as before (K6's recorded twin), and nothing offline reads differently.
+  // again. AUDIT C&C N2/H1: IN BOTH LANES, as DFU's own - K1 kept it online alone, and offline a Hard jump's replay
+  // collapsed the body again and again under one box after another (eighty-three on a three-day journey).
   let _exhaustedBox = null;
   const exhaustedShowing = () => !!_exhaustedBox && !_exhaustedBox.done && townTalk.containsOverlay(_exhaustedBox);
   function onExhaustedExterior() {
-    if (_inExhaustion || (sharedClockOn() && exhaustedShowing())) return;
+    if (_inExhaustion || exhaustedShowing()) return;
     _inExhaustion = true;
     try {
       const out = exhaustionOutcome({
@@ -7476,6 +7477,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       _exhaustedBox = new ActionTextBox(lines);
       townTalk.pushOverlay(_exhaustedBox);
       if (out.kind === 'rest') {
+        markOutCold(playerEntity);   // AUDIT C&C N2: the needs feel the hour as a night on the ground (the body is out cold)
         playerTicker.advance(60);
         // CAMP-REST: the forced hour is a rest - its minutes are spent HERE, through the same tick the rest window uses, so the
         // frame never replays them as walking time (which is what let the 15-minute camp timer fire on waking)
@@ -7492,7 +7494,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   }
   const drainExteriorFatigue = (n) => {
     if (n <= 0) return;
-    playerEntity.fatigue = Math.max(0, (playerEntity.fatigue ?? 0) - n);
+    playerEntity.fatigue = clampFatigue(playerEntity, (playerEntity.fatigue ?? 0) - n);   // AUDIT C&C N5: SetFatigue's clamp, the ceiling too
     surfacePlayer();
     if (playerEntity.fatigue <= 0 && playerEntity.health > 0) onExhaustedExterior();
   };
@@ -7506,15 +7508,18 @@ export async function bootWorld(canvas, renderer, params, status) {
     const m = _mode();
     const feet = walkMode && playerSpawned ? player.pos : cam.pos;
     const wm = skyMinutes();   // TIME1: the air's month and hour are the sky's
-    const weather = currentWeather();
+    const weather = shownWeather();   // AUDIT TEMP-UI E11: the weather the land wears - the Sun Baby's clear day too (SUNBABY1); the sim's rain soaked a body under a clear sky
     const lyc = liveLycanthropy(playerEntity);
+    const hour = (((wm % 1440) + 1440) % 1440) / 60;
+    const sheltered = m === 'exterior' && !!playerEntity.isResting && !!camps.tentNear(feet);   // AUDIT C&C I2: a rest at a tent sleeps under its roof
     return {
       climateIndex: maps.getClimateIndex(playerTravelPixel().x, playerTravelPixel().y),
-      month: dateFromClassicMinutes(wm).month, hour: (((wm % 1440) + 1440) % 1440) / 60, weather,
+      month: dateFromClassicMinutes(wm).month, hour, weather,
       insideBuilding: m === 'interior', insideDungeon: m === 'dungeon',
-      inSunlight: m === 'exterior' && !isNight(minuteNow()) && (weather === 'sunny' || weather === 'cloudy'),
+      inSunlight: m === 'exterior' && sunlit({ hour, weather, sheltered }),   // AUDIT C&C: the sun's one law, the replay's too
       swimming: m === 'exterior' && !!(walkMode && playerSpawned && player.isPlayerSwimming), transport: !!player.riding,
-      byFire: m === 'exterior' && camps.byFire(feet),
+      submerged: m === 'exterior' && !!dwPlayer?.submerged,   // AUDIT C&C (lens T D3): the head under the sea soaks at once; a swim on the surface wades (env.js)
+      byFire: m === 'exterior' && camps.byFire(feet), sheltered,
       resting: !!playerEntity.isResting, sleeping: playerEntity.isResting && !playerEntity.isLoitering ? (playerEntity.restKind ?? 'rough') : null,
       lycanthrope: !!lyc, beastForm: !!lyc?.isTransformed,
       fireResist: elementalResistanceChance(playerEntity, ELEMENTS.Fire), frostResist: elementalResistanceChance(playerEntity, ELEMENTS.Frost),
@@ -16192,6 +16197,11 @@ export async function bootWorld(canvas, renderer, params, status) {
     // AUDIT OH-F B4: never a save inside the descent (one frame in DFU): it would write the swimmer on the template's
     // land with the mod's record not yet Active. AUDIT REALM2 M5: said to a save pressed, never to the quiet checkpoint
     if (ohAbyss?.entering) { if (!quiet) townTalk.say('You cannot save now.'); return false; }   // cannotSaveNow (Internal_Strings)
+    // AUDIT C&C (lens H): nor inside a journey. DFU's fast travel is one frame - TeleportToCoordinates, then RaiseTime
+    // (DaggerfallTravelPopUp.cs :333, :344) - and here the teleport is awaited, frames running, before the clock moves:
+    // a save between them (the online checkpoint, the page's exit save, a key) wrote the arrival's place with the
+    // departure's clock and needs, and a load of it was there for nothing. The checkpoint tries again when next due.
+    if (_traveling) { if (!quiet) townTalk.say('You cannot save now.'); return false; }
     // AUDIT NAV1 (B14): nor in a boarding or on a ship of the sea's deck - the sea is never a save's, and the load set the
     // player over open water, the ship and her prize gone
     if (naval?.saveRefused?.()) { if (!quiet) townTalk.say('You cannot save now.'); return false; }
@@ -23225,26 +23235,27 @@ export async function bootWorld(canvas, renderer, params, status) {
     const name = peerName(d.peer) ?? 'your opponent';
     _duelHud.update({ bar: [`Duel with ${name}`, theirs ? `${name}: ${theirs[1]} / ${theirs[2]}` : 'The referee sets the bout...'], sides: '', self: mine ? [`Your vitality: ${mine[1]} / ${mine[2]}`] : [], works: '', arms: null, card: null });
   };
-  /** THE ATTACKER: my blow out - INT8: rolled on my own sheet against a body of my own sheet (a siege's way: the
-   *  target's armour is not mine to read), the number sent for the RELAY to referee (net/duelRef.js clips it to the
-   *  weapon my look holds and the arms my token signs). A swing that rolled nothing is a miss, said here; the referee's
-   *  word on one that landed comes back as `duelHpIn`. */
+  /** THE ATTACKER: my blow out - INT8: rolled on my own sheet against the neutral stand-in (AUDIT C&C H5: a body of my
+   *  own sheet cancelled every attribute I brought and charged me for my own luck; the target's sheet is not mine to
+   *  read), the number sent for the RELAY to referee (net/duelRef.js clips it to the weapon my look holds and the arms
+   *  my token signs). A swing that rolled nothing is a miss, said here; the referee's word on one that landed comes
+   *  back as `duelHpIn`. */
   const duelStrikeOut = (by, weapon, swing, drawMs = 0, to = null) => {
     if (!duelMgr.fighting) return siegeStrikeOut(to, by, weapon, swing, drawMs);   // AUDIT-SEATS G5: outside a duel, my shaft on a battle's foe (`to`)
     const a = duelAttackerOf(playerEntity, weapon), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
     const at = drawMs > 0 ? { at: Math.min(60000, Math.trunc(drawMs)) } : {};
-    const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at }, duelStub(a).stub);
+    const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at }, duelStandIn());
     if (!(r.dmg > 0)) { reportPlayerAttack({ hit: false, damage: 0, critical: false, backstab: false, ineffective: false }); return true; }
     const n = duelMgr.blow('strike', { by, p: campToWire(player.feetAt()), d: Math.trunc(r.dmg), ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at });
     if (n) { _duelSent.set(n, { kind: 'strike', weapon }); _duelLastWeapon = weapon ?? null; if (_duelSent.size > 64) _duelSent.delete(_duelSent.keys().next().value); }
     return !!n;
   };
-  /** My spell reached my opponent (the cast engine's duel marks, scenes/hostMagic.js): INT8 - its harm counted on a
-   *  stand-in of my own sheet (combat/siegeCombat.js siegeSpellNumbers, a siege's way), to the referee as a cast. */
+  /** My spell reached my opponent (the cast engine's duel marks, scenes/hostMagic.js): INT8 - its harm counted on the
+   *  neutral stand-in (combat/siegeCombat.js siegeSpellNumbers, a siege's way - AUDIT C&C H5), to the referee as a cast. */
   const duelSpellOut = (peerId, sp) => {
     if (!duelMgr.fighting) return siegeSpellOut(peerId, sp);   // AUDIT-SEATS G5: outside a duel, my spell on a siege's foe
     if (peerId !== duelMgr.opponent) return false;
-    const { harm } = siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStub(duelAttackerOf(playerEntity)).stub, playerEntity);
+    const { harm } = siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity);
     if (!(harm > 0)) return false;
     const n = duelMgr.blow('spell', { p: campToWire(player.feetAt()), d: siegeCastClamp(harm, false) });
     if (n) { _duelSent.set(n, { kind: 'spell', weapon: null }); if (_duelSent.size > 64) _duelSent.delete(_duelSent.keys().next().value); }
@@ -23264,7 +23275,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     return duelStrikeOut('melee', weaponRig.playerWeapon.strikingWeapon, weaponRig.playerWeapon.machine?.state);
   };
   /** SEAT2a part four: THE MELEE ARM IN A SIEGE - the nearest foe (a fighter of the other side) within a weapon's reach,
-   *  in view and in sight (the duel's test); my swing rolled on my own sheet against a body of my own sheet, sent to the
+   *  in view and in sight (the duel's test); my swing rolled on my own sheet against the neutral stand-in, sent to the
    *  relay, which clips it to DFU's range for the weapon my look holds (net/siegeRef.js). True when the swing was theirs. */
   const siegeMeleeHit = (eye, inViewFn) => {
     const battle = royalSession?.active() ? royalSession : siegeSession;   // CROWN1 part two: a Royal Tourney's bout, the same arm
@@ -23300,7 +23311,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     if (Math.hypot(me[0] - at[0], me[2] - at[1]) / SIEGE_UNITS_PER_M > SIEGE_REACH.melee + size) return false;
     const weapon = weaponRig.playerWeapon.strikingWeapon;
     const a = duelAttackerOf(playerEntity, weapon), w = duelWeaponOf(weapon), sw = duelSwingOf(weaponRig.playerWeapon.machine?.state);
-    const r = resolveDuelStrike({ by: 'melee', a, ...(w ? { w } : {}), ...(sw ? { sw } : {}) }, duelStub(a).stub);
+    const r = resolveDuelStrike({ by: 'melee', a, ...(w ? { w } : {}), ...(sw ? { sw } : {}) }, duelStandIn());
     if (r.dmg > 0) {
       const held = weapon ? (composeLook(playerEntity)?.items ?? []).find((i) => i?.group === 'Weapons' && i.templateIndex === weapon.templateIndex) ?? null : null;
       siegeSession.workBlow(to, { w: weapon ? weapon.templateIndex : -1, m: held?.material ?? 0, d: r.dmg, r: siegeBlowKind('melee') });
@@ -23309,13 +23320,13 @@ export async function bootWorld(canvas, renderer, params, status) {
   };
   /** AUDIT-SEATS G5: MY BLOW ON A BATTLE'S FOE `to` - a swing or a shaft (`by` 'melee' or 'arrow': its kind on the wire,
    *  combat/siegeCombat.js siegeBlowKind - the referee takes a shaft from a bow alone, at a shaft's reach), rolled on my
-   *  own sheet against a body of my own sheet (a shaft's the release's StrikeDown and its draw's time), sent to the relay,
+   *  own sheet against the neutral stand-in (a shaft's the release's StrikeDown and its draw's time), sent to the relay,
    *  which clips it to DFU's range for the weapon my look holds (net/siegeRef.js). True when it was the battle's. */
   const siegeStrikeOut = (to, by, weapon, swing, drawMs = 0) => {
     const battle = royalSession?.active() ? royalSession : siegeSession;
     if (!to || !battle?.active() || !battle.foes().includes(to)) return wildStrikeOut(to, by, weapon, swing, drawMs);   // WILD1: not the battle's - perhaps a fair player of the open zone's
     const a = duelAttackerOf(playerEntity, weapon), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
-    const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...(drawMs > 0 ? { at: Math.min(60000, Math.trunc(drawMs)) } : {}) }, duelStub(a).stub);
+    const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...(drawMs > 0 ? { at: Math.min(60000, Math.trunc(drawMs)) } : {}) }, duelStandIn());
     if (r.dmg > 0) {
       const held = weapon ? (composeLook(playerEntity)?.items ?? []).find((i) => i?.group === 'Weapons' && i.templateIndex === weapon.templateIndex) ?? null : null;
       battle.blow(to, { w: weapon ? weapon.templateIndex : -1, m: held?.material ?? 0, d: r.dmg, r: siegeBlowKind(by) });
@@ -23348,11 +23359,11 @@ export async function bootWorld(canvas, renderer, params, status) {
     const bodies = battleFoeBodies(siegeSession);
     return bodies.length ? bodies.map((b) => ({ ...b, name: b.name ?? peerName(b.id) ?? 'a foe' })) : wildSpellMarks();   // SEAT2b part two (c): a guard or a rebel by its own name; WILD1: no siege - the open zone's fair players
   };
-  /** AUDIT-SEATS G5: A SPELL OF MINE MET A SIEGE'S FOE - its harm, counted on a stand-in of my own sheet
+  /** AUDIT-SEATS G5: A SPELL OF MINE MET A SIEGE'S FOE - its harm, counted on the neutral stand-in
    *  (combat/siegeCombat.js siegeSpellNumbers), to the referee as a cast (it clips, and bounds the rate). */
   const siegeSpellOut = (peerId, sp) => {
     if (!siegeSession?.isFoe(peerId)) return wildSpellOut(peerId, sp);   // WILD1: not the siege's - perhaps a fair player of the open zone's
-    const { harm } = siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStub(duelAttackerOf(playerEntity)).stub, playerEntity);
+    const { harm } = siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity);
     return harm > 0 && siegeSession.cast(peerId, siegeCastClamp(harm, false));
   };
   /** AUDIT-SEATS G5: A GIFT OF MINE ON A SIEGE'S SIDE-MATE - its Heal Health, counted as the mate's own client would land
@@ -23360,7 +23371,7 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  for anyone else, or a gift with no heal in it - the ordinary door takes it then. */
   const siegeHealOut = (id, frame) => {
     if (!siegeSession?.active() || !siegeSession.mates().includes(id)) return false;
-    const { heal } = siegeSpellNumbers(frame?.spell, Math.max(1, Math.trunc(frame?.level || 1)), duelStub(duelAttackerOf(playerEntity)).stub, playerEntity);
+    const { heal } = siegeSpellNumbers(frame?.spell, Math.max(1, Math.trunc(frame?.level || 1)), duelStandIn(), playerEntity);
     return heal > 0 && siegeSession.cast(id, siegeCastClamp(heal, true), true);
   };
   /** AUDIT-SEATS G5: whether I stand in a siege's own room - its wards hold there (Teleport, Recall, Levitate; the saddle). */
@@ -23906,25 +23917,26 @@ export async function bootWorld(canvas, renderer, params, status) {
     _crimeResponse();
     townTalk.say('The town watch has seen you strike - the guards are coming!');
   };
-  /** MY BLOW ON A FAIR PLAYER `to` - a swing or a shaft. INT9: rolled on my own sheet against a body of my own sheet (a
-   *  siege's way: the target's armour is not mine to read), the number sent for the RELAY to referee (net/wildRef.js clips
-   *  it to the weapon my look holds and the arms my token signs); a swing that rolled nothing is a miss, said here, and the
-   *  referee's word on one that landed comes back as `wildHpIn`. True when the swing was the zone's. */
+  /** MY BLOW ON A FAIR PLAYER `to` - a swing or a shaft. INT9: rolled on my own sheet against the neutral stand-in (a
+   *  siege's way: the target's sheet is not mine to read - AUDIT C&C H5), the number sent for the RELAY to referee
+   *  (net/wildRef.js clips it to the weapon my look holds and the arms my token signs); a swing that rolled nothing is a
+   *  miss, said here, and the referee's word on one that landed comes back as `wildHpIn`. True when the swing was the
+   *  zone's. */
   const wildStrikeOut = (to, by, weapon, swing, drawMs = 0) => {
     if (!wildFair(to)) return false;
     const a = duelAttackerOf(playerEntity, weapon), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
     const at = drawMs > 0 ? { at: Math.min(60000, Math.trunc(drawMs)) } : {};
-    const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at }, duelStub(a).stub);
+    const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at }, duelStandIn());
     if (!(r.dmg > 0)) { reportPlayerAttack({ hit: false, damage: 0, critical: false, backstab: false, ineffective: false }); zoneWatchCall(); return true; }
     const n = wildFight.blow(to, 'strike', { by, p: campToWire(player.feetAt()), d: Math.trunc(r.dmg), ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at });
     if (n) { _wildLastWeapon = weapon ?? null; zoneWatchCall(); }
     return !!n;
   };
-  /** My harmful spell met a fair player (the cast engine's marks): INT9 - its harm counted on a stand-in of my own sheet
+  /** My harmful spell met a fair player (the cast engine's marks): INT9 - its harm counted on the neutral stand-in
    *  (combat/siegeCombat.js siegeSpellNumbers, a siege's way), to the referee as a cast (it clips, and bounds the rate). */
   const wildSpellOut = (peerId, sp) => {
     if (!wildFair(peerId)) return false;
-    const { harm } = siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStub(duelAttackerOf(playerEntity)).stub, playerEntity);
+    const { harm } = siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity);
     if (!(harm > 0)) return false;
     const n = wildFight.blow(peerId, 'spell', { p: campToWire(player.feetAt()), d: siegeCastClamp(harm, false) });
     if (n) zoneWatchCall();

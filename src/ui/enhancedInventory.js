@@ -100,6 +100,7 @@ import {
 } from '../systems/equip.js';
 import { armourBadge, armourPlaque, compareBlock, lineCompareBlock, wearComparison } from './armourCard.js';   // AC-COMPARE: the doll's numbers on the map, the overall figure, the card's comparison
 import { statFlip } from './statsCard.js';   // STATS-CARD: the paperdoll's flip side, its Stats button
+import { temperaturePlaque, temperatureCompareBlock } from './temperatureCard.js';   // TEMP-UI: the felt temperature on the figure and on a wearable's card
 import {
   itemWeight, isEnchanted, totalWeight, addItem, goldStack,
   goldPiecesOf, GOLD_PIECE_WEIGHT_KG,   // E4: the counter and its per-coin weight
@@ -2052,9 +2053,19 @@ function equippedList() {
   map.append(dollFrame);
   // AC-COMPARE: THE OVERALL FIGURE ON THE CHARACTER - a plaque at the head of the figure's column (the doll's own first
   // row, over it), whatever stands there: the doll, the Morrowind body or the empty frame (ui/armourCard.js)
-  const plaque = armourPlaque(deps.entity);
-  plaque.style.gridArea = '1 / 2';
-  map.append(plaque);
+  // TEMP-UI: AND THE FELT TEMPERATURE beside it - the same cell's other corner, while Climates & Calories is on
+  // (ui/temperatureCard.js: live, so a cloak put on under this window shows its warmth at once)
+  // AUDIT C&C S1: THE TWO STAND IN ONE ROW OF THEIR OWN, on the figure's first cell named whole - row 1 to 2, column 2 to
+  // 3. Each plaque had stood alone on '1 / 2', and an absolutely placed grid child's unnamed end lines run to the grid's
+  // own edge, so the Felt plaque's right corner was the map's: it stood on the R-Weapon panel at every screen in both
+  // dresses, and a tap at its middle opened nothing. Where the figure is too narrow for both in a line, the Felt plaque
+  // wraps under the Armour one (the row is the sheets' - a wrapping flex, ui/enhancedPlusStyle.js ARMOUR_CSS).
+  const plaques = el('div', 'wornplaques');
+  plaques.style.gridArea = '1 / 2 / 2 / 3';
+  plaques.append(armourPlaque(deps.entity));
+  const temp = temperaturePlaque(deps.entity);
+  if (temp) plaques.append(temp);
+  map.append(plaques);
   wrap.append(statFlip(map, deps.entity, deps.usingRightHand));   // STATS-CARD: the worn map is the card's front; a Stats button turns it over
   const byLabel = new Map();
   for (const row of worn.rows) {
@@ -3169,6 +3180,7 @@ function infoCard(picked, side, ready = render, { body = false } = {}) {
     const wear = wearComparison(deps.entity, picked);   // AUDIT LOOT II B6: one comparison for both blocks
     const cmp = compareBlock(deps.entity, picked, (it) => itemLongName(it, { getQuest: deps.getQuest ?? null }), wear); if (cmp) into.append(cmp);
     const lc = lineCompareBlock(deps.entity, picked, wear); if (lc) into.append(lc);   // LOOT18: and its lines against theirs
+    const tc = temperatureCompareBlock(deps.entity, picked, wear); if (tc) into.append(tc);   // TEMP-UI: and the felt temperature it would leave (or, worn, taking it off would)
   }
   return { c, line, big };
 }
