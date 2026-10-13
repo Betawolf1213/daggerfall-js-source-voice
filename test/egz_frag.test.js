@@ -226,9 +226,11 @@ test('EG-ZC THE SHAFTS (sections 11.1-11.2): every Deepway of law 5 goes down by
 });
 
 test('EG-ZC THE LAW PIN (section 22, EG-H2\'s record): spec law 5 is the law, law 4 kept beside it its seven days WITH its generator - its halls byte for byte as they were (800 halls hashed whole); a hall says its law; the director draws every hall in its breach\'s own law (mutants: the law before drawn in the new; the breach\'s law forgotten)', () => {
-  assert.equal(EG_SPEC, 5);
-  assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12' });
-  assert.ok(egLawKnown(4) && egLawKnown(5) && !egLawKnown(6));
+  // PIN MOVED (AUDIT EG III): spec law 6 (the span decrees on every span) is the law now, laws 4 and 5 kept beside it, each
+  // byte for byte (test/egaudit3_law.test.js pins law 6)
+  assert.equal(EG_SPEC, 6);
+  assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13' });
+  assert.ok(egLawKnown(4) && egLawKnown(5) && egLawKnown(6) && !egLawKnown(7));
   assert.ok((Date.parse(EG_LAWS[5]) - Date.parse(EG_LAWS[4])) / 86_400_000 <= EG_LAW_KEEP_DAYS, 'the law before inside its keep');
   // law 4's halls as they stood before this law (46364ff52): every hall of four seeds, both grounds, a hundred halls each
   let acc = 0x811c9dc5;
@@ -240,14 +242,16 @@ test('EG-ZC THE LAW PIN (section 22, EG-H2\'s record): spec law 5 is the law, la
   }
   assert.deepEqual(per, { 1: 3167448703, 13: 853054473, 78: 1662358260, 88: 4228635459 }, 'a Span, a Deepway, the Shade and the Wellhead');
   assert.equal(acc >>> 0, 1228307904, 'law 4, byte for byte');
-  const d4 = egHallOf(1, 82, 0, 4), d5 = egHallOf(1, 82, 0);
-  assert.deepEqual([d4.v, d5.v], [4, 5], 'each hall says its law');
+  const d4 = egHallOf(1, 82, 0, 4), d5 = egHallOf(1, 82, 0, 5), d6 = egHallOf(1, 82, 0);   // PIN MOVED (AUDIT EG III): law 5 named, law 6 the build's
+  assert.deepEqual([d4.v, d5.v, d6.v], [4, 5, 6], 'each hall says its law');
   assert.notEqual(egSpecDigest(d4), egSpecDigest(d5), 'a Wellhead Deepway differs between them');
   // the director: a breach opened under law 4 runs law 4's halls (its stage's digest)
   const w = at(1, 82, 1);
-  assert.equal(egStateOf(w.B, w.clock.now).dg, egSpecDigest(d5), 'a breach of this law: this law\'s hall');
+  assert.equal(egStateOf(w.B, w.clock.now).dg, egSpecDigest(d6), 'a breach of this law: this law\'s hall');
   w.B.egv = 4;
   assert.equal(egStateOf(w.B, w.clock.now).dg, egSpecDigest(d4), 'a breach of the law before: its own law\'s hall');
+  w.B.egv = 5;
+  assert.equal(egStateOf(w.B, w.clock.now).dg, egSpecDigest(d5), 'and law 5\'s, its own');
   assert.equal(w.bad(), 0);
 });
 

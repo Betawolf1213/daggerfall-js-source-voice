@@ -76,6 +76,7 @@ import { egVOf, egRankOf, EG_MASTERIES, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX, EG_DR_
 import { egHymnOf, EG_HYMN_MS } from './egVestige.js';   // EG-ZR (section 15's Accord): Shield-Hymn's pair and its seconds
 import { egResonance, egAccordMates, EG_STORM_N, EG_STORM_M, EG_FAR_M, EG_KINDLED_M, EG_WALL_X, EG_ECHO_Q } from './egVestige.js';   // EG-ZS: the capstones, the Accords
 import { EG_M_ID, EG_SWEEP_M, EG_SPILL_M, EG_COUNTER_M } from './egVestige.js';   // AUDIT EG III: Sweeping Arc's, Spillover's and Counterstroke's numbers
+import { egSpirebridge } from './egVestige.js';   // AUDIT EG III: Spirebridge, the room's rule
 import { egEchoShare, egCompanyAt } from './egRun.js';   // EG-ZS: an Echo's share; the company the pair law reads at a blow
 import { shDisc, shLane, egInShape } from './egShape.js';
 import { egBlowNear } from './egFloor.js';   // AUDIT EG III: Counterstroke's reach from a lord's blow
@@ -1572,7 +1573,8 @@ export function egDown(B, sub, h, pose, now) {
 /**
  * A MEMBER'S OTHER WORDS in the breach: `pick` (a Vestige card), `surplus` (a fourth card or a reroll), `vote` (the
  * company's word), `cant` (a Cantrip used), `buy` (from the Sutler), `lping`/`ping` (a living member's, a witness's),
- * `bequest` (a fallen's Vestige offered to the living), `forsake`, `pz` (an Athenaeum's turn), `use` (an engine). Answers
+ * `bequest` (a fallen's Vestige offered to the living), `forsake`, `pz` (an Athenaeum's turn), `use` (an engine), `mast`
+ * (AUDIT EG III: Spirebridge asked - net/egVestige.js egSpirebridge). Answers
  * the frames.
  * @param {any} B @param {string} sub @param {any} m @param {{sx: number, z: number}|null} pose @param {number} now @param {() => number} rng
  */
@@ -1611,6 +1613,7 @@ export function egWord(B, sub, m, pose, now, rng) {
       if (got) out.push({ k: 'egot', to: sub, w: got }, { k: 'run', r: egRunOf(sub, mm) });
       break;
     }
+    case 'mast': { const w = egSpirebridge(B, sub, spec, p, now); if (w) out.push(w); break; }   // AUDIT EG III: Spirebridge asked (net/egVestige.js - the room's rule)
     case 'lping': if (mm.alive && now - (mm.pingAt ?? 0) >= 3000) { mm.pingAt = now; out.push({ k: 'eping', s: sub, x: m.x, z: m.z, w: m.w, wit: 0 }); } break;
     case 'ping': if (!mm.alive && now - (mm.pingAt ?? 0) >= 3000) { mm.pingAt = now; out.push({ k: 'eping', s: sub, x: m.x, z: m.z, w: m.w, wit: 1 }); } break;
     case 'bequest': if (!mm.alive && (mm.vs ?? []).some((q) => q[0] === m.v)) mm.bequest = m.v; break;
@@ -1678,7 +1681,7 @@ export function egPoseIn(B, sub, p, t) {
     // saw - a break, so a member who left the plate in the gather's last seconds holds nothing until it stands on an island
     if (m.fair?.k !== k) { measureFold(m, m.fair); m.fair = { ...egFairNew(B.h, B.hw), k, cbHeld: 0 }; if (!egOnArrive(spec, x, z, 2) && m.roseH !== B.h) { m.fair.brk = 1; m.fair.brks = 1; m.fair.why = 'start'; } }   // EG-ZA: the trail it closes folded into the circle's measures
     const A = m.fair;
-    egFairPose(A, spec, { x, y, z, ride, cl: !!p.cl }, t);
+    egFairPose(A, spec, { x, y, z, ride, cl: !!p.cl }, t, B.sb);   // AUDIT EG III: a standing Spirebridge is ground
     if (spec.fork && z >= spec.fork.z && x >= (spec.fork.lowX + spec.fork.x) / 2) A.road = 1;
     if (egAtDoor(spec, x, z)) { egFairCross(A, t, A.road); if (A.cross > 0 && A.cmin == null) A.cmin = egCrossMinMs(spec, A.road); if (egFairOk(A)) A.atEnd = 1; }   // EG-ZA: the crossing's bound kept with it (its hall's spec is this one); EG-ZI: the end reached on a fair trail owes no toll
     // a fall past EG_VOID_Y - EG-ZB (section 21): or feet on a Falling Wall's or the Collapsing Tube's fallen ground, which the

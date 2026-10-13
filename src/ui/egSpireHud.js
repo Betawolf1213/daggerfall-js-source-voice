@@ -268,25 +268,36 @@ function stageLine(E, now) {
   }
 }
 
+// ── AUDIT EG III: SPIREBRIDGE ON THE STAGE'S LINE (section 15) ───────────────────────────────────────────────────
+/** The stage line's Spirebridge words (pure): each plank standing in this hall with its seconds (who raised it - the room's
+ *  word), and the ask offered while mine may be asked (`ready`). '' none. */
+export function egBridgeLine(E, now, ready = false) {
+  const stand = (E?.fight?.bridges ?? []).filter((q) => q.h === E.h && now >= q.at && now < q.until).map((q) => EG_PRES_TEXT.bridgeStands(q.n || 'A companion', Math.ceil((q.until - now) / 1000)));
+  return [...stand, ready ? EG_PRES_TEXT.bridgeReady : ''].filter(Boolean).join(' ');
+}
+
 // ── TOUCH AND THE PAD (section 27.8) ──────────────────────────────────────────────────────────────────────────
-/** The touch buttons a moment asks for (pure): a witness's eye before and after, and forsaking; a Redoubt's way home. */
-export function egTouchButtons({ witness = false, rest = false } = {}) {
+/** The touch buttons a moment asks for (pure): a witness's eye before and after, and forsaking; a Redoubt's way home; AUDIT EG
+ *  III (section 15): Spirebridge while its holder may ask it (a gap ahead, unspent this span). */
+export function egTouchButtons({ witness = false, rest = false, bridge = false } = {}) {
   const T = EG_PRES_TEXT.touch;
   if (witness) return [{ id: 'prev', label: T.prev }, { id: 'next', label: T.next }, { id: 'forsake', label: T.forsake }];
   if (rest) return [{ id: 'home', label: T.home }];
+  if (bridge) return [{ id: 'bridge', label: T.bridge }];
   return [];
 }
 /** The d-pad's codes (systems/inputActions.js DEFAULT_SECONDARY_BINDINGS' diamond; ui/plusPad.js HELM_DPAD). */
 export const EG_PAD_DIRS = Object.freeze({ JoystickAxis7Button0: 'up', JoystickAxis7Button1: 'down', JoystickAxis6Button1: 'left', JoystickAxis6Button0: 'right' });
 const PAD_OF_DIR = Object.freeze(Object.fromEntries(Object.entries(EG_PAD_DIRS).map(([c, d]) => [d, c])));
-/** Whether the d-pad is the Spire's now: a recap standing, the panel open, or a witness's eye. */
-export const egPadUp = ({ recap = false, panel = false, witness = false } = {}) => !!(recap || panel || witness);
+/** Whether the d-pad is the Spire's now: a recap standing, the panel open, or a witness's eye - AUDIT EG III: or a Spirebridge
+ *  its holder may ask (a gap ahead of it, unspent this span). */
+export const egPadUp = ({ recap = false, panel = false, witness = false, bridge = false } = {}) => !!(recap || panel || witness || bridge);
 /**
  * A d-pad press in the Spire (pure): `dir` up | down | left | right, `kind` tap | hold | release. The recap closes on any
  * tap; the panel's choices move left and right, up takes, down says no; a witness's left and right change whom, a held
- * down forsakes. Null: not the Spire's.
+ * down forsakes; AUDIT EG III: with neither, up asks a Spirebridge its holder may ask. Null: not the Spire's.
  */
-export function egPadAct(dir, kind, { recap = false, panel = false, witness = false } = {}) {
+export function egPadAct(dir, kind, { recap = false, panel = false, witness = false, bridge = false } = {}) {
   if (kind === 'release') return null;
   if (recap && kind === 'tap') return { k: 'close' };
   if (panel && kind === 'tap') return dir === 'left' ? { k: 'focus', d: -1 } : dir === 'right' ? { k: 'focus', d: 1 } : dir === 'up' ? { k: 'take' } : { k: 'no' };
@@ -294,14 +305,16 @@ export function egPadAct(dir, kind, { recap = false, panel = false, witness = fa
     if (kind === 'tap' && (dir === 'left' || dir === 'right')) return { k: 'watch', d: dir === 'left' ? -1 : 1 };
     if (kind === 'hold' && dir === 'down') return { k: 'forsake' };
   }
+  if (bridge && !panel && !witness && kind === 'tap' && dir === 'up') return { k: 'bridge' };
   return null;
 }
 /** The prompt bar's rows while the d-pad is the Spire's (the helm's shape - ui/enhancedHelm.js helmPadPrompts). */
-export function egPadPrompts({ recap = false, panel = false, witness = false } = {}) {
+export function egPadPrompts({ recap = false, panel = false, witness = false, bridge = false } = {}) {
   const P = EG_PRES_TEXT.pad;
   if (recap) return [[[PAD_OF_DIR.up], P.close]];
   if (panel) return [[[PAD_OF_DIR.left, PAD_OF_DIR.right], P.choose], [[PAD_OF_DIR.up], P.take], [[PAD_OF_DIR.down], P.no]];
   if (witness) return [[[PAD_OF_DIR.left, PAD_OF_DIR.right], P.watch], [[PAD_OF_DIR.down], P.forsake]];
+  if (bridge) return [[[PAD_OF_DIR.up], P.bridge]];   // AUDIT EG III
   return null;
 }
 
@@ -313,9 +326,11 @@ export function egPadPrompts({ recap = false, panel = false, witness = false } =
  * teaching line, the door's marker, a live line for a screen reader.
  * @param {any} E @param {string|null} me @param {number} now
  * AUDIT EG III: `held` the holder's chips (`{ k, text }` - ui/egBeats.js egHolderWatch), none for a witness.
- * @param {{ ff?: string, witness?: boolean, potions?: number, gain?: { text: string, blue?: boolean }|null, first?: string, door?: any, live?: string, touch?: boolean, foldOpen?: boolean, held?: { k: string, text: string }[] }} [o]
+ * AUDIT EG III (section 15): `bridge` - whether my Spirebridge may be asked now (the stage's line offers it, the touch layer its
+ * button); the company's planks standing in this hall told on the stage's line with their seconds.
+ * @param {{ ff?: string, witness?: boolean, potions?: number, gain?: { text: string, blue?: boolean }|null, first?: string, door?: any, live?: string, touch?: boolean, foldOpen?: boolean, held?: { k: string, text: string }[], bridge?: boolean }} [o]
  */
-export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, potions = EG_POTIONS_PER_HALL, gain = null, first = '', door = null, live = '', touch = false, foldOpen = false, held = [] } = {}) {
+export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, potions = EG_POTIONS_PER_HALL, gain = null, first = '', door = null, live = '', touch = false, foldOpen = false, held = [], bridge = false } = {}) {
   if (!E?.b || !(E.h > 0) || E.end) return null;
   const L = EG_LAYOUTS[ff] ?? EG_LAYOUTS.desktop;
   const spec = egHallOf(E.seed, E.h, E.geo ?? 0);
@@ -333,10 +348,10 @@ export function egSpireHudModel(E, me, now, { ff = 'desktop', witness = false, p
     recall: mine && mine.alive && !mine.home && !mine.recall ? EG_PRES_TEXT.recallSpent : '',   // my last life (PARTY8-B's law: a fact when it is actionable)
     dec: L.dec === 'card' ? [] : dec, decFold: L.dec === 'fold' && dec.length > 0 ? EG_PRES_TEXT.decrees(dec.length) : '', foldOpen,
     objective: E.sg === 'trial' && !watching ? egObjectiveOf(spec) : '', progress: E.sg === 'trial' && !watching ? egProgressText(spec, E.fight?.pg) : '',
-    stage: watching ? witLine : stageLine(E, now), marks, marksSaid: marks.map((m) => `${EG_MARK_NAMES[m.k] ?? ''} ${m.secs}s`).join(' - '),
+    stage: watching ? witLine : [stageLine(E, now), egBridgeLine(E, now, bridge && !watching)].filter(Boolean).join(' '), marks, marksSaid: marks.map((m) => `${EG_MARK_NAMES[m.k] ?? ''} ${m.secs}s`).join(' - '),
     eclipse: E.sg === 'trial' || E.sg === 'closing' ? egEclipseChip(egEclipseAt(spec, now / 1000)) : '',   // EG-ZG (section 25.5): *The Eclipse - 5*, while the place's hazards run (the fight's own stages)
     lord: egLordBar(E)?.court ? egLordBar(E) : null, lordH: L.lordH,   // only in a Court (a Proving Walk's champion has none)
-    gain, first, door, live, touch: touch ? egTouchButtons({ witness: watching, rest: E.sg === 'rest' }) : [],
+    gain, first, door, live, touch: touch ? egTouchButtons({ witness: watching, rest: E.sg === 'rest', bridge: bridge && !watching }) : [],
     held: watching ? [] : held,   // AUDIT EG III: the holder's chips
   };
 }

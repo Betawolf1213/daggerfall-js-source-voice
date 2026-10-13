@@ -23,6 +23,8 @@
 //     already holds of each body (when it rose, its hurt), so a member who joins or reloads mid-fight holds the company's
 //     fight at once and the fight said again every two seconds never stands its bodies anew.
 //   EG-ZQ (2026-10-12; section 14): a lord's size (`sz`, Colossal's) kept on its body.
+//   AUDIT EG III (2026-10-13; section 15): the SPIREBRIDGES the room raised in this hall (`bridges` - each `ebridge`'s hall, gap,
+//     stand and end, who raised it), kept across the fight said again, until a second past their end.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_ROLE, EG_FL, egWalkY } from './egBodies.js';   // EG-ZJ: a lord's fall, a walk's height (the room's own law)
@@ -90,7 +92,7 @@ function foldFight(f, w, now) {
       // EG-ZJ (section 22): the room's whole fight over what this screen holds of it - each body known kept its own memory
       // (egBodyOf's `had`), one first heard here standing all along; the zones the room still burns
       const same = f.h === w.h, had = same ? new Map(f.bodies.map((b) => [b.i, b])) : null;
-      return { ...EG_FIGHT_EMPTY, h: w.h, wk: w.wk, bodies: w.b.map((t) => egBodyOf(t, now, had?.get(t[0]) ?? null, 0)), blows: w.bl, tx: w.tx, mk: w.mk, pg: w.pg, zones: w.zs ?? (same ? f.zones : []), says: same ? f.says : [], gone: same ? f.gone : [], fells: same ? f.fells : [], phases: same ? f.phases : [], told: same ? f.told ?? [] : [], gust: f.gust, dark: f.dark, rail: f.rail };
+      return { ...EG_FIGHT_EMPTY, h: w.h, wk: w.wk, bodies: w.b.map((t) => egBodyOf(t, now, had?.get(t[0]) ?? null, 0)), blows: w.bl, tx: w.tx, mk: w.mk, pg: w.pg, zones: w.zs ?? (same ? f.zones : []), says: same ? f.says : [], gone: same ? f.gone : [], fells: same ? f.fells : [], phases: same ? f.phases : [], told: same ? f.told ?? [] : [], gust: f.gust, dark: f.dark, rail: f.rail, bridges: (f.bridges ?? []).filter((q) => q.h === w.h) };   // AUDIT EG III: the hall's Spirebridges kept (one heard before its fight was)
     }
     case 'ead': { const had = new Set(f.bodies.map((b) => b.i)); return { ...f, bodies: [...f.bodies, ...w.a.filter((t) => !had.has(t[0])).map((t) => egBodyOf(t, now))] }; }
     case 'emv': {
@@ -117,10 +119,11 @@ function foldFight(f, w, now) {
     case 'egust': return { ...f, gust: w };
     case 'edark': return { ...f, dark: w.until };
     case 'erail': return { ...f, rail: w.until };
+    case 'ebridge': return { ...f, bridges: [...(f.bridges ?? []).filter((q) => q.h === w.h && q.until > now - 1000), { h: w.h, g: w.g, at: w.at, until: w.until, s: w.s, n: w.n }].slice(-8) };   // AUDIT EG III: a Spirebridge raised
     default: return f;
   }
 }
-const FIGHT_WORDS = new Set(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail', 'tell', 'untell']);
+const FIGHT_WORDS = new Set(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail', 'tell', 'untell', 'ebridge']);
 
 /**
  * One word folded into the breach's state (pure). A word of another breach than the one held is not this one's - a call

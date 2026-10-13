@@ -39,6 +39,13 @@
 // laid by courseOf, one course a road: layHall stands the hall about the generator's edge. Laws 4 and 5 lay byte for byte
 // the halls they laid before (test/egz_frag.test.js, test/eg6a_span.test.js).
 //
+// AUDIT EG III (2026-10-13, lane 1 #14; sections 14 and 22): SPEC LAW 6 - THE SPAN DECREES ON EVERY SPAN. Gale-Swept and
+// Crumbling Halls lay their sections on every span of a hall (EG_DECREE_LAW): a Span's road, both roads of THE FORK (the Low
+// Road had none), and a Proving Walk's second span, the one to its door (it had none); at rank II each lays two sections, not
+// one longer. A Gust section stands on an island of its own; a Crumble section is laid straight on from the ground before it
+// and brings none (a section and no island: one island fewer than a section brings, two at rank II). Laws 4 and 5 are kept
+// byte for byte (their 800 halls hashed whole - test/egz_frag.test.js, test/eg6a_span.test.js) and stay in EG_LAWS their days.
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { sdSeed, sdRng } from './sdBrain.js';
 import { egSpanProof, egRoadCross, EG_SPAN_RUN_MPS } from './egSpanLaw.js';   // EG-FULL: THE TIMED SOLVER - a course it refuses is laid again
@@ -48,8 +55,12 @@ import { egFragShaft, EG_SHAFT_KITS, EG_SLAG_LAW, EG_SLAG_STEP } from './egFragL
 import { gateTrialOf } from './gateMods.js';   // EG5: the gate's boss-general trials the lord family recasts (a leaf - it imports nothing)
 
 /** The spec law's number - a change to any draw below changes it (and the relay's version with it). EG-ZC: 5, the last
- *  fragments (the law before kept - net/egDurable.js EG_LAWS). */
-export const EG_SPEC = 5;
+ *  fragments (the law before kept - net/egDurable.js EG_LAWS). AUDIT EG III: 6, the span decrees on every span (laws 4 and 5
+ *  kept beside it). */
+export const EG_SPEC = 6;
+/** AUDIT EG III (sections 14 and 22): the spec law from which Gale-Swept and Crumbling Halls lay their sections on every span
+ *  (a Proving Walk's second span, THE FORK's Low Road) and two sections at rank II - the laws before lay as they laid. */
+export const EG_DECREE_LAW = 6;
 /** The most a company holds (the party's own PARTY_MAX, net/wire.js - pinned equal). */
 export const EG_PARTY_MAX = 8;
 
@@ -639,6 +650,7 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   const r = sdRng(egSeed(seed, HALL_SALT + h + attempt * RELAY_SALT));
   const plain = attempt > EG_RELAY_MAX;   // the last resort: the band's first two pieces alone
   const gale = geo % 3, crumbling = Math.floor(geo / 3) % 3;
+  const L6 = law >= EG_DECREE_LAW;   // AUDIT EG III: the span decrees on every span, a section a rank
   const X = 0;
   /** the hall's parts in cm, said in metres at the end */
   const P = { discs: [], bands: [], lanes: [], steps: [], islands: [], caves: [], rifts: [], vents: [], fl: [], spots: {}, deco: [], gate: null, foe: null, arrive: null, end: null, ring: null, walk: null, waystones: [], chamber: 0,
@@ -664,7 +676,9 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   /** a step laid `gap` past the edge (its unused fields nought, one shape for every step - the Steps' law): its place */
   const step = (k, gap, o = {}) => { S.at(edge, y); const at = S.step(k, gap, { ...o, x: X + (o.x ?? xRoad), kit: kitNow }); edge = S.edge; return at; };
   const gap = () => S.gap();
-  const island = (g = gap(), x = X) => { S.at(edge, y); const z = S.check(g); P.islands.push({ x, y, z, r: ISLE_R, road }); disc(x, z, ISLE_R, 'island', y); edge = S.edge; return z; };
+  const island = (g = gap(), x = X) => { S.at(edge, y); const z = S.check(g); P.islands.push({ x, y, z, r: ISLE_R, road }); disc(x, z, ISLE_R, 'island', y); edge = S.edge; isleEdge = edge; return z; };
+  /** LAW 6: the edge the last island left (a Gust section begun there stands on it - never a second island beside it) */
+  let isleEdge = -1;
   /** a run of `n` steps of one piece (section 10.3 - every piece at the Steps' own timing, at every depth) */
   const run = (k, n) => { S.at(edge, y); S.run(k, n, X + xRoad, kitNow); edge = S.edge; y = S.y; };
   /** A fragment's law half laid into the hall (net/egFragLaw.js's plan, in its own frame about (x0, z0, y0)): its hazards,
@@ -770,11 +784,25 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   const court = (R, role = 'court') => { const zc = edge + 400 + R; band(edge - 50, edge + 450, BRIDGE_HALF, 'bridge', y); disc(X, zc, R, role, y); flD(X, zc, R, y); edge = zc + R; return zc; };
   const downToPlate = () => { if (y > 0) { island(); run('crumble', Math.max(2, Math.ceil(y / EG_STEP_DOWN_CM))); } };
   /** The span decrees' sections (section 14) - never dropped for room ("every span carries a gust"), at least two pieces
-   *  each. */
+   *  each. AUDIT EG III - LAW 6 (EG_DECREE_LAW): each rank its own section - a Gust section on its island (on the road's own
+   *  line, `xRoad` - the Low Road's too), a Crumble section laid straight on from the ground before it (no island of its own);
+   *  rank I's of three pieces (room allowing, two at least), rank II's two of two each - the second Crumble section stands
+   *  elsewhere on the road (crumbleTwo). */
   function decreeSections() {
-    if (gale > 0) { island(); run('gust', Math.max(2, Math.min(2 + gale, Math.floor((10200 - edge) / 560)))); }
-    if (crumbling > 0) { if (crumbling < 2) island(); run('crumble', Math.max(2, Math.min(2 + crumbling, Math.floor((10200 - edge) / 560)))); }
+    if (!L6) {
+      if (gale > 0) { island(); run('gust', Math.max(2, Math.min(2 + gale, Math.floor((10200 - edge) / 560)))); }
+      if (crumbling > 0) { if (crumbling < 2) island(); run('crumble', Math.max(2, Math.min(2 + crumbling, Math.floor((10200 - edge) / 560)))); }
+      return;
+    }
+    for (let k = 0; k < gale; k++) { if (edge !== isleEdge) island(gap(), X + xRoad); run('gust', sectionOf(gale)); }
+    if (crumbling > 0) run('crumble', sectionOf(crumbling));
   }
+  /** LAW 6: a decree section's pieces at its decree's rank - rank I three (two at least, as the room past 102 m allows),
+   *  rank II two (it lays two sections). */
+  const sectionOf = (rank) => (rank >= 2 ? 2 : Math.max(2, Math.min(3, Math.floor((10200 - edge) / 560))));
+  /** LAW 6: Crumbling Halls II's second Crumble section, laid straight on from the ground before it, apart from the first by
+   *  the road between them (a run, an island, a passage). */
+  const crumbleTwo = () => { if (L6 && crumbling >= 2) run('crumble', 2); };
   /**
    * THE FORK (section 11.4): the course forks at an island. THE HIGH ROAD stays over the void - harder (two sections, each
    * at the Steps' own timing), shorter, its cache of Reliquaries at its hardest point - and meets the end plate's height by
@@ -793,6 +821,7 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     const zCache = island();
     spot('hcache', X, zCache);
     run(pieces[between(r, 0, pieces.length - 1)], extra > 0 ? 2 : 3);
+    crumbleTwo();   // LAW 6: Crumbling Halls II's second section, before the High Road's Drop
     y = yF - EG_FORK_DROP_CM;
     step('drop', gap());
     const zHi = edge, yLow = y;
@@ -806,6 +835,7 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     edge = zc + ISLE_R;
     y = yLow;
     step('drop', gap(), { x: EG_LOW_X_CM });
+    xRoad = EG_LOW_X_CM; crumbleTwo(); xRoad = 0;   // LAW 6: the Low Road's second Crumble section, off its Drop's landing
     cave(EG_PASSAGE_KITS[bnd][0], EG_LOW_X_CM);
     // the Battlemage's niche on a landing past the passage: heals 15% once a member, holds a shard each, takes a Memento
     const zN = edge + 400;
@@ -814,9 +844,10 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     spot('niche', LX + BRIDGE_HALF, zN);
     edge = zN + 300;
     for (const g of ['harrier', 'harrier']) spot('lowfoe', LX, zN - 600, { k: g });
-    // fewer falls: still ground the rest of the way, then across to the end plate
+    // fewer falls: still ground the rest of the way, then across to the end plate - LAW 6: the span decrees' sections in its
+    // place (the Low Road is a span's road: it carries them as the High Road does)
     xRoad = EG_LOW_X_CM;
-    run('still', 2);
+    if (L6 && extra > 0) decreeSections(); else run('still', 2);
     xRoad = 0;
     const zLo = edge;
     // the roads meet at the end plate (at the Low Road's height): a High Road that ends first is carried on by still
@@ -865,18 +896,26 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     } else if (c >= EG_FORK_FROM_C && !plain && !set) fork(two, extra);
     else {
       // the span decrees' sections take the room of the runs before them; a set piece takes most of the hall
-      run(two[0], set ? 2 : extra > 0 ? 3 : c <= 1 ? 6 : between(r, 4, 5));
-      if (crumbling < 1 || set) island();
+      // LAW 6: under two ranks of the decrees their sections take more of the runs' room - two pieces a run, none with a set piece
+      const runN = L6 && extra >= 2 ? 2 : 3;
+      if (!(L6 && set && extra >= 2)) run(two[0], set ? 2 : extra > 0 ? runN : c <= 1 ? 6 : between(r, 4, 5));
+      if (L6) { crumbleTwo(); island(); }   // LAW 6: Crumbling Halls II's second section, and no island taken for it
+      else if (crumbling < 1 || set) island();
       if (set) { setPiece(set, extra > 0); island(between(r, 200, 260)); }
       else if (c <= 2 || r() < 0.5) { cave(); island(between(r, 200, 260)); }   // in circles 1 and 2 every span carries a passage (section 7)
-      if (!(set && extra > 0)) run(two[1], set ? 2 : extra > 0 ? 3 : c <= 1 ? 6 : between(r, 4, 5));
+      if (!(set && extra > 0)) run(two[1], set ? 2 : extra > 0 ? runN : c <= 1 ? 6 : between(r, 4, 5));
       decreeSections();
       if (c >= 3 && extra < 2 && edge < 9000 && !set) { island(); run(pieces[between(r, 0, pieces.length - 1)], between(r, 3, 4)); }
       if (twist === 'vault') { const [vx, vz] = [X + 900, edge - 300]; lane(X, edge - 300, vx, vz, BRIDGE_HALF, 'side', y); disc(vx, vz, 350, 'vault', y); spot('vault', vx, vz); }
     }
     if (!P.fork) { downToPlate(); edge += gap(); }   // THE FORK lays its own way onto the plate
   } else if (kind === 'proving') {
-    run(c <= 1 ? 'still' : pieces[between(r, 0, 1)], between(r, 5, 7));
+    // LAW 6: under the span decrees the first span runs short (four pieces, three under two decrees' ranks) and the second -
+    // the one to the door - is the decrees' own, their sections in place of its run: the hall stays inside EG_HALL_LEN_MAX.
+    // Crumbling Halls II's second Crumble section ends the first span, apart from the first by the court
+    const extra = L6 ? gale + crumbling : 0;
+    run(c <= 1 ? 'still' : pieces[between(r, 0, 1)], extra >= 2 ? 3 : extra > 0 ? 4 : between(r, 5, 7));
+    if (extra > 0) crumbleTwo();
     const R = 1400, zc = edge + gap() + R;
     disc(X, zc, R, 'court', y); flD(X, zc, R, y);
     if (c >= 2 && r() * 3 < 1) chamberAt(zc, R);   // one proving court in three a chamber (section 11.4) - its play its own
@@ -884,7 +923,8 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     for (const deg of [0, 120, 240]) { const [x, z] = polar(X, zc, 900, deg + 60); spot('standard', x, z); }
     edge = zc + R;
     if (twist === 'vault') { const [vx, vz] = [X - 900, zc]; lane(X - R, zc, vx - 350, vz, BRIDGE_HALF, 'side', y); disc(vx - 700, vz, 350, 'vault', y); spot('vault', vx - 700, vz); }
-    run(c <= 1 ? 'drift' : pieces[between(r, 0, 2)], between(r, 4, 6));
+    if (extra > 0) decreeSections();   // LAW 6: the second span the decrees' (section 14 - "a Proving Walk's")
+    else run(c <= 1 ? 'drift' : pieces[between(r, 0, 2)], between(r, 4, 6));
     downToPlate();
     edge += gap();
   } else if (kind === 'rampart') {

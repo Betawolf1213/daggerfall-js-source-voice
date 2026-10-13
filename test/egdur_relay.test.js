@@ -236,9 +236,11 @@ test('EG-H2 THE LAW PIN (section 22): a member\'s `spec` answered with its hall 
     assert.equal(egSpecGive({ h: 1 }), false, 'a hall that names no seed is none');
     await beat(1000);
   }, { party: false });
-  // PIN MOVED (EG-ZC): spec law 5 (the last fragments) became the law on 2026-10-12, and law 4 is kept beside it its seven days
-  assert.equal(EG_LAWS[EG_SPEC], '2026-10-12', 'this build draws its own law');
-  assert.equal(EG_LAWS[EG_SPEC - 1], '2026-10-11', 'and the law before, kept');
+  // PIN MOVED (EG-ZC): spec law 5 (the last fragments) became the law on 2026-10-12, and law 4 is kept beside it its seven days.
+  // PIN MOVED (AUDIT EG III): spec law 6 (the span decrees on every span) became the law on 2026-10-13, laws 4 and 5 kept beside it
+  assert.equal(EG_LAWS[EG_SPEC], '2026-10-13', 'this build draws its own law');
+  assert.equal(EG_LAWS[EG_SPEC - 1], '2026-10-12', 'and the law before, kept');
+  assert.equal(EG_LAWS[EG_SPEC - 2], '2026-10-11', 'and the one before it, inside its seven days');
   assert.equal(EG_LAW_KEEP_DAYS, 7);
   assert.deepEqual([egLawKnown(EG_SPEC), egLawKnown(EG_SPEC - 1), egLawKnown(999), egLawKnown('4')], [true, true, false, false]);
   // a woken room whose law this build does not draw: the breach a void

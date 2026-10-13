@@ -218,8 +218,8 @@
   {
     "name": "EGZ-the-law-before-forgotten",
     "file": "src/net/egDurable.js",
-    "old": "export const EG_LAWS = Object.freeze({ 4: '2026-10-11', 5: '2026-10-12' });",
-    "new": "export const EG_LAWS = Object.freeze({ 5: '2026-10-12' });",
+    "old": "export const EG_LAWS = Object.freeze({ 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13' });",
+    "new": "export const EG_LAWS = Object.freeze({ 5: '2026-10-12', 6: '2026-10-13' });",
     "tests": [
       "test/egz_frag.test.js"
     ]
@@ -353,8 +353,8 @@
   {
     "name": "EGZ-the-client-hands-no-light",
     "file": "src/scenes/egClient.js",
-    "old": "        lit: (F.zones ?? []).filter((z) => z.kind === 'haven').map((z) => ({ s: z.s, from: z.from, until: z.until })) });",
-    "new": "        lit: [] });",
+    "old": "        lit: (F.zones ?? []).filter((z) => z.kind === 'haven').map((z) => ({ s: z.s, from: z.from, until: z.until })), br });",
+    "new": "        lit: [], br });",
     "tests": [
       "test/egz_frag.test.js"
     ]

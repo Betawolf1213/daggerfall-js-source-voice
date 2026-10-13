@@ -200,8 +200,8 @@
   {
     "name": "EGPRES-the-dpad-taken-with-nothing-open",
     "file": "src/ui/egSpireHud.js",
-    "old": "export const egPadUp = ({ recap = false, panel = false, witness = false } = {}) => !!(recap || panel || witness);",
-    "new": "export const egPadUp = ({ recap = false, panel = false, witness = false } = {}) => !!(recap || panel || witness || true);",
+    "old": "export const egPadUp = ({ recap = false, panel = false, witness = false, bridge = false } = {}) => !!(recap || panel || witness || bridge);",
+    "new": "export const egPadUp = ({ recap = false, panel = false, witness = false, bridge = false } = {}) => !!(recap || panel || witness || bridge || true);",
     "tests": [
       "test/egpres_hud.test.js"
     ]

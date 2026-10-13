@@ -799,7 +799,8 @@ band's **champion** stands: a Kynreeve in the Galleries, a Kynmarcher in the Cai
   - **the Markynaz, the Grand Duke's Decree**: he lays one lord-family decree (section 14) on his own fight, named on
     his card. It folds with the circle's lord decrees through the fight's profile (section 14), never in their place: the
     one his hall's number draws from the four, or the next his fight does not already bear.
-- Its fall opens a second span, whose end is the door.
+- Its fall opens a second span, whose end is the door. Under Gale-Swept or Crumbling Halls that second span is the
+  decrees' own sections, and the first runs short (section 14, THE SPAN DECREES' SECTIONS).
 - From circle 2, one proving court in three is a chamber: the Fallen Stacks' broken dome, with two balconies (section
   11.4).
 
@@ -1816,6 +1817,28 @@ card.
 | | **Ashen Vigil** | the next rest heals half; the rest card says so | a quarter |
 | **lord** | **Colossal**, **Unyielding**, **Vengeful**, **Grudge-Bearer** | the gate's boss-general trials, recast as laws (below), on the Court's lord alone | the laws' rank II values (below) |
 
+**THE SPAN DECREES' SECTIONS** (spec law 6, `EG_DECREE_LAW` in `net/egLaw.js`; AUDIT EG III). Gale-Swept and Crumbling Halls
+lay a section a rank on every span of a hall:
+
+- a Span's road, and both roads of THE FORK - the Low Road's after its niche, in place of its still ground, so neither road
+  escapes the decree;
+- a Proving Walk's second span, the one to its door, which is the decrees' sections alone. Its first span runs four pieces
+  (three under two ranks), and Crumbling Halls II's second section ends it, before the court.
+
+How each is laid:
+
+- **a Gust section** stands on an island of its own, two pieces at least;
+- **a Crumble section** is laid straight on from the ground before it and brings no island, so the span has one island
+  fewer than a section brings (two at rank II);
+- rank I's section is three pieces, two as the room past 102 m allows. Rank II lays two sections of two pieces each, apart
+  on their road (a run, an island or a passage between them);
+- under two ranks the runs before them yield their room (two pieces a run, and none beside a set piece), so every hall stays
+  inside `EG_HALL_LEN_MAX`;
+- a Brink's fixed course and a Deepway's fragments carry none.
+
+Laws 4 and 5 lay as they laid (THE LAW PIN, section 22): Gale-Swept on the High Road alone, rank II one longer section, the
+Proving Walk and the Low Road untouched.
+
 A wave's cadence and a decree's own cadence (Hunting Pack, Ashfall) are "more at once", which depth may add. NOTHING
 GETS FASTER binds every wind-up, every piece's timing and every crumble, never the number of things at once (section
 18).
@@ -1916,7 +1939,27 @@ every Valkynaz Redoubt; a member holds one at a time, and taking another replace
 | **Blade** | **Counterstroke** | a melee blow on a lord within 0.6 s after one of its blows lands within 6 m of you deals x1.4 | relay (it knows both), inside the 1.6 cap |
 | **Hunt** | **Spotter** | your arrows wake Lurkers at any range, and a woken or struck foe is marked +10% for 8 s | relay |
 | **Arcana** | **Spillover** | a spell's overkill on an add carries to the nearest add within 6 m | relay (host hits); the carry out of the member's purse, within its blow's cap |
-| **Fellowship** | **Spirebridge** | once a span, a gold bridge over the next gap for the company, for 6 s | the room's word; known to the fair trail, and the crossing's bounds are solved with it |
+| **Fellowship** | **Spirebridge** | once a span, a gold bridge over the next gap for the company, for 6 s | the room's word (`ebridge`); ground on the fair trail while it stands; never asked of the solver |
+
+**Spirebridge** (AUDIT EG III; the room's rule `egSpirebridge` in `net/egVestige.js`, the plank's law `egBridgeOf` in
+`net/egSpanLaw.js`).
+
+- **The ask.** Its living holder asks it (`mast`) in a trial or its closing, once a hall's span: B, the pad's up, the touch
+  layer's button or `/breach bridge`. The screen offers it on the stage's line only while a gap lies ahead. A Proving Walk's
+  two spans are one hall's, so its holder raises one there. A screen reloaded mid-span forgets a plank it raised in that
+  hall: it may offer the ask again, and the room refuses it, saying nothing.
+- **The gap.** The room picks the next gap ahead of the holder's own pose by `egBridgeAhead`, on the road whose line it
+  stands on. The gap begins no more than 6 m ahead and no more than 1.5 m behind. A Drop's fall or a riser's face, past
+  THE ENVELOPE's step down, is spanned by none. With no such gap the ask is refused and nothing is spent.
+- **The plank.** It spans the gap at the far piece's rest line, 1.6-3 m wide, lapped 0.3 m onto each side, rising from one
+  side's height to the other's. It stands 6 s, said to the company (`ebridge`).
+- **The fair trail** counts its top as a piece's ground while it stands (`net/egFair.js` `egSupportAt`).
+- **On every screen** (`scenes/egSpan.js`) it draws gold under THE EDGE LINE and stands in the collider from its raising to
+  its end. It lays itself across over 0.25 s and falters through its last second at 2 Hz. Under reduced motion it stands
+  whole and steady.
+- **The solver never sees it.** Every course is proven without it, and running a plank is no faster than jumping its gap.
+  So the crossing's bound (section 10.5) is not solved with it: a bridge saves at most a wait, and the bound is a measure
+  that gates nothing.
 
 **Accords.** Two members within 10 m, holding a named pair from two different families, gain an Accord while they
 stand together. The offer card names it and says what it does: *Takes an Accord with Mira's Hunter's Mark. Hammer and
@@ -2871,7 +2914,8 @@ height rides a word the fight already says, so the frames stay as many as they w
 | `{k:'lping', x, z, kind}` | member -> room | a living member's ping, every 3 s (*here*, *danger*, *mine*; section 16.4) |
 | `{k:'buy', i}` | member -> room | a purchase from the Sutler (section 17.3) |
 | `{k:'tonic'}` | member -> room | a Spire Tonic drunk (section 17.1): one of the run's spent, and `{k:'eheal', p: 0.25, why: 'tonic'}` to that member alone - its health through the census, its magicka on its screen (AUDIT EG III) |
-| `{k:'mast'}` | member -> room | a Mastery used (Spirebridge, section 15) |
+| `{k:'mast'}` | member -> room | a Mastery used (Spirebridge, section 15) - no fields: the room reads the asker's own pose |
+| `{k:'ebridge', h, g, at, until, s, n}` | room -> all | a Spirebridge raised (section 15): its hall, its gap's number in the hall's chain (`egSpanPairs`), when it stands and until when (at most 10 s on the wire), who raised it |
 | `{k:'ping', x, z, kind}` / `{k:'bequest', v}` / `{k:'forsake'}` | witness -> room | the witness's acts |
 | `{k:'home'}` | member -> room | the way home, confirmed |
 | `{k:'void', z}` | client -> room | an order never accepted, asked to be voided |

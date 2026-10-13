@@ -327,5 +327,5 @@ test('EG-FULL LAYER THREE THE BREACH CLIENT\'S HANDS (sections 8.4 and 11.10): a
   const n1 = N.sent.length;
   N.client.command('use');
   assert.equal(N.sent.length, n1, 'from too far, nothing');
-  assert.deepEqual(N.client.objs(), { h: en.s.h, objs: [], lit: [] }, 'no fight yet - no objects');   // PIN MOVED (EG-ZC): and no branch the Moon-Mirror lit
+  assert.deepEqual(N.client.objs(), { h: en.s.h, objs: [], lit: [], br: [] }, 'no fight yet - no objects');   // PIN MOVED (EG-ZC): and no branch the Moon-Mirror lit; PIN MOVED (AUDIT EG III): and no Spirebridge
 });

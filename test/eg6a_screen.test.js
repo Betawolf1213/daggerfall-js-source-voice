@@ -51,7 +51,9 @@ test('EG6a THE WAYSTONES READ OFF THE COURSES (section 10.1: the course is the S
 test('EG6a A GUST\'S BREATH AND ITS BANNERS (section 10.3): over each run of a hall\'s Gust pieces, an island\'s reach either side, on its own road\'s line - the Crumbles between two runs and THE FORK\'s other road stand in no breath (the course sweep found both blowing), and the other road\'s island beside a run carries no banner of its (mutants: the runs one section; the breath across the hall; the banner on the other road\'s island)', () => {
   const spec = egHallOf(25, 27, 7);
   const G = egGustSections([spec]);
-  assert.deepEqual(G.map((g) => [g.spec.h, g.road, g.x, g.y, +g.z0.toFixed(2), +g.z1.toFixed(2)]), [[27, 0, 0, 0, 48.58, 69.47], [27, 0, 0, 0, 95.47, 111.69]], 'two runs, two sections');
+  // PIN MOVED (AUDIT EG III): spec law 6 lays Gale-Swept on the Low Road too (its run on its own line, x 15, 4.5 m down) - the
+  // High Road's two runs as before, the second where law 6 lays it
+  assert.deepEqual(G.map((g) => [g.spec.h, g.road, g.x, g.y, +g.z0.toFixed(2), +g.z1.toFixed(2)]), [[27, 0, 0, 0, 48.58, 69.47], [27, 0, 0, 0, 84.02, 100.3], [27, 1, 15, -4.5, 87.06, 103.03]], 'two runs, two sections - and the Low Road\'s its own');
   assert.equal(EG_GUST_REACH_M, 6);
   const { span } = rig(25, 6, 7);
   let t = 0;

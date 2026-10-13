@@ -115,6 +115,11 @@
 //     mid-flush carried as the flush ends; the frame's lists kept; the key said while the start window asks; A SPIRE TONIC
 //     drunk (`/breach tonic`, its magicka on this screen) and LONG STEP on my crumbles for one span (section 17).
 //
+//   AUDIT EG III (2026-10-13, lane 1 #7 / lane 3 #10; section 15): SPIREBRIDGE ASKED - while I hold it, alive in a trial or
+//     its closing, unspent this span, with a gap ahead of my feet (net/egSpanLaw.js egBridgeAhead - the room's own law), the
+//     ask is offered on the stage's line, the touch layer's button and the pad's up, and taken by B or `/breach bridge`
+//     (`mast`); the room's word (`ebridge`) said on every screen, and its plank handed to the spans (`objs`' `br`).
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
 import { egKeyRefusal } from './egArch.js';   // EG-F: the key's refusals, in the page's order
@@ -132,6 +137,8 @@ import { egHudModel, drawEgHud, egPanelModel, drawEgPanel, egRecapModel, EG_POTI
 import { EG_CANTRIPS } from '../net/egRun.js';
 import { egVOf } from '../net/egVestige.js';
 import { egResonance, EG_WALL_X } from '../net/egVestige.js';   // EG-ZS: Rooted's and Rallying Cry's resonance; Living Wall's share
+import { EG_SPIREBRIDGE_ID } from '../net/egVestige.js';   // AUDIT EG III (section 15): Spirebridge, the Fellowship's Mastery
+import { egBridgeAhead } from '../net/egSpanLaw.js';   // AUDIT EG III: the gap ahead, the room's own law
 import { fillVitalSigns } from '../systems/statMods.js';
 import { createPortalSet } from './portalFx.js';
 import { EG_ROLE } from '../net/egBodies.js';
@@ -1285,7 +1292,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     const a = open.at(-1);
     return a ? { kind: 'ask', n: egAskText(a[0], a[1]).opts.length, cards: 0, ask: a } : { kind: null, n: 0, cards: 0, ask: null };
   }
-  const padCtx = () => { const E = link.state(); return { recap: !!recap, panel: inSpire() && !E.end && choices(E).n > 0, witness: inSpire() && !!witness }; };
+  const padCtx = () => { const E = link.state(); return { recap: !!recap, panel: inSpire() && !E.end && choices(E).n > 0, witness: inSpire() && !!witness, bridge: bridgeGap() >= 0 }; };
   const hudScaleNow = () => { try { return /** @type {any} */ (globalThis.document?.querySelector?.('.hud'))?.style?.getPropertyValue?.('--hud-scale') || ''; } catch { return ''; } };
   const rgbCss = (c) => `rgb(${Math.round(c[0] * 255)}, ${Math.round(c[1] * 255)}, ${Math.round(c[2] * 255)})`;
   /** One frame of the Spire's presentation (after the halls' and the fight's). */
@@ -1349,7 +1356,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     const held = egHolderWatch(holdMemo, egHolderNow(witness ? null : fight, E, me(), spireWeaveReady()), t, E.h);
     for (const b of held.beats) beatNow(b.k, b);
     const model = egSpireHudModel(E, me(), t, { ff, witness: !!witness, potions, gain: pres.gain && t - pres.gain.at < EG_GAIN_MS ? pres.gain : null,
-      first: pres.first && t - pres.firstAt < FIRST_SHOW_MS ? pres.first : '', door, live: pres.live, touch: pres.touch ??= isTouchDevice(win), foldOpen: pres.foldOpen, held: held.chips });
+      first: pres.first && t - pres.firstAt < FIRST_SHOW_MS ? pres.first : '', door, live: pres.live, touch: pres.touch ??= isTouchDevice(win), foldOpen: pres.foldOpen, held: held.chips, bridge: bridgeGap() >= 0 });   // AUDIT EG III: Spirebridge offered
     drawEgSpireHud(model, { hidden: hudHidden(), skin: isEnhanced() ? 'enhanced' : 'classic', still: acc.still, danger: rgbCss(acc.palette.danger), scale: hudScaleNow(),
       onTouch: (id) => touchAct(id), onFold: () => { pres.foldOpen = !pres.foldOpen; } });
   }
@@ -1363,6 +1370,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (act.k === 'close') { recap = null; drawEgPanel(null); return true; }
     if (act.k === 'watch') { if (witness) { witness.idx += act.d; if (witness.idx < 0) witness.idx += 8; witness.watched = null; } return true; }
     if (act.k === 'forsake') { api.command('forsake'); return true; }
+    if (act.k === 'bridge') return bridgeAsk();   // AUDIT EG III: Spirebridge, the pad's up
     const P = choices(E);
     if (act.k === 'focus' && P.n > 0) { pres.focus = (pres.focus + act.d + P.n) % P.n; return true; }
     if (act.k === 'take' && P.kind === 'offer' && pres.focus >= P.cards) { o?.sendEg?.('surplus', { use: pres.focus - P.cards }); return true; }   // EG-ZD: a fourth card (0) or a reroll (1)
@@ -1376,7 +1384,34 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (id === 'prev' || id === 'next') { if (witness) { witness.idx += id === 'next' ? 1 : -1; if (witness.idx < 0) witness.idx += 8; witness.watched = null; } return true; }
     if (id === 'forsake') { api.command('forsake'); return true; }
     if (id === 'home') return api.wayHome();
+    if (id === 'bridge') return bridgeAsk();   // AUDIT EG III
     return false;
+  }
+  // ── AUDIT EG III (section 15): SPIREBRIDGE ASKED ──────────────────────────────────────────────────────────────────
+  /** When I last asked it (my clock - an answer is a round trip away; a refusal lets me ask again after it). */
+  let bridgeAskedAt = -Infinity;
+  /** Why my Spirebridge may not be asked now ('' it may): not held, spent this span, no gap ahead. */
+  function bridgeWhy() {
+    const E = link.state();
+    if (!inSpire() || witness || E.end || !(E.h > 0) || egRunOfMember(E, me()).mast !== EG_SPIREBRIDGE_ID) return EG_PRES_TEXT.bridgeNot;
+    if (E.sg !== 'trial' && E.sg !== 'closing') return EG_PRES_TEXT.bridgeNone;
+    if ((E.fight?.bridges ?? []).some((q) => q.h === E.h && q.s === me())) return EG_PRES_TEXT.bridgeSpent;
+    return '';
+  }
+  /** The gap my Spirebridge would span now (its number in the hall's chain - the room's own reading of my feet), or -1. */
+  function bridgeGap() {
+    if (bridgeWhy() || Date.now() - bridgeAskedAt < 1000) return -1;
+    const F = feetInHall(link.state());
+    return F ? egBridgeAhead(F.spec, F.x, F.z) : -1;
+  }
+  /** Ask it (`mast`): the room picks the gap from my pose and says the plank to the company. */
+  function bridgeAsk() {
+    const why = bridgeWhy();
+    if (why) { say(why); return true; }
+    if (Date.now() - bridgeAskedAt < 1000) return true;
+    if (bridgeGap() < 0) { say(EG_PRES_TEXT.bridgeNone); return true; }
+    bridgeAskedAt = Date.now();
+    return !!online()?.sendEg?.('mast');
   }
 
   // ── EG-ZF (section 27.6): THE RECAP WHOLE - the lord's fall's chart, the healing, the board's line ──────────────────
@@ -1504,6 +1539,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (w.k === 'eheal' && w.why === 'rally') fight?.rally?.(now() - egClockHalfRtt(clock));   // EG-ZR: SHIELD-HYMN - at the door's opening, the word's way here taken off
       if (w.k === 'eheal' && w.why === 'rally' && w.p > 0 && !witness && entity.health > 0 && inSpire()) beatNow('rally', { t: w.p });   // AUDIT EG III (section 27.5): Rally's heal seen, heard and said
       if (w.k === 'toll') payToll(w.q, w.h);   // EG-ZI: the pull's toll (section 10.6)
+      if (w.k === 'ebridge') say(w.s === me() ? EG_PRES_TEXT.bridgeMine : EG_PRES_TEXT.bridgeRaised(w.n || 'A companion'));   // AUDIT EG III: Spirebridge, said to the company
       if (w.k === 'egot' && w.w === 'page' && EG_ANNALS[w.p]) { annals.add(w.p); say(`A page of the Annals of 3E 398 - ${EG_ANNALS[w.p][0]}: ${EG_ANNALS[w.p][1]}`); }
       else if (w.k === 'egot' && EG_GOT_TEXT[w.w]) say(EG_GOT_TEXT[w.w]);
       if (w.k === 'egot' && w.w === 'longstep') longStepHeard(link.state());   // AUDIT EG III (lane1 #5): LONG STEP on my crumbles, for one span
@@ -1532,9 +1568,10 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
           forsakeAskAt = -Infinity; o?.sendEg?.('forsake'); return;
         }
         if (a === 'use' || a === 'engine') { this.useEngine(); return; }
+        if (a === 'bridge' || a === 'spirebridge') { bridgeAsk(); return; }   // AUDIT EG III (section 15)
         if (a === 'annals') { const n = (Number(b) | 0) - 1, have = [...annals].sort((x, y) => x - y); if (!have.length) say('No page of the Annals is yours yet. Look behind the halls\' false walls.'); else if (n >= 0 && have[n] != null) say(`${EG_ANNALS[have[n]][0]}: ${EG_ANNALS[have[n]][1]}`); else say(`Your pages of the Annals: ${have.map((p, j) => `${j + 1}. ${EG_ANNALS[p][0]}`).join(', ')}. /breach annals N to read one.`); return; }
         if (a === 'bequest') { const run = egRunOfMember(E, me()), n = (Number(b) | 0) - 1, v = run.vs[n]?.[0]; if (!witness || v == null) say('A fallen member names one of their Vestiges: /breach bequest N.'); else o?.sendEg?.('bequest', { v }); return; }
-        say('In the breach: /breach pick N, vote yes|no|N, cant N, tonic, buy cant|tonic|shard, use, annals, ping, watch, forsake, home.');
+        say('In the breach: /breach pick N, vote yes|no|N, cant N, tonic, buy cant|tonic|shard, use, bridge, annals, ping, watch, forsake, home.');
         return;
       }
       answer();
@@ -1566,6 +1603,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       const open = (E.as ?? []).filter((q) => q[2] > now());
       if (open.length && (code === 'KeyY' || code === 'KeyN')) return this.vote(code === 'KeyY' ? 'yes' : 'no');
       if (open.length && m) return this.vote(m[1]);
+      if (code === 'KeyB' && bridgeGap() >= 0) return bridgeAsk();   // AUDIT EG III: Spirebridge - B while a gap lies ahead (the shoulder's own key otherwise)
       return false;
     },
     /** THE DEATH SAVE (characters/playerEntity.js registerPlayerDeathSave): a blow that would kill me in the Spire is a
@@ -1743,9 +1781,10 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       const E = link.state(), F = E.fight, here = inSpire();
       if (objsMemo.E === E && objsMemo.here === here) return objsMemo.v;   // AUDIT EG III (lane4 #10): made again only when the room's word moved - the spans ask it up to three times a frame
       objsMemo.E = E; objsMemo.here = here;
-      if (!here || !F || F.h !== E.h) return (objsMemo.v = { h: E.h | 0, objs: [], lit: [] });
+      const br = here ? (F?.bridges ?? []).filter((q) => q.h === E.h).map((q) => ({ g: q.g, from: q.at, until: q.until })) : [];   // AUDIT EG III: the hall's Spirebridges
+      if (!here || !F || F.h !== E.h) return (objsMemo.v = { h: E.h | 0, objs: [], lit: [], br });
       return (objsMemo.v = { h: E.h | 0, objs: F.bodies.filter((b) => b.role === EG_ROLE.obj).map((b) => ({ t: OBJ_NAME[b.k] ?? '', i: b.i, x: b.x, z: b.z, st: b.st ?? 0, stAt: b.stAt ?? 0, pt: b.pt ?? 0 })),
-        lit: (F.zones ?? []).filter((z) => z.kind === 'haven').map((z) => ({ s: z.s, from: z.from, until: z.until })) });
+        lit: (F.zones ?? []).filter((z) => z.kind === 'haven').map((z) => ({ s: z.s, from: z.from, until: z.until })), br });
     },
     /** A press on a span's own target (systems/spireKit.js spireAct): an Orrery stone's handle (`pz` - a turn forward or
      *  back) or an engine (`use`), in the hall I stand in. */
