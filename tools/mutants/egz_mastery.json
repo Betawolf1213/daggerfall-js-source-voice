@@ -899,8 +899,8 @@
   {
     "name": "EGZS-cry-door-unhanded",
     "file": "src/scenes/egClient.js",
-    "old": "h: E.h | 0, dn: E.dn ?? 0, cry };",
-    "new": "h: E.h | 0, dn: 0, cry };",
+    "old": "h: E.h | 0, dn: E.dn ?? 0, cry, ls: longStepOn(E) });",
+    "new": "h: E.h | 0, dn: 0, cry, ls: longStepOn(E) });",
     "tests": [
       "test/egz_mastery.test.js"
     ],

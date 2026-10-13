@@ -167,8 +167,9 @@ export class SdStepsPass {
   }
   /** Add the ghosts (`step`, `state`: SD_GHOST_STEPS.length vec4s each, written in place by the Steps) onto the frame,
    *  `steps` the pixel law's levels, `vw` x `vh` the world image (px - the drawing buffer's when not said). Answers
-   *  whether any drew. */
-  draw(proj, view, step, state, fog = null, steps = 10, vw = 0, vh = 0) {
+   *  whether any drew. AUDIT EG III (lane4 #5): `color` their line's (the Steps' gold when not said - the Spire's
+   *  ghosts take the danger palette's safety, scenes/egSpan.js egGhostRgb). */
+  draw(proj, view, step, state, fog = null, steps = 10, vw = 0, vh = 0, color = SD_GHOST.color) {
     this.drawn = false;
     let any = false;
     for (let i = 0; i < this.n; i++) if (state[i * 4] > 0) { any = true; break; }
@@ -182,7 +183,7 @@ export class SdStepsPass {
     gl.uniform4fv(U.uStep, step); gl.uniform4fv(U.uState, state);
     gl.uniform2fv(U.uViewport, this._viewport);
     gl.uniform1f(U.uWidth, SD_GHOST.px * telegraphLineW(h));
-    gl.uniform3f(U.uColor, SD_GHOST.color[0], SD_GHOST.color[1], SD_GHOST.color[2]);
+    gl.uniform3f(U.uColor, color[0], color[1], color[2]);
     gl.uniform1f(U.uSteps, steps);
     gl.uniform1i(U.uFogMode, fog ? fog.mode : 0);
     gl.uniform1f(U.uFogDensity, fog?.density ?? 0);

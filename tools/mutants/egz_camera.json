@@ -732,8 +732,8 @@
   {
     "name": "EGZN-bands-freed-standing",
     "file": "src/scenes/worldModes.js",
-    "old": "    if (!_egBands.size || (mode === 'dungeon' && isEgHall(dungeonLoc))) return 0;",
-    "new": "    if (!_egBands.size) return 0;",
+    "old": "    if (mode === 'dungeon' && isEgHall(dungeonLoc)) return 0;\n    let n = egBeatTellDown",
+    "new": "    let n = egBeatTellDown",
     "tests": [
       "test/egz_camera_host.test.js"
     ]

@@ -206,7 +206,10 @@ test('EG-ZA THE VOID OF A BREACH THE ROOM TOOK (section 22): while nothing has b
   assert.equal((await verifyEgOpenAnyAge(old, kp.publicKey, { subtle })).ok, true, 'long past its minute, still the opener\'s');
   const adm = await mintEgOrder({ o: 'egadmit', s: 'acct-0', eb: B, ez: 'z'.repeat(20) }, kp.privateKey, { subtle, nowS: 1000 });
   assert.equal((await verifyEgOpenAnyAge(adm, kp.publicKey, { subtle })).ok, false, 'an admission is no stake');
-  assert.equal((await verifyEgOpenAnyAge(old.slice(0, -2) + 'AA', kp.publicKey, { subtle })).ok, false, 'a forged one');
+  // a forged one: one whole character of the signature changed (its last two carry pad bits - an 'AA' there was the same
+  // bytes one key in 256, a flake seen in AUDIT EG III's merge)
+  const forged = old.slice(0, -3) + (old.at(-3) === 'A' ? 'B' : 'A') + old.slice(-2);
+  assert.equal((await verifyEgOpenAnyAge(forged, kp.publicKey, { subtle })).ok, false, 'a forged one');
 });
 
 test('EG-ZA EMPTY OR VOID (section 22): a breach nobody answers is the opener\'s \'empty\' only when its room was told its call went out - otherwise, with no hall ever woken, a void and its opener handed the `v`; the room\'s end is held at the hub for the opener (mutants: the void rule gone; the call ignored; the opener owed nothing)', async () => {

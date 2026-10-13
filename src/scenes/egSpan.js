@@ -99,6 +99,7 @@ import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE } from '../player/activate.js
 import { spireFooting, spireWake, spireObjs, spireAct } from '../systems/spireKit.js';
 import { spireCrumbleWait } from '../systems/spireVestiges.js';   // EG-ZR (Elite-Gates.md section 15): Featherstep - my crumbles wait longer
 import { egBandDress, EG_DRESS, egTellArchive, egBeatWarnArt, egBeatBackArt, egBeatTellMaps } from '../world/egBandArt.js';   // EG-G2: the band's dress on every piece (EG-ZC: its liquid on the slag); EG-ZL: a Beat's warning
+import { EG_BEAT_TELL_RECORDS } from '../world/egBandArt.js';   // AUDIT EG III (lane4 #4): the Beat's records, freed at the breach's end
 import { createEgPieceBatch, EG_BATCH_CULL_PAD } from './egPieceBatch.js';   // EG-G2: one draw a kind, culled
 import { meshKitBounds } from '../world/meshKit.js';
 import { spherePlanes, sphereInPlanes } from '../render/bounds.js';
@@ -330,9 +331,10 @@ export const EG_GHOSTS_MAX = 48;
  *  of its ghost's). */
 export const EG_GHOST_SLAB = Object.freeze({ hold: 0.3, fill: 0.35 });
 /** A BEAT'S PICTURES UP (world/egBandArt.js egBeatWarnArt, egBeatBackArt - cutouts under band `band`'s tell archive) for
- *  palette `key` on `renderer`: uploaded the first time a renderer is asked for that band and palette, and kept the session
- *  (the band's own dress's law - EG-G2: textures that stand for the session, so a swap uploads nothing again). Answers
- *  whether they stand; a renderer with no upload holds none. */
+ *  palette `key` on `renderer`: uploaded the first time a renderer is asked for that band and palette, and kept while the
+ *  breach stands (the band's own dress's law - EG-ZN: up once a breach, so a swap uploads nothing again; AUDIT EG III lane4
+ *  #4: freed with it at the breach's end - egBeatTellDown). Answers whether they stand; a renderer with no upload holds
+ *  none. */
 const _tellUp = new WeakMap();
 export function egBeatTellUp(renderer, band, key) {
   if (!renderer || typeof renderer !== 'object') return false;
@@ -351,6 +353,26 @@ export function egBeatTellUp(renderer, band, key) {
   }
   return up.get(k);
 }
+/** AUDIT EG III (lane4 #4, EVERY ALLOCATION HAS AN OWNER - section 29: "band textures are cached per band and freed at the
+ *  breach's end"): every Beat's picture `renderer` holds (each band's tell archive, its warning stages and its return -
+ *  world/egBandArt.js EG_BEAT_TELL_RECORDS - albedo and emission) freed, and the record of them let go, so the next breach
+ *  uploads them again. The mode machine's band dress owner calls it (scenes/worldModes.js egBandsDown). Answers how many
+ *  textures it freed. */
+export function egBeatTellDown(renderer) {
+  const up = renderer && typeof renderer === 'object' ? _tellUp.get(renderer) : null;
+  if (!up?.size) return 0;
+  const bands = new Set([...up.keys()].map((k) => Number(k.split(':')[0])));
+  _tellUp.delete(renderer);
+  let n = 0;
+  for (const band of bands) {
+    const arch = egTellArchive(band);
+    for (const rec of [...EG_BEAT_TELL_RECORDS.warn.flat(), ...EG_BEAT_TELL_RECORDS.back]) { if (renderer.releaseTexture?.(arch, rec)) n++; if (renderer.evictEmissionTexture?.(`${arch}_${rec}`)) n++; }
+  }
+  return n;
+}
+/** AUDIT EG III (lane4 #5, sections 25.2 and 25.7): a ghost's line in the danger palette's safety - the Steps' own gold under
+ *  the Standard (render/sdStepsPass.js SD_GHOST.color), the palette's safety under any other. Pure. */
+export const egGhostRgb = (pal) => (pal && pal.key !== 'standard' && Array.isArray(pal.safety) ? pal.safety : SD_GHOST.color);
 /** A Beat's kind: its beat (the pieces of one beat show one frame - their draw shares one picture map). */
 const beatKind = (s) => `beat@${Math.round(s.beat * 1000)}`;
 /** `out` made a turn by `yw` about y (0 faces +z, a quarter turn +x), then the move to (x, y, z) - in place (the Hour's
@@ -812,7 +834,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       if (!draws) return 0;
       let planes = null;
       if (proj && view) { mul4(_vp, proj, view); planes = spherePlanes(_vp, _planes); }
-      for (const g of [...isles, ...seals]) {
+      for (const list of [isles, seals]) for (const g of list) {   // AUDIT EG III (lane4 #10): the two lists walked, never joined a frame
         const d = g.draw;
         if (!d?.sphere) continue;
         const M = d.object.matrix, c = d.sphere.centre;
@@ -910,7 +932,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       if (!passTried) { passTried = true; try { pass = new SdStepsPass(renderer.gl, ghostSteps.map((st) => ({ kind: st.s.kind === 'beat' ? 'beat' : 'crumble' })), { max: EG_GHOSTS_MAX, slab: true, fogFloor: EG_FOG_FLOOR }); } catch (e) { console.warn('[eg] the ghosts would not build', e?.message ?? e); pass = null; } }
       if (!pass) return false;
       const vp = renderer._worldViewportPx;   // the world image (px) - read, never copied
-      return pass.draw(proj, view, ghostStep, ghostState, fog, renderer.lightingLane ? SD_SKY_STEPS.lane : SD_SKY_STEPS.classic, vp?.[2] ?? 0, vp?.[3] ?? 0);
+      return pass.draw(proj, view, ghostStep, ghostState, fog, renderer.lightingLane ? SD_SKY_STEPS.lane : SD_SKY_STEPS.classic, vp?.[2] ?? 0, vp?.[3] ?? 0, egGhostRgb(access?.palette));   // AUDIT EG III (lane4 #5): in the palette's safety
     },
     /** EG-ZL: the ghosts as the pass reads them (tests) - each slot's top and state, and the step each stands for. */
     get ghosts() { return { step: ghostStep, state: ghostState, of: ghostSteps.map((st) => ({ h: st.spec.h, i: st.s.i, kind: st.s.kind })) }; },

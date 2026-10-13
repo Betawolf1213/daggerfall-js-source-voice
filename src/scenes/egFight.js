@@ -50,6 +50,10 @@
 // my screen (`rally` - net/egVestige.js egHymnOf on where the screen draws the company, read by egShieldDr with the census's
 // law); Immovable's push half (`immovable` - the census's own stillness on my trail); a blow's share of the body without
 // Stoneskin's cushion (systems/renownLayer.js spireBodyMax).
+// AUDIT EG III (2026-10-13, the client group; sections 13.3 and 13.4): THE TWINS' TOUCHED on my screen (egTouchedX - Vael's
+// blow on the Fire-touched, Isk's on the Frost-touched, +25%) and MORVAYN'S CHAINING (egChainMates - a blow on any of my
+// chain split over it, a mate's judged at their drawn feet); the title card only ever this fight's own, and a leave that
+// holds nothing touches nothing (the Burning Court's card stands).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { HIT_KINDS, CRYSTAL_R, CRYSTAL_H } from '../net/gateBrain.js';
@@ -79,6 +83,7 @@ import { egBlowVerdict, egInShape, egShapeOrder, coneInscribed } from '../net/eg
 import { EG_ROLE, EG_FL, EG_FEINT_AT } from '../net/egBodies.js';
 import { egKindLook, EG_LEGION_KINDS } from '../net/egLegion.js';
 import { EG_BOSS_KEYS, EG_OBJ, egBossLook, egBossName } from '../net/egLords.js';
+import { EG_MARK_FIRE, EG_MARK_FROST, EG_TOUCH_X } from '../net/egLords.js';   // AUDIT EG III (lane1 #4): the Touched marks and their weight - the lords' one home
 import { egHallCentre, egFireFallFlames, EG_FIRE_FALL } from '../world/egHall.js';   // EG-ZH: the fire falls' flames
 import { GENERAL_FPS } from '../render/flatAnimation.js';   // EG-ZH: DaggerfallBillboard's framesPerSecond - the fire falls' frames
 import { egHazardParts, egHazardBites, egWispAt, EG_HAZARDS } from '../net/egFragLaw.js';   // EG-FULL LAYER THREE: the fragments' hazards
@@ -93,9 +98,12 @@ import { egFightView } from '../net/egWalkGraph.js';   // EG-ZP: the hall's figh
 import { egRunOfMember } from '../net/egLink.js';   // EG-ZP: each member's Vestiges and Mastery
 import { egVOf, egHymnOf, EG_BLOODIED_UNDER, EG_HYMN_MS } from '../net/egVestige.js';   // EG-ZR (section 15): the holder's Vestiges, Shield-Hymn's pair
 import { egAccordMates, EG_ECHO_Q } from '../net/egVestige.js';   // EG-ZS (section 15): the pair law; an Echo's number
+import { EG_MASTERIES } from '../net/egVestige.js';   // AUDIT EG III (lane4 #10): Immovable's number - the census asked only for its holder
 import { egHolderBlow } from '../systems/spireVestiges.js';   // EG-ZR: a blow of mine with the Vestiges I hold
 import { spireBodyMax } from '../systems/renownLayer.js';   // EG-ZR: Stoneskin's cushion over the body a share is of
 
+/** AUDIT EG III (lane4 #10): Immovable's number (the Mastery's id - net/egVestige.js EG_MASTERIES, as net/egBrain.js reads it). */
+const IMMOVABLE_ID = EG_MASTERIES.find((M) => M.key === 'immovable')?.id ?? -1;
 /** The objects' types by number (net/egLords.js EG_OBJ), and which are struck (drawn as crystals) - the rest are stood on. */
 const OBJ_KEY = Object.freeze(Object.fromEntries(Object.entries(EG_OBJ).map(([k, v]) => [v, k])));
 const STRUCK = new Set(['rift', 'anchor', 'banner', 'heart', 'seal', 'brazier', 'standard', 'chain', 'pillar', 'spark', 'fwall']);   // LAYER THREE: `fwall` an alcove's false wall - one blow
@@ -306,6 +314,45 @@ export function egShieldDr(E, F, spec, bl, me, tr, at, ll, hy = null) {
  */
 export const egLifelineOpen = (ll, v, at) => [...ll.filter((w) => w[1] >= at - EG_TRAIL_MS), [at - EG_HEAL_WORD_MS, at + EG_LIFELINE_MS, v]].slice(-4);
 
+// ── AUDIT EG III (2026-10-13, lane1 #4 and #12): THE SOUL CAIRN'S TWO LAWS ON THE STRUCK SCREEN ─────────────────────────
+/**
+ * AUDIT EG III (lane1 #4) - THE TWINS' TOUCHED: the weight blow `bl` lands on member `me` with in fight `F` (its bodies, its
+ * marks `mk` - `[sub, mark, until, n]`) at `t`: net/egLords.js EG_TOUCH_X (section 13.3: "They deal +25% to Isk and take +25%
+ * from Vael" - the relay weighs the dealt half, egLordHitX; this is the taken half) when the twin it leaves is the one whose
+ * mark `me` bears live (Vael of the Fire Clan, `pt` 0, lays EG_MARK_FIRE; Isk of the Frost Clan, `pt` 1, EG_MARK_FROST - net/egLords.js
+ * egLordsStep's), else 1. Pure.
+ * @param {any} F @param {{ o?: number }} bl @param {string|null} me @param {number} t
+ */
+export function egTouchedX(F, bl, me, t) {
+  if (!me || !Number.isInteger(bl?.o)) return 1;
+  const L = (F?.bodies ?? []).find((b) => b.i === bl.o);
+  if (!L || L.role !== EG_ROLE.lord || EG_BOSS_KEYS[L.k] !== 'twins') return 1;
+  const mark = L.pt === 1 ? EG_MARK_FROST : EG_MARK_FIRE;
+  return (F.mk ?? []).some((m) => m[0] === me && m[1] === mark && m[2] > t) ? EG_TOUCH_X : 1;
+}
+/**
+ * AUDIT EG III (lane1 #12) - MORVAYN'S CHAINING, "a blow on one is shared with the other" (section 13.4): the members bound
+ * to `me` by soul-chains in tethers `tx` (`[a, b, kind, cm]` - kind 2 the stay-close chain, net/egLords.js; a chain of three
+ * is two links on its first member), every member its links reach - never a Wraith an odd member is chained to (a body,
+ * not a member: killing it breaks the chain, it shares nothing). A blow on any of the chain is split evenly over all of it,
+ * so each takes its share of the blow (1 / (mates + 1)) for every one of them it lands on. Pure.
+ * @param {any[]} tx @param {string|null} me
+ */
+export function egChainMates(tx, me) {
+  const out = [];
+  if (!me || !tx?.length) return out;
+  const seen = new Set([me]);
+  for (let grew = true; grew;) {
+    grew = false;
+    for (const t of tx) {
+      if (t?.[2] !== 2 || typeof t[0] !== 'string' || typeof t[1] !== 'string') continue;
+      const a = seen.has(t[0]), b = seen.has(t[1]);
+      if (a !== b) { const n = a ? t[1] : t[0]; seen.add(n); out.push(n); grew = true; }
+    }
+  }
+  return out;
+}
+
 /**
  * @param {{ renderer?: any, gl?: any, getTexture?: any, uploadRecordFrame?: any, audio?: any, link: any, now: () => number,
  *   cam?: () => number[]|null, feet?: () => number[]|null, player?: () => any, me?: () => string|null, save?: (e: any, el: string) => number,
@@ -356,6 +403,14 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
    *  words, the sigils), the Eclipse's cycles heard (its wind and toll), the pull-apart tethers on me last frame (a snap's
    *  glass), the Drop I am falling onto, a Drop's dust */
   let floors = [], floorBuf = null, lastPlan = null, lastPeril = null, lastGround = null, viewYaw = null, groundUp = false, sigilsUp = false, dropFrom = null, dropOn = null;
+  /** AUDIT EG III (lane4 #2): whether this fight's title card stands - the card is the gate's own (ui/gateTitleCard.js), and
+   *  the Burning Court's frame draws it before the breach's: only a card this fight drew is ever put away here */
+  let cardUp = false;
+  /** One frame's title card (a wake, a fall), drawn while this fight holds one, put away once when it goes. */
+  function titleFrame(t) {
+    const m = titleCardModel(beat, t);
+    if (m || cardUp) { drawGateTitleCard(m, { hidden: hudHidden() }); cardUp = !!m; }
+  }
   const _pending = [], _sigils = [], _vp = new Float32Array(16), eclipseHeard = new Set(), dusts = [];
   let pullsWas = new Map(), pullsNow = new Map();
   /** EG-ZP (sections 15 and 21): my trail in the hall's frame (the census's own `[t, x, y, z, h]`, its last EG_TRAIL_MS) and
@@ -432,11 +487,12 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     beat = null; saysSeen = E.fight.says.length; wokeSeen = 0; gustSeen = 0;
   }
   /** A blow on me landed - its share of my health and its base, through my saving throw against its element. EG-ZP: less
-   *  the share `dr` my company's Vestiges spare a blow (spared). EG-ZR: its share of my body without Stoneskin's points. */
-  function landShare(pct, base, el, name, dr = 0) {
+   *  the share `dr` my company's Vestiges spare a blow (spared). EG-ZR: its share of my body without Stoneskin's points.
+   *  AUDIT EG III: `x` its weight on me - a twin's Touched (egTouchedX), my part of a chained blow (egChainMates). */
+  function landShare(pct, base, el, name, dr = 0, x = 1) {
     const e = player();
     if (!e || !(e.health > 0) || !(pct > 0)) return;
-    const k = 1 - dr, raw = strikeDamage(pct * k, spireBodyMax(e), base * k), dmg = el ? savedShare(raw, save(e, el)) : raw;
+    const k = (1 - dr) * x, raw = strikeDamage(pct * k, spireBodyMax(e), base * k), dmg = el ? savedShare(raw, save(e, el)) : raw;
     if (dmg > 0) strike(dmg, { fire: el === 'fire', el, name });
   }
   /** EG-ZP: the share of blow `bl` on me my company's Vestiges spare (egShieldDr - the census's own law) - each companion
@@ -815,7 +871,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       dropStep(t);   // EG-ZG (section 25.8)
       const f = myFeet(), e = player(), standing = !!f && !!e && e.health > 0, d0f = feet(), fy = d0f && centre ? d0f[1] - centre[1] : 0;
       if (standing) { trail.push([t, f[0], fy, f[1], hall]); while (trail.length > 1 && trail[1][0] <= t - EG_TRAIL_MS) trail.shift(); }   // EG-ZP: my trail, the census's shape
-      if (!F) { groundFrame(t, standing ? f : null, fy, null); snapFrame(); drawGateTitleCard(titleCardModel(beat, t), { hidden: hudHidden() }); return; }
+      if (!F) { groundFrame(t, standing ? f : null, fy, null); snapFrame(); titleFrame(t); return; }
       const blowBy = new Map();
       for (const bl of F.blows) if (bl.o && (!blowBy.has(bl.o) || blowBy.get(bl.o).at < bl.at) && t < bl.at + 700) blowBy.set(bl.o, bl);
       // THE BODIES
@@ -843,11 +899,19 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
         if (!toldHeard.has(bl.i) && t >= Math.max(bl.heard ?? -Infinity, bl.at - bl.wu - (bl.sh ?? 0)) && t < bl.at) { toldHeard.add(bl.i); const at = egToldAt(bl, f); if (at) mix.tell(toDungeon(at[0], 1, at[1])); }
       }
       const motion = egShakeMotion(egReducedMotion(), getPref('techniqueMotion'));   // EG-ZG (section 25.7): the shakes under reduced motion and Technique camera motion
+      // AUDIT EG III (lane1 #12): MORVAYN'S CHAINING - a blow on any of my chain split over all of it (egChainMates; none: mine whole)
+      const mates = egChainMates(F.tx, me()), part = 1 / (mates.length + 1);
       for (const bl of F.blows) {
         if (!bl.cut && t < bl.at) _pending.push(bl);   // EG-ZG: the peril arrow's
         if (!judged.has(bl.i) && !bl.cut && standing) {
           const v = egBlowVerdict(bl, f[0], f[1], t);
-          if (v !== 'wait') { judged.add(bl.i); if (v === 'hit') { landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl)); if (bl.pu > 0) { const s = bl.s[0]; const ox = s[0] === 'l' ? s[3] - s[1] : f[0] - s[1], oz = s[0] === 'l' ? s[4] - s[2] : f[1] - s[2], d = Math.hypot(ox, oz) || 1; push(ox / d, oz / d, bl.pu); } } }
+          if (v !== 'wait') { judged.add(bl.i); if (v === 'hit') { landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part * egTouchedX(F, bl, me(), t)); if (bl.pu > 0) { const s = bl.s[0]; const ox = s[0] === 'l' ? s[3] - s[1] : f[0] - s[1], oz = s[0] === 'l' ? s[4] - s[2] : f[1] - s[2], d = Math.hypot(ox, oz) || 1; push(ox / d, oz / d, bl.pu); } } }   // AUDIT EG III (lane1 #4): THE TWINS' TOUCHED, on my own blow
+        }
+        if (mates.length && !bl.cut && standing) for (const sub of mates) {   // AUDIT EG III (lane1 #12): my part of a blow on a chained mate, at their feet where this screen draws them
+          const key = `${bl.i}:${sub}`, q = judged.has(key) ? null : peerFeet(sub);
+          if (!q) continue;
+          const v = egBlowVerdict(bl, q[0], q[2], t);
+          if (v !== 'wait') { judged.add(key); if (v === 'hit') landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part); }
         }
         if (!landedSet.has(bl.i) && t >= bl.at && t - bl.at < 1500) {
           landedSet.add(bl.i); const s = bl.s[0]; if (s && s.length >= 3) play3(BOSS_CUES.quake, toDungeon(s[1], 1, s[2]));
@@ -892,7 +956,7 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       groundFrame(t, standing ? f : null, fy, chained);   // EG-ZG: the peril arrow, the chain's words
       snapFrame();
       beats(E, t, F);
-      drawGateTitleCard(titleCardModel(beat, t), { hidden: hudHidden() });
+      titleFrame(t);
     },
     /** No one body stands for the gate's boss seam: every body is the legion's seam's (`hostTargets`). */
     target: () => null,
@@ -986,16 +1050,19 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     immovable() {
       const E = link.state(), sub = me();
       if (!spec || !sub || hall !== E.h || !trail.length) return false;
-      return egCensusDr({ h: hall, mem: { [sub]: { mast: egRunOfMember(E, sub).mast } } }, null, egFightView(spec), { sub, at: now() }, [{ sub, tr: trail }]) > 0;
+      const mast = egRunOfMember(E, sub).mast;
+      if (mast !== IMMOVABLE_ID) return false;   // AUDIT EG III (lane4 #10): the census asked (its arrays made) only for Immovable's holder - the spans read this every frame
+      return egCensusDr({ h: hall, mem: { [sub]: { mast } } }, null, egFightView(spec), { sub, at: now() }, [{ sub, tr: trail }]) > 0;
     },
     /** The count's words for a tracker that asks. */
     countText: (ms) => egCountText(ms),
-    /** Out of the breach: everything put away. */
+    /** Out of the breach: everything put away - once (AUDIT EG III lane4 #2: again it is nothing). */
     leave() {
+      if (!hall && !centre && !cardUp && !groundUp && !sigilsUp && !drawn.size && !fireBatches.size && !ll.length && !trail.length && !hymn) return;   // AUDIT EG III (lane4 #2): nothing held - asked every frame out of the Spire, it touches nothing (never the Burning Court's card)
       for (const d of drawn.values()) destroy(d);
       drawn.clear(); crystalSlots.clear();
       dropFire(); toldHeard.clear(); mix.peers(false);   // EG-ZH: the flames freed, the peers as they were
-      drawGateTitleCard(null);
+      if (cardUp) { drawGateTitleCard(null); cardUp = false; }   // AUDIT EG III (lane4 #2): only a card this fight drew
       if (groundUp) { drawGateGround(null); groundUp = false; }   // EG-ZG: the peril arrow's readout
       if (sigilsUp) { drawEgSigils(null); sigilsUp = false; }
       hall = 0; spec = null; centre = null; beat = null;

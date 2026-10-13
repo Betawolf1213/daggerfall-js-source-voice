@@ -132,7 +132,19 @@ export class EgLinePass {
     this._mk = mk;
     this._vp = new Float32Array(16);
     this._gold = egEdgeLineColor();
+    this._white = EG_LINE_WHITE;
+    this._pal = 'standard';
     this.drawn = 0;
+  }
+  /** AUDIT EG III (lane4 #5, sections 25.2, 25.3 and 25.7): the danger palette the lines are drawn in (ui/egAccess.js) -
+   *  THE EDGE LINE in its safety at the line's luminance (world/egLook.js egEdgeLineColor), the tracks and streamers in its
+   *  hazard; made again only when the palette changes. None: the Standard. */
+  palette(pal) {
+    const key = pal?.key ?? 'standard';
+    if (key === this._pal) return;
+    this._pal = key;
+    this._gold = egEdgeLineColor(pal);
+    this._white = Array.isArray(pal?.hazard) ? pal.hazard : EG_LINE_WHITE;
   }
   /** The circle's edges and tracks (world/egLook.js egCircleEdges), made the static buffer - once a circle. */
   setCircle(edges) {
@@ -161,7 +173,7 @@ export class EgLinePass {
     gl.uniform2f(U.uViewport, vw || gl.drawingBufferWidth, h);
     gl.uniform1f(U.uWidth, egEdgeLinePx(h));
     gl.uniform3f(U.uGold, this._gold[0], this._gold[1], this._gold[2]);
-    gl.uniform3f(U.uWhite, 0.95, 0.95, 1.0);
+    gl.uniform3f(U.uWhite, this._white[0], this._white[1], this._white[2]);
     const fc = fog?.color ?? NO_FOG_COLOR;
     gl.uniform3f(U.uFogColor, fc[0], fc[1], fc[2]);
     gl.uniform3f(U.uFogFloor, EG_FOG_FLOOR.floor, EG_FOG_FLOOR.within, EG_FOG_FLOOR.ease);
@@ -193,3 +205,5 @@ export class EgLinePass {
 }
 const NO_FOG_RANGE = new Float32Array([0, 1]);
 const NO_FOG_COLOR = new Float32Array(3);
+/** The place's white under the Standard (ui/egAccess.js EG_DANGER_PALETTES.standard.hazard - the tracks' and streamers'). */
+const EG_LINE_WHITE = Object.freeze([0.95, 0.95, 1.0]);

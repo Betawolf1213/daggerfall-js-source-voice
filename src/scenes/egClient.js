@@ -108,6 +108,12 @@
 //     member resonates in Fellowship - systems/spireVestiges.js refreshes my Second Wind); and LIVING WALL, the screen's half
 //     (a heal on me, the room's or a companion's, its share more while I hold Stoneskin within 10 m of a companion holding
 //     Mender's Grace where my screen draws them - scenes/egFight.js accordMates; the census counts the room's the same).
+//   AUDIT EG III (2026-10-13, the client group): THE WITNESS never cast back, its eye critically damped (0.35 s) and kept
+//     out of the rock (egWitnessDamp, egWitnessClear - section 16.5), applied in the dungeon arm through the world host's
+//     `egWitnessEye`; THE LAW PIN's rebuild counted done once its step has run, and no worker's build under another law;
+//     the look on the level standing; the swap's worker let go every way out; the refusal's one type; a receipt heard
+//     mid-flush carried as the flush ends; the frame's lists kept; the key said while the start window asks; A SPIRE TONIC
+//     drunk (`/breach tonic`, its magicka on this screen) and LONG STEP on my crumbles for one span (section 17).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
@@ -179,6 +185,8 @@ import { spireBodyMax } from '../systems/renownLayer.js';   // EG-ZR: the body t
 import { healMine } from '../systems/playerHeal.js';   // EG-ZR: Mender's Grace's heal, the one heal a power gives
 import { spireVestigeNews, spireWeaveReady } from '../systems/spireVestiges.js';   // AUDIT EG III (section 27.5): the holder's news, said; Spellweave's chip
 import { egHolderNow, egHolderWatch, egHolderMemo } from '../ui/egBeats.js';   // AUDIT EG III: the holder's chips and the beats they bring
+import { CAMERA_OBSTACLE_LIMIT, MW_UNITS_PER_METER } from '../player/mwCamera.js';   // AUDIT EG III (lane6 #1): the witness's orbit collides as the Morrowind body's camera does
+import { EG_CRUMBLE_KINDS } from '../net/egSpanLaw.js';   // AUDIT EG III (lane1 #5): the steps Long Step's span is a span of
 
 /** Where the receipts wait on the device, how many at most, how often a kept one is asked again (ms). */
 export const EG_CLAIMS_KEY = 'eg.claims';
@@ -291,6 +299,10 @@ export const EG_END_TEXT = Object.freeze({
 });
 /** EG-F: no arch's clearing (one empty list, so the host's memo of the clearing set holds). */
 const NO_CLEARS = Object.freeze([]);
+/** AUDIT EG III (lane4 #12): the key turned while the start window still asks (or its preflight is out). */
+export const EG_START_ASKING_TEXT = 'The Spire already asks where you begin.';
+/** AUDIT EG III (lane1 #5): A SPIRE TONIC's refusals on this screen (`/breach tonic` - section 17.1). */
+export const EG_TONIC_TEXT = Object.freeze({ none: 'You hold no Spire Tonic.', fallen: 'The fallen drink nothing.' });
 /** A gift's words (`egot`). */
 /** EG-FULL LAYER THREE: the relay's object types by number (net/egLords.js EG_OBJ) - the spans read Grath's islands and
  *  the false walls by name (systems/spireKit.js spireObjs). */
@@ -307,9 +319,55 @@ export const EG_RING_PAD = 0.3;
 /** EG-E: a Redoubt's spoils leave the Court's heart this high over its floor, and rest this far inside its ring (m). */
 export const EG_BEACON_SPEW_UP = 2.2;
 export const EG_BEACON_RIM_M = 1.5;
+/** AUDIT EG III (lane1 #5): how many halls on from the one it is used in Long Step looks for its span (a crumble's hall). */
+export const EG_LONG_STEP_LOOK = 10;
 /** The witness's camera: behind and over the watched member (m). */
 export const EG_WITNESS_BACK = 4;
 export const EG_WITNESS_UP = 1.5;
+/** AUDIT EG III (lane6 #1, section 16.5: "critically damped (0.35 s), colliding as the Morrowind body's camera does"): the
+ *  orbit's smoothing time (s), and how far the eye may have to go in a frame before it stands there at once instead (m - the
+ *  watched member pulled to another plate: the stair's veil covers that step, never a sweep across the void). */
+export const EG_WITNESS_DAMP_S = 0.35;
+export const EG_WITNESS_SNAP_M = 8;
+/** AUDIT EG III (lane6 #1): THE WITNESS'S ORBIT POINT - EG_WITNESS_BACK behind the watched member's relayed pose `p` (its
+ *  eye, the camera's yaw `yaw`) and over it. Pure. @param {number[]} p @param {number} yaw */
+export const egWitnessOrbit = (p, yaw) => [p[0] - Math.sin(yaw) * EG_WITNESS_BACK, p[1] + EG_WITNESS_UP + 1.6, p[2] - Math.cos(yaw) * EG_WITNESS_BACK];
+/**
+ * AUDIT EG III (lane6 #1): THE WITNESS'S EYE KEPT OUT OF THE ROCK, as the Morrowind body's camera keeps its own (player/
+ * mwCamera.js eye): eye `e` pulled in along the way out from the watched member's pose `p` to where the swept sphere of the
+ * camera's clearance (CAMERA_OBSTACLE_LIMIT) first meets the hall (`cast`, the host's sphere cast - its distance is the
+ * sphere's centre's, nothing taken off). No cast, no hit short of it: `e` itself. Pure.
+ * @param {number[]} p @param {number[]} e @param {((o: number[], r: number, d: number[], m: number) => (number|null)) | null} [cast]
+ */
+export function egWitnessClear(p, e, cast = null) {
+  const dx = e[0] - p[0], dy = e[1] - p[1], dz = e[2] - p[2], len = Math.hypot(dx, dy, dz);
+  if (typeof cast !== 'function' || !(len > 1e-6)) return [e[0], e[1], e[2]];
+  const hit = cast([p[0], p[1], p[2]], CAMERA_OBSTACLE_LIMIT / MW_UNITS_PER_METER, [dx / len, dy / len, dz / len], len);
+  const k = Number.isFinite(hit) && hit < len ? Math.max(0, hit) / len : 1;
+  return [p[0] + dx * k, p[1] + dy * k, p[2] + dz * k];
+}
+/**
+ * AUDIT EG III (lane6 #1): THE WITNESS'S EYE DAMPED - `cur` (`{ p, v, who }`, the eye and its velocity, or null) carried
+ * toward `want` over `dt` (s) by a critically damped spring of smoothing time EG_WITNESS_DAMP_S (Unity's SmoothDamp, its
+ * Pade approximation); no eye yet, no time, or `want` past EG_WITNESS_SNAP_M away, and it stands at `want` still. `who` the
+ * member it watches. In place where `cur` is given; answers the eye.
+ * @param {{ p: number[], v: number[], who: string } | null} cur @param {number[]} want @param {number} dt @param {string} who
+ */
+export function egWitnessDamp(cur, want, dt, who) {
+  const e = cur ?? { p: [want[0], want[1], want[2]], v: [0, 0, 0], who };
+  e.who = who;
+  if (!cur || !(dt > 0) || Math.hypot(want[0] - e.p[0], want[1] - e.p[1], want[2] - e.p[2]) > EG_WITNESS_SNAP_M) {
+    for (let a = 0; a < 3; a++) { e.p[a] = want[a]; e.v[a] = 0; }
+    return e;
+  }
+  const w = 2 / EG_WITNESS_DAMP_S, x = w * dt, f = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
+  for (let a = 0; a < 3; a++) {
+    const ch = e.p[a] - want[a], tmp = (e.v[a] + w * ch) * dt;
+    e.v[a] = (e.v[a] - w * tmp) * f;
+    e.p[a] = want[a] + (ch + tmp) * f;
+  }
+  return e;
+}
 /** The account service's refusals in the Spire's words (net/accountClient.js REFUSALS holds the rest). */
 const REFUSED = Object.freeze({
   short: EG_TEXT.noKeys, guest: EG_TEXT.guest, 'no-session': EG_TEXT.guest, live: EG_TEXT.held, offline: EG_TEXT.shut, server: EG_TEXT.shut,
@@ -475,8 +533,10 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   /** EG-ZD (section 26): THE SPIRE MIX the beats ride - the fight's (over the host's music), else this screen's own. */
   let ownMix = null;
   const bus = () => fight?.mix?.() ?? (ownMix ??= createSpireMix({ audio, now }));
-  /** The circle this screen stands in, told to the look. */
-  const lookCircle = (E) => { const L = lookOf(); if (L && E.b && E.h > 0) L.setCircle(E.seed, egCircleOfHall(E.h), E.geo ?? 0); return L; };
+  /** The circle this screen stands in, told to the look. AUDIT EG III (lane4 #6): the level standing - the mode machine's
+   *  circle and the seed it was built from - never the company's word, which runs ahead of it through the veil's closing
+   *  and a swap's wait. */
+  const lookCircle = (E) => { const L = lookOf(), c = modes()?.egHallCircle?.(); if (L && E.b && c > 0) L.setCircle(circleSeed ?? E.seed, c, E.geo ?? 0); return L; };
   /** EG-ZE: reduced motion now (the port's row or the system's) - the stair's cut, the lights still. */
   const stillNow = () => egReducedMotion(win);
   // EG-ZH: THE HALL'S REVERB over this screen's engine (systems/egReverb.js); the arena my motor was given (mine to take
@@ -545,6 +605,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (E.call && E.call.co.some((r) => r[0] === me()) && egPhase({ openedAt: E.call.op }, now()) === 'open' && !inSpire()) { answer(); return EG_TEXT.opens; }
     const no = openRefusal();
     if (no) return no;
+    if (startWindow && startWin) return EG_START_ASKING_TEXT;   // AUDIT EG III (lane4 #12): a start window already asking - said, never a silent press
     if (startWindow) { askStart(); return ''; }   // EG-F: the start window asks where first (its preflight's answer opens it)
     open(false);
     return EG_TEXT.opening;
@@ -662,13 +723,15 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     stepIn(c);
     return true;
   }
-  /** A refusal the hub or the room said. */
+  /** A refusal the hub or the room said. AUDIT EG III (lane4 #8, THE MODAL CONTRACT): answers a boolean from every exit -
+   *  true where the refusal is said here or is a background ask's (the link says nothing), false where the link says it. */
   function refused(w) {
-    if (opening && w === 'the road is shut') { opening = null; return; }   // EG-H2 (section 22): THE DRAIN - the hub handed the stake back (its void receipt), no retry
+    if (opening && w === 'the road is shut') { opening = null; return false; }   // EG-H2 (section 22): THE DRAIN - the hub handed the stake back (its void receipt), no retry; said
     if (w === 'the breach took the key' || w === 'the void is too old') { if (voidFor) stakeDrop((s) => s.z === voidFor); voidFor = ''; return true; }   // EG-ZA: the breach's own receipts settle it, or it is past asking - a background ask, said nothing
-    if (opening && !inSpire() && w === 'the breach is closed' && opening.tries < EG_OPEN_TRIES) { opening.sentAt = Date.now() - EG_OPEN_RETRY_MS + 1000; return; }
+    if (opening && !inSpire() && w === 'the breach is closed' && opening.tries < EG_OPEN_TRIES) { opening.sentAt = Date.now() - EG_OPEN_RETRY_MS + 1000; return true; }   // AUDIT EG III (lane4 #8): the open asked again - nothing said while it retries
     if (w === 'the breach is closed' && answeredFor && link.state().call?.b === answeredFor) { say(EG_TEXT.late(link.state().call.o)); answeredFor = ''; callPortal?.clear?.(); return true; }   // EG-F: answered after the first hall woke - the late line, said instead
     if (w === 'the order is spent' || w === 'the order is not yours') admit = admit ? { ...admit, z: null } : null;
+    return false;
   }
 
   // ── the receipts ──────────────────────────────────────────────────────────────────────────────────────
@@ -687,10 +750,13 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     }
     flush();
   }
-  let flushing = false;
+  /** AUDIT EG III (lane4 #9, ASYNC NEVER DROPS): a flush asked while one is in flight is run again as it ends (`again`) -
+   *  a receipt heard mid-flush never waits on EG_CLAIM_RETRY_MS. */
+  let flushing = false, again = false;
   async function flush() {
-    if (flushing || !me() || account?.guest?.()) return;
-    flushing = true;
+    if (flushing) { again = true; return; }
+    if (!me() || account?.guest?.()) return;
+    flushing = true; again = false;
     claimAt = Date.now();
     try {
       const nowS = Math.floor(now() / 1000);
@@ -710,6 +776,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         if (egClaimDone(a)) { drop(); hub()?.sendEg?.('claimed', { b: c.b, q: c.q, w: c.q === 'w' ? c.w : 0 }); }   // EG-ZA: the hub forgets its held copy
       }
     } finally { flushing = false; }
+    if (again) await flush();   // AUDIT EG III (lane4 #9): the receipt heard meanwhile, carried now
   }
 
   // ── EG-ZA: the stakes (sections 22 and 23, "A key's loss") ───────────────────────────────────────────────────
@@ -801,19 +868,20 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
    *  build not ready by then, or none offered, and it is the old step: out under the veil and into the next, built as
    *  the first was. */
   async function swapTo(E, c) {
-    if (swapping || answering) return;
+    if (swapping || answering) return false;
     const r = { b: E.b, seed: E.seed, c, geo: E.geo ?? 0 };
-    const built = modes()?.egPrebuild?.(r) ?? null;
-    if (built === 'building') { if (!swapWaitAt) swapWaitAt = now(); if (now() - swapWaitAt < EG_SWAP_WAIT_MS) return; }
+    const built = lawForeign(E) ? null : modes()?.egPrebuild?.(r) ?? null;   // AUDIT EG III (lane4 #3): under another law no worker's build (its module never holds the halls given) - the old step, from the halls this thread holds
+    if (built === 'building') { if (!swapWaitAt) swapWaitAt = now(); if (now() - swapWaitAt < EG_SWAP_WAIT_MS) return false; }
     swapWaitAt = 0;
     swapping = true;
     // EG-ZE: THE STAIR the swap shows - the full fall into a band's first hall, the veil else (the circle standing built
     // again under the breach's law veils: the company has not moved), the cut under reduced motion; 0.8 s each way
     const step = egStairStep(E.h, stillNow(), c === modes()?.egHallCircle?.());
+    let went = false;
     try {
       const back = modes()?.egHallReturn?.() ?? null;
       placedH = 0; downH = 0; dropDoor();
-      await modes()?.stepThroughFire?.(async () => {
+      went = !!await modes()?.stepThroughFire?.(async () => {
         if (built === 'ready' && modes()?.egSwapCircle?.(r)) { if (!witness && placeOn(E.h, E, false)) placedH = E.h; return true; }   // EG-H3: THE SWAP - the built level stood in place, my feet on its first plate (a witness's body stays held)
         modes()?.forceExitToExterior?.();
         if (back) landAt(back);
@@ -821,6 +889,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       }, step.look, step.opts);
       if (modes()?.egHallCircle?.() === c) circleSeed = E.seed >>> 0;   // EG-ZD: the circle standing is the breach's own now
     } finally { swapping = false; }
+    return went;   // AUDIT EG III (lane4 #3): whether the step ran - THE LAW PIN's rebuild is done only then
   }
   /** One frame in the Spire. */
   function spireFrame(E, t) {
@@ -854,7 +923,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     // THE POTION LAW: two restoring potions a hall, refilled at each wake and at the rest
     if ((E.sg === 'trial' || E.sg === 'rest') && potionHall !== `${E.h}:${E.sg === 'rest' ? 'r' : 't'}`) { potionHall = `${E.h}:${E.sg === 'rest' ? 'r' : 't'}`; potions = EG_POTIONS_PER_HALL; }
     const c = egCircleOfHall(E.h);
-    if (E.sg === 'rest' && c === M.egHallCircle?.()) M.egPrebuild?.({ b: E.b, seed: E.seed, c: c + 1, geo: E.geo ?? 0 });   // EG-H3 (EG10): THE SWAP'S BUILD - the next circle's level made while the Court rests
+    if (E.sg === 'rest' && c === M.egHallCircle?.() && !lawForeign(E)) M.egPrebuild?.({ b: E.b, seed: E.seed, c: c + 1, geo: E.geo ?? 0 });   // EG-H3 (EG10): THE SWAP'S BUILD - the next circle's level made while the Court rests (AUDIT EG III lane4 #3: never under another law)
     // EG-ZD (section 22): a circle - or a seed - my record had wrong is rebuilt in place on a return, as a new circle is
     if (c !== M.egHallCircle?.() || (circleSeed != null && circleSeed !== E.seed >>> 0)) { if (E.sg === 'arrive' || returning === E.b) swapTo(E, c); return; }
     // EG-ZD (section 22): BACK IN - resumed at my last island in a trial (the dropped socket's rule), at the hall's arrival
@@ -1025,6 +1094,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   function applyHeal(p, why) {
     if (witness || !(entity.health > 0) || !inSpire()) return;
     if (why === 'rest' && p >= 1) { fillVitalSigns(entity); return; }
+    if (why === 'tonic' && p > 0 && entity.maxMagicka > 0) entity.magicka = Math.min(entity.maxMagicka, (entity.magicka ?? 0) + Math.round(p * entity.maxMagicka));   // AUDIT EG III (lane1 #5): A SPIRE TONIC restores its share of magicka too (section 17.1)
     if (p > 0 && wall()) p *= 1 + EG_WALL_X;
     if (heal) { heal(p, why); return; }
     const max = entity.maxHealth ?? 0;
@@ -1037,14 +1107,32 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
    *  Spire, a witness, gone home, the breach ended. */
   function holderNow() {
     if (!inSpire() || witness) return null;
-    const E = link.state(), m = egMemberOf(E, me());
+    const E = link.state();
+    // AUDIT EG III (lane4 #10): the holder made again only when the room's word, or Long Step's, moved - never every frame
+    if (holderMade.E === E && holderMade.ls === lsSeq) return holderMade.h;
+    holderMade.E = E; holderMade.ls = lsSeq; holderMade.h = null;
+    const m = egMemberOf(E, me());
     if (!E.b || E.end || !m?.in || !m.alive || m.home) return null;
     const run = egRunOfMember(E, me());
     // EG-ZS: RALLYING CRY - the hall's door's instant (the room's `dn`, 0 before it opens) and whether a living member of the
     // company resonates in Fellowship
     const cry = (E.co ?? []).some((c) => { const q = egMemberOf(E, c[0]); return !!q?.in && q.alive && !q.home && egResonance(egRunOfMember(E, c[0]).vs).includes('fellowship'); });
-    return { vs: run.vs, mast: run.mast, b: E.b, h: E.h | 0, dn: E.dn ?? 0, cry };
+    return (holderMade.h = { vs: run.vs, mast: run.mast, b: E.b, h: E.h | 0, dn: E.dn ?? 0, cry, ls: longStepOn(E) });   // AUDIT EG III (lane1 #5): and Long Step's half second
   }
+  /** AUDIT EG III (lane4 #10): the holder as last made, and the room's state and Long Step's word it was made from. */
+  const holderMade = { E: null, ls: -1, h: /** @type {any} */ (null) };
+  /** AUDIT EG III (lane1 #5) - LONG STEP (section 17.2: "your crumbles wait +0.5 s for one span (private, as crumbles are)"):
+   *  the Cantrip's word to me (`egot` `longstep`) holds for one span - the hall the company stands in when it is used if that
+   *  hall lays a crumble, else the next of the breach that does (`{ b, h }`); `lsSeq` counts its words (the holder's memo). */
+  let longStep = /** @type {{ b: string, h: number } | null} */ (null), lsSeq = 0;
+  function longStepHeard(E) {
+    if (!E.b || !(E.h > 0)) return;
+    let h = E.h;
+    for (let k = E.h; k < E.h + EG_LONG_STEP_LOOK; k++) if (egHallOf(E.seed, k, E.geo ?? 0).steps?.some((s) => EG_CRUMBLE_KINDS.includes(s.kind) || s.kind === 'sink')) { h = k; break; }
+    longStep = { b: E.b, h }; lsSeq++;
+  }
+  /** Whether Long Step holds in breach `E` now: its span not yet behind the company. */
+  const longStepOn = (E) => !!longStep && longStep.b === E.b && E.h <= longStep.h;
   /** EG-ZS - LIVING WALL on my screen (section 15's Accord, Stoneskin with Mender's Grace: "heals on the Stoneskin holder +10%"):
    *  I hold Stoneskin within 10 m of a living companion holding Mender's Grace where my screen draws us (scenes/egFight.js
    *  accordMates - the pair law, net/egVestige.js egAccordMates). */
@@ -1351,10 +1439,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   /** the halls asked (`b:h` -> when), the halls given, the breach told, the circle built again from its given halls */
   const lawAsked = new Map(), lawGot = new Set();
   let lawSaid = '', lawBuilt = '';
+  /** Whether breach `E` keeps another law than mine (`st`'s `egv`). */
+  function lawForeign(E) { return E.egv > 0 && E.egv !== EG_SPEC; }
   /** Each hall of my circle the room has not given me asked (`{k:'spec'}`), EG_SPEC_ASK_MS apart - once my law is not the
    *  breach's (`st`'s `egv`). Said once a breach. */
   function lawFrame(E) {
-    if (!E.b || !(E.egv > 0) || E.egv === EG_SPEC || !(E.h > 0) || E.end) return;
+    if (!E.b || !lawForeign(E) || !(E.h > 0) || E.end) return;
     if (lawSaid !== E.b) { lawSaid = E.b; say(EG_LAW_TEXT); }
     const c = egCircleOfHall(E.h), o = online();
     for (let h = (c - 1) * 5 + 1; h <= c * 5; h++) {
@@ -1362,18 +1452,30 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (lawGot.has(k) || Date.now() - (lawAsked.get(k) ?? -Infinity) < EG_SPEC_ASK_MS) continue;
       if (o?.sendEg?.('spec', { h })) lawAsked.set(k, Date.now());
     }
+    lawRebuild(E);   // AUDIT EG III (lane4 #3): asked again every frame until the step has run
   }
   /** A hall the room gave (net/egLaw.js egSpecGive - read before any draw). Once all five of my circle are given, the
-   *  circle standing (drawn by my own law before they came) is built again from them, under the veil. */
+   *  circle standing (drawn by my own law before they came) is built again from them, under the veil (lawRebuild). */
   function lawTook(w) {
     const E = link.state();
     if (!E.b || w.egv !== E.egv || w.sp?.seed !== E.seed || !egSpecGive(w.sp)) return;
     lawGot.add(`${E.b}:${w.h}`);
-    const c = egCircleOfHall(E.h);
+    lawRebuild(E);
+  }
+  /** AUDIT EG III (lane4 #3): THE LAW PIN'S REBUILD - the circle standing, once all five of its halls are given, built again
+   *  from them under the veil; counted done (`lawBuilt`) only once that step has run, so a step held behind a swap or an
+   *  answer under way, or one that did not go, is asked again by the next frame (lawFrame). */
+  async function lawRebuild(E) {
+    const c = egCircleOfHall(E.h), key = `${E.b}:${c}`;
+    if (lawBuilt === key || !inSpire() || modes()?.egHallCircle?.() !== c || swapping || answering) return;
     for (let h = (c - 1) * 5 + 1; h <= c * 5; h++) if (!lawGot.has(`${E.b}:${h}`)) return;
-    if (lawBuilt !== `${E.b}:${c}` && inSpire() && modes()?.egHallCircle?.() === c && !swapping && !answering) { lawBuilt = `${E.b}:${c}`; swapTo(E, c); }
+    if (await swapTo(E, c)) lawBuilt = key;
   }
 
+  /** AUDIT EG III (lane4 #10): the frame's batch list (batches), and the errand objects as last made with the state they
+   *  were made from (objs). */
+  const _batchList = [];
+  const objsMemo = { E: null, here: false, v: /** @type {any} */ (null) };
   const api = {
     link,
     /** A word of the hub or my breach's room (net/online.js onEg). */
@@ -1404,6 +1506,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (w.k === 'toll') payToll(w.q, w.h);   // EG-ZI: the pull's toll (section 10.6)
       if (w.k === 'egot' && w.w === 'page' && EG_ANNALS[w.p]) { annals.add(w.p); say(`A page of the Annals of 3E 398 - ${EG_ANNALS[w.p][0]}: ${EG_ANNALS[w.p][1]}`); }
       else if (w.k === 'egot' && EG_GOT_TEXT[w.w]) say(EG_GOT_TEXT[w.w]);
+      if (w.k === 'egot' && w.w === 'longstep') longStepHeard(link.state());   // AUDIT EG III (lane1 #5): LONG STEP on my crumbles, for one span
       if (w.k === 'rd') say(w.cov ? `${EG_TEXT.redoubt(w.w)}: the Covenant has spoken - this Redoubt is the last.` : `${EG_TEXT.redoubt(w.w)}: the count gains ${egCountText(Math.max(0, w.g ?? 0))}.`);
       void room;
     },
@@ -1418,6 +1521,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         if (a === 'pick') { const n = Number(b) | 0, card = E.offer?.v?.[n - 1]; if (card == null) say('No Vestige waits for that number.'); else o?.sendEg?.('pick', { v: card }); return; }
         if (a === 'vote') { this.vote(b); return; }
         if (a === 'cant' || a === 'cantrip') { const run = egRunOfMember(E, me()), n = (Number(b) | 0) - 1; if (n < 0 || n >= run.cant.length) say(run.cant.length ? `Your Cantrips: ${run.cant.map((c, j) => `${j + 1}. ${EG_CANTRIPS[c]?.name}`).join(', ')}.` : 'You hold no Cantrip.'); else o?.sendEg?.('cant', { i: n }); return; }
+        if (a === 'tonic') { if (!(egRunOfMember(E, me()).tonics > 0)) say(EG_TONIC_TEXT.none); else if (witness) say(EG_TONIC_TEXT.fallen); else o?.sendEg?.('tonic'); return; }   // AUDIT EG III (lane1 #5): A SPIRE TONIC drunk - the room heals it (section 17.1)
         if (a === 'buy') { const i = { cant: 0, cantrip: 0, tonic: 1, shard: 2 }[b]; if (i == null) say('The Sutler sells a Cantrip (20 lumen), a Spire Tonic (15) or a Vestige shard (30): /breach buy cant|tonic|shard.'); else o?.sendEg?.('buy', { i }); return; }
         if (a === 'surplus') { o?.sendEg?.('surplus', { use: b === 'reroll' ? 1 : 0 }); return; }
         if (a === 'ping') { const at = pingPlace(E); if (at) o?.sendEg?.(witness ? 'ping' : 'lping', { x: Math.round(at.x * 100) / 100, z: Math.round(at.z * 100) / 100, w: { danger: 1, mine: 2, cache: 2 }[b] ?? 0 }); return; }   // EG-ZE: a witness pings where the member it watches stands
@@ -1430,7 +1534,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         if (a === 'use' || a === 'engine') { this.useEngine(); return; }
         if (a === 'annals') { const n = (Number(b) | 0) - 1, have = [...annals].sort((x, y) => x - y); if (!have.length) say('No page of the Annals is yours yet. Look behind the halls\' false walls.'); else if (n >= 0 && have[n] != null) say(`${EG_ANNALS[have[n]][0]}: ${EG_ANNALS[have[n]][1]}`); else say(`Your pages of the Annals: ${have.map((p, j) => `${j + 1}. ${EG_ANNALS[p][0]}`).join(', ')}. /breach annals N to read one.`); return; }
         if (a === 'bequest') { const run = egRunOfMember(E, me()), n = (Number(b) | 0) - 1, v = run.vs[n]?.[0]; if (!witness || v == null) say('A fallen member names one of their Vestiges: /breach bequest N.'); else o?.sendEg?.('bequest', { v }); return; }
-        say('In the breach: /breach pick N, vote yes|no|N, cant N, buy cant|tonic|shard, use, annals, ping, watch, forsake, home.');
+        say('In the breach: /breach pick N, vote yes|no|N, cant N, tonic, buy cant|tonic|shard, use, annals, ping, watch, forsake, home.');
         return;
       }
       answer();
@@ -1469,15 +1573,20 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     fallSave() { if (!inSpire() || witness) return false; enterWitness(now(), false); return true; },
     /** A witness takes no blow (the damage door's mod). */
     witnessing: () => !!witness,
-    /** The witness's eye: behind and over the member watched (the camera's override). Answers whether it took the eye. */
-    witnessEye(c, yaw = 0) {
+    /** The witness's eye: behind and over the member watched (the camera's override). Answers whether it took the eye.
+     *  AUDIT EG III (lane6 #1, section 16.5): `dt` the frame's (s) - the orbit critically damped over EG_WITNESS_DAMP_S
+     *  (egWitnessDamp; none, or a new member watched, and it stands at once) - and `cast` the host's sphere cast
+     *  (`(origin, radius, dir, maxDist) -> dist|null`, the Morrowind body's camera's seam), which pulls the damped eye in
+     *  off the hall's rock at once (egWitnessClear - never damped into the wall). */
+    witnessEye(c, yaw = 0, { dt = 0, cast = null } = {}) {
       // EG-ZD (section 16.5): THE FALL's own eye - where I fell, sinking - until the witness view dithers in
       const F = witness?.fall?.eye ? egFallModel(witness.fall, now(), { still: egReducedMotion(win) }) : null;
       if (F?.eye === 'fall') { const e = witness.fall.eye; c.pos = [e[0], e[1] - F.sink, e[2]]; return true; }
       if (!witness?.watched) return false;
       const p = peers().find((q) => q.sub === witness.watched);
       if (!p?.pos) return false;
-      c.pos = [p.pos[0] - Math.sin(yaw) * EG_WITNESS_BACK, p.pos[1] + EG_WITNESS_UP + 1.6, p.pos[2] - Math.cos(yaw) * EG_WITNESS_BACK];
+      witness.eye = egWitnessDamp(witness.eye?.who === witness.watched ? witness.eye : null, egWitnessOrbit(p.pos, yaw), dt, witness.watched);
+      c.pos = egWitnessClear(p.pos, witness.eye.p, cast);
       return true;
     },
     /** THE POTION LAW: may I drink a restoring potion now (two a hall), and one drunk. */
@@ -1527,6 +1636,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         if (look) { look.release(); look = null; }   // EG-G2: the look's passes, freed on every way out
         if (!swapping && !answering) reverb.release();   // EG-ZH: let go on every way out - held through a swap or an answer's step under way
         if (!swapping && !answering) modes()?.egBandsDown?.();   // EG-ZN (section 29): the band textures freed at the breach's end, every way out - never under a swap's or an answer's step (the next circle's stand uploads nothing)
+        if (!swapping && !answering) { swapWaitAt = 0; modes()?.egSwapDrop?.(); }   // AUDIT EG III (lane4 #7): and the swap's build and its worker with them, every way out (walkOut's alone did)
         clampAway();   // EG-ZH
         if (leaving || (E.end && E.b)) { leaving = false; link.forget(); }
         if (door || portal) dropDoor();
@@ -1541,7 +1651,14 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** The hall's fight driver (the dungeon host's seams), or null outside the Spire. */
     fight: () => (inSpire() ? fight : null),
     lights: () => (inSpire() ? fight?.lights() ?? [] : []),
-    batches: () => (inSpire() ? [...(fight?.batches() ?? []), ...(portalSet?.batches() ?? [])] : []),
+    /** AUDIT EG III (lane4 #10): one list, refilled a frame (the host reads it at once), never a new one. */
+    batches() {
+      _batchList.length = 0;
+      if (!inSpire()) return _batchList;
+      for (const b of fight?.batches() ?? NO_CLEARS) _batchList.push(b);
+      for (const b of portalSet?.batches() ?? NO_CLEARS) _batchList.push(b);
+      return _batchList;
+    },
     drawPass(proj, view, eye, seconds, fog) {
       if (!inSpire()) return false;
       // EG-G2 (section 25.6): the mist first, the hall's fight over it, THE EDGE LINE and the tells last - on the shared clock
@@ -1549,7 +1666,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       const under = !!L?.drawUnder(proj, view, eye, ts, fog);
       const drew = !!fight?.drawPass(proj, view, eye, seconds, fog);
       const ghosts = !!modes()?.dungeonCtx?.egSpanDraw?.(proj, view, fog);   // EG-ZL (sections 10.3 and 10.8): the spans' ghosts and a peer's ghost slab (scenes/egSpan.js drawPass), under the lines
-      const over = !!L?.drawOver(proj, view, eye, ts, fog);
+      const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette);   // AUDIT EG III (lane4 #5): THE EDGE LINE in the danger palette's safety
       const lit = !!L?.drawLights(proj, view, eye, ts, fog, lightsNow(), stillNow());   // EG-ZE: THE LIGHTS, added over the lines
       return under || drew || ghosts || over || lit;
     },
@@ -1572,6 +1689,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** THE VOID'S COST (section 8): a tenth of my health, never below a quarter of it. EG-ZR: Featherstep's 8, 6 or 4% by
      *  its rank (the census's own law - net/egBrain.js egCastBackCost), of the body without Stoneskin's cushion. */
     castBack() {
+      if (witness || !inSpire()) return;   // AUDIT EG III (lane4 #1): a witness's body, held under the hall, owes the void nothing
       const share = egCastBackCost(egRunOfMember(link.state(), me()).vs), max = spireBodyMax(entity), cut = Math.min(share * max, Math.max(0, entity.health - EG_CAST_BACK_FLOOR * max));
       if (cut > 0) hurt(Math.round(cut));
       castBackBeat(cut > 0, Math.round(cut) / (entity.maxHealth || 1));   // EG-G1: -10% on the screen, the Steps' rewind, and the first time its line; AUDIT EG III: what it took of the health bar
@@ -1622,10 +1740,12 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
      *  stand Grath's islands and the false walls by them). EG-ZC (section 11.10): and the havens the Moon-Mirror lays over the
      *  branches it lights (`lit` - each zone's stamp and its run, relay ms), by which the spans stand a lit branch. */
     objs() {
-      const E = link.state(), F = E.fight;
-      if (!inSpire() || !F || F.h !== E.h) return { h: E.h | 0, objs: [], lit: [] };
-      return { h: E.h | 0, objs: F.bodies.filter((b) => b.role === EG_ROLE.obj).map((b) => ({ t: OBJ_NAME[b.k] ?? '', i: b.i, x: b.x, z: b.z, st: b.st ?? 0, stAt: b.stAt ?? 0, pt: b.pt ?? 0 })),
-        lit: (F.zones ?? []).filter((z) => z.kind === 'haven').map((z) => ({ s: z.s, from: z.from, until: z.until })) };
+      const E = link.state(), F = E.fight, here = inSpire();
+      if (objsMemo.E === E && objsMemo.here === here) return objsMemo.v;   // AUDIT EG III (lane4 #10): made again only when the room's word moved - the spans ask it up to three times a frame
+      objsMemo.E = E; objsMemo.here = here;
+      if (!here || !F || F.h !== E.h) return (objsMemo.v = { h: E.h | 0, objs: [], lit: [] });
+      return (objsMemo.v = { h: E.h | 0, objs: F.bodies.filter((b) => b.role === EG_ROLE.obj).map((b) => ({ t: OBJ_NAME[b.k] ?? '', i: b.i, x: b.x, z: b.z, st: b.st ?? 0, stAt: b.stAt ?? 0, pt: b.pt ?? 0 })),
+        lit: (F.zones ?? []).filter((z) => z.kind === 'haven').map((z) => ({ s: z.s, from: z.from, until: z.until })) });
     },
     /** A press on a span's own target (systems/spireKit.js spireAct): an Orrery stone's handle (`pz` - a turn forward or
      *  back) or an engine (`use`), in the hall I stand in. */
@@ -1766,6 +1886,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     },
     /** EG-ZH: the hall's reverb as held (tests). */
     reverbState: () => reverb.state(),
+    /** AUDIT EG III (lane4 #6): the look as it stands (tests) - the circle it draws, or null before any. */
+    lookState: () => look?.state() ?? null,
   };
   // EG-ZH: THE CAMERA IN ROCK and TOUCH ON THE SPANS told by this screen - the Spire's while I stand alive in it (a witness's
   // eye is the witness's), nothing anywhere else

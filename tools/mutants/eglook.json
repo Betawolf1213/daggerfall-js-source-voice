@@ -721,7 +721,7 @@
   {
     "name": "EGLOOK-client-lines-dropped",
     "file": "src/scenes/egClient.js",
-    "old": "const over = !!L?.drawOver(proj, view, eye, ts, fog);",
+    "old": "const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette);",
     "new": "const over = false;",
     "tests": [
       "test/eglook_hosts.test.js"

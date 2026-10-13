@@ -465,8 +465,8 @@
   {
     "name": "EGZR-immovable-mast-unread",
     "file": "src/scenes/egFight.js",
-    "old": "{ [sub]: { mast: egRunOfMember(E, sub).mast } }",
-    "new": "{ [sub]: { mast: 100 } }",
+    "old": "      const mast = egRunOfMember(E, sub).mast;\n      if (mast !== IMMOVABLE_ID) return false;",
+    "new": "      const mast = 100;\n      if (mast !== IMMOVABLE_ID) return false;",
     "tests": [
       "test/egz_vestiges_hymn.test.js"
     ],
@@ -485,8 +485,8 @@
   {
     "name": "EGZR-holder-out-of-spire",
     "file": "src/scenes/egClient.js",
-    "old": "    if (!inSpire() || witness) return null;\n    const E = link.state(), m = egMemberOf(E, me());",
-    "new": "    if (witness) return null;\n    const E = link.state(), m = egMemberOf(E, me());",
+    "old": "    if (!inSpire() || witness) return null;\n    const E = link.state();\n    // AUDIT EG III (lane4 #10)",
+    "new": "    if (witness) return null;\n    const E = link.state();\n    // AUDIT EG III (lane4 #10)",
     "tests": [
       "test/egz_vestiges.test.js"
     ],

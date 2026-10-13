@@ -466,7 +466,7 @@ test('EG-F THE HOSTS BY SOURCE: the world host builds the arch pool and hands it
     '    arches: egArchPool,   // EG-F: the Elite Breaches\' arches, stood, drawn and pressed beside the gate',
     '    keyFacts: egKeyFacts, startWindow: egStartWindow, arches: egArchPool, callPortal: _egCallPortal, prompt: egCallPrompt, feet: egFeet, probes: egProbes,   // EG-F',
     'const win = new ListPickerWindow({ items: labels, backdrop: \'none\', onPick: (i) => onPick(i), onCancel: () => onCancel() });',
-    'ask: (lines, onYes, onNo) => townTalk.showOverlay(new YesNoBoxWindow({ rows: lines, onYes, onNo })),',
+    'ask: egStartAsk((w) => townTalk.showOverlay(w), (o) => new YesNoBoxWindow(o)),',   // PIN MOVED (AUDIT EG III lane4 #12): DFU's YesNo box through the question's door (ui/egStartWindow.js egStartAsk - test/egaudit3_client.test.js)
     'if (ea) frame.ea = ea;',
     'exteriorFoes.setOnEgArch((from, r) => { const p = online?.peers?.get(from); egClient?.archHeard(from, r, p?.shown ? onlineToScene(p.shown) : null); });',
     'elite: egClient?.timers() ?? null,',
