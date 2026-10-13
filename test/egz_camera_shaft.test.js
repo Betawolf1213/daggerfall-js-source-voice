@@ -67,7 +67,7 @@ test('EG-ZN THE SHAFT\'S CAMERA (player/mwView.js, section 11.8): facing a shaft
   assert.equal(spireShaftEase(0, P, 0.1, false), (P * 0.1) / 0.5);
   assert.equal(spireShaftEase(0, P, 1, false), P, 'never past it');
   assert.equal(spireShaftEase(P, 0, 0.25, false), P / 2, 'out at the same pace');
-  assert.equal(spireShaftEase(0, P, 0.01, true), P, 'reduced motion: whole at once');
+  assert.equal(spireShaftEase(0, P, 0.01, true), 0, 'reduced motion: none - never a snap (AUDIT EG III, PIN MOVED: it was whole at once)');
   assert.equal(spireShaftEase(P, 0, 0.01, true), 0);
   let word = { way: [0, 1], still: false };
   setSpireShaft(() => word);
@@ -98,10 +98,10 @@ test('EG-ZN THE SHAFT\'S CAMERA (player/mwView.js, section 11.8): facing a shaft
     word = { way: null, still: false };
     spireShaftPitch(0, 0, 0.1, true);
     assert.ok(Math.abs(spireShaftBias() - P * 0.8) < 1e-12, 'off the ledge: easing out');
-    // reduced motion: whole at once, both ways
+    // reduced motion: none (AUDIT EG III, PIN MOVED: it was whole at once, both ways)
     word = { way: [0, 1], still: true };
-    spireShaftPitch(0, 0, 0.001, true);
-    assert.equal(spireShaftBias(), P);
+    spireShaftPitch(0, 0, 0.5, true);
+    assert.equal(spireShaftBias(), 0);
     word = { way: null, still: true };
     spireShaftPitch(0, 0, 0.001, true);
     assert.equal(spireShaftBias(), 0);
@@ -117,13 +117,13 @@ test('EG-ZN THE SHAFT\'S CAMERA (player/mwView.js, section 11.8): facing a shaft
     setSpireShaft(() => { throw new Error('x'); });
     assert.equal(spireShaftPitch(0.3, 0, 1, true), 0.3, 'a host that throws biases nothing');
     // THE REAL MORROWIND CAMERA: the bias laid on its eye rises it by the metre and the orbit's own lift, looking down 20 degrees
-    word = { way: [0, 1], still: true };
+    word = { way: [0, 1], still: false };   // AUDIT EG III: eased in whole over a second (reduced motion lays none)
     setSpireShaft(() => word);
     const cam = createMwCamera();
     cam.restore({ firstPerson: false });
     const feet = [3, 2, 5], u = 1 / MW_UNITS_PER_METER, focalY = feet[1] + FOCAL_HEIGHT * u;
     const flat = cam.eye({ fpEye: [3, 3.7, 5], feet, yaw: 0, pitch: 0 });
-    const p = spireShaftPitch(0, 0, 0.016, true), floor = spireShaftPivot(null, focalY);
+    const p = spireShaftPitch(0, 0, 1, true), floor = spireShaftPivot(null, focalY);
     const leaned = spireShaftLook(cam.eye({ fpEye: [3, 3.7, 5], feet, yaw: 0, pitch: p, pivotFloor: floor }), 0, p);
     const dist = flat.distance;
     assert.ok(Math.abs(flat.eye[1] - focalY) < 1e-9);
@@ -189,10 +189,10 @@ test('EG-ZN THE SHAFT\'S WORD (scenes/egClient.js setSpireShaft): alive in the S
     R.client.fallSave();
     assert.equal(R.client.witnessing(), true);
     assert.equal(bias(), 0, 'a witness: none');
-    // reduced motion (the system's here): whole at once
+    // reduced motion (the system's here): none (AUDIT EG III, PIN MOVED: it was whole at once)
     const S = inBreach({ win: { matchMedia: () => ({ matches: true }) } });
     S.stand(q.x, q.y, (q.z0 + q.zA) / 2);
-    assert.equal(bias(0.0001), SPIRE_SHAFT_PITCH, 'reduced motion: whole at once');
+    assert.equal(bias(), 0, 'reduced motion: none - never a snap');
   } finally { setSpireShaft(null); }
   assert.match(rd('src/scenes/egClient.js'), /setSpireShaft\(\(\) => \(inSpire\(\) && !witness \? \{ way: shaftWay\(link\.state\(\)\), still: stillNow\(\) \} : null\)\);/);
 });

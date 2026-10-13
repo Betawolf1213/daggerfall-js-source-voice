@@ -185,8 +185,9 @@ test('EG-ZI THE TOLL ON THE WIRE AND ON THE SCREEN (sections 10.6, 23 and 27.5):
   assert.deepEqual([1, 4].map((q) => validEgOut({ k: 'toll', q, h: 7 })), [{ k: 'toll', q: 1, h: 7 }, { k: 'toll', q: 4, h: 7 }]);
   for (const bad of [{ q: 0, h: 7 }, { q: 5, h: 7 }, { q: 1.5, h: 7 }, { q: 2, h: 0 }, { q: 2 }, { q: '2', h: 7 }]) assert.equal(validEgOut({ k: 'toll', ...bad }), null, JSON.stringify(bad));
   assert.equal(validEgIn({ k: 'toll', q: 1, h: 7 }), null, 'never a member\'s word');
-  assert.deepEqual([1, 2, 3, 4].map((q) => EG_PRES_TEXT.toll(q)), ['-5%', '-10%', '-15%', '-20%']);
-  assert.equal(EG_PRES_TEXT.tollLine(3), 'The Spire takes its toll: 15% of your health.');
+  // AUDIT EG III (PIN MOVED): the words take what the toll took of the health bar, not its quarters
+  assert.deepEqual([0.05, 0.1, 0.15, 0.2].map((q) => EG_PRES_TEXT.toll(q)), ['-5%', '-10%', '-15%', '-20%']);
+  assert.equal(EG_PRES_TEXT.tollLine(0.15), 'The Spire takes its toll: 15% of your health.');
   // the screen (test/egz_recap.test.js's harness: a client inside a breach of two)
   let clock = T0 + EG_SEALED_MS + 60_000, inside = true;
   const co = [['acct-0', 'Mac', 1], ['acct-1', 'Ann', 2]];

@@ -162,7 +162,8 @@ export function spireCameraFrame(out, full, dt) {
  * stand on its rim or a flight above its Drop's landing, world/egHall.js egShaftLedgeAt, and whether the screen stands
  * still); this seam judges the facing on the frame's yaw, and both lanes lay the bias on their own eye: the camera's pitch
  * SPIRE_SHAFT_PITCH under the look's, its pivot SPIRE_SHAFT_RISE_M over its own (the casts start there), both eased over
- * SPIRE_SHAFT_EASE_S as the facing comes and goes - under reduced motion whole at once, as the stair cuts. The look the
+ * SPIRE_SHAFT_EASE_S as the facing comes and goes - under reduced motion none (AUDIT EG III: section 11.8's camera never
+ * snaps, and a still screen is never turned for the player). The look the
  * player aims with is never moved: the frame's eye answers the camera's own forward (`look`) for the host's view alone. In
  * third person only, and nowhere but the Spire. A departure from camera.cpp and from the mod, Ledger A (ELITE-GATES).
  */
@@ -186,9 +187,9 @@ export function spireShaftFacing(way, yaw, was) {
   return c >= (was ? SPIRE_SHAFT_FACE_OUT : SPIRE_SHAFT_FACE_IN);
 }
 /** THE EASE (pure): the bias this frame - `prev` last frame's, `want` SPIRE_SHAFT_PITCH or nought, `dt` the frame (s) - the
- *  whole bias every SPIRE_SHAFT_EASE_S, never past `want`; `still` (reduced motion) at once. */
+ *  whole bias every SPIRE_SHAFT_EASE_S, never past `want`; `still` (reduced motion) none at all (AUDIT EG III - never a snap). */
 export function spireShaftEase(prev, want, dt, still) {
-  if (still) return want;
+  if (still) return 0;
   const step = (SPIRE_SHAFT_PITCH * Math.max(0, Number(dt) || 0)) / SPIRE_SHAFT_EASE_S;
   return prev < want ? Math.min(want, prev + step) : Math.max(want, prev - step);
 }

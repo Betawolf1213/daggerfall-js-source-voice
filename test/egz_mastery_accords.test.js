@@ -263,14 +263,15 @@ test('EG-ZS THE OFFER\'S CARD NAMES ITS ACCORD (section 15: "The offer card name
   const cards = [vId('oath'), vId('standard'), vId('stoneskin'), vId('fade'), 100];
   const E = () => foldEg(foldEg(EG_STATE_EMPTY, wire(egStateOf(S.B, S.now())), S.now()), wire({ k: 'offer', v: cards, n: 1 }), S.now());
   const lines = () => egPanelModel(E(), 'acct-0', S.now()).offer.cards.map((c) => c.accord);
-  assert.deepEqual(lines(), ["Takes an Accord with M1's Hunter's Mark.", "Takes an Accord with M1's Arcane Echo.", "Takes an Accord with M2's Mender's Grace.", '', '']);
+  // AUDIT EG III (PIN MOVED): and what each Accord does
+  assert.deepEqual(lines(), ["Takes an Accord with M1's Hunter's Mark. Hammer and Anvil: A foe the mark's holder marked takes +8% from the oath's holder.", "Takes an Accord with M1's Arcane Echo. War-Chorus: Near the Standard, an Echo repeats at full.", "Takes an Accord with M2's Mender's Grace. Living Wall: Heals on the Stoneskin holder +10%.", '', '']);
   S.B.mem['acct-2'].alive = 0;
   assert.deepEqual(lines().slice(2, 3), [''], 'a fallen companion takes no Accord');
   const doc = fakeDocument();
   destroyEgHud();
   drawEgPanel(egPanelModel(E(), 'acct-0', S.now()), { doc });
   const notes = find(doc.body, 'eg-accord').map((n) => n.textContent);
-  assert.deepEqual(notes, ["Takes an Accord with M1's Hunter's Mark.", "Takes an Accord with M1's Arcane Echo."], 'drawn under their cards');
+  assert.deepEqual(notes, ["Takes an Accord with M1's Hunter's Mark. Hammer and Anvil: A foe the mark's holder marked takes +8% from the oath's holder.", "Takes an Accord with M1's Arcane Echo. War-Chorus: Near the Standard, an Echo repeats at full."], 'drawn under their cards');
   destroyEgHud();
 });
 

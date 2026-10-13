@@ -5471,7 +5471,9 @@ export const EG_SAY_KEYS = Object.freeze(['wake', 'fury', 'covenant', 'covenantr
   'reopened', 'cantrip', 'bargain', 'respite', 'ready',
   // EG-FULL LAYER THREE: a false wall falls, an engine worked, the Clan Pit's horn (blown, won, fouled), the Low Road's
   // niche, the High Road's cache, the Low Road taken
-  'seam', 'engine', 'horn', 'hornwon', 'hornfoul', 'niche', 'hcache', 'lowroad']);
+  'seam', 'engine', 'horn', 'hornwon', 'hornfoul', 'niche', 'hcache', 'lowroad',
+  // AUDIT EG III (Elite-Gates.md section 27.5): Bladestorm and Deadeye struck - said to their striker (`s`), its screen's beat
+  'storm', 'deadeye']);
 /** The gifts a member is told of (`egot`'s `w`). */
 export const EG_GOT_WORDS = Object.freeze(['shard', 'tonic', 'cant', 'lumen', 'rel', 'longstep', 'page']);   // LAYER THREE: 'page' - a page of the Annals (`p`)
 /** The zones' kinds (`ez`). */

@@ -1443,11 +1443,13 @@ export function egBlow(B, sub, m, pose, now) {
 function hostHits(B, F, spec, sub, mm, w, b, got, p, now, here, out) {
   const r = w.r, foes = () => F.bodies.filter((a) => a !== b && (a.role === EG_ROLE.add || a.role === EG_ROLE.lord));
   if (r === HIT_KINDS.Melee && egResonance(mm.vs).includes('blade') && (mm.storm = (mm.storm ?? 0) + 1) % EG_STORM_N === 0) {
-    for (const a of foes()) { const [ax, az] = egBodyAt(a, now); if (dist(ax, az, p.x, p.z) <= EG_STORM_M) hostStrike(B, F, spec, a, got, w, sub, mm, p, now, here, out); }
+    let n = 0;
+    for (const a of foes()) { const [ax, az] = egBodyAt(a, now); if (dist(ax, az, p.x, p.z) <= EG_STORM_M) n += hostStrike(B, F, spec, a, got, w, sub, mm, p, now, here, out) > 0 ? 1 : 0; }
+    if (n) out.push({ k: 'esay', w: 'storm', n: mm.name, s: [sub] });   // AUDIT EG III (section 27.5): its striker's screen says it
   }
   if (r === HIT_KINDS.Shaft && egResonance(mm.vs).includes('hunt')) {
     const [bx, bz] = egBodyAt(b, now), a = dist(bx, bz, p.x, p.z) > EG_FAR_M ? egBehind(F, b, p, now) : null;
-    if (a) hostStrike(B, F, spec, a, got, w, sub, mm, p, now, here, out);
+    if (a && hostStrike(B, F, spec, a, got, w, sub, mm, p, now, here, out) > 0) out.push({ k: 'esay', w: 'deadeye', n: mm.name, s: [sub] });   // AUDIT EG III: and this
   }
   const fire = r === HIT_KINDS.Melee ? egVOf(mm.vs, 'searing') : 0;
   if (fire > 0 && egAccordMates(egCompanyAt(B, sub, p, here), sub, 'kindled', 'a').length) {

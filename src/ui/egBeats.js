@@ -21,26 +21,55 @@
 //   THE TOUCH OF IT (`EG_HAPTICS`, section 27.8): 15 ms when the Beat underfoot enters its last 0.4 s, 30 ms on a peril,
 //     a pad's dual rumble for the same two, behind the touch layer's own `touchHaptics` (`egBuzz`); `egBeatUnder` and
 //     `egPerilsNew` find them, pure.
+//   AUDIT EG III (2026-10-13, section 27.5's last rows; section 15): THE VESTIGES SEEN, HEARD AND SAID - Second Wind, Rally's
+//     heal, Lifeline's and Shield-Hymn's windows, Spellweave's free spell, Rallying Cry's refresh, Bladestorm, Deadeye, an
+//     Accord forming and lapsing (Kindled Steel's splash among them) and resonance first reached, each a row of EG_BEATS on
+//     THE SPIRE MIX's critical bus as every beat is; THE HOLDER'S CHIPS (`egHolderNow`, `egHolderWatch`): a blue chip for each
+//     timed window on me with its seconds, Spellweave's free spell standing, and each Accord standing - and the beats they
+//     bring as each window opens and each Accord forms or lapses (once a hall each way).
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { EG_TEXT, EG_TWIST_LINES, egHallOf } from '../net/egLaw.js';
-import { EG_TOLL_STEP } from '../net/egLaw.js';   // EG-ZI: the pull's toll, a quarter's share
 import { egInShape } from '../net/egShape.js';
 import { EG_BEAT_CYCLE_S, EG_BEAT_SOLID_S } from '../net/egSpanLaw.js';
 import { EG_OBJ } from '../net/egLords.js';
 import { EG_ROLE } from '../net/egBodies.js';
+import { egResonance, EG_CAPSTONES, EG_V_FAMILY_NAMES, EG_ACCORDS } from '../net/egVestige.js';   // AUDIT EG III: resonance's beat, the Accords' chips
+import { egRunOfMember, egMemberOf } from '../net/egLink.js';
 
-/** EG-ZI: a toll of `q` quarters as a whole percentage of the body. */
-const tollPct = (q) => Math.round(q * EG_TOLL_STEP * 100);
+/** AUDIT EG III: a share of the health bar as the screen says it - whole percent, never "-0%" for a share that took
+ *  something. */
+const pctOf = (share) => Math.max(share > 0 ? 1 : 0, Math.round(share * 100));
 
 /** Every new line, worded once (section 27.9). */
 export const EG_PRES_TEXT = Object.freeze({
   castBack: '-10%',
-  // EG-ZR (section 15's Featherstep): a cast-back's cost as it was taken - 8, 6 or 4% for its holder
-  castBackCost: (share) => `-${Math.round(share * 100)}%`,
-  // EG-ZI (section 10.6): the pull's toll - its share on the screen, as the cast-back's, and its line with the pull's
-  toll: (q) => `-${tollPct(q)}%`,
-  tollLine: (q) => `The Spire takes its toll: ${tollPct(q)}% of your health.`,
+  // EG-ZR (section 15's Featherstep): a cast-back's cost as it was taken. AUDIT EG III: `share` the points taken over the
+  // health bar's whole (the floor's and Stoneskin's say), never the law's share
+  castBackCost: (share) => `-${pctOf(share)}%`,
+  // EG-ZI (section 10.6): the pull's toll - its share on the screen, as the cast-back's, and its line with the pull's.
+  // AUDIT EG III: `share` what it took of the health bar's whole (the last point it never takes and Stoneskin's cushion say)
+  toll: (share) => `-${pctOf(share)}%`,
+  tollLine: (share) => `The Spire takes its toll: ${pctOf(share)}% of your health.`,
+  // AUDIT EG III (section 15's resonance and Accords): an offer's card says the capstone a third Vestige of its family
+  // completes, and what each Accord it takes does; the recap's capstones
+  completes: (fam, cap, line) => `Completes ${fam}: ${cap}. ${line}`,
+  accordDoes: (name, line) => `${name}: ${line}`,
+  recapCapstones: 'Capstones',
+  // AUDIT EG III (section 27.5): the Vestiges' beats, and the holder's chips
+  secondWind: (n) => (n > 0 ? `Second Wind! ${n} health returns.` : 'Second Wind!'),
+  rally: (pct) => `Rally! The company heals ${pct}%.`,
+  lifeline: (pct) => `Lifeline! ${pct}% less from blows for 3 seconds.`,
+  shieldHymn: "Shield-Hymn! Bastion's guard for 4 seconds.",
+  spellweave: 'Spellweave! The spell costs nothing.',
+  rallyingCry: 'Rallying Cry! Your Second Wind is ready again.',
+  bladestorm: 'Bladestorm!',
+  deadeye: 'Deadeye! The arrow runs through.',
+  accordForms: (name, mates) => `${name}, with ${mates}.`,
+  accordLapses: (name) => `${name} lapses.`,
+  resonance: (fam, cap) => `${fam} resonates: ${cap}.`,
+  heldChip: (name, secs) => (secs > 0 ? `${name} ${secs}s` : name),
+  weaveChip: 'Spellweave - free',
   // EG-ZS (section 8.5): the decree the Markynaz lays, on his card; (section 15) the Accord an offer's card would take
   champDecree: (title, decree) => `${title}: ${decree}`,
   takesAccord: (name, vestige) => `Takes an Accord with ${name}'s ${vestige}.`,
@@ -128,6 +157,10 @@ export const EG_BEAT_SOUNDS = Object.freeze({
   rare: Object.freeze({ rec: 364, vol: 1, pitch: 1 }),
   chord: Object.freeze({ rec: 365, vol: 0.9, pitch: 0.9 }),
   score: Object.freeze({ by: 'score' }),
+  // AUDIT EG III: Bladestorm's sweep - the low swing (systems/soundClips.js SOUND.SwingLowPitch, SoundClips.cs), lower; Deadeye's
+  // pierce - the bow's loose (SOUND.ArrowShoot), higher
+  sweep: Object.freeze({ rec: 105, vol: 1, pitch: 0.7 }),
+  pierce: Object.freeze({ rec: 3, vol: 0.9, pitch: 1.5 }),
 });
 
 /** THE EXAMINATION HEARD (section 25.7): the chime as a rune lights, and how far up each numeral pitches it. */
@@ -158,10 +191,24 @@ export const EG_BEATS = Object.freeze({
   twist: Object.freeze({ sight: "the arrival card's second line", sound: null, words: (n, t) => EG_TWIST_LINES[t] ?? '', by: null, chat: true }),
   home: Object.freeze({ sight: "their row's arch", sound: null, words: (n) => `${n} walks home.`, by: 'fight', chat: true }),
   lastWord: Object.freeze({ sight: "the chip's seal", sound: 'toll', words: () => EG_PRES_TEXT.lastWord, by: 'client', chat: false }),
+  // AUDIT EG III (section 27.5's last rows): THE VESTIGES - each the holder's own (none to the chat), `t` its figure or name
+  secondWind: Object.freeze({ sight: "the health bar's rise", sound: 'chime', words: (n, t) => EG_PRES_TEXT.secondWind(t), by: null, chat: false }),   // `t` the points healed
+  rally: Object.freeze({ sight: "the health bar's rise", sound: 'chime', words: (n, t) => EG_PRES_TEXT.rally(pctOf(t)), by: null, chat: false }),   // `t` the share
+  lifeline: Object.freeze({ sight: "Lifeline's blue chip, its seconds", sound: 'softChime', words: (n, t) => EG_PRES_TEXT.lifeline(pctOf(t)), by: null, chat: false }),   // `t` the share spared
+  shieldHymn: Object.freeze({ sight: "Shield-Hymn's blue chip, its seconds", sound: 'softChime', words: () => EG_PRES_TEXT.shieldHymn, by: null, chat: false }),
+  spellweave: Object.freeze({ sight: "Spellweave's blue chip while the next is free; the book's 0", sound: 'softChime', words: () => EG_PRES_TEXT.spellweave, by: null, chat: false }),
+  rallyingCry: Object.freeze({ sight: "the door's beam", sound: 'chime', words: () => EG_PRES_TEXT.rallyingCry, by: null, chat: false }),
+  bladestorm: Object.freeze({ sight: "the struck foes' flash", sound: 'sweep', words: () => EG_PRES_TEXT.bladestorm, by: null, chat: false }),
+  deadeye: Object.freeze({ sight: "the pierced add's flash", sound: 'pierce', words: () => EG_PRES_TEXT.deadeye, by: null, chat: false }),
+  accord: Object.freeze({ sight: "the Accord's blue chip while the pair stands", sound: 'softChime', words: (n, t) => EG_PRES_TEXT.accordForms(t ?? '', n), by: null, chat: false }),   // `t` the Accord, `n` the mates
+  accordLapse: Object.freeze({ sight: 'its chip gone', sound: null, words: (n, t) => EG_PRES_TEXT.accordLapses(t ?? ''), by: null, chat: false }),
+  resonance: Object.freeze({ sight: "the offer card's blue line before it; the recap's capstones", sound: 'chord', words: (n, t) => (EG_CAPSTONES[t] ? EG_PRES_TEXT.resonance(EG_V_FAMILY_NAMES[t], EG_CAPSTONES[t].name) : ''), by: null, chat: false }),   // `t` the family
 });
 export const EG_BEAT_KEYS = Object.freeze(Object.keys(EG_BEATS));
-/** The room's beat lines (`esay`'s `w`) that are beats of the table. */
-const SAY_BEAT = Object.freeze({ door: 'door', goldrun: 'goldRun', memento: 'memento', recalled: 'recall', home: 'home', orrerytrue: 'orrery', niche: 'niche', phase: 'phase' });
+/** The room's beat lines (`esay`'s `w`) that are beats of the table. AUDIT EG III: Bladestorm's and Deadeye's are their
+ *  striker's alone (`SAY_MINE` - the word's `s`). */
+const SAY_BEAT = Object.freeze({ door: 'door', goldrun: 'goldRun', memento: 'memento', recalled: 'recall', home: 'home', orrerytrue: 'orrery', niche: 'niche', phase: 'phase', storm: 'bladestorm', deadeye: 'deadeye' });
+const SAY_MINE = Object.freeze(new Set(['storm', 'deadeye']));
 
 /**
  * What one beat does now (pure): `{ sound, screen, chat }` - the sound to play (a record, its volume and pitch; null for
@@ -198,9 +245,12 @@ export function egBeatWatch(memo, E, me) {
   // the room's beat lines
   for (const s of E.fight?.says ?? []) {
     if (!fresh(keyOf(`say:${s.w}`, s.at, s.n ?? ''))) continue;
+    if (SAY_MINE.has(s.w) && !(me && s.s?.includes(me))) continue;   // AUDIT EG III: a host hit is its striker's to hear
     if (SAY_BEAT[s.w]) beats.push({ k: SAY_BEAT[s.w], n: s.n, t: s.t });
     if (s.w === 'fury') firsts.push('fury');
   }
+  // AUDIT EG III (section 15's resonance): a family's capstone, said once a breach as my run first holds three of it
+  if (me) for (const f of egResonance(egRunOfMember(E, me).vs)) if (fresh(keyOf('res', E.b, f))) beats.push({ k: 'resonance', t: f });
   // the falls
   for (const f of E.falls ?? []) if (fresh(keyOf('fall', f.at, f.s))) { beats.push({ k: 'fall', n: f.n, t: f.fin }); if (!f.fin) firsts.push('recall'); }
   // a gift (a cache, an alcove, a vault) - mine alone
@@ -231,8 +281,56 @@ export function egBeatWatch(memo, E, me) {
   memo.h = E.h;
   memo.primed = true;
   if (memo.seen.size > EG_BEAT_SEEN_MAX) memo.seen = new Set(held);
-  void me;
   return { beats, firsts, runes };
+}
+
+// ── AUDIT EG III: THE HOLDER'S CHIPS (sections 15 and 27.5) ─────────────────────────────────────────────────────────────
+/**
+ * What the holder's chips read this frame, off the fight (scenes/egFight.js - its Lifeline windows `shield().ll`, its
+ * Shield-Hymn window `hymn()`, and each Accord through `accordMates`, the pair law where the screen stands us) and the room's
+ * names: `{ ll, hymn, accords: [{ key, name, mates }], weave }`. No fight (out of the halls, a witness): nothing. Pure but
+ * for the fight's reads.
+ * @param {any} fight @param {any} E @param {string|null} me @param {boolean} [weave] Spellweave's next damage spell is free
+ */
+export function egHolderNow(fight, E, me, weave = false) {
+  if (!fight || !E?.b || !me) return { ll: [], hymn: null, accords: [], weave: false };
+  const nameOf = (sub) => egMemberOf(E, sub)?.name ?? '';
+  const accords = [];
+  for (const A of EG_ACCORDS) {
+    const subs = [...new Set([...(fight.accordMates?.(A.key, 'a') ?? []), ...(fight.accordMates?.(A.key, 'b') ?? [])])];
+    if (subs.length) accords.push({ key: A.key, name: A.name, mates: subs.map(nameOf).filter(Boolean) });
+  }
+  const hy = fight.hymn?.() ?? null;
+  return { ll: fight.shield?.().ll ?? [], hymn: hy && hy[2].some((s) => s !== me) ? hy : null, accords, weave: !!weave };
+}
+/** The holder's watch before it has looked. */
+export const egHolderMemo = () => ({ primed: false, h: -1, llU: -Infinity, hyF: -Infinity, up: new Set(), said: new Set() });
+/**
+ * THE HOLDER'S WATCH (pure but for `memo`): the chips (`{ k, text }` - each timed window on me with its whole seconds left,
+ * Spellweave's free spell, each Accord standing) and the beats brought - a Lifeline or Shield-Hymn window newly open, an
+ * Accord formed or lapsed, each way once a hall. The first look, and the first in a new hall, learn what stands.
+ * @param {any} memo egHolderMemo() @param {{ ll: number[][], hymn: any[]|null, accords: any[], weave: boolean }} H egHolderNow's
+ * @param {number} now the shared clock (ms) @param {number} h the hall
+ */
+export function egHolderWatch(memo, H, now, h) {
+  const chips = [], beats = [];
+  const secs = (until) => Math.max(1, Math.ceil((until - now) / 1000));
+  const ll = (H.ll ?? []).filter((w) => w[0] <= now && now < w[1]).at(-1);
+  if (ll) chips.push({ k: 'lifeline', text: EG_PRES_TEXT.heldChip('Lifeline', secs(ll[1])) });
+  const hy = H.hymn && H.hymn[0] <= now && now < H.hymn[1] ? H.hymn : null;
+  if (hy) chips.push({ k: 'shieldHymn', text: EG_PRES_TEXT.heldChip('Shield-Hymn', secs(hy[1])) });
+  if (H.weave) chips.push({ k: 'spellweave', text: EG_PRES_TEXT.weaveChip });
+  for (const A of H.accords ?? []) chips.push({ k: `accord:${A.key}`, text: A.name });
+  if (memo.h !== h) { memo.h = h; memo.said.clear(); memo.primed = false; }
+  const newest = (H.ll ?? []).at(-1);
+  if (newest && newest[1] > memo.llU) { if (memo.primed && newest[1] > now) beats.push({ k: 'lifeline', t: newest[2] }); memo.llU = newest[1]; }
+  if (H.hymn && H.hymn[0] !== memo.hyF) { if (memo.primed && H.hymn[1] > now) beats.push({ k: 'shieldHymn' }); memo.hyF = H.hymn[0]; }
+  const up = new Set((H.accords ?? []).map((A) => A.key));
+  for (const A of H.accords ?? []) if (!memo.up.has(A.key) && memo.primed && !memo.said.has(`${A.key}+`)) { memo.said.add(`${A.key}+`); beats.push({ k: 'accord', n: A.mates.join(' and '), t: A.name }); }
+  for (const key of memo.up) if (!up.has(key) && memo.primed && !memo.said.has(`${key}-`)) { memo.said.add(`${key}-`); beats.push({ k: 'accordLapse', t: EG_ACCORDS.find((A) => A.key === key)?.name ?? '' }); }
+  memo.up = up;
+  memo.primed = true;
+  return { chips, beats };
 }
 
 /**

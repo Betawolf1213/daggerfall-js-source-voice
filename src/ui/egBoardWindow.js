@@ -11,10 +11,15 @@
 // CLASSIC skin builds them from DFU windows (ui/listPicker.js, DaggerfallListPickerWindow, as the start window uses it):
 // a picker of the five tabs, and the chosen tab's lines in one of its own, back to the tabs on its close - the slot
 // emptied before the next window is put in it.
+// AUDIT EG III (2026-10-13): THE PANEL IS A WINDOW TO THE PAD - an `enhanced-` door on the page (ui/gamepadInput.js
+// domWindowUp) and on the enhanced doors' stack (ui/enhancedOverlays.js - Tab puts it away, and the pad's cursor drives it),
+// and its Back (the pad's, or Escape anywhere on the page - the enhanced doors' own `back`, ui/input.js overlayAction) closes it.
 //
 // Not a DFU member: Daggerfall Unity has no Elite Breach. Ledger A (ELITE-GATES).
 import { egBandOfHall, EG_BAND_NAMES } from '../net/egLaw.js';
 import { ListPickerWindow } from './listPicker.js';
+import { registerOverlay } from './enhancedOverlays.js';   // AUDIT EG III: on the enhanced doors' stack
+import { overlayAction } from './input.js';   // AUDIT EG III: the doors' own Back
 
 /** The tabs, in their order: the Descent's three brackets (server-account/src/egHonours.js EG_BRACKETS), the Depths and
  *  the Deepest Redoubts. */
@@ -24,6 +29,8 @@ export const EG_BOARD_TAB_TEXT = Object.freeze({
   alone: 'The Descent - Alone', few: 'The Descent - The Few', company: 'The Descent - The Company',
   depths: 'The Depths', deepest: 'The Deepest Redoubts',
 });
+/** AUDIT EG III: the panel's id on the page - an enhanced door's, so the pad's window test finds it. */
+export const EG_BOARD_PANEL_ID = 'enhanced-egboard';
 /** The window's words. */
 export const EG_BOARD_TEXT = Object.freeze({
   title: 'The Boards of the Spire',
@@ -123,6 +130,7 @@ export function createEgBoardPanel({ doc = document, onTab, onClose }) {
   }
   const el = (tag, cls, text) => { const n = doc.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   const root = el('div', 'dfegboard');
+  root.id = EG_BOARD_PANEL_ID;   // AUDIT EG III: an enhanced door, for the pad
   root.setAttribute('tabindex', '-1');
   // a press on the panel is the panel's - never a swing or a look (ui/iliacTableHud.js's law); Escape is its close
   for (const t of ['pointerdown', 'mousedown', 'click', 'touchstart', 'wheel', 'contextmenu']) root.addEventListener(t, (e) => e.stopPropagation());
@@ -130,6 +138,12 @@ export function createEgBoardPanel({ doc = document, onTab, onClose }) {
   doc.body?.append(root);
   try { root.focus?.({ preventScroll: true }); } catch { /* a page that cannot focus */ }
   let alive = true;
+  // AUDIT EG III: on the enhanced doors' stack while it stands, and its Back heard on the whole page (the pad's Escape is
+  // dispatched at the document, never at the panel)
+  const unregister = registerOverlay(() => onClose());
+  const win = doc.defaultView ?? globalThis;
+  const onBack = (e) => { if (typeof e?.key !== 'string' || e.metaKey || e.ctrlKey || e.altKey || overlayAction(e) !== 'back') return; e.preventDefault?.(); e.stopPropagation?.(); onClose(); };
+  win.addEventListener?.('keydown', onBack, { capture: true });
   return {
     root,
     render(board, tab) {
@@ -157,7 +171,7 @@ export function createEgBoardPanel({ doc = document, onTab, onClose }) {
       acts.append(close);
       root.append(acts);
     },
-    destroy() { if (!alive) return; alive = false; root.remove?.(); },
+    destroy() { if (!alive) return; alive = false; unregister(); win.removeEventListener?.('keydown', onBack, { capture: true }); root.remove?.(); },
   };
 }
 
