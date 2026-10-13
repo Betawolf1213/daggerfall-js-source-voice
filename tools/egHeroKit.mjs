@@ -134,3 +134,53 @@ export function sweep(m, path, sec, mat = 0, { caps = true } = {}) {
   }
   return m;
 }
+
+// ── EG-HERO (the Soul Cairn): the pieces both of its scenes are written with (tools/egHeroOssuaryScene.mjs,
+// tools/egHeroMistStairScene.mjs) - a mesh's mirror, a box and a wound face on either, a gem, the rows a surface is cut at,
+// a walk-graph edge's strip.
+/** A mesh seen in the mirror X -> -X: each face's corners (and its corners' own normals) mirrored and wound back, so the
+ *  west twin of an east piece faces where its twin faces, mirrored. Its `face` is the only method grid, lathe and sweep
+ *  call. */
+export function mirrorX(m) {
+  const o = { face(pts, mat = 0, smooth = null) { m.face(pts.map((p) => [0 - p[0], p[1], p[2]]).reverse(), mat, smooth && smooth.map(([n, uv]) => [[0 - n[0], n[1], n[2]], uv]).reverse()); return o; } };
+  return o;
+}
+/** The east piece of mesh `m` (s 1), or its west mirror (s -1). */
+export const onSide = (m, s) => (s > 0 ? m : mirrorX(m));
+/** A box on a mesh or its mirror, every face out (the reference's box, on either). */
+export function boxOn(M, x0, y0, z0, x1, y1, z1, mat = 0) {
+  const p = [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]];
+  for (const f of [[0, 3, 2, 1], [4, 5, 6, 7], [0, 1, 5, 4], [2, 3, 7, 6], [0, 4, 7, 3], [1, 2, 6, 5]]) M.face(f.map((i) => p[i].map(r4)), mat);
+  return M;
+}
+/** A flat face over `pts` wound to face `want` - its corners' own order or reversed, as Newell's normal decides. */
+export function faceTo(M, pts, want, mat = 0) {
+  let nx = 0, ny = 0, nz = 0;
+  for (let i = 0; i < pts.length; i++) { const a = pts[i], b = pts[(i + 1) % pts.length]; nx += (a[1] - b[1]) * (a[2] + b[2]); ny += (a[2] - b[2]) * (a[0] + b[0]); nz += (a[0] - b[0]) * (a[1] + b[1]); }
+  const q = pts.map((p) => p.map(r4));
+  M.face(nx * want[0] + ny * want[1] + nz * want[2] >= 0 ? q : q.reverse(), mat);
+  return M;
+}
+/** An octahedron about (x, y, z), `r` its reach across and `h` up and down, every face out - a gem, a crystal. */
+export function octahedron(M, x, y, z, r, h, mat = 0) {
+  const t = [x, y, z + h].map(r4), b = [x, y, z - h].map(r4), ring = [[x + r, y, z], [x, y + r, z], [x - r, y, z], [x, y - r, z]].map((p) => p.map(r4));
+  for (let k = 0; k < 4; k++) { const a = ring[k], c = ring[(k + 1) % 4]; M.face([a, c, t], mat); M.face([c, a, b], mat); }
+  return M;
+}
+/** A row of values through each of `knots` (ascending or descending), each span cut evenly into pieces no longer than `max`
+ *  - the rows and columns surfaces that meet are cut at, so their edges meet vertex to vertex. */
+export function cuts(knots, max) {
+  const out = [knots[0]];
+  for (let k = 1; k < knots.length; k++) {
+    const a = knots[k - 1], b = knots[k], n = Math.max(1, Math.ceil(Math.abs(b - a) / max - 1e-9));
+    for (let i = 1; i <= n; i++) out.push(a + ((b - a) * i) / n);
+  }
+  return out;
+}
+/** A walk-graph edge's strip on mesh `m`, `w` wide, from node `a` to node `b` ([x, y, z]) along X or along Y - square to
+ *  the course, so no edge asks a length of anything but subtraction. */
+export function walkStrip(m, a, b, w = 0.2) {
+  if (a[0] === b[0]) return m.level(a[0] - w / 2, Math.min(a[1], b[1]), a[0] + w / 2, Math.max(a[1], b[1]), a[2]);
+  if (a[1] === b[1]) return m.level(Math.min(a[0], b[0]), a[1] - w / 2, Math.max(a[0], b[0]), a[1] + w / 2, a[2]);
+  throw new Error(`walkStrip: [${a}] to [${b}] runs neither along X nor along Y`);
+}

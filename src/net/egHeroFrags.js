@@ -15,6 +15,11 @@
 // it to EG_HERO_FRAGS under its id. Not a DFU member. Ledger A (ELITE-GATES).
 import { egFragRecordFault } from './egFragLaw.js';
 import EG_REF_FRAG_LAW from '../assets/egfrags/egRefFrag.law.json' with { type: 'json' };
+// EG-HERO (the Soul Cairn, 2026-10-13): the Ossuary (a passage) and the Mist Stair (a shaft), written by the port in code -
+// tools/egHeroOssuaryScene.mjs and tools/egHeroMistStairScene.mjs, baked by tools/bakeEgHeroOssuary.mjs and
+// tools/bakeEgHeroMistStair.mjs (test/eghero_cairn.test.js)
+import EG_HERO_OSSUARY_LAW from '../assets/egfrags/egheroOssuary.law.json' with { type: 'json' };
+import EG_HERO_MIST_STAIR_LAW from '../assets/egfrags/egheroMistStair.law.json' with { type: 'json' };
 
 /** The variant of the reference fragment - the stand-in no hall lays. */
 export const EG_HERO_REFERENCE = 'reference';
@@ -28,7 +33,8 @@ export function egHeroFragRegistry(laws) {
   })));
 }
 /** EVERY BAKED FRAGMENT'S LAW HALF, by its id. */
-export const EG_HERO_FRAGS = egHeroFragRegistry([EG_REF_FRAG_LAW]);
+export const EG_HERO_FRAGS = egHeroFragRegistry([EG_REF_FRAG_LAW,
+  EG_HERO_OSSUARY_LAW, EG_HERO_MIST_STAIR_LAW]);
 
 /** The hero fragments of kit `kit` a hall may lay - every one of that kit registered (in `frags`, the registry by
  *  default) but the reference. */
