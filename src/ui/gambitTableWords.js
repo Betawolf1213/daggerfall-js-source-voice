@@ -223,7 +223,7 @@ export function cellWords(/** @type {{tile: number, hazard: any, round: number}}
   }
 }
 /** A piece's lines: its side, its numbers, its reach, whom it can strike now, a king's warning. */
-export function pieceLines(/** @type {{name: string, mine: boolean, regular: string, piece: any, foes: number}} */ x) {
+export function pieceInfoLines(/** @type {{name: string, mine: boolean, regular: string, piece: any, foes: number}} */ x) {
   const p = x.piece;
   const lines = [
     x.mine ? t('cards.kingsGambit.info.mine', '{name} - yours', { name: x.name }) : t('cards.kingsGambit.info.theirs', '{name} - {regular}\'s', { name: x.name, regular: x.regular }),

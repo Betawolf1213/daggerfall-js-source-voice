@@ -39,7 +39,7 @@ import { noteFirstUse } from '../systems/tutorials.js';
 import {
   unitName, kingName, pieceName, regularLines, stakeLabel, stakeWhat, stakePurse, stakeNight,
   kingLine, unitLine, unitCost, unitChips, pointsLeft, unitsHeld, armyKingLine, actionsLeft, refusalWords, cellWords,
-  pieceLines, gambitTitle, GAMBIT_HEADS, GAMBIT_PRESS, pressStart, pressForfeit, pressStandCost, pressDrink, pressStrike,
+  pieceInfoLines, gambitTitle, GAMBIT_HEADS, GAMBIT_PRESS, pressStart, pressForfeit, pressStandCost, pressDrink, pressStrike,
   potionsChip, fallenChip, healthOf, nextStep, resultHead, kingFalls, resultGold, nightSpent, gambitWhat, gambitGuide,
   gambitWords, layoutName,
 } from './gambitTableWords.js';
@@ -245,7 +245,7 @@ export function infoBox(/** @type {any} */ st, /** @type {any} */ info, /** @typ
     const pc = pieceById(st, info.piece);
     if (!pc) return null;
     const name = pc.king ? kingName(crowns[pc.side]) : pieceName(pc, crowns);   // the box's head: a king's whole title
-    return { kind: 'piece', id: pc.id, card: pc.king ? null : unitCardId(pc.unit), crown: pc.king ? crowns[pc.side] : null, name, lines: pieceLines({ name, mine: pc.side === 0, regular, piece: pc, foes: foesInRange(st, pc).length }) };
+    return { kind: 'piece', id: pc.id, card: pc.king ? null : unitCardId(pc.unit), crown: pc.king ? crowns[pc.side] : null, name, lines: pieceInfoLines({ name, mine: pc.side === 0, regular, piece: pc, foes: foesInRange(st, pc).length }) };
   }
   if (Array.isArray(info.cell)) {
     const [c, r] = info.cell;
@@ -620,7 +620,7 @@ export function createGambitTableHud({ onPress, doc = globalThis.document }) {
 }
 
 /** The cell a key moves the board's cursor to (14.3: the arrows or the d-pad; the board's edges hold it). */
-export const cursorStep = (/** @type {number[]} */ at, /** @type {string} */ key) => {
+export const boardCursorStep = (/** @type {number[]} */ at, /** @type {string} */ key) => {
   const [c, r] = at;
   const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[key];
   return d ? [Math.max(0, Math.min(KG_COLS - 1, c + d[0])), Math.max(0, Math.min(KG_ROWS - 1, r + d[1]))] : at;

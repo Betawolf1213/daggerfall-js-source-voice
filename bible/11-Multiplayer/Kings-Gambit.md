@@ -1391,6 +1391,10 @@ panel; the card panels' sheets and the chrome joined FONT3's floor (`test/font3_
   says it now (`kingsGambit.js:"export const warningsArmAt = (round) =>"`), pinned against a game played on.
 - A STALE COUNT: `Tavern-Cards.md` section 40 said KG-SET's pins 4 and its mutants 12 - 5 and 13 since the no-break
   space was found.
+- THREE NAMES ALREADY TAKEN (found by the whole suite at the merge of main): `cursorStep` (the gamepad cursor's,
+  `systems/gamepad.js`), `pieceLines` (a crafted piece's, `net/recipeLaw.js`) and `pieceKey` (the grass lab's) were
+  other modules' names, and the one-home ratchet (`test/audit24_onehome.test.js`) holds a name to one home. The board's
+  are its own: `boardCursorStep`, `pieceInfoLines`, `pieceAtlasKey`.
 
 ### 16.6 Pins and mutants
 

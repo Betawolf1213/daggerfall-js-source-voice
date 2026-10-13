@@ -18,7 +18,7 @@ import { SUIT_CROWNS } from '../src/render/cardFaces.js';
 import { ENEMY_NAMES } from '../src/characters/enemyBasics.js';
 import { FOE_CARDS } from '../src/systems/cardSources.js';
 import {
-  gambitHudModel, createGambitTableHud, gridOrder, stakePicks, rangeCells, infoBox, tierStep, unitCardId, cursorStep, GAMBIT_TABLE_CSS,
+  gambitHudModel, createGambitTableHud, gridOrder, stakePicks, rangeCells, infoBox, tierStep, unitCardId, boardCursorStep, GAMBIT_TABLE_CSS,
 } from '../src/ui/gambitTableHud.js';
 import {
   kingName, kingShort, pieceName, unitName, refusalWords, logLine, gambitGuide, gambitWords, gambitWhat, resultGold, nextStep, barkEnd, regularLines,
@@ -481,9 +481,9 @@ test('KG3 THE WORDS ARE ITS OWN (CARDS-PLUS\'s law, the third panel): every clas
 });
 
 test('KG3 the board\'s cursor: the arrows and the d-pad walk it, the board\'s edges hold it (mutant: an edge)', () => {
-  assert.deepEqual(cursorStep([7, 12], 'ArrowUp'), [7, 11]);
-  assert.deepEqual(cursorStep([0, 0], 'ArrowLeft'), [0, 0]);
-  assert.deepEqual(cursorStep([KG_COLS - 1, KG_ROWS - 1], 'ArrowRight'), [KG_COLS - 1, KG_ROWS - 1]);
-  assert.deepEqual(cursorStep([KG_COLS - 1, KG_ROWS - 1], 'ArrowDown'), [KG_COLS - 1, KG_ROWS - 1]);
-  assert.deepEqual(cursorStep([3, 3], 'KeyQ'), [3, 3]);
+  assert.deepEqual(boardCursorStep([7, 12], 'ArrowUp'), [7, 11]);
+  assert.deepEqual(boardCursorStep([0, 0], 'ArrowLeft'), [0, 0]);
+  assert.deepEqual(boardCursorStep([KG_COLS - 1, KG_ROWS - 1], 'ArrowRight'), [KG_COLS - 1, KG_ROWS - 1]);
+  assert.deepEqual(boardCursorStep([KG_COLS - 1, KG_ROWS - 1], 'ArrowDown'), [KG_COLS - 1, KG_ROWS - 1]);
+  assert.deepEqual(boardCursorStep([3, 3], 'KeyQ'), [3, 3]);
 });

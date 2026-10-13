@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { gambitPlaces, gambitCardYaw, GAMBIT_FELT_LONG, GAMBIT_FELT_SHORT, GAMBIT_MAT_LIFT } from '../src/world/gambitCloth.js';
 import {
   GAMBIT_ATLAS_KEYS, GAMBIT_ATLAS_COLS, GAMBIT_CELL_W, GAMBIT_CELL_H, GAMBIT_ATLAS_W, GAMBIT_ATLAS_H, GAMBIT_CARD_SHARE, GAMBIT_INKS,
-  gambitAtlasCell, gambitCellUv, pieceKey, matModel, paintGambitMat, createGambitTableDraw, GAMBIT_ARCHIVE,
+  gambitAtlasCell, gambitCellUv, pieceAtlasKey, matModel, paintGambitMat, createGambitTableDraw, GAMBIT_ARCHIVE,
 } from '../src/render/gambitTableDraw.js';
 import { CARD_TABLE_W, CARD_TABLE_D, CARD_TABLE_RAIL } from '../src/world/cardTableProp.js';
 import { KG_COLS, KG_ROWS, KG_ROSTER, KG_TILE, autoFill, KG_POINT_BUDGET } from '../src/net/kingsGambit.js';
@@ -72,8 +72,8 @@ test('KG3 the atlas: every unit\'s picture, the four Kings, the back - each a ce
   assert.deepEqual(gambitAtlasCell('back'), [(GAMBIT_ATLAS_KEYS.length - 1) % GAMBIT_ATLAS_COLS, Math.floor((GAMBIT_ATLAS_KEYS.length - 1) / GAMBIT_ATLAS_COLS)]);
   const [u0, v0, u1, v1] = gambitCellUv([0, 0]);
   assert.ok(near(u0, 0.5 / GAMBIT_ATLAS_W) && near(u1, (GAMBIT_CELL_W - 0.5) / GAMBIT_ATLAS_W) && near(v1, 1 - 0.5 / GAMBIT_ATLAS_H), 'half a texel in, v up');
-  assert.equal(pieceKey({ king: true, side: 1, unit: 143 }, [3, 0]), 'k0', 'a king by its side\'s crown');
-  assert.equal(pieceKey({ king: false, side: 0, unit: 41 }, [3, 0]), 'u41');
+  assert.equal(pieceAtlasKey({ king: true, side: 1, unit: 143 }, [3, 0]), 'k0', 'a king by its side\'s crown');
+  assert.equal(pieceAtlasKey({ king: false, side: 0, unit: 41 }, [3, 0]), 'u41');
 });
 
 test('KG3 the mat\'s quad over the board\'s corners, wound as the renderer winds - cross(b - a, c - a) up - from either side of the table (mutant: a triangle turned)', () => {
@@ -128,7 +128,7 @@ test('KG3 the draw: nothing until a board; the atlas and the mat made once, the 
   const places = gambitPlaces(frame(), [2, 0, -3.9]);
   const look = { layout: st.layout, tiles: st.tiles, hazards: st.hazards, pieces: st.pieces.map((p) => ({ id: p.id, side: p.side, col: p.col, row: p.row, king: p.king, unit: p.unit })), selected: null, lit: [], range: [], targets: [], cursor: null, staged: null };
   d.draw({ places, look, crowns: [3, 0] });
-  const kinds = new Set(look.pieces.map((p) => pieceKey(p, [3, 0])));
+  const kinds = new Set(look.pieces.map((p) => pieceAtlasKey(p, [3, 0])));
   assert.equal(d.meshCount(), kinds.size + 1, 'the mat, and a plate a kind');
   assert.deepEqual(uploads.map((u) => u[1]), ['atlas', 'mat']);
   assert.equal(drawn.length, look.pieces.length + 1);

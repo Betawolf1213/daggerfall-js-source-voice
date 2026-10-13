@@ -31,7 +31,7 @@
 import { GambitTableSession, gambitNightLeft, gambitPursesAfter, stakeOf, gambitCrownRestore, crownIndex, GAMBIT_CROWNS, GAMBIT_LOG_MAX, GAMBIT_STAKE_MULTS } from '../systems/gambitTableSession.js';
 import { tierFor, GAMBIT_TIERS } from '../systems/gambitPatrons.js';
 import { KG_POINT_BUDGET, KG_COLS, KG_ROWS, KG_KING_CELL, armyRefusal, armyCost, canRecruit, autoFill, rosterUnit, pieceById, pieceAt, reachable, foesInRange } from '../net/kingsGambit.js';
-import { gambitHudModel, createGambitTableHud, cursorStep } from '../ui/gambitTableHud.js';
+import { gambitHudModel, createGambitTableHud, boardCursorStep } from '../ui/gambitTableHud.js';
 import {
   pieceName, unitJoined, unitLeft, unitTooDear, armyFull, refusalWords, logLine, resultGold,
   dealLine, barkInvite, barkEnd,
@@ -379,7 +379,7 @@ export function openGambitTableGame(d) {
     if (g.closed || g.phase !== 'battle' || !g.session) return false;
     const st = g.session.state;
     if (Object.hasOwn(GAMBIT_CURSOR_KEYS, code)) {
-      g.cursor = cursorStep(g.cursor ?? KG_KING_CELL.slice(), GAMBIT_CURSOR_KEYS[code]);
+      g.cursor = boardCursorStep(g.cursor ?? KG_KING_CELL.slice(), GAMBIT_CURSOR_KEYS[code]);
       const pc = pieceAt(st, g.cursor[0], g.cursor[1]);
       g.info = pc ? { piece: pc.id } : { cell: g.cursor.slice() };
       g.armed = null;

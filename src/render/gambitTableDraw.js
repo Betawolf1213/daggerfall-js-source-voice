@@ -54,7 +54,7 @@ export function gambitCellUv(/** @type {number[]} */ [col, row]) {
   return [u0, v0, u1, v1];
 }
 /** The atlas key a piece is drawn with: a king's crown, a unit's kind. @param {{king: boolean, side: number, unit: number}} p @param {number[]} crowns the two sides' crown indices */
-export const pieceKey = (p, crowns) => (p.king ? `k${crowns[p.side]}` : `u${p.unit}`);
+export const pieceAtlasKey = (p, crowns) => (p.king ? `k${crowns[p.side]}` : `u${p.unit}`);
 
 /** Paint the atlas: every unit's picture (its card's, picture-only), the four Kings, the back. */
 export function paintGambitAtlas(/** @type {any} */ ctx) {
@@ -236,7 +236,7 @@ export function createGambitTableDraw(renderer, { doc = globalThis.document } = 
       const s = (GAMBIT_CARD_SHARE * scene.places.cell) / CARD_W;
       for (const p of scene.look.pieces ?? []) {
         const at = scene.places.at(p.col, p.row), yaw = gambitCardYaw(scene.places, p.side);
-        renderer.drawMesh(plateOf(pieceKey(p, scene.crowns)), trs(at[0], at[1] + GAMBIT_CARD_LIFT, at[2], 0, (yaw * 180) / Math.PI, 0, s, 1, s), null, { noShadow: true });
+        renderer.drawMesh(plateOf(pieceAtlasKey(p, scene.crowns)), trs(at[0], at[1] + GAMBIT_CARD_LIFT, at[2], 0, (yaw * 180) / Math.PI, 0, s, 1, s), null, { noShadow: true });
       }
     },
     /** How many meshes it holds - a test's look at its allocations. */
