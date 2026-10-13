@@ -12,7 +12,7 @@ import {
 import { call, busyUntil, _resetBusyForTests } from '../src/net/accountClient.js';
 import { ROUTES, REPLICA_ROUTES } from '../server-account/src/service.js';
 
-test('BUSY-GATE the law: the reads that stand back are the fourteen display reads - each a route the service serves, by its method, none a read a replica serves; the wait doubles from BUSY_BASE_MS to BUSY_MAX_MS, spread over its upper half; an overload is a 503 that says `server` or `queue`, never a 500; a Retry-After is whole seconds (mutants: uncapped; unspread; a 500 an overload; the line unread)', () => {
+test('BUSY-GATE the law: the reads that stand back are the fourteen display reads - each a route the service serves, by its method, a replica\'s read but the three an isolate keeps; the wait doubles from BUSY_BASE_MS to BUSY_MAX_MS, spread over its upper half; an overload is a 503 that says `server` or `queue`, never a 500; a Retry-After is whole seconds (mutants: uncapped; unspread; a 500 an overload; the line unread)', () => {
   assert.deepEqual([...BUSY_READS], [
     ['/v1/homes/town', 'POST'], ['/v1/homes/yards', 'POST'], ['/v1/homes/layouts', 'POST'], ['/v1/homes/mine', 'POST'],
     ['/v1/homes/rooms', 'POST'], ['/v1/homes/decor', 'POST'], ['/v1/prof/pixels', 'POST'], ['/v1/seats/list', 'POST'],
@@ -21,7 +21,9 @@ test('BUSY-GATE the law: the reads that stand back are the fourteen display read
   ]);
   for (const [path, method] of BUSY_READS) {
     assert.ok(ROUTES.has(path), `${path}: a route the service serves`);
-    assert.notEqual(REPLICA_ROUTES.get(path), method, `${path}: a replica's read is not slowed by the primary's queue`);
+    // PIN MOVED (DISPLAY-REPLICA, 2026-10-13): each was no replica's read; each is one now (service.js REPLICA_ROUTES), and
+    // still stands back - without the tab's bookmark its first statement is the primary's
+    assert.equal(REPLICA_ROUTES.get(path) === method || ['/v1/homes/yards', '/v1/homes/layouts', '/v1/seats/list'].includes(path), true, `${path}: a replica's read, or one an isolate keeps`);
     assert.equal(busyRead(path, method), true);
     assert.equal(busyRead(path, method === 'GET' ? 'POST' : 'GET'), false, `${path}: by its method alone`);
   }

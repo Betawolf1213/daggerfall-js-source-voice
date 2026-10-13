@@ -775,6 +775,19 @@ export const D1_BOOKMARK_READS = new Map([
   ['/v1/realm', 'GET'],
   ['/v1/prof/state', 'POST'],
   ['/v1/prof/motherlodes', 'POST'],
+  // DISPLAY-REPLICA (2026-10-13; server-account/src/service.js REPLICA_ROUTES): and the display reads
+  ['/v1/homes/town', 'POST'],
+  ['/v1/homes/mine', 'POST'],
+  ['/v1/homes/rooms', 'POST'],
+  ['/v1/homes/decor', 'POST'],
+  ['/v1/prof/pixels', 'POST'],
+  ['/v1/market/vendors', 'POST'],
+  ['/v1/marks/balance', 'POST'],
+  ['/v1/guilds/invites', 'POST'],
+  ['/v1/realm/lineages', 'POST'],
+  ['/v1/realm/unions', 'POST'],
+  ['/v1/saves', 'GET'],
+  ['/v1/arena/board', 'POST'],
 ]);
 let _d1Mark = { secret: null, mark: null };
 /** AUDIT SCALE II A-2: how many times the page's bookmark has been forgotten - a read's answer is kept only under the
