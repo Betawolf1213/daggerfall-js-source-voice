@@ -45,10 +45,9 @@ producers), and killed a mutant of every fix. The verdicts:
 - **PARTIAL/page**: the code was right and the page wrong, so the page was fixed;
 - **REFUTED** (it did not reproduce) and **DECLINED** (its cost above its worth, recorded on the page);
 - **FIXED-BY-** a group (FIXED-BY-A2, say): owned by one group, already closed by that group's fix;
-- **PENDING-F**: group F's, filled from its report before the push.
 
-At this writing: 76 FIXED, 2 PARTIAL, 2 PARTIAL/page, 1 FIXED + PARTIAL/page, 31 PENDING-F. The seven
-fix groups refuted none and declined none.
+In all: 105 FIXED, 3 PARTIAL, 2 PARTIAL/page, 1 FIXED + PARTIAL/page, 1 FIXED-BY-C. The eight groups refuted none and
+declined none.
 
 ## The fix groups
 
@@ -64,10 +63,10 @@ order below, then origin/main (1f5325be: #842, #861 and #862, three conflicts). 
 | C, client | scenes/: `egClient.js`, `egFight.js`, `egSpan.js`, `egOcclude.js`, `egLookDraw.js`, `world.js`, `worldModes.js`; render/: `egLinePass.js`, `sdStepsPass.js`; `systems/spireVestiges.js`, `ui/egStartWindow.js`, `ui/gateVeil.js`, `world/egLook.js`; the `tonic` word | L4-1 to L4-13, L6-1, L1-5, L1-4 and L1-12 (the screen's halves) | d33dee08, c6dbf73e | `egaudit3_client` 13, `egaudit3_client_fight` 3, `egaudit3_client_tonic` 2 | 82 |
 | D, law and Spirebridge | net/: `egLaw.js`, `egSpanLaw.js`, `egVestige.js`, `egFair.js`, `egDurable.js`, `egLink.js`; `scenes/egSpan.js`, `scenes/egClient.js`, `ui/egSpireHud.js`, `ui/egBeats.js`; the `mast` and `ebridge` words | L1-14; L1-7 (with L3-10, L5-1, L6-2) | c4b0e0d5, 1d01388a | `egaudit3_law` 4, `egaudit3_law_bridge` 6 | 55 |
 | G, count and rewards | net/: `egBrain.js`, `egLaw.js`, `egRun.js`, `egVestige.js`, `egLink.js`; `systems/egSpoils.js`, `ui/egHud.js`, `scenes/egClient.js`, `scenes/world.js` (`egSpoilsPaid`); the `wkpaid` word | L2-1 to L2-3, L2-5, L2-6, L2-8, L2-11, L2-18 | deca4951, 09ab9d26 | `egaudit3_count` 16, `egaudit3_count_spoils` 5 | 95 |
-| F, the bible pass | the design page, Active-Arcs, Port-Ledger, Testing.md, Accounts-And-Cloud-Saves-Arc; `net/wire.js` `EG_END_WORDS` | L1-22; L2-7, L2-9, L2-10, L2-12 to L2-15, L2-17; L3-11, L3-16, L3-17; L5-4 to L5-22; L4-11 verified | from 1f5325be | - | - |
+| F, the bible pass | the design page, Active-Arcs, Port-Ledger, Testing.md, Accounts-And-Cloud-Saves-Arc, Sigil-Sets; `net/wire.js` `EG_END_WORDS` | L1-22; L2-7, L2-9, L2-10, L2-12 to L2-15, L2-17; L3-11, L3-16, L3-17; L5-4 to L5-22; L4-11 verified | ad903255 (from 1f5325be) | `egaudit3_bible` (1) | 1 |
 
 Together the fix groups added 14 test files (102 tests) and 440 mutant records in seven lists under tools/mutants/
-(`egaudit3_<group>.json`), every one dead. Each group re-judged the existing records aimed near the text it moved,
+(`egaudit3_<group>.json`), every one dead; the bible pass added one of each (`egaudit3_bible`). Each group re-judged the existing records aimed near the text it moved,
 re-aimed by content those whose text had moved (test/mutantdrift.test.js), and moved a pin only with a PIN MOVED note.
 `RELAY_VERSION` stays `world199`, unshipped, its hash re-taken in place in `test/relayversion.test.js`;
 `ACCOUNT_VERSION` stays `acct124`, and migration 0112 needed no change. The one law change is D's spec law 6
@@ -100,7 +99,7 @@ coordinator fixed it on its own (9bdbe722).
 | L1-19 | MED | Sweeping Arc never splashes off a blow on a lord, and measures stale places | FIXED | A2: a host hit off any landed melee blow, lords' included, measured where each body stands now; `egaudit3_legion_blows` |
 | L1-20 | LOW | the Wellhead's Sapper and Lurker share sprite 36 (ROLE READS) | FIXED | A2: the Sapper a Fire Atronach (35); `egaudit3_legion` |
 | L1-21 | LOW | Cantrips refused at the rest; the shield test reads one Twin; unrecorded | FIXED | A2: used at the rest, refused under any lord's shield; Sight kept while no fight stands (17.2 says so); `egaudit3_legion_blows` |
-| L1-22 | LOW | sections 6.2 and 7 name constants and homes the code does not have | PENDING-F | group F (the bible pass) |
+| L1-22 | LOW | sections 6.2 and 7 name constants and homes the code does not have | FIXED | F: sections 6.2 and 7 name the `_MS` constants and their homes (`net/egLaw.js`, the respite's in `net/egBrain.js`) |
 | L1-23 | LOW | `net/egLords.js` copies the gate's `ATTACKS` rows; its Meteor drops the burning pool | FIXED | A1: `ATTACKS` and `POOLS` read from `net/gateBrain.js` (a source sweep pins that no copy remains); the Meteor leaves the gate's burning ground; `egaudit3_lords` |
 | L1-24 | LOW | the Binder's raise sums claimed damage | FIXED | A2: it counts what lands, never the claim; `egaudit3_legion_blows` |
 
@@ -114,17 +113,17 @@ coordinator fixed it on its own (9bdbe722).
 | L2-4 | MED | Counterstroke arms only on a hit; its numbers literals; no pin | FIXED | with L1-17 (A2) |
 | L2-5 | MED | Lifeline III's 40% can never apply under the 30% cap | FIXED | G: 20 / 25 / 30% (`net/egVestige.js`, section 15's table); `egaudit3_count` |
 | L2-6 | MED | section 21's 12 m rule for Hunter's Mark and Spotter not built, and against section 15 | FIXED | G: both mark only on an arrow from beyond 12 m (`egMarkFoe`'s distance); section 15 and the cards say so; `egaudit3_count` |
-| L2-7 | MED | section 23's migrations sentence stale: every EG table is in 0112 | PENDING-F | group F (the bible pass) |
+| L2-7 | MED | section 23's migrations sentence stale: every EG table is in 0112 | FIXED | F: section 23's Migration 0112 paragraph lists every table and column of the arc |
 | L2-8 | MED | the stake's and `eg_live`'s until is 3 h 20 min; the page says 3 h 10 | PARTIAL/page | G: the code's 3 h 20 min from the order's issue is right; sections 22 and 23 corrected; no code changed |
-| L2-9 | LOW | the current versions misstated (world196, acct114, migration 0111) | PENDING-F | group F (the bible pass) |
-| L2-10 | LOW | the EG-E1, EG-E2 and EG-E3 records half renumbered | PENDING-F | group F (the bible pass) |
+| L2-9 | LOW | the current versions misstated (world196, acct114, migration 0111) | FIXED | F: the slice table, section 23's Versions and Active-Arcs say world199, acct124, 0112 |
+| L2-10 | LOW | the EG-E1, EG-E2 and EG-E3 records half renumbered | FIXED | F: EG-E1, EG-E2 and EG-E3 say their versions and migration as renumbered |
 | L2-11 | LOW | the door's reach: 3 m on the page, 5 m at the relay, 4 m at the client | FIXED | G: one `EG_DOOR_REACH_M` (3 m) at both ends, `down` re-sent each second; `egaudit3_count` |
-| L2-12 | LOW | the page names constants the code does not have (the respite's, the absence's, the Valkynaz's keys) | PENDING-F | group F (the bible pass) |
-| L2-13 | LOW | the stake's 14-day clock is in EG-ZM's record, not in section 23's sentence | PENDING-F | group F (the bible pass) |
-| L2-14 | LOW | EG-ZJ's 16 KiB argument does not apply | PENDING-F | group F (the bible pass) |
-| L2-15 | LOW | the Falling Wall's "tenth" is not a tenth (21/208) | PENDING-F | group F (the bible pass) |
+| L2-12 | LOW | the page names constants the code does not have (the respite's, the absence's, the Valkynaz's keys) | FIXED | F: the respite's `_MS` constants with its 120 s step and 30 s floor; `EG_ABSENT_TRIAL_MS`; the Valkynaz's key `EG_VALK_KEY_ODDS` and `players.eg_valk_wk` |
+| L2-13 | LOW | the stake's 14-day clock is in EG-ZM's record, not in section 23's sentence | FIXED | F: section 23's clock is `EG_STAKE_CLOCK_S`, 14 days past a stake's `until` |
+| L2-14 | LOW | EG-ZJ's 16 KiB argument does not apply | FIXED | F: EG-ZJ's sentence says `MAX_FRAME_BYTES` bounds what a client sends, and the rows' eighteen fields |
+| L2-15 | LOW | the Falling Wall's "tenth" is not a tenth (21/208) | FIXED | F: EG6a's record and `test/eglook_pieces.test.js`'s title say the bound as asserted (a tenth, and one) |
 | L2-16 | LOW | the Standard's, Counterstroke's, the marks' and Sweeping Arc's numbers duplicated as literals | FIXED | A2: declared in `net/egVestige.js` and imported; `egMarkFoe`'s 8000 became `EG_MARK_MS` at the merge; `egaudit3_legion_blows` |
-| L2-17 | LOW | section 11.9's "Budgets. None are documented" stale | PENDING-F | group F (the bible pass) |
+| L2-17 | LOW | section 11.9's "Budgets. None are documented" stale | FIXED | F: section 11.9's budgets are law (`EG_FRAG_BUDGET`) and measured (EG-G2, EG-ZL, EG-ZN) |
 | L2-18 | LOW | the gather cut short by the 30 s wait; `EG_STAIR_HOLD_MS` can never bind | FIXED | G: a gather begun before the wait ends runs its 8 s; `EG_STAIR_HOLD_S`/`_MS` deleted, section 6.2 says at most 38 s; `egaudit3_count` |
 | L2-19 | LOW | Systems.md states BAL9's `spellPower.js` sentence twice (outside the arc) | FIXED | the coordinator, 9bdbe722 |
 
@@ -142,13 +141,13 @@ coordinator fixed it on its own (9bdbe722).
 | L3-8 | MED | instants stamped during THE HOLD pushed into the future at its release | FIXED | B: a hold records the instants it found, and its release moves only those (`net/egDurable.js`); `egaudit3_service_relay` |
 | L3-9 | MED | the room never checks an egadmit order's `ew` | FIXED | B: the room refuses an `ew` not the breach's; `/v1/eg/admit` refuses a breach with no stake; `egaudit3_service`, `egaudit3_service_relay` |
 | L3-10 | MED | Spirebridge offered and does nothing; no `mast` word | FIXED | with L1-7 (D) |
-| L3-11 | MED | EG-E2's closed departures still stand in section 20 | PENDING-F | group F (the bible pass) |
+| L3-11 | MED | EG-E2's closed departures still stand in section 20 | FIXED | F: EG-E2's closed departures deleted; one stands |
 | L3-12 | MED | a Soul-Pool from a player's kill is pushed into the last beat's sent frames | FIXED | A2: said in that blow's own frames; `egaudit3_legion_blows` |
 | L3-13 | LOW | the 'gone' end can never happen | FIXED | A2: no living member at a rest ends 'gone', in a hall 'wipe'; `egaudit3_legion_blows` |
 | L3-14 | LOW | a void consumes the day's Rehearsal | FIXED | B: a voided Rehearsal frees that day's again, if it is still that day; `egaudit3_service` |
 | L3-15 | LOW | `/v1/eg/admit` locks out a member who never stepped in, to request + 3 h 20 min, unrecorded | FIXED + PARTIAL/page | B: admission only within `EG_ADMIT_WINDOW_S` (20 min) of the open and while the stake is held; `eg_live` ends at the stake's own until; section 23 corrected to the request + 3 h 20 min; recorded in 23: an order taken and never used holds its member to that breach until then; `egaudit3_service` |
-| L3-16 | LOW | section 23's drift: the frame table, `eglive`, `/v1/eg/live`'s home, the migrations, the prefix gate | PENDING-F | group F (the bible pass) |
-| L3-17 | LOW | stale numbers: migration 0112's header (acct116, world195), the slice table's world196 | PENDING-F | group F (the bible pass) |
+| L3-16 | LOW | section 23's drift: the frame table, `eglive`, `/v1/eg/live`'s home, the migrations, the prefix gate | FIXED | F: section 23's frame table as the wire carries it; `eglive` and `egcall:<sub>`; `/v1/eg/live` the relay's; the prefix gate's 404 |
+| L3-17 | LOW | stale numbers: migration 0112's header (acct116, world195), the slice table's world196 | FIXED | F: migration 0112's header says acct124 and world199; the slice table's EG-PLAY row world199 |
 | L3-18 | LOW | the boards read whole tables on every call | PARTIAL | B: the rankings kept 60 s per Worker, shared by readers, dropped on any claim; recorded in section 20: an end claim reads its season fresh, and the Deepest board reads every Redoubt at a rebuild; `egaudit3_service` |
 | L3-19 | LOW | the public `/v1/eg/live` fans out to every live room, unbounded | FIXED | B: the hub's answer kept 2 s (`EG_LIVE_SAID_MS`), shared, dropped when a breach opens; `egaudit3_service_relay` |
 
@@ -177,25 +176,25 @@ coordinator fixed it on its own (9bdbe722).
 | L5-1 | HIGH | Spirebridge offered, does nothing, unflagged | FIXED | with L1-7 (D) |
 | L5-2 | MED | No Quarter and Far Watch skip the pair rule | FIXED | with L1-16 (A2) |
 | L5-3 | MED | Counterstroke arms only on a hit | FIXED | with L1-17 (A2) |
-| L5-4 | MED | EG-PLAY's departures stand after later slices closed them (RETIRING A FLAG) | PENDING-F | group F (the bible pass) |
-| L5-5 | MED | EG-FULL's three layers keep closed departures and owed lists | PENDING-F | group F (the bible pass) |
-| L5-6 | MED | EG-G1's and EG-G2's closed departures, some kept with "(EG-ZF added them)" appended | PENDING-F | group F (the bible pass) |
-| L5-7 | MED | EG-H2's, EG-H3's, EG-E's and EG-ZH's closed departures | PENDING-F | group F (the bible pass) |
-| L5-8 | MED | host wiring FLAGGED that is wired (EG-ZF, EG-E1, EG-E2, EG-E3; Sigil-Sets' EG15) | PENDING-F | group F (the bible pass) |
-| L5-9 | MED | four EG-E commits have no record naming the four hosts (THE FOUR HOSTS RULE) | PENDING-F | group F (the bible pass) |
-| L5-10 | MED | cross-references after renumbering: EG-ZP's departures 6 and 8, EG-H3's list | PENDING-F | group F (the bible pass) |
-| L5-11 | MED | sections 28 and 29 name things never built | PENDING-F | group F (the bible pass) |
-| L5-12 | LOW | section 31's table and intro: `EG_OPEN=false`, world196, deleted files, "every mutant dead" | PENDING-F | group F (the bible pass) |
-| L5-13 | LOW | the Port-Ledger row omits the account service's files and names a dead seam | PENDING-F | group F (the bible pass) |
-| L5-14 | LOW | Active-Arcs' EG-PLAY line stale; no line for EG-FULL to EG-ZS | PENDING-F | group F (the bible pass) |
-| L5-15 | LOW | Testing.md's rows say migration 0111; egz_lords' row lists one seam hit | PENDING-F | group F (the bible pass) |
-| L5-16 | LOW | Accounts-And-Cloud-Saves-Arc.md's EG sections | PENDING-F | group F (the bible pass) |
-| L5-17 | LOW | records' versions and migrations (acct122, 0111) with no renumber note | PENDING-F | group F (the bible pass) |
-| L5-18 | LOW | the arch's archive block moved from 38231 to 38281-38289, unrecorded | PENDING-F | group F (the bible pass) |
-| L5-19 | LOW | section 23's frame table and sections 12 and 13.2 list words the wire does not carry | PENDING-F | group F (the bible pass) |
-| L5-20 | LOW | EG-ZL's departure reason stale | PENDING-F | group F (the bible pass) |
-| L5-21 | LOW | prose and structure: the gap audit's rows, misplaced records, missing blank lines, 495 long lines | PENDING-F | group F (the bible pass) |
-| L5-22 | LOW | mutant counts drifted (eglook, egpres_hud, egz_stair) | PENDING-F | group F (the bible pass) |
+| L5-4 | MED | EG-PLAY's departures stand after later slices closed them (RETIRING A FLAG) | FIXED | F: EG-PLAY's list keeps its three that stand, and names what closed the rest |
+| L5-5 | MED | EG-FULL's three layers keep closed departures and owed lists | FIXED | F: layer one keeps its one that stands; layer two's owed list and layer three's closed departures deleted |
+| L5-6 | MED | EG-G1's and EG-G2's closed departures, some kept with "(EG-ZF added them)" appended | FIXED | F: EG-G1's list keeps seven, with no appended closures; EG-G2's "not built" list closed |
+| L5-7 | MED | EG-H2's, EG-H3's, EG-E's and EG-ZH's closed departures | FIXED | F: EG-H2's intro and departures 4 to 6, EG-H3's departure 4, EG-E's feats departure and EG-ZH's "not built" said as built |
+| L5-8 | MED | host wiring FLAGGED that is wired (EG-ZF, EG-E1, EG-E2, EG-E3; Sigil-Sets' EG15) | FIXED | F: EG-ZF's heal word and world.js line (wired at its merge), EG-E1 and EG-E3's host lines, Sigil-Sets' EG15 flags |
+| L5-9 | MED | four EG-E commits have no record naming the four hosts (THE FOUR HOSTS RULE) | FIXED | F: a new record, "EG-E (the rest)" - the pay law, the spoils, the lords' arms and cards and the host wiring, with the four hosts |
+| L5-10 | MED | cross-references after renumbering: EG-ZP's departures 6 and 8, EG-H3's list | FIXED | F: section 31 says a record names a departure by its number when it closed; EG-ZP's departures 6 and 8 and its mapping corrected; EG-H3's list renumbered |
+| L5-11 | MED | sections 28 and 29 name things never built | FIXED | F: sections 7, 9, 11.6, 12, 28 and 29 name the hosts and seams as built |
+| L5-12 | LOW | section 31's table and intro: `EG_OPEN=false`, world196, deleted files, "every mutant dead" | FIXED | F: section 31's intro - every band open (`EG_OPEN`), the table as the plan with the names never built, the recorded equivalents |
+| L5-13 | LOW | the Port-Ledger row omits the account service's files and names a dead seam | FIXED | F: the Ledger row names the service files the arc widened, and `gateHost.js`'s `centre` as a seam no caller passes |
+| L5-14 | LOW | Active-Arcs' EG-PLAY line stale; no line for EG-FULL to EG-ZS | FIXED | F: Active-Arcs' EG-PLAY line renumbered, and a line for EG-FULL to EG-ZS |
+| L5-15 | LOW | Testing.md's rows say migration 0111; egz_lords' row lists one seam hit | FIXED | F: Testing.md's rows say 0112; `egz_lords`' row names its two hits |
+| L5-16 | LOW | Accounts-And-Cloud-Saves-Arc.md's EG sections | FIXED | F: the Accounts arc gains the Elite Breach's account section; EG-E2's heading says its version |
+| L5-17 | LOW | records' versions and migrations (acct122, 0111) with no renumber note | FIXED | F: section 31 says once how a record's versions read (world199, acct124, 0112 since the merges) |
+| L5-18 | LOW | the arch's archive block moved from 38231 to 38281-38289, unrecorded | FIXED | F: section 25.1 says the harbour took 38231 and the arch's block is 38281-38289, the arch's skin `GATE_ARCHIVE` 5-7 |
+| L5-19 | LOW | section 23's frame table and sections 12 and 13.2 list words the wire does not carry | FIXED | F: sections 7, 12, 13.2 and 23 name the words the wire carries; `here` is read off the pose |
+| L5-20 | LOW | EG-ZL's departure reason stale | FIXED-BY-C | C: the Beats' pictures freed with the band dress (`egBeatTellDown`), and EG-ZL's reason with them |
+| L5-21 | LOW | prose and structure: the gap audit's rows, misplaced records, missing blank lines, 495 long lines | PARTIAL | F: the gap-audit pointers, the economy line, EG-H1's host line, EG-ZE's painted underside, the renumber sentence, EG6a's non-departure, the missing blank lines and layer three's bullet fixed; the page's older lines over 120 columns are not rewrapped, only the lines this pass touched |
+| L5-22 | LOW | mutant counts drifted (eglook, egpres_hud, egz_stair) | FIXED | F: eglook (85 with its merge's three) and egpres_hud (68); egz_stair's 85 was right at its slice |
 
 ## Lane 6 - the player's experience
 
@@ -238,10 +237,14 @@ built the same thing one was kept, and where two had built halves of one rule bo
   were the same bytes one key in 256 (seen once, in the run after C's merge).
 - **The sweep.** After D and G, the 25-seed sweep with the golden courses crossed every course in all four bands.
 
-Two things group G saw that no group fixed went to group F (PENDING-F): `EG_END_WORDS` in `net/wire.js` lacks `'seal'`,
-which `EG_END_WHYS` (`net/egReceipt.js`) and `EG_OPEN_ENDS` (`net/egLaw.js`) carry, so a director's `'seal'` end frame
-would be refused (latent: no breach ends at a seal today); and G's own page note that Spotter's wake of Lurkers is not
-built, which A2's `egLurkerWake` made false at the merge.
+Two things group G saw that no group fixed went to group F, which fixed both: `EG_END_WORDS` in `net/wire.js` lacked
+`'seal'`, which `EG_END_WHYS` (`net/egReceipt.js`) and `EG_OPEN_ENDS` (`net/egLaw.js`) carry, so a director's `'seal'`
+end frame would have been refused (latent: no breach ends at a seal today) - now carried, pinned by
+`test/egaudit3_bible.test.js` (1 mutant, dead), world199 re-hashed in place; and G's own page note that Spotter's wake
+of Lurkers is not built, which A2's `egLurkerWake` had made false - sections 15 and 21 now say it.
+
+Group F's agent was stopped part way (an API session limit); the coordinator finished its pass from the agent's
+uncommitted work (sections 6 to 23, the seal and its pin), as one commit on its branch.
 
 ## Still owed
 

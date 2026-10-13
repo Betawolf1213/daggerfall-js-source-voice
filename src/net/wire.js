@@ -5471,8 +5471,10 @@ export const EG_OUT_KINDS = Object.freeze(['call', 'st', 'sg', 'co', 'fall', 'rd
 /** A hall's stages as the wire says them (section 7): before the first hall (`wait` - the arch rising, sealed, open),
  *  the arrival and gather, the trial, the closing (its door open), a Redoubt's rest, the end. */
 export const EG_STAGES = Object.freeze(['wait', 'arrive', 'trial', 'closing', 'rest', 'end']);
-/** How a breach ends (the `end` frame's `why`, net/egReceipt.js EG_END_WHYS' room half). */
-export const EG_END_WORDS = Object.freeze(['tear', 'wipe', 'gone', 'last', 'empty', 'rehearsal', 'void', 'home']);
+/** How a breach ends (the `end` frame's `why`, net/egReceipt.js EG_END_WHYS' room half). AUDIT EG III: THE SEAL's
+ *  `'seal'` too - the director's `egEnd(B, 'seal')` (section 13.3, for a deploy that opens fewer bands than four) said an
+ *  end and a state this list refused, so every screen would have dropped them; the client words it (EG_END_TEXT.seal). */
+export const EG_END_WORDS = Object.freeze(['tear', 'wipe', 'gone', 'last', 'empty', 'rehearsal', 'void', 'home', 'seal']);
 /** The room's refusals, in words. */
 export const EG_NO_WORDS = Object.freeze(['the breach is closed', 'the breach answers only to its company', 'the order is spent', 'you have fallen', 'you went home', 'the order is not yours', 'the road is shut', 'the breach took the key', 'the void is too old']);   // EG-H2: THE DRAIN's refusal at the hub (its stake handed back); EG-ZA: a void refused - the breach took the order (its own receipts settle the stake), or it is past EG_VOID_MAX_S
 /** The beats a room names (`esay`'s `w` - the client words each: scenes/egFight.js EG_SAY). */
