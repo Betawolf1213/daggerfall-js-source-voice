@@ -1194,6 +1194,14 @@ The Brink halls (section 8.9) are built from them.
   - a chokepoint: an arch 6 m wide splitting the floor;
   - a moving hazard: the Caverns' channels surging across the floor in thirds every 20 s;
   - an engine (section 11.10).
+- **A hero in a kit's place** (spec law 7, the EG-HERO-LAY record). From law 7, in a slot where the hall lays a kit's
+  passage, shaft or chamber (never a set piece), a registered hero fragment of that kit and class may stand instead: a
+  fair coin a slot off the hall's own hero die, in the slots' order, and the first heads whose hero fits is laid - at
+  most one a hall. It stands where the kit's would: its mouth at the slot's start on the course's line, the course on
+  from its lowest exit at that exit's height, a chamber's court at the hero's own size with its trial on its fight
+  floors. Tails, or no hero that fits, and the kit's fragment stands, law 6's hall byte for byte but its number. The
+  reference (`egRefFrag`) is laid by none, and so is a hero whose inner course leaves the slowest build no room to land and
+  leap again (THE LANDING ROOM - the Fallen Stacks' chamber until its second shelf is deepened).
 - **Never**: a fragment in the Athenaeum (the lock is the hall), or two chambers running.
 
 ### 11.5 The fragment record - the law half
@@ -1268,8 +1276,8 @@ Two sources, one record:
    - **each fragment its own `.fbx`**. The gate's 8.6 MB whole-scene source (1,905 meshes) is the warning.
    - built by EG6c: `tools/fragBake.mjs`, the record's reader in `net/egFragLaw.js`, the registries
      (`net/egHeroFrags.js`, `world/egHeroFragModel.js`) and a reference fragment of the port's own. How Mac names a
-     fragment's art and markers so the bake accepts it is the EG6c record's (below); laying his into the halls waits for
-     them.
+     fragment's art and markers so the bake accepts it is the EG6c record's (below); laying them into the halls is spec
+     law 7's (section 11.4, the EG-HERO-LAY record).
 
 **One kit of mesh tools.** Today every made level carries its own box, extrude and pack helpers (`packFaces` in
 `src/world/gateArena.js`, `packRealmFaces` and `quadFacing` in `src/world/sdRealm.js`, `away` in
@@ -1397,7 +1405,8 @@ archives (section 25).
   - a hall: at most four fragments (a fork's Low Road counted), 50,000 drawn triangles, and no more GL draws than the
     Hour's own frame (its 25 steps stand 79 dynamic draws, 82 GL draws).
   The draws are measured in node over 60 circles (EG-G2, EG-ZL, EG-ZN): the circle and its batched pieces, every copy in
-  view, a mean of 23.8 GL draws, 35 at worst and 39 with the worst piece dithering, under the Hour's 82. Frame time on
+  view, a mean of 25.2 GL draws, 39 at worst and 43 with the worst piece dithering, under the Hour's 82 (EG-HERO-LAY: with
+  the ten heroes laid - 23.8, 35 and 39 before). Frame time on
   SwiftShader and a reference phone is EG21's field pass, not yet measured.
 - **The moving pieces are batched.** A draw a dressed moving platform would let a 28-platform span alone pass the
   Hour's whole frame. So each kind of piece is one mesh holding every copy (`scenes/egPieceBatch.js`, EG-G2), re-laid on
@@ -4013,12 +4022,11 @@ Grath's falling isles, and the solver's median check.
 **Departures, said plainly** (the rest of this list was closed by later slices: the Sluice's 6 s flood, the
 Moon-Mirror's lit branch, the slag's crust and the Low Road's closing, EG-ZC; the Annals on the account, EG-E2; the band
 art, the mist, the batched pieces, the cull, the measured draws, `world/meshKit.js` and `world/pseudoArchives.js`,
-EG-G2):
+EG-G2; the authored hero fragments laid into the halls, EG-HERO-LAY's spec law 7):
 - a code-built fragment's law lives in the spec's own fields, not a separate record with `sockets`, polygon `floors` and
-  a legion `graph` (an authored fragment's law is that record since EG6c - `net/egFragLaw.js` `egFragRecordFault`). A
-  passage's mouth and exit are its `z0` and `z1`; its floors are rectangles;
-- the authored hero fragments laid into the halls (EG6c built their bake, its reader, their registries and a reference
-  fragment - its record, below).
+  a legion `graph` (an authored fragment's law is that record since EG6c - `net/egFragLaw.js` `egFragRecordFault` - and
+  spec law 7 lays one since EG-HERO-LAY, its polygon floors and graph in the spec). A passage's mouth and exit are its
+  `z0` and `z1`; its floors are rectangles.
 
 **Pins.**
 - `test/egfrag_law.test.js` (9), `test/egfrag_relay.test.js` (5), `test/egfrag_client.test.js` (6).
@@ -6108,7 +6116,8 @@ Mac authors the hero fragments in Blender (section 11.6, "Authored hero fragment
 builds what turns his scene into a fragment: the bake, the law half's reader, where a baked fragment is registered, and
 one reference fragment of the port's own standing in for his until they arrive. It keeps section 10.5's ceiling clamp and
 section 11.5's volumes-apart rejection as far as one fragment's bake can keep them. Two of layer three's sentences are
-narrowed. "Still owed by EG-D: the authored hero fragments" now owes only their laying, which waits for his. Its departure
+narrowed. "Still owed by EG-D: the authored hero fragments" now owes only their laying, which waits for his (EG-HERO-LAY:
+built - spec law 7 lays every registered hero but the reference). Its departure
 that "a fragment's law lives in the spec's own fields, not a separate record" now holds for the code-built kits alone.
 
 **What shipped, by piece.**
@@ -6267,7 +6276,8 @@ that "a fragment's law lives in the spec's own fields, not a separate record" no
     fixed them.
 12. An inner piece's size is as authored (not `EG_STEP`'s), and its clock is the name's wherever the law leaves it free.
 
-**Not built - the owner item, for when Mac's fragments arrive.** Laying an authored fragment into a hall, which needs:
+**Not built - the owner item, for when Mac's fragments arrive.** (EG-HERO-LAY: built, as spec law 7 - `EG_SPEC` 6 went to
+AUDIT EG III's span decrees; its record says where each item below landed.) Laying an authored fragment into a hall, which needs:
 - `net/egLaw.js` to choose one (`egHeroFragLaws`) in place of a kit's passage or chamber;
 - its polygon fight floors in the spec (`spec.fl` is discs and lanes today, and `net/egFair.js`, `net/egFloor.js` and
   `net/egWalkGraph.js` read no polygon);
@@ -8344,3 +8354,428 @@ EG-HERO-LAY lays it.
 - `RELAY_VERSION` stays `world199`: `net/egHeroFrags.js` is not in the relay's bundle, and no file of it moved
   (`test/relayversion.test.js` stands). `ACCOUNT_VERSION` stays `acct124`; there is no migration. `EG_SPEC` and `EG_LAWS`
   are as they were.
+
+### EG-HERO-LAY - 2026-10-13 - SPEC LAW 7: THE HEROES LAID
+
+The owner (2026-10-13): *"You have to author the fragments"*. Four slices author the ten hero fragments beside this one, one
+kit at a time, each a baked record in `net/egHeroFrags.js` and a mesh in `world/egHeroFragModel.js`. This slice lays them:
+any registered hero but the reference, generically, by its law record alone. EG6c left the laying as its owner item ("Not
+built - the owner item, for when Mac's fragments arrive"); it is built here as spec law 7, since `EG_SPEC` 6 went to AUDIT EG
+III's span decrees. Narrowed: section 11.4 (a hero in a kit's place), section 11.6 ("laying his into the halls waits for
+them"), layer three's departure and its still-owed item, EG6c's "laying waits" sentence and its owner item, and
+`net/egHeroFrags.js`'s header ("NO HALL LAYS IT ... when they arrive").
+
+**What shipped, by piece.**
+
+- **THE LAW** (`net/egLaw.js`):
+  - `EG_SPEC` 7 and `EG_HERO_LAW` 7. `egHallOf` lays law 6's hall first, on the try its solver takes, as before; from law 7,
+    `heroHall` then tosses its coins over that hall's fragments;
+  - `heroHall` lays the hall again on the same try with the hero at its slot. `layHall`'s fragment makers (`cave`, `shaft`
+    and a court's chamber) take it there in the kit's place, through `heroAt`, which holds it to `egHeroStatic`;
+  - `heroLay` lays the record at its origin, the foot of its mouth:
+    - its fight floors go into `fl` as polygons (`{ t: 'p', poly, y }`), and its stairs into `ramps` in the code-built
+      ramp's shape;
+    - its hazards go on the shared clock, and its anchors become the legion's places (an engine anchor stands its kit's
+      engine);
+    - its alcoves and lights are laid, and its inner course goes through the span generator at its authored places and
+      sizes (`net/egSpanLaw.js`: a step's `size` may name its own);
+    - the course then runs on from its exit at the exit's height. The next bridge begins at the box's end, with no
+      half-metre lap back over its floor;
+  - a hero chamber's court (`heroCourtAt`, `egHeroCourtOf`) is laid at the hero's own size:
+    - its mouth is the court's near edge, its middle the court's, and its reach the court's radius. No code-built disc or
+      ring wall is laid;
+    - a Rift-Yard's rifts are its own rift anchors where it names five, and a Deepway's where it names three. Otherwise the
+      hall law sets them on its floor;
+    - the Clan Pit's Honour Horn is its kit's, and a captive's chains stand about its middle;
+  - `heroFit` holds the laid hall to the fit rule (below), and `egHeroTrials(seed, h, geo, law)` says every slot's coin and
+    why its hero did or did not stand. That is for the pins, a tool, and an author asking where theirs would stand;
+  - the spec's new field `heroes` (in metres) carries each laid hero's id, kit, class, fragment, road, origin, exit, box,
+    sockets, floors, ramps, open edges, ceilings and walk graph: the clamp, the fair trail's ground and the legion's graph
+    read them there;
+  - polygons are read in `egOnFloor`, `egOnFight`, `egFightPieceAt` and `egKeepOnFight`.
+- **THE SEAM**: `egHeroSeam(frags)` swaps the registry the law lays from (`EG_HERO_FRAGS` by default) and forgets every
+  hall kept. It is for a test or a tool's sweep, never a breach. `world/egHall.js` `egHeroMeshSeam` is its client twin.
+- **THE POLYGONS** (`net/egShape.js`): `egPolyIn`, `egPolyEdgeDist`, `egPolyDist`, `egPolyKeep` and `egPieceIn`. A disc, a
+  lane and a polygon are each a fight-floor piece. These are read by:
+  - `net/egFair.js` (`egFightFloorAt`, and the fair trail's ground over a hero's floors);
+  - `net/bossRef.js` (the floors under a body);
+  - `world/egTelegraph.js` (a polygon cut by ear clipping for the telegraph pass).
+- **THE LEGION** (`net/egWalkGraph.js`):
+  - a hero's fight floors are regions, with portals where their plans meet;
+  - its law's nodes and edges join the hall's graph, with a node at each socket's foot;
+  - inside a region a walker goes straight only where it sees through (`egSeesIn`, `EG_SEE_STEP_M`), so it goes round a
+    notch. The nearest point and the keep are the polygon's;
+  - its walls (every floor edge its law does not open) stand in the fliers' air.
+- **THE CLIENT** (`world/egHall.js`, `world/egHeroFragModel.js`, `systems/egReverb.js`):
+  - the hero's mesh half is laid into the circle's one mesh at its origin through `egHeroFragInto` (now given an `at`). Its
+    ground is laid plainly: each triangle whose top stands within a hand (`EG_HERO_GROUND_HAND_M`, 0.2 m) of a height its
+    law lays ground at, a floor or a stair's corner (`egHeroGroundYs`). Every other triangle is its rock, whatever record it
+    wears, cut a record's 6 m cell at a time (`EG_HERO_ROCK_CELL_M`), each cell an occluder of its own (EG-ZN). This was
+    changed at the merge of the ten heroes (below);
+  - its proxy goes into the circle's one collider bucket through `egHeroFragCollider` (an `at` too), so it is freed with
+    the circle and owns no buffer;
+  - its lights join the circle's in its kit's colours;
+  - no code-built stair, niche or slag spout is drawn or collided inside its box: its own mesh holds them;
+  - its clamp is `egFragZones`' `hero` zone:
+    - its law's floors are extruded to its ceilings, or open to the sky where it has none;
+    - each edge its law does not open is a wall, and its stairs are free;
+    - a hero shaft is marked as a code-built one is;
+  - its reverb zone's half-width reaches the farther side of its box.
+- **THE SWEEP** (`tools/egSpanSolve.mjs`): the sweep's ground reads a hero's floors, so the real motor's sweep crosses a hero
+  hall over its proxy and its floors.
+- **THE LAW PIN** (`net/egDurable.js`): `EG_LAWS` is `{ 4, 5, 6, 7 }`, law 7 dated 2026-10-13. Laws 4, 5 and 6 keep their
+  800-hall hashes byte for byte. A breach records law 7, and a breach of law 6 draws law 6's halls with no hero in any.
+
+**The odds.**
+
+- **The slots.** A hall's slots are its code-built fragments, in order: a passage, a chamber or a shaft, never a set piece
+  (the Collapsing Tube, the Sinking Stair, the Moon Path, the Forge Line). A fragment is a slot only where a hero of its kit
+  and class is registered (`egHeroCands`; `egHeroFragLaws` leaves the reference out).
+- **The die.** The hall's own hero die is `sdRng(egSeed(seed, 0x0e6e40 + h))`. It is a die of its own, so the hall's stream
+  never feels the coin.
+- **The coin.** Each slot takes one draw `u`, in order:
+  - `u` of one half or more is tails;
+  - heads picks the slot's hero at `floor(u * 2 * count)`;
+  - the first heads whose hero fits is laid. A hero that does not fit hands the turn to the next slot's coin.
+- **At most one hero a hall.** No heads, or no fit, and law 6's hall stands byte for byte except its `v`.
+- **The pins' tally.** With the test registry (the reference re-labelled `test`, and a chamber and a shaft fixture), 49
+  halls held 54 coins between them: 33 passage, 15 chamber and 6 shaft. 19 heroes were laid and two did not fit. No hall
+  laid two.
+
+**The fit rule** (a hero is laid only when all of these hold).
+
+- **At its slot** (`egHeroStatic`):
+  - its box runs along +Z from its mouth;
+  - its mouth is at least `EG_HERO_WAY_CM` (a ledge, 240 cm) wide, with a floor at its foot;
+  - its course leaves by its lowest exit on the course's line (`egHeroExit`: its middle within half its width of x = 0,
+    and at least a ledge wide), with a floor under it;
+  - that exit stands at the height its slot keeps:
+    - a passage's is at its mouth's height, or as far under it as its kit's own code-built passage descends (the Mist
+      Stair's 3.6 m; every other kit 0). On the Low Road it is at its mouth's height alone;
+    - a shaft's is 1 cm to `EG_HERO_SHAFT_CM` (810 cm: four flights and the deepest Drop) under its mouth;
+    - a chamber's is at its mouth's height. A chamber's middle (half its length along the line) must also stand on a fight
+      floor at its mouth's height that reaches more than a rift's 3 m inset from it;
+  - a chamber is never laid in a Proving Walk's Reliquary Vault, whose side span leaves the court through its wall.
+- **Over the hall laid** (`heroFit`):
+  - the hall stays inside `EG_HALL_LEN_MAX` (158 m) and its cap of four fragments;
+  - its box stands `EG_FRAG_APART_CM` (2 m) from every other fragment's volume, and from every piece's swept box with
+    the piece's hanging underside (`EG_HANG_CM`, 22 m). Its own inner course is excepted, and so is a volume joined at its
+    mouth or exit face, overlapping no more than the socket's 10 cm;
+  - its vault stands `EG_VAULT_UNDER_CM` (3 m) under any underside over it;
+  - in a chamber, every place the hall set inside its box (a rift, a spot, the foe) stands on one of its fight floors. Its
+    own anchors are excepted.
+- **Its inner course landed** (`egHeroLanding`, THE LANDING ROOM - added at the merge of the ten heroes):
+  - THE SPAN BUILD's running jump onto each piece comes down at least `EG_HERO_LAND_ROOM_CM` (20 cm) before the piece's
+    far edge. The jump is pressed at the launch edge: the run and the jump's forward push over its time in the air, at the
+    height between;
+  - a piece that moves along the course (a Drift, a Rail, a Drum, a Pendulum) is excepted, and so is a step down of more
+    than 30 cm that the build's run carries it off onto;
+  - every code-built course leaves at least 0.24 m (measured over the law pin's 800 halls).
+- **Whole**:
+  - THE TIMED SOLVER proves the whole hall;
+  - its spec stays inside `EG_SPEC_SAID_MAX` (32,768 characters, `net/wire.js` `EG_SPEC_WIRE_MAX`, pinned equal).
+
+**The relay's bytes.**
+
+- `net/egHeroFrags.js` (2,543 B) and the reference's law half (`assets/egfrags/egRefFrag.law.json`, 2,559 B) join the
+  relay's graph after `net/egFragLaw.js`, which takes it from 88 files to 90. No mesh half joins, and no `world/`,
+  `scenes/` or `render/` file.
+- Each hero adds its law JSON and one import line. The two fixtures run 1,572 and 1,651 characters, and the reference
+  2,559 B.
+- A hall a hero stands in grows by its `heroes` entry: 482 to 1,092 characters in the pins.
+- `RELAY_VERSION` `world199`, unshipped, is rehashed in place.
+- As merged with the ten heroes:
+  - the graph holds `net/egHeroFrags.js` (4,888 B) and eleven law JSONs (28,826 B: 1,768 B for the Colonnade's up to
+    4,206 B for the Stacks'), 100 files;
+  - `RELAY_VERSION` is `world200` (main took `world199`), rehashed in place.
+
+**The four hosts.**
+
+- `src/scenes/world.js` - FLAGGED, untouched. The hero rides doors the hosts already share: the circle's one mesh and
+  collider bucket, and the breach client's clamp (`scenes/egClient.js` `egFragArena`). Nothing was added to
+  `function frame(now)`.
+- `src/scenes/worldModes.js` - WIRED through its existing path, no line changed. Its `buildEgCircleModel` and
+  `egCircleColliderTris` carry the hero, and it frees them with the circle as before.
+- `src/scenes/dungeonContext.js` - FLAGGED, untouched.
+- `src/scenes/exterior.js` - FLAGGED: the bench is offline and holds no Elite Breach.
+
+**Departures, said plainly.**
+
+1. **The registry is part of law 7.** A hero registered after law 7 ships moves law 7's halls, so it is a new spec law
+   (`EG_SPEC` 8, with law 7 kept) and a relay version. The ten heroes must land before law 7 ships, or come with a law of
+   their own.
+2. A hall a hero stands in is laid again with it. Past the hero's slot, its stream draws what the code-built fragment's
+   own draws would have moved, so its later pieces are not law 6's. Only a hall with no hero is law 6's byte for byte.
+3. A hero the solver refuses is not laid again on another try. Law 6's hall stands (in the pins, seed 77's hall
+   26: laid again with the hero, its sinking flight asks a wait of 36 s).
+4. A hero never stands in a set piece's place, nor in a Reliquary Vault's court.
+5. Each code-built fragment's volume for VOLUMES STAND APART is its cave's floors and vault, its court's square up to a
+   chamber's headroom, or a set piece's flights' strip. These are boxes, not the code-built mesh.
+6. A hero's stair is said in `ramps` in the code-built ramp's shape (from the middle of its low corners to the middle of its
+   high ones, half its widest side across) for the fair trail and the walk graph. `heroes` carries its corners whole for
+   the floor and the clamp.
+7. A client that does not carry a hero's mesh (a law-foreign build given the relay's bytes) draws and collides nothing
+   there. The law stands all the same.
+8. No pin fails these three on a registered hero: the refusal for another fragment's box, the hanging underside alone, and
+   the vault rule. None of the pins' halls presents one. They are pure and said here.
+
+**Not verified without a browser and the game's data:** no hero hall was drawn or played. Its mesh, clamp and collider were
+checked in node: its triangles at their origin, its occluder runs, its proxy in the bucket, and the real motor crossing it
+over that proxy.
+
+**Pins.**
+
+- `test/eghero_lay.test.js` (11) drives the law through the seam. Its fixtures (`test/fixtures/egheroLay.mjs`: a Caverns
+  chamber with a balcony and an L-shaped fight floor, and a shaft) are written and baked by the port's own writer and bake,
+  so the law a shipped hero does not yet exercise is proven.
+- `tools/mutants/eghero_lay.json` (98, every one dead). Two survived the first run, and new assertions killed both:
+  - a hero laid at an earlier fragment of its class (now a Deepway's last passage, laid after a Broken Colonnade's);
+  - a stair read as floor only where a floor lies under it (now the stair with its floors taken away).
+- PIN MOVED: `test/egaudit3_law.test.js`, `test/egdur_relay.test.js` and `test/egz_frag.test.js` (law 7 is the law, with
+  law 6 kept beside it).
+- Re-aimed by content and judged again: eight records of `egaudit3_law.json`, `egz_frag.json`, `egz_legion.json` and
+  `egz_sound.json`, every one dead.
+- The 25-seed sweep with the golden seeds, all four bands, under law 7 with the shipped registry (the reference alone, laid
+  by none): 95, 111, 108 and 109 courses, every one crossed. Law 7 is law 6 then, and its 800 halls are law 6's but their
+  number. With the test registry in band 0, 100 seeds and the golden: 57 hero halls, 351 courses, every one crossed.
+- `ACCOUNT_VERSION` is untouched, with no migration. No new `src/` module (the fixture is the test's), and the
+  Port-Ledger's ELITE-GATES row is unchanged.
+
+**At the merge of the ten heroes (2026-10-13).** The four bands' heroes, merged onto this law, made the registry real: law-7
+halls lay them, and 24 tests went red. Each failure was decided at its root.
+
+- **The law refuses what the real motor cannot cross.** All six failing courses in the sweep were the Stacks' chamber. Its
+  second shelf (`course[1]`: a 1.6 m gap after the first shelf, 1.6 m deep, 0.5 m lower) takes THE SPAN BUILD's running jump
+  3.09 m on. That leaves 12 cm before the shelf's far edge, and the motor jumps again only after a body has stood
+  `GROUNDED_JUMP_GATE_S` (0.1 s). So the pilot stood on the shelf's lip, unable to leap. THE TIMED SOLVER had proven it,
+  because it judges reach and not where a jump comes down. The law now holds a hero's inner course to THE LANDING ROOM (the
+  fit rule, above):
+  - the Stacks' chamber is refused at every slot and laid by no hall;
+  - its author's change: deepen the second shelf to 1.8 m, keeping its near edge (`course[1]` z 704 -> 714, d 160 -> 180,
+    `after` 166 -> 146, the shelf `b` running 6.24-8.04 m in tools/egHeroStacksScene.mjs's `SHELVES`). That leaves 32 cm.
+    Alternatively, stand it level with the first (`y` -20 -> +30), which leaves 64 cm. Either is a rebake
+    (tools/bakeEgHeroStacks.mjs) and its own pins moved (test/eghero_galleries.test.js's course);
+  - every other hero leaves 54 cm or more (the Ossuary's bone bridges), or lands only on pieces that move.
+- **The client tells ground by the law, not the record.** Heroes dress rock in their ground's records: the Gloam's trunks
+  in its floor's, the Clan Pit's tiers in its cobbles', the Ossuary's and the Forge Gut's falls in molten. So the camera
+  could not see through them (EG-ZN's "nothing rises from the ground unmarked"). The ground is now where the law lays
+  ground, and the rock is cut a record's cell at a time, so a ray dithers what it crosses and not the whole fragment. Its
+  budget, measured: one piece dithering costs at most 12 draws, as before.
+- **Readers that did not know a hero's shape learned it** (each a PIN MOVED beside the test's own words):
+  - a Proving Walk's court may be a hero chamber's floors (`test/egaudit3_law.test.js`);
+  - the Low Road's passage may be a hero's (`test/egfrag_law.test.js`);
+  - a hero chamber names its plays as a list, and its stair climbs to a polygon fight floor (`test/egfrag_law.test.js`);
+  - a Rift-Yard's course is its hero chamber's alone (`test/eg6a_span.test.js`);
+  - a hero's rift and hazard anchors stand where its record sets them, in centimetres (`test/egz_relay.test.js`);
+  - a hero Forge Gut's crust and a hero shaft are their own records', and the kit's law is held over the code-built ones
+    (`test/egz_frag.test.js`);
+  - a Deepway now laid around the Colonnade's hero brings a surge's lane into the union floor's set
+    (`test/egint_relay.test.js`);
+  - the widest Drum is found at seed 10's Hall 2, since seed 295's lays the Colonnade's hero (`test/eg6a_sweep.test.js`);
+  - a hero's ground heights are the occluder test's ground (`test/egz_camera.test.js`);
+  - the budget was measured again (`test/egz_camera_budget.test.js`: 7.48, 9.61, 25.2, 39 and 43, where 7.15, 9.15, 23.8,
+    35 and 39 stood; worst one piece 12, as before).
+- **Of the merge, not of the heroes:**
+  - `test/egmade_law.test.js`'s avoid-death door ends at main's `avoidDeathText()`;
+  - `tools/egHeroKit.mjs` carried Newell's normal twice (the Galleries' `newell`, the Wellhead's `wellNormal`, line for
+    line), so MUT-AIM found `EGHERO-GALLERIES-kit-newell-misread` naming two sites. `wellNormal` is `newell` now, and the
+    bakes are byte for byte;
+  - `test/l10n4_hardcoded.test.js`: `net/egLaw.js` holds 189 (it held 173). The 16 added are the fit's refusals (the
+    `why` that `egHeroTrials` says), which a test and an author read and a player never does. They are kept the way
+    `net/egFragLaw.js`'s record faults are.
+- **How often each hero is laid.** Every circle of each band was laid, for 25 seeds and the golden seeds (2,800 halls, at
+  the sweep's ground). The table gives each hero's fillable slots, heads and halls laid:
+
+  | hero | slots | heads | laid |
+  |---|---|---|---|
+  | the Ossuary (passage) | 152 | 82 | 81 |
+  | the Gloam Thicket (passage) | 184 | 95 | 93 |
+  | the Forge Gut (passage) | 121 | 59 | 44 |
+  | the Oblivion Caverns (passage) | 104 | 43 | 34 |
+  | the Clan Pit (chamber) | 35 | 23 | 23 |
+  | the Eclipse Vault (chamber) | 39 | 20 | 20 |
+  | the Oblivion Caverns, deep (chamber) | 27 | 16 | 15 |
+  | the Mist Stair (shaft) | 29 | 14 | 14 |
+  | the Broken Colonnade (passage) | 33 | 13 | 13 |
+  | the Fallen Stacks (chamber) | 55 | 32 | 0 |
+
+  The refusals, by reason:
+  - the Stacks', 32 by THE LANDING ROOM;
+  - the Forge Gut's 15 and the Caverns' 2, by a box meeting a step's swept box and its hanging underside;
+  - the Caverns' 7, the Gloam's 2 and the Ossuary's 1, by THE TIMED SOLVER (a sinking flight's wait, a window too narrow);
+  - the deep Caverns' 1, by a Reliquary Vault.
+- **The sweep**, 25 seeds and the golden seeds on all four bands with the ten heroes: 95, 111, 108 and 109 courses, every
+  one crossed.
+- **Pins:**
+  - `test/eghero_lay.test.js` (11). THE LAW PIN, moved: law 7's 800 halls hashed whole (1273544078), each with no hero
+    laid law 6's but its number, the heroes laid counted, and the Stacks' refusal named. THE FIT AT ITS SLOT now holds THE
+    LANDING ROOM;
+  - `tools/mutants/eghero_lay.json` (108, every one dead): two records re-aimed by content and ten new. One new survived its
+    first run (a moving piece judged as a still one), and a Drift drawn 1.9 m back now kills it;
+  - `EGHERO-GALLERIES-kit-newell-misread` judged again, dead.
+
+### EG-HERO (the Havoc Wellhead) - 2026-10-13 - THE FORGE GUT, THE CLAN PIT, THE OBLIVION CAVERNS, DEEP
+
+The owner, 2026-10-13: *"You have to author the fragments"*. Section 11.6 says Mac authors the hero fragments in Blender;
+now the port authors them in code. Each is a scene a script writes from numbers, exactly as `tools/egRefFragScene.mjs`
+writes the reference, exported as the .fbx `tools/fragBake.mjs` bakes, then baked, registered and tested. This record is
+the Havoc Wellhead's three. The other bands' heroes, and laying them all into the halls (spec law 7), have records of their
+own.
+
+**What shipped, by fragment.** Each fragment has:
+- a scene module, `tools/egHero<Name>Scene.mjs`: its scene function and its writer, reusing `writeRefFragFbx`;
+- its own bake script, `tools/bakeEgHero<Name>.mjs`, in the reference's shape;
+- its committed .fbx under `src/assets/egfrags/source/`, with its law and mesh halves beside it;
+- its law registered in `net/egHeroFrags.js` and its mesh in `world/egHeroFragModel.js`.
+
+- **THE FORGE GUT** (`egheroForgeGut`, kit `forge`, a passage, variant `forgegut`). Dagon's war-forges, built as a gut of
+  riveted basalt ringed in iron.
+  - *Its envelope*: `egFragPassage('forge')` from `EG_SLAG_LAW`.
+    - The mouth and exit are 8.4 m wide and 6.5 m high (halfW 420, height 650), on the box's faces.
+    - It is 31 m long (len 2800, plus the slag's 300).
+    - Its landings are 0-6.8 m and 24.2-31 m along the course, under one 6.5 m clamp.
+    - Its box is x -9.86 to 10.32 m, height -16.65 to 16.40 m (the rock mass's torn keel up
+      to its chimneys), and 0 to 31 m along the course.
+  - *Its place*:
+    - Each end has a portal of ashlar framed in iron. A forge-eye of molten iron is set into the mouth's gable.
+    - Ten iron ribs ring the gut, one every 3.1 m. The ashlar walls between them are pushed outward by noise, under a
+      vault of rough rock that rises to 9.7 m.
+    - A molten channel runs along each wall's foot, behind a 0.6 m kerb. Furnace grates glow between the ribs.
+    - Four hearth bays are cut into the walls: a hearth with its anvil, a rack of blades, the Drop-Hammer's winch, and
+      the alcove's niche.
+    - The chasm drops 5.5 m to a river of molten iron. Over it stand:
+      - the conveyors' beds: girders, rollers, drums and cog-wheels on iron trestles;
+      - the slag weir, under its two crucibles' spouts;
+      - hanging chains.
+    - Six drop-hammers hang over the spots they strike.
+    - Outside, the rock mass carries three chimneys glowing at their mouths, and hangs a torn keel.
+    - THE EDGE LINE runs along the mouth, both lips and the exit.
+    - Cost: 8,137 triangles in 7 draws (floor, brass, root, arena, edge, molten, pillar), on a 30-triangle proxy.
+  - *Its law*: two fight floors, and one ceiling at 6.5 m.
+    - Its course uses the kit's pieces (`EG_FRAG_PIECES.forge`): two conveyors and the cooling slag's crust
+      (`EG_SLAG_STEP`). The conveyors are Rails 3 by 3 m, `amp` 200, on a 6 s cycle, in step. Each piece stands 2.8 m
+      past the one before it.
+    - THE TIMED SOLVER proves the course: crossFast 3,382 ms, crossSlow 4,882 ms, 4 moves. It stays proven at every slag
+      phase, with every window at least 5.5 s in 12 and no wait past 2.7 s.
+    - Its hazards:
+      - the hammers, striking each landing's two spots in turn: r 3, told 1.4 s, each landing on its own clock;
+      - the hammer line over each conveyor's middle, as the Forge Line has it;
+      - the slag's two lanes, 4 m wide, `EG_SLAG_LANE_CM` either side of the course. Each runs from the crust's near edge
+        onto 1.5 m of the far landing. The east spout runs half a cycle behind the west, on the crust's own clock.
+    - Its places: Lurkers on each landing, a Battlemage's niche, the Drop-Hammer's winch (`engine`), the two spouts
+      (`hazard`), and a seam alcove holding a shard.
+    - Its lights: four, two band and two lava.
+- **THE CLAN PIT** (`egheroClanPit`, kit `clanpit`, a chamber, variant `clanpit`, play `balcony`). The Wellhead's arena of
+  honourable fights between clans, sunk in basalt.
+  - *Its envelope*: `egFragChamber('clanpit', r, R)` at the Deepway's R of 16 m.
+    - The pit's floor is that circle about (0, 18 m), open to the sky.
+    - The court's 4 m bridge becomes its gates, 4 by 6 m, at 0 and 36 m along the course, through the south and north
+      towers.
+    - Its box is x -22.5 to 22.5 m, height -14.1 to 12.92 m, and 0 to 36 m along the course.
+  - *Its place*:
+    - The pit's wall is dressed basalt, 3.2 m high, with furnace grates.
+    - Five tiers of grandstand rise east and west to an iron-capped parapet at 8 m. 165 Kyn stand on the tiers, with the
+      clans' banners over them and braziers where the stands meet the towers.
+    - The gate towers are 9.5 m high, battlemented and grated.
+    - The chieftains' dais is a second fight floor, 3.2 m up (R 12 to 19, 22.5 degrees either way), on two stepped stairs.
+      The box's wall and banners stand behind it.
+    - The Honour Horn sits on the north tower with its bell over the pit. Its ring is set in iron at r 6 about the pit's
+      middle.
+    - A shrine niche in the west wall is the alcove. A torn keel hangs underneath.
+    - Gold runs along the mouth, the exit, the dais's open front and sides, and the open end of every stair tread.
+    - Cost: 5,614 triangles in 8 draws (all eight records), on a 212-triangle proxy.
+  - *Its law*:
+    - The pit and the dais are fight floors, joined by two ramps from 0 to 320 cm.
+    - It has no ceiling, no hazard and no course. The kit has no pieces in `EG_FRAG_PIECES`; the Honour Horn is the hall's
+      spot and the Ashfall is the crowd's.
+    - Its places: five rifts by the walls, two Casters on the dais, three Lurkers, and a seam alcove holding a page.
+    - Its lights: four band lights at the braziers.
+- **THE OBLIVION CAVERNS, DEEP** (`egheroDeepCaverns`, kit `deep`, a chamber, variant `deepcaverns`, play `balcony`). The
+  Wellhead's own magma caverns: wider, brighter, the magma higher.
+  - *Its envelope*: `egFragChamber('deep', r, R)` at R 16 m.
+    - The low floor is that circle: a basalt shelf 0.8 m over a lake of magma.
+    - The court's 4 by 6 m gates run 2 m deep through the cavern's face at each end.
+    - Two dry ledges stand east and west, 2.5 m up, from R 13 to 19.5, each on two stepped stairs. They are
+      `egFragChamber`'s deep balconies: two, as section 11.2 names them, not the code-built three.
+    - The clamp's ceilings are 9 m over the cavern and 6 m in the gates.
+    - Its box is x -27.5 to 27.2 m, height -15.23 to 22.02 m, and 0 to 36 m along the course.
+  - *Its place*:
+    - A vaulted cavern of rough basalt rises to 16 m, pushed out by noise and coursed where the lake laps it.
+    - Six lava falls pour into the lake. Four basalt columns and four stumps stand out of it, and stalactites hang
+      overhead.
+    - The Sluice's iron drum stands at the lake's edge.
+    - The low floor carries its plates and an iron tide-gauge ring at 9 m. A 0.6 m kerb of dressed stone runs round its
+      rim (section 11.9), and gold runs round every open rim.
+    - The ledges' rock rises out of the lake.
+    - The gates wear iron frames in a cliff of rock. The south gate's wall holds a niche, which is the alcove.
+    - Cost: 4,258 triangles in 7 draws, on a 192-triangle proxy.
+  - *Its law*:
+    - The low floor and both ledges are fight floors. There are two gate floors (traversal) and four ramps.
+    - THE MAGMA TIDE is a disc of r 16 m over the low floor, which covers it to within 15 cm at the gates' slivers. The
+      ledges, 2.5 m up, are out of its bite.
+    - The farthest point of the low floor is 14.5 m from a stair, inside the 24 m that the tide's 5 s tell allows.
+    - It has no course.
+    - Its places: five rifts, a Caster on each ledge, three Lurkers, the Sluice (`engine`), and a seam alcove holding lumen.
+    - Its lights: four, two band over the ledges and two lava at the falls.
+
+**THE AUTHORING KIT** (`tools/egHeroKit.mjs`). I appended one block at its end, using names no other band's shapes share:
+shapes at least two of the three scenes use, and the helpers under them:
+- `planeFace`, `boxFaces`: faces that carry their own Newell normals, so the writer's hypotenuse never reaches the bytes;
+- `walkEdge`, `levelDisc`: the markers;
+- `ringBand`, `ringWall`: tiers, the dais, rims and walls on the fixed rings;
+- `earcut`, `levelPolygon`: a notched floor's art, its marker and its proxy;
+- `rockFaceLoops`, `rockEllipseAt`, `rayHit`, `outlineLoops`, `rockFace`, `rockHull`: a rock mass round a mouth, with its
+  face and its keel.
+Every number in the block and in the scenes comes from IEEE arithmetic and `Math.sqrt` alone.
+
+**Departures, said plainly.**
+
+1. **Written in code, not modelled in Blender.** Every surface is a shape from the kit or a scene: grids pushed by hash
+   noise, lathes, sweeps, boxes and ring bands. So there is no sculpted detail beyond those shapes: no worn edges, no carved
+   reliefs, no organic Kyn (the crowd is 165 boxed figures), and no hand-painted UV islands. The pictures are the band's
+   code-painted records, at a planar tile every 2 m.
+2. **The files name the reference's writer.** Each .fbx is written by `writeRefFragFbx`, so its SceneInfo and Creator name
+   `tools/egRefFragScene.mjs` (`FRAG_REF_WRITER`). That is the only non-Blender name the bake accepts, and the bake was not
+   to be changed. The mesh half's `creator` names the same writer.
+3. **The Forge Gut's gaps are 2.8 m, not the code-built 3.2 m.** At 3.2 m the timed solver passes only at a few rail
+   phases, with waits near 4 s. At 2.8 m it proves at every slag phase, with no wait past 2.7 s. The landings grow to 6.8 m
+   deep instead of 6.2 m; the length is unchanged.
+4. **The chambers' radius is chosen, not the halls'.** The halls call `egFragChamber` at R 14 m (a proving court), 16 m (the
+   Deepway) and 22-26 m (a Rift-Yard). The heroes take the Deepway's 16 m and run 36 m from mouth to exit: the disc's 32 m
+   plus 2 m gates. The code-built chamber's bridge and disc take 36.5 m. Whether a slot fits them is the laying's call.
+5. **The deep Caverns has two ledges where the code-built deep chamber has three.** Section 11.2 says two. Two still keep
+   the 24 m rule, at 14.5 m. They stand 2.5 m up but are deeper (R 13 to 19.5) than the code-built r 4.5 discs.
+6. **The Honour Horn's ring is art only.** The record has no anchor word for it. The ring of iron sits at the pit floor's
+   middle, (0, 18 m), where the code-built chamber's `horn` spot stands. The laying places the spot.
+7. **The chambers carry no inner course.** `EG_FRAG_PIECES` names none for the Clan Pit, and the code-built deep chamber
+   lays none, so their proofs are nought.
+8. **Never drawn by the game.** I looked at each mesh in a software rasteriser with the band's own painted records (scratch
+   tooling, not committed): from the mouths, from above, cut away under the clamp, and from the floors. None was drawn in
+   the port's renderer or under its lights. So it is not verified whether the in-game lights light the Wellhead's dark
+   basalt as well as the molten does.
+
+**The four hosts.**
+- `src/scenes/exterior.js` - untouched.
+- `src/scenes/world.js` - untouched.
+- `src/scenes/worldModes.js` - untouched.
+- `src/scenes/dungeonContext.js` - untouched.
+No host draws a hero yet; laying them is spec law 7's work.
+
+**Pins.**
+- `test/eghero_wellhead.test.js` (10 tests) holds, for each fragment:
+  - its scene to its .fbx, and its bake to both halves, twice;
+  - its spec and the registries;
+  - its envelope, by deepEqual;
+  - the Forge Gut's proof at every slag phase;
+  - its signature;
+  - its budget, and the proxy's floors matching the law's by area;
+  - THE EDGE LINE on every open edge that falls away (4, 6 and 38 of them);
+  - no drawn vertex inside a floor's envelope, an inner piece's travel, or the air over its gaps;
+  - its walk graph over floors and stairs only, and its anchors counted;
+  - its scene and the kit's block free of transcendentals.
+- `tools/mutants/eghero_wellhead.json`: 25 mutants, every one dead.
+- PIN MOVED: `test/eg6c_law.test.js`'s registry pin now holds the reference as the first key, not the only one.
+- `test/doctrine.test.js`'s allow-list names the nine new files.
+- `RELAY_VERSION` stays `world199`: no relay import reaches `net/egHeroFrags.js`, so the relay's bytes do not move.
+  `ACCOUNT_VERSION` stays `acct124`. `EG_SPEC` and `EG_LAWS` are unchanged.
+- The Port-Ledger's ELITE-GATES row names the new files.

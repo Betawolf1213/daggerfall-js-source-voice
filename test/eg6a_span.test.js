@@ -121,8 +121,11 @@ test('EG6a THE COURSE A READER TAKES (egCourseOf, section 10.1): a hall\'s road 
   assert.equal(court.kind, 'court');
   assert.equal(egCourseOf(court, 0).end, court.len, 'a Court\'s approach meets its lord\'s ground');
   assert.equal(egCourseOf(court, 1), null);
-  const yard = egHallOf(1, 9, 0);
-  assert.deepEqual(egCourseOf(yard, 0).steps, [], 'a Rift-Yard lays no course');
+  // PIN MOVED (EG-HERO-LAY, spec law 7): a hero chamber laid in a Rift-Yard brings its own inner course - the yard's course is
+  // its hero's pieces alone, inside its box
+  const yard = egHallOf(1, 9, 0), own = (s) => (yard.heroes ?? []).some((q) => s.z >= q.box[2] && s.z <= q.box[5]);
+  assert.equal(yard.kind, 'yard');
+  assert.deepEqual(egCourseOf(yard, 0).steps.filter((s) => !own(s)), [], 'a Rift-Yard lays no course of its own');
 });
 
 test('EG6a THE CROSSING\'S BOUND AT THE FAST BUILD (sections 10.2 and 10.5): THE FAST BUILD is the motor\'s - Speed 100, Running 100 with Fleetfoot III, Jumping 100 with the Jump spell and athleticism improved (2.3, a 2.68 m apex); its crossing waits for a timed piece it cannot leap and leaps past one it can; EG_CROSS_MIN is its fastest less 15%, never below the road\'s length at its run, the fair trail\'s measure (mutants: no wait counted; no leap past a piece; the bound at the span build; the slack lost; the Low Road\'s bridges unrun)', () => {

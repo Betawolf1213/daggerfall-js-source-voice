@@ -11,7 +11,7 @@
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildEgCircleModel, egToDungeon, egNicheBoxes } from '../src/world/egHall.js';
+import { buildEgCircleModel, egToDungeon, egNicheBoxes, egHeroGroundYs } from '../src/world/egHall.js';
 import { egCircleParts } from '../src/world/egCircleParts.js';
 import { egHallOf, egCircleSpecs, egCircleOfHall } from '../src/net/egLaw.js';
 import { createEgOccluders, egOccludersHit, egSegTri, egSegBox, egOccludeEase, egOccludeRanges, EG_OCCLUDE_KEEP, EG_OCCLUDE_FADE_S, EG_OCCLUDE_BODY_M, EG_OCCLUDE_CHEST_M, EG_OCCLUDE_VIEWS_MAX } from '../src/scenes/egOcclude.js';
@@ -79,7 +79,7 @@ test('EG-ZN THE OCCLUDERS MARKED (world/egHall.js, section 11.8): every circle\'
     const m = buildEgCircleModel(seed, c, 0), owned = new Uint8Array(m.indices.length / 3);
     for (const o of m.occluders) for (const [, at, n] of o.r) for (let k = 0; k < n; k++) owned[at / 3 + k] = 1;
     const ys = (j) => [0, 1, 2].map((v) => m.positions[m.indices[j + v] * 3 + 1]);
-    const ground = new Set(), lay = (y) => ground.add(Math.round(egToDungeon({ x0: 0 }, 0, y, 0)[1] * 1000));
+    const ground = new Set(), heroGround = new Set(), lay = (y) => ground.add(Math.round(egToDungeon({ x0: 0 }, 0, y, 0)[1] * 1000));
     for (const spec of egCircleSpecs(seed, c, 0)) {
       for (const d of spec.discs) lay(d.y);
       for (const b of spec.bands) lay(b.y);
@@ -88,6 +88,9 @@ test('EG-ZN THE OCCLUDERS MARKED (world/egHall.js, section 11.8): every circle\'
       for (const q of spec.caves) { lay(q.y); lay(q.yB); }
       for (const a of spec.alcoves ?? []) lay(a.y);
       for (const d of spec.deco ?? []) if (d.t === 'magma') lay(d.y ?? -1.5); else if (d.t === 'tiers') for (let k = 1; k <= 3; k++) lay((d.y ?? 0) - 0.5 + k * (d.h / 6));
+      // EG-HERO-LAY (spec law 7): a hero's ground is where its law lays it - its floors and its stairs' corners, a hand either
+      // side (world/egHall.js egHeroGroundYs: its mesh's floor drawn a hair under its law's is ground still)
+      for (const q of spec.heroes ?? []) for (const y of egHeroGroundYs(q)) heroGround.add(Math.round(egToDungeon({ x0: 0 }, 0, q.y + y, 0)[1] * 1000));
     }
     let rising = 0;
     for (let j = 0; j < m.indices.length; j += 3) {
@@ -95,7 +98,7 @@ test('EG-ZN THE OCCLUDERS MARKED (world/egHall.js, section 11.8): every circle\'
       const y = ys(j), top = Math.max(...y);
       if (top - Math.min(...y) <= 0.2) continue;
       rising++;
-      assert.ok([...ground].some((g) => top * 1000 - g >= -1 && top * 1000 - g <= 201), `circle ${c} of seed ${seed}: an unmarked triangle rising to ${top} - rock left out of the occluders`);
+      assert.ok([...ground].some((g) => top * 1000 - g >= -1 && top * 1000 - g <= 201) || [...heroGround].some((g) => Math.abs(top * 1000 - g) <= 201), `circle ${c} of seed ${seed}: an unmarked triangle rising to ${top} - rock left out of the occluders`);
     }
     assert.ok(rising > 0, 'the ground\'s own sides counted');
   }

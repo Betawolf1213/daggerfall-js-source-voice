@@ -615,6 +615,19 @@ const PUBLIC_ALLOWLIST = new Map([
   ['src/assets/egfrags/source/egheroColonnade.fbx', 'OURS - the Broken Colonnade hero passage\'s scene, written by tools/egHeroColonnadeScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
   ['src/assets/egfrags/egheroColonnade.law.json', 'OURS - egheroColonnade.fbx\'s law half baked by tools/bakeEgHeroColonnade.mjs; numbers only'],
   ['src/assets/egfrags/egheroColonnade.mesh.json', 'OURS - egheroColonnade.fbx\'s mesh half baked by tools/bakeEgHeroColonnade.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
+  // EG-HERO (2026-10-13, the owner: "You have to author the fragments"): THE HAVOC WELLHEAD'S HERO FRAGMENTS - the Forge Gut,
+  // the Clan Pit and the Oblivion Caverns, deep, each a scene written from numbers alone by its tools/egHero*Scene.mjs (no
+  // image, no game data, no third-party art), committed as the .fbx tools/fragBake.mjs bakes; each tools/bakeEgHero*.mjs
+  // re-makes its two halves, and test/eghero_wellhead.test.js holds each scene and both halves to their bytes.
+  ['src/assets/egfrags/source/egheroForgeGut.fbx', 'OURS - a Wellhead hero fragment\'s scene, written by tools/egHeroForgeGutScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
+  ['src/assets/egfrags/egheroForgeGut.law.json', 'OURS - egheroForgeGut.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgHeroForgeGut.mjs; numbers only'],
+  ['src/assets/egfrags/egheroForgeGut.mesh.json', 'OURS - egheroForgeGut.fbx\'s mesh half baked by tools/bakeEgHeroForgeGut.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
+  ['src/assets/egfrags/source/egheroClanPit.fbx', 'OURS - a Wellhead hero fragment\'s scene, written by tools/egHeroClanPitScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
+  ['src/assets/egfrags/egheroClanPit.law.json', 'OURS - egheroClanPit.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgHeroClanPit.mjs; numbers only'],
+  ['src/assets/egfrags/egheroClanPit.mesh.json', 'OURS - egheroClanPit.fbx\'s mesh half baked by tools/bakeEgHeroClanPit.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
+  ['src/assets/egfrags/source/egheroDeepCaverns.fbx', 'OURS - a Wellhead hero fragment\'s scene, written by tools/egHeroDeepCavernsScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
+  ['src/assets/egfrags/egheroDeepCaverns.law.json', 'OURS - egheroDeepCaverns.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgHeroDeepCaverns.mjs; numbers only'],
+  ['src/assets/egfrags/egheroDeepCaverns.mesh.json', 'OURS - egheroDeepCaverns.fbx\'s mesh half baked by tools/bakeEgHeroDeepCaverns.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
   // WAGONS1 (2026-10-09, Mac: "Here are 3 new models that will need to be textured"): MAC'S THREE WAGONS, supplied as
   // four saves of one Blender scene ("wagons.blend") - the newest committed whole, as the ships' scenes are.
   // tools/bakeWagons.mjs re-makes the three JSONs from it (tools/shipBake.mjs), and test/wagons1_bake.test.js holds them

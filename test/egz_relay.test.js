@@ -11,6 +11,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { validEgOut, EG_SIZE_WIRE_MIN, EG_SIZE_WIRE_MAX } from '../src/net/wire.js';
 import { egHallOf, egCircleSpecs, EG_SEALED_MS, EG_DECREES, EG_DECREE_BY_KEY, EG_LORDS, EG_LAW_UNIT } from '../src/net/egLaw.js';
+import { EG_HERO_FRAGS } from '../src/net/egHeroFrags.js';
 import { egBreachNew, egEnter, egStep } from '../src/net/egBrain.js';
 import { EG_SEAM, egLordsFight, egLordsOf, egLordLaw, egLordsShare, egMarkynazDecree, egBossLook } from '../src/net/egLords.js';
 import { EG_ROLE, EG_FL, egFightNew, egPlace, egCarry, egWalk } from '../src/net/egBodies.js';
@@ -281,6 +282,10 @@ test('EG-ZQ A SPOT\'S HEIGHT IS SAID IN CENTIMETRES (section 9; EG-ZJ\'s finding
     for (const [role, list] of Object.entries(h.spots)) for (const q of list) {
       if (q.y == null) continue;
       ys++;
+      // PIN MOVED (EG-HERO-LAY, spec law 7): a hero's rift and hazard anchors are no body's places - a rift set in its wall, a
+      // hazard's spout - and stand where its record sets them, in centimetres from its origin
+      const hq = (h.heroes ?? []).find((x) => x.f === q.f);
+      if (hq && (role === 'rift' || role === 'hazard')) { assert.ok(Number.isInteger(q.y) && EG_HERO_FRAGS[hq.id].anchors[role].some((p) => Math.round(hq.y * 100) + p[1] === q.y), `seed ${seed} Hall ${h.h}'s hero ${role} at y ${q.y}: its record's`); continue; }
       assert.ok(Number.isInteger(q.y) && floors.has(q.y), `seed ${seed} Hall ${h.h}'s ${role} at y ${q.y}: centimetres of a floor the law laid`);
     }
   }

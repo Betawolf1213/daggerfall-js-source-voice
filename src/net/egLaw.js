@@ -46,18 +46,38 @@
 // and brings none (a section and no island: one island fewer than a section brings, two at rank II). Laws 4 and 5 are kept
 // byte for byte (their 800 halls hashed whole - test/egz_frag.test.js, test/eg6a_span.test.js) and stay in EG_LAWS their days.
 //
+// EG-HERO-LAY (2026-10-13, the owner: "You have to author the fragments"; sections 11.4-11.6 and 22): SPEC LAW 7 - THE HEROES
+// LAID. In each slot where law 6 lays a code-built fragment of kit K and class C (a passage, a chamber, a shaft - never a set
+// piece), a hero fragment of (K, C) registered in net/egHeroFrags.js (the reference aside) may stand instead: the hall's own
+// hero die (egSeed(seed, HERO_SALT + h)) tosses a fair coin a slot, in the slots' order, and the first heads whose hero FITS is
+// laid - at most one hero a hall (heroHall). It fits when its mouth stands on the course's line at the slot's start, its
+// course's exit meets what follows at the height the slot keeps, its box stands EG_FRAG_APART_CM from every other volume
+// (joined fragments and pieces at its mouth and exit aside), a chamber's trial stands on its fight floors, the hall stays
+// inside EG_HALL_LEN_MAX and its cap of four fragments, and THE TIMED SOLVER proves the whole hall (egHeroStatic, heroFit). Where
+// none does, law 6's hall stands byte for byte but its number: the coin is the hero die's, never the hall's, and the code-built
+// fragment that stands is the one law 6 laid. Everything the relay judges comes from the hero's LAW record, never its mesh:
+// its fight floors in `fl` as polygons, its stairs in `ramps`, its course in `steps`, its hazards, anchors, alcoves, lights and
+// engine in the spec's own fields, and its floors, ceilings, open edges, sockets and walk graph in `heroes` (the clamp, the
+// fair trail's ground, the legion's graph). The registry is a seam (egHeroSeam), EG_HERO_FRAGS by default.
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { sdSeed, sdRng } from './sdBrain.js';
-import { egSpanProof, egRoadCross, EG_SPAN_RUN_MPS } from './egSpanLaw.js';   // EG-FULL: THE TIMED SOLVER - a course it refuses is laid again
-import { egSpanOf, egDieBetween, EG_GAP_MIN_CM, EG_STEP_DOWN_CM } from './egSpanLaw.js';   // EG6a: THE SPAN GENERATOR - every course laid by it, through courseOf
+import { egSpanProof, egRoadCross, egJumpReach, EG_SPAN_RUN_MPS, EG_JUMP_MPS, EG_JUMP_FWD, EG_JUMP_G } from './egSpanLaw.js';   // EG-FULL: THE TIMED SOLVER - a course it refuses is laid again
+import { egSpanOf, egDieBetween, EG_GAP_MIN_CM, EG_STEP_DOWN_CM, EG_DROP_CM } from './egSpanLaw.js';   // EG6a: THE SPAN GENERATOR - every course laid by it, through courseOf
 import { egFragPassage, egFragChamber, egSetPiece, egSetPieceOf, EG_PASSAGE_KITS, EG_CHAMBER_KITS, EG_FRAGS } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments
 import { egFragShaft, EG_SHAFT_KITS, EG_SLAG_LAW, EG_SLAG_STEP } from './egFragLaw.js';   // EG-ZC: the shafts, the slag's law and its crust
+import { egFragInPoly, egFragApart, egFragBoxAt, egFragSwept, EG_SET_PIECES, EG_FRAG_SOCKET_TOL_CM, EG_FRAG_HEADROOM_CM, EG_SHAFT_FLIGHT_CM, EG_SHAFT_DROP_CM } from './egFragLaw.js';   // EG-HERO-LAY: a hero's record, read where it is laid
+import { EG_HERO_FRAGS, egHeroFragLaws } from './egHeroFrags.js';   // EG-HERO-LAY: the hero fragments' law halves (the relay's since spec law 7)
+import { egPieceIn, egPolyIn, egPolyKeep } from './egShape.js';   // EG-HERO-LAY: a hero's fight floors are polygons
 import { gateTrialOf } from './gateMods.js';   // EG5: the gate's boss-general trials the lord family recasts (a leaf - it imports nothing)
 
 /** The spec law's number - a change to any draw below changes it (and the relay's version with it). EG-ZC: 5, the last
  *  fragments (the law before kept - net/egDurable.js EG_LAWS). AUDIT EG III: 6, the span decrees on every span (laws 4 and 5
- *  kept beside it). */
-export const EG_SPEC = 6;
+ *  kept beside it). EG-HERO-LAY: 7, the heroes laid (laws 4, 5 and 6 kept beside it). */
+export const EG_SPEC = 7;
+/** EG-HERO-LAY (sections 11.4-11.6): the spec law from which a hall lays a registered hero fragment in place of a code-built
+ *  one (heroHall) - the laws before lay as they laid. */
+export const EG_HERO_LAW = 7;
 /** AUDIT EG III (sections 14 and 22): the spec law from which Gale-Swept and Crumbling Halls lay their sections on every span
  *  (a Proving Walk's second span, THE FORK's Low Road) and two sections at rank II - the laws before lay as they laid. */
 export const EG_DECREE_LAW = 6;
@@ -571,6 +591,9 @@ export const EG_STEP = Object.freeze({
   // EG-ZC: a slag crossing's crust, each spout's lane (net/egFragLaw.js EG_SLAG_STEP - its one home)
   slag: EG_SLAG_STEP,
 });
+/** EG-HERO-LAY: the narrowest a hero's mouth and its course's exit may be (cm) - the narrowest top a course asks a body to
+ *  land on, a ledge's. */
+export const EG_HERO_WAY_CM = EG_STEP.ledge.w;
 /** Which pieces each band unlocks (section 10.3) - the Galleries' five, the Cairn's Gust and Rail, the Shade's Pendulum,
  *  the Wellhead's Vent. */
 export const EG_BAND_PIECES = Object.freeze([
@@ -627,9 +650,11 @@ export function egHallOf(seed, h, geo = 0, law = EG_SPEC) {
   if (had) return had;
   // THE TIMED SOLVER (section 10.5, net/egSpanLaw.js): a course it refuses is laid again from the next sub-seed, at most
   // EG_RELAY_MAX times, then from the band's first two pieces alone
-  let spec = layHall(seed >>> 0, h, geo | 0, 0, law), tries = 0;
-  while (spec.steps.length && !egSpanProof(spec).ok && tries < EG_RELAY_MAX) spec = layHall(seed >>> 0, h, geo | 0, ++tries, law);
-  if (spec.steps.length && !egSpanProof(spec).ok) spec = layHall(seed >>> 0, h, geo | 0, EG_RELAY_MAX + 1, law);
+  let spec = layHall(seed >>> 0, h, geo | 0, 0, law), tries = 0, at = 0;
+  while (spec.steps.length && !egSpanProof(spec).ok && tries < EG_RELAY_MAX) spec = layHall(seed >>> 0, h, geo | 0, at = ++tries, law);
+  if (spec.steps.length && !egSpanProof(spec).ok) spec = layHall(seed >>> 0, h, geo | 0, at = EG_RELAY_MAX + 1, law);
+  // EG-HERO-LAY - SPEC LAW 7: THE HEROES LAID, on the try law 6's hall was laid on (heroHall - law 6's hall where none fits)
+  if (law >= EG_HERO_LAW) spec = heroHall(seed >>> 0, h, geo | 0, law, at, spec);
   // THE FORK's two roads' fastest crossings at THE SPAN BUILD (s; the Low Road's bridges across and back run too) - the
   // Low Road's closing reads their difference (section 11.4)
   if (spec.fork) spec.fork = { ...spec.fork, hi: Math.round(egRoadCross(spec, 0, spec.fork.z).fast * 10) / 10, lo: Math.round((egRoadCross(spec, 1).fast + (2 * (spec.fork.lowX - spec.fork.x)) / EG_SPAN_RUN_MPS) * 10) / 10 };
@@ -658,7 +683,170 @@ export function egSpecForget() { _given.clear(); }
 
 /** How often a course the solver refuses is laid again before the band's first two pieces stand alone (section 10.5). */
 export const EG_RELAY_MAX = 8;
-function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
+
+// ── EG-HERO-LAY (2026-10-13; sections 11.4-11.6 and 22): SPEC LAW 7, THE HEROES LAID ─────────────────────────────────────
+/** The hall's cap of fragments (section 11.4 - a fork's Low Road counted). */
+export const EG_FRAGS_MAX = 4;
+/** The hanging underside under every piece of a course (cm - section 11.5's "a hanging underside's depth, SD_ROOT_DEPTH
+ *  22 m": world/sdRealm.js SD_ROOT_DEPTH, pinned equal - the relay's bundle carries no world module). */
+export const EG_HANG_CM = 2200;
+/** A Low Road's vault stands at least this far (cm) below the lowest underside above it (section 11.5). */
+export const EG_VAULT_UNDER_CM = 300;
+/** The most characters a hall's spec may run to, said whole on the wire (net/wire.js EG_SPEC_WIRE_MAX - pinned equal): a
+ *  hero's floors, ceilings and walk graph ride in its spec, and a law-foreign client builds from the relay's bytes. */
+export const EG_SPEC_SAID_MAX = 32_768;
+/** The hero die's salt (egSeed(seed, HERO_SALT + h)): a die of its own, so the hall's own stream never feels the coin. */
+const HERO_SALT = 0x0e6e40;
+/** The hero registry the law lays from (egHeroSeam) - EG_HERO_FRAGS, the relay's and every client's. */
+let _heroFrags = EG_HERO_FRAGS;
+/**
+ * THE SEAM: the hero registry the hall law lays from - `frags` (a registry of law halves, net/egHeroFrags.js
+ * egHeroFragRegistry's shape) or EG_HERO_FRAGS. Every hall kept is forgotten (a hall is the registry's). Answers the registry
+ * it replaced. For a test, a tool's sweep, and nothing that runs a breach.
+ * @param {Readonly<Record<string, any>>} [frags]
+ */
+export function egHeroSeam(frags = EG_HERO_FRAGS) {
+  const was = _heroFrags;
+  _heroFrags = frags;
+  _specs.clear();
+  return was;
+}
+/** The heroes a slot of kit `kit` and class `cls` may lay (net/egHeroFrags.js egHeroFragLaws - the reference never). */
+export const egHeroCands = (kit, cls, frags = _heroFrags) => egHeroFragLaws(kit, frags).filter((L) => L.class === cls);
+/**
+ * THE HERO A HALL LAYS (spec law 7): law 6's hall `spec` (laid on try `at`) - or, where a hero stands, the hall laid again on
+ * that try with it. Each of its code-built fragments (a passage, a chamber, a shaft; never a set piece) with a hero of its
+ * kit and class registered is a slot; the hall's own hero die tosses a fair coin a slot, in their order, and the first heads
+ * whose hero fits (egHeroStatic at its slot, heroFit over the hall laid, THE TIMED SOLVER over its whole course) is laid. Of a
+ * slot's heroes, the coin's own draw picks (heads below one half: the hero at u x 2 x their count). At most one a hall.
+ * @param {number} seed @param {number} h @param {number} geo @param {number} law @param {number} at @param {any} spec
+ */
+function heroHall(seed, h, geo, law, at, spec, log = /** @type {any[]|null} */ (null)) {
+  const slots = [];
+  spec.frags.forEach((f, n) => { if (!EG_SET_PIECES.includes(f.play)) { const c = egHeroCands(f.kit, f.cls); if (c.length) slots.push({ n, c }); } });
+  if (!slots.length) return spec;
+  const hr = sdRng(egSeed(seed, HERO_SALT + h));
+  for (const { n, c } of slots) {
+    const u = hr(), rec = c[Math.min(c.length - 1, Math.floor(u * 2 * c.length))];
+    if (u >= 0.5) { log?.push({ n, kit: spec.frags[n].kit, cls: spec.frags[n].cls, u, id: null, why: 'tails' }); continue; }
+    const fit = { ok: false, why: '' };
+    const H = layHall(seed, h, geo, at, law, { n, rec }, fit);
+    const why = !fit.ok ? fit.why || 'not laid' : !egSpanProof(H).ok ? `THE TIMED SOLVER refuses the hall: ${egSpanProof(H).why.join('; ')}` : JSON.stringify(H).length > EG_SPEC_SAID_MAX ? `its spec runs past ${EG_SPEC_SAID_MAX} characters` : '';
+    log?.push({ n, kit: spec.frags[n].kit, cls: spec.frags[n].cls, u, id: rec.id, why });
+    if (!why) return H;
+  }
+  return spec;
+}
+/**
+ * EVERY SLOT OF HALL `h` AND ITS COIN (spec law 7), as heroHall tosses them - `[{ n, kit, cls, u, id, why }]`: each slot's
+ * fragment, the hero die's draw, the hero the coin picked (null on tails) and why it did not stand ('' - it stands; 'tails').
+ * Pure (it lays the hall again); for a test, a tool, and a hero's author asking where theirs would stand.
+ * @param {number} seed @param {number} h @param {number} [geo] @param {number} [law]
+ */
+export function egHeroTrials(seed, h, geo = 0, law = EG_SPEC) {
+  let spec = layHall(seed >>> 0, h, geo | 0, 0, law), at = 0;
+  while (spec.steps.length && !egSpanProof(spec).ok && at < EG_RELAY_MAX) spec = layHall(seed >>> 0, h, geo | 0, ++at, law);
+  if (spec.steps.length && !egSpanProof(spec).ok) spec = layHall(seed >>> 0, h, geo | 0, at = EG_RELAY_MAX + 1, law);
+  const log = [];
+  if (law >= EG_HERO_LAW) heroHall(seed >>> 0, h, geo | 0, law, at, spec, log);
+  return log;
+}
+/** A hero record's course's exit (section 11.5's sockets): the lowest of its exits the course's line passes through (its
+ *  middle within half its width of x 0) at least EG_HERO_WAY_CM wide - the nearest the line of those, then the first - or -1. */
+export function egHeroExit(rec) {
+  let k = -1;
+  (rec?.sockets?.out ?? []).forEach((o, i) => {
+    if (!(o.w >= EG_HERO_WAY_CM) || Math.abs(o.x) * 2 > o.w) return;
+    const b = rec.sockets.out[k];
+    if (k < 0 || o.y < b.y || (o.y === b.y && Math.abs(o.x) < Math.abs(b.x))) k = i;
+  });
+  return k;
+}
+/** The lowest a passage's course exit may stand under its mouth (cm, <= 0): its kit's own code-built passage's descent (the
+ *  Mist Stair's flights; every other kit leaves at its mouth's height) - read off the kit's planner. */
+const kitDescent = (kit) => Math.min(0, egFragPassage(kit, () => 0).yB);
+/** The lowest a shaft's course exit may stand under its mouth (cm): the code-built shaft's deepest - four flights and the
+ *  deepest Drop. */
+export const EG_HERO_SHAFT_CM = 4 * EG_SHAFT_FLIGHT_CM + EG_SHAFT_DROP_CM[1];
+/** THE LANDING ROOM (cm - EG-HERO-LAY at the merge of the ten heroes): the least a hero's inner course may leave between where
+ *  THE SPAN BUILD's running jump, pressed at a launch edge, lands and the far edge of the piece it lands on. The motor jumps
+ *  again only after a body has stood GROUNDED_JUMP_GATE_S (player/motor.js), so the slowest build lands, runs on and leaps
+ *  again only with room before the edge - every code-built course leaves at least 0.24 m (test/eghero_lay.test.js measures
+ *  it over the law pin's halls); the Stacks' first hero left 0.11 m, and the real motor stood on its shelf's lip unable to
+ *  leap. A piece that moves along the course, and a step down run off rather than leapt, are judged by the solver alone. */
+export const EG_HERO_LAND_ROOM_CM = 20;
+/**
+ * A HERO'S INNER COURSE LANDED (spec law 7, THE LANDING ROOM): why record `rec`'s course leaves THE SPAN BUILD no room to land
+ * and leap again - '' when every landing leaves EG_HERO_LAND_ROOM_CM. Each piece in order is landed on from the one before
+ * (the first from the floor at its gap's start, its height the highest floor holding that edge): where a running jump pressed
+ * at the edge comes down (the span build's run and the jump's forward push over its time in the air, the height between) is
+ * held against the piece's far edge - unless the piece moves along the course, or a step down of more than 30 cm is run off
+ * onto it at the build's run (the sweep's pilot's own way down a stair).
+ * @param {any} rec
+ */
+export function egHeroLanding(rec) {
+  let prev = null;
+  for (const [i, q] of (rec.course ?? []).entries()) {
+    const lz = prev ? prev.z + prev.d / 2 : q.z - q.d / 2 - q.gap;
+    const ay = prev ? prev.y : Math.max(0, ...rec.floors.filter((f) => egFragInPoly(f.poly, q.x, lz - 1)).map((f) => f.y)), dy = q.y - ay;
+    prev = q;
+    if (q.amp > 0 && ['drift', 'rail', 'drum', 'pend'].includes(q.kind)) continue;
+    const air = egJumpReach(dy / 100).air, land = lz + Math.floor(100 * (EG_SPAN_RUN_MPS + EG_JUMP_MPS * EG_JUMP_FWD) * air);
+    const off = dy < -30 ? Math.floor((EG_SPAN_RUN_MPS * lawIsqrt(Math.floor((-dy * 20000) / EG_JUMP_G))) / 10) : -1;   // the fall's time in ms, the law's root
+    if (off >= q.gap + 40 && off <= q.gap + q.d - 50) continue;   // run off it, as a stair is
+    const room = q.z + q.d / 2 - land;
+    if (room < EG_HERO_LAND_ROOM_CM) return `its course's piece ${i} (${q.kind}) leaves the span build's landing ${room} cm before its far edge, under ${EG_HERO_LAND_ROOM_CM}`;
+  }
+  return '';
+}
+/**
+ * A HERO'S FIT AT ITS SLOT (spec law 7, before it is laid): why record `rec` cannot stand in a slot of its class - '' when it
+ * can. Its box runs from its mouth along +Z; its mouth is at least EG_HERO_WAY_CM wide with a floor at its foot; its course
+ * leaves by an exit on the course's line (egHeroExit) with a floor under it, at the height the slot keeps: a chamber's at its
+ * mouth's, a passage's at its mouth's or as far under it as its kit's own passage goes down (never on the Low Road, whose
+ * bridge to the end plate stands at the fork's low height), a shaft's under its mouth, no deeper than EG_HERO_SHAFT_CM.
+ * A chamber's middle (half its length along the course, on the line) stands on a fight floor at its mouth's height. Its inner
+ * course leaves the span build room to land and leap again (egHeroLanding, EG_HERO_LAND_ROOM_CM).
+ * @param {any} rec @param {boolean} [low] on the Low Road
+ */
+export function egHeroStatic(rec, low = false) {
+  const S = rec.sockets, B = rec.box;
+  if (!(B[5] > 0) || B[2] < -EG_FRAG_SOCKET_TOL_CM) return 'its box does not run along +Z from its mouth';
+  if (!(S.in.w >= EG_HERO_WAY_CM) || !rec.floors.some((f) => f.y === 0 && egFragInPoly(f.poly, 0, 0))) return `its mouth is under ${EG_HERO_WAY_CM} cm wide or has no floor at its foot`;
+  const k = egHeroExit(rec);
+  if (k < 0) return 'no exit on the course\'s line';
+  const o = S.out[k];
+  const [lo, hi] = rec.class === 'shaft' ? [-EG_HERO_SHAFT_CM, -1] : rec.class === 'chamber' || low ? [0, 0] : [kitDescent(rec.kit), 0];
+  if (o.y < lo || o.y > hi) return `its course's exit stands at ${o.y} cm, outside ${lo} to ${hi}`;
+  if (!rec.floors.some((f) => f.y === o.y && egFragInPoly(f.poly, o.x, o.z))) return 'no floor reaches its course\'s exit';
+  if (rec.class === 'chamber' && !egHeroCourtOf(rec)) return 'no fight floor at its mouth\'s height holds its middle';
+  return egHeroLanding(rec);
+}
+/** The squared distance (cm, floored) from (px, pz) to the segment a-b - the law's integers. */
+function segD2(px, pz, a, b) {
+  const ex = b[0] - a[0], ez = b[1] - a[1], L2 = ex * ex + ez * ez, ax = px - a[0], az = pz - a[1], t = ax * ex + az * ez;
+  if (t <= 0 || L2 === 0) return ax * ax + az * az;
+  if (t >= L2) { const bx = px - b[0], bz = pz - b[1]; return bx * bx + bz * bz; }
+  return Math.max(0, Math.floor(ax * ax + az * az - (t * t) / L2));
+}
+/** A HERO CHAMBER'S COURT (spec law 7): its middle `cz` (half its length along the course, on the line) and `R` - how far the
+ *  fight floor at its mouth's height that holds the middle reaches from it before its first edge (cm) - the court the hall's
+ *  trial is laid on in place of the code-built disc; null where none holds the middle, or it reaches no further than a
+ *  rift's 3 m inset. */
+export function egHeroCourtOf(rec) {
+  const cz = Math.floor(rec.box[5] / 2), main = rec.floors.find((f) => f.fight && f.y === 0 && egFragInPoly(f.poly, 0, cz));
+  if (!main) return null;
+  let d2 = Infinity;
+  for (let i = 0; i < main.poly.length; i++) d2 = Math.min(d2, segD2(0, cz, main.poly[i], main.poly[(i + 1) % main.poly.length]));
+  const R = lawIsqrt(d2);
+  return R > 300 ? { cz, R } : null;
+}
+/** Two boxes ([x0, y0, z0, x1, y1, z1], cm) apart (egFragApart) - or JOINED: one meeting the other's mouth or exit face, their
+ *  overlap along the course no more than the socket's tolerance (a code-built passage after a hero shaft, a Drop's landing
+ *  before a hero passage). */
+const apartOrJoined = (a, b) => egFragApart(a, b) || (Math.min(a[5], b[5]) - Math.max(a[2], b[2]) <= EG_FRAG_SOCKET_TOL_CM && (Math.abs(b[5] - a[2]) <= EG_FRAG_SOCKET_TOL_CM || Math.abs(b[2] - a[5]) <= EG_FRAG_SOCKET_TOL_CM));
+
+function layHall(seed, h, geo, attempt = 0, law = EG_SPEC, hero = /** @type {{ n: number, rec: any }|null} */ (null), fit = /** @type {{ ok: boolean, why: string }|null} */ (null)) {
   const c = egCircleOfHall(h), slot = egSlotOfHall(h), plan = egCirclePlan(seed, c)[slot - 1];
   const kind = plan.kind, variant = plan.variant, twist = plan.twist, bnd = egBandOfHall(h);
   const r = sdRng(egSeed(seed, HALL_SALT + h + attempt * RELAY_SALT));
@@ -670,7 +858,9 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   const P = { discs: [], bands: [], lanes: [], steps: [], islands: [], caves: [], rifts: [], vents: [], fl: [], spots: {}, deco: [], gate: null, foe: null, arrive: null, end: null, ring: null, walk: null, waystones: [], chamber: 0,
     // EG-FULL LAYER THREE: the fragments' law halves (net/egFragLaw.js) - each fragment's record, its hazards on the shared
     // clock, its ramps (support, never fight floors), its engines, alcoves, vignettes and lights; the Collapsing Tube; THE FORK
-    frags: [], hazards: [], ramps: [], engines: [], alcoves: [], vignettes: [], lights: [], tube: null, fork: null };
+    frags: [], hazards: [], ramps: [], engines: [], alcoves: [], vignettes: [], lights: [], tube: null, fork: null,
+    // EG-HERO-LAY: the hero laid (at most one - its record and where its origin stands, said in `heroes` at the end)
+    heroes: /** @type {Array<{ rec: any, f: number, x: number, y: number, z: number, exit: number, road: number }>} */ ([]) };
   const disc = (x, z, rad, role, y = 0) => { const d = { x, y, z, r: rad, role }; P.discs.push(d); return d; };
   const band = (z0, z1, half, role, y = 0, x = X) => { const b = { x, y, z0, z1, halfW: half, role }; P.bands.push(b); return b; };
   const lane = (ax, az, bx, bz, half, role, y = 0) => { const l = { ax, az, bx, bz, hw: half, role, y }; P.lanes.push(l); return l; };
@@ -715,6 +905,83 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     for (const q of Q.vignettes ?? []) P.vignettes.push({ t: q.t, x: x0 + q.x, z: z0 + q.z, y: y0 + (q.y ?? 0), yaw: q.yaw ?? 0 });
     for (const q of Q.lights ?? []) P.lights.push([x0 + q[0], y0 + q[1], z0 + q[2], q[3]]);
   };
+  // ── EG-HERO-LAY - SPEC LAW 7: a hero fragment laid at its slot (heroHall's `hero`: the slot's number among the hall's
+  // fragments and the record) ─────────────────────────────────────────────────────────────────────────────────────────
+  /** the edge a hero's exit left (the next bridge begins there, never half a metre back over its floor - a code-built
+   *  fragment's own lap) */
+  let heroEnd = -1;
+  const back = () => (edge === heroEnd ? 0 : 50);
+  /** a hero chamber's court, once its slot is reached: its record, its mouth's z, its middle, its reach, its length */
+  let hc = /** @type {{ rec: any, z0: number, zc: number, R: number, L: number, laid: number }|null} */ (null);
+  /** why the hero was refused (heroHall's fit) */
+  const refuse = (why) => { if (fit && !fit.why) fit.why = why; return null; };
+  /** THE HERO AT THIS SLOT: heroHall's record when this is its slot (the hall's next fragment is its number) and it fits the
+   *  slot (egHeroStatic - `low` on the Low Road), else null - a refused hero leaves the code-built fragment law 6 lays. */
+  const heroAt = (cls, low = false) => {
+    if (!hero || hero.rec.class !== cls || P.frags.length !== hero.n || P.heroes.length) return null;
+    const why = egHeroStatic(hero.rec, low);
+    return why ? refuse(why) : hero.rec;
+  };
+  /** A HERO CHAMBER'S COURT at the court's slot, its mouth at `z0`: the court laid at the hero's own size (egHeroCourtOf) - or
+   *  null (no hero here; a Proving Walk's Reliquary Vault, whose side span leaves the court through its wall). */
+  const heroCourtAt = (z0) => {
+    const rec = heroAt('chamber');
+    if (!rec) return null;
+    if (kind === 'proving' && twist === 'vault') return refuse('a Reliquary Vault\'s side span leaves its court');
+    const C = /** @type {{ cz: number, R: number }} */ (egHeroCourtOf(rec));
+    hc = { rec, z0, zc: z0 + C.cz, R: C.R, L: rec.box[5], laid: 0 };
+    return hc;
+  };
+  /** A hero's stair (its record's ramp - a slope's corners, each at its height) as the hall's ramp: from the middle of its
+   *  low corners to the middle of its high ones, half its widest low or high side across (cm, laid at the origin). */
+  const heroRamp = (q, x0, y0, z0) => {
+    const lo = q.poly.filter((p) => p[1] === q.y0), hi = q.poly.filter((p) => p[1] === q.y1);
+    const mid = (ps) => [Math.round(ps.reduce((s, p) => s + p[0], 0) / ps.length), Math.round(ps.reduce((s, p) => s + p[2], 0) / ps.length)];
+    let w2 = 0;
+    for (const s of [lo, hi]) for (const p of s) for (const o of s) w2 = Math.max(w2, (p[0] - o[0]) * (p[0] - o[0]) + (p[2] - o[2]) * (p[2] - o[2]));
+    const a = mid(lo), b = mid(hi);
+    return { ax: x0 + a[0], az: z0 + a[1], bx: x0 + b[0], bz: z0 + b[1], hw: Math.floor(lawIsqrt(w2) / 2), y0: y0 + q.y0, y1: y0 + q.y1 };
+  };
+  /**
+   * A HERO LAID: record `rec`'s law half at its origin (x0, y0, z0) (cm - the foot of its mouth; `xOff` its offset across the
+   * hall, the Low Road's): its fight floors into the fight floor as polygons, its stairs into the ramps, its hazards, its
+   * legion's places (an engine anchor its kit's engine), its alcoves and lights; its inner course through the span generator
+   * at its authored places and sizes; its fragment; and the course on from its exit, at the exit's height.
+   */
+  const heroLay = (rec, x0, z0, y0, xOff) => {
+    const k = egHeroExit(rec), o = rec.sockets.out[k], L = rec.box[5];
+    const at = (q) => [x0 + q[0], z0 + q[1]];
+    P.frags.push({ kit: rec.kit, cls: rec.class, name: EG_FRAGS[rec.kit].name, x: x0, y: y0, z0, z1: z0 + L, play: rec.play.join(','), reverb: rec.reverb, road, hero: rec.id });
+    const f = P.frags.length - 1;
+    P.heroes.push({ rec, f, x: x0, y: y0, z: z0, exit: k, road });
+    for (const g of rec.floors) if (g.fight) P.fl.push({ t: 'p', poly: g.poly.map(at), y: y0 + g.y });
+    for (const q of rec.ramps) P.ramps.push(heroRamp(q, x0, y0, z0));
+    for (const hz of rec.hazards) {
+      P.hazards.push({ kind: hz.kind, i: P.hazards.length, x: x0 + hz.x, z: z0 + hz.z, y: y0 + hz.y, period: hz.period, phase: hz.phase, w: hz.w, r: hz.r, ring: hz.ring,
+        sh: hz.sh ? [...at([hz.sh[0], hz.sh[1]]), ...at([hz.sh[2], hz.sh[3]])] : null, spots: hz.spots ? hz.spots.map(at) : null,
+        lanes: hz.lanes ? hz.lanes.map((q) => [...at([q[0], q[1]]), ...at([q[2], q[3]])]) : null, path: hz.path ? [...at([hz.path[0], hz.path[1]]), hz.path[2], hz.path[3]] : null });
+    }
+    const engine = EG_FRAGS[rec.kit].engine;
+    for (const [kk, list] of Object.entries(rec.anchors)) for (const q of list) {
+      if (kk === 'engine') { if (engine) P.engines.push({ i: P.engines.length, kind: engine, x: x0 + q[0], z: z0 + q[2], y: y0 + q[1] }); continue; }
+      spot(kk, x0 + q[0], z0 + q[2], { y: y0 + q[1], road, f });
+    }
+    for (const a of rec.alcoves) P.alcoves.push({ i: P.alcoves.length, x: x0 + a.x, z: z0 + a.z, y: y0 + a.y, seal: a.seal, side: a.side, holds: a.holds });
+    for (const l of rec.lights) P.lights.push([x0 + l[0], y0 + l[1], z0 + l[2], l[3]]);
+    kitNow = rec.kit;
+    for (const q of rec.course) {
+      edge = z0 + q.z - q.d / 2 - q.gap; y = y0 + q.y;
+      step(q.kind, q.gap, { x: xOff + q.x, amp: q.amp, period: q.period, phase: q.phase, beat: q.kind === 'moon' ? z0 + q.beat : q.beat, size: { w: q.w, d: q.d } });
+    }
+    kitNow = '';
+    edge = heroEnd = z0 + L; y = y0 + o.y;
+  };
+  /** A hero chamber's rifts (section 8.1, "its rifts set in the walls"): its record's rift anchors laid, the first `n`, where it
+   *  names `n` or more (`a` - its own place, never held to its fight floor) - else null, and the hall law sets its own. */
+  const heroRifts = (n) => {
+    const H = hc?.laid ? P.heroes[0] : null, list = H?.rec.anchors.rift ?? [];
+    return H && list.length >= n ? list.slice(0, n).map((q) => ({ x: H.x + q[0], z: H.z + q[2], a: 1 })) : null;
+  };
   /** The band's passage kit for this hall (the hall's die - the band's library, section 11.2). */
   const passageKit = () => { const L = EG_PASSAGE_KITS[bnd]; return L[between(r, 0, L.length - 1)]; };
   /** A FRAGMENT'S PASSAGE (section 11): a tunnel of its kit over the course (net/egFragLaw.js egFragPassage - the
@@ -722,6 +989,8 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
    *  the Forge Gut, the deep Caverns), its floor broken by a chasm crossed on its inner course; its floors its landings
    *  (fight floors - section 11.1), its hazards on the shared clock. `x` its offset across the hall (the Low Road's). */
   const cave = (kit = passageKit(), x = 0) => {
+    const H = heroAt('passage', x !== 0);   // EG-HERO-LAY: the hero in its place (on the Low Road at the mouth's height)
+    if (H) { heroLay(H, X + x, edge, y, x); return; }
     const Q = egFragPassage(kit, r, { c, deep: bnd, law });
     const X0 = X + x, z0 = edge, zA = z0 + Q.zA, zB = z0 + Q.zB, z1 = z0 + Q.len, y0 = y, role = Q.open ? 'colonnade' : 'cave';
     band(z0, zA, Q.halfW, role, y, X0); flL(X0, z0, X0, zA, Q.halfW, y);
@@ -738,6 +1007,8 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
    *  ground that is no fight floor (blows land on none of it), its flights, its Drop and the Slag Chute's crust its course;
    *  its walls the passages' (world/egHall.js - running down past its foot), marked `shaft`. */
   const shaft = (kit = EG_SHAFT_KITS[bnd][between(r, 0, EG_SHAFT_KITS[bnd].length - 1)]) => {
+    const H = heroAt('shaft');   // EG-HERO-LAY: the hero in its place
+    if (H) { heroLay(H, X, edge, y, 0); return; }
     const Q = egFragShaft(kit, r);
     const z0 = edge, zA = z0 + Q.zA, zB = z0 + Q.zB, z1 = z0 + Q.len, y0 = y;
     band(z0, zA, Q.halfW, 'cave', y);
@@ -783,6 +1054,8 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   const chamberAt = (zc, R, kit = /** @type {string|null} */ (EG_CHAMBER_KITS[bnd][between(r, 0, EG_CHAMBER_KITS[bnd].length - 1)])) => {
     P.chamber = 1;
     if (!kit) { P.deco.push({ t: 'wall', x: X, z: zc, r: R + 150, h: 900, y }); return; }
+    // EG-HERO-LAY: the hero chamber its court was laid for (heroCourtAt) - and its kit's own call (the Clan Pit's Honour Horn)
+    if (hc && !hc.laid) { hc.laid = 1; heroLay(hc.rec, X, hc.z0, y, 0); if (egFragChamber(kit, () => 0, R).horn) spot('horn', X, zc, { r: 600 }); return; }
     const Q = egFragChamber(kit, r, R);
     const rim = Q.floors.length ? R + 900 : R + 150;
     P.deco.push({ t: 'wall', x: X, z: zc, r: rim, h: kit === 'clanpit' ? 600 : 900, y, kit });
@@ -795,7 +1068,10 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     lay(Q, X, zc, y);
   };
   /** The court disc of a fight hall, at z centre `zc`, radius R. */
-  const court = (R, role = 'court') => { const zc = edge + 400 + R; band(edge - 50, edge + 450, BRIDGE_HALF, 'bridge', y); disc(X, zc, R, role, y); flD(X, zc, R, y); edge = zc + R; return zc; };
+  const court = (R, role = 'court', H = /** @type {typeof hc} */ (null)) => {
+    if (H) { band(edge - back(), H.z0, BRIDGE_HALF, 'bridge', y); edge = H.z0 + H.L; return H.zc; }   // EG-HERO-LAY: a hero chamber's - its own floors, the bridge to its mouth
+    const zc = edge + 400 + R; band(edge - back(), edge + 450, BRIDGE_HALF, 'bridge', y); disc(X, zc, R, role, y); flD(X, zc, R, y); edge = zc + R; return zc;
+  };
   const downToPlate = () => { if (y > 0) { island(); run('crumble', Math.max(2, Math.ceil(y / EG_STEP_DOWN_CM))); } };
   /** The span decrees' sections (section 14) - never dropped for room ("every span carries a gust"), at least two pieces
    *  each. AUDIT EG III - LAW 6 (EG_DECREE_LAW): each rank its own section - a Gust section on its island (on the road's own
@@ -879,12 +1155,14 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   edge = PLATE_R;
 
   if (kind === 'yard') {
-    const R = between(r, 22, 26) * 100;
-    const zc = court(R);
+    const R0 = between(r, 22, 26) * 100, H = heroCourtAt(edge + 400), R = H ? H.R : R0;   // EG-HERO-LAY: a hero chamber's court at its own size
+    const zc = court(R, 'court', H);
     if (c >= 2 && r() * 3 < 1) chamberAt(zc, R);
     const turn = between(r, -1, 1) * 5;
     if (variant === 'riftyard' || variant === 'wellmouth') {
-      for (const deg of [60, 240, 120, 300, 90]) { const [x, z] = polar(X, zc, R - 300, deg + turn); P.rifts.push({ x, z }); }
+      const ra = variant === 'riftyard' ? heroRifts(5) : null;   // EG-HERO-LAY: a hero's rifts set in its walls, where it names enough
+      if (ra) P.rifts.push(...ra);
+      else for (const deg of [60, 240, 120, 300, 90]) { const [x, z] = polar(X, zc, R - 300, deg + turn); P.rifts.push({ x, z }); }
       if (variant === 'wellmouth') for (let k = 0; k < 5; k++) for (const off of [-35, 0, 35]) { const [x, z] = polar(X, zc, R - 300, [60, 240, 120, 300, 90][k] + turn + off); spot('socket', x, z, { k }); }
     } else if (variant === 'wellspring') {
       const [gx, gz] = polar(X, zc, Math.floor(R / 3), 0);
@@ -894,9 +1172,11 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
       for (const deg of [0, 120, 240]) { const [x, z] = polar(X, zc, R - 500, deg + turn); spot('rally', x, z); }
     } else if (variant === 'holdfast') {
       spot('relic', X, zc, { r: 600 });
-      for (const deg of [60, 180, 300, 120, 240]) { const [x, z] = polar(X, zc, R - 300, deg + turn); P.rifts.push({ x, z }); }
+      const ra = heroRifts(5);
+      if (ra) P.rifts.push(...ra);
+      else for (const deg of [60, 180, 300, 120, 240]) { const [x, z] = polar(X, zc, R - 300, deg + turn); P.rifts.push({ x, z }); }
     }
-    band(edge - 50, edge + 600, BRIDGE_HALF, 'bridge', y);
+    band(edge - back(), edge + 600, BRIDGE_HALF, 'bridge', y);
     edge += 600;
   } else if (kind === 'span' || kind === 'brink') {
     const extra = gale + crumbling;
@@ -930,12 +1210,12 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     const extra = L6 ? gale + crumbling : 0;
     run(c <= 1 ? 'still' : pieces[between(r, 0, 1)], extra >= 2 ? 3 : extra > 0 ? 4 : between(r, 5, 7));
     if (extra > 0) crumbleTwo();
-    const R = 1400, zc = edge + gap() + R;
-    disc(X, zc, R, 'court', y); flD(X, zc, R, y);
+    const g = gap(), H = heroCourtAt(edge + g), R = H ? H.R : 1400, zc = H ? H.zc : edge + g + R;   // EG-HERO-LAY: a hero chamber's court at its own size
+    if (!H) { disc(X, zc, R, 'court', y); flD(X, zc, R, y); }
     if (c >= 2 && r() * 3 < 1) chamberAt(zc, R);   // one proving court in three a chamber (section 11.4) - its play its own
     P.foe = { x: X, z: zc + 400 };
     for (const deg of [0, 120, 240]) { const [x, z] = polar(X, zc, 900, deg + 60); spot('standard', x, z); }
-    edge = zc + R;
+    edge = H ? H.z0 + H.L : zc + R;
     if (twist === 'vault') { const [vx, vz] = [X - 900, zc]; lane(X - R, zc, vx - 350, vz, BRIDGE_HALF, 'side', y); disc(vx - 700, vz, 350, 'vault', y); spot('vault', vx - 700, vz); }
     if (extra > 0) decreeSections();   // LAW 6: the second span the decrees' (section 14 - "a Proving Walk's")
     else run(c <= 1 ? 'drift' : pieces[between(r, 0, 2)], between(r, 4, 6));
@@ -978,18 +1258,21 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   } else if (kind === 'deepway') {
     // four fragments end to end (section 8.8): a passage, a chamber, a shaft down, a passage
     cave();
-    const R = 1600, zc = edge + 400 + R;
-    band(edge - 50, edge + 450, BRIDGE_HALF, 'bridge', y);
-    disc(X, zc, R, 'court', y); flD(X, zc, R, y); chamberAt(zc, R);
+    const H = heroCourtAt(edge + 400), R = H ? H.R : 1600, zc = H ? H.zc : edge + 400 + R;   // EG-HERO-LAY: a hero chamber's court at its own size
+    band(edge - back(), H ? H.z0 : edge + 450, BRIDGE_HALF, 'bridge', y);
+    if (!H) { disc(X, zc, R, 'court', y); flD(X, zc, R, y); }
+    chamberAt(zc, R);
     const obj = between(r, 0, 2);
     spot('chamber', X, zc, { obj });
-    if (obj === 0) for (const deg of [60, 180, 300]) { const [x, z] = polar(X, zc, R - 300, deg); P.rifts.push({ x, z }); }
+    const ra = obj === 0 ? heroRifts(3) : null;   // EG-HERO-LAY: a hero's rifts set in its walls, where it names enough
+    if (ra) P.rifts.push(...ra);
+    else if (obj === 0) for (const deg of [60, 180, 300]) { const [x, z] = polar(X, zc, R - 300, deg); P.rifts.push({ x, z }); }
     else if (obj === 1) P.foe = { x: X, z: zc + 400 };
     else spot('engine', X, zc);
     spot('niche', X + R - 200, zc);
-    edge = zc + R;
+    edge = H ? H.z0 + H.L : zc + R;
     // the shaft down - or the Galleries' set piece (section 8.8's third fragment)
-    band(edge - 50, edge + 300, BRIDGE_HALF, 'bridge', y);
+    band(edge - back(), edge + 300, BRIDGE_HALF, 'bridge', y);
     edge += 300;
     const set = plain ? null : egSetPieceOf(c, kind, bnd, egTubeCircle(seed));
     if (set) { setPiece(set); island(between(r, 200, 260)); }
@@ -1091,7 +1374,10 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
   if (!['court'].includes(kind)) { const z = edge + PLATE_R; P.end = disc(X, z, PLATE_R, 'end', y); edge = z + PLATE_R; }
   if (twist === 'sutler') spot('sutler', X + 300, 0);
   if (twist === 'bargain') spot('shrine', X - 300, 0);
-  if (twist === 'captive') { const f0 = P.fl[0]; if (f0?.t === 'd') for (const deg of [0, 120, 240]) { const [x, z] = polar(f0.x, f0.z, Math.floor(f0.r / 2), deg); spot('chain', x, z); } else spot('chain', X, Math.floor(edge / 2)); }
+  if (twist === 'captive') {
+    const f0 = hc?.laid ? { t: 'd', x: X, z: hc.zc, r: hc.R } : P.fl[0];   // EG-HERO-LAY: a hero chamber's court, the chains about its middle
+    if (f0?.t === 'd') for (const deg of [0, 120, 240]) { const [x, z] = polar(f0.x, f0.z, Math.floor(f0.r / 2), deg); spot('chain', x, z); } else spot('chain', X, Math.floor(edge / 2));
+  }
   if (slot === 3 || kind === 'scriptorium') spot('niche', X - 350, 0);
   // the cache on every trial hall's end plate (section 17.1)
   if (P.end && kind !== 'brink') spot('cache', P.end.x, P.end.z - 200);
@@ -1106,14 +1392,22 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     for (const d of P.discs) if (Math.abs(d.x - s.x) <= d.r + s.w && d.z - d.r >= far - 1) best = Math.min(best, d.z - d.r - far);
     for (const b of P.bands) if (Math.abs(b.x - s.x) <= b.halfW + s.w && b.z0 >= far - 1) best = Math.min(best, b.z0 - far);
     for (const l of P.lanes) { const lz = Math.min(l.az, l.bz); if (Math.abs(l.ax - s.x) <= l.hw + s.w && lz >= far - 1) best = Math.min(best, lz - far); }
+    // EG-HERO-LAY: a hero's floors are still ground too (each its outline's box across the step and along the road)
+    for (const q of P.heroes) for (const g of q.rec.floors) {
+      const xs = g.poly.map((p) => q.x + p[0]), z0 = q.z + Math.min(...g.poly.map((p) => p[1]));
+      if (Math.min(...xs) - s.w <= s.x && s.x <= Math.max(...xs) + s.w && z0 >= far - 1) best = Math.min(best, z0 - far);
+    }
     s.after = Number.isFinite(best) ? Math.max(0, best) : 0;
   }
+  // EG-HERO-LAY: THE HERO'S FIT over the hall laid (heroHall reads it; THE TIMED SOLVER is asked after)
+  if (fit && P.heroes.length) fit.ok = !fit.why && heroFit(P, edge, kind, fit);
   // the fight's bounding disc (the telegraph pass's floor, the wire's bound)
   let fight = null;
   if (P.fl.length) {
     let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
     for (const f of P.fl) {
       if (f.t === 'd') { x0 = Math.min(x0, f.x - f.r); x1 = Math.max(x1, f.x + f.r); z0 = Math.min(z0, f.z - f.r); z1 = Math.max(z1, f.z + f.r); }
+      else if (f.t === 'p') for (const [px, pz] of f.poly) { x0 = Math.min(x0, px); x1 = Math.max(x1, px); z0 = Math.min(z0, pz); z1 = Math.max(z1, pz); }   // EG-HERO-LAY: a hero's fight floor
       else { x0 = Math.min(x0, f.ax - f.hw, f.bx - f.hw); x1 = Math.max(x1, f.ax + f.hw, f.bx + f.hw); z0 = Math.min(z0, f.az, f.bz); z1 = Math.max(z1, f.az, f.bz); }
     }
     const cx = Math.round((x0 + x1) / 2), cz = Math.round((z0 + z1) / 2);
@@ -1147,7 +1441,7 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     lights: P.lights.map((q) => [m(q[0]), m(q[1]), m(q[2]), q[3]]),
     tube: P.tube ? { x: m(P.tube.x), y: m(P.tube.y), z0: m(P.tube.z0), z1: m(P.tube.z1), halfW: m(P.tube.halfW), start: P.tube.start / 1000, mps: P.tube.mps } : null,
     fork: P.fork ? { x: m(P.fork.x), z: m(P.fork.z), lowX: m(P.fork.lowX), y: m(P.fork.y), yLow: m(P.fork.yLow), plate: m(P.fork.plate), hi: 0, lo: 0 } : null,
-    fl: P.fl.map((f) => (f.t === 'd' ? { t: 'd', x: m(f.x), z: m(f.z), r: m(f.r), y: m(f.y) } : { t: 'l', ax: m(f.ax), az: m(f.az), bx: m(f.bx), bz: m(f.bz), hw: m(f.hw), y: m(f.y) })),
+    fl: P.fl.map((f) => (f.t === 'd' ? { t: 'd', x: m(f.x), z: m(f.z), r: m(f.r), y: m(f.y) } : f.t === 'p' ? { t: 'p', poly: f.poly.map((p) => [m(p[0]), m(p[1])]), y: m(f.y) } : { t: 'l', ax: m(f.ax), az: m(f.az), bx: m(f.bx), bz: m(f.bz), hw: m(f.hw), y: m(f.y) })),
     fight: pt(fight), foe: P.foe ? { x: m(P.foe.x), z: m(P.foe.z) } : null, ring: pt(P.ring), spots, chamber: P.chamber,
     deco: P.deco.map((d) => Object.fromEntries(Object.entries(d).map(([k, v]) => [k, typeof v === 'number' ? m(v) : v]))),
     rifts: P.rifts.map((q) => ({ x: m(q.x), z: m(q.z) })),
@@ -1155,7 +1449,70 @@ function layHall(seed, h, geo, attempt = 0, law = EG_SPEC) {
     gate: P.gate ? { x: m(P.gate.x), z: m(P.gate.z), halfW: m(P.gate.halfW), bearers: P.gate.bearers.map((q) => ({ x: m(q.x), z: m(q.z) })) } : null,
     walk: P.walk ? { x: m(P.walk.x), z0: m(P.walk.z0), z1: m(P.walk.z1), halfW: m(P.walk.halfW) } : null,
     waystones: P.waystones.map((q) => ({ x: m(q.x), z: m(q.z) })),
+    // EG-HERO-LAY - SPEC LAW 7: the hero laid, its law in the hall's frame (metres) - none in a hall that lays none, which is
+    // law 6's hall but its number
+    ...(P.heroes.length ? { heroes: P.heroes.map(heroSaid) } : {}),
   };
+}
+/**
+ * A HERO AS ITS HALL SAYS IT (metres, the hall's frame - its origin `x, y, z`, the foot of its mouth): its id, kit and class,
+ * its fragment's number (`f`, the spec's `frags`), its road, its course's exit (`exit`, a socket of `sockets.out`), its box,
+ * its sockets, its floors (each a polygon at its height, `fight` where blows land), its stairs (each corner at its height),
+ * its open edges (`[floor, edge]`), its ceilings (null: open to the sky) and its walk graph - the record's own law, laid.
+ * What the relay and every screen read of it but its fight floors, stairs, course, hazards, places, alcoves and lights,
+ * which stand in the spec's own fields.
+ */
+function heroSaid({ rec, f, x, y, z, exit, road }) {
+  const at = (q) => [m(x + q[0]), m(z + q[1])], so = (s) => ({ x: m(x + s.x), y: m(y + s.y), z: m(z + s.z), w: m(s.w), h: m(s.h) });
+  return {
+    id: rec.id, kit: rec.kit, cls: rec.class, f, road, x: m(x), y: m(y), z: m(z), exit, box: egFragBoxAt(rec, x, y, z).map(m),
+    sockets: { in: so(rec.sockets.in), out: rec.sockets.out.map(so) },
+    floors: rec.floors.map((g) => ({ y: m(y + g.y), poly: g.poly.map(at), fight: g.fight ? 1 : 0 })),
+    ramps: rec.ramps.map((q) => ({ poly: q.poly.map((p) => [m(x + p[0]), m(y + p[1]), m(z + p[2])]) })),
+    open: rec.open.map((e) => [e[0], e[1]]),
+    ceil: rec.ceil ? rec.ceil.map((c) => ({ y: m(y + c.y), poly: c.poly.map(at) })) : null,
+    graph: { nodes: rec.graph.nodes.map((n) => [m(x + n[0]), m(y + n[1]), m(z + n[2]), m(n[3])]), edges: rec.graph.edges.map((e) => [e[0], e[1]]) },
+  };
+}
+/**
+ * THE HERO'S FIT OVER THE HALL LAID (spec law 7; cm, the hall's parts `P` before they are said - `edge` the hall's length):
+ * the hall inside EG_HALL_LEN_MAX and its cap of fragments; the hero's box EG_FRAG_APART_CM from every other fragment's
+ * volume and every other piece's swept box with its hanging underside (EG_HANG_CM) - one joined at its mouth or exit aside
+ * (apartOrJoined) - and a Low Road's vault EG_VAULT_UNDER_CM under any underside over it; a chamber's trial on its fight
+ * floors (every place the hall set inside its box - a rift, a spot, the foe - on one of them, its own anchors aside). Says why
+ * not into `fit`. Pure.
+ * @param {any} P @param {number} edge @param {string} kind @param {{ ok: boolean, why: string }} fit
+ */
+function heroFit(P, edge, kind, fit) {
+  const no = (why) => { fit.why = why; return false; };
+  const H = P.heroes[0], rec = H.rec, hb = egFragBoxAt(rec, H.x, H.y, H.z);
+  if (edge > EG_HALL_LEN_MAX * 100) return no(`the hall runs ${edge} cm, past ${EG_HALL_LEN_MAX} m`);
+  if (P.frags.length > EG_FRAGS_MAX) return no(`${P.frags.length} fragments, past the hall's cap`);
+  // VOLUMES STAND APART (section 11.5): every other fragment's volume - a code-built one's floors and vault, a chamber's court
+  for (const [i, g] of P.frags.entries()) {
+    if (i === H.f) continue;
+    const q = P.caves.find((cv) => cv.z0 === g.z0 && cv.x === g.x);
+    const gb = q ? [q.x - q.halfW, Math.min(q.y, q.yB), q.z0, q.x + q.halfW, Math.max(q.y, q.yB) + q.height, q.z1]
+      : g.cls === 'chamber' ? [g.x - Math.floor((g.z1 - g.z0) / 2), g.y, g.z0, g.x + Math.floor((g.z1 - g.z0) / 2), g.y + EG_FRAG_HEADROOM_CM.chamber, g.z1]
+        : [g.x - EG_STEP.still.w, g.y - EG_DROP_CM, g.z0, g.x + EG_STEP.still.w, g.y + EG_FRAG_HEADROOM_CM.passage, g.z1];   // a set piece's flights
+    if (!apartOrJoined(hb, gb)) return no(`its box meets fragment ${i}'s`);
+  }
+  // ...and every piece's swept box but its own inner course's, its hanging underside under it
+  for (const s of P.steps) {
+    if (s.road === H.road && s.z >= hb[2] && s.z <= hb[5] && s.kit === rec.kit) continue;
+    const sw = egFragSwept(s), sb = [sw[0], sw[1] - EG_HANG_CM, sw[2], sw[3], sw[4], sw[5]];
+    if (!apartOrJoined(hb, sb)) return no(`its box meets step ${s.i}'s swept box`);
+    if (sb[0] < hb[3] && hb[0] < sb[3] && sb[2] < hb[5] && hb[2] < sb[5] && sb[1] - hb[4] < EG_VAULT_UNDER_CM && sb[4] > hb[4]) return no(`its vault under step ${s.i}'s underside by under ${EG_VAULT_UNDER_CM} cm`);
+  }
+  // a chamber's trial on its fight floors
+  if (rec.class === 'chamber') {
+    const floors = P.fl.filter((g) => g.t === 'p');   // the hero's (the hall lays no other polygon)
+    const inBox = (x, z) => x >= hb[0] && x <= hb[3] && z >= hb[2] && z <= hb[5];
+    const on = (x, z) => floors.some((g) => egFragInPoly(g.poly, x, z));
+    const places = [...Object.values(P.spots).flat().filter((q) => q.f !== H.f), ...P.rifts.filter((q) => !q.a), ...(P.foe ? [P.foe] : [])];
+    for (const q of places) if (inBox(q.x, q.z) && !on(q.x, q.z)) return no(`its ${kind}'s place at (${q.x}, ${q.z}) stands on none of its fight floors`);
+  }
+  return true;
 }
 
 /** THE COLLAPSING TUBE's circle (section 11.3 - the Galleries' set piece): the first circle from the third whose
@@ -1188,6 +1545,8 @@ export function egOnFloor(spec, x, z, pad = 0) {
   for (const b of spec.bands) if (z >= b.z0 - pad && z <= b.z1 + pad && Math.abs(x - b.x) <= b.halfW + pad) return true;
   for (const l of spec.lanes ?? []) if (segD(x, z, l.ax, l.az, l.bx, l.bz).d <= l.hw + pad) return true;
   for (const s of spec.steps) if (Math.abs(z - s.z) <= s.d / 2 + pad && Math.abs(x - s.x) <= s.w / 2 + s.amp + pad) return true;
+  // EG-HERO-LAY: a hero's floors and stairs (its law's own outlines)
+  for (const q of spec.heroes ?? []) for (const g of [...q.floors, ...q.ramps]) if (egPolyIn(g.poly.map((p) => (p.length > 2 ? [p[0], p[2]] : p)), x, z, pad)) return true;
   return false;
 }
 /** Is the Spire-frame point (sx, z) within hall `spec`'s ground at all (its x strip about its origin and its length,
@@ -1204,15 +1563,16 @@ export function egSlotAt(x) {
 /** Is (x, z) on the hall's arrival plate (pad m about)? On its end plate, at its door? */
 export const egOnArrive = (spec, x, z, pad = 1) => !!spec.arrive && Math.hypot(x - spec.arrive.x, z - spec.arrive.z) <= spec.arrive.r + pad;
 export const egAtDoor = (spec, x, z, pad = 0) => !!spec.end && Math.hypot(x - spec.end.x, z - spec.end.z) <= EG_DOOR_REACH_M + pad;
-/** Is (x, z) on THE FIGHT FLOOR (its discs and lanes - section 11.7), `pad` m about? */
+/** Is (x, z) on THE FIGHT FLOOR (its discs and lanes - section 11.7; EG-HERO-LAY: a hero's polygons), `pad` m about? A
+ *  negative pad asks that far inside its edge. */
 export function egOnFight(spec, x, z, pad = 0) {
   for (const f of spec.fl ?? []) {
-    if (f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segD(x, z, f.ax, f.az, f.bx, f.bz).d <= f.hw + pad) return true;
+    if (f.t === 'p' ? egPieceIn(f, x, z, pad) : f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segD(x, z, f.ax, f.az, f.bx, f.bz).d <= f.hw + pad) return true;
   }
   return false;
 }
 /** The fight floor's piece under (x, z) (pad m about), or null. */
-export const egFightPieceAt = (spec, x, z, pad = 0) => (spec.fl ?? []).find((f) => (f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segD(x, z, f.ax, f.az, f.bx, f.bz).d <= f.hw + pad)) ?? null;
+export const egFightPieceAt = (spec, x, z, pad = 0) => (spec.fl ?? []).find((f) => (f.t === 'p' ? egPieceIn(f, x, z, pad) : f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segD(x, z, f.ax, f.az, f.bx, f.bz).d <= f.hw + pad)) ?? null;
 /** The nearest point of the fight floor to (x, z), `inset` m inside its edge (the legion and the lord keep to it). */
 export function egKeepOnFight(spec, x, z, inset = 0) {
   if (!spec.fl?.length) return [x, z];
@@ -1220,7 +1580,8 @@ export function egKeepOnFight(spec, x, z, inset = 0) {
   let best = null, bd = Infinity;
   for (const f of spec.fl) {
     let px, pz, d;
-    if (f.t === 'd') {
+    if (f.t === 'p') { [px, pz] = egPolyKeep(f.poly, x, z, inset); d = Math.hypot(px - x, pz - z); }   // EG-HERO-LAY: a hero's fight floor
+    else if (f.t === 'd') {
       const dx = x - f.x, dz = z - f.z, dd = Math.hypot(dx, dz), R = Math.max(0, f.r - inset);
       px = dd <= R ? x : f.x + (dx / (dd || 1)) * R; pz = dd <= R ? z : f.z + (dz / (dd || 1)) * R; d = Math.max(0, dd - R);
     } else {

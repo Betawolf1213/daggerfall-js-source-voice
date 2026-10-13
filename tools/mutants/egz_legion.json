@@ -20,7 +20,7 @@
   {
     "name": "EGZ-no-walk-within-a-region",
     "file": "src/net/egWalkGraph.js",
-    "old": "if (nodes[a].rg === nodes[b].rg) edge(",
+    "old": "if (nodes[a].rg === nodes[b].rg && seesRg(view, rg, nodes[a].rg, nodes[a].x, nodes[a].z, nodes[b].x, nodes[b].z)) edge(",
     "new": "if (false) edge(",
     "tests": [
       "test/egz_legion.test.js"

@@ -186,7 +186,7 @@ test('EG6c THE RECORD AS A HALL READS IT: the inner course as a hall spec\'s ste
 });
 
 test('EG6c WHERE A BAKED FRAGMENT IS REGISTERED (section 11.6): its law in net/egHeroFrags.js, held to the reader at import and frozen; its mesh in world/egHeroFragModel.js beside its law (the same bake); the reference laid by no hall; its pictures its band\'s archive (world/pseudoArchives.js - no number of its own); its mesh through the one mesh kit (world/meshKit.js `mesh`), moved to where it is laid with its own normals and UVs, packed with the hall\'s code-built shapes; its collider the proxy (mutants: the reference laid; a mesh unmoved; normals or UVs not carried; another band\'s archive)', () => {
-  assert.deepEqual(Object.keys(EG_HERO_FRAGS), ['egRefFrag', 'egheroOssuary', 'egheroMistStair', 'egheroGloam', 'egheroEclipse', 'egheroCaverns', 'egheroStacks', 'egheroColonnade'], 'the reference first, then every band\'s heroes (EG-HERO - PIN MOVED: each band\'s own test pins its heroes)');
+  assert.deepEqual(Object.keys(EG_HERO_FRAGS), ['egRefFrag', 'egheroOssuary', 'egheroMistStair', 'egheroGloam', 'egheroEclipse', 'egheroCaverns', 'egheroStacks', 'egheroColonnade', 'egheroForgeGut', 'egheroClanPit', 'egheroDeepCaverns'], 'the reference first, then every band\'s heroes (EG-HERO - PIN MOVED: each band\'s own test pins its heroes)');
   assert.ok(Object.isFrozen(EG_HERO_FRAGS) && Object.isFrozen(EG_HERO_FRAGS.egRefFrag));
   assert.equal(JSON.stringify(EG_HERO_FRAGS.egRefFrag), JSON.stringify(LAW));
   assert.equal(EG_HERO_REFERENCE, 'reference');

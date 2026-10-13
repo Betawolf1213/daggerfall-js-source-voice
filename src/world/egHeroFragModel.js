@@ -12,8 +12,9 @@
 //   - its MESH goes through the one mesh kit (world/meshKit.js `mesh`) into the hall's own buckets, moved to where it is
 //     laid, so it packs with the hall's code-built shapes in one model (THE SWAP's slices, section 7);
 //   - its LAW is net/egHeroFrags.js's, held to net/egFragLaw.js's reader.
-// Laying one into a hall (world/egHall.js beside the kits' fragments, its proxy in the hall's collider buckets) is for when
-// Mac's arrive; the reference (`egRefFrag`) is laid by none. Not a DFU member. Ledger A (ELITE-GATES).
+// LAID (EG-HERO-LAY, spec law 7): world/egHall.js draws a hall's hero (net/egLaw.js's `heroes`) through egHeroFragInto into
+// its circle's one mesh at the hero's origin and lays its proxy in the circle's one collider bucket (egHeroFragCollider) -
+// freed with the circle; the reference (`egRefFrag`) is laid by none. Not a DFU member. Ledger A (ELITE-GATES).
 import { createMeshKit } from './meshKit.js';
 import { EG_BAND_ARCHIVES } from './pseudoArchives.js';
 import { EG_HERO_FRAGS } from '../net/egHeroFrags.js';
@@ -27,6 +28,10 @@ import EG_HERO_ECLIPSE_MESH from '../assets/egfrags/egheroEclipse.mesh.json' wit
 import EG_HERO_CAVERNS_MESH from '../assets/egfrags/egheroCaverns.mesh.json' with { type: 'json' };
 import EG_HERO_STACKS_MESH from '../assets/egfrags/egheroStacks.mesh.json' with { type: 'json' };
 import EG_HERO_COLONNADE_MESH from '../assets/egfrags/egheroColonnade.mesh.json' with { type: 'json' };
+// EG-HERO (2026-10-13): the Havoc Wellhead's three hero fragments' mesh halves (net/egHeroFrags.js holds their laws).
+import EG_HERO_FORGE_GUT_MESH from '../assets/egfrags/egheroForgeGut.mesh.json' with { type: 'json' };
+import EG_HERO_CLAN_PIT_MESH from '../assets/egfrags/egheroClanPit.mesh.json' with { type: 'json' };
+import EG_HERO_DEEP_CAVERNS_MESH from '../assets/egfrags/egheroDeepCaverns.mesh.json' with { type: 'json' };
 
 /** A registry of mesh halves, by id: each beside its law half in `laws` (the same id, the same band, the same bake) - or
  *  refused, naming it. */
@@ -47,20 +52,24 @@ export const EG_HERO_FRAG_MESHES = egHeroFragMeshes([
   EG_HERO_CAVERNS_MESH,
   EG_HERO_STACKS_MESH,
   EG_HERO_COLONNADE_MESH,
+  EG_HERO_FORGE_GUT_MESH,
+  EG_HERO_CLAN_PIT_MESH,
+  EG_HERO_DEEP_CAVERNS_MESH,
 ]);
 
-/** Fragment `id`'s drawn mesh into kit `kit` (world/meshKit.js), its origin laid at `at` (m, the hall's frame): a bucket a
- *  dress record. */
-export function egHeroFragInto(kit, id, at = [0, 0, 0]) {
-  const mesh = EG_HERO_FRAG_MESHES[id];
+/** Fragment `id`'s drawn mesh into kit `kit` (world/meshKit.js, or anything with its `mesh`), its origin laid at `at` (m, the
+ *  frame `kit` builds in): a bucket a dress record. EG-HERO-LAY: `meshes` the registry it is read from (a test's seam). */
+export function egHeroFragInto(kit, id, at = [0, 0, 0], meshes = EG_HERO_FRAG_MESHES) {
+  const mesh = meshes[id];
   for (const s of mesh.subMeshes) kit.mesh(s.record, mesh, { start: s.startIndex, count: s.primitiveCount, at });
   return kit;
 }
 /** Fragment `id` alone as renderer.createMesh's model, under its band's archive. */
 export const egHeroFragModel = (id) => egHeroFragInto(createMeshKit(), id).pack(EG_BAND_ARCHIVES[EG_HERO_FRAGS[id].band]);
-/** Fragment `id`'s collider proxy (section 11.6 - never the drawn mesh) as a triangle soup, its origin laid at `at` (m). */
-export function egHeroFragCollider(id, at = [0, 0, 0]) {
-  const c = EG_HERO_FRAG_MESHES[id].collider, out = new Float32Array(c.length);
+/** Fragment `id`'s collider proxy (section 11.6 - never the drawn mesh) as a triangle soup, its origin laid at `at` (m).
+ *  EG-HERO-LAY: `meshes` the registry it is read from (a test's seam). */
+export function egHeroFragCollider(id, at = [0, 0, 0], meshes = EG_HERO_FRAG_MESHES) {
+  const c = meshes[id].collider, out = new Float32Array(c.length);
   for (let i = 0; i < c.length; i++) out[i] = c[i] + at[i % 3];
   return out;
 }
