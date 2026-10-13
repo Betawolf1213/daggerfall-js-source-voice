@@ -60,6 +60,16 @@ import {
 export const HOME_TOWN_TTL_MS = 60_000;
 /** After an unanswered ask, how long before the next - a service that is down is not asked at every door. */
 export const HOME_RETRY_MS = 10_000;
+/**
+ * HOMES-SHED (2026-10-13, the account database overloaded from 14:11 UTC): A FAILED ASK BACKS OFF, YARD-SHED's law
+ * (scenes/homeYards.js yardRetryMs) on the service's busiest route - 88,079 asks of a town's homes in the outage's hour.
+ * A town unanswered was asked again every HOME_RETRY_MS while a fresh answer waits HOME_TOWN_TTL_MS, so a database too
+ * slow to answer was asked six times as often as one that answered. Now each failure in a row doubles the wait, to
+ * HOME_RETRY_MAX_MS; an answer starts the count again.
+ */
+export const HOME_RETRY_MAX_MS = 300_000;
+/** The wait before a town's next ask after `n` failures in a row (ms). */
+export const homeRetryMs = (n) => Math.min(HOME_RETRY_MAX_MS, HOME_RETRY_MS * 2 ** Math.max(0, n - 1));
 /** How long a door waits for a town's first answer before it goes on under Daggerfall's own law. */
 export const HOME_ASK_WAIT_MS = 2_500;
 
@@ -364,8 +374,9 @@ export function createOnlineHomes({ api, character = () => null, now = () => Dat
   const towns = new Map();
   /** @type {Map<number, Promise<boolean>>} */
   const asking = new Map();
-  /** @type {Map<number, number>} */
+  /** @type {Map<number, {at: number, n: number}>} HOMES-SHED: each town's last unanswered ask, and how many in a row */
   const failed = new Map();
+  const fail = (id) => { failed.set(id, { at: now(), n: (failed.get(id)?.n ?? 0) + 1 }); return towns.has(id); };
   /** @type {Map<number, number>} FB1001 LOOK-STALE: my answered writes to each town, counted - and the count each town's
    *  ask in flight set out under. An answer that set out before a write of mine landed is older than the row I wrote. */
   const writes = new Map();
@@ -388,14 +399,15 @@ export function createOnlineHomes({ api, character = () => null, now = () => Dat
     // NEVER DROPS): that flight set out before whatever forced this one (a look painted, a room rented), and its answer
     // does not hold it. The one exception is a forced flight that set out after my last write: its answer is the one asked
     if (flying) return !force || (forcedFlight.has(id) && askedAt.get(id) === writesTo(id)) ? flying : afterFlight(id, flying);
-    if (!force && now() - (failed.get(id) ?? -Infinity) < HOME_RETRY_MS) return Promise.resolve(!!had);
+    const f = failed.get(id);
+    if (!force && f && now() - f.at < homeRetryMs(f.n)) return Promise.resolve(!!had);
     const gen = writesTo(id);
     const p = Promise.resolve()
       .then(() => api.town(id, character()))   // HOME-RENT: the playing character's own tenancies ride the answer
       .then((r) => {
         const list = r?.ok ? r.data?.homes : null;
         // unanswered: what was known stands, nothing new is believed, and the next ask waits a little
-        if (!Array.isArray(list)) { failed.set(id, now()); return towns.has(id); }
+        if (!Array.isArray(list)) return fail(id);
         // FB1001 LOOK-STALE: the service answered before a write of mine landed - a painted look, a door's entry, a claim
         // - so the town as it stood then is never believed over it (it put a painted house back for a minute); the
         // write's own ask follows this one
@@ -429,7 +441,7 @@ export function createOnlineHomes({ api, character = () => null, now = () => Dat
         failed.delete(id);
         version++;
         return true;
-      }, () => { failed.set(id, now()); return towns.has(id); })
+      }, () => fail(id))
       .finally(() => { asking.delete(id); askedAt.delete(id); forcedFlight.delete(id); });
     asking.set(id, p);
     askedAt.set(id, gen);

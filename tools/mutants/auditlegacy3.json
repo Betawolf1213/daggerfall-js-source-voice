@@ -356,7 +356,7 @@
     "name": "AUDIT-LEGACY-III-A2-newer-save-drops-the-stores-facts",
     "file": "src/scenes/legacyHost.js",
     "old": "  if (base === saved) mergeFacts(out, stored);\n",
-    "new": "",
+    "new": "  if (base === saved) /* the store's facts dropped */;\n",
     "tests": [
       "test/auditlegacy3.test.js"
     ]

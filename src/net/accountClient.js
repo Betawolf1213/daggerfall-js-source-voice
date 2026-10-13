@@ -62,6 +62,7 @@ import { SERPENT_EMBERS } from './serpentHoardLaw.js';   // AUDIT 625 P4: the em
 import { HERALDRY_CHANGE_DRAKES } from './heraldryLaw.js';   // GUILD1d: a change's cost, in its refusal's own sentence
 import { t, localizedTable } from '../systems/textManager.js';   // L10N4: the refusals in the player's language, each read when it is said
 import { VENDOR_REFUSAL_WORDS } from './vendorLaw.js';   // HOME-VENDOR: a trader's refusals
+import { busyRead, busyAnswer, busyWaitMs, retryAfterMs, BUSY_HOLD_MS } from './busyLaw.js';   // BUSY-GATE: the reads that stand back while the service is overloaded
 import { ARENA_TEXT } from '../systems/arenaText.js';   // ARENA4b: the arena's refusals, in its own frozen table
 import { cardById } from './iliacCards.js';   // AUDIT CARDS-6 D7: the card a short deck lacks, said by its name
 import { jittered } from './backoff.js';   // STORM-SHED: a failed mint's hold, jittered as every book's wait is
@@ -792,7 +793,16 @@ export function noteD1Bookmark(/** @type {string|null} */ secret, /** @type {unk
  *  (systems/realmSaves.js realmAsk, systems/cloudSaves.js ask). */
 export function forgetD1Bookmark() { _d1Mark = { secret: null, mark: null }; _d1Era += 1; }
 
-export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = null, keepalive = false }, path, body = null) {
+/** BUSY-GATE (net/busyLaw.js): the page's word from the service on its load - the overload answers in a row (`n`) and
+ *  the moment the reads may be asked again (`until`, ms). One for the page: the database is one, whichever book asked. */
+let _busy = { n: 0, until: 0 };
+/** BUSY-GATE: the page's busy word let go (a test's fresh page). */
+export function _resetBusyForTests() { _busy = { n: 0, until: 0 }; }
+/** BUSY-GATE: the moment the reads may be asked again (ms; 0 when the service has said nothing). */
+export const busyUntil = () => _busy.until;
+const holdFor = (/** @type {number} */ ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
+
+export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = null, keepalive = false, now = Date.now, rand = Math.random, hold = holdFor }, path, body = null) {
   const headers = { accept: 'application/json' };
   if (body) headers['content-type'] = 'application/json';
   // THE ONE PLACE A CREDENTIAL IS SENT. There is no `?secret=` branch
@@ -800,6 +810,13 @@ export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = nul
   // that door on the service and this side does not get to reopen it.
   if (secret) headers.authorization = `Bearer ${secret}`;
   const method = body ? 'POST' : 'GET';
+  // BUSY-GATE: WHILE THE SERVICE SAYS IT IS OVERLOADED, ITS READS ARE NOT ASKED. A held read is answered as the service
+  // itself answers one then - `server`, 503, which every book asks again on its own schedule - without the request, and
+  // never at once (BUSY_HOLD_MS). Only the reads busyLaw.js names: a write, a sign-in or an act always goes.
+  if (busyRead(path, method) && now() < _busy.until) {
+    await hold(BUSY_HOLD_MS);
+    return { ok: false, error: 'server', status: 503, busy: true };
+  }
   // AUDIT SCALE II A-2: a bookmark read carries the page's bookmark; any other call forgets it, now and once answered
   const read = D1_BOOKMARK_READS.get(path) === method;
   if (!read) forgetD1Bookmark();
@@ -837,6 +854,14 @@ export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = nul
   try { data = await res.json(); parsed = true; } catch { data = null; }
 
   if (!res.ok) {
+    // BUSY-GATE: the service says it is overloaded - its reads stand back, the wait doubling with each such answer in a
+    // row, never shorter than the answer's own Retry-After
+    if (busyAnswer(res.status, typeof data?.error === 'string' ? data.error : 'server')) {
+      let after = null;
+      try { after = res.headers?.get?.('retry-after') ?? null; } catch { after = null; }
+      const n = _busy.n + 1;
+      _busy = { n, until: Math.max(_busy.until, now() + Math.max(busyWaitMs(n, rand()), retryAfterMs(after))) };
+    }
     // The service says `{ error: '<word>' }`. A proxy, a 502 or an
     // HTML error page says nothing we can read, and `server` is the
     // honest answer for that rather than a guess at which word it meant.
@@ -850,6 +875,7 @@ export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = nul
   // with its own id (the service's `repeat` answers one that landed), a read shows the last good view. As `ok` with no
   // data it let a kept purchase go unminted and cached a blank market for a minute. A 204 says it has nothing to say.
   if (!parsed && res.status !== 204) { forgetD1Bookmark(); return { ok: false, error: 'offline', unknown: true, status: res.status }; }   // AUDIT SCALE II A-6: `offline`, as one never made
+  _busy = { n: 0, until: _busy.until };   // BUSY-GATE: an answer starts the count again; a hold already running runs out
   return { ok: true, data, status: res.status };
 }
 

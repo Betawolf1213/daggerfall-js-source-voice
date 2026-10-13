@@ -33,7 +33,8 @@ Every one of these is a standing call of Mac's, and no slice moves it:
    answer my blows at a FOE and a foe's blows at me, and a duel's blows reach neither (SET2's damage door passes a
    duel's blow without asking the port, and every blow modifier here refuses a target that is a player).
 6. **Off is DFU exactly** (LR1). Every slice hangs off the one `loot-rarity` row: off, no field is written, no read
-   moves, no champion stands, no line of light is drawn, no shard is minted.
+   moves, no champion stands, no line of light is drawn for a tier, no shard is minted. (A find another arc marks draws
+   its own line, the row on or off - section 13.)
 7. **The Aetheric is never rolled** (SET6). The Exalted is a Legendary's variant, not a rung: the ladder keeps its six.
 
 ## 2. The shape, end to end
@@ -235,7 +236,9 @@ A body or a pile holding a Rare or better stands a thin line of its best tier's 
 the find's top, never a beam beside it) through the gate spoils' own renderer (`render/spoilsGlow.js`: additive,
 fogged, no light, no new program), a Legendary's and better pulsing. The nearest eight within 40 m, in the dungeon,
 the street and a building; gone the moment its best is taken below Rare. A peer's body in the street shows none: its
-list lives on its owner's side (the street's own law). Off, nothing draws.
+list lives on its owner's side (the street's own law). Off, nothing draws for a tier. A find that carries its own mark
+draws its own line, the row on or off, each kind under its own word (`lootLines.js setLootMarksLive(on, by)`): the open
+zone's remains (WILD1) and the house's fallen (`01-Overview/Field-Bugs-2026-10-13d.md` REMAINS-STAND; AUDIT FB1013d C13).
 
 ## 14. The slices
 

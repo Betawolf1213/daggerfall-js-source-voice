@@ -47,8 +47,8 @@
   {
     "name": "ITEM-WALK-B-remains-unrepaired",
     "file": "src/scenes/legacyHost.js",
-    "old": "        repairItemLists([r.items]);",
-    "new": "",
+    "old": "    if (!repairedLists.has(r.items)) { repairItemLists([r.items]); repairedLists.add(r.items); }",
+    "new": "    if (!repairedLists.has(r.items)) repairedLists.add(r.items);",
     "tests": [
       "test/itemwalk.test.js"
     ]
