@@ -1253,3 +1253,79 @@ fixes and what is recorded for Mac are `01-Overview/Audit-FAR-SEA1.md`. What mov
   stays the water's one fog law - and its band fades over its outer half (L3), so water running down to the sea
   crosses into its haze without a line.
 - **A crossing builds one buffer** (P4), as the ring alone did.
+
+## SHORE-SILT - A SHORE'S PAINTED WATER GOES UNDER THE SILT (2026-10-12)
+
+Dudey, with a video of a village pond in the rain and the town's water: *"how do we fix this water issue, ocean water is
+not the problem more like inland in cities, rivers and so on"*. The pond's bank - and Daggerfall's garden canal, shot
+with `tools/waterLookProbe.mjs` - was freckled with flat blue blotches between the grass and the water, smeared into
+streaks at a walker's eye height.
+
+**Why.** The bed's face (WATER-NEXT 2) turns a tile's water to silt by the corner table's BILINEAR coverage, and the
+sheet stops at the same line. A shore record's art paints its water as a ragged shape that reaches past it: on the
+classic temperate set 7-34% of a shore tile (records 21, 22, 30-32, 37-44, 49, 50) was painted water outside both; Vanilla
+Enhanced, worn by default, feathers its water further into the bank in blue-greys record 0 never paints. Neither the bed
+nor the sheet reached them: blue paint on the bank. The sea's coast is Deep Waters' floor, which is why the ocean read
+clean; the towns' ponds and moats and the painter's rivers and streams all lie on these records.
+
+**The rule** (`world/puddleMask.js` `shoreWaterColours`, `markShoreWater`). A shore's water is the colours the wet tiles
+(record 0 and the shores) paint and the archive's dry tiles (no water at any turn) paint twenty times less, as a share
+of their texels (`SHORE_DRY_RATIO` 0.05) - never WATER5's tolerance, which on ARENA2 calls 30-100% of a dry tile wet in
+the mountains, the swamp and the winter and rain sets. Cleaned into shapes at the art's own scale (32 texels a 64-square
+tile, 512 a 256-square one). Written into the shore layers' alpha by the upload's one marking (`markPuddleWater`), so
+both hosts take it with no new line; a mod's set takes the classic shape (`carryPuddleMask`), and a set painted in a
+palette (`palettedSet`: its water tile in 256 colours or fewer - Vanilla Enhanced) is read by its own colours. Measured on
+ARENA2: under 1% of any archive's dry texels read wet; record 21 about half water, 22 a corner, 5 three corners.
+
+**The silt** (`render/waterBedGlsl.js` `bedCover`): on a part-water tile the art's water goes under the silt too, read
+from the alpha only there; the share the art adds past the sheet - the FRINGE, which no water darkens - is wet mud
+(`WET_MUD` 0.62 of the silt's grey, at `WET_MUD_SHARE` 0.8): bare silt there read as bright orange flecks in Vanilla
+Enhanced's grass. Both terrain programs. The classic skin draws DFU's tile as before (the bed is off). DRAWN ONLY: the
+feet, the townsfolk's paths and the grass read their own tables.
+
+**THE FOUR HOSTS.** The streaming world (`scenes/world.js`) and the fixed town (`scenes/exterior.js`) upload through
+`markPuddleWater` and draw the bed; the interiors (`scenes/worldModes.js`) and the dungeons (`scenes/dungeonContext.js`)
+draw no enhanced water and no RMB ground.
+
+**Not changed, recorded.** A small pond is shallow by the bed's law (BED_RAMP is three tiles; a pond two tiles across
+reaches about a unit), so it reads clear and its silt shows through - the look WATER-NEXT chose. A deeper or murkier
+small pond is a tuning of `BED_RAMP`/`WATER_ABSORB`, not this fix.
+
+**Pinned** in `test/shoresilt.test.js` (6). PIN MOVED: `test/waternext.test.js` (the bed's off-switch answers a
+`vec2`). Mutants: `tools/mutants/shoresilt.json` (11, all dead); `tools/mutants/waternext.json`'s BEDFACE-always-on
+and BEDFACE-puddle-lost re-aimed at the `vec2` text (both dead).
+
+## BANK-FLUSH - THE WATER'S EDGE MEETS THE GROUND (2026-10-12)
+
+Dudey, on the same video, after SHORE-SILT: *"what i meant with the video is the graphics glitch on the bank - you can look
+under the blue, it's like the whole water texture is flying"*.
+
+**Why.** The bed (WATER-NEXT 2) lowers grid VERTICES: every wet vertex by the bed's profile, a unit or so a cell in
+from the bank. The sheet stays where the ground stood and stops MID-TILE - where its corner table's bilinear coverage
+crosses a half, or where a puddle record's art stops. A shore tile runs from a bank vertex (0) to a wet one, so at the
+sheet's edge the ground had already fallen half the wet vertex's depth: the water's edge hung about half a unit over
+the slope, and from the bank the eye looked under the sheet at the carved ground beneath it. Ponds, moats, rivers and
+streams - every inland shore; the sea's coast is Deep Waters' floor.
+
+**The law** (`world/waterBed.js` `SHELF_CHAMFER`, `bedFields`, `waterBedCarve`). Every tile the sheet has an edge in
+has a corner its own table calls dry - and that corner is a dry vertex - or is a puddle record. So the ground is carved
+only past one cell (the 3-4 chamfer's 3 and 4, a diagonal included) from the bank, and never at a vertex touching a
+puddle tile; the carve's profile starts there and still reaches `BED_DEPTH` in open water. The SHEET keeps the bed's own
+depths, as before: the water is shaded as deep as it was, its foam and its tint where they were - only the ground under
+it moved, and every edge of the sheet now lies on uncarved ground (a hand's breadth under it, `WATER_LIFT`). `depths`
+in a bed is now what the GROUND moved (the snow and the town's heights read the drawn ground by it), `sheetDepths` the
+water's. The swell grows only past the shelf's own depth (`waterCorners.js` `SHELF_SHEET_DEPTH`, 1.668), so a trough
+over the uncarved shelf never dips under it. Deep Waters' cap re-carve (`dwRecarve`) compares both fields.
+
+**THE FOUR HOSTS.** The streaming world (`scenes/world.js`, the kernel's `gridBed` and `dwRecarve`) and the fixed town
+(`scenes/exterior.js`, `waterBedOf` over its `flatGrid`) carve by the one law; the interiors (`scenes/worldModes.js`) and
+the dungeons (`scenes/dungeonContext.js`) draw no enhanced water and carve no bed.
+
+**What it costs.** One more Float32Array a grid beside the depths, filled in the same chamfer pass; a pass over the
+tiles for puddles. The bed is shallower within a cell of the bank and a cell narrower: a pond two tiles across is no
+longer carved at all - its sheet still reads the bed's depth, so it is tinted as it was, over its silt.
+
+**Pinned** in `test/bankflush.test.js` (3). PIN MOVED: `test/waternext.test.js` and `test/audit_waternext.test.js` (the
+swell's growth; the re-carve's fields). Mutants: `tools/mutants/bankflush.json` (6, all dead);
+`tools/mutants/audit_waternext.json`'s AUDIT-WATER-NEXT-H2-swell-on-uncarved-ground re-aimed at the new line.
+

@@ -164,7 +164,7 @@
   {
     "name": "SWELL-on-the-bank",
     "file": "src/render/waterSurface.js",
-    "old": "  float grow = uOpen == 1 ? 1.0 : (aDepth < 0.0 ? 0.0 : smoothstep(0.0, ${SWELL_DEPTH.toFixed(2)}, aDepth));",
+    "old": "  float grow = uOpen == 1 ? 1.0 : (aDepth < 0.0 ? 0.0 : smoothstep(${SHELF_SHEET_DEPTH.toFixed(3)}, ${(SHELF_SHEET_DEPTH + SWELL_DEPTH).toFixed(3)}, aDepth));",
     "new": "  float grow = uOpen == 1 ? 1.0 : (aDepth < 0.0 ? 0.0 : 1.0);",
     "tests": [
       "test/waternext.test.js"
@@ -236,8 +236,8 @@
   {
     "name": "BEDFACE-always-on",
     "file": "src/render/waterBedGlsl.js",
-    "old": "  if (uWaterBed < 0.5) return 0.0;",
-    "new": "  if (uWaterBed < -1.0) return 0.0;",
+    "old": "  if (uWaterBed < 0.5) return vec2(0.0);",
+    "new": "  if (uWaterBed < -1.0) return vec2(0.0);",
     "tests": [
       "test/waternext.test.js"
     ]
@@ -245,8 +245,8 @@
   {
     "name": "BEDFACE-puddle-lost",
     "file": "src/render/waterBedGlsl.js",
-    "old": "  if (${PUDDLE_RECORDS.map((r) => `rec == ${r}u`).join(' || ')}) return 0.0;",
-    "new": "  if (false) return 0.0;",
+    "old": "  if (${PUDDLE_RECORDS.map((r) => `rec == ${r}u`).join(' || ')}) return vec2(0.0);",
+    "new": "  if (false) return vec2(0.0);",
     "tests": [
       "test/waternext.test.js"
     ]

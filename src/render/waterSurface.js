@@ -41,7 +41,7 @@ import { FOG_GLSL } from './fogGlsl.js';   // AUDIT 68 S17-fog-glsl-dup: the fog
 import { SEA_LOOK_GLSL, SEA_HAZE_BAND } from './horizonHaze.js';   // FAR-SEA1: the sea takes the far ring's haze; AUDIT FAR-SEA1 C12: and the open sea's light is one text with the ring's sea
 import { pageParam } from '../systems/pageQuery.js';
 import { RIPPLE_CELLS, RIPPLE_SCALE } from '../world/waterRipples.js';
-import { NO_BED_DEPTH } from '../world/waterCorners.js';   // AUDIT WATER-NEXT H2: its one home, the water's leaf (the kernel's worker writes it)   // WATER-NEXT 4: the ripple field the shader reads   // PERF-URL: the page's query, parsed once a search
+import { NO_BED_DEPTH, SHELF_SHEET_DEPTH } from '../world/waterCorners.js';   // AUDIT WATER-NEXT H2: its one home, the water's leaf (the kernel's worker writes it)   // WATER-NEXT 4: the ripple field the shader reads   // PERF-URL: the page's query, parsed once a search
 
 /** FT6 (2026-09-14, the Features arc): THE SWITCH, ONE HOME. Both
  *  exterior hosts composed "the enhanced skin, the pref, the kill door"
@@ -321,7 +321,9 @@ void main() {
   // AUDIT WATER-NEXT H2: a negative depth is water on ground never carved (world/waterCorners.js SHEET_NO_BED) - its
   // magnitude the tint's depth, and no swell: lifted only uLift over its ground, a heave of a fifth of a unit took its
   // troughs under the ground in any fair wind
-  float grow = uOpen == 1 ? 1.0 : (aDepth < 0.0 ? 0.0 : smoothstep(0.0, ${SWELL_DEPTH.toFixed(2)}, aDepth));
+  // BANK-FLUSH: the ground under the sheet is carved only past the shelf (world/waterBed.js SHELF_CHAMFER), so the swell
+  // grows past it too - a trough over the shelf's uncarved ground went under it in a fair wind
+  float grow = uOpen == 1 ? 1.0 : (aDepth < 0.0 ? 0.0 : smoothstep(${SHELF_SHEET_DEPTH.toFixed(3)}, ${(SHELF_SHEET_DEPTH + SWELL_DEPTH).toFixed(3)}, aDepth));
   vec3 sw = swellAt(world.xz, uTime, uWindDir, uSwell * grow);
   // AUDIT WATER-NEXT G8: the heave fades out before the far rings' strided grids, whose cells are as long as the
   // shortest train (a vertex a wave: the distant sheet heaved in an aliased lattice); the slope stays the fragment's

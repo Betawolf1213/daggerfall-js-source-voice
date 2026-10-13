@@ -50,7 +50,7 @@ test('WATER-NEXT 2 the GLSL is the JS: SWELL_GLSL carries each train\'s wavenumb
 test('WATER-NEXT 2 the sheet: lifted by the swell, which dies over the bank (none on a bed shallower than nothing), whole on the open sea; its depth rides the swell (mutants: the swell on the bank; the open sea still)', () => {
   // PIN MOVED (AUDIT WATER-NEXT H2/G8): a negative depth (water on uncarved ground) takes no swell, the heave fades with
   // the eye's distance, and the depth is the magnitude
-  assert.match(WATER_SURFACE_VS, /float grow = uOpen == 1 \? 1\.0 : \(aDepth < 0\.0 \? 0\.0 : smoothstep\(0\.0, 2\.50, aDepth\)\);/);
+  assert.match(WATER_SURFACE_VS, /float grow = uOpen == 1 \? 1\.0 : \(aDepth < 0\.0 \? 0\.0 : smoothstep\(1\.668, 4\.168, aDepth\)\);/);   // PIN MOVED (BANK-FLUSH): the swell grows past the shelf the carve leaves
   assert.match(WATER_SURFACE_VS, /vec3 sw = swellAt\(world\.xz, uTime, uWindDir, uSwell \* grow\);/);
   assert.match(WATER_SURFACE_VS, /float lift = sw\.x \* \(1\.0 - smoothstep\(300\.0, 600\.0, length\(world\.xz - uCamPos\.xz\)\)\);\s*\n\s*world\.y \+= lift;/);
   assert.match(WATER_SURFACE_VS, /vDepth = max\(abs\(aDepth\) \+ lift, 0\.0\);/);
@@ -104,7 +104,7 @@ test('WATER-NEXT 2 the bed\'s face: both terrain programs draw the ground under 
   const r = read('src/render/renderer.js');
   assert.equal(BED_RECORD, 1, 'the tileset\'s dirt');
   assert.ok(BED_SILT.every((v) => v < 1), 'darkened');
-  assert.match(WATER_BED_GLSL, /if \(uWaterBed < 0\.5\) return 0\.0;/, 'off, nothing');
+  assert.match(WATER_BED_GLSL, /if \(uWaterBed < 0\.5\) return vec2\(0\.0\);/, 'off, nothing');   // PIN MOVED (SHORE-SILT): the bed's share and its fringe's
   assert.match(WATER_BED_GLSL, /rec == 8u \|\| rec == 9u \|\| rec == 23u/, 'a puddle keeps its art');
   assert.match(waterBedMix(), /textureGrad\(uTileArr, vec3\(tuv, 1\.0\), gx, gy\)\.rgb \* vec3\(0\.62, 0\.60, 0\.52\)/);
   assert.match(waterBedMix((t) => `elDecode(${t})`), /elDecode\(textureGrad\(uTileArr, vec3\(tuv, 1\.0\), gx, gy\)\.rgb\)/, 'the lane decodes it as it decodes the ground');

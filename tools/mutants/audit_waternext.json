@@ -93,8 +93,8 @@
   {
     "name": "AUDIT-WATER-NEXT-H2-swell-on-uncarved-ground",
     "file": "src/render/waterSurface.js",
-    "old": "(aDepth < 0.0 ? 0.0 : smoothstep(0.0, ${SWELL_DEPTH.toFixed(2)}, aDepth));",
-    "new": "smoothstep(0.0, ${SWELL_DEPTH.toFixed(2)}, abs(aDepth)));",
+    "old": "(aDepth < 0.0 ? 0.0 : smoothstep(${SHELF_SHEET_DEPTH.toFixed(3)}, ${(SHELF_SHEET_DEPTH + SWELL_DEPTH).toFixed(3)}, aDepth));",
+    "new": "smoothstep(${SHELF_SHEET_DEPTH.toFixed(3)}, ${(SHELF_SHEET_DEPTH + SWELL_DEPTH).toFixed(3)}, abs(aDepth)));",
     "tests": ["test/audit_waternext.test.js"]
   },
   {

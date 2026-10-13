@@ -73,7 +73,7 @@ import { hasPortFor, hasPort, setSeatHarbours, PORT_LOCATION_IDS, maskMapId } fr
 import { WoodsFile, MAP_WIDTH, MAP_HEIGHT } from '../formats/woodsFile.js';
 import { buildTerrainIndices, isOutdoorWaterTile, TERRAIN_TILE_DIM, TERRAIN_SKIRT_DEPTH, surfaceHeightAt, surfaceNormalAt, surfaceNormalFromSamples, gridValueAt, groundOffPlane, terrainSampleHeightAt, lowestGroundUnder } from '../world/terrainSurface.js';   // GRASS-LIT2: the ground's normal under a blade; SNOWFALL1: and a pixel's that keeps none
 import { waterUniforms, buildWaterIndices, waterSwitchOn } from '../render/waterSurface.js';   // WATER1: the enhanced water surface over the pixel's own grid; WATER-AUDIT: its own index set
-import { waterBedDepths } from '../world/waterBed.js';   // WATER-NEXT 2: the bed under the water, carved for the eye alone (AUDIT WATER-NEXT H1: the cap's re-carve asks its depths)
+import { bedFields, sheetDepthsOf } from '../world/waterBed.js';   // WATER-NEXT 2: the bed under the water, carved for the eye alone (AUDIT WATER-NEXT H1: the cap's re-carve asks its depths)
 import { createRipples, createRippleStir, RIPPLE_SPAN, RIPPLE_CELLS, BOAT_STIR, BOAT_WAKE_SPEED } from '../world/waterRipples.js';   // WATER-NEXT 4: the rings and wakes
 import { waterCorners, WATER_DRAW_MASK_TABLE } from '../world/waterCorners.js';   // GRASS-WET1: the one table that says which of a tile's corners stand in water - the DRAW's, because a blade in a puddle is a picture, not a physics
 import { windowEmissionRGB } from '../render/windowEmission.js';
@@ -5049,11 +5049,11 @@ export async function bootWorld(canvas, renderer, params, status) {
     if (!waterOn || !p._bed || !p.terrain) return;   // no vertex was under water: a cap only takes water away
     const stride = p._stride ?? 1;
     const halo = stride === 1 ? p._bed.halo : null;   // AUDIT WATER-NEXT F2: the seams' tiles the build read
-    const depths = waterBedDepths(bedBytesOf(p), { stride, halo });
-    const was = p._bed.depths;
-    if (depths === was || (depths && was && depths.length === was.length && depths.every((d, i) => d === was[i]))) return;
+    const fields = bedFields(bedBytesOf(p), { stride, halo });   // BANK-FLUSH: the ground's carve (`_bed.depths`) and the sheet's depths, one chamfer
+    const g = 128 / stride + 1, same = (a, b) => a === b || (a && b && a.length === b.length && a.every((d, i) => d === b[i]));
+    if (same(fields?.carve ?? null, p._bed.depths) && same(fields ? sheetDepthsOf(fields.depths, g, g) : null, p._bed.sheetDepths)) return;
     const grid = { positions: p._bed.sheet, normals: p._bed.normals };
-    const bed = depths ? gridBed(grid, bedBytesOf(p), stride, halo) : null;
+    const bed = fields ? gridBed(grid, bedBytesOf(p), stride, halo) : null;
     renderer.destroyMesh(p.terrain);
     p.terrain = renderer.createTerrainSurface(bed?.positions ?? grid.positions, bed?.normals ?? grid.normals,
       stride === 1 ? TERRAIN_INDICES : TERRAIN_INDICES_LOD);

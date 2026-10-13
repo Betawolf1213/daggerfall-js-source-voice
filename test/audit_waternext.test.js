@@ -122,7 +122,7 @@ test('AUDIT WATER-NEXT H1: Deep Waters\' cap carves the bed - a tile it repaints
   assert.match(w, /entry\._dwBytes = bytes === entry\.tilemapBytes \? null : bytes;\n\s*dwRecarve\(entry\);[^\n]*\n\s*dwClipTerrain\(entry\);\n\s*dwWaterSurface\(entry\);/, 'the cap carves, then clips, then re-indexes');
   assert.match(w, /function bedBytesOf\(p\) \{ return p\._dwBytes \?\? p\.tilemapBytes; \}/);
   const recarve = w.slice(w.indexOf('  function dwRecarve(p) {'), w.indexOf('  function hostBed(grid, bed)'));
-  assert.match(recarve, /const depths = waterBedDepths\(bedBytesOf\(p\), \{ stride, halo \}\);/);
+  assert.match(recarve, /const fields = bedFields\(bedBytesOf\(p\), \{ stride, halo \}\);/);   // PIN MOVED (BANK-FLUSH): the carve and the sheet's depths, one chamfer
   assert.match(recarve, /const grid = \{ positions: p\._bed\.sheet, normals: p\._bed\.normals \};/, 'from the grid as it stood');
   assert.match(recarve, /renderer\.destroyMesh\(p\.terrain\);\n\s*p\.terrain = renderer\.createTerrainSurface\(bed\?\.positions \?\? grid\.positions, bed\?\.normals \?\? grid\.normals,/);
   assert.match(recarve, /p\._bed = \{ sheet: grid\.positions, normals: grid\.normals, depths: bed\?\.depths \?\? null, sheetDepths: bed\?\.sheetDepths \?\? null, halo \};/, 'the grid kept, so a lifted cap carves it back');
@@ -206,7 +206,7 @@ test('AUDIT WATER-NEXT H2: the sheet\'s own depths - a vertex the carve reaches 
   for (let z = 1; z < 16; z++) assert.equal(s[z * 17 + 13], Math.fround(SHEET_NO_BED), `the stream's vertex ${z} is uncarved water (a Float32Array's)`);
   assert.equal(SHEET_NO_BED, -NO_BED_DEPTH);
   assert.equal(NO_BED_DEPTH, 1.2);
-  assert.match(WATER_SURFACE_VS, /float grow = uOpen == 1 \? 1\.0 : \(aDepth < 0\.0 \? 0\.0 : smoothstep\(0\.0, 2\.50, aDepth\)\);/);
+  assert.match(WATER_SURFACE_VS, /float grow = uOpen == 1 \? 1\.0 : \(aDepth < 0\.0 \? 0\.0 : smoothstep\(1\.668, 4\.168, aDepth\)\);/);   // PIN MOVED (BANK-FLUSH): the swell grows past the shelf the carve leaves
   assert.match(WATER_SURFACE_VS, /vDepth = max\(abs\(aDepth\) \+ lift, 0\.0\);/);
   assert.match(rd('src/render/renderer.js'), /gl\.vertexAttrib1f\(1, -NO_BED_DEPTH\);/, 'a sheet with no bed at all: the same constant');
   const w = rd('src/scenes/world.js');
