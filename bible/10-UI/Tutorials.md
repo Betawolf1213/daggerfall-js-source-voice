@@ -135,6 +135,19 @@ list is the same array - 0.3 microseconds a call); the L and N keys reach the qu
 writes text only through textContent; the welcome tour starts only for a new character (an heir, the Test Room, a
 headless `?class=`, a new online character), never a loaded save.
 
+## PLEA-LOOP: a page over a decision (FIELD BUGS 2026-10-13b)
+
+A page is pushed over the window that reached its system, and the keys go to the page alone - which is DFU's law: the
+top window takes the input. The court broke it on the enhanced skin. The Crime page's seam is the courtroom's
+constructor, so a beat after the court opens the page stands over the plea; the plea, the enhanced keyed menu's DOM
+dialog, answered its own buttons wherever it stood, and its scrim took the click the page's "click or press any key"
+asked for. A Guilty pressed under the page pleaded, the prison screen replaced the PAGE, and the answered plea stayed in
+the stack, painted with live buttons - a loop of pleas (`01-Overview/Field-Bugs-2026-10-13b.md` PLEA-LOOP). A covered
+keyed menu now takes no pointer and answers nothing (`ui/windowStack.js` windowCovered, `ui/enhancedDialog.js`): the
+click falls through to the canvas and puts the page away, as a key does. A buttoned box (`ui/messageBox.js`'s, DLG1)
+always replayed its press on the canvas, so its host handed that to the top window; the keyed menu was the one
+dialog that reached its window directly.
+
 ## The menu
 
 The pause window has a **Tutorials** tab (`enhancedMenu.js` PAUSE_TABS, before System); the front door and both shell

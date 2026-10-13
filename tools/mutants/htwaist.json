@@ -617,8 +617,8 @@
   {
     "name": "HT-WAIST-BACK-the-pace-jump-read-as-a-sprint",
     "file": "src/net/peerPace.js",
-    "old": "  if (d > JUMP_UNITS) return 0;\n",
-    "new": "",
+    "old": "  if (!(d <= JUMP_UNITS) || !Number.isFinite(speed)) return 0;\n",
+    "new": "  if (!Number.isFinite(speed)) return 0;\n",
     "tests": [
       "test/htwaistback.test.js",
       "test/mwbody1.test.js"

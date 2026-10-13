@@ -3933,8 +3933,21 @@ export class Renderer {
   get characterSpriteBatchOpen() { return this._spriteBatch.open; }
 
   /** MWNPC2: one body's picture, measured: { mesh, model, also (COATS3D), proj, view, pw, ph, quad: { at, halfW, halfH, right,
-   *  hitFlash, conceal, up } }. Its tile is written by the flush. */
-  queueCharacterSprite(item) { this._spriteBatch.items.push(item); }
+   *  hitFlash, conceal, up } }. Its tile is written by the flush.
+   *  FIELD BUGS 2026-10-13b ONE-BAD-BODY: a picture whose size is not a finite count of texels is refused here, the batch's
+   *  one door. The flush packs every tile after the last (packSpriteTiles: `x += it.pw`), so one NaN put every picture
+   *  queued after it at NaN - drawn over the first tile (the player's own body's, queued first) and composited from
+   *  nowhere: one body with a bad measure blanked every Morrowind body after it, and the player's own picture with them,
+   *  for every frame it stood. Refused, it draws nothing - its own loss, said once on the console. Answers whether it
+   *  was taken. */
+  queueCharacterSprite(item) {
+    if (!Number.isFinite(item?.pw) || !Number.isFinite(item?.ph)) {
+      if (!this._spriteRefusedSaid) { this._spriteRefusedSaid = true; console.warn(`[mw] a body's picture could not be measured (${item?.pw} x ${item?.ph}) - left out of the batch`); }
+      return false;
+    }
+    this._spriteBatch.items.push(item);
+    return true;
+  }
 
   flushCharacterSpriteBatch() {
     const b = this._spriteBatch;
