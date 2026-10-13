@@ -18,6 +18,8 @@ import { createMeshKit } from './meshKit.js';
 import { EG_BAND_ARCHIVES } from './pseudoArchives.js';
 import { EG_HERO_FRAGS } from '../net/egHeroFrags.js';
 import EG_REF_FRAG_MESH from '../assets/egfrags/egRefFrag.mesh.json' with { type: 'json' };
+import EG_HERO_GLOAM_MESH from '../assets/egfrags/egheroGloam.mesh.json' with { type: 'json' };   // EG-HERO: the Shade's two heroes
+import EG_HERO_ECLIPSE_MESH from '../assets/egfrags/egheroEclipse.mesh.json' with { type: 'json' };
 
 /** A registry of mesh halves, by id: each beside its law half in `laws` (the same id, the same band, the same bake) - or
  *  refused, naming it. */
@@ -29,7 +31,7 @@ export function egHeroFragMeshes(meshes, laws = EG_HERO_FRAGS) {
   })));
 }
 /** EVERY BAKED FRAGMENT'S MESH HALF, by its id. */
-export const EG_HERO_FRAG_MESHES = egHeroFragMeshes([EG_REF_FRAG_MESH]);
+export const EG_HERO_FRAG_MESHES = egHeroFragMeshes([EG_REF_FRAG_MESH, EG_HERO_GLOAM_MESH, EG_HERO_ECLIPSE_MESH]);
 
 /** Fragment `id`'s drawn mesh into kit `kit` (world/meshKit.js), its origin laid at `at` (m, the hall's frame): a bucket a
  *  dress record. */

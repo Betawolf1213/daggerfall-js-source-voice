@@ -582,6 +582,15 @@ const PUBLIC_ALLOWLIST = new Map([
   ['src/assets/egfrags/source/egRefFrag.fbx', 'OURS - the reference hero fragment\'s scene, written by tools/egRefFragScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
   ['src/assets/egfrags/egRefFrag.law.json', 'OURS - egRefFrag.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgRefFrag.mjs; numbers only'],
   ['src/assets/egfrags/egRefFrag.mesh.json', 'OURS - egRefFrag.fbx\'s mesh half baked by tools/bakeEgRefFrag.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
+  // EG-HERO (2026-10-13, the owner: "You have to author the fragments"): THE SHADE'S TWO HEROES - the Gloam Thicket's
+  // passage and the Eclipse Vault's chamber, each a scene written from numbers alone by its tools/egHero*Scene.mjs and
+  // baked by its tools/bakeEgHero*.mjs; test/eghero_shade.test.js holds each scene and both its halves to their bytes.
+  ['src/assets/egfrags/source/egheroGloam.fbx', 'OURS - the Gloam Thicket hero passage\'s scene, written by tools/egHeroGloamScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
+  ['src/assets/egfrags/egheroGloam.law.json', 'OURS - egheroGloam.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgHeroGloam.mjs; numbers only'],
+  ['src/assets/egfrags/egheroGloam.mesh.json', 'OURS - egheroGloam.fbx\'s mesh half baked by tools/bakeEgHeroGloam.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
+  ['src/assets/egfrags/source/egheroEclipse.fbx', 'OURS - the Eclipse Vault hero chamber\'s scene, written by tools/egHeroEclipseScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
+  ['src/assets/egfrags/egheroEclipse.law.json', 'OURS - egheroEclipse.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgHeroEclipse.mjs; numbers only'],
+  ['src/assets/egfrags/egheroEclipse.mesh.json', 'OURS - egheroEclipse.fbx\'s mesh half baked by tools/bakeEgHeroEclipse.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
   // WAGONS1 (2026-10-09, Mac: "Here are 3 new models that will need to be textured"): MAC'S THREE WAGONS, supplied as
   // four saves of one Blender scene ("wagons.blend") - the newest committed whole, as the ships' scenes are.
   // tools/bakeWagons.mjs re-makes the three JSONs from it (tools/shipBake.mjs), and test/wagons1_bake.test.js holds them
