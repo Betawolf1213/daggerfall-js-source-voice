@@ -46,6 +46,7 @@ import { closeAuctions, pruneMarketHistory, SETTLE_MAX, reckonPatrons, marketOpe
 import { closeGuildWrits } from './writs.js';
 import { closeContracts } from './contracts.js';
 import { settleDueOnce } from './seatTurning.js';
+import { keepSeatFacts } from './townSeats.js';   // SEAT-FACTS: the seats' facts, kept once for the service
 import { motherlodesOf } from './motherlodes.js';
 import { sweepBoard } from './board.js';
 import { sweepGuildNotes } from './guildBoard.js';
@@ -117,6 +118,10 @@ export const MINUTE_JOBS = Object.freeze([
   ['contracts', (ctx) => rounds(() => closeContracts(ctx), WRIT_SETTLE_MAX, ctx.budget)],
   // a seat's Turning while the seats are open to everyone - behind `dev` they are a developer's, settled by their reads
   ['seats', async (ctx, env) => (seatsSwitchOf(env?.SEATS_OPEN) === 'on' ? (await settleDueOnce(ctx.db, ctx.nowS, seasonZeroOf(env.SEASON_ZERO_WEEK))).settled : 0)],
+  // SEAT-FACTS (townSeats.js keepSeatFacts): the seats' facts counted once for the whole service while the seats are open
+  // to anyone (`dev` too: a developer's player reads them) - one read of the rows and one row kept, where every isolate
+  // read the rows each minute
+  ['seat-facts', async (ctx, env) => (seatsSwitchOf(env?.SEATS_OPEN) === 'off' ? 0 : keepSeatFacts(ctx.db, ctx.nowS))],
   // the season's #1, counted before a reader would count it (arena.js championNow, STORM-SHED 2's kept word). AUDIT SCALE
   // A4: COUNTED ONLY WHEN A BOUT HAS COME SINCE - the board moves through a bout alone (claimArena counts it at once; no
   // route deletes an account), so a kept word no bout is newer than is stamped again rather than counted: the count

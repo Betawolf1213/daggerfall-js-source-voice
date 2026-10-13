@@ -32,8 +32,8 @@
  {
   "name": "SEATREPLICA-write-unmarked",
   "file": "server-account/src/townSeats.js",
-  "old": "  seatRowsWritten.add(root);\n}",
-  "new": "}",
+  "old": "  seatRowsWritten.add(root);\n",
+  "new": "",
   "tests": [
    "test/seat_replica.test.js"
   ],
@@ -62,8 +62,8 @@
  {
   "name": "SEATREPLICA-every-report-forgets",
   "file": "server-account/src/townSeats.js",
-  "old": "if (Number(put?.meta?.changes) !== 0) forgetSeatRows(db);",
-  "new": "forgetSeatRows(db);",
+  "old": "if (Number(put?.meta?.changes) !== 0) forgetSeatRows(db, nowS);",
+  "new": "forgetSeatRows(db, nowS);",
   "tests": [
    "test/seat_replica.test.js"
   ],
@@ -72,8 +72,8 @@
  {
   "name": "SEATREPLICA-no-report-forgets",
   "file": "server-account/src/townSeats.js",
-  "old": "if (Number(put?.meta?.changes) !== 0) forgetSeatRows(db);",
-  "new": "if (false && put) forgetSeatRows(db);",
+  "old": "if (Number(put?.meta?.changes) !== 0) forgetSeatRows(db, nowS);",
+  "new": "if (false && put) forgetSeatRows(db, nowS);",
   "tests": [
    "test/seat_replica.test.js"
   ],
