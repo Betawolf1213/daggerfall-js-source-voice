@@ -118,11 +118,5 @@
     "tests": ["test/horsewalk.test.js"]},
   {"name": "HORSEWALK-peer-gallop-bit-any-move", "file": "src/net/remotePlayers.js",
     "old": "running: peer.shown.mv === 2 });", "new": "running: !!peer.shown.mv });",
-    "tests": ["test/horsewalk.test.js"]},
-  {"name": "HORSEWALK-town-gallops-as-shipped", "file": "src/systems/modSettings.js",
-    "old": "'EnhancedRiding.GallopingInTowns': Object.freeze({ default: false,", "new": "'EnhancedRiding.GallopingInTowns': Object.freeze({ default: true,",
-    "tests": ["test/horsewalk.test.js"]},
-  {"name": "HORSEWALK-tutorial-towns-dropped", "file": "src/systems/tutorialCatalogue.js",
-    "old": "Your horse walks; hold {Run} to gallop outside towns.", "new": "Your horse walks; hold {Run} to gallop.",
     "tests": ["test/horsewalk.test.js"]}
 ]

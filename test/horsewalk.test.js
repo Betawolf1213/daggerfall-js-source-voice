@@ -5,7 +5,8 @@
 // rideWalks), and everything that reads the gait: the riding sprite and its clop (systems/riding.js, player/mountRig.js),
 // the peers' clop (the pose's `hs`, motor.js slowRide), the 3D horse under its rider (world/horseModel.js gaitFor's
 // `gallops`, world/horseRig.js, player/mwView.js, net/peerBodies.js), the saddle panel (ui/enhancedSaddle.js,
-// scenes/saddleHost.js), a town under Roleplay & Realism, the Features row, the Horses tutorial and the four hosts.
+// scenes/saddleHost.js), a town under Roleplay & Realism (TOWN-GALLOP: Galloping In Towns on, as the port ships it), the
+// Features row, the Horses tutorial and the four hosts.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -25,7 +26,7 @@ import { RemotePlayers } from '../src/net/remotePlayers.js';
 import { SOUND } from '../src/systems/soundClips.js';
 import { FEATURES } from '../src/systems/features.js';
 import { TUTORIALS } from '../src/systems/tutorialCatalogue.js';
-import { setModSetting, _resetModSettings } from '../src/systems/modSettings.js';
+import { setModSetting, onlineModSetting, _resetModSettings } from '../src/systems/modSettings.js';
 import { rrRidingOn, rrCanRunRiding, rrRidingSetting, RR_VENDOR } from '../src/systems/rrRealism.js';
 import { fakeDoc, one } from './decorFakes.mjs';
 
@@ -327,7 +328,7 @@ test('HORSE-WALK THE HOSTS (world.js, exterior.js): the walk installed beside th
  *  source and run, as the Overworld's lines are world.js's. */
 const RR_INSTALL = rd('src/systems/rrInstall.js');
 
-test('HORSE-WALK IN A TOWN (AUDIT HORSE-WALK): Roleplay & Realism as it ships - Enhanced Riding on, Galloping In Towns off - keeps a horse in a town from galloping, so there it walks with Run held, and out of town Run gallops it; the mod\'s Galloping In Towns gallops it in a town too. The mod\'s own CanRun line, lifted from its source and run over the real upkeep and motor - the law the Horses tutorial\'s "outside towns" says (mutants: HORSEWALK-town-gallops-as-shipped)', () => {
+test('HORSE-WALK IN A TOWN (TOWN-GALLOP, 2026-10-13, Mac: "Remove forced horse walking in towns"): Roleplay & Realism as the port ships it - Enhanced Riding on, Galloping In Towns ON, where the mod ships it off - lets Run gallop a horse in a town as out of one, and there it walks unless Run gallops it, as everywhere; online the room reads the port\'s on whatever a player saved. The mod\'s own rule, Galloping In Towns off, is the town walk AUDIT HORSE-WALK pinned: Run held walks a horse in a town and gallops it out of one. The mod\'s own CanRun line, lifted from its source and run over the real upkeep and motor (mutants: TOWNGALLOP-town-walks-as-shipped, TOWNGALLOP-room-walks-in-town, TOWNGALLOP-room-leaves-it-to-the-player, TOWNGALLOP-setting-unread)', () => {
   const m0 = /\n {2}(setCanRunOverride\(\(mode\) => \(rrRidingOn\(\)[\s\S]*?: null\)\);)\n/.exec(RR_INSTALL);
   assert.ok(m0, 'lifted from systems/rrInstall.js: the mod\'s CanRun');
   let town = true;
@@ -344,22 +345,29 @@ test('HORSE-WALK IN A TOWN (AUDIT HORSE-WALK): Roleplay & Realism as it ships - 
   try {
     const k = u.rideScale('Horse');
     m.rideSpeedScale = k;
-    assert.deepEqual([rrRidingOn(), rrRidingSetting('GallopingInTowns')], [true, false], 'the mod as it ships');
+    const GALLOP = RIDE_50 * (1.35 + 40 / 200) * k;
+    assert.deepEqual([rrRidingOn(), rrRidingSetting('GallopingInTowns')], [true, true], 'the mod as the port ships it');
+    ride(m);
+    assert.deepEqual([m.isRunning, m.rideWalking, near(m.speed, WALK_50 * k)], [false, true, true], 'in a town, no Run: the walk');
     ride(m, { run: true });
-    assert.deepEqual([m.isRunning, m.rideWalking, near(m.speed, WALK_50 * k)], [false, true, true], `in a town, Run held: the walk (${m.speed.toFixed(2)} m/s)`);
+    assert.deepEqual([m.isRunning, m.rideWalking, near(m.speed, GALLOP)], [true, false, true], `in a town, Run held: the gallop (${m.speed.toFixed(2)} m/s)`);
     town = false;
     ride(m, { run: true });
-    assert.deepEqual([m.isRunning, near(m.speed, RIDE_50 * (1.35 + 40 / 200) * k)], [true, true], 'out of town: the gallop');
+    assert.deepEqual([m.isRunning, near(m.speed, GALLOP)], [true, true], 'out of town: the gallop');
+    setModSetting(RR_VENDOR, 'EnhancedRiding.GallopingInTowns', false);
+    assert.equal(onlineModSetting(RR_VENDOR, 'EnhancedRiding.GallopingInTowns', '?online=1'), true, 'online the room gallops in a town, whatever a player saved (Roleplay & Realism is the room\'s whole: onlineLane.js ONLINE_WHOLE_MODS)');
     town = true;
     ride(m, { run: true });
-    assert.equal(m.isRunning, false, 'and in a town again, the walk');
-    setModSetting(RR_VENDOR, 'EnhancedRiding.GallopingInTowns', true);
+    assert.deepEqual([m.isRunning, m.rideWalking, near(m.speed, WALK_50 * k)], [false, true, true], `the mod's own rule, Galloping In Towns off - in a town, Run held: the walk (${m.speed.toFixed(2)} m/s)`);
+    town = false;
     ride(m, { run: true });
-    assert.deepEqual([m.isRunning, m.rideWalking], [true, false], 'Galloping In Towns: it gallops in a town too');
+    assert.equal(m.isRunning, true, 'and out of town the gallop');
   } finally { setCanRunOverride(null); setRideWalk(null); setGallopGate(null); _resetModSettings(); }
 });
 
-test('HORSE-WALK THE WORDS: the Features row and the Horses tutorial say the horse walks and Run gallops it - the tutorial "outside towns" (AUDIT HORSE-WALK: IN A TOWN above - the mod as it ships walks a horse in a town with Run held, and a player first mounts in the town whose stable sold the horse) (TUT1: a slice that changes how a system plays changes its page) (mutants: HORSEWALK-tutorial-towns-dropped)', () => {
+test('HORSE-WALK THE WORDS: the Features row and the Horses tutorial say the horse walks and Run gallops it - in a town too since TOWN-GALLOP (AUDIT HORSE-WALK\'s "outside towns" retired with the town walk), and the tutorial says what a gallop into the people of a town does: the trample Roleplay & Realism ships on (TUT1: a slice that changes how a system plays changes its page) (mutants: TOWNGALLOP-tutorial-towns-back, TOWNGALLOP-tutorial-trample-dropped, TOWNGALLOP-trample-ships-off)', () => {
   assert.match(FEATURES.find((f) => f.id === 'horse-care').note, /walks unless you hold Run to gallop on its breath/);
-  assert.ok(TUTORIALS.find((t) => t.id === 'horse').body.some((b) => b.includes('Your horse walks; hold {Run} to gallop outside towns.')));
+  assert.ok(TUTORIALS.find((t) => t.id === 'horse').body.some((b) => b.includes('Your horse walks; hold {Run} to gallop. Don\'t gallop into people in town: trampling them is a crime.')));
+  _resetModSettings();
+  assert.equal(rrRidingSetting('TrampleCivilians'), true, 'the trample the page warns of ships on');
 });
