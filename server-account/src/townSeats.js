@@ -49,7 +49,7 @@ import {
 } from '../../src/net/townSeatLaw.js';
 import { utcDay, MARKS_MAX } from '../../src/net/marksLaw.js';   // AUDIT-SEATS S4: a struck Charter's fee refunded
 import { fortsLapsedStatements } from './seatForts.js';   // AUDIT SEATS-2 S5: a struck Charter's building projects fall with it
-import { DB_ROOT } from './service.js';   // STORM-SHED: the binding a request's counted Proxy wraps
+import { DB_ROOT, replicaDb } from './service.js';   // STORM-SHED: the binding a request's counted Proxy wraps; SEAT-REPLICA: the kept read's session
 
 /** Whether the seats are open to this account: the switch, and at `dev` the developers alone. */
 export function seatsOpenFor(player, env) {
@@ -112,12 +112,25 @@ async function allSeatRows(db) {
  *  was asked the faster for it. A seat's facts move with a witness's report and by the week (seatIgnoredAccounts), so a
  *  minute is nothing to them; a report or a strike written here lets them go at once. */
 export const SEAT_ROWS_KEPT_S = 60;
-/** The database binding -> what this isolate last read of it, and the read asked now, and its writes counted. */
+/** SEAT-REPLICA (2026-10-13, the account database overloaded from 14:11 UTC; bible/11-Multiplayer/Scale-Arc.md
+ *  SEAT-REPLICA): WHERE THE KEPT READ IS ASKED - a read replica, never the primary's queue. The rows were 15,899 a read
+ *  on the day, and the isolates many enough that two lists in three missed their isolate's kept copy; in the outage the
+ *  read was more than half the primary's statement time and nine in ten of the rows it answered. A read after this
+ *  isolate's own write starts at the primary ('first-primary', so it sees the write), and every read after a kept one
+ *  starts from the bookmark that one ended at, so a replica behind what this isolate already read never answers it
+ *  (D1's Sessions API); the first, with neither, is any instance's. */
+export const SEAT_ROWS_FROM = 'first-unconstrained';
+/** The database binding -> what this isolate last read of it, and the read asked now, and its writes counted; and
+ *  (SEAT-REPLICA) the bookmark its last kept read ended at, and whether it has written since. */
 const seatRowsKept = new WeakMap(), seatRowsAsking = new WeakMap(), seatRowWrites = new WeakMap();
+const seatRowsMark = new WeakMap(), seatRowsWritten = new WeakSet();
 const seatRowsRoot = (/** @type {any} */ db) => db?.[DB_ROOT] ?? db;
+/** SEAT-REPLICA: a session's newest bookmark, or null (the binding, an older runtime or a harness, keeps none). */
+const bookmarkOf = (/** @type {any} */ session) => { try { const m = session?.getBookmark?.(); return typeof m === 'string' && m ? m : null; } catch { return null; } };
 
 /** STORM-SHED: the seats' witness rows as this isolate keeps them - read at most once in SEAT_ROWS_KEPT_S, every ask of
- *  one moment answered by one read, and a read begun before a write here never kept. */
+ *  one moment answered by one read, and a read begun before a write here never kept. SEAT-REPLICA: each read on a
+ *  session of its own (SEAT_ROWS_FROM); a session D1 will not open is the database as the request holds it. */
 async function seatRowsOf(db, nowS) {
   const root = seatRowsRoot(db);
   const kept = seatRowsKept.get(root);
@@ -125,19 +138,31 @@ async function seatRowsOf(db, nowS) {
   const asking = seatRowsAsking.get(root);
   if (asking) return asking;
   const gen = seatRowWrites.get(root) ?? 0;
-  const ask = allSeatRows(db).then((rows) => {
-    if ((seatRowWrites.get(root) ?? 0) === gen) seatRowsKept.set(root, { at: nowS, rows });
+  const wrote = seatRowsWritten.has(root);
+  const from = wrote ? 'first-primary' : (seatRowsMark.get(root) ?? SEAT_ROWS_FROM);
+  let session = db;
+  try { session = replicaDb(db, from); } catch { /* a bookmark D1 refuses: the request's database */ }
+  const ask = allSeatRows(session).then((rows) => {
+    if ((seatRowWrites.get(root) ?? 0) === gen) {
+      seatRowsKept.set(root, { at: nowS, rows });
+      const mark = bookmarkOf(session);
+      if (mark) seatRowsMark.set(root, mark);
+      if (wrote) seatRowsWritten.delete(root);
+    }
     return rows;
-  }).finally(() => { if (seatRowsAsking.get(root) === ask) seatRowsAsking.delete(root); });
+  }, (e) => { if (seatRowsMark.get(root) === from) seatRowsMark.delete(root); throw e; })   // a read that failed from a bookmark: the next starts from none (never a newer read's)
+    .finally(() => { if (seatRowsAsking.get(root) === ask) seatRowsAsking.delete(root); });
   seatRowsAsking.set(root, ask);
   return ask;
 }
-/** STORM-SHED: the kept rows let go - a witness's report or a strike written here. */
+/** STORM-SHED: the kept rows let go - a witness's report or a strike written here. SEAT-REPLICA: and the next read the
+ *  primary's, which has the write. */
 function forgetSeatRows(db) {
   const root = seatRowsRoot(db);
   seatRowsKept.delete(root);
   seatRowsAsking.delete(root);
   seatRowWrites.set(root, (seatRowWrites.get(root) ?? 0) + 1);
+  seatRowsWritten.add(root);
 }
 
 /**
@@ -200,9 +225,12 @@ export async function witnessSeat({ db, nowS }, player, env, { seat } = {}) {
   if (!witnessOf(player, nowS)) return { ok: true, counted: false, why: 'young' };
   const { ignored } = seatFacts(await seatRowsOf(db, nowS), nowS);   // STORM-SHED: the isolate's kept rows
   if (ignored.has(player.id)) return { ok: true, counted: false, why: 'ignored' };
-  await db.prepare("INSERT OR IGNORE INTO world_witness (kind, key, account, report, region, at) VALUES ('seat', ?, ?, ?, ?, ?)")
+  const put = await db.prepare("INSERT OR IGNORE INTO world_witness (kind, key, account, report, region, at) VALUES ('seat', ?, ?, ?, ?, ?)")
     .bind(String(s.key), player.id, seatReportText(s), s.region, nowS).run();
-  forgetSeatRows(db);   // STORM-SHED: this report is the rows' news - asked afresh here
+  // STORM-SHED: this report is the rows' news - asked afresh here. SEAT-REPLICA: unless the table already held it (a
+  // witness's first answer stands, so the same witness's report again writes nothing, and cost the next ask a whole
+  // read of the rows all the same)
+  if (Number(put?.meta?.changes) !== 0) forgetSeatRows(db);
   return { ok: true, counted: true };
 }
 
