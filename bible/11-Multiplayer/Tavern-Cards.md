@@ -1398,3 +1398,29 @@ finding reproduced again on the live tree after the merge of main and fixed or r
   which A6's guard had made unreachable); records re-aimed by content: `auditcards6_b` AC6-B10-fallback-hand and
   AC6-B10-tab-walk, `fb1011_cardskept` CP-fold-forgotten. The 127 older records on the files the audit changed (25
   lists), run on the final tree: 127 dead.
+
+## 40. KG-SET (2026-10-13): nine cards more, and the set's words in the player's language
+
+The King's Gambit's slice (`Kings-Gambit.md` section 15; the owner: "Dont come back until this is completed in full")
+brings the nine units of its roster that wore no card into the first set and moves every card's words out of the
+relay's catalog.
+
+- **THE NINE:** the Grizzly Bear, the Sabretooth Tiger, the Spider, the Slaughterfish (commons), the Mummy (magic), the
+  Frost and the Fire Daedra (rares), the Archer (common) and the Ranger (magic) - 94 cards and 11 holdings now; 69 units.
+  Six emblems of their own (bear, cat, spider, fish, mummy, bow - `render/iliacCardFaces.js`, 57 glyphs). Their foes
+  drop them (`systems/cardSources.js` FOE_CARDS: the seven creatures that dropped none, and the Archer and the Ranger,
+  who dropped none); the packs, the regulars' decks and a card's worth read them off the catalog. The relay: world201.
+- **THE WORDS:** a card's rules and flavor are said in the player's language through the text core when they are shown
+  (`systems/iliacCardWords.js` - `cardRules`, `cardFlavor`), never written in the relay's catalog again: the catalog
+  (`net/iliacCards.js`) keeps the rules and the names, the face painter takes the words beside the card, the binder,
+  a card item's lines and the table panel's titles read them, and the binder's faces are painted again under a new
+  language. Every rules line's English is still EXACTLY `fxText`'s (section 26's law, its pin moved). Drafted into the
+  thirteen whole languages; a card's name keeps Daggerfall's English until L10N4's cards batch shows it through Daggerfall
+  Unity's name tables.
+- **MEASURE:** `tools/iliacBalance.mjs` (committed) re-runs section 33's measures: no seat's edge in 3,000 random games
+  (49.0% / 49.9%, 1.1% drawn); the regulars' win rates within 3.3 points of the set before the nine
+  (`Kings-Gambit.md` section 15's table).
+- **Pins:** `test/kgset_cards.test.js` (4); the moved pins of `test/cards8_catalog.test.js`, `test/cards8_faces.test.js`,
+  `test/cards8_binder.test.js`, `test/cards9_sources.test.js` and `test/auditcards5_items.test.js`; mutants
+  `tools/mutants/kgset.json`, 12, all dead; `tools/mutants/auditcards5.json` AC5-C-M7 and faces5-N02-tile-writes-rules
+  re-aimed by content.

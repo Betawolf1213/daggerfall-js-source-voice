@@ -4,7 +4,8 @@
 permission") - section 10 answers section 9 and decides every point the record had left open. KG1 SHIPPED (the law,
 section 11); KG2 SHIPPED (the innkeeper's play, section 12); AUDIT KG (section 13: the law, the play and this record
 read cold, every finding fixed) - and section 14 binds the table's UI, KG3's and KG4's, to Enhanced Plus, the house's
-own coat and plain words.** The owner handed over a
+own coat and plain words. KG-SET SHIPPED (section 15: the nine in the Iliac set, and the set's words in the player's
+language).** The owner handed over a
 Daggerfall Unity mod, `thekingsgambit.dfmod`, and asked how to build it as a new minigame on the Iliac Bay card system -
 the tavern card table `Tavern-Cards.md` built: the table and its seat, the deck of the Iliac Bay, Iliac Hand's painted
 cards, the regulars, the panel, the relay's tables. Sections 1-2 read the mod off its assembly; sections 3-7 lay it on
@@ -505,7 +506,7 @@ Each ships alone and is verifiable without the next.
 |---|---|
 | **KG1** SHIPPED (section 11) | THE LAW: `net/kingsGambit.js` - the board and its build, hazards, units and roster, the deployment, the turn, a blow, potions, the end (a seat's view: none to make, section 11); pins deepEqual against section 2's tables, whole games on a fixed source, mutants. |
 | **KG2** SHIPPED (section 12) | THE INNKEEPER'S PLAY: `systems/gambitPatrons.js` - AiAction, TryEscape, AiBlunder, the tiers over a regular's seed, the regular's army by the law's AutoFill (AUDIT KG C4). MEASURE: each tier against an Auto-filled 300 over seeded games. |
-| **KG-SET** | The nine creatures painted into the set (section 10.3) - cards, emblems, Iliac Hand's numbers and text, FOE_CARDS rows (so their foes drop them, CARDS9), Iliac Hand's balance measured again; a relay version (the catalog is relay law). Before KG3, whose grid shows every unit's card. |
+| **KG-SET** SHIPPED (section 15) | The nine creatures painted into the set (section 10.3) - cards, emblems, Iliac Hand's numbers and text, FOE_CARDS rows (so their foes drop them, CARDS9), Iliac Hand's balance measured again; a relay version (the catalog is relay law). Before KG3, whose grid shows every unit's card. |
 | **KG3** | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result) to section 14 - in the card tables' kit (`ui/cardPanelKit.js`, CARDS-PLUS) and the roles, the face, the type, the finger, the keys, the four plain-words blocks, the phone - with its pins (14.9), the stake and the regulars' night's purse; the panel's words through the text core, `t(key, en)`, each new key with its drafts in all 25 languages (L10N4's rule - the law keeps keys, section 11); the board a flat mat with the pieces as their cards and the press as a cell, staged under a finger (14.3; AUDIT KG C13: the press had been KG4's alone, and the game cannot be played without it) - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
 | **KG4** | THE BOARD ON THE CLOTH: walls, pillars and water built; the hazards' drawn effects; the pieces' motion; the press on the built board (14.3); the cloth's marks in the house's coat (14.8); the lab (`cards.html` with a King's Gambit table) and its probes - the panel's at a desktop's and a phone's size (`tools/cardPanelsProbe.mjs`, the three panels' one probe - 14.9); the frame cost on the phone probe, as CARDS3c measured it. |
 | **KG5** | ONLINE: the relay's table (a relay version), the wire, the client's mirror, spectators, the clock; friendly. |
@@ -604,6 +605,9 @@ point the record had left open. A number marked MEASURE is the first guess its s
   painter's keys pinned equal to `CARD_EMBLEMS`); FOE_CARDS rows for mobile types 4, 5, 6, 11, 19, 25, 26, 141 and 142;
   the cards in the house's packs and the regulars' decks by their tags; their worth by tier (`net/cardWorthLaw.js`); and a
   relay version, because the catalog is relay law.
+- FOUND AT KG-SET (section 15): the set's words had no road to a player's language, and L10N4's ratchet would not let
+  the nine's be written in English beside the others'. A card's rules and flavor are the display's now
+  (`systems/iliacCardWords.js`, through the text core); the catalog keeps the rules and the names.
 
 ### 10.4 The kings - THE BAY'S FOUR (Q4)
 
@@ -1161,3 +1165,75 @@ desktop, of the panel's column (MEASURE, by the probe).
   no borrowed component, the fold), and the game's own: every press 44 px on the phone, the panel or the strip clear of
   the board, the cell's size on the screen (KG4's MEASURE) and the snap's radius; photographs of the guide and the words
   unfolded, and of the three panels side by side in one coat.
+
+## 15. KG-SET (2026-10-13): the nine in the set, and the set's words in the player's language
+
+The owner: **"Dont come back until this is completed in full"** - the slice after AUDIT KG, before the table (KG3).
+
+- THE NINE (section 10.3, as decided): the Grizzly Bear, the Sabretooth Tiger, the Spider, the Slaughterfish, the
+  Mummy, the Frost Daedra, the Fire Daedra, the Archer and the Ranger are cards of the set (`net/iliacCards.js`) - units,
+  their numbers, tags and effects 10.3's table's, every effect `fxRefusal`'s null and its words `fxText`'s. Every
+  textured creature of the game now wears a card, and all 46 of the roster's units have their faces. Six emblems are
+  theirs, painted in code and looked at in Chromium at the tile's and the large face's sizes (`render/iliacCardFaces.js`:
+  the bear's head, the sabretooth's with its two sabres, the spider let down on its thread, the slaughterfish's jaw of
+  teeth, the wrapped dead, the drawn bow - the Archer's and the Ranger's); the Frost and the Fire Daedra wear frost and
+  fire. Their foes drop them (`systems/cardSources.js` FOE_CARDS: mobile types 4, 5, 6, 11, 19, 25, 26, 141 and 142, at
+  their tiers' chances); the house's packs, the regulars' decks and a card's worth take them off the catalog, as they
+  take every card.
+- FOUND AT THE SLICE - THE SET'S WORDS HAD NO ROAD TO A PLAYER'S LANGUAGE. L10N4's ratchet holds a file's English from
+  growing (`test/l10n4_hardcoded.test.js`), and the catalog held its 96 cards' rules and flavor in English (234
+  literals): the nine's could not be written beside them, and no card's words reached a French or a Korean player at
+  all. The root, fixed: the relay's catalog keeps the rules and the canonical names - a card's name is Daggerfall's own,
+  the name fxText's summons say, and `tools/l10n/ROUTE-BRIEF.md` does not route it - and no word. Every card's rules and
+  flavor are `systems/iliacCardWords.js`'s, said through the text core when they are shown (`cardRules`, `cardFlavor`;
+  the keys `cards.iliacSet.<card>.rules` and `.flavor`, 210), each rules line's English pinned EXACTLY `fxText`'s, as the
+  catalog's `text` was (`test/cards8_catalog.test.js`). The face painter takes the words beside the card
+  (`paintIliacCard`'s `words`, the card's own by default); the binder's look and its tiles, a card item's lines and the
+  table panel's card title read them; the binder's cached faces are painted again when a language is chosen or a
+  translation's table laid (`textRevision`). The catalog's count fell to 52 - its names - and the words module holds
+  none; the relay's bundle carries no word. Drafted in-session into the thirteen whole languages
+  (`06-Systems/Localization-Arc.md`, "KG-SET"), each set's keywords settled once in its glossary and every face painted
+  in Chromium to check its fit: no rules line cut in any of them; a flavor dropped where the box is full, as the
+  painter's law drops it first - Ancient Vampire's and Ancient Lich's in most languages, Ancient Lich's in English too.
+  A card's name shown through Daggerfall Unity's own name tables, and the Iliac panels' own sentences round it, stay
+  L10N4's cards batch.
+- FOUND AT THE DRAFTS - A NO-BREAK SPACE WAS A PLACE TO BREAK. French sets a no-break space before a colon ("Continu :"),
+  and the face's wrapper split the words on every white space (`/\s+/` matches U+00A0): the colon wrapped onto the next
+  line's head and the space came back a plain one. The wrapper breaks on white space but never a no-break space now
+  (`iliacCardFaces.js:"export const CARD_BREAK = "`) - U+00A0, U+2007 and U+202F - and keeps it; no French rules line
+  opens on its colon at any width.
+- FOUND AT THE GATES - THE ACCOUNT WORKER CARRIES THE WORDS. The account service bundles `systems/iliacItems.js` (the
+  item law reads a card item), so the words module a card item's lines read rides its bundle beside the text core it
+  already carried; its deploy's path filter names it now (`.github/workflows/account-deploy.yml`, held to the Worker's
+  own import graph by `test/accountdeploy.test.js`), so a change to a card's words deploys the service that bundles
+  them. The relay's bundle carries none.
+- THE RELAY: world201 (NOT YET DEPLOYED) - the catalog is relay law, and a deck holding one of the nine is one an older
+  relay refuses.
+- MEASURE - ILIAC HAND'S BALANCE, AGAIN. `tools/iliacBalance.mjs`, committed (CARDS7's random games and AUDIT CARDS-6
+  B12's regulars were measured by scripts that never were); seed 20261013, the set before the nine (85 cards) and after
+  (94):
+
+  | | before | after |
+  |---|---|---|
+  | 3,000 random games: seat 0 / seat 1 / drawn | 48.9% / 49.6% / 1.5% | 49.0% / 49.9% / 1.1% |
+  | decided on the holdings / on power | 84.9% / 13.6% | 84.6% / 14.3% |
+  | the starter deck, careful, against a village's / a town's / a city's regulars | 56.1 / 53.3 / 45.7% | 59.4 / 55.7 / 45.7% |
+  | reckless | 60.3 / 58.7 / 47.2% | 62.2 / 58.2 / 49.0% |
+  | sly | 56.1 / 53.7 / 43.9% | 58.8 / 55.2 / 44.3% |
+
+  The random games are CARDS7's, reproduced: no seat's edge, eight games in ten decided on the holdings. The regulars'
+  1,200 games a temper and a grade move by at most 3.3 points - inside two standard errors of a difference of two such
+  rates (2 points each) - and the village's most: a village regular trades six of the starter deck's cards for their
+  kind's, and the nine now stand among the trades - the Slaughterfish above all, a one-cost beast of the sea that tires,
+  in most of a reckless village regular's decks (sampled over 3,000 seeds a grade). The curve holds - the tiring three sit one step
+  up as the Zombie does (1/3, 2/4, 3/5), each with text that costs it power. B12's own figures came from another
+  seeding; the before column is this tool's, so the two columns compare.
+- Pins: `test/kgset_cards.test.js` (5) - the nine as 10.3 writes them and their foes; the catalog's no word and the
+  words' cover; every surface in French and back in English byte for byte, the faces painted again; a no-break space
+  kept whole; the balance tool's decks and games - and the moved pins of `cards8_catalog`, `cards8_faces` (the six
+  glyphs' measures), `cards8_binder`, `cards9_sources` and `auditcards5_items`. Mutants: `tools/mutants/kgset.json`, 13,
+  all dead.
+- THE FOUR HOSTS: no host changed - `scenes/worldModes.js`, `scenes/world.js`, `scenes/exterior.js` and
+  `scenes/dungeonContext.js` untouched; the cards reach a table through the catalog alone.
+- **Not yet:** the table (KG3) and everything after.
+- **Ledger:** section A row THE KING'S GAMBIT - THE NINE IN THE SET.

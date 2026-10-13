@@ -23,6 +23,8 @@ import { ILIAC_CARDS, ILIAC_TIERS, cardById } from '../net/iliacCards.js';
 import { deckValid, ILIAC_DECK_SIZE, ILIAC_COPIES_MAX, ILIAC_LEGENDARY_COPIES_MAX } from '../net/iliacHand.js';
 import { paintIliacCard, paintIliacBack, ILIAC_CARD_ASPECT } from '../render/iliacCardFaces.js';
 import { binderOf, binderDecks, collectionOf, deckHeldRefusal, setBinderDeck, dropBinderDeck, DECK_NAME_MAX, BINDER_DECKS_MAX } from '../systems/iliacItems.js';
+import { cardRules, cardFlavor } from '../systems/iliacCardWords.js';
+import { textRevision } from '../systems/textManager.js';
 
 export const CARD_BINDER_STYLE_ID = 'card-binder-page-css';
 /** The kinds' switch: [id, label]. */
@@ -92,9 +94,13 @@ function ensureStyle(doc) {
 /** AUDIT CARDS-5 D1: a face painted once a size and a pixel ratio - its canvas laid again on every redraw. */
 const _faces = new Map();
 export const FACE_CACHE_MAX = 256;
+/** KG-SET: the text core's revision the cached faces were painted under - a face carries its rules and flavor in the
+ *  player's language, so a language chosen (or a translation's table laid) paints them again. */
+let _facesRev = -1;
 /** A card's painted face on a canvas, `h` tall (a back for a card the catalog does not know). Never throws: a host with no
- *  2D context (the bench's DOM) draws nothing. Cached by card, height and pixel ratio. */
+ *  2D context (the bench's DOM) draws nothing. Cached by card, height and pixel ratio, while the language stands. */
 export function cardCanvas(/** @type {any} */ doc, /** @type {any} */ card, h = TILE_H) {
+  if (_facesRev !== textRevision()) { _faces.clear(); _facesRev = textRevision(); }
   const dpr = Math.min(2, Number(globalThis.devicePixelRatio) || 1);
   const key = `${card?.id ?? '?'}|${h}|${dpr}`;
   const had = _faces.get(key);
@@ -164,8 +170,9 @@ export function drawCardsPart(detail, rerender, kit) {
     const box = el('div', 'binder-look');
     if (doc) box.append(cardCanvas(doc, look, LARGE_H));
     const words = el('div', 'binder-look-text');
-    words.append(el('div', null, look.name), el('div', null, look.text));
-    if (look.flavor) words.append(el('div', 'flavor', look.flavor));
+    words.append(el('div', null, look.name), el('div', null, cardRules(look)));
+    const flavor = cardFlavor(look);
+    if (flavor) words.append(el('div', 'flavor', flavor));
     box.append(words);
     detail.append(box);
   }
@@ -176,7 +183,7 @@ export function drawCardsPart(detail, rerender, kit) {
     tile.type = 'button';
     tile.dataset.card = c.id;
     tile.setAttribute('data-focus', `binder-card-${c.id}`);
-    tile.title = `${c.name} - ${c.text}`;
+    tile.title = `${c.name} - ${cardRules(c)}`;
     if (doc) tile.append(cardCanvas(doc, c));
     if (n) tile.append(el('span', 'binder-count', `×${n}`));
     tile.append(el('div', 'binder-name', c.name));

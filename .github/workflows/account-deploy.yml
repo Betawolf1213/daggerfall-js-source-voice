@@ -220,6 +220,7 @@ on:
       - "src/systems/harmMark.js"
       - "src/systems/horseCartLaw.js"
       - "src/systems/iliacItems.js"
+      - "src/systems/iliacCardWords.js"
       - "src/systems/inventory.js"
       - "src/systems/inventorySession.js"
       - "src/systems/itemDye.js"

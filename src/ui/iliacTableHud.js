@@ -23,6 +23,7 @@
 //
 // Not a DFU member: Daggerfall Unity has no card games. Ledger A row (TAVERN CARDS).
 import { cardById } from '../net/iliacCards.js';
+import { cardRules } from '../systems/iliacCardWords.js';   // KG-SET: a card's rules, in the player's language
 import { ILIAC_HAND_MAX, ILIAC_HOLDINGS, ILIAC_MAGICKA_MAX, ILIAC_ROOM, ILIAC_TURNS } from '../net/iliacHand.js';
 import { ILIAC_CARD_ASPECT } from '../render/iliacCardFaces.js';
 import { cardCanvasCopy } from './cardBinderPage.js';   // CARDS-PLUS: the binder's own painting of a face, at its CSS size
@@ -90,7 +91,7 @@ export function stagedRefusal(view, plays) {
 export const iliacFace = (/** @type {any} */ c, extra = {}) => {
   if (!c || c.down && !c.id) return { id: null, name: 'Face down', title: 'A card face down', ...extra };
   const card = cardById(c.form ?? c.id);
-  return { id: card?.id ?? null, name: card?.name ?? '?', power: c.power ?? card?.power ?? 0, cost: card?.cost ?? 0, title: card ? `${card.name} - ${card.text}` : '?', ...(c.down ? { down: true } : {}), ...extra };
+  return { id: card?.id ?? null, name: card?.name ?? '?', power: c.power ?? card?.power ?? 0, cost: card?.cost ?? 0, title: card ? `${card.name} - ${cardRules(card)}` : '?', ...(c.down ? { down: true } : {}), ...extra };
 };
 
 /** The result said. */

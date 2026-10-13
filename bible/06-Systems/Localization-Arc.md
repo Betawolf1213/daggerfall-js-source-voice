@@ -948,3 +948,29 @@ section 39 its audit).
   counted; English with a number sign, brackets or a colon, with a stopword or without, still is); mutants in
   `tools/mutants/cardsplus.json` (the rule off, its stopword guard gone, any token taken as a selector, no class
   asked for, a digit opening a name).
+
+## KG-SET (2026-10-13): the Iliac set's words
+
+The King's Gambit's KG-SET (`11-Multiplayer/Kings-Gambit.md` section 15) brought nine cards into Iliac Hand's set and
+met the ratchet: `net/iliacCards.js` held every card's rules and flavor in English (234 literals), and the nine's
+could not be written beside them. No card's words had reached a player in their language.
+
+- **The road:** the relay's catalog keeps a card's rules and its canonical name, and no word; the words are
+  `systems/iliacCardWords.js`'s - every card's and holding's rules and flavor as readers through `t`, under
+  `cards.iliacSet.<card>.rules` and `.flavor` (210 keys), read when shown: the face painter (handed the words beside the
+  card), the binder's look and tiles, a card item's lines, the table panel's card titles. The binder's cached faces
+  follow `textRevision`, so a language chosen or a table laid paints them again. Each rules line's English is pinned
+  EXACTLY the engine's `fxText`, so a translation translates the rule the engine plays, whole, a card at a time.
+- **Not routed, by the brief:** a card's name - Daggerfall's creature, guild, Prince, artifact or city, and the name the
+  engine's summons say. Four rules lines name another card (a Rat, an Imp, a Zombie, a Daedroth: the tokens a card
+  summons or turns a unit into), and the drafts keep those names as printed on the cards' banners.
+- **The drafts:** in-session, the thirteen whole languages, each with its keywords settled once and added to its
+  glossary (Reveal, Ongoing, End of turn, power, magicka, unit, holding, summon), each face painted in Chromium to check
+  its fit (no rules line cut; a flavor dropped first where the box is full, as the painter's law drops it); the twelve
+  drafting languages owe them (their next run). The drafts found the face's wrapper breaking at a no-break space -
+  French's before a colon - and it breaks only at white space that may break now (`iliacCardFaces.js` CARD_BREAK).
+- **The ratchet:** `net/iliacCards.js` 234 -> 52 (its two-word names; the nine's four among them); the words module 0.
+- **Still owed (L10N4's cards batch):** a card's name shown through Daggerfall Unity's own tables where it is one of
+  theirs (an enemy's, a spell's, an artifact's, a faction's, a place's), and the Iliac panels' own sentences round it -
+  `scenes/iliacTableGame.js`, `ui/cardBinderPage.js`, `systems/iliacItems.js`'s first line - routed with it, so no
+  sentence glues a translated name into English.

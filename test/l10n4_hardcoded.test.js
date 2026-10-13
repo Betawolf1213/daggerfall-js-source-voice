@@ -96,7 +96,7 @@ const HARDCODED = {
   'src/net/homeLaw.js': 3,
   'src/net/homeVoteLaw.js': 11,
   'src/net/houseLaw.js': 1,
-  'src/net/iliacCards.js': 234,
+  'src/net/iliacCards.js': 52,
   'src/net/iliacHand.js': 13,
   'src/net/journalPage.js': 16,
   'src/net/mail.js': 3,
