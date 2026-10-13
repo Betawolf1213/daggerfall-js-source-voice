@@ -150,7 +150,7 @@ test('EG-G2 THE CULL (section 11.9): against this frame\'s frustum, a copy behin
   assert.equal(batch.stats().culled, 2);
 });
 
-test('EG-G2 THE BUDGET, MEASURED (section 11.9): over every circle of three seeds, the spans\' pieces stand in a handful of batched draws where they stood a draw a piece - the batched GL draws at most 48 a circle, the dynamic draws a tenth or less of a draw a piece on the Falling Walls\' circles; the copies the law\'s own pose (a Drift where egPieceAt swings it); from Hall 1\'s plate looking down its course the other halls\' pieces culled; the cull of a whole circle well under a millisecond (mutants: a kind a piece; the pose not written; the cull skipped)', () => {
+test('EG-G2 THE BUDGET, MEASURED (section 11.9): over every circle of three seeds, the spans\' pieces stand in a handful of batched draws where they stood a draw a piece - the batched GL draws at most 48 a circle, the dynamic draws at most a tenth of a draw a piece, and one, on the Falling Walls\' circles; the copies the law\'s own pose (a Drift where egPieceAt swings it); from Hall 1\'s plate looking down its course the other halls\' pieces culled; the cull of a whole circle well under a millisecond (mutants: a kind a piece; the pose not written; the cull skipped)', () => {
   let worstGl = 0, sumPieces = 0, sumKinds = 0, fw = null;
   for (const seed of [7, 99, 12345]) for (let c = 1; c <= 20; c += 1) {
     const plain = createEgSpan({ renderer: { createMesh: (m) => ({ subMeshes: m.subMeshes }), destroyMesh: () => {} }, seed, c });

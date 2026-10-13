@@ -4018,7 +4018,29 @@ unique different version of the aura, a title named Hour's First, and each the g
   has 11 mutants, all dead.
 
 
-## EG-E2 — the Spire's titles and auras (2026-10-12, acct121, acct122 past BAL9, acct124 past NAME-AS and HACKED-GOLD, world197, world198 past BAL8, world199 past SPAWN-REBIRTH)
+## EG-PLAY and after — the Elite Breach on the account service (2026-10-11 to 2026-10-13, acct124, migration 0112)
+
+The Elite Breach's account half, each piece recorded in `bible/11-Multiplayer/Elite-Gates.md` section 31 (sections 19
+and 20 for EG-E1 to EG-E3) and listed here so this arc's page names every route it holds. The arc ships under one
+account version, EG-PLAY's: `acct116` to `acct122` on its branch, `acct124` since the merges of main (past BAL9, NAME-AS
+and HACKED-GOLD's `acct123`), and one migration, `0112_elite_breach.sql` (0111 on its branch, past NAME-AS's 0111).
+
+- **EG-PLAY** (`server-account/src/eg.js`): the Weir Keys (`players.eg_keys`, the rolls at gate and Hour claims, the
+  launch gift), `/v1/eg/keys`, `/v1/eg/open` (a stake, idempotent on its request id; one live breach an account; the
+  day's Rehearsal), `/v1/eg/admit` and `/v1/eg/claim` (a Redoubt's `w`, an end's `x`, a void's `v`; the first breach's
+  mercy).
+- **EG-E1** (`server-account/src/egEconomy.js`): what a Redoubt pays - the week's pay, the embers, the pity, the
+  Valkynaz's key, the Broker's Panoply sink (`/v1/eg/sink`).
+- **EG-E2**: the feats, the Annals, the honours and the boards (below, and `/v1/eg/board`).
+- **EG-E3**: the herald's posts and the dungeon's find (`/v1/eg/find`, `eg_finds`).
+- **EG-F** (`server-account/src/egStarts.js`): where a breach may start (`/v1/eg/starts`), the Wager on the stake.
+- **EG-ZA**: a key is never lost - voids for an order no call answered, the receipts' fields counted.
+- **EG-ZF**: the first-time lines kept on the account (`players.eg_first`, `/v1/eg/first`), First of the Spire's letter.
+- **EG-ZM**: the stake's clock on the hourly cron (`spendLapsedStakes`, 14 days past a stake's `until`).
+- **AUDIT EG III**: a void after a Redoubt returns the key, a voided Rehearsal gives the day's back, the first breach's
+  mercy judged at the end, an admission's `eg_live` ending at its stake's `until`.
+
+## EG-E2 — the Spire's titles and auras (2026-10-12, under EG-PLAY's account version: acct121 then, acct124 since the merges; world197 then, world199 since)
 
 The Elite Breach's honours (`bible/11-Multiplayer/Elite-Gates.md` section 19, THE HONOURS; its EG-E2 record at the end
 of section 20), added as every honour is: the ids last in `identityToken.js` `TITLES` and `AURAS` (the relay's bundle -

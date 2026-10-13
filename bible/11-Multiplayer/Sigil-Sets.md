@@ -1025,13 +1025,12 @@ to no finding and a forged one (an affix past its record, another template, set,
 THE FOUR HOSTS. The cast is told by the one engine every host builds (`scenes/hostMagic.js` `createPlayerMagic`:
 `scenes/world.js`'s - whose instance `scenes/worldModes.js`'s interiors take - `scenes/exterior.js`'s and
 `scenes/dungeonContext.js`'s), so every host's casts arm the Discipline. The two doors are `scenes/world.js`'s, the
-streaming page that keeps the party and the Spire, and FLAGGED here until EG-E's host wiring registers them:
-`setSetPowersAllies` (the party mates within 8 m, cast at through `castAtAllyDoor`) and `setSpireRecovery` (the breach the
-player stands in, `modes.egHallBreach()`), with `spireRedoubtTaken` called as the room says a Redoubt was taken
-(`scenes/egClient.js`). Unopened, the Reprieve shields its wearer alone and every death save keeps its timer.
-`scenes/exterior.js`, the offline town page, wires neither - the sets are online gear. FLAGGED too: section 15 names
-Divine Grace and the Ghost-King's Vigil (`systems/lootPowers.js`) among the saves the Spire holds; they are the loot's, not
-this slice's, and still recover on their timers.
+streaming page that keeps the party and the Spire, WIRED by EG-E's host wiring (`11-Multiplayer/Elite-Gates.md` section
+31): `setSetPowersAllies` (the party mates within 8 m, cast at through `castAtAllyDoor`) and `setSpireRecovery` (the
+breach the player stands in, `modes.egHallBreach()`), with `spireRedoubtTaken` called as the room says a Redoubt was taken
+(`scenes/egClient.js`). `scenes/exterior.js`, the offline town page, wires neither - the sets are online gear. Section
+15's Divine Grace and the Ghost-King's Vigil (`systems/lootPowers.js`), the loot's saves, are held in the Spire too
+(EG-ZH: `lootSpireHeld`).
 
 Pinned: `test/eg15_panoply.test.js` (15); `tools/mutants/eg15.json` (91, all dead). The older pins it moved: SET1's,
 SD9d's and SERPENT-SET's set lists and records, SET3's states and voice, SERPENT-SET's heal imports, and the cast
