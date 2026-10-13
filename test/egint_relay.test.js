@@ -182,9 +182,9 @@ test('EG-H1 A STAMP FORGED EARLY (the time law\'s clamps, in the room): a member
     const at = now() + 1200;
     throwBlow(rec(), spec, shDisc(0, cz, 3), at, now());
     while (now() < at + 300) { await send(ann, 0, cz, now() - 150); await send(mac, 3, cz, now() - 150); await beat(100); }
-    const before = eg.room._egTrailsBy.get(socks[ann]).length;
+    const before = eg.room._egTrailsBy.get(ann).tr.length;   // PIN MOVED (AUDIT EG III, lane3 #3): the trail is the account's
     await send(ann, 0, cave.az + 1.2, at - 600);   // forged: "I left before it landed"
-    const tr = eg.room._egTrailsBy.get(socks[ann]);
+    const tr = eg.room._egTrailsBy.get(ann).tr;
     assert.equal(tr.length, before, 'a stamp before its last is out of order - never placed');
     assert.equal(tr.at(-1)[3], cz, 'where it stood is where it stood');
     await beat(1200);
@@ -383,7 +383,7 @@ test('EG-H1 RIDDEN POSES (section 10.8): a body on a Drift, a Rail or a Drum rid
     // a walk to the first piece, then 3 s aboard - the raw pose 40 m off in the void, its ride saying where it stands
     for (let z = spec.arrive.z + 0.6; z < s0.z - 1.2; z += 0.6) { await eg.pose(socks[mac], poseAt(spec, 0, z)); await beat(100); }
     for (let k = 0; k < 30; k++) { await eg.pose(socks[mac], poseAt(spec, 40, s0.z, 0, { pl: [0, 0.3, 0, 0] })); await beat(100); }
-    const tr = eg.room._egTrailsBy.get(socks[mac]), e = tr.at(-1), qe = egPieceAt(s0, e[0] / 1000);
+    const tr = eg.room._egTrailsBy.get(mac).tr, e = tr.at(-1), qe = egPieceAt(s0, e[0] / 1000);   // PIN MOVED (AUDIT EG III, lane3 #3): the trail is the account's
     assert.ok(Math.abs(e[1] - (s0.x + qe.dx + 0.3)) < 1e-6 && Math.abs(e[3] - s0.z) < 1e-6, 'its trail stands on the piece at its clock');
     assert.equal(rec().mem[mac].fair.why, '', 'its fair trail held aboard');
     // a ride the piece cannot hold: the raw pose judged - and the void holds nothing
@@ -421,7 +421,7 @@ test('EG-H1 THE CLOCK CORRECTED (section 10.8; net/egClock.js): pings in a burst
     assert.deepEqual(ans.map((m) => [m.c, m.now]), [[41, now()]], 'answered at once, with the relay\'s clock');
     assert.equal(egs(socks[ann]).filter((m) => m.k === 'clk').length, 0, 'to its socket alone');
     for (let k = 0; k < 12; k++) { await eg.pose(socks[mac], poseAt(spec, spec.arrive.x, spec.arrive.z, 0, { ts: tsOf(now() - 150 + 5000) })); await beat(100); }
-    const e = eg.room._egTrailsBy.get(socks[mac]).at(-1);
+    const e = eg.room._egTrailsBy.get(mac).tr.at(-1);   // PIN MOVED (AUDIT EG III, lane3 #3): the trail is the account's
     assert.equal(now() - 100 - e[0], 150, 'the pose stands at the instant it was sent');
   });
 });

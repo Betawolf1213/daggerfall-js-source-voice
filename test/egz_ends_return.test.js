@@ -87,7 +87,9 @@ async function stage(t, { co = [[ME, 'Mac', 1], ['acct-ann', 'Ann', 2]], opener 
   const account = {
     me: () => ME, guest: () => false,
     keys: track(async () => ({ ok: true, data: { keys: 1, live: { b: B, until: Math.floor(clock / 1000) + 3 * 3600 } } })),
-    admit: track(async (b) => { asked.admit.push(b); return { ok: true, data: { order: await mintEgOrder({ o: 'egadmit', s: ME, eb: b, ez: 'a'.repeat(20) }, (await eg.signer()).privateKey, { subtle, nowS: Math.floor(clock / 1000) }), b } }; }),
+    // PIN MOVED (AUDIT EG III, lane3 #9 - TEST THE SHAPE THE PRODUCER MINTS): the service signs an admission to its breach's
+    // start (server-account/src/eg.js admitEg: the stake's `ew`), and the room now refuses another start's order
+    admit: track(async (b) => { asked.admit.push(b); return { ok: true, data: { order: await mintEgOrder({ o: 'egadmit', s: ME, eb: b, ez: 'a'.repeat(20), ew: EW }, (await eg.signer()).privateKey, { subtle, nowS: Math.floor(clock / 1000) }), b } }; }),
     claim: track(async () => ({ ok: false, error: 'server' })),
   };
   let store = memStore(), client = null;

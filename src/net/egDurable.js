@@ -72,6 +72,9 @@ export const EG_LIVE_MAX = 64;
 /** Where the hub keeps its live list (breach -> `{ egv, until }`), the relay's public door that says it (the deploy's
  *  hold and drain read it), and the internal doors the Worker asks the hub through and the hub asks each room through. */
 export const EG_LIVE_KEY = 'eglive';
+/** AUDIT EG III (lane3 #19): how long the hub keeps its answer to the public live door (ms) - every ask meanwhile answered
+ *  by it, so a flood of asks costs one round of the rooms each EG_LIVE_SAID_MS (server/src/index.js `_egLiveSay`). */
+export const EG_LIVE_SAID_MS = 2000;
 export const EG_LIVE_PATH = '/v1/eg/live';
 export const EG_INTERNAL_LIVE = '/internal/eg/live';
 export const EG_INTERNAL_STAGE = '/internal/eg/stage';
@@ -88,11 +91,19 @@ const KEPT = new Set(['op', 'endAt', 'tk', 'gv', 'hold', 'rc', 'zs', 'co', 'owe'
  * GIVE THE GAP BACK: every instant breach `B` holds after its first wake - a number between its open (less
  * EG_INSTANT_SLACK_MS) and the last word from `now` - moved forward `gap` ms, the fight's clocks and the members' with the
  * stage's and the count's. A frozen piece (a hall's spec) holds no instant and is left; nothing before the first wake
- * moves. Answers the ms given back (`B.gv` keeps the sum).
- * @param {any} B @param {number} gap @param {number} now
+ * moves. Answers the ms given back (`B.gv` keeps the sum). AUDIT EG III: `moves(object, key, value)`, where given, says
+ * which instants move (THE HOLD's finding; a beat gap's own stamps stay).
+ * @param {any} B @param {number} gap @param {number} now @param {((o: any, k: string, v: number) => boolean)|null} [moves]
  */
-export function egGiveBack(B, gap, now) {
+export function egGiveBack(B, gap, now, moves = null) {
   if (!B || !(gap > 0) || !(B.wk > 0) || B.end) return 0;
+  instantsOf(B, now, (o, k, v) => { if (!moves || moves(o, k, v)) o[k] = v + gap; });
+  B.gv = (B.gv ?? 0) + gap;
+  return gap;
+}
+/** Every instant breach `B` holds at `now` - a number between its open (less EG_INSTANT_SLACK_MS) and the last word from
+ *  `now`, outside a frozen piece and the KEPT fields - handed to `fn(object, key, value)`. */
+function instantsOf(B, now, fn) {
   const lo = B.op - EG_INSTANT_SLACK_MS, hi = now + EG_LAST_WORD_MS, seen = new Set();
   const walk = (o, top) => {
     if (seen.has(o) || Object.isFrozen(o)) return;
@@ -100,13 +111,28 @@ export function egGiveBack(B, gap, now) {
     for (const k of Object.keys(o)) {
       if (top && KEPT.has(k)) continue;
       const v = o[k];
-      if (typeof v === 'number') { if (v >= lo && v <= hi) o[k] = v + gap; }
+      if (typeof v === 'number') { if (v >= lo && v <= hi) fn(o, k, v); }
       else if (v && typeof v === 'object') walk(v, false);
     }
   };
   walk(B, true);
-  B.gv = (B.gv ?? 0) + gap;
-  return gap;
+}
+/**
+ * AUDIT EG III (lane3 #8; section 22, THE HOLD - "A member who returns finds the hall where they left it"): WHAT A HOLD
+ * FOUND - each held record's instants as its hold began (an object's keys and their values), so its release gives the gap
+ * back to those alone. A member's word during the hold (a ping, a pose, a heal, a pick) stamps relay time, and moving it by
+ * the whole gap stood it in the future: a pose stamped ten seconds before the release stood a hundred seconds ahead, and
+ * its fair trail judged nothing until the clock caught it. An instant rewritten during the hold, or in a piece made during
+ * it, is the hold's own and stays; a deadline the hold found (a rest's end, a closing's) still moves, however far into the
+ * hold it fell. In memory, keyed by the record: a room woken again inside its hold takes it again from what it read.
+ * @type {WeakMap<any, WeakMap<object, Map<string, number>>>}
+ */
+const HOLD_FOUND = new WeakMap();
+/** The hold's finding taken: breach `B`'s instants at `now`. */
+function holdFind(B, now) {
+  const found = new WeakMap();
+  instantsOf(B, now, (o, k, v) => { let m = found.get(o); if (!m) found.set(o, (m = new Map())); m.set(k, v); });
+  HOLD_FOUND.set(B, found);
 }
 
 /**
@@ -122,7 +148,7 @@ export function egResume(B, now, voidBefore = 0) {
   if (!egLawKnown(B.egv) || egForceVoided(B, voidBefore)) return 'void';   // EG-ZA: and THE FORCE VOID - a breach live at a `force` deploy's stamp
   if (!(B.wk > 0)) { B.tk = now; return null; }
   const last = Number.isFinite(B.tk) && B.tk <= now ? B.tk : now;
-  if (B.hold) return 'hold';   // woken again inside a hold: its release gives the whole gap back
+  if (B.hold) { holdFind(B, now); return 'hold'; }   // woken again inside a hold: its release gives the whole gap back (AUDIT EG III: to what it found)
   if (egBetween(B)) { egHoldBegin(B, last, now); return 'hold'; }
   B.tk = now;
   return now - last > EG_GAP_MS && egGiveBack(B, now - last, now) > 0 ? 'gave' : null;
@@ -134,6 +160,7 @@ export function egResume(B, now, voidBefore = 0) {
 export function egHoldBegin(B, at, now) {
   B.hold = { at, until: now + EG_REJOIN_MS, ran: B.cnt?.at > 0 ? 1 : 0 };
   if (B.cnt) B.cnt = egCountHold(B.cnt, at);
+  holdFind(B, now);   // AUDIT EG III (lane3 #8): what the hold found - its release moves those alone
 }
 /**
  * May a held breach go on at `now`: every living member back in the room (`present` - the accounts with a fresh body
@@ -148,27 +175,32 @@ export function egHoldDone(B, now, present) {
 }
 /**
  * THE HOLD RELEASED at `now`: the whole gap since its beat given back, the count running again if it ran. Answers the
- * ms given back.
+ * ms given back. AUDIT EG III (lane3 #8): given back to the instants the hold found, never to one its company stamped
+ * while it held (a record held by hand, with no finding, moves every instant).
  * @param {any} B @param {number} now
  */
 export function egRelease(B, now) {
   const h = B?.hold;
   if (!h) return 0;
   B.hold = null;
-  const gap = egGiveBack(B, Math.max(0, now - h.at), now);
+  const found = HOLD_FOUND.get(B);
+  HOLD_FOUND.delete(B);
+  const gap = egGiveBack(B, Math.max(0, now - h.at), now, found ? (o, k, v) => found.get(o)?.get(k) === v : null);
   if (h.ran && B.cnt) B.cnt = egCountRun(B.cnt, now);
   B.tk = now;
   return gap;
 }
 /**
  * A BEAT at `now` of a breach whose room never slept: a gap past EG_GAP_MS since its last beat (an alarm the runtime
- * held) given back; the beat stamped. Answers the ms given back.
+ * held) given back; the beat stamped. Answers the ms given back. AUDIT EG III (lane3 #8): the room was awake, so its
+ * members' words in the gap stamped relay time - an instant inside the gap (after the last beat, by now) is the gap's
+ * own and stays; those before it and the deadlines past it move.
  * @param {any} B @param {number} now
  */
 export function egBeatGap(B, now) {
   const last = B?.tk;
   if (B) B.tk = now;
-  return Number.isFinite(last) && now - last > EG_GAP_MS ? egGiveBack(B, now - last, now) : 0;
+  return Number.isFinite(last) && now - last > EG_GAP_MS ? egGiveBack(B, now - last, now, (o, k, v) => v <= last || v > now) : 0;
 }
 
 /**

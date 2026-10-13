@@ -313,9 +313,9 @@ import { isEgRoom, egRoomKey, egBreachOfRoom, EG_SEALED_MS, EG_ADMIT_MAX_MS } fr
 import { egBreachNew, egEnter, egAdmitWord, egStep, egBlow, egDown, egHome, egWord, egStateOf, egFightStateOf, egLive } from '../../src/net/egBrain.js';
 // EG-H2 (2026-10-12, Elite-Gates.md section 22): DURABILITY - net/egDurable.js (time across a restart, THE HOLD, the law
 // pin, the secret receipt seeds, the live list and its cap); the breach's end and its ground, a hall's spec for `spec`
-import { egResume, egHoldDone, egRelease, egBeatGap, egReceiptSeed, EG_LIVE_MAX, EG_LIVE_KEY, EG_LIVE_PATH, EG_INTERNAL_LIVE, EG_INTERNAL_STAGE } from '../../src/net/egDurable.js';
+import { egResume, egHoldDone, egRelease, egBeatGap, egReceiptSeed, EG_LIVE_MAX, EG_LIVE_KEY, EG_LIVE_PATH, EG_INTERNAL_LIVE, EG_INTERNAL_STAGE, EG_LIVE_SAID_MS } from '../../src/net/egDurable.js';   // AUDIT EG III: and how long the live door's answer is kept
 import { egEnd, egGeo } from '../../src/net/egBrain.js';
-import { egHallOf, egCircleOfHall, EG_LAST_WORD_MS } from '../../src/net/egLaw.js';
+import { egHallOf, egCircleOfHall, EG_LAST_WORD_MS, EG_ABSENT_TRIAL_MS } from '../../src/net/egLaw.js';   // AUDIT EG III: and a closed socket's body held for the absence's window
 import { mintEgReceipt } from '../../src/net/egReceipt.js';
 // EG-ZA (2026-10-12, Mac: "I said I want everything"; Elite-Gates.md sections 22 and 23): A KEY IS NEVER LOST - the hub's
 // open retried and its call told the room, an open the room never took voided by the room (its tombstone first), a client's
@@ -335,7 +335,7 @@ import { EG_INTERNAL_HERALD, EG_HERALD_KEY, EG_HERALD_KEEP_MS, EG_HERALD_TELL_MS
 // heals restored to it, the member's own word of its body (`vt`), the shared clock's ping answered (`clk`)
 import { egPoseIn, egCount, egCountHeals, egBodyWord, egFairWoke, EG_BODY_ENFORCE } from '../../src/net/egBrain.js';
 import { egHeal } from '../../src/net/egBrain.js';   // EG-ZF (Elite-Gates.md section 27.6): what a companion's spell healed in a member - the recap's healing
-import { egPoseClock, egPoseShared, egTrailPush } from '../../src/net/egFair.js';
+import { egPoseClock, egPoseShared, egTrailPush, EG_TRAIL_MS } from '../../src/net/egFair.js';
 import { signEgCall } from '../../src/net/egCallSig.js';   // EG-F: the hub's signature on the call's arch fields
 import { egGate, EG_INTERNAL_OPEN, EG_KEY, egCallKey, validEgOpenTell, EG_BRAIN_MIN } from './relay.js';
 
@@ -437,6 +437,23 @@ async function sdLiveAsk(rooms, s) {
 /** AUDIT SD: a realm's refusal while the hub does not answer - the hello's busy close, which the page tries again (never
  *  "The Hour has closed.", which is for good: a deploy's hello storm cast fighters out mid-fight). */
 const SD_NO_BUSY = 'busy';
+/** AUDIT EG III (lane3 #3): a held body's stand-in poses on its trail, this far apart (ms) - under the judge's
+ *  EG_POSE_NEAR_MS, so every landing finds one either side of it. */
+const EG_HELD_STEP_MS = 200;
+/**
+ * AUDIT EG III (lane3 #3; Elite-Gates.md sections 6.1 and 22): A CLOSED SOCKET'S BODY HELD - an account's trail record (`{ tr,
+ * last }`, the room's - `last` its newest real pose) grown to `now` with its last pose, an entry each EG_HELD_STEP_MS
+ * (`[t, x, y, z, h, 1]`, from the trail's end, its window's at most), for EG_ABSENT_TRIAL_MS after that pose; past it the
+ * trail is left as it is (the absence's fall is the director's). Answers the trail.
+ * @param {{ tr: number[][], last: number[] }} k @param {number} now
+ */
+function egTrailHeld(k, now) {
+  const r = k.last, tr = k.tr;
+  if (!r || now - r[0] > EG_ABSENT_TRIAL_MS) return tr;
+  const end = tr.length ? tr[tr.length - 1][0] : r[0];
+  for (let t = Math.max(end + EG_HELD_STEP_MS, now - EG_TRAIL_MS); t <= now; t += EG_HELD_STEP_MS) egTrailPush(tr, [t, r[1], r[2], r[3], r[4], 1]);
+  return tr;
+}
 /** EG-H2 (Elite-Gates.md section 22): THE SPIRE'S LIVE BREACHES, asked of the hub - `/v1/eg/live`, public, read by the relay
  *  deploy's hold and drain (.github/workflows/relay-deploy.yml): how many breaches live, whether every one stands between
  *  trials, the spec laws they were opened under, the longest's last word, and whether the road is shut. It names no
@@ -7431,20 +7448,36 @@ export class Room {
     const [sx, y, z] = dungeonToRealm(p.x, p.y ?? 0, p.z);
     const at = egPoseIn(B, a.sub, { sx, y, z, pl: p.pl ?? null, cl: p.cl ?? 0 }, t);
     if (!at) return;
+    // AUDIT EG III (lane3 #3; sections 6.1 and 22): THE TRAIL IS THE ACCOUNT'S, not its socket's - a socket that closes
+    // leaves its body standing on it (_egTrails holds its last pose). The newest socket speaks for it (the gate's law), and
+    // a pose before the trail's last is no step of it (a reload's clock is its own); the held stand-in it overtakes goes.
     const trails = (this._egTrailsBy ??= new Map());
-    const tr = trails.get(ws) ?? [];
-    trails.delete(ws); trails.set(ws, egTrailPush(tr, [t, at.x, at.y, at.z, at.h]));
+    const k = trails.get(a.sub);
+    if (k && k.ws !== ws && this._siegeSocketOf(a.sub)?.[0] !== ws) return;
+    const tr = k?.tr ?? [];
+    while (tr.length && tr[tr.length - 1][5] === 1 && tr[tr.length - 1][0] >= t) tr.pop();
+    if (tr.length && t < tr[tr.length - 1][0]) return;
+    const e = [t, at.x, at.y, at.z, at.h];
+    trails.delete(a.sub); trails.set(a.sub, { ws, tr: egTrailPush(tr, e), last: e });
     if (trails.size > 64) trails.delete(trails.keys().next().value);
   }
-  /** The members' shared-time trails for the count - each one's NEWEST socket speaking for it (the gate's law). */
-  _egTrails(B) {
-    const newest = new Map();
-    for (const [ws, b] of this._all()) {
-      if (!b.id || !b.sub || !B.mem?.[b.sub]) continue;
-      const had = newest.get(b.sub);
-      if (!had || (b.since ?? 0) >= (had[1].since ?? 0)) newest.set(b.sub, [ws, b]);
+  /**
+   * The members' shared-time trails for the count - each one's NEWEST socket speaking for it (the gate's law). AUDIT EG III
+   * (lane3 #3; section 6.1 - "A shape aimed at another member still lands on it, so a tab closed before a blow is not a life
+   * saved"; section 22, "A dropped socket"): a living member with NO socket here keeps its body at its last pose for
+   * EG_ABSENT_TRIAL_MS from it - its trail held there, an entry each EG_HELD_STEP_MS to now (`[t, x, y, z, h, 1]`), so the
+   * judge's poses either side of a landing find it standing where it was. The census walked the sockets alone, and a closed
+   * one dropped its body from every blow. No blow is aimed at it: the director's bodies are the fresh poses (_egBodies).
+   */
+  _egTrails(B, now = Date.now()) {
+    const socks = this._siegeSockets(), out = [];
+    for (const [sub, m] of Object.entries(B.mem ?? {})) {
+      const k = this._egTrailsBy?.get(sub);
+      if (socks.has(sub)) { out.push({ sub, tr: k?.tr ?? [] }); continue; }
+      if (!m?.in || !m.alive || m.home || !k?.last) continue;
+      out.push({ sub, tr: egTrailHeld(k, now) });
     }
-    return [...newest.values()].map(([ws, b]) => ({ sub: b.sub, tr: this._egTrailsBy?.get(ws) ?? [] }));
+    return out;
   }
   /** The breach's frames to everyone in the room, in order - EG-FULL: a frame carrying `to` (a member's offer, a gift, a
    *  recall) to that member's sockets alone, its `to` taken off. */
@@ -7614,7 +7647,10 @@ export class Room {
       await this._loadKey();
       if (!this._verifyKey) return;
       const r = await verifyOrder(m.z, this._verifyKey, { subtle: crypto.subtle, nowS: Math.floor(now / 1000), kind: 'egadmit' });
-      if (!r.ok || r.claims.s !== a.sub || r.claims.eb !== B.b) { no('the order is not yours'); return; }
+      // AUDIT EG III (lane3 #9; section 23 - "The room checks `eb` against its own key, `s` against the hello's subject,
+      // `ew` against the breach's"): an order for another start is not this breach's - the service signs a member's
+      // admission to the start it may make, and a room that read no `ew` took any start's order
+      if (!r.ok || r.claims.s !== a.sub || r.claims.eb !== B.b || (r.claims.ew ?? 0) !== (B.ew ?? 0)) { no('the order is not yours'); return; }
       now = Date.now();
       B = this._eg;
       const lv = a.cl > 0 && Number.isSafeInteger(a.cl) ? a.cl : m.lv;   // the token's character level where it carries one
@@ -7745,7 +7781,12 @@ export class Room {
     const c = r.claims;
     // EG-H2 (section 22): THE DRAIN and THE COST - no new breach while a deploy drains the Spire (the relay setting
     // `egDrain`), nor past EG_LIVE_MAX live at once: refused, and the stake handed straight back (a void receipt)
-    if ((await this._egDraining()) || Object.keys(await this._egLiveOf(now)).length >= EG_LIVE_MAX) { await this._egShut(ws, a, c, now); return; }
+    // AUDIT EG III (lane3 #5): AT THE CAP, THE ROOMS ASKED - an ended breach stayed on the list until its last word, three
+    // hours of a slot; at EG_LIVE_MAX the hub asks each listed room where it stands (the live door's own question, kept
+    // EG_LIVE_SAID_MS) and lets the ended ones go before it refuses
+    let full = Object.keys(await this._egLiveOf(now)).length >= EG_LIVE_MAX;
+    if (full) { await this._egLiveSay(); full = Object.keys(await this._egLiveOf(now)).length >= EG_LIVE_MAX; }
+    if ((await this._egDraining()) || full) { await this._egShut(ws, a, c, now); return; }
     const rec = await this._acct(a.sub);
     let members = [a.sub];
     if (rec) { const [party] = await this._myParty(a.sub, rec, now); if (party?.members?.length) members = party.members.includes(a.sub) ? party.members.slice(0, 8) : [a.sub]; }
@@ -7873,6 +7914,7 @@ export class Room {
   async _egLiveAdd(b, e, now) {
     const live = await this._egLiveOf(now);
     live[b] = e;
+    this._egLiveSaid = null; this._egLiveGen = (this._egLiveGen ?? 0) + 1;   // AUDIT EG III: a breach added - the kept answer no longer counts it
     await this.state.storage.put(EG_LIVE_KEY, live);
   }
   /** EG-H2: is the Spire's road shut (THE DRAIN - the relay setting `egDrain` 'on', or the Worker's EG_DRAIN var)? */
@@ -7888,8 +7930,26 @@ export class Room {
   /** EG-H2: THE SPIRE'S LIVE BREACHES (`/v1/eg/live`): each live room asked where it stands (at once), one that answers it
    *  holds no live breach taken off the list; every one between trials (`between` - an unanswered room counts as mid-trial,
    *  so no deploy goes on a guess), their laws, the longest's last word, the road. */
-  async _egLiveInternal() {
-    const now = Date.now(), live = await this._egLiveOf(now), list = Object.entries(live);
+  async _egLiveInternal() { return json({ ...(await this._egLiveSay()), drain: await this._egDraining() }); }   // the road's word read fresh: a developer's switch is said at once
+  /**
+   * AUDIT EG III (lane3 #19, #5): THE LIVE LIST'S ANSWER, KEPT - `/v1/eg/live` is public and asked every room on the list
+   * (up to EG_LIVE_MAX internal calls a request, with no bound on the requests), so the hub keeps its answer EG_LIVE_SAID_MS
+   * and every ask meanwhile - a crowd's, a deploy's poll, an open at the cap - is answered by it, one asked at a time and the
+   * ones that come while it is asked answered by that same asking (ASYNC NEVER DROPS: coalesced, never refused). The
+   * deploy polls every fifteen seconds and goes tens of seconds after it reads, so a two-second answer is no staler than
+   * the one it acts on. Answers `{ live, between, laws, until }` (the road's `drain` is the door's, read fresh).
+   */
+  async _egLiveSay() {
+    const now = Date.now(), kept = this._egLiveSaid;
+    if (kept?.body && now >= kept.at && now - kept.at < EG_LIVE_SAID_MS) return kept.body;
+    if (this._egLiveAsking) return this._egLiveAsking;
+    const gen = this._egLiveGen ?? 0;   // a breach added while the rooms are asked: that answer is not kept
+    this._egLiveAsking = this._egLiveRead(now).then((body) => { if ((this._egLiveGen ?? 0) === gen) this._egLiveSaid = { at: now, body }; return body; }).finally(() => { this._egLiveAsking = null; });
+    return this._egLiveAsking;
+  }
+  /** EG-H2: the live list asked of its rooms at `now` - the answer `_egLiveSay` keeps. */
+  async _egLiveRead(now) {
+    const live = await this._egLiveOf(now), list = Object.entries(live);
     const said = await Promise.all(list.map(([b]) => this._egPost(egRoomKey(b), EG_INTERNAL_STAGE, {})));
     let between = true, until = 0, n = 0, gone = false;
     const laws = new Set();
@@ -7900,7 +7960,7 @@ export class Room {
       if (!st || st.sg === 'trial') between = false;
     });
     if (gone) await this.state.storage.put(EG_LIVE_KEY, live);
-    return json({ live: n, between, laws: [...laws].sort((x, y) => x - y), until, drain: await this._egDraining() });
+    return { live: n, between, laws: [...laws].sort((x, y) => x - y), until };
   }
   /** EG-H2: where this breach's room stands, for the hub's list - its stage, its law, whether it holds; or no live breach. */
   async _egStageInternal() {

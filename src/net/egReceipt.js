@@ -17,6 +17,7 @@
 //         td seconds from Hall 1's wake to the deepest hall's door ('x', once a hall is cleared - EG-ZA)
 //         sh the member's share of the circle's damage, thousandths ('w')   m the circle's measures, six whole numbers ('w')
 //         co the company: its entrants' count and a 48-bit tag of their accounts, sorted (both kinds - egCompanyTag)
+//         nr 1 when the BREACH ended with no Redoubt taken ('x' alone - AUDIT EG III: the first breach's mercy is decided by it)
 //
 // EG-ZA (2026-10-12, Mac: "I said I want everything"; Elite-Gates.md sections 20, 21 and 23's table): THE FIELDS THE
 // TABLE ASKED THAT NOTHING MINTED. `td` on the end (the Descent's seconds - the director kept it and said it only to the
@@ -115,6 +116,8 @@ export function egReceiptValid(c) {
   if (c.td !== undefined && (c.q !== 'x' || !int(c.td, 0, 7 * 24 * 3600))) return false;
   if (c.sh !== undefined && (c.q !== 'w' || !int(c.sh, 0, EG_SHARE_WHOLE))) return false;
   if (c.m !== undefined && (c.q !== 'w' || !egMeasuresValid(c.m))) return false;
+  // AUDIT EG III (lane3 #6): an end's word that its breach ended with no Redoubt taken - 1 or absent, an end's alone
+  if (c.nr !== undefined && (c.q !== 'x' || c.nr !== 1)) return false;
   if (c.q === 'w') return int(c.w, 1, 19_999) && c.why === undefined;
   return EG_END_WHYS.includes(c.why) && c.w === undefined;
 }

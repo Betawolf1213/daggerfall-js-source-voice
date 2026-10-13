@@ -12,7 +12,7 @@ import worker from '../server/src/index.js';
 import { fakeRooms } from './fakeRoom.mjs';
 import { SOCIAL_ROOM, EG_KEY, validEgOut, validEgIn } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, egCountLeft, egSpecGive, egSpecForget, EG_SPEC, EG_SEALED_MS, EG_GATHER_MS, EG_LAST_WORD_MS, EG_ARRIVE_MAX_MS, EG_ADMIT_MAX_MS } from '../src/net/egLaw.js';
-import { EG_LAWS, EG_LAW_KEEP_DAYS, EG_GAP_MS, EG_REJOIN_MS, EG_LIVE_MAX, EG_LIVE_KEY, EG_LIVE_PATH, egLawKnown, egReceiptSeed, egGiveBack, egResume, egHoldDone, egRelease, egBeatGap, egBetween, EG_DONE_KEY } from '../src/net/egDurable.js';
+import { EG_LAWS, EG_LAW_KEEP_DAYS, EG_GAP_MS, EG_REJOIN_MS, EG_LIVE_MAX, EG_LIVE_KEY, EG_LIVE_PATH, egLawKnown, egReceiptSeed, egGiveBack, egResume, egHoldDone, egRelease, egBeatGap, egBetween, EG_DONE_KEY, EG_LIVE_SAID_MS } from '../src/net/egDurable.js';
 import { egBreachNew } from '../src/net/egBrain.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { readEgReceipt } from '../src/net/egReceipt.js';
@@ -165,12 +165,13 @@ test('EG-H2 THE HOLD (section 22): a breach restarted between trials (the swap t
 });
 
 test('EG-H2 THE LIVE LIST, THE DRAIN AND THE COST (section 22): the hub keeps each breach it opens until its last word and answers `/v1/eg/live` - how many, all between trials or not, their laws, the longest\'s last word, the road - naming none; with the road shut (the relay setting `egDrain`, a developer\'s alone, on or off) or EG_LIVE_MAX live, an open is refused in words and its stake handed straight back (a void receipt), no room opened (mutants: the drain unread; the cap unread; the stake kept; a room opened anyway; the live list never kept)', async () => {
-  await withBreach(async ({ world, hub, mac, eg, openOrder }) => {
+  await withBreach(async ({ world, hub, mac, eg, openOrder, step }) => {
     const ask = async () => (await worker.fetch(new Request(`https://relay.example${EG_LIVE_PATH}`), { ROOMS: world.ROOMS })).json();
     const rec = eg.store.get(EG_KEY);
     assert.deepEqual(hub.store.get(EG_LIVE_KEY), { [B]: { egv: EG_SPEC, until: rec.op + EG_LAST_WORD_MS } }, 'kept until its last word');
     assert.deepEqual(await ask(), { live: 1, between: true, laws: [EG_SPEC], until: rec.op + EG_LAST_WORD_MS, drain: false });
     eg.room._eg.sg = 'trial';
+    step(EG_LIVE_SAID_MS);   // PIN MOVED (AUDIT EG III, lane3 #19): the hub keeps its answer EG_LIVE_SAID_MS
     assert.equal((await ask()).between, false, 'a breach in a trial: not between');
     // THE DRAIN: a developer shuts the road
     const dev = hub.connect(); await hub.hello(dev, 'dev-0001', null, { glyphs: ['dev'] });
@@ -193,6 +194,10 @@ test('EG-H2 THE LIVE LIST, THE DRAIN AND THE COST (section 22): the hub keeps ea
     await hub.raw(dev, JSON.stringify({ t: 'cfg', k: 'egDrain', v: 'off' }));
     // THE COST: EG_LIVE_MAX live at once
     const full = Object.fromEntries(Array.from({ length: EG_LIVE_MAX }, (_, i) => [i.toString(16).padStart(16, '0'), { egv: EG_SPEC, until: Date.now() + 60_000 }]));
+    // PIN MOVED (AUDIT EG III, lane3 #5): at the cap the hub asks each listed room and lets the ended go - so the cap's
+    // breaches stand live in their rooms (the real breach's record under each id)
+    for (const id of Object.keys(full)) await world.room(egRoomKey(id)).state.storage.put(EG_KEY, { ...structuredClone(rec), b: id });
+    step(EG_LIVE_SAID_MS);
     await hub.state.storage.put(EG_LIVE_KEY, full);
     hub.room._egLive = undefined;
     mac.sent.length = 0;
@@ -202,6 +207,7 @@ test('EG-H2 THE LIVE LIST, THE DRAIN AND THE COST (section 22): the hub keeps ea
     // a breach past its last word leaves the list as it is read
     await hub.state.storage.put(EG_LIVE_KEY, { [B]: { egv: EG_SPEC, until: Date.now() - 1 } });
     hub.room._egLive = undefined;
+    step(EG_LIVE_SAID_MS);
     assert.equal((await ask()).live, 0);
   });
   assert.ok(RELAY_CFG_KEYS.includes('egDrain') && RELAY_CFG_VARS.egDrain === 'EG_DRAIN', 'the setting over its Worker var');
