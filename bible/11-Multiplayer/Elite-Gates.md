@@ -1201,7 +1201,7 @@ The Brink halls (section 8.9) are built from them.
   from its lowest exit at that exit's height, a chamber's court at the hero's own size with its trial on its fight
   floors. Tails, or no hero that fits, and the kit's fragment stands, law 6's hall byte for byte but its number. The
   reference (`egRefFrag`) is laid by none, and so is a hero whose inner course leaves the slowest build no room to land and
-  leap again (THE LANDING ROOM - the Fallen Stacks' chamber until its second shelf is deepened).
+  leap again (THE LANDING ROOM).
 - **Never**: a fragment in the Athenaeum (the lock is the hall), or two chambers running.
 
 ### 11.5 The fragment record - the law half
@@ -1405,8 +1405,8 @@ archives (section 25).
   - a hall: at most four fragments (a fork's Low Road counted), 50,000 drawn triangles, and no more GL draws than the
     Hour's own frame (its 25 steps stand 79 dynamic draws, 82 GL draws).
   The draws are measured in node over 60 circles (EG-G2, EG-ZL, EG-ZN): the circle and its batched pieces, every copy in
-  view, a mean of 25.2 GL draws, 39 at worst and 43 with the worst piece dithering, under the Hour's 82 (EG-HERO-LAY: with
-  the ten heroes laid - 23.8, 35 and 39 before). Frame time on
+  view, a mean of 25.5 GL draws, 39 at worst and 43 with the worst piece dithering, under the Hour's 82 (EG-HERO-LAY: with
+  the ten heroes laid - 23.8, 35 and 39 before; 25.2 before AUDIT EG IV laid the Fallen Stacks). Frame time on
   SwiftShader and a reference phone is EG21's field pass, not yet measured.
 - **The moving pieces are batched.** A draw a dressed moving platform would let a 28-platform span alone pass the
   Hour's whole frame. So each kind of piece is one mesh holding every copy (`scenes/egPieceBatch.js`, EG-G2), re-laid on
@@ -8243,6 +8243,7 @@ hero into a hall is spec law 7's (EG-HERO-LAY).
     threshold, the bridge). Two ramps (the stairs), no ceiling (the dome is broken: open to the sky), and 66 open edges.
     THE CASCADE: four lanes 4 m deep across the floor, 5.5 m apart, the near first. The course is two bookcases, gaps 1.6,
     1.6 and 1.66 m (0.3 m up, then 0.5 m down). The solver proves it in 1.207 s fastest and 1.207 s median, three moves.
+    (AUDIT EG IV: the second shelf 2.0 m deep, the last gap 1.26 m, proven in 1.280 s - EG-HERO-LAY's merge notes.)
     The walk graph has 21 nodes and 23 edges, up each stair to its gallery and never across the gap. Anchors: four rifts
     round the floor (for a Rift-Yard), a Caster on each gallery, three Lurkers, the engine and two hazard sources. One seam
     alcove (a shard), four lights of the kit's own, and a 260-triangle proxy.
@@ -8465,12 +8466,14 @@ them"), layer three's departure and its still-owed item, EG6c's "laying waits" s
   - in a chamber, every place the hall set inside its box (a rift, a spot, the foe) stands on one of its fight floors. Its
     own anchors are excepted.
 - **Its inner course landed** (`egHeroLanding`, THE LANDING ROOM - added at the merge of the ten heroes):
-  - THE SPAN BUILD's running jump onto each piece comes down at least `EG_HERO_LAND_ROOM_CM` (20 cm) before the piece's
-    far edge. The jump is pressed at the launch edge: the run and the jump's forward push over its time in the air, at the
+  - THE SPAN BUILD's running jump onto each piece comes down at least `EG_HERO_LAND_ROOM_CM` (40 cm since AUDIT EG IV, 20
+    cm before) before the piece's far edge. The jump is pressed at the launch edge: the run and the jump's forward push over its time in the air, at the
     height between;
   - a piece that moves along the course (a Drift, a Rail, a Drum, a Pendulum) is excepted, and so is a step down of more
     than 30 cm that the build's run carries it off onto;
-  - every code-built course leaves at least 0.24 m (measured over the law pin's 800 halls).
+  - every code-built landing a piece launches onto leaves at least 0.44 m (measured over the law pin's 800 halls); only one
+    launched from still ground, after its run-up, leaves less (0.24 m). The real motor stood on a hero landing 32 cm short
+    of its edge in 5 of 37 crossings over 200 seeds, and on one 42 cm short in none (AUDIT EG IV).
 - **Whole**:
   - THE TIMED SOLVER proves the whole hall;
   - its spec stays inside `EG_SPEC_SAID_MAX` (32,768 characters, `net/wire.js` `EG_SPEC_WIRE_MAX`, pinned equal).
@@ -8550,11 +8553,14 @@ halls lay them, and 24 tests went red. Each failure was decided at its root.
   `GROUNDED_JUMP_GATE_S` (0.1 s). So the pilot stood on the shelf's lip, unable to leap. THE TIMED SOLVER had proven it,
   because it judges reach and not where a jump comes down. The law now holds a hero's inner course to THE LANDING ROOM (the
   fit rule, above):
-  - the Stacks' chamber is refused at every slot and laid by no hall;
+  - the Stacks' chamber is refused at every slot and laid by no hall (until AUDIT EG IV - below);
   - its author's change: deepen the second shelf to 1.8 m, keeping its near edge (`course[1]` z 704 -> 714, d 160 -> 180,
     `after` 166 -> 146, the shelf `b` running 6.24-8.04 m in tools/egHeroStacksScene.mjs's `SHELVES`). That leaves 32 cm.
     Alternatively, stand it level with the first (`y` -20 -> +30), which leaves 64 cm. Either is a rebake
-    (tools/bakeEgHeroStacks.mjs) and its own pins moved (test/eghero_galleries.test.js's course);
+    (tools/bakeEgHeroStacks.mjs) and its own pins moved (test/eghero_galleries.test.js's course). AUDIT EG IV took neither:
+    the 1.8 m shelf passed the law's 20 cm and still failed the real motor (5 of 37 crossings), so THE LANDING ROOM rose to
+    40 cm and the shelf was deepened to 2.0 m (`course[1]` z 724, d 200, `after` 126, the shelf `b` running 6.24-8.24 m),
+    which leaves 52 cm. The Stacks is laid in 6 of the law pin's 800 halls, and the sweep crosses every course;
   - every other hero leaves 54 cm or more (the Ossuary's bone bridges), or lands only on pieces that move.
 - **The client tells ground by the law, not the record.** Heroes dress rock in their ground's records: the Gloam's trunks
   in its floor's, the Clan Pit's tiers in its cobbles', the Ossuary's and the Forge Gut's falls in molten. So the camera
@@ -8574,7 +8580,7 @@ halls lay them, and 24 tests went red. Each failure was decided at its root.
   - the widest Drum is found at seed 10's Hall 2, since seed 295's lays the Colonnade's hero (`test/eg6a_sweep.test.js`);
   - a hero's ground heights are the occluder test's ground (`test/egz_camera.test.js`);
   - the budget was measured again (`test/egz_camera_budget.test.js`: 7.48, 9.61, 25.2, 39 and 43, where 7.15, 9.15, 23.8,
-    35 and 39 stood; worst one piece 12, as before).
+    35 and 39 stood; worst one piece 12, as before - AUDIT EG IV, the Stacks laid: 7.52, 9.64 and 25.5).
 - **Of the merge, not of the heroes:**
   - `test/egmade_law.test.js`'s avoid-death door ends at main's `avoidDeathText()`;
   - `tools/egHeroKit.mjs` carried Newell's normal twice (the Galleries' `newell`, the Wellhead's `wellNormal`, line for

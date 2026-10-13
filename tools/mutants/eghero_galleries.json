@@ -191,7 +191,7 @@
   {
     "name": "EGHERO-GALLERIES-stacks-a-bookcase-past-the-reach",
     "file": "tools/egHeroStacksScene.mjs",
-    "old": "['b', -0.3, 6.24, 7.84, -0.2]",
+    "old": "['b', -0.3, 6.24, 8.24, -0.2]",
     "new": "['b', -0.3, 7.6, 8.4, -0.2]",
     "tests": [
       "test/eghero_galleries.test.js"

@@ -920,8 +920,8 @@
   {
     "name": "EGHL-landing-room-short",
     "file": "src/net/egLaw.js",
-    "old": "export const EG_HERO_LAND_ROOM_CM = 20;",
-    "new": "export const EG_HERO_LAND_ROOM_CM = 10;",
+    "old": "export const EG_HERO_LAND_ROOM_CM = 40;",
+    "new": "export const EG_HERO_LAND_ROOM_CM = 30;",
     "tests": [
       "test/eghero_lay.test.js"
     ]

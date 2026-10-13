@@ -102,5 +102,6 @@
   { "name": "EGZJ-traversal-on-the-floors", "file": "src/world/egTelegraph.js", "old": "EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? hz.y ?? 0 : NaN", "new": "hz?.kind === 'slag' ? hz.y ?? 0 : NaN", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-surface-at-nought", "file": "src/world/egTelegraph.js", "old": "EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? hz.y ?? 0 : NaN", "new": "EG_HAZARDS[hz?.kind]?.aim === 'trav' || hz?.kind === 'slag' ? 0 : NaN", "tests": ["test/egz_state.test.js"] },
   { "name": "EGZJ-lord-straight-walk-at-nought", "file": "src/net/egLords.js", "old": "if (from === to) { egWalk(F, L, gx, gz, stop, speed, now, spec, L.r); return; }", "new": "if (from === to) { egWalk(F, L, gx, gz, stop, speed, now, spec, L.r, false, 0); return; }", "tests": ["test/egz_state.test.js"] },
-  { "name": "EGZJ-lord-top-reached-feet-left-on-the-stair", "file": "src/net/egWalkGraph.js", "old": "{ b.fr = wn.rg; b.y = cm(view.fl[G.rg[wn.rg].f]?.y ?? 0); }", "new": "{ b.fr = wn.rg; }", "tests": ["test/egz_state.test.js"] }
+  { "name": "EGZJ-lord-top-reached-feet-left-on-the-stair", "file": "src/net/egWalkGraph.js", "old": "{ b.fr = wn.rg; b.y = cm(view.fl[G.rg[wn.rg].f]?.y ?? 0); }", "new": "{ b.fr = wn.rg; }", "tests": ["test/egz_state.test.js"] },
+  { "name": "AUDIT-EG-IV-region-hint-pad-short", "file": "src/net/egWalkGraph.js", "old": "inRegion(view, G, hint, x, z, EG_NODE_REACH_M)", "new": "inRegion(view, G, hint, x, z, 0.5)", "tests": ["test/egz_state.test.js"] }
 ]

@@ -74,12 +74,18 @@ function breachAt(seed, h, { n = 2 } = {}) {
 const courtAbove = () => findSpec((q) => q.kind === 'court' && q.fl.length > 0 && q.fl.every((f) => f.y > 1));
 
 test('EG-ZJ A BODY\'S FEET, THE LAW (sections 11.7 and 23; net/egWalkGraph.js egFeetAt, egWalkFeet; net/egLegion.js egAirY; net/egBodies.js): on a chamber\'s stair\'s top the balcony from above and the floor from under it, the lowest with no height, the balcony past the floor\'s rim, a height kept over no fight ground; a walker up the stair standing on the floor with its walk ending on the balcony; a flier at its mark\'s floor, past the band at its own feet; a body stood on the ground under it or at its height, whole centimetres; a walk carrying its height and its end\'s, said again past EG_Y_RESAY_M or with its feet off its line, a stop and a place on their ground; a body\'s row of eighteen with its state as said; the whole fight\'s walk carried to its instant; a standing body whose ground moves under it said again; a Sapper up a stair from the floor\'s height to the balcony\'s and off its lip at the floor\'s at once; a Caster on its pillar over a bastion standing on the pillar; the fight\'s ground kept unenumerated and bound again (mutants: the climb flat; the lip a glide; the walker\'s region by plan; the band\'s fallback dropped; a stair\'s end read off the wrong region; a flier at the floor past the band; a height in millimetres; a walk\'s end\'s height never resaid; the feet off the line unheard; a place left in the air; the state unsaid; the whole fight\'s walk at its head start)', () => {
-  // a chamber's balcony over its floor and its stair between (the law's)
-  const { s: spec } = findSpec((q) => (q.ramps ?? []).length > 0);
+  // a chamber's balcony over its floor and its stair between (the law's). PIN MOVED (AUDIT EG IV, the Fallen Stacks laid
+  // since): a code-built chamber's discs - the first hall with a stair is now the Stacks', whose floors are polygons (its
+  // stair and balcony test/eghero_lay.test.js's THE LEGION WALKS ITS GRAPH)
+  const { s: spec } = findSpec((q) => !q.heroes && (q.ramps ?? []).length > 0);
   const view = egFightView(spec), q = spec.ramps[0];
   const low = spec.fl.find((f) => f.t === 'd' && f.y === q.y0 && Math.hypot(q.bx - f.x, q.bz - f.z) <= f.r);
   const high = spec.fl.find((f) => f.t === 'd' && f.y === q.y1 && Math.hypot(q.bx - f.x, q.bz - f.z) <= f.r + 0.5);
   assert.ok(low && high && q.y1 - q.y0 > 3, 'a balcony over the floor its stair climbs from');
+  // AUDIT EG IV: a Deepway champion chamber's - its stair's top on its balcony's very rim, where a walker that reached the top
+  // node (EG_NODE_REACH_M short of it) once stood outside the balcony by more than its region's pad, was told the floor's,
+  // and walked back down the stair for ever
+  assert.ok(Math.abs(Math.hypot(q.bx - high.x, q.bz - high.z) - high.r) < 1e-9, 'the stair\'s top on the balcony\'s rim');
   assert.equal(egFeetAt(view, q.bx, q.bz, q.y1), q.y1, 'at the stair\'s top, from the balcony: the balcony');
   assert.equal(egFeetAt(view, q.bx, q.bz, q.y0), q.y0, 'the same plan from the floor under it: the floor (section 11.7\'s band)');
   assert.equal(egFeetAt(view, q.bx, q.bz), q.y0, 'with no height: the lowest that holds it');

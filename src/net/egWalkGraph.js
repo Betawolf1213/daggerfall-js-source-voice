@@ -242,13 +242,15 @@ function inRegion(view, G, k, x, z, pad = 0) {
   return R.side === 0 || (R.side < 0 ? z <= G.archOf[R.f].z + pad : z >= G.archOf[R.f].z - pad);
 }
 /**
- * The region a point stands in: `hint` when it still holds it; else by plan (with a height, section 11.7's band - the
- * highest; with none, the lowest). With none holding it, the nearest region (a body over the void, a member off the
+ * The region a point stands in: `hint` when it still holds it, EG_NODE_REACH_M about (AUDIT EG IV: a node on a region's very
+ * rim - a Deepway champion chamber's stair's top on its balcony's - is reached from that far off it, and its region is the
+ * body's then; held any closer, the body was told the floor's and walked back down the stair for ever); else by plan (with a
+ * height, section 11.7's band - the highest; with none, the lowest). With none holding it, the nearest region (a body over the void, a member off the
  * floors) - `[k, inside]`.
  * @param {any} view @param {any} G @param {number} x @param {number} z @param {number} [y] @param {number} [hint]
  */
 export function egRegionAt(view, G, x, z, y = NaN, hint = -1) {
-  if (hint >= 0 && hint < G.rg.length && inRegion(view, G, hint, x, z, 0.5)) return [hint, true];
+  if (hint >= 0 && hint < G.rg.length && inRegion(view, G, hint, x, z, EG_NODE_REACH_M)) return [hint, true];
   let best = -1, bestY = 0;
   const high = Number.isFinite(y);
   for (let k = 0; k < G.rg.length; k++) {

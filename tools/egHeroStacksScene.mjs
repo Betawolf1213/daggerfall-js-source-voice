@@ -153,9 +153,9 @@ function frameBox(m, E, u0, v0, z0, u1, v1, z1, mat) {
 }
 
 /** THE COURSE: the two bookcases fallen across the gap - `[label, x, y0, y1, top]` (m), 2.6 m wide; the threshold's lip at
- *  Y 1.24 (the drum's inner face at the doorway's jambs), the gaps 1.6, 1.6 and 1.66 m to the floor's front (each inside THE
+ *  Y 1.24 (the drum's inner face at the doorway's jambs), the gaps 1.6, 1.6 and 1.26 m to the floor's front (each inside THE
  *  SPAN BUILD's reach: the first 0.3 m up, the second 0.5 m down, the floor 0.2 m up - net/egSpanLaw.js egJumpReach). */
-const SHELVES = Object.freeze([['a', 0.3, 2.84, 4.64, 0.3], ['b', -0.3, 6.24, 7.84, -0.2]]);
+const SHELVES = Object.freeze([['a', 0.3, 2.84, 4.64, 0.3], ['b', -0.3, 6.24, 8.24, -0.2]]);
 const SHELF_W = 2.6, THRESH = 1.24;
 /** The cascade's four lanes across the floor: their middles along Y (each 4 m deep, 1.5 m apart). */
 const LANES = Object.freeze([ZC - 8.25, ZC - 2.75, ZC + 2.75, ZC + 8.25]);

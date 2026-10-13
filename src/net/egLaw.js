@@ -771,10 +771,12 @@ export const EG_HERO_SHAFT_CM = 4 * EG_SHAFT_FLIGHT_CM + EG_SHAFT_DROP_CM[1];
 /** THE LANDING ROOM (cm - EG-HERO-LAY at the merge of the ten heroes): the least a hero's inner course may leave between where
  *  THE SPAN BUILD's running jump, pressed at a launch edge, lands and the far edge of the piece it lands on. The motor jumps
  *  again only after a body has stood GROUNDED_JUMP_GATE_S (player/motor.js), so the slowest build lands, runs on and leaps
- *  again only with room before the edge - every code-built course leaves at least 0.24 m (test/eghero_lay.test.js measures
- *  it over the law pin's halls); the Stacks' first hero left 0.11 m, and the real motor stood on its shelf's lip unable to
- *  leap. A piece that moves along the course, and a step down run off rather than leapt, are judged by the solver alone. */
-export const EG_HERO_LAND_ROOM_CM = 20;
+ *  again only with room before the edge. Measured by the real motor (tools/egSpanSolve.mjs's pilot, 200 seeds): a landing
+ *  32 cm short of the edge left it standing on the lip in 5 of 37 crossings, 42 cm in none. Every code-built landing a piece
+ *  launches onto leaves at least 0.44 m (test/eghero_lay.test.js measures it over the law pin's halls); only a landing
+ *  launched from still ground, after its run-up, leaves less (0.24 m). A piece that moves along the course, and a step down
+ *  run off rather than leapt, are judged by the solver alone. */
+export const EG_HERO_LAND_ROOM_CM = 40;
 /**
  * A HERO'S INNER COURSE LANDED (spec law 7, THE LANDING ROOM): why record `rec`'s course leaves THE SPAN BUILD no room to land
  * and leap again - '' when every landing leaves EG_HERO_LAND_ROOM_CM. Each piece in order is landed on from the one before

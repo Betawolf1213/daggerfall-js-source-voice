@@ -45,6 +45,10 @@ function findSpec(want) {
   for (let seed = 1; seed <= 120; seed++) for (let c = 1; c <= 20; c++) for (const s of egCircleSpecs(seed, c, 0)) if (want(s)) return { seed, c, s };
   throw new Error('no such hall');
 }
+/** A code-built Rift-Yard whose fight floors stand at two heights (its disc court and a balcony). PIN MOVED (AUDIT EG IV, the
+ *  Fallen Stacks laid since): the first hall with two heights is now a hero's, whose floors are polygons (test/eghero_lay.test.js
+ *  pins those), and the next a Deepway's, whose lanes run under its court. */
+const twoFloors = (q) => !q.heroes && q.kind === 'yard' && q.fight && new Set((q.fl ?? []).map((f) => f.y)).size >= 2;
 const triArea = (t, i) => Math.abs((t[i + 2] - t[i]) * (t[i + 5] - t[i + 1]) - (t[i + 4] - t[i]) * (t[i + 3] - t[i + 1])) / 2;
 const areaOf = (t, n = t.length) => { let a = 0; for (let i = 0; i + 5 < n; i += 6) a += triArea(t, i); return a; };
 /** A shape as the pass takes it (render/gateTelegraph.js's own fields). */
@@ -117,7 +121,7 @@ test('EG-ZG EACH FIGHT FLOOR, TRIANGULATED ONCE (section 11.7): a court\'s disc 
 });
 
 test('EG-ZG THE FLOOR BUDGET (sections 11.7 and 25.4): a blow on the court drawn on the court alone - never the balcony 3.6 m over it, whatever its bounds cover; a balcony\'s on the balcony; the whole floor\'s on every floor; at most 32 shape-floor draws, what holds my feet and the budget\'s first blows always among them, mine drawn last; a shape with its own surface one quad at its height; a hall with no fight floor every shape its quad (mutants: the budget past 32; my shapes first; a court blow on the balcony; the rank ignored)', () => {
-  const { s } = findSpec((q) => q.fight && new Set((q.fl ?? []).map((f) => f.y)).size >= 2);
+  const { s } = findSpec(twoFloors);
   const floors = egFightFloors(s), court = s.fl.find((f) => f.t === 'd' && f.y === 0), bal = s.fl.find((f) => f.y > 0);
   const onCourt = shapeOf({ origin: [bal.x - Math.sign(bal.x) * (bal.r + 1.5), bal.z], r: 4 });   // its bounds reach over the balcony
   const p1 = egFloorPlan([onCourt], floors, null, null);
@@ -149,7 +153,7 @@ test('EG-ZG THE FLOOR BUDGET (sections 11.7 and 25.4): a blow on the court drawn
 });
 
 test('EG-ZG THE FLOORS\' DRAWS THROUGH THE PASS (render/gateTelegraph.js drawFloors): the frame\'s triangles uploaded once, each floor\'s draw the gate\'s own draw over that floor\'s triangles - its count, its height, its circle the court - and a shape\'s own surface the gate\'s quad at its height; the pass\'s quad and the floors\' uniforms put back after; the gate\'s own pass draws nothing by it (mutants: the floor\'s height never set; the quad not given back)', () => {
-  const { s } = findSpec((q) => q.fight && new Set((q.fl ?? []).map((f) => f.y)).size >= 2);
+  const { s } = findSpec(twoFloors);
   const floors = egFightFloors(s), court = s.fl.find((f) => f.t === 'd' && f.y === 0), bal = s.fl.find((f) => f.y > 0);
   const plan = egFloorPlan([shapeOf({ origin: [1, 2], r: 1, y: -4.5 }), shapeOf({ origin: [court.x, court.z], r: 3 }), shapeOf({ origin: [bal.x, bal.z], r: 2 })], floors, null, null);
   const { gl, calls } = recordingGl();
@@ -225,7 +229,7 @@ test('EG-ZG THE GRAMMARS\' POOLS (sections 25.2, 25.4 and 25.5) in the Spire\'s 
 });
 
 test('EG-ZG THE PERIL ARROW (section 25.5): the soonest blow on my feet, its way out searched over MY fight floor - out of the shape, never across an open edge or onto another floor - preferring a bearing that also clears every other pending shape; a CHECK\'s way into the light, and with none in reach its order; nothing on traversal ground or under the whole floor\'s (mutants: the edge crossed; the clear bearing ignored; the CHECK\'s order never said; a landed blow fled)', () => {
-  const { s } = findSpec((q) => q.fight && new Set((q.fl ?? []).map((f) => f.y)).size >= 2);
+  const { s } = findSpec(twoFloors);
   const court = s.fl.find((f) => f.t === 'd' && f.y === 0), t = 10_000;
   const blow = (stamp, o = {}) => ({ s: [stamp], at: t + 800, wu: 1500, nm: 'Smash', ch: 0, ...o });
   // at the court's middle under a disc of r 3: out in 3 m, any bearing

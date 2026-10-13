@@ -55,7 +55,7 @@ const H = { low: [0xbeef, 7, 0], high: [0xbeef, 2, 0], brink: [8, 26, 0], shaft:
 const hall = (k, law = EG_SPEC) => withHeroes(() => egHallOf(...H[k].slice(0, 2), H[k][2], law));
 const cm = (v) => Math.round(v * 100);
 
-test('EG-HERO-LAY THE LAW PIN (sections 9 and 22): spec law 7 is the law, laws 4, 5 and 6 kept beside it their seven days each, byte for byte (their 800 halls hashed whole, the existing pins); a hall of law 7 with no layable hero for its kits is law 6\'s hall but its number - so with the reference alone registered (which no hall lays) every law-7 hall is law 6\'s; with the ten heroes (the merge of the four bands\' authors) every one but the Stacks\' chamber fits its slot (its second shelf leaves THE SPAN BUILD 12 cm to land on - THE LANDING ROOM), law 7\'s 800 halls are hashed whole, each with no hero laid is law 6\'s, and the heroes laid as counted; a breach opened records law 7; the law\'s copies of the wire\'s bound and the hang held equal (mutants: law 7 not in the table; the law before forgotten; the reference laid; a hall with no hero moved)', () => {
+test('EG-HERO-LAY THE LAW PIN (sections 9 and 22): spec law 7 is the law, laws 4, 5 and 6 kept beside it their seven days each, byte for byte (their 800 halls hashed whole, the existing pins); a hall of law 7 with no layable hero for its kits is law 6\'s hall but its number - so with the reference alone registered (which no hall lays) every law-7 hall is law 6\'s; with the ten heroes (the merge of the four bands\' authors) every one fits its slot (the Stacks\' chamber since its second shelf was deepened to leave THE LANDING ROOM), law 7\'s 800 halls are hashed whole, each with no hero laid is law 6\'s, and the heroes laid as counted; a breach opened records law 7; the law\'s copies of the wire\'s bound and the hang held equal (mutants: law 7 not in the table; the law before forgotten; the reference laid; a hall with no hero moved)', () => {
   assert.deepEqual([EG_SPEC, EG_HERO_LAW, EG_DECREE_LAW], [7, 7, 6]);
   assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13' });
   assert.deepEqual([4, 5, 6, 7, 8].map(egLawKnown), [true, true, true, true, false]);
@@ -72,22 +72,21 @@ test('EG-HERO-LAY THE LAW PIN (sections 9 and 22): spec law 7 is the law, laws 4
     }
   }, REF_ONLY, {});
   // PIN MOVED (EG-HERO-LAY at the merge of the ten heroes - the registry is real): the reference and the four bands' ten, each
-  // but the reference a candidate of its kit and class; every one fits its slot but the Stacks' chamber, whose second shelf
-  // leaves THE SPAN BUILD's landing 12 cm before its far edge (the real motor stood on its lip unable to leap - tools/
-  // egSpanSolve.mjs's sweep); law 7's 800 halls hashed whole, each with no hero laid law 6's but its number
+  // but the reference a candidate of its kit and class; law 7's 800 halls hashed whole, each with no hero laid law 6's but its
+  // number. PIN MOVED (AUDIT EG IV): every one fits its slot - the Stacks' chamber, refused at the merge (its second shelf left
+  // THE SPAN BUILD's landing 12 cm before its far edge), since its author deepened that shelf to 2.0 m (52 cm)
   const ids = Object.keys(EG_HERO_FRAGS);
   assert.equal(ids.length, 11);
   for (const id of ids) { const L = EG_HERO_FRAGS[id]; assert.equal(egHeroCands(L.kit, L.class).includes(L), id !== 'egRefFrag', id); }
-  assert.match(egHeroStatic(EG_HERO_FRAGS.egheroStacks), /^its course's piece 1 \(ledge\) leaves the span build's landing 12 cm before its far edge/);
-  for (const id of ids.filter((x) => x !== 'egheroStacks')) assert.equal(egHeroStatic(EG_HERO_FRAGS[id]), '', id);
-  assert.equal(hash(7), 1273544078, 'law 7, as the ten heroes lay it');
+  for (const id of ids) assert.equal(egHeroStatic(EG_HERO_FRAGS[id]), '', id);
+  assert.equal(hash(7), 2018192008, 'law 7, as the ten heroes lay it');
   const laid = {};
   for (const [s, h, g] of LAW_HALLS) {
     const a = egHallOf(s, h, g, 6), b = egHallOf(s, h, g);
     if (b.heroes) { assert.equal(b.heroes.length, 1, 'one hero a hall'); laid[b.heroes[0].id] = (laid[b.heroes[0].id] ?? 0) + 1; continue; }
     assert.equal(JSON.stringify({ ...b, v: 6 }), JSON.stringify(a), `seed ${s} hall ${h} ground ${g}: law 7 with no hero is law 6's`);
   }
-  assert.deepEqual(laid, { egheroOssuary: 22, egheroGloam: 24, egheroEclipse: 3, egheroClanPit: 10, egheroForgeGut: 4, egheroColonnade: 3, egheroCaverns: 3, egheroDeepCaverns: 3 });
+  assert.deepEqual(laid, { egheroOssuary: 22, egheroGloam: 24, egheroEclipse: 3, egheroClanPit: 10, egheroForgeGut: 4, egheroColonnade: 3, egheroCaverns: 3, egheroStacks: 6, egheroDeepCaverns: 3 });
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'a', o: 'A', ew: 0, rh: 0, seed: 77, op: 1_800_000_000_000, co: [['a', 'A', 1]], site: { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 }, wg: [] });
   assert.equal(B.egv, 7, 'a breach opened now is of law 7');
   assert.equal(EG_SPEC_SAID_MAX, EG_SPEC_WIRE_MAX, 'the law\'s bound on a spec said whole is the wire\'s');
@@ -150,7 +149,7 @@ test('EG-HERO-LAY THE ODDS (spec law 7): with heroes registered, each slot a cod
   assert.deepEqual(ids, { egRefFrag: 9, egRefFragTwo: 4 });
 });
 
-test('EG-HERO-LAY THE FIT AT ITS SLOT (egHeroStatic, egHeroExit, egHeroCourtOf): the mouth at least a ledge wide with a floor at its foot; the course leaves by the lowest exit the course\'s line passes through (at least a ledge wide), a floor under it, at the height its slot keeps - a passage\'s at its mouth\'s or as far under as its kit\'s own passage goes (the Mist Stair\'s 3.6 m), never off it on the Low Road; a shaft\'s under its mouth by at most four flights and the deepest Drop; a chamber\'s at its mouth\'s, its middle on a fight floor reaching past a rift\'s inset; THE LANDING ROOM (egHeroLanding - at the merge of the ten heroes): THE SPAN BUILD\'s running jump onto each piece of its inner course comes down at least 20 cm before the piece\'s far edge - the least every code-built course leaves - unless the piece moves along the course or a step down is run off onto it (mutants: each bound loosened or dropped)', () => {
+test('EG-HERO-LAY THE FIT AT ITS SLOT (egHeroStatic, egHeroExit, egHeroCourtOf): the mouth at least a ledge wide with a floor at its foot; the course leaves by the lowest exit the course\'s line passes through (at least a ledge wide), a floor under it, at the height its slot keeps - a passage\'s at its mouth\'s or as far under as its kit\'s own passage goes (the Mist Stair\'s 3.6 m), never off it on the Low Road; a shaft\'s under its mouth by at most four flights and the deepest Drop; a chamber\'s at its mouth\'s, its middle on a fight floor reaching past a rift\'s inset; THE LANDING ROOM (egHeroLanding - at the merge of the ten heroes): THE SPAN BUILD\'s running jump onto each piece of its inner course comes down at least 40 cm before the piece\'s far edge - the least the real motor leaps again from, under the least every code-built landing a piece launches onto leaves - unless the piece moves along the course or a step down is run off onto it (mutants: each bound loosened or dropped)', () => {
   const T = { ...REF, variant: 'test' }, sock = (o) => ({ ...T, sockets: { in: T.sockets.in, out: [{ ...T.sockets.out[1], ...o }] } });
   assert.equal(egHeroStatic(T), ''); assert.equal(egHeroStatic(T, true), '');
   assert.equal(egHeroExit(T), 1, 'the floor\'s exit: the balcony\'s stands off the line and 1.5 m up');
@@ -187,27 +186,31 @@ test('EG-HERO-LAY THE FIT AT ITS SLOT (egHeroStatic, egHeroExit, egHeroCourtOf):
   assert.deepEqual(egHeroCourtOf({ ...small, floors: small.floors.map((f) => (f.fight && f.y === 0 ? { ...f, poly: [[301, 1401], [301, 2003], [-301, 2003], [-301, 1401]] } : f)) }), { cz: 1702, R: 301 });
   assert.match(egHeroStatic({ ...C, floors: C.floors.map((f) => ({ ...f, fight: 0 })) }), /middle/);
   // THE LANDING ROOM: the reference's first shelf (a 1 m gap, 2 m deep) takes the span build's running jump 2.56 m on - 44 cm
-  // before its far edge; its far edge drawn back 20 cm leaves 24 and stands, 30 cm leaves 14 and is refused
+  // before its far edge; its far edge drawn back 4 cm leaves 40 and stands, 10 cm leaves 34 and is refused. PIN MOVED (AUDIT
+  // EG IV): the bound 40 cm, not 20 - the real motor stood on a landing 32 cm short of the edge in 5 of 37 crossings
   const edge = (dz, dy = 0) => ({ ...T, course: T.course.map((c, i) => (i === 0 ? { ...c, z: c.z - dz / 2, d: c.d - dz, y: c.y + dy } : c)) });
-  assert.equal(EG_HERO_LAND_ROOM_CM, 20);
+  assert.equal(EG_HERO_LAND_ROOM_CM, 40);
   assert.equal(egHeroLanding(T), '');
-  assert.equal(egHeroLanding(edge(20)), '');
-  assert.match(egHeroLanding(edge(30)), /^its course's piece 0 \(ledge\) leaves the span build's landing 14 cm before its far edge, under 20$/);
-  assert.equal(egHeroStatic(edge(30)), egHeroLanding(edge(30)), 'the fit holds it');
+  assert.equal(egHeroLanding(edge(4)), '');
+  assert.match(egHeroLanding(edge(10)), /^its course's piece 0 \(ledge\) leaves the span build's landing 34 cm before its far edge, under 40$/);
+  assert.equal(egHeroStatic(edge(10)), egHeroLanding(edge(10)), 'the fit holds it');
   // a metre down, the running jump flies past it (49 cm past its far edge) - but a player runs off onto it, 1.7 m on
   assert.match(egHeroLanding({ ...edge(0, -100), course: edge(0, -100).course.map((c, i) => (i === 0 ? { ...c, gap: c.gap + 40, z: c.z + 20, d: c.d - 40 } : c)) }), /piece 0/, 'a gap of 1.4 m: run off, short of it - refused');
   assert.equal(egHeroLanding(edge(0, -100)), '', 'run off onto it');
-  // a piece moving along the course is the solver's alone; every code-built course of the law pin's halls leaves the room
+  // a piece moving along the course is the solver's alone; every code-built landing a piece launches onto, over the law pin's
+  // halls, leaves the room (0.44 m at worst) - only one launched from still ground after its run-up leaves less (0.24 m)
   assert.equal(egHeroLanding({ ...T, course: T.course.map((c, i) => (i === 1 ? { ...c, d: 100, z: c.z - 120 } : c)) }), '', 'a Drift, its far edge 1.9 m back - judged, past it');
-  let worst = Infinity;
+  let worst = Infinity, ground = Infinity;
   for (const [sd, h, g] of LAW_HALLS) for (const p of egSpanPairs(egHallOf(sd, h, g, 6))) {
     const { a, b } = p;
     if (!b || b.amp > 0 || b.kind === 'riser' || (a && a.amp > 0)) continue;
     const dy = b.y - (a ? a.y : b.y);
     if (dy < -0.3) continue;   // a step down: run off
-    worst = Math.min(worst, b.z + b.d / 2 - (a ? a.z + a.d / 2 : p.edge) - (EG_SPAN_RUN_MPS + EG_JUMP_MPS * EG_JUMP_FWD) * egJumpReach(dy).air);
+    const room = b.z + b.d / 2 - (a ? a.z + a.d / 2 : p.edge) - (EG_SPAN_RUN_MPS + EG_JUMP_MPS * EG_JUMP_FWD) * egJumpReach(dy).air;
+    if (a) worst = Math.min(worst, room); else ground = Math.min(ground, room);
   }
-  assert.ok(worst >= EG_HERO_LAND_ROOM_CM / 100 && worst < EG_HERO_LAND_ROOM_CM / 100 + 0.1, `every code-built landing leaves the room: ${worst.toFixed(3)} m at worst`);
+  assert.ok(worst >= EG_HERO_LAND_ROOM_CM / 100 && worst < EG_HERO_LAND_ROOM_CM / 100 + 0.1, `every code-built landing a piece launches onto leaves the room: ${worst.toFixed(3)} m at worst`);
+  assert.equal(Math.round(ground * 100), 24, 'a landing launched from still ground, after its run-up');
 });
 
 test('EG-HERO-LAY A PASSAGE LAID FROM ITS LAW (sections 11.4-11.7): on THE FORK\'s Low Road the hero\'s mouth stands at the slot\'s start on the road\'s line, its fight floors in the fight floor as polygons at its origin, its stair as the hall\'s ramp, its inner course its record\'s pieces at their places and sizes (the span generator\'s steps, its kit\'s), its hazards, its places (an engine anchor its kit\'s Sluice), its alcove and its lights, its law in `heroes`, its fragment, and the course on from its exit at the exit\'s height; a hero whose box meets the High Road\'s pieces does not fit (mutants: each field dropped or moved off the origin)', () => {

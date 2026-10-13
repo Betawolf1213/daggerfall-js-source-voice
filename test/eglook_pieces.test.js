@@ -13,6 +13,7 @@ import { createMeshKit, meshKitBounds, MESH_KIT_START } from '../src/world/meshK
 import { createEgPieceBatch, EG_BATCH_HIDE_Y } from '../src/scenes/egPieceBatch.js';
 import { createEgSpan } from '../src/scenes/egSpan.js';
 import { egCircleSpecs } from '../src/net/egLaw.js';
+import { EG_HERO_FRAGS } from '../src/net/egHeroFrags.js';
 import { egPieceAt } from '../src/net/egSpanLaw.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
 import { egToDungeon } from '../src/world/egHall.js';
@@ -167,7 +168,11 @@ test('EG-G2 THE BUDGET, MEASURED (section 11.9): over every circle of three seed
     sumPieces += plainDraws.length; sumKinds += draws.length;
     assert.ok(draws.length <= plainDraws.length, `circle ${c}: never more draws`);
     assert.ok(st.glDraws <= glPlain, `circle ${c}: never more GL draws (${st.glDraws} of ${glPlain})`);
-    if (!fw && egCircleSpecs(seed, c, 0).some((s) => s.variant === 'fallingwall')) fw = { plain: plainDraws.length, batched: draws.length };
+    // PIN MOVED (AUDIT EG IV, the Fallen Stacks laid since): a hero's inner course is pieces of its own sizes, a draw each
+    // (seed 7's circle 3 lays the Stacks: 23 draws where 204 stood) - so the Falling Walls' tenth is held with a draw a hero
+    // piece beside it
+    const heroPieces = egCircleSpecs(seed, c, 0).reduce((n, s) => n + (s.heroes ?? []).reduce((k, q) => k + EG_HERO_FRAGS[q.id].course.length, 0), 0);
+    if (!fw && egCircleSpecs(seed, c, 0).some((s) => s.variant === 'fallingwall')) fw = { plain: plainDraws.length, batched: draws.length, heroPieces };
   }
   assert.ok(worstGl <= 48, `the worst circle: ${worstGl} batched GL draws`);
   assert.ok(sumKinds * 3 <= sumPieces, `${sumKinds} draws where ${sumPieces} stood`);
@@ -188,7 +193,8 @@ test('EG-G2 THE BUDGET, MEASURED (section 11.9): over every circle of three seed
   const toward = camera(egToDungeon(court, 0, 20, -40), egToDungeon(court, 0, 0, 60));
   gs.cull(toward.proj, toward.view);
   assert.ok(isleDraws.some((d) => !d.culled), 'looking at them: drawn');
-  assert.ok(fw && fw.batched * 10 <= fw.plain + 10, `a Falling Wall's circle: ${fw?.batched} draws where ${fw?.plain} stood`);
+  assert.ok(fw && fw.batched * 10 <= fw.plain + 10 + 10 * fw.heroPieces, `a Falling Wall's circle: ${fw?.batched} draws where ${fw?.plain} stood (${fw?.heroPieces} a hero's)`);
+  assert.equal(fw.heroPieces, 2, 'the Stacks\' two shelves');
   // the copies are the law's pose, and the other halls are culled from Hall 1's plate
   let found = null;
   for (let c = 1; c <= 20 && !found; c++) for (const s of egCircleSpecs(7, c, 0)) { const d = s.steps.find((q) => q.kind === 'drift' && q.amp > 0); if (d) { found = { c, s, d }; break; } }

@@ -142,8 +142,8 @@ const PIN = {
     sockets: { in: { x: 0, y: 0, z: 0, yaw: 180, w: 660, h: 800 }, out: [{ x: 0, y: 0, z: 4700, yaw: 0, w: 660, h: 800 }] },
     box: [-2347, -1400, 0, 2580, 2142, 4700],
     floors: [[0, 0, 4], [350, 1, 21], [0, 1, 62], [350, 1, 19], [0, 0, 4]], ramps: 2, ceil: null, open: 66,
-    cost: { tris: 5176, collider: 260, lights: 4, draws: 7 }, proof: { crossFast: 1207, crossSlow: 1207, moves: 3 },
-    course: [['ledge', 30, 30, 374, 160], ['ledge', -30, -20, 704, 160]],
+    cost: { tris: 5176, collider: 260, lights: 4, draws: 7 }, proof: { crossFast: 1280, crossSlow: 1280, moves: 3 },
+    course: [['ledge', 30, 30, 374, 160], ['ledge', -30, -20, 724, 160]],   // PIN MOVED (AUDIT EG IV): its second shelf 2.0 m deep, THE LANDING ROOM's 52 cm
     hazards: ['cascade'], graph: [21, 23], alcoves: [{ x: 2400, y: 350, z: 2350, seal: 'seam', side: 1, holds: 'shard' }],
   },
   colonnade: {
