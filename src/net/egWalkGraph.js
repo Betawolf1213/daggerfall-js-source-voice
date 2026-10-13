@@ -29,9 +29,16 @@
 //     lords, the graph's own now: a walker set down off its walk keeps no node to walk straight to through a wall), and A
 //     PINNED WALKER keeps to its own region (a Rampart's Caster on its pillar, whatever the pillar's plan meets).
 //
+//   EG-HERO-LAY (2026-10-13; spec law 7, sections 11.5 and 11.7): A HERO'S GROUND. A hero fragment's fight floors stand in
+//     the fight floor as polygons (`{ t: 'p', poly, y }`): each a region of its own, met by the pieces about it where their
+//     plans meet (a portal, as any two pieces meet - egPortalOf), its stairs the hall's ramps. A polygon need not be convex,
+//     so within one a walk goes straight only where the way stays on it (egSeesIn) - else over its nodes; and its LAW's walk
+//     graph joins the hall's (`spec.heroes`): every node of it on its fight ground a node of the graph, every edge of it an
+//     edge, and a node at each of its sockets' feet, where the course comes in and goes on.
+//
 // Pure, deterministic (no die), in the relay bundle (net/egLegion.js, net/egBrain.js). Not a DFU member. Ledger A
 // (ELITE-GATES).
-import { segDist } from './egShape.js';
+import { segDist, egPolyIn, egPolyDist, egPolyKeep } from './egShape.js';
 
 /** A blow is struck from the fight ground within this of its plan (m - the pose's age and the capsule), and a member is off
  *  it past this (section 11.7's hunt). */
@@ -74,7 +81,37 @@ export function egFightView(spec) {
   return view;
 }
 /** Does piece `f` hold (x, z) in plan, `pad` m about? */
-const holds = (f, x, z, pad = 0) => (f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segDist(x, z, f.ax, f.az, f.bx, f.bz) <= f.hw + pad);
+const holds = (f, x, z, pad = 0) => (f.t === 'p' ? egPolyIn(f.poly, x, z, pad) : f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segDist(x, z, f.ax, f.az, f.bx, f.bz) <= f.hw + pad);
+/** EG-HERO-LAY: how often (m) a straight walk inside a polygon is looked along (egSeesIn). */
+export const EG_SEE_STEP_M = 0.5;
+/** EG-HERO-LAY: does the straight walk from (ax, az) to (bx, bz) stay on polygon `poly` (each point along it every
+ *  EG_SEE_STEP_M, EG_PIECE_TOUCH_M about its outline - a node at a portal stands on its edge)? A convex floor's every walk
+ *  does; a notched one's may not. */
+export function egSeesIn(poly, ax, az, bx, bz) {
+  const n = Math.max(2, Math.ceil(Math.hypot(bx - ax, bz - az) / EG_SEE_STEP_M));
+  for (let k = 1; k < n; k++) if (!egPolyIn(poly, ax + ((bx - ax) * k) / n, az + ((bz - az) * k) / n, EG_PIECE_TOUCH_M)) return false;
+  return true;
+}
+/** EG-HERO-LAY: where a polygon piece meets another piece (any kind) in plan, or null - of their corners, edges' middles,
+ *  centres and each one's nearest point to the other's, those both hold (EG_PIECE_TOUCH_M about), the one nearest their
+ *  middle. */
+function polyPortal(a, b) {
+  const pts = [];
+  const own = (f) => {
+    if (f.t === 'p') f.poly.forEach((p, i) => { const q = f.poly[(i + 1) % f.poly.length]; pts.push([p[0], p[1]], [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]); });
+    else if (f.t === 'd') pts.push([f.x, f.z]);
+    else pts.push([f.ax, f.az], [f.bx, f.bz], [(f.ax + f.bx) / 2, (f.az + f.bz) / 2]);
+  };
+  own(a); own(b);
+  const toward = (f, g) => { if (f.t !== 'p') return; for (const p of [...pts]) if (holds(g, p[0], p[1], EG_PIECE_TOUCH_M)) pts.push(egPolyKeep(f.poly, p[0], p[1], 0)); };
+  toward(a, b); toward(b, a);
+  const both = pts.filter((p) => holds(a, p[0], p[1], EG_PIECE_TOUCH_M) && holds(b, p[0], p[1], EG_PIECE_TOUCH_M));
+  if (!both.length) return null;
+  const mx = both.reduce((v, p) => v + p[0], 0) / both.length, mz = both.reduce((v, p) => v + p[1], 0) / both.length;
+  let best = both[0], bd = Infinity;
+  for (const p of both) { const d = Math.hypot(p[0] - mx, p[1] - mz); if (d < bd - 1e-9) { bd = d; best = p; } }
+  return [best[0], best[1]];
+}
 /**
  * The fight-ground piece a body's feet at (x, y, z) stand on, `pad` m about its plan: with a height, the highest at or below
  * it plus EG_GROUND_UNDER_M whose top it is no more than EG_GROUND_OVER_M over (section 11.7's band - a member on a
@@ -132,6 +169,7 @@ function closest(a, b) {
 const radius = (f) => (f.t === 'd' ? f.r : f.hw);
 /** Where two pieces meet in plan (the middle of their overlap on the line between their cores), or null (apart). */
 export function egPortalOf(a, b) {
+  if (a.t === 'p' || b.t === 'p') return polyPortal(a, b);   // EG-HERO-LAY: a hero's fight floor
   const [ax, az, bx, bz] = closest(a, b), d = Math.hypot(bx - ax, bz - az), ra = radius(a), rb = radius(b);
   if (d > ra + rb + EG_PIECE_TOUCH_M) return null;
   if (d < 1e-6) return [ax, az];
@@ -180,12 +218,23 @@ export function egWalkGraph(view) {
   }
   // an arch's gap: its two halves meet there alone
   for (let i = 0; i < fl.length; i++) if (archOf[i]) { const d = archOf[i]; edge(node(d.x, d.z - 0.8, rgOf[i][0]), node(d.x, d.z + 0.8, rgOf[i][1]), 1.6); }
-  // within a region every node sees every other (each region is convex): a straight walk between them
-  for (let a = 0; a < nodes.length; a++) for (let b = a + 1; b < nodes.length; b++) if (nodes[a].rg === nodes[b].rg) edge(a, b, Math.hypot(nodes[b].x - nodes[a].x, nodes[b].z - nodes[a].z));
+  // EG-HERO-LAY: a hero's law graph joined - its nodes on its fight ground, its edges, a node at each socket's foot
+  const heroRg = (x, z, y) => { let k = -1; for (let i = 0; i < fl.length; i++) if (fl[i].t === 'p' && Math.abs((fl[i].y ?? 0) - y) <= EG_LEVEL_M && holds(fl[i], x, z, EG_PIECE_TOUCH_M) && (k < 0 || (fl[i].y ?? 0) > (fl[k].y ?? 0))) k = i; return k < 0 ? -1 : rgOf[k][0]; };
+  for (const q of view?.heroes ?? []) {
+    const at = q.graph.nodes.map(([x, y, z]) => { const k = heroRg(x, z, y); return k < 0 ? -1 : node(x, z, k); });
+    for (const [a, b] of q.graph.edges) if (at[a] >= 0 && at[b] >= 0) edge(at[a], at[b], Math.hypot(nodes[at[b]].x - nodes[at[a]].x, nodes[at[b]].z - nodes[at[a]].z));
+    for (const so of [q.sockets.in, ...q.sockets.out]) { const k = heroRg(so.x, so.z, so.y); if (k >= 0) node(so.x, so.z, k); }
+  }
+  // within a region every node sees every other (each disc and lane is convex; EG-HERO-LAY: a polygon's where the way stays
+  // on it): a straight walk between them
+  for (let a = 0; a < nodes.length; a++) for (let b = a + 1; b < nodes.length; b++) if (nodes[a].rg === nodes[b].rg && seesRg(view, rg, nodes[a].rg, nodes[a].x, nodes[a].z, nodes[b].x, nodes[b].z)) edge(a, b, Math.hypot(nodes[b].x - nodes[a].x, nodes[b].z - nodes[a].z));
   const G = { rg, nodes, adj, archOf };
   _graphs.set(view, G);
   return G;
 }
+/** EG-HERO-LAY: does a straight walk inside region k (of regions `rg`) stay on it - always on a disc or a lane (each convex),
+ *  on a polygon where egSeesIn says so? */
+function seesRg(view, rg, k, ax, az, bx, bz) { const f = view.fl[rg[k].f]; return f.t !== 'p' || egSeesIn(f.poly, ax, az, bx, bz); }
 /** Does region k of graph G hold (x, z), `pad` m about? */
 function inRegion(view, G, k, x, z, pad = 0) {
   const R = G.rg[k], f = view.fl[R.f];
@@ -211,7 +260,7 @@ export function egRegionAt(view, G, x, z, y = NaN, hint = -1) {
   if (best >= 0) return [best, true];
   let bd = Infinity;
   for (let k = 0; k < G.rg.length; k++) {
-    const f = view.fl[G.rg[k].f], d = f.t === 'd' ? Math.hypot(x - f.x, z - f.z) - f.r : segDist(x, z, f.ax, f.az, f.bx, f.bz) - f.hw;
+    const f = view.fl[G.rg[k].f], d = f.t === 'p' ? egPolyDist(f.poly, x, z) : f.t === 'd' ? Math.hypot(x - f.x, z - f.z) - f.r : segDist(x, z, f.ax, f.az, f.bx, f.bz) - f.hw;
     const dz = G.rg[k].side === 0 ? 0 : Math.max(0, G.rg[k].side < 0 ? z - G.archOf[G.rg[k].f].z : G.archOf[G.rg[k].f].z - z);
     if (Math.max(d, dz) < bd) { bd = Math.max(d, dz); best = k; }
   }
@@ -221,7 +270,8 @@ export function egRegionAt(view, G, x, z, y = NaN, hint = -1) {
 export function egKeepInRegion(view, G, k, x, z, inset = 0) {
   const R = G.rg[k], f = view.fl[R.f];
   let px = x, pz = z;
-  if (f.t === 'd') {
+  if (f.t === 'p') [px, pz] = egPolyKeep(f.poly, x, z, inset);   // EG-HERO-LAY: a hero's fight floor
+  else if (f.t === 'd') {
     const dx = x - f.x, dz = z - f.z, d = Math.hypot(dx, dz), r = Math.max(0, f.r - inset);
     if (d > r) { px = f.x + (dx / (d || 1)) * r; pz = f.z + (dz / (d || 1)) * r; }
   } else {
@@ -275,10 +325,12 @@ export function egWalkNext(view, b, gx, gz, gy = NaN, inset = 0) {
   b.fr = from;
   const to = b.pinned ? from : egRegionAt(view, G, gx, gz, gy)[0];   // EG-ZQ: a pinned walker's ground is its own region
   const goal = egKeepInRegion(view, G, to, gx, gz, inset);   // `inset` in, as net/egLaw.js egKeepOnFight keeps a walker
-  if (to === from) return [goal[0], goal[1], true];
-  // Dijkstra from the body (a source joined to every node of its region) to the goal (joined from every node of its own)
+  const sees = (k, ax, az, bx, bz) => seesRg(view, G.rg, k, ax, az, bx, bz);   // EG-HERO-LAY: a polygon's way straight only where it stays on it
+  if (to === from && sees(from, b.x, b.z, goal[0], goal[1])) return [goal[0], goal[1], true];
+  // Dijkstra from the body (a source joined to every node of its region it sees) to the goal (joined from every node of its
+  // own that sees it)
   const N = G.nodes.length, dist = new Array(N).fill(Infinity), prev = new Array(N).fill(-1), done = new Array(N).fill(false);
-  for (let i = 0; i < N; i++) if (G.nodes[i].rg === from) dist[i] = Math.hypot(G.nodes[i].x - b.x, G.nodes[i].z - b.z);
+  for (let i = 0; i < N; i++) if (G.nodes[i].rg === from && sees(from, b.x, b.z, G.nodes[i].x, G.nodes[i].z)) dist[i] = Math.hypot(G.nodes[i].x - b.x, G.nodes[i].z - b.z);
   // the node it was already walking to (along a stair, out of a portal) is a way on from where it stands
   if (wn && dist[wi] > Math.hypot(wn.x - b.x, wn.z - b.z)) dist[wi] = Math.hypot(wn.x - b.x, wn.z - b.z);
   let end = -1, endCost = Infinity;
@@ -287,7 +339,7 @@ export function egWalkNext(view, b, gx, gz, gy = NaN, inset = 0) {
     for (let i = 0; i < N; i++) if (!done[i] && dist[i] < Infinity && (u < 0 || dist[i] < dist[u])) u = i;
     if (u < 0 || dist[u] >= endCost) break;
     done[u] = true;
-    if (G.nodes[u].rg === to) { const c = dist[u] + Math.hypot(goal[0] - G.nodes[u].x, goal[1] - G.nodes[u].z); if (c < endCost) { endCost = c; end = u; } }
+    if (G.nodes[u].rg === to && sees(to, G.nodes[u].x, G.nodes[u].z, goal[0], goal[1])) { const c = dist[u] + Math.hypot(goal[0] - G.nodes[u].x, goal[1] - G.nodes[u].z); if (c < endCost) { endCost = c; end = u; } }
     for (const [v, w] of G.adj[u]) if (dist[u] + w < dist[v]) { dist[v] = dist[u] + w; prev[v] = u; }
   }
   if (end < 0) { const p = egKeepInRegion(view, G, from, gx, gz, inset); return [p[0], p[1], true]; }
@@ -363,6 +415,13 @@ export function egAirOf(spec) {
       }
       for (const s of [-1, 1]) ways.push([d.x, d.z + s * (d.r - C)], [d.x, d.z + s * (d.r + C)]);
     }
+  }
+  // EG-HERO-LAY: a hero's walls - every edge of its floors its law does not open - and the ways in and out at its sockets
+  for (const q of spec?.heroes ?? []) {
+    const open = new Set(q.open.map((e) => `${e[0]}:${e[1]}`));
+    q.floors.forEach((f, fi) => f.poly.forEach((p, e) => { if (!open.has(`${fi}:${e}`)) { const n = f.poly[(e + 1) % f.poly.length]; walls.push([p[0], p[1], n[0], n[1]]); } }));
+    ways.push([q.sockets.in.x, q.sockets.in.z - C], [q.sockets.in.x, q.sockets.in.z + C]);
+    for (const o of q.sockets.out) ways.push([o.x, o.z - C], [o.x, o.z + C]);
   }
   const A = { walls, ways, sees: /** @type {boolean[][]} */ ([]) };
   A.sees = ways.map((p) => ways.map((q) => egAirClear(A, p[0], p[1], q[0], q[1])));

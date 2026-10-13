@@ -51,6 +51,46 @@ export function segDist(px, pz, ax, az, bx, bz) {
   return Math.hypot(px - (ax + dx * t), pz - (az + dz * t));
 }
 
+// ── EG-HERO-LAY (2026-10-13, spec law 7; Elite-Gates.md sections 11.5 and 11.7): A FIGHT FLOOR'S PIECE AS A POLYGON ─────────
+// A hero fragment's fight floors are polygons at their heights (its law record's `floors` - net/egFragLaw.js), laid into a
+// hall spec's fight floor beside the discs and lanes as `{ t: 'p', poly: [[x, z], ...], y }` (metres, the hall's frame,
+// counter-clockwise with x right and z up). Every reader of the fight floor asks these three of a polygon: does it hold a
+// point, how far is a point from it, and where is the nearest point inside it.
+/** Does polygon `poly` ([[x, z], ...]) hold (x, z) - its edges and corners its own - or stand within `pad` of it? */
+export function egPolyIn(poly, x, z, pad = 0) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const ax = poly[j][0], az = poly[j][1], bx = poly[i][0], bz = poly[i][1];
+    if ((az > z) !== (bz > z) && x < ax + ((bx - ax) * (z - az)) / (bz - az)) inside = !inside;
+  }
+  return inside || egPolyEdgeDist(poly, x, z) <= Math.max(0, pad) + 1e-9;
+}
+/** The distance from (x, z) to polygon `poly`'s outline (m). */
+export function egPolyEdgeDist(poly, x, z) {
+  let d = Infinity;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) d = Math.min(d, segDist(x, z, poly[j][0], poly[j][1], poly[i][0], poly[i][1]));
+  return d;
+}
+/** How far (x, z) stands outside polygon `poly` (m): its distance to the outline outside it, minus that distance inside. */
+export const egPolyDist = (poly, x, z) => (egPolyIn(poly, x, z) ? -egPolyEdgeDist(poly, x, z) : egPolyEdgeDist(poly, x, z));
+/** The point of polygon `poly` nearest (x, z), `inset` m inside its outline (along the nearest edge's inward normal - a
+ *  counter-clockwise polygon's left), or the outline's own nearest point where the inset would leave it. `[x, z]`. */
+export function egPolyKeep(poly, x, z, inset = 0) {
+  if (egPolyIn(poly, x, z) && egPolyEdgeDist(poly, x, z) >= inset) return [x, z];
+  let best = null, bd = Infinity;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const ax = poly[j][0], az = poly[j][1], ex = poly[i][0] - ax, ez = poly[i][1] - az, L2 = ex * ex + ez * ez;
+    const t = L2 > 0 ? Math.max(0, Math.min(1, ((x - ax) * ex + (z - az) * ez) / L2)) : 0, px = ax + ex * t, pz = az + ez * t, d = Math.hypot(x - px, z - pz);
+    if (d < bd) { bd = d; const L = Math.sqrt(L2) || 1; best = [px, pz, -ez / L, ex / L]; }
+  }
+  if (!best) return [x, z];
+  const q = [best[0] + best[2] * inset, best[1] + best[3] * inset];
+  return egPolyIn(poly, q[0], q[1]) ? q : [best[0], best[1]];
+}
+/** Does fight floor piece `f` (a disc `d`, a lane `l`, a polygon `p`) hold (x, z), `pad` m about - a negative pad that far
+ *  inside its edge? */
+export const egPieceIn = (f, x, z, pad = 0) => (f.t === 'p' ? egPolyIn(f.poly, x, z, Math.max(0, pad)) && (pad >= 0 || egPolyEdgeDist(f.poly, x, z) >= -pad) : f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segDist(x, z, f.ax, f.az, f.bx, f.bz) <= f.hw + pad);
+
 // ── the stamps' makers (each rounded to the centimetre, the wire's) ──────────────────────────────────────
 export const shDisc = (x, z, r) => ['d', r2(x), r2(z), r2(r)];
 export const shLane = (ax, az, bx, bz, w) => ['l', r2(ax), r2(az), r2(bx), r2(bz), r2(w)];

@@ -5,11 +5,11 @@
 // here and held at import to its reader (egFragRecordFault): a record with a fault never reaches a hall. Its mesh half is
 // the client's, registered beside it in world/egHeroFragModel.js - the relay has no mesh and never reads one.
 //
-// THE REFERENCE (`egRefFrag`, variant 'reference') is the port's own stand-in for Mac's fragments, written by
-// tools/egRefFragScene.mjs and baked by tools/bakeEgRefFrag.mjs: it proves the path his take, and NO HALL LAYS IT
-// (egHeroFragLaws leaves it out). Laying his fragments into the halls is net/egLaw.js's, when they arrive - its polygon
-// fight floors, its sockets joined to the course and its volumes kept EG_FRAG_APART_CM apart; nothing here is in the
-// relay's import graph until then.
+// THE REFERENCE (`egRefFrag`, variant 'reference') is the port's own stand-in, written by tools/egRefFragScene.mjs and baked
+// by tools/bakeEgRefFrag.mjs: it proves the path every hero takes, and NO HALL LAYS IT (egHeroFragLaws leaves it out). Every
+// other registered hero is LAID (EG-HERO-LAY, spec law 7 - net/egLaw.js heroHall): in a slot of its kit and class, on the hall's
+// own hero die, where it fits. So this module and every law JSON it imports are in the relay's bundle (test/relayversion.test.js
+// RELAY_GRAPH): a hero's law half is a relay version; its mesh half is not.
 //
 // To register one of Mac's: bake it (its own tools/bake<Name>.mjs, the reference's shape), import its law JSON here and add
 // it to EG_HERO_FRAGS under its id. Not a DFU member. Ledger A (ELITE-GATES).

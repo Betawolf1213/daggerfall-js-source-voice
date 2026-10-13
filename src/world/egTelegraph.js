@@ -19,7 +19,7 @@
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { telegraphBounds, telegraphField, TELEGRAPH_KIND, TELEGRAPH_NOW_MS } from '../render/gateTelegraph.js';
-import { egInShape, segDist } from '../net/egShape.js';
+import { egInShape, segDist, egPieceIn } from '../net/egShape.js';
 import { egHazardParts, EG_HAZARDS } from '../net/egFragLaw.js';
 import { egFightFloorAt } from '../net/egFair.js';
 import { EG_FL } from '../net/egBodies.js';
@@ -36,8 +36,25 @@ const clamp01 = (v) => Math.max(0, Math.min(1, v));
 export const EG_FLOOR_DRAWS_MAX = 32;
 export const EG_FLOOR_CAP_SIDES = 12;
 export const EG_FLOOR_NEAR_M = 1;
-/** Does fight floor piece `f` (spec.fl's - a disc `d` or a lane `l`) hold (x, z), `pad` m about? */
-const holds = (f, x, z, pad = 0) => (f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segDist(x, z, f.ax, f.az, f.bx, f.bz) <= f.hw + pad);
+/** Does fight floor piece `f` (spec.fl's - a disc `d` or a lane `l`; EG-HERO-LAY: a hero's polygon `p`) hold (x, z), `pad` m
+ *  about? */
+const holds = (f, x, z, pad = 0) => (f.t === 'p' ? egPieceIn(f, x, z, pad) : f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r + pad : segDist(x, z, f.ax, f.az, f.bx, f.bz) <= f.hw + pad);
+/** EG-HERO-LAY: a polygon (x, z - counter-clockwise, x right and z up) cut into triangles by its ears, into `tri`. */
+function earCut(poly, tri) {
+  const v = poly.map((p) => [p[0], p[1]]);
+  const turn = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  const inTri = (p, a, b, c) => turn(a, b, p) >= 0 && turn(b, c, p) >= 0 && turn(c, a, p) >= 0;
+  for (let guard = 0; v.length > 3 && guard < 4096; guard++) {
+    let cut = false;
+    for (let i = 0; i < v.length; i++) {
+      const a = v[(i + v.length - 1) % v.length], b = v[i], c = v[(i + 1) % v.length];
+      if (turn(a, b, c) <= 0 || v.some((p) => p !== a && p !== b && p !== c && inTri(p, a, b, c))) continue;
+      tri(a[0], a[1], b[0], b[1], c[0], c[1]); v.splice(i, 1); cut = true; break;
+    }
+    if (!cut) break;
+  }
+  if (v.length === 3) tri(v[0][0], v[0][1], v[1][0], v[1][1], v[2][0], v[2][1]);
+}
 
 /**
  * EACH FIGHT FLOOR, TRIANGULATED ONCE (the hall's frame - x, z pairs, three a triangle): `[{ y, tris, box, cx, cz, R, piece,
@@ -52,6 +69,14 @@ export function egFightFloors(spec) {
     const v = [];
     const tri = (ax, az, bx, bz, cx, cz) => v.push(ax, az, bx, bz, cx, cz);
     const fan = (x, z, r, a0, a1, n) => { for (let k = 0; k < n; k++) { const p = a0 + ((a1 - a0) * k) / n, q = a0 + ((a1 - a0) * (k + 1)) / n; tri(x, z, x + Math.sin(p) * r, z + Math.cos(p) * r, x + Math.sin(q) * r, z + Math.cos(q) * r); } };
+    if (f.t === 'p') {
+      // EG-HERO-LAY: a hero's fight floor - its polygon cut by its ears; its circle about its box's middle
+      earCut(f.poly, tri);
+      const xs = f.poly.map((p) => p[0]), zs = f.poly.map((p) => p[1]), box = [Math.min(...xs), Math.min(...zs), Math.max(...xs), Math.max(...zs)];
+      const cx = (box[0] + box[2]) / 2, cz = (box[1] + box[3]) / 2, R = Math.max(...f.poly.map((p) => Math.hypot(p[0] - cx, p[1] - cz)));
+      out.push({ y: f.y ?? 0, tris: new Float32Array(v), box, cx, cz, R, piece: f, over: Object.freeze({ r: R, courts: Object.freeze([Object.freeze([cx, cz])]) }) });
+      continue;
+    }
     if (f.t === 'd') {
       fan(f.x, f.z, f.r, 0, Math.PI * 2, SD_ISLAND_SIDES);
       out.push({ y: f.y ?? 0, tris: new Float32Array(v), box: [f.x - f.r, f.z - f.r, f.x + f.r, f.z + f.r], cx: f.x, cz: f.z, R: f.r, piece: f, over: Object.freeze({ r: f.r, courts: Object.freeze([Object.freeze([f.x, f.z])]) }) });

@@ -39,7 +39,7 @@ import { SD_BLOW_BY_ID, SD_BLOWS, SD_RESET_PCT, SD_END_PCT, SD_ARENA_SLACK, blow
 import { SERPENT_ATTACK_BY_ID, SERPENT_ATTACK_TABLE, GRIP, CRUSH, MAEL_GRIND, MAEL_EYE_R, coilHolds, serpentShipsFighting, serpentOnShip } from './serpentBrain.js';
 import { shapeMeets, fleetShare } from '../systems/serpentStrike.js';
 import { deepIn, BODY_AFTER_MS } from './bossBody.js';
-import { egInBlow, egInShape, segDist } from './egShape.js';   // EG-H1: the Spire's FULL shape stamps, one judge for them all
+import { egInBlow, egInShape, segDist, egPieceIn } from './egShape.js';   // EG-H1: the Spire's FULL shape stamps, one judge for them all
 import { egTrailAt, egTrailAfter, egTrailNear, egTrailReady, egFightFloorAt, EG_POSE_WAIT_MS, EG_POSE_NEAR_MS } from './egFair.js';   // EG-H1: THE TIME LAW's trails
 import { egVentAt, EG_VENT_PCT } from './egLaw.js';
 import { egHazardParts, EG_HAZARDS } from './egFragLaw.js';
@@ -236,7 +236,7 @@ function caughtWhile(test, tr, from, until, h, spec, ys, { free = false, point =
 /** The fight floors' heights a stamp lands on: those whose plan holds its anchor (a CHECK's, every floor: null). */
 function floorsUnder(spec, s) {
   if (!s || s[0] === 'a' || s[0] === 'h') return null;
-  const ys = (spec?.fl ?? []).filter((f) => (f.t === 'd' ? Math.hypot(s[1] - f.x, s[2] - f.z) <= f.r + 1 : segDist(s[1], s[2], f.ax, f.az, f.bx, f.bz) <= f.hw + 1)).map((f) => f.y ?? 0);
+  const ys = (spec?.fl ?? []).filter((f) => (f.t === 'p' ? egPieceIn(f, s[1], s[2], 1) : f.t === 'd' ? Math.hypot(s[1] - f.x, s[2] - f.z) <= f.r + 1 : segDist(s[1], s[2], f.ax, f.az, f.bx, f.bz) <= f.hw + 1)).map((f) => f.y ?? 0);   // EG-HERO-LAY: a hero's fight floor, its polygon
   return ys.length ? ys : null;
 }
 /**

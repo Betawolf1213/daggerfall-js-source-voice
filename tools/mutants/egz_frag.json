@@ -182,8 +182,8 @@
   {
     "name": "EGZ-the-law-before-drawn-in-the-new",
     "file": "src/net/egLaw.js",
-    "old": "  let spec = layHall(seed >>> 0, h, geo | 0, 0, law), tries = 0;",
-    "new": "  let spec = layHall(seed >>> 0, h, geo | 0, 0, EG_SPEC), tries = 0;",
+    "old": "  let spec = layHall(seed >>> 0, h, geo | 0, 0, law), tries = 0, at = 0;",
+    "new": "  let spec = layHall(seed >>> 0, h, geo | 0, 0, EG_SPEC), tries = 0, at = 0;",
     "tests": [
       "test/egz_frag.test.js"
     ]
@@ -218,8 +218,8 @@
   {
     "name": "EGZ-the-law-before-forgotten",
     "file": "src/net/egDurable.js",
-    "old": "export const EG_LAWS = Object.freeze({ 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13' });",
-    "new": "export const EG_LAWS = Object.freeze({ 5: '2026-10-12', 6: '2026-10-13' });",
+    "old": "export const EG_LAWS = Object.freeze({ 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13' });",
+    "new": "export const EG_LAWS = Object.freeze({ 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13' });",
     "tests": [
       "test/egz_frag.test.js"
     ]
