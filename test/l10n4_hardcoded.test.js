@@ -87,7 +87,7 @@ const HARDCODED = {
   'src/net/egFragLaw.js': 85,
   'src/net/egHerald.js': 13,
   'src/net/egLaw.js': 189,   // EG-HERO-LAY: +16, the hero fit's refusals (net/egLaw.js egHeroTrials' `why`) - the relay's law read by a test and a hero's author, never said to a player, kept as egFragLaw.js's record faults are
-  'src/net/egLegion.js': 11,
+  'src/net/egLegion.js': 10,
   'src/net/egLords.js': 53,
   'src/net/egRun.js': 18,
   'src/net/egSpanLaw.js': 12,

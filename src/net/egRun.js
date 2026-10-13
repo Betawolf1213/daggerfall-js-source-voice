@@ -21,6 +21,10 @@ import { egOfferOf, egTake, egVOf, egDeclaredX, egCapX, egResonance, EG_SHARDS_P
 import { egAccordMates, EG_FAR_M, EG_HAMMER_X, EG_AMBUSH_X, EG_ECHO_SHARE } from './egVestige.js';   // EG-ZS: the Accords' pair law and numbers
 import { EG_V_BY_KEY, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX, EG_M_ID, EG_COUNTER_MS, EG_COUNTER_X, EG_MARK_MS } from './egVestige.js';   // AUDIT EG III: the Standard's aura, Counterstroke's numbers, a mark's life - declared once
 import { HIT_KINDS } from './gateBrain.js';
+import { egSeed } from './egLaw.js';   // AUDIT EG IV (lane10 #11): the season's strata, a seeded order
+import { sdRng } from './sdBrain.js';
+import { arenaSeasonOf } from './arenaLaw.js';
+import { EG_OFFER_MAX, EG_SPOT_X } from './egVestige.js';   // AUDIT EG IV: an offer's six; Spotter's share over a Hunter's Mark
 import { EG_RUN_REL_MAX } from './wire.js';   // AUDIT EG III (lane2 #1): the Reliquaries' circles a run's row carries
 
 /** The company's word stays open this long (ms). */
@@ -143,30 +147,49 @@ export function egBargainDecree(B, rng) {
   B.bargainDc = [[D.id, 1]];
   return D;
 }
-/** THE WELLHEAD'S TIDE for circle c (past 20), and a STRATUM joined at Redoubt w (20 and every fifth after, never a
- *  repeat in a breach). */
+/** THE WELLHEAD'S TIDE for circle c (past 20). */
 export const egTideOf = (c, rng) => (c > 20 ? EG_TIDES[Math.floor(rng() * EG_TIDES.length)] : null);
-export function egStratumAt(B, w, rng) {
-  if (w < 20 || w % 5 !== 0) return null;
-  const open = EG_STRATA.filter((s) => !(B.strata ?? []).includes(s));
-  if (!open.length) return null;
-  const s = open[Math.floor(rng() * open.length)];
+/** AUDIT EG IV (lane10 #11, lane2 #3; section 18: "drawn without repeat each season from six") - THE SEASON'S STRATA: the six in
+ *  the order arena season `season` draws them (a seeded shuffle - every breach of the season the same, so the Depths board ranks
+ *  one test), the first joining at Redoubt 20 and the next at every fifth after. Pure. */
+const STRATA_SALT = 0x57a7a;
+export function egSeasonStrata(season) {
+  const r = sdRng(egSeed(season >>> 0, STRATA_SALT)), a = [...EG_STRATA];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+/** The STRATUM that joins breach `B` at Redoubt `w` (20 and every fifth after): its season's (`B.op`'s), never one held -
+ *  joined, and answered (null for none). */
+export function egStratumAt(B, w) {
+  if (!(w >= 20) || w % 5 !== 0) return null;
+  const s = egSeasonStrata(arenaSeasonOf((B.op ?? 0) / 1000))[(w - 20) / 5];
+  if (!s || (B.strata ?? []).includes(s)) return null;
   B.strata = [...(B.strata ?? []), s];
   return s;
+}
+/** AUDIT EG IV (lane10 #11): A DEEPER START (section 16.6) at the Redoubt `w` it starts past begins with every stratum of the
+ *  Redoubts behind it (20 to `w`, by fifths) - starting deeper never sheds what the depth holds. Answers the strata. */
+export function egStrataTo(B, w) {
+  for (let r = 20; r <= w; r += 5) egStratumAt(B, r);
+  return B.strata ?? [];
 }
 
 // ── the Vestiges' offers ────────────────────────────────────────────────────────────────────────────────────
 /** THE OFFERS at a Redoubt's rest: one to every living member (net/egVestige.js egOfferOf) - the Lean at the first, a
  *  Mastery at Redoubt 3 and every Valkynaz, a fallen's bequest, shards' extra card. Answers the frames (each `s` its
- *  member's alone). */
+ *  member's alone). AUDIT EG IV (lane10 #15): no card that cannot act for its member - the living company's size and the
+ *  member's landed blow kinds over the breach (`m.kinds`) read; (lane10 #22): the shards' card one of the member's own
+ *  Vestiges at its next rank; (lane1 #13): the offer's own law kept (`m.offerO`) for a Surplus's reroll. */
 export function egOffers(B, w, valk, rng, now) {
   const out = [];
   const bequests = Object.values(B.mem).filter((m) => m.bequest != null).map((m) => m.bequest);
+  const n = Object.values(B.mem).filter((m) => m.in && m.alive && !m.home && !m.forsaken).length;
   for (const [sub, m] of Object.entries(B.mem)) {
     if (!m.in || !m.alive || m.home || m.forsaken) continue;
     const lean = m.kinds ? [0, 1, 2].reduce((best, k) => ((m.kinds[k] ?? 0) > (m.kinds[best] ?? 0) ? k : best), 0) : null;
     const shardPicks = Math.floor((m.shards ?? 0) / EG_SHARDS_PER);
-    const cards = egOfferOf(rng, { vs: m.vs, mast: m.mast, lean, w, valk, bequest: bequests.find((b) => b != null && !(m.vs ?? []).some((p) => p[0] === b)) ?? null, extra: shardPicks > 0 ? 1 : 0, hollow: (B.strata ?? []).includes('hollow') });
+    m.offerO = { lean, w, valk, bequest: bequests.find((b) => b != null && !(m.vs ?? []).some((p) => p[0] === b)) ?? null, rank: shardPicks > 0 ? 1 : 0, hollow: (B.strata ?? []).includes('hollow'), n };
+    const cards = egOfferOf(rng, { ...m.offerO, vs: m.vs, mast: m.mast, kinds: m.kinds });
     m.offer = cards; m.picks = 1 + shardPicks + (m.athFree ? 1 : 0); m.athFree = 0;
     out.push({ k: 'offer', to: sub, v: cards, n: m.picks });   // a member's own offer, to their sockets alone (the room's _egFan)
   }
@@ -188,13 +211,20 @@ export function egPick(B, sub, card) {
 }
 /** The rest's end: every offer still open takes its first card. */
 export function egPicksClose(B) { for (const [sub, m] of Object.entries(B.mem)) if (m.offer?.length && m.picks > 0) egPick(B, sub, m.offer[0]); }
-/** A Surplus spent: a fourth card, or the three rerolled. */
+/** A Surplus spent: a fourth card, or the three rerolled. AUDIT EG IV (lane1 #13; section 15: "an offer holds at most six
+ *  cards"): a card past EG_OFFER_MAX (or none to find) is refused and the Surplus kept; a reroll deals the offer by its own law
+ *  (`m.offerO` - The Hollow Offer's two, the bequest, the shards' card, the Lean), and both deal only cards that act for it. */
 export function egSurplus(B, sub, use, rng, w, valk) {
   const m = B.mem[sub];
   if (!m || !m.offer || !(B.sur > 0)) return null;
+  const o = { w, valk, ...(m.offerO ?? {}), vs: m.vs, mast: m.mast, kinds: m.kinds };
+  if (use === 'reroll') m.offer = egOfferOf(rng, o);
+  else {
+    const more = m.offer.length < EG_OFFER_MAX ? egOfferOf(rng, { vs: m.vs, mast: m.mast, w: 2, extra: 1, n: o.n, kinds: m.kinds }).find((c) => !m.offer.includes(c)) : null;
+    if (more == null) return null;
+    m.offer = [...m.offer, more];
+  }
   B.sur--;
-  if (use === 'reroll') m.offer = egOfferOf(rng, { vs: m.vs, mast: m.mast, w, valk });
-  else { const more = egOfferOf(rng, { vs: m.vs, mast: m.mast, w: 2, extra: 1 }).find((c) => !m.offer.includes(c)); if (more != null) m.offer = [...m.offer, more]; }
   return { k: 'offer', to: sub, v: m.offer, n: m.picks };
 }
 /** A recall's cost: the member's newest Vestige lost. */
@@ -298,12 +328,18 @@ export function egFadeOn(m, now) {
 }
 /** A first arrow's mark (Hunter's Mark) or a struck foe's (Spotter) on a body. EG-ZS: the mark keeps who laid it (`by` - Hammer
  *  and Anvil reads it). AUDIT EG III (lane2 #6; section 21): each reads an arrow (`r`, the client's word) from beyond EG_FAR_M
- *  of the foe (`d`, between the poses) - where no melee blow reaches, so a forged kind gains nothing a real one would not. */
+ *  of the foe (`d`, between the poses) - where no melee blow reaches, so a forged kind gains nothing a real one would not.
+ *  AUDIT EG IV (lane10 #13; section 15): ONE MARK, TWO LAYERS - Hunter's Mark's share (`hm`, the first holder's arrow, its rank)
+ *  and Spotter's EG_SPOT_X (`sp`) over it, either joining the other (a layer joined stands the mark EG_MARK_MS more); a
+ *  holder's mark never halves the other's. Answers whether its arrow newly SPOTTED the foe (net/egLegion.js egSpotted). */
 export function egMarkFoe(m, body, r, now, by = '', d = 0) {
-  if (r !== HIT_KINDS.Shaft || !(d > EG_FAR_M)) return;
-  const hm = egVOf(m?.vs, 'huntersmark');
-  if (hm && !(body.marked?.until > now)) body.marked = { x: hm, until: now + EG_MARK_MS, by };
-  if (m?.mast === EG_M_ID.spotter && !(body.marked?.until > now)) body.marked = { x: 0.1, until: now + EG_MARK_MS, by };
+  if (r !== HIT_KINDS.Shaft || !(d > EG_FAR_M)) return false;
+  const cur = body.marked?.until > now ? body.marked : null;
+  const hm = cur?.hm ? 0 : egVOf(m?.vs, 'huntersmark'), sp = !cur?.sp && m?.mast === EG_M_ID.spotter;
+  if (!hm && !sp) return false;
+  const H = hm || cur?.hm || 0, S = sp || !!cur?.sp;
+  body.marked = { x: H + (S ? EG_SPOT_X : 0), until: now + EG_MARK_MS, by: hm ? by : cur?.by ?? by, ...(H ? { hm: H } : {}), ...(S ? { sp: 1 } : {}) };
+  return sp;
 }
 /** The member's run as the state says it: `[sub, rl, lumen, shards, tonics, cantrips, vestiges, mastery, circles]` - AUDIT EG III
  *  (lane2 #1): `circles` each Reliquary's (the newest EG_RUN_REL_MAX), the rest's stake line's (ui/egHud.js egStakeText). */

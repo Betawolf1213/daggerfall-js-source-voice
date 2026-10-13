@@ -93,6 +93,16 @@ export function spireHolderStep(entity, holder) {
   const bane = heldV('spellbane', entity);
   if (bane !== _bane) { _bane = bane; computeEntityMods(entity); }
 }
+/** AUDIT EG IV (lane10 #14; section 15) - RALLYING CRY AT A COURT'S PHASE TURN: the room's word (`eheal` `cry` - net/egBrain.js
+ *  rallyingCry) gives back a Second Wind spent in this hall, said as the door's refresh says it. Answers whether one was given
+ *  back. */
+export function spireRallyingCry() {
+  if (!_held) return false;
+  const spent = _wind === `${_held.b}:${_held.h}`;
+  if (spent) _news.push({ k: 'rallyingCry' });
+  _wind = '';
+  return spent;
+}
 /** The holder as this frame has it (tests). */
 export const spireHeld = () => _held;
 

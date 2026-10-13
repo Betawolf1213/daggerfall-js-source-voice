@@ -709,7 +709,7 @@ Wellhead the legions came through, each a standing body.
 |---|---|---|
 | **the Rift-Yard** | the Galleries | as above |
 | **the Wellspring** | the Galleries | one great rift worth 30 s of the company's reference damage, shielded while any of its three anchors stand (each 4 s); Sappers walk to broken anchors and relight them at a third |
-| **the Muster** | the Cairn | no rifts: a Kynreeve standard-bearer walks between three rally points (3.0 m/s, a new point every 20 s), and every rally point pours waves while the standard stands. It holds 20 s of the company's reference damage, times the depth. Fell it and the waves stop |
+| **the Muster** | the Cairn | no rifts: a standard-bearer (a Daedra Seducer bearing the Kyn's standard, section 12) walks between three rally points (3.0 m/s, a new point every 20 s), and every rally point pours waves while the standard stands. It holds 20 s of the company's reference damage, times the depth. Fell it and the waves stop |
 | **the Holdfast** | the Shade | hold a Battlemage relic (a gold disc, r 6) for 75 s against waves from three rifts. Each add that reaches it takes 4 of its 100. A broken relic opens two more rifts and the hold restarts at half; it never fails the hall |
 | **the Wellmouth** | the Wellhead | the rifts wander: each moves between three sockets on the rim every 20 s, at a fixed 2.0 m/s, so the groups that close them must follow |
 
@@ -1467,20 +1467,31 @@ player's data and the budget allow. Every blow is a shape the telegraph pass dra
 
 | id | kind | does | bodies (band) | body | move | its blow (wind-up / floor) |
 |---|---|---|---|---|---|---|
-| 0 | **Harrier** | runs at the living member farthest from its anchor (in a Court, from the lord, as the gate's runs from the Warden; elsewhere, from itself), hovering; on a span it bites only on islands and plates | Imp (1); Giant Bat (3) in the Shade | r 0.5, h 1.5 | 5.0 m/s | Bite: disc r 2, 12% + 4 (0.9 s / 0.79 s) |
-| 1 | **Sapper** | walks to its OBJECTIVE: a Court's lord (heals it, the gate's law), a Yard's nearest closed rift (opens it again at a third), or a Wellspring's broken anchor | the Atronachs (35, 37, 38) | r 0.7, h 2.3 | 1.6 m/s | none: it is the objective |
-| 2 | **Ward-Bearer** | stands and pulses, holding a ward on what it guards (a lord, a portcullis) | Frost Daedra (25); Daedra Seducer (29) in the Shade | r 0.6, h 2.2 | stands | Pulse: disc r 3.5, 18% + 6 of the band's element (1.4 s / 1.01 s) |
+| 0 | **Harrier** | runs at a living member - in a Court the one farthest from the lord, as the gate's runs from the Warden; elsewhere the nearest - hovering; on a span it bites only on islands and plates | Imp (1); Giant Bat (3) in the Shade | r 0.5, h 1.5 | 5.0 m/s | Bite: disc r 2, 12% + 4 (0.9 s / 0.79 s) |
+| 1 | **Sapper** | walks to its OBJECTIVE: a Court's lord (heals it the gate's `SAP_HEAL`, 2%, while its fight's feedings last - `SAP_FEEDS_MAX`, 6 - and burns out against it after), a Yard's nearest closed rift (opens it again at a third of its own health), or a Wellspring's broken anchor | the Atronachs (35, 37, 38) | r 0.7, h 2.3 | 1.6 m/s | none: it is the objective |
+| 2 | **Ward-Bearer** | stands and pulses, holding a ward on what it guards (a lord, a portcullis) | Frost Daedra (25) | r 0.6, h 2.2 | stands | Pulse: disc r 3.5, 18% + 6 of the band's element (1.4 s / 1.01 s) |
 | 3 | **Breaker** | winds a charge at a member, runs it, pushes | Daedroth (27) | r 0.8, h 2.4 | 3.0 m/s; the charge 12 m/s | Charge: lane w 4 x 14, 25% + 8, push 6 m (1.1 s / 0.79 s) |
-| 4 | **Caster** | stands off 10-18 m, on a raised anchor where the hall has one, and throws at a member every 6-9 s | Fire Daedra (26); Lich (32) in the Cairn | r 0.6, h 2.2 | 2.0 m/s | Bolt: disc r 3 at the member's feet, 20% + 6, the element, leaving a pool (`POOLS` hellfire's) (1.6 s / 0.94 s) |
+| 4 | **Caster** | stands off 10-18 m, on a raised anchor where the hall has one, and throws at a member every 6-9 s | Fire Daedra (26); Lich (32) in the Cairn | r 0.6, h 2.2 | 2.0 m/s | Bolt: disc r 3 at the member's feet, 20% + 6, the element, leaving a pool (`POOLS` hellfire's, read: 8% + 3 a tick for 6 s) (1.6 s / 0.94 s) |
 | 5 | **Diver** | flies at 6-10 m, circles, dives a lane at a member; never onto ground narrower than the lane plus 2 m (6 m) | Harpy (13), Dragonling (34) | r 0.6 | 6.0 m/s | Dive: lane w 4 x 10, 18% + 5 (1.0 s / 0.79 s) |
 | 6 | **Lurker** | dormant until a member passes within 6 m (an ambush) or a blow lands on it, then slow and heavy | Gargoyle (22); Iron Atronach (36) in the Wellhead | r 0.9, h 2.6 | 2.2 m/s | Smash: disc r 3, 30% + 10 (1.3 s / 0.94 s) |
-| 7 | **Binder** | stands back and raises the last fallen add of its wave once, a 6 s cast broken by blows that land a tenth of its health in it (the hand's and the purse's, never the claim) | Ancient Lich (33) | r 0.6, h 2.2 | 1.2 m/s | none: the raise |
-| 8 | **Wraith** | drifts in and tethers the nearest member on a fight floor: 3% of max health a second while within 8 m, broken by putting 10 m between | Wraith (23), Ghost (18) | r 0.5 | 2.5 m/s | Drain: a tether (the pull-apart grammar, section 25.5) |
+| 7 | **Binder** | stands back and raises the last fallen add of its wave once, a 6 s cast broken by blows that land a tenth of its health in it (the hand's and the purse's, never the claim). The body is claimed as the cast begins, so no two Binders raise one; a broken cast spends the raise; a cast begins only with room under the cap | Ancient Lich (33) | r 0.6, h 2.2 | 1.2 m/s | none: the raise |
+| 8 | **Wraith** | drifts in and tethers the nearest member on a fight floor: 3% of max health a second while within 8 m, broken by putting 10 m between | Wraith (23) | r 0.5 | 2.5 m/s | Drain: a tether (the pull-apart grammar, section 25.5) |
 
 **ROLE READS.** Kill priority in every horde mode is read from silhouette, so among the legion's kinds one sprite never
 plays two roles in a band, and every role also carries a mark that is not a colour (a lord that shares an add's
-sprite is told apart by its scale of 2.5 or more and the boss ring):
+sprite is told apart by its scale of 2.5 or more and the boss ring). AUDIT EG IV (lane1 #18) held it over all sixteen
+kinds, the hall's own with the nine:
 
+- a friend is a human shape no foe of the Spire wears: the Battlemage's Ghost a Battlemage (130), the Deserter a
+  Spellsword (129) - a Dremora who has shed the Kyn's armour;
+- the elites, a Kynval and the Daedra Lord, are one role and the Dremora's (31) alone;
+- the Muster's standard-bearer is a Daedra Seducer (29), and the Ward-Bearer a Frost Daedra (25) in every band;
+- the Vengeful Shade is the Ghost (18), the Wraith a Wraith (23) in every band, and the Night-Stalker's Blood Thrall a
+  Vampire (28) on its feet - the Giant Bat (3) is the Shade's Harrier.
+
+The marks that are not a colour:
+
+- a friend's is its human shape, and in the Shade it keeps no rim light (`world/egTelegraph.js` egRimOf);
 - the Ward-Bearer stands at 1.15 scale with a ward ring at its feet;
 - the Caster flares its hand 0.4 s before each Bolt;
 - the Binder draws a violet beam to the body it raises, with a bar for its 6 s cast;
@@ -1500,7 +1511,10 @@ frame), and resisted by the Iron Footing Vestige. Near an edge it is a cast-back
 - **Size**: a wave counts the living company, as the gate's do, clamped by kind.
 - **Cadence and cap**: the hall's (section 8.1), the cadence quickening with depth (section 18). Every wave is held to
   the room under the cap (`egLegionRoom`, `net/egLegion.js`): the hall's, a lord's fury's and its summons', Hunting
-  Pack's, and a Kynval squad (its first affixes kept). A friend (the Ghost, the Deserter) is no foe under it.
+  Pack's, and a Kynval squad (its first affixes kept). A friend (the Ghost, the Deserter) is no foe under it. AUDIT EG IV
+  (lane1 #6): a lord's summons (Moonfall's Divers, the Soul Burst's Wraiths, the Last Rites'), a Binder's raise and the
+  Low Road's foes are held to it too (`egLegionSummon`); a summons a mechanic needs - Morvayn's odd member's Wraith, the
+  Night-Stalker's lone member's Blood Thrall - stands whatever the room, and counts against it after.
 - **Fade** (section 15): every kind picks among the members it sees, never one in its Fade, but an Unshaken elite
   (section 8.7). A shape aimed at another still lands on a Faded member, and a dormant Lurker wakes at anyone's
   nearness.
@@ -1511,8 +1525,9 @@ frame), and resisted by the Iron Footing Vestige. Near an edge it is a cast-back
 - Galleries: kinds 0, 1, 2, 3, 4, 6;
 - Cairn: + 7, 8;
 - Shade: + 5;
-- Wellhead: all of them, with a Daedra Lord (31) as an elite add (x5 health, the Warden's Cleave, never under its
-  floor) one wave in six.
+- Wellhead: all of them, with a Daedra Lord (31) as an elite add (x5 health, the Warden's Cleave - the gate's
+  `ATTACKS.cleave` read, its reach 7 - never under its floor) one wave in six (one in three under the Mingled Legion,
+  section 18).
 
 **Pure, and the relay's.** The runner's dice are the tick's rng (the relay's CSPRNG), as every brain's are.
 
@@ -1906,8 +1921,18 @@ Hall 60 as at Hall 6, and eight members choosing what to become is what makes a 
   kind in the circle (the hit's `r`): melee leans to Blade, an arrow to Hunt, a spell to Arcana. It nudges and never
   decides; the room knows nothing of classes and should not.
 - **More cards**: Surplus (section 6.2) buys a fourth card or a reroll. A **bequest** (section 16.5) adds the fallen's
-  card. A Mastery (below) adds one more. They stack: an offer holds at most six cards. Three Vestige shards (section
-  17.1) make a rank of a held Vestige, or a pick of two new ones.
+  card. A Mastery (below) adds one more. They stack: an offer holds at most six cards (`EG_OFFER_MAX`) - a fourth card
+  past it is refused and the Surplus kept, and a reroll deals the offer again by its own law (The Hollow Offer's two,
+  the bequest, the shards' card, the Lean - `m.offerO`, `net/egRun.js` egSurplus). Three Vestige shards (section 17.1)
+  add a card - one of the member's own Vestiges below III at its next rank, or a new card when none can rank - and a
+  second pick: a rank of a held Vestige, or two picks of the offer.
+- **Cards that act** (AUDIT EG IV, lane10 #15): an offer never shows a card that cannot act for its member, where the
+  room can see it (`EG_CARD_NEEDS`, `egCardActs`, `net/egVestige.js`). A Vestige that works only through an ally
+  (Bastion, Spire's Standard, Fallen's Due, Mender's Grace, Lifeline) is left out for a company of one, and Steadfast
+  Line under four. One that reads a blow kind is left out for a member who has landed no blow of that kind in the
+  breach: melee for Searing Edge, Sweeping Arc and Counterstroke, an arrow for Hunter's Mark and Spotter, a spell for
+  Overcharge, Arcane Echo and Spillover, and an arrow or a spell for Long Sight. A Vestige whose use the room cannot
+  see (Battlemage's Focus and Shieldweaver: any spell) is always offered, and a bequest is the fallen's own.
 - They last until the breach closes. The room holds each member's, says them to the company (auras need it), and the
   Redoubt's receipt carries them.
 
@@ -1963,7 +1988,7 @@ every Valkynaz Redoubt; a member holds one at a time, and taking another replace
 |---|---|---|---|
 | **Stone** | **Immovable** | stand still for 1 s on a fight floor, and blows on you deal 25% less and pushes do nothing until you move | client; the relay's census applies it too |
 | **Blade** | **Counterstroke** | a melee blow on a lord within 0.6 s after one of its blows lands within 6 m of you deals x1.4 | relay (it knows both), inside the 1.6 cap |
-| **Hunt** | **Spotter** | your arrows wake Lurkers at any range (as any blow that lands on one does), and a foe your arrow strikes from beyond 12 m is marked +10% for 8 s | relay |
+| **Hunt** | **Spotter** | your arrow from beyond 12 m SPOTS a foe, once a mark: an add loses the blow it is winding (every blow of its still to land cut, a Binder's raise broken - `egSpotted`), and the company deals +10% to it for 8 s, over any Hunter's Mark | relay |
 | **Arcana** | **Spillover** | a spell's overkill on an add carries to the nearest add within 6 m | relay (host hits); the carry out of the member's purse, within its blow's cap |
 | **Fellowship** | **Spirebridge** | once a span, a gold bridge over the next gap for the company, for 6 s | the room's word (`ebridge`); ground on the fair trail while it stands; never asked of the solver |
 
@@ -2005,10 +2030,10 @@ relay, inside the caps:
 
 **The marks read an arrow from beyond 12 m** (section 21; AUDIT EG III, lane2 #6): Hunter's Mark's and Spotter's mark is laid by
 an arrow (the blow's `r`) from more than `EG_FAR_M` 12 m between the poses (`net/egRun.js` `egMarkFoe`), where no melee
-blow reaches, so a forged kind gains nothing a real one would not. Spotter's wake reads no kind and no distance: any
-blow
-that lands on a dormant Lurker wakes it (`net/egLegion.js` `egLurkerWake`, from `egBlow`), so its arrows wake one at any
-range, and the mark is the arrow's from beyond 12 m.
+blow reaches, so a forged kind gains nothing a real one would not. Any blow that lands on a dormant Lurker wakes it
+(`net/egLegion.js` `egLurkerWake`, from `egBlow`). AUDIT EG IV (lane10 #13): a mark has two layers - Hunter's Mark's share,
+the first holder's arrow at its rank, and Spotter's 10% (`EG_SPOT_X`) over it - and either joins the other, standing the
+mark 8 s more; a Spotter holding Hunter's Mark I no longer marks at half its Mastery.
 
 **Watchfire.** Every lord's brain commits each blow `EG_TELL_LEAD_MS` (400 ms) before its wind-up begins, whether or
 not anyone holds Watchfire, so the blow's timing never depends on who does. The holder's company sees the early
@@ -2035,7 +2060,10 @@ for the breach:
 - **Blade, Bladestorm**: every fifth melee blow strikes every foe within 3 m (relay host hits);
 - **Hunt, Deadeye**: an arrow from beyond 12 m pierces the add behind its target;
 - **Arcana, Spellweave**: every fourth damage spell costs nothing;
-- **Fellowship, Rallying Cry**: Rally's heal and every Second Wind in the company refresh when a hall's door opens.
+- **Fellowship, Rallying Cry**: Rally's heal and every Second Wind in the company come again at each of a Court's phase
+  turns - the first of its lords to turn its second and its third phase, a mirror's and a champion's never (`eheal`
+  `cry`, net/egBrain.js rallyingCry; systems/spireVestiges.js spireRallyingCry) - and when a hall's door opens. AUDIT EG IV
+  (lane10 #14): at a door alone it gave back what the closing could not spend; the Courts are where support is tested.
 
 A card that would be a member's third different Vestige of a family says so in the Vestiges' blue: *Completes Stone:
 Rooted. Immune to push, and your threat doubles.* A capstone is said as it is first reached (*Stone resonates: Rooted.*,
@@ -2236,7 +2264,7 @@ something the company can see coming; none of it outlives the breach.
   most), a **Cantrip**, or **lumen**.
 - It gives one to each member who touches it during the closing, from a fair trail (section 21). The hall's budget
   (section 9) weighs it, and the relay records what each member took.
-- **Vestige shards**: three, spent at a Redoubt, make a rank of a held Vestige or a pick of two new ones.
+- **Vestige shards**: three, spent at a Redoubt, add a card of the member's own Vestiges at its next rank and a second pick (section 15).
 - A cache may be the Kyn Mimic's (section 8.7).
 
 ### 17.2 Cantrips
@@ -2287,16 +2315,27 @@ It is a departure from DFU, in the Ledger A row.
      kit, on the lord's own ground: one seam, one fight);
    - **The Warband**: every hall begins with a Kynval Squad;
    - **Hungering Dark**: the rest heals half and Rally a third;
-5. **the Wellhead's strata**: at Redoubt 20 and every fifth after, one stratum joins for the rest of the breach, drawn
-   without repeat each season from six:
-   - **The Twin Court**: two lords from two bands at 0.6 health each, the union floor over both;
-   - **The Mingled Legion**: waves draw every band's kinds;
-   - **The Old Masters**: the Last Spellmaster and the Last Armsmaster rise together as one Court, under the Twins'
-     15 s law. The Last Lesson stops at r 17, the havens keep their r 13 ring, the Examination's runes stand on a
-     ring of r 16, and the errand solver pins that court;
-   - **The Molten Rim**: the outer 3 m of every court disc is magma;
+5. **the Wellhead's strata**: at Redoubt 20 and every fifth after, one stratum joins for the rest of the breach. The
+   six come in the order the arena season draws them (`egSeasonStrata`, a seeded shuffle of the season's number - every
+   breach of a season meets the same stratum at the same Redoubt, so the Depths board ranks one test), and a breach that
+   starts deeper (section 16.6) begins with every stratum of the Redoubts it starts past (`egStrataTo`, `net/egRun.js`):
+   - **The Twin Court**: a second lord beside the Court's own, of another band than its own (`net/egBrain.js` egStrataSecond, one of
+     the Hound, the Cairn-Keeper, the Mother of Dusk and the Colossus, turning with the circle), each lord at 0.6 health
+     (`EG_PAIR_HP`; a Kyn champion beside them whole), the union floor over both;
+   - **The Mingled Legion**: no wave is one kind and Harriers. Every body of a wave is drawn on its own among the lead
+     kinds (Harriers, Breakers, Casters, Wraiths, and Divers under the sky - `EG_MINGLED_LEADS`), and a Daedra Lord
+     leads one wave in three, not six (`net/egLegion.js` egWaveKinds);
+   - **The Old Masters**: a master rises beside every Court's lord, as the Twin Court's second does: the Last
+     Spellmaster at an odd circle and the Last Armsmaster at an even one, and the other master beside a master. The
+     pair keeps the Twins' 15 s law (`F.mem.oldMasters`, the lords' fall law's to read). Where both masters stand (THE MASTERS' GROUND), the Last Lesson stops at r 17
+     (`EG_MASTERS_LESSON_R`), the havens keep their r 13 ring, and the Examination's runes stand on a ring of r 16
+     (`EG_MASTERS_RUNE_R`) whatever the ground lays, so neither master's errand stands in the other's burning ground.
+     Holding the Twin Court as well, the master is the second;
+   - **The Molten Rim**: the outer 3 m of every disc of a Court is magma (a fight hall's way in and out keeps its
+     edge);
    - **Kyn Champions**: Clan Feud at every Court;
-   - **The Hollow Offer**: two Vestige cards instead of three, one of them always a Mastery;
+   - **The Hollow Offer**: two Vestige cards instead of three, one of them always a Mastery - a Surplus's reroll deals
+     it again by the same law;
 6. **numbers, gently**: lord health `ttkRef(c)` (x1.07 a circle, x1.03 past 20); add health `x (1 + 0.04(c-1))`;
    shares `x (1 + 0.02(c-1))` within the 1.5 cap;
 7. **fury**, for a company slow against its lord: waves and chained blows, never speed (section 13.2).
@@ -2725,9 +2764,9 @@ The gate's trust law, kept whole, and where it was not enough for one life, wide
   blow's kind `r` is the client's word (`HIT_KINDS`), so a Vestige that reads it must not gain from a lie. Sweeping
   Arc, Bladestorm and Counterstroke read melee, and the relay already checks a melee blow's reach. Long Sight, Hunter's
   Mark, Spotter and Deadeye read arrows and spells, and also need more than 12 m between the poses, where a forged kind
-  gains nothing a real one would not (the marks: `net/egRun.js` `egMarkFoe`, an arrow alone). Spotter's wake reads
-  neither: any blow that lands on a dormant Lurker wakes it (`net/egLegion.js` `egLurkerWake`). The lean reads it too,
-  and changes no damage.
+  gains nothing a real one would not (the marks and Spotter's spotting: `net/egRun.js` `egMarkFoe`, an arrow alone). A
+  dormant Lurker wakes at any blow that lands on it (`net/egLegion.js` `egLurkerWake`), reading neither. The lean and an
+  offer's cards that act (section 15) read it too, and change no damage.
 - **The lords' blows on members**: ONE judge for every shape. `src/net/bossRef.js` holds a judge for each boss
   (`judgeGate`, `judgeRemnant`, `judgeSerpent`).
   - Every Spire blow travels with a FULL shape stamp, its kind and every number, which is new. The Remnant's
@@ -2736,15 +2775,16 @@ The gate's trust law, kept whole, and where it was not enough for one life, wide
     (`posAt`/`posAfter`, `deepIn`, `BODY_AFTER_MS`) and feeds `src/net/bossBody.js` (`bodyStruck`, `bodyCensus`).
   - It also judges the hall's own hazards at their landing on a fight floor, and a cast-back (a trail below
     `SD_VOID_Y`), into the census. A modified client that ignores vents and magma is seen.
-- **Time, before enforcement.** The relay keeps trails timed by arrival, and a client draws and resolves a landing on
-  a clock that runs late by the welcome's one-way latency, so today both poses the judge reads can predate the
-  client's landing: a dodge in its last round trip would be counted as a hit. `BOSS_BODY`'s enforcement is off
-  today (`BODY_DEFAULT.enforce`), so this error has never been paid. Before EG14 turns it on for `eg:` rooms:
-  - trail entries become `[tShared, x, y, z]`, `tShared` being the pose's own `ts` plus the socket's offset (below);
-  - `posAfter` is the first pose SENT after the blow's `at`, waited for up to 800 ms; a body with no pose within
-    ±300 ms of `at` is not counted;
-  - the client's clock is corrected (section 10.8);
-  - pinned: a dodge at the client's `at` less 50 ms, at a 300 ms round trip, is never counted.
+- **Time, the law enforcement stands on** (EG-H1, built; AUDIT EG IV, lane1 #30, said as built). A client draws and
+  resolves a landing on a clock that runs late by the welcome's one-way latency, so a trail timed by arrival would let
+  both poses the judge reads predate the client's landing, and count a dodge in its last round trip as a hit. So the
+  relay's trails are timed by when each pose was SENT (`net/egFair.js`):
+  - each trail entry is `[t, x, y, z, h]`, `t` the pose's shared time - its own `ts` plus the socket's offset, less the
+    one-way delay its corrected clock said (section 10.8, the `clk` word);
+  - the judge's pose after a blow is the first SENT after its `at`, waited for up to `EG_POSE_WAIT_MS` (800 ms); a body
+    with no pose within `EG_POSE_NEAR_MS` (±300 ms) of `at` is not counted;
+  - pinned (`test/egint_relay.test.js`): a dodge at the client's `at` less 50 ms, at a 300 ms round trip, is never
+    counted.
 - **THE FAIR TRAIL** (`spanFair`, new, on every `eg:` pose). The relay's body trails (`BODY_TRAIL_MS` 2000,
   `BODY_TRAIL_MAX` 24) are seconds long, and a crossing takes tens of seconds, so the room keeps an ONLINE accumulator
   per member: the fastest step, the air time since the last support, the last island. Its law:
@@ -2776,8 +2816,8 @@ The gate's trust law, kept whole, and where it was not enough for one life, wide
   restores it, so holders do not drain their budgets or skew the measures staff read.
 
 A modified client can still refuse to take damage (a player owns their body). Under `BOSS_BODY` enforcement, the
-relay's census fells it as it fells a gate's fighter. The Spire's boards are measured with enforcement on: EG14 turns
-it on for `eg:` rooms when the boards open, whatever the gate's setting, and only once the time law above is in.
+relay's census fells it as it fells a gate's fighter. The Spire's boards are measured with enforcement on: it is on in
+`eg:` rooms (`EG_BODY_ENFORCE`, `net/egBrain.js`), whatever the gate's setting, on the time law above.
 
 ## 22. Failure and recovery
 
@@ -7807,8 +7847,9 @@ census now counts.
    end.
 3. **Kindled Steel's fire is the Edge's points whole**, never scaled by the blow's factors. The relay keeps no element.
 4. **A host hit on an add spends no hand and no purse**, as Sweeping Arc's splash does. One on a lord goes through the
-   seam, the one plug every blow on a lord takes (EG-ZK), so it rides the blow's token and draws on the member's purse. No
-   member's tally counts either.
+   seam, the one plug every blow on a lord takes (EG-ZK), so it rides the blow's token and draws on the member's purse.
+   AUDIT EG IV (lane1 #25): what either lands is its member's, as a blow's is - the hall's and the circle's damage and the
+   recap's and a Court's chart.
 5. **An Echo's share is the relay's now.** The screen claims the cast's whole. The bucket grows by Arcane Echo's own declared
    factor, not by War-Chorus's doubled expectation.
 6. **Hammer and Anvil reads any mark its mate laid**, its Hunter's Mark or its Spotter's: "a foe the mark's holder marked".

@@ -69,6 +69,8 @@ export const EG_ECHO_Q = 0x40000000;
  *  carries to an add within EG_SPILL_M (m) of the one it felled. */
 export const EG_SWEEP_M = 3;
 export const EG_MARK_MS = 8000;
+/** AUDIT EG IV (lane10 #13): Spotter's share on a foe it spots - over any Hunter's Mark (net/egRun.js egMarkFoe). */
+export const EG_SPOT_X = 0.1;
 export const EG_COUNTER_MS = 600;
 export const EG_COUNTER_X = 1.4;
 export const EG_COUNTER_M = 6;
@@ -121,7 +123,7 @@ export const EG_V_BY_KEY = Object.freeze(Object.fromEntries(EG_VESTIGES.map((v) 
 export const EG_MASTERIES = Object.freeze([
   Object.freeze({ id: 100, key: 'immovable', fam: 'stone', name: 'Immovable', line: 'Stand still 1 s on a fight floor: blows on you deal 25% less and pushes nothing, until you move.' }),
   Object.freeze({ id: 101, key: 'counterstroke', fam: 'blade', name: 'Counterstroke', line: "A melee blow on a lord within 0.6 s after one of its blows lands near you deals x1.4." }),
-  Object.freeze({ id: 102, key: 'spotter', fam: 'hunt', name: 'Spotter', line: 'Your arrows wake Lurkers at any range; a foe your arrow strikes from beyond 12 m is marked +10% for 8 s.' }),
+  Object.freeze({ id: 102, key: 'spotter', fam: 'hunt', name: 'Spotter', line: "Your arrow from beyond 12 m spots a foe: an add loses the blow it is winding (a Binder its raise), and the company deals +10% to it for 8 s, over any Hunter's Mark." }),   // AUDIT EG IV (lane10 #13): a verb - its wake every blow's since AUDIT EG III
   Object.freeze({ id: 103, key: 'spillover', fam: 'arcana', name: 'Spillover', line: "A spell's overkill on an add carries to the nearest add within 6 m." }),
   Object.freeze({ id: 104, key: 'spirebridge', fam: 'fellowship', name: 'Spirebridge', line: 'Once a span, a gold bridge over the next gap for the company, for 6 s.' }),
 ]);
@@ -167,7 +169,7 @@ export const EG_CAPSTONES = Object.freeze({
   blade: Object.freeze({ name: 'Bladestorm', line: 'Every fifth melee blow strikes every foe within 3 m.' }),
   hunt: Object.freeze({ name: 'Deadeye', line: 'An arrow from beyond 12 m pierces the add behind its target.' }),
   arcana: Object.freeze({ name: 'Spellweave', line: 'Every fourth damage spell costs nothing.' }),
-  fellowship: Object.freeze({ name: 'Rallying Cry', line: "Rally's heal and every Second Wind refresh when a hall's door opens." }),
+  fellowship: Object.freeze({ name: 'Rallying Cry', line: "Rally's heal and every Second Wind in the company come again at each of a Court's phase turns, and when a hall's door opens." }),   // AUDIT EG IV (lane10 #14): where the support is tested
 });
 
 /** A member's rank in a Vestige (0 none). */
@@ -241,26 +243,52 @@ export function egAccordsOf(vsA, vsB) {
 }
 
 /**
+ * AUDIT EG IV (lane10 #15; section 15's CARDS THAT ACT) - WHAT A CARD NEEDS TO ACT, where the room can see it: `ally` the living
+ * company it needs (a Vestige that works only through an ally - 2; Steadfast Line's three allies - 4), `hit` the blow kinds
+ * (net/gateBrain.js HIT_KINDS: 0 melee, 1 an arrow, 2 a spell) of which its member must have landed one in the breach. A
+ * Vestige whose use the room cannot see (Battlemage's Focus and Shieldweaver - any spell) needs nothing.
+ */
+export const EG_CARD_NEEDS = Object.freeze({
+  bastion: Object.freeze({ ally: 2 }), standard: Object.freeze({ ally: 2 }), fallensdue: Object.freeze({ ally: 2 }), mender: Object.freeze({ ally: 2 }), lifeline: Object.freeze({ ally: 2 }), steadfast: Object.freeze({ ally: 4 }),
+  searing: Object.freeze({ hit: Object.freeze([0]) }), sweeping: Object.freeze({ hit: Object.freeze([0]) }), counterstroke: Object.freeze({ hit: Object.freeze([0]) }),
+  huntersmark: Object.freeze({ hit: Object.freeze([1]) }), spotter: Object.freeze({ hit: Object.freeze([1]) }), longsight: Object.freeze({ hit: Object.freeze([1, 2]) }),
+  overcharge: Object.freeze({ hit: Object.freeze([2]) }), echo: Object.freeze({ hit: Object.freeze([2]) }), spillover: Object.freeze({ hit: Object.freeze([2]) }),
+});
+/** Can card `key` (a Vestige's or a Mastery's) act for a member of a living company of `n` (0 unknown) whose landed blows over
+ *  the breach are `kinds` (`[melee, arrows, spells]`; null unknown)? Pure. */
+export function egCardActs(key, n = 0, kinds = null) {
+  const N = EG_CARD_NEEDS[key];
+  if (!N) return true;
+  if (N.ally && n > 0 && n < N.ally) return false;
+  if (N.hit && Array.isArray(kinds) && !N.hit.some((k) => (kinds[k] ?? 0) > 0)) return false;
+  return true;
+}
+/**
  * THE OFFER at a Redoubt for one member: three Vestiges from three different families (one held at III never shown),
  * at the first Redoubt one of them from the family of their most-used blow kind (THE LEAN: melee Blade, an arrow Hunt, a
  * spell Arcana); a Mastery as a fourth card at Redoubt 3 and every Valkynaz Redoubt; a bequest's card; at most
  * EG_OFFER_MAX. `extra` cards from a Surplus or shards. Under The Hollow Offer, two cards, one a Mastery.
- * @param {() => number} rng @param {{ vs: number[][], mast?: number, lean?: number|null, w: number, valk?: boolean, bequest?: number|null, extra?: number, hollow?: boolean }} o
+ * AUDIT EG IV: (lane10 #15) every card one that acts for its member (egCardActs - `n` the living company, `kinds` its landed
+ * blow kinds), the bequest's aside (the fallen's own); (lane10 #22) `rank` - THE SHARDS' CARD: one of the member's own Vestiges
+ * below III at its next rank (egCardText), else a new card as `extra` deals.
+ * @param {() => number} rng @param {{ vs: number[][], mast?: number, lean?: number|null, w: number, valk?: boolean, bequest?: number|null, extra?: number, hollow?: boolean, n?: number, kinds?: number[]|null, rank?: number }} o
  * @returns {number[]} the cards (Vestige ids, Mastery ids from 100)
  */
-export function egOfferOf(rng, { vs = [], mast = -1, lean = null, w = 1, valk = false, bequest = null, extra = 0, hollow = false }) {
+export function egOfferOf(rng, { vs = [], mast = -1, lean = null, w = 1, valk = false, bequest = null, extra = 0, hollow = false, n = 0, kinds = null, rank = 0 }) {
   const maxed = new Set((vs ?? []).filter((p) => p[1] >= 3).map((p) => p[0]));
+  const own = rank > 0 ? (vs ?? []).filter((p) => p[1] < 3 && EG_VESTIGES[p[0]]).map((p) => p[0]) : [], mine = own.length ? own[Math.floor(rng() * own.length)] : -1;
   const fams = [...EG_V_FAMILIES].sort(() => rng() - 0.5);
   const leanFam = w === 1 && lean != null ? (lean === 0 ? 'blade' : lean === 1 ? 'hunt' : 'arcana') : null;
   if (leanFam) { fams.splice(fams.indexOf(leanFam), 1); fams.unshift(leanFam); }
   const cards = [];
-  const n = (hollow ? 1 : 3) + Math.max(0, extra);
+  const k = (hollow ? 1 : 3) + Math.max(0, extra) + (rank > 0 && mine < 0 ? 1 : 0);
   for (const f of fams) {
-    if (cards.length >= n) break;
-    const pool = EG_VESTIGES.filter((V) => V.fam === f && !maxed.has(V.id) && !cards.includes(V.id));
+    if (cards.length >= k) break;
+    const pool = EG_VESTIGES.filter((V) => V.fam === f && !maxed.has(V.id) && !cards.includes(V.id) && V.id !== mine && egCardActs(V.key, n, kinds));
     if (pool.length) cards.push(pool[Math.floor(rng() * pool.length)].id);
   }
-  if (hollow || w === 3 || valk) { const pool = EG_MASTERIES.filter((M) => M.id !== mast); if (pool.length) cards.push(pool[Math.floor(rng() * pool.length)].id); }
+  if (mine >= 0) cards.push(mine);
+  if (hollow || w === 3 || valk) { const pool = EG_MASTERIES.filter((M) => M.id !== mast && egCardActs(M.key, n, kinds)); if (pool.length) cards.push(pool[Math.floor(rng() * pool.length)].id); }
   if (bequest != null && !cards.includes(bequest) && !maxed.has(bequest)) cards.push(bequest);
   return cards.slice(0, EG_OFFER_MAX);
 }

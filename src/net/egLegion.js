@@ -32,10 +32,12 @@
 // Pure: a fight and a beat in, frames out. In the relay bundle (the looks are data the client reads). Not a DFU member.
 // Ledger A (ELITE-GATES).
 import { EG_ROLE, EG_FL, EG_GONE, egBodyNew, egBodyWire, egWalk, egStop, egPlace, egAim, egGone, egHas, egSetFl, egHpMean, egHpTeam, egBodiesOf, egShareX } from './egBodies.js';
+import { egCut } from './egBodies.js';   // AUDIT EG IV: a spotted add's wind-up cut
 import { shDisc, shLaneAt, shCone, egChainGapMs } from './egShape.js';
 import { egKeepOnFight, egOnFight } from './egLaw.js';
 import { egWalkNext, egAirNext, egAirKeep, egArchCut, egGroundAt, egWalkFeet, egFeetAt, egWayOn, EG_PIECE_TOUCH_M } from './egWalkGraph.js';   // EG-ZB: the walk graph and the air; EG-ZJ: the feet on it; EG-ZQ: the way on kept only while walked
 import { harrierCountFor } from './gateBrain.js';
+import { ATTACKS, POOLS, HARRIER_S, HOST_RETARGET_MS, HARRIER_BITE_REACH } from './gateBrain.js';   // AUDIT EG IV (lane1 #16; ONE DFU MEMBER, ONE EXPORT): the gate's rows read, never copied - the Daedra Lord's Cleave, the Caster's burning ground, the Harrier's health, mark and bite
 import { wrapAngle } from '../world/mat4.js';   // the one wrap (ONCRASH1 C2) - already in the relay's graph
 
 /** The kinds by name. */
@@ -49,22 +51,22 @@ export const EG_KIND = Object.freeze({ harrier: 0, sapper: 1, bearer: 2, breaker
 /** @typedef {{ id: number, key: string, name: string, plural: string, r: number, h: number, speed: number, hpS: number, team?: number, mob: number[], scale: number, hover: number, blow: any, fly?: number, friend?: number, wake?: number, raiseMs?: number, drain?: { pct: number, r: number, brk: number } }} EgKindRow */
 /** @type {ReadonlyArray<EgKindRow>} */
 export const EG_LEGION_KINDS = Object.freeze([
-  Object.freeze({ id: 0, key: 'harrier', name: 'Harrier', plural: 'Harriers', r: 0.5, h: 1.5, speed: 5, hpS: 3, mob: [1, 1, 3, 1], scale: 1, hover: 0.9, blow: Object.freeze({ nm: 'Bite', t: 'd', r: 2, wu: 900, rec: 900, p: 0.12, b: 4 }) }),
+  Object.freeze({ id: 0, key: 'harrier', name: 'Harrier', plural: 'Harriers', r: 0.5, h: 1.5, speed: 5, hpS: HARRIER_S, mob: [1, 1, 3, 1], scale: 1, hover: 0.9, blow: Object.freeze({ nm: 'Bite', t: 'd', r: 2, wu: 900, rec: 900, p: 0.12, b: 4 }) }),
   Object.freeze({ id: 1, key: 'sapper', name: 'Sapper', plural: 'Sappers', r: 0.7, h: 2.3, speed: 1.6, hpS: 6, team: 1, mob: [35, 37, 38, 35], scale: 1.1, hover: 0, blow: null }),   // AUDIT EG III (ROLE READS): the Wellhead's a Fire Atronach - its Iron Atronach (36) is the Lurker's there
-  Object.freeze({ id: 2, key: 'bearer', name: 'Ward-Bearer', plural: 'Ward-Bearers', r: 0.6, h: 2.2, speed: 0, hpS: 6, team: 1, mob: [25, 25, 29, 25], scale: 1.15, hover: 0, blow: Object.freeze({ nm: 'Ward Pulse', t: 'd', r: 3.5, wu: 1400, rec: 0, p: 0.18, b: 6, el: 'band', every: 6000 }) }),
+  Object.freeze({ id: 2, key: 'bearer', name: 'Ward-Bearer', plural: 'Ward-Bearers', r: 0.6, h: 2.2, speed: 0, hpS: 6, team: 1, mob: [25, 25, 25, 25], scale: 1.15, hover: 0, blow: Object.freeze({ nm: 'Ward Pulse', t: 'd', r: 3.5, wu: 1400, rec: 0, p: 0.18, b: 6, el: 'band', every: 6000 }) }),   // AUDIT EG IV (ROLE READS): a Frost Daedra in every band - the Daedra Seducer is the standard-bearer's
   Object.freeze({ id: 3, key: 'breaker', name: 'Breaker', plural: 'Breakers', r: 0.8, h: 2.4, speed: 3, hpS: 6, mob: [27, 27, 27, 27], scale: 1, hover: 0, blow: Object.freeze({ nm: 'Charge', t: 'l', w: 4, len: 14, wu: 1100, rec: 1200, p: 0.25, b: 8, pu: 6, run: 12 }) }),
   Object.freeze({ id: 4, key: 'caster', name: 'Caster', plural: 'Casters', r: 0.6, h: 2.2, speed: 2, hpS: 5, mob: [26, 32, 26, 26], scale: 1, hover: 0, blow: Object.freeze({ nm: 'Bolt', t: 'd', r: 3, wu: 1600, rec: 600, p: 0.2, b: 6, el: 'band', every: 6000, jitter: 3000, pool: 1 }) }),
   Object.freeze({ id: 5, key: 'diver', name: 'Diver', plural: 'Divers', r: 0.6, h: 1.5, speed: 6, hpS: 4, mob: [13, 13, 13, 34], scale: 1, hover: 7, fly: 1, blow: Object.freeze({ nm: 'Dive', t: 'l', w: 4, len: 10, wu: 1000, rec: 2400, p: 0.18, b: 5, every: 7000 }) }),
   Object.freeze({ id: 6, key: 'lurker', name: 'Lurker', plural: 'Lurkers', r: 0.9, h: 2.6, speed: 2.2, hpS: 8, mob: [22, 22, 22, 36], scale: 1, hover: 0, wake: 6, blow: Object.freeze({ nm: 'Smash', t: 'd', r: 3, wu: 1300, rec: 1200, p: 0.3, b: 10 }) }),
   Object.freeze({ id: 7, key: 'binder', name: 'Binder', plural: 'Binders', r: 0.6, h: 2.2, speed: 1.2, hpS: 5, mob: [33, 33, 33, 33], scale: 1, hover: 0, blow: null, raiseMs: 6000 }),
-  Object.freeze({ id: 8, key: 'wraith', name: 'Wraith', plural: 'Wraiths', r: 0.5, h: 1.8, speed: 2.5, hpS: 4, mob: [23, 23, 18, 23], scale: 1, hover: 0.4, blow: null, drain: Object.freeze({ pct: 0.03, r: 8, brk: 10 }) }),
-  Object.freeze({ id: 9, key: 'dlord', name: 'Daedra Lord', plural: 'Daedra Lords', r: 1.2, h: 3, speed: 2, hpS: 15, mob: [31, 31, 31, 31], scale: 1.3, hover: 0, blow: Object.freeze({ nm: 'Cleave', t: 'c', r: 9, arc: 110, wu: 1400, rec: 900, p: 0.45, b: 12 }) }),
+  Object.freeze({ id: 8, key: 'wraith', name: 'Wraith', plural: 'Wraiths', r: 0.5, h: 1.8, speed: 2.5, hpS: 4, mob: [23, 23, 23, 23], scale: 1, hover: 0.4, blow: null, drain: Object.freeze({ pct: 0.03, r: 8, brk: 10 }) }),   // AUDIT EG IV (ROLE READS): a Wraith in every band - the Ghost (18) is the Vengeful Shade's
+  Object.freeze({ id: 9, key: 'dlord', name: 'Daedra Lord', plural: 'Daedra Lords', r: 1.2, h: 3, speed: 2, hpS: 15, mob: [31, 31, 31, 31], scale: 1.3, hover: 0, blow: Object.freeze({ nm: ATTACKS.cleave.name, t: 'c', r: ATTACKS.cleave.r, arc: ATTACKS.cleave.arc, wu: ATTACKS.cleave.windup, rec: ATTACKS.cleave.recover, p: ATTACKS.cleave.pct, b: ATTACKS.cleave.base, reach: ATTACKS.cleave.range }) }),   // AUDIT EG IV (lane1 #16): the Warden's Cleave, the gate's row
   Object.freeze({ id: 10, key: 'kynval', name: 'Kynval', plural: 'Kynval', r: 0.8, h: 2.4, speed: 3, hpS: 10, mob: [31, 31, 31, 31], scale: 1, hover: 0, blow: Object.freeze({ nm: 'Kynval Strike', t: 'c', r: 5, arc: 100, wu: 1200, rec: 900, p: 0.25, b: 8 }) }),
-  Object.freeze({ id: 11, key: 'ghost', name: "Battlemage's Ghost", plural: 'Ghosts', r: 0.5, h: 1.8, speed: 4, hpS: 999, mob: [18, 18, 18, 18], scale: 1, hover: 0.3, blow: null, friend: 1 }),
-  Object.freeze({ id: 12, key: 'deserter', name: 'The Deserter', plural: 'Deserters', r: 0.6, h: 2.2, speed: 3, hpS: 999, mob: [26, 26, 26, 26], scale: 1, hover: 0, blow: null, friend: 1 }),
-  Object.freeze({ id: 13, key: 'standard', name: 'Kynreeve Standard-Bearer', plural: 'Standard-Bearers', r: 0.8, h: 2.4, speed: 3, hpS: 20, team: 1, mob: [31, 31, 31, 31], scale: 1.2, hover: 0, blow: null }),
+  Object.freeze({ id: 11, key: 'ghost', name: "Battlemage's Ghost", plural: 'Ghosts', r: 0.5, h: 1.8, speed: 4, hpS: 999, mob: [130, 130, 130, 130], scale: 1, hover: 0.3, blow: null, friend: 1 }),
+  Object.freeze({ id: 12, key: 'deserter', name: 'The Deserter', plural: 'Deserters', r: 0.6, h: 2.2, speed: 3, hpS: 999, mob: [129, 129, 129, 129], scale: 1, hover: 0, blow: null, friend: 1 }),   // AUDIT EG IV (ROLE READS): a friend is a human shape no foe wears - the Ghost a Battlemage (130), the Deserter a Spellsword (129)
+  Object.freeze({ id: 13, key: 'standard', name: 'Standard-Bearer', plural: 'Standard-Bearers', r: 0.8, h: 2.4, speed: 3, hpS: 20, team: 1, mob: [29, 29, 29, 29], scale: 1.2, hover: 0, blow: null }),   // AUDIT EG IV (ROLE READS): a Daedra Seducer bearing the Kyn's standard - the Dremora (31) is the elites' alone
   Object.freeze({ id: 14, key: 'shade', name: 'Vengeful Shade', plural: 'Shades', r: 0.4, h: 1.6, speed: 3, hpS: 999, mob: [18, 18, 18, 18], scale: 0.8, hover: 0.3, blow: Object.freeze({ nm: 'Shade Burst', t: 'd', r: 2, wu: 1000, rec: 0, p: 0.1, b: 0 }) }),
-  Object.freeze({ id: 15, key: 'thrall', name: 'Blood Thrall', plural: 'Blood Thralls', r: 0.5, h: 1.5, speed: 3, hpS: 6, mob: [3, 3, 3, 3], scale: 1, hover: 0.9, blow: null }),
+  Object.freeze({ id: 15, key: 'thrall', name: 'Blood Thrall', plural: 'Blood Thralls', r: 0.5, h: 1.5, speed: 3, hpS: 6, mob: [28, 28, 28, 28], scale: 1, hover: 0, blow: null }),   // AUDIT EG IV (ROLE READS): a Vampire, on its feet - the Giant Bat (3) is the Shade's Harrier
 ]);
 /** Which kinds each band's waves draw (section 12): the Galleries' six, the Cairn's Binders and Wraiths, the Shade's
  *  Divers, and all of them in the Wellhead (its Daedra Lord one wave in six). */
@@ -73,10 +75,15 @@ export const EG_BAND_KINDS = Object.freeze([
 ]);
 /** The kinds a wave leads with (the Sappers and Ward-Bearers rise only where they have work). */
 const WAVE_LEADS = Object.freeze([EG_KIND.harrier, EG_KIND.breaker, EG_KIND.caster, EG_KIND.diver, EG_KIND.wraith]);
+/** A Daedra Lord leads one Wellhead wave in this many (section 12); under THE MINGLED LEGION (AUDIT EG IV; section 18) one in
+ *  EG_MINGLED_DLORD_EVERY, and every body of a wave is drawn among EG_MINGLED_LEADS - the lead kinds of every band. */
+export const EG_DLORD_EVERY = 6;
+export const EG_MINGLED_DLORD_EVERY = 3;
+export const EG_MINGLED_LEADS = WAVE_LEADS;
 /** A Harrier keeps its mark this long; it stops this short of the mark and Bites within reach; a Lurker wakes within its
  *  `wake`; a Caster keeps this far off; a Wraith's tether breaks at its `brk`; a shade follows this long. */
-export const EG_RETARGET_MS = 3000;
-export const EG_BITE_REACH = 1.8;
+export const EG_RETARGET_MS = HOST_RETARGET_MS;   // AUDIT EG IV (lane1 #16): the gate's, read
+export const EG_BITE_REACH = HARRIER_BITE_REACH;
 export const EG_CASTER_RANGE = Object.freeze([10, 18]);
 export const EG_SHADE_MS = 6000;
 /** How long an add takes to rise out of the floor (ms) - seen rising on every screen. */
@@ -136,6 +143,9 @@ const far = (x, z, here) => { let best = null, bd = -1; for (const m of here) { 
  * with it under Swarm-Mother, two at rank II; one wave in six in the Wellhead a Daedra Lord leads it) - at `spots`.
  * Answers the kinds, one a spot. AUDIT EG III: held to `room` (the room the legion's cap leaves - egLegionRoom), the first
  * of them kept: a wave never stands the legion past its cap, whoever pours it.
+ * AUDIT EG IV (lane1 #14, lane2 #3, lane10 #12; section 18) - THE MINGLED LEGION (a stratum, `F.mingled`): no wave is one kind
+ * and Harriers - each body is drawn on its own among the lead kinds (EG_MINGLED_LEADS: a Diver only under the sky), and a
+ * Daedra Lord leads one wave in three (EG_MINGLED_DLORD_EVERY), not six.
  * @param {any} F @param {() => number} rng @param {number} size @param {{ swarm?: number, waveNo?: number, sky?: boolean, room?: number }} o
  */
 export function egWaveKinds(F, rng, size, { swarm = 0, waveNo = 0, sky = false, room = egLegionRoom(F) } = {}) {
@@ -143,9 +153,11 @@ export function egWaveKinds(F, rng, size, { swarm = 0, waveNo = 0, sky = false, 
   const leads = WAVE_LEADS.filter((k) => open.includes(k) && (k !== EG_KIND.diver || sky));
   const lead = leads[Math.floor(rng() * leads.length)] ?? EG_KIND.harrier;
   const out = [];
-  if (F.band >= 3 && waveNo % 6 === 5) out.push(EG_KIND.dlord);
+  const every = F.mingled ? EG_MINGLED_DLORD_EVERY : EG_DLORD_EVERY;
+  if (F.band >= 3 && waveNo % every === every - 1) out.push(EG_KIND.dlord);
   const half = Math.ceil(size / 2);
-  for (let i = out.length; i < size; i++) out.push(i < half ? lead : EG_KIND.harrier);
+  if (F.mingled) { const mix = EG_MINGLED_LEADS.filter((k) => k !== EG_KIND.diver || sky); while (out.length < size) out.push(mix[Math.floor(rng() * mix.length)] ?? lead); }
+  else for (let i = out.length; i < size; i++) out.push(i < half ? lead : EG_KIND.harrier);
   for (let s = 0; s < swarm; s++) out.push(EG_KIND.binder);
   return out.slice(0, Math.max(0, room));
 }
@@ -187,6 +199,19 @@ export function egLegionRaise(F, kinds, spots, now, out, { wave = 0, fl = 0, hpX
   });
   if (made.length) out.push({ k: 'ead', a: made.map((b) => egBodyWire(b)), at: now });
   return made;
+}
+/**
+ * AUDIT EG IV (lane1 #6; section 12: "Every wave is held to the room under the cap ... the hall's, a lord's fury's and its
+ * summons'") - A SUMMONS HELD TO THE ROOM: `kinds` raised as egLegionRaise raises them, but no more of them than the room the
+ * legion's cap leaves (egLegionRoom), the first kept - a lord's summons (Moonfall's Divers, the Soul Burst's Wraiths, the Last
+ * Rites'), a Binder's raise, the Low Road's foes. The first `need` of them are a mechanic's own body (a chained odd member's
+ * Wraith, a lone member's Blood Thrall): they stand whatever the room, and count against it after. Answers the bodies.
+ * @param {any} F @param {number[]} kinds @param {any[]} spots @param {number} now @param {any[]} out @param {{ need?: number, wave?: number, fl?: number, hpX?: number }} [o]
+ */
+export function egLegionSummon(F, kinds, spots, now, out, o = {}) {
+  const need = Math.max(0, Math.min(kinds.length, o.need ?? 0)), room = egLegionRoom(F);
+  const take = [...kinds.slice(0, need), ...kinds.slice(need, need + Math.max(0, room - need))];
+  return take.length ? egLegionRaise(F, take, spots, now, out, o) : [];
 }
 
 /**
@@ -305,7 +330,7 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
       case EG_KIND.breaker: case EG_KIND.dlord: case EG_KIND.kynval: {
         const n = near(a, seen);
         if (!n) { egStop(F, a, now); break; }
-        const reach = a.k === EG_KIND.breaker ? 14 : a.k === EG_KIND.dlord ? 7 : 3.5;
+        const reach = a.k === EG_KIND.breaker ? 14 : a.k === EG_KIND.dlord ? K.blow.reach : 3.5;   // AUDIT EG IV (lane1 #16): the Daedra Lord's the gate's Cleave's
         if (n.d <= reach && now >= (a.next ?? 0)) {
           egStop(F, a, now);
           addBlow(F, spec, a, n.m.x, n.m.z, now, here, out, { chain, twin: a.k === EG_KIND.breaker ? twin : 0 });
@@ -327,7 +352,7 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
           const tgt = seen[Math.floor(rng() * seen.length)] ?? n.m;
           a.next = now + K.blow.every + Math.floor(rng() * K.blow.jitter);
           const bl = addBlow(F, spec, a, tgt.x, tgt.z, now, here, out, { chain, atFeet: true });
-          if (bl && ctx.pool) ctx.pool(tgt.x, tgt.z, 3, bl.at, 6000, 0.06, 2, F.el);
+          if (bl && ctx.pool) ctx.pool(tgt.x, tgt.z, POOLS.hellfire.r, bl.at, POOLS.hellfire.ms, POOLS.hellfire.pct, POOLS.hellfire.base, F.el);   // AUDIT EG IV (lane1 #16): the gate's burning ground (POOLS' hellfire), never a copy
         }
         break;
       }
@@ -363,14 +388,16 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
           if (now >= a.cast.until) {
             const g = a.cast.g;
             a.cast = null; a.raised = 1;
-            egLegionRaise(F, [g.k], [[g.x, g.z]], now, out, { wave: a.wv });
-            out.push({ k: 'esay', w: 'raised' });
+            if (F.pg.raise?.[0] === a.i) F.pg.raise = null;
+            if (egLegionSummon(F, [g.k], [[g.x, g.z]], now, out, { wave: a.wv }).length) out.push({ k: 'esay', w: 'raised' });   // AUDIT EG IV (lane1 #6): within the room under the cap
           }
           break;
         }
         if (n && n.d < 8) { const ux = (a.x - n.m.x) / (n.d || 1), uz = (a.z - n.m.z) / (n.d || 1); walkGraph(F, spec, a, a.x + ux * 4, a.z + uz * 4, 0.5, K.speed, now); }
-        const g = !a.raised ? (F.mem.fallen ?? []).filter((x) => x.wv === a.wv && x.k !== EG_KIND.binder).pop() : null;
-        if (g && !F.mem.casting?.[a.i]) { egStop(F, a, now); a.cast = { g, at: now, until: now + K.raiseMs, dmg: 0, max: a.max / 10 }; F.pg.raise = [a.i, now + K.raiseMs]; out.push({ k: 'efl', i: a.i, fl: a.fl | EG_FL.lit }); }
+        // AUDIT EG IV (lane1 #12; section 12: "raises the last fallen add of its wave once"): the body CLAIMED as the cast begins -
+        // taken off the fallen, so no second Binder raises it - and begun only with room under the cap to raise it into
+        const fallen = F.mem.fallen ?? [], g = !a.raised && egLegionRoom(F) > 0 ? fallen.filter((x) => x.wv === a.wv && x.k !== EG_KIND.binder).pop() : null;
+        if (g) { fallen.splice(fallen.indexOf(g), 1); egStop(F, a, now); a.cast = { g, at: now, until: now + K.raiseMs, dmg: 0, max: a.max / 10 }; F.pg.raise = [a.i, now + K.raiseMs]; out.push({ k: 'efl', i: a.i, fl: a.fl | EG_FL.lit }); }
         break;
       }
       case EG_KIND.wraith: {
@@ -426,6 +453,33 @@ export function egLegionStep(F, spec, now, here, rng, out, ctx = {}) {
   }
 }
 
+/** AUDIT EG IV (lane1 #12; section 12: "raises the last fallen add of its wave once, a 6 s cast broken by blows"): A BINDER'S
+ *  RAISE BROKEN - by the blows that land a tenth of its health in its cast (net/egBrain.js egBlow), or a Spotter's arrow
+ *  (egSpotted): the cast ended, its raise SPENT (the claimed body is gone with it), its bar taken down, said. Answers whether a
+ *  cast was broken. */
+export function egBinderBroken(F, a, out) {
+  if (!a?.cast) return false;
+  a.cast = null; a.raised = 1;
+  if (F.pg.raise?.[0] === a.i) F.pg.raise = null;
+  out.push({ k: 'esay', w: 'raisebroken' });
+  return true;
+}
+/**
+ * AUDIT EG IV (lane10 #13; section 15) - SPOTTED: a Spotter's arrow from beyond 12 m newly marking add `a` (net/egRun.js
+ * egMarkFoe) breaks what it is winding - every blow of its still to land cut (`ecut`, its outline gone from every screen; one
+ * the union floor holds dropped), its charge's run with it - and a Binder's raise. Once a mark: a foe spotted is not spotted
+ * again while its mark stands. Answers whether anything was broken.
+ * @param {any} F @param {any} a @param {number} now @param {any[]} out
+ */
+export function egSpotted(F, a, now, out) {
+  if (!a || a.role !== EG_ROLE.add || !(a.hp > 0) || egHas(a, EG_FL.friend)) return false;
+  let broke = false;
+  for (const b of F.blows.filter((x) => x.o === a.i && x.at > now)) { egCut(F, b.i, out); broke = true; }
+  const held = (F.held ?? []).filter((h) => h.b?.o === a.i);
+  if (held.length) { F.held = F.held.filter((h) => !held.includes(h)); broke = true; }
+  if (broke) { a.atk = null; a.runTo = null; }
+  return egBinderBroken(F, a, out) || broke;
+}
 /** A DORMANT LURKER WAKES (section 12's ROLE READS): its dormancy lifted, risen over 0.6 s, *Something stirs.* once a hall - at
  *  a member's nearness (egLegionStep) and, AUDIT EG III, at a blow that lands on it (net/egBrain.js egBlow - Spotter's arrows
  *  wake it at any range so). Answers whether it woke. */

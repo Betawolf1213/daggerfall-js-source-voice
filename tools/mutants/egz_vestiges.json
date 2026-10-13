@@ -596,7 +596,7 @@
   {
     "name": "EGZR-rally-word-any-heal",
     "file": "src/scenes/egClient.js",
-    "old": "if (w.k === 'eheal' && w.why === 'rally') fight?.rally?.(",
+    "old": "if (w.k === 'eheal' && (w.why === 'rally' || (w.why === 'cry' && w.p > 0))) fight?.rally?.(",
     "new": "if (w.k === 'eheal') fight?.rally?.(",
     "tests": [
       "test/egz_vestiges_hymn.test.js"
