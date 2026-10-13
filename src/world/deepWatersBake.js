@@ -145,13 +145,26 @@ function cubicLo(hi0, lo1, lo2, hi3) {
   return m - (s < q ? s : q);
 }
 
+/** THE PLANES A THREAD KEEPS (ETHER-DEEP's law, the Bay's too since AUDIT ETHER-OW C1-2 - the main thread's Bay planes
+ *  were adopted at every promote and never let go, 6,314 of them after a 900-pixel voyage and growing): past this many
+ *  in any one cache, those farther than PLANE_KEEP_RADIUS pixels (Chebyshev) from the pixel last asked are let go. The
+ *  worker's own radius (deepWatersWorker.js) - a stream and the windows round it. */
+export const PLANE_KEEP_MAX = 4096;
+export const PLANE_KEEP_RADIUS = 12;
+
 /**
  * WoodsFile.GetLargeHeightMapValuesRange(mx - 1, my, 3), flattened the way
  * DefaultTerrainSampler flattens it (lhm[y * 9 + x] = lhm2[x, y]), written
  * into `out` without the reader's per-call arrays. Verbatim clamps.
  */
 function readLargeWindow(woods, mapPixelX, mapPixelY, out) {
-  const bytes = woods._bytes, offsets = woods.dataOffsets;
+  // ETHER-DEEP: the raw file's bytes answer the raw file's own map - a composition (world/ethericSea.js etherWoods,
+  // TAMRIEL2's groundWoods: a prototype child of the file) answers its own ground past the map through its door, and read
+  // through the inherited bytes an Eltheric pixel was the Bay's clamped edge. AUDIT ETHER-OW C1-1: and a pixel of the
+  // Bay's map reads the bytes whoever holds them - the mod's own clamped window, as it read before ETHER-DEEP; the
+  // world's reader is always a composition, and its door cost every Bay classification three times over
+  const raw = Object.prototype.hasOwnProperty.call(woods, '_bytes') || isValidMapPixel(mapPixelX, mapPixelY);
+  const bytes = raw ? woods._bytes : null, offsets = raw ? woods.dataOffsets : null;
   if (!bytes || !offsets) {                    // a reader without the raw file: the reader's own door
     out.set(woods.getLargeHeightMapValuesRange(mapPixelX - 1, mapPixelY, 3));
     return out;
@@ -461,10 +474,19 @@ export function* buildGlobalSteps(woods, {
   classify = (px, py) => classifyPixel(woods, px, py),
   candidates = (px, py) => coarseCandidateBits(pixelWaterSampler(woods, px, py, locationRectAt(px, py))),
 } = {}) {
-  const n = MAP_W * MAP_H;
+  return yield* floodSteps(MAP_W, MAP_H, classify, candidates);
+}
+
+/**
+ * THE FLOOD over a frame of `FW x FH` pixels (the Bay's map, or ETHER-DEEP an Eltheric isle's cell - etherWatersBake.js),
+ * `classify` and `candidates` asked by the frame's own pixel (0, 0 its north-west): the 8-connected flood of the
+ * candidates from the frame's border, as buildGlobal's record.
+ */
+export function* floodSteps(FW, FH, classify, candidates) {
+  const n = FW * FH;
   const classes = new Uint8Array(n);
-  for (let py = 0; py < MAP_H; py++) {
-    for (let px = 0; px < MAP_W; px++) classes[py * MAP_W + px] = classify(px, py);
+  for (let py = 0; py < FH; py++) {
+    for (let px = 0; px < FW; px++) classes[py * FW + px] = classify(px, py);
     yield;
   }
   // Candidates of the mixed pixels.
@@ -474,7 +496,7 @@ export function* buildGlobalSteps(woods, {
   const candBits = new Uint8Array(mixed * 8);
   for (let i = 0; i < n; i++) {
     if (classes[i] !== PIXEL_MIXED) continue;
-    const px = i % MAP_W, py = (i - px) / MAP_W;
+    const px = i % FW, py = (i - px) / FW;
     candBits.set(candidates(px, py), candIndex[i] * 8);
     yield;
   }
@@ -489,23 +511,23 @@ export function* buildGlobalSteps(woods, {
     for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
       if (!dx && !dy) continue;
       const x = px + dx, y = py + dy;
-      if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H || classes[y * MAP_W + x] === PIXEL_LAND) continue;
-      push(y * MAP_W + x);
+      if (x < 0 || y < 0 || x >= FW || y >= FH || classes[y * FW + x] === PIXEL_LAND) continue;
+      push(y * FW + x);
     }
   };
   // Seeds: the candidates on the map's edge, each flooded through its own pixel at once.
-  for (let py = 0; py < MAP_H; py++) {
-    for (let px = 0; px < MAP_W; px++) {
-      if (px !== 0 && py !== 0 && px !== MAP_W - 1 && py !== MAP_H - 1) continue;
-      const i = py * MAP_W + px, c = cand(i);
+  for (let py = 0; py < FH; py++) {
+    for (let px = 0; px < FW; px++) {
+      if (px !== 0 && py !== 0 && px !== FW - 1 && py !== FH - 1) continue;
+      const i = py * FW + px, c = cand(i);
       if (c === NONE8) continue;
       const r = reached.subarray(i * 8, i * 8 + 8);
       for (let row = 0; row < 8; row++) {
         let edge = 0;
         if (px === 0) edge |= 1;
-        if (px === MAP_W - 1) edge |= 0x80;
+        if (px === FW - 1) edge |= 0x80;
         if (py === 0 && row === 0) edge |= 0xff;
-        if (py === MAP_H - 1 && row === 7) edge |= 0xff;
+        if (py === FH - 1 && row === 7) edge |= 0xff;
         r[row] |= edge & c[row];
       }
       floodInside(r, c);
@@ -519,11 +541,11 @@ export function* buildGlobalSteps(woods, {
     const i = queue[qh]; qh = (qh + 1) % n; qn--; queued[i] = 0;
     const c = cand(i);
     if (c === NONE8) continue;
-    const px = i % MAP_W, py = (i - px) / MAP_W;
+    const px = i % FW, py = (i - px) / FW;
     const r = reached.subarray(i * 8, i * 8 + 8);
     // Incoming: the neighbours' reached cells 8-adjacent to this pixel's cells.
     inc.fill(0);
-    const nb = (dx, dy) => { const x = px + dx, y = py + dy; return (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) ? null : reached.subarray((y * MAP_W + x) * 8, (y * MAP_W + x) * 8 + 8); };
+    const nb = (dx, dy) => { const x = px + dx, y = py + dy; return (x < 0 || y < 0 || x >= FW || y >= FH) ? null : reached.subarray((y * FW + x) * 8, (y * FW + x) * 8 + 8); };
     const W = nb(-1, 0), E = nb(1, 0), N = nb(0, -1), S = nb(0, 1), NW = nb(-1, -1), NE = nb(1, -1), SW = nb(-1, 1), SE = nb(1, 1);
     for (let row = 0; row < 8; row++) {
       if (W) { const m = ((W[row] >> 7) & 1) | (row > 0 ? (W[row - 1] >> 7) & 1 : 0) | (row < 7 ? (W[row + 1] >> 7) & 1 : 0); if (m) inc[row] |= 1; }
@@ -580,6 +602,13 @@ const clampInt = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
 export function isValidMapPixel(mapPixelX, mapPixelY) {
   return mapPixelX >= 0 && mapPixelY >= 0 && mapPixelX < MAP_W && mapPixelY < MAP_H;
 }
+
+/** ETHER-DEEP: A BAKE'S FRAME - the pixels it answers, `{ x0, y0, w, h }`, its cells counted from (x0, y0). The mod's is
+ *  the Bay's map, IsValidMapPixel's 1000 x 500 from (0, 0) (every query's arithmetic the C#'s to the float: a pixel less
+ *  0 is the pixel); the Eltheric Ocean's is its own box (etherWatersBake.js ETHER_FRAME). */
+export const BAY_FRAME = Object.freeze({ x0: 0, y0: 0, w: MAP_W, h: MAP_H });
+/** Is a pixel in a frame? */
+export const inFrame = (f, px, py) => px >= f.x0 && py >= f.y0 && px < f.x0 + f.w && py < f.y0 + f.h;
 
 /** BakedSouthFraction: a float parameter is a float32, so the input is rounded first. */
 export const bakedSouthFraction = (fracZ) => f32(1 - clamp01(f32(fracZ)));
@@ -653,18 +682,21 @@ export class DeepWatersBake {
   /**
    * @param {object} deps
    * @param {object} deps.woods - the boot-smoothed WoodsFile the world streams from.
-   * @param {object} deps.global - buildGlobal's record (or the cache's copy of it).
+   * @param {?object} deps.global - buildGlobal's record (or the cache's copy of it); ETHER-DEEP: null for a bake that
+   *   builds its classes and flood as they are asked (etherWatersBake.js).
    * @param {(px: number, py: number) => ?object} [deps.locationRectAt]
    * @param {(px: number, py: number) => Uint8Array} [deps.fineAt] - a mixed pixel's 512-byte fine mask (test seam).
+   * @param {{ x0: number, y0: number, w: number, h: number }} [deps.frame] - ETHER-DEEP: the pixels it answers (BAY_FRAME)
    */
-  constructor({ woods, global, locationRectAt = () => null, fineAt = null }) {
+  constructor({ woods, global, locationRectAt = () => null, fineAt = null, frame = BAY_FRAME }) {
     this.woods = woods;
-    this.state = global.state;
-    this.classes = global.classes;
+    this.frame = frame;   // ETHER-DEEP: the pixels it answers - the Bay's map, or (etherWatersBake.js) the Eltheric Ocean's box
+    this.state = global?.state ?? null;
+    this.classes = global?.classes ?? null;
     this.locationRectAt = locationRectAt;
     this._fineAt = fineAt ?? ((px, py) => fineMaskBits(pixelWaterSampler(this.woods, px, py, this.locationRectAt(px, py))));
     this._partial = new Map();
-    for (let k = 0; k < global.partialIndex.length; k++) this._partial.set(global.partialIndex[k], global.partialBits.subarray(k * 8, k * 8 + 8));
+    for (let k = 0; k < (global?.partialIndex.length ?? 0); k++) this._partial.set(global.partialIndex[k], global.partialBits.subarray(k * 8, k * 8 + 8));
     this._fine = new Map();       // pixel -> 512 bytes
     this._full = new Map();       // pixel -> 8 bytes (all-64-fine-water cells)
     this._dist = new Map();       // pixel -> 64 bytes
@@ -672,27 +704,40 @@ export class DeepWatersBake {
     // The file's header, as TryLoadBytes reads it.
     this.subX = BAKE_SUB; this.subY = BAKE_SUB; this.subFine = BAKE_SUB_FINE;
     this.distanceScaleMeters = BAKE_DISTANCE_SCALE_METERS;
-    this.widthCells = MAP_W * BAKE_SUB; this.heightCells = MAP_H * BAKE_SUB;
-    this.widthCellsFine = MAP_W * BAKE_SUB_FINE; this.heightCellsFine = MAP_H * BAKE_SUB_FINE;
+    this.widthCells = frame.w * BAKE_SUB; this.heightCells = frame.h * BAKE_SUB;
+    this.widthCellsFine = frame.w * BAKE_SUB_FINE; this.heightCellsFine = frame.h * BAKE_SUB_FINE;
     this.loaded = true;           // IsLoaded
     this.hasFineWaterMask = true; // HasFineWaterMask
   }
 
   // ---- the planes ----------------------------------------------------
 
+  // ---- the frame (ETHER-DEEP) -----------------------------------------
+
+  /** The frame a pixel's queries are answered in: this bake's own. */
+  frameOf() { return this.frame; }
+  /** Does this bake answer the pixel? */
+  inFrame(px, py) { return inFrame(this.frame, px, py); }
+  /** A pixel's slot in the frame's planes, rows north to south. */
+  _index(px, py) { return (py - this.frame.y0) * this.frame.w + (px - this.frame.x0); }
+  /** A pixel's bound class (LAND, SEA, MIXED) - the global record's. */
+  _class(i, _px, _py) { return this.classes[i]; }
+  /** The per-pixel caches, for eviction. */
+  _caches() { return [this._fine, this._full, this._dist, this._edge]; }
+
   /** The sea bits of a pixel (8 bytes), null off the map. */
   seaBits(px, py) {
-    if (!isValidMapPixel(px, py)) return null;
-    const i = py * MAP_W + px, s = this.state[i];
+    if (!this.inFrame(px, py)) return null;
+    const i = this._index(px, py), s = this.state[i];
     return s === 1 ? ALL8 : s === 2 ? this._partial.get(i) : NONE8;
   }
 
   /** The fine mask of a pixel (512 bytes). */
   fineBits(px, py) {
-    const i = py * MAP_W + px;
+    const i = this._index(px, py);
     let f = this._fine.get(i);
     if (f) return f;
-    const cls = this.classes[i];
+    const cls = this._class(i, px, py);
     if (cls === PIXEL_SEA) f = FINE_ALL;
     else if (cls === PIXEL_LAND) f = FINE_NONE;
     else f = this._fineAt(px, py);
@@ -702,11 +747,11 @@ export class DeepWatersBake {
 
   /** The all-fine-water bits of a pixel (8 bytes), null off the map. */
   fullBits(px, py) {
-    if (!isValidMapPixel(px, py)) return null;
-    const i = py * MAP_W + px;
+    if (!this.inFrame(px, py)) return null;
+    const i = this._index(px, py);
     let b = this._full.get(i);
     if (b) return b;
-    const cls = this.classes[i];
+    const cls = this._class(i, px, py);
     b = cls === PIXEL_SEA ? ALL8 : cls === PIXEL_LAND ? NONE8 : fullWaterBits(this.fineBits(px, py));
     this._full.set(i, b);
     return b;
@@ -714,7 +759,7 @@ export class DeepWatersBake {
 
   _plane(plane, px, py) {
     const cache = plane === 'dist' ? this._dist : this._edge;
-    const i = py * MAP_W + px;
+    const i = this._index(px, py);
     let b = cache.get(i);
     if (b) return b;
     b = distanceBytes(px, py, plane === 'dist' ? (x, y) => this.seaBits(x, y) : (x, y) => this.fullBits(x, y));
@@ -726,7 +771,7 @@ export class DeepWatersBake {
   prepare(px, py) {
     for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
       const x = px + dx, y = py + dy;
-      if (!isValidMapPixel(x, y)) continue;
+      if (!this.inFrame(x, y)) continue;
       this._plane('dist', x, y);
       this._plane('edge', x, y);
       this.fineBits(x, y);
@@ -745,30 +790,44 @@ export class DeepWatersBake {
     const rows = [];
     for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
       const x = px + dx, y = py + dy;
-      if (!isValidMapPixel(x, y)) continue;
-      const i = y * MAP_W + x;
-      const f = this.classes[i] === PIXEL_MIXED ? this._fine.get(i) ?? null : null;
-      const row = { i, fine: f ? f.slice() : null, dist: this._dist.get(i)?.slice() ?? null, edge: this._edge.get(i)?.slice() ?? null };
-      if (row.fine || row.dist || row.edge) rows.push(row);
+      if (!this.inFrame(x, y)) continue;
+      const i = this._index(x, y);
+      const f = this._class(i, x, y) === PIXEL_MIXED ? this._fine.get(i) ?? null : null;
+      const row = this._row(i, { i, fine: f ? f.slice() : null, dist: this._dist.get(i)?.slice() ?? null, edge: this._edge.get(i)?.slice() ?? null });
+      if (row) rows.push(row);
     }
     return rows;
   }
 
-  /** Take exportPlanes' rows into this bake's caches (what is already here stays - the bytes are the same). */
+  /** An exported row, or null when it carries nothing (ETHER-DEEP: the Eltheric's carry more - etherWatersBake.js). */
+  _row(_i, row) { return row.fine || row.dist || row.edge ? row : null; }
+
+  /** Take exportPlanes' rows into this bake's caches (what is already here stays - the bytes are the same), and keep
+   *  them bounded about the last row's pixel (`_keep` - AUDIT ETHER-OW C1-2: this thread's Bay planes grew for the session). */
   adoptPlanes(rows) {
+    let last = null;
     for (const r of rows ?? []) {
-      if (!Number.isInteger(r?.i) || r.i < 0 || r.i >= MAP_W * MAP_H) continue;
+      if (!Number.isInteger(r?.i) || r.i < 0 || r.i >= this.frame.w * this.frame.h) continue;
       if (r.fine && r.fine.length === 512 && !this._fine.has(r.i)) this._fine.set(r.i, r.fine);
       if (r.dist && r.dist.length === 64 && !this._dist.has(r.i)) this._dist.set(r.i, r.dist);
       if (r.edge && r.edge.length === 64 && !this._edge.has(r.i)) this._edge.set(r.i, r.edge);
+      last = r.i;
     }
+    if (last !== null) this._keep((last % this.frame.w) + this.frame.x0, Math.floor(last / this.frame.w) + this.frame.y0);
+  }
+
+  /** The planes bounded: past PLANE_KEEP_MAX in any one cache, those farther than PLANE_KEEP_RADIUS from (px, py) let go
+   *  (asked again, they are built again - the bytes are the same). */
+  _keep(px, py) {
+    if (this._caches().some((c) => c.size > PLANE_KEEP_MAX)) this.evictOutside(px, py, PLANE_KEEP_RADIUS);
   }
 
   /** Forget the per-pixel planes of pixels farther than `radius` (Chebyshev) from (px, py). */
   evictOutside(px, py, radius) {
-    for (const cache of [this._fine, this._full, this._dist, this._edge]) {
+    const { x0, y0, w } = this.frame;
+    for (const cache of this._caches()) {
       for (const i of [...cache.keys()]) {
-        const x = i % MAP_W, y = (i - x) / MAP_W;
+        const x = (i % w) + x0, y = Math.floor(i / w) + y0;
         if (Math.max(Math.abs(x - px), Math.abs(y - py)) > radius) cache.delete(i);
       }
     }
@@ -776,17 +835,17 @@ export class DeepWatersBake {
 
   /** A byte of a distance plane at global cell (x, y). */
   _byte(plane, x, y) {
-    const px = x >> 3, py = y >> 3;
+    const px = (x >> 3) + this.frame.x0, py = (y >> 3) + this.frame.y0;   // ETHER-DEEP: a cell is the frame's own
     return this._plane(plane, px, py)[(y & 7) * 8 + (x & 7)];
   }
 
   _coarseBit(x, y) {
-    const b = this.seaBits(x >> 3, y >> 3);
+    const b = this.seaBits((x >> 3) + this.frame.x0, (y >> 3) + this.frame.y0);
     return !!b && ((b[y & 7] >> (x & 7)) & 1) === 1;
   }
 
   _fineBit(fx, fy) {
-    const f = this.fineBits(fx >> 6, fy >> 6);
+    const f = this.fineBits((fx >> 6) + this.frame.x0, (fy >> 6) + this.frame.y0);
     const r = fy & 63, c = fx & 63;
     return ((f[r * 8 + (c >> 3)] >> (c & 7)) & 1) === 1;
   }
@@ -811,8 +870,8 @@ export class DeepWatersBake {
 
   /** BilinearSampleMeters, float by float. */
   _bilinearSampleMeters(plane, mapPixelX, mapPixelY, fracX, fracZ) {
-    const num = f32(f32(f32(mapPixelX * this.subX) + f32(clamp01(f32(fracX)) * this.subX)) - 0.5);
-    const num2 = f32(f32(f32(mapPixelY * this.subY) + f32(bakedSouthFraction(fracZ) * this.subY)) - 0.5);
+    const num = f32(f32(f32((mapPixelX - this.frame.x0) * this.subX) + f32(clamp01(f32(fracX)) * this.subX)) - 0.5);   // ETHER-DEEP: the frame's own cells (the Bay's: the pixel less 0)
+    const num2 = f32(f32(f32((mapPixelY - this.frame.y0) * this.subY) + f32(bakedSouthFraction(fracZ) * this.subY)) - 0.5);
     const num3 = clampInt(Math.floor(num), 0, this.widthCells - 1);
     const num4 = clampInt(Math.floor(num2), 0, this.heightCells - 1);
     const num5 = Math.min(num3 + 1, this.widthCells - 1);
@@ -840,8 +899,8 @@ export class DeepWatersBake {
   /** IsCarvedWater. */
   isCarvedWater(mapPixelX, mapPixelY, fracX, fracZ) {
     if (!this.loaded || !this.hasFineWaterMask || this.subFine <= 0) return false;
-    const num = f32(f32(f32(mapPixelX * this.subFine) + f32(clamp01(f32(fracX)) * this.subFine)) - 0.5);
-    const num2 = f32(f32(f32(mapPixelY * this.subFine) + f32(bakedSouthFraction(fracZ) * this.subFine)) - 0.5);
+    const num = f32(f32(f32((mapPixelX - this.frame.x0) * this.subFine) + f32(clamp01(f32(fracX)) * this.subFine)) - 0.5);
+    const num2 = f32(f32(f32((mapPixelY - this.frame.y0) * this.subFine) + f32(bakedSouthFraction(fracZ) * this.subFine)) - 0.5);
     const num3 = clampInt(roundToInt(num), 0, this.widthCellsFine - 1);
     const row = clampInt(roundToInt(num2), 0, this.heightCellsFine - 1);
     return this._fineBit(num3, row);
@@ -850,7 +909,7 @@ export class DeepWatersBake {
   /** MapPixelHasFineWaterCells. */
   mapPixelHasFineWaterCells(mapPixelX, mapPixelY) {
     if (!this.loaded || !this.hasFineWaterMask || this.subFine <= 0) return false;
-    if (!isValidMapPixel(mapPixelX, mapPixelY)) return false;
+    if (!this.inFrame(mapPixelX, mapPixelY)) return false;
     const f = this.fineBits(mapPixelX, mapPixelY);
     for (let i = 0; i < f.length; i++) if (f[i]) return true;
     return false;
@@ -858,6 +917,10 @@ export class DeepWatersBake {
 
   /** MapPixelHasWaterCells. */
   mapPixelHasWaterCells(mapPixelX, mapPixelY) { return this._mapPixelHasCoarseCell(mapPixelX, mapPixelY, true); }
+
+  /** AUDIT ETHER-OW C1-3: whether this thread holds the sea bits the dry check reads without a flood - the Bay's always
+   *  (its global record), the Eltheric's those flooded or adopted (etherWatersBake.js). */
+  holdsSea(_px, _py) { return true; }
 
   /** MapPixelOrCardinalNeighborHasWaterCells. */
   mapPixelOrCardinalNeighborHasWaterCells(mapPixelX, mapPixelY) {
@@ -874,7 +937,7 @@ export class DeepWatersBake {
   /** MapPixelHasCoarseCell. */
   _mapPixelHasCoarseCell(mapPixelX, mapPixelY, water) {
     if (!this.loaded) return false;
-    if (!isValidMapPixel(mapPixelX, mapPixelY)) return false;
+    if (!this.inFrame(mapPixelX, mapPixelY)) return false;
     const b = this.seaBits(mapPixelX, mapPixelY);
     for (let r = 0; r < 8; r++) if (water ? b[r] !== 0 : b[r] !== 0xff) return true;
     return false;
@@ -882,8 +945,8 @@ export class DeepWatersBake {
 
   /** GetNearestCell. */
   _nearestCell(mapPixelX, mapPixelY, fracX, fracZ) {
-    const num = f32(f32(f32(mapPixelX * this.subX) + f32(clamp01(f32(fracX)) * this.subX)) - 0.5);
-    const num2 = f32(f32(f32(mapPixelY * this.subY) + f32(bakedSouthFraction(fracZ) * this.subY)) - 0.5);
+    const num = f32(f32(f32((mapPixelX - this.frame.x0) * this.subX) + f32(clamp01(f32(fracX)) * this.subX)) - 0.5);
+    const num2 = f32(f32(f32((mapPixelY - this.frame.y0) * this.subY) + f32(bakedSouthFraction(fracZ) * this.subY)) - 0.5);
     return [clampInt(roundToInt(num), 0, this.widthCells - 1), clampInt(roundToInt(num2), 0, this.heightCells - 1)];
   }
 

@@ -2362,6 +2362,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // one the pause tab takes - see questBridge.js.
     questLog: () => opts.questBridge.questLog(),
     notebook: () => opts.questBridge.notebook ?? null,
+    shelfDoor: () => opts.questBridge?.journalClean ?? null,   // QUEST-SHELF-MAIN: the chronicle's Abandon, the pause tab's own door
     // QUEST1: the Share button, delegated through the SAME chain
     // dungeonOnline/useMagicItem/survivalEnv already ride - the dungeon
     // has no online layer of its own, only whatever the outer host

@@ -15,6 +15,13 @@ import { planRoute, routeLegs, routeDrawPoints, routeGround, TV_MOUNTAIN_CLIMATE
 
 // PIN MOVED (AUDIT OW5 G2): the Overworld's own lines are said through tvSay - held at the scale they are said at
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
+/** ETHER-OW: the dungeon lists' rows and what stands on a row's pixel (world.js tvDungeonRowsAt, tvDungeonAt), lifted to
+ *  run beside a lifted list - the Bay's, the sea off (`etherSea` false: the map's rows and the live index alone). */
+const liftDungeonRows = (w) => {
+  const m = /\n {2}(const tvDungeonRowsAt = \(at, range = TV_FAR_RANGE\) => \{\n[\s\S]*?\n {2}\};\n {2}const tvDungeonAt = [^\n]*;)\n/.exec(w);
+  assert.ok(m, 'the rows and their stand, lifted');
+  return `const etherSea = false, inEther = () => false, etherPlaceRows = () => [], tvEtherPlace = () => null, TV_FAR_RANGE = 24, tvKnownGen = () => discoveryGeneration();\n${m[1]}`;   // AUDIT ETHER-OW C2-2: the finds' generation (no charts here)
+};
 const loc = (name, locationType) => ({ name, mapTableData: { locationType } });
 /** A map row as systems/mapDirectory.js buildMapDict makes it (the key is the pixel id; the MapId carries more bits). */
 const mapRow = (x, y, locationType) => ({ id: getMapPixelID(x, y), mapID: (0x100000 | getMapPixelID(x, y)) >>> 0, regionIndex: 17, mapIndex: x, locationType, dungeonType: 0, discovered: false });
@@ -175,7 +182,9 @@ test('AUDIT OW3 D1 host: the spawns off the live index, told as the spawned feat
   const { discoverLocation, hasDiscoveredLocationId } = await import('../src/systems/discovery.js');
   const w = rd('src/scenes/world.js');
   assert.match(w, /const grid = Math\.max\(1, state\.terrainDistance \?\? 3\), n = _locIndexGen;/, 'the grid\'s reach, and the index\'s churn (AUDIT OW4 D5: its generation, not its size)');
-  assert.match(w, /const dungeons = \(_tvDungeonRows \?\?= dungeonRows\(mapDict\)\), locAt = \(x, y\) => locationIndex\.get\(`\$\{x\},\$\{y\}`\), isFound = \(x, y\) => !!tvPlaceSummary\(x, y\);/);
+  // PIN MOVED (ETHER-OW, test/ether_ow.test.js): the rows and what stands on them are the lists' one pair (tvDungeonRowsAt,
+  // tvDungeonAt) - the map's rows gathered once and the live index, as before, and past the Veil the ruin isles beside them
+  assert.match(w, /const dungeons = tvDungeonRowsAt\(at\), locAt = tvDungeonAt, isFound = \(x, y\) => !!tvPlaceSummary\(x, y\);/);
   assert.match(w, /const list = nearDungeons\(\{ at, grid, dungeons, locAt, isFound, spawns: \[\.\.\.spawnedPixels\(locationIndex\), \.\.\.tvFiledSpawns\(at\)\], spawnKnown: tvSpawnKnown,\n\s*spawnFound: tvSpawnFound, spawnGone: \(s\) => tvSpawnGone\(s\.x, s\.y\) \}\)\.map\(placed\);/,
     'the rows, the live index, the spawns read afresh (AUDIT OW4 D4: and the found ones past it; D2: none gone) - and the grid handed in, so TV2\'s own spend no slot');
   // the find's own list, uncapped, is travelViewFindList (AUDIT OW5 D1 - test/ow5_audit.test.js mounts it); AUDIT OW5b D1's
@@ -407,6 +416,7 @@ test('AUDIT OW4 D2/D5/D4 host: THE KEPT LIST - rebuilt on ANY change to the inde
   const env = new Function('d', `let tvDng = { at: null, dg: -1, list: [] }, _tvDungeonRows = null, _locIndexGen = 0;
     const { playerTravelPixel, discoveryGeneration, state, tvSpawnGone, nearDungeons, dungeonRows, mapDict, locationIndex, tvPlaceSummary, spawnedPixels,
       tvFiledSpawns, tvSpawnKnown, tvSpawnFound, locationWorldRect } = d;
+    ${liftDungeonRows(w)}
     ${m[1]}
     return { list: travelViewDungeons, bump: () => { _locIndexGen += 1; } };`)({
     playerTravelPixel: () => ({ x: 100, y: 100 }), discoveryGeneration: () => 0, state: { terrainDistance: 3 }, tvSpawnGone: (x, y) => gone.has(`${x},${y}`),
@@ -565,6 +575,7 @@ test('AUDIT OW5b D1 host run: TWELVE FOUND ABOUT, AND THE KEEP NEXT DOOR IS STIL
       const { playerTravelPixel, discoveryGeneration, state, tvSpawnGone, nearDungeons, dungeonRows, mapDict, locationIndex, tvPlaceSummary, spawnedPixels,
         tvFiledSpawns, tvSpawnKnown, tvSpawnFound, locationWorldRect, isEnhanced, modes, walkMode, playerSpawned, worldMoveBusy, player,
         dungeonToFind, discoverLocation, maps, tvSay, dungeonFoundText } = d;
+      ${liftDungeonRows(w)}
       ${reach[1]}
       ${list[1]}
       ${own[1]}

@@ -127,7 +127,7 @@ import { BEACH_JITTER, WORLD_MAP_TILE_DIM, blendLocationTerrain, locationFootpri
 import { DIR_DELTA, MAP_W, MAP_H } from './roadNetwork.js';
 import { perlinNoise } from './perlin.js';
 import { CLIMATES } from '../formats/mapsTables.js';
-import { inEtherLaw, etherClimateAt } from './ethericSea.js';   // AUDIT CAPTAIN'S SEA G3: the Etheric Sea's climates past the table (worker-safe)
+import { inEtherLaw, etherClimateAt } from './ethericSea.js';   // AUDIT CAPTAIN'S SEA G3: the Eltheric Ocean's climates past the table (worker-safe)
 
 
 /** At or under this, a height is DFU's: the beach line with its jitter, the highest height the tile classifier can
@@ -630,7 +630,7 @@ function landShape(j, wx, wy, gx, gy, rock) {
   return saturate((shapeRaw(land.shape, wx, wy, gx, gy, rock, land) - norm[0]) * norm[1]);
 }
 
-/** AUDIT CAPTAIN'S SEA G3: a node's land in the Etheric Sea's law - its isle's climate's (world/ethericSea.js
+/** AUDIT CAPTAIN'S SEA G3: a node's land in the Eltheric Ocean's law - its isle's climate's (world/ethericSea.js
  *  etherClimateAt; the Ocean's woodlands at sea) - remembered for the last few nodes (a pixel's samples ask the same
  *  four, and the law's isle read is a cache lookup); outside the law the table's, held to the map as ever. */
 const _etherLand = new Map();
@@ -656,7 +656,7 @@ function landShares(gx, gy, climates, span) {
   // a world of another hDim read its climates off 128-sample pixels
   const fx = gx / span - 0.5, fy = MAP_H + 0.5 - gy / span;
   const ix = Math.floor(fx), iy = Math.floor(fy);
-  // the four nodes, their coordinates held to the map - AUDIT CAPTAIN'S SEA G3: a node in the Etheric Sea's law its isle's
+  // the four nodes, their coordinates held to the map - AUDIT CAPTAIN'S SEA G3: a node in the Eltheric Ocean's law its isle's
   // own climate (every isle wore the land of the Bay's corner pixel, held to the map, whatever its climate)
   let l00, l10, l01, l11;
   if (inEtherLaw(ix, iy) || inEtherLaw(ix + 1, iy + 1)) {

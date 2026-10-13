@@ -84,6 +84,28 @@ export function buyLabel(s) {
   return 'Gone';
 }
 
+/** MENU-ORDER (bible/10-UI/Menu-Order.md; bible/10-UI/Plain-Words.md law 5, A FINGER HAS NO HOVER): A REFUSED PRESS SAYS
+ *  WHY WHEN PRESSED. Never `disabled` - a disabled button takes no tap, and its whole reason stood in the hover (`title`)
+ *  alone, which a finger never sees. It reads refused (`aria-disabled`, BROKER_CSS's grey), keeps the title for the
+ *  pointer, and a press of it hands the reason to `tell` - the window's note line - and does nothing else: it replaces
+ *  the press's own `onclick`, so it is set after it. The Broker's and the Reforge's (ui/reforgeWindow.js) alike.
+ *  @param {any} btn @param {string} reason @param {(reason: string) => void} tell */
+export function refusePress(btn, reason, tell) {
+  btn.setAttribute('aria-disabled', 'true');
+  btn.setAttribute('title', reason);
+  // AUDIT MENU-ORDER U15: its name starts with the word it shows (WCAG's label in name - "Need 5 more", then whose and why)
+  const word = String(btn.textContent ?? '').trim();
+  const said = btn.getAttribute('aria-label') || reason;
+  if (word && !said.startsWith(word)) btn.setAttribute('aria-label', `${word} - ${said}`);
+  btn.onclick = (e) => {
+    e?.stopPropagation?.();
+    // AUDIT MENU-ORDER U4: the keys stay where the press was - a window that draws again on the word finds it by its name
+    const doc = btn.ownerDocument, held = !!doc && doc.activeElement === btn, name = btn.getAttribute('aria-label'), win = btn.closest?.('.broker-win');
+    tell(reason);
+    if (held && btn.isConnected === false && win && name) [...(win.querySelectorAll?.('[aria-disabled="true"]') ?? [])].find((b) => b.getAttribute('aria-label') === name)?.focus?.();
+  };
+}
+
 /** The kit's rules cut to a surface's own selectors - the kit's module holds it now (NAV-F: the naval readout lays its
  *  share too, and a HUD in the main bundle must not import this lazy chunk for it); said here still for its callers. */
 export { scopeRules };
@@ -158,6 +180,14 @@ export function mountBrokerWindow(host, deps) {
   let pickedInsig = null, pendingInsig = null;
   /** The last press's word, and whether it was a sale (a refusal is read in the refusal's colour). */
   let note = null;
+  /** MENU-ORDER: a refused press's reason, said in the note (refusePress) - the note alone drawn again (AUDIT MENU-ORDER
+   *  U4: the whole list drawn again took the keys' focus off the press) */
+  const refused = (reason) => {
+    note = { ok: false, text: reason };
+    noteLine.textContent = reason;
+    noteLine.className = 'broker-note';
+    noteLine.removeAttribute?.('hidden');
+  };
   const shell = el('div', 'broker-shell');
   shell.id = 'sigil-broker';
   shell.setAttribute('role', 'dialog');
@@ -230,8 +260,7 @@ export function mountBrokerWindow(host, deps) {
       const buy = el('button', 'act broker-buy', buyLabel(s));
       buy.setAttribute('type', 'button');
       buy.setAttribute('aria-label', s.ok ? `Buy ${nameOf(o.item)} for ${stonesText(o.price)}` : `${nameOf(o.item)}: ${BROKER_REFUSALS[s.reason] ?? ''}`);   // U14: the button says whose
-      if (!s.ok) { buy.setAttribute('disabled', ''); buy.setAttribute('title', BROKER_REFUSALS[s.reason] ?? ''); }
-      else if (pendingInsig || deps.insigniaBusy?.()) buy.setAttribute('disabled', '');   // AUDIT WB9 (insignia F2): nothing else sold while a piece of the insignia is
+      if (s.ok && (pendingInsig || deps.insigniaBusy?.())) buy.setAttribute('disabled', '');   // AUDIT WB9 (insignia F2): nothing else sold while a piece of the insignia is
       buy.onclick = (e) => {
         e.stopPropagation();
         if (pendingInsig || deps.insigniaBusy?.()) return;
@@ -240,6 +269,7 @@ export function mountBrokerWindow(host, deps) {
         pickedSlot = o.slot;
         render();
       };
+      if (!s.ok) refusePress(buy, BROKER_REFUSALS[s.reason] ?? '', refused);   // MENU-ORDER: pressed, it says why
       row.append(frame, text, price, buy);
       pressable(row, () => { pickedSlot = o.slot; pickedInsig = null; render({ reveal: true }); });   // U10
       list.append(row);
@@ -265,8 +295,7 @@ export function mountBrokerWindow(host, deps) {
         const btn = el('button', 'act broker-buy', insigniaLabel(g, { have, busy, pending: pendingInsig === g.id }));
         btn.setAttribute('type', 'button');
         const can = g.owned || have >= g.price;
-        if (!can || busy || pendingInsig) btn.setAttribute('disabled', '');
-        if (!can) btn.setAttribute('title', BROKER_REFUSALS.stones);
+        if (busy || pendingInsig) btn.setAttribute('disabled', '');   // in flight: nothing pressable, and nothing to say
         btn.onclick = (e) => {
           e.stopPropagation();
           const act = g.owned ? deps.wearInsignia : deps.buyInsignia;
@@ -277,6 +306,7 @@ export function mountBrokerWindow(host, deps) {
             note = done?.ok ? { ok: true, text: done.text ?? '' } : { ok: false, text: done?.text ?? 'The Broker will not sell that.' };
           }, () => { note = { ok: false, text: 'The Broker will not sell that.' }; }).finally(() => { pendingInsig = null; render(); });
         };
+        if (!can && !busy && !pendingInsig) refusePress(btn, BROKER_REFUSALS.stones, refused);   // MENU-ORDER: pressed, it says why
         row.append(frame, text, price, btn);
         pressable(row, () => { pickedInsig = g.id; render({ reveal: true }); });
         list.append(row);

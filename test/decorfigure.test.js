@@ -18,7 +18,7 @@ import { decorCatalogue, collectDecor } from '../src/systems/decorCatalogue.js';
 import { decorEditPrice } from '../src/scenes/decorTool.js';
 import { createDecorBar } from '../src/ui/decorPanel.js';
 import { standService, T0 } from './accountDb.mjs';
-import { fakeDoc, all, settle, toolRig, placeFrom, yardWorld, live, sized, rmb, rows } from './decorFakes.mjs';
+import { fakeDoc, all, text, settle, toolRig, placeFrom, yardWorld, live, sized, rmb, rows } from './decorFakes.mjs';
 
 const figure = (over = {}) => ({ id: 'fig1', model: null, flat: [184, 17], pos: [1, 0, 1], rot: [0, 0, 0], scale: 1, light: null, storage: false, paid: 40, ...over });
 
@@ -64,7 +64,7 @@ test('DECOR-FIGURE the bar: `sized` false hides Smaller and Bigger and drops the
   const doc = fakeDoc();
   const bar = createDecorBar({ on: {}, doc });
   const chip = (label) => all(bar.root, 'dfdecor-chip').find((c) => c.textContent === label);
-  const keys = () => all(bar.root, 'dfdecor-bar-keys')[0].textContent;
+  const keys = () => text(all(bar.root, 'dfdecor-bar-keys')[0]);   // MENU-ORDER: a legend of pairs, read whole
   bar.show({ name: 'Bed', price: 100 });
   assert.equal(!!chip('Smaller').hidden, false);
   assert.match(keys(), /Size: - and =/);

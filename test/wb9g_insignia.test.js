@@ -12,7 +12,7 @@ import { readFileSync } from 'node:fs';
 import { INSIGNIA, INSIGNIA_COLUMN_MAX, insigniaById, insigniaVocabularyOk, insigniaHeld, insigniaWith, insigniaKeys, insigniaRefusal } from '../src/net/insignia.js';
 import { TITLES, GLYPHS, AURAS, claimsValid, mintToken, verifyToken } from '../src/net/identityToken.js';
 import { badged, readAura } from '../src/net/wire.js';
-import { BROKER_PRICES, spendStones, spendableStonesIn, stoneCount, insigniaSale, insigniaUnheard, makeBrokerSale, brokerStock } from '../src/systems/sigilBroker.js';
+import { BROKER_PRICES, spendStones, spendableStonesIn, stoneCount, insigniaSale, insigniaUnheard, makeBrokerSale, brokerStock, BROKER_REFUSALS } from '../src/systems/sigilBroker.js';
 import { sigilStone } from '../src/systems/gateSpoils.js';
 import { setLocked } from '../src/systems/itemLock.js';
 import { TITLE_TEXT, AURA_TEXT, TITLE_GRADIENT, TITLE_EDGE, badgeCss } from '../src/ui/playerBadge.js';
@@ -546,7 +546,14 @@ test('WB9g the Broker\'s window: under the day\'s stock, the Insignia - its head
       view.repaint();
       ins = kids(shell, 'broker-insig');
       assert.equal(btn(ins[0]).textContent, 'Need 12 more');
-      assert.equal(btn(ins[0]).attrs.disabled, '', 'a short purse cannot press it');
+      assert.equal(btn(ins[0]).attrs['aria-disabled'], 'true', 'a short purse reads refused');
+      assert.equal(btn(ins[0]).attrs.title, BROKER_REFUSALS.stones);
+      const before = asked.length;
+      btn(ins[0]).onclick({ stopPropagation() {} });   // MENU-ORDER (Plain-Words law 5): pressed, it says why and buys nothing
+      await settle();
+      assert.equal(asked.length, before, 'a short purse never asks the account');
+      assert.equal(one(shell, 'broker-note').textContent, BROKER_REFUSALS.stones);
+      ins = kids(shell, 'broker-insig');
       busy = true;
       view.repaint();
       assert.ok(kids(shell, 'broker-insig').every((r) => btn(r).attrs.disabled === ''), 'the host mid-sale: nothing pressable');

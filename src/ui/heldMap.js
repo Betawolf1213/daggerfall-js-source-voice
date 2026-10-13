@@ -190,6 +190,7 @@ import { paintWaypointFlag, flagBox } from './waypointFlags.js';   // WAYPOINTS:
 import { mapUiScale } from './mapScale.js';   // FIELD BUGS 2026-10-09e MAP-SCALE: the map's interface at the screen's size
 import { getPref } from '../systems/uiPrefs.js';
 import { retroScreenRect } from '../systems/retroMode.js';   // DISC25-B: DFU's CustomScreenRect, the pillarbox's screen
+import { TRAVEL_VIEW_BUTTON } from '../scenes/travelView.js';   // TV1: the Overworld door's words (ETHER-OW: one home with the Eltheric chart's)
 
 export const HELD_MAP_URL = new URL('art/held-map.png', APP_ROOT ?? globalThis.document?.baseURI ?? 'https://invalid.invalid/').href;
 /** Its own pixels, and the stage's aspect. */
@@ -474,8 +475,9 @@ const PARTY_POLL_S = 0.25;
 export const MAP_HINT = 'drag to pan · scroll to zoom · Esc to close';
 /** WILD2: the foot's line on the zone map. */
 export const ZONE_MAP_HINT = 'drag to pan · scroll to zoom · Esc for the world map';
-/** TV1: the foot row's door into the travel view (scenes/travelView.js), and its key on the sheet: O. */
-export const TRAVEL_VIEW_BUTTON = 'Overworld (O)';
+/** TV1: the foot row's door into the travel view, and its key on the sheet: O - the view's own words (scenes/travelView.js
+ *  TRAVEL_VIEW_BUTTON, one home since ETHER-OW: the Eltheric Ocean's chart wears the same door). */
+export { TRAVEL_VIEW_BUTTON };
 /** The scale a search or a journal click-through zooms to. */
 const FOCUS_SCALE = 6;
 /** How often the breathing rings repaint the sheet while one is up. */

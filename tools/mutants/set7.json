@@ -191,8 +191,8 @@
   {
     "name": "SET7-a-refused-offers-buy-pressable",
     "file": "src/ui/brokerWindow.js",
-    "old": "      if (!s.ok) { buy.setAttribute('disabled', ''); buy.setAttribute('title', BROKER_REFUSALS[s.reason] ?? ''); }\n",
-    "new": "      if (!s.ok) { buy.setAttribute('title', BROKER_REFUSALS[s.reason] ?? ''); }\n",
+    "old": "      if (!s.ok) refusePress(buy, BROKER_REFUSALS[s.reason] ?? '', refused);   // MENU-ORDER: pressed, it says why\n",
+    "new": "",
     "tests": [
       "test/set7_broker.test.js"
     ]

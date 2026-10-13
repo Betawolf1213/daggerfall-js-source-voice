@@ -32,7 +32,7 @@ const player = (pos, o = {}) => ({ id: 'me', kind: 'player', pos, vel: [0, 0, 0]
 // ── the classes ─────────────────────────────────────────────────────────────────────────────────────────────────
 
 test('NAV-C the classes: nine in three trades, each a hull with guns scaled off its build, one pirate flagship, the galleys fighting over the stem; classFor draws among the classes a level has reached by weight, the draw\'s edges exact (mutants: the level gate off, a weight ignored, the edge off by one)', () => {
-  // PIN MOVED (ETHER-LEGENDS, bible/03-World/Etheric-Sea.md): the nine the sea draws, and the Etheric Sea's six legends
+  // PIN MOVED (ETHER-LEGENDS, bible/03-World/Eltheric-Ocean.md): the nine the sea draws, and the Eltheric Ocean's six legends
   // after them - each her own class, never drawn (LEGEND_LEVEL), launched by name in her haunt
   assert.equal(SHIP_CLASSES.filter((c) => !c.legend).length, 9);
   assert.equal(SHIP_CLASSES.length, 15);

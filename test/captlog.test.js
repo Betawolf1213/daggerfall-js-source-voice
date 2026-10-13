@@ -61,7 +61,7 @@ test('CAPT-LOG what a deed is worth with a crown: a pirate\'s end her size (carg
   assert.equal(standingFor('sink', null), 0);
 });
 
-test('CAPT-LOG the ledger: a deed logged by her trade and her crown\'s regard moved (a marque\'s to the letter\'s crown); a legend\'s end every crown\'s, once; the Etheric Sea\'s ships no crown\'s; regard kept in its band; a rank crossed said once, up and down (mutants: the trade, the marque\'s crown, the legend, the band, the changes)', () => {
+test('CAPT-LOG the ledger: a deed logged by her trade and her crown\'s regard moved (a marque\'s to the letter\'s crown); a legend\'s end every crown\'s, once; the Eltheric Ocean\'s ships no crown\'s; regard kept in its band; a rank crossed said once, up and down (mutants: the trade, the marque\'s crown, the legend, the band, the changes)', () => {
   const l = createCaptainLedger();
   l.deed('sink', brig, { crown: 'Wayrest' });
   l.deed('board', sloop, { crown: 'Wayrest' });
@@ -79,7 +79,7 @@ test('CAPT-LOG the ledger: a deed logged by her trade and her crown\'s regard mo
   l.deed('board', classById('pirateBrig'), { trade: 'legend', legend: 'The Pale Queen' });
   assert.deepEqual([l.standing('Daggerfall'), l.log.legends.length], [12, 1], 'a legend ends once');
   l.deed('sink', brig, { trade: 'ether', crown: 'Wayrest' });
-  assert.deepEqual([l.log.sunk.ether, l.standing('Wayrest')], [1, 12], 'the Etheric Sea knows no crown');
+  assert.deepEqual([l.log.sunk.ether, l.standing('Wayrest')], [1, 12], 'the Eltheric Ocean knows no crown');
   l.takeRankChanges();
   const up = l.regard('Wayrest', 3);
   assert.deepEqual([up.crown, up.from.title, up.to.title], ['Wayrest', 'Unsworn', 'Sworn Captain']);
@@ -95,7 +95,7 @@ test('CAPT-LOG the ledger: a deed logged by her trade and her crown\'s regard mo
   assert.equal(l.regard('Morrowind', 10), null, 'no such crown');
 });
 
-test('CAPT-LOG the log\'s counts: the notes, the leagues (a frame\'s nonsense refused), the richest prize kept while none richer comes, the deepest Etheric waters; a letter of marque held on the captain\'s own clock until its end, torn up at will (mutants: each count, the prize\'s keep, the letter\'s end)', () => {
+test('CAPT-LOG the log\'s counts: the notes, the leagues (a frame\'s nonsense refused), the richest prize kept while none richer comes, the deepest Eltheric waters; a letter of marque held on the captain\'s own clock until its end, torn up at will (mutants: each count, the prize\'s keep, the letter\'s end)', () => {
   const l = createCaptainLedger();
   for (const f of ['claimed', 'maps', 'islands']) l.note(f);
   l.note('plunder', 1250.7); l.note('earned', 900); l.note('traded', 400); l.note('bounty'); l.note('bounty'); l.note('salvage');
@@ -125,7 +125,7 @@ test('CAPT-LOG the save: its own slot (Captain, v1) - the log, the crowns\' rega
   const b = createCaptainLedger();
   b.restoreSaveData(JSON.parse(JSON.stringify(a.getSaveData())));
   assert.deepEqual(b.getSaveData(), a.getSaveData());
-  assert.deepEqual(b.newSaveData(), { v: 1, log: newLog(), standing: { Daggerfall: 0, Wayrest: 0, Sentinel: 0 }, marque: null, contracts: [], taken: [], dealt: null, charts: [], raised: [], ether: { charted: [], legends: {}, harvested: {}, from: null, crossings: 0, heard: [] } });   // CAPT-BOARD: and the contracts held, the board's taken; CAPT-TRADE: the day's dealing; ETHER-SEA: the captain's Etheric Sea - PIN MOVED (AUDIT CAPTAIN'S SEA B8): and the caches raised
+  assert.deepEqual(b.newSaveData(), { v: 1, log: newLog(), standing: { Daggerfall: 0, Wayrest: 0, Sentinel: 0 }, marque: null, contracts: [], taken: [], dealt: null, charts: [], raised: [], ether: { charted: [], legends: {}, harvested: {}, from: null, crossings: 0, heard: [] } });   // CAPT-BOARD: and the contracts held, the board's taken; CAPT-TRADE: the day's dealing; ETHER-SEA: the captain's Eltheric Ocean - PIN MOVED (AUDIT CAPTAIN'S SEA B8): and the caches raised
   const c = createCaptainLedger();
   c.restoreSaveData({ log: { sunk: { pirate: -4, merchant: 'x' }, plunder: 1e20, legends: [5, 'Ok'], best: { name: 3 } }, standing: { Wayrest: 5000, Daggerfall: 'q', Morrowind: 9 }, marque: { crown: 'Morrowind', until: 10 } });
   assert.deepEqual([c.log.sunk.pirate, c.log.sunk.merchant, c.log.legends, c.log.best], [0, 0, ['Ok'], null]);
@@ -229,7 +229,7 @@ test('CAPT-MARQUE at sea: under a letter a RIVAL\'s lawful ship struck is the ri
   assert.deepEqual(s.law.crimes.at(-1), [crownRegion('Wayrest'), CRIMES.Piracy]);
   const host = rd('src/scenes/navalHost.js');
   assert.match(host, /for \(const w of sea\.values\(\)\) if \(w\.ship\.cls\.faction === 'navy' && w\.ship\.flag !== signed && dist2d\(w\.ship\.pos, s\.pos\) < WITNESS_RANGE\) provoke\(w\.ship, by, clock\);/, 'the signing crown\'s navy looks on');
-  assert.match(host, /ship\.flag = ether \? etherFlagOf\(cls\) : flagOf\(cls, spec\.seed, region\);/, 'every ship launched with her colours (ETHER-SEA: a trader of the Etheric Sea the Isles\')');
+  assert.match(host, /ship\.flag = ether \? etherFlagOf\(cls\) : flagOf\(cls, spec\.seed, region\);/, 'every ship launched with her colours (ETHER-SEA: a trader of the Eltheric Ocean the Isles\')');
 });
 
 test('CAPT-LOG the world\'s wiring: one ledger a world host, in its own save slot whether the sea runs or not; the deeds\' rank changes said on the screen\'s middle; the letter read on the captain\'s own clock; plunder\'s worth handed in; the leagues at the helm; the Captain page on the Holdings rail after the Fleet (mutants: the slot, the clock, the say)', () => {

@@ -4,10 +4,10 @@
 // rewarding and giving a reason to players to experience it"; bible/03-World/Captains-Sea.md) - THE CAPTAIN'S LEDGER:
 // what a captain has done at sea, and what the three crowns of the Bay make of it. The port's own - Daggerfall has no
 // sea. Pure: the hosts tell it what happened (scenes/navalHost.js chargePlayer, the harbour board, the exchange, the
-// Etheric Sea) and read it back (the Captain page, the harbour's favours); the save keeps it (CAPTAIN_SAVE_VENDOR).
+// Eltheric Ocean) and read it back (the Captain page, the harbour's favours); the save keeps it (CAPTAIN_SAVE_VENDOR).
 //
 // THE LOG is a captain's record: ships sunk and taken by their trade, boarders thrown back, prizes claimed, the plunder's
-// worth, contracts and bounties done, the exchange's trade, the leagues sailed, the treasure found, the Etheric isles
+// worth, contracts and bounties done, the exchange's trade, the leagues sailed, the treasure found, the Eltheric isles
 // charted and how deep a captain has gone there, the legends ended, and the richest prize.
 //
 // STANDING is a crown's regard for a captain at sea, one number a crown (Daggerfall, Wayrest, Sentinel - navalShips.js
@@ -24,7 +24,7 @@
 // the letter is torn up.
 
 import { CROWNS } from './navalShips.js';
-import { LEAGUE_M, inEtherLaw } from '../../world/ethericSea.js';
+import { LEAGUE_M, inEtherLaw, ETHER_WORD } from '../../world/ethericSea.js';
 import { HARBOUR_CONTRACT_KINDS, CONTRACTS_MAX, STANDING_FAILED, STANDING_ABANDONED, advance, expired, restoreContract } from './harbourBoard.js';
 
 export const CAPTAIN_SAVE_VENDOR = 'Captain';
@@ -77,11 +77,11 @@ export const DEED_STANDING = Object.freeze({ sunk: 2, taken: 3, repelled: 2 });
 export const PIRACY_STANDING = Object.freeze({ fire: -5, sink: -8, board: -10 });
 /** A rival crown's lawful ship ended under a crown's letter of marque - the commissioning crown's regard, times her size. */
 export const MARQUE_STANDING = Object.freeze({ sink: 2, board: 3 });
-/** A legend of the Etheric Sea ended: every crown hears of it. */
+/** A legend of the Eltheric Ocean ended: every crown hears of it. */
 export const LEGEND_STANDING = 10;
-/** A league: three miles, the sea's own measure of a captain's way (metres) - the Etheric Sea's own (one home). */
+/** A league: three miles, the sea's own measure of a captain's way (metres) - the Eltheric Ocean's own (one home). */
 export { LEAGUE_M };
-/** The trades a log counts ships by - the Bay's three, and the Etheric Sea's two. */
+/** The trades a log counts ships by - the Bay's three, and the Eltheric Ocean's two. */
 export const LOG_TRADES = Object.freeze(['pirate', 'merchant', 'navy', 'ether', 'legend']);
 /** The contracts a log counts by kind (the harbour board's - systems/naval/harbourBoard.js HARBOUR_CONTRACT_KINDS). */
 export const LOG_CONTRACTS = HARBOUR_CONTRACT_KINDS;
@@ -99,13 +99,13 @@ export const SAILED_MAX_M = 1e10;
 export const MARQUE_UNTIL_MAX = 1e9;
 /** The legends a log keeps by name, and its other lists, at most this many. */
 export const LOG_LIST_MAX = 32;
-/** ETHER-SEA: the Etheric isles a captain's charts keep (the first charted, kept), and the wild isles' strands
+/** ETHER-SEA: the Eltheric isles a captain's charts keep (the first charted, kept), and the wild isles' strands
  *  remembered gathered (the newest). */
 export const ETHER_CHARTED_MAX = 4096;
 export const ETHER_HARVEST_KEEP = 128;
-/** ETHER-SEA: a new Etheric record - nothing charted, ended or gathered, no crossing made. */
+/** ETHER-SEA: a new Eltheric record - nothing charted, ended or gathered, no crossing made. */
 export const newEther = () => ({ charted: [], legends: {}, harvested: {}, from: null, crossings: 0, heard: [] });
-/** ETHER-CROSSING: a way out as the ledger keeps it - a whole pixel of the world's grid, never one in the Etheric Sea's
+/** ETHER-CROSSING: a way out as the ledger keeps it - a whole pixel of the world's grid, never one in the Eltheric Ocean's
  *  law (AUDIT CAPTAIN'S SEA X2: a stale Yes kept the sea itself as the way out, and every way home landed back in it) -
  *  else null (the way home then the open Abecean's). */
 export const wayOutOf = (at) => (at && Number.isFinite(at.px) && Number.isFinite(at.py) && Math.abs(at.px) < 8192 && Math.abs(at.py) < 8192 && !inEtherLaw(at.px, at.py)
@@ -166,7 +166,7 @@ export function createCaptainLedger() {
    *  the caches raised (their ids, the newest CHARTS_RAISED_KEEP). */
   let charts = [];
   let raised = [];
-  /** ETHER-SEA: the captain's Etheric Sea - the isles charted (world/ethericSea.js cell keys), the legends ended (the
+  /** ETHER-SEA: the captain's Eltheric Ocean - the isles charted (world/ethericSea.js cell keys), the legends ended (the
    *  day each was), the wild isles' strands gathered (the day each was), the Bay's waters the last crossing out set sail
    *  from (the way home's landfall), the crossings made. */
   let ether = newEther();
@@ -194,7 +194,7 @@ export function createCaptainLedger() {
     crowns: () => CROWNS.map((c) => ({ crown: c.name, ruler: c.ruler, standing: standing[c.name] ?? 0, rank: crownRankOf(standing[c.name] ?? 0), next: nextRankOf(standing[c.name] ?? 0) })),
     regard,
     /**
-     * A SHIP'S FATE AT THE CAPTAIN'S HANDS: logged by her trade ('ether'/'legend' for the Etheric Sea's - `legend` her
+     * A SHIP'S FATE AT THE CAPTAIN'S HANDS: logged by her trade ('ether'/'legend' for the Eltheric Ocean's - `legend` her
      * name, kept), and her crown's regard moved - `crown` the crown the deed is charged to (the waters', a navy's own),
      * `marque` under a letter against a rival (the regard the letter's crown's).
      * @param {'fire'|'sink'|'board'|'repel'} act @param {any} cls
@@ -212,7 +212,7 @@ export function createCaptainLedger() {
         for (const c of crownNames()) { const ch = regard(c, LEGEND_STANDING); if (ch) changes.push(ch); }
         return changes;
       }
-      if (trade === 'ether') return changes;   // the Etheric Sea knows no crown
+      if (trade === 'ether') return changes;   // the Eltheric Ocean knows no crown
       const n = standingFor(act, cls, { marque: !!under });
       const to = under ?? crown;
       if (to && n) { const ch = regard(to, n); if (ch) changes.push(ch); }
@@ -227,7 +227,7 @@ export function createCaptainLedger() {
     },
     /** The way made at a helm (metres). */
     sailed(m) { if (Number.isFinite(m) && m > 0 && m < 1e5) log.sailed += m; },
-    /** The deepest an Etheric voyage has gone (leagues past the Veil - ETHER-SEA, scenes/etherHost.js sight). */
+    /** The deepest an Eltheric voyage has gone (leagues past the Veil - ETHER-SEA, scenes/etherHost.js sight). */
     deepest(d) { if (Number.isFinite(d) && d > log.deepest) log.deepest = Math.floor(d); },
     /** The richest prize: kept while none richer is taken. */
     prize(name, worth) { if (Number.isFinite(worth) && worth > 0 && (!log.best || worth > log.best.worth)) log.best = { name: String(name ?? 'a prize').slice(0, 48), worth: Math.floor(worth) }; },
@@ -326,7 +326,7 @@ export function createCaptainLedger() {
       const at = dealt.at[port];
       at[side][id] = (Object.hasOwn(at[side], id) ? at[side][id] | 0 : 0) + Math.max(0, n | 0);
     },
-    // ── ETHER-SEA: the captain's Etheric Sea ──
+    // ── ETHER-SEA: the captain's Eltheric Ocean ──
     /** An isle charted (its key): the log's `islands` the first time - never past ETHER_CHARTED_MAX. Answers whether it
      *  was new. */
     chartIsle(key) {
@@ -338,6 +338,8 @@ export function createCaptainLedger() {
     },
     isCharted: (key) => chartedSet.has(key),
     charted: () => ether.charted.slice(),
+    /** AUDIT ETHER-OW C2-2: how many isles are charted - asked each frame by the Overworld's lists' keys (no copy). */
+    chartedCount: () => ether.charted.length,
     /** A legend ended on `day`, and the day a legend was last ended (null: never). */
     endLegend(id, day) { if (typeof id === 'string' && Number.isFinite(day)) ether.legends[id] = Math.floor(day); },
     legendDay: (id) => (Number.isFinite(ether.legends[id]) ? ether.legends[id] : null),
@@ -448,14 +450,14 @@ export function logLines(log) {
   if (log.earned) lines.push(['Contract purses', gold(log.earned)]);
   if (log.traded) lines.push(['Sold at the exchange', gold(log.traded)]);
   if (log.maps) lines.push(['Treasure found', `${log.maps} ${log.maps === 1 ? 'cache' : 'caches'}`]);
-  if (log.islands) lines.push(['Etheric isles charted', `${log.islands}`]);
-  if (log.deepest) lines.push(['Deepest Etheric waters', `${log.deepest} ${log.deepest === 1 ? 'league' : 'leagues'} past the Veil`]);
+  if (log.islands) lines.push([`${ETHER_WORD} isles charted`, `${log.islands}`]);
+  if (log.deepest) lines.push([`Deepest ${ETHER_WORD} waters`, `${log.deepest} ${log.deepest === 1 ? 'league' : 'leagues'} past the Veil`]);
   if (log.legends.length) lines.push(['Legends ended', log.legends.join(', ')]);
   return lines;
 }
 /** The trades' words in the log - one, and many. */
-export const TRADE_WORD = Object.freeze({ pirate: 'pirate', merchant: 'merchantman', navy: 'crown\'s ship', ether: 'Etheric ship', legend: 'legend' });
-export const TRADE_WORDS = Object.freeze({ pirate: 'pirates', merchant: 'merchantmen', navy: 'crown\'s ships', ether: 'Etheric ships', legend: 'legends' });
+export const TRADE_WORD = Object.freeze({ pirate: 'pirate', merchant: 'merchantman', navy: 'crown\'s ship', ether: `${ETHER_WORD} ship`, legend: 'legend' });
+export const TRADE_WORDS = Object.freeze({ pirate: 'pirates', merchant: 'merchantmen', navy: 'crown\'s ships', ether: `${ETHER_WORD} ships`, legend: 'legends' });
 /** The contracts' kinds in the log - one, and many (AUDIT CAPTAIN'S SEA L11: "2 bounty"). */
 export const CONTRACT_WORD = Object.freeze({ bounty: 'bounty', hunt: 'hunt', delivery: 'delivery', salvage: 'salvage', survey: 'survey' });
 export const CONTRACT_WORDS = Object.freeze({ bounty: 'bounties', hunt: 'hunts', delivery: 'deliveries', salvage: 'salvages', survey: 'surveys' });

@@ -19,7 +19,7 @@
 //   waters() -> crown | null   the crown of the waters the captain sails
 //   carrack(price, port) -> bool  the Admiralty's carrack's title to the Fleet's book (systems/fleet.js titleDeed)
 //   stow(hold, item)           an item into a ship's hold (CAPT-TRADE)
-//   etherGoods() -> bool       whether the captain may sail for the Etheric Sea's goods (AUDIT CAPTAIN'S SEA B16)
+//   etherGoods() -> bool       whether the captain may sail for the Eltheric Ocean's goods (AUDIT CAPTAIN'S SEA B16)
 // }
 //
 // CAPT-TRADE: THE EXCHANGE (systems/naval/tradeGoods.js) - the port's goods at the day's prices, bought into the hold of

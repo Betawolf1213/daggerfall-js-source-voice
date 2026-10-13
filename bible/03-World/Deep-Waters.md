@@ -39,6 +39,25 @@ compares the two cell for cell; they agree to within the Perlin departure
 (Port-Ledger A: Ken Perlin's reference noise where Unity's Mathf.PerlinNoise
 stood - the author's bake is a little wetter at the coast).
 
+THE FRAME (ETHER-DEEP, 2026-10-12; `03-World/Eltheric-Ocean.md`). The mod knows
+one map, IsValidMapPixel's 1000 x 500, and clamps every query to it. The
+port's bake answers a FRAME of pixels - its planes indexed and its cells
+counted from the frame's corner, the tile data's clamps the frame's - and the
+Bay's frame is the mod's map to the float (a pixel less 0 is the pixel). The
+Eltheric Ocean's box past the Veil is a frame of its own
+(`world/etherWatersBake.js`), built by these same rules from the sea's composed
+ground as it is asked, its flood an isle's cell at a time; a world with the
+sea standing carves by both bakes side by side. The raw file's fast read is the
+raw file's alone - a composed reader answers past the map through its door
+(and the Bay's pixels off the bytes still - AUDIT ETHER-OW C1-1: the door was 3.4
+times the cost there). THE KEEP (AUDIT ETHER-OW C1-2): every bake's planes are
+bounded on every thread - past PLANE_KEEP_MAX in any one cache, those farther than
+PLANE_KEEP_RADIUS from the pixel last asked or sent are let go (asked again, they
+are built again; the bytes are the same). The main thread's Bay bake had only
+added the worker's rows, for the session. The host's dry check reads only the sea
+bits its thread holds (C1-3): a fresh Eltheric cell is the worker's trip to answer.
+There's a Hole in the Bottom of the Ocean's pits stay the Bay's.
+
 ## The floor (DW-B)
 
 A carved cell's ground is the seafloor: the world host's `heightAt` answers

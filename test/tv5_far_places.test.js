@@ -67,7 +67,9 @@ test('TV5 host wiring: the far places are rebuilt on a pixel (or a reach) change
   assert.match(w, /let tvFar = \{ at: null, near: -1, list: \[\] \};/);
   assert.ok(((i, j) => i >= 0 && j >= 0 && i < j)(w.indexOf('let tvFar = { at: null, near: -1, list: [] };'), w.indexOf('tvFar = { at: null, near: -1, list: [] };   // TV5: nor the far places')), 'BOOT-TDZ: declared above the load that clears it');
   assert.match(w, /if \(tvFar\.at && tvFar\.at\.x === at\.x && tvFar\.at\.y === at\.y && tvFar\.near === near && tvFar\.dg === dg\) return tvFar\.list;/);
-  assert.match(w, /farPlaces\(\{ at, near, settlements: \(_tvSettlements \?\?= settlementPixels\(locationIndex\)\), summaryOf: tvPlaceSummary \}\)/);
+  // PIN MOVED (ETHER-OW, test/ether_ow.test.js): the map's settlements gathered once (never an isle's), and past the Veil the
+  // port isles within the edge's range beside them
+  assert.match(w, /const settlements = \(_tvSettlements \?\?= settlementPixels\(locationIndex\)\.filter\(\(t\) => !t\.loc\.ether\)\);\n\s*const list = farPlaces\(\{ at, near, settlements: etherSea && inEther\(at\.x, at\.y\) \? \[\.\.\.settlements, \.\.\.etherPlaceRows\(at, TV_FAR_RANGE, 'port'\)\] : settlements, summaryOf: tvPlaceSummary \}\)/);
   assert.match(w, /marks\.push\(\{ key: f\.key, at: tvSceneKept\(f, f\.x, f\.z, TV_PLACE_LIFT\), label: f\.summary\.name, sub: farDistanceText\(km\), kind: 'far', pick: true, edge: true, hub: carriageTown\(f\.summary\.mapId\), tip: seatTipAt\(f\.summary\.mapId\) \}\);/);   // PIN MOVED (FIELD BUGS 2026-10-04e OW-HUBS, SEAT-TIP)
   assert.match(w, /const farEnd = endKey \? `far:\$\{tvTrip\.plan\.summary\.mapId\}` : null;/, 'the journey\'s own end is the flag\'s, not a plate at the edge');
   assert.match(w, /for \(const f of travelViewFarPlaces\(\)\) \{\n\s*if \(f\.key === farEnd\) continue;/);

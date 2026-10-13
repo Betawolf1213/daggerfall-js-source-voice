@@ -11,7 +11,7 @@ main's `e18e54322`. Five are fixed here; one was a switch, thrown on Mac's word;
 | 4 | "Possible key press parsing glitch (sound stuttering only when holding down a button)" | no keydown path touches audio, and every one filters auto-repeat; the likeliest cause is walking (streaming hitches past the music's 0.25 s lookahead), not the keys | not changed - questions to the reporter (KEY-STUTTER, below) |
 | 5 | "I was with a trade lock because of a Ring, I got rid of the ring and now it says only 'something'" | the third law hold stands for staff once the piece is gone, and the answer said nothing of it; the trade refusal never named the piece the session had heard | fixed (RING-HOLD); the player's hold is staff's to clear |
 | 6 | "Decorating Issue - My property... This house has no property lines, can't place anything - only on inside" | a terraced house with neighbours flush on three sides and the street at its door has no free ground in its lot; the house's own exterior is the house (FB1009 HOME-FOOT) | not a defect - a design limit (NO-LOT, below) |
-| 7 | "Water not working as water should in new region west of the bay" - "Cannot swim back to boat" | Deep Waters carved the Etheric Sea's floor through the pump's deferred builds; TAMRIEL2 held only the near promote | fixed (ETHER-HOLD) |
+| 7 | "Water not working as water should in new region west of the bay" - "Cannot swim back to boat" | Deep Waters carved the Eltheric Ocean's floor through the pump's deferred builds; TAMRIEL2 held only the near promote | fixed (ETHER-HOLD) |
 | 8 | "Underwater torch/lantern/candle issue" - "almost total blindness" | the lane's fog in-scatter integrated at the underwater murk's own density, ten times its tuning point | fixed (UW-GLOW) |
 
 ## QUAY-CROSSING: a harbour's quays never cross (2)
@@ -74,7 +74,7 @@ pins it on both and pins the words' "third" to the service's STRIKES_FOR_REVIEW.
 
 ## ETHER-HOLD and UW-GLOW (7, 8)
 
-Recorded on their pages: `03-World/Etheric-Sea.md` "Recorded departures" (test/ethersea_dwhold.test.js) and
+Recorded on their pages: `03-World/Eltheric-Ocean.md` "Recorded departures" (test/ethersea_dwhold.test.js) and
 `07-Rendering/Enhanced-Lighting-Arc.md` UW-GLOW (test/uw_glow.test.js).
 
 ## CHAPTERS-ON: the switch #734 never threw (1)

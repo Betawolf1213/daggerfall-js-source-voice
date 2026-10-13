@@ -88,6 +88,9 @@ export const TV_HEARTBEAT_MS = 600;
 /** The movement actions whose press turns the traveller toward the view's heading. */
 export const TV_MOVE_ACTIONS = Object.freeze(['MoveForwards', 'MoveBackwards', 'MoveLeft', 'MoveRight']);
 
+/** TV1: THE DOOR UP - its words on the held map's foot row (ui/heldMap.js) and, ETHER-OW (2026-10-13), on the Eltheric
+ *  Ocean's chart (ui/etherChartWindow.js), the map's answer past the Veil - and its key on either: O. */
+export const TRAVEL_VIEW_BUTTON = 'Overworld (O)';
 /** The view's own lines - the refusals the door says, and the readout's place line. */
 export const TRAVEL_VIEW_TEXT = Object.freeze({
   enhancedOnly: 'The overworld is part of the enhanced interface.',

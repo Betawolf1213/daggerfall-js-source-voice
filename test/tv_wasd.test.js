@@ -15,6 +15,7 @@ import { createLoadGovernor, unbuiltAround, TV_GOV_HOLD_S } from '../src/systems
 import { timeScale, setTimeScale, resetTimeScale, MAX_TIME_SCALE, TRAVEL_ROAD_RATE, TRAVEL_OPEN_RATE } from '../src/systems/timeScale.js';
 import { foePaced } from '../src/systems/travelThreat.js';   // RATE-LAW: ENEMY-PACE's fixed floor, which the governor calls
 import { travelDriveForward } from '../src/systems/travelAutopilot.js';
+import { StreamingWorldState } from '../src/world/streamingWorld.js';   // ETHER-OW: the governor's ground is the stream's own law
 import { setPaceGround, setTravelPace, _resetTravelPace } from '../src/systems/travelPace.js';   // PACE-DIALS: the road's x100 is the player's dial
 /** PACE-DIALS (2026-10-06): x100 is chosen, on a road - the dial set there as the panels set it (the default is x60, and
  *  leaving a road takes it back to x60: test/pacedials.test.js). These pins hold the LANES' law at the dial's top. */
@@ -72,7 +73,7 @@ function rig({ onRoad = false } = {}) {
     travelAsked: 20, csaHoldsTimeScale: () => false,
     travelGovernor: createLoadGovernor({ max: MAX_TIME_SCALE }),
     state: { terrainDistance: 3 }, playerTravelPixel: () => ({ x: 100, y: 200 }), tvGroundGenNow: () => w.unbuilt.size,
-    unbuiltAround, built: { has: (k) => !w.unbuilt.has(k) },
+    unbuiltAround, built: { has: (k) => !w.unbuilt.has(k) }, StreamingWorldState,   // ETHER-OW: only what the world streams is owed a build
     journeyThreatCap: () => ({ cap: Infinity }), journeySlowSaid: () => {},   // OW6: no enemy about (test/ow6_slowdown.test.js runs the cap)
   };
   return { w, g: mountGovernor(env) };

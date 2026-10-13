@@ -696,6 +696,7 @@ export function createHomeYards(deps) {
     scanDeps: () => deps.scanDeps(),
     base: () => null,
     getGpuMesh: (id) => deps.meshes.getGpuMesh(id), cpuModels: deps.meshes.cpuModels, getTexture: deps.getTexture, uploadRecord: deps.uploadRecord, iconUrl: deps.iconUrl,
+    ...(deps.meshes.hold ? { thumbHold: () => deps.meshes.hold('decor-thumbs', 'yard') } : {}),   // AUDIT MENU-ORDER R4: the tiles' models, the panel's while it stands
     collider: () => collider, origin: () => (cur ? originOf(cur.yard) : [0, 0, 0]), eye: () => deps.eye?.() ?? [0, 0, 0],
     stick: () => deps.stick?.() ?? null, actionOf: (e) => deps.actionOf?.(e) ?? null,
     locked: () => !!deps.locked?.(), cursorOff: () => deps.cursorOff?.(),

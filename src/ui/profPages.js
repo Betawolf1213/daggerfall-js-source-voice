@@ -88,12 +88,14 @@ import { marksText } from '../net/marksLaw.js';   // AUDIT 32 R13: "1 Drake", as
 import { accountRefusalText } from '../net/accountClient.js';
 import { chainPlan, chainNeeded, chainYield, storesRoom } from '../net/chainLaw.js';   // CRAFT1: the works a craft's inputs want first
 import { getPref, setPref } from '../systems/uiPrefs.js';
+import { pictureNode } from './menuGlyphs.js';   // MENU-ORDER: a material's picture, the host's
 import { t, localizedText, formatMessage, formatNumber } from '../systems/textManager.js';   // L10N4: the pages' words in the player's language; the smith's lone metals, Leather, Arrows and All are DFU's own
 
 /**
  * @typedef {object} ProfPagesProvider
  * @property {any} book                                   net/profBook.js - the character's professions
  * @property {(key: string) => string} name               a material's name (systems/profItems.js materialLabel)
+ * @property {(key: string, wake: () => void) => ({ src: string, w: number, h: number }|null)} [picture]   MENU-ORDER: a material's picture (ui/menuPicture.js), null while made
  * @property {(key: string, qty: number) => Promise<{ ok: boolean, text: string }>} withdraw   out of the Stores, into the pack
  * @property {() => ({ kind: 'shop'|'home', fee: number }|null)} [forge]   PROF2: the forge the player stands at, or null
  * @property {(recipe: string, count: number, opts?: { clean?: boolean }) => Promise<{ ok: boolean, text: string }>} [smelt]   PROF2: a
@@ -225,7 +227,7 @@ let _armed = null;
 /** The Professions page's last refusal, said under the cards. */
 let _profWord = null;
 /** The Stores page's filter, search, sort, the material chosen and the quantity to withdraw. */
-const _stores = { family: null, query: '', sort: 'tier', picked: null, qty: 1, word: null, busy: false, settledAt: -Infinity };
+const _stores = { family: null, query: '', sort: 'tier', picked: null, qty: 1, word: null, busy: false, settledAt: -Infinity, awayPick: null };   // MENU-ORDER: the away station whose words are shown
 /** BAG1: the Stores page's own words for a carrying book. */
 export const BAG_PAGE_WORDS = Object.freeze({
   noBag: 'You have no Materials Bag: what you gather goes into your pack. Every General Store sells one.',
@@ -748,7 +750,7 @@ export function drawStoresPage(detail, rerender, kit) {
   for (const r of rows) {
     const card = el('button', `prof-mat${_stores.picked === r.material ? ' on' : ''}`);
     card.type = 'button';
-    card.append(el('b', null, r.name), el('span', 'prof-count', formatNumber(r.total)), el('span', 'prof-split', storesSplit(r)));
+    card.append(matName(el, r, rerender), el('span', 'prof-count', formatNumber(r.total)), el('span', 'prof-split', storesSplit(r)));
     card.onclick = () => { _stores.picked = r.material; _stores.qty = Math.min(_stores.qty, r.total) || 1; _stores.word = null; rerender(); };
     grid.append(card);
   }
@@ -780,17 +782,104 @@ export function drawStoresPage(detail, rerender, kit) {
     if ((pick.loose | 0) > 0) detail.append(el('p', 'px-note', looseGoodsLine()));   // AUDIT BAG-CRAFT A1: an older book's page (another device's put-in)
   }
   if (_stores.word) detail.append(el('p', 'prof-word', _stores.word));
-  drawForge(detail, rerender, kit);
-  drawAnvil(detail, rerender, kit);   // PROF3
-  drawTemper(detail, rerender, kit, 'anvil');   // CRAFT4: the smith's temper
-  drawWorkbench(detail, rerender, kit);   // PROF4
-  drawLoom(detail, rerender, kit);   // PROF7
-  drawTemper(detail, rerender, kit, 'loom');   // CRAFT4: the tailor's
-  drawMasonBench(detail, rerender, kit);   // PROF11
-  drawCookFire(detail, rerender, kit);   // PROF9
-  drawJewellerBench(detail, rerender, kit);   // PROF10
-  drawAlchemyStation(detail, rerender, kit);   // PROF12
-  drawEnchantingStation(detail, rerender, kit);   // PROF12
+  drawStationTiles(detail, rerender, kit, [
+    ['forge', (d) => drawForge(d, rerender, kit)],
+    ['anvil', (d) => drawAnvil(d, rerender, kit)],   // PROF3
+    ['temper-anvil', (d) => drawTemper(d, rerender, kit, 'anvil')],   // CRAFT4: the smith's temper
+    ['workbench', (d) => drawWorkbench(d, rerender, kit)],   // PROF4
+    ['loom', (d) => drawLoom(d, rerender, kit)],   // PROF7
+    ['temper-loom', (d) => drawTemper(d, rerender, kit, 'loom')],   // CRAFT4: the tailor's
+    ['mason', (d) => drawMasonBench(d, rerender, kit)],   // PROF11
+    ['fire', (d) => drawCookFire(d, rerender, kit)],   // PROF9
+    ['jeweller', (d) => drawJewellerBench(d, rerender, kit)],   // PROF10
+    ['alchemy', (d) => drawAlchemyStation(d, rerender, kit)],   // PROF12
+    ['enchant', (d) => drawEnchantingStation(d, rerender, kit)],   // PROF12
+  ]);
+}
+
+/** MENU-ORDER (2026-10-12): a material card's name with its picture before it - the item the Stores withdraw it as, the
+ *  host's to make (`picture`); none (no data, or not made yet) is the name alone. */
+function matName(el, r, rerender) {
+  const n = el('b', null, r.name);
+  const pic = pictureNode(_provider?.picture?.(r.material, rerender) ?? null, el, 'prof-matpic');
+  if (pic) { if (n.prepend) n.prepend(pic); else n.append(pic); }
+  return n;
+}
+/** MENU-ORDER (2026-10-12): THE STATIONS AS TILES - each its picture and its short name, the ones worked here lit. */
+export const STATION_TILES = Object.freeze({
+  forge: ['Forge', 'forge'], anvil: ['Anvil', 'anvil'], 'temper-anvil': ['Temper (anvil)', 'temper'], workbench: ['Workbench', 'saw'],
+  loom: ['Loom', 'spool'], 'temper-loom': ['Temper (loom)', 'temper'], mason: ['Mason\'s bench', 'chisel'], fire: ['Fire', 'fire'],
+  jeweller: ['Jeweller\'s bench', 'gem'], alchemy: ['Alchemy', 'flask'], enchant: ['Enchanting', 'rune'],
+});
+/** AUDIT MENU-ORDER C2: WHERE A STATION IS WORKED, by the provider's own word - its station here, or none. A section read
+ *  for a press said "Away" at a forge with nothing to temper (its words alone: none to temper), and hid the word a last
+ *  piece tempered or disenchanted left there. */
+export const STATION_AT = Object.freeze({
+  forge: 'forge', anvil: 'forge', 'temper-anvil': 'forge', workbench: 'workbench', loom: 'loom', 'temper-loom': 'loom',
+  mason: 'mason', fire: 'fire', jeweller: 'jeweller', alchemy: 'alchemy', enchant: 'enchanter',
+});
+/** MENU-ORDER: what a tile says under its name - worked here, or where it is worked (its words, under the tiles, on a press). */
+export const STATION_TILE_WORDS = Object.freeze({
+  get here() { return t('prof.page.tile.here', 'Here'); }, get away() { return t('prof.page.tile.away', 'Away'); },
+  get hint() { return t('prof.page.tile.hint', 'Press a station to see where it is worked.'); },
+});
+/** MENU-ORDER: whether a station's section can be worked from here - it draws a press (a button, a field, a choice); one
+ *  that draws words alone ("is done at...") is a station the player is away from. Walked by hand, as every fake document
+ *  the pins stand on has children and a tag. */
+export function stationWorkable(node) {
+  for (const c of node?.children ?? []) {
+    if (/^(button|input|select|textarea)$/i.test(String(c.tagName ?? c.tag ?? ''))) return true;
+    if (stationWorkable(c)) return true;
+  }
+  return false;
+}
+const holdsHead = (node, id) => (node?.id === id || (node?.children ?? []).some((c) => holdsHead(c, id)));
+/**
+ * MENU-ORDER: THE STATIONS, TILED. A row of tiles, one a station - its picture, its name, Here or Away - over the
+ * stations. A station worked here stands below the tiles as it always has, and its tile takes the player to it; one the
+ * player is away from shows its words (where it is worked, what it costs there) only when its tile is pressed - the
+ * section is kept, hidden, so nothing it says is lost - where nine "is done at" paragraphs stood one after another. A
+ * station a press asked the page to land on (STATION-DOOR) is shown.
+ */
+function drawStationTiles(detail, rerender, kit, list) {
+  const { el } = kit;
+  const focus = _storesFocus;   // stationHead spends it as it draws
+  const drawn = [];
+  for (const [id, draw] of list) {
+    const box = el('div', 'prof-station');
+    draw(box);
+    if (!(box.children?.length)) continue;
+    const at = /** @type {any} */ (_provider)?.[STATION_AT[id]];
+    const here = typeof at === 'function' ? !!at() : stationWorkable(box);   // C2: the provider's word; a press in it where it has none
+    if (!here && focus && holdsHead(box, `prof-station-${focus}`)) _stores.awayPick = id;
+    drawn.push({ id, box, here });
+  }
+  if (!drawn.length) return;
+  const tiles = el('div', 'prof-stations');
+  for (const { id, box, here } of drawn) {
+    const [name, icon] = STATION_TILES[id] ?? [id, 'station'];
+    const t = el('button', `prof-stile${here ? ' here' : ''}${!here && _stores.awayPick === id ? ' on' : ''}`);
+    t.type = 'button';
+    t.setAttribute('data-dficon', icon);   // a fake document's node has no dataset
+    t.setAttribute('data-station', id);
+    if (!here) t.setAttribute('aria-expanded', _stores.awayPick === id ? 'true' : 'false');   // AUDIT MENU-ORDER U15: an away tile opens its words
+    t.append(el('span', 'prof-stile-name', name), el('span', 'prof-stile-state', here ? STATION_TILE_WORDS.here : STATION_TILE_WORDS.away));
+    t.onclick = () => {
+      if (here) { box.scrollIntoView?.({ block: 'start', behavior: 'smooth' }); return; }
+      _stores.awayPick = _stores.awayPick === id ? null : id;
+      rerender();
+    };
+    tiles.append(t);
+  }
+  detail.append(tiles);
+  const away = drawn.filter((d) => !d.here);
+  if (away.length) {
+    const notes = el('div', 'prof-awaynotes');
+    for (const { id, box } of away) { box.hidden = _stores.awayPick !== id; notes.append(box); }
+    if (!away.some((d) => d.id === _stores.awayPick) && !drawn.some((d) => d.here)) notes.append(el('p', 'prof-stile-hint', STATION_TILE_WORDS.hint));
+    detail.append(notes);
+  }
+  for (const { box, here } of drawn) if (here) detail.append(box);
 }
 
 /**
@@ -862,7 +951,7 @@ function drawCarryStores(detail, rerender, kit) {
   for (const r of rows) {
     const card = el('button', `prof-mat${_stores.picked === r.material ? ' on' : ''}`);
     card.type = 'button';
-    card.append(el('b', null, r.name), el('span', 'prof-count', r.total.toLocaleString('en-US')),
+    card.append(matName(el, r, rerender), el('span', 'prof-count', r.total.toLocaleString('en-US')),
       el('span', 'prof-split', [r.total ? storesSplit(r) : null, r.carried ? `${r.carried.toLocaleString('en-US')} carried` : null, r.uncounted ? BAG_PAGE_WORDS.uncountedSplit(r.uncounted) : null].filter(Boolean).join(' · ')));
     card.onclick = () => { _stores.picked = r.material; _stores.qty = Math.max(1, Math.min(_stores.qty, Math.max(r.total, r.carried))); _stores.word = null; rerender(); };
     grid.append(card);
@@ -912,15 +1001,17 @@ function drawCarryStores(detail, rerender, kit) {
     if ((pick.loose | 0) > 0) detail.append(el('p', 'px-note', looseGoodsLine()));   // AUDIT BAG-CRAFT A1: a carrying book's page
   }
   if (_stores.word) detail.append(el('p', 'prof-word', _stores.word));
-  drawForge(detail, rerender, kit);
-  drawAnvil(detail, rerender, kit);
-  drawWorkbench(detail, rerender, kit);
-  drawLoom(detail, rerender, kit);
-  drawMasonBench(detail, rerender, kit);
-  drawCookFire(detail, rerender, kit);
-  drawJewellerBench(detail, rerender, kit);
-  drawAlchemyStation(detail, rerender, kit);
-  drawEnchantingStation(detail, rerender, kit);
+  drawStationTiles(detail, rerender, kit, [   // MENU-ORDER
+    ['forge', (d) => drawForge(d, rerender, kit)],
+    ['anvil', (d) => drawAnvil(d, rerender, kit)],
+    ['workbench', (d) => drawWorkbench(d, rerender, kit)],
+    ['loom', (d) => drawLoom(d, rerender, kit)],
+    ['mason', (d) => drawMasonBench(d, rerender, kit)],
+    ['fire', (d) => drawCookFire(d, rerender, kit)],
+    ['jeweller', (d) => drawJewellerBench(d, rerender, kit)],
+    ['alchemy', (d) => drawAlchemyStation(d, rerender, kit)],
+    ['enchant', (d) => drawEnchantingStation(d, rerender, kit)],
+  ]);
 }
 
 /** What the Stores make of a recipe now: the most it can smelt (every input's units over its need), to SMELT_MAX. */
@@ -959,6 +1050,8 @@ function workRows(detail, rerender, el, recipes, state, verb, busyVerb, go, shor
   const p = /** @type {ProfPagesProvider} */ (_provider);
   const book = p.book;
   const held = (k) => workOf(book, k);
+  const cards = el('div', 'prof-works');   // MENU-ORDER: the works a grid of cards - what it makes, from what, how many, the press
+  detail.append(cards);
   for (const r of recipes) {
     const most = smeltable(r, held);
     const row = el('div', `prof-smelt${most ? '' : ' prof-locked'}`);
@@ -981,7 +1074,7 @@ function workRows(detail, rerender, el, recipes, state, verb, busyVerb, go, shor
       rerender();
     };
     row.append(qty, b);
-    detail.append(row);
+    cards.append(row);
   }
 }
 
@@ -1161,6 +1254,8 @@ export function patternLead(/** @type {{ recipes: readonly any[] }} */ pattern, 
  * @param {{ stand: (r: any) => Standing, word: (r: any, s: Standing) => string, locked?: boolean }} how
  */
 export function patternRows(detail, el, list, state, rerender, { stand, word, locked = false }) {
+  const grid = el('div', 'prof-recipes');   // MENU-ORDER: the patterns a grid of cards, not a column of lines
+  detail.append(grid);
   for (const pt of patternsOf(list)) {
     const lead = patternLead(pt, stand);
     const s = stand(lead);
@@ -1169,7 +1264,7 @@ export function patternRows(detail, el, list, state, rerender, { stand, word, lo
     row.disabled = locked;
     row.append(el('b', null, pt.name), el('span', 'prof-split', word(lead, s)));
     row.onclick = () => { const r = pickedOf(pt, stand, state.madeOf); state.pattern = pt.id; state.picked = r.id; state.madeOf = r.madeOf; rerender(); };
-    detail.append(row);
+    grid.append(row);
   }
 }
 /** CRAFT2: the recipe a station's box is for - the picked one, where it is still of the pattern shown in `list`. */

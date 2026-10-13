@@ -1062,7 +1062,7 @@
   {
     "name": "PROF10-pages-no-bench",
     "file": "src/ui/profPages.js",
-    "old": "  drawJewellerBench(detail, rerender, kit);   // PROF10\n",
+    "old": "    ['jeweller', (d) => drawJewellerBench(d, rerender, kit)],   // PROF10\n",
     "new": "",
     "tests": [
       "test/prof10_client.test.js"

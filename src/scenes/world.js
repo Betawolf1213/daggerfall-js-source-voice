@@ -280,12 +280,12 @@ import { treeKind, isTreeRecord, FOREST_STAMP } from './treeHost.js';   // PROF4
 import { createLowPolyTrees } from '../systems/lowPolyTreesAssets.js';   // LPT1: Low Poly Trees - the host's one door
 import { LPT_SCALE_MAX, lptVariety, buildTreeSet } from '../world/lowPolyTrees.js'; import { naturePicture } from '../world/naturePicture.js';   // LPT1: each tree's own draw, and a near pixel's set; AUDIT 05b A12: which picture a nature flat stands as, every host's one choice
 import { realForestsOn, FOREST_HIDDEN_LOCATION_TYPES, roadVergesOn, climateBlendOn } from './shared.js';   // FOREST1: the Real forests switch, and the places the woods hide; VERGE1: the clear roadsides' switch; ECOTONE1: the blended climates'
-import { landformsOn, tamrielLandOn, tamrielTraceOn, etherSeaOn, etherCrossOutOn } from './shared.js';   // LANDFORM1-3: the Landforms switch; TAMRIEL2: the land beyond the Bay's; TAMRIEL3: the trace's door; ETHER-SEA: the Etheric Sea's
+import { landformsOn, tamrielLandOn, tamrielTraceOn, etherSeaOn, etherCrossOutOn } from './shared.js';   // LANDFORM1-3: the Landforms switch; TAMRIEL2: the land beyond the Bay's; TAMRIEL3: the trace's door; ETHER-SEA: the Eltheric Ocean's
 import { preloadTamrielTrace } from '../ui/tamrielTrace.js';   // TAMRIEL3: Daggerfall's own map of Tamriel, off the player's two files
 import { fitBayToPicture } from '../world/tamrielLand.js';   // TAMRIEL3: where the Bay stands on it
 import { groundWoods, groundClimateIndex } from '../world/tamrielGround.js';   // TAMRIEL2: the continent's ground round the Bay, for the kernels and the far ring
-import { etherWoods, etherClimateIndex, etherPoliticIndex, etherFrame, inEther, inEtherLaw, isleAt, islesNear, veilhaven, ETHER_HARBOUR_REACH, ETHER_SEA_NAME, CROSS_X, CROSS_LAND_PX, etherLight, ETHER_KEY_TINT } from '../world/ethericSea.js';   // ETHER-SEA: the Etheric Sea's ground and its box
-import { etherTemplates, etherTemplateOf, synthesizeEtherLocation, ETHER_REGION, ETHER_REGION_NAME } from '../world/etherPlaces.js';   // ETHER-PLACES: the isles' towns and ruins
+import { etherWoods, etherClimateIndex, etherPoliticIndex, etherFrame, inEther, inEtherLaw, onBayOrEther, isleAt, islesNear, veilhaven, ETHER_HARBOUR_REACH, ETHER_SEA_NAME, ETHER_SEA_TITLE, CROSS_X, CROSS_LAND_PX, etherLight, ETHER_KEY_TINT } from '../world/ethericSea.js';   // ETHER-SEA: the Eltheric Ocean's ground and its box
+import { etherTemplates, etherTemplateOf, synthesizeEtherLocation, etherPlaceIsle, etherPlaceRows, ETHER_REGION, ETHER_REGION_NAME } from '../world/etherPlaces.js';   // ETHER-PLACES: the isles' towns and ruins; ETHER-OW: their pixels and far rows, the Overworld's
 import { tamrielFrameInBay, inBay as onTheBay } from '../world/tamrielFrame.js';   // TAMRIEL2: the frame the world streams over, and the Bay's own ground
 import { createLandforms, landformLiftField, landformSites, landformClimates, cliffFadeAt } from '../world/landforms.js';   // LANDFORM1-3: the shaped ground, and what it lifts a point by; AUDIT LANDFORMS II I1: the lift's fade beside the sea
 import { vergeClear, natureReach, pathTileMask, lptFitCap } from '../world/roadVerge.js';   // VERGE1: a wild flat's footprint off the roads; LPT-FIT: every Low Poly tree's crown off them
@@ -297,6 +297,7 @@ import { fishKind } from './fishHost.js';   // PROF8: Fishing's casts and school
 import { utcDayOfMs } from '../net/nodeLaw.js';   // PROF8: a haul's UTC day
 import { registerPlayerKillListener } from '../systems/playerKills.js';   // PROF7: the player's own kill stamps a body
 import { setProfessionsPages, forgeOffered, focusStoresStation, stationColdLine } from '../ui/profPages.js';   // PROF1: the Professions and Stores pages on the character sheet's rail; CARP-YARD: the joinery's bench opens it
+import { materialPicture, itemPicture } from '../ui/menuPicture.js';   // MENU-ORDER: a material's and a piece's picture for the menus' rows
 import { createSaddleHost } from './saddleHost.js';   // STEED-UI: the saddle panel - the horse and the wagon on screen (Enhanced Plus)
 import { setHoldingsProvider, stableProviderFor } from '../ui/holdingsPages.js';   // HOLDINGS: the Stable and the Fleet pages on the pause menu's Holdings tab
 import { fleetBook, fleetShip, titleDeed, knowShip, retitle, setShipPort, forgetShip, fleetSaveSlot, FLEET_SAVE_VENDOR } from '../systems/fleet.js';   // HOLDINGS: the Fleet's ledger and its book of titles
@@ -474,7 +475,7 @@ import { createWildAlert, noticeChance, WILD_MARK, WILD_MARK_S } from '../system
 import { drawWildMarks, WILD_MARK_RANGE } from '../ui/wildMarks.js';   // WILD-ALERT: the "!" over an alerted foe
 import { playerOnPathAt, pathsDataPoint } from '../systems/travelPaths.js';   // RATE-LAW: the traveller on a road's lane or off it
 import { threatCap, foePaced } from '../systems/travelThreat.js';   // OW6: the journey slows as enemies close; ENEMY-PACE's floor, fixed (RATE-LAW)
-import { farPlaces, settlementPixels, farDistanceText, PIXEL_KM } from '../systems/travelFarPlaces.js';   // TV5: the far places, held at the view's edge
+import { farPlaces, settlementPixels, farDistanceText, PIXEL_KM, TV_FAR_RANGE } from '../systems/travelFarPlaces.js';   // TV5: the far places, held at the view's edge
 import { dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M } from '../systems/travelDungeons.js';   // TV6: the dungeons, discovered on approach; AUDIT OW3 D1/D3: off the map rows, and the spawns with them; AUDIT OW4 D4/D6: the far found spawns, the last leg's start
 import { routeGround, joinPoint, routeDrawPoints, TV_MOUNTAIN_CLIMATE } from '../systems/travelRoute.js';   // OW-MOUNTAINS, OW-ROADSIDE; AUDIT OW3 J4: the drawn route's points; AUDIT OW4 J3: the ground read once
 import { bandsNear, wanderAt, bandSight, bandChaseStep, bandLabel, bandMakeSeed, bandSizeOf, bandLevelOf, BAND_LIFE_MS, BAND_CONTACT_M, BAND_CHASE_MPS, BAND_STAND_M, BAND_STAND_MIN_M, BAND_STAND_RETRY_MS, BAND_STAND_TRIES } from '../systems/travelBands.js';   // TV7: the roaming bands; OW6: their number and their level
@@ -586,6 +587,7 @@ import { questActionsExtensionTemplates } from '../systems/quest/questActionsExt
 import { entityMaxEncumbrance } from '../combat/formulas.js';   // FORAGE1: PlayerEntity.MaxEncumbrance, for Foraging's last check
 import { packCapacityKg } from '../systems/naval/crewCompanions.js';   // COMPANION-WEIGHT: what his pack carries
 import { createComeSailAwayPool, CULL_DETAIL_PX, FADE_FLATS as CSA_FADE_FLATS } from './comeSailAwayPool.js';   // CSA-B: Come Sail Away's boats, drawn
+import { createShipPortraits } from './shipPortraits.js';   // MENU-ORDER: a ship's own picture on the shipmaster's card
 import { createComeSailAwayPeers } from './comeSailAwayPeers.js';   // CSA-J: another player's boats, seen
 import { createComeSailAwayAboard, CSA_ABOARD_GRACE, deckPose as csaDeckPose, helmWord as csaHelmWordOf, localOf as csaLocalOf, worldOf as csaWorldOf } from './comeSailAwayAboard.js';   // CSA-K: another player's boat, boarded; FIELD BUGS 2026-09-29 (the sea) #1: the deck's frame, the helmsman's place
 import { csaWireRecord, csaRecordKey } from '../systems/comeSailAwayWire.js';   // CSA-J: my boats, said
@@ -608,7 +610,7 @@ import { ComeSailAwayRenderer, softParticleTexture as csaSoftParticleTexture } f
 import { createNavalHost, hullBoxOf as navalHullBoxOf, NAVAL_SAVE_VENDOR, NAVAL_TAG_RANGE } from './navalHost.js';   // NAV-H: the sea fight - the Iliac Bay's ships, the guns, boarding, the law and the word
 import { createCaptainLedger, CAPTAIN_SAVE_VENDOR, perksOf, PERKS_REFUSED_AT, logLines } from '../systems/naval/captainLedger.js';
 import { createHarbourOffice } from './harbourOffice.js';
-import { createEtherHost } from './etherHost.js';   // ETHER-SEA: the Etheric Sea's waters, charts, strands and legends
+import { createEtherHost } from './etherHost.js';   // ETHER-SEA: the Eltheric Ocean's waters, charts, strands and legends
 import { createCrossingGate, crossingWayAt, crossingTarget, crossingRows, crossingWords, CROSS_DAYS, CROSS_CHECK_S, CROSS_REFUSED, CROSS_STALE, CROSS_FAILED } from '../systems/naval/etherCrossing.js';   // ETHER-CROSSING: the voyage across
 import { mulberry32 } from '../combat/bloodArt.js';   // CAPT-BOARD: a site's point off its seed
 import { CHART_TEMPLATE } from '../systems/naval/treasureCharts.js';   // CAPT-CHARTS: a treasure chart read   // CAPT-BOARD: the harbourmaster's board, the contracts, the letters
@@ -957,7 +959,7 @@ import { PrecipitationRenderer } from '../render/precipitation.js';
 import { warmPrograms } from '../render/warmPrograms.js';
 import { ROTOR_HUB, rotorPhase, advanceRotor, mountRotor, MILL_SOUND, millSoundPosition } from '../world/windmills.js';   // WM2b: the sails; WM4c: the hum
 import { BODY } from '../world/windmillMesh.js';   // WM2d: the tower, for the collider
-import { remapSubMeshes } from '../world/texRemap.js';   // WM3: the one climate/dungeon remap seam
+import { remapSubMeshes, markRemapLaw } from '../world/texRemap.js';   // WM3: the one climate/dungeon remap seam; AUDIT MENU-ORDER C3: a table named by its law
 import { homeLookRemap, HOME_LOOK_BUILD_WAIT_MS } from '../world/homeLook.js';   // HOME-LOOK: a painted house's own table
 import { createStandingHorses, isStandingHorseFlat } from '../world/standingHorses.js';   // STAND-HORSE: the town's and the Stable's horses as the 3D horse
 import { isStandFlat, standFlatId, standFlatRecord } from '../world/standFlats.js';   // STAND-FLAT: a town horse and a person's flat no StaticNPC holds, a batch each
@@ -1055,6 +1057,7 @@ import { rayUprightCapsule } from '../world/passiveFish.js';   // DW-E3: a fish'
 import { installDeepWatersFishIcons, createFishItem, normalizeFishItems, fishPictureUrl, fishIconArchive } from '../systems/deepWatersFishItems.js';   // DW-E3: the fish as items
 import { clearEdgeBlackPixels } from '../world/underwaterDecorations.js';   // DW-E3: a fish's picture, edge-cleaned   // DW-E2: the seafloor's decorations   // DW-D: DeepWaterRuntime's load grace
 import { carvedFloorLocalY } from './deepWatersHost.js';   // DW-D: the shore probes see no terrain over a carved cell
+import { etherPlaceRects } from '../world/etherWatersBake.js';   // ETHER-DEEP: the Eltheric Ocean's places' rects, for its own bake
 import { breathStep, setWaterBreathingRule } from '../systems/breath.js';   // DW-D: the dungeon's breath law, on the open sea; ApplyArgonianInfiniteBreath
 import { CLASSIC_UPDATE_INTERVAL } from '../characters/weaponStates.js';   // DW-D: PlayerEntity's classic cadence, the dungeon's import
 import { RACES } from '../systems/races.js';   // DW-D: ArgonianInfiniteBreath
@@ -1342,7 +1345,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     maps.getClimateIndex = groundClimateIndex(maps.getClimateIndex.bind(maps));
   }
   StreamingWorldState.frame = tamrielLand ? tamrielFrameInBay() : null;
-  // ETHER-SEA (bible/03-World/Etheric-Sea.md): THE ETHERIC SEA'S GROUND - its isles and its open water, composed over
+  // ETHER-SEA (bible/03-World/Eltheric-Ocean.md): THE ELTHERIC OCEAN'S GROUND - its isles and its open water, composed over
   // whatever the world grows past the Bay (world/ethericSea.js: its own box, far north of the continent's frame; the
   // worker composes its copy the same way), its climate read beside it, and its box a frame the world streams over
   // (the crossing's landfall and a save made there build from it).
@@ -1667,7 +1670,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // a region's cities apart: its Hollow stood by another city, on another pixel, in another room.
   const _sdCityRows = params.has('online') ? _classicRows.filter((loc) => !!hubClaim(loc, maps.getRegionName(loc.regionIndex))) : [];
   const _sdTemplateRows = params.has('online') ? sdTemplates(_classicRows, isMainStoryDungeon) : [];
-  // ETHER-PLACES (world/etherPlaces.js): THE ISLES' TEMPLATES - the towns and the ruins an Etheric isle's place may
+  // ETHER-PLACES (world/etherPlaces.js): THE ISLES' TEMPLATES - the towns and the ruins an Eltheric isle's place may
   // clone, off the SAME rows (the game's own, as MAPS.BSA holds them: every client clones the same place), kept before
   // the rows go
   const _etherTemplates = etherSea ? etherTemplates(_classicRows ?? _hubRows.map(classicRow).filter(Boolean), isMainStoryDungeon) : null;
@@ -2086,6 +2089,13 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!n) { const it = mintPiece(piece, piece.provenance); n = it ? itemLongName(it) : 'a crafted piece'; _pieceNames.set(piece.provenance, n); }
     return n;
   };
+  /** MENU-ORDER: a crafted piece's picture - the piece its record mints, minted once and kept by its provenance id. */
+  const _pieceItems = new Map();
+  const marketPiecePicture = (piece, wake) => {
+    if (!piece?.provenance) return null;
+    if (!_pieceItems.has(piece.provenance)) { let it = null; try { it = mintPiece(piece, piece.provenance); } catch { it = null; } _pieceItems.set(piece.provenance, it); }
+    return itemPicture(_pieceItems.get(piece.provenance), { onReady: wake });
+  };
   /** PROF5: the crafted pieces this character may list - in the pack, none worn, locked or bound (TRADE1's refusals), and
    *  the home's crafted furniture not set down. AUDIT 30 C2: none enchanted since its craft - the market mints a piece
    *  again from its record, and the item maker's work would be lost on the way (smithItems asMinted). */
@@ -2427,7 +2437,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     return loc || spawnedDungeonAt(px, py);
   }
   /** ETHER-PLACES (world/etherPlaces.js): THE PLACE AN ISLE'S CENTRE PIXEL STANDS - a port's town or a ruin's dungeon,
-   *  cloned off the game's own rows under the isle's own id, name and index, the region it answers for the Etheric Isles'
+   *  cloned off the game's own rows under the isle's own id, name and index, the region it answers for the Eltheric Isles'
    *  (etherPlaces.js ETHER_REGION) and its climate the isle's - stood in the index once (a building's door, a quest's
    *  site and a save's records read it there), or null: the open sea, an isle's other pixels, a wild isle, a rock. */
   function etherPlaceAt(px, py) {
@@ -2436,12 +2446,18 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (had?.ether) return had;
     const isle = isleAt(px, py);
     if (!isle || isle.px !== px || isle.py !== py) return null;
-    const template = etherTemplateOf(_etherTemplates, isle);
-    if (!template) return null;
-    const loc = synthesizeEtherLocation(template, isle, { regionIndex: ETHER_REGION, regionName: REGION_NAMES[ETHER_REGION] ?? ETHER_REGION_NAME, politic: 128 + ETHER_REGION, climate: getWorldClimateSettings(isle.climate) });   // AUDIT CAPTAIN'S SEA P8: its region's own name - the quests resolve and gate a site by it
+    const loc = etherPlaceClone(isle);
+    if (!loc) return null;
     _locIndexGen += 1;
     locationIndex.set(key, loc);
     return loc;
+  }
+  /** ETHER-OW: an isle's place, cloned and NOT stood (etherPlaceAt stands it as its pixel builds) - the Overworld marks a
+   *  far isle's place without building it (tvSpawnAt's law), or null: a wild isle, a rock, no templates. */
+  function etherPlaceClone(isle) {
+    const template = etherTemplateOf(_etherTemplates, isle);
+    if (!template) return null;
+    return synthesizeEtherLocation(template, isle, { regionIndex: ETHER_REGION, regionName: REGION_NAMES[ETHER_REGION] ?? ETHER_REGION_NAME, politic: 128 + ETHER_REGION, climate: getWorldClimateSettings(isle.climate) });   // AUDIT CAPTAIN'S SEA P8: its region's own name - the quests resolve and gate a site by it
   }
   /** AUDIT OW4 D4: THE CLONE a pixel's spawn IS - the template its hash picks, dressed as where it stands (region, politic,
    *  climate, elite). Pure in the salt, the pixel and the map files, so the one answer serves spawnedDungeonAt (which stands
@@ -4451,6 +4467,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // made further down; the first pixels promote before it exists, so the question is late-bound (nothing is up yet).
   let _dwOverlayUp = () => false;
   const dwPlaying = () => !_dwOverlayUp();
+  const _etherRectScratch = new Uint8Array(128 * 128);   // AUDIT ETHER-OW C1-4: the isles' templates' tilemap, one for all
   const deepWaters = dwRender ? createDeepWatersHost({
     woods, woodsBytes,
     locations: [...locationIndex].map(([k, loc]) => { const i = k.indexOf(','); return [+k.slice(0, i), +k.slice(i + 1), loc]; }),
@@ -4463,6 +4480,11 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     onFloorRefreshed: (e) => dwDecor?.onFloorRefreshed(e),   // DW-E2: DeepWaterFloorBuilder.OnFloorRefreshed -> UnderwaterDecorations.HandleFloorRefreshed
     onSeafloorBuilt: (e) => oceanHoles?.seafloorBuilt(e),   // OH-B: DeepWaterFloorBuilder.OnSeafloorBuilt -> OceanHoles.OnDeepWaterFloorBuilt
     canMutateTerrainData: () => dwCanMutateTerrainData(performance.now() / 1000, dwPlaying()),   // OH-B: RefreshLoadedTile's gate
+    // ETHER-DEEP (bible/03-World/Eltheric-Ocean.md): the Eltheric Ocean carved by its own bake (world/etherWatersBake.js)
+    // - its places' rects read off the isles' templates once, as the Bay's are off its locations: a template's rect is
+    // its blocks' alone, read as a clone reads them (the isles' region and an isle's own index - WD3 names the town
+    // whose blocks come next, and no variant names a clone)
+    ether: etherSea ? etherPlaceRects(_etherTemplates, (t) => setLocationTiles({ ...t, regionIndex: ETHER_REGION, locationIndex: -1000 }, maps, blocks, _etherRectScratch.fill(0))) : null,   // AUDIT ETHER-OW C1-4: one tilemap, cleared per template (deepWatersLocationRects' own way)
   }) : null;
   /** OH-B: THERE'S A HOLE IN THE BOTTOM OF THE OCEAN 1.1.0 (jet082, vendor/ocean-holes/) - made below, after the decorations its
    *  pits keep out; the sea's floor builds are late-bound to it (a promote lands only after the world is up). */
@@ -5726,7 +5748,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // deferred to the pump, nearest first - and built there, the port's own
     // whole-stream carve (Port-Ledger (9): the mod's pump builds only a near
     // pixel, and a far one's surface).
-    const dwNear = deepWaters && onTheBay(px, py) ? deepWaters.promoteNear({ px, py, samples, tilemap, tilemapBytes }) : null;   // TAMRIEL2: the mod's bathymetry is the Bay's
+    const dwNear = deepWaters ? deepWaters.promoteNear({ px, py, samples, tilemap, tilemapBytes }) : null;   // TAMRIEL2: the mod's bathymetry is the Bay's - ETHER-DEEP: and the Eltheric's own; the host's promote is the one gate, for every arm (scenes/deepWatersHost.js), and answers nothing past the map
     // WM3: this pixel's climate law, bound once - the one argument the
     // shared remap seam takes that differs between the climate hosts
     // and the dungeon.
@@ -5824,7 +5846,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // Per-pixel climate swap table: pixels from the swapped archive, UVs
     // from the original (the SetDungeonTextures pattern; verbatim
     // MaterialReader.ChangeClimate semantics).
-    const texRemap = new Map();
+    const texRemap = markRemapLaw(new Map(), `climate:${townClimateBase}.${season}`);   // AUDIT MENU-ORDER C3: named by the law it is built in (townClimateArchive's)
     const models = []; // { gpu, local } - local precomposed pixel-local matrix
     // PERF4: the pixel's static models, merged as they arrive (the
     // transform rides the build's own awaits) into one mesh per pixel,
@@ -8647,6 +8669,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const _csaOnAtLoad = latchModLoaded('come-sail-away', (() => { try { return modSetting('come-sail-away', 'Enabled') !== false; } catch { return false; } })());   // AUDIT PRE-MERGE 0928 S4: and the mod's other doors (the shelf's rows, its keys, its effect's restore) read this answer too
   const csaOn = () => _csaOnAtLoad;
   const csa = createComeSailAwayPool({ renderer, pipeline, log: console });
+  /** MENU-ORDER: the shipmaster's cards' pictures - each hull's portrait boat, drawn after the frame's own pass (below) */
+  const shipPortraits = createShipPortraits({ renderer, canvas, doc: typeof document !== 'undefined' ? document : null, portrait: (hull) => (csaOn() ? csa.portrait(hull) : null) });
   /** NAV-H: the naval host (made below, with Come Sail Away's runtime) - declared here, beside the pool whose sea list
    *  it fills, because the boats' colliders, rays and particles below read its ships. */
   let naval = null;
@@ -9534,7 +9558,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  deed, the variant box and the shipwright answer to the port the player was shown. */
   // SHIPYARDS (BOOT-TDZ): `seaPixel` - the port's one water law - is declared above the stream now, beside the towns' places
   // (townPlacesFor reads it in the boot's own first build).
-  /** ETHER-PORTS (bible/03-World/Etheric-Sea.md): the Etheric isle whose town stands on a map pixel - a port isle's
+  /** ETHER-PORTS (bible/03-World/Eltheric-Ocean.md): the Eltheric isle whose town stands on a map pixel - a port isle's
    *  centre - or null (the Bay's world, the open sea, any other isle). */
   const etherPortAt = (x, y) => {
     if (!etherSea || !inEther(x, y)) return null;
@@ -10407,15 +10431,19 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     townTalk.showOverlay(win, () => { if (why === 'hold') navalOpenHold(model, hold); });
     return true;
   }
-  /** ETHER-CHART: the chart of the Etheric Sea over the world (navalPlunderDoor.js's chart door) - the ship's pixel and
+  /** ETHER-CHART: the chart of the Eltheric Ocean over the world (navalPlunderDoor.js's chart door) - the ship's pixel and
    *  heading, the isles charted, the legends heard of (etherHost.js chart). Answers whether it opened. */
   function openEtherChart() {
     // AUDIT CAPTAIN'S SEA X16: the ship's heading at her helm (the camera's yaw is where the captain looks - astern, as often)
     const heading = () => { const boat = csaRuntime?.isSailing?.() ? csaRuntime.state.CurrentBoat : null; if (!boat) return cam.yaw; const f = boatForward(boat); return Math.atan2(f[0], f[2]); };
     const word = () => { const p = playerTravelPixel(); return etherHost.chart(p.x, p.y, heading()); };
-    const win = createEtherChartOverlay({ word });
+    // ETHER-OW (2026-10-13, the owner: "Also allow the player to zoom out into the overworld like in the Iliac Bay for easy
+    // travel"): THE CHART'S OVERWORLD DOOR - the held map's own (TV1: shown where the view can rise, a driver's never),
+    // taken once the chart is down and its slot empty (the slot is emptied before the occupant is told)
+    let why = 'close';
+    const win = createEtherChartOverlay({ word, overworld: () => !!travelView && travelViewAllowed().ok, onClose: (reason) => { why = reason; } });
     if (!win) return false;
-    townTalk.showOverlay(win);
+    townTalk.showOverlay(win, () => { if (why === 'overworld') travelView?.enter(); });
     return true;
   }
   /** AUDIT NAV1 (the helm): the shipwright's window over the world (navalPlunderDoor.js's yard door). */
@@ -10484,7 +10512,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     stow: (hold, item) => addItem(hold, item),   // CAPT-TRADE: goods into her hold
     etherGoods: () => etherOut,   // AUDIT CAPTAIN'S SEA B16: the other sea's goods listed where the captain may sail for them
   });
-  // ETHER-SEA (bible/03-World/Etheric-Sea.md): THE ETHERIC SEA'S HOST - its waters (the naval host's `where`), the isles
+  // ETHER-SEA (bible/03-World/Eltheric-Ocean.md): THE ELTHERIC OCEAN'S HOST - its waters (the naval host's `where`), the isles
   // charted as they are sighted, the wild isles' strands (sites of the naval host's), its legends' coming and their ends,
   // and its harbourmasters' rumours and charts - over the same ledger
   const etherHost = createEtherHost({
@@ -10496,7 +10524,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     say: (text, s) => townTalk.say(text, s),
     mid: (text, s) => setMidScreenText(text, s),
   });
-  /** ETHER-SEA: the Etheric Sea's waters at the player's pixel (etherHost.js `waters`), or null in the Bay's world. */
+  /** ETHER-SEA: the Eltheric Ocean's waters at the player's pixel (etherHost.js `waters`), or null in the Bay's world. */
   const etherWatersHere = () => { if (!etherSea) return null; const p = playerTravelPixel(); return etherHost.waters(p.x, p.y); };
   // CAPT-CHARTS: a treasure chart USED is read - its cache marked on the captain's charts and the chart spent (its words
   // on the pack's line either way)
@@ -10525,7 +10553,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   };
   naval = createNavalHost({
     captain: captainDeps,   // CAPT-LOG: the ledger's door
-    ether: etherSea ? {   // ETHER-SEA: the Etheric Sea's door - its legends, a corsair's papers, a strand's good
+    ether: etherSea ? {   // ETHER-SEA: the Eltheric Ocean's door - its legends, a corsair's papers, a strand's good
       legendHere: (px, py, o) => etherHost.legendHere(px, py, o),
       legendEnded: (id, act) => { const r = etherHost.legendEnded(id, act); captainSay(); return r; },
       papers: (cls, seed, px, py) => etherHost.papers(cls, seed, px, py),
@@ -10551,7 +10579,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       dir: [Math.sin(cam.yaw) * Math.cos(cam.pitch), Math.sin(cam.pitch), Math.cos(cam.yaw) * Math.cos(cam.pitch)],
     }),
     level: () => playerEntity.level ?? 1,
-    where: () => { const p = playerTravelPixel(); const nearPort = navalNearPort(); const ether = etherWatersHere(); return { px: p.x, py: p.y, region: _questRegionIndex(), day: Math.floor(worldMinutes() / 1440), nearPort, port: nearPort ? navalPortHere() : null, waters: ether ? 'ether' : watersOf({ nearPort, portPx: navalPortPx() }), ether, capitals: navalCapitals(), cityLights: isCityLightsOn(minuteNow()), night: isNight(minuteNow()) }; },   // ETHER-SEA: the Etheric Sea's band and depth, and whether she is in the Veil   // CAPT-BOARD: the port lain at   // AUDIT WK-N5: the lanterns' hours and the dark's, apart - CAPT-WATERS: the deep waters
+    where: () => { const p = playerTravelPixel(); const nearPort = navalNearPort(); const ether = etherWatersHere(); return { px: p.x, py: p.y, region: _questRegionIndex(), day: Math.floor(worldMinutes() / 1440), nearPort, port: nearPort ? navalPortHere() : null, waters: ether ? 'ether' : watersOf({ nearPort, portPx: navalPortPx() }), ether, capitals: navalCapitals(), cityLights: isCityLightsOn(minuteNow()), night: isNight(minuteNow()) }; },   // ETHER-SEA: the Eltheric Ocean's band and depth, and whether she is in the Veil   // CAPT-BOARD: the port lain at   // AUDIT WK-N5: the lanterns' hours and the dark's, apart - CAPT-WATERS: the deep waters
     say: (text, seconds) => townTalk.say(text, seconds),
     mid: (text, seconds) => setMidScreenText(text, seconds),
     shake: (amount) => betterAmbience.weaponKick(amount),   // FIELD-GUN6's door: a shake that is not a wound, under the player's own maxShake
@@ -10717,6 +10745,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       model: (view) => shipyardHost.model(site, view),
       act: (verb, a, b) => shipyardHost.act(site, verb, a, b),
       onDoor: (fn) => { door = typeof fn === 'function' ? fn : null; },
+      picture: (hull, where) => shipPortraits.picture(hull, where),   // MENU-ORDER: her own picture on her card
     });
     if (!win) return false;
     townTalk.showOverlay(win, () => { const fn = door; door = null; if (fn && fn() === false) openShipyard(site, 'fleet'); });
@@ -10749,7 +10778,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  stowPlunder) - ahead of Come Sail Away's own transition, while my boats still stand. Never on a load: the loaded
    *  save's hold is the one that stands. */
   const navalStow = () => { if (!_loading) naval?.stowPlunder?.(); };
-  // ETHER-CROSSING (systems/naval/etherCrossing.js; bible/03-World/Etheric-Sea.md): THE CROSSING - asked at a helm in the
+  // ETHER-CROSSING (systems/naval/etherCrossing.js; bible/03-World/Eltheric-Ocean.md): THE CROSSING - asked at a helm in the
   // crossing waters (out) and in the Veil (home), once each time the ship comes into them, and sailed: the helm let go,
   // the jump to the landfall, the ship at whose helm the captain stood brought round where she floats there (her crew and
   // her hold aboard her) and her helm taken again, the voyage's days on the clock.
@@ -12664,6 +12693,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const alchemyHall = () => myHall('alchemy');
       setProfessionsPages({
         book: profBook, name: (k) => materialLabel(k), withdraw: (k, n) => profBook.withdraw(k, n, profMint),
+        picture: (k, wake) => materialPicture(k, { onReady: wake }),   // MENU-ORDER: a material card's picture
         settle: () => profBook.settle(profMint, profMintCraft),   // AUDIT 29 C4: a kept withdrawal asked again when the Stores page opens; PROF3: and a kept craft
         // BAG1 (bible/06-Systems/Materials-Bag.md): THE STORES PAGE'S OTHER HALF - what is carried put in (the bag's first,
         // then the pack's), in a town; the bag's load, and the room the bag and the pack have left
@@ -13512,7 +13542,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     eye: () => cam.pos,
     cull: (box) => yardCull(box),   // PERF-YARD: the pieces culled as the town's own models are
     range: () => getPref('yardRange'),   // YARD-RANGE: how far other players' yards are drawn (the Other players card)
-    collider: () => collider, meshes: { getGpuMesh, cpuModels }, renderer, getTexture, uploadRecord, uploadRecordFrame,
+    collider: () => collider, meshes: { getGpuMesh, cpuModels, hold: (kind, key) => pipeline.holdPlace?.(kind, key) ?? null }, renderer, getTexture, uploadRecord, uploadRecordFrame,   // AUDIT MENU-ORDER R4: a place's hold, for the decorator's tiles
     iconUrl: (a, r) => loadIcon(a, r, { scale: 1 }),
     scanDeps: () => decorScanDeps({ blocks, arch, getTexture }),   // DECOR-DUNGEON: the interior host's own constructor
     seasonal: () => (seasonsActive ? seasons : null),   // DECOR-OUTDOOR: a yard's trees in Seasons of the Iliac Bay's season, as the town's
@@ -14160,6 +14190,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         : (mode === 'notebook' ? 'notes' : 'quests'),
       questMessages: () => questBridge?.machine.getAllQuestLogMessages() ?? [],
       notebook: () => questBridge?.notebook ?? null,
+      shelfDoor: () => questBridge?.journalClean ?? null,   // QUEST-SHELF-MAIN: the chronicle's Abandon, the pause tab's own door
       // QUEST1: the Share button's own two hooks - named above (with the
       // dungeon delegation this now feeds explained there).
       partyMembers: partyMembersHere,
@@ -14900,7 +14931,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // AUDIT CAPTAIN'S SEA G2/P7: a landing made for a pixel this game does not stream, said where the player now stands
     // (below the arrival's statements, which the party's boat pins run over stand-ins: partyBoatTeleportFix)
     if (_unstreamedLanding) {
-      townTalk.say(_unstreamedLanding === 'ether' ? 'The Etheric Sea is closed in this game - you wake in the Bay\'s waters.' : 'That ground does not stand in this game - you wake at the edge of the Iliac Bay.', 7);
+      townTalk.say(_unstreamedLanding === 'ether' ? `${ETHER_SEA_TITLE} is closed in this game - you wake in the Bay's waters.` : 'That ground does not stand in this game - you wake at the edge of the Iliac Bay.', 7);
       _unstreamedLanding = null;
     }
 
@@ -15094,6 +15125,11 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       position: shipMemory({ mapPixel: here, pos: [player.pos[0], groundFrameHeight(player.pos[1] - state.compensation[1], player.pos[0], player.pos[2]) + state.compensation[1], player.pos[2]], yaw: cam.yaw, terrainScale: STREAMING_TERRAIN_SCALE }, state.compensation[1]),   // AUDIT LANDFORMS C1: its height in DFU's frame   // TERRAIN-SCALE1 (audit): the ground `pos` stood on; AUDIT 68 S22: its height without the streamer's compensation
     });
     if (!t) return;
+    // AUDIT ETHER-OW C2-3 (AUDIT CAPTAIN'S SEA P6's law): NO BOARDING ACROSS THE VEIL - "Your Ship" is the Bay's (its two
+    // pixels in region 31), and the board is a teleport: from past the Veil the transport's Ship row and Warm Ashes' raid
+    // carried a captain over and home again without the crossing, the boat left behind. Leaving the ship always goes
+    // back where it was boarded (`boardShipPosition`), whichever side that is
+    if (!playerEntity.boardShipPosition && veilRefused(t.go)) return;
     // TR-AUDIT F-F1: READ the reposition rather than infer it from
     // `restore`. StreamingWorld's RandomStartMarker is
     // PositionPlayerToLocation, which puts you at a random SIDE of the
@@ -17071,7 +17107,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // here is townTalk.say. It was silent: a Find Place taken in a
     // building closed the journal on nothing.
     if ((modes?.mode ?? 'exterior') !== 'exterior') { townTalk.say(localizedText('cannotTravelIndoors', CANNOT_TRAVEL_INDOORS_TEXT)); return false; }
-    // ETHER-CHART (ui/etherChartWindow.js): past the Veil the map is the captain's chart of the Etheric Sea - the Bay's has
+    // ETHER-CHART (ui/etherChartWindow.js): past the Veil the map is the captain's chart of the Eltheric Ocean - the Bay's has
     // no sea there to show, and nothing on it is travelled to
     { const p = playerTravelPixel(); if (etherSea && inEther(p.x, p.y)) return openEtherChart(); }
     // W1/U61: the DOOR decides which map this skin wears. The classic
@@ -21063,7 +21099,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     random: Math.random,   // UnityEngine.Random.Range - THE ENGINE-PRNG RULE
     maps: () => maps,
     picker: () => travelMapPickerData(),   // DaggerfallUI.GetImgBitmap("TRAV0I01.IMG")
-    regionIndex: () => { const px = playerTravelPixel(); return !(etherSea && inEther(px.x, px.y)) && politicClaimed(maps.getPoliticIndex(px.x, px.y)) ? _questRegionIndex() : -1; },   // fix 8: the sea (politic 64) and an unmapped pixel are no province - AUDIT CAPTAIN'S SEA G7: nor the Etheric Sea (its composed politic is the isles' region's, and Betony's raids were announced to a captain past the Veil)
+    regionIndex: () => { const px = playerTravelPixel(); return !(etherSea && inEther(px.x, px.y)) && politicClaimed(maps.getPoliticIndex(px.x, px.y)) ? _questRegionIndex() : -1; },   // fix 8: the sea (politic 64) and an unmapped pixel are no province - AUDIT CAPTAIN'S SEA G7: nor the Eltheric Ocean (its composed politic is the isles' region's, and Betony's raids were announced to a captain past the Veil)
     regionName: (r) => REGION_NAMES[r] ?? String(r),   // GetLocalizedRegionName - the port speaks one language (ui/travelMapWindow.js)
     townHere: () => ((modes?.mode ?? 'exterior') === 'exterior' && _musicInLocationRect() ? _questLoc() : null),   // FindCurrentRaid: outdoors, in the rect, at a location
     playerPixel: () => playerTravelPixel(),
@@ -27953,6 +27989,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const market = marketBook && profBook && profBook.state.open !== false && marksBook?.state?.open !== false && Number.isInteger(region) ? {
       book: marketBook, stores: () => profBook.state.stores, region, regionName: REGION_NAMES[region] ?? 'the region',
       regionNameOf: (r) => REGION_NAMES[r] ?? 'another region', hubs: marketHubs, name: (k) => materialLabel(k), countName: materialCountLabel,
+      picture: (k, wake) => materialPicture(k, { onReady: wake }), itemPicture: (it, wake) => itemPicture(it, { onReady: wake }), piecePicture: marketPiecePicture,   // MENU-ORDER: a row's picture
       board: [town.px, town.py],   // SEAT1d (Seats-Arc 7.2): the board's town - the seat whose bailiwick takes the Tithe
       tithe: () => (seatBook?.open === true ? boardTithePct(seatBook.data?.seats ?? [], region, [town.px, town.py]) : null),   // AUDIT SEATS-3 D3: its rate as the seats' list says it (null: not read)
       pieces: marketPieces, take: marketTake, putBack: marketPutBack, mint: marketMint, pieceName: marketPieceName, drop: marketDrop, goods: () => marketGoods.goods(), good: (it) => marketGoods.good(it), goodName: (rec) => marketGoods.goodName(rec),   // MARKET-ANY: a piece from the pack, for gold
@@ -28073,6 +28110,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const vendorBoardHost = (region) => ({
     mode: 'board', region, regionName: REGION_NAMES[region] ?? 'the region',
     read: () => vendorReachable(region), nameOf: vendorNameOf, townOf: vendorTownOf, stats: vendorItemStats,
+    picture: (it, wake) => itemPicture(it, { onReady: wake }),   // MENU-ORDER: a piece's picture on its row
     waypoint: vendorWaypointOn, waypointKey: () => vendorWaypointKey(), clearWaypoint: () => clearVendorWaypoint(),
   });
   /** A TRADER PRESSED in its home (worldModes.js openHomeVendor): its stall, in the Notice Board's window - the owner
@@ -28092,6 +28130,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           return r;
         },
         nameOf: vendorNameOf, stats: vendorItemStats, purse: () => marketBook.purse(vendorRegionHere() ?? 0),
+        picture: (it, wake) => itemPicture(it, { onReady: wake }),   // MENU-ORDER
         buy: (row) => vendorBuy(vendor, row), take: (row) => vendorTake(row),
         goods: () => marketGoods.goods(), put: (item, price) => vendorPut(vendor, item, price),
       },
@@ -28104,6 +28143,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     mine: () => marketBook.myVendors(), search: (region) => vendorReachable(region),
     patronName: (pt) => livingPatronName(pt),   // LW15: who of the town bought it
     regionHere: vendorRegionHere, regionNames: REGION_NAMES, nameOf: vendorNameOf, townOf: vendorTownOf, stats: vendorItemStats,
+    picture: (it, wake) => itemPicture(it, { onReady: wake }),   // MENU-ORDER: a piece's picture on its row
     take: (row) => vendorTake(row), collectGold: async () => {
       const region = vendorRegionHere();
       if (region == null) return { ok: false, text: 'Collect your takings where a region\'s bank can hold them.' };
@@ -30997,7 +31037,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // TV3: past the built grid, the far ring's own macro height for the pixel (render/farRing.js ringHeight) - the
     // ground the view shows out there - under the grid's current compensation
     const px = worldCoordToMapPixel(nx, nz);
-    // AUDIT CAPTAIN'S SEA G5: past the map the ground the ring reads there (the continent's, the Etheric Sea's) - an isle's
+    // AUDIT CAPTAIN'S SEA G5: past the map the ground the ring reads there (the continent's, the Eltheric Ocean's) - an isle's
     // plate stood at the sea's height under its silhouette
     const ground = (px.x >= 0 && px.y >= 0 && px.x < 1000 && px.y < 500) || !!woods.isTamrielGround || !!woods.etherLaw?.(px.x, px.y);
     const byte = ground ? woods.getHeightMapValue(px.x, px.y) : 0;
@@ -31039,7 +31079,22 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     if (!f) _seatTipFns.set(mapId, (f = () => seatTipOf(seatHere(mapId))));
     return f;
   };
+  // ETHER-OW (2026-10-13, the owner: "Also allow the player to zoom out into the overworld like in the Iliac Bay for easy
+  // travel"): THE ISLES' PLACES ON THE OVERWORLD. Past the Veil no place is a row of the Bay's dictionary - an isle's town
+  // or ruin is its own (world/etherPlaces.js), the index's once its pixel has built, else its clone, marked and never
+  // stood (etherPlaceClone). KNOWN as the Eltheric knows a place: its isle on the captain's charts (etherHost.js `sight`
+  // within three pixels, a harbourmaster's chart, a corsair's papers - the chart's own isles), or the place found.
+  const tvEtherPlace = (px, py) => { const isle = etherPlaceIsle(px, py); return isle ? (locationIndex.get(`${px},${py}`) ?? etherPlaceClone(isle)) : null; };
+  const tvEtherKnown = (loc) => captainLedger.isCharted(loc.ether) || hasDiscoveredLocationId(loc.mapTableData.mapId);
+  /** AUDIT ETHER-OW C2-2: WHAT IS KNOWN, as the Overworld's lists key it - DFU's finds and the captain's charts: an isle
+   *  charted by sight, a harbourmaster's chart or a corsair's papers is a plate at once, never a pixel later. */
+  const tvKnownGen = () => `${discoveryGeneration()}:${captainLedger.chartedCount()}`;
   const tvPlaceSummary = (px, py) => {
+    // ETHER-OW: past the Veil, an isle's place - known, it is its own summary (HALL-JOURNEY's way), its region the isles'
+    if (etherSea && inEther(px, py)) {
+      const loc = tvEtherPlace(px, py);
+      return loc && tvEtherKnown(loc) ? { pixel: { x: px, y: py }, name: loc.name, mapId: loc.mapTableData.mapId, regionIndex: loc.regionIndex, locationIndex: loc.locationIndex, loc } : null;
+    }
     // HALL-JOURNEY (2026-10-08, the owner: "when i want to travel there with begin journey nothing happens"): a zone hall
     // is no row of the map's dictionary (it is spawned, by the day) - it is its own summary, always known, so the
     // Overworld walks to its door as to any place's
@@ -31056,7 +31111,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
   };
   // TV-BEYOND: off the map is the sea where the world streams nothing there (DFU's empty edge), and the ground's own
   // bytes where TAMRIEL2 streams the land beyond the Bay - `woods` is its composed reader then, the sea past the frame
-  const tvWater = (px, py) => (!woods.isTamrielGround && !woods.etherLaw?.(px, py) && (px < 0 || py < 0 || px >= 1000 || py >= 500)) || woods.getHeightMapValue(px, py) <= WATER_BYTE;   // AUDIT CAPTAIN'S SEA G5: the Etheric Sea's isles land, whatever the continent's switch says
+  const tvWater = (px, py) => (!woods.isTamrielGround && !woods.etherLaw?.(px, py) && (px < 0 || py < 0 || px >= 1000 || py >= 500)) || woods.getHeightMapValue(px, py) <= WATER_BYTE;   // AUDIT CAPTAIN'S SEA G5: the Eltheric Ocean's isles land, whatever the continent's switch says
   /** The trip is over when Travel Options no longer walks it - arrived, stopped, or replaced by a journey of its own. */
   const tvTripLive = () => !!tvTrip.plan && !!travelOptions?.route && travelOptions.route === tvTrip.plan.route;
   /** `roads` (TO-ROADS x OW-PATH): by the roads whatever the Path switch says - the map's first-person pick (tvMapForcesRoads). */
@@ -31693,7 +31748,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
    *  changes; their plates stand over the town's middle. */
   function travelViewPlaces() {
     const at = playerTravelPixel();
-    const dg = discoveryGeneration();   // AUDIT DEEP2 B-3: a place found while standing on one pixel gets its plate now, not a pixel later
+    const dg = tvKnownGen();   // AUDIT DEEP2 B-3: a place found while standing on one pixel gets its plate now, not a pixel later (AUDIT ETHER-OW C2-2: or charted)
     if (tvPlates.at && tvPlates.at.x === at.x && tvPlates.at.y === at.y && tvPlates.dg === dg) return tvPlates.list;
     const r = Math.max(1, state.terrainDistance ?? 3);
     const list = [];
@@ -31715,9 +31770,12 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
   function travelViewFarPlaces() {
     const at = playerTravelPixel();
     const near = Math.max(1, state.terrainDistance ?? 3);
-    const dg = discoveryGeneration();   // AUDIT DEEP2 B-3: and a far one found (a quest, a map) stands at the edge at once
+    const dg = tvKnownGen();   // AUDIT DEEP2 B-3: and a far one found (a quest, a map) stands at the edge at once (AUDIT ETHER-OW C2-2: or charted)
     if (tvFar.at && tvFar.at.x === at.x && tvFar.at.y === at.y && tvFar.near === near && tvFar.dg === dg) return tvFar.list;
-    const list = farPlaces({ at, near, settlements: (_tvSettlements ??= settlementPixels(locationIndex)), summaryOf: tvPlaceSummary })
+    // ETHER-OW: the map's settlements (gathered once - never an isle's, which the index holds only once built), and past the
+    // Veil the port isles within the edge's range
+    const settlements = (_tvSettlements ??= settlementPixels(locationIndex).filter((t) => !t.loc.ether));
+    const list = farPlaces({ at, near, settlements: etherSea && inEther(at.x, at.y) ? [...settlements, ...etherPlaceRows(at, TV_FAR_RANGE, 'port')] : settlements, summaryOf: tvPlaceSummary })
       .map((f) => { const rect = tvPlaceRect(f.summary); return { key: f.key, summary: f.summary, x: rect.cx, z: rect.cz }; });
     tvFar = { at, near, dg, list };
     return list;
@@ -31729,6 +31787,14 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
   // live index (streaming and the spawns change it: a spawn in it at the first ask stood for good, a later one never
   // did); the index is read afresh for each list, and the list is filtered before its twelve are taken (nearDungeons)
   let _tvDungeonRows = null;
+  /** ETHER-OW: THE DUNGEONS TV6's law reads about the traveller - the map's rows, and past the Veil the ruin isles within
+   *  `range` (their places' own rows, world/etherPlaces.js etherPlaceRows) - and what stands on a row's pixel: the
+   *  index's, else past the Veil the isle's place (tvEtherPlace: marked, never built). */
+  const tvDungeonRowsAt = (at, range = TV_FAR_RANGE) => {
+    const bay = (_tvDungeonRows ??= dungeonRows(mapDict));
+    return etherSea && inEther(at.x, at.y) ? [...bay, ...etherPlaceRows(at, range, 'ruin')] : bay;
+  };
+  const tvDungeonAt = (x, y) => locationIndex.get(`${x},${y}`) ?? (etherSea && inEther(x, y) ? tvEtherPlace(x, y) : null);
   /** AUDIT OW3 D1: what the spawned feature has told the player of a spawn - its pixel's line (announceNearbySpawns, this
    *  session), or the pixel entry's filing in the store (syncTopics' discoverLocation, the same crossing, saved): the
    *  store's is its name too. Nothing else - a spawn not yet said is not marked (that feature never says one next door). */
@@ -31741,7 +31807,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
   function travelViewDungeons() {
     if (typeof _tvListsReady !== 'undefined' && !_tvListsReady) return [];   // BOOT-TDZ II (typeof: a slice lifted without the flag reads as standing)
     const at = playerTravelPixel();
-    const dg = discoveryGeneration();
+    const dg = tvKnownGen();   // AUDIT ETHER-OW C2-2: the finds and the charts
     // AUDIT OW3 D1/D3: and the grid's reach (what TV2 plates), and the index's churn - a spawn comes as its pixel streams
     // and goes when its time runs out or a road takes it back, on a pixel the traveller has not left (AUDIT OW4 D5: its
     // generation - the size missed one spawn gone and another come in the same window)
@@ -31749,7 +31815,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // AUDIT OW4 D2: and time - a kept spawn whose clock has run out since is dropped now, asked of the kept list each time
     if (tvDng.list.some((g) => g.spawn && tvSpawnGone(g.px, g.py))) tvDng.at = null;
     if (tvDng.at && tvDng.at.x === at.x && tvDng.at.y === at.y && tvDng.dg === dg && tvDng.grid === grid && tvDng.n === n) return tvDng.list;
-    const dungeons = (_tvDungeonRows ??= dungeonRows(mapDict)), locAt = (x, y) => locationIndex.get(`${x},${y}`), isFound = (x, y) => !!tvPlaceSummary(x, y);
+    const dungeons = tvDungeonRowsAt(at), locAt = tvDungeonAt, isFound = (x, y) => !!tvPlaceSummary(x, y);
     const placed = (g) => {
       const r = locationWorldRect(g.loc, g.x, g.y);
       return { key: g.key, row: g.row, loc: g.loc, found: g.found, spawn: g.spawn, summary: g.found && !g.spawn ? tvPlaceSummary(g.x, g.y) : null,
@@ -31767,10 +31833,10 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
    *  nearest TV_DUNGEON_MODELS_MAX; read again as TV6's is, when the pixel, the finds or the index move. */
   function tvDungeonModelList() {
     if (typeof _tvListsReady !== 'undefined' && !_tvListsReady) return [];   // BOOT-TDZ II (typeof: a slice lifted without the flag reads as standing)
-    const at = playerTravelPixel(), dg = discoveryGeneration(), n = _locIndexGen;
+    const at = playerTravelPixel(), dg = tvKnownGen(), n = _locIndexGen;   // AUDIT ETHER-OW C2-2: the finds and the charts
     if (tvDngModels.list.some((g) => g.spawn && !g.loc?.superTier && tvSpawnGone(g.px, g.py))) tvDngModels.at = null;   // AUDIT OW4 D2's law: a spawn whose time ran out goes
     if (tvDngModels.at && tvDngModels.at.x === at.x && tvDngModels.at.y === at.y && tvDngModels.dg === dg && tvDngModels.n === n) return tvDngModels.list;
-    const near = nearDungeons({ at, dungeons: (_tvDungeonRows ??= dungeonRows(mapDict)), locAt: (x, y) => locationIndex.get(`${x},${y}`), isFound: (x, y) => !!tvPlaceSummary(x, y),
+    const near = nearDungeons({ at, dungeons: tvDungeonRowsAt(at), locAt: tvDungeonAt, isFound: (x, y) => !!tvPlaceSummary(x, y),
       spawns: [...spawnedPixels(locationIndex), ...tvFiledSpawns(at)], spawnKnown: (s) => !!s.loc?.superTier || tvSpawnKnown(s), spawnFound: tvSpawnFound,
       spawnGone: (s) => !s.loc?.superTier && tvSpawnGone(s.x, s.y), max: Infinity });
     const list = dungeonModelSet(near).map((g) => ({ key: g.key, px: g.x, py: g.y, loc: g.loc, spawn: g.spawn }));
@@ -31852,10 +31918,10 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
    *  the Overworld for such a keep is travelDungeons.js nearDungeons' own). */
   function travelViewFindList() {
     if (typeof _tvListsReady !== 'undefined' && !_tvListsReady) return [];   // BOOT-TDZ II (typeof: a slice lifted without the flag reads as standing)
-    const at = playerTravelPixel(), dg = discoveryGeneration(), n = _locIndexGen;
+    const at = playerTravelPixel(), dg = tvKnownGen(), n = _locIndexGen;   // AUDIT ETHER-OW C2-2: the finds and the charts
     if (tvFind.at && tvFind.at.x === at.x && tvFind.at.y === at.y && tvFind.dg === dg && tvFind.n === n) return tvFind.list;
-    const list = nearDungeons({ at, range: TV_FIND_REACH, max: Infinity, dungeons: (_tvDungeonRows ??= dungeonRows(mapDict)),
-      locAt: (x, y) => locationIndex.get(`${x},${y}`), isFound: (x, y) => !!tvPlaceSummary(x, y) }).filter((g) => !g.found).map((g) => {
+    const list = nearDungeons({ at, range: TV_FIND_REACH, max: Infinity, dungeons: tvDungeonRowsAt(at, TV_FIND_REACH),
+      locAt: tvDungeonAt, isFound: (x, y) => !!tvPlaceSummary(x, y) }).filter((g) => !g.found).map((g) => {
       const r = locationWorldRect(g.loc, g.x, g.y);
       return { key: g.key, row: g.row, loc: g.loc, found: false, spawn: false, x: (r.minX + r.maxX) / 2, z: (r.minZ + r.maxZ) / 2 };
     });
@@ -31994,10 +32060,12 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     }
   }
   const bandNight = (ms) => { const m = ((online ? skyClassicMinutes(ms) : skyMinutes()) % 1440 + 1440) % 1440; return m < 360 || m > 1080; };   // TIME1: the sky's night at the instant given (the life's middle) - a pure function of the relay's ms, the same for every player
-  /** The land a band may stand on: a map pixel with no water and no place in it (native units). */
+  /** The land a band may stand on: a map pixel with no water and no place in it (native units). ETHER-OW (2026-10-13, the
+   *  owner: "Enemies should show on the world map just like in the bay"): the Bay's map or the Eltheric Ocean's box
+   *  (ethericSea.js onBayOrEther, the nodes' own ground) - an isle's land, never its town's or its ruin's pixel. */
   const bandOk = (x, z) => {
     const px = Math.floor(x / 32768), py = 499 - Math.floor(z / 32768);
-    return px >= 0 && py >= 0 && px < 1000 && py < 500 && !tvWater(px, py) && !_bandPlacePixels.has(`${px},${py}`);   // AUDIT OW4 B2
+    return onBayOrEther(px, py) && !tvWater(px, py) && !_bandPlacePixels.has(`${px},${py}`) && !etherPlaceIsle(px, py);   // AUDIT OW4 B2
   };
   function travelViewBands() {
     const at = bandPixelOf(playerTravelPixel()), ms = bandNowMs(), life = Math.floor(ms / BAND_LIFE_MS);   // AUDIT OW4 B1: the bands' own rows
@@ -32475,20 +32543,23 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
   /** The shared clock (the relay's, online): every player's raiders at the same minute. */
   const raidNowMs = () => Date.now() + _sharedOffsetMs;
   /** A raider's birth: the open sea - its pixel and every one about it water, the ocean's (never a lake, a bay's mouth).
-   *  AUDIT OW5b S5: and ON THE MAP - `tvWater` counts off the map as water (the planner's edge is the sea), and a column
-   *  off it read the PAK's first for its climate: a raider was born a pixel past the map's edge. */
+   *  AUDIT OW5b S5: and ON ITS GROUND - the Bay's map (ETHER-OW: or the Eltheric Ocean's box, ethericSea.js onBayOrEther,
+   *  the sea's climate the composed index's there) - `tvWater` counts off the map as water (the planner's edge is the sea),
+   *  and a column off it read the PAK's first for its climate: a raider was born a pixel past the map's edge. AUDIT
+   *  ETHER-OW C2-3: past the Veil only where the sea fight stands her as a ship - the mod's raid boards the Bay's. */
   const tvRaidOpen = (px, py) => {
-    if (px < 0 || py < 0 || px >= 1000 || py >= 500 || maps.getClimateIndex(px, py) !== CLIMATES.Ocean) return false;
+    if (!onBayOrEther(px, py) || maps.getClimateIndex(px, py) !== CLIMATES.Ocean) return false;
+    if (inEther(px, py) && !navalRaidersOn()) return false;   // AUDIT ETHER-OW C2-3
     for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (!tvWater(px + dx, py + dy)) return false;
     return true;
   };
-  /** A native point on the water, by its pixel's byte (the planner's sea) - AUDIT OW5b S5: on the map alone (the pixel law
-   *  truncates, so the strip a pixel wide past the west and south edges read as the edge's own water, and past it all was
-   *  water: a raider sailed off the world). */
+  /** A native point on the water, by its pixel's byte (the planner's sea) - AUDIT OW5b S5: on the raiders' ground alone,
+   *  the map (ETHER-OW: or the Eltheric Ocean's box - onBayOrEther, their birth's), by the point's own pixel FLOORED (the
+   *  pixel law truncates, so the strip a pixel wide past the west and south edges read as the edge's own water, and past
+   *  it all was water: a raider sailed off the world). */
   const tvRaidSea = (x, z) => {
-    if (!(x >= 0 && z >= 0 && x < 1000 * RAID_NATIVE_PIXEL && z < 500 * RAID_NATIVE_PIXEL)) return false;
-    const p = pixelOfNative(x, z);
-    return tvWater(p.x, p.y);
+    const px = Math.floor(x / RAID_NATIVE_PIXEL), py = 499 - Math.floor(z / RAID_NATIVE_PIXEL);
+    return onBayOrEther(px, py) && tvWater(px, py);
   };
   /** The raiders about the traveller at the shared clock, read again each TV_RAID_LIST_MS. */
   function travelViewRaiders() {
@@ -32859,7 +32930,10 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // PERF-TV: counted again only when the ground, the pixel or the reach moved - not every frame
     const px = playerTravelPixel(), gen = tvGroundGenNow(), uc = _tvUnbuilt;
     if (uc.gen !== gen || uc.x !== px.x || uc.y !== px.y || uc.r !== radius) {
-      uc.n = unbuiltAround(px, radius, (x, y) => x < 0 || y < 0 || x >= 1000 || y >= 500 || built.has(`${x},${y}`));
+      // ETHER-OW: nothing to build where the world streams nothing - the stream's own law (StreamingWorldState.streams: the
+      // map, the continent's frame, the Eltheric Ocean's box). "Off the map" was that law before the world streamed past
+      // it, and past the Veil (and on the land past the Bay) every pixel read built: the clock was never held for the load
+      uc.n = unbuiltAround(px, radius, (x, y) => !StreamingWorldState.streams(x, y) || built.has(`${x},${y}`));
       uc.gen = gen; uc.x = px.x; uc.y = px.y; uc.r = radius;
     }
     const unbuilt = uc.n;
@@ -35051,7 +35125,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
           climateAt: (x, y) => maps.getClimateIndex(x, y),
           baseX: state.current.x, baseY: state.current.y,
           relief: !!landform,   // LANDFORM1: the ring stands the massifs the streamed ground raises
-          byteAt: tamrielLand || etherSea ? (x, y) => woods.getHeightMapValue(x, y) : null,   // TAMRIEL2: the continent past the map's edge, as the stream grows it (ETHER-SEA: and the Etheric Sea's isles)
+          byteAt: tamrielLand || etherSea ? (x, y) => woods.getHeightMapValue(x, y) : null,   // TAMRIEL2: the continent past the map's edge, as the stream grows it (ETHER-SEA: and the Eltheric Ocean's isles)
           pastOwn: tamrielLand ? null : inEtherLaw,   // AUDIT CAPTAIN'S SEA G6: the ground the reader answers past the map - its cliffs faded at their own pixels (the clamp's at the clamped)
           // ETHER-SEA: the isles' own climates past the map - AUDIT CAPTAIN'S SEA G4/G9: the continent's wherever it stands (its
           // tint never the sea's switch's), the sea's in its law, and else the Bay edge's clamped climate as ever (the read
@@ -35120,7 +35194,6 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     renderer.drawBillboards(allBatches, camRight, bbUp);
     if (magic.batches().length) renderer.drawBillboards(magic.batches(), camRight, bbUp);   // M2: spell missiles
     magic.drawFx?.();   // IMPACTFX: the spells' landings in light, over their flashes
-    yards?.drawPreview();   // HOME-YARD: the decorator's panel, its pointed model turning in the preview box
     // T2 towns: every built populated pixel runs its own pool
     // (PopulationManager is per-location); the pool sees the player in
     // the pixel's LOCATION frame, and live persons draw through the
@@ -36114,6 +36187,12 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // (preserveDrawingBuffer false clears it after compositing).
     capturePendingScreenshot(canvas);
     deliverOwedShots();   // SHOT1: the PrintScreen shots owed to a drawn frame, read from this one (ui/screenshot.js)
+    // AUDIT MENU-ORDER R2: THE PANEL PASSES LAST - after the frame is shown and its shots are taken. A panel pass is its own
+    // beginFrame: drawn amid the world pass, it left its camera and light in the mesh program for every world draw after
+    // it (beginFrame alone uploads them) and resolved the lighting lane's image early, so the rest of the world drew with
+    // no depth; and a shot taken after it held the picture. Each pass copies its rect out at once, so here costs nothing.
+    yards?.drawPreview();   // HOME-YARD: the decorator's panel, its pointed model turning in the preview box (and its tiles' models)
+    shipPortraits.draw();   // MENU-ORDER: the shipmaster's cards' pictures, under his window
 
     if (shotMode) {
       window.__frame++;

@@ -2798,8 +2798,8 @@
   {
     "name": "ACS-X17-isle-words",
     "file": "src/ui/etherChartWindow.js",
-    "old": "export const isleWords = (isle, ship) => `${capFirst(isle.name)} -",
-    "new": "export const isleWords = (isle, ship) => `${isle.name} -",
+    "old": "t('sea.chart.isleLine', '{name} - {kind} - {way}', { name: capFirst(isle.name),",
+    "new": "t('sea.chart.isleLine', '{name} - {kind} - {way}', { name: isle.name,",
     "tests": [
       "test/auditcaptsea.test.js"
     ]
@@ -2816,8 +2816,8 @@
   {
     "name": "ACS-X14-overlap",
     "file": "src/ui/etherChartWindow.js",
-    "old": "if (placed.some((p) => box[0] < p[2] && p[0] < box[2] && box[1] < p[3] && p[1] < box[3])) { i.label = false; continue; }",
-    "new": "if (false) { i.label = false; continue; }",
+    "old": "const free = sides.filter((box) => !placed.some((p) => overlaps(box, p)));",
+    "new": "const free = sides;",
     "tests": [
       "test/auditcaptsea.test.js"
     ]
@@ -2825,8 +2825,8 @@
   {
     "name": "ACS-X14-ports-first",
     "file": "src/ui/etherChartWindow.js",
-    "old": "for (const i of [...isles].sort((a, b) => (b.kind === 'port' ? 1 : 0) - (a.kind === 'port' ? 1 : 0))) {",
-    "new": "for (const i of [...isles]) {",
+    "old": "const ports = isles.filter((i) => i.kind === 'port'), lesser = isles.filter((i) => i.kind !== 'port');",
+    "new": "const ports = isles, lesser = [];",
     "tests": [
       "test/auditcaptsea.test.js"
     ]
@@ -2843,8 +2843,8 @@
   {
     "name": "ACS-X12-band-side",
     "file": "src/ui/etherChartWindow.js",
-    "old": "Math.min(w - 4, b.x - 6), 16);",
-    "new": "Math.min(w - 4, b.x + 6), 16);",
+    "old": "x1 = Math.min(w, boundX(n));",
+    "new": "x1 = Math.min(w, boundX(n) + 60);",
     "tests": [
       "test/auditcaptsea.test.js"
     ]
@@ -2915,7 +2915,7 @@
   {
     "name": "ACS-X6-tools",
     "file": "src/ui/etherChartWindow.js",
-    "old": "tool('-', () => zoomMid(-1)); tool('+', () => zoomMid(1)); tool('Ship', toShip);",
+    "old": "tool('-', () => zoomMid(-1)); tool('+', () => zoomMid(1)); tool(t('sea.chart.ship', 'Ship'), toShip);",
     "new": "void tool;",
     "tests": [
       "test/auditcaptsea.test.js"
@@ -2978,8 +2978,8 @@
   {
     "name": "ACS-V1-word-in-the-arrival",
     "file": "src/scenes/world.js",
-    "old": "    // Q4-v: StreamingWorld.OnInitWorld - the world re-initialised at a\n    // new origin (fast travel, quickload); CreateFoe's pending waves\n    // invalidate across live AND scheduled quests.\n    questBridge?.onInitWorld();\n    // AUDIT CAPTAIN'S SEA G2/P7: a landing made for a pixel this game does not stream, said where the player now stands\n    // (below the arrival's statements, which the party's boat pins run over stand-ins: partyBoatTeleportFix)\n    if (_unstreamedLanding) {\n      townTalk.say(_unstreamedLanding === 'ether' ? 'The Etheric Sea is closed in this game - you wake in the Bay\\'s waters.' : 'That ground does not stand in this game - you wake at the edge of the Iliac Bay.', 7);\n      _unstreamedLanding = null;\n    }\n",
-    "new": "    // AUDIT CAPTAIN'S SEA G2/P7: a landing made for a pixel this game does not stream, said where the player now stands\n    // (below the arrival's statements, which the party's boat pins run over stand-ins: partyBoatTeleportFix)\n    if (_unstreamedLanding) {\n      townTalk.say(_unstreamedLanding === 'ether' ? 'The Etheric Sea is closed in this game - you wake in the Bay\\'s waters.' : 'That ground does not stand in this game - you wake at the edge of the Iliac Bay.', 7);\n      _unstreamedLanding = null;\n    }\n    // Q4-v: StreamingWorld.OnInitWorld - the world re-initialised at a\n    // new origin (fast travel, quickload); CreateFoe's pending waves\n    // invalidate across live AND scheduled quests.\n    questBridge?.onInitWorld();\n",
+    "old": "    // Q4-v: StreamingWorld.OnInitWorld - the world re-initialised at a\n    // new origin (fast travel, quickload); CreateFoe's pending waves\n    // invalidate across live AND scheduled quests.\n    questBridge?.onInitWorld();\n    // AUDIT CAPTAIN'S SEA G2/P7: a landing made for a pixel this game does not stream, said where the player now stands\n    // (below the arrival's statements, which the party's boat pins run over stand-ins: partyBoatTeleportFix)\n    if (_unstreamedLanding) {\n      townTalk.say(_unstreamedLanding === 'ether' ? `${ETHER_SEA_TITLE} is closed in this game - you wake in the Bay's waters.` : 'That ground does not stand in this game - you wake at the edge of the Iliac Bay.', 7);\n      _unstreamedLanding = null;\n    }\n",
+    "new": "    // AUDIT CAPTAIN'S SEA G2/P7: a landing made for a pixel this game does not stream, said where the player now stands\n    // (below the arrival's statements, which the party's boat pins run over stand-ins: partyBoatTeleportFix)\n    if (_unstreamedLanding) {\n      townTalk.say(_unstreamedLanding === 'ether' ? `${ETHER_SEA_TITLE} is closed in this game - you wake in the Bay's waters.` : 'That ground does not stand in this game - you wake at the edge of the Iliac Bay.', 7);\n      _unstreamedLanding = null;\n    }\n    // Q4-v: StreamingWorld.OnInitWorld - the world re-initialised at a\n    // new origin (fast travel, quickload); CreateFoe's pending waves\n    // invalidate across live AND scheduled quests.\n    questBridge?.onInitWorld();\n",
     "tests": [
       "test/partyBoatTeleportFix.test.js"
     ]

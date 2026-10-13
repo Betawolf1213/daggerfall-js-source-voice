@@ -259,7 +259,7 @@ test('SHIPYARDS x TUT1: the shipmaster\'s window pops the shipyard\'s page, as t
   assert.equal(createShipyardOverlay({}), null);
   assert.equal(createNavalYardOverlay({}), null);
   assert.equal(createNavalPlunderOverlay({}), null);
-  // AUDIT CAPTAIN'S SEA (at the merge of SHIPYARDS): the chart of the Etheric Sea, through the same door, pops no page
+  // AUDIT CAPTAIN'S SEA (at the merge of SHIPYARDS): the chart of the Eltheric Ocean, through the same door, pops no page
   assert.equal(createEtherChartOverlay({}), null);
   assert.deepEqual(noted, ['shipyard', 'shipyard', 'naval-combat']);
   off();

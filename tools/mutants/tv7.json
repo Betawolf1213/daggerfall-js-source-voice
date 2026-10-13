@@ -222,12 +222,12 @@
   {
     "name": "TV7b-off-the-map",
     "file": "src/systems/travelBands.js",
-    "old": "    if (flag === 1 && !(Number.isInteger(x) && Number.isInteger(z) && x >= 0 && z >= 0 && x <= WORLD_NATIVE_W && z <= WORLD_NATIVE_H)) continue;",
+    "old": "    if (flag === 1 && !chaserPlaceOk(x, z)) continue;",
     "new": "    if (flag === 1 && !(Number.isFinite(x) && Number.isFinite(z))) continue;",
     "tests": [
       "test/tv7_bands.test.js"
     ],
-    "note": "A peer's word can place a band off the world."
+    "note": "A peer's word can place a band off the world. RE-AIMED (ETHER-OW): the place's law is the world's pixels (chaserPlaceOk, net/wire.js worldPixelOk)."
   },
   {
     "name": "TV7b-twice",

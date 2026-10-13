@@ -5,7 +5,7 @@ and giving a reason to players to experience it"* - and then: *"I want you to ma
 this as detailed as possible, providing depth without overcomplicating systems. This is your baby ... On top of this,
 2 things to add. 1. Removing observable names from ships and instead implementing a spyglass option where you can aim
 and view to observe other ships, their allegiance, cargo, etc. 2. A brand new open sea map that allows you to traverse
-to the etheric sea."* The Etheric Sea is its own page (`03-World/Etheric-Sea.md`); this one is the Iliac Bay's.
+to the etheric sea."* The Eltheric Ocean is its own page (`03-World/Eltheric-Ocean.md`); this one is the Iliac Bay's.
 
 The pre-merge audit (AUDIT CAPTAIN'S SEA, the owner: "Lets do a comprehensive audit, enaure this is insanely detailed
 and perfection. No exceptions") is `01-Overview/Audit-Captains-Sea.md`: its fixes stand in the sections below, each
@@ -34,7 +34,7 @@ a captain did added up. Now:
 - **EVERY PORT HAS WORK** (CAPT-BOARD): the harbourmaster's board - bounties on named pirates, hunts, cargoes to carry,
   wrecks to salvage, the Admiralty's survey through the glass - and the letters a rank buys.
 - **A HOLD IS WORTH FILLING** (CAPT-TRADE): goods bought cheap where they are made and sold dear where they are wanted,
-  and the Etheric Sea's three wanted everywhere.
+  and the Eltheric Ocean's three wanted everywhere.
 - **A PIRATE'S PAPERS** (CAPT-CHARTS): a treasure chart, now and then, to a cache sunk off the coast.
 
 ## The slices
@@ -101,7 +101,7 @@ new character's first pause with Come Sail Away off and the Fleet hidden).
 
 THE LOG: leagues sailed at a helm (`sailed`, LEAGUE_M a league - a frame's way, never a jump: a step over 100 km is
 refused), the deepest waters sailed, ships sunk and taken by trade (`LOG_TRADES`: pirate, merchant, navy, and the
-Etheric Sea's two) and boarders beaten off (one count, not by trade - H16), the richest prize (not every prize's
+Eltheric Ocean's two) and boarders beaten off (one count, not by trade - H16), the richest prize (not every prize's
 worth), the plunder hauled (`navalTransfer.js navalLootWorth` - gold pieces at their count, the rest at its value: a
 hold's own items each counted once as they leave it, by Take all or by hand - AUDIT CAPTAIN'S SEA L12: the captain's
 own things put in and taken out again were counted every pass), the contracts done by kind (`LOG_CONTRACTS`). `logLines` says it in a captain's words, one of a thing
@@ -338,9 +338,9 @@ way).
 ## CAPT-TRADE - the exchange
 
 The shipwright's window's EXCHANGE tab (`harbourOffice.js exchange`): `tradeGoods.js GOODS` - eight of the Bay (wine,
-grain, wool, iron, spices, silk, silver, ivory) and the Etheric Sea's three (ether-amber, starglass, voidsilk). Each
+grain, wool, iron, spices, silk, silver, ivory) and the Eltheric Ocean's three (ether-amber, starglass, voidsilk). Each
 crown's ports MAKE some and WANT others (`CROWN_TRADE`), every port twisting its crown's trade by one good of its own
-off its key (`portTrade`); the Etheric Sea's goods are wanted in every port of the Bay and made only on its isles. A
+off its key (`portTrade`); the Eltheric Ocean's goods are wanted in every port of the Bay and made only on its isles. A
 good's price is its base times MADE_K where made, WANT_K where wanted (EXOTIC_K for the other sea's), drifting within
 PRICE_DRIFT a day - the same for every client on the world's day (`priceOf`); the exchange sells SPREAD over it and buys SPREAD
 under it, and deals only so much of a good a day (`DAY_STOCK`: plenty of what it makes, little of what it wants - and it is

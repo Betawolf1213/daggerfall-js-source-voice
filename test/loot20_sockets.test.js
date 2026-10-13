@@ -31,7 +31,7 @@ import { computeEntityMods } from '../src/systems/entityMods.js';
 import { validLootItem } from '../src/systems/loot.js';
 import { rollCorpseKit } from '../src/systems/foeLootCap.js';
 import { GROUP_TEMPLATE_INDICES } from '../src/systems/itemTemplatesData.js';
-import { mountReforgeWindow, SOCKETS_NONE, GEMS_NONE, GEM_SET, UNSET_ASK, GEM_SHATTERED, GEM_EXTRACTED } from '../src/ui/reforgeWindow.js';
+import { mountReforgeWindow, SOCKETS_NONE, GEMS_NONE, GEM_SET, UNSET_ASK, GEM_SHATTERED, GEM_EXTRACTED, REFORGE_REFUSALS } from '../src/ui/reforgeWindow.js';
 import { withDom } from './invdrag.mjs';
 import { rollGemFind } from '../src/systems/gems.js';   // GEM2: the gem find, held off and put back
 
@@ -333,6 +333,38 @@ test('LOOT20: the Sockets page - a row a socketed piece; an empty one offers eac
       assert.deepEqual([calls.at(-1), me.goldPieces, LR.socketsOf(piece)], [['extract'], 300, [LR.SOCKET_EMPTY]]);
       assert.equal(one(shell, 'broker-note').textContent, GEM_EXTRACTED(piece.name, 'ruby', 200));
       assert.deepEqual(choices().map((c) => c.dataset.gem), ['ruby'], 'the ruby back in the pack');
+      // AUDIT MENU-ORDER U5: a refused extract, unset and set - pressed, each says its whole reason and does nothing
+      one(choices()[0], 'set-press').onclick({ stopPropagation() {} });
+      me.goldPieces = 0;
+      view.repaint();
+      const before = calls.length;
+      const poor = one(one(shell, 'socket-card'), 'extract-press');
+      assert.equal(poor.attrs['aria-disabled'], 'true');
+      poor.onclick({ stopPropagation() {} });
+      assert.equal(calls.length, before, 'no gold: nothing extracted');
+      assert.equal(one(shell, 'broker-note').textContent, REFORGE_REFUSALS.gold);
+      piece.isIdentified = false;
+      me.items.push(gem('diamond'));
+      view.repaint();
+      for (const cls of ['unset-press', 'extract-press']) {
+        const b = one(one(shell, 'socket-card'), cls);
+        assert.equal(b.attrs['aria-disabled'], 'true', `${cls}: an unknown piece's`);
+        b.onclick({ stopPropagation() {} });
+        assert.equal(one(shell, 'broker-note').textContent, REFORGE_REFUSALS.unknown);
+      }
+      assert.equal(calls.length, before, 'an unknown piece: nothing unset, nothing extracted');
+      const blank = socketed(sword, 'rare', 23);   // an empty socket on a piece not yet known: its gems offered, refused
+      blank.isIdentified = false;
+      me.items.push(blank);
+      view.repaint();
+      kids(shell, 'socket-row').at(-1).onclick();   // the new piece's row (its name is the first's: the same blade, the same tier)
+      const offer = one(choices()[0], 'set-press');
+      assert.equal(offer.attrs['aria-disabled'], 'true', 'set: refused');
+      offer.onclick({ stopPropagation() {} });
+      assert.equal(calls.length, before, 'nothing set');
+      assert.equal(one(shell, 'broker-note').textContent, REFORGE_REFUSALS.unknown);
+      piece.isIdentified = true;
+      piece.sockets = [LR.SOCKET_EMPTY];   // the ruby that stayed set, gone: the page as the rest of this pin reads it
       me.items = [piece];
       view.repaint();
       assert.ok(textOf(one(shell, 'socket-card')).includes(GEMS_NONE));

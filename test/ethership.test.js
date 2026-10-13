@@ -1,5 +1,5 @@
-// ETHER-SHIPS, ETHER-LEGENDS (2026-10-11, the owner: "deadly legendary ships") - THE ETHERIC SEA'S SHIPS
-// (bible/03-World/Etheric-Sea.md): its corsairs and its isles' traders - the Bay's classes under the sea's names and the
+// ETHER-SHIPS, ETHER-LEGENDS (2026-10-11, the owner: "deadly legendary ships") - THE ELTHERIC OCEAN'S SHIPS
+// (bible/03-World/Eltheric-Ocean.md): its corsairs and its isles' traders - the Bay's classes under the sea's names and the
 // Isles' colours, drawn by the band, no crown's navy and no crown's law - and its six legends, each her own class, haunt,
 // terror and purse; the director's traffic past the Veil and the host's seams. tools/mutants/ethership.json.
 import './modsOff.js';
@@ -56,7 +56,7 @@ test('ETHER-LEGENDS the six: two to a band past the Shallows, each her own class
   assert.ok(classById('legendRegent').skill >= 0.95, 'gunners who do not miss');
 });
 
-test('ETHER-SHIPS the names and colours: a corsair\'s and a trader\'s the Etheric Sea\'s own lists, on their own stream - her captain the Bay\'s own law\'s, unmoved; a legend\'s her own; a trader flies the Isles\' colours, a corsair and a legend the black flag; the glass reads "the Isles\' merchant colours" (mutants: the lists, the stream, the captain, the flag, the possessive)', () => {
+test('ETHER-SHIPS the names and colours: a corsair\'s and a trader\'s the Eltheric Ocean\'s own lists, on their own stream - her captain the Bay\'s own law\'s, unmoved; a legend\'s her own; a trader flies the Isles\' colours, a corsair and a legend the black flag; the glass reads "the Isles\' merchant colours" (mutants: the lists, the stream, the captain, the flag, the possessive)', () => {
   const pirate = classById('pirateBrig'), trader = classById('merchantGalleon');
   for (let seed = 1; seed < 40; seed++) {
     const p = etherShipNames(pirate, seed), t = etherShipNames(trader, seed);
@@ -173,7 +173,7 @@ test('ETHER-SHIPS the director past the Veil: corsairs and traders alone, every 
   assert.ok(!relief.spawn?.relief, 'no navy to answer past the Veil');
 });
 
-test('ETHER-SHIPS at sea: a ship launched in the Etheric Sea\'s waters wears its names and colours, a corsair the band\'s boldness; a legend her own name, bold, announced; her end no crime and no crown\'s - the log\'s by her trade, a legend\'s purse and her day, a corsair\'s papers read; the plate says the band and the leagues (mutants: each seam)', async () => {
+test('ETHER-SHIPS at sea: a ship launched in the Eltheric Ocean\'s waters wears its names and colours, a corsair the band\'s boldness; a legend her own name, bold, announced; her end no crime and no crown\'s - the log\'s by her trade, a legend\'s purse and her day, a corsair\'s papers read; the plate says the band and the leagues (mutants: each seam)', async () => {
   const s = await sea({ hull: 2, where: { ether: reaches, region: 19 } });
   const deeds = [], events = [], ended = [], papers = [];
   const crimes = [];

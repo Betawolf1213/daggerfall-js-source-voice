@@ -1,7 +1,7 @@
 // ETHER-CROSSING, ETHER-SEA's host, ETHER-CHART (2026-10-11, the owner: "Sail far enough and you are prompted to travel
-// into the open sea") - THE CROSSING, AND WHAT A CAPTAIN KEEPS OF THE SEA (bible/03-World/Etheric-Sea.md): when the
-// crossing is asked and how it is sailed; the ledger's Etheric record; the Etheric host's waters, charting, strands,
-// legends, charts and papers; the chart of the Etheric Sea. tools/mutants/ethercross.json.
+// into the open sea") - THE CROSSING, AND WHAT A CAPTAIN KEEPS OF THE SEA (bible/03-World/Eltheric-Ocean.md): when the
+// crossing is asked and how it is sailed; the ledger's Eltheric record; the Eltheric host's waters, charting, strands,
+// legends, charts and papers; the chart of the Eltheric Ocean. tools/mutants/ethercross.json.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -57,7 +57,7 @@ test('ETHER-CROSSING the voyage: three days; out to the open water off Veilhaven
   assert.match(out.join(' '), /Set a course into the open sea\? \(3 days - your ship,/);
   assert.match(crossingRows('home').join(' '), /Set a course for home\? \(3 days\)/);
   assert.match(crossingRows('out', { days: 1 }).join(' '), /\(1 day - your ship/);
-  assert.match(crossingWords('out'), /You have crossed into the Etheric Sea\. Veilhaven lies ahead\.$/);
+  assert.match(crossingWords('out'), /You have crossed into the Eltheric Ocean\. Veilhaven lies ahead\.$/);   // PIN MOVED (ELTHERIC): the Etheric Sea's
   assert.match(crossingWords('home'), /The Iliac Bay - home\.$/);
   assert.match(CROSS_REFUSED.passengers, /deck is your own/); assert.match(CROSS_REFUSED.hostile, /enemy/);
 });
@@ -123,8 +123,8 @@ test('ETHER-SEA the ledger\'s record: isles charted once each (the log\'s island
   for (let i = 0; i < ETHER_CHARTED_MAX + 3; i++) c.chartIsle(`${i % 4000},${Math.floor(i / 4000)}`);
   assert.equal(c.charted().length, ETHER_CHARTED_MAX, 'no more than the charts hold');
   const lines = Object.fromEntries(logLines({ ...newLog(), islands: 3, deepest: 12, legends: ['The Drowned Queen'] }));
-  assert.deepEqual([lines['Etheric isles charted'], lines['Deepest Etheric waters'], lines['Legends ended']], ['3', '12 leagues past the Veil', 'The Drowned Queen']);
-  assert.equal(Object.fromEntries(logLines({ ...newLog(), deepest: 1 }))['Deepest Etheric waters'], '1 league past the Veil');
+  assert.deepEqual([lines['Eltheric isles charted'], lines['Deepest Eltheric waters'], lines['Legends ended']], ['3', '12 leagues past the Veil', 'The Drowned Queen']);   // PIN MOVED (ELTHERIC): 'Etheric'
+  assert.equal(Object.fromEntries(logLines({ ...newLog(), deepest: 1 }))['Deepest Eltheric waters'], '1 league past the Veil');
 });
 
 test('ETHER-SEA the host\'s waters and charting: the band, the depth and the legend\'s haunt at a pixel (none off the sea); every isle within SIGHT_PX charted the first time and said - a port and a ruin by kind - and the deepest kept (mutants: the reach, the words, the depth)', () => {
@@ -180,7 +180,7 @@ test('ETHER-SEA the legends\' host: the haunt\'s legend while she sails and is a
   assert.equal(host.legendHere(lan.px, lan.py, { night: true })?.id, 'lantern');
   assert.equal(host.legendEnded('queen', 'sink'), 3000);
   assert.equal(purse(), 4000);
-  assert.match(mid.at(-1), /^The Drowned Queen is sunk! The Etheric Sea will speak of this\. 3,000 gold/);
+  assert.match(mid.at(-1), /^The Drowned Queen is sunk! The Eltheric Ocean will speak of this\. 3,000 gold/);   // PIN MOVED (ELTHERIC): the Etheric Sea's
   assert.equal(L.legendDay('queen'), 40);
   assert.equal(host.legendHere(q.px, q.py), null, 'ended');
   setDay(70); assert.equal(host.legendHere(q.px, q.py)?.id, 'queen', 'risen');
@@ -281,7 +281,8 @@ test('ETHER-CHART the doors: the travel map\'s door opens the chart past the Vei
   const o = { ether: true, port: 'Veilhaven', waters: 'the Shallows, 7 leagues past the Veil', rumours: ['A tale.', 'Another.'], charted: 1, chart: { price: 150, fresh: 12, can: true, why: '' } };
   const t = officeText(o);
   assert.deepEqual(t, etherOfficeText(o));
-  assert.equal(t.lede, 'Veilhaven - a freeport of the Etheric Sea, in the Shallows, 7 leagues past the Veil. No crown\'s writ runs past the Veil, and no crown\'s favours. Your charts hold 1 isle.');
+  // PIN MOVED (ELTHERIC): the Etheric Sea's
+  assert.equal(t.lede, 'Veilhaven - a freeport of the Eltheric Ocean, in the Shallows, 7 leagues past the Veil. No crown\'s writ runs past the Veil, and no crown\'s favours. Your charts hold 1 isle.');
   assert.deepEqual(t.board.map((b) => [b.title, b.words, b.press]), [['Talk on the quay', 'A tale.', ''], ['Talk on the quay', 'Another.', '']]);
   assert.deepEqual(t.letters, [{ id: 'chart', title: 'A chart of these waters', words: '12 isles your charts do not hold, marked on them.', press: 'Buy - 150 gold', can: true }]);
   assert.deepEqual(t.heads.board, ['The quay\'s talk', 'the legends of these waters']);

@@ -148,12 +148,15 @@ test('DISC20-D: a storm cell strikes only where it is drawn - wholly outside its
   const squall = run(cell(null), (type, x) => (x <= 20000 ? 'snow' : 'thunder'));
   assert.deepEqual([squall.strikes.length, squall.sounds, squall.lit], [0, 0, 0], 'a squall\'s edge is no storm');
 
-  // the report's own afternoon, measured: a swamp everywhere, the player's word sunny, 18 clipped cells in range
+  // the report's own afternoon, measured: a swamp everywhere, the player's word sunny, 18 clipped cells in range.
+  // RAIN-HOURS (2026-10-13) moved the map's births, and the report's place grew a real storm inside these four game
+  // hours (218 strikes, every one where the map paints thunder); the same minute 600 km east is the report's afternoon
+  // on the map as it stands - sunny, 11 clipped cells in range, 208 strikes and 6 claps with the clip gate dropped
   const { systemsNear, weatherAt } = await import('../src/systems/weatherMap.js');
   const { mapGround } = await import('../src/systems/weatherSim.js');
   const { FIELD_RANGE_M } = await import('../src/systems/weatherField.js');
   const { CLIMATES } = await import('../src/formats/mapsFile.js');
-  const swamp = () => CLIMATES.Swamp, ground = mapGround(swamp), at = [522000, 618000], m0 = 210181980;
+  const swamp = () => CLIMATES.Swamp, ground = mapGround(swamp), at = [1114000, 664000], m0 = 210181980;
   assert.equal(weatherAt(at[0], at[1], m0, swamp).word, 'sunny');
   const ds = createDistantStorms();
   let strikes = 0, sounds = 0;
@@ -162,7 +165,7 @@ test('DISC20-D: a storm cell strikes only where it is drawn - wholly outside its
     const r = ds.tick({ systems: systemsNear(at[0], at[1], Math.floor(minutes), swamp, FIELD_RANGE_M + 250), at, minutes, seconds: f, ground });
     strikes += r.strikes.length; sounds += r.sounds.length;
   }
-  assert.deepEqual([strikes, sounds], [0, 0], 'no lightning and no thunder under a sunny sky with no storm drawn (248 strikes and 43 claps before)');
+  assert.deepEqual([strikes, sounds], [0, 0], 'no lightning and no thunder under a sunny sky with no storm drawn (208 strikes and 6 claps without the clip gate)');
 });
 
 // ── DISC20-B: "Sometimes when music tracks switch, its very abrupt instead of seamlessly fading in between tracks" ──

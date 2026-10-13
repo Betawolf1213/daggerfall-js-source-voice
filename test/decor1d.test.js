@@ -232,7 +232,8 @@ test('DECOR1d a flat\'s picture is asked for when its row comes into view, never
   panel.open({ where: '', entries, progress: 1, ready: true, gold: 1000, count: 0, cap: DECOR_CAP, radiusOf: () => 0.5, priceOf: () => 75 });
   const flats = entries.filter((e) => e.flat);
   assert.equal(asked.length, 0, 'nothing asked for while no row is in view');
-  assert.equal(watched.length, flats.length, 'every flat\'s row watched');
+  assert.equal(watched.length, flats.length + entries.filter((e) => !e.flat && e.model != null).length, 'every flat\'s row watched - and (MENU-ORDER) every model\'s, whose own picture is asked as a flat\'s is');
+  assert.ok(flats.length > 0 && watched.length > flats.length);
   const w = watched.find((x) => x.t.dataset.key === flats[0].key);
   w.io.cb([{ isIntersecting: true, target: w.t }]);
   await settle();

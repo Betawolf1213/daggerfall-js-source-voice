@@ -500,7 +500,7 @@ test('PROF9 wiring: the fire is any lit one (the street\'s camps and braziers, a
   assert.match(sh, /\n {2}installCooking\(\);   \/\/ PROF9/);
   assert.match(sh, /const tart = dishStaminaFactor\(entity\);/);
   const p = src('src/ui/profPages.js');
-  assert.match(p, /drawCookFire\(detail, rerender, kit\);   \/\/ PROF9/);
+  assert.match(p, /\['fire', \(d\) => drawCookFire\(d, rerender, kit\)\],   \/\/ PROF9/);   // PIN MOVED (MENU-ORDER)
   assert.match(src('src/ui/enhancedPlusStyle.js'), /\.prof-heatbar\.prof-panbar \{ background: linear-gradient/);
   const svc = src('server-account/src/professions.js');
   assert.match(svc, /const xp = r\.kind === 'dish' \? cookXp\(rank, \{ clean: clean === true, steps: halls \}\) : craftXp\(r\.tier, rank, false\);/);   // PIN MOVED (PROF12): the Apothecary's steps

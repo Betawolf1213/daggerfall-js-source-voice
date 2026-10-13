@@ -1,5 +1,5 @@
 // ETHER-PLACES (2026-10-11, the owner: "procedural islands with towns, dungeons") - THE ISLES' PLACES
-// (bible/03-World/Etheric-Sea.md ETHER-PLACES): a port isle's town and a ruin isle's dungeon, each a non-mutating clone
+// (bible/03-World/Eltheric-Ocean.md ETHER-PLACES): a port isle's town and a ruin isle's dungeon, each a non-mutating clone
 // of one of the game's own places on its isle's centre pixel under its own id (a lane of its own, past every pixel id of
 // the Bay), name and location index; the templates the game's own rows in map-id order; the world host's hooks - the
 // build, the Overworld's far reads, a ruin's online wake, the ports. tools/mutants/etherplaces.json.
@@ -135,7 +135,7 @@ test('ETHER-PLACES by source: the world host keeps the isles\' templates off the
   assert.match(src, /etherSea && inEther\(px\.x, px\.y\) \? ETHER_SEA_NAME : maps\.getRegionName/, 'the Overworld\'s line');
 });
 
-test('ETHER-PORTS by source: a port isle answers as a port to the Come Sail Away deeds, the naval host\'s waters, the harbour book (its town\'s harbour sounded - its quays) and the harbour office (no crown\'s); the Etheric freeport\'s harbourmaster its own tab; the crown\'s waters none past the Veil (mutants: each seam)', () => {
+test('ETHER-PORTS by source: a port isle answers as a port to the Come Sail Away deeds, the naval host\'s waters, the harbour book (its town\'s harbour sounded - its quays) and the harbour office (no crown\'s); the Eltheric freeport\'s harbourmaster its own tab; the crown\'s waters none past the Veil (mutants: each seam)', () => {
   const src = read('src/scenes/world.js');
   assert.match(src, /if \(etherSea && inEther\(x, y\)\) return !!etherPortAt\(x, y\);/);
   assert.match(src, /const etherPortOf = \(i\) => \(\{ key: `\$\{i\.px\},\$\{i\.py\}`, name: i\.name, px: i\.px, py: i\.py, region: ETHER_REGION, crown: null, ether: true \}\);/);

@@ -74,7 +74,7 @@
   {
     "name": "AUDIT-WB9-the-wares-pressable-mid-sale",
     "file": "src/ui/brokerWindow.js",
-    "old": "      else if (pendingInsig || deps.insigniaBusy?.()) buy.setAttribute('disabled', '');",
+    "old": "      if (s.ok && (pendingInsig || deps.insigniaBusy?.())) buy.setAttribute('disabled', '');",
     "new": "",
     "tests": [
       "test/wb9g_insignia.test.js"

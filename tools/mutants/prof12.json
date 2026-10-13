@@ -1251,7 +1251,7 @@
   {
     "name": "PROF12-pages-alchemy-undrawn",
     "file": "src/ui/profPages.js",
-    "old": "  drawAlchemyStation(detail, rerender, kit);   // PROF12\n",
+    "old": "    ['alchemy', (d) => drawAlchemyStation(d, rerender, kit)],   // PROF12\n",
     "new": "",
     "tests": [
       "test/prof12_client.test.js"
@@ -1260,7 +1260,7 @@
   {
     "name": "PROF12-pages-enchant-undrawn",
     "file": "src/ui/profPages.js",
-    "old": "  drawEnchantingStation(detail, rerender, kit);   // PROF12\n",
+    "old": "    ['enchant', (d) => drawEnchantingStation(d, rerender, kit)],   // PROF12\n",
     "new": "",
     "tests": [
       "test/prof12_client.test.js"

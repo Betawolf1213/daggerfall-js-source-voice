@@ -900,3 +900,22 @@ Russian and Spanish (2,435 rows each, every one the machine's).
   that name them follow). A speaker's review file (`tools/l10nReview.mjs`) is the way a fix comes in.
 - **Next:** the twelve, through the pipeline (`tools/translate.mjs`, Mac's key) or a cheaper run; then L10N4's routing of
   main's 6,000 new literals (the ratchet's 13,602).
+
+## The Eltheric chart, routed (2026-10-13, at PR #847's merge of main)
+
+The ratchet held PR #847 at its merge of main: its rewrite of the Eltheric chart (`ui/etherChartWindow.js`,
+ETHER-CHART2 and ETHER-OW) wrote 22 literals of prose where main's chart had 6. Its words are the text core's now
+(`sea.chart.*`, 33 keys - the catalog's 2,470), by ROUTE-BRIEF's laws, and drafted in-session into the thirteen whole
+languages; the twelve drafting owe them with the rest. The sea's own vocabulary (its name, bands, kinds and compass
+points) stays `world/ethericSea.js`'s, passed as arguments in English: that module is the account Worker's too, so its
+routing is its own. `01-Overview/Audit-Ether-OW.md` has the record; `test/audit_etherow.test.js` reads the chart in
+French and in English.
+
+## The chronicle's quest Abandon, routed from the start (2026-10-13, QUEST-SHELF-MAIN)
+
+QUEST-SHELF-MAIN (`06-Systems/Quest-Arc.md`) was written before the ratchet reached main, and its Abandon in the
+chronicle (`ui/enhancedChronicle.js`) carried four new literals of prose. It landed with them routed instead: the label,
+the armed label, the title and both aria-labels are `chronicle.quests.*` (5 keys - the catalog's 2,511 at its merge of
+main), read when the button is drawn, so the file's count stays at 35. They are drafted in-session into the thirteen
+whole languages, and `abandon (a quest)` and `reclaim (a quest)` were added to those languages' glossaries. The twelve
+drafting languages owe them with the rest. `test/questshelfmain.test.js` reads the button in French and in English.

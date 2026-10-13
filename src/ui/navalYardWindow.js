@@ -29,6 +29,7 @@ import { overlayAction } from './input.js';
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { injectNavalKit } from './navalHud.js';
 import { injectNavalWindowStyle } from './navalPlunderWindow.js';
+import { ETHER_SEA_NAME } from '../world/ethericSea.js';   // ELTHERIC: the sea's name, one home
 
 export const NAVAL_YARD_STYLE_ID = 'dagger-naval-yard-style';
 /** The yard's own rules beside the naval windows' sheet: a row's three columns. */
@@ -138,14 +139,14 @@ export function officeText(o) {
 }
 
 /**
- * ETHER-SEA: AN ETHERIC HARBOURMASTER'S TAB's words (scenes/etherHost.js office) - no crown, no contracts: the port's
+ * ETHER-SEA: AN ELTHERIC HARBOURMASTER'S TAB's words (scenes/etherHost.js office) - no crown, no contracts: the port's
  * waters, the legends' rumours as the board, and a chart of these waters among the letters. The same shape as
  * officeText's, `ether` set and `heads` the board's own words.
  * @param {any} o
  */
 export function etherOfficeText(o) {
   const g = (n) => `${Math.round(n).toLocaleString('en-US')} gold`;
-  const lede = `${o.port} - a freeport of the Etheric Sea, in ${o.waters}. No crown's writ runs past the Veil, and no crown's favours. Your charts hold ${o.charted} ${o.charted === 1 ? 'isle' : 'isles'}.`;
+  const lede = `${o.port} - a freeport of ${ETHER_SEA_NAME}, in ${o.waters}. No crown's writ runs past the Veil, and no crown's favours. Your charts hold ${o.charted} ${o.charted === 1 ? 'isle' : 'isles'}.`;
   const board = (o.rumours ?? []).map((r, i) => ({ id: `rumour:${i}`, title: 'Talk on the quay', words: r, terms: '', press: '', can: false, why: '' }));
   const c = o.chart;
   const letters = c ? [{ id: 'chart', title: 'A chart of these waters', words: c.fresh > 0 ? `${c.fresh} ${c.fresh === 1 ? 'isle' : 'isles'} your charts do not hold, marked on them.${c.can ? '' : ` ${c.why}`}` : c.why, press: `Buy - ${g(c.price)}`, can: !!c.can }] : [];
@@ -262,6 +263,7 @@ export function mountNavalYardWindow(host, deps) {
   const officeTab = button('Harbourmaster', 'dfnaval-btn', () => { tab = 'office'; note = null; render(); });
   const tradeTab = button('Exchange', 'dfnaval-btn', () => { tab = 'trade'; note = null; render(); });
   tabs.append(yardTab, officeTab, tradeTab);
+  yardTab.setAttribute('data-dficon', 'saw'); officeTab.setAttribute('data-dficon', 'anchor'); tradeTab.setAttribute('data-dficon', 'treasure');   // MENU-ORDER: each page its picture
   const exchange = () => (typeof m.exchange === 'function' ? m.exchange() : null);
   const tLede = el('p', 'dfnaval-lede');
   const tradeSec = el('section', 'dfnaval-sec'), tradeHead = el('h3', 'dfnaval-sechead'), tradeList = el('ul', 'dfnaval-holdlist');
@@ -290,7 +292,7 @@ export function mountNavalYardWindow(host, deps) {
     }
     return li;
   };
-  /** A section's head words: the Bay's own, or an Etheric harbourmaster's (`heads`). */
+  /** A section's head words: the Bay's own, or an Eltheric harbourmaster's (`heads`). */
   const headWords = (headEl, words) => { const [a, b] = headEl.children; if (a && b && words) { a.textContent = words[0]; b.textContent = words[1]; } };
   body.append(tabs, lede, sec, pSec, oLede, boardSec, heldSec, lettersSec, tLede, tradeSec);
   win.append(head, body);

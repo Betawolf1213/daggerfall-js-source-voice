@@ -245,7 +245,7 @@
   {
     "name": "LOOT17-a-refused-press-pressable",
     "file": "src/ui/reforgeWindow.js",
-    "old": "        if (why) { hb.setAttribute('disabled', ''); hb.setAttribute('title', REFORGE_REFUSALS[why] ?? ''); }\n",
+    "old": "        if (why) refusePress(hb, REFORGE_REFUSALS[why] ?? '', refused);   // MENU-ORDER: pressed, it says why\n",
     "new": "",
     "tests": [
       "test/loot17_hone.test.js"

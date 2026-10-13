@@ -17,6 +17,7 @@
 import { accountRefusalText } from '../net/accountClient.js';
 import { goldText, wearOf, wearText, MARKET_PRICE_MAX } from '../net/marketLaw.js';
 import { vendorSearch, VENDOR_LISTING_S } from '../net/vendorLaw.js';
+import { pictureNode } from './menuGlyphs.js';   // MENU-ORDER: a piece's picture, the host's
 
 const el = (tag, cls = null, text = null) => {
   const n = document.createElement(tag);
@@ -127,6 +128,9 @@ export function createVendorTab(v, ui) {
     return r;
   });
 
+  /** MENU-ORDER (AUDIT MENU-ORDER C5): the one wake every row's picture is asked with - a picture that lands wakes the
+   *  board once (textureCanvas.js hears a wake once), never once a row */
+  const wake = () => ui.rerender();
   /** A row as the Market tab draws one (its `.market-row`, its picked `.market-bar` straight under it in the list - the
    *  Plus dress's own rules, no wrapper of this tab's): the row, and its bar when picked. */
   function rowNodes(row, { buy = false, take = false, where = false } = {}) {
@@ -134,7 +138,10 @@ export function createVendorTab(v, ui) {
     b.setAttribute('type', 'button');
     b.setAttribute('aria-expanded', st.picked === row.id ? 'true' : 'false');
     b.onclick = () => { st.picked = st.picked === row.id ? null : row.id; ui.rerender(); };
-    b.append(el('b', null, nameOf(row.item)),
+    const name = el('b', null, nameOf(row.item));   // MENU-ORDER: the piece's picture before its name (the host's, `v.picture`)
+    const pic = pictureNode(v.picture?.(row.item, wake) ?? null, el, 'market-pic');
+    if (pic) { if (name.prepend) name.prepend(pic); else name.append(pic); }
+    b.append(name,
       el('span', 'market-quality', wearText(wearOf(row.item)) ?? 'whole'),
       el('span', 'market-price', goldText(row.price)),
       el('span', 'market-where', where ? `${row.owner ?? 'someone'}'s house, ${townOf(row.map)}` : standsText(row.expiresAt, ui.nowS())));

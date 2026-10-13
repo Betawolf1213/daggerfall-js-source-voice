@@ -6,7 +6,7 @@ import { byClass, keydown, Node_ } from './chargenDom.mjs';   // the suite's min
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createShipyardHost, SHIPYARD_PAGES, AT_HAND } from '../src/scenes/shipyardHost.js';
-import { mountShipyardWindow, shipCardText, fleetRowText, recruitText, SHIPYARD_TABS } from '../src/ui/shipyardWindow.js';
+import { mountShipyardWindow, shipCardText, fleetRowText, recruitText, SHIPYARD_TABS, SHIPYARD_TAB_ICONS } from '../src/ui/shipyardWindow.js';
 import { createShipyardOverlay, shipyardOpen, closeShipyard } from '../src/ui/navalPlunderDoor.js';
 import { WARM_CHUNKS } from '../src/ui/enhancedChunk.js';
 import { fleetShip, fleetBook, titleDeed, knowShip, _resetFleetForTests, shipLabel } from '../src/systems/fleet.js';
@@ -238,7 +238,7 @@ test('SHIPYARDS THE WINDOW\'S WORDS: a ship\'s card (her figures, a galley lying
   assert.equal(recruitText({ name: 'B', gradeLabel: 'Green', trade: 'Cook', className: 'Monk', sex: 'male', fights: 0, boardings: 0, line: '', fee: 180 }).who, 'Green Cook - Monk, he has never been in a fight.');
 });
 
-test('SHIPYARDS THE WINDOW MOUNTED: its tabs page the model; a ship bought, a ship sold and a hand paid off each take a SECOND press - never the click that asked (AUDIT SHIPYARDS L1-5: a double click is one press); a deed bought turns the window to her (L7-4); the Crew Hall, the Shipwright and the Refits pages mounted (L6-7); a summons hands its water to the host and the window makes way; the back key leaves', () => {
+test('SHIPYARDS THE WINDOW MOUNTED: its tabs page the model; a ship bought, a ship sold and a hand paid off each take a SECOND press - never the click that asked (AUDIT SHIPYARDS L1-5: a double click is one press); a deed bought turns the window to her (L7-4); the Crew Hall, the Shipwright and the Refits pages mounted (L6-7); a summons hands its water to the host and the window makes way; the back key leaves', async () => {
   const r = rig();
   own(r, 801, 2, 'here', { hands: ['Bram'] });
   own(r, 802, 4, 'away');
@@ -246,12 +246,25 @@ test('SHIPYARDS THE WINDOW MOUNTED: its tabs page the model; a ship bought, a sh
   globalThis.document.body.append(host);
   const exits = [], doors = [];
   let t = 1000;
-  const view = mountShipyardWindow(host, { model: (v) => r.host.model(SITE, v), act: (verb, a, b) => r.host.act(SITE, verb, a, b), page: 'ships', onDoor: (d) => doors.push(d), onExit: (why) => exits.push(why), now: () => t });
+  const pics = [];   // MENU-ORDER: her own picture, as the host draws her (scenes/shipPortraits.js)
+  const view = mountShipyardWindow(host, { model: (v) => r.host.model(SITE, v), act: (verb, a, b) => r.host.act(SITE, verb, a, b), page: 'ships', onDoor: (d) => doors.push(d), onExit: (why) => exits.push(why), now: () => t,
+    picture: (hull, where) => { pics.push([hull, where]); return Promise.resolve(hull === 0 ? null : `data:ship${hull}`); } });
   const click = (b) => b.dispatch('click', { stopPropagation() {} });
   const note = () => byClass(host, 'dfnaval-note')[0].textContent;
   const tab = (id) => byClass(host, 'dfyard-tab').find((b) => b.getAttribute('data-tab') === id);
   const selected = () => byClass(host, 'dfyard-tab').find((b) => b.getAttribute('aria-selected') === 'true')?.getAttribute('data-tab');
   assert.equal(byClass(host, 'dfyard-card').length, SHIPYARD_HULLS.length);
+  // MENU-ORDER (bible/10-UI/Menu-Order.md f): each page its picture, each ship's card a ship
+  assert.deepEqual(byClass(host, 'dfyard-tab').map((b) => b.getAttribute('data-dficon')), SHIPYARD_TABS.map((t) => SHIPYARD_TAB_ICONS[t.id]));
+  assert.ok(byClass(host, 'dfyard-card').every((c) => byClass(c, 'dfyard-pic')[0]?.getAttribute('data-dficon') === 'ship'), 'a ship on every card');
+  assert.deepEqual(pics.map(([h]) => h), SHIPYARD_HULLS, 'her own picture asked, once a hull');
+  await Promise.resolve(); await Promise.resolve();
+  const img = (hull) => byClass(byClass(host, 'dfyard-card').find((c) => c.getAttribute('data-hull') === String(hull)), 'dfyard-shipimg')[0];
+  assert.ok(SHIPYARD_HULLS.filter((h) => h !== 0).every((h) => img(h).getAttribute('src') === `data:ship${h}`), 'set over her glyph as it lands');
+  assert.ok(img(0).getAttribute('src') == null, 'none to be had: her glyph stands');
+  click(tab('fleet')); click(tab('ships'));
+  assert.equal(img(2).getAttribute('src'), 'data:ship2', 'kept - drawn again at once');
+  assert.deepEqual(pics.map(([h]) => h), [...SHIPYARD_HULLS, 0], 'only the one never had is asked again');
   // buying: the first press asks, a second at once (a double click) does nothing, a second a beat later buys
   const buyBtn = () => byClass(byClass(host, 'dfyard-card').find((c) => c.getAttribute('data-hull') === '1'), 'dfnaval-take')[0];
   click(buyBtn());

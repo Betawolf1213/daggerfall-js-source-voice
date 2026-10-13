@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { webcrypto } from 'node:crypto';
 import {
-  mintWatchReceipt, readWatchReceipt, verifyWatchReceipt, watchReceiptValid, watchDue, WATCH_RECEIPT_TTL_S, WATCH_TICK_MS, WATCH_MOVED_MS,
+  mintWatchReceipt, readWatchReceipt, verifyWatchReceipt, watchReceiptValid, watchDue, watchPixelOk, WATCH_RECEIPT_TTL_S, WATCH_TICK_MS, WATCH_MOVED_MS,
 } from '../src/net/watchReceipt.js';
 import { mintReceipt, verifyReceipt, importReceiptKey } from '../src/net/gateReceipt.js';
 import { verifyRaidReceipt } from '../src/net/raidReceipt.js';
@@ -320,7 +320,10 @@ test('SEAT1b THE HOSTS BY SOURCE: the relay ticks in its pose arm and nowhere el
   const relay = rd('server/src/index.js');
   assert.match(relay, /if \(isCellRoom\(a\.key\) && cellRoomOfWire\(m\.p\.x, m\.p\.z\) === a\.key && typeof met\.sub === 'string' && met\.sub\) await this\._watchTick\(ws, met\.sub, m\.p, !unmoved, now\);/);   // PIN MOVED (AUDIT-SEATS): R7 - the pose's own cell alone, never a halo's
   assert.equal((relay.match(/_watchTick\(/g) ?? []).length, 2, 'one call, one definition');
-  assert.match(relay, /if \(!\(x >= 0 && x < 1000 && y >= 0 && y < 500\)\) return;/);
+  // PIN MOVED (AUDIT ETHER-OW C2-1, test/audit_etherow.test.js): a pose off the map mints nothing - the Watch's ground
+  // one home (net/watchReceipt.js watchPixelOk), its answers as they were
+  assert.match(relay, /const \[x, y\] = mapPixelOfWire\(p\.x, p\.z\);\n {4}if \(!watchPixelOk\(x, y\)\) return;/);
+  assert.deepEqual([watchPixelOk(0, 0), watchPixelOk(999, 499), watchPixelOk(-1, 0), watchPixelOk(1000, 0), watchPixelOk(0, -1), watchPixelOk(0, 500)], [true, true, false, false, false, false]);
   assert.match(relay, /mintWatchReceipt\(\{ s: sub, x, y, c: rand32\(\) \}, await this\._receiptKeyOf\(\)/);
   assert.match(relay, /this\._send\(ws, JSON\.stringify\(\{ t: 'watch', r \}\)\);/);
   const online = rd('src/net/online.js');

@@ -128,8 +128,11 @@ test('LOOT19: the scryers\' page - a row a family, its press or why not, a press
       const rowOf = (f) => rows().find((r) => r.dataset.family === f);
       const dragon = one(rowOf('dragon'), 'scry-press');
       assert.equal(dragon.textContent, 'None hidden');
-      assert.equal(dragon.attrs.disabled, '');
+      assert.equal(dragon.attrs['aria-disabled'], 'true');
       assert.equal(dragon.attrs.title, REFORGE_REFUSALS.none);
+      dragon.onclick({ stopPropagation() {} });   // MENU-ORDER: pressed, it says why and scries nothing
+      assert.deepEqual(calls, []);
+      assert.equal(one(shell, 'broker-note').textContent, REFORGE_REFUSALS.none);
       const undead = one(rowOf('undead'), 'scry-press');
       assert.equal(undead.textContent, 'Scry');
       assert.ok(textOf(rowOf('undead')).includes('Crypts, vampire haunts, ruined castles and cemeteries'));

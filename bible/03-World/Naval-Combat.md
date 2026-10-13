@@ -292,9 +292,10 @@ With the sea fight on, a raider IS a pirate of the sea (`systems/naval/navalRaid
   the traveller - where each sails now and where its seeded course is RAIDER_LEAD_S on (`raiderAt`), in the scene -
   and the lookout's reach (`raiderSight`: a day's 1,000 m, a night's 500). A raider within RAIDER_STAND_M stands as a
   ship, the nearest RAIDER_SHIPS_MAX at most; a spent one never.
-- **Her seed's own ship.** Her class is a pirate the player's level has met, drawn off the raider's seed by the
-  classes' weights (`raiderClassOf`) - a sloop, a brigantine or a corsair galley, never the flagship (the small raid's
-  crew); her name and her captain are her seed's (`shipNames`).
+- **Her seed's own ship.** Her class is a pirate the player's level has met (past the Veil the band's levels over it -
+  ETHER-OW), drawn off the raider's seed by the classes' weights (`raiderClassOf`) - a sloop, a brigantine or a corsair
+  galley, never the flagship (the small raid's crew); her name and her captain are her seed's (`shipNames`; past the
+  Veil the sea's, `etherShipNames`).
 - **Her course, then her fight.** She steers for her course's lead (`ship.course`, navalAI.js cruiseCourse), so the
   sail on the map is the sail met on the water, and her lookout reaches as far as the raiders' does (`ship.sight` in
   place of ENGAGE_RANGE). Sighting a boat she is a captain like any pirate's: the broadsides, the grapple of a boat
@@ -308,7 +309,12 @@ With the sea fight on, a raider IS a pirate of the sea (`systems/naval/navalRaid
 - **One copy.** A raider is stood by the client she is near - the chased traveller's own, as OWS3's chase was - and
   said in that client's word like any ship; a peer's copy of the same seed with the lower id keeps her (TV7b's
   `chaseYields`), and mine goes.
-- With no sea fight (the switch off), OWS3 stands as it was: the chase on the Overworld and the mod's raid alongside.
+- With no sea fight (the switch off), OWS3 stands as it was in the Bay: the chase on the Overworld and the mod's raid
+  alongside.
+- **Past the Veil** (ETHER-OW, 2026-10-13, `03-World/Eltheric-Ocean.md`): the raiders are seeded on the Eltheric Ocean's
+  open sea too while the sea fight stands them as ships (AUDIT ETHER-OW C2-3: with it off none are - the mod's raid
+  boards the Bay's "Your Ship", a teleport over the Veil), and one stood there is the sea's own corsair - `launch`
+  dresses her (its names, its colours, no crown's law), her class the band's levels over the captain's (above).
 
 **THE MERGE with main's OW6 (2026-09-29).** Main shared the Overworld's raider chase on the cell's foes frames (OW6,
 `bible/06-Systems/Travel-View.md`: a chase said where it sails, a spent raider said and kept by the cell's ledger, never

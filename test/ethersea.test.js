@@ -1,6 +1,6 @@
 // ETHER-SEA (2026-10-11, the owner: "A brand new open sea map ... The etheric sea is a infinite procedural oceanscape with
-// procedural islands with towns, dungeons, exotic resources, deadly legendary ships") - THE ETHERIC SEA'S LAW
-// (bible/03-World/Etheric-Sea.md): its box on the Bay's grid, the Veil and the bands, the isles' lattice, the ground the
+// procedural islands with towns, dungeons, exotic resources, deadly legendary ships") - THE ELTHERIC OCEAN'S LAW
+// (bible/03-World/Eltheric-Ocean.md): its box on the Bay's grid, the Veil and the bands, the isles' lattice, the ground the
 // kernel grows there and the composition that hands it to the kernels, the stream and the far ring, and the crossing's
 // waters. tools/mutants/ethersea.json.
 import './modsOff.js';
@@ -29,7 +29,7 @@ import { buildFarRingGrid } from '../src/render/farRing.js';
 import { TerrainGenClient } from '../src/world/terrainGenClient.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
-/** A stub reader: the open sea everywhere (byte 0, no detail) - the Etheric Sea composed over it. */
+/** A stub reader: the open sea everywhere (byte 0, no detail) - the Eltheric Ocean composed over it. */
 const seaWoods = () => {
   const w = Object.create(WoodsFile.prototype);
   w.getHeightMapValue = () => 0;
@@ -71,7 +71,9 @@ test('ETHER-SEA the box: inside the wire\'s world (a pose\'s x and z within POSE
   assert.equal(ETHER_MARGIN, 64);
   assert.equal(inEtherLaw(ETHER_BOX.x0 - 64, ETHER_BOX.y0 - 64), true); assert.equal(inEtherLaw(ETHER_BOX.x0 - 65, -5000), false); assert.equal(inEtherLaw(ETHER_BOX.x1 + 63, -5000), true); assert.equal(inEtherLaw(ETHER_BOX.x1 + 64, -5000), false);
   assert.deepEqual(etherFrame(), { x0: 64, y0: -7680, w: 8064, h: 4992 });
-  assert.equal(ETHER_SEA_NAME, 'the Etheric Sea');
+  // PIN MOVED (ELTHERIC, 2026-10-12, the owner: "Apparently the ocean is suppose to be eltheric not etheric"): the lore's
+  // Eltheric Ocean, the name the intro map already gave the waters west of the Bay - it was 'the Etheric Sea'
+  assert.equal(ETHER_SEA_NAME, 'the Eltheric Ocean');
 });
 
 test('ETHER-SEA the Veil and the bands: the Veil the box\'s eastmost VEIL_PX, depth leagues west of it, the bands from 0, 12, 45 and 140 leagues - each deadlier and richer, its isles\' kinds and its sea\'s law (mutants: the Veil, the league, each band\'s bound)', () => {
@@ -264,7 +266,7 @@ test('ETHER-SEA the crossing\'s waters: out on the open Abecean - west of CROSS_
   assert.deepEqual({ ...HOME_WATERS }, { px: 180, py: 300 });
 });
 
-test('ETHER-SEA the goods the wild isles bear are the exchange\'s Etheric goods, one for one (mutants: the list)', () => {
+test('ETHER-SEA the goods the wild isles bear are the exchange\'s Eltheric goods, one for one (mutants: the list)', () => {
   assert.deepEqual([...ETHER_GOODS], GOODS.filter((g) => g.ether).map((g) => g.id));
 });
 

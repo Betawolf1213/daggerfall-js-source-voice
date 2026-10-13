@@ -179,7 +179,7 @@ test('TRUE-CURSE (AUDIT FB1010 D2): the temple\'s page shows a damned piece with
       assert.equal(all2(row, 'broker-set')[0].textContent, `Damned Legendary · ${LR.curseLine(damned)}`);
       assert.equal(all2(row, 'broker-price')[0].textContent, '-', 'no price for what no temple lifts');
       const press = all2(row, 'lift-press')[0];
-      assert.deepEqual([press.textContent, press.attrs.disabled, press.attrs.title], ['Damned', '', LIFT_REFUSALS.damned]);
+      assert.deepEqual([press.textContent, press.attrs['aria-disabled'], press.attrs.title], ['Damned', 'true', LIFT_REFUSALS.damned]);
     } finally { view.unmount(); }
   });
 });

@@ -128,7 +128,7 @@
  {
   "name": "DW-A-no-south-border-seeds",
   "file": "src/world/deepWatersBake.js",
-  "old": "        if (py === MAP_H - 1 && row === 7) edge |= 0xff;",
+  "old": "        if (py === FH - 1 && row === 7) edge |= 0xff;",
   "new": "        if (false) edge |= 0xff;",
   "tests": [
    "test/dwa_bake.test.js"
@@ -137,7 +137,7 @@
  {
   "name": "DW-A-no-east-border-seeds",
   "file": "src/world/deepWatersBake.js",
-  "old": "        if (px === MAP_W - 1) edge |= 0x80;",
+  "old": "        if (px === FW - 1) edge |= 0x80;",
   "new": "        if (false) edge |= 0x80;",
   "tests": [
    "test/dwa_bake.test.js"

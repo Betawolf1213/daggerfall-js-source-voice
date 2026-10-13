@@ -31,6 +31,7 @@
    drift this file exists to prevent. scripts/landingHtml.mjs injects
    this block into that page at build; the rest of the skin stays a
    string the game pays for only when a screen is mounted. */
+import { DFICON_CSS } from './menuGlyphs.js';   // MENU-ORDER (AUDIT U8): the menus' pictures, laid with this sheet
 import { PIXELIFY_FIVE_FACE, PIXEL_STACK, PIXEL_FONT_CSS } from './pixelifyFive.js';   // FIX-D: Silkscreen's five ahead of Pixelify Sans
 import { badgeCss } from './playerBadge.js';   // ACC3c: one rule per title and per glyph, walked out of the vocabulary - the card writes a class and the skin carries the colour
 import { STONE_WORD, PLUS_CSS, PLUS_STYLE_ID, applyPlusTheme } from './enhancedPlusStyle.js';   // PLUS1: the Enhanced Plus sheet, laid over this one
@@ -128,6 +129,10 @@ export const ENHANCED_CSS = `
 ${PIXELIFY_FIVE_FACE}
 /* ── TOKENS ── see ENHANCED_TOKENS above */
 ${ENHANCED_TOKENS}
+/* ── MENU-ORDER: the menus' pictures (ui/menuGlyphs.js), on every page this sheet is laid on - AUDIT MENU-ORDER U8: they
+   rode the Plus sheet alone, and a window the classic skin dresses (the Reforge, the shipmaster's) lays this one and not
+   that: its tabs wore no picture */
+${DFICON_CSS}
 
 /* ── FONT3: THE GAME SPEAKS ONE FACE (2026-10-02, Mac: "we need to ensure everything recieves our enhanced font").
    The page's own face was --data, Barlow Semi Condensed - the LAUNCHER's - and --display, Cormorant, the menu's
@@ -3791,6 +3796,38 @@ ${paceControlsCss('tview')}
   border-top: 2px solid rgba(125,116,96,0.35); background: rgba(10,12,17,0.4); }
 .trade-shell .trade-cost { flex: 1 1 auto; color: var(--brass); font-size: 13px;
   font-variant-numeric: tabular-nums; align-self: center; }
+/* MENU-ORDER (2026-10-12): the footer's two figures, each under its own name; the theft set apart from the sale */
+.trade-shell .trade-cost { display: flex; flex-wrap: wrap; gap: 4px 26px; }
+.trade-shell .trade-fig { display: flex; flex-direction: column; gap: 1px; }
+.trade-shell .trade-fig small { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+.trade-shell .trade-fig b { font-weight: 400; font-size: 16px; color: #efe8d6; }
+.trade-shell .trade-fig:first-child b { color: rgb(243,239,44); }
+.trade-shell .trade-steal { margin-right: 18px; }
+.trade-shell .trade-ownhead { margin-bottom: 8px; }
+/* MENU-ORDER: a row's own price; the lists as lines or as pictures - the header's switch */
+.trade-shell .itemprice { flex: 0 0 auto; margin-left: 12px; font-size: 13px; color: rgb(243,239,44); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.trade-shell .trade-view { display: flex; gap: 4px; justify-self: start; }
+.trade-shell .trade-view .act { min-height: 32px; padding: 4px 10px; font-size: 12px; }
+/* AUDIT MENU-ORDER U7: on a phone the title has the header's first row whole, the switch and Close the second - beside
+   the switch it had 94px, the shop's name six lines tall, and the lists gave up 80px to it */
+@media (max-width: 560px) {
+  .trade-shell .sb-top { grid-template-columns: 1fr auto; grid-template-areas: "who who" "view close"; row-gap: 8px; }
+  .trade-shell .sb-top > .sb-who { grid-area: who; }
+  .trade-shell .sb-top > .trade-view { grid-area: view; }
+  .trade-shell .sb-top > .act { grid-area: close; }
+}
+/* AUDIT MENU-ORDER U14: a finger's press is 44px, as the touch layer's own */
+@media (pointer: coarse) { .trade-shell .trade-view .act { min-height: 44px; } }
+.trade-shell[data-view="grid"] .remotelist { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  grid-auto-rows: max-content; gap: 6px; align-content: start; }
+.trade-shell[data-view="grid"] .itemrow { flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px;
+  min-height: 0; padding: 8px 6px; text-align: center; border: 1px solid rgba(125,116,96,0.35); }
+.trade-shell[data-view="grid"] .itemrow .tile { width: 56px; height: 56px; }
+.trade-shell[data-view="grid"] .itemname { align-items: center; width: 100%; }
+.trade-shell[data-view="grid"] .itemname > span:first-child { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.trade-shell[data-view="grid"] .itemname small, .trade-shell[data-view="grid"] .itemwt { display: none; }
+.trade-shell[data-view="grid"] .itemprice, .trade-shell[data-view="grid"] .itemrepair { margin-left: 0; }
+.trade-shell[data-view="grid"] .packempty { grid-column: 1 / -1; }
 .trade-shell .itemrow.on { background: rgba(125,116,96,0.16); box-shadow: inset 2px 0 0 var(--brass); }
 .trade-shell .itemrow.ghost { opacity: 0.5; }
 .trade-shell .itemrow.picked { background: rgba(125,116,96,0.22); box-shadow: inset 2px 0 0 var(--brass); }
@@ -3805,7 +3842,7 @@ ${paceControlsCss('tview')}
 .trade-shell .trade-detail .tile { flex: 0 0 auto; }
 .trade-shell .trade-detail { min-height: 78px; box-sizing: border-box; }   /* TRADE-STEADY: the strip's room kept, filled or not */
 .trade-shell .trade-detail-empty { justify-content: center; }
-.trade-shell .trade-detail-empty .meta { margin: 0; font-size: 12px; color: #7d745f; letter-spacing: 0.04em; }
+.trade-shell .trade-detail-empty .meta { margin: 0; font-size: 13px; color: var(--dim); letter-spacing: 0.04em; }   /* MENU-ORDER: FONT3's dim, where #7d745f had escaped it */
 .trade-shell .trade-detail-info { flex: 1 1 auto; min-width: 0; }
 .trade-shell .trade-detail-info h4 { margin: 0 0 4px; font-size: 14px; font-weight: 400;
   color: #e8e0c8; }

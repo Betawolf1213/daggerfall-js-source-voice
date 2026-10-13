@@ -23,7 +23,7 @@ import { multiply, transformPoint, identity } from '../world/mat4.js';
 import { StaticBatchBuilder, keyResolver } from '../render/staticBatch.js';   // PERF6: the room's static models as one mesh
 import { collectInteriorLights } from '../world/interiorLights.js';
 import { applyClimate } from '../world/climateSwaps.js';
-import { remapSubMeshes } from '../world/texRemap.js';   // WM3: the one climate/dungeon remap seam
+import { remapSubMeshes, markRemapLaw } from '../world/texRemap.js';   // WM3: the one climate/dungeon remap seam; AUDIT MENU-ORDER C3: a table named by its law
 import { unityMaterialName } from '../systems/immersiveFootsteps.js';   // IF1: MaterialReader's material name, for the mod's floor walk
 import { billboardSize } from '../world/rmbFlats.js';
 import { preloadTextureRecord } from '../systems/textureReplacement.js';   // LAMP-KEEPER: a re-materialised person's art, decoded before it is drawn
@@ -249,6 +249,7 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
   // standalone scene when the swapped archive lacks the record.
   const texRemap = new Map();
   const resolveTexKey = keyResolver(texRemap);   // PERF6: drawMesh's own remap resolution (every model is remapped above, before the list is built)
+  markRemapLaw(texRemap, `climate:${climateBase}.${season}`);   // AUDIT MENU-ORDER C3: the table named by the law it is built in
   const climateArchive = (archive, record) => applyClimate(archive, record, climateBase, season);
   for (const id of pending.keys()) {
     // The undefined submesh list is the seam's to survive, not this

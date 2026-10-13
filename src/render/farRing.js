@@ -120,7 +120,7 @@ const RING_SEA_Y = ringHeight(0);
  * @param {?((x: number, y: number) => number)} [o.byteAt] - TAMRIEL2: the height byte past the map's edge, or null for the clamp
  * @param {?((x: number, y: number) => number)} [o.climatePast] - ETHER-SEA: the climate past the map's edge, or null for the clamp
  * @param {?((x: number, y: number) => boolean)} [o.pastOwn] - AUDIT CAPTAIN'S SEA G6: whether `byteAt` answers a pixel past
- *   the map with its own ground (the continent's, the Etheric Sea's) rather than the clamp - its cliffs then faded at its
+ *   the map with its own ground (the continent's, the Eltheric Ocean's) rather than the clamp - its cliffs then faded at its
  *   own pixel; null: every pixel past the map it is handed
  */
 export function buildFarRingGrid({ heightBytes, mapWidth, mapHeight, climateAt, baseX, baseY, radius = RING_RADIUS, relief = false, byteAt: byteAtPast = null, climatePast = null, pastOwn = null }) {
@@ -136,7 +136,7 @@ export function buildFarRingGrid({ heightBytes, mapWidth, mapHeight, climateAt, 
   const byteAt = byteAtPast
     ? (x, y) => (x >= 0 && y >= 0 && x < mapWidth && y < mapHeight ? heightBytes[y * mapWidth + x] : byteAtPast(x, y))
     : (x, y) => heightBytes[clampY(y) * mapWidth + clampX(x)];
-  // ETHER-SEA: and the climate past the map, where the host hands one (the Etheric Sea's isles wear their own; the clamp
+  // ETHER-SEA: and the climate past the map, where the host hands one (the Eltheric Ocean's isles wear their own; the clamp
   // read the Bay's edge's there, and an isle stood in the edge's climate)
   const climateOf = climatePast
     ? (x, y) => (x >= 0 && y >= 0 && x < mapWidth && y < mapHeight ? climateAt(x, y) : climatePast(x, y))

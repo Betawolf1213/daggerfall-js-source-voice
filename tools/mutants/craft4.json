@@ -622,7 +622,7 @@
   {
     "name": "CRAFT4-pages-no-loom",
     "file": "src/ui/profPages.js",
-    "old": "  drawTemper(detail, rerender, kit, 'loom');   // CRAFT4: the tailor's\n",
+    "old": "    ['temper-loom', (d) => drawTemper(d, rerender, kit, 'loom')],   // CRAFT4: the tailor's\n",
     "new": "",
     "tests": [
       "test/craft4_temper.test.js"

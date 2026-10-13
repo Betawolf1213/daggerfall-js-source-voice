@@ -132,12 +132,12 @@
   {
     "name": "OW3D3-rows-off-the-index",
     "file": "src/scenes/world.js",
-    "old": "const dungeons = (_tvDungeonRows ??= dungeonRows(mapDict)), locAt",
-    "new": "const dungeons = (_tvDungeonRows ??= dungeonRows(locationIndex)), locAt",
+    "old": "    const bay = (_tvDungeonRows ??= dungeonRows(mapDict));",
+    "new": "    const bay = (_tvDungeonRows ??= dungeonRows(locationIndex));",
     "tests": [
       "test/tv6_dungeons.test.js"
     ],
-    "note": "AUDIT OW3 D3: the fixed list a one-time read of the LIVE index again (and, with rows read off locations, no dungeon at all)."
+    "note": "AUDIT OW3 D3: the fixed list a one-time read of the LIVE index again (and, with rows read off locations, no dungeon at all). RE-AIMED (ETHER-OW): the rows' one home, tvDungeonRowsAt."
   },
   {
     "name": "OW3D3-spawns-snapshotted",

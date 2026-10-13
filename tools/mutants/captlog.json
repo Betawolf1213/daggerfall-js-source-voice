@@ -200,8 +200,8 @@
   {
     "name": "CL-ether-crowned",
     "file": "src/systems/naval/captainLedger.js",
-    "old": "if (trade === 'ether') return changes;   // the Etheric Sea knows no crown",
-    "new": "if (trade === 'x') return changes;   // the Etheric Sea knows no crown",
+    "old": "if (trade === 'ether') return changes;   // the Eltheric Ocean knows no crown",
+    "new": "if (trade === 'x') return changes;   // the Eltheric Ocean knows no crown",
     "tests": [
       "test/captlog.test.js"
     ]

@@ -31,7 +31,7 @@ function hostPorts({ flagged = new Set(), dict, names, here, ether = null }) {
   const travelLocationSummaryAt = (d, x, y) => d.get(y * 1000 + x) ?? null;
   // eslint-disable-next-line no-new-func
   // SEAT2b part two (PIN MOVED): the port test asks hasPortFor - HasPort, or a members' Harbour at a seat (none set here)
-  // PIN MOVED (ETHER-PORTS): past the Veil the port test asks the isle's port (world.js etherPortAt) - with the Etheric Sea
+  // PIN MOVED (ETHER-PORTS): past the Veil the port test asks the isle's port (world.js etherPortAt) - with the Eltheric Ocean
   // off (`etherSea` false: every host but the enhanced and online ones) it never asks; `ether` here is its box's west edge
   // and its ports' pixels
   return new Function('mapDict', 'maps', 'travelLocationSummaryAt', 'hasPort', 'hasPortFor', 'PORT_LOCATION_IDS', 'getPixelFromPixelID', 'playerTravelPixel',

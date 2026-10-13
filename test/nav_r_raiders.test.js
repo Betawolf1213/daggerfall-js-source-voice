@@ -18,6 +18,8 @@ import { SHIP_STATES } from '../src/systems/naval/navalDamage.js';
 import { ENGAGE_RANGE } from '../src/systems/naval/navalAI.js';
 import { navalWireRecord } from '../src/systems/naval/navalWire.js';
 import { RAIDER_SIGHT_M, RAIDER_SIGHT_NIGHT_M, RAIDER_SAIL_MPS, RAIDERS_WIRE_MAX, RAIDER_WORD_MS, RAIDER_CONTACT_M, RAIDER_CHASE_MPS, raiderWordOf } from '../src/systems/seaRaiders.js';
+import { BANDS } from '../src/world/ethericSea.js';   // ETHER-OW: the sea's bands, their levels
+import { etherShipNames, etherFlagOf } from '../src/systems/naval/etherShips.js';
 
 const src = (p) => readFileSync(new URL(`../src/${p}`, import.meta.url), 'utf8');
 
@@ -100,7 +102,7 @@ async function harness(o = {}) {
   const view = { feet: [0, 0, 0] };
   const deps = {
     pool, csa: () => runtime, seaY: () => 0, isWater: () => true, feet: () => view.feet, look: () => ({ origin: [0, 5, 0], dir: [1, 0, 0] }), level: () => o.level ?? 5,
-    where: () => ({ px: 100, py: 100, region: 23, day: 1, nearPort: false, capitals: [{ region: 23, x: 100, y: 100 }], cityLights: false }),
+    where: () => o.where ?? ({ px: 100, py: 100, region: 23, day: 1, nearPort: false, capitals: [{ region: 23, x: 100, y: 100 }], cityLights: false }),   // ETHER-OW: or the Eltheric Ocean's
     say: (t) => log.say.push(t), mid() {}, audio: { play3d() {}, loop3d: () => ({ move() {}, stop() {} }) }, flame: () => ({ move() {}, retire() {} }),
     law: { crime() {}, legal() {}, faction() {} },
     board: { leaveHelm() {}, placePlayer() {}, deckSpots: (_b, n) => Array.from({ length: n }, (_, i) => [[i, 5, 0], 0]), spawnFoe: () => ({ dead: false }), foeDown: () => false, removeFoe() {}, startRaid: () => null, openPlunder: () => true, giveItems: () => ({ left: [] }) },
@@ -333,4 +335,25 @@ test('THE MERGE (OW6) the world host, run: with the sea fight on my raider word 
   d.tvRaid.chase.clear();
   d.threats = [];   // the arc off: no sea (navalHost.js threats)
   assert.deepEqual(h.journeyThreats(true), [{ dx: 300, dz: 0, reach: RAIDER_SIGHT_M }, { dx: 1 - 100000, dz: 1 - 200000, reach: RAIDER_SIGHT_M }]);
+});
+
+test('ETHER-OW: past the Veil a raider stands as the sea\'s own corsair - her class drawn the band\'s levels over the captain\'s, as every class the director draws there is (navalDirector.js ctx.ether), her names and colours the sea\'s, no crown\'s law over her (mutants: the band\'s levels unread, its tier read for them)', async () => {
+  const abyss = BANDS.find((b) => b.id === 'abyss');
+  // AUDIT ETHER-OW T-9: a captain of level 1, so the Abyss's levels (a pool with the galley) and its tier (none) draw apart
+  let seed = 1;
+  while (raiderClassOf(seed, 1 + abyss.level) === raiderClassOf(seed, 1 + abyss.tier) || raiderClassOf(seed, 1 + abyss.level) === raiderClassOf(seed, 1)) seed += 1;
+  const where = { px: 2000, py: -5000, region: 19, day: 1, nearPort: false, capitals: [], cityLights: false, ether: { band: 'abyss', bandName: abyss.name, depth: 150 } };
+  const { host } = await harness({ settings: { ShipsAtSea: 'off' }, where, level: 1 });
+  host.raiders([{ ...RAIDER, seed }], { sight: RAIDER_SIGHT_M, spent: new Set() });
+  const [e] = raiderShips(host);
+  assert.ok(e, 'stood');
+  assert.equal(e.ship.cls, raiderClassOf(seed, 1 + abyss.level), 'the Abyss\'s nine levels over my one');
+  assert.notEqual(e.ship.cls, raiderClassOf(seed, 1 + abyss.tier), 'its levels, not its tier');
+  assert.equal(e.ether, 'abyss', 'a ship of the sea: no crown\'s law (chargeEther), the band\'s hold');
+  assert.equal(e.ship.names.name, etherShipNames(e.ship.cls, seed).name, 'the sea\'s names');
+  assert.equal(e.ship.flag, etherFlagOf(e.ship.cls), 'and its colours - a corsair the black flag');
+  const bay = await harness({ settings: { ShipsAtSea: 'off' }, level: 1 });
+  bay.host.raiders([{ ...RAIDER, seed }], { sight: RAIDER_SIGHT_M, spent: new Set() });
+  assert.equal(raiderShips(bay.host)[0].ship.cls, raiderClassOf(seed, 1), 'the Bay\'s at my own level, as ever');
+  assert.notEqual(raiderClassOf(seed, 1), e.ship.cls);
 });

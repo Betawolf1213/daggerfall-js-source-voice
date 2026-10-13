@@ -5397,19 +5397,19 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     // beginFrame may have resized the canvas; re-arm the scissor and
     // take the viewport it just set to full-canvas.
     this.setScreenScissor(rect.x, rect.y, rect.w, rect.h);
+    // the DFU clear, blended over whatever the panel already shows. AUDIT MENU-ORDER R1: drawn under the whole-canvas
+    // viewport beginFrame left - a screen quad's rect is the canvas's own pixels, and under the panel's viewport it
+    // was squeezed into a patch rect/canvas of its size, so every panel's ground was the world behind it (the bank's
+    // preview, the decorator's, a model's and a ship's picture: the last tile's model behind the next); the scissor
+    // keeps it to the rect
+    if (clearRGBA) {
+      this.drawScreenQuad(null, { x: rect.x, y: rect.y, w: rect.w, h: rect.h }, undefined,
+        [clearRGBA[0], clearRGBA[1], clearRGBA[2], clearRGBA[3]]);
+    }
     gl.viewport(
       Math.round(rect.x), Math.round(this.canvas.height - (rect.y + rect.h)),
       Math.max(0, Math.round(rect.w)), Math.max(0, Math.round(rect.h)),
     );
-    // the DFU clear, blended over whatever the panel already shows
-    if (clearRGBA) {
-      this.drawScreenQuad(null, { x: rect.x, y: rect.y, w: rect.w, h: rect.h }, undefined,
-        [clearRGBA[0], clearRGBA[1], clearRGBA[2], clearRGBA[3]]);
-      gl.viewport(
-        Math.round(rect.x), Math.round(this.canvas.height - (rect.y + rect.h)),
-        Math.max(0, Math.round(rect.w)), Math.max(0, Math.round(rect.h)),
-      );
-    }
   }
 
   /** Close the bracket: every global back to its entry value, the

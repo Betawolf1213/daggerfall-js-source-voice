@@ -1604,6 +1604,7 @@ export function createWorldModes(host) {
     look: () => caravanPaintDoor(),   // WAGONS2: the decorator's painter, in my caravan's room
     base: () => interiorCtx?.base ?? null,   // BASE-HIDE: the room's own furniture, piece by piece
     getGpuMesh, cpuModels, getTexture, uploadRecord, iconUrl: (a, r, dye = null, dyeTarget = null) => loadIcon(a, r, { scale: 1, dye, dyeTarget }),
+    thumbHold: () => placeHoldOf('decor-thumbs', 'interior'),   // AUDIT MENU-ORDER R4: the tiles' models, the panel's while it stands
     mwPicture: decorMwPicture,   // MW-MOUNT: the ghost hangs as the room will
     collider: () => interiorCtx?.collider ?? null, origin: () => buildingOrigin(), eye: () => cam.pos,
     stick: () => host.stickAxes?.() ?? null,   // DECOR1e: the finger's or the pad's stick, analog - it flies the eye

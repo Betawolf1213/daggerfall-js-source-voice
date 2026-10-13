@@ -1607,6 +1607,7 @@ export async function bootExterior(canvas, renderer, params, status) {
     // so the two faces cannot disagree about what is live.
     questLog: () => pauseQuestLog(),
     notebook: () => questBridge.notebook ?? null,
+    shelfDoor: () => questBridge?.journalClean ?? null,   // QUEST-SHELF-MAIN: the chronicle's Abandon, the pause tab's own door
     // ROAD-G G2 (c): HandleQuestClicks' FIRST world question
     // (DaggerfallQuestJournalWindow.cs:450) -
     // `place.SiteDetails.locationName != PlayerGPS.CurrentLocation.Name`.

@@ -152,7 +152,10 @@ test('OW-DUNGEONS the host\'s list: TV6\'s own law with nothing left to the grid
   const s = { at: { x: 10, y: 20 }, dg: 1, n: 1, asked: [], gone: new Set() };
   const hollow = { name: 'The Brass Hollow', spawned: true, superTier: 'super' };
   const ruin = { name: 'Old Ruin (12,20)', spawned: true };
-  const make = new Function('d', `let { tvDngModels } = d; const { playerTravelPixel, discoveryGeneration, nearDungeons, dungeonRows, mapDict, locationIndex, tvPlaceSummary, spawnedPixels, tvFiledSpawns, tvSpawnKnown, tvSpawnFound, tvSpawnGone, dungeonModelSet } = d; let _tvDungeonRows = null; let _locIndexGen = 0; d.gen = (n) => { _locIndexGen = n; };\n${src}\nreturn tvDungeonModelList;`);
+  // ETHER-OW: the lists' rows and what stands on them (world.js tvDungeonRowsAt, tvDungeonAt), lifted beside it - the sea off
+  const rows = lift(/\n {2}(const tvDungeonRowsAt = \(at, range = TV_FAR_RANGE\) => \{\n[\s\S]*?\n {2}\};\n {2}const tvDungeonAt = [^\n]*;)\n/, 'the rows');
+  const make = new Function('d', `let { tvDngModels } = d; const { playerTravelPixel, discoveryGeneration, nearDungeons, dungeonRows, mapDict, locationIndex, tvPlaceSummary, spawnedPixels, tvFiledSpawns, tvSpawnKnown, tvSpawnFound, tvSpawnGone, dungeonModelSet } = d; let _tvDungeonRows = null; let _locIndexGen = 0; d.gen = (n) => { _locIndexGen = n; };
+    const etherSea = false, inEther = () => false, etherPlaceRows = () => [], tvEtherPlace = () => null, TV_FAR_RANGE = 24, tvKnownGen = () => discoveryGeneration();\n${rows}\n${src}\nreturn tvDungeonModelList;`);
   const d = {
     tvDngModels: { at: null, dg: -1, n: -1, list: [] },
     playerTravelPixel: () => s.at, discoveryGeneration: () => s.dg,

@@ -368,7 +368,7 @@ export const LEGEND_LEVEL = 999;
  * well they lead), `range` how close it likes to fight (m), `cargo` the hold's worth (1-4, navalPlunder.js),
  * `minLevel` the player's level it first sails against, `weight` how often among its faction, `boarders` the muster a
  * boarding meets, `tactic` how it fights ('broadside', or a galley's 'bow' - its great guns over the stem). A flagship
- * carries a named captain the quest makes its boss. ETHER-LEGENDS: `legend` one of the Etheric Sea's legends, launched by
+ * carries a named captain the quest makes its boss. ETHER-LEGENDS: `legend` one of the Eltheric Ocean's legends, launched by
  * name alone.
  */
 export const SHIP_CLASSES = Object.freeze([
@@ -381,7 +381,7 @@ export const SHIP_CLASSES = Object.freeze([
   cls('merchantCarrack', 'merchant', HULL.Carrack, 'Merchant Carrack', { hullHp: 0.9, sailHp: 0.9, crew: 18, speed: 5.4, turn: 5, skill: 0.3, range: 120, cargo: 4, minLevel: 5, weight: 2, boarders: 11 }),
   cls('navyCutter', 'navy', HULL.SmallShip, 'Navy Cutter', { hullHp: 1, sailHp: 1, crew: 26, speed: 8.0, turn: 10, skill: 0.75, range: 90, cargo: 2, minLevel: 1, weight: 3, boarders: 14 }),
   cls('navyGalley', 'navy', HULL.LargeGalley, 'War Galley', { hullHp: 1, sailHp: 1, crew: 60, speed: 6.8, turn: 9, skill: 0.7, range: 70, cargo: 2, minLevel: 6, weight: 2, boarders: 18, tactic: 'bow' }),
-  // ETHER-LEGENDS (bible/03-World/Etheric-Sea.md): the Etheric Sea's six legends, each her own class - never drawn
+  // ETHER-LEGENDS (bible/03-World/Eltheric-Ocean.md): the Eltheric Ocean's six legends, each her own class - never drawn
   // (LEGEND_LEVEL past any captain's, no weight): launched by name in her haunt (systems/naval/etherShips.js LEGENDS)
   cls('legendWake', 'pirate', HULL.SmallShip, 'Legendary Brigantine', { hullHp: 1.8, sailHp: 1.4, crew: 34, speed: 9.4, turn: 12, skill: 0.85, range: 95, cargo: 4, minLevel: LEGEND_LEVEL, weight: 0, boarders: 22, legend: true }),
   cls('legendQueen', 'pirate', HULL.Carrack, 'Legendary Carrack', { hullHp: 2.4, sailHp: 1.3, crew: 48, speed: 6.6, turn: 6, skill: 0.8, range: 115, cargo: 4, minLevel: LEGEND_LEVEL, weight: 0, boarders: 30, legend: true }),

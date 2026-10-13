@@ -26,6 +26,9 @@ const el = (tag, cls, text) => {
   return n;
 };
 
+/** MENU-ORDER (2026-10-12): a merchant's presses, each its picture (ui/menuGlyphs.js), by its word. */
+export const MERCHANT_ICONS = Object.freeze({ Talk: 'talk', Sell: 'treasure', Banking: 'treasure', 'Repair item': 'anvil', Exit: 'back' });
+
 let host = null;
 let title = '';
 let buttons = [];
@@ -50,6 +53,8 @@ function render() {
   const wrap = el('div', 'tavern-menu-acts');
   for (const b of buttons) {
     const btn = el('button', 'act tavern-act', b.label);
+    const icon = MERCHANT_ICONS[b.label];   // MENU-ORDER: each press its picture
+    if (icon) btn.setAttribute('data-dficon', icon);
     btn.onclick = b.onClick;
     wrap.append(btn);
   }

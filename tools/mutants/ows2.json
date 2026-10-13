@@ -318,8 +318,8 @@
   {
     "name": "OWS2-rig-bounds",
     "file": "src/scenes/comeSailAwayPool.js",
-    "old": "if (!models || !(hull >= 0 && hull < HULL_NAMES.length)) return null;",
-    "new": "if (!models) return null;",
+    "old": "if (!models || !(hull >= 0 && hull < HULL_NAMES.length)) return null;\n    let rig = hullRigCache.get(hull);",
+    "new": "if (!models) return null;\n    let rig = hullRigCache.get(hull);",
     "tests": [
       "test/ows2_crossing.test.js"
     ]

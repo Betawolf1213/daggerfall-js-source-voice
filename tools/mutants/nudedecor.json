@@ -48,8 +48,8 @@
   {
     "name": "NUDEDECOR-thumb-born",
     "file": "src/scenes/decorTool.js",
-    "old": "        return entry.flat ? deps.iconUrl?.(...drawnHere(entry.flat)) ?? null : null;   // NUDE-DECOR, DECOR-OUTDOOR: the picture it stands as",
-    "new": "        return entry.flat ? deps.iconUrl?.(entry.flat[0], entry.flat[1]) ?? null : null;",
+    "old": "        if (entry.flat) return deps.iconUrl?.(...drawnHere(entry.flat)) ?? null;   // NUDE-DECOR, DECOR-OUTDOOR: the picture it stands as",
+    "new": "        if (entry.flat) return deps.iconUrl?.(entry.flat[0], entry.flat[1]) ?? null;",
     "tests": [
       "test/nudedecor.test.js"
     ]

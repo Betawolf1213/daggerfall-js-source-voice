@@ -1,8 +1,8 @@
 # AUDIT CAPTAIN'S SEA (2026-10-11) - the naval update, audited before it merges
 
 The owner, of the naval update (PR #781: CAPT-CREW, CAPT-LOG, CAPT-PAY, CAPT-MARQUE, CAPT-WATERS, SPYGLASS,
-CAPT-BOARD, CAPT-TRADE, CAPT-CHARTS - `03-World/Captains-Sea.md` - and the Etheric Sea's ETHER-SEA, ETHER-PLACES,
-ETHER-PORTS, ETHER-SHIPS, ETHER-LEGENDS, ETHER-CROSSING, ETHER-CHART, ETHER-LIGHT - `03-World/Etheric-Sea.md`):
+CAPT-BOARD, CAPT-TRADE, CAPT-CHARTS - `03-World/Captains-Sea.md` - and the Eltheric Ocean's ETHER-SEA, ETHER-PLACES,
+ETHER-PORTS, ETHER-SHIPS, ETHER-LEGENDS, ETHER-CROSSING, ETHER-CHART, ETHER-LIGHT - `03-World/Eltheric-Ocean.md`):
 **"Lets do a comprehensive audit, enaure this is insanely detailed and perfection. No exceptions"**. This page is the
 findings, each with its verdict. What the audit changed is written into the two record pages' sections as they now
 stand, each change under its finding's id (AUDIT CAPTAIN'S SEA S1 and on), and the code says the same at every site.
@@ -16,7 +16,7 @@ reproduce every finding - a probe script and its saved output - before reporting
 | Lane | Over | How |
 |---|---|---|
 | C - the crew | CAPT-CREW: the roster, the posts and their worth, the First Mate's hands, the Fleet page's crew | 16 probes over the sea harness (`test/navalSea.mjs`): a companion's post at sea, the deck's set against the worth's, sign-ons in and out of a harbour, the boarding's hands |
-| G - the Etheric ground | ETHER-SEA's law and the composed reader, the far ring, the landforms, the Overworld's view, the switches | 21 probes: the ring built at the Veil over a world of land, the landforms' climate read at isles, the Overworld's water law lifted and run, every switch's game |
+| G - the Eltheric ground | ETHER-SEA's law and the composed reader, the far ring, the landforms, the Overworld's view, the switches | 21 probes: the ring built at the Veil over a world of land, the landforms' climate read at isles, the Overworld's water law lifted and run, every switch's game |
 | X - the crossing and the chart | ETHER-CROSSING, ETHER-CHART | 19 probes: world.js's crossing text cut from the file and run over stand-ins (an hour of checks, a load between ask and answer, a failed landfall); the chart window driven by pointer, finger, wheel and key |
 | D - traffic, law and legends | ETHER-SHIPS, ETHER-LEGENDS, CAPT-WATERS, the strands, online | 24 probes: strands sailed in and out of, prizes past the Veil, two captains in one haunt, the wire both ways, a legend's terrors at sea |
 | L - the ledger, the save, online | CAPT-LOG, CAPT-PAY, CAPT-MARQUE, the ledger's record, offline copies | 18 probes: a pirate charged twice, two exchanges in one day, hostile saves, the lanes' clocks, the page's meter |
@@ -35,8 +35,8 @@ working tree hands its lanes a snapshot.
 
 **WHAT THEY FOUND.** 159 findings, 24 of them one finding met by two lenses (written `= C9` and so on): 135 in all.
 Five reached the player as a broken promise or a hole in the game - a save made past the Veil threw on load under
-the classic skin (G2), a wild isle's strand floated its casks again on every return, the Etheric goods without end
-(D1), no Etheric port had a harbour, so no quay stood at any port of the sea (H1), the Fleet's Summon and Send away
+the classic skin (G2), a wild isle's strand floated its casks again on every return, the Eltheric goods without end
+(D1), no Eltheric port had a harbour, so no quay stood at any port of the sea (H1), the Fleet's Summon and Send away
 carried a ship across the Veil in a moment (P5), and a General Store paid more for a good than the quay that makes it
 asked (B2). The rest: a crew's worth lost at sea, a spyglass that saw through land and night and carried into cabins,
 a crossing question that never came back, legends launched twice online, a bounty's quarry that came back whole, the
@@ -67,7 +67,7 @@ own id in its test's title) or in the suite its verdict names, and where it chan
 | C10 | NOTE | A wear that was no number (NaN) stopped the sea's clock on her spirits for good | FIXED: a NaN wear reads none |
 | C11 | LOW | The posts' worth was pinned by its text alone | FIXED: the Gunner's reload, the Carpenter's mending and the Cook's wear executed at sea against the same crew with the post struck off |
 
-### G - the Etheric ground
+### G - the Eltheric ground
 
 | # | Sev | Finding | Verdict |
 |---|---|---|---|
@@ -77,8 +77,8 @@ own id in its test's title) or in the suite its verdict names, and where it chan
 | G4 | LOW | `climatePast` turned the Bay edge's ring green with the land beyond the Bay off | FIXED: the continent's climate wherever it stands, the sea's in its law, else the edge's clamp |
 | G5 | MED | The Overworld's water law read every isle as water with the land beyond the Bay off, and its plates stood at the sea's height under their silhouettes | FIXED: the composed ground answers its own law (`etherLaw`) to both - executed |
 | G6 | LOW | The far ring faded an isle's cliffs at the clamped corner's pixel past the map (a fade of 1: every isle its whole lift on the horizon) | FIXED: faded at the node's own pixel, off the bytes read once into a grid padded by the fade's reach - executed against the clamped |
-| G7 | LOW | Open Etheric water read as a claimed province (politic 147): Raiding Parties announced Betony's raids to a captain at sea | FIXED: no province past the Veil (`regionIndex` -1) |
-| G8 | NOTE | World of Daggerfall's pick scanned its whole list for every Etheric pixel (1.35 ms a pixel, thrown away) | FIXED: its pick the Bay's alone (`onTheBay`) |
+| G7 | LOW | Open Eltheric water read as a claimed province (politic 147): Raiding Parties announced Betony's raids to a captain at sea | FIXED: no province past the Veil (`regionIndex` -1) |
+| G8 | NOTE | World of Daggerfall's pick scanned its whole list for every Eltheric pixel (1.35 ms a pixel, thrown away) | FIXED: its pick the Bay's alone (`onTheBay`) |
 | G9 | NOTE | The continent's ring tint depended on the sea's switch | FIXED with G4 |
 | G10 | DOC | The margin's reach against the cliffs' fade unsaid | FIXED in the record with G1 |
 | G11 | DOC | "Two places share a name about one time in fifty" | FIXED in the record: one time in twenty, measured |
@@ -114,9 +114,9 @@ own id in its test's title) or in the suite its verdict names, and where it chan
 
 | # | Sev | Finding | Verdict |
 |---|---|---|---|
-| D1 | HIGH | A strand's casks floated again on every return to its reach - the Etheric goods without end | FIXED: never while her casks float; bare from its first cask hauled (a later one never pushes it on) - executed |
+| D1 | HIGH | A strand's casks floated again on every return to its reach - the Eltheric goods without end | FIXED: never while her casks float; bare from its first cask hauled (a later one never pushes it on) - executed |
 | D2 | MED | A strand's haul floated 700 m off on no bearing of the isle's, some casks on its beach; a swimmer "hauled a cask aboard" | FIXED: alongside the boat that pulled in for it, every cask on water; a swimmer's to his pack, said so |
-| D3 | MED | An Etheric prize's papers washed the captain's notoriety in the nearest Bay capital's waters | FIXED: no crown's law past the Veil - burned, they wash nothing |
+| D3 | MED | An Eltheric prize's papers washed the captain's notoriety in the nearest Bay capital's waters | FIXED: no crown's law past the Veil - burned, they wash nothing |
 | D4 | MED | A freeport's quay rolled the Bay's navy share: crown cutters moored past the Veil | FIXED: the isles' traders |
 | D5 | MED | A disguised corsair past the Veil flew a Bay crown's false colours (with S5) | FIXED: the Isles' colours and an Isles name |
 | D6 | MED | Online, a peer's copy of a legend paid her purse again and pushed her rise back (= L3) | FIXED: paid only while she sails by this captain's own ledger |
@@ -161,7 +161,7 @@ own id in its test's title) or in the suite its verdict names, and where it chan
 
 | # | Sev | Finding | Verdict |
 |---|---|---|---|
-| H1 | HIGH | No Etheric port had a harbour: a port isle of two kilometres put the water past any harbour's reach (420 m), so no quay stood at any port of the sea, Veilhaven's included (= P2) | FIXED: A PORT IS A TOWN ON A SMALL ISLE - its land the four bytes round its town's pixel's middle (`landCentre`), its shore ETHER_PORT_SHORE_M about the town, its harbour sounded ETHER_HARBOUR_REACH (900 m) through the kernel's own ground - executed over seven ports, both turns of the widest towns cloned |
+| H1 | HIGH | No Eltheric port had a harbour: a port isle of two kilometres put the water past any harbour's reach (420 m), so no quay stood at any port of the sea, Veilhaven's included (= P2) | FIXED: A PORT IS A TOWN ON A SMALL ISLE - its land the four bytes round its town's pixel's middle (`landCentre`), its shore ETHER_PORT_SHORE_M about the town, its harbour sounded ETHER_HARBOUR_REACH (900 m) through the kernel's own ground - executed over seven ports, both turns of the widest towns cloned |
 | H2 | MED | = D9 | |
 | H3 | DOC | = D2 (and the cache "beside the ship") | FIXED with D2; the cache's words in the record |
 | H4 | DOC | = D16 | |
@@ -227,7 +227,7 @@ own id in its test's title) or in the suite its verdict names, and where it chan
 | P5 | HIGH | The Fleet's Summon and Send away carried a ship across the Veil in a moment; the nearest port was named from the Bay | FIXED: never across the Veil (`veilApart`), laid up she keeps her side through a save, past the Veil the nearest port the sea's - executed |
 | P6 | LOW | Recall, a guild's teleport, a portal stone and a party's journey to its leader crossed the Veil | FIXED: refused at every door (`veilRefused`) - executed |
 | P7 | HIGH | = G2 (and the online wake ungated by the sea's switch) | FIXED with G2: the wake lands where the world stands |
-| P8 | MED | A quest site in an isle town carried the region "the Etheric Isles": RevealLocation threw (a guild's house job removed on its first tick) and topic gates failed | FIXED: found in the index it stands in, by its region's own name |
+| P8 | MED | A quest site in an isle town carried the region "the Eltheric Isles": RevealLocation threw (a guild's house job removed on its first tick) and topic gates failed | FIXED: found in the index it stands in, by its region's own name |
 | P9 | LOW | House ownership keyed (region 19, building key): one Betony house owned the same key in every isle town | FIXED: no deed past the Veil, no house sold there (`houseOwnedAt`, the one reading of the law) |
 | P10 | NOTE | A ruin kept its template's port byte; with Travel Options on an isle's port was no port for the ship | FIXED: by its own kind |
 | P11 | DOC | = G11 | |
@@ -270,7 +270,7 @@ lists (What stands). Only V8 reaches a player; the rest are each a pin or the re
 | V5 | LOW | FIELD-CSA2's retail-data test threw "etherSea is not defined" from ETHER-PORTS on: it mounts world.js's `csaIsPortTown`, which asks an isle's port first - and it runs only with the player's data, so CI skips it | FIXED: PIN MOVED, the mount handed the sea, its law and an isle's port that answers every pixel, and the open Bay asked - a Bay pixel that asked the sea's ports would read a port; 6 of 6 with the data (ACS-V5-bay-asks-the-sea) |
 | V6 | NOTE | At the merge: F212 (`audit26_dungeonfoes`) reads the teleport's first 7,800 characters for its teardown - the needle stood at 7,664 on main and 7,756 on this branch, 7,939 merged | FIXED: PIN MOVED, 8,100 |
 | V7 | DOC | Port-Status counted this branch's two Ledger rows in section A's tally (302) and never named them | FIXED at the third merge: 303 rows, 288 standing - BR5's the 301st, this branch's the 302nd and 303rd |
-| V8 | LOW | The chart of the Etheric Sea popped the sea fight's tutorial page the first time it opened - the windows' door read every window but the yard's as the sea fight's; at the merge of SHIPYARDS, main's door would have read it as the yard's | FIXED: the chart pops no page (`test/shipyards1_found.test.js`, ACS-V8-the-chart-pops-a-page); main's record of the door re-aimed by content, dead |
+| V8 | LOW | The chart of the Eltheric Ocean popped the sea fight's tutorial page the first time it opened - the windows' door read every window but the yard's as the sea fight's; at the merge of SHIPYARDS, main's door would have read it as the yard's | FIXED: the chart pops no page (`test/shipyards1_found.test.js`, ACS-V8-the-chart-pops-a-page); main's record of the door re-aimed by content, dead |
 
 ## Pins moved
 

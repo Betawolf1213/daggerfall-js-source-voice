@@ -959,7 +959,7 @@
   {
     "name": "PROF11-pages-bench-undrawn",
     "file": "src/ui/profPages.js",
-    "old": "  drawMasonBench(detail, rerender, kit);   // PROF11\n",
+    "old": "    ['mason', (d) => drawMasonBench(d, rerender, kit)],   // PROF11\n",
     "new": "",
     "tests": [
       "test/prof11_client.test.js"

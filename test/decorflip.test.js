@@ -7,12 +7,11 @@
 // renderer's flip is the sign of a batch's width). A mount hangs by its own frame and a model turns in earnest.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
 import { decorFlatMirrored } from '../src/net/decorLaw.js';
 import { createDecorRoom } from '../src/scenes/decorRoom.js';
 import { settle, toolRig, placeFrom } from './decorFakes.mjs';
+import { decorBarKeys } from '../src/ui/decorPanel.js';
 
-const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const flat = (yaw, over = {}) => ({ id: 'p1', model: null, flat: [209, 0], pos: [0, 0, 0], rot: [yaw, 0, 0], scale: 1, light: null, storage: false, paid: 20, ...over });
 
 test('DECOR-FLIP the law: a flat turned past a quarter either way is mirrored; up to a quarter, as it came; a model and a hung mount never (mutants: the quarter taken as a half; a mount mirrored)', () => {
@@ -53,5 +52,5 @@ test('DECOR-FLIP the ghost: turned past a quarter while it is placed, the pictur
   assert.ok(ghost().size.w < 0, `turned: mirrored (${ghost().size.w})`);
   assert.equal(await rig.tool.commit(), true);
   assert.equal(decorFlatMirrored(rig.standing.at(-1)), true, 'and it stands so');
-  assert.match(src('src/ui/decorPanel.js'), /Turn: wheel or Turn Left\/Right \(Shift: fine; a picture turned half round faces the other way\)/, 'the bar says what a turn does to a picture');
+  assert.ok(decorBarKeys(false).some(([k, v]) => k === 'Turn' && /^wheel or Turn Left\/Right \(Shift: fine; a picture turned half round faces the other way\)$/.test(v)), 'the bar says what a turn does to a picture');   // MENU-ORDER: the legend's own pair
 });

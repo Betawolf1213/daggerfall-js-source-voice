@@ -1,7 +1,7 @@
 // @ts-check
 // ETHER-SEA (2026-10-11, the owner: "The etheric sea is a infinite procedural oceanscape with procedural islands with
 // towns, dungeons, exotic resources, deadly legendary ships, and whatever more you can add to give meaning to the etheric
-// sea"; bible/03-World/Etheric-Sea.md) - THE ETHERIC SEA'S HOST: what a captain finds past the Veil and what it is worth,
+// sea"; bible/03-World/Eltheric-Ocean.md) - THE ELTHERIC OCEAN'S HOST: what a captain finds past the Veil and what it is worth,
 // stood over the captain's ledger (systems/naval/captainLedger.js, its `ether` record) for the world host and the naval
 // host. Pure in its deps: the law is world/ethericSea.js's and systems/naval/etherShips.js's.
 //
@@ -26,7 +26,7 @@
 //   gold() / pay(n)        the purse, for a chart of the waters
 // }
 
-import { islesNear, isleByKey, etherDepthAt, etherBandOf, BANDS, LEAGUE_PX, KIND_WORDS, inEther, inVeil, ETHER_SEA_NAME } from '../world/ethericSea.js';
+import { islesNear, isleByKey, etherDepthAt, etherBandOf, BANDS, LEAGUE_PX, KIND_WORDS, inEther, inVeil, ETHER_SEA_NAME, ETHER_SEA_TITLE } from '../world/ethericSea.js';
 import { ETHER_CHARTED_MAX } from '../systems/naval/captainLedger.js';   // AUDIT CAPTAIN'S SEA X5: the charts' room
 import { LEGENDS, legendAt, legendSails, legendAbroad, legendById, rumourOf } from '../systems/naval/etherShips.js';
 import { mintGood, goodById } from '../systems/naval/tradeGoods.js';
@@ -115,7 +115,7 @@ export function createEtherHost(deps) {
     if (!l || !legendSails(L.legendDay(l.id), day())) return 0;
     L.endLegend(l.id, day());
     deps.credit?.(l.purse);
-    deps.mid?.(`${l.name} is ${act === 'board' ? 'taken' : 'sunk'}! The Etheric Sea will speak of this. ${gold(l.purse)} - her captain's hoard.`, 6);
+    deps.mid?.(`${l.name} is ${act === 'board' ? 'taken' : 'sunk'}! ${ETHER_SEA_TITLE} will speak of this. ${gold(l.purse)} - her captain's hoard.`, 6);
     return l.purse;
   }
   /** A harbourmaster's rumours of the legends from a port's pixel: each one's line. */
@@ -150,7 +150,7 @@ export function createEtherHost(deps) {
     return n;
   }
 
-  /** THE ETHERIC HARBOURMASTER'S TAB (ui/navalYardWindow.js): the port, its waters, the legends' rumours, the chart -
+  /** THE ELTHERIC HARBOURMASTER'S TAB (ui/navalYardWindow.js): the port, its waters, the legends' rumours, the chart -
    *  and `hear`, the quay's talk heard (every legend's haunt on the captain's charts) when the tab is shown: AUDIT CAPTAIN'S
    *  SEA X11 - the window reads this model on every render, and the shipwright's tab heard every legend. */
   function office(port) {
@@ -164,7 +164,7 @@ export function createEtherHost(deps) {
   }
 
   /** THE CHART'S WORD (ui/etherChartWindow.js): the ship's pixel and heading, the isles charted, the legends heard of -
-   *  each with her haunt and whether she sails - and the log's Etheric counts. */
+   *  each with her haunt and whether she sails - and the log's Eltheric counts. */
   function chart(px, py, yaw) {
     const log = L.log ?? {};
     return {

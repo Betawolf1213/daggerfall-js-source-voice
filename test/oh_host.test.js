@@ -96,6 +96,29 @@ test('OH-B ProcessTerrain: a pixel the hash does not pick is rejected at once, b
   assert.deepEqual(r.deepWaters.log, [], 'no floor asked for');
 });
 
+test('OH-B ProcessTerrain (ETHER-DEEP): a pixel off the Bay\'s map - the Eltheric Ocean\'s carved floor - is never cut: an abyss is named by its pit pixel\'s id, the Bay\'s alone - nor the continent\'s west of it (mutants: the hold dropped, the box\'s alone held)', () => {
+  const r = rig();
+  let pit = null;
+  for (let x = 4000; x < 8000 && !pit; x++) if (isPitPixel(x, -5000, 0.5)) pit = [x, -5000];
+  assert.ok(pit, 'a pixel past the Veil the hash picks');
+  const e = r.add(...pit);
+  r.deepWaters.build(e, -100, 1);
+  r.oh.promoted(e);
+  r.oh.update();
+  assert.equal(r.oh.stateOf(e).diagnostic, 'rejected:off-the-map');
+  assert.deepEqual([r.pits.length, r.deepWaters.log.filter((l) => l[0] === 'commit').length], [0, 0], 'no pit, no cut');
+  // AUDIT ETHER-OW T-14: the continent's west of the map too - off the map is off it, the box or not
+  let west = null;
+  for (let x = -1; x > -1000 && !west; x--) if (isPitPixel(x, 250, 0.5)) west = [x, 250];
+  assert.ok(west, 'a pixel west of the Bay the hash picks');
+  const c = r.add(...west);
+  r.deepWaters.build(c, -100, 1);
+  r.oh.promoted(c);
+  r.oh.update();
+  assert.equal(r.oh.stateOf(c).diagnostic, 'rejected:off-the-map');
+  assert.deepEqual([r.pits.length, r.deepWaters.log.filter((l) => l[0] === 'commit').length], [0, 0], 'no pit, no cut');
+});
+
 test('OH-B ProcessTerrain: a location is never cut; a missing floor waits, asking the sea to build it (a new wait and every thirtieth try) until MaxFloorWaitFrames', () => {
   const [[x, y]] = pitPixels(1);
   const loc = rig({ hasLocation: () => true });

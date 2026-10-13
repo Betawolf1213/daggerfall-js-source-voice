@@ -174,7 +174,8 @@ test('TV7 host: the bands about the traveller kept a life and a pixel; made once
   const w = rd('src/scenes/world.js');
   assert.match(rd('src/systems/campEncounters.js'), /^export function rollGroupComposition\(ctx, rolls\) \{/m, 'the themed group is the camps\' own');
   assert.match(w, /const bandNowMs = \(\) => Date\.now\(\) \+ \(online \? _sharedOffsetMs : 0\);/, 'the shared clock online');
-  assert.match(w, /return px >= 0 && py >= 0 && px < 1000 && py < 500 && !tvWater\(px, py\) && !_bandPlacePixels\.has\(`\$\{px\},\$\{py\}`\);/, 'never the water, never a place - the maps\' own places, the same on every client (AUDIT OW4 B2)');
+  // PIN MOVED (ETHER-OW, test/ether_ow.test.js): on the Bay's map or the Eltheric Ocean's box, never an isle's place
+  assert.match(w, /return onBayOrEther\(px, py\) && !tvWater\(px, py\) && !_bandPlacePixels\.has\(`\$\{px\},\$\{py\}`\) && !etherPlaceIsle\(px, py\);/, 'never the water, never a place - the maps\' own places, the same on every client (AUDIT OW4 B2)');
   // PIN MOVED (AUDIT OW5 B2, and AUDIT OW5b B3 the same): filled in the boot's own index loop, from the game's rows alone - a
   // world-data mod's appended rows stand only where Replace Game Artwork is on, each client's own switch
   assert.match(w, /const baseCount = maps\.baseLocationCount\(r\);[\s\S]{0,420}?if \(l < baseCount\) \{ _hubRows\.push\(loc\); _bandPlacePixels\.add\(`\$\{p\.x\},\$\{p\.y\}`\); \}/, 'taken at boot, before any spawn stands - the game\'s own rows');
@@ -229,9 +230,12 @@ test('TV7b THE CHASE, SHARED: the band word - my chases where they are, then the
   assert.deepEqual(validBandWord([
     ['b1.2.3', 100, 200, 1], ['b1.2.3', 5, 5, 1],          // once
     ['b4.5.6', 0, 0, 2],                                      // spent
-    ['nope', 1, 1, 1], ['b7.8.9', -1, 2, 1], ['b7.8.9', 1.5, 2, 1], ['b7.8.9', 1, 2, 3], ['b7.8.9', 1e12, 2, 1],   // refused
+    // PIN MOVED (ETHER-OW, test/ether_ow.test.js): a place is refused past the WORLD's edge (net/wire.js worldPixelOk) - it
+    // was a native unit west of the Bay - where the land past it now streams; the Eltheric Ocean's bands are born far north of it
+    ['nope', 1, 1, 1], ['b7.8.9', -8192 * 32768, 2, 1], ['b7.8.9', 1.5, 2, 1], ['b7.8.9', 1, 2, 3], ['b7.8.9', 1e12, 2, 1],   // refused
+    ['b2500.4000.9', 5000 * 32768, (499 + 5160) * 32768, 1],   // ETHER-OW: a chase on the Eltheric Ocean, held
     'junk', [1, 2], null,
-  ]), [['b1.2.3', 100, 200, 1], ['b4.5.6', 0, 0, 2]]);
+  ]), [['b1.2.3', 100, 200, 1], ['b4.5.6', 0, 0, 2], ['b2500.4000.9', 5000 * 32768, (499 + 5160) * 32768, 1]]);
   assert.deepEqual(validBandWord('x'), []);
   assert.equal(validBandWord(Array.from({ length: 20 }, (_, i) => [`b${i}.0.1`, 1, 1, 1])).length, BANDS_WIRE_MAX);
   assert.equal(chaseYields('peer-b', 'peer-a'), true, 'the lower id keeps it');

@@ -1622,7 +1622,8 @@ dungeons, the sea) were sent over the tree, and every finding was verified again
   moving end, and flipped the moment it touched land - a raider jumped up to 700 m in a breath, into a lookout's sight -
   and a full leg asked only its end, and sailed across a cape; a leg's way is chosen by the whole leg now, water all
   along it (RAIDER_LEG_PROBES), and kept while it is sailed (the bands' T7-6). S5: off the map read as water - a raider was
-  born a pixel past the edge and sailed off the world; the raiders' sea is on the map. S6: a world being moved holds the
+  born a pixel past the edge and sailed off the world; the raiders' sea is on the map (ETHER-OW, 2026-10-13: or the
+  Eltheric Ocean's box). S6: a world being moved holds the
   chase (the bands' D2). S7 is D4. S8: no Come Sail Away, no boat to be at sea in - no raider is drawn (the bands' B6).
 - **Known, not changed** (the first two since answered: OW6's raider word and OW6L's cell ledger, below). A raider's
   chase is still the chased traveller's own and not said to the others (TV7b's word has no sea half): a helmsman and a friend on their own boat nearby may each be chased by the same sail. The spawn
@@ -2036,3 +2037,24 @@ sea; `apart` leaves an end past the table to the search; a step past the table r
 `tvWater`'s own answer, which is the ground's where TAMRIEL2 composed the reader and the sea off the map where it did
 not (`scenes/world.js`). The record, and the wire's half: `01-Overview/Field-Bugs-2026-10-09.md` TV-BEYOND;
 `test/fb1009_beyond.test.js`, `tools/mutants/fb1009_beyond.json`.
+
+## ETHER-OW - the Overworld past the Veil (2026-10-13, the owner)
+
+*"Also allow the player to zoom out into the overworld like in the Iliac Bay for easy travel. Enemies should show on
+the world map just like in the bay"*. The record is `03-World/Eltheric-Ocean.md` ETHER-OW; what it moved here:
+- **The door.** TV1's Overworld door stood on the held map alone, and past the Veil the map's answer is the Eltheric
+  chart: it wears the same door now (its button and its key O, the words `scenes/travelView.js` TRAVEL_VIEW_BUTTON -
+  moved out of `ui/heldMap.js`, which re-exports it).
+- **The places.** `tvPlaceSummary` answers an isle's place past the Veil (known by the captain's charts or found);
+  TV5's far list takes the port isles within its range and TV6's lists the ruin isles (`tvDungeonRowsAt`,
+  `tvDungeonAt` - one pair the three lists read). The settlements gathered once never keep an isle's place.
+- **The load.** TV2's governor reads the stream's own law (`StreamingWorldState.streams`) for what is owed: off the map
+  is no longer built where the world streams (the continent's frame, the Eltheric's box).
+- **The enemies.** TV7's bands (`bandOk`) and OWS3's raiders (`tvRaidOpen`, `tvRaidSea` - S5's edges kept, by the point's own
+  pixel floored) are born on the Bay's map or the Eltheric's box (`world/ethericSea.js` `onBayOrEther`) - a raider past
+  the Veil only where the sea fight stands her as a ship (AUDIT ETHER-OW C2-3) - and TV7b's chase word holds a place
+  anywhere on the world's pixels (`chaserPlaceOk`, the wire's `worldPixelOk`).
+- **What is known** (AUDIT ETHER-OW C2-2). The lists' keys (`tvPlates`, `tvFar`, `tvDng`, `tvFind`, `tvDngModels`) are
+  `tvKnownGen` - DFU's finds and the captain's charts - so an isle charted on the pixel the traveller stands on is a
+  plate at once, as AUDIT DEEP2 B-3 made a find.
+`test/ether_ow.test.js`, `tools/mutants/ether_ow.json`; the pins moved are the Eltheric page's list.

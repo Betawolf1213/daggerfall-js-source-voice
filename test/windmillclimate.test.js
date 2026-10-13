@@ -167,7 +167,7 @@ test('WM3: the shared seam remaps, prunes the short archive, and never re-keys',
 test('WM3: ONE DFU MEMBER, ONE EXPORT - no host keeps its own copy of the loop', () => {
   for (const host of REMAP_HOSTS) {
     const text = src(host);
-    assert.match(text, /import \{ remapSubMeshes \} from '\.\.\/world\/texRemap\.js'/,
+    assert.match(text, /import \{ remapSubMeshes(?:, \w+)* \} from '\.\.\/world\/texRemap\.js'/,   // PIN MOVED (AUDIT MENU-ORDER C3): the seam's own name for a table's law may ride the same import
       `${host} does not use the shared remap seam`);
     // The tell of a re-grown copy is the write, not the read: any host
     // that sets a texRemap entry itself has stopped going through the

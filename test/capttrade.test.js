@@ -1,6 +1,6 @@
-// CAPT-TRADE, CAPT-CHARTS (2026-10-11, the owner: "giving a reason to players to experience it" - and of the Etheric Sea,
+// CAPT-TRADE, CAPT-CHARTS (2026-10-11, the owner: "giving a reason to players to experience it" - and of the Eltheric Ocean,
 // "exotic resources"; bible/03-World/Captains-Sea.md) - THE EXCHANGE AND THE TREASURE CHARTS: the Bay's goods made cheap
-// where they are made and sold dear where they are wanted, the Etheric Sea's wanted everywhere, a day's prices the same
+// where they are made and sold dear where they are wanted, the Eltheric Ocean's wanted everywhere, a day's prices the same
 // for every client, a port's day's dealing; the goods as items in a ship's hold; a chart among a pirate's papers, read
 // and marked, its cache raised and paid; the exchange's tab. tools/mutants/capttrade.json.
 import './modsOff.js';
@@ -31,7 +31,7 @@ const WINE_WANTED = { key: '101,100', name: 'Hegathe', px: 101, py: 100, region:
 const ISLE = { key: 'e:1', name: 'Driftholm', ether: true };
 const seaAt = (x, y) => x >= 100 || y >= 104;
 
-test('CAPT-TRADE the goods: the Bay\'s eight and the Etheric Sea\'s three, each a stackable item of the port\'s own from GOODS_TEMPLATE on - its weight and base the row\'s; minted, counted, taken and weighed in a hold (mutants: the template, the count, the take, the weight)', () => {
+test('CAPT-TRADE the goods: the Bay\'s eight and the Eltheric Ocean\'s three, each a stackable item of the port\'s own from GOODS_TEMPLATE on - its weight and base the row\'s; minted, counted, taken and weighed in a hold (mutants: the template, the count, the take, the weight)', () => {
   assert.equal(GOODS_TEMPLATE, 1331);
   assert.deepEqual(GOODS.map((g) => g.id), ['wine', 'grain', 'wool', 'iron', 'spice', 'silk', 'silver', 'ivory', 'etheramber', 'starglass', 'voidsilk']);
   assert.deepEqual(GOODS.filter((g) => g.ether).map((g) => g.id), ['etheramber', 'starglass', 'voidsilk']);
@@ -54,7 +54,7 @@ test('CAPT-TRADE the goods: the Bay\'s eight and the Etheric Sea\'s three, each 
   assert.equal(hold.length, 2, 'spent stacks gone, the stores untouched');
 });
 
-test('CAPT-TRADE a port\'s trade: its crown\'s makes and wants, twisted by one good of its own off its key; an Etheric isle makes the Etheric goods and wants the Bay\'s; the Etheric goods wanted in every port of the Bay (mutants: the twist, the isle, the exotic want)', () => {
+test('CAPT-TRADE a port\'s trade: its crown\'s makes and wants, twisted by one good of its own off its key; an Eltheric isle makes the Eltheric goods and wants the Bay\'s; the Eltheric goods wanted in every port of the Bay (mutants: the twist, the isle, the exotic want)', () => {
   assert.deepEqual(CROWN_TRADE.Wayrest, { makes: ['wine', 'silver'], wants: ['iron', 'ivory', 'grain'] });
   const t = portTrade(WAYREST);
   const base = [...CROWN_TRADE.Wayrest.makes, ...CROWN_TRADE.Wayrest.wants];
@@ -66,7 +66,7 @@ test('CAPT-TRADE a port\'s trade: its crown\'s makes and wants, twisted by one g
   assert.deepEqual(portTrade(ISLE), { makes: ['etheramber', 'starglass', 'voidsilk'], wants: ['wine', 'grain', 'wool', 'iron', 'spice', 'silk', 'silver', 'ivory'] });
   assert.equal(standOf(WAYREST, 'wine'), 'makes');
   assert.equal(standOf(WAYREST, 'iron'), 'wants');
-  assert.equal(standOf(WAYREST, 'starglass'), 'wants', 'the Etheric goods wanted in the Bay');
+  assert.equal(standOf(WAYREST, 'starglass'), 'wants', 'the Eltheric goods wanted in the Bay');
   assert.equal(standOf(ISLE, 'starglass'), 'makes');
   assert.equal(standOf(WAYREST, 'nope'), 'neither');
 });
@@ -99,7 +99,7 @@ test('CAPT-TRADE the price: a good\'s base at MADE_K where made, WANT_K where wa
 test('CAPT-TRADE the exchange\'s board: every good of its sea, the other sea\'s it wants; how many more it sells and buys today by DAY_STOCK and the captain\'s dealing here; the other sea\'s never sold (mutants: the stock, the dealing\'s sides, the exotic rows)', () => {
   assert.deepEqual(DAY_STOCK, { makes: { sell: 30, buy: 4 }, wants: { sell: 2, buy: 30 }, neither: { sell: 10, buy: 12 } });
   const rows = exchangeOf(WAYREST, 3);
-  assert.deepEqual(rows.map((r) => r.id), GOODS.map((g) => g.id), 'the Bay\'s and the Etheric goods it wants');
+  assert.deepEqual(rows.map((r) => r.id), GOODS.map((g) => g.id), 'the Bay\'s and the Eltheric goods it wants');
   const wine = rows.find((r) => r.id === 'wine');
   assert.deepEqual([wine.stand, wine.sells, wine.buys], ['makes', 30, 4]);
   const glass = rows.find((r) => r.id === 'starglass');
