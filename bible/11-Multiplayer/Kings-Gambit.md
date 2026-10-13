@@ -1,7 +1,8 @@
 # THE KING'S GAMBIT - armies and kings at the tavern's card table (KG0, the design record)
 
 **Status: DESIGN RECORD, DECIDED (the owner, 2026-10-13: "Make the best and most detailed decisions. We also have
-permission") - section 10 answers section 9 and decides every point the record had left open.** The owner handed over a
+permission") - section 10 answers section 9 and decides every point the record had left open. KG1 SHIPPED (the law,
+section 11).** The owner handed over a
 Daggerfall Unity mod, `thekingsgambit.dfmod`, and asked how to build it as a new minigame on the Iliac Bay card system -
 the tavern card table `Tavern-Cards.md` built: the table and its seat, the deck of the Iliac Bay, Iliac Hand's painted
 cards, the regulars, the panel, the relay's tables. Sections 1-2 read the mod off its assembly; sections 3-7 lay it on
@@ -465,7 +466,7 @@ Each ships alone and is verifiable without the next.
 
 | Slice | What it builds |
 |---|---|
-| **KG1** | THE LAW: `net/kingsGambit.js` - the board and its build, hazards, units and roster, the deployment, the turn, a blow, potions, the end, a seat's view; pins deepEqual against section 2's tables, whole games on a fixed source, mutants. |
+| **KG1** SHIPPED (section 11) | THE LAW: `net/kingsGambit.js` - the board and its build, hazards, units and roster, the deployment, the turn, a blow, potions, the end, a seat's view; pins deepEqual against section 2's tables, whole games on a fixed source, mutants. |
 | **KG2** | THE INNKEEPER'S PLAY: `systems/gambitPatrons.js` - AiAction, TryEscape, AiBlunder, AutoFill, the tiers over a regular's seed. MEASURE: each tier against an Auto-filled 300 over seeded games. |
 | **KG-SET** | The nine creatures painted into the set (section 10.3) - cards, emblems, Iliac Hand's numbers and text, FOE_CARDS rows (so their foes drop them, CARDS9), Iliac Hand's balance measured again; a relay version (the catalog is relay law). Before KG3, whose grid shows every unit's card. |
 | **KG3** | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result), the stake and the regulars' night's purse; the board a flat mat with the pieces as their cards - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
@@ -627,3 +628,60 @@ point the record had left open. A number marked MEASURE is the first guess its s
   each), the winner's receipt carrying both stakes; and a season board the Arena's way, its Elo and its caps, whose #1
   over 10 games against 5 foes (Iliac Hand's champion's floor) wears GRANDMASTER - the mod's highest tier's name.
 - THE ORDER OF THE SLICES: KG1, KG2, KG-SET, KG3, KG4, KG5, KG6 (section 8).
+
+## 11. KG1 (2026-10-13): the law
+
+The owner: **"Make the best and most detailed decisions. We also have permission"** - and the first slice after them.
+
+- **THE LAW** (`net/kingsGambit.js`): pure, DOM-free and plain data, importing only `characters/enemyBasics.js`,
+  `net/dice.js` and `systems/mathf.js` (Unity's RoundToInt), so the relay can carry it at KG5. Every member of section
+  2's game is one of its exports:
+  - the board: `buildMap` (BuildMap - its layouts `KG_LAYOUTS` and `KG_OPEN_FIELD`, RandomChunks, PlaceWallCell, SetTile,
+    SpawnHazardPair), `mapIsPlayable`, `pathMap`, `tileAt`, `isPassable`, `blocksSight`;
+  - the units: `makeUnit`, `KG_ROSTER`, `rosterUnit`, `KG_KINGS`;
+  - the armies: `armyCost`, `armyRefusal` (ParseArmy's law), `canRecruit` (TryAdd's), `autoFill`;
+  - the deployment: PlaceArmy, inside `newGambit` (BeginMatch), with `KG_CENTER_OUT`;
+  - the turn: `gambitRefusal` (IsLegal), `gambitAct` (Apply and SpendAction), `reachable` (GetReachable),
+    `targetInRange` (InRange), `foesInRange`, `hasLineOfSight`, `roundDiv`, `blowRoll` (Attack's roll);
+  - its end: `finishTurn` (FinishTurn, ApplyHazards, HazardTick, CheckGameOver).
+- **ONE HOME, AND NAMES OF ITS OWN** (AUDIT 24's gate, `test/audit24_onehome.test.js`, which the first full run of the
+  tests that walk `src/` failed on five names the tree already declared): Mathf.RoundToInt is `systems/mathf.js`'s
+  `roundToInt`, imported, not ported a second time. A cell's index, a blow's roll and InRange take names of their own
+  (`cellIndex`, `blowRoll`, `targetInRange`) beside `render/volumetricClouds.js`'s `cellOf`, `net/gateStrike.js`'s
+  `blowOf` and `net/wire.js`'s `inRange`, three different things; the [0, 1) draw (NextDouble, Random.value) is the
+  module's own, unexported, as `net/gateLaw.js`'s `unit` is. The ratchet stays at 42.
+- **ITS FRAME IS THE HOST'S** (section 4): side 0 the host, who moves first, at the foot; side 1 the guest, mirrored. A
+  client turns the picture, never the law.
+- **THE DICE**: a `rand32` handed in - Rand is drawBelow's, NextDouble rand32 / 2^32 - drawn in the mod's order. The
+  source is checked: a 32-bit draw, and at most `KG_RAND_DRAWS_MAX` of them a step. A broken one deals no game and takes
+  no blow ('rand').
+- **EVERY STEP A NEW STATE**: `gambitAct` and `finishTurn` answer `{state, events}` or `{refused}`, and never touch the
+  state they were handed (a structuredClone, cardLaw's way), so a refused or broken step changes nothing and the relay
+  can keep its last good state.
+- **WHAT THE PORT FOUND, KEPT AS THE MOD HAS IT**:
+  - CheckGameOver's "no piece left" never decides: a side's king is one of its pieces, so its first clause, the king's
+    fall, always decides first. Both clauses are kept verbatim.
+  - PlaceArmy's fallback rows never fill. Twelve units fit one row (row 11 takes fifteen, row 12 fourteen beside the
+    king), so a melee unit never reaches row 10 or 12, nor a ranged one row 10 or 11. Kept; the twelve-of-a-kind
+    deployment pins the rows they fill.
+  - MapIsPlayable's 97% at float32: no floor count a board can hold (147 to 195) brings 0.97 x floor within float32's
+    reach of an integer, so float32 and float64 agree on every board. The C#'s float32 is kept anyway.
+  - MakeUnit meets no half on DFU's rows (computed both ways). A blow does meet one: attack 5 at u = 0.25 is exactly 4.5
+    at float32 and rounds to 4, and that is pinned.
+- **Pins:** `test/kg1_law.test.js`, 18 tests: the mod's numbers; the roster's 46 rows and the kings against section 2.2's
+  table, with RoundToInt's half to even; the army's law; Auto-fill on a scripted source; the Pillared hall, a sealed
+  Guard rooms thrown away for a Moat and bridges, a kept Guard rooms, a Ruined keep's every chunk shape, and the Open field
+  after thirty failures - each from scripted draws, its picture and its pairs; MapIsPlayable's 97% either side and the
+  head's cell alone; the deployment's order; a new game's refusals and a broken source; GetReachable's order; InRange
+  and HasLineOfSight's samples; a blow, its kill and its shot; potions; the turn; the turn's end (the hazards, the tick,
+  the warning pair, a mirror cell under a piece, the fourteen); the end; and 250 seeded whole games between two greedy
+  players, each ending lawfully. Each scripted draw is its value plus 1009 times its modulus, so a range is pinned and
+  not only its value.
+- **Mutants:** `tools/mutants/kg1.json`, 80, all dead. Three survived the first pass - a chunk's rows, a Guard rooms'
+  doorway and a moat's bridge, each a range mutated by one. The scripted draws' offset was then a thousand times the
+  modulus, and 4 and 5 divide a thousand; it is 1009 now, a prime. Four more pins were written before the run, where the
+  plan found nothing to fail a mutant: the head's king cell walled off on a board otherwise 99% reached, a hazard's try
+  refused only by a piece on its mirror, the game-ending blow as a turn's second action, and the source's top draw
+  (0xFFFFFFFF) taken.
+- **Not yet:** the innkeeper's play (KG2), the nine cards (KG-SET), the table (KG3) and everything after.
+- **Ledger:** section A row THE KING'S GAMBIT.
