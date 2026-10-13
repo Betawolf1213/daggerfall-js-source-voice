@@ -313,7 +313,7 @@ import { createWagonWarden, wardenTownIn } from './wagonWardenHost.js';   // WAR
 import { WARDEN_VENDOR, isWardenTown } from '../systems/wagonWarden.js';   // WARDEN1: the stamp's save slot, and the towns a watch keeps
 import { townGroundOf, yardSitesOn, craftYardSitesOn, carveYards, MONUMENT_KEEP_M, yardMeasuresOf, placedModelBox } from '../world/merchantYardSites.js';   // MERCHANT-YARDS: where they stand off the town's layout, and the people's navgrid carved round them
 import { isYardTown, yardKeeper, ALL_YARD_KINDS, YARD_BENCH } from '../systems/merchantYards.js';   // MERCHANT-YARDS: the towns that stand them, who keeps them, the town's people
-import { isPortTown, portTownByData, portKeeper, portPlaceName, PORT_SITE_ORDER } from '../systems/portPlaces.js';   // SHIPYARDS: the port towns, their keepers and their places' names
+import { isPortTown, isPortTownType, portTownByData, portKeeper, portPlaceName, PORT_SITE_ORDER } from '../systems/portPlaces.js';   // SHIPYARDS: the port towns, their keepers and their places' names; FIELD BUGS 2026-10-13c PORT-TOWNS: the harbour board's ports are its towns
 import { townSeaOf, seaBearing, seaField, portSitesOn, portPlaceRows, sceneToLocationXZ } from '../world/portSites.js';   // SHIPYARDS: where a port town's shipyard and lighthouse stand - its seaward ground
 import { SHIPYARD as SHIPYARD_LAYOUT } from '../world/shipyardModel.js';   // SHIPYARDS: the crew hall's table, for the talk directory's row
 import { HARBOUR_REACH } from '../systems/naval/shipLife.js';   // AUDIT HOLDINGS O1: the harbour's scan reach, its pixels built before it is sounded
@@ -10153,8 +10153,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     _navalPortPxAt = { key, d: Number.isFinite(d) ? d : null };
     return _navalPortPxAt.d;
   };
-  /** CAPT-BOARD: every port of the map (Travel Options' - travelPorts.js) as the harbour board reads them - `{ key (its
-   *  map pixel), name, px, py, region, crown }` - found once the map's directory stands. */
+  /** CAPT-BOARD: every port of the map as the harbour board reads them - `{ key (its map pixel), name, px, py, region,
+   *  crown }` - found once the map's directory stands. FIELD BUGS 2026-10-13c PORT-TOWNS: THE TOWNS among Travel Options'
+   *  harbours (travelPorts.js) - a city, a town or a village (systems/portPlaces.js isPortTownType: the towns that stand
+   *  the port's places, every one of them on this list). The list is every place a ship may put in at - MAPS.BSA's 343
+   *  locations flagged PortTownAndUnknown and Hazelnut's 35 more - and 223 of its 378 are tombs, farms, inns, temples,
+   *  manors and ruins: the board sent cargoes to "Corranoth's Tomb's harbourmaster". */
   let _navalPortList = null;
   const navalPortList = () => {
     if (!mapDict) return [];
@@ -10162,7 +10166,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const out = new Map();
     for (const id of new Set(PORT_LOCATION_IDS)) {
       const s = mapDict.get(id & 0x000fffff);
-      if (!s) continue;
+      if (!s || !isPortTownType(s.locationType)) continue;
       const at = getPixelFromPixelID(s.id);
       const name = maps.getRegion(s.regionIndex)?.mapNames?.[s.mapIndex];
       const key = `${at.x},${at.y}`;

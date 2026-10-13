@@ -159,7 +159,7 @@
   {
     "name": "ACS-B4-said",
     "file": "src/scenes/harbourOffice.js",
-    "old": "    for (const c of r.voided ?? []) deps.mid?.(`Bounty void - ${c.title}. She went down by another hand.`, 5);",
+    "old": "    for (const c of r.voided ?? []) deps.mid?.(c.kind === 'delivery' ? cargoVoidWords(c) : `Bounty void - ${c.title}. She went down by another hand.`, 5);",
     "new": "    void r;",
     "tests": [
       "test/auditcaptsea.test.js",

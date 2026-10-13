@@ -300,7 +300,7 @@ The kinds, each ending in something the sea already does:
 |---|---|---|---|
 | bounty | a named pirate - her class one of the two strongest within two levels of the captain's (`bountyClass`; the flagship from level 12), her name her seed's - last seen SITE_PX map pixels off the port in open water (`siteFor`: every neighbour of her pixel sea, on the square ring, in from the drawn distance and then out past it (B6), eight ways round) | she is sunk or taken by the captain's hand (`advance`'s `end` with her `bounty` id); gone down by another hand, void (`lost` - B4) | PAY_BASE.bounty times her size, and her waters' distance |
 | hunt | CONTRACT_NEED.hunt pirate ships ended in the crown's waters | sunk or taken there, any of them (a boarding beaten off is no end) | PAY_BASE.hunt each |
-| delivery | a cargo to another port DELIVERY_PX_MIN or more off, its term DELIVERY_DAYS_BASE and a day a DELIVERY_PX_DAY pixels | the boat that took it on lies to that port's quay; wrecked, it is lost | PAY_BASE.delivery a pixel and its start |
+| delivery | a cargo to another port DELIVERY_PX_MIN or more off with the sea beside it (`deliveryPort` - PORT-TOWNS, below), its term DELIVERY_DAYS_BASE and a day a DELIVERY_PX_DAY pixels | the boat that took it on lies to that port's quay; wrecked, it is lost; held for a place that is no such port, void (`unported`) | PAY_BASE.delivery a pixel and its start |
 | salvage | a merchantman gone down SITE_PX off the port - CONTRACT_NEED.salvage casks of her cargo | each cask hauled out of the sea where she went down | PAY_BASE.salvage a cask, and the distance |
 | survey | the Admiralty's measure of the crown's shipping - CONTRACT_NEED.survey ships studied through the glass in its waters | each ship the glass studies (`KNOW.studied` by the glass, never a ship struck), each ship once - her seed kept on the contract (`seen` - L6: a harbour's ship stood again was counted again) | PAY_BASE.survey each |
 
@@ -312,6 +312,18 @@ A contract runs on the captain's own clock (CONTRACTS_MAX at once - `captainLedg
 regard rises by its `standing`, its kind and its purse in the log; failed (a term out - the world asks every two
 seconds - or a cargo lost) STANDING_FAILED; given up from the tab, STANDING_ABANDONED. The HUD says each one come
 further ("Clear Wayrest's waters: 2 of 3 pirate ships ended"), the screen's middle each done or failed.
+
+THE PORTS (PORT-TOWNS, `01-Overview/Field-Bugs-2026-10-13c.md`; the owner: "Even the port quests sending you to non port
+places"). The board's ports - the port a captain lies at (`world.js navalPortHere`, the nearest within a map pixel), a
+cargo's, a treasure chart's - are the TOWNS among Travel Options' harbours (`world.js navalPortList`, `portPlaces.js
+isPortTownType`): the towns that stand the port's places, 155 on the real map. The table is every place a ship may put
+in at - MAPS.BSA's 343 flagged locations and Hazelnut's extras - and 223 of its 378 are tombs, farms, inns, temples,
+manors, graveyards and ruins, which the board read as ports with harbourmasters until then. A cargo goes only to a port
+with the sea beside it - its own map pixel or one of the eight about it (`harbourBoard.js deliveryPort`, `net/fortLaw.js
+coastalAt`), the berth's reach: 113 of the 155, each answering to its own name from a sea pixel beside it - never to a
+capital inland (31 of the 39 the byte's 0x10 marks have no sea within six pixels) nor to Daggerfall, Sentinel and
+Wayrest, two pixels off it. A cargo already held for a place that is no such port is void at the office's tick, no
+regard lost, and said ("Contract void - ... No ship can make port there.").
 
 THE SITES (`navalHost.js siteStep`, SITE_CHECK_S apart, aboard): a held bounty's quarry is stood when the captain sails
 within SITE_REACH_PX map pixels of her waters - at the world's open water in her pixel (`world.js navalSitePoint`), else

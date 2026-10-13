@@ -14,8 +14,8 @@
 //   say(text, s) / mid(text, s)  the HUD's line and the screen's middle
 //   notorietyOf(crown)         a crown's notoriety against the captain in its waters (navalHost.js)
 //   port() -> port | null      the port the captain lies at: { key, name, px, py, region, crown }
-//   ports() -> port[]          every port of the map
-//   seaAt(px, py) -> bool      a map pixel of open sea
+//   ports() -> port[]          every port of the map (its towns - FIELD BUGS 2026-10-13c PORT-TOWNS)
+//   seaAt(px, py) -> bool      a map pixel of open sea (a site's water; the sea beside a port a cargo goes to)
 //   waters() -> crown | null   the crown of the waters the captain sails
 //   carrack(price, port) -> bool  the Admiralty's carrack's title to the Fleet's book (systems/fleet.js titleDeed)
 //   stow(hold, item)           an item into a ship's hold (CAPT-TRADE)
@@ -28,14 +28,17 @@
 // CAPT-CHARTS: TREASURE CHARTS (systems/naval/treasureCharts.js) - one among a pirate's papers (`chartFor`), read and
 // marked (`readChart`), its cache a site of the naval host's, raised and paid (`raiseCache`).
 
-import { boardFor, takeContract, contractLine, contractSites, marqueOffer, admiraltyOffer, CONTRACTS_MAX, STANDING_ABANDONED } from '../systems/naval/harbourBoard.js';
+import { boardFor, takeContract, contractLine, contractSites, marqueOffer, admiraltyOffer, deliveryPort, CONTRACTS_MAX, STANDING_ABANDONED } from '../systems/naval/harbourBoard.js';
 import { MINUTES_PER_DAY } from '../systems/gameDate.js';
 import { perksOf, PERKS_REFUSED_AT } from '../systems/naval/captainLedger.js';
 import { exchangeOf, goodById, goodIn, takeGood, mintGood, goodsWeight } from '../systems/naval/tradeGoods.js';
 import { chartAboard, chartSite, mintChart, cacheGold, CHART_SITE } from '../systems/naval/treasureCharts.js';
+import { t } from '../systems/textManager.js';   // FIELD BUGS 2026-10-13c PORT-TOWNS: a cargo voided, in the player's language
 
 const gold = (n) => `${Math.round(n).toLocaleString('en-US')} gold`;
 const days = (n) => `${n} ${n === 1 ? 'day' : 'days'}`;
+/** FIELD BUGS 2026-10-13c PORT-TOWNS: a cargo voided - held for a place that is no port a cargo goes to (`unported`). */
+const cargoVoidWords = (c) => t('sea.board.cargoVoid', 'Contract void - {title}. No ship can make port there.', { title: c.title });
 /** A held contract's progress, as the HUD says it when it moves. */
 const movedWords = (c) => (c.kind === 'hunt' ? `${c.done} of ${c.need} pirate ships ended` : c.kind === 'survey' ? `${c.done} of ${c.need} ships studied`
   : c.kind === 'salvage' ? `${c.done} of ${c.need} casks raised` : '');
@@ -55,13 +58,24 @@ export function createHarbourOffice(deps) {
     for (const c of r.done) { deps.credit?.(c.pay); deps.mid?.(`Contract done - ${c.title}. ${gold(c.pay)} paid by ${c.port?.name ?? c.crown}'s harbourmaster.`, 5); }
     for (const c of r.failed) deps.mid?.(`Contract failed - ${c.title}.${c.kind === 'delivery' ? ' The cargo went down with her.' : ''}`, 5);
     for (const c of r.moved) deps.say?.(`${c.title}: ${movedWords(c)}.`, 3);
-    for (const c of r.voided ?? []) deps.mid?.(`Bounty void - ${c.title}. She went down by another hand.`, 5);   // AUDIT CAPTAIN'S SEA B4
+    for (const c of r.voided ?? []) deps.mid?.(c.kind === 'delivery' ? cargoVoidWords(c) : `Bounty void - ${c.title}. She went down by another hand.`, 5);   // AUDIT CAPTAIN'S SEA B4; FIELD BUGS 2026-10-13c PORT-TOWNS
     return r;
   }
-  /** The clock's step: every contract whose term is out failed, and said. */
+  /** The clock's step: every contract whose term is out failed, and said. FIELD BUGS 2026-10-13c PORT-TOWNS: and every
+   *  cargo held for a place that is no port a cargo goes to - none of the map's ports (`deps.ports`, its towns), or one
+   *  with no sea beside it (harbourBoard.js deliveryPort) - void, no regard lost, and said: a board that read Travel
+   *  Options' every place a ship may put in at as a port posted cargoes to tombs, farms and inland capitals, which no
+   *  ship can lie at. Asked once the map's ports and the sea stand. */
   function tick() {
     const failed = L.expireContracts(now());
     for (const c of failed) deps.mid?.(`Contract failed - ${c.title}. Its term ran out.`, 5);
+    const ports = deps.ports?.() ?? [];
+    if (ports.length && typeof deps.seaAt === 'function') {
+      for (const c of L.contracts()) {
+        if (c.kind !== 'delivery' || (ports.some((p) => p.key === c.to?.key) && deliveryPort(c.to, deps.seaAt))) continue;
+        event({ type: 'unported', port: c.to?.key });
+      }
+    }
     return failed;
   }
   /** The board of the port the captain lies at, today - its offers not yet taken. */
