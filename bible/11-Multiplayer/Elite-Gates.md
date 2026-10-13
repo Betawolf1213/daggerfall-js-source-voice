@@ -4,7 +4,9 @@
 > lanes on the first draft, 177a3acd6, 105 findings, then a sixth lane on the revision, 28 more:
 > `01-Overview/Audit-EG0.md`), widened by EG0b (the fragments), and polished by AUDIT EG II (six cold lanes on
 > 14b3b172f, 282 findings: `01-Overview/Audit-EG-II.md`). EG-PLAY (section 31) then built the first playable Elite
-> Breach - a vertical slice through the slices below, its departures from this page listed in its record. The code's comments cite this page by section number;
+> Breach - a vertical slice through the slices below, its departures from this page listed in its record. AUDIT EG III
+> audited the arc as built (six cold lanes on 6b86b534, 112 findings: `01-Overview/Audit-EG-III.md`). The code's
+> comments cite this page by section number;
 > where the page and a pin disagree, the pin is what runs. Each slice adds its record under section 31. A path that
 > exists today is written from the repository root (`src/net/gateBrain.js`); a path this arc will create is written
 > without `src/` (`net/egLaw.js`).
