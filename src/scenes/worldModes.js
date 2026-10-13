@@ -1208,12 +1208,15 @@ export function createWorldModes(host) {
   function onExhaustedInterior() {
     if (_inExhaustion || exhaustedShowing()) return;   // AUDIT C&C N2/H1: DFU's popup guard in both lanes (world.js's twin)
     _inExhaustion = true;
-    host.csaOnPlayerDeath?.();   // CSA-J (the audit): PlayerEntity.OnExhausted -> ComeSailAway.OnPlayerDeath, indoors too
     try {
       const out = exhaustionOutcome({
         enemiesNearby: interiorEnemiesNearby(), swimming: false, entity: playerEntity,
         day: false, inside: true,   // IF: a building interior CAN hold foes now; the feet stay dry
       });
+      // SPENT-ASHORE (rest.js): with foes in the building a share of the health and a line - no box, and Come Sail Away
+      // hears no death (world.js's twin); DFU SetHealth(0)s the player here, whatever the health
+      if (out.kind === 'spent') { say(out.line); hurtPlayer(playerEntity, out.damage, { bypassShield: true }); return; }
+      host.csaOnPlayerDeath?.();   // CSA-J (the audit): PlayerEntity.OnExhausted -> ComeSailAway.OnPlayerDeath, indoors too
       // ROAD-B B5: a PUSH. PlayerEntity's OnExhausted handler is a plain
       // DaggerfallUI.MessageBox, and DaggerfallUI.MessageBox is
       // `new DaggerfallMessageBox(...); mb.Show()` -> uiManager
@@ -1232,8 +1235,6 @@ export function createWorldModes(host) {
         playerEntity.fatigue = Math.min(maxFatigue(playerEntity), (playerEntity.fatigue ?? 0) + out.fatigue);
         playerEntity.magicka = Math.min(playerEntity.maxMagicka ?? Infinity, (playerEntity.magicka ?? 0) + out.magicka);
         tallySkill(playerEntity, SKILLS.Medical);
-      } else {
-        hurtPlayer(playerEntity, playerEntity.health, { bypassShield: true });   // SetHealth(0): no shield stands against the collapse
       }
     } finally { _inExhaustion = false; }
   }
@@ -4732,7 +4733,8 @@ export function createWorldModes(host) {
     // the state word alone; `t` is derived from it so the legacy entry
     // restores as a settled pose rather than a NaN matrix.
     interiorCtx.actions?.restoreSaveData?.(
-      data.actionDoors.map((d) => (d.t == null ? { ...d, t: d.state === 'end' ? 1 : 0 } : d)));
+      data.actionDoors.map((d) => (d.t == null ? { ...d, t: d.state === 'end' ? 1 : 0 } : d)),
+      { level: playerEntity.level });   // SPELL-LOCK: a peer's lock this copy kept before the fix is dropped (lockLands)
     // ID1: a scene cached before this shipped has no `droppedPiles`,
     // and restorePiles CLEARS on an absent list - which is right: the
     // pool was rebuilt empty on the way in, so clearing is a no-op,
@@ -7122,10 +7124,11 @@ export function createWorldModes(host) {
    * building box, so an enclosing box would win on distance and
    * swallow every entry click (AUDIT 64 F11, pinned).
    *
-   * The press ran this inline; the plaque has to ask the same question
-   * to name a shop from the street, and a second copy of a box test is
-   * how the two would come to disagree about which building you are
-   * looking at.
+   * The press ran this inline, and the plaque asked it too until
+   * DOOR-NAME (FIELD BUGS 2026-10-13e): a DOOR'S plaque names the door's
+   * own building (`doorBuilding`), the record its click enters - the box
+   * answered a neighbour's over a tavern's doorstep. The press keeps
+   * this for ActivateBuilding's discovery, as DFU's does.
    */
   function buildingUnderRay(eye, dir) {
     if (!buildingTargets) return null;
@@ -7144,6 +7147,13 @@ export function createWorldModes(host) {
       // DFU's per-cell building key is built from (RMBLayout.cs:888).
       door: { matrix: bhit.matrix }, pixelLocal: true,
     }) ?? null;
+    return bd && bd.buildingType != null ? bd : null;
+  }
+
+  /** DOOR-NAME: the building a static door belongs to - its own record, as activateStaticDoor resolves it for the
+   *  click (`buildingDataForDoor(hit)` on the same entry) - or null. */
+  function doorBuilding(entry) {
+    const bd = entry ? buildingDataForDoor?.(entry) ?? null : null;
     return bd && bd.buildingType != null ? bd : null;
   }
 
@@ -7264,8 +7274,9 @@ export function createWorldModes(host) {
       //
       // AUDIT-WH P2: AND THE MOD'S OWN CACHE COMES WITH IT. This is
       // the one arm in the whole ladder that is not a table lookup -
-      // `buildingUnderRay` casts a collider ray and box-tests the
-      // location's buildings, then the discovery store is read - and
+      // the building is resolved (a collider ray and a box test then;
+      // the door's own record since DOOR-NAME), then the discovery
+      // store is read and written - and
       // it ran EVERY FRAME the crosshair rested on a shopfront. The
       // mod does not: `prevHit`/`prevText` (.cs:266-275) short-circuit
       // the entire tooltip body when the ray strikes the same
@@ -7319,7 +7330,21 @@ export function createWorldModes(host) {
       // look-away drop in `exteriorHoverPick`, `_doorText` here is this
       // same door's last good word or it is null - it can never be a
       // different door's.
-      const bd = buildingUnderRay(eye, dir);
+      //
+      // DOOR-NAME (FIELD BUGS 2026-10-13e, "Tavern in Issaqumbaa marked
+      // as a player house": its door read "To Residence ... Buy it:
+      // 227,900 gold"). The building is the DOOR'S OWN record - the one
+      // the click enters, prices and buys (activateStaticDoor's
+      // `buildingDataForDoor(hit)`, the same entry) - never the first
+      // box the ray's point falls in. The mod box-tests the HIT BLOCK's
+      // buildings (GetBuildings(hit.transform), .cs:701-702); the port's
+      // box test reads every loaded block's (buildingUnderRay), and a
+      // box is the AABB of a rotated building (DaggerfallStaticBuildings
+      // .cs:73-86), wider than its walls - so a neighbour house's box
+      // over a tavern's doorstep named the tavern's door, while the
+      // click walked into the tavern. A door belongs to one building;
+      // its plaque says that one. A departure from the mod (Ledger A).
+      const bd = doorBuilding(entry);
       if (!bd) return _doorText;
       const locId = discoveryLocationId?.() ?? null;
       if (!locId) return _doorText;

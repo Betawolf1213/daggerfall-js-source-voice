@@ -354,7 +354,13 @@ const NO_SHELF = Object.freeze({ shelvedAt: null, shelvedSites: null });
 // are the RECEIVER's own roll (questShare takeLocalItems, relinked to this quest): self-contained as the three above.
 // Without it The Courier, shared after the sharer took the package, left the receiver with no package - and its
 // `toting _X_` finish could never be true on their side.
-const REPLAYABLE_ONE_TIME_ACTIONS = new Set(['TeleportPc', 'GivePc', 'TrainPc', 'GetItem']);
+// SHARE-REVEAL (FIELD BUGS 2026-10-13e, "Shared Guild quest doesn't give me map location after friend talked to the quest
+// npc"): and RevealLocation - `reveal _place_` marks THE HOLDER'S OWN MAP (PlayerGPS.DiscoverLocation, RevealLocation.cs
+// :59; discoverLocation is idempotent) with this quest's own Place, and the receiver's copy holds the same Places. The
+// envelope carried the reveal complete and never ran it: the partner who clicked the scholar had The Nest of Aneloth on
+// their map and the receiver had "Not on your map yet" - and no one to ask, since the quest's people take the click
+// and DFU's talk names no remote quest dungeon. A `readmap` reveal files its note once here, as it did there.
+const REPLAYABLE_ONE_TIME_ACTIONS = new Set(['TeleportPc', 'GivePc', 'TrainPc', 'GetItem', 'RevealLocation']);
 
 /** AUDIT 68 S29-behaviour-registry-leak: the behaviour registry's first prune size; each prune doubles what is
  *  left, so the set stays within twice the live behaviours at an amortised O(1) per registration. */

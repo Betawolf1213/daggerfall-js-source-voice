@@ -82,6 +82,7 @@ on:
       - "src/world/ethericSea.js"
       - "src/net/skyLaw.js"
       - "src/net/kingdomLaw.js"
+      - "src/net/busyLaw.js"
       - "src/net/recipeLaw.js"
       - "src/net/productRecord.js"
       - "src/net/marketLaw.js"

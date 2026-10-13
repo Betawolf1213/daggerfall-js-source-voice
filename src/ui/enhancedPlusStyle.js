@@ -1567,6 +1567,8 @@ export const PROF_CSS = `/* ── PROF1: THE PROFESSIONS ── */
 .notice-writ .writ-need { margin: 0; font-size: 15px; line-height: 1.3; color: #1d150b; }
 .notice-writ .writ-pay, .notice-writ .writ-left { margin: 0; font-size: 13px; color: #4a3a25; }
 .notice-writ .writ-take { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 6px; font-size: 12px; color: #5a4630; }
+/* WRIT-WALL (FIELD BUGS 2026-10-13e): what is held and no writ may spend, and why - under the Take, in the card's ink */
+.notice-writ .writ-walled { margin: 0; font-size: 12px; line-height: 1.35; font-style: italic; color: #6b3a22; overflow-wrap: anywhere; }
 .notice-writ.done { opacity: 0.62; }
 /* BOARD-UI: the day's count over the cards, on its own dark strip */
 .notice-worktoday { margin: 0 4px 12px; padding: 6px 10px; font-size: 15px; letter-spacing: 0.04em; color: #e9e1cf;

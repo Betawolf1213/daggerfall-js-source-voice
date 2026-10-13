@@ -57,8 +57,8 @@
   {
     "name": "AUDIT-LEGACY-II-A3-lapse-keeps-first-laid",
     "file": "src/scenes/legacyHost.js",
-    "old": "r.state = 'lying'; r.first = JSON.parse(JSON.stringify(r.items)); lapsed = true;",
-    "new": "r.state = 'lying'; lapsed = true;",
+    "old": "        r.first = JSON.parse(JSON.stringify(r.items)); lapsed = true;",
+    "new": "        lapsed = true;",
     "tests": [
       "test/auditlegacy2.test.js"
     ]
@@ -75,8 +75,8 @@
   {
     "name": "AUDIT-LEGACY-II-H5-claimed-at-the-open",
     "file": "src/scenes/legacyHost.js",
-    "old": "          if (r.by == null && !openedSig.has(r.id)) openedSig.set(r.id, itemsSig(r.items));   // claimed once changed (claimTouched)",
-    "new": "          r.by = me.id;",
+    "old": "    if (r.by == null && !openedSig.has(r.id)) openedSig.set(r.id, itemsSig(r.items));",
+    "new": "    if (r.by == null) r.by = current()?.id ?? null;",
     "tests": [
       "test/auditlegacy2.test.js"
     ]

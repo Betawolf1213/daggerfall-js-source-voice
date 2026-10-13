@@ -162,7 +162,7 @@ test('AUDIT 23: both dungeon-mounting hosts pass the spawn applier; the snapshot
   // pinned by RUNNING it in action.test.js); the host must route
   // through it rather than grow a second, thinner snapshot shape.
   assert.ok(/actions: actions\.collectSaveData\(\)/.test(dc), 'collectWorld delegates the action record');
-  assert.ok(/actions\.restoreSaveData\(w\.actions\)/.test(dc), 'applyWorld delegates the restore');
+  assert.ok(/actions\.restoreSaveData\(w\.actions, \{ remote: wire, level: playerEntity\.level \}\)/.test(dc), 'applyWorld delegates the restore');   // PIN MOVED (FIELD BUGS 2026-10-13e SPELL-LOCK): the room's memory is a peer's word (`remote: wire`) and the save's own locks are held to the player's level - the restore is still ActionSystem's
 });
 
 test('AUDIT 23: the sticky region price band rides the envelope', () => {

@@ -32,6 +32,7 @@ import { Message, Formatting } from './message.js';
 import { localizedQuestMessage } from './localizedQuest.js';   // L10N3c: GetMessage's Internal_Quests lookup
 import { symbolToSaveData, symbolFromSaveData } from './symbol.js';
 import { smallerDungeonsStateNow } from '../../world/smallerDungeons.js';   // AUDIT 28 W4: Quest.cs:284's stamp
+import { askAgain } from './noAsksAgain.js';   // NO-ASKS-AGAIN (FIELD BUGS 2026-10-13e): a No that leads nowhere asks again
 
 /** ShowMessagePopup's chunker (Quest.cs:777, 793-819): a message
  *  longer than 22 LINES becomes several click-through boxes. A line
@@ -256,6 +257,10 @@ export class Quest {
 
     // Tick resources
     for (const resource of this.resources.values()) resource.tick(this);
+
+    // NO-ASKS-AGAIN (not DFU's - quest/noAsksAgain.js): a prompt answered No since the last tick, whose No leads
+    // nowhere, is asked again on the next click
+    askAgain(this);
 
     // Update tasks
     for (const task of this.tasks.values()) {
@@ -606,6 +611,8 @@ export class Quest {
     }
     this.oneTimeDisplayedMessages.clear();
     for (const id of data.oneTimeDisplayedMessages ?? []) this.oneTimeDisplayedMessages.add(id);
+    // NO-ASKS-AGAIN (not DFU's - quest/noAsksAgain.js): a save taken after such a No, under DFU's law, loads asking again
+    askAgain(this);
   }
 
 }

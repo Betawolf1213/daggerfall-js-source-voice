@@ -175,11 +175,11 @@ export async function levyAt(db, nowS, region, pixel) {
 }
 
 /** OPEN GATES (SEAT0 7.6: "homes in the town may not be set private this week"): whether it rules at the town `mapId`
- *  this week - the town answer opens every home there (homes.js homesInTown), each home's own choice kept for after. */
-export async function openGatesAt(db, nowS, mapId) {
-  return !!(await db.prepare("SELECT 1 FROM town_seat_edicts WHERE key = ? AND week = ? AND state = 'law' AND edict = 'open-gates'")
-    .bind(mapId, weekAt(nowS)).first());
-}
+ *  this week - a row when it does. The town answer opens every home there (homes.js homesInTown), each home's own choice
+ *  kept for after. HOMES-SHED (2026-10-13): the statement, not its answer - homesInTown sends it in the homes read's own
+ *  batch, so a town's homes cost the database one request where they cost two. */
+export const openGatesRead = (db, nowS, mapId) => db.prepare("SELECT 1 FROM town_seat_edicts WHERE key = ? AND week = ? AND state = 'law' AND edict = 'open-gates'")
+  .bind(mapId, weekAt(nowS));
 
 /**
  * A BOUNTY'S CAMP PAID (SEAT0 7.6: "the treasury pays 20 Marks per camp cleared, up to the sum set aside ... validated

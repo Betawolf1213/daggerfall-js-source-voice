@@ -32,6 +32,7 @@ import { installDetStandIns, MeshBuilder } from './detStandIns.js';
 import { TOWN_PICTURE_ARCHIVE, PICTURE } from './townPictures.js';
 import { registerFlatField } from './flatFields.js';
 import { RMBRP_HILL_SHAPES, SHAPE_BEARINGS, SHAPE_RINGS } from './rmbrpHillShapes.js';   // FIELD BUGS 2026-10-05 HILL-SHAPES: the pack's hills, measured
+import { wrapAngle } from './mat4.js';   // FIELD BUGS 2026-10-13e HILL-SEAT: a pad corner's turn, in one step
 import { shareDetailedShipsArt } from '../systems/detailedShips.js';   // Cliffworms' Items (archive 1210): his pictures, the towns' too
 
 const U = 0.025;   // MeshReader.GlobalScale: one classic unit in metres
@@ -222,6 +223,9 @@ export const RMBRP_HILLS = Object.freeze({
   52463: 'rock', 52508: 'grass', 52543: 'rock', 52548: 'grass', 52599: 'rock', 52613: 'rock', 52638: 'grass', 52663: 'rock',
   52683: 'rock', 52703: 'rock', 52713: 'rock', 52725: 'grass', 52758: 'grass', 52816: 'rock', 52973: 'rock',
 });
+/** The hills' texture coordinates: a plan view in the hill's own frame, a picture every 4 m (hillMesh's - and FIELD BUGS
+ *  2026-10-13e HILL-SEAT's pads', in the frame of the hill under them). */
+const hillPlanUv = (x, z) => [x / 4, -z / 4];
 /** HILL-SHAPES: one hill at its measured polar profile - its centre at `top`, SHAPE_RINGS rings out along
  *  SHAPE_BEARINGS bearings to the rim at the mesh's base (under the block's plane, so no edge stands out of the ground);
  *  each triangle faces up along its own normal. */
@@ -233,7 +237,7 @@ export function hillMesh(shape, surface) {
     const b = k % K, a = (b / K) * Math.PI * 2, r = (shape.reach[b] * j) / N;
     return [cx + Math.cos(a) * r, shape.rings[b][j - 1], cz + Math.sin(a) * r];
   };
-  const uv = (p) => [p[0] / 4, -p[2] / 4];
+  const uv = (p) => hillPlanUv(p[0], p[2]);
   const face = (a, b, c) => {
     const u = [b[0] - a[0], b[1] - a[1], b[2] - a[2]], v = [c[0] - a[0], c[1] - a[1], c[2] - a[2]];
     const n = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]], l = Math.hypot(...n) || 1, sgn = n[1] < 0 ? -1 : 1;
@@ -269,7 +273,7 @@ export const drawnHillStandIn = (id) => (RMBRP_HILLS[id] ? customModelFor(id) : 
  * highest of them over that point in the same frame, or null where none is. Null when the block draws no hill of ours.
  * @param {Iterable<{modelIdNum:number, matrix:ArrayLike<number>}>} models
  * @param {(id:number) => ?{positions:ArrayLike<number>, indices:ArrayLike<number>}} [drawn] the mesh drawn for an id
- * @returns {?{topAt: (x:number, z:number) => ?number}}
+ * @returns {?{topAt: (x:number, z:number) => ?number, lay: (mesh:{positions:ArrayLike<number>, indices:ArrayLike<number>}) => void, trianglesIn: (x0:number, z0:number, x1:number, z1:number) => number[][]}}
  */
 export function blockHillSeat(models, drawn = drawnHillStandIn) {
   const tris = [];   // per triangle: ax, ay, az, bx, by, bz, cx, cy, cz, minX, maxX, minZ, maxZ
@@ -289,11 +293,30 @@ export function blockHillSeat(models, drawn = drawnHillStandIn) {
         Math.min(w[a], w[b], w[c]), Math.max(w[a], w[b], w[c]), Math.min(w[a + 2], w[b + 2], w[c + 2]), Math.max(w[a + 2], w[b + 2], w[c + 2]));
     }
   }
+  // FIELD BUGS 2026-10-13e HILL-SEAT: the triangles by the 2 m square their box touches, filed on the first ask after a
+  // change - a pad asks the top a few thousand times, and each ask reads the few triangles under it, not the block's all
+  const CELL = 2, NONE = [];
+  let cells = null, gx = 0, gz = 0, nz = 0;
+  const near = (x, z) => {
+    if (!cells) {
+      gx = Infinity; gz = Infinity;
+      let x1 = -Infinity, z1 = -Infinity;
+      for (let k = 0; k < tris.length; k += 13) { gx = Math.min(gx, tris[k + 9]); x1 = Math.max(x1, tris[k + 10]); gz = Math.min(gz, tris[k + 11]); z1 = Math.max(z1, tris[k + 12]); }
+      nz = Math.floor((z1 - gz) / CELL) + 1;
+      cells = new Array((Math.floor((x1 - gx) / CELL) + 1) * nz);
+      for (let k = 0; k < tris.length; k += 13) {
+        const i1 = Math.floor((tris[k + 10] - gx) / CELL), j0 = Math.floor((tris[k + 11] - gz) / CELL), j1 = Math.floor((tris[k + 12] - gz) / CELL);
+        for (let i = Math.floor((tris[k + 9] - gx) / CELL); i <= i1; i++) for (let j = j0; j <= j1; j++) (cells[i * nz + j] ??= []).push(k);
+      }
+    }
+    const i = Math.floor((x - gx) / CELL), j = Math.floor((z - gz) / CELL);
+    return i < 0 || j < 0 || j >= nz ? NONE : cells[i * nz + j] ?? NONE;
+  };
   if (!tris.length) return null;
   return {
     topAt(x, z) {
       let top = null;
-      for (let k = 0; k < tris.length; k += 13) {
+      for (const k of near(x, z)) {
         if (x < tris[k + 9] || x > tris[k + 10] || z < tris[k + 11] || z > tris[k + 12]) continue;
         const ax = tris[k], az = tris[k + 2], bx = tris[k + 3], bz = tris[k + 5], cx = tris[k + 6], cz = tris[k + 8];
         const d = (bz - cz) * (ax - cx) + (cx - bx) * (az - cz);
@@ -305,6 +328,27 @@ export function blockHillSeat(models, drawn = drawnHillStandIn) {
       }
       return top;
     },
+    /** FIELD BUGS 2026-10-13e HILL-SEAT: lay a mesh drawn in the block's own frame (blockHillPatch's pads) under the
+     *  same top, so whatever reads the seat - TREES-SEATED's flats - stands on it as on the hills. */
+    lay(mesh) {
+      const p = mesh.positions, ix = mesh.indices;
+      for (let t = 0; t + 2 < ix.length; t += 3) {
+        const a = ix[t] * 3, b = ix[t + 1] * 3, c = ix[t + 2] * 3;
+        tris.push(p[a], p[a + 1], p[a + 2], p[b], p[b + 1], p[b + 2], p[c], p[c + 1], p[c + 2],
+          Math.min(p[a], p[b], p[c]), Math.max(p[a], p[b], p[c]), Math.min(p[a + 2], p[b + 2], p[c + 2]), Math.max(p[a + 2], p[b + 2], p[c + 2]));
+      }
+      cells = null;   // filed again on the next ask
+    },
+    /** HILL-SEAT: the drawn triangles whose boxes meet the box x0..x1, z0..z1, seen from above ([ax, az, bx, bz, cx, cz]
+     *  each) - the corners and edges where the top between two samples turns. */
+    trianglesIn(x0, z0, x1, z1) {
+      const out = [];
+      for (let k = 0; k < tris.length; k += 13) {
+        if (tris[k + 10] < x0 || tris[k + 9] > x1 || tris[k + 12] < z0 || tris[k + 11] > z1) continue;
+        out.push([tris[k], tris[k + 2], tris[k + 3], tris[k + 5], tris[k + 6], tris[k + 8]]);
+      }
+      return out;
+    },
   };
 }
 
@@ -313,6 +357,216 @@ export function blockHillSeat(models, drawn = drawnHillStandIn) {
 export function seatNatureFlat(seat, x, z, groundY) {
   const top = seat ? seat.topAt(x, z) : null;
   return top !== null && top > groundY ? top : groundY;
+}
+
+// ---- HILL-SEAT: a hill holds what the author stood on it -----------------------------------------------------------
+// FIELD BUGS 2026-10-13e HILL-SEAT (SylviaBun on the Discord: "Some locations have floating houses - Temple of Kynareth
+// has floating houses due to terrain modifications", a night screenshot of a house on a grass mound whose crest falls
+// away under its front wall, a lit gap under the wall). Beautiful Villages stands about a fifth of Kynareth's temples as
+// TEMPASH3 (Ipsham's block), whose houses 127, 129 and 201 and temple 402 the author stood on hill 52758's plateau,
+// 4.1-4.2 m up. HILL-SHAPES drew each hill at its measured profile and seated them at their origins, but the profile is
+// each cell's MEDIAN, and it falls away towards the plateau's edge - 0.23-0.33 m under the houses' height 5 m out from
+// an origin, 0.74-1.24 m 7 m out: a house's far wall hung a metre over the drawn slope. DFU with the pack stands the
+// house on the author's own mesh, whose plateau holds it. So a block that stands a model up on a drawn hill lays a PAD
+// under it: a flat top HILL_PATCH_SINK under the model's base over its whole footprint and a little past it, and a bank
+// falling from that edge until it is under what the block draws there (its hills, or its plane) - in the picture of the
+// hill the model stands on, with that hill's own texture coordinates (hillPlanUv in the hill's frame), so where the bank
+// meets the hill the grass runs on. The model is not moved, and nothing is raised over its base.
+
+/** HILL-SEAT: how far a model the author stood on a hill may hang over what is drawn under any point of its footprint,
+ *  in metres - the bar HILL-SHAPES held a prop's foot to at its origin (test/fb1005_hills.test.js), held now under the
+ *  whole footprint: three times the 2 classic units (0.05 m) a town's own models stand over their ground (GroundOffset,
+ *  the block's frame over the levelled terrain), the hair the pad's own top keeps under a base (HILL_PATCH_SINK). */
+export const HILL_SEAT_TOLERANCE = 0.15;
+/** HILL-SEAT: a model whose base is under this stands on the block's plane, not up a hill (fb1005_hills' sweep's bar). */
+export const HILL_SEAT_PLANE = 0.5;
+/** HILL-SEAT: a model whose base is more than this over every drawn top under its footprint was hung there by its
+ *  author, not stood - HILL-SHAPES' metre (no model stood on a hill hangs one over the stand-in at its middle). */
+export const HILL_SEAT_STAND = 1;
+/** HILL-SEAT: the pad's top under the model's base - a third of the bar: GroundOffset's 2 classic units, as a town's
+ *  models stand over their ground, so the base's own faces and the pad never fight for the depth. */
+export const HILL_PATCH_SINK = HILL_SEAT_TOLERANCE / 3;
+const HILL_PATCH_MARGIN = 0.25;   // the flat top runs this far past the footprint: a wall's foot is not the bank's edge
+const HILL_PATCH_SLOPE = 1;       // the bank falls a metre a metre (45 degrees): the median's fall by a plateau's edge is under half that, so it meets the hill within a few metres and buries nothing farther off
+const HILL_PATCH_TOE = 0.25;      // the bank runs on until it is this far under what is drawn there - its edge never in the open
+const HILL_PATCH_STEP = 0.25;     // the bank's march out
+const HILL_PATCH_GRID = 1;        // the gap's samples inside a footprint, past the exact ones (footprintSamples)
+const HILL_PATCH_RAY = 1;         // a bank's rays along a footprint's edge
+const HILL_PATCH_FAN = Math.PI / 6;   // and round its corners, 30 degrees apart at most
+
+/** HILL-SEAT: the convex hull of points [x, z], counter-clockwise (x across, z up the page) - Andrew's monotone chain. */
+function hullXZ(points) {
+  const p = points.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  if (p.length < 3) return p;
+  const turn = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lower = [], upper = [];
+  for (const q of p) {
+    while (lower.length >= 2 && turn(lower[lower.length - 2], lower[lower.length - 1], q) <= 1e-9) lower.pop();
+    lower.push(q);
+  }
+  for (let i = p.length - 1; i >= 0; i--) {
+    while (upper.length >= 2 && turn(upper[upper.length - 2], upper[upper.length - 1], p[i]) <= 1e-9) upper.pop();
+    upper.push(p[i]);
+  }
+  return lower.slice(0, -1).concat(upper.slice(0, -1));
+}
+/** HILL-SEAT: whether [x, z] stands in a counter-clockwise convex polygon, its edge included. */
+function inHull(h, x, z) {
+  for (let i = 0; i < h.length; i++) {
+    const a = h[i], b = h[(i + 1) % h.length];
+    if ((b[0] - a[0]) * (z - a[1]) - (b[1] - a[1]) * (x - a[0]) < -1e-9) return false;
+  }
+  return true;
+}
+/** HILL-SEAT: a placed model's footprint as it is drawn - its lowest vertex (`base`) and the hull of its vertices seen
+ *  from above (`hull`), in the block's frame. Read off the mesh the host draws (its CPU copy), so the footprint is the
+ *  house's own walls, eaves and steps under its own turn, not a box round them. */
+function modelFootprint(positions, m) {
+  let base = Infinity;
+  const pts = [];
+  for (let i = 0; i < positions.length; i += 3) {
+    const x = positions[i], y = positions[i + 1], z = positions[i + 2];
+    base = Math.min(base, m[1] * x + m[5] * y + m[9] * z + m[13]);
+    pts.push([m[0] * x + m[4] * y + m[8] * z + m[12], m[2] * x + m[6] * y + m[10] * z + m[14]]);
+  }
+  return { base, hull: hullXZ(pts) };
+}
+/** HILL-SEAT: where a footprint's gap is read. The drawn top is a plane in each triangle, so over the footprint it is
+ *  lowest at one of the footprint's corners, a corner of the top inside it, or a point where an edge of the top crosses
+ *  an edge of the footprint - every one of them is read; and, for where two hills' tops cross, on a grid of
+ *  HILL_PATCH_GRID inside. */
+function footprintSamples(seat, hull) {
+  const out = hull.slice(), n = hull.length;
+  let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
+  for (const [x, z] of hull) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); z0 = Math.min(z0, z); z1 = Math.max(z1, z); }
+  for (const t of seat.trianglesIn(x0, z0, x1, z1)) {
+    for (let v = 0; v < 6; v += 2) {
+      const px = t[v], pz = t[v + 1], rx = t[(v + 2) % 6] - px, rz = t[(v + 3) % 6] - pz;
+      if (inHull(hull, px, pz)) out.push([px, pz]);
+      for (let i = 0; i < n; i++) {
+        const [ax, az] = hull[i], sx = hull[(i + 1) % n][0] - ax, sz = hull[(i + 1) % n][1] - az;
+        const den = rx * sz - rz * sx;
+        if (Math.abs(den) < 1e-12) continue;   // parallel: its ends are read
+        const s = ((ax - px) * sz - (az - pz) * sx) / den, u = ((ax - px) * rz - (az - pz) * rx) / den;
+        if (s >= 0 && s <= 1 && u >= 0 && u <= 1) out.push([px + rx * s, pz + rz * s]);
+      }
+    }
+  }
+  for (let x = x0 + HILL_PATCH_GRID / 2; x < x1; x += HILL_PATCH_GRID) for (let z = z0 + HILL_PATCH_GRID / 2; z < z1; z += HILL_PATCH_GRID) if (inHull(hull, x, z)) out.push([x, z]);
+  return out;
+}
+/** HILL-SEAT: the texture coordinates of a point of the block's frame in the frame of the hill placed by `m` (the
+ *  inverse of its matrix, which may turn and scale), as hillMesh gives its own. */
+function hillUvAt(m) {
+  const a = m[0], b = m[4], c = m[8], d = m[1], e = m[5], f = m[9], g = m[2], h = m[6], i = m[10];
+  const det = a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g) || 1;
+  return (p) => {
+    const x = p[0] - m[12], y = p[1] - m[13], z = p[2] - m[14];
+    return hillPlanUv(((e * i - f * h) * x + (c * h - b * i) * y + (b * f - c * e) * z) / det, ((d * h - e * g) * x + (b * g - a * h) * y + (a * e - b * d) * z) / det);
+  };
+}
+/** HILL-SEAT: one model's pad into `mb` - a flat top at `top` over `hull` grown by HILL_PATCH_MARGIN (its corners
+ *  rounded), and a bank out of every point of that edge along its outward normal, falling HILL_PATCH_SLOPE a metre until
+ *  it is HILL_PATCH_TOE under what the block draws there (`seat`'s top, or the plane), or under the plane wherever it
+ *  is. Each triangle faces up. */
+function hillPad(mb, seat, hull, top, tex, uvOf) {
+  const n = hull.length, rays = [];
+  const outward = (i) => {
+    const [ax, az] = hull[i], [bx, bz] = hull[(i + 1) % n];
+    return Math.atan2(ax - bx, bz - az);   // the edge's (dz, -dx), as an angle from +x towards +z
+  };
+  for (let i = 0; i < n; i++) {
+    const [ax, az] = hull[i], [bx, bz] = hull[(i + 1) % n];
+    const a0 = outward((i + n - 1) % n);
+    const a1 = a0 + wrapAngle(outward(i) - a0);   // the corner's outward turn, (0, pi) on a convex hull - ONCRASH1's one wrap
+    const fan = Math.max(1, Math.ceil((a1 - a0) / HILL_PATCH_FAN));
+    for (let k = a1 > a0 ? 0 : fan; k <= fan; k++) rays.push([ax, az, a0 + ((a1 - a0) * k) / fan]);
+    const along = Math.ceil(Math.hypot(bx - ax, bz - az) / HILL_PATCH_RAY);
+    for (let k = 1; k < along; k++) rays.push([ax + ((bx - ax) * k) / along, az + ((bz - az) * k) / along, a1]);
+  }
+  const under = (x, z) => Math.max(seat.topAt(x, z) ?? 0, 0);   // what the block draws: its hills, or its plane
+  const reach = (top + HILL_PATCH_TOE) / HILL_PATCH_SLOPE;   // this far out the bank is under the plane
+  const ring = rays.map(([px, pz, a]) => {
+    const dx = Math.cos(a), dz = Math.sin(a), cx = px + dx * HILL_PATCH_MARGIN, cz = pz + dz * HILL_PATCH_MARGIN;
+    let d = HILL_PATCH_STEP;
+    while (d < reach && top - HILL_PATCH_SLOPE * d > under(cx + dx * d, cz + dz * d) - HILL_PATCH_TOE) d += HILL_PATCH_STEP;
+    d = Math.min(d, reach);
+    return { crest: [cx, top, cz], toe: [cx + dx * d, top - HILL_PATCH_SLOPE * d, cz + dz * d] };
+  });
+  const bank = (p, q, r) => {
+    const u = [q[0] - p[0], q[1] - p[1], q[2] - p[2]], v = [r[0] - p[0], r[1] - p[1], r[2] - p[2]];
+    const c = [u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0]];
+    const len = Math.hypot(c[0], c[1], c[2]);
+    if (len < 1e-9) return;   // two rays out of one corner at one angle
+    const s = c[1] < 0 ? -len : len;
+    mb.tri(tex, p, q, r, [c[0] / s, c[1] / s, c[2] / s], uvOf(p), uvOf(q), uvOf(r));
+  };
+  let mx = 0, mz = 0;
+  for (const { crest } of ring) { mx += crest[0]; mz += crest[2]; }
+  const mid = [mx / ring.length, top, mz / ring.length];
+  for (let i = 0; i < ring.length; i++) {
+    const a = ring[i], b = ring[(i + 1) % ring.length];
+    mb.tri(tex, mid, a.crest, b.crest, [0, 1, 0], uvOf(mid), uvOf(a.crest), uvOf(b.crest));
+    bank(a.crest, b.crest, b.toe);
+    bank(a.crest, b.toe, a.toe);
+  }
+}
+
+/**
+ * HILL-SEAT: THE PADS ONE BLOCK LAYS UNDER WHAT ITS AUTHOR STOOD ON ITS DRAWN HILLS. For each of the block's models (a
+ * hill holds itself) whose base stands over the block's plane (HILL_SEAT_PLANE), over a drawn hill, and ON it - the
+ * drawn top somewhere under its footprint within HILL_SEAT_STAND of its base (a model hung higher keeps its air) - and
+ * which hangs more than HILL_PATCH_SINK over what is drawn anywhere under its footprint: a pad (hillPad), in the picture
+ * of the hill under its middle. The pads come back as ONE mesh in the block's frame, in a custom model's shape
+ * (positions, normals, uvs, indices, subMeshes), and are laid into `seat`, so its top - TREES-SEATED's flats' - answers
+ * them as it answers the hills. Null when the block needs none. The one home of both street hosts (scenes/world.js
+ * merges it with the pixel's statics and its collider bucket, freed with them; scenes/exterior.js draws and collides it
+ * for its fixed city's life).
+ * @param {?ReturnType<typeof blockHillSeat>} seat the block's hills as drawn (blockHillSeat), or null - none of ours
+ * @param {Iterable<{modelIdNum:number, matrix:ArrayLike<number>}>} models the block's (layoutRmbBlock's)
+ * @param {(placed:{modelIdNum:number, matrix:ArrayLike<number>}) => ?{positions:ArrayLike<number>}} meshOf the mesh the host draws for a placement, or null for one it does not draw
+ * @param {(id:number) => ?{positions:ArrayLike<number>, indices:ArrayLike<number>, subMeshes?:Array<{textureArchive:number, textureRecord:number}>}} [drawn] the mesh drawn for a hill (blockHillSeat's)
+ * @returns {?{positions:Float32Array, normals:Float32Array, uvs:Float32Array, indices:Uint32Array, subMeshes:Array, doors:Array}}
+ */
+export function blockHillPatch(seat, models, meshOf, drawn = drawnHillStandIn) {
+  if (!seat) return null;
+  const hills = [];
+  for (const placed of models ?? []) {
+    const mesh = drawn(placed.modelIdNum);
+    if (mesh) hills.push({ placed, mesh, seat: null });
+  }
+  const mb = new MeshBuilder();
+  let pads = 0;
+  for (const placed of models ?? []) {
+    if (drawn(placed.modelIdNum)) continue;   // a hill holds itself
+    const mesh = meshOf(placed);
+    if (!mesh?.positions?.length) continue;
+    const { base, hull } = modelFootprint(mesh.positions, placed.matrix);
+    if (hull.length < 3 || base < HILL_SEAT_PLANE) continue;   // on the block's plane
+    let mx = 0, mz = 0;
+    for (const [x, z] of hull) { mx += x / hull.length; mz += z / hull.length; }
+    if (seat.topAt(mx, mz) === null) continue;   // over no drawn hill
+    let high = -Infinity, gap = -Infinity;
+    for (const [x, z] of footprintSamples(seat, hull)) {
+      const t = seat.topAt(x, z);
+      if (t !== null && t > high) high = t;
+      gap = Math.max(gap, base - Math.max(t ?? 0, 0));
+    }
+    if (base - high > HILL_SEAT_STAND || gap <= HILL_PATCH_SINK) continue;   // hung over the hill, or held by it already
+    let on = null, onTop = -Infinity;   // the hill it stands on: the highest under its middle
+    for (const h of hills) {
+      const t = (h.seat ??= blockHillSeat([h.placed], drawn))?.topAt(mx, mz) ?? null;
+      if (t !== null && t > onTop) { on = h; onTop = t; }
+    }
+    if (!on) continue;
+    const sm = on.mesh.subMeshes?.[0];
+    hillPad(mb, seat, hull, base - HILL_PATCH_SINK, sm ? [sm.textureArchive, sm.textureRecord] : GRASS, hillUvAt(on.placed.matrix));
+    pads++;
+  }
+  if (!pads) return null;
+  const patch = mb.build();
+  seat.lay(patch);
+  return patch;
 }
 /** The pack's market stalls: the awning each wears (its fourth material, a cloth of TEXTURE.049 or 449) on a stall the
  *  pack's size - 3.2 m across the counter, 4.9 m along it, 4.4 m to the awning's high edge. */

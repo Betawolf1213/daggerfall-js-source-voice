@@ -9,16 +9,18 @@
   {
     "name": "SWIM-SPENT-the-whole-pool-at-once",
     "file": "src/systems/rest.js",
-    "old": "export const EXHAUSTED_SWIM_SHARE = 0.1;",
-    "new": "export const EXHAUSTED_SWIM_SHARE = 1;",
-    "tests": ["test/fb0930b_swimspent.test.js"]
+    "old": "export const EXHAUSTED_SPENT_SHARE = 0.1;",
+    "new": "export const EXHAUSTED_SPENT_SHARE = 1;",
+    "tests": ["test/fb0930b_swimspent.test.js"],
+    "note": "Re-aimed by content at FIELD BUGS 2026-10-13e SPENT-ASHORE: EXHAUSTED_SWIM_SHARE renamed, the water's share and the shore's."
   },
   {
     "name": "SWIM-SPENT-a-small-pool-drowns-for-nothing",
     "file": "src/systems/rest.js",
-    "old": "damage: Math.max(1, Math.ceil((entity?.maxHealth ?? 0) * EXHAUSTED_SWIM_SHARE))",
-    "new": "damage: Math.ceil((entity?.maxHealth ?? 0) * EXHAUSTED_SWIM_SHARE)",
-    "tests": ["test/fb0930b_swimspent.test.js"]
+    "old": "const spentDamage = (entity) => Math.max(1, Math.ceil((entity?.maxHealth ?? 0) * EXHAUSTED_SPENT_SHARE));",
+    "new": "const spentDamage = (entity) => Math.ceil((entity?.maxHealth ?? 0) * EXHAUSTED_SPENT_SHARE);",
+    "tests": ["test/fb0930b_swimspent.test.js"],
+    "note": "Re-aimed by content at FIELD BUGS 2026-10-13e SPENT-ASHORE: the share's floor moved into the one helper the water and the shore share."
   },
   {
     "name": "SWIM-SPENT-foes-about-still-kill-in-the-water",

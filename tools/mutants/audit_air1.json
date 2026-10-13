@@ -38,20 +38,22 @@
   {
     "name": "DEATH1-the-dungeon-collapse-writes-health-raw-again",
     "file": "src/scenes/dungeonContext.js",
-    "old": "      hurtEntity(playerEntity, playerEntity.health, { bypassShield: true });   // SetHealth(0): the fatal collapse",
-    "new": "      playerEntity.health = 0;   // SetHealth(0): the fatal collapse",
+    "old": "    if (out.kind === 'spent') { hudText.add(out.line); hurtEntity(playerEntity, out.damage, { bypassShield: true }); surfacePlayer(); return; }",
+    "new": "    if (out.kind === 'spent') { hudText.add(out.line); playerEntity.health = Math.max(0, playerEntity.health - out.damage); surfacePlayer(); return; }",
     "tests": [
       "test/playerdeath.test.js"
-    ]
+    ],
+    "note": "Re-aimed by content at FIELD BUGS 2026-10-13e SPENT-ASHORE: the lethal collapse is gone; the foes-about arm's share is what reaches nothing now, and a raw write of it raises no death."
   },
   {
     "name": "DEATH1-a-shield-makes-the-lethal-collapse-survivable",
     "file": "src/scenes/dungeonContext.js",
-    "old": "      hurtEntity(playerEntity, playerEntity.health, { bypassShield: true });   // SetHealth(0): the fatal collapse",
-    "new": "      hurtEntity(playerEntity, playerEntity.health);   // SetHealth(0): the fatal collapse",
+    "old": "    if (out.kind === 'spent') { hudText.add(out.line); hurtEntity(playerEntity, out.damage, { bypassShield: true });",
+    "new": "    if (out.kind === 'spent') { hudText.add(out.line); hurtEntity(playerEntity, out.damage);",
     "tests": [
       "test/playerdeath.test.js"
-    ]
+    ],
+    "note": "Re-aimed by content at FIELD BUGS 2026-10-13e SPENT-ASHORE: the collapse's share past the shield, as the SetHealth(0) it replaced was."
   },
   {
     "name": "DEATH1-the-presenter-fires-on-the-state-not-the-transition",

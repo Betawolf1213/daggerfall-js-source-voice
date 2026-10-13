@@ -91,7 +91,7 @@ import { spherePlanes, batchVisible, setFlatLean, batchSphere } from '../render/
 import { withMoonAmbient } from '../render/enhancedSky.js';   // EV5: secunda rides the ambient
 import { FarRingRenderer, ringDisabled, ringHeight, RING_HAZE_HOLD } from '../render/farRing.js';   // EV8: the province's mountains on the horizon; FAR-SEA1: its haze, the sea's too
 import { syncLightingLane, lanternColor } from '../render/enhancedLighting.js';   // EL1: the Enhanced Lighting lane, installed at mount
-import { collectBlockFlats, billboardSize, mobileBillboardSize, centredBase, classicBillboardSize, isNatureArchive, NATURE_FLATS_Y } from '../world/rmbFlats.js'; import { blockHillSeat, seatNatureFlat } from '../world/townStandIns.js';   // TREES-SEATED: a block's trees on the hills drawn under them
+import { collectBlockFlats, billboardSize, mobileBillboardSize, centredBase, classicBillboardSize, isNatureArchive, NATURE_FLATS_Y } from '../world/rmbFlats.js'; import { blockHillSeat, seatNatureFlat, blockHillPatch } from '../world/townStandIns.js';   // TREES-SEATED: a block's trees on the hills drawn under them; FIELD BUGS 2026-10-13e HILL-SEAT: and the pads under what its author stood on them
 import { blockSolids, flatFieldFor } from '../world/flatFields.js';   // FIELD BUGS 2026-10-04d CROPS: a crop field keeps a metre off the block's solids; AUDIT MERCHANT-YARDS G1: and a yard off the field
 import { textureReplacementEnabled, hasTextureReplacement, preloadTextureRecord, decodePng, decodedTextureTopDown } from '../systems/textureReplacement.js';   // DW-E2: a decoration's replacement (UnderwaterDecorationReplacementCache)
 import { SeasonHelper, archivePrefix as seasonPrefixOf } from '../systems/seasonsIliacBay.js';   // SIB1: Seasons of the Iliac Bay's SeasonHelper; WINDFALL1: and its atlases' prefixes, which Windfall's own tables key on
@@ -658,6 +658,7 @@ import { setRaidingPartiesHost, raidFrame as raidingPartiesFrame, raidState, rai
 import { modSaveRecords, restoreModSaveRecords, newGameModSaveRecords, registerModSaveData } from '../systems/modSaveData.js';   // WA1: DFU's per-mod save slot, for the mods after HCC; OH-D: Ocean Holes' OceanHoleSaveData
 import { applyDeathPenalty, deathPenaltyText, stateDeathLoss, statedDeathLoss } from '../systems/deathPenalty.js';   // DEATH-PENALTY: an online death costs a tenth of the purse
 import { createLegacyHost, LEGACY_TEXT, REMAINS_FLAT } from './legacyHost.js';   // LEGACY1: Project Legacy's family - the record, the deaths, the births
+import { createRemainsStand } from './legacyRemainsStand.js';   // FB1013d REMAINS-STAND: the house's fallen, seen where they lie
 import { isFamilyRes } from '../systems/legacy/household.js';   // LEGACY-HOME: one of the line among a town's residents
 import { legacyOn, legacySettings } from '../systems/legacy/settings.js';
 import { listFamilies, newestSaveOf } from '../systems/legacy/store.js';
@@ -705,7 +706,7 @@ import { noteLocalPlayer, tacticsNow, tickTactics, offsetTactics } from '../ai/t
 import { drawableBlows, registerBlowDodgedListener } from '../ai/foeBlows.js';   // TACT4; AUDIT ARENA-LADDER: a dodge told
 import { landViewRead } from '../world/landView.js';   // LV1: the enhanced lane's own streamed radius; FT2: the read is the module's
 import { CityLightAnimator, SUN_RIG_COLOR, INDIRECT_LIGHT_COLOR, INDIRECT_LIGHT_RANGE, exteriorAmbient, indirectLightScale, isCityLightsOn, isNight, hourOf, daylightScale, parseTimeOfDay, sunDirection, sunScale, windowStyleForTime, viewOutLight } from '../world/worldClock.js';
-import { dungeonLocationFor } from '../world/smallerDungeons.js';   // AUDIT 28 F-B2: the quest layer sees the sized dungeon
+import { dungeonLocationFor, builtDungeonSize } from '../world/smallerDungeons.js';   // AUDIT 28 F-B2: the quest layer sees the sized dungeon; AUDIT FB1013d B1: the size a fallen's dungeon was built at
 import { audio, QuestAudioSource, logarithmicRolloff, plainSourceGain } from '../systems/audio.js';   // E6: the QuestMachine's own DaggerfallAudioSource (PlaySound's busy-skip)
 import { music } from '../systems/music.js';
 import { AmbientEffects, EXTERIOR_AMBIENT_WAITS, presetForExterior } from '../systems/ambientEffects.js';
@@ -6083,6 +6084,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           }
         }
         const hillSeat = blockHillSeat(b.layout.models);   // TREES-SEATED: the block's hills as the port draws them, null for none of ours. No RMB ground plane on terrain (addGroundPlane = false).
+        // FIELD BUGS 2026-10-13e HILL-SEAT: the pads under what the author stood on those hills (laid into the seat, so the trees below stand on them too) - merged with the pixel's statics and solid in its bucket, both freed with the pixel (destroyPixel)
+        const hillPatch = blockHillPatch(hillSeat, b.layout.models, (m) => (m.enhancedOnly && !isEnhanced() ? null : cpuModels.get(m.modelIdNum)));
+        if (hillPatch) { staticBuilder.add(hillPatch, originMatrix, resolveTexKey); collider.addMesh(key, hillPatch.positions, hillPatch.indices, originMatrix, onFloatingFrame(state, ((o) => () => state.pixelTranslation(px, py, o))([0, 0, 0]))); unionBox(transformedAabb(localAabb(hillPatch.positions), originMatrix)); }
         // FIELD BUGS 2026-10-04d CROPS: a crop field's batch reads the climate (the second desert's plant is its own) and
         // keeps a metre off the block's solids - the models this build drew and collided just above (IsOverlapping)
         const blockFlats = collectBlockFlats(b.dfBlock, natureArchive, { climateIndex: maps.getClimateIndex(px, py), solid: blockSolids(b.layout.models, (m) => (m.enhancedOnly && !isEnhanced() ? null : cpuModels.get(m.modelIdNum))) });
@@ -7466,6 +7470,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // SWIM-SPENT (rest.js): in the water the drain to nothing is a share of the health and a line - no box, so the
       // swimmer can make for the shore; Come Sail Away hears no death
       if (out.kind === 'drown') { townTalk.say(out.line); hurtPlayer(playerEntity, out.damage, { bypassShield: true }); return; }
+      // SPENT-ASHORE (rest.js): on dry feet with foes about the same share and a line - no box, no death heard; the
+      // fighter can get clear (DFU SetHealth(0)s them there, whatever the health)
+      if (out.kind === 'spent') { townTalk.say(out.line); hurtPlayer(playerEntity, out.damage, { bypassShield: true }); return; }
       if (csaRuntime) csaCall(() => csaRuntime.OnPlayerDeath());   // CSA-D: PlayerEntity.OnExhausted -> ComeSailAway.OnPlayerDeath
       const lines = ['You collapse from exhaustion.'];
       // ROAD-B B5: a PUSH. PlayerEntity's OnExhausted handler is a plain
@@ -7490,8 +7497,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         playerEntity.magicka = Math.min(playerEntity.maxMagicka ?? Infinity, (playerEntity.magicka ?? 0) + out.magicka);
         tallySkill(playerEntity, SKILLS.Medical);
         surfacePlayer();
-      } else {
-        hurtPlayer(playerEntity, playerEntity.health, { bypassShield: true });   // SetHealth(0)
       }
     } finally { _inExhaustion = false; }
   }
@@ -15780,8 +15785,16 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   function legacyStep(dt) {
     _legacyT -= dt;
     if (_legacyT > 0 || !legacyHost) return;
+    // AUDIT FB1013d A2: and never while the world is moved (AUDIT 68 S22's one question) - a load replaces the record's
+    // lists once its awaits are done (legacyHost.js adopt), and a list opened or a body stood over them in between
+    // outlived them: a take from it was a take from no record
+    if (worldMoveBusy()) return;
     _legacyT = 1;
     const said = legacyHost.tick();
+    // FB1013d REMAINS-STAND: the house's fallen stood where they lie - after the tick, which lays the bones again before a
+    // list is made ready (legacyHost.js remainsToStand; a claim that lapses there lays its bones at once, AUDIT FB1013d A1);
+    // their line of light under the house's name
+    setLootMarksLive(legacyRemainsStand.frame(legacyHost.remainsToStand()) > 0, 'legacy');
     // AUDIT LEGACY A2: asked every second until it is shown - never dropped under a window that stood when it was first asked
     if (!said || successionOpen() || (townTalk.overlayActive && !townTalk.overlayDone) || modes?.deathUp?.()) return;
     if (said.past) openLegacyDeadLoad(said);
@@ -27747,7 +27760,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // death reset (the presenter above) and the modal hosts' (worldModes' interior and the dungeon context reset through
   // `onlineRespawn`, below) both ask `legacyDeathReset`.
   // FLAGGED (Legacy-Arc.md section 3): exterior.js, the fixed city, keeps DFU's death - no streamer to birth an heir into.
-  const legacyHere = () => {
+  const legacyHere = ({ height = false } = {}) => {
     const px = playerTravelPixel();
     const r = maps.getRegionIndexAt(px.x, px.y);
     const loc = locationIndex.get(`${px.x},${px.y}`) ?? null;
@@ -27759,11 +27772,26 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     return {
       pixel: { x: px.x, y: px.y }, regionIndex: r, region: REGION_NAMES[r] ?? '', mode, loc: loc?.name ?? null, locationType: loc?.mapTableData?.locationType ?? null,
       mapId: loc?.mapTableData?.mapId != null ? loc.mapTableData.mapId >>> 0 : null,   // LEGACY-HOME: the seat's town, as its residents know it
-      dungeon: dl ? { regionIndex: dl.regionIndex, locationIndex: dl.locationIndex } : null,
+      // AUDIT FB1013d B1: and the dungeon's own key - its save's and its room's (`dungeon:<locationId>`): a made dungeon
+      // shares its region's row, the Arena's Undercroft its city's - and the size it was built at (Smaller Dungeons: another
+      // size is another layout, where the fallen's floor position is some other room or none)
+      dungeon: dl ? { regionIndex: dl.regionIndex, locationIndex: dl.locationIndex, key: modes?.dungeonCtx?.locationKey?.() ?? null, size: builtDungeonSize(modes?.dungeonLocation) } : null,
       pos: mode === 'dungeon' ? pos : null,
-      world: mode === 'exterior' ? state.worldCoords(pos) : null,
+      // FB1013d: and the height they stood at - the body stands there (a roof, a bridge): a record's, so in DFU's frame
+      // (AUDIT LANDFORMS C1) on the ground it was measured on (TERRAIN-SCALE1), as the Recall anchor keeps its own.
+      // AUDIT FB1013d B2: asked by the death alone (`height`) - the lift is a field's kernel pass on the first pixel the
+      // main thread asks it of, and the slow tick asks where the one played stands every second
+      world: mode === 'exterior' ? { ...state.worldCoords(pos), ...(height ? { y: groundFrameHeight(pos[1] - state.compensation[1], pos[0], pos[2]), terrainScale: STREAMING_TERRAIN_SCALE } : {}) } : null,
     };
   };
+  /** LEGACY4 + AUDIT LEGACY H1: whether `h` (legacyHere) stands in the dungeon a remains' `place` names - by its location
+   *  AND the pixel it stands on (AUDIT FB1013d O1: a MADE dungeon is no table row - a spawn, a hall, the Arena's floor,
+   *  the Hour and the Court are each locationIndex -1 of their region, so the body stood in every spawn of the fallen's
+   *  region; inside, the GPS is the dungeon's own pixel - Ocean Holes' abyss its template's - as the map ring reads it)
+   *  AND, where the row kept them, its own key and the size it was built at (AUDIT FB1013d B1: the Undercroft is its
+   *  city's row on its city's pixel, Castle Daggerfall's; another size is another layout). A row from before keeps the
+   *  row and the pixel. */
+  const legacyInDungeonOf = (h, place) => h.mode === 'dungeon' && !!place?.dungeon && h.pixel?.x === place.pixel?.x && h.pixel?.y === place.pixel?.y && h.dungeon?.regionIndex === place.dungeon.regionIndex && h.dungeon?.locationIndex === place.dungeon.locationIndex && (place.dungeon.key == null || h.dungeon?.key === place.dungeon.key) && (place.dungeon.size == null || h.dungeon?.size === place.dungeon.size);
   /** LEGACY4: is the player where these remains lie - in their dungeon, or within a stone's throw of where they fell
    *  outdoors (in a building: anywhere on its town's pixel, in the street). */
   const legacyAtPlace = (place) => {
@@ -27771,7 +27799,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const h = legacyHere();
     // AUDIT LEGACY H1: underground, where they fell - within a few paces of the fallen's own floor position (the dungeon's
     // fixed coordinates), not anywhere in the dungeon
-    if (place.mode === 'dungeon') return h.mode === 'dungeon' && !!place.dungeon && h.dungeon?.regionIndex === place.dungeon.regionIndex && h.dungeon?.locationIndex === place.dungeon.locationIndex
+    if (place.mode === 'dungeon') return legacyInDungeonOf(h, place)
       && (!place.pos || !h.pos || Math.hypot(h.pos[0] - place.pos[0], h.pos[1] - place.pos[1], h.pos[2] - place.pos[2]) <= LEGACY_REMAINS_NEAR_DUNGEON);
     if (h.mode !== 'exterior' || h.pixel.x !== place.pixel?.x || h.pixel.y !== place.pixel?.y) return false;
     if (place.mode !== 'exterior' || !place.world) return true;
@@ -27792,6 +27820,34 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (w) townTalk.showOverlay(w);
     return !!w;
   };
+  /** FB1013d REMAINS-STAND (`01-Overview/Field-Bugs-2026-10-13d.md`): WHERE A REMAINS' PLACE STANDS in the pool the one
+   *  played stands in now - underground, the floor under the fallen's last position in their own dungeon; outdoors, the
+   *  ground under where they fell (at the height they stood at, where the row kept it), once its pixel is built; null
+   *  anywhere else. A building's death lies in its town's street by the law (Legacy-Arc section 7: its place names no
+   *  building, and its list opens anywhere on the pixel), so no body stands for it. */
+  const legacyRemainsFeet = (place) => {
+    if (!place || !playerSpawned) return null;
+    const mode = modes?.mode ?? 'exterior';
+    if (place.mode === 'dungeon') {
+      if (mode !== 'dungeon' || !Array.isArray(place.pos) || !legacyInDungeonOf(legacyHere(), place)) return null;
+      return modes?.dungeonCtx?.floorAt?.(place.pos[0], place.pos[1], place.pos[2]) ?? [place.pos[0], place.pos[1], place.pos[2]];
+    }
+    if (mode !== 'exterior' || place.mode !== 'exterior' || !place.world) return null;
+    const [x, z] = state.localFromWorld(place.world.x, place.world.z);
+    const ground = heightAt(x, z);
+    if (!Number.isFinite(ground)) return null;   // its pixel not built yet - stood once it is
+    const y = Number.isFinite(place.world.y) ? anchorLanding({ nativeX: place.world.x, nativeZ: place.world.z, y: place.world.y, terrainScale: place.world.terrainScale })[1] : ground;   // a record's height stood again: the Recall anchor's own read, one home (AUDIT FB1013d C14)
+    return floorLanding(collider, [x, Math.max(y, ground) + 0.5, z]);
+  };
+  /** FB1013d REMAINS-STAND: the house's fallen, seen where they lie - a body in the street's pool, or the building's or the
+   *  dungeon's (worldModes droppedPool), whose list is the record's own (scenes/legacyRemainsStand.js). */
+  const legacyRemainsStand = createRemainsStand({
+    pool: () => ((modes?.mode ?? 'exterior') === 'exterior' ? droppedLoot : (modes?.droppedPool?.() ?? null)),
+    feetOf: legacyRemainsFeet,
+    pixelKeyOf: (place) => (place?.mode === 'exterior' && place.pixel ? `${place.pixel.x},${place.pixel.y}` : null),   // dies with its pixel (collectPixel), stood again when it is built
+    icon: REMAINS_FLAT,
+    label: (r) => LEGACY_TEXT.remainsName(r.name),   // their own name, the map ring's (legacyHost.js LEGACY_TEXT)
+  });
   /** AUDIT LEGACY: what the one played keeps - the pack, the wagon and the Materials Bag. */
   const legacyCarried = () => [...(playerEntity.items ?? []), ...(playerEntity.wagonItems ?? []), ...(playerEntity.bagItems ?? [])];
   /** LEGACY4: a place to lay the dead to rest - a temple's inside, or the family's seat. */
@@ -27911,12 +27967,20 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       return true;
     },
     saveNow: () => (legacyFirstSave ? legacyFirstSave() : !!(modes ? modes?.quickSaveNow(QUICK_SAVE_NAME, { quiet: true }) : worldQuickSave(QUICK_SAVE_NAME, { quiet: true }))),   // LEGACY7: an online birth's is the realm's first checkpoint (legacyRealmBirth)   // `?.` inside the arm: audit24 wave37's gate above the declaration; AUDIT LEGACY B6: answers whether it saved
-    inFight: () => areEnemiesNearby([...(cityGuards?.guards ?? []), ...(exteriorFoes?.foes ?? []), ...(modes?.dungeonCtx?.foes ?? [])]),
+    // FB1013d LIVE-FIGHT: the fight is the PLACE the one played stands in - the street's foes and watch outdoors, the
+    // building's or the dungeon's own inside (GameManager.AreEnemiesNearby walks the ACTIVE enemies alone). The street's
+    // pools stand frozen while a mode is mounted, their senses latched as the player went in, and one hostile walker
+    // within 27 metres of the door (1094 classic units - AUDIT FB1013d C9) kept every visit below "in a fight": the
+    // remains never opened, and no switch, mantle or wedding was let through. AUDIT FB1013d B3: and the fights the host's
+    // rest refusal reads beside the pools - a duel or the one played's own bout (DUEL1, ARENA2: duelEnemyNear) and a
+    // hostile ship in reach (NAV-H)
+    inFight: () => duelEnemyNear() || areEnemiesNearby((modes?.mode ?? 'exterior') === 'exterior' ? exteriorFoePool() : (modes?.insideFoes?.() ?? [])) || navalHostileNear(),
     payEstate: (n) => legacyAddItem(playerEntity.items ??= [], letterOfCredit(n)),
     giveItems: (items) => { for (const it of items) legacyAddItem(playerEntity.items ??= [], it); },   // AUDIT LEGACY: an elder's bequest, into the pack
     killer: () => { const e = playerHarmMark(); return e ? (e.revenant?.name ?? e.displayName ?? (Number.isInteger(e.mobileType) ? enemyDisplayName(e.mobileType) : null)) : null; },   // LEGACY4: who struck the fallen down - a revenant by its own name
     atPlace: legacyAtPlace,
     openRemains: legacyOpenRemains,
+    letGoRemains: () => legacyRemainsStand.clear(),   // AUDIT FB1013d A2: a load's adopt replaced every list - the bodies over the old ones go
     carried: legacyCarried,
     atRest: legacyAtRest,
     // AUDIT LEGACY H8: answers whether the question was SHOWN - a rest asked under another window is asked again

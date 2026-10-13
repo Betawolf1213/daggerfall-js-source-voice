@@ -596,3 +596,69 @@ a real page, 0 texels apart) are `04-Characters/Morrowind-NPCs.md` section 6, th
 open from this page: the build is a long main-thread task - MWNPC3 (section 8 there) shares its parse across bodies and drops a
 peer's reach sweep; a build gate across lanes is MWNPC4's. MWNPC2 (section 7 there) closed the other: every
 seen body's picture is taken in ONE bind of the sprite target now, a tile each, where each body took its own pass.
+
+## AOE-PERF - the boss's circles laid over their own ground; the crowd measured (FIELD BUGS 2026-10-13e, 2026-10-13)
+
+HellRay on Discord, `01-Overview/Field-Bugs-2026-10-13e.md`: *"massive FPS drops when the boss performs AoE attacks and
+circles appear on the ground ... Player sprites also cause severe performance drops, especially when more than 10 players
+are gathered in one area."* Measured first, by `tools/fb1013ePerfProbe.mjs`: the real Renderer in Chromium on SwiftShader
+(software GL - its time grows with the fragments and vertices it shades, so it measures overdraw; it is no GPU and its
+milliseconds are relative), 960x540, the enhanced lane on, the Burning Court's own mesh, art, lights and fog, the GL synced
+by a 1x1 read-back before and after the part measured, every case once a round and the median of five rounds. The
+numbers below were taken with the machine at a load average of 8-10 on four cores (other work running beside it); a first
+pass at a load of 40-50 gave the same ratios at four times the milliseconds and is not quoted.
+
+**What a frame costs.** The court alone: about 2.0 s a frame. The telegraph pass, at a fighter's eye (the third-person
+camera 8 m from him):
+
+| | fragments rasterised | its ms, before | after |
+|---|---|---|---|
+| his mark (every frame of the fight) | 0.39 of a screen -> 0.05 | 60 | 9 |
+| a blow alone (Slam, Hellfire, Nova, Spokes, Wrath) | 0.45-0.51, unchanged | 64-122 | the same, within the noise |
+| his burning ground, two groups | 0.96, unchanged | 207 | 174 (noise) |
+| his host's eight (bites, pulses, tethers, paths) | 1.51 -> 0.54 | 303 | 100 |
+| AoE: mark, Nova, ground, host - 12 passes | 3.37 -> 2.06 | 575 | 430 |
+| AoE: mark, Spokes, ground, host | 3.37 -> 2.06 | 572 | 407 |
+| the same from the first-person eye | 3.71 -> 2.15 | 575-582 | 300-373 |
+
+The crowd, the same eye: 8 Morrowind bodies (the committed 3D horse through the same skinned pass and sprite batch - a
+person's needs the player's own Data Files - 5,934 corners each) 157 ms; 12 players (8 bodies, 4 Eye Of The Beholder
+walkers past the cap) 226; 24 266; 40 265. Walkers alone (the sprite lane, one billboard a player): 8 66 ms, 12 81, 24
+142, 40 190. CPU a frame for any of it under 5 ms on this machine.
+
+**What dominated.** The telegraph: an AoE frame laid twelve blended passes over 3.4-3.7 screens of its fragment stage -
+in SwiftShader terms a quarter of the court's own frame on top of it, more than forty players. And SwiftShader pays for
+every fragment a quad rasterises, whether it discards it or not (his mark, nearly all discards, cost what the Wrath's
+whole floor does). Two kinds were laid over ground they never draw on at any pixel's size: his mark (TELEGRAPH_REACH past
+its chevron's tip, for a ring, the floor inside it and a chevron - no glow, no keyline, no wave) and his host's paths and
+tethers (the box about a lane's whole run from the rim, for a lane 0.7 m wide that writes nothing past itself).
+
+**What changed** (`render/gateTelegraph.js`): his mark's quad is its own ground (`telegraphMarkReach`: its ring's reach,
+its chevron's base and its tip, a hair past), and a path's or a tether's is its own strip (`telegraphStrip`, the
+walkways' quad laid along it by the vertex stage, `uStrip`). Every other shape keeps TELEGRAPH_REACH: a blow's glow,
+keyline and wave reach as far as the pixel is large (at a far grazing pixel past 4 m), and burning ground's rim as far
+as its line - tighter quads there would cut what the old quads drew. The fragment stage is the one it was, byte for
+byte. THE LOOK, on the classic lane read back whole: the AoE frames drawn now and before differ in 675-885 texels, 18-94
+of them by more than 3/255 - all where the quads' moved corners land the floor's interpolated point a millimetre
+elsewhere on a hard edge (the chevron, a dash's end); the old pass against itself with the camera moved a millimetre
+differs in 15,500-16,600 (1,750-2,080 by more than 3/255).
+
+**Tried and not shipped: one pass a court.** Every shape of a court in one draw - a quad over the ground they covered
+between them, the fragment stage looping over the set (each shape's uniforms in a vec4 array) and compositing each as
+its blend did. It rasterised half a screen where the passes laid 3.4, and on SwiftShader it was slower by every
+measure: his mark alone 214 -> 720 ms, his host's eight 862 -> 2,774, the AoE frame 1,411 -> 6,743 (that pass at a load
+of 40) - a software rasteriser runs the loop's every shape at every fragment of the union, and the shape's kind read out
+of an array no longer branches as a uniform does. A GPU might have gained on the blending; nothing here could show it.
+
+**The crowd, read and not changed.** A Morrowind body's picture is taken every frame it is seen (MWNPC2's tile), at most
+BODIES_MAX (8) of them, about 20 ms each here; a player past the cap is one billboard. A body's tile kept across frames
+would be redrawn every frame anyway - a standing body breathes (PEER-CADENCE poses a near body every frame) and the
+court's braziers flicker its light - so keeping it would change what it looks like; the cost scales with the players
+drawn and their size on the screen, and nothing in it is drawn for nothing. NOT SEEN: the classic class sprite and the
+paperdoll (they need ARENA2), the name layer and the auras (not drawn by the probe), and any of this on a GPU.
+
+Pinned: `test/fb1013e_aoeperf.test.js` (4) - his mark's quad holds every fragment the shader draws for it at four
+pixel sizes under each term of its reach and is a third of the box it was; a path's strip, as the vertex stage lays it,
+holds every fragment the shader draws for it, the pass laying it on the walkways' quad and putting the court's back;
+every other shape keeps TELEGRAPH_REACH; and the count at a fighter's eye at 960x540 and 1920x1080 (the AoE frame under
+0.65 of what it rasterised, his mark and his host's a third). `tools/mutants/fb1013e_aoeperf.json`: 11 mutants, all dead.

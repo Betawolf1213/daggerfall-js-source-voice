@@ -25,6 +25,13 @@
 //     dashes flowing to him. Nothing flashes faster than three times a second.
 //   - Premultiplied: the light ADDED, the floor under a fill DARKENED (ONE, ONE_MINUS_SRC_ALPHA). A quad per shape.
 //
+// FIELD BUGS 2026-10-13e AOE-PERF (HellRay: "massive FPS drops when the boss performs AoE attacks and circles appear"): a
+// quad is laid over the ground its shape can draw on, and no more. A blow's reaches TELEGRAPH_REACH past it - its glow,
+// keyline and wave reach as far as the pixel is large - but his mark (telegraphMarkReach) and a path or a tether
+// (telegraphStrip) draw nothing past their own ground at any pixel's size, and theirs are that ground: an AoE frame at a
+// fighter's eye rasterised 3.4 screens of this pass, 2.1 now (tools/fb1013ePerfProbe.mjs). The fragment stage is the one
+// it was, byte for byte (bible/07-Rendering/Performance-Rig.md AOE-PERF).
+//
 // Not a DFU member. Ledger A (WB).
 import { FOG_FACTOR_GLSL } from './labGrass.js';
 import { buildProgram } from './glProgram.js';
@@ -49,6 +56,11 @@ export const TELEGRAPH_POINTS_MAX = 10;
 export const TELEGRAPH_LIFT = 0.05;
 export const TELEGRAPH_MARGIN = 0.5;
 export const TELEGRAPH_REACH = 4;
+/** FIELD BUGS 2026-10-13e AOE-PERF: how far past its ring his mark's ring is drawn (its smoothstep's outer edge - the
+ *  shader reads it from here), and how far past the ground a shape draws its quad is laid where that ground is all it
+ *  draws (his mark; a path or a tether) - a hair, for the rounding of the quad's corners. */
+export const TELEGRAPH_MARK_RING = 0.2;
+export const TELEGRAPH_TIGHT_PAD = 0.05;
 /** Burning ground comes up over this long as it lands; a landing's afterglow dies over this long after its span. */
 export const TELEGRAPH_FADE_IN_MS = 150;
 export const TELEGRAPH_FLASH_MS = 350;
@@ -177,7 +189,7 @@ export function telegraphBounds(sh) {
   const box = (x0, z0, x1, z1, pad) => [x0 - pad, z0 - pad, x1 + pad, z1 + pad];
   switch (sh?.kind) {
     case TELEGRAPH_KIND.cone: case TELEGRAPH_KIND.disc: return box(sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], sh.r + M);
-    case TELEGRAPH_KIND.mark: return box(sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], sh.r + sh.r1 + M);
+    case TELEGRAPH_KIND.mark: return box(sh.origin[0], sh.origin[1], sh.origin[0], sh.origin[1], telegraphMarkReach(sh));   // AOE-PERF: his mark draws no glow
     case TELEGRAPH_KIND.lane: return box(Math.min(sh.origin[0], sh.end[0]), Math.min(sh.origin[1], sh.end[1]), Math.max(sh.origin[0], sh.end[0]), Math.max(sh.origin[1], sh.end[1]), sh.halfW + M);
     case TELEGRAPH_KIND.discs: {
       if (!sh.points?.length) return null;
@@ -187,6 +199,30 @@ export function telegraphBounds(sh) {
     }
     default: return null;
   }
+}
+
+/**
+ * FIELD BUGS 2026-10-13e AOE-PERF: HOW FAR FROM WHERE HE STANDS HIS MARK CAN DRAW ANYTHING - its pass draws its ring
+ * (TELEGRAPH_MARK_RING about it), the floor inside it and the chevron before it (its base `halfW` either side at the ring,
+ * its tip `r1` past it), and discards every fragment else whatever the pixel's size: no glow, no keyline, no wave. Its
+ * quad was TELEGRAPH_REACH past the chevron's tip - three times the ground, a third of a fighter's screen, every frame
+ * of the fight. Pure.
+ */
+export const telegraphMarkReach = (sh) => Math.max(sh.r + TELEGRAPH_MARK_RING, Math.hypot(sh.r, sh.halfW), sh.r + sh.r1) + TELEGRAPH_TIGHT_PAD;
+
+/**
+ * FIELD BUGS 2026-10-13e AOE-PERF: A PATH'S OR A TETHER'S OWN STRIP - { a, u, len, w }: its start (TELEGRAPH_TIGHT_PAD
+ * past the capsule's end), its direction, its length and its half-width - or null for any other shape. A path's pass
+ * (TELEGRAPH_POOL.path) writes its colour inside the lane alone (`fin`, the dashes flowing to him) and nothing past it at
+ * any pixel's size - no line, no glow - so its quad is the strip, laid along it; it was the box about its whole run,
+ * TELEGRAPH_REACH past it, and a Sapper walking in from the rim made that a fifth of the screen. Pure.
+ * @param {any} sh
+ */
+export function telegraphStrip(sh) {
+  if (!sh || sh.kind !== TELEGRAPH_KIND.lane || sh.pool !== TELEGRAPH_POOL.path) return null;
+  const dx = sh.end[0] - sh.origin[0], dz = sh.end[1] - sh.origin[1], l = Math.hypot(dx, dz);
+  const ux = l > 1e-6 ? dx / l : 0, uz = l > 1e-6 ? dz / l : 1, w = sh.halfW + TELEGRAPH_TIGHT_PAD;
+  return { a: [sh.origin[0] - ux * w, sh.origin[1] - uz * w], u: [ux, uz], len: l + 2 * w, w };
 }
 
 const wrap = (a) => a - 2 * Math.PI * Math.floor((a + Math.PI) / (2 * Math.PI));
@@ -277,10 +313,12 @@ uniform highp int uOnWalk;   // AUDIT WB9 (court F4): 1 - the quad is a laid wal
 uniform vec2 uWalkA;     // its start, in the court frame
 uniform vec2 uWalkU;     // its direction
 uniform float uWalkLen;  // as far as it is laid
+uniform highp int uStrip;   // AOE-PERF: 1 - the quad is a path's own strip over its court (uWalkA, uWalkU, uWalkLen; uStripW across)
+uniform float uStripW;
 out vec2 vCourt;
 out vec3 vWorld;
 void main() {
-  vCourt = uOnWalk == 1 ? uWalkA + uWalkU * (aCourt.x * uWalkLen) + vec2(uWalkU.y, -uWalkU.x) * (aCourt.y * ${WALK_HALF_W.toFixed(3)}) : mix(uLo, uHi, aCourt);
+  vCourt = uOnWalk == 1 ? uWalkA + uWalkU * (aCourt.x * uWalkLen) + vec2(uWalkU.y, -uWalkU.x) * (aCourt.y * ${WALK_HALF_W.toFixed(3)}) : uStrip == 1 ? uWalkA + uWalkU * (aCourt.x * uWalkLen) + vec2(uWalkU.y, -uWalkU.x) * (aCourt.y * uStripW) : mix(uLo, uHi, aCourt);
   vWorld = uCentre + vec3(vCourt.x, uLift, vCourt.y);
   gl_Position = uVP * vec4(vWorld, 1.0);
 }`;
@@ -400,7 +438,7 @@ void main() {
     float along = dot(rel, fdir), side = rel.x * fdir.y - rel.y * fdir.x;
     float k = (along - uR) / uR1;
     float chev = (k >= 0.0 && k <= 1.0 && abs(side) <= uHalfW * (1.0 - k)) ? 1.0 : 0.0;
-    float ring = 1.0 - smoothstep(0.04, 0.2, abs(d - uR));
+    float ring = 1.0 - smoothstep(0.04, ${TELEGRAPH_MARK_RING.toFixed(1)}, abs(d - uR));
     float dash = step(0.4, fract((atan(rel.x, rel.y) + PI) / (2.0 * PI) * 10.0));
     float floorIn = d <= uR ? 1.0 : 0.0;
     float mark = 0.4 * ring * dash + 0.65 * chev * (0.7 + 0.3 * (1.0 - k)) + 0.04 * floorIn;
@@ -515,7 +553,7 @@ export class GateTelegraphRenderer {
     this.u = {};
     for (const n of ['uVP', 'uCentre', 'uCourt', 'uLo', 'uHi', 'uLift', 'uKind', 'uOrigin', 'uYaw', 'uR', 'uHalfArc', 'uBody', 'uEnd', 'uHalfW', 'uR0', 'uR1', 'uPts', 'uCount',
       'uT', 'uFlash', 'uAlpha', 'uColor', 'uEdgeCol', 'uFloorR', 'uStyle', 'uSince', 'uSpan', 'uAfter', 'uPool', 'uRunS', 'uLineW', 'uFogMode', 'uFogDensity', 'uFogRange', 'uCamPos',
-      'uOnWalk', 'uWalkA', 'uWalkU', 'uWalkLen', 'uWalkC0', 'uWalkC1']) this.u[n] = gl.getUniformLocation(prog, n);
+      'uOnWalk', 'uWalkA', 'uWalkU', 'uWalkLen', 'uWalkC0', 'uWalkC1', 'uStrip', 'uStripW']) this.u[n] = gl.getUniformLocation(prog, n);
     const verts = telegraphQuad();
     this.count = verts.length / 2;
     const vao = gl.createVertexArray();
@@ -604,14 +642,22 @@ export class GateTelegraphRenderer {
     // WB9b: over its court - or, the whole arena's, over each of them; WB13a: over its own ground there
     const one = Number.isInteger(shape.court) && shape.court >= 0, k0 = one ? (floorCourts[shape.court] ? shape.court : 0) : 0, k1 = one ? k0 + 1 : floorCourts.length;
     gl.uniform1i(U.uOnWalk, 0);
+    // AOE-PERF: a path's or a tether's quad is its own strip (telegraphStrip) - the walkways' quad, laid along it
+    const strip = telegraphStrip(shape);
+    if (strip) {
+      gl.bindVertexArray(this.walkVao);
+      gl.uniform1i(U.uStrip, 1); gl.uniform1f(U.uStripW, strip.w);
+      gl.uniform2f(U.uWalkA, strip.a[0], strip.a[1]); gl.uniform2f(U.uWalkU, strip.u[0], strip.u[1]); gl.uniform1f(U.uWalkLen, strip.len);
+    }
     for (let k = k0; k < k1; k++) {
       const q = telegraphQuadOver(shape, k, floorCourts, floorR);
       if (!q) continue;
       gl.uniform2f(U.uCourt, floorCourts[k][0], floorCourts[k][1]);
       gl.uniform2f(U.uLo, q[0], q[1]); gl.uniform2f(U.uHi, q[2], q[3]);
-      gl.drawArrays(gl.TRIANGLES, 0, this.count);
+      gl.drawArrays(gl.TRIANGLES, 0, strip ? TELEGRAPH_WALK_QUAD.length / 2 : this.count);
       this.drawn++;
     }
+    if (strip) { gl.uniform1i(U.uStrip, 0); gl.bindVertexArray(this.vao); }
     // AUDIT WB9 (court F4): on over the walkways its courts join, as far as each is laid - never his mark (he stands in his court)
     if (Array.isArray(walks) && shape.kind !== TELEGRAPH_KIND.mark) {
       let on = false;

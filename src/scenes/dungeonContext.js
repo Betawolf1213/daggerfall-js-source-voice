@@ -3174,9 +3174,11 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
    *  actively seeing the player, or one inside the classic spawn
    *  band - the P13 senses fields) and dry feet = one rest hour (the
    *  clock advances 60 classic minutes, each pool recovers one
-   *  hour's rate, Medical tallies); near enemies or swimming = the
-   *  collapse KILLS. The text box is click-anywhere-to-close and
-   *  holds the motor like every overlay. */
+   *  hour's rate, Medical tallies); near enemies or swimming DFU's
+   *  collapse KILLS, and the port's costs a tenth of the health and a
+   *  HUD line (SWIM-SPENT, SPENT-ASHORE - rest.js exhaustionOutcome).
+   *  The text box is click-anywhere-to-close and holds the motor like
+   *  every overlay. */
   function onExhausted() {
     // GameManager.AreEnemiesNearby() (PlayerEntity.cs:2397) - the
     // STRICT variant, through the ONE home the three hosts ask.
@@ -3194,6 +3196,9 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // drainFatigue, DUEL1 B3).
     const sandSpare = opts.playerSpare?.() ?? null;
     if (sandSpare) { hurtEntity(playerEntity, playerEntity.health, { bypassShield: true, ...sandSpare }); playerEntity.fatigue = Math.max(playerEntity.fatigue ?? 0, 1); surfacePlayer(); return; }   // a breath of fatigue, as the duel leaves: the collapse is said once, not every frame   if (foeDeps?.playerBoutOf?.()) { playerEntity.fatigue = Math.max(playerEntity.fatigue ?? 0, 1); surfacePlayer(); return; }   // AUDIT ARENA-LADDER 2: in my bout before its fight or after it (no spare yet) - a breath, never an hour of rest in the Herald's call
+    // SPENT-ASHORE (rest.js): on dry feet with foes about a share of the health and a line - no box, no death heard (the
+    // sand's fall, above, is asked first: a bout keeps its own law)
+    if (out.kind === 'spent') { hudText.add(out.line); hurtEntity(playerEntity, out.damage, { bypassShield: true }); surfacePlayer(); return; }
     opts.csaOnPlayerDeath?.();   // CSA-J (the audit): PlayerEntity.OnExhausted -> ComeSailAway.OnPlayerDeath, underground too
     const lines = rscLines(out.textId);
     // AUDIT 68 S19-exhaustion-latch-stuck: a PUSH (ROAD-B B5) - DaggerfallUI.MessageBox never asks what else is open.
@@ -3205,21 +3210,6 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       playerEntity.fatigue = Math.min(maxFatigue(playerEntity), (playerEntity.fatigue ?? 0) + out.fatigue);
       playerEntity.magicka = Math.min(playerEntity.maxMagicka ?? Infinity, (playerEntity.magicka ?? 0) + out.magicka);
       tallySkill(playerEntity, SKILLS.Medical);
-      surfacePlayer();
-    } else {
-      // AUDIT-DEATH1 (2026-09-19, Mac: "sometimes get stuck at 0% health
-      // and live"): THROUGH THE ONE DOOR, like the other three hosts.
-      // This wrote `playerEntity.health = 0` raw, and raw is exactly what
-      // the note ninety lines above warns about - "it was the only one of
-      // the four writers that checked for death, which is why the other
-      // three could go on writing health raw and nobody noticed". The
-      // death presenter fires on the TRANSITION inside `hurtPlayer`
-      // (characters/playerEntity.js), so a raw zero raises nothing: the
-      // player sat at 0% health, alive, in the one host that owns the
-      // DeathScreen. `bypassShield` is the SetHealth(0) door's own flag -
-      // no shield stands between the player and a lethal collapse - and
-      // it is what world.js, exterior.js and worldModes.js already pass.
-      hurtEntity(playerEntity, playerEntity.health, { bypassShield: true });   // SetHealth(0): the fatal collapse
       surfacePlayer();
     }
   }
@@ -6498,7 +6488,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // restore, then each object settles its matrix and collider bucket
     // (an open door no longer restores solid-and-closed, and a door
     // saved mid-rise keeps rising).
-    actions.restoreSaveData(w.actions);
+    actions.restoreSaveData(w.actions, { remote: wire, level: playerEntity.level });   // SPELL-LOCK: the room's memory is a peer's word - its locks only to each door's own ceiling; the save's own, never past the player's level
     // AUDIT 63 F30: SerializablePlayer.cs:402-405's
     // `if (data.playerPosition.insideDungeon) playerEnterExit
     // .PlayerTeleportedIntoDungeon = data.playerPosition

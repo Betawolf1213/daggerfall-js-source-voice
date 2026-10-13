@@ -216,6 +216,7 @@ export const copyEffectEntry = (a) => {
   const c = { ...a };
   if (a.effect) c.effect = { ...a.effect };
   if (a.statMods) c.statMods = { ...a.statMods };
+  if (a.statMaxMods) c.statMaxMods = { ...a.statMaxMods };   // MACE-MAX: the max mods, saved with their effect as DFU's effectData.statMaxMods is (EntityEffectManager.cs:2269)
   if (a.skillMods) c.skillMods = { ...a.skillMods };   // V2a: the racial override's second map
 
   // AUDIT 24 (wave 31): the continuous-damage entries carry their CASTER

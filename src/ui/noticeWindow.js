@@ -60,7 +60,7 @@ import { hallPosterName, isChapterWrit, meritLineOf, chapterLineOf, chapterFocus
 import { chapterSeasonLines, chapterBackChoices, chapterBackedLine } from '../net/chapterEvents.js';   // CHAP6c: a chapter's Season - its lines, a member's choices   // CHAP2a: a hall writ's guild, named; CHAP3a: a member's own writ, its Merit; CHAP3b: a chapter's Strength
 import { movedFirstText } from '../net/bagLaw.js';   // AUDIT2 BAG1 K8: what went into the Stores before a refusal
 import { createMarketTab } from './marketTab.js';   // PROF5: the Market tab
-import { createWorkTab } from './workTab.js';   // PROF6: the Work tab's guild writs and commissions
+import { createWorkTab, writWalledText } from './workTab.js';   // PROF6: the Work tab's guild writs and commissions; WRIT-WALL: what no writ may spend, in words
 import { createSeatTab, boardFold } from './seatTab.js';   // SEAT1b: the Seat tab - a seat town's standings, pledges and Tribute
 import { createVendorTab } from './vendorTab.js';   // HOME-VENDOR: the Vendors tab, and a trader's stall
 import { bannerSvg } from './heraldryArt.js';   // GUILD1e: a guild's banner over its notes and its posters
@@ -304,6 +304,7 @@ export function mountNoticeBoard(host, deps) {
   let workBusy = false;
   const workMore = work?.writs ? createWorkTab({
     writs: work.writs, held: (m) => work.book.held(m), carrying: () => work.book.carrying?.() === true, region: work.region, regionName: work.regionName,   // AUDIT BAG1: whose count `held` is
+    walled: (m) => Number(work.book.walled?.(m)) || 0,   // WRIT-WALL: and what is held past it
     regionNameOf: work.regionNameOf ?? ((r) => String(r)), countName: work.countName, pieces: work.pieces ?? (() => []),
     reload: () => { work.book.forgetWrits?.(); loadWrits(true); },   // AUDIT 31 B7: a read begun before the act is read again
   }, {
@@ -514,17 +515,24 @@ export function mountNoticeBoard(host, deps) {
     li.append(el('p', 'writ-pay', `Pays ${w.pay.toLocaleString('en-US')} silver, ${w.renown.toLocaleString('en-US')} Renown${own && earns ? `, standing and Merit with the ${poster}` : poster ? ` and standing with the ${poster}` : ''}`));
     li.append(el('p', 'writ-left', w.state === 'mine' ? 'Taken by you' : w.state === 'taken' ? 'Filled by another' : timeLeftText(w.expiresAt, nowS())));
     const held = work.book.held(w.material);
+    // WRIT-WALL (FIELD BUGS 2026-10-13e, "Cant turn in writs": 100 Iron in the pack, "0 held" on the card and nothing
+    // said why): what is held and no writ may spend - looted, shop-bought, traded or gold-bought (net/profBook.js walled) -
+    // named on the card and on Take's title, wherever it is why the writ cannot be filled
+    const walled = w.state === 'open' && held < w.qty ? Number(work.book.walled?.(w.material)) || 0 : 0;
+    const walledSaid = walled > 0 ? writWalledText(walled, work.countName(w.material, walled)) : null;
     const take = el('div', 'writ-take');
     if (w.state === 'open') {
       const full = (work.book.state.writs?.today ?? 0) >= (work.book.state.writs?.max ?? 3);
       const b = button('primary notice-take', 'Take', () => takeWrit(w));
       b.disabled = busy || workBusy || held < w.qty || full;   // AUDIT 31 B10: nor while a guild writ's or a commission's act is out
-      if (held < w.qty) b.title = work.book.carrying?.() ? 'Not enough - your Stores, Materials Bag and pack together' : 'Not enough in your Stores';   // BAG1; AUDIT BAG1: and the pack
+      if (held < w.qty) b.title = walledSaid ?? (work.book.carrying?.() ? 'Not enough - your Stores, Materials Bag and pack together' : 'Not enough in your Stores');   // BAG1; AUDIT BAG1: and the pack; WRIT-WALL: and what of them is walled
       else if (full) b.title = 'You have filled today\'s writs';   // CHAP2a: the Court's and the halls' one allowance
       take.append(b);
     }
     take.append(el('span', null, `${held.toLocaleString('en-US')} ${work.book.carrying?.() ? 'held' : 'in your Stores'}`));   // BAG1: the Stores' and what is carried
-    li.append(take, el('span', 'notice-seal', ''));
+    li.append(take);
+    if (walledSaid) li.append(el('p', 'writ-walled', walledSaid));   // WRIT-WALL: on the card - a phone has no hover
+    li.append(el('span', 'notice-seal', ''));
     return li;
   }
 

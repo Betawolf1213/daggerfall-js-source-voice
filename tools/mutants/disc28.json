@@ -319,8 +319,8 @@
   {
     "name": "DISC28-I-getitem-not-replayed",
     "file": "src/systems/quest/machine.js",
-    "old": "'TrainPc', 'GetItem']);",
-    "new": "'TrainPc']);",
+    "old": "'TrainPc', 'GetItem', 'RevealLocation']);",
+    "new": "'TrainPc', 'RevealLocation']);",
     "tests": [
       "test/disc28_quest.test.js"
     ]

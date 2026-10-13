@@ -1414,6 +1414,7 @@ const VENDOR_CITES = [
   // GetStaticDoorText, arm by arm
   ['.cs:684-789', /string GetStaticDoorText\(DaggerfallStaticDoors doors/, /^ {8}\}$/, /^            return null;$/],
   ['.cs:692', /if \(door\.doorType == DoorTypes\.Building && !playerEnterExit\.IsPlayerInside\)/, null],
+  ['.cs:701-702', /DaggerfallStaticBuildings buildings = GetBuildings\(hit\.transform, out buildingOwner\);/, /if \(buildings && buildings\.HasHit\(hit\.point, out building\)\)/],   // DOOR-NAME (FIELD BUGS 2026-10-13e): the mod's box test is the hit block's
   ['.cs:706-707', /if \(!buildingDirectory\)/, /return "<ERR: 010>";/],
   ['.cs:711-712', /if \(!buildingDirectory\.GetBuildingSummary\(building\.buildingKey, out buildingSummary\)\)/, /return "<ERR: 011>";/],
   ['.cs:719', /playerGPS\.DiscoverBuilding\(building\.buildingKey\);/, null],

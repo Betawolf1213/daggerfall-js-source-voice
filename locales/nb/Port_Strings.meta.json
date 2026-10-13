@@ -2675,8 +2675,8 @@
   "by": "claude-in-session"
  },
  "account.refusal.storesGold": {
-  "en": "e281032484c3",
-  "tr": "e3921d6f0917",
+  "en": "89ca7b1f088a",
+  "tr": "9335e35b60da",
   "by": "claude-in-session"
  },
  "account.refusal.storesShort": {
@@ -12034,6 +12034,11 @@
   "tr": "68dfdb415f82",
   "by": "claude-in-session"
  },
+ "prof.work.writ.walled": {
+  "en": "516dc720cae9",
+  "tr": "c1e083ee5c03",
+  "by": "claude-in-session"
+ },
  "prof.work.yours": {
   "en": "755844bc3946",
   "tr": "1778c70f70c6",
@@ -12092,6 +12097,11 @@
  "prof.work.yours.writ": {
   "en": "ce32bc277933",
   "tr": "fce7a347cc4a",
+  "by": "claude-in-session"
+ },
+ "rest.exhausted.fighting": {
+  "en": "37f9250e69af",
+  "tr": "a1fc43a5eac8",
   "by": "claude-in-session"
  },
  "sea.board.cargoVoid": {

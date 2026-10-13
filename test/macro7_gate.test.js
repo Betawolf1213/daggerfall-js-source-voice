@@ -26,7 +26,7 @@ import { join } from 'node:path';
 import { macroTableCoverage } from '../src/systems/quest/questMacros.js';
 import { spellMakerDescriptionId, SPELLBOOK_DESCRIPTION_IDS } from '../src/systems/spellEffects.js';
 import { REST_TEXT } from '../src/systems/restSession.js';
-import { EXHAUSTED_SAFE_TEXT_ID, EXHAUSTED_ENEMIES_TEXT_ID } from '../src/systems/rest.js';
+import { EXHAUSTED_SAFE_TEXT_ID } from '../src/systems/rest.js';
 import { NOT_SATED_TEXT_ID } from '../src/systems/vampirism.js';
 import { dfuFile, missingDfu } from './dfuRoot.mjs';
 
@@ -67,7 +67,9 @@ const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 const RACES = range(2000, 2007), CLASSES = range(2100, 2117);
 const CHARGEN_TEXT = [300, 301, 302, 303, 306, ...range(2400, 2407)];
 // the rest boxes, off the constants the rest law speaks them from
-const REST_BOXES = [...Object.values(REST_TEXT), EXHAUSTED_SAFE_TEXT_ID, EXHAUSTED_ENEMIES_TEXT_ID, NOT_SATED_TEXT_ID];
+// PIN MOVED (FIELD BUGS 2026-10-13e SPENT-ASHORE): 1072 (EXHAUSTED_ENEMIES_TEXT_ID) left the list with the constant -
+// the collapse with foes about is a HUD line now, no box, and no host speaks the record
+const REST_BOXES = [...Object.values(REST_TEXT), EXHAUSTED_SAFE_TEXT_ID, NOT_SATED_TEXT_ID];
 
 // [file, a substring unique to the site's line, verdict, detail]
 //   walk:  detail unused (the walk must be within four lines)

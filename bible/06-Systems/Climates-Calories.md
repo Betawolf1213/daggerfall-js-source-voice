@@ -653,7 +653,17 @@ kills through the collapse, which is DFU's own route. [In the water no
 longer at once, since SWIM-SPENT (FIELD BUGS 2026-09-30b): each drain to
 nothing there costs a tenth of the health pool, said on the HUD, until
 the swimmer reaches the shore (`systems/rest.js` `exhaustionOutcome`'s
-`drown` - AUDIT C&C N7).]
+`drown` - AUDIT C&C N7).] [Near enemies no longer at once either, since
+SPENT-ASHORE (FIELD BUGS 2026-10-13e, 2026-10-13: a player killed at full
+health seconds after a fight): on dry feet with a foe in the classic
+spawn band a drain to nothing costs the same tenth, with its own HUD line
+("You are too exhausted to fight - get clear and rest!") and no box, in
+all four hosts (`exhaustionOutcome`'s `spent`). No outcome is a death
+now: the collapse kills only through the tenths it takes, so the lethal
+branch this section pinned, and its raw zero, are gone from every host -
+`test/playerdeath.test.js` holds the share's arm to the damage door
+instead, and `audit_air1.json`'s two DEATH1 collapse records were
+re-aimed at it.]
 
 **What broke is the death itself.** `hurtPlayer`
 (characters/playerEntity.js) raises the death presenter on the
@@ -963,7 +973,8 @@ Casual is not Hard with the numbers turned down. It is five rules, and
 4. **Borrowed, not taken.** The needs may take stamina down to half the
    pool and no further - so on their own they can never raise DFU's
    exhaustion collapse, which kills a player with a foe near
-   (`systems/rest.js` `exhaustionOutcome`), and a neglected player still
+   (`systems/rest.js` `exhaustionOutcome`; the port's costs a tenth of the
+   health there since SPENT-ASHORE, 2026-10-13), and a neglected player still
    has half a pool to fight and run with - and what a need took it gives
    back the moment it is met: a meal repays the hunger, a drink the
    thirst, a sleep the exhaustion, a warm place or a lit fire the cold.

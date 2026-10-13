@@ -1598,7 +1598,8 @@ export function createPlayerTicker(entity, { say = () => {}, onLevelUp = null, o
       // AUDIT 23 (C5: hosts-5 = entity-3) - DaggerfallEntity.cs:360-366:
       // EVERY fatigue write clamps and, at 0 with health left, raises
       // OnExhausted - the collapse was dungeon-only; the host passes
-      // its presenter (rest-hour-or-death via exhaustionOutcome).
+      // its presenter (the rest hour, or a tenth of the health in the
+      // water or with foes about, via exhaustionOutcome - SPENT-ASHORE).
       if (entity.fatigue <= 0 && (entity.health ?? 0) > 0) onExhausted?.();
     },
     restoreFatigue: (n) => { if (n > 0) entity.fatigue = Math.min(maxFatigue(entity), (entity.fatigue ?? 0) + n); },   // C5: the MaxFatigue clamp

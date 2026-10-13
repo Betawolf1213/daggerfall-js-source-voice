@@ -105,6 +105,20 @@ move only the count. A realm trade moves save records and no count - so the rece
 counted, by the same law; letting the count travel with a trade is the owner's call. Pinned by
 `test/fb1009c_uncounted.test.js`; `tools/mutants/fb1009c_uncounted.json` (7, all dead; `bag1.json`'s B6 and
 `goldmarket.json`'s stores-total records re-aimed by content).
+**And a writ's card names them too** (WRIT-WALL, FIELD BUGS 2026-10-13e, 2026-10-13, "Cant turn in writs": 100 Iron
+in the pack, a chapter writ for 40 of it reading "0 held", Take shut, and a hover that said "Not enough - your Stores,
+Materials Bag and pack together"). UNCOUNTED fixed the silence on the Stores page alone; a writ counts what law 3 and
+GOLD-MARKET's wall let it spend (the book's `held`: the Stores' own and bought, and what is carried and still counted,
+never gold's), so Iron off an Alchemist's shelf, looted, traded or bought with gold - in the bag or in the Stores, and
+withdrawn, since a gold unit keeps its origin - reads 0, by design and still. The book reads `held`'s other side now
+(`net/profBook.js` walled: the Stores' gold and loose units, and every unit held past what `held` counts), and where it
+is why a writ cannot be filled the card says it under Take and on Take's title - "100 Iron you hold cannot fill a writ:
+only what you gathered, or bought with silver, counts - not what was looted, bought at a shop or with gold, or given by
+another player." (`ui/workTab.js` writWalledText, the one sentence; a guild writ's card the same, never "You have none"
+beside it). The service's gold refusal (`stores-gold`) no longer says "Withdraw it to your pack": withdrawn, gold's
+units fill no writ, station or guild Stores either. NOT DONE, and the owner's: counting looted or bought units toward a
+writ (it changes law 3). Pinned by `test/fb1013e_writwall.test.js`; `tools/mutants/fb1013e_writwall.json` (13, all
+dead).
 **Empty your bag into your pack** stands on the page, in a town or out of one, whenever the bag's list holds anything:
 every piece, as much of each as the pack's weight takes, what no Put in takes first (a full pack never leaves the jam
 behind).

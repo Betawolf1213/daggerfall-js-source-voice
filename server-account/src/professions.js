@@ -66,7 +66,7 @@ import {
   jewelHand, takesCracked, masterworkSpec, LAPIDARY,   // PROF10: the jeweller's hand, a Lapidary's cracked gem, the Master Jeweller's points
   PROVENANCE_RE,   // CRAFT4: a tempered piece's id
 } from '../../src/net/recipeLaw.js';
-import { mintProductRecord, readProductRecord } from '../../src/net/productRecord.js';   // CRAFT4: a tempered piece's record re-signed
+import { mintProductRecord, readProductRecord, MINT_VERSION } from '../../src/net/productRecord.js';   // CRAFT4: a tempered piece's record re-signed; CRAFT-PROCS: the mint's version
 import { temperableRecipe, temperFrom, temperCost, temperXp } from '../../src/net/temperLaw.js';   // CRAFT4: the temper
 import { signingKey } from './signing.js';
 import {
@@ -1289,7 +1289,7 @@ export async function craftAtAnvil(ctx, player, env, { character, recipe: id, cl
   const key = await signingKey(env, subtle);
   const u = dye ?? null;
   const hand = dishHand(r, specs[100]) ?? jewelHand(r, specs[50]);   // PROF9: a Chef's feast, a Provisioner's dish - the dish's wherever it goes; PROF10: a Goldsmith's Silver, a Gemcutter's gem
-  const records = await Promise.all(provs.map((p) => mintProductRecord({ p, s: player.id, h: character, r: r.id, q: quality, m: maker, c: seed, a: marked === 1 && maker !== null, u, f: hand }, key, { subtle, nowS })));   // AUDIT 30 L4: the mark signed; PROF7: the dye; PROF9: the hand
+  const records = await Promise.all(provs.map((p) => mintProductRecord({ p, s: player.id, h: character, r: r.id, q: quality, m: maker, c: seed, a: marked === 1 && maker !== null, u, f: hand, v: MINT_VERSION }, key, { subtle, nowS })));   // AUDIT 30 L4: the mark signed; PROF7: the dye; PROF9: the hand; CRAFT-PROCS: the law it mints under (its last pass)
   const nonce = mintId(rand);
   // ?1 player ?2 character ?3 rid ?4 recipe ?5 quality ?6 count ?7 provenance ?8 provenance2 ?9 seed ?10 the XP before the
   // first craft's ?13 (AUDIT 32 S1: none for a recipe wholly of goods only a counter sells) ?11 now ?12 nonce ?14 the
@@ -1415,7 +1415,7 @@ export async function temperPiece(ctx, player, env, { character, recipe: id, qua
     if (Number(p.quality) !== quality) return { error: 'prof-temper-stale' };
     const c = readProductRecord(p.record);
     if (!c) return { error: 'prof-temper' };
-    record = await mintProductRecord({ p: c.p, s: c.s, h: c.h, r: c.r, q: quality + 1, m: c.m, c: c.c, a: c.a === 1, u: c.u ?? null, f: c.f ?? null }, await signingKey(env, subtle), { subtle, nowS });
+    record = await mintProductRecord({ p: c.p, s: c.s, h: c.h, r: c.r, q: quality + 1, m: c.m, c: c.c, a: c.a === 1, u: c.u ?? null, f: c.f ?? null, v: c.v ?? null }, await signingKey(env, subtle), { subtle, nowS });   // CRAFT-PROCS: the craft's mint version kept - a piece made before mints as it was
   }
   const cost = temperCost(r);
   const cap = craftXpCap(craft, ranks);

@@ -419,6 +419,15 @@ export function createProfBook({ door, storage = null, character = () => null, n
      *  a carrying book, what the character carries and still holds of the service's count (bagLaw.js carriedUsable) - the
      *  shortfall put in the Stores before it spends (`ensureInStores`). A station reads `workable`. */
     held(material) { return this.storesHeld(material) + this.carriedUsable(material); },
+    /** WRIT-WALL (FIELD BUGS 2026-10-13e, "Cant turn in writs"): WHAT OF A MATERIAL IS HELD AND NO WRIT MAY SPEND - `held`'s
+     *  other side: the Stores' gold and loose units (WRIT_ORIGINS reads neither), and every unit the bag, the pack and the
+     *  wagon hold past what `held` counts of them - looted, bought at a shop, given by another player (law 3: never
+     *  counted, UNCOUNTED's units) or bought with gold (GOLD-MARKET's wall, counted carried as gold). A writ's card names
+     *  them, so "0 held" beside a pack of 100 says why. */
+    walled(material) {
+      const s = this.store(material);
+      return (s.gold | 0) + (s[LOOSE_ORIGIN] | 0) + (carry ? Math.max(0, carry.held(material) - this.carriedUsable(material)) : 0);
+    },
     /** BAG-CRAFT (FIELD BUGS 2026-10-09d, Mac: "I just want players to also be able to craft from their inventory, not
      *  just the store"): WHAT A STATION MAY WORK OF IT - a craft, a brew, a smelt, a temper: the Stores' and everything the
      *  bag, the pack and the wagon hold of it, counted or not, but gold's (bagLaw.js carriedWorkable) - the shortfall put

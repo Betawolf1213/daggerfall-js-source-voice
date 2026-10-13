@@ -27,10 +27,8 @@
 // MACE STATE is an activeEffects entry (kind 'artifact', key
 // 'maceOfMolagBal') - the same shape every other persistent modifier
 // takes, so the save carries it for free and liveStat reads its
-// strength mod through one added arm. RECORDED: DFU also raises the
-// attacker's strength MAX (ChangeStatMaxMod); the port's liveStat
-// clamps at 100 and has no max-mod channel, so a 100-strength
-// character gains nothing - the drain on the TARGET is exact.
+// strength mod through one added arm, and its strength MAX mod
+// (statMaxMods) through the max-mod layer every live entry has.
 
 import { savingThrow, ELEMENTS, EFFECT_FLAGS } from './spellcast.js';
 import { ENEMY_BASICS } from '../characters/enemyBasics.js';
@@ -77,11 +75,13 @@ export const WABBAJACK_CAREER_IDS = Object.freeze([
 ]);
 
 /** The Mace's incumbent state, as the entry every persistent modifier
- *  is: minted on first strike, read by liveStat's 'artifact' arm. */
+ *  is: minted on first strike, read by liveStat's 'artifact' arm (its
+ *  statMods) and max-mod layer (its statMaxMods - the live effect's
+ *  StatMaxMods, MaceOfMolagBalEffect.cs:75/:138). */
 export function maceState(entity, mint = false) {
   let entry = (entity.activeEffects ?? []).find((a) => a.kind === 'artifact' && a.key === 'maceOfMolagBal' && !a.ended);
   if (!entry && mint) {
-    entry = { kind: 'artifact', key: 'maceOfMolagBal', statMods: {}, maxMagickaIncrease: 0, lastStrikeTime: 0 };
+    entry = { kind: 'artifact', key: 'maceOfMolagBal', statMods: {}, statMaxMods: {}, maxMagickaIncrease: 0, lastStrikeTime: 0 };
     (entity.activeEffects ??= []).push(entry);
   }
   return entry ?? null;
@@ -176,10 +176,12 @@ const HANDLERS = new Map([
   /** MaceOfMolagBalEffect.cs - Strikes: while the target has spell
    *  points, drain up to the strike's damage into the wielder, any
    *  OVERFLOW above their max raising max itself; a dry target loses
-   *  1d6 strength, which the wielder gains. Held round: 12 game
-   *  minutes after the last strike, both increases reset. The
-   *  constant fold adds the magicka increase into mods.maxMagicka, so
-   *  it SUMS with every other producer through V2c's one modifier. */
+   *  1d6 strength, which the wielder gains - over their usual maximum
+   *  too ("more strength than he would have fully rested"). Held
+   *  round: 12 game minutes after the last strike, both increases
+   *  reset. The constant fold adds the magicka increase into
+   *  mods.maxMagicka, so it SUMS with every other producer through
+   *  V2c's one modifier. */
   [ARTIFACTS.MaceOfMolagBal, {
     constant({ entity, mods }) {
       const st = maceState(entity);
@@ -189,8 +191,18 @@ const HANDLERS = new Map([
       const st = maceState(entity);
       if (st && nowMinutes > (st.lastStrikeTime ?? 0) + MACE_MAX_INCREASE_ROUNDS) {
         st.maxMagickaIncrease = 0;
-        st.statMods = {};
+        st.statMaxMods = {};   // SetStatMaxMod(Strength, 0) (:75)
+        st.statMods = {};   // SetStatMod(Strength, 0) (:76)
       }
+    },
+    /** MACE-MAX (FIELD BUGS 2026-10-13e): UnequipHeldItem's bundle sweep (EntityEffectManager.cs:1073-1083) - the
+     *  live effect is the Held bundle StartHeldItem assigned when the Mace was worn (:1045-1061, `FromEquippedItem`),
+     *  and taking the Mace off removes it with its mods, its max mods and its magicka increase; a Mace worn again
+     *  starts a fresh one. The entry is not item-pinned (a pin is stripped from the save - save.js - and DFU saves
+     *  this effect's state), so its end is this door, and the decay above never runs for a Mace no longer worn. */
+    unequipped({ entity }) {
+      const st = maceState(entity);
+      if (st) entity.activeEffects.splice(entity.activeEffects.indexOf(st), 1);
     },
     strikes({ entity, target, damage, nowMinutes, rolls = Math.random }) {
       if (!entity || !target || damage === 0) return null;
@@ -200,12 +212,23 @@ const HANDLERS = new Map([
         const drained = Math.min(target.magicka, damage);
         target.magicka -= drained;
         const overflow = (entity.magicka ?? 0) + drained - (entity.maxMagicka ?? 0);
-        if (overflow > 0) st.maxMagickaIncrease += overflow;
+        if (overflow > 0) {
+          // MACE-MAX: ChangeMaxMagickaModifier(overflow) AT ONCE (:117-123 - "Immediately set increase to spell
+          // point maximum to absorb all spell points drained"), beside the live effect's tally the constant fold
+          // re-applies every round. The tally alone moved the max at the next round, so a second strike in the same
+          // round measured its overflow against the old max and counted the first's again (two 10-point drains on
+          // a full pool: an increase of 30, not 20). The modifier is the one the live MaxMagicka accessor reads
+          // (chargen.js defineLiveMaxMagicka) and the fold rewrites from the tally.
+          entity.maxMagickaModifier = (entity.maxMagickaModifier ?? 0) + overflow;
+          st.maxMagickaIncrease += overflow;
+        }
         entity.magicka = (entity.magicka ?? 0) + drained;
       } else {
         // Random.Range(1, 7) - 1d6
         const strengthDrained = 1 + Math.min(5, Math.floor(rolls() * 6));
         drainStrength(target, strengthDrained);
+        // MACE-MAX: ChangeStatMaxMod then ChangeStatMod (:138-139) - the max too, or a wielder at 100 gains nothing
+        (st.statMaxMods ??= {}).strength = (st.statMaxMods.strength ?? 0) + strengthDrained;
         st.statMods.strength = (st.statMods.strength ?? 0) + strengthDrained;
       }
       st.lastStrikeTime = nowMinutes;
