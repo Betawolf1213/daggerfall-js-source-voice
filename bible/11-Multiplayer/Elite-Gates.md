@@ -8167,3 +8167,181 @@ and that one are merged by the coordinator.
   moved, and `net/egHeroFrags.js` is in no relay import graph yet. `ACCOUNT_VERSION` stays the arc's (`acct126`), with no
   migration. `EG_SPEC` and `EG_LAWS` are as they were.
 - The Port-Ledger's ELITE-GATES row names the four tools and the assets.
+
+### EG-HERO (the Broken Galleries) - 2026-10-13 - THE OBLIVION CAVERNS, THE FALLEN STACKS, THE BROKEN COLONNADE
+
+Mac, 2026-10-13: *"You have to author the fragments"*. The hero fragments this page said Mac authors in Blender
+(section 11.6, "Authored hero fragments") are now the port's to author, in code. Each is a scene written from numbers by a
+script, as `tools/egRefFragScene.mjs` writes the reference, and exported as the .fbx `tools/fragBake.mjs` bakes. Each is
+baked by its own script, registered and pinned. This record is the Broken Galleries' three: one for each of the band's
+kits (section 11.2), each in the class the brief named. Three other slices author the other bands' heroes, and laying any
+hero into a hall is spec law 7's (EG-HERO-LAY).
+
+**What shipped, by fragment.**
+
+- **THE OBLIVION CAVERNS** (`egheroCaverns`: kit `caverns`, a passage, variant `caverns`).
+  - *What it is:* the Deadlands' lava tubes under the torn halls. A floating mass of basalt is bored through by a lava
+    tube, not a box: an elliptical bore 8.5 m across and 7.7 m to its crown. Its walls are pushed outward by noise (never
+    inward, never the floor), with a lava bench along each wall. The underside of the mass is torn and hangs basalt spurs
+    into the void, and two slabs of the torn hall's flagged floor lie across its crown, with the stumps of their
+    colonnade. The Battlemages' marble portals are set into the rock at the mouth and the exit, each lintel filled to the
+    bore's ellipse. Inside, under hanging basalt columns, is the near fight floor. A glowing fissure across the vault
+    feeds the FIRE FALL at the chasm's lip. The chasm is the tube's floor gone into a magma lake 4.8 m down. Over it the
+    vault is broken open onto the burning sky, crossed by one surviving rib. The way across is the planks of a CHAINED
+    BRIDGE that fell: three ledges slung on chains from the vault and the rib, with the bridge's gilded posts at both lips
+    trailing its broken chains. On the far fight floor a MAGMA CHANNEL is cut along the west wall. It is fed by a spout
+    under a gilded sluice gate and spills into the lake, and a basalt kerb carries THE EDGE LINE along its lip (section
+    11.9's kerb). An alcove behind a false wall in the east wall, framed by a marble portal, holds a page of the Annals.
+  - *Envelope* (`net/egFragLaw.js` `egFragPassage`, the default kit; `net/egLaw.js` `EG_CAVE`): the mouth is 6 m by
+    5.2 m (halfW 300, height 520), 28 m long, with one exit 6 m by 5.2 m on floor height 0 (yB 0). The kit's 10 m chasm is
+    widened to 13 m (Y 8-21) for a real crossing. Box: x -10.62 to 10.61 m, y -17.26 to 19.21 m, z 0 to 28 m.
+  - *Art:* 8,918 triangles in 6 draws, all the Galleries' dress: `floor` the flags; `root` the rock (its works band
+    walked out and back for basalt; the lip and courses on the torn edges; its gradient on the underside); `pillar` the
+    portals; `brass` the posts, chains and sluice; `molten` the lake, channel, fissure and spout; `edge`.
+  - *Law:* two fight floors (notched round the posts) and two ceilings at 5.2 m. Hazards: the fire fall (a lane across the
+    passage, 1.2 m deep, just short of the near lip), falling basalt (two discs r 2.5 on the near floor) and a magma surge
+    (a 4 m lane along the channel over the far floor). The course is three ledges, gaps 1.7, 1.8, 1.8 and 1.7 m, sagging
+    0.2-0.45 m. THE TIMED SOLVER proves it: 2.066 s fastest, 2.066 s median, four moves. The walk graph has ten nodes and
+    twelve edges, none across the chasm. Anchors: two Lurkers, the Low Road's niche, the sluice's engine and two hazard
+    sources. One seam alcove (a page). Three lights: two of the kit's own, one of the lava. A 76-triangle proxy.
+
+- **THE FALLEN STACKS** (`egheroStacks`: kit `stacks`, a chamber, variant `stacks`, play `balcony` and `engine`).
+  - *What it is:* the Athenaeum's rotunda, torn loose into the void.
+    - Its marble drum is lined with gilded stacks.
+    - Its gilded dome is broken open onto the burning sky round its oculus: a great rent over the east gallery (seen from
+      the mouth) and a lesser one over the portal (seen from the approach). The drum's lower courses are torn off below.
+    - Its reading-room floor (the court plates with their Battlemage-blue inlay) stands alone in the drum over the void,
+      a root hanging under it.
+    - Two galleries survive as balconies, east and west, 3.5 m up against the stacks. Each is reached by a marble stair
+      fanning up from a slot in the floor across the gap. Their fronts are parapets: walls, so no edge line.
+    - The company comes in through the rotunda's portal and crosses the gap on two bookcases that fell across it
+      ("bookcases become platforms"). It leaves over a bridge to the far portal.
+    - THE SHELF stands on its plinth at the floor's south-west rim.
+    - The floor of the fallen wing stands on its edge before the drum's south-west ("floors become walls").
+    - A seam alcove in the east gallery's back wall, its niche built out past the drum, holds a Vestige shard.
+  - *Envelope* (`egFragChamber('stacks', r, R)`, with R the proving court's 14 m from `net/egLaw.js`: the page's "one
+    proving court in three is a chamber (the Fallen Stacks' broken dome)"):
+    - the fight floor has radius R about (0, 23.5 m), and its ring wall stands at R + 9 m (the drum's inner face, 22.5 m);
+    - the two balconies are the kit's own: east and west, 3.5 m up, 15.5-22 m out (kept clear of the floor's 6 m of
+      headroom), each on its stair from 6 m out;
+    - THE SHELF stands where the kit stands it, toward the mouth;
+    - the mouth and the exit are the doorways, 6.6 m by 8 m, on the drum's outer faces 47 m apart;
+    - box: x -23.47 to 25.8 m, y -14 to 21.42 m, z 0 to 47 m.
+  - *Art:* 5,176 triangles in 7 draws: `pillar` (the drum and the dome inside, the portals), `brass` (the gilded dome
+    outside, the stacks, the bookcases), `root` (every broken edge's section, the books in shadow, the undersides), `arena`
+    (the reading floor), `floor` (the galleries and stairs), `cobble` (the bridge) and `edge`.
+  - *Law:* three fight floors (the reading floor with its two slots; the two galleries) and two traversal floors (the
+    threshold, the bridge). Two ramps (the stairs), no ceiling (the dome is broken: open to the sky), and 66 open edges.
+    THE CASCADE: four lanes 4 m deep across the floor, 5.5 m apart, the near first. The course is two bookcases, gaps 1.6,
+    1.6 and 1.66 m (0.3 m up, then 0.5 m down). The solver proves it in 1.207 s fastest and 1.207 s median, three moves.
+    The walk graph has 21 nodes and 23 edges, up each stair to its gallery and never across the gap. Anchors: four rifts
+    round the floor (for a Rift-Yard), a Caster on each gallery, three Lurkers, the engine and two hazard sources. One seam
+    alcove (a shard), four lights of the kit's own, and a 260-triangle proxy.
+
+- **THE BROKEN COLONNADE** (`egheroColonnade`: kit `colonnade`, a passage, variant `colonnade`).
+  - *What it is:* the Galleries' great colonnade, come down across the void. The company enters under a standing arch
+    onto a length of its entablature, which still rides two columns whose feet are gone into the dark. It crosses on a
+    drum lying where it fell (the still piece), then on two drums ROLLING back and forth along fallen architraves at the
+    law's fixed 2.0 m/s (the signature, ridden as Rails). It lands on the far entablature and leaves under the second
+    arch, which is broken at its west haunch, its three voussoirs tumbling below. On either side the colonnade stands
+    broken in the void, in two ranks: columns rise from nowhere to broken tops or gilded capitals, one lintel still
+    bridges two, another has slipped to hang at a slant, one column has fallen right across under the course, and loose
+    drums drift below. A capital standing clear of the near landing holds lumen past an optional hard jump (2.3 m, 0.4 m
+    up): the alcove.
+  - *Envelope* (`egFragPassage('colonnade')`): open (no wall, no vault, no ceiling), the mouth 5 m wide (halfW 250) with
+    its opening 4.6 m to the arches' spring, 28 m long, one exit 5 m wide on floor height 0. The course is the kit's pieces
+    (a still drum, two rolling drums at 1.2 m travel - the kit's 1.5 m, held clear). The landings are 4.6 m and 4.4 m (the
+    kit's 3.9 m, for a fight). Box: x -11.2 to 11.05 m, y -13.1 to 8.45 m, z 0 to 28 m.
+  - *Art:* 5,094 triangles in 5 draws: `pillar` (columns as ashlar drums, arches, entablature), `brass` (capitals, the
+    architraves' gilded fillets), `floor` (the landings), `root` (their torn faces) and `edge`.
+  - *Law:* two fight floors (the landings) and one traversal floor (the alcove's capital), every edge open but the mouth's
+    and the exit's. No ceiling and no hazard: the drums are the signature. The course is the still drum (0.35 m up, gap
+    2.2 m) and two drums (gaps 2.6 and 3.0 m, period 2.4 s, half a roll apart, so at their nearest they pass 0.6 m apart).
+    The solver proves it in 2.999 s fastest and 3.099 s median, four moves. The walk graph has six nodes and six edges,
+    three a landing. Anchors: two Lurkers and a Caster on the far landing. One jump alcove (lumen), three lights and an
+    84-triangle proxy (the landings, the capital, the arches' columns).
+
+**THE AUTHORING KIT, added to** (`tools/egHeroKit.mjs`'s own section at its end; numbers IEEE-only, as the kit's rule):
+- `newell` and `planUv`: a face's normal, and the reference writer's own plan mapping;
+- `flat`, `facing` and `block`: a hard face with its UVs (wound by its points, or to face a direction), and a box;
+- `cells`: a level floor of cells with no T-junction. It draws every marker floor, ceiling and drawn ground of the three;
+- `shell`: two grids on one lattice with a hole mask, every hole closed by rims from the inner face to the outer (the
+  Caverns' sky over its chasm, the Stacks' rents and doorways and torn foot), and an inner-only `cut` for a framed
+  doorway.
+
+The Caverns and the Stacks share `shell`; all three share the rest.
+
+**Files.**
+- Scenes: `tools/egHeroCavernsScene.mjs`, `tools/egHeroStacksScene.mjs`, `tools/egHeroColonnadeScene.mjs`. Each exports
+  its scene function and its writer (`writeHero*Fbx`, through `writeRefFragFbx`); `node tools/egHero*Scene.mjs` writes the
+  committed .fbx.
+- Bakes: `tools/bakeEgHeroCaverns.mjs`, `tools/bakeEgHeroStacks.mjs`, `tools/bakeEgHeroColonnade.mjs`, each the
+  reference's shape with its SPEC.
+- Assets: `src/assets/egfrags/source/eghero{Caverns,Stacks,Colonnade}.fbx` (1.13 MB, 0.82 MB and 0.62 MB) and their halves
+  `src/assets/egfrags/eghero*.law.json` and `.mesh.json`.
+- Registered: the laws in `net/egHeroFrags.js` `EG_HERO_FRAGS`, the meshes in `world/egHeroFragModel.js`
+  `EG_HERO_FRAG_MESHES`. `egHeroFragLaws(kit)` now gives each kit's hero.
+- `test/doctrine.test.js`'s allow-list names the nine files. The Port-Ledger's ELITE-GATES row names the scenes, the
+  bakes and the assets.
+
+**Departures, said plainly.**
+
+1. **Written in code, not modelled in Blender.** No sculpted detail past the kit's shapes:
+   - the rock is value noise on a lattice, pushed outward, smooth-shaded; there is no hand-placed crack or strata;
+   - columns are 16-sided lathes, chains are boxes turned link by link, and the stacks are a stepped profile, not books;
+   - there is no hand UV unwrap: plan, arc-length and per-face maps, a tile a 2 m on the whole;
+   - there is no baked light, AO or vertex colour.
+   The dark basalt is `root`'s own works band, its v walked out and back between v 0.235 and 0.32 so a long face never
+   leaves it. That is a reading of the record's picture, not a record of its own.
+2. **What a hero does not draw.** The course's pieces are the span's to stand (`scenes/egSpan.js` - they move, and wear
+   their tells), so the scenes draw only what hangs under them or holds them: the bookcases under the Stacks' ledges, the
+   chains to the Caverns' planks, the architraves under the drums. Each assumes the span's slab, 0.6 m thick
+   (`SD_STEP_THICK`). The Caverns' fire fall is Daggerfall's own TEXTURE.356, the client's to draw on the fall's line
+   (section 11.6), so the scene draws only its fissure. False walls are `scenes/egSpan.js`'s; the niches behind them are
+   drawn to `world/egHall.js` `egNicheBoxes`' box.
+3. **The envelopes bent where the hero needed room**, each said in its scene's header:
+   - the Caverns' chasm is 13 m, not 10 m;
+   - the Colonnade's landings are 4.6 m and 4.4 m, not 3.9 m;
+   - the Stacks' doorways are 6.6 m (the code-built court has no mouth: the hall's bridge band meets it);
+   - the Stacks is R 14 m: it fits a proving court, not a yard's 22-26 m or the Deepway's 16 m.
+4. **The Stacks is open to the sky** (its dome broken), so no ceiling clamps it and Divers may dive there (section 11.7).
+   Its galleries' fronts are parapets, so a member comes down by the stairs, never off the edge.
+5. **The Colonnade has no hazard record.** Its signature is its course, as the code-built kit's is, and section 11.2's
+   "arches climbed as Risers" is not taken: `EG_FRAG_PIECES.colonnade` lays no Riser. Its arches are the gates it passes
+   under.
+6. **THE TIMED SOLVER takes the ground level** with the first and last pieces (`net/egSpanLaw.js` `jumpLands`). The band's
+   test holds each hero's real rise onto its first piece and off its last inside THE SPAN BUILD's reach (`egJumpReach`).
+7. **THE EDGE LINE and the proxy are held by the band's test, not by the bake.** The bake does not check them (EG6c
+   departure 9).
+   - The edge line test asks a strip of the `edge` record just inside every point of every open edge, except where the
+     edge runs on into another floor or a ramp, or lies on a socket's face.
+   - The proxy test asks that no drawn vertex stands in the room over any floor or ramp (5 cm in, 3 cm over it, up to its
+     ceiling or its class's headroom). It also asks that the proxy floors every floor and walls every edge that is not open.
+   - The stairs' treads lie under their ramp (their nosings on it), and their edge line runs tread by tread.
+8. **Not verified in the game.** Each was looked at only in a software preview, from without and within (the band's
+   painted dress, a sun, back faces culled). Nothing is laid yet: laying a hero is spec law 7's.
+
+**The four hosts.** `src/scenes/exterior.js`, `src/scenes/world.js`, `src/scenes/worldModes.js` and
+`src/scenes/dungeonContext.js` are none of them touched. A hero is registered, not laid, and nothing draws one until
+EG-HERO-LAY lays it.
+
+**Pins.**
+- `test/eghero_galleries.test.js` (10): for each fragment,
+  - the bytes: the scene, the bake twice;
+  - the reader and both registries;
+  - THE ENVELOPE, deepEqual: spec, sockets, box, floors, ceilings, open edges, course, graph, alcove and hazards;
+  - THE TIMED SOLVER's proof, and the ground's real rise;
+  - the signatures, lawful;
+  - the budget;
+  - THE EDGE LINE on every rim;
+  - the proxy as the room's envelope;
+  - the walk graph on its ground;
+  - no engine-rounded function in a scene.
+- `tools/mutants/eghero_galleries.json` (41, every one dead). Each scene mutant was judged again with the scene re-written
+  and re-baked under it, so the bytes could not be what killed it: every one dies on its law test.
+  - The one gap that judging found is now held: a first piece too high off the ground, which the solver takes level.
+- PIN MOVED: `test/eg6c_law.test.js` no longer pins the registry to the reference alone. Its first entry is the reference,
+  and no kit's layable heroes include it (the reference's "laid by no hall", kept failing).
+- `RELAY_VERSION` stays `world199`: `net/egHeroFrags.js` is not in the relay's bundle, and no file of it moved
+  (`test/relayversion.test.js` stands). `ACCOUNT_VERSION` stays `acct124`; there is no migration. `EG_SPEC` and `EG_LAWS`
+  are as they were.
