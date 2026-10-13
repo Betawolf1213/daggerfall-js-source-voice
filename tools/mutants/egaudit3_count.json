@@ -425,8 +425,8 @@
   {
     "name": "EGA3-count-mark-distance-unread",
     "file": "src/net/egRun.js",
-    "old": "if (r !== HIT_KINDS.Shaft || !(d > EG_FAR_M)) return;",
-    "new": "if (r !== HIT_KINDS.Shaft) return;",
+    "old": "if (r !== HIT_KINDS.Shaft || !(d > EG_FAR_M)) return false;",
+    "new": "if (r !== HIT_KINDS.Shaft) return false;",
     "tests": [
       "test/egaudit3_count.test.js"
     ]
@@ -434,8 +434,8 @@
   {
     "name": "EGA3-count-mark-kind-unread",
     "file": "src/net/egRun.js",
-    "old": "if (r !== HIT_KINDS.Shaft || !(d > EG_FAR_M)) return;",
-    "new": "if (!(d > EG_FAR_M)) return;",
+    "old": "if (r !== HIT_KINDS.Shaft || !(d > EG_FAR_M)) return false;",
+    "new": "if (!(d > EG_FAR_M)) return false;",
     "tests": [
       "test/egaudit3_count.test.js"
     ]
@@ -443,8 +443,8 @@
   {
     "name": "EGA3-count-mark-twelve-beyond",
     "file": "src/net/egRun.js",
-    "old": "if (r !== HIT_KINDS.Shaft || !(d > EG_FAR_M)) return;",
-    "new": "if (r !== HIT_KINDS.Shaft || !(d >= EG_FAR_M)) return;",
+    "old": "if (r !== HIT_KINDS.Shaft || !(d > EG_FAR_M)) return false;",
+    "new": "if (r !== HIT_KINDS.Shaft || !(d >= EG_FAR_M)) return false;",
     "tests": [
       "test/egaudit3_count.test.js"
     ]
@@ -452,8 +452,8 @@
   {
     "name": "EGA3-count-mark-far-unpassed",
     "file": "src/net/egBrain.js",
-    "old": "egMarkFoe(mm, body, m.r, now, sub, far);",
-    "new": "egMarkFoe(mm, body, m.r, now, sub);",
+    "old": "if (egMarkFoe(mm, body, m.r, now, sub, far)) egSpotted(",
+    "new": "if (egMarkFoe(mm, body, m.r, now, sub)) egSpotted(",
     "tests": [
       "test/egaudit3_count.test.js"
     ]

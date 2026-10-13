@@ -488,8 +488,8 @@
   {
     "name": "EGA3-sb-never-offered",
     "file": "src/net/egVestige.js",
-    "old": "const pool = EG_MASTERIES.filter((M) => M.id !== mast);",
-    "new": "const pool = EG_MASTERIES.filter((M) => M.id !== mast && M.key !== 'spirebridge');",
+    "old": "const pool = EG_MASTERIES.filter((M) => M.id !== mast && egCardActs(M.key, n, kinds));",
+    "new": "const pool = EG_MASTERIES.filter((M) => M.id !== mast && M.key !== 'spirebridge' && egCardActs(M.key, n, kinds));",
     "tests": [
       "test/egaudit3_law_bridge.test.js"
     ]

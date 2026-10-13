@@ -188,6 +188,7 @@ import { EG_LIFELINE_UNDER, EG_LIFELINE_LOOK_MS } from '../net/egBrain.js';
 import { egLifelineMin } from '../net/egBrain.js';   // AUDIT EG III: a heal worth a Lifeline window, the census's own   // EG-ZP (section 15): Lifeline's 30%, and how far back the census looks for it
 import { egCastBackCost } from '../net/egBrain.js';   // EG-ZR (section 15's Featherstep): a cast-back's cost, the census's own
 import { spireHolderStep } from '../systems/spireVestiges.js';   // EG-ZR: THE VESTIGES ON THEIR HOLDER
+import { spireRallyingCry } from '../systems/spireVestiges.js';   // AUDIT EG IV (lane10 #14): Rallying Cry at a Court's phase turn
 import { spireBodyMax } from '../systems/renownLayer.js';   // EG-ZR: the body the room's shares are of (Stoneskin's cushion over it)
 import { healMine } from '../systems/playerHeal.js';   // EG-ZR: Mender's Grace's heal, the one heal a power gives
 import { spireVestigeNews, spireWeaveReady } from '../systems/spireVestiges.js';   // AUDIT EG III (section 27.5): the holder's news, said; Spellweave's chip
@@ -1549,8 +1550,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (w.k === 'fall' && w.s === me() && !witness) enterWitness(now(), true, w.fin);
       if (w.k === 'rise' && w.s === me()) riseAt(w);
       if (w.k === 'eheal') applyHeal(w.p, w.why);
-      if (w.k === 'eheal' && w.why === 'rally') fight?.rally?.(now() - egClockHalfRtt(clock));   // EG-ZR: SHIELD-HYMN - at the door's opening, the word's way here taken off
-      if (w.k === 'eheal' && w.why === 'rally' && w.p > 0 && !witness && entity.health > 0 && inSpire()) beatNow('rally', { t: w.p });   // AUDIT EG III (section 27.5): Rally's heal seen, heard and said
+      if (w.k === 'eheal' && (w.why === 'rally' || (w.why === 'cry' && w.p > 0))) fight?.rally?.(now() - egClockHalfRtt(clock));   // EG-ZR: SHIELD-HYMN - at the door's opening, the word's way here taken off (AUDIT EG IV: and at Rallying Cry's)
+      if (w.k === 'eheal' && (w.why === 'rally' || w.why === 'cry') && w.p > 0 && !witness && entity.health > 0 && inSpire()) beatNow('rally', { t: w.p });   // AUDIT EG III (section 27.5): Rally's heal seen, heard and said
+      if (w.k === 'eheal' && w.why === 'cry' && !witness && entity.health > 0 && inSpire()) spireRallyingCry();   // AUDIT EG IV (lane10 #14): a Court's phase turn gives back a spent Second Wind
       if (w.k === 'toll') payToll(w.q, w.h);   // EG-ZI: the pull's toll (section 10.6)
       if (w.k === 'ebridge') say(w.s === me() ? EG_PRES_TEXT.bridgeMine : EG_PRES_TEXT.bridgeRaised(w.n || 'A companion'));   // AUDIT EG III: Spirebridge, said to the company
       if (w.k === 'egot' && w.w === 'page' && EG_ANNALS[w.p]) { annals.add(w.p); say(`A page of the Annals of 3E 398 - ${EG_ANNALS[w.p][0]}: ${EG_ANNALS[w.p][1]}`); }

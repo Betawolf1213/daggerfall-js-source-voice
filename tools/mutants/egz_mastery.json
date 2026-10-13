@@ -196,8 +196,8 @@
   {
     "name": "EGZS-mark-layer-unkept",
     "file": "src/net/egRun.js",
-    "old": "body.marked = { x: hm, until: now + EG_MARK_MS, by };",
-    "new": "body.marked = { x: hm, until: now + EG_MARK_MS };",
+    "old": "until: now + EG_MARK_MS, by: hm ? by : cur?.by ?? by,",
+    "new": "until: now + EG_MARK_MS, by: '',",
     "tests": [
       "test/egz_mastery_accords.test.js"
     ],
@@ -206,8 +206,8 @@
   {
     "name": "EGZS-mark-layer-unsaid",
     "file": "src/net/egBrain.js",
-    "old": "egMarkFoe(mm, body, m.r, now, sub, far);",
-    "new": "egMarkFoe(mm, body, m.r, now, '', far);",
+    "old": "if (egMarkFoe(mm, body, m.r, now, sub, far)) egSpotted(",
+    "new": "if (egMarkFoe(mm, body, m.r, now, '', far)) egSpotted(",
     "tests": [
       "test/egz_mastery_accords.test.js"
     ],
@@ -409,8 +409,8 @@
   {
     "name": "EGZS-strike-add-half",
     "file": "src/net/egBrain.js",
-    "old": "if (a.role === EG_ROLE.add) { a.hp -= n;",
-    "new": "if (a.role === EG_ROLE.add) { a.hp -= n / 2;",
+    "old": "if (a.role === EG_ROLE.add) { got = Math.min(n, a.hp); a.hp -= n; }",
+    "new": "if (a.role === EG_ROLE.add) { got = Math.min(n, a.hp); a.hp -= n / 2; }",
     "tests": [
       "test/egz_mastery.test.js"
     ],
@@ -449,8 +449,8 @@
   {
     "name": "EGZS-strike-lord-as-add",
     "file": "src/net/egBrain.js",
-    "old": "  return EG_SEAM.hit(egLordsFight(F, spec, {}, now), sub, n, w.r,",
-    "new": "  a.hp -= n; return n; void EG_SEAM.hit(egLordsFight(F, spec, {}, now), sub, n, w.r,",
+    "old": "  else got = EG_SEAM.hit(egLordsFight(F, spec, {}, now), sub, n, w.r,",
+    "new": "  else { a.hp -= n; got = n; } void EG_SEAM.hit(egLordsFight(F, spec, {}, now), sub, n, w.r,",
     "tests": [
       "test/egz_mastery.test.js"
     ],

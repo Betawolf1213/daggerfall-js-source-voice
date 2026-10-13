@@ -51,6 +51,7 @@ import { egHitBody, egFightState } from './egBodies.js';   // EG-ZK: the seam's 
 import { shDisc, shLane, shLaneAt, shCone, shRing, shAll, shOut, egErrandMs, egBlowFrom, egChainGapMs } from './egShape.js';
 import { EG_LORDS, EG_DECREES, EG_DECREE_BY_KEY, EG_LAW_UNIT, EG_BANDS, egKeepOnFight, egFightProfile, egBandOfCircle } from './egLaw.js';
 import { EG_KIND, egLegionRaise, egWaveKinds, egWaveSize, egFromBehind, egFromFront } from './egLegion.js';
+import { egLegionSummon } from './egLegion.js';   // AUDIT EG IV (lane1 #6): a lord's summons held to the room under the legion's cap
 import { walkGraph, walkAir } from './egLegion.js';   // EG-ZK (section 11.7): the lords walk the graph and fly about the rock
 import { egFightView, egWalkGraph, egRegionAt, egKeepInRegion, egArchCut, egWayOn, EG_LEVEL_M } from './egWalkGraph.js';   // EG-ZK: the fight ground's graph and its regions; a run cut at an arch's wall. EG-ZQ: the way on kept only while walked
 import { bossSeam } from './bossSeam.js';   // EG-ZK (section 13.1): the Spire's lords written to the boss seam
@@ -111,6 +112,7 @@ export const EG_LORD_WAKE_MS = 2500;
  *  Meteor's), and `pool` the burning ground its landing leaves (net/gateBrain.js POOLS - the Meteor's). */
 const gateRow = (A) => Object.freeze({ nm: A.name, ak: A.key, wu: A.windup, rec: A.recover, p: A.pct, b: A.base, range: A.range, minGap: A.minGap, w: A.w, ...(A.pool ? { pool: A.pool } : {}) });
 const CLEAVE = gateRow(ATTACKS.cleave), SLAM = gateRow(ATTACKS.slam), CHARGE = gateRow(ATTACKS.charge), METEOR = gateRow(ATTACKS.meteor);
+const HELLFIRE = gateRow(ATTACKS.hellfire);   // AUDIT EG IV (lane1 #16): the Mother of Dusk's, read - its pool (POOLS.hellfire) the Meteor's way
 /** A lord's body radius at its scale (the Warden's 1.8 at 3). */
 const bodyR = (scale) => Math.max(0.8, (1.8 * scale) / 3);
 const dist = (ax, az, bx, bz) => Math.hypot(ax - bx, az - bz);
@@ -328,9 +330,9 @@ function havenWu(havens, field) {
  *  Court's, the Old Masters'). */
 const mainDisc = (spec, L) => spec.fl?.find((f) => f.t === 'd') ?? { x: L.x, z: L.z, r: 18 };
 /** A ground's spots of a role, or `k` laid on a ring `rr` out from the main disc's heart (a lord on another's ground). */
-function spotsOr(spec, L, role, k, rr) {
+function spotsOr(spec, L, role, k, rr, own = true) {
   const have = spec.spots?.[role];
-  if (have?.length) return have.map((q) => [q.x, q.z]);
+  if (own && have?.length) return have.map((q) => [q.x, q.z]);   // AUDIT EG IV: `own` false - the ring, whatever the ground lays
   const f = mainDisc(spec, L), R = Math.min(rr, Math.max(2, f.r - 1.5));
   return Array.from({ length: k }, (_, j) => egKeepOnFight(spec, f.x + Math.sin((j / k) * 2 * Math.PI + Math.PI / 4) * R, f.z + Math.cos((j / k) * 2 * Math.PI + Math.PI / 4) * R, 1));
 }
@@ -406,7 +408,7 @@ export function egLordsStep(F, spec, now, here, rng, out, ctx) {
     if (bl.ld || now < bl.at) continue;
     bl.ld = 1;
     const pl = F.mem.pools?.[bl.i], by = egBodyById(F, bl.o);
-    if (pl) { delete F.mem.pools[bl.i]; zoneOut(F, 'burn', shDisc(bl.s[0][1], bl.s[0][2], pl[0]), bl.at, bl.at + pl[1], out, { p: pl[2], b: pl[3], el: bl.el }); }
+    if (pl) { delete F.mem.pools[bl.i]; for (const st of bl.s) zoneOut(F, 'burn', shDisc(st[1], st[2], pl[0]), bl.at, bl.at + pl[1], out, { p: pl[2], b: pl[3], el: bl.el }); }   // AUDIT EG IV (lane1 #16): one under each of its marks, as the gate's Hellfire lays it (net/gateStrike.js landingPools)
     if (by?.role === EG_ROLE.lord) KITS[by.key]?.landed?.(F, by, bl, egStruck(bl, here));
   }
   if (F.mem.pools) for (const k of Object.keys(F.mem.pools)) { const i = Number(k); if (!F.blows.some((b) => b.i === i) && !(F.pend ?? []).some((q) => q.b.i === i) && !F.held.some((h) => h.b?.i === i)) delete F.mem.pools[k]; }
@@ -676,7 +678,7 @@ const KITS = {
     tick(F, spec, L, now, here, rng, out, ctx) {
       if ((L.guardUntil ?? 0) && now >= L.guardUntil) { L.guardUntil = 0; egSetFl(F, L, EG_FL.lit, false, out); }
       challengeTick(F, spec, L, now, here, rng, out, ctx, 15_000);
-      if (L.ph >= 3 && F.mem.lessonR > 12 && now >= F.mem.lessonAt) {
+      if (L.ph >= 3 && F.mem.lessonR > (F.mem.lessonMin ?? 12) && now >= F.mem.lessonAt) {   // AUDIT EG IV (section 18): THE MASTERS' GROUND stops it at EG_MASTERS_LESSON_R
         F.mem.lessonR -= 1; F.mem.lessonAt = now + 6000;
         const f = mainDisc(spec, L);
         zoneOut(F, 'burn', shRing(f.x, f.z, F.mem.lessonR, f.r + 4), now, now + 6000, out, { p: 0.08, b: 3, el: elOf(F, 'fire') });
@@ -756,7 +758,7 @@ const KITS = {
           else t.gem = 0;
           if (now >= t.until && t.left > 0) {
             t.left = 0; egUnmark(F, t.sub, 1); F.mem.mkDirty = 1;
-            if (m) { egAim(F, spec, { o: L.i, s: [shDisc(m.x, m.z, 2)], at: now + 600, wu: 600, p: 0.3, b: 0, el: elOf(F, 'poison'), nm: 'Soul Burst', ch: 1 }, [], now, out); egLegionRaise(F, L.ph >= 3 ? [EG_KIND.wraith, EG_KIND.wraith] : [EG_KIND.wraith], [[m.x + 2, m.z]], now, out); }
+            if (m) { egAim(F, spec, { o: L.i, s: [shDisc(m.x, m.z, 2)], at: now + 600, wu: 600, p: 0.3, b: 0, el: elOf(F, 'poison'), nm: 'Soul Burst', ch: 1 }, [], now, out); egLegionSummon(F, L.ph >= 3 ? [EG_KIND.wraith, EG_KIND.wraith] : [EG_KIND.wraith], [[m.x + 2, m.z]], now, out); }
           }
         }
         if (T.every((t) => t.left <= 0)) F.mem.tithe = null;
@@ -823,7 +825,7 @@ const KITS = {
         while (order.length >= size) chains.push(order.splice(0, size).map((m) => m.sub));
         F.tethers = F.tethers.filter((t) => t[2] !== 2);
         for (const c of chains) for (let j = 1; j < c.length; j++) F.tethers.push([c[0], c[j], 2, 800]);
-        for (const odd of order) { const [w] = egLegionRaise(F, [EG_KIND.wraith], [[odd.x + 3, odd.z]], now, out); if (w) F.tethers.push([w.i, odd.sub, 2, 800]); }
+        for (const odd of order) { const [w] = egLegionSummon(F, [EG_KIND.wraith], [[odd.x + 3, odd.z]], now, out, { need: 1 }); if (w) F.tethers.push([w.i, odd.sub, 2, 800]); }
         F.mem.chains = chains;
         for (const c of chains) for (const s of c) egMark(F, s, 4, now + 20_000);
         F.mem.txDirty = 1; F.mem.mkDirty = 1;
@@ -837,7 +839,7 @@ const KITS = {
           egAim(F, spec, { o: L.i, s: [shDisc(ms[0].x, ms[0].z, 1.5), shDisc(ms[j].x, ms[j].z, 1.5)], at: now + 400, wu: 400, p: 0.3, b: 0, el: elOf(F, 'poison'), nm: 'The Chain Snaps', ch: 1 }, [], now, out);
         }
       }
-      if (L.ph >= 3 && now >= (F.mem.ritesAt ?? Infinity)) { F.mem.ritesAt = now + 20_000; egLegionRaise(F, [EG_KIND.wraith, EG_KIND.wraith], (spec.spots.court ?? []).map((c) => [c.x, c.z]), now, out); }
+      if (L.ph >= 3 && now >= (F.mem.ritesAt ?? Infinity)) { F.mem.ritesAt = now + 20_000; egLegionSummon(F, [EG_KIND.wraith, EG_KIND.wraith], (spec.spots.court ?? []).map((c) => [c.x, c.z]), now, out); }
     },
   },
 
@@ -845,7 +847,7 @@ const KITS = {
   dusk: {
     blows: [
       { nm: 'Dusk Dive', wu: 1300, rec: 1400, p: 0.4, b: 12, el: 'frost', range: 99, w: 3, when: (F, L, t, here, ctx) => true, make: (F, spec, L, t) => ({ stamps: [laneTo(L, t, 16, 4)] }) },
-      { nm: 'Hellfire', wu: 2000, rec: 900, p: 0.4, b: 9, el: 'fire', range: 99, w: 2, make: (F, spec, L, t, here) => ({ stamps: here.slice(0, 5).map((m) => shDisc(m.x, m.z, 3.5)) }) },
+      { ...HELLFIRE, el: ATTACKS.hellfire.el, range: 99, make: (F, spec, L, t, here) => ({ stamps: here.slice(0, ATTACKS.hellfire.max).map((m) => shDisc(m.x, m.z, ATTACKS.hellfire.r)) }) },   // AUDIT EG IV (lane1 #16): the gate's row, its burning ground with it
     ],
     wake(F, spec, L, now, out) { for (const [ax, az] of spotsOr(spec, L, 'anchor', 3, 20)) obj(F, 'anchor', ax, az, egHpTeam(F, 6), now, out, { r: 0.9 }); F.mem.gutterAt = now + 30_000; },
     phase(F, spec, L, ph, now, here, rng, out) { if (ph === 2) { F.mem.gustAt = now + 4000; say(out, 'phase', { t: 'Wingbeat.' }); } if (ph === 3) say(out, 'phase', { t: 'Moonfall.' }); },
@@ -867,7 +869,7 @@ const KITS = {
       }
       if (F.mem.anchorsBackAt && now >= F.mem.anchorsBackAt) {
         F.mem.anchorsBackAt = 0;
-        for (const [ax, az] of spotsOr(spec, L, 'anchor', 3, 20)) { obj(F, 'anchor', ax, az, egHpTeam(F, 6), now, out, { r: 0.9 }); if (L.ph >= 3) egLegionRaise(F, [EG_KIND.diver, EG_KIND.diver], [[ax, az]], now, out); }
+        for (const [ax, az] of spotsOr(spec, L, 'anchor', 3, 20)) { obj(F, 'anchor', ax, az, egHpTeam(F, 6), now, out, { r: 0.9 }); if (L.ph >= 3) egLegionSummon(F, [EG_KIND.diver, EG_KIND.diver], [[ax, az]], now, out); }
         say(out, 'anchors');
       }
       // Wingbeat: a glade-wide gust every 8 s, told 1 s - 3 m/s for 1 s
@@ -910,7 +912,7 @@ const KITS = {
         F.tethers = F.tethers.filter((t) => t[2] !== 1);
         const brk = L.ph >= 3 ? 16 : 14;
         if (ctx.n >= 2) { const picks = [...here].sort(() => rng() - 0.5).slice(0, L.ph >= 3 ? 3 : 2); for (let j = 1; j < picks.length; j++) F.tethers.push([picks[0].sub, picks[j].sub, 1, brk * 100]); }
-        else if (here[0]) { const [th] = egLegionRaise(F, [EG_KIND.thrall], [[here[0].x + 4, here[0].z]], now, out); if (th) F.tethers.push([th.i, here[0].sub, 1, brk * 100]); }
+        else if (here[0]) { const [th] = egLegionSummon(F, [EG_KIND.thrall], [[here[0].x + 4, here[0].z]], now, out, { need: 1 }); if (th) F.tethers.push([th.i, here[0].sub, 1, brk * 100]); }
         F.mem.txDirty = 1; F.mem.apart = {}; F.mem.tetherUntil = now + 20_000;
         say(out, 'tether');
       }
@@ -1081,7 +1083,7 @@ function perch(F, spec, L, now, out) {
 function examination(F, spec, L, now, here, rng, out, ctx) {
   const n = Math.max(1, ctx.n), k = Math.min(4, Math.max(2, n));
   const f = mainDisc(spec, L);
-  const spots = (n < k ? [45, 135, 225, 315].map((d) => egKeepOnFight(spec, f.x + Math.sin((d * Math.PI) / 180) * 8, f.z + Math.cos((d * Math.PI) / 180) * 8, 1)) : spotsOr(spec, L, 'rune', 4, f.r - 1.5)).slice(0, k);
+  const spots = (n < k ? [45, 135, 225, 315].map((d) => egKeepOnFight(spec, f.x + Math.sin((d * Math.PI) / 180) * 8, f.z + Math.cos((d * Math.PI) / 180) * 8, 1)) : spotsOr(spec, L, 'rune', 4, Math.min(F.mem.runeR ?? Infinity, f.r - 1.5), !F.mem.runeR)).slice(0, k);   // AUDIT EG IV (section 18): THE MASTERS' GROUND's ring (net/egBrain.js EG_MASTERS_RUNE_R)
   const order = spots.map((_, j) => j).sort(() => rng() - 0.5);
   spots.forEach((p, j) => obj(F, 'rune', p[0], p[1], 0, now, out, { r: 1.6, pt: order.indexOf(j) + 1 }));
   F.mem.exam = { kind: 'runes', next: 1, k, until: now + (10 + 4 * Math.max(0, k - n)) * 1000 };
