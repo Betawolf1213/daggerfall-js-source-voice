@@ -126,6 +126,22 @@ export function egFloorWindup(wu, stamps, check = false) {
   for (const s of stamps) f = Math.max(f, egWindupFloorMs(s));
   return Math.max(wu, f);
 }
+/** AUDIT EG III (section 13.2's fury, section 14's Chained Blows): a chained second shape's fill past its wind-up floor, and
+ *  its least (ms). */
+export const EG_CHAIN_PAD_MS = 300;
+export const EG_CHAIN_MIN_MS = 1000;
+/**
+ * AUDIT EG III - THE CHAINED GAP, the one rule fury's chained shape (net/egLords.js) and Chained Blows (net/egLegion.js) both
+ * read: how long after a blow of wind-up `wu` and stamps `stamps` lands its chained second shape lands - `max(the blow's own
+ * wind-up, its wind-up floor + 0.3 s, 1.0 s)` (sections 13.2 and 14), so a chained shape never counts down faster than the
+ * same blow alone. A CHECK's stamps carry no floor (egWindupFloorMs), so its gap is its wind-up or the least.
+ * @param {number} wu @param {any[]} stamps
+ */
+export function egChainGapMs(wu, stamps) {
+  let f = 0;
+  for (const s of stamps ?? []) f = Math.max(f, egWindupFloorMs(s));
+  return Math.max(wu, f + EG_CHAIN_PAD_MS, EG_CHAIN_MIN_MS);
+}
 /** A lone runner's route at the escape build plus the errand floor's 1.5 s (THE ERRAND FLOOR, section 13.2), ms. */
 export const egErrandMs = (routeM) => Math.ceil(((routeM / EG_ESCAPE_MPS + 1.5) * 1000) / 10) * 10;
 

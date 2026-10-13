@@ -1590,7 +1590,8 @@ byte. The Spire's lords are written to it. The gate's brain already exports the 
 
 `egBossOf(seed, c)` draws a Court's lord:
 
-- **the pool**: the band's own lords at weight 2, plus every earlier band's at weight 1, re-aspected;
+- **the pool**: the band's own lords at weight 2, plus every earlier band's at weight 1, re-aspected: every element
+  of its kit is the band's aspect's, as the gate's fire is its aspect's (the Twin Lords keep their clans' fire and frost);
 - **no repeat**: never one of the last `min(2, pool - 1)` Courts';
 - **the Valkynaz**: every fifth Court (Halls 25, 50, 75, 100...) is a Valkynaz's, outside the draw, and its fall takes
   a Valkynaz Redoubt;
@@ -1673,7 +1674,10 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
    - They must fall within 15 s of each other, or the survivor raises the other at half (the Echoes' law,
      `SD_ECHO_PAIR_MS`).
    - **Fire-touched and Frost-touched**: a member struck by Vael is Fire-touched for 12 s. They deal +25% to Isk and
-     take +25% from Vael. The reverse holds for Isk.
+     take +25% from Vael. The reverse holds for Isk. A blow struck them when the relay's reckoning of the poses finds
+     them in it as it lands (the census's), and the mark is said (`emk` 2 and 3) for every screen's sigil. The +25% taken
+     is the struck screen's alone: every blow of the Twins carries its clan's element, which the census sees and never
+     counts (section 21).
    - **The Crossing**: every 60 s they cross the walkway (at most 24 m long) and change courts. The walkway is struck
      along its length, 3.0 s; the escape runs along it to either court (floor 12/6.975 + 0.5 = 2.23 s).
    - Phase 2, **Rivalry**: the healthier twin's shares rise by a tenth until the two stand within a tenth of each
@@ -1690,11 +1694,12 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
    gave her kind its wings. She circles over a Gloam glade open to the sky, beyond the court and out of a blade's reach.
    - Dives (lanes 4 m wide; never onto ground narrower than 6 m) and Hellfire.
    - **Three anchors** hold her to the rim. They are bodies a blade strikes, each 6 s of the company's reference
-     damage. With all three broken she is dragged down and grounded for 30 s, x1.3.
+     damage. With all three broken she is dragged down and grounded for 30 s, x1.3; they rise again 20 s after she takes
+     the air, and only anchors broken drag her down.
    - **Gutterdark**: the braziers gutter in turn. The floor goes dark; telegraphs keep their light (section 25.6), and
      every foe keeps a rim light.
    - Phase 2, **Wingbeat**: a glade-wide gust every 8 s, told 1 s, 3 m/s for 1 s (the Steps' gust).
-   - Phase 3, **Moonfall**: the anchors rise again 40 s after a grounding, two Divers with each.
+   - Phase 3, **Moonfall**: the anchors rise again 40 s after a grounding ends, two Divers with each.
    - *A fight about the air.*
 9. **The Night-Stalker** (`stalker`; Vampire Ancient 30, x2.5).
    - He vanishes. Where he stands is drawn as an umbral disc on the floor, the telegraph pass's mark kind.
@@ -1719,14 +1724,16 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
       Spread.
     - Phase 2, **Paired Hearts**: the two hearts of a pair must break within 5 s of each other, or both relight. One
       member breaks a pair alone in time (6/6.975 + 1.5 = 2.37 s).
-    - Phase 3, **Breakdown**: it kneels for 20 s at x1.5, then walks half its route.
+    - Phase 3, **Breakdown**: it kneels for 20 s at x1.5 (a stun's stillness, and its weight never a stun's times the
+      kneel's), then walks half its route: the half it knelt in.
     - *A fight you climb.*
 12. **The Wellhead Wyrm** (`wyrm`; Dragonling 34, x5, flying).
     - In an open-sky cavern, it perches on three pillars, breathing lanes (4 m x 16 m, 1.4 s; floor 0.79 s) and cones
       (10 m, 90°, 1.5 s; floor 1.10 s); it takes flight and drops meteors (discs of r 4, 1.8 s; floor 1.08 s).
     - Each pillar is reached by a side span and broken from on top. With its perch broken it lands, x1.3, for 25 s,
-      until it finds another.
-    - Phase 2, **Burning Perches**: the pillar it leaves erupts (a disc of r 6, 2.0 s; floor 1.37 s).
+      until it finds another; with none left standing it stays down.
+    - Phase 2, **Burning Perches**: the pillar it leaves erupts as its perch breaks under it (a disc of r 6, 2.0 s;
+      floor 1.37 s).
     - Phase 3, **Grounded**: no perch; a breath of 180° and 12 m (inscribed r 6; floor 1.37 s; wind-up 1.6 s).
     - *A fight for every build.*
 13. **Valkynaz Garoth of the Wellhead**: Redoubt 20, and every fifth after.
@@ -1734,7 +1741,8 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
 ### 13.4 The Valkynaz
 
 ONE brain (`net/egLord.js`) with a signature for each Valkynaz. Each fights on its band's own ground, with three of
-the gate's blows (Cleave, Slam and the Meteor from `ATTACKS`, at the depth's shares, each lengthened to its floor), two
+the gate's blows (Cleave, Slam and the Meteor from `ATTACKS`, at the depth's shares, each lengthened to its floor, the
+Meteor named by the aspect and leaving the gate's burning ground, `POOLS`'), two
 of its own, its signature, and a third-phase set-piece. Each wears its own look (`BOSS_LOOKS`: Daedra Lord 31 at 3.0,
 3.3, 3.6 and 4.0, tinted by band) and its own WIND set. The deepest boss of the endless mode is never the commonest
 fight of the game again.
@@ -1742,9 +1750,9 @@ fight of the game again.
 | Valkynaz | Redoubt | aspect (`GATE_ASPECTS`) | ground | its own blows | signature | phase 3 |
 |---|---|---|---|---|---|---|
 | **Ilthys of the Galleries** | 5 | Burning | **the Council Rotunda**: a floor of r 24 and three balconies 4 m up, two stairs each | **Spear of the Conquest** (a lane 4 m x 22 m, 1.3 s); **the Muster-Call** (a wave from the balconies) | **the Conquest**: he plants a banner (a Ward-Bearer body) on each balcony that claims a third of the floor. Claimed ground burns (a pool, told 3.5 s: the longest way off a third of the floor is 20.8 m) until its banner is broken, and while two banners stand they hold his ward (25 s at most) | **the Last Charge**: a third of the floor falls every 20 s, told 5 s ahead, and rises again when the next falls |
-| **Morvayn of the Cairn** | 10 | Venom-Blooded | **the Soul-Bridge**: two Ossuary crypts (r 14) joined by a rib bridge 30 m long | **Venom Lash** (a cone 8 m, 90°, 1.3 s); **Soul Rend** (a disc of r 4 on a chained pair's midpoint, 1.5 s) | **the Chaining**: pairs of members are bound by soul-chains for 20 s (the stay-close grammar). A pair stretched past 8 m both take 30% (a CHECK), and a blow on one is shared with the other. An odd member, or a member alone, is chained to a Wraith; kill it to break the chain | **the Last Rites**: Wraiths rise at both crypts every 20 s, and chains bind threes |
+| **Morvayn of the Cairn** | 10 | Venom-Blooded | **the Soul-Bridge**: two Ossuary crypts (r 14) joined by a rib bridge 30 m long | **Venom Lash** (a cone 8 m, 90°, 1.3 s); **Soul Rend** (a disc of r 4 on a chained pair's midpoint, 1.5 s) | **the Chaining**: pairs of members are bound by soul-chains for 20 s (the stay-close grammar). A pair stretched past 8 m both take 30% (a CHECK), and a blow on one is shared with the other: divided between the chain, a pair's halves (a three's thirds). An odd member, or a member alone, is chained to a Wraith; kill it to break the chain | **the Last Rites**: Wraiths rise at both crypts every 20 s, and chains bind threes |
 | **Seyth of the Shade** | 15 | Rime-Wrought | **the Eclipse Vault** (section 11.2), the Eclipse running | **Frost Lance** (a lane 4 m x 18 m, 1.2 s); **Moonshatter** (three discs of r 2.5 at members' feet, 1.4 s) | **the Mirrorcourt**: two mirror lords fight beside him and throw real blows at half share. Only the true lord casts his ground mark and his bar's pip; the mirrors shimmer (a 2 Hz dither line) and crack audibly when struck. A mirror shatters after 8 s of the company's reference damage and returns 20 s later | **the Long Night**: Gutterdark over the whole vault, while the moon-shafts walk at a fixed 1.5 m/s |
-| **Garoth of the Wellhead** | 20, 25, 30... | each of the four in turn | **the Clan Pit** (section 11.2) | **Wellfire** (two lanes 4 m wide crossing at his feet, 1.4 s); **the Kyn's Due** (a disc of r 5 on the top of threat, 1.6 s) | **the Clan Muster**: each phase turn calls an honour duel (one member, the Armsmaster's ring law, r 6, 15 s; none at *n* = 1) | one of the three older signatures, by turns from one Garoth Redoubt to the next, under the next aspect, with every decree the circle bears |
+| **Garoth of the Wellhead** | 20, 25, 30... | each of the four in turn, in `GATE_ASPECTS`' order: Burning at Redoubt 20, Rime-Wrought at 25, Storm-Crowned at 30, Venom-Blooded at 35 | **the Clan Pit** (section 11.2) | **Wellfire** (two lanes 4 m wide crossing at his feet, 1.4 s); **the Kyn's Due** (a disc of r 5 on the top of threat, 1.6 s) | **the Clan Muster**: each phase turn calls an honour duel (one member, the Armsmaster's ring law, r 6, 15 s; none at *n* = 1) | one of the three older signatures, by turns from one Garoth Redoubt to the next, under the next aspect, with every decree the circle bears |
 
 A Valkynaz's Redoubt rolls its spoils twice and may give a key (sections 5, 19). The first Valkynaz a company fells is
 its first true feat in the Spire.
