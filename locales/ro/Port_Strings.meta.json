@@ -4014,6 +4014,1261 @@
   "tr": "feb19df297ac",
   "by": "claude-in-session"
  },
+ "cards.kingsGambit.armies.health": {
+  "en": "d23ec2b96411",
+  "tr": "f8b9899d5b3d",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.army.full": {
+  "en": "8ab2894002e1",
+  "tr": "fdc985b9e84d",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.army.joined": {
+  "en": "03c682172029",
+  "tr": "7cce4fd62770",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.army.king": {
+  "en": "98d43e354c8a",
+  "tr": "0f0536d0c3a0",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.army.left": {
+  "en": "0373b06f68ed",
+  "tr": "a2e70050c1b2",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.army.pointsLeft": {
+  "en": "42183224dbd6",
+  "tr": "01b3d52b3806",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.army.tooDear": {
+  "en": "7a8e69d963a4",
+  "tr": "75fd8c5d13fa",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.army.units": {
+  "en": "e17cc42f1579",
+  "tr": "97a489161489",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.bark.invite": {
+  "en": "03a13b459494",
+  "tr": "45e2d32fa1cf",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.bark.lost1": {
+  "en": "663b21b1e51a",
+  "tr": "2875481b8f0c",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.bark.lost2": {
+  "en": "8739fd6140e8",
+  "tr": "97271e0ef46e",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.bark.lost3": {
+  "en": "d5fa1f3b1ffa",
+  "tr": "297fb00bcd52",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.bark.won1": {
+  "en": "f29cbaa9a441",
+  "tr": "facaee034f9b",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.bark.won2": {
+  "en": "6df039ae2d35",
+  "tr": "52ca2e2dc6d8",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.bark.won3": {
+  "en": "b7f7c7ed1c0e",
+  "tr": "57828dc1339f",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.cell.floor": {
+  "en": "6c41ba8262aa",
+  "tr": "a62637786411",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.cell.hazard": {
+  "en": "161dd2b288ef",
+  "tr": "81119c9d0fef",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.cell.pillar": {
+  "en": "cb455427de1a",
+  "tr": "c47ad35f0b4d",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.cell.wall": {
+  "en": "da4aa29d97e6",
+  "tr": "0767ff97106b",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.cell.warning": {
+  "en": "83cc5f2fb520",
+  "tr": "c17ed680d054",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.cell.water": {
+  "en": "c08d3a190d53",
+  "tr": "2b6522ef8c65",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.chip.attack": {
+  "en": "7778285c32f3",
+  "tr": "c07787c463ea",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.chip.cost": {
+  "en": "b98ab59bdc99",
+  "tr": "fae69b8d4eb2",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.chip.fallenMine": {
+  "en": "db3038b26296",
+  "tr": "d207d3bdfdaf",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.chip.fallenTheirs": {
+  "en": "c9d03bc8b6ac",
+  "tr": "cf6f5b77c07a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.chip.health": {
+  "en": "94ac14340990",
+  "tr": "42f6ec2bd478",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.chip.level": {
+  "en": "1e4d3a529886",
+  "tr": "96d42af76f4f",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.chip.melee": {
+  "en": "e00694b1e25c",
+  "tr": "c1ba64c91cd6",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.chip.potionsMine": {
+  "en": "1eba56bd209b",
+  "tr": "9ecd1b570fb4",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.chip.potionsTheirs": {
+  "en": "44630b4a1939",
+  "tr": "3fb5f68eb41a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.chip.ranged": {
+  "en": "a6a535b865db",
+  "tr": "e3ce4cc32467",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.army.body": {
+  "en": "95ca5c0b2300",
+  "tr": "8c6535524c28",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.army.head": {
+  "en": "77f5b3023b3c",
+  "tr": "ee3626d39b34",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.ground.body": {
+  "en": "e615b1595834",
+  "tr": "73012f644a34",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.ground.head": {
+  "en": "429e461ebe45",
+  "tr": "0214e57c0834",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.regular.body": {
+  "en": "93eb9e0213b7",
+  "tr": "66e634b01316",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.regular.head": {
+  "en": "c8936d792221",
+  "tr": "627202692670",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.stake.body": {
+  "en": "811c2d9647d3",
+  "tr": "a8e3f4694f04",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.stake.head": {
+  "en": "626ef4714240",
+  "tr": "e4dd301f4ad5",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.strike.body": {
+  "en": "41b33a66c830",
+  "tr": "fe3b3f5dc117",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.strike.head": {
+  "en": "f9ae58aa354c",
+  "tr": "2e8ad091dbc4",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.turn.body": {
+  "en": "4e569fde0162",
+  "tr": "6b33c84f2568",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.turn.head": {
+  "en": "16728ca12353",
+  "tr": "7c278ad5c790",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.win.body": {
+  "en": "eec05bcef86e",
+  "tr": "c6d380921359",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.guide.win.head": {
+  "en": "4973f4c599d5",
+  "tr": "0b6feca58135",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.hazard.fire": {
+  "en": "78baebfcb4b5",
+  "tr": "fc1b24dd3a24",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.hazard.poison": {
+  "en": "6de0b0c65644",
+  "tr": "614864add1a2",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.hazard.spikes": {
+  "en": "d6adaf3ef20e",
+  "tr": "f7c73833dc62",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.head.armies": {
+  "en": "bd57fb94c0ff",
+  "tr": "cfbd8529c703",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.head.army": {
+  "en": "9c564aaf24ce",
+  "tr": "48dd2a7230eb",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.head.crown": {
+  "en": "856d3c07b1a0",
+  "tr": "65eb5aba4c88",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.head.grid": {
+  "en": "27c43c5d63b4",
+  "tr": "9e6cebdd455e",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.head.guide": {
+  "en": "59bd43d611ff",
+  "tr": "a64be81f9d04",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.head.info": {
+  "en": "d7aa58dc410e",
+  "tr": "8850ed85e9a0",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.head.regulars": {
+  "en": "c8936d792221",
+  "tr": "627202692670",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.head.stake": {
+  "en": "019f60dfc114",
+  "tr": "16658aafc88a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.head.unit": {
+  "en": "e522f066d45f",
+  "tr": "004e1aa4840d",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.head.words": {
+  "en": "0f61860caa97",
+  "tr": "8d06ca679186",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.info.foes": {
+  "en": "8d760f2e6417",
+  "tr": "815d29abe138",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.info.health": {
+  "en": "719cb636411e",
+  "tr": "3f427e731de5",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.info.kingMine": {
+  "en": "89801118b18a",
+  "tr": "268db092f66f",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.info.kingTheirs": {
+  "en": "7ccb80b98a3f",
+  "tr": "957662755009",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.info.melee": {
+  "en": "4ddd387e4f5e",
+  "tr": "41bcd9311a0a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.info.mine": {
+  "en": "55ba338e85b6",
+  "tr": "c31606db942d",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.info.moves": {
+  "en": "a9d99cf7a438",
+  "tr": "6d9793c55abc",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.info.ranged": {
+  "en": "858dbd6b6d89",
+  "tr": "2efd69dff2c1",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.info.theirs": {
+  "en": "e41bbcfd72d9",
+  "tr": "ea6aa5d804d5",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.king.line": {
+  "en": "35c0fcf3f595",
+  "tr": "eddffba77949",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.king.name": {
+  "en": "2ba275638cb1",
+  "tr": "922ca4dd4ace",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.king.short": {
+  "en": "2ac64d468423",
+  "tr": "68a8e6f43ecb",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.layout.guardRooms": {
+  "en": "8dc49dda9275",
+  "tr": "8b41c8e4a557",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.layout.moatAndBridges": {
+  "en": "b84a93d3b903",
+  "tr": "dd9436c367b2",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.layout.openField": {
+  "en": "2f0c348c654a",
+  "tr": "f739ae2e2437",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.layout.pillaredHall": {
+  "en": "a4ddc2e74904",
+  "tr": "7fec007ad4ae",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.layout.ruinedKeep": {
+  "en": "b3563b47a1cb",
+  "tr": "6fcd38e064f6",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.armed": {
+  "en": "3164cb89533d",
+  "tr": "40592e16a7df",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.endMine": {
+  "en": "349fd9193e5d",
+  "tr": "0015a80aea9f",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.endTheirs": {
+  "en": "90d4438d99e2",
+  "tr": "61191adb62e9",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.forfeit": {
+  "en": "11344eaf45bc",
+  "tr": "66655723da04",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.game": {
+  "en": "4a2b3d99ecbf",
+  "tr": "23cd8f00f9f9",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.hazardKillMine": {
+  "en": "947a3426e047",
+  "tr": "dbbc40135eef",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.hazardKillTheirs": {
+  "en": "6401bb20e74d",
+  "tr": "3eaa8f90f1e1",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.hazardMine": {
+  "en": "d647d9a8d004",
+  "tr": "91215629f367",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.hazardTheirs": {
+  "en": "164d0c803957",
+  "tr": "b9597385eb87",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.killMine": {
+  "en": "4d5a142c62a0",
+  "tr": "a0e122c28c21",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.killTheirs": {
+  "en": "c2ce2a3c18a5",
+  "tr": "575271b7af0c",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.lost": {
+  "en": "20c300b301d1",
+  "tr": "b053041dbcb6",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.moveMine": {
+  "en": "b13472441a62",
+  "tr": "9ceb8a386015",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.moveTheirs": {
+  "en": "611d9801e2ae",
+  "tr": "e8b58779bb10",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.potionMine": {
+  "en": "c45a9adadcc2",
+  "tr": "7a6fce4f7272",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.potionTheirs": {
+  "en": "0962221ad8f3",
+  "tr": "a5c45ab72db6",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.shotMine": {
+  "en": "91607c3e842a",
+  "tr": "d495d04aca64",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.shotTheirs": {
+  "en": "07ab19bbddc1",
+  "tr": "d1e5f694911c",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.strikeMine": {
+  "en": "3abafc4df399",
+  "tr": "6636df0281fe",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.strikeTheirs": {
+  "en": "d869860891eb",
+  "tr": "e3a395604d8a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.turnMine": {
+  "en": "1cf5116634c6",
+  "tr": "9a4977605290",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.turnTheirs": {
+  "en": "73aa482fea02",
+  "tr": "b903d35f264c",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.void": {
+  "en": "d45b73352c4c",
+  "tr": "fc36d566e75f",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.warning": {
+  "en": "6f32ad384866",
+  "tr": "0845f50611a4",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.log.won": {
+  "en": "6ba06cf55c74",
+  "tr": "bde9eea87646",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.addUnit": {
+  "en": "825d2b3f75b1",
+  "tr": "282aca58d226",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.chooseKing": {
+  "en": "baca7237f2ac",
+  "tr": "8bc66b2e9fe8",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.chooseRegular": {
+  "en": "5aa4dbe98834",
+  "tr": "8b5af0edc65b",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.chooseStake": {
+  "en": "1d19bfd849bb",
+  "tr": "387457bec9d2",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.ending": {
+  "en": "d2b76104efd0",
+  "tr": "f6b0486ebe16",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.forFun": {
+  "en": "2483a742538c",
+  "tr": "28d5f70e0c1a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.noRegular": {
+  "en": "6fd231ece9a5",
+  "tr": "ede65407392b",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.online": {
+  "en": "c3e626fc8ea7",
+  "tr": "11ba0081e535",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.over": {
+  "en": "0c0126ea2a48",
+  "tr": "43d48e2a767f",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.piece": {
+  "en": "9b199ff43e33",
+  "tr": "1bf7b6a2445d",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.short": {
+  "en": "3d312c105edc",
+  "tr": "cd602217450c",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.start": {
+  "en": "7a6d9c7e558e",
+  "tr": "c06351c84b0f",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.theirTurn": {
+  "en": "a6c12c48a4fc",
+  "tr": "8057fc0bf69f",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.warnings": {
+  "en": "81c55760960a",
+  "tr": "fe58921e0817",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.next.yourTurn": {
+  "en": "ec2bc6f2a1fc",
+  "tr": "7f4f5b8e68ff",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.again": {
+  "en": "576766d387ec",
+  "tr": "0510a8dec0f2",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.armed": {
+  "en": "c979603b24b6",
+  "tr": "9524fec20e83",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.autofill": {
+  "en": "5b721feb0e2b",
+  "tr": "b303de45b7af",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.back": {
+  "en": "b52b36b7269f",
+  "tr": "45b72a263e11",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.cancel": {
+  "en": "77dfd2135f4d",
+  "tr": "2d1ef4c74330",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.changeArmy": {
+  "en": "926bc4817568",
+  "tr": "ce431d44172c",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.clear": {
+  "en": "719ea396ad92",
+  "tr": "d3a5364b61dd",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.drink": {
+  "en": "a8a482f74877",
+  "tr": "bd734d42fa09",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.endTurn": {
+  "en": "f891e77a6cfc",
+  "tr": "7878e4472ebf",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.forfeit": {
+  "en": "1affe1719af4",
+  "tr": "e060d655a39c",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.forfeitFun": {
+  "en": "79424e785ea2",
+  "tr": "a357fb0144f0",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.holdem": {
+  "en": "b6e3bedd3229",
+  "tr": "e8f71a312c39",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.iliac": {
+  "en": "4307140c305f",
+  "tr": "04857f9066c4",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.leave": {
+  "en": "c4175a4a0084",
+  "tr": "b77ea6f2d1cc",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.more": {
+  "en": "4bab2d8fe13f",
+  "tr": "89908b59c792",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.moveHere": {
+  "en": "d6f5b75c92e2",
+  "tr": "b2b4092cfea4",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.next": {
+  "en": "77f5b3023b3c",
+  "tr": "ee3626d39b34",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.otherRegular": {
+  "en": "cc771e2d769d",
+  "tr": "4a6aa3478312",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.play": {
+  "en": "cb0a407505f0",
+  "tr": "e272e1759137",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.remove": {
+  "en": "e963907dac5c",
+  "tr": "1dd5967ccd46",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.stand": {
+  "en": "d979686fcdb2",
+  "tr": "fab6d4678147",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.standCost": {
+  "en": "427bf46f25c0",
+  "tr": "723ec4c1eb31",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.start": {
+  "en": "4cbbaa27373e",
+  "tr": "a76991ae7904",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.startFun": {
+  "en": "42f4abad9c1b",
+  "tr": "8350c8674bd6",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.press.strike": {
+  "en": "d28564283789",
+  "tr": "aa0925dd22e7",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.cell": {
+  "en": "225374fd16d2",
+  "tr": "de4d8194ee46",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.empty": {
+  "en": "dbdc5206f630",
+  "tr": "86200138f048",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.ending": {
+  "en": "d2b76104efd0",
+  "tr": "f6b0486ebe16",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.full": {
+  "en": "70efa9a636b8",
+  "tr": "df39debcd00f",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.over": {
+  "en": "2df27a2009b2",
+  "tr": "70f319dbc5d0",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.piece": {
+  "en": "bb4dcf77b3b6",
+  "tr": "786ad808ad7e",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.points": {
+  "en": "30ee2ba72f30",
+  "tr": "f204d98050ec",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.potions": {
+  "en": "491bac415fb1",
+  "tr": "34c4cba6a455",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.rand": {
+  "en": "5186a1d18cc4",
+  "tr": "11e99a547017",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.range": {
+  "en": "4e33a685458a",
+  "tr": "1639ca0aeb8e",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.shape": {
+  "en": "0f9b746ba37f",
+  "tr": "2b87920e3ba2",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.target": {
+  "en": "bb97ae466d2d",
+  "tr": "5a88d44ec118",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.turn": {
+  "en": "9392bf635d33",
+  "tr": "3d79c4efdb91",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.refuse.units": {
+  "en": "8ab2894002e1",
+  "tr": "fdc985b9e84d",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.regular.fields": {
+  "en": "acaa2ccb7aa7",
+  "tr": "5f82c33e9772",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.regular.fieldsNever": {
+  "en": "8f322c754c28",
+  "tr": "98bfe0a1b6eb",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.regular.forFun": {
+  "en": "574c63e7ebc9",
+  "tr": "b5224c6d8487",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.regular.least": {
+  "en": "37b9fe6452ea",
+  "tr": "44e8cc8d6e8b",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.regular.nightLeft": {
+  "en": "f8ec71b33bfc",
+  "tr": "af2b45d4fb14",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.regular.online": {
+  "en": "98469001a63d",
+  "tr": "a7ba14507e0b",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.result.back": {
+  "en": "b97feb3ea5a6",
+  "tr": "7eb685bb678c",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.result.collect": {
+  "en": "d735bca4d284",
+  "tr": "f5db53903db5",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.result.fun": {
+  "en": "1c68a9db92a2",
+  "tr": "8cb85d931d58",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.result.keeps": {
+  "en": "9e09b15384bd",
+  "tr": "fef6ed0fee4a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.result.kingFalls": {
+  "en": "ccfde062757e",
+  "tr": "241c89fa979a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.result.lose": {
+  "en": "7931f84abb10",
+  "tr": "2b4f0b307417",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.result.loseForfeit": {
+  "en": "97be54c95a36",
+  "tr": "8b1b04edd735",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.result.nightSpent": {
+  "en": "3d6ff8b48109",
+  "tr": "9d8bfd860321",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.result.void": {
+  "en": "6f6077ad429f",
+  "tr": "20a37c2989d6",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.result.win": {
+  "en": "67094ce59c1d",
+  "tr": "fcce8935ec27",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.save.staked": {
+  "en": "48ffc3196988",
+  "tr": "a9dc7cb1d983",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.say.deal": {
+  "en": "e80a96d705c4",
+  "tr": "54e5909b7f0b",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.say.dealFun": {
+  "en": "6da3d26d0e58",
+  "tr": "8a087f645b5b",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.stake.night": {
+  "en": "8ceeaa8d4e4c",
+  "tr": "eb63be7f3822",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.stake.pick": {
+  "en": "43aa780579e6",
+  "tr": "ca093bf912e4",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.stake.purse": {
+  "en": "abfbb74b9c8b",
+  "tr": "84da57d4323a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.stake.what": {
+  "en": "7cacd41198c7",
+  "tr": "a29600165192",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.tier.amateur.blurb": {
+  "en": "63800ee1267e",
+  "tr": "1f3f6aa45341",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.tier.amateur.name": {
+  "en": "62d398303f2d",
+  "tr": "91ba9f95c7a1",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.tier.grandmaster.blurb": {
+  "en": "e90eb9224115",
+  "tr": "ea9ad82ceff2",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.tier.grandmaster.name": {
+  "en": "7fef960c0f73",
+  "tr": "eaea3f954ad7",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.tier.seasoned.blurb": {
+  "en": "701141e51214",
+  "tr": "7761031058cb",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.tier.seasoned.name": {
+  "en": "0f469733126f",
+  "tr": "52bbf70fd573",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.tier.veteran.blurb": {
+  "en": "7070d9e2dbdf",
+  "tr": "5ca04947b3f7",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.tier.veteran.name": {
+  "en": "4146a9880174",
+  "tr": "4146a9880174",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.title.army": {
+  "en": "93b30a8a4e38",
+  "tr": "1a4ac077b6b6",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.title.mine": {
+  "en": "1c8aeee84d28",
+  "tr": "44c4c7f1af7c",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.title.over": {
+  "en": "386da3682f21",
+  "tr": "50c7289d700f",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.title.setup": {
+  "en": "0a39bd57d669",
+  "tr": "0a39bd57d669",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.title.theirs": {
+  "en": "36ec9d986822",
+  "tr": "6742a44d85c6",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.turn.actions": {
+  "en": "42a140424742",
+  "tr": "5c3abe26500a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.unit.cost": {
+  "en": "2a87829214af",
+  "tr": "e4dc14be10ef",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.unit.melee": {
+  "en": "d07676ec4500",
+  "tr": "af85d2c29949",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.unit.ranged": {
+  "en": "67a8577d587d",
+  "tr": "fa7640bf6bc0",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.what": {
+  "en": "7c60529ec3c8",
+  "tr": "7091fa571ed7",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.action.meaning": {
+  "en": "ec325e94ddab",
+  "tr": "2dadabae83d3",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.action.term": {
+  "en": "d50783327deb",
+  "tr": "b071a77a9092",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.army.meaning": {
+  "en": "39457ec9b5db",
+  "tr": "106a04f503fa",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.army.term": {
+  "en": "8f03a34714e4",
+  "tr": "5e893faa9ab2",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.attack.meaning": {
+  "en": "dda01d4ea3f8",
+  "tr": "723c6a766e57",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.attack.term": {
+  "en": "1b81f28b5afb",
+  "tr": "67f95fe2f2a6",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.autofill.meaning": {
+  "en": "317c4d7a7b20",
+  "tr": "3c9eb868955a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.autofill.term": {
+  "en": "5b721feb0e2b",
+  "tr": "b303de45b7af",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.blunder.meaning": {
+  "en": "1488b60a5712",
+  "tr": "c28c39a5b5c7",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.blunder.term": {
+  "en": "cf281d8cd12b",
+  "tr": "141838ba7840",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.crown.meaning": {
+  "en": "46dae84dfbb5",
+  "tr": "d2fcaff494f4",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.crown.term": {
+  "en": "410494f2cf46",
+  "tr": "17879069fecd",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.fallen.meaning": {
+  "en": "c4aacfdb6659",
+  "tr": "00f1015eff71",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.fallen.term": {
+  "en": "2ff8da0a32d1",
+  "tr": "27c423badc3b",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.forFun.meaning": {
+  "en": "e3d4d0d4c6fe",
+  "tr": "58dc81b72536",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.forFun.term": {
+  "en": "95b56a5179e5",
+  "tr": "c9ec0549e18e",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.forfeit.meaning": {
+  "en": "d691333612a4",
+  "tr": "f928f3faf4f2",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.forfeit.term": {
+  "en": "79424e785ea2",
+  "tr": "4ff9809f333c",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.ground.meaning": {
+  "en": "0d8905187cd1",
+  "tr": "c52b599bcc86",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.ground.term": {
+  "en": "399b72d819fd",
+  "tr": "46f3888f20d0",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.hazard.meaning": {
+  "en": "318440679749",
+  "tr": "2b0cfb1a2772",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.hazard.term": {
+  "en": "59cdead1d737",
+  "tr": "d24373f6f95f",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.health.meaning": {
+  "en": "ec24a8569d27",
+  "tr": "315c8d7eb78d",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.health.term": {
+  "en": "3703cd216881",
+  "tr": "2af000ff56e1",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.king.meaning": {
+  "en": "773acd01321d",
+  "tr": "ede6f2b2b9e7",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.king.term": {
+  "en": "364d37be779d",
+  "tr": "50e366ebb485",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.layout.meaning": {
+  "en": "f6aa9f349348",
+  "tr": "5fd440596eae",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.layout.term": {
+  "en": "972ad8d8a503",
+  "tr": "880cda5730e6",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.leastStake.meaning": {
+  "en": "33b808723953",
+  "tr": "1771d981cb7b",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.leastStake.term": {
+  "en": "61d1b441bb44",
+  "tr": "3e8a7d463053",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.level.meaning": {
+  "en": "85b66a6eab27",
+  "tr": "cc3ea16bd836",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.level.term": {
+  "en": "7c7f5d049fad",
+  "tr": "ada9db57a4b1",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.melee.meaning": {
+  "en": "78ac2235c9fa",
+  "tr": "ec4ddda19b3c",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.melee.term": {
+  "en": "e00694b1e25c",
+  "tr": "c1ba64c91cd6",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.move.meaning": {
+  "en": "c3ed37f09f8f",
+  "tr": "002817c008ab",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.move.term": {
+  "en": "76cdb9507216",
+  "tr": "c0e0802b564b",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.points.meaning": {
+  "en": "5f5460f3caf7",
+  "tr": "7f00a254e100",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.points.term": {
+  "en": "4b2a6a314956",
+  "tr": "f4b8f63db5db",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.potion.meaning": {
+  "en": "eea3ee39ee5a",
+  "tr": "de748f74a200",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.potion.term": {
+  "en": "5f4632af950d",
+  "tr": "28e07c28e6d9",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.range.meaning": {
+  "en": "60a599e188bb",
+  "tr": "8e991a87c5d1",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.range.term": {
+  "en": "1638ba261597",
+  "tr": "44c41d045a6e",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.ranged.meaning": {
+  "en": "35c1150e6113",
+  "tr": "18598b42c4bf",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.ranged.term": {
+  "en": "a6a535b865db",
+  "tr": "e3ce4cc32467",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.reach.meaning": {
+  "en": "6e919f44c337",
+  "tr": "b5fd511d7497",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.reach.term": {
+  "en": "f38263319f93",
+  "tr": "26a652b69d4d",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.regular.meaning": {
+  "en": "08b546c5c3c6",
+  "tr": "6a64f1857894",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.regular.term": {
+  "en": "8d4e4ef3ea52",
+  "tr": "0a6adce1ef7a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.round.meaning": {
+  "en": "18d78bae1255",
+  "tr": "d50e69356454",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.round.term": {
+  "en": "ec7b59833520",
+  "tr": "8ed144f06812",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.stake.meaning": {
+  "en": "3356a077b877",
+  "tr": "13d79e7476f0",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.stake.term": {
+  "en": "78d7103a319e",
+  "tr": "e4b01ac47073",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.tier.meaning": {
+  "en": "39d1f457fb69",
+  "tr": "0616b91ce59d",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.tier.term": {
+  "en": "5bd44ebe63cd",
+  "tr": "db4410f7ef06",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.warning.meaning": {
+  "en": "87bf792e99f9",
+  "tr": "c896c6bca8ae",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.words.warning.term": {
+  "en": "e9c45563358e",
+  "tr": "b7e8cc60c8ba",
+  "by": "claude-in-session"
+ },
  "cards.table.fold.hide": {
   "en": "c9cbe37a6f28",
   "tr": "86a779268b71",
@@ -4282,6 +5537,21 @@
  "credits.immersiveFootsteps.what": {
   "en": "2946767d73d9",
   "tr": "238a9d33439b",
+  "by": "claude-in-session"
+ },
+ "credits.kingsGambit.terms": {
+  "en": "a1ed77a37ba2",
+  "tr": "70ad86797c5c",
+  "by": "claude-in-session"
+ },
+ "credits.kingsGambit.title": {
+  "en": "cac39285f110",
+  "tr": "cac39285f110",
+  "by": "claude-in-session"
+ },
+ "credits.kingsGambit.what": {
+  "en": "633ac3158be2",
+  "tr": "4e61c8ebcc86",
   "by": "claude-in-session"
  },
  "credits.l10n.bundled": {
@@ -5212,6 +6482,11 @@
  "features.mod.immersiveTravel.effect": {
   "en": "c5b8e0ed8e1b",
   "tr": "42e14d40767e",
+  "by": "claude-in-session"
+ },
+ "features.mod.kingsGambit.note": {
+  "en": "8fe15e18e3a0",
+  "tr": "3be173865f62",
   "by": "claude-in-session"
  },
  "features.mod.meanerMonsters.effect": {
@@ -13712,6 +14987,26 @@
  "trade.counter.title.sellMagic": {
   "en": "2b1ee8ca6b70",
   "tr": "bc808e10697f",
+  "by": "claude-in-session"
+ },
+ "tutorials.kingsGambit.body1": {
+  "en": "3732ec56399c",
+  "tr": "b6858718b829",
+  "by": "claude-in-session"
+ },
+ "tutorials.kingsGambit.body2": {
+  "en": "9e86c7d7ee0d",
+  "tr": "0a2b002fc126",
+  "by": "claude-in-session"
+ },
+ "tutorials.kingsGambit.title": {
+  "en": "0a39bd57d669",
+  "tr": "0a39bd57d669",
+  "by": "claude-in-session"
+ },
+ "tutorials.kingsGambit.trigger": {
+  "en": "c81b04ec0857",
+  "tr": "d0281d094056",
   "by": "claude-in-session"
  }
 }

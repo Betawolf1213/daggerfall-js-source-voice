@@ -1065,7 +1065,8 @@ import { etherPlaceRects } from '../world/etherWatersBake.js';   // ETHER-DEEP: 
 import { breathStep, setWaterBreathingRule } from '../systems/breath.js';   // DW-D: the dungeon's breath law, on the open sea; ApplyArgonianInfiniteBreath
 import { CLASSIC_UPDATE_INTERVAL } from '../characters/weaponStates.js';   // DW-D: PlayerEntity's classic cadence, the dungeon's import
 import { RACES } from '../systems/races.js';   // DW-D: ArgonianInfiniteBreath
-import { localizedStrings, localizedText, getLocalizedLocationName, getLocalizedRegionName, getLocalizedFactionName } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: and the names shown
+import { localizedStrings, localizedText, getLocalizedLocationName, getLocalizedRegionName, getLocalizedFactionName } from '../systems/textManager.js';
+import { stakedSaveRefusal } from '../ui/gambitTableWords.js';   // KG3: the save's refusal while gold is staked on The King's Gambit   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: and the names shown
 import { hallStepsFor, harbourPortFor, coastalAt } from '../net/fortLaw.js';   // SEAT2b part two: a seat's crafting halls, its members' Harbour, a coast
 import { isWaterPixel } from '../ui/overworldModel.js';   // SEAT2b part two: a coast is the sea beside the town (the port's one water law)
 import { createSiegeNpcs } from './siegeNpcs.js';   // SEAT2b part two (c): the Barracks' guards and a revolt's rising, drawn
@@ -16244,6 +16245,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (modes?.cardTableLive?.()) { if (!quiet) townTalk.say('You cannot save with chips on the table.'); return false; }
     // CARDS10: nor with a card staked on a game of Iliac Hand - the card it may cost is in no save
     if (modes?.iliacStaked?.()) { if (!quiet) townTalk.say('You cannot save with a card staked on the table.'); return false; }
+    if (modes?.gambitStaked?.()) { if (!quiet) townTalk.say(stakedSaveRefusal()); return false; }   // KG3: gold staked on The King's Gambit (Kings-Gambit.md 5.7)
     const pf = walkMode && playerSpawned ? player.pos : cam.pos;
     const wc = state.worldCoords(pf);
     // IS1 (AUDIT 26 F221): the inside-building half (SerializablePlayer
@@ -18259,7 +18261,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     quickSave: worldQuickSave,
     quickLoad: worldQuickLoad,
     relock: () => requestLook(canvas),   // MAC1: the pointer comes back with the resume gesture (ui/pauseDoor.js)
-    savingPrevented: () => !!naval?.saveRefused?.() || !!modes?.cardTableLive?.() || !!modes?.iliacStaked?.(),   // AUDIT NAV1 (B14): the pause's Save says why, as worldQuickSave refuses it; AUDIT CARDS-2 H1: and chips on a card table
+    savingPrevented: () => !!naval?.saveRefused?.() || !!modes?.cardTableLive?.() || !!modes?.gambitStaked?.() || !!modes?.iliacStaked?.(),   // AUDIT NAV1 (B14): the pause's Save says why, as worldQuickSave refuses it; AUDIT CARDS-2 H1: and chips on a card table
     // ONLINE-LOAD1: this host's own live-session flag (`online`,
     // not `onlineOn` - see worldQuickLoad's own header for why),
     // for the enhanced Load pane (enhancedMenu.js paneLoad) to

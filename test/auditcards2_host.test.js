@@ -23,6 +23,9 @@ import { RemoteCardTable } from '../src/systems/cardRemoteTable.js';
 import { isCardPack } from '../src/systems/iliacItems.js';
 import { cardPackPrice, buyCardPack } from '../src/systems/cardSources.js';   // CARDS9: the house's packs at the table
 import { openIliacTableGame } from '../src/scenes/iliacTableGame.js';   // CARDS10: the other game at the table
+import { openGambitTableGame, gambitTableOn } from '../src/scenes/gambitTableGame.js';   // KG3: the third game at the table
+import { regularLook } from '../src/world/cardRegulars.js';
+import { seatTopByte } from '../src/player/seatPose.js';
 import { iliacGrade } from '../src/systems/iliacPatrons.js';
 import { skillValue, SKILLS } from '../src/systems/skills.js';
 import { liveStat } from '../src/systems/statMods.js';
@@ -69,6 +72,8 @@ function host({ gold = 5000, online = false, realmAct = null, seats = 4, peers =
     RemoteCardTable, mode: 'interior', regularsToStand, regularBark, BARK_MS, showdownWinners: hudm.showdownWinners, HOLDEM_REFUSALS: hudm.HOLDEM_REFUSALS,
     // PIN MOVED (CARDS9/10): the block prices a pack at the table and opens Iliac Hand on the seat - their names, real
     cardPackPrice, buyCardPack, openIliacTableGame: (o) => openIliacTableGame({ ...o, doc }), iliacGrade, skillValue, SKILLS, liveStat,
+    // KG3: the block opens The King's Gambit on the seat too - its names, real (its cloth's listeners want a window)
+    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false,
   };
   const state = { interiorCtx: { tables: [{ aabb: {} }], collider: null }, interiorBuilding: building };
   const api = new Function('S', ...Object.keys(scope), `let interiorCtx = S.interiorCtx, interiorBuilding = S.interiorBuilding;\n${BLOCK}\n
@@ -143,7 +148,7 @@ test('AUDIT CARDS-2 H1: a load\'s road pays nothing - the chips belonged to the 
   const W = read('src/scenes/world.js');
   assert.match(body(W, 'worldQuickSave'), /if \(modes\?\.cardTableLive\?\.\(\)\) \{ if \(!quiet\) townTalk\.say\('You cannot save with chips on the table\.'\); return false; \}/);
   // PIN MOVED (CARDS10): the pause's Save also waits on a card staked at Iliac Hand
-  assert.match(W, /savingPrevented: \(\) => !!naval\?\.saveRefused\?\.\(\) \|\| !!modes\?\.cardTableLive\?\.\(\) \|\| !!modes\?\.iliacStaked\?\.\(\),/);
+  assert.match(W, /savingPrevented: \(\) => !!naval\?\.saveRefused\?\.\(\) \|\| !!modes\?\.cardTableLive\?\.\(\) \|\| !!modes\?\.gambitStaked\?\.\(\) \|\| !!modes\?\.iliacStaked\?\.\(\),/);   // PIN MOVED (KG3): and gold staked on The King's Gambit
 });
 
 test('AUDIT CARDS-2 M2: a purse that shrank since the seat is asked again - never emptied by a press it cannot pay', () => {

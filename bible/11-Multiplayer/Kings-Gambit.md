@@ -5,7 +5,8 @@ permission") - section 10 answers section 9 and decides every point the record h
 section 11); KG2 SHIPPED (the innkeeper's play, section 12); AUDIT KG (section 13: the law, the play and this record
 read cold, every finding fixed) - and section 14 binds the table's UI, KG3's and KG4's, to Enhanced Plus, the house's
 own coat and plain words. KG-SET SHIPPED (section 15: the nine in the Iliac set, and the set's words in the player's
-language).** The owner handed over a
+language). KG3 SHIPPED (section 16: the evening offline - the first playable game, at a tavern's card table against its
+regulars).** The owner handed over a
 Daggerfall Unity mod, `thekingsgambit.dfmod`, and asked how to build it as a new minigame on the Iliac Bay card system -
 the tavern card table `Tavern-Cards.md` built: the table and its seat, the deck of the Iliac Bay, Iliac Hand's painted
 cards, the regulars, the panel, the relay's tables. Sections 1-2 read the mod off its assembly; sections 3-7 lay it on
@@ -507,7 +508,7 @@ Each ships alone and is verifiable without the next.
 | **KG1** SHIPPED (section 11) | THE LAW: `net/kingsGambit.js` - the board and its build, hazards, units and roster, the deployment, the turn, a blow, potions, the end (a seat's view: none to make, section 11); pins deepEqual against section 2's tables, whole games on a fixed source, mutants. |
 | **KG2** SHIPPED (section 12) | THE INNKEEPER'S PLAY: `systems/gambitPatrons.js` - AiAction, TryEscape, AiBlunder, the tiers over a regular's seed, the regular's army by the law's AutoFill (AUDIT KG C4). MEASURE: each tier against an Auto-filled 300 over seeded games. |
 | **KG-SET** SHIPPED (section 15) | The nine creatures painted into the set (section 10.3) - cards, emblems, Iliac Hand's numbers and text, FOE_CARDS rows (so their foes drop them, CARDS9), Iliac Hand's balance measured again; a relay version (the catalog is relay law). Before KG3, whose grid shows every unit's card. |
-| **KG3** | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result) to section 14 - in the card tables' kit (`ui/cardPanelKit.js`, CARDS-PLUS) and the roles, the face, the type, the finger, the keys, the four plain-words blocks, the phone - with its pins (14.9), the stake and the regulars' night's purse; the panel's words through the text core, `t(key, en)`, each new key with its drafts in all 25 languages (L10N4's rule - the law keeps keys, section 11); the board a flat mat with the pieces as their cards and the press as a cell, staged under a finger (14.3; AUDIT KG C13: the press had been KG4's alone, and the game cannot be played without it) - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
+| **KG3** SHIPPED (section 16) | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result) to section 14 - in the card tables' kit (`ui/cardPanelKit.js`, CARDS-PLUS) and the roles, the face, the type, the finger, the keys, the four plain-words blocks, the phone - with its pins (14.9), the stake and the regulars' night's purse; the panel's words through the text core, `t(key, en)`, each new key with its drafts in the thirteen whole languages (L10N6's rule, the twelve drafting owing them - section 16.5; the law keeps keys, section 11); the board a flat mat with the pieces as their cards and the press as a cell, staged under a finger (14.3; AUDIT KG C13: the press had been KG4's alone, and the game cannot be played without it) - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
 | **KG4** | THE BOARD ON THE CLOTH: walls, pillars and water built; the hazards' drawn effects; the pieces' motion; the press on the built board (14.3); the cloth's marks in the house's coat (14.8); the lab (`cards.html` with a King's Gambit table) and its probes - the panel's at a desktop's and a phone's size (`tools/cardPanelsProbe.mjs`, the three panels' one probe - 14.9); the frame cost on the phone probe, as CARDS3c measured it. |
 | **KG5** | ONLINE: the relay's table (a relay version), the wire, the client's mirror, spectators, the clock; friendly. |
 | **KG6** | Gold tables online (the realm's escrow) and a season board with its title (section 10.7). |
@@ -643,7 +644,8 @@ point the record had left open. A number marked MEASURE is the first guess its s
 - THE REGULAR'S ARMY: Auto-filled to the tier's points at each deal, from the table's own source - a fresh army every
   game, as the mod's.
 - THE REGULAR'S VOICE: "Care for a game of The King's Gambit?" over their head as the setup opens (CARDS4b's bark
-  layer), and a word at a win and at a loss. MEASURE (KG3): the lines.
+  layer), and a word at a win and at a loss. MEASURE (KG3): the lines. MEASURED (KG3, section 16.2): the invitation the
+  mod's own line; at the end one of three lines a side, by a roll.
 
 ### 10.6 Permission (Q6)
 
@@ -699,7 +701,9 @@ point the record had left open. A number marked MEASURE is the first guess its s
   pin refuses "Daggerfall", so the page names no crown); the 'tavern-cards' page names the third game (section 14.5;
   AUDIT KG D21, C16).
 - THE FEATURES ROW: "The King's Gambit" on the Gameplay tab, on by default (MO1, "All mods should be enabled by
-  default"); switched off, no table offers it. The bundle ships no settings file, so the row is declared for the mod by
+  default"); switched off, no table offers it. FOUND AT KG3 (section 16.5): no Gameplay tab holds a Features row - it
+  stands on the World tab beside Windmills, titled as every mod's row is, "The King’s Gambit by Unnamed
+  (thekingsgambit.dfmod)". The bundle ships no settings file, so the row is declared for the mod by
   id, as Windmills' is (WM3; AUDIT KG C18).
 - THE CREDIT: `ui/credits.js`'s mods - The King's Gambit, its author as the owner names them, and until then the credits'
   own unnamed form (`credits.author.unnamed`: CR1 asks every row for an author - AUDIT KG C17), "permission granted".
@@ -1035,14 +1039,15 @@ The four blocks of PLAIN-UI a (`10-UI/Plain-Words.md`), on every stage, in this 
 - THE NEXT STEP, one live sentence by the reader's state - no regular free; none chosen; a regular playing for fun
   tonight; a purse short of the least stake ("{name} will not sit down for less than {stake} gold. Come back with more,
   or choose another regular."); no stake chosen; choose your king, then your army; add a unit or Auto-fill; start the
-  battle; your turn and its actions left; a piece chosen (press a lit cell to move, a ringed foe to strike, or Drink);
+  battle; your turn and its actions left; a piece chosen (press a lit cell to move, a ringed foe to strike, or give the
+  piece a potion);
   the regular's turn; your turn is ending; the round before the warnings turn. A refusal takes the line until the next
   press (CARDS-SAID).
 - HOW THE KING'S GAMBIT WORKS (law 4): seven short paragraphs - choose a regular; put down your stake; build your army;
   take your turn; strike; mind the ground; win - every number read from the law. OPEN until the player (not the
   character) has finished one game; once they fold or open it, their choice holds (`ui/seatTab.js` boardFold's press,
   never the `toggle` event - AUDIT PLAIN-UI C1).
-- WORDS ON THIS TABLE (law 2), folded: Regular, Tier, Blunder, Least stake, Stake, For fun, Crown, King, Army, Points,
+- WHAT THE WORDS MEAN (law 2; "Words on this table" until KG3's English pass, 16.5), folded: Regular, Tier, Blunder, Least stake, Stake, For fun, Crown, King, Army, Points,
   Level, Health, Attack, Melee, Ranged, Auto-fill, Turn and action, Move, Potion, Round, Fire, Spikes and Poison,
   Warning, Wall, Pillar and Water, Layout, Reach, Range and Target, Fallen, Forfeit - each in brass over its meaning.
 - THE NUMBERS ARE THE LAW'S (law 3): every figure in a line, the guide or the words is interpolated from its export -
@@ -1059,14 +1064,15 @@ The four blocks of PLAIN-UI a (`10-UI/Plain-Words.md`), on every stage, in this 
 
 - CHOOSING A REGULAR: a row a regular in a free chair (a list row, 44 px, `aria-pressed`, the chosen one marked in
   brass), in tier order, then by chair: the name; the tier as a chip with a four-step mark (a picture before a word,
-  MENU-ORDER law 1); "Fields {points} points - {potions} potions - blunders {n}% of the time" ("never blunders" at 0);
+  MENU-ORDER law 1); "An army of {points} points - {potions} potions - blunders {n}% of the time" ("never blunders" at
+  0; "Fields {points} points" until 16.5);
   "Sits down for {stake} gold or more"; the tier's blurb in the dim; what is left of the regular's night ("Can still pay
   {left} gold tonight", or "Plays for fun tonight"); online, "Online, the regulars play for fun".
 - THE STAKE AND THE KING: three tiles, "x{m} - {m x stake} gold", the chosen in brass; a pick past the purse or past the
   regular's night says why when pressed; under them, what the stake does before it is put down: "Win: you take back
   {pay} gold. Lose, forfeit or stand up mid-game: {name} keeps your {stake}." Then the four crowns, each the painted King
-  of its crown over its name; one line, "Your king's face. Every king plays alike: level {level}, {hp} health, attack
-  {attack}."
+  of its crown over its name; one line, "The crown changes only your king's face: every king plays alike - level {level},
+  {hp} health, attack {attack}." (16.5)
 - THE ARMY: the header's two chips, "Points left {left} of {budget}" and "Units {n} of {max}"; THE UNIT - the last unit
   pressed, shown large (the binder's law: "a tile's own words are too small to read") beside the grid on a desktop and
   above it on a phone: its picture, name, "Level {l} - Health {hp} - Attack {atk} - Melee" or "Ranged ({range} cells)",
@@ -1079,7 +1085,7 @@ The four blocks of PLAIN-UI a (`10-UI/Plain-Words.md`), on every stage, in this 
 - THE TURN: the header "ROUND {r} - YOUR TURN" or "{NAME}'S TURN"; chips with pips AND words ("{n} of {actions} actions
   left"), both sides' potions, both sides' fallen; the next-step line; the information box; ARMIES (folded) - both
   sides' pieces as rows with a health meter banded like the vitals and "{hp} of {max}"; the log; the guide and the
-  words, folded. Presses: Drink a potion on {piece} (+{healed}) - refused in words ("{piece} is at full health.", "You
+  words, folded. Presses: Give {piece} a potion (+{healed}) (16.5) - refused in words ("{piece} is at full health.", "You
   have no potions left."); End turn (primary); Forfeit (warn, two presses); Stand up (warn while a game is under way).
 - THE INFORMATION BOX: a piece - its picture, its name and side, level, attack, melee or ranged and its reach, a health
   meter and "{hp} of {max}", how far it moves, whom it can strike now (`foesInRange`), its cell's hazard; a king: "If
@@ -1110,8 +1116,10 @@ The four blocks of PLAIN-UI a (`10-UI/Plain-Words.md`), on every stage, in this 
 - Every word a player reads goes through `t(key, en, args)` under `cards.kingsGambit.*`, read when it is shown, never at
   a module's load (`tools/l10n/ROUTE-BRIEF.md`); one sentence one pattern, plurals by ICU, never fragments glued. The new
   modules hold no hard-coded prose (the ratchet holds a new file at 0) and the files they touch hold their counts:
-  `ui/cardTableHud.js` (84), `ui/iliacTableHud.js` (69), `world/cardRegulars.js` (10), `systems/modSettings.js` (243),
-  `systems/tutorialCatalogue.js` (219). Every key ships its drafts in all 25 languages (L10N4's rule).
+  `ui/cardTableHud.js` (80 at KG3), `ui/iliacTableHud.js` (63), `world/cardRegulars.js` (10), `systems/modSettings.js`
+  (243), `systems/tutorialCatalogue.js` (219), and at KG3 `ui/credits.js` (86), `systems/features.js` (135),
+  `scenes/worldModes.js` (84) and `scenes/world.js` (350). Every key ships its drafts in the thirteen whole languages
+  (L10N6's rule; the twelve drafting owe them - 16.5).
 - NAMES: a unit's name through DFU's own lookup (`systems/textManager.js` getLocalizedEnemyName), never the law's
   canonical English; a king as "{name}, King of {crown}" off the Bay deck's crowns (`render/cardFaces.js` SUIT_CROWNS) -
   never the law's KG_KINGS names (Knight, Barbarian: the mod's classes, the law's numbers only); the mod's title, the
@@ -1237,3 +1245,171 @@ The owner: **"Dont come back until this is completed in full"** - the slice afte
   `scenes/dungeonContext.js` untouched; the cards reach a table through the catalog alone.
 - **Not yet:** the table (KG3) and everything after.
 - **Ledger:** section A row THE KING'S GAMBIT - THE NINE IN THE SET.
+
+## 16. KG3 (2026-10-13): the evening offline - the first playable King's Gambit
+
+The owner: **"Dont come back until this is completed in full"**; asked how one starts the game, the answer is this
+slice. A player sits down at a tavern's card table (any chair: the seat's own press, `Tavern-Cards.md` section 12), and
+the table's panel - Hold'em's buy-in, or Iliac Hand's setup - offers **Play The King's Gambit** beside its other game
+while the game's Features switch is on (Settings, the World tab: "The King’s Gambit by Unnamed (thekingsgambit.dfmod)",
+on by default). The press opens the third panel on the same seat: choose a regular, put down a stake, choose a king,
+build an army, play the battle on the board laid across the cloth.
+
+- THE SESSION (`systems/gambitTableSession.js`): the law's game (KG1) dealt against a regular by the innkeeper's play
+  (KG2, `dealRegular`) and run on the mod's beats - 0.9 s to a turn's end, 1.2 s before each of the regular's actions,
+  1.3 s before the result (`GAMBIT_TURN_END_MS`, `GAMBIT_REGULAR_PAUSE_MS`, `GAMBIT_RESULT_MS`). A command the law refuses
+  changes nothing and answers the law's word; a source that breaks is no contest - no game, no gold. The stake's numbers
+  live where its law does (14.4): the picks `GAMBIT_STAKE_MULTS` (the tier's least times 1, 2 and 5), a win paying
+  `GAMBIT_WIN_PAYS` (twice the stake), and A REGULAR'S NIGHT - the book on the character's save (`gambitPurses`), net by
+  table, game day and name, `GAMBIT_NIGHT_MULT` (15) least stakes a night, never below nothing, a new day afresh, 24
+  tables of 6 names, the oldest day out first (a tie keeping the table just booked), restored only well formed. The
+  player's king is kept on the character too (`gambitCrown`, one of `GAMBIT_CROWNS` - the Bay deck's four in its suit
+  order - and Daggerfall the first time). The log keeps 12 lines.
+- THE HOST'S HALF (`scenes/gambitTableGame.js`): THE SETUP - the free chairs' regulars in tier order, then by chair,
+  none chosen for the player; a regular chosen hears the mod's own invitation over their head; the stake picked only as
+  the purse and the night allow, and read again at the deal; the king chosen and kept. THE ARMY - a unit pressed joins,
+  or is refused in the law's own word (a thirteenth unit, or points the army no longer has) and shown large either way;
+  Remove, Clear, Auto-fill to the points. THE DEAL - the stake leaves the purse and the table holds it; the regular's
+  king their seed's crown, the next round the deck when it is the player's; the board's cursor on the player's king.
+  THE BATTLE - a press on the cloth read through the frame's own lens as a cell (14.3): at once under a fine pointer,
+  snapped within `GAMBIT_SNAP_PX` (22 px) and staged under a finger (Move here, or Strike {name}, with Cancel); the felt
+  round the board is taken and presses nothing; another button cancels. The arrows and the d-pad walk the cursor and
+  fill the information box, Enter, Space and the pad's A press its cell, Escape and the pad's B cancel - and with nothing
+  to cancel Escape is the Stand up press. A PRESS THAT COSTS GOLD ASKS TWICE: Forfeit, and Stand up while a stake is
+  down, arm on the first press for `GAMBIT_ARM_MS` (4 s) and act on the second. THE GOLD is settled the moment the game
+  is decided - the pot paid, the regular's night booked, the guide folded once the player has finished a game - and the
+  result shown after its beat. Every road off the seat forfeits a game under way (the stake the regular's); a load's
+  road settles nothing (the save predates the deal); the close frees every mesh and both textures, once.
+- THE PANEL (`ui/gambitTableHud.js`, `ui/gambitTableWords.js`) - section 14, built: the chrome of the card panels
+  (`cardPanelChromeCss('.dfgambit')`) and the kit's roles for every surface beside the other two panels' (14.1); the
+  setup, the army, the turn and the result (14.5); the four plain-words blocks, every number its export's (14.4); every
+  refusal word of the law said; units named through Daggerfall Unity's own name list, kings off the Bay deck (14.6); the
+  phone's sheet and strip (14.7); the tutorial's page from inside its painter.
+- THE CLOTH (`world/gambitCloth.js`, `render/gambitTableDraw.js`): the board laid for the host's chair - along the
+  table from an end, across it from a side - and drawn flat on the felt: the mat painted on a canvas from the law's own
+  board and the house's marks over it (14.8: a side told by its ring's shape, the chosen in brass, the reach a wash, the
+  range an outline, a target the blood ring), each piece its card's picture lying on its cell, its top away from its
+  owner. KG4 raises the board.
+- THE MOD AS IT SHIPS (10.6): `vendor/kings-gambit/` - the manifest verbatim, the assembly byte for byte, its IL, a
+  README with its provenance and the owner's word; the registry's row (`01-Overview/Mod-Registry.md`, permission
+  granted, RECORD OPEN for the author's own words); the credit (`ui/credits.js`, the credits' own unnamed form); the
+  Features row; the tutorial's page; the 'tavern-cards' page naming the third game.
+
+### 16.1 THE LOG, tabled (10.7, 14.5)
+
+A line an event of the law, the player in the second person and the regular by name; a king inside a sentence is "King
+{name}" (16.5). Every line, with its names in, fits one line of the panel (`kg3_panel.test.js` holds each under 64
+characters).
+
+| Event | Line |
+|---|---|
+| game | The board is laid: {layout}. |
+| move | Your {piece} moves. / {name}'s {piece} moves. |
+| a blow | Your {piece} strikes {target} for {damage}. / {name}'s {piece} strikes your {target} for {damage}. |
+| a shot | Your {piece} shoots {target} for {damage}. / {name}'s {piece} shoots your {target} for {damage}. |
+| a kill | ... for {damage} - it falls. |
+| potion | Your {piece} drinks a potion: +{healed}. / {name}'s {piece} drinks a potion: +{healed}. |
+| hazard | Fire bites your {piece} for {damage}. (Spikes, Poison; "takes ... - it falls." when it kills) |
+| armed | The warnings turn: {n} hazards are live now. |
+| warning | A warning: fire is coming to {n} cells. (spikes are, poison is) |
+| turn | Round {round}: your turn. / Round {round}: {name}'s turn. |
+| end | You end your turn. / {name} ends the turn. |
+| forfeit | You forfeit the game. |
+| decided | You win. / {name} wins. / The game cannot go on: no contest. |
+| over, result | none - the decision's own line stands |
+
+### 16.2 THE REGULAR'S VOICE (10.5's MEASURE, answered)
+
+The invitation is the mod's own line - "Care for a game of The King's Gambit?" - over the regular's head as the player
+chooses them; at the end one of three lines by a roll, the regular's win ("A fine game - and mine.", "Better luck next
+time.", "The board is mine tonight.") or loss ("Well played.", "You have my measure tonight.", "Again, and I will have
+you."), each held `BARK_MS` (CARDS4b's layer, the regulars' own). The regulars stand in the chairs the setup lists them
+by (`cardRegularsNow`'s branch), a player sat in a regular's chair keeping it (AUDIT CARDS-3 E-N3's law).
+
+### 16.3 THE FOUR HOSTS (5.9)
+
+- `scenes/worldModes.js` (interiors) - WIRED: the third slot beside the other two (each game opens by closing the
+  others, and every road off the seat closes all three - `standFromCardTable`'s), the press on both panels, the cloth's
+  pointer and keys taken at the capture phase while a battle is on (a press on the panel or inside its box the panel's;
+  Escape the game's even from the panel), its regulars, its frame and its draw in the room's pass after the decor, and
+  `gambitStaked`.
+- `scenes/world.js` - WIRED: both save doors refuse while a stake is down, in words (`worldQuickSave`, the pause's
+  `savingPrevented`); it mounts the interiors' modes through `createWorldModes`.
+- `scenes/exterior.js` - mounts the same modes; no seam of its own (its taverns' tables are the interiors').
+- `scenes/dungeonContext.js` - FLAGGED: it stands no tavern, so no card table and no King's Gambit.
+
+### 16.4 THE COAT, AUDITED BY ITS OWN SWEEP
+
+CARDS-PLUS's law - the words a panel writes are its own - run over the third panel (`kg3_panel.test.js`, every stage
+painted, every sheet the game injects read as rules) found nothing borrowed; reading the dress and the sheet against
+what the painter writes found five things wrong, each fixed at its root:
+
+- THE GRIMOIRE DRESS'S LIT PIP named `.on` where the painter writes `dfgambit-lit` - a dead rule: an action left and a
+  tier's step were never re-said in gold leaf on their wooden chip. It names the painter's word; the pin reads every
+  class the sheet, the roles and the dress's own block name against what the painter writes.
+- ITS INK ON THE WOOD: the rule that inks a name, a term and the result's head reached a unit's name inside its
+  picture's well, which is a wooden surface - dark on dark. Scoped to the page (`IN_INK`, `NOT_WOOD`).
+- ITS OWN RING on a chosen tile and row overrode the kit's own marks - a tile's gold leaf, a list row's wash (NO-BAR,
+  "a row chosen is not marked with a bar"). Gone: the kit's marks stand, as on the other two panels.
+- THE RESULT'S TONE: the head's win and loss were both the dress's red ink; the win is the green that is yours and the
+  loss the pack's red. And the line under the panel took 'won' and 'lost', words the chrome never styles, over a next
+  step: the line's tone is the chrome's three (a refusal, your turn, theirs) and the verdict the box's own.
+- ONE HOME FOR THE BOUND: the landscape phone's column restated the chrome's height bound; the 70% sheet and the
+  quarter strip are the portrait phone's, and landscape takes the chrome's own.
+
+The classic cut grew with the third panel's own roles (its list rows, its meter's fill, its sections' heads): CARDS-PLUS's
+weigh-in is "under half the kit's rules" now (it was a third). The cut, the face and the WARN role's pin take the third
+panel; the card panels' sheets and the chrome joined FONT3's floor (`test/font3_readable.test.js`).
+
+### 16.5 FOUND AT KG3
+
+- A KING IN A SENTENCE. The whole title glued into a sentence read "Your Gothryd, King of Daggerfall moves." and
+  "Gortwog, King of Orsinium falls." - the closing comma missing, and a fragment glued (ROUTE-BRIEF: one sentence, one
+  pattern). A king inside a sentence is "King {name}" now (`kingShort`) - the log's, a refusal's, a press's; the whole
+  title stands in a list or a label (the crowns, the army's line, the information box's head), and the fall is its own
+  sentence, "{name}, King of {crown}, falls.".
+- THE ENGLISH, READ AGAIN BEFORE IT WAS DRAFTED: every count said with its noun goes through the plural ("Fields {points}
+  points" became "An army of {points} points", and a unit's cost in a refusal - a Slavic language says 2, 3 and 4 in
+  another form than 5); "spikes is coming to two cells" agrees in each branch and counts the event's own cells; the
+  warnings that turn "burn now" were spikes and poison too - "are live now"; "You drink a potion on your Rat" is "Your
+  Rat drinks a potion", the press "Give {piece} a potion"; "Your king's face." says what it means - "The crown changes
+  only your king's face"; the glossary's head is "What the words mean".
+- THE FEATURES ROW (10.7) stands on the World tab beside Windmills - no "Gameplay tab" holds a Features row - and is
+  titled as every mod's row is, the creator in the title (AUDIT SURV E): the bundle names none, so the credits' own
+  unnamed form, "The King’s Gambit by Unnamed (thekingsgambit.dfmod)", one source with the About pane.
+- A MOD'S NAME IN THE DRAFTS. The house's drafting rules (`tools/l10n/TRANSLATE-BRIEF.md` rule 6) keep a mod's name in
+  every language: "The King's Gambit" stays as it is, as Iliac Hand and Hold'em do on their own panels. The credit's
+  title is routed through the text core all the same - the ratchet holds `ui/credits.js` at its count - and every draft
+  keeps the name.
+- THE LANGUAGES: 14.6's "all 25 languages" was L10N4's first rule; L10N6 (`06-Systems/Localization-Arc.md`) holds the
+  thirteen whole languages to the catalog, and the twelve drafting owe a new key with the rest. KG3's 259 keys are
+  drafted in-session into the thirteen, each language's new terms added to its glossary.
+- A TYPED TWELVE: an army press's refusal decided "full" by a typed 12 and summed the army's cost again; it says the
+  law's own word now (`armyRefusal`, `armyCost`).
+- THE WARNINGS' CLOCK (found by the mutation run): the panel said when the warnings turn - the information box's round
+  and the next step's "at the end of this round" - with a formula true only while `KG_HAZARD_SPAWN_EVERY` is 2. The law
+  says it now (`kingsGambit.js:"export const warningsArmAt = (round) =>"`), pinned against a game played on.
+- A STALE COUNT: `Tavern-Cards.md` section 40 said KG-SET's pins 4 and its mutants 12 - 5 and 13 since the no-break
+  space was found.
+
+### 16.6 Pins and mutants
+
+`test/kg3_session.test.js` (7), `test/kg3_panel.test.js` (17), `test/kg3_host.test.js` (13 - the last the host's
+wiring: `scenes/worldModes.js`'s card block run as the six harness tests run it, and world.js's two save doors read and
+run) and `test/kg3_draw.test.js` (6); the moved pins of `cardsplus`, `font3_readable`, `plusdress1`, `ft9_mods` (the
+row's creator, one source with the credit), `features`, `ft18_features`, `hard4_registry`, `auditcards2_host`,
+`auditcards6_e` and `l10n3e_names` (the words module a name site), and the six harness tests' scopes. Mutants: `tools/mutants/kg3.json`, 139 - 138 dead and one recorded equivalent (a draw after the close: the board's own
+draw returns once it is destroyed). Ten survived the first run, each a pin that did not hold what its title claimed, and
+each is strengthened: the pips after an action and on the regular's turn; the warnings' clock at both of its arms; the
+regulars' order where tier and chair disagree; a second close after a load's road; the pad's A and a finger's stage,
+which ran only when the king could move; the snap radius's edge, at a phone's scale where it decides; a game for fun
+under way holding no save; the guest's notched ring; and a refused command's state (a shallow copy was no mutant - the
+record is a refusal that ends the turn now); seven older records
+re-aimed by content (`auditcards5` faces5-F23, `cardsplus` CP-warn-dropped and CP-B4-frame-off-screen, `kgset`
+KGSET-painter-words-english, `navaudit_boarding` NAVB-B14, `auditcards6_e` AC6-E2-panel-box - at `insidePanelBox`, the
+panel's box test's one home now - and `cards3b` C3b-host-bubble).
+
+- **Not yet:** the board raised (KG4: walls, pillars and water built, the pieces stood in their stands and moving, the
+  lean, the hazards' effects, the numbers and the shot, the cards lab's King's Gambit table and the three panels'
+  probe, the frame cost); online (KG5); gold online and the season board (KG6).
+- **Ledger:** section A row THE KING'S GAMBIT - THE EVENING OFFLINE.

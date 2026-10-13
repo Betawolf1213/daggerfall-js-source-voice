@@ -2,8 +2,8 @@
   {
     "name": "KGSET-painter-words-english",
     "file": "src/render/iliacCardFaces.js",
-    "old": "export function paintIliacCard(ctx, card, w, h, words = cardWords(card)) {",
-    "new": "export function paintIliacCard(ctx, card, w, h, words = { rules: '', flavor: '' }) {",
+    "old": "export function paintIliacCard(ctx, card, w, h, words = cardWords(card), { picture = false } = {}) {",
+    "new": "export function paintIliacCard(ctx, card, w, h, words = { rules: '', flavor: '' }, { picture = false } = {}) {",
     "tests": [
       "test/kgset_cards.test.js",
       "test/cards8_faces.test.js"

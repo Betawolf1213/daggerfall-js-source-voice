@@ -97,6 +97,7 @@ export function lastLineOf(/** @type {any} */ last) {
  *   rand32: () => number, now: () => number, day: number|(() => number), key: string, grade: number, friendly: boolean,
  *   regulars: {name: string, seed: number, chair: number}[], frame: any, mySeatFeet: number[], chairFeet: (k: number) => number[],
  *   packPrice?: () => number|null, buyPack?: () => {ok: boolean, price: number}, onHoldem: () => void, onStand: () => void,
+ *   gambit?: () => boolean, onGambit?: () => void,
  *   online?: {send: (w: any) => boolean, myId: () => (string|null), table: number, chairs: number, chair: number, now: () => number,
  *     rankedWhy: () => (string|null), vouch: (deck: string[]) => Promise<{ok: boolean, order?: string, why?: string}>,
  *     board?: () => Promise<any>, welcomes?: () => number}|null}} d
@@ -149,7 +150,7 @@ export function openIliacTableGame(d) {
       const view = g.remote.view();
       g.hud.render(iliacHudModel({
         phase: g.phase, view, staged: g.staged, pick: g.pick, log: g.log, why: g.why, friendly: false, online: onlineModel(d.online.now()),
-        setup: { decks: decks(), foes: [], deck: g.setup.deck, foe: null }, end: g.endWhy, packPrice: d.packPrice?.() ?? null,
+        setup: { decks: decks(), foes: [], deck: g.setup.deck, foe: null }, end: g.endWhy, packPrice: d.packPrice?.() ?? null, gambit: !!d.gambit?.(),
       }));
       return;
     }
@@ -158,7 +159,7 @@ export function openIliacTableGame(d) {
     g.hud.render(iliacHudModel({
       phase: g.phase, view, staged: g.staged, pick: g.pick, log: g.log, why: g.why, friendly: d.friendly,
       setup: { decks: decks(), foes: foes(), deck: g.setup.deck, foe: g.setup.foe, forKeeps: g.setup.forKeeps, keepsOk: !keepsWhy(), keepsWhy: keepsWhy() },
-      end: s?.over ?? null, prize: s?.prize ?? null, packPrice: d.packPrice?.() ?? null,
+      end: s?.over ?? null, prize: s?.prize ?? null, packPrice: d.packPrice?.() ?? null, gambit: !!d.gambit?.(),   // KG3: the third game offered
     }));
   };
   /** AUDIT CARDS-6 B1: one card `id` lifted out of the pack - a stack's one minted apart (a split mints a fresh record,
@@ -251,6 +252,7 @@ export function openIliacTableGame(d) {
     const now = d.now();
     if (id === 'stand') { d.onStand(); return; }
     if (id === 'holdem') { d.onHoldem(); return; }
+    if (id === 'gambit') { d.onGambit?.(); return; }   // KG3: The King's Gambit at this table
     if (id === 'pack') { const r = d.buyPack?.(); if (r) d.say(r.ok ? `You buy a pack of Iliac Hand cards for ${r.price} gold. Use it from your pack to open it.` : `A pack costs ${r.price} gold - your purse is short.`); paint(); return; }
     if (online()) { pressOnline(id, value); return; }
     if (g.phase === 'setup') {

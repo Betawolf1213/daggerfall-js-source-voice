@@ -98,11 +98,12 @@ export const FACE_CACHE_MAX = 256;
  *  player's language, so a language chosen (or a translation's table laid) paints them again. */
 let _facesRev = -1;
 /** A card's painted face on a canvas, `h` tall (a back for a card the catalog does not know). Never throws: a host with no
- *  2D context (the bench's DOM) draws nothing. Cached by card, height and pixel ratio, while the language stands. */
-export function cardCanvas(/** @type {any} */ doc, /** @type {any} */ card, h = TILE_H) {
+ *  2D context (the bench's DOM) draws nothing. Cached by card, height, pixel ratio and mode, while the language stands.
+ *  KG3: `picture` paints the card's picture alone (render/iliacCardFaces.js's PICTURE - The King's Gambit's units). */
+export function cardCanvas(/** @type {any} */ doc, /** @type {any} */ card, h = TILE_H, { picture = false } = {}) {
   if (_facesRev !== textRevision()) { _faces.clear(); _facesRev = textRevision(); }
   const dpr = Math.min(2, Number(globalThis.devicePixelRatio) || 1);
-  const key = `${card?.id ?? '?'}|${h}|${dpr}`;
+  const key = `${card?.id ?? '?'}|${h}|${dpr}${picture ? '|picture' : ''}`;
   const had = _faces.get(key);
   if (had && had.ownerDocument === doc) return had;
   const cv = doc.createElement('canvas');
@@ -111,7 +112,7 @@ export function cardCanvas(/** @type {any} */ doc, /** @type {any} */ card, h = 
   const ctx = cv.getContext?.('2d');
   if (ctx) {
     ctx.scale?.(dpr, dpr);
-    try { if (card) paintIliacCard(ctx, card, w, h); else paintIliacBack(ctx, w, h); } catch { /* a face that will not paint is a blank tile */ }
+    try { if (card) paintIliacCard(ctx, card, w, h, undefined, { picture }); else paintIliacBack(ctx, w, h); } catch { /* a face that will not paint is a blank tile */ }
   }
   if (_faces.size >= FACE_CACHE_MAX) _faces.delete(_faces.keys().next().value);
   _faces.set(key, cv);
@@ -121,8 +122,8 @@ export function cardCanvas(/** @type {any} */ doc, /** @type {any} */ card, h = 
  *  one place at once (Iliac Hand's table panel: two Rats on the board, a pair in the hand), where the one cached node can
  *  stand only once. The face is the same painting at the same size and pixel ratio; a host with no 2D context gets the
  *  blank canvas, as cardCanvas does. */
-export function cardCanvasCopy(/** @type {any} */ doc, /** @type {any} */ card, h = TILE_H) {
-  const src = cardCanvas(doc, card, h);
+export function cardCanvasCopy(/** @type {any} */ doc, /** @type {any} */ card, h = TILE_H, { picture = false } = {}) {
+  const src = cardCanvas(doc, card, h, { picture });
   const cv = doc.createElement('canvas');
   cv.width = src.width; cv.height = src.height;
   cv.getContext?.('2d')?.drawImage?.(src, 0, 0);

@@ -30,6 +30,7 @@ import { cardCanvasCopy } from './cardBinderPage.js';   // CARDS-PLUS: the binde
 import { cardPanelChromeCss, dressCardPanel, foldWords } from './cardPanelKit.js';   // CARDS-PLUS: the kit and the face, both panels' one home
 import { PIXELIFY_FIVE_FACE } from './pixelifyFive.js';   // FIX-D: the face's five, carried by every sheet that sets it
 import { t, localizedText } from '../systems/textManager.js';   // CARDS-PLUS (L10N4): the words this panel's look added, in the player's language
+import { playGambitWord } from './gambitTableWords.js';   // KG3: the third game's press, in the player's language
 
 /** A temper as the panel names it. */
 export const TEMPER_WORDS = Object.freeze({ tight: 'careful', loose: 'reckless', bluffer: 'sly' });
@@ -147,9 +148,9 @@ export const VERDICT_WORDS = Object.freeze({
 
 /**
  * The panel's model.
- * @param {{phase: 'setup'|'playing'|'over', view?: any, staged?: {card: number, holding: number}[], pick?: number|null, setup?: any, end?: string|null, prize?: any, log?: string[], packPrice?: number|null, online?: any, friendly?: boolean, why?: string|null}} p
+ * @param {{phase: 'setup'|'playing'|'over', view?: any, staged?: {card: number, holding: number}[], pick?: number|null, setup?: any, end?: string|null, prize?: any, log?: string[], packPrice?: number|null, online?: any, friendly?: boolean, why?: string|null, gambit?: boolean}} p
  */
-export function iliacHudModel({ phase, view = null, staged = [], pick = null, setup = null, end = null, prize = null, log = [], packPrice = null, online = null, friendly = false, why = null }) {
+export function iliacHudModel({ phase, view = null, staged = [], pick = null, setup = null, end = null, prize = null, log = [], packPrice = null, online = null, friendly = false, why = null, gambit = false }) {
   const title = 'Card table - Iliac Hand';
   const note = online ? (online.ranked ? 'A ranked game with the room: the relay deals, and the result counts on the season\'s board.' : 'A game with the room: the relay deals and keeps the clock.')
     : friendly ? 'A friendly game: online, no card changes hands at a regulars\' table.' : null;
@@ -175,6 +176,7 @@ export function iliacHudModel({ phase, view = null, staged = [], pick = null, se
         ...(online ? [{ id: 'regulars', label: 'Play a regular instead', enabled: !!online.regularsOk }] : []),   // CARDS10: the tavern's own, while he holds no seat at the relay's (AUDIT CARDS-6 E20: not "alone in the room")
         ...(online ? [{ id: 'board', label: online.board ? 'Hide the season board' : 'Season board', enabled: !online.boardBusy }] : []),   // CARDS10: the ladder
         { id: 'holdem', label: 'Play Hold\'em instead', enabled: true },
+        ...(gambit ? [{ id: 'gambit', label: playGambitWord(), enabled: true }] : []),   // KG3: the third game, its Features switch on
         ...pack,
         { id: 'stand', label: 'Stand up', enabled: true, kind: 'quiet' },
       ],
@@ -218,6 +220,7 @@ export function iliacHudModel({ phase, view = null, staged = [], pick = null, se
   } else {
     actions.push({ id: 'again', label: 'Play again', enabled: true, kind: 'primary' });
     actions.push({ id: 'holdem', label: 'Play Hold\'em', enabled: true });
+    if (gambit) actions.push({ id: 'gambit', label: playGambitWord(), enabled: true });   // KG3
     actions.push(...pack);
     actions.push({ id: 'stand', label: 'Leave the table', enabled: true, kind: 'quiet' });
   }

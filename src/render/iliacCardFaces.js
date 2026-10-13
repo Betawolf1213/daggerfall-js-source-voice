@@ -48,6 +48,8 @@ export const COST_GEM = '#2456c8';        // the magicka gem - blue, as the game
 const COST_GEM_LIGHT = '#7da6f2';
 export const POWER_SHIELD = '#8e2a1c';    // the power shield - a war-red heater
 const FRAME_DARK = '#2a2118';
+/** KG3: a PICTURE's rim - the house stock's warm bronze, no tier's colour (a unit of The King's Gambit has no rarity). */
+const PICTURE_RIM = '#8a7454';
 const GOLD = '#c9a24a';
 const GOLD_DARK = '#8a6a24';
 const TEXT_INK = '#2a2018';
@@ -925,13 +927,16 @@ const KEYLINE = 1.3;
  * Where a card's parts sit at w x h: the panel's inset, the rim and its keyline, the studs, the art window (x, y, w, h
  * and its shape), the emblem's centre and size, the banner and the name's box inside its notches, the text box (null
  * in TILE MODE), the gem's and the shield's centres (null where the kind has none). Pure - the painter and the pins
- * both read it.
+ * both read it. KG3: a PICTURE (`picture`) is the art window alone in the panel - no banner, no gem, no shield, no text
+ * box - for The King's Gambit, whose units are the cards' pictures and whose numbers are its own (Kings-Gambit.md
+ * section 14.1, AUDIT KG D12).
  * @param {string} kind
  * @param {string} tier
  * @param {number} w
  * @param {number} h
+ * @param {{picture?: boolean}} [o]
  */
-export function iliacLayout(kind, tier, w, h) {
+export function iliacLayout(kind, tier, w, h, { picture = false } = {}) {
   const u = h / 100, art = KIND_ART[kind] ?? KIND_ART.unit, frame = TIER_FRAMES[tier] ?? TIER_FRAMES.common;
   const tile = h <= ILIAC_TILE_MAX_H;
   const rimIn = (1 + frame.band) * u, p = rimIn + KEYLINE * u, innerW = w - 2 * p;
@@ -969,6 +974,10 @@ export function iliacLayout(kind, tier, w, h) {
     size: Math.min(win.w, win.h) * (landscape ? 0.86 : tile ? 0.8 : 0.78),
   };
   if (tile && art.window === 'arch') emblem.cy = win.y + win.h * 0.56;
+  if (picture) {   // KG3: the window takes the panel, the picture centred in it; no word, no number
+    const pw = { x: p + 1.2 * u, y: p + 1.2 * u, w: innerW - 2.4 * u, h: h - 2 * p - 2.4 * u };
+    return { u, p, tile, frame, art, rim, studs, studR, win: pw, emblem: { cx: pw.x + pw.w / 2, cy: pw.y + pw.h / 2, size: Math.min(pw.w, pw.h) * 0.8 }, banner: null, notch, nameBox: null, nameFont, box: null, gem: null, shield: null, shape: art.window };
+  }
   return { u, p, tile, frame, art, rim, studs, studR, win, emblem, banner, notch, nameBox, nameFont, box, gem, shield, shape: art.window };
 }
 
@@ -1160,23 +1169,25 @@ function paintShield(ctx, L, power) {
  * kind's shape with the emblem in it, the name's banner, the rules and flavor (not on a tile), the cost gem (not a
  * location's) and the power shield (a unit's and a prince's only). KG-SET: the rules and the flavor are `words` - the
  * card's own in the player's language (systems/iliacCardWords.js) unless a caller hands others (the painter's layout
- * pins, which set long and short words on one face).
+ * pins, which set long and short words on one face). KG3: a PICTURE (`picture`) is the card's picture alone, in a
+ * frame with no tier's colour - The King's Gambit's units, whose numbers and names the table says (iliacLayout).
  * @param {CanvasRenderingContext2D} ctx
  * @param {{ id?: string, name?: string, kind?: string, cost?: number, power?: number|null, tier?: string, emblem?: string }} card
  * @param {number} w
  * @param {number} h
  * @param {{ rules: string, flavor: string }} [words]
+ * @param {{ picture?: boolean }} [o]
  */
-export function paintIliacCard(ctx, card, w, h, words = cardWords(card)) {
+export function paintIliacCard(ctx, card, w, h, words = cardWords(card), { picture = false } = {}) {
   const kind = KIND_ART[card?.kind] ? card.kind : 'unit';
-  const tier = RARITIES[card?.tier] ? card.tier : 'common';
-  const colour = RARITIES[tier].colour;
-  const L = iliacLayout(kind, tier, w, h);
+  const tier = !picture && RARITIES[card?.tier] ? card.tier : 'common';
+  const colour = picture ? PICTURE_RIM : RARITIES[tier].colour;
+  const L = iliacLayout(kind, tier, w, h, { picture });
   const emblem = EMBLEM_PAINTERS[card?.emblem] ? card.emblem : KIND_EMBLEM[kind];
   ctx.save();
   paintFrame(ctx, L, colour, w, h);
   paintArt(ctx, L, emblem, colour);
-  paintBanner(ctx, L, card?.name, colour);
+  if (L.banner) paintBanner(ctx, L, card?.name, colour);
   if (L.box) paintText(ctx, L, words?.rules ?? '', words?.flavor ?? '');
   if (L.gem) paintGem(ctx, L, card?.cost);
   if (L.shield) paintShield(ctx, L, card?.power);

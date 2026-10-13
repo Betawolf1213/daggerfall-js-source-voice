@@ -3285,8 +3285,8 @@
   {
     "name": "faces5-F23-tier-colour-ignored",
     "file": "src/render/iliacCardFaces.js",
-    "old": "const colour = RARITIES[tier].colour;",
-    "new": "const colour = RARITIES.common.colour;",
+    "old": "const colour = picture ? PICTURE_RIM : RARITIES[tier].colour;",
+    "new": "const colour = picture ? PICTURE_RIM : RARITIES.common.colour;",
     "tests": [
       "test/cards8_faces.test.js"
     ]

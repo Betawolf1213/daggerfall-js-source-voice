@@ -336,6 +336,10 @@ export function mapIsPlayable(tiles) {
 
 /** The first hazard on (c, r) (HazardAt), or null. @param {{hazards: GambitHazard[]}} board @param {number} c @param {number} r */
 export const hazardAt = (board, c, r) => board.hazards.find((h) => h.col === c && h.row === r) ?? null;
+/** KG3: the round at whose end the warnings standing in round `round` turn into hazards - HazardTick's clock as
+ *  finishTurn keeps it (the round counts on after the guest's turn, and every KG_HAZARD_SPAWN_EVERY-th count arms them),
+ *  so a client says it off the law and never off the constant's present value. @param {number} round */
+export const warningsArmAt = (round) => round + ((KG_HAZARD_SPAWN_EVERY - ((round + 1) % KG_HAZARD_SPAWN_EVERY)) % KG_HAZARD_SPAWN_EVERY);
 /** The piece on (c, r) (PieceAt), or null. @param {{pieces: GambitPiece[]}} board @param {number} c @param {number} r */
 export const pieceAt = (board, c, r) => board.pieces.find((p) => p.col === c && p.row === r) ?? null;
 /** The piece numbered `id` (PieceById), or null. @param {{pieces: GambitPiece[]}} board @param {number} id */

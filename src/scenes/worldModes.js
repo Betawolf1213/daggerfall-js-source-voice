@@ -234,8 +234,9 @@ import { seatTopByte } from '../player/seatPose.js';   // CARDS2b: the seat on t
 import { CardTableSession, stakesFor, buyInRange, seatPatrons, regularsFor, regularsAfter } from '../systems/cardTableSession.js';   // CARDS4: the table's evening
 import { RemoteCardTable } from '../systems/cardRemoteTable.js';   // CARDS5: the relay's table as this client sees it
 import { HOLDEM_STAKE_MAX_BB, HOLDEM_TOPUP_MIN_BB } from '../net/holdemTable.js';   // CARDS6 follow-up: a gold seat's top-up
-import { regularsToStand, regularBark, BARK_MS } from '../world/cardRegulars.js';   // CARDS4b: the regulars in their chairs
+import { regularsToStand, regularBark, regularLook, BARK_MS } from '../world/cardRegulars.js';   // CARDS4b: the regulars in their chairs
 import { openIliacTableGame } from './iliacTableGame.js';   // CARDS10: Iliac Hand on the seat
+import { openGambitTableGame, gambitTableOn } from './gambitTableGame.js';   // KG3: The King's Gambit on the seat
 import { readIliacReceipt } from '../net/iliacReceipt.js';   // AUDIT CARDS-6 C1: a ranked result kept, its game said back to the relay
 import { iliacGrade } from '../systems/iliacPatrons.js';   // CARDS10: the tavern's grade - its regulars' decks and play
 import { cardPackPrice, buyCardPack } from '../systems/cardSources.js';   // CARDS9: the house sells packs at its card table
@@ -378,7 +379,7 @@ import { decorScanDeps } from '../systems/decorScan.js';   // DECOR-DUNGEON: the
 import { GLOBAL_SCALE } from '../world/meshReader.js';
 import { loadIcon } from '../ui/textureCanvas.js';
 import { isTouchDevice } from '../ui/touchDevice.js';
-import { setCursorActive, holdCursor } from '../player/pointerLock.js';
+import { setCursorActive, holdCursor, cursorKeyClaimed } from '../player/pointerLock.js';
 import { decorKey } from '../systems/decorCatalogue.js';
 import { BULLETIN_BOARD_MODEL_ID } from '../world/rmbLayout.js';   // GUILD1e: Daggerfall's own board, placed in a guild's hall
 import { accountRefusalText } from '../net/accountClient.js';
@@ -571,6 +572,7 @@ export function createWorldModes(host) {
     cam.pos = player.eyeAt();   // EV1: back to the body's own eye
     closeCardGame({ cashOut });   // CARDS4: every road off the seat cashes the table out
     closeIliacGame({ concede: cashOut });   // CARDS10: and concedes an Iliac game under way (a load's road: the game the load threw away)
+    closeGambitGame({ concede: cashOut });   // KG3: and forfeits a King's Gambit under way (a load's road: nothing settles - the save predates the deal)
   }
   // CARDS4 (bible/11-Multiplayer/Tavern-Cards.md section 14; Mac: "Hold'em first", "Real gold", "Yes, patrons play"):
   // THE TABLE'S EVENING ON THE SEAT. Sitting down opens the table's panel (ui/cardTableHud.js - the port's own, not a
@@ -601,6 +603,7 @@ export function createWorldModes(host) {
     if (!cardSeat) return;
     if (cardGame) closeCardGame();
     closeIliacGame();
+    closeGambitGame();   // KG3: one game a cloth
     const t = interiorCtx?.tables?.[cardSeat.table];
     if (!t) return;
     const seats = cardSeatsOf(cardSeat.table);
@@ -617,6 +620,7 @@ export function createWorldModes(host) {
       packPrice: cardPackHere, buyPack: buyCardPackHere,
       onHoldem: () => { closeIliacGame(); if (cardSeat) openCardGame((cardSeat.free?.length ?? 0) + 1); },
       onStand: () => standFromCardTable(),
+      gambit: gambitTableOn, onGambit: () => openGambitGame(),   // KG3: the third game, offered while its Features switch is on
       // CARDS10: a relay that deals Iliac Hand - the room's table at this cloth (the same index and chairs as Hold'em's)
       online: host.iliacOnline?.ok?.() ? {
         send: (w) => !!host.iliacOnline.send(w), myId: () => host.iliacOnline.id(), now: () => host.iliacOnline.now(),
@@ -627,6 +631,82 @@ export function createWorldModes(host) {
       } : null,
     });
     iliacGame.regulars = regs;   // CARDS4b's look for the regular in his chair (cardRegularsNow)
+  }
+  // KG3 (bible/11-Multiplayer/Kings-Gambit.md section 3): THE KING'S GAMBIT ON THE SEAT - the third slot beside the other
+  // two (each game opens by closing the others, and every road off the seat closes all three), its half in
+  // scenes/gambitTableGame.js; its listeners on the cloth and the keys are the game's, gone with it
+  let gambitGame = null;
+  /** KG3: the game closes (a battle under way forfeited) - the slot emptied first (THE SLOT IS EMPTIED BEFORE THE OCCUPANT
+   *  IS TOLD), the cloth's listeners let go. */
+  function closeGambitGame({ concede = true } = {}) {
+    const gg = gambitGame;
+    if (!gg) return;
+    gambitGame = null;
+    gg.unlisten?.();
+    gg.close({ concede });
+  }
+  /** KG3: The King's Gambit opens on the seat - the other two games gone, a regular for every free chair (section 10.5: the
+   *  room's own, named and seeded as at the other two games). */
+  function openGambitGame() {
+    if (!cardSeat || !gambitTableOn()) return;
+    if (cardGame) closeCardGame();
+    closeIliacGame();
+    closeGambitGame();
+    const t = interiorCtx?.tables?.[cardSeat.table];
+    if (!t) return;
+    const seats = cardSeatsOf(cardSeat.table);
+    const free = cardSeat.free ?? [];
+    const names = tavernRegulars(Math.max(1, Math.min(5, free.length)));
+    const seeds = regularSeeds(names.length);
+    const gg = openGambitTableGame({
+      renderer, entity: playerEntity, say, holdCursor, relock: () => host.relock?.(), rand32: cardRand32, now: () => performance.now(),
+      day: cardDay, key: cardTableKey(), friendly: !!host.realmAct || isOnlinePage(),   // 5.7: online, the regulars play for fun
+      regulars: free.map((chair, i) => (names[i] ? { name: names[i], seed: seeds[i].seed, chair } : null)).filter(Boolean),
+      frame: tableFrame(t), mySeatFeet: seats[cardSeat.seat].feet, touch: () => isTouchDevice(),
+      onHoldem: () => { closeGambitGame(); if (cardSeat) openCardGame((cardSeat.free?.length ?? 0) + 1); },
+      onIliac: () => openIliacGame(),
+      onStand: () => standFromCardTable(),
+    });
+    gg.regulars = new Map(seeds.map((r, i) => [names[i], r]));   // CARDS4b's look for each regular in their chair (cardRegularsNow)
+    gambitGame = gg;
+    gg.unlisten = gambitListen(gg);
+  }
+  /** KG3 (Kings-Gambit.md section 14.3): THE CLOTH UNDER THE HAND, AND THE KEYS. While a battle is on, a press on the table
+   *  is the game's - a cell, or the felt round the board - never the seat's swing or its activate, which stand the player
+   *  up; and the arrows, the d-pad, Enter, Space and the pad's A walk and press the board's cursor, Escape and the pad's B
+   *  cancel (with nothing to cancel, Escape asks the Stand up press, which asks twice while a stake is down). A press on
+   *  the panel, a key typed in a field, a key the chat claims, and anything under a window are not the cloth's; a key on
+   *  the panel is the panel's, but Escape (the panel reads none, and the seat's Escape would stand up at once). Taken at
+   *  the capture phase, before the seat's listeners hear them, as Hold'em's hand and chips are (cardPointerListen). */
+  function gambitListen(gg) {
+    if (typeof window === 'undefined' || !window.addEventListener) return null;
+    let swallowMouse = false;
+    const live = () => gg === gambitGame && !!cardSeat && mode === 'interior' && !interiorPaused() && !townTalk?.overlayActive;
+    const onPanel = (e) => e.target?.closest?.('.dfgambit') || insidePanelBox(e, gg.box?.());
+    const down = (e) => {
+      if (!live() || onPanel(e)) return;
+      const r = canvas.getBoundingClientRect?.() ?? { left: 0, top: 0 };
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      const took = gg.pointer([e.clientX - r.left, e.clientY - r.top], { w, h, rect: worldViewportRect(w, h) }, { touch: e.pointerType === 'touch' || e.pointerType === 'pen', button: e.button ?? 0 });
+      if (!took) return;
+      swallowMouse = true;   // the mouse press a taken pointerdown leaves behind is the cloth's too
+      e.stopImmediatePropagation?.(); e.preventDefault?.();
+    };
+    const mouseDown = (e) => { if (!swallowMouse) return; swallowMouse = false; e.stopImmediatePropagation?.(); e.preventDefault?.(); };
+    const key = (e) => {
+      if (!live()) return;
+      const cancel = e.code === 'Escape' || e.code === 'JoystickButton1';
+      const el = e.target;
+      if (!cancel && (el?.closest?.('.dfgambit') || /^(INPUT|TEXTAREA|SELECT)$/.test(el?.tagName ?? '') || el?.isContentEditable)) return;
+      if ((e.code === 'Enter' || e.code === 'NumpadEnter') && cursorKeyClaimed(e)) return;   // KB1: the chat's Enter online
+      if (e.repeat && (cancel || e.code === 'Enter' || e.code === 'NumpadEnter' || e.code === 'Space')) { if (gg.playing()) { e.stopImmediatePropagation?.(); e.preventDefault?.(); } return; }   // a held press presses once
+      if (!gg.key(e.code)) return;
+      e.stopImmediatePropagation?.(); e.preventDefault?.();
+    };
+    window.addEventListener('pointerdown', down, true);
+    window.addEventListener('mousedown', mouseDown, true);
+    window.addEventListener('keydown', key, true);
+    return () => { window.removeEventListener('pointerdown', down, true); window.removeEventListener('mousedown', mouseDown, true); window.removeEventListener('keydown', key, true); };
   }
   /** CARDS10: the relay's Iliac table's frames (world.js online.onIliac): a ranked game's receipt is carried wherever the
    *  player is now; the rest is the open game's, at its table. */
@@ -662,6 +742,8 @@ export function createWorldModes(host) {
   const CARD_SIT_AGAIN_MS = 1500;
   function openCardGame(seatCount) {
     if (cardGame) closeCardGame();
+    closeIliacGame();   // KG3: one game a cloth - each opens by closing the others
+    closeGambitGame();
     const stakes = stakesFor(interiorBuilding?.quality ?? 10);
     // CARDS6: online, a realm character plays for gold at the relay's table - its stake held by the service (net/cardStakes.js)
     const goldOnline = cardTableGold(cardSeat?.table ?? -1) && !!host.cardOnline?.ok?.() && !!host.cardStakes?.goldOk?.();   // TAVERN-TABLES: at the gold table alone - a realm character plays for chips at the other
@@ -766,13 +848,14 @@ export function createWorldModes(host) {
     g.paintedAt = performance.now();
     g.hud.render(cardHudModel({ phase: g.phase, view: table?.view() ?? null, legal: table?.legal() ?? null, buyIn: g.buyIn, stakes: g.stakes, friendly: g.friendly, log: g.log, why: g.why, refused: g.refused ?? null,
       online: g.remote ? { waiting: g.remote.seated < 2 && !g.remote.state?.hand, clock: Math.ceil(g.remote.clockLeft(g.paintedAt) / 1000), error: g.remote.error, regulars: !!cardSeat?.free.length && !g.goldOnline } : null,
-      gold: !!g.goldOnline, staking: !!g.staking, topUp: cardTopUpAmount(g), iliac: true, packPrice: cardPackHere() }));   // CARDS6; section 24: the top-up; CARDS9/10: a pack, and the other game
+      gold: !!g.goldOnline, staking: !!g.staking, topUp: cardTopUpAmount(g), iliac: true, gambit: gambitTableOn(), packPrice: cardPackHere() }));   // CARDS6; section 24: the top-up; CARDS9/10: a pack, and the other game; KG3: and the third
   }
   function cardPress(game, id, value) {
     if (game !== cardGame) return;   // a press from a panel already gone
     const now = performance.now();
     if (id === 'stand') { standFromCardTable(); return; }
     if (id === 'iliac') { openIliacGame(); return; }   // CARDS10: the other game at this table
+    if (id === 'gambit') { openGambitGame(); return; }   // KG3: and the third
     if (id === 'pack') { const r = buyCardPackHere(); say(r.ok ? `You buy a pack of Iliac Hand cards for ${r.price} gold. Use it from your pack to open it.` : `A pack costs ${r.price} gold - your purse is short.`); paintCardGame(); return; }   // CARDS9: the house's packs
     if (game.remote) {
       // CARDS5: the relay's table - an action is a word to it, and the relay answers with the table; alone, the regulars
@@ -884,6 +967,17 @@ export function createWorldModes(host) {
   }
   /** CARDS4b: the regulars at this table to stand this frame - none at a relay's table or a game not dealt. */
   function cardRegularsNow(now) {
+    const gg = gambitGame;
+    if (gg && cardSeat) {   // KG3: The King's Gambit's regulars sit in the chairs its setup lists them by, its words over them
+      const seats = cardSeatsOf(cardSeat.table);
+      const peers = takenSeats(seats, host.seatedPeers?.() ?? []);   // AUDIT CARDS-3 E-N3's law: a player in a regular's chair - the chair is theirs
+      return gg.regularsNow(now).filter((r) => !peers.includes(r.chair)).map((r) => {
+        const chair = seats[r.chair], who = gg.regulars?.get(r.name);
+        if (!chair || !who) return null;
+        const id = `gambit:${cardTableKey()}:${r.chair}`;
+        return { key: id, res: { id, name: r.name, look: regularLook(who.seed, who.bank, who.gender) }, feet: chair.feet, yaw: chair.yaw, st: seatTopByte(chair.top), say: r.say };
+      }).filter(Boolean);
+    }
     const ig = iliacGame?.g;
     if (ig?.session && cardSeat) {   // CARDS10: Iliac Hand's regular sits in the chair he plays from
       const seats = cardSeatsOf(cardSeat.table);
@@ -923,17 +1017,17 @@ export function createWorldModes(host) {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     return g.heldAt.some((p) => { const s = projectToScreen(p, w, h, f.proj, f.view, worldViewportRect(w, h)); return s.front && Math.hypot(s.x - g.mouse[0], s.y - g.mouse[1]) < h * 0.09; });
   }
+  /** AUDIT CARDS-6 E2: a pointer inside a card table panel's box on the page - the panel is the point inside its box as
+   *  well as its own target (a pointer held on the canvas keeps the canvas as its target over the panel). Hold'em's and
+   *  The King's Gambit's (KG3) one test. */
+  const insidePanelBox = (e, b) => !!b && b.width > 0 && e.clientX >= b.left && e.clientX <= b.right && e.clientY >= b.top && e.clientY <= b.bottom;
   function cardPointerListen(g) {
     if (typeof window === 'undefined' || !window.addEventListener) return null;
     const mine = () => g === cardGame && !!cardSeat;
     // AUDIT CARDS-6 E2: the panel is also the point inside its box - a pointer held on the canvas keeps the canvas as its
     // target over the panel (the capture below; a touch always did, its capture implicit), and a chip let go over the
     // panel is still never the bet (AUDIT CARDS-3 C6)
-    const onPanel = (e) => {
-      if (e.target?.closest?.('.dfcards')) return true;
-      const b = g.hud?.root?.getBoundingClientRect?.();
-      return !!b && b.width > 0 && e.clientX >= b.left && e.clientX <= b.right && e.clientY >= b.top && e.clientY <= b.bottom;
-    };
+    const onPanel = (e) => e.target?.closest?.('.dfcards') || insidePanelBox(e, g.hud?.root?.getBoundingClientRect?.());
     // AUDIT CARDS-6 E2: A PRESS IS ITS OWN POINTER'S. The press on the hand and the chips carried each keep the pointer
     // that made them (`id`); another finger's move, letting go or cancel is not theirs (a second finger on the hand took
     // the press's place, and the first lifting still folded the hand). A press let go where the window never heard it -
@@ -10207,6 +10301,7 @@ export function createWorldModes(host) {
     decorTool.frame({ dt, cam, overlayUp: overlayHeld, interior: mode === 'interior' });   // DECOR1d: the button, the panel's scan, the free camera
     if (mode === 'interior') cardGameFrame(performance.now());   // CARDS4: the card table's patrons think and deal on, under any window
     if (mode === 'interior') iliacGame?.frame(performance.now());   // CARDS10: and the Iliac regular thinks and the turn turns over
+    if (mode === 'interior') gambitGame?.frame(performance.now());   // KG3: and The King's Gambit's regular, at the mod's beats
     host.cardRegulars?.(mode === 'interior' ? cardRegularsNow(performance.now()) : [], dt, cam.pos);   // CARDS4b: the regulars in their chairs, drawn as peers are (world.js) - none outside a building
     // Q4-v: the quest layer's modal frame. Behaviours update every
     // frame (Unity Update runs whatever Time.timeScale is); the
@@ -10912,6 +11007,7 @@ export function createWorldModes(host) {
     decorTool.drawMounts(renderer);   // DECOR2c: and the one being hung
     if (cardGame?.scene) cardDrawGame(cardGame, proj, view, mwv.eye);   // CARDS3: the cards and chips on the cloth - CARDS3b: the player's own two held before the eye
     iliacGame?.draw(performance.now());   // CARDS10: an Iliac game's cards on the cloth
+    gambitGame?.draw(performance.now(), { proj, view, eye: mwv.eye });   // KG3: The King's Gambit's board - and the lens its next press is read through
     for (const w of cardWatches.values()) if (w.remote.state) w.draw.draw(w.scene.poses(performance.now() / 1000, w.remote.view()));   // CARDS5: and the tables this player watches
     interiorCtx.flatAnims.tick(dt);   // FA1
     // MWNPC8a: the standing people offered their bodies, before the room's billboards draw (cast-only where one stands)
@@ -13492,6 +13588,7 @@ export function createWorldModes(host) {
     get footstepKind() { return _modeFootstepKind; },
     cardTableLive: () => !!cardGame?.session && !cardGame.friendly,   // AUDIT CARDS-2 H1: chips on the table - the save refuses (world.js worldQuickSave); AUDIT CARDS-3 E-N5: a friendly game's chips are no gold
     iliacStaked: () => !!iliacGame?.staked?.(),
+    gambitStaked: () => !!gambitGame?.staked?.(),   // KG3: gold staked on The King's Gambit - the save waits (world.js's two doors)
     iliacOnlineFrame,   // CARDS10: the relay's Iliac table's frames (world.js online.onIliac)   // CARDS10: a game of Iliac Hand for keeps under way - a card in play the save would not know (world.js worldQuickSave)
     cardOnlineFrame,   // CARDS5: the relay's card table's frames (world.js online.onHoldem)
     /** CARDS2b: the seat the pose says (scenes/world.js's sender): the feet and the facing the body is drawn at, and the

@@ -974,3 +974,28 @@ could not be written beside them. No card's words had reached a player in their 
   theirs (an enemy's, a spell's, an artifact's, a faction's, a place's), and the Iliac panels' own sentences round it -
   `scenes/iliacTableGame.js`, `ui/cardBinderPage.js`, `systems/iliacItems.js`'s first line - routed with it, so no
   sentence glues a translated name into English.
+
+## KG3 (2026-10-13): The King's Gambit's table, in the player's language from the first press
+
+The King's Gambit's evening (`11-Multiplayer/Kings-Gambit.md` section 16) shipped with every word through the text core,
+by ROUTE-BRIEF's laws: 259 keys - the panel's and the table's (`cards.kingsGambit.*`, 251, the save's refusal among
+them), the tutorial's page (4), the Features row's note (1) and the credit (3) - read when shown; the new modules hold no prose, and the files
+they touched hold their counts (`ui/credits.js` 86: the credit's title routed, a mod's name the ratchet counts).
+
+- **The English, read again before it was drafted** (a string drafted thirteen times is cheapest to fix once): every count
+  said with its noun goes through the plural (a regular's army in points, a unit's cost in a refusal); a `select`'s
+  branches carry their own agreement ("spikes are", "fire is"); a king inside a sentence is "King {name}" and the whole
+  title stands in lists and labels, the fall its own sentence round it - a fragment glued into a sentence wanted commas
+  no other language would put in the same places.
+- **A mod's name** (TRANSLATE-BRIEF rule 6): "The King's Gambit" kept in every language, as Iliac Hand and Hold'em stay
+  on their own panels; the Features row is titled as every mod's row ("{title} by {author}", the credits' unnamed form).
+- **The drafts:** in-session, the thirteen whole languages (L10N6's rule - the twelve drafting languages owe them), one
+  drafter a language, each held to the placeholder law and the text core's own parser and rendered under its plural
+  rules before the merge; 48 to 69 new terms a language added to its glossary (regular, stake, least stake, forfeit,
+  piece, unit, round, blunder, tier - kept apart from a unit's level where the glossary's word for "tier" was "level").
+  What the drafters were unsure of: the inserted names, which no language can decline - each sentence built so a name
+  stands in its own form (a colon, an apposition, the actor first), the possessive "{name}'s" reworded where a language
+  marks it on the name; the chips' short forms; French's "de" before a crown that begins with a vowel (the title written
+  "Roi {name} ({crown})", the fall "{crown} perd son roi : {name} tombe.").
+- **The name lookups:** a unit is named through Daggerfall Unity's own list (`getLocalizedEnemyName`), so
+  `ui/gambitTableWords.js` is a counted name site (`test/l10n3e_names.test.js`).
