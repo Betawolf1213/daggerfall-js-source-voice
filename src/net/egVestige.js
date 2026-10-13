@@ -57,13 +57,23 @@ export const EG_KINDLED_M = 2;
  *  (scenes/egFight.js sends it; the relay knows an Echo by it and takes its share - net/egRun.js egEchoShare) - the bodies one
  *  cast meets share their echo's number as they share the cast's (the wire's `q` holds to 0x7fffffff). */
 export const EG_ECHO_Q = 0x40000000;
+/** AUDIT EG III (section 15's numbers, declared once - net/egRun.js, net/egBrain.js read them): Sweeping Arc splashes adds
+ *  within EG_SWEEP_M (m) of its target; a mark (Hunter's Mark, Spotter) lasts EG_MARK_MS; Counterstroke's blow lands
+ *  EG_COUNTER_X within EG_COUNTER_MS of a lord's blow landing within EG_COUNTER_M (m) of its holder; Spillover's overkill
+ *  carries to an add within EG_SPILL_M (m) of the one it felled. */
+export const EG_SWEEP_M = 3;
+export const EG_MARK_MS = 8000;
+export const EG_COUNTER_MS = 600;
+export const EG_COUNTER_X = 1.4;
+export const EG_COUNTER_M = 6;
+export const EG_SPILL_M = 6;
 
 /**
  * EVERY VESTIGE: its number, family, name, its three ranks' values (`v`), what applies it (`by`: 'client' - the holder's
  * own body; 'relay' - the room, to a blow; 'word' - each client, from the room's word), its expected damage factor where
  * it is client-declared (`x` - the bucket's), and its line.
  */
-/** @type {ReadonlyArray<{ id: number, key: string, fam: string, name: string, v: number[], by: string, x?: number[], line: (v: any) => string }>} */
+/** @type {ReadonlyArray<{ id: number, key: string, fam: string, name: string, v: number[], by: string, x?: number[], aura?: number, line: (v: any) => string }>} */
 export const EG_VESTIGES = Object.freeze([
   // STONE
   Object.freeze({ id: 0, key: 'stoneskin', fam: 'stone', name: 'Stoneskin', v: [0.10, 0.18, 0.25], by: 'client', line: (v) => `+${pc(v)} maximum health.` }),
@@ -110,6 +120,8 @@ export const EG_MASTERIES = Object.freeze([
   Object.freeze({ id: 104, key: 'spirebridge', fam: 'fellowship', name: 'Spirebridge', line: 'Once a span, a gold bridge over the next gap for the company, for 6 s.' }),
 ]);
 export const EG_M_BY_ID = Object.freeze(Object.fromEntries(EG_MASTERIES.map((m) => [m.id, m])));
+/** AUDIT EG III: each Mastery's number by its key (`EG_M_ID.counterstroke` 101) - the relay reads a held Mastery by it. */
+export const EG_M_ID = Object.freeze(Object.fromEntries(EG_MASTERIES.map((m) => [m.key, m.id])));
 /** THE ACCORDS: two members within 10 m holding a named pair from two families. */
 export const EG_ACCORDS = Object.freeze([
   Object.freeze({ key: 'hammer', name: 'Hammer and Anvil', a: 'oath', b: 'huntersmark', line: "A foe the mark's holder marked takes +8% from the oath's holder." }),

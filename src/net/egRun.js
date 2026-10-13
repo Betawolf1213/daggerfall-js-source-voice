@@ -17,8 +17,9 @@
 // Pure: a breach record (net/egBrain.js) and a beat in, frames out. In the relay bundle. Not a DFU member. Ledger A
 // (ELITE-GATES).
 import { EG_DECREES, EG_DECREE_FAMILIES, EG_DECREE_BY_KEY, egDecreeCount, egDecreeRanksUp, egBandOfCircle } from './egLaw.js';
-import { egOfferOf, egTake, egVOf, egRankOf, egDeclaredX, egCapX, egResonance, EG_SHARDS_PER, EG_FADE_CD_S } from './egVestige.js';
+import { egOfferOf, egTake, egVOf, egDeclaredX, egCapX, egResonance, EG_SHARDS_PER, EG_FADE_CD_S } from './egVestige.js';
 import { egAccordMates, EG_FAR_M, EG_HAMMER_X, EG_AMBUSH_X, EG_ECHO_SHARE } from './egVestige.js';   // EG-ZS: the Accords' pair law and numbers
+import { EG_V_BY_KEY, EG_AURA_EXTRA, EG_AURA_EXTRA_MAX, EG_M_ID, EG_COUNTER_MS, EG_COUNTER_X } from './egVestige.js';   // AUDIT EG III: the Standard's aura, Counterstroke's numbers - declared once
 import { HIT_KINDS } from './gateBrain.js';
 
 /** The company's word stays open this long (ms). */
@@ -248,20 +249,23 @@ export function egVestigeX(B, sub, pose, body, r, now, here) {
   const isAdd = body?.role === 1;
   const fallenDue = Math.max(0, ...Object.values(B.mem).filter((o) => o.alive && o.in).map((o) => egVOf(o.vs, 'fallensdue')));
   const dueOn = (B.F?.fellThisHall ?? 0) > 0;
-  if (isAdd && body.max > 0) { const cull = egVOf(vs, 'culling'), line = dueOn && egRankOf(vs, 'culling') && fallenDue ? 1 / 3 : 1 / 4; if (cull && body.hp / body.max < line) x *= 1 + cull; }
+  const ms = egCompanyAt(B, sub, pose, here);
+  // AUDIT EG III - NO QUARTER is an Accord (THE PAIR LAW): while Fallen's Due burns, a Culling Edge holder standing within
+  // EG_ACCORD_M of a mate holding Fallen's Due reaches adds under a third
+  if (isAdd && body.max > 0) { const cull = egVOf(vs, 'culling'), line = dueOn && fallenDue && egAccordMates(ms, sub, 'noquarter', 'a').length ? 1 / 3 : 1 / 4; if (cull && body.hp / body.max < line) x *= 1 + cull; }
   if (dueOn) x *= 1 + fallenDue;
-  // Spire's Standard: allies within 10 m who hold it
-  const std = here.filter((o) => o.sub !== sub && Math.hypot(o.x - pose.x, o.z - pose.z) <= 10).map((o) => egVOf(B.mem[o.sub]?.vs, 'standard')).filter((v) => v > 0).sort((a, b) => b - a);
-  if (std.length) x *= 1 + Math.min(std[0] + 0.06, std[0] + 0.02 * (std.length - 1));
+  // Spire's Standard: allies within its aura who hold it - the strongest, and EG_AURA_EXTRA for each other, EG_AURA_EXTRA_MAX at most
+  const std = here.filter((o) => o.sub !== sub && Math.hypot(o.x - pose.x, o.z - pose.z) <= EG_V_BY_KEY.standard.aura).map((o) => egVOf(B.mem[o.sub]?.vs, 'standard')).filter((v) => v > 0).sort((a, b) => b - a);
+  if (std.length) x *= 1 + Math.min(std[0] + EG_AURA_EXTRA_MAX, std[0] + EG_AURA_EXTRA * (std.length - 1));
   // a marked foe (Hunter's Mark, Spotter)
   const mk = body?.marked && body.marked.until > now ? body.marked.x : 0;
   if (mk) x *= 1 + mk;
-  // Counterstroke (a Mastery): a melee blow on a lord within 0.6 s after one of its blows landed within 6 m
-  if (m.mast === 101 && r === HIT_KINDS.Melee && body?.role === 0 && (m.lordLandedAt ?? -Infinity) + 600 >= now) x *= 1.4;
+  // Counterstroke (a Mastery): a melee blow on a lord within EG_COUNTER_MS after one of its blows landed within EG_COUNTER_M
+  // of its holder (`lordLandedAt` - net/egBrain.js trial's census)
+  if (m.mast === EG_M_ID.counterstroke && r === HIT_KINDS.Melee && body?.role === 0 && (m.lordLandedAt ?? -Infinity) + EG_COUNTER_MS >= now) x *= EG_COUNTER_X;
   // EG-ZS - THE ACCORDS ON A BLOW (section 15, every one the relay's, inside the caps): HAMMER AND ANVIL - a foe marked by a
   // mate holding Hunter's Mark (`marked.by`) takes its share more from the oath's holder standing with it; AMBUSH - the first
   // blow after a Fade (`m.amb`, egFadeOn), within 10 m of a mate holding the Standard
-  const ms = egCompanyAt(B, sub, pose, here);
   if (mk && body.marked.by && egAccordMates(ms, sub, 'hammer', 'a').includes(body.marked.by)) x *= 1 + EG_HAMMER_X;
   if (m.amb && egAccordMates(ms, sub, 'ambush', 'a').length) x *= 1 + EG_AMBUSH_X;
   const bx = egDeclaredX(vs);

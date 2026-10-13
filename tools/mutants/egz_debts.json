@@ -274,8 +274,8 @@
   {
     "name": "EGZP-healer-unread",
     "file": "src/scenes/egClient.js",
-    "old": "h.map(([by]) => accountOf(by))",
-    "new": "h.map(() => null)",
+    "old": "n >= min).map(([by]) => accountOf(by))",
+    "new": "n >= min).map(() => null)",
     "tests": [
       "test/egz_debts.test.js"
     ]

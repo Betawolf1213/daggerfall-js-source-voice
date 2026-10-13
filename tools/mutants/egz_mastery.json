@@ -316,8 +316,8 @@
   {
     "name": "EGZS-echo-binder-whole",
     "file": "src/net/egBrain.js",
-    "old": "body.cast.dmg += dm;",
-    "new": "body.cast.dmg += m.d;",
+    "old": "(b.cast.dmg += got)",
+    "new": "(b.cast.dmg += m.d)",
     "tests": [
       "test/egz_mastery_accords.test.js"
     ],
@@ -326,7 +326,7 @@
   {
     "name": "EGZS-host-hits-never",
     "file": "src/net/egBrain.js",
-    "old": "  hostHits(B, F, spec, sub, mm, { r: m.r, q: m.q, bx: vx.bx }, b, got, p, now, here, out);   // EG-ZS",
+    "old": "  hostHits(B, F, spec, sub, mm, { r: m.r, q: m.q, bx: vx.bx, d: dm * mult }, b, got, p, now, here, out);   // EG-ZS",
     "new": "  void hostHits;   // EG-ZS",
     "tests": [
       "test/egz_mastery.test.js",

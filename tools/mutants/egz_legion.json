@@ -119,7 +119,7 @@
   {
     "name": "EGZ-the-divers-dont-wait",
     "file": "src/net/egLegion.js",
-    "old": "if (ctx.span) { diverOnSpan(F, spec, a, K, now, here, out, ctx, chain); break; }",
+    "old": "if (ctx.span) { diverOnSpan(F, spec, a, K, now, here, out, ctx, chain, sure ? ctx.shadow ?? here : shadowAll); break; }",
     "new": "",
     "tests": [
       "test/egz_legion.test.js"
@@ -173,7 +173,7 @@
   {
     "name": "EGZ-no-span-legion",
     "file": "src/net/egBrain.js",
-    "old": "if (span) spanLegion(F, view, now, inHall, cap, out);",
+    "old": "if (span) spanLegion(F, view, now, inHall, egLegionRoom(F), out);",
     "new": "",
     "tests": [
       "test/egz_legion.test.js"
