@@ -102,8 +102,8 @@
   {
     "name": "CRYSTALFIST-the-card-label",
     "file": "src/ui/enhancedAccount.js",
-    "old": "  crystalfist: 'Crystal Fist',   // CRYSTAL-FIST:",
-    "new": "  crystalfist: 'Crystal',   // CRYSTAL-FIST:",
+    "old": "  crystalfist: () => t('account.glyph.crystalfist', 'Crystal Fist'),   // CRYSTAL-FIST:",
+    "new": "  crystalfist: () => t('account.glyph.crystalfist', 'Crystal'),   // CRYSTAL-FIST:",
     "tests": [
       "test/crystalfist.test.js"
     ],

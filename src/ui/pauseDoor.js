@@ -58,6 +58,7 @@ import { usesVirtueLeveling } from '../systems/oblivionLeveling.js';   // ORL1: 
 import { profPagesShown, PROF_PAGE_SECTIONS } from './profPages.js';   // CLASSIC-PAGES: the professions' two pages, on either skin
 import { FAMILY_PAGE_SECTIONS } from './familyPages.js';   // LEGACY3: Project Legacy's Family tab, on either skin
 import { hudText } from '../systems/notify.js';
+import { t } from '../systems/textManager.js';   // L10N4: the professions' closed line in the player's language
 import {
   openClassicPauseFlow as openClassicPauseWindow,
   pauseArtLoaded,
@@ -178,6 +179,8 @@ export function pauseMenuAct(hooks, close) {
 /** CLASSIC-PAGES: what a door pressed for a professions page says when the pages are not this account's (offline, the
  *  professions' switch closed, the book not read yet). */
 export const PROF_PAGES_CLOSED_LINE = 'Your professions are kept online: your Professions and Stores open while you play online.';
+/** L10N4: the line in the player's language (PROF_PAGES_CLOSED_LINE stays the English the pins read). */
+export const profPagesClosedLine = () => t('pause.profPagesClosed', PROF_PAGES_CLOSED_LINE);
 /** Whether a door's landing page is one of the professions' own (the Professions key's, a station's). */
 export const profPageAt = (at) => PROF_PAGE_SECTIONS.some(([id]) => id === at);
 /** LEGACY3: whether a door's landing is the Family tab or one of its pages. */
@@ -213,7 +216,7 @@ export function openPauseFlow(show, hooks = {}) {
 
 function openPauseFlowNow(show, hooks) {
   if (profPageAt(hooks.at)) {
-    if (!profPagesShown()) { hudText(PROF_PAGES_CLOSED_LINE); return null; }
+    if (!profPagesShown()) { hudText(profPagesClosedLine()); return null; }
     if (typeof document !== 'undefined') return enhancedPauseOverlay(show, hooks);
   }
   // LEGACY3: Project Legacy's Family tab (its key, the death's Succession) - the classic pause has no tabs, so the family's

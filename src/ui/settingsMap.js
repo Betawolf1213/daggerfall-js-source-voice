@@ -120,6 +120,8 @@ export const CATEGORIES = Object.freeze([
       "feat:mod-come-sail-away", "feat:mod-detailed-ships", "feat:mod-warm-ashes-ships", "feat:mod-iliac-puddle-no-more", "feat:mod-ocean-holes"]),
   ]),
   tab("interface", "Interface", [
+    // L10N1b: the language the game's words are shown in, and under it a Daggerfall Unity translation pack (L10N3b)
+    sec("language", "Language", ["port:language"]),
     sec("hud", "HUD", [
       "port:hudScale", "port:hudLock", "port:hudBars", "port:hudReset", "port:foeBarStyle", "feat:quick-slots", "GUI/Crosshair",
       "GUI/EnableVitalsIndicators", "GUI/InteractionModeIcon", "GUI/EnableArrowCounter", "GUI/IconsPositioningScheme", "feat:near-death-warning",

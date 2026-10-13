@@ -30,6 +30,7 @@
 import { injectEnhancedStyle } from './enhancedStyle.js';
 import { inClassicScope } from './enhancedScope.js';   // PORT0: the classic travel map keeps its own boxes
 import { armDrawWatchdog, disarmDraw } from './drawWatchdog.js';   // DISC29-D: the watchdog counts frames, not milliseconds
+import { windowCovered } from './windowStack.js';   // PLEA-LOOP: a keyed menu's press is the top window's alone
 
 /** MessageBoxButtons (DaggerfallMessageBox.cs:67-90), in words. The
  *  numbers are ui/messageBox.js MB_BUTTONS (not imported: that module
@@ -170,6 +171,23 @@ export const enhancedDialogOpen = () => !!active || !!choice;
 // too, but it never went through messageBox.js - it painted its own flat
 // canvas panel reading "Y - yes / N - no". Same window here; a press
 // calls the window's own input(code), exactly what the key does.
+//
+// PLEA-LOOP (FIELD BUGS 2026-10-13b, "Pleading guilty not working"): and
+// ONLY WHILE THE KEY WOULD REACH IT. The key goes to the top window
+// alone, through the host; the button reached its window directly,
+// wherever it stood. A window another covers is still painted (the
+// stack paints what its top covers), so the court's plea, covered a
+// beat later by the Crime tutorial page, stood on screen with live
+// buttons - and its scrim, over the whole screen, took every click the
+// page's "click or press any key" asked for. A press answered the plea
+// under the page; the prison screen that answer opened replaced the
+// PAGE, so the answered plea stayed in the stack, painted every frame
+// with its buttons live, and every press pleaded again. Covered now, the
+// dialog is painted and takes no pointer (`.dlg-covered`): a press falls
+// through to the canvas, where the host hands it to the window on top -
+// the page is put away by the click, as DFU's top window takes it. The
+// button asks the stack again at the press, so a frame's lag answers
+// nothing either.
 
 /** "Y - yes" -> { key: 'Y', label: 'Yes' }; "Esc - close" -> Esc/Close;
  *  a label with no key prefix ("Invite to party") keeps its words. */
@@ -179,7 +197,11 @@ export function choiceLabel(text) {
   return m ? { key: m[1], label: word(m[2]) } : { key: null, label: word(String(text ?? '')) };
 }
 
-let choice = null;   // { owner, sig, shell, watchdog }
+let choice = null;   // { owner, sig, shell, watchdog, covered }
+
+/** PLEA-LOOP: the class a covered keyed menu wears - ui/enhancedDialogStyle.js gives it no pointer. */
+export const COVERED_CLASS = 'dlg-covered';
+const CHOICE_CLASS = 'dlg-shell dlg-choice';
 
 export function closeEnhancedChoice(owner) {
   if (!choice || (owner && choice.owner !== owner)) return;
@@ -200,7 +222,7 @@ export function drawEnhancedChoice(owner, lines, options, doc = globalThis.docum
   if (!choice) {
     try {
       injectEnhancedStyle(doc);
-      const shell = el(doc, 'div', 'dlg-shell dlg-choice');
+      const shell = el(doc, 'div', CHOICE_CLASS);
       const win = el(doc, 'section', 'dlg-win px-win');
       win.setAttribute('role', 'alertdialog');
       win.setAttribute('aria-modal', 'true');
@@ -217,6 +239,7 @@ export function drawEnhancedChoice(owner, lines, options, doc = globalThis.docum
         btn.addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); });
         btn.addEventListener('click', (e) => {
           e.preventDefault(); e.stopPropagation();
+          if (windowCovered(owner)) return;   // PLEA-LOOP: asked at the press - a covered window answers nothing
           closeEnhancedChoice();
           owner.input(o.code);
         });
@@ -226,8 +249,14 @@ export function drawEnhancedChoice(owner, lines, options, doc = globalThis.docum
       shell.append(win);
       shell.addEventListener('pointerdown', (e) => { if (e.target === shell) e.stopPropagation(); });
       doc.body.append(shell);
-      choice = { owner, sig, shell, watchdog: null };
+      choice = { owner, sig, shell, watchdog: null, covered: false };
     } catch { return false; }
+  }
+  // PLEA-LOOP: painted under another window, it takes no pointer - written only when it changes, not every frame
+  const covered = windowCovered(owner);
+  if (choice.covered !== covered) {
+    choice.covered = covered;
+    choice.shell.className = covered ? `${CHOICE_CLASS} ${COVERED_CLASS}` : CHOICE_CLASS;
   }
   disarmDraw(choice.watchdog);
   choice.watchdog = armDrawWatchdog(DIALOG_WATCHDOG_MS, () => closeEnhancedChoice());   // DISC29-D

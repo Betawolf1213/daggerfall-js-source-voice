@@ -204,14 +204,15 @@ test('R7/SO1/FT12: the port\'s own switches are the Features home\'s, every one 
 test('the destructive actions ask first', () => {
   const src = read('src/ui/enhancedMenu.js');
   assert.match(src, /const ask = \(title, body, label, onYes\)/, 'one confirm, not two');
-  const resetAt = src.indexOf("label: 'Reset everything to defaults'");
-  assert.match(src.slice(resetAt, resetAt + 200), /onClick: \(\) => ask\('Reset Everything', RESET_ALL_ASK, 'Reset', /,
+  // PIN MOVED (L10N4): the toolbar's reset and its ask said in the player's language (resetAllAsk reads RESET_ALL_ASK)
+  const resetAt = src.indexOf("label: t('menu.settings.reset', 'Reset everything to defaults')");
+  assert.match(src.slice(resetAt, resetAt + 300), /onClick: \(\) => ask\(t\('menu\.settings\.resetTitle', 'Reset Everything'\), resetAllAsk\(\), t\('menu\.settings\.resetYes', 'Reset'\), /,
     'Reset must ask - the classic screen does');
   // ORG2: and so does one tab's restore, from its card
-  const tabAt = src.indexOf("const b = el('button', 'act', 'Restore defaults');");
+  const tabAt = src.indexOf("const b = el('button', 'act', t('menu.settings.restoreTab', 'Restore defaults'));");
   assert.ok(tabAt > 0, 'the tab card carries its restore');
-  assert.match(src.slice(tabAt, tabAt + 400), /b\.onclick = \(\) => ask\(\s*\n\s*`Restore \$\{cat\.title\} Defaults`/, 'a tab\'s restore asks too');
-  const delAt = src.indexOf("label: 'Delete'");
+  assert.match(src.slice(tabAt, tabAt + 400), /b\.onclick = \(\) => ask\(\s*\n\s*t\('menu\.settings\.restoreTabTitle', 'Restore \{tab\} Defaults', \{ tab: cat\.title \}\)/, 'a tab\'s restore asks too');
+  const delAt = src.indexOf("label: localizedText('deleteSave', 'Delete')");
   assert.match(src.slice(delAt, delAt + 400), /onClick: \(\) => ask\(/,
     'Delete must ask');
   assert.match(src.slice(delAt, delAt + 500), /deleteSave\(save\.key\)/,
@@ -267,7 +268,7 @@ test('U51: the saved game is rendered from one place', () => {
   const src = read('src/ui/enhancedMenu.js');
   assert.match(src, /^const saveLine = \(save\) =>/m);
   assert.match(src, /^const saveStats = \(save\) =>/m);
-  const joins = [...src.matchAll(/level \$\{save\.level\}/g)];
+  const joins = [...src.matchAll(/'level \{level\}', \{ level: save\.level \}/g)];
   assert.equal(joins.length, 1, 'the character line is written once');
   const health = [...src.matchAll(/save\.maxHealth \? /g)];
   assert.equal(health.length, 1, 'and so are the numbers');
@@ -460,7 +461,7 @@ test('EE13: the Enhanced pane offers a season/weather test that spawns in a rand
   const menu = read('src/ui/enhancedMenu.js');
   const from = menu.indexOf('function outdoorsTestRow(');   // SO1: the door was a row of the Enhanced category; FT12: it is the Test Room's
   const pane = menu.slice(from, menu.indexOf('\n}', from));
-  assert.match(pane, /el\('div', 'row-name', 'Test the outdoors'\)/, 'the row exists');
+  assert.match(pane, /el\('div', 'row-name', t\('menu\.test\.outdoorsName', 'Test the outdoors'\)\)/, 'the row exists');
   // EE14: a season is both an archive and a day - the game has three
   // archive seasons and the field has a calendar, and 'spring' as a bare
   // name was a pin that ignored it

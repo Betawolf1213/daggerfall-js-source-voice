@@ -245,7 +245,7 @@
   {
     "name": "AUDIT-IT1-W6-indoors-silent",
     "file": "src/scenes/world.js",
-    "old": "    if ((modes?.mode ?? 'exterior') !== 'exterior') { townTalk.say(CANNOT_TRAVEL_INDOORS_TEXT); return null; }",
+    "old": "    if ((modes?.mode ?? 'exterior') !== 'exterior') { townTalk.say(localizedText('cannotTravelIndoors', CANNOT_TRAVEL_INDOORS_TEXT)); return null; }",
     "new": "    if ((modes?.mode ?? 'exterior') !== 'exterior') return null;",
     "tests": [
       "test/auditit1.test.js"
@@ -264,8 +264,8 @@
   {
     "name": "AUDIT-IT1-W4-the-row-says-next-load",
     "file": "src/systems/features.js",
-    "old": "modFeature('immersive-travel', 'Takes effect when the game is next started (an in-game Load keeps what it started with);",
-    "new": "modFeature('immersive-travel', 'Takes effect when the game next loads;",
+    "old": "modFeature('immersive-travel', () => t('features.mod.immersiveTravel.effect', 'Takes effect when the game is next started (an in-game Load keeps what it started with);",
+    "new": "modFeature('immersive-travel', () => t('features.mod.immersiveTravel.effect', 'Takes effect when the game next loads;",
     "tests": [
       "test/auditit1.test.js"
     ]

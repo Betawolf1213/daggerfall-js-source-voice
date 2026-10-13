@@ -62,7 +62,7 @@
 //       past its LOT_KEYS would fail its door and the whole word with it
 //   d - AUDIT CAPTAIN'S SEA D8: the ships of `s` launched of the deep waters (CAPT-WATERS `deep`), each her number - her
 //       hold, her casks and the chart in her papers the deep's on every client (a peer's copy of her was open water's)
-//   e - AUDIT CAPTAIN'S SEA D8: the casks of `f` of a deep ship's (or the Etheric Sea's) cargo, each its id - a peer's
+//   e - AUDIT CAPTAIN'S SEA D8: the casks of `f` of a deep ship's (or the Eltheric Ocean's) cargo, each its id - a peer's
 //       haul of one drawn as rich as its owner's (it was DEEP_TIER tiers poorer)
 //   `k`, `m` and `l` are keys of their own because an older build's door checks every field of `s` and `p` by count: it
 //   passes a word with them whole and reads none of them, and a newer door reads an older build's word as saying none.

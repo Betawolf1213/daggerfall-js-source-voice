@@ -29,7 +29,7 @@ import { validLootItem } from '../src/systems/loot.js';
 import { rollCorpseKit } from '../src/systems/foeLootCap.js';
 import { PAYLOAD, doItemEnchantmentPayloads, enchantmentMagicRound, computeEnchantmentMods, mobileAffinityMatches } from '../src/systems/enchantments.js';
 import { GuildServiceWindow, REFORGE_RECT, LIFT_ROW, LIFT_KEY, PANEL_X, PANEL_Y, _setGuildServiceArtForTests } from '../src/ui/guildServiceWindow.js';
-import { mountReforgeWindow, LIFT_TITLE, LIFT_NONE, LIFTED, REFORGE_GUILD_PAGES } from '../src/ui/reforgeWindow.js';
+import { mountReforgeWindow, LIFT_TITLE, LIFT_NONE, LIFTED, REFORGE_GUILD_PAGES, LIFT_REFUSALS } from '../src/ui/reforgeWindow.js';
 import { withDom } from './invdrag.mjs';
 import { rollGemFind } from '../src/systems/gems.js';   // GEM2: the gem find, held off and put back
 
@@ -382,8 +382,12 @@ test('LOOT16: the temple\'s row - a Cure Disease priest\'s, in the Reforge\'s pl
       assert.equal(one(row, 'broker-set').textContent, 'Cursed Rare · Bad Rep With: Nobility');
       assert.equal(one(row, 'broker-price').textContent, `${liftPrice(cursed)} gold`);
       const wornRow = rows.find((r) => r !== row);
-      assert.equal(one(wornRow, 'lift-press').attrs.disabled, '', 'worn: take it off first');
+      assert.equal(one(wornRow, 'lift-press').attrs['aria-disabled'], 'true', 'worn: take it off first');
       assert.equal(one(wornRow, 'lift-press').textContent, 'Worn');
+      one(wornRow, 'lift-press').onclick({ stopPropagation() {} });   // MENU-ORDER: pressed, it says why and lifts nothing
+      assert.deepEqual(calls, []);
+      assert.equal(one(shell, 'broker-note').textContent, LIFT_REFUSALS.worn);
+      rows = kids(shell, 'lift-row');
       one(row, 'lift-press').onclick({ stopPropagation() {} });
       assert.deepEqual(calls, [cursed]);
       assert.equal(one(shell, 'broker-note').textContent, LIFTED(cursed.name));

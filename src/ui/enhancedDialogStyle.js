@@ -29,4 +29,7 @@ export const DIALOG_CSS = `
   padding: 0 4px; font-size: 12px; letter-spacing: 0; text-indent: 0; color: #0e1013; text-shadow: none;
   background: #c9bfa4; box-shadow: inset -2px -2px 0 #7a7260, inset 2px 2px 0 #efe8d6, 0 0 0 1px #050608; }
 .dlg-btn.primary .dlg-key { background: #e2b064; box-shadow: inset -2px -2px 0 #7a5424, inset 2px 2px 0 #f3cf86, 0 0 0 1px #050608; }
+/* PLEA-LOOP: a keyed menu another window covers is painted and takes no pointer - the press falls through to the
+   canvas, and the host hands it to the window on top (ui/enhancedDialog.js drawEnhancedChoice) */
+.dlg-shell.dlg-covered { pointer-events: none; }
 `;

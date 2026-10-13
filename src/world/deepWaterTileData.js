@@ -14,10 +14,15 @@
 // tileWorldSize` with the origin already taken off. The global-map
 // fraction walk (GetGlobalMapFractions) is kept whole: a point just past
 // the pixel's edge still resolves to the neighbour pixel's bake cells.
+//
+// ETHER-DEEP: the C#'s map is the bake's FRAME (deepWatersBake.js BAY_FRAME, the Bay's 1000 x 500) - its clamps and its
+// map-edge refusals read the frame that holds the pixel, so an Eltheric Ocean pixel walks its own box's cells
+// (etherWatersBake.js) where it walked the Bay's clamped corner; the Bay's are the C#'s to the integer.
 // ═══════════════════════════════════════════════════════════════════
 
 import { climateBaseDepth, climateBandSignal } from './deepBathymetry.js';
 import { mapDataHasWater, isLocalPointWater } from './deepWaterClassification.js';
+import { BAY_FRAME } from './deepWatersBake.js';   // ETHER-DEEP: the map a bake's frame
 
 const TILE_WORLD_SIZE = 819.2;
 const OCEAN_CLIMATE = 223;
@@ -45,6 +50,7 @@ export class DeepWaterTileData {
     this.mapData = mapData;
     this.climateIndex = climateIndex;
     this.bake = bake ?? null;
+    this.frame = this.bake?.frameOf?.(mapPixelX, mapPixelY) ?? BAY_FRAME;   // ETHER-DEEP: the map this pixel's queries clamp to
     this._climateAt = climateAt;
     this.usesLocalWaterFallback = false;
     this.biomeClimateIndex = this._resolveBiomeClimateIndex(climateIndex, mapPixelX, mapPixelY);
@@ -155,7 +161,8 @@ export class DeepWaterTileData {
   /** ClimateAtPixel: clamped to the map. */
   _climateAtPixel(mapX, mapY) {
     if (!this._climateAt) return this.climateIndex;
-    return this._climateAt(clampInt(mapX, 0, 999), clampInt(mapY, 0, 499));
+    const f = this.frame;
+    return this._climateAt(clampInt(mapX, f.x0, f.x0 + f.w - 1), clampInt(mapY, f.y0, f.y0 + f.h - 1));
   }
 
   /** ResolveBiomeClimateIndex: an ocean pixel near land wears its neighbours' commonest climate. */
@@ -201,7 +208,8 @@ export class DeepWaterTileData {
   }
 
   _climateSafe(mapX, mapY, fallback) {
-    if (mapX < 0 || mapY < 0 || mapX >= 1000 || mapY >= 500) return fallback;
+    const f = this.frame;
+    if (mapX < f.x0 || mapY < f.y0 || mapX >= f.x0 + f.w || mapY >= f.y0 + f.h) return fallback;
     return this._climateAt(mapX, mapY);
   }
 
@@ -214,8 +222,9 @@ export class DeepWaterTileData {
     let mapPixelY = Math.floor(num2);
     let fracX = num - mapPixelX;
     let fracZ = 1 - (num2 - mapPixelY);
-    if (mapPixelX < 0) { mapPixelX = 0; fracX = 0; } else if (mapPixelX >= 1000) { mapPixelX = 999; fracX = 1; } else fracX = clamp01(fracX);
-    if (mapPixelY < 0) { mapPixelY = 0; fracZ = 1; } else if (mapPixelY >= 500) { mapPixelY = 499; fracZ = 0; } else fracZ = clamp01(fracZ);
+    const f = this.frame;
+    if (mapPixelX < f.x0) { mapPixelX = f.x0; fracX = 0; } else if (mapPixelX >= f.x0 + f.w) { mapPixelX = f.x0 + f.w - 1; fracX = 1; } else fracX = clamp01(fracX);
+    if (mapPixelY < f.y0) { mapPixelY = f.y0; fracZ = 1; } else if (mapPixelY >= f.y0 + f.h) { mapPixelY = f.y0 + f.h - 1; fracZ = 0; } else fracZ = clamp01(fracZ);
     return { mapPixelX, mapPixelY, fracX, fracZ };
   }
 

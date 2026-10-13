@@ -106,7 +106,7 @@ test('CHAT-LANG wire: one channel per language, keyed by its code under its own 
   assert.equal(LANG_RELAY_MIN, 196);   // world192 on its branch, renumbered past main's world192-world195 at the port
   assert.equal(relaySupportsLang('world195'), false);
   assert.equal(relaySupportsLang('world196'), true);
-  assert.equal(RELAY_VERSION, 'world199');   // PIN MOVED: world199, EG-PLAY (the room of an Elite Breach - the hub opening it and calling its company, its halls and their director, its own fight, its receipts; world195 on its branch, renumbered past COATS1, CHAT-LANG, BAL8 and SPAWN-REBIRTH at the merges); PIN MOVED: world198, SPAWN-REBIRTH (a cell keeps the row of a spawned dungeon until it stands again, never sixty real days); PIN MOVED: world197, BAL8 (the PvP referee and its one harm ceiling) over world196, CHAT-LANG
+  assert.equal(RELAY_VERSION, 'world200');   // PIN MOVED: world200, EG-PLAY (the room of an Elite Breach - the hub opening it and calling its company, its halls and their director, its own fight, its receipts; world195 on its branch, renumbered past COATS1, CHAT-LANG, BAL8, SPAWN-REBIRTH and AUDIT ETHER-OW at the merges); PIN MOVED: world199, AUDIT ETHER-OW C2-1 (one home for the ground the Watch mints on - watchPixelOk, its answers as they were); PIN MOVED: world198, SPAWN-REBIRTH (a cell keeps the row of a spawned dungeon until it stands again, never sixty real days); PIN MOVED: world197, BAL8 (the PvP referee and its one harm ceiling) over world196, CHAT-LANG
   assert.match(rd('src/net/online.js'), /if \(primary\) this\.langOk = relaySupportsLang\(relayV\);/);
 });
 
@@ -133,7 +133,7 @@ test('CHAT-LANG tab and commands: the Language tab rides a room of its own, off 
   assert.match(host, /chatLangFrame\(\);   \/\/ CHAT-LANG/);
   assert.match(host, /if \(tabId === 'lang' && !chatLog\.tab\('lang'\)\?\.room\) return why\(langOld\(\) \? LANG_OLD_RELAY_TEXT : NO_LANG_TEXT\);/);
   const menu = rd('src/ui/enhancedMenu.js');
-  assert.match(menu, /choiceRow\('chatLang', 'Language channel',/);
-  assert.match(menu, /prefRow\('chatChannelColours', 'Chat colours by channel',/);
-  assert.match(menu, /prefRow\('chatPingSound', 'Chime when someone @mentions you',/);
+  assert.match(menu, /choiceRow\('chatLang', t\('menu\.chat\.lang', 'Language channel'\),/);
+  assert.match(menu, /prefRow\('chatChannelColours', t\('menu\.chat\.colours', 'Chat colours by channel'\),/);
+  assert.match(menu, /prefRow\('chatPingSound', t\('menu\.chat\.ping', 'Chime when someone @mentions you'\),/);
 });

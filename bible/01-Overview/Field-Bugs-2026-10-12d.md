@@ -146,7 +146,7 @@ Pinned by `test/fb1012d_salvageclassic.test.js` (4), every fixture the real prod
 `src/scenes/fleetHost.js` the Veil's refusal.
 
 FOUND - NOT REPRODUCED. Nothing ties a ship's side of the Veil to Come Sail Away's motor: `comeSailAway.js` reads no
-Etheric state, and no seam the world host hands the helm (the sea's way scale, brake, warp, drift and gale, the refit,
+Eltheric state, and no seam the world host hands the helm (the sea's way scale, brake, warp, drift and gale, the refit,
 the cargo, the terrain, the input) carries anything across a crossing. The crossing's own flags cannot be the lock - its
 question is asked only while the motor sails (`world.js:"    if (!etherSea || _etherCrossing || !csaRuntime?.isSailing?.()) return;"`),
 and the reporter met it at the helm of a rowboat that would not move, so the helm was live and no disembark or pause

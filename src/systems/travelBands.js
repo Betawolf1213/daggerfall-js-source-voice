@@ -17,6 +17,7 @@
 // ═══════════════════════════════════════════════════════════════════
 import { seededRng } from './wind.js';
 import { NATIVE_PER_M } from './travelDungeons.js';   // one home: native units a metre
+import { worldPixelOk } from '../net/wire.js';   // ETHER-OW: a chaser's place is a pixel of the world (TV-BEYOND's law)
 
 /** The band's world: a cell of this many map pixels square has one chance of a band a life. */
 export const BAND_CELL_PX = 2;
@@ -199,8 +200,11 @@ export const BAND_ID_RE = /^b-?\d{1,4}\.-?\d{1,4}\.\d{1,9}$/;
 export const BANDS_WIRE_MAX = 8;
 /** A chase word heard is believed this long (ms) - a frame every FOES_MS, so a chaser that stopped saying so is gone. */
 export const BAND_WORD_MS = 3000;
-/** The world's extent in native units - a band's place is inside it. */
-const WORLD_NATIVE_W = 1000 * 32768, WORLD_NATIVE_H = 500 * 32768;
+/** A chaser's place is a point of the world: its pixel (floored - MapsFile's rows counted south, 499 - z's) a pixel the wire
+ *  carries (net/wire.js worldPixelOk, TV-BEYOND's law). ETHER-OW (2026-10-13): it was the Bay's 1000 x 500 alone - and
+ *  the bands and raiders are born on the Eltheric Ocean's box too (scenes/world.js bandOk, tvRaidOpen), so every chase
+ *  said there was thrown out by the peers who heard it. */
+const chaserPlaceOk = (x, z) => Number.isInteger(x) && Number.isInteger(z) && worldPixelOk(Math.floor(x / PIXEL_NATIVE)) && worldPixelOk(499 - Math.floor(z / PIXEL_NATIVE));
 
 /**
  * A CHASE WORD - the band word I say, and OW6's raiders' (systems/seaRaiders.js), one law for any chaser: `[[id, x, z,
@@ -230,7 +234,7 @@ export function validChaseWord(raw, idRe) {
     const [id, x, z, flag] = e;
     if (typeof id !== 'string' || !idRe.test(id) || seen.has(id)) continue;
     if (flag !== 1 && flag !== 2) continue;
-    if (flag === 1 && !(Number.isInteger(x) && Number.isInteger(z) && x >= 0 && z >= 0 && x <= WORLD_NATIVE_W && z <= WORLD_NATIVE_H)) continue;
+    if (flag === 1 && !chaserPlaceOk(x, z)) continue;
     seen.add(id);
     out.push([id, flag === 1 ? x : 0, flag === 1 ? z : 0, flag]);
   }

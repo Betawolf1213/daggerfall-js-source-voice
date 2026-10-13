@@ -23,7 +23,7 @@ import { equipItem } from '../src/systems/equip.js';
 import { mintCondition } from '../src/systems/itemTemplates.js';
 import { createSurvivalItem } from '../src/systems/survival/items.js';
 import { TEMPLATE } from '../src/systems/survival/food.js';
-import { MONTH_NAMES } from '../src/systems/gameDate.js';
+import { monthNames } from '../src/systems/gameDate.js';   // L10N3e: the month names, read in the player's language
 import { CLIMATES } from '../src/formats/mapsFile.js';
 import { RACES, raceById } from '../src/systems/races.js';
 import { EQUIP_SLOTS } from '../src/characters/paperdoll.js';
@@ -130,7 +130,7 @@ test('TEMP-UI: the breakdown adds up to the felt temperature, to the degree - ov
   assert.ok(temperatureBreakdown(DESERT_NOON, hot).some((r) => r.key === 'drink' && r.value === -WATER_COOLS), 'the drink to hand, in the heat');
   assert.equal(temperatureBreakdown({}, null).length, 0);
   assert.equal(CLIMATE_NAMES[CLIMATES.Desert2], 'Deep desert'); assert.equal(WEATHER_NAMES.thunder, 'Thunderstorm');
-  assert.equal(MONTH_NAMES.length, 12);
+  assert.equal(monthNames().length, 12);
 });
 
 test('TEMP-UI: signedDegrees - signed, rounded, the degree sign; no sign on nought', () => {

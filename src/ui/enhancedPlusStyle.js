@@ -247,6 +247,10 @@ body .dfchat-form .dfchat-close { min-width: 32px; padding: 4px 8px; }
    lines of a list (the listRow role) with the icon in a small sunk socket, and the column's heading is the pixel
    face, not the display serif it fell back to. */
 .trade-shell .packtabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 6px; margin: 4px 0 12px; }
+@media (max-width: 560px) {   /* MENU-ORDER: a phone's four pages two by two, their words wrapping, never four rows over the list */
+  .trade-shell .packtabs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+  .trade-shell .packtab { min-height: 34px; white-space: normal; line-height: 1.2; }
+}
 .trade-shell .packtab { min-height: 38px; padding: 6px 8px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
   color: #e6dec6; text-shadow: 1px 1px 0 #050608, 2px 2px 0 rgba(0,0,0,0.45); border-bottom-width: 2px; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; }
@@ -976,6 +980,16 @@ export const BROKER_CSS = `/* ── SET7: THE SIGIL BROKER'S WINDOW (ui/brokerW
 .broker-shell .insignia-sign.hero .aura-ring { width: 110px; height: 110px; filter: drop-shadow(0 0 12px #ff6b14) drop-shadow(0 0 3px #ffd152); }
 .broker-insignia-card .insignia-what { margin: 0 0 8px; font-size: 13px; line-height: 1.45; color: #e6dccb; }
 .broker-insignia-card .insignia-kept { margin: 0; font-size: 12px; line-height: 1.45; color: #b9ab93; }
+/* MENU-ORDER (Plain-Words law 5, A FINGER HAS NO HOVER): a refused press is never disabled - pressed, it says why in the
+   note (brokerWindow.js refusePress) - and it reads refused as the kit's disabled press does, under the pointer, held and
+   focused too; its word in the dim bone, never faded by opacity (the reason it shortens has to be read). AUDIT MENU-ORDER
+   U2/U3: under its window's own frame, so it outweighs the kit's held (body .broker-shell .act:active:not(:disabled))
+   and focused presses, which lit and sank it as a live one; focused, a ring of its own grey says where the keys are */
+body .broker-shell .broker-win .act[aria-disabled="true"], body .broker-shell .broker-win .act[aria-disabled="true"]:hover,
+body .broker-shell .broker-win .act[aria-disabled="true"]:active, body .broker-shell .broker-win .act[aria-disabled="true"]:focus-visible {
+  color: #9c937d; text-shadow: none; border-color: rgba(125,116,96,0.3); background-color: rgba(12,14,18,0.6); background-image: none;
+  box-shadow: 0 0 0 1px rgba(5,6,8,0.6); translate: none; cursor: help; }
+body .broker-shell .broker-win .act[aria-disabled="true"]:focus-visible { outline: 2px solid #9c937d; outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .broker-shell .aura-ring { animation: none; } }
 @media (max-width: 720px) {
   .broker-shell { padding: 8px; }
@@ -1029,7 +1043,12 @@ export const REFORGE_CSS = `/* ── LOOT9/LOOT10: THE REFORGE'S WINDOW (ui/ref
 @media (max-width: 720px) {
   .reforge-tabs { padding: 6px 12px 0; }
   .broker-offer > .reforge-keep { grid-column: 3; grid-row: 3; }   /* the Broker's phone rule spans every press over two rows: Keep sat on Break it */
-}`;
+}
+/* MENU-ORDER (2026-10-12): a piece's name whole, on two lines if it needs them - SCRY-FIT's price sized to its words and
+   a press's column kept for a row with no press had cut every name on the Reforge's page to "Warrior..." - so a row with
+   no press of its own gives that column to its name */
+.reforge-shell .broker-offer:not(.codex-row):not(.codex-set):not(.codex-gilded):not(.scry-row):not(:has(> button)) { grid-template-columns: 48px minmax(0, 1fr) max-content; }
+.reforge-shell .broker-name { white-space: normal; line-height: 1.25; }`;
 /** BOUNTY1 (2026-09-28): THE BOUNTY BOARD'S WINDOW and the payday notice (ui/bountyWindow.js) - the Broker's kind: a
  *  stone window over the world, the town's notices in a list, the one pressed read whole beside it (under it on a
  *  phone). The kit dresses the window, the card, the rows, the header and the presses (ui/enhancedFrame.js); this is
@@ -1595,7 +1614,7 @@ export const PROF_CSS = `/* ── PROF1: THE PROFESSIONS ── */
 .prof-search { flex: 1 1 auto; min-width: 0; }
 .prof-qty { width: 5.5em; }
 .prof-families { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 8px; }
-.prof-family { font: inherit; font-size: 11px; padding: 3px 8px; color: #b9ab93; background: rgba(10,8,6,0.55); border: 1px solid rgba(192,138,62,0.25); cursor: pointer; }
+.prof-family { font: inherit; font-size: 12px; padding: 4px 9px; color: #b9ab93; background: rgba(10,8,6,0.55); border: 1px solid rgba(192,138,62,0.25); cursor: pointer; }
 .prof-family.on { color: #f3cf86; border-color: var(--brass, #c08a3e); }
 .prof-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 6px; }
 .prof-mat { display: grid; grid-template-columns: 1fr auto; gap: 2px 6px; padding: 6px 8px; text-align: left; font: inherit; font-size: 12px;
@@ -1603,6 +1622,28 @@ export const PROF_CSS = `/* ── PROF1: THE PROFESSIONS ── */
 .prof-mat.on { border-color: var(--brass, #c08a3e); background: rgba(192,138,62,0.16); }
 .prof-count { color: #f3cf86; font-variant-numeric: tabular-nums; }
 .prof-split { grid-column: 1 / -1; font-size: 11px; color: var(--bone); }
+/* MENU-ORDER (2026-10-12): THE STATIONS AS TILES - a picture, a name, Here (lit) or Away; an away station's words under
+   the tiles while its tile is pressed */
+.prof-stations { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; margin: 16px 0 8px; }
+.prof-stile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 84px; padding: 10px 4px 8px;
+  font: inherit; font-size: 12px; line-height: 1.2; text-align: center; color: #b9ab93; background: rgba(10,8,6,0.55);
+  border: 1px solid rgba(192,138,62,0.22); cursor: pointer; }
+.prof-stile[data-dficon]::before { width: 30px; height: 30px; margin: 0; }
+.prof-stile:hover, .prof-stile:focus-visible { border-color: rgba(192,138,62,0.6); outline: none; }
+.prof-stile.here { color: #f3cf86; border-color: var(--brass, #c08a3e); background: rgba(192,138,62,0.12); }
+.prof-stile.on { border-color: #c9bba1; background: rgba(201,187,161,0.1); color: #efe0b8; }
+.prof-stile-state { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.85; }
+.prof-awaynotes > .prof-station { margin: 0 0 10px; padding: 4px 12px 10px; border: 1px solid rgba(201,187,161,0.3); background: rgba(10,8,6,0.45); }
+.prof-awaynotes > .prof-station[hidden] { display: none; }
+.prof-awaynotes .px-divider { margin: 8px 0 4px; }
+.prof-awaynotes .px-note { margin: 4px 0 0; font-size: 15px; }
+.prof-stile-hint { margin: 2px 0 10px; font-size: 13px; color: #b9ab93; text-align: center; }
+/* MENU-ORDER: a station's works and patterns as cards in a grid - a short page of tiles where a long column of lines stood */
+.prof-works { display: grid; grid-template-columns: repeat(auto-fill, minmax(236px, 1fr)); gap: 6px; margin: 4px 0 10px; }
+.prof-works > .prof-smelt { margin: 0; padding: 8px 10px; border: 1px solid rgba(192,138,62,0.22); background: rgba(10,8,6,0.45); }
+.prof-works > .prof-smelt.prof-locked { border-color: rgba(192,138,62,0.1); }
+.prof-recipes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 4px 6px; margin: 4px 0 10px; }
+.prof-recipes > .prof-recipe { margin: 0; grid-template-columns: minmax(0, 1fr); align-content: center; min-height: 46px; }
 /* Existing readable text roles follow the active theme rather than one hard-coded Stone palette. */
 .px-qdetail.prof-detail .px-note { color: var(--bone); }
 .prof-matbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0 4px; font-size: 12px; color: #d9cfbd; }
@@ -1744,6 +1785,15 @@ export const PROF_CSS = `/* ── PROF1: THE PROFESSIONS ── */
 .market-views { display: flex; flex-wrap: wrap; gap: 4px 18px; align-items: center; }
 .market-viewgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
 .market-viewpart { margin-right: 4px; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: #a89a84; }
+/* MENU-ORDER (2026-10-12): the market's views are pictured chips, never a second row of the board's tabs; a row's name
+   wears its piece's picture (the host's, from the player's data) */
+.market-views .market-view { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; font-size: 13px; letter-spacing: 0.06em;
+  border: 1px solid rgba(192,138,62,0.22); background: rgba(10,8,6,0.4); }
+.market-views .market-view[data-dficon]::before { width: 16px; height: 16px; margin: 0; }
+@media (pointer: coarse) { .market-views .market-view { min-height: 44px; } }   /* AUDIT MENU-ORDER U14: a finger's press */
+.market-views .market-view.on { color: #f3cf86; border-color: var(--brass, #c08a3e); background: rgba(192,138,62,0.16); box-shadow: none; }
+.market-viewgroup { gap: 4px; }
+.market-pic, .prof-matpic { flex: none; vertical-align: middle; margin-right: 8px; image-rendering: pixelated; }
 .market-filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .market-search { flex: 1 1 140px; min-width: 0; }
 .market-num { width: 5.5em; }
@@ -1854,7 +1904,7 @@ export const PROF_CSS = `/* ── PROF1: THE PROFESSIONS ── */
   /* AUDIT 657 B2: a counter's row on two lines at a phone's width - its name on the first, the price, the count and the
      press under it; four columns left the name none, a letter a line */
   .market-counterrow { grid-template-columns: minmax(0, 1fr) 4.5em auto; } .market-counterrow > b { grid-column: 1 / -1; }
-  .market-views { flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+  .market-views { flex: none; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }   /* MENU-ORDER: flex none - a scroller in the tab's column took no height (min-height: auto is 0 past an overflow), and a phone's views were gone */
   .market-viewgroup { flex: none; flex-wrap: nowrap; }
   .market-view { flex: none; white-space: nowrap; }
   .market-auction { grid-template-columns: minmax(0, 1fr); } .market-auction > * { grid-column: 1 / -1; }

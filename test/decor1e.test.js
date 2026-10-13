@@ -16,7 +16,7 @@ import {
 import { DECOR_CAP, decorPrice, decorRefund, decorSaleBack, decorLightOf } from '../src/net/decorLaw.js';
 import { createOnlineHomes, sellOnlineHome, homeRefund, homeSoldLine, homeSaleLines } from '../src/systems/onlineHomes.js';
 import { createSceneCache, cacheScene, takeSceneDecor } from '../src/systems/sceneCache.js';
-import { settle, near, fakeDoc, fakeWin, all, one, chipNamed, catalogue, rows, toolRig, placeFrom } from './decorFakes.mjs';
+import { settle, near, fakeDoc, fakeWin, all, one, text, chipNamed, catalogue, rows, toolRig, placeFrom } from './decorFakes.mjs';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const panelOf = (rig) => rig.doc.body.children.find((c) => c.className === 'dfdecor');
@@ -407,7 +407,7 @@ test('DECOR1e the touch screen\'s flight: the stick flies the eye - its throw th
   await placeFrom(rig, 'm41000');
   const bar = barOf(rig);
   assert.match(bar.className, /\btouch\b/, 'a finger\'s bar - at the top, clear of the stick and the layer\'s buttons');
-  assert.match(one(bar, 'dfdecor-bar-keys').textContent, /the stick, and hold Fly up or Fly down/);
+  assert.match(text(one(bar, 'dfdecor-bar-keys')), /the stick, and hold Fly up or Fly down/);   // MENU-ORDER: a legend of pairs, read whole
   const desk = toolRig();
   await placeFrom(desk, 'm41000');
   assert.deepEqual([chipNamed(barOf(desk), 'Fly up'), chipNamed(barOf(desk), 'Fly down')], [undefined, undefined], 'a keyboard has Jump and Crouch');

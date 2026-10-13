@@ -486,7 +486,7 @@ body:has(.hud-foe.on.blade) .dfnaval-hud { --nc-top: ${NAVAL_CARD_TOP_BLADE}; }
 
 /** A share as a whole percent, bounded. */
 const pct = (v) => Math.max(0, Math.min(100, Math.round((Number(v) || 0) * 100)));
-/** ETHER-SEA: the Etheric Sea's waters on the plate - "The Reaches, 23 leagues past the Veil"; in the Veil itself "The
+/** ETHER-SEA: the Eltheric Ocean's waters on the plate - "The Reaches, 23 leagues past the Veil"; in the Veil itself "The
  *  Veil" (AUDIT CAPTAIN'S SEA D19: "The Shallows, 0 leagues past the Veil" while she sailed in it). */
 export const etherWatersWords = (e) => (e.veil ? 'The Veil' : `${String(e.bandName ?? '').replace(/^./, (c) => c.toUpperCase())}, ${Math.max(0, Math.round(Number(e.depth) || 0))} ${Math.round(Number(e.depth) || 0) === 1 ? 'league' : 'leagues'} past the Veil`);
 const SIDE_WORDS = Object.freeze({ bow: 'Bow', port: 'Port', starboard: 'Starboard', stern: 'Stern' });

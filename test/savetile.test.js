@@ -206,14 +206,14 @@ test('AUDIT-312 F1: the cloud DELETE has a door, and it asks twice', () => {
   // own, which removes the save from this device. Two buttons reading
   // `Delete` one row apart - one destroying the game, one destroying
   // the copy - is the worst label this menu could carry.
-  assert.match(menu, /label: 'Delete backup'/);
-  assert.match(menu, /label: 'Delete backup\?'/, 'a destructive act asks twice');
+  assert.match(menu, /label: t\('menu\.cloud\.deleteBackup', 'Delete backup'\)/);
+  assert.match(menu, /label: t\('menu\.cloud\.deleteBackupAsk', 'Delete backup\?'\)/, 'a destructive act asks twice');
   // EVERY ONE of them: the save's tile and the cloud-only card each carry
   // the button, so one site asking twice cannot stand for the other (the
   // A312-7 mutant lived through the lone match above while the card's
   // copy still read true).
-  const deletes = menu.match(/label: 'Delete backup'/g) ?? [];
-  const asks = menu.match(/cloudArm === slot\s*\?\s*\{ label: 'Delete backup\?', primary: true/g) ?? [];
+  const deletes = menu.match(/label: t\('menu\.cloud\.deleteBackup', 'Delete backup'\)/g) ?? [];
+  const asks = menu.match(/cloudArm === slot\s*\?\s*\{ label: t\('menu\.cloud\.deleteBackupAsk', 'Delete backup\?'\), primary: true/g) ?? [];
   assert.equal(asks.length, deletes.length, 'every Delete backup is armed by a first press');
   // IT REMOVES THE COPY AND NEVER THE SAVE. The cloud is a backup, so
   // deleting the backup is not deleting the game.
@@ -221,7 +221,7 @@ test('AUDIT-312 F1: the cloud DELETE has a door, and it asks twice', () => {
   const fn = cloud.slice(cloud.indexOf('export const removeCloudSlot'));
   assert.doesNotMatch(fn, /removeItem|setItem/, 'it never touches this device\'s store');
   // ...and the sentence that names it is reachable now.
-  assert.match(rd('src/net/accountClient.js'), /'too-many-saves': '[^']*[Dd]elete[^']*'/);
+  assert.match(rd('src/net/accountClient.js'), /'too-many-saves': \(\) => t\('[^']*', '[^']*[Dd]elete[^']*'/);   // L10N4 (PIN MOVED): the sentence is its t() call's English
 });
 
 test('AUDIT-312 F5: the ten heads stay POSITIONAL - the index IS the identity', () => {

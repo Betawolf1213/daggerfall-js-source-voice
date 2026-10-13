@@ -272,7 +272,7 @@
   {
     "name": "LEFAY-MODES-NO-REFUSAL",
     "file": "src/scenes/worldModes.js",
-    "old": "    if (typeof key === 'string' && key.startsWith('lefay:')) {   // LEFAY1: the monument - too far speaks the refusal; the plaque's lit row is the verb\n      if (_hitDist > _hitReach) { setMidScreenText(TOO_FAR_AWAY_TEXT); return true; }\n",
+    "old": "    if (typeof key === 'string' && key.startsWith('lefay:')) {   // LEFAY1: the monument - too far speaks the refusal; the plaque's lit row is the verb\n      if (_hitDist > _hitReach) { setMidScreenText(tooFarAwayText()); return true; }\n",
     "new": "    if (typeof key === 'string' && key.startsWith('lefay:')) {   // LEFAY1: the monument - too far speaks the refusal; the plaque's lit row is the verb\n",
     "tests": [
       "test/lefay1_monument.test.js"

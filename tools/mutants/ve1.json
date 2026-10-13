@@ -293,8 +293,8 @@
     "tests": [
       "test/ve1_vanillaEnhanced.test.js"
     ],
-    "old": "{ label: m.enabled ? 'Switch off' : 'Switch on', onClick: () => { setDfmodEnabled(m.key, !m.enabled); render(); } },",
-    "new": "{ label: 'Switch off', onClick: () => { setDfmodEnabled(m.key, false); render(); } },"
+    "old": "{ label: m.enabled ? t('menu.packs.switchOff', 'Switch off') : t('menu.packs.switchOn', 'Switch on'), onClick: () => { setDfmodEnabled(m.key, !m.enabled); render(); } },",
+    "new": "{ label: t('menu.packs.switchOff', 'Switch off'), onClick: () => { setDfmodEnabled(m.key, false); render(); } },"
   },
   {
     "name": "VE3-nothing-registered-read-as-none",

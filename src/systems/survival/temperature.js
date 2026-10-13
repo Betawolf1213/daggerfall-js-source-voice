@@ -22,7 +22,7 @@
 import { EQUIP_SLOTS } from '../../characters/paperdoll.js';
 import { CLIMATES } from '../../formats/mapsFile.js';
 import { RACES } from '../races.js';
-import { MONTH_NAMES, DAWN_HOUR, DUSK_HOUR } from '../gameDate.js';   // TEMP-UI: the breakdown names the month (an import-free leaf); AUDIT C&C: the sun's hours
+import { monthNames, DAWN_HOUR, DUSK_HOUR } from '../gameDate.js';   // TEMP-UI: the breakdown names the month (an import-free leaf; L10N3e: in the player's language); AUDIT C&C: the sun's hours
 
 /** spellcast.js's EFFECT_FLAGS.Fire and .Frost (DFCareer.EffectFlags),
  *  restated so this leaf imports no combat module: spellcast sits on the
@@ -473,7 +473,7 @@ export function temperatureBreakdown(env = {}, temp = null) {
   const p = naturalParts(env);
   const out = [{ key: 'climate', label: CLIMATE_NAMES[env.climateIndex] ?? 'The land', value: p.climate }];
   const add = (key, label, value, note = null) => { if (value) out.push(note ? { key, label, value, note } : { key, label, value }); };
-  add('season', MONTH_NAMES[((env.month ?? 0) % 12 + 12) % 12] ?? 'The season', p.season);
+  add('season', monthNames()[((env.month ?? 0) % 12 + 12) % 12] ?? 'The season', p.season);
   add('hour', HOUR_NAMES[hourBand(env.hour)], p.hour);
   add('weather', WEATHER_NAMES[env.weather] ?? 'The weather', p.weather);
   add('roof', 'Shelter', p.roof);

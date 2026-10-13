@@ -43,5 +43,23 @@
     "tests": [
       "test/shorttouch.test.js"
     ]
+  },
+  {
+    "name": "TALL-TOUCH-short-screens-only",
+    "file": "src/ui/enhancedStyle.js",
+    "old": "@media (pointer: coarse) and (orientation: landscape) and (min-width: 600px), (orientation: landscape) and (min-width: 600px) and (max-width: 860px) {",
+    "new": "@media (pointer: coarse) and (orientation: landscape) and (max-height: 560px) and (min-width: 600px) {",
+    "tests": [
+      "test/shorttouch.test.js"
+    ]
+  },
+  {
+    "name": "TALL-TOUCH-narrow-window-stacks",
+    "file": "src/ui/enhancedStyle.js",
+    "old": "@media (pointer: coarse) and (orientation: landscape) and (min-width: 600px), (orientation: landscape) and (min-width: 600px) and (max-width: 860px) {",
+    "new": "@media (pointer: coarse) and (orientation: landscape) and (min-width: 600px) {",
+    "tests": [
+      "test/shorttouch.test.js"
+    ]
   }
 ]

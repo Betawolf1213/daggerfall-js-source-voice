@@ -254,8 +254,11 @@ test('LOOT9: the window - the purse, both pages, a piece whole with a press on e
       const after = kids(one(shell, 'reforge-card'), 'reforge-press');
       assert.equal(after.length, 1, 'only the line it was reforged on');
       assert.equal(after[0].textContent, 'Need 3 more shards');
-      assert.equal(after[0].attrs.disabled, '');
+      assert.equal(after[0].attrs['aria-disabled'], 'true');
       assert.equal(after[0].attrs.title, REFORGE_REFUSALS.shards);
+      after[0].onclick({ stopPropagation() {} });   // MENU-ORDER (Plain-Words law 5): pressed, it says why and rolls nothing
+      assert.deepEqual(calls, [['reforge', 0]]);
+      assert.equal(one(shell, 'broker-note').textContent, REFORGE_REFUSALS.shards);
       // the salvage page: asked before it breaks
       kids(shell, 'reforge-tab').find((t) => t.dataset.page === 'salvage').onclick({ stopPropagation() {} });
       rows = kids(shell, 'broker-offer');

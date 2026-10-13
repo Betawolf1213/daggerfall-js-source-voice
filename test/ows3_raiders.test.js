@@ -27,6 +27,7 @@ import {
 import { ANY_LOCATION_KEY } from '../src/systems/worldDataVariants.js';
 import { SHIP_TYPES } from '../src/systems/banking.js';
 import { TRAVEL_VIEW_TEXT } from '../src/scenes/travelView.js';
+import { onBayOrEther, inEther } from '../src/world/ethericSea.js';   // ETHER-OW: the raiders' ground, the host's own (AUDIT ETHER-OW C2-3: and the box, where a raider is the sea fight's alone)
 
 // PIN MOVED (AUDIT OW5 G2): the Overworld's own lines are said through tvSay - held at the scale they are said at
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -211,7 +212,10 @@ test('OWS3 readout: a raider is a ship in the cinnabar, "Pirates" under it in th
 
 test('OWS3 host wiring by source: the open sea a raider is born on, the shared clock, the chase begun only under the view and at sea, its contact the mod\'s raid, ashore every chase given up, a load ending them; the marks', () => {
   const w = rd('src/scenes/world.js');
-  assert.match(w, /if \(px < 0 \|\| py < 0 \|\| px >= 1000 \|\| py >= 500 \|\| maps\.getClimateIndex\(px, py\) !== CLIMATES\.Ocean\) return false;\n\s*for \(let dy = -1; dy <= 1; dy\+\+\) for \(let dx = -1; dx <= 1; dx\+\+\) if \(!tvWater\(px \+ dx, py \+ dy\)\) return false;/, 'the open sea: the ocean\'s, every pixel about it water');
+  // PIN MOVED (ETHER-OW, 2026-10-13): the raiders' ground is the Bay's map or the Eltheric Ocean's box (ethericSea.js
+  // onBayOrEther) - the Bay's bounds as they were, the box beside them (test/ether_ow.test.js)
+  // PIN MOVED (AUDIT ETHER-OW C2-3): past the Veil a raider is the sea fight's ship alone (test/ether_ow.test.js)
+  assert.match(w, /if \(!onBayOrEther\(px, py\) \|\| maps\.getClimateIndex\(px, py\) !== CLIMATES\.Ocean\) return false;\n\s*if \(inEther\(px, py\) && !navalRaidersOn\(\)\) return false;[^\n]*\n\s*for \(let dy = -1; dy <= 1; dy\+\+\) for \(let dx = -1; dx <= 1; dx\+\+\) if \(!tvWater\(px \+ dx, py \+ dy\)\) return false;/, 'the open sea: the ocean\'s, every pixel about it water');
   assert.match(w, /const raidNowMs = \(\) => Date\.now\(\) \+ _sharedOffsetMs;/);
   assert.match(w, /const ms = raidNowMs\(\), life = Math\.floor\(ms \/ RAIDER_LIFE_MS\);\n\s*if \(life !== tvRaid\.life\) \{\n\s*tvRaid\.life = life; for \(const id of tvRaid\.spent\) if \(!tvRaid\.chase\.has\(id\)\) tvRaid\.spent\.delete\(id\);[^\n]*\n[\s\S]{0,500}?\n\s*\}\n\s*tvRaid\.list = raidersNear\(\{ at: playerTravelPixel\(\), ms, open: tvRaidOpen, sea: tvRaidSea \}\);/, 'AUDIT OWS A3: a new life forgets the last life\'s spent sails (a chase still running kept)');
   // PIN MOVED (AUDIT OW5 R1): a window or a death HOLDS the chase above the gate - it read as ashore (test/ow5_audit.test.js
@@ -265,7 +269,7 @@ const seaHost = (over = {}) => {
     worldTimeScale: () => 1, travelView: { active: true }, feet: { x: 500.5 * NATIVE_PIXEL, z: 250.5 * NATIVE_PIXEL },
     state: { worldCoords: () => d.feet, terrainDistance: 3 }, player: { pos: [0, 0, 0] }, RAID_NATIVE_PIXEL: NATIVE_PIXEL, raiderSight, isNight: () => false,
     minuteNow: () => 720, list: [], travelViewRaiders: () => d.list, raiderChaseStep: chaseStep, RAIDER_CONTACT_M, RAIDER_CONTACT_PLAY_M,
-    pixelOfNative, tvWater: () => true, maps: { getClimateIndex: () => 'Ocean' }, CLIMATES: { Ocean: 'Ocean' },
+    pixelOfNative, onBayOrEther, inEther, tvWater: () => true, maps: { getClimateIndex: () => 'Ocean' }, CLIMATES: { Ocean: 'Ocean' },   // ETHER-OW: the ground law the host reads
     sailing: true, csaRuntime: { isSailing: () => d.sailing, StopSailing: () => { order.push('stop'); d.sailing = false; } }, csaCall: (f) => f(),
     playerEntity: { activeEffects: [] }, isBoatEffectBundle: (n) => n === "I'm On A Boat",
     refusal: null, warmAshesRaidRefusal: () => d.refusal, warmAshesRaidAtSea: () => { order.push('raid'); return 'raid'; },
@@ -403,7 +407,11 @@ test('OW6 law: the raider word is the band word\'s law with a raider\'s ids - it
   assert.deepEqual(raiderWordOf(chases, ['r3.4.30', 'r5.6.29']), [['r1.2.30', 10, 21, 1], ['r3.4.30', 0, 0, 2], ['r5.6.29', 0, 0, 2]]);
   const many = Array.from({ length: 12 }, (_, k) => `r${k}.1.30`);
   assert.equal(raiderWordOf(new Map(), many).length, RAIDERS_WIRE_MAX);
-  assert.deepEqual(validRaiderWord([['r1.2.30', 5, 6, 1], ['b1.2.30', 0, 0, 2], ['r1.2.30', 0, 0, 2], ['r9.9.30', -1, 6, 1], ['r8.8.30', 0, 0, 3], 'junk']), [['r1.2.30', 5, 6, 1]]);
+  // PIN MOVED (ETHER-OW, 2026-10-13): a chaser's place is a pixel of the WORLD (net/wire.js worldPixelOk, TV-BEYOND's
+  // law) - the raiders sail the Eltheric Ocean too, and a chase said there was dropped by every peer; past the world's
+  // edge it is still dropped (it was a place a native unit west of the Bay)
+  const P = NATIVE_PIXEL, ether = ['r833.-860.30', 5000 * P, (499 + 5160) * P, 1];
+  assert.deepEqual(validRaiderWord([['r1.2.30', 5, 6, 1], ['b1.2.30', 0, 0, 2], ['r1.2.30', 0, 0, 2], ['r9.9.30', -8192 * P, 6, 1], ['r8.8.30', 0, 0, 3], ether, 'junk']), [['r1.2.30', 5, 6, 1], ether]);
   assert.deepEqual(validBandWord([['r1.2.30', 0, 0, 2], ['b1.2.30', 0, 0, 2]]), [['b1.2.30', 0, 0, 2]], 'a band word takes no raider');
   const at = { x: 60, y: 30 };   // my map pixel: the raider cells about it are within RAIDER_REACH_PX + RAIDER_CELL_PX
   assert.equal(raiderNearMe('r10.5.30', at, 30), true, 'my cell, this life');

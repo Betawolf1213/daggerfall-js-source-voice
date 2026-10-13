@@ -24,7 +24,7 @@ import {
 } from './arenaLeague.js';
 import { exhibitionCard, bookLines } from './arenaBook.js';
 import { enemyDisplayName, ENEMY_BASICS } from '../characters/enemyBasics.js';
-import { dateFromClassicMinutes, MONTH_NAMES, MINUTES_PER_DAY } from './gameDate.js';
+import { dateFromClassicMinutes, monthNames, MINUTES_PER_DAY } from './gameDate.js';   // L10N3e: the month in the player's language
 import { arenaSeasonOf, arenaSeasonDay } from '../net/arenaLaw.js';   // ARENA4b: the realm's season a row was taken in
 import { arenaReplaysRestore } from './arenaReplay.js';   // ARENA5: the Records page's Watch the replay
 
@@ -51,7 +51,7 @@ export function opponentLine(list) {
 /** A game minute as the window dates it: "14 First Seed, 3E 405". */
 export function arenaDate(gameMinutes) {
   const d = dateFromClassicMinutes(Math.max(0, Math.floor(Number(gameMinutes) || 0)));
-  return `${d.day + 1} ${MONTH_NAMES[d.month]}, 3E ${d.year}`;
+  return `${d.day + 1} ${monthNames()[d.month]}, 3E ${d.year}`;
 }
 const hh = (h) => `${String(h % 24).padStart(2, '0')}:00`;
 

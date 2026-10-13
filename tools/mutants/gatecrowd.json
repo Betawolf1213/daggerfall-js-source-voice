@@ -209,8 +209,8 @@
   {
     "name": "GATECROWD-row-gone",
     "file": "src/ui/enhancedMenu.js",
-    "old": "  c.append(choiceRow('gateCrowd', 'Crowd in the Burning Court',",
-    "new": "  void (choiceRow('gateCrowd', 'Crowd in the Burning Court',",
+    "old": "  c.append(choiceRow('gateCrowd', t('menu.peers.crowd', 'Crowd in the Burning Court'),",
+    "new": "  void (choiceRow('gateCrowd', t('menu.peers.crowd', 'Crowd in the Burning Court'),",
     "tests": [
       "test/gatecrowd.test.js"
     ]
@@ -218,8 +218,8 @@
   {
     "name": "GATECROWD-row-key",
     "file": "src/ui/enhancedMenu.js",
-    "old": "choiceRow('gateCrowd', 'Crowd in the Burning Court',",
-    "new": "choiceRow('gateCrowds', 'Crowd in the Burning Court',",
+    "old": "choiceRow('gateCrowd', t('menu.peers.crowd', 'Crowd in the Burning Court'),",
+    "new": "choiceRow('gateCrowds', t('menu.peers.crowd', 'Crowd in the Burning Court'),",
     "tests": [
       "test/gatecrowd.test.js"
     ]

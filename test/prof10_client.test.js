@@ -493,7 +493,7 @@ test('PROF10 wiring: the jeweller\'s bench a Pawn Shop\'s or a Gem Store\'s (ope
   assert.match(idx, /'prof-lapidary': 403,/);
   assert.match(idx, /POST \/v1\/prof\/craft \{ character, recipe, clean, name\?, heartwood\?, dye\?, cracked\?, rid \}/);
   const p = src('src/ui/profPages.js');
-  assert.match(p, /drawCookFire\(detail, rerender, kit\);   \/\/ PROF9\n\s*drawJewellerBench\(detail, rerender, kit\);   \/\/ PROF10/);
+  assert.match(p, /\['fire', \(d\) => drawCookFire\(d, rerender, kit\)\],   \/\/ PROF9\n\s*\['jeweller', \(d\) => drawJewellerBench\(d, rerender, kit\)\],   \/\/ PROF10/);   // PIN MOVED (MENU-ORDER): the stations a list of tiles
   assert.match(src('src/ui/enhancedPlusStyle.js'), /\.prof-heatbar\.prof-facetbar \{/);
   assert.match(src('src/scenes/decorTool.js'), /if \(PROF_STATIONS\.includes\(want\) && !forgeOffered\(\)\) \{ deps\.say\?\.\(stationColdLine\(want\)\); return false; \}/, 'the jeweller\'s bench sold where the bench works, as the forge');
   // INT1 (PIN MOVED): the template read through `lookup` - templateByIndex by default, the item law's own on the service

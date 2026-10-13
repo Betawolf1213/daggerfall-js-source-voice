@@ -28,7 +28,7 @@ import { wornPowers } from '../src/systems/lootPowers.js';
 import { equipItem } from '../src/systems/equip.js';
 import { createWeapon } from '../src/combat/enemyEquipment.js';
 import { withDom } from './invdrag.mjs';
-import { mountReforgeWindow, CODEX_TITLE, IMPRINTED, IMPRINT_NONE } from '../src/ui/reforgeWindow.js';
+import { mountReforgeWindow, CODEX_TITLE, IMPRINTED, IMPRINT_NONE, REFORGE_REFUSALS } from '../src/ui/reforgeWindow.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const on = () => { _resetForTests(); setPref('lootRarity', true); CX._resetCodexForTests(); };
@@ -212,6 +212,17 @@ test('LOOT10: the pages - the Codex alone from the pack, the Imprint at the guil
     try {
       const shell = one(host, 'reforge-shell');
       assert.deepEqual(kids(shell, 'reforge-tab').map((t) => t.dataset.page), ['reforge', 'salvage', 'imprint', 'codex', 'scry', 'sockets'], 'the guild\'s four - PIN MOVED (LOOT19, bible/06-Systems/Loot-II-Arc.md section 11): and its scryers\' page, the fifth; (LOOT20, section 12) its sockets\', the sixth');
+      // AUDIT MENU-ORDER U5: a refused imprint - pressed, it says why and imprints nothing
+      const gold = me.goldPieces;
+      me.goldPieces = 0;
+      view.repaint();
+      const poor = one(kids(shell, 'imprint-choice').find((li) => li.dataset.record === 'nightwhisper'), 'imprint-press');
+      assert.equal(poor.attrs['aria-disabled'], 'true');
+      poor.onclick({ stopPropagation() {} });
+      assert.deepEqual(calls, [], 'nothing imprinted');
+      assert.equal(one(shell, 'broker-note').textContent, REFORGE_REFUSALS.gold);
+      me.goldPieces = gold;
+      view.repaint();
       const choice = kids(shell, 'imprint-choice').find((li) => li.dataset.record === 'nightwhisper');
       assert.ok(choice, 'a found power of its group');
       one(choice, 'imprint-press').onclick({ stopPropagation() {} });

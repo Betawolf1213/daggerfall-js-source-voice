@@ -27,6 +27,7 @@ import { SOUND } from '../systems/soundClips.js';
 import { InputMessageBoxWindow } from './inputMessageBox.js';   // NOTE-KEYS: EnterNote's DaggerfallInputMessageBox, the one home (CM3)
 import { hotkeyHit } from '../systems/dialogShortcuts.js';   // NOTE-KEYS: the confirm box's Yes 'Y' and No 'N', off either host's alphabet
 import { ToolTip } from './toolTip.js';   // U37's shared component - this window points two panels at it
+import { localizedStrings, localizedTable, localizedText, formatText, getLocalizedLocationName, getLocalizedRegionName } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: the place names shown
 
 let _art = null;
 // AUDIT 24 (wave 40): DaggerfallQuestJournalWindow.cs:161-163 builds
@@ -87,13 +88,14 @@ export const JOURNAL_MODES = Object.freeze(['activeQuests', 'finishedQuests', 'n
  *  the ONLY place the game says that an entry is moved with a left
  *  click and deleted with a right one - which is exactly what
  *  handleClick/removeEntry below do. The port carried neither string
- *  nor a hover seam to hang them on. */
-export const JOURNAL_TIPS = Object.freeze({
-  dialog: 'Switch between: Active Quests; Finished Quests; Notebook; Messages',
-  activeQuests: 'Click on an active quest that has a target location to initiate travel.',
-  finishedQuests: 'Click on an entry to move it. Right click to delete.',
-  notebook: 'Click a note to move. Right click to delete. Click in-between to add a new note.',
-  messages: 'History of messages recently shown on screen',
+ *  nor a hover seam to hang them on. L10N3d: each page's tip by DFU's
+ *  key, read in the player's language when the tip shows. */
+export const JOURNAL_TIPS = localizedTable({
+  dialog: ['dialogButtonInfo', 'Switch between: Active Quests; Finished Quests; Notebook; Messages'],
+  activeQuests: ['activeQuestsInfo', 'Click on an active quest that has a target location to initiate travel.'],
+  finishedQuests: ['finishedQuestsInfo', 'Click on an entry to move it. Right click to delete.'],
+  notebook: ['notebookInfo', 'Click a note to move. Right click to delete. Click in-between to add a new note.'],
+  messages: ['messagesInfo', 'History of messages recently shown on screen'],
 });
 /** `defaultToolTip.ToolTipDelay = 1` (:103-104) - this window's own
  *  override of the GUI setting, the same per-window idiom the automap
@@ -126,7 +128,7 @@ export const JOURNAL_COLORS = Object.freeze({
  *  630, 632, 634) - AUDIT 24 (the seven-slice sweep): two of them were
  *  the port's own sentence case where the table title-cases both
  *  words. */
-const TITLES = Object.freeze({
+const TITLES = localizedStrings({
   activeQuests: 'Active Quests',
   finishedQuests: 'Finished Quests',
   notebook: 'Notebook',
@@ -138,30 +140,33 @@ const TITLE_SHADOW = Object.freeze([0, 0.2, 0.5, 1]);
 
 /** CreateDialogBox's three rows for baseKey "confirmFind" (:487-489)
  *  and the line HandleQuestClicks composes the place with (:478-481),
- *  verbatim from Internal_Strings.csv :799-801 and :1344. The port has
- *  no localisation table, so the English literals live here - the same
- *  call the rest of the port's native windows make. */
-export const FIND_PLACE_TEXT = Object.freeze({
-  head: 'Travel to location',
-  action: 'Do you want to open the world map to travel to:',
-  note: '(Note: you can cancel travel from the world map)',
+ *  verbatim from Internal_Strings.csv :799-801 and :1344 - L10N3d: by
+ *  DFU's keys, read in the player's language when the box is built. */
+export const FIND_PLACE_TEXT = localizedTable({
+  head: ['confirmFindHead', 'Travel to location'],
+  action: ['confirmFind', 'Do you want to open the world map to travel to:'],
+  note: ['confirmFind2', '(Note: you can cancel travel from the world map)'],
   /** locationInRegionProvince, "{0} in {1} province" - GUIDE2: its one
    *  home is the quest lens now, which the enhanced faces say it through. */
-  locationInRegion: locationInRegionText,
+  locationInRegion: () => locationInRegionText,
 });
+/** locationInRegionProvince (:459-462) - its one home is the quest lens (GUIDE2), read there in the player's language. */
+export { locationInRegionText };
 
 /** F160: CreateDialogBox's six strings and the note prompt -
  *  Internal_Strings_en verbatim (m_Id 636-641, 645), the same table
  *  FIND_PLACE_TEXT came from. */
-export const CONFIRM_TEXT = Object.freeze({
-  moveHead: 'Move entry',
-  move: 'Do you want to change the position of this entry?',
-  move2: '(It will be moved to before the next entry clicked)',
-  removeHead: 'Delete entry',
-  remove: 'Are you sure you want to remove this entry?',
-  remove2: '(It will be deleted permanently and cannot be restored)',
+export const CONFIRM_TEXT = localizedTable({   // L10N3d: baseKey "confirmMove" / "confirmRemove" + "Head", "", "2" (:417, :489-491)
+  moveHead: ['confirmMoveHead', 'Move entry'],
+  move: ['confirmMove', 'Do you want to change the position of this entry?'],
+  move2: ['confirmMove2', '(It will be moved to before the next entry clicked)'],
+  removeHead: ['confirmRemoveHead', 'Delete entry'],
+  remove: ['confirmRemove', 'Are you sure you want to remove this entry?'],
+  remove2: ['confirmRemove2', '(It will be deleted permanently and cannot be restored)'],
 });
 export const ENTER_NOTE_PROMPT = 'Enter your note:';
+/** L10N3d: EnterNote's prompt (:515), in the player's language, read when the box opens. */
+export const enterNotePrompt = () => localizedText('enterNote', ENTER_NOTE_PROMPT);
 /** EnterNote's field (:507-526): the entry line's label and TextBox.WidthOverride = 318 (:521); MaxCharacters is the
  *  notebook's MaxLineLenth (MAX_LINE_LENGTH, 70). */
 export const ENTER_NOTE_LABEL = ' > ';
@@ -518,7 +523,7 @@ export class QuestJournalWindow {
     // NOTE-KEYS: the one DaggerfallInputMessageBox (CM3) - the prompt above the entry line in one parchment box, the
     // box as wide as WidthOverride (:521) whatever the note's length. Escape closes it and the pick clears with it.
     this.noteBox = new InputMessageBoxWindow({
-      lines: [{ text: ENTER_NOTE_PROMPT, center: false }], label: ENTER_NOTE_LABEL,
+      lines: [{ text: enterNotePrompt(), center: false }], label: ENTER_NOTE_LABEL,
       maxCharacters: MAX_LINE_LENGTH, widthOverride: ENTER_NOTE_WIDTH_OVERRIDE,
       onSubmit: (text) => this._submitNote(text),
       onCancel: () => { this.noteBox = null; this.selectedEntry = null; },
@@ -552,9 +557,12 @@ export class QuestJournalWindow {
     this.findPlace = place;
     // :455-456 - the workaround for saves written before SiteDetails   (AUDIT GUIDE D4: the cite corrected)
     // carried a regionIndex, and the region NAME the dialog shows comes
-    // off the patched index.
+    // off the patched index. L10N3e: "Display using localized name"
+    // (:459-462) - the place by its map id, the region by that index;
+    // the canonical names above stay the gates' keys.
     const regionIndex = patchRegionIndex(site.regionIndex ?? 0, site.regionName ?? '');
-    const entryStr = FIND_PLACE_TEXT.locationInRegion(site.locationName, REGION_NAMES[regionIndex] ?? site.regionName ?? '');
+    const entryStr = locationInRegionText(getLocalizedLocationName(site.mapId, site.locationName),
+      getLocalizedRegionName(regionIndex, (i) => REGION_NAMES[i] ?? site.regionName ?? ''));
     // CreateDialogBox (:486-504): heading, the action line, a blank, the
     // entry in TextHighlight, then the explanation - and Yes/No.
     this.findBox = {

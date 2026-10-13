@@ -197,8 +197,12 @@ test('LOOT17: the window - a Hone press beside each line under its top, its pric
       card = one(shell, 'reforge-card');
       const next = kids(card, 'hone-press')[0];   // a Rare's third line stands under its top still
       assert.equal(next.textContent, 'Need 3 more shards', 'the next costs 4: one in the pack');
-      assert.equal(next.attrs.disabled, '');
+      assert.equal(next.attrs['aria-disabled'], 'true');
       assert.equal(next.attrs.title, REFORGE_REFUSALS.shards);
+      next.onclick({ stopPropagation() {} });   // MENU-ORDER: pressed, it says why and hones nothing
+      assert.deepEqual(calls, [0]);
+      assert.equal(one(shell, 'broker-note').textContent, REFORGE_REFUSALS.shards);
+      card = one(shell, 'reforge-card');
       assert.ok(textOf(card).includes(HONE_NOTE({ shards: 4, gold: 300 })), 'the next price, twice');
       kids(shell, 'broker-offer')[1].onclick();
       assert.equal(kids(one(shell, 'reforge-card'), 'hone-press').length, 0, 'an unknown piece: none');

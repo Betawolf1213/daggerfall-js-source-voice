@@ -386,6 +386,65 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     }
     return rig;
   }
+  /** MENU-ORDER (bible/10-UI/Menu-Order.md): A HULL'S PORTRAIT - the shipmaster's card's picture of her (scenes/
+   *  shipPortraits.js). A boat of the hull built once as hullRig's is (at the origin, standing), never placed and never
+   *  in the drawn lists; her sails baked once as they stand. Her parts - each drawn mesh and its matrix, as the draw
+   *  finds them - and her box (the parts' boxes, joined), once every part has come; null until then (asked again a
+   *  frame later: her meshes load as the draw's do) and before the models are in. Her billboards (the crew, the
+   *  lanterns' flames) are not in it. */
+  const portraitBoats = new Map();
+  const _portraitSphere = new Float32Array(4);
+  const holderAsks = new WeakMap();   // a sail's holder -> how often a portrait asked it to bake
+  function portrait(hull) {
+    if (!models || !(hull >= 0 && hull < HULL_NAMES.length)) return null;
+    let b = portraitBoats.get(hull);
+    if (!b) {
+      b = new Boat(hull, 0);
+      spawnBoat(b, { models, player: () => ({ position: [0, 0, 0], rotation: [0, 0, 0, 1] }), billboardSize: billboardSizeOf, modelBounds: modelBoundsOf });
+      portraitBoats.set(hull, b);
+    }
+    const w = walkMade(b);
+    const parts = [];
+    const box = [Infinity, Infinity, Infinity, -Infinity, -Infinity, -Infinity];
+    let waiting = false;
+    for (let i = 0; i < w.nodes.length; i++) {
+      const node = w.nodes[i];
+      for (const c of node.components) {   // her sails, baked as they stand (the holder's timer is spent on the first ask)
+        if (c.type !== 'FixDeformations' || bakes.has(c)) continue;
+        holderAsks.set(c, (holderAsks.get(c) ?? 0) + 1);
+        lateUpdateHolder(c, node, 1);
+      }
+      const mr = node.getComponent('MeshRenderer');
+      if (!mr || mr.m_Enabled === false || mr.materials?.[0]?.billboard) continue;
+      let gpu = null;
+      if (mr.classicModel != null) { gpu = pipeline?.gpuMeshes?.get(mr.classicModel) ?? null; if (!gpu) continue; }   // a classic model the world has not loaded: left out, as the draw leaves it
+      else {
+        const mf = node.getComponent('MeshFilter');
+        if (mf?.baked) {
+          const fix = node.getComponent('FixDeformations');
+          if (!bakes.has(fix) && (holderAsks.get(fix) ?? 0) > 2) continue;   // one that will not bake (no bones to bake from) is left out, as the draw leaves it
+          gpu = bakes.get(fix)?.gpu ?? null;
+        } else if (mf?.m_Mesh?.mesh) {
+          const slots = mr.materials ?? bundleSlots(mr);
+          const key = rendererModelKey(mf.m_Mesh.mesh, slots);
+          if (meshes.has(key) && !meshes.get(key)) continue;   // one that would not build: left out, as the draw leaves it
+          gpu = meshFor(key, () => rendererModel(models.geometry(mf.m_Mesh.mesh), slots));
+        } else continue;
+      }
+      if (!gpu) { waiting = true; continue; }
+      const m = w.mats[i];
+      parts.push([gpu, m]);
+      const local = meshLocalBounds({ models }, node.getComponent('MeshFilter')?.m_Mesh);   // her box off each part's own (graftColours' reading); a sphere's where it has none
+      if (local) {
+        const wb = worldBounds(node, local);
+        for (let k = 0; k < 3; k++) { box[k] = Math.min(box[k], wb.min[k]); box[k + 3] = Math.max(box[k + 3], wb.max[k]); }
+      } else if (gpu.bounds && gpu.bounds[3] > 0) {
+        const sp = transformSphere(m, gpu.bounds, _portraitSphere);
+        for (let k = 0; k < 3; k++) { box[k] = Math.min(box[k], sp[k] - sp[3]); box[k + 3] = Math.max(box[k + 3], sp[k] + sp[3]); }
+      }
+    }
+    return waiting || !parts.length || !(box[3] > box[0]) ? null : { parts, box };
+  }
   /** Object.Destroy(boat.GameObject): its meshes, bakes and flats go with it. */
   function remove(boat) {
     const list = boats.includes(boat) ? boats : peerBoats.includes(boat) ? peerBoats : seaBoats;
@@ -767,6 +826,7 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     ensureModels, spawn, spawnNow, preload, ready: () => preloaded, remove, setVariant, frame, batches, people, draw, lights, offsetAll, destroyAll,
     deckOf,   // DECK-WALK
     hullRig,   // OWS2
+    portrait,   // MENU-ORDER: a hull's picture for the shipmaster's card
     spawnPeerNow, spawnSeaNow,
     /** AUDIT PRE-MERGE 0928 R5: a boat's walk as this frame made it (its nodes and world matrices) - a probe's reading. */
     walkOf: walkMade,

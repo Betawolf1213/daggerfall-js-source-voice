@@ -273,7 +273,8 @@ test('FEATURES-DEFAULTS (issue #399): online the room\'s rows stay as the room h
   // ORG2: the button is the Settings toolbar's one reset - beside All off, asked first - and it runs this
   const menu = read('src/ui/enhancedMenu.js');
   const bar = menu.slice(menu.indexOf('function optionsToolbar('), menu.indexOf('\n}', menu.indexOf('function optionsToolbar(')));
-  assert.match(bar, /\{ label: 'Reset everything to defaults', onClick: \(\) => ask\('Reset Everything', RESET_ALL_ASK, 'Reset', \(\) => \{ resetEverything\(\); \}\) \}/, 'Defaults is asked first');
+  // PIN MOVED (L10N4): the button's words said through t(), their English as FEATURES-DEFAULTS left them
+  assert.match(bar, /\{ label: t\('menu\.settings\.reset', 'Reset everything to defaults'\), onClick: \(\) => ask\(t\('menu\.settings\.resetTitle', 'Reset Everything'\), resetAllAsk\(\), t\('menu\.settings\.resetYes', 'Reset'\), \(\) => \{ resetEverything\(\); \}\) \}/, 'Defaults is asked first');
   assert.match(menu, /function resetEverything\(\) \{\s*\n\s*resetToDefaults\(\); _eff = null;\s*\n\s*featuresDefaults\(\);\s*\n\}/, 'and puts every tile back');
 });
 
@@ -339,8 +340,8 @@ test('FT18 by source: the pane\'s search filters in place and All off asks first
   assert.match(menu, /if \(item\.startsWith\('feat:'\)\) \{ const f = FEATURES\.find\(\(x\) => x\.id === item\.slice\(5\)\); return f \? featureSearchText\(f\) : ''; \}/, 'a row is found by the words the Features search read');
   assert.match(menu, /\.flatMap\(\(item\) => itemNodes\(item, \{ \.\.\.ctx, any: true \}\)\);\s*\n\s*if \(!nodes\.length\) continue;/, 'a section left with nothing goes too');
   assert.match(menu, /if \(!found\) body\.append\(empty\('No matches'\)\);/, 'and an empty search says so');
-  assert.match(bar, /\{ label: 'All off', onClick: \(\) => ask\('Turn Everything Off', ALL_OFF_ASK, 'All off', \(\) => \{ featuresAllOff\(\); \}\) \}/, 'All off is asked first');
-  assert.match(bar, /\.\.\.\(kept && typeof kept === 'object' \? \[\{ label: 'Restore',/, 'Restore only while there is something to restore');
+  assert.match(bar, /\{ label: t\('menu\.features\.allOff', 'All off'\), onClick: \(\) => ask\(t\('menu\.features\.allOffTitle', 'Turn Everything Off'\), allOffAsk\(\), t\('menu\.features\.allOff', 'All off'\), \(\) => \{ featuresAllOff\(\); \}\) \}/, 'All off is asked first');
+  assert.match(bar, /\.\.\.\(kept && typeof kept === 'object' \? \[\{ label: t\('menu\.features\.restore', 'Restore'\),/, 'Restore only while there is something to restore');
   assert.match(menu, /optQuery = '';   \/\/ FT18: a fresh visit searches nothing/);
   // the menu's own key handler stands down for a text field, so typing in the search never walks the menu
   assert.match(menu, /if \(t && \(t\.tagName === 'INPUT' \|\| t\.tagName === 'TEXTAREA' \|\| t\.isContentEditable\)\) return;/);

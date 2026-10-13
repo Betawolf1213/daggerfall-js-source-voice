@@ -70,6 +70,7 @@ import { PATRON_COUNTER_MARK } from '../net/patronLaw.js';   // AUDIT LW-II-2 S1
 import {
   cureOfferMessageOffset, TRADE_MESSAGE_BASE_ID, NOT_ENOUGH_GOLD_ID,
 } from './guildServiceActions.js';
+import { localizedText, formatText } from './textManager.js';   // L10N3d: the window's own lines
 
 /** The shared TEXT.RSC ids. DaggerfallTradeWindow declares both
  *  (:33-34) and so do the guild services; ONE DFU MEMBER, ONE EXPORT,
@@ -181,7 +182,6 @@ export function identifySpellPass(items, chance, rolls = Math.random) {
   return { successCount, total: list.length, identified, spendMagicka: list.length > 0 };
 }
 
-/** Internal_Strings.csv:1053 - `totalIdentified,{0} out of {1} identified.` */
 /** AUDIT 26 F067 - DoModeAction's magicka refusal
  *  (DaggerfallTradeWindow.cs:960-963). The string table the old flag
  *  waited on IS in the reference tree, and it settles the wording:
@@ -195,9 +195,13 @@ export function identifySpellPass(items, chance, rolls = Math.random) {
  *  (GodMode's `&& !GodMode` arm has no port counterpart, as
  *  motor.js:"this.transportMode = mode" already records for the levitation term.) */
 export const NOT_ENOUGH_SPELL_POINTS_TEXT = 'You do not have enough spell points left.';
+/** L10N3d: ...as the refusal shows it (:962), in the player's language. */
+export const notEnoughSpellPointsText = () => localizedText('notEnoughSpellpointsLeft', NOT_ENOUGH_SPELL_POINTS_TEXT);
 
+/** The tally (:990): string.Format over GetLocalizedText("totalIdentified"),
+ *  Internal_Strings.csv:1053 - `totalIdentified,{0} out of {1} identified.` */
 export const identifiedTallyText = (successCount, total) =>
-  `${successCount} out of ${total} identified.`;
+  formatText(localizedText('totalIdentified', '{0} out of {1} identified.'), successCount, total);
 
 /** The three Buy-mode holiday halvings (:444-449), as ONE predicate
  *  per arm so each can be pinned alone. `guildFactionId` is null
@@ -413,6 +417,8 @@ export function tradeDecision(mode, { cost, tradePrice, gold = 0 }) {
  *  The sound alone (ParchmentScratching, already ported at :1084) is
  *  not that explanation - it plays where GoldPieces would have. */
 export const LETTER_OF_CREDIT_TEXT = 'You are paid with a letter of credit.';
+/** L10N3d: ...as the box shows it (:1093), in the player's language - both skins read it. */
+export const letterOfCreditText = () => localizedText('letterOfCredit', LETTER_OF_CREDIT_TEXT);
 
 /** ConfirmTrade's SELL arm (:1035-1050): the proceeds are weighed
  *  BEFORE they are paid, and a purse that would push the player past
@@ -503,6 +509,8 @@ export function localClickDecision(mode, item, {
  *  Internal_Strings.csv:821 - `doesntNeedIdentify,This does not need to
  *  be identified.` (the row has no "item"). */
 export const DOESNT_NEED_IDENTIFY = 'This does not need to be identified.';
+/** L10N3d: ...as the refusal shows it, in the player's language - both skins read it. */
+export const doesntNeedIdentifyText = () => localizedText('doesntNeedIdentify', DOESNT_NEED_IDENTIFY);
 
 // The three clauses that stood here are all closed:
 //  - the IDENTIFY SPELL arm (:956-996) is live. identifySpellPass

@@ -110,8 +110,8 @@
   {
     "name": "STATION-DOOR-the-wrong-section",
     "file": "src/ui/profPages.js",
-    "old": "  detail.append(stationHead(divider, 'The Enchanting Station', 'enchant'));   // STATION-DOOR",
-    "new": "  detail.append(stationHead(divider, 'The Enchanting Station', 'alchemy'));   // STATION-DOOR",
+    "old": "  detail.append(stationHead(divider, t('prof.page.enchant', 'The Enchanting Station'), 'enchant'));   // STATION-DOOR",
+    "new": "  detail.append(stationHead(divider, t('prof.page.enchant', 'The Enchanting Station'), 'alchemy'));   // STATION-DOOR",
     "tests": [
       "test/fb1011f_stationdoor.test.js"
     ]

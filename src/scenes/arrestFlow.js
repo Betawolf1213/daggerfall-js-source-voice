@@ -161,12 +161,17 @@ export function createArrestFlow({
    *  armed (a plea's answer, the verdict box's close, the prison's end and its close) asks before it acts: is my trial
    *  still the one standing? A load ends it (`abandon`, below) without running it to its release, and a step armed for
    *  a trial that is no longer standing does nothing at all - the boxes it drains and the keys that reach them before
-   *  the drain act on no game. Null between trials. */
+   *  the drain act on no game. Null before the first trial and after a load.
+   *  PLEA-LOOP (FIELD BUGS 2026-10-13b): ITS RELEASE ENDS IT TOO. ReleaseFromPrison is the court's last act - its
+   *  CancelWindow (:490) takes every box of the trial with it - and the token used to stand on past it, so a step of a
+   *  released trial still acted: a plea answered again after its release pleaded, took the fine and released again (four
+   *  hours, the grace, the reposition), as often as it was pressed. `released` is set as the release begins; the token
+   *  stays, so the trial's last box (the verdict's words, shown after it) is still the trial's for a load to take down. */
   let trial = null;
   /** A window the trial puts up, remembered so `abandon` can take it down. */
   const own = (win) => { trial?.windows.add(win); return win; };
-  /** A step of the trial now standing: it runs only while that same trial stands. */
-  const step = (fn) => { const t = trial; return (...args) => (t && trial === t ? fn(...args) : undefined); };
+  /** A step of the trial now standing: it runs only while that same trial stands, unreleased. */
+  const step = (fn) => { const t = trial; return (...args) => (t && trial === t && !t.released ? fn(...args) : undefined); };
   function openCourtScreen() {
     courtScreen = own(new CourtScreenWindow());
     townTalk.showOverlay(courtScreen);
@@ -724,6 +729,7 @@ export function createArrestFlow({
    *  member walks out of the courthouse where they stood; everyone
    *  else is put down at the location entrance. */
   function release({ reposition = true } = {}) {
+    if (trial) trial.released = true;   // PLEA-LOOP: the court's last act - no step of this trial acts after it
     clearArrest();
     // ReleaseFromPrison ends in CancelWindow (:490) - the court window
     // itself pops. EVERY court exit funnels through release(), which is

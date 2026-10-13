@@ -120,6 +120,7 @@ function travelHost({ mode = 'exterior', enemies = false, online = false, now = 
     livingTravelEnemies: () => enemies,
     townTalk: { say: (x) => log.push(['say', x]) },
     CANNOT_TRAVEL_ENEMIES_TEXT: 'You cannot travel with enemies nearby.',
+    localizedText: (key, en) => en,   // L10N3d: the refusal through DFU's key - English here
     _mode: () => mode,
     modes: { forceExitToExterior: () => { log.push(['exit']); mode = 'exterior'; } },
     advanceOwnMinutes: (m) => log.push(['clock', m]),
@@ -316,7 +317,7 @@ test('AUDIT LW-II-2 C6/H1: travel on with them only where a journey may go - the
   // world.js's gate: outdoors and the travel map's refusal - the very expression the map's door asks
   const enemies = 'duelEnemyNear() || areEnemiesNearby([...cityGuards.guards, ...exteriorFoes.foes]) || navalHostileNear()';
   assert.ok(WORLD.includes(`const livingTravelEnemies = () => ${enemies};`), 'the travel map\'s refusal');
-  assert.ok(WORLD.includes(`    if (${enemies}) {   // NAV-H: a hostile ship in reach too\n      townTalk.say(CANNOT_TRAVEL_ENEMIES_TEXT);`), 'as the map\'s door asks it');
+  assert.ok(WORLD.includes(`    if (${enemies}) {   // NAV-H: a hostile ship in reach too\n      townTalk.say(localizedText('cannotTravelWithEnemiesNearby', CANNOT_TRAVEL_ENEMIES_TEXT));`), 'as the map\'s door asks it');
   assert.equal(travelHost().travelFree(), true);
   assert.equal(travelHost({ mode: 'interior' }).travelFree(), false, 'indoors');
   assert.equal(travelHost({ mode: 'dungeon' }).travelFree(), false, 'below');

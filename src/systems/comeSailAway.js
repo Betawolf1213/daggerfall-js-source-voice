@@ -156,7 +156,7 @@ import { BOAT_PARTS_TEMPLATE, BOAT_DEED_TEMPLATE, mintBoatItem, boatItemName, bo
 import { NO_WATER_LEVEL } from '../world/deepWaterSwim.js';
 import { invertAffine } from '../world/prefabColliders.js';
 import { buildWaveMesh, stepWaveFrame, waveFrameTimeOf, isDayHour, WAVE_FRAME_COUNT, WAVE_SCALE } from './comeSailAwayWaves.js';
-import { MONTH_NAMES } from './gameDate.js';   // CSA-I: WorldTime.Now.MonthName, a marker's label
+import { monthNames } from './gameDate.js';   // CSA-I: WorldTime.Now.MonthName, a marker's label (L10N3d: in the player's language, as DFU's GetMonthName reads it)
 import { HELM_WAY, CARGO_HOLD_MISSING, steerage, isResponsive, pointOfSail, seaWind, SAIL_FREE, sailFreeGain, WIND_RATED } from './helmWay.js';   // HELM-WAY: the responsive helm; SAIL-FREE: her way under sail
 import { MAP_MARKER_MODE_COLORS, mapRect, guiMouse, mapPixelUnder, guiRectContains, vector2IntDistance, markerLabel, dayOfMonthWithSuffix, mapOverlayDraws, csFloatString, COLOR_RED, COLOR_GREEN, COLOR_BLUE, COLOR_BLACK, DAGGERFALL_DEFAULT_SHADOW_POS } from './comeSailAwayMap.js';   // CSA-I: the position reading
 import { noteFirstUse } from './tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
@@ -540,7 +540,7 @@ export function comeSailAwayCarrier(deps) {
 
 /** UpdateBoatCargoMod's two lines (3820-3858), by the cargo's mod: past half "a bigger boat", under whole "draws a little
  *  lower", whole nothing. FB1012d ETHER-STRAND (bible/01-Overview/Field-Bugs-2026-10-12d.md): one home for the words, so a
- *  host that covers the helm's mid-screen line - the Etheric crossing's own words, 7 s over its 3 - can say them again. */
+ *  host that covers the helm's mid-screen line - the Eltheric crossing's own words, 7 s over its 3 - can say them again. */
 export const cargoModWords = (mod) => (mod < 0.5 ? "You're going to need a bigger boat" : mod < 1 ? 'The boat draws a little lower than usual' : null);
 
 /**
@@ -2166,7 +2166,7 @@ export function createComeSailAwayRuntime(deps) {
     log(`COME SAIL AWAY - MOUSE IS OVER MAP PIXEL (${val3[0]}, ${val3[1]})`);
     if (!IsPositionMarked(val3)) {
       const d = deps.date();
-      const newLabel = markerLabel(val3, dayOfMonthWithSuffix(d.day), MONTH_NAMES[d.month]);
+      const newLabel = markerLabel(val3, dayOfMonthWithSuffix(d.day), monthNames()[d.month]);
       state.mapMarkers.push({ position: val3, label: newLabel, color: { ...MAP_MARKER_MODE_COLORS[state.mapMarkerMode] } });
     }
   }

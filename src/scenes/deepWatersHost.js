@@ -46,7 +46,8 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { openDeepWaters, deepWatersLocationRects } from '../world/deepWatersClient.js';
-import { isValidMapPixel } from '../world/deepWatersBake.js';   // ETHER-HOLD: the mod's map is the Bay's 1000 x 500
+import { inFrame } from '../world/deepWatersBake.js';
+import { waterFrameOf } from '../world/etherWatersBake.js';   // ETHER-DEEP: a pixel's frame - the Bay's map, or the Eltheric Ocean's box
 import { modSetting, modSettingsGeneration, MOD_SETTINGS } from '../systems/modSettings.js';
 import { DeepWaterTileData } from '../world/deepWaterTileData.js';
 import { sampleMeshLocalY, HOLES_RESOLUTION, TILE_WORLD_SIZE } from '../world/deepWaterFloor.js';
@@ -209,10 +210,12 @@ export function wallColliderIndices(floor) {
  *   is built and before OnFloorRefreshed (There's a Hole in the Bottom of the Ocean cuts its pit there)
  * @param {() => boolean} [deps.canMutateTerrainData] - OH-B: DeepWaterRuntime.CanMutateTerrainData, RefreshLoadedTile's gate
  * @param {() => number} [deps.clock] - milliseconds (performance.now), for the promote timing
+ * @param {?object|boolean} [deps.ether] - ETHER-DEEP: the Eltheric Ocean stands - its places' rects (etherWatersBake.js
+ *   etherPlaceRects), or true for none known: its box is carved by its own bake
  */
 export function createDeepWatersHost({ woods, woodsBytes = null, locations = [], maps = null, blocks = null, built, climateAt, currentPixel, collider = null, pixelTranslation = null, floatingFrame = null, gpu = null, client = null,
-  canRunHeavy = () => true, onFloorRefreshed = null, onSeafloorBuilt = null, canMutateTerrainData = () => true, clock = () => performance.now() }) {
-  const dw = client ?? openDeepWaters({ woods, woodsBytes, rects: deepWatersLocationRects(woods, locations, maps, blocks) });
+  canRunHeavy = () => true, onFloorRefreshed = null, onSeafloorBuilt = null, canMutateTerrainData = () => true, clock = () => performance.now(), ether = null }) {
+  const dw = client ?? openDeepWaters({ woods, woodsBytes, rects: deepWatersLocationRects(woods, locations, maps, blocks), ether });
   let bake = null;
   let disposed = false;
   const deferred = new Map();   // key -> entry, promoted when its turn comes
@@ -231,10 +234,12 @@ export function createDeepWatersHost({ woods, woodsBytes = null, locations = [],
 
   const keyOf = (e) => `${e.px},${e.py}`;
   const isCurrent = (e) => built.get(keyOf(e)) === e;
-  const climateClamped = (x, y) => climateAt(clampInt(x, 0, 999), clampInt(y, 0, 499));
+  /** ETHER-DEEP: the climate read clamped to the map the pixel (px, py) is answered in - the Bay's, or the Eltheric's box. */
+  const climateIn = (px, py) => { const f = waterFrameOf(px, py, ether); return (x, y) => climateAt(clampInt(x, f.x0, f.x0 + f.w - 1), clampInt(y, f.y0, f.y0 + f.h - 1)); };
 
   function jobFor({ px, py, samples, tilemap, tilemapBytes }) {
     const climates = new Array(9);
+    const climateClamped = climateIn(px, py);
     for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) climates[(dy + 1) * 3 + dx + 1] = climateClamped(px + dx, py + dy);
     const at = (x, y) => built.get(`${x},${y}`)?.samples ?? null;
     return {
@@ -246,18 +251,21 @@ export function createDeepWatersHost({ woods, woodsBytes = null, locations = [],
 
   const centre = () => { const c = currentPixel(); return [c.x, c.y]; };
 
-  /** A pixel with no water of its own and no sea in the bake at or beside it: the promote's answer is nothing, without the trip. */
+  /** A pixel with no water of its own and no sea in the bake at or beside it: the promote's answer is nothing, without the
+   *  trip. AUDIT ETHER-OW C1-3: asked only of sea bits this thread holds - a fresh Eltheric cell flooded here first (1-8 ms
+   *  on the main thread at a landfall) and again on the worker; the trip answers it. */
   function isDry(pixel) {
-    if (!bake || bake.mapPixelOrCardinalNeighborHasWaterCells(pixel.px, pixel.py)) return false;
+    if (!bake || bake.holdsSea?.(pixel.px, pixel.py) === false || bake.mapPixelOrCardinalNeighborHasWaterCells(pixel.px, pixel.py)) return false;
     return !mapDataHasWater({ samples: pixel.samples, tilemap: pixel.tilemap });
   }
 
-  /** The promote, on the worker - or its answer at once for a dry pixel, and for a pixel past the Bay's map (the
-   *  Etheric Sea, TAMRIEL2's continent): the mod's bathymetry is the Bay's, so nothing is carved there and the kernel's
-   *  water stands and swims. Every arm - the near promote, the pump's deferred builds, a refresh - comes through here
-   *  (ETHER-HOLD: the deferred arm carved the Etheric Sea's floor, and a player stood on it, unable to swim). */
+  /** The promote, on the worker - or its answer at once for a dry pixel, and for a pixel no bake answers (TAMRIEL2's
+   *  continent past the map): nothing is carved there and the kernel's water stands and swims. Every arm - the near
+   *  promote, the pump's deferred builds, a refresh - comes through here (ETHER-HOLD: the deferred arm carved the sea
+   *  past the Veil against the Bay's clamped corner, and a player stood on it, unable to swim). ETHER-DEEP: the
+   *  Eltheric Ocean's box is a bake's own frame (etherWatersBake.js) - carved as the Bay is, by its own coastline. */
   function promote(pixel) {
-    if (!isValidMapPixel(pixel.px, pixel.py) || isDry(pixel)) return Promise.resolve(null);
+    if (!inFrame(waterFrameOf(pixel.px, pixel.py, ether), pixel.px, pixel.py) || isDry(pixel)) return Promise.resolve(null);
     return dw.buildPixel(jobFor(pixel), centre());
   }
 
@@ -557,7 +565,7 @@ export function createDeepWatersHost({ woods, woodsBytes = null, locations = [],
       if (!s._tile) {
         s._tile = new DeepWaterTileData({
           mapPixelX: entry.px, mapPixelY: entry.py, mapData: { samples: entry.samples, tilemap: entry.tilemap },
-          climateIndex: climateAt(entry.px, entry.py), climateAt: climateClamped, bake,
+          climateIndex: climateAt(entry.px, entry.py), climateAt: climateIn(entry.px, entry.py), bake,
         });
       }
       return s._tile;

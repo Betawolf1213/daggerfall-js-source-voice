@@ -50,6 +50,7 @@ import { equipItem, equipTableOf, EQUIP_SLOTS, isBrokenItem, isForbiddenEquip, i
 import { isShieldTemplate } from './armorMaterials.js';
 import { itemLongName, conditionPercentage } from './itemInfo.js';
 import { isEnchanted } from './inventory.js';   // UI2: an enchanted piece shows its wear (its powers spend its condition - the pack's rule)
+import { shownSpellName } from './loot.js';   // L10N3e: a slotted spell's name as the book shows it - the stored name stays the canonical one
 import { isAmmunition } from './itemTemplates.js';   // THUNDERLOCK-ART: a stack of shot shows its count, never a wear bar (the pack's rule)
 
 import { expandRowValues } from './quest/questMacros.js';   // MACROS1: a used item's record through its own context (%map)
@@ -639,7 +640,7 @@ export function clearSpellQuickslot() { spellState = null; }
 export function resolveSpellQuickslot(entity) {
   if (!spellState) return null;
   const spell = bookOf(entity).find((sp) => sp?.index === spellState.index) ?? null;
-  return { index: spellState.index, name: spell?.name || spellState.name, spell };
+  return { index: spellState.index, name: shownSpellName(spell) || shownSpellName(spellState), spell };   // L10N3e: drawn, so as shown
 }
 
 /**
@@ -765,7 +766,7 @@ export function cycleQuickslot(slot, { entity = null, dir = 1 } = {}) {
     const next = at < 0 ? (step > 0 ? 0 : list.length - 1) : (at + step + list.length) % list.length;
     setSpellQuickslot(list[next]);
     cycling = { slot, ms: QUICK_CYCLE_LINGER_MS };
-    return { slot, index: list[next].index, name: list[next].name, spell: list[next] };
+    return { slot, index: list[next].index, name: shownSpellName(list[next]), spell: list[next] };   // L10N3e: as shown
   }
   if (!CONSUMABLE_SLOTS.includes(slot)) throw new Error(`quickslots: ${slot} does not cycle`);
   const list = consumableCandidates(entity, slot);
@@ -1119,7 +1120,7 @@ export function hotbarView(entity, { readiedIndex = null, size = HOTBAR_CAPACITY
     if (!e) return { slot: i, empty: true };
     if (e.type === 'spell') {
       const spell = book.find((sp) => sp?.index === e.index) ?? null;
-      return { slot: i, type: 'spell', name: spell?.name || e.name, index: e.index, spell,
+      return { slot: i, type: 'spell', name: shownSpellName(spell) || shownSpellName(e), index: e.index, spell,   // L10N3e: drawn, so as shown
         element: spell?.element ?? null, rangeType: spell?.rangeType ?? null,
         icon: spell?.noIcon ? null : iconOf(spell).icon ?? e.icon ?? null,   // UI2: the book's icon, else the one it was slotted with (NO-ICON: none)
         noIcon: !!spell?.noIcon,

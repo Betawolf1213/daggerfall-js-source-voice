@@ -865,7 +865,7 @@ export function tamrielLandOn(search) {
   return !!getPref('tamrielLand') && (isOnlinePage(search) || isEnhanced(search));
 }
 
-/** ETHER-SEA (bible/03-World/Etheric-Sea.md): THE ETHERIC SEA STANDS - its ground streamed in the world's far box
+/** ETHER-SEA (bible/03-World/Eltheric-Ocean.md): THE ELTHERIC OCEAN STANDS - its ground streamed in the world's far box
  *  (world/ethericSea.js), its places, its ships and its way home through the Veil - in every game. AUDIT CAPTAIN'S SEA
  *  G2: a save made past the Veil threw on its load under the classic skin, where the sea did not stand; it stands there
  *  now, and its captain sails home. `?ether=off` the kill door (a save past the Veil then lands at the way home). No

@@ -135,7 +135,7 @@ test('BALANCE1: every blow\'s wear path takes the scale - DFU\'s DamageEquipment
     } finally { Math.random = random; }
 
     // the other two, where they are charged
-    assert.match(rd('src/combat/pcaao.js'), /lowerCondition\(item, blowWear\(amount, rolls\), owner, say, removeFrom\);/, 'the overhaul\'s one wear sink');
+    assert.match(rd('src/combat/pcaao.js'), /lowerCondition\(item, blowWear\(amount, rolls\), owner, say, removeFrom, shownItemName\);/, 'the overhaul\'s one wear sink');
     assert.match(rd('src/systems/rrInstall.js'), /\(it, amount\) => lowerCondition\(it, blowWear\(amount, rolls\), owner, say\)/, 'Roleplay Realism\'s armour x5');
     // PIN MOVED (INT8/INT9, 2026-10-09 - bible/06-Systems/Integrity-Arc.md lane 2): the referee's word that a blow landed
     // wears the weapon of the strike that left - a duel's, and the open zone's the same

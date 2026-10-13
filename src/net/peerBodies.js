@@ -644,6 +644,11 @@ export class PeerBodies {
   /** A body's feet, pace, range and camera for this frame. */
   _place(b, peer, toScene, dt, near) {
     const f = toScene(peer.shown);
+    // FIELD BUGS 2026-10-13b ONE-BAD-BODY: a drawn pose with no finite place holds the body where it last stood. The body
+    // INTEGRATES its pose - the pace off the feet's travel, the yaw eased toward the pose's - so one NaN read stayed NaN
+    // for as long as the body stood, its picture with it (the renderer's batch door refuses that one now), until a
+    // reload. Its yaw is taken only when finite, below; said once, naming what was not
+    if (!(Number.isFinite(f?.[0]) && Number.isFinite(f[1]) && Number.isFinite(f[2]))) { this._notFinite('place', peer.shown); return; }
     // the ground speed off the drawn pose, eased; a jump (a snap, a recenter missed) resets it rather than reading as a sprint.
     // FIELD BUGS 2026-09-29 (the sea) #1: one stood on a deck (the glue's `deck`) paces by their place on it - a body standing
     // on a moving deck stood in a walk at the ship's speed - and a change of deck (or onto one, or off) starts afresh
@@ -655,7 +660,9 @@ export class PeerBodies {
     // and a pose eased over one send interval stops between arrivals, so the turn clip stuttered
     // ONCRASH1: one step, not a loop - the yaw eased here is the WIRE's
     // (see online.js lerpAngle), and a loop over a large one never falls.
-    b.yaw += wrapAngle(peerBodyYaw(peer.shown) - b.yaw) * (dt > 0 ? Math.min(1, dt * YAW_EASE) : 1);   // CLIMB5: to the wall, on the climb
+    const want = peerBodyYaw(peer.shown);   // CLIMB5: to the wall, on the climb
+    if (!Number.isFinite(want)) this._notFinite('yaw', peer.shown);   // ONE-BAD-BODY: the yaw it had stands
+    else b.yaw = Number.isFinite(b.yaw) ? b.yaw + wrapAngle(want - b.yaw) * (dt > 0 ? Math.min(1, dt * YAW_EASE) : 1) : want;   // ...and one born on a bad one takes the first good one
     b.d2 = near ? dist2(f, near) : 0;
     b.far = !!near && b.d2 > this._range * this._range * (b.far ? 1 : this._hyst * this._hyst);   // MWNPC11: a standing body held to the hysteresis past the range, a far one back within it
     b.cam = peerCamera(peer.shown, f, b.speed, b.cam, b.yaw);
@@ -814,6 +821,16 @@ export class PeerBodies {
     if (b.hit == null || dd) b.hit = ht;
     else if (ht !== b.hit) { b.hit = ht; b.rig.hurt?.(ht); }
     return dd > 0;
+  }
+
+  /** ONE-BAD-BODY: a drawn pose this lane could not take - its place or its yaw not a finite number - said once a lane, the
+   *  pose's own numbers with it, so the next report names the field that went wrong and where it came from. On the
+   *  console itself, as the renderer's refusal is: it is a line for the one who reads the console, never a player's, and
+   *  L10N4's ratchet (tools/l10nHardcoded.mjs) knows a console line only as a call on `console`. */
+  _notFinite(what, shown) {
+    if (this._notFiniteSaid) return;
+    this._notFiniteSaid = true;
+    console.warn(`[online] a body's drawn pose is not finite (${what}: x ${shown?.x} y ${shown?.y} z ${shown?.z} yaw ${shown?.yaw}${shown?.cl ? ` cw ${shown.cw}` : ''}) - it stands where it last stood`);
   }
 
   /** A body that failed - refused, or threw - is released and its look waited out, the reason kept and said once. */

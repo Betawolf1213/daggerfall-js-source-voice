@@ -246,7 +246,7 @@
   {
     "name": "CRAFT3-page-free-paid",
     "file": "src/ui/profPages.js",
-    "old": "      const free = t.free?.includes(r) === true;",
+    "old": "      const free = tr.free?.includes(r) === true;",
     "new": "      const free = false;",
     "tests": [
       "test/craft3_five.test.js"
@@ -255,8 +255,8 @@
   {
     "name": "CRAFT3-page-unlocks-one-discipline",
     "file": "src/ui/profPages.js",
-    "old": "  if (of.length < 2) return UNLOCKS[track] ?? null;",
-    "new": "  if (of.length < 99) return UNLOCKS[track] ?? null;",
+    "old": "  if (of.length < 2) return UNLOCKS[track]?.() ?? null;",
+    "new": "  if (of.length < 99) return UNLOCKS[track]?.() ?? null;",
     "tests": [
       "test/craft3_five.test.js"
     ]

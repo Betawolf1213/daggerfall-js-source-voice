@@ -177,7 +177,9 @@ export const FRAME_ROLES = {
   // button in blood rather than brass (the low-health frame's red). Each is a button above as well; this is its edge.
   warn: ['body .dfsocial-btn.warn', 'body .dfprofile-duel',
     'body .dfnaval-scuttle',   // NAV-F: scuttling a prize - she and what is left in her go down
-    '.pack-shell .fate-confirm .act.warn', '.px-sys .cmp-acts .act.warn'],   // REVENANT-FATE: Execute; COMPANION-ROSTER: Release, confirmed
+    '.pack-shell .fate-confirm .act.warn', '.px-sys .cmp-acts .act.warn',   // REVENANT-FATE: Execute; COMPANION-ROSTER: Release, confirmed
+    'body .dfdecor-btn.warn',   // MENU-ORDER: the decorator's Remove - its piece and half its price go
+    '.trade-shell .act.trade-steal'],   // MENU-ORDER: the counter's Steal - a crime, if the keeper sees it
   tile: ['.port-host .port-tile', '.pack-shell .sf-chip', '.port-host .port-iconcell', '.pack-shell .itemrow', '.pack-shell .equipped .wornrow', '.pack-shell .wornsock', '.wizard .racegrid button',
     '.wizard .facegrid button', '.shell .ft-tile', '.shell .ft-seg', '.shell .ft-mchip', '.shell .ft-tile-more',   // FT18: a condensed tile's parts toggle
     '.sb-shell .sb-chip', '.cr-shell .sb-chip', '.piletab',

@@ -65,8 +65,8 @@
   {
     "name": "GQ-near-companion-plain",
     "file": "src/scenes/hostMagic.js",
-    "old": "{ sayArm('mine-near', prevArm, PRESS_BUTTON_TO_FIRE_SPELL, COMPANION_ARMED_LINE); return true; }",
-    "new": "{ say(PRESS_BUTTON_TO_FIRE_SPELL); say(COMPANION_ARMED_LINE); return true; }",
+    "old": "{ sayArm('mine-near', prevArm, pressButtonToFireSpellText(), COMPANION_ARMED_LINE); return true; }",
+    "new": "{ say(pressButtonToFireSpellText()); say(COMPANION_ARMED_LINE); return true; }",
     "tests": [
       "test/giftquiet.test.js"
     ]
@@ -74,8 +74,8 @@
   {
     "name": "GQ-near-mate-plain",
     "file": "src/scenes/hostMagic.js",
-    "old": "{ sayArm('mate-near', prevArm, PRESS_BUTTON_TO_FIRE_SPELL, ALLY_ARMED_LINE); return true; }",
-    "new": "{ say(PRESS_BUTTON_TO_FIRE_SPELL); say(ALLY_ARMED_LINE); return true; }",
+    "old": "{ sayArm('mate-near', prevArm, pressButtonToFireSpellText(), ALLY_ARMED_LINE); return true; }",
+    "new": "{ say(pressButtonToFireSpellText()); say(ALLY_ARMED_LINE); return true; }",
     "tests": [
       "test/giftquiet.test.js"
     ]
@@ -83,8 +83,8 @@
   {
     "name": "GQ-aim-mate-plain",
     "file": "src/scenes/hostMagic.js",
-    "old": "{ sayArm('mate-aim', prevArm, PRESS_BUTTON_TO_FIRE_SPELL); return true; }",
-    "new": "{ say(PRESS_BUTTON_TO_FIRE_SPELL); return true; }",
+    "old": "{ sayArm('mate-aim', prevArm, pressButtonToFireSpellText()); return true; }",
+    "new": "{ say(pressButtonToFireSpellText()); return true; }",
     "tests": [
       "test/giftquiet.test.js"
     ]
@@ -92,8 +92,8 @@
   {
     "name": "GQ-aim-companion-plain",
     "file": "src/scenes/hostMagic.js",
-    "old": "{ sayArm('mine-aim', prevArm, PRESS_BUTTON_TO_FIRE_SPELL); return true; }",
-    "new": "{ say(PRESS_BUTTON_TO_FIRE_SPELL); return true; }",
+    "old": "{ sayArm('mine-aim', prevArm, pressButtonToFireSpellText()); return true; }",
+    "new": "{ say(pressButtonToFireSpellText()); return true; }",
     "tests": [
       "test/giftquiet.test.js"
     ]
@@ -119,8 +119,8 @@
   {
     "name": "GQ-ally-touch-plain",
     "file": "src/scenes/hostMagic.js",
-    "old": "    if (sent && !quiet) sayGift(allyCastCasterLine(sp.name, mark.name));",
-    "new": "    if (sent && !quiet) say(allyCastCasterLine(sp.name, mark.name));",
+    "old": "    if (sent && !quiet) sayGift(allyCastCasterLine(shownSpellName(sp), mark.name));",
+    "new": "    if (sent && !quiet) say(allyCastCasterLine(shownSpellName(sp), mark.name));",
     "tests": [
       "test/giftquiet.test.js"
     ]
@@ -137,8 +137,8 @@
   {
     "name": "GQ-ally-release-plain",
     "file": "src/scenes/hostMagic.js",
-    "old": "      sayGift(allyCastCasterLine(sp.name, ally.name));",
-    "new": "      say(allyCastCasterLine(sp.name, ally.name));",
+    "old": "      sayGift(allyCastCasterLine(shownSpellName(sp), ally.name));",
+    "new": "      say(allyCastCasterLine(shownSpellName(sp), ally.name));",
     "tests": [
       "test/giftquiet.test.js"
     ]

@@ -43,13 +43,14 @@ import {
   splitStack, GOLD_PIECE_WEIGHT_KG, goldPiecesOf, addGoldPieces, isGoldPieces, tellTaken,
 } from './inventory.js';
 import { isMap, isLightSource, isSpellbook } from './useItem.js';   // AUDIT 26 F156/F157: the map interception + the lit-torch clear; KEEP-SPELLBOOK
-import { CANNOT_REMOVE_ITEM_TEXT } from './createItem.js';
+import { cannotRemoveItemText } from './createItem.js';
 // AUDIT 26: DaggerfallEntity.MaxEncumbrance, enchantment allowance and
 // all - :1417 reads playerEntity.MaxEncumbrance, not the bare formula.
 import { entityMaxEncumbrance } from '../combat/formulas.js';
 import { makeItemPermanent } from './quest/item.js';   // TransferItem's MakePermanent arm (:1502-1504)
 import { getBool } from './settings.js';   // GUI/CanDropQuestItems
 import { setLightSource } from './lightSource.js';   // DISC7: the light in hand's one door
+import { localizedText, formatText } from './textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { REMAINS_LIST } from './legacy/heirloom.js';   // AUDIT LEGACY II H4: a remains' list, open
 import { BAG_WORDS, isBagItem, holdsOtherBag } from '../net/bagLaw.js';   // BAG1: a loaded Materials Bag never leaves the pack; ONE-BAG: one to a character
 import { SMALL_CART_KG } from './wagonKinds.js';   // WAGONS1: DFU's 750, one literal
@@ -66,6 +67,9 @@ export const WAGON_KG_LIMIT = SMALL_CART_KG;   // WAGONS1: the Small Cart's - ea
  *  CanCarryAmount). */
 export const CANNOT_HOLD_TEXT = 'Your wagon cannot hold any more stuff.';
 export const CANNOT_CARRY_TEXT = 'You cannot carry any more stuff.';
+/** L10N3d: ...in the player's language, read where the box shows them. */
+export const cannotHoldText = () => localizedText('cannotHoldAnymore', CANNOT_HOLD_TEXT);
+export const cannotCarryText = () => localizedText('cannotCarryAnymore', CANNOT_CARRY_TEXT);
 
 /** KEEP-SPELLBOOK (2026-10-08, the owner: "a player dropped his spellbook apparently"): the port's own - DFU lets the
  *  spellbook go like any MiscItems piece. The character's spellbook (MiscItems 132, not a quest's) leaves the pack for
@@ -79,21 +83,22 @@ export const SPELLBOOK_KEPT_TEXT = 'Your spellbook never leaves you.';
  *  EVERY refusal is silent in the SOUND sense - DFU's guards all
  *  return above DoTransferItem's click - so the only thing that
  *  varies is the box, and `text` is it: null means the click simply
- *  does nothing, which is what DFU's transport block does. */
+ *  does nothing, which is what DFU's transport block does. L10N3d: a
+ *  `text` is read in the player's language when the box asks for it. */
 export const REFUSAL = Object.freeze({
   /** Defensive only: both windows drop a click on an empty slot long
    *  before they reach the ladder. */
   missing: { reason: 'missing', text: null },
   transport: { reason: 'transport', text: null },
-  summoned: { reason: 'summoned', text: CANNOT_REMOVE_ITEM_TEXT },
+  summoned: { reason: 'summoned', get text() { return cannotRemoveItemText(); } },
   /** AUDIT 26: the quest arm's refusal shares the summoned one's
    *  words, because DFU pops the same string for both. */
-  questItem: { reason: 'questItem', text: CANNOT_REMOVE_ITEM_TEXT },
+  questItem: { reason: 'questItem', get text() { return cannotRemoveItemText(); } },
   remains: { reason: 'remains', text: 'These are the remains of your blood. Carry them home, or leave them where they lie.' },   // AUDIT LEGACY II H4
   spellbook: { reason: 'spellbook', text: SPELLBOOK_KEPT_TEXT },   // KEEP-SPELLBOOK
   chooseOnePile: { reason: 'chooseOnePile', text: null },
-  wagonFull: { reason: 'wagonFull', text: CANNOT_HOLD_TEXT },
-  cannotCarry: { reason: 'cannotCarry', text: CANNOT_CARRY_TEXT },
+  wagonFull: { reason: 'wagonFull', get text() { return cannotHoldText(); } },
+  cannotCarry: { reason: 'cannotCarry', get text() { return cannotCarryText(); } },
   /** BAG1: the Materials Bag leaves the pack only empty - the cart's own rule (tradeModes.js), said here because a bag
    *  dropped, chested or carted with materials in it would strand them in a list nobody owns. */
   bagLoaded: { reason: 'bagLoaded', text: BAG_WORDS.notEmpty },
@@ -182,7 +187,7 @@ export function questTransferRefused(item, { fromLocal, toWagon = false, getQues
 /** key "wagonFullGold" - the drop-gold clamp's box, Internal_Strings.csv:815
  *  verbatim ("Your wagon could only hold {0} gold pieces."), formatted
  *  with wagonCanHold at DaggerfallInventoryWindow.cs:1303. */
-export const wagonFullGoldText = (n) => `Your wagon could only hold ${n} gold pieces.`;
+export const wagonFullGoldText = (n) => formatText(localizedText('wagonFullGold', 'Your wagon could only hold {0} gold pieces.'), n);
 /** COMPANION-WEIGHT (2026-10-01): a storage with its own limit - a companion's pack (inventorySession storeCapacityOf) -
  *  refuses in its own words, the port's: DFU has no companion to name. */
 export const packFullText = (name) => `${name || 'Your companion'} cannot carry any more.`;
@@ -391,7 +396,7 @@ export function planTake(item, {
 // same question as a field on the item's own card (DISC25-F).
 
 /** TextManager's howManyItems, formatted (:1529). */
-export const HOW_MANY_ITEMS = (max) => `Pick how many items (max ${max})?`;
+export const HOW_MANY_ITEMS = (max) => formatText(localizedText('howManyItems', 'Pick how many items (max {0})?'), max);
 /** mb.TextBox.MaxCharacters = 8 (:1533). */
 export const SPLIT_INPUT_MAX = 8;
 

@@ -1,9 +1,9 @@
 // @ts-check
 // ETHER-SHIPS (2026-10-11, the owner: "The etheric sea is a infinite procedural oceanscape with procedural islands with
-// towns, dungeons, exotic resources, deadly legendary ships"; bible/03-World/Etheric-Sea.md ETHER-SHIPS, ETHER-LEGENDS) -
-// THE ETHERIC SEA'S SHIPS. Pure: the naval host and its director read them (scenes/navalHost.js, navalDirector.js).
+// towns, dungeons, exotic resources, deadly legendary ships"; bible/03-World/Eltheric-Ocean.md ETHER-SHIPS, ETHER-LEGENDS) -
+// THE ELTHERIC OCEAN'S SHIPS. Pure: the naval host and its director read them (scenes/navalHost.js, navalDirector.js).
 //
-// ITS TRAFFIC: corsairs and the isles' traders - the Bay's own classes under the Etheric Sea's names (`etherShipNames`,
+// ITS TRAFFIC: corsairs and the isles' traders - the Bay's own classes under the Eltheric Ocean's names (`etherShipNames`,
 // her captain the Bay's own law's) and the Isles' colours on a trader, the black flag on a corsair; no crown's navy sails
 // past the Veil. The deeper the band, the likelier a corsair (world/ethericSea.js BANDS `pirate`) and the bigger every
 // class (`level`); a port's waters keep the traders' peace (ETHER_PORT_WEIGHTS).
@@ -22,7 +22,7 @@ import { BANDS, LEAGUE_PX, VEIL_X, veilhaven, etherHash, etherRng, inEther, comp
 
 /** A trader of the isles flies their colours (the spyglass reads "the Isles' merchant colours"). */
 export const ISLES_FLAG = 'the Isles';
-/** The Etheric Sea's ship names - its corsairs' and its traders', ours: two words a name, a first and a last of each
+/** The Eltheric Ocean's ship names - its corsairs' and its traders', ours: two words a name, a first and a last of each
  *  trade's own (AUDIT CAPTAIN'S SEA D20 - sixteen names a trade moored two ships of one harbour under the same name;
  *  these are 256 a trade, drawn as the sixteen were). */
 const PIRATE_FIRSTS = ['Gloam', 'Void', 'Starving', 'Pale', 'Ashen', 'Hollow', 'Black', 'Sable', 'Crooked', 'Mourning', 'Weeping', 'Amber', 'Drowned', 'Grim', 'Red', 'Last'];
@@ -35,7 +35,7 @@ export const ETHER_MERCHANT_NAMES = twoWords(MERCHANT_FIRSTS, MERCHANT_LASTS);
 /** The names' own stream's salt (her captain's and every other draw stay the ones they were). */
 export const ETHER_NAME_SALT = 0xe7a3e;
 /**
- * A ship of the Etheric Sea's names: `{ name, captain, crown: null }` - her name the Etheric Sea's by her trade, her
+ * A ship of the Eltheric Ocean's names: `{ name, captain, crown: null }` - her name the Eltheric Ocean's by her trade, her
  * captain the Bay's own law's (shipNames, the Breton bank), no crown. A legend's are her own.
  * @param {any} cls @param {number} seed
  */

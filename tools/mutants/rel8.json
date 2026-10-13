@@ -115,7 +115,7 @@
   {
     "name": "REL8-about-without-the-row",
     "file": "src/ui/enhancedMenu.js",
-    "old": "    ['Update', UPDATE ?? 'a development build'],   // REL8: the player's update number (scripts/updateNumber.mjs)\n",
+    "old": "    [t('menu.about.update', 'Update'), UPDATE ?? t('menu.about.devBuild', 'a development build')],   // REL8: the player's update number (scripts/updateNumber.mjs)\n",
     "new": "",
     "tests": [
       "test/rel8_updates.test.js"

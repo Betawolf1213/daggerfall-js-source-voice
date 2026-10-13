@@ -150,7 +150,8 @@ test('CLIMB5 C4: the others draw a climber facing the wall, off the ground, neve
   assert.match(rp, /const face = peerBodyYaw\(shown\);[^\n]*\n\s*const yaw = Number\.isFinite\(face\) \? face : 0;/, 'the billboard\'s facing');
   assert.match(rp, /standingStill: !peerMoving\(shown\)/, 'no stride on the wall');
   const pb = rd('src/net/peerBodies.js');
-  assert.match(pb, /b\.yaw \+= wrapAngle\(peerBodyYaw\(peer\.shown\) - b\.yaw\)/, 'the body eases to the wall');
+  // PIN MOVED (FIELD BUGS 2026-10-13b ONE-BAD-BODY): the eased yaw is read once as `want` and taken only when finite
+  assert.match(pb, /const want = peerBodyYaw\(peer\.shown\);[^\n]*\n[^\n]*\n\s*else b\.yaw = Number\.isFinite\(b\.yaw\) \? b\.yaw \+ wrapAngle\(want - b\.yaw\)/, 'the body eases to the wall');
   assert.match(pb, /yaw: peerBodyYaw\(shown\), speed: 0,/, 'and stands at it');
   const pr = rd('src/net/peerRiders.js');
   assert.match(pr, /const standing = \(pose\) => chooseTable\(\{ stopped: !peerMoving\(pose\)/, 'the walkers stand on the wall (not only the beast: AUDIT CLIMB-ARC N2 says the same words there)');

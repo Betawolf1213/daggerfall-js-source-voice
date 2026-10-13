@@ -77,8 +77,8 @@ test('PX23 book: it borrows every law and invents none', () => {
   assert.ok(rows[0].effects[0].group.length > 0);
   // ...and the source of the naming is the classic book's own module.
   const book = read('src/ui/enhancedSpellbook.js');
-  assert.match(book, /from '\.\.\/systems\/spellEffects\.js'/, 'the same effectByKey spellbookWindow.js:"effectByKey, spellBookDescriptionId" uses');
-  assert.match(book, /spellEffects, spellPointCost, EFFECT_NOT_FOUND,/, 'the laws are imported, not rewritten');
+  assert.match(book, /from '\.\.\/systems\/spellEffects\.js'/, 'the same effectByKey spellbookWindow.js:"const template = effectByKey(key);" uses');
+  assert.match(book, /spellEffects, spellPointCost, effectNotFoundText,/, 'the laws are imported, not rewritten');
   assert.doesNotMatch(book, /tag === 'lycanthrope'|tag === 'vampire'/, 'the tags are constants, never typed');
 });
 
@@ -91,7 +91,7 @@ test('AUDIT 39: DELETE is two presses in BOTH books, and the words are the class
   // (:840-852) deletes. The port's CLASSIC window carries all of that,
   // so the two skins disagreed about an unrecoverable act.
   const src = read('src/ui/enhancedSpellbook.js');
-  assert.match(src, /DELETE_SPELL_PROMPT/, 'the prompt is the classic\'s own string, imported');
+  assert.match(src, /deleteSpellPrompt\(\)/, 'the prompt is the classic\'s own string, imported');
   assert.doesNotMatch(src, /'Do you want to delete this spell\?'/, 'and never retyped');
   assert.match(src, /^let deleting = null;/m, 'deleteSpellIndex, by another name');
   // THE PRESS ARMS, IT DOES NOT DELETE.
@@ -220,7 +220,7 @@ test('PX23b: RENAME comes back, and the book says when you cannot afford a spell
   const src = read('src/ui/enhancedSpellbook.js');
   // The classic asks "Enter spell name : " (:934); the first draft
   // dropped it - a prettier window that can do less.
-  assert.match(src, /ENTER_SPELL_NAME/);
+  assert.match(src, /enterSpellNameLabel\(\)/);
   // AUDIT 68 S31-enhanced-rename-mutates-shared-spell: MOVED, deliberately - this pinned
   // `sel.spell.name = name`, a write into the shared (or frozen RRI) record; the edit is the classic's copy now.
   assert.match(src, /if \(name\) editBookSpell\(deps\.spells\?\.\(\), sel\.i, \{ name \}\);/);

@@ -69,6 +69,7 @@ import { isShelved } from '../systems/quest/quest.js';   // QUEST-SHELF: a quest
 import { WA_RAID_QUESTS } from '../systems/warmAshesShips.js';   // QUEST-SHELF: a raid the world runs is never set aside
 import { QuestListsManager } from '../systems/quest/questLists.js';
 import { QuestOfferFlow } from '../systems/quest/offerFlow.js';
+import { localizedQuestDisplayName } from '../systems/quest/localizedQuest.js';   // L10N3c: the pickers' localized labels
 import { PlayerNotebook } from '../systems/notebook.js';
 import { GENDERS } from '../characters/nameHelper.js';
 import { ZERO_NPC_DATA, NPC_CONTEXT, raceFromFaction } from '../characters/staticNpc.js';
@@ -226,6 +227,7 @@ export const QUEST_CTX_CONTRACT = Object.freeze([
   'getReputation', 'getTotalGold', 'giveItemToPlayer', 'hasQuestTopics',
   'isPlayerInTown', 'isPlayerInsideCastle', 'makeEnemiesHostile',
   'makeHeldQuestItemsPermanent', 'makePcDiseased', 'midDateTimeString',
+  'noteMinutes', 'notePlace',   // L10N5: a notebook header's render data
   'offerReward', 'onQuestEnded', 'onQuestStarted', 'ownMinutes', 'partySize', 'playSong',
   'playSound', 'playVideo', 'playerEntity', 'playerHasItem',
   'playerRaceName', 'questClockStepMax', 'questFoeInstances', 'questWhere',   // GUIDE4: the host's two questions for the lens's look
@@ -285,6 +287,8 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
     dateTimeString: () => ctx.dateTimeString?.() ?? '',
     midDateTimeString: () => ctx.midDateTimeString?.() ?? '',
     cityName: () => ctx.cityName?.() ?? '',
+    nowMinutes: () => ctx.noteMinutes?.(),   // L10N5: a header's render data - optional seams, a host without them files text alone
+    place: () => ctx.notePlace?.() ?? null,
   });
 
   let questLists = null;
@@ -409,6 +413,9 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
     // offers it, so the list-box arm was unreachable. Defaults off,
     // which is the classic random draw.
     get guildQuestListBox() { return getBool('Enhancements', 'GuildQuestListBox'); },
+    // L10N3c: DaggerfallGuildServicePopupWindow.cs:637's GetLocalizedQuestDisplayName - the list box's label in the
+    // player's language, '' (the quest's own DisplayName) where the language has no -LOC file for it
+    getLocalizedQuestDisplayName: (questName) => localizedQuestDisplayName(questName),
   });
 
   // QuestMachine.Update's pacing (QuestMachine.cs:305-320): tick at

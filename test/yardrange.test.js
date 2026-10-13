@@ -59,7 +59,7 @@ test('YARD-RANGE the law: the Other players card offers Off, 75 m, 150 m and 300
   assert.equal(PREF_DEFAULTS.yardRange, YARD_RANGE_DEFAULT, 'the prefs shelf carries the law\'s own default');
   for (const v of YARD_RANGE_TIERS) assert.equal(yardRangeOf(v), v, `${v} is a choice`);
   for (const v of [undefined, null, 7, -300, '300', 301, true, Infinity, NaN]) assert.equal(yardRangeOf(v), YARD_RANGE_DEFAULT, `${String(v)} is no choice`);
-  assert.match(src('src/ui/enhancedMenu.js'), /choiceRow\('yardRange', 'Yard decorations',\n\s*'[^']*Your own yard always shows\.[^']*',\n\s*YARD_RANGE_TIERS\.map\(\(m\) => \[m, m \? `\$\{m\} m` : 'Off'\]\), \{ home: true, read: \(\) => yardRangeOf\(getPref\('yardRange'\)\) \}\)\);/);
+  assert.match(src('src/ui/enhancedMenu.js'), /choiceRow\('yardRange', t\('menu\.peers\.yards', 'Yard decorations'\),\n\s*t\('menu\.peers\.yardsNote', '[^']*Your own yard always shows\.[^']*'\),\n\s*YARD_RANGE_TIERS\.map\(\(m\) => \[m, m \? t\('menu\.peers\.metres', '\{m\} m', \{ m \}\) : t\('menu\.toggle\.off', 'Off'\)\]\), \{ home: true, read: \(\) => yardRangeOf\(getPref\('yardRange'\)\) \}\)\);/);
   assert.match(src('src/scenes/world.js'), /\n {4}range: \(\) => getPref\('yardRange'\),/, 'the streaming host reads the choice every frame');
 });
 

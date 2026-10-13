@@ -82,7 +82,8 @@ import { totalGoldAmount } from '../systems/court.js';   // PlayerEntity.GetGold
 import { classSpecials } from '../systems/specialAdvantages.js';   // MAC-G: GetClassSpecials, read back off the career's own flags
 import { arenaLadderRestore, ladderTitle } from '../systems/arenaLadder.js';   // ARENA2: the arena's name for you
 import { ARENA_TEXT } from '../systems/arenaText.js';   // ARENA3: the banner's name
-import { liveRaceTemplate } from '../systems/vampirism.js';     // MAC-G: the blood half of that list; DISC10-D V5: PlayerEntity.RaceTemplate, the LIVE (compound) race
+import { liveRaceTemplate, liveRaceName } from '../systems/vampirism.js';     // MAC-G: the blood half of that list; DISC10-D V5: PlayerEntity.RaceTemplate, the LIVE (compound) race
+import { processGrammar } from '../systems/textManager.js';   // L10N3g: the race label's grammar (DaggerfallCharacterSheetWindow.cs:398)
 
 /** ARENA2: the sheet's Arena lines - the title the ladder gives and the record ("12 won, 3 lost") - or null for a
  *  character who never fought there. ARENA3: and the banner worn (systems/arenaLeague.js - "The Red Banner"), which
@@ -130,7 +131,7 @@ export function sheetModel(entity) {
     name: e.name ?? '',
     // The classic sheet's own default when an entity carries none.
     // DISC10-D V5: RaceTemplate.Name (DaggerfallCharacterSheetWindow.cs:398)
-    race: raceTemplateOf(e)?.name ?? e.race ?? 'Breton',
+    race: processGrammar(liveRaceName(e) || 'Breton'),   // L10N3d: shown in the player's language; L10N3g: through the grammar, as the classic sheet's raceLabel (:398)
     career: e.career?.name ?? '',
     level: e.level ?? 1,
     // The classic sheet's own read: GetGoldAmount, coins plus every

@@ -20,6 +20,21 @@
 // record past the end draws garbage. Such a pair is left unmapped, so
 // the mesh keeps its original texture rather than a wrong one.
 
+/** MENU-ORDER (AUDIT MENU-ORDER C3): THE LAW A TABLE WAS BUILT IN, by name - the climate and season its swaps were made
+ *  for - so a picture drawn through one table is known again through another built the same way (a house entered again
+ *  builds its table anew, and the decorator's model pictures were drawn again each visit, each copy kept). Kept beside
+ *  the table, never in it: drawMesh reads its every entry. A table no builder named has none (`remapLawOf` null). */
+const remapLaws = new WeakMap();
+/** @param {Map<string,string>} texRemap @param {string} law @returns {Map<string,string>} */
+export function markRemapLaw(texRemap, law) {
+  if (texRemap && typeof texRemap === 'object') remapLaws.set(texRemap, String(law));
+  return texRemap;
+}
+/** @param {any} texRemap @returns {string|null} */
+export function remapLawOf(texRemap) {
+  return texRemap && typeof texRemap === 'object' ? remapLaws.get(texRemap) ?? null : null;
+}
+
 /**
  * Fill `texRemap` for one mesh's submeshes.
  *

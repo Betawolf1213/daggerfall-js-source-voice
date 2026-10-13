@@ -31,6 +31,7 @@ import { gateHash } from './gateLaw.js';   // the one mix every clock-law rolls 
 import { VEIN_TABLES, regionSignature } from './nodeLaw.js';
 import { CLIMATES } from '../formats/mapsTables.js';
 import { MARKS_FAUCETS } from './marksLaw.js';
+import { watchPixelOk } from './watchReceipt.js';   // AUDIT ETHER-OW C2-1: a site the Watch can vouch for
 
 export const MOTHERLODE_SALT = 0x6d1d;
 /** The Motherlodes a UTC day, server-wide. */
@@ -103,7 +104,7 @@ export const motherlodeGround = (climate) => !!VEIN_TABLES[climate];
  * @param {number} day @param {Array<{ x: number, y: number, climate: number, region: number }>} candidates
  */
 export function motherlodeSites(day, candidates) {
-  const all = (candidates ?? []).filter((c) => c && Number.isSafeInteger(c.x) && Number.isSafeInteger(c.y) && motherlodeGround(c.climate))
+  const all = (candidates ?? []).filter((c) => c && watchPixelOk(c.x, c.y) && motherlodeGround(c.climate))   // AUDIT ETHER-OW C2-1: never past the Veil - a strike asks a Watch receipt of the site's pixel
     .sort((a, b) => a.y - b.y || a.x - b.x);
   const rich = all.filter((c) => MOTHERLODE_CLIMATES.includes(c.climate));
   const pool = (rich.length >= MOTHERLODES_A_DAY ? rich : all).slice();

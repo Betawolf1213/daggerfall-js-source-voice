@@ -1,7 +1,7 @@
 // AUDIT CAPTAIN'S SEA (2026-10-11, the owner: "Lets do a comprehensive audit, enaure this is insanely detailed and
 // perfection. No exceptions") - the pre-merge audit of the naval update (#781: CAPT-CREW, CAPT-LOG, CAPT-PAY, CAPT-MARQUE,
-// CAPT-WATERS, CAPT-BOARD, CAPT-TRADE, CAPT-CHARTS, SPYGLASS and the Etheric Sea's ETHER-* slices): nine lenses, each
-// finding verified by a probe and pinned here, executed wherever a seam can be stood up. Ids: C the crew, G the Etheric
+// CAPT-WATERS, CAPT-BOARD, CAPT-TRADE, CAPT-CHARTS, SPYGLASS and the Eltheric Ocean's ETHER-* slices): nine lenses, each
+// finding verified by a probe and pinned here, executed wherever a seam can be stood up. Ids: C the crew, G the Eltheric
 // ground, X the crossing and the chart, D traffic, law and legends, L the ledger, the save and online, H the docs' and the
 // tests' honesty, S the spyglass, P the isles' places in the world, B the board, the exchange and the charts.
 // bible/01-Overview/Audit-Captains-Sea.md; tools/mutants/auditcaptsea.json.
@@ -426,7 +426,7 @@ test('AUDIT CAPTAIN\'S SEA S24: an unknown hull\'s hurts are no more read than h
   destroyNavalHud();
 });
 
-// ── G: the Etheric ground ───────────────────────────────────────────────────────────────────────────────────────────
+// ── G: the Eltheric ground ───────────────────────────────────────────────────────────────────────────────────────────
 
 test('AUDIT CAPTAIN\'S SEA G1/G10: the law answers its sea ETHER_MARGIN round the box - the far ring\'s whole reach from a ship in the box (its radius, its rebuild\'s drift, a normal\'s neighbour, the cliffs\' fade): built at the Veil over a world of land, the ring is all sea (four pixels drew the Bay\'s clamped row 0 as a ridge on the way home) (mutants: the margin)', async () => {
   const E = await import('../src/world/ethericSea.js');
@@ -464,14 +464,14 @@ test('AUDIT CAPTAIN\'S SEA G2/P7: THE SWITCH SPLIT - the sea stands in every gam
   const core = w.slice(w.indexOf('  async function _teleportToPixel('));
   const land = core.indexOf('    const unstreamed = _streamedLanding(px, py);\n    if (unstreamed) { px = unstreamed.px; py = unstreamed.py; localPos = null; resolveArrival = null; }');
   assert.ok(land > core.indexOf('climbFeel.reset();') && land < core.indexOf('if (modEvent == null && !resolveArrival) csaPreJump();') && land < core.indexOf('state.init(px, py)'), 'after the resets, before the helm and the build');
-  assert.match(w, /if \(_unstreamedLanding\) \{\n\s+townTalk\.say\(_unstreamedLanding === 'ether' \? 'The Etheric Sea is closed in this game/);
+  assert.match(w, /if \(_unstreamedLanding\) \{\n\s+townTalk\.say\(_unstreamedLanding === 'ether' \? `\$\{ETHER_SEA_TITLE\} is closed in this game/);   // PIN MOVED (ELTHERIC): the sea's name its one home's
   const { crossingTarget } = await import('../src/systems/naval/etherCrossing.js');
   const { HOME_WATERS } = await import('../src/world/ethericSea.js');
   assert.deepEqual(crossingTarget('home', { px: 8000, py: -5000 }), { px: HOME_WATERS.px, py: HOME_WATERS.py }, 'never a way out in the sea itself');
   assert.deepEqual(crossingTarget('home', { px: 150, py: 300 }), { px: 150, py: 300 });
 });
 
-test('AUDIT CAPTAIN\'S SEA G3: the landforms\' lands past the Bay\'s table answer the Etheric Sea\'s own climates - an isle\'s hills never move with the Bay\'s corner pixel (999, 0), and wear its own climate\'s land (mutants: the law\'s arm, the node\'s climate)', async () => {
+test('AUDIT CAPTAIN\'S SEA G3: the landforms\' lands past the Bay\'s table answer the Eltheric Ocean\'s own climates - an isle\'s hills never move with the Bay\'s corner pixel (999, 0), and wear its own climate\'s land (mutants: the law\'s arm, the node\'s climate)', async () => {
   const { hillsAt, landformClimates } = await import('../src/world/landforms.js');
   const { veilhaven, isleOfCell } = await import('../src/world/ethericSea.js');
   const { CLIMATES } = await import('../src/formats/mapsTables.js');
@@ -818,32 +818,52 @@ test('AUDIT CAPTAIN\'S SEA X6/X7/X8/X12/X13/X14/X18: the chart under a finger an
   const M = await import('../src/ui/etherChartWindow.js');
   const ES = await import('../src/world/ethericSea.js');
   const h = ES.veilhaven();
-  // the labels: packed names at x8 never overlap
+  // the labels: packed names at x8 never overlap (PIN MOVED, ETHER-CHART2: a name stands on its isle's east side or its
+  // west - the model's own `box`, not a box re-derived east of the isle)
   const charted = ES.islesNear(h.px - 30, h.py, 30).map((i) => i.key);
   const m = M.chartModel({ px: h.px, py: h.py, charted, legends: [], stats: {} }, { cx: h.px - 30, cy: h.py, zoom: 3 }, 1000, 700);
-  const boxes = m.isles.filter((i) => i.label).map((i) => [i.x + i.r + 4, i.y - M.LABEL_H / 2 - 2, i.x + i.r + 4 + M.capFirst(i.name).length * M.LABEL_CHAR_PX, i.y + M.LABEL_H / 2 - 2]);
+  const boxes = m.isles.filter((i) => i.label).map((i) => i.box);
   for (let a = 0; a < boxes.length; a++) for (let b = a + 1; b < boxes.length; b++) {
     const [p, q] = [boxes[a], boxes[b]];
     assert.ok(!(p[0] < q[2] && q[0] < p[2] && p[1] < q[3] && q[1] < p[3]), 'no two names over each other');
   }
   assert.ok(m.isles.some((i) => !i.label), 'a crowded chart leaves some unlettered');
   assert.ok(m.isles.filter((i) => i.kind === 'port').every((i) => i.label), 'every port lettered - placed first');
-  // ports first: a port goes unlettered only under another port's name, never a lesser isle's
-  const boxOf = (i) => [i.x + i.r + 4, i.y - M.LABEL_H / 2 - 2, i.x + i.r + 4 + M.capFirst(i.name).length * M.LABEL_CHAR_PX, i.y + M.LABEL_H / 2 - 2];
+  // ports first: a port goes unlettered only under another port's name, never a lesser isle's (PIN MOVED, ETHER-CHART2:
+  // on BOTH its sides - `labelBoxes` - each under a lettered port's own box)
   const over = (p, q) => p[0] < q[2] && q[0] < p[2] && p[1] < q[3] && q[1] < p[3];
-  const mz = M.chartModel({ px: h.px, py: h.py, charted: ES.islesNear(h.px, h.py, 40).map((i) => i.key), legends: [], stats: {} }, { cx: h.px, cy: h.py, zoom: 1 }, 1000, 700);
+  const mz = M.chartModel({ px: h.px, py: h.py, charted: ES.islesNear(h.px, h.py, 60).map((i) => i.key), legends: [], stats: {} }, { cx: h.px, cy: h.py, zoom: 0 }, 1000, 700);   // x1: x2 now letters every port of these waters on one side or the other
   const lettered = mz.isles.filter((i) => i.label);
   assert.ok(mz.isles.some((i) => i.kind === 'port' && !i.label), 'a view crowded with ports');
-  for (const p of mz.isles.filter((i) => i.kind === 'port' && !i.label)) assert.ok(lettered.some((q) => q.kind === 'port' && over(boxOf(p), boxOf(q))), `${p.name}: unlettered under a port's name alone`);
+  for (const p of mz.isles.filter((i) => i.kind === 'port' && !i.label)) {
+    for (const side of M.labelBoxes(p, M.capFirst(p.name).length * M.LABEL_CHAR_PX)) assert.ok(lettered.some((q) => q.kind === 'port' && over(side, q.box)), `${p.name}: unlettered under a port's name alone`);
+  }
   // ...and the ports lettered are the ones a chart of its ports alone letters (at x8 off Veilhaven a wild isle's name, met
   // first in the chart's order, took a port's place)
-  const near = ES.islesNear(h.px, h.py, 45);
-  const at8 = (keys) => M.chartModel({ px: h.px, py: h.py, charted: keys, legends: [], stats: {} }, { cx: h.px, cy: h.py, zoom: 3 }, 1000, 700);
+  // PIN MOVED (ETHER-CHART2): and in the crowded waters seventy pixels west and thirty south, where - a name standing on
+  // either side of its isle now - a lesser isle's name met first in the chart's order still takes a port's only place
   const letteredPorts = (mm) => mm.isles.filter((i) => i.kind === 'port' && i.label).map((i) => i.key).sort();
-  assert.deepEqual(letteredPorts(at8(near.map((i) => i.key))), letteredPorts(at8(near.filter((i) => i.kind === 'port').map((i) => i.key))), 'the ports lettered as they would be with no lesser isle on the chart');
+  for (const [dx, dy, reach] of [[0, 0, 45], [-70, 30, 60]]) {
+    const near = ES.islesNear(h.px + dx, h.py + dy, reach);
+    const at8 = (keys) => M.chartModel({ px: h.px, py: h.py, charted: keys, legends: [], stats: {} }, { cx: h.px + dx, cy: h.py + dy, zoom: 3 }, 1000, 700);
+    assert.deepEqual(letteredPorts(at8(near.map((i) => i.key))), letteredPorts(at8(near.filter((i) => i.kind === 'port').map((i) => i.key))), 'the ports lettered as they would be with no lesser isle on the chart');
+  }
   // the bands: the Shallows named by the Veil with no line of its own, every deeper band its bound
   const mv = M.chartModel({ px: ES.VEIL_X - 2, py: h.py, charted: [], legends: [], stats: {} }, { cx: ES.VEIL_X - 13 * ES.LEAGUE_PX, cy: h.py, zoom: 0 }, 1000, 700);
   assert.deepEqual(mv.bands.map((b) => [b.name, b.line]), [['the Shallows', false], ['the Reaches', true], ['the Deep Aether', true]]);
+  // PIN MOVED (ETHER-CHART2, then AUDIT ETHER-CHART2 U2: the band names stand on the depth ruler over the chart): each
+  // name lettered stands in its own water - west of its own bound, east of the next deeper band's
+  const mb = M.chartModel({ px: h.px, py: h.py, charted: [], legends: [], stats: {} }, { cx: ES.VEIL_X - 30 * ES.LEAGUE_PX, cy: h.py, zoom: 1 }, 1000, 700);
+  const named = mb.ruler.filter((seg) => seg.words && seg.id !== 'veil' && seg.id !== 'edge');
+  assert.ok(named.length >= 2, 'names lettered in view');
+  for (const seg of named) {
+    const n = ES.BANDS.findIndex((b) => b.id === seg.id);
+    const [east] = M.toScreen({ cx: ES.VEIL_X - 30 * ES.LEAGUE_PX, cy: h.py, zoom: 1 }, ES.VEIL_X - ES.BANDS[n].from * ES.LEAGUE_PX, 0, 1000, 700);
+    const [west] = ES.BANDS[n + 1] ? M.toScreen({ cx: ES.VEIL_X - 30 * ES.LEAGUE_PX, cy: h.py, zoom: 1 }, ES.VEIL_X - ES.BANDS[n + 1].from * ES.LEAGUE_PX, 0, 1000, 700) : [-Infinity];
+    const half = seg.words.length * M.LABEL_CHAR_PX / 2, mid = (seg.x0 + seg.x1) / 2;
+    assert.ok(seg.x1 === Math.min(1000, east) && seg.x0 === Math.max(0, west), `${seg.id}: its water its own, bound to bound`);
+    assert.ok(mid + half <= Math.min(1000, east) && mid - half >= Math.max(0, west), `${seg.id} on its deeper side of its own bound, in its own water`);
+  }
   const src = rd('src/ui/etherChartWindow.js');
   assert.match(src, /if \(e\.pointerType === 'mouse' && e\.button !== 0\) return;/, 'the mouse\'s first button alone');
   assert.match(src, /if \(drag && e\.pointerType === 'mouse' && !\(e\.buttons & 1\)\) endDrag\(e\);/, 'no button held: no drag');
@@ -851,13 +871,13 @@ test('AUDIT CAPTAIN\'S SEA X6/X7/X8/X12/X13/X14/X18: the chart under a finger an
   assert.match(src, /canvas\.addEventListener\('contextmenu', \(e\) => e\.preventDefault\(\)\);/);
   assert.match(src, /const step = d \/ pinch\.d >= CHART_PINCH_STEP \? 1 : pinch\.d \/ d >= CHART_PINCH_STEP \? -1 : 0;/, 'the pinch');
   assert.match(src, /canvas\.addEventListener\('pointerup', \(e\) => \{ if \(drag && !drag\.moved && downs\.size === 1\) note\(\.\.\.local\(e\)\); endDrag\(e\); \}\);/, 'the tap');
-  assert.match(src, /tool\('-', \(\) => zoomMid\(-1\)\); tool\('\+', \(\) => zoomMid\(1\)\); tool\('Ship', toShip\);/, 'its own presses');
+  // PIN MOVED (L10N4, at the merge of main): the Ship press's word through the text core, its English as it was
+  assert.match(src, /tool\('-', \(\) => zoomMid\(-1\)\); tool\('\+', \(\) => zoomMid\(1\)\); tool\(t\('sea\.chart\.ship', 'Ship'\), toShip\);/, 'its own presses');
   assert.match(src, /const acts = actionsForCode\(bindings\(\), e\.code\);\n\s+if \(overlayAction\(e\) === 'back' \|\| acts\.includes\('TravelMap'\) \|\| acts\.includes\('AutoMap'\)\)/, 'the key that opened it');
   assert.ok(!/e\.code === 'KeyM'/.test(src), 'no key of its own hard-coded');
   assert.match(src, /if \(Math\.abs\(wheelAcc\) < CHART_WHEEL_STEP\) return;/, 'the wheel gathered');
   assert.equal(M.CHART_WHEEL_STEP, 100);
   assert.match(src, /g\.strokeRect\(t\.x - t\.r, t\.y - t\.r, 2 \* t\.r, 2 \* t\.r\);/, 'a haunt a square');
-  assert.match(src, /g\.textAlign = 'right'; g\.fillText\(capFirst\(b\.name\), Math\.min\(w - 4, b\.x - 6\), 16\);/, 'a band on its deeper side');
 });
 
 test('AUDIT CAPTAIN\'S SEA X15/X16: the chart goes with the world it charts - shut at every load, jump and move (it stood over the Bay after a load); its arrow the ship\'s heading at her helm, never where the captain looks (mutants: the close, the boat\'s heading)', () => {
@@ -992,7 +1012,7 @@ test('AUDIT CAPTAIN\'S SEA C10: a wear that is no number reads none - the sea\'s
   assert.equal(c.morale, MORALE_START - 1, 'twice the wear: half the clock');
 });
 
-// ── D: the Etheric Sea's traffic and its strands ─────────────────────────────────────────────────────────────────────
+// ── D: the Eltheric Ocean's traffic and its strands ─────────────────────────────────────────────────────────────────────
 
 const REACHES = { band: 'reaches', bandName: 'the Reaches', depth: 20, legend: null };
 /** A boat of mine at a wild isle's strand past the Veil: the world's sites and gather stood in for. */
@@ -1006,7 +1026,7 @@ async function strandSea(o = {}) {
   return { s, w, site, casks };
 }
 
-test('AUDIT CAPTAIN\'S SEA D1: a strand\'s casks float once - out of its reach and back while they float, none floats again (each return floated three more till the first was hauled: the Etheric goods without end) (mutants: the floating check\'s stood gate)', async () => {
+test('AUDIT CAPTAIN\'S SEA D1: a strand\'s casks float once - out of its reach and back while they float, none floats again (each return floated three more till the first was hauled: the Eltheric goods without end) (mutants: the floating check\'s stood gate)', async () => {
   const { s, w, site, casks } = await strandSea();
   s.run(1.2);
   assert.equal(casks().length, 3);
@@ -1050,14 +1070,14 @@ test('AUDIT CAPTAIN\'S SEA D2: a strand\'s haul floats alongside the boat that p
   assert.ok(s.log.given.some(([n, b]) => n === 1 && b === null), 'into his pack');
 });
 
-test('AUDIT CAPTAIN\'S SEA D3: an Etheric prize\'s papers answer to no crown - burned, they wash no notoriety of mine in the Bay (the nearest Bay capital\'s waters were read for a ship of the Etheric Sea) (mutants: the Veil\'s gate)', async () => {
+test('AUDIT CAPTAIN\'S SEA D3: an Eltheric prize\'s papers answer to no crown - burned, they wash no notoriety of mine in the Bay (the nearest Bay capital\'s waters were read for a ship of the Eltheric Ocean) (mutants: the Veil\'s gate)', async () => {
   const { GRAPPLE_S } = await import('../src/systems/naval/navalBoarding.js');
   const s = await sea({ hull: 2, where: { ether: REACHES } });
   const id = s.host.spawnShip('merchantGalleon', { range: 26.8, bearing: Math.PI / 2, yaw: 0 });
   const e = s.host._sea.get(id);
   e.ship.pos = [26.8, 0, 0];
   s.host.frame(0.1);
-  assert.equal(e.ether, 'reaches', 'a ship of the Etheric Sea');
+  assert.equal(e.ether, 'reaches', 'a ship of the Eltheric Ocean');
   s.host.notoriety.add('Wayrest', 40);
   s.host.notoriety.add('Sentinel', 40);
   s.host.notoriety.add('Daggerfall', 40);

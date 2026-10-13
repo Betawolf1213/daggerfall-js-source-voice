@@ -380,7 +380,7 @@
   {
     "name": "SEAT1b-relay-off-map-mints",
     "file": "server/src/index.js",
-    "old": "    if (!(x >= 0 && x < 1000 && y >= 0 && y < 500)) return;",
+    "old": "    if (!watchPixelOk(x, y)) return;   // AUDIT ETHER-OW C2-1: the Watch's ground, one home (its answers as they were)",
     "new": "",
     "tests": [
       "test/seat1b_client.test.js"

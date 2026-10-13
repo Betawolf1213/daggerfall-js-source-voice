@@ -566,8 +566,8 @@
   {
     "name": "LOOT16-a-refusal-pressable",
     "file": "src/ui/reforgeWindow.js",
-    "old": "      if (why) { btn.setAttribute('disabled', ''); btn.setAttribute('title', LIFT_REFUSALS[why] ?? ''); }\n      btn.onclick = (e) => {\n        e.stopPropagation();\n        if (why) return;\n        const done = deps.lift",
-    "new": "      btn.onclick = (e) => {\n        e.stopPropagation();\n        if (why) return;\n        const done = deps.lift",
+    "old": "      if (why) refusePress(btn, LIFT_REFUSALS[why] ?? '', refused);   // MENU-ORDER: pressed, it says why\n",
+    "new": "",
     "tests": [
       "test/loot16_curses.test.js"
     ]

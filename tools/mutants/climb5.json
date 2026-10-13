@@ -308,8 +308,8 @@
   {
     "name": "CLIMB5-body-eases-to-the-camera",
     "file": "src/net/peerBodies.js",
-    "old": "b.yaw += wrapAngle(peerBodyYaw(peer.shown) - b.yaw)",
-    "new": "b.yaw += wrapAngle(peer.shown.yaw - b.yaw)",
+    "old": "const want = peerBodyYaw(peer.shown);",
+    "new": "const want = peer.shown.yaw;",
     "tests": [
       "test/climb5.test.js"
     ]

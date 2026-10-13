@@ -32,11 +32,12 @@ import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { closeOnOutsideTap } from './enhancedOverlays.js';   // OT1
 import { overlayAction, eventMeans } from './input.js';   // KB1: and the registry's answer for the book's own key
 import {
-  spellEffects, spellPointCost, EFFECT_NOT_FOUND, ENTER_SPELL_NAME,
-  CANNOT_DELETE_VAMP, CANNOT_DELETE_WERE, DELETE_SPELL_PROMPT,
+  spellEffects, spellPointCost, effectNotFoundText, enterSpellNameLabel,
+  cannotDeleteVampText, cannotDeleteWereText, deleteSpellPrompt,
   VAMPIRE_SPELL_TAG, LYCANTHROPY_SPELL_TAG, editBookSpell,
 } from './spellbookWindow.js';
-import { effectByKey } from '../systems/spellEffects.js';   // the classic book's own source (spellbookWindow.js:"effectByKey, spellBookDescriptionId")
+import { effectByKey } from '../systems/spellEffects.js';   // the classic book's own source (spellbookWindow.js:"computed from the")
+import { shownSpellName } from '../systems/loot.js';   // L10N3e: a stock spell's name in the player's language
 import { spellQuickslot, setSpellQuickslot, clearSpellQuickslot } from '../systems/quickslots.js';   // HOTSLOT: the book is where a spell is slotted
 import { TARGET_DESCRIPTIONS, ELEMENT_DESCRIPTIONS, SPELL_ICON_COUNT } from './spellIcons.js';
 import { spellIconPicture, spellIconUrl } from './enhancedArt.js';   // UI2: the spell's own icon, carried onto the hotbar
@@ -86,7 +87,7 @@ export function effectWords(effect) {
   const template = effectByKey(key);
   const base = template
     ? { group: template.group, subgroup: template.subgroup ?? '' }
-    : { group: EFFECT_NOT_FOUND, subgroup: key };
+    : { group: effectNotFoundText(), subgroup: key };
   const lo = effect.magnitudeBaseLow ?? 0;
   const hi = effect.magnitudeBaseHigh ?? 0;
   const perLevel = effect.magnitudeLevelBase ?? 0;
@@ -124,12 +125,12 @@ export function spellFrame(spell) {
 export function bookModel(spells, castCost) {
   return (spells ?? []).map((sp, i) => ({
     i,
-    name: sp?.name ?? '',
+    name: shownSpellName(sp) ?? '',   // L10N3e: the Name the classic book shows (EntityEffectBroker.cs:877)
     cost: spellPointCost(sp, castCost),
     // The classic's own two refusals (:CANNOT_DELETE_VAMP / _WERE):
     // a special spell is not the player's to throw away.
-    undeletable: sp?.tag === VAMPIRE_SPELL_TAG ? CANNOT_DELETE_VAMP
-      : sp?.tag === LYCANTHROPY_SPELL_TAG ? CANNOT_DELETE_WERE : null,
+    undeletable: sp?.tag === VAMPIRE_SPELL_TAG ? cannotDeleteVampText()
+      : sp?.tag === LYCANTHROPY_SPELL_TAG ? cannotDeleteWereText() : null,
     effects: spellEffects(sp).map(effectWords).filter(Boolean),
     frame: spellFrame(sp),
     spell: sp,
@@ -343,18 +344,20 @@ function render() {
     input.type = 'text';
     input.value = renaming;
     input.maxLength = 30;
-    input.setAttribute('aria-label', ENTER_SPELL_NAME.trim());
+    input.setAttribute('aria-label', enterSpellNameLabel().trim());
     input.oninput = () => { renaming = input.value; };
     const ok = el('button', 'act primary', 'Save');
     ok.type = 'submit';
     form.onsubmit = (e) => {
       e.preventDefault();
-      const name = renaming.trim();
+      const typed = renaming.trim();
+      // L10N3e: the field opened on the name as shown; handed back as it was, the spell keeps its canonical name
+      const name = typed === sel.name ? (sel.spell?.name ?? typed) : typed;
       if (name) editBookSpell(deps.spells?.(), sel.i, { name });   // AUDIT 68 S31-enhanced-rename-mutates-shared-spell: never the shared record
       renaming = null;
       render();
     };
-    form.append(el('span', 'sb-renamelabel', ENTER_SPELL_NAME.trim()), input, ok);
+    form.append(el('span', 'sb-renamelabel', enterSpellNameLabel().trim()), input, ok);
     detail.append(form);
   }
   if (notice) detail.append(el('p', 'sheet-notice', notice));
@@ -407,7 +410,7 @@ function confirmDelete(yes) {
 function deleteScrim() {
   const scrim = el('div', 'sb-ask');
   const ask = el('div', 'card');
-  ask.append(el('p', 'px-note', DELETE_SPELL_PROMPT));
+  ask.append(el('p', 'px-note', deleteSpellPrompt()));
   const a = el('div', 'sb-acts');
   const yes = el('button', 'act primary', 'Yes');
   yes.onclick = () => confirmDelete(true);

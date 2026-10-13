@@ -164,6 +164,7 @@ import { createReforgeOverlay, reforgeDoorOpen, closeReforgeDoor } from './refor
 import { SOUND } from '../systems/soundClips.js';
 
 import { expandRowValues } from '../systems/quest/questMacros.js';   // MACROS1: a used item's record through its own context (%map)
+import { localizedText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 /** Slot id -> where it sits on the body, and what to call it.
  *
@@ -453,7 +454,7 @@ export function itemLine(item, identity = undefined) {
     // (:1602-1609): "Recipe for Potion of %po" and the chained PotionRecipeIngredients box. This skin has no
     // Info mode - the card IS the info - so without these two the recipe said nothing anywhere.
     recipe: potionRecipeIngredientNames(item)
-      ? { potion: `Potion of ${potionMacroName(item)}`, ingredients: potionRecipeIngredientNames(item) }
+      ? { potion: localizedText('potionOf', 'Potion of %po').replaceAll('%po', potionMacroName(item)), ingredients: potionRecipeIngredientNames(item) }   // L10N3d: DaggerfallUnityItemMCP.cs:240
       : null,
     stack: (item.stackCount ?? 1) > 1 ? item.stackCount : null,
     equipped: isEquipped(item),

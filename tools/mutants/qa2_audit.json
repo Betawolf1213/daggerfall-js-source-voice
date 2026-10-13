@@ -436,8 +436,8 @@
   {
     "name": "QA2A-name-unseeded",
     "file": "src/systems/quest/place.js",
-    "old": "      if (!shareId) return THE_NAMED_RESIDENCE.replace('%s', named());",
-    "new": "      return THE_NAMED_RESIDENCE.replace('%s', named());",
+    "old": "      if (!shareId) return named();",
+    "new": "      return named();",
     "tests": [
       "test/qa2_layouts.test.js"
     ],

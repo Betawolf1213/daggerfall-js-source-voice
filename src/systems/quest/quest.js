@@ -29,6 +29,7 @@
 
 import { travelTimeSeconds } from './clock.js';
 import { Message, Formatting } from './message.js';
+import { localizedQuestMessage } from './localizedQuest.js';   // L10N3c: GetMessage's Internal_Quests lookup
 import { symbolToSaveData, symbolFromSaveData } from './symbol.js';
 import { smallerDungeonsStateNow } from '../../world/smallerDungeons.js';   // AUDIT 28 W4: Quest.cs:284's stamp
 
@@ -119,6 +120,7 @@ export class Quest {
     // unreachable and a null there would only add `?? ''` noise to the
     // dozen template literals that print it.
     this.displayName = null;
+    this.ownDisplayName = undefined;   // L10N5: the quest's own DisplayName while a translation's stands (localizeDisplayName)
     this.factionId = 0;
     this.messages = new Map();     // id -> Message
     this.tasks = new Map();        // symbol name -> Task
@@ -192,7 +194,25 @@ export class Quest {
     else existing.copyQuestActions(task);   // duplicate symbol: merge actions in
   }
 
-  getMessage(messageID) { return this.messages.get(messageID) ?? null; }
+  /** GetMessage (Quest.cs:666-684). L10N3c: a translation's text for `QUEST.messageId` (the current language's
+   *  Internal_Quests, filled from its -LOC file) is read into the same Message, as ReplaceMessage does, each time it is
+   *  asked for; English has none, and reads its own source. */
+  getMessage(messageID) {
+    const result = this.messages.get(messageID) ?? null;
+    if (!result) return null;
+    const lines = localizedQuestMessage(this.questName, messageID);
+    if (lines) result.localize(lines);   // L10N5: the quest's own lines kept beside, for the save
+    else result.ownText();   // L10N5: a language with no translation of it reads the quest's own again
+    return result;
+  }
+
+  /** L10N5: the current language's DisplayName (its -LOC file's - L10N3c, ParseQuest's tail) over the quest's own, which
+   *  is kept for the save; '' reads the quest's own. So a quest begun in French is saved under its own name and named
+   *  in each language's words after a load (machine.js localizeDisplayName). */
+  localizeDisplayName(name) {
+    if (this.ownDisplayName === undefined) this.ownDisplayName = this.displayName;
+    this.displayName = name || this.ownDisplayName;
+  }
   getTask(symbol) { return (symbol && this.tasks.get(symbol.name)) ?? null; }
   getResource(symbol) { return (symbol && this.resources.get(symbol.name)) ?? null; }
   getClock(symbol) { const r = this.getResource(symbol); return r?.isClock ? r : null; }
@@ -510,7 +530,7 @@ export class Quest {
       questComplete: this.questComplete,
       questSuccess: this.questSuccess,
       questName: this.questName,
-      displayName: this.displayName,
+      displayName: this.ownDisplayName !== undefined ? this.ownDisplayName : this.displayName,   // L10N5: the quest's own name
       factionId: this.factionId,
       questStartTime: this.questStartTime,
       questTombstoned: this.questTombstoned,
@@ -550,6 +570,7 @@ export class Quest {
     this.questSuccess = data.questSuccess;
     this.questName = data.questName;
     this.displayName = data.displayName ?? null;   // an older envelope has no field; C# deserialises to null
+    this.ownDisplayName = undefined;   // L10N5: the machine names it in the language again (localizeDisplayName)
     this.factionId = data.factionId;
     this.questStartTime = data.questStartTime;
     this.questTombstoned = data.questTombstoned;

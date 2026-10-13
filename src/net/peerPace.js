@@ -16,6 +16,8 @@ export const JUMP_UNITS = 5;
 export function stepPeerPace(speed, from, to, dt) {
   if (!from) return 0;
   const d = Math.hypot(to[0] - from[0], to[2] - from[2]);
-  if (d > JUMP_UNITS) return 0;
+  // FIELD BUGS 2026-10-13b ONE-BAD-BODY: a travel that is not a finite number is a jump too - `NaN > JUMP_UNITS` is false,
+  // and the eased pace took the NaN and kept it every frame after (0.8 of NaN is NaN); a pace that is not one starts over
+  if (!(d <= JUMP_UNITS) || !Number.isFinite(speed)) return 0;
   return dt > 0 ? speed * 0.8 + (d / dt) * 0.2 : speed;
 }

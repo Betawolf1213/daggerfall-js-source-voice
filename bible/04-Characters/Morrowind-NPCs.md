@@ -290,6 +290,23 @@ view's (AUDIT OW4 J6), the flats' own - stands as handed. Classic
 billboards keep DFU's upright quad: they are flats, not pictures of a 3D
 figure. Pinned: `test/bodylean.test.js`; mutants `tools/mutants/bodylean.json`.
 
+ONE-BAD-BODY (FIELD BUGS 2026-10-13b, `01-Overview/Field-Bugs-2026-10-13b.md`;
+the owner: "people are saying with norrowind models, people are invisable.
+Something in a recent commit borked it", online only). The packer places each tile after the last (`x += it.pw`),
+so one picture whose size was not a number - `Math.max(2, NaN)` is NaN,
+so the measure's own clamp let it through - put every picture queued after
+it at NaN: drawn over the first tile, which is the player's own body's
+(queued first), and composited from nowhere. One body with a bad measure
+blanked every Morrowind body after it, the player's own picture with them,
+for every frame it stood; before this pass it would have broken only
+itself. The batch's one door (`renderer.queueCharacterSprite`) refuses a
+picture whose size is not a finite count of texels - its own loss, said
+once on the console - and the peer layer that fed it a non-finite pose no
+longer keeps one (`net/peerBodies.js` _place, `net/peerPace.js`). On a real
+GL (Chromium's, the world frame's batch and composite): three horses, the
+middle one at a place that is not a number - the third drew 0 texels; with
+the door, 4,073.
+
 PROVEN. `test/mwnpc2_onepass.test.js` on the real Renderer over a recording
 GL: three bodies, two binds where alone they were six, each tile cleared
 and drawn under its own camera, each quad sampling its own tile, the

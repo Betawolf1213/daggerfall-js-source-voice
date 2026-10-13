@@ -552,7 +552,9 @@ test('TV2 host wiring: THE CAP - governed before the frame reads the travel scal
   assert.match(w, /const want = journey \? travelAsked : walk;/);   // PIN MOVED (TV-WASD): a journey's ask, else the keys' travel
   assert.equal((w.match(/if \(!ok\) return false;\n(?:\s*partyWalkBegin\([^\n]*\n)?\s*travelGovernor\.reset\(\);   \/\/ AUDIT DEEP T2-8/g) ?? []).length, 2, 'a new click\'s journey forgets the old ceiling - the road\'s and the spot\'s');
   assert.match(w, /const radius = Math\.max\(1, grid - 1\);/, 'never its outermost ring, queued anew at every crossing and fogged (AUDIT DEEP T2-2) - and every ring inside it, always (AUDIT DEEP2 B-2: the early warning)');
-  assert.match(w, /if \(uc\.gen !== gen \|\| uc\.x !== px\.x \|\| uc\.y !== px\.y \|\| uc\.r !== radius\) \{\n\s*uc\.n = unbuiltAround\(px, radius, \(x, y\) => x < 0 \|\| y < 0 \|\| x >= 1000 \|\| y >= 500 \|\| built\.has\(`\$\{x\},\$\{y\}`\)\);/);
+  // PIN MOVED (ETHER-OW, test/ether_ow.test.js): nothing to build is where the world streams nothing - the stream's own
+  // law, which past the map holds the continent's frame and the Eltheric Ocean's box (it was "off the map")
+  assert.match(w, /if \(uc\.gen !== gen \|\| uc\.x !== px\.x \|\| uc\.y !== px\.y \|\| uc\.r !== radius\) \{\n(?:\s*\/\/[^\n]*\n)*\s*uc\.n = unbuiltAround\(px, radius, \(x, y\) => !StreamingWorldState\.streams\(x, y\) \|\| built\.has\(`\$\{x\},\$\{y\}`\)\);/);
   assert.match(w, /held: tvHeld,/, 'the travel panel says the clock is held');
   const panel = rd('src/ui/enhancedTravelControl.js');
   assert.match(panel, /put\(parts\.accel, 'accel', held != null \? `×\$\{held\} \/ ×\$\{accel\}` : `×\$\{accel\}`\);/);   // RATE-LAW: every hold shown, the enemies' too

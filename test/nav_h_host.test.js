@@ -444,7 +444,7 @@ test('NAV-H the world host: one naval host on Come Sail Away\'s pool, its record
   assert.match(w, /const navalHostileNear = \(\) => !!naval\?\.hostileNear\(\);/);
   assert.match(w, /enemiesNearby: \(\) => areEnemiesNearby\([^\n]*\) \|\| navalHostileNear\(\),   \/\/ NAV-H: a hostile ship in reach holds the helm's time scale too/, 'no hurrying time with a hostile sail near');
   assert.match(w, /if \(duelEnemyNear\(\) \|\| areEnemiesNearby\(\[\.\.\.cityGuards\.guards, \.\.\.exteriorFoes\.foes\]\) \|\| navalHostileNear\(\)\) \{/, 'no travel map');
-  assert.match(w, /\.\.\.exteriorFoes\.foes\]\) \|\| navalHostileNear\(\)\) return CANNOT_TRAVEL_ENEMIES_TEXT;/, 'no party trip');
+  assert.match(w, /\.\.\.exteriorFoes\.foes\]\) \|\| navalHostileNear\(\)\) return localizedText\('cannotTravelWithEnemiesNearby', CANNOT_TRAVEL_ENEMIES_TEXT\);/, 'no party trip');
   assert.match(w, /enemiesNearby: \(\) => duelEnemyNear\(\) \|\| areEnemiesNearby\(\[\.\.\.cityGuards\.guards, \.\.\.wildSeen\(exteriorFoes\.foes\)\]\) \|\| navalHostileNear\(\),/, 'no journey - the Overworld\'s sea legs stop for her (WILD-ALERT: the foes a fast traveller\'s stop counts)');
   assert.match(w, /\[\.\.\.cityGuards\.guards, \.\.\.exteriorFoes\.foes\], \{ resting: true \}\) \|\| navalHostileNear\(\),/, 'no rest');
 });
@@ -474,6 +474,6 @@ test('NAV-H the switch: the Features row on the port\'s own prefs, forced on onl
     assert.ok(w.includes(`'${k}'`) && w.includes(`'${pref}'`), `${k} reads ${pref}`);
   }
   const f = src('systems/features.js');
-  assert.match(f, /id: 'naval-combat',\s+group: 'combat',\s+title: 'Naval Combat',/);
+  assert.match(f, /id: 'naval-combat',\s+group: 'combat',\s+get title\(\) \{ return t\('features\.navalCombat\.title', 'Naval Combat'\); \},/);
   assert.match(f, /control: Object\.freeze\(\{\s*store: 'prefs', key: 'naval', initial: true, online: true,/);
 });

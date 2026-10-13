@@ -228,7 +228,7 @@ test('SHIPYARDS THE HOSTS: world.js places the port\'s places in each port town\
   assert.match(tt, /directory\.push\(\.\.\.portDirectoryRows\(topics\.ports\)\);/, 'joined to the directory');
   assert.match(tt, /setTopics, setPorts,/);
   assert.match(modes, /for \(const t of host\.portTargets\?\.\(\) \?\? \[\]\) targets\.push\(t\);/);
-  assert.match(modes, /key\.startsWith\('port:'\)\) \{[^\n]*\n\s*if \(_hitDist > _hitReach\) \{ setMidScreenText\(TOO_FAR_AWAY_TEXT\); return true; \}\n\s*return host\.activatePort\?\.\(key, getInteractionMode\(\), plaqueActionFor\(key\)\) \?\? true;/);
+  assert.match(modes, /key\.startsWith\('port:'\)\) \{[^\n]*\n\s*if \(_hitDist > _hitReach\) \{ setMidScreenText\(tooFarAwayText\(\)\); return true; \}\n\s*return host\.activatePort\?\.\(key, getInteractionMode\(\), plaqueActionFor\(key\)\) \?\? true;/);
   assert.doesNotMatch(read('src/scenes/exterior.js'), /portHost|portSites|createShipyardOverlay/, 'the bench stands no port');
   assert.doesNotMatch(read('src/scenes/dungeonContext.js'), /portHost|portSites|createShipyardOverlay/, 'the dungeon none');
   assert.match(read('src/scenes/portHost.js'), /\/\/ scenes\/exterior\.js - FLAGGED: the single-town bench stands no port/);
@@ -259,7 +259,7 @@ test('SHIPYARDS x TUT1: the shipmaster\'s window pops the shipyard\'s page, as t
   assert.equal(createShipyardOverlay({}), null);
   assert.equal(createNavalYardOverlay({}), null);
   assert.equal(createNavalPlunderOverlay({}), null);
-  // AUDIT CAPTAIN'S SEA (at the merge of SHIPYARDS): the chart of the Etheric Sea, through the same door, pops no page
+  // AUDIT CAPTAIN'S SEA (at the merge of SHIPYARDS): the chart of the Eltheric Ocean, through the same door, pops no page
   assert.equal(createEtherChartOverlay({}), null);
   assert.deepEqual(noted, ['shipyard', 'shipyard', 'naval-combat']);
   off();

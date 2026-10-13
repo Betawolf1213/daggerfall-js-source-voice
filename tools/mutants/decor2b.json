@@ -403,8 +403,8 @@
   {
     "name": "DECOR2b-the-tab-unpressed-in-a-look",
     "file": "src/ui/decorPanel.js",
-    "old": "chip(`Your things (${m})`, mode === 'own' || mode === 'look', () => setMode('own'))",
-    "new": "chip(`Your things (${m})`, mode === 'own', () => setMode('own'))",
+    "old": "chip(`Your things (${m})`, mode === 'own' || mode === 'look', () => setMode('own'), 'own')",
+    "new": "chip(`Your things (${m})`, mode === 'own', () => setMode('own'), 'own')",
     "tests": [
       "test/decor2b.test.js"
     ]

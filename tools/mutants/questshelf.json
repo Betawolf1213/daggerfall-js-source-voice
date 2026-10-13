@@ -290,7 +290,7 @@
   {
     "name": "QS-no-abandoned-section",
     "file": "src/ui/enhancedMenu.js",
-    "old": "  if (shelved.length) section('Abandoned', shelved, ' done');\n",
+    "old": "  if (shelved.length) section(t('pause.journal.abandoned', 'Abandoned'), shelved, ' done');\n",
     "new": "",
     "tests": [
       "test/questshelf.test.js"

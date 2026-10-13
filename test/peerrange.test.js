@@ -45,7 +45,7 @@ test('PEER-RANGE the default is past a shot\'s reach: another player\'s arrow or
   assert.equal(reach * BLOW.aimed.speed, 260, 'a foe archer\'s aimed shot - the only one sped up (hostCombat.js aimedArrowMeta)');
   assert.ok(PEER_RANGE_DEFAULT >= reach * BLOW.aimed.speed, `the default ${PEER_RANGE_DEFAULT} m reaches past either`);
   assert.ok(PEER_RANGE_TIERS[0] < reach, 'the near tier is inside a player\'s shot');
-  assert.match(read('src/ui/enhancedMenu.js'), /choiceRow\('peerRange', 'Draw distance',\n\s*'[^']*150 m can hide an archer\.'/, 'and the row says so');
+  assert.match(read('src/ui/enhancedMenu.js'), /choiceRow\('peerRange', t\('menu\.peers\.range', 'Draw distance'\),\n\s*t\('menu\.peers\.rangeNote', '[^']*150 m can hide an archer\.'/, 'and the row says so');
   assert.match(read('src/scenes/hostCombat.js'), /export function aimedArrowMeta\(shot\) \{\n\s*return shot \? \{ aimed: true, speedScale: BLOW\.aimed\.speed \} : null;/, 'the aimed shot\'s speed');
 });
 
@@ -210,7 +210,7 @@ test('PEER-RANGE the Other players card: the distance beside the court\'s crowd,
   const menu = read('src/ui/enhancedMenu.js');
   assert.match(menu, /import \{ PEER_RANGE_TIERS, peerRangeOf \} from '\.\.\/net\/peerRange\.js';/);
   const card = menu.slice(menu.indexOf('function peerSpritesCard() {'), menu.indexOf('\n}\n', menu.indexOf('function peerSpritesCard() {')));
-  assert.match(card, /c\.append\(choiceRow\('peerRange', 'Draw distance',\n\s*'How far away other players are drawn\. Your party and your duel opponent always show\.[^']*',\n\s*PEER_RANGE_TIERS\.map\(\(m\) => \[m, m \? `\$\{m\} m` : 'Everyone'\]\), \{ home: true, read: \(\) => peerRangeOf\(getPref\('peerRange'\)\) \}\)\);/);
+  assert.match(card, /c\.append\(choiceRow\('peerRange', t\('menu\.peers\.range', 'Draw distance'\),\n\s*t\('menu\.peers\.rangeNote', 'How far away other players are drawn\. Your party and your duel opponent always show\.[^']*'\),\n\s*PEER_RANGE_TIERS\.map\(\(m\) => \[m, m \? t\('menu\.peers\.metres', '\{m\} m', \{ m \}\) : t\('menu\.peers\.everyone', 'Everyone'\)\]\), \{ home: true, read: \(\) => peerRangeOf\(getPref\('peerRange'\)\) \}\)\);/);
   assert.ok(card.indexOf("choiceRow('peerRange'") < card.indexOf("choiceRow('gateCrowd'"), 'the street\'s distance before the court\'s crowd');
   // choiceRow shows the tier `read` answers
   assert.match(menu, /function choiceRow\(key, name, note, tiers, \{ home = false, read = null, write = null \} = \{\}\) \{[\s\S]*?const cur = String\(read \? read\(\) : getPref\(key\)\);/);

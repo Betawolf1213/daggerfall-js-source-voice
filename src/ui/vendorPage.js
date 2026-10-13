@@ -21,6 +21,7 @@ import { goldText, wearOf, wearText } from '../net/marketLaw.js';
 import { vendorSearch, VENDOR_LISTING_S } from '../net/vendorLaw.js';
 import { accountRefusalText } from '../net/accountClient.js';
 import { vendorStatsNode, injectVendorStatsCss } from './vendorTab.js';   // a piece's stats, as the board shows them
+import { pictureNode } from './menuGlyphs.js';   // MENU-ORDER: a piece's picture, the host's
 
 /** The rail's row: under the Professions. */
 export const VENDOR_PAGE_SECTIONS = Object.freeze([Object.freeze(['vendor', 'Vendor'])]);
@@ -42,7 +43,7 @@ export const VENDOR_PAGE_TEXT = Object.freeze({
 
 let _provider = /** @type {any} */ (null);
 /** The host's side: { shown, mine, search, regionHere, regionNames, nameOf, townOf, take, collectGold, waypoint, waypointKey,
- *  waypoint0, clearWaypoint }. */
+ *  waypoint0, clearWaypoint } - MENU-ORDER: and `picture(item, wake)`, a piece's picture (ui/menuPicture.js). */
 export function setVendorPage(p) { _provider = p ?? null; }
 export const vendorPageShown = () => { try { return !!_provider && _provider.shown() === true; } catch { return false; } };
 
@@ -76,6 +77,7 @@ const VENDOR_PAGE_CSS = `/* HOME-VENDOR: the Stores' list rows (PROF_CSS .prof-s
 .vendor-row .vendor-meta { grid-column: 1; grid-row: 2; font-size: 12px; color: #9d917d; }
 .vendor-row .act { grid-column: 2; grid-row: 1 / span 2; }
 .vendor-price { color: #f3cf86; }
+.vendor-pic { vertical-align: middle; margin-right: 8px; image-rendering: pixelated; }   /* MENU-ORDER: the piece's own picture */
 .vendor-word { margin: 6px 0; font-size: 12px; color: #e9e4d9; } .vendor-word.bad { color: #e59a8e; }
 .vendor-takings, .vendor-waypoint { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin: 6px 0; }
 .vendor-line { margin: 4px 0; font-size: 14px; color: #efe0b8; text-align: left; }
@@ -112,6 +114,13 @@ export function drawVendorPage(detail, rerender, kit) {
   };
   const nameOf = (it) => safe(() => p.nameOf(it), 'a piece') || 'a piece';
   const townOf = (map) => safe(() => p.townOf(map), 'a town') || 'a town';
+  /** MENU-ORDER: a row's name with its piece's picture before it (none without one). */
+  const named = (item) => {
+    const n = el('b', null, nameOf(item));
+    const pic = pictureNode(safe(() => p.picture?.(item, rerender), null), el, 'vendor-pic');
+    if (pic) { if (n.prepend) n.prepend(pic); else n.append(pic); }
+    return n;
+  };
   /** An act: one at a time, its word kept, my traders read again. */
   const act = async (start) => {
     if (_st.busy) return;
@@ -183,7 +192,7 @@ export function drawVendorPage(detail, rerender, kit) {
     const grid = el('div', 'vendor-rows');
     for (const l of stock) {
       const row = el('div', 'vendor-row');
-      row.append(el('b', null, nameOf(l.item)), el('span', 'vendor-meta', `${wearText(wearOf(l.item)) ?? 'whole'} · ${goldText(l.price)} · ${townOf(l.vendor?.map)} · ${leftText(l.expiresAt)}`),
+      row.append(named(l.item), el('span', 'vendor-meta', `${wearText(wearOf(l.item)) ?? 'whole'} · ${goldText(l.price)} · ${townOf(l.vendor?.map)} · ${leftText(l.expiresAt)}`),
         btn('vendor-take', 'Take back', () => act(() => p.take(l))));
       lookable(row, `s:${l.id}`, l.item);
       grid.append(row);
@@ -200,7 +209,7 @@ export function drawVendorPage(detail, rerender, kit) {
       total += Number(s.gets) || 0;
       const row = el('div', 'vendor-row');
       const who = s.patron ? safe(() => p.patronName?.(s.patron), null) : null;   // LW15: "Sold to Ada Lark of Wayrest"
-      row.append(el('b', null, nameOf(s.item)), el('span', 'vendor-meta', `${who ? `Sold to ${who} - ` : ''}${goldText(s.total)} - you got ${goldText(s.gets)} · ${townOf(s.vendor?.map)} · ${agoText(s.at)}`));
+      row.append(named(s.item), el('span', 'vendor-meta', `${who ? `Sold to ${who} - ` : ''}${goldText(s.total)} - you got ${goldText(s.gets)} · ${townOf(s.vendor?.map)} · ${agoText(s.at)}`));
       lookable(row, `d:${s.listing}:${s.at}`, s.item);
       sg.append(row);
     }
@@ -244,7 +253,7 @@ export function drawVendorPage(detail, rerender, kit) {
   for (const r of rows) {
     const row = el('div', 'vendor-row');
     const set = wpKey === `${r.map}:${r.buildingKey}`;
-    row.append(el('b', null, nameOf(r.item)), el('span', 'vendor-meta', `${goldText(r.price)} · ${r.owner ?? 'someone'}'s house, ${townOf(r.map)}${r.mine ? ' · yours' : ''}`),
+    row.append(named(r.item), el('span', 'vendor-meta', `${goldText(r.price)} · ${r.owner ?? 'someone'}'s house, ${townOf(r.map)}${r.mine ? ' · yours' : ''}`),
       set ? btn('vendor-clear', 'Clear waypoint', () => { p.clearWaypoint(); rerender(); })
         : btn('vendor-wp', 'Set waypoint', () => { p.waypoint(r); rerender(); }));
     lookable(row, `f:${r.id}`, r.item);

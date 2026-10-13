@@ -33,6 +33,7 @@ import { SKILLS, WEAPON_SKILL } from './skills.js';   // S23: the weapon partiti
 import { EQUIP_DELAY_TIMES } from '../characters/weaponStates.js';   // CH3 (characters-13): the swap-pause table gains its consumer
 import { startingProvisions } from './survival/items.js';   // SURV2: the new character's kit
 import { survivalOn } from './survival/switch.js';   // SURV2: the one switch
+import { localizedText } from './textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 
 export { EQUIP_SLOTS, ITEM_HANDS };
 
@@ -498,7 +499,11 @@ export const bodyPartForSlot = (slot) => SLOT_BODY_PART.get(slot) ?? -1;
  *  from the owner, which restores the armor table through
  *  unequipSlot. A broken MUNDANE item stays in the pack; DFU removes
  *  only an ENCHANTED player item, and that arm rides the enchantment
- *  arc with the rest of the payloads. Returns true on a break. */
+ *  arc with the rest of the payloads. Returns true on a break.
+ *
+ *  L10N3e: `nameOf(item)` is the caller's name AS SHOWN (shownItemName -
+ *  itemInfo.js imports this module, so it cannot import that back); the
+ *  line names the item by it, and by the canonical name without one. */
 const PLURAL_BREAK_TEMPLATES = new Set([103, 104, 108]);   // Armor.Gauntlets, Greaves, Boots
 
 /** THE SCALE ON A BLOW'S WEAR - 1, Daggerfall Unity's own. BALANCE1
@@ -553,7 +558,7 @@ export function blowWear(amount, rolls = Math.random) {
   return x > n && rolls() < x - n ? n + 1 : n;
 }
 
-export function lowerCondition(item, amount, owner = null, say = null, removeFrom = null) {
+export function lowerCondition(item, amount, owner = null, say = null, removeFrom = null, nameOf = null) {
   mintCondition(item);
   // AUDIT WEAPON-POOL P2: a weapon still on its row's pool - back from a store the load does not walk (hung in a room, a
   // revenant's take, a quest's prize, an heir's bequest, a market or vault record) - moves to the one pool before it wears
@@ -562,8 +567,10 @@ export function lowerCondition(item, amount, owner = null, say = null, removeFro
   item.currentCondition -= amount;
   if (item.currentCondition > 0) return false;
   item.currentCondition = 0;
-  const name = item.name ?? templateByIndex(item.templateIndex)?.name ?? 'Item';
-  say?.(`${name} ${PLURAL_BREAK_TEMPLATES.has(item.templateIndex) ? 'have' : 'has'} broken.`);
+  const name = nameOf?.(item) ?? item.name ?? templateByIndex(item.templateIndex)?.name ?? 'Item';
+  // L10N3d: ItemBreaks' rows (DaggerfallUnityItem.cs:1203-1207), %s filled after the lookup - here with the port's
+  // short name, where DFU passes LongName
+  say?.((PLURAL_BREAK_TEMPLATES.has(item.templateIndex) ? localizedText('itemHasBrokenPlural', '%s have broken.') : localizedText('itemHasBroken', '%s has broken.')).replace('%s', name));
   // E2 corrected E1's order to ItemBreaks' own (DaggerfallUnityItem):
   // the popup, THEN the unequip (which fires the Unequipped payloads
   // and strips any held bundle), THEN the Breaks payload - both

@@ -38,7 +38,7 @@
   {
     "name": "AR1-an-abandoned-trial-still-steps",
     "file": "src/scenes/arrestFlow.js",
-    "old": "(t && trial === t ? fn(...args) : undefined)",
+    "old": "(t && trial === t && !t.released ? fn(...args) : undefined)",
     "new": "fn(...args)",
     "tests": [
       "test/auditdisc28_arrest.test.js"

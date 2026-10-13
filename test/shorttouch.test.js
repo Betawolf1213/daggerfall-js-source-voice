@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 const css = readFileSync(new URL('../src/ui/enhancedStyle.js', import.meta.url), 'utf8');
-const SHORT = '@media (pointer: coarse) and (orientation: landscape) and (max-height: 560px) and (min-width: 600px) {';
+const SHORT = '@media (pointer: coarse) and (orientation: landscape) and (min-width: 600px), (orientation: landscape) and (min-width: 600px) and (max-width: 860px) {';
 const block = () => {
   const at = css.indexOf(SHORT);
   assert.ok(at > 0, 'the short landscape touch rule is gone');
@@ -45,4 +45,16 @@ test('SHORT-TOUCH: the sign-in window takes a short screen\'s height, over PX8\'
   // two classes: PX8's `.px-stage` short rule sits later in the sheet and would win a one-class tie
   const px8 = css.indexOf('.px-stage { justify-content: flex-start; padding: 7dvh 24px 132px; overflow-y: auto; }');
   assert.ok(px8 > at, 'PX8\'s rule is the later one - which is why this one needs its second class');
+});
+
+test('TALL-TOUCH: any landscape screen the stack would take keeps the two columns - not only a short one (the Ally X, 1280x720: the stacked logo stood ~470 px of 720)', () => {
+  const head = SHORT.slice('@media '.length, -2).split(', ');
+  assert.equal(head.length, 2, 'both ways into the stack: a coarse pointer, and a window under 860 px');
+  for (const q of head) {
+    assert.match(q, /\(orientation: landscape\)/);
+    assert.match(q, /\(min-width: 600px\)/, 'never a phone held upright - its stack is right');
+    assert.doesNotMatch(q, /max-height/, 'no height ceiling: the stacked logo is half a landscape screen at any height');
+  }
+  assert.match(head[0], /^\(pointer: coarse\)/);
+  assert.match(head[1], /\(max-width: 860px\)$/, 'the narrow window\'s half is the stack\'s own width bound');
 });

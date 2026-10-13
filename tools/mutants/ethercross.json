@@ -434,8 +434,8 @@
   {
     "name": "CHART-crossings-plural",
     "file": "src/ui/etherChartWindow.js",
-    "old": "${st.crossings === 1 ? 'crossing' : 'crossings'}",
-    "new": "crossings",
+    "old": "{crossings, plural, one {# crossing} other {# crossings}}', {",
+    "new": "{crossings} crossings', {",
     "tests": [
       "test/ethercross.test.js"
     ]
@@ -479,7 +479,7 @@
   {
     "name": "CHART-here",
     "file": "src/ui/etherChartWindow.js",
-    "old": "  if (leagues < 0.5) return 'here';\n",
+    "old": "  if (leagues < 0.5) return t('sea.chart.here', 'here');\n",
     "new": "",
     "tests": [
       "test/ethercross.test.js"

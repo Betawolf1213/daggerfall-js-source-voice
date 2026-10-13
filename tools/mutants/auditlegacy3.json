@@ -1728,7 +1728,7 @@
   {
     "name": "AUDIT-LEGACY-III-O2-the-client-has-no-words",
     "file": "src/net/accountClient.js",
-    "old": "  'lineage-too-large': 'Your family\\'s record has grown past what the realm keeps for one family.',   // AUDIT LEGACY III O2/P1\n",
+    "old": "  'lineage-too-large': () => t('account.refusal.lineageTooLarge', 'Your family\\'s record has grown past what the realm keeps for one family.'),   // AUDIT LEGACY III O2/P1\n",
     "new": "",
     "tests": [
       "test/auditlegacy3.test.js"

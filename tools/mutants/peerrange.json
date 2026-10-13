@@ -335,8 +335,8 @@
   {
     "name": "PEERRANGE-card-row-gone",
     "file": "src/ui/enhancedMenu.js",
-    "old": "  c.append(choiceRow('peerRange', 'Draw distance',",
-    "new": "  void (choiceRow('peerRange', 'Draw distance',",
+    "old": "  c.append(choiceRow('peerRange', t('menu.peers.range', 'Draw distance'),",
+    "new": "  void (choiceRow('peerRange', t('menu.peers.range', 'Draw distance'),",
     "tests": [
       "test/peerrange.test.js"
     ]
@@ -344,8 +344,8 @@
   {
     "name": "PEERRANGE-card-key-another",
     "file": "src/ui/enhancedMenu.js",
-    "old": "choiceRow('peerRange', 'Draw distance',",
-    "new": "choiceRow('peerRanges', 'Draw distance',",
+    "old": "choiceRow('peerRange', t('menu.peers.range', 'Draw distance'),",
+    "new": "choiceRow('peerRanges', t('menu.peers.range', 'Draw distance'),",
     "tests": [
       "test/peerrange.test.js"
     ]
@@ -353,8 +353,8 @@
   {
     "name": "PEERRANGE-card-tiers-twice",
     "file": "src/ui/enhancedMenu.js",
-    "old": "PEER_RANGE_TIERS.map((m) => [m, m ? `${m} m` : 'Everyone'])",
-    "new": "[150, 300, 600, 0].map((m) => [m, m ? `${m} m` : 'Everyone'])",
+    "old": "PEER_RANGE_TIERS.map((m) => [m, m ? t('menu.peers.metres', '{m} m', { m }) : t('menu.peers.everyone', 'Everyone')])",
+    "new": "[150, 300, 600, 0].map((m) => [m, m ? t('menu.peers.metres', '{m} m', { m }) : t('menu.peers.everyone', 'Everyone')])",
     "tests": [
       "test/peerrange.test.js"
     ]

@@ -68,10 +68,10 @@ test('SILVER no word a player reads says Drakes any more - the Bank, the account
   // the places it is said, by name
   const ports = src('src/ui/enhancedPorts.js');
   for (const w of ["'Silver to sell'", "title: 'Silver'", "['Silver held'", '`${MARKS_BANK.goldPerMark} gold for each silver`', "'Sell silver'"]) assert.ok(ports.includes(w), w);
-  assert.match(src('src/ui/enhancedAccount.js'), /row\('Silver', marksText\(flow\.account\.marks\)\)/, 'the account card');
+  assert.match(src('src/ui/enhancedAccount.js'), /row\(t\('account\.card\.silver', 'Silver'\), marksText\(flow\.account\.marks\)\)/, 'the account card');   // L10N4 (PIN MOVED): the row's word through t()
   assert.match(src('src/ui/socialPanel.js'), /el\('div', 'dfsocial-sec', 'Silver treasury'\)/, 'the guild\'s treasury');
   assert.match(src('src/ui/bankWindow.js'), /MARKS_COUNTING = 'The Bank counts your silver\.\.\.'/);
-  assert.match(src('src/ui/workTab.js'), /labelled\('Pay \(silver\)', pay\)/);
+  assert.match(src('src/ui/workTab.js'), /labelled\(t\('prof\.work\.label\.paySilver', 'Pay \(silver\)'\), pay\)/);   // PIN MOVED (L10N4): the label through t()
   assert.match(src('src/ui/marketTab.js'), /\[\['marks', 'Priced in silver'\], \['gold', 'Priced in gold'\]\]/);
   // and the metal stands as it was
   assert.match(src('src/net/professionLaw.js'), /made\('ingot:silver', 'metals', 3, 622, 'Silver Ingot', ICON_IRON, 'Silver'\)/);

@@ -264,8 +264,10 @@ test('TAMRIEL2 host: the reader is rebound to the composed one at the mount, aft
   assert.match(between, /maps\.getClimateIndex = groundClimateIndex\(maps\.getClimateIndex\.bind\(maps\)\);/);
   assert.match(between, /StreamingWorldState\.frame = tamrielLand \? tamrielFrameInBay\(\) : null;/);
   assert.match(src, /if \(picks\.length && onTheBay\(px, py\)\) wodPicks = picks;/, 'the mod\'s sites are the Bay\'s');
-  assert.match(src, /const dwNear = deepWaters && onTheBay\(px, py\) \? deepWaters\.promoteNear/, 'the mod\'s bathymetry is the Bay\'s');
-  // PIN MOVED (ETHER-SEA, bible/03-World/Etheric-Sea.md): and the Etheric Sea's isles past the map, whatever the
+  // PIN MOVED (ETHER-DEEP, bible/03-World/Eltheric-Ocean.md): the host's promote is the one gate for every arm - the Bay's
+  // map and the Eltheric Ocean's box carved, the continent past the map held there (test/ether_deep.test.js)
+  assert.match(src, /const dwNear = deepWaters \? deepWaters\.promoteNear\(\{ px, py, samples, tilemap, tilemapBytes \}\) : null;/, 'the mod\'s bathymetry is the host\'s to gate');
+  // PIN MOVED (ETHER-SEA, bible/03-World/Eltheric-Ocean.md): and the Eltheric Ocean's isles past the map, whatever the
   // continent's switch says
   assert.match(src, /byteAt: tamrielLand \|\| etherSea \? \(x, y\) => woods\.getHeightMapValue\(x, y\) : null,/, 'the ring past the map');
   assert.match(src, /restrideGrid\(\{ woods, px: p\.px/, 'the promotion reads the one reader');

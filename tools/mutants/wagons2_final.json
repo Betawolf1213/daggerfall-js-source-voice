@@ -128,8 +128,8 @@
   {
     "name": "WAGONS2-FINAL-the-shelf-by-the-record",
     "file": "src/scenes/worldModes.js",
-    "old": "    ?? wagonItemName(it) ?? it.name ?? templateByIndex(it.templateIndex)?.name ?? it.group;",
-    "new": "    ?? it.name ?? templateByIndex(it.templateIndex)?.name ?? it.group;",
+    "old": "      ?? wagonItemName(it) ?? shownItemName(it) ?? (t?.name == null ? t?.name : getLocalizedItemName(t.index, t.name)) ?? it.group;",
+    "new": "      ?? shownItemName(it) ?? (t?.name == null ? t?.name : getLocalizedItemName(t.index, t.name)) ?? it.group;",
     "tests": [
       "test/wagons2_final.test.js"
     ]

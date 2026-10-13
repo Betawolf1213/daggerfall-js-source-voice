@@ -102,8 +102,8 @@
   {
     "name": "AC-host-heals-self-too",
     "file": "src/scenes/hostMagic.js",
-    "old": "      sayGift(allyCastCasterLine(sp.name, ally.name));   // GIFT-QUIET\n      if (Number.isFinite(ally.distance)) giftFx(sp, alongAim(eye, dir, ally.distance));   // IMPACTFX: a heal rising at the mate\n      return done(true);\n    }",
-    "new": "      sayGift(allyCastCasterLine(sp.name, ally.name));   // GIFT-QUIET\n      if (Number.isFinite(ally.distance)) giftFx(sp, alongAim(eye, dir, ally.distance));   // IMPACTFX: a heal rising at the mate\n    }",
+    "old": "      sayGift(allyCastCasterLine(shownSpellName(sp), ally.name));   // GIFT-QUIET; L10N3e: composed here, so as shown; the frame above carries the canonical name\n      if (Number.isFinite(ally.distance)) giftFx(sp, alongAim(eye, dir, ally.distance));   // IMPACTFX: a heal rising at the mate\n      return done(true);\n    }",
+    "new": "      sayGift(allyCastCasterLine(shownSpellName(sp), ally.name));   // GIFT-QUIET; L10N3e: composed here, so as shown; the frame above carries the canonical name\n      if (Number.isFinite(ally.distance)) giftFx(sp, alongAim(eye, dir, ally.distance));   // IMPACTFX: a heal rising at the mate\n    }",
     "tests": [
       "test/allycast.test.js"
     ]
@@ -255,7 +255,7 @@
   {
     "name": "AAC-host-casteronly-instant",
     "file": "src/scenes/hostMagic.js",
-    "old": "      if (!free && allyCastable(sp) && allyInReach(lastAim?.eye ?? null, lastAim?.dir ?? null, ALLY_TOUCH_REACH, sp)) { sayArm('mate-aim', prevArm, PRESS_BUTTON_TO_FIRE_SPELL); return true; }\n",
+    "old": "      if (!free && allyCastable(sp) && allyInReach(lastAim?.eye ?? null, lastAim?.dir ?? null, ALLY_TOUCH_REACH, sp)) { sayArm('mate-aim', prevArm, pressButtonToFireSpellText()); return true; }\n",
     "new": "",
     "tests": [
       "test/allycast.test.js"

@@ -159,6 +159,7 @@ export const ONLINE_PLAYERS_OWN_PREFS = [
   'padCursorAssist',  // PAD-CURSOR: how THIS player's controller cursor feels - nothing the room agrees on
   'plusToggleRun',    // PADPLUS1: whether THIS player's Run button latches - how this pad is held, nothing the room agrees on
   'proceduralSky',    // EE1's legacy key, read only by the migration
+  'language', 'languageOffered',   // L10N1b: the language THIS player reads the port in, and whether the front door has asked - words on this screen, nothing the room agrees on
   'restWithParty',   // REST-OPT: whether I rest with my party or alone - my own say
   'gentleActs',   // PROF1: Gentle acts - an accessibility choice; every act plain is never an edge over another player
   'acceptStrangerSpells',   // SPELL-GIFT: whether a stranger's healing and protective spells land on THIS player - their own say

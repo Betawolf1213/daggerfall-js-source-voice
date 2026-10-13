@@ -118,7 +118,7 @@ test('REL8: the game says it - the pause window\'s version line leads with the n
   assert.equal(ver('0.0.1', 'abcdef012345'), 'DFO Online 0.0.1 (abcdef012345)');
   assert.equal(ver(null, 'abcdef012345'), 'DFO Online abcdef012345');
   const menu = rd('src/ui/enhancedMenu.js');
-  assert.match(menu, /\['Update', UPDATE \?\? 'a development build'\],[^\n]*\n\s*\['Build', BUILD_TAG\],/);
+  assert.match(menu, /\[t\('menu\.about\.update', 'Update'\), UPDATE \?\? t\('menu\.about\.devBuild', 'a development build'\)\],[^\n]*\n\s*\[t\('menu\.about\.build', 'Build'\), BUILD_TAG\],/);
 });
 
 test('REL8: the site and the release derive it where the history is whole, and every leg is told the one number; the release is named for it', () => {

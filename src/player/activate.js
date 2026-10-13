@@ -14,6 +14,7 @@
 import { GLOBAL_SCALE } from '../world/meshReader.js';
 import { isActionDoorObject } from '../world/actionSystem.js';   // MC-2: ActionDoorCheck's own classifier (PlayerActivate.cs:374 vs :380)
 import { noteBodyStack } from './lootStack.js';   // LOOT-STACK: the ray notes the pile of bodies its winner stands at the front of
+import { localizedText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 /** The pick's pardon (m): a surface met this far outside a target's box is still that target's own face (the box is
  *  the mesh's, rounded). AUDIT DELVE C8: one home - the dungeon's look round reads it (systems/dungeonSense.js). */
 export const PICK_PARDON_M = 0.15;
@@ -43,6 +44,8 @@ export const MOBILE_NPC_ACTIVATION_DISTANCE = 256 * GLOBAL_SCALE;
  *  'You are too far away.' with a full stop, so one localized key was
  *  shipping as two different sentences in one session. */
 export const TOO_FAR_AWAY_TEXT = 'You are too far away...';
+/** The refusal as the player reads it, for every reach that speaks it. */
+export const tooFarAwayText = () => localizedText('youAreTooFarAway', TOO_FAR_AWAY_TEXT);
 /** AUDIT 58 (talk lane): TextManager 'youSee'
  *  (Internal_Strings.csv:53 - `youSee,You see %s.`), the WHOLE of
  *  PresentNPCInfo (PlayerActivate.cs:1484-1486): one HUD line naming
@@ -51,7 +54,7 @@ export const TOO_FAR_AWAY_TEXT = 'You are too far away...';
  *  (:755-757) - the other three modes fall to StaticNPCClick. */
 export const YOU_SEE_TEXT = 'You see %s.';
 /** PresentNPCInfo's one line, macro-replaced (:1486). */
-export const presentNpcInfoText = (displayName) => YOU_SEE_TEXT.replace('%s', displayName ?? '');
+export const presentNpcInfoText = (displayName) => localizedText('youSee', YOU_SEE_TEXT).replaceAll('%s', displayName ?? '');
 // PlayerActivate.cs:85 - corpses reach FURTHER than everything else
 // (150 classic units, not 128). It is deliberate, not incidental:
 // ActivateLootContainer (:866-874) exempts CorpseMarker from the

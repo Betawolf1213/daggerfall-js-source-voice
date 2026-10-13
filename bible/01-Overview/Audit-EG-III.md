@@ -68,8 +68,9 @@ order below, then origin/main (1f5325be: #842, #861 and #862, three conflicts). 
 Together the fix groups added 14 test files (102 tests) and 440 mutant records in seven lists under tools/mutants/
 (`egaudit3_<group>.json`), every one dead; the bible pass added one of each (`egaudit3_bible`). Each group re-judged the existing records aimed near the text it moved,
 re-aimed by content those whose text had moved (test/mutantdrift.test.js), and moved a pin only with a PIN MOVED note.
-`RELAY_VERSION` stays `world199`, unshipped, its hash re-taken in place in `test/relayversion.test.js`;
-`ACCOUNT_VERSION` stays `acct124`, and migration 0112 needed no change. The one law change is D's spec law 6
+`RELAY_VERSION` stays the arc's (`world199` then, `world200` since the merge of main past AUDIT ETHER-OW), unshipped,
+its hash re-taken in place in `test/relayversion.test.js`; `ACCOUNT_VERSION` stays the arc's (`acct124` then, `acct126`
+since), and migration 0112 needed no change. The one law change is D's spec law 6
 (`EG_DECREE_LAW`; `EG_LAWS` holds 4, 5 and 6, and laws 4 and 5 keep their 800-hall hashes): the 25-seed sweep with the
 golden courses and a 100-seed sweep crossed every course in all four bands. Lane 2 #19 lay outside the arc: the
 coordinator fixed it on its own (9bdbe722).

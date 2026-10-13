@@ -30,7 +30,7 @@ thing to show:
 |---|---|---|
 | Stable | `ui/holdingsPages.js` | whenever a host provides it - owning nothing is a thing it says, and where to buy |
 | Fleet | `ui/fleetPage.js` | while Come Sail Away runs in the world host |
-| Captain | `ui/captainPage.js` (CAPT-LOG, `03-World/Captains-Sea.md`) | once a captain has a standing, a log, a contract or a chart - each crown's regard and rank, the letter, the contracts held, the treasure charts marked, the log (the Etheric Sea's lines among it: the isles charted, the deepest waters, the legends ended - `03-World/Etheric-Sea.md`) |
+| Captain | `ui/captainPage.js` (CAPT-LOG, `03-World/Captains-Sea.md`) | once a captain has a standing, a log, a contract or a chart - each crown's regard and rank, the letter, the contracts held, the treasure charts marked, the log (the Eltheric Ocean's lines among it: the isles charted, the deepest waters, the legends ended - `03-World/Eltheric-Ocean.md`) |
 | Companions | `ui/companionRoster.js` (moved off the Stats rail) | anyone sworn or at the player's side |
 | Revenants | `ui/revenantPage.js` (moved) | revenants made, or any remembered |
 | Stores | `ui/profPages.js` (moved; the Professions page stays on Stats) | online, the professions this account's |

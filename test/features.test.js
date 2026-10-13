@@ -158,7 +158,7 @@ test('FT14: the panel is tiles grouped by what they change, the control is alway
   for (const [store, why] of [["c\\.store === 'prefs'", 'the port\'s own shelf'], ["c\\.store === 'settings'", 'DFU\'s ini']]) {
     assert.ok(new RegExp(store).test(menu), `tileStates answers for ${why}`);
   }
-  assert.match(menu, /return \{ labels: \['Off', 'On'\], at: getPref\(c\.key\) \? 1 : 0, locked,/, 'a two-state pref is a two-segment bar');
+  assert.match(menu, /return \{ labels: \['Off', 'On'\], shown: toggleWords\(\), at: getPref\(c\.key\) \? 1 : 0, locked,/, 'a two-state pref is a two-segment bar');
   assert.match(menu, /labels: c\.tiers\.map\(\(\[, l\]\) => l\)/, 'and a tiered one is its tiers, in order');
   assert.match(menu, /const vals = ENUM_LAW\[c\.key\]\.values;/, 'a DFU enum is its own values');
   assert.match(menu, /function segBar\(st, label\) \{/, 'one bar builder for all of them');
@@ -262,7 +262,7 @@ test('FT15: every note is one or two sentences, and the panel stays under its bu
   // description itself rather than adding a short-note override, so there is no
   // second copy to drift (test/ft9_mods.test.js holds the equality; this holds the why)
   const src = readFileSync('src/systems/features.js', 'utf8');
-  assert.match(src, /note: mod\.keys\.Enabled\.description,/, 'modFeature takes no note of its own');
+  assert.match(src, /get note\(\) \{ return mod\.keys\.Enabled\.description; \},/, 'modFeature takes no note of its own');
 });
 
 // FT16 (2026-09-15, Mac: "make the new feature UI elements have the same transparent

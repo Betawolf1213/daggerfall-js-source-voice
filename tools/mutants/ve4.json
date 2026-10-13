@@ -168,8 +168,8 @@
     "tests": [
       "test/ve1_vanillaEnhanced.test.js"
     ],
-    "old": "...(m.shipped ? [] : [remove('Remove',",
-    "new": "...(false ? [] : [remove('Remove',"
+    "old": "...(m.shipped ? [] : [remove(t('menu.packs.removeYes', 'Remove'),",
+    "new": "...(false ? [] : [remove(t('menu.packs.removeYes', 'Remove'),"
   },
   {
     "name": "VE4-packs-card-before-a-boot-empty",

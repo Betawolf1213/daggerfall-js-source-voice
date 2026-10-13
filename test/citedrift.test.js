@@ -1009,7 +1009,7 @@ test('CD6: every `src/` line Port-Status cites is the line it describes', () => 
   assert.match(slice, /revealMap: this\.hooks\.revealMap \?\? null,/, 'the cited range misses the hook itself');
   const host = new RegExp(String.raw`\`scenes\/world\.js:${AT}\``).exec(text);
   assert.ok(host, 'Port-Status no longer cites the host arm that fills it');
-  assert.match(lines('src/scenes/world.js')[anchoredAt('src/scenes/world.js', host[1], host[2]) - 1] ?? '', /revealMap: \(\) => revealLocation\('readMap'\)/,
+  assert.match(lines('src/scenes/world.js')[anchoredAt('src/scenes/world.js', host[1], host[2]) - 1] ?? '', /revealMap: \(\) => \{ const r = revealLocation\('readMap'\);/,
     'the world.js cite is not the arm that fills the reveal hook');
 
   assert.deepEqual(bad, [], 'a Port-Status src cite names a line it does not describe');

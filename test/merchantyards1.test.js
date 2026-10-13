@@ -445,7 +445,7 @@ test('MERCHANT-YARDS THE FOUR HOSTS - world.js places, stands, draws and names t
   assert.match(world, /race: walkerRace\(climate\?\.people, dfLocation\.regionIndex\),/, 'the walkers...');
   assert.match(world, /race = walkerRace\(people, dfLocation\.regionIndex\);/, '...and the keepers one race law (a Redguard region\'s Redguard - REGIONAL-FOLK)');
   assert.match(modes, /for \(const t of host\.yardTargets\?\.\(\) \?\? \[\]\) targets\.push\(t\);/);
-  assert.match(modes, /key\.startsWith\('yard:'\)\) \{[^\n]*\n\s*if \(_hitDist > _hitReach\) \{ setMidScreenText\(TOO_FAR_AWAY_TEXT\); return true; \}\n\s*return host\.activateYard\?\.\(key, getInteractionMode\(\), plaqueActionFor\(key\)\) \?\? true;/);
+  assert.match(modes, /key\.startsWith\('yard:'\)\) \{[^\n]*\n\s*if \(_hitDist > _hitReach\) \{ setMidScreenText\(tooFarAwayText\(\)\); return true; \}\n\s*return host\.activateYard\?\.\(key, getInteractionMode\(\), plaqueActionFor\(key\)\) \?\? true;/);
   assert.match(modes, /accepts: \(it\) => \(typeof b\.accepts === 'function' \? b\.accepts\(it\) : shopBuysItem\(b\.buildingType, it\)\),/, 'the counter asks the yard what it buys');
   assert.match(modes, /const win = openTradeWindow\(\{ items: tradeMode === 'Sell' \? \[\] : stock\(\) \}, b, tradeMode === 'Sell' \? 'Sell' : 'Buy'\);\n\s*if \(!win\) return true;[^\n]*\n\s*mountServiceWindow\(win\);/, 'the counter in the street\'s slot, never the interior\'s (undrawn outdoors)');   // PIN MOVED (STEED1): the stock the town's on the world's day
   // AUDIT MERCHANT-YARDS Y3: one press waits (the latest), and opens only where it was pressed - the street, its slot free

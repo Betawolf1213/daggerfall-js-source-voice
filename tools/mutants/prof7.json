@@ -1022,8 +1022,8 @@
   {
     "name": "PROF7-pages-smithing-unlocks-swallowed",
     "file": "src/ui/profPages.js",
-    "old": "    ['Silver', 3], ['Elven, Dwarven', 4], ['Mithril', 5], ['Adamantium",
-    "new": "    ['Adamantium",
+    "old": "    [localizedText('silver', 'Silver'), 3], [t('prof.page.unlocks.smithing4', 'Elven, Dwarven'), 4], [localizedText('mithril', 'Mithril'), 5], [t('prof.page.unlocks.smithing6'",
+    "new": "    [t('prof.page.unlocks.smithing6'",
     "tests": [
       "test/prof7_client.test.js"
     ]
@@ -1040,8 +1040,8 @@
   {
     "name": "PROF7-pages-weavers-unnamed",
     "file": "src/ui/profPages.js",
-    "old": "who: 'the Weavers', counter: 'weavers' });",
-    "new": "who: 'the Weavers' });",
+    "old": "      if (sale && have < inp.n && loom.kind === 'shop') counterBuy(line, { el, p, state: _loom, rerender, key: inp.key, need: inp.n - have, sale, who: 'weavers', counter: 'weavers' });",
+    "new": "      if (sale && have < inp.n && loom.kind === 'shop') counterBuy(line, { el, p, state: _loom, rerender, key: inp.key, need: inp.n - have, sale, who: 'weavers' });",
     "tests": [
       "test/prof7_client.test.js"
     ]
@@ -1060,8 +1060,8 @@
   {
     "name": "PROF7-pages-hunt-day-characters",
     "file": "src/ui/profPages.js",
-    "old": "    pane.append(el('p', 'prof-today', `Today: ${h.hides} hide",
-    "new": "    pane.append(el('p', 'prof-today', `Today: ${0} hide",
+    "old": "{ hides: h.hides, high:",
+    "new": "{ hides: 0, high:",
     "tests": [
       "test/prof7_client.test.js"
     ],

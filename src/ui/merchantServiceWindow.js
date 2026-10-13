@@ -39,6 +39,7 @@ import { drawScreenDimBackdrop } from './chargenArt.js';
 import { drawText, measureText } from './text.js';
 import { audio } from '../systems/audio.js';   // F141: the ButtonClick roster
 import { SOUND } from '../systems/soundClips.js';
+import { localizedTable } from '../systems/textManager.js';   // L10N3d: the service label
 
 /** mainPanel.Size (:66) and the centring both alignments force. */
 export const MERCHANT_PANEL_W = 130, MERCHANT_PANEL_H = 42;
@@ -70,8 +71,9 @@ export function drawPortalRow(renderer, m, font, px, py, ph, label) {
 }
 
 /** GetServiceLabelText's switch (:78-88), with the `default:` folded
- *  into Sell exactly as the C# folds it. */
-export const MERCHANT_SERVICE_LABEL = Object.freeze({ Sell: 'Sell', Banking: 'Banking' });
+ *  into Sell exactly as the C# folds it - keyed by the service, each
+ *  label read through its DFU key when drawn (L10N3d). */
+export const MERCHANT_SERVICE_LABEL = localizedTable({ Sell: ['serviceSell', 'Sell'], Banking: ['serviceBanking', 'Banking'] });
 export const merchantServiceLabel = (service) => MERCHANT_SERVICE_LABEL[service] ?? MERCHANT_SERVICE_LABEL.Sell;
 
 let _art = null;

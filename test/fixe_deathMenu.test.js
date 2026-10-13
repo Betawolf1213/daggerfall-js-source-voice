@@ -156,6 +156,7 @@ test('FIX-E: the interior slot releases what it overwrites, and the fixed city o
   assert.match(read('src/scenes/world.js'), /new DeathScreen\(\{ eyeHeight: player\.eye\[1\] - player\.pos\[1\], capsuleHeight: player\.height, onReset: \(\) => \(legacyDeathReset\(\) \|\| \(_deathWasOnline \? respawnOnlinePlayer\(\) : endRunToTitleMenu\(renderer\)\)\), rises: \(\) => legacyHost\?\.willRise\(\) \?\? false \}\)/, 'the world keeps the full hint - its F11 is real now (D-ONLINE1: and its reset respawns when the death was online)');   // PIN MOVED (BAL4): the Legacy rise told
   const ds = read('src/ui/deathScreen.js');
   assert.match(ds, /hint = 'ENTER end   F11 load'/, 'the default hint is the full one');
-  // PIN MOVED (BAL4, bible/05-Combat/Balance-Arc.md section 6): offline, a Legacy rise's hint says Enter raises (riseHint)
-  assert.match(ds, /const hint = this\.online \? (?:\(this\.wild \? `RISING IN \$\{this\.respawnIn\}` : )?`RISING IN \$\{this\.respawnIn\}   ENTER now`\)? : this\.rises \? riseHint\(this\.hint\) : this\.hint;[^\n]*\n\s*drawText\(renderer, font, hint,/, 'and the screen draws the hint it was given (AUDIT CONTRIB A5: online, the hold\'s count in its place)');
+  // PIN MOVED (BAL4, bible/05-Combat/Balance-Arc.md section 6): offline, a Legacy rise's hint says Enter raises (riseHint);
+  // L10N4: the hold's count and the hint said in the player's language (the hint kept English, shown through hintText)
+  assert.match(ds, /const hint = this\.online \? (?:\(this\.wild \? t\('death\.risingInWild', 'RISING IN \{n\}', \{ n: this\.respawnIn \}\) : )?t\('death\.risingIn', 'RISING IN \{n\}   ENTER now', \{ n: this\.respawnIn \}\)\)? : hintText\(this\.rises \? riseHint\(this\.hint\) : this\.hint\);[^\n]*\n\s*drawText\(renderer, font, hint,/, 'and the screen draws the hint it was given (AUDIT CONTRIB A5: online, the hold\'s count in its place)');
 });

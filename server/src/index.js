@@ -243,7 +243,7 @@ import { serpentHeraldRole, serpentOmenPost, serpentFellPost, serpentHeraldOmenD
 // bible/03-World/Raiding-Parties.md, "The relay holds the raid (RAID3)".
 import { raidWordFits, raidWordSane, raidSig, raidLedgerId, raidEvictPick, newRaidLedger, foldRaidWord, raidCleansed, raidEarned, raidTop, raidLedgerState, raidLedgerEndMinute, raidDayOfKey, RAID_KEEP_MS, RAID_LEDGERS_MAX, RAID_LEDGERS_BY_MAX, RAID_SAVE_MS, RAID_DAY_MINUTES, RAID_ACCOUNTS_MAX, raidDaySlots, raidOnSlot, raidDayIds, readRaidTowns, raidTownsHash, RAID_TOWNS_SHA_RE } from '../../src/net/raidLaw.js';   // RAID-ROLL: the day's roll
 import { mintRaidReceipt, readRaidReceipt } from '../../src/net/raidReceipt.js';
-import { mintWatchReceipt, watchDue } from '../../src/net/watchReceipt.js';
+import { mintWatchReceipt, watchDue, watchPixelOk } from '../../src/net/watchReceipt.js';
 import { newIliacTable, iliacSit, iliacStand, iliacCommit, iliacTick as iliacTableTick, iliacNextAt, iliacEmpty, iliacLook, iliacSeatOf, iliacSitRefusal, iliacVouch, iliacGone, iliacBack, iliacVoid } from '../../src/net/iliacTable.js';   // CARDS10: THE RELAY DEALS ILIAC HAND - iliacTable.js imports the rules (iliacHand.js, iliacCards.js) and Hold'em's bounds; AUDIT CARDS-6: a sit's refusal asked first, a vouch again, a seat kept for a blink
 import { mintIliacReceipt, ILIAC_RECEIPT_TTL_S } from '../../src/net/iliacReceipt.js';   // CARDS10: a ranked game's result - the relay's signature again; AUDIT CARDS-6 C1: kept owed for its life
 import { mintCardReceipt, CARD_RECEIPT_TTL_S } from '../../src/net/cardReceipt.js';   // CARDS6: a staked seat's cash-out - the relay's fourth signature   // SEAT1b: the Watch's tick and its rhythm - the relay's third signature
@@ -6199,7 +6199,7 @@ export class Room {
     if (moved) w.moved = now;
     if (!watchDue(w, now)) return;
     const [x, y] = mapPixelOfWire(p.x, p.z);
-    if (!(x >= 0 && x < 1000 && y >= 0 && y < 500)) return;
+    if (!watchPixelOk(x, y)) return;   // AUDIT ETHER-OW C2-1: the Watch's ground, one home (its answers as they were)
     w.at = now;
     let r;
     try { r = await mintWatchReceipt({ s: sub, x, y, c: rand32() }, await this._receiptKeyOf(), { subtle: crypto.subtle, nowS: Math.floor(now / 1000) }); } catch { return; }

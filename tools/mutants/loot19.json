@@ -192,8 +192,8 @@
   {
     "name": "LOOT19-a-refusal-pressable",
     "file": "src/ui/reforgeWindow.js",
-    "old": "      if (why) { btn.setAttribute('disabled', ''); btn.setAttribute('title', REFORGE_REFUSALS[why] ?? ''); }\n      btn.onclick = (e) => {\n        e.stopPropagation();\n        if (why) return;\n        const done = deps.scry",
-    "new": "      btn.onclick = (e) => {\n        e.stopPropagation();\n        if (why) return;\n        const done = deps.scry",
+    "old": "      if (why) refusePress(btn, REFORGE_REFUSALS[why] ?? '', refused);   // MENU-ORDER: pressed, it says why\n      row.append(text, el('span', 'broker-price', reforgePriceText(SCRY_PRICE)), btn);",
+    "new": "      row.append(text, el('span', 'broker-price', reforgePriceText(SCRY_PRICE)), btn);",
     "tests": [
       "test/loot19_scry.test.js"
     ]

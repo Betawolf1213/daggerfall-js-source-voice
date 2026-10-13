@@ -332,7 +332,7 @@ test('ARENA3 the door, the gate\'s presses at the gate only, the Herald\'s and t
   assert.match(rd('src/scenes/worldModes.js'), /openArena: \(\) => mountedInterior\(host\.makeArenaWindow\?\.\('team'\) \?\? null\), arenaJoined: \(\) => !!host\.arenaJoined\?\.\(\),/);
   assert.match(rd('src/scenes/worldModes.js'), /makeArenaWindow: \(page\) => host\.makeArenaWindow\?\.\(page\) \?\? null, arenaJoined: \(\) => !!host\.arenaJoined\?\.\(\),/, 'the dungeon is handed it');
   assert.match(rd('src/scenes/dungeonContext.js'), /openArena: opts\.makeArenaWindow \? \(\) => \{ const w = opts\.makeArenaWindow\('team'\); if \(w\) activeOverlay = w; return !!w; \} : undefined,/);
-  assert.match(rd('src/ui/enhancedMenu.js'), /\['Arena', hooks\.arenaJoined\?\.\(\) \? hooks\.openArena : undefined\],/, 'the Stats page\'s door, once joined');
+  assert.match(rd('src/ui/enhancedMenu.js'), /\[t\('pause\.door\.arena', 'Arena'\), hooks\.arenaJoined\?\.\(\) \? hooks\.openArena : undefined\],/, 'the Stats page\'s door, once joined');
   assert.match(rd('src/ui/charSheetDoor.js'), /openArena: door\('openArena'\)/, 'and the F5 page\'s');
 });
 

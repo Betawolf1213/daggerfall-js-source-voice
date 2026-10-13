@@ -38,6 +38,7 @@ import {
   MAX_FLOOR_WAIT_FRAMES, MINIMUM_DEPTH, MINIMUM_EDGE_DISTANCE, FLOOR_FLATTEN_VARIANCE, SURFACE_OUTER_RADIUS, SURFACE_MIASMA_MAX_PARTICLES,
   SURFACE_MIASMA_HEIGHT, OCEAN_HOLES_VENDOR,
 } from '../world/oceanHoles.js';
+import { isValidMapPixel } from '../world/deepWatersBake.js';   // ETHER-DEEP: IsValidMapPixel - the pits' map is the Bay's
 import { sampleMeshLocalY, TILE_WORLD_SIZE_F32 } from '../world/deepWaterFloor.js';   // AUDIT PRE-MERGE 0928 H4: terrainData.size, a float
 import { modSetting, modSettingsGeneration } from '../systems/modSettings.js';
 import { OCEAN_CLIMATE } from '../world/terrainHelper.js';   // worldClimate 223: the unverified placement's own check
@@ -267,6 +268,10 @@ export function createOceanHoles({ deepWaters, decor = null, built, pixelTransla
       return;
     }
     const v = version(entry);
+    // ETHER-DEEP (bible/03-World/Eltheric-Ocean.md): the pits are the Bay's. The Eltheric Ocean's floors are carved now
+    // (world/etherWatersBake.js), and a pit's drowned dungeon is named by its pixel's id's low twenty bits
+    // (GetAbyssMapId) - the Bay's 1000 x 500 alone keeps those apart; a pit past the Veil would share a Bay pit's abyss
+    if (!isValidMapPixel(st.mapX, st.mapY)) { markTerrainProcessed(st, v, 'rejected:off-the-map'); return; }
     if (!isPitPixel(st.mapX, st.mapY, s.pitSpawnRate)) { markTerrainProcessed(st, v, 'rejected:not-selected'); return; }
     if (hasLocation(entry)) { markTerrainProcessed(st, v, 'rejected:has-location'); return; }
     const flag = !!deepWaters.tryGetSeafloor(entry);   // TryGetFloorCollider

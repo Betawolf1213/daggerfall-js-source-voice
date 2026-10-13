@@ -141,7 +141,7 @@ test('UXB1-F: the tile\'s door counts its keys, and its drawer names them read-o
   });
   const menu = read('src/ui/enhancedMenu.js');
   assert.match(menu, /function openControls\(\) \{\n\s+category = 'controls';\n\s+optQuery = ''; optFilter = 'all';[^\n]*\n\s+optScrollTo = 'sec-controls-bindings';[^\n]*\n\s+go\('settings'\);\n\}/, 'the press lands on Settings, Controls - ORG2: on the bindings, past any search or filter');
-  assert.match(menu, /if \(keys\.length\) pair\('Keys', /, 'and the reading rail names them for the tile pointed at');
+  assert.match(menu, /if \(keys\.length\) pair\(t\('menu\.features\.keysLabel', 'Keys'\), /, 'and the reading rail names them for the tile pointed at');
   // KB1's law stands: the keys are not dials - nothing in the curated table reaches for a key
   assert.doesNotMatch(read('src/systems/features.js'), /'Handling\.(ManualDropInput|ToggleLightInput)'|'Hotkeys\.(SummonTransport|QuickMountDismount)'/);
 });

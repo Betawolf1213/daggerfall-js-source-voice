@@ -191,7 +191,7 @@
   {
     "name": "AUDITLWII2-C6-refusal",
     "file": "src/scenes/world.js",
-    "old": "      if (livingTravelEnemies()) { townTalk.say(CANNOT_TRAVEL_ENEMIES_TEXT); return false; }\n",
+    "old": "      if (livingTravelEnemies()) { townTalk.say(localizedText('cannotTravelWithEnemiesNearby', CANNOT_TRAVEL_ENEMIES_TEXT)); return false; }\n",
     "new": "",
     "tests": [
       "test/auditlwii2_door.test.js"

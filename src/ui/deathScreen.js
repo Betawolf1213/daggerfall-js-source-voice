@@ -38,6 +38,18 @@ import { stateDeathLoss, deathGoldLoss, deathPenaltyLine } from '../systems/deat
 import { goldPiecesOf } from '../systems/inventory.js';   // DEATH-PENALTY: the purse the loss is read off
 import { wildDeath, wildDeathLines, WILD_DEATH_HOLD_S } from '../systems/wildZone.js';   // WILD1: a death in the open zone holds two minutes, Enter or not
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
+import { t } from '../systems/textManager.js';   // L10N4: the classic face's words in the player's language
+
+/** L10N4: what a host's hint SAYS. The hosts hand the English hint - FIX-E's law is in it (no F11 where there is no
+ *  quickload) and the enhanced face reads its keys off it - so the screen keeps it as given and shows its words; a
+ *  Legacy rise's hint (BAL4 riseHint) is the same hint with Enter raising. */
+const HINT_TEXT = Object.freeze({
+  'ENTER end   F11 load': () => t('death.hint.endLoad', 'ENTER end   F11 load'),
+  'ENTER end': () => t('death.hint.end', 'ENTER end'),
+  'ENTER rise   F11 load': () => t('death.hint.riseLoad', 'ENTER rise   F11 load'),
+  'ENTER rise': () => t('death.hint.rise', 'ENTER rise'),
+});
+const hintText = (hint) => HINT_TEXT[hint]?.() ?? hint;
 
 /** DEATH4 (Discord, 2026-09-23: "don't let it fade away automatically in
  *  offline mode, only in online mode - and give it 10 seconds"). On the
@@ -204,9 +216,9 @@ export class DeathScreen {
     // skin draws the words as a DOM layer over the same fade; the classic
     // skin keeps the canvas text below, untouched.
     if (isEnhanced() && typeof document !== 'undefined') { drawEnhancedDeath(this, fade); return; }
-    const t = 'YOU HAVE DIED';
-    drawText(renderer, font, t, (canvas.width - measureText(font.fnt, t) * s) / 2, canvas.height / 2 - 10 * s, s, [0.9, 0.2, 0.15, 1]);
-    const hint = this.online ? (this.wild ? `RISING IN ${this.respawnIn}` : `RISING IN ${this.respawnIn}   ENTER now`) : this.rises ? riseHint(this.hint) : this.hint;   // WILD1: no Enter in the zone   // AUDIT CONTRIB A5: the hold said out loud, as the enhanced face's "Rising in"   // BAL4: a Legacy rise's Enter raises
+    const died = t('death.title', 'YOU HAVE DIED');
+    drawText(renderer, font, died, (canvas.width - measureText(font.fnt, died) * s) / 2, canvas.height / 2 - 10 * s, s, [0.9, 0.2, 0.15, 1]);
+    const hint = this.online ? (this.wild ? t('death.risingInWild', 'RISING IN {n}', { n: this.respawnIn }) : t('death.risingIn', 'RISING IN {n}   ENTER now', { n: this.respawnIn })) : hintText(this.rises ? riseHint(this.hint) : this.hint);   // WILD1: no Enter in the zone   // AUDIT CONTRIB A5: the hold said out loud, as the enhanced face's "Rising in"   // BAL4: a Legacy rise's Enter raises
     drawText(renderer, font, hint, (canvas.width - measureText(font.fnt, hint) * s) / 2, canvas.height / 2 + 6 * s, s, DIM);
     // WILD1: the zone's lines on the classic face, under the hold (the enhanced face draws its own)
     let wy = canvas.height / 2 + (this.goldLoss > 0 ? 38 : 22) * s;
@@ -216,7 +228,7 @@ export class DeathScreen {
       wy += 12 * s;
     }
     if (this.goldLoss > 0) {   // DEATH-PENALTY: the classic face says it too, one line under the hold
-      const loss = `DEATH CLAIMS ${this.goldLoss} GOLD`;
+      const loss = t('death.goldLoss', 'DEATH CLAIMS {gold} GOLD', { gold: this.goldLoss });
       drawText(renderer, font, loss, (canvas.width - measureText(font.fnt, loss) * s) / 2, canvas.height / 2 + 22 * s, s, [0.9, 0.2, 0.15, 1]);
     }
   }
