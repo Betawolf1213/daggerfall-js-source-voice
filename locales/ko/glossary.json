@@ -178,5 +178,11 @@
  "mute": "채팅 금지",
  "moderator": "관리자",
  "abandon (a quest)": "포기",
- "reclaim (a quest)": "되찾기"
+ "reclaim (a quest)": "되찾기",
+ "deck (cards)": "덱",
+ "hand (cards held)": "손패",
+ "turn (a card game's)": "턴",
+ "committed (a turn locked in)": "확정됨",
+ "ranked (game)": "랭크",
+ "panel (interface)": "패널"
 }

@@ -143,5 +143,11 @@
  "recoil": "отдача",
  "sheathe": "убрать в ножны",
  "abandon (a quest)": "бросить",
- "reclaim (a quest)": "вернуть"
+ "reclaim (a quest)": "вернуть",
+ "deck (cards)": "колода",
+ "hand (cards held)": "рука",
+ "turn (a card game's)": "ход",
+ "committed (a turn locked in)": "ход сделан",
+ "ranked (game)": "рейтинговая",
+ "panel (interface)": "панель"
 }

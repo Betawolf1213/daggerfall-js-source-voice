@@ -30,12 +30,28 @@ const walk = (d, out = []) => {
   return out;
 };
 
+/** A CSS identifier - a class's, an id's, an attribute's or a pseudo-class's name: never a digit first (`#1` is no id). */
+const CSS_IDENT = String.raw`-?[A-Za-z_][\w-]*`;
+/** A compound selector: a type (or *), then its classes, ids, attributes and pseudo-classes. */
+const COMPOUND_SELECTOR = new RegExp(String.raw`^(?:[a-z][\w-]*|\*)?(?:[.#]${CSS_IDENT}|\[${CSS_IDENT}(?:[~|^$*]?=(?:"[^"]*"|'[^']*'|[\w-]+))?\]|::?${CSS_IDENT}(?:\([^()\s]*\))?)*$`);
+/** A class in a compound - every selector the port writes into its code names one. */
+const HAS_CLASS = new RegExp(String.raw`\.${CSS_IDENT}`);
 /** Prose: two words of two letters or more, not a CSS value, a selector, a path, code or a URL. */
 export function isProse(s) {
   if (!/[A-Za-z]{2,}[\s\u00a0]+[A-Za-z]{2,}/.test(s)) return false;
   if (/(^|\s)(px|em|rem|vh|vw)(\s|;|$)|\d(px|em|rem|vh|vw|ms|deg)\b|rgba?\(|hsla?\(|var\(--|calc\(|linear-gradient|;\s*$|=>|\bfunction\b|\bimport\b|\bconst\b|\breturn\b|https?:|\.(js|mjs|json|png|wav|ttf|glb|bsa|img|cif)\b/i.test(s)) return false;
   if (/^[a-z]+(-[a-z0-9]+)+( [a-z]+(-[a-z0-9]+)*)*$/.test(s)) return false;   // class lists
-  if (/^[\w$.-]+( [\w$.-]+)*$/.test(s) && !/[A-Z]/.test(s[0]) && !/\s(a|an|the|of|to|is|in|on|and|or|you|your)\s/i.test(` ${s} `)) return false;   // identifier runs
+  const english = /\s(a|an|the|of|to|is|in|on|and|or|you|your)\s/i.test(` ${s} `);
+  if (/^[\w$.-]+( [\w$.-]+)*$/.test(s) && !/[A-Z]/.test(s[0]) && !english) return false;   // identifier runs
+  // CARDS-PLUS (2026-10-13): a selector naming an id, an attribute or a pseudo-class (`#wp-menu input.wpm-name`,
+  // `body .dfiliac button[data-kind="warn"]`, `:scope > .px-tabs button`) - the identifier runs above read only words
+  // and dots, so a kit role written this way was counted as a sentence. AUDIT CARDS-PLUS D1: every part a compound of
+  // CSS identifiers AND a class among them - without the class, "press [E] when ready", "[locked] needs more gold" and
+  // "item:sword equipped" read as selectors and English slipped past the ratchet
+  if (/[#[:]/.test(s) && !english) {
+    const parts = s.trim().split(/\s*[,>+~]\s*|\s+/);
+    if (parts.every((p) => p && COMPOUND_SELECTOR.test(p)) && parts.some((p) => HAS_CLASS.test(p))) return false;   // selectors
+  }
   return true;
 }
 

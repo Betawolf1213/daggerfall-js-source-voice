@@ -812,7 +812,8 @@ ${G} :is([data-grim="ink"], .px-journal) :is(.opt-tools, .poolbar, .reviewhead, 
   box-shadow: 0 ${px(1)} 0 rgba(74,44,18,0.12) !important; }`;
 /** The windows too small or too thin for the board's frame. */
 export const SMALL_WINDOWS = Object.freeze(['.px-about', '.px-profile', '.px-support', '.travelpanel-bar', '.tview-bar', '.tview-side',
-  '.tview-confirm', '#wp-menu', '#travel-pace-box', '.helmpanel-bar', '.saddlepanel-bar', '.hmroot .hmtools', 'body .dfdecor-bar']);
+  '.tview-confirm', '#wp-menu', '#travel-pace-box', '.helmpanel-bar', '.saddlepanel-bar', '.hmroot .hmtools', 'body .dfdecor-bar',
+  'body .dfcards', 'body .dfiliac']);   // AUDIT CARDS-PLUS B4: the card tables' panels - the torn page's frame ran off the screen's edges
 
 export function kitCss() {
   const fb = FRAME_ART.band;
@@ -901,15 +902,22 @@ ${G} [data-grim-exit]:hover, ${G} [data-grim-exit]:focus-visible, ${at([...R.pri
 /* WARN - a press that costs something: written in the pack's red, struck under with a hard line */
 ${at(R.warn)} { color: ${T.red} !important; text-decoration: underline solid rgba(142,26,16,0.6) !important; text-underline-offset: 0.22em; }
 ${G} [data-grim-on="wood"]:is(${list(R.warn)}) { color: #ff8a6a !important; }
+/* AUDIT CARDS-PLUS (lane B): ...and it answers the pointer and the keyboard as every press does - its own red outweighed
+   the hover's, so a Concede, a Leave or a Disband never changed under either */
+${at(R.warn, ':hover:not(:disabled)')}, ${at(R.warn, ':focus-visible')} { color: ${T.redHi} !important; text-decoration: underline double ${T.redHi} !important; }
+${G} [data-grim-on="wood"]:is(${list(R.warn)}):is(:hover, :focus-visible) { color: #ffb08f !important; }
 
 /* TILE - the inventory's wooden shelf box: what you pick sits IN it. Chosen, it is framed in the pack's yellow. */
 ${at(R.tile)} { background: rgba(14,8,3,0.92); color: ${T.cream}; text-shadow: ${WORD_ON_WOOD};
   border-color: #5a3a1e #2a170a #1c0f05 #4a2e16; border-radius: 0;
   border-image: ${v('cubby')} 5 5 7 6 fill / ${px(5, 'gq')} ${px(5, 'gq')} ${px(7, 'gq')} ${px(6, 'gq')} stretch; box-shadow: 0 0 0 1px ${T.outline}; transition: none; }
-${at(R.tile, ':hover')}, ${at(R.tile, ':focus-visible')} { box-shadow: 0 0 0 1px ${T.outline}, inset 0 0 0 2px rgba(216,176,74,0.55); }
+/* AUDIT CARDS-PLUS C2: its marks drawn OVER the box - the cubby's fill is painted above every inset shadow, so a chosen
+   tile, a pointed-at one and the keyboard's looked as every other (a binder's chosen filter, the Codex | Cards part);
+   an outline is drawn above the fill */
+${at(R.tile, ':hover')}, ${at(R.tile, ':focus-visible')} { box-shadow: 0 0 0 1px ${T.outline}; outline: 2px solid rgba(216,176,74,0.55); outline-offset: -4px; }
 ${at(R.tile, '.on')}, ${at(R.tile, '.sel')}, ${at(R.tile, '[aria-pressed="true"]')} {
-  box-shadow: 0 0 0 1px ${T.outline}, inset 0 0 0 2px ${T.goldLeaf}, inset 0 0 16px rgba(216,176,74,0.28); }
-${at(R.tile, ':active')} { box-shadow: 0 0 0 1px ${T.outline}, inset 2px 3px 0 rgba(0,0,0,0.6); }
+  box-shadow: 0 0 0 1px ${T.outline}, 0 0 10px rgba(216,176,74,0.35); outline: 2px solid ${T.goldLeaf}; outline-offset: -4px; }
+${at(R.tile, ':active')} { box-shadow: 0 0 0 1px ${T.outline}; outline: 2px solid rgba(0,0,0,0.6); outline-offset: -4px; }
 
 /* CHIP - a small plaque of the desk's wood, never pressed */
 ${at(R.chip)} { background: ${WOOD(0.12)}; color: ${T.cream}; text-shadow: ${WORD_ON_WOOD};
@@ -920,6 +928,27 @@ ${at(R.chip)} { background: ${WOOD(0.12)}; color: ${T.cream}; text-shadow: ${WOR
    comfortable */
 ${G} .hud-temp[data-level="warn"] { border-color: #f3cf86 #7a5424 #7a5424 #f3cf86; }
 ${G} .hud-temp[data-level="danger"] { border-color: #ff9a7a #b53a2e #b53a2e #ff9a7a; }
+/* AUDIT CARDS-PLUS B1: THE CARD TABLES' MARKS, re-said in the dress's own colours, as the plate's levels are just above.
+   The dress repaints a seat, a holding, a power and a chip by their roles and re-says the panels' own sheets in its ink,
+   and every state the panels mark went with them - a target looked as every holding, the winner as every seat, the
+   power ahead as the one behind. What is yours or for you is the chosen role's deep green, what is the other's the
+   pack's red (each 3:1 or better on the page and the scroll), a lead a bar inside the plate's top so a target's ring
+   outside it never hides it, the power ahead gold leaf on its wood, a card's own power badge as its card prints it, an
+   empty place a hollow in the page, the keyboard's place a red ring, and a word on the page in the ink. */
+${G} body .dfcards .seat.you { border-color: #1d5530 !important; box-shadow: 0 0 0 2px #1d5530, 1px 2px 0 rgba(48,26,10,0.28) !important; }
+${G} body .dfcards .seat.to-act { box-shadow: inset 0 0 0 2px ${T.red}, 0 0 10px rgba(142,26,16,0.35) !important; }
+${G} body .dfcards .seat.won { border-color: #1d5530 !important; box-shadow: inset 0 0 0 100vmax rgba(29,85,48,0.16), 0 0 0 2px #1d5530 !important; }
+${G} body .dfiliac .hold.lead-mine { border-top-color: #1d5530 !important; box-shadow: inset 0 3px 0 #1d5530, inset 0 0 14px rgba(96,54,16,0.32) !important; }
+${G} body .dfiliac .hold.lead-theirs { border-top-color: ${T.red} !important; box-shadow: inset 0 3px 0 ${T.red}, inset 0 0 14px rgba(96,54,16,0.32) !important; }
+${G} body .dfiliac .hold.target { outline: 3px solid #1d5530 !important; outline-offset: 2px; cursor: pointer; }
+${G} body .dfiliac .holdname, ${G} body .dfiliac .duel { color: ${T.ink} !important; text-shadow: none !important; }
+${G} body .dfiliac .pw.ahead { border-color: ${T.goldLeaf} !important; color: ${T.yellow} !important; }
+${G} body .dfiliac .ic .p { background: #8e2a1c !important; color: #fff6ee !important; text-shadow: none !important; }
+${G} body .dfiliac .ic .p.up { background: #2f7a43 !important; }
+${G} body .dfiliac .ic .p.down { background: #4a1a12 !important; color: #ffb4a6 !important; }
+${G} body .dfiliac .slot { background: rgba(43,26,12,0.12) !important; box-shadow: inset 0 0 0 1px rgba(43,26,12,0.5) !important; }
+${G} body .dfcards [tabindex="0"]:focus-visible, ${G} body .dfiliac [tabindex="0"]:focus-visible { outline: 2px solid ${T.red} !important; outline-offset: 2px; }
+${G} .px-sys .binder-chip.short { color: #ff8a6a !important; outline: 2px solid #ff8a6a; outline-offset: -3px; }
 
 /* WELL - sunk into the board: a dark hollow with the light caught on its far lip */
 ${at(R.well)} { background-color: rgba(22,13,6,0.9); color: ${T.cream};

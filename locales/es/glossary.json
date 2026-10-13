@@ -185,5 +185,11 @@
  "hotbar": "barra rápida",
  "quick slot": "acceso rápido",
  "abandon (a quest)": "abandonar",
- "reclaim (a quest)": "recuperar"
+ "reclaim (a quest)": "recuperar",
+ "deck (cards)": "baraja",
+ "hand (cards held)": "mano",
+ "turn (a card game's)": "turno",
+ "committed (a turn locked in)": "confirmado",
+ "ranked (game)": "clasificatoria",
+ "panel (interface)": "panel"
 }

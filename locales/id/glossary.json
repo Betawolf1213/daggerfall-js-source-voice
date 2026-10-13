@@ -22,5 +22,11 @@
  "dmg": "kerusakan",
  "abandon (a quest)": "tinggalkan",
  "reclaim (a quest)": "ambil kembali",
- "Motherlode": "Urat Induk"
+ "Motherlode": "Urat Induk",
+ "deck (cards)": "dek",
+ "hand (cards held)": "tangan",
+ "turn (a card game's)": "giliran",
+ "committed (a turn locked in)": "terkunci",
+ "ranked (game)": "peringkat",
+ "panel (interface)": "panel"
 }

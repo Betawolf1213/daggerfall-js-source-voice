@@ -15,6 +15,9 @@
 // HELD HAND" was a claim no run of the probe could make, so the probe now reports the parts. The bench's counts are
 // what the frame drew (`&chips=0` drew none - its row said 40). AUDIT CARDS-6 E21: the held hand laid as the host lays
 // it - at the frame's fit (world/cardHand.js heldFit) and, with the panel up, lifted clear of it (heldLift).
+// CARDS-PLUS (section 38): the panels wear the Enhanced Plus kit by role, and on the enhanced skin the game's HUD has laid
+// the Plus sheet before a table is sat at - the lab lays it as the HUD does (`&skin=classic` the panel lays its own cut
+// of the kit); with `&game=iliac` the panel over the cloth is Iliac Hand's own, at that last turn.
 import { Renderer } from '../render/renderer.js';
 import { perspective, lookAt, mirrorProjectionX } from '../world/mat4.js';
 import { cardTableSeats, tableFrame } from '../world/cardTables.js';
@@ -32,6 +35,9 @@ import { STARTER_DECK } from '../net/iliacCards.js';
 import { patronPlays } from '../systems/iliacPatrons.js';
 import { iliacPlaces, iliacPoses } from '../world/iliacCloth.js';
 import { createIliacTableDraw } from '../render/iliacTableDraw.js';
+import { createIliacTableHud, iliacHudModel } from '../ui/iliacTableHud.js';   // CARDS-PLUS: Iliac Hand's panel over its cloth
+import { injectEnhancedStyle } from '../ui/enhancedStyle.js';
+import { isEnhancedPlus } from '../systems/uiSkin.js';
 
 const params = new URLSearchParams(location.search);
 const T = Number(params.get('t') ?? 14);
@@ -103,7 +109,8 @@ for (let now = 0; now <= T * 1000; now += 50) {
   scene.poses(now / 1000, session.view());
 }
 
-const hud = params.has('nohud') ? null : createCardTableHud({ onPress: () => {} });
+if (isEnhancedPlus()) injectEnhancedStyle();   // CARDS-PLUS: the Plus sheet, as the game's enhanced HUD lays it
+const hud = params.has('nohud') || params.get('game') === 'iliac' ? null : createCardTableHud({ onPress: () => {} });
 hud?.render(cardHudModel({ phase: 'playing', view: session.view(), legal: session.legal(), stakes: { sb: 5, bb: 10 }, log }));
 /** AUDIT CARDS-6 E21: the lift that keeps the held hand clear of the panel, read as worldModes cardHeldLift reads it - the
  *  plates' lowest corner over the panel's width against its top. */
@@ -177,8 +184,10 @@ const iliac = params.get('game') === 'iliac' ? (() => {
   }
   const v = iliacView(st, 0);
   const at = iliacPlaces(frame, seats[0].feet, seats[2].feet, 0);
-  return { draw: createIliacTableDraw(renderer), poses: iliacPoses(v, at, T, new Map()), cards: v.holdings.reduce((n, hd) => n + 1 + hd.sides[0].length + hd.sides[1].length, 0) };
+  return { view: v, draw: createIliacTableDraw(renderer), poses: iliacPoses(v, at, T, new Map()), cards: v.holdings.reduce((n, hd) => n + 1 + hd.sides[0].length + hd.sides[1].length, 0) };
 })() : null;
+// CARDS-PLUS: the Iliac game's own panel over its cloth (the Hold'em one stood there)
+if (iliac && !params.has('nohud')) createIliacTableHud({ onPress: () => {} }).render(iliacHudModel({ phase: 'playing', view: { ...iliac.view, names: ['You', names[1] ?? 'A regular'] } }));
 
 // The table alone, its cards drawn every one as a back, then as dealt: the pixels the cards and chips change, and the
 // pixels a FACE paints (the dealt frame against the all-backs one) - a frame that culls or loses the faces has none of
