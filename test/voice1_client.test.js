@@ -192,6 +192,30 @@ test('VOICE1 spatial: source -> gain -> pan -> master -> destination per voice, 
   const sp2 = new VoiceSpatialAudio(ctx2); sp2.add('a', {}, {}); assert.equal(sp2.voices.get('a').gain.out, sp2.master); assert.equal(sp2.voices.get('a').pan, null);
 });
 
+test('VOICE1 spatial: place() is a dirty-check, not a per-frame schedule - the same gain/pan asked again costs the audio thread nothing', () => {
+  const ctx = fakeContext();
+  const sp = new VoiceSpatialAudio(ctx);
+  sp.add('a', {}, {});
+  assert.ok(sp.place('a', 0.5, -0.5));
+  const scheduledAfterFirst = ctx.log.filter(([n]) => n === 'gain' || n === 'pan').length;
+  assert.equal(scheduledAfterFirst, 2, 'first place schedules both gain and pan');
+  // two players standing still: the exact same numbers, frame after frame
+  for (let i = 0; i < 10; i++) assert.ok(sp.place('a', 0.5, -0.5));
+  assert.equal(ctx.log.filter(([n]) => n === 'gain' || n === 'pan').length, scheduledAfterFirst, 'ten identical frames schedule nothing new');
+  // only the field that actually moved is scheduled
+  sp.place('a', 0.9, -0.5);
+  assert.equal(ctx.log.filter(([n]) => n === 'gain').length, 2, 'gain changed - one more gain schedule');
+  assert.equal(ctx.log.filter(([n]) => n === 'pan').length, 1, 'pan unchanged - still just the first pan schedule');
+  // a context with no panner: an unused 'pan' argument changing every frame never blocks the gain's own dirty-check
+  const ctx2 = fakeContext(); delete ctx2.createStereoPanner;
+  const sp2 = new VoiceSpatialAudio(ctx2);
+  sp2.add('a', {}, {});
+  sp2.place('a', 0.4, 0.1);
+  const afterFirst = ctx2.log.filter(([n]) => n === 'gain').length;
+  sp2.place('a', 0.4, 0.9);   // pan moved, but there is no panner to move - gain must still skip
+  assert.equal(ctx2.log.filter(([n]) => n === 'gain').length, afterFirst, 'no panner: a changing pan argument cannot defeat the gain dirty-check');
+});
+
 // ─── THE TRANSPORT OVER A FAKE SDK ──────────────────────────────────────────────────────────────────────────────────
 
 function fakeSdk() {

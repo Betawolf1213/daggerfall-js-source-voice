@@ -1,7 +1,7 @@
 // VOICE2: the voice settings panel - opt-in, push-to-talk, volume; mounts in the enhanced menu's Voice category.
 
 import { getVoiceNet } from '../net/voiceNet.js';
-import { getPref, setPref } from '../systems/uiPrefs.js';
+import { saveVoiceSetting } from '../voice/voiceSettings.js';
 
 /**
  * @param {{ doc?: Document }} o injectable document for tests, mirrors chatPanel.js's own convention
@@ -23,7 +23,7 @@ export function voiceSettingsRows({ doc = document } = {}) {
   `;
   enableRow.querySelector('.voice-enable').addEventListener('change', (e) => {
     state.setEnabled(e.target.checked);
-    setPref('voice', { ...getPref('voice'), enabled: e.target.checked });
+    saveVoiceSetting('enabled', e.target.checked);
   });
   rows.push(enableRow);
 
@@ -36,7 +36,7 @@ export function voiceSettingsRows({ doc = document } = {}) {
   `;
   pttRow.querySelector('.voice-ptt').addEventListener('change', (e) => {
     state.setPushToTalk(e.target.checked);
-    setPref('voice', { ...getPref('voice'), pushToTalk: e.target.checked });
+    saveVoiceSetting('pushToTalk', e.target.checked);
   });
   rows.push(pttRow);
 
@@ -49,7 +49,7 @@ export function voiceSettingsRows({ doc = document } = {}) {
   `;
   volRow.querySelector('.voice-volume').addEventListener('input', (e) => {
     voiceNet.setVolume(Number(e.target.value) / 100);
-    setPref('voice', { ...getPref('voice'), volume: voiceNet.volume });
+    saveVoiceSetting('volume', voiceNet.volume);
   });
   rows.push(volRow);
 

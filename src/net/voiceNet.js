@@ -2,7 +2,8 @@
 // VOICE2: the game loop's one door to voice - owns the VoiceClient singleton so no second one can exist per session.
 
 import { VoiceClient, DEFAULT_VOICE_SERVICE } from '../voice/voiceClient.js';
-import { getPref, setPref } from '../systems/uiPrefs.js';
+import { loadVoiceSettings, projectVoiceSettings, VOICE_PREF_KEY } from '../voice/voiceSettings.js';
+import { setPref } from '../systems/uiPrefs.js';
 
 /** The singleton voice client, created once per session. */
 let voiceNet = null;
@@ -13,21 +14,18 @@ let voiceNet = null;
  */
 export function initVoiceNet(o) {
   if (voiceNet) return voiceNet;
-  const voicePref = getPref('voice');
-  const service = voicePref?.service || DEFAULT_VOICE_SERVICE;
+  const voicePref = loadVoiceSettings();
   voiceNet = new VoiceClient({
-    service,
+    service: DEFAULT_VOICE_SERVICE,
     mintToken: o.mintToken,
     audioContext: o.audioContext,
     destination: o.destination,
   });
   // The pref row is the player's last session, not this client's default - carried over explicitly.
-  if (voicePref) {
-    voiceNet.state.setEnabled(voicePref.enabled ?? false);
-    voiceNet.state.setPushToTalk(voicePref.pushToTalk ?? true);
-    voiceNet.volume = voicePref.volume ?? 1;
-    voiceNet.state.mutedPeers = new Set(voicePref.mutedPeers ?? []);
-  }
+  voiceNet.state.setEnabled(voicePref.enabled);
+  voiceNet.state.setPushToTalk(voicePref.pushToTalk);
+  voiceNet.volume = voicePref.volume;
+  voiceNet.state.mutedPeers = new Set(voicePref.mutedPeers);
   return voiceNet;
 }
 
@@ -65,15 +63,17 @@ export function destroyVoiceNet() {
 }
 
 /**
- * Persist the player's current voice choices under the `voice` pref row.
+ * Persist the player's current voice choices under the `voice` pref row - one read, one validation pass, one write
+ * (not four): saveVoiceSetting() per field would otherwise reload/revalidate/restringify the whole shelf each time.
  */
 export function saveVoiceSettings() {
   if (!voiceNet) return;
-  setPref('voice', {
-    ...getPref('voice'),
+  const next = projectVoiceSettings({
+    ...loadVoiceSettings(),
     enabled: voiceNet.state.enabled,
     pushToTalk: voiceNet.state.pushToTalk,
     volume: voiceNet.volume,
     mutedPeers: [...voiceNet.state.mutedPeers],
   });
+  return setPref(VOICE_PREF_KEY, next);
 }
