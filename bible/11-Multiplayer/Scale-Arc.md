@@ -2193,6 +2193,45 @@ Pins: `test/display_replica.test.js` (3); `tools/mutants/display_replica.json` (
 SCALE4d's example of a read on the binding (the yards, where it was the lineages) and BUSY-GATE's rule that a held read
 is never a replica's - each PIN MOVED.
 
+## SEAT-FACTS: built (2026-10-13, this branch - migration 0112, no version, no drop)
+
+The owner's "1, 2 and 3", the first of them: one read of the seats' rows a minute for the whole service.
+
+### Measured
+
+- **SEAT-REPLICA moved the read, not its count.** From 18:55 the seats' witness read ran on the replica - 408-572
+  reads every five minutes, 15,899 rows each - and the replica's batch p99 went from 2-4 ms to 47-60 ms with them; the
+  heartbeat and the mint read there after their first statement. Each read is one isolate's minute: the isolates are
+  many, and each asks its own.
+- **And every ask counted the facts again.** `seatFacts` walked every row on each list, Watch claim, witness's report
+  and every caller of `confirmedSeats` (a Levy's seat, a Tithe's, a Market Hall's cap, a siege, a pledge) - the kept
+  rows saved the read, never the count.
+
+### Built
+
+- **The clock keeps the facts.** `server-account/src/townSeats.js:"export async function keepSeatFacts("` - a minute's
+  job (`cron.js` `seat-facts`, while the seats are not `off`) reads every seat row on the binding and keeps what they
+  say in `seat_facts_kept`'s one row (migration 0112): the seats that stand (a disputed one too) by key, state and
+  report, and the accounts ignored - two statements a minute, where every isolate read the rows.
+- **The isolates read the row.** A player's list, `confirmedSeats` and a witness's standing ask `keptSeatFacts`: the
+  row, on a session of its own, kept SEAT_ROWS_KEPT_S as the rows were. It answers only while it is fresh
+  (SEAT_FACTS_FRESH_S, 180 s: a stopped clock is no answer) and newer than this isolate's last report or strike - its
+  own second is not after it; otherwise the rows are read as before (SEAT-REPLICA's law: the primary's after a write
+  here), and a row unfit to answer is not asked again for SEAT_ROWS_KEPT_S. Any text that is not the clock's is no row;
+  an overload is the overload's, never taken for no row. A developer's list and the Turning's read the table as it
+  stands.
+
+### Left, each with its reason
+
+- **The seats' rows still grow.** 4,050 at STORM-SHED, 15,899 on the day, now read twice a minute rather than in every
+  isolate; trimming them moves which seats stand - the owner's call.
+- **Another isolate's report reaches a list up to a minute and SEAT_ROWS_KEPT_S later** (the clock's minute, then the
+  isolate's keep), where it was SEAT_ROWS_KEPT_S - a confirmation is three witnesses' and the facts move by the week.
+
+Pins: `test/seat_facts.test.js` (3); `tools/mutants/seat_facts.json` (10 dead); AUDIT SCALE D7's quiet minute (eight
+statements, where it was six), SEAT-REPLICA's counted point (two statements, the row asked first) and ACC1b's tables
+(`seat_facts_kept`) - each PIN MOVED.
+
 ## THE PLAN PAST 2,000 (2026-10-10)
 
 Mac, after #755's merge: "Alright lets now tackle the bigger work. I want to go deep and really future proof our

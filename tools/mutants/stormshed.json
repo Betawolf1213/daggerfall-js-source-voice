@@ -202,8 +202,8 @@
   {
     "name": "STORM-SHED-developer-kept",
     "file": "server-account/src/townSeats.js",
-    "old": "await (dev ? allSeatRows(db) : seatRowsOf(db, nowS))",
-    "new": "await seatRowsOf(db, nowS)",
+    "old": "dev ? seatFacts(await allSeatRows(db), nowS) : await keptSeatFacts(db, nowS)",
+    "new": "await keptSeatFacts(db, nowS)",
     "tests": [
       "test/stormshed.test.js"
     ],
@@ -222,7 +222,7 @@
   {
     "name": "STORM-SHED-report-unforgotten",
     "file": "server-account/src/townSeats.js",
-    "old": "  if (Number(put?.meta?.changes) !== 0) forgetSeatRows(db);\n",
+    "old": "  if (Number(put?.meta?.changes) !== 0) forgetSeatRows(db, nowS);\n",
     "new": "",
     "tests": [
       "test/stormshed.test.js"
@@ -232,7 +232,7 @@
   {
     "name": "STORM-SHED-strike-unforgotten",
     "file": "server-account/src/townSeats.js",
-    "old": "  forgetSeatRows(db);   // STORM-SHED: the struck seat's reports are gone - asked afresh here\n",
+    "old": "  forgetSeatRows(db, nowS);   // STORM-SHED: the struck seat's reports are gone - asked afresh here\n",
     "new": "",
     "tests": [
       "test/stormshed.test.js"

@@ -31,7 +31,7 @@ async function seatsDb() {
   const raw = base._raw;
   const witnesses = [await svc.guest(), await svc.guest(), await svc.guest()];
   for (const w of witnesses) raw.prepare("INSERT INTO world_witness (kind, key, account, report, region, at) VALUES ('seat', ?, ?, ?, ?, ?)").run(String(ANTICLERE.key), w.id, seatReportText(ANTICLERE), ANTICLERE.region, T0 - DAY);
-  const c = { n: 0, fail: false, hold: false, release: () => {} };
+  const c = { n: 0, fail: false, hold: false, held: false, release: () => {} };
   const db = Object.create(base);
   db.prepare = (sql) => {
     const st = base.prepare(sql);
@@ -40,7 +40,7 @@ async function seatsDb() {
     return {
       all: async () => {
         const failing = c.fail;
-        if (c.hold) await new Promise((res) => { c.release = res; });
+        if (c.hold) await new Promise((res) => { c.held = true; c.release = res; });
         if (failing) throw new Error('D1_ERROR: D1 DB is overloaded. Requests queued for too long.');
         return st.all();
       },
@@ -106,6 +106,7 @@ test('SEAT-REPLICA: a read that failed from a bookmark leaves it - the next star
   c.fail = true;
   c.hold = true;
   const failing = listSeats({ db, nowS: T0 + 2 * SEAT_ROWS_KEPT_S + 1 }, PLAYER, ENV);
+  while (!c.held) await new Promise((res) => { setImmediate(res); });   // SEAT-FACTS: the kept facts asked first, then the rows
   const releaseOld = c.release;
   c.fail = false;
   c.hold = false;
@@ -128,6 +129,6 @@ test('SEAT-REPLICA: a read that failed from a bookmark leaves it - the next star
   const counted = await seatsDb();
   const tally = { n: 0 };
   await listSeats({ db: countedDb(counted.db, tally), nowS: T0 }, PLAYER, ENV);
-  assert.equal(tally.n, 1, 'the session\'s statement on the request\'s metrics point (metrics.js countedDb)');
+  assert.equal(tally.n, 2, 'the sessions\' statements on the request\'s metrics point (metrics.js countedDb) - PIN MOVED (SEAT-FACTS): the kept facts\' row asked first, none there, then the rows');
   assert.deepEqual(counted.seatSessions(), [SEAT_ROWS_FROM]);
 });
