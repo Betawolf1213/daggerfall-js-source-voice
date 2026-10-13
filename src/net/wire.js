@@ -5447,9 +5447,13 @@ export function validSdFoundTell(b) {
 //
 // EG-ZQ (2026-10-12; section 14, Colossal): a body's row carries its size (`sz`, thousandths of its look's - a Colossal lord's),
 // so every screen draws the lord at the size the relay judges it by.
+//
+// AUDIT EG III (lane2 #1; Elite-Gates.md section 16.3): `wkpaid` - a member's own word that the account service answered its
+// Redoubt `w`'s receipt paid already this arena week (its gold alone), so the room turns that circle's Reliquaries into 20
+// lumen each; and a run's row carries its Reliquaries' circles (`r[8]`, at most EG_RUN_REL_MAX) for the rest's stake line.
 
 /** What a client may say: `open` to the hub (EG-ZA: and `void` and `claimed`); the rest to a breach's room (EG-ZF: `heal`). */
-export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed', 'heal']);   // EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
+export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed', 'heal', 'wkpaid']);   // AUDIT EG III: `wkpaid` a Redoubt the service paid already this week (section 16.3); EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
 /** What the hub and a breach's room say back. */
 export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail', 'tell', 'untell']);   // EG-H1: Watchfire's `tell`, the union floor's `untell`
 export const EG_RUN_KINDS = Object.freeze(['offer', 'ask', 'asked', 'tally', 'egot', 'run', 'rise', 'eping', 'pz', 'eheal', 'toll']);   // EG-ZI: `toll` the pull's toll, to its member
@@ -5590,13 +5594,17 @@ function egProgress(pg) {
   }
   return out;
 }
-/** A member's run: `[sub, reliquaries, lumen, shards, tonics, cantrips, vestiges, mastery]`. */
+/** AUDIT EG III (lane2 #1): the most Reliquaries' circles a run's row carries (net/egBrain.js oweEnd's own 64). */
+export const EG_RUN_REL_MAX = 64;
+/** A member's run: `[sub, reliquaries, lumen, shards, tonics, cantrips, vestiges, mastery, circles?]` - AUDIT EG III: each
+ *  Reliquary's circle, the newest EG_RUN_REL_MAX (an eight-field row, an older relay's, still read). */
 function egRunW(t) {
-  if (!Array.isArray(t) || t.length !== 8 || !egId(t[0]) || !intIn(t[1], 0, 999) || !intIn(t[2], 0, 99_999) || !intIn(t[3], 0, 999) || !intIn(t[4], 0, 9)) return null;
+  if (!Array.isArray(t) || (t.length !== 8 && t.length !== 9) || !egId(t[0]) || !intIn(t[1], 0, 999) || !intIn(t[2], 0, 99_999) || !intIn(t[3], 0, 999) || !intIn(t[4], 0, 9)) return null;
   if (!Array.isArray(t[5]) || t[5].length > 3 || !t[5].every((c) => intIn(c, 0, 9))) return null;
   if (!Array.isArray(t[6]) || t[6].length > 32 || !t[6].every((p) => Array.isArray(p) && p.length === 2 && intIn(p[0], 0, 99) && intIn(p[1], 1, 3))) return null;
   if (!intIn(t[7], -1, 199)) return null;
-  return [t[0], t[1], t[2], t[3], t[4], [...t[5]], t[6].map((p) => [...p]), t[7]];
+  if (t.length === 9 && (!Array.isArray(t[8]) || t[8].length > EG_RUN_REL_MAX || !t[8].every((w) => intIn(w, 1, 19_999)))) return null;   // AUDIT EG III: the Reliquaries' circles
+  return [t[0], t[1], t[2], t[3], t[4], [...t[5]], t[6].map((p) => [...p]), t[7], ...(t.length === 9 ? [[...t[8]]] : [])];
 }
 const egDecreesW = (a) => egList(a, (p) => (Array.isArray(p) && p.length === 2 && intIn(p[0], 0, 31) && intIn(p[1], 1, 2) ? [...p] : null), 9);
 /** EG-ZF (2026-10-12; bible/11-Multiplayer/Elite-Gates.md section 27.6, THE RECAP): a number of the recap's - all a member
@@ -5648,6 +5656,7 @@ export function validEgIn(m) {
     // EG-ZF (section 27.6): what companions' spells healed in me, each caster by peer id in the room, once - the gate's own
     // word and law (GATE-HEAL: validGateIn's `heal`), heard by a breach's room for the recap and the chart
     case 'heal': { const g = validGateIn({ k: 'heal', h: m.h }); return g ? { k: 'heal', h: g.h } : null; }
+    case 'wkpaid': return intIn(m.w, 1, 19_999) ? { k: 'wkpaid', w: m.w } : null;   // AUDIT EG III: Redoubt `w` paid me already this week - its circle's Reliquaries 20 lumen each
     default: return null;
   }
 }

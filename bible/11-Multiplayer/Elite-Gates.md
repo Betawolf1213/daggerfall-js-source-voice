@@ -485,17 +485,19 @@ What moves the count:
 | a Redoubt taken | +180 game min (+15 real min) | `remaining = min(remaining + EG_REDOUBT_HOLD_MIN, EG_COUNT_CAP_MIN, lastWord - elapsed)` |
 | THE GOLD RUN (section 8.2) | +12 game min (+1 real min) | past the cap, it counts toward a Surplus |
 | the closing | runs its first `EG_CLOSING_COUNT_S` 15 s, then HOLDS | a straggler costs the company 15 s, not 45 |
-| the pull to the wake (the swap and the gather together) | HOLDS, at most `EG_STAIR_HOLD_S` 40 s | a slow machine's loading is never the company's time |
+| the pull to the wake (the swap and the gather together) | HOLDS - at most 38 s: the wait's `EG_ARRIVE_MAX_S` 30 s and a gather begun in it, whole (section 7), so it needs no bound of its own | a slow machine's loading is never the company's time |
 | the rest (90 real s) | HOLDS | *The Redoubt holds the count* is shown by the count's chip, never said |
 | a respite | HOLDS | from the breach's respite budget (below); the last word does not hold |
 | a deploy's hold (section 22) | HOLDS | the gap is given back |
 | a Court's fight when the count is spent | THE COVENANT'S PATIENCE (section 18) | the Court finishes under the Covenant's Weight |
 
 Constants (`net/egLaw.js`): `EG_RISE_MIN` 60, `EG_ADMIT_MAX_MIN` 60, `EG_COUNT_START_MIN` 360, `EG_REDOUBT_HOLD_MIN`
-180, `EG_COUNT_CAP_MIN` 360, `EG_REST_S` 90, `EG_CLOSING_COUNT_S` 15, `EG_STAIR_HOLD_S` 40, `EG_RESPITE_BUDGET_S` 900,
+180, `EG_COUNT_CAP_MIN` 360, `EG_REST_S` 90, `EG_CLOSING_COUNT_S` 15, `EG_RESPITE_BUDGET_S` 900,
 `EG_RESPITE_VALK_S` 600, `EG_LAST_WORD_MIN` 2160. `egTimes(rec)` answers every phase's relay time and `egPhase(rec,
 ms)` the phase: `'rising' | 'sealed' | 'open' | 'deep' | 'torn' | 'ended'`. These are `gateTimes` and `gatePhase`
-again, for a record instead of a day.
+again, for a record instead of a day. A Redoubt's time is ONE law, the director's own (AUDIT EG III): `egCountRedoubt(c,
+now, lastWordLeft, hold)` with `egRedoubtHold(press)` its hold under the Covenant's Press, and `egCountOver` what the cap
+turns away toward a Surplus, which THE GOLD RUN banks the same way.
 
 **The respite budget.** Every breach has `EG_RESPITE_BUDGET_S` (900 s, 15 minutes) of respite, and each Valkynaz
 Redoubt adds `EG_RESPITE_VALK_S` (600 s). It is spent at any Redoubt, in pieces, by the company's word (section 16.4):
@@ -599,10 +601,10 @@ as one:
 | stage | what | how long |
 |---|---|---|
 | **arrival** | each member steps off the swap onto the hall's ARRIVAL PLATE (gold) and says `here` | as they come |
-| **gather** | a ring fills over the plate, *3 of 6 here*. The hall wakes once every living member has said `here`, or `EG_ARRIVE_MAX_S` (30 s) after the pull: *The hall wakes.* After two halls in a row that a member woke late, the wait for them drops to 10 s | `EG_GATHER_S` 8 s after the last `here` |
+| **gather** | a ring fills over the plate, *3 of 6 here*. The hall wakes once every living member has said `here`, or `EG_ARRIVE_MAX_S` (30 s) after the pull with a member still missing: *The hall wakes.* A gather begun before the wait ends runs whole. After two halls in a row that a member woke late, the wait for them drops to 10 s | `EG_GATHER_S` 8 s after the last `here` |
 | **the trial** | the hall's kind (section 8), its objective on the arrival card and the objective chip (section 27.3) | the trial's |
 | **the door** | the relay judges the trial done, and a gold door opens at the hall's END PLATE: a beam seen hall-wide, a compass and screen-edge marker, *The way down opens.*, and a door's sound | - |
-| **the closing** | each member steps through the door when ready (`down`, accepted only within `EG_DOOR_REACH_M` 3 m of it, from a fair trail, section 21) | `EG_CLOSING_FIGHT_S` 20 s; `EG_CLOSING_SPAN_S` 45 s after a span or the Deepway |
+| **the closing** | each member steps through the door when ready (`down`, said by the screen and accepted by the relay only within `EG_DOOR_REACH_M` 3 m of it - the closing ring's radius, one number and never a pad; the screen says it again each second it stands there - from a fair trail, section 21) | `EG_CLOSING_FIGHT_S` 20 s; `EG_CLOSING_SPAN_S` 45 s after a span or the Deepway |
 | **the pull** | at the closing's end, every living member still in the hall is pulled down | after a span, the toll (section 10.6) |
 
 **The breach's first hall** wakes when every company member has said `here`, or when the open window ends
@@ -1862,7 +1864,7 @@ as their save. Every Vestige that raises damage on a relay foe does so through t
 | **Hunt** | **Long Sight** | arrows and spells from beyond 12 m +8 / 14 / 20% | relay (it knows both poses) |
 | | **Featherstep** | your crumbles wait +0.2 / 0.35 / 0.5 s; cast-backs cost 8 / 6 / 4% | client (crumbles are private) |
 | | **Fade** | after you strike, adds lose you for 1.5 / 2.5 / 3.5 s, once every `EG_FADE_CD_S` 8 s | relay (targeting) |
-| | **Hunter's Mark** | your first arrow on a foe marks it 8 s: the company deals +5 / 8 / 12% to it | relay |
+| | **Hunter's Mark** | your first arrow from beyond 12 m on a foe marks it 8 s: the company deals +5 / 8 / 12% to it | relay |
 | | **Fleetfoot** | run speed +4 / 7 / 10% | client (spans are laid for the span build) |
 | **Arcana** | **Battlemage's Focus** | spell cost -10 / 18 / 25% | client |
 | | **Overcharge** | spell blows +8 / 14 / 20% | client; expected 1.08 / 1.14 / 1.20 |
@@ -1875,7 +1877,7 @@ as their save. Every Vestige that raises damage on a relay foe does so through t
 | | **Fallen's Due** | when an ally falls, the living deal +10 / 15 / 20% for the rest of the hall | relay |
 | | **Steadfast Line** | with three allies within 8 m, you take 5 / 10 / 15% less | client, from poses; the relay's census applies it too |
 | | **Mender's Grace** | heals you cast on allies +15 / 25 / 35% | the receiver's client, from the room's word (ALLY-CAST's law) |
-| | **Lifeline** | a heal you cast on an ally under 30% gives them 3 s of 20 / 30 / 40% less from blows | the receiver's client; the relay's census applies it too |
+| | **Lifeline** | a heal you cast on an ally under 30% gives them 3 s of 20 / 25 / 30% less from blows | the receiver's client; the relay's census applies it too |
 
 The Redoubt's card shows the circle's damage chart with the gate's Healed column (`src/ui/gateDamageChart.js`,
 GATE-HEAL), so a company of eight sees what its healer did.
@@ -1887,7 +1889,7 @@ every Valkynaz Redoubt; a member holds one at a time, and taking another replace
 |---|---|---|---|
 | **Stone** | **Immovable** | stand still for 1 s on a fight floor, and blows on you deal 25% less and pushes do nothing until you move | client; the relay's census applies it too |
 | **Blade** | **Counterstroke** | a melee blow on a lord within 0.6 s after one of its blows lands within 6 m of you deals x1.4 | relay (it knows both), inside the 1.6 cap |
-| **Hunt** | **Spotter** | your arrows wake Lurkers at any range, and a woken or struck foe is marked +10% for 8 s | relay |
+| **Hunt** | **Spotter** | your arrows wake Lurkers at any range, and a woken foe, or one your arrow strikes from beyond 12 m, is marked +10% for 8 s | relay |
 | **Arcana** | **Spillover** | a spell's overkill on an add carries to the nearest add within 6 m | relay (host hits) |
 | **Fellowship** | **Spirebridge** | once a span, a gold bridge over the next gap for the company, for 6 s | the room's word; known to the fair trail, and the crossing's bounds are solved with it |
 
@@ -1906,6 +1908,11 @@ relay, inside the caps:
 | **No Quarter** | Culling Edge + Fallen's Due | while Fallen's Due burns, Culling Edge reaches adds under a third of their health |
 | **War-Chorus** | Arcane Echo + Spire's Standard | within 10 m of the Standard, an Echo repeats at full |
 
+**The marks read an arrow from beyond 12 m** (section 21; AUDIT EG III, lane2 #6): Hunter's Mark's and Spotter's mark is laid by
+an arrow (the blow's `r`) from more than `EG_FAR_M` 12 m between the poses (`net/egRun.js` `egMarkFoe`), where no melee
+blow reaches, so a forged kind gains nothing a real one would not. Not built, and recorded here: Spotter's wake of Lurkers
+at any range - a Lurker wakes as every one does (a member within 6 m), so no woken foe is marked.
+
 **Watchfire.** Every lord's brain commits each blow `EG_TELL_LEAD_MS` (400 ms) before its wind-up begins, whether or
 not anyone holds Watchfire, so the blow's timing never depends on who does. The holder's company sees the early
 outline as a PULSING solid red line (a dashed line is a feint's), and a blue pip marks the holder (blue is yours,
@@ -1917,7 +1924,8 @@ themselves.
 
 - the same Vestige aura from several holders applies the strongest, plus 2% for each other holder, at most +6% over
   it;
-- every Vestige's damage reduction together is at most 30%;
+- every Vestige's damage reduction together is at most 30%, and no one rank passes it: Lifeline III stands at it (AUDIT EG III,
+  lane2 #5 - its 40% never applied under the cap, so its III bought nothing over its II's 30%; now 20 / 25 / 30%);
 - the client-declared damage factors together are at most 1.25, the relay-established ones at most 1.6, and both
   together at most 1.6;
 - a Vestige aura draws as one thin blue ring (0.6 m) at its holder's feet, never a cloud over the floor the telegraphs
@@ -1955,7 +1963,14 @@ When a Court's lord falls, the Redoubt is taken for every living member at once.
   least `1/(8n)` of what the company took, stood 1.5 s in an errand's mark, or crossed a span with a fair trail.
 
 The rule is the seam's `earned(f, sub)`, over the circle. An idle account pulled from hall to hall earns nothing (AUDIT
-EG0 A6), and a scripted wiggle is not activity (AUDIT EG II L4-18). A receipt banks:
+EG0 A6), and a scripted wiggle is not activity (AUDIT EG II L4-18). Each hall's part is the director's (AUDIT EG III,
+lane2 #3 - `net/egBrain.js` `egActiveIn`, counted at the pull and at the Court's fall): the hall's damage is the
+company's, *n* the living company at the hall's end; what the company took is the census's shares, and a healer's part
+its believed heals as shares of their receivers' bodies; an errand's mark is a stood-on errand's object (a rune, a gem,
+an isle, an umbra, a relic, an Orrery's stone, an engine) within its own reach or 2.5 m, or a Rampart's winch or Gauntlet
+plate, stood 1.5 s unbroken; and a span is crossed in a hall the pull tolls (the Span, the Deepway, a Brink, the Proving
+Walk) by a step through its door - which only a fair trail takes - or its end reached on a fair trail. A step through a
+fight hall's door is no part. A receipt banks:
 
 - **the depth**: the Redoubt joins the member's taken Redoubts, this season and all time;
 - **the week's spoils** of that Redoubt, rolled from the receipt's secret seed (section 22) and thrown at the beacon
@@ -2001,18 +2016,27 @@ The way home, a fall and forsaking are the only ways out before the tear or the 
 
 **The Reliquaries** are what a company risks. Each Redoubt that pays this week (section 19) seals one Reliquary into
 each earner's satchel: one more spoils roll at that Redoubt's depth, at twice the Panoply chance. A Redoubt already
-paid this week seals none, or a company with keys would farm Reliquaries (AUDIT EG II L2-15).
+paid this week seals none, or a company with keys would farm Reliquaries (AUDIT EG II L2-15). Only the account service
+knows which pay, so the relay seals one at every Redoubt, and the member's own claim of that Redoubt's receipt tells the
+room when the service answered it paid already this week (`wkpaid`, AUDIT EG III): every Reliquary of that circle then
+gives `EG_REL_LUMEN` (20 lumen) instead, and the HUD's count falls with it. A word that lies only turns a Reliquary that
+would open into lumen. A circle whose Redoubt the member never claimed keeps its Reliquaries sealed, and the end opens
+none of them that do not pay (the service's `egReliquariesOf`).
 
-- It opens only at a good end: the end receipt with `why` `'home'`, `'seal'`, `'last'` or `'void'` carries how many it
-  opens, rolled from that
-  receipt's secret seed.
+- It opens only at a good end: the end receipt with `why` `'home'`, `'seal'`, `'last'` or `'void'` (`EG_OPEN_ENDS`)
+  carries how many it opens, rolled from that receipt's secret seed - each circle the service opens one pass at its
+  depth on its own seed (`systems/egSpoils.js` `egReliquaryList`), its Panoply piece on its own stream at twice the
+  Redoubt's odds and with no pity (the service never sees the roll), no lord's arm nor card; given through the pool a
+  Redoubt's spoils use, once an end (`scenes/world.js` `egSpoilsPaid`). The recap's count is the service's once the
+  end's claim answers it.
 - A fall, the tear or a wipe loses every one. The way home, THE SEAL, the last word and a void open them, and THE
   COVENANT'S PATIENCE ends a breach as the way home (section 18).
 - **Every Reliquary**, whatever gives it (a Redoubt, the Reliquary Vault, Dagon's Bargain, the Honour Horn, the High
   Road's cache), is sealed only in a circle whose Redoubt pays this week, and rolls at that Redoubt's depth. In a
   circle already paid, each gives 20 lumen instead.
 - The HUD shows them: *Reliquaries: 4*. The rest card shows the stake: *4 Reliquaries - 1 Valkynaz - a Panoply piece
-  about 1 in 2.*
+  about 1 in 2.* (on the rest's line, `ui/egHud.js` `egStakeText`, each Reliquary's circle on its run's row; *a Panoply
+  piece likely* past two in three).
 - Every Redoubt is now the question the Spire was built to ask: walk home with four, or push for a fifth. One member
   walking home weakens the company, and that is the social tension a company of eight should feel.
 
@@ -2596,7 +2620,7 @@ The gate's trust law, kept whole, and where it was not enough for one life, wide
   blow's kind `r` is the client's word (`HIT_KINDS`), so a Vestige that reads it must not gain from a lie. Sweeping
   Arc, Bladestorm and Counterstroke read melee, and the relay already checks a melee blow's reach. Long Sight, Hunter's
   Mark, Spotter and Deadeye read arrows and spells, and also need more than 12 m between the poses (Spotter's wake
-  aside), where a forged kind gains nothing a real one would not. The lean reads it too, and changes no damage.
+  aside), where a forged kind gains nothing a real one would not (the marks: `net/egRun.js` `egMarkFoe`, an arrow alone). The lean reads it too, and changes no damage.
 - **The lords' blows on members**: ONE judge for every shape. `src/net/bossRef.js` holds a judge for each boss
   (`judgeGate`, `judgeRemnant`, `judgeSerpent`).
   - Every Spire blow travels with a FULL shape stamp, its kind and every number, which is new. The Remnant's
@@ -2654,7 +2678,7 @@ A breach is a three-hour instance on infrastructure that restarts. Every failure
 AUDIT EG II L4-31, L4-42).
 
 **A deploy.** `.github/workflows/relay-deploy.yml` drops every socket and restarts every Durable Object. The client
-deploys on every merge. A drain of up to 3 h 10 min for every relay deploy would close the Spire for much of each day,
+deploys on every merge. A drain of up to three hours (the last word) for every relay deploy would close the Spire for much of each day,
 so:
 
 - **THE HOLD** (the usual deploy): the deploy waits until every live breach is between trials (a closing, a swap or a
@@ -2766,7 +2790,8 @@ once. `ew` names the start Redoubt everywhere: orders, frames and receipts.
   it after.
 - **The clock** spends a stake only after `EG_VOID_MAX_S` (7 days) with no receipt naming it.
 - **The opening** is the moment the room accepts the open order, when the arch begins to rise. A stake's `until`, and
-  `eg_live`'s, is the opening plus `EG_LAST_WORD_MIN` plus `EG_LIVE_SLACK` (10 min): about 3 h 10 min.
+  `eg_live`'s, is set when the service signs the order: `EG_LIVE_S` (`server-account/src/eg.js`), the last word (3 h),
+  the open window before it (10 min) and `EG_LIVE_SLACK_S` (10 min) - about 3 h 20 min, so no breach outlives it.
 - **The tombstone**: after the end the room keeps `egdone` for `EG_VOID_MAX_S` (7 days) and refuses older voids (the
   `HOLDEM_STAKE_VOID_S` precedent).
 
@@ -2796,7 +2821,7 @@ height rides a word the fight already says, so the frames stay as many as they w
 | `{k:'call', b, ew, site, riseAt, openAt, sg}` | hub -> the company | the call (section 6.4), signed |
 | `{k:'in', z, lv}` | member -> room | the admit order and the level claim (frozen at the first admission) |
 | `{k:'here', h}` / `{k:'down'}` | member -> room | arrived in hall `h` / stepped through the door |
-| `{k:'st', ...}` | room -> all | the breach: seed, `sd` (the spec's digest), `egv`, hall, kind, variant, slot, twist, stage, the count's end, the respite left, the company (each `m1..`: numeral, alive, witness, home, forsaken, road), each member's Reliquaries, Cantrips and lumen, the Mementos lying, the decrees, the Proclamation, the Wager, the arch's site |
+| `{k:'st', ...}` | room -> all | the breach: seed, `sd` (the spec's digest), `egv`, hall, kind, variant, slot, twist, stage, the count's end, the respite left, the company (each `m1..`: numeral, alive, witness, home, forsaken, road), each member's Reliquaries (each one's circle with them, AUDIT EG III), Cantrips and lumen, the Mementos lying, the decrees, the Proclamation, the Wager, the arch's site |
 | `{k:'spec'}` / `{k:'specb', b}` | member -> room / room -> one | a spec asked for, and its bytes |
 | `{k:'wake', at}` / `{k:'door', at, until, ul}` | room -> all | the trial begins / the door opens (`at`), the closing ends (`until`), and on a forked span the Low Road's closing ends (`ul`) |
 | `{k:'hit', q, d, r}` / `{k:'ahit', i, q, d, r}` | member -> room | a blow on the lord / on add `i` |
@@ -2818,6 +2843,7 @@ height rides a word the fight already says, so the frames stay as many as they w
 | `{k:'mast'}` | member -> room | a Mastery used (Spirebridge, section 15) |
 | `{k:'ping', x, z, kind}` / `{k:'bequest', v}` / `{k:'forsake'}` | witness -> room | the witness's acts |
 | `{k:'home'}` | member -> room | the way home, confirmed |
+| `{k:'wkpaid', w}` | member -> room | the service answered my Redoubt `w`'s receipt paid already this week: that circle's Reliquaries 20 lumen each (section 16.3; AUDIT EG III) |
 | `{k:'void', z}` | client -> room | an order never accepted, asked to be voided |
 | `{k:'end', why}` | room -> all | why: `'tear'` (the count spent), `'gone'` (every member out: fallen twice, forsaken or home), `'wipe'` (no living member), `'home'` (THE COVENANT'S PATIENCE), `'seal'` (THE SEAL), `'rehearsal'` (a Rehearsal's end), `'last'` (the last word) or `'void'` (a force deploy, an unknown `egv`, no hall ever woken) |
 
@@ -4166,7 +4192,8 @@ art stay the look's (EG16, EG17).
   - A strip per circle: its halls' glyphs, its lord and its falls.
   - Each member: numeral, falls, the recall kept or spent, and how they left.
   - The Vestiges, and the Accords held with any companion.
-  - The Reliquaries open only by walking home or the last word, one each 400 ms with the Rare chime.
+  - The Reliquaries open only by walking home or the last word, one each 400 ms with the Rare chime (AUDIT EG III: THE
+    SEAL and a void open them too, `EG_OPEN_ENDS`, and the count is the service's once the end's claim answers it).
   - A member who walks home reads it too, not only the end's company.
   - The last five runs are kept on the device (`eg.recaps`).
 - **The first breach** (section 27.7). `EG_TEXT_FIRST` holds the nine lines verbatim. Each is said at its first occurrence
@@ -5692,7 +5719,8 @@ applies every Vestige section 21 names); both sentences are deleted above.
 - **LIFELINE IN THE CENSUS** (`net/egBrain.js` `egHeal`, `egCensusDr`, `EG_LIFELINE_UNDER`, `EG_LIFELINE_MS`,
   `EG_HEAL_WORD_MS`, `EG_LIFELINE_LOOK_MS`; sections 15 and 21).
   - The room hears `heal` since EG-ZF (`egHeal`). A believed heal of a Lifeline holder's on a member under 30% opens a
-    window on that member's blows (`m.ll`: `[from, until, share]`), at the healer's rank: 20, 30 or 40%.
+    window on that member's blows (`m.ll`: `[from, until, share]`), at the healer's rank: 20, 30 or 40% (AUDIT EG III:
+    20, 25 or 30% since - III's 40% never applied under the census's 30%).
   - "Under 30%" is read three ways: its count now, the count seen so at a beat (`egCount` notes `m.lowAt`), or its own
     word of its body saying so (`egBodyWord` notes it too). The look back is the heal word's second and a beat
     (`EG_LIFELINE_LOOK_MS`). The word comes up to `EG_HEAL_SEND_MS` (pinned equal to `EG_HEAL_WORD_MS`) after the heal,

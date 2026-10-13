@@ -61,17 +61,23 @@ function court(vs = {}, at = {}) {
   return {
     B, spec, rng, step, now: () => now, tick: (ms) => (now += ms),
     adds: (pts, hp = 500) => egRaise(B.F, EG_ROLE.add, 0, pts, hp, now, []),
-    /** a blow of `sub`'s (`d` claimed, kind `r`, numbered `seq` or the next) on body `i` from where `sub` stands */
-    blow: (sub, i, d, r, seq = q++) => { const [x, z] = places[sub]; return egBlow(B, sub, { k: 'hit', i, q: seq, d, r }, { sx: spec.x0 + x, y: 0, z }, (now += 300)); },
+    /** a blow of `sub`'s (`d` claimed, kind `r`, numbered `seq` or the next) on body `i` from where `sub` stands (or `at`) */
+    blow: (sub, i, d, r, seq = q++, at = places[sub]) => { const [x, z] = at; return egBlow(B, sub, { k: 'hit', i, q: seq, d, r }, { sx: spec.x0 + x, y: 0, z }, (now += 300)); },
+    /** PIN MOVED (AUDIT EG III, lane2 #6): `sub` back where `places` puts it, as the room last holds its pose - a mark is laid by an
+     *  arrow from beyond 12 m (section 21), and the pair law reads where the member stands after */
+    stand: (sub) => { const [x, z] = places[sub]; B.mem[sub].pose = { x, z, h: 5 }; },
   };
 }
 
+/** PIN MOVED (AUDIT EG III, lane2 #6): a place on the Court's floor 13 m from the foes the Hammer's pins strike - beyond 12 m. */
+const FAR = [0, 29.5];
 // ── HAMMER AND ANVIL ─────────────────────────────────────────────────────────────────────────────────────────────────
 test('EG-ZS HAMMER AND ANVIL (section 15: Challenger\'s Oath with Hunter\'s Mark - "a foe the mark\'s holder marked takes +8% from the oath\'s holder"): a foe my mate\'s first arrow marked takes my blow its mark\'s share and the Accord\'s 8% more while we stand within 10 m; the mark\'s holder\'s own blows the mark alone; the mate past 10 m, a foe marked by none, or my own mark (one member holding both): the mark alone (mutants: the Accord\'s share; the mark\'s layer unkept or unread; the pair\'s reach)', () => {
   const vs = { 'acct-0': [[vId('oath'), 1]], 'acct-1': [[vId('huntersmark'), 1]] };
   const S = court(vs);
   const [A, U] = S.adds([[0, 42.5], [0.5, 39.5]]);
-  S.blow('acct-1', A.i, 20, HIT_KINDS.Shaft);
+  S.blow('acct-1', A.i, 20, HIT_KINDS.Shaft, undefined, FAR);   // PIN MOVED (AUDIT EG III, lane2 #6): the first arrow from beyond 12 m
+  S.stand('acct-1');
   assert.deepEqual([A.hp, A.marked.by, A.marked.x], [480, 'acct-1', 0.05], 'the mate\'s first arrow lands and marks it');
   S.blow('acct-0', A.i, 20, HIT_KINDS.Melee);
   assert.ok(near(480 - A.hp, 20 * 1.05 * (1 + EG_HAMMER_X)), `my blow: the mark and the Accord (${480 - A.hp})`);
@@ -83,18 +89,20 @@ test('EG-ZS HAMMER AND ANVIL (section 15: Challenger\'s Oath with Hunter\'s Mark
   // a foe marked by another (a Spotter's mark, no Hunter's Mark of its own) takes its mark from me, never the Accord's share
   S.B.mem['acct-2'].mast = 102;
   const [V] = S.adds([[-5.5, 44]]);
-  S.blow('acct-2', V.i, 20, HIT_KINDS.Melee);
+  S.blow('acct-2', V.i, 20, HIT_KINDS.Shaft, undefined, FAR);   // PIN MOVED (AUDIT EG III, lane2 #6): the Spotter's arrow from beyond 12 m
+  S.stand('acct-2');
   assert.deepEqual([V.marked.by, V.marked.x], ['acct-2', 0.1]);
   S.blow('acct-0', V.i, 20, HIT_KINDS.Shaft);
   assert.ok(near(480 - V.hp, 22), `the Spotter's mark alone (${480 - V.hp})`);
   const F = court(vs, { 'acct-1': [-10.5, 41] });
   const [A2] = F.adds([[0, 42.5]]);
-  F.blow('acct-1', A2.i, 20, HIT_KINDS.Shaft);
+  F.blow('acct-1', A2.i, 20, HIT_KINDS.Shaft, undefined, FAR);
+  F.stand('acct-1');
   F.blow('acct-0', A2.i, 20, HIT_KINDS.Melee);
   assert.ok(near(480 - A2.hp, 21), 'the mate 10.5 m off: the mark alone');
   const M = court({ 'acct-0': [[vId('oath'), 1], [vId('huntersmark'), 1]] });
   const [A3] = M.adds([[0, 42.5]]);
-  M.blow('acct-0', A3.i, 20, HIT_KINDS.Shaft);
+  M.blow('acct-0', A3.i, 20, HIT_KINDS.Shaft, undefined, FAR);
   M.blow('acct-0', A3.i, 20, HIT_KINDS.Melee);
   assert.ok(near(480 - A3.hp, 21), 'my own mark: one member is no Accord');
 });

@@ -81,7 +81,7 @@ export const EG_VESTIGES = Object.freeze([
   Object.freeze({ id: 10, key: 'longsight', fam: 'hunt', name: 'Long Sight', v: [0.08, 0.14, 0.20], by: 'relay', line: (v) => `Arrows and spells from beyond 12 m +${pc(v)}.` }),
   Object.freeze({ id: 11, key: 'featherstep', fam: 'hunt', name: 'Featherstep', v: [0.2, 0.35, 0.5], by: 'client', line: (v) => `Your crumbles wait +${v} s; cast-backs cost less.` }),
   Object.freeze({ id: 12, key: 'fade', fam: 'hunt', name: 'Fade', v: [1.5, 2.5, 3.5], by: 'relay', line: (v) => `After you strike, adds lose you for ${v} s.` }),
-  Object.freeze({ id: 13, key: 'huntersmark', fam: 'hunt', name: "Hunter's Mark", v: [0.05, 0.08, 0.12], by: 'relay', line: (v) => `Your first arrow marks a foe: the company deals +${pc(v)} to it.` }),
+  Object.freeze({ id: 13, key: 'huntersmark', fam: 'hunt', name: "Hunter's Mark", v: [0.05, 0.08, 0.12], by: 'relay', line: (v) => `Your first arrow from beyond 12 m marks a foe: the company deals +${pc(v)} to it.` }),
   Object.freeze({ id: 14, key: 'fleetfoot', fam: 'hunt', name: 'Fleetfoot', v: [0.04, 0.07, 0.10], by: 'client', line: (v) => `Run speed +${pc(v)}.` }),
   // ARCANA
   Object.freeze({ id: 15, key: 'focus', fam: 'arcana', name: "Battlemage's Focus", v: [0.10, 0.18, 0.25], by: 'client', line: (v) => `Spell cost -${pc(v)}.` }),
@@ -96,7 +96,7 @@ export const EG_VESTIGES = Object.freeze([
   Object.freeze({ id: 23, key: 'fallensdue', fam: 'fellowship', name: "Fallen's Due", v: [0.10, 0.15, 0.20], by: 'relay', line: (v) => `When an ally falls, the living deal +${pc(v)} for the hall.` }),
   Object.freeze({ id: 24, key: 'steadfast', fam: 'fellowship', name: 'Steadfast Line', v: [0.05, 0.10, 0.15], by: 'client', line: (v) => `With three allies within 8 m, you take ${pc(v)} less.` }),
   Object.freeze({ id: 25, key: 'mender', fam: 'fellowship', name: "Mender's Grace", v: [0.15, 0.25, 0.35], by: 'word', line: (v) => `Heals you cast on allies +${pc(v)}.` }),
-  Object.freeze({ id: 26, key: 'lifeline', fam: 'fellowship', name: 'Lifeline', v: [0.20, 0.30, 0.40], by: 'word', line: (v) => `A heal on an ally under 30% gives them ${pc(v)} less from blows for 3 s.` }),
+  Object.freeze({ id: 26, key: 'lifeline', fam: 'fellowship', name: 'Lifeline', v: [0.20, 0.25, 0.30], by: 'word', line: (v) => `A heal on an ally under 30% gives them ${pc(v)} less from blows for 3 s.` }),   // AUDIT EG III (lane2 #5): every rank under EG_DR_MAX, III at it - its 40% never applied
 ]);
 function pc(v) { return `${Math.round(v * 100)}%`; }
 export const EG_V_BY_KEY = Object.freeze(Object.fromEntries(EG_VESTIGES.map((v) => [v.key, v])));
@@ -105,7 +105,7 @@ export const EG_V_BY_KEY = Object.freeze(Object.fromEntries(EG_VESTIGES.map((v) 
 export const EG_MASTERIES = Object.freeze([
   Object.freeze({ id: 100, key: 'immovable', fam: 'stone', name: 'Immovable', line: 'Stand still 1 s on a fight floor: blows on you deal 25% less and pushes nothing, until you move.' }),
   Object.freeze({ id: 101, key: 'counterstroke', fam: 'blade', name: 'Counterstroke', line: "A melee blow on a lord within 0.6 s after one of its blows lands near you deals x1.4." }),
-  Object.freeze({ id: 102, key: 'spotter', fam: 'hunt', name: 'Spotter', line: 'Your arrows wake Lurkers at any range; a woken or struck foe is marked +10% for 8 s.' }),
+  Object.freeze({ id: 102, key: 'spotter', fam: 'hunt', name: 'Spotter', line: 'Your arrows wake Lurkers at any range; a foe your arrow strikes from beyond 12 m is marked +10% for 8 s.' }),
   Object.freeze({ id: 103, key: 'spillover', fam: 'arcana', name: 'Spillover', line: "A spell's overkill on an add carries to the nearest add within 6 m." }),
   Object.freeze({ id: 104, key: 'spirebridge', fam: 'fellowship', name: 'Spirebridge', line: 'Once a span, a gold bridge over the next gap for the company, for 6 s.' }),
 ]);

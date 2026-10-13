@@ -424,6 +424,7 @@ import { createSdClaims } from '../net/sdClaims.js';   // SD9b: the Hour's recei
 import { readSdReceipt } from '../net/sdReceipt.js';   // SD9e: my Hour receipt, read for its spoils
 import { SD_SPOILS_KEYS, SD_SPOILS_RECORDS_MAX, SD_SPOILS_TEXT, sdSpoilsDay, sdSpoilsSlot, sdSpoilsList } from '../systems/sdSpoils.js';   // SD9e: the Brass Remnant's spoils
 import { egSpoilsDay, egSpoilsList, EG_SPOILS_TEXT } from '../systems/egSpoils.js';   // EG-E: a Redoubt's spoils
+import { egReliquaryGrant } from '../systems/egSpoils.js';   // AUDIT EG III (Elite-Gates.md section 16.3): an end's Reliquaries opened
 import { createSdSpoils, clearOfPillars } from './sdSpoils.js';   // SD9e: thrown from where it fell; AUDIT SD: the way home clear of the arena's pillars
 import { slainLine, serpentBossOf, serpentBossById, sameSerpentSite, SERPENT_NATIVE_PER_M } from '../net/serpentLaw.js';   // SERPENT1: the hub's word of its kill, in the chat (AUDIT SERPENT S1: my own site's alone)
 import { createGateCourt, courtSaySeconds } from './gateCourt.js';   // WB4: the fight on this screen - the boss drawn, heard and read, and his blows on me
@@ -25220,8 +25221,16 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  receipt's seed at the level the breach admitted, the lord's arm and card by its key, the Panoply's pity as the
    *  service forced it), thrown from the Court's heart when I stand in that Redoubt, else straight into the pack - in the
    *  Hour's pool (the Spire is a dungeon's frame as the Hour is, and the two are never stood in at once), once a receipt
-   *  and account. A Redoubt taken again this week pays its gold alone, and a guest's (no name the service records) too. */
+   *  and account. A Redoubt taken again this week pays its gold alone, and a guest's (no name the service records) too.
+   *  AUDIT EG III (section 16.3): an END's claim (`q` 'x') opens its Reliquaries - those the service answered (`rl`), each a
+   *  roll at its Redoubt's depth off the end receipt's seed (systems/egSpoils.js egReliquaryGrant), straight into the pack
+   *  through the same pool, once an end and account. */
   function egSpoilsPaid(c, d) {
+    if (c?.q === 'x') {
+      const g = egReliquaryGrant(c, d, spoilsLevel(playerEntity.level ?? 1, c.l));
+      if (g) spoilsLock(() => sdSpoilsPool.grant({ day: g.day, acct: c.s, roll: g.roll, text: g.text })).catch((e) => console.warn('[eg] reliquaries', e?.message ?? e));
+      return;
+    }
     if (!c || !Number.isSafeInteger(c.c) || !Number.isSafeInteger(c.w)) return;
     if (d?.marks || d?.deed) { showHaul(claimHauls(d, 'eg')); for (const line of marksBook?.claimLines(d, 'eg') ?? []) chatNotice(line); }
     const guest = d?.why === 'guest', goldOnly = guest || d?.paid === false;

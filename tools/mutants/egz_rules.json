@@ -275,8 +275,8 @@
   {
     "name": "EGZI-brain-late-the-wait-the-old",
     "file": "src/net/egBrain.js",
-    "old": "    if (B.wk && now >= B.pulledAt + wait) { wake(B, now, rng, out); return out; }",
-    "new": "    if (B.wk && now >= B.pulledAt + EG_ARRIVE_MAX_MS) { wake(B, now, rng, out); return out; }",
+    "old": "    if (B.wk && !B.gatherAt && now >= B.pulledAt + wait) { wake(B, now, rng, out); return out; }",
+    "new": "    if (B.wk && !B.gatherAt && now >= B.pulledAt + EG_ARRIVE_MAX_MS) { wake(B, now, rng, out); return out; }",
     "tests": ["test/egz_rules.test.js"]
   },
   {
