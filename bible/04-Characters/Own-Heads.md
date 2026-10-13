@@ -42,10 +42,11 @@ its name by what it is drawn for:
 
 - **The hairs - certain.** The red band paints the headband's own island (0111); the widow's peak runs along its own
   hair's island (widow); the third is the 01.
-- **The eyepatch - h0423, by the export's pairing.** The eyepatch is the one face painting that is not mirror-even, so it
-  wears a full-face layout; h0411 and h0423 share theirs texel for texel (h04's mesh takes half of it, the face's two
-  sides on the same texels), so the layouts cannot tell them apart. The export pairs h0423 with the red headband (object `.003`), and an eyepatch and
-  a headband are one look: h0423.
+- **The eyepatch - h0423, by the export's pairing.** The eyepatch is the one face painting that is not mirror-even (its
+  eye band differs from its mirror image by 37.6, the plain faces' by 9), so it wears a full-face layout: on h04's,
+  which reads both sides of the face from one half of the painting, it is two eyepatches (the owner caught exactly that
+  in an exploration render). h0411 and h0423 share their layout texel for texel, so the layouts cannot tell them apart;
+  the export pairs h0423 with the red headband (object `.003`), and an eyepatch and a headband are one look: h0423.
 - **h04 and h0411 - judged.** The two plain faces - a black-and-grey beard and a brown one - fit either mesh alike: both
   paintings are near mirror-even, both paint beard over h04's sculpted chin (all 32 of its vertices that stand off the
   other faces' surface), and the detail of each falls in the same share of each layout. The black-and-grey painting is
@@ -83,13 +84,14 @@ Breton women's heads are not in this batch. The first person draws no head or ha
 
 ## How it was proven
 
-`test/mwheads1.test.js` (5): every head and hair re-made from the committed export and its six paintings byte for byte,
+`test/mwheads1.test.js` (6): every head and hair re-made from the committed export and its six paintings byte for byte,
 each DDS its painting, the export and each painting by hash, each painting under the name the export gives its
 material (a material read as another's picture, and a part off its box, refused); each part one rigid shape of its own
 material in the head's own frame, its polygons its material's alone, the three faces' shared crown, sides and back,
-the owner's scene height against MW-STEEL5's reading; every hair over every head's scalp; the pools, the data's
-ignored for a Breton man and kept for a Breton woman and a Nord, the curated ten, the walk's nine pairs, the vampire's
-head, and the viewer's sheet by source; and through the binder a retail head takes, six rigid pieces under the Head
+the owner's scene height against MW-STEEL5's reading; ONE EYEPATCH - the one-sided painting worn only by a layout that
+reads each side of the face from its own half, h04's mirrored layout wearing a face whose eyes match; every hair over
+every head's scalp; the pools, the data's ignored for a Breton man and kept for a Breton woman and a Nord, the curated
+ten, the walk's nine pairs, the vampire's head, and the viewer's sheet by source; and through the binder a retail head takes, six rigid pieces under the Head
 node, unmirrored, their own geometry, no note. PIN MOVED: `test/mwnpc17_wardrobe.test.js` MWNPC17d's walk and
 MWNPC17e's street re-aimed from the Breton men (whose pools are the port's own now) to the Nord men, and its memo pin
-read with MW-FOLK1's outfit key. `tools/mutants/mwheads1.json` (9, all dead).
+read with MW-FOLK1's outfit key. `tools/mutants/mwheads1.json` (10, all dead - the tenth paints the eyepatch onto h04).

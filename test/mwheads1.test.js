@@ -95,6 +95,42 @@ test('MW-HEADS1: each part one rigid shape of its own material, in the head\'s o
   for (const d of over) assert.ok(d > 3.24 && d < 4.25, `the source head stands ${d.toFixed(2)} over the scene's`);
 });
 
+test('MW-HEADS1: one eyepatch - the one painting whose eyes differ side to side is worn by a layout that reads each side of the face from its own half; h04\'s mirrored layout, which reads both sides from one half, wears a face whose eyes match', () => {
+  // the eye band of each face's painting, as the bake maps it (PAINTINGS - its DDS that painting, the first test): how
+  // far its left half differs from its mirror image
+  const eyeBand = (id) => {
+    const { width: W, height: H, data: rgba } = readPng(raw(PAINTINGS[id]));
+    let d = 0, m = 0;
+    for (let y = Math.floor(0.3 * H); y < Math.floor(0.55 * H); y++) {
+      for (let x = Math.floor(0.3 * W); x < W / 2; x++) {
+        for (let k = 0; k < 3; k++) { d += Math.abs(rgba[(y * W + x) * 4 + k] - rgba[(y * W + W - 1 - x) * 4 + k]); m++; }
+      }
+    }
+    return d / m;
+  };
+  // which half of the painting each side of the face reads: the share of the +x side's vertices left of the middle,
+  // and of the -x side's right of it (a mirrored layout reads both sides from one half)
+  const halves = (id) => {
+    const { positions: P, uvs: UV } = nifOf(id)[0];
+    const side = (sgn, left) => { let n = 0, k = 0; for (let v = 0; v < P.length / 3; v++) if (sgn * P[v * 3] > 1) { n++; if ((UV[v * 2] < 0.5) === left) k++; } return k / n; };
+    return [side(1, true), side(-1, false)];
+  };
+  const band = Object.fromEntries(HEADS.map((id) => [id, eyeBand(id)]));
+  assert.ok(band.breton_m_head_h0423 > 30, `the eyepatch's eyes differ side to side (${band.breton_m_head_h0423.toFixed(1)})`);
+  assert.ok(band.breton_m_head_h04 < 12 && band.breton_m_head_h0411 < 12, `the plain faces' eyes match (${band.breton_m_head_h04.toFixed(1)}, ${band.breton_m_head_h0411.toFixed(1)})`);
+  for (const id of ['breton_m_head_h0411', 'breton_m_head_h0423']) {
+    const [r, l] = halves(id);
+    assert.ok(r > 0.85 && l > 0.95, `${id}: each side of the face reads its own half (${r.toFixed(2)}, ${l.toFixed(2)})`);
+  }
+  const [r04, l04] = halves('breton_m_head_h04');
+  assert.ok(r04 > 0.85 && l04 < 0.15, `h04's layout is mirrored - both sides read one half (${r04.toFixed(2)}, ${l04.toFixed(2)})`);
+  // so no face whose eyes differ is worn where both sides read one half: one patch, never two
+  for (const id of HEADS) {
+    const [r, l] = halves(id);
+    if (band[id] > 20) assert.ok(r > 0.85 && l > 0.95, `${id}: a one-sided face on a layout that shows it once`);
+  }
+});
+
 test('MW-HEADS1: every hair sits on every head - no vertex of a scalp stands outside any of the three hairs', () => {
   const tris = (b) => { const out = []; for (let i = 0; i < b.indices.length; i += 3) out.push([0, 1, 2].map((k) => Array.from(b.positions.slice(b.indices[i + k] * 3, b.indices[i + k] * 3 + 3)))); return out; };
   const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];

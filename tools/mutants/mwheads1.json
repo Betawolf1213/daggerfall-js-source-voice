@@ -88,5 +88,15 @@
       "test/mwheads1.test.js"
     ],
     "note": "The face sheet the table is authored against draws Morrowind's Breton men's heads, which no Breton man wears."
+  },
+  {
+    "name": "MWHEADS1-two-eyepatches",
+    "file": "tools/bakeHeads.mjs",
+    "old": "  breton_m_head_h04: 'src/assets/mw/source/Breton_Head_H04.png',",
+    "new": "  breton_m_head_h04: 'src/assets/mw/source/Breton_Head_H0423.png',",
+    "tests": [
+      "test/mwheads1.test.js"
+    ],
+    "note": "The eyepatch painted onto h04, whose layout reads both sides of the face from one half of the painting: a face with two eyepatches."
   }
 ]
