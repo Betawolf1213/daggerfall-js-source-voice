@@ -5447,11 +5447,19 @@ export function validSdFoundTell(b) {
 //
 // EG-ZQ (2026-10-12; section 14, Colossal): a body's row carries its size (`sz`, thousandths of its look's - a Colossal lord's),
 // so every screen draws the lord at the size the relay judges it by.
+//
+// AUDIT EG III (2026-10-13, lane 1 #7 / lane 3 #10; sections 15 and 23): SPIREBRIDGE ON THE WIRE - a holder's ask (`mast`, no
+// fields: the room reads the asker's own pose) and the room's word to the company (`ebridge` - the hall, its gap's number
+// in the hall's chain, when the plank stands and until when, who raised it), its life at most EG_SB_WIRE_MS.
 
 /** What a client may say: `open` to the hub (EG-ZA: and `void` and `claimed`); the rest to a breach's room (EG-ZF: `heal`). */
-export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed', 'heal']);   // EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
+export const EG_KINDS = Object.freeze(['open', 'in', 'down', 'home', 'hit', 'pick', 'surplus', 'vote', 'cant', 'buy', 'lping', 'ping', 'bequest', 'forsake', 'pz', 'fell', 'use', 'vt', 'clk', 'spec', 'void', 'claimed', 'heal', 'mast']);   // EG-H2: `spec` - a hall of the breach's own law asked; EG-H1: `vt` my body, `clk` the shared clock's ping; EG-ZA: `void` a stake no call answered, `claimed` a held receipt the service counted - both to the hub alone
 /** What the hub and a breach's room say back. */
-export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail', 'tell', 'untell']);   // EG-H1: Watchfire's `tell`, the union floor's `untell`
+export const EG_FIGHT_KINDS = Object.freeze(['efs', 'ead', 'emv', 'ehp', 'edie', 'efl', 'eb', 'ecut', 'etx', 'emk', 'eph', 'efell', 'eob', 'ez', 'esay', 'egust', 'edark', 'erail', 'tell', 'untell', 'ebridge']);   // EG-H1: Watchfire's `tell`, the union floor's `untell`; AUDIT EG III: Spirebridge's `ebridge`
+/** AUDIT EG III (Elite-Gates.md section 15): the longest a Spirebridge stands on the wire (ms - net/egSpanLaw.js EG_SB_MS, 6 s,
+ *  pinned under it: wire.js imports no law of the Spire's), and the most gaps a hall's chain numbers. */
+export const EG_SB_WIRE_MS = 10_000;
+export const EG_GAP_WIRE_MAX = 999;
 export const EG_RUN_KINDS = Object.freeze(['offer', 'ask', 'asked', 'tally', 'egot', 'run', 'rise', 'eping', 'pz', 'eheal', 'toll']);   // EG-ZI: `toll` the pull's toll, to its member
 /** EG-ZI (Elite-Gates.md section 10.6): the most quarters a pull's toll says (net/egLaw.js EG_TOLL_QUARTERS - pinned equal:
  *  wire.js imports no law of the Spire's). */
@@ -5648,6 +5656,7 @@ export function validEgIn(m) {
     // EG-ZF (section 27.6): what companions' spells healed in me, each caster by peer id in the room, once - the gate's own
     // word and law (GATE-HEAL: validGateIn's `heal`), heard by a breach's room for the recap and the chart
     case 'heal': { const g = validGateIn({ k: 'heal', h: m.h }); return g ? { k: 'heal', h: g.h } : null; }
+    case 'mast': return { k: 'mast' };   // AUDIT EG III (section 15): a Mastery used - Spirebridge, over the gap ahead of my own pose
     default: return null;
   }
 }
@@ -5739,6 +5748,9 @@ export function validEgOut(m) {
     }
     case 'egust': return gateMs(m.at) && finite(m.dx) && Math.abs(m.dx) <= 1 && finite(m.dz) && Math.abs(m.dz) <= 1 && finite(m.v) && m.v >= 0 && m.v <= 10 && intIn(m.ms, 0, 5000) ? { k: 'egust', at: m.at, dx: m.dx, dz: m.dz, v: m.v, ms: m.ms } : null;
     case 'edark': case 'erail': return gateMs(m.until) ? { k: m.k, until: m.until } : null;
+    // AUDIT EG III (section 15): a Spirebridge raised - its hall, its gap, from when until when (at most EG_SB_WIRE_MS), who raised it
+    case 'ebridge': return intIn(m.h, 1, EG_HALL_WIRE_MAX) && intIn(m.g, 0, EG_GAP_WIRE_MAX) && gateMs(m.at) && gateMs(m.until) && m.until > m.at && m.until - m.at <= EG_SB_WIRE_MS && egId(m.s)
+      ? { k: 'ebridge', h: m.h, g: m.g, at: m.at, until: m.until, s: m.s, n: egText(m.n ?? '', 48) ?? '' } : null;
     // ── the run ──
     case 'offer': return Array.isArray(m.v) && m.v.length <= 6 && m.v.every((c) => intIn(c, 0, 199)) && intIn(m.n ?? 0, 0, 9) ? { k: 'offer', v: [...m.v], n: m.n ?? 0 } : null;
     case 'ask': return typeof m.q === 'string' && /^[a-z:]{1,24}$/.test(m.q) && Array.isArray(m.o) && m.o.length <= 4 && m.o.every((x) => intIn(x, 0, 99)) && gateMs(m.until) ? { k: 'ask', q: m.q, o: [...m.o], until: m.until } : null;

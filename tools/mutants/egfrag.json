@@ -150,8 +150,8 @@
   {
     "name": "EGFRAG-the-low-road-on-the-high-line",
     "file": "src/net/egLaw.js",
-    "old": "    xRoad = EG_LOW_X_CM;\n    run('still', 2);",
-    "new": "    xRoad = 0;\n    run('still', 2);",
+    "old": "    xRoad = EG_LOW_X_CM;\n    if (L6 && extra > 0) decreeSections(); else run('still', 2);",
+    "new": "    xRoad = 0;\n    if (L6 && extra > 0) decreeSections(); else run('still', 2);",
     "tests": [
       "test/egfrag_law.test.js"
     ]

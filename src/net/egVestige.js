@@ -13,9 +13,15 @@
 // EG-ZR (2026-10-12): the numbers section 15 gives no rank (Momentum's stack, Second Wind's and Bloodied Fury's lines, an
 // Echo's share, Shield-Hymn's seconds, an Accord's reach) and Shield-Hymn's pair (egHymnOf), each declared once here - the
 // holder's screen (systems/spireVestiges.js, scenes/egFight.js) and the relay's census (net/egBrain.js) import them.
+// AUDIT EG III (2026-10-13, lane 1 #7 / lane 3 #10): SPIREBRIDGE BUILT - the Fellowship's Mastery was offered and applied
+// nowhere; the room's rule is here (egSpirebridge: once a hall's span, the holder's ask, the next gap ahead of it, 6 s, said to
+// the company), its plank the span law's (net/egSpanLaw.js egBridgeOf), ground on the relay's fair trail while it stands
+// (net/egFair.js) and on every screen (scenes/egSpan.js).
 // EG-ZS (2026-10-12): the capstones' and the Accords' numbers (Bladestorm's fifth blow and its reach, Spellweave's fourth spell,
 // the reach "beyond 12 m", Hammer and Anvil's, Ambush's and Living Wall's shares, Kindled Steel's splash, an Echo's number)
 // and THE PAIR LAW every Accord but Shield-Hymn is read by (egAccordMates), declared once here beside egHymnOf.
+
+import { egBridgeAhead, EG_SB_MS } from './egSpanLaw.js';   // AUDIT EG III: Spirebridge's gap and its time (a leaf)
 
 export const EG_V_FAMILIES = Object.freeze(['stone', 'blade', 'hunt', 'arcana', 'fellowship']);
 export const EG_V_FAMILY_NAMES = Object.freeze({ stone: 'Stone', blade: 'Blade', hunt: 'Hunt', arcana: 'Arcana', fellowship: 'Fellowship' });
@@ -110,6 +116,28 @@ export const EG_MASTERIES = Object.freeze([
   Object.freeze({ id: 104, key: 'spirebridge', fam: 'fellowship', name: 'Spirebridge', line: 'Once a span, a gold bridge over the next gap for the company, for 6 s.' }),
 ]);
 export const EG_M_BY_ID = Object.freeze(Object.fromEntries(EG_MASTERIES.map((m) => [m.id, m])));
+/** AUDIT EG III: Spirebridge's number (the Fellowship's Mastery). */
+export const EG_SPIREBRIDGE_ID = EG_MASTERIES.find((M) => M.key === 'spirebridge')?.id ?? -1;
+/**
+ * AUDIT EG III - SPIREBRIDGE, THE ROOM'S RULE (section 15: "once a span, a gold bridge over the next gap for the company, for
+ * 6 s" - "the room's word; known to the fair trail"): member `sub` of breach `B` asks it (`mast`) standing at `p` (`{x, z}`,
+ * the hall's frame of `spec`, the hall the breach stands in) at relay ms `now`. A living holder, in a trial or its closing,
+ * once a hall's span (`m.sbH` - its hall), over the next gap ahead of it on its road (net/egSpanLaw.js egBridgeAhead): the
+ * plank kept in `B.sb` (`{ h, g, from, until }` - the fair trail's ground, net/egFair.js) for EG_SB_MS, and said to the
+ * company. Answers the word (`ebridge`), or null - refused, nothing spent (no gap ahead, not the holder, spent this span).
+ * @param {any} B @param {string} sub @param {any} spec @param {{x: number, z: number}|null} p @param {number} now
+ */
+export function egSpirebridge(B, sub, spec, p, now) {
+  const m = B?.mem?.[sub];
+  if (!m || !m.in || !m.alive || m.home || m.mast !== EG_SPIREBRIDGE_ID || !spec || !p || !(B.h > 0) || spec.h !== B.h) return null;
+  if ((B.sg !== 'trial' && B.sg !== 'closing') || m.sbH === B.h) return null;
+  const g = egBridgeAhead(spec, p.x, p.z);
+  if (g < 0) return null;
+  m.sbH = B.h;
+  const q = { h: B.h, g, from: now, until: now + EG_SB_MS };
+  B.sb = [...(B.sb ?? []).filter((o) => o.h === B.h && o.until > now), q];
+  return { k: 'ebridge', h: B.h, g, at: q.from, until: q.until, s: sub, n: m.name ?? '' };
+}
 /** THE ACCORDS: two members within 10 m holding a named pair from two families. */
 export const EG_ACCORDS = Object.freeze([
   Object.freeze({ key: 'hammer', name: 'Hammer and Anvil', a: 'oath', b: 'huntersmark', line: "A foe the mark's holder marked takes +8% from the oath's holder." }),

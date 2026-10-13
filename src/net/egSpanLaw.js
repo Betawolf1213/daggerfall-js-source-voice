@@ -632,3 +632,86 @@ export function egSpanProof(spec) {
   }
   return { ok: why.length === 0, why };
 }
+
+// ── AUDIT EG III (2026-10-13, lane 1 #7 / lane 3 #10; Elite-Gates.md section 15): SPIREBRIDGE'S PLANK ────────────────
+// The Fellowship's Mastery: "once a span, a gold bridge over the next gap for the company, for 6 s". The room picks the gap
+// (net/egVestige.js egSpirebridge) and says it (`ebridge`, its gap's number in egSpanPairs' chain); every screen stands the
+// plank this law lays over it (scenes/egSpan.js), and the relay's fair trail counts it as ground while it stands
+// (net/egFair.js egSupportAt). The solver never sees it: a bridge is a help, never needed - every course is proven without
+// one, and running a plank is no faster than jumping its gap.
+/** How long a Spirebridge stands (ms), how far ahead of a member its gap may begin (m - "the next gap"), how far behind it may
+ *  have begun (m - a member at its edge, or just off it), how far across the road's line a member may stand from it (m), how
+ *  far the plank laps onto each side (m), its width's bounds (m), and the most a plank rises or falls across its gap (cm - THE
+ *  ENVELOPE's step down: a Drop's fall, a riser's face are spanned by none). */
+export const EG_SB_MS = 6000;
+export const EG_SB_AHEAD_M = 6;
+export const EG_SB_BEHIND_M = 1.5;
+export const EG_SB_SIDE_M = 4;
+export const EG_SB_LAP_M = 0.3;
+export const EG_SB_W_MIN = 1.6;
+export const EG_SB_W_MAX = 3;
+export const EG_SB_RISE_CM = EG_STEP_DOWN_CM;
+/** The floor's height under (x, z) - the highest disc, band or lane of `spec` holding it (m), or null. */
+function floorAt(spec, x, z) {
+  let y = null;
+  const take = (v) => { if (y == null || v > y) y = v; };
+  for (const d of spec?.discs ?? []) { const dx = x - d.x, dz = z - d.z; if (dx * dx + dz * dz <= d.r * d.r) take(d.y ?? 0); }
+  for (const b of spec?.bands ?? []) if (z >= b.z0 && z <= b.z1 && Math.abs(x - b.x) <= b.halfW) take(b.y ?? 0);
+  for (const l of spec?.lanes ?? []) {
+    const dx = l.bx - l.ax, dz = l.bz - l.az, L2 = dx * dx + dz * dz, u = L2 > 0 ? Math.max(0, Math.min(1, ((x - l.ax) * dx + (z - l.az) * dz) / L2)) : 0;
+    const ex = x - (l.ax + dx * u), ez = z - (l.az + dz * u);
+    if (ex * ex + ez * ez <= l.hw * l.hw) take(l.y ?? 0);
+  }
+  return y;
+}
+/**
+ * SPIREBRIDGE'S PLANK over gap `g` of hall `spec` (its number in egSpanPairs' chain): `{ g, road, x, w, z0, z1, y0, y1 }`
+ * (metres, the hall's frame) - along the course at the far piece's rest line (`x`, `w` across), from the near side's edge to
+ * the far side's, each lapped by EG_SB_LAP_M, rising from the near side's height `y0` to the far side's `y1` - or null: no such
+ * gap, an alcove's side way, or a gap no plank spans (a Drop's fall, a riser's face - past EG_SB_RISE_CM). Pure.
+ * @param {any} spec @param {number} g @param {any[]|null} [P] the hall's chain, when the reader holds it
+ */
+export function egBridgeOf(spec, g, P = null) {
+  if (!Number.isInteger(g) || g < 0) return null;
+  const p = (P ?? egSpanPairs(spec ?? {}))[g];
+  if (!p) return null;
+  const a = p.a, b = p.b, on = b ?? a;
+  if ((on.road ?? 0) === 2) return null;
+  const za = a ? a.z + a.d / 2 : p.edge, zb = b ? b.z - b.d / 2 : p.edge;
+  if (!(zb - za > 0.05)) return null;
+  const y0 = a ? a.y : floorAt(spec, b.x, za - EG_SB_LAP_M) ?? b.y, y1 = b ? b.y : floorAt(spec, a.x, zb + EG_SB_LAP_M) ?? a.y;
+  if (Math.abs(y1 - y0) * 100 > EG_SB_RISE_CM + 1e-6) return null;
+  return { g, road: on.road ?? 0, x: on.x, w: Math.max(EG_SB_W_MIN, Math.min(EG_SB_W_MAX, on.w)), z0: za - EG_SB_LAP_M, z1: zb + EG_SB_LAP_M, y0, y1 };
+}
+/** The plank's top at `z` (m): its near side's height to its far side's across the gap, level past either end. */
+export function egBridgeY(br, z) {
+  const L = br.z1 - br.z0, u = L > 0 ? Math.max(0, Math.min(1, (z - br.z0) / L)) : 0;
+  return br.y0 + (br.y1 - br.y0) * u;
+}
+/**
+ * THE NEXT GAP AHEAD of a member at (x, z) of hall `spec`: the number (in egSpanPairs' chain) of the nearest gap a plank spans
+ * on the road whose line the member stands on (within EG_SB_SIDE_M of the plank's - THE FORK's two roads stand 15 m apart),
+ * its near edge no more than EG_SB_BEHIND_M behind the member and no more than EG_SB_AHEAD_M ahead, its far edge ahead of it -
+ * or -1. Both sides read it: the room picks the gap by it, and a holder's screen offers the ask only while it answers one.
+ * Pure.
+ * @param {any} spec @param {number} x @param {number} z
+ */
+export function egBridgeAhead(spec, x, z) {
+  const P = egSpanPairs(spec ?? {});
+  let best = -1, bz = Infinity;
+  for (let g = 0; g < P.length; g++) {
+    const br = egBridgeOf(spec, g, P);
+    if (!br || Math.abs(x - br.x) > EG_SB_SIDE_M) continue;
+    const near = br.z0 + EG_SB_LAP_M, far = br.z1 - EG_SB_LAP_M;
+    if (far <= z + EG_BODY_R || near < z - EG_SB_BEHIND_M || near > z + EG_SB_AHEAD_M) continue;
+    if (near < bz) { bz = near; best = g; }
+  }
+  return best;
+}
+/** Is a body's feet at (x, y, z) (the hall's frame) on plank `br` - its top within the support's heights `up` over and `down`
+ *  under it, inside its width and its laps, the capsule `pad` about them? Pure. */
+export function egOnBridge(br, x, y, z, up, down, pad = EG_BODY_R) {
+  if (!br || Math.abs(x - br.x) > br.w / 2 + pad || z < br.z0 - pad || z > br.z1 + pad) return false;
+  const top = egBridgeY(br, z);
+  return y <= top + up && y >= top - down;
+}

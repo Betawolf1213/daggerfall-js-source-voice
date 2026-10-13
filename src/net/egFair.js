@@ -38,6 +38,10 @@
 //     - EG-ZI (2026-10-12; section 10.6): THE FURTHEST FAIR POINT - the furthest along the road a held pose stood with no
 //       break since the last island (`far`), and when still ground was last first stood on so (`fnew`, groundAt's keys):
 //       the pull's toll counts the road still ahead of the one and is waived by the other (net/egBrain.js egTollOf).
+//   AUDIT EG III (2026-10-13, lane 1 #7 / lane 3 #10; section 15): SPIREBRIDGE IS GROUND WHILE IT STANDS - a plank the room
+//     raised over a gap (net/egVestige.js egSpirebridge - `{ h, g, from, until }`, its gap's number) holds a body on its top
+//     from its raising to its end (net/egSpanLaw.js egBridgeOf, egOnBridge): SUPPORT as a piece's (never still ground - the
+//     last island stays the last island), so a member who walks it neither flies nor falls on the relay's trail.
 //   RIDDEN POSES (section 10.8). A pose on a moving piece (a Drift, a Rail, a Drum) carries `pl`: the piece's index and
 //     its offset from that piece's top at the sender's time (egRideOf); a receiver draws it at the piece's place on its
 //     own clock plus the offset, and the relay judges it on the piece's clock position at the pose's shared time
@@ -48,6 +52,7 @@
 // reads the ridden poses' half. Not a DFU member. Ledger A (ELITE-GATES).
 import { poseTsDiff } from './wire.js';
 import { egPieceAt, egCrossMin, EG_BODY_R, EG_SINK_GONE_M, EG_FAST_RUN_MPS } from './egSpanLaw.js';
+import { egBridgeOf, egOnBridge } from './egSpanLaw.js';   // AUDIT EG III: Spirebridge's plank, ground while it stands
 import { segDist } from './egShape.js';
 import { egWallFallenZ } from './egLaw.js';   // EG-ZB: a Falling Wall's fallen edge - and the Collapsing Tube's, below
 import { egTubeEdge } from './egFragLaw.js';
@@ -207,13 +212,17 @@ function groundAt(spec, x, y, z, tS, plan, hw) {
 /**
  * WHAT HOLDS a body's feet at (x, y, z) (the hall's frame) at shared second `tS` (EG_HOLD). `plan` - the floor's plan
  * alone, every height (a climb's hold). EG-ZB: `hw` the hall's wake (relay ms) - a Falling Wall's and the Collapsing Tube's
- * fallen segments hold nothing after it. EG-ZI: still ground is groundAt's - the end plate still, the rest an island. Pure.
+ * fallen segments hold nothing after it. EG-ZI: still ground is groundAt's - the end plate still, the rest an island. AUDIT
+ * EG III: `bridges` the Spirebridges the room raised (`{ h, g, from, until }`, relay ms) - one of this hall standing at `tS`
+ * holds its top as a piece does. Pure.
  * @param {any} spec @param {number} x @param {number} y @param {number} z @param {number} tS @param {boolean} [plan] @param {number} [hw]
+ * @param {Array<{h: number, g: number, from: number, until: number}>|null} [bridges]
  */
-export function egSupportAt(spec, x, y, z, tS, plan = false, hw = 0) {
+export function egSupportAt(spec, x, y, z, tS, plan = false, hw = 0, bridges = null) {
   const g = groundAt(spec, x, y, z, tS, plan, hw);
   if (g) return g === 'e' ? EG_HOLD.still : EG_HOLD.island;
   const P = EG_SUPPORT_PAD + (plan ? EG_CLIMB_NEAR_M : 0), on = (fy) => plan || yOn(y, fy ?? 0);
+  if (egBridgeHolds(spec, bridges, x, y, z, tS * 1000, plan ? Infinity : EG_SUPPORT_UP_M, plan ? Infinity : EG_SUPPORT_DOWN_M, P)) return EG_HOLD.piece;
   for (const s of spec?.steps ?? []) {
     const fy = s.y ?? 0;
     if (!plan && !(y <= fy + EG_SUPPORT_UP_M && y >= fy - (s.kind === 'sink' ? EG_SINK_GONE_M : EG_SUPPORT_DOWN_M))) continue;
@@ -225,6 +234,15 @@ export function egSupportAt(spec, x, y, z, tS, plan = false, hw = 0) {
   }
   for (const a of spec?.alcoves ?? []) if (Math.hypot(x - a.x, z - a.z) <= 1.8 + P && on(a.y)) return EG_HOLD.still;
   return EG_HOLD.none;
+}
+/** AUDIT EG III - IS A BODY ON A SPIREBRIDGE of hall `spec` standing at relay ms `tMs` (`bridges` the room's - `{ h, g, from,
+ *  until }`): its feet on the plank's top, within `up` over and `down` under it, the capsule `pad` about it. Pure. */
+export function egBridgeHolds(spec, bridges, x, y, z, tMs, up = EG_SUPPORT_UP_M, down = EG_SUPPORT_DOWN_M, pad = EG_SUPPORT_PAD) {
+  for (const q of bridges ?? []) {
+    if (!q || q.h !== spec?.h || !(tMs >= q.from && tMs < q.until)) continue;
+    if (egOnBridge(egBridgeOf(spec, q.g), x, y, z, up, down, pad)) return true;
+  }
+  return false;
 }
 /** EG-ZB (section 21): IS A BODY CAUGHT BY FALLEN GROUND - its feet at (x, y, z) over a Falling Wall's or the Collapsing
  *  Tube's fallen segment at shared ms `tMs` (the hall woken at `hw`), and nothing else holding it? The screen casts it on to
@@ -284,13 +302,15 @@ function broke(A, why, t) {
  * ONE POSE of a member's fair trail: `p` its feet in the hall's own frame (`{x, y, z}` - a ridden pose already at its
  * piece's clock position) with `ride` (it claimed a piece and the piece holds it) and `cl` (a climb's hold), `t` its
  * shared time (ms). The stretch from the last pose is judged - its speed, its air - unless it was blind; the hold under
- * it is read; still ground ends the window from the last island. Moves `A` in place. Pure.
+ * it is read; still ground ends the window from the last island. Moves `A` in place. AUDIT EG III: `bridges` the room's
+ * Spirebridges (egSupportAt's) - a pose on a standing plank is held. Pure.
  * @param {ReturnType<typeof egFairNew>} A @param {any} spec @param {{x: number, y: number, z: number, ride?: boolean, cl?: boolean}} p @param {number} t
+ * @param {Array<{h: number, g: number, from: number, until: number}>|null} [bridges]
  */
-export function egFairPose(A, spec, p, t) {
+export function egFairPose(A, spec, p, t, bridges = null) {
   if (![p.x, p.y, p.z, t].every(Number.isFinite)) return;
   const L = A.last;
-  const hold = p.ride ? EG_HOLD.piece : egSupportAt(spec, p.x, p.y, p.z, t / 1000, false, A.hw ?? 0) || (p.cl && egSupportAt(spec, p.x, p.y, p.z, t / 1000, true) ? EG_HOLD.piece : EG_HOLD.none);
+  const hold = p.ride ? EG_HOLD.piece : egSupportAt(spec, p.x, p.y, p.z, t / 1000, false, A.hw ?? 0, bridges) || (p.cl && egSupportAt(spec, p.x, p.y, p.z, t / 1000, true, 0, bridges) ? EG_HOLD.piece : EG_HOLD.none);
   A.last = [t, p.x, p.y, p.z];
   if (!A.from) A.from = t;
   if (!L) { if (hold) { A.sup = [t, p.x, p.y, p.z]; if (hold === EG_HOLD.island) A.isl = [p.x, p.z]; } farther(A, spec, p, t, hold); return; }

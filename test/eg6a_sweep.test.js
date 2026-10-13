@@ -16,7 +16,9 @@ test('EG6a THE SWEEP (section 10.5): every course of a seed\'s circle in each ba
   assert.deepEqual({ ...SWEEP_BUILD }, { speed: 10, running: 0, swimming: 30 }, 'THE SPAN BUILD - SD7b\'s worst build');
   const kinds = new Set();
   let courses = 0, forks = 0;
-  for (const [band, seed] of [[0, 1], [0, 3], [0, 5], [1, 1], [1, 2], [1, 5], [2, 1], [3, 1], [3, 2]]) {
+  // PIN MOVED (AUDIT EG III): spec law 6 draws seed 2's Wellhead circle (Gale-Swept II - two Gust sections) with no Vent left on
+  // its courses; seed 6's circle crosses one in place of seed 1's (whose pieces seeds 2 and 6 cross too)
+  for (const [band, seed] of [[0, 1], [0, 3], [0, 5], [1, 1], [1, 2], [1, 5], [2, 1], [3, 6], [3, 2]]) {
     for (const r of sweepSeed(seed, band)) {
       assert.ok(r.ok, `band ${band}: seed ${r.seed} hall ${r.h} road ${r.road} step ${r.step} - ${r.why}`);
       courses++;

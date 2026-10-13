@@ -72,6 +72,12 @@
 // 0.2, 0.35 or 0.5 s longer (systems/spireVestiges.js spireCrumbleWait, read as the foot lands), its cracks' stages spread
 // across the wait; crumbles are each member's own, so nothing of it reaches the relay.
 //
+// AUDIT EG III (2026-10-13, lane 1 #7 / lane 3 #10; Elite-Gates.md section 15): SPIREBRIDGE ON THIS SCREEN - each plank the
+// room raised over a gap in this circle's hall (`ebridge`, read through systems/spireKit.js spireObjs `br`) stands as its own
+// draw and collider bucket, the relay's own plank (net/egSpanLaw.js egBridgeOf): gold, THE EDGE LINE round its top, laying
+// itself across over EG_SB_GROW_S and faltering its last second (both still under reduced motion), holding from its raising
+// to its end, its mesh and bucket freed at its end and with the circle.
+//
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { realmToDungeon, dungeonToRealm } from '../net/sdBrain.js';
 import { egCircleSpecs, egWallFallenZ, egBandOfCircle, EG_VOID_Y, EG_BELT_MPS } from '../net/egLaw.js';
@@ -90,6 +96,7 @@ import { faces } from '../world/gateModel.js';
 import { packRealmFaces, realmIsland, SD_REALM_ARCHIVE, SD_REALM_FLOOR_RECORD, SD_REALM_BRASS_RECORD, SD_REALM_EDGE_RECORD, SD_REALM_PILLAR_RECORD, SD_REALM_ROOT_RECORD, SD_REALM_ARENA_RECORD, SD_ISLAND_SIDES } from '../world/sdRealm.js';
 import { identity } from '../world/mat4.js';
 import { egPieceAt, egPendAt, egPendHits, egBeatAt, egCourseOf, EG_PEND_HALF, EG_DROP_WALL_H, EG_CRUMBLE_KINDS, EG_SINK_MPS, EG_SINK_GONE_M, EG_BODY_R } from '../net/egSpanLaw.js';
+import { egBridgeOf } from '../net/egSpanLaw.js';   // AUDIT EG III: Spirebridge's plank, the relay's own
 import { egSlagState, egSlagX, EG_SLAG_SPOUTS, EG_SLAG_CRUST_S, EG_SLAG_WARN_S } from '../net/egSpanLaw.js';   // EG-ZC: the Cooling Slag
 import { egInShape } from '../net/egShape.js';   // EG-ZC: a lit branch under the mirror's haven
 import { egTubeEdge, EG_ENGINES } from '../net/egFragLaw.js';
@@ -267,6 +274,51 @@ const WALL_FALL_G = 9.8;
 const EG_GUST_DT_MAX = 0.1;
 /** EG6a: how far across a Gust section's line its push reaches (m - an island's 3 m and a body pushed off it). */
 export const EG_GUST_REACH_M = 6;
+
+// ── AUDIT EG III: SPIREBRIDGE'S PLANK (section 15) ────────────────────────────────────────────────────────────────
+/** A Spirebridge's plank: how deep it stands (m), how long it takes to lay itself across (s - none under reduced motion), its
+ *  last stretch (s) and how fast it falters through it (Hz - the Beat's last 0.4 s's grammar, under THE TELEGRAPH's 3 Hz; held
+ *  still under reduced motion). */
+export const EG_SB_THICK = 0.12;
+export const EG_SB_GROW_S = 0.25;
+export const EG_SB_LAST_S = 1;
+export const EG_SB_FALTER_HZ = 2;
+/** A PLANK's faces (its own frame - its near end's top centre the origin, +z across the gap): its top gold (the way, "it
+ *  holds" - section 25.2) rising `dy` over its `len`, `w` across; brass sides under THE EDGE LINE (section 25.3, gold, never
+ *  pulsing) round its top, as the Steps' slabs wear it (slabFaces). */
+export function egBridgeModel(len, w, dy) {
+  const f = faces(), x = w / 2, h = EG_SB_THICK;
+  const P = (a, b, c) => [a, b, c];
+  const A = P(-x, 0, 0), Bq = P(x, 0, 0), C = P(x, dy, len), D = P(-x, dy, len);
+  f.quad(SD_REALM_EDGE_RECORD, A, D, C, Bq, [0, 0], [0, len / 2], [w / 2, len / 2], [w / 2, 0]);
+  for (const [a, b, n] of [[A, Bq, [0, 0, -1]], [Bq, C, [1, 0, 0]], [C, D, [0, 0, 1]], [D, A, [-1, 0, 0]]]) {
+    f.quad(SD_REALM_BRASS_RECORD, a, P(a[0], a[1] - h, a[2]), P(b[0], b[1] - h, b[2]), b, [0, 0], [0, 0.3], [1, 0.3], [1, 0]);
+    const o = 0.02;
+    f.quad(SD_REALM_EDGE_RECORD, P(a[0] + n[0] * o, a[1] + 0.004, a[2] + n[2] * o), P(a[0] + n[0] * o, a[1] - 0.05, a[2] + n[2] * o), P(b[0] + n[0] * o, b[1] - 0.05, b[2] + n[2] * o), P(b[0] + n[0] * o, b[1] + 0.004, b[2] + n[2] * o), [0, 0], [0, 1], [1, 1], [1, 0]);
+  }
+  f.quad(SD_REALM_FLOOR_RECORD, P(-x, -h, 0), P(x, -h, 0), P(x, dy - h, len), P(-x, dy - h, len), [0, 0], [1, 0], [1, 1], [0, 1]);
+  return packRealmFaces(f);
+}
+/** A PLANK's collider triangles (its own frame, egBridgeModel's): its top and its sides. */
+export function egBridgeTris(len, w, dy) {
+  const x = w / 2, h = EG_SB_THICK, out = [];
+  const q = (a, b, c, e) => out.push(...a, ...b, ...c, ...a, ...c, ...e);
+  q([-x, 0, 0], [x, 0, 0], [x, dy, len], [-x, dy, len]);
+  q([-x, -h, 0], [x, -h, 0], [x, 0, 0], [-x, 0, 0]); q([-x, dy - h, len], [x, dy - h, len], [x, dy, len], [-x, dy, len]);
+  q([-x, -h, 0], [-x, dy - h, len], [-x, dy, len], [-x, 0, 0]); q([x, -h, 0], [x, dy - h, len], [x, dy, len], [x, 0, 0]);
+  const positions = new Float32Array(out), indices = new Uint16Array(positions.length / 3);
+  for (let i = 0; i < indices.length; i++) indices[i] = i;
+  return { positions, indices };
+}
+/** A PLANK'S LOOK at relay ms `ms` (pure): `stand` - whether it holds (from its raising to its end), `grow` - how far across
+ *  it has laid itself (0 to 1; whole at once under reduced motion), `seen` - whether it draws this frame (its last
+ *  EG_SB_LAST_S faltering at EG_SB_FALTER_HZ, steady under reduced motion). */
+export function egBridgeLook(q, ms, still = false) {
+  const stand = ms >= q.from && ms < q.until, left = (q.until - ms) / 1000, since = (ms - q.from) / 1000;
+  const grow = !stand ? 0 : still ? 1 : Math.max(0.05, Math.min(1, since / EG_SB_GROW_S));
+  const falter = !still && left <= EG_SB_LAST_S && Math.floor(left * EG_SB_FALTER_HZ * 2) % 2 === 1;
+  return { stand, grow, seen: stand && !falter };
+}
 
 // ── EG-ZL: THE PIECES' TELLS (sections 10.3 and 10.8) ─────────────────────────────────────────────────────────────
 /** A DRIFT'S CHAINS (section 10.3: "hangs on two chains from an anchor 18 m up ... leaning as it swings"): a link's length,
@@ -582,6 +634,52 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
   for (const st of steps) if (st.s.kind === 'slag') for (let k = 0; k < EG_SLAG_SPOUTS; k++) slags.push({ st, s: st.s, spec: st.spec, k, key: `${st.key}:${k}`, T: [0, EG_STEP_GONE_Y, 0], crust: null, molten: null, state: 'gone' });
   /** EG-ZC (section 11.10): the Moon branches the Moon-Mirror lights now (the relay's havens over them) */
   const lit = new Set(), moons = steps.some((st) => st.s.kind === 'moon');
+  /** AUDIT EG III - SPIREBRIDGES (section 15): the planks the room raised in this circle's hall standing now (systems/spireKit.js
+   *  spireObjs `br` - each its gap, its raising and its end, relay ms), each its own draw and bucket from its word to its end -
+   *  the relay's own plank (net/egSpanLaw.js egBridgeOf), its collider holding from its raising to its end, freed then */
+  /** @type {Map<string, { key: string, spec: any, br: any, q: any, T: number[], at: number[], draw: any, gpu: any }>} */
+  const planks = new Map();
+  /** the collider the circle stood in (a plank stands in it after the stand) */
+  let col = null;
+  function standPlank(key, spec, q) {
+    const br = egBridgeOf(spec, q.g);
+    if (!br) return;
+    const len = br.z1 - br.z0, dy = br.y1 - br.y0, at = realmToDungeon(spec.x0 + br.x, br.y0, br.z0);
+    const P = { key, spec, br, q, T: [at[0], EG_STEP_GONE_Y, at[2]], at, draw: null, gpu: null };
+    const model = egBridgeModel(len, br.w, dy), gpu = make(model);
+    if (gpu && draws) { P.gpu = gpu; P.draw = { gpu, object: { matrix: identity() }, noShadow: true, texRemap: null, hidden: true }; draws.push(P.draw); }
+    const { positions, indices } = egBridgeTris(len, br.w, dy);
+    try { col?.addMesh?.(key, positions, indices, identity(), () => P.T); } catch (e) { console.warn('[eg] a Spirebridge\'s collider', e?.message ?? e); }
+    planks.set(key, P);
+  }
+  function dropPlank(P) {
+    planks.delete(P.key);
+    if (P.draw && draws) { const i = draws.indexOf(P.draw); if (i >= 0) draws.splice(i, 1); }
+    if (P.gpu) { try { renderer?.destroyMesh?.(P.gpu); } catch { /* gone */ } }
+    try { col?.removeBucket?.(P.key); } catch { /* gone */ }
+    P.draw = null; P.gpu = null;
+  }
+  /** The planks where the room has them at `t` (s): stood at their word, holding from their raising to their end, laid across
+   *  over EG_SB_GROW_S and faltering their last second (both still under reduced motion), gone and freed at their end. */
+  function posePlanks(t) {
+    const O = spireObjs(), ms = t * 1000, want = new Set(), spec = specs.find((q) => q.h === O.h);
+    if (spec) for (const q of O.br ?? []) {
+      if (!(ms < q.until)) continue;
+      const key = `eg:bridge:${O.h}:${q.g}:${q.from}`;
+      want.add(key);
+      if (!planks.has(key)) standPlank(key, spec, q);
+    }
+    for (const P of [...planks.values()]) {
+      if (!want.has(P.key)) { dropPlank(P); continue; }
+      const L = egBridgeLook(P.q, ms, access.still);
+      P.T[1] = L.stand ? P.at[1] : EG_STEP_GONE_Y;
+      if (P.draw) {
+        const m = P.draw.object.matrix;
+        if (L.seen) { translate(m, P.at[0], P.at[1], P.at[2]); m[10] = L.grow; } else m.fill(0);
+        P.draw.hidden = !L.seen;
+      }
+    }
+  }
   /** THE FALSE WALLS (section 11.10): one in each seam alcove's doorway, standing until the relay says it broken */
   const seals = [];
   for (const spec of specs) for (const nb of egNicheBoxes(spec)) if (nb.a.seal === 'seam') seals.push({ spec, a: nb.a, door: nb.door, side: nb.side, key: `eg:seal:${spec.h}:${nb.a.i}`, T: [0, 0, 0], draw: null, up: true });
@@ -730,6 +828,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
     stand({ dynamicDraws, collider = null }) {
       if (draws) return false;
       draws = dynamicDraws;
+      col = collider;   // AUDIT EG III: a Spirebridge stands in it after the stand
       ensureSdStepsArt(renderer);
       // EG-G2 (section 11.9): with a renderer that moves a mesh's vertices, every piece of a kind is one batched draw
       // (scenes/egPieceBatch.js - the slot each pose writes is the draw it replaced); without one, a draw a piece as before
@@ -834,6 +933,7 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       if (on && live && (EG_CRUMBLE_KINDS.includes(on.s.kind) || on.s.kind === 'sink') && on.touched == null) { on.touched = t; on.wait = SD_CRUMBLE_DELAY + spireCrumbleWait(); if (on.s.kind !== 'sink') play3(SD_STEPS_SOUNDS.grind, [on.T[0], on.T[1], on.T[2]], 1, 1.3); }   // EG-ZL: a Crumble grinds under my foot (the Steps')
       lastT = t; access = egAccessNow();   // EG-ZL: the frame's clock and the screen's settings (the danger palette, reduced motion)
       poseLit(t);
+      posePlanks(t);   // AUDIT EG III: the Spirebridges the room raised
       for (const st of steps) pose(st, t);
       beatFrames(t);   // EG-ZL: each beat's frame
       poseMarks(t);
@@ -940,6 +1040,8 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
     get steps() { return steps.map((st) => ({ h: st.spec.h, i: st.s.i, kind: st.s.kind, key: st.key, T: [...st.T], solid: st.solid })); },
     /** EG-ZC: every slag lane as it stands (tests): its hall, its step, its spout, its state, whether its crust is up. */
     get slags() { return slags.map((g) => ({ h: g.spec.h, i: g.s.i, k: g.k, key: g.key, state: g.state, up: g.T[1] !== EG_STEP_GONE_Y, T: [...g.T] })); },
+    /** AUDIT EG III: the Spirebridges standing (tests): each one's bucket, its plank, whether it holds and whether it draws. */
+    get planks() { return [...planks.values()].map((P) => ({ key: P.key, g: P.q.g, br: P.br, T: [...P.T], holds: P.T[1] !== EG_STEP_GONE_Y, drawn: !!P.draw && !P.draw.hidden, grow: P.draw?.object.matrix[10] ?? 0 })); },
     /** EG-ZC: the Moon branches lit now (tests): their hall and number. */
     get lit() { return [...lit].map((st) => ({ h: st.spec.h, i: st.s.i })); },
     /** Every Falling Wall segment as it stands (tests). */
@@ -965,6 +1067,8 @@ export function createEgSpan({ renderer = null, audio = null, seed, c, geo = 0, 
       for (const g of seals) g.draw = null;
       for (const g of slags) { g.crust = null; g.molten = null; }
       lit.clear();
+      for (const P of [...planks.values()]) dropPlank(P);   // AUDIT EG III: every plank's mesh and bucket freed
+      col = null;
       targetList = [];
       draws = null; safe = null;
     },
