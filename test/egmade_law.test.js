@@ -258,7 +258,7 @@ test('EG-H2 THE SWEEP (section 24, THE ONE CONSTRUCTION SEAM): every rule\'s doo
     ['D', 'let automapRec =', 'enterDungeonAutomap(', ['automap']],
     ['D', 'toggleRest() {', '// S40:', ['rest']],
     ['D', 'get playerSlowFalling()', '\n', ['slowfall']],
-    ['D', 'const _prevAvoidDeath = setAvoidDeathHook(', 'hudText.add(AVOID_DEATH_TEXT)', ['avoidDeath']],
+    ['D', 'const _prevAvoidDeath = setAvoidDeathHook(', 'hudText.add(avoidDeathText())', ['avoidDeath']],   // PIN MOVED (the merge of main's L10N arc): the line said through the text core
     ['D', 'activeOverlay = new DeathScreen(', '\n', ['deathPenalty']],
     ['W', 'function companionPlace(', 'const spotOf =', ['companions']],
     ['W', 'function partyCompanions() {', 'const party =', ['companions']],
