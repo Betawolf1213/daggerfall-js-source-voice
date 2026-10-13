@@ -48,7 +48,7 @@ export function voiceSettingsRows({ doc = document } = {}) {
     <input type="range" class="voice-volume" min="0" max="100" value="${Math.round(voiceNet.volume * 100)}">
   `;
   volRow.querySelector('.voice-volume').addEventListener('input', (e) => {
-    voiceNet.volume = Number(e.target.value) / 100;
+    voiceNet.setVolume(Number(e.target.value) / 100);
     setPref('voice', { ...getPref('voice'), volume: voiceNet.volume });
   });
   rows.push(volRow);

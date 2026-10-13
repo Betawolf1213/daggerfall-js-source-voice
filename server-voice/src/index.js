@@ -17,7 +17,7 @@
 import { importPublicKeyB64 } from '../../src/net/identityToken.js';
 import { validTokenAsk, validPlaceAsk, VOICE_V, VOICE_MINT_PER_MIN, VOICE_PLACE_HZ_MAX, voiceUrlOk } from '../../src/voice/voiceWire.js';
 import { authorizeVoice } from './roomAuthorizer.js';
-import { ProximityPolicy } from './proximityPolicy.js';
+import { ProximityPolicy, VOICE_ROOM_IDLE_MS } from './proximityPolicy.js';
 import { mintLiveKitToken, mintLiveKitAdminToken } from './livekitToken.js';
 
 /** The service's own version, said on /health - bumped when a shape here changes. */
@@ -30,8 +30,10 @@ const json = (body, status = 200, origin = '*') => new Response(JSON.stringify(b
 
 /** The per-isolate state: the policy, the imported key, the rate buckets. `_resetForTests` empties it. */
 let _state = null;
-const stateOf = (now) => (_state ??= { policy: new ProximityPolicy({ now }), key: undefined, mints: new Map(), places: new Map() });
+const stateOf = (now) => (_state ??= { policy: new ProximityPolicy({ now }), key: undefined, mints: new Map(), places: new Map(), lastSweptAt: -Infinity });
 export function _resetForTests() { _state = null; }
+/** A test's read of the live per-isolate policy, to tell "swept away" from "merely stale" - never called in production. */
+export function _peekPolicyForTests() { return _state?.policy ?? null; }
 
 /** A token bucket per identity: `max` in `windowMs`. True when admitted. */
 function admit(map, who, max, windowMs, now) {
@@ -125,6 +127,8 @@ export async function handle(request, env, { now = () => Date.now(), fetch: fetc
     // tell the SFU about publishers this listener stopped naming - a second hand, since it may miss the handoff
     const lost = before.filter((id) => !ask.near.includes(id));
     if (lost.length) await unsubscribeOnSfu(env, fetchImpl, a.room, a.identity, lost, nowS);
+    // opportunistic GC: a per-isolate policy never shrinks on its own, so a place frame also pays the sweep's rent
+    if (now() - st.lastSweptAt >= VOICE_ROOM_IDLE_MS) { st.lastSweptAt = now(); st.policy.sweep(); }
     return json({ ok: true, v: VOICE_V, allow }, 200, origin);
   }
 

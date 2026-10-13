@@ -11,7 +11,7 @@ import { VOICE_PLACE_MS } from '../src/voice/voiceProximity.js';
 import { authorizeVoice } from '../server-voice/src/roomAuthorizer.js';
 import { ProximityPolicy, VOICE_PLACE_STALE_MS, VOICE_ROOM_IDLE_MS } from '../server-voice/src/proximityPolicy.js';
 import { mintLiveKitToken, mintLiveKitAdminToken, readJwtClaims } from '../server-voice/src/livekitToken.js';
-import { handle, _resetForTests, VOICE_SERVICE_VERSION } from '../server-voice/src/index.js';
+import { handle, _resetForTests, _peekPolicyForTests, VOICE_SERVICE_VERSION } from '../server-voice/src/index.js';
 
 const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
 const { subtle } = globalThis.crypto;
@@ -219,6 +219,27 @@ test('VOICE1 doors: a lost neighbour is told to the SFU through the admin door -
     const res = await handle(post('/v1/voice/place', { token: tokB, room: 'cell:1', near: [] }), e, { ...io(), fetch: async () => { throw new Error('down'); } });
     assert.equal(res.status, 200); assert.deepEqual((await res.json()).allow, []);
   } finally { console.warn = warn; }
+});
+
+test('VOICE1 doors: the place door sweeps the per-isolate policy once an idle window has passed, so a long-lived service does not grow forever', async () => {
+  _resetForTests();
+  const k = await keys(); const e = env(k);
+  const clock = { t: NOW_S * 1000 };
+  const ioClock = () => ({ now: () => clock.t, subtle, fetch: async () => { throw new Error('no network in this test'); } });
+  // a fresh relay token each step - VOICE_ROOM_IDLE_MS (10 min) outlives a relay token's own default life (5 min),
+  // and this test is about the service's room GC, not the relay token's, so each step mints its own current token
+  const tokAt = (nowS) => mintToken(who('peer_aaaa'), k.priv, { subtle, nowS });
+  // a frames 'cell:1' once, then never again - its room entry sits idle from here on
+  await handle(post('/v1/voice/place', { token: await tokAt(Math.floor(clock.t / 1000)), room: 'cell:1', near: [] }), e, ioClock());
+  assert.equal(_peekPolicyForTests().rooms.has('vx_cell_1'), true, 'the idle room is held, pre-sweep');
+  // short of the idle window: a frame elsewhere must NOT yet have swept it away
+  clock.t += VOICE_ROOM_IDLE_MS - 1;
+  await handle(post('/v1/voice/place', { token: await tokAt(Math.floor(clock.t / 1000)), room: 'cell:2', near: [] }), e, ioClock());
+  assert.equal(_peekPolicyForTests().rooms.has('vx_cell_1'), true, 'not idle long enough to sweep yet');
+  // past the idle window: the next place frame (to ANY room) pays the sweep's rent and drops the idle one
+  clock.t += 2;
+  await handle(post('/v1/voice/place', { token: await tokAt(Math.floor(clock.t / 1000)), room: 'cell:2', near: [] }), e, ioClock());
+  assert.equal(_peekPolicyForTests().rooms.has('vx_cell_1'), false, 'the idle room was swept, not merely read as stale');
 });
 
 // ─── BY SOURCE ──────────────────────────────────────────────────────────────────────────────────────────────────────
