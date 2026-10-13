@@ -92,7 +92,7 @@
   {
     "name": "MWFOLK1-the-second-outfit-drawn",
     "file": "src/formats/mwItemMap.js",
-    "old": "      if (outfitAdd) { notes.push(`outfit ${o.id}: a second outfit - the first (${outfitAdd.recordId}) is the one drawn`); continue; }",
+    "old": "      if (outfitAdd) { notes.push(`outfit ${o.id}: ${t('body.outfit.second', 'a second outfit - the first ({first}) is the one drawn', { first: outfitAdd.recordId })}`); continue; }",
     "new": "",
     "tests": [
       "test/mwfolk1.test.js"

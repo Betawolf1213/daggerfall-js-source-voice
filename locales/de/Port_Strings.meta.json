@@ -2889,6 +2889,16 @@
   "tr": "3b5f644f4333",
   "by": "claude-in-session"
  },
+ "body.outfit.second": {
+  "en": "1db02fb23c59",
+  "tr": "b1362912adb0",
+  "by": "claude-in-session"
+ },
+ "body.outfit.unknown": {
+  "en": "e83bb293cbcc",
+  "tr": "28f293e8edb8",
+  "by": "claude-in-session"
+ },
  "cards.iliac.foe.committed": {
   "en": "82606b0cf26d",
   "tr": "ca6c12a7e353",

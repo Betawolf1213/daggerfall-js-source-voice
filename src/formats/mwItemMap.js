@@ -47,6 +47,7 @@ import { WEAPONS, WEAPON_MATERIALS } from '../characters/weapons.js';
 import { OWN_MW_MODELS } from '../characters/ownWeaponModels.js';   // FIELD-GUN-MW2: the weapons Morrowind does not have
 import { OWN_MW_ARMOR, ownArmorModelFor, ownArmorParts } from '../characters/ownArmorModels.js';   // MW-BRIG1: the armour Morrowind does not have; MW-STEEL1: and its styles
 import { CLOAK_NAMES, CLOAK_PAINTINGS, cloakModel, ownCloakFor, ownOutfitFor } from '../characters/ownClothingModels.js';   // MW-CLOAK1: and the clothing; MW-FOLK1: and the townsfolk's outfits
+import { t } from '../systems/textManager.js';   // L10N4: MW-FOLK1's notes in the player's language
 import { ARMOR_MATERIAL } from '../systems/armorMaterials.js';
 import { ARMOR_ENUM } from '../combat/enemyEquipment.js';
 import templates from '../characters/itemTemplates.json' with { type: 'json' };
@@ -637,8 +638,10 @@ export function composeWornArmor({ pieces, armors, clothes, bodyPool, female = f
     // One is drawn; a second says so. An id the table does not hold is no outfit.
     if (piece.kind === 'outfit') {
       const o = ownOutfitFor(piece.id);
-      if (!o) { notes.push(`outfit ${piece.id}: no outfit the port carries`); continue; }
-      if (outfitAdd) { notes.push(`outfit ${o.id}: a second outfit - the first (${outfitAdd.recordId}) is the one drawn`); continue; }
+      // each note opens with its piece's label, `outfit <id>:` - the card's rows find a piece's reason by it
+      // (fpArm.js wornVerdicts), so it stands outside the player's language as every label does; the rest is theirs
+      if (!o) { notes.push(`outfit ${piece.id}: ${t('body.outfit.unknown', 'no outfit the port carries')}`); continue; }
+      if (outfitAdd) { notes.push(`outfit ${o.id}: ${t('body.outfit.second', 'a second outfit - the first ({first}) is the one drawn', { first: outfitAdd.recordId })}`); continue; }
       const prio = ((0 + 1) << 1) + 0;
       outfitAdd = { slot: `outfit (${o.id})`, partName: 'outfit', bones: [], model: o.model, recordId: o.id, piece, hides: o.hides };
       for (const h of o.hides) claim(ARMO_PART.findIndex((r) => r.name === h), prio, null, outfitAdd);
