@@ -344,8 +344,8 @@
   {
     "name": "EG5-the-cap-taken-apart",
     "file": "src/net/egLords.js",
-    "old": "B.p * egShareX(F.c, (F.mem.furyX ?? 1) * law.dmgX * (L.shareX ?? 1));",
-    "new": "B.p * egShareX(F.c, (F.mem.furyX ?? 1) * (L.shareX ?? 1)) * law.dmgX;",
+    "old": "B.p * egShareX(F.c, (L.champ ? 1 : F.mem.furyX ?? 1) * law.dmgX * (L.shareX ?? 1));",
+    "new": "B.p * egShareX(F.c, (L.champ ? 1 : F.mem.furyX ?? 1) * (L.shareX ?? 1)) * law.dmgX;",
     "tests": [
       "test/eg5_profile.test.js"
     ]

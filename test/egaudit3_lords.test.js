@@ -13,7 +13,7 @@ import { readFileSync } from 'node:fs';
 import { egHallOf, EG_SEALED_MS } from '../src/net/egLaw.js';
 import { egBreachNew, egEnter, egStep, egCount } from '../src/net/egBrain.js';
 import { egLordsNew, egLordsWake, egLordsStep, egLordsOf, egObjsOf, egObjBroken, egLordHitX, egLordAspect, EG_MARK_FIRE, EG_MARK_FROST, EG_TOUCH_MS, EG_TOUCH_X, EG_SCORCH_HIT_X, EG_KNEEL_HIT_X, EG_GROUNDED_HIT_X } from '../src/net/egLords.js';
-import { egFightNew, egHas, EG_FL, EG_ROLE, egBodyById, egBlowsStep, egAim, egShareX, egBodiesOf } from '../src/net/egBodies.js';
+import { egFightNew, egHas, EG_FL, EG_ROLE, egBodyById, egBlowsStep, egAim, egShareX, egBodiesOf, EG_TELL_LEAD_MS } from '../src/net/egBodies.js';
 import { egChainGapMs, egWindupFloorMs, shDisc, egInBlow, EG_CHAIN_PAD_MS, EG_CHAIN_MIN_MS } from '../src/net/egShape.js';
 import { egFightView } from '../src/net/egWalkGraph.js';
 import { EG_KIND } from '../src/net/egLegion.js';
@@ -137,8 +137,14 @@ test('AUDIT EG III lane1 #2 THE WELLHEAD WYRM (section 13.3): its perch broken i
   for (let k = 0; k < 16; k++) C.step(here);   // its turn's ward spent
   const p2 = egBodyById(F, L.perch), out2 = [], t2 = C.now();
   egObjBroken(F, spec, p2, 'M0', t2, out2);
-  assert.deepEqual(out2.filter((f) => f.k === 'eb').map((f) => [f.nm, f.o, f.s, f.at - t2, f.wu, f.el]), [['Burning Perch', L.i, [shDisc(p2.x, p2.z, 6)], 2000, 2000, 'fire']], 'the perch it leaves erupts: r 6, 2.0 s');
-  C.step(here);
+  // PIN MOVED (AUDIT EG IV, lane1 #26): Burning Perch is the Wyrm's own lord blow (lordBlow), committed EG_TELL_LEAD_MS before its
+  // wind-up and said at the first beat its word is due (500 ms on, past the lead), landing its 2000 ms after - before, it was said
+  // at once, landing 2000 ms on
+  const k2 = C.frames.length;
+  C.step(here); C.step(here);
+  out2.push(...C.frames.slice(k2));
+  assert.deepEqual(out2.filter((f) => f.k === 'eb' && f.nm === 'Burning Perch').map((f) => [f.nm, f.o, f.s, f.at - t2, f.wu, f.el]), [['Burning Perch', L.i, [shDisc(p2.x, p2.z, 6)], 500 + 2000, 2000, 'fire']], 'the perch it leaves erupts: r 6, 2.0 s');
+  assert.ok(500 >= EG_TELL_LEAD_MS && 250 < EG_TELL_LEAD_MS, 'its word due past the lead, at the second beat');
   assert.deepEqual([egHas(L, EG_FL.grounded), C.said.landed, egLordHitX(F, L, 'acct-0', { x: L.x + 1, z: L.z }, HIT_KINDS.Melee, C.now() + 100)], [true, 2, EG_GROUNDED_HIT_X], 'landed again, x1.3');
   assert.equal(egFeatBits('wyrm', { said: C.said, fellThisHall: 1, lordAt: 0, mem: {} }, { now: C.now() }) & 4, 4, 'Brought to Earth: two landings');
   for (let k = 0; k < 4 * 26; k++) C.step(here);
@@ -247,6 +253,10 @@ test('AUDIT EG III lane1 #11 THE LORDS\' WEIGHTS AND KITS (section 13.3): a stat
   // Grath alone gores twice as often: the same die chooses Gore alone, Savage in company
   const choice = (n) => {
     const C = court(12345, 5, 'hound', { n, rng: () => 0.6 });
+    // PIN MOVED (AUDIT EG IV, lane1 #8): Gore is laid only at a member on Grath's own island, so his first choice is made at once
+    // (his breath spent) with the member 6.8 m off on it - before, he walked 2.5 s after the member, who was carried off the
+    // island's rim into the magma, and gored there
+    C.L.nextAt = T0;
     for (let k = 0; k < 40; k++) {
       const u = 6.8, here = [{ sub: 'acct-0', x: C.L.x + u, z: C.L.z }];
       let got = null;

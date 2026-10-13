@@ -13,7 +13,7 @@ import { EG_INTERNAL_OPEN, validEgOut } from '../src/net/wire.js';
 import { egRoomKey, egHallOf, egCircleSpecs, EG_LORDS, EG_SEALED_MS, EG_GATHER_MS } from '../src/net/egLaw.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
-import { egBreachNew, egEnter, egStep, egStateOf, egFightStateOf } from '../src/net/egBrain.js';
+import { egBreachNew, egEnter, egStep, egStateOf, egFightStateOf, champRing } from '../src/net/egBrain.js';
 import { EG_ROLE, EG_FL, EG_Y_RESAY_M, egFightNew, egFightBind, egBodyNew, egBodyWire, egBodyAt, egWalk, egWalkY, egStop, egPlace, egCarry, egMovesOut, egHpOut, egObSay, egSetFl, egFightState } from '../src/net/egBodies.js';
 import { EG_KIND, egAirY, egIsleAhead, egLegionRaise, egLegionStep } from '../src/net/egLegion.js';
 import { EG_OBJ, zoneOut, egLordHit } from '../src/net/egLords.js';
@@ -330,6 +330,11 @@ test('EG-ZJ THE LORDS\' WALKS ON THE SEAM CARRY THEIR FEET (EG5 + EG-ZK\'s lordW
   const S = breachAt(31337, 43, { n: 1 }), K = S.B.F.bodies.find((b) => b.role === EG_ROLE.lord), q = S.spec.ramps[0], up = S.spec.fl.find((f) => f.t === 'd' && f.y > 3);
   assert.ok(K.key === 'kynmarcher' && q && up, 'the champion, its stair and the floor above');
   const low = egFeetAt(egFightView(S.spec), K.x, K.z);
+  // PIN MOVED (AUDIT EG IV, lane1 #11): a Proving Walk's champion wakes at its court's ring - the member steps in at its heart first,
+  // a beat, then goes up (before, the champion woke with the hall)
+  const ring = champRing(S.spec);
+  S.at('acct-0', ring.x, ring.z, 0); S.step();
+  assert.ok(K.up2, 'the champion woke at its ring');
   S.at('acct-0', up.x + 3.5, up.z, up.y);
   const s0 = S.frames.length;
   for (let k = 0; k < 60; k++) S.step();

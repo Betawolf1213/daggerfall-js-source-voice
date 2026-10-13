@@ -68,6 +68,7 @@ import { screenBearing } from './gateCourt.js';   // EG-ZG: the way out as the s
 import { egFightFloors, egFloorPlan, egHazardSurface, egPerilOf, egTetherKind, egTetherBreak, egPullLook, egChainLook, egChainWords, egPoolRgb, egEclipseAt, egEclipseDark, egSigilsOf, egScreenAt, egViewYaw, egAuraHolders, egRimOf, egHeavyShake, egShakeMotion, egBodyFlash, egDropUnder,
   EG_CHECK_ORDER, EG_ECLIPSE_LOOK, EG_SIGIL_UP_M, EG_AURA_RING, EG_DROP_THUD, EG_TETHER } from '../world/egTelegraph.js';   // EG-ZG: THE TELEGRAPHS AS WRITTEN, the law
 import { drawEgSigils } from '../ui/egSpireHud.js';   // EG-ZG: the marks over heads
+import { EG_NUMERALS } from '../ui/egParty.js';   // AUDIT EG IV (lane1 #15): the company's numerals, an errand's member drawn by its
 import { egMemberOf } from '../net/egLink.js';
 import { multiply } from '../world/mat4.js';
 import { getPref } from '../systems/uiPrefs.js';
@@ -153,6 +154,12 @@ export { EG_ECHO_Q };
 export const EG_TICK_MS = 1000;
 const FALL_MS = 1200;
 const LINGER_MS = 350;
+/** AUDIT EG IV (lane1 #15; section 13.2): how high over an errand (an object's feet, a lord's) its members' numerals stand (m). */
+export const EG_GIVEN_UP_M = 2.4;
+export const EG_GIVEN_UP_LORD_M = 5;
+/** AUDIT EG IV (lane1 #15): an errand's words over it - one member's numeral and name (*III - Mira*), several members' numerals
+ *  (*I II*); `co` the company's rows (`[sub, name, n, ...]`). Pure. */
+export const egGivenWords = (ns, co = []) => (ns.length === 1 ? `${EG_NUMERALS[ns[0]] ?? ns[0]} - ${(co.find((c) => c[2] === ns[0]) ?? [])[1] ?? ''}`.replace(/ - $/, '') : ns.map((n) => EG_NUMERALS[n] ?? n).join(' '));
 /** The beats' words (net/wire.js EG_SAY_KEYS), by key - `n` a name, `t` a word the room adds. */
 export const EG_SAY = Object.freeze({
   wake: () => '', fury: (n) => `${n || 'The lord'} rages!`, covenant: () => 'The Covenant presses.', covenantrest: () => 'The Covenant has spoken. This Redoubt is the last.',
@@ -169,6 +176,7 @@ export const EG_SAY = Object.freeze({
   orrerytrue: () => 'The Orrery turns true. A Vestige waits.', chamberdone: () => 'The chamber is cleared. Find the way down.', freed: () => 'The Battlemage is freed - a Cantrip for each of you.',
   desertertook: () => 'The Deserter takes the cache.', sapperfed: () => 'A Sapper reaches its lord and heals it.', reopened: () => 'A Sapper tears a rift open again!', cantrip: (n, t) => `${n} uses ${t}.`,
   bargain: (n, t) => `Dagon's Bargain is struck: ${t}.`, respite: (n, t) => `A respite: ${t} seconds.`, ready: () => 'The company is ready.',
+  gateheld: () => 'The march holds the gate - break it, or the Ward-Bearers stand warded.',   // AUDIT EG IV (section 8.3)
   // EG-FULL LAYER THREE: the fragments' beats
   seam: (n) => `${n || 'Someone'} breaks a false wall - an alcove opens.`, engine: (n, t) => `${n || 'Someone'} works the ${t || 'engine'}!`,
   horn: (n) => `The Honour Horn sounds - ${n || 'one of you'} is called into the ring. Answer alone!`, hornwon: (n) => `${n || 'The challenger'} fought with honour - the tiers throw Reliquaries!`,
@@ -495,6 +503,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     const k = (1 - dr) * x, raw = strikeDamage(pct * k, spireBodyMax(e), base * k), dmg = el ? savedShare(raw, save(e, el)) : raw;
     if (dmg > 0) strike(dmg, { fire: el === 'fire', el, name });
   }
+  /** AUDIT EG IV (lane1 #5): a member's feet in the hall's frame where this screen stands them (mine, or a companion's as drawn),
+   *  `[x, z]`, or null - where a failure blow that names them is drawn. */
+  const targetFeet = (sub) => { if (sub === me()) return myFeet(); const q = peerFeet(sub); return q ? [q[0], q[2]] : null; };
+  const namesMe = (bl) => !!bl.on && bl.on.includes(me());
   /** EG-ZP: the share of blow `bl` on me my company's Vestiges spare (egShieldDr - the census's own law) - each companion
    *  where this screen draws them, at their feet (the pose stands at the eye). */
   const spared = (E, F, bl) => egShieldDr(E, F, spec, bl, me(), trail, peerFeet, ll, hymn);
@@ -569,9 +581,10 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
   function drawBlow(bl, t, aimedAtMe, rank = Infinity) {
     const from = bl.at - bl.wu, span = Math.max(1, bl.sp ?? 0);
     if (t < from || t > bl.at + span + LINGER_MS) return;
-    for (const s of bl.s) {
-      const sh = (_slots[_shapes.length] ??= slot());
+    for (let j = 0; j < bl.s.length; j++) {
+      const s = bl.s[j], sh = (_slots[_shapes.length] ??= slot());
       if (!fillStamp(sh, s)) continue;
+      if (bl.on && s[0] === 'd') { const at = targetFeet(bl.on[j] ?? bl.on[0]); if (at) { sh.origin[0] = at[0]; sh.origin[1] = at[1]; } }   // AUDIT EG IV (lane1 #5): a failure blow's mark rides the member it names
       sh.order = rank;
       sh.t = Math.max(0, Math.min(1, ((bl.cut ? Math.min(t, bl.cut) : t) - from) / Math.max(1, bl.wu))); sh.flash = t >= bl.at ? 1 : 0;   // EG-ZD: a feint's fill frozen where it was cut
       sh.alpha = bl.cut ? Math.max(0, 1 - (t - bl.cut) / EG_FEINT_FADE_MS) : t > bl.at + span ? 1 - (t - bl.at - span) / LINGER_MS : aimedAtMe ? 1 : 0.85;
@@ -841,6 +854,16 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     _sigils.length = 0;
     const E = link.state(), F = E?.fight?.h === hall ? E.fight : null, meSub = me();
     if (F && centre) {
+      // AUDIT EG IV (lane1 #15; section 13.2): ERRANDS BY NUMERAL - over each errand the room gave (`pg.as`), its member's numeral
+      // and name (*III - Mira*), or the numerals of several (a gem's group, a twin's)
+      const given = new Map(), tg = now();
+      for (const [i, n] of F.pg?.as ?? []) given.set(i, [...(given.get(i) ?? []), n]);
+      for (const [i, ns] of given) {
+        const b = F.bodies.find((x) => x.i === i);
+        if (!b || !(b.hp > 0) || b.goneAt) continue;
+        const [x, z] = egBodyPlace(b, tg), at = egScreenAt(vp, [centre[0] + x, centre[1] + egBodyHeight(b, tg) + (b.role === EG_ROLE.lord ? EG_GIVEN_UP_LORD_M : EG_GIVEN_UP_M), centre[2] + z]);
+        if (at) _sigils.push({ key: `e${i}`, x: at[0], y: at[1], marks: [{ sigil: 'given', text: egGivenWords(ns, E.co) }] });
+      }
       const subs = new Set();
       for (const m of F.mk ?? []) if (m[0] !== meSub && typeof m[0] === 'string') subs.add(m[0]);
       const t = now();
@@ -886,9 +909,9 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       mix.barks(_barks, cam(), (b) => play3(b.cue, b.at));   // EG-G2: the legion's barks, four a kind, nearest first
       // THE BLOWS - drawn in the budget's order, each judged on my feet at its landing
       const lordIds = new Set(F.bodies.filter((b) => b.role === EG_ROLE.lord).map((b) => b.i));
-      const order = egShapeOrder(F.blows.filter((bl) => !bl.cut || t - bl.cut < EG_FEINT_FADE_MS), f ?? [0, 0], t, { lords: lordIds });
+      const order = egShapeOrder(F.blows.filter((bl) => !bl.cut || t - bl.cut < EG_FEINT_FADE_MS), f ?? [0, 0], t, { lords: lordIds, aimedAt: namesMe });   // AUDIT EG IV (lane1 #5): a failure blow naming me is aimed at me
       for (let k = 0; k < order.length; k++) {
-        const bl = order[k], mine = !!f && bl.s.some((s) => egInShape(s, f[0], f[1]));
+        const bl = order[k], mine = bl.on ? bl.on.includes(me()) : !!f && bl.s.some((s) => egInShape(s, f[0], f[1]));   // AUDIT EG IV (lane1 #5): a failure blow is mine when it names me
         drawBlow(bl, t, mine, k);   // EG-ZG: its rank, THE TELEGRAPH BUDGET's order for the floors' draws
         // EG-G2 - THE SPIRE MIX: a personal sting at its word for a lord's blow or a CHECK on my feet; an add's at most one each 1.5 s
         if (mine && standing && !stung.has(bl.i) && t < bl.at) { stung.add(bl.i); const d0 = feet(); mix.sting(bl.ch ? 'check' : lordIds.has(bl.o) ? 'lord' : 'add', d0 ? [d0[0], d0[1], d0[2]] : null); }
@@ -904,13 +927,13 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
       for (const bl of F.blows) {
         if (!bl.cut && t < bl.at) _pending.push(bl);   // EG-ZG: the peril arrow's
         if (!judged.has(bl.i) && !bl.cut && standing) {
-          const v = egBlowVerdict(bl, f[0], f[1], t);
+          const v = egBlowVerdict(bl, f[0], f[1], t, 400, me());   // AUDIT EG IV (lane1 #5): a failure blow that names me lands wherever I stand
           if (v !== 'wait') { judged.add(bl.i); if (v === 'hit') { landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part * egTouchedX(F, bl, me(), t)); if (bl.pu > 0) { const s = bl.s[0]; const ox = s[0] === 'l' ? s[3] - s[1] : f[0] - s[1], oz = s[0] === 'l' ? s[4] - s[2] : f[1] - s[2], d = Math.hypot(ox, oz) || 1; push(ox / d, oz / d, bl.pu); } } }   // AUDIT EG III (lane1 #4): THE TWINS' TOUCHED, on my own blow
         }
         if (mates.length && !bl.cut && standing) for (const sub of mates) {   // AUDIT EG III (lane1 #12): my part of a blow on a chained mate, at their feet where this screen draws them
           const key = `${bl.i}:${sub}`, q = judged.has(key) ? null : peerFeet(sub);
           if (!q) continue;
-          const v = egBlowVerdict(bl, q[0], q[2], t);
+          const v = egBlowVerdict(bl, q[0], q[2], t, 400, sub);
           if (v !== 'wait') { judged.add(key); if (v === 'hit') landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part); }
         }
         if (!landedSet.has(bl.i) && t >= bl.at && t - bl.at < 1500) {

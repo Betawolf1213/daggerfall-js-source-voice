@@ -245,5 +245,7 @@ test('AUDIT EG III THE PAGE: EG-ZS\'s two flags (Spillover applied nowhere, Spot
   for (const gone of ['SPILLOVER (Arcana\'s Mastery', 'SPOTTER\'s first half', 'FLAGGED to the relay, where `hostHits` is its seam']) assert.ok(!zs.includes(gone), `retired: ${gone}`);
   assert.ok(page.includes('dormant until a member passes within 6 m (an ambush) or a blow lands on it'), 'section 12: a struck Lurker wakes');
   assert.ok(page.includes('Every wave is held to\n  the room under the cap (`egLegionRoom`'), 'section 12: the room under the cap');
-  assert.ok(page.includes('with its escort (`1 + ceil(n/3)`, section 8.5); never in a Proving Walk or a Court'), 'section 14: Kyn\'s Vigil as built');
+  // PIN MOVED (AUDIT EG IV, lane1 #1): the Vigil stands none in a Deepway whose chamber is a champion's either - before, the needle
+  // read "never in a Proving Walk or a Court"
+  assert.ok(page.includes('with its escort (`1 + ceil(n/3)`, section 8.5); never in a Proving Walk, a Court or a Deepway whose chamber is a champion\'s'), 'section 14: Kyn\'s Vigil as built');
 });

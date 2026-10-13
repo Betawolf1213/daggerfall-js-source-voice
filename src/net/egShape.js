@@ -132,6 +132,10 @@ export function egInShape(s, px, pz) {
 }
 /** Is (px, pz) inside any of a blow's stamps? */
 export const egInBlow = (blow, px, pz) => !!blow?.s?.some((s) => egInShape(s, px, pz));
+/** AUDIT EG IV (lane1 #5; section 13.2's CHECK class): does a blow reach member `sub` standing at (px, pz)? A blow that names its
+ *  members (`on` - an errand's failure blow: the Chain Snaps, a Soul Burst, the Cage Closes) lands on them wherever they stand,
+ *  and on no one else; any other, where its stamps hold the feet. */
+export const egBlowOn = (blow, sub, px, pz) => (blow?.on ? sub != null && blow.on.includes(sub) : egInBlow(blow, px, pz));
 
 /** A cone's inscribed radius: the largest disc inside the sector (half its length past a half-turn). */
 export function coneInscribed(r, arcDeg) {
@@ -190,11 +194,14 @@ export const egErrandMs = (routeM) => Math.ceil(((routeM / EG_ESCAPE_MPS + 1.5) 
  * stamps, `at` when it lands (relay ms), `wu` its wind-up (the word went out `at - wu`), `p` the share of the struck body's
  * own maximum health and `b` the points beside it, `el` its element (null plain), `nm` its name, `ch` a CHECK, `pu` its push
  * (m), `sp` how long its landing lasts (ms - a charge's run, a fire-fall's burn), `ft` a feint (cut at FEINT_AT - never
- * said: the relay sends the cut).
- * @param {{ i: number, o?: number, s: any[], at: number, wu: number, p: number, b?: number, el?: string|null, nm?: string, ch?: number|boolean, pu?: number, sp?: number, ft?: number }} blow
+ * said: the relay sends the cut). AUDIT EG IV (lane1 #5): `on` the members a CHECK names (egBlowOn) - its stamps then only
+ * mark them; absent, it lands where its stamps lie.
+ * @param {{ i: number, o?: number, s: any[], at: number, wu: number, p: number, b?: number, el?: string|null, nm?: string, ch?: number|boolean, pu?: number, sp?: number, ft?: number, on?: string[]|null }} blow
  */
-export function egBlowOf({ i, o = 0, s, at, wu, p, b = 0, el = null, nm = '', ch = 0, pu = 0, sp = 0 }) {
-  return { i, o, s, at, wu: egFloorWindup(wu, s, !!ch), p, b, el, nm, ch: ch ? 1 : 0, pu, sp };
+export function egBlowOf({ i, o = 0, s, at, wu, p, b = 0, el = null, nm = '', ch = 0, pu = 0, sp = 0, on = null }) {
+  const blow = { i, o, s, at, wu: egFloorWindup(wu, s, !!ch), p, b, el, nm, ch: ch ? 1 : 0, pu, sp };
+  if (on?.length) blow.on = [...on];
+  return blow;
 }
 /** Its word's instant (relay ms): the wind-up's start. */
 export const egBlowFrom = (blow) => blow.at - blow.wu;
@@ -202,14 +209,15 @@ export const egBlowFrom = (blow) => blow.at - blow.wu;
 /**
  * THE VERDICT on the struck member's machine at `now`: 'hit', 'miss' or 'wait' - decided at the first frame at or past
  * its landing (a landing with a span is 'hit' at the first frame inside it while it lasts), and a landing met later than
- * `late` past its span lets it pass (nobody is struck by what their screen never showed land).
+ * `late` past its span lets it pass (nobody is struck by what their screen never showed land). AUDIT EG IV: `sub` the member
+ * judged, for a blow that names its members (egBlowOn).
  */
-export function egBlowVerdict(blow, px, pz, now, late = 400) {
+export function egBlowVerdict(blow, px, pz, now, late = 400, sub = null) {
   if (!blow || !Number.isFinite(blow.at)) return 'miss';
   if (now < blow.at) return 'wait';
   const span = Math.max(1, blow.sp ?? 0);
   if (now > blow.at + span + late) return 'miss';
-  if (egInBlow(blow, px, pz)) return 'hit';
+  if (egBlowOn(blow, sub, px, pz)) return 'hit';
   return now >= blow.at + span ? 'miss' : 'wait';
 }
 
