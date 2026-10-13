@@ -9674,6 +9674,21 @@
   "tr": "ed8c81fe2730",
   "by": "claude-in-session"
  },
+ "prof.lode.legend": {
+  "en": "80b1736b1dfb",
+  "tr": "4a640707ab47",
+  "by": "claude-in-session"
+ },
+ "prof.lode.name": {
+  "en": "d876aeaab489",
+  "tr": "60b5a9c1eb63",
+  "by": "claude-in-session"
+ },
+ "prof.lode.rises": {
+  "en": "5a04337e81ee",
+  "tr": "cd25b9d87983",
+  "by": "claude-in-session"
+ },
  "prof.page.act.strike": {
   "en": "f9ae58aa354c",
   "tr": "c25bc5bdeaa3",
@@ -10357,6 +10372,11 @@
  "prof.page.how.miningGround": {
   "en": "8e35469069dc",
   "tr": "116f972193c1",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.miningSurveyor": {
+  "en": "8ea3b3f58e32",
+  "tr": "9485ef589b51",
   "by": "claude-in-session"
  },
  "prof.page.jewel": {

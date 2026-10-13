@@ -39,8 +39,8 @@
   {
     "name": "NODE-MARKS-farthest-first",
     "file": "src/scenes/gatherHost.js",
-    "old": "      out.sort((a, b) => a.d - b.d);\n      if (out.length > NODE_MARK_MAX) out.length = NODE_MARK_MAX;",
-    "new": "      out.sort((a, b) => b.d - a.d);\n      if (out.length > NODE_MARK_MAX) out.length = NODE_MARK_MAX;",
+    "old": "      out.sort((a, b) => a.d - b.d);\n      if (out.length > max) out.length = max;",
+    "new": "      out.sort((a, b) => b.d - a.d);\n      if (out.length > max) out.length = max;",
     "tests": [
       "test/nodemarks.test.js"
     ]
@@ -48,7 +48,7 @@
   {
     "name": "NODE-MARKS-uncapped",
     "file": "src/scenes/gatherHost.js",
-    "old": "      if (out.length > NODE_MARK_MAX) out.length = NODE_MARK_MAX;",
+    "old": "      if (out.length > max) out.length = max;",
     "new": "",
     "tests": [
       "test/nodemarks.test.js"
@@ -468,7 +468,7 @@
   {
     "name": "AUDIT-NODE-MARKS-classic-nodes-drawn-last",
     "file": "src/ui/hud.js",
-    "old": "  // NODE-MARKS: every profession's nodes near (a Prospector's veins, 200 m; a Tracker's animals, 100 m) - FIRST, so the\n  drawNodeCompassMarks(renderer, nodes, playerXZ, heading01, { bx, by, bw, s });   // AUDIT: Detect markers, the party and the ships stand over them\n",
+    "old": "  // NODE-MARKS: every profession's nodes near (a Prospector's veins, 500 m; a Tracker's animals, 100 m) - FIRST, so the\n  drawNodeCompassMarks(renderer, nodes, playerXZ, heading01, { bx, by, bw, s });   // AUDIT: Detect markers, the party and the ships stand over them\n",
     "new": "",
     "tests": [
       "test/nodemarks.test.js"

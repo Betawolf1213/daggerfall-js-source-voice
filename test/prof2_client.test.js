@@ -196,7 +196,7 @@ test('PROF2 plan: what E does at a vein or a boulder, and what it needs - worked
   assert.deepEqual([pickHandFrame(1).frame, pickHandFrame(0.5).frame, pickHandFrame(0.01).frame], [0, 2, 4], 'StrikeDown\'s frames over the swing');
   assert.deepEqual({ ...PICK_HAND }, { group: 'Weapons', templateIndex: 126, material: 0 });
   assert.equal(templateByIndex(126).name, 'Warhammer', 'the Pick-Axe in the hand is DFU\'s Warhammer (PROF0 5.1)');
-  assert.equal(PROSPECT_M, 200);
+  assert.equal(PROSPECT_M, 500);   // PIN MOVED (MINE-PERKS, Professions-Arc 43): 200 beside everyone's 150 was "only a 50m difference"
 });
 
 // ─── THE ONE HOST ────────────────────────────────────────────────────

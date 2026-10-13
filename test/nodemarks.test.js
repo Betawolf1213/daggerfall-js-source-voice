@@ -20,7 +20,7 @@ import { readFileSync } from 'node:fs';
 import { createProfBook } from '../src/net/profBook.js';
 import { veins, utcDayOfMs, dungeonVeins } from '../src/net/nodeLaw.js';
 import { SKINNING_KNIFE } from '../src/net/professionLaw.js';
-import { mineKind, MINE_MARKS, PROSPECT_M } from '../src/scenes/mineHost.js';
+import { mineKind, MINE_MARKS, PROSPECT_M, PROSPECT_DEEP_M } from '../src/scenes/mineHost.js';
 import { herbKind, PATCH_MARK } from '../src/scenes/herbHost.js';
 import { huntKind, BODY_MARK } from '../src/scenes/huntHost.js';
 import { treeKind, TREE_MARK } from '../src/scenes/treeHost.js';
@@ -162,7 +162,9 @@ test('NODE-MARKS the host: a Prospector\'s veins are marked from PROSPECT_M off 
   const kind = mineKind({ book: { taken: () => false } });
   const specs = () => ({ 50: 'prospector', 100: null });
   assert.equal(kind.mark({ key: 'b', what: 'boulder' }, { specs }).reach, undefined, 'a boulder is quarried, not prospected');
-  assert.equal(kind.mark({ key: 'd', what: 'dvein' }, { specs }).reach, PROSPECT_M, 'a dungeon\'s vein is a vein');
+  // PIN MOVED (AUDIT MINE-PERKS, Professions-Arc 43): a dungeon's vein keeps PROF2's 200 m - PROSPECT_M's 500 would mark
+  // nearly every dungeon's every vein, the Deep Delver's own perk
+  assert.equal(kind.mark({ key: 'd', what: 'dvein' }, { specs }).reach, PROSPECT_DEEP_M, 'a dungeon\'s vein is a vein, at PROF2\'s reach');
 });
 
 test('NODE-MARKS the host: the loose nodes - a body the knife may skin is Hunting\'s mark where it lies, in BODY_MARK; no knife, or its hide taken, none; a kind that marks none of its loose nodes (Fishing\'s cast) is never asked for them (mutants: the loose nodes never walked; a body marked with no knife; every kind\'s loose nodes asked)', async () => {

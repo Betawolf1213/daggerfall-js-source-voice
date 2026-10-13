@@ -333,8 +333,8 @@
   {
     "name": "GATHER-OW-the-cap-unasked",
     "file": "src/scenes/gatherHost.js",
-    "old": "groupsKept = all.slice(0, GROUP_MAX);",
-    "new": "groupsKept = all;",
+    "old": "groupsKept = [...all.slice(0, GROUP_MAX), ...ones",
+    "new": "groupsKept = [...all, ...ones",
     "tests": [
       "test/gatherow.test.js"
     ]

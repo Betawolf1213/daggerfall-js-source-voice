@@ -86,6 +86,7 @@ import { stationSteps } from '../../src/net/fortLaw.js';   // SEAT2b part two (7
 import { fortTiersOf } from './seatForts.js';   // SEAT2b part two: the halls standing at the seat
 import { RAM_KIT } from '../../src/net/professionLaw.js';   // SEAT2b part two: a siege work's place in the Stores
 import { SIEGE_GEM } from '../../src/net/professionLaw.js';   // PROF10: a Lapidary's Siege-cracked Gem, spent for a piece's gem
+import { SURVEYOR } from '../../src/net/professionLaw.js';   // MINE-PERKS: Mining 100's Surveyor (the Stonebreaker's id)
 import { CARRIED_MAX, DEPOSIT_MAX, CLAMP_ORDER, DEPOSIT_ORDERS, CARRIED_ROW_DAYS, heldOk, seenOk, depositOrderOk, looseOrder, LOOSE_ORIGIN, STATION_ORIGINS, WRIT_ORIGINS } from '../../src/net/bagLaw.js';   // BAG1: what a character carries, counted
 import { hallWrits, hallWritCountIn, hallWritId, hallHidden, HALL_WRIT_REP, memberWrit, memberWritId, MERIT_WRIT, chapterBandOf, chaptersSwitchOf, meritWeekOf, chapterFocusesOf, crackdownMerit, doctrineWritCount } from '../../src/net/npcChapterLaw.js';   // CHAP2a: a chapter's hall writs and what one pays its guild; CHAP3a: a member's own
 import { MAX_REPUTATION, GUILD_FACTION_IDS } from '../../src/systems/guildFactions.js';   // CHAP2a: a hall writ's reputation, inside DFU's bound; the hidden two
@@ -623,7 +624,11 @@ export async function harvestNode(ctx, player, env, body = {}) {
     }
   } else {
     // PROF2: THE PICK-AXE - a vein's ore, a boulder's stone, a dungeon vein's deep ore (PROF0 23)
-    const found = n.kind === 'vein' ? vein({ x: n.x, y: n.y, day, slot: n.slot, climate, region, confirmed })
+    // MINE-PERKS (Professions-Arc 43): a Surveyor's surface vein on ground the witnesses have not confirmed is its
+    // climate's whole table - their word its witness, for their own veins alone; never a signature (veinSlots above
+    // counted none), never the March's or a Tide's (named by the region, on confirmed ground alone)
+    const surveyed = n.kind === 'vein' && !confirmed && specs[100] === SURVEYOR;
+    const found = n.kind === 'vein' ? vein({ x: n.x, y: n.y, day, slot: n.slot, climate, region, confirmed, surveyed })
       : n.kind === 'boulder' ? boulder({ x: n.x, y: n.y, day, slot: n.slot, climate })
         : dungeonVein({ dungeon: n.dungeon, day, slot: n.slot, climate, confirmed });
     if (!found) return { error: 'bad-node' };
@@ -632,14 +637,15 @@ export async function harvestNode(ctx, player, env, body = {}) {
     const s = strikesOf(act, tier);
     clean = s.clean;
     if (n.kind === 'boulder') {
-      const y = boulderYield({ roll: roll(BOULDER_YIELD[0], BOULDER_YIELD[1]), march, cut: clean || specs[100] === 'stonebreaker', tideMult: tideYield(tide, 'boulder') }, dice(rand));
+      const y = boulderYield({ roll: roll(BOULDER_YIELD[0], BOULDER_YIELD[1]), march, cut: clean || specs[100] === SURVEYOR, tideMult: tideYield(tide, 'boulder') }, dice(rand));
       key2 = y.material;
       qty = y.qty;
     } else {
       key2 = found.material;
       qty = veinYield({ roll: roll(VEIN_YIELD[0], VEIN_YIELD[1]), deep, deepDelver: specs[50] === 'deep-delver', march, tideMult: tideYield(tide, 'vein') }, dice(rand));
       // a gem: each strike on the glint a chance (a Prospector's x1.1), on ground the witnesses confirmed - one at most
-      gem = veinGem({ kind: n.kind, climate, glints: s.glints, confirmed, prospector: specs[50] === 'prospector' }, () => dice(rand));
+      // (MINE-PERKS: or a Surveyor's own)
+      gem = veinGem({ kind: n.kind, climate, glints: s.glints, confirmed: confirmed || surveyed, prospector: specs[50] === 'prospector' }, () => dice(rand));
     }
   }
   if (!key2) return { error: 'bad-node' };

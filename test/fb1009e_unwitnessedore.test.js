@@ -52,7 +52,8 @@ test('UNWITNESSED-ORE law: the one cap is the dungeon\'s too - an unconfirmed de
   assert.ok(un.includes('metal:silver'), 'the Court may ask the Silver the vein stands');
   assert.ok(!un.includes('metal:gold') && !un.includes('ore:orichalcum'));
   const src = readFileSync(new URL('../src/net/nodeLaw.js', import.meta.url), 'utf8');
-  assert.equal(src.match(/confirmed \? 7 : UNCONFIRMED_VEIN_TIER\)/g)?.length, 3, 'the vein, the deep vein and the Court read the one cap');
+  // PIN MOVED (MINE-PERKS, Professions-Arc 43): the vein's cap is lifted for a Surveyor's own vein too (`confirmed || surveyed`)
+  assert.equal(src.match(/confirmed(?: \|\| surveyed)? \? 7 : UNCONFIRMED_VEIN_TIER\)/g)?.length, 3, 'the vein, the deep vein and the Court read the one cap');
 });
 
 test('UNWITNESSED-ORE service: an unconfirmed Mountain pixel\'s Silver vein is mined - the law\'s Silver into the Stores at tier 3\'s XP, no gem, no signature - and its Gold is no vein there', async () => {

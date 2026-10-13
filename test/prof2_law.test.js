@@ -84,7 +84,7 @@ test('PROF2 law: the act - 4 / 5 / 7 strikes by tier, the glint 1.2 s (2 s at Ma
   assert.deepEqual([1, 2, 3, 4, 5, 6].map(strikesFor), [4, 4, 5, 5, 7, 7]);
   assert.deepEqual([1, 3, 5].map(glintsMax), [2, 3, 4], 'every strike on the glint counts two');
   assert.deepEqual({ ...MINE_ACT }, { points: 5, glintS: 1.2, masterGlintS: 2.0, radiusDeg: 2.5, swingS: 0.45, spreadYawDeg: 7, spreadPitchDeg: 4 });
-  assert.deepEqual([GEM_CHANCE, PROSPECTOR_GEM, DEEP_DELVER_MULT, CUT_RATIO], [0.03, 1.1, 1.5, 2]);
+  assert.deepEqual([GEM_CHANCE, PROSPECTOR_GEM, DEEP_DELVER_MULT, CUT_RATIO], [0.03, 1.1, 2, 2]);   // PIN MOVED (MINE-PERKS): the Deep Delver's x1.5 is x2
   assert.equal(pickAxeBand({ intelligence: 70, agility: 50 }), actBand(60));
   assert.equal(pickAxeBand({ intelligence: 39, agility: 40 }), actBand(39), 'C#\'s integer average: 79 / 2 is 39');
 });
@@ -175,12 +175,12 @@ test('PROF2 law: the boulders - the climate\'s count a day, tier 1, Rough Stone;
   assert.equal(dungeonVein({ dungeon: 5, day: DAY, slot: 4, climate: C.Mountain }), null);
 });
 
-test('PROF2 law: the yields (PROF0 6) - a vein 2-3, Deep Delver x1.5 underground only, a march +25%; a boulder 3-5, cut two to one', () => {
+test('PROF2 law: the yields (PROF0 6) - a vein 2-3, Deep Delver x2 underground only (MINE-PERKS; x1.5 until then), a march +25%; a boulder 3-5, cut two to one', () => {
   assert.deepEqual([VEIN_YIELD, BOULDER_YIELD], [[2, 3], [3, 5]]);
   assert.equal(veinYield({ roll: 2 }, 0.9), 2);
-  assert.equal(veinYield({ roll: 2, deep: true, deepDelver: true }, 0.9), 3);
+  assert.equal(veinYield({ roll: 2, deep: true, deepDelver: true }, 0.9), 4);
   assert.equal(veinYield({ roll: 2, deepDelver: true }, 0.1), 2, 'Deep Delver works the dungeon\'s veins alone');
-  assert.equal(veinYield({ roll: 3, deep: true, deepDelver: true }, 0.4), 5, '4.5: a coin for the fifth');
+  assert.equal(veinYield({ roll: 3, deep: true, deepDelver: true }, 0.9), 6, 'x2: whole, no coin');
   assert.equal(veinYield({ roll: 2, march: true }, 0.4), 3, '2.5');
   assert.deepEqual(boulderYield({ roll: 4 }, 0.9), { material: 'stone:rough', qty: 4 });
   assert.deepEqual(boulderYield({ roll: 4, cut: true }, 0.9), { material: 'stone:cut', qty: 2 });

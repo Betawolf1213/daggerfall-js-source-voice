@@ -59,6 +59,7 @@ import {
   STORES_MAX, ARCANE_ESSENCE,   // AUDIT PROF-541 B8: a disenchant's room in the Stores
   smeltRecipe,   // CRAFT1: a chain's works said
   trackOf, disciplinesOf, disciplineName, specDiscipline,   // CRAFT3: five crafts of eight disciplines
+  SURVEYOR, specOf,   // MINE-PERKS: Mining 100's Surveyor, whose own word witnesses the ground; its name, the card's
 } from '../net/professionLaw.js';
 import {
   POTIONS, brewKeys, brewSpends, brewCount, potentChance, potentPct, potentLasts, potentAble, brewXp, brewFirstPays, ingredientKeys, DISTILLER, POTENT,
@@ -522,6 +523,10 @@ const gatherHow = (id) => (id === 'herbalism' ? t('prof.page.how.herbalism', GAT
 export const MINING_GROUND_LINE = 'Ground that fewer than three players have gathered on holds Silver at most. Gold, Platinum, Mithril and a region\'s own ore appear there once three different players (each account at least a week old) have gathered on it - the mountains hold them, and the dungeons\' deep veins hold Silver anywhere. Point at bare ground on the world map to see what its veins hold and whether it is witnessed yet.';
 /** L10N4: MINING_GROUND_LINE in the player's language. */
 const miningGroundLine = () => t('prof.page.how.miningGround', MINING_GROUND_LINE);
+/** AUDIT MINE-PERKS (the cold pass, 8): what the line above means for a Surveyor - the Mining page told them "Silver at
+ *  most" while their own word witnesses the ground (net/nodeLaw.js vein `surveyed`). Said under it, theirs alone. */
+export const MINING_SURVEYOR_LINE = 'As a {name}, your own word witnesses the ground: your veins there can be any ore of its land. A region\'s own ore still waits on the witnesses.';
+const miningSurveyorLine = () => t('prof.page.how.miningSurveyor', MINING_SURVEYOR_LINE, { name: specOf('mining', 100, SURVEYOR)?.name ?? '' });
 /** TOOL-SAID: the empty Stores say where their goods come from - a node's act (TOOL-USE: the key's, or the tool's Use
  *  there), never a tool used from the pack. */
 /** AUDIT (2026-10-04): the empty Stores on BAG1's page - a carrying book's harvest goes into the bag or the pack, never
@@ -620,6 +625,7 @@ export function drawProfessionsPage(detail, rerender, kit) {
     pane.append(el('p', 'prof-today', t('prof.page.today.harvests', 'Today: {n, plural, one {# harvest} other {# harvests}}', { n: today })));
     if (GATHER_HOW[_sel]) pane.append(el('p', 'px-note', gatherHow(_sel)));   // TOOL-SAID
     if (_sel === 'mining') pane.append(el('p', 'px-note', miningGroundLine()));   // UNWITNESSED-ORE
+    if (_sel === 'mining' && tr.specs?.[100] === SURVEYOR) pane.append(el('p', 'px-note', miningSurveyorLine()));   // MINE-PERKS
   }
   // THE SPECIALISATIONS: two cards a rank (CRAFT3: a merged craft's four, each its discipline's), the chosen one lit; a
   // change of mind pressed twice - free once where the five crafts' merge lost a choice (`free`)
