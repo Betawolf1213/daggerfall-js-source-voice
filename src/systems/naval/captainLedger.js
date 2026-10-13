@@ -254,7 +254,8 @@ export function createCaptainLedger() {
     /**
      * WHAT HAPPENED AT SEA, TO THE CONTRACTS HELD (harbourBoard.js advance's events): each one done or failed off the
      * list - done, its crown's regard (its `standing`), its kind's count and its purse in the log; failed,
-     * STANDING_FAILED; void (a bounty's quarry gone down by another hand), off it and no regard lost - answered `{ done,
+     * STANDING_FAILED; void (a bounty's quarry gone down by another hand; a cargo for a place that is no port - FIELD
+     * BUGS 2026-10-13c PORT-TOWNS), off it and no regard lost - answered `{ done,
      * failed, moved, voided }` (`moved` the ones come further) for the host to pay and say.
      */
     contractEvent(ev) {

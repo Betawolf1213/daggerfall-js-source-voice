@@ -31,7 +31,8 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and EG-G1's four (`egSpireHud.js`: the Spire's HUD by form factor, THE COUNT CHIP, the arrival card, the objective, the door's marker, the lord's bar, touch and the pad; `egBeats.js`: every event's sight, sound and words, the first breach's lines; `egParty.js`: the company's state on the party rows; `egAccess.js`: the danger palette, the fill and reduced motion; `11-Multiplayer/Elite-Gates.md` section 27)
 - and EG-F's START WINDOW and ARCH MARK (`egStartWindow.js`: where a Weir Key's breach starts - the stake, the choices and the company's ticks, the Wager, the Rehearsal, over DFU's list picker; `egArchMapMark.js`: the company's arch on the held map, in its gold; `11-Multiplayer/Elite-Gates.md` section 31, EG-F)
 - and TEMP-UI's PACK TEMPERATURE (`temperatureCard.js`: the felt temperature on the enhanced pack's figure, a wearable's card and the Stats side - live, over the minute law's own sum; `06-Systems/Climates-Calories.md` TEMP-UI)
-364 modules
+- and MINE-PERKS' MOTHERLODES ON THE MAPS (`lodeMapMark.js`: a Motherlode Sense's day's Motherlodes, each a circle on its pixel with its ore and, until it rises, its hour, on both maps and the Overworld; `06-Systems/Professions-Arc.md` 43)
+365 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.

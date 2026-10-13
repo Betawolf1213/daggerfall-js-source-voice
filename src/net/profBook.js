@@ -397,7 +397,22 @@ export function createProfBook({ door, storage = null, character = () => null, n
     closed(key) { return state.closed.get(key) === dayOf(now()); },
     /** A track as the service last said it (never null: a profession not worked yet is at nothing). */
     /** A track as the service said it - CRAFT3: a discipline's its craft's ('jewelcrafting' the Smithing track). */
-    track(profession) { const p = trackOf(profession); return state.tracks.get(p) ?? { profession: p, xp: 0, rank: 0, specs: { 50: null, 100: null }, respec: null }; },
+    track(profession) {
+      const p = trackOf(profession);
+      const t = state.tracks.get(p);
+      if (!t) return { profession: p, xp: 0, rank: 0, specs: { 50: null, 100: null }, respec: null };
+      // AUDIT MINE-PERKS (the cold pass, 4): A CHANGE OF MIND COME DUE - the service stands a track under its paid
+      // change once the week is out (professionLaw.js specsAt), while the book kept the choice it last heard until the
+      // next read: a respec to or from a choice that changes what stands (Mining's Surveyor, Herbalism's Seasonal Eye)
+      // stood one table on the screen and the service rolled the other. The change applied here, once, on the shared clock.
+      const r = t.respec;
+      if (r && (r.rank === 50 || r.rank === 100) && Number.isFinite(r.at) && now() >= r.at * 1000) {
+        const due = { ...t, specs: { ...t.specs, [r.rank]: r.to }, respec: null };
+        state.tracks.set(p, due);
+        return due;
+      }
+      return t;
+    },
     /** One material's count in the Stores, own and bought (GOLD-MARKET: and `gold`, bought with gold, where held). */
     store(material) { return state.stores.get(material) ?? { material, own: 0, bought: 0 }; },
     /** What a writ or the market may spend of it - never what gold bought (GOLD-MARKET's wall). BAG1: the Stores' and, for

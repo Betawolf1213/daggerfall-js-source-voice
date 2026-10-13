@@ -9744,6 +9744,21 @@
   "tr": "83843d09d2a5",
   "by": "claude-in-session"
  },
+ "prof.lode.legend": {
+  "en": "80b1736b1dfb",
+  "tr": "6585eea7f3de",
+  "by": "claude-in-session"
+ },
+ "prof.lode.name": {
+  "en": "d876aeaab489",
+  "tr": "35361c91a5b6",
+  "by": "claude-in-session"
+ },
+ "prof.lode.rises": {
+  "en": "5a04337e81ee",
+  "tr": "a949e49992c5",
+  "by": "claude-in-session"
+ },
  "prof.page.act.strike": {
   "en": "f9ae58aa354c",
   "tr": "cf3047c85b56",
@@ -10427,6 +10442,11 @@
  "prof.page.how.miningGround": {
   "en": "8e35469069dc",
   "tr": "6b38b9208940",
+  "by": "claude-in-session"
+ },
+ "prof.page.how.miningSurveyor": {
+  "en": "8ea3b3f58e32",
+  "tr": "369fc40ec6a4",
   "by": "claude-in-session"
  },
  "prof.page.jewel": {
@@ -12037,6 +12057,11 @@
  "prof.work.yours.writ": {
   "en": "ce32bc277933",
   "tr": "beea131c6f56",
+  "by": "claude-in-session"
+ },
+ "sea.board.cargoVoid": {
+  "en": "ab24e7cbf348",
+  "tr": "35a4d150471e",
   "by": "claude-in-session"
  },
  "sea.chart.anIsle": {

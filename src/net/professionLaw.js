@@ -134,6 +134,9 @@ export const JOURNEYMAN_RANK = 50;
 export const SPEC_RANKS = Object.freeze([50, 100]);
 /** A change of mind: 1,000 Marks burnt, and the new one takes effect a week later (the old stands until then). */
 export const RESPEC = Object.freeze({ marks: 1000, days: 7 });
+/** MINE-PERKS (Professions-Arc 43): THE SURVEYOR's id - Mining 100's second choice, the Stonebreaker until MINE-PERKS,
+ *  whose id the tracks that chose it still hold (`spec100`, `respec_to`), so the id stands and the choice is new. */
+export const SURVEYOR = 'stonebreaker';
 /** `later`: the slice the choice waits for - named on its card, never chosen until then (AUDIT 29 A17). */
 const spec = (id, name, text, later = null) => Object.freeze(later ? { id, name, text, later } : { id, name, text });
 const pair = (a, b) => Object.freeze([a, b]);
@@ -142,10 +145,13 @@ const pair = (a, b) => Object.freeze([a, b]);
  *  merged craft offers its disciplines' (SPECIALISATIONS, below). */
 const OWN_CHOICES = Object.freeze({
   mining: Object.freeze({
-    50: pair(spec('prospector', 'Prospector', 'Surface veins within 200 m are marked on the compass; gems come a tenth more often.'),
-      spec('deep-delver', 'Deep Delver', 'Dungeon veins yield +50%.')),
-    100: pair(spec('motherlode-sense', 'Motherlode Sense', 'Motherlode warnings come 30 minutes ahead, not 10.'),   // PROF2b: its Motherlodes built - chosen as any
-      spec('stonebreaker', 'Stonebreaker', 'Quarrying yields Cut Stone directly.')),
+    // MINE-PERKS (Professions-Arc 43, the players' "Mining perks need buff" thread): the four made worth a choice - the
+    // Prospector's compass 500 m and its veins one by one on the Overworld, the Deep Delver's x2 and every vein of the
+    // dungeon on the compass, the day's Motherlodes on a Sense's map, and the Stonebreaker made the Surveyor (SURVEYOR)
+    50: pair(spec('prospector', 'Prospector', "Surface veins within 500 m are marked on the compass (a dungeon's within 200 m), and each vein on the Overworld by its ore; gems come a tenth more often."),
+      spec('deep-delver', 'Deep Delver', 'Dungeon veins yield double, and every vein in the dungeon is marked on the compass.')),
+    100: pair(spec('motherlode-sense', 'Motherlode Sense', "The day's Motherlodes are marked on your map from the day's start; warnings come 30 minutes ahead, not 10."),   // PROF2b: its Motherlodes built - chosen as any
+      spec(SURVEYOR, 'Surveyor', "Your own word witnesses the ground: unwitnessed veins can be any of their land's ores for you (a region's own ore still waits on witnesses). Quarrying yields Cut Stone directly.")),
   }),
   logging: Object.freeze({
     50: pair(spec('lumberjack', 'Lumberjack', 'Two chops fewer a tree (three at least).'),
@@ -775,8 +781,9 @@ export const glintsMax = (tier) => Math.ceil(strikesFor(tier) / 2);
 /** A gem: 3% a strike on the glint (a Prospector's x1.1), on a confirmed pixel or dungeon only. */
 export const GEM_CHANCE = 0.03;
 export const PROSPECTOR_GEM = 1.1;
-/** Deep Delver's dungeon veins, x1.5. */
-export const DEEP_DELVER_MULT = 1.5;
+/** Deep Delver's dungeon veins, x2 - MINE-PERKS (Professions-Arc 43; it was x1.5: "50% more from the veins is kinda
+ *  meh"). */
+export const DEEP_DELVER_MULT = 2;
 /** Rough Stone cut at the rock: two make one (PROF0 4.5; Quarryman's 1 : 1 is the bench's, not the rock's). */
 export const CUT_RATIO = 2;
 /** The Pick-Axe's attribute pair (FORAGE0 14.4): (INT + AGI) / 2 - Foraging's average, the IL's Agility. */

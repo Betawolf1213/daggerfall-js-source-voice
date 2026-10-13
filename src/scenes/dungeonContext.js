@@ -1117,13 +1117,18 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   }
   // PROF2: A DUNGEON VEIN'S WALL (profIdentity / veinWall below; bible/06-Systems/Professions-Arc.md 23) - over the
   // layout's own markers, before an elite copy is added: every client of the dungeon casts the same rays.
-  const PROF_VEIN_WALL_M = 12, PROF_VEIN_OFF_M = 0.33, PROF_VEIN_CHEST_M = 0.9, PROF_VEIN_UP_M = 0.5;
+  // MINE-PERKS (Professions-Arc 43, the players' "they like to spawn halfway in the wall so its hard to see"): the vein
+  // stands at the wall's foot, on the floor, 0.75 m out. It stood a third of a metre off the face and half a metre up,
+  // its flats spread about that point, and the flats, which turn to the eye, went into the wall at any look but a near
+  // square one (reasoned from the flats' sizes, not seen - no game data in the slice's tree).
+  const PROF_VEIN_WALL_M = 12, PROF_VEIN_OFF_M = 0.75, PROF_VEIN_CHEST_M = 0.9, PROF_VEIN_UP_M = 0;
   /** AUDIT 29 C3: the rays read the dungeon's own mesh (its 'dungeon' bucket), never a door's or a platform's */
   const PROF_VEIN_ONLY = Object.freeze({ only: Object.freeze(['dungeon']) });
   function profVeinWall(marker, bearing) {
     const list = _layoutEnemies;
     if (!list?.length || !collider) return null;
     const first = Math.min(list.length - 1, Math.max(0, Math.floor(marker * list.length)));
+    let close = null;   // AUDIT MINE-PERKS: the first foot found nearer its wall than PROF_VEIN_OFF_M, where none stands clear
     for (let m = 0; m < Math.min(4, list.length); m++) {
       const mk = list[(first + m) % list.length];
       for (let k = 0; k < 8; k++) {
@@ -1138,10 +1143,15 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
         const at = [from[0] + dir[0] * d, from[1], from[2] + dir[2] * d];
         const down = collider.raycast(at, [0, -1, 0], 3, PROF_VEIN_ONLY);
         if (!Number.isFinite(down)) continue;   // AUDIT 29 C11: no floor under it (a pit, deep water) - the next bearing, never a vein in the air
-        return [at[0], at[1] - down + PROF_VEIN_UP_M, at[2]];
+        const foot = [at[0], at[1] - down + PROF_VEIN_UP_M, at[2]];
+        // AUDIT MINE-PERKS (the cold pass, 7): a wall nearer the marker than PROF_VEIN_OFF_M stood the vein on the marker
+        // itself, as near the wall as the marker is - its flats back in the wall, and a foe stood on it. The next bearing;
+        // that foot only where no bearing of the four markers stands one clear (a vein is never lost to the rule)
+        if (hit.dist < PROF_VEIN_OFF_M) { close ??= foot; continue; }
+        return foot;
       }
     }
-    return null;
+    return close;
   }
   // ELITE DUNGEONS: an elite spawned dungeon stands ELITE_FOE_MULTIPLIER foes at every marker.
   // The extras are pulled back from walls by a ray through this dungeon's own collider (every
@@ -10331,8 +10341,8 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     },
     /** PROF2: A DUNGEON VEIN'S WALL - from one of this dungeon's foe markers (the layout's own list, the same on every
      *  client, so every client stands the vein in one place), a ray at chest height along `bearing` through the collider
-     *  to the first near-vertical face within PROF_VEIN_WALL_M, the vein a third of a metre off it and half a metre up
-     *  from the floor under it; the next eighths of a turn, then the next markers, where nothing is found. The elite
+     *  to the first near-vertical face within PROF_VEIN_WALL_M, the vein at its foot, PROF_VEIN_OFF_M off it on the floor
+     *  under it (MINE-PERKS); the next eighths of a turn, then the next markers, where nothing is found. The elite
      *  foes' clearance rays are the precedent (expandEliteEnemies, above). Null when no wall answers. */
     veinWall(marker, bearing) { return profVeinWall(marker, bearing); },
     /** PROF2: flats the professions stand here (a vein's ore), owned with the dungeon's own - freed by destroy() with the

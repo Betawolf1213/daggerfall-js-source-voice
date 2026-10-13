@@ -809,7 +809,7 @@ export function drawHud(renderer, canvas, art, vitals, heading01, dt = 0,
   const by = canvas.height - art.compassBox.h * s;
   const { bw, bh } = drawCompassStrip(renderer, art, bx, by, s, heading01);
   drawArrowCount(renderer, canvas, font, vitals, weaponSheathed, { bw, bh }, s);
-  // NODE-MARKS: every profession's nodes near (a Prospector's veins, 200 m; a Tracker's animals, 100 m) - FIRST, so the
+  // NODE-MARKS: every profession's nodes near (a Prospector's veins, 500 m; a Tracker's animals, 100 m) - FIRST, so the
   drawNodeCompassMarks(renderer, nodes, playerXZ, heading01, { bx, by, bw, s });   // AUDIT: Detect markers, the party and the ships stand over them
   drawBoatCompassMarks(renderer, boats, playerXZ, heading01, { bx, by, bw, s });   // BOAT-MARK: my boats - over the nodes, under the live marks
   // X4: DrawTrackedObjects (HUDCompass.cs:198-217), AFTER the box -

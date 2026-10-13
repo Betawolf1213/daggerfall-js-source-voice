@@ -228,8 +228,8 @@
   {
     "name": "CRAFT3-book-unmapped",
     "file": "src/net/profBook.js",
-    "old": "    track(profession) { const p = trackOf(profession); return state.tracks.get(p)",
-    "new": "    track(profession) { const p = profession; return state.tracks.get(p)",
+    "old": "      const p = trackOf(profession);\n      const t = state.tracks.get(p);",
+    "new": "      const p = profession;\n      const t = state.tracks.get(p);",
     "tests": [
       "test/craft3_five.test.js"
     ]

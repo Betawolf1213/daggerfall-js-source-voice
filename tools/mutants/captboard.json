@@ -155,8 +155,8 @@
   {
     "name": "BOARD-delivery-near",
     "file": "src/systems/naval/harbourBoard.js",
-    "old": "cheb(p, port) >= DELIVERY_PX_MIN)",
-    "new": "cheb(p, port) >= 1)",
+    "old": "cheb(p, port) >= DELIVERY_PX_MIN && deliveryPort(p, seaAt))",
+    "new": "cheb(p, port) >= 1 && deliveryPort(p, seaAt))",
     "tests": [
       "test/captboard.test.js"
     ]

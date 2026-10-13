@@ -50,8 +50,12 @@ export const validPortSite = (k) => (PORT_SITE_ORDER.includes(/** @type {any} */
 /** The towns that stand the port's places: the cities, towns and villages the port's harbour law calls ports (the
  *  host's `isPort` - its map pixel's port). No farm, manor, temple or dungeon stands a shipyard. */
 export const PORT_TOWN_TYPES = Object.freeze([LOCATION_TYPES.TownCity, LOCATION_TYPES.TownHamlet, LOCATION_TYPES.TownVillage]);
+/** Whether a map table's location type is a town's (PORT_TOWN_TYPES) - the half of `isPortTown` a map summary answers
+ *  alone (FIELD BUGS 2026-10-13c PORT-TOWNS: the harbour board's ports, scenes/world.js navalPortList). Pure.
+ *  @param {number} type */
+export const isPortTownType = (type) => PORT_TOWN_TYPES.includes(/** @type {any} */ (type));
 /** Whether a location stands the port's places: a town of PORT_TOWN_TYPES that `isPort` says is a port. */
-export const isPortTown = (loc, isPort) => PORT_TOWN_TYPES.includes(loc?.mapTableData?.locationType) && !!isPort;
+export const isPortTown = (loc, isPort) => isPortTownType(loc?.mapTableData?.locationType) && !!isPort;
 /** Whether a location is a port by its own data - `hasPort(mapId)` (Travel Options' hand-written harbours, travelPorts.js)
  *  or Daggerfall's PortTownAndUnknown byte (scenes/world.js portByData; AUDIT SHIPYARDS L6-10: executed here, not read
  *  off world.js's text). Pure. */

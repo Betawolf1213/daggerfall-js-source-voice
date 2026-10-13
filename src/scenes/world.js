@@ -313,7 +313,7 @@ import { createWagonWarden, wardenTownIn } from './wagonWardenHost.js';   // WAR
 import { WARDEN_VENDOR, isWardenTown } from '../systems/wagonWarden.js';   // WARDEN1: the stamp's save slot, and the towns a watch keeps
 import { townGroundOf, yardSitesOn, craftYardSitesOn, carveYards, MONUMENT_KEEP_M, yardMeasuresOf, placedModelBox } from '../world/merchantYardSites.js';   // MERCHANT-YARDS: where they stand off the town's layout, and the people's navgrid carved round them
 import { isYardTown, yardKeeper, ALL_YARD_KINDS, YARD_BENCH } from '../systems/merchantYards.js';   // MERCHANT-YARDS: the towns that stand them, who keeps them, the town's people
-import { isPortTown, portTownByData, portKeeper, portPlaceName, PORT_SITE_ORDER } from '../systems/portPlaces.js';   // SHIPYARDS: the port towns, their keepers and their places' names
+import { isPortTown, isPortTownType, portTownByData, portKeeper, portPlaceName, PORT_SITE_ORDER } from '../systems/portPlaces.js';   // SHIPYARDS: the port towns, their keepers and their places' names; FIELD BUGS 2026-10-13c PORT-TOWNS: the harbour board's ports are its towns
 import { townSeaOf, seaBearing, seaField, portSitesOn, portPlaceRows, sceneToLocationXZ } from '../world/portSites.js';   // SHIPYARDS: where a port town's shipyard and lighthouse stand - its seaward ground
 import { SHIPYARD as SHIPYARD_LAYOUT } from '../world/shipyardModel.js';   // SHIPYARDS: the crew hall's table, for the talk directory's row
 import { HARBOUR_REACH } from '../systems/naval/shipLife.js';   // AUDIT HOLDINGS O1: the harbour's scan reach, its pixels built before it is sounded
@@ -603,6 +603,9 @@ import { essenceOf, piecePoints, DISENCHANTER } from '../net/alchemyLaw.js';   /
 import { facetBand } from '../net/recipeLaw.js';   // PROF10: the facet's attribute band
 import { panBand, DISH_LEVEL } from '../net/recipeLaw.js';   // PROF9: the pan's attribute band; a feast's level at the table
 import { COOK_FIRE } from '../net/professionLaw.js';   // PROF9: the fire Cooking is done at - any lit one, no fee
+import { SURVEYOR } from '../net/professionLaw.js';   // MINE-PERKS: Mining 100's Surveyor, whose own word witnesses the ground
+import { lodeMapMarks, lodeLabel, LODE_COMPASS_CSS } from '../ui/lodeMapMark.js';   // MINE-PERKS: a Motherlode Sense's day's Motherlodes, on both maps and the Overworld
+import { localWhenText } from '../systems/eventTimers.js';   // AUDIT MINE-PERKS: a Motherlode's hour as the timers say a moment - this machine's clock, its weekday where it is not today
 import { setFeastShare, takeFeastGift, shareFeastWith } from '../systems/cookItems.js';   // PROF9: a feast shared with the party at the table
 import { hasSkillet, packSavedFires, CAMP_TEXT } from '../systems/survival/camp.js';   // PROF9: C&C's Skillet widens the pan's window; AUDIT REST II H5: a dungeon save's fires carried out
 import { allyCastFrame } from '../systems/allyCast.js';   // PROF9: a feast reaches a party mate as ALLY-CAST's gift
@@ -3964,6 +3967,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   pipeline.keepPlaces('owdungeon', TV_DUNGEON_MODELS_MAX);   // OW-DUNGEONS: a dungeon that leaves the set and comes back is not loaded again
   const _tvBountyHold = new Map();   // BOUNTY-OVERWORLD: each held bounty's kept scene point, by bounty id
   const _tvVendorHold = {};   // HOME-VENDOR: the trader's waypoint's kept scene point (tvSceneKept's holder)
+  const _tvLodeHold = new Map();   // AUDIT MINE-PERKS: each sensed Motherlode's kept scene point, by its key
   const _tvWaypointHold = new Map();   // WAYPOINTS: each flag's kept scene point (tvSceneKept's holders), by its id
   const _tvPartyHold = new Map();   // AUDIT OW5 P6: each party member's kept scene point (PERF-TV's own holder), by account
   const TV_FIND_REACH = 4;   // AUDIT OW5 D1: map pixels about the traveller's that a kilometre from the feet can reach
@@ -10173,8 +10177,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     _navalPortPxAt = { key, d: Number.isFinite(d) ? d : null };
     return _navalPortPxAt.d;
   };
-  /** CAPT-BOARD: every port of the map (Travel Options' - travelPorts.js) as the harbour board reads them - `{ key (its
-   *  map pixel), name, px, py, region, crown }` - found once the map's directory stands. */
+  /** CAPT-BOARD: every port of the map as the harbour board reads them - `{ key (its map pixel), name, px, py, region,
+   *  crown }` - found once the map's directory stands. FIELD BUGS 2026-10-13c PORT-TOWNS: THE TOWNS among Travel Options'
+   *  harbours (travelPorts.js) - a city, a town or a village (systems/portPlaces.js isPortTownType: the towns that stand
+   *  the port's places, every one of them on this list). The list is every place a ship may put in at - MAPS.BSA's 343
+   *  locations flagged PortTownAndUnknown and Hazelnut's 35 more - and 223 of its 378 are tombs, farms, inns, temples,
+   *  manors and ruins: the board sent cargoes to "Corranoth's Tomb's harbourmaster". */
   let _navalPortList = null;
   const navalPortList = () => {
     if (!mapDict) return [];
@@ -10182,7 +10190,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const out = new Map();
     for (const id of new Set(PORT_LOCATION_IDS)) {
       const s = mapDict.get(id & 0x000fffff);
-      if (!s) continue;
+      if (!s || !isPortTownType(s.locationType)) continue;
       const at = getPixelFromPixelID(s.id);
       const name = maps.getRegion(s.regionIndex)?.mapNames?.[s.mapIndex];
       const key = `${at.x},${at.y}`;
@@ -17807,6 +17815,20 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       isOnShip: () => isOnShip(playerEntity, playerEntity.boardShipPosition ?? null, playerTravelPixel()),
     };
   }
+  /** MINE-PERKS (Professions-Arc 43): THE MAPS' MOTHERLODES - a Motherlode Sense's (Mining 100) every one of the day's
+   *  still to rise or standing, from the day's start (net/motherlodeBook.js sensedAll); none for anyone else, whose
+   *  compass alone marks one, from its warning (LODE-MARK). */
+  const _lodesSensed = [];
+  /** Whether this character's Mining stands under the Motherlode Sense, online with the professions open. */
+  const lodeSense = () => !!motherlodeBook && profBook?.state.open === true && profBook.track('mining').specs?.[100] === 'motherlode-sense';
+  /** The words a Motherlode is named and timed in - AUDIT MINE-PERKS (the cold pass, A1): its hour on THIS machine's
+   *  clock (TIME1's display, as the timers window's), its weekday where it is not today - a bare "13:00" was read as past
+   *  across the date line from the UTC day the Motherlodes keep. */
+  const lodeWords = { oreName: (m) => materialLabel(m).replace(/ Ore$/, ''), clock: (s) => localWhenText(s * 1000 - _sharedOffsetMs, Date.now()) };
+  const lodeMapMarksNow = () => {
+    if (!lodeSense()) return [];
+    return lodeMapMarks(motherlodeBook.sensedAll(_lodesSensed), Math.floor((Date.now() + _sharedOffsetMs) / 1000), lodeWords);
+  };
   /** ORE-MAP (ui/oreMapTip.js): A BARE PIXEL'S ORE CARD on the held map - its veins, its dungeons', its kingdom's own and
    *  whether the witnesses have vouched for its ground. The ground's witnessed state is the book's (net/profBook.js
    *  pixel); one the book has not heard today is asked once, after the pointer has rested on it ORE_ASK_MS, through the
@@ -17827,7 +17849,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         gatherHost?.askPixels([[px, py]]).then(() => again?.(), () => {});
       }, ORE_ASK_MS);
     }
-    return oreMapTip({ climate: maps.getClimateIndex(px, py), region: maps.getRegionIndexAt(px, py), fact });
+    const surveyed = profBook?.state?.open === true && profBook.track('mining').specs?.[100] === SURVEYOR;   // MINE-PERKS
+    return oreMapTip({ climate: maps.getClimateIndex(px, py), region: maps.getRegionIndexAt(px, py), fact, surveyed });
   };
   /** ONE construction for the map, because G5 gave it a second opener
    *  and the dependency list is long enough that two copies would
@@ -17896,6 +17919,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       bounties: () => [...(bountyHost?.mapMarks() ?? []), ...(legacyHost?.mapMarks() ?? [])],   // LEGACY4: and where the house's fallen lie, ringed as a hunt is
       // RVN7c (bible/12-Enhanced-AI/Feud-Arc.md 18.3): each revenant lair heard of - a blood-red circle, on both maps
       revenants: () => revenantMapMarks(),
+      // MINE-PERKS (Professions-Arc 43): a Motherlode Sense's day's Motherlodes - each on its pixel from the day's start,
+      // its ore and its hour (ui/lodeMapMark.js); none without the Sense, nor with the professions shut
+      lodes: () => lodeMapMarksNow(),
       // HOME-VENDOR: the trader's waypoint - its town's pixel, the house's owner and the town, on both maps (ui/vendorMapMark.js)
       vendor: () => { const wp = vendorWaypoint(); const t = wp ? _townOfMapId.get(wp.map) : null; return t ? { px: t.px, py: t.py, label: `Trader: ${wp.owner || 'a'}'s house`, town: t.name } : null; },
       // HUB1: each region's hub, marked and named - online alone (systems/regionHubs.js); offline the map is DFU's
@@ -27021,8 +27047,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const partyOnMaps = () => partyNear().filter((m) => !_hiddenPeers.has(m.id));
   /** NODE-MARKS (2026-10-01, Mac: "Any profession node, like herbs, should appear on the compass. The node itself should
    *  also stand out with a detailed slight glow"): THE NODES STANDING ABOUT `feet` (the place's own frame - the street's,
-   *  or the dungeon's), for the compass and the glow (scenes/gatherHost.js marks: a Prospector's veins from 200 m off,
-   *  PROF0 3.3 - mineKind's mark); null in a building or with the professions shut (AUDIT: the compass keeps them under the travel view). */
+   *  or the dungeon's), for the compass and the glow (scenes/gatherHost.js marks: a Prospector's veins from 500 m off,
+   *  PROF0 3.3 and MINE-PERKS - mineKind's mark; a Deep Delver's dungeon veins from anywhere in it); null in a building or with the professions shut (AUDIT: the compass keeps them under the travel view). */
   const nodeMarksAt = (feet) => {
     if (!gatherHost || profBook?.state.open !== true || !feet) return null;
     const m = _mode();
@@ -32726,6 +32752,26 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
         marks.push({ key: `vendor:${wp.map}:${wp.buildingKey}`, at: tvSceneKept(_tvVendorHold, x, z, TV_PLACE_LIFT), label: `Trader: ${wp.owner || 'a'}'s house`, sub: `${t.name} · ${farDistanceText(km)}`, kind: 'target', edge: true });
       }
     }
+    // AUDIT MINE-PERKS (the cold pass, A8 - the thread: "mark the motherlode spots with a waypoint on the travel map"): A
+    // MOTHERLODE SENSE'S MOTHERLODES on the Overworld too - each at its pixel's middle, its ore and its hour, held at the
+    // edge off the picture with its distance as a bounty is; Mining's glyph in the compass's aqua, under the Gathering
+    // switch, its distance never the nodes' reach (no `dist`)
+    {
+      const keep = new Set();
+      if (lodeSense()) {
+        const nowS = Math.floor((Date.now() + _sharedOffsetMs) / 1000);
+        for (const l of motherlodeBook.sensedAll(_lodesSensed)) {
+          keep.add(l.key);
+          const o = mapPixelToWorldCoords(l.x, l.y);
+          const x = o.x + 16384, z = o.z + 16384;   // the pixel's middle, native units
+          let h = _tvLodeHold.get(l.key);
+          if (!h) { h = {}; _tvLodeHold.set(l.key, h); }
+          const km = (Math.hypot(x - here.x, z - here.z) / 32768) * PIXEL_KM;
+          marks.push({ key: `lode:${l.key}`, at: tvSceneKept(h, x, z, TV_PLACE_LIFT), label: lodeLabel(l, nowS, lodeWords), sub: farDistanceText(km), kind: 'gather mining', color: LODE_COMPASS_CSS, edge: true });
+        }
+      }
+      for (const k of [..._tvLodeHold.keys()]) if (!keep.has(k)) _tvLodeHold.delete(k);   // a Motherlode gone lets its point go
+    }
     // WAYPOINTS (2026-10-06): THE FLAGS - every waypoint the switches show, a small flag in its colour where it lies; a
     // FOLLOWED one held at the screen's edge with its distance, as a bounty is (the rest only where they are in view).
     // A click on one is a walk to it; a right-click its menu (onTravelViewContext)
@@ -36399,7 +36445,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
           quest: vendorCompassMark() ?? townQuestCompassMark() ?? questCompassMark(),   // GUIDE5: the tracker's quest's place on the compass, on the street; HOME-VENDOR: a trader's waypoint first, while it is set; GUIDE8: the Town tier's building, in its town
           party: partyCompass(),   // COMPASS-PARTY: the party's marks - the bodies drawn here, the rest where their poses say
           ships: navalOn() && _mode() === 'exterior' ? naval?.compassShips() ?? null : null, boats: csaRuntime && _mode() === 'exterior' ? boatCompassPoints(csaRuntime.AllBoats, csaBoatUnderMe(), enchantFeet(), state, TERRAIN_SIZE) : null,   // AUDIT NAV1 (the helm): the sea's ships on the compass; BOAT-MARK: my own boats, from anywhere on the street (under the travel view too), the one at my helm left out
-          nodes: professionMarks(),   // NODE-MARKS: every profession's nodes near (PROF2: a Prospector's veins within 200 m, PROF0 3.3); PROF7: a Tracker's animals within 100 m
+          nodes: professionMarks(),   // NODE-MARKS: every profession's nodes near (PROF2: a Prospector's veins within 500 m since MINE-PERKS, PROF0 3.3); PROF7: a Tracker's animals within 100 m
           largeHud: largeHudOptions({ renderer, fetchBytes, palette }, playerEntity),
           // AUDIT 39: the enhanced HUD's two hand plaques. Both values
           // are already this host's - the rig one argument over, the

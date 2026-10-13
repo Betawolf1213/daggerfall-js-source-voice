@@ -32,7 +32,7 @@
 // harvest (`ask`) to the service.
 // ═══════════════════════════════════════════════════════════════════
 import { veins, boulders, nodeKey, VEIN_TABLES, dungeonVeins, dveinKey } from '../net/nodeLaw.js';
-import { tierOpen, TIER_RANKS, PROF_RANK_MAX, pickAxeBand, minedMaterial, storesFullIn, goneIn, fullWordsIn, GROUND_WHERE, GROUND_WHERE_WORDS } from '../net/professionLaw.js';
+import { tierOpen, TIER_RANKS, PROF_RANK_MAX, pickAxeBand, minedMaterial, storesFullIn, goneIn, fullWordsIn, GROUND_WHERE, GROUND_WHERE_WORDS, SURVEYOR } from '../net/professionLaw.js';
 import { natureStandsAt, groundAt, insideRocks } from '../world/terrainNature.js';   // NODE-CLEAR: the rock check's one home
 import { WORLD_MAP_TILE_DIM } from '../world/terrainTiles.js';
 import { TERRAIN_SIZE } from '../world/terrainSampler.js';
@@ -99,14 +99,27 @@ export const FOOT_INSET_M = 0.5;
 /** Whether a pixel-local (x, z) stands on the pixel's own ground, FOOT_INSET_M in. */
 const onPixel = (x, z) => x >= FOOT_INSET_M && x <= TERRAIN_SIZE - FOOT_INSET_M && z >= FOOT_INSET_M && z <= TERRAIN_SIZE - FOOT_INSET_M;
 export const VEIN_STONE_REACH = 24;
-/** A Prospector's compass marks the veins stood within this many metres (PROF0 3.3). */
-export const PROSPECT_M = 200;
+/** A Prospector's compass marks the veins stood within this many metres (PROF0 3.3) - MINE-PERKS (Professions-Arc 43,
+ *  the players' "Mining perks need buff" thread: "its only a 50m difference"): 500, where it was 200 beside everyone's
+ *  150 (NODE_MARK_M). */
+export const PROSPECT_M = 500;
+/** AUDIT MINE-PERKS (the cold pass, 3): a Prospector's dungeon veins keep PROF2's 200 m - at 500 the Prospector marked
+ *  nearly every dungeon's every vein (a dungeon is blocks of 51.2 m), the Deep Delver's own perk, the choice beside it. */
+export const PROSPECT_DEEP_M = 200;
+/** AUDIT MINE-PERKS (the cold pass, 5 and 6): what a Prospector's marks need of the gathering host - the stood pixels
+ *  within PROSPECT_M walked, and room on the compass for the veins within it (a Mountain stands twelve a pixel; at
+ *  NODE_MARK_MAX's sixteen a worst standpoint marked fifteen of twenty). */
+export const PROSPECT_REACH = Object.freeze({ walk: PROSPECT_M, max: 32 });
+/** MINE-PERKS: a Deep Delver's compass marks every vein of the dungeon it stands in - this far is past any dungeon's
+ *  reach ("actually finding one in the labyrinths"). */
+export const DEEP_DELVER_M = 2000;
 /** NODE-MARKS: a node's glow about its foot (m) - a vein's ore, a boulder's loose stone under its rock, a dungeon
- *  vein's on its wall - and a Prospector's veins, marked out to PROSPECT_M. */
+ *  vein's at its wall - and a Prospector's veins, marked out to PROSPECT_M. */
 export const MINE_MARKS = Object.freeze({
   vein: Object.freeze({ w: 1.6, h: 1.3 }), boulder: Object.freeze({ w: 2.1, h: 1.5 }), dvein: Object.freeze({ w: 1.4, h: 1.2 }),
 });
-const PROSPECTOR_MARKS = Object.freeze({ vein: Object.freeze({ ...MINE_MARKS.vein, reach: PROSPECT_M }), dvein: Object.freeze({ ...MINE_MARKS.dvein, reach: PROSPECT_M }) });
+const PROSPECTOR_MARKS = Object.freeze({ vein: Object.freeze({ ...MINE_MARKS.vein, reach: PROSPECT_M }), dvein: Object.freeze({ ...MINE_MARKS.dvein, reach: PROSPECT_DEEP_M }) });
+const DEEP_DELVER_MARK = Object.freeze({ ...MINE_MARKS.dvein, reach: DEEP_DELVER_M });
 /** PROF2b: a Motherlode's heap - this many of its ore's flats at this size, spread this far (m) - and its glow, marked
  *  on the compass from `reach` off (the compass marks it from anywhere while it stands - scenes/world.js). */
 export const MOTHERLODE_FLATS = 7;
@@ -176,11 +189,13 @@ function nearestStone(samples, tilemap, locationRect, tx, ty, reach, rocks, clea
  * VERGE1: `verge` (`(x, z, reach) => boolean`, the pixel's - world/roadVerge.js vergeClear), when handed, keeps a vein
  * that stands on the stone off the roads by its glow's half width (MINE_MARKS); a vein or a boulder at a rock piece's
  * foot keeps the piece's own clearance (ROADS-CLEAR).
- * @param {{ px: number, py: number, day: number, climate: number, region?: number|null, confirmed?: boolean,
+ * MINE-PERKS: `surveyed` - this character a Surveyor (net/nodeLaw.js vein): their veins on ground not confirmed are
+ * their climate's whole table, as the service rolls them for them.
+ * @param {{ px: number, py: number, day: number, climate: number, region?: number|null, confirmed?: boolean, surveyed?: boolean,
  *   samples: Float32Array, tilemap: Uint8Array, locationRect?: any, rocks?: number[][], near?: number[][],
  *   verge?: ((x: number, z: number, reach: number) => boolean)|null, beach?: ?Float32Array }} p
  */
-export function standMineNodes({ px, py, day, climate, region = null, confirmed = false, samples, tilemap, locationRect = null, rocks = [], near = [], verge = null, beach = null }) {
+export function standMineNodes({ px, py, day, climate, region = null, confirmed = false, surveyed = false, samples, tilemap, locationRect = null, rocks = [], near = [], verge = null, beach = null }) {
   const out = [];
   const pieces = rocks ?? [];
   // ROCK-NEAR (FIELD BUGS 2026-10-09b): what no node may stand inside - this pixel's pieces and the ones its built
@@ -218,7 +233,7 @@ export function standMineNodes({ px, py, day, climate, region = null, confirmed 
     stones.push({ key: nodeKey({ kind: 'boulder', x: px, y: py, day, slot: b.slot }), what: 'boulder', slot: b.slot, tier: b.tier, material: b.material, local: [fx, g, fz], rock, lift: Math.min(1.2, Math.max(0.4, (rock[4] - g) / 2)) });
   }
   if (VEIN_TABLES[climate]) {
-    for (const v of veins({ x: px, y: py, day, climate, region, confirmed })) {
+    for (const v of veins({ x: px, y: py, day, climate, region, confirmed, surveyed })) {
       const x = v.u * TERRAIN_SIZE, z = v.v * TERRAIN_SIZE;
       const claimed = claim(x, z);
       const rock = claimed?.rock ?? null;
@@ -389,6 +404,9 @@ export function motherlodePlan({ node, taken, counting, found, rank, pick, store
   return { harvest: 'ore', verb, rest: `Mining ${rank}`, ready: true };
 }
 
+/** PROF-MENU: what a mine node is called - the boulder, the Motherlode or the vein, by its ore. */
+export const mineNodeName = (n) => (n.what === 'boulder' ? 'Boulder' : n.what === 'motherlode' ? `Motherlode of ${materialLabel(n.material).replace(/ Ore$/, '')}` : `${materialLabel(n.material).replace(/ Ore$/, '')} Vein`);
+
 /** The hand's StrikeDown frame for a swing's phase (1 just struck, 0 none) - Idle between swings. */
 export const pickHandFrame = (swing) => (swing > 0 ? { state: 'StrikeDown', frame: Math.min(STRIKE_FRAMES - 1, Math.floor((1 - swing) * STRIKE_FRAMES)) } : { state: 'Idle', frame: 0 });
 
@@ -405,14 +423,15 @@ export function mineKind({ book, lodes = null, marks = null }) {
   return {
     id: 'mine',
     professions: Object.freeze(['mining']),
-    nodesOf({ px, py, day, info, confirmed, entry, near }) {
+    nodesOf({ px, py, day, info, confirmed, specs, entry, near }) {
       const stone = {
         samples: entry.samples, tilemap: entry.tilemap, locationRect: entry.locationRect ?? entry.wodSite ?? null, rocks: entry.rocks ?? [],   // AUDIT 29 C8
         near: near ?? [],   // ROCK-NEAR: the neighbours' pieces reaching in
         beach: entry.beach ?? null,   // AUDIT LANDFORMS II H2: the beach line DFU's own blend draws in a town's pixel
         verge: entry.verge ?? null,   // VERGE1: off the roads
       };
-      const nodes = standMineNodes({ px, py, day, climate: info.climate, region: info.region, confirmed, ...stone });
+      const surveyed = specs?.('mining')?.[100] === SURVEYOR;   // MINE-PERKS: a Surveyor's own word witnesses the ground
+      const nodes = standMineNodes({ px, py, day, climate: info.climate, region: info.region, confirmed, surveyed, ...stone });
       // PROF2b: a Motherlode standing on this pixel, clear of its veins and boulders
       const here = lodes?.standingOn?.(px, py) ?? [];
       return here.length ? [...nodes, ...standMotherlodes({ lodes: here, ...stone, taken: nodes.map((n) => n.local) })] : nodes;
@@ -422,16 +441,24 @@ export function mineKind({ book, lodes = null, marks = null }) {
     },
     flatsOf: (n) => [{ archive: ORE_FLAT_ARCHIVE, record: mineRecord(n), scale: n.what === 'boulder' ? STONE_SCALE : n.what === 'motherlode' ? MOTHERLODE_SCALE : VEIN_SCALE, centers: mineFlats(n), tint: mineWash(n), dye: mineWash(n) ? ORE_DYE : 0 }],   // VEIN-WASH: its ore's own wash; VEIN-HUE: as its colour
     gone,
-    /** NODE-MARKS: every vein and boulder standing; a Prospector's veins from PROSPECT_M off (PROF0 3.3) */
+    /** NODE-MARKS: every vein and boulder standing; a Prospector's veins from PROSPECT_M off (PROF0 3.3); MINE-PERKS: a
+     *  Deep Delver's dungeon veins from anywhere in the dungeon (DEEP_DELVER_M) */
     mark(n, { specs }) {
       if (gone(n)) return null;
       if (n.what === 'motherlode') return MOTHERLODE_MARK;   // PROF2b: from 400 m, whatever the specialisation
+      if (n.what === 'dvein' && specs('mining')[50] === 'deep-delver') return DEEP_DELVER_MARK;
       return (specs('mining')[50] === 'prospector' && PROSPECTOR_MARKS[n.what]) || MINE_MARKS[n.what] || MINE_MARKS.vein;
     },
+    /** MINE-PERKS: on the Overworld a Prospector's veins are each a mark of their own, named by their ore ("Silver Vein"),
+     *  where everyone's are Mining's group and its count (GATHER-OW) - "on the overhead travel it shows all the individual
+     *  veins in the area". A boulder and a Motherlode ride the group. */
+    overworldOne: (n, { specs }) => (n.what === 'vein' && specs('mining')[50] === 'prospector' ? mineNodeName(n) : null),
+    /** AUDIT MINE-PERKS: a Prospector's marks walk PROSPECT_M and keep room for its veins (PROSPECT_REACH) */
+    markReach: ({ specs }) => (specs('mining')[50] === 'prospector' ? PROSPECT_REACH : null),
     tools: Object.freeze([FT.PickAxe]),   // TOOL-USE: the Pick-Axe's Use at a vein or a boulder is E there
     where: (n) => (n.what === 'dvein' ? null : actChecksRefusal(GROUND_WHERE, GROUND_WHERE_WORDS)),   // SETTLE-SAID: a dungeon's vein asks no settlement (DUNGEON_SKIP)
     /** PROF-MENU: the menu's title - the boulder, or the vein's ore. */
-    nodeName: (n) => (n.what === 'boulder' ? 'Boulder' : n.what === 'motherlode' ? `Motherlode of ${materialLabel(n.material).replace(/ Ore$/, '')}` : `${materialLabel(n.material).replace(/ Ore$/, '')} Vein`),
+    nodeName: mineNodeName,
     plan(n, { entity, rank }) {
       if (n.what === 'motherlode') {   // PROF2b
         const plan = motherlodePlan({

@@ -216,6 +216,17 @@ export function createMotherlodeBook({ door, character, me, nowS, onChange = () 
       }
       return out;
     },
+    /** MINE-PERKS (Professions-Arc 43): what a Motherlode Sense's maps mark - every one of the day's still to rise or
+     *  standing, from the day's start, never once it is gone or spent nor after this account's find today (ui/lodeMapMark.js),
+     *  into `out` as standingAll's. */
+    sensedAll(out = []) {
+      meNow();
+      out.length = 0;
+      const t = nowS();
+      if (state.found || state.day !== Math.floor(t / 86400)) return out;
+      for (const l of state.lodes) if (t < l.closesAt && (l.struck ?? 0) < MOTHERLODE_STRIKERS) out.push(l);
+      return out;
+    },
     /** A lode by its node key. */
     lodeOf: (key) => state.lodes.find((l) => l.key === key) ?? null,
     /** Whether this account's Motherlode today is found. */
