@@ -28,6 +28,10 @@ import EG_HERO_ECLIPSE_MESH from '../assets/egfrags/egheroEclipse.mesh.json' wit
 import EG_HERO_CAVERNS_MESH from '../assets/egfrags/egheroCaverns.mesh.json' with { type: 'json' };
 import EG_HERO_STACKS_MESH from '../assets/egfrags/egheroStacks.mesh.json' with { type: 'json' };
 import EG_HERO_COLONNADE_MESH from '../assets/egfrags/egheroColonnade.mesh.json' with { type: 'json' };
+// EG-HERO (2026-10-13): the Havoc Wellhead's three hero fragments' mesh halves (net/egHeroFrags.js holds their laws).
+import EG_HERO_FORGE_GUT_MESH from '../assets/egfrags/egheroForgeGut.mesh.json' with { type: 'json' };
+import EG_HERO_CLAN_PIT_MESH from '../assets/egfrags/egheroClanPit.mesh.json' with { type: 'json' };
+import EG_HERO_DEEP_CAVERNS_MESH from '../assets/egfrags/egheroDeepCaverns.mesh.json' with { type: 'json' };
 
 /** A registry of mesh halves, by id: each beside its law half in `laws` (the same id, the same band, the same bake) - or
  *  refused, naming it. */
@@ -48,6 +52,9 @@ export const EG_HERO_FRAG_MESHES = egHeroFragMeshes([
   EG_HERO_CAVERNS_MESH,
   EG_HERO_STACKS_MESH,
   EG_HERO_COLONNADE_MESH,
+  EG_HERO_FORGE_GUT_MESH,
+  EG_HERO_CLAN_PIT_MESH,
+  EG_HERO_DEEP_CAVERNS_MESH,
 ]);
 
 /** Fragment `id`'s drawn mesh into kit `kit` (world/meshKit.js, or anything with its `mesh`), its origin laid at `at` (m, the

@@ -280,3 +280,185 @@ export function shell(m, { cols, rows, inner, outer, hole = () => false, cut = (
   }
   return { inner: PI, outer: PO };
 }
+
+// ── EG-HERO (2026-10-13), THE HAVOC WELLHEAD'S SHAPES ──────────────────────────────────────────────────────────────
+// Each used by two of the Wellhead's three scenes (tools/egHeroForgeGutScene.mjs, egHeroClanPitScene.mjs,
+// egHeroDeepCavernsScene.mjs): faces that carry their own normals (never the writer's hypotenuse, an engine's own), boxes, rings, notched
+// floors and a rock mass round a mouth - IEEE arithmetic and Math.sqrt alone, as the rest of the kit.
+/** A face's own normal (Newell's, unit by Math.sqrt alone). */
+function wellNormal(pts) {
+  const n = [0, 0, 0];
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i], b = pts[(i + 1) % pts.length];
+    n[0] += (a[1] - b[1]) * (a[2] + b[2]); n[1] += (a[2] - b[2]) * (a[0] + b[0]); n[2] += (a[0] - b[0]) * (a[1] + b[1]);
+  }
+  return unit(n);
+}
+/**
+ * A FLAT FACE on mesh `m` (EG-HERO, the Havoc Wellhead's three): `pts` counter-clockwise seen from where it faces, slot
+ * `mat`, its own normal at every corner (Newell's - never the writer's own, whose hypotenuse an engine may round
+ * otherwise) and its UVs from its plane: the axis it faces most dropped (u along x or y, v up a wall), a tile every two
+ * metres (`uvScale` 0.5), or `uv(p)`; `want` a direction it must face (its corners turned round when they wind the other
+ * way). Hard where it meets another face - the weld keeps its normal its own.
+ */
+export function planeFace(m, pts, mat = 0, { uvScale = 0.5, uv = null, want = null } = {}) {
+  let P = pts.map((p) => p.map(r4)), n = wellNormal(P);
+  if (want && n[0] * want[0] + n[1] * want[1] + n[2] * want[2] < 0) { P = P.reverse(); n = wellNormal(P); }
+  const ax = [0, 1, 2].reduce((b, k) => (Math.abs(n[k]) > Math.abs(n[b]) ? k : b), 2);
+  const at = (p) => (uv ? uv(p) : ax === 2 ? [p[0] * uvScale, p[1] * uvScale] : ax === 0 ? [p[1] * uvScale, p[2] * uvScale] : [p[0] * uvScale, p[2] * uvScale]).map(r4);
+  return m.face(P, mat, P.map((p) => [n, at(p)]));
+}
+/** A BOX of flat faces from (x0, y0, z0) to (x1, y1, z1), every face out; `skip` names the faces left off ('-x+z' - a
+ *  face against a wall or a floor nobody sees). */
+export function boxFaces(m, x0, y0, z0, x1, y1, z1, mat = 0, { skip = '', uvScale = 0.5 } = {}) {
+  if (x0 > x1) [x0, x1] = [x1, x0];
+  if (y0 > y1) [y0, y1] = [y1, y0];
+  if (z0 > z1) [z0, z1] = [z1, z0];
+  const o = { uvScale };
+  if (!skip.includes('-z')) planeFace(m, [[x0, y0, z0], [x0, y1, z0], [x1, y1, z0], [x1, y0, z0]], mat, o);
+  if (!skip.includes('+z')) planeFace(m, [[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], mat, o);
+  if (!skip.includes('-y')) planeFace(m, [[x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1]], mat, o);
+  if (!skip.includes('+y')) planeFace(m, [[x1, y1, z0], [x0, y1, z0], [x0, y1, z1], [x1, y1, z1]], mat, o);
+  if (!skip.includes('-x')) planeFace(m, [[x0, y1, z0], [x0, y0, z0], [x0, y0, z1], [x0, y1, z1]], mat, o);
+  if (!skip.includes('+x')) planeFace(m, [[x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1]], mat, o);
+  return m;
+}
+/** A WALK-GRAPH EDGE marker: a strip `w` wide from a to b ([x, y, z]), facing up - refFragMesh's strip, its perpendicular
+ *  by Math.sqrt alone. */
+export function walkEdge(m, a, b, w) {
+  const d = unit([b[0] - a[0], b[1] - a[1], 0]), px = (-d[1] * w) / 2, py = (d[0] * w) / 2;
+  return planeFace(m, [[a[0] - px, a[1] - py, a[2]], [b[0] - px, b[1] - py, b[2]], [b[0] + px, b[1] + py, b[2]], [a[0] + px, a[1] + py, a[2]]]);
+}
+/** A level DISC of radius r about (x, y) at height z on ring `n` (RINGS' sides), facing up: a node's or a spot's marker,
+ *  an inlay. Its extents are exactly 2r both ways (every ring has its four quarters). */
+export function levelDisc(m, x, y, z, r, n = 16, mat = 0) {
+  return planeFace(m, RINGS[n].map(([c, s]) => [x + r * c, y + r * s, z]), mat);
+}
+/** The corners of ring `n` from index i0 to i1 (i1 - i0 at most n; RINGS' order, wrapping). */
+const wellArc = (n, i0, i1) => Array.from({ length: i1 - i0 + 1 }, (_, k) => RINGS[n][(((i0 + k) % n) + n) % n]);
+/**
+ * A RING BAND on mesh `m`: the annulus about (cx, cy) from radius r0 to r1 at height z, over ring `n` from corner i0 to
+ * i1 (all of it when i1 - i0 is n), a quad a side, facing up (`down`: under) - a tier's tread, a dais, an iron ring set in
+ * a floor, an edge line round a curved rim.
+ */
+export function ringBand(m, cx, cy, r0, r1, z, n, i0, i1, mat = 0, { down = false, uvScale = 0.5 } = {}) {
+  const A = wellArc(n, i0, i1);
+  for (let k = 0; k + 1 < A.length; k++) {
+    const [c0, s0] = A[k], [c1, s1] = A[k + 1];
+    const q = [[cx + r0 * c0, cy + r0 * s0, z], [cx + r1 * c0, cy + r1 * s0, z], [cx + r1 * c1, cy + r1 * s1, z], [cx + r0 * c1, cy + r0 * s1, z]];
+    planeFace(m, down ? q.reverse() : q, mat, { uvScale });
+  }
+  return m;
+}
+/**
+ * A RING WALL on mesh `m`: the upright cylinder about (cx, cy) of radius r from z0 to z1, over ring `n` from corner i0 to
+ * i1, smooth round it (each corner's normal its own bearing; u its arc length, v up it, a tile every two metres), facing
+ * out from its axis (`inward`: toward it) - a pit's wall, a tier's riser, a cavern's foot.
+ */
+export function ringWall(m, cx, cy, r, z0, z1, n, i0, i1, mat = 0, { inward = false, uvScale = 0.5 } = {}) {
+  const A = wellArc(n, i0, i1), step = r * Math.sqrt((A[1][0] - A[0][0]) * (A[1][0] - A[0][0]) + (A[1][1] - A[0][1]) * (A[1][1] - A[0][1]));
+  for (let k = 0; k + 1 < A.length; k++) {
+    const [c0, s0] = A[k], [c1, s1] = A[k + 1], sg = inward ? -1 : 1, u0 = r4(k * step * uvScale), u1 = r4((k + 1) * step * uvScale), v0 = r4(z0 * uvScale), v1 = r4(z1 * uvScale);
+    const n0 = [sg * c0, sg * s0, 0], n1 = [sg * c1, sg * s1, 0];
+    const q = [[[cx + r * c0, cy + r * s0, z0], n0, [u0, v0]], [[cx + r * c1, cy + r * s1, z0], n1, [u1, v0]], [[cx + r * c1, cy + r * s1, z1], n1, [u1, v1]], [[cx + r * c0, cy + r * s0, z1], n0, [u0, v1]]];
+    const w = inward ? [q[1], q[0], q[3], q[2]] : q;
+    m.face(w.map((c) => c[0].map(r4)), mat, w.map((c) => [c[1], c[2]]));
+  }
+  return m;
+}
+
+/**
+ * EAR CLIPPING: a simple polygon `poly` ([[x, y], ...], counter-clockwise) cut into triangles - `[[a, b, c], ...]`, its
+ * corners' indices, each counter-clockwise - the first ear from the lowest index each time (so the same polygon cuts the
+ * same way on every engine). A notched floor's art and its collider's proxy; its marker any faces whose outline it is.
+ */
+export function earcut(poly) {
+  const idx = poly.map((_, i) => i), out = [];
+  const cr = (a, b, c) => (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0]);
+  while (idx.length > 3) {
+    let cut = -1;
+    for (let k = 0; k < idx.length && cut < 0; k++) {
+      const [i0, i1, i2] = [idx[(k + idx.length - 1) % idx.length], idx[k], idx[(k + 1) % idx.length]], [a, b, c] = [poly[i0], poly[i1], poly[i2]];
+      if (cr(a, b, c) <= 0) continue;
+      if (idx.some((j) => j !== i0 && j !== i1 && j !== i2 && cr(a, b, poly[j]) >= 0 && cr(b, c, poly[j]) >= 0 && cr(c, a, poly[j]) >= 0)) continue;
+      cut = k;
+    }
+    if (cut < 0) throw new Error('earcut: not a simple counter-clockwise levelPolygon');
+    out.push([idx[(cut + idx.length - 1) % idx.length], idx[cut], idx[(cut + 1) % idx.length]]);
+    idx.splice(cut, 1);
+  }
+  out.push([idx[0], idx[1], idx[2]]);
+  return out;
+}
+/** A level POLYGON on mesh `m` at height z ([[x, y], ...], counter-clockwise), cut by earcut, each triangle a flat face
+ *  facing up (`down`: under) - a notched floor, a proxy's floor, a marker's. */
+export function levelPolygon(m, poly, z, mat = 0, { down = false, uvScale = 0.5 } = {}) {
+  for (const t of earcut(poly)) planeFace(m, t.map((i) => [poly[i][0], poly[i][1], z]), mat, { uvScale, want: [0, 0, down ? -1 : 1] });
+  return m;
+}
+
+/** A direction's bearing as a number that grows with its angle - the diamond's measure, no trigonometry: 0 to 4 round from
+ *  +x toward +z. */
+const wellBearing = (dx, dz) => { const p = dz / (Math.abs(dx) + Math.abs(dz)); return dx >= 0 ? (dz >= 0 ? p : 4 + p) : 2 - p; };
+/**
+ * A ROCK FACE'S TWO LOOPS (a fragment's mouth in its rock mass): opening `inner` ([[x, z], ...], counter-clockwise with x
+ * right and z up, every corner seen from (cx, cz)) and the rock's outline round it - the ellipse about (cx, cz) `a` wide
+ * either way, `up` over it and `down` under it - both met on the same rays from (cx, cz): through every corner of the
+ * opening and every corner of ring `n` (but those within a sliver of a corner), by bearing from straight down. `[inner,
+ * outer, dirs]`, corner for corner, so quads between them tile the face (rockFace) and `dirs` lays a rockHull (rockHull).
+ */
+export function rockFaceLoops(cx, cz, inner, a, up, down, n = 24) {
+  const dirs = raysThrough(cx, cz, inner, RINGS[n]);
+  return [dirs.map((d) => rayHit(cx, cz, inner, d)), dirs.map((d) => rockEllipseAt(cx, cz, a, up, down, d)), dirs];
+}
+/** The rays from (cx, cz) through every corner of polygon `poly` and along every direction of `more` (but those within a
+ *  sliver of a corner) - unit [dx, dz] by bearing from straight down (a hull's seam under its keel). */
+function raysThrough(cx, cz, poly, more) {
+  const corners = poly.map(([x, z]) => { const u = unit([x - cx, z - cz, 0]); return [u[0], u[1]]; });
+  const from = (d) => (wellBearing(d[0], d[1]) + 1) % 4;
+  const dirs = [...corners, ...more.filter((d) => corners.every((c) => Math.abs(from(c) - from(d)) > 0.04 && Math.abs(Math.abs(from(c) - from(d)) - 4) > 0.04))];
+  return dirs.sort((p, q) => from(p) - from(q));
+}
+/** Where the ray from (cx, cz) along unit `d` first meets polygon `poly`'s outline ([x, z]). */
+export function rayHit(cx, cz, poly, d) {
+  let best = Infinity;
+  for (let i = 0; i < poly.length; i++) {
+    const [ax, az] = poly[i], [bx, bz] = poly[(i + 1) % poly.length], ex = bx - ax, ez = bz - az, den = d[0] * ez - d[1] * ex;
+    if (den === 0) continue;
+    const t = ((ax - cx) * ez - (az - cz) * ex) / den, s = ((ax - cx) * d[1] - (az - cz) * d[0]) / den;
+    if (t > 0 && s >= -1e-9 && s <= 1 + 1e-9 && t < best) best = t;
+  }
+  return [r4(cx + d[0] * best), r4(cz + d[1] * best)];
+}
+/** TWO OUTLINES MATCHED (a face between an opening `inner` and a rock's outline `outer`, both [[x, z], ...] and seen whole
+ *  from (cx, cz)): `[inner, outer]` met on the rays through every corner of both - rockFace's loops. */
+export function outlineLoops(cx, cz, inner, outer) {
+  const dirs = raysThrough(cx, cz, inner, outer.map(([x, z]) => { const u = unit([x - cx, z - cz, 0]); return [u[0], u[1]]; }));
+  return [dirs.map((d) => rayHit(cx, cz, inner, d)), dirs.map((d) => rayHit(cx, cz, outer, d))];
+}
+/** The point of the ellipse about (cx, cz) (`a` either way, `up` over, `down` under) on the ray along unit `d` ([dx, dz]). */
+export function rockEllipseAt(cx, cz, a, up, down, d, out = 0) {
+  const b = d[1] >= 0 ? up : down, t = 1 / Math.sqrt((d[0] / a) * (d[0] / a) + (d[1] / b) * (d[1] / b)) + out;
+  return [r4(cx + d[0] * t), r4(cz + d[1] * t)];
+}
+/** THE FACE between two matched loops (rockFaceLoops) standing at `y`: a quad between each two rays, facing `want`. */
+export function rockFace(m, y, inner, outer, mat = 0, want = [0, -1, 0]) {
+  for (let k = 0; k < inner.length; k++) {
+    const k1 = (k + 1) % inner.length;
+    planeFace(m, [[inner[k][0], y, inner[k][1]], [inner[k1][0], y, inner[k1][1]], [outer[k1][0], y, outer[k1][1]], [outer[k][0], y, outer[k][1]]], mat, { want });
+  }
+  return m;
+}
+/**
+ * A ROCK HULL on mesh `m`: the rings about (cx, cz) on rays `dirs` (rockFaceLoops') at stations `ys`, each the ellipse `axes(j)`
+ * gives ([a, up, down]) pushed out along its ray by `push(k, j)` (m - nought at the ends, where a face meets it), smooth
+ * round and along it, facing out; its seam under the keel. `uv(p)` maps a corner (default a tile every four metres along,
+ * and the root's own picture round it - v up, as Blender's: its coursed stone over the middle, its torn tip at the keel).
+ */
+export function rockHull(m, cx, cz, dirs, ys, axes, push, mat = 0, { uv = null } = {}) {
+  const n = dirs.length;
+  const v = (p, j) => { const [, up, down] = axes(j); return p[2] >= cz ? 0.94 - (0.5 * (p[2] - cz)) / up : 0.94 * (1 - Math.min(1, (cz - p[2]) / down)); };
+  return grid(m, n, ys.length - 1, (i, j) => { const [a, up, down] = axes(j), [x, z] = rockEllipseAt(cx, cz, a, up, down, dirs[i % n], push(i % n, j)); return [x, ys[j], z]; }, mat, {
+    flip: true, uv: (i, j, p) => (uv ? uv(p) : [p[1] * 0.25, v(p, j)]),
+  });
+}

@@ -8525,3 +8525,169 @@ over that proxy.
   number. With the test registry in band 0, 100 seeds and the golden: 57 hero halls, 351 courses, every one crossed.
 - `ACCOUNT_VERSION` is untouched, with no migration. No new `src/` module (the fixture is the test's), and the
   Port-Ledger's ELITE-GATES row is unchanged.
+
+### EG-HERO (the Havoc Wellhead) - 2026-10-13 - THE FORGE GUT, THE CLAN PIT, THE OBLIVION CAVERNS, DEEP
+
+The owner, 2026-10-13: *"You have to author the fragments"*. Section 11.6 says Mac authors the hero fragments in Blender;
+now the port authors them in code. Each is a scene a script writes from numbers, exactly as `tools/egRefFragScene.mjs`
+writes the reference, exported as the .fbx `tools/fragBake.mjs` bakes, then baked, registered and tested. This record is
+the Havoc Wellhead's three. The other bands' heroes, and laying them all into the halls (spec law 7), have records of their
+own.
+
+**What shipped, by fragment.** Each fragment has:
+- a scene module, `tools/egHero<Name>Scene.mjs`: its scene function and its writer, reusing `writeRefFragFbx`;
+- its own bake script, `tools/bakeEgHero<Name>.mjs`, in the reference's shape;
+- its committed .fbx under `src/assets/egfrags/source/`, with its law and mesh halves beside it;
+- its law registered in `net/egHeroFrags.js` and its mesh in `world/egHeroFragModel.js`.
+
+- **THE FORGE GUT** (`egheroForgeGut`, kit `forge`, a passage, variant `forgegut`). Dagon's war-forges, built as a gut of
+  riveted basalt ringed in iron.
+  - *Its envelope*: `egFragPassage('forge')` from `EG_SLAG_LAW`.
+    - The mouth and exit are 8.4 m wide and 6.5 m high (halfW 420, height 650), on the box's faces.
+    - It is 31 m long (len 2800, plus the slag's 300).
+    - Its landings are 0-6.8 m and 24.2-31 m along the course, under one 6.5 m clamp.
+    - Its box is x -9.86 to 10.32 m, height -16.65 to 16.40 m (the rock mass's torn keel up
+      to its chimneys), and 0 to 31 m along the course.
+  - *Its place*:
+    - Each end has a portal of ashlar framed in iron. A forge-eye of molten iron is set into the mouth's gable.
+    - Ten iron ribs ring the gut, one every 3.1 m. The ashlar walls between them are pushed outward by noise, under a
+      vault of rough rock that rises to 9.7 m.
+    - A molten channel runs along each wall's foot, behind a 0.6 m kerb. Furnace grates glow between the ribs.
+    - Four hearth bays are cut into the walls: a hearth with its anvil, a rack of blades, the Drop-Hammer's winch, and
+      the alcove's niche.
+    - The chasm drops 5.5 m to a river of molten iron. Over it stand:
+      - the conveyors' beds: girders, rollers, drums and cog-wheels on iron trestles;
+      - the slag weir, under its two crucibles' spouts;
+      - hanging chains.
+    - Six drop-hammers hang over the spots they strike.
+    - Outside, the rock mass carries three chimneys glowing at their mouths, and hangs a torn keel.
+    - THE EDGE LINE runs along the mouth, both lips and the exit.
+    - Cost: 8,137 triangles in 7 draws (floor, brass, root, arena, edge, molten, pillar), on a 30-triangle proxy.
+  - *Its law*: two fight floors, and one ceiling at 6.5 m.
+    - Its course uses the kit's pieces (`EG_FRAG_PIECES.forge`): two conveyors and the cooling slag's crust
+      (`EG_SLAG_STEP`). The conveyors are Rails 3 by 3 m, `amp` 200, on a 6 s cycle, in step. Each piece stands 2.8 m
+      past the one before it.
+    - THE TIMED SOLVER proves the course: crossFast 3,382 ms, crossSlow 4,882 ms, 4 moves. It stays proven at every slag
+      phase, with every window at least 5.5 s in 12 and no wait past 2.7 s.
+    - Its hazards:
+      - the hammers, striking each landing's two spots in turn: r 3, told 1.4 s, each landing on its own clock;
+      - the hammer line over each conveyor's middle, as the Forge Line has it;
+      - the slag's two lanes, 4 m wide, `EG_SLAG_LANE_CM` either side of the course. Each runs from the crust's near edge
+        onto 1.5 m of the far landing. The east spout runs half a cycle behind the west, on the crust's own clock.
+    - Its places: Lurkers on each landing, a Battlemage's niche, the Drop-Hammer's winch (`engine`), the two spouts
+      (`hazard`), and a seam alcove holding a shard.
+    - Its lights: four, two band and two lava.
+- **THE CLAN PIT** (`egheroClanPit`, kit `clanpit`, a chamber, variant `clanpit`, play `balcony`). The Wellhead's arena of
+  honourable fights between clans, sunk in basalt.
+  - *Its envelope*: `egFragChamber('clanpit', r, R)` at the Deepway's R of 16 m.
+    - The pit's floor is that circle about (0, 18 m), open to the sky.
+    - The court's 4 m bridge becomes its gates, 4 by 6 m, at 0 and 36 m along the course, through the south and north
+      towers.
+    - Its box is x -22.5 to 22.5 m, height -14.1 to 12.92 m, and 0 to 36 m along the course.
+  - *Its place*:
+    - The pit's wall is dressed basalt, 3.2 m high, with furnace grates.
+    - Five tiers of grandstand rise east and west to an iron-capped parapet at 8 m. 165 Kyn stand on the tiers, with the
+      clans' banners over them and braziers where the stands meet the towers.
+    - The gate towers are 9.5 m high, battlemented and grated.
+    - The chieftains' dais is a second fight floor, 3.2 m up (R 12 to 19, 22.5 degrees either way), on two stepped stairs.
+      The box's wall and banners stand behind it.
+    - The Honour Horn sits on the north tower with its bell over the pit. Its ring is set in iron at r 6 about the pit's
+      middle.
+    - A shrine niche in the west wall is the alcove. A torn keel hangs underneath.
+    - Gold runs along the mouth, the exit, the dais's open front and sides, and the open end of every stair tread.
+    - Cost: 5,614 triangles in 8 draws (all eight records), on a 212-triangle proxy.
+  - *Its law*:
+    - The pit and the dais are fight floors, joined by two ramps from 0 to 320 cm.
+    - It has no ceiling, no hazard and no course. The kit has no pieces in `EG_FRAG_PIECES`; the Honour Horn is the hall's
+      spot and the Ashfall is the crowd's.
+    - Its places: five rifts by the walls, two Casters on the dais, three Lurkers, and a seam alcove holding a page.
+    - Its lights: four band lights at the braziers.
+- **THE OBLIVION CAVERNS, DEEP** (`egheroDeepCaverns`, kit `deep`, a chamber, variant `deepcaverns`, play `balcony`). The
+  Wellhead's own magma caverns: wider, brighter, the magma higher.
+  - *Its envelope*: `egFragChamber('deep', r, R)` at R 16 m.
+    - The low floor is that circle: a basalt shelf 0.8 m over a lake of magma.
+    - The court's 4 by 6 m gates run 2 m deep through the cavern's face at each end.
+    - Two dry ledges stand east and west, 2.5 m up, from R 13 to 19.5, each on two stepped stairs. They are
+      `egFragChamber`'s deep balconies: two, as section 11.2 names them, not the code-built three.
+    - The clamp's ceilings are 9 m over the cavern and 6 m in the gates.
+    - Its box is x -27.5 to 27.2 m, height -15.23 to 22.02 m, and 0 to 36 m along the course.
+  - *Its place*:
+    - A vaulted cavern of rough basalt rises to 16 m, pushed out by noise and coursed where the lake laps it.
+    - Six lava falls pour into the lake. Four basalt columns and four stumps stand out of it, and stalactites hang
+      overhead.
+    - The Sluice's iron drum stands at the lake's edge.
+    - The low floor carries its plates and an iron tide-gauge ring at 9 m. A 0.6 m kerb of dressed stone runs round its
+      rim (section 11.9), and gold runs round every open rim.
+    - The ledges' rock rises out of the lake.
+    - The gates wear iron frames in a cliff of rock. The south gate's wall holds a niche, which is the alcove.
+    - Cost: 4,258 triangles in 7 draws, on a 192-triangle proxy.
+  - *Its law*:
+    - The low floor and both ledges are fight floors. There are two gate floors (traversal) and four ramps.
+    - THE MAGMA TIDE is a disc of r 16 m over the low floor, which covers it to within 15 cm at the gates' slivers. The
+      ledges, 2.5 m up, are out of its bite.
+    - The farthest point of the low floor is 14.5 m from a stair, inside the 24 m that the tide's 5 s tell allows.
+    - It has no course.
+    - Its places: five rifts, a Caster on each ledge, three Lurkers, the Sluice (`engine`), and a seam alcove holding lumen.
+    - Its lights: four, two band over the ledges and two lava at the falls.
+
+**THE AUTHORING KIT** (`tools/egHeroKit.mjs`). I appended one block at its end, using names no other band's shapes share:
+shapes at least two of the three scenes use, and the helpers under them:
+- `planeFace`, `boxFaces`: faces that carry their own Newell normals, so the writer's hypotenuse never reaches the bytes;
+- `walkEdge`, `levelDisc`: the markers;
+- `ringBand`, `ringWall`: tiers, the dais, rims and walls on the fixed rings;
+- `earcut`, `levelPolygon`: a notched floor's art, its marker and its proxy;
+- `rockFaceLoops`, `rockEllipseAt`, `rayHit`, `outlineLoops`, `rockFace`, `rockHull`: a rock mass round a mouth, with its
+  face and its keel.
+Every number in the block and in the scenes comes from IEEE arithmetic and `Math.sqrt` alone.
+
+**Departures, said plainly.**
+
+1. **Written in code, not modelled in Blender.** Every surface is a shape from the kit or a scene: grids pushed by hash
+   noise, lathes, sweeps, boxes and ring bands. So there is no sculpted detail beyond those shapes: no worn edges, no carved
+   reliefs, no organic Kyn (the crowd is 165 boxed figures), and no hand-painted UV islands. The pictures are the band's
+   code-painted records, at a planar tile every 2 m.
+2. **The files name the reference's writer.** Each .fbx is written by `writeRefFragFbx`, so its SceneInfo and Creator name
+   `tools/egRefFragScene.mjs` (`FRAG_REF_WRITER`). That is the only non-Blender name the bake accepts, and the bake was not
+   to be changed. The mesh half's `creator` names the same writer.
+3. **The Forge Gut's gaps are 2.8 m, not the code-built 3.2 m.** At 3.2 m the timed solver passes only at a few rail
+   phases, with waits near 4 s. At 2.8 m it proves at every slag phase, with no wait past 2.7 s. The landings grow to 6.8 m
+   deep instead of 6.2 m; the length is unchanged.
+4. **The chambers' radius is chosen, not the halls'.** The halls call `egFragChamber` at R 14 m (a proving court), 16 m (the
+   Deepway) and 22-26 m (a Rift-Yard). The heroes take the Deepway's 16 m and run 36 m from mouth to exit: the disc's 32 m
+   plus 2 m gates. The code-built chamber's bridge and disc take 36.5 m. Whether a slot fits them is the laying's call.
+5. **The deep Caverns has two ledges where the code-built deep chamber has three.** Section 11.2 says two. Two still keep
+   the 24 m rule, at 14.5 m. They stand 2.5 m up but are deeper (R 13 to 19.5) than the code-built r 4.5 discs.
+6. **The Honour Horn's ring is art only.** The record has no anchor word for it. The ring of iron sits at the pit floor's
+   middle, (0, 18 m), where the code-built chamber's `horn` spot stands. The laying places the spot.
+7. **The chambers carry no inner course.** `EG_FRAG_PIECES` names none for the Clan Pit, and the code-built deep chamber
+   lays none, so their proofs are nought.
+8. **Never drawn by the game.** I looked at each mesh in a software rasteriser with the band's own painted records (scratch
+   tooling, not committed): from the mouths, from above, cut away under the clamp, and from the floors. None was drawn in
+   the port's renderer or under its lights. So it is not verified whether the in-game lights light the Wellhead's dark
+   basalt as well as the molten does.
+
+**The four hosts.**
+- `src/scenes/exterior.js` - untouched.
+- `src/scenes/world.js` - untouched.
+- `src/scenes/worldModes.js` - untouched.
+- `src/scenes/dungeonContext.js` - untouched.
+No host draws a hero yet; laying them is spec law 7's work.
+
+**Pins.**
+- `test/eghero_wellhead.test.js` (10 tests) holds, for each fragment:
+  - its scene to its .fbx, and its bake to both halves, twice;
+  - its spec and the registries;
+  - its envelope, by deepEqual;
+  - the Forge Gut's proof at every slag phase;
+  - its signature;
+  - its budget, and the proxy's floors matching the law's by area;
+  - THE EDGE LINE on every open edge that falls away (4, 6 and 38 of them);
+  - no drawn vertex inside a floor's envelope, an inner piece's travel, or the air over its gaps;
+  - its walk graph over floors and stairs only, and its anchors counted;
+  - its scene and the kit's block free of transcendentals.
+- `tools/mutants/eghero_wellhead.json`: 25 mutants, every one dead.
+- PIN MOVED: `test/eg6c_law.test.js`'s registry pin now holds the reference as the first key, not the only one.
+- `test/doctrine.test.js`'s allow-list names the nine new files.
+- `RELAY_VERSION` stays `world199`: no relay import reaches `net/egHeroFrags.js`, so the relay's bytes do not move.
+  `ACCOUNT_VERSION` stays `acct124`. `EG_SPEC` and `EG_LAWS` are unchanged.
+- The Port-Ledger's ELITE-GATES row names the new files.

@@ -30,6 +30,12 @@ import EG_HERO_ECLIPSE_LAW from '../assets/egfrags/egheroEclipse.law.json' with 
 import EG_HERO_CAVERNS_LAW from '../assets/egfrags/egheroCaverns.law.json' with { type: 'json' };
 import EG_HERO_STACKS_LAW from '../assets/egfrags/egheroStacks.law.json' with { type: 'json' };
 import EG_HERO_COLONNADE_LAW from '../assets/egfrags/egheroColonnade.law.json' with { type: 'json' };
+// EG-HERO (2026-10-13, the owner: "You have to author the fragments"): the Havoc Wellhead's three - the Forge Gut (a
+// passage), the Clan Pit and the Oblivion Caverns, deep (chambers) - written by tools/egHero*Scene.mjs, baked by their own
+// tools/bakeEgHero*.mjs.
+import EG_HERO_FORGE_GUT_LAW from '../assets/egfrags/egheroForgeGut.law.json' with { type: 'json' };
+import EG_HERO_CLAN_PIT_LAW from '../assets/egfrags/egheroClanPit.law.json' with { type: 'json' };
+import EG_HERO_DEEP_CAVERNS_LAW from '../assets/egfrags/egheroDeepCaverns.law.json' with { type: 'json' };
 
 /** The variant of the reference fragment - the stand-in no hall lays. */
 export const EG_HERO_REFERENCE = 'reference';
@@ -52,6 +58,9 @@ export const EG_HERO_FRAGS = egHeroFragRegistry([
   EG_HERO_CAVERNS_LAW,
   EG_HERO_STACKS_LAW,
   EG_HERO_COLONNADE_LAW,
+  EG_HERO_FORGE_GUT_LAW,
+  EG_HERO_CLAN_PIT_LAW,
+  EG_HERO_DEEP_CAVERNS_LAW,
 ]);
 
 /** The hero fragments of kit `kit` a hall may lay - every one of that kit registered (in `frags`, the registry by
