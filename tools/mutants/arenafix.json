@@ -148,8 +148,8 @@
   {
     "name": "ARENAFIX-GATE-NAMES-TALK",
     "file": "src/scenes/worldModes.js",
-    "old": "npcName: officeName(pn) ?? displayName, portrait:",
-    "new": "npcName: displayName, portrait:",
+    "old": "npcName: officeName(pn) ?? npcShownName(npcData), portrait:",
+    "new": "npcName: npcShownName(npcData), portrait:",
     "tests": [
       "test/arena_fix.test.js"
     ]

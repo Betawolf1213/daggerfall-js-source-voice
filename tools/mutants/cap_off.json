@@ -59,8 +59,8 @@
   {
     "name": "CAP-OFF-pages-harvests-of-sixty",
     "file": "src/ui/profPages.js",
-    "old": "`Today: ${today} harvest${today === 1 ? '' : 's'}`",
-    "new": "`Today: ${today} of 60 harvests`",
+    "old": "'Today: {n, plural, one {# harvest} other {# harvests}}'",
+    "new": "'Today: {n} of 60 harvests'",
     "tests": [
       "test/cap_off.test.js"
     ]
@@ -68,8 +68,8 @@
   {
     "name": "CAP-OFF-pages-harvest-plural-lost",
     "file": "src/ui/profPages.js",
-    "old": "harvest${today === 1 ? '' : 's'}",
-    "new": "harvests",
+    "old": "{n, plural, one {# harvest} other {# harvests}}",
+    "new": "{n} harvests",
     "tests": [
       "test/cap_off.test.js"
     ]
@@ -77,8 +77,8 @@
   {
     "name": "CAP-OFF-pages-hauls-of-forty",
     "file": "src/ui/profPages.js",
-    "old": "`Today: ${hauls} haul${hauls === 1 ? '' : 's'} - your account's",
-    "new": "`Today: ${hauls} of 40 hauls - your account's",
+    "old": "'Today: {hauls, plural, one {# haul} other {# hauls}} - your account\\'s",
+    "new": "'Today: {hauls} of 40 hauls - your account\\'s",
     "tests": [
       "test/cap_off.test.js",
       "test/prof8_client.test.js"
@@ -87,8 +87,8 @@
   {
     "name": "CAP-OFF-pages-hides-of-thirty",
     "file": "src/ui/profPages.js",
-    "old": "`Today: ${h.hides} hide${h.hides === 1 ? '' : 's'}, ",
-    "new": "`Today: ${h.hides} of 30 hides, ",
+    "old": "'Today: {hides, plural, one {# hide} other {# hides}}, ",
+    "new": "'Today: {hides} of 30 hides, ",
     "tests": [
       "test/cap_off.test.js",
       "test/prof7_client.test.js"
@@ -106,8 +106,8 @@
   {
     "name": "CAP-OFF-text-the-sixty",
     "file": "src/net/accountClient.js",
-    "old": "  'prof-cap': 'You have gathered all a day allows.',",
-    "new": "  'prof-cap': 'You have gathered all a day allows (60).',",
+    "old": "  'prof-cap': () => t('account.refusal.profCap', 'You have gathered all a day allows.'),",
+    "new": "  'prof-cap': () => t('account.refusal.profCap', 'You have gathered all a day allows (60).'),",
     "tests": [
       "test/cap_off.test.js"
     ]

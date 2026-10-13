@@ -302,5 +302,5 @@ test('DUEL1 the F-menu\'s rows: a waiting challenge reads Accept duel with Decli
   assert.match(w, /onReceipt: \(rc\) => \{ if \(duelClaims\.keep\(rc\)\) duelClaims\.offer\(\{ force: true \}\); \},/, 'the referee\'s receipt, carried');
   assert.equal(/duelAccount\.lost\(/.test(w), false, 'no loss reported');
   const card = src('src/ui/enhancedAccount.js');
-  assert.match(card, /const duels = duelRecordText\(flow\.account\.duels\);\s*\n\s*if \(duels\) row\('Duels', duels\);/, 'the main menu\'s account card');
+  assert.match(card, /const duels = duelRecordText\(flow\.account\.duels\);\s*\n\s*if \(duels\) row\(t\('account\.card\.duels', 'Duels'\), duels\);/, 'the main menu\'s account card');   // L10N4 (PIN MOVED): the row's word through t()
 });

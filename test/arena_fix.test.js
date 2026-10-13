@@ -186,9 +186,9 @@ test('ARENA-FIX 2: the gate\'s people named by their office - the plaque, "You s
   assert.equal(arenaGatePersonName({ position: 7, textureArchive: 183, textureRecord: 5 }), null, 'anyone else keeps their own');
   const W = rd('src/scenes/worldModes.js');
   assert.match(W, /const officeName = \(pn\) => arenaGatePersonName\(pn\) \?\? /);
-  assert.match(W, /const displayName = officeName\(pn\) \?\? npcDisplayName\(staticNpcData\(pn, npcSceneCtx\)\);/, 'Info: "You see ..."');
-  assert.match(W, /npcName: officeName\(pn\) \?\? displayName, portrait:/, 'the talk door');
-  assert.ok((W.match(/const display = officeName\(pn\) \?\? npcDisplayName\(staticNpcData\(pn, staticNpcSceneCtx\(pn\)\)\);/g) ?? []).length >= 3, 'the plaques (the street, the dungeon, the interior)');
+  assert.match(W, /const displayName = officeName\(pn\) \?\? npcShownName\(staticNpcData\(pn, npcSceneCtx\)\);/, 'Info: "You see ..."');
+  assert.match(W, /npcName: officeName\(pn\) \?\? npcShownName\(npcData\), portrait:/, 'the talk door');
+  assert.ok((W.match(/const display = officeName\(pn\) \?\? npcShownName\(staticNpcData\(pn, staticNpcSceneCtx\(pn\)\)\);/g) ?? []).length >= 3, 'the plaques (the street, the dungeon, the interior)');
 });
 
 test('ARENA-FIX 7: the record says which way the gate faces - north, onto the market (the compass calls +z north)', () => {

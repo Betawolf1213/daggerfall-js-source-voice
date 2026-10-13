@@ -667,8 +667,15 @@ select, input, textarea { font: inherit; }
    lives - was left a few pixels. The title and the rail drew; the pane each rail press opened could not be seen, and
    the sliver of it was the "tiny space" that scrolled. Where height is the constraint and width is not, the desk's
    two columns come back - the rail down the side, the pane the whole height - with the thumb's 44 px rows. Not the
-   wizard: its rail is a readout and its phone strip is its own (below). */
-@media (pointer: coarse) and (orientation: landscape) and (max-height: 560px) and (min-width: 600px) {
+   wizard: its rail is a readout and its phone strip is its own (below).
+   TALL-TOUCH (2026-10-13, Discord #bug-reports, on an ASUS ROG Xbox Ally X: "it's impossible to configure the game
+   settings because of a huge game logo that won't minimize or go away"). NOT ONLY A SHORT ONE: ANY LANDSCAPE SCREEN.
+   The stack sizes the logo by the screen's WIDTH (59.5% of it, at the mark's 1.63:1), so held sideways it stands at
+   least half the height at any size - 1280x720 (a 1080p handheld at Windows' 150%) drew it ~470 px of 720 and left
+   the Settings pane a strip. The 560 px ceiling caught the AYN Thor and missed the Ally. So every landscape screen
+   600 px wide or more that the stack would take - a touch screen of any height, or a window narrowed under 860 px -
+   keeps the two columns. */
+@media (pointer: coarse) and (orientation: landscape) and (min-width: 600px), (orientation: landscape) and (min-width: 600px) and (max-width: 860px) {
   .shell:not(.wizard) { grid-template-columns: min(var(--side), 34vw) 1fr; grid-template-rows: none; }
   .shell:not(.wizard) > .side { display: flex; flex-direction: column; min-height: 0; }
   .shell:not(.wizard) .brand { padding: 10px 14px 6px; }
@@ -2322,6 +2329,22 @@ ${badgeCss()}
   text-shadow: 2px 2px 0 rgba(0,0,0,0.8);
 }
 .px-profile:focus-visible { outline: none; }
+/* L10N1b: THE FIRST-RUN LANGUAGE OFFER - the top-left corner, the About box's plate, the question in the language it
+   offers. Gone for good once answered. It stands under SUPPORT1's asks, which hold the corner itself (their box is
+   52px tall: a 44px mark, its padding and its border), and above them should the two ever meet. */
+.px-langoffer {
+  position: absolute; top: 76px; left: 18px; z-index: 5; max-width: min(360px, calc(100vw - 36px));
+  padding: 12px 14px; background: rgba(10,12,17,0.95); border: 2px solid var(--brass);
+  box-shadow: 0 0 0 2px var(--iron), 0 3px 10px rgba(0,0,0,0.65); color: #d8cfae;
+}
+/* L10N1b: the language row's select stays a control's width, so the row's name and note keep their column */
+.langsel { max-width: 15rem; }
+.px-langoffer-q { font-size: 1.05em; margin-bottom: 4px; }
+.px-langoffer-note { font-size: 0.85em; opacity: 0.8; margin-bottom: 8px; }
+@media (max-width: 480px) {
+  /* a phone's mark is a 48px portrait 10px from the right: the offer stands beside it, never over it */
+  .px-langoffer { top: 70px; left: 10px; max-width: calc(100vw - 88px); }
+}
 /* THE PORTRAIT: a round well rimmed in brass over the iron ring, the
    face inside at its own pixels. */
 .px-portrait {

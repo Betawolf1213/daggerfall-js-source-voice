@@ -15202,7 +15202,7 @@ status strip on a phone sits under the touch layer's two top-left buttons
 exactly as the classic did; the enhanced HUD has no arrow counter (AUDIT
 28 W2a's classic-arm feature) - not a font matter. AND THE CANVAS NATIVE
 WINDOWS, which the first record did not name: under the enhanced skin the
-death screen (`ui/deathScreen.js:"font, t, (canvas.width - measureText(font.fnt, t) * s)"`), the rest window's rows
+death screen (`ui/deathScreen.js:"font, died, (canvas.width - measureText(font.fnt, died) * s)"`), the rest window's rows
 (`ui/restWindow.js:"rows = this.endLines"`), the save window (`ui/saveWindow.js`, eight
 `shadowText` sites), the travel popup (`ui/travelPopUp.js:"font, r.text ?? r"`), the quest
 journal (`ui/questJournal.js:"font, line, m.ox + (lx + 1)"`), every MessageBox row

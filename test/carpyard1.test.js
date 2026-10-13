@@ -279,11 +279,11 @@ test('CARP-YARD THE HOSTS: the street\'s workbench is the host\'s own question -
   assert.match(w, /workbench: \(\) => workbenchHere\(\),/);
   assert.match(w, /: bench \? workbenchHere\(\) : modes\?\.forgeHere\?\.\(\)\) \?\? null;/);
   assert.match(w, /bench: \(\) => openYardBench\(\),/);
-  assert.match(w, /function openYardBench\(\) \{\n\s+if \(!forgeOffered\(\)\) \{ townTalk\.say\(WORKBENCH_COLD_LINE\); return true; \}\n\s+focusStoresStation\('workbench'\);\n\s+hudCtx\.togglePause\(\{ at: 'stores' \}\);/);
+  assert.match(w, /function openYardBench\(\) \{\n\s+if \(!forgeOffered\(\)\) \{ townTalk\.say\(stationColdLine\('workbench'\)\); return true; \}[^\n]*\n\s+focusStoresStation\('workbench'\);\n\s+hudCtx\.togglePause\(\{ at: 'stores' \}\);/);
   assert.match(w, /`The \$\{f\.who \?\? st\.who\} asks \$\{f\.fee\} gold for the use of the \$\{st\.noun\}\.`/);
   assert.match(w, /bench \? \(f\.who \?\? 'furnisher'\) : 'smith'/);
   const pp = read('src/ui/profPages.js');
-  assert.match(pp, /detail\.append\(stationHead\(divider, 'The Workbench', 'workbench'\)\);/);
+  assert.match(pp, /detail\.append\(stationHead\(divider, t\('prof\.page\.bench', 'The Workbench'\), 'workbench'\)\);/);
   assert.match(pp, /const who = bench\.who \?\? 'furnisher';/);
   assert.match(pp, /sale\?\.counter === 'furnisher' && have < inp\.n && bench\.kind === 'shop' && !bench\.yard\) counterBuy\(/);
   assert.doesNotMatch(read('src/scenes/exterior.js'), /merchantYards|craftYardSitesOn/, 'the bench stands no yard');

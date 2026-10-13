@@ -367,8 +367,8 @@
   {
     "name": "AUDIT-CRAFT1-R2-mason-word",
     "file": "src/ui/profPages.js",
-    "old": "open ? makeWord(can, raw) : 'a Sculptor\\'s'",
-    "new": "open ? makeWord(can, false) : 'a Sculptor\\'s'",
+    "old": "open ? makeWord(can, raw) : t('prof.page.mason.sculptors', 'a Sculptor\\'s')",
+    "new": "open ? makeWord(can, false) : t('prof.page.mason.sculptors', 'a Sculptor\\'s')",
     "tests": [
       "test/craft1_chain.test.js"
     ]

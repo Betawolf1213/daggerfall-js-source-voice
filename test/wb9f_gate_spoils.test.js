@@ -247,7 +247,7 @@ test('WB9f the seams, by source: the court stands the spoils and their words whe
   assert.match(wm, /ctx\.addActivationNamer\(\(key\) => \(typeof key === 'string' && key\.startsWith\('spoil'\) \? host\.spoilName\?\.\(key\) \?\? null : null\)\);/);
   const press = wm.indexOf("if (key.startsWith('spoil')) { quickLootSpend(); host.takeSpoil?.(key); return true; }");   // AUDIT WB9 (spoils F2): the armed key spent on it
   assert.ok(press > 0, 'the press rung');
-  assert.ok(press > wm.indexOf('if (_pick.distance > _pick.reach) { setMidScreenText(TOO_FAR_AWAY_TEXT); return true; }', press - 2000), 'after the reach is judged');
+  assert.ok(press > wm.indexOf('if (_pick.distance > _pick.reach) { setMidScreenText(tooFarAwayText()); return true; }', press - 2000), 'after the reach is judged');
   assert.ok(press < wm.indexOf("if (key.startsWith('loot:') || key.startsWith('corpse:')", press), 'before the loot rung');
   assert.match(wm, /spoilContents: \(key\) => host\.spoilContents\?\.\(key\) \?\? null,/);
   assert.match(read('src/scenes/dungeonContext.js'), /if \(kind === 'spoil'\) return opts\.spoilContents\?\.\(key\) \?\? null;/);

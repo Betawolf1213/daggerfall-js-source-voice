@@ -298,7 +298,7 @@
   {
     "name": "TOOL-SAID-the-page-keeps-its-silence",
     "file": "src/ui/profPages.js",
-    "old": "    if (GATHER_HOW[_sel]) pane.append(el('p', 'px-note', GATHER_HOW[_sel]));   // TOOL-SAID",
+    "old": "    if (GATHER_HOW[_sel]) pane.append(el('p', 'px-note', gatherHow(_sel)));   // TOOL-SAID",
     "new": "",
     "tests": ["test/fb0930b_toolsaid.test.js"]
   },
@@ -312,8 +312,8 @@
   {
     "name": "AUDIT-carry-page-says-the-stores",
     "file": "src/ui/profPages.js",
-    "old": "all.size ? 'Nothing in the Stores matches.' : STORES_EMPTY_CARRY_LINE));",
-    "new": "all.size ? 'Nothing in the Stores matches.' : STORES_EMPTY_LINE));",
+    "old": "all.size ? t('prof.page.stores.noMatch', 'Nothing in the Stores matches.') : storesEmptyCarryLine()));",
+    "new": "all.size ? t('prof.page.stores.noMatch', 'Nothing in the Stores matches.') : storesEmptyLine()));",
     "tests": [
       "test/fb0930b_toolsaid.test.js"
     ]
@@ -321,8 +321,8 @@
   {
     "name": "AUDIT-hunting-act-choice-again",
     "file": "src/ui/profPages.js",
-    "old": "The body\\'s list also lets you search it.'));",
-    "new": "The act choice key searches the body instead.'));",
+    "old": "The body\\'s list also lets you search it.')));",
+    "new": "The act choice key searches the body instead.')));",
     "tests": [
       "test/fb0930b_toolsaid.test.js"
     ]

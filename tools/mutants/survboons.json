@@ -234,8 +234,8 @@
   {
     "name": "SURVBOONS-bar-without-boons",
     "file": "src/systems/features.js",
-    "old": "[[false, 'Off'], ['boons', 'Boons'], ['casual', 'Casual'], ['hard', 'Hard']]",
-    "new": "[[false, 'Off'], ['casual', 'Casual'], ['hard', 'Hard']]",
+    "old": "[tier(false, OFF), tier('boons', () => t('features.mod.climatesCalories.boons', 'Boons')), tier('casual', () => t('features.mod.climatesCalories.casual', 'Casual')), tier('hard', () => t('features.mod.climatesCalories.hard', 'Hard'))]",
+    "new": "[tier(false, OFF), tier('casual', () => t('features.mod.climatesCalories.casual', 'Casual')), tier('hard', () => t('features.mod.climatesCalories.hard', 'Hard'))]",
     "why": "the bar has no Boons segment",
     "tests": [
       "test/survboons.test.js",

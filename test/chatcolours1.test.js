@@ -133,7 +133,7 @@ test('CHAT-LANG tab and commands: the Language tab rides a room of its own, off 
   assert.match(host, /chatLangFrame\(\);   \/\/ CHAT-LANG/);
   assert.match(host, /if \(tabId === 'lang' && !chatLog\.tab\('lang'\)\?\.room\) return why\(langOld\(\) \? LANG_OLD_RELAY_TEXT : NO_LANG_TEXT\);/);
   const menu = rd('src/ui/enhancedMenu.js');
-  assert.match(menu, /choiceRow\('chatLang', 'Language channel',/);
-  assert.match(menu, /prefRow\('chatChannelColours', 'Chat colours by channel',/);
-  assert.match(menu, /prefRow\('chatPingSound', 'Chime when someone @mentions you',/);
+  assert.match(menu, /choiceRow\('chatLang', t\('menu\.chat\.lang', 'Language channel'\),/);
+  assert.match(menu, /prefRow\('chatChannelColours', t\('menu\.chat\.colours', 'Chat colours by channel'\),/);
+  assert.match(menu, /prefRow\('chatPingSound', t\('menu\.chat\.ping', 'Chime when someone @mentions you'\),/);
 });

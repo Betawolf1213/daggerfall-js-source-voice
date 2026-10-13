@@ -70,7 +70,7 @@
 
 import { STAT_KEYS_ORDER } from '../systems/chargen.js';
 import { statUp, statDown, MAX_STAT_VALUE } from './chargen.js';
-import { MUST_DISTRIBUTE_BONUS_POINTS } from './charsheet.js';
+import { mustDistributeBonusPointsText } from './charsheet.js';
 import { REMAINING_POINTS_ERROR, REMAINING_POINTS_LABEL, TAKE_ONE_BACK_HINT } from './virtueLevelUp.js';
 import { attributeOffset, canRaiseAttribute, canLowerAttribute, LEVELUP_TOTAL, levelBarProgress, levelingSettings, usesVirtueLeveling } from '../systems/oblivionLeveling.js';   // ASCEND-ANYTIME: a mod-law view still needs the mod's own prices to draw a row
 import { LEVELUP_SKILL_SUM_PER_LEVEL, skillRecentlyIncreased } from '../systems/advancement.js';
@@ -428,7 +428,7 @@ export const ALL_MAX_LINE = 'Every attribute is at its maximum. What is left has
 /** The refusal each lane already ships, so the window quotes rather
  *  than invents. */
 export const refusalText = (screen) =>
-  (levelUpLane(screen) === LANE_VIRTUE ? REMAINING_POINTS_ERROR : MUST_DISTRIBUTE_BONUS_POINTS);
+  (levelUpLane(screen) === LANE_VIRTUE ? REMAINING_POINTS_ERROR : mustDistributeBonusPointsText());
 
 /** IN A CORNER: points left and no star will take another. Only the
  *  mod's priced purse can reach that state (ui/virtueLevelUp.js's

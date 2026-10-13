@@ -36,6 +36,7 @@ import {
   hotbarEntryForItem, hotbarEntryForSpell, setHotbarSlot, clearHotbarSlot, swapHotbarSlots, hotbarEntry,
   hotbarSlotOf, firstFreeHotbarSlot, hotbarKindOf,
 } from '../systems/quickslots.js';
+import { shownSpellName } from '../systems/loot.js';   // L10N3e: a spell's name as the book shows it
 import { modelIconUrl } from './itemIconUrl.js';
 import { fpArm } from '../combat/fpArm.js';
 import { requestFittedIcon, showFitted, fittedImg, iconName } from './textureCanvas.js';   // UI2: a slot's picture fitted to it
@@ -75,6 +76,9 @@ const el = (tag, cls, text) => {
   if (text != null) n.textContent = text;
   return n;
 };
+/** L10N3e: what a caption calls a slot's entry - a spell by its name as the book shows it (the entry keeps the
+ *  canonical one), an item by the name the bar took when it was slotted. */
+const entryName = (e) => (e?.type === 'spell' ? shownSpellName(e) : e?.name);
 
 let bar = null;          // the one .hb node
 let hbTook = null;       // AUDIT 27h B1: the press a socket stopped ({ node, button }), until the next press anywhere
@@ -563,7 +567,7 @@ export function pressHotbar(i) {
   const good = ok && res.kind !== 'none' && res.kind !== 'refused' && res.kind !== 'empty';   // AUDIT CONTRIB H3: the performer's own answer (hotbarPress)
   strike(i, good);
   const e = hotbarEntry(i);
-  showCaption(said ?? (e ? e.name : HOTBAR_TEXT.emptySlot), !good);
+  showCaption(said ?? (e ? entryName(e) : HOTBAR_TEXT.emptySlot), !good);
   lastSig = null;
   paint();
 }
@@ -699,7 +703,7 @@ export function hotbarDropSpell(i, sp) {
   const e = hotbarEntryForSpell(sp);
   if (!e || !setHotbarSlot(i, e)) return false;
   lastSig = null; paint(); strike(i, true);
-  showCaption(HOTBAR_TEXT.added(e.name, i + 1));
+  showCaption(HOTBAR_TEXT.added(entryName(e), i + 1));
   return true;
 }
 
@@ -719,13 +723,13 @@ export function toggleHotbarItem(item) {
 }
 export function toggleHotbarSpell(sp) {
   const at = hotbarSlotOf(sp, { spell: true });
-  if (at >= 0) { clearHotbarSlot(at); lastSig = null; paint(); return HOTBAR_TEXT.removed(sp?.name ?? 'It'); }
+  if (at >= 0) { clearHotbarSlot(at); lastSig = null; paint(); return HOTBAR_TEXT.removed(shownSpellName(sp) ?? 'It'); }
   const e = padInHand() && hotbarAcceptsDrops() ? hotbarEntryForSpell(sp) : null;   // PAD-ARRANGE: and a spell
-  if (e) { hand = { kind: 'spell', spell: sp, name: e.name }; lastSig = null; raiseSync(); paint(); return PAD_ARRANGE_TEXT.choose(e.name); }
+  if (e) { hand = { kind: 'spell', spell: sp, name: e.name }; lastSig = null; raiseSync(); paint(); return PAD_ARRANGE_TEXT.choose(entryName(e)); }   // L10N3e: its name as the book shows it
   const free = firstFreeHotbarSlot(xbOn ? HOTBAR_CAPACITY : HOTBAR_SIZE);
   if (free < 0) return HOTBAR_TEXT.full;
   hotbarDropSpell(free, sp);
-  return HOTBAR_TEXT.added(sp?.name ?? 'It', free + 1);
+  return HOTBAR_TEXT.added(shownSpellName(sp) ?? 'It', free + 1);
 }
 /** KB1: the key a slot answers to, as its chip names it - the slot's registry action through the diamond's own tag
  *  law (ui/quickslotTags.js), so a rebound slot says so and an unbound one says nothing. */
@@ -850,7 +854,7 @@ function dragEnd(commit) {
   if (d.payload.kind === 'slot') {
     const from = d.payload.slot;
     if (i < 0) {
-      const name = hotbarEntry(from)?.name;
+      const name = entryName(hotbarEntry(from));
       clearHotbarSlot(from);
       if (name) showCaption(HOTBAR_TEXT.removed(name));
     } else if (i !== from) { swapHotbarSlots(from, i); strike(i, true); }
@@ -903,7 +907,7 @@ function bindSlot(node, i) {
   node.addEventListener('contextmenu', (e) => {
     if (!editable()) return;
     e.preventDefault();
-    const name = hotbarEntry(i)?.name;
+    const name = entryName(hotbarEntry(i));
     if (!name) return;
     clearHotbarSlot(i);
     if (hand?.kind === 'slot' && hand.slot === i) { hand = null; handPress = -1; raiseSync(); }   // PAD-ARRANGE: the slot in hand cleared

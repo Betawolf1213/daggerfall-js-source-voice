@@ -521,7 +521,7 @@
   {
     "name": "LW14-AUDIT-D11-reach",
     "file": "src/player/mobileEnemyActivate.js",
-    "old": "    if (far) { midScreen?.(TOO_FAR_AWAY_TEXT); return true; }\n    if (openLiving(foe)) return true;",
+    "old": "    if (far) { midScreen?.(tooFarAwayText()); return true; }\n    if (openLiving(foe)) return true;",
     "new": "    if (openLiving(foe)) return true;",
     "tests": [
       "test/lw14_deep.test.js"

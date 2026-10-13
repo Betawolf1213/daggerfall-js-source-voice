@@ -890,7 +890,7 @@
   {
     "name": "PROF11-pages-mason-cold-as-a-forge",
     "file": "src/ui/profPages.js",
-    "old": "station === 'mason' ? MASON_COLD_LINE : station === 'jeweller'",
+    "old": "station === 'mason' ? t('prof.page.cold.mason', MASON_COLD_LINE) : station === 'jeweller'",
     "new": "station === 'jeweller'",
     "tests": [
       "test/prof11_client.test.js"
@@ -899,30 +899,30 @@
   {
     "name": "PROF11-pages-masonry-unpractised",
     "file": "src/ui/profPages.js",
-    "old": "  masonry: Object.freeze([['Cut Stone, from Rough Stone', 1],",
-    "new": "  stonework: Object.freeze([['Cut Stone, from Rough Stone', 1],",
+    "old": "  masonry: () => [[t('prof.page.unlocks.masonry1', 'Cut Stone, from Rough Stone'), 1],",
+    "new": "  stonework: () => [[t('prof.page.unlocks.masonry1', 'Cut Stone, from Rough Stone'), 1],",
     "tests": [
       "test/prof11_client.test.js",
       "test/craft3_five.test.js"
     ],
-    "note": "PROF9 (RE-AIMED by content): the fire's code beside it. PROF12 (PIN MOVED): re-aimed by content. CRAFT3: re-aimed by content."
+    "note": "PROF9 (RE-AIMED by content): the fire's code beside it. PROF12 (PIN MOVED): re-aimed by content. CRAFT3: re-aimed by content. L10N4 (the merge of main): re-aimed by content - the table's rows read when drawn."
   },
   {
     "name": "PROF11-pages-fortifications-unsaid",
     "file": "src/ui/profPages.js",
-    "old": "SEAT2b: 'Comes with the fortifications',",
+    "old": " get SEAT2b() { return t('prof.page.later.seat2b', 'Comes with the fortifications'); },",
     "new": "",
     "tests": [
       "test/prof11_client.test.js"
     ],
     "equivalent": true,
-    "why": "CRAFT3's re-judge (2026-10-07): survives on main too - since SEAT2b built the fortifications no choice is `later: 'SEAT2b'`, so LATER_WORDS.SEAT2b is a word no card reads now; the pins that the Builder and the Fortifier are chosen stand."
+    "why": "CRAFT3's re-judge (2026-10-07): survives on main too - since SEAT2b built the fortifications no choice is `later: 'SEAT2b'`, so LATER_WORDS.SEAT2b is a word no card reads now; the pins that the Builder and the Fortifier are chosen stand. L10N4: so too through its getter - the word stands for the next slice that waits on one."
   },
   {
     "name": "PROF11-pages-mortar-at-rank-0",
     "file": "src/ui/profPages.js",
-    "old": "['Mortar, from Sulphur, Lead and Rough Stone', 2]",
-    "new": "['Mortar, from Sulphur, Lead and Rough Stone', 1]",
+    "old": "  masonry: () => [[t('prof.page.unlocks.masonry1', 'Cut Stone, from Rough Stone'), 1], [t('prof.page.unlocks.masonry2', 'Mortar, from Sulphur, Lead and Rough Stone'), 2]],",
+    "new": "  masonry: () => [[t('prof.page.unlocks.masonry1', 'Cut Stone, from Rough Stone'), 1], [t('prof.page.unlocks.masonry2', 'Mortar, from Sulphur, Lead and Rough Stone'), 1]],",
     "tests": [
       "test/prof11_client.test.js"
     ]
@@ -930,7 +930,7 @@
   {
     "name": "PROF11-pages-hands-not-at-the-bench",
     "file": "src/ui/profPages.js",
-    "old": ": me !== _mason && (_mason.act || _mason.crafting) ? 'the mason\\'s bench'\n    : me !== _cook",
+    "old": ": me !== _mason && (_mason.act || _mason.crafting) ? 'mason'\n    : me !== _cook",
     "new": "\n    : me !== _cook",
     "tests": [
       "test/prof11_client.test.js"
@@ -940,7 +940,7 @@
   {
     "name": "PROF11-pages-escape-forgets-the-chisel",
     "file": "src/ui/profPages.js",
-    "old": "  if (_mason.act) { _mason.act.cancel(); endChisel(); _mason.word = CHISEL_DOWN_LINE; return true; }   // PROF11\n",
+    "old": "  if (_mason.act) { _mason.act.cancel(); endChisel(); _mason.word = chiselDownLine(); return true; }   // PROF11\n",
     "new": "",
     "tests": [
       "test/prof11_client.test.js"
@@ -1157,7 +1157,7 @@
   {
     "name": "PROF11-door-sculptor-unworded",
     "file": "src/net/accountClient.js",
-    "old": "  'prof-sculptor': 'Only a Sculptor carves stone decor - a Building choice at 100 (Masonry\\'s).',   // PROF11; CRAFT3: the craft's\n",
+    "old": "  'prof-sculptor': () => t('account.refusal.profSculptor', 'Only a Sculptor carves stone decor - a Building choice at 100 (Masonry\\'s).'),   // PROF11; CRAFT3: the craft's\n",
     "new": "",
     "tests": [
       "test/prof11_service.test.js",

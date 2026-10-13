@@ -184,7 +184,7 @@ test('DUEL1 hosts by source: the swing reaches my opponent before any pool and i
   assert.match(w, /const n = duelMgr\.blow\('strike', \{ by, p: campToWire\(player\.feetAt\(\)\), d: Math\.trunc\(r\.dmg\),/, 'sent as a number');
   assert.match(w, /const n = duelMgr\.blow\('spell', \{ p: campToWire\(player\.feetAt\(\)\), d: siegeCastClamp\(harm, false\) \}\);/, 'a spell\'s harm, counted at home');
   // NAV-H (2026-09-28): a hostile ship in reach joined the same doors, after the duel and the foes
-  assert.match(w, /if \(duelEnemyNear\(\) \|\| areEnemiesNearby\(\[\.\.\.cityGuards\.guards, \.\.\.exteriorFoes\.foes\]\) \|\| navalHostileNear\(\)\) \{[^\n]*\n\s*townTalk\.say\(CANNOT_TRAVEL_ENEMIES_TEXT\);/, 'the travel map');
+  assert.match(w, /if \(duelEnemyNear\(\) \|\| areEnemiesNearby\(\[\.\.\.cityGuards\.guards, \.\.\.exteriorFoes\.foes\]\) \|\| navalHostileNear\(\)\) \{[^\n]*\n\s*townTalk\.say\(localizedText\('cannotTravelWithEnemiesNearby', CANNOT_TRAVEL_ENEMIES_TEXT\)\);/, 'the travel map');
   assert.equal((w.match(/enemiesNearby: \(\) => duelEnemyNear\(\) \|\| areEnemiesNearby\(/g) ?? []).length, 2, 'rest and a journey');
   assert.match(w, /duelHolds: \(\) => duelEnemyNear\(\),/);
   const m = rd('src/scenes/worldModes.js');

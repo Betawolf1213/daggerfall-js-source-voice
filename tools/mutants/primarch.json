@@ -132,8 +132,8 @@
   {
     "name": "PRIMARCH-the-card-label-dropped",
     "file": "src/ui/enhancedAccount.js",
-    "old": "  primarch: 'Primarch',   // PRIMARCH:",
-    "new": "  // primarch: 'Primarch',   // PRIMARCH:",
+    "old": "  primarch: () => t('account.glyph.primarch', 'Primarch'),   // PRIMARCH:",
+    "new": "  // primarch: () => t('account.glyph.primarch', 'Primarch'),   // PRIMARCH:",
     "tests": [
       "test/primarch.test.js"
     ],

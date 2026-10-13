@@ -57,6 +57,7 @@ import { MOBILE_TEAMS } from '../../characters/enemyTargets.js';   // MT-iii: Ch
 import { dfuEffectKeyOf } from '../spellEffects.js';   // QG1: CastEffectDo's key vocabulary, one home
 import { setLocationVariant, setNewLocationVariant, setBlockVariant, setBuildingVariant, makeLocationKey, NO_VARIANT } from '../worldDataVariants.js';   // RR3: WorldUpdate's registry
 import { ONLINE_GUARD_WINDOWS, guardWindowStep } from './onlineGuard.js';   // GUARD-ONLINE: a guarded quest's window online is its arrival's
+import { localizedText } from '../textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { raisedSince } from './questStamps.js';   // TIME3: a wave's interval charges a raise whole
 import { waveIsAwaited, questWaitsShort, ONLINE_DELAY_SECONDS } from './clock.js';   // WAVE-WAIT: a wave the quest waits on comes on the short wait online
 import { stringHash } from '../../formats/netRuntime.js';   // VERMIN-SHARED: a shared copy's pick, seeded (a leaf)
@@ -1555,7 +1556,7 @@ export class GetItem extends ActionTemplate {
     if (dfItem && isGoldPieces(dfItem)) {   // GetItem.cs:73 - IsOfTemplate, both terms
       const amount = dfItem.stackCount ?? 0;
       hooks?.addGold?.(amount);
-      hooks?.addHUDText?.(YOU_RECEIVE_GOLD_PIECES.replace('%s', String(amount)));
+      hooks?.addHUDText?.(localizedText('youReceiveGoldPieces', YOU_RECEIVE_GOLD_PIECES).replaceAll('%s', String(amount)));
     } else {
       hooks?.giveItemToPlayer?.(dfItem, true);   // AddPosition.Front
     }
@@ -1947,7 +1948,7 @@ export class RevealLocation extends ActionTemplate {
     const world = this.parentQuest.hooks?.world;
     world?.discoverLocation?.(place.siteDetails?.regionName, place.siteDetails?.locationName);
     if (this.readMap) {
-      world?.addNote?.(READ_MAP_NOTE.replace('%map', place.siteDetails?.locationName ?? ''));
+      world?.addNote?.(localizedText('readMap', READ_MAP_NOTE).replaceAll('%map', place.siteDetails?.locationName ?? ''));
     }
     this.setComplete();
   }

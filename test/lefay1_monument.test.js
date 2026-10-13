@@ -451,7 +451,7 @@ test('LEFAY1: THE FOUR HOSTS - world.js and exterior.js stand it, the street pre
   assert.match(world, /lefay: lefaySpot,/, 'the pixel keeps its spot');
   assert.match(modes, /for \(const t of host\.monumentTargets\?\.\(\) \?\? \[\]\) targets\.push\(t\);/);
   assert.match(modes, /return host\.activateMonument\?\.\(key, getInteractionMode\(\), plaqueActionFor\(key\)\) \?\? true;/);
-  assert.match(modes, /key\.startsWith\('lefay:'\)\) \{[^\n]*\n\s*if \(_hitDist > _hitReach\) \{ setMidScreenText\(TOO_FAR_AWAY_TEXT\); return true; \}/, 'too far speaks the refusal');
+  assert.match(modes, /key\.startsWith\('lefay:'\)\) \{[^\n]*\n\s*if \(_hitDist > _hitReach\) \{ setMidScreenText\(tooFarAwayText\(\)\); return true; \}/, 'too far speaks the refusal');
   assert.equal(/lefay/i.test(dungeon), false, 'the dungeon host stands no street, and nothing of it');
   assert.match(save, /snap\.lefayTribute = normalTribute\(entity\.lefayTribute\);/);
   assert.match(save, /entity\.lefayTribute = normalTribute\(snap\.lefayTribute\);/);

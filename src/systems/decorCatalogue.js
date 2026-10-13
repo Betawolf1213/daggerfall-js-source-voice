@@ -55,6 +55,7 @@ import { isShopShelfModel } from './shopStock.js';
 import { HOUSE_CONTAINER_NAMES } from './worldTooltips.js';
 import { interiorLightProperties } from '../world/interiorLights.js';
 import { decorPrice } from '../net/decorLaw.js';
+import { localizedStrings } from './textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
 import { BULLETIN_BOARD_MODEL_ID, WINDMILL_MODEL_ID, isCityGate } from '../world/rmbLayout.js';   // GUILD1e: the hall's board is Daggerfall's own; DECOR-OUTDOOR: the mill and the gates are no street pieces
 import { CLIMATE_NATURE } from '../formats/mapsFile.js';   // DECOR-OUTDOOR: the climates' nature sets
 import { isTreeRecord } from '../world/terrainNature.js';
@@ -368,7 +369,7 @@ export function decorRoomEntries(entries, room, show = null, mods = null) {
 }
 
 /** A piece's SIZE band, by its radius in metres - the panel's size filter. */
-export const DECOR_SIZES = Object.freeze({ small: 'Small', medium: 'Medium', large: 'Large' });
+export const DECOR_SIZES = localizedStrings({ small: 'Small', medium: 'Medium', large: 'Large' });
 export function decorSize(radiusMetres) {
   if (!(radiusMetres > 0)) return null;
   if (radiusMetres < 0.5) return 'small';

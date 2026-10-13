@@ -502,7 +502,7 @@
   {
     "name": "AUDIT625-S1-the-sentence-unsaid",
     "file": "src/net/accountClient.js",
-    "old": "  'marks-young': 'Silver turns up in finds and gathering once your account is a week old.',",
+    "old": "  'marks-young': () => t('account.refusal.marksYoung', 'Silver turns up in finds and gathering once your account is a week old.'),",
     "new": "",
     "why": "the young refusal said as a server's fault",
     "tests": [

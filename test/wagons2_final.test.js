@@ -131,7 +131,7 @@ test('WAGONS2 (FINAL AUDIT) A MARKED WAGON BY ITS KIND\'S NAME, WHEREVER A LIST 
   const sp = read('src/ui/socialPanel.js');
   assert.match(sp, /offers\.map\(\(it, i\) => \[String\(i\), \(it\.stackCount \?\? 1\) > 1 \? `\$\{vaultPieceName\(it\)\} x\$\{it\.stackCount\}` : vaultPieceName\(it\)\]\)/, 'the Put in list');
   assert.match(sp, /const it = \{ \.\.\.row, name: wagonItemName\(row\.rec\) \?\? row\.name \};/, 'the rows (a row named before the service did)');
-  assert.match(read('src/scenes/worldModes.js'), /\?\? wagonItemName\(it\) \?\? it\.name \?\? templateByIndex\(it\.templateIndex\)\?\.name \?\? it\.group;/, 'the keyed shelf');
+  assert.match(read('src/scenes/worldModes.js'), /\?\? wagonItemName\(it\) \?\? shownItemName\(it\) \?\? /, 'the keyed shelf');
 });
 
 test('WAGONS2 (FINAL AUDIT) THE WORDS: an inside painted says "is" of a floor and a ceiling and "are" of the walls; "Ask to ride" out of reach says too far (it said there was no room); an Accept after the ask lapsed says so (it said no seat was free); the ride\'s strip stands below the duel\'s (both stood at the top centre - a challenge under a ride\'s ask lapsed unseen) (mutants: each word, the strip\'s place)', () => {

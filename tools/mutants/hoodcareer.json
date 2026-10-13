@@ -56,8 +56,8 @@
   {
     "name": "HOODCAREER-the-refusal-says-no-more",
     "file": "src/systems/vampirism.js",
-    "old": "  return { text: SUNLIGHT_TRAVEL_TEXT, hint };",
-    "new": "  return { text: SUNLIGHT_TRAVEL_TEXT };",
+    "old": "  return { text: sunlightTravelText(), hint };   // L10N3d: the same routed box as the racial rung",
+    "new": "  return { text: sunlightTravelText() };   // L10N3d: the same routed box as the racial rung",
     "tests": [
       "test/hoodcareer.test.js"
     ]

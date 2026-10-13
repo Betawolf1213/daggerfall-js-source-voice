@@ -19,7 +19,7 @@ import { WORLD_FRAME } from '../render/renderer.js';   // AUDIT-EL F5
 import { frameBegin, frameEnd, frameAbort } from '../systems/frameClock.js';   // PERF1: the frame's script time; AUDIT-WH2 L1-F4: and the door an early return takes
 import { frameCapSkip } from '../systems/frameCap.js';   // FPS-CAP1: DFU's TargetFrameRate - a held frame re-arms before the clock and the input frame
 import { INTERIOR_CLEAR } from '../render/renderer.js';
-import { getInteractionMode, setInteractionMode, MODE_ACTIONS, askInteractionMode } from '../player/interactionMode.js';   // R1: the global PlayerActivate mode; AUDIT 58: its four ACTIONS
+import { getInteractionMode, setInteractionMode, MODE_ACTIONS, interactionModeText, askInteractionMode } from '../player/interactionMode.js';   // R1: the global PlayerActivate mode; AUDIT 58: its four ACTIONS
 import { modeWheel, MODE_WHEEL_ACTION } from '../ui/modeWheel.js';   // MODE-WHEEL: the held key's wheel
 import { setMidScreenText } from '../ui/midScreenText.js';   // AUDIT 64 F34: DaggerfallHUD's centred label
 import { FootstepMachine, pickFootstepSet } from '../systems/footsteps.js';   // FS-slice
@@ -54,7 +54,7 @@ import { PITCH_LIMIT } from '../player/mwCamera.js';   // MW-D30: camera.cpp:323
 import { jumpSpeedMultiplier, isEnhancedJumping } from '../systems/skills.js';   // AUDIT 64 F2: CheckAirControl's IsEnhancedJumping disjunct
 import { pickFoe,   // TI1: the lock-on pick
   pickActivatableHit,   // AUDIT 63 F33 (review): the pick hands its distance back so the enemy arm can lose to a nearer target   // WORLD-HOVER: the LIST comes off the context's one seam now
-  RAY_DISTANCE, TOO_FAR_AWAY_TEXT,   // AUDIT 65 MC-2: the ONE reach the foe arm competes at (DFU's one ray), and the refusal each handler speaks for itself
+  RAY_DISTANCE, tooFarAwayText,   // AUDIT 65 MC-2: the ONE reach the foe arm competes at (DFU's one ray), and the refusal each handler speaks for itself
   doorDistanceOf,   // AUDIT TACT C7: the door behind a peaceful guard
 } from '../player/activate.js';
 // AUDIT 63 F33: PlayerActivate.ActivateMobileEnemy (:800-841) - the
@@ -308,7 +308,7 @@ export async function bootDungeon(canvas, renderer, params, status) {
     const key = _pick?.key ?? null;
     // AUDIT 65 MC-2: THE REFUSAL, where DFU keeps it - inside the handler its one ray dispatched into: the action door
     // (:686-689), the loot container (:868-873), the corpse (:936-941). activate.js's pickActivatableHit holds the law.
-    if (_pick && _pick.distance > _pick.reach) { setMidScreenText(TOO_FAR_AWAY_TEXT); return true; }   // consumed, and no key: nothing was activated (the probe seam __activate reads this)
+    if (_pick && _pick.distance > _pick.reach) { setMidScreenText(tooFarAwayText()); return true; }   // consumed, and no key: nothing was activated (the probe seam __activate reads this)
     // U26: the player's OWN dropped piles are loot targets too, and
     // they carry the droppedLoot: prefix. Without this arm a dungeon
     // drop was one-way - the pile drew, the ray found it, and E did
@@ -333,7 +333,7 @@ export async function bootDungeon(canvas, renderer, params, status) {
   const pickMode = (m) => {
     if (ctx.uiOverlayActive) return false;
     askInteractionMode(m);
-    if (m !== getInteractionMode()) { setInteractionMode(m); setMidScreenText(`Interaction is now in ${m} mode.`); }
+    if (m !== getInteractionMode()) { setInteractionMode(m); setMidScreenText(interactionModeText(m)); }
     return true;
   };
   // P15: AltLeft is Sneak (DFU default) - preventDefault on BOTH edges

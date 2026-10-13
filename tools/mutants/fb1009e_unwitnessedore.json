@@ -23,8 +23,8 @@
   {
     "name": "UNWITNESSED-ORE-the-page-says-nothing",
     "file": "src/ui/profPages.js",
-    "old": "    if (_sel === 'mining') pane.append(el('p', 'px-note', MINING_GROUND_LINE));   // UNWITNESSED-ORE",
-    "new": "    void MINING_GROUND_LINE;",
+    "old": "    if (_sel === 'mining') pane.append(el('p', 'px-note', miningGroundLine()));   // UNWITNESSED-ORE",
+    "new": "    void miningGroundLine;",
     "tests": ["test/fb1009e_unwitnessedore.test.js"]
   }
 ]

@@ -296,7 +296,7 @@ import { huntKind, createBodyStamps, bodiesHere, trackerMarks } from './huntHost
 import { fishKind } from './fishHost.js';   // PROF8: Fishing's casts and schools - a kind in it
 import { utcDayOfMs } from '../net/nodeLaw.js';   // PROF8: a haul's UTC day
 import { registerPlayerKillListener } from '../systems/playerKills.js';   // PROF7: the player's own kill stamps a body
-import { setProfessionsPages, forgeOffered, focusStoresStation, WORKBENCH_COLD_LINE } from '../ui/profPages.js';   // PROF1: the Professions and Stores pages on the character sheet's rail; CARP-YARD: the joinery's bench opens it
+import { setProfessionsPages, forgeOffered, focusStoresStation, stationColdLine } from '../ui/profPages.js';   // PROF1: the Professions and Stores pages on the character sheet's rail; CARP-YARD: the joinery's bench opens it
 import { createSaddleHost } from './saddleHost.js';   // STEED-UI: the saddle panel - the horse and the wagon on screen (Enhanced Plus)
 import { setHoldingsProvider, stableProviderFor } from '../ui/holdingsPages.js';   // HOLDINGS: the Stable and the Fleet pages on the pause menu's Holdings tab
 import { fleetBook, fleetShip, titleDeed, knowShip, retitle, setShipPort, forgetShip, fleetSaveSlot, FLEET_SAVE_VENDOR } from '../systems/fleet.js';   // HOLDINGS: the Fleet's ledger and its book of titles
@@ -501,11 +501,11 @@ import { seaZoomReach } from '../player/seaZoom.js';   // FIELD BUGS 2026-09-29 
 import { mwCamera } from '../player/mwCamera.js';   // MW-D30: persistence
 import { pickActivatableHit, pickQuestFoe, pickFoe, peacefulFoePass } from '../player/activate.js';   // G3: corpse loot; QG1: the foe-click door; TI1: the lock-on pick
 import { raceActivation } from '../player/activationRace.js';   // HARD2: one home for "the nearest thing under the one ray takes the click"
-import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE, MOBILE_NPC_ACTIVATION_DISTANCE, TOO_FAR_AWAY_TEXT } from '../player/activate.js';   // AUDIT 63 F33: ActivateMobileEnemy (PlayerActivate.cs:800-841); AUDIT 65 MC-2: the loot handlers' refusal
+import { RAY_DISTANCE, DEFAULT_ACTIVATION_DISTANCE, MOBILE_NPC_ACTIVATION_DISTANCE, tooFarAwayText } from '../player/activate.js';   // AUDIT 63 F33: ActivateMobileEnemy (PlayerActivate.cs:800-841); AUDIT 65 MC-2: the loot handlers' refusal
 import { setMidScreenText, midScreenText as _wildMidText } from '../ui/midScreenText.js';   // AUDIT 64 F34: DaggerfallHUD's centred label, where PlayerActivate's refusals go
 import { tryMobileEnemyActivate } from '../player/mobileEnemyActivate.js';
 import { FOUND_NOTHING_VALUABLE_TEXT_ID } from '../systems/talk.js';   // GetRandomText(8999)
-import { spellRecordOfIndex, DUNGEON_LOOT_KEYS, generateItems as generateLootItems, addPileLootExtras } from '../systems/loot.js';   // QG1: CastSpellDo's classic-record read (the G4 registry); WOD3: LootTables.GenerateLoot for the camps' piles
+import { spellRecordOfIndex, DUNGEON_LOOT_KEYS, generateItems as generateLootItems, addPileLootExtras, shownSpellName } from '../systems/loot.js';   // QG1: CastSpellDo's classic-record read (the G4 registry); WOD3: LootTables.GenerateLoot for the camps' piles; L10N3e: a spell's name as shown
 import { preloadCharSheetArt } from '../ui/charsheet.js';   // U8a. AUDIT 44 (a11): no LevelUpScreen here - a level-up opens the SHEET, and the skin fork behind charSheetDoor decides which face it wears.
 import { createCharSheetWindow, charSheetDoorReady, warmLevelUpWindow } from '../ui/charSheetDoor.js';
 import { announceLevelUp, levelOwed } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
@@ -526,7 +526,7 @@ import { randomEpitaph } from '../systems/gravestoneLore.js';   // GRAVE1: Info 
 import { ImgFile } from '../formats/imgFile.js';   // AUDIT 21 hosts F7: loadHud's reader
 import { preloadInventoryArt } from '../ui/nativeInventory.js';   // U8d: the native inventory
 import { createInventoryWindow, inventoryDoorReady } from '../ui/inventoryDoor.js';   // U53: the pack's ONE seam, and the skin fork in front of it
-import { createUseMagicItemWindow, NO_ITEM_TO_ACTIVATE_TEXT } from '../ui/useMagicItemWindow.js';   // UI1: the U key's window
+import { createUseMagicItemWindow, noItemToActivateText } from '../ui/useMagicItemWindow.js';   // UI1: the U key's window
 import { preloadTransportArt } from '../ui/transportWindow.js';   // TR3: the picker's art (the picker itself is the mount rig's)
 import { TRANSPORT_MODES } from '../systems/transport.js';   // TR3: what the rows offer
 import { shipTransition, REPOSITION, isOnShip, shipMemory, shipRestorePos } from '../systems/ship.js';   // TR4: board and disembark; AUDIT-TO1 D1: TransportManager.IsOnShip for the popup; AUDIT 68 S22: the memory's height, compensation-free
@@ -542,7 +542,7 @@ import { createDroppedLoot, droppedLootHooks, containerDropPos } from './dropped
 import { CONTAINER_IMAGES } from '../ui/targetIconPanel.js';   // DW-E3: a fish's DaggerfallLoot keeps the field's default picture (Chest) under its icon
 import { preloadPaperDollArt } from '../ui/paperDoll.js';   // U8f: the avatar base
 import { seedStartingEquipment } from '../systems/equip.js';   // U8h: the worn-weapon binding
-import { createChargenFlow, createChargenWindow, finishChargen, loadSpellIndex, applyHeadlessChargen } from '../systems/chargenSession.js';   // S3c/U9
+import { createChargenFlow, createChargenWindow, finishChargen, loadSpellIndex, applyHeadlessChargen, handHeroGenderToGrammar } from '../systems/chargenSession.js';   // S3c/U9; L10N3g: the hero's gender to the grammar
 import { testEntryById, applyTestCharacter, seedTestMount, seedTestLoot, testRoomOnlineRefused, TEST_ROOM_OFFLINE_TEXT, TEST_SEA, TEST_SEA_TEXT, enableTestSea } from '../systems/testRoom.js';   // TR3: the Test Room's one home; TSR4: the ride; AUDIT SET D4: its character's online refusal
 import { publishBootParams, refuseOnlinePowerFlags, BOOT_DOOR_KEYS } from '../systems/onlineLane.js';   // AUDIT SET D4: a refused Test Room boot drops `online` from the URL the lane reads; REALM P0.1: the URL's powers stay offline
 import { preloadChargenArt } from '../ui/chargenArt.js';   // U10
@@ -662,14 +662,14 @@ import { createSuccessionOverlay, successionOpen, createKinOverlay } from '../ui
 import { createFaceLoader } from '../ui/partyPanel.js';   // LEGACY3: a member's portrait, the party HUD's own door
 import { goldPiecesOf as legacyGold, addItem as legacyAddItem, letterOfCredit } from '../systems/inventory.js';   // LEGACY1: the estate
 import { tabStorage } from '../systems/appStorage.js';   // LEGACY1: a birth crosses the reload in the tab's own store
-import { MONTH_NAMES } from '../systems/gameDate.js';
+import { monthNames } from '../systems/gameDate.js';   // L10N3e: the month's name in the player's language, read when asked
 import { createBountyHost } from './bountyHost.js';   // BOUNTY1: the town's bounty boards - the hunts, their packs, their purse
 import { createBountyFarms, farmSpotLocal, pickFarm } from './bountyFarms.js';   // BOUNTY-FARM: a farm on a farm bounty's pixel, while it is held
 import { questBoardIndices, bountyDungeons } from '../systems/bountyBoard.js';   // BOUNTY1: which of a town's boards post bounties (half); RVN7: a revenant's lair, in the boards' ring
 import { createBountyOverlay, closeBountyDoor, bountyDoorOpen } from '../ui/bountyDoor.js';   // BOUNTY1: the board's window and the payday notice
 import { isQualifyingThreatState } from '../systems/horseFollow.js';   // HCC: CollectThreats' qualification, the mod's own five-term test
 import { totalWeight } from '../systems/inventory.js';   // HCC: PlayerEntity.WagonWeight
-import { planTake, CANNOT_CARRY_TEXT } from '../systems/itemTransfer.js';   // SET7: the Broker's sale asks the pack's own carry gate
+import { planTake, cannotCarryText } from '../systems/itemTransfer.js';   // SET7: the Broker's sale asks the pack's own carry gate
 import { createUpkeep, horseWhereOf, upkeepReach, registerUpkeepUses } from '../systems/upkeepRuntime.js';   // STEED1/WAGONS4: horse care and wagon upkeep, a frame at a time
 import { mendWagon, wagonWord, WAGON_UPKEEP_TEXT } from '../systems/wagonUpkeep.js';   // WAGONS4: the Wagon Yard's wright
 import { horseCareOn, wagonUpkeepOn } from '../systems/upkeepSwitch.js';   // STEED1/WAGONS4: their Features switches
@@ -901,7 +901,7 @@ import { PageOffers, pageOfferText, pageShownText, pageTooFarText, keptPageToken
 import { quickslotTag, quickslotHand, tagText, actionKeyWord } from '../ui/quickslotTags.js';   // JOURNAL1: the F-menu's own key, named off the live bindings
 import { isTouchDevice } from '../ui/touchDevice.js';   // JOURNAL1: ...or a tap, where a finger points
 import { composeCard, createCardAnswerGate, CARD_WAIT_MS } from '../net/profileCard.js';   // INSPECT1: my card when asked, and how often one asker is answered
-import { relayVersionSeen, buildUpdateSeen, fetchLiveBuildTag, RELAY_RESTART_TEXT, BUILD_UPDATE_TEXT, BUILD_POLL_MS } from '../net/updateNotice.js';   // SRV-N: the relay moved, or the build did
+import { relayVersionSeen, buildUpdateSeen, fetchLiveBuildTag, relayRestartText, buildUpdateText, BUILD_POLL_MS } from '../net/updateNotice.js';   // SRV-N: the relay moved, or the build did
 import { BUILD_TAG } from '../buildTag.js';   // SRV-N: which build this tab is actually running
 import { morrowindDataCount, morrowindDataGeneration, getBytes } from './dataSource.js';   // MWBODY1: the bodies' gate - Morrowind data attached - and its generation
 // Q4-v: THE QUEST BRIDGE - the machine goes live in this host.
@@ -916,7 +916,7 @@ import { isShelved } from '../systems/quest/quest.js';   // QUEST-SHELF: a quest
 import { guildOfFaction, membershipOf, guildFactionIdOfGroup, joinedGuildOfGroup, activeMemberships, guildInitiationQuestEnded } from '../systems/guilds.js';   // V2e: the per-read vampire book pick; F96: the TG/DB initiation listener
 import { GUILD_FACTION_IDS } from '../systems/guildFactions.js';   // CHAP4b: the Mages Guild's faction, for its seat's teleport
 import { GUILD_GROUPS, FACTION_TYPES } from '../formats/factionFile.js';   // the membership book's key - the travel popup's free-ship read   // AUDIT 39 (#23): GetRegionFaction's Province filter
-import { freeShipTravel, freeTavernRooms, avoidDeath, AVOID_DEATH_TEXT } from '../systems/guildServices.js';   // KnightlyOrder.FreeShipTravel, the second half of hasShip; FreeTavernRooms, the trip cost's inn nights
+import { freeShipTravel, freeTavernRooms, avoidDeath, avoidDeathText } from '../systems/guildServices.js';   // KnightlyOrder.FreeShipTravel, the second half of hasShip; FreeTavernRooms, the trip cost's inn nights
 import { resolveVariantGuild, orderOf, getDivine } from '../systems/guildVariants.js';   // TN1: GetFactionName's HolyOrder arm
 import { revealGuildHallsOnMap, revealingMemberships } from '../systems/guildHallReveal.js';   // AUDIT 63 F9: ThievesGuild/DarkBrotherhood RevealGuildHallOnMap; AUDIT CHAP2 D4: either book's
 // TK-i: THE RUMOR MILL - the quest machine's rumor seams stop being silent.
@@ -1058,6 +1058,7 @@ import { carvedFloorLocalY } from './deepWatersHost.js';   // DW-D: the shore pr
 import { breathStep, setWaterBreathingRule } from '../systems/breath.js';   // DW-D: the dungeon's breath law, on the open sea; ApplyArgonianInfiniteBreath
 import { CLASSIC_UPDATE_INTERVAL } from '../characters/weaponStates.js';   // DW-D: PlayerEntity's classic cadence, the dungeon's import
 import { RACES } from '../systems/races.js';   // DW-D: ArgonianInfiniteBreath
+import { localizedStrings, localizedText, getLocalizedLocationName, getLocalizedRegionName, getLocalizedFactionName } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: and the names shown
 import { hallStepsFor, harbourPortFor, coastalAt } from '../net/fortLaw.js';   // SEAT2b part two: a seat's crafting halls, its members' Harbour, a coast
 import { isWaterPixel } from '../ui/overworldModel.js';   // SEAT2b part two: a coast is the sea beside the town (the port's one water law)
 import { createSiegeNpcs } from './siegeNpcs.js';   // SEAT2b part two (c): the Barracks' guards and a revolt's rising, drawn
@@ -1076,7 +1077,7 @@ import { startTutorialTour } from '../ui/tutorialPopup.js';   // TUT1: the welco
 /** Internal_Strings_en 654 / 655, the two guild map-reveal notes
  *  (ThievesGuild.cs:115, DarkBrotherhood.cs:108). %map is the
  *  DiscoverRandomLocation name. */
-const REVEAL_NOTE_TEXT = Object.freeze({
+const REVEAL_NOTE_TEXT = localizedStrings({
   // U44: the map ITEM's own note (DaggerfallInventoryWindow.cs:1834),
   // Internal_Strings.csv :810.
   readMap: 'Discovered the location of %map after studying a map.',
@@ -1112,7 +1113,7 @@ export const BOSS_COUNT_FELL_TEXT = 'The fight counts you fallen.';
 // recenters the world (StreamingWorld + FloatingOrigin semantics in
 // streamingWorld.js). Everything is stored pixel-local; per-frame
 // placement is pixelTranslation(px, py) under the current compensation.
-export async function bootWorld(canvas, renderer, params, status) {
+export async function bootWorld(canvas, renderer, params, status) { handHeroGenderToGrammar(playerEntity);   // L10N3g: StartGameBehaviour.cs:147 - every start, a load included, hands the grammar the live hero's gender
   // MENU1-WARM: the seven enhanced menus are lazy chunks, each fetched
   // the first time its door opens - which is mid-play, on the frame the
   // key was pressed. Asked for idly instead, so no door pays for its
@@ -3688,7 +3689,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     travelFree: () => _mode() === 'exterior' && !livingTravelEnemies(),
     travelWith: (trip, until) => {
       if (params.has('online')) return false;
-      if (livingTravelEnemies()) { townTalk.say(CANNOT_TRAVEL_ENEMIES_TEXT); return false; }
+      if (livingTravelEnemies()) { townTalk.say(localizedText('cannotTravelWithEnemiesNearby', CANNOT_TRAVEL_ENEMIES_TEXT)); return false; }
       if (_mode() !== 'exterior') modes?.forceExitToExterior();
       advanceOwnMinutes(Math.max(0, until - skyMinutes()));
       const at = livingPartyAt(trip, Math.min(until, trip.outT1 - 1));
@@ -7607,7 +7608,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   // Temple.AvoidDeath reads: a Stendarr priest drowning at sea is not saved).
   setAvoidDeathHook(() => {
     if (!avoidDeath(activeMemberships(playerEntity), { submerged: !!dwPlayer?.submerged })) return false;
-    townTalk.say(AVOID_DEATH_TEXT);
+    townTalk.say(avoidDeathText());
     return true;
   });
 
@@ -8204,7 +8205,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     getQuest: (uid) => questBridge?.machine.getQuest(uid) ?? null,
     took: (moved, who) => showPickups(moved, who),
     say: (l) => townTalk.say(l),
-    revealMap() { return revealLocation('readMap'); },   // useHooks' own reveal (U44), named as a method: that bag's line is a cite's anchor
+    revealMap() { return useHooks.revealMap(); },   // useHooks' own reveal (U44), named as a method: that bag's line is a cite's anchor; L10N3e: so its answer is the bag's, the place as shown
     paused: () => !!gamePaused(),   // AUDIT PI1 L10: the flights hold while the game does (this host's one pause answer)
   });
   // T3d: the Where-is directory follows the player's LOCATION PIXEL
@@ -8616,7 +8617,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     entity: { wagonWeight: () => totalWeight(playerEntity.wagonItems ?? []), wagonKgLimit: () => wagonKgFor(playerEntity) },   // WAGONS1: the driven wagon's
     activateMode: () => getInteractionMode(),
     fadeInProgress: () => false,   // the port fades no transition
-    say: (l) => townTalk.say(l), setMidScreenText: (t, seconds) => setMidScreenText(t, seconds), tooFarText: () => TOO_FAR_AWAY_TEXT,
+    say: (l) => townTalk.say(l), setMidScreenText: (t, seconds) => setMidScreenText(t, seconds), tooFarText: tooFarAwayText,
     settings: hccSettings, actionPressed: hccActionPressed, now: () => performance.now() / 1000,
     travelOptionsActive: () => (travelOptions ? !!travelOptions.isTravelActive : null),
     worldCoordToMapPixel: (x, z) => worldCoordToMapPixel(x, z),
@@ -13810,7 +13811,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   const useHooks = {
     // U44: RecordLocationFromMap's reveal. DFU's own note key for the
     // map ITEM is `readMap`, the third caller of this one seam.
-    revealMap: () => revealLocation('readMap'),
+    revealMap: () => { const r = revealLocation('readMap'); return r ? r.shown || r.name : null; },   // L10N3e: record 499's %map is the place as shown (DaggerfallInventoryWindow.cs:1832); the gate is its canonical name (:1828), so a translation's empty row still reads as found
     drinkPotion: (key, potent) => magic.drinkPotion(key, potent),   // U44: DrinkPotion through the ONE cast engine; PROF12: a Potent potion's share
     // QuestMachine.GetQuest - the window's quest reach: the use-click
     // block (DaggerfallInventoryWindow.cs:1673) and ResolveItemLongName's
@@ -13974,7 +13975,13 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  guild map reveals (G8) and U44's map ITEM, whose note key is
    *  DFU's own `readMap` (DaggerfallInventoryWindow.cs:1833-1834).
    *  Only this host has a region index to walk - the standalone town
-   *  and dungeon pages legitimately answer nothing. */
+   *  and dungeon pages legitimately answer nothing.
+   *
+   *  L10N3e: it answers the place as DiscoverRandomLocation's DFLocation
+   *  does, or null - `name` the canonical one (the discovery's key, and
+   *  the callers' gate: DaggerfallInventoryWindow.cs:1828,
+   *  ThievesGuild.cs:112), its `mapId`, and `shown`, the name as the
+   *  map item shows it (GetLocalizedLocationName, :1831). */
   const revealLocation = (noteKey) => {
     const dfLoc = locationIndex.get(`${playerTravelPixel().x},${playerTravelPixel().y}`);
     const region = dfLoc ? maps.getRegion(dfLoc.regionIndex) : null;
@@ -13984,13 +13991,18 @@ export async function bootWorld(canvas, renderer, params, status) {
       name: region.mapNames[i], regionName: region.name,
     }));
     const picked = discoverRandomLocation(rows);
+    if (!picked) return null;
+    const shown = getLocalizedLocationName(picked.mapId, picked.name);
     // ThievesGuild.cs:114-116 / DarkBrotherhood.cs:107-109 -
-    // `GetLocalizedText(noteKey).Replace("%map", name)`, verbatim.
-    if (picked) questBridge?.notebook?.addNote(REVEAL_NOTE_TEXT[noteKey]?.replace('%map', picked.name) ?? '');
+    // `GetLocalizedText(noteKey).Replace("%map", name)`, verbatim: the
+    // guilds' notes name revealedDungeon.Name, the canonical one, and the
+    // map item's names the place as shown (DaggerfallInventoryWindow.cs:1834).
+    questBridge?.notebook?.addNote(REVEAL_NOTE_TEXT[noteKey]?.replace('%map', noteKey === 'readMap' ? shown : picked.name) ?? '');
     // MACROS1: PlayerGPS.LocationRevealedByMapItem (DiscoverRandomLocation :1092-1095 sets it) - the quest macro
-    // table's %map reads it through the world hook below; it answered null here since the table was written
-    if (picked) _locationRevealedByMapItem = picked.name;
-    return picked?.name ?? null;
+    // table's %map reads it through the world hook below; it answered null here since the table was written.
+    // L10N3e: the name as shown - DFU stores the localized one (DaggerfallInventoryWindow.cs:1832)
+    _locationRevealedByMapItem = shown;
+    return { name: picked.name, mapId: picked.mapId, shown };
   };
   let _locationRevealedByMapItem = null;
   /** LOOT19 (the Loot arc II, bible/06-Systems/Loot-II-Arc.md section 11): THE REGION A SCRYING READS - the current
@@ -15403,7 +15415,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       // TeleportToCoordinates has already returned - here the arrival
       // is awaited, which is the same instant.
       hudFade.fadeHUDFromBlack();
-      townTalk.say(`You arrive at ${pick.name}.`);
+      townTalk.say(`You arrive at ${getLocalizedLocationName(pick.mapId, pick.name)}.`);   // L10N3e: the place as shown, by its MapId - the pick keeps the canonical name the journey is keyed by
     } finally {
       _teleporting = false;
     }
@@ -15716,7 +15728,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   /** A classic minute as the calendar says it: "14 Last Seed, 3E 405". */
   function legacyDateText(minutes) {
     const d = dateFromClassicMinutes(Math.max(0, Math.floor(minutes)));
-    return `${d.day + 1} ${MONTH_NAMES[d.month]}, 3E ${d.year}`;
+    return `${d.day + 1} ${monthNames()[d.month]}, 3E ${d.year}`;
   }
   let _legacyT = 0;
   /** LEGACY1: Project Legacy's slow tick (once a second, every mode): the seat, the elder, the estate, a dead load. */
@@ -16137,7 +16149,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       // keeps the crime in DFU too.
       setCrimeCommitted(playerEntity, CRIMES.None);
       arrestFlow.crimeCleared();   // DISC28-B: a surrender box a guard raised as the journey committed asks about THIS crime - it goes with it
-      townTalk.say(beside && pick.besideText ? pick.besideText : `You arrive at ${pick.name}.`);
+      townTalk.say(beside && pick.besideText ? pick.besideText : `You arrive at ${getLocalizedLocationName(pick.mapId, pick.name)}.`);   // L10N3e: the place as shown, by its MapId - the pick keeps the canonical name the journey is keyed by
       if (warmAshesOn()) warmAshesPostTravel();   // WA1: RaiseOnPostFastTravelEvent (:383) - Warm Ashes' CheckforEncounters arms its 0.05s coroutine
       if (csaRuntime) csaCall(() => csaRuntime.OnPostFastTravel());   // CSA-J (the audit): ComeSailAway.OnPostFastTravel, the same event's - ResetTimeScale(false)
     } finally {
@@ -16278,7 +16290,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // capturePendingScreenshot delivers it once the save window has
     // popped, HUD in shot exactly as the C# leaves it.
     if (r.ok && !quiet) requestScreenshot(r.key);
-    if (!r.ok || !quiet) townTalk.say(r.ok ? 'Game saved.' : 'Save failed (storage full or disabled).');
+    if (!r.ok || !quiet) townTalk.say(r.ok ? localizedText('gameSaved', 'Game saved.') : 'Save failed (storage full or disabled).');
     return r.ok;
   }
   /** AUDIT 63r F24, the EXTERIOR half of SerializableEnemy.cs
@@ -16850,7 +16862,7 @@ export async function bootWorld(canvas, renderer, params, status) {
           }
         } else if (modes?.mode === 'exterior') ensureBankCabinLink();
       }
-      townTalk.say('Game loaded.');
+      townTalk.say(localizedText('gameLoaded', 'Game loaded.'));
       slotLoaded(playerEntity.characterId ?? null);   // AUDIT ONLINE2 F3: the pack is the save's - the spoils' crash door asks again
       // BA1: SaveLoadManager.OnLoad's listeners - Better Ambience's fog and rain source (four frames on), and
       // Immersive Footsteps' ModCompatibilityWarning_OnLoadSave.
@@ -17058,7 +17070,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // DFU says it - AddHUDText with `cannotTravelIndoors`, whose door
     // here is townTalk.say. It was silent: a Find Place taken in a
     // building closed the journal on nothing.
-    if ((modes?.mode ?? 'exterior') !== 'exterior') { townTalk.say(CANNOT_TRAVEL_INDOORS_TEXT); return false; }
+    if ((modes?.mode ?? 'exterior') !== 'exterior') { townTalk.say(localizedText('cannotTravelIndoors', CANNOT_TRAVEL_INDOORS_TEXT)); return false; }
     // ETHER-CHART (ui/etherChartWindow.js): past the Veil the map is the captain's chart of the Etheric Sea - the Bay's has
     // no sea there to show, and nothing on it is travelled to
     { const p = playerTravelPixel(); if (etherSea && inEther(p.x, p.y)) return openEtherChart(); }
@@ -17079,7 +17091,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // DUEL1: and a duel opponent IS an enemy nearby (Mac: the ring "keeps them from going outside of the duel space") -
     // no travelling out of a duel by map
     if (duelEnemyNear() || areEnemiesNearby([...cityGuards.guards, ...exteriorFoes.foes]) || navalHostileNear()) {   // NAV-H: a hostile ship in reach too
-      townTalk.say(CANNOT_TRAVEL_ENEMIES_TEXT);
+      townTalk.say(localizedText('cannotTravelWithEnemiesNearby', CANNOT_TRAVEL_ENEMIES_TEXT));
       return false;
     }
     // AUDIT 58: the rung the comment above already named and the code
@@ -17176,7 +17188,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   function openImmersiveMap(kind) {
     // AUDIT IT1 W6: a map that does not open says why, as the travel map's door says its own - the popup had closed
     // on nothing (a click that landed after the player stepped indoors, the classic art not loaded)
-    if ((modes?.mode ?? 'exterior') !== 'exterior') { townTalk.say(CANNOT_TRAVEL_INDOORS_TEXT); return null; }
+    if ((modes?.mode ?? 'exterior') !== 'exterior') { townTalk.say(localizedText('cannotTravelIndoors', CANNOT_TRAVEL_INDOORS_TEXT)); return null; }
     if (!travelMapDoorReady()) { townTalk.say('(the travel map art is unavailable)'); return null; }
     if (!immersiveTravelLoaded() || (kind !== IT_POPUP.carriage && kind !== IT_POPUP.seafarer)) return null;
     // AUDIT IT1 W2: ONLINE, THE SUN. Offline a sun-averse traveller who rides by day lands after dark - fastTravelTo's
@@ -17497,7 +17509,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       const code = action === 'TravelExit' ? sequenceString(shortcutBinding('TravelExit')) : getBinding(bindings(), action);
       return String(code ?? '').replace(/^Key/, '');
     },
-    text: (key) => (key === 'cannotTravelWithEnemiesNearby' ? CANNOT_TRAVEL_ENEMIES_TEXT : ''),
+    text: (key) => (key === 'cannotTravelWithEnemiesNearby' ? localizedText('cannotTravelWithEnemiesNearby', CANNOT_TRAVEL_ENEMIES_TEXT) : ''),
     pushWindow: (ui) => { ui.show(); },
     // TRAVEL-NAV1: the way ahead - the drive turned and capped in place, a stop answered by name
     steer: (drive, worldX, worldZ, autopilot) => {
@@ -17924,7 +17936,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // placeholder plate on the town map that outlives the load.
     Promise.resolve(townTalk.ensureFactions?.()).then(() => {
       revealGuildHallsOnMap(revealingMemberships(playerEntity), locationId, buildings,   // AUDIT CHAP2 D4: either book's
-        { factionName: (id) => townTalk.factionDict?.get(id)?.name ?? '' });
+        { factionName: (id) => { const n = townTalk.factionDict?.get(id)?.name; return n == null ? '' : getLocalizedFactionName(id, n); } });   // L10N3e: GetGuildName's GetFactionData, a translation's name for the id (ThievesGuild.cs:246, DarkBrotherhood.cs:255, PersistentFactionData.cs:176)
       // CHAP2a (Chapters-Arc 4): and online, at the entry edge, the town's guild halls read off these same buildings are
       // reported - once a UTC day a town, the Chapters' witnesses (net/npcHallBook.js). A town with none reports nothing.
       // AUDIT CHAP2 U1: only off the layout every client stands in - the homes' own gate (WD3): a town whose pinned layout
@@ -17962,8 +17974,12 @@ export async function bootWorld(canvas, renderer, params, status) {
     getGpuMesh(99900).catch(() => {});
     // HALF B: the plates now come off the Position-bearing subrecord
     // walk over ALL buildings, not off the discovered doors.
+    // L10N3e: the plates' names carry the shown pair beside the canonical one - GetLocalizedLocationName by the MapId
+    // and GetLocalizedRegionName by the index (ExteriorAutomap.cs:717-718); the canonical pair still chooses the palace
+    const shownLocation = getLocalizedLocationName(dfLoc.mapTableData?.mapId, dfLoc.name);
     const summaries = buildingSummaries(dfLoc.exterior?.buildings ?? [], b.locBlocks,
-      { locationName: dfLoc.name, regionName: maps.getRegionName(dfLoc.regionIndex), locationIndex: dfLoc.locationIndex ?? 0 });
+      { locationName: dfLoc.name, regionName: maps.getRegionName(dfLoc.regionIndex), locationIndex: dfLoc.locationIndex ?? 0,
+        shownLocationName: shownLocation, shownRegionName: getLocalizedRegionName(dfLoc.regionIndex, (i) => maps.getRegionName(i)) });
     // ROAD-D D5: CreateBuildingNameplates' residence arm (:682-709).
     // DFU resolves the quest name for every discovered residence AS IT
     // BUILDS THE NAMEPLATES - once per open (:273), never per frame -
@@ -17984,7 +18000,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     mwViewFirstPerson();   // MW-MAP1: MAP-POV's law for this sheet too - the town plan is read in the head, and the arm must be first-person before the window's first tick asks
     townTalk.showOverlay(createTownMapWindow({
       holder: sheetHolderOf(() => weaponRig),   // MW-MAP1: the Morrowind hands lane on the M key, as on V
-      locationName: dfLoc.name,
+      locationName: shownLocation,   // L10N3e: the title, as shown - the key is locationId
       locationId: locId,
       gridW: dfLoc.exterior.exteriorData.width, gridH: dfLoc.exterior.exteriorData.height,
       blocks: b.locBlocks.map((bl) => ({ x: bl.x, y: bl.y, autoMap: bl.dfBlock?.rmbBlock?.fldHeader?.autoMapData, landmark: arenaTownLandmark(bl.dfBlock) })),   // ARENA-MAP: the Arena's name (world/arenaCity.js)
@@ -18061,7 +18077,7 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  "Custom name: " label is Internal_Strings' `customName`. */
   const renameMapBuilding = (locId, buildingKey, displayed) => {
     townTalk.pushOverlay(new ServiceFlowWindow([{
-      rows: ['Custom name: '],
+      rows: [localizedText('customName', 'Custom name: ')],
       field: { numeric: false, maxCharacters: 80, initial: displayed ?? '' },
       onInput: (text) => { setDiscoveredBuildingCustomName(locId, buildingKey, text); return null; },
     }]));
@@ -18312,7 +18328,7 @@ export async function bootWorld(canvas, renderer, params, status) {
         onUse: (item) => useMagicItem(item),
       });
       if (win) townTalk.showOverlay(win);
-      else townTalk.say(NO_ITEM_TO_ACTIVATE_TEXT);   // DISC12: DaggerfallUI.cs:584-585
+      else townTalk.say(noItemToActivateText());   // DISC12: DaggerfallUI.cs:584-585
     },
     // PX15: THE DIAL - Tab (routeKey's arm) raises the compass rose
     // over the live world, each arm one of THIS host's own doors: the
@@ -19928,8 +19944,8 @@ export async function bootWorld(canvas, renderer, params, status) {
     // "tavern" when the location has none.
     randomTavernName: (roll = Math.random) => {
       const taverns = (townTalk.buildingDirectory ?? []).filter((b) => b.buildingType === TALK_BUILDING_TYPES.Tavern);
-      if (!taverns.length) return 'tavern';
-      return taverns[Math.floor(roll() * taverns.length)]?.name ?? 'tavern';
+      if (!taverns.length) return localizedText('tavern', 'tavern');   // L10N3d: MacroHelper.cs:641
+      return taverns[Math.floor(roll() * taverns.length)]?.name ?? localizedText('tavern', 'tavern');
     },
     // Place.SetupSites' residence filter (Place.cs:1196):
     // DaggerfallBankManager.IsHouseOwned reads the CURRENT region's
@@ -20306,7 +20322,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     currentBuildingKey: () => modes?.interiorBuilding?.buildingKey ?? -1,
     getBuildingList: () => townTalk.directory,
     exteriorBuildings: () => _questLoc()?.exterior?.buildings ?? null,
-    factionName: (id) => townTalk.factionDict?.get(id)?.name ?? '',
+    factionName: (id) => townTalk.factionDict?.get(id)?.name ?? '',   // the record's own name: the tree shows it through GetLocalizedFactionName by the id (L10N3e, topicTree.js; GetFactionName, PersistentFactionData.cs:307-313)
     addOrReplaceQuestProgressRumor: (uid, m) => rumorMill.addOrReplaceQuestProgressRumor(uid, m),
     // F099: TalkManager.cs:2958 passes onlyIfResidence=TRUE and the
     // quest Place's buildingName - the bridge used to drop both, so
@@ -20426,7 +20442,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       // window the player is standing in (DaggerfallUI.cs:1346-1353,
       // UserInterfaceManager.cs:79-91). The seam's default push is
       // that, and it now reaches an interior or dungeon host too.
-      messageBox(rows.length ? rows : ['You get no response.']);
+      messageBox(rows.length ? rows : [localizedText('youGetNoResponse', 'You get no response.')]);
     },
     pushTalkWindow: () => {},   // TK-v opens the window
     onTargetChanged: () => {},  // TK-v repaints the portrait and name
@@ -20959,7 +20975,12 @@ export async function bootWorld(canvas, renderer, params, status) {
     // region as DFU's no-location fallback)
     dateTimeString: () => dateTimeString(dateFromClassicMinutes(skyMinutes())),   // TIME1: the date the player sees
     midDateTimeString: () => midDateTimeString(dateFromClassicMinutes(skyMinutes())),
-    cityName: () => _questLoc()?.name ?? questWorld.currentRegionName(),
+    // L10N3e: MacroHelper.CityName as it is shown (PlayerNotebook.cs:114) - the location by its MapId
+    // (MacroHelper.cs:571), else the region by its index (:573); the header is written in the language of the moment
+    cityName: () => { const loc = _questLoc(); return loc?.name != null ? getLocalizedLocationName(loc.mapTableData?.mapId, loc.name) : getLocalizedRegionName(_questRegionIndex(), () => questWorld.currentRegionName()); },
+    // L10N5: what a header records, for a load to draw it in its own language - the minute, and the place as ids
+    noteMinutes: () => skyMinutes(),
+    notePlace: () => { const loc = _questLoc(); return loc?.name != null ? { mapId: loc.mapTableData?.mapId ?? null, name: loc.name } : { region: _questRegionIndex(), name: questWorld.currentRegionName() }; },
   }, { label: 'world.js' });
   // WA1: Warm Ashes - Ships' quest action, registered as its Awake registers it [IL_0303] - on the machine this host
   // builds, before any save's quests are restored (a restored "Leave Ship" resolves its type through the registry).
@@ -25979,7 +26000,7 @@ export async function bootWorld(canvas, renderer, params, status) {
       items: playerEntity.items, day: brokerDay(_brokerNow()),
       canCarry: (item, rest) => planTake(item, { bag: rest, entity: playerEntity, dryRun: true }).ok,
     });
-    if (!sale.ok) return sale.reason === 'heavy' ? { ...sale, text: CANNOT_CARRY_TEXT } : sale;
+    if (!sale.ok) return sale.reason === 'heavy' ? { ...sale, text: cannotCarryText() } : sale;
     audio.playOneShot(SOUND.GoldPieces, 1);
     surfacePlayer();
     return sale;
@@ -26138,7 +26159,7 @@ export async function bootWorld(canvas, renderer, params, status) {
    *  forgeOffered); where the page is not (offline, the switch shut) the bench says so, as a home's does. Answers true
    *  (the press handled). */
   function openYardBench() {
-    if (!forgeOffered()) { townTalk.say(WORKBENCH_COLD_LINE); return true; }
+    if (!forgeOffered()) { townTalk.say(stationColdLine('workbench')); return true; }   // L10N4: the bench's cold line, read in the player's language
     focusStoresStation('workbench');
     hudCtx.togglePause({ at: 'stores' });
     return true;
@@ -27552,7 +27573,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   function partyTravelRefusal() {
     if ((modes?.mode ?? 'exterior') !== 'exterior') return PARTY_TRAVEL_TEXT.inside;
     if (!(playerEntity.health > 0) || worldMoveBusy()) return PARTY_TRAVEL_TEXT.off;
-    if (duelEnemyNear() || areEnemiesNearby([...cityGuards.guards, ...exteriorFoes.foes]) || navalHostileNear()) return CANNOT_TRAVEL_ENEMIES_TEXT;   // NAV-H: a hostile ship in reach too
+    if (duelEnemyNear() || areEnemiesNearby([...cityGuards.guards, ...exteriorFoes.foes]) || navalHostileNear()) return localizedText('cannotTravelWithEnemiesNearby', CANNOT_TRAVEL_ENEMIES_TEXT);   // NAV-H: a hostile ship in reach too
     const nowMin = Math.floor(skyMinutes());   // TIME1: the sky's sun
     const sun = (careerFastTravelBlock(playerEntity, nowMin) ?? racialFastTravelBlock(playerEntity, nowMin))?.text ?? null;   // HOOD-CAREER: the career's rung first, as the door asks it
     return sun ? withNightfall(sun) : null;   // LIVED1: the door's own words, and when the world's night falls
@@ -28400,7 +28421,7 @@ export async function bootWorld(canvas, renderer, params, status) {
   const channelLinksOffShards = () => { for (const link of chatLinks?.values?.() ?? []) if (isChannelShard(link.room) && !link.welcomed) link.join(channelOf(link.room)); };
   // SCALE5c: and whether the relay keeps the hub's shards, remembered for the next page (`channelLinkRoom`) - AUDIT SCALE II
   // C-2: under this relay's own key, and a relay without them takes the links off their shards
-  const onRelayVersion = (v) => { const keeps = hubShardsSupported(v); try { appStorage()?.setItem?.(hubShardsSeenKey(), keeps ? '1' : '0'); } catch { /* storage refused: the hub itself says it again */ } if (!keeps) channelLinksOffShards(); _relayKeepsRite = relaySupportsRite(v); _relayKeepsCage = relaySupportsCage(v); if (relayVersionSeen(v) === 'changed') chatNotice(RELAY_RESTART_TEXT); };   // AUDIT BROKER-CAGE C4, C6: and whether it keeps the rite and the cage
+  const onRelayVersion = (v) => { const keeps = hubShardsSupported(v); try { appStorage()?.setItem?.(hubShardsSeenKey(), keeps ? '1' : '0'); } catch { /* storage refused: the hub itself says it again */ } if (!keeps) channelLinksOffShards(); _relayKeepsRite = relaySupportsRite(v); _relayKeepsCage = relaySupportsCage(v); if (relayVersionSeen(v) === 'changed') chatNotice(relayRestartText()); };   // AUDIT BROKER-CAGE C4, C6: and whether it keeps the rite and the cage
   // SRV-N: THE BUILD POLL. The relay moves by hand and rarely; the client
   // moves on every merge, which is what "whenever we push" actually is
   // for this project. Nothing tells a tab held open across a deploy that
@@ -28427,7 +28448,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     _buildPolledAt = now;
     const href = globalThis.location?.href ?? '';
     fetchLiveBuildTag(href).then((tag) => {
-      if (buildUpdateSeen(tag, BUILD_TAG) === 'changed') chatNotice(BUILD_UPDATE_TEXT);
+      if (buildUpdateSeen(tag, BUILD_TAG) === 'changed') chatNotice(buildUpdateText());
     }, () => {});   // `fetchLiveBuildTag` swallows its own throws; this is the belt for a rejection it cannot see
   };
   // ═══ CHAT-CHAN — THE FOUR CHANNELS, AT THE HOST ═══════════════════
@@ -28693,7 +28714,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     const reach = giftable ? allyReachFor(sp.rangeType) : null;
     const pick = reach !== null ? (underground ? modes?.dungeonCtx?.allyInReach?.(cam.pos, socialFwd(), reach) : magic?.allyInReach?.(cam.pos, socialFwd(), reach)) ?? null : null;
     const name = pick?.id === id ? peerName(id) : null;
-    return name ? allyCastPlaqueLine(sp.name, name) : null;
+    return name ? allyCastPlaqueLine(shownSpellName(sp), name) : null;   // L10N3e: my readied spell, as the book shows it
   }
   /** PEER-PLAQUE1: the plaque's word for `peer:<id>` - the session's own name for them (peerName: the chat's and
    *  the name layer's), the badge's text marks after it (ui/playerBadge.js glyphMarks - the classic face's own
@@ -30268,7 +30289,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     // in), and AreEnemiesNearby(false, false), the strict pool the travel map's own door asks
     openImmersiveMap,
     travelEnemiesNearby: () => duelEnemyNear() || areEnemiesNearby([...cityGuards.guards, ...exteriorFoes.foes]) || navalHostileNear(),
-    travelEnemiesText: CANNOT_TRAVEL_ENEMIES_TEXT,
+    get travelEnemiesText() { return localizedText('cannotTravelWithEnemiesNearby', CANNOT_TRAVEL_ENEMIES_TEXT); },   // L10N3d: read when the box opens
     // G6: the knightly smith's gift needs THIS host's inventory
     // window in choose-one mode - one builder, one dependency list.
     makeInventory: (extra) => (inventoryDoorReady() ? makeInventoryWindow(extra) : null),
@@ -30337,7 +30358,7 @@ export async function bootWorld(canvas, renderer, params, status) {
     pauseQuestLog: () => questBridge?.questLog() ?? { active: [], finished: [] },
     repairQuests: () => questBridge?.repair?.() ?? null,   // QREPAIR: the interior pause's Settings row, off this host's bridge
     journalClean: () => questBridge?.journalClean ?? null,   // JOURNAL-CLEAN: the Quests tab's remove / clear archive / hide / unhide (scenes/questBridge.js journalClean), for the interior pause
-    revealLocation,
+    revealLocation, revealMap: () => useHooks.revealMap(),   // L10N3e: the map item's reveal, for the dungeon's use bag - the one law above
     scryWhere,   // LOOT19: the guild's scryers read this host's region
     magic, spellsByIndex: () => spellsByIndex,   // M2: the one cast engine + SPELLS.STD ride into the interior arm
     townTalk,   // U23: the interior host borrows FACTION.TXT/TEXT.RSC + the talk seam
@@ -33952,21 +33973,21 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
             const _torchNearest = _race.torchWins;
             // EOTB-IL: the mod's cart under the same ray (RegisterCustomActivation(41239, CheckWagon, 3.2)) - Info names it, any other mode opens the pack with the wagon
             // SURV3: a camp under the ray - Info and Talk name it, any other mode opens its menu; a water source fills the skins
-            if (_race.gateWins) { if (_gatePick.distance > _gatePick.reach) setMidScreenText(TOO_FAR_AWAY_TEXT); else if (!riteHost?.activate(_gatePick.key)) gatePool.activate(_gatePick.key); }   // WB2: the gate's own door; WB12d: the casket's its own
-            else if (_race.brokerWins) { if (_brokerPick.distance > _brokerPick.reach) setMidScreenText(TOO_FAR_AWAY_TEXT); else sigilBroker.activate(_brokerPick.key, getInteractionMode()); }   // SET7: Info names her, Steal is watched, anything else opens her window
-            else if (_race.campWins) { if (_campPick.distance > _campPick.reach) setMidScreenText(TOO_FAR_AWAY_TEXT); else camps.activate(_campPick.key, getInteractionMode(), plaqueActionFor(_campPick.key)); }   // REST2: the plaque's lit row
-            else if (_race.waterWins) { if (_springPick.distance > _springPick.reach) setMidScreenText(TOO_FAR_AWAY_TEXT); else drinkAtSpring(_springPick.key); }
-            else if (_race.wagonWins) { if (_wagonPick.distance > _wagonPick.reach) setMidScreenText(TOO_FAR_AWAY_TEXT); else mwViewWagonActivate(getInteractionMode(), { say: (l) => townTalk.say(l), openInventoryWithWagon: () => { const w = makeInventoryWindow(EOTB_WAGON_PACK); if (w) townTalk.showOverlay(w); } }); }   // DISC10-E L3: a refused pack is null
-            else if (_race.horseCartWins) { hcc.activate(_hccPick.key, _hccPick.distance, (l) => townTalk.say(l), () => setMidScreenText(TOO_FAR_AWAY_TEXT), plaqueActionFor(_hccPick.key)); }
+            if (_race.gateWins) { if (_gatePick.distance > _gatePick.reach) setMidScreenText(tooFarAwayText()); else if (!riteHost?.activate(_gatePick.key)) gatePool.activate(_gatePick.key); }   // WB2: the gate's own door; WB12d: the casket's its own
+            else if (_race.brokerWins) { if (_brokerPick.distance > _brokerPick.reach) setMidScreenText(tooFarAwayText()); else sigilBroker.activate(_brokerPick.key, getInteractionMode()); }   // SET7: Info names her, Steal is watched, anything else opens her window
+            else if (_race.campWins) { if (_campPick.distance > _campPick.reach) setMidScreenText(tooFarAwayText()); else camps.activate(_campPick.key, getInteractionMode(), plaqueActionFor(_campPick.key)); }   // REST2: the plaque's lit row
+            else if (_race.waterWins) { if (_springPick.distance > _springPick.reach) setMidScreenText(tooFarAwayText()); else drinkAtSpring(_springPick.key); }
+            else if (_race.wagonWins) { if (_wagonPick.distance > _wagonPick.reach) setMidScreenText(tooFarAwayText()); else mwViewWagonActivate(getInteractionMode(), { say: (l) => townTalk.say(l), openInventoryWithWagon: () => { const w = makeInventoryWindow(EOTB_WAGON_PACK); if (w) townTalk.showOverlay(w); } }); }   // DISC10-E L3: a refused pack is null
+            else if (_race.horseCartWins) { hcc.activate(_hccPick.key, _hccPick.distance, (l) => townTalk.say(l), () => setMidScreenText(tooFarAwayText()), plaqueActionFor(_hccPick.key)); }
             else if (_race.boatWins) csaActivate(_csaBoatPick);   // CSA-D: Come Sail Away's seven activations - the helm, the board, the status (the rest are their slices')   // ACT-MENU: the verb the plaque lit, where it stands   // HCC: DeployedWagonActivator / FollowingWagonActivator / StationaryHorseActivator - the runtime's own reach test and refusals
-            else if (_torchNearest) { if (_torchPick.distance > _torchPick.reach) setMidScreenText(TOO_FAR_AWAY_TEXT); else droppedTorches.activate(_torchPick.key, getInteractionMode()); }   // the mod's own activation, ahead of DFU's ladder
+            else if (_torchNearest) { if (_torchPick.distance > _torchPick.reach) setMidScreenText(tooFarAwayText()); else droppedTorches.activate(_torchPick.key, getInteractionMode()); }   // the mod's own activation, ahead of DFU's ladder
             else {
             // AUDIT 65 MC-2: the corpse's own refusal
             // (PlayerActivate.cs:936-941) - the body reaches for the
             // ray now (scenes/corpseMarker.js) so the handler can
             // speak, where the old pick dropped it in silence and let
             // the click fall through to the door behind it.
-            if (lootKey && _lootPick.distance > _lootPick.reach) setMidScreenText(TOO_FAR_AWAY_TEXT);
+            if (lootKey && _lootPick.distance > _lootPick.reach) setMidScreenText(tooFarAwayText());
               // MAC-E: a body under the ray opens the inventory WITH the body
               // as the remote target (PlayerActivate.cs:957), exactly as the
               // pile arm below does and as the dungeon host has since U26.
@@ -33999,7 +34020,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
           // other pack arm asks - and on the classic skin it still comes
           // down to the same art.
           // AUDIT 65 MC-2: ActivateLootContainer's own refusal (:868-873)
-          else if (dropKey && _dropPick.distance > _dropPick.reach) setMidScreenText(TOO_FAR_AWAY_TEXT);
+          else if (dropKey && _dropPick.distance > _dropPick.reach) setMidScreenText(tooFarAwayText());
           // PI1: an item standing as itself is taken on the press (Physical Items' TryPickup) - no window
           else if (dropKey && droppedLoot.physical.owns(dropKey)) droppedLoot.physical.pick(dropKey, playerEntity);
           else if (dropKey && inventoryDoorReady()) {

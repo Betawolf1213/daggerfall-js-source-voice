@@ -11,8 +11,8 @@
   {
     "name": "PROF12-potions-reexport-copy",
     "file": "src/systems/potions.js",
-    "old": "import {\n  POTION_RECIPES, POTION_DEFAULT_TEXTURE_RECORD, potionRecipeKey, potionKeyFromCauldron,\n} from './potionRecipes.js';",
-    "new": "import {\n  POTION_RECIPES as LEAF_RECIPES, POTION_DEFAULT_TEXTURE_RECORD, potionRecipeKey, potionKeyFromCauldron,\n} from './potionRecipes.js';\nconst POTION_RECIPES = Object.freeze([...LEAF_RECIPES]);",
+    "old": "import {\n  POTION_RECIPES, POTION_DEFAULT_TEXTURE_RECORD, potionRecipeKey, potionKeyFromCauldron, setPotionDisplayNames,\n} from './potionRecipes.js';",
+    "new": "import {\n  POTION_RECIPES as LEAF_RECIPES, POTION_DEFAULT_TEXTURE_RECORD, potionRecipeKey, potionKeyFromCauldron, setPotionDisplayNames,\n} from './potionRecipes.js';\nconst POTION_RECIPES = Object.freeze([...LEAF_RECIPES]);",
     "tests": [
       "test/prof12_law.test.js"
     ]
@@ -1288,8 +1288,8 @@
   {
     "name": "PROF12-pages-counter-unoffered",
     "file": "src/ui/profPages.js",
-    "old": "      if (sale && have < inp.n) counterBuy(line, { el, p, state: _alchemy, rerender, key: inp.key, need: inp.n - have, sale, who: 'the Apothecaries', counter: 'apothecaries' });",
-    "new": "      if (sale && have < 0) counterBuy(line, { el, p, state: _alchemy, rerender, key: inp.key, need: inp.n - have, sale, who: 'the Apothecaries', counter: 'apothecaries' });",
+    "old": "      if (sale && have < inp.n) counterBuy(line, { el, p, state: _alchemy, rerender, key: inp.key, need: inp.n - have, sale, who: 'apothecaries', counter: 'apothecaries' });",
+    "new": "      if (sale && have < 0) counterBuy(line, { el, p, state: _alchemy, rerender, key: inp.key, need: inp.n - have, sale, who: 'apothecaries', counter: 'apothecaries' });",
     "tests": [
       "test/prof12_client.test.js"
     ]
@@ -1435,8 +1435,8 @@
   {
     "name": "PROF12-E1-page-essence-line",
     "file": "src/ui/profPages.js",
-    "old": "(pick.family === 'essences' ? ESSENCE_STAYS_LINE : pick.family === 'siege' ? SIEGE_STAYS_LINE : STOCK_STAYS_LINE);",
-    "new": "(pick.family === 'siege' ? SIEGE_STAYS_LINE : STOCK_STAYS_LINE);",
+    "old": "(pick.family === 'essences' ? essenceStaysLine() : pick.family === 'siege' ? siegeStaysLine() : stockStaysLine());",
+    "new": "(pick.family === 'siege' ? siegeStaysLine() : stockStaysLine());",
     "tests": [
       "test/prof12_client.test.js"
     ]
@@ -1444,8 +1444,8 @@
   {
     "name": "PROF12-E1-refusal-words",
     "file": "src/net/accountClient.js",
-    "old": "  'prof-no-pack-form': 'That stays in the Stores - it never goes to the pack.',",
-    "new": "  'prof-no-pack-form': 'That stays at the bench until its own craft is practised.',",
+    "old": "  'prof-no-pack-form': () => t('account.refusal.profNoPackForm', 'That stays in the Stores - it never goes to the pack.'),",
+    "new": "  'prof-no-pack-form': () => t('account.refusal.profNoPackForm', 'That stays at the bench until its own craft is practised.'),",
     "tests": [
       "test/prof12_client.test.js"
     ]
@@ -1648,8 +1648,8 @@
   {
     "name": "PROF12-A3-page-words",
     "file": "src/ui/profPages.js",
-    "old": ": potentLasts(potion) ? `lasts ${pct}% longer` :",
-    "new": ": false ? `lasts ${pct}% longer` :",
+    "old": "    : potentLasts(potion) ? t('prof.page.alchemy.potentLasts', 'Potent {c}% (lasts {pct}% longer)', { c, pct }) : t('prof.page.alchemy.potent', 'Potent {c}% (+{pct}% magnitude)', { c, pct });",
+    "new": "    : false ? t('prof.page.alchemy.potentLasts', 'Potent {c}% (lasts {pct}% longer)', { c, pct }) : t('prof.page.alchemy.potent', 'Potent {c}% (+{pct}% magnitude)', { c, pct });",
     "tests": [
       "test/prof12_client.test.js"
     ]
@@ -1657,8 +1657,8 @@
   {
     "name": "PROF12-A3-page-station-words",
     "file": "src/ui/profPages.js",
-    "old": "const what = !potion ? `+${pct}% magnitude or duration` :",
-    "new": "const what = !potion ? `+${pct}% magnitude` :",
+    "old": "  return !potion ? t('prof.page.alchemy.potentAny', 'Potent {c}% (+{pct}% magnitude or duration)', { c, pct })",
+    "new": "  return !potion ? t('prof.page.alchemy.potentAny', 'Potent {c}% (+{pct}% magnitude)', { c, pct })",
     "tests": [
       "test/prof12_client.test.js"
     ]
@@ -1732,8 +1732,8 @@
   {
     "name": "PROF-541-B3-line",
     "file": "src/ui/profPages.js",
-    "old": "  if (potion && !potentAble(potion)) return POTENT_NONE_LINE;",
-    "new": "  if (potion && !potion) return POTENT_NONE_LINE;",
+    "old": "  if (potion && !potentAble(potion)) return t('prof.page.alchemy.neverPotent', POTENT_NONE_LINE);",
+    "new": "  if (potion && !potion) return t('prof.page.alchemy.neverPotent', POTENT_NONE_LINE);",
     "tests": [
       "test/prof12_client.test.js"
     ]
@@ -1923,8 +1923,8 @@
   {
     "name": "PROF-541-R2-C2-anvil-word",
     "file": "src/net/accountClient.js",
-    "old": "'prof-busy': 'Your hands are busy with another craft.',",
-    "new": "'prof-busy': 'The anvil is still ringing from your last work.',",
+    "old": "'prof-busy': () => t('account.refusal.profBusy', 'Your hands are busy with another craft.'),",
+    "new": "'prof-busy': () => t('account.refusal.profBusy', 'The anvil is still ringing from your last work.'),",
     "tests": [
       "test/prof12_client.test.js"
     ]
@@ -1973,8 +1973,8 @@
   {
     "name": "PROF541-R2-S1-page-note",
     "file": "src/ui/profPages.js",
-    "old": "${n > 1 ? ' A potion wholly of the Apothecaries",
-    "new": "${n > 9 ? ' A potion wholly of the Apothecaries",
+    "old": "  detail.append(el('p', 'px-note', `${station.kind === 'shop' ? t('prof.page.alchemy.shop', 'The alchemist\\'s station - {fee} gold a brew.', { fee: station.fee }) : t('prof.page.alchemy.home', 'Your alchemy station.')} ${brewLine}${n > 1 ? ` ${t('prof.page.alchemy.counterOne', 'A potion wholly of the Apothecaries\\' goods brews one.')}` : ''}`));   // AUDIT PROF-541 R2-S1",
+    "new": "  detail.append(el('p', 'px-note', `${station.kind === 'shop' ? t('prof.page.alchemy.shop', 'The alchemist\\'s station - {fee} gold a brew.', { fee: station.fee }) : t('prof.page.alchemy.home', 'Your alchemy station.')} ${brewLine}${n > 9 ? ` ${t('prof.page.alchemy.counterOne', 'A potion wholly of the Apothecaries\\' goods brews one.')}` : ''}`));   // AUDIT PROF-541 R2-S1",
     "tests": [
       "test/prof12_client.test.js"
     ],

@@ -269,7 +269,7 @@ test('AUDIT SERPENT D4/B8/B10/B11 and the words: the inspect card and the accoun
   assert.equal(profileView({ record: { serpents: { slain: 2 } } }).serpents, 'Serpents slain: 2');
   // PIN MOVED (PROFILE-UI): the serpents slain are a plaque in the card's record row, said only when there is one
   assert.match(src('src/ui/profileWindow.js'), /\['dfprofile-serpents', v\.serpents\], \['dfprofile-hours', v\.hours\]\]\.filter\(\(\[, t\]\) => t\);/);   // PIN MOVED: SD9b's Hours broken after them
-  assert.match(src('src/ui/enhancedAccount.js'), /const serpents = serpentRecordText\(flow\.account\.serpents\);\n\s+if \(serpents\) row\('Serpents slain', serpents\);/);
+  assert.match(src('src/ui/enhancedAccount.js'), /const serpents = serpentRecordText\(flow\.account\.serpents\);\n\s+if \(serpents\) row\(t\('account\.card\.serpents', 'Serpents slain'\), serpents\);/);
   for (const w of SERPENT_NO_WORDS) assert.ok(SERPENT_NO_TEXT[w], `words for "${w}"`);
   assert.equal(SERPENT_NO_TEXT['it is already slain'], 'The serpent is already slain.');
   const boss = { ...SERPENT_BOSSES[0], name: 'Vharos' };

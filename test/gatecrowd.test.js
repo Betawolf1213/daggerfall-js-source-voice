@@ -174,7 +174,7 @@ test('GATE-CROWD the online frame: the drawn list cut after the map\'s poses are
 test('GATE-CROWD the Other players card: the crowd\'s choice beside the sprite and the sounds, its tiers the law\'s (mutants: the row gone; its key another; the tiers written twice)', () => {
   const menu = read('src/ui/enhancedMenu.js');
   const card = menu.slice(menu.indexOf('function peerSpritesCard() {'), menu.indexOf('\n}\n', menu.indexOf('function peerSpritesCard() {')));
-  assert.match(card, /c\.append\(choiceRow\('gateCrowd', 'Crowd in the Burning Court',\n\s*'[^\n]*',\n\s*GATE_CROWD_TIERS\.map\(\(n\) => \[n, n \? `Nearest \$\{n\}` : 'Everyone'\]\), \{ home: true \}\)\);/);
+  assert.match(card, /c\.append\(choiceRow\('gateCrowd', t\('menu\.peers\.crowd', 'Crowd in the Burning Court'\),\n\s*t\('menu\.peers\.crowdNote', '[^\n]*'\),\n\s*GATE_CROWD_TIERS\.map\(\(n\) => \[n, n \? t\('menu\.peers\.nearest', 'Nearest \{n\}', \{ n \}\) : t\('menu\.peers\.everyone', 'Everyone'\)\]\), \{ home: true \}\)\);/);
   assert.match(menu, /import \{ GATE_CROWD_TIERS \} from '\.\.\/net\/gateCrowd\.js';/);
   assert.match(read('src/systems/uiPrefs.js'), /\n {2}gateCrowd: 0,\n/, 'the shelf\'s literal - pinned equal to the law\'s default in the first test, never imported (BOOT2)');
   assert.doesNotMatch(read('src/systems/uiPrefs.js'), /from '\.\.\/net\/gateCrowd\.js'/, 'the shelf is on the boot path: it imports nothing of the court');

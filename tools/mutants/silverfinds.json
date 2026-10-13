@@ -486,7 +486,7 @@
   {
     "name": "SILVER-FINDS-door-words",
     "file": "src/net/accountClient.js",
-    "old": "  'bad-find': 'That find could not be read.',",
+    "old": "  'bad-find': () => t('account.refusal.badFind', 'That find could not be read.'),",
     "new": "",
     "why": "a word without its sentence",
     "tests": [

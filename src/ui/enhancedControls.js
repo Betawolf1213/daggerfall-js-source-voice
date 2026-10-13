@@ -82,6 +82,8 @@ import {
   bindingHolders, replaceKeybindPromptRows, stageReplace, stagedDefaults,
   canShareKey, stageShare, keySharers, SHARE_KEY_LABEL, unsavedEdits,
 } from '../systems/controlsConfig.js';
+import { localizedText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
+import { gameSettingsText } from '../systems/textDatabases.js';   // L10N3f: DFU's GameSettings text database, a pack's in its language
 
 /** The shell's own `el`, three lines, kept LOCAL on purpose:
  *  ui/enhancedMenu.js imports this module, so importing its helper
@@ -423,7 +425,7 @@ function keyRow(action, label) {
 function promptCard() {
   const c = el('div', 'ctl-prompt');
   c.append(el('h3', null, prompt.kind === 'defaults' ? 'Default controls' : 'Key in use'));
-  const rows = prompt.kind === 'defaults' ? [DEFAULTS_PROMPT]
+  const rows = prompt.kind === 'defaults' ? [localizedText('confirmDefaultControls', DEFAULTS_PROMPT)]   // L10N3d (DaggerfallControlsWindow.cs:302)
     : replaceKeybindPromptRows(prompt.action, prompt.code, prompt.holders, prompt.usingPrimary);
   // UXB1-D: the one pair where the answer is "you need neither" - see sharedFloatNote.
   const note = prompt.kind === 'replace' ? sharedFloatNote(prompt.action, prompt.holders, prompt.usingPrimary) : null;
@@ -515,7 +517,8 @@ export function paneControls(body, { render = () => {} } = {}) {
       `Nothing is saved until you press ${CONFIRM_LABEL}, Defaults included. Leave this page and your changes are dropped.`));
 
     const acts = el('div', 'acts');
-    const which = el('button', 'act ctl-which', unsaved.usingPrimary ? 'Primary' : 'Secondary');
+    // L10N3f: GameSettings' primary/secondary (DaggerfallControlsWindow.cs:139, :252), a pack's in its language
+    const which = el('button', 'act ctl-which', unsaved.usingPrimary ? gameSettingsText('primary', 'Primary') : gameSettingsText('secondary', 'Secondary'));
     which.title = 'Which of the two binding sets this page edits';
     which.onclick = act(switchDict);
     const defaults = el('button', 'act ctl-defaults', 'Defaults');
@@ -525,10 +528,13 @@ export function paneControls(body, { render = () => {} } = {}) {
     acts.append(which, defaults, cont);
     head.append(acts);
 
+    // L10N3d: the refusal shown in the player's language (DaggerfallControlsWindow.cs:262); `notice` keeps the
+    // English, which is what the line is told apart by
+    const refusal = localizedText('multipleAssignments', MULTIPLE_ASSIGNMENTS);
     if (owed.length) head.append(el('p', 'ctl-notice ctl-pending', unsavedCount(owed.length)));   // UNSAVED-MARK
-    if (notice) head.append(el('p', `ctl-notice${notice === MULTIPLE_ASSIGNMENTS ? ' bad' : ''}`, notice));
+    if (notice) head.append(el('p', `ctl-notice${notice === MULTIPLE_ASSIGNMENTS ? ' bad' : ''}`, notice === MULTIPLE_ASSIGNMENTS ? refusal : notice));
     if (!dupes.ok && notice !== MULTIPLE_ASSIGNMENTS) {
-      head.append(el('p', 'ctl-notice bad', MULTIPLE_ASSIGNMENTS));
+      head.append(el('p', 'ctl-notice bad', refusal));
     }
   }
   body.append(head);

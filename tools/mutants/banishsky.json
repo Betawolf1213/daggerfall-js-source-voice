@@ -182,8 +182,8 @@
   {
     "name": "BANISH-SKY-the-page-says-no-real-time",
     "file": "src/ui/enhancedMenu.js",
-    "old": "left${real ? `, ${real}` : ''}` : '';",
-    "new": "left` : '';",
+    "old": "const real = Number.isFinite(left) ? worldSpanRealWords(left) : null;",
+    "new": "const real = null;",
     "tests": [
       "test/banishsky_standing.test.js"
     ]

@@ -1140,6 +1140,18 @@
    "has": "day: Math.floor(worldMinutes() / 1440)",
    "clock": "event",
    "why": "STEED1: the Stable's horses of the day - stood by the world's day, so every client in the town that day sees the same three"
+  },
+  {
+   "file": "src/scenes/world.js",
+   "has": "noteMinutes: () => skyMinutes(),",
+   "clock": "sky",
+   "why": "L10N5: the minute a notebook header records, so a load draws its date in its own language - the sky's, as the header's own date line reads"
+  },
+  {
+   "file": "src/scenes/exterior.js",
+   "has": "noteMinutes: () => skyMinutes(),",
+   "clock": "sky",
+   "why": "L10N5: the minute a notebook header records, as the streaming host's"
   }
  ]
 }

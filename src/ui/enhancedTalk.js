@@ -98,8 +98,14 @@ export function talkPanelModel(model) {
     return { i, text: e.text, kind: e.kind === 'question' ? 'question' : 'answer', selected: i === model.conversationSelected, copied: model.copyIndexes.has(i) };
   });
   const whereIs = model._talkOption === 'whereIs';
+  // L10N3g: the name, the player-says line and each topic row as the
+  // model shows them - through the grammar, as DFU's window runs it
+  // (DaggerfallTalkWindow.cs:390, :1248, :873); the conversation's
+  // entries already hold theirs (:642, :1256, :1268). A plain model
+  // (no talk window behind it - the PLAIN-UI pins' own) reads its
+  // fields as they stand.
   return {
-    npcName: model.hooks.npcName ?? '',
+    npcName: model.shownNpcName?.() ?? model.hooks.npcName ?? '',
     // PLAIN-UI (bible/10-UI/Plain-Words.md): how a living resident regards the player, as the host words it
     // (systems/livingWorld/people.js regardBadge) - null for anyone else
     regard: model.hooks.regard?.() ?? null,
@@ -107,9 +113,9 @@ export function talkPanelModel(model) {
     option: model._talkOption,
     category: model._lastCategory,
     mode: model.topicMode,
-    question: model.question ?? '',
+    question: model.shownQuestion?.() ?? model.question ?? '',
     entries,
-    topics: model.topics.map((t, i) => ({ i, label: t.label ?? t.name ?? '', selected: i === model.selected, group: model.topicMode === 'categories' })),
+    topics: model.topics.map((t, i) => ({ i, label: model.shownTopic?.(t) ?? t.label ?? t.name ?? '', selected: i === model.selected, group: model.topicMode === 'categories' })),
     // a category page (buildings) carries a way back - the list it
     // descended from is one press of Location away
     back: model.topicMode === 'buildings',

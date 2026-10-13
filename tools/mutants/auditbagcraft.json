@@ -167,7 +167,7 @@
   {
     "name": "AUDITBAGCRAFT-A1-pages-split-silent",
     "file": "src/ui/profPages.js",
-    "old": "loose ? `${loose} from your pack` : null]",
+    "old": "loose ? t('prof.page.stores.fromPack', '{n} from your pack', { n: loose }) : null]",
     "new": "null]",
     "tests": [
       "test/auditbagcraft.test.js"
@@ -176,7 +176,7 @@
   {
     "name": "AUDITBAGCRAFT-A1-pages-line-undrawn",
     "file": "src/ui/profPages.js",
-    "old": "    if ((pick.loose | 0) > 0) detail.append(el('p', 'px-note', LOOSE_GOODS_LINE));   // AUDIT BAG-CRAFT A1: a carrying book's page\n",
+    "old": "    if ((pick.loose | 0) > 0) detail.append(el('p', 'px-note', looseGoodsLine()));   // AUDIT BAG-CRAFT A1: a carrying book's page\n",
     "new": "",
     "tests": [
       "test/auditbagcraft.test.js"

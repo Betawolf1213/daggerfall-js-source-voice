@@ -60,8 +60,7 @@ import { bindings } from './input.js';   // KB1: the live registry
 import { getBinding } from '../systems/inputActions.js';   // KB1: the toggle-close binding, GetBinding(Actions.Inventory)
 import { layoutMessageBox, drawMessageBox, messageBoxHit, MB_BUTTONS, fitBoxRows } from './messageBox.js';   // U25   // SS5: fitBoxRows, a long row wrapped on the screen
 import { useItem, isLightSource, isPotionRecipe, nextVariant, USE_PENDING } from '../systems/useItem.js';   // U25; AUDIT 64 F49/F50
-import { potionRecipeByKey } from '../systems/potions.js';   // AUDIT 64 F49: PotionRecipeIngredients' recipe lookup
-import { itemInfoRows, itemInfoPanelRows, infoPanelShorten, questLetterName, INFO_TEXT, itemLongName } from '../systems/itemInfo.js';   // U25; AUDIT 64 F51; AUDIT MERGE-PLUS C3: the refusal's name
+import { itemInfoRows, itemInfoPanelRows, infoPanelShorten, questLetterName, INFO_TEXT, itemLongName, potionRecipeIngredientNames } from '../systems/itemInfo.js';   // U25; AUDIT 64 F51; AUDIT MERGE-PLUS C3: the refusal's name; AUDIT 64 F49 / L10N3e: PotionRecipeIngredients, one list for both skins
 import { lockRefuses, lockedText } from '../systems/itemLock.js';   // AUDIT MERGE-PLUS C3: the player's lock holds on this skin too
 import { boundRefusesPut, boundText, isPackOnly, packOnlyText } from '../systems/itemBound.js';   // SS3: a bound piece stays the player's on this skin too; WALLET1: and a pack-only one in the pack
 import { letterRefusesPut, letterPutText } from '../systems/peerWord.js';   // HACKED-GOLD: online a letter of credit goes nowhere a peer's word could hand it on
@@ -118,6 +117,8 @@ import { firstHotkey } from '../systems/dialogShortcuts.js';   // A8: the Dagger
 import { expandRowValues } from '../systems/quest/questMacros.js';   // MACROS1: a used item's record through its own context (%map)
 import { magicPowersLines } from '../systems/itemPowers.js';   // MACRO-3: %mpw
 import { itemIsIdentified } from '../systems/tradeModes.js';   // MACRO-3: MagicPowers' identified arm
+import { localizedText, formatText } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
+import { getLocalizedItemName } from '../systems/textManager.js';   // L10N3e: the equipping cue's template name, by its index
 import { bagMayLeave } from '../systems/materialsBag.js';   // AUDIT2 BAG1 H11: a loaded bag stays - the one test
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 
@@ -193,8 +194,8 @@ export function powersRows(recordRows, powers) {
  *  decimals and anything else shows exactly two. At 0.0025 kg a coin,
  *  that is every multiple of 400 gold and nothing between. */
 export const goldPanelRows = (gold, weightKg) => [
-  { text: `${gold} gold pieces`, center: true },
-  { text: `Weight: ${weightKg % 1 === 0 ? weightKg.toFixed(0) : weightKg.toFixed(2)} kg`, center: true },
+  { text: formatText(localizedText('goldAmount', '{0} gold pieces'), gold), center: true },
+  { text: formatText(localizedText('goldWeight', 'Weight: {0} kg'), weightKg % 1 === 0 ? weightKg.toFixed(0) : weightKg.toFixed(2)), center: true },
 ];
 /** The arms whose destination window the port has not built. Named,
  *  so a Use click SAYS something rather than eating itself.
@@ -642,12 +643,12 @@ export class NativeInventoryWindow {
     // for this visit, then DFU's "Equipping %s" cue per changed hand
     // (:729-756; the string is Internal_Strings' equippingWeapon,
     // the name the item's TEMPLATE name). Runs on hand-offs too -
-    // this is the B-C1 one-close-law seam.
+    // this is the B-C1 one-close-law seam. L10N3e: the name by its index (:738/:750).
     if (this._handSnapshot && this.hooks.entity) {
       const r = billEquipDelayOnClose(this.hooks.entity, this._handSnapshot);
       this._handSnapshot = null;   // a re-entrant close bills nothing
       for (const it of r.equipping) {
-        this.hooks.say?.(`Equipping ${templateByIndex(it.templateIndex)?.name ?? it.name ?? ''}`);
+        this.hooks.say?.(localizedText('equippingWeapon', 'Equipping %s').replace('%s', getLocalizedItemName(it.templateIndex, templateByIndex(it.templateIndex)?.name ?? it.name ?? '')));
       }
     }
     closeSession(this.hooks, this);   // the world pile mints on close (OnPop)
@@ -728,11 +729,11 @@ export class NativeInventoryWindow {
     // still adds and shows the box, so an unknown key gets an EMPTY
     // second box rather than none. (A recipe is MiscItems, never
     // Paintings, so sitting below the painting arm is inert.)
+    // L10N3e: itemInfo's list, the enhanced card's too - each name as shown (MCP :254).
     if (isPotionRecipe(it)) {
-      const recipe = potionRecipeByKey(it.potionRecipeKey ?? 0);
       this.boxes = [
         { rows: infoRows },
-        { rows: (recipe?.ingredients ?? []).map((id) => ({ text: templateByIndex(id)?.name ?? '', center: true })) },
+        { rows: potionRecipeIngredientNames(it).map((text) => ({ text, center: true })) },
       ];
       this.infoItem = it;
       return;

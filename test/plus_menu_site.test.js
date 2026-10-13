@@ -211,7 +211,7 @@ test('PLUS-MENU: the doors are the kit\'s buttons, given the edge the role paint
   // AUDIT M2: standing at rest, the diamonds would be every door's name - "◆ Continue ◆" - so each is hidden from a reader
   const menu = src('src/ui/enhancedMenu.js');
   const doorLoop = menu.slice(menu.indexOf("const b = el('button', `doorbtn door-${id}`);"), menu.indexOf('menu.append(b);', menu.indexOf("const b = el('button', `doorbtn door-${id}`);")));
-  assert.match(doorLoop, /const dia = \(\) => \{ const d = el\('span', 'px-c', '\\u25c6'\); d\.setAttribute\('aria-hidden', 'true'\); return d; \};\n\s+b\.append\(dia\(\), document\.createTextNode\(label\), dia\(\)\);/);
+  assert.match(doorLoop, /const dia = \(\) => \{ const d = el\('span', 'px-c', '\\u25c6'\); d\.setAttribute\('aria-hidden', 'true'\); return d; \};\n\s+b\.append\(dia\(\), document\.createTextNode\(railLabel\(label\)\), dia\(\)\);/);
   // every Plus colour dresses them: the theme rules are walked out of the same role list
   assert.match(PLUS_CSS, /:root\[data-plus-theme="stone"\] \.px-menu \.doorbtn/);
 });

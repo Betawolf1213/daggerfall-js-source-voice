@@ -38,6 +38,7 @@ function host({ safe = true, target = true, failBuild = false, boat = false, own
       player.spawn(...landing.pos); if (landing.yaw != null) cam.yaw = landing.yaw;
     },
     sharedClockOn: () => true, skyMinutes: () => 1000, worldMinutes: () => 1000,
+    getLocalizedLocationName: (mapId, name) => name,   // L10N3e: the arrival line's place as shown - English here
     REPOSITION: { DirectionFromStartMarker: 1 },
     waitForPartyArrival: (probe, opts) => waitForPartyArrival(probe, { ...opts, now: () => waits * 100, wait: async () => { waits++; } }),
     csaPeers: { frame: no }, csaSyncColliders: no,

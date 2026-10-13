@@ -349,7 +349,7 @@ test('PROF8 book, page, words and wiring: the book keeps the account\'s hauls (t
   assert.doesNotMatch(pb, /'prof-fish-cap'/, 'no forty to learn');   // PIN MOVED (CAP-OFF, 2026-10-07 - Mac: "Remove the cap on life skills")
   const pp = src('src/ui/profPages.js');
   assert.match(pp, /const PRACTISED = Object\.freeze\(\['herbalism', 'mining', 'hunting', 'fishing',/);
-  assert.match(pp, /Today: \$\{hauls\} haul\$\{hauls === 1 \? '' : 's'\} - your account's, across your characters/);   // PIN MOVED (CAP-OFF, 2026-10-07 - Mac: "Remove the cap on life skills"): 'of forty'
+  assert.match(pp, /t\('prof\.page\.today\.hauls', 'Today: \{hauls, plural, one \{# haul\} other \{# hauls\}\} - your account\\'s, across your characters', \{ hauls \}\)/);   // PIN MOVED (CAP-OFF, 2026-10-07 - Mac: "Remove the cap on life skills"): 'of forty'; PIN MOVED (L10N4): the line through t(), its plural ICU's
   const w = src('src/scenes/world.js');
   assert.match(w, /fishKind\(\{ book: profBook, host: \{/);
   assert.match(w, /storm: \(\) => currentWeather\(\) === 'thunder',/);

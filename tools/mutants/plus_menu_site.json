@@ -290,8 +290,8 @@
   {
     "name": "AUDIT-P8-the-share-floored",
     "file": "src/ui/enhancedAccount.js",
-    "old": "`${Math.round((100 * won) / (won + lost))}% of duels won`",
-    "new": "`${Math.floor((100 * won) / (won + lost))}% of duels won`",
+    "old": "{ percent: Math.round((100 * won) / (won + lost)) }",
+    "new": "{ percent: Math.floor((100 * won) / (won + lost)) }",
     "tests": [
       "test/plus_menu_site.test.js"
     ]
@@ -299,8 +299,8 @@
   {
     "name": "AUDIT-P9-the-guest-note-off-its-section",
     "file": "src/ui/enhancedAccount.js",
-    "old": "        account.append(el('p', 'meta', 'Adding a username keeps everything this account already has.'));",
-    "new": "        root.append(el('p', 'meta', 'Adding a username keeps everything this account already has.'));",
+    "old": "        account.append(el('p', 'meta', t('account.card.guestNote', 'Adding a username keeps everything this account already has.')));",
+    "new": "        root.append(el('p', 'meta', t('account.card.guestNote', 'Adding a username keeps everything this account already has.')));",
     "tests": [
       "test/plus_menu_site.test.js"
     ]

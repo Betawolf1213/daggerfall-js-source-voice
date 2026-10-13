@@ -58,7 +58,9 @@ test('F016: the static NPC name bank is the REGION\'s, and the race path is gone
   // <name>" off the layout data its click would stamp, so the look and the click call one person one thing.
   // FIELD BUGS 2026-10-11g QUEST-NAME added the EIGHTH (PIN MOVED): the plaque names a quest stand's Person (World
   // Tooltips' StaticNPC arm) off the same layout data, through the same helper - the plaque, Info and the click one name.
-  assert.equal((wm.match(/npcDisplayName\(/g) ?? []).length, 8, 'every static-NPC name site calls it');
+  // L10N3e: the pair over the one derivation - the name SHOWN where a player reads it, the talk partner's canonical
+  // name at the two talk doors - so the two talk windows' plates beside those doors make the eight ten.
+  assert.equal((wm.match(/npc(?:Display|Shown)Name\(/g) ?? []).length, 10, 'every static-NPC name site calls it - L10N3e: the pair over the one derivation, the name shown at eight and the talk partner\'s canonical name at the two talk doors');
   // (WORLD-HOVER added three: the dungeon plaque's, the interior
   // plaque's and the street's. Every hover arm reads the same bank as
   // the click beside it, or the two would call one person two things.)

@@ -222,8 +222,8 @@
   {
     "name": "HOME-VOTE-own-words-lost",
     "file": "src/net/accountClient.js",
-    "old": "  'vote-own': 'You cannot vote on your own home, or on the hall of your own guild.',",
-    "new": "  'vote-own': 'x',",
+    "old": "  'vote-own': () => t('account.refusal.voteOwn', 'You cannot vote on your own home, or on the hall of your own guild.'),",
+    "new": "  'vote-own': () => t('account.refusal.voteOwn', 'x'),",
     "tests": [
       "test/homevote.test.js"
     ],

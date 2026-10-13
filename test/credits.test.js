@@ -62,9 +62,9 @@ test('CR1: a mod row carries what a modder is owed - title, author, what it is, 
 
 test('CR1: the About pane renders the table, mods under their own heading, through the one module', () => {
   const menu = read('src/ui/enhancedMenu.js');
-  assert.match(menu, /import \{ CREDITS \} from '\.\/credits\.js'/);
+  assert.match(menu, /import \{ CREDITS, translationCredits \} from '\.\/credits\.js'/);   // L10N6: the translations' rows beside the works'
   assert.match(menu, /function paneAbout\(body\) \{[\s\S]*?body\.append\(creditsCard\(\)\);/, 'About does not show the credits');
-  assert.match(menu, /group\('Built on', CREDITS\.builtOn\);\s*\n\s*group\('Mods', CREDITS\.mods\);/, 'the two groups are not both rendered, in that order');
+  assert.match(menu, /group\(t\('menu\.credits\.builtOn', 'Built on'\), CREDITS\.builtOn\);\s*\n\s*group\(t\('menu\.credits\.mods', 'Mods'\), CREDITS\.mods\);/, 'the two groups are not both rendered, in that order');
   // The renderer knows the SHAPE and no work by name.
   const fn = menu.slice(menu.indexOf('function creditsCard()'), menu.indexOf('// ── SHELL'));
   for (const r of rows) assert.doesNotMatch(fn, new RegExp(r.author.split(/\s+/)[0]), 'a credit is hard-coded in the renderer');

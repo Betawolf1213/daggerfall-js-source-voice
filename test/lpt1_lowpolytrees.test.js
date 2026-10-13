@@ -981,7 +981,7 @@ test('LPT1 the mod\'s row: Low Poly Trees, SquidKamer, on by default - a switch 
   assert.equal(m.title, 'Low Poly Trees');
   assert.equal(m.author, 'SquidKamer');
   assert.equal(m.keys.Enabled.default, true);
-  assert.match(read('src/systems/features.js'), /modFeature\('low-poly-trees', 'Takes effect when the world next loads\.', 'sight'\)/);
+  assert.match(read('src/systems/features.js'), /modFeature\('low-poly-trees', \(\) => t\('features\.effect\.worldLoads', 'Takes effect when the world next loads\.'\), 'sight'\)/);
 });
 
 test('LPT1 runSteps: a step generator\'s answer, whole', () => {

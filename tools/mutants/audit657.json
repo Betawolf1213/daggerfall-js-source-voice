@@ -158,8 +158,8 @@
   {
     "name": "AUDIT657-B6-the-raid-cards-condition-cut",
     "file": "src/ui/workTab.js",
-    "old": "`Strike a raider in a town here and stay until it is cleansed: paid when the raid is counted, less ${marksText(saleTax(x.pay))} tax.`",
-    "new": "`Fight off a raid on a town here: paid when the raid is counted, less ${marksText(saleTax(x.pay))} tax.`",
+    "old": "'Strike a raider in a town here and stay until it is cleansed: paid when the raid is counted, less {tax} tax.'",
+    "new": "'Fight off a raid on a town here: paid when the raid is counted, less {tax} tax.'",
     "tests": [
       "test/audit657_board.test.js"
     ]

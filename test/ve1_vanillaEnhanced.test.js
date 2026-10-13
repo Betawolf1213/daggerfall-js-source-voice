@@ -336,13 +336,13 @@ test('VE3/VE4 the Texture Overhaul card: Classic and Vanilla Enhanced - the pack
 
 test('VE3/VE4 the menu: the card\'s button wears the look at once - nothing to attach; its add-ons are switches while it is worn; the packs card switches a mod on and off, says the load order, and never offers to remove a shipped mod', () => {
   const menu = src('ui/enhancedMenu.js');
-  assert.match(menu, /const use = el\('button', 'act primary look-use', o === cur \? 'In use' : `Use \$\{o\.name\}`\);/);
+  assert.match(menu, /const use = el\('button', 'act primary look-use', o === cur \? t\('menu\.ovh\.inUse', 'In use'\) : t\('menu\.ovh\.use', 'Use \{look\}', \{ look: o\.name \}\)\);/);
   assert.doesNotMatch(menu, /needsFiles|pickDfmodFiles\(o\.attach\)/, 'VE3\'s pick went with the attach');
   assert.match(menu, /const addons = o === cur \? o\.addons\?\.\(\) \?\? \[\] : \[\];/, 'the add-ons only while the look is worn');
   assert.match(menu, /b\.onclick = \(e\) => \{ e\.stopPropagation\(\); setVeAddon\(m\.key, on\); render\(\); \};/);
-  assert.match(menu, /p\.custom \?\? 'Custom: your own mix from Settings\./);   // ORG2: the Features home is Settings' tabs
-  assert.match(menu, /\{ label: m\.enabled \? 'Switch off' : 'Switch on', onClick: \(\) => \{ setDfmodEnabled\(m\.key, !m\.enabled\); render\(\); \} \},/);
-  assert.match(menu, /\.\.\.\(m\.shipped \? \[\] : \[remove\('Remove', `Remove \$\{m\.title\}`/, 'a shipped mod is switched, never removed');
-  assert.match(menu, /'In load order: where two mods carry the same texture, the later one is drawn\./);
+  assert.match(menu, /p\.custom \?\? t\('menu\.ovh\.custom', 'Custom: your own mix from Settings\./);   // ORG2: the Features home is Settings' tabs
+  assert.match(menu, /\{ label: m\.enabled \? t\('menu\.packs\.switchOff', 'Switch off'\) : t\('menu\.packs\.switchOn', 'Switch on'\), onClick: \(\) => \{ setDfmodEnabled\(m\.key, !m\.enabled\); render\(\); \} \},/);
+  assert.match(menu, /\.\.\.\(m\.shipped \? \[\] : \[remove\(t\('menu\.packs\.removeYes', 'Remove'\), t\('menu\.packs\.removeMod', 'Remove \{mod\}', \{ mod: m\.title \}\)/, 'a shipped mod is switched, never removed');
+  assert.match(menu, /t\('menu\.packs\.loadOrder', 'In load order: where two mods carry the same texture, the later one is drawn\./);
   assert.match(src('scenes/dataSource.js'), /export async function pickDfmodFiles\(\) \{\n\s+return pickAssetFolder\(\{\n\s+title: 'Add texture mods',/);
 });

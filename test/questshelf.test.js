@@ -203,7 +203,7 @@ test('QUEST-SHELF the journal: the walk hands the quests set aside, their clocks
   assert.match(bridge, /if \(r\.ok\) notebook\?\.unhideQuest\?\.\(id\);/, 'a reclaimed quest the player had hidden is on the page again');
   assert.match(bridge, /if \(!q \|\| q\.questComplete \|\| isShelved\(q\)\) questTracker\.pinned = null;/, 'the tracker lets it go');
   const menu = src('src/ui/enhancedMenu.js');
-  assert.match(menu, /if \(shelved\.length\) section\('Abandoned', shelved, ' done'\);/);
+  assert.match(menu, /if \(shelved\.length\) section\(t\('pause\.journal\.abandoned', 'Abandoned'\), shelved, ' done'\);/);
   assert.match(menu, /const ab = el\('button', 'act', armed \? 'Click again to abandon' : 'Abandon quest'\);/);
   assert.match(menu, /} else if \(sel\.entries && sel\.id != null && clean\.abandon && clean\.canAbandon\?\.\(sel\.id\)\) \{/);
   assert.match(menu, /const rc = el\('button', 'act', 'Reclaim quest'\);/);

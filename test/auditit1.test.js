@@ -338,7 +338,7 @@ test('AUDIT IT1 W4/G3: the mod is loaded for the game - off at the start, no fac
   assert.match(w, /const immersiveSettingsIfOn = \(\) => \(immersiveTravelLoaded\(\) \? readImmersiveTravelSettings\(\) : null\);/);
   assert.match(w, /if \(!immersiveTravelLoaded\(\) \|\| \(kind !== IT_POPUP\.carriage && kind !== IT_POPUP\.seafarer\)\) return null;/);
   assert.match(read('src/scenes/modWorldData.js'), /const isOn = vendor === IMMERSIVE_TRAVEL_VENDOR \? immersiveTravelLoaded : \(\) => modSetting\(vendor, 'Enabled'\) === true;/);
-  assert.match(read('src/systems/features.js'), /modFeature\('immersive-travel', 'Takes effect when the game is next started \(an in-game Load keeps what it started with\); its fares and rules at the next map\.'/);
+  assert.match(read('src/systems/features.js'), /modFeature\('immersive-travel', \(\) => t\('features\.mod\.immersiveTravel\.effect', 'Takes effect when the game is next started \(an in-game Load keeps what it started with\); its fares and rules at the next map\.'/);
 });
 
 test('AUDIT IT1 L3: Init registers its services only once BOTH factions went in (IL_047a-050b) - a faction id already taken leaves the drivers with no service, and says so', () => {
@@ -362,7 +362,7 @@ test('AUDIT IT1 L1/W2/W6: the driver\'s map reads PlayerGPS\'s region (politic 6
   const w = read('src/scenes/world.js');
   assert.match(w, /function itHere\(\) \{[\s\S]*?regionIndex: maps\.getRegionIndexAt\(px\.x, px\.y\),/);
   const open = w.slice(w.indexOf('function openImmersiveMap(kind) {'), w.indexOf('function openTeleportMap() {'));
-  assert.match(open, /if \(\(modes\?\.mode \?\? 'exterior'\) !== 'exterior'\) \{ townTalk\.say\(CANNOT_TRAVEL_INDOORS_TEXT\); return null; \}/);
+  assert.match(open, /if \(\(modes\?\.mode \?\? 'exterior'\) !== 'exterior'\) \{ townTalk\.say\(localizedText\('cannotTravelIndoors', CANNOT_TRAVEL_INDOORS_TEXT\)\); return null; \}/);
   assert.match(open, /if \(!travelMapDoorReady\(\)\) \{ townTalk\.say\('\(the travel map art is unavailable\)'\); return null; \}/);
   assert.match(open, /if \(sharedClockOn\(\)\) \{\s*\n\s*const nowMin = Math\.floor\(skyMinutes\(\)\);\s*\n\s*const cfb = careerFastTravelBlock\(playerEntity, nowMin\);[^\n]*\n\s*if \(cfb\) \{ sayWithNightfall\(cfb\.text\); if \(cfb\.hint\) townTalk\.say\(cfb\.hint\); return null; \}\s*\n\s*const ftb = racialFastTravelBlock\(playerEntity, nowMin\);\s*\n\s*if \(ftb\) \{ sayWithNightfall\(ftb\.text\); if \(ftb\.hint\) townTalk\.say\(ftb\.hint\); return null; \}/);   // PIN MOVED (HOOD-CAREER): the career rung is careerFastTravelBlock's, its hood's hint after DFU's line
   // ...and it is the clamp's own condition: the arrival clamp runs exactly where this does not

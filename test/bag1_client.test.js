@@ -803,7 +803,7 @@ test('BAG1 (AUDIT): Put everything in says what went in and each material refuse
   const page = src('src/ui/profPages.js');
   assert.match(page, /if \(res\?\.kept\) stop = res\.text \?\? null; else refused\.push\(\{ name: r\.name, text: res\?\.text \?\? null \}\); break;/);
   assert.match(page, /const carriedAny = \[\.\.\.all\.values\(\)\]\.some/);
-  assert.match(src('src/ui/workTab.js'), /\$\{count\(held\)\} \$\{w\.carrying\?\.\(\) \? 'held' : 'in your Stores'\}/);
+  assert.match(src('src/ui/workTab.js'), /w\.carrying\?\.\(\) \? t\('prof\.work\.writ\.heldCarried', '\{n, number\} held', \{ n: Number\(held\) \}\) : t\('prof\.work\.writ\.held', '\{n, number\} in your Stores', \{ n: Number\(held\) \}\)/);
 });
 
 test('BAG1 (AUDIT2 H1/U2/U1/U11/U14): the Stores page empties the bag into the pack - anywhere, on either skin, as much as the pack carries (the classic inventory draws no bag, and a food rotted in it held it loaded for good); Put in and Put everything in stop at the Stores\' room, said; why Take out or Put in is shut is drawn; the qty field says what it counts (mutants: no way out of the bag; the pack past its weight; the jam left behind; the Stores\' room unread; Put everything in asking a full Store; the reason a title alone; the qty unlabelled)', async () => {
