@@ -96,7 +96,9 @@ test('EG6a THE SWEEP\'S HARD COURSES (found sweeping seeds 1 to 500 of every ban
     return spec;
   };
   // the widest: a Drum rolled away at the envelope's widest gap; a still island 3.19 m off a Drift step
-  const drum = crossed(295, 0, 2), d7 = drum.steps.find((q) => q.i === 7);
+  // PIN MOVED (EG-HERO-LAY, spec law 7): seed 295's Hall 2 lays the Colonnade's hero in its passage's place (its drums its
+  // own, 2.6 and 3 m apart); seed 10's Hall 2 keeps the kit's at the envelope's widest
+  const drum = crossed(10, 0, 2), d7 = drum.steps.find((q) => q.i === 7);
   assert.deepEqual([d7.kind, d7.gap], ['drum', 3.2]);
   const isle = crossed(147, 0, 12), s1 = isle.steps.find((q) => q.i === 1);
   assert.deepEqual([s1.kind, s1.after], ['drift', 3.19]);

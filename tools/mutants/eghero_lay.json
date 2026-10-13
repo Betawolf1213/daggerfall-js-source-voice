@@ -686,8 +686,8 @@
   {
     "name": "EGHL-hero-ground-undrawn",
     "file": "src/world/egHall.js",
-    "old": "    egHeroFragInto(heroInto(f, true), q.id, at, M);",
-    "new": "    void heroInto;",
+    "old": "    heroTrisInto(f, S.ground, at);",
+    "new": "    void S.ground;",
     "tests": [
       "test/eghero_lay.test.js"
     ]
@@ -695,8 +695,8 @@
   {
     "name": "EGHL-hero-rock-not-dithered",
     "file": "src/world/egHall.js",
-    "old": "    occ(() => egHeroFragInto(heroInto(f, false), q.id, at, M));",
-    "new": "    egHeroFragInto(heroInto(f, false), q.id, at, M);",
+    "old": "    for (const tris of S.rock.values()) occ(() => heroTrisInto(f, tris, at));",
+    "new": "    for (const tris of S.rock.values()) heroTrisInto(f, tris, at);",
     "tests": [
       "test/eghero_lay.test.js"
     ]
@@ -877,6 +877,96 @@
     "file": "tools/egSpanSolve.mjs",
     "old": "    for (const q of spec.heroes ?? []) for (const g of q.floors) {",
     "new": "    for (const q of []) for (const g of q.floors) {",
+    "tests": [
+      "test/eghero_lay.test.js"
+    ]
+  },
+  {
+    "name": "EGHL-hero-ground-by-record",
+    "file": "src/world/egHall.js",
+    "old": "        if (ys.some((y) => Math.abs(top - y) <= EG_HERO_GROUND_HAND_M)) { ground.push([rec, src, k]); continue; }",
+    "new": "        if ([EG_DRESS.floor, EG_DRESS.arena, EG_DRESS.cobble, EG_DRESS.edge, EG_DRESS.molten].includes(rec)) { ground.push([rec, src, k]); continue; }",
+    "tests": [
+      "test/eghero_lay.test.js"
+    ]
+  },
+  {
+    "name": "EGHL-hero-rock-one-piece-a-record",
+    "file": "src/world/egHall.js",
+    "old": "        const key = `${rec}:${Math.floor(",
+    "new": "        const key = `${rec}`; void `${Math.floor(",
+    "tests": [
+      "test/eghero_lay.test.js"
+    ]
+  },
+  {
+    "name": "EGHL-hero-rock-cell-records-mixed",
+    "file": "src/world/egHall.js",
+    "old": "        const key = `${rec}:${Math.floor(",
+    "new": "        const key = `${Math.floor(",
+    "tests": [
+      "test/eghero_lay.test.js"
+    ]
+  },
+  {
+    "name": "EGHL-landing-room-unread",
+    "file": "src/net/egLaw.js",
+    "old": "  return egHeroLanding(rec);\n}",
+    "new": "  return '';\n}",
+    "tests": [
+      "test/eghero_lay.test.js"
+    ]
+  },
+  {
+    "name": "EGHL-landing-room-short",
+    "file": "src/net/egLaw.js",
+    "old": "export const EG_HERO_LAND_ROOM_CM = 20;",
+    "new": "export const EG_HERO_LAND_ROOM_CM = 10;",
+    "tests": [
+      "test/eghero_lay.test.js"
+    ]
+  },
+  {
+    "name": "EGHL-landing-no-run-off",
+    "file": "src/net/egLaw.js",
+    "old": "    if (off >= q.gap + 40 && off <= q.gap + q.d - 50) continue;   // run off it, as a stair is",
+    "new": "    void off;",
+    "tests": [
+      "test/eghero_lay.test.js"
+    ]
+  },
+  {
+    "name": "EGHL-landing-run-off-short-taken",
+    "file": "src/net/egLaw.js",
+    "old": "    if (off >= q.gap + 40 && off <= q.gap + q.d - 50) continue;",
+    "new": "    if (off >= 0 && off <= q.gap + q.d - 50) continue;",
+    "tests": [
+      "test/eghero_lay.test.js"
+    ]
+  },
+  {
+    "name": "EGHL-landing-mover-judged",
+    "file": "src/net/egLaw.js",
+    "old": "    if (q.amp > 0 && ['drift', 'rail', 'drum', 'pend'].includes(q.kind)) continue;",
+    "new": "    void q.amp;",
+    "tests": [
+      "test/eghero_lay.test.js"
+    ]
+  },
+  {
+    "name": "EGHL-landing-first-from-its-own-height",
+    "file": "src/net/egLaw.js",
+    "old": "    const ay = prev ? prev.y : Math.max(0, ...rec.floors.filter((f) => egFragInPoly(f.poly, q.x, lz - 1)).map((f) => f.y)), dy = q.y - ay;",
+    "new": "    const ay = prev ? prev.y : q.y, dy = q.y - ay;",
+    "tests": [
+      "test/eghero_lay.test.js"
+    ]
+  },
+  {
+    "name": "EGHL-landing-flight-no-push",
+    "file": "src/net/egLaw.js",
+    "old": "land = lz + Math.floor(100 * (EG_SPAN_RUN_MPS + EG_JUMP_MPS * EG_JUMP_FWD) * air);",
+    "new": "land = lz + Math.floor(100 * EG_SPAN_RUN_MPS * air);",
     "tests": [
       "test/eghero_lay.test.js"
     ]

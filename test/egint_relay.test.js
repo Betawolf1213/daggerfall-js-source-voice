@@ -509,7 +509,10 @@ test('EG-H1 THE UNION FLOOR, IN TIME (net/egFloor.js - section 13.2, where the p
   assert.equal(egUnionHolds(L, ring, 0, 25, now, onFloor), true, 'the vent erupting first leaves nowhere: held');
   const dw = egHallOf(SEED, 12, 0), bas = dw.hazards.find((q) => q.kind === 'basalt');
   const P = egPlaceLandings(dw, now, now, now + 8000);
-  assert.ok(P.length >= 1 && P.every((q) => q.s[0][0] === 'd' && q.s[0][3] === bas.r), 'a fragment\'s basalt lands in the set');
+  // PIN MOVED (EG-HERO-LAY, spec law 7): this Deepway lays the Colonnade's hero now, and the fragments after it are drawn
+  // again - a surge among their hazards beside the basalt: each lands in the set, the basalt a disc of its reach, the surge its
+  // lane
+  assert.ok(P.some((q) => q.s[0][0] === 'd') && P.every((q) => (q.s[0][0] === 'd' && q.s[0][3] === bas.r) || (q.s[0][0] === 'l' && dw.hazards.some((z) => z.kind === 'surge'))), 'a fragment\'s basalt lands in the set');
   const Fr = egFightNew(spec, wokeAt, [20]), o5 = [];
   assert.equal(egAim(Fr, spec, { o: 1, s: ring.s, at: t1, wu: 1400, p: 0.2 }, [{ sub: 'mac', x: 0, z: 25 }], now, o5), null, 'the director holds it - the vent in its set');
   assert.equal(Fr.held.length, 1);

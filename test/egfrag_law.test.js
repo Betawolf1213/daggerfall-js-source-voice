@@ -13,7 +13,7 @@ import { egPieceAt, egMoonBeamZ, egSpanProof, egSpanPairs, egRoadCross, egPairWi
 import { egHallOf, egCircleSpecs, egFirstHallOf, egTubeCircle, egOnFight, egAtDoor, egCirclePlan, EG_HALL_LEN_MAX, EG_FORK_FROM_C, EG_LOW_X_CM, EG_STEP } from '../src/net/egLaw.js';
 import { EG_ANNALS, EG_ANNALS_FOUND, EG_ANNALS_LORDS, egAnnalsLordPage, egAnnalsNext } from '../src/net/egAnnals.js';
 import { EG_BOSS_KEYS } from '../src/net/egLords.js';
-import { egWindupFloorMs, shLane, shDisc } from '../src/net/egShape.js';
+import { egWindupFloorMs, shLane, shDisc, egPolyIn } from '../src/net/egShape.js';
 
 const SEEDS = [77, 0xbeef, 3, 0x51ee, 12345];
 /** Every hall over the seeds and twenty circles (the plain ground and one of each span decree). */
@@ -180,7 +180,8 @@ test('EG-FULL LAYER THREE THE FORK (section 11.4): from circle 2 every span fork
     const low = s.steps.filter((q) => q.road === 1), high = s.steps.filter((q) => q.road === 0 && q.z > F.z);
     assert.ok(low.length && low.every((q) => Math.abs(q.x - F.lowX) < 5), 'the Low Road on its own line');
     assert.equal(high.filter((q) => q.kind === 'drop').length, 1, 'the High Road meets the plate\'s height by one Drop');
-    assert.ok(s.caves.some((q) => q.road === 1 && q.x === F.lowX), 'the Low Road\'s passage');
+    // PIN MOVED (EG-HERO-LAY, spec law 7): the Low Road's passage may be a hero of the band's kit, laid in the kit's place
+    assert.ok(s.caves.some((q) => q.road === 1 && q.x === F.lowX) || s.frags.some((f) => f.hero && f.cls === 'passage' && f.road === 1 && f.x === F.lowX), 'the Low Road\'s passage');
     const cache = s.spots.hcache?.[0], niche = s.spots.lniche?.[0];
     assert.ok(cache && s.islands.some((q) => q.road === 0 && Math.hypot(q.x - cache.x, q.z - cache.z) < 0.01), 'the cache on a High Road island');
     assert.ok(niche && (s.spots.niche ?? []).some((q) => Math.hypot(q.x - niche.x, q.z - niche.z) < 0.01), 'the Low Road\'s niche takes a Memento');
@@ -207,14 +208,17 @@ test('EG-FULL LAYER THREE THE CHAMBERS (section 11.4): a chamber is never a disc
     const ch = s.frags.filter((f) => f.cls === 'chamber');
     if (s.kind === 'athenaeum') assert.equal(ch.length, 0, 'never a fragment in the Athenaeum');
     for (const f of ch) {
-      plays.add(f.play);
-      assert.ok(EG_PLAYS.includes(f.play), `${f.kit}'s play ${f.play}`);
+      // PIN MOVED (EG-HERO-LAY, spec law 7): a hero chamber's record names its plays as a list (section 11.5's `play`), at least one
+      const fp = f.hero ? f.play.split(',') : [f.play];
+      assert.ok(fp.length >= 1 && fp.every((p) => EG_PLAYS.includes(p)), `${f.kit}'s play ${f.play}`);
+      for (const p of fp) plays.add(p);
       assert.ok(EG_CHAMBER_KITS[s.band].includes(f.kit));
     }
     // every second floor in a chamber has its stair
     for (const b of s.discs.filter((d) => d.role === 'balcony' && s.frags.some((f) => f.cls === 'chamber'))) assert.ok(s.ramps.some((q) => Math.abs(q.y1 - b.y) < 1e-9 && Math.hypot(q.bx - b.x, q.bz - b.z) <= b.r + 0.5), `hall ${s.h}: a balcony with its stair`);
     for (const q of s.ramps) {
-      const top = s.fl.find((x) => x.t === 'd' && Math.abs(x.y - q.y1) < 1e-9 && Math.hypot(q.bx - x.x, q.bz - x.z) <= x.r + 0.5);
+      // EG-HERO-LAY (spec law 7): a hero's stair climbs to one of its fight floors - a polygon
+      const top = s.fl.find((x) => Math.abs(x.y - q.y1) < 1e-9 && (x.t === 'd' ? Math.hypot(q.bx - x.x, q.bz - x.z) <= x.r + 0.5 : x.t === 'p' && egPolyIn(x.poly, q.bx, q.bz, 0.5)));
       assert.ok(top, `hall ${s.h}: a ramp climbs to a fight floor`);
       assert.ok(q.y1 - q.y0 >= 2.5 && q.y1 - q.y0 <= 4, 'a second floor 2.5-4 m up');
       assert.ok(Math.atan2(q.y1 - q.y0, Math.hypot(q.bx - q.ax, q.bz - q.az)) < (60 * Math.PI) / 180, 'walkable');

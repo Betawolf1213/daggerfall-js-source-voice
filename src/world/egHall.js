@@ -35,8 +35,9 @@
 // those (scenes/egOcclude.js) while the circle stays one mesh, one upload and one draw; and THE SHAFT'S LEDGE
 // (egShaftLedgeAt), the ground the camera leans out over (player/mwView.js).
 // EG-HERO-LAY (2026-10-13, spec law 7; sections 11.6-11.8): THE HERO DRAWN - a hall's hero fragment (net/egLaw.js's `heroes`)
-// is its mesh half laid into the circle's one mesh at its origin (world/egHeroFragModel.js egHeroFragInto - its ground plainly,
-// its rock as an occluder of its own), its proxy into the circle's one collider bucket (egHeroFragCollider), so both are freed
+// is its mesh half laid into the circle's one mesh at its origin (world/egHeroFragModel.js egHeroFragInto - its ground, where its
+// law lays ground, plainly; its rock a cell at a time, each an occluder of its own), its proxy into the circle's one collider
+// bucket (egHeroFragCollider), so both are freed
 // with the circle; its lights join the circle's by its kit; no code-built stair, niche or slag spout is drawn inside its box
 // (its own mesh holds them). THE HERO'S CLAMP (egFragZones' `hero` zone): its law's floors extruded to its ceilings, its
 // walls every floor edge its law does not open.
@@ -329,37 +330,64 @@ let _heroMeshes = /** @type {Readonly<Record<string, any>>|null} */ (null);
  *  null for EG_HERO_FRAG_MESHES. Answers the one it replaced. For a test, and nothing that stands a breach. */
 export function egHeroMeshSeam(meshes = null) { const was = _heroMeshes; _heroMeshes = meshes; return was; }
 const heroMeshes = () => _heroMeshes ?? EG_HERO_FRAG_MESHES;
-/** The dress records a hero's ground wears (laid plainly - never dithered): its floors, its arena, its cobbles, its edge
- *  lines, its molten; every other record (its pillars, its root, its brass) is its rock, an occluder of its own (EG-ZN). */
-export const EG_HERO_GROUND = Object.freeze([EG_DRESS.floor, EG_DRESS.arena, EG_DRESS.cobble, EG_DRESS.edge, EG_DRESS.molten]);
+/** A hand (m): a hero's triangle whose top stands within it of a height its law lays ground at is its ground. */
+export const EG_HERO_GROUND_HAND_M = 0.2;
+/** The heights (m, from hero `q`'s origin - net/egLaw.js `heroes`) its law lays ground at: its floors' and its stairs' corners'. */
+export const egHeroGroundYs = (q) => [...new Set([...q.floors.map((g) => g.y - q.y), ...q.ramps.flatMap((r) => r.poly.map((p) => p[1] - q.y))])];
 /** Does a hall's hero's box (net/egLaw.js `heroes` - the hall's frame) hold (x, z) in plan? Pure. */
 export const egInHeroBox = (spec, x, z) => (spec?.heroes ?? []).some((q) => x >= q.box[0] && x <= q.box[3] && z >= q.box[2] && z <= q.box[5]);
-/** A faces sink (world/gateModel.js faces' `byRec`) for egHeroFragInto: a baked mesh's triangles copied in with their own
- *  normals and UVs, moved by `at` - of the ground's records (`ground`) or of the rest. */
-const heroInto = (f, ground) => ({
-  mesh(rec, src, { start = 0, count = src.indices.length / 3, at = [0, 0, 0] } = {}) {
-    if (EG_HERO_GROUND.includes(rec) !== ground) return this;
+/** The side (m) of the cells a hero's rock is cut into, a record's in each an occluder of its own (EG-ZN - a camera's ray
+ *  dithers the rock it crosses, never the whole fragment, and a piece dithering costs its one record two draws more). */
+export const EG_HERO_ROCK_CELL_M = 6;
+/** A kit (world/egHeroFragModel.js egHeroFragInto's) that sorts a baked mesh's triangles: its GROUND (each whose top stands
+ *  within EG_HERO_GROUND_HAND_M of a height in `ys`, the law's - a floor, a floor's lip and side, a stair) in `ground`, its
+ *  ROCK (every other: a wall, a pillar, a vault, a fall of fire, whatever record it wears) in `rock` by its record and the cell
+ *  of its middle (EG_HERO_ROCK_CELL_M across, from the origin) - each `[record, mesh, first index]`. EG-HERO-LAY at the merge of the ten
+ *  heroes: it was told by the record, and a hero dresses a trunk or a tier in its floor's or its molten's record - rock the
+ *  camera could not see through; and the rock was one occluder, the whole fragment dithered for one wall. */
+const heroSorter = (ys) => {
+  const ground = [], rock = new Map();
+  return {
+    ground, rock,
+    mesh(rec, src, { start = 0, count = src.indices.length / 3 } = {}) {
+      const P = src.positions, I = src.indices;
+      for (let k = start; k < start + count * 3; k += 3) {
+        const a = I[k] * 3, b = I[k + 1] * 3, c = I[k + 2] * 3, top = Math.max(P[a + 1], P[b + 1], P[c + 1]);
+        if (ys.some((y) => Math.abs(top - y) <= EG_HERO_GROUND_HAND_M)) { ground.push([rec, src, k]); continue; }
+        const key = `${rec}:${Math.floor((P[a] + P[b] + P[c]) / 3 / EG_HERO_ROCK_CELL_M)}:${Math.floor((P[a + 2] + P[b + 2] + P[c + 2]) / 3 / EG_HERO_ROCK_CELL_M)}`;
+        let list = rock.get(key);
+        if (!list) rock.set(key, list = []);
+        list.push([rec, src, k]);
+      }
+      return this;
+    },
+  };
+};
+/** Triangles `tris` (heroSorter's) copied into faces `f` (world/gateModel.js faces' `byRec`) with their own normals and UVs,
+ *  moved by `at`. */
+function heroTrisInto(f, tris, at) {
+  for (const [rec, src, k] of tris) {
     let g = f.byRec.get(rec);
     if (!g) f.byRec.set(rec, g = { p: [], n: [], uv: [], parts: [] });
-    for (let k = start; k < start + count * 3; k++) {
-      const v = src.indices[k];
+    for (let c = 0; c < 3; c++) {
+      const v = src.indices[k + c];
       g.p.push(src.positions[v * 3] + at[0], src.positions[v * 3 + 1] + at[1], src.positions[v * 3 + 2] + at[2]);
       g.n.push(src.normals[v * 3], src.normals[v * 3 + 1], src.normals[v * 3 + 2]);
       g.uv.push(src.uvs[v * 2], src.uvs[v * 2 + 1]);
-      if ((k - start) % 3 === 0) g.parts.push(GATE_PART.Stone);
     }
-    return this;
-  },
-});
-/** A hall's hero, drawn into faces `f` at its origin (the dungeon's frame): its ground, then its rock as one occluder. A hero
- *  this build does not carry (a hall the relay gave a law-foreign client) draws nothing - its law stands all the same. */
+    g.parts.push(GATE_PART.Stone);
+  }
+}
+/** A hall's hero, drawn into faces `f` at its origin (the dungeon's frame): its ground, then its rock a record's cell at a time,
+ *  each an occluder. A hero this build does not carry (a hall the relay gave a law-foreign client) draws nothing - its law stands all
+ *  the same. */
 function heroModel(f, spec, occ = whole) {
   for (const q of spec.heroes ?? []) {
     const M = heroMeshes();
     if (!M[q.id]) continue;
-    const at = egToDungeon(spec, q.x, q.y, q.z);
-    egHeroFragInto(heroInto(f, true), q.id, at, M);
-    occ(() => egHeroFragInto(heroInto(f, false), q.id, at, M));
+    const at = egToDungeon(spec, q.x, q.y, q.z), S = egHeroFragInto(heroSorter(egHeroGroundYs(q)), q.id, at, M);
+    heroTrisInto(f, S.ground, at);
+    for (const tris of S.rock.values()) occ(() => heroTrisInto(f, tris, at));
   }
 }
 /** THE CIRCLE'S HALLS, as one mesh (renderer.createMesh's model), in the circle's band's dress (EG-G2 - world/egBandArt.js).

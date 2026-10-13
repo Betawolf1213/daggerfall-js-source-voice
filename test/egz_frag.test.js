@@ -165,7 +165,10 @@ test('EG-ZC THE FORGE KIT LAYS IT (section 11.2, spec law 5): every Forge Gut pa
       assert.ok(egOnFight(s, q.x, q.zB + 1), 'the floor it pours toward is a fight floor');
       if (q.road === 1) low++;
     }
-    for (const x of s.steps.filter((q) => q.kind === 'slag')) {
+    // PIN MOVED (EG-HERO-LAY, spec law 7): a hero Forge Gut laid in the kit's place carries its own crust and spouts, as its
+    // record draws them (test/eghero_wellhead.test.js) - the kit's law below is the code-built crossing's
+    const hero = (x) => (s.heroes ?? []).some((q) => q.road === (x.road ?? 0) && x.z >= q.box[2] && x.z <= q.box[5]);
+    for (const x of s.steps.filter((q) => q.kind === 'slag' && !hero(q))) {
       slags++;
       if (s.kind === 'deepway') deep++;
       assert.equal(s.band, 3, 'the Wellhead\'s alone');
@@ -201,6 +204,9 @@ test('EG-ZC THE SHAFTS (sections 11.1-11.2): every Deepway of law 5 goes down by
     const f = sh[0];
     assert.equal(s.frags.indexOf(f), 2, 'the Deepway\'s third fragment');
     assert.ok(EG_SHAFT_KITS[s.band].includes(f.kit), `its band's kit (${f.kit})`);
+    // PIN MOVED (EG-HERO-LAY, spec law 7): a hero shaft laid in the kit's place - its own walls, flights and Drop as its record
+    // draws them (test/eghero_cairn.test.js); it goes down, its exit under its mouth
+    if (f.hero) { const q = s.heroes.find((x) => x.f === 2); assert.ok(q && q.id === f.hero && q.sockets.out[q.exit].y < q.y, 'a hero shaft goes down'); continue; }
     assert.equal(f.name, EG_SHAFT_NAMES[f.kit] ?? f.name);
     seen[f.kit] = (seen[f.kit] ?? 0) + 1;
     const q = s.caves.find((c) => c.shaft);

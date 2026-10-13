@@ -285,15 +285,9 @@ export function shell(m, { cols, rows, inner, outer, hole = () => false, cut = (
 // Each used by two of the Wellhead's three scenes (tools/egHeroForgeGutScene.mjs, egHeroClanPitScene.mjs,
 // egHeroDeepCavernsScene.mjs): faces that carry their own normals (never the writer's hypotenuse, an engine's own), boxes, rings, notched
 // floors and a rock mass round a mouth - IEEE arithmetic and Math.sqrt alone, as the rest of the kit.
-/** A face's own normal (Newell's, unit by Math.sqrt alone). */
-function wellNormal(pts) {
-  const n = [0, 0, 0];
-  for (let i = 0; i < pts.length; i++) {
-    const a = pts[i], b = pts[(i + 1) % pts.length];
-    n[0] += (a[1] - b[1]) * (a[2] + b[2]); n[1] += (a[2] - b[2]) * (a[0] + b[0]); n[2] += (a[0] - b[0]) * (a[1] + b[1]);
-  }
-  return unit(n);
-}
+/** A face's own normal (Newell's, unit by Math.sqrt alone) - the kit's one `newell` (above); the merge of the four bands' kits
+ *  had brought it twice, line for line. */
+const wellNormal = newell;
 /**
  * A FLAT FACE on mesh `m` (EG-HERO, the Havoc Wellhead's three): `pts` counter-clockwise seen from where it faces, slot
  * `mat`, its own normal at every corner (Newell's - never the writer's own, whose hypotenuse an engine may round

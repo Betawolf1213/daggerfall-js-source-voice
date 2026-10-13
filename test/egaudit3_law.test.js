@@ -45,8 +45,14 @@ function runs(ev, kind) {
 const onIsles = (ev, kind) => ev.every((e, k) => e !== kind || ev[k - 1] === kind || ev[k - 1] === '|');
 /** The span decrees' ground (net/egLaw.js egGeoOf - Gale-Swept's rank and Crumbling Halls'). */
 const geoOf = (gale, crumbling) => egGeoOf([...(gale ? [[EG_DECREE_BY_KEY.gale.id, gale]] : []), ...(crumbling ? [[EG_DECREE_BY_KEY.crumbling.id, crumbling]] : [])]);
-/** A Proving Walk's court (its fight disc) - the span before it and the span after it. */
-const courtOf = (spec) => spec.discs.find((d) => d.role === 'court');
+/** A Proving Walk's court (its fight disc) - the span before it and the span after it. EG-HERO-LAY (spec law 7): or a hero
+ *  chamber laid at the court's slot - its own floors, from its mouth to its far wall (net/egLaw.js `heroes`). */
+const courtOf = (spec) => {
+  const d = spec.discs.find((x) => x.role === 'court');
+  if (d) return d;
+  const q = (spec.heroes ?? []).find((x) => x.cls === 'chamber');
+  return q ? { z: (q.box[2] + q.box[5]) / 2, r: (q.box[5] - q.box[2]) / 2 } : undefined;
+};
 
 test('AUDIT EG III LAW 6 - THE LAW PIN (section 22): spec law 6 is the law, laws 4 and 5 kept beside it their seven days each, byte for byte (their 800 halls hashed whole); law 6 laid byte for byte as this audit laid it; a hall of no span decree is law 5\'s whole but its number; a breach opened records law 6, and one of law 5 draws law 5\'s halls (mutants: law 6 not in the table; the law before forgotten; law 6 laid on plain ground)', () => {
   // PIN MOVED (EG-HERO-LAY): spec law 7 (the heroes laid) is the build's law now, law 6 kept beside it its seven days and still

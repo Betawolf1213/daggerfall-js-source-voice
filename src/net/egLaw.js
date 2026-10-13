@@ -62,7 +62,7 @@
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { sdSeed, sdRng } from './sdBrain.js';
-import { egSpanProof, egRoadCross, EG_SPAN_RUN_MPS } from './egSpanLaw.js';   // EG-FULL: THE TIMED SOLVER - a course it refuses is laid again
+import { egSpanProof, egRoadCross, egJumpReach, EG_SPAN_RUN_MPS, EG_JUMP_MPS, EG_JUMP_FWD, EG_JUMP_G } from './egSpanLaw.js';   // EG-FULL: THE TIMED SOLVER - a course it refuses is laid again
 import { egSpanOf, egDieBetween, EG_GAP_MIN_CM, EG_STEP_DOWN_CM, EG_DROP_CM } from './egSpanLaw.js';   // EG6a: THE SPAN GENERATOR - every course laid by it, through courseOf
 import { egFragPassage, egFragChamber, egSetPiece, egSetPieceOf, EG_PASSAGE_KITS, EG_CHAMBER_KITS, EG_FRAGS } from './egFragLaw.js';   // EG-FULL LAYER THREE: the fragments
 import { egFragShaft, EG_SHAFT_KITS, EG_SLAG_LAW, EG_SLAG_STEP } from './egFragLaw.js';   // EG-ZC: the shafts, the slag's law and its crust
@@ -768,13 +768,45 @@ const kitDescent = (kit) => Math.min(0, egFragPassage(kit, () => 0).yB);
 /** The lowest a shaft's course exit may stand under its mouth (cm): the code-built shaft's deepest - four flights and the
  *  deepest Drop. */
 export const EG_HERO_SHAFT_CM = 4 * EG_SHAFT_FLIGHT_CM + EG_SHAFT_DROP_CM[1];
+/** THE LANDING ROOM (cm - EG-HERO-LAY at the merge of the ten heroes): the least a hero's inner course may leave between where
+ *  THE SPAN BUILD's running jump, pressed at a launch edge, lands and the far edge of the piece it lands on. The motor jumps
+ *  again only after a body has stood GROUNDED_JUMP_GATE_S (player/motor.js), so the slowest build lands, runs on and leaps
+ *  again only with room before the edge - every code-built course leaves at least 0.24 m (test/eghero_lay.test.js measures
+ *  it over the law pin's halls); the Stacks' first hero left 0.11 m, and the real motor stood on its shelf's lip unable to
+ *  leap. A piece that moves along the course, and a step down run off rather than leapt, are judged by the solver alone. */
+export const EG_HERO_LAND_ROOM_CM = 20;
+/**
+ * A HERO'S INNER COURSE LANDED (spec law 7, THE LANDING ROOM): why record `rec`'s course leaves THE SPAN BUILD no room to land
+ * and leap again - '' when every landing leaves EG_HERO_LAND_ROOM_CM. Each piece in order is landed on from the one before
+ * (the first from the floor at its gap's start, its height the highest floor holding that edge): where a running jump pressed
+ * at the edge comes down (the span build's run and the jump's forward push over its time in the air, the height between) is
+ * held against the piece's far edge - unless the piece moves along the course, or a step down of more than 30 cm is run off
+ * onto it at the build's run (the sweep's pilot's own way down a stair).
+ * @param {any} rec
+ */
+export function egHeroLanding(rec) {
+  let prev = null;
+  for (const [i, q] of (rec.course ?? []).entries()) {
+    const lz = prev ? prev.z + prev.d / 2 : q.z - q.d / 2 - q.gap;
+    const ay = prev ? prev.y : Math.max(0, ...rec.floors.filter((f) => egFragInPoly(f.poly, q.x, lz - 1)).map((f) => f.y)), dy = q.y - ay;
+    prev = q;
+    if (q.amp > 0 && ['drift', 'rail', 'drum', 'pend'].includes(q.kind)) continue;
+    const air = egJumpReach(dy / 100).air, land = lz + Math.floor(100 * (EG_SPAN_RUN_MPS + EG_JUMP_MPS * EG_JUMP_FWD) * air);
+    const off = dy < -30 ? Math.floor((EG_SPAN_RUN_MPS * lawIsqrt(Math.floor((-dy * 20000) / EG_JUMP_G))) / 10) : -1;   // the fall's time in ms, the law's root
+    if (off >= q.gap + 40 && off <= q.gap + q.d - 50) continue;   // run off it, as a stair is
+    const room = q.z + q.d / 2 - land;
+    if (room < EG_HERO_LAND_ROOM_CM) return `its course's piece ${i} (${q.kind}) leaves the span build's landing ${room} cm before its far edge, under ${EG_HERO_LAND_ROOM_CM}`;
+  }
+  return '';
+}
 /**
  * A HERO'S FIT AT ITS SLOT (spec law 7, before it is laid): why record `rec` cannot stand in a slot of its class - '' when it
  * can. Its box runs from its mouth along +Z; its mouth is at least EG_HERO_WAY_CM wide with a floor at its foot; its course
  * leaves by an exit on the course's line (egHeroExit) with a floor under it, at the height the slot keeps: a chamber's at its
  * mouth's, a passage's at its mouth's or as far under it as its kit's own passage goes down (never on the Low Road, whose
  * bridge to the end plate stands at the fork's low height), a shaft's under its mouth, no deeper than EG_HERO_SHAFT_CM.
- * A chamber's middle (half its length along the course, on the line) stands on a fight floor at its mouth's height.
+ * A chamber's middle (half its length along the course, on the line) stands on a fight floor at its mouth's height. Its inner
+ * course leaves the span build room to land and leap again (egHeroLanding, EG_HERO_LAND_ROOM_CM).
  * @param {any} rec @param {boolean} [low] on the Low Road
  */
 export function egHeroStatic(rec, low = false) {
@@ -788,7 +820,7 @@ export function egHeroStatic(rec, low = false) {
   if (o.y < lo || o.y > hi) return `its course's exit stands at ${o.y} cm, outside ${lo} to ${hi}`;
   if (!rec.floors.some((f) => f.y === o.y && egFragInPoly(f.poly, o.x, o.z))) return 'no floor reaches its course\'s exit';
   if (rec.class === 'chamber' && !egHeroCourtOf(rec)) return 'no fight floor at its mouth\'s height holds its middle';
-  return '';
+  return egHeroLanding(rec);
 }
 /** The squared distance (cm, floored) from (px, pz) to the segment a-b - the law's integers. */
 function segD2(px, pz, a, b) {

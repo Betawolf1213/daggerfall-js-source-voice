@@ -11,7 +11,7 @@ import { createEgSpan } from '../src/scenes/egSpan.js';
 
 
 // ── THE BUDGET ──────────────────────────────────────────────────────────────────────────────────────────────────────
-test('EG-ZN THE BUDGET, MEASURED (section 11.9, as EG-G2 measured): over 60 circles (seeds 7, 99 and 12345, circles 1 to 20) the circle is still one draw of a sub-mesh a record while nothing stands between - a mean of 7.15 GL draws, at worst 8 - and with any one occluder dithering at most two draws more a record it touches: a mean of 9.15, at worst 12; the frame\'s circle and batched pieces together a mean of 23.8 (worst 35) whole and at most 39 with the worst one piece dithering, under the Hour\'s 82 (mutants: a piece\'s runs unmerged; the rest drawn in pieces)', () => {
+test('EG-ZN THE BUDGET, MEASURED (section 11.9, as EG-G2 measured): over 60 circles (seeds 7, 99 and 12345, circles 1 to 20) the circle is still one draw of a sub-mesh a record while nothing stands between - a mean of 7.48 GL draws, at worst 8 - and with any one occluder dithering at most two draws more a record it touches: a mean of 9.61, at worst 12; the frame\'s circle and batched pieces together a mean of 25.2 (worst 39) whole and at most 43 with the worst one piece dithering, under the Hour\'s 82 (mutants: a piece\'s runs unmerged; the rest drawn in pieces)', () => {
   const fake = () => ({ createMesh: (mm) => ({ subMeshes: mm.subMeshes }), destroyMesh: () => {}, updateMeshVertices: () => {} });
   let n = 0, whole = 0, wholeWorst = 0, one = 0, oneWorst = 0, pieces = 0, frame = 0, frameWorst = 0, frameOccWorst = 0;
   for (const seed of [7, 99, 12345]) for (let c = 1; c <= 20; c++) {
@@ -30,8 +30,11 @@ test('EG-ZN THE BUDGET, MEASURED (section 11.9, as EG-G2 measured): over 60 circ
     }
     n++; whole += w; wholeWorst = Math.max(wholeWorst, w); frame += w + batched; frameWorst = Math.max(frameWorst, w + batched); frameOccWorst = Math.max(frameOccWorst, worstHere + batched);
   }
-  assert.deepEqual([whole / n, wholeWorst], [7.15, 8], 'the circle whole: one draw a record, as before');
-  assert.deepEqual([Math.round((one / pieces) * 100) / 100, oneWorst], [9.15, 12], 'one piece dithering');
-  assert.deepEqual([Math.round((frame / n) * 10) / 10, frameWorst, frameOccWorst], [23.8, 35, 39]);   // PIN MOVED at the merge with EG-ZL (its Drift chains, Beat phases and tells are kinds of the batch): 20.7, 30, 34 before
+  // PIN MOVED (EG-HERO-LAY at the merge of the ten heroes, spec law 7): the heroes laid in these circles wear more of their
+  // band's records (each one draw), their rock cut a record's cell at a time (world/egHall.js EG_HERO_ROCK_CELL_M), and their
+  // inner courses' pieces batched: 7.15, 8; 9.15, 12; 23.8, 35, 39 before
+  assert.deepEqual([Math.round((whole / n) * 100) / 100, wholeWorst], [7.48, 8], 'the circle whole: one draw a record, as before');
+  assert.deepEqual([Math.round((one / pieces) * 100) / 100, oneWorst], [9.61, 12], 'one piece dithering');
+  assert.deepEqual([Math.round((frame / n) * 10) / 10, frameWorst, frameOccWorst], [25.2, 39, 43]);   // PIN MOVED at the merge with EG-ZL (its Drift chains, Beat phases and tells are kinds of the batch): 20.7, 30, 34 before
   assert.ok(frameOccWorst < 82, 'under the Hour\'s own frame');
 });

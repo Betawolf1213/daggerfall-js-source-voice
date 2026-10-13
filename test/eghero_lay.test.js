@@ -11,12 +11,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { egHallOf, egHeroSeam, egHeroTrials, egHeroCands, egHeroStatic, egHeroExit, egHeroCourtOf, egSpecDigest, egCircleOfHall, egOnFight, egOnFloor, egFightPieceAt, egKeepOnFight, egFloorTest,
-  EG_SPEC, EG_HERO_LAW, EG_DECREE_LAW, EG_HALL_LEN_MAX, EG_HANG_CM, EG_SPEC_SAID_MAX, EG_HERO_WAY_CM, EG_HERO_SHAFT_CM, EG_FRAGS_MAX, EG_STEP } from '../src/net/egLaw.js';
+import { egHallOf, egHeroSeam, egHeroTrials, egHeroCands, egHeroStatic, egHeroExit, egHeroCourtOf, egHeroLanding, egSpecDigest, egCircleOfHall, egOnFight, egOnFloor, egFightPieceAt, egKeepOnFight, egFloorTest,
+  EG_SPEC, EG_HERO_LAW, EG_DECREE_LAW, EG_HALL_LEN_MAX, EG_HANG_CM, EG_SPEC_SAID_MAX, EG_HERO_WAY_CM, EG_HERO_SHAFT_CM, EG_HERO_LAND_ROOM_CM, EG_FRAGS_MAX, EG_STEP } from '../src/net/egLaw.js';
 import { EG_LAWS, EG_LAW_KEEP_DAYS, egLawKnown } from '../src/net/egDurable.js';
 import { EG_HERO_FRAGS, egHeroFragRegistry, egHeroFragLaws } from '../src/net/egHeroFrags.js';
 import { EG_FRAGS, egFragBoxAt, egFragApart, egHazardParts, egHazardBites, EG_FRAG_APART_CM } from '../src/net/egFragLaw.js';
-import { egSpanProof, egCourseOf } from '../src/net/egSpanLaw.js';
+import { egSpanProof, egCourseOf, egSpanPairs, egJumpReach, EG_SPAN_RUN_MPS, EG_JUMP_MPS, EG_JUMP_FWD } from '../src/net/egSpanLaw.js';
 import { egFightFloorAt, egSupportAt, EG_HOLD } from '../src/net/egFair.js';
 import { judgePlace } from '../src/net/bossRef.js';
 import { egUnionHolds } from '../src/net/egFloor.js';
@@ -25,7 +25,7 @@ import { egPolyIn, egPolyDist, egPolyKeep, egPieceIn } from '../src/net/egShape.
 import { egBreachNew, egStateOf } from '../src/net/egBrain.js';
 import { EG_SPEC_WIRE_MAX } from '../src/net/wire.js';
 import { EG_HERO_FRAG_MESHES, egHeroFragMeshes } from '../src/world/egHeroFragModel.js';
-import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egHeroMeshSeam, egFragArena, egFragZones, egShaftLedgeAt, egSlagSpouts, egToDungeon, EG_LAMP } from '../src/world/egHall.js';
+import { buildEgCircleModel, egCircleColliderTris, egCircleLights, egHeroMeshSeam, egHeroGroundYs, EG_HERO_GROUND_HAND_M, EG_HERO_ROCK_CELL_M, egFragArena, egFragZones, egShaftLedgeAt, egSlagSpouts, egToDungeon, EG_LAMP } from '../src/world/egHall.js';
 import { egCircleParts, egCirclePartsTransfers } from '../src/world/egCircleParts.js';
 import { egFightFloors, egOnFloorAt } from '../src/world/egTelegraph.js';
 import { egHallReverb } from '../src/systems/egReverb.js';
@@ -55,20 +55,39 @@ const H = { low: [0xbeef, 7, 0], high: [0xbeef, 2, 0], brink: [8, 26, 0], shaft:
 const hall = (k, law = EG_SPEC) => withHeroes(() => egHallOf(...H[k].slice(0, 2), H[k][2], law));
 const cm = (v) => Math.round(v * 100);
 
-test('EG-HERO-LAY THE LAW PIN (sections 9 and 22): spec law 7 is the law, laws 4, 5 and 6 kept beside it their seven days each, byte for byte (their 800 halls hashed whole, the existing pins); a hall of law 7 with no layable hero for its kits is law 6\'s hall but its number - so with the registry as it stands (the reference alone, which no hall lays) every law-7 hall is law 6\'s; a breach opened records law 7; the law\'s copies of the wire\'s bound and the hang held equal (mutants: law 7 not in the table; the law before forgotten; the reference laid; a hall with no hero moved)', () => {
+test('EG-HERO-LAY THE LAW PIN (sections 9 and 22): spec law 7 is the law, laws 4, 5 and 6 kept beside it their seven days each, byte for byte (their 800 halls hashed whole, the existing pins); a hall of law 7 with no layable hero for its kits is law 6\'s hall but its number - so with the reference alone registered (which no hall lays) every law-7 hall is law 6\'s; with the ten heroes (the merge of the four bands\' authors) every one but the Stacks\' chamber fits its slot (its second shelf leaves THE SPAN BUILD 12 cm to land on - THE LANDING ROOM), law 7\'s 800 halls are hashed whole, each with no hero laid is law 6\'s, and the heroes laid as counted; a breach opened records law 7; the law\'s copies of the wire\'s bound and the hang held equal (mutants: law 7 not in the table; the law before forgotten; the reference laid; a hall with no hero moved)', () => {
   assert.deepEqual([EG_SPEC, EG_HERO_LAW, EG_DECREE_LAW], [7, 7, 6]);
   assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13' });
   assert.deepEqual([4, 5, 6, 7, 8].map(egLawKnown), [true, true, true, true, false]);
   assert.ok((Date.parse(EG_LAWS[7]) - Date.parse(EG_LAWS[4])) / 86_400_000 <= EG_LAW_KEEP_DAYS, 'every law before inside its keep');
   assert.deepEqual([hash(4), hash(5), hash(6)], [1228307904, 1301097644, 201408482], 'laws 4, 5 and 6, byte for byte');
-  // the registry as it stands: the reference alone - no candidate anywhere, so law 7 is law 6 but its number
-  assert.deepEqual(Object.keys(EG_HERO_FRAGS), ['egRefFrag']);
-  for (const kit of Object.keys(EG_FRAGS)) for (const cls of ['passage', 'chamber', 'shaft']) assert.deepEqual(egHeroCands(kit, cls), [], `${kit} ${cls}: no hero to lay`);
+  // the reference alone registered: no candidate anywhere, so law 7 is law 6 but its number
+  const REF_ONLY = egHeroFragRegistry([REF]);
+  for (const kit of Object.keys(EG_FRAGS)) for (const cls of ['passage', 'chamber', 'shaft']) assert.deepEqual(egHeroCands(kit, cls, REF_ONLY), [], `${kit} ${cls}: no hero to lay`);
+  withHeroes(() => {
+    for (const [s, h, g] of LAW_HALLS.slice(0, 200)) {
+      const a = egHallOf(s, h, g, 6), b = egHallOf(s, h, g);
+      assert.equal(JSON.stringify({ ...b, v: 6 }), JSON.stringify(a), `seed ${s} hall ${h} ground ${g}: law 7 with no hero is law 6's`);
+      assert.equal(b.heroes, undefined);
+    }
+  }, REF_ONLY, {});
+  // PIN MOVED (EG-HERO-LAY at the merge of the ten heroes - the registry is real): the reference and the four bands' ten, each
+  // but the reference a candidate of its kit and class; every one fits its slot but the Stacks' chamber, whose second shelf
+  // leaves THE SPAN BUILD's landing 12 cm before its far edge (the real motor stood on its lip unable to leap - tools/
+  // egSpanSolve.mjs's sweep); law 7's 800 halls hashed whole, each with no hero laid law 6's but its number
+  const ids = Object.keys(EG_HERO_FRAGS);
+  assert.equal(ids.length, 11);
+  for (const id of ids) { const L = EG_HERO_FRAGS[id]; assert.equal(egHeroCands(L.kit, L.class).includes(L), id !== 'egRefFrag', id); }
+  assert.match(egHeroStatic(EG_HERO_FRAGS.egheroStacks), /^its course's piece 1 \(ledge\) leaves the span build's landing 12 cm before its far edge/);
+  for (const id of ids.filter((x) => x !== 'egheroStacks')) assert.equal(egHeroStatic(EG_HERO_FRAGS[id]), '', id);
+  assert.equal(hash(7), 1273544078, 'law 7, as the ten heroes lay it');
+  const laid = {};
   for (const [s, h, g] of LAW_HALLS) {
     const a = egHallOf(s, h, g, 6), b = egHallOf(s, h, g);
+    if (b.heroes) { assert.equal(b.heroes.length, 1, 'one hero a hall'); laid[b.heroes[0].id] = (laid[b.heroes[0].id] ?? 0) + 1; continue; }
     assert.equal(JSON.stringify({ ...b, v: 6 }), JSON.stringify(a), `seed ${s} hall ${h} ground ${g}: law 7 with no hero is law 6's`);
-    assert.equal(b.heroes, undefined);
   }
+  assert.deepEqual(laid, { egheroOssuary: 22, egheroGloam: 24, egheroEclipse: 3, egheroClanPit: 10, egheroForgeGut: 4, egheroColonnade: 3, egheroCaverns: 3, egheroDeepCaverns: 3 });
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'a', o: 'A', ew: 0, rh: 0, seed: 77, op: 1_800_000_000_000, co: [['a', 'A', 1]], site: { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 }, wg: [] });
   assert.equal(B.egv, 7, 'a breach opened now is of law 7');
   assert.equal(EG_SPEC_SAID_MAX, EG_SPEC_WIRE_MAX, 'the law\'s bound on a spec said whole is the wire\'s');
@@ -131,7 +150,7 @@ test('EG-HERO-LAY THE ODDS (spec law 7): with heroes registered, each slot a cod
   assert.deepEqual(ids, { egRefFrag: 9, egRefFragTwo: 4 });
 });
 
-test('EG-HERO-LAY THE FIT AT ITS SLOT (egHeroStatic, egHeroExit, egHeroCourtOf): the mouth at least a ledge wide with a floor at its foot; the course leaves by the lowest exit the course\'s line passes through (at least a ledge wide), a floor under it, at the height its slot keeps - a passage\'s at its mouth\'s or as far under as its kit\'s own passage goes (the Mist Stair\'s 3.6 m), never off it on the Low Road; a shaft\'s under its mouth by at most four flights and the deepest Drop; a chamber\'s at its mouth\'s, its middle on a fight floor reaching past a rift\'s inset (mutants: each bound loosened or dropped)', () => {
+test('EG-HERO-LAY THE FIT AT ITS SLOT (egHeroStatic, egHeroExit, egHeroCourtOf): the mouth at least a ledge wide with a floor at its foot; the course leaves by the lowest exit the course\'s line passes through (at least a ledge wide), a floor under it, at the height its slot keeps - a passage\'s at its mouth\'s or as far under as its kit\'s own passage goes (the Mist Stair\'s 3.6 m), never off it on the Low Road; a shaft\'s under its mouth by at most four flights and the deepest Drop; a chamber\'s at its mouth\'s, its middle on a fight floor reaching past a rift\'s inset; THE LANDING ROOM (egHeroLanding - at the merge of the ten heroes): THE SPAN BUILD\'s running jump onto each piece of its inner course comes down at least 20 cm before the piece\'s far edge - the least every code-built course leaves - unless the piece moves along the course or a step down is run off onto it (mutants: each bound loosened or dropped)', () => {
   const T = { ...REF, variant: 'test' }, sock = (o) => ({ ...T, sockets: { in: T.sockets.in, out: [{ ...T.sockets.out[1], ...o }] } });
   assert.equal(egHeroStatic(T), ''); assert.equal(egHeroStatic(T, true), '');
   assert.equal(egHeroExit(T), 1, 'the floor\'s exit: the balcony\'s stands off the line and 1.5 m up');
@@ -167,6 +186,28 @@ test('EG-HERO-LAY THE FIT AT ITS SLOT (egHeroStatic, egHeroExit, egHeroCourtOf):
   assert.equal(egHeroCourtOf(small), null, 'a court reaching no further than a rift\'s 3 m inset');
   assert.deepEqual(egHeroCourtOf({ ...small, floors: small.floors.map((f) => (f.fight && f.y === 0 ? { ...f, poly: [[301, 1401], [301, 2003], [-301, 2003], [-301, 1401]] } : f)) }), { cz: 1702, R: 301 });
   assert.match(egHeroStatic({ ...C, floors: C.floors.map((f) => ({ ...f, fight: 0 })) }), /middle/);
+  // THE LANDING ROOM: the reference's first shelf (a 1 m gap, 2 m deep) takes the span build's running jump 2.56 m on - 44 cm
+  // before its far edge; its far edge drawn back 20 cm leaves 24 and stands, 30 cm leaves 14 and is refused
+  const edge = (dz, dy = 0) => ({ ...T, course: T.course.map((c, i) => (i === 0 ? { ...c, z: c.z - dz / 2, d: c.d - dz, y: c.y + dy } : c)) });
+  assert.equal(EG_HERO_LAND_ROOM_CM, 20);
+  assert.equal(egHeroLanding(T), '');
+  assert.equal(egHeroLanding(edge(20)), '');
+  assert.match(egHeroLanding(edge(30)), /^its course's piece 0 \(ledge\) leaves the span build's landing 14 cm before its far edge, under 20$/);
+  assert.equal(egHeroStatic(edge(30)), egHeroLanding(edge(30)), 'the fit holds it');
+  // a metre down, the running jump flies past it (49 cm past its far edge) - but a player runs off onto it, 1.7 m on
+  assert.match(egHeroLanding({ ...edge(0, -100), course: edge(0, -100).course.map((c, i) => (i === 0 ? { ...c, gap: c.gap + 40, z: c.z + 20, d: c.d - 40 } : c)) }), /piece 0/, 'a gap of 1.4 m: run off, short of it - refused');
+  assert.equal(egHeroLanding(edge(0, -100)), '', 'run off onto it');
+  // a piece moving along the course is the solver's alone; every code-built course of the law pin's halls leaves the room
+  assert.equal(egHeroLanding({ ...T, course: T.course.map((c, i) => (i === 1 ? { ...c, d: 100, z: c.z - 120 } : c)) }), '', 'a Drift, its far edge 1.9 m back - judged, past it');
+  let worst = Infinity;
+  for (const [sd, h, g] of LAW_HALLS) for (const p of egSpanPairs(egHallOf(sd, h, g, 6))) {
+    const { a, b } = p;
+    if (!b || b.amp > 0 || b.kind === 'riser' || (a && a.amp > 0)) continue;
+    const dy = b.y - (a ? a.y : b.y);
+    if (dy < -0.3) continue;   // a step down: run off
+    worst = Math.min(worst, b.z + b.d / 2 - (a ? a.z + a.d / 2 : p.edge) - (EG_SPAN_RUN_MPS + EG_JUMP_MPS * EG_JUMP_FWD) * egJumpReach(dy).air);
+  }
+  assert.ok(worst >= EG_HERO_LAND_ROOM_CM / 100 && worst < EG_HERO_LAND_ROOM_CM / 100 + 0.1, `every code-built landing leaves the room: ${worst.toFixed(3)} m at worst`);
 });
 
 test('EG-HERO-LAY A PASSAGE LAID FROM ITS LAW (sections 11.4-11.7): on THE FORK\'s Low Road the hero\'s mouth stands at the slot\'s start on the road\'s line, its fight floors in the fight floor as polygons at its origin, its stair as the hall\'s ramp, its inner course its record\'s pieces at their places and sizes (the span generator\'s steps, its kit\'s), its hazards, its places (an engine anchor its kit\'s Sluice), its alcove and its lights, its law in `heroes`, its fragment, and the course on from its exit at the exit\'s height; a hero whose box meets the High Road\'s pieces does not fit (mutants: each field dropped or moved off the origin)', () => {
@@ -365,7 +406,7 @@ test('EG-HERO-LAY THE LEGION WALKS ITS GRAPH (section 11.7): the hall\'s walk gr
   assert.equal(egAirClear(A, q.x - 1, q.z + 2, q.x + 1, q.z + 28), true, 'along it, the way clear');
 });
 
-test('EG-HERO-LAY THE CLIENT DRAWS IT (sections 11.6-11.9; THE SWAP; EVERY ALLOCATION HAS AN OWNER): the circle\'s one mesh carries the hero\'s mesh half at its origin (its rock an occluder of its own) and the circle\'s one collider bucket its proxy - so they are freed with the circle, no buffer of their own; its lights join the circle\'s in its kit\'s colours; its clamp is its law\'s - its walls hold, its open edges and stair free, its ceiling over it or the sky; its reverb zone its box\'s reach; no code-built niche or spout inside its box; its fight floors cut for the telegraph pass (mutants: the mesh off its origin; its rock not dithered; the proxy dropped; a wall unread; an open edge clamped; the ceiling unread)', () => {
+test('EG-HERO-LAY THE CLIENT DRAWS IT (sections 11.6-11.9; THE SWAP; EVERY ALLOCATION HAS AN OWNER): the circle\'s one mesh carries the hero\'s mesh half at its origin (its ground where its law lays ground, its rock a record\'s cell at a time, each an occluder of its own) and the circle\'s one collider bucket its proxy - so they are freed with the circle, no buffer of their own; its lights join the circle\'s in its kit\'s colours; its clamp is its law\'s - its walls hold, its open edges and stair free, its ceiling over it or the sky; its reverb zone its box\'s reach; no code-built niche or spout inside its box; its fight floors cut for the telegraph pass (mutants: the mesh off its origin; its rock not dithered; its ground told by its record; its rock one piece; the proxy dropped; a wall unread; an open edge clamped; the ceiling unread)', () => {
   withHeroes(() => {
     const [seed, h] = H.low, c = egCircleOfHall(h), spec = egHallOf(seed, h, 0), q = spec.heroes[0], mesh = EG_HERO_FRAG_MESHES.egRefFrag;
     const model = buildEgCircleModel(seed, c, 0), tris = egCircleColliderTris(seed, c, 0);
@@ -373,7 +414,21 @@ test('EG-HERO-LAY THE CLIENT DRAWS IT (sections 11.6-11.9; THE SWAP; EVERY ALLOC
     const bare = buildEgCircleModel(seed, c, 0), bareTris = egCircleColliderTris(seed, c, 0);
     egHeroMeshSeam(MESHES);
     assert.equal(model.indices.length - bare.indices.length, mesh.indices.length, 'its every triangle in the circle\'s one mesh');
-    assert.equal(model.occluders.length - bare.occluders.length, 1, 'its rock one occluder of its own');
+    // PIN MOVED (EG-HERO-LAY at the merge of the ten heroes): its ground is where its law lays ground (a triangle topping out
+    // within a hand of a floor or a stair's corner), never told by its record; its rock a record's cell at a time, each an
+    // occluder of its own (EG_HERO_ROCK_CELL_M) - a ray dithers the rock it crosses, never the whole fragment
+    const ys = egHeroGroundYs(q), cells = new Set();
+    let rockTris = 0;
+    for (const sm of mesh.subMeshes) for (let k = sm.startIndex; k < sm.startIndex + sm.primitiveCount * 3; k += 3) {
+      const P3 = [0, 1, 2].map((v) => mesh.indices[k + v] * 3), top = Math.max(...P3.map((p) => mesh.positions[p + 1]));
+      if (ys.some((y) => Math.abs(top - y) <= EG_HERO_GROUND_HAND_M)) continue;
+      rockTris++;
+      cells.add(`${sm.record}:${Math.floor(P3.reduce((a, p) => a + mesh.positions[p], 0) / 3 / EG_HERO_ROCK_CELL_M)}:${Math.floor(P3.reduce((a, p) => a + mesh.positions[p + 2], 0) / 3 / EG_HERO_ROCK_CELL_M)}`);
+    }
+    const ownedTris = (m) => m.occluders.reduce((a, o) => a + o.r.reduce((b, [, , n]) => b + n, 0), 0);
+    assert.ok(rockTris > 0 && rockTris < mesh.indices.length / 3, 'some of it ground, some rock');
+    assert.equal(ownedTris(model) - ownedTris(bare), rockTris, 'its rock, and none of its ground, the occluders\'');
+    assert.equal(model.occluders.length - bare.occluders.length, cells.size, 'a piece a record\'s cell');
     assert.equal(tris.length - bareTris.length, mesh.collider.length, 'its proxy in the circle\'s one bucket');
     const at = egToDungeon(spec, q.x, q.y, q.z);
     const want = Float32Array.from(mesh.collider, (v, i) => v + at[i % 3]);
@@ -383,8 +438,10 @@ test('EG-HERO-LAY THE CLIENT DRAWS IT (sections 11.6-11.9; THE SWAP; EVERY ALLOC
     const pos = new Set(); for (let i = 0; i < model.positions.length; i += 3) pos.add(`${Math.round(model.positions[i] * 100)},${Math.round(model.positions[i + 1] * 100)},${Math.round(model.positions[i + 2] * 100)}`);
     for (let v = 0; v < mesh.positions.length; v += 3) assert.ok(pos.has(`${Math.round((mesh.positions[v] + at[0]) * 100)},${Math.round((mesh.positions[v + 1] + at[1]) * 100)},${Math.round((mesh.positions[v + 2] + at[2]) * 100)}`), `vertex ${v / 3} at its origin`);
     const bareB = new Set(bare.occluders.map((o) => o.b.join())), rock = model.occluders.filter((o) => !bareB.has(o.b.join()));
-    assert.equal(rock.length, 1);
-    assert.ok(rock[0].b[1] < at[1] && rock[0].b[4] > at[1] + 6 && rock[0].b[0] < at[0] - 3 && rock[0].b[3] > at[0] + 3, 'its rock: its walls and vault, about its origin');
+    assert.equal(rock.length, cells.size);
+    assert.ok(rock.every((o) => o.r.length === 1), 'each piece one record\'s');
+    const B = rock.reduce((b, o) => [Math.min(b[0], o.b[0]), Math.min(b[1], o.b[1]), Math.min(b[2], o.b[2]), Math.max(b[3], o.b[3]), Math.max(b[4], o.b[4]), Math.max(b[5], o.b[5])], [Infinity, Infinity, Infinity, -Infinity, -Infinity, -Infinity]);
+    assert.ok(B[1] < at[1] && B[4] > at[1] + 6 && B[0] < at[0] - 3 && B[3] > at[0] + 3, 'its rock: its walls and vault, about its origin');
     const parts = egCircleParts(seed, c, 0);
     assert.equal(egCirclePartsTransfers(parts).length, 4 + 1 + parts.gates.length * 5, 'no buffer of its own: the circle\'s mesh and bucket carry it');
     const lamps = egCircleLights(seed, c, 0), band = lamps.filter((l) => Math.abs(l.y - (at[1] + 4)) < 1e-6 && Math.abs(l.x - at[0]) < 1e-6);
