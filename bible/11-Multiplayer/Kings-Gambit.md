@@ -1,11 +1,12 @@
 # THE KING'S GAMBIT - armies and kings at the tavern's card table (KG0, the design record)
 
-**Status: DESIGN RECORD - nothing built.** The owner handed over a Daggerfall Unity mod, `thekingsgambit.dfmod`, and
-asked how to build it as a new minigame on the Iliac Bay card system - the tavern card table `Tavern-Cards.md` built: the
-table and its seat, the deck of the Iliac Bay, Iliac Hand's painted cards, the regulars, the panel, the relay's tables.
-Sections 1-2 read the mod off its assembly; sections 3-7 lay it on the card table; section 8 slices it; section 9 asks.
-Every DECIDED below is the record's proposal until the owner answers section 9; a slice that ships one records any
-change here first.
+**Status: DESIGN RECORD, DECIDED (the owner, 2026-10-13: "Make the best and most detailed decisions. We also have
+permission") - section 10 answers section 9 and decides every point the record had left open.** The owner handed over a
+Daggerfall Unity mod, `thekingsgambit.dfmod`, and asked how to build it as a new minigame on the Iliac Bay card system -
+the tavern card table `Tavern-Cards.md` built: the table and its seat, the deck of the Iliac Bay, Iliac Hand's painted
+cards, the regulars, the panel, the relay's tables. Sections 1-2 read the mod off its assembly; sections 3-7 lay it on
+the card table; section 8 slices it; section 9 asked and section 10 decides. Every DECIDED below binds the slices; a
+slice that ships one records any change here first.
 
 ## The words
 
@@ -325,9 +326,9 @@ structure ours.
 - FACT: nine of the roster's 46 wear no card (2.2's table): seven monsters with no FOE_CARDS row and no card in
   `net/iliacCards.js` - the Grizzly Bear, the Sabretooth Tiger, the Spider, the Slaughterfish, the Mummy, the Frost
   Daedra, the Fire Daedra - and the Archer and the Ranger, for whom FOE_CARDS names none. Q3.
-- THE ARMY (Q2). DECIDED for the first playable: the mod's roster whole - any unit, as often as 300 points buy - so every
-  player sits down at once and the cards are the units' faces. THE OWNER'S ALTERNATIVE: an army only of the creature cards
-  the binder holds, a card a unit (the collection the barracks). It bends the mod's balance: the starter deck
+- THE ARMY (Q2). DECIDED (section 10.2): the mod's roster whole - any unit, as often as 300 points buy - so every player
+  sits down at once and the cards are the units' faces. NOT CHOSEN: an army only of the creature cards the binder holds,
+  a card a unit (the collection the barracks). It would bend the mod's balance: the starter deck
   (`iliacCards.js:"export const STARTER_DECK = Object.freeze(["`) fields nine units worth 167 points - two Rats, two Giant
   Bats, two Mages Guild Apprentices, the Spriggan, the Centaur, the Dreugh and the Lamia.
 
@@ -368,7 +369,7 @@ structure ours.
   at 3.5 cells a second, a blow lunges it at its foe, a hurt one shakes and flashes red, a healed one glows, a destroyed
   one topples flat onto the cloth and fades - laid down as a card is; its hp a bar on its base, red to green. Every timing
   is 2.10's. It is the card system's own picture, painted in code, and the cards lab can show and probe it without ARENA2.
-- THE ALTERNATIVE (the owner's call): the creature's own DFU sprite as an animated miniature - the mod's look. FACT: the
+- NOT CHOSEN (section 10.1): the creature's own DFU sprite as an animated miniature - the mod's look. FACT: the
   port can draw it with what it has - a billboard batch per figure (`renderer.createBillboardBatch`, `drawBillboards` in
   the interior's pass, lit by the room as every foe is), its frames uploaded off the player's own ARENA2 at runtime
   (`scenes/dataPipeline.js` uploadRecordFrame), DFU's records by facing (`characters/mobileUnit.js`), sized by
@@ -377,7 +378,7 @@ structure ours.
   mod's picture, not the card system's, and nothing here can see it without the player's ARENA2. Its module would be its
   own: the card painters' imports are pinned (`render/iliacCardFaces.js` reads only the loot's rarities and the Bay's
   faces).
-- The kings follow the pieces: with the cards, the Bay's Kings (5.2); with the sprites, the mod's Knight and Barbarian.
+- The kings follow the pieces: the cards standing, so the Bay's Kings (5.2, section 10.4).
 
 ### 5.5 The panel
 
@@ -428,7 +429,7 @@ structure ours.
   the pins that name the version (`wire.js:"export const ILIAC_RELAY_MIN = 182;"` is the minimum's pattern); the client's
   send, its welcome gate and its frames in `net/online.js` and `scenes/world.js`; the alarm, the socket's close and the
   room's sweep.
-- LATER (the owner's call): gold tables through the realm's escrow (CARDS6's stake orders and receipts) and a season
+- LATER (KG6, section 10.7): gold tables through the realm's escrow (CARDS6's stake orders and receipts) and a season
   board (CARDS10's, the Arena's way).
 
 ### 5.9 THE FOUR HOSTS
@@ -466,13 +467,13 @@ Each ships alone and is verifiable without the next.
 |---|---|
 | **KG1** | THE LAW: `net/kingsGambit.js` - the board and its build, hazards, units and roster, the deployment, the turn, a blow, potions, the end, a seat's view; pins deepEqual against section 2's tables, whole games on a fixed source, mutants. |
 | **KG2** | THE INNKEEPER'S PLAY: `systems/gambitPatrons.js` - AiAction, TryEscape, AiBlunder, AutoFill, the tiers over a regular's seed. MEASURE: each tier against an Auto-filled 300 over seeded games. |
+| **KG-SET** | The nine creatures painted into the set (section 10.3) - cards, emblems, Iliac Hand's numbers and text, FOE_CARDS rows (so their foes drop them, CARDS9), Iliac Hand's balance measured again; a relay version (the catalog is relay law). Before KG3, whose grid shows every unit's card. |
 | **KG3** | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result), the stake and the regulars' night's purse; the board a flat mat with the pieces as their cards - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
 | **KG4** | THE BOARD ON THE CLOTH: walls, pillars and water built; the hazards' drawn effects; the pieces' motion; the press as a cell; the lab (`cards.html` with a King's Gambit table) and its probe; the frame cost on the phone probe, as CARDS3c measured it. |
 | **KG5** | ONLINE: the relay's table (a relay version), the wire, the client's mirror, spectators, the clock; friendly. |
-| **KG6** | The owner's call: gold tables online (the realm's escrow) and a season board. |
-| **KG-SET** | The owner's call (Q3): the nine creatures painted into the set - cards, emblems, Iliac Hand's numbers and text, FOE_CARDS rows (so their foes drop them, CARDS9), Iliac Hand's balance measured again. |
+| **KG6** | Gold tables online (the realm's escrow) and a season board with its title (section 10.7). |
 
-## 9. Questions for the owner
+## 9. Questions for the owner (ANSWERED 2026-10-13 - section 10)
 
 1. **The pieces.** The units' cards standing on the board (the proposal, 5.4) - or DFU's animated monster sprites as
    miniatures (the mod's look)?
@@ -483,3 +484,146 @@ Each ships alone and is verifiable without the next.
    innkeeper at the table?
 6. **The mod's author and permission.** The bundle names no author and carries no licence; the registry records the
    owner's word for a mod handed over, as it did for the environment mods, and the author's own when it comes.
+
+## 10. THE DECISIONS (2026-10-13)
+
+The owner, answering section 9: **"Make the best and most detailed decisions. We also have permission"**. Every DECIDED
+of sections 3-8 binds the slices as written. Section 9's six are answered here, each with its reasons, and so is every
+point the record had left open. A number marked MEASURE is the first guess its slice measures before it ships.
+
+### 10.1 The pieces - THE CARDS STANDING (Q1)
+
+- WHY: the ask was the card system, and a standing card is that system's own piece. THE ART IS OURS holds without an
+  exception: no ARENA2 pixel reaches the board, and the cards lab can show and probe every piece in CI, which no piece
+  read off the player's ARENA2 allows. It uses the plate, the atlas and drawMesh, whose frame cost on a phone CARDS3c
+  already measured. The mod's motion carries over to a stand whole (below). The sprites stay what 5.4 records - feasible,
+  and not chosen.
+- THE PLATE: the Iliac card's own (`render/cardTableDraw.js` plateModel over the Iliac atlas), scaled to its cell - 0.64
+  of a cell wide (4.5 cm on a 7.08 cm cell) at the card's own 63:88 shape (6.3 cm high) - with the face painted on BOTH
+  sides, as a standee is: every face is read from both chairs.
+- THE STAND: a turned disc 0.84 of a cell across and 6 mm high, in its side's colour - the host's (the player's,
+  offline) the mod's blue (0.20, 0.45, 0.95), the guest's the mod's red (0.90, 0.20, 0.20); a king's disc gold (1.00,
+  0.84, 0.20), ringed in its side's colour. The card stands upright in a slot across the disc's middle, square to the
+  board's rows.
+- ITS HEALTH: a bar over the card's top edge, the mod's (a 0.7 black underlay, the fill red to green by hp over max),
+  turned to the viewer.
+- SELECTED: the disc's rim lit yellow (the mod's 3 px outline); the selected card lifts 1 cm.
+- ITS MOTION, at 2.10's timings: the walk slides the stand cell to cell along the path the move took (each step's cell in
+  turn - never a straight line through a wall) at 3.5 cells a second; a blow tips it toward its foe and back (the 0.28 s
+  lunge, 0.3 of a cell for a melee blow and 0.12 for a shot); a hurt card shakes 0.45 s (the mod's jitter, scaled to the
+  cell) and its face flashes red; a potion's 0.6 s glow is green; a destroyed card topples flat away from its attacker
+  0.27 s after the blow lands, then slides to its owner's FALLEN PILE beside the board (the Hold'em muck's way) - the
+  mod's 0.6 s fade becomes the fall and the slide, and the piles count the losses at a glance.
+- THE MUSTER: the armies come onto the board as cards are dealt - the king first, then every unit in the deployment's own
+  order (2.4) - each thrown from its owner's edge onto its cell (Iliac Hand's throw, `ILIAC_THROW_S`) and stood up in its
+  stand. MEASURE (KG4): the beat between throws, first guess 0.12 s.
+
+### 10.2 The army - THE MOD'S ROSTER WHOLE (Q2)
+
+- WHY: the mod's balance is its roster's - its tiers field 220, 300, 360 and 450 points against the player's 300 from the
+  same 46 units. A new character sits down at once (the starter deck's own principle, `Tavern-Cards.md` 6.3). Two seats
+  online meet on equal armies; a binder army would make a collection a strength at a table that plays for gold. The
+  collection already has its game in Iliac Hand; here its cards are the units' faces.
+- THE GRID: all 46 units as their cards, in the mod's order (cost, then name; the two Dragonlings by id - the mod left
+  their order to .NET's unstable sort), each tile the card's face with the unit's numbers under it - level, hp, attack,
+  "Ranged" - and its cost in gold, or red and dimmed past the points or at 12 units (the mod's DrawCard).
+
+### 10.3 The nine - PAINTED INTO THE SET (Q3; KG-SET, before KG3)
+
+- WHY: the mod's roster stays whole, no unit dropped. Every textured monster of DFU then wears a card (the Horse has no
+  texture and no unit). Seven foes that dropped no card drop their own (CARDS9's "a rat drops a rat", completed), and the
+  Archer and the Ranger drop theirs.
+- THE NINE, as cards of the set. Each effect below is a valid record of Iliac Hand's language (`fxRefusal` answers null for
+  every one), and its words are exactly what `fxText` says of it. Iliac Hand's numbers are MEASURE at KG-SET: its 3,000
+  random games and the regulars' win rates are run again, and the curve (`net/iliacCards.js`'s header) is held.
+
+  | id | card | tier | cost | power | tags | emblem | text | flavor |
+  |---|---|---|---|---|---|---|---|---|
+  | `grizzly-bear` | Grizzly Bear | common | 3 | 4 | beast | bear (new) | Reveal: the weakest enemy unit here loses 1 power. | The Wrothgarian passes charge one toll, and the bear collects it. |
+  | `sabretooth-tiger` | Sabretooth Tiger | common | 3 | 4 | beast | cat (new) | Reveal: the strongest enemy unit here loses 1 power. | It goes for the biggest throat in the hall. |
+  | `spider` | Spider | common | 2 | 2 | beast | spider (new) | Ongoing: enemy units here that cost 1 or 2 have -1 power. | The small walk into its web; the large walk through it. |
+  | `slaughterfish` | Slaughterfish | common | 1 | 3 | beast, sea | fish (new) | End of turn: this loses 1 power. | Out of the water, it has one good bite in it. |
+  | `mummy` | Mummy | magic | 4 | 4 | undead | mummy (new) | End of turn: your weakest undead unit here gains +1 power. | Wrapped for the long dark, and patient in it. |
+  | `frost-daedra` | Frost Daedra | rare | 5 | 6 | daedra | frost | Reveal: enemy units here lose 1 power. | Where it walks, the ale freezes in the cup. |
+  | `fire-daedra` | Fire Daedra | rare | 5 | 6 | daedra | fire | Reveal: the strongest enemy unit here loses 2 power. | Its blade was forged in the Deadlands, and it is burning still. |
+  | `archer` | Archer | common | 2 | 2 | human, warrior | bow (new) | Reveal: the weakest enemy unit here loses 1 power. | One arrow, for the one who cannot dodge it. |
+  | `ranger` | Ranger | magic | 3 | 3 | human, warrior | bow | Reveal: the strongest enemy beast unit here loses 2 power. | The wilds have one law, and the ranger keeps it. |
+
+- THE REST OF KG-SET: six emblems painted in code (bear, cat, spider, fish, mummy, bow - `render/iliacCardFaces.js`, the
+  painter's keys pinned equal to `CARD_EMBLEMS`); FOE_CARDS rows for mobile types 4, 5, 6, 11, 19, 25, 26, 141 and 142;
+  the cards in the house's packs and the regulars' decks by their tags; their worth by tier (`net/cardWorthLaw.js`); and a
+  relay version, because the catalog is relay law.
+
+### 10.4 The kings - THE BAY'S FOUR (Q4)
+
+- WHY: the pieces are cards, and the Bay deck's royals are the card system's own kings (CARDS-BAY's painted busts). The
+  mod's Knight and Barbarian were two sprites over one set of numbers, so nothing of the rules moves.
+- THE FOUR: Gothryd (Daggerfall), Eadwyre (Wayrest), Camaron (Sentinel), Gortwog (Orsinium) - the K of each crown's suit
+  (`render/cardFaces.js` paintFace, its title `cardTitle`'s: "Gothryd, King of Daggerfall"), stood like the units on
+  the gold disc. The numbers are the mod's king's: level 8, 70 hp, attack 16, melee, free.
+- THE PLAYER'S CROWN: chosen at the setup from the four, and kept on the character (`gambitCrown` on the save, restored
+  as one of the four or Daggerfall); Daggerfall the first time, the game's own crown.
+- A REGULAR'S CROWN: their seed's (the four in the deck's suit order - Orsinium, Sentinel, Wayrest, Daggerfall - by the
+  seed mod 4); when it is the player's, the next round that order.
+- ONLINE: each seat brings its crown; the guest's, when it is the host's, becomes the next round the deck's order.
+- THE WORDS: the mod's "Your king: <name> (free) ... Protect him!" names the king card ("Your king: Gothryd, King of
+  Daggerfall (free)"); its end, "<opponent>'s king has fallen." and "Your king has fallen.", names the regular; the log
+  says the fall ("Eadwyre, King of Wayrest, falls.").
+
+### 10.5 The opponent - A REGULAR (Q5)
+
+- WHY: the table already has its people - named, seeded, seated in their chairs and voiced (`Tavern-Cards.md` sections
+  14 and 18) - and the innkeeper keeps the counter and the rooms.
+- THE CHOICE IS THE DIFFICULTY: the setup lists the regulars in the table's free chairs, each with their tier's name and
+  blurb, and the player picks whom to challenge. A tavern's regulars decide which tiers it offers, the same every evening:
+  one regular in about fourteen is a Grandmaster (the mod's band, 93-99), so about three tables in ten with five free
+  chairs seat one - "Legendary across the Iliac Bay".
+- THE TIER: the mod's own hash and bands over the regular's seed (2.7; `TierFor`'s arithmetic on an int32).
+- THE REGULAR'S ARMY: Auto-filled to the tier's points at each deal, from the table's own source - a fresh army every
+  game, as the mod's.
+- THE REGULAR'S VOICE: "Care for a game of The King's Gambit?" over their head as the setup opens (CARDS4b's bark
+  layer), and a word at a win and at a loss. MEASURE (KG3): the lines.
+
+### 10.6 Permission (Q6)
+
+- ANSWERED (the owner, 2026-10-13): "We also have permission". Written where the registry keeps it when the mod is
+  vendored (KG3): the permission cell reads "granted (the owner, 2026-10-13: "We also have permission")". The manifest
+  names no author, so the README keeps the registry's placeholder for the author's own words (RECORD OPEN) until the
+  owner records them, as the environment mods' do.
+
+### 10.7 What the record had left open, decided
+
+- THE LEAN: a battle is played from the seat leaning over the board. The seated eye moves forward over the player's own
+  edge of the board and up, and pitches down until the whole board is in view; the setup, the army and the result keep the
+  seat's own view. MEASURE (KG4), by the lab's probe at a desktop's and a phone's aspect - first guess: 0.30 m in from the
+  table's near edge, 0.62 m over the felt, pitched 52 degrees down.
+- THE STAKE: the tier's least stake x 1, x 2 and x 5 (the mod's three buttons), each disabled past the purse; a purse
+  short of the least hears the mod's "He will not sit down for less than N gold. Come back with more."
+- A REGULAR'S NIGHT: a regular pays out at most 15 times the tier's least stake a game day, net of what they won back -
+  three wins at the highest bet: Amateur 150, Seasoned 750, Veteran 3,000, Grandmaster 15,000 - and past it plays for
+  fun until tomorrow. It is a book on the character's save (`gambitPurses`), bounded as the Hold'em regulars' book is (24
+  taverns, the oldest day first out). MEASURE (KG2, KG3): the bound, against the tiers' measured win rates.
+- THE SAVE: refused while a stake is down, at both of `world.js`'s doors (worldQuickSave and the pause's savingPrevented).
+- THE BEATS: the mod's own - 0.9 s to a turn's end, 1.2 s for the regular's pause before and between actions, 0.55 s
+  between an online opponent's two actions, 1.3 s before the result's banner.
+- THE CLOCK: none offline (the mod's). Online (KG5), 60 s a turn: an expired turn ends as End turn does, and three running
+  stand the seat up and forfeit it (Iliac Hand's idle law). MEASURE (KG5).
+- THE HIGHLIGHTS, in the mod's colours on the mat 1 mm above it: a selected piece's reach green (0.2, 0.9, 0.3, 0.45),
+  its range white (1, 1, 1, 0.35) over the cells a blow or a shot reaches, its targets red (1, 0.1, 0.1, 0.35) ringed
+  (1, 0.25, 0.2). Hovering any piece shows its range, as the mod's does.
+- THE NUMBERS: a blow's or a bite's number rises 0.8 of a cell over 1 s above its cell (the mod's float) - a loss on the
+  player's side (1, 0.35, 0.3), on the regular's (1, 0.92, 0.4), a hazard's in the hazard's colour, a potion's "+N"
+  (0.4, 1, 0.5) - painted from a glyph strip in code.
+- THE SHOT: four bright squares on the line from the shooter to its target over 0.3 s (the mod's trail), at a card's
+  mid-height.
+- THE LOG: the mod's sentences, the last 12 lines.
+- THE TUTORIAL: The King's Gambit's own page in the tutorial catalogue (TUT1), shown at the first game.
+- THE FEATURES ROW: "The King's Gambit" on the Gameplay tab, on by default (MO1, "All mods should be enabled by
+  default"); switched off, no table offers it.
+- THE CREDIT: `ui/credits.js`'s mods - The King's Gambit, its author as the owner names them, "permission granted".
+- THE TABLES: offline, both of a tavern's tables play it. Online (KG5), the green table: the red one is the realm's gold
+  table, which plays The King's Gambit only once KG6 brings gold.
+- KG6: gold online through CARDS6's escrow at the red table, at the mod's online stakes (10, 50, 200, 1,000 and 5,000
+  each), the winner's receipt carrying both stakes; and a season board the Arena's way, its Elo and its caps, whose #1
+  over 10 games against 5 foes (Iliac Hand's champion's floor) wears GRANDMASTER - the mod's highest tier's name.
+- THE ORDER OF THE SLICES: KG1, KG2, KG-SET, KG3, KG4, KG5, KG6 (section 8).
