@@ -312,7 +312,8 @@ function owe(B, sub, claims) { B.owe.push({ sub, claims: { b: B.b, s: sub, z: B.
  *  opener alone when none entered). */
 const companyOf = (B) => { const E = entrants(B).map(([sub]) => sub); return egCompanyTag(E.length ? E : [B.s]); };
 /** A member's end receipt (`x`), once: why it ended, the deepest hall cleared, the Reliquaries it opens (a good end), its
- *  falls. */
+ *  falls. AUDIT EG III (lane3 #6): `nr` when the BREACH is over with no Redoubt taken - an end its end owes, or the end of
+ *  the last member living (nobody left to take one) - the word the first breach's mercy waits for. */
 function oweEnd(B, sub, why, now) {
   const m = B.mem[sub];
   if (m?.x) return;
@@ -324,7 +325,7 @@ function oweEnd(B, sub, why, now) {
     ...(B.wg?.length ? { wg: [...B.wg] } : {}), ...(m?.pages ? { an: m.pages } : {}),
     // EG-ZA (section 23's table): the seconds from Hall 1's wake to the deepest hall's door, once one is cleared (the
     // Descent's second key - section 20), and the company
-    ...(B.cleared > 0 ? { td: B.td ?? 0 } : {}), co: companyOf(B) });
+    ...(B.cleared > 0 ? { td: B.td ?? 0 } : {}), co: companyOf(B), ...(!(B.rd > 0) && !B.rh && (B.end || !living(B).length) ? { nr: 1 } : {}) });
 }
 /**
  * EG-ZA: A MEMBER'S FAIR TRAIL FOLDED INTO ITS CIRCLE'S MEASURES (`m.mz` - a Redoubt's `m`, section 21: "its measures ride

@@ -78,7 +78,7 @@ test('EG-F THE OPEN CARRIES THE WINDOW\'S CHOICE: a start the opener may not mak
   assert.deepEqual([vr.claims.ew, vr.claims.ewg, vr.claims.rh], [0, undefined, 1]);
 });
 
-test('EG-F NO CARRIES: a member\'s admission to a breach that starts at Redoubt 7 is signed only for a member who may start there - its order naming the start - and refused `start` otherwise; a breach the service holds no stake for starts at Hall 1 (mutants: the admission unchecked; the order\'s start left at Hall 1)', async (t) => {
+test('EG-F NO CARRIES: a member\'s admission to a breach that starts at Redoubt 7 is signed only for a member who may start there - its order naming the start - and refused `start` otherwise; a breach the service holds no stake for is refused, AUDIT EG III (mutants: the admission unchecked; the order\'s start left at Hall 1)', async (t) => {
   const { S } = await stood(t);
   const me = await S.registered('Opener'), mara = await S.registered('Mara'), ann = await S.registered('Ann');
   await S.claim(me, 700, T0);
@@ -93,7 +93,9 @@ test('EG-F NO CARRIES: a member\'s admission to a breach that starts at Redoubt 
   const no = await S.call('/v1/eg/admit', { b: open.body.b }, ann.secret);
   assert.deepEqual([no.status, no.body], [403, { error: 'start', w: 7 }], 'she has not taken Redoubt 7 this season');
   assert.equal(S.env.DB._raw.prepare('SELECT eg_live_b AS b FROM players WHERE id = ?').get(ann.id).b, null, 'and holds no live breach for it');
+  // PIN MOVED (AUDIT EG III, lane3 #9): a breach the service holds no stake for is no breach - its start read as Hall 1
+  // signed an order any room took
   const free = await S.call('/v1/eg/admit', { b: 'fedcba9876543210' }, ann.secret);
-  assert.equal(free.status, 200, 'no stake known: Hall 1, everyone\'s');
-  assert.equal((await verifyOrder(free.body.order, S.identityPublic, { subtle, nowS: T0, kind: 'egadmit' })).claims.ew, 0);
+  assert.deepEqual([free.status, free.body], [400, { error: 'breach' }], 'no stake known: no breach, no order');
+  assert.equal(S.env.DB._raw.prepare('SELECT eg_live_b AS b FROM players WHERE id = ?').get(ann.id).b, null, 'and no live breach for it');
 });

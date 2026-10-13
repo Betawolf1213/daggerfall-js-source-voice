@@ -297,8 +297,8 @@
   {
     "name": "EGDUR-the-gap-kept",
     "file": "src/net/egDurable.js",
-    "old": "      if (typeof v === 'number') { if (v >= lo && v <= hi) o[k] = v + gap; }",
-    "new": "      if (typeof v === 'number') { /* kept */ }",
+    "old": "{ if (!moves || moves(o, k, v)) o[k] = v + gap; }",
+    "new": "{ /* kept */ }",
     "tests": [
       "test/egdur_relay.test.js"
     ]
@@ -351,7 +351,7 @@
   {
     "name": "EGDUR-the-release-gives-nothing",
     "file": "src/net/egDurable.js",
-    "old": "  const gap = egGiveBack(B, Math.max(0, now - h.at), now);",
+    "old": "  const gap = egGiveBack(B, Math.max(0, now - h.at), now, found ? (o, k, v) => found.get(o)?.get(k) === v : null);",
     "new": "  const gap = 0;",
     "tests": [
       "test/egdur_relay.test.js"
@@ -378,7 +378,7 @@
   {
     "name": "EGDUR-a-held-alarm-kept",
     "file": "src/net/egDurable.js",
-    "old": "  return Number.isFinite(last) && now - last > EG_GAP_MS ? egGiveBack(B, now - last, now) : 0;",
+    "old": "  return Number.isFinite(last) && now - last > EG_GAP_MS ? egGiveBack(B, now - last, now, (o, k, v) => v <= last || v > now) : 0;",
     "new": "  return 0;",
     "tests": [
       "test/egdur_relay.test.js"
@@ -450,8 +450,8 @@
   {
     "name": "EGDUR-the-drain-unread",
     "file": "server/src/index.js",
-    "old": "    if ((await this._egDraining()) || Object.keys(",
-    "new": "    if (Object.keys(",
+    "old": "if ((await this._egDraining()) || full) {",
+    "new": "if (full) {",
     "tests": [
       "test/egdur_relay.test.js"
     ]
@@ -459,7 +459,7 @@
   {
     "name": "EGDUR-the-cap-unread",
     "file": "server/src/index.js",
-    "old": "|| Object.keys(await this._egLiveOf(now)).length >= EG_LIVE_MAX) { await this._egShut(ws, a, c, now); return; }",
+    "old": "|| full) { await this._egShut(ws, a, c, now); return; }",
     "new": "|| false) { await this._egShut(ws, a, c, now); return; }",
     "tests": [
       "test/egdur_relay.test.js"

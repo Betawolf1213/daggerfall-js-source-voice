@@ -245,8 +245,8 @@
   {
     "name": "EGECO2-company-keyed-by-order",
     "file": "server-account/src/egHonours.js",
-    "old": ": [...c.players].sort().join(',');",
-    "new": ": c.players.join(',');",
+    "old": "`co:${c.co}` : [...c.players].sort().join(','));",
+    "new": "`co:${c.co}` : c.players.join(','));",
     "tests": [
       "test/egeco_board.test.js"
     ]

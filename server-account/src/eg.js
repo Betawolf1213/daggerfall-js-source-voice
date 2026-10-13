@@ -61,7 +61,7 @@ import { POST_SENDER } from '../../src/net/postLaw.js';   // EG-ZM: the post's s
 import { mintEgOrder } from '../../src/net/identityToken.js';
 import { utcDay } from '../../src/net/marksLaw.js';
 import { egHonourStatements, egHonoursAnswer, egRecordOf } from './egHonours.js';   // EG-E2: the feats, the Annals, the honours
-import { egStandingOf, egFirstPost } from './egHonours.js';   // EG-ZF: the recap's board line; First of the Spire's letter
+import { egStandingOf, egFirstPost, egBoardsMoved } from './egHonours.js';   // EG-ZF: the recap's board line; First of the Spire's letter; AUDIT EG III: the boards' kept rankings forgotten at a claim
 import { egRedoubtPay, egReliquariesOf, egSinkOf } from './egEconomy.js';   // EG-E1: what a Redoubt pays, the sink
 import { arenaWeekOf } from '../../src/net/arenaLaw.js';   // EG-E3: the week a find's keys are capped by, the arena's
 import { egMayStart, egWagerOf } from '../../src/net/egStartLaw.js';   // EG-F: the start Redoubt and the Wager, held at the open and every admission
@@ -78,6 +78,11 @@ export const EG_LAST_WORD_S = 10_800;
 export const EG_OPEN_WINDOW_S = 600;
 export const EG_LIVE_SLACK_S = 600;
 export const EG_LIVE_S = EG_LAST_WORD_S + EG_OPEN_WINDOW_S + EG_LIVE_SLACK_S;
+/** AUDIT EG III (lane3 #15): how long after its open's ask a breach admits a member - the sealed hour and the open window
+ *  (EG_OPEN_WINDOW_S: the relay's 5 and at most 5 real minutes from the opening) and the slack an order takes to reach the
+ *  room. The page answers the call only while its breach is open (src/scenes/egClient.js `answer`), so a later ask is a
+ *  breach that has closed behind its company: it locks no account out for three hours. */
+export const EG_ADMIT_WINDOW_S = EG_OPEN_WINDOW_S + EG_LIVE_SLACK_S;
 /** EG-E3 (2026-10-12, Mac: "I said I want everything"; section 5, "The dungeon's find"): a dungeon elite's odds of a key,
  *  by the dungeon's tier as the port names it (src/systems/dungeonTier.js DUNGEON_TIERS - `super` the player's Abyss
  *  Dungeon); the asks a tier an account a real UTC day; the keys finds may pay an account an arena week. At the caps a
@@ -213,7 +218,8 @@ const wagerOfRow = (s) => { const wg = egWagerOf(String(s ?? '').split(',').filt
 /**
  * A MEMBER'S ADMISSION: the account's live breach set to `b` (one breach at a time - a lapsed one is clear) and its
  * admit order signed (`egadmit`). The room checks the company and spends the order once. Answers `{ order, b }`, or
- * `{ error }`: `no-signing-key`, `guest`, `breach` (a bad id), `live` (another breach held - `b` which). EG-F (section
+ * `{ error }`: `no-signing-key`, `guest`, `breach` (a bad id, or one no stake opened - AUDIT EG III), `spent` (its stake
+ * settled, or its open window past - AUDIT EG III), `live` (another breach held - `b` which). EG-F (section
  * 16.6): `start` (`w`) - the breach starts at a Redoubt this member may not start at (no carries); the order names the
  * breach's start (`ew`, its stake's).
  * @param {{ db: any, nowS: number, subtle: SubtleCrypto, rand: (b: Uint8Array) => Uint8Array }} ctx
@@ -224,10 +230,16 @@ export async function admitEg({ db, nowS, subtle, rand }, player, body, key) {
   if (!player.handle) return { error: 'guest' };
   const b = body?.b;
   if (typeof b !== 'string' || !BREACH_RE.test(b)) return { error: 'breach' };
-  const ew = int((await db.prepare('SELECT ew FROM eg_stakes WHERE b = ?1').bind(b).first())?.ew);   // EG-F: the breach's start
+  // AUDIT EG III (lane3 #9, #15): THE BREACH'S OWN STAKE - a breach the service staked no key for is no breach (its start
+  // read as Hall 1 signed an order any room would take), one whose stake is settled or whose open window is past admits
+  // nobody (`spent`), and the live breach an admission sets is the stake's own `until`, never the ask's (section 23)
+  const st = await db.prepare('SELECT ew, at, until, state FROM eg_stakes WHERE b = ?1').bind(b).first();
+  if (!st) return { error: 'breach' };
+  if (st.state !== 'held' || nowS > int(st.at) + EG_ADMIT_WINDOW_S) return { error: 'spent' };
+  const ew = int(st.ew);   // EG-F: the breach's start
   if (ew > 0 && !egMayStart(await egStartsFor(db, player.id, nowS), ew)) return { error: 'start', w: ew };
   const took = await db.prepare(`UPDATE players SET eg_live_b = ?2, eg_live_until = CASE WHEN eg_live_b = ?2 AND eg_live_until > ?3 THEN eg_live_until ELSE ?4 END
-    WHERE id = ?1 AND (eg_live_b IS NULL OR eg_live_b = ?2 OR eg_live_until <= ?3) RETURNING eg_live_b`).bind(player.id, b, nowS, nowS + EG_LIVE_S).first();
+    WHERE id = ?1 AND (eg_live_b IS NULL OR eg_live_b = ?2 OR eg_live_until <= ?3) RETURNING eg_live_b`).bind(player.id, b, nowS, int(st.until)).first();
   if (!took) { const live = liveOf(await playerRow(db, player.id), nowS); return { error: 'live', ...(live ? { b: live.b } : {}) }; }
   const order = await mintEgOrder({ o: 'egadmit', s: player.id, eb: b, ez: hex(rand(new Uint8Array(12))), ew }, key, { subtle, nowS });
   return { order, b };
@@ -249,14 +261,41 @@ export function egReceiptRest(db, player, c) {
   if (c.q === 'x' && Array.isArray(c.co)) return [db.prepare('UPDATE eg_runs SET co_n = ?3, co_h = ?4 WHERE b = ?1 AND account = ?2').bind(c.b, player.id, int(c.co[0]), String(c.co[1]))];
   return [];
 }
+/** A UTC day's seconds (src/net/marksLaw.js utcDay's divisor - a Rehearsal's day is the day of its stake's `at`). */
+const DAY_S = 86_400;
 /** A stake given back, once: the key to its opener (a Rehearsal's held none) and the stake marked returned - one
- *  transaction, the key moved only while the stake still held. */
-const returnStake = (db, ez, mercy = false) => [
-  db.prepare(`UPDATE players SET eg_keys = eg_keys + 1${mercy ? ', eg_mercy = 1' : ''} WHERE id = (SELECT account FROM eg_stakes WHERE ez = ?1 AND state = 'held' AND rh = 0)`).bind(ez),
-  db.prepare("UPDATE eg_stakes SET state = 'returned' WHERE ez = ?1 AND state = 'held'").bind(ez),
-];
+ *  transaction, the key moved only while the stake still held. AUDIT EG III (lane3 #1, section 23 RETURNED: "an x with
+ *  why:'void', even after w receipts"): A VOID gives back a stake its breach's first Redoubt SPENT too - a force deploy's
+ *  void came after the company's Redoubts and left the key spent - and never one already returned; the mercy gives back a
+ *  held one alone. AUDIT EG III (lane3 #14): a voided Rehearsal gives back the day it took (`eg_rh_day`, while it is still
+ *  that day's), as a voided key's stake gives back its key. */
+const returnStake = (db, ez, mercy = false) => {
+  const from = mercy ? "state = 'held'" : "state IN ('held', 'spent')";
+  return [
+    db.prepare(`UPDATE players SET eg_keys = eg_keys + 1${mercy ? ', eg_mercy = 1' : ''} WHERE id = (SELECT account FROM eg_stakes WHERE ez = ?1 AND ${from} AND rh = 0)`).bind(ez),
+    ...(mercy ? [] : [db.prepare(`UPDATE players SET eg_rh_day = -1 WHERE id = (SELECT account FROM eg_stakes WHERE ez = ?1 AND ${from} AND rh = 1)
+      AND eg_rh_day = (SELECT at / ${DAY_S} FROM eg_stakes WHERE ez = ?1)`).bind(ez)]),
+    db.prepare(`UPDATE eg_stakes SET state = 'returned' WHERE ez = ?1 AND ${from}`).bind(ez),
+  ];
+};
 /** A stake spent, once. */
 const spendStake = (db, ez) => db.prepare("UPDATE eg_stakes SET state = 'spent' WHERE ez = ?1 AND state = 'held'").bind(ez);
+/**
+ * AUDIT EG III (lane3 #6; section 5, "The first breach's mercy" - "an account's first opened breach"): MAY STAKE `ez` STILL
+ * BE GIVEN BACK BY THE MERCY - a key's stake (a Rehearsal's held none), its opener's mercy unspent (`players.eg_mercy`), and
+ * the opener's FIRST opened breach: no key it staked before this one stands unreturned (a breach a void gave back was given
+ * back whole - the Spire kept nothing of it - so the breach after it is still the first).
+ * @param {any} db @param {string} ez @param {{ account: string, rh: number }} stake
+ */
+async function mercyMay(db, ez, stake) {
+  if (int(stake.rh) !== 0) return false;
+  // "before" by the stakes' own order of writing (the table's rowid - never deleted but with their account): two opens in
+  // one second, an end claimed between them, are still one before the other
+  const r = await db.prepare(`SELECT (SELECT eg_mercy FROM players WHERE id = ?2) AS m,
+      EXISTS (SELECT 1 FROM eg_stakes WHERE account = ?2 AND rh = 0 AND state != 'returned' AND rowid < (SELECT rowid FROM eg_stakes WHERE ez = ?1)) AS before`)
+    .bind(ez, stake.account).first();
+  return int(r?.m) === 0 && int(r?.before) === 0;
+}
 
 /**
  * EG-ZM (section 23, "The clock"): THE STAKE'S CLOCK, ONE PAGE - at most `limit` stakes still `held` EG_STAKE_CLOCK_S past
@@ -314,17 +353,18 @@ export async function claimEg({ db, nowS, subtle, rand }, player, receipt, publi
     said = await pay.answer(recorded, paid.slice(0, pay.statements.length));   // the pay's own results (the honours' follow them)
     honours = await egHonoursAnswer(db, player, c);   // EG-E2: the honours it grants, written on the row; the new ones answered
   } else if (c.q === 'x') {
-    // the stake: a void gives it back; the first breach's mercy gives it back once ever when the breach took no
-    // Redoubt; any other end spends it
-    // the opener's end alone settles it (a member who fell in Hall 2 has not ended the opener's breach)
+    // the stake (section 23): a void gives it back - AUDIT EG III (lane3 #1): held, or spent by the breach's Redoubts;
+    // the first breach's mercy gives it back once ever - AUDIT EG III (lane3 #6): only on the relay's word that the BREACH
+    // ended with no Redoubt taken (`nr`, on every end its end owes - net/egBrain.js oweEnd), whichever member's end carries
+    // it (the opener's own may have come first, a fall or a forsaking while the company played on); the opener's end
+    // without that word holds the stake for it while the mercy may still be paid (a Redoubt's receipt spends it, the
+    // stake's clock at the last), and spends it otherwise; any other member's end settles nothing
     const stake = await db.prepare('SELECT account, state, rh FROM eg_stakes WHERE ez = ?1').bind(c.z).first();
     let settle = [];
-    if (stake?.state === 'held' && (stake.account === player.id || c.why === 'void')) {
-      if (c.why === 'void') settle = returnStake(db, c.z);
-      else {
-        const took = await db.prepare('SELECT EXISTS (SELECT 1 FROM eg_redoubts WHERE b = ?1) AS w, (SELECT eg_mercy FROM players WHERE id = ?2) AS m').bind(c.b, stake.account).first();
-        settle = int(took?.w) === 0 && c.h < 5 && int(took?.m) === 0 && int(stake.rh) === 0 ? returnStake(db, c.z, true) : [spendStake(db, c.z)];
-      }
+    if (c.why === 'void') { if (stake?.state === 'held' || stake?.state === 'spent') settle = returnStake(db, c.z); }
+    else if (stake?.state === 'held' && (c.nr === 1 || stake.account === player.id)) {
+      const may = await mercyMay(db, c.z, stake);
+      settle = may && c.nr === 1 ? returnStake(db, c.z, true) : may ? [] : [spendStake(db, c.z)];
     }
     const [row] = await db.batch([
       db.prepare('INSERT OR IGNORE INTO eg_runs (b, account, h, why, t, at) VALUES (?1, ?2, ?3, ?4, ?5, ?6)').bind(c.b, player.id, c.h, c.why, c.t, nowS),
@@ -336,11 +376,12 @@ export async function claimEg({ db, nowS, subtle, rand }, player, receipt, publi
     recorded = Number(row?.meta?.changes ?? 0) > 0;
     said = { ...(await egReliquariesOf({ db, nowS }, player, c)), ...(await egStandingOf(db, player, c)) };   // EG-E1: the Reliquaries it opens, by the week's pay; EG-ZF: the member's standing - the recap's board line
   } else {
-    // a void: the stake back (once - the stake's own state guards it) and the live breach cleared; answered as recorded
-    // however often it is carried
+    // a void: the stake back (once - the stake's own state guards it; AUDIT EG III: held or spent) and the live breach
+    // cleared; answered as recorded however often it is carried
     await db.batch([...returnStake(db, c.z), db.prepare('UPDATE players SET eg_live_b = NULL, eg_live_until = 0 WHERE id = ?1 AND eg_live_b = ?2').bind(player.id, c.b)]);
     recorded = true;
   }
+  if (recorded && c.q !== 'v') egBoardsMoved();   // AUDIT EG III (lane3 #18): a Redoubt or an end moved the boards this Worker keeps
   const keys = int((await playerRow(db, player.id))?.eg_keys);
   return recorded ? { recorded: true, q: c.q, b: c.b, ...(c.q === 'w' ? { w: c.w } : {}), keys, ...said, ...honours } : { recorded: false, why: 'claimed', q: c.q, keys, ...said, ...honours };
 }

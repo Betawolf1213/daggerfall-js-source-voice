@@ -17,7 +17,7 @@ import { validEgOut, validEgIn, EG_KINDS, EG_INTERNAL_OPEN, GATE_HEAL_ROWS_MAX }
 import { healRef, HEAL_DEPTH_X, HEAL_REFILL_S } from '../src/net/gateBrain.js';
 import { bodyStruck } from '../src/net/bossBody.js';
 import { mintEgOrder } from '../src/net/identityToken.js';
-import { mintEgReceipt } from '../src/net/egReceipt.js';
+import { mintEgReceipt, egCompanyTag } from '../src/net/egReceipt.js';
 import { realmToDungeon } from '../src/net/sdBrain.js';
 import { EG_STATE_EMPTY, foldEg } from '../src/net/egLink.js';
 import { egRecapModel, egRecapMemberLine, egRankText, egBoardLine, egRecapBoardKeep, egRecapKeep, egRecapsKept, egChartFell, drawEgPanel, destroyEgHud } from '../src/ui/egHud.js';
@@ -294,7 +294,11 @@ async function stood(t, extra = {}) {
   const S = await standService(extra);
   return { S, now: () => Math.floor(clock / 1000), at: (s) => { clock = s * 1000; } };
 }
-const endReceipt = (S, now, who, o) => mintEgReceipt({ q: 'x', b: breach(), s: who.id, z: 'z'.repeat(16), c: 9, h: 15, t: 2000, n: 1, ew: 0, l: 12, why: 'home', ...o }, S.gatePriv, { subtle, nowS: now() });
+// PIN MOVED (AUDIT EG III, lane3 #4 - TEST THE SHAPE THE PRODUCER MINTS): every end the relay mints carries its company
+// (`co` - net/egBrain.js oweEnd, egCompanyTag over the breach's entrants), and this fixture carried none, so the standing's
+// own key (the claimers) matched the board's fallback and never the key every real end is ranked under. `co` names the
+// breach's entrants (the claimer alone by default).
+const endReceipt = (S, now, who, { co = [who.id], ...o } = {}) => mintEgReceipt({ q: 'x', b: breach(), s: who.id, z: 'z'.repeat(16), c: 9, h: 15, t: 2000, n: 1, ew: 0, l: 12, why: 'home', co: egCompanyTag(co), ...o }, S.gatePriv, { subtle, nowS: now() });
 
 test('EG-ZF service: THE FIRST-TIME LINES ONCE AN ACCOUNT (section 27.7) - `/v1/eg/first` ORs a client\'s lines onto the account (a bit once held is held), answered on `/v1/eg/keys` (`first`); a guest refused (the device keeps its own), a number that is no lines refused; the bits are sixteen, past the page\'s nine and the Rehearsal\'s (mutants: the bits replaced, not OR\'ed; a guest kept; the bound unchecked)', async (t) => {
   const { S } = await stood(t);
@@ -324,12 +328,12 @@ test('EG-ZF service: THE RECAP\'S BOARD LINE (section 27.6) - an end\'s claim an
   // each claim a second after the last: the boards' ties go to the first there
   const claim = async (w, r) => { at(now() + 1); return (await S.call('/v1/eg/claim', { receipt: r }, w.secret)).body; };
   const b1 = breach();
-  const r1 = await endReceipt(S, now, lead, { b: b1, h: 15, n: 2 });
+  const r1 = await endReceipt(S, now, lead, { b: b1, h: 15, n: 2, co: [lead.id, mate.id] });
   assert.deepEqual((await claim(lead, r1)).board, { k: 'descent', br: 'few', rank: 1 }, 'the Few, first');
-  assert.deepEqual((await claim(mate, await endReceipt(S, now, mate, { b: b1, h: 15, n: 2 }))).board, { k: 'descent', br: 'few', rank: 1 }, 'the same company');
+  assert.deepEqual((await claim(mate, await endReceipt(S, now, mate, { b: b1, h: 15, n: 2, co: [lead.id, mate.id] }))).board, { k: 'descent', br: 'few', rank: 1 }, 'the same company');
   const b2 = breach();
-  assert.deepEqual((await claim(far, await endReceipt(S, now, far, { b: b2, h: 25, n: 2 }))).board, { k: 'descent', br: 'few', rank: 1 });
-  await claim(wide, await endReceipt(S, now, wide, { b: b2, h: 25, n: 2 }));
+  assert.deepEqual((await claim(far, await endReceipt(S, now, far, { b: b2, h: 25, n: 2, co: [far.id, wide.id] }))).board, { k: 'descent', br: 'few', rank: 1 });
+  await claim(wide, await endReceipt(S, now, wide, { b: b2, h: 25, n: 2, co: [far.id, wide.id] }));
   const again = await claim(lead, r1);
   assert.deepEqual([again.recorded, again.board], [false, { k: 'descent', br: 'few', rank: 2 }], 'asked again: a deeper company stands above it now');
   assert.deepEqual((await claim(solo, await endReceipt(S, now, solo, { h: 5, n: 1 }))).board, { k: 'descent', br: 'alone', rank: 1 }, 'Alone');

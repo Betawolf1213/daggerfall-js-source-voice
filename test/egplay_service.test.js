@@ -70,7 +70,12 @@ test('EG-PLAY THE REHEARSAL: any registered account may open one a real day with
 
 test('EG-PLAY THE ADMISSION: a member asks for breach b and is signed an egadmit order and its live breach set; a member held in another breach is refused `live`; the same breach again is admitted (a reload) (mutants: an admission over another live breach; the order for another account)', async (t) => {
   const { S, me } = await stood(t);
-  const b = '0123456789abcdef', other = 'fedcba9876543210';
+  // PIN MOVED (AUDIT EG III, lane3 #9): a breach is one a stake opened (an id no open staked is refused `breach`) - two
+  // openers' breaches
+  const op1 = await S.registered('OpenerOne'), op2 = await S.registered('OpenerTwo');
+  await S.claim(op1, 700, T0); await S.claim(op2, 701, T0);
+  const b = (await S.call('/v1/eg/open', { rq: RQ }, op1.secret)).body.b, other = (await S.call('/v1/eg/open', { rq: RQ }, op2.secret)).body.b;
+  assert.deepEqual((await S.call('/v1/eg/admit', { b: '0123456789abcdef' }, me.secret)).body, { error: 'breach' }, 'no stake, no breach');
   const a = await S.call('/v1/eg/admit', { b }, me.secret);
   assert.equal(a.status, 200);
   const v = await verifyOrder(a.body.order, S.identityPublic, { subtle, nowS: T0, kind: 'egadmit' });
@@ -122,11 +127,13 @@ test('EG-PLAY THE STAKE SETTLED: a void returns the key once; the first breach\'
   const mx = await mintEgReceipt({ q: 'x', b: o2.b, s: member.id, z: o2.ez, c: 1, h: 1, t: 60, n: 2, ew: 0, l: 5, why: 'fall' }, S.gatePriv, { subtle, nowS: T0 });
   await S.call('/v1/eg/claim', { receipt: mx }, member.secret);
   assert.equal(S.env.DB._raw.prepare('SELECT state FROM eg_stakes WHERE ez = ?').get(o2.ez).state, 'held', 'a member\'s fall is not the opener\'s end');
-  const x2 = await mintEgReceipt({ q: 'x', b: o2.b, s: me.id, z: o2.ez, c: 2, h: 2, t: 120, n: 2, ew: 0, l: 12, why: 'fall' }, S.gatePriv, { subtle, nowS: T0 });
+  // PIN MOVED (AUDIT EG III, lane3 #6): the mercy waits for the relay's word that the BREACH ended with no Redoubt taken
+  // (`nr` - net/egBrain.js oweEnd: here the opener's fall left nobody living)
+  const x2 = await mintEgReceipt({ q: 'x', b: o2.b, s: me.id, z: o2.ez, c: 2, h: 2, t: 120, n: 2, ew: 0, l: 12, why: 'fall', nr: 1 }, S.gatePriv, { subtle, nowS: T0 });
   assert.equal((await S.call('/v1/eg/claim', { receipt: x2 }, me.secret)).body.keys, 3, 'the first breach\'s mercy');
   at(T0 + 10);
   const o3 = (await S.call('/v1/eg/open', { rq: 'rq4123456789abcdef' }, me.secret)).body;
-  const x3 = await mintEgReceipt({ q: 'x', b: o3.b, s: me.id, z: o3.ez, c: 3, h: 2, t: 120, n: 1, ew: 0, l: 12, why: 'fall' }, S.gatePriv, { subtle, nowS: T0 + 10 });
+  const x3 = await mintEgReceipt({ q: 'x', b: o3.b, s: me.id, z: o3.ez, c: 3, h: 2, t: 120, n: 1, ew: 0, l: 12, why: 'fall', nr: 1 }, S.gatePriv, { subtle, nowS: T0 + 10 });
   assert.equal((await S.call('/v1/eg/claim', { receipt: x3 }, me.secret)).body.keys, 2, 'mercy is once ever');
   assert.equal(S.env.DB._raw.prepare('SELECT state FROM eg_stakes WHERE ez = ?').get(o3.ez).state, 'spent');
 });

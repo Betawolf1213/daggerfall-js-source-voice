@@ -373,8 +373,12 @@ seed. `claimGate`'s context gains `rand`, which it lacks today (`claimSd`'s has 
 | **an Elite Dungeon's elite foe** | `/v1/eg/find` | **1 in 150** | three or four a dungeon: about one in forty |
 | **a Regular Dungeon's elite foe** | `/v1/eg/find` | **1 in 400** | one dungeon in five has one: about one in two thousand |
 
-**The first breach's mercy.** An account's first opened breach that ends before Redoubt 1 is taken returns its stake,
-once ever (`players.eg_mercy`). A solo player who falls in Hall 2 has learned the Spire, not lost a week.
+**The first breach's mercy.** An account's first opened breach that ends before its first Redoubt is taken returns its
+stake, once ever (`players.eg_mercy`). A solo player who falls in Hall 2 has learned the Spire, not lost a week. It is
+the BREACH's end, not the opener's: the relay says so on the end receipts of a breach over with no Redoubt taken (`nr`,
+section 23), and the opener's own end before that word - a fall, a forsaking while the company plays on - holds the stake
+for it, so the company's Redoubt 1 spends it. The first is the first key the account staked that the Spire kept: a
+breach a void gave back whole is not counted (AUDIT EG III).
 
 **The dungeon's find.** No relay witnesses an ordinary dungeon, so the killer's client asks for the find. When an
 elite foe (`eliteFoe`) dies in a dungeon online:
@@ -450,9 +454,11 @@ The answer goes to `/v1/eg/open` (section 23), which stakes one key.
   - Each member asks `/v1/eg/admit` and gets an **admit order**. The service checks:
     - a handle (no guests: the Spire's feats are recorded);
     - that the member may start at the breach's start Redoubt (section 16.6);
-    - no other live breach (`eg_live`).
+    - no other live breach (`eg_live`);
+    - that the breach is one an open staked, its stake unsettled and its open window not past (refused `breach`,
+      `spent` - AUDIT EG III: an id no open staked read as a Hall 1 start, and a late ask locked its asker out).
   - The member's hello to `eg:<b>` carries the order. The room spends it once, then checks the member is in the
-    company, not fallen twice, not forsaken, not gone home, and the open window.
+    company, not fallen twice, not forsaken, not gone home, the open window, and that the order's start is the breach's.
   - The level claim (`lv`, 1-60) is frozen at the first admission.
 - **Outside the company.** Touching the arch: *The breach answers only to <opener>'s company.*
 - **One breach at a time** for every account, opener or member, enforced by the service's `eg_live` (section 23).
@@ -2445,6 +2451,11 @@ the pay law `net/egPay.js`, and the Broker sells the Panoply's sink. File by fil
   company's row takes the deepest `h` of its members.
 - **Champions**: each bracket's top ten at a season's end hold *Spire Champion* through the next season
   (`iliacHonoursOf`'s pattern).
+- **The reads** (AUDIT EG III): a Worker keeps the boards' rankings `EG_BOARD_CACHE_S` (a minute), and a claim it records
+  forgets them, so a crowd at the window reads the season once a minute. An end's claim still reads its season's ends to
+  place its company, keyed as the board keys it (the recap's standing must count the claim itself), and the Deepest
+  Redoubts read every Redoubt ever taken whenever the rankings are read: a board places the caller and says its total out
+  of every company and account, so a narrower read would be a rank query over the same rows - a departure, said so.
 - **The sealed band**: until a band ships, a run that reaches THE SEAL (section 13.3) ranks on the Descent by its
   seconds to the sealed Redoubt.
 
@@ -2659,7 +2670,9 @@ so:
 
 - **THE HOLD** (the usual deploy): the deploy waits until every live breach is between trials (a closing, a swap or a
   rest), asks each room to hold, then goes. A held room freezes the count and gives the gap back, and waits until
-  every living member has returned or 180 s have passed. A member who returns finds the hall where they left it.
+  every living member has returned or 180 s have passed. A member who returns finds the hall where they left it. The gap
+  goes back to what the hold found as it began (its deadlines however far into the hold they fell); a word its company
+  stamped while it held is relay time already, and stays (AUDIT EG III).
 - **THE DRAIN** (an `EG_SPEC` change beyond `EG_LAWS` only): the deploy waits on `/v1/eg/live`, as it waits on
   `/v1/seats/sieges/live`. Opens are refused meanwhile (*The Spire's road is shut. Try again soon.*), and the deploy
   waits until no breach is live, or the last word of the longest has passed.
@@ -2686,12 +2699,15 @@ so:
   the caches taken, the Cantrips, the lumen, the fair-trail accumulators and the Athenaeum's hall all live in storage
   (hibernation keeps nothing else).
 - **Time survives the restart**: a member's absence is counted from `max(lastSeen, wakeAt)`, and any tick gap over
-  `EG_GAP_MS` (2 s) is given back: the count and the hall's timers do not run across it.
+  `EG_GAP_MS` (2 s) is given back: the count and the hall's timers do not run across it. In a room that never slept, an
+  instant stamped inside the gap (a word heard while the alarm was late) is the gap's own and stays.
 
 **A dropped socket.** A closed socket would drop its body from the census, and returning at the arrival plate would
 dodge a lord's blow. So the body stays at its last pose for the absence window and takes what lands there, though no
-blow is aimed at it (section 6.1). On a fight floor it resumes there. In traversal it resumes at its last island or
-plate, with no cast-back's cost: a platform has moved on, and a reconnect is not a fall.
+blow is aimed at it (section 6.1): the room keeps each member's trail by its account, and a member with no socket in the
+room has its trail held at its last pose for `EG_ABSENT_TRIAL_MS` (AUDIT EG III). On a fight floor it resumes there. In
+traversal it resumes at its last island or plate, with no cast-back's cost: a platform has moved on, and a reconnect is
+not a fall.
 
 **A reload.** Saves are refused inside (the Burning Court's law, WBX W6), so a reloaded page boots outside.
 `/v1/eg/keys` answers the account's live breach, and the world host offers *Return to the Spire*: a hello as an entrant
@@ -2715,7 +2731,10 @@ which writes its one tombstone.
 **The cost.** One Durable Object per breach, awake for up to three hours. So:
 
 - the tick is 250 ms only while a trial runs, 1 s otherwise, and none while the arch rises;
-- the hub enforces `EG_LIVE_MAX` (64) live breaches at once, the Rehearsals among them;
+- the hub enforces `EG_LIVE_MAX` (64) live breaches at once, the Rehearsals among them. At the cap it asks each listed
+  room where it stands and lets the ended go first, so an ended breach no longer holds its slot until its last word; and
+  it keeps its answer to `/v1/eg/live` `EG_LIVE_SAID_MS` (2 s), so the public door asks the rooms at most once in that
+  time, every ask meanwhile answered by it (AUDIT EG III);
 - every breach ends at the last word.
 
 ## 23. The wire
@@ -2758,21 +2777,28 @@ once. `ew` names the start Redoubt everywhere: orders, frames and receipts.
 - **Open** (`/v1/eg/open`) is idempotent on the client's request id `rq`. A crashed client asking again gets the same
   order back. One conditional `UPDATE ... RETURNING` (the insignia-spend pattern) takes one key, writes the stake
   `eg_stakes(ez, account, b, until, state)` and sets `eg_live`.
-- **SPENT**: on the first `w` naming its `ez`, or the first `x` whose `why` is not `'void'`; except an account's first
-  opened breach that ends with no `w` (the first breach's mercy, section 5), whose stake is RETURNED, once ever.
+- **SPENT**: on the first `w` naming its `ez`, or the opener's own `x` whose `why` is not `'void'`; except an account's
+  first opened breach that ends with no Redoubt taken (the first breach's mercy, section 5), whose stake is RETURNED, once
+  ever, by the first end receipt that says the breach is over with no Redoubt (`nr`), whoever's it is. The opener's own
+  end before that word holds the stake while the mercy may still be paid (AUDIT EG III).
 - **RETURNED**: on a relay-signed **void** (`e1`, kind `'v'`), or an `x` with `why:'void'`, even after `w` receipts
   (a force deploy, an unknown `egv`: the company keeps its Redoubts and the opener gets the key back). `eg:<b>` mints a
   void for an order it never accepted. It writes the order spent first, as `_holdemVoid` does, so it can never accept
   it after.
 - **The clock** spends a stake only after `EG_VOID_MAX_S` (7 days) with no receipt naming it.
-- **The opening** is the moment the room accepts the open order, when the arch begins to rise. A stake's `until`, and
-  `eg_live`'s, is the opening plus `EG_LAST_WORD_MIN` plus `EG_LIVE_SLACK` (10 min): about 3 h 10 min.
+- **The opening** is the moment the room accepts the open order, when the arch begins to rise. The service never sees
+  it, so a stake's `until` counts from the open's ask: `EG_LAST_WORD_MIN`, the open window's ten minutes
+  (`EG_OPEN_WINDOW_S`) and `EG_LIVE_SLACK` (10 min) - 3 h 20 min, room for an order's minute on its way to the room. An
+  admission's `eg_live` ends at its stake's `until` (AUDIT EG III: it had been the admission's own ask plus 3 h 20 min).
 - **The tombstone**: after the end the room keeps `egdone` for `EG_VOID_MAX_S` (7 days) and refuses older voids (the
   `HOLDEM_STAKE_VOID_S` precedent).
 
 **`eg_live`** (AUDIT EG0 A2) is `{b, until}`, `until` being the stake's. `/v1/eg/open` and `/v1/eg/admit` each write
 it in one conditional `UPDATE` (`WHERE eg_live IS NULL OR b = ? OR until < now`). An end receipt or a void clears it,
-and a lapsed one counts as clear. No lost receipt can lock an account out.
+and a lapsed one counts as clear. No lost receipt can lock an account out. An admission is asked within
+`EG_ADMIT_WINDOW_S` (20 min) of its breach's open; a member who takes an order then and never steps in holds that breach
+as its live one until its stake's `until` - the service cannot see the room, and the room owes no receipt to a member it
+never admitted (a departure, AUDIT EG III).
 
 **The arch on the cell.** The opener's client says the hub's signed call on its world cell (`{t:'eg', k:'arch', b,
 site, riseAt, openAt, o, sg}`) on full frames while it stands there, as `portalWire` rides a peer's frame. Peers check
@@ -2827,7 +2853,7 @@ relay receipt is):
 | kind | claims |
 |---|---|
 | `k:'w'`, a Redoubt taken | `b`, `w` (the Redoubt), `h` (the hall), `s` (the sub), `c` (this receipt's seed), `sh` (the share dealt), `t` (seconds since the first hall woke), `n` (earning entrants), `ew` (the start Redoubt), `vs` (the Vestiges), `m` (the measures), `z` (the order id), `co` (the company's subs), `fl`, `lb`, `ft`, `wg` |
-| `k:'x'`, the member's end | `b`, `h` (the deepest hall cleared), `s`, `t`, `n`, `ew`, `co`, `rl` (Reliquaries opened, with `why` `'home'`, `'seal'`, `'last'` or `'void'`), `fl` (the falls in the breach), `lb` (a Court felled alone), `ft` (feat bits), `td` (seconds from Hall 1's wake to `h`'s door), `wg` (the Wager), `c`, `why` (`'fall'` (a final fall), `'home'`, `'tear'`, `'wipe'`, `'last'`, `'seal'`, `'forsake'`, `'empty'` (the opener's, when the call went out and nobody was admitted before the open window ended) or `'void'`), `z`. A first fall, which a recall can undo, mints no `x` |
+| `k:'x'`, the member's end | `b`, `h` (the deepest hall cleared), `s`, `t`, `n`, `ew`, `co`, `rl` (Reliquaries opened, with `why` `'home'`, `'seal'`, `'last'` or `'void'`), `fl` (the falls in the breach), `lb` (a Court felled alone), `ft` (feat bits), `td` (seconds from Hall 1's wake to `h`'s door), `wg` (the Wager), `c`, `why` (`'fall'` (a final fall), `'home'`, `'tear'`, `'wipe'`, `'last'`, `'seal'`, `'forsake'`, `'empty'` (the opener's, when the call went out and nobody was admitted before the open window ended) or `'void'`), `z`, `nr` (1 when the breach is over with no Redoubt taken - an end its end owes, or the last living member's; AUDIT EG III). A first fall, which a recall can undo, mints no `x` |
 | `k:'v'`, a void | `b`, `z`, `s` (the opener) |
 
 **The account service** (EG2, EG8, EG14):
@@ -2838,8 +2864,8 @@ relay receipt is):
 | `/v1/eg/find` | a dungeon's find: the tier, the roll, the caps |
 | `/v1/eg/starts` | the start window's preflight: which starts each member of the opener's party may make |
 | `/v1/eg/open` | idempotent on `rq`: stakes one, signs `egopen`, sets `eg_live` |
-| `/v1/eg/admit` | checks the handle, the start Redoubt and `eg_live`; signs `egadmit`; sets `eg_live` |
-| `/v1/eg/claim` | `claimEg`: verifies `e1`, refuses another's, answers guests `guest`. For `w`: one row in `eg_redoubts (b, account, w)` with its embers, the week's pay, Marks, the deed, the depth, the honours, the pity, the Valkynaz's key roll. For `x`: `eg_runs (b, account)`, the board's row, the Reliquaries, settles the stake (the mercy included), clears `eg_live`. For `v`: returns the stake |
+| `/v1/eg/admit` | checks the handle, the breach's stake (none: `breach`; settled, or its open window past: `spent`), the start Redoubt and `eg_live`; signs `egadmit`; sets `eg_live` to the stake's `until` |
+| `/v1/eg/claim` | `claimEg`: verifies `e1`, refuses another's, answers guests `guest`. For `w`: one row in `eg_redoubts (b, account, w)` with its embers, the week's pay, Marks, the deed, the depth, the honours, the pity, the Valkynaz's key roll. For `x`: `eg_runs (b, account)`, the board's row, the Reliquaries, settles the stake (the mercy on the breach's own end, `nr`), clears `eg_live`. For `v`, and an `x` whose `why` is `'void'`: returns the stake, held or spent |
 | `/v1/eg/board` | `egBoardOf` |
 | `/v1/eg/live` | the drain's question: any breach live, and until when |
 

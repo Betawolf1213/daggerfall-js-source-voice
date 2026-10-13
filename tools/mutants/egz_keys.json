@@ -173,8 +173,8 @@
   {
     "name": "EGZA-no-td",
     "file": "src/net/egBrain.js",
-    "old": "...(B.cleared > 0 ? { td: B.td ?? 0 } : {}), co: companyOf(B) });",
-    "new": "co: companyOf(B) });",
+    "old": "...(B.cleared > 0 ? { td: B.td ?? 0 } : {}), co: companyOf(B),",
+    "new": "co: companyOf(B),",
     "tests": [
       "test/egz_keys.test.js"
     ]
@@ -191,8 +191,8 @@
   {
     "name": "EGZA-no-co-end",
     "file": "src/net/egBrain.js",
-    "old": "{ td: B.td ?? 0 } : {}), co: companyOf(B) });",
-    "new": "{ td: B.td ?? 0 } : {}) });",
+    "old": "{ td: B.td ?? 0 } : {}), co: companyOf(B), ...(",
+    "new": "{ td: B.td ?? 0 } : {}), ...(",
     "tests": [
       "test/egz_keys.test.js"
     ]
@@ -561,8 +561,8 @@
   {
     "name": "EGZA-descent-by-claimers",
     "file": "server-account/src/egHonours.js",
-    "old": "const key = c.co ? `co:${c.co}` : [...c.players].sort().join(',');",
-    "new": "const key = [...c.players].sort().join(',');",
+    "old": "const companyKeyOf = (c) => (c.co ? `co:${c.co}` : [...c.players].sort().join(','));",
+    "new": "const companyKeyOf = (c) => ([...c.players].sort().join(','));",
     "tests": [
       "test/egz_keys.test.js"
     ]

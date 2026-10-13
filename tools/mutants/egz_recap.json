@@ -821,8 +821,8 @@
   {
     "name": "EGZ-svc-the-company-mis-keyed",
     "file": "server-account/src/egHonours.js",
-    "old": "const key = [...new Set(rows.filter((r) => r.b === c.b).map((r) => r.account))].sort().join(',');",
-    "new": "const key = [...new Set(rows.filter((r) => r.b === c.b).map((r) => r.account))].join(',');",
+    "old": "const mine = breachesOf(rows).get(c.b), key = mine ? companyKeyOf(mine) : '';",
+    "new": "const mine = breachesOf(rows).get(c.b), key = mine ? [...mine.players].join(',') : '';",
     "tests": [
       "test/egz_recap.test.js"
     ]

@@ -196,6 +196,19 @@ const descentOrder = (a, b) => b.h - a.h || a.t - b.t || a.at - b.at || (a.key <
  * @param {any[]} rows
  */
 export function egDescentCompanies(rows) {
+  const best = new Map();
+  for (const c of breachesOf(rows).values()) {
+    const key = companyKeyOf(c);
+    const row = { key, players: c.players.slice(0, EG_COMPANY_MAX), h: c.h, t: c.t, n: Math.max(c.n, c.players.length), flame: c.fell === 0, at: c.at };
+    const had = best.get(key);
+    if (!had || descentOrder(row, had) < 0) best.set(key, row);
+  }
+  return [...best.values()].sort(descentOrder);
+}
+/** The Descent's breaches from a season's ends (DESCENT_SQL's rows): breach -> its company as its claims say it - the
+ *  accounts that ended it (in the order they ended it), its deepest hall and the fewest seconds there, its size, its falls,
+ *  its first claim, and the receipt's company tag (`co`). Pure. */
+function breachesOf(rows) {
   const by = new Map();
   for (const r of rows) {
     let c = by.get(r.b);
@@ -208,15 +221,12 @@ export function egDescentCompanies(rows) {
     c.at = Math.min(c.at, int(r.at));
     if (!c.co && typeof r.co_h === 'string' && r.co_h) c.co = `${int(r.co_n)}:${r.co_h}`;
   }
-  const best = new Map();
-  for (const c of by.values()) {
-    const key = c.co ? `co:${c.co}` : [...c.players].sort().join(',');
-    const row = { key, players: c.players.slice(0, EG_COMPANY_MAX), h: c.h, t: c.t, n: Math.max(c.n, c.players.length), flame: c.fell === 0, at: c.at };
-    const had = best.get(key);
-    if (!had || descentOrder(row, had) < 0) best.set(key, row);
-  }
-  return [...best.values()].sort(descentOrder);
+  return by;
 }
+/** A breach's company's key on the Descent - its receipt's `co` where it says one, else its claimers - ONE KEY for the
+ *  board's rows and the recap's standing (AUDIT EG III lane3 #4: the standing keyed by the claimers alone found no row for
+ *  a company the relay had tagged, and every end the relay mints is tagged). Pure. */
+const companyKeyOf = (c) => (c.co ? `co:${c.co}` : [...c.players].sort().join(','));
 /** The Descent's three brackets from its ranked companies, each ranked. Pure. */
 export function egDescentBrackets(companies) {
   const out = Object.fromEntries(EG_BRACKETS.map((k) => [k, /** @type {any[]} */ ([])]));
@@ -244,8 +254,8 @@ export async function recordEgChampions({ db }, season) {
 }
 /** One Worker's word of the last season's champions, kept EG_CHAMPION_CACHE_S within the season it was read in. */
 let _champs = { season: 0, at: -Infinity, ids: /** @type {Set<string>} */ (new Set()) };
-/** Tests: the kept word forgotten. */
-export function _resetEgHonoursCache() { _champs = { season: 0, at: -Infinity, ids: new Set() }; }
+/** Tests: the kept word forgotten (AUDIT EG III: and the boards' rankings). */
+export function _resetEgHonoursCache() { _champs = { season: 0, at: -Infinity, ids: new Set() }; egBoardsMoved(); }
 /** The accounts holding Spire Champion at `nowS`: the last season's champions - kept first if that season is unkept. */
 async function championsNow(ctx, nowS) {
   const season = arenaSeasonOf(nowS);
@@ -280,8 +290,8 @@ export async function withEgHonoursAll(ctx, rows, nowS) {
 /**
  * EG-ZF (section 27.6, THE RECAP: "the board's line: *The Descent, the Few: 14th*") - A MEMBER'S STANDING, answered on
  * its end's claim (eg.js claimEg, after the end's row is written): where the breach ranks on the Descent (its rows among
- * DESCENT_SQL's - begun at Hall 1, unwagered, no Rehearsal), its company's - the accounts that have claimed an end of this
- * breach so far, its best breach's place if it has a better one - bracket and rank this season; else the account's own
+ * DESCENT_SQL's - begun at Hall 1, unwagered, no Rehearsal), its company's - keyed as the board keys it (the receipt's
+ * `co`, else the accounts that have claimed an end of this breach so far), its best breach's place if it has a better one - bracket and rank this season; else the account's own
  * rank on the Depths this season. `{ board: { k: 'descent', br, rank } }`, `{ board: { k: 'depths', rank } }`, or `{}` (a Rehearsal, no
  * hall cleared, another kind).
  * @param {any} db @param {{ id: string }} player @param {any} c the verified claims
@@ -290,7 +300,7 @@ export async function egStandingOf(db, player, c) {
   if (c?.q !== 'x' || c.rh === 1 || !(int(c.h) >= 1)) return {};
   const season = arenaSeasonOf(c.i);
   const rows = (await db.prepare(DESCENT_SQL).bind(season).all()).results ?? [];
-  const key = [...new Set(rows.filter((r) => r.b === c.b).map((r) => r.account))].sort().join(',');   // '' off the Descent: no company's
+  const mine = breachesOf(rows).get(c.b), key = mine ? companyKeyOf(mine) : '';   // '' off the Descent: no company's - AUDIT EG III (lane3 #4): the board's own key
   const brackets = egDescentBrackets(egDescentCompanies(rows));
   for (const br of EG_BRACKETS) {
     const i = brackets[br].findIndex((r) => r.key === key);
@@ -328,6 +338,39 @@ export async function egFirstPost(db, player, env, nowS) {
   return Number(r?.meta?.changes ?? 0) > 0;
 }
 
+/** AUDIT EG III (lane3 #18): how long one Worker keeps the boards' rankings before it reads them again (s). The rankings
+ *  are every company's and every account's of the season (and the Deepest's of all time) - a caller's own row and the
+ *  total are placed in them - so a board read the season's ends, the season's depths and every Redoubt ever taken each
+ *  time anyone opened the window; a crowd at the board now reads them once a minute a Worker, and a claim this Worker
+ *  records forgets them at once (egBoardsMoved). An end's claim still reads its season fresh: the recap's standing must
+ *  count the claim itself (egStandingOf). */
+export const EG_BOARD_CACHE_S = 60;
+/** One Worker's rankings, kept EG_BOARD_CACHE_S within the season they were read for; the read in flight (shared by every
+ *  board asked meanwhile - ASYNC NEVER DROPS: coalesced); and the claims' count, so a read a claim overtook keeps nothing. */
+let _ranks = { season: -1, at: -Infinity, v: /** @type {any} */ (null) };
+let _ranksAsking = /** @type {{ season: number, gen: number, p: Promise<any> } | null} */ (null);
+let _ranksGen = 0;
+/** AUDIT EG III: the kept rankings forgotten - a claim recorded here moved them (eg.js claimEg). */
+export function egBoardsMoved() { _ranks = { season: -1, at: -Infinity, v: null }; _ranksAsking = null; _ranksGen++; }
+/** The boards' rankings for `season` at `nowS`: the Descent's companies and brackets, the Depths' rows, the Deepest's -
+ *  kept, else read (once, however many ask while it is read). Each reader copies the rows it ranks (topWithMe marks the
+ *  caller's own on them). */
+async function ranksOf(db, season, nowS) {
+  if (_ranks.v && _ranks.season === season && nowS >= _ranks.at && nowS - _ranks.at < EG_BOARD_CACHE_S) return _ranks.v;
+  if (_ranksAsking?.season === season && _ranksAsking.gen === _ranksGen) return _ranksAsking.p;
+  const gen = _ranksGen;
+  const p = (async () => {
+    const { companies, brackets } = await descentOf(db, season);
+    const depths = ((await db.prepare(DEPTHS_SQL).bind(season).all()).results ?? []).map((r) => ({ player: r.account, h: int(r.h), ew: int(r.ew), wagered: int(r.wg) === 1 }));
+    const deepest = ((await db.prepare(DEEPEST_SQL).all()).results ?? []).map((r) => ({ player: r.account, w: int(r.w), at: int(r.at) }));
+    const v = { companies, brackets, depths, deepest };
+    if (gen === _ranksGen) _ranks = { season, at: nowS, v };
+    return v;
+  })().finally(() => { if (_ranksAsking?.p === p) _ranksAsking = null; });
+  _ranksAsking = { season, gen, p };
+  return p;
+}
+
 /** The week's Proclamation (section 20): its decree's key, name and line. */
 export function egProclamationNow(nowS) {
   const week = arenaWeekOf(nowS), key = egProclamationOf(week), d = EG_DECREE_BY_KEY[key];
@@ -348,11 +391,11 @@ export async function egBoardOf(ctx, player, env) {
   const season = arenaSeasonOf(nowS);
   const me = player?.id ?? null;
   await championsNow(ctx, nowS);   // the last season's champions kept, the first read of a new season
-  const { companies, brackets } = await descentOf(db, season);
+  const R = await ranksOf(db, season, nowS), { companies } = R, copy = (rows) => rows.map((r) => ({ ...r }));   // AUDIT EG III (lane3 #18): kept a minute
   const mine = (r) => !!me && r.players.includes(me);
-  const descent = Object.fromEntries(EG_BRACKETS.map((k) => [k, topWithMe(brackets[k], mine, ARENA_BOARD_TOP)]));
-  const depths = topWithMe(((await db.prepare(DEPTHS_SQL).bind(season).all()).results ?? []).map((r) => ({ player: r.account, h: int(r.h), ew: int(r.ew), wagered: int(r.wg) === 1 })), me, ARENA_BOARD_TOP);
-  const deepest = topWithMe(((await db.prepare(DEEPEST_SQL).all()).results ?? []).map((r) => ({ player: r.account, w: int(r.w), at: int(r.at) })), me, ARENA_BOARD_TOP);
+  const descent = Object.fromEntries(EG_BRACKETS.map((k) => [k, topWithMe(copy(R.brackets[k]), mine, ARENA_BOARD_TOP)]));
+  const depths = topWithMe(copy(R.depths), me, ARENA_BOARD_TOP);
+  const deepest = topWithMe(copy(R.deepest), me, ARENA_BOARD_TOP);
   const shownOf = (b) => [...b.rows, ...(b.pinned ? [b.pinned] : [])];
   const ids = [
     ...EG_BRACKETS.flatMap((k) => shownOf(descent[k]).flatMap((r) => r.players)),
