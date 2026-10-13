@@ -44,7 +44,8 @@ export function egHallReverb(spec) {
     const preset = egReverbPreset(f.reverb);
     if (!preset) continue;
     const cave = f.cls === 'passage' ? (spec.caves ?? []).find((q) => Math.abs(q.x - f.x) < 0.5 && q.z0 <= f.z0 + 0.5 && q.z1 >= f.z1 - 0.5) : null;
-    const half = cave ? cave.halfW : f.cls === 'chamber' ? (f.z1 - f.z0) / 2 : 6;
+    const hero = f.hero ? (spec.heroes ?? []).find((q) => q.f === spec.frags.indexOf(f)) : null;   // EG-HERO-LAY: a hero's reach across, its box's
+    const half = hero ? Math.max(f.x - hero.box[0], hero.box[3] - f.x) : cave ? cave.halfW : f.cls === 'chamber' ? (f.z1 - f.z0) / 2 : 6;
     zones.push({ x: f.x, half, z0: f.z0, z1: f.z1, preset });
   }
   const second = zones.find((q) => q.preset !== EG_REVERB_OPEN)?.preset ?? null;

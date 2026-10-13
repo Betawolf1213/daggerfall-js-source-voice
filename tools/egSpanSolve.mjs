@@ -40,6 +40,7 @@ import { Collider } from '../src/player/collider.js';
 import { realmToDungeon, dungeonToRealm } from '../src/net/sdBrain.js';
 import { gustAt } from '../src/world/sdSteps.js';
 import { identity } from '../src/world/mat4.js';
+import { egPolyIn } from '../src/net/egShape.js';   // EG-HERO-LAY: a hero's floors, crossed as still ground
 import { isMain } from './lib/isMain.mjs';
 
 /** THE SPAN BUILD on the motor (section 10.2 - SD7b's: Speed 10, Running 0), and its skills for the parkour (a riser). */
@@ -155,6 +156,13 @@ export function sweepCourse(S, spec, road, t0, trace = null) {
     for (const d of spec.discs) { const dx = Math.abs(x - d.x); if (dx <= d.r - 0.4) { const hh = Math.sqrt(d.r * d.r - dx * dx); iv.push([d.z - hh, d.z + hh]); } }
     for (const q of spec.bands) if (Math.abs(x - q.x) <= q.halfW - 0.4) iv.push([q.z0, q.z1]);
     for (const l of spec.lanes) if (Math.abs(l.ax - l.bx) < 0.01 && Math.abs(x - l.ax) <= l.hw - 0.4) iv.push([Math.min(l.az, l.bz), Math.max(l.az, l.bz)]);
+    // EG-HERO-LAY: a hero's floors (its law's polygons) - where the line runs 0.4 m inside each, a tenth of a metre at a time
+    for (const q of spec.heroes ?? []) for (const g of q.floors) {
+      const zs = g.poly.map((p) => p[1]), z1 = Math.max(...zs), on = (z) => egPolyIn(g.poly, x, z) && egPolyIn(g.poly, x - 0.4, z) && egPolyIn(g.poly, x + 0.4, z);
+      let a = null;
+      for (let k = 0, z = Math.min(...zs); z <= z1 + 1e-9; z = Math.min(...zs) + ++k * 0.1) { if (on(z)) a ??= z; else if (a != null) { iv.push([a, z - 0.1]); a = null; } }
+      if (a != null) iv.push([a, z1]);
+    }
     iv.sort((u, v) => u[0] - v[0]);
     const out = [];
     for (const q of iv) { const l = out[out.length - 1]; if (l && q[0] <= l[1] + 0.05) l[1] = Math.max(l[1], q[1]); else out.push([...q]); }

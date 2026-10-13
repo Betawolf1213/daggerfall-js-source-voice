@@ -53,7 +53,7 @@
 import { poseTsDiff } from './wire.js';
 import { egPieceAt, egCrossMin, EG_BODY_R, EG_SINK_GONE_M, EG_FAST_RUN_MPS } from './egSpanLaw.js';
 import { egBridgeOf, egOnBridge } from './egSpanLaw.js';   // AUDIT EG III: Spirebridge's plank, ground while it stands
-import { segDist } from './egShape.js';
+import { segDist, egPolyIn } from './egShape.js';   // EG-HERO-LAY: a hero's floors are polygons
 import { egWallFallenZ } from './egLaw.js';   // EG-ZB: a Falling Wall's fallen edge - and the Collapsing Tube's, below
 import { egTubeEdge } from './egFragLaw.js';
 
@@ -128,7 +128,7 @@ export function egFightFloorAt(spec, x, y, z) {
   for (const f of spec?.fl ?? []) {
     const fy = f.y ?? 0;
     if (!(fy <= y + EG_FLOOR_UNDER_M && y - fy <= EG_FLOOR_OVER_M)) continue;
-    if (!(f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r : segDist(x, z, f.ax, f.az, f.bx, f.bz) <= f.hw)) continue;
+    if (!(f.t === 'p' ? egPolyIn(f.poly, x, z) : f.t === 'd' ? Math.hypot(x - f.x, z - f.z) <= f.r : segDist(x, z, f.ax, f.az, f.bx, f.bz) <= f.hw)) continue;   // EG-HERO-LAY: a hero's fight floor, its polygon
     if (!best || fy > (best.y ?? 0)) best = f;
   }
   return best;
@@ -193,8 +193,9 @@ const bandFallen = (spec, b, z, hw, tMs) => hw > 0 && ((b.role === 'walk' && z <
 /**
  * EG-ZI (section 10.6): THE STILL GROUND under a body's feet at (x, y, z) at shared second `tS` - its key, or '' none: `a`
  * the arrival plate, `e` the end plate, `d<i>` another disc (an island, a court, a balcony), `b<i>` a band (a passage's
- * floor, a walkway, a bridge), `l<i>` a lane, `r<i>` a ramp (a stair, a slope). egSupportAt's first reads, in its order,
- * so the toll's "new island, or a fragment's node" is the support law's own ground. Pure.
+ * floor, a walkway, a bridge), `l<i>` a lane, `r<i>` a ramp (a stair, a slope); EG-HERO-LAY: `h<i>` a hero's floor (its law's
+ * polygon, a fight floor or not - spec law 7's `heroes`). egSupportAt's first reads, in its order, so the toll's "new island,
+ * or a fragment's node" is the support law's own ground. Pure.
  * @param {any} spec @param {number} x @param {number} y @param {number} z @param {number} tS @param {boolean} plan @param {number} hw
  */
 function groundAt(spec, x, y, z, tS, plan, hw) {
@@ -207,6 +208,7 @@ function groundAt(spec, x, y, z, tS, plan, hw) {
     const r = R[i], dx = r.bx - r.ax, dz = r.bz - r.az, L2 = dx * dx + dz * dz, u = L2 > 0 ? Math.max(0, Math.min(1, ((x - r.ax) * dx + (z - r.az) * dz) / L2)) : 0;
     if (segDist(x, z, r.ax, r.az, r.bx, r.bz) <= r.hw + P && on(r.y0 + (r.y1 - r.y0) * u)) return `r${i}`;
   }
+  for (const q of spec?.heroes ?? []) for (const [i, f] of q.floors.entries()) if (on(f.y) && egPolyIn(f.poly, x, z, P)) return `h${i}`;
   return '';
 }
 /**

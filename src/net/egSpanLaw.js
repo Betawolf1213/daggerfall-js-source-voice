@@ -251,9 +251,10 @@ export function egSpanOf(seed, hall, band, { r, sizes, start, checkR }) {
   /** an entry said into the road's spec, rising from the height last said */
   const said = (e) => { e.rise = L.y - L.said; L.said = L.y; sec().pieces.push(e); };
   const gap = () => egDieBetween(r, EG_GAP_MIN_CM, EG_GAP_MAX_CM);
-  /** a piece `gap` past the edge: its place (cm, the hall's frame) */
+  /** a piece `gap` past the edge: its place (cm, the hall's frame) - EG-HERO-LAY: `o.size` its top where a hero fragment's
+   *  record says its own (EG6c's departure 12: an inner piece's size is as authored) */
   const step = (kind, g, o = {}) => {
-    const S = sizes[kind], z = L.edge + g + S.d / 2;
+    const S = o.size ?? sizes[kind], z = L.edge + g + S.d / 2;
     said({ kind, gap: g, size: S, x: o.x ?? 0, amp: o.amp ?? 0, period: o.period ?? 0, phase: o.phase ?? 0, beat: o.beat ?? 0, i: n++, kit: o.kit ?? '' });
     L.edge = z + S.d / 2;
     return { x: o.x ?? 0, y: L.y, z };

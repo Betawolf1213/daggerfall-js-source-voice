@@ -56,8 +56,8 @@
   {
     "name": "EGZ-reverb-chamber-half",
     "file": "src/systems/egReverb.js",
-    "old": "const half = cave ? cave.halfW : f.cls === 'chamber' ? (f.z1 - f.z0) / 2 : 6;",
-    "new": "const half = cave ? cave.halfW : 6;",
+    "old": "const half = hero ? Math.max(f.x - hero.box[0], hero.box[3] - f.x) : cave ? cave.halfW : f.cls === 'chamber' ? (f.z1 - f.z0) / 2 : 6;",
+    "new": "const half = hero ? Math.max(f.x - hero.box[0], hero.box[3] - f.x) : cave ? cave.halfW : 6;",
     "tests": [
       "test/egz_sound.test.js"
     ]
@@ -875,8 +875,8 @@
   {
     "name": "EGZ-clamp-hall-frame",
     "file": "src/world/egHall.js",
-    "old": "return to ? [egToDungeon(spec, to[0], 0, to[1])[0], egToDungeon(spec, to[0], 0, to[1])[2]] : null;",
-    "new": "return to;",
+    "old": "      const to = egFragKeep(q, px - spec.x0, pz, r, spec);\n      return to ? [egToDungeon(spec, to[0], 0, to[1])[0], egToDungeon(spec, to[0], 0, to[1])[2]] : null;",
+    "new": "      const to = egFragKeep(q, px - spec.x0, pz, r, spec);\n      return to;",
     "tests": [
       "test/egz_body.test.js"
     ]
