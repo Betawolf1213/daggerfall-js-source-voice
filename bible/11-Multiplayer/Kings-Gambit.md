@@ -3,8 +3,8 @@
 **Status: DESIGN RECORD, DECIDED (the owner, 2026-10-13: "Make the best and most detailed decisions. We also have
 permission") - section 10 answers section 9 and decides every point the record had left open. KG1 SHIPPED (the law,
 section 11); KG2 SHIPPED (the innkeeper's play, section 12); AUDIT KG (section 13: the law, the play and this record
-read cold, every finding fixed) - and section 14 binds the table's UI, KG-COAT's, KG3's and KG4's, to Enhanced Plus, the
-house's own coat and plain words.** The owner handed over a
+read cold, every finding fixed) - and section 14 binds the table's UI, KG3's and KG4's, to Enhanced Plus, the house's
+own coat and plain words.** The owner handed over a
 Daggerfall Unity mod, `thekingsgambit.dfmod`, and asked how to build it as a new minigame on the Iliac Bay card system -
 the tavern card table `Tavern-Cards.md` built: the table and its seat, the deck of the Iliac Bay, Iliac Hand's painted
 cards, the regulars, the panel, the relay's tables. Sections 1-2 read the mod off its assembly; sections 3-7 lay it on
@@ -409,7 +409,8 @@ structure ours.
   End turn, Forfeit (two presses); the information box, filled by a press as by a hover; the log; the result. Every
   surface, line and number is section 14's (AUDIT KG D2-D23).
 - Not the native-window rule's - no DFU window stands behind it (`Tavern-Cards.md` section 14) - and no free style
-  either: it wears the stone-and-brass kit by role, as every Enhanced Plus screen does (section 14.1). Its words are
+  either: it wears the card tables' kit (`ui/cardPanelKit.js`, CARDS-PLUS), and the stone-and-brass kit paints it by
+  role, as every Enhanced Plus screen (section 14.1). Its words are
   ours, plain, through the text core (14.4, 14.6); the mod's (section 2) are its record, never the screen's.
 
 ### 5.6 Sound
@@ -486,8 +487,9 @@ structure ours.
 - ASYNC NEVER DROPS: the relay's frames folded into one view, a word on its way said again (Hold'em's and Iliac Hand's
   client mirrors).
 - A SLICE CLOSES ITS LEDGER ROW: each slice opens or narrows its section A row.
-- THE KIT BY ROLE (AUDIT KG D1-D4, D23): every surface of the table's panels wears the stone-and-brass kit through its
-  role (`ui/enhancedFrame.js` FRAME_ROLES; PLUS-DRESS), in the pixel face (FONT1), at the type floor (FONT3) - 14.1, 14.2.
+- THE CARD TABLES' KIT BY ROLE (AUDIT KG D1-D4, D23): the panel wears `ui/cardPanelKit.js`'s chrome, as Hold'em's and
+  Iliac Hand's do (CARDS-PLUS), and the stone-and-brass kit paints its every surface by role (`ui/enhancedFrame.js`
+  FRAME_ROLES; PLUS-DRESS), in the pixel face (FONT1), at the type floor (FONT3) - 14.1, 14.2.
 - A FINGER HAS NO HOVER, AND IT IS 44 PX: what a hover says a press says; every press a finger's size on a phone (Plain
   Words law 5; U51) - 14.3.
 - PLAIN WORDS: what it is before its numbers, the next step, how it works, its words - every number the law's (Plain
@@ -504,9 +506,8 @@ Each ships alone and is verifiable without the next.
 | **KG1** SHIPPED (section 11) | THE LAW: `net/kingsGambit.js` - the board and its build, hazards, units and roster, the deployment, the turn, a blow, potions, the end (a seat's view: none to make, section 11); pins deepEqual against section 2's tables, whole games on a fixed source, mutants. |
 | **KG2** SHIPPED (section 12) | THE INNKEEPER'S PLAY: `systems/gambitPatrons.js` - AiAction, TryEscape, AiBlunder, the tiers over a regular's seed, the regular's army by the law's AutoFill (AUDIT KG C4). MEASURE: each tier against an Auto-filled 300 over seeded games. |
 | **KG-SET** | The nine creatures painted into the set (section 10.3) - cards, emblems, Iliac Hand's numbers and text, FOE_CARDS rows (so their foes drop them, CARDS9), Iliac Hand's balance measured again; a relay version (the catalog is relay law). Before KG3, whose grid shows every unit's card. |
-| **KG-COAT** | THE TABLE'S COAT (AUDIT KG D1, section 14.1): Hold'em's `.dfcards` and Iliac Hand's `.dfiliac` panels into the stone-and-brass kit by role, in the pixel face, at the type floor, a finger's 44 px on a phone, their logs wrapped whole (14.1-14.3) - the two panels the third game joins, in one coat before it does. A change players see, with its own patch notes. Before KG3. |
-| **KG3** | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result) to section 14 - the kit by role, the face, the type, the finger, the keys, the four plain-words blocks, the phone - with its pins (14.9), the stake and the regulars' night's purse; the panel's words through the text core, `t(key, en)`, each new key with its drafts in all 25 languages (L10N4's rule - the law keeps keys, section 11); the board a flat mat with the pieces as their cards and the press as a cell, staged under a finger (14.3; AUDIT KG C13: the press had been KG4's alone, and the game cannot be played without it) - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
-| **KG4** | THE BOARD ON THE CLOTH: walls, pillars and water built; the hazards' drawn effects; the pieces' motion; the press on the built board (14.3); the cloth's marks in the house's coat (14.8); the lab (`cards.html` with a King's Gambit table) and its probes - the panel's at a desktop's and a phone's size (`kgPanelProbe.mjs`, which KG4 writes - 14.9); the frame cost on the phone probe, as CARDS3c measured it. |
+| **KG3** | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result) to section 14 - in the card tables' kit (`ui/cardPanelKit.js`, CARDS-PLUS) and the roles, the face, the type, the finger, the keys, the four plain-words blocks, the phone - with its pins (14.9), the stake and the regulars' night's purse; the panel's words through the text core, `t(key, en)`, each new key with its drafts in all 25 languages (L10N4's rule - the law keeps keys, section 11); the board a flat mat with the pieces as their cards and the press as a cell, staged under a finger (14.3; AUDIT KG C13: the press had been KG4's alone, and the game cannot be played without it) - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
+| **KG4** | THE BOARD ON THE CLOTH: walls, pillars and water built; the hazards' drawn effects; the pieces' motion; the press on the built board (14.3); the cloth's marks in the house's coat (14.8); the lab (`cards.html` with a King's Gambit table) and its probes - the panel's at a desktop's and a phone's size (`tools/cardPanelsProbe.mjs`, the three panels' one probe - 14.9); the frame cost on the phone probe, as CARDS3c measured it. |
 | **KG5** | ONLINE: the relay's table (a relay version), the wire, the client's mirror, spectators, the clock; friendly. |
 | **KG6** | Gold tables online (the realm's escrow) and a season board with its title (section 10.7). |
 
@@ -703,7 +704,7 @@ point the record had left open. A number marked MEASURE is the first guess its s
 - KG6: gold online through CARDS6's escrow at the red table, at the mod's online stakes (10, 50, 200, 1,000 and 5,000
   each), the winner's receipt carrying both stakes; and a season board the Arena's way, its Elo and its caps, whose #1
   over 10 games against 5 foes (Iliac Hand's champion's floor) wears GRANDMASTER - the mod's highest tier's name.
-- THE ORDER OF THE SLICES: KG1, KG2, KG-SET, KG-COAT, KG3, KG4, KG5, KG6 (section 8).
+- THE ORDER OF THE SLICES: KG1, KG2, KG-SET, KG3, KG4, KG5, KG6 (section 8).
 
 ## 11. KG1 (2026-10-13): the law
 
@@ -892,7 +893,7 @@ The owner: **"Do KG2"**.
   strike's coin at float64, the blunder's foe, the unchecked source, an unread tier at either door, and the measure's
   kings and seeds), each killed by the pin it wrote. The first run's 20 survivors were the weights the scenarios' margins
   left loose; THE WEIGHTS AT THEIR EDGES pins them.
-- **Not yet:** the nine cards (KG-SET), the table's coat (KG-COAT), the table (KG3) and everything after.
+- **Not yet:** the nine cards (KG-SET), the table (KG3) and everything after.
 - **Ledger:** section A row THE KING'S GAMBIT - THE INNKEEPER'S PLAY.
 
 ## 13. AUDIT KG (2026-10-13): the law, the play and this record, read cold
@@ -916,18 +917,19 @@ sections above, each marked AUDIT KG and its id. In short:
   the starter deck's ten, a dropped link's purse, the arrays the C# view shows, the lunge, the walk, the log's two
   lines, a lean that could not see the near rows, the press in the playable slice - each put right (C3-C23); the
   Grizzly Bear no longer the Dreugh's twin (C21).
-- THE UI (D): no screen of the game exists yet. Section 14 is what KG-COAT, KG3 and KG4 build, binding: the
+- THE UI (D): no screen of the game exists yet. Section 14 is what KG3 and KG4 build, binding: the
   stone-and-brass kit by role, the pixel face, no type under 12 px and every line a reader reads at 15, a finger's 44
   px, a press for every hover, the four plain-words blocks with every number the law's, the words through the text core
   with no pronoun guessed, and the cloth's marks in the house's coat, never colour alone. Hold'em's and Iliac Hand's
-  panels, which shipped outside the kit, join it first (KG-COAT, D1).
+  panels, which had shipped outside the kit, were dressed in it the same day by CARDS-PLUS (`Tavern-Cards.md` section
+  38) through a shared kit, `ui/cardPanelKit.js`; the game's panel is the third to wear it (D1).
 - THE RECORD'S OWN WORDS (K1, the author's): the regulars are of both genders, and this record, the KG2 module, its
   tests and its Ledger row called every one "he". Each is the regular, or the regular's name, now.
 
 Pins: `test/kg1_law.test.js` 18 tests and `test/kg2_patrons.test.js` 11, every audit fix pinned; mutants 98 and 108, all
 dead.
 
-## 14. THE TABLE'S UI (AUDIT KG): Enhanced Plus, our own coat, plain words - binding KG-COAT, KG3 and KG4
+## 14. THE TABLE'S UI (AUDIT KG): Enhanced Plus, our own coat, plain words - binding KG3 and KG4
 
 The owner: **"Ensure any of the UI is enhanced plus, our own coat and easily understandable/readable"**. This section
 is what the table's panels and the board on the cloth are built to. It replaces section 5.5's first plan, which copied
@@ -935,82 +937,90 @@ Iliac Hand's painter and the mod's words and palette (AUDIT KG D2-D23); every DE
 10.4, 10.5 and 10.7 that met it is changed there and marked. A slice that ships a surface proves it against this
 section (14.9).
 
-### 14.1 ONE TABLE, ONE COAT - the stone-and-brass kit
+### 14.1 ONE TABLE, ONE COAT - the card tables' kit
 
-- THE KIT BY ROLE (`ui/enhancedFrame.js`: "TO DRESS A NEW SCREEN: add its selector to the role it plays below"). The
-  panel is `ui/gambitTableHud.js` (KG3 writes it), Iliac Hand's two halves - `gambitHudModel` pure (every label, every flag and its
-  reason, every number), `createGambitTableHud` the painter - its root `div.dfgambit`, its parts `.dfgambit-<part>`.
-  Its selectors join FRAME_ROLES, each with a leading `body` (the sheet is laid after the kit):
+- THE CARD TABLES' KIT (CARDS-PLUS, `Tavern-Cards.md` section 38, merged to main the same day; AUDIT KG D1). Hold'em's
+  `.dfcards` and Iliac Hand's `.dfiliac` wear the stone-and-brass kit through one home, `ui/cardPanelKit.js`: the chrome
+  both wear (`cardPanelChromeCss` - the window's box, bounded by the screen's height and scrolling inside; the header
+  band `.tablehead` and its `.fold`; the `.tablenote`; the line `.msg` and its tones; the presses' row `.tableacts` and
+  their kinds, `data-kind` primary, quiet and warn; the `.log`), the classic skin's copy of the kit cut to the panels
+  (`cardKitCss`, `dressCardPanel`, by `isCardPanelSelector`), and the fold's words (`foldWords`). The King's Gambit's
+  panel is the third to wear it, so the three are one coat by construction: KG3 lays `cardPanelChromeCss('.dfgambit')`,
+  adds `dfgambit` to `isCardPanelSelector`, and gives the kit the game's own surfaces by role. AUDIT KG had planned a
+  slice of its own, KG-COAT, to dress the two panels; CARDS-PLUS dressed them first, and KG-COAT is withdrawn.
+- THE KIT BY ROLE. The panel is `ui/gambitTableHud.js` (KG3 writes it), Iliac Hand's two halves - `gambitHudModel` pure
+  (every label, every flag and its reason, every number), `createGambitTableHud` the painter - its root `div.dfgambit`.
+  The chrome's parts take the roles the other two panels' take; the game's own parts are words of their own,
+  `.dfgambit-<part>` (CARDS-PLUS's sweep, `test/cardsplus.test.js`, holds every panel's classes clear of the enhanced
+  sheets' bare components). Each selector with a leading `body`, the panels' sheets landing after the skin's:
 
-  | Role | Selectors |
-  |---|---|
-  | window | `body .dfgambit` |
-  | header | `body .dfgambit-head` |
-  | headerRule | `body .dfgambit-sec > summary`, `body .dfgambit-sec > h3` |
-  | panel | `body .dfgambit-sec`, `body .dfgambit-next`, `body .dfgambit-info`, `body .dfgambit-result` |
-  | panelAccent | `body .dfgambit-next`, `body .dfgambit-result` |
-  | button / primary / warn | `body .dfgambit .act`, `body .dfgambit .act.primary`, `body .dfgambit .act.warn` |
-  | tile | `body .dfgambit-unit`, `body .dfgambit-stake`, `body .dfgambit-crown` |
-  | listRow | `body .dfgambit-regular`, `body .dfgambit-armyrow`, `body .dfgambit-piece` |
-  | chip | `body .dfgambit-chip` |
-  | well / meterFill | `body .dfgambit-face`, `body .dfgambit-meter`, `body .dfgambit-log` / `body .dfgambit-fill` |
-  | footer | `body .dfgambit-foot` (and LAYOUT1's ACTION_ROWS; its presses ACTION_BUTTONS) |
+  | Role | The chrome's parts, as the two panels' | The game's own parts |
+  |---|---|---|
+  | window | `body .dfgambit` | |
+  | header | `body .dfgambit .tablehead` | |
+  | button | `body .dfgambit button`, `body .dfgambit .fold` | |
+  | primary / warn | `body .dfgambit button[data-kind="primary"]` / `body .dfgambit button[data-kind="warn"]` | |
+  | ruleTop | `body .dfgambit .log` | |
+  | panel | | `body .dfgambit-sec`, `body .dfgambit-info`, `body .dfgambit-result` |
+  | headerRule | | `body .dfgambit-sec > summary`, `body .dfgambit-sec > h3` |
+  | tile | | `body .dfgambit-unit`, `body .dfgambit-stake`, `body .dfgambit-crown` |
+  | listRow | | `body .dfgambit-regular`, `body .dfgambit-armyrow`, `body .dfgambit-piece` |
+  | chip | | `body .dfgambit-chip` |
+  | well / meterFill | | `body .dfgambit-face`, `body .dfgambit-meter` / `body .dfgambit-fill` |
 
-  The panel's own sheet writes layout and ink only - never a border colour, a ground, a shadow or a radius on a role
-  (the kit's law: "It changes paint and never geometry"); a role's box keeps the kit's 2 px edge. So every look comes
-  with the roles: the Plus themes (`themeCss` walks FRAME_ROLES), DFO Grimoire's dress (`ui/grimoireDress.js`), and the
-  classic skin, where the panel lays the kit cut to its own selectors (`scopeRules`, as ARENA3's `arenaSkinCss` does).
-- THE TABLE'S OTHER TWO PANELS JOIN IT FIRST (AUDIT KG D1). Hold'em's `.dfcards` (`ui/cardTableHud.js`) and Iliac Hand's
-  `.dfiliac` (`ui/iliacTableHud.js`) are in no role today: a 1 px gold line on a dark plate of their own, Georgia, words
-  at 11 and 12 px - both shipped after PLUS-DRESS (the owner, 2026-09-26: "just ensure any of the new UI elements are
-  also apart of how enhanced plus looks"), while the binder already dresses the same Iliac cards in the kit. DECIDED:
-  KG-COAT dresses both in the roles above, to 14.2's type and 14.3's finger, their logs wrapped whole (14.5), before KG3
-  - the player moves between the three games at one table by one press, so the table wears one coat before the third
-  game comes.
-- THE FACE: the root wears the pixel face (`ui/pixelifyFive.js` PIXEL_FONT_CSS; the sheet carries PIXELIFY_FIVE_FACE -
-  FONT1, the owner: "Any enhanced UI or text must be our enhanced version"), never another family and never
-  `!important`, so a player's TEXT-FONT choice (`ui/textFont.js`: Sans, Monospace, Dyslexic or their own) reaches every
-  word. No italics: the face has none.
+  The panel's own sheet writes geometry and words only - an edge a width and a style, never a colour, a ground, a
+  shadow or a radius on a role (the kit's law, CARDS-PLUS's: "Geometry and words only: every surface's paint is the
+  kit's, by role"). So every look comes with the roles: the Plus themes (`themeCss` walks FRAME_ROLES), DFO Grimoire's
+  dress (the panels its small windows, every state they mark re-said in its colours - AUDIT CARDS-PLUS B1, B4), and the
+  classic skin, by `dressCardPanel`.
+- THE FACE: the chrome's root wears the pixel face (`ui/pixelifyFive.js` PIXEL_FONT_CSS), and `dressCardPanel` asks for it
+  on the classic skin (FONT1, the owner: "Any enhanced UI or text must be our enhanced version"); no other family and
+  never `!important`, so a player's TEXT-FONT choice (`ui/textFont.js`: Sans, Monospace, Dyslexic or their own) reaches
+  every word. No italics: the face has none.
 - THE CARDS IN THE PANEL ARE PICTURES, NOT ILIAC HAND'S RULES (D12): a unit's face is painted without Iliac Hand's cost
   gem, power shield and rarity frame - a picture-only mode of `paintIliacCard`, pinned - so a Rat never shows Iliac's 1
-  and 1 beside its 6 points, 12 health and attack 2. The same face stands on the cloth (10.1).
+  and 1 beside its 6 points, 12 health and attack 2; painted as the binder paints, at its CSS size (`cardCanvas`, a copy
+  for each place it stands - CARDS-PLUS's one cache). The same face stands on the cloth (10.1).
 
 ### 14.2 TYPE AND INK - easily read
 
-- Sizes (px; the pixel face's reading weight and tracking, PIXEL_READ_CSS): the window's title 17 (capitals, brass); a
-  section's name 14 (capitals, brass); every line a reader reads - what it is, the next step, the guide, the words, a
-  regular's line, the information box, a refusal, the result's line - 15, at a line height of 1.55; a press 15; the log
-  14; a chip and a tile's numbers 12 (the floor - nothing smaller); a unit's name under its tile 13, on up to two lines,
-  whole; the result's headline 18. The panels' sheets join FONT3's FLOOR_SHEETS (`test/font3_readable.test.js`), so the
-  floor's pin and the dim colour's pin hold them (PLAIN-UI e's sizes, `10-UI/Plain-Words.md`).
-- Ink through the kit's tokens: words in the bone, a lesser word in the dim (never the kit's `#7d7460`, never a word
-  faded by `opacity`), names and heads in brass; Stone's lift written as the profile's and the timers' are (AUDIT
-  TIMERS1 UI-4). A refused press keeps its word in the dim and its edge, never a fade (MENU-ORDER g).
-- Focus is a 2 px dashed brass ring off the edge; motion honours `prefers-reduced-motion`; the next-step line and the
-  refusal line are `aria-live="polite"`.
+- Sizes (px; the pixel face's reading weight and tracking, PIXEL_READ_CSS). The chrome's parts at the chrome's sizes,
+  as the other two panels read them: the header band 14 (capitals, brass), the line 14, a press 13, the note and the
+  log 12. The game's own reading blocks - what it is, the next step's reasons, the guide, the words, a regular's line,
+  the information box, the result's line - 15 at a line height of 1.55 (PLAIN-UI e's, the plain-words panels' size; the
+  other two panels have no such blocks); a chip and a tile's numbers 12, the floor - nothing smaller; a unit's name under
+  its tile 13, on up to two lines, whole; the result's headline 18. The panel's sheet joins FONT3's FLOOR_SHEETS
+  (`test/font3_readable.test.js`), so the floor's pin and the dim colour's pin hold it (`10-UI/Plain-Words.md`).
+- Ink through the chrome's tokens - words in the bone, a lesser word in `--cp-dim`, a refusal's in `--cp-red`, Stone's
+  lift already the chrome's - never the kit's `#7d7460` for a word, never a word faded by `opacity`. A refused press is
+  `aria-disabled`, its word in the dim and its edge kept, and says why when pressed (MENU-ORDER g); the chrome's
+  `:disabled` fade is a press in flight's alone.
+- Focus is the other two panels' ring (2 px brass, off the edge); motion honours `prefers-reduced-motion`; the line
+  (`.msg`, the next step and a refusal) is `aria-live="polite"`.
 
 ### 14.3 THE FINGER, THE KEYS AND THE PAD
 
-- 44 BY 44: under the touch law (`ui/touchDevice.js` isTouchDevice: a coarse pointer with no hover) or on a screen 480 px
-  wide or less, every press, tile, row, pick and fold is at least 44 CSS px each way (U51's rule; a fold's line AUDIT
-  PLAIN-UI U3's); with a fine pointer at least 32 px tall. The card panels measure 21-26 px on a 390 px phone today
-  (D5).
+- 44 BY 44: the chrome's coarse-pointer law makes every press and the fold 44 px (AUDIT CARDS-PLUS E5); the game's own
+  tiles, rows and picks take the same, and on a screen 480 px wide or less too (U51's rule); with a fine pointer at least
+  32 px tall. (Lane D measured the card panels at 21-26 px on a 390 px phone - D5 - before CARDS-PLUS.)
 - A FINGER HAS NO HOVER (Plain Words law 5): a press on any piece - either side's - or any cell fills the information box
-  and draws its reach; a hover may preview the same; a `title` is never the only place a word lives. A fold says Hide or
-  Show in words beside its glyph.
+  and draws its reach; a hover may preview the same; a `title` is never the only place a word lives. The fold is the
+  chrome's: its press folds the panel before the eye, and its words ("Collapse the panel", "Expand the panel",
+  `foldWords`) are its name to a screen reader.
 - THE CLOTH UNDER A FINGER (D6): fifteen columns across a 390 px screen are 26 px a column at best, so a press picks the
   nearest of the player's pieces, or of the lit cells, within 22 CSS px; on a touch device a press STAGES - it draws the
   path or the target and offers Move here, Strike {name} or Drink with Cancel, each 44 px - and the staged press commits
   (Iliac Hand's stage-then-commit); with a fine pointer the mod's click acts at once and Escape cancels. Both pinned.
-- THE KEYS AND THE PAD (D18): Tab walks the panel, Enter and Space press (AUDIT CARDS-6 B10's `pressable`), focus is kept
-  across a redraw and never handed to a costly press; the armies' rows select a piece; a cell cursor on the cloth moves by
-  the arrows or the d-pad, presses on Enter or the pad's A, cancels on Escape or its B, drawn in the brass ring and read
-  in the information box.
+- THE KEYS AND THE PAD (D18): Tab walks the panel, Enter and Space press (AUDIT CARDS-6 B10's `pressable`; Space on the
+  panel the panel's, never the game's jump - AUDIT CARDS-PLUS A4), focus is kept across a redraw and never handed to a
+  costly press or to what the fold hid; the armies' rows select a piece; a cell cursor on the cloth moves by the arrows or
+  the d-pad, presses on Enter or the pad's A, cancels on Escape or its B, drawn in the brass ring and read in the
+  information box.
 - A seated finger is the table's (CARDS-TOUCH, `Tavern-Cards.md` section 31); the panel swallows its own presses and
   answers nothing while a box stands over the seat, the tutorial's page included (PLEA-LOOP).
-- A PRESS THAT COSTS GOLD SAYS SO AND ASKS TWICE (D15): Forfeit, and Stand up while a game is under way, wear the warn
-  role with the cost in the label ("Forfeit - lose 100 gold"); the first press arms it for 4 s (`ui/seatTab.js`
-  SEAT_RELINQUISH_ARM_MS's way), any other press disarms it.
+- A PRESS THAT COSTS GOLD SAYS SO AND ASKS TWICE (D15): Forfeit, and Stand up while a game is under way, are the warn kind
+  (`data-kind="warn"`, Iliac Hand's Concede and stand's role) with the cost in the label ("Forfeit - lose 100 gold"); the
+  first press arms it for 4 s (`ui/seatTab.js` SEAT_RELINQUISH_ARM_MS's way), any other press disarms it.
 
 ### 14.4 PLAIN WORDS AT THE TABLE
 
@@ -1073,10 +1083,12 @@ The four blocks of PLAIN-UI a (`10-UI/Plain-Words.md`), on every stage, in this 
   ranged shot"); water ("cannot be crossed on foot, but ranged attacks pass over it" - the mod's); an active hazard ("a
   piece that ends its own side's turn here loses {damage} health"); a warning ("becomes {kind} at the end of round {r};
   it hurts nobody until then").
-- THE LOG: the last 12 lines at 14 px, a sentence a line, wrapped whole and never cut (FONT1 F8; today's card logs cut
-  theirs, D16), the newest last and scrolled into view; four lines tall on a desktop, folded on a phone; the player in
-  the second person and the regular by name, one pattern an event of the law (move, attack, a shot, a kill, potion,
-  hazard, armed, warning, turn, over) - tabled in this record before KG3 builds it.
+- THE LOG: the chrome's - four lines in view, the newest last and scrolled into view, folded with the panel - the last
+  12 kept; a sentence a line, the player in the second person and the regular by name, one pattern an event of the law
+  (move, attack, a shot, a kill, potion, hazard, armed, warning, turn, over), tabled in this record before KG3 builds it
+  and each written to fit one line of the panel. The chrome cuts a line too long for it (`white-space: nowrap` and an
+  ellipsis, so its scroll stands on whole lines), where FONT1 F8 asks a long line wrapped whole: recorded against the
+  chrome - the three panels' one home - for the card tables' next change (D16).
 - THE RESULT, after the result's beat: the headline ("You win" / "You lose", "- by forfeit" when one); the king's fall
   ("{name}, King of {crown}, falls."); the gold in one sentence ("You collect the pot: your {stake} gold back, plus
   {stake} gold from {name}." / "{name} keeps your {stake} gold." / "Played for fun - no gold changed hands."); when the
@@ -1131,19 +1143,21 @@ desktop, of the panel's column (MEASURE, by the probe).
   ("-8" a loss, "+30" a heal) - not the mod's tints, which read 1.61:1 on the Moat and bridges' light floor.
 - THE HEALTH BAR is banded like the vitals (the kit's `meterFill`), its length the value. Reduced motion: no shake.
 
-### 14.9 WHAT PROVES IT (KG-COAT's, KG3's and KG4's acceptance)
+### 14.9 WHAT PROVES IT (KG3's and KG4's acceptance)
 
 - `kg3_panel.test.js` (KG3 writes it) over `gambitHudModel`: every next-step arm; the guide open until a first game and its kept
   fold; every number in a line, the guide and the words equal to its export (with mutants that type a stale number);
   the regulars' rows; the stake's picks and their refusals; every refusal word of `gambitRefusal` and `armyRefusal` said
   in words; a log line for every event type; the result's three gold lines; kings named off SUIT_CROWNS; units named
   through getLocalizedEnemyName.
-- THE COAT'S PINS (KG-COAT for the two panels, KG3 for the third): every selector of 14.1 in FRAME_ROLES, `.dfcards`'
-  and `.dfiliac`'s among them; the panels' sheets write no paint on a role and no size under 12 px; the pixel face on
-  each root; the three sheets in FONT3's FLOOR_SHEETS; the classic skin's sheet the kit cut to each panel.
+- THE COAT'S PINS: the panel built on `cardPanelChromeCss('.dfgambit')` and named by `isCardPanelSelector`; every
+  selector of 14.1 in FRAME_ROLES beside the two panels'; `test/cardsplus.test.js`'s sweeps - the classes clear of the
+  bare components, each panel's classic dressing read alone, every press's kind - run over the third panel too; the
+  sheet writes no paint on a role and no size under 12 px; the sheet in FONT3's FLOOR_SHEETS.
 - THE WORDS' PINS: the ratchet's counts above; the tutorial's page within its limits and its seam swept both ways.
-- THE PROBE, `kgPanelProbe.mjs`, over the cards lab with a King's Gambit table, at 1280x800, 1920x1080, a 390x844
-  phone upright and an 844x390 one on its side: every press 44 px on the phone, nothing past the viewport, the panel or
-  the strip clear of the board, the cell's size on the screen (KG4's MEASURE) and the snap's radius; photographs of the
-  guide and the words unfolded under Slate, Stone, DFO Grimoire and the classic skin, and of the three panels side by
-  side in one coat.
+- THE PROBE: CARDS-PLUS's `tools/cardPanelsProbe.mjs`, one probe for the three panels, given a King's Gambit table in
+  the cards lab - its looks (Enhanced Plus, the classic skin, DFO Grimoire), its sizes (1280, a 1000x560 window, a 390 and
+  a 360 phone, an 844x390 phone under a finger) and its checks (the face, the kit's frame, nothing wider than the panel,
+  no borrowed component, the fold), and the game's own: every press 44 px on the phone, the panel or the strip clear of
+  the board, the cell's size on the screen (KG4's MEASURE) and the snap's radius; photographs of the guide and the words
+  unfolded, and of the three panels side by side in one coat.
