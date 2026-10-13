@@ -15,6 +15,11 @@
 // it to EG_HERO_FRAGS under its id. Not a DFU member. Ledger A (ELITE-GATES).
 import { egFragRecordFault } from './egFragLaw.js';
 import EG_REF_FRAG_LAW from '../assets/egfrags/egRefFrag.law.json' with { type: 'json' };
+// EG-HERO (2026-10-13, Mac: "You have to author the fragments"): the Broken Galleries' three, authored in code by the port
+// (tools/egHeroCavernsScene.mjs, egHeroStacksScene.mjs, egHeroColonnadeScene.mjs) and baked as Mac's would be
+import EG_HERO_CAVERNS_LAW from '../assets/egfrags/egheroCaverns.law.json' with { type: 'json' };
+import EG_HERO_STACKS_LAW from '../assets/egfrags/egheroStacks.law.json' with { type: 'json' };
+import EG_HERO_COLONNADE_LAW from '../assets/egfrags/egheroColonnade.law.json' with { type: 'json' };
 
 /** The variant of the reference fragment - the stand-in no hall lays. */
 export const EG_HERO_REFERENCE = 'reference';
@@ -28,7 +33,7 @@ export function egHeroFragRegistry(laws) {
   })));
 }
 /** EVERY BAKED FRAGMENT'S LAW HALF, by its id. */
-export const EG_HERO_FRAGS = egHeroFragRegistry([EG_REF_FRAG_LAW]);
+export const EG_HERO_FRAGS = egHeroFragRegistry([EG_REF_FRAG_LAW, EG_HERO_CAVERNS_LAW, EG_HERO_STACKS_LAW, EG_HERO_COLONNADE_LAW]);
 
 /** The hero fragments of kit `kit` a hall may lay - every one of that kit registered (in `frags`, the registry by
  *  default) but the reference. */

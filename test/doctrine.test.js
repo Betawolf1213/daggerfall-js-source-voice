@@ -582,6 +582,20 @@ const PUBLIC_ALLOWLIST = new Map([
   ['src/assets/egfrags/source/egRefFrag.fbx', 'OURS - the reference hero fragment\'s scene, written by tools/egRefFragScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
   ['src/assets/egfrags/egRefFrag.law.json', 'OURS - egRefFrag.fbx\'s law half (its markers, section 11.5\'s record) baked by tools/bakeEgRefFrag.mjs; numbers only'],
   ['src/assets/egfrags/egRefFrag.mesh.json', 'OURS - egRefFrag.fbx\'s mesh half baked by tools/bakeEgRefFrag.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
+  // EG-HERO (2026-10-13, Mac: "You have to author the fragments"; Elite-Gates.md section 31, EG-HERO (the Broken
+  // Galleries)): THE GALLERIES' THREE HERO FRAGMENTS - scenes the port writes from numbers alone (tools/egHeroCavernsScene.mjs,
+  // egHeroStacksScene.mjs, egHeroColonnadeScene.mjs - no image, no game data, no third-party art), committed as the .fbx
+  // tools/fragBake.mjs bakes; each its own bake script re-makes its two halves, and test/eghero_galleries.test.js holds every
+  // scene and half to its bytes.
+  ['src/assets/egfrags/source/egheroCaverns.fbx', 'OURS - the Oblivion Caverns hero passage\'s scene, written by tools/egHeroCavernsScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
+  ['src/assets/egfrags/egheroCaverns.law.json', 'OURS - egheroCaverns.fbx\'s law half baked by tools/bakeEgHeroCaverns.mjs; numbers only'],
+  ['src/assets/egfrags/egheroCaverns.mesh.json', 'OURS - egheroCaverns.fbx\'s mesh half baked by tools/bakeEgHeroCaverns.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
+  ['src/assets/egfrags/source/egheroStacks.fbx', 'OURS - the Fallen Stacks hero chamber\'s scene, written by tools/egHeroStacksScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
+  ['src/assets/egfrags/egheroStacks.law.json', 'OURS - egheroStacks.fbx\'s law half baked by tools/bakeEgHeroStacks.mjs; numbers only'],
+  ['src/assets/egfrags/egheroStacks.mesh.json', 'OURS - egheroStacks.fbx\'s mesh half baked by tools/bakeEgHeroStacks.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
+  ['src/assets/egfrags/source/egheroColonnade.fbx', 'OURS - the Broken Colonnade hero passage\'s scene, written by tools/egHeroColonnadeScene.mjs from numbers alone; no ARENA2 data, no third-party art'],
+  ['src/assets/egfrags/egheroColonnade.law.json', 'OURS - egheroColonnade.fbx\'s law half baked by tools/bakeEgHeroColonnade.mjs; numbers only'],
+  ['src/assets/egfrags/egheroColonnade.mesh.json', 'OURS - egheroColonnade.fbx\'s mesh half baked by tools/bakeEgHeroColonnade.mjs; geometry only, its pictures the band\'s painted dress, no ARENA2 data'],
   // WAGONS1 (2026-10-09, Mac: "Here are 3 new models that will need to be textured"): MAC'S THREE WAGONS, supplied as
   // four saves of one Blender scene ("wagons.blend") - the newest committed whole, as the ships' scenes are.
   // tools/bakeWagons.mjs re-makes the three JSONs from it (tools/shipBake.mjs), and test/wagons1_bake.test.js holds them

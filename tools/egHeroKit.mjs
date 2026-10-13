@@ -134,3 +134,99 @@ export function sweep(m, path, sec, mat = 0, { caps = true } = {}) {
   }
   return m;
 }
+
+// ── EG-HERO (the Broken Galleries, 2026-10-13): the shapes two or more of the band's scenes share ───────────────────────
+// A cut face's own normal, a two-layer shell broken open (the Caverns' sky over its chasm, the Stacks' broken dome) and a
+// level floor of cells (every floor, ceiling and drawn ground of all three). Numbers IEEE-only, as above.
+
+/** A face's own unit normal (Newell's - Math.sqrt alone), its corners counter-clockwise seen from where it faces. */
+export function newell(pts) {
+  const n = [0, 0, 0];
+  for (let i = 0; i < pts.length; i++) {
+    const a = pts[i], b = pts[(i + 1) % pts.length];
+    n[0] += (a[1] - b[1]) * (a[2] + b[2]); n[1] += (a[2] - b[2]) * (a[0] + b[0]); n[2] += (a[0] - b[0]) * (a[1] + b[1]);
+  }
+  return unit(n);
+}
+/** The plan's UV of point `p` on a face whose normal is `n` (a tile every two metres, from the axis it faces most) - the
+ *  reference writer's own mapping. */
+export const planUv = (p, n) => {
+  const ax = Math.abs(n[0]), ay = Math.abs(n[1]), az = Math.abs(n[2]);
+  return az >= ax && az >= ay ? [p[0] / 2, p[1] / 2] : ax >= ay ? [p[1] / 2, p[2] / 2] : [p[0] / 2, p[2] / 2];
+};
+/** A FLAT FACE on mesh `m` (refFragMesh's) over `pts` (counter-clockwise seen from where it faces), material slot `mat`:
+ *  HARD - every corner its own face's normal - and each corner's UV `uvOf(p, n, c)` (planUv by default; `c` the corner's
+ *  index). A cut face. */
+export function flat(m, pts, mat = 0, uvOf = planUv) {
+  const P = pts.map((p) => p.map(r4)), n = newell(P);
+  return m.face(P, mat, P.map((p, c) => [n, uvOf(p, n, c).map(r4)]));
+}
+/** A flat face over `pts` wound to face `want` (a direction - its corners taken in either order). */
+export function facing(m, pts, want, mat = 0, uvOf = planUv) {
+  const n = newell(pts.map((p) => p.map(r4)));
+  return flat(m, n[0] * want[0] + n[1] * want[1] + n[2] * want[2] < 0 ? pts.slice().reverse() : pts, mat, uvOf);
+}
+/** A BOX on mesh `m` from (x0, y0, z0) to (x1, y1, z1), every face out and flat, its UVs `uvOf` (planUv by default); the
+ *  faces `skip` names ('-x', '+x', '-y', '+y', '-z', '+z') left off. */
+export function block(m, x0, y0, z0, x1, y1, z1, mat = 0, uvOf = planUv, skip = []) {
+  const p = [[x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0], [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]];
+  const F = { '-z': [0, 3, 2, 1], '+z': [4, 5, 6, 7], '-y': [0, 1, 5, 4], '+y': [2, 3, 7, 6], '-x': [0, 4, 7, 3], '+x': [1, 2, 6, 5] };
+  for (const [k, f] of Object.entries(F)) if (!skip.includes(k)) flat(m, f.map((i) => p[i]), mat, uvOf);
+  return m;
+}
+/**
+ * A LEVEL FLOOR OF CELLS on mesh `m`: the rectangles between consecutive `xs` and `ys` that `keep(x0, y0, x1, y1)` keeps,
+ * at height `z`, facing up (down with `down`) - every edge two cells share one edge, so the outline is one loop with no
+ * T-junction (a marker's - floor.*, ceil.* - or a drawn floor's). UVs the plan's unless `uvOf`.
+ */
+export function cells(m, xs, ys, z, keep = () => true, mat = 0, { down = false, uvOf = planUv } = {}) {
+  for (let j = 0; j + 1 < ys.length; j++) {
+    for (let i = 0; i + 1 < xs.length; i++) {
+      const x0 = xs[i], x1 = xs[i + 1], y0 = ys[j], y1 = ys[j + 1];
+      if (!keep(x0, y0, x1, y1)) continue;
+      const q = [[x0, y0, z], [x1, y0, z], [x1, y1, z], [x0, y1, z]];
+      flat(m, down ? q.reverse() : q, mat, uvOf);
+    }
+  }
+  return m;
+}
+/**
+ * A SHELL on mesh `m`: two grids on one lattice (i in 0..cols, j in 0..rows) - the INNER face at `inner(i, j)`, its
+ * normals toward the cavity (cross(d/di, d/dj); `flipIn` turns it), and the OUTER face at `outer(i, j)`, its normals away -
+ * with the cells `hole(i, j)` names taken out of both, and every edge between a kept cell and a taken one closed by a RIM
+ * from the inner edge to the outer (flat, facing into the hole): the rock round an opening onto the sky, a dome's broken
+ * edge. The cells `cut(i, j)` names leave the inner face alone and close no rim: a doorway its caller frames. Both faces are SMOOTH (each corner's normal its lattice neighbours', as `grid`'s); `ring` closes i round (corner
+ * `cols` is corner 0). Each cell's material slot `matIn(i, j)`, `matOut(i, j)`, each corner's UV `uvIn(i, j, p)`,
+ * `uvOut(i, j, p)`; the rims' `matRim` and `uvRim(p, n)`.
+ */
+export function shell(m, { cols, rows, inner, outer, hole = () => false, cut = () => false, ring = false, flipIn = false, matIn = () => 0, matOut = () => 0, matRim = 0, uvIn, uvOut, uvRim = planUv }) {
+  const lattice = (at) => { const P = []; for (let j = 0; j <= rows; j++) { const row = []; for (let i = 0; i <= cols; i++) row.push((ring && i === cols ? at(0, j) : at(i, j)).map(r4)); P.push(row); } return P; };
+  const PI = lattice(inner), PO = lattice(outer);
+  const at = (P, i, j) => P[Math.max(0, Math.min(rows, j))][ring ? ((i % cols) + cols) % cols : Math.max(0, Math.min(cols, i))];
+  const normal = (P, i, j, s) => {
+    const du = sub(at(P, i + 1, j), at(P, i - 1, j)), dv = sub(at(P, i, j + 1), at(P, i, j - 1)), n = unit(cross(du, dv));
+    return s < 0 ? n.map((c) => -c + 0) : n;
+  };
+  const sIn = flipIn ? -1 : 1;
+  const gone = (i, j) => j < 0 || j >= rows || (!ring && (i < 0 || i >= cols)) ? null : hole(ring ? ((i % cols) + cols) % cols : i, j);
+  for (let j = 0; j < rows; j++) {
+    for (let i = 0; i < cols; i++) {
+      if (hole(i, j)) continue;
+      const q = [[i, j], [i + 1, j], [i + 1, j + 1], [i, j + 1]];
+      const qi = sIn > 0 ? q : q.slice().reverse(), qo = sIn > 0 ? q.slice().reverse() : q;
+      if (!cut(i, j)) m.face(qi.map(([a, b]) => PI[b][a]), matIn(i, j), qi.map(([a, b]) => [normal(PI, a, b, sIn), uvIn(a, b, PI[b][a]).map(r4)]));
+      m.face(qo.map(([a, b]) => PO[b][a]), matOut(i, j), qo.map(([a, b]) => [normal(PO, a, b, -sIn), uvOut(a, b, PO[b][a]).map(r4)]));
+      // the rims: each side of this kept cell that meets a taken one
+      for (const [di, dj, e0, e1] of [[1, 0, [i + 1, j], [i + 1, j + 1]], [-1, 0, [i, j + 1], [i, j]], [0, 1, [i + 1, j + 1], [i, j + 1]], [0, -1, [i, j], [i + 1, j]]]) {
+        if (gone(i + di, j + dj) !== true) continue;
+        const A = PI[e0[1]][e0[0]], B = PI[e1[1]][e1[0]], Ao = PO[e0[1]][e0[0]], Bo = PO[e1[1]][e1[0]];
+        const ci = [0, 1, 2].map((k) => (PI[j][i][k] + PI[j + 1][i + 1][k]) / 2), toward = sub([0, 1, 2].map((k) => (A[k] + B[k]) / 2), ci);
+        let pts = [A, B, Bo, Ao];
+        const n = newell(pts);
+        if (n[0] * toward[0] + n[1] * toward[1] + n[2] * toward[2] < 0) pts = pts.reverse();
+        flat(m, pts, matRim, uvRim);
+      }
+    }
+  }
+  return { inner: PI, outer: PO };
+}
