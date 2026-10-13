@@ -1148,3 +1148,90 @@ dead. What still mints an eye a frame - the bolts (test/bolt_lightning.test.js p
 world.js the banners, the duel wall, the gate's pool and smoke, the omen and the loot lines - is outside the falling
 weather and was left as it stands.
 
+## RAIN-HOURS and RAIN-HEART - a wet day rains for half of it, and a front can sprinkle (2026-10-13)
+
+Mac: *"I feel like it rains too much, also sometimes instead of downpours it should just sprinkle"* - the sprinkle for
+the second time (RAIN-SPRINKLE, `01-Overview/Field-Bugs-2026-10-01.md`, was the first).
+
+**Measured first.** The map's own `weatherAt`, 3,000 places a row over the whole map and twenty years of each season,
+and what falls drawn as the front draws it (`rollPeak` of the place's intensity, at the wander's mean). A woodland
+spring stood under falling rain or a storm 36% of every hour, a swamp's 41%, a jungle's 54%, a summer woodland's 15%.
+Of that wet time 44-56% was drawn at half the rain's profile or more (13,000 drops and up), and 17-22% under 0.15, a
+sprinkle. Two causes, both in the map's law:
+
+- **RAIN-HOURS - a day's odds worn as hours.** The Chronicles' table (`systems/weatherTable.js`, DFU's digit for
+  digit) is the odds of a DAY's weather, and DFU wears the day's word for all of it: a rain day rains twenty-four
+  hours. Slice A solved the map's births to those odds as the share of TIME each word is worn, so the enhanced lane
+  rained as long as DFU's whole rain days. A wet day is a day it rains, not a day of rain.
+- **RAIN-HEART - every front poured at its heart.** WX2 rolled a strength for each shower. On the map's lane slice B
+  put the place's intensity in the roll's place: the system's envelope, falling from its heart out (slice I), placed
+  in the rain's range by RAIN-SPRINKLE's `rollPeak`. The envelope is 1 at every grown system's heart, so every rain
+  front poured there (0.8 of the profile at the wander's mean). A sprinkle was only ever a front's edge, never a rain
+  of its own. And a third or more of the wet time was a thunderstorm, which never sprinkles (WX2's `PRECIP_PEAK.storm`,
+  kept).
+
+**The fix** (`systems/weatherMap.js`):
+- **`WET_HOURS`** (rain 0.5, thunder 0.5), in `targetShares` - the one place the table becomes the map's amounts. The
+  map wears rain and thunder for half their odds. The hours they give up go to the dry words - clear air, cloud, the
+  deck, fog, the desert's sand - each lifted by the one factor, so a climate keeps its character and only rains less.
+  The woodlands' spring: rain 25% -> 12.5%, storms 10% -> 5%, clear air 35% -> 44.4%, cloud 15% -> 19.0%, the deck 10%
+  -> 12.7%, fog 5% -> 6.3%. Snow keeps its odds (the ask was the rain). The classic lane's table and roll are DFU's,
+  untouched.
+- **`STRENGTH`** (rain: [EDGE_INTENSITY, 1]) **and `systemStrength`**. Each rain front is born with its own strength - how
+  hard it falls at its heart - drawn evenly from the heaviest front's edge (0.2: the weakest is a drizzle from heart to
+  edge) to the downpour, and `bandAt` scales the place's intensity by it. It is the front's own draw, from its id
+  (`idHash`, the FNV hash `drawCells` already seeded a front's cells from, now one function for both), never from its
+  node's generator, so no other draw moves. Taken alone, before the calibration moved, it left every system, place,
+  shape and cell of FLOW2's goldens the same bits and scaled each rain intensity by exactly its front's strength. A
+  type with no range falls whole: snow, the sandstorm ("never thin", WEATHER2d), and the storm cell - a cell is born in
+  its front, not on the lattice where a strength is drawn, and the module refuses a strength for one at load.
+
+**Measured after** (the same samples):
+- Wet time halved: the woodlands' spring 36% -> 17%, the swamp's 41% -> 19%, the jungle's 54% -> 26%, a summer
+  woodland's 15% -> 7%.
+- Rain (not the storms): under 0.15 of the profile 27-33% -> 63-71% of it; half the profile or more 21-24% -> 2-3%.
+- All the wet time: a sprinkle 17-22% -> 36-49%; half the profile or more 44-56% -> 29-47%. What stays heavy is the
+  storms, a third to nearly half of the wet time, as before.
+- Heavy hours: a woodland spring's 16% of all hours -> 5%, a jungle spring's 25% -> 8%.
+- A spring's 1,379 fronts over the woodlands: 30.9% with a drizzle's heart (under 0.2), 42.3% a shower's, 26.8% a
+  downpour's (half the profile or more) - where every one poured.
+
+**Pins moved, each by content.**
+- `test/weather3a_weathermap.test.js`, THE CALIBRATION GATE: holds the sampled map to the row as the map wears it
+  (`targetShares`), and `test/rainhours.test.js` holds that law to the Chronicles' digits.
+- The same file, the thinning pin: it named the swamp's spring, which had thinned nothing since slice G - its rain
+  front's cloud skirt read 0.9999999999999993 of its share, a rounding residue the pin passed on. It now names the
+  woodlands' summer deck (0.78 of its share) and the desert's (none), and the swamp's spring is the row that keeps the
+  whole shape.
+- The same file, PRIORITY: its oracle read each system at its centre's distance, a disc, where the law reads the
+  system's own measure (`radialOf`, slice H). On the moved map five of its thirty probes fell where a shape turns a
+  band, and in every one the shaped read agreed with the worn word. Its ground-law half probed one line at one minute,
+  which the moved map no longer rains on, and `WEATHER3a-ground-after-priority` survived it: each probe is now a place
+  the bare map rains on (twenty at least).
+- `test/disc20.test.js`, DISC20-D: the report's afternoon grew a real storm in its four game hours (218 strikes, every
+  one where the map paints thunder). The same minute about 600 km east is the report's condition on the map as it
+  stands: sunny, 11 clipped cells in range, no strike - and 208 strikes and 6 claps with the clip gate dropped.
+- `test/flow2_fast_tests.test.js`: the sky's and the cells' goldens taken again under the new law.
+- `test/weather3a_weathermap.test.js`, THE LAW SOLVES THE TABLE: the day's shares are now taken by the Cox law written
+  out in the test as well as by the module's own. With the storms halved, the gate's 2.6 points no longer told a linear
+  cell law from the true one (the solve then 1.5 points off), and `WEATHER3g-cells-linear` survived until this check.
+
+**The sweep.** Every mutant record judged by a test that reads the weather law was run against the merged head: 700,
+from 44 lists. 698 died. The two that lived were both WEATHER3g's, both judged by weather3a's file. One was
+`WEATHER3g-cells-linear`, which the check above now kills. The other, `WEATHER3g-front-covers-only-rain`, is recorded
+equivalent, measured: the day's re-aim absorbs a flat solve that leaves the cells out of the fronts' mean (every row's
+weights within 1e-4 of themselves, every share of the day within 1e-6 by the Cox law written out). Its one kill before
+was the thinning pin's rounding residue.
+
+**Scope.** The enhanced lane's world weather map only - on by default, and always online. The classic lane is DFU's,
+1:1. Off the map's lane (the `weather-events` row off - "Off uses the classic weather, the same everywhere in the
+region" - or `?wxmap=off`) the zones' words keep DFU's odds, and WX2's per-shower roll already varies their strength.
+The rain a winter table rolls is halved with the rest wherever it falls, as snow too on a ground that wears it
+(WEATHER2a): a woodland winter snows 30% of its hours where it snowed 35%; a mountain winter's 35% and a swamp
+winter's 15% stand.
+A thunderstorm is still a storm, half as often and never a sprinkle: `WET_HOURS.thunder` is the knob if storms should
+be rarer than rain.
+
+Pinned by `test/rainhours.test.js` (4); `tools/mutants/rainhours.json`, 9, all dead; `weather3a.json` 14/14;
+`weather3g.json` 15 dead and 1 equivalent as recorded.
+

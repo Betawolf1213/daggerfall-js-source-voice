@@ -19,5 +19,7 @@
  "swing": "Schlag",
  "level": "Stufe",
  "hit": "Treffer",
- "dmg": "Schaden"
+ "dmg": "Schaden",
+ "abandon (a quest)": "aufgeben",
+ "reclaim (a quest)": "zurückholen"
 }

@@ -176,5 +176,7 @@
  "backup": "백업",
  "party": "파티",
  "mute": "채팅 금지",
- "moderator": "관리자"
+ "moderator": "관리자",
+ "abandon (a quest)": "포기",
+ "reclaim (a quest)": "되찾기"
 }

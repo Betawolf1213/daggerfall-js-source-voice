@@ -183,5 +183,7 @@
  "Space (key)": "Espacio",
  "use key": "tecla de usar",
  "hotbar": "barra rápida",
- "quick slot": "acceso rápido"
+ "quick slot": "acceso rápido",
+ "abandon (a quest)": "abandonar",
+ "reclaim (a quest)": "recuperar"
 }

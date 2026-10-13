@@ -147,5 +147,7 @@
  "glyph": "glyf",
  "home": "hjem",
  "rent": "husleje",
- "letterbox": "postkasse"
+ "letterbox": "postkasse",
+ "abandon (a quest)": "opgive",
+ "reclaim (a quest)": "genoptage"
 }

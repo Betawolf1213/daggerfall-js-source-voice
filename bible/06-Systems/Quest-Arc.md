@@ -6598,3 +6598,29 @@ it runs (`twin`); a reclaim relinks at once what stands of it and its topics; a 
 
 `test/questshelf.test.js` (5); `tools/mutants/questshelf.json` (58), all dead. PINS MOVED: `test/questbridge.test.js`,
 `test/rest8_questwaits.test.js`, `test/journal_clean.test.js`, `test/time3_quests.test.js`, `test/enhancedPause.test.js`.
+
+## QUEST-SHELF-MAIN - the chronicle's Abandon, on every quest but the main story's (2026-10-13)
+
+Dudey: *"Now i need an Abandon button for all quests except main quest"*, then *"leave the main quest logic untouched"*.
+QUEST-SHELF's Abandon stood in the pause window's Quests tab alone; the chronicle - the window the L key opens - carried
+an Abandon only for a bounty and a revenant's hunt.
+
+- **The chronicle's Abandon** (`ui/enhancedChronicle.js`): every running quest that is not the main story's (the rail's
+  `main`, `questLists.js isMainQuestName` - the `S0000` lines, Brisienna's), a bounty or a hunt (each of those keeps its
+  own) draws Abandon in its header where the bridge's door allows it (`canAbandon`) - pressed twice, BOUNTY1's arming
+  (`bountyArmed`, the quest's as `q:<uid>`), through QUEST-SHELF's own `journalClean.abandon`; what it said stands over
+  the quests (`shelfWord`, cleared on mount). The quest leaves the chronicle's list (it shows no quest set aside) and is
+  reclaimed from the pause tab's Abandoned list, as the words say.
+- **Its words are the text core's** (L10N4, `06-Systems/Localization-Arc.md`): the label, the armed label, the title and
+  both aria-labels are `chronicle.quests.*`, read when the button is drawn, and drafted in the thirteen whole languages.
+  The bounty's and the hunt's Abandons beside it are still English, among the file's 35 literals the ratchet holds.
+- **The main quest's logic is untouched**: the machine's ladder is QUEST-SHELF's (the world's own `PROTECTED_QUESTS`
+  refused, the main story's other quests not), and the pause tab still offers Abandon where it did.
+- **THE FOUR HOSTS.** Each chronicle builder hands the bridge's `journalClean` as `shelfDoor` (its own name - the pause
+  windows' `journalClean` count is JOURNAL-CLEAN's pin): the streaming world (`scenes/world.js makeJournalWindow`), the
+  fixed town (`scenes/exterior.js questJournalHooks`), the interiors through their outer host's builder
+  (`scenes/worldModes.js` opens `host.makeJournal` - the world's, or the town's in the fixed town) and the dungeon
+  (`scenes/dungeonContext.js questJournalHooks`). The classic skin's logbook is DFU's native window and draws no button
+  (THE NATIVE-WINDOW RULE).
+
+`test/questshelfmain.test.js` (4); `tools/mutants/questshelfmain.json` (14), all dead.

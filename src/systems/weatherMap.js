@@ -42,9 +42,10 @@
 // Chronicles' odds per climate and season, weatherTable.js), that fixes
 // every mu, and the structure's band volumes turn the mus into birth
 // weights, solved top priority down (`birthLaw`). The table stays
-// the law of HOW MUCH weather a climate gets; the map decides WHERE and
-// WHEN. The calibration test samples the map and holds the shares to
-// the table.
+// the law of HOW MUCH weather a climate gets - as the map wears it, rain
+// and thunder for WET_HOURS of their odds (RAIN-HOURS, `targetShares`);
+// the map decides WHERE and WHEN. The calibration test samples the map
+// and holds the shares to the table as worn.
 //
 // PURE. Positions are FIELD METRES (weatherField.js's frame: a map
 // pixel is TERRAIN_SIZE on a side, x east, z north), time is absolute
@@ -222,13 +223,32 @@ export function coreVolume(type) {
 
 // ---- the calibration: the table's shares to the birth law ------------
 
+/**
+ * RAIN-HOURS (Mac, 2026-10-13: "I feel like it rains too much"): THE SHARE OF A WET DAY'S HOURS ITS WORD FALLS. The
+ * Chronicles' odds are a DAY's weather, and DFU wears the day's word for all of it - a rain day rains twenty-four
+ * hours. The map took the odds as the share of TIME each word is worn, so a woodland spring was under falling rain 36%
+ * of every hour, a swamp's 41% and a jungle's 54%, about a third of it a storm. A wet day is a day it rains, not a day
+ * of rain: the map wears rain and thunder for this share of their odds, and the hours they give up go to the climate's
+ * own dry weather - clear air, cloud, the deck, fog, the desert's sand - each in proportion to its odds, so a climate
+ * keeps its character and only rains less. Snow keeps its odds: the ask was the rain.
+ */
+export const WET_HOURS = Object.freeze({ rain: 0.5, thunder: 0.5 });
+/** The words that take the hours the falling words give up, beside clear air (the share no system paints). */
+const DRY_WORDS = Object.freeze(['cloudy', 'overcast', 'fog', 'sandstorm']);
+
 /** The table's row (compiled order [Sunny, Cloudy, Overcast, Fog, Rain,
- *  Snow, Thunder], per cent) as the target share of each worn word. */
+ *  Snow, Thunder], per cent) as the target share of each worn word - the
+ *  falling words worn for their WET_HOURS (RAIN-HOURS). */
 export function targetShares(table, season) {
   const row = table?.[season];
   if (!row) return null;
   const t = { thunder: row[6] / 100, rain: row[4] / 100, snow: row[5] / 100, sandstorm: 0, fog: row[3] / 100, overcast: row[2] / 100, cloudy: row[1] / 100 };
   if (table === WEATHER_TABLE.desert) { t.sandstorm = t.cloudy * SAND_SHARE_OF_CLOUDY; t.cloudy -= t.sandstorm; }
+  // RAIN-HOURS: the falling words give up the hours they no longer fall, and the dry words share them by their odds
+  let freed = 0;
+  for (const [w, k] of Object.entries(WET_HOURS)) { freed += t[w] * (1 - k); t[w] *= k; }
+  const dry = row[0] / 100 + DRY_WORDS.reduce((sum, w) => sum + t[w], 0);
+  if (dry > 0) for (const w of DRY_WORDS) t[w] *= 1 + freed / dry;
   return t;
 }
 
@@ -502,9 +522,10 @@ function poisson(lambda, r) {
 }
 
 /** The births of `type` in node (gx, gz, gt) of its own lattice: the kept
- * candidates, each { type, id, bornX, bornZ, bornAt, life, core, rings } -
+ * candidates, each { type, id, bornX, bornZ, bornAt, life, core, rings, strength } -
  * `core` its core radius at full growth, `rings` as the birth law made
- * them where and when it was born. Pure over climateAt. */
+ * them where and when it was born, `strength` how hard it falls at its
+ * heart (RAIN-HEART, `systemStrength`). Pure over climateAt. */
 export function birthsIn(type, gx, gz, gt, climateAt) {
   return memoised(`${type}:${gx}:${gz}:${gt}`, climateAt, () => drawBirths(type, gx, gz, gt, climateAt));
 }
@@ -536,6 +557,14 @@ function memoised(key, climateAt, draw) {
 let _births = new WeakMap();
 export const BIRTHS_MEMO = 40000;
 
+/** A system's id as a seed (FNV-1a over its characters): a front's cells are drawn from it, and a system's strength
+ *  (RAIN-HEART, `systemStrength`). */
+function idHash(id) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 0x01000193);
+  return h;
+}
+
 function drawBirths(type, gx, gz, gt, climateAt) {
   const ceiling = ceilings()[type];
   if (!(ceiling > 0) || SYSTEM_TYPES[type].parent) return [];   // a cell type is born in its fronts (cellsOf), not on a lattice
@@ -555,11 +584,13 @@ function drawBirths(type, gx, gz, gt, climateAt) {
     const hour = (((skyBorn % 1440) + 1440) % 1440) / 60;
     if (!law || keep * ceiling >= law.weight[type] * diurnal(type, hour, season)) continue;
     const shape = shapeOf(type, u1, u2, u3, u4, u5, u6);
+    const id = `${type}:${gx}:${gz}:${gt}:${i}`;
     out.push(Object.freeze({
-      type, id: `${type}:${gx}:${gz}:${gt}:${i}`, bornX, bornZ, bornAt, shape,
+      type, id, bornX, bornZ, bornAt, shape,
       core: spec.core[0] + rc * (spec.core[1] - spec.core[0]),
       life: spec.life[0] + rl * (spec.life[1] - spec.life[0]),
       rings: law.rings[type],
+      strength: systemStrength(type, id),   // RAIN-HEART: drawn from the id, never from `r` - no candidate's draws move
     }));
   }
   return out;
@@ -582,9 +613,7 @@ function drawCells(front, climateAt) {
   const ceiling = ceilings()[type];
   if (!(ceiling > 0)) return [];
   const fspec = SYSTEM_TYPES[front.type], spec = SYSTEM_TYPES[type];
-  let h = 0x811c9dc5;
-  for (let i = 0; i < front.id.length; i++) h = Math.imul(h ^ front.id.charCodeAt(i), 0x01000193);
-  const r = seededRng((h ^ Math.imul(TYPE_SALT[type], 2971215073) ^ WORLD_SEED) >>> 0);
+  const r = seededRng((idHash(front.id) ^ Math.imul(TYPE_SALT[type], 2971215073) ^ WORLD_SEED) >>> 0);
   const reach = front.core * shapeBound(front.shape) + spec.core[1] * shapeMax(type), lead = spec.life[1];
   const n = poisson(ceiling * Math.PI * reach * reach * (lead + front.life), r);
   const out = [];
@@ -719,15 +748,34 @@ export function systemsNear(x, z, minutes, climateAt, range = 0) {
  *  the heart, a fifth of it at the core's edge, so walking in from the
  *  edge thickens a drizzle into the downpour; the rings beyond hold the
  *  edge's fifth. Over the core's area the intensity is uniform on
- *  [0.2, 1] x env. (Measured over the whole outline instead, a grown
+ *  [0.2, 1] x env x the system's STRENGTH (RAIN-HEART, below; 1 for a
+ *  system with none). (Measured over the whole outline instead, a grown
  *  front's rain never fell below 0.73: heavy to its very edge.) */
 export const EDGE_INTENSITY = 0.2;
+/**
+ * RAIN-HEART (Mac, 2026-10-13: "sometimes instead of downpours it should just sprinkle"): HOW HARD A SYSTEM FALLS AT
+ * ITS HEART, as a share of the heaviest - a range per type, and each system's strength drawn evenly in it from its own
+ * id (`systemStrength`), never from its node's generator, so no other draw moves. WEATHER3b put the place's intensity where
+ * WX2's roll per shower had stood, and the envelope is 1 at every grown system's heart: every rain front poured there,
+ * and a sprinkle was only ever a front's edge. A rain front's heart now falls anywhere from the heaviest front's edge
+ * (EDGE_INTENSITY: the weakest is a drizzle from heart to edge) to the downpour. A type with no range falls whole: a
+ * snow front, the sandstorm ("never thin", WEATHER2d) and the storm - a storm cell is born in its front (CELL_OF), not
+ * on the lattice where a strength is drawn, and a storm never sprinkles (weatherFront.js PRECIP_PEAK).
+ */
+export const STRENGTH = Object.freeze({ rain: Object.freeze([EDGE_INTENSITY, 1]) });
+for (const t of Object.keys(STRENGTH)) if (!SYSTEM_TYPES[t] || SYSTEM_TYPES[t].parent) throw new Error(`weatherMap: a strength for ${t}, which is not born on the lattice`);
+const STRENGTH_SEED = 0x53545247;   // 'STRG'
+/** A system's strength: its type's range (STRENGTH) placed by its id's own draw; 1 for a type with none. */
+export function systemStrength(type, id) {
+  const range = STRENGTH[type];
+  return range ? range[0] + (range[1] - range[0]) * seededFirst((idHash(id) ^ STRENGTH_SEED) >>> 0) : 1;
+}
 export function bandAt(s, d) {
   if (!(d < s.r)) return null;
   const band = s.bands.find(([outer]) => d < outer);
   const core = s.bands[0][0];
   const f = core > 0 ? Math.min(1, d / core) : 1;   // a core of no size is all edge (never NaN)
-  return band ? { word: band[1], intensity: s.env * (1 - (1 - EDGE_INTENSITY) * f * f) } : null;
+  return band ? { word: band[1], intensity: (s.strength ?? 1) * s.env * (1 - (1 - EDGE_INTENSITY) * f * f) } : null;
 }
 
 /** Whether (x, z) is within a system's `clip` (a cell's front core now);

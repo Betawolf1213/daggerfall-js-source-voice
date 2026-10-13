@@ -30,6 +30,7 @@ import { breakableNote } from '../systems/notebook.js';   // JOURNAL1: a note th
 import { pageOfNote, pageRefusalText } from '../net/journalPage.js';   // JOURNAL1: a note as the page it would be shown as, or why it cannot be
 import { isBountyQuestId, abandonBountyQuest, shareBountyQuest, bountyQuestShareable } from '../systems/bountyJournal.js';   // BOUNTY1: a bounty's Abandon and Share
 import { isHuntQuestId, abandonHuntQuest } from '../systems/huntJournal.js';   // RVN7c: a revenant's hunt - its Abandon
+import { t } from '../systems/textManager.js';   // L10N4: QUEST-SHELF-MAIN's words in the player's language, read when they are drawn
 
 const el = (tag, cls, text) => {
   const n = document.createElement(tag);
@@ -48,6 +49,7 @@ let draft = '';   // PX24b: the note being written, kept across renders
 let sharing = null;
 let shareWord = '';
 let bountyArmed = null;   // BOUNTY1: the bounty whose Abandon was pressed once
+let shelfWord = '';   // QUEST-SHELF-MAIN: what the last Abandon said ("Abandoned: ..." or why not), above the quests
 // MAC-F (Mac: "Quests and their tabs should be able to be minimized").
 // WHICH CARDS THE PLAYER HAS SHUT, as `section:index`. A quest's whole
 // trail is its body and twelve of them is a wall of text; the classic
@@ -454,6 +456,7 @@ function render() {
       compose.append(input, add);
       detail.append(compose);
     }
+    if (section === 'quests' && shelfWord) detail.append(el('p', 'px-note cr-shelfword', shelfWord));   // QUEST-SHELF-MAIN
     if (!rows.length) {
       detail.append(el('p', 'px-note', section === 'notes' ? 'Nothing written yet.'
         : (section === 'quests' ? 'No active quests.' : 'No messages yet.')));
@@ -565,6 +568,25 @@ function render() {
           };
           top.append(ab);
         }
+        // QUEST-SHELF-MAIN (2026-10-13, Dudey: "an Abandon button for all quests except main quest"): every other running
+        // quest's Abandon (twice, BOUNTY1's arming) - QUEST-SHELF's own door (scenes/questBridge.js journalClean.abandon:
+        // set aside, kept, reclaimed from the pause window's Quests tab), drawn where it may be (`canAbandon` - never the
+        // main story's, a raid the sea runs, or one ending). A bounty's and a hunt's keep their own above.
+        const clean = section === 'quests' && e.uid != null && !e.main && !isHuntQuestId(e.uid) && !isBountyQuestId(e.uid)
+          ? deps.shelfDoor?.() : null;
+        if (clean?.abandon && clean.canAbandon?.(e.uid)) {
+          const armed = bountyArmed === `q:${e.uid}`;
+          const ab = el('button', 'cr-rm cr-share', armed ? t('chronicle.quests.abandonArmed', 'Click again') : t('chronicle.quests.abandon', 'Abandon'));
+          ab.title = t('chronicle.quests.abandonTitle', 'Give up this quest for now - reclaim it from the pause menu\'s Quests tab');
+          ab.setAttribute('aria-label', armed ? t('chronicle.quests.abandonArmedLabel', 'Click again to abandon this quest') : t('chronicle.quests.abandonLabel', 'Abandon this quest'));
+          ab.onclick = () => {
+            if (bountyArmed !== `q:${e.uid}`) { bountyArmed = `q:${e.uid}`; render(); return; }
+            bountyArmed = null;
+            shelfWord = clean.abandon(e.uid)?.text ?? '';
+            render();
+          };
+          top.append(ab);
+        }
         if (section === 'quests' && e.uid != null && !e.main && !isBountyQuestId(e.uid) && !isHuntQuestId(e.uid)
           && (deps.partyMembers?.() ?? []).length) {
           const share = el('button', 'cr-rm cr-share', 'Share');
@@ -652,6 +674,7 @@ export function mountEnhancedChronicle(hostEl, d = {}) {
   draft = '';
   sharing = null; shareWord = '';   // JOURNAL1: a fresh open shares nothing yet
   bountyArmed = null;   // AUDIT 28 B11: an armed Abandon never outlives the visit it was armed on
+  shelfWord = '';   // QUEST-SHELF-MAIN: nor what the last one said
   folded.clear();   // MAC-F: a fresh open reads whole, as it always has
   render();
   window.addEventListener('keydown', onKey, true);

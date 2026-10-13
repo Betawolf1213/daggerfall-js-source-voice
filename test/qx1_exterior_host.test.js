@@ -729,6 +729,7 @@ test('QX1: the pause window\'s Quests tab reads the machine, and BOTH pauses rea
       active: [{ id: '5', name: 'A Small Debt', questName: '_BRISIEN', clockSeconds: 120, messages: [{ id: 1010 }, { id: 1020 }] }],
       finished: ['a finished one'],
     }),
+    journalClean: { abandon: () => ({ ok: true, text: '' }), canAbandon: () => true },   // QUEST-SHELF-MAIN: the pause tab's door
   };
   const live = mount(bridge);
 
@@ -737,8 +738,10 @@ test('QX1: the pause window\'s Quests tab reads the machine, and BOTH pauses rea
   // ROAD-G G2 added the third: HandleQuestClicks' current-location
   // question, which this route answers outright.
   assert.deepEqual(Object.keys(live.questJournalHooks()).sort(),
-    ['currentLocationName', 'notebook', 'questLog', 'questMessages'],
-    'MAC-K2 added questLog - the chronicle\'s Quests section, which is what the L key opens');
+    ['currentLocationName', 'notebook', 'questLog', 'questMessages', 'shelfDoor'],
+    'MAC-K2 added questLog - the chronicle\'s Quests section, which is what the L key opens; QUEST-SHELF-MAIN added shelfDoor');
+  assert.equal(live.questJournalHooks().shelfDoor(), bridge.journalClean,
+    'QUEST-SHELF-MAIN: the chronicle\'s Abandon goes through the bridge\'s own door - the pause tab\'s, not a copy');
   assert.deepEqual(live.questJournalHooks().questLog(), live.pauseQuestLog(),
     'and it is the SAME walk the pause tab takes, not a second one');
   assert.deepEqual(live.questJournalHooks().questMessages(), ['entry-a', 'entry-b']);

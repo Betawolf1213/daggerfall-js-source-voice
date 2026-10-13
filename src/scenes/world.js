@@ -14213,6 +14213,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         : (mode === 'notebook' ? 'notes' : 'quests'),
       questMessages: () => questBridge?.machine.getAllQuestLogMessages() ?? [],
       notebook: () => questBridge?.notebook ?? null,
+      shelfDoor: () => questBridge?.journalClean ?? null,   // QUEST-SHELF-MAIN: the chronicle's Abandon, the pause tab's own door
       // QUEST1: the Share button's own two hooks - named above (with the
       // dungeon delegation this now feeds explained there).
       partyMembers: partyMembersHere,

@@ -178,5 +178,7 @@
  "party": "groupe",
  "raid": "raid",
  "raiders": "pillards",
- "mute": "réduire au silence"
+ "mute": "réduire au silence",
+ "abandon (a quest)": "abandonner",
+ "reclaim (a quest)": "reprendre"
 }

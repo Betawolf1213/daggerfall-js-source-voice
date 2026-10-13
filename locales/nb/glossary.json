@@ -19,5 +19,7 @@
  "swing": "slag",
  "level": "nivå",
  "hit": "treff",
- "dmg": "skade"
+ "dmg": "skade",
+ "abandon (a quest)": "oppgi",
+ "reclaim (a quest)": "ta opp igjen"
 }
