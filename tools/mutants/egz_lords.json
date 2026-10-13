@@ -110,8 +110,8 @@
   {
     "name": "EGZK-the-judge-off-the-ground",
     "file": "src/net/egLords.js",
-    "old": "judge: (f, bodies, now) => judgeShapes(f.F, bodies, now, f.spec),",
-    "new": "judge: (f, bodies, now) => judgeShapes(f.F, bodies, now, {}),",
+    "old": "judge: (f, bodies, now) => egChainShared(f.F, judgeShapes(f.F, bodies, now, f.spec), bodies),",
+    "new": "judge: (f, bodies, now) => egChainShared(f.F, judgeShapes(f.F, bodies, now, {}), bodies),",
     "tests": [
       "test/egz_lords.test.js"
     ]
@@ -298,8 +298,8 @@
   {
     "name": "EGZK-the-charge-no-run",
     "file": "src/net/egLords.js",
-    "old": "{ ...CHARGE, range: 40, minGap: 8, w: 2, sp: 900, run: 1, make:",
-    "new": "{ ...CHARGE, range: 40, minGap: 8, w: 2, sp: 900, make:",
+    "old": "{ ...CHARGE, sp: ATTACKS.charge.active, run: 1, make:",
+    "new": "{ ...CHARGE, sp: ATTACKS.charge.active, make:",
     "tests": [
       "test/egz_lords.test.js"
     ]
