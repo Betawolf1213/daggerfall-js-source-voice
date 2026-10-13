@@ -144,6 +144,7 @@ const REFUSAL_WORDS = {
   rehearsed: () => t('account.refusal.rehearsed', 'You have rehearsed the Spire today. A Weir Key opens it again.'),
   spent: () => t('account.refusal.spent', 'That breach is spent.'),
   breach: () => t('account.refusal.breach', 'That breach is not one the Spire knows.'),
+  none: () => t('account.refusal.none', 'The Spire took no key for that.'),   // AUDIT EG IV (lane3 #1): an open asked again (`again`) whose ask never reached it
   // EG-E3: a dungeon elite's find (server-account/src/eg.js findEg)
   tier: () => t('account.refusal.tier', 'That is no dungeon the Spire knows.'),
   capped: () => t('account.refusal.capped', 'The dungeons have given all they will today.'),
@@ -1455,7 +1456,8 @@ export function accountEg({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
   return {
     keys: () => post('/v1/eg/keys', {}),
     // EG-F: the open carries the start window's choice - its start Redoubt `ew` and its Wager `wg` (none: Hall 1, no Wager)
-    open: (rq, rh = false, { ew = 0, wg = [] } = {}) => post('/v1/eg/open', { rq, ...(rh ? { rh: 1 } : {}), ...(ew > 0 ? { ew } : {}), ...(wg?.length ? { wg: [...wg] } : {}) }),
+    // AUDIT EG IV (lane3 #1): `again` - an open whose answer was lost, asked by its own request id for the stake it took alone
+    open: (rq, rh = false, { ew = 0, wg = [], again = false } = {}) => post('/v1/eg/open', { rq, ...(rh ? { rh: 1 } : {}), ...(ew > 0 ? { ew } : {}), ...(wg?.length ? { wg: [...wg] } : {}), ...(again ? { again: 1 } : {}) }),
     /** EG-F: the start window's preflight - which starts each member of my party (`subs`) may make. */
     starts: (subs) => post('/v1/eg/starts', { subs: [...subs] }),
     admit: (b) => post('/v1/eg/admit', { b }),

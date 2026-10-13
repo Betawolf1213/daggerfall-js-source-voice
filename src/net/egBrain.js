@@ -206,6 +206,11 @@ export const EG_LIFELINE_MIN = 0.05;
 export const egLifelineMin = (lv) => EG_LIFELINE_MIN * healRef(clampLv(lv));
 export const EG_HEAL_WORD_MS = 1000;
 export const EG_LIFELINE_LOOK_MS = EG_HEAL_WORD_MS + BRAIN_TICK_MS;
+/** AUDIT EG IV (lane3 #3; section 16.1, AUDIT EG0 A6): how long before a heal word a cast the room relayed from a healer to
+ *  its receiver (ALLY-CAST's directed `cast` frame - the healer's own socket sent it) corroborates the word naming that
+ *  healer for the earner's part (egHeal's `cast`) - the word goes each second (scenes/egClient.js EG_HEAL_SEND_MS) with the
+ *  heals landed since, and a heal lands as its cast frame does. */
+export const EG_HEAL_CAST_MS = 5000;
 /** The names the gate's old frames gave (kept for the tracker's words). */
 export const EG_FOE_NAMES = Object.freeze({ champion: 'The Kynreeve', lord: 'The Lord of the Court' });
 
@@ -469,7 +474,12 @@ export function egEnd(B, why, now, out) {
 function wake(B, now, rng, out) {
   const spec = specOf(B);
   B.sg = 'trial'; B.sa = now; B.su = 0; B.hw = now; B.dn = 0; B.gatherAt = 0; B.gold = 0;
+  const first = !B.wk;
   if (!B.wk) { B.wk = now; B.cnt = { left: egCountNew().left, at: now }; } else B.cnt = egCountRun(B.cnt, now);
+  // AUDIT EG IV (lane3 #11; section 23): THE OPENER WHO NEVER STEPPED IN - the first wake closes the door to them (egAdmits),
+  // so their end is owed now ('empty', nothing cleared): their stake settles by it (the first breach's mercy may hold it, as
+  // any end of the opener's) and their `eg_live` clears, never held three hours by a breach their company plays without them
+  if (first && !B.mem[B.s]?.in) oweEnd(B, B.s, 'empty', now);
   for (const [, m] of living(B)) { m.downH = 0; m.dh = 0; m.late = m.hereH === B.h ? 0 : (m.late ?? 0) + 1; }   // EG-ZI (section 7): THE LATE WAKE - a hall woken before its `here` counted, one in time begins the count again
   B.cache = spec.end && spec.kind !== 'brink' ? egCacheDraw(rng, spec.twist === 'mimic') : null;
   B.F = standFight(B, spec, now, rng, out);
@@ -1981,16 +1991,23 @@ export function egBodyWord(B, sub, v, now, line, enforce = EG_BODY_ENFORCE) {
  * its last EG_HEAL_WORD_MS, so the window runs from that far back to EG_LIFELINE_MS past the word: every blow that could
  * land inside the 3 s of a heal it says, in the struck member's favour as every judge of the relay's is (BODY_MARGIN).
  * Windows a blow can no longer be judged in (EG_TRAIL_MS) are let go. Answers the points believed.
+ * AUDIT EG IV (lane3 #3; section 16.1 - "an idle account pulled from hall to hall earns nothing", AUDIT EG0 A6): A HEALER'S
+ * PART IS CORROBORATED - the receiver's word alone named any entered member its healer, so a modified client made an idle
+ * companion an earner with one forged word a hall. A healer's believed heal is its part in the hall (`hh`, egActiveIn) only
+ * where `cast(by)` says the room relayed a cast from that healer's own socket to this member within EG_HEAL_CAST_MS (the
+ * room's record - server/src/index.js `_egCastSaw`); none given, none is. The recap's healing, the count's mend and Lifeline
+ * read the word as before.
  * @param {any} B @param {string} sub @param {Array<[string, number]>} pairs @param {number} now @param {{depth: number, perS: number}} line @param {boolean} [enforce]
+ * @param {(by: string) => boolean} [cast]
  */
-export function egHeal(B, sub, pairs, now, line, enforce = EG_BODY_ENFORCE) {
+export function egHeal(B, sub, pairs, now, line, enforce = EG_BODY_ENFORCE, cast = () => false) {
   const m = B.mem[sub], list = Array.isArray(pairs) ? pairs : [];
   const under = !!m && ((m.bd?.v ?? 1) < EG_LIFELINE_UNDER || now - (m.lowAt ?? -Infinity) <= EG_LIFELINE_LOOK_MS);
   const had = list.map(([by]) => B.mem[by]?.ht ?? 0);
   const got = egTallyHeal(B, sub, pairs, now);
   if (got > 0) bodyHealed(B.mem[sub], got / healRef(B.mem[sub].lv) / egCountWhole(B.mem[sub].vs), now, line, { enforce });   // EG-ZS: a share of the whole, Stoneskin's cushion in it
   // AUDIT EG III (lane2 #3): each healer's believed heal in this hall, a share of its receiver's body (section 16.1's part)
-  if (got > 0) list.forEach(([by], i) => { const q = B.mem[by], d = (q?.ht ?? 0) - had[i]; if (d > 0) q.hh = (q.hh ?? 0) + d / healRef(B.mem[sub].lv); });
+  if (got > 0) list.forEach(([by], i) => { const q = B.mem[by], d = (q?.ht ?? 0) - had[i]; if (d > 0 && cast(by)) q.hh = (q.hh ?? 0) + d / healRef(B.mem[sub].lv); });   // AUDIT EG IV (lane3 #3): a healer the room saw cast on this member alone
   if (under && got > 0) {
     // the strongest Lifeline among the healers whose heal was believed (its credit rose) - AUDIT EG III: by a heal worth a
     // window (EG_LIFELINE_MIN of the member's reference body)

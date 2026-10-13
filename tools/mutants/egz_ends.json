@@ -576,8 +576,8 @@
   {
     "name": "EGZM-letter-the-days-unsaid",
     "file": "server-account/src/eg.js",
-    "old": "replace(?5, '{day}', strftime('%Y-%m-%d', at, 'unixepoch'))",
-    "new": "?5",
+    "old": "replace(CASE WHEN EXISTS (SELECT 1 FROM eg_runs r WHERE r.b = eg_stakes.b AND r.account = eg_stakes.account) THEN ?7 ELSE ?5 END, '{day}', strftime('%Y-%m-%d', at, 'unixepoch'))",
+    "new": "CASE WHEN EXISTS (SELECT 1 FROM eg_runs r WHERE r.b = eg_stakes.b AND r.account = eg_stakes.account) THEN ?7 ELSE ?5 END",
     "tests": [
       "test/egz_ends_stake.test.js"
     ]
@@ -585,8 +585,8 @@
   {
     "name": "EGZM-letter-the-ends-day",
     "file": "server-account/src/eg.js",
-    "old": "replace(?5, '{day}', strftime('%Y-%m-%d', at, 'unixepoch'))",
-    "new": "replace(?5, '{day}', strftime('%Y-%m-%d', until, 'unixepoch'))",
+    "old": "END, '{day}', strftime('%Y-%m-%d', at, 'unixepoch'))",
+    "new": "END, '{day}', strftime('%Y-%m-%d', until, 'unixepoch'))",
     "tests": [
       "test/egz_ends_stake.test.js"
     ]

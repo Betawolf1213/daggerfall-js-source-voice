@@ -217,7 +217,10 @@ test('EG-PLAY THE WORKER: an `eg:` key that is not a breach\'s mints no object (
   const post = (body) => r.room.fetch(new Request('https://relay.internal/internal/eg/open', { method: 'POST', body: JSON.stringify(body) }));
   const a = await post(tell);
   assert.equal(a.status, 200);
-  assert.deepEqual(await (await post(tell)).json(), { ok: true, seed: 9, op: T0, egv: EG_SPEC });   // PIN MOVED (EG-H2): the room answers the law it opened under - the hub's live list keeps it (Elite-Gates.md section 22)
+  // PIN MOVED (EG-H2): the room answers the law it opened under - the hub's live list keeps it (Elite-Gates.md section 22).
+  // PIN MOVED (AUDIT EG IV, lane3 #12): it held `{ ok, seed, op, egv }` - the room answers the company and the site it froze
+  // too, and a retried open calls them, never the party as the retry finds it
+  assert.deepEqual(await (await post({ ...tell, co: [['acct-mac', 'Mac', 1], ['acct-ann', 'Ann', 2]] })).json(), { ok: true, seed: 9, op: T0, egv: EG_SPEC, co: [['acct-mac', 'Mac', 1]], site: SITE });
   assert.equal((await post({ ...tell, ez: 'y'.repeat(20) })).status, 409);
   assert.equal((await post({ ...tell, co: [] })).status, 400);
   assert.ok(Room);

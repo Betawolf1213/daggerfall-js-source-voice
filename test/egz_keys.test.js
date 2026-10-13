@@ -289,7 +289,10 @@ test('EG-ZA THE RECEIPTS HELD AT THE HUB (section 23, step 5): every receipt a r
     assert.equal(egRcLive(hub.store.get(egRcKey('acct-ann')), Math.floor(Date.now() / 1000)).length, 0, 'the spent mark stands over it');
     // a tell naming another's receipt, or another breach's, is kept for nobody
     await hub.room.fetch(new Request(`https://relay.internal${EG_INTERNAL_RCPT}`, { method: 'POST', body: JSON.stringify({ b: B2, rc: [['acct-ann', r], ['acct-mac', r]], here: [] }) }));
-    assert.equal(hub.store.get(egRcKey('acct-mac')), undefined);
+    // PIN MOVED (AUDIT EG IV, lane3 #11): it held `undefined` - Mac, the opener who never stepped in, is owed his own end at
+    // the first wake now ('empty'), so the hub holds his; Ann's receipt is held for him still never
+    assert.ok(!(hub.store.get(egRcKey('acct-mac')) ?? []).some((x) => x.r === r), 'another\'s receipt kept for nobody');
+    assert.deepEqual(egRcLive(hub.store.get(egRcKey('acct-mac')), Math.floor(Date.now() / 1000)).map((x) => [readEgReceipt(x).q, readEgReceipt(x).why, readEgReceipt(x).h]), [['x', 'empty', 0]], 'the opener\'s own end, nothing cleared');
     // the sweep: past every receipt's life, the account's key forgotten
     step(8 * 24 * 3600 * 1000);
     await hub.room._sweepHub(Date.now());

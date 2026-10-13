@@ -3,7 +3,7 @@
 --   npx wrangler d1 migrations apply daggerfall-accounts --remote
 --
 -- Applied exactly once through the `d1_migrations` ledger, which the deploy runs (ACC1-CI). Deploy this service
--- (acct127) with the relay (world200 opens the breaches and signs their `e1` receipts) and the site.
+-- (acct127) with the relay (world201 opens the breaches and signs their `e1` receipts) and the site.
 --
 -- Mac: "an endless procedural breach for a party of 8 ... keys ... checkpoints". Design:
 -- bible/11-Multiplayer/Elite-Gates.md sections 5 and 23.
@@ -67,6 +67,16 @@ CREATE INDEX IF NOT EXISTS idx_eg_runs_account ON eg_runs (account);
 -- THE LAUNCH GIFT (section 5): every account that has closed a Dagon's Breach (a recorded kill, never the rite alone)
 -- holds one key when this lands.
 UPDATE players SET eg_keys = eg_keys + 1 WHERE EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = players.id AND g.earned != 'rite');
+-- AUDIT EG IV (lane3 #4, lane9 #24): AND ITS LETTER - the same accounts, one piece of the server's post each (0093's table,
+-- HOURS-FIRST's send in 0094: INSERT OR IGNORE over its one-a-batch index), batch `spire-launch`, no item - the key is the
+-- balance's, counted above. Its words are server-account/src/eg.js EG_LAUNCH_POST's (test/egaudit4_net_service.test.js).
+INSERT OR IGNORE INTO server_post (id, to_id, batch, sender, subject, body, item, sent_at)
+SELECT lower(hex(randomblob(12))), p.id, 'spire-launch', 'The Developers', 'From the Battlespire', 'For the Dagon''s Breach you closed, the Battlespire sends you a Weir Key - one of its portal keys, surrendered to the Kyn in 3E 398. It is already in your pack.
+
+Use it under open sky, away from any town, to open an Elite Breach: your party is called with you, and the Spire''s halls go down as deep as you can take them.
+
+- The Developers', NULL, CAST(strftime('%s', 'now') AS INTEGER)
+FROM players p WHERE EXISTS (SELECT 1 FROM gate_kills g WHERE g.account = p.id AND g.earned != 'rite');
 -- EG-E2 (2026-10-12, Mac: "I said I want everything"; Elite-Gates.md sections 19 and 20) - THE FEATS, THE ANNALS, THE
 -- HONOURS AND THE BOARDS (server-account/src/egHonours.js).
 --   eg_annals   the Annals of 3E 398's pages the account was given (bit p page p - net/egAnnals.js), OR'ed at each end

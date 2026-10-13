@@ -37,8 +37,9 @@
 //   - THE DEPTHS: every account, the deepest hall it cleared this season from any start, its start Redoubt and its Wager.
 //   - THE DEEPEST REDOUBTS: every account, all time, the deepest Redoubt it ever took and when.
 // SPIRE CHAMPION: each Descent bracket's top ten at a season's end hold it through the next season - kept in
-// `eg_champions` the first time a read in the new season finds the last one unkept (a board, a token's mint, a badge),
-// and read onto the row (`eg`) at the doors the Iliac Champion is (withEgHonours, withEgHonoursAll).
+// `eg_champions` the first time a read finds the last one unkept (a board, a token's mint, a badge) once the season is a
+// receipt's life past its end (AUDIT EG IV: an end claimed late lands in it until then, and the title follows the
+// standing as it is), and read onto the row (`eg`) at the doors the Iliac Champion is (withEgHonours, withEgHonoursAll).
 //
 // ═══ THE RECAP'S BOARD LINE AND FIRST OF THE SPIRE'S LETTER (EG-ZF) ═
 //
@@ -60,6 +61,7 @@ import { topWithMe, ARENA_BOARD_TOP } from './arena.js';
 import { boardNamesOf } from './boardNames.js';
 import { isSpireFirst } from './titles.js';   // EG-ZF: First of the Spire's list - its letter's addressees
 import { POST_SENDER } from '../../src/net/postLaw.js';   // EG-ZF: the post's sender, as the box shows it
+import { EG_RECEIPT_TTL_S } from '../../src/net/egReceipt.js';   // AUDIT EG IV (lane3 #13): a season's champions kept once its late ends are claimed
 
 /** THE SPIRE'S HONOURS on the row (`players.eg_honours`), a bit each, in section 19's table's order - each a title of
  *  the same id (src/net/identityToken.js TITLES). */
@@ -245,25 +247,33 @@ async function descentOf(db, season) {
  * @param {{ db: any }} ctx @param {number} season
  */
 export async function recordEgChampions({ db }, season) {
-  const { brackets } = await descentOf(db, season);
-  const rows = [];
-  for (const k of EG_BRACKETS) for (const c of brackets[k].slice(0, EG_CHAMPIONS_TOP)) for (const p of c.players) rows.push([k, p]);
+  const rows = championsOf((await descentOf(db, season)).brackets);
   if (!rows.length) return 0;
   const out = await db.batch(rows.map(([k, p]) => db.prepare('INSERT OR IGNORE INTO eg_champions (season, bracket, account) VALUES (?1, ?2, ?3)').bind(season, k, p)));
   return out.reduce((s, r) => s + Number(r?.meta?.changes ?? 0), 0);
+}
+/** A season's Descent brackets' top EG_CHAMPIONS_TOP companies, every member: `[bracket, account]`. Pure. */
+function championsOf(brackets) {
+  const rows = [];
+  for (const k of EG_BRACKETS) for (const c of brackets[k].slice(0, EG_CHAMPIONS_TOP)) for (const p of c.players) rows.push([k, p]);
+  return rows;
 }
 /** One Worker's word of the last season's champions, kept EG_CHAMPION_CACHE_S within the season it was read in. */
 let _champs = { season: 0, at: -Infinity, ids: /** @type {Set<string>} */ (new Set()) };
 /** Tests: the kept word forgotten (AUDIT EG III: and the boards' rankings). */
 export function _resetEgHonoursCache() { _champs = { season: 0, at: -Infinity, ids: new Set() }; egBoardsMoved(); }
-/** The accounts holding Spire Champion at `nowS`: the last season's champions - kept first if that season is unkept. */
+/** The accounts holding Spire Champion at `nowS`: the last season's champions - kept first if that season is unkept.
+ *  AUDIT EG IV (lane3 #13; section 20): kept only once the season is a receipt's life past its end (EG_RECEIPT_TTL_S) - an
+ *  end issued in its last hours may be claimed that much later, and its row lands in that season after the first read;
+ *  until then they are the season's standing as it is, read afresh and never kept. */
 async function championsNow(ctx, nowS) {
   const season = arenaSeasonOf(nowS);
   if (_champs.season === season && nowS - _champs.at < EG_CHAMPION_CACHE_S) return _champs.ids;
   const last = season - 1;
   const read = async () => new Set(((await ctx.db.prepare('SELECT account FROM eg_champions WHERE season = ?1').bind(last).all()).results ?? []).map((r) => r.account));
   let ids = new Set();
-  if (last >= 1) {
+  if (last >= 1 && nowS < arenaSeasonEndsS(last) + EG_RECEIPT_TTL_S) ids = new Set(championsOf((await descentOf(ctx.db, last)).brackets).map(([, p]) => p));
+  else if (last >= 1) {
     ids = await read();
     if (!ids.size && (await recordEgChampions(ctx, last)) > 0) ids = await read();
   }

@@ -5526,12 +5526,22 @@ export const EG_BRAIN_MIN = 2;
 /** The breach frames' own bucket: the gate's (a swing through a pack of the legion is a frame a body). */
 export const EG_HZ_MAX = 16;
 export const egGate = (bucket, nowMs) => tokenGate(bucket, nowMs, EG_HZ_MAX);
+/** AUDIT EG IV (lane3 #5): THE HUB'S OWN BREACH WORDS - `open`, `void` and `claimed`, each said about once a minute and each
+ *  a storage write, an Ed25519 verify or calls on another object at the one object every client holds - on a bucket of
+ *  their own at the social acts' rate (SOCIAL_HZ_MAX), its depth a flush's few receipts said together; never the breach
+ *  room's blow bucket (EG_HZ_MAX, a swing through a pack of the legion). At the hub and at home (net/online.js sendEg). */
+export const EG_HUB_HZ_MAX = SOCIAL_HZ_MAX;
+export const EG_HUB_BURST = 8;
+export const egHubGate = (bucket, nowMs) => tokenGate(bucket, nowMs, EG_HUB_HZ_MAX, EG_HUB_BURST);
+/** The breach words the hub takes (anywhere else junk) - the rest are a breach room's. */
+export const EG_HUB_KINDS = Object.freeze(['open', 'void', 'claimed']);
 /** The first relay that opens an Elite Breach - an older one closes the socket on the frame, so none is sent it. */
 export const EG_RELAY_MIN = 197;
 export const relaySupportsEg = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= EG_RELAY_MIN; };
 /** The door the hub opens a breach's room through (HCC-PARK's doors' law - the public worker forwards /room/<key> alone). */
 export const EG_INTERNAL_OPEN = '/internal/eg/open';
-/** Where a breach's room keeps its breach, and where the hub keeps an account's live call (never a swept prefix). */
+/** Where a breach's room keeps its breach, and where the hub keeps an account's live call (AUDIT EG IV, lane3 #9: swept by
+ *  the hub's own sweep once its open window has ended - server/src/index.js _sweepHub). */
 export const EG_KEY = 'egbreach';
 export const egCallKey = (sub) => `egcall:${sub}`;
 /** An order on the wire (net/identityToken.js TOKEN_MAX_CHARS bounds it again where it is opened), a receipt. */

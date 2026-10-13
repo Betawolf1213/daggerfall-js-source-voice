@@ -92,6 +92,7 @@ import { dungeonRoomTag } from './wire.js';   // SD-ONLINE: a dungeon's room car
 import { nativePoseRoom } from './wire.js';   // SLIM-FRAME: the frame a room's poses are in - one home, the relay's slim pose rounds by it
 import { validSdIn, validSdOut, sdGate, sdPzGate, relaySupportsSd, sdFightGate, SD_BRAIN_V } from './wire.js';
 import { validEgIn, validEgOut, egGate, relaySupportsEg, EG_BRAIN_V } from './wire.js';   // EG-PLAY: an Elite Breach's frame - the open to the hub, a member's words to its room; the call, the breach and its fights in
+import { egHubGate, EG_HUB_KINDS } from './wire.js';   // AUDIT EG IV (lane3 #5): the hub's breach words on their own bucket
 import { isEgRoom } from './egLaw.js';   // SD3: the Super dungeon's frame - a find out, the hub's record in; SD6b: a turn out, the realm's Orrery in
 import { isSdRoom } from './sdLaw.js';   // SD6b: the realm's room, where the Orrery's turns go
 import { owGate, validOwIn, validOwOut, relaySupportsOverworld, OW_WORD_IDS_MAX, OW_WORD_ROWS_MAX } from './wire.js';
@@ -1707,10 +1708,12 @@ export class OnlineSession {
     const w = validEgIn({ ...fields, k, ...(k === 'in' ? { bv: EG_BRAIN_V } : {}) });
     if (!w || !this.egOk || this.status !== 'open' || !this._ws || !this._welcomed.has(this._ws)) return false;
     if (k === 'open' || k === 'void' || k === 'claimed' ? !isSocialRoom(this.room) : !isEgRoom(this.room)) return false;   // EG-ZA: a stake's void and a counted receipt's word, the hub's as the open is
-    const body = k === 'vt', gate = body ? bodyWordGate(this._egBodyBucket, this._now()) : egGate(this._egBucket, this._now());   // EG-H1: my body's word on a bucket of its own (AUDIT INT15's law)
+    // AUDIT EG IV (lane3 #5): the hub's own words on the hub's bucket for them (net/wire.js egHubGate) - a word it would refuse
+    // is never sent
+    const body = k === 'vt', hubWord = EG_HUB_KINDS.includes(k), gate = body ? bodyWordGate(this._egBodyBucket, this._now()) : hubWord ? egHubGate(this._egHubBucket, this._now()) : egGate(this._egBucket, this._now());   // EG-H1: my body's word on a bucket of its own (AUDIT INT15's law)
     if (!gate.pass) return false;
     try { this._ws.send(JSON.stringify({ t: 'eg', ...w })); } catch { return false; }
-    if (body) this._egBodyBucket = gate.bucket; else this._egBucket = gate.bucket;
+    if (body) this._egBodyBucket = gate.bucket; else if (hubWord) this._egHubBucket = gate.bucket; else this._egBucket = gate.bucket;
     this.stats.sent++;
     return true;
   }

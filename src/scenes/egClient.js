@@ -119,6 +119,11 @@
 //     its closing, unspent this span, with a gap ahead of my feet (net/egSpanLaw.js egBridgeAhead - the room's own law), the
 //     ask is offered on the stage's line, the touch layer's button and the pad's up, and taken by B or `/breach bridge`
 //     (`mast`); the room's word (`ebridge`) said on every screen, and its plank handed to the spans (`objs`' `br`).
+//   AUDIT EG IV (2026-10-13, the net group; sections 5, 22 and 23): AN OPEN'S LOST ANSWER - the open's request id kept on
+//     the device before it is asked (EG_OPENS_KEY) and asked again by it (`again`) until the service says, the stake it took
+//     kept for its void; THE RECEIPTS COUNTED remembered (EG_COUNTED_KEY) and never claimed again, a re-claim's Marks never
+//     handed on; THE BALANCE in its asks' order, and *The key turns to rust.* said; the answer's refusals asked again when
+//     the admission lands, and a step under way refusing the call's in silence.
 //
 // Not a DFU member. Ledger A (ELITE-GATES).
 import { createEgLink, egMemberOf, egRunOfMember, egCountAt } from '../net/egLink.js';
@@ -130,9 +135,10 @@ import { egOnFight, egSpecGive, EG_SPEC } from '../net/egLaw.js';   // EG-H2 (se
 import { EG_TOLL_STEP } from '../net/egLaw.js';   // EG-ZI (section 10.6): the pull's toll, a quarter's share
 import { readEgReceipt } from '../net/egReceipt.js';
 import { EG_VOID_MAX_S } from '../net/egDurable.js';   // EG-ZA: how long a stake's void may be asked
+import { egRcId } from '../net/egDurable.js';   // AUDIT EG IV (lane3 #2): a receipt's identity, for the counted ones
 import { dungeonToRealm } from '../net/sdBrain.js';
 import { egToDungeon } from '../world/egHall.js';
-import { restackWeirKeys, setWeirKeyOpener } from '../systems/weirKey.js';
+import { restackWeirKeys, setWeirKeyOpener, weirKeysHeld } from '../systems/weirKey.js';   // AUDIT EG IV (lane3 #10): the keys the pack shows, for the rust's line
 import { egHudModel, drawEgHud, egPanelModel, drawEgPanel, egRecapModel, EG_POTIONS_PER_HALL } from '../ui/egHud.js';
 import { EG_CANTRIPS } from '../net/egRun.js';
 import { egVOf } from '../net/egVestige.js';
@@ -209,6 +215,22 @@ export const EG_VOID_WAIT_MS = 60_000;
 export const EG_VOID_ASK_MS = 60_000;
 /** EG-ZA: how often the frame looks at the kept stakes at most (ms) - never a parse of the device's store every frame. */
 export const EG_STAKE_LOOK_MS = 5000;
+/** AUDIT EG IV (lane3 #1; sections 22 and 23, "A key's loss"): where an open's ask is kept on the device BEFORE it goes
+ *  (`{ rq, s, at }` - its request id, the account, the second it was asked), so an answer lost (the wait's end, a dropped
+ *  connection, a reload mid-ask) is asked again by that id (`again` - the service never takes a key for it) until the
+ *  service says: the stake it took, kept as a stake no call answered (its void asked - the key back), none, or settled.
+ *  The most kept, how often one is asked again (ms), how long `none` is doubted after the ask (s - the first may still be
+ *  landing), and the refusals that are no answer (the ask may have landed). */
+export const EG_OPENS_KEY = 'eg.opens';
+export const EG_OPENS_MAX = 4;
+export const EG_OPEN_AGAIN_MS = 30_000;
+export const EG_OPEN_SURE_S = 120;
+export const EG_OPEN_LOST = Object.freeze(['offline', 'server']);
+/** AUDIT EG IV (lane3 #2): where the receipts the service has counted are remembered on the device (`{ id, s, e }` -
+ *  net/egDurable.js egRcId, the account, the receipt's own end), the most kept: one handed again (the hub's held copy,
+ *  before its `claimed` landed) is never claimed again - its `claimed` is said again instead. */
+export const EG_COUNTED_KEY = 'eg.counted';
+export const EG_COUNTED_MAX = 64;
 /** EG-ZA: a stake handed back (its void claimed) - the words. */
 export const EG_VOID_TEXT = 'The Spire did not open. Your key is returned.';
 /** How often a step through the door is said again while I stand in it, how long the end's words stand before the walk
@@ -552,16 +574,26 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   let fragArena = null;
 
   // ── the keys ────────────────────────────────────────────────────────────────────────────────────────
-  /** The pack's keys set to the account's balance (a face, never the count). */
-  function restack(n) {
-    if (!Number.isSafeInteger(n) || n < 0 || !entity?.items) return;
+  /** AUDIT EG IV (lane3 #10; section 5): THE BALANCE'S ANSWERS IN THE ORDER THEIR ASKS WENT - each ask that answers the balance
+   *  (the keys, the open, the start window's preflight, a claim) takes a number as it goes, and an answer that lands after a
+   *  later ask's was applied is never applied over it: answers landing out of order left a stale count on the pack. */
+  let keysAsked = 0, keysSaid = 0;
+  const keysAsk = () => ++keysAsked;
+  /** The pack's keys set to the account's balance (a face, never the count) - `seq` its ask's number (keysAsk), `spent` the
+   *  keys this answer's own open staked. AUDIT EG IV (lane3 #10; section 5 - *The key turns to rust.*): an answer that takes a
+   *  key the pack showed, past those its open staked and those the device's lost opens took unseen (EG_OPENS_KEY), says so -
+   *  a key the service does not count does nothing. */
+  function restack(n, seq = keysAsk(), spent = 0) {
+    if (!Number.isSafeInteger(n) || n < 0 || !entity?.items || seq < keysSaid) return;
+    keysSaid = seq;
+    if (weirKeysHeld(entity.items) - spent - opensKept().filter((p) => p.s === me()).length > n) say(EG_TEXT.rust);
     if (restackWeirKeys(entity.items, n)) saved();
   }
   async function askKeys() {
     if (!me() || account?.guest?.()) return;   // EG-ZD: asked once signed in (a reloaded page signs in after its first frame)
     keysAt = Date.now();
-    const a = await account.keys();
-    if (a?.ok) restack(a.data?.keys);
+    const seq = keysAsk(), a = await account.keys();
+    if (a?.ok) restack(a.data?.keys, seq);
     if (a?.ok && typeof a.data?.rk === 'string') rk = a.data.rk;   // EG-F: the relay's public half
     if (a?.ok) backHeard(a.data?.live ?? null);   // EG-ZD (section 22): the account's live breach - THE WAY BACK
     // EG-ZF (section 27.7): the first-time lines the account has heard - read over the device's; a line this screen showed
@@ -587,11 +619,16 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   /** THE OPEN: a key staked (or the Rehearsal taken) and its order handed to the hub. EG-F: from the start window's
    *  choice - its start Redoubt `ew` and its Wager `wg` - and the arch's site where it will stand (the host's facts). */
   async function open(rh, { ew = 0, wg = [] } = {}) {
-    const rq = requestId();
+    const rq = requestId(), seq = keysAsk();
     opening = { rq, rh, z: null, site: null, tries: 0, sentAt: -Infinity };
+    opensKeep([...opensKept().filter((p) => p.rq !== rq), { rq, s: me(), at: Math.floor(Date.now() / 1000) }]);   // AUDIT EG IV (lane3 #1): kept before it is asked
     const a = await account.open(rq, rh, { ew, wg });
-    if (!a?.ok) { opening = null; say(a?.error === 'start' ? EG_TEXT.notStart(ew) : egRefusalText(a?.error)); return false; }
-    restack(a.data?.keys);
+    // AUDIT EG IV (lane3 #1): an answer that never came is no answer - the ask stays kept and is asked again by its own id
+    // (openAgainFrame); any word the service said settles it
+    if (a?.ok || !EG_OPEN_LOST.includes(a?.error)) opensDrop(rq);
+    else openAgainAt = Date.now();
+    if (!a?.ok) { opening = null; if (a?.error === 'live') openAgainAt = -Infinity; say(a?.error === 'start' ? EG_TEXT.notStart(ew) : egRefusalText(a?.error)); return false; }   // a breach held: a lost open of mine is asked at once
+    restack(a.data?.keys, seq, rh ? 0 : 1);
     opening.z = a.data?.order ?? null; opening.b = a.data?.b ?? null;
     if (opening.z && opening.b) stakeKeep({ b: opening.b, z: opening.z, at: Math.floor(Date.now() / 1000) });   // EG-ZA: kept until a call or a receipt answers it
     opening.site = keyFacts?.()?.site ?? wire();
@@ -624,10 +661,11 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     startWin = { asking: true };
     const members = [{ sub: me(), name: '' }, ...(party() ?? []).filter((m) => m && m.sub !== me())].slice(0, 8);
     let a = null;
+    const seq = keysAsk();   // AUDIT EG IV (lane3 #10): its balance in its ask's order
     try { a = await account.starts?.(members.map((m) => m.sub)); } catch { a = null; }
     if (!a?.ok) { startWin = null; say(egRefusalText(a?.error)); return; }
     if (typeof a.data?.rk === 'string') rk = a.data.rk;
-    restack(a.data?.keys);
+    restack(a.data?.keys, seq);
     const mine = (party() ?? []).find((m) => m.sub === me());
     if (mine) members[0].name = mine.name;
     startWin = startWindow({ keys: a.data?.keys ?? 0, me: me(), members, starts: a.data?.starts ?? {}, rehearsal: !!a.data?.rehearsal, questDue: !!questDue(), say,
@@ -643,11 +681,8 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     if (returnable() && (!c || c.b === wayBack.b)) return returnIn();   // EG-ZD (section 22): THE WAY BACK - never refused as late
     if (!c) { say('No breach calls you. A Weir Key opens one; /breach rehearse opens the day\'s Rehearsal.'); return false; }
     if (!c.co.some((r) => r[0] === me())) { say(EG_TEXT.outside(c.o)); return false; }
-    if (inSpire()) return false;
-    const phase = egPhase({ openedAt: c.op }, t), T = egTimes({ openedAt: c.op });
-    if (phase === 'rising' || phase === 'sealed') { say(EG_TEXT.sealed(egCountText(T.openAt - t))); return false; }
-    if (phase !== 'open') { say(EG_TEXT.late(c.o)); return false; }
-    if ((M?.mode ?? 'exterior') !== 'exterior') { say(EG_TEXT.indoors); return false; }
+    const no = answerNo(c, t, M);
+    if (no !== null) { if (no) say(no); return false; }
     if (answering || M?.stepping) return false;
     answering = true;
     try {
@@ -656,6 +691,11 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         if (!a?.ok) { say(a?.error === 'start' ? EG_TEXT.notStart(c.ew ?? 0) : egRefusalText(a?.error)); return false; }   // EG-F: no carries
         admit = { b: c.b, z: a.data?.order ?? null };
         inFor = -1;
+        // AUDIT EG IV (lane4 #14; section 29 - "every refusal is checked again when its async answer lands"): a step indoors,
+        // the open window's end or the Spire entered while the admission was asked - each said in its own words, never as
+        // "no room" or a shut Spire; the admission is kept for the answer asked again
+        const again = answerNo(c, now(), modes());
+        if (again !== null) { if (again) say(again); return false; }
       }
       if (!admit.z) { say(EG_TEXT.shut); return false; }
       // EG-F (section 6.4): THE PORTAL AT MY FEET - stepping into it is the admission (the arch's own step is one already)
@@ -669,9 +709,21 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       return await stepIn(c, E);
     } finally { answering = false; }
   }
+  /** AUDIT EG IV (lane4 #14): why my answer to call `c` will not go now (`t` my clock, `M` the mode machine) - its words, ''
+   *  for a refusal said elsewhere (I stand in the Spire), or null when it may: the window's phase, then open ground. */
+  function answerNo(c, t, M) {
+    if (inSpire()) return '';
+    const phase = egPhase({ openedAt: c.op }, t), T = egTimes({ openedAt: c.op });
+    if (phase === 'rising' || phase === 'sealed') return EG_TEXT.sealed(egCountText(T.openAt - t));
+    if (phase !== 'open') return EG_TEXT.late(c.o);
+    if ((M?.mode ?? 'exterior') !== 'exterior') return EG_TEXT.indoors;
+    return null;
+  }
   /** THE STEP IN: under the veil into the breach's first circle (EG-F: the start's - a deeper start's own), the opener
-   *  landed before the arch when they come out (section 6.4), everyone else where they answered from. */
+   *  landed before the arch when they come out (section 6.4), everyone else where they answered from. AUDIT EG IV (lane4
+   *  #14): a step already under way (the mode machine's) refuses this one in silence - it is no shut Spire. */
   async function stepIn(c, E = link.state()) {
+    if (modes()?.stepping) return false;
     placedH = 0; downH = 0; endSeen = null; rdSeen = 0; leaving = false;
     answeredFor = c.b;
     const landing = c.os === me() ? arches?.landing?.(c.b) ?? null : null;
@@ -722,9 +774,11 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       return true;
     } finally { answering = false; }
   }
-  /** EG-F: the call's portal stepped into - my admission, the step under the veil. */
+  /** EG-F: the call's portal stepped into - my admission, the step under the veil. AUDIT EG IV (lane4 #14): not while another
+   *  step or an answer is under way - the portal stands for the step after it. */
   function portalEntered() {
     const c = link.state().call;
+    if (answering || modes()?.stepping) return false;
     callPortal?.clear?.();
     if (!c || c.b !== admit?.b || inSpire()) return false;
     stepIn(c);
@@ -746,6 +800,11 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   const keep = (list) => { try { store?.setItem?.(EG_CLAIMS_KEY, JSON.stringify(list.slice(-EG_CLAIMS_MAX))); } catch { /* the session's alone */ } };
   let memo = [];
   function claimAdd(r) {
+    // AUDIT EG IV (lane3 #2): A RECEIPT THE SERVICE HAS COUNTED, HANDED AGAIN (the hub's held copy, its `claimed` not yet
+    // landed) - never claimed again: a re-claim's `again` showed the Redoubt's Marks and haul once more at every hello. Its
+    // `claimed` is said again, so the hub lets its copy go.
+    const rc = readEgReceipt(r);
+    if (rc && countedOf(rc)) { hub()?.sendEg?.('claimed', { b: rc.b, q: rc.q, w: rc.q === 'w' ? rc.w : 0 }); return; }
     const list = store ? kept() : memo;
     if (!list.includes(r)) list.push(r);
     if (store) keep(list); else memo = list.slice(-EG_CLAIMS_MAX);
@@ -772,20 +831,23 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         const drop = () => { if (store) keep(kept().filter((x) => x !== r)); else memo = memo.filter((x) => x !== r); };
         if (!c || !(c.e > nowS)) { drop(); continue; }
         if (c.s !== me()) continue;
-        const a = await account.claim(r);
-        if (a?.ok && Number.isSafeInteger(a.data?.keys)) restack(a.data.keys);
+        const seq = keysAsk(), a = await account.claim(r);   // AUDIT EG IV (lane3 #10): its balance in its ask's order
+        if (a?.ok && Number.isSafeInteger(a.data?.keys)) restack(a.data.keys, seq);
         if (a?.ok && a.data?.recorded && a.data.q === 'w') say(`Redoubt ${a.data.w} is yours.`);
         // EG-E (section 19): WHAT IT PAID - the service's word on a Redoubt's receipt (the week's pay, the pity's passes,
         // the Marks, the deed, the embers), and the spoils it rolls; a re-claim answers the same (`again`), a guest's its
         // gold alone. Never for a Rehearsal (the service pays none).
-        if (a?.ok && c.q === 'w' && c.rh !== 1 && (a.data?.recorded || a.data?.again || a.data?.why === 'guest')) paid?.(c, a.data);
+        // AUDIT EG IV (lane3 #2): the Marks and the deed handed on with the claim that struck them alone (`recorded`) - a
+        // receipt carried again answers its pay again (`again`), and the host showed its Marks' card and lines once more for
+        // every re-claim; its spoils go on (the host's pool takes each once)
+        if (a?.ok && c.q === 'w' && c.rh !== 1 && (a.data?.recorded || a.data?.again || a.data?.why === 'guest')) paid?.(c, a.data?.recorded ? a.data : { ...a.data, marks: null, deed: null });
         if (a?.ok && c.q === 'x' && a.data?.board) boardHeard(c.b, a.data.board);   // EG-ZF (section 27.6): the board's line on the recap
         // AUDIT EG III (section 16.3): an end's Reliquaries - those the service opens (`rl`) rolled and given (`paid`, the host's
         // pool), the recap's count theirs; a Redoubt the service paid already this week (`paid` false) told the room, whose
         // circle's Reliquaries then give 20 lumen each (net/egBrain.js `wkpaid`)
         if (a?.ok && c.q === 'x' && Array.isArray(a.data?.rl)) { openedHeard(c.b, a.data.rl.length); if (a.data.rl.length) paid?.(c, a.data); }
         if (a?.ok && c.q === 'w' && a.data?.paid === false && (a.data.recorded || a.data.again) && link.state().b === c.b && !link.state().end) online()?.sendEg?.('wkpaid', { w: c.w });
-        if (egClaimDone(a)) { drop(); hub()?.sendEg?.('claimed', { b: c.b, q: c.q, w: c.q === 'w' ? c.w : 0 }); }   // EG-ZA: the hub forgets its held copy
+        if (egClaimDone(a)) { drop(); countedAdd(c); hub()?.sendEg?.('claimed', { b: c.b, q: c.q, w: c.q === 'w' ? c.w : 0 }); }   // EG-ZA: the hub forgets its held copy; AUDIT EG IV (lane3 #2): and this device remembers it counted
       }
     } finally { flushing = false; }
     if (again) await flush();   // AUDIT EG III (lane4 #9): the receipt heard meanwhile, carried now
@@ -824,6 +886,60 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     voidAt = t;
     if (hub()?.sendEg?.('void', { z: st.z })) voidFor = st.z;
   }
+
+  // ── AUDIT EG IV (lane3 #1): THE OPENS ASKED, KEPT UNTIL ANSWERED (sections 22 and 23, "A key's loss") ───────────────────
+  /** the opens kept on the device (`{ rq, s, at }`), those past EG_VOID_MAX_S let go; the memo without a store */
+  let opensMemo = [], openAgainAt = -Infinity, openAgainBusy = false;
+  function opensKept() {
+    let v = opensMemo;
+    if (store) { try { v = JSON.parse(store.getItem?.(EG_OPENS_KEY) ?? '[]'); } catch { v = []; } }
+    const nowS = Math.floor(Date.now() / 1000);
+    return Array.isArray(v) ? v.filter((p) => p && typeof p.rq === 'string' && typeof p.s === 'string' && Number.isSafeInteger(p.at) && nowS - p.at <= EG_VOID_MAX_S) : [];
+  }
+  function opensKeep(list) {
+    opensMemo = list.slice(-EG_OPENS_MAX);
+    if (store) { try { store.setItem?.(EG_OPENS_KEY, JSON.stringify(opensMemo)); } catch { /* the session's alone */ } }
+  }
+  function opensDrop(rq) { const list = opensKept(); if (list.some((p) => p.rq === rq)) opensKeep(list.filter((p) => p.rq !== rq)); }
+  /**
+   * AN OPEN WHOSE ANSWER WAS LOST, ASKED AGAIN by its own request id (`again` - the service answers the stake that request
+   * took and never takes a key for it), one at a time, every EG_OPEN_AGAIN_MS, under the account that asked it - across
+   * reloads, and never the open still in flight here: the stake it took is kept as a stake no call answered, so
+   * its void is asked and the key comes back (stakeFrame - the order lived a minute, and opens nothing now); `none` is let
+   * go once EG_OPEN_SURE_S past the ask (the request never reached the service - no key was taken), a settled stake at once.
+   */
+  async function openAgainFrame() {
+    if (openAgainBusy || Date.now() - openAgainAt < EG_OPEN_AGAIN_MS || !me() || account?.guest?.()) return;
+    if (!store && !opensMemo.length) return;
+    const p = opensKept().find((q) => q.s === me() && q.rq !== opening?.rq);
+    if (!p) return;
+    openAgainAt = Date.now(); openAgainBusy = true;
+    try {
+      const seq = keysAsk(), a = await account.open(p.rq, false, { again: true });
+      if (a?.ok && typeof a.data?.order === 'string' && typeof a.data?.b === 'string') {
+        stakeKeep({ b: a.data.b, z: a.data.order, at: Number.isSafeInteger(a.data.at) ? a.data.at : p.at });
+        restack(a.data.keys, seq);   // the pack still shows the key the lost answer took (opensKept counts it, so no rust)
+        opensDrop(p.rq);
+      } else if (a?.error === 'none' ? Math.floor(Date.now() / 1000) - p.at >= EG_OPEN_SURE_S : !EG_OPEN_LOST.includes(a?.error) && a?.error !== 'no-session') opensDrop(p.rq);
+    } finally { openAgainBusy = false; }
+  }
+
+  // ── AUDIT EG IV (lane3 #2): THE RECEIPTS COUNTED, REMEMBERED ──────────────────────────────────────────────────────────
+  let countedMemo = [];
+  function countedKept() {
+    let v = countedMemo;
+    if (store) { try { v = JSON.parse(store.getItem?.(EG_COUNTED_KEY) ?? '[]'); } catch { v = []; } }
+    const nowS = Math.floor(Date.now() / 1000);
+    return Array.isArray(v) ? v.filter((x) => x && typeof x.id === 'string' && typeof x.s === 'string' && Number.isSafeInteger(x.e) && x.e > nowS) : [];
+  }
+  /** Receipt claims `c` counted by the service (or refused for good) - remembered until the receipt's own end. */
+  function countedAdd(c) {
+    const id = egRcId(c), list = countedKept().filter((x) => !(x.id === id && x.s === c.s));
+    countedMemo = [...list, { id, s: c.s, e: c.e }].slice(-EG_COUNTED_MAX);
+    if (store) { try { store.setItem?.(EG_COUNTED_KEY, JSON.stringify(countedMemo)); } catch { /* the session's alone */ } }
+  }
+  /** Has the service counted receipt claims `c` (its identity, its account)? */
+  const countedOf = (c) => { const id = egRcId(c); return countedKept().some((x) => x.id === id && x.s === c.s); };
 
   // ── the halls ─────────────────────────────────────────────────────────────────────────────────────────
   /** Where my feet stand in the circle: the hall slot, and the hall frame's x and z (null outside every hall). */
@@ -1657,6 +1773,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (Date.now() - keysAt >= EG_KEYS_EVERY_MS) askKeys();
       if (Date.now() - claimAt >= EG_CLAIM_RETRY_MS) flush();
       stakeFrame();   // EG-ZA: a stake no call answered, its void asked
+      openAgainFrame();   // AUDIT EG IV (lane3 #1): an open whose answer was lost, asked again by its own id
       if (opening?.z) sendOpen();
       if (opening && opening.tries >= EG_OPEN_TRIES && Date.now() - opening.sentAt > EG_OPEN_RETRY_MS * 2) { opening = null; say(EG_TEXT.shut); }
       if (E.call && !inSpire() && egPhase({ openedAt: E.call.op }, t) === 'ended' && !E.wk) link.forget();
@@ -1891,7 +2008,9 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** My arch for my foes frame (`ea`), and a stranger's heard on theirs. */
     archWord: (near) => arches?.word?.(near) ?? null,
     archHeard: (peer, raw, from) => arches?.heard?.(peer, raw, from) ?? Promise.resolve(false),
-    restack,
+    /** A balance this screen did not ask for (a gate's claim's key - scenes/world.js weirHeard): as new as its landing, and
+     *  the balance asked again after it (AUDIT EG IV, lane3 #10: its ask's order is not this screen's to know). */
+    restack: (n) => { restack(n); askKeys(); },
     // EG-G1 (section 27): the seams the host reads
     /** The party rows in the party panel's terms (ui/egParty.js egPartyDeco), or null outside a breach. */
     partyRows() {
