@@ -222,7 +222,7 @@
   {
     "name": "STORM-SHED-report-unforgotten",
     "file": "server-account/src/townSeats.js",
-    "old": "  forgetSeatRows(db);   // STORM-SHED: this report is the rows' news - asked afresh here\n",
+    "old": "  if (Number(put?.meta?.changes) !== 0) forgetSeatRows(db);\n",
     "new": "",
     "tests": [
       "test/stormshed.test.js"
@@ -242,8 +242,8 @@
   {
     "name": "STORM-SHED-write-unasked",
     "file": "server-account/src/townSeats.js",
-    "old": "    if ((seatRowWrites.get(root) ?? 0) === gen) seatRowsKept.set(root, { at: nowS, rows });",
-    "new": "    seatRowsKept.set(root, { at: nowS, rows });",
+    "old": "    if ((seatRowWrites.get(root) ?? 0) === gen) {",
+    "new": "    if (true) {",
     "tests": [
       "test/stormshed.test.js"
     ],
