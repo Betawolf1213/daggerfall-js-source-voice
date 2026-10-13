@@ -5380,6 +5380,22 @@ function pauseQuests(body) {
         };
         acts.append(ab);
       }
+      // QUEST-RESET (LostMyLeg: "an option that can fully reset a quest"): a running quest RESTARTS from its first step -
+      // twice, the same arming - where it may be (scenes/questBridge.js canRestart); the selection follows its new copy
+      if (!isShelvedRow && sel.entries && sel.id != null && clean.restart && clean.canRestart?.(sel.id)) {
+        const armed = journalCleanArmed === `rs:${sel.id}`;
+        const rs = el('button', 'act', armed ? t('pause.journal.restartArmed', 'Click again to restart') : t('pause.journal.restart', 'Restart quest'));
+        rs.title = t('pause.journal.restartTitle', 'Start this quest again from its first step - what it placed and gave is taken back');
+        rs.onclick = () => {
+          if (journalCleanArmed !== `rs:${sel.id}`) { journalCleanArmed = `rs:${sel.id}`; render(); return; }
+          journalCleanArmed = null;
+          const out = clean.restart(sel.id);
+          questShelfSaid = out?.text ?? null;
+          if (out?.ok) questSel = `a:${out.uid}`;
+          render();
+        };
+        acts.append(rs);
+      }
       if (sel.entries && sel.id != null && !isShelvedRow) {
         const isHidden = hidden.some((q) => q.key === sel.key);
         const hb = el('button', 'act', isHidden ? t('pause.journal.unhide', 'Unhide') : t('pause.journal.hide', 'Hide from journal'));

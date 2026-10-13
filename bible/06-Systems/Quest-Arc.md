@@ -6671,3 +6671,41 @@ global); the corpus read by the law itself (the inert Nos, the prompts asked on 
 `tools/mutants/fb1013e_noasks.json` (12), all dead - one of them killed by `test/questsave.test.js`'s restore-order pin:
 the law reads no task's state before its verdict, so a load never reads a global's task (whose read writes it from the
 store).
+
+## QUEST-RESET - restart a quest from its first step (2026-10-13)
+
+LostMyLeg on Discord: the Dust of Restful Death's (S0000018) mummy *"wont spawn in the dungeon choosen by the quest ...
+ive added alot of fixes for this but it seems the queststate itself is borked. We prob need to add an option that can
+fully reset a quest"*. QREPAIR puts back what a fault took away and QUEST-VOID re-lays a marker the build has not; neither
+touches a quest whose own state says its foe is dead.
+
+- **RESTART** (`systems/quest/machine.js` `restartQuest` / `restartRefusal`): the quest thrown away and started again
+  from its own script, as `start quest` starts it. The new copy is parsed FIRST, while the old one still holds its
+  sites, so a remote Place chooses afresh away from the one the old copy broke in; a copy that will not parse here (no
+  source, no site of its kind left in the region) leaves the old one running. Then the old copy goes as an
+  error-terminated quest goes (`removeQuest`: its quest items leave the pack, its site links, topics and questors go;
+  no reputation and no journal entry - it did not end), and the new one starts at once and runs its first step on the
+  machine's next tick. A shared copy leaves the party's step first, so the tombstone does not file it as a finished
+  share. Refused, each in words (`scenes/questBridge.js` `restartRefusalText`): a quest gone, ending or set aside
+  (reclaim it first); the world's own (`PROTECTED_QUESTS`); one with a questor - its parse would bind whoever the
+  player clicked last (abandon it and ask its questor again); one another quest's `run quest` waits on (the parent
+  would read the restart as a failure); a sea raid. S0000018 restarted waits its thirty days for Medora's vision again
+  - its script's own first step.
+- **THE DOORS**: `journalClean.restart` / `canRestart` beside Abandon, so every host that hands its pause window and
+  its chronicle `journalClean` hands these too (THE FOUR HOSTS as QUEST-SHELF-MAIN records them). The pause window's
+  Quests tab draws Restart quest on a running quest where the door allows it, and the chronicle draws Restart in the
+  quest's header - the main story's steps among them; both pressed twice (the arming Abandon uses), the line it said
+  shown under the quests, the tracker following the new copy. Every word of it is the text core's (L10N4 - the
+  chronicle's `chronicle.quests.restart*`, the pause tab's and the bridge's `pause.journal.restart*`, its refusals
+  among them), drafted in the thirteen whole languages.
+- **THE FIELD FINDING - A KILL CREDITED BY NAME IS A COUNT, NEVER A DEATH** (`scenes/questFoeHost.js` `countsByName`).
+  DESYNC-ZERO's `partyQuestFoe` counted a party member's quest-foe kill on ANY copy of the same quest this player held,
+  by name. The main story is never shared, so every member on S0000018 holds their own mummy in their own crypt (a
+  `remote dungeon0`), with their own Dust on it: a member's mummy killed counted mine dead (`killCount` 1 of 1), the
+  mount never stood it (`sceneMount.js` - a Foe stands only while `killCount < spawnCount`) and the Dust was never
+  dropped - before the crypt was ever entered, if the kill came first. QREPAIR leaves such a foe alone (dead, by its
+  own state) and so does QUEST-VOID. An unlinked copy now takes the credit only for a Foe a task of its own counts (a
+  `killed` or `injured` trigger naming it - the credit DESYNC-ZERO was for) and only while no quest item rides it; a
+  linked copy (`sharedQuestFoe`) is the party's and is unchanged. A save already broken this way is the restart's.
+
+`test/questreset1.test.js` (6); `tools/mutants/questreset1.json` (18), all dead.

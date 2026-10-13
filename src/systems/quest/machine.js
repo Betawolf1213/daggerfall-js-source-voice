@@ -1643,6 +1643,55 @@ export class QuestMachine {
     return { ok: true, quest };
   }
 
+  /**
+   * QUEST-RESET (2026-10-13, LostMyLeg on Discord: the Dust of Restful Death's mummy "wont spawn in the dungeon choosen
+   * by the quest ... the queststate itself is borked. We prob need to add an option that can fully reset a quest"):
+   * RESTART - the quest thrown away and started again from its own script, as `start quest` starts it. The new copy is
+   * parsed FIRST, while the old one still holds its sites, so its Places choose afresh away from the ones the old copy
+   * broke in; a copy that will not parse here (no source, no site of its kind left) leaves the old one as it was. Then
+   * the old copy goes the way an error-terminated quest goes (removeQuest: its quest items leave the pack, its site
+   * links, topics and questors go; no reputation and no journal entry - it did not end) and the new one starts at once.
+   * A shared copy leaves the party's step first, so the tombstone does not file it as finished (Share it again).
+   * Refused: a quest gone, ending or set aside; the world's own (PROTECTED_QUESTS); one with a questor (a restart
+   * would bind whoever was clicked last - abandon it and ask its questor again); one another quest's `run quest` is
+   * waiting on (the parent would read the restart as a failure); and whatever the host's `refuse` names. Not a DFU
+   * member (DFU's restart is its developer console). Answers `{ ok, reason?, quest? }` - `quest` the new copy.
+   */
+  restartQuest(uid, { refuse = null } = {}) {
+    const why = this.restartRefusal(uid, { refuse });
+    if (why) return { ok: false, reason: why };
+    const old = this.quests.get(Number(uid));
+    const lines = this.deps.getQuestSourceLines?.(old.questName);
+    const fresh = lines ? this.parseQuestForLists(lines, old.factionId) : null;
+    if (!fresh) return { ok: false, reason: 'unparsed' };
+    if (this.sharedCandidateNamed(old.questName) === old) this.sharedQuestNames.delete(old.questName);
+    this.removeQuest(old);
+    try {
+      this.startQuestImmediate(fresh);
+    } catch (e) {
+      console.warn(`[quest] QuestMachine failed to restart quest ${fresh.questName}: ${e?.message ?? e}`);
+      return { ok: false, reason: 'failed' };
+    }
+    this.deps.forceTopicListsUpdate?.();
+    return { ok: true, quest: fresh };
+  }
+
+  /** QUEST-RESET: why the quest may not be restarted now, or null - restartQuest's ladder, and the journal's button
+   *  (questBridge.js canRestart) asks the same one. */
+  restartRefusal(uid, { refuse = null } = {}) {
+    const why = this.shelveRefusal(uid);   // Abandon's own rungs: gone, set aside, ending, the world's own
+    if (why) return why;
+    const quest = this.quests.get(Number(uid));
+    if ([...quest.resources.values()].some((r) => r?.isPerson && r.isQuestor)) return 'questor';
+    for (const parent of this.quests.values()) {
+      if (parent === quest || parent.questComplete || parent.questTombstoned) continue;
+      for (const task of parent.tasks.values()) {
+        if (task.actions?.some((a) => a?.typeName === 'RunQuest' && !a.isComplete && a.questUId === quest.uid)) return 'child';
+      }
+    }
+    return refuse ? refuse(quest) ?? null : null;
+  }
+
   /** Dispose resources then task actions (Quest.cs Dispose order,
    *  AUDIT quest-P5), mark tombstoned (site-link scrub rides Q3). */
   tombstoneQuest(quest) {

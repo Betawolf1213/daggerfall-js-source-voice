@@ -299,8 +299,28 @@ export function partyQuestFoe(machine, tag) {
   if (linked) return linked;
   const quest = machine.sharedCandidateNamed?.(tag.q) ?? null;
   if (!quest || quest.questTombstoned || !quest.resources) return null;
-  for (const r of quest.resources.values()) if (r.isFoe && r.symbol?.name === tag.s) return r;
+  for (const r of quest.resources.values()) if (r.isFoe && r.symbol?.name === tag.s) return countsByName(quest, r) ? r : null;
   return null;
+}
+
+/** QUEST-RESET's field finding (2026-10-13, LostMyLeg: the Dust of Restful Death's mummy "wont spawn in the dungeon
+ *  choosen by the quest"): A KILL CREDITED BY NAME IS A COUNT, NEVER A DEATH. My copy is not the member's - my Foe stands
+ *  in my world, at my Place, holding my quest's items - and a kill counted on it is the mount's verdict that it is dead
+ *  (sceneMount.js: a Foe stands only while killCount < spawnCount): it never stands again, and what it carried is never
+ *  dropped. The main story's copies are never shared (questShare.js), so every party member on S0000018 holds their own
+ *  mummy in their own crypt: a member's kill counted on mine, and my mummy - the Dust on it - was gone before my crypt
+ *  was ever entered. So an unlinked copy takes the credit only for a Foe a task of its own COUNTS (a `killed` or an
+ *  `injured` trigger naming it - the credit DESYNC-ZERO is for) and only while no quest item rides it (its body is the
+ *  only door to them). A linked copy (sharedQuestFoe) is kept in step with the party's, and is not read here. */
+export function countsByName(quest, foe) {
+  if ((foe?.itemQueue?.length ?? 0) > 0) return false;
+  const name = foe?.symbol?.name;
+  for (const task of quest?.tasks?.values?.() ?? []) {
+    for (const a of task.actions ?? []) {
+      if (a?.isTriggerCondition && (a.typeName === 'KilledFoe' || a.typeName === 'InjuredFoe') && a.foeSymbol?.name === name) return true;
+    }
+  }
+  return false;
 }
 
 /** CURSE-SYNC (2026-09-27, the bug-reports channel: "Monsters aren't syncing ... The ghost on daggerfall ... We all had

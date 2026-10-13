@@ -64,6 +64,7 @@
 import { QuestMachine, TICKS_PER_SECOND } from '../systems/quest/machine.js';
 import { clockCounts } from '../systems/quest/clock.js';   // DEAD-CLOCK: a clock whose end changes nothing is no deadline
 import { repairActiveQuests, relayOnlineDungeons, relayMovedLayouts, relayBuiltDungeon } from '../systems/quest/questRepair.js';   // QREPAIR: the Settings' repair (AUDIT DELVE E1: and a frozen size, crossing online)
+import { t } from '../systems/textManager.js';   // QUEST-RESET: the restart's words in the player's language (L10N4)
 import { isOnlinePage } from '../systems/onlineLane.js';   // AUDIT DELVE E1: online, every dungeon is whole
 import { isShelved } from '../systems/quest/quest.js';   // QUEST-SHELF: a quest set aside
 import { WA_RAID_QUESTS } from '../systems/warmAshesShips.js';   // QUEST-SHELF: a raid the world runs is never set aside
@@ -260,6 +261,21 @@ export function shelfRefusalText(reason) {
     case 'raid': return 'Not while the raid is on.';
     case 'twin': return 'You have taken that quest up again - finish or abandon it first.';
     default: return 'That cannot be done now.';
+  }
+}
+/** QUEST-RESET: why a quest could not be restarted, in words (machine.js restartRefusal) - the player's language (L10N4). */
+export function restartRefusalText(reason) {
+  switch (reason) {
+    case 'gone': return t('pause.journal.restartGone', 'That quest is over.');
+    case 'shelved': return t('pause.journal.restartShelved', 'That quest is abandoned - reclaim it first.');
+    case 'ending': return t('pause.journal.restartEnding', 'That quest is ending.');
+    case 'protected': return t('pause.journal.restartProtected', 'That quest cannot be restarted.');
+    case 'questor': return t('pause.journal.restartQuestor', 'That quest was given by someone - abandon it and ask them again.');
+    case 'child': return t('pause.journal.restartChild', 'Another quest is waiting on that one - it cannot be restarted.');
+    case 'raid': return t('pause.journal.restartRaid', 'Not while the raid is on.');
+    case 'unparsed': return t('pause.journal.restartUnparsed', 'That quest could not be started again here.');
+    case 'failed': return t('pause.journal.restartFailed', 'That quest could not be started again.');
+    default: return t('pause.journal.restartRefused', 'That cannot be done now.');
   }
 }
 
@@ -626,6 +642,16 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
       },
       /** QUEST-SHELF: whether the quest may be abandoned now - the journal draws the button only where it is. */
       canAbandon: (id) => machine.shelveRefusal(Number(id), { refuse: refuseRaid }) === null,
+      /** QUEST-RESET (LostMyLeg: "an option that can fully reset a quest"): RESTART - the quest thrown away and started
+       *  again from its first step (machine.js restartQuest); the tracker follows it to its new copy. Answers
+       *  `{ ok, reason?, uid?, text }` - `uid` the new copy's. */
+      restart(id) {
+        const r = machine.restartQuest(Number(id), { refuse: refuseRaid });
+        if (r.ok && questTracker.pinned != null && Number(questTracker.pinned) === Number(id)) questTracker.pinned = String(r.quest.uid);
+        return { ok: r.ok, reason: r.reason, uid: r.quest?.uid, text: r.ok ? t('pause.journal.restarted', 'Restarted: {name}. It begins again from its first step.', { name: r.quest.displayName || r.quest.questName }) : restartRefusalText(r.reason) };
+      },
+      /** QUEST-RESET: whether the quest may be restarted now - the journal draws the button only where it is. */
+      canRestart: (id) => machine.restartRefusal(Number(id), { refuse: refuseRaid }) === null,
     },
 
     /** SetLayoutData's direct overload for a host that has a quest
