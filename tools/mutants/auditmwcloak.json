@@ -268,8 +268,8 @@
   {
     "name": "AUDITMWCLOAK-a-leg-a-childs-blend",
     "file": "tools/skinWeights.mjs",
-    "old": "      if (legIndex?.has(j)) continue;",
-    "new": "      if (false) continue;",
+    "old": "      if (!can[j]) continue;   // a leg (the hang's alone), or - bare - a child that reaches",
+    "new": "      if (bare && bones[j].reach != null) continue;   // a leg (the hang's alone), or - bare - a child that reaches",
     "tests": ["test/mwcloak1.test.js"],
     "note": "Hung over its joints, a thigh blends in at its own origin as the pelvis's child: the waist not one surface."
   },

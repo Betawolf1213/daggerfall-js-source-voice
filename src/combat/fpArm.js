@@ -64,7 +64,7 @@ import {
   lightRecords, pickTorchRecord, blendMaskBones, overlayTracks, overlaySampler, weaponFlags, MW_TWO_HANDED,   // MW-D51: the held torch
   pickLanternRecord, hangAnchor, hookOnBone, hangAffine,   // HT-WAIST: the lantern at the waist, and the part that hangs
   tpAnimSources, TP_BASE_MODEL, playerBodyRows, werewolfHeadRows, MW_UNITS_PER_METER, resolveBodyParts, ARM_PARTS, raceRecords, armorRecords, clothingRecords,
-  facePools, meshBounds,
+  facePools, meshBounds, curatedAnswersFace,   // AUDIT MW-HEADS1: the match stands down where the curated table answers
   movementAnimState, composeMovementGroup, MOVEMENT_FALLBACK_SPEED, MOVEMENT_SPEED_CAP, turnAnimSpeed,
   jumpAnimState,
   sourcesKeyTime, sourceVelocityOf,
@@ -92,7 +92,7 @@ import { fpLightingOn } from './fpsWeapon.js';   // MAC-P: the first-person ligh
 import { createParticleSystem, packParticleQuads, particleDrawState, affineOfTransform, affineMul, affineApply, affineScale } from '../formats/mwParticles.js';   // MAC-Q: the torch's flame, and any other particle system a part carries
 import { boneSourcesFor, resolveHolsterParts, holsterPartPaths, holsterHidden, HOLSTER_SLOTS } from '../systems/weaponSheathing.js';   // WS1
 import { fitCloakOver, fitStowedGear, followCloak, seatCloak, HIP_PITCH_LIMIT, CLOAK_PUSH_LIMIT, SLUNG_MOVE_LIMIT } from '../formats/mwCloakFit.js';   // MW-CLOAK1: the cloak over what the body wears, stowed gear against it; AUDIT MW-CLOAK: and going with it
-import { isCloakSlot, ownCloakFor } from '../characters/ownClothingModels.js';   // MW-CLOAK1; AUDIT MW-CLOAK: and its picture
+import { isCloakSlot, ownCloakFor, isOutfitSlot } from '../characters/ownClothingModels.js';   // MW-CLOAK1; AUDIT MW-CLOAK: and its picture; AUDIT MW-FOLK1: an outfit's add, by its label
 import { injectSkeletonNodes } from '../formats/mwSkin.js';   // WS1: the dry injection the holster's bone probe runs
 // MAP3: THE HELD SHEET - the pose deltas over the idle, the paper piece
 // the hands hold, and where its corners land on the composite
@@ -107,6 +107,7 @@ import { createVfxGpu } from '../render/vfxGpu.js';   // MW-SPELLFX1: an effect'
 import { validCastRate } from '../systems/castSpeed.js';   // CAST-SPEED: the rate a cast is handed, made safe
 import { skinLayout, skinSamePieces, packSkinStream, writeSkinPalette, skinnedVertex, restreamMovedRows } from '../formats/mwGpuSkin.js';   // MWNPC1: the third body's skin, on the GPU
 import { pageParam } from '../systems/pageQuery.js';   // MWNPC1: the GPU skin's bisect door
+import { t } from '../systems/textManager.js';   // L10N4: AUDIT MW-FOLK1's note in the player's language
 
 // MW-LOAD (2026-09-08, Mac: "improve the load time when Morrowind assets
 // are enabled"): THE ARCHIVE IS OPENED, NOT READ, AND THIS FILE IS ITS
@@ -433,12 +434,12 @@ export function blowRate(span, left) {
  */
 export function releaseSkip(keys, group, attackType, strength) {
   const k = attackKeys(attackType, strength);
-  const t = (name) => getTextKeyTime(keys, `${group}: ${name}`);
+  const keyTime = (name) => getTextKeyTime(keys, `${group}: ${name}`);   // (not `t` - the text core's, imported here)
   return releaseStartPoint(strength, {
-    minAttackTime: t(k.minAttack),
-    maxAttackTime: t(k.maxAttack),
-    minHitTime: t(k.minHit),
-    hitTime: t(k.hitKey),
+    minAttackTime: keyTime(k.minAttack),
+    maxAttackTime: keyTime(k.maxAttack),
+    minHitTime: keyTime(k.minHit),
+    hitTime: keyTime(k.hitKey),
   });
 }
 
@@ -1384,8 +1385,11 @@ async function measurePart(record, archives, kind) {
  *  measured; every playable head and hair of the race and sex,
  *  measured; the nearest of each chosen - all on the player's own data,
  *  at build time. Returns { head, hair, reasons } with nulls where a
- *  half could not be measured (the walk then stands for that half). */
-export async function matchFaceFor({ race, female, faceIndex, parts, archives, deps }) {
+ *  half could not be measured (the walk then stands for that half).
+ *  AUDIT MW-HEADS1: `pools` are the build's (facePools over the archives'
+ *  directory) - the ones the rows walk and the verdict's key names, so
+ *  what is measured is what is chosen among, by construction. */
+export async function matchFaceFor({ race, female, faceIndex, pools, archives, deps }) {
   const reasons = [];
   let portrait = null;
   try {
@@ -1400,7 +1404,6 @@ export async function matchFaceFor({ race, female, faceIndex, parts, archives, d
     reasons.push(`portrait unreadable: ${err.message}`);
   }
   if (!portrait) return { head: null, hair: null, reasons: [...reasons, 'the walk stands'] };
-  const pools = facePools(parts, race, female);
   // MW-TEXTHREAD: every candidate measured side by side - its reads concurrent and its decode in the pool - in the
   // pools' own order, which matchFace's ties read. AUDIT MW-TEXTHREAD F5: a few at a time (inLanes), heads and hairs
   // in one set of lanes
@@ -1911,7 +1914,7 @@ async function buildTpBody({
     const skeletonBytes = nifBytes(skelArc, skeletonPath);
 
     // WEREWOLF1: the wolf's head and hair, by id - every other skin slot is empty, the robe is the body
-    const rows = werewolf ? werewolfHeadRows(parts) : playerBodyRows(parts, race, female, { beast, faceIndex, faceMatch, vampire, walk });   // MWNPC14: a vampire's head; MWNPC17: an NPC's own
+    const rows = werewolf ? werewolfHeadRows(parts) : playerBodyRows(parts, race, female, { beast, faceIndex, faceMatch, vampire, walk, has: exists });   // MWNPC14: a vampire's head; MWNPC17: an NPC's own; AUDIT MW-HEADS1: the port's own heads where these archives carry them
     const missing = [];
     // MW-D29/D31: the worn verdicts arrive COMPOSED - one arbitration
     // in buildFpArm serves both rigs. shadowSkinRows applies the
@@ -2408,10 +2411,17 @@ export async function buildFpArm({
     // does not change when a gauntlet does; without this, every worn
     // swap re-parsed a dozen meshes and decoded a dozen textures.
     let faceMatch;
+    // AUDIT MW-HEADS1 (L2-F6): THE POOLS THE FACE IS CHOSEN AMONG, as the rows will choose (facePools, the archives'
+    // directory: the port's own where they stand) - and where the curated table answers both halves among them, no
+    // measured match is ever worn (playerBodyRows), so none is measured: every Breton man's ten portraits, which measured
+    // all six of the port's parts on every build for a verdict the table overrode.
+    const pools = werewolf || npcFace ? null : facePools(parts, race, female, { has: archiveHas(archives) });
     if (werewolf) {
       faceMatch = { head: null, hair: null, reasons: ['werewolf: the head is WerewolfHead'] };   // WEREWOLF1: no face to match
     } else if (npcFace) {
       faceMatch = { head: null, hair: null, reasons: ['an NPC: its head and hair walked off its seed'] };   // MWNPC17: no portrait is its own - nothing measured
+    } else if (curatedAnswersFace(pools, race, female, faceIndex)) {
+      faceMatch = { head: null, hair: null, reasons: [t('body.face.curated', 'the curated table names both halves - nothing measured')] };
     } else if (!d.fetchArena2Bytes) {
       faceMatch = { head: null, hair: null, reasons: ['no Daggerfall data door - the walk stands'] };
     } else {
@@ -2424,15 +2434,23 @@ export async function buildFpArm({
       // derived store, and a set that changes is measured again. The
       // measuring is a mesh parse and a texture decode per candidate,
       // a dozen or more of each, on every page load until now.
+      // AUDIT MW-HEADS1 (L2-F6): AND ON THE CANDIDATES MEASURED. The
+      // stored set's fingerprint is the player's files, and the pools
+      // are not only theirs: the port's own heads ship with the page,
+      // and stand only where their archive loaded (facePools) - a
+      // verdict kept over the data's heads was read back over the
+      // port's own, named no head of them, and the walk stood. The
+      // ids measured are the key's, so another pool is measured anew.
       const print = typeof d.morrowindDataFingerprint === 'function' ? d.morrowindDataFingerprint() : null;
+      const measured = [...pools.heads, ...pools.hairs].map((r) => r.id).join('\n');
       const dkey = print !== null && typeof d.loadDerivedJson === 'function' && typeof d.storeDerivedJson === 'function'
-        ? `mw-face-match:v${FACE_MATCH_VERSION}:${race}:${female ? 'f' : 'm'}:${faceIndex | 0}:${fnv(print)}` : null;
+        ? `mw-face-match:v${FACE_MATCH_VERSION}:${race}:${female ? 'f' : 'm'}:${faceIndex | 0}:${fnv(print)}:${fnv(measured)}` : null;
       if (!faceMatch && dkey) {
         const kept = await d.loadDerivedJson(dkey);
         if (kept && (kept.head || kept.hair)) { faceMatch = kept; FACE_MATCH_CACHE.set(fkey, kept); }
       }
       if (!faceMatch) {
-        faceMatch = await matchFaceFor({ race, female, faceIndex, parts, archives, deps: d });
+        faceMatch = await matchFaceFor({ race, female, faceIndex, pools, archives, deps: d });
         if (dkey && (faceMatch.head || faceMatch.hair)) {
           try { await d.storeDerivedJson(dkey, faceMatch); } catch (e) { console.warn('[mw] face verdict could not be kept -', e?.message ?? e); }
         }
@@ -2566,9 +2584,21 @@ export async function buildFpArm({
     catalog.magic = magic;   // MW-SPELLFX1: and the magic the world's spell effects draw with
     // MW-D24: the THIRD-PERSON BODY, while the same archives are open.
     // Its refusal is a note on the card, never the arm's refusal.
-    const third = arm.ok
-      ? await buildTpBody({ race, female, beast, faceIndex, faceMatch, weapon, hasAmmo, worn, archives, parts, allWeapons, find, gen, torch, allLights, sheathing, ammoCount, hipLight, werewolf, skin: werewolf ? skin : null, vampire: !!vampire, walk: npcFace })   // (the wolf's rows read no face)   // MW-D51; WS1; HT-WAIST; WEREWOLF1; SHADOW-FANG; MWNPC14; MWNPC17
-      : null;
+    const tpBody = (wornNow) => buildTpBody({ race, female, beast, faceIndex, faceMatch, weapon, hasAmmo, worn: wornNow, archives, parts, allWeapons, find, gen, torch, allLights, sheathing, ammoCount, hipLight, werewolf, skin: werewolf ? skin : null, vampire: !!vampire, walk: npcFace });   // (the wolf's rows read no face)   // MW-D51; WS1; HT-WAIST; WEREWOLF1; SHADOW-FANG; MWNPC14; MWNPC17
+    let third = arm.ok ? await tpBody(worn) : null;
+    // AUDIT MW-FOLK1 (L2-F2): AN OUTFIT THAT BOUND NOTHING HIDES NOTHING AND DRESSES NOTHING. Its `hides` took the skin
+    // under it and its `covers` stood the modesty shirt down at the composition, before its mesh was read; one whose mesh
+    // was not in the archives (the port's own, its chunk not loaded), did not parse or bound no shape left the body with
+    // holes where it hid - and a woman's chest bare with Show Nudity off. Composed again without it, and built again:
+    // the skin it hid stands, the weld asks its shirt, and the card says why (wornVerdicts reads `outfit <id>:`).
+    let wornBuilt = worn;
+    const lost = third?.ok ? worn.adds.filter((a) => isOutfitSlot(a.slot) && !third.arm.pieces.some((p) => p.slot === a.slot)) : [];
+    if (lost.length) {
+      const without = composeWornModest({ pieces: (armor ?? []).filter((p) => !lost.some((a) => a.piece === p)), armors: armors ?? [], clothes: clothes ?? [], bodyPool: parts, female, colourOf, helmStyle }, showNudity());
+      without.notes.push(...lost.map((a) => `outfit ${a.recordId}: ${t('body.outfit.unbound', 'none of it bound - drawn without it')}`));   // the label outside the language, as the composer's notes
+      const again = await tpBody(without);
+      if (again.ok) { third = again; wornBuilt = without; }
+    }
     stage('meshes');
     // IG2: the mapped archives are NO LONGER truncated here - they are
     // dataSource's generation-keyed cache now (the same array every
@@ -2725,7 +2755,7 @@ export async function buildFpArm({
       // clothes. Every piece the equip table handed over, and what
       // became of it: the record it resolved to and the parts it
       // dressed, or the reason it kept its sprite.
-      worn: wornVerdicts(armor ?? [], worn),
+      worn: wornVerdicts(armor ?? [], wornBuilt),   // AUDIT MW-FOLK1: the composition the body was built from
       face: faceMatch,
       catalog,
       // MW-D14: every source, in PUSH order, each with its own keys AND

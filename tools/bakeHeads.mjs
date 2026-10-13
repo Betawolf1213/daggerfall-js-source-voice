@@ -15,14 +15,17 @@
 //   - so the three objects are three heads and three hairs: nine faces.
 //
 //   EACH PART IN THE HEAD'S OWN FRAME. A retail head or hair is a RIGID part hung under the skeleton's "Head" node
-//   (02-Formats/Morrowind-Rules.md rules 5, 12 and 13), its geometry in that node's frame - upright, facing +Y, about
-//   its own origin. The three faces carry one such frame between them, not a recentring of each: every one has the same
-//   crown (z 7.66), the same sides (x +-4.78) and the same back (y -6.95), though one is a different mesh with a
-//   sculpted beard - so the frame is the source head's (`b_n_breton_m_head_05`, the names say), and each part is baked
-//   in it: the object's scene placement taken back off (`partFrame`), never re-centred, never scaled. Where the owner's
-//   scene stood them - z 125 over its floor - is where MW-STEEL5 measured the game drawing a retail head over the
-//   T-posed scene's own (3.2 to 4.3 higher than its 113.15 to 129.2, and 125 puts these 3.45 higher): the same height,
-//   read two ways.
+//   (02-Formats/Morrowind-Rules.md rules 5, 12 and 13), its geometry in that node's frame. The three faces carry one
+//   such frame between them, not a recentring of each: every one has the same crown (z 7.66), the same sides
+//   (x +-4.78) and the same back (y -6.95), though one is a different mesh with a sculpted beard - so the frame is the
+//   source head's (`b_n_breton_m_head_05`, the names say), and each part is baked in it: the object's scene placement
+//   taken back off (`partFrame` - a translation, the scene turning nothing), never re-centred, never scaled. In it each
+//   face stands upright and looks +Y: its crown on top on the middle line, its nose ahead under it, its chin ahead of
+//   the crown (test/mwheads1.test.js). How the game's Head node turns that frame is the one link the tree cannot read -
+//   no retail skeleton's part nodes are vendored - so a retail head's frame is taken to be its source's, to be seen in
+//   game. Where the owner's scene stood them - z 125 over its floor - is where MW-STEEL5 measured the game drawing a
+//   retail head over the T-posed scene's own (3.2 to 4.3 higher than its 113.15 to 129.2, and 125 puts these 3.46
+//   higher): the same height, read two ways.
 //
 //   THE PAINTINGS, BY THE NAMES THE EXPORT GIVES THEM. They came as attachments with no names; the export names each
 //   material's picture (tx_b_n_breton_m_h04.png and so on), so each part is read by its material AND held to that name

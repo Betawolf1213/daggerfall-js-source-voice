@@ -2889,9 +2889,19 @@
   "tr": "9beef9fc11c3",
   "by": "claude-in-session"
  },
+ "body.face.curated": {
+  "en": "4ca651d7c69a",
+  "tr": "56aef4e9bdcc",
+  "by": "claude-in-session"
+ },
  "body.outfit.second": {
   "en": "1db02fb23c59",
   "tr": "9c85bc53ea16",
+  "by": "claude-in-session"
+ },
+ "body.outfit.unbound": {
+  "en": "7f1c6d12ebee",
+  "tr": "82e8934a1b81",
   "by": "claude-in-session"
  },
  "body.outfit.unknown": {

@@ -38,9 +38,13 @@
 // in material slot 6 - Morrowind's own tx_b_n_generic_m_g00 - and dropping the object would drop the outfit. A cut
 // takes out the polygons that wear that slot, with every vertex, normal and UV only they used, and rewrites the
 // object's Geometry arrays - and nothing else: the slot itself stays (no polygon wears it), so every polygon left keeps
-// its material's index, and every array left keeps its order. An edge a cut polygon shared with one that stays is
-// kept, written from the polygon that stays. A Geometry holding anything this tool does not know how to cut (another
-// layer, another mapping) is refused by name rather than half cut.
+// its material's index, and every array left keeps its order - a vertex no polygon uses at all was never the cut's, and
+// stays. An edge a cut polygon shared with one that stays is kept, written from the polygon that stays. Two slots of
+// one object are cut in ONE pass, from the one Geometry (AUDIT MW-FOLK1 L1-F1: each cut read the object's arrays as
+// the file held them, so a second cut of the same object re-wrote the first's arrays from the original and the first
+// slot's polygons came back, both reported cut). A Geometry holding anything this tool does not know how to cut
+// (another layer, another mapping) or carrying a deformer - a skin's clusters or a blend shape, each naming its
+// vertices by their index (AUDIT MW-FOLK1 L1-F2) - is refused by name rather than half cut.
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { deflateSync } from 'node:zlib';
@@ -48,9 +52,9 @@ import { readFbx, childrenNamed, nodeAt, objectName } from './fbxRead.mjs';
 import { isMain } from './lib/isMain.mjs';
 
 /** The sixteen bytes Blender's encoder writes first in the footer (encode_bin.py _FOOT_ID). */
-const FOOT_ID = Buffer.from('fabcab09d0c8d466b176fb831cf7267e', 'hex');
+export const FOOT_ID = Buffer.from('fabcab09d0c8d466b176fb831cf7267e', 'hex');
 /** ...and the sixteen it ends the file with. */
-const FOOT_MAGIC = Buffer.from('f85a8c6adef5d97eece90ce3758f290b', 'hex');
+export const FOOT_MAGIC = Buffer.from('f85a8c6adef5d97eece90ce3758f290b', 'hex');
 
 /** The byte-level record tree: each record's name, its property bytes as written, its children, and whether its
  *  child list closed with a null record. */
@@ -136,11 +140,11 @@ const CUT_GEOMETRY = new Set(['Properties70', 'GeometryVersion', 'Vertices', 'Po
 const CUT_LAYER = new Set(['Version', 'Name', 'MappingInformationType', 'ReferenceInformationType']);
 
 /**
- * MW-FOLK1: cut out of a raw Geometry record (paired with its decoded twin) the polygons that wear material slot
- * `material`, with every vertex, normal and UV only they used (see the header). Each array left keeps its order and its
- * encoding. Answers how many polygons and vertices it took.
+ * MW-FOLK1: cut out of a raw Geometry record (paired with its decoded twin) the polygons that wear any of the material
+ * slots `materials`, with every vertex, normal and UV only they used (see the header). Each array left keeps its order
+ * and its encoding. Answers how many polygons each slot gave up, and how many vertices went with them.
  */
-function cutGeometry(geo, material, label) {
+function cutGeometry(geo, materials, label) {
   for (const c of geo.children) if (!CUT_GEOMETRY.has(c.name)) throw new Error(`${label}: its Geometry holds "${c.name}", which a cut does not know - refused rather than half cut`);
   const one = (parent, name) => {
     const r = parent.children.filter((c) => c.name === name);
@@ -166,24 +170,29 @@ function cutGeometry(geo, material, label) {
   const mats = matsRec.decoded.props[0];
   // one material for the whole object (AllSame): every polygon wears it, or none does
   if (value(matEl, 'MappingInformationType') === 'AllSame') {
-    throw new Error(mats[0] === material ? `${label}: every polygon wears material ${material} - drop the object instead` : `${label}: no polygon wears material ${material} - nothing to cut`);
+    for (const m of materials) if (mats[0] === m) throw new Error(`${label}: every polygon wears material ${m} - drop the object instead`);
+    throw new Error(`${label}: no polygon wears material ${materials[0]} - nothing to cut`);
   }
   if (value(matEl, 'MappingInformationType') !== 'ByPolygon' || value(matEl, 'ReferenceInformationType') !== 'IndexToDirect') {
     throw new Error(`${label}: its materials are not mapped ByPolygon, IndexToDirect - a cut reads no other`);
   }
   if (mats.length !== polys.length) throw new Error(`${label}: ${mats.length} material indices for ${polys.length} polygons`);
-  const keep = mats.map((m) => m !== material);
-  const cut = keep.filter((k) => !k).length;
-  if (!cut) throw new Error(`${label}: no polygon wears material ${material} - nothing to cut`);
-  if (cut === polys.length) throw new Error(`${label}: every polygon wears material ${material} - drop the object instead`);
+  const polygons = materials.map((m) => mats.filter((x) => x === m).length);
+  materials.forEach((m, i) => { if (!polygons[i]) throw new Error(`${label}: no polygon wears material ${m} - nothing to cut`); });
+  const slots = new Set(materials);
+  const keep = mats.map((m) => !slots.has(m));
+  if (keep.every((k) => !k)) throw new Error(`${label}: every polygon wears material ${materials.join(' or ')} - drop the object instead`);
   const keptPV = polys.flatMap(([s, e], p) => (keep[p] ? Array.from({ length: e - s + 1 }, (_, i) => s + i) : []));
   const newPV = new Map(keptPV.map((k, n) => [k, n]));
 
-  // THE VERTICES the polygons left use, in their order; the polygons re-pointed at them
+  // THE VERTICES: every one but those only the cut polygons used (a vertex no polygon uses was never theirs), in their
+  // order; the polygons left re-pointed at them
   const vOf = (k) => (pvi[k] < 0 ? ~pvi[k] : pvi[k]);
-  const usedV = [...new Set(keptPV.map(vOf))].sort((a, b) => a - b);
-  const vTo = new Map(usedV.map((u, n) => [u, n]));
-  vertsRec.props = arrayProps(vertsRec, usedV.flatMap((u) => verts.slice(u * 3, u * 3 + 3)));
+  const theirs = new Set(polys.flatMap(([s, e], p) => (keep[p] ? [] : Array.from({ length: e - s + 1 }, (_, i) => vOf(s + i)))));
+  for (const k of keptPV) theirs.delete(vOf(k));
+  const keptV = Array.from({ length: verts.length / 3 }, (_, u) => u).filter((u) => !theirs.has(u));
+  const vTo = new Map(keptV.map((u, n) => [u, n]));
+  vertsRec.props = arrayProps(vertsRec, keptV.flatMap((u) => verts.slice(u * 3, u * 3 + 3)));
   pviRec.props = arrayProps(pviRec, keptPV.map((k) => (pvi[k] < 0 ? ~vTo.get(~pvi[k]) : vTo.get(pvi[k]))));
   matsRec.props = arrayProps(matsRec, mats.filter((_, p) => keep[p]));
 
@@ -214,12 +223,20 @@ function cutGeometry(geo, material, label) {
     const values = valuesRec.decoded.props[0];
     const wRec = wName ? el.children.find((c) => c.name === wName) : null;
     let keepAt;
-    if (ref === 'Direct') keepAt = keptPV;
-    else if (ref === 'IndexToDirect') {
+    if (ref === 'Direct') {
+      // a value a corner, and no index table beside them (the audit's own fixture: one there was cut as if it were not)
+      if (el.children.some((c) => c.name === `${valueName}Index`)) throw new Error(`${label}: its ${el.name} is referenced Direct yet carries a ${valueName}Index`);
+      if (values.length !== pvi.length * width) throw new Error(`${label}: its ${valueName} is not one value a corner`);
+      keepAt = keptPV;
+    } else if (ref === 'IndexToDirect') {
       const idxRec = one(el, `${valueName}Index`);
       const idx = idxRec.decoded.props[0];
       if (idx.length !== pvi.length || idx.some((i) => i < 0)) throw new Error(`${label}: its ${valueName}Index is not one entry a corner`);
-      keepAt = [...new Set(keptPV.map((k) => idx[k]))].sort((a, b) => a - b);
+      // every entry but those only the cut corners used (an entry no corner uses was never theirs), in their order
+      const cutCorner = new Set(polys.flatMap(([s, e], p) => (keep[p] ? [] : Array.from({ length: e - s + 1 }, (_, i) => s + i))));
+      const only = new Set([...cutCorner].map((k) => idx[k]));
+      for (const k of keptPV) only.delete(idx[k]);
+      keepAt = Array.from({ length: values.length / width }, (_, u) => u).filter((u) => !only.has(u));
       const to = new Map(keepAt.map((u, n) => [u, n]));
       idxRec.props = arrayProps(idxRec, keptPV.map((k) => to.get(idx[k])));
     } else throw new Error(`${label}: its ${el.name} is referenced ${ref} - a cut reads Direct or IndexToDirect`);
@@ -228,15 +245,17 @@ function cutGeometry(geo, material, label) {
   };
   for (const el of geo.children.filter((c) => c.name === 'LayerElementNormal')) corners(el, 'Normals', 3, 'NormalsW');
   for (const el of geo.children.filter((c) => c.name === 'LayerElementUV')) corners(el, 'UV', 2, null);
-  return { polygons: cut, vertices: verts.length / 3 - usedV.length };
+  return { polygons, vertices: theirs.size };
 }
 
 /**
  * Strip the named Models (by their Blender object name) out of an FBX, with what hangs only from them, and (MW-FOLK1)
- * CUT out of a Model that stays the polygons wearing one material slot (`cut`: `[{ object, material }]` - see the
- * header). Returns `{ bytes, dropped: [{ kind, name, id }], cut: [{ object, material, polygons, vertices }] }`. Throws
- * on a name that is not a Model of the file, on an object parented under a removed one, on a cut of a removed object
- * or of a Geometry another object shares, and on a footer this tool does not recognise.
+ * CUT out of a Model that stays the polygons wearing a material slot (`cut`: `[{ object, material }]`, an object's
+ * slots cut together - see the header). Returns `{ bytes, dropped: [{ kind, name, id }], cut: [{ object, materials,
+ * polygons, vertices }] }` - a cut object each, its slots in the order named, the polygons each gave up and the vertices
+ * only they used. Throws on a name that is not a Model of the file, on an object parented under a removed one, on a
+ * cut of a removed object, of a slot named twice, of a Geometry another object shares or a deformer names, and on a
+ * footer this tool does not recognise.
  */
 export function stripFbx(bytes, { drop = [], cut = [] } = {}) {
   const buf = Buffer.from(bytes);
@@ -279,8 +298,14 @@ export function stripFbx(bytes, { drop = [], cut = [] } = {}) {
   objectsRaw.children = objectsRaw.children.filter((r) => !gone.has(idKey(r.decoded.props[0])));
   connRaw.children = connRaw.children.filter((r) => r.name !== 'C' || !(gone.has(idKey(r.decoded.props[1])) || gone.has(idKey(r.decoded.props[2]))));
 
-  // MW-FOLK1: THE CUTS - each object's one Geometry, re-written less one material's polygons
-  const cuts = cut.map(({ object, material }) => {
+  // MW-FOLK1: THE CUTS - each object's one Geometry, re-written less its slots' polygons, every slot of it in one pass
+  const slotsOf = new Map();
+  for (const { object, material } of cut) {
+    const list = slotsOf.get(object) ?? [];
+    if (list.includes(material)) throw new Error(`"${object}": material ${material} named twice`);
+    slotsOf.set(object, [...list, material]);
+  }
+  const cuts = [...slotsOf].map(([object, materials]) => {
     const label = `"${object}"`;
     const model = objectsRaw.children.find((r) => r.name === 'Model' && objectName(r.decoded.props[1]) === object);
     if (!model) throw new Error(`no Model named ${label} in this FBX${drop.includes(object) ? ' once its drop is made - a dropped object has nothing to cut' : ''}`);
@@ -288,7 +313,10 @@ export function stripFbx(bytes, { drop = [], cut = [] } = {}) {
     const geos = links.filter((l) => l.parent === id && byId.get(l.child)?.name === 'Geometry').map((l) => l.child);
     if (geos.length !== 1) throw new Error(`${label} has ${geos.length} Geometry records - a cut reads one`);
     if (links.some((l) => l.child === geos[0] && l.parent !== id && byId.get(l.parent)?.name === 'Model')) throw new Error(`${label}'s Geometry is another object's too - a cut would cut both`);
-    return { object, material, ...cutGeometry(byId.get(geos[0]), material, label) };
+    // AUDIT MW-FOLK1 L1-F2: what hangs FROM the Geometry - a skin's deformer, a blend shape - names its vertices by index
+    const hung = links.find((l) => l.parent === geos[0]);
+    if (hung) throw new Error(`${label}'s Geometry carries a ${byId.get(hung.child)?.name ?? 'record'} that names its vertices by their index - a cut would leave it on the old numbering: refused`);
+    return { object, materials, ...cutGeometry(byId.get(geos[0]), materials, label) };
   });
 
   // THE DEFINITIONS COUNT THE OBJECTS: each ObjectType's Count, and the section's own total.
@@ -376,6 +404,6 @@ if (isMain(import.meta.url)) {
   writeFileSync(files[1], r.bytes);
   console.log(`${files[0]} -> ${files[1]}  ${r.bytes.length} bytes`);
   for (const d of r.dropped) console.log(`  dropped ${d.kind} "${d.name}"`);
-  for (const c of r.cut) console.log(`  cut "${c.object}" material ${c.material}: ${c.polygons} polygons, ${c.vertices} vertices`);
+  for (const c of r.cut) console.log(`  cut "${c.object}" ${c.materials.map((m, i) => `material ${m}: ${c.polygons[i]} polygons`).join(', ')}; ${c.vertices} vertices`);
   console.log(`  kept: ${meshModelNames(r.bytes).join(', ')}`);
 }

@@ -744,7 +744,11 @@ pool's behavioural proof of the same lines.
   garment dyed off the spawn (`FOLK_DYES`) so a street is not one colour;
   the guard in the watch's whole steel plate. (AMENDED BY MWNPC17, section
   25: the variant is the walker's role and cut - FOLK_DRESS - and the
-  wardrobe dresses the rest off the spawn.) A RE-ROLL IS A NEW PERSON:
+  wardrobe dresses the rest off the spawn.) (AMENDED BY MW-FOLK1, 2026-10-13,
+  and its audit: a walker whose picture has an outfit of the port's own -
+  eleven of the twenty-four - wears that outfit and no wardrobe, so one
+  picture's walkers differ by their faces alone;
+  `04-Characters/Townsfolk-Outfits.md`.) A RE-ROLL IS A NEW PERSON:
   the pool's shells come back as someone else, so another archive, face,
   name or gender is a new id (`<shell>.<spawn>`) and a new look - a body
   built for them, never the last one's re-dressed (PeerBodies holds a
@@ -2016,7 +2020,11 @@ ten colours over ten faces.
   shows, a robe, a skirt or breeches, so the body that replaces a picture at
   its range wears what the picture wore). (AMENDED BY MW-FOLK1, 2026-10-13: a
   walker whose picture has an outfit of the port's own - eleven of the
-  twenty-four - wears that outfit and no garment of the wardrobe's;
+  twenty-four - wears that outfit and no garment of the wardrobe's, so a
+  street of one such picture shows as many people as its race has faces -
+  48 on a Nord's 387, 9 on a Breton's 385; "barely any two alike" holds
+  on the thirteen pictures the wardrobe still dresses (MWNPC17e re-read on
+  Nord women's 392, AUDIT MW-FOLK1 L3-F2);
   `04-Characters/Townsfolk-Outfits.md`.) A still picture by its kind
   (`rosterBodies.js` STILL_WARDROBE - a priest at the door in robes). The
   street's guard keeps the watch's uniform; foes and rosters keep their kit.

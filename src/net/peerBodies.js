@@ -67,7 +67,7 @@
 import { createFpArm } from '../combat/fpArm.js';
 import { dfWornEquipment } from '../formats/mwItemMap.js';
 import { werewolfSkinOf } from '../characters/werewolfSkin.js';   // SHADOW-FANG: a peer's wolf in the skin their signed glyphs name
-import { npcHintOf, npcKeyOf, withNpcPicks, npcFaceOf, beastWorn } from '../characters/wardrobe.js';   // MWNPC17: an NPC's own garments, head and hair
+import { npcHintOf, npcKeyOf, withNpcPicks, npcFaceOf, beastWorn, WARDROBE_BEAST_RACES } from '../characters/wardrobe.js';   // MWNPC17: an NPC's own garments, head and hair
 import { ownOutfitFor } from '../characters/ownClothingModels.js';   // MW-FOLK1: a townsperson's whole outfit
 import { ARMOR_ENUM } from '../combat/enemyEquipment.js';
 import { EQUIP_SLOTS } from '../systems/equip.js';
@@ -266,8 +266,10 @@ function bodyLookKey(look) {
 }
 
 /** MW-FOLK1: the outfit a look wears (characters/ownClothingModels.js TOWNSFOLK_OUTFITS), read as data - an id the table
- *  does not hold is none - and the key it adds to a body's: one outfit is one body, another another. */
-const lookOutfit = (look) => (typeof look?.outfit === 'string' ? ownOutfitFor(look.outfit) : null);
+ *  does not hold is none, and so is one on a beast (AUDIT MW-FOLK1 L2-F8: the look's producer refused them, but a look
+ *  is data here - its boots on a Khajiit's or an Argonian's digitigrade feet, as Morrowind dresses none, wardrobe.js
+ *  beastWorn) - and the key it adds to a body's: one outfit is one body, another another. */
+const lookOutfit = (look) => (typeof look?.outfit === 'string' && !WARDROBE_BEAST_RACES.includes(look.race) ? ownOutfitFor(look.outfit) : null);
 export const outfitKeyOf = (look) => { const o = lookOutfit(look); return o ? `|outfit:${o.id}` : ''; };
 
 export function peerBuildOpts(look, shown = null, glyphs = null) {

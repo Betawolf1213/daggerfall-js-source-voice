@@ -15,39 +15,50 @@
 //   breeches, its boots or shoes, a pouch - one material a painting, and it ships as ONE skinned part of one shape per
 //   painting (the steel cuirass's breastplate and band are one part of two shapes), worn in no slot of its own (the
 //   cloak's door) with the skin it covers hidden (`hides`). The export assigns each object's materials their
-//   paintings; Nords 389 and 390 are 388's and 386's outfits in the colours their pictures wear, from paintings the
-//   export carries for the same islands (RECOLOURS) - the shapes and the islands the export's own.
+//   paintings; Nords 389 and 390 are 388's and 386's outfits in the colours their pictures wear (RECOLOURS): 389's
+//   tunic islands are 386's own (602 of 602 corners alike) and wear its painting, its hood - which 386 has not -
+//   reading that painting where 386's yoke is painted (2468 of its 2908 texels) and its ground (the other 440), both
+//   the hood's teal; 390's boots are 384's (278 of 278 corners alike) and wear 384's painting.
 //
-//   THE MORROWIND SKIN IT KEPT IS NOT COMMITTED. The owner's `Breton_Male.018` (385) carried 61 polygons of half a groin
-//   under the tunic, painted with Morrowind's own tx_b_n_generic_m_g00 - a piece of the body the outfit was made on,
-//   Bethesda's mesh, which the port never ships (MW-STEEL1's law: a source is committed less the body it was fitted
-//   on). tools/fbxStrip.mjs CUT them out of the export before it was committed (`--cut=Breton_Male.018:6`): that
-//   object's Geometry less those polygons and the 41 vertices only they used, every other record byte for byte, the
-//   slot left wearing nothing. Every material that carries a polygon is the owner's painting.
+//   THE MORROWIND BODY IT WAS MADE ON. The owner's `Breton_Male.018` (385) carried 61 polygons of half a groin under the
+//   tunic, painted with Morrowind's own tx_b_n_generic_m_g00 - a piece of the body the outfit was made on, Bethesda's
+//   mesh, which the port never ships (MW-STEEL1's law: a source is committed less the body it was fitted on).
+//   tools/fbxStrip.mjs CUT them out of the export before it was committed (`--cut=Breton_Male.018:6`): that object's
+//   Geometry less those polygons and the 41 vertices only they used, every other record byte for byte, the slot left
+//   wearing nothing. Every material that carries a polygon is the owner's painting. THE LEGS ARE ANOTHER MATTER (AUDIT
+//   MW-FOLK1 L1-F3, measured): 385's hose was made from the pack body's own leg - its object's empty slots still name
+//   Morrowind's leg pictures (tx_b_n_breton_m_ll and _ul) - and the same mesh is 388's and 389's hose (270 of 270
+//   positions alike); 386's and 390's breeches are a part of it (138 of 138), and the boots of 384, 386, 387 and 390
+//   share its lower leg (100 of their 192 positions). Seven outfits carry that geometry, repainted; whether it is the
+//   owner's to give is the owner's to confirm (test/doctrine.test.js says so on each of those meshes' rows).
 //
 //   A T-POSE WHOSE ARMS ARE NOT RETAIL'S. The outfits were made on the "Morrowind_Symmetric_TPose_Models" body - the
 //   steel plate's is the plain pack's - and its legs, feet and trunk stand where the steel plate's do: the scene's
-//   floor and SCENE_FROM_BIND stand them on retail's bind (the hose, the leg itself repainted, within a unit of the
-//   thigh and calf lines; the ankles 6.6 over the floor). Its ARMS do not: every sleeve, cuff and wrap stands over
-//   retail's arm line, 1.6 at the shoulder, 2.4 at the elbow, 3.2 at the wrist. Fitted as two turns of retail's arm,
-//   the symmetric pack's clavicle is LEVEL - the fit turns it up 11.46 degrees, the very fall retail's has from its
-//   root to the shoulder joint - and its arm falls PACK_ARM_FALL from the shoulder to the wrist (the cleanest tubes,
-//   the wraps over the wrists, to 0.06). So the outfits are skinned in THEIR pose (packBind): retail's bind with each
-//   arm turned so, the inverse binds that pose's. A skin's binds are the pose its mesh was made in; written so, the
-//   game's own skinning lays each sleeve on the arm it animates - no vertex is moved to fit.
+//   floor and SCENE_FROM_BIND stand them on retail's bind (the hose's cross-sections centred within 1.5 of the thigh
+//   and calf lines, 2.4 at the hip; the ankles 6.6 over the floor). Its ARMS do not: the sleeves, cuffs and wraps
+//   stand over retail's arm line - at the shoulder 0.95 (the bell sleeves) to 1.97 (385's), where the two binds'
+//   joints stand 1.89 apart; 2.3 to 2.9 at the elbow, which only 385's long sleeve reaches; 3.2 to 3.3 at the wrist.
+//   Fitted as two turns of retail's arm, the symmetric pack's clavicle is LEVEL - the fit turns it up 11.46 degrees,
+//   the very fall retail's has from its root to the shoulder joint - and its arm falls PACK_ARM_FALL from the shoulder
+//   to the wrist (the wraps over the wrists on its line to 0.07). So the outfits are skinned in THEIR pose
+//   (packBind): retail's bind with each arm turned so, the inverse binds that pose's. A skin's binds are the pose its
+//   mesh was made in; written so, the game's own skinning lays each sleeve on the arm it animates - no vertex is moved
+//   to fit.
 //
 //   A HOOD IS A HELM. The hoods were made over the T-posed scene's head, which the game draws HELM_LIFT lower on its
 //   bone than its own (MW-STEEL5); at the game's head the scalp stands through them. A hood's island is raised
 //   HELM_LIFT onto it, as the open steel helm is, and rides the head; a hooded outfit hides the hair, as a helmet does.
 //
 //   THE WEIGHTS ARE A RIGGER'S, PIECE BY PIECE. Each connected island of a painting is one garment piece - a tunic, a
-//   collar, a sleeve, a cuff, a leg of hose, a boot, a kilt, a belt, a pouch - and is weighted by what it is
+//   collar, a sleeve, a cuff, a leg of hose, a boot, a kilt, a belt, a flap, a pouch - and is weighted by what it is
 //   (islandClass): a hood the neck and head; an arm's piece its clavicle, arm, hand and fingers; a leg's its pelvis,
-//   thigh, calf and foot; a torso's the spine, clavicles and upper arms; cloth that hangs round both legs (a tunic's
-//   hem, a kilt, a skirt, a robe) that law above the waist and the thighs' share over it below (tools/skinWeights.mjs
-//   hang 'over', the ebony breastplate's tassets'); a pouch or a buckle at the hip the pelvis. Pieces that touch are
-//   pieces of one rig (a hose's segments, a sleeve's, breeches into boots), and the law is a function of position, so
-//   no seam opens under a pose.
+//   thigh, calf and foot; a torso's the spine, and the clavicles and upper arms within their reach (ARM_REACH - the
+//   shoulder's cap and a sleeve joined on, never the body's side under the armpit, which is the ribcage's); cloth that
+//   hangs round the legs (a tunic's skirt, a kilt, a robe, a dress, a flap at one side) that law above the waist and
+//   the hang below it (hangOf: tools/skinWeights.mjs hang 'over', the ebony breastplate's tassets' - here the thighs'
+//   whole share from the hip joints down, the calves' past the knees); a pouch or a buckle on the belt the pelvis.
+//   Every law is one of position, the same for every piece of every outfit, so pieces that touch and layers that lie
+//   over each other move as one, and no seam opens under a pose (test/mwfolk1.test.js poses them on the body).
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { readFbx } from './fbxRead.mjs';
@@ -57,7 +68,7 @@ import { skinnedMeshesToNif } from './nifWrite.mjs';
 import { jointWeights } from './skinWeights.mjs';
 import { readPng } from './pngIO.mjs';
 import { isMain } from './lib/isMain.mjs';
-import { RETAIL_SKELETON, plateBind, rigSegments, objectTree, BOX_SLACK, HELM_LIFT } from './bakeSteelPlate.mjs';
+import { RETAIL_SKELETON, plateBind, rigSegments, objectTree, BOX_SLACK, HELM_LIFT, SCENE_BODY } from './bakeSteelPlate.mjs';
 
 /** The owner's export, as committed - clothes.fbx as it came, less the Morrowind skin cut from it (CUT). */
 export const SOURCE = 'src/assets/mw/source/Townsfolk.fbx';
@@ -138,9 +149,10 @@ export const OUTFITS = Object.freeze([
   outfit(398, 'Plane Remeshed', [[0, 'dress_redguardwoman1']]),
 ]);
 
-/** The two outfits that wear a painting the export names on another material of the same islands: Nord 389 is 388's
- *  hooded tunic in the teal his picture wears (386's tunic painting), Nord 390 386's outfit with the yellow-striped
- *  boots his picture wears (384's skirt-and-boots painting, drawn for the same boots). */
+/** The two outfits that wear a painting the export names on another object: Nord 389 is 388's hooded tunic in the teal
+ *  his picture wears (386's tunic painting - 388's tunic islands are 386's; its hood, which 386 has not, reads the
+ *  painting's yoke and ground, both teal), Nord 390 386's outfit with the yellow-striped boots his picture wears (384's
+ *  skirt-and-boots painting, drawn for the same boots - their islands alike). */
 export const RECOLOURS = Object.freeze({ 389: Object.freeze([0]), 390: Object.freeze([10]) });
 
 /** An object's scene-placed mesh in its own frame: its scene translation's x and y taken off - the row the owner laid
@@ -175,8 +187,9 @@ export function checkObject(tree, name) {
 
 /**
  * How far the symmetric pack's arm falls from the shoulder joint to the wrist joint (units; retail's bind falls 1.83) -
- * read off the export's own tubes with its clavicle level: the wraps over 386's and 387's wrists (to 0.06), the cuffs,
- * the long sleeve and the bell sleeves, all at once (bible/04-Characters/Townsfolk-Outfits.md).
+ * read off the export's own tubes with its clavicle level: the wraps over 386's and 387's wrists stand on its line (to
+ * 0.07 - 0.066), 385's long sleeve to 0.39; the bell sleeves sit 0.4 to 1.0 under it and 382's cuffs within 1.2 either
+ * side (AUDIT MW-FOLK1 L1-F7: the record had them all on it at once; bible/04-Characters/Townsfolk-Outfits.md).
  */
 export const PACK_ARM_FALL = 0.5;
 
@@ -240,14 +253,41 @@ const side = (S) => {
 };
 const R = side('R');
 const L = side('L');
-const TORSO = Object.freeze([...SPINE, R.clavicle(['Bip01 Spine2', 2]), L.clavicle(['Bip01 Spine2', 2]), R.upperArm, L.upperArm]);
-/** Where cloth that hangs round both legs starts to swing with them: the waist (the ebony breastplate's and the steel
- *  skirt's 84). Below it the thighs take up to HANG_SHARE at the piece's hem, split across HANG_CENTRE either side. */
+/** AUDIT MW-FOLK1 (L1-F5): how far from its own line an arm's bone claims a piece of the TORSO (units) - the shoulder's
+ *  cap over the joint and a sleeve joined to the body, never the body's side under the armpit. That side stands nearer
+ *  the shoulder joint than the spine's line, so the nearest line gave it to the arm (14 off the spine in the bind),
+ *  and the idle, lowering the arm the pack's T-pose raised and its clavicle the pack's fit levelled, swung it 12 into
+ *  the chest (to 2.3 off the spine). The arm's own pieces keep their whole rig. */
+export const ARM_REACH = 6;
+/** ...and over how far past it that claim fades into the ribcage's (units): the sleeves' seams stand 5.8 or less off
+ *  the arm's line (398's bodice meets her sleeve at 5.8), the body's side under the armpit 7.3 and more. */
+export const ARM_FADE = 1.5;
+const reaching = (b) => Object.freeze({ ...b, reach: ARM_REACH, fade: ARM_FADE });
+const TORSO = Object.freeze([...SPINE, reaching(R.clavicle(['Bip01 Spine2', 2])), reaching(L.clavicle(['Bip01 Spine2', 2])), reaching(R.upperArm), reaching(L.upperArm)]);
+/**
+ * THE HANG - cloth round the legs (a tunic's skirt, a kilt, a robe, a dress, a flap at one side): one law of where a
+ * point stands, the same for every piece and every outfit, so layers and pieces that touch move as one (AUDIT MW-FOLK1
+ * L1-F6: each piece hung to its own hem, and a flap sheared through the kilt under it). From the waist (HANG_TOP, the
+ * ebony breastplate's and the steel skirt's 84) the thighs take a growing share, the whole of it (HANG_SHARE) from the
+ * hip joints down, split across HANG_CENTRE either side of the middle; past the knees the calves take it from the
+ * thighs, across KNEE_BLEND either side. AUDIT MW-FOLK1 (L2-F1): the share was 0.7, reached at each piece's own hem,
+ * and the legs stood out through the cloth every stride - the owner's cloth sits within a unit of the leg's own
+ * surface at mid-thigh (the tunics' hose IS the leg), so cloth that lags a swinging thigh at all is cloth it passes
+ * through. The leg's own surface (385's hose) now stays inside every tunic in a 35-degree stride.
+ */
 export const HANG_TOP = 84;
-export const HANG_SHARE = 0.7;
+export const HANG_SHARE = 1;
 export const HANG_CENTRE = 4;
+export const KNEE_BLEND = 3;
+/** The hang a hanging piece takes, read off the bind: full at the hip joints' height, the calves past the knees'. */
+export function hangOf(bind) {
+  const hip = (bind.get('Bip01 L Thigh').t[2] + bind.get('Bip01 R Thigh').t[2]) / 2;
+  const knee = (bind.get('Bip01 L Calf').t[2] + bind.get('Bip01 R Calf').t[2]) / 2;
+  return { mode: 'over', root: 'Bip01 Pelvis', legs: ['Bip01 L Thigh', 'Bip01 R Thigh'], top: HANG_TOP, bottom: hip, share: HANG_SHARE, centre: HANG_CENTRE,
+    calves: ['Bip01 L Calf', 'Bip01 R Calf'], knee, kneeBlend: KNEE_BLEND };
+}
 
-/** Each piece's rig, by its class (islandClass). A hanging piece's hang reaches its own hem. */
+/** Each piece's rig, by its class (islandClass). A hanging piece takes the hang (hangOf). */
 export const RIGS = Object.freeze({
   hood: Object.freeze({ bones: Object.freeze([bone('Bip01 Neck', 'Bip01 Head'), bone('Bip01 Head', { local: [10, 0, 0] }, ['Bip01 Neck', 2])]) }),
   'arm:R': Object.freeze({ bones: Object.freeze([R.clavicle(), R.upperArm, ...R.arm]) }),
@@ -255,23 +295,29 @@ export const RIGS = Object.freeze({
   'leg:R': Object.freeze({ bones: Object.freeze([PELVIS, R.thigh, ...R.leg]) }),
   'leg:L': Object.freeze({ bones: Object.freeze([PELVIS, L.thigh, ...L.leg]) }),
   torso: Object.freeze({ bones: TORSO }),
-  skirt: Object.freeze({ bones: Object.freeze([...TORSO, bone('Bip01 L Thigh', 'Bip01 L Calf'), bone('Bip01 R Thigh', 'Bip01 R Calf')]), hang: true }),
+  skirt: Object.freeze({ bones: Object.freeze([...TORSO, bone('Bip01 L Thigh', 'Bip01 L Calf'), bone('Bip01 R Thigh', 'Bip01 R Calf'),
+    bone('Bip01 L Calf', 'Bip01 L Foot'), bone('Bip01 R Calf', 'Bip01 R Foot')]), hang: true }),
   hip: Object.freeze({ bones: Object.freeze([PELVIS, bone('Bip01 Spine', 'Bip01 Spine1', ['Bip01 Pelvis', 3])]) }),
 });
 
+/** Where the thighs swing from (the bind's hip joints stand at 76.4): cloth reaching below them hangs. */
+export const HIP_JOINTS = 76;
 /**
- * WHAT A PIECE IS, by where it stands (its island's box, in the outfit's frame): over the shoulders and narrower than
- * them, a hood; out along one arm, that arm's; round both legs and down past the hips (76, the hip joints), cloth that
- * hangs; across the middle above them, the torso's (a collar, a vest, a bodice, a belt); down one leg, that leg's;
- * anything else at the hip - a pouch, a buckle, a flap at one side - the pelvis's.
+ * WHAT A PIECE IS, by where it stands (its island's box, in the outfit's frame): over the shoulders, narrower than them
+ * and up over the crown (SCENE_BODY's head - AUDIT MW-FOLK1 L1-F4: a narrow collar was a hood, lifted onto the head),
+ * a hood; out along one arm, that arm's; round both legs and down past the hip joints, cloth that hangs; across the
+ * middle above them, the torso's (a collar, a vest, a bodice, a belt); down one leg, that leg's; at one side and down
+ * past the hip joints - a flap - cloth that hangs too (AUDIT MW-FOLK1 L1-F4: 384's side flap was the pelvis's,
+ * rigid, and the thigh swung through it), the hang's split giving it to its own leg; anything else at the hip - a
+ * pouch, a buckle - the pelvis's.
  */
 export function islandClass({ min, max }) {
-  if (min[2] > 112 && Math.max(-min[0], max[0]) < 12) return 'hood';
+  if (min[2] > 112 && max[2] > SCENE_BODY.head.max[2] && Math.max(-min[0], max[0]) < 12) return 'hood';
   if (min[2] > 100 && min[0] > 6) return 'arm:R';
   if (min[2] > 100 && max[0] < -6) return 'arm:L';
-  if (min[0] < -3 && max[0] > 3) return min[2] < 76 ? 'skirt' : 'torso';
+  if (min[0] < -3 && max[0] > 3) return min[2] < HIP_JOINTS ? 'skirt' : 'torso';
   if (min[2] < 70) return min[0] + max[0] > 0 ? 'leg:R' : 'leg:L';
-  return 'hip';
+  return min[2] < HIP_JOINTS ? 'skirt' : 'hip';
 }
 
 /** A mesh's islands - triangles joined by a shared POSITION (a seam in the UVs or the normals is one piece) - each its
@@ -296,23 +342,28 @@ export function islandsOf(mesh) {
   }).sort((p, q) => p.verts[0] - q.verts[0]);
 }
 
-/** A mesh with its hood islands raised HELM_LIFT onto the game's head (see the header), to the bake's six places. */
+/** A mesh with its hood islands raised HELM_LIFT onto the game's head (see the header), to the bake's six places - its
+ *  bounds the lifted mesh's (AUDIT MW-FOLK1 L1-F9: they were the unlifted ones). */
 export function liftHoods(mesh) {
   const up = new Set(islandsOf(mesh).filter((isl) => islandClass(isl) === 'hood').flatMap((isl) => isl.verts));
   if (!up.size) return mesh;
-  return { ...mesh, positions: mesh.positions.map((v, i) => (i % 3 === 2 && up.has((i - 2) / 3) ? +(v + HELM_LIFT).toFixed(6) : v)) };
+  const positions = mesh.positions.map((v, i) => (i % 3 === 2 && up.has((i - 2) / 3) ? +(v + HELM_LIFT).toFixed(6) : v));
+  const min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
+  positions.forEach((v, i) => { const k = i % 3; if (v < min[k]) min[k] = v; if (v > max[k]) max[k] = v; });
+  return { ...mesh, positions, bounds: { min, max } };
 }
 
 /**
- * One shape's weights: each island by its class's rig in the outfits' bind (`bind`, packBind), a hanging piece's hang
- * to its own hem. One `[[bone, weight], ...]` list per vertex, and the bones the shape uses.
+ * One shape's weights: each island by its class's rig in the outfits' bind (`bind`, packBind), a hanging piece the
+ * hang (hangOf). One `[[bone, weight], ...]` list per vertex, and the bones the shape uses.
  */
 export function shapeWeights(mesh, bind) {
   const weights = new Array(mesh.positions.length / 3);
   const used = new Set();
+  const hanging = hangOf(bind);
   for (const isl of islandsOf(mesh)) {
     const rig = RIGS[islandClass(isl)];
-    const hang = rig.hang ? { mode: 'over', root: 'Bip01 Pelvis', legs: ['Bip01 L Thigh', 'Bip01 R Thigh'], top: HANG_TOP, bottom: isl.min[2], share: HANG_SHARE, centre: HANG_CENTRE } : null;
+    const hang = rig.hang ? hanging : null;
     const pos = isl.verts.flatMap((v) => [mesh.positions[v * 3], mesh.positions[v * 3 + 1], mesh.positions[v * 3 + 2]]);
     const lists = jointWeights(pos, rigSegments(rig.bones, bind), { hang });
     isl.verts.forEach((v, k) => { weights[v] = lists[k]; for (const [b] of lists[k]) used.add(b); });

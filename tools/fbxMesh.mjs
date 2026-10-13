@@ -821,18 +821,23 @@ function layerReader(layer, stride, valueKey, indexKey) {
 }
 
 /**
- * MW-HEADS1: the material index each POLYGON wears - LayerElementMaterial, as Blender writes it (ByPolygon, or
- * AllSame for an object of one material; IndexToDirect into the object's material connections, in their order).
- * Anything else is refused rather than read as another layout.
+ * MW-HEADS1: the material index each of a Geometry's `polygons` POLYGONS wears - LayerElementMaterial, as Blender
+ * writes it (ByPolygon, or AllSame for an object of one material; IndexToDirect into the object's material
+ * connections, in their order). Anything else is refused rather than read as another layout - and so is a ByPolygon
+ * list that is not one index a polygon (AUDIT MW-FOLK1 L1-F9: a short list read its missing polygons as no material's,
+ * and they were dropped from every bake without a word).
  */
-function materialReader(geo) {
+function materialReader(geo, polygons) {
   const layer = childNamed(geo, 'LayerElementMaterial');
   if (!layer) throw new Error('the Geometry carries no LayerElementMaterial - there is no material to bake alone');
   const map = childNamed(layer, 'MappingInformationType')?.props[0];
   const ids = childNamed(layer, 'Materials')?.props[0];
   if (!ids?.length) throw new Error('LayerElementMaterial carries no Materials');
   if (map === 'AllSame') return () => ids[0];
-  if (map === 'ByPolygon') return (i) => ids[i];
+  if (map === 'ByPolygon') {
+    if (ids.length !== polygons) throw new Error(`LayerElementMaterial: ${ids.length} material indices for ${polygons} polygons`);
+    return (i) => ids[i];
+  }
   throw new Error(`LayerElementMaterial: MappingInformationType ${map} is not ByPolygon or AllSame`);
 }
 
@@ -937,7 +942,7 @@ export function bakeMesh(tree, { name = null, keepRotation = false, normalise = 
 
   // ── triangulate and weld ──────────────────────────────────────────
   const polys = polygonsOf(pvi);
-  const wears = material === null ? null : materialReader(geo);   // MW-HEADS1
+  const wears = material === null ? null : materialReader(geo, polys.length);   // MW-HEADS1
   const outPos = []; const outNrm = []; const outUv = []; const indices = [];
   const seen = new Map();
   let corner = 0;
