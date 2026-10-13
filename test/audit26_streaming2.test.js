@@ -9,7 +9,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { areEnemiesNearby } from '../src/systems/encounters.js';
-import { exhaustionOutcome, EXHAUSTED_SAFE_TEXT_ID, EXHAUSTED_ENEMIES_TEXT_ID } from '../src/systems/rest.js';
+import { exhaustionOutcome, EXHAUSTED_SAFE_TEXT_ID, EXHAUSTED_FIGHTING_LINE } from '../src/systems/rest.js';
 import { calculateTripCost } from '../src/systems/travel.js';
 import { ownsShip, SHIP_TYPES } from '../src/systems/banking.js';
 import { freeShipTravel } from '../src/systems/guildServices.js';
@@ -50,13 +50,16 @@ test('audit26 F059: the exhaustion collapse rides AreEnemiesNearby over EVERY fo
   assert.equal(safe.textId, EXHAUSTED_SAFE_TEXT_ID);
 
   // One encounter wolf that has SEEN the player: AreEnemiesNearby says
-  // yes and the collapse is fatal - the arm the guard-only read could
-  // never reach, because encounter foes were not consulted at all.
+  // yes and the collapse is the foes-about arm - the arm the guard-only
+  // read could never reach, because encounter foes were not consulted
+  // at all. PIN MOVED (FIELD BUGS 2026-10-13e SPENT-ASHORE): that arm
+  // is no longer DFU's death on 1072 but a tenth of the health and a
+  // HUD line - the pin is still that the encounter pool reaches it.
   const encounter = [foe({ detected: true, inSight: true, dist: 900 })];
   assert.equal(areEnemiesNearby(encounter), true);
-  const fatal = exhaustionOutcome({ enemiesNearby: areEnemiesNearby(encounter), swimming: false, entity, day: true, inside: false });
-  assert.equal(fatal.kind, 'death');
-  assert.equal(fatal.textId, EXHAUSTED_ENEMIES_TEXT_ID);
+  const spent = exhaustionOutcome({ enemiesNearby: areEnemiesNearby(encounter), swimming: false, entity, day: true, inside: false });
+  assert.equal(spent.kind, 'spent');
+  assert.equal(spent.line, EXHAUSTED_FIGHTING_LINE);
 
   // and the STRICT variant is the right one: a foe inside the classic
   // spawn band that has not seen you still counts (only the RESTING

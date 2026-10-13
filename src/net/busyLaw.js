@@ -1,3 +1,4 @@
+// @ts-check
 // BUSY-GATE (2026-10-13, after HOMES-SHED; the owner: "Build whatever can harden our server"): WHEN THE ACCOUNT DATABASE
 // IS OVERLOADED, THE READS A TAB KEEPS ASKING STAND BACK - TOGETHER, AND AT BOTH ENDS. ONE LAW for the client's gate
 // (net/accountClient.js `call`) and the service's shed (server-account/src/index.js), so the two can never disagree on

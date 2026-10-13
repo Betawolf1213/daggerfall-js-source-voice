@@ -383,6 +383,12 @@ does not, its tier's band, appended after its numbers, the price with it. Every 
 Exalted, so neither moves the other's roll whatever a list's order. The gate's spoils and a town's thanks take them in
 the same pass, after every earlier draw.
 
+CRAFT-PROCS (FIELD BUGS 2026-10-13e): and a crafted Superior or Masterwork. The craft's mint (`systems/smithItems.js`
+mintPiece) took its quality's `applyRarity` and never this pass, so no crafted piece carried a line that does
+something - a jewel none of its four, the caster's lines. It takes the pass now, on its record's stream after the roll,
+with `lastPass`'s `on` set: the switch is not asked, because the piece is its record's on every client and the line's
+reader asks it. A record made before mints as it was (`Professions-Arc.md` 9.2, the record's `v`).
+
 **What they do** - `systems/lootPowers.js` (new, the kit), registered at import under one name (`lootPowers`) and
 imported by the game beside the sets' own (`scenes/world.js`, folded onto the sets' import line - line-neutral):
 
@@ -808,6 +814,11 @@ lean are one roll each; the Exalted's pool holds the proc kinds (section 6's Leg
 drought counted once at the take and none in a new game; the codex's silent backfill; `cp` bounded by
 `CHAMPION_TRAIT_MAX` (world139); the four item fields declared and the Broker's wares bound (no salvage); the guild
 popup's F free of DFU's four letters; the lines' finds never a peer's street body.
+
+CRAFT-PROCS (FIELD BUGS 2026-10-13e): "a Masterwork's roll never reach[es] it" was read for the doors' order, and was
+written when focus was a jewel's only proc line. No page kept crafted pieces from the proc lines on purpose. A crafted
+Superior's and Masterwork's roll takes the last pass since, on its own record's stream (the LOOT4 record's CRAFT-PROCS
+note, section 15); the Broker's `applyRarity` still never does.
 
 Pinned: `test/auditloot.test.js` (8), driven where it can be - F1 the fits, the choices and the wire; F2 a Masterwork's
 and a Superior's piece refused with nothing taken; F3 a reforge and an imprint off the market; F4 both hands, either

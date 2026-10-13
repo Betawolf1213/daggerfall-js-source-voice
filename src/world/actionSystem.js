@@ -151,8 +151,9 @@ export const TRIGGER_GATE = Object.freeze({
 /** The four states an action record's tween can be in - the only ones the graph ever mints
  *  (start / end at rest, forward / reverse mid-tween). */
 export const ACTION_STATES = Object.freeze(['start', 'forward', 'end', 'reverse']);
-/** The largest lock a record may carry off the wire: DFU's own values run 0..20 (MAGIC_LOCK_THRESHOLD), and a byte
- *  is past every one of them. */
+/** The largest lock a record may carry off the wire: a byte. Daggerfall's own values run to 255 (RDBLayout's
+ *  LOCK_VALUES - 50, 128 and 255 among them; SPELL-LOCK found this line saying 0..20), and what a peer's lock may do
+ *  to a door is `lockCeiling`'s law, not this bound's. */
 export const ACTION_LOCK_MAX = 255;
 
 /** AUDIT WORLD3 B1: the SHARED half of a save record - a save record with the picker's own retry latch removed.
@@ -292,6 +293,37 @@ export const DOOR_OPEN_DURATION = 1.5;
 // action value:
 export const ACTION_LOCK_VALUE = 16;
 export const MAGIC_LOCK_THRESHOLD = 20;
+
+/** SPELL-LOCK (FIELD BUGS 2026-10-13e): THE HARDEST LOCK A DOOR'S OWN DATA CAN GIVE IT - its starting lock (RDBLayout's
+ *  LOCK_VALUES; an interior's doors start at 0, DaggerfallInterior.AddActionDoors sets none), or LockDoor's 16 when the
+ *  door's own action can lock it (`_doorVerb`). Every other lock a door can carry is a Lock spell's, minted at its
+ *  caster's level (mysticism.js triggerLock, Lock.cs:116) - and Daggerfall has one player, who can always Open what
+ *  they locked (Open.cs:117 reads the same level). A peer's word is held to this ceiling (`restoreSaveData`'s
+ *  `remote`): one player's level-41 Lock on a shop's inner door reached every visitor for the room memory's thirty
+ *  days, magically held (>= MAGIC_LOCK_THRESHOLD: no pick, no bash) and past every lower level's Open. */
+export function lockCeiling(o) {
+  return Math.max(o?.startingLockValue | 0, o?.actionFlag === ACTION_FLAGS.LockDoor ? ACTION_LOCK_VALUE : 0);
+}
+
+/** SPELL-LOCK: whether a saved lock lands on this door. Up to the door's own ceiling, always. Past it the lock is a
+ *  Lock spell's: a peer's word never lands it (its caster's alone), and the player's own save lands it unless it is
+ *  past the player's level - a lock no Lock of theirs could have cast (Lock.cs:116 locks at the caster's level, and a
+ *  level never drops), which is a peer's lock this save took before SPELL-LOCK and kept: the trapped player's own
+ *  copy of the shop is mended on its next load. */
+function lockLands(o, lock, remote, level) {
+  if (lock <= lockCeiling(o)) return true;
+  if (remote) return false;
+  return !(Number.isFinite(level) && lock > level);
+}
+
+/** SPELL-LOCK: a peer's record kept for a door not hung yet (HOME-DOORS' early records) carries no lock - such a door
+ *  is a placed one, whose own data locks it at nothing (`lockCeiling` 0). */
+function withoutLock(r) {
+  if (!r || typeof r !== 'object' || r.lock == null) return r;
+  const { lock: _lock, ...rest } = r;
+  void _lock;
+  return rest;
+}
 
 // CalculateInteriorLockpickingChance = clamp(5*(level - lockValue) +
 // lockpickSkill, 5, 95) - the chance LookAtInteriorLock's text tiers on
@@ -518,7 +550,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
       // life of the session - a door bricked open, for every player in the room, by one 146-byte frame.
       const rec = validActionRecord(raw);
       const o = rec && this.objects.get(rec.key);
-      if (!o) { if (rec) this._keepEarly(rec); continue; }   // HOME-DOORS (AUDIT): a placed door not hung yet takes it when it is
+      if (!o) { if (rec) this._keepEarly(withoutLock(rec)); continue; }   // HOME-DOORS (AUDIT): a placed door not hung yet takes it when it is (SPELL-LOCK: never a peer's lock)
       const opening = o.kind === 'door' && o.state !== 'forward' && rec.state === 'forward';
       // AUDIT WORLD3 B3: the author rings the RDB soundIndex on EVERY Play (`_play`, "if (PlaySound && Index > 0)"),
       // and a Play always moves the record's own state - a tween's start, or an INSTANT flip. Gating the peers' ring
@@ -526,7 +558,7 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
       // sliding in silence on every screen but the author's.
       const played = rec.state !== o.state
         || (o.kind === 'door' && rec.moveState != null && rec.moveState !== o.moveState);
-      this.restoreSaveData([rec]);
+      this.restoreSaveData([rec], { remote: true });   // SPELL-LOCK: a peer's lock lands only up to the door's own
       if (opening) this.onDoorState?.(o, true);
       if (played && o.index > 0) this.onActionSound?.(o);
       n++;
@@ -1388,18 +1420,23 @@ constructor(collider, { damagePlayer = null, drainMagicka = null, castSpell = nu
    *
    *  Every field past {state, t, activationCount} is presence-gated:
    *  snapshots written before a field existed leave the live value, the
-   *  additive shape this save layer uses everywhere. */
-  restoreSaveData(list) {
+   *  additive shape this save layer uses everywhere.
+   *
+   *  SPELL-LOCK (FIELD BUGS 2026-10-13e): `remote` is a PEER'S word - an act (applyRemote) or a room's memory (a
+   *  building's, a dungeon's) - and its lock lands only up to the door's own `lockCeiling`. A lock past it is a Lock
+   *  spell's, its caster's alone: this door keeps the lock it has. The player's own save keeps its locks, but for one
+   *  past both the ceiling and `level` (the player's own): `lockLands`. */
+  restoreSaveData(list, { remote = false, level = null } = {}) {
     list?.forEach((sa) => {
       const o = this.objects.get(sa.key);
-      if (!o) { this._keepEarly(sa); return; }   // HOME-DOORS (AUDIT): a placed door, hung a moment later, takes it then
+      if (!o) { this._keepEarly(remote ? withoutLock(sa) : sa); return; }   // HOME-DOORS (AUDIT): a placed door, hung a moment later, takes it then
       o.state = sa.state;
       o.t = sa.t;
       // F185: activationCount deliberately NOT restored - an old
       // envelope still carrying the field is ignored, so every
       // counter starts the rebuilt scene at 0, as DFU's does.
       if (o.kind === 'door') {
-        if (sa.lock != null) o.currentLockValue = sa.lock;   // P10: door locks persist
+        if (sa.lock != null && lockLands(o, sa.lock, remote, level)) o.currentLockValue = sa.lock;   // P10: door locks persist; SPELL-LOCK: a Lock spell's, its caster's alone
         if (sa.failedSkillLevel != null) o.failedSkillLevel = sa.failedSkillLevel;   // F187: the pick latch survives
         if (sa.moveState != null) { o.moveState = sa.moveState; o.moveT = sa.moveT ?? 0; }
       }

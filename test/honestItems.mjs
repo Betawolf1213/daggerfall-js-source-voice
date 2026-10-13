@@ -756,6 +756,13 @@ function runCrafts(run, seedsOf, S, minted) {
           if (!item) continue;
           one(item);
           crafted.push({ item, claims: { p: prov, s: 'acct_honest', h: 'char_honest', r: r.id, q: quality, m: maker, c: seed, i: 1_760_000_000, ...(marked ? { a: 1 } : {}), ...(dye == null ? {} : { u: dye }), ...(hand == null ? {} : { f: hand }) } });
+          // CRAFT-PROCS (FIELD BUGS 2026-10-13e): a quality the ladder rolls mints at both laws - the record made before
+          // (above, no `v`) and the one a craft stamps now, its last pass taken - each its own provenance
+          if (!R.QUALITY_EFFECTS[quality]?.rarity) continue;
+          const now = provenanceOf(50_000 + n);
+          const stamped = SMITH.mintPiece({ recipe: r.id, quality, seed, maker, marked, dye, hand, version: PRODUCT.MINT_VERSION }, now);
+          one(stamped);
+          crafted.push({ item: stamped, claims: { ...crafted.at(-1).claims, p: now, v: PRODUCT.MINT_VERSION } });
         }
       }
     }

@@ -2118,6 +2118,7 @@ prof.page.purse.temperAnvil,"Kowal żąda {fee} złota za hartowanie; masz przy 
 prof.page.purse.temperLoom,"Krawiec żąda {fee} złota za hartowanie; masz przy sobie {have}."
 prof.page.purse.workbench,"{who, select, carpenter {Cieśla} other {Meblarz}} żąda {fee} złota za wyrób lub cięcie; masz przy sobie {have}."
 prof.page.rail.professions,"Profesje"
+rest.exhausted.fighting,"Jesteś zbyt wyczerpany, by walczyć - wycofaj się i odpocznij!"
 settings.language.machine,"Tłumaczenie maszynowe"
 settings.language.name,"Język"
 settings.language.note,"Język tekstów w grze. Działa od razu."

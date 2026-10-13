@@ -504,7 +504,7 @@
   {
     "name": "HOME-DOORS-the-early-record-dropped",
     "file": "src/world/actionSystem.js",
-    "old": "      if (!o) { this._keepEarly(sa); return; }",
+    "old": "      if (!o) { this._keepEarly(remote ? withoutLock(sa) : sa); return; }",
     "new": "      if (!o) return;",
     "tests": [
       "test/homedoors.test.js"

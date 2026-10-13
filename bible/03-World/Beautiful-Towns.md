@@ -368,7 +368,7 @@ one stand-in, on while either mod that places it is loaded.
 | the table clutter | archive `56790` (22 records) | 4,827 | no peer's catalogue names it; each record a piece of Daggerfall's own clutter of the kind its height says - tableware and books on the tables, jars, potions and books on shelves and ledges |
 | the temple gardens | archive `10035` (7 records) | 151 | no catalogue names it either; rows of one record each on three temples' grounds - each a garden plant of Daggerfall's own (`TEXTURE.301`): cabbages, greens, lavender, flowers, a berry bush |
 | the RMB Resource Pack's rocks | 23 ids | 245 | a boulder of the climate's rock (`302_3`), each the size of the pack's own mesh, measured |
-| its hills | 23 ids | 47 | a hill of the climate's grass or rock at the pack's own shape (FIELD BUGS 2026-10-05 HILL-SHAPES, "Houses in Ipsham are floating"): a polar profile measured off each published mesh by `tools/rmbrpHills.mjs --shapes` (`world/rmbrpHillShapes.js`: the raised footprint's centre, 16 bearings each with its reach and ten rings' heights, each cell's median - the shape, not the sculpt; 0.03-0.32 m from the pack's surface at the median), so what the author stood on a hill stands on it - Ipsham's TEMPASH3 houses, TVRNAS03's gazebo. They were mounds of the catalogue's size, 1.7-4.5x too narrow and 2-7x too low, and those houses hung 4.1-4.2 m. TREES-SEATED's seat (`world/townStandIns.js` `blockHillSeat`) reads the hills drawn, so the six blocks' 130 trees stand on them (1 more than 1.5 m off, where 121 were). A measurement of the peer's mesh, as the docks' and domes' - Mac's to confirm |
+| its hills | 23 ids | 47 | a hill of the climate's grass or rock at the pack's own shape (FIELD BUGS 2026-10-05 HILL-SHAPES, "Houses in Ipsham are floating"): a polar profile measured off each published mesh by `tools/rmbrpHills.mjs --shapes` (`world/rmbrpHillShapes.js`: the raised footprint's centre, 16 bearings each with its reach and ten rings' heights, each cell's median - the shape, not the sculpt; 0.03-0.32 m from the pack's surface at the median), so what the author stood on a hill stands on it - Ipsham's TEMPASH3 houses, TVRNAS03's gazebo - and is held under its whole footprint by a pad (HILL-SEAT, below). They were mounds of the catalogue's size, 1.7-4.5x too narrow and 2-7x too low, and those houses hung 4.1-4.2 m. TREES-SEATED's seat (`world/townStandIns.js` `blockHillSeat`) reads the hills drawn, so the six blocks' 130 trees stand on them (1 more than 1.5 m off, where 121 were). A measurement of the peer's mesh, as the docks' and domes' - Mac's to confirm |
 | its market stalls | 17 ids | 32 | a stall the pack's size (3.2 m across the counter, 4.9 m along it), its awning the cloth each prefab names (`TEXTURE.049` or `449`) |
 | its docks | `53140`-`53144` | 16 | measured off the pack's meshes: a plank deck whose top is the origin, five-sided piles 5 m below it and 1 m above, a ramp or five steps - which land where the author's do (GENRAS00's ramps at the long dock's two ends; TEMPASH3's three flights across the T-dock's wing) |
 | its platform, foundation and domes | `53160`, `53170`, `53182`, `53187`, `53194` | 22 | stone blocks, classic textures, and the three domes at the pack's own profile (FIELD BUGS 2026-10-04d DOMES, measured off its HF Dome 03/04 meshes at the prefabs' 4.6875: an octagonal drum 4.8 m across on the ground to 3.63 m, the dome to 8.43 m, 03's spire to 10.75 m - they had been a 3.6 m cap over a drum sunk in the roofs they stand on) - the foundation the pack's 16 x 8 x 16 m block, its top the floor of the two temples it stands under (centred, as the pack's mesh is, it walled up their front doors; no stand-in covers any door of either pack's towns) |
@@ -405,6 +405,21 @@ loader: all 410 rings shut, none open at either end of any line; every one of th
 445 with nothing on its cut faces; Daggerfall's own corner towers reach exactly 448 from where their lines cross. The
 author's farms stand inside the ring by design and reach at most 50 units into a wall piece (house `215` in
 `WALLAA06/12/13.FARMAA01`), as Daggerfall Unity places them too: recorded, unchanged.
+
+**What a hill holds** (FIELD BUGS 2026-10-13e HILL-SEAT, 2026-10-13; SylviaBun: "Temple of Kynareth has floating
+houses due to terrain modifications"). A hill's stand-in is each cell's median, which seats a model at its origin but
+falls away towards a plateau's edge: TEMPASH3 (about a fifth of Beautiful Villages' Kynareth temples) stands houses
+`127`, `129`, `201` and temple `402` on hill `52758`'s plateau, and a house's far wall hung over the drawn slope - at
+7 m from an origin 0.74-1.24 m, and under a 14 m house's corners up to 2.2 m. A hill holds what the author stood on
+it: every model whose lowest vertex stands over the block's plane (0.5 m), over a drawn hill and within a metre of
+its top (not hung there), and which hangs more than 0.05 m over what is drawn anywhere under the hull of its own
+vertices, gets a PAD (`world/townStandIns.js` `blockHillPatch`): a flat top 0.05 m under its base over that whole
+footprint and 0.25 m past it, and a 45-degree bank down until it is under the hill or the plane - the hill's own
+picture, laid in the hill's own frame, so the grass runs on where they meet. No model moves and nothing is raised
+over a base. The streamed world merges the pads with the pixel's statics and its collider bucket, both freed with the
+pixel; the fixed city (`?exterior`) draws and collides them for its life; TREES-SEATED's seat reads them. Every point
+of every such footprint now stands within 0.15 m of what is drawn (`test/fb1013e_hillseat.test.js`; the whole packs
+swept with the player's ARCH3D on `ARENA2_PATH`).
 
 ### Not stood in
 

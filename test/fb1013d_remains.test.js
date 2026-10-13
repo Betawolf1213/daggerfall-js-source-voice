@@ -10,8 +10,8 @@
 // list never opened even on the spot. Now the fight is the place the one played stands in.
 //
 // Fixtures from the producers: the Legacy host (createLegacyHost) over one storage and one tab - its founding, the death
-// as the collapse decides it (exhaustionOutcome over areEnemiesNearby) at the one damage door it takes (hurtPlayer's
-// SetHealth(0) arm), the Succession, the birth, the save door (modSaveRecords, restoreModSaveRecords); a real ground pool
+// as the collapse decides it (exhaustionOutcome over areEnemiesNearby) at the one damage door it takes (hurtPlayer -
+// SPENT-ASHORE's tenth at each drain since FIELD BUGS 2026-10-13e, where it was DFU's SetHealth(0)), the Succession, the birth, the save door (modSaveRecords, restoreModSaveRecords); a real ground pool
 // (createDroppedLoot), the real transfer laws (planTake, planStore, applyTransfer) and the made dungeons' producers (a
 // spawn, the Undercroft, the Arena's floor, a medium build); the world host's own reads (legacyHere, legacyInDungeonOf,
 // legacyAtPlace, anchorLanding, legacyRemainsFeet, the stand's construction, inFight, the let-go, legacyStep) and the
@@ -176,15 +176,25 @@ function house() {
   host.current().toll = 200;   // the span spent: Arkay will not grant another
   return { w, world, host, e };
 }
-/** The collapse kills - DFU's OnExhausted, as the dungeon's own onExhausted asks it: exhaustionOutcome over
- *  areEnemiesNearby (no foe near, an hour on the ground; a hostile one that sees her, a death), then SetHealth(0) through
- *  the one damage door - and the line's Succession raises a newborn heir, who lands through the birth's own door. */
+/** The collapse kills - as the dungeon's own onExhausted asks it: exhaustionOutcome over areEnemiesNearby (no foe near,
+ *  an hour on the ground; a hostile one that sees her, SPENT-ASHORE's tenth of her health at each drain to nothing,
+ *  through the one damage door, until the drains have spent her) - and the line's Succession raises a newborn heir, who
+ *  lands through the birth's own door. PIN MOVED (FIELD BUGS 2026-10-13e SPENT-ASHORE): DFU's OnExhausted SetHealth(0)s
+ *  her at the first such collapse (TEXT.RSC 1072), and this helper stood her death on that one; the port's collapse among
+ *  foes costs a tenth now, so she dies of the collapses as they come - the same death through the same door, the
+ *  Legacy host hearing it as any death. */
 function fallAndHeir(t) {
   const seen = { dead: false, ai: { wouldBeSpawned: true, detected: true, inSight: true, targetIsLocalPlayer: true, isHostile: true } };   // the castle turned on her
   assert.equal(exhaustionOutcome({ enemiesNearby: areEnemiesNearby([]), entity: t.e, day: false, inside: true }).kind, 'rest', 'no foe near: the collapse is an hour on the ground');
-  assert.equal(exhaustionOutcome({ enemiesNearby: areEnemiesNearby([seen]), entity: t.e, day: false, inside: true }).kind, 'death', 'a hostile foe near: the collapse kills (TEXT.RSC 1072)');
+  const spent = exhaustionOutcome({ enemiesNearby: areEnemiesNearby([seen]), entity: t.e, day: false, inside: true });
+  assert.equal(spent.kind, 'spent', 'a hostile foe near: the collapse costs a tenth of her health (SPENT-ASHORE)');
   setDeathListener('projectLegacy', () => t.host.onDeath());
-  try { assert.equal(hurtPlayer(t.e, t.e.health, { bypassShield: true }), true, 'the collapse is a death'); } finally { setDeathListener('projectLegacy', null); }
+  try {
+    let died = false, drains = 0;
+    while (!died && drains < 20) { died = hurtPlayer(t.e, spent.damage, { bypassShield: true }); drains++; }
+    assert.equal(died, true, 'the collapses are a death');
+    assert.equal(drains, Math.ceil(t.e.maxHealth / spent.damage), 'one at each drain to nothing, until her health is spent');
+  } finally { setDeathListener('projectLegacy', null); }
   const out = t.host.deathOutcome();
   assert.equal(out.kind, 'fall');
   assert.equal(out.fallen.died.cause, 'years', 'dead of her years: the span was spent');

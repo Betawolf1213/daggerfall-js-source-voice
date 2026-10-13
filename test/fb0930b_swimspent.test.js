@@ -13,7 +13,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
-import { exhaustionOutcome, EXHAUSTED_SWIM_SHARE, EXHAUSTED_SWIMMING_LINE, EXHAUSTED_ENEMIES_TEXT_ID } from '../src/systems/rest.js';
+import { exhaustionOutcome, EXHAUSTED_SPENT_SHARE, EXHAUSTED_SWIMMING_LINE, EXHAUSTED_FIGHTING_LINE } from '../src/systems/rest.js';
 import { createPlayerTicker } from '../src/scenes/shared.js';
 import { setSharedClock, setWorldMinutes, resetMagicRoundMarker } from '../src/systems/worldTick.js';
 import { hurtPlayer } from '../src/characters/playerEntity.js';
@@ -35,17 +35,19 @@ function swimmer({ fatigue = 0, swimmingSkill = 5 } = {}) {
   return entity;
 }
 
-test('SWIM-SPENT: the law - in the water a drain to nothing is a tenth of the health and a line, foes about or not; on dry feet the safe collapse rests and foes about kill, as before', () => {
+test('SWIM-SPENT: the law - in the water a drain to nothing is a tenth of the health and a line, foes about or not; on dry feet the safe collapse rests and foes about cost the same share (SPENT-ASHORE; they killed until 2026-10-13e)', () => {
   const e = swimmer();
   const wet = exhaustionOutcome({ enemiesNearby: false, swimming: true, entity: e });
   assert.deepEqual({ kind: wet.kind, damage: wet.damage, line: wet.line, inWater: wet.inWater }, { kind: 'drown', damage: 10, line: EXHAUSTED_SWIMMING_LINE, inWater: true });
-  assert.equal(EXHAUSTED_SWIM_SHARE, 0.1);
+  assert.equal(EXHAUSTED_SPENT_SHARE, 0.1);   // PIN MOVED (FIELD BUGS 2026-10-13e SPENT-ASHORE): renamed - the water's share and the shore's, one constant
   assert.equal(exhaustionOutcome({ enemiesNearby: true, swimming: true, entity: e }).kind, 'drown', 'foes about change nothing in the water');
   assert.equal(exhaustionOutcome({ swimming: true, entity: { ...e, maxHealth: 7 } }).damage, 1, 'rounded up - never nothing');
   assert.equal(exhaustionOutcome({ swimming: true, entity: { ...e, maxHealth: 0 } }).damage, 1, 'never nothing');
   assert.equal(exhaustionOutcome({ enemiesNearby: false, swimming: false, entity: e }).kind, 'rest');
+  // PIN MOVED (FIELD BUGS 2026-10-13e SPENT-ASHORE): foes about on dry feet no longer kill - the water's share, its own
+  // line (test/fb1013e_spentashore.test.js)
   const near = exhaustionOutcome({ enemiesNearby: true, swimming: false, entity: e });
-  assert.deepEqual([near.kind, near.textId, near.inWater], ['death', EXHAUSTED_ENEMIES_TEXT_ID, false]);
+  assert.deepEqual([near.kind, near.damage, near.line, near.inWater], ['spent', 10, EXHAUSTED_FIGHTING_LINE, false]);
 });
 
 test('SWIM-SPENT: a swimmer run out of fatigue on the real ticker lives through the first drain, drowns only in the water\'s own time - some fifty real seconds from full health - and at the shore rests instead', () => {

@@ -702,6 +702,18 @@ Then **+1 step** each, at most: a seat's Forge / Workshop / Apothecary (SEAT0 7.
 specialisation that says so; Heartwood or a Warforged ingot among the inputs. Masterwright adds 5 points to
 Masterwork. Nothing passes Masterwork.
 
+CRAFT-PROCS (FIELD BUGS 2026-10-13e; a player: "Added potency and cast speed, cast cost affixes are not rolling on
+crafted jewelry"): the roll is the loot door's whole roll now. The mint took the tier's `applyRarity` and never the
+door's last pass, and every line that does something is drawn in that pass alone (LOOT4), so no crafted piece carried
+one. A Superior and a Masterwork take the pass after the roll, on the same stream off the
+record's seed (`systems/smithItems.js` mintPiece, `systems/lootRarity.js` lastPass): one such line, 20 times in 100 on a
+Superior and 35 on a Masterwork, as a loot door's Magic and Rare take it. A jewel's is focus, castSpeed, potency or
+wellspring, a weapon's one of five, armour's thorns, and the Loot Rarity switch is not asked (the piece is its record's
+on every client; the line's reader asks it). THE RECORD SAYS WHICH LAW MINTS IT: the service stamps `v` 1 at the craft
+(`net/productRecord.js` MINT_VERSION), a temper's re-sign keeps the craft's, and the market's piece carries it
+(`server-account/src/market.js` pieceOf). A record made before has none, and mints as it always did wherever it is
+minted again. The service at acct126; no migration.
+
 ### 9.3 The recipes
 
 **Smithing** (a forge: a home station, or any Weaponsmith or Armorer for a 50-gold use fee to the shop):

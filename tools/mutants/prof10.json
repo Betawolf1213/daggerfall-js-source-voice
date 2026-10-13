@@ -1486,8 +1486,8 @@
   {
     "name": "AUDIT-PROF-541-J4-no-fit",
     "file": "src/systems/smithItems.js",
-    "old": "seededRng(seed >>> 0), null, { fits })",
-    "new": "seededRng(seed >>> 0), null, {})",
+    "old": "applyRarity(item, eff.rarity, rolls, null, { fits })",
+    "new": "applyRarity(item, eff.rarity, rolls, null, {})",
     "tests": [
       "test/prof10_client.test.js"
     ]

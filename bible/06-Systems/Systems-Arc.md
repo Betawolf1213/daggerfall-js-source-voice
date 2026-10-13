@@ -790,7 +790,11 @@ DaggerfallEntity.SetFatigue + PlayerEntity's OnExhausted handler:
   rounds, as DFU's broker does under RaiseTime), each pool recovers
   one hour's rate, Medical tallies, TEXT.RSC 1071 shows
   click-to-close; enemies nearby (1072) or swimming (the watery-
-  grave line) -> SetHealth(0), the fatal collapse.
+  grave line) -> SetHealth(0), the fatal collapse. [DEPARTED: in the
+  water since SWIM-SPENT (FIELD BUGS 2026-09-30b), near enemies since
+  SPENT-ASHORE (FIELD BUGS 2026-10-13e, 2026-10-13) - each drain to
+  nothing costs a tenth of the health pool and a HUD line, no box;
+  1072 is said by no host.]
 - **Parity fix en route**: DFU applies the per-minute fatigue loss
   ONCE per minute-CHANGE (a single DecreaseFatigue behind
   lastGameMinutes != gameMinutes - no loop over elapsed minutes);
@@ -4107,8 +4111,7 @@ RAISING max (the increase folds into mods.maxMagicka, so it sums with
 ExtraSpellPts and V2c's magery through the one modifier), takes 1d6
 strength from a dry target, and resets both twelve game minutes after
 the last strike - its state an activeEffects entry (kind 'artifact')
-the save carries free and liveStat reads through one added arm
-(RECORDED: DFU also moves the strength MAX; the port clamps at 100).
+the save carries free and liveStat reads through one added arm.
 The Oghma Infinium sets both level flags, opens the sheet, and is
 consumed; advancement's new oghma arm grants the fixed 30-point pool
 with NO Level++ and no health raise, both flags clearing together.
@@ -4142,6 +4145,29 @@ sum, the Oghma end to end into applyLevelUp, both summons' gates with
 the unmounted door pinned ABSENT, the Wabbajack's forced reroll and
 latch with the world door's three laws, and Namira's four team arms
 plus the no-ring null.
+
+MACE-MAX (FIELD BUGS 2026-10-13e, "Molag bal mace do nothing"): the
+strength arm moves the MAX too. DFU's live effect raises its stat MAX
+mod beside its stat mod (`ChangeStatMaxMod` then `ChangeStatMod`,
+MaceOfMolagBalEffect.cs:138-139) and GetLiveStatValue clamps at
+MaxStatValue plus the merged max mods of every live effect
+(DaggerfallStats.cs:155-161, EntityEffectManager MergeStatMaxMods);
+the port had no max-mod layer, so a wielder at 100 Strength - against
+the dry foes nearly every fight is with - gained nothing. Now any live
+activeEffects entry may carry `statMaxMods` (its stat-keyed map, saved
+with it by save.js copyEffectEntry as effectData.statMaxMods is), and
+`statMods.js` liveStat's ceiling is MAX_STAT_VALUE plus their sum; the
+Mace is still DFU's only writer. The magicka arm's overflow raises the
+live max AT ONCE (`ChangeMaxMagickaModifier`, MaceOfMolagBalEffect.cs:117-123) as well as the
+tally the fold re-applies, so two strikes in one round count once
+(two 10-point drains on a full pool: 20, not 30). And taking the Mace
+off ends its live effect (UnequipHeldItem's Held-bundle sweep) through
+the type-26 row's new `unequipped` hook - the twelve-minute decay never
+ran for a Mace no longer worn, so its Strength stood for good. The
+condition bill was already DFU's (DamageEquipment's wear plus
+durabilityLoss = the blow's damage on a failed save). Pins:
+`test/fb1013e_macemax.test.js` (4), `tools/mutants/fb1013e_macemax.json`
+(8, all dead).
 
 ## V4 - THE BEAST IN TOWN: the transformed host laws (2026-08-27)
 

@@ -750,6 +750,7 @@ const REGISTRY = new Map([
     strikes: artifactHook('strikes'),
     constant: artifactHook('constant'),
     magicRound: artifactHook('magicRound'),
+    unequipped: artifactHook('unequipped'),   // MACE-MAX: the Held bundle's removal (UnequipHeldItem) - ungated by the flags, as the dispatcher runs every row's
   }],
 ]);
 

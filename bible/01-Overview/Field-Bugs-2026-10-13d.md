@@ -19,7 +19,10 @@ turned on the player: a door bashed inside it (`world/actionSystem.js attemptBas
 `MakeEnemiesHostile`), a private door tried again past its warning (DaggerfallAction.cs's DoorText trespass, the port's
 `actionSystem.js` `onTrespass` - AUDIT FB1013d C10), or a blow. So a collapse that kills in the castle is one with a
 hostile foe near. SWIM-SPENT
-(`Field-Bugs-2026-09-30b.md`) changed the water's arm of this law and no other.
+(`Field-Bugs-2026-09-30b.md`) changed the water's arm of this law and no other. (SPENT-ASHORE, `Field-Bugs-2026-10-13e.md`, a batch of
+the same day merged after this one, changed the dry arm too: a collapse with a foe near costs a tenth of the health at
+each drain to nothing, so the elder dies of the collapses as they come, through the same door - and has the bar's warning
+to get clear. `test/fb1013d_remains.test.js`'s fall moved with it.)
 
 THE SPAN IS THE ENDURING MODEL'S. Each death took Arkay's toll, years off a span (a Breton's 90, born at 23, five
 years a death at the Standard toll); spent, the next death is the last (`systems/legacy/age.js payToll`), and she

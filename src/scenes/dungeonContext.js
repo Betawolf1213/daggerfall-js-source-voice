@@ -191,6 +191,7 @@ import { isEquipped } from '../systems/equip.js';   // DR1: FilterLocalItems' `!
 import { totalGoldAmount } from '../systems/court.js';   // DR1: the trade screen's gold strip - AUDIT 58: PlayerEntity.GetGoldAmount (:1313-1316), coins PLUS letters
 import { isAzurasStarEquipped, registerFoeDoor } from '../systems/artifactEffects.js';   // V3: the Star's kill capture; AUDIT PSCALE1 DOORS-2: Namira's reflection through this pool's door
 import { applySpell, hasActiveEffect, isEntityWaterWalking, entityIsParalyzed, maxFatigue, applyEnemyMotorEffectFlags, concealmentFlags, concealFlagsOfBits, isSoulTrapEffect, spellSways } from '../systems/effects.js';   // A5: the enemy Levitate arm, the foe-target concealment closure + EntityConcealmentBehaviour's visual
+import { tellSpellLanded } from '../systems/spellPower.js';   // AUDIT SCHOOLS L2 F4: my spell on a stand-in of the court, told to the paths' riders
 import { liveStat, killIfAnyLiveStatZero, clampFatigue } from '../systems/statMods.js';   // AUDIT C&C N5: SetFatigue's clamp
 import { breathStep } from '../systems/breath.js';
 import { onMonsterHit, SPIDER_TOUCH_SPELL_INDEX } from '../systems/diseases.js';
@@ -3174,9 +3175,11 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
    *  actively seeing the player, or one inside the classic spawn
    *  band - the P13 senses fields) and dry feet = one rest hour (the
    *  clock advances 60 classic minutes, each pool recovers one
-   *  hour's rate, Medical tallies); near enemies or swimming = the
-   *  collapse KILLS. The text box is click-anywhere-to-close and
-   *  holds the motor like every overlay. */
+   *  hour's rate, Medical tallies); near enemies or swimming DFU's
+   *  collapse KILLS, and the port's costs a tenth of the health and a
+   *  HUD line (SWIM-SPENT, SPENT-ASHORE - rest.js exhaustionOutcome).
+   *  The text box is click-anywhere-to-close and holds the motor like
+   *  every overlay. */
   function onExhausted() {
     // GameManager.AreEnemiesNearby() (PlayerEntity.cs:2397) - the
     // STRICT variant, through the ONE home the three hosts ask.
@@ -3194,6 +3197,9 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // drainFatigue, DUEL1 B3).
     const sandSpare = opts.playerSpare?.() ?? null;
     if (sandSpare) { hurtEntity(playerEntity, playerEntity.health, { bypassShield: true, ...sandSpare }); playerEntity.fatigue = Math.max(playerEntity.fatigue ?? 0, 1); surfacePlayer(); return; }   // a breath of fatigue, as the duel leaves: the collapse is said once, not every frame   if (foeDeps?.playerBoutOf?.()) { playerEntity.fatigue = Math.max(playerEntity.fatigue ?? 0, 1); surfacePlayer(); return; }   // AUDIT ARENA-LADDER 2: in my bout before its fight or after it (no spare yet) - a breath, never an hour of rest in the Herald's call
+    // SPENT-ASHORE (rest.js): on dry feet with foes about a share of the health and a line - no box, no death heard (the
+    // sand's fall, above, is asked first: a bout keeps its own law)
+    if (out.kind === 'spent') { hudText.add(out.line); hurtEntity(playerEntity, out.damage, { bypassShield: true }); surfacePlayer(); return; }
     opts.csaOnPlayerDeath?.();   // CSA-J (the audit): PlayerEntity.OnExhausted -> ComeSailAway.OnPlayerDeath, underground too
     const lines = rscLines(out.textId);
     // AUDIT 68 S19-exhaustion-latch-stuck: a PUSH (ROAD-B B5) - DaggerfallUI.MessageBox never asks what else is open.
@@ -3205,21 +3211,6 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       playerEntity.fatigue = Math.min(maxFatigue(playerEntity), (playerEntity.fatigue ?? 0) + out.fatigue);
       playerEntity.magicka = Math.min(playerEntity.maxMagicka ?? Infinity, (playerEntity.magicka ?? 0) + out.magicka);
       tallySkill(playerEntity, SKILLS.Medical);
-      surfacePlayer();
-    } else {
-      // AUDIT-DEATH1 (2026-09-19, Mac: "sometimes get stuck at 0% health
-      // and live"): THROUGH THE ONE DOOR, like the other three hosts.
-      // This wrote `playerEntity.health = 0` raw, and raw is exactly what
-      // the note ninety lines above warns about - "it was the only one of
-      // the four writers that checked for death, which is why the other
-      // three could go on writing health raw and nobody noticed". The
-      // death presenter fires on the TRANSITION inside `hurtPlayer`
-      // (characters/playerEntity.js), so a raw zero raises nothing: the
-      // player sat at 0% health, alive, in the one host that owns the
-      // DeathScreen. `bypassShield` is the SetHealth(0) door's own flag -
-      // no shield stands between the player and a lethal collapse - and
-      // it is what world.js, exterior.js and worldModes.js already pass.
-      hurtEntity(playerEntity, playerEntity.health, { bypassShield: true });   // SetHealth(0): the fatal collapse
       surfacePlayer();
     }
   }
@@ -3432,13 +3423,13 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // WB4b: the Burning Court's boss as a body my harmful spells meet (his own radius), and the door a spell that met him
     // leaves through - computed here against his stand-in and sent (spellOnBoss); outside the court, nobody
     bossMark: opts.gateBoss ? () => { const b = gateBossBody(); return b ? { feet: b.ai.feet, height: b.ai.height, radius: b.ai.radius } : null; } : null,
-    castAtBoss: opts.gateBoss ? (sp) => spellOnBoss(sp) : null,
+    castAtBoss: opts.gateBoss ? (sp, caster) => spellOnBoss(sp, caster) : null,
     // WB9c: the Reckoning's crystals as marks a harmful spell meets (a touch, a missile, a blast) - each by its number
     crystalMarks: opts.gateCrystals ? () => gateCrystalBodies().map((q) => ({ c: q.crystal, feet: q.ai.feet, height: q.ai.height, radius: q.ai.radius })) : null,
-    castAtCrystal: opts.gateCrystals ? (sp, c) => spellOnCrystal(sp, c) : null,
+    castAtCrystal: opts.gateCrystals ? (sp, c, caster) => spellOnCrystal(sp, c, caster) : null,
     // WB11c: the Legion-Lord's host as marks a harmful spell meets - each by its number and name
     hostMarks: opts.gateHost ? () => gateHostBodies().map((q) => ({ i: q.host, name: q.entity?.name ?? '', feet: q.ai.feet, height: q.ai.height, radius: q.ai.radius })) : null,
-    castAtHost: opts.gateHost ? (sp, i) => spellOnHost(sp, i) : null,
+    castAtHost: opts.gateHost ? (sp, i, caster) => spellOnHost(sp, i, caster) : null,
     // ARENA4b: MY OPPONENT ON A RELAY'S SAND as the one body my harmful spells reach (the duel's own seam, hostMagic.js
     // duelMarksFor - a touch, a missile or a blast that meets them), and the door such a spell leaves through
     // (spellOnRival: the number to the referee as a spell, as a swing's goes); none outside a bout between players
@@ -4275,13 +4266,20 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   }
   /** A harmful spell of mine that met a crystal (hostMagic's crystal seam): its harmful families on the crystal's
    *  stand-in by the one door every spell lands through, the damage summed and sent. */
-  function spellOnCrystal(sp, c) {
+  /** AUDIT SCHOOLS L2 F4: MY SPELL LANDED ON A STAND-IN OF THE COURT - told to the paths' riders as any landing of mine
+   *  is (hostMagic.js applySpellToFoe), with no foe record: the relay holds the body, so no arc or second burn reaches
+   *  it; what it took is what was sent. `caster` the cast's wrapper (its token and cost), when the cast engine's. */
+  function tellStandIn(sp, entity, r, dealt, caster) {
+    tellSpellLanded({ caster: playerEntity, target: entity, foe: null, spell: sp, r, self: false, took: dealt, cast: caster?.cast ?? null });
+  }
+  function spellOnCrystal(sp, c, caster = null) {
     const cr = gateCrystalBodies().find((q) => q.crystal === c), harm = duelSpellOf(sp);
     if (!cr || !harm) return false;
-    let dealt = 0;
+    let dealt = 0, r = null;
     const sinks = { hurt: (n) => { dealt += Math.max(0, n); }, heal() {}, drainFatigue() {}, restoreFatigue() {}, drainMagicka() {}, restoreMagicka() {} };
-    try { applySpell(harm, playerEntity.level, cr.entity, sinks, Math.random, { entity: playerEntity }); } finally { cr.entity.activeEffects = []; }
+    try { r = applySpell(harm, playerEntity.level, cr.entity, sinks, Math.random, { entity: playerEntity }); } finally { cr.entity.activeEffects = []; }
     if (!(dealt >= 1)) return false;
+    tellStandIn(sp, cr.entity, r, dealt, caster);
     reportPlayerAttack({ hit: true, damage: Math.round(dealt) });   // HN1: the number pops as a blow's does
     return landOnCrystal(cr, dealt, HIT_KINDS.Spell);
   }
@@ -4324,13 +4322,14 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   }
   /** A harmful spell of mine that met one of his host (hostMagic's host seam): its harmful families on the body's
    *  stand-in by the one door every spell lands through, the damage summed and sent. */
-  function spellOnHost(sp, i) {
+  function spellOnHost(sp, i, caster = null) {
     const hb = gateHostBodies().find((q) => q.host === i), harm = duelSpellOf(sp);
     if (!hb || !harm) return false;
-    let dealt = 0;
+    let dealt = 0, r = null;
     const sinks = { hurt: (n) => { dealt += Math.max(0, n); }, heal() {}, drainFatigue() {}, restoreFatigue() {}, drainMagicka() {}, restoreMagicka() {} };
-    try { applySpell(harm, playerEntity.level, hb.entity, sinks, Math.random, { entity: playerEntity }); } finally { hb.entity.activeEffects = []; }
+    try { r = applySpell(harm, playerEntity.level, hb.entity, sinks, Math.random, { entity: playerEntity }); } finally { hb.entity.activeEffects = []; }
     if (!(dealt >= 1)) return false;
+    tellStandIn(sp, hb.entity, r, dealt, caster);
     reportPlayerAttack({ hit: true, damage: Math.round(dealt) });   // HN1: the number pops as a blow's does
     return landOnHost(hb, dealt, HIT_KINDS.Spell);
   }
@@ -4421,7 +4420,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
    *  one door every spell lands through (effects.js applySpell - the magnitude, his saving throw), the damage summed and
    *  sent. Continuous families are not his to carry - the stand-in forgets them. */
   let swayToldAt = -Infinity;   // WB8a: when his refusal was last said
-  function spellOnBoss(sp) {
+  function spellOnBoss(sp, caster = null) {
     const boss = gateBossBody(), harm = duelSpellOf(sp);
     if (!boss) return false;
     // WB8a: A SWAY ON HIM. A Pacify or a Charm in the spell is refused by his own word (world/gateBoss.js bossStandIn's
@@ -4450,10 +4449,11 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       } catch (e) { console.warn('[gate] the trap on him', e?.message ?? e); } finally { boss.entity.activeEffects = []; }
     }
     if (!harm) return laid || sways;
-    let dealt = 0;
+    let dealt = 0, r = null;
     const sinks = { hurt: (n) => { dealt += Math.max(0, n); }, heal() {}, drainFatigue() {}, restoreFatigue() {}, drainMagicka() {}, restoreMagicka() {} };
-    try { applySpell(harm, playerEntity.level, boss.entity, sinks, Math.random, { entity: playerEntity }); } finally { boss.entity.activeEffects = []; }
+    try { r = applySpell(harm, playerEntity.level, boss.entity, sinks, Math.random, { entity: playerEntity }); } finally { boss.entity.activeEffects = []; }
     if (!(dealt >= 1)) return false;
+    tellStandIn(sp, boss.entity, r, dealt, caster);
     reportPlayerAttack({ hit: true, damage: Math.round(dealt) });   // HN1: the number pops as a blow's does
     return landOnBoss(boss, dealt, HIT_KINDS.Spell);
   }
@@ -6498,7 +6498,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     // restore, then each object settles its matrix and collider bucket
     // (an open door no longer restores solid-and-closed, and a door
     // saved mid-rise keeps rising).
-    actions.restoreSaveData(w.actions);
+    actions.restoreSaveData(w.actions, { remote: wire, level: playerEntity.level });   // SPELL-LOCK: the room's memory is a peer's word - its locks only to each door's own ceiling; the save's own, never past the player's level
     // AUDIT 63 F30: SerializablePlayer.cs:402-405's
     // `if (data.playerPosition.insideDungeon) playerEnterExit
     // .PlayerTeleportedIntoDungeon = data.playerPosition

@@ -6624,3 +6624,50 @@ an Abandon only for a bounty and a revenant's hunt.
   (THE NATIVE-WINDOW RULE).
 
 `test/questshelfmain.test.js` (4); `tools/mutants/questshelfmain.json` (14), all dead.
+
+## NO-ASKS-AGAIN - a No that leads nowhere asks again, on the next click (2026-10-13, FIELD BUGS 2026-10-13e)
+
+The batch's record: `01-Overview/Field-Bugs-2026-10-13e.md`, report 6.
+
+The report, "Cant complete quest 'the lost child'": *"I found the child in the dungeon, interacted with it, accidentally
+said 'no' when it asked me to get it, and now i cant interact with it at all. Tried restarting the game, didnt help."*
+K0C00Y05 asks under `_S.07_ task: clicked npc _child_` / `prompt 1017 yes _S.09_ no _no_`, and `variable _no_` is read
+by nothing. DFU's own soft-lock, ported faithfully: Prompt.cs's `allowRearm = false` and its SetComplete at Show (a
+clear leaves it complete), ClickedNpc.cs's "Always return true once owning Task is triggered", Task.cs Update reading no
+trigger of a set task - and nothing clears `_S.07_`. The click is still the quest's (DoClick answers that a quest took
+it, so no talk window opens) and the three flags are saved, so a restart changes nothing.
+
+A DEPARTURE (Port-Ledger A, NO-ASKS-AGAIN; the owner's standing rule for a player's soft-lock, "I dont care about DFU.
+We're our own thing now"), one law in one home, `systems/quest/noAsksAgain.js`, read off the parsed quest's own
+structures. A prompt whose No is INERT (noAsksAgain.js:"export function inertNo" - a plain `variable` with no actions,
+named by nothing but that prompt: no `until ... performed:`, no action's symbol, no `when`, no resource) and whose
+asking is A CLICK (noAsksAgain.js:"export function asksOnAClick" - a plain `_x_ task:`, never a global's, every trigger
+of it one of noAsksAgain.js:"export const CLICK_TRIGGERS", and the task named by nothing) is re-armed once answered No
+(noAsksAgain.js:"export function askAgain"): its task cleared as a `clear` clears it, the prompt alone made incomplete,
+the No variable cleared. The next click asks again, a Yes then runs as a first Yes does, and a No that does something
+stays DFU's. Two doors: Quest.update each tick (quest.js:"NO-ASKS-AGAIN (not DFU's - quest/noAsksAgain.js): a prompt")
+and the end of Quest.restoreSaveData (quest.js:"NO-ASKS-AGAIN (not DFU's - quest/noAsksAgain.js): a save"), so a save
+taken after such a No loads asking again, as do a party member's copy and a reclaimed quest.
+
+THE CLICK IS THE LAW'S LIMIT. Thirteen vendored prompts in eleven quests carry a No as inert as `_no_` under `injured
+_foe_` - a robber's or a guard's "hand it over" (A0C00Y14, A0C00Y15, K0C00Y03, O0B00Y00, O0B00Y01 three times,
+O0B10Y00, R0C10Y00, R0C10Y01, R0C10Y02, R0C10Y18, R0C11Y19). There the No is the refusal and the courier's road goes
+on, and the trigger is Foe.injuredTrigger, a latch that holds until the foe is stood again: re-armed, the demand would
+come back the next tick, every tick, until a Yes gave the goods away. In the shipped corpus the law re-arms The Lost
+Child alone.
+
+NOT TAKEN, Mac's to decide: C0C00Y10 (the healer's `prompt 1014 yes _S.11_ no _no_` under `clicked npc _healer_ say
+1013`) answers a No with `_no_ task: clear _S.10_` - the author's own ask-again - and Prompt.cs's `allowRearm = false`
+defeats it in DFU as here: the healer says 1013 on every click and never asks again, and the talisman is never sold. A
+No that does something is outside this law by its own terms; it is the corpus's one prompt whose answer clears the task
+that asks it.
+
+`test/fb1013e_noasks.test.js` (5): the real scripts through the real parser and machine over a crafted region, every
+click through QuestResourceBehaviour.doClick and every answer through the box's own callback - The Lost Child asked
+again after a No, twice, and a Yes then leaving every task and action as a first Yes does; a save taken after the No
+loading asked again; M0B00Y16's refused villager and K0C00Y03's refused guard asked once (DFU's law); the action and the
+asking-task guards on the script's own variants (a `_no_ task:` merged in, a reader of `_S.07_`, `_S.07_` linked to a
+global); the corpus read by the law itself (the inert Nos, the prompts asked on a click, and the one it re-arms).
+`tools/mutants/fb1013e_noasks.json` (12), all dead - one of them killed by `test/questsave.test.js`'s restore-order pin:
+the law reads no task's state before its verdict, so a load never reads a global's task (whose read writes it from the
+store).

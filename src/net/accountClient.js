@@ -494,7 +494,9 @@ const REFUSAL_WORDS = {
   'market-good-gone': () => t('account.refusal.marketGoodGone', 'The realm does not hold that piece where your pack had it. Nothing was listed.'),
   'market-piece-route': () => t('account.refusal.marketPieceRoute', 'That piece\'s maker\'s record is yours: list it as a crafted piece.'),
   'market-goods-gold': () => t('account.refusal.marketGoodsGold', 'A piece from your pack sells for gold alone.'),
-  'stores-gold': () => t('account.refusal.storesGold', 'What you bought with gold is not used there. Withdraw it to your pack, or sell it again for gold.'),
+  // WRIT-WALL (FIELD BUGS 2026-10-13e): it sent the reader to withdraw it - and withdrawn it stays gold's, which no writ,
+  // station or guild Stores takes from the pack either (bagLaw.js carriedUsable, carriedWorkable)
+  'stores-gold': () => t('account.refusal.storesGold', 'What you bought with gold is not used there, in your Stores or out of them: it goes to your pack or back on the market for gold.'),
   // PROF5b: the auctions
   'auction-not-masterwork': () => t('account.refusal.auctionNotMasterwork', 'Only a Masterwork is sold at auction. List it at a price instead.'),
   'auction-low': () => t('account.refusal.auctionLow', 'Another bid came first. The next bid is higher now.'),

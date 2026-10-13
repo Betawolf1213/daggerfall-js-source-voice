@@ -46,6 +46,7 @@ import { expandRowValues } from '../systems/quest/questMacros.js';   // MACRO-3:
 // nothing about the old skin is decided in a UI module.
 import { announceSkillRaise, announceMastery, announceSkillMilestone } from '../ui/levelNotice.js';
 import { masterSkillsBoxDue, setMasterSkills, MASTER_SKILLS_OFFER_ROWS, MASTER_SKILLS_INFO_ROWS, MASTER_SKILLS_DECLINED_TEXT, MASTER_SKILLS_INTRO_ROWS, nextMasteryChoice, masteryChoiceRows, masterSkill } from '../systems/masterSkills.js';   // SOFTCAP3/4
+import { nextPathChoice, pathChoices, pathChoiceRows, pathsOpenRows, choosePath, pathDeclinedText } from '../systems/arcanePaths.js';   // SCHOOLS1: the specialisation's one ask
 import { DOOR_SPELL_TEXT, castBySkeletonKey } from '../systems/mysticism.js';   // X1: the door-spell alert lines; D9: Open.CheckCastByItem
 import { raiseSkills } from '../systems/advancement.js';   // AUDIT 23 (entity-1): the rest-end raise
 import { tickPlayerMinutes, runMagicRoundsFor, worldMinutes, skyMinutes, setWorldMinutes, ownMinutes, advanceOwnMinutes, tickInFlight, MINUTES_PER_DAY, CLASSIC_MINUTES_PER_SECOND, sharedClockOn } from '../systems/worldTick.js';
@@ -1530,6 +1531,24 @@ export function raisePlayerSkills(entity, { say = () => {}, onLevelUp = null, ro
     ask([...MASTER_SKILLS_OFFER_ROWS],
       () => { say(setMasterSkills(entity, true).text); audio.playOneShot(SOUND.ArenaFanfareLevelUp, 1); },
       () => say(MASTER_SKILLS_DECLINED_TEXT));
+  } else {
+    // SCHOOLS1 (bible/06-Systems/Arcane-Specialisations.md section 3): THE SPECIALISATION - two schools mastered and no
+    // path yet, on a pass that put no other box up (a mastery's own choice comes first): asked ONCE a character,
+    // permanently decided by Yes; No leaves it to the skill screen, which offers every open path.
+    // AUDIT SCHOOLS L4 M1: ONE path open is asked about (Yes chooses it); SEVERAL are named in an OK box that sends the
+    // player to the skill screen, where each is offered - a permanent Yes on whichever stood first in the table was no
+    // choice at all
+    const path = ask && !windowed ? nextPathChoice(entity) : null;
+    if (path) {
+      entity.pathPrompted = true;
+      const open = pathChoices(entity);
+      if (open.length > 1) ask(pathsOpenRows(open), null, null, { okOnly: true });
+      else {
+        ask(pathChoiceRows(entity, path.id),
+          () => { const r = choosePath(entity, path.id); say(r.text); if (r.ok) audio.playOneShot(SOUND.ArenaFanfareLevelUp, 1); },
+          () => say(pathDeclinedText()));
+      }
+    }
   }
   return raised;
 }
@@ -1598,7 +1617,8 @@ export function createPlayerTicker(entity, { say = () => {}, onLevelUp = null, o
       // AUDIT 23 (C5: hosts-5 = entity-3) - DaggerfallEntity.cs:360-366:
       // EVERY fatigue write clamps and, at 0 with health left, raises
       // OnExhausted - the collapse was dungeon-only; the host passes
-      // its presenter (rest-hour-or-death via exhaustionOutcome).
+      // its presenter (the rest hour, or a tenth of the health in the
+      // water or with foes about, via exhaustionOutcome - SPENT-ASHORE).
       if (entity.fatigue <= 0 && (entity.health ?? 0) > 0) onExhausted?.();
     },
     restoreFatigue: (n) => { if (n > 0) entity.fatigue = Math.min(maxFatigue(entity), (entity.fatigue ?? 0) + n); },   // C5: the MaxFatigue clamp

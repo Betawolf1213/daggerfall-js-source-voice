@@ -392,12 +392,21 @@ test('X1 REVIEW: the four SetHealth(0) callers all say bypassShield, and each na
     // aliased at import, because a one-argument wrapper owns the name here
     'src/scenes/dungeonContext.js': 'hurtEntity',
   };
+  // PIN MOVED (FIELD BUGS 2026-10-13e SPENT-ASHORE): the exhaustion collapse is no SetHealth(0) in any host now - with
+  // foes about (and in the water, SWIM-SPENT) it costs a share of the health through the same door, the shield still
+  // bypassed - so exterior.js and worldModes.js, whose only SetHealth(0) it was, are held to that arm; the drownings
+  // (world.js's Deep Waters breath, the dungeon's) still kill.
+  const KILLS = new Set(['src/scenes/world.js', 'src/scenes/dungeonContext.js']);
   for (const [p, door] of Object.entries(DOOR)) {
     const src = rd(p);
     assert.match(src, new RegExp(`import \\{[^}]*\\b(hurtPlayer as ${door}|${door})\\b[^}]*\\} from '\\.\\./characters/playerEntity\\.js'`),
       `${p} imports the shared damage door as ${door}`);
-    assert.match(src, new RegExp(`${door}\\(playerEntity, playerEntity\\.health, \\{ bypassShield: true \\}\\)`),
-      `${p} kills rather than damages, through the 3-argument door it imported`);
+    if (KILLS.has(p)) {
+      assert.match(src, new RegExp(`${door}\\(playerEntity, playerEntity\\.health, \\{ bypassShield: true \\}\\)`),
+        `${p} kills rather than damages, through the 3-argument door it imported`);
+    }
+    assert.match(src, new RegExp(`if \\(out\\.kind === 'spent'\\) \\{[^\\n]*\\b${door}\\(playerEntity, out\\.damage, \\{ bypassShield: true \\}\\)`),
+      `${p} spends the collapse's share past the shield, through the 3-argument door it imported`);
   }
   assert.doesNotMatch(rd('src/scenes/dungeonContext.js'), /hurtPlayer\(playerEntity\.health\)/, 'the entity-less call is gone');
   assert.doesNotMatch(rd('src/scenes/dungeonContext.js'), /hurtPlayer\(playerEntity,/,
