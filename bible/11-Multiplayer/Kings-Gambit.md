@@ -295,8 +295,8 @@ structure ours.
 
 - THE LAW, `net/kingsGambit.js` (KG1) - pure, DOM-free, ONE HOME for the device and the relay, as `net/iliacHand.js` is:
   the board and its build, the hazards, the units and the roster, the deployment, the legal commands and their effect, a
-  turn's end, the game's end, and each seat's view. A refused command answers a refusal word and changes nothing (a relay
-  keeps the last good state - `net/cardLaw.js`'s way).
+  turn's end, the game's end, and each seat's view (KG1 found none to make - section 11). A refused command answers a
+  refusal word and changes nothing (a relay keeps the last good state - `net/cardLaw.js`'s way).
 - THE ROSTER IS DFU's TABLE: the units read `enemyBasics.js:"export const ENEMY_BASICS = Object.freeze({"` (ONE DFU
   MEMBER, ONE EXPORT - never a second literal of the levels and the health), at float32 with RoundToInt's half to even,
   pinned deepEqual against section 2.2's table. DECIDED: the vanilla rows, never a mod's overlay. Meaner Monsters is
@@ -466,10 +466,10 @@ Each ships alone and is verifiable without the next.
 
 | Slice | What it builds |
 |---|---|
-| **KG1** SHIPPED (section 11) | THE LAW: `net/kingsGambit.js` - the board and its build, hazards, units and roster, the deployment, the turn, a blow, potions, the end, a seat's view; pins deepEqual against section 2's tables, whole games on a fixed source, mutants. |
+| **KG1** SHIPPED (section 11) | THE LAW: `net/kingsGambit.js` - the board and its build, hazards, units and roster, the deployment, the turn, a blow, potions, the end (a seat's view: none to make, section 11); pins deepEqual against section 2's tables, whole games on a fixed source, mutants. |
 | **KG2** | THE INNKEEPER'S PLAY: `systems/gambitPatrons.js` - AiAction, TryEscape, AiBlunder, AutoFill, the tiers over a regular's seed. MEASURE: each tier against an Auto-filled 300 over seeded games. |
 | **KG-SET** | The nine creatures painted into the set (section 10.3) - cards, emblems, Iliac Hand's numbers and text, FOE_CARDS rows (so their foes drop them, CARDS9), Iliac Hand's balance measured again; a relay version (the catalog is relay law). Before KG3, whose grid shows every unit's card. |
-| **KG3** | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result), the stake and the regulars' night's purse; the board a flat mat with the pieces as their cards - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
+| **KG3** | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result), the stake and the regulars' night's purse; the panel's words through the text core, `t(key, en)`, each new key with its drafts in all 25 languages (L10N4's rule - the law keeps keys, section 11); the board a flat mat with the pieces as their cards - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
 | **KG4** | THE BOARD ON THE CLOTH: walls, pillars and water built; the hazards' drawn effects; the pieces' motion; the press as a cell; the lab (`cards.html` with a King's Gambit table) and its probe; the frame cost on the phone probe, as CARDS3c measured it. |
 | **KG5** | ONLINE: the relay's table (a relay version), the wire, the client's mirror, spectators, the clock; friendly. |
 | **KG6** | Gold tables online (the realm's escrow) and a season board with its title (section 10.7). |
@@ -644,12 +644,6 @@ The owner: **"Make the best and most detailed decisions. We also have permission
   - the turn: `gambitRefusal` (IsLegal), `gambitAct` (Apply and SpendAction), `reachable` (GetReachable),
     `targetInRange` (InRange), `foesInRange`, `hasLineOfSight`, `roundDiv`, `blowRoll` (Attack's roll);
   - its end: `finishTurn` (FinishTurn, ApplyHazards, HazardTick, CheckGameOver).
-- **ONE HOME, AND NAMES OF ITS OWN** (AUDIT 24's gate, `test/audit24_onehome.test.js`, which the first full run of the
-  tests that walk `src/` failed on five names the tree already declared): Mathf.RoundToInt is `systems/mathf.js`'s
-  `roundToInt`, imported, not ported a second time. A cell's index, a blow's roll and InRange take names of their own
-  (`cellIndex`, `blowRoll`, `targetInRange`) beside `render/volumetricClouds.js`'s `cellOf`, `net/gateStrike.js`'s
-  `blowOf` and `net/wire.js`'s `inRange`, three different things; the [0, 1) draw (NextDouble, Random.value) is the
-  module's own, unexported, as `net/gateLaw.js`'s `unit` is. The ratchet stays at 42.
 - **ITS FRAME IS THE HOST'S** (section 4): side 0 the host, who moves first, at the foot; side 1 the guest, mirrored. A
   client turns the picture, never the law.
 - **THE DICE**: a `rand32` handed in - Rand is drawBelow's, NextDouble rand32 / 2^32 - drawn in the mod's order. The
@@ -658,6 +652,21 @@ The owner: **"Make the best and most detailed decisions. We also have permission
 - **EVERY STEP A NEW STATE**: `gambitAct` and `finishTurn` answer `{state, events}` or `{refused}`, and never touch the
   state they were handed (a structuredClone, cardLaw's way), so a refused or broken step changes nothing and the relay
   can keep its last good state.
+- **ONE HOME, AND NAMES OF ITS OWN** (AUDIT 24's gate, `test/audit24_onehome.test.js`, which the first full run of the
+  tests that walk `src/` failed on five names the tree already declared): Mathf.RoundToInt is `systems/mathf.js`'s
+  `roundToInt`, imported, not ported a second time. A cell's index, a blow's roll and InRange take names of their own
+  (`cellIndex`, `blowRoll`, `targetInRange`) beside `render/volumetricClouds.js`'s `cellOf`, `net/gateStrike.js`'s
+  `blowOf` and `net/wire.js`'s `inRange`, three different things; the [0, 1) draw (NextDouble, Random.value) is the
+  module's own, unexported, as `net/gateLaw.js`'s `unit` is. The ratchet stays at 42.
+- **THE WORDS ARE THE CLIENT'S** (L10N4, `test/l10n4_hardcoded.test.js`, which counted the layouts' five names in this
+  file once main's localization arc came in): the law keeps a layout's key (`pillared-hall`, ... `open-field`) and its
+  floor tones, never its name. The mod's names (section 2.1) are words a player reads, so KG3's panel says them through
+  the text core, as every word of the game it shows - the refusals, the log, the banners. The law's own strings are
+  identities - keys, refusal words, event types - sent and compared, never shown. The ratchet holds this file at 0.
+- **A SEAT'S VIEW: NONE TO MAKE.** Section 4 planned each seat's view, as `net/iliacHand.js` has one. Nothing in a dealt
+  game is hidden - both armies stand on the board, and the dice are the table's - so the state is each seat's view, and
+  the guest's picture is the host's turned (the frame, above). The armies chosen before the deal are kept apart by
+  whoever holds them: the relay's table at KG5.
 - **WHAT THE PORT FOUND, KEPT AS THE MOD HAS IT**:
   - CheckGameOver's "no piece left" never decides: a side's king is one of its pieces, so its first clause, the king's
     fall, always decides first. Both clauses are kept verbatim.

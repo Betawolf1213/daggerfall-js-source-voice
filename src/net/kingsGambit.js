@@ -107,15 +107,16 @@ export const KG_AUTOFILL_LEAN = 0.5;
  *  source is broken (net/iliacHand.js ILIAC_RAND_DRAWS_MAX's law). */
 export const KG_RAND_DRAWS_MAX = 100_000;
 
-/** THE LAYOUTS - BuildMap's switch, by Rand(0, 4) - each its key, the mod's name and its two floor tones (floorA,
- *  floorB, RGB); and the Open field, its thirtieth failure. */
+/** THE LAYOUTS - BuildMap's switch, by Rand(0, 4) - each its key and its two floor tones (floorA, floorB, RGB); and the
+ *  Open field, its thirtieth failure. A layout's name is a word a player reads, so it is the client's to say through the
+ *  text core (L10N4) - the key is what the law keeps and sends. */
 export const KG_LAYOUTS = Object.freeze([
-  Object.freeze({ key: 'pillared-hall', name: 'Pillared hall', floor: Object.freeze([Object.freeze([0.27, 0.27, 0.3]), Object.freeze([0.36, 0.36, 0.4])]) }),
-  Object.freeze({ key: 'guard-rooms', name: 'Guard rooms', floor: Object.freeze([Object.freeze([0.3, 0.23, 0.17]), Object.freeze([0.4, 0.31, 0.22])]) }),
-  Object.freeze({ key: 'ruined-keep', name: 'Ruined keep', floor: Object.freeze([Object.freeze([0.24, 0.29, 0.2]), Object.freeze([0.32, 0.38, 0.26])]) }),
-  Object.freeze({ key: 'moat-and-bridges', name: 'Moat and bridges', floor: Object.freeze([Object.freeze([0.4, 0.35, 0.24]), Object.freeze([0.49, 0.43, 0.3])]) }),
+  Object.freeze({ key: 'pillared-hall', floor: Object.freeze([Object.freeze([0.27, 0.27, 0.3]), Object.freeze([0.36, 0.36, 0.4])]) }),
+  Object.freeze({ key: 'guard-rooms', floor: Object.freeze([Object.freeze([0.3, 0.23, 0.17]), Object.freeze([0.4, 0.31, 0.22])]) }),
+  Object.freeze({ key: 'ruined-keep', floor: Object.freeze([Object.freeze([0.24, 0.29, 0.2]), Object.freeze([0.32, 0.38, 0.26])]) }),
+  Object.freeze({ key: 'moat-and-bridges', floor: Object.freeze([Object.freeze([0.4, 0.35, 0.24]), Object.freeze([0.49, 0.43, 0.3])]) }),
 ]);
-export const KG_OPEN_FIELD = Object.freeze({ key: 'open-field', name: 'Open field', floor: Object.freeze([Object.freeze([0.24, 0.29, 0.2]), Object.freeze([0.32, 0.38, 0.26])]) });
+export const KG_OPEN_FIELD = Object.freeze({ key: 'open-field', floor: Object.freeze([Object.freeze([0.24, 0.29, 0.2]), Object.freeze([0.32, 0.38, 0.26])]) });
 
 /** The commands (GameCmdType, in the mod's order): a move, an attack, a potion, the turn ended. */
 export const KG_COMMANDS = Object.freeze(['move', 'attack', 'potion', 'end']);

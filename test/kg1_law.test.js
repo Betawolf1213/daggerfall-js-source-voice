@@ -121,13 +121,14 @@ test('KG1 THE MOD\'S NUMBERS: the board, the hazards, the army, the units, the t
   assert.deepEqual([K.KG_AUTOFILL_ROUNDS, K.KG_AUTOFILL_RANGED, K.KG_AUTOFILL_LEAN], [200, 2, 0.5]);
   assert.deepEqual(K.KG_CENTER_OUT, [7, 6, 8, 5, 9, 4, 10, 3, 11, 2, 12, 1, 13, 0, 14]);
   assert.deepEqual(K.KG_COMMANDS, ['move', 'attack', 'potion', 'end']);
-  assert.deepEqual(K.KG_LAYOUTS.map((l) => [l.key, l.name, l.floor]), [
-    ['pillared-hall', 'Pillared hall', [[0.27, 0.27, 0.3], [0.36, 0.36, 0.4]]],
-    ['guard-rooms', 'Guard rooms', [[0.3, 0.23, 0.17], [0.4, 0.31, 0.22]]],
-    ['ruined-keep', 'Ruined keep', [[0.24, 0.29, 0.2], [0.32, 0.38, 0.26]]],
-    ['moat-and-bridges', 'Moat and bridges', [[0.4, 0.35, 0.24], [0.49, 0.43, 0.3]]],
+  // the mod's names (Pillared hall, Guard rooms, Ruined keep, Moat and bridges, Open field) are the client's to say
+  assert.deepEqual(K.KG_LAYOUTS, [
+    { key: 'pillared-hall', floor: [[0.27, 0.27, 0.3], [0.36, 0.36, 0.4]] },
+    { key: 'guard-rooms', floor: [[0.3, 0.23, 0.17], [0.4, 0.31, 0.22]] },
+    { key: 'ruined-keep', floor: [[0.24, 0.29, 0.2], [0.32, 0.38, 0.26]] },
+    { key: 'moat-and-bridges', floor: [[0.4, 0.35, 0.24], [0.49, 0.43, 0.3]] },
   ]);
-  assert.deepEqual([K.KG_OPEN_FIELD.key, K.KG_OPEN_FIELD.name, K.KG_OPEN_FIELD.floor], ['open-field', 'Open field', [[0.24, 0.29, 0.2], [0.32, 0.38, 0.26]]]);
+  assert.deepEqual(K.KG_OPEN_FIELD, { key: 'open-field', floor: [[0.24, 0.29, 0.2], [0.32, 0.38, 0.26]] });
 });
 
 test('KG1 THE ROSTER is DFU\'s table through MakeUnit: the record\'s 46 rows in the mod\'s order, the kings, Unity\'s half to even', () => {
