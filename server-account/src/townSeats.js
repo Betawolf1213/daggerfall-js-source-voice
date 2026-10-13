@@ -141,7 +141,10 @@ async function seatRowsOf(db, nowS) {
   const wrote = seatRowsWritten.has(root);
   const from = wrote ? 'first-primary' : (seatRowsMark.get(root) ?? SEAT_ROWS_FROM);
   let session = db;
-  try { session = replicaDb(db, from); } catch { /* a bookmark D1 refuses: the request's database */ }
+  // DISPLAY-REPLICA: a request already on a session (a replica route's - a market's or a pixel's read asking a seat) has
+  // none of its own to open; the binding opens this read's, so the read after a write here is still the primary's
+  const opener = typeof db?.withSession === 'function' ? db : root;
+  try { session = replicaDb(opener, from); } catch { /* a bookmark D1 refuses: the request's database */ }
   const ask = allSeatRows(session).then((rows) => {
     if ((seatRowWrites.get(root) ?? 0) === gen) {
       seatRowsKept.set(root, { at: nowS, rows });

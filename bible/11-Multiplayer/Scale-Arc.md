@@ -2143,6 +2143,56 @@ properly", then "Do it". Read off D1's own query insights and the service's metr
 Pins: `test/seat_replica.test.js` (3); `tools/mutants/seat_replica.json` (12 dead); STORM-SHED's
 `STORM-SHED-report-unforgotten` and `STORM-SHED-write-unasked` re-aimed at the new lines (both dead).
 
+## DISPLAY-REPLICA: built (2026-10-13, this branch - no migration, no version, no drop)
+
+The owner, with SEAT-REPLICA deployed at 18:59 and the service still slow ("the server is still insanely slow for
+people"): "1, 2 and 3" - the display reads on the replicas the first of them to ship.
+
+### Measured
+
+- **The primary has a ceiling since 14:11, and our statements are not what reach it.** At 02:00 the primary served
+  1.03 million batches an hour at a median wall time of 0.2 s. From 14:00 to 19:00 it served 490,000-550,000 an hour,
+  every route waiting on it, whatever the batches cost: after SEAT-REPLICA its answers fell from some 10 GB an hour to
+  1.5 GB, its batch p99 from 67 ms to 9 ms and its p999 from 119 ms to 34 ms, and from 19:15 the service's mean wall
+  time was still 11.4 s on `/v1/homes/town`, 9.3 s on the heartbeat and 9.0 s on the mint - nearly all of it D1's
+  wait. No deploy, cron or workflow ran at 14:11 (the last account deploy before it, #868's at 13:29, changed no
+  server code); what holds the primary to some 150 batches a second is not visible from here.
+- **Much of what asks it is display.** From 19:15 to 19:40, six of the reads moved here were among the sixteen busiest
+  routes - 37,800 of their 84,700 asks, 1.6-6.9 statements each (a town's homes 3.4), every one of them the primary's.
+
+### Built
+
+- **The display reads are replica routes.** `server-account/src/service.js:"export const REPLICA_ROUTES = new Map(["`
+  names them beside the mint and the heartbeat: a town's homes, the caller's homes, a home's rooms and pieces, a
+  pixel's nodes, a region's traders, the Marks held, the invitations waiting, the lineages, the unions, the saves' list
+  and the arena's board. Each writes nothing (BUSY-GATE checked them statement by statement; the board's #1 is stored
+  on the doors `ARENA_HONOUR_PATHS` names) and keeps nothing an isolate shares. With the bookmark a tab carries, every
+  statement is a replica's; with none - a page from before this, or the read after a write - the session's first
+  statement (the lookup) is the primary's and every one after it a replica's at least as new, so a caller reads its
+  own writes. The client mirrors the list (`D1_BOOKMARK_READS`, AUDIT SCALE II's pin), and already forgets its
+  bookmark on every other call (AUDIT SCALE II A-2). The page's display reads used to forget it too, on every ask; now
+  they keep it, so the heartbeat and the mint start from it more often.
+- **The three an isolate keeps stay on the binding.** A town's yards, every town's layouts and the seats' list keep
+  an answer for every caller of the isolate; a replica's answer kept there could be older than a write another caller
+  just made here.
+- **A seat read from a request on a session opens its own off the binding.** A market's or a pixel's read asks the
+  seats (a Market Hall's cap, a Levy's seat); SEAT-REPLICA's read opened its session from the request's database, and
+  a request already on a session has none to open - so the read after a write here would have ridden the request's
+  bookmark, not the primary.
+
+### Left, each with its reason
+
+- **What holds the primary to some 150 batches a second.** Not our statements' cost (above). It is Cloudflare's to
+  answer: the database's id, the hour it began (14:11 UTC) and the batch counts before and after are the report.
+- **The pages from before this.** Without a bookmark each display read still asks the primary its first statement;
+  a page takes the client half at its next load.
+- **The replica's ceiling.** The display reads are some 75 statements a second at this hour, on the one WNAM replica
+  the pinned Worker is nearest (D1-NEAR); a replica is one instance as the primary is.
+
+Pins: `test/display_replica.test.js` (3); `tools/mutants/display_replica.json` (4 dead); SCALE4g's route list,
+SCALE4d's example of a read on the binding (the yards, where it was the lineages) and BUSY-GATE's rule that a held read
+is never a replica's - each PIN MOVED.
+
 ## THE PLAN PAST 2,000 (2026-10-10)
 
 Mac, after #755's merge: "Alright lets now tackle the bigger work. I want to go deep and really future proof our

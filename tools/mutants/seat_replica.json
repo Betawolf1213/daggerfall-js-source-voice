@@ -102,8 +102,8 @@
  {
   "name": "SEATREPLICA-open-unguarded",
   "file": "server-account/src/townSeats.js",
-  "old": "  try { session = replicaDb(db, from); } catch { /* a bookmark D1 refuses: the request's database */ }",
-  "new": "  session = replicaDb(db, from);",
+  "old": "  try { session = replicaDb(opener, from); } catch { /* a bookmark D1 refuses: the request's database */ }",
+  "new": "  session = replicaDb(opener, from);",
   "tests": [
    "test/seat_replica.test.js"
   ],
@@ -112,8 +112,8 @@
  {
   "name": "SEATREPLICA-uncounted",
   "file": "server-account/src/townSeats.js",
-  "old": "try { session = replicaDb(db, from); }",
-  "new": "try { session = replicaDb(seatRowsRoot(db), from); }",
+  "old": "const opener = typeof db?.withSession === 'function' ? db : root;",
+  "new": "const opener = root;",
   "tests": [
    "test/seat_replica.test.js"
   ],

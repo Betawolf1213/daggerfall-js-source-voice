@@ -95,6 +95,26 @@ export const REPLICA_ROUTES = new Map([
   ['/v1/realm', 'GET'],
   ['/v1/prof/state', 'POST'],
   ['/v1/prof/motherlodes', 'POST'],
+  // DISPLAY-REPLICA (2026-10-13, the account database's primary capped near 150 requests a second from 14:11 UTC and
+  // every route waiting on it; bible/11-Multiplayer/Scale-Arc.md DISPLAY-REPLICA): AND THE DISPLAY READS - each of them
+  // writes nothing (BUSY-GATE checked them statement by statement; the board's #1 is stored on the doors
+  // ARENA_HONOUR_PATHS names, never here) and keeps nothing an isolate shares, so a replica's answer is never an
+  // isolate's for another caller (the yards, the layouts and the seats' list keep one, and stay on the binding). With
+  // the bookmark a tab carries, every statement a replica's; with none - a page from before this, or the read after a
+  // write, which the client forgets its bookmark for (net/accountClient.js `call`, AUDIT SCALE II A-2) - the first, the
+  // session's lookup, the primary's, and every one after it a replica's at least as new: the caller's own writes read.
+  ['/v1/homes/town', 'POST'],
+  ['/v1/homes/mine', 'POST'],
+  ['/v1/homes/rooms', 'POST'],
+  ['/v1/homes/decor', 'POST'],
+  ['/v1/prof/pixels', 'POST'],
+  ['/v1/market/vendors', 'POST'],
+  ['/v1/marks/balance', 'POST'],
+  ['/v1/guilds/invites', 'POST'],
+  ['/v1/realm/lineages', 'POST'],
+  ['/v1/realm/unions', 'POST'],
+  ['/v1/saves', 'GET'],
+  ['/v1/arena/board', 'POST'],
 ]);
 /** SCALE4d: where a replica session's FIRST statement goes - the primary. A mint's first statement is the session
  *  lookup, and every statement after it is served by a replica at least as new as that answer (D1's Sessions API: one
