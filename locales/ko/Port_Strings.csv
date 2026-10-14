@@ -1855,6 +1855,7 @@ mods.worldEventsRaidingParties.Enabled.description,"기사, 산적, 오크가 �
 mods.worldOfDaggerfall.Enabled.description,"야생에서 찾을 것이 더 많아집니다. 일리악 만 전역의 산적 야영지와 요새, 폐허, 사당, 산, 바위 지대에 산적, 곰, 보물이 있고, 프라이버티어스 홀드 바깥에 야영지가 있습니다."
 mods.worldTooltips.Enabled.description,"바라보는 대상의 이름을 조준점 아래에 띄웁니다. 사람, 상점과 영업시간, 문과 자물쇠, 출구가 이어지는 곳, 레버, 바퀴, 사다리, 책장, 소환을 기다리는 데이드라까지 표시합니다. 꺼도 상자나 시체에 든 것은 여전히 보입니다."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"켜면 비밀로 의도되었을 수 있는 상호작용 오브젝트(특히 메인 퀘스트의 퍼즐)에 기본 표시를 하지 않습니다."
+naval.yard.grogDrunk,"선원들의 사기는 {spirits, select, roaring {하늘을 찌릅니다} high {높습니다} steady {안정적입니다} low {낮습니다} other {바닥입니다}} - 오늘 몫의 술은 이미 마셨습니다"
 net.mod.ambiguous,"{name}(이)라는 플레이어가 {count}명 있습니다. 아무도 채팅 금지되지 않았습니다."
 net.mod.chatAgain,"다시 채팅할 수 있습니다."
 net.mod.muteRange,"채팅 금지는 1~{max}분(일주일)입니다."

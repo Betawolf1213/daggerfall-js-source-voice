@@ -1855,6 +1855,7 @@ mods.worldEventsRaidingParties.Enabled.description,"Ksatria, bandit, atau orc me
 mods.worldOfDaggerfall.Enabled.description,"Lebih banyak yang bisa ditemukan di alam liar: perkemahan dan benteng bandit, reruntuhan, kuil kecil, pegunungan, dan padang batu di seluruh Iliac Bay, dengan bandit, beruang, dan harta karun, serta perkemahan di luar Privateer’s Hold."
 mods.worldTooltips.Enabled.description,"Nama di bawah bidikan untuk apa yang kamu lihat: seseorang, toko dan jam bukanya, pintu dan kuncinya, ke mana sebuah pintu keluar menuju, tuas, roda, tangga, rak buku, Daedra yang menunggu dipanggil. Jika dimatikan, kamu tetap melihat isi peti atau mayat."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Aktifkan agar tidak memberi petunjuk bawaan pada objek yang bisa berinteraksi yang mungkin dimaksudkan untuk dirahasiakan, terutama terkait teka-teki di misi utama."
+naval.yard.grogDrunk,"Semangat awaknya {spirits, select, roaring {meluap} high {tinggi} steady {stabil} low {rendah} other {suram}} - mereka sudah mendapat jatah hari ini"
 net.mod.ambiguous,"Ada {count} pemain bernama {name}. Tidak ada yang dibisukan."
 net.mod.chatAgain,"Kamu bisa mengobrol lagi."
 net.mod.muteRange,"Bisu berlaku 1 sampai {max} menit (satu minggu)."

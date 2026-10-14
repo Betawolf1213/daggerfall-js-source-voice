@@ -1855,6 +1855,7 @@ mods.worldEventsRaidingParties.Enabled.description,"Rytíři, bandité nebo orko
 mods.worldOfDaggerfall.Enabled.description,"Víc k nalezení v divočině: tábory a pevnosti banditů, ruiny, svatyně, hory a skalní pole po celém Iliackém zálivu, s bandity, medvědy a poklady, a tábor před Privateer’s Hold."
 mods.worldTooltips.Enabled.description,"Jméno pod zaměřovačem pro to, na co se díváš: osoba, obchod a jeho otevírací doba, dveře a jejich zámek, kam vede východ, páka, kolo, žebřík, knihovna, Daedra čekající na vyvolání. I když je vypnuto, stále vidíš, co obsahuje truhla nebo tělo."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Zapni, aby se u interaktivních objektů, které možná měly být tajné, nezobrazovala výchozí nápověda, zvláště u hádanek v hlavním úkolu."
+naval.yard.grogDrunk,"Nálada její posádky je {spirits, select, roaring {bujará} high {vysoká} steady {vyrovnaná} low {nízká} other {zachmuřená}} - dnešní příděl grogu už dostali"
 net.mod.ambiguous,"{count} hráčů se jmenuje {name}. Nikdo nebyl ztlumen."
 net.mod.chatAgain,"Můžeš znovu chatovat."
 net.mod.muteRange,"Ztlumení je na 1 až {max} minut (jeden týden)."

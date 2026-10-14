@@ -1855,6 +1855,7 @@ mods.worldEventsRaidingParties.Enabled.description,"Cavaleiros, bandidos ou orcs
 mods.worldOfDaggerfall.Enabled.description,"Mais para encontrar nos ermos: acampamentos e fortes de bandidos, ruínas, santuários, montanhas e campos de pedra por toda Iliac Bay, com bandidos, ursos e tesouros, e um acampamento do lado de fora de Privateer’s Hold."
 mods.worldTooltips.Enabled.description,"Um nome sob a mira para o que você estiver olhando: uma pessoa, uma loja e o horário dela, uma porta e a fechadura, aonde uma saída leva, uma alavanca, uma roda, uma escada, uma estante, um Daedra esperando para ser invocado. Com isto desligado, você ainda vê o que um baú ou corpo guarda."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Ative para não dar a indicação padrão em objetos interativos que talvez devessem ser secretos, especialmente nos enigmas da missão principal."
+naval.yard.grogDrunk,"O ânimo da tripulação dela está {spirits, select, roaring {exultante} high {alto} steady {firme} low {baixo} other {sombrio}} - eles já tomaram a rodada de hoje"
 net.mod.ambiguous,"{count} jogadores se chamam {name}. Ninguém foi silenciado."
 net.mod.chatAgain,"Você pode conversar de novo."
 net.mod.muteRange,"Um silenciamento dura de 1 a {max} minutos (uma semana)."

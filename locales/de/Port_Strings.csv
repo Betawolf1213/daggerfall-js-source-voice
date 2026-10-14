@@ -1855,6 +1855,7 @@ mods.worldEventsRaidingParties.Enabled.description,"Ritter, Banditen oder Orks �
 mods.worldOfDaggerfall.Enabled.description,"Mehr zu entdecken in der Wildnis: Banditenlager und -festungen, Ruinen, Schreine, Berge und Felsfelder in der ganzen Iliac-Bucht, mit Banditen, Bären und Schätzen, und ein Lager vor Privateer’s Hold."
 mods.worldTooltips.Enabled.description,"Ein Name unter dem Fadenkreuz für das, was du ansiehst: eine Person, ein Laden und seine Öffnungszeiten, eine Tür und ihr Schloss, wohin ein Ausgang führt, ein Hebel, ein Rad, eine Leiter, ein Bücherregal, ein Daedra, der auf seine Beschwörung wartet. Ist es aus, siehst du trotzdem, was eine Truhe oder Leiche enthält."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Aktivieren, um bei interaktiven Objekten, die vielleicht geheim bleiben sollten, keinen Standardhinweis zu geben, besonders bei Rätseln der Hauptquest."
+naval.yard.grogDrunk,"Die Stimmung ihrer Mannschaft ist {spirits, select, roaring {ausgelassen} high {hoch} steady {stabil} low {gedrückt} other {finster}} - sie hat die heutige Runde schon bekommen"
 net.mod.ambiguous,"{count} Spieler heißen {name}. Niemand wurde stummgeschaltet."
 net.mod.chatAgain,"Du kannst wieder chatten."
 net.mod.muteRange,"Eine Stummschaltung dauert 1 bis {max} Minuten (eine Woche)."
