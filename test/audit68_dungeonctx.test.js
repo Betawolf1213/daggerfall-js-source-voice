@@ -112,6 +112,7 @@ function killHarness({ foes, foeDeps = null, getTexture = async () => ({ recordC
     uploadRecord: () => {}, billboardSize: () => ({ w: 1, h: 1 }), armFlatAnim: () => {}, flatAnims: { remove: () => {} }, uploadRecordFrame: () => {},
     eliteCorpseSize, isEliteCorpse, markEliteCorpseBatch,   // ELITE FOES: spawnCorpseNow's
     billboardBatches: [], corpses: [], _lootSeen: new Set(), _lootAt: new Map(),   // corpses: the base's second owner list (AUDIT 68 S19-corpses-array-dead retired it)
+    sayBodyLoot: () => false,   // PIN MOVED (PARTY-LOOT): the runner's word about a body at its death - offline here, and test/partyloot.test.js mounts the real one
     renderer: {
       createBillboardBatch: (archive, record) => { log.minted++; return { archive, record, id: log.minted }; },
       destroyBillboardBatch: (b) => { log.freed.push(b); },
@@ -498,6 +499,7 @@ test('AUDIT SET P-M3: a joiner\'s killing blow, applied at the host, is named on
       dropFoeCard: () => null,   // PIN MOVED (AUDIT CARDS-6 A3): the copy's own card, drawn at the copy door - not this seam
       sayEnemyDied, hudText: { add: () => {} },   // LOOT7-CHECK DUNGEON-DIED: the striker's notice (test/loot7check.test.js reads its line)
       liveStat: () => 50, playerEntity: { isPlayer: true, items: [] }, setFoeDead: (f, d) => { f.dead = d; }, retypeFoe: async () => false,
+      streamLaidBody: () => false,   // PIN MOVED (PARTY-LOOT): the runner's word landing on the body the stream laid - test/partyloot.test.js's seam, not this one
     };
     return { foes, ...mount(`${declSrc('REMOTE_KILL')} ${fnSrc('applyFoeRecord')} return { applyFoeRecord };`, state) };
   };

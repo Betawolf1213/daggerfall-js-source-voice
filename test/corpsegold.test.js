@@ -98,6 +98,9 @@ function restoreHarness(foes) {
     ${fnSrc('bodyRecords')}
     ${fnSrc('lootableBody')}
     ${fnSrc('lootHolder')}
+    ${declSrc('LOOT_EARLY_MAX')}
+    ${declSrc('_lootEarly')}
+    ${fnSrc('holdEarlyLoot')}   // PIN MOVED (PARTY-LOOT): a word about a body not laid yet is held for it (test/partyloot.test.js) - the memory's, read while the rebuild awaits its art, is held too and lands by the rebuild's own door below
     ${fnSrc('applyLoot')}
     ${fnSrc('freeCorpse')}
     ${fnSrc('spawnCorpse')}

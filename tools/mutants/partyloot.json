@@ -1,0 +1,191 @@
+[
+  {
+    "name": "PARTY-LOOT-no-word-at-the-death",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      sayBodyLoot(foe);   // PARTY-LOOT",
+    "new": "      void foe;   // PARTY-LOOT",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-word-before-the-handlers-finds",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      raiseEnemyDeath(foe.entity, { luck: liveStat(playerEntity, 'luck') });   // UL1",
+    "new": "      sayBodyLoot(foe); raiseEnemyDeath(foe.entity, { luck: liveStat(playerEntity, 'luck') });   // UL1",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-an-early-word-dropped",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      if (!lootHolder(canon)) { holdEarlyLoot(canon, rec); continue; }",
+    "new": "      if (!lootHolder(canon)) { continue; }",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-laid-body-never-handed-its-word",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    if (laid) streamLaidBody(f);   // PARTY-LOOT",
+    "new": "    if (laid) void f;   // PARTY-LOOT",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-no-wait",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "if (!_lootSeen.has(k)) f._lootDueAt = performance.now() + LOOT_WORD_WAIT_MS;",
+    "new": "if (!_lootSeen.has(k)) f._lootDueAt = null;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-held-press-dropped",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "{ _lootHeld = { key, mode, pileKeys }; return 0; }",
+    "new": "{ return 0; }",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-held-press-never-opened",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    return api.takeLoot(h.key, h.mode, h.pileKeys) > 0;",
+    "new": "    return false;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-wait-never-ends",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "!_lootSeen.has(k) && performance.now() < f._lootDueAt;",
+    "new": "!_lootSeen.has(k) && performance.now() < Infinity;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-held-press-over-another-window",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    if (!lootableBody(f) || (activeOverlay && !activeOverlay.done)) return false;\n    return api.takeLoot(",
+    "new": "    if (!lootableBody(f)) return false;\n    return api.takeLoot(",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-close-always-speaks",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "if (missed && sameLoot(lootHolder(k), sig)) { applyLoot([missed]); return false; }",
+    "new": "if (false) { applyLoot([missed]); return false; }",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-open-keeps-no-list",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    _lootOpenSig = _lootSeen.has(k) ? lootSig(items) : null;",
+    "new": "    _lootOpenSig = null;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-claims-window-keeps-its-list",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    _lootOpenSig = _lootSeen.has(k) ? lootSig(items) : null;",
+    "new": "    _lootOpenSig = lootSig(items);",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-word-under-the-window-not-kept",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "{ _lootOpenMissed = rec; n++; continue; }",
+    "new": "{ n++; continue; }",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-mount-claims-around-lootOpened",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      if (_w && _k) lootOpened(_k, source);",
+    "new": "      if (_w && _k) publishLoot(_k, { claim: true });",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-close-says-around-lootClosed",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "if (lootKey) lootClosed(lootKey);",
+    "new": "if (lootKey) publishLoot(lootKey);",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-no-cap",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "while (_lootEarly.size > LOOT_EARLY_MAX)",
+    "new": "while (_lootEarly.size > Infinity)",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-no-age",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "if (e && performance.now() - e.at <= LOOT_EARLY_MS && applyLoot([e.rec]) > 0) return true;",
+    "new": "if (e && applyLoot([e.rec]) > 0) return true;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-any-key-held",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "if (canon.startsWith('corpse:') ? !(Number(canon.slice(7)) < _layoutFoes) : !canon.startsWith('enc:')) return;",
+    "new": "if (false) return;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-said-offline",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    if (!onlineRoom() || !_authority) return false;\n    const i = foes.indexOf(f);\n    const k = i < 0 ? null : roomLootKey(`corpse:${i}`);\n    return k ? publishLoot(k, { claim: true }) : false;",
+    "new": "    if (!_authority) return false;\n    const i = foes.indexOf(f);\n    const k = i < 0 ? null : roomLootKey(`corpse:${i}`);\n    return k ? publishLoot(k, { claim: true }) : false;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-physical-body-stood-early",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      if (lootWordDue(f, u)) return null;",
+    "new": "      if (false) return null;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-held-press-never-asked",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    heldLootTick();   // PARTY-LOOT",
+    "new": "    void 0;   // PARTY-LOOT",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  }
+]

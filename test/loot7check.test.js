@@ -221,6 +221,7 @@ function killDoor() {
     peerSoulTrapOf: () => null, attemptSoulTrap: () => ({ allowDeath: true }), isAzurasStarEquipped: () => false, fillEmptyTrap: () => false,
     hudText: { add: (l) => hud.push(l) }, SOUL_TRAP_TEXT: {}, setEnemyAlert: () => {}, sayEnemyDied,
     spawnCorpse: () => {}, playRareDrop: () => {}, rollCorpseKit: () => [], stampWonWeapons: () => {}, raiseEnemyDeath: () => {}, liveStat: () => 50,
+    sayBodyLoot: () => false,   // PIN MOVED (PARTY-LOOT): the runner's word about the body at its death - test/partyloot.test.js's seam, not this one
   };
   return { hud, ...mount(`${fnSrc('damageFoe')} return { damageFoe };`, state) };
 }
@@ -234,6 +235,7 @@ function joiner(self) {
     dropFoeCard: () => null,   // PIN MOVED (AUDIT CARDS-6 A3): the copy's own card, drawn at the copy door - not this seam
     playerEntity: { isPlayer: true, items: [] }, setFoeDead: (f, d) => { f.dead = d; }, retypeFoe: async () => false,
     sayEnemyDied, hudText: { add: (l) => hud.push(l) },
+    streamLaidBody: () => false,   // PIN MOVED (PARTY-LOOT): the runner's word landing on the body the stream laid - test/partyloot.test.js's seam, not this one
   };
   return { foes, hud, ...mount(`${declSrc('REMOTE_KILL')} ${fnSrc('applyFoeRecord')} return { applyFoeRecord };`, state) };
 }

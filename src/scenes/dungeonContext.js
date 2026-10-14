@@ -2311,6 +2311,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       if (!lootableBody(f) || !f.corpsePos || f.corpseDisabled) return null;
       const key = `corpse:${i}`, u = roomLootKey(key);
       if (u && _lootUnreadable.has(lootKeyOf(u))) return null;
+      if (lootWordDue(f, u)) return null;   // PARTY-LOOT: nor one whose runner's word is due - what it stands is this copy's own roll until the word lands
       return { entity: f.entity, pos: f.corpsePos, key, silver: silverFindKey(key, 'corpse', i) };
     }).filter(Boolean),
     identity: () => playerEntity,
@@ -2540,7 +2541,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       physicalDrop: (items) => droppedLoot.dropPhysical(items, [...lastPlayerFeet], [Math.sin(_fpYaw), 0, Math.cos(_fpYaw)]),
       // WORLD4: what is LEFT goes to the room on the close - the same moment DFU frees an emptied container's flat,
       // and the moment the taking is finished rather than half done
-      onClose: () => { onEmptied?.(); if (lootKey) { _lootOpenKey = null; publishLoot(lootKey); } droppedLoot.releaseEmptied(); surfacePlayer(); },   // AUDIT WORLD4 C1: the window is closed before the close's word goes, so the room's next word may land
+      onClose: () => { onEmptied?.(); if (lootKey) lootClosed(lootKey); droppedLoot.releaseEmptied(); surfacePlayer(); },   // AUDIT WORLD4 C1: the window is closed before the close's word goes, so the room's next word may land (lootClosed); PARTY-LOOT: and a window that moved nothing says nothing over the room's newer word
     });
   }
 
@@ -5722,6 +5723,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       const _to = p.target === '.' ? (f._ownFrom ?? _foesFrom) : (p.target || null), _me = opts.selfId?.() ?? null;
       applyBlowRecord(f.ai, r, { origin: r.wo ?? null, me: _to != null && _me != null && _to === _me, entity: f.entity, collider, sig: SIG });
     }
+    const laid = r.d === 1 && !f.dead;   // PARTY-LOOT: this frame lays the body - its runner's word lands on it below (streamLaidBody)
     // AUDIT SET P-M3: THE HOST'S WORD THAT MY BLOW KILLED IT (its record's `v`, roomRecord's) - read before the death below
     // lays the body, once: the frame after finds the foe dead
     if (r.d === 1 && !f.dead && r.v != null && r.v === (opts.selfId?.() ?? null)) reportPlayerKill(f.entity, REMOTE_KILL);
@@ -5749,6 +5751,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       if (idx >= 0 && idx < _layoutFoes && !_retyping.has(idx)) retypeFoe(idx, f.mobileType, f.gender ?? null).then((ok) => { if (ok && !_authority && foes[idx]) applyFoeRecord(foes[idx], r); }).catch((e) => console.error('[online] the rebuilt foe could not take the record - the foe stands as it is:', e));   // AUDIT ONCRASH1 A1
       else setFoeDead(f, false);
     }
+    if (laid) streamLaidBody(f);   // PARTY-LOOT: the runner's word about the body lands on it now, or the body waits for it
   }
 
   /** WORLD2: a peer's blow on my foe, while I host - through the one damage door with the peer's number and kind
@@ -5973,6 +5976,21 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   const _lootAt = new Map();     // WORLD8: canon -> when the room last spoke about it (the relay's clock); the hour's respawn reads it
   let _lootOpenKey = null;       // AUDIT WORLD4 C1: the container THIS player has a window open on
   const _lootTooBig = new Set(); // AUDIT WORLD4 A1/A2/B2/D1: the containers this client cannot say (said once)
+  // PARTY-LOOT (2026-10-14, a player: "When in a party, if a monster is killed, loot drops for one player but the other
+  // player sees "Empty". If that player clicks "Empty" it wipes out the loot for the other player"): A BODY IS THE
+  // ROOM'S FROM ITS DEATH. Every copy rolled its own list for a body and the first OPENER's became the room's, so a
+  // party member whose own roll came up empty opened "Empty", claimed it, and emptied the killer's body for everyone.
+  // The runner says the body's list as it lays it (sayBodyLoot); a word that reaches a copy before the stream has laid
+  // the body there waits for the body (_lootEarly); a body laid before its word holds a press for LOOT_WORD_WAIT_MS
+  // (lootWordDue), after which the copy claims its own list, as a room run by an older build always did; and a window
+  // that moved nothing does not speak over a word the room said while it stood open (lootClosed).
+  const LOOT_WORD_WAIT_MS = 1500;   // how long a body the stream laid waits for its runner's word
+  const LOOT_EARLY_MS = 10000;      // how long a word about a body not laid yet is kept
+  const LOOT_EARLY_MAX = 64;        // and how many - a peer's words are bounded like everything else off the wire
+  const _lootEarly = new Map();     // canon -> { rec, at }: the room's word about a body this copy has not laid
+  let _lootHeld = null;             // a press on a body whose word is due: { key, mode, pileKeys }
+  let _lootOpenSig = null;          // what the open container held when it opened (lootSig)
+  let _lootOpenMissed = null;       // the room's newest word about the open container, held back by C1
   /** AUDIT WORLD4 C4: the CANONICAL spelling of a container key, or null. The key arrives off the wire beside the
    *  list, and only the list was projected: `Number('0x0a')`, `'1e1'`, `' 10 '` and `'0000000010'` all named pile 10,
    *  so one peer could mint an unbounded family of aliases for one container - each landing in `_lootSeen`, each
@@ -6114,6 +6132,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     for (const rec of Array.isArray(list) ? list : []) {
       const canon = lootKeyOf(rec?.k);
       if (!canon) continue;
+      if (!lootHolder(canon)) { holdEarlyLoot(canon, rec); continue; }   // PARTY-LOOT: the runner's word about a body this copy's stream has not laid yet waits for the body (streamLaidBody), read or unread
       const items = peerHanded(validLootList(rec.r));   // SS3: a container is the room's - a bound piece in one never lands; HACKED-GOLD: nor a letter of credit, a peer's gold
       if (!items) { if (lootHolder(canon) && !respawnDue(rec.t, _wallNow())) { _lootSeen.add(canon); _lootUnreadable.add(canon); } continue; }   // AUDIT SETS M2: the room has spoken, in words this build cannot read (a word due back is the room's no longer - WORLD8)
       const held = lootHolder(canon);
@@ -6124,7 +6143,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       _lootSeen.add(canon);   // the room HAS opened it, whether or not I may land it right now
       { const _t = Number.isFinite(rec.t) ? (_now == null ? rec.t : Math.min(rec.t, _now)) : _now; if (_t != null) _lootAt.set(canon, _t); }
       if (canon.startsWith('srch:')) searchHeard(Number(canon.slice(5)), _lootAt.get(canon));   // SEARCH1: another's search starts my five hours too   // WORLD8: the room's stamp, or now for a record without one; AUDIT WORLD7/8 C2: never AHEAD of now - a peer's far-future stamp switched the hour off for everyone and rode into the memory for thirty days
-      if (canon === _lootOpenKey) { n++; continue; }   // C1: not under an open window
+      if (canon === _lootOpenKey) { _lootOpenMissed = rec; n++; continue; }   // C1: not under an open window; PARTY-LOOT: held for its close (lootClosed)
       held.length = 0;
       for (const it of items) held.push(it);
       if (canon.startsWith('loot:')) { const p = lootPiles[Number(canon.slice(5))]; p.roomWords = (p.roomWords ?? 0) + 1; }   // AUDIT LW-II-2 D5: the room's word counted on the pile - a company minding it (dungeonDivers.js) reads it again, and charges no peer's take to this player
@@ -6132,6 +6151,84 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       n++;
     }
     return n;
+  }
+  /** PARTY-LOOT: the room's word about a body this copy has not laid yet. The runner says a body's list as it lays it
+   *  (sayBodyLoot), and that word can reach this copy ahead of the stream's frame that lays the body here: it was
+   *  dropped, the body was laid with this copy's own roll, and the first press on it claimed that roll for the room.
+   *  The newest word per body is kept LOOT_EARLY_MS (LOOT_EARLY_MAX bodies at most) and lands when the stream lays the
+   *  body (streamLaidBody). A pile and a searchable stand from the first frame, so only a body's word waits - a layout
+   *  body's inside the layout's run (lootHolder's own bound), or a rest's encounter's by the room's number. */
+  function holdEarlyLoot(canon, rec) {
+    if (canon.startsWith('corpse:') ? !(Number(canon.slice(7)) < _layoutFoes) : !canon.startsWith('enc:')) return;
+    _lootEarly.delete(canon);
+    _lootEarly.set(canon, { rec, at: performance.now() });
+    while (_lootEarly.size > LOOT_EARLY_MAX) _lootEarly.delete(_lootEarly.keys().next().value);
+  }
+  /** PARTY-LOOT: the runner's word about a body it has just laid - the whole list, said for the room before anyone
+   *  opens it (a claim, so never over a word the room has said). Only while this copy runs the room's foes, and only
+   *  for a body that is the room's container (a layout foe's, a rest's encounter's): a quest spawn's or a summon's body
+   *  is its runner's own, and no key names it. */
+  function sayBodyLoot(f) {
+    if (!onlineRoom() || !_authority) return false;
+    const i = foes.indexOf(f);
+    const k = i < 0 ? null : roomLootKey(`corpse:${i}`);
+    return k ? publishLoot(k, { claim: true }) : false;
+  }
+  /** PARTY-LOOT: the runner's stream has just laid body `f` on this copy. Its word, if it came first, lands now;
+   *  otherwise the body waits LOOT_WORD_WAIT_MS for it (lootWordDue). */
+  function streamLaidBody(f) {
+    const i = foes.indexOf(f);
+    const k = i < 0 ? null : roomLootKey(`corpse:${i}`);
+    if (!k) return false;
+    const e = _lootEarly.get(k);
+    _lootEarly.delete(k);
+    if (e && performance.now() - e.at <= LOOT_EARLY_MS && applyLoot([e.rec]) > 0) return true;
+    if (!_lootSeen.has(k)) f._lootDueAt = performance.now() + LOOT_WORD_WAIT_MS;
+    return false;
+  }
+  /** PARTY-LOOT: whether a press on body `f` (the room's `k`) waits for its runner's word - the stream laid it moments
+   *  ago and the room has not spoken about it. Past LOOT_WORD_WAIT_MS this copy's own roll is the room's to claim, as
+   *  in a room whose runner is an older build and says nothing at the death. */
+  function lootWordDue(f, k) {
+    return !!k && f?._lootDueAt != null && !_lootSeen.has(k) && performance.now() < f._lootDueAt;
+  }
+  /** PARTY-LOOT: the press lootWordDue held, opened once the word has landed or the wait is over (a press is the
+   *  player's, and ASYNC NEVER DROPS) - the latest press only, and none once the body is gone or the player is at
+   *  another window. */
+  function heldLootTick() {
+    const h = _lootHeld;
+    if (!h) return false;
+    const f = foes[Number(h.key.split(':')[1])];
+    if (lootWordDue(f, roomLootKey(h.key))) return false;
+    _lootHeld = null;
+    if (!lootableBody(f) || (activeOverlay && !activeOverlay.done)) return false;
+    return api.takeLoot(h.key, h.mode, h.pileKeys) > 0;
+  }
+  /** PARTY-LOOT: what a container holds, as its window's close compares it - each item by identity, with its count (a
+   *  take splices an item out, a store pushes one in, a split takes from a stack's count). */
+  function lootSig(items) { return Array.isArray(items) ? items.map((it) => [it, it?.stackCount]) : null; }
+  function sameLoot(items, sig) {
+    return Array.isArray(items) && Array.isArray(sig) && items.length === sig.length && items.every((it, j) => it === sig[j][0] && it?.stackCount === sig[j][1]);
+  }
+  /** WORLD4: a window stands open on the room's container `k` - this player's until it closes (AUDIT WORLD4 C1) - and
+   *  CLAIMS it (C2: only where the room has not spoken). PARTY-LOOT: what it held at the open is kept for the close -
+   *  when the room had spoken, so the window opened on the room's word. A window whose open is the claim keeps none: a
+   *  word that crosses a claim is another claim, and the close's word is what settles the two (C1's last writer). */
+  function lootOpened(k, items) {
+    _lootOpenKey = k;
+    _lootOpenSig = _lootSeen.has(k) ? lootSig(items) : null;
+    _lootOpenMissed = null;
+    return publishLoot(k, { claim: true });
+  }
+  /** WORLD4: the window on `k` has closed - what is left is the room's newest word, said after the window is closed so
+   *  the room's next word may land (AUDIT WORLD4 C1). PARTY-LOOT: except from a window that opened on the room's word,
+   *  moved nothing, and heard the room speak while it stood open. Its list is the one it opened on, and saying that
+   *  again put back what another player had taken in the meantime. The word C1 held back lands instead. */
+  function lootClosed(k) {
+    const missed = _lootOpenMissed, sig = _lootOpenSig;
+    _lootOpenKey = null; _lootOpenSig = null; _lootOpenMissed = null;
+    if (missed && sameLoot(lootHolder(k), sig)) { applyLoot([missed]); return false; }
+    return publishLoot(k);
   }
   const _retyping = new Set();
   /** WORLD8: the relay's clock now (a wall millisecond), null offline - the stamps' and the hour's one reading. */
@@ -6810,6 +6907,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       playRareDrop(audio, foe.ai.feet, foe.entity.items);   // LR3: the chime for a Rare or better on the body
       stampWonWeapons(foe.entity.items, _sharedFoe(foe) ? fightN(foe) : 1);   // SIGIL1: the body's Magic+ weapons won online may carry a sigil; a bigger fight, better odds
       raiseEnemyDeath(foe.entity, { luck: liveStat(playerEntity, 'luck') });   // UL1: OnEnemyDeath (EnemyDeath.cs:139) - the kill, not the load's rewind. AUDIT VC6: the player's luck, which SURV2's food rolls against - this host keeps no loot stream of its own, so the roll stays Math.random as its spawn loot's is
+      sayBodyLoot(foe);   // PARTY-LOOT: the body is the room's from its death - its list, whole (the handlers' finds and the cap above), said before anyone opens it
       return;
     }
     // C15 knockback (WeaponManager.WeaponDamage): WEAPON hits carry
@@ -7200,6 +7298,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
     const aimed = aimView ?? view;
     _ecvT += dt;
     respawnSweep(_ecvT);   // WORLD8: the hour's respawn, once a second
+    heldLootTick();   // PARTY-LOOT: a press held for a body's word, opened once the word has landed or the wait is over
     const ecvOn = combatVisualsOn();   // ECV1: once per frame
     _weaponCanvas = canvas;   // C10: the rig's late canvas (gesture dim + the overlay draw)
     // MW-D8: latch the eye and heading THIS frame, before anything draws.
@@ -10415,6 +10514,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       } else if (kind === 'corpse') {
         const f = foes[i];
         if (!lootableBody(f)) return 0;   // AUDIT 68 S19-removed-foe-lootable
+        if (lootWordDue(f, roomLootKey(key))) { _lootHeld = { key, mode, pileKeys }; return 0; }   // PARTY-LOOT: the runner's word about this body is due - the press opens it when the word lands (heldLootTick), never on this copy's own roll
         source = f.entity.items;
         // CreateLootableCorpseMarker hands ReverseCorpseTexture's
         // archive/record straight to CreateLootContainer
@@ -10487,7 +10587,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       const _k = roomLootKey(key);   // REST-SYNC: the room's name for it
       const _w = openInventory(source, onEmptied, { lootHooks, lootKey: _k });
       if (_w) activeOverlay = _w;   // DISC10-E L3: a refused pack is null - and its box already holds the slot
-      if (_w && _k) { _lootOpenKey = _k; publishLoot(_k, { claim: true }); }
+      if (_w && _k) lootOpened(_k, source);   // PARTY-LOOT: the claim, and what the window opened on (lootClosed reads it)
       if (_w && _find) silverFindAt(_find.kind, _find.key);   // AUDIT 625 D6: the window stood
       return source.length;
     },

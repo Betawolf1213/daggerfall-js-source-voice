@@ -105,12 +105,13 @@ test('AUDIT WORLD4 C1/C2/C6 + D5: a container YOU have open is yours until you c
   assert.match(d, /let _lootOpenKey = null;/, 'the container this player has open');
   // DISC10-E L3 re-aim: the refusal is the inventory DOOR's now (ui/inventoryDoor.js), and the null it answers must
   // not be written over the slot its refusal box already holds - the claim still follows the MOUNT alone
-  assert.match(d, /const _k = roomLootKey\(key\);[^\n]*\n\s*const _w = openInventory\(source, onEmptied, \{ lootHooks, lootKey: _k \}\);\s*if \(_w\) activeOverlay = _w;[^\n]*\n\s*if \(_w && _k\) \{ _lootOpenKey = _k; publishLoot\(_k, \{ claim: true \}\); \}/,
-    'C6: the inventory door REFUSES a transformed lycanthrope and answers null - no window, no claim');
-  assert.match(d, /onClose: \(\) => \{ onEmptied\?\.\(\); if \(lootKey\) \{ _lootOpenKey = null; publishLoot\(lootKey\); \}/, 'and the window is closed before its last word goes, so the room\'s next word may land');
+  assert.match(d, /const _k = roomLootKey\(key\);[^\n]*\n\s*const _w = openInventory\(source, onEmptied, \{ lootHooks, lootKey: _k \}\);\s*if \(_w\) activeOverlay = _w;[^\n]*\n\s*if \(_w && _k\) lootOpened\(_k, source\);/,
+    'C6: the inventory door REFUSES a transformed lycanthrope and answers null - no window, no claim');   // PIN MOVED (PARTY-LOOT): the claim is lootOpened's (test/world4.test.js pins its body)
+  assert.match(d, /onClose: \(\) => \{ onEmptied\?\.\(\); if \(lootKey\) lootClosed\(lootKey\);/, 'and the window is closed before its last word goes, so the room\'s next word may land');   // PIN MOVED (PARTY-LOOT): through lootClosed
+  assert.match(d, /function lootClosed\(k\) \{\s*const missed = _lootOpenMissed, sig = _lootOpenSig;\s*_lootOpenKey = null; _lootOpenSig = null; _lootOpenMissed = null;\s*if \(missed && sameLoot\(lootHolder\(k\), sig\)\) \{ applyLoot\(\[missed\]\); return false; \}\s*return publishLoot\(k\);\s*\}/, 'the window let go before the word goes');
   assert.match(d, /if \(claim && _lootSeen\.has\(canon\)\) return false;/, 'C2: a claim never overwrites the room\'s newer word - a joiner inside the memory\'s window used to un-empty a chest for everyone');
   assert.match(d, /const first = !_lootSeen\.has\(canon\);\s*_lootSeen\.add\(canon\);\s*(?:const _t = _wallNow\(\); if \(_t != null\) _lootAt\.set\(canon, _t\);[^\n]*\n\s*)?if \(first\) opts\.onLootClaimed\?\.\(\);/, 'D5: and the first word about a container makes the memory due');
-  assert.match(d, /if \(canon === _lootOpenKey\) \{ n\+\+; continue; \}/, 'C1: the room\'s word waits at an open window');
+  assert.match(d, /if \(canon === _lootOpenKey\) \{ _lootOpenMissed = rec; n\+\+; continue; \}/, 'C1: the room\'s word waits at an open window');   // PIN MOVED (PARTY-LOOT): and is held for the window's close
   // D5's chain, end to end: the host's bag, the mode's forward, the clock it resets
   assert.match(rd('src/scenes/worldModes.js'), /onLootClaimed: \(\) => host\.onLootClaimed\?\.\(\),/, 'forwarded');
   assert.match(rd('src/scenes/world.js'), /onLootClaimed: \(\) => \{ _worldPublishedAt = -Infinity; \},/, 'and the memory\'s clock is reset, so this frame\'s own publish carries the claim');

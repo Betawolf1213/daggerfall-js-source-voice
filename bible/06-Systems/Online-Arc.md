@@ -15683,3 +15683,64 @@ visit.
 
 - **Pinned**: `test/fb1007_hallfolk.test.js` (4) - over the account service's own answer and the real mode machine;
   `tools/mutants/fb1007hallfolk.json` (4, all killed).
+
+## PARTY-LOOT (2026-10-14, a player: "When in a party, if a monster is killed, loot drops for one player but the other player sees "Empty". If that player clicks "Empty" it wipes out the loot for the other player") - a body is the room's from its death
+
+WORLD4 made a container the room's at its first OPEN, and a body had a list on every copy before anyone opened it: the
+killer's copy rolled its own at the kill, and a joiner's copy rolls its own when the host's stream says the foe fell
+(CORPSE-FOOD, KIT-ROLL, AUDIT CARDS-6 A3 - "the room adopts the first opener's list"). Two players' rolls differ, so the
+killer saw loot where a party member's copy had come up empty, and the plaque told the second player "Empty". Opening
+it CLAIMED the empty list - AUDIT WORLD4 C2 refuses a claim only where the room has spoken, and nobody had - and the
+killer's copy adopted it in place. The close made it worse: it said its list whatever the room had said while the
+window stood open (C1 holds that word back from the window), so a close that moved nothing still put its stale list
+over the room's newer one.
+
+- **The runner says the body at its death.** `sayBodyLoot` (dungeonContext.js:"function sayBodyLoot"), from the kill door once the death's
+  handlers have found what they find and the cap has run (dungeonContext.js:"sayBodyLoot(foe)"): the body's whole list, as a claim,
+  online only, and only for a body that is the room's container (a layout foe's, a rest's encounter's - a quest spawn's
+  or a summon's body stays its runner's own). The claim makes the room's memory due (D5), so a joiner arriving after
+  the kill reads the body's list rather than rolling one.
+- **A word that comes before its body waits for it.** The word leaves at the death and the frame that lays the body
+  leaves after it, so a joiner usually hears the word while its copy still stands - and `applyLoot` dropped a word
+  about a container it did not hold. `holdEarlyLoot` (dungeonContext.js:"function holdEarlyLoot") keeps the newest word per body
+  (LOOT_EARLY_MAX bodies, LOOT_EARLY_MS, only a key this layout can lay or a rest's encounter's), and `streamLaidBody`
+  (dungeonContext.js:"function streamLaidBody") lands it from the stream's own door the frame the body stands (dungeonContext.js:"if (laid) streamLaidBody"). A
+  word this build cannot read is held the same way, so the body is the room's unread (AUDIT SETS M2) rather than claimed.
+- **A body that comes before its word holds the press.** When the act bucket holds the word back past the frame (five
+  acts a second; a fight's kills, opens and doors share them), the body waits LOOT_WORD_WAIT_MS for it (`lootWordDue`,
+  dungeonContext.js:"function lootWordDue"). A press inside the wait opens nothing and claims nothing (dungeonContext.js:"if (lootWordDue(f, roomLootKey(key)))"); it is
+  held, the latest press only, and opened by `heldLootTick` (dungeonContext.js:"function heldLootTick", every frame at
+  dungeonContext.js:"heldLootTick();   //") the moment the word lands or the wait ends - or dropped if the player is at another window
+  by then. The Physical Items layer stands nothing of the body meanwhile (dungeonContext.js:"if (lootWordDue(f, u))"). Past the wait this
+  copy claims its own roll exactly as before, so a room whose runner is an older build - which says nothing at the
+  death - plays as it did.
+- **A window that moved nothing says nothing over the room.** `lootOpened` (dungeonContext.js:"function lootOpened") keeps what the
+  window opened on when it opened on the room's word; `lootClosed` (dungeonContext.js:"function lootClosed") lands the word C1 held
+  back instead of speaking when that window moved nothing, so the dagger another player took while it stood open
+  stays taken. A window that moved something still says what is left - C1's last writer wins, as WORLD4 recorded - and
+  so does a window whose open was the claim: a word that crossed it is another claim, and landing it in silence
+  would leave the two copies on each other's lists.
+
+What it costs: one act word per kill online and the memory made due, where the first open used to do both; the memory
+carries a body's list from its death rather than from its first open, which the hour's respawn bounds (WORLD8 forgets
+each record past the hour) inside WORLD_FRAME_MAX. A press on a body whose word is late opens up to LOOT_WORD_WAIT_MS
+later. Not closed: two players taking from one body under two open windows still keep both takes (WORLD4's own note),
+and a memory read at arrival can still land over a live word heard while the restore's rebuild loaded its art
+(CORPSE-GOLD's note - the held word lands first and the memory's record after it, as before).
+
+The four hosts: `scenes/dungeonContext.js` WIRED (above). `scenes/exterior.js` and `scenes/world.js` stand the street's
+and the wilderness's bodies on the exterior pool, where a puppet's body is its owner's: the take is ASKED of the owner
+and granted (exteriorFoes.js:"function takeLoot", exteriorFoes.js:"function grantCorpse"), so there is no claim to race and nothing moved; world.js
+forwards the dungeon's words and its memory clock as it did (world.js:"onLootClaimed: ()"). `scenes/worldModes.js` - a building's
+foes are the same pool (worldModes.js:"bodyPool(lootKey)"), so its bodies are granted too; its shared containers are shelves and
+cupboards, and FLAGGED: their close (`interiorLootSettle`) says its list whatever the room said while the window stood,
+the same close this slice gave `lootClosed` - not changed here.
+
+- **Pinned**: `test/partyloot.test.js` (9) - two clients over the real kill door, the host's stream, the joiner's stream
+  door, the room's loot, takeLoot, the window's own onClose and the Physical Items bodies; `tools/mutants/partyloot.json`
+  (21, all killed). PIN MOVED in `test/world4.test.js`, `test/auditworld4.test.js` (the open's claim, the close and C1
+  through lootOpened and lootClosed) and the harnesses that mount the kill door or the stream's door
+  (`test/audit68_dungeonctx.test.js`, `test/loot7check.test.js`, `test/auditcards6_a.test.js`, `test/seatheal.test.js`,
+  `test/survtiers3.test.js`, `test/corpsegold.test.js`).
+
+---

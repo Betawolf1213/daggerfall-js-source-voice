@@ -153,6 +153,7 @@ test('AUDIT CARDS-6 A3: a joiner\'s copy of a body - the stream\'s death of it a
     ...doorDeps(), foes, _layoutFoes: 1, _retyping: new Set(), _authority: false, validFoeRecord, opts: { selfId: () => 'peer-7' },
     renownFoeDied: () => {}, reportPlayerKill: () => {}, sayEnemyDied: () => null, hudText: { add: () => {} },
     setFoeDead: (f, d) => { f.dead = d; }, retypeFoe: async () => false,
+    streamLaidBody: () => false,   // PIN MOVED (PARTY-LOOT): the runner's word landing on the body the stream laid - test/partyloot.test.js's seam, not this one
   };
   const api = mount(`${srcOf(find((x) => x.type === 'VariableDeclaration' && x.declarations.some((d) => d.id?.name === 'REMOTE_KILL')))}
     ${srcOf(find((x) => x.type === 'FunctionDeclaration' && x.id?.name === 'applyFoeRecord'))} return { applyFoeRecord };`, state);
