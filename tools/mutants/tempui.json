@@ -282,16 +282,6 @@
     ]
   },
   {
-    "name": "TEMPUI-the-plate-never-fits",
-    "file": "src/ui/enhancedHud.js",
-    "old": "  if (r) fitTemp(t);\n",
-    "new": "",
-    "why": "the whole plate runs off the screen at a large HUD scale",
-    "tests": [
-      "test/tempui.test.js"
-    ]
-  },
-  {
     "name": "TEMPUI-the-part-ignored",
     "file": "src/ui/enhancedHud.js",
     "old": "  const on = survivalOn() && getPref(TEMP_HUD_PREF) !== false;",

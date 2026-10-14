@@ -99,28 +99,51 @@ export const HOLDINGS_CSS = `
 .px-sys .hld-art .hld-glyph { font-size: 22px; color: #8b8578; }
 .px-sys .hld-text { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .px-sys .hld-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-.px-sys .hld-name { font-size: 15px; color: #f3cf86; overflow-wrap: anywhere; }
-.px-sys .hld-state { flex: none; padding: 0 5px; border-width: 1px; border-style: solid; font-size: 10px; line-height: 1.5; letter-spacing: 0.12em; text-transform: uppercase; color: #8fc7a0; }
+.px-sys .hld-name { font-size: 17px; color: #f3cf86; overflow-wrap: anywhere; }
+.px-sys .hld-state { flex: none; padding: 0 6px; border-width: 1px; border-style: solid; font-size: 12px; line-height: 1.5; letter-spacing: 0.1em; text-transform: uppercase; color: #8fc7a0; }
 .px-sys .hld-state.is-away { color: #b8b0a0; }
 .px-sys .hld-state.is-hurt { color: #e0a54a; }
 .px-sys .hld-state.is-lost { color: #ff8a78; }
-.px-sys .hld-sub { font-size: 11px; color: #8b8578; }
-.px-sys .hld-meter { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 8px; max-width: 320px; }
-.px-sys .hld-meter.hld-stat { grid-template-columns: 76px 1fr 64px; }
-.px-sys .hld-mk { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #b8b0a0; }
-.px-sys .hld-mn { font-size: 11px; color: #b8b0a0; font-variant-numeric: tabular-nums; }
-.px-sys .hld-why { font-size: 11px; color: #e0a54a; }
-.px-sys .hld-said { font-size: 11px; color: #8fc7a0; }
+.px-sys .hld-sub { font-size: 14px; line-height: 1.35; color: #bdb4a0; }   /* UI-CALM: the card's words were 11px grey under 17px presses */
+.px-sys .hld-meter { display: grid; grid-template-columns: 96px minmax(0, 1fr) 104px; align-items: center; gap: 10px; max-width: 400px; }
+.px-sys .hld-meter.hld-stat { grid-template-columns: 96px minmax(0, 1fr) 104px; }
+.px-sys .hld-mk { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #cfc7b1; }
+.px-sys .hld-mn { font-size: 13px; color: #ddd5bd; font-variant-numeric: tabular-nums; }
+.px-sys .hld-why { font-size: 13px; color: #e0a54a; }
+.px-sys .hld-said { font-size: 13px; color: #8fc7a0; }
 .px-sys .hld-acts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
-.px-sys .hld-acts .act { min-width: 0; padding-left: 10px; padding-right: 10px; }
+.px-sys .hld-acts .act { min-width: 0; padding-left: 12px; padding-right: 12px; font-size: 14px; letter-spacing: 0.06em; }
 .px-sys .hld-acts .act[aria-disabled="true"] { opacity: 0.55; }
 .px-sys .hld-field { font: inherit; font-size: 14px; min-height: 32px; padding: 2px 8px; box-sizing: border-box; width: 100%; max-width: 260px;
   color: #e9e4d9; background: rgba(15,17,22,0.75); border: 2px solid rgba(125,116,96,0.7); }
-.px-sys .hld-foot { font-size: 11px; color: #8b8578; margin: 4px 0 0; }
+.px-sys .hld-foot { font-size: 13px; line-height: 1.35; color: #bdb4a0; margin: 6px 0 0; }
+/* UI-CALM: the card's sections - the care, then the stats under a small head, then the look a line and a small press */
+.px-sys .hld-stats { display: flex; flex-direction: column; gap: 3px; margin-top: 8px; }
+.px-sys .hld-subhead { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: #9c937d; margin-bottom: 2px; }
+.px-sys .hld-lookline { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; margin-top: 8px; }
+.px-sys .hld-linkbtn { font: inherit; font-size: 13px; letter-spacing: 0.04em; padding: 2px 0; min-height: 0; background: none; border: 0;
+  color: #f3cf86; text-decoration: none; cursor: pointer; }
+.px-sys .hld-linkbtn::before { content: '\\203a  '; }
+.px-sys .hld-linkbtn:hover, .px-sys .hld-linkbtn:focus-visible { color: rgb(243,239,44); outline: none; }
+/* UI-CALM: a look's choice is a SELECTOR - swatches where each choice is a colour, a stepper where it is a word */
+.px-sys .hld-pick { display: grid; grid-template-columns: 96px auto 1fr; align-items: center; gap: 10px; min-height: 30px; }
+.px-sys .hld-picklabel { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #cfc7b1; }
+.px-sys .hld-pickname { font-size: 14px; color: #ddd5bd; }
+.px-sys .hld-swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+.px-sys .hld-swatch { width: 22px; height: 22px; padding: 0; min-height: 0; box-sizing: border-box; cursor: pointer; background: var(--sw, #555);
+  border: 2px solid #050608; box-shadow: 0 0 0 1px #5a5446; }
+.px-sys .hld-swatch:hover, .px-sys .hld-swatch:focus-visible { outline: none; box-shadow: 0 0 0 2px #f3cf86; }
+.px-sys .hld-swatch.on { box-shadow: 0 0 0 2px rgb(243,239,44), 0 0 0 4px #050608; }
+.px-sys .hld-step { font: inherit; font-size: 18px; line-height: 1; width: 28px; height: 28px; min-height: 0; padding: 0; cursor: pointer;
+  color: #ddd5bd; background: rgba(10,12,17,0.6); border: 2px solid #5a5446; }
+.px-sys .hld-step:hover, .px-sys .hld-step:focus-visible { outline: none; color: rgb(243,239,44); border-color: #f3cf86; }
+.px-sys .hld-pick:has(.hld-step) { grid-template-columns: 96px auto minmax(7em, auto) auto 1fr; }
+.px-sys .hld-stepname { text-align: center; }
 .px-sys .hld-refit { display: flex; flex-direction: column; gap: 3px; padding: 6px 9px 7px; border-width: 2px; border-style: solid; box-sizing: border-box; margin-top: 6px; }
 .px-sys .hld-log { display: grid; grid-template-columns: minmax(120px, 38%) 1fr; align-items: baseline; gap: 8px; }
 @media (max-width: 480px) { .px-sys .hld-field { font-size: 16px; } }
 :root[data-plus-theme="stone"] .px-sys .hld-sub, :root[data-plus-theme="stone"] .px-sys .hld-foot { color: #e2d9c4; }
+@media (max-width: 480px) { .px-sys .hld-pick { grid-template-columns: 1fr; gap: 4px; } .px-sys .hld-pick:has(.hld-step) { grid-template-columns: auto auto 1fr auto; } .px-sys .hld-pick:has(.hld-step) .hld-picklabel { grid-column: 1 / -1; } }
 `;
 export function ensureHoldingsStyle(doc = typeof document === 'undefined' ? null : document) {
   if (!doc?.getElementById || doc.getElementById(HOLDINGS_STYLE_ID)) return;
@@ -199,7 +222,6 @@ function steedLines(el, meter, h, care, act) {
     out.push(holdingMeter(el, meter, 'Breath', h.breath * 100, 100, h.breath < 0.25 || h.winded ? 'blood' : 'verdigris'));
     if (h.winded) out.push(el('span', 'hld-sub hld-why', 'Winded - it will not gallop until its breath is back.'));
   }
-  for (const st of h.stats) out.push(statMeter(el, meter, st.name, st.now, Math.max(0, st.now - st.born), 'thin', statWhy(st, h.bonus, h.penalty, h.hunger)));
   const row = el('div', 'hld-acts');
   const feed = el('button', h.full ? 'act' : 'act primary', `Feed oats (${care.oats})`);
   feed.title = h.full ? 'It is not hungry' : 'A sack of oats - a day’s food';
@@ -217,6 +239,12 @@ function steedLines(el, meter, h, care, act) {
     row.append(ride);
   }
   out.push(row);
+  // UI-CALM: the care first - its words, its bond and breath and the presses that answer them - then the four stats, a
+  // block of their own under a small head (they are read, never pressed)
+  const stats = el('div', 'hld-stats');
+  stats.append(el('span', 'hld-subhead', 'Stats'));
+  for (const st of h.stats) stats.append(statMeter(el, meter, st.name, st.now, Math.max(0, st.now - st.born), 'thin', statWhy(st, h.bonus, h.penalty, h.hunger)));
+  out.push(stats);
   return out;
 }
 /** STEED-UI: a wagon's state's bar tone - sound and worn the kit's verdigris, rickety its plain, failing blood. */
@@ -285,17 +313,61 @@ export function stableWords(m) {
 let _said = null;   // { who: 'horse'|'wagon'|'both', ok, text } - the last act's word
 let _renaming = false;   // the horse's name field open
 let _draft = '';
+let _lookOpen = '';   // UI-CALM: whose look's pickers are open - 'horse', 'wagon', or none
 
-/** WAGONS2/COATS1: a card's row of choices - its word, then a button a choice, the one worn pressed. */
+/** UI-CALM: a colour a look's swatch wears, by the name the card says - a horse's coats, a wagon's outside paints. A
+ *  name with none is drawn as a word (the stepper). */
+export const LOOK_SWATCHES = Object.freeze({
+  Bay: '#7a4527', Chestnut: '#9c5224', Black: '#26211e', Grey: '#9d9a93', Dun: '#b39a6b', Buckskin: '#c9a256', Palomino: '#dcbd7c',
+  'Weathered oak': '#7d6a4f', Red: '#9a2f24', Blue: '#2f4f8a', Green: '#3d6a3a', White: '#e4ded0', 'Cream canvas': '#e3d6b4',
+  Ochre: '#c08a2e', Oxblood: '#5e1d1b',
+});
+
+/**
+ * WAGONS2/COATS1: a card's row of choices. UI-CALM (2026-10-14, a player: "Why are horse coat colors huge buttons
+ * instead of a selector? Why do they take up more space than the horse stats?"): A SELECTOR, NOT A WALL OF PRESSES - its
+ * word, then where every choice has a colour (a coat, a wagon's paint) a row of small swatches, the one worn ringed and
+ * named beside them; else a stepper, ‹ the one worn › . Each swatch says its name to a reader and under the pointer.
+ */
 function choiceRow(el, word, { choices, current }, choose) {
-  const row = el('div', 'hld-acts');
-  row.append(el('span', 'hld-sub', `${word}:`));
-  choices.forEach((name, i) => {
-    const b = el('button', i === current ? 'act primary' : 'act', name);
-    b.setAttribute('aria-pressed', i === current ? 'true' : 'false');
-    b.onclick = () => choose(i);
-    row.append(b);
-  });
+  const row = el('div', 'hld-pick');
+  row.append(el('span', 'hld-picklabel', word));
+  const colours = choices.map((name) => LOOK_SWATCHES[name] ?? null);
+  if (colours.every(Boolean)) {
+    const set = el('div', 'hld-swatches');
+    set.setAttribute('role', 'radiogroup');
+    set.setAttribute('aria-label', word);
+    choices.forEach((name, i) => {
+      const b = el('button', `hld-swatch${i === current ? ' on' : ''}`);
+      b.setAttribute('role', 'radio');
+      b.setAttribute('aria-checked', i === current ? 'true' : 'false');
+      b.setAttribute('aria-label', name);
+      b.title = name;
+      if (b.style) b.style.setProperty?.('--sw', colours[i]);
+      b.onclick = () => choose(i);
+      set.append(b);
+    });
+    row.append(set, el('span', 'hld-pickname', choices[current] ?? ''));
+    return row;
+  }
+  const n = choices.length;
+  const step = (d, glyph, aria) => {
+    const b = el('button', 'hld-step', glyph);
+    b.setAttribute('aria-label', aria);
+    b.onclick = () => choose(((current + d) % n + n) % n);
+    return b;
+  };
+  row.append(step(-1, '\u2039', `${word}: previous`), el('span', 'hld-pickname hld-stepname', choices[current] ?? ''), step(1, '\u203a', `${word}: next`));
+  return row;
+}
+/** UI-CALM: a look in words, and the small press that opens its pickers (or closes them). */
+function lookLine(el, who, desc, rerender) {
+  const row = el('div', 'hld-lookline');
+  row.append(el('span', 'hld-sub', desc));
+  const b = el('button', 'hld-linkbtn', _lookOpen === who ? 'Done' : 'Change look');
+  b.setAttribute('aria-expanded', _lookOpen === who ? 'true' : 'false');
+  b.onclick = () => { _lookOpen = _lookOpen === who ? '' : who; rerender(); };
+  row.append(b);
   return row;
 }
 
@@ -352,12 +424,14 @@ export function drawStablePage(detail, rerender, { el, divider, meter = null } =
       row.append(ok, no);
       extra.push(row);
     }
-    if (m.look) {   // COATS1: its look in words, then its coats, patterns and legs, a button each - pressed, worn
-      extra.push(el('span', 'hld-sub', `${m.look.desc[0].toUpperCase()}${m.look.desc.slice(1)}.`));
-      for (const row of m.look.rows) extra.push(choiceRow(el, row.name, row, (i) => act(/** @type {any} */ (row.part), i)));
-    }
     const ridden = care?.horseCare ? care.horses.find((h) => h.ridden) : null;
     if (ridden) extra.push(...steedLines(el, meter, ridden, care, act));   // STEED1: its care
+    // COATS1: its look in words, and (UI-CALM) behind a small press its coats, patterns and legs as selectors - the look
+    // is chosen once in a while, the care read every visit, so the care comes first and the look waits to be asked for
+    if (m.look) {
+      extra.push(lookLine(el, 'horse', `${m.look.desc[0].toUpperCase()}${m.look.desc.slice(1)}.`, rerender));
+      if (_lookOpen === 'horse') for (const row of m.look.rows) extra.push(choiceRow(el, row.name, row, (i) => act(/** @type {any} */ (row.part), i)));
+    }
     list.append(card(el, { art: HORSE_ART, glyph: '♞', name, words: words.horse, sub: v?.horseName ? 'Your horse' : null, extra, rerender }).item);
     // STEED1: every other horse owned - its look, its care, and the choice to ride it
     for (const h of care?.horseCare ? care.horses.filter((x) => !x.ridden) : []) {
@@ -368,7 +442,10 @@ export function drawStablePage(detail, rerender, { el, divider, meter = null } =
     const extra = [];
     if (v && v.limit > 0) extra.push(holdingMeter(el, meter, 'Load', v.kg, v.limit, 'thin'));
     if (care?.wagonUpkeep && care.wagon) extra.push(...wagonLines(el, meter, care.wagon, care, act));   // WAGONS4: its soundness, and a kit
-    if (m.paint) extra.push(choiceRow(el, LOOK_TEXT.paint, m.paint, (i) => act('paint', i)));   // WAGONS2: its outside's paints, a button each - pressed, painted
+    if (m.paint) {   // WAGONS2: its outside's paints - UI-CALM: swatches, behind the same small press as the horse's look
+      extra.push(lookLine(el, 'wagon', `${LOOK_TEXT.paint}: ${m.paint.choices[m.paint.current] ?? ''}.`, rerender));
+      if (_lookOpen === 'wagon') extra.push(choiceRow(el, LOOK_TEXT.paint, m.paint, (i) => act('paint', i)));
+    }
     list.append(card(el, { art: WAGON_ART, glyph: '☸', name: stableWagonName(m.kind), words: words.wagon, sub: m.kind && m.kind !== 'cart' ? WAGON_KINDS[m.kind]?.name ?? null : null, extra, rerender }).item);   // WAGONS1: the wagon driven, by its kind
   }
   detail.append(list);
@@ -399,4 +476,4 @@ export function drawStablePage(detail, rerender, { el, divider, meter = null } =
 }
 
 /** A visit's words forgotten (an act's answer, an open name field) - the pause menu's every mount. */
-export function resetHoldingsPages() { _said = null; _renaming = false; _draft = ''; }
+export function resetHoldingsPages() { _said = null; _renaming = false; _draft = ''; _lookOpen = ''; }

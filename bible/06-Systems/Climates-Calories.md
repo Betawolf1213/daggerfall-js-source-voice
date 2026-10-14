@@ -2949,3 +2949,7 @@ they held Casual. Mutants: five new in `survboons.json` (80 now) - the
 default and the row back to Casual, the record read as the default, the
 page and the credits naming Casual - and six re-aimed by content; all
 dead.
+
+## UI-CALM - the plate in the corner (2026-10-14)
+
+A player: "I like the temperature indicator, but it would fit better in the bottom-left corner." The HUD plate (TEMP-UI) now stands as the first word of the bottom-left block's caption, beside the mode's word (`ui/enhancedHud.js`), its own HUD piece inside the quick block (`ui/hudLayout.js`); comfortable it shows the glyph and the number alone, felt or costing its word and scale too. The fit off the compass's right end (AUDIT C&C S3, S10, S12 and lens S: beside, compact, hung, aside) is retired with that place. `10-UI/UI-Calm.md`.

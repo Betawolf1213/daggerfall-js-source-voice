@@ -379,7 +379,16 @@ export const FEATURES = Object.freeze([
       + 'breath. Feeding it grows your bond and every stat with it, and a hungry horse is weaker; online it is always on.',
     effect: 'Takes effect at once.',
     kinds: Object.freeze(['enhanced']),
-    control: Object.freeze({ store: 'prefs', key: 'horseCare', initial: true, online: true }),   // systems/upkeepSwitch.js HORSE_CARE_PREF
+    control: Object.freeze({
+      store: 'prefs', key: 'horseCare', initial: true, online: true,   // systems/upkeepSwitch.js HORSE_CARE_PREF
+      // UI-CALM (2026-10-14): when the saddle panel stands (ui/enhancedSaddle.js saddleShown) - the player's own, offline
+      // and online: When needed (the mouse freed, a need, the first seconds in the saddle), Always (STEED-UI's), Off
+      also: Object.freeze([Object.freeze({ store: 'prefs', key: 'saddlePanel', initial: 'auto', online: 'player' })]),
+      parts: Object.freeze([Object.freeze({
+        key: 'saddlePanel', get label() { return t('features.horseCare.saddlePanel', 'Saddle panel'); },
+        get tiers() { return [['auto', t('features.horseCare.saddleAuto', 'When needed')], ['always', t('features.horseCare.saddleAlways', 'Always')], ['off', OFF()]]; },
+      })]),
+    }),
   }),
   // WAGONS4 (2026-10-11, the owner: "Wagons have durability and require upkeep to keep from breaking down and becoming
   // unusable"): WAGON UPKEEP (bible/06-Systems/Wagon-Upkeep.md, systems/wagonUpkeep.js). On by default; forced on online.
@@ -1220,6 +1229,18 @@ export const FEATURES = Object.freeze([
     get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['classic']),
     control: Object.freeze({ store: 'settings', key: 'Enhancements/CombatVoices' }),
+  }),
+  // UI-CALM (2026-10-14, a player: "Not everything needs to be visible constantly. Show information when it's
+  // relevant."): THE CALM HUD (ui/enhancedHud.js HUD_CALM_PREF) - the vitals rest while full and untouched, and come
+  // back with the first point lost or spent. On by default; the player's own, online too.
+  Object.freeze({
+    id: 'calm-hud',
+    group: 'interface',
+    get title() { return t('features.calmHud.title', 'Calm HUD'); },
+    get note() { return t('features.calmHud.note', 'Your health, fatigue and magicka bars fade away while all three are full, and come back the moment one changes.'); },
+    get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
+    kinds: Object.freeze(['enhanced']),
+    control: Object.freeze({ store: 'prefs', key: 'hudCalm', initial: true, online: 'player' }),
   }),
   Object.freeze({
     id: 'near-death-warning',

@@ -180,6 +180,13 @@ export const ACTIONS = Object.freeze([
   // (DEFAULT_SHARES): the road's key ashore, the glass's aboard - a deck has no road, and the road is never followed
   // from one. Appended, like every port action before it.
   'Spyglass',
+  // UI-CALM (2026-10-14, a player: "the horse riding menu would be great in a blocky form in the bottom right and we
+  // need a keybind to make it appear and disappear"): THE SADDLE PANEL'S KEY - one press shows the panel while riding, the
+  // next puts it away (ui/enhancedSaddle.js toggleSaddlePanel). On F2: the letters are spent, and Slash, Minus and
+  // Equal are the decorator's (scenes/decorTool.js DECOR_FREE_KEYS); F1-F4 are free since MODE-WHEEL let the four modes
+  // go, and a file that still keeps GrabMode on F2 keeps it (the action stands unbound until the player gives it a key).
+  // Appended, like every port action before it.
+  'SaddlePanel',
 ]);
 
 /** AUDIT SOC D3: THE PORT'S OWN ROWS, NAMED SO THE CLASSIC WINDOWS CAN YIELD THEM.
@@ -197,7 +204,7 @@ export const PORT_ACTIONS = Object.freeze(['SocialInteract', 'QuickUse1', 'Quick
   'TorchToggleLight', 'TorchDrop', 'TorchThrow', 'ShoulderSwitch', 'AutoPerspective', 'FollowPaths', 'HorseMount', 'HorseSummon', 'DebugOverlay',
   'BoatDisembark', 'BoatToggleLight', 'BoatToggleSail', 'BoatTrimRight', 'BoatTrimLeft', 'BoatTrimModifier',
   'BoatTimeScaleUp', 'BoatTimeScaleDown', 'BoatTimeScaleReset', 'TravelView', 'WalkMode', 'TogglePerspective', 'ActChoice', 'BoatSailUp', 'BoatSailDown', 'Professions',
-  'LegacyFamily', 'ModeWheel', 'WeaponTechnique', 'Spyglass']);   // SPYGLASS: the captain's glass   // TECH1: the weapon's technique   // LEGACY1: Project Legacy's family tree; MODE-WHEEL: the mode wheel   // KB1; TV1; PADWALK; VIEW-TOGGLE; PROF1   // QUICK-LOOT B4: the plaque's two, drawn in the enhanced pane under their own heading - the classic windows cannot draw them at all
+  'LegacyFamily', 'ModeWheel', 'WeaponTechnique', 'Spyglass', 'SaddlePanel']);   // SPYGLASS: the captain's glass   // TECH1: the weapon's technique   // LEGACY1: Project Legacy's family tree; MODE-WHEEL: the mode wheel   // KB1; TV1; PADWALK; VIEW-TOGGLE; PROF1   // QUICK-LOOT B4: the plaque's two, drawn in the enhanced pane under their own heading - the classic windows cannot draw them at all
 
 const ACTION_SET = new Set(ACTIONS);
 
@@ -354,6 +361,7 @@ export const DEFAULT_BINDINGS = Object.freeze([
   ['KeyK', 'FollowPaths'],
   ['Comma', 'HorseMount'],
   ['Period', 'HorseSummon'],
+  ['F2', 'SaddlePanel'],   // UI-CALM: the saddle panel (Slash is the decorator's grid)
   // CSA-D: the mod ships C (Crouch's) and Period (Horse Cart and Cargo's summon): one key, one action, so the port's
   // defaults are free keys under the right hand - `'` and `;` (DECLARED, the Port-Ledger's Come Sail Away row; `/` is
   // the decorator's own grid key, scenes/decorTool.js DECOR_FREE_KEYS)
@@ -520,6 +528,7 @@ export const ACTION_GROUPS = Object.freeze([
     ['StealMode', 'Steal mode'], ['GrabMode', 'Grab mode'], ['InfoMode', 'Info mode'], ['TalkMode', 'Talk mode'],
     ['QuickLootAll', 'Take everything'], ['QuickLootOpen', 'Open the container'],
     ['Transport', 'Transport'], ['Rest', 'Rest'],
+    ['SaddlePanel', 'Saddle panel: show or hide (riding)'],   // UI-CALM
   ]),
   g('Windows', [
     ['Escape', 'Pause menu'], ['CharacterSheet', 'Character sheet'], ['Inventory', 'Inventory'], ['Status', 'Status'],

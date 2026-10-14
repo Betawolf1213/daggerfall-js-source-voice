@@ -80,6 +80,9 @@ import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first tou
 export const NOTICE_LEVEL = 'level';
 export const NOTICE_SKILL = 'skill';
 export const NOTICE_MASTERY = 'mastery';
+/** FIRM1: a Renown level - announced as a level is (the lead dev, 2026-10-13: "when leveling up a renown give the player
+ *  the same message as he would ascend"), but news, never a reminder: nothing is owed by it. */
+export const NOTICE_RENOWN = 'renown';
 /** QUEST-NOTE: a quest's word - its foe fallen (a player, 2026-10-13: "Would it be possible to implement kill/quest
  *  notifications?"). News, as a skill's row is. */
 export const NOTICE_QUEST = 'quest';
@@ -151,6 +154,11 @@ export class LevelNotices {
   announceLevel(level, now) {
     this.announcedLevel = level ?? null;
     return this._push(NOTICE_LEVEL, NOTICE_LEVEL, RISEN_TITLE, level != null ? `Level ${level}` : '', now);
+  }
+
+  /** FIRM1: a Renown level was reached - the level's own title, its new Stars beneath. */
+  announceRenown(level, stars, now) {
+    return this._push(NOTICE_RENOWN, NOTICE_RENOWN, RISEN_TITLE, `Renown ${level}${stars > 0 ? ` · ${stars} new Stars` : ''}`, now);
   }
 
   /** QUEST-NOTE: a quest's word - a title and a line under it, keyed by `key` so a second word of one quest updates it. */
@@ -294,6 +302,20 @@ export function announceLevelUp(entity, { say = null, open = null, now = nowMs()
   return true;
 }
 
+/** FIRM1: A RENOWN LEVEL, SAID AS A LEVEL IS (the lead dev, 2026-10-13: "when leveling up a renown give the player the
+ *  same message as he would ascend"): the classic lane's line and the level's fanfare; on the enhanced skin the strip's
+ *  row in the level's own gold - "You have risen", the Renown and its Stars - and the same fanfare. A Renown level owes
+ *  nothing, so its row is news and goes as a skill's does. */
+export function announceRenownRise(level, { stars = 0, say = null, now = nowMs(), doc = DOC } = {}) {
+  audio.playOneShot(SOUND.LevelUp, 1);
+  if (!isEnhanced() || !doc) {
+    say?.(`You have risen to Renown ${level}!${stars > 0 ? ` ${stars} new Stars shine in your Firmament.` : ''}`);
+    return false;
+  }
+  levelNotices.announceRenown(level, stars, now);
+  return true;
+}
+
 /** QUEST-NOTE: A QUEST'S FOE FELL - on the enhanced strip a row in the mastery's brass ("Quest target slain", who and
  *  for which quest, its count where there are several); on the classic skin the HUD's line. */
 export function announceQuestFoeSlain({ who, quest, done = 1, of = 1, key = null }, { say = null, now = nowMs(), doc = DOC } = {}) {
@@ -406,7 +428,7 @@ function rowNode(doc, r) {
   // (touch, or the freed cursor); the pause window's Stats page carries the same door for everyone else.
   const clickable = r.kind === NOTICE_LEVEL && codeForAction(bindings(), 'CharacterSheet') != null;
   const n = doc.createElement(clickable ? 'button' : 'div');
-  n.className = `lv-note lv-note-${r.kind}${r.kind === NOTICE_QUEST ? ' lv-note-mastery' : ''}${r.standing ? ' lv-standing' : ''}${clickable ? ' lv-clickable' : ''}${r.fading ? ' lv-fading' : ''}`;
+  n.className = `lv-note lv-note-${r.kind}${r.kind === NOTICE_RENOWN ? ' lv-note-level' : ''}${r.kind === NOTICE_QUEST ? ' lv-note-mastery' : ''}${r.standing ? ' lv-standing' : ''}${clickable ? ' lv-clickable' : ''}${r.fading ? ' lv-fading' : ''}`;
   // SKILL2: the strip is rebuilt whenever a row comes or goes, so a row
   // already fading resumes its fade where it was instead of restarting it.
   if (r.fading && n.style) n.style.animationDelay = `-${Math.round(r.fadeElapsed ?? 0)}ms`;

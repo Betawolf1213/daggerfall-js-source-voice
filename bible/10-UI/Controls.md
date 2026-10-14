@@ -327,6 +327,7 @@ Generated from `ACTION_GROUPS` and the two default tables; the enhanced pane dra
 | `QuickLootOpen` | J |  | Open the container |
 | `Transport` | T |  | Transport |
 | `Rest` | R |  | Rest |
+| `SaddlePanel` | F2 |  | Saddle panel: show or hide (riding) |
 
 ### Windows
 
@@ -492,3 +493,7 @@ Overworld's alone). Under a window LT raises the hotbar to be arranged: A takes 
 press's click (a swap or a move), Y clears one; with the pad in hand "Add to hotbar" puts the new entry in hand and
 asks for a slot - A on it, or a bumper and the slot's own button on the crossbar (LB + X places too, never the quick
 act); on the row of ten the bumpers stay the tabs'. The mouse taking the hands back lets go of the hand. The record: `01-Overview/Field-Bugs-2026-10-04e.md`.
+
+## UI-CALM - the saddle panel when it is wanted (2026-10-14)
+
+A player: "Why is there a huge, unmovable panel showing horse/cart info at the top of my screen? It's intrusive and ruins immersion. Put that info in a separate menu." The saddle panel now stands over the vitals and the hotbar, and only when wanted (`ui/enhancedSaddle.js` saddleShown): the whole panel while the mouse is free; one line when the horse or the wagon needs the rider; the horse's name for six seconds after mounting; a finger's plate a tap from the panel; else nothing. The Horse care row's part *Saddle panel* chooses When needed (default), Always or Off. The Stable page is its separate menu. `10-UI/UI-Calm.md`.

@@ -26,8 +26,22 @@
 //
 // Enhanced Plus only: the classic skin keeps the grip bar's meter (ui/hud.js drawGripBar) and the keys.
 // UPDATED, NOT REBUILT (the HUD's third law): the buttons and the meters are made again only when their set changes.
+//
+// UI-CALM (2026-10-14, a player: "Why is there a huge, unmovable panel showing horse/cart info at the top of my screen?
+// It's intrusive and ruins immersion. Put that info in a separate menu ... Show information when it's relevant."):
+// THE PANEL STANDS WHEN IT IS WANTED, AND LOW (saddleShown). Its presses take a click only with the mouse free, so the
+// whole panel - the meters, the presses - stands while the mouse is free (the free-mouse key), and never over the ride
+// while the look holds it. Then only what needs the rider stands, as ONE LINE (`note`: winded, short of breath, hungry,
+// a wagon rickety or failing, a load past its limit - and its own meter beside it), and for a few seconds after mounting
+// a line that says the horse's name and how to call the panel (`hello`). A finger has no free mouse: it reads a small
+// plate with the name, and a tap on it opens the panel and closes it again. The Stable page (Holdings) is the separate
+// menu it always was - every word of this panel is there too. The player's choice ('saddlePanel', the Horse care row's
+// part): When needed (this), Always (the panel as STEED-UI stood it), Off. And it stands at the BOTTOM, over the vitals
+// and the hotbar, where a rider's eye already goes - the compass and the sky above it are the world's.
 import { PIXEL_STACK } from './pixelifyFive.js';
 import { injectEnhancedStyle } from './enhancedStyle.js';
+import { t } from '../systems/textManager.js';   // UI-CALM: the hello's line
+import { getPref, setPref } from '../systems/uiPrefs.js';   // UI-CALM: the player's choice of when the panel stands
 
 export const ENHANCED_SADDLE_ID = 'enhanced-saddle';
 const SADDLE_STYLE_ID = 'enhanced-saddle-style';
@@ -147,27 +161,100 @@ export function saddleHint(s, state = {}) {
   return parts.join(' · ');
 }
 
+/** UI-CALM: the player's choice - when the panel stands. */
+export const SADDLE_PANEL_PREF = 'saddlePanel';
+export const SADDLE_PANEL_MODES = Object.freeze(['auto', 'always', 'off']);
+/** UI-CALM: how long the line that names the horse stands after mounting (ms). */
+export const SADDLE_HELLO_MS = 6000;
+/** The choice now: 'auto' (When needed) unless the player chose another. */
+export const saddlePanelMode = () => { const v = getPref(SADDLE_PANEL_PREF); return SADDLE_PANEL_MODES.includes(v) ? v : 'auto'; };
+
+/**
+ * UI-CALM: what of the saddle needs the rider NOW, or null - the breath (winded, or short), the hunger (hungry or
+ * starving), the wagon (rickety or failing), the load (past its limit). The first that does, in that order. Pure.
+ * @param {any} s
+ */
+export function saddleAlert(s) {
+  const h = s?.horse, w = s?.wagon;
+  if (h && (h.winded || (h.breath != null && h.breath < SADDLE_BREATH_LOW))) return 'breath';
+  if (h && (h.hungerKey === 'hungry' || h.hungerKey === 'starving')) return 'hunger';
+  if (w && (w.stateKey === 'rickety' || w.stateKey === 'failing')) return 'wagon';
+  if (s?.load && s.load.limit > 0 && s.load.kg > s.load.limit) return 'load';
+  return null;
+}
+/** UI-CALM: the one line a `note` says - what needs the rider, and what to do (the plate's title names whose). Pure.
+ *  @param {any} s */
+export function saddleNote(s) {
+  const h = s?.horse, w = s?.wagon;
+  switch (saddleAlert(s)) {
+    case 'breath': return h.winded ? 'Winded - ease off and let it breathe' : 'Short of breath - ease off';
+    case 'hunger': return h.hungerKey === 'starving' ? (s.mode === 'Horse' ? 'Starving - it will not gallop until it eats' : 'Starving - feed your horse') : 'Hungry - feed it oats';
+    case 'wagon': return w.stateKey === 'failing' ? `The ${w.name.toLowerCase()} is failing - mend it to get its pace back` : `The ${w.name.toLowerCase()} is rickety - a kit or a Wagon Yard mends it`;
+    case 'load': return 'Overloaded - your team pulls it slower';
+    default: return '';
+  }
+}
+/** UI-CALM: the panel put up or away with its key (SADDLE_PANEL_ACTION) - remembered, so the next ride keeps the
+ *  player's last word; unset, the choice decides (Always up, else away). */
+export const SADDLE_OPEN_PREF = 'saddlePanelOpen';
+/** UI-CALM: the registry's action that puts the panel up and away (systems/inputActions.js, default F2). */
+export const SADDLE_PANEL_ACTION = 'SaddlePanel';
+/** UI-CALM: whether the panel is up now - the player's last press, else the choice's own (Always: up). */
+export function saddlePanelOpen(mode = saddlePanelMode()) {
+  const v = getPref(SADDLE_OPEN_PREF);
+  return typeof v === 'boolean' ? v : mode === 'always';
+}
+/** UI-CALM: the key's press (or a finger's tap on the plate) - the panel up if it was away, away if it was up. */
+export function toggleSaddlePanel(mode = saddlePanelMode()) {
+  const next = !saddlePanelOpen(mode);
+  setPref(SADDLE_OPEN_PREF, next);
+  return next;
+}
+/**
+ * UI-CALM: WHAT OF THE PANEL STANDS - 'full' (the block: the meters and the presses), 'note' (one line: what needs the
+ * rider), 'hello' (the name and the key that puts the panel up, the first seconds in the saddle), 'chip' (a finger's
+ * plate, a tap from the panel), or 'none'. THE KEY DECIDES (a player: "we need a keybind to make it appear and
+ * disappear"): up, the block stands whatever else; away, only what needs the rider - When needed - or nothing (Off).
+ * `state`: { open (the key's word: saddlePanelOpen), touch, since (ms in the saddle) }. Pure.
+ * @param {any} s @param {{ open?: boolean, touch?: boolean, since?: number }} state @param {string} [mode]
+ */
+export function saddleShown(s, state = {}, mode = 'auto') {
+  if (!s) return 'none';
+  if (state.open ?? mode === 'always') return 'full';
+  if (mode === 'off') return state.touch ? 'chip' : 'none';
+  if (saddleAlert(s)) return 'note';
+  if (state.touch) return 'chip';
+  return (state.since ?? Infinity) < SADDLE_HELLO_MS ? 'hello' : 'none';
+}
+/** UI-CALM: the hello's line under the horse's name - the key that puts the panel up. */
+export const saddleHello = (s, key = '') => (key ? t('saddle.hello.key', '{key}: saddle panel', { key }) : t('saddle.hello.none', 'Saddle panel: give it a key in Controls'));
+
 /** The layout and the letters; the Plus kit paints the bar and the buttons (enhancedFrame.js FRAME_ROLES). */
 export const SADDLE_CSS = `
-/* STEED-UI: THE SADDLE PANEL (ui/enhancedSaddle.js) - under the compass, above the HUD and below every window */
+/* STEED-UI: THE SADDLE PANEL (ui/enhancedSaddle.js) - above the HUD and below every window. UI-CALM: LOW, over the vitals
+   and the hotbar (--sp-bottom, measured off them each few frames: placeBar), never across the compass and the sky; and
+   only what is wanted stands (data-show, saddleShown) */
 .saddlepanel { position: fixed; inset: 0; z-index: 5; pointer-events: none; font-family: ${PIXEL_STACK}; -webkit-font-smoothing: none;
-  font-variant-ligatures: none; color: #d8cfae; --sp-top: calc(18px + 28px * var(--hud-scale, 1) + 20px); }
-body:has(.hud-foe.on) .saddlepanel { --sp-top: calc(18px + 28px * var(--hud-scale, 1) + 20px + 46px * var(--hud-scale, 1)); }
-.saddlepanel-bar { position: absolute; left: 50%; top: var(--sp-top); transform: translateX(-50%); display: flex; flex-direction: column;
-  align-items: center; gap: 6px; padding: 8px 12px; width: max-content; max-width: calc(100vw - 24px); box-sizing: border-box; border: 2px solid; border-radius: 0; }
-.saddlepanel-title { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 4px 12px; }
-.saddlepanel-name { font-size: 15px; letter-spacing: 0.06em; color: #efe8d6; text-shadow: 1px 1px 0 #050608; }
-.saddlepanel-gait { font-size: 13px; letter-spacing: 0.06em; color: #d9c48a; text-shadow: 1px 1px 0 #050608; font-variant-numeric: tabular-nums; }
+  font-variant-ligatures: none; color: #d8cfae; --sp-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+.saddlepanel[data-show="none"] { display: none; }
+.saddlepanel-bar { position: absolute; right: calc(16px + env(safe-area-inset-right, 0px)); bottom: var(--sp-bottom); display: flex; flex-direction: column;
+  align-items: stretch; gap: 8px; padding: 10px 12px; width: 300px; max-width: calc(100vw - 32px); box-sizing: border-box; border: 2px solid; border-radius: 0; }
+.saddlepanel-title { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 12px; }
+.saddlepanel-name { font-size: 16px; letter-spacing: 0.04em; color: #efe8d6; text-shadow: 1px 1px 0 #050608; }
+.saddlepanel-gait { font-size: 14px; letter-spacing: 0.04em; color: #d9c48a; text-shadow: 1px 1px 0 #050608; font-variant-numeric: tabular-nums; }
 .saddlepanel-gait:empty { display: none; }
-.saddlepanel-hint { font-size: 11px; letter-spacing: 0.08em; color: #a89f88; text-shadow: 1px 1px 0 #050608; }
+.saddlepanel-hint { font-size: 13px; letter-spacing: 0.03em; color: #bdb4a0; text-shadow: 1px 1px 0 #050608; }
 .saddlepanel-hint:empty { display: none; }
 .saddlepanel-hint.warn { color: #e8b04a; }
-.saddlepanel-meters { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 14px; }
+/* the block: a meter a row - its word, its bar, its reading - in one grid, so the bars stand in one column */
+.saddlepanel-meters { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 5px 10px; }
 .saddlepanel-meters:empty { display: none; }
-.saddlepanel-meter { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: 0.06em; text-shadow: 1px 1px 0 #050608; }
-.saddlepanel-mlabel { color: #a89f88; }
+.saddlepanel-meter { display: contents; font-size: 13px; letter-spacing: 0.04em; text-shadow: 1px 1px 0 #050608; }
+.saddlepanel-meter > * { font-size: 13px; letter-spacing: 0.04em; text-shadow: 1px 1px 0 #050608; }
+.saddlepanel-meter:not(:has(.saddlepanel-track)) .saddlepanel-mtext { grid-column: 2 / -1; }
+.saddlepanel-mlabel { color: #bdb4a0; }
 .saddlepanel-mtext { color: #e6dec6; font-variant-numeric: tabular-nums; }
-.saddlepanel-track { position: relative; width: 64px; height: 8px; background: rgba(5,6,8,0.75); border: 1px solid #5a5446; box-sizing: border-box; }
+.saddlepanel-track { position: relative; width: 100%; height: 8px; background: rgba(5,6,8,0.75); border: 1px solid #5a5446; box-sizing: border-box; }
 .saddlepanel-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #7fae5a; }
 .saddlepanel-meter.ok .saddlepanel-fill { background: #7fae5a; }
 .saddlepanel-meter.warn .saddlepanel-fill { background: #d9a441; }
@@ -176,20 +263,37 @@ body:has(.hud-foe.on) .saddlepanel { --sp-top: calc(18px + 28px * var(--hud-scal
 .saddlepanel-meter.low .saddlepanel-mtext { color: #e2735e; }
 .saddlepanel-meter.bond .saddlepanel-fill { background: #c08a3e; }
 .saddlepanel-meter.bond .saddlepanel-mtext { color: #f3cf86; }
-.saddlepanel-btns { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; }
+/* the block's presses: two to a row, each a block of its own */
+.saddlepanel-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.saddlepanel-btn:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .saddlepanel-btns:empty { display: none; }
-.saddlepanel-btn { pointer-events: auto; display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 10px;
-  border: 2px solid; border-radius: 0; font: inherit; font-size: 13px; letter-spacing: 0.06em; color: #e6dec6; cursor: pointer;
+.saddlepanel-btn { pointer-events: auto; display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 34px; padding: 4px 8px;
+  border: 2px solid; border-radius: 0; font: inherit; font-size: 14px; letter-spacing: 0.04em; color: #e6dec6; cursor: pointer;
   text-shadow: 1px 1px 0 #050608; touch-action: none; user-select: none; -webkit-user-select: none; }
+.saddlepanel-btn { white-space: nowrap; }
 .saddlepanel-btn[disabled] { opacity: 0.45; cursor: default; }
-.saddlepanel-key { font-size: 11px; letter-spacing: 0.04em; color: #a89f88; }
+.saddlepanel-key { font-size: 12px; letter-spacing: 0.04em; color: #bdb4a0; }
 .saddlepanel-key:empty { display: none; }
-/* the helm's finger place (ui/enhancedHelm.js AUDIT NAV1): centred in the room right of the corner's two presses */
-.saddlepanel.touch .saddlepanel-bar { top: calc(8px + env(safe-area-inset-top, 0px)); left: calc(50% + 56px + (env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) / 2);
+/* UI-CALM: a NOTE is one line - the name, what needs the rider and its own meter, no presses; the HELLO the name and how
+   to call the panel; a finger's CHIP the name alone, a tap away from the panel. Each a small plate, quieter than the panel. */
+.saddlepanel:is([data-show="note"], [data-show="hello"], [data-show="chip"]) .saddlepanel-btns,
+.saddlepanel:is([data-show="note"], [data-show="hello"], [data-show="chip"]) .saddlepanel-gait { display: none; }
+.saddlepanel:is([data-show="note"], [data-show="hello"], [data-show="chip"]) .saddlepanel-bar { width: auto; max-width: 300px; gap: 4px; padding: 6px 12px; }
+.saddlepanel:is([data-show="hello"], [data-show="chip"]) .saddlepanel-meters { display: none; }
+.saddlepanel[data-show="note"] .saddlepanel-meter:not(.warn):not(.low) { display: none; }
+.saddlepanel[data-show="chip"] .saddlepanel-hint { display: none; }
+.saddlepanel[data-show="hello"] .saddlepanel-bar { animation: saddlepanel-hello ${SADDLE_HELLO_MS}ms steps(12, end) both; }
+@keyframes saddlepanel-hello { 0%, 80% { opacity: 1; } 100% { opacity: 0; } }
+.saddlepanel.touch .saddlepanel-title { pointer-events: auto; cursor: pointer; min-height: 32px; align-items: center; }
+/* the helm's finger place (ui/enhancedHelm.js AUDIT NAV1): centred in the room right of the corner's two presses - the
+   bottom is the sticks' */
+/* a finger: the block at the top right, clear of the sticks at the bottom and the corner's two presses at the top left */
+.saddlepanel.touch .saddlepanel-bar { bottom: auto; top: calc(8px + env(safe-area-inset-top, 0px)); right: calc(8px + env(safe-area-inset-right, 0px));
   max-width: calc(100vw - 144px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)); }
 .saddlepanel.touch .saddlepanel-btn { min-height: 44px; min-width: 44px; }
 .saddlepanel.touch .saddlepanel-key { display: none; }
-@media (max-width: 560px) { .saddlepanel-btn { padding: 4px 7px; font-size: 12px; } .saddlepanel-track { width: 44px; } }
+@media (max-width: 560px) { .saddlepanel-btn { padding: 4px 6px; font-size: 13px; } .saddlepanel-bar { width: 260px; } }
+@media (prefers-reduced-motion: reduce) { .saddlepanel[data-show="hello"] .saddlepanel-bar { animation: none; } }
 `;
 
 let host = null;
@@ -197,6 +301,10 @@ let host = null;
 let parts = null;
 /** @type {any} */
 let last = null;
+/** UI-CALM: when this ride's panel was first drawn (ms, the hello's clock). */
+let mountedAt = 0;
+/** UI-CALM: the frames between two measures of where the vitals and the hotbar stand (placeBar). */
+export const SADDLE_PLACE_EVERY = 15;
 
 function injectSaddleStyle(doc) {
   if (doc.getElementById?.(SADDLE_STYLE_ID)) return;
@@ -225,6 +333,8 @@ function build(doc) {
   title.className = 'saddlepanel-title';
   const name = span(doc, 'saddlepanel-name'), gait = span(doc, 'saddlepanel-gait'), hint = span(doc, 'saddlepanel-hint');
   title.append(name, gait, hint);
+  // UI-CALM: a finger's plate - the name - opens the panel, and closes it again
+  title.addEventListener('click', (e) => { if (!last?.touch) return; e.preventDefault?.(); toggleSaddlePanel(last.mode); });
   const meters = doc.createElement('div');
   meters.className = 'saddlepanel-meters';
   const btns = doc.createElement('div');
@@ -295,7 +405,8 @@ export function drawEnhancedSaddle(state = {}, hooks = {}, { doc = globalThis.do
   if (!doc?.body) return null;
   const s = state.saddle ?? null;
   if (!s) { hideEnhancedSaddle(); return null; }
-  if (!host) { last = {}; parts = build(doc); host = parts.root; }
+  const now = Number.isFinite(state.now) ? /** @type {number} */ (state.now) : (globalThis.performance?.now?.() ?? Date.now());
+  if (!host) { last = {}; parts = build(doc); host = parts.root; mountedAt = now; }
   if (state.covered) {
     if (last.covered !== true) { last.covered = true; parts.root.style.display = 'none'; }
     return parts.root;
@@ -306,12 +417,23 @@ export function drawEnhancedSaddle(state = {}, hooks = {}, { doc = globalThis.do
   if (last.scale !== scale) { last.scale = scale; parts.root.style.setProperty?.('--hud-scale', scale); }
   const rootClass = `saddlepanel${state.touch ? ' touch' : ''}`;
   if (last.rootClass !== rootClass) { last.rootClass = rootClass; parts.root.className = rootClass; }
+  // UI-CALM: what stands - the whole panel, a note, the hello, a finger's chip, or nothing (saddleShown)
+  last.touch = !!state.touch;
+  const mode = state.panel ?? saddlePanelMode();
+  last.mode = mode;
+  const show = saddleShown(s, { open: state.open ?? saddlePanelOpen(mode), touch: !!state.touch, since: now - mountedAt }, mode);
+  if (last.show !== show) { last.show = show; parts.root.dataset.show = show; last.place = -1; }
+  if (show === 'none') return parts.root;
+  last.place = ((last.place ?? -1) + 1) % SADDLE_PLACE_EVERY;
+  if (last.place === 0 && !state.touch) placeBar(doc);
   const title = saddleTitle(s);
   if (last.title !== title) { last.title = title; parts.name.textContent = title; }
   const gait = [saddleGait(s.mode, s.speed, s.galloping, s.walks), saddleSpeedText(s.speed)].filter(Boolean).join(' · ');
   if (last.gait !== gait) { last.gait = gait; parts.gait.textContent = gait; }
-  const hint = saddleHint(s, state);
-  const hintWarn = !!(s.horse?.winded || s.horse?.hungerKey === 'starving' || s.wagon?.stateKey === 'failing');
+  // UI-CALM: a note says what needs the rider; the hello the horse's name and how to call the panel
+  const said = show === 'note' ? saddleNote(s) : show === 'hello' ? saddleHello(s, state.keyOf?.(SADDLE_PANEL_ACTION) ?? '') : '';
+  const hint = said || saddleHint(s, state);
+  const hintWarn = show === 'note' || !!(s.horse?.winded || s.horse?.hungerKey === 'starving' || s.wagon?.stateKey === 'failing');
   if (last.hint !== hint || last.hintWarn !== hintWarn) { last.hint = hint; last.hintWarn = hintWarn; parts.hint.textContent = hint; parts.hint.className = `saddlepanel-hint${hintWarn ? ' warn' : ''}`; }
   // the meters: made again only when their set changes (a bar becoming a chip is a new set)
   const meters = saddleMeters(s);
@@ -352,6 +474,24 @@ export function drawEnhancedSaddle(state = {}, hooks = {}, { doc = globalThis.do
   return parts.root;
 }
 
+/** UI-CALM: THE BLOCK STANDS IN THE BOTTOM-RIGHT CORNER (a player: "in a blocky form in the bottom right") - and where
+ *  a narrow screen brings the hotbar or the vitals under it (they are centred, it is a corner), just over whichever of
+ *  them it would meet: the HUD's own boxes, read off the page, so no HUD scale puts it on them. */
+function placeBar(doc) {
+  const vh = Number(globalThis.innerHeight);
+  const me = /** @type {any} */ (parts.bar)?.getBoundingClientRect?.();
+  if (!(vh > 0) || !me || !(me.width > 0)) return;
+  let top = Infinity;
+  for (const sel of ['.hud .hb', '.hud .hud-bottom']) {
+    const r = /** @type {any} */ (doc.querySelector?.(sel))?.getBoundingClientRect?.();
+    if (r && r.width > 0 && r.height > 0 && r.right > me.left - 8 && r.left < me.right + 8) top = Math.min(top, r.top);
+  }
+  const v = Number.isFinite(top) ? `${Math.max(12, Math.round(vh - top + 10))}px` : '';
+  if (last.bottom === v) return;
+  last.bottom = v;
+  if (v) parts.root.style.setProperty?.('--sp-bottom', v); else parts.root.style.removeProperty?.('--sp-bottom');
+}
+
 /** Taken down: out of the saddle, the skin or the switch off, a door. */
 export function hideEnhancedSaddle() {
   if (!host) return;
@@ -361,4 +501,4 @@ export function hideEnhancedSaddle() {
 
 export const enhancedSaddleMounted = () => !!host;
 /** The bar standing now - mounted and not covered - or null (the helm's enhancedHelmBar's twin). */
-export const enhancedSaddleBar = () => (host && last?.covered !== true ? parts.bar : null);
+export const enhancedSaddleBar = () => (host && last?.covered !== true && last?.show !== 'none' ? parts.bar : null);

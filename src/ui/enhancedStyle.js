@@ -36,6 +36,7 @@ import { PIXELIFY_FIVE_FACE, PIXEL_STACK, PIXEL_FONT_CSS } from './pixelifyFive.
 import { badgeCss } from './playerBadge.js';   // ACC3c: one rule per title and per glyph, walked out of the vocabulary - the card writes a class and the skin carries the colour
 import { STONE_WORD, PLUS_CSS, PLUS_STYLE_ID, applyPlusTheme } from './enhancedPlusStyle.js';   // PLUS1: the Enhanced Plus sheet, laid over this one
 import { installPlusCursor } from './plusCursor.js';   // PLUS7: the gauntlet cursor
+import { injectUiCalmStyle } from './uiCalmStyle.js';   // UI-CALM: the quiet pass, laid after the Plus sheet
 import { installWindowMotion } from './windowMotion.js';   // PLUS1/WM1: windows unfold and fold - Enhanced Plus only
 import { isEnhancedPlus } from '../systems/uiSkin.js';   // PLUS1: the Plus sheet is laid only under Plus
 import { pageHas } from '../systems/pageQuery.js';   // PERF-URL: the page's query, parsed once a search
@@ -2891,7 +2892,7 @@ html.plus-pad-prompts-visible .px-over > .px-stage:not(.px-acctstage):not(.px-ti
   cursor: pointer; background: none; border: 0; padding: 2px 0; min-height: 24px; text-align: left; }
 /* AUDIT PLAIN-UI U10: the badge says it can be pressed - a mark after the number, the name underlined under a pointer */
 .talk-regard-value::after { content: ' ?'; color: #9c937d; }
-.talk-regard:hover .talk-regard-name, .talk-regard:focus-visible .talk-regard-name { text-decoration: underline dotted; }
+.talk-regard:hover .talk-regard-name, .talk-regard:focus-visible .talk-regard-name { text-decoration: underline solid; text-underline-offset: 0.2em; }
 .talk-regard:focus-visible { outline: 1px dashed currentColor; outline-offset: 2px; }
 .talk-regard-words { grid-column: 1 / -1; margin: 0; font-size: 14px; line-height: 1.45; color: #c9bfa3; max-height: 4.4em; overflow-y: auto; max-width: 72ch; }   /* AUDIT PLAIN-UI C5: a short screen keeps its conversation; U9: a line a reader can follow */
 .talk-regard-name { text-transform: uppercase; }
@@ -6466,6 +6467,7 @@ export function injectEnhancedStyle(doc = document) {
     doc.head.append(plus);
     installWindowMotion(doc);  installPlusCursor(doc);   // PLUS7: the gauntlet presses while a button is held
     applyPlusTheme(doc);   // PLUS2: the stored colour
+    injectUiCalmStyle(doc);   // UI-CALM: the quiet pass - its type, its space - laid after Plus's, so it wins by order
   }
   // SND1: every enhanced surface is styled through here once, so the UI's
   // click sound is installed with it. Loaded late, so this sheet (which

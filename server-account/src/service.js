@@ -313,6 +313,8 @@ export const ROUTES = new Set([
   // character's again since RENOWN-CHAR). Behind a session; the level
   // itself rides the token.
   '/v1/renown/xp',
+  // FIRM1: the Firmament - a character's passive tree, read and changed whole (firmament.js)
+  '/v1/firmament/state', '/v1/firmament/set', '/v1/firmament/respec',
   // CHAP1: the Roll - a realm character's standing with Daggerfall's guilds, read (seeded once) and claimed under the
   // playing tab's lease (npcRoll.js). Behind a session and CHAPTERS_OPEN.
   '/v1/chapters/roll', '/v1/chapters/claim',

@@ -1782,6 +1782,18 @@ export function accountProf({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
   };
 }
 
+/** FIRM1: THE FIRMAMENT'S DOOR (server-account/src/firmament.js) - a character's tree and purses read, and the whole tree
+ *  it wants asked under its own id. Every answer is `call`'s shape; each is waited for ACCOUNT_ACT_WAIT_MS at most. */
+export function accountFirmament({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
+  const post = waitedPost({ fetch, storage }, waitMs);
+  return {
+    account: () => storedSession(storage)?.id ?? null,
+    state: (character) => post('/v1/firmament/state', { character }),
+    set: (character, tree, rid) => post('/v1/firmament/set', { character, tree, rid }),
+    respec: (character, rid, realm = null, region = null) => post('/v1/firmament/respec', { character, rid, ...(realm ? { realm } : {}), ...(Number.isSafeInteger(region) ? { region } : {}) }),   // the whole sky back for gold
+  };
+}
+
 /** PROF5: the market's door (server-account/src/market.js) - the Market tab's views and every act, each with the
  *  board's region and the hubs this client derived (the courier's road, witnessed - PROF0 26). */
 export function accountMarket({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
