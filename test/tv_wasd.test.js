@@ -72,7 +72,9 @@ function rig({ onRoad = false } = {}) {
     setWorldTimeScale: setTimeScale, worldTimeScale: timeScale, resetTimeScale,
     travelAsked: 20, csaHoldsTimeScale: () => false,
     travelGovernor: createLoadGovernor({ max: MAX_TIME_SCALE }),
-    state: { terrainDistance: 3 }, playerTravelPixel: () => ({ x: 100, y: 200 }), tvGroundGenNow: () => w.unbuilt.size,
+    // PIN MOVED (LOAD-OWED, test/ow_loadowed.test.js): the count asks the stream's own books - every pixel of this grid is
+    // on them (`loaded`), so the rig's `unbuilt` are owed, as a stream still building them owes them
+    state: { terrainDistance: 3, loaded: { has: () => true } }, playerTravelPixel: () => ({ x: 100, y: 200 }), tvGroundGenNow: () => w.unbuilt.size,
     unbuiltAround, built: { has: (k) => !w.unbuilt.has(k) }, StreamingWorldState,   // ETHER-OW: only what the world streams is owed a build
     journeyThreatCap: () => ({ cap: Infinity }), journeySlowSaid: () => {},   // OW6: no enemy about (test/ow6_slowdown.test.js runs the cap)
   };

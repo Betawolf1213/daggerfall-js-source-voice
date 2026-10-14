@@ -33069,10 +33069,16 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     // PERF-TV: counted again only when the ground, the pixel or the reach moved - not every frame
     const px = playerTravelPixel(), gen = tvGroundGenNow(), uc = _tvUnbuilt;
     if (uc.gen !== gen || uc.x !== px.x || uc.y !== px.y || uc.r !== radius) {
-      // ETHER-OW: nothing to build where the world streams nothing - the stream's own law (StreamingWorldState.streams: the
-      // map, the continent's frame, the Eltheric Ocean's box). "Off the map" was that law before the world streamed past
-      // it, and past the Veil (and on the land past the Bay) every pixel read built: the clock was never held for the load
-      uc.n = unbuiltAround(px, radius, (x, y) => !StreamingWorldState.streams(x, y) || built.has(`${x},${y}`));
+      // LOAD-OWED (the bug-reports channel, 2026-10-14: "the speed randomly drops and gets locked at 1x after traveling for
+      // a while ... no enemies or threats nearby"): THE LAND LOADING IS WHAT THE STREAM OWES - a pixel of its grid it is
+      // still building, queued or in flight (`state.loaded` is built or building; less `built`). The stream's books hold
+      // ETHER-OW's law too: it loads nothing where the world streams nothing (StreamingWorldState.streams - the map, the
+      // continent's frame, the Eltheric Ocean's box), so off the map past the Veil the land is owed as the Bay's is. The
+      // count asked that law alone, and a pixel whose build THREW is let go by the stream (pump's catch: state.release) and
+      // asked for again only at the next map pixel crossed - so it read unbuilt to the end: the hold halved the clock to x1
+      // and kept it there, at a walking pace that took minutes to reach that crossing, and a build that failed again held
+      // it again. A hold for the load now ends when its build does, whichever way it ends
+      uc.n = unbuiltAround(px, radius, (x, y) => built.has(`${x},${y}`) || !state.loaded.has(`${x},${y}`));
       uc.gen = gen; uc.x = px.x; uc.y = px.y; uc.r = radius;
     }
     const unbuilt = uc.n;

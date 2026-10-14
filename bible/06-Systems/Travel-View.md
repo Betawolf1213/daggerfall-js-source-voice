@@ -2058,3 +2058,65 @@ the world map just like in the bay"*. The record is `03-World/Eltheric-Ocean.md`
   `tvKnownGen` - DFU's finds and the captain's charts - so an isle charted on the pixel the traveller stands on is a
   plate at once, as AUDIT DEEP2 B-3 made a find.
 `test/ether_ow.test.js`, `tools/mutants/ether_ow.json`; the pins moved are the Eltheric page's list.
+
+## LOAD-OWED - the land loading is what the stream owes (2026-10-14, the bug-reports channel)
+
+*"When traveling using Overworld, the speed randomly drops and gets locked at 1x after traveling for a while. There are
+no enemies or threats nearby to trigger this slowdown. To get back to 100x speed, I have to cancel the travel and
+restart it manually"* - "tested and reproduced ... on foot, on horseback, and with the cart" (seven upvotes, a second
+player's confirmation).
+
+**Every hold on a journey's clock, and what lets it go** (traced on the code as it stands, each add beside its release):
+
+| Hold | Down to | Let go when |
+|---|---|---|
+| the land loading (TV2, the view's branch of `travelViewGovern`, world.js:"function travelViewGovern") | halved, to x1 | the counted grid clean for TV_GOV_CLEAR_S, a step at a time (travelGovernor.js:"if (clear >= TV_GOV_CLEAR_S)"); a journey begun or the view down forgets the ceiling |
+| enemies near (OW6, `journeyThreats`) | the near-enemies dial, x5 at its lowest (`foePaced`, travelThreat.js:"export const foePaced") | read afresh each frame from the live sets - a band's chase (lost, stood, spent, a town, a load), an alerted foe (culled, dead, its hunt given up), a raider, a hostile ship |
+| a stranger in the open zone (PVPNEAR, world.js:"const rate = g.dist") | x1 at 100 m | its 250 ms list - and at 100 m the view comes down and stops the journey |
+| the view down under an Overworld journey (AUDIT OW4 J5, world.js:"if (worldTimeScale() !== 1) setWorldTimeScale") | x1 | `tvJourneyUp` (world.js:"function tvJourneyUp") raises the view once no window, foe or duel stands - a window's pause, a danger exit (travelView.js:"&& deps.danger?.()") or two silent heartbeats (travelView.js:"function stalled") brought it down |
+| Travel Options' own stops (interruptTravel, travelOptions.js:"function interruptTravel"; an encounter) | x1 | none: the journey is over (the panel's Camp), and a resume asks its rate afresh |
+| the helm's time keys (CSA-G), no panel (the frame's nets) | the helm's; x1 | the helm; a journey |
+
+**FOUND.** Only the first can hold a journey at x1 with the view up and nothing near: the enemies' hold never goes under
+the near-enemies pace, a stranger's and Travel Options' stop the journey, and the view down is the ground's. And the
+land's hold outlived its cause. The count (world.js:"uc.n = unbuiltAround") asked whether the world streams a pixel and whether it is
+built. A build that THROWS is let go by the stream - the pump's catch frees what it made and takes the key off the
+stream's books (world.js:"state.release(next.px, next.py)", AUDIT 49faf853 B1) - and the stream asks for a pixel only when the traveller crosses
+into a new map pixel (streamingWorld.js:"load = this._loadList"). So the pixel read "loading" with nothing building it: the governor halved
+the clock to x1 in about eight seconds and held it there, the journey crept at walking pace toward the crossing that
+would ask for the pixel again - minutes away on foot - and a build that threw again held it again. A restart forgot the
+ceiling (AUDIT DEEP T2-8), and its x100 crossed a pixel before the halving came back down: the players' way out.
+Measured on the host's own code (the stream, the pump, the view's governor and its count, lifted out of
+`scenes/world.js`): a journey on foot past one pixel of the grid that cannot be built - the clock at x1 for 540 s of
+the next 900, the pixel asked for again at four crossings and failing at each, let go only when the traveller had
+walked it out of the counted grid; now 4 s, then the climb to x100.
+
+Not this: an enemy unloaded with its ground while it counts. A foe whose pixel leaves the grid is held, not stepped
+(FALL-HOLD, exteriorFoes.js:"if (groundStands && !groundStands(f.ai.feet[0], f.ai.feet[2]))"), and a placed one is never culled, so one that was hunting the traveller keeps its
+hunt - `holdFrame` (enemyMotor.js:"holdFrame() {") clears its senses, not its GiveUpTimer - and stays alerted (encounters.js:"export function foeAlerted"),
+in the threat list at its frozen place. It cannot hold the clock: past the grid's edge it is two and a half kilometres
+off, and at x100 THREAT_WARN_S bites only within sixty times the traveller's own pace (about a kilometre for a rider,
+300 m on foot); come back within reach and its ground is built and it steps again.
+Recorded, not changed.
+
+**FIXED.** The count is the stream's own books: a pixel is owed while the stream holds it (`state.loaded`, built or
+building) and has not built it. ETHER-OW's law stands inside that (the stream loads nothing where the world streams
+nothing). A hold for the land ends when its build does, whichever way it ends; the pixel is still asked for again at
+the next crossing, as before, and is a hole until it builds.
+
+**The four hosts.** `scenes/world.js` wired - it alone streams the world and raises the Overworld. `scenes/exterior.js`
+streams nothing (one fixed city) and has no Overworld, so no governor; `scenes/worldModes.js` (a building) and
+`scenes/dungeonContext.js` (a dungeon) run no journey - a door ends one (AUDIT-TO1 G2).
+
+**Open, for Mac.** Why the players' builds threw is not known here: the pump says `pixel X,Y failed:` on the console,
+and that line from a player who meets the slowdown names the build to mend. Whether the stream should ask for a failed
+pixel again before the next crossing - it stands a hole in the view until then - is a streaming call, left as BUILD-FAIL1
+and AUDIT 49faf853 B1 made it.
+
+`test/ow_loadowed.test.js` (2), `tools/mutants/ow_loadowed.json` (4, all dead). PIN MOVED: `ether_ow` (the count's line
+run over a real stream), `tv2_click_to_move` (the line's text) and `tv_wasd` (its rig's grid on the stream's books);
+`tools/mutants/ether_ow.json` EOW-governor-off-map-built re-aimed by content. The lists naming those suites (audit_etherow,
+ether_ow, ow2, ow3j, ow4j, ow4x, ow5, ow5d, ow6s, ratelaw, tv2, tv3, tv5, tv_wasd and this one) re-run: 435 dead; the five
+that live (OW6-S-reason-unshown, EDGE-FURNITURE-stale-on-show, AUDIT-DEEP2-E6-bands-unshared, -E7-corner-piece-ignored and
+-E8-foot-ends-overlap) live on main's tree as well,
+untouched here.
