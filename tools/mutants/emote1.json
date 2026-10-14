@@ -79,8 +79,8 @@
   {
     "name": "EM-kind-lost",
     "file": "src/net/chat.js",
-    "old": "    const kind = rolled ? 'roll' : sys ? '' : me === true ? 'me' : isOocText(text) ? 'ooc' : '';",
-    "new": "    const kind = rolled ? 'roll' : sys ? '' : isOocText(text) ? 'ooc' : '';",
+    "old": "    const kind = rolled ? 'roll' : sys ? '' : me === true ? 'me' : isOocText(text) ? 'ooc' : isRpText(text) ? 'rp' : '';",
+    "new": "    const kind = rolled ? 'roll' : sys ? '' : isOocText(text) ? 'ooc' : isRpText(text) ? 'rp' : '';",
     "tests": ["test/emote1.test.js"]
   },
   {

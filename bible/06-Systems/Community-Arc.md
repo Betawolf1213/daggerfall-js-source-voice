@@ -985,3 +985,39 @@ coloured name to the ink is gone; each is deepened by hand to keep its hue.
 with a bar at its edge, the mention itself in gold, its tab's dot and the Chat button's count gold until read, and it
 stands over the world from whichever tab it was said on. The enchanter's chime sounds once for a burst
 (`chatPingSound`).
+
+## CHAT-TRADE and CHAT-RP - the Trade and LFG channels, and a line of roleplay (2026-10-14)
+
+Mac: "I want to improve the player chat interface without introducing clutter and implement new commands into /help.
+/rp Italicizes and makes text color green. For roleplay purposes. New channels: 1. Trading 2. LFG".
+
+**Two channels, joined by choice.** Trade and LFG are the Language channel's shape twice over: a room each
+(`net/wire.js` `CHAT_TRADE_ROOM` `chat:trade`, `CHAT_LFG_ROOM` `chat:lfg`), whitelisted in `CHAT_ROOMS` and unsharded,
+the World channel's whole machinery with nothing new in it. The clutter is answered by the choice: each tab
+(`net/chat.js` `CHAT_TABS`, `trade` and `lfg`) stands on the bar only while the player has joined it (`chatTrade`,
+`chatLfg`, both off), and its link opens no socket until then - so a player who never joins sees the bar as it was,
+World, Region and Local. `/join trade`, `/join lfg` put a tab on the bar and bring it to the front; `/leave trade`,
+`/leave lfg` take it off (a bare `/leave` is still the battle's, `net/siegeSession.js` isBattleLeaveCommand); Settings >
+Other players > Chat has the same two switches. `/trade` (or `/tr`) and `/lfg` say a line on the channel - said to one
+not joined, they join it and keep the line in the field, to be said once it opens. Neither tab peeks over the world
+from behind another tab: a market's chatter is not said TO the player, as a party's line is. The host's frame is
+`scenes/world.js` chatOptFrame, beside the Language tab's; a relay from before them says so on the tab
+(`TRADE_CHAN_OLD_RELAY_TEXT`). The relay change is the whitelist alone: **deploy world201 before either tab can join**
+(an older relay refuses the room key). Words: Trade gold, LFG blue (`ui/chatColours.js` CHANNEL_COLOURS, each 4.5:1 or
+better on both grounds).
+
+**A line of roleplay.** `/rp <text>` says the text on the tab it was typed on wrapped in single asterisks -
+`*draws her blade*` - and a whole line so wrapped is drawn green and leaning on every tab (`net/chat.js` isRpText, the
+log's `rp` kind; `ui/chatColours.js` RP_COLOURS, a yellower green than the Region's, light on Plus's box and over the
+world, dark on Grimoire's page). It is the aside's kind of mark, the speaker's own and read off their words, never a
+field: no relay carries it, and an older client reads the line as the tabletop writes it. An action (`/me`) and an
+aside (`(( ))`) keep their own kinds ahead of it; a line the game says is never one. Being in character, it stands over
+the speaker's head as any said line does (`ui/nameLayer.js` bubbleLineOk).
+
+**/help** lists `/trade`, `/lfg`, `/join` and `/leave`, and `/rp`.
+
+THE FOUR HOSTS: the chat is `scenes/world.js`'s alone (the log, the panel and the links are made in its chatStart) -
+`scenes/exterior.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js` host no chat, and are FLAGGED as such here:
+nothing to wire.
+
+Not a DFU member: Daggerfall Unity has no chat. Ledger A row (ONLINE). Pinned by `test/chattrade1.test.js`.

@@ -4325,8 +4325,8 @@
   "by": "claude-in-session"
  },
  "menu.chat.coloursNote": {
-  "en": "1fa02d8d74aa",
-  "tr": "731d40f79632",
+  "en": "89cb1ea4162a",
+  "tr": "afc53650cf4c",
   "by": "claude-in-session"
  },
  "menu.chat.lang": {
@@ -4337,6 +4337,16 @@
  "menu.chat.langNote": {
   "en": "92b570473ec2",
   "tr": "23d17cca3799",
+  "by": "claude-in-session"
+ },
+ "menu.chat.lfg": {
+  "en": "e2502216be5c",
+  "tr": "26027dd814e9",
+  "by": "claude-in-session"
+ },
+ "menu.chat.lfgNote": {
+  "en": "7e416b08ce54",
+  "tr": "7ff0d7ff2eb8",
   "by": "claude-in-session"
  },
  "menu.chat.ping": {
@@ -4352,6 +4362,16 @@
  "menu.chat.title": {
   "en": "2ced57f12591",
   "tr": "62f8727f2343",
+  "by": "claude-in-session"
+ },
+ "menu.chat.trade": {
+  "en": "3399fecf6395",
+  "tr": "71628f317800",
+  "by": "claude-in-session"
+ },
+ "menu.chat.tradeNote": {
+  "en": "83a83696941c",
+  "tr": "0a56a0e68adc",
   "by": "claude-in-session"
  },
  "menu.classic.status.classicSaves": {

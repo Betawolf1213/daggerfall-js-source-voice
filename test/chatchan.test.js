@@ -40,7 +40,7 @@ test('CHAT-CHAN wire: one channel per politic region, whitelisted by enumeration
   assert.equal(chatRegionRoom(61), 'chat:region.61');
   for (const bad of [-1, 62, 1.5, NaN, null, undefined, '3']) assert.equal(chatRegionRoom(bad), null, `no region ${String(bad)}`);
   for (let i = 0; i < CHAT_REGION_COUNT; i++) assert.ok(isChatRoom(chatRegionRoom(i)), `region ${i}'s channel is one the relay opens`);
-  assert.equal(CHAT_ROOMS.size, 1 + CHAT_REGION_COUNT + 16 + CHAT_REGION_COUNT * 4 + 15);   // PIN MOVED, SCALE5c: and the hub's sixteen shards; part two: and each region's four; CHAT-LANG: and the fifteen language channels
+  assert.equal(CHAT_ROOMS.size, 1 + CHAT_REGION_COUNT + 16 + CHAT_REGION_COUNT * 4 + 15 + 2);   // PIN MOVED, SCALE5c: and the hub's sixteen shards; part two: and each region's four; CHAT-LANG: and the fifteen language channels; CHAT-TRADE: and the Trade and LFG channels
   for (const bad of ['chat:region.62', 'chat:region.-1', 'chat:region.01', 'chat:region.x', 'chat:party.q123']) assert.equal(isChatRoom(bad), false, `${bad}: a list, not a prefix (AUDIT CHAT A1)`);
   assert.ok(isSocialRoom(SOCIAL_ROOM) && !isSocialRoom(chatRegionRoom(4)), 'a region\'s channel is no hub: it keeps no seats');
 
@@ -246,7 +246,7 @@ test('CHAT-CHAN log: a line the game says goes on EVERY tab as ONE line - peeked
   assert.equal(n.system, true, 'the game\'s, whatever the caller said');
   assert.equal(n.tab, null, 'said on no one tab');
   for (const tab of log.tabs) assert.equal(tab.messages.at(-1), n, `the same line object on ${tab.id}`);
-  assert.deepEqual(log.tabs.map((t) => t.unread), [1, 0, 0, 0, 0, 0], 'unread where the player reads - the active tab');   // GUILD1c: five tabs; CHAT-LANG: six
+  assert.deepEqual(log.tabs.map((t) => t.unread), [1, 0, 0, 0, 0, 0, 0, 0], 'unread where the player reads - the active tab');   // GUILD1c: five tabs; CHAT-LANG: six; CHAT-TRADE: eight
   assert.equal(log.unreadTotal(), 1, 'the Chat button counts the line that arrived, not the line times the tabs');
   assert.equal(log.peek().length, 1, 'the peek draws it once');
   assert.equal(log.pushAll({ text: '' }), null, 'nothing to say: nothing kept');
@@ -288,7 +288,7 @@ test('CHAT-W log: the peek is the open tab\'s and the party\'s - a World line ne
 
 test('CHAT-P log: the Party tab starts off the bar, is put on and taken off by the host, cannot be selected while off, counts no unread while off, and taking it off the front hands the front to the first tab on the bar - read at once when the chat is open (mutants: the Party tab shown from the start; select into a hidden tab; the front left on a hidden tab; the hidden count on the badge)', () => {
   const log = new ChatLog({ now: () => 1 });
-  assert.deepEqual(log.tabs.map((t) => [t.id, t.shown]), [['world', true], ['region', true], ['lang', false], ['party', false], ['guild', false], ['local', true]]);   // GUILD1c: the Guild tab starts off the bar too; CHAT-LANG: the Language tab until one is chosen
+  assert.deepEqual(log.tabs.map((t) => [t.id, t.shown]), [['world', true], ['region', true], ['lang', false], ['trade', false], ['lfg', false], ['party', false], ['guild', false], ['local', true]]);   // CHAT-TRADE: the Trade and LFG tabs until joined; GUILD1c: the Guild tab starts off the bar too; CHAT-LANG: the Language tab until one is chosen
   assert.equal(log.select('party'), false, 'off the bar: not to the front');
   log.push('party', { id: 'b', name: 'B', text: 'early' });
   assert.equal(log.unreadTotal(), 0, 'a count on a tab nobody can see is on no badge');
@@ -333,7 +333,7 @@ test('CHAT-CHAN log: setRoom moves a tab\'s channel and names its PLACE, keeping
   assert.equal(log.setRoom('region', 'chat:region.17', 'Wayrest'), false);
   assert.equal(log.version, v2);
   assert.equal(log.setRoom('nowhere', 'x', 'y'), false);
-  assert.deepEqual(log.tabs.map((t) => t.link), [true, true, true, false, false, false], 'the World, Region and Language tabs ride rooms of their own');   // GUILD1c: the Guild tab rides the hub's
+  assert.deepEqual(log.tabs.map((t) => t.link), [true, true, true, true, true, false, false, false], 'the World, Region, Language, Trade and LFG tabs ride rooms of their own');   // CHAT-TRADE: the Trade and LFG tabs too; GUILD1c: the Guild tab rides the hub's
   assert.equal(regionJoinedText('Wayrest'), 'Region channel: Wayrest.');
 });
 

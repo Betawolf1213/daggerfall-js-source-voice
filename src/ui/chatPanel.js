@@ -164,7 +164,7 @@ import { rosterRows, rosterTitle } from '../net/roster.js';   // CHAT-R1: who is
 import { PARTY_GREEN_CSS } from '../net/social.js';   // CHAT-CHAN: the Party tab's mark wears the party's one green
 import { SHORTCODE_LIST, findCommandOf } from '../net/chatCommands.js';   // EMOTE1: the picker offers the shortcodes' own emoji, in their order, so a pick and a :code: say the same thing
 import { getPref, setPref } from '../systems/uiPrefs.js';   // CHAT-R2: the hidden state outlives the session
-import { CHANNEL_COLOURS, NAME_COLOURS, PING_COLOURS, channelRules, pipRules } from './chatColours.js';   // CHAT-COLOURS, NAME-INK, PING1
+import { CHANNEL_COLOURS, NAME_COLOURS, PING_COLOURS, RP_COLOURS, channelRules, pipRules } from './chatColours.js';   // CHAT-COLOURS, NAME-INK, PING1
 import { PIXELIFY_FIVE_FACE, PIXEL_FONT_CSS, PIXEL_TEXT_SHADOW } from './pixelifyFive.js';   // FONT1: the enhanced skin's own face, unsmoothed, with Silkscreen's five
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 
@@ -249,6 +249,8 @@ ${PIXELIFY_FIVE_FACE}
 @container (width < ${CHAT_WIDTH_MIN - 2 * CHAT_BOX_BORDER}px) { .dfchat-emoji { display: none; } }
 /* EMOTE1: an action - "Bran waves at Ann." - the words leaning after the name, in the name's own warmth */
 .dfchat-line.me .dfchat-text { font-style: italic; color: #dccfae; }
+/* CHAT-RP: a line of roleplay - *its mark* is the speaker's own - green and leaning, on every tab */
+.dfchat-line.rp .dfchat-text { font-style: italic; color: ${RP_COLOURS.light}; }
 /* DICE1: a roll the relay made - its own colour, which no typed line can wear (the kind is set from the FRAME's type) */
 .dfchat-line.roll .dfchat-text { color: #e7c46a; }
 /* CHAT-CHAN: the channel a peek line came from, when it is not the tab the chat opens on */
@@ -854,7 +856,7 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
     return out;
   };
   const lineNode = (line, withTime, withChan = false, hit = '') => {
-    const n = el('div', `dfchat-line${line.mine ? ' mine' : ''}${line.system ? ' system' : ''}${line.red ? ' red' : ''}${line.dm ? ' dm' : ''}${line.kind === 'ooc' ? ' ooc' : ''}${line.kind === 'roll' ? ' roll' : ''}${line.kind === 'me' ? ' me' : ''}${line.ping ? ' ping' : ''}`);
+    const n = el('div', `dfchat-line${line.mine ? ' mine' : ''}${line.system ? ' system' : ''}${line.red ? ' red' : ''}${line.dm ? ' dm' : ''}${line.kind === 'ooc' ? ' ooc' : ''}${line.kind === 'roll' ? ' roll' : ''}${line.kind === 'me' ? ' me' : ''}${line.kind === 'rp' ? ' rp' : ''}${line.ping ? ' ping' : ''}`);
     if (line.tab) n.dataset.ch = line.tab;   // CHAT-COLOURS: the channel it was said on - its colour is the sheet's
     const chan = withChan ? chanOf(line) : null;
     if (chan) n.append(chan);

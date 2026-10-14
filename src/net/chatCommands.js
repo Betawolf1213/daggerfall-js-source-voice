@@ -10,6 +10,9 @@
 //   /guild /gu <text>       your guild (GUILD1c)
 //   /lc <text>              your language channel (CHAT-LANG)   /lang [code|off]  choose it; alone, the list
 //   /ooc <text>             a Local aside out of character - the line wrapped in (( ))
+//   /rp <text>              a line of roleplay on the active tab - wrapped in *asterisks*, drawn green and leaning (CHAT-RP)
+//   /trade /tr <text>       the Trade channel      /lfg <text>  the LFG channel (CHAT-TRADE) - each joined by choice:
+//   /join <trade|lfg>       on the bar and in the channel      /leave <trade|lfg>  off it (a bare /leave is a battle's)
 //   /roll /dice [NdM+K]     dice the RELAY rolls, on the active tab (DICE1, net/dice.js) - a d20 when nothing is said
 //   /me <action>            an ACTION on the active tab - "Bran looks around" (EMOTE1)
 //   /wave /bow ... [name]   a GESTURE, to those near you (Local) - "Bran waves at Ann." (EMOTE1, EMOTES; /emotes lists them)
@@ -28,6 +31,7 @@
 import { parseRollSpec, ROLL_DICE_MAX, ROLL_SIDES_MAX } from './dice.js';   // DICE1: the dice's grammar
 import { LIVE_EVENTS, CHAT_LANGS } from './wire.js';   // EVENT1: the live events a dev may stage; CHAT-LANG: the language channels
 import { HUB_FIND_MAX } from './hubShards.js';   // SCALE5c: a search's bound
+import { rpText } from './chat.js';   // CHAT-RP: the roleplay mark
 
 /** The channel commands: each names the tab its text is said on. `wrap` is what the text becomes first. */
 export const CHANNEL_COMMANDS = Object.freeze([
@@ -38,7 +42,14 @@ export const CHANNEL_COMMANDS = Object.freeze([
   Object.freeze({ names: Object.freeze(['guild', 'gu']), tab: 'guild', wrap: null, help: '/guild or /gu <text> - to your guild' }),   // GUILD1c: /g is the World's
   Object.freeze({ names: Object.freeze(['local', 'l', 'say', 's']), tab: 'local', wrap: null, help: '/local, /l, /say or /s <text> - to those near enough to hear you, in character' }),
   Object.freeze({ names: Object.freeze(['ooc']), tab: 'local', wrap: 'ooc', help: '/ooc <text> - to those near you, out of character - (( ))' }),
+  // CHAT-TRADE: the two channels a player joins by choice - said on a channel not joined joins it (scenes/world.js)
+  Object.freeze({ names: Object.freeze(['trade', 'tr']), tab: 'trade', wrap: null, help: '/trade or /tr <text> - to the Trade channel: buying, selling, swapping' }),
+  Object.freeze({ names: Object.freeze(['lfg']), tab: 'lfg', wrap: null, help: '/lfg <text> - to the LFG channel: looking for a group, or for one more' }),
 ]);
+/** CHAT-TRADE: the channels `/join` and `/leave` name (net/chat.js OPT_CHANNELS' ids). */
+export const JOIN_CHANNELS = Object.freeze(['trade', 'lfg']);
+/** CHAT-TRADE: a /join or /leave that names none of them. */
+export const badJoinText = (name) => `/${name} takes ${JOIN_CHANNELS.join(' or ')}: /${name} ${JOIN_CHANNELS[0]}.`;
 /**
  * EMOTE1 (2026-09-23, Addison Knox: "Emotes, be it emojis or additional animations"): THE GESTURES. Each is an ACTION
  * line said on the Local tab - a gesture is the body's, and the bodies near enough to see it are the ones Local
@@ -176,7 +187,9 @@ export const HELP_LINES = Object.freeze([
   ...CHANNEL_COMMANDS.map((c) => c.help),
   '/lang de, /lang en ... - join a language channel; /lang off leaves it, /lang alone lists them',
   '/roll or /dice [NdM+K] - dice the server rolls, on this tab: /roll 2d6+3, /roll d20, /roll 100',
+  '/join trade, /join lfg - put a channel on your tabs; /leave trade, /leave lfg takes it off',
   '/me <action> - an action on this tab: /me looks around',
+  '/rp <text> - a line of roleplay on this tab, drawn green and leaning: /rp draws her blade',
   '/wave, /bow, /nod ... [name] - a gesture to those near you - /emotes lists them all',
   ':smile: :sword: :heart: ... - a shortcode is its emoji',
   '/ready - how your party rests online (no vote: a night at a fire carries the party)',
@@ -205,6 +218,9 @@ export const HELP_LINES = Object.freeze([
  *   { kind: 'emotes' }                      - EMOTE1: the gestures' list
  *   { kind: 'badroll', name }               - a roll the dice's grammar or bounds refuse
  *   { kind: 'find', q }                     - SCALE5c: a search of everyone online by name (the World tab's link asks)
+ *   { kind: 'join', chan } / { kind: 'leave', chan } - CHAT-TRADE: a channel joined or left by choice (JOIN_CHANNELS;
+ *                                             `chan` '' for one the line did not name - refused in words)
+ *   { kind: 'rp', text }                    - CHAT-RP: a line of roleplay, on the active tab - the text in its *mark*
  * A line starting `//` is said with one slash off it. `extra` is a later slice's own table of commands, each
  * { names, parse(rest) } - parse answers a result of its own or null to decline.
  */
@@ -222,6 +238,8 @@ export function parseChatLine(text, extra = []) {
   if (name === 'lang') return { kind: 'lang', code: rest.toLowerCase() };   // CHAT-LANG: '' the list, 'off' none, else a code
   if (name === 'roll' || name === 'dice') { const spec = parseRollSpec(rest); return spec ? { kind: 'roll', spec } : { kind: 'badroll', name }; }
   if (name === 'me') return rest ? { kind: 'me', text: rest } : { kind: 'empty', name };
+  if (name === 'rp') return rest.replace(/\*/g, '').trim() ? { kind: 'rp', text: rpText(rest) } : { kind: 'empty', name };   // CHAT-RP
+  if (name === 'join' || name === 'leave') { const chan = rest.toLowerCase().replace(/^#/, ''); return { kind: name, chan: JOIN_CHANNELS.includes(chan) ? chan : '' }; }   // CHAT-TRADE
   if (name === 'emotes') return { kind: 'emotes' };
   if (name === 'find' || name === 'who') return rest ? { kind: 'find', q: rest } : { kind: 'empty', name };   // SCALE5c (Mac's decision 2)
   if (Object.hasOwn(EMOTES, name)) return { kind: 'emote', text: emoteText(name, rest) };
