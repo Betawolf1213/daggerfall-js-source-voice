@@ -145,7 +145,7 @@ dead. The account deploy's path filter carries the three shared law files. acct1
 
 Pinned by `test/poi2_runtime.test.js` (11) - the renderer on a recording GL, the shaders' text, the pictures, models
 and matrices, the feed and assets on a fake service, the host on a fake streamer, collider and renderer;
-`tools/mutants/poi2.json` 26, all dead.
+`tools/mutants/poi2.json` 27, all dead.
 
 ## POI-4 - the glTF 2.0 reader (2026-10-14)
 

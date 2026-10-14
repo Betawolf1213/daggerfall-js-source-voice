@@ -232,5 +232,14 @@
     "tests": [
       "test/poi2_runtime.test.js"
     ]
+  },
+  {
+    "name": "POI2-the-ride-unmarked",
+    "file": "src/scenes/world.js",
+    "old": "ride = onFloatingFrame(state, () => state.pixelTranslation(px, py, o));",
+    "new": "ride = () => state.pixelTranslation(px, py, o);",
+    "tests": [
+      "test/perfcol2.test.js"
+    ]
   }
 ]

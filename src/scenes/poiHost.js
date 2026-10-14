@@ -36,7 +36,7 @@ import {
   POI_TEXTURE_ARCHIVE, materialLook, samplerOf, emits, createTextureBook, bakeAlbedo, bakeEmission, poiPartModels,
   placeMatrix, partMatrix, boxThrough, lightsOf, det3,
 } from '../poi/poiRuntime.js';
-import { trsQuat } from '../world/mat4.js';
+import { mat4FromQuatPosScale } from '../world/quat.js';
 import { samplerKey } from '../render/meshAlpha.js';
 import { drawSeen } from './decorRoom.js';
 
@@ -133,7 +133,7 @@ export function createPoiHost({
         await Promise.all(held.map((l) => l.ready));
         if (s.gone) return;
         const recordOf = (m) => book.recordOf(materialLook(m));
-        const mirrored = det3(trsQuat([0, 0, 0], part.r, part.s)) < 0;
+        const mirrored = det3(mat4FromQuatPosScale(part.r, [0, 0, 0], part.s)) < 0;
         const models = poiPartModels(d.mesh, part.materials, recordOf, { mirrored });
         const remap = new Map();
         for (const m of part.materials) {

@@ -17,7 +17,8 @@ import {
   POI_TEXTURE_ARCHIVE, materialLook, createTextureBook, bakeAlbedo, bakeEmission, poiPartModels, placeMatrix, partMatrix,
   boxThrough, lightsOf, xform,
 } from '../src/poi/poiRuntime.js';
-import { trsQuat } from '../src/world/mat4.js';
+import { mat4FromQuatPosScale } from '../src/world/quat.js';
+const trsQuat = (t, q, s) => mat4FromQuatPosScale(q, t, s);
 import { createPoiFeed, POI_FEED_POLL_MS, POI_FEED_CACHE_KEY } from '../src/poi/poiFeed.js';
 import { createPoiHost, sameBuild, POI_RETRY_MS } from '../src/scenes/poiHost.js';
 import { encodePoiMesh } from '../src/poi/poiMesh.js';

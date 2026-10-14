@@ -24,7 +24,8 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { applyTextureTransform } from './gltfImport.js';
-import { multiply, trsQuat } from '../world/mat4.js';   // the port's one column-major product and its T * R(q) * S (fresh matrices)
+import { multiply } from '../world/mat4.js';   // the port's one column-major product (a fresh matrix each call here)
+import { mat4FromQuatPosScale } from '../world/quat.js';   // Unity's T * R(q) * S - outside the relay's bundle (test/relayversion.test.js)
 
 /** The texture archive every POI picture is uploaded under - one record a look (render/meshAlpha.js keys the sampler
  *  apart). Numeric, so world art's mip chain is its own; clear of every archive the port draws (the classic 0-511 and
@@ -178,10 +179,10 @@ export const xform = (m, p) => [m[0] * p[0] + m[4] * p[1] + m[8] * p[2] + m[12],
  * `y` (the ground's under it plus the document's `y` for 'snap', the document's own for 'absolute'), its turn and size.
  * @param {any} place the document's `place` @param {number} y the height it stands at, resolved by the host
  */
-export const placeMatrix = (place, y) => trsQuat([place.x, y, place.z], place.r, [place.s, place.s, place.s]);
+export const placeMatrix = (place, y) => mat4FromQuatPosScale(place.r, [place.x, y, place.z], [place.s, place.s, place.s]);
 
 /** A part's matrix in its pixel's frame: the place's, then the part's own. @param {Float32Array} place @param {any} part */
-export const partMatrix = (place, part) => multiply(place, trsQuat(part.t, part.r, part.s));
+export const partMatrix = (place, part) => multiply(place, mat4FromQuatPosScale(part.r, part.t, part.s));
 
 /** The box a mesh's bounds make through a matrix - `{ min, max }`, its eight corners' bounds. */
 export function boxThrough(m, min, max) {
