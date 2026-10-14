@@ -5,7 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { CHAT_TABS, ChatLog, OPT_CHANNELS, isRpText, rpText, notJoinedText, optJoinedText, optLeftText, optWaitText, TRADE_CHAN_OLD_RELAY_TEXT } from '../src/net/chat.js';
+import { CHAT_TABS, ChatLog, OPT_CHANNELS, isRpText, rpText, notJoinedText, optJoinedText, optJoinedSayText, optLeftText, optWaitText, tradeChanOldText } from '../src/net/chat.js';
 import { CHAT_TRADE_ROOM, CHAT_LFG_ROOM, CHAT_ROOMS, isChatRoom, isRegionRoom, TRADE_CHAN_RELAY_MIN, relaySupportsTradeChan, RELAY_VERSION } from '../src/net/wire.js';
 import { parseChatLine, CHANNEL_COMMANDS, HELP_LINES, JOIN_CHANNELS, badJoinText } from '../src/net/chatCommands.js';
 import { RP_COLOURS, CHANNEL_COLOURS, CHAT_GROUNDS, PING_GROUNDS, COLOURED_LINE, contrast } from '../src/ui/chatColours.js';
@@ -74,7 +74,15 @@ test('CHAT-TRADE commands: /trade, /tr and /lfg say a line on their channel; /jo
   assert.equal(optJoinedText('lfg'), 'LFG channel joined. /leave lfg leaves it.');
   assert.equal(optLeftText('trade'), 'Trade channel left.');
   assert.ok(optWaitText('lfg').startsWith('The LFG channel is still opening'));
-  assert.ok(TRADE_CHAN_OLD_RELAY_TEXT.includes('update'));
+  assert.ok(tradeChanOldText().includes('update'));
+  assert.equal(optJoinedSayText('trade'), 'Trade channel joined - press Enter to say your line. /leave trade leaves it.');
+  // L10N4: the new words are the text core's, READ WHEN SHOWN - a getter on the tab's hint and the /help rows, never a string
+  // the boot's import froze in whatever language it found
+  for (const id of JOIN_CHANNELS) assert.equal(typeof Object.getOwnPropertyDescriptor(CHAT_TABS.find((x) => x.id === id), 'hint').get, 'function', `${id}'s hint`);
+  for (const id of JOIN_CHANNELS) assert.equal(typeof Object.getOwnPropertyDescriptor(CHANNEL_COMMANDS.find((c) => c.tab === id), 'help').get, 'function', `${id}'s help`);
+  const rp = HELP_LINES.findIndex((l) => l.startsWith('/rp '));
+  assert.equal(typeof Object.getOwnPropertyDescriptor(HELP_LINES, rp).get, 'function', '/rp\'s row');
+  assert.ok(Object.isFrozen(HELP_LINES) && Array.isArray(HELP_LINES));
   assert.match(rd('src/net/siegeSession.js'), /isBattleLeaveCommand = \(text\) => \/\^\\\/leave\$\/i\.test/, 'a bare /leave is still the battle\'s');
 });
 
@@ -84,7 +92,8 @@ test('CHAT-TRADE host: each tab follows its choice - on the bar while joined, jo
   assert.match(host, /if \(!room\) \{ chatLog\.setRoom\(id, null, null\); link\.leave\(\); continue; \}\n      if \(!chatLinks\.get\('world'\)\?\.tradeChanOk\) continue;\n      chatLog\.setRoom\(id, room, c\.name\);\n      link\.join\(room\);/);
   assert.match(host, /chatLangFrame\(\);   \/\/ CHAT-LANG[^\n]*\n    chatOptFrame\(\);   \/\/ CHAT-TRADE/);
   assert.equal((host.match(/return why\(optWhy\(tabId\) \?\? optWaitText\(tabId\)\);/g) ?? []).length, 2, 'the line\'s door and the roll\'s');
-  assert.match(host, /if \(Object\.hasOwn\(OPT_CHANNELS, tabId\) && !tab\?\.room\) return optWhy\(tabId\);/, 'the strip says why');
+  assert.match(host, /if \(\(tabId === 'trade' \|\| tabId === 'lfg'\) && !tab\?\.room\) return optWhy\(tabId\);/, 'the strip says why');
+  assert.deepEqual(Object.keys(OPT_CHANNELS), ['trade', 'lfg'], 'the host\'s doors name the same two');
   assert.match(host, /if \(cmd\.kind === 'join' \|\| cmd\.kind === 'leave'\) \{\n          if \(!cmd\.chan\) \{ note\(badJoinText\(cmd\.kind\)\); return false; \}/);
   assert.match(host, /setPref\(c\.pref, on\);\n          chatOptFrame\(\);/);
   assert.match(host, /if \(cmd\.kind === 'channel' && Object\.hasOwn\(OPT_CHANNELS, cmd\.tab\) && !optJoined\(cmd\.tab\)\) \{\n          setPref\(OPT_CHANNELS\[cmd\.tab\]\.pref, true\);[\s\S]{0,260}return false;\n        \}/);

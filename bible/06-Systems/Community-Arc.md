@@ -1016,6 +1016,11 @@ the speaker's head as any said line does (`ui/nameLayer.js` bubbleLineOk).
 
 **/help** lists `/trade`, `/lfg`, `/join` and `/leave`, and `/rp`.
 
+**In the player's language** (L10N4's ratchet): every new word goes through the text core (`net.chat.*`) and is READ
+WHEN SHOWN - the two tabs' hints and the four new /help rows are getters (`net/chatCommands.js` lazyLines, the text
+core's own localizedStrings law), the notices functions - because the world host is imported at the boot, behind the
+cinematic, before a player has chosen a language, and a string frozen there would be English whatever they chose.
+
 THE FOUR HOSTS: the chat is `scenes/world.js`'s alone (the log, the panel and the links are made in its chatStart) -
 `scenes/exterior.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js` host no chat, and are FLAGGED as such here:
 nothing to wire.

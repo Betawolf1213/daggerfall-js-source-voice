@@ -32,6 +32,7 @@ import { parseRollSpec, ROLL_DICE_MAX, ROLL_SIDES_MAX } from './dice.js';   // D
 import { LIVE_EVENTS, CHAT_LANGS } from './wire.js';   // EVENT1: the live events a dev may stage; CHAT-LANG: the language channels
 import { HUB_FIND_MAX } from './hubShards.js';   // SCALE5c: a search's bound
 import { rpText } from './chat.js';   // CHAT-RP: the roleplay mark
+import { t } from '../systems/textManager.js';   // CHAT-TRADE: the new rows' words in the player's language, each read when /help is asked
 
 /** The channel commands: each names the tab its text is said on. `wrap` is what the text becomes first. */
 export const CHANNEL_COMMANDS = Object.freeze([
@@ -43,8 +44,8 @@ export const CHANNEL_COMMANDS = Object.freeze([
   Object.freeze({ names: Object.freeze(['local', 'l', 'say', 's']), tab: 'local', wrap: null, help: '/local, /l, /say or /s <text> - to those near enough to hear you, in character' }),
   Object.freeze({ names: Object.freeze(['ooc']), tab: 'local', wrap: 'ooc', help: '/ooc <text> - to those near you, out of character - (( ))' }),
   // CHAT-TRADE: the two channels a player joins by choice - said on a channel not joined joins it (scenes/world.js)
-  Object.freeze({ names: Object.freeze(['trade', 'tr']), tab: 'trade', wrap: null, help: '/trade or /tr <text> - to the Trade channel: buying, selling, swapping' }),
-  Object.freeze({ names: Object.freeze(['lfg']), tab: 'lfg', wrap: null, help: '/lfg <text> - to the LFG channel: looking for a group, or for one more' }),
+  Object.freeze({ names: Object.freeze(['trade', 'tr']), tab: 'trade', wrap: null, get help() { return t('net.chat.tradeHelp', '/trade or /tr <text> - to the Trade channel: buying, selling, swapping'); } }),
+  Object.freeze({ names: Object.freeze(['lfg']), tab: 'lfg', wrap: null, get help() { return t('net.chat.lfgHelp', '/lfg <text> - to the LFG channel: looking for a group, or for one more'); } }),
 ]);
 /** CHAT-TRADE: the channels `/join` and `/leave` name (net/chat.js OPT_CHANNELS' ids). */
 export const JOIN_CHANNELS = Object.freeze(['trade', 'lfg']);
@@ -181,15 +182,23 @@ export function parseEventCommand(text) {
  *  for commands)"): the line the chat greets the player with each time they go online - theirs alone, never counted
  *  unread (net/chat.js push's `quiet`), so /help is found without being announced. */
 export const CHAT_GREETING_TEXT = 'Welcome! Type /help for chat commands.';
+/** CHAT-TRADE: a list whose rows may be READ WHEN THEY ARE READ - a function row is a getter (the text core's
+ *  localizedStrings law, systems/textManager.js): /help's newer rows are said in the language the player chose, never the
+ *  one the boot's import found. A frozen array of strings to every reader. */
+const lazyLines = (rows) => {
+  const out = [];
+  rows.forEach((r, i) => { if (typeof r === 'function') Object.defineProperty(out, i, { enumerable: true, get: r }); else out[i] = r; });
+  return Object.freeze(out);
+};
 /** The lines `/help` shows - the channels, then the host's own. */
-export const HELP_LINES = Object.freeze([
+export const HELP_LINES = lazyLines([
   'Chat commands:',
-  ...CHANNEL_COMMANDS.map((c) => c.help),
+  ...CHANNEL_COMMANDS.map((c) => () => c.help),
   '/lang de, /lang en ... - join a language channel; /lang off leaves it, /lang alone lists them',
   '/roll or /dice [NdM+K] - dice the server rolls, on this tab: /roll 2d6+3, /roll d20, /roll 100',
-  '/join trade, /join lfg - put a channel on your tabs; /leave trade, /leave lfg takes it off',
+  () => t('net.chat.joinHelp', '/join trade, /join lfg - put a channel on your tabs; /leave trade, /leave lfg takes it off'),
   '/me <action> - an action on this tab: /me looks around',
-  '/rp <text> - a line of roleplay on this tab, drawn green and leaning: /rp draws her blade',
+  () => t('net.chat.rpHelp', '/rp <text> - a line of roleplay on this tab, drawn green and leaning: /rp draws her blade'),
   '/wave, /bow, /nod ... [name] - a gesture to those near you - /emotes lists them all',
   ':smile: :sword: :heart: ... - a shortcode is its emoji',
   '/ready - how your party rests online (no vote: a night at a fire carries the party)',

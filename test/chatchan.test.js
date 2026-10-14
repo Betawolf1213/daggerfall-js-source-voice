@@ -470,10 +470,10 @@ test('CHAT-CHAN panel: each tab says who it reaches (and the region\'s name), th
   assert.equal(tabs[1].title, `Wayrest - ${CHAT_TABS[1].hint}`);
   assert.equal(input.placeholder, 'Say something - Wayrest', 'the place a moving channel is');
   log.select('world');
-  assert.equal(tabs[3].style.display, 'none', 'CHAT-P: the Party tab is off the bar outside a party');   // CHAT-LANG: the Language tab stands before it
+  assert.equal(tabs[5].style.display, 'none', 'CHAT-P: the Party tab is off the bar outside a party');   // CHAT-LANG: the Language tab stands before it; CHAT-TRADE: and the Trade and LFG tabs (PIN MOVED: 3 -> 5)
   log.setShown('party', true);
   panel.render({});
-  assert.equal(tabs[3].style.display, '', 'and on it inside one');
+  assert.equal(tabs[5].style.display, '', 'and on it inside one');
 
   log.push('world', { id: 'a', name: 'A', text: 'on the World' });
   log.push('party', { id: 'b', name: 'B', text: 'to the party' });
@@ -481,7 +481,7 @@ test('CHAT-CHAN panel: each tab says who it reaches (and the region\'s name), th
   log.pushAll({ text: 'The server is restarting.' });
   panel.render({});
   // the unread count is the tab's spoken name (the eye gets a dot - tools/chatChanProbe.mjs looks at it)
-  assert.deepEqual(tabs.map((b) => b.attrs['aria-label']), ['World, 2 unread', 'Region', 'Lang', 'Party, 1 unread', 'Guild', 'Local, 1 unread'], 'the World line and the game\'s notice (unread on the active tab), a line each on Party and Local');   // GUILD1c: the Guild tab, off the bar and counting nothing
+  assert.deepEqual(tabs.map((b) => b.attrs['aria-label']), ['World, 2 unread', 'Region', 'Lang', 'Trade', 'LFG', 'Party, 1 unread', 'Guild', 'Local, 1 unread'], 'the World line and the game\'s notice (unread on the active tab), a line each on Party and Local');   // GUILD1c: the Guild tab, off the bar and counting nothing
   assert.ok(tabs.every((b) => one(b, 'dfchat-badge').attrs['aria-hidden'] === 'true'), 'the dot says nothing a second time');
   const peek = one(root, 'dfchat-peek').children;
   // CHAT-W: the open tab's line, the party's, the game's - the Local aside is Local's alone (it waits on its dot)
