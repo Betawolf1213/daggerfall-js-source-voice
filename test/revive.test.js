@@ -21,7 +21,7 @@ import { mergeFacts } from '../src/systems/legacy/store.js';
 import { mergeLines } from '../src/systems/legacy/realmLine.js';
 import { readFamily } from '../src/systems/legacy/family.js';
 import { mergeFamily } from '../src/scenes/legacyHost.js';
-import { query, playerQuery, findFallen, planRevive, summaryOf, REV_MARGIN, BEFORE_DEATH_S } from '../tools/reviveRealmCharacter.mjs';
+import { query, playerQuery, findFallen, planRevive, summaryOf, recordEdit, REV_MARGIN, BEFORE_DEATH_S, STATEMENT_MAX_BYTES } from '../tools/reviveRealmCharacter.mjs';
 import { GUILD_RANK_MASTER } from '../src/net/guildLaw.js';
 
 const src = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -215,6 +215,44 @@ test('REVIVE: the tool\'s command line as the workflow\'s lines run it - the fin
   const calls = [...src('.github/workflows/realm-revive.yml').matchAll(/node \$tool (--[a-z-]+)/g)].map((m) => m[1]);
   assert.deepEqual([...new Set(calls)].sort(), ['--find', '--plan', '--player-query', '--query']);
   assert.match(src('tools/reviveRealmCharacter.mjs'), /const mode = argv\[0\];/);
+});
+
+test('REVIVE-SIZE: a line\'s record past what one D1 statement takes is revived by an edit in place - the statement small, the record it leaves exactly the revival\'s, the rest of the record as it was; the line written before the tombstone; a plan with any statement too long writes nothing; an edit that cannot say the change is refused (mutants: the whole record in the statement; the tombstone first; the long statement written)', async () => {
+  const { raw, ask, facts, then } = await theDeath({ master: false });
+  // the line as a long-played house holds it: its news past 100 KB (a record may be 128 KiB)
+  const news = Array.from({ length: 1100 }, (_, i) => ({ at: i, kind: 'deed', text: `The house of Hlaalu was spoken of in Wayrest, the ${i}th time, with a quote's "marks" and a dash - ${'x'.repeat(40)}` }));
+  raw.prepare('UPDATE lineages SET record = json_set(record, \'$.news\', json(?)) WHERE id = ?').run(JSON.stringify(news), LID);
+  const stored = raw.prepare('SELECT rev, record FROM lineages WHERE id = ?').get(LID);
+  assert.ok(stored.record.length > STATEMENT_MAX_BYTES, `the record is not past one statement (${stored.record.length})`);
+  const found = findFallen(facts());
+  const plan = planRevive({ then, now: nowFacts(ask, then.seat[0].guild_id, then), found, player: P, nowS: DEAD_S + 86400 });
+  assert.deepEqual(plan.held, []);
+  const line = plan.sql.findIndex((q) => q.startsWith('UPDATE lineages'));
+  const tomb = plan.sql.findIndex((q) => q.startsWith('UPDATE realm_characters'));
+  assert.ok(line >= 0 && tomb > line, 'the tombstone is cleared before the line is stamped - a write cut between them leaves her alive under a line that entombs her again');
+  assert.ok(plan.sql[line].length < 8000, `the line's statement carries the whole record (${plan.sql[line].length} chars)`);
+  // what the revival makes, by the law itself, over the record as stored
+  const want = JSON.parse(stored.record);
+  const me = want.people.find((p) => p.id === 0);
+  stampRevived(me, DIED_AT);
+  dropRevived(want);
+  want.houses = want.houses.map((h) => (h.from === 0 ? (({ from, ...row }) => ({ ...row, by: 0 }))(h) : h));   // eslint-disable-line no-unused-vars
+  want.rev = stored.rev + REV_MARGIN;
+  for (const q of plan.sql) raw.exec(q);
+  const got = JSON.parse(raw.prepare('SELECT record FROM lineages WHERE id = ?').get(LID).record);
+  const canon = (v) => JSON.stringify(v, (_, x) => (x && typeof x === 'object' && !Array.isArray(x) ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, x[k]])) : x));
+  assert.equal(canon(got), canon(want), 'the record the edit left is not the revival\'s');
+  assert.equal(got.news.length, 1100, 'the rest of the record was not kept');
+  assert.equal(raw.prepare('SELECT dead_at FROM realm_characters WHERE id = ?').get(F).dead_at, null);
+  // ALL OR NOTHING: one statement past what D1 takes, and nothing is written
+  const big = planRevive({ then: { ...then, seat: [{ ...then.seat[0], name: 'y'.repeat(STATEMENT_MAX_BYTES) }] }, now: nowFacts(ask, then.seat[0].guild_id, then), found: { ...found, living: 1 }, player: P, nowS: DEAD_S + 86400 });
+  assert.deepEqual(big.sql, [], 'a plan with a statement D1 refuses wrote the rest');
+  assert.match(big.held.join('\n'), /longer than D1 takes .* NOTHING written/);
+  // an edit refuses a change it cannot say: anything but the people, the remains, the Succession, the houses, the rev
+  const w = { people: [{ id: 0 }], remains: [], houses: [], rev: 1, surname: 'A' };
+  assert.equal(recordEdit(w, { ...w, surname: 'B', rev: 2 }), null);
+  assert.equal(recordEdit(w, { ...w, people: [], rev: 2 }), null);
+  assert.match(recordEdit(w, { ...w, rev: 2 }), /^json_set\(record, '\$\.rev', json\('2'\)\)$/);
 });
 
 test('REVIVE: and it HOLDS - a stale device\'s copy (the death in it) written after the revival stores no death and entombs nobody; her checkpoint and her heir\'s then charge nobody a copy; a LATER real death is a death (mutants: putLineage deaf to the stored stamp)', async () => {
