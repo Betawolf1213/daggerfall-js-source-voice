@@ -939,6 +939,22 @@ every region; `holyDayOf` against the old law restated, over 4,000 drawn cycles 
 filter and sort, asked of the world once a town. Mutants: `tools/mutants/holydays.json`, 6, all dead; `lw13.json`'s
 LW13-holy-region re-aimed at the line that passes every region's day.
 
+## ROADS-MISS — a roads' day not ready yet is asked once a tick
+
+*ghandhikus (#889, 2026-10-14), from a player's Firefox profile walking out of a house in a city: ~4.6 s of ~8 s of the
+main thread in `LivingTown._tick` -> `planOf` -> `_roadsOf` -> the host's `tripsOf`, in 100-300 ms tasks.*
+
+**Found.** While a way the day's trips need is not asked yet, `tripsOf` answers undefined, and `_roadsOf` kept nothing
+of the miss - so every resident's `planOf` in one `_tick` asked again, each a whole plan of every trip of every town near
+(HOLY-DAYS above is the same call's cost when it answers). Measured on the suite's synthetic town: 139 asks in one tick.
+
+**The fix.** `_tick` runs its body (`_tickNow`) with the miss kept: `_roadsOf` remembers the day that answered undefined
+for the rest of that tick, and `_tick` clears it at both ends, so the next tick asks again and a day that answers is kept
+as before. Nothing outside a tick changes.
+
+Pins: `test/roadmiss.test.js` (2) - an unready day asked at most once a tick over five ticks, asked again on later ticks,
+and once ready kept by the day; a read outside a tick (`peopleOf`) asks again. Mutants: `tools/mutants/roadmiss.json`, 2, both dead.
+
 ## For the owner
 
 - **The A/B this branch owes**: on a machine with the data, `ARENA2_PATH=... node tools/frameProbe.mjs knight night`
