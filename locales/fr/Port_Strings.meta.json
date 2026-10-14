@@ -2269,6 +2269,71 @@
   "tr": "11001ebcc7b5",
   "by": "claude-in-session"
  },
+ "account.refusal.poiBadMesh": {
+  "en": "5aee9f2ee5a2",
+  "tr": "4548116d4eea",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiBadTexture": {
+  "en": "55a4a5b374c0",
+  "tr": "8e5d7389c3aa",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiDoc": {
+  "en": "857ea7b91059",
+  "tr": "ebe502c38ff6",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiKind": {
+  "en": "261448c29a84",
+  "tr": "4a465df1359a",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiNotApprover": {
+  "en": "0f40d815d888",
+  "tr": "034c632da3a8",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiNotAuthor": {
+  "en": "9098769940a9",
+  "tr": "f9b8aa4e8563",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiNotBuilder": {
+  "en": "375700981252",
+  "tr": "36981ee98e03",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiNotLive": {
+  "en": "c59cb5d8c1e2",
+  "tr": "646c6f289141",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiPending": {
+  "en": "03d07115788f",
+  "tr": "83c8ed7e3ca6",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiQuota": {
+  "en": "3ca55c300cd5",
+  "tr": "f57035daf38a",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiSha": {
+  "en": "a34fd95b6301",
+  "tr": "4ef613ff2fea",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiShaMismatch": {
+  "en": "23a2f96d8088",
+  "tr": "13c2f7a53cac",
+  "by": "claude-in-session"
+ },
+ "account.refusal.poiState": {
+  "en": "73f70313508e",
+  "tr": "f665912a3f88",
+  "by": "claude-in-session"
+ },
  "account.refusal.postClaimed": {
   "en": "ce731a57817e",
   "tr": "7d2bbdf41f79",

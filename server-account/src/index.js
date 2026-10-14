@@ -189,7 +189,8 @@ import {
   ACCOUNT_MAX, ACCOUNT_WINDOW_S,
 } from './accounts.js';
 import { mintToken, mintOrder, mintRenownOrder, mintGuildOrder, mintGuildOutOrder, MAX_TTL_S, TOKEN_V, ID_RE, SEAT_TITLES, CHAPTER_TITLES, TOKEN_MAX_CHARS, TOKEN_BODY_MAX, tokenBodyOf } from '../../src/net/identityToken.js';
-import { ACCOUNT_VERSION, MAX_BODY_BYTES, ROUTES, OPEN_ROUTES, PATREON_OPEN_ROUTES, savePathOf, realmPathOf, SAVE_MAX_BYTES, SHOT_MAX_BYTES, maintaining, routeDb, d1BookmarkOf, D1_BOOKMARK_RE, d1Overloaded, noteOverload, shedding } from './service.js';   // SCALE4d: the routes a read replica may serve, and the session they are served on
+import { ACCOUNT_VERSION, MAX_BODY_BYTES, ROUTES, OPEN_ROUTES, PATREON_OPEN_ROUTES, savePathOf, realmPathOf, poiPathOf, SAVE_MAX_BYTES, SHOT_MAX_BYTES, maintaining, routeDb, d1BookmarkOf, D1_BOOKMARK_RE, d1Overloaded, noteOverload, shedding } from './service.js';   // SCALE4d: the routes a read replica may serve, and the session they are served on
+import { poiRolesOf, putPoiAsset, getPoiAsset, savePoiDraft, submitPoi, withdrawPoi, requestRetire, reviewPoi, rollbackPoi, listPoi, poiHistory, poiQueue, poiLiveFeed, POI_ASSET_MAX, POI_DRAFT_BODY_MAX } from './poi.js';   // POI-1: the POI store - builders draft, an approver decides, the feed is what is live
 import { listSaves, putCard, putBlob, getBlob, deleteSave, saveCardOf } from './saves.js';
 import { signingKey, gatePublicKey } from './signing.js';
 import { stakeCards, cashoutCards } from './cards.js';   // CARDS6: a card table's stakes, escrowed
@@ -292,6 +293,20 @@ const json = (body, status = 200, origin = '*') => new Response(JSON.stringify(b
 /** Every refusal is one word and the same shape. A client learns that
  *  it failed and not why somebody else's secret is wrong. */
 const no = (why, status, origin) => json({ error: why }, status, origin);
+/** POI-1: a POI store refusal's status - a role refused 403, a thing not there 404, a state moved 409, a full day 429. */
+const POI_STATUS = { 'poi-not-builder': 403, 'poi-not-approver': 403, 'poi-not-author': 403, 'not-found': 404, 'poi-state': 409, 'poi-pending': 409, 'poi-not-live': 409, 'poi-quota': 429, 'no-storage': 503 };
+/** POI-1: what one address may ask of the POI store's open reads in a window - a game streaming a town's models at once. */
+const POI_OPEN_MAX = 600;
+/** POI-1: AN ASSET'S BYTES, as stored - a live one cached for good (its name is its hash: it can never change), a draft's
+ *  never cached (a builder's business, and it may never go live). */
+const poiAssetResponse = (/** @type {any} */ r, /** @type {string} */ origin) => new Response(r.object.body, {
+  status: 200,
+  headers: {
+    'content-type': r.type,
+    'access-control-allow-origin': origin,
+    'cache-control': r.live ? 'public, max-age=31536000, immutable' : 'private, no-store',
+  },
+});
 /** AUDIT ONLINE A17's law, the service's one answer to a throw: LOGGED, not lost, and a player told nothing about it -
  *  an overloaded D1 a 503 (SCALE4f: counted apart from a bug), any other a 500. HOMES-SHED (2026-10-13, the database
  *  overloaded from 14:11 UTC): the try's catch below, and the one route above it that asks the database (the siege
@@ -598,7 +613,7 @@ const service = {
         headers: {
           'access-control-allow-origin': origin,
           'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'access-control-allow-headers': 'content-type, authorization, x-realm-lease, x-realm-seq, x-realm-summary, x-d1-bookmark',   // REALM P1: a checkpoint's lease, sequence and tile; SCALE4g: the tab's D1 bookmark
+          'access-control-allow-headers': 'content-type, authorization, x-realm-lease, x-realm-seq, x-realm-summary, x-d1-bookmark, if-none-match',   // REALM P1: a checkpoint's lease, sequence and tile; SCALE4g: the tab's D1 bookmark; POI-1: the feed version a game holds
           'access-control-max-age': '86400',
         },
       });
@@ -654,7 +669,8 @@ const service = {
     // there is still exactly one place that decides a path is a 404.
     const slot = savePathOf(path);
     const realmSlot = realmPathOf(path);   // REALM P1: a realm character's save, matched as a save slot is
-    if (!ROUTES.has(path) && !slot && !realmSlot) return no('not-found', 404, origin);
+    const poiPath = poiPathOf(path);   // POI-1: the POI store's paths, matched the same way
+    if (!ROUTES.has(path) && !slot && !realmSlot && !poiPath) return no('not-found', 404, origin);
 
     if (!env.DB) return no('no-database', 503, origin);
     // ADMIT-LINE (admit.js): A SIGN-IN TAKES ITS PLACE IN THE LINE before it costs the database a statement - the open
@@ -786,6 +802,25 @@ const service = {
         if (overAccountRate(`yards:${ip}`, nowS, ACCOUNT_MAX, ACCOUNT_WINDOW_S)) return no('rate', 429, origin);
         const r = await yardsKept(ctx, body.mapId, nowS);
         return 'error' in r ? no(r.error, 400, origin) : json(r, 200, origin);
+      }
+      // POI-1: THE LIVE FEED AND A LIVE ASSET NEED NO SESSION - what every approved POI is, and the bytes it names, are
+      // every player's to read, the game's included (poi.js). Bounded per address in this isolate's memory, as the yards
+      // are; the feed kept in the isolate and answered 304 to a game that already holds its version; an asset by its
+      // hash, so it is cached for good. An asset no live POI names falls through to a builder's session below.
+      if (poiPath && request.method === 'GET' && (poiPath.route === 'live' || poiPath.route === 'asset')) {
+        const ip = request.headers.get('cf-connecting-ip') || 'unknown';
+        if (overAccountRate(`poi:${ip}`, nowS, POI_OPEN_MAX, ACCOUNT_WINDOW_S)) return no('rate', 429, origin);
+        const feed = await poiLiveFeed(env.DB, Date.now());
+        if (poiPath.route === 'live') {
+          const etag = `"poi-${feed.v}"`;
+          const headers = { 'access-control-allow-origin': origin, 'access-control-expose-headers': 'etag', etag, 'cache-control': 'public, max-age=30' };
+          if (request.headers.get('if-none-match') === etag) return new Response(null, { status: 304, headers });
+          return new Response(feed.body, { status: 200, headers: { ...headers, 'content-type': 'application/json; charset=utf-8' } });
+        }
+        if (feed.live.has(poiPath.sha) || !request.headers.get('authorization')) {
+          const r = await getPoiAsset({ ...ctx, db: env.DB, bucket: env.SAVES }, poiPath.sha, { builder: false });
+          return 'error' in r ? no(r.error, r.error === 'no-storage' ? 503 : 404, origin) : poiAssetResponse(r, origin);
+        }
       }
       // ═══ AUDIT-ACC F13: A CREDENTIAL DOES NOT GO IN A URL ══════
       //
@@ -1818,6 +1853,50 @@ const service = {
       // would tell a player at the backup button to sign in again,
       // which is not what they need to do. 403 rather than 401 because
       // the credential is GOOD; there is nothing to sign in again with.
+      // ═══ POI-1: THE POI STORE (poi.js) ═════════════════════════
+      //
+      // A builder's uploads, drafts and submissions; an approver's queue and word; the list and a POI's history. Every
+      // door asks the role itself (poi.js poiRolesOf), so a route here is never more than the roles say.
+      if (poiPath) {
+        const pctx = { ...ctx, bucket: env.SAVES };
+        const me = who.player;
+        const answer = (r) => ('error' in r ? json(r, POI_STATUS[r.error] ?? 400, origin) : json(r, 200, origin));
+        const { route } = poiPath;
+        if (route === 'me' && request.method === 'GET') return json({ handle: me.handle ?? null, ...poiRolesOf(me, env) }, 200, origin);
+        if (route === 'list' && request.method === 'GET') return answer(await listPoi(pctx, me, env));
+        if (route === 'queue' && request.method === 'GET') return answer(await poiQueue(pctx, me, env));
+        if (route === 'doc' && request.method === 'GET') return answer(await poiHistory(pctx, me, env, poiPath.id));
+        if (route === 'asset' && request.method === 'GET') {
+          const r = await getPoiAsset(pctx, poiPath.sha, poiRolesOf(me, env));
+          return 'error' in r ? no(r.error, r.error === 'no-storage' ? 503 : 404, origin) : poiAssetResponse(r, origin);
+        }
+        if (route === 'asset' && request.method === 'PUT') {
+          // A RAW BODY, against its kind's own bound (as a save's is), read only for a builder
+          if (!poiRolesOf(me, env).builder) return no('poi-not-builder', 403, origin);
+          const kind = url.searchParams.get('kind');
+          if (kind !== 'mesh' && kind !== 'texture') return no('poi-kind', 400, origin);
+          const raw = await readCapped(request, POI_ASSET_MAX[kind]);
+          if (!raw) return no('too-large', 413, origin);
+          if (!raw.byteLength) return no('body', 400, origin);
+          return answer(await putPoiAsset(pctx, me, env, { sha: poiPath.sha, kind, bytes: raw }));
+        }
+        if (route === 'draft' && request.method === 'PUT') {
+          if (!poiRolesOf(me, env).builder) return no('poi-not-builder', 403, origin);
+          const draft = await readBody(request, POI_DRAFT_BODY_MAX);
+          if (draft === undefined) return no('too-large', 413, origin);
+          if (!draft) return no('body', 400, origin);
+          return answer(await savePoiDraft(pctx, me, env, { doc: draft.doc, base: draft.base ?? null }));
+        }
+        if (request.method === 'POST') {
+          if (route === 'submit') return answer(await submitPoi(pctx, me, env, { id: body.id, rev: body.rev }));
+          if (route === 'withdraw') return answer(await withdrawPoi(pctx, me, env, { id: body.id, rev: body.rev }));
+          if (route === 'retire') return answer(await requestRetire(pctx, me, env, { id: body.id }));
+          if (route === 'review') return answer(await reviewPoi(pctx, me, env, { id: body.id, rev: body.rev, verdict: body.verdict, note: body.note ?? null }));
+          if (route === 'rollback') return answer(await rollbackPoi(pctx, me, env, { id: body.id, rev: body.rev }));
+        }
+        return no('method', 405, origin);
+      }
+
       if (path === '/v1/saves' || slot) {
         if (accountKind(who.player) !== 'linked') return no('saves-need-account', 403, origin);
         const me = who.player.id;
