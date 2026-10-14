@@ -61,7 +61,7 @@ export const START_KEYS = Object.freeze([SERPENT.id, ...SIGNS.map((s) => s.id)].
 // ─── THE GEOMETRY ────────────────────────────────────────────────────
 
 /** The radii the roads stand on (tree units; the sky is about 2,700 across). */
-export const RADII = Object.freeze({
+export const FIRM_RADII = Object.freeze({
   start: 150, spoke1: 245, spoke2: 330, ring: 400, rad1: 530, rad2: 660, keyApproach: 730, keystone: 800,
   way1: 275, way2: 560, way3: 720, life: 900, lifeRad1: 1000, lifeRad2: 1130, lifeApproach: 1210, lifeKeystone: 1290,
 });
@@ -305,12 +305,12 @@ function build() {
   node('sp.start', 'start', 'combat', 'sp', null, SERPENT.name, { luck: 2 }, { x: 0, y: 0 });
   for (const s of SIGNS) {
     const sky = SKY[s.id];
-    node(`${s.id}.start`, 'start', 'combat', s.id, null, s.name, sky.start, at(RADII.start, s.angle));
-    node(`${s.id}.bt`, 'road', 'life', s.id, null, ROAD_NAMES.bt, WAYFARER.bt, at(RADII.start, s.angle + 30));
+    node(`${s.id}.start`, 'start', 'combat', s.id, null, s.name, sky.start, at(FIRM_RADII.start, s.angle));
+    node(`${s.id}.bt`, 'road', 'life', s.id, null, ROAD_NAMES.bt, WAYFARER.bt, at(FIRM_RADII.start, s.angle + 30));
   }
   SIGNS.forEach((s, i) => {
     const next = SIGNS[(i + 1) % SIGNS.length];
-    const C = { cx: 0, cy: 0, r: RADII.start };
+    const C = { cx: 0, cy: 0, r: FIRM_RADII.start };
     link(`${s.id}.start`, `${s.id}.bt`, C);
     link(`${s.id}.bt`, `${next.id}.start`, C);
     link('sp.start', `${s.id}.bt`);
@@ -319,28 +319,28 @@ function build() {
   for (const s of SIGNS) {
     const sky = SKY[s.id], a = s.angle, b = s.angle + 30;
     const road = (id, r, deg, ring = 'combat', stats = sky.roads[id]) => node(`${s.id}.${id}`, 'road', ring, s.id, null, ROAD_NAMES[id], stats, at(r, deg));
-    road('s1', RADII.spoke1, a); road('s2', RADII.spoke2, a); road('g', RADII.ring, a);
-    road('r1', RADII.rad1, a); road('r2', RADII.rad2, a); road('k1', RADII.keyApproach, a);
-    node(`${s.id}.k`, 'keystone', 'combat', s.id, null, sky.keystone.name, sky.keystone.stats, at(RADII.keystone, a), sky.keystone.text);
+    road('s1', FIRM_RADII.spoke1, a); road('s2', FIRM_RADII.spoke2, a); road('g', FIRM_RADII.ring, a);
+    road('r1', FIRM_RADII.rad1, a); road('r2', FIRM_RADII.rad2, a); road('k1', FIRM_RADII.keyApproach, a);
+    node(`${s.id}.k`, 'keystone', 'combat', s.id, null, sky.keystone.name, sky.keystone.stats, at(FIRM_RADII.keystone, a), sky.keystone.text);
     for (const [p, q] of [['start', 's1'], ['s1', 's2'], ['s2', 'g'], ['g', 'r1'], ['r1', 'r2'], ['r2', 'k1'], ['k1', 'k']]) link(`${s.id}.${p}`, `${s.id}.${q}`);
-    road('w', RADII.way1, b, 'life', WAYFARER.w); road('x', RADII.ring, b, 'life', WAYFARER.x);
-    road('xr1', RADII.way2, b, 'life', WAYFARER.xr1); road('xr2', RADII.way3, b, 'life', WAYFARER.xr2);
+    road('w', FIRM_RADII.way1, b, 'life', WAYFARER.w); road('x', FIRM_RADII.ring, b, 'life', WAYFARER.x);
+    road('xr1', FIRM_RADII.way2, b, 'life', WAYFARER.xr1); road('xr2', FIRM_RADII.way3, b, 'life', WAYFARER.xr2);
     for (const [p, q] of [['bt', 'w'], ['w', 'x'], ['x', 'xr1'], ['xr1', 'xr2']]) link(`${s.id}.${p}`, `${s.id}.${q}`);
     // the life ring's two gates in this sign's sky (at its bearing less and plus 15) and its radial to the life keystone
     const ring = sky.life.ring;
-    node(`${s.id}.lg0`, 'road', 'life', s.id, null, ROAD_NAMES.lg, ring[0], at(RADII.life, a - 15));
-    node(`${s.id}.lg1`, 'road', 'life', s.id, null, ROAD_NAMES.lg, ring[1], at(RADII.life, a + 15));
+    node(`${s.id}.lg0`, 'road', 'life', s.id, null, ROAD_NAMES.lg, ring[0], at(FIRM_RADII.life, a - 15));
+    node(`${s.id}.lg1`, 'road', 'life', s.id, null, ROAD_NAMES.lg, ring[1], at(FIRM_RADII.life, a + 15));
     // FIRM1c: the Wayfarer's own gate, on the life ring where its road meets it (bearing plus 30) - the road runs straight
     // out along its own line, so it never crosses the outer wheels beside it
-    node(`${s.id}.lgx`, 'road', 'life', s.id, null, ROAD_NAMES.lg, WAYFARER.x, at(RADII.life, b));
-    road('lr1', RADII.lifeRad1, a, 'life', sky.life.lr1); road('lr2', RADII.lifeRad2, a, 'life', sky.life.lr2);
-    road('la', RADII.lifeApproach, a, 'life', sky.life.la);
-    node(`${s.id}.lk`, 'keystone', 'life', s.id, null, sky.lifeKeystone.name, sky.lifeKeystone.stats, at(RADII.lifeKeystone, a), sky.lifeKeystone.text);
+    node(`${s.id}.lgx`, 'road', 'life', s.id, null, ROAD_NAMES.lg, WAYFARER.x, at(FIRM_RADII.life, b));
+    road('lr1', FIRM_RADII.lifeRad1, a, 'life', sky.life.lr1); road('lr2', FIRM_RADII.lifeRad2, a, 'life', sky.life.lr2);
+    road('la', FIRM_RADII.lifeApproach, a, 'life', sky.life.la);
+    node(`${s.id}.lk`, 'keystone', 'life', s.id, null, sky.lifeKeystone.name, sky.lifeKeystone.stats, at(FIRM_RADII.lifeKeystone, a), sky.lifeKeystone.text);
     for (const [p, q] of [['lg0', 'lr1'], ['lg1', 'lr1'], ['lr1', 'lr2'], ['lr2', 'la'], ['la', 'lk']]) link(`${s.id}.${p}`, `${s.id}.${q}`);
   }
   SIGNS.forEach((s, i) => {
     const next = SIGNS[(i + 1) % SIGNS.length];
-    const R = { cx: 0, cy: 0, r: RADII.ring }, L = { cx: 0, cy: 0, r: RADII.life };
+    const R = { cx: 0, cy: 0, r: FIRM_RADII.ring }, L = { cx: 0, cy: 0, r: FIRM_RADII.life };
     link(`${s.id}.g`, `${s.id}.x`, R);
     link(`${s.id}.x`, `${next.id}.g`, R);
     link(`${s.id}.lg0`, `${s.id}.lg1`, L);

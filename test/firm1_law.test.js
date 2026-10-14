@@ -9,7 +9,7 @@ import { createHash } from 'node:crypto';
 import { FIRM_NODES, FIRM_EDGES, FIRM_ADJ, START_KEYS, SIGNS, firmNode } from '../src/net/firmamentTree.js';
 import {
   starsFor, craftPointsFor, FIRM_RENOWN_MAX, CRAFT_RANK_MAX, GATHERING, CRAFTING, ATTRIBUTES, COMBAT_SKILLS, LIFE_SKILLS,
-  statDef, statWords, costOf, fits, pointsLeft, treeFault, pathTo, refundTakes, treeDiff, refundSilver, totals, capped,
+  statDef, statWords, firmCostOf, fits, pointsLeft, treeFault, pathTo, refundTakes, treeDiff, refundSilver, totals, capped,
   treeStats, blowPct, castCostPct, BLOW_CAP, BLOW_TOTAL_CAP, CAST_COST_CAP, packTree, unpackTree, cleanKeys, scaleQty,
   scaleXp, REFUND_FREE_BELOW_RENOWN, REFUND_SILVER_PER_STAR, overCap, allocatable,
   buildCode, treeOfCode, SKY_TAG, BUILD_CODE_RE,
@@ -103,9 +103,9 @@ test('FIRM1 law: the purses - 2 Stars a Renown level past the first (98 at 50, n
 test('FIRM1 law: what fits - a combat star is Stars\' alone, a life star Craft first and then Stars; what is left in each', () => {
   const combat = walk('wr.start', 'wr.r1');   // s1 s2 g r1
   const life = walk('wr.start', 'wr.lr1');    // the Wayfarer's Road out
-  assert.deepEqual(costOf(combat.keys), { combat: 4, life: 0 });
-  assert.equal(costOf(life.keys).combat, 0);
-  const L = costOf(life.keys).life;
+  assert.deepEqual(firmCostOf(combat.keys), { combat: 4, life: 0 });
+  assert.equal(firmCostOf(life.keys).combat, 0);
+  const L = firmCostOf(life.keys).life;
   assert.ok(fits(combat.keys, 4, 0) && !fits(combat.keys, 3, 100), 'Craft never pays a combat star');
   assert.ok(fits(life.keys, 0, L) && fits(life.keys, L, 0) && !fits(life.keys, 0, L - 1) && fits(life.keys, 1, L - 1));
   assert.deepEqual(pointsLeft(life.keys, 10, 3), { stars: 10 - (L - 3), craft: 0 });
@@ -188,7 +188,7 @@ test('FIRM1 law: THE BUDGET - the whole sky allocated at once holds every channe
 test('FIRM1 law: the PvE budget a real build reaches - a full 49 Stars spent on the Warrior\'s fight adds no more than the caps to a blow and never a channel past one', () => {
   const t = walk('wr.start', 'wr.k', 'wr.c1.3', 'wr.c3.3', 'wr.c5.3', 'wr.c4.4', 'wr.c2.4', 'wr.c6.4', 'wr.c7.2');
   const stars = starsFor(50);
-  while (costOf(t.keys).combat > stars) t.keys.pop();
+  while (firmCostOf(t.keys).combat > stars) t.keys.pop();
   assert.equal(treeFault(t, stars, 0), null);
   const c = treeStats(t);
   assert.ok(blowPct(c, { skill: 'Axe', group: 'undead', wounded: true }) <= BLOW_TOTAL_CAP);

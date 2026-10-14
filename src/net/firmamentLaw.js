@@ -65,7 +65,7 @@ export const COMBAT_SKILLS = Object.freeze(['ShortBlade', 'LongBlade', 'Axe', 'B
 /** The skills a life reads - the counter, the street, the road and the sea. */
 export const LIFE_SKILLS = Object.freeze(['Mercantile', 'Etiquette', 'Streetwise', 'Swimming', 'Climbing', 'Medical', 'Lockpicking', 'Pickpocket']);
 /** The five elements a saving throw is read against (systems/entityMods.js resist channel). */
-export const ELEMENTS = Object.freeze(['fire', 'frost', 'poison', 'shock', 'magic']);
+export const FIRM_ELEMENTS = Object.freeze(['fire', 'frost', 'poison', 'shock', 'magic']);
 /** The six schools a spell's price is read in. */
 export const SCHOOLS = Object.freeze(['Destruction', 'Restoration', 'Illusion', 'Alteration', 'Thaumaturgy', 'Mysticism']);
 /** The ten professions (net/professionLaw.js PROFESSIONS' ids) - the gathering five and the crafting five. */
@@ -150,7 +150,7 @@ export function statDef(key) {
 /** @type {Record<string, (arg: string) => StatDef|null>} */
 const FAMILIES = Object.freeze({
   skill: (n) => (COMBAT_SKILLS.includes(n) ? SKILL_DEF.combat[n] : LIFE_SKILLS.includes(n) ? SKILL_DEF.life[n] : null),
-  resist: (e) => (ELEMENTS.includes(e) ? RESIST_DEF[e] : null),
+  resist: (e) => (FIRM_ELEMENTS.includes(e) ? RESIST_DEF[e] : null),
   castCost: (s) => (SCHOOLS.includes(s) ? SCHOOL_COST_DEF[s] : null),
   yield: (p) => (GATHERING.includes(p) ? YIELD_DEF[p] : null),
   xp: (p) => (GATHERING.includes(p) || CRAFTING.includes(p) ? XP_DEF[p] : null),
@@ -172,7 +172,7 @@ const SKILL_DEF = Object.freeze({
   combat: Object.freeze(Object.fromEntries(COMBAT_SKILLS.map((n) => [n, def('combat', 15, (v) => `${signed(v)} ${SKILL_WORDS(n)}`)]))),
   life: Object.freeze(Object.fromEntries(LIFE_SKILLS.map((n) => [n, def('life', 20, (v) => `${signed(v)} ${SKILL_WORDS(n)}`)]))),
 });
-const RESIST_DEF = Object.freeze(Object.fromEntries(ELEMENTS.map((e) => [e, def('combat', 20, (v) => `${signed(v)}% chance to resist ${e === 'magic' ? 'magic' : e}`, 0)])));   // a point of resistance is a point on the saving throw's hundred
+const RESIST_DEF = Object.freeze(Object.fromEntries(FIRM_ELEMENTS.map((e) => [e, def('combat', 20, (v) => `${signed(v)}% chance to resist ${e === 'magic' ? 'magic' : e}`, 0)])));   // a point of resistance is a point on the saving throw's hundred
 const SCHOOL_COST_DEF = Object.freeze(Object.fromEntries(SCHOOLS.map((s) => [s, def('combat', 20, (v) => `${s} spells cost ${v}% less`, 0)])));
 const YIELD_DEF = Object.freeze(Object.fromEntries(GATHERING.map((p) => [p, def('life', 30, (v) => `${signed(v)}% ${profName(p)} yield`)])));
 const XP_DEF = Object.freeze(Object.fromEntries([...GATHERING, ...CRAFTING].map((p) => [p, def('life', 35, (v) => `${signed(v)}% ${profName(p)} experience`, -30)])));
@@ -241,19 +241,19 @@ export function cleanKeys(keys) {
   return [...out].sort();
 }
 /** What an allocation costs, by purse ring: `{ combat, life }` (a start is free). */
-export function costOf(keys) {
+export function firmCostOf(keys) {
   let combat = 0, life = 0;
   for (const k of keys) { const n = firmNode(k); if (!n || n.kind === 'start') continue; if (n.ring === 'life') life++; else combat++; }
   return { combat, life };
 }
 /** Whether an allocation's cost FITS the purses: its combat stars within the Stars, all of it within both together. */
 export function fits(keys, stars, craft) {
-  const c = costOf(keys);
+  const c = firmCostOf(keys);
   return c.combat <= stars && c.combat + c.life <= stars + craft;
 }
 /** What is left in each purse: `{ stars, craft }` - the Craft purse spent on the life ring first. */
 export function pointsLeft(keys, stars, craft) {
-  const c = costOf(keys);
+  const c = firmCostOf(keys);
   const craftUsed = Math.min(craft, c.life);
   return { stars: stars - c.combat - (c.life - craftUsed), craft: craft - craftUsed };
 }

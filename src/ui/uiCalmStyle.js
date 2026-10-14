@@ -274,8 +274,14 @@ ${P} .wizard .list .row.on, ${P} .wizard .skillpane .row.on { background: linear
 ${P} .wizard .list .row.on .row-name, ${P} .wizard .skillpane .row.on .row-name { color: #fff3cf; }
 /* a way on that waits ("18 left to spend") is read, not hidden: it says what is left */
 ${P} .wizard .act.primary[disabled] { opacity: 0.72; }
-/* a scroll that is needed is a thin one in the frame's own colours */
-${P} .wizard, ${P} .wizard * { scrollbar-width: thin; scrollbar-color: #6b6350 transparent; }
+/* a scroll that is needed is a thin one in the frame's own colours - a ::-webkit-scrollbar one (CURSOR-EDGE: the
+   standard pair only where that is not, or Chromium draws the native one and its OS arrow) */
+@media (any-pointer: fine) {
+${P} .wizard::-webkit-scrollbar, ${P} .wizard ::-webkit-scrollbar { width: 6px; height: 6px; } }
+${P} .wizard::-webkit-scrollbar-track, ${P} .wizard ::-webkit-scrollbar-track { background: transparent; }
+${P} .wizard::-webkit-scrollbar-thumb, ${P} .wizard ::-webkit-scrollbar-thumb { background: #6b6350; border: 0; }
+@supports not selector(::-webkit-scrollbar) {
+${P} .wizard, ${P} .wizard * { scrollbar-width: thin; scrollbar-color: #6b6350 transparent; } }
 /* the card's figures read as words: "Carry weight", not a spaced capital whisper */
 .wizard .dcard .stats dt { font-size: 13px; letter-spacing: 0.02em; text-transform: none; }
 ${P} .wizard .dcard .stats dt { color: #bdb4a0; }

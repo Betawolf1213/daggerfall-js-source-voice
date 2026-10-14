@@ -392,7 +392,7 @@ export const DEFAULT_BINDINGS = Object.freeze([
   // RecastSpell, F the social door, R Rest, G and X the torches', E Interact), and the free keys by the movement hand are
   // worse than none: Caps Lock toggles on a Mac (a hold to aim is two presses there) and a held Left Ctrl makes W the
   // browser's close-tab. Mouse4 is TogglePerspective's, and the world host already stops the browser's Back on this
-  // one. A keyboard player moves it in the Controls pane (F2 and F4 ship unbound).
+  // one. A keyboard player moves it in the Controls pane (F1, F3 and F4 ship unbound).
   ['Mouse3', 'WeaponTechnique'],
 ]);
 

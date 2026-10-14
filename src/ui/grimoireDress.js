@@ -1766,7 +1766,6 @@ ${G} .wizard .dcard .acts .act, ${G} .wizard .dcard .acts .act[data-grim-on] { b
 ${G} .wizard .dcard .acts .act.primary { border-color: ${T.red} !important; color: ${T.red} !important; }
 ${G} .wizard .dcard .acts .act:hover, ${G} .wizard .dcard .acts .act:focus-visible { background: rgba(142,26,16,0.1) !important; color: ${T.redHi} !important; outline: none !important; }
 ${G} .wizard .dcard p { text-shadow: none !important; }
-${G} .wizard .dcard .dscroll { scrollbar-color: rgba(92,56,24,0.6) transparent; }
 /* the name: a line of the page to write on, and Suggest one a plate under it */
 ${G} .wizard .choose .namebox { background: ${PAGE} !important; color: ${T.ink} !important; font-size: 32px !important; text-shadow: none !important;
   border: 2px solid ${T.outline} !important; box-shadow: inset 0 0 0 2px rgba(92,56,24,0.35), 4px 6px 14px rgba(0,0,0,0.5) !important; caret-color: ${T.red}; }
@@ -1781,8 +1780,13 @@ ${G} .wizard .stagebody > .list, ${G} .wizard .stagebody.solo > .skillpane { bor
 ${G} .wizard .list .row.on, ${G} .wizard .skillpane .row.on { outline: none !important; border-color: transparent !important;
   background: linear-gradient(90deg, rgba(244,224,76,0.16), rgba(244,224,76,0.03) 70%) !important; box-shadow: inset 3px 0 0 ${T.yellow} !important; }
 ${G} .wizard .list .row.on .row-name, ${G} .wizard .skillpane .row.on .row-name { color: ${T.yellow} !important; }
+/* CURSOR-EDGE: the walk's scrollers in the dress's own ::-webkit-scrollbar (the wood's lit grain; the card's ink on its
+   parchment) - the standard pair only where that is not, or Chromium draws the native one */
+${G} .wizard::-webkit-scrollbar-thumb, ${G} .wizard ::-webkit-scrollbar-thumb { background: ${T.woodLit}; }
+${G} .wizard .dcard::-webkit-scrollbar-thumb, ${G} .wizard .dcard ::-webkit-scrollbar-thumb { background: rgba(92,56,24,0.6); }
+@supports not selector(::-webkit-scrollbar) {
 ${G} .wizard, ${G} .wizard * { scrollbar-width: thin; scrollbar-color: ${T.woodLit} transparent; }
-${G} .wizard .dcard, ${G} .wizard .dcard * { scrollbar-color: rgba(92,56,24,0.6) transparent; }
+${G} .wizard .dcard, ${G} .wizard .dcard * { scrollbar-color: rgba(92,56,24,0.6) transparent; } }
 ${G} .wizard .stagebody.solo > .skillpane { background: ${WOOD(0.32)}; }
 ${G} .wizard .row-name { color: ${T.cream} !important; text-shadow: 0 1px 0 rgba(0,0,0,0.6) !important; }
 ${G} .wizard .row-sub { color: #d6b98a !important; text-shadow: none !important; }

@@ -30,7 +30,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { SKILLS, SKILL_KEYS, permanentSkillValue } from './skills.js';
-import { ATTRIBUTES, COMBAT_SKILLS, LIFE_SKILLS, ELEMENTS, blowPct, castCostPct, statDef, pctOf } from '../net/firmamentLaw.js';
+import { ATTRIBUTES, COMBAT_SKILLS, LIFE_SKILLS, FIRM_ELEMENTS, blowPct, castCostPct, statDef, pctOf } from '../net/firmamentLaw.js';
 import { firmamentStats, onFirmamentChange, firmamentInForce } from './firmamentLive.js';
 import { sigilDueling } from './sigil.js';
 import { registerEntityFold, registerWeaponBlowMod, newMods, EMPTY_MODS, NUMBER_BODY_PARTS, STANDING_CHANNELS, computeEntityMods } from './entityMods.js';
@@ -100,7 +100,7 @@ export function firmamentFold(entity) {
     const v = read(`skill.${n}`) + (share ? pctOf(permanentSkillValue(entity, id), share) : 0);
     if (v) mods.skills[id] = v;
   }
-  for (const e of ELEMENTS) { const v = read(`resist.${e}`); if (v) mods.resist[e] = v; }
+  for (const e of FIRM_ELEMENTS) { const v = read(`resist.${e}`); if (v) mods.resist[e] = v; }
   const armor = read('armor');
   if (armor) for (let p = 0; p < NUMBER_BODY_PARTS; p++) mods.armorParts[p] = armor;
   mods.weightMult = read('carry') / 100;

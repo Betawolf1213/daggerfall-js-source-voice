@@ -24,9 +24,9 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import { t } from '../systems/textManager.js';   // UI-CALM: the read's failure, said
-import { FIRM_NODES, FIRM_EDGES, SIGNS, SERPENT, RADII, signById } from '../net/firmamentTree.js';
+import { FIRM_NODES, FIRM_EDGES, SIGNS, SERPENT, FIRM_RADII, signById } from '../net/firmamentTree.js';
 import {
-  pathTo, refundTakes, costOf, fits, pointsLeft, treeDiff, refundSilver, statWords, statDef, totals, capped, overCap, FIRM_RESPEC_GOLD,
+  pathTo, refundTakes, firmCostOf, fits, pointsLeft, treeDiff, refundSilver, statWords, statDef, totals, capped, overCap, FIRM_RESPEC_GOLD,
   buildCode, treeOfCode, treeFault,
 } from '../net/firmamentLaw.js';
 import { firmamentBook } from '../net/firmamentBook.js';
@@ -218,7 +218,7 @@ export function refusalOf(tree, key, stars, craft) {
   if (!path.length) return 'No path leads there from your stars.';
   const want = [...tree.keys, ...path];
   if (fits(want, stars, craft)) return null;
-  const c = costOf(path), left = pointsLeft(tree.keys, stars, craft);
+  const c = firmCostOf(path), left = pointsLeft(tree.keys, stars, craft);
   if (c.combat > left.stars) return `You need ${c.combat} Star${c.combat === 1 ? '' : 's'} and have ${Math.max(0, left.stars)}. Craft points serve only the crafts.`;
   return `You need ${c.combat + c.life} point${c.combat + c.life === 1 ? '' : 's'} and have ${Math.max(0, left.stars) + left.craft}.`;
 }
@@ -316,14 +316,14 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
   const zFloor = () => Math.max(0.12, Math.min(room(), vh() - 240) / 2900);   // between the bar above and the hint below
   const Z_CEIL = 2.5;
   /** The sky's own edge: the outer keystones and their names. */
-  const SKY_EDGE = RADII.lifeKeystone + 80;
+  const SKY_EDGE = FIRM_RADII.lifeKeystone + 80;
   /** HOLD THE SKY IN THE FRAME: never further out than the whole of it, and never dragged off - the middle of the
    * screen always looks at the sky, so it cannot be pushed out of sight. */
   const hold = () => {
     view.z = Math.max(zFloor(), Math.min(Z_CEIL, view.z));
     // how far the sky's middle may stand from the screen's: far enough to bring an outer keystone near the middle when
     // close in, never so far that the sky slides out of sight when far out (the inner ring's width at the least)
-    const reach = Math.max(RADII.life * view.z, SKY_EDGE * view.z - 0.35 * Math.min(vw(), vh()));
+    const reach = Math.max(FIRM_RADII.life * view.z, SKY_EDGE * view.z - 0.35 * Math.min(vw(), vh()));
     view.x = Math.max(-reach, Math.min(reach, view.x));
     view.y = Math.max(-reach, Math.min(reach, view.y));
   };
@@ -442,7 +442,7 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
       const why = refusalOf(pending, key, p.stars, p.craft);
       if (why) { foot = why; no = true; } else if (n.kind === 'start') foot = 'Click to take this birthsign.';
       else {
-        const c = costOf(pathTo(pending, key));
+        const c = firmCostOf(pathTo(pending, key));
         const ways = [c.combat ? `${c.combat} Star${c.combat === 1 ? '' : 's'}` : null, c.life ? `${c.life} craft star${c.life === 1 ? '' : 's'}, paid in Craft points first` : null].filter(Boolean);
         foot = `Click to learn: ${ways.join(' and ')}.`;
       }
@@ -551,7 +551,7 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     const p = purse();
     const fault = treeFault(r.tree, p.stars, p.craft);
     if (fault === 'firm-points') {
-      const c = costOf(r.tree.keys);
+      const c = firmCostOf(r.tree.keys);
       const needStars = Math.max(c.combat, c.combat + c.life - p.craft);
       say(`That build needs ${needStars} Stars${c.life ? ` and up to ${c.life} Craft points` : ''}. You have ${p.stars} Stars and ${p.craft} Craft points.`, true);
       return false;
