@@ -313,8 +313,8 @@ import { createWagonWarden, wardenTownIn } from './wagonWardenHost.js';   // WAR
 import { WARDEN_VENDOR, isWardenTown } from '../systems/wagonWarden.js';   // WARDEN1: the stamp's save slot, and the towns a watch keeps
 import { townGroundOf, yardSitesOn, craftYardSitesOn, carveYards, MONUMENT_KEEP_M, yardMeasuresOf, placedModelBox } from '../world/merchantYardSites.js';   // MERCHANT-YARDS: where they stand off the town's layout, and the people's navgrid carved round them
 import { isYardTown, yardKeeper, ALL_YARD_KINDS, YARD_BENCH } from '../systems/merchantYards.js';   // MERCHANT-YARDS: the towns that stand them, who keeps them, the town's people
-import { isPortTown, isPortTownType, portTownByData, portKeeper, portPlaceName, PORT_SITE_ORDER } from '../systems/portPlaces.js';   // SHIPYARDS: the port towns, their keepers and their places' names; FIELD BUGS 2026-10-13c PORT-TOWNS: the harbour board's ports are its towns
-import { townSeaOf, seaBearing, seaField, portSitesOn, portPlaceRows, sceneToLocationXZ } from '../world/portSites.js';   // SHIPYARDS: where a port town's shipyard and lighthouse stand - its seaward ground
+import { isPortTown, isPortTownType, portKeeper, portPlaceName, PORT_SITE_ORDER } from '../systems/portPlaces.js';   // SHIPYARDS: the port towns, their keepers and their places' names; FIELD BUGS 2026-10-13c PORT-TOWNS: the harbour board's ports are its towns
+import { townSeaOf, seaBearing, seaField, portSitesOn, portPlaceRows, sceneToLocationXZ, openSeaOf, seaBears, portTownOnSea } from '../world/portSites.js';   // SHIPYARDS: where a port town's shipyard and lighthouse stand - its seaward ground; FIELD BUGS 2026-10-14 INLAND-PORTS: and which towns the open sea bears on
 import { SHIPYARD as SHIPYARD_LAYOUT } from '../world/shipyardModel.js';   // SHIPYARDS: the crew hall's table, for the talk directory's row
 import { HARBOUR_REACH } from '../systems/naval/shipLife.js';   // AUDIT HOLDINGS O1: the harbour's scan reach, its pixels built before it is sounded
 import { createHarbourBook } from '../systems/naval/harbourBook.js';   // HARBOUR-BOOK: the harbours near the player, the quays' and the sea's
@@ -4033,11 +4033,24 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  SHIPYARDS (BOOT-TDZ): declared here, above the stream - a port town's places read its bearing in the boot's first
    *  build, three thousand lines before its old place ran. */
   const seaPixel = (x, y) => isWaterPixel(maps.getClimateIndex(x, y), woods.getHeightMapValue(x, y));
-  /** SHIPYARDS: whether a town stands the port's places (systems/portPlaces.js isPortTown) - a port by its own data alone:
-   *  Travel Options' hand-written harbours (travelPorts.js hasPort) or Daggerfall's PortTownAndUnknown byte. Never a seat's
-   *  members' harbour (hasPortFor's word is one guild's - every client stands the same shipyard), and never csaIsPortTown,
-   *  declared below the stream (BOOT-TDZ). */
-  const portByData = (dfLocation) => portTownByData(dfLocation, hasPort);
+  /** FIELD BUGS 2026-10-14 INLAND-PORTS: THE OPEN SEA - a pixel of the Bay's map whose water reaches the map's border
+   *  (world/portSites.js openSeaOf over seaPixel, flooded the first time a town asks: every lake and pond the map draws
+   *  inland left out); past the Veil, the Eltheric Ocean's water round its isles (the ether's own ground - each isle a
+   *  hill of land in open water, ethericSea.js isleByte). Anywhere else, none. */
+  let _openSea = null;
+  const openSea = (x, y) => {
+    if (etherSea && inEther(x, y)) return seaPixel(x, y);
+    if (!(x >= 0 && y >= 0 && x < MAP_WIDTH && y < MAP_HEIGHT)) return false;
+    _openSea ??= openSeaOf(seaPixel, MAP_WIDTH, MAP_HEIGHT);
+    return _openSea[y * MAP_WIDTH + x] === 1;
+  };
+  /** SHIPYARDS: whether a town stands the port's places (systems/portPlaces.js isPortTown) - a port by its own data
+   *  (Travel Options' hand-written harbours, travelPorts.js hasPort, or Daggerfall's PortTownAndUnknown byte) that the open
+   *  sea bears on (INLAND-PORTS: world/portSites.js portTownOnSea - the open sea within SEA_RING, the ring its bearing is
+   *  read off; the data alone stood a shipyard and a lighthouse at the middle of 36 region capitals, beside a pond in
+   *  Ilessan Hills' blocks). Never a seat's members' harbour (hasPortFor's word is one guild's - every client stands the
+   *  same shipyard), and never csaIsPortTown, declared below the stream (BOOT-TDZ). */
+  const portOnSea = (dfLocation) => portTownOnSea(dfLocation, hasPort, openSea);
   const _yardMemo = new Map();   // mapId -> { sig, sites, ports }, the latest few towns
   const _yardBoxes = new Map();   // a registered model's local box, by id
   const palaceIn = (b) => {
@@ -4071,7 +4084,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         keep: lefaySpot ? [[lefaySpot.x, lefaySpot.z, MONUMENT_KEEP_M]] : [],
       };
       const mapId = (dfLocation.mapTableData?.mapId ?? 0) >>> 0, regionIndex = dfLocation.regionIndex ?? 0, race = walkerRace(people, dfLocation.regionIndex);
-      const yardTown = isYardTown(dfLocation), port = isPortTown(dfLocation, portByData(dfLocation));
+      const yardTown = isYardTown(dfLocation), port = isPortTown(dfLocation, portOnSea(dfLocation));
       const sig = `${JSON.stringify(measures)}|${yardTown ? 'yards' : ''}|${port ? 'port' : ''}`;
       let memo = _yardMemo.get(mapId);
       if (!memo || memo.sig !== sig) {
@@ -4080,7 +4093,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         let ports = [];
         if (g && port) {
           const lp = longitudeLatitudeToMapPixel(dfLocation.mapTableData.longitude, dfLocation.mapTableData.latitude);
-          const bearing = seaBearing(lp.x, lp.y, seaPixel);   // AUDIT SHIPYARDS U2: and the town's own water against it is no sea
+          const bearing = seaBearing(lp.x, lp.y, openSea);   // AUDIT SHIPYARDS U2: and the town's own water against it is no sea; INLAND-PORTS: nor a lake the map draws
           ports = portSitesOn(g, seaField(g.width, g.height, townSeaOf(yl, bearing), bearing));
         }
         if (g && yardTown) sites.push(...craftYardSitesOn(g));   // CARP-YARD: the joinery on what the yards and the port left - none of theirs moves
@@ -5896,7 +5909,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (isLefayTown(dfLocation)) lefaySpot = lefaySpotOf(loc);   // LEFAY1: the open ground nearest the town's middle, off its own navgrid
       // MERCHANT-YARDS: the town's open ground, clear of its buildings, roads and lots; SHIPYARDS: and a port town's seaward
       // ground, on what the yards left - one pass (AUDIT SHIPYARDS L3-3: the yards' and the port's each asked it whole)
-      const yardTown = isYardTown(dfLocation), portTown = isPortTown(dfLocation, portByData(dfLocation));
+      const yardTown = isYardTown(dfLocation), portTown = isPortTown(dfLocation, portOnSea(dfLocation));
       const places = yardTown || portTown ? townPlacesFor(dfLocation, lefaySpot, climate?.people, loc) : null;
       if (yardTown) yardSites = places.yards;
       if (portTown) portSites = places.ports;
@@ -10166,7 +10179,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  harbours (travelPorts.js) - a city, a town or a village (systems/portPlaces.js isPortTownType: the towns that stand
    *  the port's places, every one of them on this list). The list is every place a ship may put in at - MAPS.BSA's 343
    *  locations flagged PortTownAndUnknown and Hazelnut's 35 more - and 223 of its 378 are tombs, farms, inns, temples,
-   *  manors and ruins: the board sent cargoes to "Corranoth's Tomb's harbourmaster". */
+   *  manors and ruins: the board sent cargoes to "Corranoth's Tomb's harbourmaster". FIELD BUGS 2026-10-14 INLAND-PORTS:
+   *  and the ones the open sea bears on (world/portSites.js seaBears - the shipyard law's own half the map answers,
+   *  portTownOnSea's): no harbourmaster keeps a board in a capital in the hills or by a lake inland. */
   let _navalPortList = null;
   const navalPortList = () => {
     if (!mapDict) return [];
@@ -10176,6 +10191,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const s = mapDict.get(id & 0x000fffff);
       if (!s || !isPortTownType(s.locationType)) continue;
       const at = getPixelFromPixelID(s.id);
+      if (!seaBears(at.x, at.y, openSea)) continue;
       const name = maps.getRegion(s.regionIndex)?.mapNames?.[s.mapIndex];
       const key = `${at.x},${at.y}`;
       if (!name || out.has(key)) continue;

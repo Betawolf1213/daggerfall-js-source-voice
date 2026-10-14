@@ -7,7 +7,8 @@
 //
 // THE PLACES. A port town (a city, a town or a village that is a port by its own data - `portTownByData`: Travel Options'
 // hand-written harbours or Daggerfall's PortTownAndUnknown byte, never a seat's members' harbour, which is one guild's
-// word, so every client stands the same shipyard) stands two of its own, on
+// word, so every client stands the same shipyard - and that the open sea bears on: world/portSites.js portTownOnSea,
+// FIELD BUGS 2026-10-14 INLAND-PORTS) stands two of its own, on
 // its seaward ground (world/portSites.js - Mac chose "the town's seaward edge", placed off the town's layout like the
 // Stables): a SHIPYARD, the shipmaster's - with its CREW HALL inside its fence, where the crewmaster signs hands on -
 // and a LIGHTHOUSE, the lightkeeper's. Its DOCKS are the harbour's quays, found off the terrain (systems/naval/quays.js).
@@ -54,11 +55,13 @@ export const PORT_TOWN_TYPES = Object.freeze([LOCATION_TYPES.TownCity, LOCATION_
  *  alone (FIELD BUGS 2026-10-13c PORT-TOWNS: the harbour board's ports, scenes/world.js navalPortList). Pure.
  *  @param {number} type */
 export const isPortTownType = (type) => PORT_TOWN_TYPES.includes(/** @type {any} */ (type));
-/** Whether a location stands the port's places: a town of PORT_TOWN_TYPES that `isPort` says is a port. */
+/** Whether a location stands the port's places: a town of PORT_TOWN_TYPES that `isPort` says is a port (the host's
+ *  portOnSea - world/portSites.js portTownOnSea: a port by its data that the open sea bears on). */
 export const isPortTown = (loc, isPort) => isPortTownType(loc?.mapTableData?.locationType) && !!isPort;
 /** Whether a location is a port by its own data - `hasPort(mapId)` (Travel Options' hand-written harbours, travelPorts.js)
- *  or Daggerfall's PortTownAndUnknown byte (scenes/world.js portByData; AUDIT SHIPYARDS L6-10: executed here, not read
- *  off world.js's text). Pure. */
+ *  or Daggerfall's PortTownAndUnknown byte (AUDIT SHIPYARDS L6-10: executed here, not read off world.js's text) - the
+ *  data's half of world/portSites.js portTownOnSea. The data alone is no coast (FIELD BUGS 2026-10-14 INLAND-PORTS): the
+ *  byte's 0x10 is the region capitals' mark, and the table copied the byte's list. Pure. */
 export const portTownByData = (loc, hasPort) => !!hasPort?.(loc?.mapTableData?.mapId) || (loc?.exterior?.exteriorData?.portTownAndUnknown ?? 0) !== 0;
 
 /**

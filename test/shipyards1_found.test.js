@@ -171,9 +171,11 @@ test('SHIPYARDS THE HOSTS: world.js places the port\'s places in each port town\
   const w = read('src/scenes/world.js'), modes = read('src/scenes/worldModes.js');
   // PIN MOVED (AUDIT SHIPYARDS L3-3, U2): the yards' and the port's places in one pass, and the town's own water read against
   // the map's bearing
-  assert.match(w, /const yardTown = isYardTown\(dfLocation\), portTown = isPortTown\(dfLocation, portByData\(dfLocation\)\);\n\s*const places = yardTown \|\| portTown \? townPlacesFor\(dfLocation, lefaySpot, climate\?\.people, loc\) : null;\n\s*if \(yardTown\) yardSites = places\.yards;\n\s*if \(portTown\) portSites = places\.ports;/);
-  assert.match(w, /const bearing = seaBearing\(lp\.x, lp\.y, seaPixel\);[^\n]*\n\s*ports = portSitesOn\(g, seaField\(g\.width, g\.height, townSeaOf\(yl, bearing\), bearing\)\);/, 'on what the yards left, off the sea');
-  assert.match(w, /const portByData = \(dfLocation\) => portTownByData\(dfLocation, hasPort\);/, 'a port by its own data (executed: test/shipyards1_audit_port.test.js)');
+  // PIN MOVED (FIELD BUGS 2026-10-14 INLAND-PORTS): a port town is a port by its data that the open sea bears on (portOnSea),
+  // and the bearing is read off the open sea
+  assert.match(w, /const yardTown = isYardTown\(dfLocation\), portTown = isPortTown\(dfLocation, portOnSea\(dfLocation\)\);\n\s*const places = yardTown \|\| portTown \? townPlacesFor\(dfLocation, lefaySpot, climate\?\.people, loc\) : null;\n\s*if \(yardTown\) yardSites = places\.yards;\n\s*if \(portTown\) portSites = places\.ports;/);
+  assert.match(w, /const bearing = seaBearing\(lp\.x, lp\.y, openSea\);[^\n]*\n\s*ports = portSitesOn\(g, seaField\(g\.width, g\.height, townSeaOf\(yl, bearing\), bearing\)\);/, 'on what the yards left, off the sea');
+  assert.match(w, /const portOnSea = \(dfLocation\) => portTownOnSea\(dfLocation, hasPort, openSea\);/, 'a port by its own data on the open sea (executed: test/shipyards1_audit_port.test.js, test/fb1014_inlandports.test.js)');
   assert.match(w, /if \(portSites\?\.length\) carveYards\(nav, portSites\);/, 'the people walk round them');
   assert.match(w, /\n\s+portSites,   \/\/ SHIPYARDS/, 'on the pixel\'s record');
   assert.match(w, /portHost = createPortHost\(\{/);

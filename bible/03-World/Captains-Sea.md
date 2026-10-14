@@ -316,13 +316,15 @@ further ("Clear Wayrest's waters: 2 of 3 pirate ships ended"), the screen's midd
 THE PORTS (PORT-TOWNS, `01-Overview/Field-Bugs-2026-10-13c.md`; the owner: "Even the port quests sending you to non port
 places"). The board's ports - the port a captain lies at (`world.js navalPortHere`, the nearest within a map pixel), a
 cargo's, a treasure chart's - are the TOWNS among Travel Options' harbours (`world.js navalPortList`, `portPlaces.js
-isPortTownType`): the towns that stand the port's places, 155 on the real map. The table is every place a ship may put
+isPortTownType`) that the open sea bears on (`portSites.js seaBears` - INLAND-PORTS, `01-Overview/Field-Bugs-2026-10-14-inland-ports.md`):
+the towns that stand the port's places, 106 on the real map. The table is every place a ship may put
 in at - MAPS.BSA's 343 flagged locations and Hazelnut's extras - and 223 of its 378 are tombs, farms, inns, temples,
 manors, graveyards and ruins, which the board read as ports with harbourmasters until then. A cargo goes only to a port
 with the sea beside it - its own map pixel or one of the eight about it (`harbourBoard.js deliveryPort`, `net/fortLaw.js
-coastalAt`), the berth's reach: 113 of the 155, each answering to its own name from a sea pixel beside it - never to a
-capital inland (31 of the 39 the byte's 0x10 marks have no sea within six pixels) nor to Daggerfall, Sentinel and
-Wayrest, two pixels off it. A cargo already held for a place that is no such port is void at the office's tick, no
+coastalAt`), the berth's reach: 101 of the 106, each answering to its own name from a sea pixel beside it - never to
+Daggerfall, Sentinel and Wayrest, two pixels off it. A capital inland is no port of the board's at all (36 of the 39
+the byte's 0x10 marks have no open sea within two pixels), nor is a town by a lake inland (INLAND-PORTS: the twelve
+that took a cargo until then). A cargo already held for a place that is no such port is void at the office's tick, no
 regard lost, and said ("Contract void - ... No ship can make port there.").
 
 THE SITES (`navalHost.js siteStep`, SITE_CHECK_S apart, aboard): a held bounty's quarry is stood when the captain sails
