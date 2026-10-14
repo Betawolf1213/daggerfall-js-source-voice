@@ -164,6 +164,17 @@ export function challengeDue(player, regionIndex, { ownNow, worldNow = ownNow })
 }
 export function noteChallenge(player, regionIndex, ownNow) { standingOf(player).challengeAt[regionIndex] = ownNow; }
 export function grantGrace(player, regionIndex, ownNow) { standingOf(player).graceUntil[regionIndex] = ownNow + CHALLENGE_GRACE_MINUTES; }
+/** FIELD BUGS 2026-10-14 FINE-MENDS (Dweme... on the Discord: stopped for 560 gold three times with no new crime; Mac:
+ *  "Fine raises standing"). A fine paid on the spot mends the payer's name by a temple penance's step (PENANCE_POINTS),
+ *  never past the watch's line - a fine bought a day's grace and nothing else, so the same standing stopped the player
+ *  again the day after for the same sum. A name a step or two under the line is clear in a fine or two; one far under it
+ *  pays more fines, each its standing's price. Answers the points moved. */
+export function settleChallenge(player, regionIndex) {
+  const rep = legalRepOf(player, regionIndex);
+  const pts = rep < KNOWN_CRIMINAL_BELOW ? Math.min(PENANCE_POINTS, KNOWN_CRIMINAL_BELOW - rep) : 0;
+  if (pts) changeLegalRep(player, regionIndex, pts, { kind: 'fine' });
+  return pts;
+}
 /** The fine the watch asks on the spot: the court's own Criminal Conspiracy penalty at this standing, every unit in coin
  *  and no days (the court would split it between both, and halve it for a guilty plea) - double for a banished one. */
 export function challengeFine(player, regionIndex, { ownNow = 0, worldNow = ownNow } = {}) {

@@ -9,6 +9,11 @@ Discord threads from 2026-10-13 and 2026-10-14, handed over as screenshots, read
 | 2 | "Inns with this room layout can't be used to sleep" - "No prompt to rest or loiter when clicking the beds" (Mona Polca) | the interior builder listed a bed only when its placement was a prop (ObjectType 3), furniture's gate; a bed written as scenery - a dormitory's, a ship's bunks - was never a click target | fixed (INN-BEDS) |
 | 3 | "Crew morale LIES sometimes between fleet window/shipwright and the helm!" - "Let me give them MORE grog!" (Cruor) | the yard's grog row wants no round once the day's is drunk, and the window read that as a crew at the top: "as high as they go", "No need", over a crew the helm called low | fixed (GROG-WORD) |
 | 4 | "Bugs envolving configuration and enchantments" - "my 'Repair items' enchantment is not repairing anything" (Arbeck; the same thread's lifesteal and Look Around are below) | MEND-WORN's order mends the worn piece with the lowest share first, and a worn piece that wears itself on the same round (Cast When Held, Item Deteriorates) took +1 and -1 every tick: it stayed first and nothing else was mended | fixed (MEND-STARVE) |
+| 5 | "Possible bug: Repeated ..." - "I was stopped by the guards and paid a fine of 560 gold. After that, I was stopped again and had to pay the same 560 gold, even though I hadn't committed any new crimes. Now it's happening for the third time" (Dweme...) | REP1 as designed: the fine bought a day's grace (about two real hours online) and nothing else, so the standing that stopped the player stopped them again for the same sum; the box's other two answers net nothing either | changed (FINE-MENDS), Mac's call |
+| 6 | "my off-hand weapon is not having its lifesteal, unless i switch hands (but it was working fine 2 days ago)" (Arbeck) | the port has no dual wield: a weapon's leech heals on its own blows (`lootPowers.js` lootStrike), and the off hand strikes only once H switches to it; nothing on that path changed in the two days (BAL7's 10% cap, 2026-10-12, lowers a leech summed past it) | the card says so (LEECH-HAND), Mac's call: per hand |
+| 7 | "the 'Look Around > With secrets' config is not even showing anything" (Arbeck) | not reproduced: nothing on its path changed since 2026-10-10 and its suite passes; it lights only in a dungeon, on an Info ask (F3 or the wheel's Info), within 8 m and in sight - and a thick secret wall can hide its own glow card | asked of the player |
+| 8 | "Gold appears when I'm trading but not in my inventory" - "After I went to sleep my character lost 5000 of gold" (Soda_do_macaco...) | not reproduced: the trade window's figure, its refusal and its payment read one count (coins and letters of credit); the inventory's footer counts coins alone, and a payment spends letters first, so a 5000 letter spent leaves the coin figure where it was | asked of the player |
+| 9 | "Mountain clipping and invisible" - "Mountain is invisible and you can go through it and get stuck" (BigOOF) | a video, no place named | asked of the player |
 
 ## STORES-CRASH: the Stores page walks a station's nodes as the browser mints them (1)
 
@@ -87,3 +92,54 @@ It dates from MEND-WORN (2026-10-07). The one change to the target inside the re
 FIXED. A worn piece carrying either row is mended after every other damaged piece; once nothing else wants the tick, the
 tick holds it against its own wear, as before. Port-Ledger's MEND-WORN row records it. Pinned by
 `test/fb1014_mendstarve.test.js` (`tools/mutants/fb1014_mendstarve.json`, 3, dead).
+
+## FINE-MENDS: a fine paid on the spot mends the name (5)
+
+`src/systems/standing.js` settleChallenge; `src/scenes/standingHost.js` (the stop's P).
+
+THE REPORT. A player in Daggerfall, "a scoundrel - known to the watch", stopped three times for the same 560 gold with
+no new crime between, asking whether to stop playing until a fix.
+
+FOUND. No fault in the code: REP1's design (`06-Systems/Standing-Arc.md`). The stop's trigger is the standing alone
+(under -10, DFU's line); paying took the gold and granted a day's grace (CHALLENGE_GRACE_MINUTES, on the character's
+own clock - about two real hours online at TimeScale 12, a third of it in one inn's night), and changed no standing. The
+fine is the court's Conspiracy table at that standing, so the same standing asked the same 560 (-12 to -19). Coming
+quietly charges a Conspiracy and the sentence gives it back whole; a standing mends a point a week. A player who read
+"pay the fine" as settling the matter was stopped every couple of hours for days.
+
+CHANGED (Mac, asked: "Fine raises standing"). A fine paid on the spot mends the name by a temple penance's step,
+PENANCE_POINTS (5), never past the -10 line - the reporter is clear in one or two fines; a name far under the line pays
+more fines, each its own standing's price, and the temple stays the way to mend it faster. The HUD's legal notice says
+the rise. The grace is unchanged. Recorded in Port-Ledger's REP1 row. Pinned by `test/fb1014_finemends.test.js`
+(`tools/mutants/fb1014_finemends.json`, 2, dead).
+
+## LEECH-HAND: the leech line says whose blows it heals on (6)
+
+`src/systems/lootRarity.js` AFFIX_KINDS.leech's label.
+
+FOUND. A weapon's power rides the blows of the weapon that struck (`lootPowers.js` lootStrike, the strike listener's
+`weapon`), and the port has DFU's hands, not dual wield: H chooses the hand that swings. An off-hand weapon's leech heals
+on nothing until the player switches to it - the rule since LOOT4, unchanged in the reported two days (BAL7's cap,
+2026-10-12, lowers a leech summed past 10%).
+
+CHANGED (Mac, asked: "Keep per-hand"). The rule stands; the line says it - "5% life leech on this weapon's own blows",
+on the item card, a gem's line and the Reforge. PIN MOVED: `test/loot4_procs.test.js`
+(`tools/mutants/fb1014_leechhand.json`, 1, dead).
+
+## Asked of the players (7, 8, 9)
+
+LOOK AROUND, WITH SECRETS (7). `systems/dungeonSense.js`, `scenes/dungeonContext.js`, `render/nodeGlow.js` - none changed
+since 2026-10-10, `test/sense1_dungeonsense.test.js` green. The tier lights nothing by itself: an Info ask in a dungeon
+(F3 - unbound for a brand-new key file since MODE-WHEEL - or the wheel flicked to Info) lights what is within 8 m and in
+sight for six seconds, a chain-moved secret among them, purple and the faintest form (its shimmer nothing under Reduced
+Motion). Read on the code and not proven: a secret slab thicker than about 1.2 m hides its own glow card, planted at the
+box's floor centre and pulled 0.6 m toward the eye. Asked: where, how the ask was made, and Reduced Motion.
+
+GOLD IN TRADE (8). The trade window's "Your gold", its refusal and its payment are one hook (`worldModes.js`
+openTradeWindow's `gold`, totalGoldAmount: coins and letters of credit). The inventory's footer counts coins alone, and
+deductGold spends letters first - a payment past the coins (an Empire call at joining, a fine) spends a letter and the
+coin figure does not move; the bank, the wagon's coin and a quest's gold stack in the pack are counted by no shop. Nothing
+on the rest path takes gold but a death (a tenth) or an overdue loan's draw. Asked: the footer's two numbers, the line
+seen on waking, and the Wallet's letters.
+
+THE MOUNTAIN (9). A video, no place named. Asked: the place (the map's name or pixel).
