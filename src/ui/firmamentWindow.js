@@ -33,6 +33,7 @@ import { firmamentBook } from '../net/firmamentBook.js';
 import { FRAME_TONES } from './enhancedFrame.js';
 import { GRIM_TONES, GRIMOIRE_STACK, px } from './grimoireDress.js';
 import { artVar } from './grimoireArt.js';
+import { wrapAngle } from '../world/mat4.js';
 import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { registerOverlay } from './enhancedOverlays.js';
 import { audio } from '../systems/audio.js';   // the UI's own click, for a press on the sky (its buttons click through ui/uiClickSound.js)
@@ -848,9 +849,7 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     if (!a || !b) return;
     if (e.arc) {
       const a0 = Math.atan2(a.y - e.arc.cy, a.x - e.arc.cx), a1 = Math.atan2(b.y - e.arc.cy, b.x - e.arc.cx);
-      let d = a1 - a0;
-      while (d > Math.PI) d -= 2 * Math.PI;
-      while (d < -Math.PI) d += 2 * Math.PI;
+      const d = wrapAngle(a1 - a0);   // the short way round (ONCRASH1 C2: the one wrap)
       ctx.moveTo(a.x, a.y);
       ctx.arc(e.arc.cx, e.arc.cy, e.arc.r, a0, a0 + d, d < 0);
     } else { ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); }
