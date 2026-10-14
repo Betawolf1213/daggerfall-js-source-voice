@@ -19,8 +19,9 @@ import { walletReserve } from './realmGoldLaw.js';   // a refused respec gives b
 
 /** Where this device keeps a change whose answer did not come: { [account|character]: { rid, tree } }. */
 export const FIRM_KEPT_KEY = 'firm1.kept';
-/** The refusals that are no word on the change - kept and asked again. */
-const UNHEARD = new Set(['offline', 'server', 'no-session', 'firm-rate']);
+/** The refusals that are no word on the change - kept and asked again. AUDIT UICALM-FIRM1 L2 M3: and the Worker's own
+ *  account-wide two, given before any route looks (`rate`, `maintenance` - profBook.js RETRY's). */
+const UNHEARD = new Set(['offline', 'server', 'no-session', 'firm-rate', 'rate', 'maintenance']);
 
 /** A change's id (FIRM_RID_RE's shape). */
 export function mintFirmRid(rand = (b) => globalThis.crypto.getRandomValues(b)) {
@@ -32,8 +33,8 @@ export function mintFirmRid(rand = (b) => globalThis.crypto.getRandomValues(b)) 
 /**
  * THE RESPEC (`respec`): the whole sky back for FIRM_RESPEC_GOLD gold. A realm character's record pays on the service in
  * the respec's own batch (`realm.act`, systems/realmSaves.js realmGoldAct - the purse checkpointed and reserved first, a
- * refusal giving back exactly what it took); a character that is not the realm's pays from its purse once the service
- * has said yes. `wallet()` is the host's: `{ gold, pay, credit?, region? }`.
+ * refusal giving back exactly what it took); with no realm there is no respec ('realm-needed' - online play is the
+ * realm's). `wallet()` is the host's: `{ gold, pay, credit?, region? }`.
  * @param {{ door: { account?: () => string|null, state: (character: string) => Promise<any>, set: (character: string, tree: string, rid: string) => Promise<any>,
  *   respec?: (character: string, rid: string, realm?: any, region?: number|null) => Promise<any> },
  *   storage?: any, character?: () => string|null, rid?: () => string, realm?: { act: (o: any) => Promise<any> } | null, wallet?: (() => any) | null }} o
@@ -77,11 +78,17 @@ export function createFirmamentBook({ door, storage = null, character = () => nu
   };
   /** @type {{ start: string|null, keys: string[] }|null} */
   let queued = null;
+  /** AUDIT UICALM-FIRM1 L2 M1: a respec on its way - no change is taken while it is (one parked behind it was sent after
+   *  the player's next change and laid the old plan over the new sign) */
+  let respecking = false;
 
   async function send(tree) {
-    const id = kept()[slot()]?.rid ?? rid();
     const who = character();
     if (!who) return { ok: false, error: 'firm-character' };
+    // AUDIT UICALM-FIRM1 L2 M2: AN ID NAMES ONE TREE - the kept change's id is asked again for that same tree alone; a
+    // newer tree is its own request (under the kept id, a kept change that had landed answered it as its repeat)
+    const left = kept()[slot()];
+    const id = left?.rid && left.tree === packTree(tree) ? left.rid : rid();
     keep({ rid: id, tree: packTree(tree) });
     state.sending = tree;
     tell();
@@ -105,21 +112,27 @@ export function createFirmamentBook({ door, storage = null, character = () => nu
       if (!who) return false;
       if (state.character !== who) { state.character = who; state.tree = { start: null, keys: [] }; }
       const left = kept()[slot()];
+      /** AUDIT UICALM-FIRM1 L2 L4: a kept change the service refused when it looked - the player was told it would be
+       *  sent again, so they are told it was not */
+      let refused = null;
       if (left?.rid && !state.sending) {
         const r = await door.set(who, left.tree, left.rid);
         if (r?.ok || !UNHEARD.has(r?.error)) keep(null);
+        if (!r?.ok && !UNHEARD.has(r?.error)) refused = r?.error ?? 'server';
       }
       const r = await door.state(who);
-      if (r?.ok) { apply(r.data); tell(); return true; }
+      if (r?.ok) { apply(r.data); if (refused) state.error = refused; tell(); return true; }
       state.error = r?.error ?? 'server';
       state.status = Number.isSafeInteger(r?.status) ? r.status : null;   // UI-CALM: the window says WHY no stars came (a 404 is a service without the Firmament)
       if (state.error === 'firm-closed' || state.error === 'no-session') state.open = false;
+      if (state.error === 'firm-closed') state.tree = { start: null, keys: [] };   // AUDIT UICALM-FIRM1 L2 M4: a shut sky is no sky in force
       tell();
       return false;
     },
     /** THE PLAYER CONFIRMED `tree` - asked now, or after the change in flight (coalesced: the newest wins). */
     async commit(tree) {
       const t = { start: tree?.start ?? null, keys: [...(tree?.keys ?? [])] };
+      if (respecking) return { ok: false, error: 'firm-busy' };
       if (state.sending) { queued = t; return { ok: true, queued: true }; }
       let r = await send(t);
       while (queued) { const next = queued; queued = null; r = await send(next); }
@@ -128,7 +141,7 @@ export function createFirmamentBook({ door, storage = null, character = () => nu
     /** Whether a respec can be paid now: a sky with something in it, the gold in the wallet, nothing on its way. */
     canRespec() {
       const w = wallet?.();
-      return !!state.tree?.start && !state.sending && !!w && w.gold() >= FIRM_RESPEC_GOLD && typeof door.respec === 'function';
+      return !!state.tree?.start && !state.sending && !!realm && !!w && w.gold() >= FIRM_RESPEC_GOLD && typeof door.respec === 'function';
     },
     /** THE RESPEC: every star and the birthsign back, for FIRM_RESPEC_GOLD gold. */
     async respec() {
@@ -139,19 +152,16 @@ export function createFirmamentBook({ door, storage = null, character = () => nu
       const w = wallet?.();
       if (!w || w.gold() < FIRM_RESPEC_GOLD) return { ok: false, error: 'firm-gold' };
       if (typeof door.respec !== 'function') return { ok: false, error: 'server' };
+      if (!realm) return { ok: false, error: 'realm-needed' };   // AUDIT UICALM-FIRM1 L2 L1: the gold is a realm record's, paid on the service
       const id = rid();
       const region = Number.isSafeInteger(w.region?.()) ? w.region() : null;
       state.sending = { start: null, keys: [] };
+      respecking = true;
       tell();
       let r;
       try {
-        if (realm) {
-          r = await realm.act({ reserve: walletReserve(w, FIRM_RESPEC_GOLD).reserve, call: (/** @type {any} */ at) => door.respec(who, id, at, region) });
-        } else {
-          r = await door.respec(who, id, null, null);
-          if (r?.ok && !r.data?.repeat) w.pay(FIRM_RESPEC_GOLD);
-        }
-      } finally { state.sending = null; }
+        r = await realm.act({ reserve: walletReserve(w, FIRM_RESPEC_GOLD).reserve, call: (/** @type {any} */ at) => door.respec(who, id, at, region) });
+      } finally { state.sending = null; respecking = false; }
       if (r?.ok) {
         keep(null);   // a change kept from before is over a sky that is gone
         if (r.data?.tree !== undefined) apply(r.data); else await book.read();

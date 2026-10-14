@@ -109,7 +109,7 @@ export async function brewAtStation(ctx, player, env, { character, potion: id, k
   // bypassed as it is drunk) - the die still cast first, so the dice after it fall as they did
   const potent = dice(rand) * 100 < chance && potentAble(potion) ? potentPct(specs[100]) : 0;
   const count = brewCount(rank, specs[50], potion);   // AUDIT PROF-541 R2-S1: the counter's goods alone one potion
-  const xp = scaleXp(brewXp(potion, rank, false), xpPct(await firmStatsOf(db, player.id, character), trackOf('alchemy')));   // FIRM1: the Firmament's hand on the brew's XP
+  const xp = scaleXp(brewXp(potion, rank, false), xpPct(await firmStatsOf(db, player, env, character), trackOf('alchemy')));   // FIRM1: the Firmament's hand on the brew's XP
   const nonce = mintId(rand);
   // ?1 player ?2 character ?3 rid ?4 potion ?5 keys ?6 count ?7 potent ?8 unbruised ?9 steps ?10 xp ?11 the first time's
   // ?12 now ?13 nonce; the inputs ?14 on, two a one
@@ -218,7 +218,7 @@ export async function disenchantPiece(ctx, player, env, { character, provenance,
   if (essence < 1) return { error: 'prof-no-essence' };
   const origin = p.bought_with === 'gold' ? 'gold' : p.char_id === character && p.bought_with == null ? 'own' : 'bought';
   const cap = craftXpCap('enchanting', ranks);
-  const xp = scaleXp(disenchantXp(r, rank, base), xpPct(await firmStatsOf(db, player.id, character), 'enchanting'));   // AUDIT PROF12 E2: the piece's recipe's tier, quartered; none for the counter's goods alone - FIRM1: the Firmament's hand on it
+  const xp = scaleXp(disenchantXp(r, rank, base), xpPct(await firmStatsOf(db, player, env, character), 'enchanting'));   // AUDIT PROF12 E2: the piece's recipe's tier, quartered; none for the counter's goods alone - FIRM1: the Firmament's hand on it
   // AUDIT PROF-541 B2: THE RECORD'S OWN PIECE - a realm character's, out of the record its tab last checkpointed
   const prep = side.at ? await prepareRealmRecord(ctx, player.id, side.at, (save) => {
     const items = Array.isArray(save.items) ? save.items : [];

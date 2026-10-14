@@ -374,6 +374,8 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     return { added: d.added.length, removed: removedCommitted, silver: refundSilver(removedCommitted, p.renown), startChanged: d.startChanged };
   }
 
+  /** A respec on its way (Accept waits for it). */
+  let respecking = false;
   function refresh() {
     const p = purse();
     const left = pointsLeft(pending.keys, p.stars, p.craft);
@@ -384,7 +386,7 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
     const c = changes();
     const n = c.added + c.removed;
     goBtn.textContent = n ? `Accept (${n})` : 'Accept';
-    goBtn.disabled = !n || !online;
+    goBtn.disabled = !n || !online || respecking;   // AUDIT UICALM-FIRM1 L2 M1: no change while the sky is being taken back
     undoBtn.disabled = !n;
     // THE RESPEC: a sky with something learned in it, and (online) the gold in the purse
     respecBtn.disabled = !committed.start || (!preview && !book?.canRespec?.());
@@ -582,7 +584,10 @@ export function mountFirmamentWindow(host, { book = firmamentBook(), preview = n
   async function respec() {
     confirmBox.classList.remove('on');
     respecBtn.disabled = true;
-    const r = preview ? { ok: true } : book ? await book.respec() : { ok: false, error: 'offline' };
+    respecking = true;
+    refresh();
+    let r;
+    try { r = preview ? { ok: true } : book ? await book.respec() : { ok: false, error: 'offline' }; } finally { respecking = false; }
     if (dead) return;
     if (r?.ok) {
       committed = preview ? { start: null, keys: [] } : cloneTree(book?.current?.() ?? { start: null, keys: [] });

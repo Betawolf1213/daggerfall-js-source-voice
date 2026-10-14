@@ -48,11 +48,12 @@ export const FIRM_PACKED_MAX = 16_384;
 
 /** The statement that reads a character's tree - read in another act's own round trip (a harvest's). */
 export const firmStatement = (db, playerId, charId) => db.prepare('SELECT tree FROM firmament WHERE player = ?1 AND char_id = ?2').bind(playerId, charId);
-/** The capped stats a tree row gives (none for no row): what a harvest's yield and XP read. */
-export const firmStatsFrom = (row) => treeStats(unpackTree(row?.tree ?? ''));
-/** A character's capped stats, read on their own. */
-export async function firmStatsOf(db, playerId, charId) {
-  return firmStatsFrom(await firmStatement(db, playerId, charId).first());
+/** The capped stats a tree row gives (none for no row): what a harvest's yield and XP read. AUDIT UICALM-FIRM1 L2 M4:
+ *  none while the Firmament is shut to this account - the switch is the tree's whole hand, its words and its trades. */
+export const firmStatsFrom = (row, player, env) => (firmamentOpenFor(player, env) ? treeStats(unpackTree(row?.tree ?? '')) : {});
+/** A character's capped stats, read on their own (none while the switch shuts it, as firmStatsFrom). */
+export async function firmStatsOf(db, player, env, charId) {
+  return firmStatsFrom(await firmStatement(db, player.id, charId).first(), player, env);
 }
 
 /** A character's purses as this service counts them: `{ renown, stars, craft, ranks }`. */
@@ -107,6 +108,9 @@ export async function setFirmament(ctx, player, env, body = {}) {
   const prior = await db.prepare('SELECT char_id, tree, silver FROM firmament_sets WHERE player = ?1 AND rid = ?2').bind(player.id, rid).first();
   if (prior) {
     if (prior.char_id !== character) return { error: 'firm-rid' };
+    // AUDIT UICALM-FIRM1 L2 M2: AN ID NAMES ONE TREE - another tree asked under a made change's id is refused, never
+    // answered as that change's repeat (the newer tree would be told it landed and never be made)
+    if (typeof body.tree !== 'string' || packTree(unpackTree(body.tree)) !== String(prior.tree ?? '')) return { error: 'firm-rid' };
     const purses = await pursesOf(ctx, player.id, character);
     const now = await firmStatement(db, player.id, character).first();
     return view(unpackTree(now?.tree ?? ''), purses, { repeat: true, silver: Number(prior.silver) });
@@ -171,8 +175,8 @@ export async function setFirmament(ctx, player, env, body = {}) {
  * star and the birthsign, to choose again. A realm character's record pays the gold in the respec's own batch (realm.js
  * prepareRealmRecord, the wallet's own order - its purse, its letters, then `region`'s account), asked first where the
  * record stands (realmActFirst: a respec asked again after its answer was lost finds its record one on - that is it,
- * landed); one that is not the realm's pays from its own purse on the client. Answers the view (`respec`, `gold`, and
- * `realm: { seq }` where a record moved); `repeat` for a request already made. Refusals: 'firm-character', 'firm-rid',
+ * landed); one with no realm record is refused ('realm-needed' - AUDIT UICALM-FIRM1 L2 L1). Answers the view (`respec`,
+ * `gold`, and `realm: { seq }`); `repeat` for a request already made. Refusals: 'firm-character', 'firm-rid',
  * 'firm-closed', 'firm-rate', 'firm-respec-empty' (a sky with nothing in it), 'firm-stale', the realm's ('realm-needed',
  * 'lease', 'seq', 'realm-gold', 'no-realm-character', 'no-data', 'no-storage').
  */
@@ -192,16 +196,19 @@ export async function respecFirmament(ctx, player, env, body = {}) {
   }
   const closed = shut(player, env);
   if (closed) return closed;
+  // AUDIT UICALM-FIRM1 L2 L1: THE GOLD IS THE RECORD'S - a respec with no realm record to pay it is refused, never made
+  // free (it had answered `gold` it never took, and a sky taken back that way skipped the refund's silver)
+  if (!side.at) return { error: 'realm-needed' };
   if (await overRate(ctx, `firm:${player.id}`, FIRM_OPS_MAX, FIRM_OPS_WINDOW_S)) return { error: 'firm-rate' };
   const [row, purses] = await Promise.all([firmStatement(db, player.id, character).first(), pursesOf(ctx, player.id, character)]);
   const prevPacked = String(row?.tree ?? '');
   if (!unpackTree(prevPacked).start) return { error: 'firm-respec-empty' };
-  const prep = side.at ? await prepareRealmRecord(ctx, player.id, side.at, (save) => (payFromSave(save, FIRM_RESPEC_GOLD, region ?? null) ? null : 'realm-gold')) : null;
-  if (prep?.error) return prep;
+  const prep = await prepareRealmRecord(ctx, player.id, side.at, (save) => (payFromSave(save, FIRM_RESPEC_GOLD, region ?? null) ? null : 'realm-gold'));
+  if (prep.error) return prep;
   const nonce = mintId(rand);
   try {
     await db.batch([
-      ...(prep?.steps ?? []),
+      ...prep.steps,
       // THE RESPEC'S ROW: over the tree it was asked over - a change landed first fails the whole batch, gold and all
       db.prepare(`INSERT INTO firmament_sets (player, rid, char_id, prev, tree, silver, at, n)
         SELECT ?1, ?4, ?2, ?3, '', 0, ?5, ?6
@@ -211,13 +218,13 @@ export async function respecFirmament(ctx, player, env, body = {}) {
       db.prepare("UPDATE firmament SET tree = '', updated_at = ?3 WHERE player = ?1 AND char_id = ?2").bind(player.id, character, nowS),
     ]);
   } catch {
-    if (prep) await dropIfUnnamed(db, ctx.bucket, player.id, character, prep.key);   // a batch that landed and lost its answer keeps its save
-    const moved = side.at ? await recordMovedOf(db, player.id, side.at) : null;
+    await dropIfUnnamed(db, ctx.bucket, player.id, character, prep.key);   // a batch that landed and lost its answer keeps its save
+    const moved = await recordMovedOf(db, player.id, side.at);
     if (moved) return moved;
     return { error: 'firm-stale' };
   }
-  if (prep) await dropObjects(ctx.bucket, [prep.prev]);
-  return view({ start: null, keys: [] }, purses, { respec: true, gold: FIRM_RESPEC_GOLD, ...(prep ? { realm: { seq: prep.seq } } : {}) });
+  await dropObjects(ctx.bucket, [prep.prev]);
+  return view({ start: null, keys: [] }, purses, { respec: true, gold: FIRM_RESPEC_GOLD, realm: { seq: prep.seq } });
 }
 
 /** The statuses a refusal answers with. */
