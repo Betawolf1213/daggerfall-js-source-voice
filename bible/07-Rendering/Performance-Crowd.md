@@ -187,6 +187,60 @@ part off while its hull moved and on again, a part hung under the hull and under
 `tools/mutants/perfsails1.json` (8, 8 dead), and AUDIT PRE-MERGE 0928 R5's own (`test/audit0928_online.test.js`: the walk
 activeObjects' to the bit, nothing allocated by a second frame - its mutant re-aimed).
 
+## PERF-SAILS3 — a boat's plan, and the walk written where it stood
+
+*2026-10-14, a live capture of the owner's client (DFO-main, origin/main d8ccf7fd6, vsync, an RX 6700 XT), one spot of
+one town offline and online: offline 237 FPS (the monitor's cap) on 3.1 ms of JavaScript a frame; online 91 FPS, the
+main thread saturated at 9.7 ms, the GPU process's WebGL ~3.9 ms - the frame is the main thread's. Of the online
+frame's 6.7 ms more, the port's ships were ~3.1: the pool's frame and draw 1.84, navalHost's poseShip and the ships'
+particles the rest - and 1.5 MB a frame of the 4.0 MB the frame allocated (326 MB/s; 49 frames over 20 ms in ten
+seconds).*
+
+After PERF-SAILS1 and PERF-SAILS2 a matrix is made only where one moved and only when read, but every frame still
+walked every active object of every drawn boat three more times to find what to do with it: `frame` scanned each node's
+components for its holders, `syncFlats` asked each node for a billboard and a renderer, and `draw` asked each for its
+renderer, its filter and its holder and built its model key - `rendererModelKey`, a string of every slot - and a
+builder closure for a mesh already in. And it made garbage doing so: the walk's three lists were emptied and pushed
+again (an emptied array gives its storage back), a Set of the frame's flats, a size and a scale a flat, an entry a
+still part, the ropes' bones and matrices and pose an every-frame holder, and an iterator a destructured quaternion
+(`quatMultiply`, `quatToMat4Into` - a walk's `lq` is a Float64Array's view).
+
+- THE PLAN (`comeSailAwayPool.js` planOf): each boat's walk keeps a plan - her holders with their nodes, her
+  billboards' nodes with their components, her renderers' nodes with their filter and holder, and per renderer its
+  model key and slots (made again only when its mesh, its materials or its bundle's materials are other arrays - every
+  writer assigns a new one) and its still chain. It is made again when her walk's nodes are others (the walk's `ver`),
+  a tree's shape changed (`prefabShapeStamp` - a part hung elsewhere, a component added) or her MeshObject is another.
+  What can change frame to frame - a renderer switched off, a billboard's material, a classic model's load, a bake's
+  upload - is still read every frame.
+- THE WALK WRITTEN WHERE IT STOOD: each slot of its lists written over, the tail cut only when the walk is shorter, and
+  `ver` counting the walks whose nodes changed.
+- THE FLATS: marked with the frame's sweep (a batch not marked is gone, as the Set said), each flat's size written into
+  the one record the pool gave it, and `lossyScaleOf(world, out)` - the product's diagonal alone, each term the one
+  `mul3` sums, in its order: the same floats.
+- THE ROPES (an every-frame holder, AUDIT GN2-RG1): the bones found once a tree's shape and a bones list, their matrices
+  and the renderer's pose written into the holder's own record; `rigStill`'s undoing turn one kept array.
+- `quatMultiply` and `quatToMat4Into` read by index.
+
+Same answer: everything the pool draws (each mesh, its matrix's bits, the texture remap), records for the shadow maps,
+uploads as a bake, stands as a flat (its origin, size, emission, look) and lights, frame by frame, over twelve ships
+standing and rocking with a part switched off and on, a renderer off and on, a variant, a ship faded and one removed,
+the origin moved, a flat scaled, a part turned and the town's lights put out - one sha256 on origin/main d8ccf7fd6 and
+on this tree (`test/perfsails3.test.js`; a one-ulp change to the flats' scale moves it).
+
+`tools/csaBench.mjs`, twelve ships (7,384 objects), the frame and its draw, three runs each: standing 1.19-1.25 ->
+0.52-0.53 ms, rocking (`BOB=1`) 1.47-1.59 -> 0.71-0.74.
+
+Live, the owner's client online at the same spot of the same town, one build after the other (origin/main d8ccf7fd6,
+then it with this change; CPU profile 11 s, sampled heap 10 s, source-mapped): the pool's frame 1.82 -> 1.07 ms and its
+draw 0.68 -> 0.25 (the ships' 2.50 -> 1.32 ms a frame); what the frame allocates under the pool 2,072 -> 738 KB a frame,
+the whole frame's 5.45 -> 3.21 MB; 78 -> 98 FPS, frames over 20 ms in ten seconds 22 -> 2. An online town is not the
+same scene twice - the draws were 1,973 and 1,931 a frame - so the FPS and the long frames are that pair's, and the
+pool's own milliseconds the change's.
+
+Pins: `test/perfsails3.test.js` (5), `tools/mutants/perfsails3.json` (11, 11 dead). AUDIT PRE-MERGE 0928's
+`A0928-R5-flat-scale-walks-again` (`n.lossyScale` for the walk's matrix) survives on origin/main d8ccf7fd6 as it does
+here - the node's own matrix is kept since AUDIT NAV1 #11, so the walk again makes nothing the pin can count.
+
 ## PERF-SKY1 — the stars are a night's (the port takes this part alone)
 
 The v5 slice's stars half: the Dynamic Skies dome weighs its stars by `night * horizonValue`, and by day night is 0 -
