@@ -49,6 +49,8 @@ export const BEFORE_DEATH_S = 120;
 /** How far the line's rev moves past every copy's: a device's copy written after the revival but from a stale base is
  *  refused as stale and merges the stored copy in (legacy.js putLineage) - the margin keeps the stored copy the newer. */
 export const REV_MARGIN = 100;
+/** D1's longest statement (bytes) - a plan with a longer one writes nothing (REVIVE-SIZE). */
+export const STATEMENT_MAX_BYTES = 100_000;
 
 /** An SQL string, a quote doubled - for values the plan read back from D1 itself, never a caller's text. */
 export const sqlStr = (s) => `'${String(s).replace(/'/g, "''")}'`;
@@ -123,11 +125,14 @@ export function planRevive({ then, now, found, player, nowS, restoreHomes = true
   const sql = [], held = [], said = [];
   const P = sqlStr(player), F = sqlStr(found.fallen);
   const fallenNow = (now.chars ?? []).find((c) => c.id === found.fallen);
-  // 1. THE TOMBSTONE - at the stamp it was read with, and only while the roster has room (the living are listed six)
+  // 1. THE TOMBSTONE - at the stamp it was read with, and only while the roster has room (the living are listed six).
+  // Written AFTER the line (REVIVE-SIZE): a write cut between them leaves her line stamped and her tombstone standing -
+  // dead as she was, run again - never alive under a line whose next write entombs her again
+  let tombstone = null;
   if (fallenNow?.dead_at != null) {
     if (found.living >= REALM_CHARACTERS_MAX) held.push(`the account holds ${found.living} living realm characters - the revived one would fall off the roster's ${REALM_CHARACTERS_MAX}; delete one first`);
     else {
-      sql.push(`UPDATE realm_characters SET dead_at = NULL, dead_why = NULL, lease = NULL, updated_at = ${nowS} WHERE id = ${F} AND player = ${P} AND dead_at = ${fallenNow.dead_at} AND dead_why = 'fell' AND (SELECT COUNT(*) FROM realm_characters WHERE player = ${P} AND dead_at IS NULL) < ${REALM_CHARACTERS_MAX};`);
+      tombstone = `UPDATE realm_characters SET dead_at = NULL, dead_why = NULL, lease = NULL, updated_at = ${nowS} WHERE id = ${F} AND player = ${P} AND dead_at = ${fallenNow.dead_at} AND dead_why = 'fell' AND (SELECT COUNT(*) FROM realm_characters WHERE player = ${P} AND dead_at IS NULL) < ${REALM_CHARACTERS_MAX};`;
       said.push(`the tombstone of ${found.name ?? found.fallen} (dead at ${new Date(fallenNow.dead_at * 1000).toISOString()}) cleared`);
     }
   } else said.push(`${found.name ?? found.fallen} stands already - no tombstone to clear`);
@@ -138,6 +143,7 @@ export function planRevive({ then, now, found, player, nowS, restoreHomes = true
   const me = personOf(rec, found.person);
   const heirPersons = new Set((now.chars ?? []).filter((c) => found.heirs.includes(c.id)).map((c) => c.person_id));
   if (rec && me) {
+    const was = JSON.parse(JSON.stringify(rec));
     const before = JSON.stringify(rec);
     stampRevived(me, found.diedAt);
     dropRevived(rec);
@@ -152,10 +158,15 @@ export function planRevive({ then, now, found, player, nowS, restoreHomes = true
     }
     if (JSON.stringify(rec) !== before) {
       rec.rev = Math.max(Number(lineNow.rev) || 0, Number(rec.rev) || 0) + REV_MARGIN;
-      sql.push(`UPDATE lineages SET record = ${sqlStr(JSON.stringify(rec))}, rev = ${rec.rev}, updated_at = ${nowS} WHERE player = ${P} AND id = ${sqlStr(found.line)} AND rev = ${lineNow.rev};`);
-      said.push(`the line's record: her death (at ${found.diedAt}) taken back and stamped, its remains and its Succession dropped${houses ? `, ${houses} house row(s) hers again` : ''}; rev ${lineNow.rev} -> ${rec.rev}`);
+      const edit = recordEdit(was, rec);
+      if (!edit) held.push('the line\'s record changed past what an edit in place can say - nothing written to it');
+      else {
+        sql.push(`UPDATE lineages SET record = ${edit}, rev = ${rec.rev}, updated_at = ${nowS} WHERE player = ${P} AND id = ${sqlStr(found.line)} AND rev = ${lineNow.rev};`);
+        said.push(`the line's record: her death (at ${found.diedAt}) taken back and stamped, its remains and its Succession dropped${houses ? `, ${houses} house row(s) hers again` : ''}; rev ${lineNow.rev} -> ${rec.rev}`);
+      }
     } else said.push('the line\'s record already holds her alive and stamped');
   } else held.push('the line or her person is not in the record as it stands - nothing written to it');
+  if (tombstone) sql.push(tombstone);
 
   // 3. THE HOMES her heir inherited - hers again where the heir still holds them
   const homesThen = (then.homes ?? []).filter((h) => h.char_id === found.fallen);
@@ -209,8 +220,55 @@ export function planRevive({ then, now, found, player, nowS, restoreHomes = true
     const other = u.a_char === found.fallen ? `${u.b_player}:${u.b_char}` : `${u.a_player}:${u.a_char}`;
     held.push(`she was wed to ${other}; the union ended at her death and their house heard it - not reopened`);
   }
+  // ALL OR NOTHING (REVIVE-SIZE): D1 refuses a statement past STATEMENT_MAX_BYTES, and a revive written in part is worse
+  // than none - so a plan with one too long writes nothing, and says which
+  const long = sql.filter((q) => new TextEncoder().encode(q).length > STATEMENT_MAX_BYTES);
+  if (long.length) {
+    held.push(`${long.length} statement(s) longer than D1 takes (${STATEMENT_MAX_BYTES} bytes) - NOTHING written: ${long.map((q) => q.slice(0, 40)).join('; ')}`);
+    sql.length = 0;
+  }
   return { sql, held, said };
 }
+
+/**
+ * REVIVE-SIZE: THE LINE'S NEW RECORD, AS AN EDIT IN PLACE - SQLite's own JSON functions over the stored text - never
+ * the whole record in the statement. A record may be LINEAGE_MAX_BYTES (128 KiB) and D1 refuses a statement past 100 KB;
+ * an edit names only what the revival moved: the people changed (each set whole, by index), the remains rows dropped
+ * (removed by index, the last first), the Succession, the house rows changed, and the rev. Proven before it is
+ * answered: the same edit made here, over the record as read, must give the new record exactly - else null, and the
+ * plan holds the line. The statement's guard (the rev it read) makes sure the text it edits is the text read.
+ * @param {any} was the record as it stands @param {any} rec the record the revival makes
+ * @returns {string | null} the SQL expression for the new `record`
+ */
+export function recordEdit(was, rec) {
+  const same = (a, b) => canon(a) === canon(b);
+  const keys = new Set([...Object.keys(was ?? {}), ...Object.keys(rec ?? {})]);
+  for (const k of keys) if (!['people', 'remains', 'pending', 'houses', 'rev'].includes(k) && !same(was[k], rec[k])) return null;
+  if ((was.people ?? []).length !== (rec.people ?? []).length || (was.houses ?? []).length !== (rec.houses ?? []).length) return null;
+  const sets = [];
+  rec.people.forEach((p, i) => { if (!same(was.people[i], p)) sets.push([`$.people[${i}]`, p]); });
+  (rec.houses ?? []).forEach((h, i) => { if (!same(was.houses[i], h)) sets.push([`$.houses[${i}]`, h]); });
+  if (!same(was.pending ?? null, rec.pending ?? null)) sets.push(['$.pending', rec.pending ?? null]);
+  sets.push(['$.rev', rec.rev]);
+  // the rows dropped: the record's remains are the stored ones, in order, less some - matched in one walk
+  const gone = [];
+  const kept = rec.remains ?? [];
+  let m = 0;
+  (was.remains ?? []).forEach((r, k) => { if (m < kept.length && same(r, kept[m])) m++; else gone.push(k); });
+  if (m !== kept.length) return null;
+  // proven: the same edit, made here
+  const made = JSON.parse(JSON.stringify(was));
+  for (const k of [...gone].reverse()) made.remains.splice(k, 1);
+  for (const [path, v] of sets) {
+    const at = /^\$\.(\w+)(?:\[(\d+)\])?$/.exec(path);
+    if (at[2] == null) made[at[1]] = v; else made[at[1]][Number(at[2])] = v;
+  }
+  if (!same(made, rec)) return null;
+  const removed = gone.length ? `json_remove(record, ${[...gone].reverse().map((k) => sqlStr(`$.remains[${k}]`)).join(', ')})` : 'record';
+  return `json_set(${removed}, ${sets.map(([path, v]) => `${sqlStr(path)}, json(${sqlStr(JSON.stringify(v))})`).join(', ')})`;
+}
+/** A value's JSON with its keys in order - two records the same whatever order their keys were written in. */
+const canon = (v) => JSON.stringify(v, (_, x) => (x && typeof x === 'object' && !Array.isArray(x) ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, x[k]])) : x));
 
 /** The run's page: who, what is written, what is held for the operator. */
 export function summaryOf({ handle, found, plan, apply }) {

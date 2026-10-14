@@ -757,9 +757,9 @@ nothing twice; a run cut short is planned again):
 - her union with another player's character REPORTED, never reopened - their house heard she died.
 
 Her heir stays, a living member, theirs to keep or delete from the Online door. Her years stay spent: an Enduring
-elder's next death is final, as it was. `test/revive.test.js` (8) runs it over a real death on the real Worker's
+elder's next death is final, as it was. `test/revive.test.js` (9) runs it over a real death on the real Worker's
 service - the plan applied and run again, a stale device's write after it, the held cases, the tombstone guard, the
-workflow's shape; `tools/mutants/revive.json` (27) all dead.
+workflow's shape; `tools/mutants/revive.json` (30) all dead.
 
 UNVERIFIED until the dry run reads production: whether she played online at all (offline, nothing here applies - her
 device's own store holds the death), whether she held a guild seat or a union, and that Time Travel still reaches
@@ -773,3 +773,14 @@ whether `--find` was ANYWHERE in its words, before asking `--plan` - and the pla
 null"). Nothing was written; the hold lifted; acct132 answered. The mode is now the first word alone, and
 `test/revive.test.js` runs the tool's `--find` and `--plan` as the workflow's own lines write them (mutant
 REV-the-mode-any-word, dead). The run is to be made again.
+
+REVIVE-SIZE (2026-10-14, Mac: "are you sure it works"). Read against what the first run found - her line at rev 307, a
+guild seat, three homes, 101 ledger pieces, a union - the plan wrote the line's WHOLE record into one statement, and a
+record may be 128 KiB (LINEAGE_MAX_BYTES) where D1 refuses a statement past 100 KB. The record is now an EDIT IN PLACE
+(`recordEdit`: SQLite's json_set/json_remove over the stored text - the people changed, set whole by index; the remains
+rows dropped, by index, the last first; the Succession; the house rows changed; the rev), proven before it is answered
+(the same edit made in the tool must give the law's record exactly, else the line is held). The line is written BEFORE
+the tombstone, so a write cut between them leaves her dead under a stamped line - run again - never alive under a line
+whose next write entombs her. And a plan with any statement past STATEMENT_MAX_BYTES writes NOTHING. Checked with it:
+nothing deletes a fallen character's saves (no cron touches realm_characters or the bucket; a tombstone only refuses
+writes) and the game never checkpoints a dead character, so the save the revival hands back is her last before the death.
