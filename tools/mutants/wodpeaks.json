@@ -30,22 +30,22 @@
   {
     "name": "LANDFORM8-no-peaks",
     "file": "src/world/landforms.js",
-    "old": "      sum += pa * (peakField(wx, wy, land.peaks.cell, land.peaks.fill) - land.peaks.fill * PEAK_MEAN);",
-    "new": "      void pa;",
+    "old": "      sum += pa * (peakField(wx, wy, land.peaks.cell, land.peaks.fill, sharp) - land.peaks.fill * (sharp ? PEAK_MEAN_SHARP : PEAK_MEAN));   // centred: the land's mean stays its own",
+    "new": "      void pa, sharp;",
     "tests": ["test/landform6.test.js", "test/auditlandforms3.test.js", "test/landform.test.js"]
   },
   {
     "name": "LANDFORM8-uncentred",
     "file": "src/world/landforms.js",
-    "old": "      sum += pa * (peakField(wx, wy, land.peaks.cell, land.peaks.fill) - land.peaks.fill * PEAK_MEAN);",
-    "new": "      sum += pa * peakField(wx, wy, land.peaks.cell, land.peaks.fill);",
+    "old": "      sum += pa * (peakField(wx, wy, land.peaks.cell, land.peaks.fill, sharp) - land.peaks.fill * (sharp ? PEAK_MEAN_SHARP : PEAK_MEAN));   // centred: the land's mean stays its own",
+    "new": "      sum += pa * peakField(wx, wy, land.peaks.cell, land.peaks.fill, sharp);",
     "tests": ["test/auditlandforms3.test.js", "test/landform6.test.js"]
   },
   {
     "name": "LANDFORM8-pyramid",
     "file": "src/world/landforms.js",
-    "old": "      const v = (0.45 + 0.55 * cellHash(ix, iy, 17)) * (0.5 + 0.5 * cosPi(q));",
-    "new": "      const v = (0.45 + 0.55 * cellHash(ix, iy, 17)) * (1 - q);",
+    "old": "      const v = (0.45 + 0.55 * cellHash(ix, iy, 17)) * (sharp ? t * t : 0.5 + 0.5 * cosPi(q));",
+    "new": "      const v = (0.45 + 0.55 * cellHash(ix, iy, 17)) * (sharp ? t * t : 1 - q);",
     "tests": ["test/landform6.test.js"]
   },
   {

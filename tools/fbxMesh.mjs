@@ -4,7 +4,7 @@
 //                            [--forward=-z] [--up=-x]
 //                            [--units=52.5] [--origin=centre|grip]
 //                            [--keep-rotation] [--no-normalise]
-//                            [--placement=object|scene]
+//                            [--placement=object|scene] [--material=N]
 //
 // FIELD-GUN-MW1 (2026-09-20, Mac: "texturing and rigging this for the
 // morrowind model"). The reader's header says why an FBX is a source
@@ -821,10 +821,60 @@ function layerReader(layer, stride, valueKey, indexKey) {
 }
 
 /**
+ * MW-HEADS1: the material index each of a Geometry's `polygons` POLYGONS wears - LayerElementMaterial, as Blender
+ * writes it (ByPolygon, or AllSame for an object of one material; IndexToDirect into the object's material
+ * connections, in their order). Anything else is refused rather than read as another layout - and so is a ByPolygon
+ * list that is not one index a polygon (AUDIT MW-FOLK1 L1-F9: a short list read its missing polygons as no material's,
+ * and they were dropped from every bake without a word).
+ */
+function materialReader(geo, polygons) {
+  const layer = childNamed(geo, 'LayerElementMaterial');
+  if (!layer) throw new Error('the Geometry carries no LayerElementMaterial - there is no material to bake alone');
+  const map = childNamed(layer, 'MappingInformationType')?.props[0];
+  const ids = childNamed(layer, 'Materials')?.props[0];
+  if (!ids?.length) throw new Error('LayerElementMaterial carries no Materials');
+  if (map === 'AllSame') return () => ids[0];
+  if (map === 'ByPolygon') {
+    if (ids.length !== polygons) throw new Error(`LayerElementMaterial: ${ids.length} material indices for ${polygons} polygons`);
+    return (i) => ids[i];
+  }
+  throw new Error(`LayerElementMaterial: MappingInformationType ${map} is not ByPolygon or AllSame`);
+}
+
+/**
+ * MW-HEADS1: WHICH PICTURE EACH MATERIAL OF AN OBJECT WEARS - the texture's path as the export gives it (its
+ * RelativeFilename, forward slashes: MW-FOLK1's paintings share a file name across the folders they came from) on each
+ * of the Mesh object `name`'s materials, in the order their connections give them (the order LayerElementMaterial's
+ * indices count in), or null for a material with no texture. The paintings are handed over by attachment, nameless;
+ * the export is the one place their names survive, so a bake reads a material by its index AND holds it to the name
+ * the export gives it.
+ */
+export function objectMaterials(tree, name) {
+  const objects = nodeAt(tree.nodes, 'Objects');
+  const byId = new Map((objects?.children ?? []).map((o) => [String(o.props[0]), o]));
+  const model = childrenNamed(objects, 'Model').find((m) => m.props[2] === 'Mesh' && objectName(m.props[1]) === name);
+  if (!model) throw new Error(`no Mesh object "${name}" in this export`);
+  const conns = childrenNamed(nodeAt(tree.nodes, 'Connections'), 'C');
+  const into = (id, kind) => conns.filter((c) => String(c.props[2]) === id && byId.get(String(c.props[1]))?.name === kind);
+  const node = (c) => byId.get(String(c.props[1]));
+  return into(String(model.props[0]), 'Material').map((m) => {
+    const texs = into(String(node(m).props[0]), 'Texture');
+    const tex = texs.length ? node(texs.find((c) => c.props[3] === 'DiffuseColor') ?? texs[0]) : null;   // the base colour's picture
+    const file = tex ? String(childNamed(tex, 'RelativeFilename')?.props[0] ?? '') : '';
+    return file ? file.replace(/\\/g, '/') : null;
+  });
+}
+
+/**
  * Bake one Geometry/Model pair out of a parsed FBX tree.
  * Pure: bytes in, numbers out, nothing touched on disk.
+ *
+ * MW-HEADS1: `material` bakes the polygons of ONE material alone - an object of several pictures (a head and its
+ * hair; a tunic, its sleeves and its hose) is one part per picture to the game. Every other polygon is skipped whole,
+ * so a corner only it names is never welded in; without it every polygon is baked, as always, and the record is the
+ * one it was.
  */
-export function bakeMesh(tree, { name = null, keepRotation = false, normalise = true, forward = '-z', up = '-x', units = 1, origin = 'centre', placement = 'object' } = {}) {
+export function bakeMesh(tree, { name = null, keepRotation = false, normalise = true, forward = '-z', up = '-x', units = 1, origin = 'centre', placement = 'object', material = null } = {}) {
   if (placement !== 'object' && placement !== 'scene') throw new Error(`placement "${placement}" is not object or scene`);
   const scene = placement === 'scene';
   const toBasis = basisMap(forward, up);
@@ -892,12 +942,14 @@ export function bakeMesh(tree, { name = null, keepRotation = false, normalise = 
 
   // ── triangulate and weld ──────────────────────────────────────────
   const polys = polygonsOf(pvi);
+  const wears = material === null ? null : materialReader(geo, polys.length);   // MW-HEADS1
   const outPos = []; const outNrm = []; const outUv = []; const indices = [];
   const seen = new Map();
   let corner = 0;
   let ngons = 0;
   let clipped = 0;
   let repeated = 0;   // MW-EBONY1: faces clipped once their repeated corners were dropped (earClipRepeated)
+  let kept = 0;   // MW-HEADS1: the polygons the bake took (every one, without `material`)
   const cornerOf = (c, positionIndex) => {
     const n = readNormal ? readNormal(c, positionIndex) : null;
     const uv = readUv ? readUv(c, positionIndex) : null;
@@ -917,10 +969,13 @@ export function bakeMesh(tree, { name = null, keepRotation = false, normalise = 
     return at;
   };
 
-  for (const poly of polys) {
+  for (let pi = 0; pi < polys.length; pi++) {
+    const poly = polys[pi];
     const base = corner;
     corner += poly.length;
     if (poly.length < 3) throw new Error(`a polygon with ${poly.length} corners is not a face`);
+    if (wears && wears(pi) !== material) continue;   // MW-HEADS1: another picture's polygon
+    kept++;
     if (poly.length > 4) ngons++;
     const ring = poly.map((p, i) => cornerOf(base + i, p));
     // FAN from corner 0 when that is a triangulation - every convex
@@ -943,6 +998,7 @@ export function bakeMesh(tree, { name = null, keepRotation = false, normalise = 
   }
 
   if (outPos.length / 3 > 65535) throw new Error(`${outPos.length / 3} vertices will not fit a Uint16 index buffer`);
+  if (wears && !kept) throw new Error(`no polygon of this object wears material ${material}`);   // MW-HEADS1: a picture it does not wear is no mesh
 
   // ── the frame: centre on bounds, longest axis to 1 ────────────────
   const min = [Infinity, Infinity, Infinity]; const max = [-Infinity, -Infinity, -Infinity];
@@ -975,7 +1031,8 @@ export function bakeMesh(tree, { name = null, keepRotation = false, normalise = 
       creator: nodeAt(tree.nodes, 'Creator')?.props[0] ?? childNamed(tree.nodes, 'Creator')?.props[0] ?? null,
       sourceVertices: positions.length / 3,
       sourceCorners: pvi.length,
-      polygons: polys.length,
+      polygons: kept,
+      ...(wears ? { material } : {}),   // MW-HEADS1: said only where one picture's polygons were taken alone
       ngons,
       // MW-BRIG1: how many concave polygons were ear-clipped, not fanned.
       clipped,
@@ -1042,7 +1099,7 @@ if (isMain(import.meta.url)) {
   const opt = (k, d = null) => args.find((a) => a.startsWith(`--${k}=`))?.split('=').slice(1).join('=') ?? d;
   const files = args.filter((a) => !a.startsWith('--'));
   if (files.length !== 2) {
-    console.error('usage: node tools/fbxMesh.mjs <in.fbx> <out.json> [--name=X] [--forward=-z] [--up=-x] [--units=N] [--origin=centre|grip] [--keep-rotation] [--no-normalise] [--placement=object|scene]');
+    console.error('usage: node tools/fbxMesh.mjs <in.fbx> <out.json> [--name=X] [--forward=-z] [--up=-x] [--units=N] [--origin=centre|grip] [--keep-rotation] [--no-normalise] [--placement=object|scene] [--material=N]');
     process.exit(2);
   }
   const [inPath, outPath] = files;
@@ -1051,6 +1108,7 @@ if (isMain(import.meta.url)) {
     forward: opt('forward', '-z'), up: opt('up', '-x'),
     units: Number(opt('units', 1)), origin: opt('origin', 'centre'),
     placement: opt('placement', 'object'),
+    material: opt('material') === null ? null : Number(opt('material')),   // MW-HEADS1
   });
   mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, `${JSON.stringify(mesh)}\n`);

@@ -106,13 +106,13 @@ test('AUDIT LANDFORMS III A1: no wall at the knee round a coastal town - a pull 
   assert.ok(eased > 20, `the strand beside the town is raised only part way (${eased} samples 20 units or more under its level)`);
 });
 
-test('AUDIT LANDFORMS III A2: every land\'s hills sit on its land - each land\'s mean hill within 3 in 100 of its height, so its average ground is DFU\'s, lifted; the mountain woods\' centre was the ridgelines\' before RIDGED_NORM was set, and stood them 13-18 m low', () => {
+test('AUDIT LANDFORMS III A2: every land\'s hills sit on its land - each land\'s mean hill within 1.5 in 100 of its height (PIN MOVED, MOUNTAINS-SHARP: within 3, the mountains\' taller peaks hid a ridge\'s centre off by 0.058 under it - every land stands under 0.009), so its average ground is DFU\'s, lifted; the mountain woods\' centre was the ridgelines\' before RIDGED_NORM was set, and stood them 13-18 m low', () => {
   const out = new Float64Array(1);
   for (const [name, climate] of Object.entries(CLIMATES)) {
     const t = filled(climate);
     let sum = 0, deep = 0;
     for (let y = 0; y < 160; y++) for (let x = 0; x < 160; x++) { sum += hillsAt(300 * 128 + x * 41, 150 * 128 + y * 41, 400, 600, null, t, out); deep += out[0]; }
-    assert.ok(Math.abs(sum / deep) < 0.03, `${name}: its mean hill ${(sum / 160 / 160 * STREAMING_TERRAIN_SCALE).toFixed(2)} m, ${(sum / deep).toFixed(4)} of its height`);
+    assert.ok(Math.abs(sum / deep) < 0.015, `${name}: its mean hill ${(sum / 160 / 160 * STREAMING_TERRAIN_SCALE).toFixed(2)} m, ${(sum / deep).toFixed(4)} of its height`);
   }
 });
 
