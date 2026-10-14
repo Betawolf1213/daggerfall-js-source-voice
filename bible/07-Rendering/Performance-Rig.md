@@ -662,3 +662,31 @@ pixel sizes under each term of its reach and is a third of the box it was; a pat
 holds every fragment the shader draws for it, the pass laying it on the walkways' quad and putting the court's back;
 every other shape keeps TELEGRAPH_REACH; and the count at a fighter's eye at 960x540 and 1920x1080 (the AoE frame under
 0.65 of what it rasterised, his mark and his host's a third). `tools/mutants/fb1013e_aoeperf.json`: 11 mutants, all dead.
+
+**What its probe did not time: the shadow pass** (counted 2026-10-14). The rounds above time the telegraph and the crowd's
+draws after `beginFrame`; the shadow maps are drawn inside it (renderer.js `_renderPasses`), from the last frame's records
+under this frame's lights, so the court's own lights never entered them. `tools/courtShadowProbe.mjs` counts that pass:
+the real Renderer and ShadowPass on a counting GL, the court's own mesh, its light composition (`world/gateArena.js`
+withCourtLights over courtLightsNear, under everyLightCasts, as the dungeon arm composes it), Steady shadows, eight
+Morrowind bodies recorded about him with a new pose every frame (5,934 corners each). A frame, mean (worst):
+
+| | 512 faces | lo faces | blits | depth draws | body corners in the maps |
+|---|---|---|---|---|---|
+| a still court | 0 | 0 | 0 | 0 | 0 |
+| the crowd posed, he stands | 6 | 0 | 5 | 19 | 0.11M |
+| he walks among them | 12 | 6 | 6 | 25 | 0.08M |
+| a Hellfire lands on five (its 27 lit frames and the 2 after) | 36 (66) | 4 (126) | 24 (35) | 79 (238) | 0.43M |
+
+All of it is his. withCourtLights marks no light carried, so his glow (it moves with him) and each landing flash
+(gateFx.js FX_KINDS' `light`, for FX_LIGHT_MS) take a 512 caster slot and a lo map as a brazier does, and replay every
+body in their reach six faces a frame; the braziers' maps are cached and none reaches a crowd standing about him; the
+worst lo frame is the session's first landing growing the lo array (every slot drawn afresh), 30 at a later one. The
+same frames with his glow and the flashes composed carried - as a spell's impact light, the wings' and a peer's torch
+are (spellImpactFx.js `light`, auraRing.js auraWingLights, playerTorch.js peerTorchLight) - count 0 in every column, and
+every lit fragment in their reach stops sampling their maps. They would still light the floor and the bodies,
+unshadowed, and throw no glare: a look to choose, not a cost to cut, so it is left for Mac
+(`01-Overview/Field-Bugs-2026-10-13e.md`, For Mac). Also left: DISC15 draws a lo map for a light that holds a 512 slot,
+which no shader reads while it holds it (`uCasterOf` names the 512 slot), so his moving glow pays six lo faces a frame
+for nothing; drawing a lo map only when its light first reads one moves DISC15's own law ("The eight keep their lo maps
+too") and its pins. On SwiftShader the pass was a few per cent of the court's frame (the lit court dominates there); on
+a GPU it is framebuffer switches and the bodies' corners, not measured here.
