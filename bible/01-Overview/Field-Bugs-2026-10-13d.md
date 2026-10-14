@@ -204,3 +204,12 @@ play online.
   and `itemwalk.json` 59 dead, `loot11.json` and `silverfinds.json` 101 dead; after the audit, every list aimed at the
   Legacy host (twenty, 712 records) run over the fixed tree: 708 dead, 3 equivalent as recorded, and one (LEGACY7W-partner-dead-or-lineless, the account service's wedding) surviving as it does on main - `Audit-FB1013d.md` O5. No relay or account file is touched: RELAY_VERSION and
   ACCOUNT_VERSION stand.
+
+## REVIVE: the reporter's own character, given back (2026-10-14) - the owner's call
+
+Mac, after the fixes above: *"I want to roll back this specific account"* (TheHalfinStream), then *"Undo the death"*,
+then *"Full revive"*. The laws stand as written - her death was the span's - and ESTATE-WIDER stays unbuilt; this is
+one account, put back by hand. A death taken back now holds (the `revived` stamp - `06-Systems/Legacy-Arc.md` REVIVE),
+and the operator's "Realm revive" run gives her back her tombstone cleared, her checkpoint (and with it the caravan,
+the gear and the bank), her line's record, her house and windmill, her guild seat and the pieces her heir holds. Her
+heir stays; her years stay spent. Run by hand after acct132 is live: a dry run first, then `apply`.

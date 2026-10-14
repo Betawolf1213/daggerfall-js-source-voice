@@ -986,7 +986,11 @@ test('ACC1c: registering is an UPGRADE IN PLACE, and the code is shown exactly o
   // THE CODE IS NEVER READABLE AGAIN - not from the account, not from
   // anywhere. It is a credential, not a hint.
   assert.ok(!JSON.stringify(acct).includes(reg.body.recoveryCode));
-  assert.ok(!/recovery/i.test(JSON.stringify(acct)), `the account view mentions recovery: ${JSON.stringify(acct)}`);
+  // PIN MOVED: RECOVERY-SET - the ONE recovery fact the view carries is the count (the profile's "1 left" for this
+  // build-from-before's single code), never a code or its hash: past it, the view still says nothing of recovery
+  const { recoveryLeft, ...rest } = acct.account;
+  assert.equal(recoveryLeft, 1);
+  assert.ok(!/recovery/i.test(JSON.stringify({ ...acct, account: rest })), `the account view mentions recovery: ${JSON.stringify(acct)}`);
 
   // registering twice is refused, and so is a taken name
   assert.equal((await call('POST', '/v1/auth/register', { secret: guest.secret, handle: 'Other', password: 'a good long one', ...ACCEPTED })).body.error, 'already-registered');

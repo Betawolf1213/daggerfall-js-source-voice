@@ -27,6 +27,7 @@ import { checkName } from '../../src/net/nameFilter.js';   // ...through the nam
 import { ID_RE, REALM_CHARACTER_RE } from '../../src/net/identityToken.js';   // LEGACY7 part three: the other's account, by the token's own shape; AUDIT LEGACY III O1: and its realm character
 import { releaseSteps } from './ledger.js';   // INT4: a tombstone's pieces let go - an heir, a looter takes them up
 import { guildMemberDead } from './guilds.js';   // AUDIT LEGACY III O5: a tombstone's guild seat handed on
+import { takeRevived, revivedOf } from '../../src/systems/legacy/revived.js';   // REVIVE: a death taken back - the client's law
 
 /** A family's id, as the client mints it (src/systems/legacy/family.js mintFamilyId). */
 export const LINEAGE_ID_RE = /^fam-[0-9a-z]{1,12}-[0-9a-z]{6}$/;
@@ -93,13 +94,15 @@ export async function listLineages({ db }, /** @type {string} */ playerId) {
  * line tombstones that member's realm character (W2, entombLineDead).
  * @param {any} ctx @param {string} playerId @param {{ id: unknown, record: unknown, base?: unknown }} at
  */
-export async function putLineage({ db, nowS }, playerId, { id, record, base = null }) {
+export async function putLineage({ db, nowS }, playerId, { id, record: sent, base = null }) {
   if (!playerId || typeof id !== 'string' || !LINEAGE_ID_RE.test(id)) return { error: 'body' };
+  if (!recordShapeOf(sent, id)) return { error: 'body' };
+  if (base !== null && !(Number.isSafeInteger(base) && /** @type {number} */ (base) >= 0)) return { error: 'body' };
+  const had = await db.prepare('SELECT rev, model, record FROM lineages WHERE player = ? AND id = ?').bind(playerId, id).first();
+  const record = had ? withoutRevived(sent, had.record) : sent;   // REVIVE: a death the stored copy says was taken back
   const rec = recordShapeOf(record, id);
   if (!rec) return { error: 'body' };
   if (rec.bytes > LINEAGE_MAX_BYTES) return { error: 'lineage-too-large' };
-  if (base !== null && !(Number.isSafeInteger(base) && /** @type {number} */ (base) >= 0)) return { error: 'body' };
-  const had = await db.prepare('SELECT rev, model, record FROM lineages WHERE player = ? AND id = ?').bind(playerId, id).first();
   if (had) {
     if (had.model !== rec.model) return { error: 'lineage-model' };
     const moved = await db.prepare('UPDATE lineages SET record = ?, rev = ?, surname = ?, updated_at = ? WHERE player = ? AND id = ? AND rev = ? AND rev < ?')
@@ -120,6 +123,24 @@ export async function putLineage({ db, nowS }, playerId, { id, record, base = nu
   }
   // a race founded it between the read and the write - the founding is another device's: stale, to merge and write again
   return (await staleLine(db, playerId, id, rec.model)) ?? { error: 'too-many-lineages' };
+}
+
+/**
+ * REVIVE: THE DEATHS THE STORED COPY SAYS WERE TAKEN BACK (src/systems/legacy/revived.js - an operator's revival,
+ * tools/reviveRealmCharacter.mjs, stamps the stored copy). A copy from a device that never heard of the revival carries
+ * the death again, and stored, it would kill the member again (entombLineDead) - so the stored copy's stamps are taken
+ * into the copy sent, and every death they take back is dropped with the remains row and the Succession it laid, before
+ * anything is stored or entombed. The stamp so goes home in every copy stored after it, and each device's next merge
+ * drops the death on its own. No second read: the stored copy is the one the write already reads. A line whose stored
+ * copy carries no stamp is the record as sent.
+ * @param {any} sent @param {string} storedText
+ */
+function withoutRevived(sent, storedText) {
+  const stored = parsed(storedText);
+  if (!(stored?.people ?? []).some((/** @type {any} */ p) => revivedOf(p).length)) return sent;
+  const out = JSON.parse(JSON.stringify(sent));
+  takeRevived(out, stored);
+  return out;
 }
 
 /** The stored line, answered to a write that was not made from it - or null when there is none. */

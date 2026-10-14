@@ -1523,6 +1523,7 @@ mods.iliacPuddleNoMore.General.SpawnUnderwaterDecorations.description,"Koristele
 mods.iliacPuddleNoMore.General.SpawnUnderwaterEnemies.description,"Luo vedenalaisia vihollisia"
 mods.iliacPuddleNoMore.General.SpawnWaterSurfaces.description,"Piirrä näkyvät vedenpinnat"
 mods.iliacPuddleNoMore.General.SwimSpeedMultiplier.description,"Kerroin ulkona uimisen liikenopeudelle"
+naval.yard.grogDrunk,"Hänen miehistönsä mieliala on {spirits, select, roaring {riehakas} high {korkea} steady {tasainen} low {matala} other {synkkä}} - he ovat jo saaneet tämän päivän kierroksen"
 net.mod.ambiguous,"Nimellä {name} on {count} pelaajaa. Ketään ei mykistetty."
 net.mod.chatAgain,"Voit taas keskustella."
 net.mod.muteRange,"Mykistys kestää 1–{max} minuuttia (yksi viikko)."

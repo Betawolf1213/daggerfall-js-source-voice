@@ -183,7 +183,7 @@ test('PROFILE-MENU: every class the profile wears is the skin\'s, the title worn
   assert.doesNotMatch(js, /\.style\.|cssText|#[0-9a-fA-F]{6}/);
   // the door hands the card the mark's own character and face
   const menu = src('src/ui/enhancedMenu.js');
-  assert.match(menu, /const save = profileCharacter\(\);\n  card = accountCard\(document, flow, \{/);
+  assert.match(menu, /const save = profileCharacter\(\);\n  const card = accountCard\(document, acctFlow, \{/);   // PIN MOVED: AUDIT RECOVERY-SET B1 - the window's flow
   assert.match(menu, /face: save \? loadFace\(save, \{ scale: 2, copy: true \}\) : null,\n    character: save \? `Playing \$\{characterLine\(save\)\}` : null,/);
 });
 

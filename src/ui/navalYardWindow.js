@@ -30,6 +30,7 @@ import { injectEnhancedStyle, injectEnhancedFonts } from './enhancedStyle.js';
 import { injectNavalKit } from './navalHud.js';
 import { injectNavalWindowStyle } from './navalPlunderWindow.js';
 import { ETHER_SEA_NAME } from '../world/ethericSea.js';   // ELTHERIC: the sea's name, one home
+import { t } from '../systems/textManager.js';   // GROG-WORD: the day's round said in the player's language
 
 export const NAVAL_YARD_STYLE_ID = 'dagger-naval-yard-style';
 /** The yard's own rules beside the naval windows' sheet: a row's three columns. */
@@ -94,10 +95,11 @@ export function yardText(model) {
     const w = WORDS[r.id];
     const state = r.id === 'stores'
       ? (r.missing === 0 ? `${r.have} in her hold - her stores are full` : `${r.have} in her hold - ${r.missing} more at ${gold(r.price)} each`)
-      : (r.missing === 0 ? 'Her crew\'s spirits are as high as they go' : `Her crew's spirits are ${spiritsWord(r.have)} - a round is ${gold(r.price)}`);
+      : r.drunk ? t('naval.yard.grogDrunk', 'Her crew\'s spirits are {spirits, select, roaring {roaring} high {high} steady {steady} low {low} other {grim}} - they have had today\'s round', { spirits: spiritsWord(r.have) })   // GROG-WORD: never "as high as they go" below the top
+        : (r.missing === 0 ? 'Her crew\'s spirits are as high as they go' : `Her crew's spirits are ${spiritsWord(r.have)} - a round is ${gold(r.price)}`);
     return {
       id: r.id, label: w.label, state,
-      press: r.missing === 0 ? (r.id === 'stores' ? 'Full' : 'No need') : r.afford === 0 ? `${w.verb} - ${gold(r.price)}${r.id === 'stores' ? ' each' : ''}`
+      press: r.missing === 0 ? (r.id === 'stores' ? 'Full' : r.drunk ? 'Tomorrow' : 'No need') : r.afford === 0 ? `${w.verb} - ${gold(r.price)}${r.id === 'stores' ? ' each' : ''}`
         : r.id === 'grog' ? `${w.verb} - ${gold(r.cost)}` : r.afford === r.missing ? `${w.verb} ${r.afford} - ${gold(r.cost)}` : `${w.verb} ${r.afford} - ${gold(r.cost)}`,
       can: r.missing > 0 && r.afford > 0,
     };

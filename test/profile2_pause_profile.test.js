@@ -46,7 +46,7 @@ test('PROFILE2: the pause face carries the mark and its window - the window inne
   assert.match(pause, /home\.append\(profileMark\(\)\);/, 'the mark over the game');
   assert.match(pause, /if \(accountOpen\) \{\s*\n\s*const acct = el\('div', 'px-stage px-acctstage'\);\s*\n\s*acct\.append\(accountWindow\(\)\);/, 'the same window the door opens: the account and the Skin card');
   // the window is the innermost thing Escape closes, ahead of the pause face's resume (the one back stack)
-  assert.match(menu, /const back = accountOpen \? \(\) => \{ accountOpen = false; render\(\); \}/);
+  assert.match(menu, /const back = accountOpen \? \(\) => closeAccount\(\)/);   // PIN MOVED: AUDIT RECOVERY-SET B1 - Escape held over codes
   // and a visit's: a window left open on the door does not stand over the next pause unasked
   const mount = menu.slice(menu.indexOf('export function mountEnhancedMenu('), menu.indexOf('export function mountEnhancedMenu(') + 5000);
   assert.match(mount, /questRepairSaid = null;[^\n]*\n(\s*\/\/[^\n]*\n)*\s*accountOpen = false;\n/);

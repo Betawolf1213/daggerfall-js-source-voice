@@ -434,7 +434,14 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
     // DFU's separate map-layout run, which this port has no counterpart
     // for, so it is not ported.) A non-prop shelf/wardrobe model was a
     // lootable container here where DFU leaves it as geometry.
-    if (p.objectType !== PROP_MODEL_TYPE) continue;
+    // FIELD BUGS 2026-10-14 INN-BEDS: a bed is not furniture's action - Roleplay Realism's BedActivation is keyed on the
+    // model id alone (RoleplayRealism.cs:126-128), and DFU stands a custom-activation model on its own whatever its
+    // ObjectType (the CombineRMB note above), so a bed written as scenery (ObjectType 0 or 4: a dormitory's, a ship's
+    // bunks) rests as a prop's does. The furniture chain below stays the prop's alone.
+    if (p.objectType !== PROP_MODEL_TYPE) {
+      if (isBedModel(classicModelIdOf(p.modelIdNum))) beds.push({ cpu, matrix });
+      continue;
+    }
     const had = [containers.length, shelves.length, beds.length];   // BASE-HIDE: which list this piece lands in, if any
     if (isShopShelfModel(p.modelIdNum)) {
       if (opts.houseOwned) {

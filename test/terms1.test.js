@@ -366,7 +366,7 @@ test('TERMS1: the card draws each box UNTICKED, its document linked beside it an
   // ...and no other stage draws one.
   for (const stage of STAGES.filter((s) => s !== 'register')) {
     flow.stage = stage;
-    if (stage === 'code') flow.recoveryCode = 'A-B';
+    if (stage === 'code') flow.recoveryCodes = ['A-B'];   // PIN MOVED: RECOVERY-SET
     if (stage === 'in') flow.account = { name: 'N', handle: 'N', kind: 'linked' };
     card.paint();
     assert.ok(!card.root.all.some((n) => n.type === 'checkbox'), `${stage} drew a box`);

@@ -197,7 +197,7 @@ test('AUDIT 68 S01-register-recover-lost-update: one guest registered from two d
   assert.ok(back.id === g.id && back.recoveryCode, 'the code the winner was shown works');
 });
 
-test('AUDIT 68 S01-register-recover-lost-update: two recoveries racing on ONE code - one succeeds, the other hears bad-code, and the winner\'s new code and session are live', async () => {
+test('AUDIT 68 S01-register-recover-lost-update: two recoveries racing on ONE code - one succeeds, the other hears codes-moved (PIN MOVED, AUDIT RECOVERY-SET A4: a code that was right and lost the race is told to try again, not that it was wrong), and the winner\'s new code and session are live', async () => {
   const ctx = ctxOf(d1());
   const g = await createGuest(ctx, {});
   const reg = await register(ctx, g.id, { handle: 'Foo', password: 'password-one' });
@@ -207,7 +207,7 @@ test('AUDIT 68 S01-register-recover-lost-update: two recoveries racing on ONE co
   ]);
   const won = both.filter((x) => !x.error);
   assert.equal(won.length, 1, 'a single-use code spent once');
-  assert.deepEqual(both.filter((x) => x.error).map((x) => x.error), ['bad-code']);
+  assert.deepEqual(both.filter((x) => x.error).map((x) => x.error), ['codes-moved']);   // PIN MOVED: AUDIT RECOVERY-SET A4
   assert.ok(await resolveSession(ctx, won[0].secret), 'the winner\'s session is live');
   assert.ok((await recover(ctx, { handle: 'Foo', code: won[0].recoveryCode, password: 'password-four' })).id, 'and so is its new code');
 });

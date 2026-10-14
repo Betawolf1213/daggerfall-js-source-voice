@@ -14,7 +14,7 @@
 // never for a transformed lycanthrope (DFU's SuppressCrime: the beast is nobody's face), never on a crime already held
 // (the chase is already under way).
 import { ChoiceWindow } from '../ui/talkWindow.js';
-import { challengeDue, noteChallenge, challengeFine, grantGrace, isBanished } from '../systems/standing.js';
+import { challengeDue, noteChallenge, challengeFine, grantGrace, settleChallenge, isBanished } from '../systems/standing.js';
 import { totalGoldAmount, deductGold, CRIMES, CRIME_NAMES, setLegalRepNotifier } from '../systems/court.js';
 import { racialSuppressCrime } from '../systems/lycanthropy.js';
 import { legalStandingWord } from '../systems/legalBands.js';
@@ -68,6 +68,7 @@ export function createStandingWatch({
     const options = [
       ...(canPay ? [{ code: 'KeyP', label: `P - pay ${fine} gold`, action: answer(() => {
         deductGold(playerEntity, fine);
+        settleChallenge(playerEntity, region);   // FINE-MENDS: the fine mends the name a penance's step, to the line at most
         grantGrace(playerEntity, region, ownNow());
         townTalk.say?.(`You pay the watch ${fine} gold.`);
       }) }] : []),

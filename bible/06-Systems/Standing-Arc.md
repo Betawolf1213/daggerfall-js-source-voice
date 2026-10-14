@@ -47,7 +47,9 @@ the line CLEAR, never through a wall) is stopped: *"Halt! The watch of Daggerfal
 gold, or come with me."* (or *"You are banished from ..."*).
 
 - **P - pay**: the court's own Criminal Conspiracy penalty at that standing, every unit in coin and no days (520 at -11,
-  720 at -50, 1,000 at -100; double for a banished face). A day's grace follows. Offered only to a purse that can pay.
+  720 at -50, 1,000 at -100; double for a banished face). The fine mends the name a penance's five points, never past
+  the -10 line (FINE-MENDS, `01-Overview/Field-Bugs-2026-10-14.md`), and a day's grace follows. Offered only to a purse
+  that can pay.
 - **S - come quietly**: a Criminal Conspiracy, charged once, and the court - whose sentence gives the charge back.
 - **R - refuse**: the Conspiracy held and the watch called as a seen crime calls it; the chase is DFU's from there.
 
