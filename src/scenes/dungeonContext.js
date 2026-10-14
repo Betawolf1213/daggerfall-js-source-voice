@@ -5987,8 +5987,9 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   const LOOT_WORD_WAIT_MS = 1500;   // how long a body the stream laid waits for its runner's word
   const LOOT_EARLY_MS = 10000;      // how long a word about a body not laid yet is kept
   const LOOT_EARLY_MAX = 64;        // and how many - a peer's words are bounded like everything else off the wire
+  const LOOT_HELD_GRACE_MS = 500;   // a held press outlives the wait by this much - a frame loop stood still longer (another window, the pause) drops it
   const _lootEarly = new Map();     // canon -> { rec, at }: the room's word about a body this copy has not laid
-  let _lootHeld = null;             // a press on a body whose word is due: { key, mode, pileKeys }
+  let _lootHeld = null;             // a press on a body whose word is due: { key, mode, pileKeys, at }
   let _lootOpenSig = null;          // what the open container held when it opened (lootSig)
   let _lootOpenMissed = null;       // the room's newest word about the open container, held back by C1
   /** AUDIT WORLD4 C4: the CANONICAL spelling of a container key, or null. The key arrives off the wire beside the
@@ -6194,14 +6195,17 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
   }
   /** PARTY-LOOT: the press lootWordDue held, opened once the word has landed or the wait is over (a press is the
    *  player's, and ASYNC NEVER DROPS) - the latest press only, and none once the body is gone or the player is at
-   *  another window. */
+   *  another window. Nor long after: the hosts call this from the frame that draws the foes, which does not run under
+   *  a window, so a press held when the player opened another one would have opened the body the moment that window
+   *  closed. A press past the wait by LOOT_HELD_GRACE_MS is the frame loop's stillness, not the player's. */
   function heldLootTick() {
     const h = _lootHeld;
     if (!h) return false;
     const f = foes[Number(h.key.split(':')[1])];
-    if (lootWordDue(f, roomLootKey(h.key))) return false;
+    const stale = performance.now() - h.at > LOOT_WORD_WAIT_MS + LOOT_HELD_GRACE_MS;
+    if (!stale && lootWordDue(f, roomLootKey(h.key))) return false;
     _lootHeld = null;
-    if (!lootableBody(f) || (activeOverlay && !activeOverlay.done)) return false;
+    if (stale || !lootableBody(f) || (activeOverlay && !activeOverlay.done)) return false;
     return api.takeLoot(h.key, h.mode, h.pileKeys) > 0;
   }
   /** PARTY-LOOT: what a container holds, as its window's close compares it - each item by identity, with its count (a
@@ -10514,7 +10518,7 @@ export async function buildDungeonContext(deps, dfLocation, blocks, climateBaseT
       } else if (kind === 'corpse') {
         const f = foes[i];
         if (!lootableBody(f)) return 0;   // AUDIT 68 S19-removed-foe-lootable
-        if (lootWordDue(f, roomLootKey(key))) { _lootHeld = { key, mode, pileKeys }; return 0; }   // PARTY-LOOT: the runner's word about this body is due - the press opens it when the word lands (heldLootTick), never on this copy's own roll
+        if (lootWordDue(f, roomLootKey(key))) { _lootHeld = { key, mode, pileKeys, at: performance.now() }; return 0; }   // PARTY-LOOT: the runner's word about this body is due - the press opens it when the word lands (heldLootTick), never on this copy's own roll
         source = f.entity.items;
         // CreateLootableCorpseMarker hands ReverseCorpseTexture's
         // archive/record straight to CreateLootContainer

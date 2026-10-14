@@ -47,7 +47,7 @@
   {
     "name": "PARTY-LOOT-the-held-press-dropped",
     "file": "src/scenes/dungeonContext.js",
-    "old": "{ _lootHeld = { key, mode, pileKeys }; return 0; }",
+    "old": "{ _lootHeld = { key, mode, pileKeys, at: performance.now() }; return 0; }",
     "new": "{ return 0; }",
     "tests": [
       "test/partyloot.test.js"
@@ -74,8 +74,8 @@
   {
     "name": "PARTY-LOOT-the-held-press-over-another-window",
     "file": "src/scenes/dungeonContext.js",
-    "old": "    if (!lootableBody(f) || (activeOverlay && !activeOverlay.done)) return false;\n    return api.takeLoot(",
-    "new": "    if (!lootableBody(f)) return false;\n    return api.takeLoot(",
+    "old": "    if (stale || !lootableBody(f) || (activeOverlay && !activeOverlay.done)) return false;\n    return api.takeLoot(",
+    "new": "    if (stale || !lootableBody(f)) return false;\n    return api.takeLoot(",
     "tests": [
       "test/partyloot.test.js"
     ]
@@ -184,6 +184,129 @@
     "file": "src/scenes/dungeonContext.js",
     "old": "    heldLootTick();   // PARTY-LOOT",
     "new": "    void 0;   // PARTY-LOOT",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-every-dead-frame-a-laying",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const laid = r.d === 1 && !f.dead;",
+    "new": "    const laid = r.d === 1;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-stack-count-unread",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "items.every((it, j) => it === sig[j][0] && it?.stackCount === sig[j][1]);",
+    "new": "items.every((it, j) => it === sig[j][0]);",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-item-identity-unread",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "items.every((it, j) => it === sig[j][0] && it?.stackCount === sig[j][1]);",
+    "new": "items.every((it, j) => it?.stackCount === sig[j][1]);",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-a-word-heard-again-not-the-newest",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    _lootEarly.delete(canon);\n    _lootEarly.set(canon, { rec, at: performance.now() });",
+    "new": "    _lootEarly.set(canon, { rec, at: performance.now() });",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-a-word-heard-ignored-by-the-wait",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    return !!k && f?._lootDueAt != null && !_lootSeen.has(k) && performance.now() < f._lootDueAt;",
+    "new": "    return !!k && f?._lootDueAt != null && performance.now() < f._lootDueAt;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-deaths-word-not-a-claim",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    return k ? publishLoot(k, { claim: true }) : false;\n  }\n  /** PARTY-LOOT: the runner's stream",
+    "new": "    return k ? publishLoot(k) : false;\n  }\n  /** PARTY-LOOT: the runner's stream",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-deaths-word-by-the-pools-index",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const k = i < 0 ? null : roomLootKey(`corpse:${i}`);\n    return k ? publishLoot(k, { claim: true }) : false;",
+    "new": "    const k = i < 0 ? null : lootKeyOf(`corpse:${i}`);\n    return k ? publishLoot(k, { claim: true }) : false;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-laid-body-by-the-pools-index",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    const k = i < 0 ? null : roomLootKey(`corpse:${i}`);\n    if (!k) return false;",
+    "new": "    const k = i < 0 ? null : lootKeyOf(`corpse:${i}`);\n    if (!k) return false;",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-press-mode-forgotten",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "{ _lootHeld = { key, mode, pileKeys, at: performance.now() }; return 0; }",
+    "new": "{ _lootHeld = { key, at: performance.now() }; return 0; }",
+    "tests": [
+      "test/partyloot.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-the-tick-asks-takeLoot-inside-the-wait",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    if (!stale && lootWordDue(f, roomLootKey(h.key))) return false;\n    _lootHeld = null;",
+    "new": "    _lootHeld = null;",
+    "tests": [
+      "test/partyloot.test.js"
+    ],
+    "equivalent": true,
+    "why": "takeLoot asks lootWordDue itself and holds the press again, so the tick's own check only spares that call every frame while the word is due"
+  },
+  {
+    "name": "PARTY-LOOT-the-open-keeps-a-stale-held-word",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    _lootOpenMissed = null;\n    return publishLoot(k, { claim: true });",
+    "new": "    return publishLoot(k, { claim: true });",
+    "tests": [
+      "test/partyloot.test.js"
+    ],
+    "equivalent": true,
+    "why": "every loot window's close runs its onClose and so lootClosed, which clears the held word - the open's own reset is belt-and-braces"
+  },
+  {
+    "name": "PARTY-LOOT-the-wait-armed-on-a-spoken-body",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    if (!_lootSeen.has(k)) f._lootDueAt = performance.now() + LOOT_WORD_WAIT_MS;",
+    "new": "    f._lootDueAt = performance.now() + LOOT_WORD_WAIT_MS;",
+    "tests": [
+      "test/partyloot.test.js"
+    ],
+    "equivalent": true,
+    "why": "lootWordDue asks _lootSeen itself, so a stamp on a body the room has spoken about never holds a press"
+  },
+  {
+    "name": "PARTY-LOOT-the-stale-press-opened",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    if (stale || !lootableBody(f) || (activeOverlay && !activeOverlay.done)) return false;",
+    "new": "    if (!lootableBody(f) || (activeOverlay && !activeOverlay.done)) return false;",
     "tests": [
       "test/partyloot.test.js"
     ]

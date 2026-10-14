@@ -15711,7 +15711,9 @@ over the room's newer one.
   dungeonContext.js:"function lootWordDue"). A press inside the wait opens nothing and claims nothing (dungeonContext.js:"if (lootWordDue(f, roomLootKey(key)))"); it is
   held, the latest press only, and opened by `heldLootTick` (dungeonContext.js:"function heldLootTick", every frame at
   dungeonContext.js:"heldLootTick();   //") the moment the word lands or the wait ends - or dropped if the player is at another window
-  by then. The Physical Items layer stands nothing of the body meanwhile (dungeonContext.js:"if (lootWordDue(f, u))"). Past the wait this
+  by then, or if the press is older than the wait by LOOT_HELD_GRACE_MS: the hosts draw no foes under a window, so a
+  press held when the player opened one would otherwise have opened the body the moment that window closed. The
+  Physical Items layer stands nothing of the body meanwhile (dungeonContext.js:"if (lootWordDue(f, u))"). Past the wait this
   copy claims its own roll exactly as before, so a room whose runner is an older build - which says nothing at the
   death - plays as it did.
 - **A window that moved nothing says nothing over the room.** `lootOpened` (dungeonContext.js:"function lootOpened") keeps what the
@@ -15736,9 +15738,11 @@ foes are the same pool (worldModes.js:"bodyPool(lootKey)"), so its bodies are gr
 cupboards, and FLAGGED: their close (`interiorLootSettle`) says its list whatever the room said while the window stood,
 the same close this slice gave `lootClosed` - not changed here.
 
-- **Pinned**: `test/partyloot.test.js` (9) - two clients over the real kill door, the host's stream, the joiner's stream
-  door, the room's loot, takeLoot, the window's own onClose and the Physical Items bodies; `tools/mutants/partyloot.json`
-  (21, all killed). PIN MOVED in `test/world4.test.js`, `test/auditworld4.test.js` (the open's claim, the close and C1
+- **Pinned**: `test/partyloot.test.js` (11) - two clients over the real kill door, the host's stream, the joiner's stream
+  doors (a layout body's and a rest encounter's), the room's loot with the heal's own re-read (actionRecords), takeLoot,
+  the window's own onClose and the Physical Items bodies, the takes and stores through the real transfer
+  (itemTransfer.js), with the shared clock off and on; `tools/mutants/partyloot.json` (34: 31 killed, 3 recorded
+  equivalent - belt-and-braces lines whose job another check also does). PIN MOVED in `test/world4.test.js`, `test/auditworld4.test.js` (the open's claim, the close and C1
   through lootOpened and lootClosed) and the harnesses that mount the kill door or the stream's door
   (`test/audit68_dungeonctx.test.js`, `test/loot7check.test.js`, `test/auditcards6_a.test.js`, `test/seatheal.test.js`,
   `test/survtiers3.test.js`, `test/corpsegold.test.js`).
