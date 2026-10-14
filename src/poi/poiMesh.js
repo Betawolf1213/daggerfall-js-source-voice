@@ -47,7 +47,7 @@ export const POI_MESH_LIMITS = Object.freeze({
  */
 
 /** The bounds of a position list - `[min, max]`, each `[x, y, z]`; a list of none answers zeros. @param {Float32Array} p */
-export function boundsOf(p) {
+export function meshBoxOf(p) {
   if (!p.length) return [[0, 0, 0], [0, 0, 0]];
   const min = [p[0], p[1], p[2]], max = [p[0], p[1], p[2]];
   for (let i = 3; i < p.length; i += 3) {
@@ -102,7 +102,7 @@ export function encodePoiMesh(m) {
   if (size > POI_MESH_LIMITS.bytes) throw new Error('poi mesh: too-many-bytes');
   const buf = new ArrayBuffer(size);
   const dv = new DataView(buf);
-  const [min, max] = boundsOf(m.positions);
+  const [min, max] = meshBoxOf(m.positions);
   dv.setUint32(0, POI_MESH_MAGIC, true);
   dv.setUint16(4, POI_MESH_VERSION, true);
   dv.setUint16(6, wide ? FLAG_U32 : 0, true);
@@ -159,7 +159,7 @@ export function decodePoiMesh(input) {
   const mesh = { positions, normals, uvs, indices, submeshes, boundsMin, boundsMax };
   const why = poiMeshError(mesh);
   if (why) return { error: why };
-  const [min, max] = boundsOf(positions);
+  const [min, max] = meshBoxOf(positions);
   for (let k = 0; k < 3; k++) if (Math.abs(min[k] - boundsMin[k]) > 1e-3 || Math.abs(max[k] - boundsMax[k]) > 1e-3) return { error: 'bounds' };
   return { mesh };
 }

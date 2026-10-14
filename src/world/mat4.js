@@ -121,6 +121,20 @@ export function quatToMat4([x, y, z, w]) {
   ]);
 }
 
+/** Unity's Transform composition, T * R * S, for a rotation given as a
+ *  quaternion `[x, y, z, w]` - `trs` only speaks Euler angles. The one home
+ *  (AUDIT 24's law): the automap's connection (ui/automapMarkers.js) and a
+ *  POI's place and parts (poi/poiRuntime.js) both read it. */
+export function trsQuat(pos, quat, scale) {
+  const r = quatToMat4(quat);
+  const m = new Float32Array(16);
+  for (let col = 0; col < 3; col++) {
+    for (let row = 0; row < 3; row++) m[col * 4 + row] = r[col * 4 + row] * scale[col];
+  }
+  m[12] = pos[0]; m[13] = pos[1]; m[14] = pos[2]; m[15] = 1;
+  return m;
+}
+
 /** Transform point (x,y,z,1) by m; returns [x,y,z]. */
 export function transformPoint(m, x, y, z) {
   return [

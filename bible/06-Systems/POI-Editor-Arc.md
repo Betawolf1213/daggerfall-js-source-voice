@@ -39,7 +39,7 @@ the glTF reader is the port's own and every model draws through `Renderer.create
 | Slice | What | State |
 |---|---|---|
 | POI-1 | The format (document, mesh, texture header) and the store: roles, content-addressed uploads, drafts, submissions, the approver's word, retirement, rollback, the live feed | built |
-| POI-2 | The game: the feed read and kept, POIs streamed with the pixels they stand on in the exterior hosts, drawn, collided, lit, marked on the map; a new approval picked up without a reload | planned |
+| POI-2 | The game: the feed read and kept, POIs streamed with the pixels they stand on in the exterior hosts, drawn, collided, lit, marked on the map; a new approval picked up without a reload | built |
 | POI-3 | The editor mode: the role gate, a free camera, the map to fly to, place / move / rotate / scale with gizmos and ground snap, an outliner and inspector, undo and redo, drafts saved and submitted | planned |
 | POI-4 | The glTF 2.0 / GLB importer: accessors (sparse too), the node tree baked, materials, embedded and side-by-side images, samplers, KHR_texture_transform; the frame turned to the game's; the asset library | the reader built; the library with POI-3 |
 | POI-5 | The material editor and the full UV editor: selection by vertex, edge, face and island; move, rotate, scale; seams; LSCM unwrap; island packing; projections; texel density | planned |
@@ -102,6 +102,50 @@ approver is in `APPROVER_HANDLES` (Lattymoy); a builder is an approver, a develo
 
 Pinned by `test/poi1_store.test.js` (10) on the real Worker over the real migrations; `tools/mutants/poi1.json` 16, all
 dead. The account deploy's path filter carries the three shared law files. acct133.
+
+## POI-2 - the game stands them (2026-10-14)
+
+- **THE FEED** (`src/poi/poiFeed.js` createPoiFeed): `GET /v1/poi/live` at start and every `POI_FEED_POLL_MS` (a minute)
+  with the version held (`If-None-Match`; a 304 reads nothing), so an approval reaches a playing game within a minute
+  with no deploy and no reload; a failed ask backs off from `POI_FEED_RETRY_MS` (5 s), doubling to the minute. Every
+  document is held to the law again (`poiDocProblems`) - one the law refuses is not stood, whatever the wire says. The
+  last feed is KEPT (the Cache API, `browserPoiCache`) and read back at the next start: a game without the network
+  stands the POIs it last saw. `setOverlay` stands a builder's open drafts over the live set on that screen alone
+  (POI-3).
+- **THE ASSETS**: by their sha256 - memory (64 MiB, the oldest asked let go), the kept copy, then
+  `GET /v1/poi/asset/<sha>` - and HASHED wherever they came from: bytes that are not the ones their name says are
+  refused (the content address is the integrity check). One ask per asset at a time.
+- **THE HOST** (`src/scenes/poiHost.js` createPoiHost; the pools' shape - `lefayMonumentHost.js`,
+  `merchantYardsHost.js`): every POI on a pixel the streamer has BUILT is loaded, stood, collided, lit, drawn and
+  marked; taken down when its pixel goes, its revision moves or it is retired. Nothing is baked into a pixel's batch -
+  a POI comes and goes while its pixel stands. Its matrices are its pixel's frame (metres east and north of the
+  south-west corner), its collider rides the pixel's translation (`collider.js` onFloatingFrame), so a floating-origin
+  recentre restands nothing. A `snap` POI stands its `y` above the drawn ground (`world.js` surfaceAt), read again when
+  the pixel moves and every `POI_GROUND_EVERY` (30) frames; until the ground answers, it waits unseen and uncollided.
+  A part's collider is HELD while the player's feet are inside its box (never walled in - an approval may land on a
+  player) and stood once they leave. A revision that only MOVES the POI (`sameBuild`: the same parts' meshes,
+  materials, colliders and shadows) is placed again, not reloaded; any other is reloaded. A POI whose assets would not
+  load is tried again after `POI_RETRY_MS` (a minute). Its lights join the scene's selection (`flicker` stepped at
+  12 Hz); its marks go to both world maps (`src/ui/poiMapMark.js`, a violet circle on the bounty's reader and
+  painter). Wired in `world.js` only; the bench (`exterior.js`) has no feed - FLAGGED.
+- **THE MATERIALS** (`src/poi/poiRuntime.js`, pure): a material's LOOK (picture, tint, alpha, sampler, emission) is
+  one texture record under `POI_TEXTURE_ARCHIVE` (600000, owned alone - `test/sd26_render.test.js` ONE ARCHIVE, ONE
+  OWNER); two materials alike share it. The tint is baked into the picture (the mesh shader has none), a cutout's
+  alpha thresholded at ITS cutoff to all or nothing (the shader cuts at a half), a blend's alpha kept times the
+  tint's; the emission is its picture times its colour, clamped (low dynamic range). Rows turned to color32 order; UVs
+  through the material's transform and to the renderer's `v' = 1 - v`. A two-sided material's faces doubled back on
+  their own vertices, normals turned; a mirroring part (negative determinant) wound back. Blended submeshes are a
+  model of their own.
+- **THE RENDERER** (`src/render/meshAlpha.js`): `MESH_ALPHA_GLSL` in both mesh programs (classic and Enhanced
+  Lighting) - `uMeshAlpha` 0 for every opaque draw (alpha 1 written, as ever), the texel's alpha times it in a
+  translucent one. `drawMesh(..., { translucent })` blends straight alpha over (`SRC_ALPHA, ONE_MINUS_SRC_ALPHA`; the
+  destination's alpha kept), tests depth and writes none, casts no shadow and puts every bit of state back; the host
+  draws them after the water, far first. A texture's own SAMPLER (`samplerParams`: wrap per axis - repeat, clamp,
+  mirror - and the filter) is keyed apart (`samplerKey`), the emission map with it.
+
+Pinned by `test/poi2_runtime.test.js` (11) - the renderer on a recording GL, the shaders' text, the pictures, models
+and matrices, the feed and assets on a fake service, the host on a fake streamer, collider and renderer;
+`tools/mutants/poi2.json` 26, all dead.
 
 ## POI-4 - the glTF 2.0 reader (2026-10-14)
 

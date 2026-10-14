@@ -29,7 +29,8 @@ ESCORTING FACES - the quest escorts' portrait column, FE1 - and the CREDITS TABL
 - and TEMP-UI's PACK TEMPERATURE (`temperatureCard.js`: the felt temperature on the enhanced pack's figure, a wearable's card and the Stats side - live, over the minute law's own sum; `06-Systems/Climates-Calories.md` TEMP-UI)
 - and MINE-PERKS' MOTHERLODES ON THE MAPS (`lodeMapMark.js`: a Motherlode Sense's day's Motherlodes, each a circle on its pixel with its ore and, until it rises, its hour, on both maps and the Overworld; `06-Systems/Professions-Arc.md` 43)
 - and CARDS-PLUS's CARD PANEL KIT (`cardPanelKit.js`: the chrome both card tables' panels wear, and the kit cut to them on the classic skin; `11-Multiplayer/Tavern-Cards.md` section 38)
-358 modules
+- and POI-2's POINTS OF INTEREST ON THE MAPS (`poiMapMark.js`: every approved POI whose document asks for a mark, a violet circle on its pixel with its label, on both maps; `06-Systems/POI-Editor-Arc.md` POI-2)
+359 modules
 live under `src/ui/`. Items still routed here are
 collected in `01-Overview/Port-Ledger.md` section C; scope in
 `01-Overview/Port-Doctrine.md` phase plan.

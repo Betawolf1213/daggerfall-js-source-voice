@@ -63,7 +63,7 @@
 // commented out - so it draws and is NEVER pickable.
 
 import { MARKER_NAMES } from '../systems/automapPick.js';
-import { trs, multiply, quatToMat4 } from '../world/mat4.js';
+import { trs, multiply, trsQuat } from '../world/mat4.js';   // trsQuat: Unity's T * R * S for a quaternion, the connection's (its one home since POI-2)
 import { USER_NOTE_MARKER_PREFIX } from '../systems/automap.js';
 
 /** The `amap` texture records these models name. One 1x1 solid each -
@@ -360,19 +360,6 @@ export function fromToRotationUp(d) {
   const n = Math.hypot(ax, ay, az, w);
   if (!(n > 1e-9)) return [1, 0, 0, 0];       // d is straight down: a half turn about +x
   return [ax / n, ay / n, az / n, w / n];
-}
-
-/** Unity's Transform composition, T * R * S, for a rotation given as a
- *  quaternion - `trs` only speaks Euler angles and the connection's is
- *  not one. */
-export function trsQuat(pos, quat, scale) {
-  const r = quatToMat4(quat);
-  const m = new Float32Array(16);
-  for (let col = 0; col < 3; col++) {
-    for (let row = 0; row < 3; row++) m[col * 4 + row] = r[col * 4 + row] * scale[col];
-  }
-  m[12] = pos[0]; m[13] = pos[1]; m[14] = pos[2]; m[15] = 1;
-  return m;
 }
 
 /**
