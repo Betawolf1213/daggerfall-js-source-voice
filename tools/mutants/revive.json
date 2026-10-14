@@ -241,5 +241,32 @@
     "tests": [
       "test/revive.test.js"
     ]
+  },
+  {
+    "name": "REV-size-the-whole-record",
+    "file": "tools/reviveRealmCharacter.mjs",
+    "old": "        sql.push(`UPDATE lineages SET record = ${edit}, rev = ${rec.rev}, updated_at = ${nowS} WHERE player = ${P} AND id = ${sqlStr(found.line)} AND rev = ${lineNow.rev};`);",
+    "new": "        sql.push(`UPDATE lineages SET record = ${sqlStr(JSON.stringify(rec))}, rev = ${rec.rev}, updated_at = ${nowS} WHERE player = ${P} AND id = ${sqlStr(found.line)} AND rev = ${lineNow.rev};`);",
+    "tests": [
+      "test/revive.test.js"
+    ]
+  },
+  {
+    "name": "REV-size-the-tombstone-first",
+    "file": "tools/reviveRealmCharacter.mjs",
+    "old": "  if (tombstone) sql.push(tombstone);",
+    "new": "  if (tombstone) sql.unshift(tombstone);",
+    "tests": [
+      "test/revive.test.js"
+    ]
+  },
+  {
+    "name": "REV-size-the-long-written",
+    "file": "tools/reviveRealmCharacter.mjs",
+    "old": "    sql.length = 0;",
+    "new": "    void sql;",
+    "tests": [
+      "test/revive.test.js"
+    ]
   }
 ]
