@@ -430,6 +430,7 @@ account.refusal.noTitle,"El servicio de cuentas no conoce ese título. Puede que
 account.refusal.noWrit,"Ese encargo ya no está publicado."
 account.refusal.nodeTaken,"Hoy ya has recolectado aquí."
 account.refusal.nonce,"No se ha podido leer esa caída. Inténtalo de nuevo."
+account.refusal.none,"La Aguja no tomó ninguna llave por eso."
 account.refusal.notDeveloper,"Solo un desarrollador puede hacer eso."
 account.refusal.notFound,"El servicio de cuentas no conoce esa petición. Puede que el juego necesite actualizarse."
 account.refusal.notHeir,"Solo un personaje vivo del mismo linaje que su dueño caído puede hacerse cargo de ese hogar."

@@ -2154,6 +2154,11 @@
   "tr": "ef8b1c1326b3",
   "by": "claude-in-session"
  },
+ "account.refusal.none": {
+  "en": "7ef79b1962d1",
+  "tr": "ae4be688bc75",
+  "by": "claude-in-session"
+ },
  "account.refusal.notDeveloper": {
   "en": "c7c70b6e50ef",
   "tr": "69fbb0623e26",

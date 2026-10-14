@@ -430,6 +430,7 @@ account.refusal.noTitle,"The account service does not know that title. The game 
 account.refusal.noWrit,"That writ is no longer posted."
 account.refusal.nodeTaken,"You have already gathered here today."
 account.refusal.nonce,"That fall could not be read. Try again."
+account.refusal.none,"The Spire took no key for that."
 account.refusal.notDeveloper,"Only a developer may do that."
 account.refusal.notFound,"The account service does not know that request. The game may need updating."
 account.refusal.notHeir,"Only a living character of the same line as its fallen owner can take up that home."

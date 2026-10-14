@@ -430,6 +430,7 @@ account.refusal.noTitle,"Служба учётных записей не зна�
 account.refusal.noWrit,"Этот заказ больше не размещён."
 account.refusal.nodeTaken,"Вы уже собирали здесь сегодня."
 account.refusal.nonce,"Не удалось прочитать это падение. Попробуйте ещё раз."
+account.refusal.none,"Шпиль не взял за это ключа."
 account.refusal.notDeveloper,"Это может сделать только разработчик."
 account.refusal.notFound,"Служба учётных записей не знает этого запроса. Возможно, игру нужно обновить."
 account.refusal.notHeir,"Этот дом может принять только живой персонаж того же рода, что и его павший владелец."

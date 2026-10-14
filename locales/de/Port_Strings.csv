@@ -430,6 +430,7 @@ account.refusal.noTitle,"Der Kontodienst kennt diesen Titel nicht. Das Spiel mus
 account.refusal.noWrit,"Dieses Gesuch ist nicht mehr ausgeschrieben."
 account.refusal.nodeTaken,"Du hast hier heute schon gesammelt."
 account.refusal.nonce,"Dieser Tod konnte nicht gelesen werden. Versuch es noch einmal."
+account.refusal.none,"Die Spitze hat dafür keinen Schlüssel genommen."
 account.refusal.notDeveloper,"Nur ein Entwickler darf das tun."
 account.refusal.notFound,"Der Kontodienst kennt diese Anfrage nicht. Das Spiel muss eventuell aktualisiert werden."
 account.refusal.notHeir,"Nur ein lebender Charakter derselben Linie wie sein gefallener Besitzer kann dieses Zuhause übernehmen."

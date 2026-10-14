@@ -430,6 +430,7 @@ account.refusal.noTitle,"Layanan akun tidak mengenal gelar itu. Permainan mungki
 account.refusal.noWrit,"Surat perintah itu sudah tidak dipasang."
 account.refusal.nodeTaken,"Kamu sudah mengumpulkan di sini hari ini."
 account.refusal.nonce,"Kejatuhan itu tidak bisa dibaca. Coba lagi."
+account.refusal.none,"Menara tidak mengambil kunci untuk itu."
 account.refusal.notDeveloper,"Hanya pengembang yang boleh melakukan itu."
 account.refusal.notFound,"Layanan akun tidak mengenal permintaan itu. Permainan mungkin perlu diperbarui."
 account.refusal.notHeir,"Hanya karakter hidup dari garis keturunan yang sama dengan pemiliknya yang gugur yang bisa mewarisi rumah itu."

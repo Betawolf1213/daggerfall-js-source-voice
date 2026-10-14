@@ -430,6 +430,7 @@ account.refusal.noTitle,"Kontotjenesten kjenner ikke den tittelen. Spillet må k
 account.refusal.noWrit,"Det ordrebrevet er ikke lenger slått opp."
 account.refusal.nodeTaken,"Du har allerede sanket her i dag."
 account.refusal.nonce,"Det fallet kunne ikke leses. Prøv igjen."
+account.refusal.none,"Spiret tok ingen nøkkel for det."
 account.refusal.notDeveloper,"Bare en utvikler kan gjøre det."
 account.refusal.notFound,"Kontotjenesten kjenner ikke den forespørselen. Spillet må kanskje oppdateres."
 account.refusal.notHeir,"Bare en levende karakter av samme slekt som den falne eieren kan overta det hjemmet."

@@ -430,6 +430,7 @@ account.refusal.noTitle,"Il servizio account non conosce quel titolo. Il gioco p
 account.refusal.noWrit,"Quel bando non è più pubblicato."
 account.refusal.nodeTaken,"Oggi hai già raccolto qui."
 account.refusal.nonce,"Impossibile leggere quella caduta. Riprova."
+account.refusal.none,"La Guglia non ha preso alcuna chiave per questo."
 account.refusal.notDeveloper,"Solo uno sviluppatore può farlo."
 account.refusal.notFound,"Il servizio account non conosce quella richiesta. Il gioco potrebbe dover essere aggiornato."
 account.refusal.notHeir,"Solo un personaggio vivo della stessa stirpe del suo proprietario caduto può prendere quella casa."

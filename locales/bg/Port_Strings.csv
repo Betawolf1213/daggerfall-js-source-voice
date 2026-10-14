@@ -430,6 +430,7 @@ account.refusal.noTitle,"Услугата за акаунти не познав�
 account.refusal.noWrit,"Тази заповед вече не е обявена."
 account.refusal.nodeTaken,"Вече събирахте тук днес."
 account.refusal.nonce,"Това падане не можа да бъде прочетено. Опитайте отново."
+account.refusal.none,"Шпилът не взе ключ за това."
 account.refusal.notDeveloper,"Само разработчик може да направи това."
 account.refusal.notFound,"Услугата за акаунти не познава тази заявка. Играта може би трябва да се обнови."
 account.refusal.notHeir,"Само жив персонаж от същата линия като падналия собственик може да поеме този дом."

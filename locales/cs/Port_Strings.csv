@@ -430,6 +430,7 @@ account.refusal.noTitle,"Služba účtů tento titul nezná. Hra možná potřeb
 account.refusal.noWrit,"Ten příkaz už není vypsaný."
 account.refusal.nodeTaken,"Tady jsi dnes už sbíral."
 account.refusal.nonce,"Ten pád nebylo možné přečíst. Zkus to znovu."
+account.refusal.none,"Věž si za to žádný klíč nevzala."
 account.refusal.notDeveloper,"To smí jen vývojář."
 account.refusal.notFound,"Služba účtů tento požadavek nezná. Hra možná potřebuje aktualizaci."
 account.refusal.notHeir,"Tento domov může převzít jen žijící postava ze stejné linie jako jeho padlý majitel."

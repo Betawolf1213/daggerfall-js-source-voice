@@ -430,6 +430,7 @@ account.refusal.noTitle,"Le service de compte ne connaît pas ce titre. Le jeu a
 account.refusal.noWrit,"Ce mandat n’est plus affiché."
 account.refusal.nodeTaken,"Vous avez déjà récolté ici aujourd’hui."
 account.refusal.nonce,"Impossible de lire cette chute. Réessayez."
+account.refusal.none,"La Flèche n’a pris aucune clé pour cela."
 account.refusal.notDeveloper,"Seul un développeur peut faire cela."
 account.refusal.notFound,"Le service de compte ne connaît pas cette requête. Le jeu a peut-être besoin d’une mise à jour."
 account.refusal.notHeir,"Seul un personnage vivant de la même lignée que son propriétaire défunt peut reprendre cette demeure."

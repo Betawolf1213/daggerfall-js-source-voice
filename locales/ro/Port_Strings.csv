@@ -430,6 +430,7 @@ account.refusal.noTitle,"Serviciul de conturi nu cunoaște acel titlu. Poate fi 
 account.refusal.noWrit,"Mandatul acela nu mai este afișat."
 account.refusal.nodeTaken,"Ai cules deja aici azi."
 account.refusal.nonce,"Căderea aceea nu a putut fi citită. Încearcă din nou."
+account.refusal.none,"Turla nu a luat nicio cheie pentru asta."
 account.refusal.notDeveloper,"Doar un dezvoltator poate face asta."
 account.refusal.notFound,"Serviciul de conturi nu cunoaște această cerere. Poate fi nevoie să actualizezi jocul."
 account.refusal.notHeir,"Doar un personaj în viață din aceeași linie cu proprietarul căzut poate prelua casa aceea."
