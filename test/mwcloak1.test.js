@@ -3,8 +3,8 @@
 // and Yellow the nearest of his eight paintings, stowed gear is worn over it): MAC'S CLOAK, SKINNED, ON DAGGERFALL'S
 // CASUAL AND FORMAL CLOAK - AND WHAT HANGS AROUND IT.
 //
-// One export, nothing of Bethesda's in it, committed as it came; eight paintings, a mesh each; skinned at bake time on
-// the steel plate's machinery, riding the spine and clavicles and hanging over the thighs below the waist; worn by a
+// One export, nothing of Bethesda's in it, committed as it came; eight paintings, a mesh each; skinned at bake time to
+// the chest alone (MW-CAPE-RIGID, 2026-10-14 - it rode the spine and clavicles and hung over the thighs); worn by a
 // garment's name and dye, claiming no slot. And the two fits a body takes once it is assembled (formats/mwCloakFit.js):
 // the cloak eased back over the armour under it, and the Weapon Sheathing addon's stowed gear against it - slung gear
 // over it, hip gear pitched under it - pinned on the addon's own scabbards, vendored.
@@ -25,8 +25,8 @@ import { readPng } from '../tools/pngIO.mjs';
 import { readFbx } from '../tools/fbxRead.mjs';
 import { meshModelNames } from '../tools/fbxStrip.mjs';
 import { smoothstep, jointWeights } from '../tools/skinWeights.mjs';
-import { PLATE_RIG, RETAIL_SKELETON, bakeObject } from '../tools/bakeSteelPlate.mjs';
-import { SOURCE, CLOAK_OBJECT, CLOAK_BOX, CLOAK_RIG, CLOAK_SUBDIVISIONS, PAINTING, bakeCloak, meshFile, textureFile, textureName } from '../tools/bakeCloak.mjs';
+import { RETAIL_SKELETON, bakeObject } from '../tools/bakeSteelPlate.mjs';
+import { SOURCE, CLOAK_OBJECT, CLOAK_BOX, CLOAK_RIG, CHEST_BONE, CLOAK_SUBDIVISIONS, PAINTING, bakeCloak, meshFile, textureFile, textureName } from '../tools/bakeCloak.mjs';
 import { loopSubdivide } from '../tools/meshSubdivide.mjs';
 import { retailSkeleton } from './fixtures/mw/retailRig.mjs';
 import { SHEATHED, set, CLOAK, isCloak, isGear, isUnder, body, turned, through, crossings } from './fixtures/mw/cloakRig.mjs';
@@ -57,33 +57,26 @@ test('MW-CLOAK1: every mesh and painting re-made from the committed export, its 
   for (const path of ownCloakModelPaths()) assert.ok(existsSync(new URL(`../src/assets/mw/${path}`, import.meta.url)), `${path} ships`);
 });
 
-test('MW-CLOAK1: the cloak is its object in the scene\'s placement (smoothed, MW-CLOAK2), one skinned shape over the steel breastplate\'s spine and clavicles and the thighs; from the waist down the thighs take their side\'s share, to 0.85 at the hem', () => {
+test('MW-CAPE-RIGID: the cloak is its object in the scene\'s placement (smoothed, MW-CLOAK2), one skinned shape on ONE bone - the chest, Bip01 Spine2 - every vertex wholly its own and no other bone in the mesh', () => {
   const scene = loopSubdivide(bakeObject(readFbx(raw(SOURCE)), CLOAK_OBJECT, CLOAK_BOX), CLOAK_SUBDIVISIONS);
-  const [b] = flattenNif(parseNif(onDisk(meshFile('red'))));
-  let worst = 0;
-  assert.equal(b.positions.length, scene.positions.length);
-  for (let k = 0; k < b.positions.length; k++) worst = Math.max(worst, Math.abs(b.positions[k] - scene.positions[k]));
-  assert.ok(worst < 1e-4, `the scene's placement (worst ${worst})`);
-  assert.equal(b.skinned, true);
-  assert.equal(b.name, 'Tri Cloak 0');
-  assert.deepEqual(CLOAK_RIG.bones.map((x) => x.name), [...PLATE_RIG.cuirass.bones.map((x) => x.name), 'Bip01 L Thigh', 'Bip01 R Thigh']);
-  assert.ok(b.skin.bones.every((x) => !/arm|hand|head|calf|foot/i.test(x.name)), 'no arm, head or lower leg: it hangs from the shoulders');
-  const n = b.positions.length / 3;
-  const weight = (name, v) => { const bone = b.skin.bones.find((x) => x.name.toLowerCase() === name.toLowerCase()); const k = bone ? Array.from(bone.indices).indexOf(v) : -1; return k < 0 ? 0 : bone.weights[k]; };
-  let hem = 0; let shoulders = 0;
-  for (let v = 0; v < n; v++) {
-    const x = b.positions[v * 3], z = b.positions[v * 3 + 2];
-    const sum = b.skin.bones.reduce((s, bone) => s + Array.from(bone.indices).reduce((t, i, k) => t + (i === v ? bone.weights[k] : 0), 0), 0);
-    assert.ok(Math.abs(sum - 1) < 1e-5, `vertex ${v} weighs ${sum}`);
-    const legs = 0.85 * smoothstep((86 - z) / (86 - 29.28));
-    const right = smoothstep((x + 10) / 20);
-    assert.ok(Math.abs(weight('Bip01 L Thigh', v) - legs * (1 - right)) < 1e-3, `vertex ${v} (x ${x.toFixed(1)}, z ${z.toFixed(1)}): the left thigh's share`);
-    assert.ok(Math.abs(weight('Bip01 R Thigh', v) - legs * right) < 1e-3, `vertex ${v}: the right thigh's share`);
-    if (z < 32) hem++;
-    if (z > 100) { shoulders++; assert.equal(weight('Bip01 L Thigh', v) + weight('Bip01 R Thigh', v), 0); }
+  assert.equal(CHEST_BONE, 'Bip01 Spine2');
+  assert.deepEqual(CLOAK_RIG, { shape: 'Tri Cloak', bones: [CHEST_BONE] });
+  for (const painting of CLOAK_PAINTINGS) {
+    const [b] = flattenNif(parseNif(onDisk(meshFile(painting))));
+    let worst = 0;
+    assert.equal(b.positions.length, scene.positions.length);
+    for (let k = 0; k < b.positions.length; k++) worst = Math.max(worst, Math.abs(b.positions[k] - scene.positions[k]));
+    assert.ok(worst < 1e-4, `the scene's placement (worst ${worst})`);
+    assert.equal(b.skinned, true);
+    assert.equal(b.name, 'Tri Cloak 0');
+    assert.deepEqual(b.skin.bones.map((x) => x.name), [CHEST_BONE.toLowerCase()], `the ${painting} cloak names the chest and no other bone`);   // the reader keys bones lower-case
+    const [chest] = b.skin.bones;
+    const n = b.positions.length / 3;
+    assert.deepEqual(Array.from(chest.indices).sort((x, y) => x - y), Array.from({ length: n }, (_, v) => v), 'every vertex on the chest');
+    assert.ok(Array.from(chest.weights).every((w) => w === 1), 'each wholly');
   }
-  assert.ok(hem > 5 && shoulders > 20, `${hem} hem and ${shoulders} shoulder vertices`);
-  assert.deepEqual({ ...CLOAK_RIG.hang, legs: [...CLOAK_RIG.hang.legs] }, { mode: 'over', root: 'Bip01 Pelvis', legs: ['Bip01 L Thigh', 'Bip01 R Thigh'], top: 86, bottom: 29.28, share: 0.85, centre: 10 });
+  // tools/skinWeights.mjs's hang (mode 'over') no longer hangs the cloak; the ebony plate and the townsfolk still hang
+  // by it, so the two laws the cloak's audit pinned there stay pinned here.
   // hung OVER its joints, a leg weighs in by the hang alone - never as the joint law's child blend at its own origin
   const rig = [{ name: 'P', from: [0, 0, 0], to: [0, 0, 10] }, { name: 'L', parent: 'P', from: [0, 0, 0], to: [0, 0, -40] }, { name: 'R', parent: 'P', from: [4, 0, 0], to: [4, 0, -40] }];
   assert.deepEqual(jointWeights([0, 0, -0.5], rig, { hang: { mode: 'over', root: 'P', legs: ['L', 'R'], top: -10, bottom: -40, share: 1, centre: 2 } }), [[['P', 1]]]);
@@ -136,45 +129,54 @@ test('MW-CLOAK1: the Casual and Formal Cloak, a man\'s and a woman\'s, wear it i
   assert.ok(rows.every((r) => /the port's own cloak/.test(r.note) && r.reserve === null));
 });
 
-test('MW-CLOAK1: through the binder on retail\'s rig the cloak moves with the body - the shoulders on the spine, the hem with the leg stepping back; as baked the stride\'s trailing boot reaches into the hem, and fitted (AUDIT MW-CLOAK) it does not', async () => {
+test('MW-CAPE-RIGID: through the binder on retail\'s rig the cloak moves with the chest and nothing else - a stride moves none of it, an arm swung back none, a lean carries the whole sheet rigidly with the chest; fitted, no leg comes through it in either stride or leaning back', async () => {
   const asm = await body(ARMOR_MATERIAL.Steel);
   const cloak = () => asm.pieces.find(isCloak);
   assert.equal(cloak().kind, 'skinned');
-  const verts = (pred) => { const P = cloak().positions; const out = []; for (let v = 0; v < P.length / 3; v++) { const p = [P[v * 3], P[v * 3 + 1], P[v * 3 + 2]]; if (pred(p)) out.push(p); } return out; };
-  const centroid = (vs) => [0, 1, 2].map((k) => vs.reduce((s, v) => s + v[k], 0) / vs.length);
-  const B = (n) => asm.mats.get(asm.skeleton.byName.get(n)).t;
+  const verts = () => { const P = cloak().positions; const out = []; for (let v = 0; v < P.length / 3; v++) out.push([P[v * 3], P[v * 3 + 1], P[v * 3 + 2]]); return out; };
+  const B = (n) => asm.mats.get(asm.skeleton.byName.get(n));
   // at rest: behind the spine, from the shoulders down past the knees
-  const spine = B('bip01 spine2');
-  const all = verts(() => true);
-  assert.ok(all.every((v) => v[1] < spine[1] + 2), 'wholly behind the spine');
-  assert.ok(Math.max(...all.map((v) => v[2])) > B('bip01 neck')[2] - 6 && Math.min(...all.map((v) => v[2])) < B('bip01 l calf')[2] - 10, 'the shoulders to below the knees');
-  const restShoulders = centroid(verts((v) => v[2] > 105));
-  const leftHem = (v) => v[2] < 40 && v[0] < -8;
-  const restLeftHem = centroid(verts(leftHem));
-  // a stride: the left leg back, its knee bent - the left hem goes back with it, the shoulders stay
-  poseAssembly(asm, turned(asm, { 'bip01 r thigh': 35, 'bip01 l thigh': -30, 'bip01 l calf': 45 }));
-  assert.ok(Math.hypot(...centroid(verts((v) => v[2] > 105)).map((c, k) => c - restShoulders[k])) < 1e-3, 'the shoulders stay');
-  const hemNow = centroid(verts((v) => v[0] < -8 && v[2] < 60).sort((a, b) => a[2] - b[2]).slice(0, 6));
-  assert.ok(hemNow[1] < restLeftHem[1] - 8, `the left hem went back with the leg (${restLeftHem[1].toFixed(1)} to ${hemNow[1].toFixed(1)})`);
-  // the stride's trailing boot, its knee bent 45 degrees, rises behind the middle of the hem - where the thighs split
-  // the cloak - and reaches into it no more than this; a walk's (back 20, the knee 30) not at all
-  const trailing = (p) => /left (upper leg|foot)/.test(p.slot);
-  assert.ok(through(asm, trailing) < 2.5, `the stride's trailing boot ${through(asm, trailing).toFixed(2)} into the hem`);
-  poseAssembly(asm, turned(asm, { 'bip01 r thigh': 22, 'bip01 l thigh': -20, 'bip01 l calf': 30 }));
-  assert.equal(through(asm, trailing), 0, 'a walk\'s trailing greave and boot stay in front of it');
-  assert.equal(crossings(asm, trailing), 0);
-  // AUDIT MW-CLOAK: fit 1 holds the cloak over the stride too - the hem's middle eased back past the boot it reached
-  fitCloakOver(asm, { isCloak, isUnder });
-  for (const stride of [{ 'bip01 r thigh': 35, 'bip01 l thigh': -30, 'bip01 l calf': 45 }, { 'bip01 l thigh': 35, 'bip01 r thigh': -30, 'bip01 r calf': 45 }]) {
-    poseAssembly(asm, turned(asm, stride));
-    assert.equal(crossings(asm, isUnder), 0, 'fitted, no leg through the hem in either stride');
+  const spine = B('bip01 spine2').t;
+  const rest = verts();
+  assert.ok(rest.every((v) => v[1] < spine[1] + 2), 'wholly behind the spine');
+  assert.ok(Math.max(...rest.map((v) => v[2])) > B('bip01 neck').t[2] - 6 && Math.min(...rest.map((v) => v[2])) < B('bip01 l calf').t[2] - 10, 'the shoulders to below the knees');
+  const moved = () => Math.max(...verts().map((v, k) => Math.hypot(v[0] - rest[k][0], v[1] - rest[k][1], v[2] - rest[k][2])));
+  // the legs and the arms are not its bones: a stride each way, its back knee bent, and either arm swung back move
+  // no vertex of it (it hung over the thighs, the left hem going back 8 units and more with the left leg)
+  for (const pose of [{ 'bip01 r thigh': 35, 'bip01 l thigh': -30, 'bip01 l calf': 45 }, { 'bip01 l thigh': 35, 'bip01 r thigh': -30, 'bip01 r calf': 45 }, { 'bip01 l upperarm': 25 }, { 'bip01 r upperarm': -25 }, { 'bip01 l clavicle': 15 }]) {
+    poseAssembly(asm, turned(asm, pose));
+    assert.ok(moved() < 1e-3, `${Object.keys(pose)} moves the cloak ${moved().toFixed(4)}`);
+  }
+  // the chest leant back: every vertex where the chest's own turn carries it - the sheet one rigid body with the chest
+  const chestRest = B('bip01 spine2');
+  const a0 = Array.from(chestRest.a); const t0 = Array.from(chestRest.t);
+  poseAssembly(asm, turned(asm, { 'bip01 spine2': -10 }));
+  const chest = B('bip01 spine2');
+  const det = a0[0] * (a0[4] * a0[8] - a0[5] * a0[7]) - a0[1] * (a0[3] * a0[8] - a0[5] * a0[6]) + a0[2] * (a0[3] * a0[7] - a0[4] * a0[6]);
+  const inv = [(a0[4] * a0[8] - a0[5] * a0[7]) / det, (a0[2] * a0[7] - a0[1] * a0[8]) / det, (a0[1] * a0[5] - a0[2] * a0[4]) / det, (a0[5] * a0[6] - a0[3] * a0[8]) / det, (a0[0] * a0[8] - a0[2] * a0[6]) / det, (a0[2] * a0[3] - a0[0] * a0[5]) / det, (a0[3] * a0[7] - a0[4] * a0[6]) / det, (a0[1] * a0[6] - a0[0] * a0[7]) / det, (a0[0] * a0[4] - a0[1] * a0[3]) / det];
+  const carried = (p) => {
+    const d = [p[0] - t0[0], p[1] - t0[1], p[2] - t0[2]];
+    const l = [0, 1, 2].map((r) => inv[r * 3] * d[0] + inv[r * 3 + 1] * d[1] + inv[r * 3 + 2] * d[2]);
+    return [0, 1, 2].map((r) => chest.a[r * 3] * l[0] + chest.a[r * 3 + 1] * l[1] + chest.a[r * 3 + 2] * l[2] + chest.t[r]);
+  };
+  const leant = verts();
+  const off = Math.max(...leant.map((v, k) => { const c = carried(rest[k]); return Math.hypot(v[0] - c[0], v[1] - c[1], v[2] - c[2]); }));
+  assert.ok(off < 1e-3, `each vertex where the chest carries it (${off.toFixed(4)} off)`);
+  assert.ok(moved() > 5, `and the lean swings the hem (${moved().toFixed(1)})`);
+  // fitted (fit 1 over CLOAK_FIT_POSES, the lean among them), no leg comes through the hem in a stride or leaning back
+  poseAssembly(asm);
+  const fit = fitCloakOver(asm, { isCloak, isUnder });
+  assert.equal(fit.deep, 0);
+  for (const pose of [{ 'bip01 r thigh': 35, 'bip01 l thigh': -30, 'bip01 l calf': 45 }, { 'bip01 l thigh': 35, 'bip01 r thigh': -30, 'bip01 r calf': 45 }, { 'bip01 spine2': -10 }]) {
+    poseAssembly(asm, turned(asm, pose));
+    assert.equal(crossings(asm, isUnder), 0, `fitted, nothing through the cloak (${Object.keys(pose)})`);
   }
 });
 
 test('MW-CLOAK1: the cloak eases back over the armour under it - the ebony pauldrons through its shoulders, then behind it in every pose; the cloak\'s batch replaced, never written into', async () => {
   const asm = await body(ARMOR_MATERIAL.Ebony);
   const before = through(asm, isUnder);
-  assert.ok(before > 2, `the ebony pauldrons stand ${before.toFixed(2)} through the cloak as baked`);
+  assert.ok(before > 1, `the ebony pauldrons stand ${before.toFixed(2)} through the cloak as baked`);   // PIN MOVED (MW-CAPE-RIGID): 2.6 hung over the spine and clavicles, 1.3 on the chest alone
   const cloak = asm.pieces.find(isCloak);
   const baked = cloak.batch.positions; const copy = Float32Array.from(baked);
   const fit = fitCloakOver(asm, { isCloak, isUnder });
@@ -206,7 +208,7 @@ test('MW-CLOAK1: the cloak eases back over the armour under it - the ebony pauld
   const skin = { ...b.skin, bones: b.skin.bones.map((x) => ({ ...x, indices: [...x.indices, ...Array.from(x.indices, (i) => i + n)], weights: [...x.weights, ...x.weights] })) };
   c.batch = { ...b, positions: pos, indices: idx, skin, normals: null }; c.indices = idx; c.positions = new Float32Array(pos.length); c.normals = null;
   poseAssembly(folded);
-  assert.ok(through(folded, isUnder) > 2, 'the folded cloak\'s front layer as pierced as the plain one');
+  assert.ok(through(folded, isUnder) > 1, 'the folded cloak\'s front layer as pierced as the plain one');   // PIN MOVED (MW-CAPE-RIGID): 1.3, as the plain one
   fitCloakOver(folded, { isCloak, isUnder });
   poseAssembly(folded);
   assert.ok(through(folded, isUnder) <= 0, 'both layers behind the pauldrons');
@@ -221,7 +223,7 @@ test('MW-CLOAK1: stowed gear against the cloak, on the addon\'s own scabbards - 
   fitCloakOver(asm, { isCloak, isUnder });
   poseAssembly(asm);
   const gearAt = (bone) => asm.pieces.filter((p) => isGear(p) && p.bone === bone);
-  assert.ok(crossings(asm, (p) => gearAt('Bip01 LongBladeTwoClose').includes(p)) > 50, 'the greatsword through the cloak as the addon slings it');
+  assert.ok(crossings(asm, (p) => gearAt('Bip01 LongBladeTwoClose').includes(p)) > 40, 'the greatsword through the cloak as the addon slings it');   // PIN MOVED (MW-CAPE-RIGID): 48 edges on the chest alone
   assert.ok(crossings(asm, (p) => gearAt('Bip01 LongBladeOneHand').includes(p)) > 0, 'the longsword\'s tip through its side');
   const dagger = gearAt('Bip01 ShortBladeOneHand')[0].source;
   const sword = gearAt('Bip01 LongBladeOneHand')[0].source; const swordCopy = Float32Array.from(sword);
@@ -273,14 +275,13 @@ test('MW-CLOAK1: stowed gear against the cloak, on the addon\'s own scabbards - 
   assert.equal(bare.pieces[0].source, was);
 });
 
-test('MW-CLOAK1 by source: the third-person build fits the cloak over the body\'s skin and what it wears, once it is assembled, and ties the stowed gear to it; a weapon swap fits the new holster; a seated body seats its cloak; a cloak\'s icon is its own', () => {
+test('MW-CLOAK1 by source: the third-person build fits the cloak over the body\'s skin and what it wears, once it is assembled, and ties the stowed gear to it; a weapon swap fits the new holster; seated or astride the cloak rides the chest as standing (MW-CAPE-RIGID: no batch swapped); a cloak\'s icon is its own', () => {
   const fp = src('src/combat/fpArm.js');
   assert.match(fp, /hangHipLight\(arm\);[^\n]*\n\s*const cloakFit = fitThirdPersonCloak\(arm, new Set\(\[\.\.\.skinRows, \.\.\.worn\.adds\]\.map\(\(row\) => row\.slot\)\)\);/);
   assert.match(fp, /\.\.\.resolvedHolster\.notes, \.\.\.cloakFit\.notes,/);
   assert.match(fp, /bindPartsInto\(t\.arm, \[\.\.\.tResolved\.parts, \.\.\.tHolster\.parts\]\);\s*const tFit = fitThirdPersonCloak\(t\.arm, null\);[^\n]*\n\s*t\.holster = tHolster\.info;\s*t\.notes = \[\.\.\.\(t\.notes \|\| \[\]\)\.filter\(\(n\) => !\/\^holster\[ :@\]\/\.test\(n\)\), \.\.\.tHolster\.notes, \.\.\.tFit\.notes\];/);
-  assert.match(fp, /export function fitThirdPersonCloak\(arm, underSlots\) \{\s*const isCloak = \(p\) => isCloakSlot\(p\.slot\);\s*const isGear = \(p\) => HOLSTER_SLOTS\.includes\(p\.slot\);\s*const covered = \(slot\) => underSlots\.has\(slot\) && slot !== 'tail' && !\/\^shield\\b\/\.test\(slot\);\s*seatCloak\(arm, false, isCloak\);[^\n]*\n\s*const cloak = underSlots \? fitCloakOver\(arm, \{ isCloak, isUnder: \(p\) => covered\(p\.slot\) \}\) : null;\s*const gear = fitStowedGear\(arm, \{ isCloak, isGear \}\);\s*const follow = followCloak\(arm, \{ isCloak, isGear \}\);/);
-  assert.match(fp, /if \(t\.cloaked\) seatCloak\(t\.arm, !!\(cam && \(cam\.seat \|\| cam\.saddle\)\)\);[^\n]*\n(\s*\/\/[^\n]*\n)*\s*if \(pose\) \{\s*posePartClocks\(t\.arm, [^\n]*\n\s*poseAssembly\(t\.arm, \{/);   // PIN MOVED (MW-BOW1): the weapon's clock poses first; PIN MOVED, COATS3D: astride, the hem behind the saddle as behind a chair
-  assert.match(fp, /cloaked: !!cloakFit\.follow \|\| !!cloakFit\.cloak,/);
+  assert.match(fp, /export function fitThirdPersonCloak\(arm, underSlots\) \{\s*const isCloak = \(p\) => isCloakSlot\(p\.slot\);\s*const isGear = \(p\) => HOLSTER_SLOTS\.includes\(p\.slot\);\s*const covered = \(slot\) => underSlots\.has\(slot\) && slot !== 'tail' && !\/\^shield\\b\/\.test\(slot\);\s*const cloak = underSlots \? fitCloakOver\(arm, \{ isCloak, isUnder: \(p\) => covered\(p\.slot\) \}\) : null;\s*const gear = fitStowedGear\(arm, \{ isCloak, isGear \}\);\s*const follow = followCloak\(arm, \{ isCloak, isGear \}\);/);
+  assert.doesNotMatch(fp, /seatCloak|cloaked:|seatedBatch/, 'MW-CAPE-RIGID: one bone, one batch - a seat swaps nothing');
   assert.match(fp, /const cloak = ownCloakFor\(\{ kind: 'clothing', name: CLOTHING_NAME\[item\.templateIndex\], dye: item\.dye \?\? 0 \}\);\s*if \(cloak\) return \{ id: `\$\{cloak\.id\}_\$\{cloak\.painting\}`, model: cloak\.model \};/);
   assert.match(fp, /if \(\(item\.group === 'MensClothing' \|\| item\.group === 'WomensClothing'\) && !ownCloakFor\(/);
   assert.match(src('src/formats/mwFirstPerson.js'), /assembly\.time = time;[\s\S]{0,400}if \(assembly\.afterPose\) assembly\.afterPose\(assembly\);\s*assembly\.bounds = /);

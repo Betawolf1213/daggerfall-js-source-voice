@@ -1660,10 +1660,12 @@ card regulars and every NPC lane) would have dropped it:
   of the mesh's buffer - a bow's few hundred corners while it draws, never
   the body (fpArm.js uploadThirdMesh). Its box moves with it (rule 42).
 - AUDIT MW-CLOAK x MWNPC1: THE SEATED CLOAK AND THE GEAR THAT GOES WITH
-  IT. Seated, main swaps the cloak's batch for one whose thighs weigh less
-  (mwCloakFit.js seatCloak); the stream carries the weights, so a layout
-  is the same body only while each skinned piece skins by the batch it was
-  laid out from (`skinSamePieces`) - a seat lays the body out again, once.
+  IT. Seated, main swapped the cloak's batch for one whose thighs weighed
+  less (mwCloakFit.js seatCloak - gone since MW-CAPE-RIGID, 2026-10-14: the
+  cloak rides the chest alone, `04-Characters/Cloak.md`); the stream
+  carries the weights, so a layout is the same body only while each
+  skinned piece skins by the batch it was laid out from (`skinSamePieces`)
+  - a fit that replaces the cloak's batch lays the body out again, once.
   And main turns the stowed gear with the cloak after every pose (the
   assembly's `afterPose`, applyCloakFollow), reading the CPU-posed cloak
   and re-placing the gear on the CPU: the GPU pose returned before it. Now

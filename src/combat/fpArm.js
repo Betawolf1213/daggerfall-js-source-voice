@@ -91,7 +91,7 @@ import { diffuseAt, emissiveAt } from '../formats/mwNifMesh.js';   // MWT2: the 
 import { fpLightingOn } from './fpsWeapon.js';   // MAC-P: the first-person lighting switch, shared with the classic sprite it stands in for
 import { createParticleSystem, packParticleQuads, particleDrawState, affineOfTransform, affineMul, affineApply, affineScale } from '../formats/mwParticles.js';   // MAC-Q: the torch's flame, and any other particle system a part carries
 import { boneSourcesFor, resolveHolsterParts, holsterPartPaths, holsterHidden, HOLSTER_SLOTS } from '../systems/weaponSheathing.js';   // WS1
-import { fitCloakOver, fitStowedGear, followCloak, seatCloak, HIP_PITCH_LIMIT, CLOAK_PUSH_LIMIT, SLUNG_MOVE_LIMIT } from '../formats/mwCloakFit.js';   // MW-CLOAK1: the cloak over what the body wears, stowed gear against it; AUDIT MW-CLOAK: and going with it
+import { fitCloakOver, fitStowedGear, followCloak, HIP_PITCH_LIMIT, CLOAK_PUSH_LIMIT, SLUNG_MOVE_LIMIT } from '../formats/mwCloakFit.js';   // MW-CLOAK1: the cloak over what the body wears, stowed gear against it; AUDIT MW-CLOAK: and going with it
 import { isCloakSlot, ownCloakFor, isOutfitSlot } from '../characters/ownClothingModels.js';   // MW-CLOAK1; AUDIT MW-CLOAK: and its picture; AUDIT MW-FOLK1: an outfit's add, by its label
 import { injectSkeletonNodes } from '../formats/mwSkin.js';   // WS1: the dry injection the holster's bone probe runs
 // MAP3: THE HELD SHEET - the pose deltas over the idle, the paper piece
@@ -1677,7 +1677,6 @@ export function fitThirdPersonCloak(arm, underSlots) {
   const isCloak = (p) => isCloakSlot(p.slot);
   const isGear = (p) => HOLSTER_SLOTS.includes(p.slot);
   const covered = (slot) => underSlots.has(slot) && slot !== 'tail' && !/^shield\b/.test(slot);
-  seatCloak(arm, false, isCloak);   // the fits measure the standing cloak, whatever a seat last swapped in
   const cloak = underSlots ? fitCloakOver(arm, { isCloak, isUnder: (p) => covered(p.slot) }) : null;
   const gear = fitStowedGear(arm, { isCloak, isGear });
   const follow = followCloak(arm, { isCloak, isGear });
@@ -2077,7 +2076,6 @@ async function buildTpBody({
       hipLight: resolvedHip.hipInfo,   // HT-WAIST
       hipLightTried: !!hipLight,   // HT-WAIST: asked at the build - a refusal here is not asked again (MW-TORCH F3's law)
       holster: resolvedHolster.info,   // WS1
-      cloaked: !!cloakFit.follow || !!cloakFit.cloak,   // AUDIT MW-CLOAK: a cloak to seat (seatCloak)
       boneSources: boneSourcePaths,   // WS1: the addons this skeleton took
       sheathing,
       werewolf: !!werewolf,   // WEREWOLF1
@@ -5520,8 +5518,6 @@ export function createFpArm() {
         if (tOverlay) overlayClock = torchState.time;
         // HT-WAIST: the lantern at the waist swings on the frame's motion before the body is posed around it.
         if (hipVisible()) stepHipSwing(cam, dt);
-        // AUDIT MW-CLOAK: seated, the cloak's hem hangs behind the chair's sitter - a batch swapped, which the next pose skins.
-        if (t.cloaked) seatCloak(t.arm, !!(cam && (cam.seat || cam.saddle)));   // COATS3D: astride, the hem falls behind the saddle as behind a chair
         // PEER-CADENCE: a frame that does not pose keeps last frame's
         // skin, upload and bounds; the clips above advanced all the
         // same, so the next posing frame lands where the clock is.

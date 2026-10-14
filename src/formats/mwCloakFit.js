@@ -10,7 +10,8 @@
 //      the whole at it and less out to CLOAK_EASE_RADIUS (MW-CLOAK2: a triangle's three corners alone left a facet over
 //      each pauldron's edge), a welded seam as one, and its normals are its new shape's. It is held over a set of
 //      poses, not one (CLOAK_FIT_POSES - AUDIT MW-CLOAK: fitted at rest alone, a pauldron came through the shoulders
-//      as its arm swung back): the rest, and a stride each way with both arms swung back. Each pose's push is carried
+//      as its arm swung back): the rest, a stride each way with both arms swung back, and (MW-CAPE-RIGID) the chest
+//      leant back, which swings the whole hem forward into the legs. Each pose's push is carried
 //      into the bind the cloak is skinned from (the inverse of each vertex's own skin blend in that pose, measured), so
 //      it rides the bones as the cloak does. What stands more than CLOAK_PUSH_LIMIT through it is no body's - it is
 //      left through and named, not chased.
@@ -24,9 +25,9 @@
 //          sheet - the addon hangs a longsword forty degrees back, its tip a hand's breadth through a cloak's side; it
 //          hangs nearer plumb under one. Pushed back over the cloak instead it would hang thirty units off the hip.
 //
-//   3. AND IT GOES WITH THE CLOAK, every pose after (followCloak, AUDIT MW-CLOAK). The cloak below the waist swings
-//      with the thighs and gear rides its own bone, so a rest fit alone let the hem sweep through a hip-hung blade on
-//      every step the leg went forward, and a greatsword's tip through the hem in a stride. Each stowed piece is tied
+//   3. AND IT GOES WITH THE CLOAK, every pose after (followCloak, AUDIT MW-CLOAK). The cloak rides the chest alone
+//      (MW-CAPE-RIGID: one bone, tools/bakeCloak.mjs) and gear rides its own bone, so a rest fit alone lets the hem
+//      sweep through hung gear as the chest turns over the hips. Each stowed piece is tied
 //      to the points of the cloak under or over it at rest (the triangle there, and where in it), and every pose it is
 //      turned about its own bone - slung gear also slid straight off the back, a unit costing as a turn of
 //      FOLLOW.slideCost radians - the least that keeps each of those points as far from the cloak as it stood at rest,
@@ -60,19 +61,18 @@ export const SLUNG_UNDER = 'bip01 spine1';
 /**
  * AUDIT MW-CLOAK: the poses fit 1 holds the cloak over - each a turn of named bones about one of their own axes over
  * their rest, degrees: an upper arm about its z swings its hand back (the left +, the right -), a thigh about its z
- * steps its leg forward (+), a calf about its z bends its knee (+). The rest first; then a stride each way, its back
- * knee bent, with both arms swung back - the arms and the legs move apart parts of the cloak, so one pose holds both
- * (and a walk's smaller step stands between the rest and the stride).
+ * steps its leg forward (+), a calf about its z bends its knee (+), the chest about its z leans back (-). The rest
+ * first; then a stride each way, its back knee bent, with both arms swung back - the arms and the legs move apart parts
+ * of the cloak, so one pose holds both (and a walk's smaller step stands between the rest and the stride); then
+ * (MW-CAPE-RIGID) the chest leant back 10 - the cloak rides the chest alone, so a lean swings its whole hem forward
+ * about the chest, into the legs and the tassets (2.5 units through the ebony plate's, fitted without it).
  */
 export const CLOAK_FIT_POSES = Object.freeze([
   Object.freeze({}),
   Object.freeze({ 'bip01 r thigh': ['z', 35], 'bip01 l thigh': ['z', -30], 'bip01 l calf': ['z', 45], 'bip01 l upperarm': ['z', 25], 'bip01 r upperarm': ['z', -25] }),
   Object.freeze({ 'bip01 l thigh': ['z', 35], 'bip01 r thigh': ['z', -30], 'bip01 r calf': ['z', 45], 'bip01 l upperarm': ['z', 25], 'bip01 r upperarm': ['z', -25] }),
+  Object.freeze({ 'bip01 spine2': ['z', -10] }),
 ]);
-/** AUDIT MW-CLOAK: seated (a card table's chair - player/seatPose.js), the cloak keeps this much of its thighs' share:
- *  the whole and its hem wraps forward under the thighs past the knees; none and it hangs from the dropped hips through
- *  the floor; three tenths and it hangs behind the body, its hem above the floor. */
-export const CLOAK_SEATED_SHARE = 0.3;
 /** AUDIT MW-CLOAK: the follow's solve - its rounds of a linear law re-taken where the last left the gear, the sweeps of
  *  each, a unit's slide priced as a turn of `slideCost` radians, the most it turns and slides a pose, and the cell of
  *  the gear's (x, z) one contact stands for (the gear sampled at the same spacing). */
@@ -630,48 +630,6 @@ export function followCloak(assembly, { isCloak, isGear, clearance = CLOAK_CLEAR
   assembly.afterPose = (a) => applyCloakFollow(a, follow);
   if (assembly.mats) applyCloakFollow(assembly, follow);
   return follow;
-}
-
-/**
- * AUDIT MW-CLOAK: the cloak seated or standing - the batch it is skinned by, swapped. Seated, each thigh keeps
- * CLOAK_SEATED_SHARE of its weight on every vertex and the rest goes to the pelvis (the hang's root), so the hem hangs
- * behind a seated body instead of wrapping under its thighs. The seated batch is made once from the standing one (after
- * fit 1), and shares its positions and normals. Answers whether the body wears a cloak.
- */
-export function seatCloak(assembly, seated, isCloak = (p) => String(p.slot ?? '').startsWith('cloak (')) {
-  const cloak = assembly.pieces.find((p) => p.kind === 'skinned' && isCloak(p));
-  if (!cloak) return false;
-  if (!cloak.standingBatch || (cloak.batch !== cloak.standingBatch && cloak.batch !== cloak.seatedBatch)) {
-    cloak.standingBatch = cloak.batch;
-    cloak.seatedBatch = null;
-  }
-  if (seated && !cloak.seatedBatch) {
-    const b = cloak.standingBatch;
-    const moved = new Map();
-    const bones = b.skin.bones.map((bone) => {
-      if (!/thigh/i.test(String(bone.name ?? ''))) return { ...bone };
-      const weights = Float32Array.from(bone.weights);
-      for (let k = 0; k < weights.length; k++) {
-        const off = weights[k] * (1 - CLOAK_SEATED_SHARE);
-        weights[k] -= off;
-        moved.set(bone.indices[k], (moved.get(bone.indices[k]) ?? 0) + off);
-      }
-      return { ...bone, weights };
-    });
-    const root = bones.find((bone) => /pelvis/i.test(String(bone.name ?? '')));
-    if (root) {
-      const indices = Array.from(root.indices), weights = Array.from(root.weights);
-      for (const [v, w] of moved) {
-        const k = indices.indexOf(v);
-        if (k >= 0) weights[k] += w; else { indices.push(v); weights.push(w); }
-      }
-      root.indices = (root.indices instanceof Uint32Array ? Uint32Array : Uint16Array).from(indices);
-      root.weights = Float32Array.from(weights);
-    }
-    cloak.seatedBatch = root ? { ...b, skin: { ...b.skin, bones } } : b;
-  }
-  cloak.batch = seated ? cloak.seatedBatch : cloak.standingBatch;
-  return true;
 }
 
 /** The rotation of axis-angle `w` (its length the angle) into `out`, row-major. */

@@ -151,7 +151,9 @@
     "old": "tr[0] += u0 / slideCost; tr[1] += u1 / slideCost; tr[2] += u2 / slideCost;",
     "new": "tr[0] += u0 * slideCost; tr[1] += u1 * slideCost; tr[2] += u2 * slideCost;",
     "tests": ["test/auditmwcloak.test.js"],
-    "note": "The slide the law asks for scaled by the price twice over: a hundredth of it is taken."
+    "note": "The slide the law asks for scaled by the price twice over: a hundredth of it is taken.",
+    "equivalent": true,
+    "why": "MW-CAPE-RIGID: the cloak rides Bip01 Spine2 alone and retail's slung holsters (Bip01 MarksmanBow, Bip01 LongBladeTwoClose) hang from Bip01 Spine2 too, so slung gear and the cloak are one rigid body - no pose moves one against the other, and the follow never slides (or turns) slung gear. The slide is kept for a skeleton that hangs a slung holster below the chest; auditmwcloak.test.js pins the rigid pair."
   },
   {
     "name": "AUDITMWCLOAK-one-round",
@@ -176,46 +178,6 @@
     "new": "which reads the cloak where this pose just put it\n  if (false) assembly.afterPose(assembly);",
     "tests": ["test/auditmwcloak.test.js", "test/mwcloak1.test.js"],
     "note": "poseAssembly never runs the follow: every frame the gear hangs where its bone puts it."
-  },
-  {
-    "name": "AUDITMWCLOAK-seated-the-whole-thigh",
-    "file": "src/formats/mwCloakFit.js",
-    "old": "const off = weights[k] * (1 - CLOAK_SEATED_SHARE);",
-    "new": "const off = 0;",
-    "tests": ["test/auditmwcloak.test.js"],
-    "note": "Seated, the cloak keeps its thighs' whole share: the hem wraps forward under them past the knees."
-  },
-  {
-    "name": "AUDITMWCLOAK-seated-the-weight-lost",
-    "file": "src/formats/mwCloakFit.js",
-    "old": "      for (const [v, w] of moved) {",
-    "new": "      for (const [v, w] of []) {",
-    "tests": ["test/auditmwcloak.test.js"],
-    "note": "The thighs' share taken and given to no bone: the hem shrinks toward the rig's root."
-  },
-  {
-    "name": "AUDITMWCLOAK-seated-for-good",
-    "file": "src/formats/mwCloakFit.js",
-    "old": "cloak.batch = seated ? cloak.seatedBatch : cloak.standingBatch;",
-    "new": "cloak.batch = cloak.seatedBatch ?? cloak.standingBatch;",
-    "tests": ["test/auditmwcloak.test.js"],
-    "note": "Once seated, the cloak hangs seated standing up."
-  },
-  {
-    "name": "AUDITMWCLOAK-the-fits-measure-a-seat",
-    "file": "src/combat/fpArm.js",
-    "old": "seatCloak(arm, false, isCloak);   // the fits measure",
-    "new": "void isCloak;   // the fits measure",
-    "tests": ["test/auditmwcloak.test.js"],
-    "note": "A swap fitted on the seated batch: the standing cloak is not restored first."
-  },
-  {
-    "name": "AUDITMWCLOAK-the-frame-never-seats",
-    "file": "src/combat/fpArm.js",
-    "old": "if (t.cloaked) seatCloak(t.arm, !!(cam && (cam.seat || cam.saddle)));",
-    "new": "if (false) seatCloak(t.arm, !!(cam && (cam.seat || cam.saddle)));",
-    "tests": ["test/mwcloak1.test.js"],
-    "note": "A seated body's cloak never seated."
   },
   {
     "name": "AUDITMWCLOAK-the-tail-under-the-cloak",
