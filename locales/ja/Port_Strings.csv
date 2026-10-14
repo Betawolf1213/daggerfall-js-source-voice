@@ -1653,6 +1653,8 @@ mods.shieldWidget.Shield.Speed.description,"攻撃時の構えの切り替えの
 mods.shieldWidget.Shield.WhenAttacking.description,"武器で攻撃するときの盾の動作"
 mods.shieldWidget.Shield.WhenCasting.description,"呪文を構えているとき、または唱えているときの盾の動作"
 naval.yard.grogDrunk,"乗組員の士気は{spirits, select, roaring {最高潮} high {高い} steady {安定している} low {低い} other {どん底}} - 今日の一杯はもう振る舞った"
+net.chat.channels,"チャンネル"
+net.chat.channelsTitle,"チャットチャンネルに参加・退出"
 net.chat.joinHelp,"/join trade、/join lfg - チャンネルをタブに追加。/leave trade、/leave lfg で外す"
 net.chat.joined,"{name}チャンネルに参加しました。/leave {id} で退出します。"
 net.chat.joinedSay,"{name}チャンネルに参加しました。Enterで発言を送信します。/leave {id} で退出します。"

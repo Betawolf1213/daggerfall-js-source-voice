@@ -1786,6 +1786,8 @@ mods.worldOfDaggerfall.Enabled.description,"Több felfedeznivaló a vadonban: ba
 mods.worldTooltips.Enabled.description,"Név a célkereszt alatt arról, amire nézel: személy, bolt és nyitvatartása, ajtó és zárja, hová vezet egy kijárat, kar, kerék, létra, könyvespolc, megidézésre váró daedra. Kikapcsolva is látod, mit rejt egy láda vagy egy test."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Bekapcsolva nem ad alapértelmezett jelzést azokon a használható tárgyakon, amelyeket titkosnak szántak, különösen a fősztori rejtvényeinél."
 naval.yard.grogDrunk,"A legénysége hangulata {spirits, select, roaring {harsány} high {emelkedett} steady {kiegyensúlyozott} low {lehangolt} other {komor}} - a mai kört már megkapták"
+net.chat.channels,"Csatornák"
+net.chat.channelsTitle,"Csatlakozás csevegőcsatornához vagy kilépés belőle"
 net.chat.joinHelp,"/join trade, /join lfg - csatornát tesz a füleid közé; /leave trade, /leave lfg leveszi"
 net.chat.joined,"Csatlakoztál a(z) {name} csatornához. A /leave {id} kilép belőle."
 net.chat.joinedSay,"Csatlakoztál a(z) {name} csatornához - nyomj Entert a sorod elmondásához. A /leave {id} kilép belőle."

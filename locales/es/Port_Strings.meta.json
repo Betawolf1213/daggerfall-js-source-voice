@@ -9304,6 +9304,16 @@
   "tr": "b869c9136e1e",
   "by": "claude-in-session"
  },
+ "net.chat.channels": {
+  "en": "18e03e2a37ba",
+  "tr": "959a0c2052a7",
+  "by": "claude-in-session"
+ },
+ "net.chat.channelsTitle": {
+  "en": "52f21e7581b0",
+  "tr": "5b95f212cc5c",
+  "by": "claude-in-session"
+ },
  "net.chat.joinHelp": {
   "en": "4075e71ea675",
   "tr": "63e0f7ccf0f5",

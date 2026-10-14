@@ -1860,6 +1860,8 @@ mods.worldOfDaggerfall.Enabled.description,"More to find in the wilderness: band
 mods.worldTooltips.Enabled.description,"A name under the crosshair for what you’re looking at: a person, a shop and its opening hours, a door and its lock, where an exit leads, a lever, a wheel, a ladder, a bookshelf, a Daedra waiting to be summoned. With it off, you still see what a chest or body holds."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Enable to not give a default indication on interactable objects that may have been intended to be secret, particularly regarding puzzles in the main quest."
 naval.yard.grogDrunk,"Her crew's spirits are {spirits, select, roaring {roaring} high {high} steady {steady} low {low} other {grim}} - they have had today's round"
+net.chat.channels,"Channels"
+net.chat.channelsTitle,"Join or leave a chat channel"
 net.chat.joinHelp,"/join trade, /join lfg - put a channel on your tabs; /leave trade, /leave lfg takes it off"
 net.chat.joined,"{name} channel joined. /leave {id} leaves it."
 net.chat.joinedSay,"{name} channel joined - press Enter to say your line. /leave {id} leaves it."

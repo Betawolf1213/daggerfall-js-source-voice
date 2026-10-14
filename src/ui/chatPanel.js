@@ -166,6 +166,7 @@ import { SHORTCODE_LIST, findCommandOf } from '../net/chatCommands.js';   // EMO
 import { getPref, setPref } from '../systems/uiPrefs.js';   // CHAT-R2: the hidden state outlives the session
 import { CHANNEL_COLOURS, NAME_COLOURS, PING_COLOURS, RP_COLOURS, channelRules, pipRules } from './chatColours.js';   // CHAT-COLOURS, NAME-INK, PING1
 import { PIXELIFY_FIVE_FACE, PIXEL_FONT_CSS, PIXEL_TEXT_SHADOW } from './pixelifyFive.js';   // FONT1: the enhanced skin's own face, unsmoothed, with Silkscreen's five
+import { t } from '../systems/textManager.js';   // CHAT-TRADE: the channel picker's words in the player's language
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 
 /** The action whose key opens the chat: DFU's own cursor key (Enter by default), since opening frees the cursor. */
@@ -435,6 +436,24 @@ ${Object.entries(CHANNEL_COLOURS).map(([ch, c]) => `.dfchat[data-colours="on"] .
 .dfchat-social-out { display: inline-flex; pointer-events: auto; margin-top: 4px; }
 .dfchat[data-state="open"] .dfchat-social-out { display: none; }
 .dfchat-social-tab { display: inline-flex; margin: 2px 4px 4px auto; }
+/* CHAT-TRADE (Mac: "There must be a better way to handle the new channels instead of a text command"): THE CHANNEL
+   PICKER - one small + beside the tabs, before Social, so the bar a new player sees gains a single glyph and no tab; it
+   opens a short list of the channels joined by choice, each a row with its mark, a click joining or leaving it. */
+.dfchat-tabs { position: relative; }
+.dfchat-chan-add { background: none; border: 0; border-radius: 3px; color: var(--dim, #9a9486); font: inherit; font-size: 16px; line-height: 1;
+  padding: 4px 8px; margin: 2px 0 4px 2px; cursor: pointer; flex: none; }
+.dfchat-chan-add:hover, .dfchat-chan-add:focus-visible, .dfchat-chan-add[aria-expanded="true"] { color: var(--bone, #e9e4d9); background: var(--iron, #2b323b); }
+.dfchat-chans { display: none; position: absolute; top: 100%; right: 4px; z-index: 3; flex-direction: column; gap: 1px; padding: 4px;
+  width: min(280px, calc(100% - 8px)); box-sizing: border-box; background: rgba(14, 16, 19, .96); border: 1px solid var(--iron, #2b323b); border-radius: 4px; }
+.dfchat-chans.on { display: flex; }
+.dfchat-chan-row { display: flex; align-items: flex-start; gap: 8px; background: none; border: 0; border-radius: 3px; color: var(--bone, #e9e4d9);
+  font: inherit; font-size: 13px; text-align: left; padding: 7px 8px; cursor: pointer; }
+.dfchat-chan-row:hover, .dfchat-chan-row:focus-visible { background: var(--iron, #2b323b); }
+.dfchat-chan-mark { flex: none; width: 1em; color: var(--brass, #c08a3e); }
+.dfchat-chan-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }   /* the name over what the channel is for */
+.dfchat-chan-name { font-weight: 600; }
+.dfchat-chan-hint { color: var(--dim, #9a9486); font-size: 11px; }
+.dfchat.touch .dfchat-chan-row { padding: 10px 8px; }
 /* a request waiting on YOU is not an unread line: its own colour, so the two badges never read as one count */
 .dfchat-social .dfchat-badge { background: #c8503c; color: #f6efe2; }
 
@@ -529,6 +548,11 @@ export function isOpenKey(e, { canOpen = () => true, overlay = overlayOpen, acti
  * `rowActions(peerId)` is `[{ label, enabled, why, run }]` - the menu a
  * click on a roster row opens.
  *
+ * CHAT-TRADE: `channels` is `{ list, set }` - `list()` the channels a
+ * player joins by choice, `[{ id, name, hint, joined }]`, and `set(id,
+ * on)` the host's one door that joins or leaves one (the + beside the
+ * tabs opens the list; without `channels` there is no +).
+ *
  * AUDIT SOC C2/C14: `above()` is the host's word on whether a social
  * surface stands OVER the chat (the friends panel, the F-menu). All
  * three listen for Escape on the window in capture, so ONE press used
@@ -537,7 +561,7 @@ export function isOpenKey(e, { canOpen = () => true, overlay = overlayOpen, acti
  * key - and when it does handle one it calls stopImmediatePropagation,
  * so neither a sibling surface nor the host's pause door sees it.
  */
-export function createChatPanel({ log, onSend, roster = null, canOpen = () => true, onOpen = null, onClose = null, above = () => false, action = actionOfKey, overlay = overlayOpen, doc = document, win = globalThis, touch = isTouchDevice(), social = null, nameColor = null, rowActions = null, badgeOf = null } = {}) {
+export function createChatPanel({ log, onSend, roster = null, canOpen = () => true, onOpen = null, onClose = null, above = () => false, action = actionOfKey, overlay = overlayOpen, doc = document, win = globalThis, touch = isTouchDevice(), social = null, nameColor = null, rowActions = null, badgeOf = null, channels = null } = {}) {
   injectChatStyle(doc);
   const el = (tag, cls, text) => { const n = doc.createElement(tag); n.className = cls; if (text != null) n.textContent = text; return n; };
   const root = el('div', `dfchat${touch ? ' touch' : ''}`);
@@ -638,6 +662,44 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
     tabButtons.set(tab.id, { b, badge, name: null });
   }
   tabs.append(tabList);
+  // CHAT-TRADE: THE CHANNEL PICKER, built only when the host hands `channels` ({ list, set } - see the header): the +
+  // toggles the list, a row joins or leaves its channel through the host's one door, and the caret goes back to the
+  // field (EMOTE1's picker law: Escape in the field takes the list down first, the panel's close takes it with it).
+  let chanOpen = false;
+  const chanBtn = channels ? el('button', 'dfchat-chan-add', '+') : null;
+  const chanMenu = channels ? el('div', 'dfchat-chans') : null;
+  const chanRows = () => {
+    chanMenu.replaceChildren(...(channels.list?.() ?? []).map((c) => {
+      const row = el('button', 'dfchat-chan-row');
+      row.type = 'button'; row.dataset.chan = c.id;
+      row.setAttribute('role', 'menuitemcheckbox');
+      row.setAttribute('aria-checked', c.joined ? 'true' : 'false');
+      const text = el('span', 'dfchat-chan-text');
+      text.append(el('span', 'dfchat-chan-name', c.name), el('span', 'dfchat-chan-hint', c.hint ?? ''));
+      row.append(el('span', 'dfchat-chan-mark', c.joined ? '\u2713' : ''), text);
+      row.addEventListener('click', () => { channels.set?.(c.id, !c.joined); chanRows(); paint(true); input.focus?.(); });
+      return row;
+    }));
+  };
+  const setChanOpen = (on) => {
+    if (!chanMenu) return;
+    chanOpen = !!on;
+    if (chanOpen) chanRows();
+    const cls = chanOpen ? 'dfchat-chans on' : 'dfchat-chans';
+    if (chanMenu.className !== cls) chanMenu.className = cls;
+    chanBtn.setAttribute('aria-expanded', chanOpen ? 'true' : 'false');
+  };
+  if (chanBtn) {
+    chanBtn.type = 'button';
+    chanBtn.setAttribute('aria-label', t('net.chat.channels', 'Channels'));
+    chanBtn.setAttribute('aria-haspopup', 'menu');
+    chanBtn.setAttribute('aria-expanded', 'false');
+    chanBtn.title = t('net.chat.channelsTitle', 'Join or leave a chat channel');
+    chanMenu.setAttribute('role', 'menu');
+    chanMenu.setAttribute('aria-label', t('net.chat.channels', 'Channels'));
+    chanBtn.addEventListener('click', () => { setChanOpen(!chanOpen); input.focus?.(); });
+    tabs.append(chanBtn, chanMenu);
+  }
   // TAB-WHEEL: the wheel over the strip turns it sideways (either wheel axis - a mouse's turns Y, a pad's X), and the
   // page under it does not scroll while the strip still can; each edge with tabs past it fades (tabEdges, the sheet).
   const tabEdges = () => {
@@ -1187,6 +1249,7 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
   const closePanel = () => {
     if (!alive || !log.open) return false;
     setEmojiOpen(false);   // EMOTE1: the picker goes with the panel
+    setChanOpen(false);   // CHAT-TRADE: and the channel list
     log.setOpen(false);
     setQuery('');   // CHAT-FIND: a search is a look at the log, not a state of it - the next open is the conversation
     search.blur?.();
@@ -1223,7 +1286,7 @@ export function createChatPanel({ log, onSend, roster = null, canOpen = () => tr
       // the field's key (CG2): stopped here, so the host's ring never fills from a chat line
       if (e.isComposing || e.keyCode === 229) { e.stopPropagation(); return; }   // C3: the IME's own Enter commits a candidate, not a line
       // AUDIT SOC C2/C14: a surface OVER the chat owns Escape - the key is left whole for it, and the field keeps its line
-      if (e.code === 'Escape') { if (above()) { e.stopPropagation(); return; } e.preventDefault(); e.stopImmediatePropagation(); if (emojiOpen) { setEmojiOpen(false); return; } closePanel(); return; }   // EMOTE1: the picker is the innermost surface - its Escape first
+      if (e.code === 'Escape') { if (above()) { e.stopPropagation(); return; } e.preventDefault(); e.stopImmediatePropagation(); if (emojiOpen) { setEmojiOpen(false); return; } if (chanOpen) { setChanOpen(false); return; } closePanel(); return; }   // EMOTE1: the picker is the innermost surface - its Escape first; CHAT-TRADE: then the channel list
       else if (e.code === 'Enter' && !e.shiftKey && !e.repeat) { e.preventDefault(); submit(); }   // C6: a held Enter opened once; its repeats send nothing
       else if (e.code === 'Tab') e.preventDefault();   // C7: focus stays in the field - Tab walked it onto Send and gave the keyboard back to the game
       else swallowBrowserKey(e);

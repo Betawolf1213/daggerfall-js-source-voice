@@ -1860,6 +1860,8 @@ mods.worldOfDaggerfall.Enabled.description,"Повече неща за нами�
 mods.worldTooltips.Enabled.description,"Име под мерника за това, което гледате: човек, магазин и работното му време, врата и ключалката ѝ, накъде води изход, лост, колело, стълба, библиотека, Даедра, чакащ да бъде призован. Изключено - пак виждате какво съдържа сандък или тяло."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Включете, за да не се дава стандартно указание върху интерактивни обекти, които може би е трябвало да са тайни, особено при загадките в основната история."
 naval.yard.grogDrunk,"Духът на екипажа ѝ е {spirits, select, roaring {ликуващ} high {висок} steady {стабилен} low {нисък} other {мрачен}} - днешната порция грог вече е изпита"
+net.chat.channels,"Канали"
+net.chat.channelsTitle,"Влез в чат канал или го напусни"
 net.chat.joinHelp,"/join trade, /join lfg - добавя канал към разделите ти; /leave trade, /leave lfg го маха"
 net.chat.joined,"Влезе в канала {name}. /leave {id} го напуска."
 net.chat.joinedSay,"Влезе в канала {name} - натисни Enter, за да кажеш реда си. /leave {id} го напуска."

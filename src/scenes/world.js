@@ -22803,21 +22803,15 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         // tab joined comes to the front with its line, and a tab left goes from the bar with the chat's front tab saying so
         if (cmd.kind === 'join' || cmd.kind === 'leave') {
           if (!cmd.chan) { note(badJoinText(cmd.kind)); return false; }
-          const on = cmd.kind === 'join', c = OPT_CHANNELS[cmd.chan];
+          const on = cmd.kind === 'join';
           if (optJoined(cmd.chan) === on) { note(on ? optJoinedText(cmd.chan) : notJoinedText(cmd.chan)); return 'read'; }   // already so: the state, and the way out of it
-          setPref(c.pref, on);
-          chatOptFrame();
-          if (on) { chatLog.select(cmd.chan); chatLog.push(cmd.chan, { text: tradeChanOld() ? tradeChanOldText() : optJoinedText(cmd.chan), system: true }); }
-          else chatLog.push(chatLog.active, { text: optLeftText(cmd.chan), system: true });
+          optSet(cmd.chan, on);
           return 'read';
         }
         // CHAT-TRADE: a line said to a channel not joined JOINS it - the tab to the front, the line kept in the field to be
         // said once the channel opens (B2's false: nothing went)
         if (cmd.kind === 'channel' && Object.hasOwn(OPT_CHANNELS, cmd.tab) && !optJoined(cmd.tab)) {
-          setPref(OPT_CHANNELS[cmd.tab].pref, true);
-          chatOptFrame();
-          chatLog.select(cmd.tab);
-          chatLog.push(cmd.tab, { text: tradeChanOld() ? tradeChanOldText() : optJoinedSayText(cmd.tab), system: true });
+          optSet(cmd.tab, true, { say: true });
           return false;
         }
         if (cmd.kind === 'rp') return chatSend(tabId, cmd.text, tabId);   // CHAT-RP: a line of roleplay, on this tab - its *mark* is the drawing's
@@ -22858,7 +22852,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // wears the friend colour, which is the list's own mark carried into the conversation
       nameColor: (id) => social?.cssColorOf(id) ?? null,   // SOC7 integration: the picture answers (net/social.js cssColorOf - party green, friend blue, a stranger none); the host names no colour, which SOC4's pin holds it to
       rowActions: (peerId) => socialRowActions(peerId),
-      badgeOf: (id) => chatSessionOf(chatLog?.active)?.badgeOf?.(id) ?? null,   // CHAT-FIT: a chat line's author wears the badge the roster shows - the same session answers both, or the one name would say two things on one screen
+      badgeOf: (id) => chatSessionOf(chatLog?.active)?.badgeOf?.(id) ?? null,
+      // CHAT-TRADE (Mac: "There must be a better way to handle the new channels instead of a text command"): the + beside
+      // the tabs - the channels joined by choice, each with its mark; a click is optSet, /join's own door
+      channels: { list: () => Object.entries(OPT_CHANNELS).map(([id, c]) => ({ id, name: c.name, hint: chatLog?.tab(id)?.hint ?? '', joined: optJoined(id) })), set: (id, on) => optSet(id, on) },   // CHAT-FIT: a chat line's author wears the badge the roster shows - the same session answers both, or the one name would say two things on one screen
     });
     socialStart();   // SOC2: the picture over the hub's link, once the panel it lands beside exists
   };
@@ -28803,6 +28800,18 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       chatLog.setRoom(id, room, c.name);
       link.join(room);
     }
+  };
+  /** CHAT-TRADE: A CHANNEL JOINED OR LEFT - the one door, for `/join` and `/leave`, a line said to a channel not joined
+   *  (`say`: its line waits in the field) and the chat's channel picker (ui/chatPanel.js `channels`). The choice is kept
+   *  (`chatTrade`, `chatLfg`) and the frame moves the tab at once; a tab joined comes to the front with its line, and a
+   *  tab left goes from the bar with the chat's front tab saying so. */
+  const optSet = (id, on, { say = false } = {}) => {
+    const c = OPT_CHANNELS[id];
+    if (!c || !chatLog) return;
+    setPref(c.pref, !!on);
+    chatOptFrame();
+    if (on) { chatLog.select(id); chatLog.push(id, { text: tradeChanOld() ? tradeChanOldText() : say ? optJoinedSayText(id) : optJoinedText(id), system: true }); }
+    else chatLog.push(chatLog.active, { text: optLeftText(id), system: true });
   };
   /** PING1 (2026-10-11, the players: "A unique color or alert for @name pings"): the log marks a line that names me
    *  (net/chat.js mentions - my name the presence session's); the alert is the enchanter's chime, once for a burst. */

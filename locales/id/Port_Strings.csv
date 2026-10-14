@@ -1860,6 +1860,8 @@ mods.worldOfDaggerfall.Enabled.description,"Lebih banyak yang bisa ditemukan di 
 mods.worldTooltips.Enabled.description,"Nama di bawah bidikan untuk apa yang kamu lihat: seseorang, toko dan jam bukanya, pintu dan kuncinya, ke mana sebuah pintu keluar menuju, tuas, roda, tangga, rak buku, Daedra yang menunggu dipanggil. Jika dimatikan, kamu tetap melihat isi peti atau mayat."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Aktifkan agar tidak memberi petunjuk bawaan pada objek yang bisa berinteraksi yang mungkin dimaksudkan untuk dirahasiakan, terutama terkait teka-teki di misi utama."
 naval.yard.grogDrunk,"Semangat awaknya {spirits, select, roaring {meluap} high {tinggi} steady {stabil} low {rendah} other {suram}} - mereka sudah mendapat jatah hari ini"
+net.chat.channels,"Saluran"
+net.chat.channelsTitle,"Bergabung atau keluar dari saluran obrolan"
 net.chat.joinHelp,"/join trade, /join lfg - menambahkan saluran ke tabmu; /leave trade, /leave lfg melepasnya"
 net.chat.joined,"Bergabung ke saluran {name}. /leave {id} keluar darinya."
 net.chat.joinedSay,"Bergabung ke saluran {name} - tekan Enter untuk mengucapkan baris kalimatmu. /leave {id} keluar darinya."

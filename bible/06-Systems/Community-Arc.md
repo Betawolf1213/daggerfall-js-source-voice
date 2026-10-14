@@ -1014,6 +1014,16 @@ field: no relay carries it, and an older client reads the line as the tabletop w
 aside (`(( ))`) keep their own kinds ahead of it; a line the game says is never one. Being in character, it stands over
 the speaker's head as any said line does (`ui/nameLayer.js` bubbleLineOk).
 
+**The channel picker** (Mac: "There must be a better way to handle the new channels instead of a text command"). A
+`+` stands in the tab bar beside the tabs and before Social - the one thing a player who joins nothing sees of these
+channels - and opens a short list of them, each a row with its name, what it is for and a mark when joined; a click
+joins or leaves it, and the list stays open for the next (`ui/chatPanel.js` `channels`, the host's `{ list, set }` - its
+`set` is `scenes/world.js` optSet, the same door `/join`, `/leave` and a line said to a channel not joined go through).
+Escape in the field takes the list down before the chat, and the chat's close takes it with it (EMOTE1's picker law).
+Measured in Chromium (`tools/chatChanProbe.mjs`): the bar with its `+` stays inside the box with Social in it at every
+width down to the 292px box of a 320px phone, both skins. The probe's older checks of a four-tab bar fail on main as
+they do here (the Language and Guild tabs outgrew them) - for its next pass, not this slice's.
+
 **/help** lists `/trade`, `/lfg`, `/join` and `/leave`, and `/rp`.
 
 **In the player's language** (L10N4's ratchet): every new word goes through the text core (`net.chat.*`) and is READ

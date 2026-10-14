@@ -12,8 +12,8 @@ import { RP_COLOURS, CHANNEL_COLOURS, CHAT_GROUNDS, PING_GROUNDS, COLOURED_LINE,
 import { bubbleLineOk } from '../src/ui/nameLayer.js';
 import { PREF_DEFAULTS } from '../src/systems/uiPrefs.js';
 import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
-import { CHAT_CSS } from '../src/ui/chatPanel.js';
 import { GRIMOIRE_KIT_CSS } from '../src/ui/grimoireDress.js';
+import { CHAT_CSS, createChatPanel } from '../src/ui/chatPanel.js';
 
 const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
 
@@ -95,8 +95,10 @@ test('CHAT-TRADE host: each tab follows its choice - on the bar while joined, jo
   assert.match(host, /if \(\(tabId === 'trade' \|\| tabId === 'lfg'\) && !tab\?\.room\) return optWhy\(tabId\);/, 'the strip says why');
   assert.deepEqual(Object.keys(OPT_CHANNELS), ['trade', 'lfg'], 'the host\'s doors name the same two');
   assert.match(host, /if \(cmd\.kind === 'join' \|\| cmd\.kind === 'leave'\) \{\n          if \(!cmd\.chan\) \{ note\(badJoinText\(cmd\.kind\)\); return false; \}/);
-  assert.match(host, /setPref\(c\.pref, on\);\n          chatOptFrame\(\);/);
-  assert.match(host, /if \(cmd\.kind === 'channel' && Object\.hasOwn\(OPT_CHANNELS, cmd\.tab\) && !optJoined\(cmd\.tab\)\) \{\n          setPref\(OPT_CHANNELS\[cmd\.tab\]\.pref, true\);[\s\S]{0,260}return false;\n        \}/);
+  assert.match(host, /const optSet = \(id, on, \{ say = false \} = \{\}\) => \{\n    const c = OPT_CHANNELS\[id\];\n    if \(!c \|\| !chatLog\) return;\n    setPref\(c\.pref, !!on\);\n    chatOptFrame\(\);/, 'one door: the choice kept, the frame moving the tab at once');
+  assert.match(host, /if \(optJoined\(cmd\.chan\) === on\) \{[^\n]*\}[^\n]*\n          optSet\(cmd\.chan, on\);/, '/join and /leave through it');
+  assert.match(host, /channels: \{ list: \(\) => Object\.entries\(OPT_CHANNELS\)\.map\(\(\[id, c\]\) => \(\{ id, name: c\.name, hint: chatLog\?\.tab\(id\)\?\.hint \?\? '', joined: optJoined\(id\) \}\)\), set: \(id, on\) => optSet\(id, on\) \},/, 'and the picker through it');
+  assert.match(host, /if \(cmd\.kind === 'channel' && Object\.hasOwn\(OPT_CHANNELS, cmd\.tab\) && !optJoined\(cmd\.tab\)\) \{\n          optSet\(cmd\.tab, true, \{ say: true \}\);\n          return false;\n        \}/);
   const at = host.indexOf("if (cmd.kind === 'channel' && Object.hasOwn(OPT_CHANNELS");
   assert.ok(at > 0 && at < host.indexOf("if (cmd.kind === 'channel') return chatSend("), 'the join comes before the channel\'s own send');
   const menu = rd('src/ui/enhancedMenu.js');
@@ -140,4 +142,78 @@ test('CHAT-RP colour: green and leaning on every tab - the channel colours pass 
   assert.match(rd('src/ui/chatPanel.js'), /\$\{line\.kind === 'rp' \? ' rp' : ''\}/);
   assert.ok(GRIMOIRE_KIT_CSS.includes(`.dfchat-box .dfchat-line.rp .dfchat-text { color: ${RP_COLOURS.dark} !important; text-shadow: none !important; font-style: italic; }`));
   assert.ok(GRIMOIRE_KIT_CSS.includes(`.dfchat-peek .dfchat-line.rp .dfchat-text { color: ${RP_COLOURS.light} !important; }`));
+});
+
+// The panel headless - chatchan.test.js's fakes, the window's key listener kept so the field's Escape can be pressed.
+function fakeNode(tag, doc) {
+  const n = {
+    tagName: tag.toUpperCase(), children: [], parent: null, className: '', textContent: '', id: '', value: '', title: '', placeholder: '',
+    style: {}, dataset: {}, attrs: {}, listeners: new Map(), scrollTop: 0, scrollHeight: 100, clientHeight: 100,
+    append(...cs) { for (const c of cs) { c.parent = n; n.children.push(c); } },
+    replaceChildren(...cs) { n.children = []; n.append(...cs); },
+    setAttribute(k, v) { n.attrs[k] = v; },
+    addEventListener(t, fn) { if (!n.listeners.has(t)) n.listeners.set(t, []); n.listeners.get(t).push(fn); },
+    removeEventListener() {},
+    fire(t, e = {}) { const ev = { type: t, target: n, preventDefault() {}, stopPropagation() {}, stopImmediatePropagation() {}, ...e }; for (const fn of n.listeners.get(t) ?? []) fn(ev); return ev; },
+    focus() { doc.activeElement = n; }, blur() {},
+    remove() { if (n.parent) { n.parent.children.splice(n.parent.children.indexOf(n), 1); n.parent = null; } },
+  };
+  return n;
+}
+function fakeDocument() {
+  const doc = { activeElement: null };
+  doc.createElement = (tag) => fakeNode(tag, doc);
+  doc.head = fakeNode('head', doc); doc.body = fakeNode('body', doc);
+  const byId = (n, id) => { if (n.id === id) return n; for (const c of n.children) { const f = byId(c, id); if (f) return f; } return null; };
+  doc.getElementById = (id) => byId(doc.head, id) ?? byId(doc.body, id);
+  return doc;
+}
+const find = (n, cls, out = []) => { if (String(n.className).split(/\s+/).includes(cls)) out.push(n); for (const c of n.children) find(c, cls, out); return out; };
+const one = (n, cls) => find(n, cls)[0];
+
+test('CHAT-TRADE picker (Mac: "There must be a better way to handle the new channels instead of a text command"): a + beside the tabs opens the channels joined by choice, each with its mark; a click joins or leaves it through the host\'s door; Escape in the field and the panel\'s close take the list down; no + without the host\'s channels', () => {
+  const plain = fakeDocument();
+  createChatPanel({ log: new ChatLog(), onSend: () => true, action: () => null, doc: plain, win: { addEventListener() {}, removeEventListener() {} }, touch: false });
+  assert.equal(find(plain.body, 'dfchat-chan-add').length, 0, 'no channels from the host: no +');
+
+  const doc = fakeDocument();
+  const keys = [];
+  const win = { addEventListener: (t, fn) => { if (t === 'keydown') keys.push(fn); }, removeEventListener() {} };
+  const joined = { trade: false, lfg: true };
+  const sets = [];
+  const log = new ChatLog();
+  const panel = createChatPanel({ log, onSend: () => true, action: () => null, doc, win, touch: false, social: { onToggle() {}, pending: () => 0 },
+    channels: { list: () => [{ id: 'trade', name: 'Trade', hint: 'buy, sell', joined: joined.trade }, { id: 'lfg', name: 'LFG', hint: 'groups', joined: joined.lfg }], set: (id, on) => { sets.push([id, on]); joined[id] = on; } } });
+  const root = doc.body.children[0];
+  const bar = one(root, 'dfchat-tabs');
+  const add = one(bar, 'dfchat-chan-add'), menu = one(bar, 'dfchat-chans');
+  assert.deepEqual(bar.children.map((c) => c.className.split(' ')[0]), ['dfchat-tablist', 'dfchat-chan-add', 'dfchat-chans', 'dfchat-social'], 'beside the tabs, before Social - one glyph, no tab');
+  assert.equal(add.textContent, '+');
+  assert.deepEqual([add.attrs['aria-label'], add.attrs['aria-haspopup'], add.attrs['aria-expanded'], menu.attrs.role], ['Channels', 'menu', 'false', 'menu']);
+  assert.equal(menu.className, 'dfchat-chans', 'shut');
+  panel.open();
+  add.fire('click');
+  assert.equal(menu.className, 'dfchat-chans on');
+  assert.equal(add.attrs['aria-expanded'], 'true');
+  const rows = () => find(menu, 'dfchat-chan-row').map((r) => [r.dataset.chan, r.attrs['aria-checked'], one(r, 'dfchat-chan-mark').textContent, one(r, 'dfchat-chan-name').textContent, one(r, 'dfchat-chan-hint').textContent]);
+  assert.deepEqual(rows(), [['trade', 'false', '', 'Trade', 'buy, sell'], ['lfg', 'true', '\u2713', 'LFG', 'groups']]);
+  find(menu, 'dfchat-chan-row')[0].fire('click');
+  assert.deepEqual(sets, [['trade', true]], 'joined through the host');
+  assert.deepEqual(rows().map((r) => r[1]), ['true', 'true'], 'and marked at once, the list still open');
+  find(menu, 'dfchat-chan-row')[1].fire('click');
+  assert.deepEqual(sets, [['trade', true], ['lfg', false]], 'and left');
+  const input = one(root, 'dfchat-input');
+  assert.equal(doc.activeElement, input, 'the caret back in the field');
+  const esc = () => { for (const fn of keys) fn({ target: input, code: 'Escape', preventDefault() {}, stopPropagation() {}, stopImmediatePropagation() {} }); };
+  esc();
+  assert.equal(menu.className, 'dfchat-chans', 'Escape takes the list down first');
+  assert.equal(log.open, true, '...and leaves the chat open');
+  add.fire('click');
+  esc();
+  esc();
+  assert.equal(log.open, false, 'the next Escape closes the chat');
+  panel.open(); add.fire('click');
+  one(root, 'dfchat-close').fire('click');
+  assert.equal(menu.className, 'dfchat-chans', 'the panel\'s close takes the list with it');
+  assert.ok(CHAT_CSS.includes('.dfchat-chans.on { display: flex; }'));
 });

@@ -1860,6 +1860,8 @@ mods.worldOfDaggerfall.Enabled.description,"Más cosas que encontrar en las tier
 mods.worldTooltips.Enabled.description,"Un nombre bajo la mira para lo que estás mirando: una persona, una tienda y su horario, una puerta y su cerradura, adónde lleva una salida, una palanca, una rueda, una escalera, una estantería, un daedra a la espera de ser invocado. Con esto desactivado, sigues viendo lo que contiene un cofre o un cuerpo."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Actívalo para no dar una indicación por defecto en objetos interactivos que quizá debían ser secretos, sobre todo en los acertijos de la misión principal."
 naval.yard.grogDrunk,"El ánimo de su tripulación es {spirits, select, roaring {exultante} high {alto} steady {firme} low {bajo} other {sombrío}} - ya han tomado la ronda de hoy"
+net.chat.channels,"Canales"
+net.chat.channelsTitle,"Únete a un canal de chat o abandónalo"
 net.chat.joinHelp,"/join trade, /join lfg - añade un canal a tus pestañas; /leave trade, /leave lfg lo quita"
 net.chat.joined,"Te uniste al canal {name}. /leave {id} lo abandona."
 net.chat.joinedSay,"Te uniste al canal {name}: pulsa Enter para decir tu línea. /leave {id} lo abandona."
