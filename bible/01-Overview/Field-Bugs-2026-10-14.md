@@ -14,6 +14,7 @@ Discord threads from 2026-10-13 and 2026-10-14, handed over as screenshots, read
 | 7 | "the 'Look Around > With secrets' config is not even showing anything" (Arbeck) | not reproduced: nothing on its path changed since 2026-10-10 and its suite passes; it lights only in a dungeon, on an Info ask (F3 or the wheel's Info), within 8 m and in sight - and a thick secret wall can hide its own glow card | asked of the player |
 | 8 | "Gold appears when I'm trading but not in my inventory" - "After I went to sleep my character lost 5000 of gold" (Soda_do_macaco...) | not reproduced: the trade window's figure, its refusal and its payment read one count (coins and letters of credit); the inventory's footer counts coins alone, and a payment spends letters first, so a 5000 letter spent leaves the coin figure where it was | asked of the player |
 | 9 | "Mountain clipping and invisible" - "Mountain is invisible and you can go through it and get stuck" (BigOOF) | a video, no place named | asked of the player |
+| 10 | "Equipped items Disappear after looting in PvP zone" - "When you kill a player in a PvP zone and loot an item they have equipped, the item disappears from the player's inventory but does not appear in yours" | the room judged the killer's take of the piece by the drop's friend law (PVPDUNGEONS): a killer the fallen's guild counted a friend (or one sharing a party with them by the take) was refused the piece the account service had already taken off the fallen's record for them | fixed (PVP-LOOT); whether guildmates may fight in the zone at all is Mac's call |
 
 ## STORES-CRASH: the Stores page walks a station's nodes as the browser mints them (1)
 
@@ -125,6 +126,60 @@ on nothing until the player switches to it - the rule since LOOT4, unchanged in 
 CHANGED (Mac, asked: "Keep per-hand"). The rule stands; the line says it - "5% life leech on this weapon's own blows",
 on the item card, a gem's line and the Reforge. PIN MOVED: `test/loot4_procs.test.js`
 (`tools/mutants/fb1014_leechhand.json`, 1, dead).
+
+## PVP-LOOT: the killer's worn piece is the order's, never the friend law's (10)
+
+`src/net/wildLaw.js` remainsNamedFor, takeFrom; `server/src/index.js` `_wildWord` (relay world201). Read on main's
+`7c291d36`.
+
+THE REPORT. A player killed another in the open zone (`11-Multiplayer/Wild-Zone.md`), searched the body and chose one of
+its worn pieces: it left the fallen and never came to the killer.
+
+FOUND. An equipped piece followed through the whole chain on the real modules, with the game's own pieces (the starting
+kit's worn clothes, a Magic longsword as the ladder rolls one, worn through `equip.js` equipItem, the record as the save
+writes it): the body's offer and the pick (`world.js` wildBodyArrived, wildBodyChosen), the relay's signed fall (`f1`, the
+pick's place and what it showed), the account service's take (`wildDropLaw.js` takeWildDeath - the piece off the record
+first, `wildRecord` stripping the receiver's marks, `equipSlot` among them), the fallen's game taking out exactly that
+(wildTakeTook, unequipped first), the remains laid on the service's order (`wk`, `wi`: the killer's), the killer's own
+book asking for it (`wildRemains.js:"const askMine = "`) and the room's `got` minted into the pack (`loot.js`
+validLootList, the receiver's marks stripped again). For a killer who is a stranger every step holds: the piece lands,
+unequipped. The break was the room's take. `_wildWord` asked the PVPDUNGEONS friend law ("Party/guildmembers cant pick it
+up" - a fallen's remains are theirs and their foes', never their party's or their guild's) before takeFrom, of EVERY
+record - the killer's piece too. INT9 had moved that piece from the fallen's own hand (WILD1's `gave`) into the remains,
+under a law written for the drop. The referee counts a guildmate a fair foe - only a party, its truce and a duel are kin
+(`world.js:"const wildFair = (peerId) => {"`, and the relay's `_wildBlow`) - so a guildmate's kill was signed, the service
+took the piece off the fallen's record and named it the killer's, the fallen's game took it out of the pack, and the room
+answered the killer "Someone took that first." The piece lay in the remains for nobody (its fallen is not its named taker
+either) until they went, and the killer's book asked again every frame. The same for a killer and a fallen who come to
+share a party before the take, and for a take asked while the hub is silent (kin until it answers).
+
+FIXED. The friend law is the drop's. `remainsNamedFor` (`wildLaw.js:"export const remainsNamedFor"`) names the account a
+record is for - the killer's worn piece its order's killer, every other record nobody in particular - and the room asks
+the friend law only of a record named for nobody (`server/src/index.js:"if (rec && !remainsNamedFor(rec, d.i) && rec.os"`);
+takeFrom keeps the named piece its killer's alone, by the same member. The drop stays the fallen's and her foes': a
+guildmate or a party member of hers is refused every record of it. Relay world201 (no frame changes shape; the deploy
+drops every player once). Pinned by `test/fb1014_pvploot.test.js`, end to end through the real account service, the real
+relay room and the killer's own book, over the game's own pieces: a stranger, a guildmate and a party member each get the
+longsword unequipped, as it was minted, under the service's fresh id; the drop is refused to her friends and taken by a
+stranger; a stranger asking first for the named piece is refused (`tools/mutants/fb1014_pvploot.json`, 5, dead - the
+first is the take as it shipped). PIN MOVED: `tools/mutants/int_lane2.json` INT9-THE-KILLERS-PIECE-ANYONES, re-aimed by
+content at takeFrom's gate.
+
+THE FOUR HOSTS. The take is the relay's, so every host reads it unchanged: `scenes/world.js` (the open country, the one
+place a body offers a worn piece and an order names one) WIRED as it stood - its book asks, the room now answers;
+`scenes/dungeonContext.js` and `scenes/worldModes.js` hold remains in their pools but no record in them is ever named (a
+hall's fall offers no worn piece, a building has no player fight); `scenes/exterior.js`, offline, NOT WIRED on purpose.
+
+LEFT OPEN, for Mac:
+- GUILDMATES FIGHT IN THE ZONE. The referee and `wildFair` make kin of a party, its truce and a duel alone, while
+  everything else the zone does counts a guildmate a friend - each other's marks on the maps, nameplates, never a
+  "stranger", the drop barred. Whether a guildmate should be a fair foe at all is a design call; this fix keeps the fight
+  as it stands and gives the killer what the service named theirs.
+- THE PIECE IS THE ROOM'S UNTIL ITS KILLER ASKS. The fallen's record loses it when the service takes it (INT9's order),
+  and the remains hold it for the killer `WILD_REMAINS_MS`; the killer's game asks the moment the room says the remains,
+  and again at any hello of that cell or its halo inside them. A killer gone from both before the remains are laid, who
+  does not come back inside twelve minutes, never asks, and the piece goes with the remains. Making the fallen lose it
+  only when the killer's take lands is a change across the account service and the relay, not this fix.
 
 ## Asked of the players (7, 8, 9)
 

@@ -288,7 +288,7 @@ import { newTable, topUp as holdemTopUp, sit as holdemSit, sitRefusal as holdemS
 // WILD1 (2026-10-07, the owner: "Wrothgarian mountains need to be turned into a open pvp zone"): ONE FILE JOINS THE
 // BUNDLE - net/wildLaw.js (a place room's REMAINS: what a body in the open zone dropped, kept here so the room alone
 // decides who takes each record - it imports wire.js alone). bible/11-Multiplayer/Wild-Zone.md.
-import { newRemains, foldFall, takeFrom, remainsWords, remainsLive, remainsEmpty, remainsSpent, remainsTakeover, remainsEvict, remainsOf, wildRemainsKey, WILD_REMAINS_PREFIX } from '../../src/net/wildLaw.js';
+import { newRemains, foldFall, takeFrom, remainsNamedFor, remainsWords, remainsLive, remainsEmpty, remainsSpent, remainsTakeover, remainsEvict, remainsOf, wildRemainsKey, WILD_REMAINS_PREFIX } from '../../src/net/wildLaw.js';
 import { wildGate, wildDirected, WILD_HZ_MAX, WDUN_HZ_MAX, WDUN_HERE_MS, WDUN_INTERNAL_RESET, WDUN_INTERNAL_KIN, WDUN_INTERNAL_GONE, WILD_INTERNAL_VIT, wdunRoomKey, wdunHall, WILD_REMAINS_MS as WDUN_PILE_MS } from './relay.js';
 import { WDUN_KEY, wdunOf, wdunPrune, wdunEnter, wdunHere, wdunLeave, wdunDie, wdunGone, wdunState, wdunCrows, wdunBound, wdunGiantDie, wdunGiants } from '../../src/net/wildLaw.js';   // PVPDUNGEONS: the zone's halls, kept by the hub
 import { validSdRecord, sdRelayGate, validSdFoundTell, chatRegionRoom, SD_INTERNAL_CENSUS, SD_INTERNAL_FOUND, SD_INTERNAL_LIVE, SD_TELL_RETRY_MS, SD_KEY, SD_FOUND_KEY, SD_REALM_KEY, sdDeadKey, SD_REGION_COUNT, SD_FIGHTERS_MAX, sdPzRelayGate, SD_ORRERY_KEY, sdFightRelayGate, SD_BRAIN_MIN, SD_NO_WORDS, SD_FIGHT_KEY, SD_INTERNAL_FELL, validSdFellTell, SD_RC_PREFIX, sdReceiptKey, SD_HERE_HOLD_MS, SD_SLOT_KEY, SD_HELD_KEY } from './relay.js';   // SD3: the Super dungeon's frame, its record and its doors (the wire's, through relay.js)
@@ -8025,8 +8025,11 @@ export class Room {
     }
     const rec = map.get(d.r);
     // PVPDUNGEONS (the owner: "Party/guildmembers cant pick it up"): a fallen's remains are theirs and their foes', never
-    // their friends' - a guildmate is read off the sockets' own verified guilds, a party member asked of the hub
-    if (rec && rec.os && a.sub !== rec.os && ((rec.gi && a.gi && rec.gi === a.gi) || (a.sub && await this._wdunKinOf(a.sub, rec.os, now)))) {
+    // their friends' - a guildmate is read off the sockets' own verified guilds, a party member asked of the hub. PVP-LOOT
+    // (FIELD BUGS 2026-10-14): the DROP's law - the record the order names (the killer's worn piece, net/wildLaw.js
+    // remainsNamedFor) is its account's by the service's word, and takeFrom judges it; the friend law read over it too, a
+    // guildmate's kill left the piece the service had taken off the fallen in the remains for nobody
+    if (rec && !remainsNamedFor(rec, d.i) && rec.os && a.sub !== rec.os && ((rec.gi && a.gi && rec.gi === a.gi) || (a.sub && await this._wdunKinOf(a.sub, rec.os, now)))) {
       this._send(ws, JSON.stringify({ t: 'wild', k: 'no', r: d.r, i: d.i }));
       return;
     }

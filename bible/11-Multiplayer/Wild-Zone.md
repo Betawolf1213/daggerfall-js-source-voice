@@ -154,7 +154,8 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   ONE worn piece: the fallen's game shows the list (`worn`, under the fall's id), the killer's body window picks
   (`pick`, INT9: to the relay, in the room that refereed the fall, within `WILD_REF.pickMs`, naming what the offer
   showed there), and the relay signs the fall with it - the service takes that piece off the fallen's record first, and the remains hold it for the killer
-  alone (their game asks for it as the room says the remains). While the body lies the fallen's socket stays in the
+  alone (their game asks for it as the room says the remains - theirs whoever the fallen's guild or party counts them,
+  PVP-LOOT, section 5). While the body lies the fallen's socket stays in the
   room, so the signed fall reaches them; a fallen that lets `WILD_FALL_GRACE_S` (30 s) go by is seized by its killer
   (the record moved where it stands, its lease cleared). A death at a player's hand underground drops the bag and the
   gold as any death there does, and offers no worn piece.
@@ -193,6 +194,12 @@ with the minutes left.
   guilds (the remains keep the fallen's `gi` - INT9's audit: the service's order's `wg`, whoever carries it), a party member asked of the hub (`_wdunKinOf`,
   `server/src/index.js:"async _wdunKinOf"`, over `WDUN_INTERNAL_KIN`, kept a minute a pair, the stalest pair let go first past 512 - never the whole cache; a hub that does not answer is kin, kept `WDUN_KIN_SILENT_MS`) - and a member's game
   never seeds the pile at all (`canTake`, `world.js:"canTake: (rec) =>"` and `wildRemains.js:"if (!canTake(rec))"`).
+  PVP-LOOT (FIELD BUGS 2026-10-14, "Equipped items Disappear after looting in PvP zone"): the DROP's law, never the
+  killer's worn piece. The record the service's order names (`wk`, `wi`) is its killer's whoever the fallen's guild or
+  party counts them (`wildLaw.js:"export const remainsNamedFor"`), and the room asks the friend law only of a record it
+  names for nobody (`server/src/index.js:"if (rec && !remainsNamedFor(rec, d.i) && rec.os"`). A guildmate may fight the
+  fallen (section 3), and the room refused such a killer the piece the service had already taken off the fallen's record,
+  which then lay there for nobody (`01-Overview/Field-Bugs-2026-10-14.md` PVP-LOOT).
 - BESIDE THE BODY (PVPFIX, the owner: "place the pile next to the body not on top of it"): the pile stands a fixed
   step to the side of where they fell, the same on every client (`wildRemains.js:"- on top it was hidden"`) - on top
   it was inside the body and could not be aimed at.
@@ -263,6 +270,8 @@ renumbered past main's SUPER-DUNGEONS (world176) - its parts written on their br
   its takes (section 3-5). INT9 (world185, `WILD_REF_RELAY_MIN`): the zone word (`zone`), the blows refereed and routed
   to nobody, the killer's `pick` the room's, a deposit carrying the service's order on every chunk; `gave` and
   `result` retired. The referee's own frame `{t:'wref', k}` (`validWildRefOut`): `hp`, `fell`, `rc` (the signed fall).
+  PVP-LOOT (world201): no frame changes shape - the room's take asks the friend law of the drop's records alone
+  (section 5).
 - `{t:'wdun', k, ...}` (`validWdunIn`/`validWdunOut`, `wire.js:"export function validWdunIn"` and
   `wire.js:"export function validWdunOut"`), to the social hub alone, from a socket whose social hello named its
   verified account, gated on `WDUN_RELAY_MIN` and `WDUN_GIANTS_RELAY_MIN` (177,
@@ -728,6 +737,11 @@ Pinned by `test/fb1009b_partytruce.test.js` and `test/tv8_party_walk.test.js`; `
 
 - PARTY-TRUCE (FIELD BUGS 2026-10-09b) is held in memory: a player who reloads forgets the truces they stood in, and
   the hub's record holds them for the referee (INT9).
+- A GUILDMATE IS A FAIR FOE (PVP-LOOT, Mac's call): the referee makes kin of a party, its truce and a duel alone, while
+  the maps, the nameplates and the strangers count a guildmate a friend, and the drop is barred to one (section 5).
+- The killer's piece is the room's until its killer asks: the fallen's record loses it when the service takes it, and a
+  killer gone from the cell and its halo before the remains are laid, who does not come back inside WILD_REMAINS_MS,
+  never asks - it goes with the remains (`01-Overview/Field-Bugs-2026-10-14.md` PVP-LOOT).
 
 ## 23. What the suite caught (WILD-SUITE, 2026-10-08)
 
@@ -755,4 +769,6 @@ relay's hub and no friend's take); the host seams of section 23 in `test/bootord
 `test/audit68_worldmodes.test.js`, `test/mapkeep.test.js`, `test/mwattach.test.js`, `test/audit26_uiwindows.test.js`
 and `test/audit24_onehome.test.js`; `tools/mutants/wildsuite.json`; LETTERS-DROP and KEEP-WALLET in
 `test/wild1_zone.test.js`, `tools/mutants/keepwallet.json`. INT9 (the zone refereed, a death's drop taken off the record):
-`test/int9_wild_ref.test.js`, `tools/mutants/int_lane2.json` (`06-Systems/Integrity-Arc.md` section 5).
+`test/int9_wild_ref.test.js`, `tools/mutants/int_lane2.json` (`06-Systems/Integrity-Arc.md` section 5). PVP-LOOT (the
+killer's worn piece theirs whoever the fallen's guild or party counts them, end to end over the game's own pieces):
+`test/fb1014_pvploot.test.js`, `tools/mutants/fb1014_pvploot.json`.

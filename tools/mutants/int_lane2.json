@@ -148,11 +148,12 @@
   {
     "name": "INT9-THE-KILLERS-PIECE-ANYONES",
     "file": "src/net/wildLaw.js",
-    "old": "  if (i === rec.wi && rec.wk && sub !== rec.wk) return null;",
+    "old": "  if (named && sub !== named) return null;",
     "new": "  if (false) return null;",
     "tests": [
       "test/int9_wild_ref.test.js"
-    ]
+    ],
+    "note": "PVP-LOOT (re-aimed by content, FIELD BUGS 2026-10-14): the killer's piece's gate is remainsNamedFor's - one law, read by takeFrom and by the relay's friend law"
   },
   {
     "name": "INT9-A-REMAINS-UNVOUCHED-SAID",

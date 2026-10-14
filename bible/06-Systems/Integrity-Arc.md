@@ -396,6 +396,10 @@ receipt's carrier); `scenes/dungeonContext.js` and `scenes/worldModes.js` NO DUE
   stalled `WILD_STALL_MS`, when the second lays it afresh. The remains' guild is the order's (the killer carrying it wrote
   its own). The deposit goes in chunks bounded by the wire's frame. The killer's game asks for its piece the moment the
   room says the remains, and again until the ask leaves. The cron sweeps the falls after `WILD_FALLS_KEEP_S`.
+  PVP-LOOT (FIELD BUGS 2026-10-14, `01-Overview/Field-Bugs-2026-10-14.md`): the room's friend law (PVPDUNGEONS, a
+  fallen's party and guild take nothing of its remains) is the DROP's - the record the order names is its killer's
+  whoever the fallen's guild or party counts them (`wildLaw.js:"export const remainsNamedFor"`). Read over that record
+  too, it refused a guildmate's kill (the referee's fair foe) the piece the service had already taken off the record.
 - **Lane 1's freeze.** A record the judge holds still loses its drop, and the room is given none of it (`burnt`, no
   order): a held character hands no value to another player.
 - **THE FOUR HOSTS.** `scenes/world.js` WIRED (the zone word, the blows, the referee's readout, the fall, the drop, the

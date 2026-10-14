@@ -111,12 +111,23 @@ export function foldFall(rec, { oid, items, last }, now = null) {
 }
 
 /**
+ * INT9: THE ACCOUNT A RECORD IS NAMED FOR - record `wi`, the killer's worn piece, is the order's killer's (`wk`) alone, by
+ * the service's signed word; every other record is the drop, null here: the fallen's and its foes', never its friends'
+ * (PVPDUNGEONS - the relay's friend law, server/src/index.js `_wildWord`). PVP-LOOT (FIELD BUGS 2026-10-14, "Equipped
+ * items Disappear after looting in PvP zone"): the friend law is the DROP's. Read over the named record too, it refused
+ * a killer the fallen's guild (or a party made since) counted a friend - after the service had already taken the piece
+ * off the fallen's record for them, so it lay in the remains for nobody until they went.
+ */
+export const remainsNamedFor = (rec, i) => (rec?.wk && i === rec.wi ? rec.wk : null);
+
+/**
  * A take: `n` of record `i`, the whole record when `n` reaches its stack. Answers the record as its taker gets it (the
  * stored one whole, or a copy at the count taken) and how many left - or null when there is nothing there to take.
  */
 export function takeFrom(rec, i, n, sub = null) {
   if (!rec?.ok) return null;   // INT9: a remains whose records the order never vouched for is nobody's
-  if (i === rec.wi && rec.wk && sub !== rec.wk) return null;   // INT9: the killer's worn piece is the killer's alone
+  const named = remainsNamedFor(rec, i);
+  if (named && sub !== named) return null;   // INT9: the killer's worn piece is the killer's alone
   const it = rec?.items?.[i];
   if (!it) return null;
   const stack = Number.isInteger(it.stackCount) && it.stackCount > 1 ? it.stackCount : 1;
