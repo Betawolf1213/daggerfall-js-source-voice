@@ -30,9 +30,11 @@ import { colliderPoses, boxColliderTriangles, raycastColliders, invertAffine } f
 import { EYE_HEIGHT, CROUCH_EYE_HEIGHT } from '../src/player/motor.js';
 import { multiply } from '../src/world/mat4.js';
 import { MODELS, scene } from './csaScene.mjs';
+import { fakeClassicRgba, PANE, LEAD } from './classicArtFake.mjs';
+import { PANE_GLOW } from '../src/world/classicArt.js';
 
 const { MEASURED: M, HELM } = GM;
-const { galleonArt, galleonGlow, _resetGalleonArt, GALLEON_ARCHIVE, TEX, BANDS } = GA;
+const { galleonGlow, _resetGalleonArt, registerGalleonArt, GALLEON_ARCHIVE, TEX, BANDS } = GA;
 const DIR = new URL('../vendor/come-sail-away/Models/', import.meta.url);
 const BAKE_TEXT = readFileSync(new URL('../src/assets/galleon/galleon.json', import.meta.url), 'utf8');
 const BAKE = JSON.parse(BAKE_TEXT);
@@ -69,18 +71,19 @@ function vendorPipeline(asked = []) {
     uploadRecord() {}, getGpuMesh: async (id) => ({ classic: id }),
   };
 }
-/** Her pictures off the door and her glow uncut, as a process that never loaded her stands. */
-const freshArt = () => { clearVendorTextures(); _resetGalleonArt(); setTextureDeriveContext({ classicRgba: async () => null }); };
+/** Her pictures off the door and her glow uncut, as a process that never loaded her stands - the player's ARENA2 the
+ *  tests' stand-in (DF-ART: her pictures are read from it). */
+const freshArt = () => { clearVendorTextures(); _resetGalleonArt(); setTextureDeriveContext({ classicRgba: fakeClassicRgba() }); };
 
 // ── PF3 ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('AUDIT GALLEON-2 PF3: her pictures are painted and her glass\'s glow cut AT THE PRELOAD - her archive asked and every one of her twenty-three records built on the vendor door, her stern windows\' glow made - never at her first draw (her first mesh\'s ask, or a sail bake\'s: a 50-120 ms stall the first time a hull 2 came into view)', async () => {
+test('AUDIT GALLEON-2 PF3: her pictures are built (DF-ART: read from the player\'s ARENA2) and her glass\'s glow cut AT THE PRELOAD - her archive asked and every one of her twenty-three records built on the vendor door, her stern windows\' glow made - never at her first draw (her first mesh\'s ask, or a sail bake\'s: a 50-120 ms stall the first time a hull 2 came into view)', async () => {
   freshArt();
   const pipeline = vendorPipeline();
   const pool = createComeSailAwayPool({ renderer: quietRenderer(), pipeline, fetchFn: fileFetch, log: { warn() {} } });
   assert.equal(await pool.preload(), true);
   assert.ok(pipeline.asked.includes(GALLEON_ARCHIVE), `TEXTURE.${GALLEON_ARCHIVE} asked during the preload`);
-  for (const r of Object.values(TEX)) assert.ok(decodedTexture(GALLEON_ARCHIVE, r), `record ${r} painted at the preload`);
+  for (const r of Object.values(TEX)) assert.ok(decodedTexture(GALLEON_ARCHIVE, r), `record ${r} built at the preload`);
   assert.equal(GA._galleonGlowMade?.(), true, 'her glow cut at the preload');
   freshArt();
 });
@@ -191,6 +194,7 @@ test('AUDIT GALLEON-2 PF5: her pictures and her glass\'s glow are her CLASSIC AR
   console.warn = () => {};   // no ARENA2 here: the flats' config and the classic archives say so
   try {
     const pipeline = createDataPipeline({ renderer, arch: null, palette: null, fetch: async () => { throw new Error('no ARENA2 here'); } });
+    setTextureDeriveContext({ classicRgba: fakeClassicRgba() });   // DF-ART: her pictures read from the tests' stand-in ARENA2
     const pool = createComeSailAwayPool({ renderer, pipeline, fetchFn: fileFetch, log: { warn() {} } });
     assert.equal(await pool.preload(), true);
     pool.spawnNow(new Boat(HULL.SmallShip, 0), { position: [0, 0, 0], rotation: [0, 0, 0, 1] });
@@ -303,24 +307,24 @@ test('AUDIT GALLEON-2 PF8: HER DOORS SWING ON THEIR LEAF\'S FACE - shut or open,
 
 // ── TS7 ─────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('AUDIT GALLEON-2 TS7: HER GLOW IS HER GLASS, PIXEL FOR PIXEL - each stern slice\'s mask lit exactly where its picture is her glass or its glint (galleonArt.js\'s two glass colours), the warm lamp colour there and black everywhere else; both slices carry glass (the check was some pixel over nothing: every pixel glowing passed it)', () => {
-  const GLASS = [[34, 48, 58], [92, 124, 136]];   // C.glass, C.glassLit
-  const art = new Map(galleonArt());
-  let panes = 0;
+test('AUDIT GALLEON-2 TS7: HER GLOW IS HER GLASS, PIXEL FOR PIXEL - each stern slice\'s mask lit exactly where its picture is glass (DF-ART: Daggerfall\'s leaded window, its panes and their leads), the warm lamp colour there and black everywhere else; both slices carry glass and timber (the check was some pixel over nothing: every pixel glowing passed it)', async () => {
+  _resetGalleonArt();
+  const entries = [];
+  registerGalleonArt((e) => { entries.push(...e); return e.length; });
+  const ctx = { classicRgba: fakeClassicRgba() };
   for (const rec of BANDS.sternWindows.recs) {
-    const pic = art.get(rec), glow = galleonGlow(rec);
+    const pic = await entries.find((e) => e.record === rec).build(ctx), glow = galleonGlow(rec);
     assert.deepEqual([glow.width, glow.height], [pic.width, pic.height]);
-    let lit = 0;
+    let lit = 0, dark = 0;
     for (let i = 0; i < pic.data.length; i += 4) {
-      const glass = GLASS.some((c) => c[0] === pic.data[i] && c[1] === pic.data[i + 1] && c[2] === pic.data[i + 2]);
+      const glass = [PANE, LEAD].some((c) => c[0] === pic.data[i] && c[1] === pic.data[i + 1] && c[2] === pic.data[i + 2]);   // the window's panes and leads, as the stand-in has them
       const at = `record ${rec} pixel ${(i / 4) % pic.width},${Math.floor(i / 4 / pic.width)}`;
-      assert.deepEqual([...glow.data.subarray(i, i + 4)], glass ? [255, 186, 96, 255] : [0, 0, 0, 255], `${at}: ${glass ? 'glass glows' : 'no glass, no glow'}`);
-      if (glass) lit++;
+      assert.deepEqual([...glow.data.subarray(i, i + 4)], glass ? [...PANE_GLOW, 255] : [0, 0, 0, 255], `${at}: ${glass ? 'glass glows' : 'no glass, no glow'}`);
+      if (glass) lit++; else dark++;
     }
-    panes += lit;
-    assert.ok(lit > 0, `record ${rec} carries glass`);
+    assert.ok(lit > 0 && dark > 0, `record ${rec} carries glass (${lit}) and timber (${dark})`);
   }
-  assert.ok(panes < 64 * 64 * 2 * 0.2, `her glass a fifth of her stern at most (${panes} pixels)`);
+  _resetGalleonArt();
 });
 
 // ── TS8 ─────────────────────────────────────────────────────────────────────────────────────────────────────────────

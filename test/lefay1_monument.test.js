@@ -13,7 +13,10 @@ import {
   buildLefayModel, LEFAY_FLOWERS, FLOWER_RINGS, MONUMENT_FLOWERS_KEPT, TOSS_MS, TOSS_ARC, TOSS_EVERY_MS, TOSS_SPREAD,
   tossRest, flowerPlace, tossPoint, normalTribute, layFlower,
 } from '../src/world/lefayMonument.js';
-import { lefayArt, lefayPlaqueArt, LEFAY_GLYPHS, lefayGlyph, lineWidth, PLAQUE_SCALES, LEFAY_PLAQUE_W, LEFAY_PLAQUE_H, GLYPH_H } from '../src/world/lefayArt.js';
+import { LEFAY_SOURCES, lefayPictures, engravePlaque, LEFAY_GLYPHS, lefayGlyph, lineWidth, PLAQUE_SCALES, LEFAY_PLAQUE_W, LEFAY_PLAQUE_H, GLYPH_H, CUT_FLOOR, CUT_LIP } from '../src/world/lefayArt.js';
+import { DF } from '../src/world/classicArt.js';
+import { setTextureDeriveContext } from '../src/systems/textureReplacement.js';
+import { fakeClassicRgba, texelOf } from './classicArtFake.mjs';
 import { createLefayMonument, bodyTrapped, LEFAY_REACH, TOSS_HAND_DROP } from '../src/scenes/lefayMonumentHost.js';
 import { CAPSULE_RADIUS, CAPSULE_HEIGHT } from '../src/player/motor.js';
 import { CityNavigation, NAV_CELL, HALF_CELL } from '../src/world/cityNavigation.js';
@@ -23,6 +26,12 @@ import { STATIC_NPC_ACTIVATION_DISTANCE, RAY_DISTANCE } from '../src/player/acti
 import { snapshotPlayer, restorePlayer } from '../src/systems/save.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+// DF-ART: the monument's pictures are read from the player's ARENA2 - here the tests' stand-in (test/classicArtFake.mjs)
+setTextureDeriveContext({ classicRgba: fakeClassicRgba() });
+/** The tests' stand-in plate (DF.plate, every texel one colour), its cut letters' floor and their lip. */
+const PLATE = texelOf(...DF.plate);
+const FLOOR = PLATE.map((v) => Math.round(v * CUT_FLOOR)), LIP = PLATE.map((v) => Math.round(v + (255 - v) * CUT_LIP));
+const plateOf = () => { const data = new Uint8Array(64 * 64 * 4); for (let i = 0; i < data.length; i += 4) data.set([...PLATE, 255], i); return { width: 64, height: 64, data }; };
 const read = (f) => readFileSync(join(root, f), 'utf8');
 
 /** A navgrid of `w` x `h` cells, every cell `weight` (stored as CityNavigation stores it). */
@@ -188,29 +197,29 @@ test('LEFAY1: THE PLAQUE\'S FACE - its picture\'s top-left at the plaque\'s top,
   assert.ok(Math.abs(PLAQUE.w / PLAQUE.h - LEFAY_PLAQUE_W / LEFAY_PLAQUE_H) < 1e-9, 'the picture is the plaque\'s shape');
 });
 
-test('LEFAY1: THE ART - five pictures, opaque, the same on every client; the plaque cut with the inscription', () => {
-  const a = lefayArt(), b = lefayArt();
+test('LEFAY1: THE ART (DF-ART, Mac: "use daggerfall textures instead of AI generated") - five pictures, each a Daggerfall record read from the player\'s own ARENA2, opaque: granite steps, marble, gilt, bronze; the plaque Daggerfall\'s riveted plate with the inscription cut into it, the memorial\'s words kept', async () => {
+  assert.deepEqual(Object.keys(LEFAY_SOURCES).map(Number), [LEFAY_GRANITE, LEFAY_MARBLE, LEFAY_GILT, LEFAY_PLAQUE, LEFAY_BRONZE]);
+  assert.deepEqual([LEFAY_SOURCES[LEFAY_GRANITE], LEFAY_SOURCES[LEFAY_MARBLE], LEFAY_SOURCES[LEFAY_PLAQUE]], [DF.granite, DF.marble, DF.plate]);
+  const a = await lefayPictures(fakeClassicRgba());
   assert.deepEqual(a.map(([r]) => r), [LEFAY_GRANITE, LEFAY_MARBLE, LEFAY_GILT, LEFAY_PLAQUE, LEFAY_BRONZE]);
-  for (let i = 0; i < a.length; i++) {
-    const img = a[i][1];
-    assert.equal(img.colors.length, img.width * img.height * 4);
-    for (let k = 3; k < img.colors.length; k += 4) assert.equal(img.colors[k], 255);
-    assert.deepEqual(img.colors, b[i][1].colors, 'deterministic');
+  for (const [, img] of a) {
+    assert.equal(img.data.length, img.width * img.height * 4);
+    for (let k = 3; k < img.data.length; k += 4) assert.equal(img.data[k], 255);
   }
   const plaque = a[3][1];
   assert.deepEqual([plaque.width, plaque.height], [LEFAY_PLAQUE_W, LEFAY_PLAQUE_H]);
   assert.deepEqual(LEFAY_TEXT.plaque, ['JULIAN LEFAY', '1965 - 2025', 'FATHER OF', 'THE ELDER SCROLLS']);
-  // every letter it carries is drawn, and every line fits inside the bevel
+  // every letter it carries is drawn, and every line fits inside the plate's frame
   for (const [i, line] of LEFAY_TEXT.plaque.entries()) {
     for (const ch of line) assert.ok(lefayGlyph(ch), `the plaque has a glyph for "${ch}"`);
     assert.ok(lineWidth(line, PLAQUE_SCALES[i]) <= LEFAY_PLAQUE_W - 16, `"${line}" fits`);
   }
   for (const g of Object.values(LEFAY_GLYPHS)) { assert.equal(g.length, GLYPH_H); for (const row of g) assert.match(row, /^[#.]{5}$/); }
-  // the cut letters are the darkest bronze on it, and there are as many as the glyphs say
-  const dark = (img) => { let n = 0; for (let k = 0; k < img.colors.length; k += 4) if (img.colors[k] === 34 && img.colors[k + 1] === 22 && img.colors[k + 2] === 10) n++; return n; };
+  // the cut letters are the plate's own texel at its floor, and there are as many as the glyphs say
+  const dark = (img) => { let n = 0; for (let k = 0; k < img.data.length; k += 4) if (img.data[k] === FLOOR[0] && img.data[k + 1] === FLOOR[1] && img.data[k + 2] === FLOOR[2]) n++; return n; };
   const inked = LEFAY_TEXT.plaque.reduce((n, line, i) => n + [...line].reduce((m, ch) => m + lefayGlyph(ch).join('').split('#').length - 1, 0) * PLAQUE_SCALES[i] ** 2, 0);
   assert.equal(dark(plaque), inked);
-  assert.equal(dark(lefayPlaqueArt([])), 0, 'a plaque with no lines has no letters');
+  assert.equal(dark(engravePlaque(plateOf(), [])), 0, 'a plaque with no lines has no letters');
 });
 
 test('LEFAY1: A THROW\'S REST - the ring by its share, the thrower\'s side, a flower of the arena crowd\'s', () => {
@@ -313,6 +322,7 @@ test('LEFAY1: THE POOL STANDS IT - on its site\'s ground, its stone, its bucket 
   const m = createLefayMonument(deps);
   assert.deepEqual(m.frame(), [100, 2, 50]);
   assert.equal(log.meshes, 1);
+  await new Promise((r) => setTimeout(r, 0));   // DF-ART: its pictures read from the player's ARENA2, landing a moment after
   assert.deepEqual(log.uploads.filter(([a]) => a === LEFAY_ARCHIVE).map(([, r]) => r), [0, 1, 2, 3, 4], 'its five pictures, under its own archive');
   assert.ok(log.buckets.has(LEFAY_KEY), 'its collider under the key the eye\'s box answers to');
   assert.deepEqual([...log.buckets.get(LEFAY_KEY).m].slice(12, 15), [100, 2, 50]);
@@ -576,9 +586,9 @@ test('AUDIT LEFAY1 B4: THE SPOT\'S SEARCH - found as far as MONUMENT_SEARCH_CELL
   assert.deepEqual([s.gx, s.gy], [69, 64], 'the nearer (5.52 cells) over the further (5.70)');
 });
 
-test('AUDIT LEFAY1 B5: THE PLAQUE READS - its letters the right way round and the right way up, centred inside its bevel (read off the picture, not the glyph table)', () => {
-  const img = lefayPlaqueArt(), W = img.width, H = img.height;
-  const dark = (x, y) => { const k = (y * W + x) * 4; return img.colors[k] === 34 && img.colors[k + 1] === 22 && img.colors[k + 2] === 10; };
+test('AUDIT LEFAY1 B5: THE PLAQUE READS - its letters the right way round and the right way up, centred on the plate (read off the picture, not the glyph table)', () => {
+  const img = engravePlaque(plateOf()), W = img.width, H = img.height;
+  const dark = (x, y) => { const k = (y * W + x) * 4; return img.data[k] === FLOOR[0] && img.data[k + 1] === FLOOR[1] && img.data[k + 2] === FLOOR[2]; };
   const runs = (n, has) => { const out = []; let a = -1; for (let i = 0; i <= n; i++) { const on = i < n && has(i); if (on && a < 0) a = i; if (!on && a >= 0) { out.push([a, i - 1]); a = -1; } } return out; };
   const bands = runs(H, (y) => { for (let x = 0; x < W; x++) if (dark(x, y)) return true; return false; });
   assert.deepEqual(bands.map(([a, b]) => b - a + 1), [14, 14, 7, 7], 'four lines: the name and the years twice the size');
@@ -603,9 +613,8 @@ test('AUDIT LEFAY1 B5: THE PLAQUE READS - its letters the right way round and th
   assert.ok(dark(J.x1, J.y0) && !dark(J.x0, J.y0) && dark(J.x0, J.y1 - 2), 'J reads right');
   assert.ok(dark(L.x0, L.y0) && !dark(L.x1, L.y0) && dark(L.x1, L.y1), 'L reads right');
   assert.ok(dark(F.x1, F.y0) && dark(F.x0, F.y1) && !dark(F.x1, F.y1), 'F reads right');
-  // the bevel lit along its top and left, in shadow along its bottom and right; a cut letter's lip below and right of it
-  const is = (x, y, c) => { const k = (y * W + x) * 4; return img.colors[k] === c[0] && img.colors[k + 1] === c[1] && img.colors[k + 2] === c[2]; };
-  const LIT = [176, 138, 76], SHADOW = [44, 30, 14], LIP = [196, 160, 92];
-  assert.ok(is(1, H >> 1, LIT) && is(W >> 1, 1, LIT) && is(W - 2, H >> 1, SHADOW) && is(W >> 1, H - 2, SHADOW), 'the light from the top left');
+  // a cut letter's lip below and right of it, the plate's own texel lifted toward the light; the plate itself untouched
+  const is = (x, y, c) => { const k = (y * W + x) * 4; return img.data[k] === c[0] && img.data[k + 1] === c[1] && img.data[k + 2] === c[2]; };
   assert.ok(is(L.x0 + 2, L.y0, LIP), 'the lip right of L\'s stroke');
+  assert.ok(is(1, 1, PLATE) && is(W - 2, H - 2, PLATE), 'the plate as Daggerfall has it where nothing is cut');
 });

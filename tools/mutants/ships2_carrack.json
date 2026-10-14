@@ -230,16 +230,6 @@
     "why": "her topsail's foot out of its rig box: a ball through it misses"
   },
   {
-    "name": "SHIPS2-C-a-picture-seeded-off-the-clock",
-    "file": "src/world/carrackArt.js",
-    "old": "ph: 7, seed: 0xc52,",
-    "new": "ph: 7, seed: Math.floor(Math.random() * 1e6),",
-    "tests": [
-      "test/ships2_carrack.test.js"
-    ],
-    "why": "her pictures another on every client"
-  },
-  {
     "name": "SHIPS2-C-registered-twice",
     "file": "src/world/carrackArt.js",
     "old": "  if (_registered) return 0;\n  _registered = true;\n",
@@ -252,12 +242,12 @@
   {
     "name": "SHIPS2-C-the-glow-everywhere",
     "file": "src/world/carrackArt.js",
-    "old": "  const k = BANDS.transom.recs.indexOf(record);",
-    "new": "  const k = Math.max(0, BANDS.transom.recs.indexOf(record));",
+    "old": "sources: CARRACK_SOURCES, glowRecs: BANDS.transom.recs });",
+    "new": "sources: CARRACK_SOURCES, glowRecs: Object.values(TEX) });",
     "tests": [
       "test/ships2_carrack.test.js"
     ],
-    "why": "every picture of hers glowing by night"
+    "why": "DF-ART (re-aimed to her stand-ins' glow): every picture of hers glowing by night"
   },
   {
     "name": "SHIPS2-C-a-face-on-no-picture",

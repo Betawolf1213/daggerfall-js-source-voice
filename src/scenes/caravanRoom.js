@@ -6,12 +6,14 @@
 //
 // WAGONS2: the room is the caravan's own (world/caravanRoomModel.js), stood on the caravan at its pose and turned with
 // it, its pictures the caravan's - the built ones or its owner's paint (systems/wagonLooks.js) - uploaded here, its
-// windows' glass cut out so the world is seen through them.
+// windows' glass cut out so the world is seen through them. DF-ART: Daggerfall's own pictures (world/wagonArt.js).
 import { CARAVAN_BUILDING_KEY, CARAVAN_TEXT, CARAVAN_ROOM_MODEL_ID, caravanRoomBlock, readCaravanRoom } from '../systems/caravanRoom.js';
 import { BUILDING_TYPES } from '../world/buildingNames.js';
 import { trs } from '../world/mat4.js';
 import { caravanRoomModel, CARAVAN_ENTER, CARAVAN_LANTERN } from '../world/caravanRoomModel.js';
-import { wagonArt, wagonLookArt, isGlassRecord, lookRecord, LOOK_RECORDS, LOOK_RECORD_STRIDE, TEX, WAGON_ARCHIVE } from '../world/wagonArt.js';
+import { WAGON_SOURCES, wagonLookSources, isGlassRecord, lookRecord, LOOK_RECORDS, TEX, WAGON_ARCHIVE } from '../world/wagonArt.js';
+import { classicPictures } from '../world/classicArt.js';   // DF-ART: the room's pictures, Daggerfall's own
+import { classicRgbaOf } from '../systems/textureReplacement.js';
 import { readWagonLook, CARAVAN_INSIDE_LOOKS, CARAVAN_INSIDE_PARTS } from '../systems/wagonLooks.js';
 import { toColor32 } from '../formats/color32Order.js';
 import { quatRotate } from '../world/quat.js';
@@ -41,29 +43,39 @@ export function caravanRoomRecords() {
   return out;
 }
 
-/** The pictures an inside paint (`look` - systems/wagonLooks.js) puts on the room's live records: `[record, picture]`,
- *  each part's built picture or its paint's. */
-export function caravanRoomPictures(look) {
+/** DF-ART: the Daggerfall sources an inside paint (`look` - systems/wagonLooks.js) puts on the room's live records:
+ *  `{ [record]: source }`, each part's built one (world/wagonArt.js WAGON_SOURCES) or its paint's (wagonLookSources). */
+export function caravanRoomSources(look) {
   const l = readWagonLook(look);
-  const built = new Map(wagonArt());
-  const out = [];
+  /** @type {Record<number, any>} */
+  const out = {};
   for (const part of CARAVAN_INSIDE_PARTS) {
     const i = l[part[0]];
-    const painted = i ? new Map(wagonLookArt(part, i, CARAVAN_INSIDE_LOOKS[part][i]).map(([rec, pic]) => [rec % LOOK_RECORD_STRIDE, pic])) : null;
-    for (const rec of LOOK_RECORDS[part]) out.push([lookRecord(rec, CARAVAN_LIVE_CHOICE), painted?.get(rec) ?? built.get(rec)]);
+    const painted = i ? wagonLookSources(part, i, CARAVAN_INSIDE_LOOKS[part][i]) : {};
+    for (const rec of LOOK_RECORDS[part]) out[lookRecord(rec, CARAVAN_LIVE_CHOICE)] = painted[lookRecord(rec, i)] ?? WAGON_SOURCES[rec];
   }
   return out;
 }
+/** The pictures an inside paint puts on the room's live records: `[record, picture]`, read from the player's own
+ *  ARENA2 (world/classicArt.js classicPictures - `classicRgba` the pipeline's reader). */
+export const caravanRoomPictures = (look, classicRgba = classicRgbaOf) => classicPictures(caravanRoomSources(look), classicRgba);
 
+let _paintGen = 0;   // the latest paint asked - a paint whose pictures land after a later one was asked is let go
 /** THE ROOM PAINTED: the live records given `look`'s pictures on the renderer - each let go first (the renderer keeps
- *  the first picture asked under a key) and uploaded again, opaque, a cut-out where the glass is. */
-export function paintCaravanRoom(renderer, look) {
-  if (!renderer?.uploadTexture) return;
-  for (const [rec, pic] of caravanRoomPictures(look)) {
-    const key = `${WAGON_ARCHIVE}_${rec}`;
-    renderer.evictTexture?.(key); renderer.evictTexture?.(`${key}#opaque`);
-    renderer.uploadTexture(WAGON_ARCHIVE, rec, toColor32(pic), isGlassRecord(rec) ? { cutout: true } : { opaque: true });
-  }
+ *  the first picture asked under a key) and uploaded again, opaque, a cut-out where the glass is. DF-ART: the pictures
+ *  are read from the player's own ARENA2, so they go up a moment after the paint is asked; a later paint asked in the
+ *  meantime is the one the walls wear. */
+export function paintCaravanRoom(renderer, look, classicRgba = classicRgbaOf) {
+  if (!renderer?.uploadTexture) return Promise.resolve();
+  const gen = ++_paintGen;
+  return caravanRoomPictures(look, classicRgba).then((pics) => {
+    if (gen !== _paintGen) return;
+    for (const [rec, pic] of pics) {
+      const key = `${WAGON_ARCHIVE}_${rec}`;
+      renderer.evictTexture?.(key); renderer.evictTexture?.(`${key}#opaque`);
+      renderer.uploadTexture(WAGON_ARCHIVE, rec, toColor32(pic), isGlassRecord(rec) ? { cutout: true } : { opaque: true });
+    }
+  });
 }
 
 /** The caravan's heading (degrees about up, 0 pulled toward +z) from its pose's rotation. */

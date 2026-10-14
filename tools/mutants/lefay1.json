@@ -164,11 +164,12 @@
   {
     "name": "LEFAY-ART-UNCUT",
     "file": "src/world/lefayArt.js",
-    "old": "    if (cut[y * W + x]) put(img, x, y, FLOOR);",
-    "new": "    if (false) put(img, x, y, FLOOR);",
+    "old": "      if (cut[y * W + x]) pic.data[i + c] = Math.round(pic.data[i + c] * CUT_FLOOR);",
+    "new": "      if (false) pic.data[i + c] = Math.round(pic.data[i + c] * CUT_FLOOR);",
     "tests": [
       "test/lefay1_monument.test.js"
-    ]
+    ],
+    "why": "DF-ART (re-aimed: the inscription cut into Daggerfall's plate): the letters never cut"
   },
   {
     "name": "LEFAY-ART-ONE-SIZE",
@@ -504,22 +505,14 @@
     ]
   },
   {
-    "name": "AUDIT-LEFAY1-B-ART-BEVEL-SWAPPED",
-    "file": "src/world/lefayArt.js",
-    "old": "put(img, x, y, lit ? LIT : SHADOW);",
-    "new": "put(img, x, y, lit ? SHADOW : LIT);",
-    "tests": [
-      "test/lefay1_monument.test.js"
-    ]
-  },
-  {
     "name": "AUDIT-LEFAY1-B-ART-NO-LIP",
     "file": "src/world/lefayArt.js",
-    "old": "    else if ((x > 0 && cut[y * W + x - 1]) || (y > 0 && cut[(y - 1) * W + x])) put(img, x, y, LIP);",
-    "new": "    else if (false) put(img, x, y, LIP);",
+    "old": "      else if (lip) pic.data[i + c] = Math.round(pic.data[i + c] + (255 - pic.data[i + c]) * CUT_LIP);",
+    "new": "      else if (false) pic.data[i + c] = Math.round(pic.data[i + c] + (255 - pic.data[i + c]) * CUT_LIP);",
     "tests": [
       "test/lefay1_monument.test.js"
-    ]
+    ],
+    "why": "DF-ART (re-aimed to the plate's engraving): no lip catching the light below and right of a cut"
   },
   {
     "name": "AUDIT-LEFAY1-B-POOL-GROUND-NEVER-REREAD",

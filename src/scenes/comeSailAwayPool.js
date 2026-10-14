@@ -56,7 +56,7 @@ import { registerGalleonArt, GALLEON_ARCHIVE, galleonGlow, BANDS as GALLEON_BAND
 import { registerCarrackArt, CARRACK_ARCHIVE, carrackGlow, BANDS as CARRACK_BANDS } from '../world/carrackArt.js';   // SHIPS-2: and the new carrack's,
 import { registerLargeBoatArt, LARGE_BOAT_ARCHIVE } from '../world/largeBoatArt.js';   // and the new large boat's
 import { toColor32 } from '../formats/color32Order.js';
-import { addVendorTextures } from '../systems/textureReplacement.js';
+import { addVendorTextures, preloadTextureArchive } from '../systems/textureReplacement.js';
 
 /** DungeonLightHandler.CheckLight's reach: UnscaledBlockRange x MeshReader.GlobalScale. */
 export const LANTERN_HANDLER_REACH = DUNGEON_LIGHT_HANDLER.unscaledBlockRange * GLOBAL_SCALE;
@@ -298,13 +298,15 @@ export function createComeSailAwayPool({ renderer = null, pipeline = null, fetch
     preloading ??= (async () => {
       if (!(await ensureModels())) return false;
       for (let hull = 0; hull < HULL_NAMES.length; hull++) await prepare(hull);
-      // AUDIT GN2-PF3: her pictures painted (her archive's first ask builds all twenty-three on the vendor door) and her
-      // glass's glow cut while the world loads - they were her first mesh's ask (meshFor) or a sail bake's, at the first
-      // draw of a hull 2: a 50-120 ms stall the first time she came into view
+      // AUDIT GN2-PF3: her pictures built (her archive's first ask builds all twenty-three on the vendor door - DF-ART:
+      // read from the player's ARENA2) and her glass's glow cut while the world loads - they were her first mesh's ask
+      // (meshFor) or a sail bake's, at the first draw of a hull 2: a 50-120 ms stall the first time she came into view.
+      // DF-ART: the glow is cut as its window is built, so the door's preload is asked too - a pipeline whose ask built
+      // them has it answered at once
       // SHIPS-2: every standing port ship's so
       for (const [key, art] of Object.entries(PORT_ART)) {
         if (!models[key]) continue;
-        try { await pipeline.getTexture(art.archive); for (const r of art.glowRecs) art.glow(r); }
+        try { await pipeline.getTexture(art.archive); await preloadTextureArchive(art.archive); for (const r of art.glowRecs) art.glow(r); }
         catch (e) { warnOnce(`tex:${art.archive}`, `[come-sail-away] TEXTURE.${art.archive} will not load - the boats' faces in it draw nothing`, e); }
       }
       for (let hull = 0; hull < HULL_NAMES.length; hull++) deckOf(hull, 0);   // DECK-WALK: baked while the world loads (10-50 ms a hull), never mid-voyage (AUDIT NAV2 F57: every rig's deck, one a hull)
