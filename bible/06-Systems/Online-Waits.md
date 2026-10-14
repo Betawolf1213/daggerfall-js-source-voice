@@ -31,7 +31,7 @@ on a clock nobody moves - the sky, the event clock, real time, a UTC day - or on
 | The full moon | thirty minutes held in the beast; two such nights four hours apart, then none for twenty-eight | sky | a Hircine ring | left - TIME 6.1, SKY-SLOW; OPEN 3 |
 | The Sea Serpent | every four real hours, a fifteen-minute door, a ship needed; at worst 3 h 45 min | event (the relay's law) | nothing | left - OPEN 5 |
 | An Oblivion gate | every two real hours, ten minutes' entry; at worst 1 h 50 min | event (the relay's law) | nothing | left - TIME OPEN 6 |
-| The respawn of a dungeon's foes and chests | one real hour (`wire.js` RESPAWN_MS) | real (the relay's law) | nothing | left - TIME OPEN 8 |
+| The respawn of a dungeon's foes and chests | half a real hour in the zone's halls and an Abyss Dungeon (`wire.js` RESPAWN_MS - an hour until RESPAWN-30, 2026-10-14); twenty minutes in a normal dungeon, forty in an elite (`dungeonRespawn.js`) | real (the relay's law) | nothing | left - TIME OPEN 8 |
 | The Sigil Broker's Regalia | twelve stones: twelve gates, a real day at every one | event; the stock a UTC day | nothing | left - SS2 (Mac doubled the prices) |
 | A Motherlode | three a UTC day, two hours each; gaps of up to about twelve hours | UTC | nothing | left - `Professions-Arc.md` |
 | A profession's nodes, harvests and specialisation | a node back at UTC midnight, sixty harvests a day, a respec seven real days | UTC, real | nothing | left - `Professions-Arc.md` |

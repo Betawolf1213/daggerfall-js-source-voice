@@ -632,7 +632,7 @@ terms; 9 is new and not built.
    opening no longer promise a dusk. The alternative re-cuts them onto the sky: one gate every fourth
    night, open for that whole 15-minute night.
 7. **The year.** It climbs about 49 a real year. Recommended: let it.
-8. **Respawns.** Unchanged: one real hour (WORLD8, `wire.js RESPAWN_MS`). They run on real time, not the
+8. **Respawns.** Unchanged by this design: one real hour (WORLD8, `wire.js RESPAWN_MS`) - half of one since RESPAWN-30 (2026-10-14, Mac's own call). They run on real time, not the
    sky, so this design does not move them; a shorter respawn is its own call.
 9. **Time zones** (Mac, 2026-10-01: *"What if we went further and split the sections of daggerfall into time
    zones?"*). NOT BUILT. The sky is one hour everywhere today. Zones fit on top of it: an offset on the sky's

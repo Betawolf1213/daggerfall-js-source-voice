@@ -23587,7 +23587,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** May I fight in the zone now: a relay that carries it, standing in the zone, outdoors (the fights are the open
    *  country's - a building's and a dungeon's foes are the zone's danger there), alive. */
   // ── PVPDUNGEONS: THE ZONE'S OWN HALLS (systems/wildDungeons.js picks them; the hub keeps them - net/wildLaw.js) ──
-  // The day is the RELAY's (`st`), so every client stands the same halls; the half-hour lock, who is inside, the empty hall's
+  // The day is the RELAY's (`st`), so every client stands the same halls; the hour's lock, who is inside, the empty hall's
   // reset and the crows are the hub's word. With no hub to ask (an older relay, a lost socket) the day falls back to this
   // machine's clock and the lock to this session's own memory - the halls still stand, the rules still hold for me.
   let _wdunLink = null, _wdunHiAt = 0, _wdunHeard = false;   // (_wdunSkew, the hub's clock less mine, is declared above the pixel builder - BOOT-TDZ2)
@@ -23923,14 +23923,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const wildDungeonIsOpenHere = () => !!wildHallHere();
   const wdKey = () => { const p = playerTravelPixel(); return `${p.x},${p.y}`; };
   /** May I go down into the dungeon at this door. In the zone only the day's halls open, and the hub says whether my
-   *  half-hour lock still holds (lifted while my own remains lie inside); with no hub, this session's own lock. */
+   *  hour's lock still holds (lifted while my own remains lie inside); with no hub, this session's own lock. */
   const wildDungeonGate = async (hit, fromLoad = false) => {
     const mask = wildMapMask();
     if (!mask || fromLoad) return true;
     const p = playerTravelPixel();
     if (!wildInside(mask, p.x, p.y)) return true;
     const hall = wildHallHere();
-    // TESTBUILD: god mode walks into a sealed door - but a HALL keeps its half-hour lock for god mode too (HALL-LOCK, the
+    // TESTBUILD: god mode walks into a sealed door - but a HALL keeps its hour's lock for god mode too (HALL-LOCK, the
     // owner: "i can still leave and reenter the dungeon as much as i want in the zone" - god mode skipped the whole gate,
     // so no hall was ever marked as entered, and nothing locked behind it)
     if (!hall) {
@@ -23962,7 +23962,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     _wdunInside = { h: hall.key, hereAt: Date.now() };
     return true;
   };
-  /** I left the hall I stood in (walked out, unstuck, fell): the hub told, my half-hour lock started here too. */
+  /** I left the hall I stood in (walked out, unstuck, fell): the hub told, my hour's lock started here too. */
   const wdunLeft = (died = false) => {
     const h = _wdunInside?.h;
     if (!h) return;
@@ -30096,7 +30096,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     raiseFallen: (f) => raiseFallenDoor(f),
     plaquePeerAct: (eye, dir) => plaquePeerAct(eye ?? cam.pos, dir ?? socialFwd()),   // ACT-MENU: the building's and the dungeon's press on a player the plaque lit, on the press's own ray (AUDIT DISC7 A9)
     pointerSurfaceUp: () => pointerSurfaces.size > 0,   // AUDIT DROPS E1: the plaque comes down under the F-menu, the chat and the friends panel indoors and underground too (AUDIT-WH2 L3-F3's law, the street's own term)
-    wildDungeonGate: (hit, fromLoad) => wildDungeonGate(hit, fromLoad),   // PVPDUNGEONS: only the day's halls open, a half-hour lock after leaving one
+    wildDungeonGate: (hit, fromLoad) => wildDungeonGate(hit, fromLoad),   // PVPDUNGEONS: only the day's halls open, an hour's lock after leaving one
     wildDungeonElite: () => wildDungeonIsOpenHere(),   // PVPDUNGEONS: every open hall is an elite dungeon
     wildHallRing: () => wildHallHere()?.ring ?? 0,   // PVPDUNGEONS: its tier
     wildHallEpoch: () => { const h = wildHallHere(); return h ? (_wdunEpoch.get(h.key) ?? 0) : 0; },   // PVPDUNGEONS: its reset's epoch

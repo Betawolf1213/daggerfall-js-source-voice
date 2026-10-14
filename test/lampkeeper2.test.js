@@ -123,7 +123,7 @@ test('LAMP-KEEPER II THE WIRING: the interior stands the classic lamp under its 
   assert.match(ctx, /pn\.standBatch = renderer\.createBillboardBatch\(LAMP_ARCHIVE, 0, size, \[\[pn\.x, pn\.y, pn\.z\]\]\);/);
   assert.match(modes, /lampPerson: \(pn\) => isLampKeeper\(pn, \{\n\s*buildingType: building\?\.buildingType \?\? -1, buildingKey: building\?\.buildingKey \?\? 0,\n\s*mapId: hit\.dfLocation\?\.mapTableData\?\.mapId \?\? 0, day: Math\.floor\(worldMinutes\(\) \/ MINUTES_PER_DAY\),/);
   assert.match(modes, /if \(!info && pn\?\.lamp\) \{ lampChoice\(pn\); return; \}/);
-  assert.match(modes, /const officeName = \(pn\) => \(pn\?\.lamp \? LAMP_TEXT\.name\(\) : null\) \?\?/);
+  assert.match(modes, /const officeName = \(pn\) => arenaGatePersonName\(pn\) \?\? [^\n]* \?\? \(pn\?\.lamp \? LAMP_TEXT\.name\(\) : null\);/);
   assert.match(modes, /\{ code: 'KeyT', label: `T - \$\{LAMP_TEXT\.trade\(\)\}`, action: \(\) => \{ Promise\.resolve\(townTalk\?\.ensureFactions\?\.\(\)\)\.then\(\(\) => openStaticNpc\(pn\)\)/, 'Trade opens the keeper\'s own shop');
   assert.match(modes, /void lampTitle\.speak\(\);/);
   assert.match(modes, /announce: \(kind, key\) => announceHonour\(kind, key\),/);

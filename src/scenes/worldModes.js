@@ -2418,7 +2418,7 @@ export function createWorldModes(host) {
   /** ARENA-FIX 2: A STOOD PERSON'S OFFICE - the arena gate's people (world/arenaCity.js arenaGatePersonName: "The Herald
    *  of the Arena", "Red Banner Recruiter", ...) and the undercroft's (the Pit Master, the Keeper of the Hall), or null:
    *  the plaque, the Info click and the talk door ask it before StaticNPC.DisplayName, so the three never disagree. */
-  const officeName = (pn) => (pn?.lamp ? LAMP_TEXT.name() : null) ?? arenaGatePersonName(pn) ?? (pn?.arenaRole ? ARENA_TEXT.undercroft.names[pn.arenaRole] ?? null : null);   // ARENA-FIX 4: the undercroft's people with an office; LAMP-KEEPER II: a keeper standing as the lamp is the Lamp
+  const officeName = (pn) => arenaGatePersonName(pn) ?? (pn?.arenaRole ? ARENA_TEXT.undercroft.names[pn.arenaRole] ?? null : null) ?? (pn?.lamp ? LAMP_TEXT.name() : null);   // ARENA-FIX 4: the undercroft's people with an office; LAMP-KEEPER II: a keeper standing as the lamp is the Lamp
   /** FIELD BUGS 2026-10-11g QUEST-NAME ("Quest NPCs are inactive": "not being able to interact with the quest NPCs"): a
    *  quest PERSON stand named on World Tooltips' plaque as the room's own people are. The mod asks its StaticNPC arm
    *  (Modded_HUDTooltipWindow.cs:325-393, `ret = npc.DisplayName`) before its quest-resource arm, and AddQuestNPC gives a
