@@ -569,7 +569,7 @@ export class NativeTradeWindow {
       return true;
     }
     const refused = isSummoned(item) || questTransferRefused(item, {
-      fromLocal: true, toWagon: false, getQuest: this.hooks.getQuest ?? null,
+      fromLocal: true, toWagon: false, getQuest: this.hooks.getQuest ?? null, trade: true,   // QUEST-SHELF-DROP: never sold
     });
     if (!refused) return false;
     this.box = { rows: [{ text: cannotRemoveItemText(), center: true }], buttons: null };

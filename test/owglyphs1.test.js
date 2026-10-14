@@ -68,12 +68,12 @@ test('OW-GLYPHS: the readout draws each look by its glyph (by source)', () => {
   const hud = readFileSync(new URL('../src/ui/travelViewHud.js', import.meta.url), 'utf8');
   assert.match(hud, /look === 'gather'\) \{[^\n]*\n\s*gatherGlyph\(g, x, y, \(m\.kind \?\? ''\)\.split\(' '\)\[1\] \?\? '', color\);/);
   assert.match(hud, /look === 'band' \|\| look === 'raider'\) \{[^\n]*\n\s*skullGlyph\(g, x, y\);/);
-  assert.match(hud, /look === 'lair' \|\| \(look === 'far' && \/\\bdungeon\\b\/\.test\(m\.kind \?\? ''\)\)\) \{[^\n]*\n\s*dungeonGlyph\(g, x, y\);/);
+  assert.match(hud, /look === 'lair' \|\| \(\(look === 'far' \|\| look === 'place'\) && \/\\bdungeon\\b\/\.test\(m\.kind \?\? ''\)\)\) \{[^\n]*\n\s*dungeonGlyph\(g, x, y\);/);   // OW-DUNGEON-DOT: a found dungeon's plate in the grid too
   assert.match(hud, /look === 'party' \|\| look === 'traveller'\) \{[^\n]*\n\s*if \(\/\\bcrowd\\b\/\.test\(m\.kind \?\? ''\)\) crowdGlyph\(g, x, y\); else personGlyph\(g, x, y\);/);
   // the ships, the held arrows and the hubs' wheels are drawn before - a party at sea keeps its sail, a far town its wheel
   const at = (re) => hud.search(re);
   assert.ok(at(/else if \(isShipKind\(m\)\)/) < at(/look === 'party' \|\| look === 'traveller'/));
-  assert.ok(at(/\(look === 'place' \|\| look === 'far'\) && m\.hub/) < at(/look === 'lair' \|\| \(look === 'far'/));
+  assert.ok(at(/\(look === 'place' \|\| look === 'far'\) && m\.hub/) < at(/look === 'lair' \|\| \(\(look === 'far'/));
 });
 
 test('OW-CROSS (Mac: "where you click a cross mark not a circle"): the spot a click walks to and a journey\'s place are an X - no circle, gold on the black rim, its shadow under it, the brush handed back', () => {

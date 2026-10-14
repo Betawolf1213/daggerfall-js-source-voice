@@ -111,6 +111,7 @@ export const ROW_MEMO_MAX = 4096;
 const _rowMemo = new Map();
 /** PERF-ON3: the last call's rows in listing order (the sort's input) and the frozen, sorted, capped answer */
 let _lastIn = /** @type {RosterRow[]} */ ([]), _lastOut = /** @type {readonly RosterRow[]} */ (Object.freeze([]));
+let _lastAll = /** @type {readonly RosterRow[]} */ (_lastOut);   // CHAT-FIND-ALL: the uncut sorted list a search reads
 let _scratchIn = /** @type {RosterRow[]} */ ([]);
 let _call = 0;
 /** PERF-ON3: an input the badge reads, by value - an array by its elements (a glyph added in place is a change), anything else as itself.
@@ -183,17 +184,23 @@ export function rosterRows(session) {
   let same = rows.length === _lastIn.length;
   for (let i = 0; same && i < rows.length; i++) same = rows[i] === _lastIn[i];
   if (!same) {
-    const out = Object.freeze(rows.slice().sort(byNameThenTag).slice(0, ROSTER_ROWS_MAX));   // AUDIT 637 A6: the answer first, then the state that names it
+    const sorted = rows.slice().sort(byNameThenTag);
+    const out = Object.freeze(sorted.slice(0, ROSTER_ROWS_MAX));   // AUDIT 637 A6: the answer first, then the state that names it
     _scratchIn = _lastIn;   // the old input becomes the next call's scratch; this call's list is kept as the new input
     _lastIn = rows;
     _lastOut = out;
+    _lastAll = sorted.length > ROSTER_ROWS_MAX ? Object.freeze(sorted) : out;   // CHAT-FIND-ALL: every row known, for a search
   }
   // ROSTER-G: the count is the ROOM's when the relay said it (`n` on a channel's welcome) - a welcome list cut at
   // CHAT_ROSTER_MAX still says how many are online; a place's welcome says no `n`, and the rows are the count
   const n = Number(session?.roomCount);
   const total = Number.isFinite(n) && n > rows.length ? n : rows.length;
   const label = typeof session?.label === 'string' && session.label ? session.label : 'Online';
-  return { rows: _lastOut, total, shown: Math.min(rows.length, ROSTER_ROWS_MAX), label };
+  // CHAT-FIND-ALL (2026-10-14, Dudey: "searching players in chat looks like it only finds the ones that are shown in the
+  // list"): `all` is every row this client knows, sorted and UNCUT - the panel's search filters it, not the first
+  // ROSTER_ROWS_MAX the column draws. The same frozen array while nothing moved (PERF-ON3), so the panel's key holds.
+  // non-enumerable: the answer's shape (rows, total, shown, label) is what its callers and pins compare; `all` rides beside it
+  return Object.defineProperty({ rows: _lastOut, total, shown: Math.min(rows.length, ROSTER_ROWS_MAX), label }, 'all', { value: _lastAll });
 }
 
 /** The heading the panel shows: "Online - 3". A roster of one is
