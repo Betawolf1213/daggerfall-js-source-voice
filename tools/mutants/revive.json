@@ -232,5 +232,14 @@
     "tests": [
       "test/revive.test.js"
     ]
+  },
+  {
+    "name": "REV-the-mode-any-word",
+    "file": "tools/reviveRealmCharacter.mjs",
+    "old": "    } else if (mode === '--find') {",
+    "new": "    } else if (has('--find')) {",
+    "tests": [
+      "test/revive.test.js"
+    ]
   }
 ]
