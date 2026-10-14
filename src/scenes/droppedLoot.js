@@ -464,6 +464,6 @@ export function createDroppedLoot({ renderer, getTexture, uploadRecordFrame, pic
   const undrawnPiles = () => piles.filter((p) => p.drawn === false && alive(p));
   /** LOOT11 (the Loot arc): the piles a line of light may stand over - a dropped pile, a house's or a camp's treasure - each
    *  its crown and its list, read live (scenes/lootLines.js picks the Rare-or-better). */
-  const lootFinds = () => [...piles.filter((p) => alive(p) && p.items?.length && !presented(p)).map((p) => (p.wild?.mine ? { root: lootCrown(p.pos, p.size), items: p.items, mark: WILD_MINE_MARK } : { root: lootCrown(p.pos, p.size), items: p.items })), ...physical.finds()];   // PI1: and each standing item's own; WILD1: my remains, their own line
+  const lootFinds = () => [...piles.filter((p) => alive(p) && p.items?.length && !presented(p)).map((p) => (p.wild?.mine ? { root: lootCrown(p.pos, p.size), items: p.items, mark: WILD_MINE_MARK } : p.mark ? { root: lootCrown(p.pos, p.size), items: p.items, mark: p.mark } : { root: lootCrown(p.pos, p.size), items: p.items })), ...physical.finds()];   // PI1: and each standing item's own; WILD1: my remains, their own line; FB1013d: a pile that carries its own (the house's fallen - scenes/legacyRemainsStand.js)
   return { contents, labelFor, dropPile, dropPhysical, physical, seedPile, removePile, restorePiles, collectPixel, takePixel, snapshotWorld, restoreWorld, batches, tickFlats, lootTargets, pileFor, activePiles, undrawnPiles, containerSeeded, snapshotScene, releaseEmptied, offsetAll, groundMoved, lootFinds, _piles: piles };
 }

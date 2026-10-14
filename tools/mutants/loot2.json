@@ -95,7 +95,7 @@
   {
     "name": "LOOT2-exalted-with-the-switch-off",
     "file": "src/systems/lootRarity.js",
-    "old": "  if (!lootRarityOn() || item?.rarity !== 'legendary' || item.exalted === true) return false;",
+    "old": "  if (!on || item?.rarity !== 'legendary' || item.exalted === true) return false;",
     "new": "  if (item?.rarity !== 'legendary' || item.exalted === true) return false;",
     "tests": [
       "test/loot2_exalted.test.js"

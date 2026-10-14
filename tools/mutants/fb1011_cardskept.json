@@ -8,6 +8,6 @@
   {"name": "CP-pick-floor", "file": "src/ui/cardTableHud.js", "old": "if (to > raise.min && to < raise.max", "new": "if (to >= raise.min && to < raise.max", "tests": ["test/fb1011_cardskept.test.js"]},
   {"name": "CP-pick-ceiling", "file": "src/ui/cardTableHud.js", "old": "if (to > raise.min && to < raise.max", "new": "if (to > raise.min && to <= raise.max", "tests": ["test/fb1011_cardskept.test.js"]},
   {"name": "CP-pick-deals", "file": "src/ui/cardTableHud.js", "old": "b.addEventListener('click', () => { range.value = String(p.value ?? p.to); sliderValue = Number(range.value); onPick(); });", "new": "b.addEventListener('click', () => { range.value = String(p.value ?? p.to); onPick(); });", "tests": ["test/fb1011_cardskept.test.js"]},
-  {"name": "CP-fold-forgotten", "file": "src/ui/cardTableHud.js", "old": "const t = el('span', 'fold', collapsed ? '+' : '−');", "new": "const t = el('span', 'fold', collapsed ? '+' : '−'); root.className = 'dfcards'; collapsed = false;", "tests": ["test/fb1011_cardskept.test.js"]},
+  {"name": "CP-fold-forgotten", "file": "src/ui/cardTableHud.js", "old": "const fold = el('span', 'fold', collapsed ? '+' : '−');", "new": "const fold = el('span', 'fold', collapsed ? '+' : '−'); root.className = 'dfcards'; collapsed = false;", "tests": ["test/fb1011_cardskept.test.js"]},
   {"name": "CP-log-one-line", "file": "src/ui/cardTableHud.js", "old": "log.append(...m.log.map((line) => el('div', '', line)));", "new": "log.append(el('div', '', m.log.join(' ')));", "tests": ["test/fb1011_cardskept.test.js"]}
 ]

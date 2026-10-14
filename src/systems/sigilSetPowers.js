@@ -62,7 +62,7 @@
 //   Battlemage's Discipline    the player's CAST listener (systems/playerCasts.js, told by the one cast engine's release)
 //                              arms the next weapon blow with the spell's element and keeps its cost; the BLOW spends
 //                              the arm, that blow alone (Riposte's law), its element read as the Burning Gate's sear is;
-//                              the STRIKE returns a share of the last spell's cost (systems/playerHeal.js gainMana)
+//                              the STRIKE returns a share of the last spell's cost (systems/playerHeal.js manaMine)
 //   Battlemage's Reprieve      the HURT listener (Shed Skin's crossing) raises a shield the DAMAGE modifier spends point
 //                              for point while its window holds (Iron Hide's ward, timed) - and shields the allies near
 //                              me through the host's ALLY-CAST door (setSetPowersAllies), each receiver's own client
@@ -84,7 +84,7 @@ import { registerPlayerStruckListener, registerPlayerStrikeListener } from '../c
 import { registerPlayerDamageMod, registerPlayerDeathSave, registerPlayerHurtListener, registerPlayerDoorOpen, setFoeBlowProbe } from '../characters/playerEntity.js';
 import { registerPlayerKillListener } from './playerKills.js';
 import { registerSpellCostMod } from './spellcost.js';
-import { healMine, gainMana } from './playerHeal.js';   // SERPENT-SET: Shed Skin heals through the loot's own heal; EG15: the Discipline returns magicka through its own
+import { healMine, manaMine } from './playerHeal.js';   // SERPENT-SET: Shed Skin heals through the loot's own heal; EG15: the Discipline returns magicka through its own
 import { registerPlayerCastListener } from './playerCasts.js';   // EG15: the player's own casts, told (a leaf)
 import { RESIST_ELEMENTS } from './lootRarity.js';   // EG15: the five elements the resistance channel names (it imports no power file)
 import { CAST_SETTING_MAX } from '../net/wire.js';   // EG15: the cast frame's byte - an ally's shield rides it
@@ -301,7 +301,7 @@ export function setCast(entity, spell, cost) {
  *  another cost. */
 function returned(attacker) {
   const v = _s.lastCost > 0 ? tierOf(attacker, 'panoply', 1) : null;
-  if (v) gainMana(attacker, (_s.lastCost * v.refund) / 100);
+  if (v) manaMine(attacker, (_s.lastCost * v.refund) / 100);
 }
 
 const flat2 = (a, b) => Math.hypot(a[0] - b[0], a[2] - b[2]);

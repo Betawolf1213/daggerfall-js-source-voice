@@ -20,8 +20,8 @@
   {
     "name": "LOOT4-the-exalted-before-the-procs",
     "file": "src/systems/lootRarity.js",
-    "old": "  for (const it of pieces ?? []) if (it?.rarity === 'magic' || it?.rarity === 'rare') rollProcLine(it, rolls);\n  for (const it of pieces ?? []) if (it?.rarity === 'legendary') rollExalted(it, rolls);",
-    "new": "  for (const it of pieces ?? []) if (it?.rarity === 'legendary') rollExalted(it, rolls);\n  for (const it of pieces ?? []) if (it?.rarity === 'magic' || it?.rarity === 'rare') rollProcLine(it, rolls);",
+    "old": "  for (const it of pieces ?? []) if (it?.rarity === 'magic' || it?.rarity === 'rare') rollProcLine(it, rolls, on);\n  for (const it of pieces ?? []) if (it?.rarity === 'legendary') rollExalted(it, rolls, on);",
+    "new": "  for (const it of pieces ?? []) if (it?.rarity === 'legendary') rollExalted(it, rolls, on);\n  for (const it of pieces ?? []) if (it?.rarity === 'magic' || it?.rarity === 'rare') rollProcLine(it, rolls, on);",
     "tests": [
       "test/loot4_procs.test.js"
     ]
@@ -29,7 +29,7 @@
   {
     "name": "LOOT4-the-last-pass-without-procs",
     "file": "src/systems/lootRarity.js",
-    "old": "  for (const it of pieces ?? []) if (it?.rarity === 'magic' || it?.rarity === 'rare') rollProcLine(it, rolls);\n",
+    "old": "  for (const it of pieces ?? []) if (it?.rarity === 'magic' || it?.rarity === 'rare') rollProcLine(it, rolls, on);\n",
     "new": "\n",
     "tests": [
       "test/loot4_procs.test.js"
@@ -56,7 +56,7 @@
   {
     "name": "LOOT4-a-proc-off",
     "file": "src/systems/lootRarity.js",
-    "old": "  if (!lootRarityOn() || (item?.rarity !== 'magic' && item?.rarity !== 'rare') || !Array.isArray(item.affixes)) return null;\n  if (item.affixes.some",
+    "old": "  if (!on || (item?.rarity !== 'magic' && item?.rarity !== 'rare') || !Array.isArray(item.affixes)) return null;\n  if (item.affixes.some",
     "new": "  if ((item?.rarity !== 'magic' && item?.rarity !== 'rare') || !Array.isArray(item.affixes)) return null;\n  if (item.affixes.some",
     "tests": [
       "test/loot4_procs.test.js"

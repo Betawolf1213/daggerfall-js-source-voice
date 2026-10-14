@@ -91,7 +91,7 @@ import { spherePlanes, batchVisible, setFlatLean, batchSphere } from '../render/
 import { withMoonAmbient } from '../render/enhancedSky.js';   // EV5: secunda rides the ambient
 import { FarRingRenderer, ringDisabled, ringHeight, RING_HAZE_HOLD } from '../render/farRing.js';   // EV8: the province's mountains on the horizon; FAR-SEA1: its haze, the sea's too
 import { syncLightingLane, lanternColor } from '../render/enhancedLighting.js';   // EL1: the Enhanced Lighting lane, installed at mount
-import { collectBlockFlats, billboardSize, mobileBillboardSize, centredBase, classicBillboardSize, isNatureArchive, NATURE_FLATS_Y } from '../world/rmbFlats.js'; import { blockHillSeat, seatNatureFlat } from '../world/townStandIns.js';   // TREES-SEATED: a block's trees on the hills drawn under them
+import { collectBlockFlats, billboardSize, mobileBillboardSize, centredBase, classicBillboardSize, isNatureArchive, NATURE_FLATS_Y } from '../world/rmbFlats.js'; import { blockHillSeat, seatNatureFlat, blockHillPatch } from '../world/townStandIns.js';   // TREES-SEATED: a block's trees on the hills drawn under them; FIELD BUGS 2026-10-13e HILL-SEAT: and the pads under what its author stood on them
 import { blockSolids, flatFieldFor } from '../world/flatFields.js';   // FIELD BUGS 2026-10-04d CROPS: a crop field keeps a metre off the block's solids; AUDIT MERCHANT-YARDS G1: and a yard off the field
 import { textureReplacementEnabled, hasTextureReplacement, preloadTextureRecord, decodePng, decodedTextureTopDown } from '../systems/textureReplacement.js';   // DW-E2: a decoration's replacement (UnderwaterDecorationReplacementCache)
 import { SeasonHelper, archivePrefix as seasonPrefixOf } from '../systems/seasonsIliacBay.js';   // SIB1: Seasons of the Iliac Bay's SeasonHelper; WINDFALL1: and its atlases' prefixes, which Windfall's own tables key on
@@ -499,7 +499,7 @@ import { drawWildMarks, WILD_MARK_RANGE } from '../ui/wildMarks.js';   // WILD-A
 import { playerOnPathAt, pathsDataPoint } from '../systems/travelPaths.js';   // RATE-LAW: the traveller on a road's lane or off it
 import { threatCap, foePaced } from '../systems/travelThreat.js';   // OW6: the journey slows as enemies close; ENEMY-PACE's floor, fixed (RATE-LAW)
 import { farPlaces, settlementPixels, farDistanceText, PIXEL_KM, TV_FAR_RANGE } from '../systems/travelFarPlaces.js';   // TV5: the far places, held at the view's edge
-import { dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M } from '../systems/travelDungeons.js';   // TV6: the dungeons, discovered on approach; AUDIT OW3 D1/D3: off the map rows, and the spawns with them; AUDIT OW4 D4/D6: the far found spawns, the last leg's start
+import { TV_DUNGEON_TYPES, dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M } from '../systems/travelDungeons.js';   // TV6: the dungeons, discovered on approach; AUDIT OW3 D1/D3: off the map rows, and the spawns with them; AUDIT OW4 D4/D6: the far found spawns, the last leg's start
 import { routeGround, joinPoint, routeDrawPoints, TV_MOUNTAIN_CLIMATE } from '../systems/travelRoute.js';   // OW-MOUNTAINS, OW-ROADSIDE; AUDIT OW3 J4: the drawn route's points; AUDIT OW4 J3: the ground read once
 import { bandsNear, wanderAt, bandSight, bandChaseStep, bandLabel, bandMakeSeed, bandSizeOf, bandLevelOf, BAND_LIFE_MS, BAND_CONTACT_M, BAND_CHASE_MPS, BAND_STAND_M, BAND_STAND_MIN_M, BAND_STAND_RETRY_MS, BAND_STAND_TRIES } from '../systems/travelBands.js';   // TV7: the roaming bands; OW6: their number and their level
 import { bandWordOf, validBandWord, chaseYields, bandLifeOf, bandNearMe, bandPixelOf, BAND_WORD_MS, BANDS_WIRE_MAX } from '../systems/travelBands.js';   // TV7b: the chase, shared
@@ -532,7 +532,7 @@ import { FOUND_NOTHING_VALUABLE_TEXT_ID } from '../systems/talk.js';   // GetRan
 import { spellRecordOfIndex, DUNGEON_LOOT_KEYS, generateItems as generateLootItems, addPileLootExtras, shownSpellName } from '../systems/loot.js';   // QG1: CastSpellDo's classic-record read (the G4 registry); WOD3: LootTables.GenerateLoot for the camps' piles; L10N3e: a spell's name as shown
 import { preloadCharSheetArt } from '../ui/charsheet.js';   // U8a. AUDIT 44 (a11): no LevelUpScreen here - a level-up opens the SHEET, and the skin fork behind charSheetDoor decides which face it wears.
 import { createCharSheetWindow, charSheetDoorReady, warmLevelUpWindow } from '../ui/charSheetDoor.js';
-import { announceLevelUp, levelOwed } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
+import { announceLevelUp, levelOwed, announceQuestFoeSlain, questFoeName } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
 import { preloadQuestJournalArt } from '../ui/questJournal.js';   // U43: the LogBook and NoteBook doors
 import { createChronicleWindow } from '../ui/chronicleDoor.js';   // PX24d: the chronicle's one door
 import { openPixelDial, setDialOpenHook } from '../ui/pixelDial.js';   // PX15: the Tab compass rose
@@ -574,6 +574,7 @@ import { preloadMessageBoxArt } from '../ui/messageBox.js';   // U11
 import { buildingDataForDoor, locationBuildings, BUILDING_KEY_0, makeBuildingKey, blockBuildingCount } from '../systems/talkTopics.js';   // E2: the shop identity   // H2: every building, with its key   // AUDIT 58: BuildingDirectory.buildingKey0, the key both ship interiors are filed under
 import { hitSoundFor, swingSoundFor, ENEMY_HIT_VOLUME, PLAYER_HIT_VOLUME } from '../systems/soundClips.js';   // AUDIT 58: DFU's two hit volumes
 import { isInvisible, entityIsParalyzed, concealBits } from '../systems/effects.js';   // AUDIT 39: the S19 gate is host-agnostic in DFU
+import { tellSpellLanded } from '../systems/spellPower.js';   // AUDIT SCHOOLS L2 F4: my spell on the serpent's hide, told to the paths' riders
 import { hasActiveEffect, applySpell } from '../systems/effects.js';   // PEERLIGHT2: my Light spell, for the pose; SERPENT4: a hand's spell on the sea serpent's stand-in
 import { combatVisualsOn, peerDraw } from '../systems/combatVisuals.js';   // INVIS-LOOK: a concealed peer, drawn as the enhanced lane draws a concealed foe
 import { isEntityWaterWalking, assignModBundle, removeBundleNamed, WATER_WALKING_SILENT_KIND } from '../systems/effects.js';   // CSA-I: the boat's water walk
@@ -681,6 +682,7 @@ import { setRaidingPartiesHost, raidFrame as raidingPartiesFrame, raidState, rai
 import { modSaveRecords, restoreModSaveRecords, newGameModSaveRecords, registerModSaveData } from '../systems/modSaveData.js';   // WA1: DFU's per-mod save slot, for the mods after HCC; OH-D: Ocean Holes' OceanHoleSaveData
 import { applyDeathPenalty, deathPenaltyText, stateDeathLoss, statedDeathLoss } from '../systems/deathPenalty.js';   // DEATH-PENALTY: an online death costs a tenth of the purse
 import { createLegacyHost, LEGACY_TEXT, REMAINS_FLAT } from './legacyHost.js';   // LEGACY1: Project Legacy's family - the record, the deaths, the births
+import { createRemainsStand } from './legacyRemainsStand.js';   // FB1013d REMAINS-STAND: the house's fallen, seen where they lie
 import { isFamilyRes } from '../systems/legacy/household.js';   // LEGACY-HOME: one of the line among a town's residents
 import { legacyOn, legacySettings } from '../systems/legacy/settings.js';
 import { listFamilies, newestSaveOf } from '../systems/legacy/store.js';
@@ -728,7 +730,7 @@ import { noteLocalPlayer, tacticsNow, tickTactics, offsetTactics } from '../ai/t
 import { drawableBlows, registerBlowDodgedListener } from '../ai/foeBlows.js';   // TACT4; AUDIT ARENA-LADDER: a dodge told
 import { landViewRead } from '../world/landView.js';   // LV1: the enhanced lane's own streamed radius; FT2: the read is the module's
 import { CityLightAnimator, SUN_RIG_COLOR, INDIRECT_LIGHT_COLOR, INDIRECT_LIGHT_RANGE, exteriorAmbient, indirectLightScale, isCityLightsOn, isNight, hourOf, daylightScale, parseTimeOfDay, sunDirection, sunScale, windowStyleForTime, viewOutLight } from '../world/worldClock.js';
-import { dungeonLocationFor } from '../world/smallerDungeons.js';   // AUDIT 28 F-B2: the quest layer sees the sized dungeon
+import { dungeonLocationFor, builtDungeonSize } from '../world/smallerDungeons.js';   // AUDIT 28 F-B2: the quest layer sees the sized dungeon; AUDIT FB1013d B1: the size a fallen's dungeon was built at
 import { audio, QuestAudioSource, logarithmicRolloff, plainSourceGain } from '../systems/audio.js';   // E6: the QuestMachine's own DaggerfallAudioSource (PlaySound's busy-skip)
 import { music } from '../systems/music.js';
 import { AmbientEffects, EXTERIOR_AMBIENT_WAITS, presetForExterior } from '../systems/ambientEffects.js';
@@ -1180,12 +1182,15 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     ? createRealmLine({ io: realmIoNow, storage: () => appStorage(), onRefused: (id, error) => { townTalk.say(LEGACY_TEXT.lineRefused(realmRefusalText(error))); } }) : null;
   /** @type {Set<string> | null} the living realm characters' ids - null unknown (unread: every id is taken to stand) */
   let legacyRealmRoster = null;
-  if (legacyRealmLine) {
-    status('Reading the family');
-    await legacyRealmLine.pull().catch((e) => console.warn('[legacy] the realm\'s lines were not read', e));
-    const listed = await realmList(realmIoNow()).catch(() => null);
-    if (listed?.ok) legacyRealmRoster = new Set(listed.characters.map((c) => String(c.id)));
-  }
+  // BOOT-OVERLAP (2026-10-12, a player's launch into the world captured from the live client: the lines and the roster
+  // were read one after the other, the boot waiting on each - 1.4 s of nothing but the network before the data was
+  // read): both asked at once, and read BEHIND the boot. Their one reader is Project Legacy's host (`legacyHost`, made
+  // further down), which waits for them where it is made - still before any save is restored.
+  let legacyRealmHeard = !legacyRealmLine;
+  const legacyRealmRead = legacyRealmLine ? Promise.all([
+    legacyRealmLine.pull().catch((e) => console.warn('[legacy] the realm\'s lines were not read', e)),
+    realmList(realmIoNow()).catch(() => null).then((listed) => { if (listed?.ok) legacyRealmRoster = new Set(listed.characters.map((c) => String(c.id))); }),
+  ]).then(() => { legacyRealmHeard = true; }) : null;
   // REALM P1.3: a realm checkpoint that LANDS is a save that lands - the gate's spoils it was composed holding are then
   // safe on the service, and their device record goes (scenes/spoilsPool.js saved, as onSlotSaved tells it for a slot).
   // Without it no realm save ever cleared them, and every boot handed the same spoils back. The hooks are the spoils
@@ -1315,6 +1320,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // the session does).
   // (bootLoadPick and bootSnap stand at the top of the boot since AUDIT FINAL F9: the Test Room's check reads the same pick)
   if (bootLoadPick) prebuildArmsForSave(bootSnap);
+  // HOME-RENT: the service's homes door itself, for a home's rooms - read at its door, rented, offered, collected
+  // BOOT-OVERLAP: stood here, above the data's read, once `online` is settled (the realm's refusal and the Test Room's
+  // drop above) - so WD3's ask for the homes' layouts (below, at the first build) goes out beside the data's read
+  // instead of after it: it was waited on 0.7 s at the first build.
+  const homesApi = params.has('online') ? accountHomes({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }) : null;
+  const bootHomeLayoutsAsk = homesApi ? homesApi.layouts().catch(() => null) : null;
   status('loading data');
   const [palBytes, blocksBytes, archBytes, mapsBytes, climateBytes, politicBytes, woodsBytes] =
     await Promise.all([
@@ -1726,9 +1737,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // HOME1 (Mac: "allowing online players to purchase housing in any location"): the online homes - the account
   // service's registry as this page knows it, one town at a time (systems/onlineHomes.js). The mode machine's doors
   // read it and the quest's residence filter asks it; offline it does not exist and every door is Daggerfall's. Read
-  // off `params`: `onlineOn` is declared far below, and a quest can be set up before it is.
-  // HOME-RENT: the service's homes door itself, for a home's rooms - read at its door, rented, offered, collected
-  const homesApi = params.has('online') ? accountHomes({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }) : null;
+  // off `params`: `onlineOn` is declared far below, and a quest can be set up before it is. (Its door, `homesApi`, stands
+  // above the data's read - BOOT-OVERLAP.)
   const onlineHomes = homesApi ? createOnlineHomes({ api: homesApi, character: () => characterIdOf(playerEntity), onWrote: () => legacyOnlineHomesRead() }) : null;   // LEGACY7 part five: a home of mine bought, sold or changed - the line's to learn again
   /** LEGACY7 part five: ONLINE, THE LINE'S HOUSES ARE ITS MEMBERS' ONLINE HOMES (Legacy-Arc 10b) - this realm character's
    *  rows of the account's homes (/v1/homes/mine; HOME1: a home is a realm character's), each named by its town. Read at
@@ -1750,16 +1760,17 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       }));
     }).catch(() => {});
   }
-  // WD3: THE TOWNS THAT HOLD AN ONLINE HOME, AND THE LAYOUT EACH WAS BOUGHT IN (net/homeLaw.js) - asked now, beside the
-  // boot's own loading, and answered into the layout pins before the first town stands (below, at the first build), so
-  // every client of the room stands a home's town as its homes were bought in it. An answer that does not come is asked
-  // again behind the play, and the towns it names are built again when it lands.
+  // WD3: THE TOWNS THAT HOLD AN ONLINE HOME, AND THE LAYOUT EACH WAS BOUGHT IN (net/homeLaw.js) - asked beside the
+  // boot's own loading (BOOT-OVERLAP: above the data's read, `bootHomeLayoutsAsk`), and answered into the layout pins
+  // before the first town stands (below, at the first build), so every client of the room stands a home's town as its
+  // homes were bought in it. An answer that does not come is asked again behind the play, and the towns it names are
+  // built again when it lands.
   const homeLayoutsOnline = !!homesApi;
   let _serverLayoutRecords = null;   // [{ locationKey, stamp, kind }] once the service has answered
   let _homeLayoutsApplied = false;   // AUDIT WD3 R2: and once its pins stand (the packs they let in fetched, the towns rebuilt)
   let _pinsGen = 0;
   let _pinsDroppedSaid = false;   // AUDIT WD3 B6   // AUDIT WD3 R3: the latest applyLayoutPins - an older one overtaken sets nothing
-  let _homeLayoutsAsk = homesApi ? homesApi.layouts().catch(() => null) : null;
+  let _homeLayoutsAsk = bootHomeLayoutsAsk;
   let _arenaHomesAsked = false;   // ARENA4b: the online homes the arena displaced, moved once a boot (moveArenaHomesOnline) - here, above the boot's first landing
   let _deedsHeldAsked = false;   // FIELD BUGS 2026-10-04d KNIGHT-HOUSE: the deeds the realm gave, held once a boot (holdRealmDeedsOnline) - here, beside it
   let playerSpawned = false, _bootLoaded = false;   // HOTFIX 1003: here, above the boot's first landing - moveArenaHomesOnline reads it when the homes' towns land, which can be before the boot walk reached its old line (a TDZ ReferenceError live)
@@ -2560,6 +2571,16 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   if (!startLoc) throw new Error(`location not found: ${regionName}/${locationName}`);
   const startPixel = longitudeLatitudeToMapPixel(
     startLoc.mapTableData.longitude, startLoc.mapTableData.latitude);
+  // BOOT-OVERLAP: THE TOWNS THE BOOT WAITS ON AS IT BUILDS THEM - the start's (the first build) and a realm save's own
+  // place (the load's arrival) - each waited on up to HOME_LOOK_BUILD_WAIT_MS at its build, one after the other (1.4 s and
+  // 0.7 s of nothing but the network). Asked now, both at once, as the realm's character the save is (`characterId`, the
+  // realm's id - the one playing once it is restored): its own tenancies ride the answer, as they would at the arrival.
+  if (onlineHomes && realmBoot && bootSnapRead) {
+    const at = bootSnapRead.locationKey === 'world' ? bootSnapRead.world?.pixel : null;
+    const saved = at ? locationIndex.get(`${at.x},${at.y}`) : null;
+    const as = typeof bootSnapRead.characterId === 'string' ? bootSnapRead.characterId : null;
+    for (const loc of new Set([startLoc, saved])) if (loc?.mapTableData) onlineHomes.ensure(loc.mapTableData.mapId, { character: as }).catch(() => {});
+  }
 
   const CITY_LIGHT_COLOR_F32 = lanternColor(lightingOn, new Float32Array(CITY_LIGHT_COLOR));   // EL1: the lane's flame over the classic white
   // World clock (R5) + sky controller: panorama follows the current pixel's
@@ -6107,6 +6128,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           }
         }
         const hillSeat = blockHillSeat(b.layout.models);   // TREES-SEATED: the block's hills as the port draws them, null for none of ours. No RMB ground plane on terrain (addGroundPlane = false).
+        // FIELD BUGS 2026-10-13e HILL-SEAT: the pads under what the author stood on those hills (laid into the seat, so the trees below stand on them too) - merged with the pixel's statics and solid in its bucket, both freed with the pixel (destroyPixel)
+        const hillPatch = blockHillPatch(hillSeat, b.layout.models, (m) => (m.enhancedOnly && !isEnhanced() ? null : cpuModels.get(m.modelIdNum)));
+        if (hillPatch) { staticBuilder.add(hillPatch, originMatrix, resolveTexKey); collider.addMesh(key, hillPatch.positions, hillPatch.indices, originMatrix, onFloatingFrame(state, ((o) => () => state.pixelTranslation(px, py, o))([0, 0, 0]))); unionBox(transformedAabb(localAabb(hillPatch.positions), originMatrix)); }
         // FIELD BUGS 2026-10-04d CROPS: a crop field's batch reads the climate (the second desert's plant is its own) and
         // keeps a metre off the block's solids - the models this build drew and collided just above (IsOverlapping)
         const blockFlats = collectBlockFlats(b.dfBlock, natureArchive, { climateIndex: maps.getClimateIndex(px, py), solid: blockSolids(b.layout.models, (m) => (m.enhancedOnly && !isEnhanced() ? null : cpuModels.get(m.modelIdNum))) });
@@ -7490,6 +7514,9 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // SWIM-SPENT (rest.js): in the water the drain to nothing is a share of the health and a line - no box, so the
       // swimmer can make for the shore; Come Sail Away hears no death
       if (out.kind === 'drown') { townTalk.say(out.line); hurtPlayer(playerEntity, out.damage, { bypassShield: true }); return; }
+      // SPENT-ASHORE (rest.js): on dry feet with foes about the same share and a line - no box, no death heard; the
+      // fighter can get clear (DFU SetHealth(0)s them there, whatever the health)
+      if (out.kind === 'spent') { townTalk.say(out.line); hurtPlayer(playerEntity, out.damage, { bypassShield: true }); return; }
       if (csaRuntime) csaCall(() => csaRuntime.OnPlayerDeath());   // CSA-D: PlayerEntity.OnExhausted -> ComeSailAway.OnPlayerDeath
       const lines = ['You collapse from exhaustion.'];
       // ROAD-B B5: a PUSH. PlayerEntity's OnExhausted handler is a plain
@@ -7514,8 +7541,6 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
         playerEntity.magicka = Math.min(playerEntity.maxMagicka ?? Infinity, (playerEntity.magicka ?? 0) + out.magicka);
         tallySkill(playerEntity, SKILLS.Medical);
         surfacePlayer();
-      } else {
-        hurtPlayer(playerEntity, playerEntity.health, { bypassShield: true });   // SetHealth(0)
       }
     } finally { _inExhaustion = false; }
   }
@@ -8728,13 +8753,15 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** SERPENT4: a harmful missile of mine on its hide (hostMagic.js boxMarks) - its harmful families landed on the stand-in
    *  through the one door every spell lands by (applySpell), the hurt summed and handed to the host; the stand-in forgets
    *  every lasting family at once, as the gate's does. */
-  function serpentSpellOn(sp, target) {
+  function serpentSpellOn(sp, target, caster = null) {
     const harm = duelSpellOf(sp), e = serpentStandIn();
     if (!harm) return false;
-    let dealt = 0;
+    let dealt = 0, r = null;
     const sinks = { hurt: (n) => { dealt += Math.max(0, n); }, heal() {}, drainFatigue() {}, restoreFatigue() {}, drainMagicka() {}, restoreMagicka() {} };
-    try { applySpell(harm, playerEntity.level, e, sinks, Math.random, { entity: playerEntity }); } finally { e.activeEffects = []; }
+    try { r = applySpell(harm, playerEntity.level, e, sinks, Math.random, { entity: playerEntity }); } finally { e.activeEffects = []; }
     if (!(dealt >= 1)) return false;
+    // AUDIT SCHOOLS L2 F4: told to the paths' riders as any landing of mine - no foe record (the hand's door holds it)
+    tellSpellLanded({ caster: playerEntity, target: e, foe: null, spell: sp, r, self: false, took: dealt, cast: caster?.cast ?? null });
     serpentHost?.handStruck?.(target, dealt);
     return true;
   }
@@ -13046,7 +13073,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     duelMark: () => { if (!duelMgr.fighting) return siegeSpellMarks(); const b = duelBody(duelMgr.opponent); return b ? { ...b, name: peerName(b.id) ?? 'your opponent' } : null; },   // AUDIT-SEATS G5: outside a duel, a siege's foes (WILD1: and past them the open zone's fair players)
     castAtDuel: (id, sp) => duelSpellOut(id, sp),
     boxMarks: () => serpentHost?.handBoxes?.() ?? null,   // SERPENT4: the sea serpent's hide, a hand's harmful missile's mark
-    castAtBox: (sp, q) => serpentSpellOn(sp, q),
+    castAtBox: (sp, q, caster) => serpentSpellOn(sp, q, caster),
     castRefusal: () => modes?.castRefusal?.() ?? null,   // HOME-MAGIC: a visitor casts nothing in another's online home (worldModes.js visitorMagicRefusal)
     spellRefusal: (sp) => battleSpellRefusal(sp),   // AUDIT-SEATS G5: Teleport, Recall and Levitate do nothing in a siege's room
     collider: { raycast: (o, d, m) => ((modes?.mode === 'interior' && modes?.interiorCollider) ? modes?.interiorCollider : collider).raycast(o, d, m) },
@@ -15805,8 +15832,16 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   function legacyStep(dt) {
     _legacyT -= dt;
     if (_legacyT > 0 || !legacyHost) return;
+    // AUDIT FB1013d A2: and never while the world is moved (AUDIT 68 S22's one question) - a load replaces the record's
+    // lists once its awaits are done (legacyHost.js adopt), and a list opened or a body stood over them in between
+    // outlived them: a take from it was a take from no record
+    if (worldMoveBusy()) return;
     _legacyT = 1;
     const said = legacyHost.tick();
+    // FB1013d REMAINS-STAND: the house's fallen stood where they lie - after the tick, which lays the bones again before a
+    // list is made ready (legacyHost.js remainsToStand; a claim that lapses there lays its bones at once, AUDIT FB1013d A1);
+    // their line of light under the house's name
+    setLootMarksLive(legacyRemainsStand.frame(legacyHost.remainsToStand()) > 0, 'legacy');
     // AUDIT LEGACY A2: asked every second until it is shown - never dropped under a window that stood when it was first asked
     if (!said || successionOpen() || (townTalk.overlayActive && !townTalk.overlayDone) || modes?.deathUp?.()) return;
     if (said.past) openLegacyDeadLoad(said);
@@ -19916,6 +19951,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // (GivePc.cs:173, :189-196) - ONE deferred act armed by offerReward
   // and fired when the box the player is reading closes.
   let _onQuestBoxClosed = null;
+  /** QUEST-NOTE: a quest's words in the chat's tab, as a system line - online, with a chat up; nothing otherwise. */
+  const questChatLine = (text) => {
+    const line = String(text ?? '').replace(/\s+/g, ' ').trim();
+    if (!line) return;
+    // the chat is declared far below this: a box raised while the page is still building (the classic start's) finds it
+    // not yet made - read inside the try, it is a convenience either way
+    try { if (chatLog) chatLog.push(chatLog.active, { text: `Quest: ${line}`, system: true }); } catch { /* not yet, or none */ }
+  };
   const showQuestBox = (box) => {
     // FORAGE4 (FORAGE0 13.1): a quest's box waits behind Foraging's online wait - a bonus's line after the work
     if (foragingWait.holds()) { foragingWait.hold(() => showQuestBox(box), keptBox(box)); return; }   // AUDIT 28 F6: a box of words rides the save
@@ -19924,6 +19967,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       return;
     }
     const win = new ServiceFlowWindow([box], {
+      graceMs: 600,   // QUEST-NOTE: a press ignored this long after it comes up - online the game does not stop for it, and the swing that raised it closed it unread (ui/guildServiceWindows.js ServiceFlowWindow graceMs); inline, as CHOP-WAIT lifts this body whole
       onClose: () => {
         if (_questBoxWin === win) _questBoxWin = null;
         const fire = _onQuestBoxClosed; _onQuestBoxClosed = null; fire?.();
@@ -20931,7 +20975,18 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // read moved back to queue time where Quest.cs:785 does it.
     showPopup: (_q, tokens) => {
       const rows = tokensToRows(tokens);
-      if (rows.length) showQuestBox({ rows });
+      if (!rows.length) return;
+      showQuestBox({ rows });
+      questChatLine(rows.join(' '));   // QUEST-NOTE: the box's words kept in the chat, where a box closed too soon can be read again
+    },
+    // QUEST-NOTE (2026-10-13, a player: "killed the mage in question, but DFO never popped up saying the mage was killed"):
+    // a quest's foe fell - the HUD strip's row and a chat line, whatever the quest's script says
+    questFoeKilled: (q, foe) => {
+      const who = questFoeName(foe);
+      const quest = q?.displayName || null;
+      const of = Math.max(1, foe?.spawnCount | 0), done = Math.max(0, foe?.killCount | 0);
+      announceQuestFoeSlain({ who, quest, done, of, key: `${q?.uid}|${foe?.symbol?.name ?? who}` }, { say: (t) => townTalk.say(t) });
+      questChatLine(`${who} slain${of > 1 ? ` (${Math.min(done, of)}/${of})` : ''}.`);
     },
     showPrompt: (q, message, respond) => showQuestBox({
       rows: tokensToRows(message.getTextTokens(-1, q.rolls)),
@@ -28038,7 +28093,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // death reset (the presenter above) and the modal hosts' (worldModes' interior and the dungeon context reset through
   // `onlineRespawn`, below) both ask `legacyDeathReset`.
   // FLAGGED (Legacy-Arc.md section 3): exterior.js, the fixed city, keeps DFU's death - no streamer to birth an heir into.
-  const legacyHere = () => {
+  const legacyHere = ({ height = false } = {}) => {
     const px = playerTravelPixel();
     const r = maps.getRegionIndexAt(px.x, px.y);
     const loc = locationIndex.get(`${px.x},${px.y}`) ?? null;
@@ -28050,11 +28105,26 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     return {
       pixel: { x: px.x, y: px.y }, regionIndex: r, region: REGION_NAMES[r] ?? '', mode, loc: loc?.name ?? null, locationType: loc?.mapTableData?.locationType ?? null,
       mapId: loc?.mapTableData?.mapId != null ? loc.mapTableData.mapId >>> 0 : null,   // LEGACY-HOME: the seat's town, as its residents know it
-      dungeon: dl ? { regionIndex: dl.regionIndex, locationIndex: dl.locationIndex } : null,
+      // AUDIT FB1013d B1: and the dungeon's own key - its save's and its room's (`dungeon:<locationId>`): a made dungeon
+      // shares its region's row, the Arena's Undercroft its city's - and the size it was built at (Smaller Dungeons: another
+      // size is another layout, where the fallen's floor position is some other room or none)
+      dungeon: dl ? { regionIndex: dl.regionIndex, locationIndex: dl.locationIndex, key: modes?.dungeonCtx?.locationKey?.() ?? null, size: builtDungeonSize(modes?.dungeonLocation) } : null,
       pos: mode === 'dungeon' ? pos : null,
-      world: mode === 'exterior' ? state.worldCoords(pos) : null,
+      // FB1013d: and the height they stood at - the body stands there (a roof, a bridge): a record's, so in DFU's frame
+      // (AUDIT LANDFORMS C1) on the ground it was measured on (TERRAIN-SCALE1), as the Recall anchor keeps its own.
+      // AUDIT FB1013d B2: asked by the death alone (`height`) - the lift is a field's kernel pass on the first pixel the
+      // main thread asks it of, and the slow tick asks where the one played stands every second
+      world: mode === 'exterior' ? { ...state.worldCoords(pos), ...(height ? { y: groundFrameHeight(pos[1] - state.compensation[1], pos[0], pos[2]), terrainScale: STREAMING_TERRAIN_SCALE } : {}) } : null,
     };
   };
+  /** LEGACY4 + AUDIT LEGACY H1: whether `h` (legacyHere) stands in the dungeon a remains' `place` names - by its location
+   *  AND the pixel it stands on (AUDIT FB1013d O1: a MADE dungeon is no table row - a spawn, a hall, the Arena's floor,
+   *  the Hour and the Court are each locationIndex -1 of their region, so the body stood in every spawn of the fallen's
+   *  region; inside, the GPS is the dungeon's own pixel - Ocean Holes' abyss its template's - as the map ring reads it)
+   *  AND, where the row kept them, its own key and the size it was built at (AUDIT FB1013d B1: the Undercroft is its
+   *  city's row on its city's pixel, Castle Daggerfall's; another size is another layout). A row from before keeps the
+   *  row and the pixel. */
+  const legacyInDungeonOf = (h, place) => h.mode === 'dungeon' && !!place?.dungeon && h.pixel?.x === place.pixel?.x && h.pixel?.y === place.pixel?.y && h.dungeon?.regionIndex === place.dungeon.regionIndex && h.dungeon?.locationIndex === place.dungeon.locationIndex && (place.dungeon.key == null || h.dungeon?.key === place.dungeon.key) && (place.dungeon.size == null || h.dungeon?.size === place.dungeon.size);
   /** LEGACY4: is the player where these remains lie - in their dungeon, or within a stone's throw of where they fell
    *  outdoors (in a building: anywhere on its town's pixel, in the street). */
   const legacyAtPlace = (place) => {
@@ -28062,7 +28132,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const h = legacyHere();
     // AUDIT LEGACY H1: underground, where they fell - within a few paces of the fallen's own floor position (the dungeon's
     // fixed coordinates), not anywhere in the dungeon
-    if (place.mode === 'dungeon') return h.mode === 'dungeon' && !!place.dungeon && h.dungeon?.regionIndex === place.dungeon.regionIndex && h.dungeon?.locationIndex === place.dungeon.locationIndex
+    if (place.mode === 'dungeon') return legacyInDungeonOf(h, place)
       && (!place.pos || !h.pos || Math.hypot(h.pos[0] - place.pos[0], h.pos[1] - place.pos[1], h.pos[2] - place.pos[2]) <= LEGACY_REMAINS_NEAR_DUNGEON);
     if (h.mode !== 'exterior' || h.pixel.x !== place.pixel?.x || h.pixel.y !== place.pixel?.y) return false;
     if (place.mode !== 'exterior' || !place.world) return true;
@@ -28083,6 +28153,34 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (w) townTalk.showOverlay(w);
     return !!w;
   };
+  /** FB1013d REMAINS-STAND (`01-Overview/Field-Bugs-2026-10-13d.md`): WHERE A REMAINS' PLACE STANDS in the pool the one
+   *  played stands in now - underground, the floor under the fallen's last position in their own dungeon; outdoors, the
+   *  ground under where they fell (at the height they stood at, where the row kept it), once its pixel is built; null
+   *  anywhere else. A building's death lies in its town's street by the law (Legacy-Arc section 7: its place names no
+   *  building, and its list opens anywhere on the pixel), so no body stands for it. */
+  const legacyRemainsFeet = (place) => {
+    if (!place || !playerSpawned) return null;
+    const mode = modes?.mode ?? 'exterior';
+    if (place.mode === 'dungeon') {
+      if (mode !== 'dungeon' || !Array.isArray(place.pos) || !legacyInDungeonOf(legacyHere(), place)) return null;
+      return modes?.dungeonCtx?.floorAt?.(place.pos[0], place.pos[1], place.pos[2]) ?? [place.pos[0], place.pos[1], place.pos[2]];
+    }
+    if (mode !== 'exterior' || place.mode !== 'exterior' || !place.world) return null;
+    const [x, z] = state.localFromWorld(place.world.x, place.world.z);
+    const ground = heightAt(x, z);
+    if (!Number.isFinite(ground)) return null;   // its pixel not built yet - stood once it is
+    const y = Number.isFinite(place.world.y) ? anchorLanding({ nativeX: place.world.x, nativeZ: place.world.z, y: place.world.y, terrainScale: place.world.terrainScale })[1] : ground;   // a record's height stood again: the Recall anchor's own read, one home (AUDIT FB1013d C14)
+    return floorLanding(collider, [x, Math.max(y, ground) + 0.5, z]);
+  };
+  /** FB1013d REMAINS-STAND: the house's fallen, seen where they lie - a body in the street's pool, or the building's or the
+   *  dungeon's (worldModes droppedPool), whose list is the record's own (scenes/legacyRemainsStand.js). */
+  const legacyRemainsStand = createRemainsStand({
+    pool: () => ((modes?.mode ?? 'exterior') === 'exterior' ? droppedLoot : (modes?.droppedPool?.() ?? null)),
+    feetOf: legacyRemainsFeet,
+    pixelKeyOf: (place) => (place?.mode === 'exterior' && place.pixel ? `${place.pixel.x},${place.pixel.y}` : null),   // dies with its pixel (collectPixel), stood again when it is built
+    icon: REMAINS_FLAT,
+    label: (r) => LEGACY_TEXT.remainsName(r.name),   // their own name, the map ring's (legacyHost.js LEGACY_TEXT)
+  });
   /** AUDIT LEGACY: what the one played keeps - the pack, the wagon and the Materials Bag. */
   const legacyCarried = () => [...(playerEntity.items ?? []), ...(playerEntity.wagonItems ?? []), ...(playerEntity.bagItems ?? [])];
   /** LEGACY4: a place to lay the dead to rest - a temple's inside, or the family's seat. */
@@ -28166,6 +28264,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const at = fallen?.characterId ? newestSaveOf(enumerateSaves().info, fallen.characterId) : -1;
     return legacyInheritDeed(row, () => (at >= 0 ? loadSlot(at)?.sceneCache ?? null : null));
   };
+  // BOOT-OVERLAP: the realm's lines and roster, read behind the boot (above, at the join), are in before the host that
+  // reads them is made
+  if (legacyRealmRead) {
+    if (!legacyRealmHeard) status('Reading the family');
+    await legacyRealmRead;
+  }
   legacyHost = createLegacyHost({
     entity: playerEntity,
     residentNow: (id) => residentOfId(id, livingTownOfId),   // AUDIT FB1010 C1: the betrothed as the census mints them now, for the wedding
@@ -28202,12 +28306,20 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       return true;
     },
     saveNow: () => (legacyFirstSave ? legacyFirstSave() : !!(modes ? modes?.quickSaveNow(QUICK_SAVE_NAME, { quiet: true }) : worldQuickSave(QUICK_SAVE_NAME, { quiet: true }))),   // LEGACY7: an online birth's is the realm's first checkpoint (legacyRealmBirth)   // `?.` inside the arm: audit24 wave37's gate above the declaration; AUDIT LEGACY B6: answers whether it saved
-    inFight: () => areEnemiesNearby([...(cityGuards?.guards ?? []), ...(exteriorFoes?.foes ?? []), ...(modes?.dungeonCtx?.foes ?? [])]),
+    // FB1013d LIVE-FIGHT: the fight is the PLACE the one played stands in - the street's foes and watch outdoors, the
+    // building's or the dungeon's own inside (GameManager.AreEnemiesNearby walks the ACTIVE enemies alone). The street's
+    // pools stand frozen while a mode is mounted, their senses latched as the player went in, and one hostile walker
+    // within 27 metres of the door (1094 classic units - AUDIT FB1013d C9) kept every visit below "in a fight": the
+    // remains never opened, and no switch, mantle or wedding was let through. AUDIT FB1013d B3: and the fights the host's
+    // rest refusal reads beside the pools - a duel or the one played's own bout (DUEL1, ARENA2: duelEnemyNear) and a
+    // hostile ship in reach (NAV-H)
+    inFight: () => duelEnemyNear() || areEnemiesNearby((modes?.mode ?? 'exterior') === 'exterior' ? exteriorFoePool() : (modes?.insideFoes?.() ?? [])) || navalHostileNear(),
     payEstate: (n) => legacyAddItem(playerEntity.items ??= [], letterOfCredit(n)),
     giveItems: (items) => { for (const it of items) legacyAddItem(playerEntity.items ??= [], it); },   // AUDIT LEGACY: an elder's bequest, into the pack
     killer: () => { const e = playerHarmMark(); return e ? (e.revenant?.name ?? e.displayName ?? (Number.isInteger(e.mobileType) ? enemyDisplayName(e.mobileType) : null)) : null; },   // LEGACY4: who struck the fallen down - a revenant by its own name
     atPlace: legacyAtPlace,
     openRemains: legacyOpenRemains,
+    letGoRemains: () => legacyRemainsStand.clear(),   // AUDIT FB1013d A2: a load's adopt replaced every list - the bodies over the old ones go
     carried: legacyCarried,
     atRest: legacyAtRest,
     // AUDIT LEGACY H8: answers whether the question was SHOWN - a rest asked under another window is asked again
@@ -32672,7 +32784,11 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     for (const p of travelViewPlaces()) {
       if (p.key === endKey) continue;
       const tier = params.has('online') ? tierPhrase(dungeonTierLabel(p.summary.loc)) : '';   // TIER1: a dungeon's tier and size under its name, online
-      marks.push({ key: p.key, at: tvSceneKept(p, p.x, p.z, TV_PLACE_LIFT), label: p.summary.name, ...(tier ? { sub: tier } : {}), kind: 'place', pick: true, hub: carriageTown(p.summary.mapId), tip: seatTipAt(p.summary.mapId) });   // OW-HUBS: a carriage town's wheel; SEAT-TIP: a seat's card
+      // OW-DUNGEON-DOT (2026-10-13, field: "some dungeons appear on the Overworld map as towns"): a found dungeon within the
+      // grid wears TV2's plate (travelViewDungeons leaves it to this list), and every plate here was kind 'place' - a
+      // town's brass dot, and the Towns switch's count. Its kind says so now: the dungeons' arch, the Dungeons switch.
+      const isDungeon = TV_DUNGEON_TYPES.has(p.summary.loc?.mapTableData?.locationType);
+      marks.push({ key: p.key, at: tvSceneKept(p, p.x, p.z, TV_PLACE_LIFT), label: p.summary.name, ...(tier ? { sub: tier } : {}), kind: isDungeon ? 'place dungeon' : 'place', pick: true, hub: carriageTown(p.summary.mapId), tip: seatTipAt(p.summary.mapId) });   // OW-HUBS: a carriage town's wheel; SEAT-TIP: a seat's card
     }
     // TV5: the far places, held at the edge with their distance (the journey's own end is the flag's)
     const farEnd = endKey ? `far:${tvTrip.plan.summary.mapId}` : null;

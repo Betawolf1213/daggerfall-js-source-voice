@@ -6624,3 +6624,146 @@ an Abandon only for a bounty and a revenant's hunt.
   (THE NATIVE-WINDOW RULE).
 
 `test/questshelfmain.test.js` (4); `tools/mutants/questshelfmain.json` (14), all dead.
+
+## QUEST-NOTE - a quest's foe fallen is told, and its box is not closed unread (2026-10-13)
+
+A player on the DFO Discord: "Would it be possible to implement kill/quest notifications? I just got done doing 'A
+Dangerous Wizard' questline and killed the mage in question, but DFO never popped up saying the mage was killed. I had to
+confirm it was the right mage by watching a video 'where the prompt did pop up' in DFU". N0B20Y05 does say it - `killed
+1 _monster_` then `say 1040` ("You have slain _wizard_, the Mad Wizard of ___mondung_.") - and the port raised the box.
+Online the game does not stop for a box, and the swing that killed the mage (or the next step) closed it before it was
+drawn: a plain quest box closes on any press (DFU's ClickAnywhereToClose), and DFU's own game is paused under it.
+
+- **The box keeps its grace.** A quest box (`scenes/world.js showQuestBox`, `scenes/exterior.js`'s) ignores a click or
+  a key for 600 ms after each box comes up (`ui/guildServiceWindows.js ServiceFlowWindow` `graceMs`; 0, DFU's own, for
+  every other window). Its words are kept in the chat as a system line ("Quest: ...") where one is up.
+- **The port's own word on the kill.** A quest's Foe counted a kill (`quest/foe.js incrementKills` - mine, or a party
+  member's credited to my copy) tells the host through the machine's `questFoeKilled` hook: on the enhanced skin the HUD
+  strip's brass row "Quest target slain" - the foe, its count where the Foe is several (2/5), the quest - and a chat
+  line; on the classic skin the HUD's line. Every quest, whatever its script says. DFU says nothing here; the script's
+  own `say` is still its own box.
+- Pinned by `test/questnote.test.js` and `tools/mutants/questnote.json`.
+
+## QUEST-SHELF-DROP - an abandoned quest's item may be thrown away (2026-10-13)
+
+The lead dev: "when a player abandoned a quest he cant throw away the questitem for it". QUEST-SHELF keeps an abandoned
+quest whole, its items in the pack - and TransferItem's quest arm (`systems/itemTransfer.js questTransferRefused`,
+DaggerfallInventoryWindow.cs:1486-1494) still refused every one the quest had not marked droppable, so a player who gave
+a quest up carried its letter, its package, its body part until they took it up again.
+
+- **A quest set aside holds no item.** Its item may leave the pack - the ground, a chest, the wagon - and nothing is
+  written to the quest (`playerDropped` is the running quest's word, and this one is not running).
+- **Never to a counter.** The trade windows pass `trade` and the refusal stands: a shop would buy an item reclaiming
+  hands back. **Never one the quest made permanent**: that one outlives the quest, and a second copy would too.
+- **Reclaimed, it comes back.** `shelveQuest` writes the items the pack held (`quest.shelvedItems`, by symbol, in the
+  save envelope beside `shelvedSites`); `reclaimQuest` hands each one the pack no longer holds back - its own quest item,
+  once - so the quest can still be finished. The journal says so ("Its item is back in your pack.").
+- Pinned by `test/questshelf.test.js` (QUEST-SHELF-DROP) and `tools/mutants/questshelf.json`.
+
+## NO-ASKS-AGAIN - a No that leads nowhere asks again, on the next click (2026-10-13, FIELD BUGS 2026-10-13e)
+
+The batch's record: `01-Overview/Field-Bugs-2026-10-13e.md`, report 6.
+
+The report, "Cant complete quest 'the lost child'": *"I found the child in the dungeon, interacted with it, accidentally
+said 'no' when it asked me to get it, and now i cant interact with it at all. Tried restarting the game, didnt help."*
+K0C00Y05 asks under `_S.07_ task: clicked npc _child_` / `prompt 1017 yes _S.09_ no _no_`, and `variable _no_` is read
+by nothing. DFU's own soft-lock, ported faithfully: Prompt.cs's `allowRearm = false` and its SetComplete at Show (a
+clear leaves it complete), ClickedNpc.cs's "Always return true once owning Task is triggered", Task.cs Update reading no
+trigger of a set task - and nothing clears `_S.07_`. The click is still the quest's (DoClick answers that a quest took
+it, so no talk window opens) and the three flags are saved, so a restart changes nothing.
+
+A DEPARTURE (Port-Ledger A, NO-ASKS-AGAIN; the owner's standing rule for a player's soft-lock, "I dont care about DFU.
+We're our own thing now"), one law in one home, `systems/quest/noAsksAgain.js`, read off the parsed quest's own
+structures. A prompt whose No is INERT (noAsksAgain.js:"export function inertNo" - a plain `variable` with no actions,
+named by nothing but that prompt: no `until ... performed:`, no action's symbol, no `when`, no resource) and whose
+asking is A CLICK (noAsksAgain.js:"export function asksOnAClick" - a plain `_x_ task:`, never a global's, every trigger
+of it one of noAsksAgain.js:"export const CLICK_TRIGGERS", and the task named by nothing) is re-armed once answered No
+(noAsksAgain.js:"export function askAgain"): its task cleared as a `clear` clears it, the prompt alone made incomplete,
+the No variable cleared. The next click asks again, a Yes then runs as a first Yes does, and a No that does something
+stays DFU's. Two doors: Quest.update each tick (quest.js:"NO-ASKS-AGAIN (not DFU's - quest/noAsksAgain.js): a prompt")
+and the end of Quest.restoreSaveData (quest.js:"NO-ASKS-AGAIN (not DFU's - quest/noAsksAgain.js): a save"), so a save
+taken after such a No loads asking again, as do a party member's copy and a reclaimed quest.
+
+THE CLICK IS THE LAW'S LIMIT. Thirteen vendored prompts in eleven quests carry a No as inert as `_no_` under `injured
+_foe_` - a robber's or a guard's "hand it over" (A0C00Y14, A0C00Y15, K0C00Y03, O0B00Y00, O0B00Y01 three times,
+O0B10Y00, R0C10Y00, R0C10Y01, R0C10Y02, R0C10Y18, R0C11Y19). There the No is the refusal and the courier's road goes
+on, and the trigger is Foe.injuredTrigger, a latch that holds until the foe is stood again: re-armed, the demand would
+come back the next tick, every tick, until a Yes gave the goods away. In the shipped corpus the law re-arms The Lost
+Child alone.
+
+NOT TAKEN, Mac's to decide: C0C00Y10 (the healer's `prompt 1014 yes _S.11_ no _no_` under `clicked npc _healer_ say
+1013`) answers a No with `_no_ task: clear _S.10_` - the author's own ask-again - and Prompt.cs's `allowRearm = false`
+defeats it in DFU as here: the healer says 1013 on every click and never asks again, and the talisman is never sold. A
+No that does something is outside this law by its own terms; it is the corpus's one prompt whose answer clears the task
+that asks it.
+
+`test/fb1013e_noasks.test.js` (5): the real scripts through the real parser and machine over a crafted region, every
+click through QuestResourceBehaviour.doClick and every answer through the box's own callback - The Lost Child asked
+again after a No, twice, and a Yes then leaving every task and action as a first Yes does; a save taken after the No
+loading asked again; M0B00Y16's refused villager and K0C00Y03's refused guard asked once (DFU's law); the action and the
+asking-task guards on the script's own variants (a `_no_ task:` merged in, a reader of `_S.07_`, `_S.07_` linked to a
+global); the corpus read by the law itself (the inert Nos, the prompts asked on a click, and the one it re-arms).
+`tools/mutants/fb1013e_noasks.json` (12), all dead - one of them killed by `test/questsave.test.js`'s restore-order pin:
+the law reads no task's state before its verdict, so a load never reads a global's task (whose read writes it from the
+store).
+
+## QUEST-CAPS and QUEST-BACKFACE - a dungeon quest's foe stands in the halls (2026-10-14)
+
+Dudey: *"almost every quest has problems to spawn enemies inside dungeons ... since we have smaller, regular and large
+dungeons. Quest enemies being placed outside of the rooms and halls"*; a dev's spawn debugger: *"there isnt even a spawn
+point ... its just droping the spawn location in general instead of find a spot"*.
+
+- **QUEST-CAPS** (`systems/quest/place.js` `questCapsSkipped`, `_enumerateDungeonQuestMarkers`): a re-laid dungeon - the
+  small plus and the medium size (`world/smallerDungeons.js`, the clone says `smaller` / `medium`) - draws its border
+  blocks (names beginning B, GetRandomBlock's own test) as caps at random round its interior, and a cap's other pockets
+  no corridor reaches. On such a build a dungeon Place enumerates its interior blocks' quest markers alone while they
+  hold any (a build whose interior holds none keeps every marker); a marker index past the shorter list takes it round.
+  The whole dungeon keeps DFU's enumeration. A target already standing in a cap is laid again at the dungeon's next
+  mount by QUEST-VOID's net (`questRepair.js relayBuiltDungeon`); the bounty lair prefers interior spawn spots too
+  (`dungeonQuestSpawnSpots`). A departure (Port-Ledger A, QUEST-CAPS).
+- **QUEST-BACKFACE** (`scenes/questFoeHost.js` `placeFoeEnv`): Unity's raycast never hits a mesh collider's back face, and
+  the port's collider is two-sided. A placement ring ray that slipped out through a seam took its open-area point in the
+  rock, and the floor probe there struck the top of a hall's ceiling - a back face - so CreateFoe, an encounter or a
+  summon stood on it, outside every hall. A back-face hit on the dungeon's own geometry (its `dungeon` bucket) is passed
+  through, as Unity's ray passes it, for what is left of the reach; another bucket's faces answer as before. DFU's law,
+  restored.
+
+`test/questcaps.test.js` (4), `test/questbackface.test.js` (4).
+
+## QUEST-RESET - restart a quest from its first step (2026-10-13)
+
+LostMyLeg on Discord: the Dust of Restful Death's (S0000018) mummy *"wont spawn in the dungeon choosen by the quest ...
+ive added alot of fixes for this but it seems the queststate itself is borked. We prob need to add an option that can
+fully reset a quest"*. QREPAIR puts back what a fault took away and QUEST-VOID re-lays a marker the build has not; neither
+touches a quest whose own state says its foe is dead.
+
+- **RESTART** (`systems/quest/machine.js` `restartQuest` / `restartRefusal`): the quest thrown away and started again
+  from its own script, as `start quest` starts it. The new copy is parsed FIRST, while the old one still holds its
+  sites, so a remote Place chooses afresh away from the one the old copy broke in; a copy that will not parse here (no
+  source, no site of its kind left in the region) leaves the old one running. Then the old copy goes as an
+  error-terminated quest goes (`removeQuest`: its quest items leave the pack, its site links, topics and questors go;
+  no reputation and no journal entry - it did not end), and the new one starts at once and runs its first step on the
+  machine's next tick. A shared copy leaves the party's step first, so the tombstone does not file it as a finished
+  share. Refused, each in words (`scenes/questBridge.js` `restartRefusalText`): a quest gone, ending or set aside
+  (reclaim it first); the world's own (`PROTECTED_QUESTS`); one with a questor - its parse would bind whoever the
+  player clicked last (abandon it and ask its questor again); one another quest's `run quest` waits on (the parent
+  would read the restart as a failure); a sea raid. S0000018 restarted waits its thirty days for Medora's vision again
+  - its script's own first step.
+- **THE DOORS**: `journalClean.restart` / `canRestart` beside Abandon, so every host that hands its pause window and
+  its chronicle `journalClean` hands these too (THE FOUR HOSTS as QUEST-SHELF-MAIN records them). The pause window's
+  Quests tab draws Restart quest on a running quest where the door allows it, and the chronicle draws Restart in the
+  quest's header - the main story's steps among them; both pressed twice (the arming Abandon uses), the line it said
+  shown under the quests, the tracker following the new copy. Every word of it is the text core's (L10N4 - the
+  chronicle's `chronicle.quests.restart*`, the pause tab's and the bridge's `pause.journal.restart*`, its refusals
+  among them), drafted in the thirteen whole languages.
+- **THE FIELD FINDING - A KILL CREDITED BY NAME IS A COUNT, NEVER A DEATH** (`scenes/questFoeHost.js` `countsByName`).
+  DESYNC-ZERO's `partyQuestFoe` counted a party member's quest-foe kill on ANY copy of the same quest this player held,
+  by name. The main story is never shared, so every member on S0000018 holds their own mummy in their own crypt (a
+  `remote dungeon0`), with their own Dust on it: a member's mummy killed counted mine dead (`killCount` 1 of 1), the
+  mount never stood it (`sceneMount.js` - a Foe stands only while `killCount < spawnCount`) and the Dust was never
+  dropped - before the crypt was ever entered, if the kill came first. QREPAIR leaves such a foe alone (dead, by its
+  own state) and so does QUEST-VOID. An unlinked copy now takes the credit only for a Foe a task of its own counts (a
+  `killed` or `injured` trigger naming it - the credit DESYNC-ZERO was for) and only while no quest item rides it; a
+  linked copy (`sharedQuestFoe`) is the party's and is unchanged. A save already broken this way is the restart's.
+
+`test/questreset1.test.js` (6); `tools/mutants/questreset1.json` (18), all dead.

@@ -151,6 +151,9 @@ export function placeRoomQuestFoe(env, handle, spots) {
   return placeFoeFreely(env, ROOM_NEAR_RING) ?? roomMarkerSpot(env, spots);
 }
 
+/** QUEST-BACKFACE: the dungeon context's geometry bucket (dungeonContext.js addMesh('dungeon', ...)). */
+const DUNGEON_GEOMETRY_BUCKET = 'dungeon';
+
 export function placeFoeEnv({ collider, playerFeet, playerYawRad, fovDegrees, rolls = Math.random, isOccupied = null }) {
   const toObj = (p) => ({ x: p[0], y: p[1], z: p[2] });
   return {
@@ -161,7 +164,25 @@ export function placeFoeEnv({ collider, playerFeet, playerYawRad, fovDegrees, ro
     raycast: (origin, dir, maxDist) => {
       const o = [origin.x, origin.y, origin.z];
       const d = [dir.x, dir.y, dir.z];
-      const h = collider.raycastHit(o, d, maxDist);
+      // QUEST-BACKFACE (2026-10-14, Dudey's dev with a spawn debugger: "there isnt even a spawn point ... its just
+      // droping the spawn location in general instead of find a spot"): UNITY'S RAYCAST NEVER HITS A MESH COLLIDER'S
+      // BACK FACE, and the port's collider is two-sided (it says so: `back`). A ring ray that slipped out through a seam
+      // took its "open area" point in the rock, and the floor probe there struck the TOP of a hall's ceiling - a back
+      // face - and the foe stood on it, outside every hall (CreateFoe, an encounter, a summon). A back-face hit is passed
+      // through, as Unity's ray passes it: the cast goes on beyond it for what is left of its reach. The DUNGEON's own
+      // geometry alone (its bucket, 'dungeon' - the winding dungeonFires.js colliderFireProbe reads a floor by): a
+      // building's or the street's models answer as they always did.
+      const pastBack = (r) => r.back === true && r.key === DUNGEON_GEOMETRY_BUCKET;
+      let h = collider.raycastHit(o, d, maxDist);
+      let travelled = 0;
+      for (let k = 0; k < 8 && pastBack(h) && Number.isFinite(h.dist); k++) {
+        travelled = h.dist + 0.01;   // h.dist is measured from `o` (the re-cast adds what it had travelled)
+        if (travelled >= maxDist) { h = { dist: Infinity, normal: null, back: false }; break; }
+        const o2 = [o[0] + d[0] * travelled, o[1] + d[1] * travelled, o[2] + d[2] * travelled];
+        const h2 = collider.raycastHit(o2, d, maxDist - travelled);
+        h = { ...h2, dist: Number.isFinite(h2.dist) ? h2.dist + travelled : Infinity };
+      }
+      if (pastBack(h)) h = { dist: Infinity, normal: null, back: false };
       let dist = h.dist;
       let normal = h.normal;
       // THE ANALYTIC FLOOR IS GROUND TOO (the guards-run-in-place
@@ -299,8 +320,28 @@ export function partyQuestFoe(machine, tag) {
   if (linked) return linked;
   const quest = machine.sharedCandidateNamed?.(tag.q) ?? null;
   if (!quest || quest.questTombstoned || !quest.resources) return null;
-  for (const r of quest.resources.values()) if (r.isFoe && r.symbol?.name === tag.s) return r;
+  for (const r of quest.resources.values()) if (r.isFoe && r.symbol?.name === tag.s) return countsByName(quest, r) ? r : null;
   return null;
+}
+
+/** QUEST-RESET's field finding (2026-10-13, LostMyLeg: the Dust of Restful Death's mummy "wont spawn in the dungeon
+ *  choosen by the quest"): A KILL CREDITED BY NAME IS A COUNT, NEVER A DEATH. My copy is not the member's - my Foe stands
+ *  in my world, at my Place, holding my quest's items - and a kill counted on it is the mount's verdict that it is dead
+ *  (sceneMount.js: a Foe stands only while killCount < spawnCount): it never stands again, and what it carried is never
+ *  dropped. The main story's copies are never shared (questShare.js), so every party member on S0000018 holds their own
+ *  mummy in their own crypt: a member's kill counted on mine, and my mummy - the Dust on it - was gone before my crypt
+ *  was ever entered. So an unlinked copy takes the credit only for a Foe a task of its own COUNTS (a `killed` or an
+ *  `injured` trigger naming it - the credit DESYNC-ZERO is for) and only while no quest item rides it (its body is the
+ *  only door to them). A linked copy (sharedQuestFoe) is kept in step with the party's, and is not read here. */
+export function countsByName(quest, foe) {
+  if ((foe?.itemQueue?.length ?? 0) > 0) return false;
+  const name = foe?.symbol?.name;
+  for (const task of quest?.tasks?.values?.() ?? []) {
+    for (const a of task.actions ?? []) {
+      if (a?.isTriggerCondition && (a.typeName === 'KilledFoe' || a.typeName === 'InjuredFoe') && a.foeSymbol?.name === name) return true;
+    }
+  }
+  return false;
 }
 
 /** CURSE-SYNC (2026-09-27, the bug-reports channel: "Monsters aren't syncing ... The ghost on daggerfall ... We all had

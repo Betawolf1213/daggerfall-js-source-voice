@@ -354,7 +354,13 @@ const NO_SHELF = Object.freeze({ shelvedAt: null, shelvedSites: null });
 // are the RECEIVER's own roll (questShare takeLocalItems, relinked to this quest): self-contained as the three above.
 // Without it The Courier, shared after the sharer took the package, left the receiver with no package - and its
 // `toting _X_` finish could never be true on their side.
-const REPLAYABLE_ONE_TIME_ACTIONS = new Set(['TeleportPc', 'GivePc', 'TrainPc', 'GetItem']);
+// SHARE-REVEAL (FIELD BUGS 2026-10-13e, "Shared Guild quest doesn't give me map location after friend talked to the quest
+// npc"): and RevealLocation - `reveal _place_` marks THE HOLDER'S OWN MAP (PlayerGPS.DiscoverLocation, RevealLocation.cs
+// :59; discoverLocation is idempotent) with this quest's own Place, and the receiver's copy holds the same Places. The
+// envelope carried the reveal complete and never ran it: the partner who clicked the scholar had The Nest of Aneloth on
+// their map and the receiver had "Not on your map yet" - and no one to ask, since the quest's people take the click
+// and DFU's talk names no remote quest dungeon. A `readmap` reveal files its note once here, as it did there.
+const REPLAYABLE_ONE_TIME_ACTIONS = new Set(['TeleportPc', 'GivePc', 'TrainPc', 'GetItem', 'RevealLocation']);
 
 /** AUDIT 68 S29-behaviour-registry-leak: the behaviour registry's first prune size; each prune doubles what is
  *  left, so the set stays within twice the live behaviours at an amortised O(1) per registration. */
@@ -477,6 +483,7 @@ export class QuestMachine {
   _buildHooks() {
     return {
       showPopup: (q, tokens) => this.deps.showPopup?.(q, tokens),
+      questFoeKilled: (q, foe, n) => this.deps.questFoeKilled?.(q, foe, n),   // QUEST-NOTE: a quest's foe fell
       showPrompt: (q, message, respond) => this.deps.showPrompt?.(q, message, respond),
       // QG1: PromptMulti's 2-4 button box - BUTTONS.RCI record
       // numbers out, the clicked record number back
@@ -1585,6 +1592,9 @@ export class QuestMachine {
     const now = Math.floor(this.deps.nowSeconds?.() ?? 0);
     quest.shelvedAt = now !== 0 ? now : 1;   // 0 reads as never set aside
     quest.shelvedSites = [...new Set(this.siteLinks.filter((l) => l.questUID === quest.uid).map((l) => l.placeSymbol?.name).filter(Boolean))];
+    // QUEST-SHELF-DROP: the items the pack holds now - set aside, the quest holds none, and the player may throw them
+    // away (itemTransfer.js questTransferRefused); reclaimed, each that is gone is handed back
+    quest.shelvedItems = [...quest.resources.values()].filter((r) => r?.isItem && !r.madePermanent && this.deps.carriesQuestItem?.(r)).map((r) => r.symbol.name);
     this.siteLinks = this.siteLinks.filter((l) => l.questUID !== quest.uid);
     for (const [factionID, owner] of [...this.factionListeners]) if (owner?.parentQuest === quest) this.factionListeners.delete(factionID);
     for (const task of quest.tasks.values()) {
@@ -1621,9 +1631,11 @@ export class QuestMachine {
     const now = Math.floor(this.deps.nowSeconds?.() ?? 0);
     const away = Math.max(0, now - quest.shelvedAt);
     const sites = quest.shelvedSites ?? [];
+    const carried = quest.shelvedItems ?? [];
     const data = JSON.parse(JSON.stringify(quest.getSaveData()));
     data.shelvedAt = null;
     data.shelvedSites = null;
+    data.shelvedItems = null;
     shiftQuestStamps(data, away, { own: true });
     const standing = this._liveBehaviours(quest.uid);   // its audit: relinked at once, as a resync's are (AUDIT DISC7 C2)
     quest.restoreSaveData({ ...data, uid: quest.uid }, this._saveResolvers());
@@ -1633,8 +1645,66 @@ export class QuestMachine {
     }
     for (const b of standing) b.relinkToLiveQuest?.();
     this.deps.relinkQuestTopics?.(quest);   // and its talk topics (AUDIT 68 S29-share-topics): 'where is' reads the live Person
+    // QUEST-SHELF-DROP: an item the pack held as it was set aside and has not now (thrown away while the quest was not
+    // running) is handed back, its own quest item, so the quest can still be finished
+    let returned = 0;
+    for (const name of carried) {
+      const res = quest.getItem?.({ name });
+      if (!res?.daggerfallUnityItem || this.deps.carriesQuestItem?.(res)) continue;
+      this.deps.giveItemToPlayer?.(structuredClone(res.daggerfallUnityItem));
+      returned++;
+    }
     this.deps.forceTopicListsUpdate?.();
-    return { ok: true, quest };
+    return { ok: true, quest, returned };
+  }
+
+  /**
+   * QUEST-RESET (2026-10-13, LostMyLeg on Discord: the Dust of Restful Death's mummy "wont spawn in the dungeon choosen
+   * by the quest ... the queststate itself is borked. We prob need to add an option that can fully reset a quest"):
+   * RESTART - the quest thrown away and started again from its own script, as `start quest` starts it. The new copy is
+   * parsed FIRST, while the old one still holds its sites, so its Places choose afresh away from the ones the old copy
+   * broke in; a copy that will not parse here (no source, no site of its kind left) leaves the old one as it was. Then
+   * the old copy goes the way an error-terminated quest goes (removeQuest: its quest items leave the pack, its site
+   * links, topics and questors go; no reputation and no journal entry - it did not end) and the new one starts at once.
+   * A shared copy leaves the party's step first, so the tombstone does not file it as finished (Share it again).
+   * Refused: a quest gone, ending or set aside; the world's own (PROTECTED_QUESTS); one with a questor (a restart
+   * would bind whoever was clicked last - abandon it and ask its questor again); one another quest's `run quest` is
+   * waiting on (the parent would read the restart as a failure); and whatever the host's `refuse` names. Not a DFU
+   * member (DFU's restart is its developer console). Answers `{ ok, reason?, quest? }` - `quest` the new copy.
+   */
+  restartQuest(uid, { refuse = null } = {}) {
+    const why = this.restartRefusal(uid, { refuse });
+    if (why) return { ok: false, reason: why };
+    const old = this.quests.get(Number(uid));
+    const lines = this.deps.getQuestSourceLines?.(old.questName);
+    const fresh = lines ? this.parseQuestForLists(lines, old.factionId) : null;
+    if (!fresh) return { ok: false, reason: 'unparsed' };
+    if (this.sharedCandidateNamed(old.questName) === old) this.sharedQuestNames.delete(old.questName);
+    this.removeQuest(old);
+    try {
+      this.startQuestImmediate(fresh);
+    } catch (e) {
+      console.warn(`[quest] QuestMachine failed to restart quest ${fresh.questName}: ${e?.message ?? e}`);
+      return { ok: false, reason: 'failed' };
+    }
+    this.deps.forceTopicListsUpdate?.();
+    return { ok: true, quest: fresh };
+  }
+
+  /** QUEST-RESET: why the quest may not be restarted now, or null - restartQuest's ladder, and the journal's button
+   *  (questBridge.js canRestart) asks the same one. */
+  restartRefusal(uid, { refuse = null } = {}) {
+    const why = this.shelveRefusal(uid);   // Abandon's own rungs: gone, set aside, ending, the world's own
+    if (why) return why;
+    const quest = this.quests.get(Number(uid));
+    if ([...quest.resources.values()].some((r) => r?.isPerson && r.isQuestor)) return 'questor';
+    for (const parent of this.quests.values()) {
+      if (parent === quest || parent.questComplete || parent.questTombstoned) continue;
+      for (const task of parent.tasks.values()) {
+        if (task.actions?.some((a) => a?.typeName === 'RunQuest' && !a.isComplete && a.questUId === quest.uid)) return 'child';
+      }
+    }
+    return refuse ? refuse(quest) ?? null : null;
   }
 
   /** Dispose resources then task actions (Quest.cs Dispose order,

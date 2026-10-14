@@ -664,5 +664,15 @@
     "tests": [
       "test/egz_telegraph.test.js"
     ]
+  },
+  {
+    "name": "EGZ-floor-no-strip",
+    "file": "src/render/gateTelegraph.js",
+    "old": "const strip = this.floorVao && this.vao === this.floorVao ? null : telegraphStrip(shape);",
+    "new": "const strip = telegraphStrip(shape);",
+    "why": "AOE-PERF's strip laid over a fight floor's own triangles (the merge of main)",
+    "tests": [
+      "test/egz_telegraph.test.js"
+    ]
   }
 ]

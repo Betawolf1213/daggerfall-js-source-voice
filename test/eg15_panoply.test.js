@@ -26,7 +26,7 @@ import {
 import { EG_PANOPLY_KEYS, EG_PANOPLY_IDS } from '../src/net/egPay.js';
 import { brokerStock } from '../src/systems/sigilBroker.js';
 import { itemFindings } from '../src/systems/itemLaw.js';
-import { gainMana, _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
+import { manaMine, _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
 import { registerPlayerCastListener, tellPlayerCast } from '../src/systems/playerCasts.js';
 import { entityModsOf, entityResistMod, computeEntityMods, EMPTY_MODS, newMods, registerEntityFold, weaponBlowMods } from '../src/systems/entityMods.js';
 import { foldMpOf, onlineMpOf, offlineVitals } from '../src/systems/renownLayer.js';
@@ -384,15 +384,15 @@ test('EG15 THE CAST SEAM AND THE ONE MAGICKA: playerCasts.js is a leaf the one c
   // the one magicka a power returns
   _resetPlayerHealForTests();
   const m = { magicka: 10, maxMagicka: 12 };
-  gainMana(m, 5);
+  manaMine(m, 5);
   assert.equal(m.magicka, 12, 'never past the maximum');
   const f = { magicka: 0, maxMagicka: 100 };
-  gainMana(f, 0.4); gainMana(f, 0.4);
+  manaMine(f, 0.4); manaMine(f, 0.4);
   assert.equal(f.magicka, 0);
-  gainMana(f, 0.4);
+  manaMine(f, 0.4);
   assert.equal(f.magicka, 1, 'the fraction carried');
   _resetPlayerHealForTests();
-  gainMana(f, 0.85);
+  manaMine(f, 0.85);
   assert.equal(f.magicka, 1, 'the reset clears the fraction (0.2 was owed)');
   const loot = strip(read('src/systems/lootPowers.js'));
   assert.doesNotMatch(loot, /function gainMana/, 'one door, never two');

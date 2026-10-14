@@ -85,6 +85,9 @@ export const FRAME_ROLES = {
     // NOTICE1: the Notice Board - the cork sits inside the same carved frame
     'body .notice-win',
     'body .aw-win',   // ARENA3: the Arena window - the Notice Board's carved frame
+    // CARDS-PLUS: the card tables' panels (ui/cardTableHud.js, ui/iliacTableHud.js) - carved windows over the room, the
+    // game going on under them, as the helm's and the saddle's bars stand over the world
+    'body .dfcards', 'body .dfiliac',
     'body .lgs-win'],   // LEGACY3: the Succession - who carries the line on
   // the talk panel is a .px-win whose own ground rule outweighs .px-win's
   windowGround: ['.talk-shell .talk-panel'],
@@ -121,6 +124,9 @@ export const FRAME_ROLES = {
     'body .bounty-card',   // BOUNTY1: the notice read whole, the reward box
     'body .arena-plate',   // ARENA2: the versus bar's plate - a stone panel over the sand
     'body .aw-card',
+    // CARDS-PLUS: a Hold'em seat and an Iliac Hand holding - boxes inside the table's window; COLLECTIONS: a deck in
+    // the binder, a row a deck
+    'body .dfcards .seat', 'body .dfiliac .hold', '.px-sys .binder-deck',
     '.px-win .card.acctin ul.acctfacts.acctrecord li'],   // PROFILE-MENU: the profile's record, a tile a deed   // ARENA3: the Arena window's cards - a bout, a tier, a banner, a board, a rule   // ARENA2: the versus bar's plate - a stone panel over the sand
   // panels that carry a brass edge on the left as their own mark
   panelAccent: ['body .rvncard', '.notice', '.inputbox', 'body .dfsocial-toast', 'body .dfdecor-bar'],   // PLUS-DRESS: the two that wore a brass line
@@ -166,20 +172,24 @@ export const FRAME_ROLES = {
     'body .dfpage-btn', 'body .dfpeer-btn:not(.cancel)', 'body .dfduel-btn', 'body .dfprofile-duel', 'body .dfdecor-btn', 'body .dfdecor-open',
     'body .dfprofile-wed',   // LEGACY7 part three: the inspect card's Propose
     'body .dfnaval-btn',   // NAV-F: the plunder window's presses
+    // CARDS-PLUS: the card tables' presses, and the fold that puts a table's words away so the cloth shows
+    'body .dfcards button', 'body .dfcards .fold', 'body .dfiliac button', 'body .dfiliac .fold',
     // PLUS-MENU (2026-10-07, Mac: "give the main menu the enhanced plus UI treatment"): the front door's doors - stone
     // slabs that go brass under the pointer, as every other Plus press does (AUDIT PLUS-MENU M3: the System tab's list
     // named beside them was `.px-menu.px-compact`, which nothing builds - that list is the rail's rows, the qrow role)
     '.px-menu .doorbtn'],
   primary: ['.lv-ok', '.hmroot .act:not(.hmtool)', 'body .dfdecor-place', 'body .bounty-shell .act.primary', 'body .lgs-shell .act.primary', 'body .notice-shell .act.primary',
     'body .aw-shell .act.primary',   // ARENA3: Fight and the wager placed - what the window is for   // BOUNTY1: Take bounty and Take the reward in brass   // PLUS-MAP: the map's tools are plain stone   // PLUS-DRESS: Place is what the decorator is for
-    'body .dfnaval-take'],   // NAV-F: Take all (and a raid's Sail on) - what the plunder window is for
+    'body .dfnaval-take',   // NAV-F: Take all (and a raid's Sail on) - what the plunder window is for
+    'body .dfcards button[data-kind="primary"]', 'body .dfiliac button[data-kind="primary"]'],   // CARDS-PLUS: Deal me in, Check and Call; Deal, Commit and Play again
   // PLUS-DRESS: a press that COSTS something - leave or disband a guild, remove a member, challenge a player - the
   // button in blood rather than brass (the low-health frame's red). Each is a button above as well; this is its edge.
   warn: ['body .dfsocial-btn.warn', 'body .dfprofile-duel',
     'body .dfnaval-scuttle',   // NAV-F: scuttling a prize - she and what is left in her go down
     '.pack-shell .fate-confirm .act.warn', '.px-sys .cmp-acts .act.warn',   // REVENANT-FATE: Execute; COMPANION-ROSTER: Release, confirmed
     'body .dfdecor-btn.warn',   // MENU-ORDER: the decorator's Remove - its piece and half its price go
-    '.trade-shell .act.trade-steal'],   // MENU-ORDER: the counter's Steal - a crime, if the keeper sees it
+    '.trade-shell .act.trade-steal',   // MENU-ORDER: the counter's Steal - a crime, if the keeper sees it
+    'body .dfiliac button[data-kind="warn"]'],   // CARDS-PLUS: Iliac Hand's Concede and stand - the staked card or the ranked game given up
   tile: ['.port-host .port-tile', '.pack-shell .sf-chip', '.port-host .port-iconcell', '.pack-shell .itemrow', '.pack-shell .equipped .wornrow', '.pack-shell .wornsock', '.wizard .racegrid button',
     '.wizard .facegrid button', '.shell .ft-tile', '.shell .ft-seg', '.shell .ft-mchip', '.shell .ft-tile-more',   // FT18: a condensed tile's parts toggle
     '.sb-shell .sb-chip', '.cr-shell .sb-chip', '.piletab',
@@ -190,14 +200,17 @@ export const FRAME_ROLES = {
     // two, same as any other tile; its OWN .on state keeps its brass mark (below), not the kit's
     '.hmpick',
     'body .dfdecor-chip',   // PLUS-DRESS: the decorator's filters and modes - pickable cells, the chosen one brass
-    'body .dfnaval-choice'],   // NAV-F: the captor's three choices - the one taken brass
+    'body .dfnaval-choice',   // NAV-F: the captor's three choices - the one taken brass
+    'body .dfiliac .opt',   // CARDS-PLUS: Iliac Hand's setup - a deck, a regular, a box ticked - the one chosen brass
+    '.px-sys .coll-part', '.px-sys .binder-filter', '.px-sys .binder-chip'],   // COLLECTIONS (CARDS-PLUS): the Codex | Cards switch, the binder's kinds, a deck's cards
   // HOLDINGS: where a holding is (`.hld-state`)
   chip: ['body .rvncard-rank', '.px-sys .rvn-rank', '.px-sys .hld-state', '.px-sys .fam-chip',   // LEGACY3: a person's state
      'body .rvncard-mood', '.px-sys .rvn-mood', '.pack-shell .fate-mood', '.px-sys .cmp-rank', '.px-sys .cmp-mood', '.hud-qspell', '.hud-temp', '.pack-shell .sf-tile', '.pack-shell .sf-pill', '.hud-qstag', '.hud-readied', '.lv-note-key',   // (UI3: the effect and need chips are the status widget's tiles now)
     '.shell .subbtn .count', '.hb .hb-caption',
     'body .dfnaval-chip', 'body .dfnaval-gun',   // NAV-F: the plate's fire/brace chips and the battery rose - readouts, never pressed
     'body .arena-timer', 'body .arena-tag',
-    'body .aw-chip'],   // ARENA3: the Arena window's titles, banners, laurels, odds and states - readouts   // ARENA2: the bout's clock and the crowd's darling/villain marks - readouts
+    'body .aw-chip',   // ARENA3: the Arena window's titles, banners, laurels, odds and states - readouts   // ARENA2: the bout's clock and the crowd's darling/villain marks - readouts
+    'body .dfcards .pot', 'body .dfiliac .pw'],   // CARDS-PLUS: the pot, and a holding's power each way - readouts
   // HOLDINGS: a holding's picture, a name's field (`.hld-art`, `.hld-field`)
   well: ['body .rvncard-face', '.px-sys .rvn-face', '.px-sys .hld-art', '.px-sys .hld-field', '.px-sys .fam-view', '.px-sys .fam-card .fam-face', 'body .lgs-face',   // LEGACY3: the tree's ground, the card's portrait
      '.pack-shell .fate-face', '.px-sys .cmp-face', '.px-sys .cmp-slot', '.trade-shell .packcol', '.pack-shell .sf-sec', '.shell .opt-search', '.shell .ft-tile-drawer',   // FT18: the Features search and a tile's opened drawer
@@ -212,10 +225,13 @@ export const FRAME_ROLES = {
     '.tview-compass',
     // PLUS-DRESS: the page's leaf, the decorator's list, preview, thumbnails and search, the party's portraits
     'body .dfpage-leaf', 'body .dfdecor-list', 'body .dfdecor-preview', 'body .dfdecor-thumb', 'body .dfdecor-search', 'body .dfparty-face',
-    'body .dfnaval-holdlist'],   // NAV-F: a taken ship's hold, sunk into her window
+    'body .dfnaval-holdlist',   // NAV-F: a taken ship's hold, sunk into her window
+    'body .dfcards .board', 'body .dfiliac .tray', 'body .dfiliac .season',   // CARDS-PLUS: the board's cards, the hand held and the season's board, sunk into the stone
+    '.px-sys .binder-edit input'],   // COLLECTIONS (CARDS-PLUS): a deck's name
   input: ['.shell .opt-search', '.wizard .namebox', '.sb-shell .sb-rename input', '.cr-shell .cr-compose input', '.hmsearch input',
     'body .dfsocial-field', 'body .dfchat-input', 'body .dfdecor-search',
-    '.tview-wp-pick', '#wp-menu input.wpm-name'],   // WAYPOINTS: the follow dropdown and the menu's name
+    '.tview-wp-pick', '#wp-menu input.wpm-name',   // WAYPOINTS: the follow dropdown and the menu's name
+    '.px-sys .binder-edit input'],   // COLLECTIONS (CARDS-PLUS): a deck's name
   meterFill: ['.px-fill'],
   header: ['.port-host .port-head', '.px-win .px-tabs', '.talk-head', '.sb-shell .sb-top', '.cr-shell .sb-top', '.trade-shell .sb-top',
     'body .broker-head',   // SET7: the Broker's header - who, the purse, the turn of the day
@@ -227,7 +243,8 @@ export const FRAME_ROLES = {
     // PLUS4: the shelf's own "On the shelf / N items" band - the same header a loot window's
     // remotehead already wears, just never scoped for the trade counter's own copy of that markup
     '.trade-shell .remotehead',
-    'body .dfsocial-head', 'body .dfchat-tabs', 'body .dfsocial-tabs'],
+    'body .dfsocial-head', 'body .dfchat-tabs', 'body .dfsocial-tabs',
+    'body .dfcards .tablehead', 'body .dfiliac .tablehead'],   // CARDS-PLUS: the band that names a card table's panel
   headerRule: ['body .rvncard-name', '.shell .ft-drawer-label', '.pack-shell .sf-sec h4', '.pack-shell .card h3', '.hmcard h3', '.hmcard h2', '.lv-crown', '.talk-modes', '.talk-cats',
     'body .dfsocial-sec', 'body .dfpeer-name', 'body .dfdecor-head',   // PLUS-DRESS: the Social panel's section heads (the Guild tab's), the F-menu's name
     'body .dfnaval-sechead'],   // NAV-F: the plunder window's three heads
@@ -237,7 +254,7 @@ export const FRAME_ROLES = {
     'body .dfprofile-head', 'body .dfsocial-letterhead',
     'body .dfsocial-row'],   // PLUS-DRESS: a friend's, a party seat's, a guild member's row - an engraved line under each
   // rules that sit ABOVE their content
-  ruleTop: ['.px-qarch', '.wplaque-list', 'body .dfchat-form'],
+  ruleTop: ['.px-qarch', '.wplaque-list', 'body .dfchat-form', 'body .dfcards .log', 'body .dfiliac .log'],   // CARDS-PLUS: a card table's log under its presses
   // a list whose rows are lines, not boxes: the loot window's rows
   // (they are .pack-shell .itemrow too, so this outweighs the tile role)
   listRow: ['.pack-shell .loot-win .itemrow', '.trade-shell .itemrow',   // PLUS6: the shop's shelf and basket rows too
@@ -245,7 +262,8 @@ export const FRAME_ROLES = {
     'body .broker-offer',   // SET7: the Broker's offers
     'body .dfnaval-item',   // NAV-F: a taken ship's hold, a line a piece
     'body .bounty-post',   // BOUNTY1: the board's notices
-    'body .aw-tier'],   // ARENA3: the ladder's ten tiers, a line each
+    'body .aw-tier',   // ARENA3: the ladder's ten tiers, a line each
+    '.px-sys .codex-line'],   // COLLECTIONS (CARDS-PLUS): the codex's Legendaries, a line each - the one opened brass
   // the fading wing rules and dividers of the quest page
   wing: ['.px-qwing'],
   wingFlip: ['.px-qwing.px-flip'],
@@ -649,6 +667,9 @@ export function themeCss(id, th, r = FRAME_ROLES) {
 ${at(r.window)}, ${at(r.windowGround)} { background: ${tex}${GRAIN}, ${th.ground}; }
 ${at(r.panel)} { background-color: ${th.panel}; }
 ${textured(r.panel)}
+/* AUDIT CARDS-PLUS B7: a card table's winning seat keeps its brass ground - the theme's panel ground just above
+   outweighed the panel's own state, and only Slate (which writes no theme sheet) showed who won */
+:root[data-plus-theme="${id}"] body .dfcards .seat.won { background-color: rgba(84,62,22,0.85); }
 /* PLUS4: a skill-up is WORDS, not a box (SKILL2, frameCss above) - Slate never paints a theme sheet
    at all, so that rule stood unchallenged and skill-ups there stayed backgroundless; every OTHER
    theme's panel rule (just above) outweighs it by specificity and put the box back. Repeat the "no

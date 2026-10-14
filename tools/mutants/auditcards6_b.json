@@ -167,8 +167,8 @@
   {
     "name": "AC6-B10-fallback-hand",
     "file": "src/ui/iliacTableHud.js",
-    "old": " ?? keyed.find((x) => x.getAttribute('data-focus').startsWith('pick-')) ?? root;",
-    "new": " ?? root;",
+    "old": ", keyed.find((x) => x.getAttribute('data-focus').startsWith('pick-'))]) if (n && took(n)) return;",
+    "new": "]) if (n && took(n)) return;",
     "tests": [
       "test/auditcards6_b.test.js"
     ]
@@ -176,7 +176,7 @@
   {
     "name": "AC6-B10-tab-walk",
     "file": "src/ui/iliacTableHud.js",
-    "old": "  root.addEventListener('keydown', (e) => { if (e.key === 'Tab') e.stopPropagation?.(); });",
+    "old": "  root.addEventListener('keydown', (e) => { if (e.key === 'Tab' || e.key === ' ' || e.key === 'Enter') e.stopPropagation?.(); });",
     "new": "",
     "tests": [
       "test/auditcards6_b.test.js"

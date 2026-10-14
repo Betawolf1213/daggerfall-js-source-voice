@@ -6,16 +6,18 @@
 // exhaustion collapse (PlayerEntity's OnExhausted handler): fatigue
 // hitting 0 with health left drops the player - with no enemies
 // nearby and dry feet, one hour passes and each pool recovers one
-// hour's rate (plus a Medical tally); near enemies or in water the
+// hour's rate (plus a Medical tally). Near enemies or in water DFU's
 // collapse KILLS (SetHealth(0) - classic's "collapse from exhaustion
-// near monsters = die" and the watery grave). The rest UI itself
-// pends; these rates are shared with it when it arrives.
+// near monsters = die" and the watery grave); the port's costs a tenth
+// of the health instead (SWIM-SPENT in the water, SPENT-ASHORE on dry
+// feet - exhaustionOutcome below). The rest UI itself pends; these
+// rates are shared with it when it arrives.
 
 import { liveStat, maxFatigue } from './statMods.js';
 import { skillValue, SKILLS } from './skills.js';
 import { healingRateModifier } from '../combat/formulas.js';   // U10
 import { isOnlinePage } from './onlineLane.js';   // REST-MANA1: online, every career's magicka comes back with rest
-import { localizedText } from './textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language
+import { localizedText, t } from './textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N4: SPENT-ASHORE's line is the port's own
 
 // ---- DFCareer.SpecialAbilityFlags (the low byte of
 // AbilityFlagsAndSpellPointsBitfield) + RapidHealingFlags ----
@@ -77,10 +79,10 @@ export function spellPointRecoveryRate(entity) {
 }
 
 // The exhaustion texts: TEXT.RSC 1071 ("you drop to the ground",
-// safe) / 1072 (enemies nearby); the in-water line is a TextManager
-// string (no RSC record).
+// safe); the in-water line is a TextManager string (no RSC record).
+// DFU's 1072 (the collapse with enemies nearby) is said by no host
+// since SPENT-ASHORE: that collapse is no box and no death here.
 export const EXHAUSTED_SAFE_TEXT_ID = 1071;
-export const EXHAUSTED_ENEMIES_TEXT_ID = 1072;
 export const EXHAUSTED_IN_WATER = 'Fatigue overcomes you and sends you to a watery grave....';
 /** L10N3d: the line as the hosts show it (PlayerEntity.cs:2407), in the player's language. */
 export const exhaustedInWaterText = () => localizedText('exhaustedInWater', EXHAUSTED_IN_WATER);
@@ -92,8 +94,24 @@ export const exhaustedInWaterText = () => localizedText('exhaustedInWater', EXHA
  * no box to hold the swimmer still: some fifty seconds from full health to reach the shore, where the collapse is the
  * rest hour it always was.
  */
-export const EXHAUSTED_SWIM_SHARE = 0.1;
+export const EXHAUSTED_SPENT_SHARE = 0.1;
 export const EXHAUSTED_SWIMMING_LINE = 'You are too exhausted to swim - get out of the water!';
+/**
+ * FIELD BUGS 2026-10-13e (SPENT-ASHORE; a player near Knightshead: "the death screen suddenly appeared ... several
+ * seconds after combat, despite having full health"; Mac on SWIM-SPENT: "We're our own thing now", and on FULL-GUARD:
+ * "No kill from full health"): A FIGHTER WHO RUNS OUT OF FATIGUE WITH FOES ABOUT IS SPENT, NOT DEAD. DFU's OnExhausted
+ * SetHealth(0)s a player on dry feet when AreEnemiesNearby - any live foe inside the classic spawn band, seen or not -
+ * so the swings that emptied the bar and the walk after the last kill killed at full health, past the shield and every
+ * death save, and the death screen took the box that said why in the same call. Now a drain to nothing there costs
+ * SWIM-SPENT's share, said on the HUD with no box (the water's arm, its own line): a drain a game minute while the foes
+ * stay about, some fifty real seconds from full health to get clear. With none about the collapse is the rest hour it
+ * always was.
+ */
+export const EXHAUSTED_FIGHTING_LINE = 'You are too exhausted to fight - get clear and rest!';
+/** The line as the HUD says it, in the player's language (L10N4's text core), read at the collapse. */
+export const exhaustedFightingText = () => t('rest.exhausted.fighting', EXHAUSTED_FIGHTING_LINE);
+/** What a drain to nothing costs, in the water and ashore alike: the share of the health pool, never nothing. */
+const spentDamage = (entity) => Math.max(1, Math.ceil((entity?.maxHealth ?? 0) * EXHAUSTED_SPENT_SHARE));
 
 /**
  * The OnExhausted outcome, pure (the scene owns the popup and the
@@ -101,11 +119,13 @@ export const EXHAUSTED_SWIMMING_LINE = 'You are too exhausted to swim - get out 
  * entity, day, inside }. Safe: one rest hour - the caller advances
  * the clock 60 classic minutes, applies the three rates (clamped)
  * and tallies Medical. In the water (SWIM-SPENT): `drown` - `damage`
- * off the health, `line` on the HUD, no box. Otherwise: death.
+ * off the health, `line` on the HUD, no box. On dry feet with foes
+ * about (SPENT-ASHORE): `spent` - the same, with its own line. No
+ * outcome is a death: only the health the drains take can kill.
  */
 export function exhaustionOutcome({ enemiesNearby = false, swimming = false, entity, day = false, inside = true }) {
   if (swimming) {
-    return { kind: 'drown', damage: Math.max(1, Math.ceil((entity?.maxHealth ?? 0) * EXHAUSTED_SWIM_SHARE)), line: EXHAUSTED_SWIMMING_LINE, textId: null, inWater: true };
+    return { kind: 'drown', damage: spentDamage(entity), line: EXHAUSTED_SWIMMING_LINE, textId: null, inWater: true };
   }
   if (!enemiesNearby && !swimming) {
     // LIVED1: every collapse costs its hour and pays it in full, online as offline - the host's RaiseTime moves the
@@ -120,5 +140,5 @@ export function exhaustionOutcome({ enemiesNearby = false, swimming = false, ent
       magicka: spellPointRecoveryRate(entity),
     };
   }
-  return { kind: 'death', textId: EXHAUSTED_ENEMIES_TEXT_ID, inWater: false };   // foes about, on dry feet (the water's is `drown`, above)
+  return { kind: 'spent', damage: spentDamage(entity), line: exhaustedFightingText(), textId: null, inWater: false };   // SPENT-ASHORE: foes about, on dry feet (the water's is `drown`, above)
 }

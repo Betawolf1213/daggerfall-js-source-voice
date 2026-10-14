@@ -49,7 +49,7 @@ import { GUILD_TREASURY_MAX } from '../../src/net/guildLaw.js';   // ARENA4b: a 
 import { DECOR_OPS_MAX, DECOR_OPS_WINDOW_S } from '../../src/net/decorLaw.js';   // HOME-LOOK: a repaint counts as a decorator's write
 import { hallMay } from '../../src/net/hallLaw.js';   // GUILD1d: a hall's keepers
 import { heraldryOfRow } from './halls.js';   // GUILD1d: a hall's heraldry, on its door
-import { openGatesAt } from './seatHolding.js';   // SEAT1d: Open Gates, where the town's holder proclaims it
+import { openGatesRead } from './seatHolding.js';   // SEAT1d: Open Gates, where the town's holder proclaims it
 import { OWNS } from './decor.js';   // GUILD-YARD: a home's character, or a hall's keeper - as its decor asks
 import { homeMyVoteOf, homeShunned } from '../../src/net/homeVoteLaw.js';   // HOME-VOTE: the caller's own vote, as the law reads one; AUDIT A3: a shunned home
 import { LAYOUT_MATCH_SQL, layoutMatchBinds, TOWN_LAYOUT_SQL, townLayoutRefusal } from './townLayout.js';   // WD3: a town's homes in one layout (AUDIT PRE-MERGE 1003 WD1: a hall's too)
@@ -409,15 +409,12 @@ const lookOfRow = (h) => { const look = h.look ? homeLookOf(h.look) : null; retu
  */
 export async function homesInTown({ db, nowS = Math.floor(Date.now() / 1000) }, player, { mapId, character = null } = {}, { seats = false } = {}) {
   if (!homeMapIdOk(mapId)) return { error: 'bad-home' };
-  // SEAT1d (Seats-Arc 7.6): OPEN GATES - while the town's holder proclaims it, every home there stands open to all (a
-  // reader the seats are open to); each owner's own choice is kept, and its own view shows it
-  const open = seats && await openGatesAt(db, nowS, mapId);
   // HOME-RENT: each home's rooms still free to rent (how many, and the cheapest a day), and - for the character the
   // caller names - the end of its own tenancy there, which opens the door to it
   const me = typeof character === 'string' && CHAR_ID_RE.test(character) ? character : '';
   // GUILD1d: a hall's guild (its name, tag and heraldry) and the named character's rank in it; a home whose owner opened
   // it to their guild, whether the named character is in that guild with them
-  const { results = [] } = await db.prepare(`SELECT h.building_key, h.player, h.char_id, h.owner_name, h.entry, h.paid, h.rent_due, h.look, h.guild_id, h.deed, h.score,
+  const homesRead = db.prepare(`SELECT h.building_key, h.player, h.char_id, h.owner_name, h.entry, h.paid, h.rent_due, h.look, h.guild_id, h.deed, h.score,
       g.name AS guild_name, g.tag AS guild_tag, g.heraldry AS guild_heraldry,
       (SELECT COUNT(*) FROM home_rooms r WHERE r.map_id = h.map_id AND r.building_key = h.building_key AND r.listed = 1 AND (r.tenant IS NULL OR r.until <= ?1)) AS vacant,
       (SELECT MIN(r.price) FROM home_rooms r WHERE r.map_id = h.map_id AND r.building_key = h.building_key AND r.listed = 1 AND (r.tenant IS NULL OR r.until <= ?1)) AS rent_from,
@@ -428,7 +425,13 @@ export async function homesInTown({ db, nowS = Math.floor(Date.now() / 1000) }, 
       EXISTS (SELECT 1 FROM realm_characters rc WHERE rc.id = ?3 AND rc.player = ?2) AS me_realm,
       (SELECT v.vote FROM home_votes v WHERE v.map_id = h.map_id AND v.building_key = h.building_key AND v.player = ?2) AS my_vote,
       (h.guild_id IS NOT NULL AND EXISTS (SELECT 1 FROM guild_members k WHERE k.guild_id = h.guild_id AND k.player = ?2)) AS kin
-    FROM homes h LEFT JOIN guilds g ON g.id = h.guild_id WHERE h.map_id = ?4 ORDER BY h.building_key LIMIT ?5`).bind(nowS, player.id, me, mapId, HOME_TOWN_MAX).all();
+    FROM homes h LEFT JOIN guilds g ON g.id = h.guild_id WHERE h.map_id = ?4 ORDER BY h.building_key LIMIT ?5`).bind(nowS, player.id, me, mapId, HOME_TOWN_MAX);
+  // SEAT1d (Seats-Arc 7.6): OPEN GATES - while the town's holder proclaims it, every home there stands open to all (a
+  // reader the seats are open to); each owner's own choice is kept, and its own view shows it. HOMES-SHED (2026-10-13,
+  // the database overloaded from 14:11 UTC; this route the service's busiest, 88,079 asks in its hour): its read rides
+  // the homes read's one request - a batch - where it was a round trip of its own before it on every ask
+  const [{ results = [] }, gates] = seats ? await db.batch([homesRead, openGatesRead(db, nowS, mapId)]) : [await homesRead.all(), null];
+  const open = !!gates?.results?.length;
   // HOME-VOTE (homeVotes.js): each home's score - its votes summed, kept on its row (AUDIT A2) - and the caller's own vote,
   // said where there is one
   const votesOf = (h) => ({ ...(Number(h.score) ? { score: Number(h.score) } : {}), ...(homeMyVoteOf(h.my_vote) ? { vote: homeMyVoteOf(h.my_vote) } : {}) });

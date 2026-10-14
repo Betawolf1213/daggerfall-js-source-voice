@@ -3,7 +3,7 @@
 // applied, the relay's receipts minted with its own key, the open's orders verified with the service's):
 //   lane3 #1   an open whose answer was lost: asked again by its request id (`again`), the stake it took answered as an order
 //              its void can name, none taken for an id that never landed; the key back by the void, the account free;
-//   lane3 #4 / lane9 #24  the launch gift's letter, sent by migration 0112 beside its key;
+//   lane3 #4 / lane9 #24  the launch gift's letter, sent by migration 0113 beside its key;
 //   lane3 #6   the stake clock's letter true where the first breach's mercy held the stake;
 //   lane3 #11  the opener's 'empty' end (the first wake's) clears their `eg_live`;
 //   lane3 #13  Spire Champion kept once a season's late ends are claimed;
@@ -65,12 +65,12 @@ test('AUDIT EG IV lane3 #1 AN OPEN WHOSE ANSWER WAS LOST (sections 22 and 23, "A
 });
 
 // ── lane3 #4, lane9 #24 ────────────────────────────────────────────────────────────────────────────────────────────────
-test('AUDIT EG IV lane3 #4 / lane9 #24 THE LAUNCH GIFT\'S LETTER (section 5): migration 0112 adds the key to every account with a recorded Dagon\'s Breach kill and words it in the mailbox - one piece of the server\'s post each, *From the Battlespire*, EG_LAUNCH_POST\'s words, no item; never to an account with the rite alone or none; applied again it sends nothing more (mutants: the letter unsent; sent to the rite; sent twice)', async (t) => {
+test('AUDIT EG IV lane3 #4 / lane9 #24 THE LAUNCH GIFT\'S LETTER (section 5): migration 0113 adds the key to every account with a recorded Dagon\'s Breach kill and words it in the mailbox - one piece of the server\'s post each, *From the Battlespire*, EG_LAUNCH_POST\'s words, no item; never to an account with the rite alone or none; applied again it sends nothing more (mutants: the letter unsent; sent to the rite; sent twice)', async (t) => {
   const { S, now } = await stood(t);
   const breaker = await S.registered('Breaker'), riter = await S.registered('Riter'), none = await S.registered('Nobody');
   await S.claim(breaker, 700, now());
   S.env.DB._raw.prepare("INSERT INTO gate_kills (day, account, boss, earned, at) VALUES (701, ?, 'ruhn', 'rite', ?)").run(riter.id, now());
-  const mig = rd('server-account/migrations/0112_elite_breach.sql');
+  const mig = rd('server-account/migrations/0113_elite_breach.sql');
   const gift = mig.slice(mig.indexOf('-- THE LAUNCH GIFT (section 5)'), mig.indexOf('-- EG-E2 (2026-10-12'));
   assert.match(gift, /INSERT OR IGNORE INTO server_post/, 'the send rides the gift');
   const q = (s) => s.replace(/'/g, "''");

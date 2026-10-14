@@ -269,14 +269,19 @@ test('AUDIT-DEATH1: the lethal exhaustion collapse goes through the ONE damage d
   // away, and a file-wide grep passed on THAT call while this one was
   // mutated back to a raw zero. A pin that another site can satisfy is
   // not a pin for this one.
+  // PIN MOVED (FIELD BUGS 2026-10-13e SPENT-ASHORE): the collapse has no lethal branch left - with foes about it costs a
+  // tenth of the health, and the tenth that reaches nothing is what kills. So the law moves with it: the foes-about arm
+  // takes its share through the damage door, shield bypassed, and the collapse writes no health raw.
   for (const h of ['scenes/world.js', 'scenes/exterior.js', 'scenes/worldModes.js', 'scenes/dungeonContext.js']) {
     const src = code(h);
-    const at = src.indexOf("if (out.kind === 'rest') {");
-    assert.ok(at > 0, `${h} has the exhaustion outcome fork`);
-    const branch = src.slice(at, src.indexOf('\n    }', src.indexOf('} else {', at)));
-    assert.match(branch, /hurt(?:Player|Entity)\(playerEntity, playerEntity\.health, \{ bypassShield: true \}\);/,
-      `${h} takes the LETHAL COLLAPSE through the damage door, with the shield bypassed`);
-    assert.doesNotMatch(branch, /playerEntity\.health = 0\s*;/,
+    const at = src.indexOf("if (out.kind === 'spent') {");
+    assert.ok(at > 0, `${h} has the exhaustion outcome's foes-about arm`);
+    const branch = src.slice(at, src.indexOf('\n', at));
+    assert.match(branch, /hurt(?:Player|Entity)\(playerEntity, out\.damage, \{ bypassShield: true \}\);/,
+      `${h} takes the collapse's share through the damage door, with the shield bypassed`);
+    const fork = src.slice(src.lastIndexOf('exhaustionOutcome({', at), src.indexOf('\n  }\n', at));   // the outcome to the collapse function's end
+    assert.ok(fork.includes("if (out.kind === 'rest') {"), `${h}: the slice holds the whole fork`);
+    assert.doesNotMatch(fork, /playerEntity\.health = 0\s*;/,
       `${h} never sets the player's health to zero raw - the presenter would not fire`);
   }
   // ...and the door really is what raises it, on the transition alone

@@ -30,8 +30,9 @@
 //
 // ═══ THE RECOVERY CODE IS READABLE ONCE, AND THIS FILE NEVER KEEPS IT
 //
-// `register` and `recover` are the only two answers that carry one,
-// and it is never written to storage here. The screen shows it and the
+// `register` and `recover` are the only two answers that carry one -
+// RECOVERY-SET: and `newRecoveryCodes`, the profile's new set - and it
+// is never written to storage here. The screen shows it and the
 // player writes it down; a copy in localStorage would be a copy in the
 // one place a stolen device reads first, and it would make "shown
 // once" a sentence rather than a fact.
@@ -62,6 +63,7 @@ import { SERPENT_EMBERS } from './serpentHoardLaw.js';   // AUDIT 625 P4: the em
 import { HERALDRY_CHANGE_DRAKES } from './heraldryLaw.js';   // GUILD1d: a change's cost, in its refusal's own sentence
 import { t, localizedTable } from '../systems/textManager.js';   // L10N4: the refusals in the player's language, each read when it is said
 import { VENDOR_REFUSAL_WORDS } from './vendorLaw.js';   // HOME-VENDOR: a trader's refusals
+import { busyRead, busyAnswer, busyWaitMs, retryAfterMs, BUSY_HOLD_MS } from './busyLaw.js';   // BUSY-GATE: the reads that stand back while the service is overloaded
 import { ARENA_TEXT } from '../systems/arenaText.js';   // ARENA4b: the arena's refusals, in its own frozen table
 import { cardById } from './iliacCards.js';   // AUDIT CARDS-6 D7: the card a short deck lacks, said by its name
 import { jittered } from './backoff.js';   // STORM-SHED: a failed mint's hold, jittered as every book's wait is
@@ -133,6 +135,7 @@ const REFUSAL_WORDS = {
   'no-account': () => t('account.refusal.noAccount', 'That account no longer exists.'),
   'bad-login': () => t('account.refusal.badLogin', 'That username and password do not match.'),
   'bad-code': () => t('account.refusal.badCode', 'That username and recovery code do not match.'),
+  'codes-moved': () => t('account.refusal.codesMoved', 'Your recovery codes changed while that was asked. Try again.'),   // RECOVERY-SET: two presses raced (accounts.js newRecoveryCodes)
   email: () => t('account.refusal.email', 'That does not look like an email address.'),
   rate: () => t('account.refusal.rate', 'Too many attempts. Wait a few minutes and try again.'),
   auth: () => t('account.refusal.auth', 'You have been signed out. Sign in again.'),
@@ -511,7 +514,9 @@ const REFUSAL_WORDS = {
   'market-good-gone': () => t('account.refusal.marketGoodGone', 'The realm does not hold that piece where your pack had it. Nothing was listed.'),
   'market-piece-route': () => t('account.refusal.marketPieceRoute', 'That piece\'s maker\'s record is yours: list it as a crafted piece.'),
   'market-goods-gold': () => t('account.refusal.marketGoodsGold', 'A piece from your pack sells for gold alone.'),
-  'stores-gold': () => t('account.refusal.storesGold', 'What you bought with gold is not used there. Withdraw it to your pack, or sell it again for gold.'),
+  // WRIT-WALL (FIELD BUGS 2026-10-13e): it sent the reader to withdraw it - and withdrawn it stays gold's, which no writ,
+  // station or guild Stores takes from the pack either (bagLaw.js carriedUsable, carriedWorkable)
+  'stores-gold': () => t('account.refusal.storesGold', 'What you bought with gold is not used there, in your Stores or out of them: it goes to your pack or back on the market for gold.'),
   // PROF5b: the auctions
   'auction-not-masterwork': () => t('account.refusal.auctionNotMasterwork', 'Only a Masterwork is sold at auction. List it at a price instead.'),
   'auction-low': () => t('account.refusal.auctionLow', 'Another bid came first. The next bid is higher now.'),
@@ -790,6 +795,19 @@ export const D1_BOOKMARK_READS = new Map([
   ['/v1/realm', 'GET'],
   ['/v1/prof/state', 'POST'],
   ['/v1/prof/motherlodes', 'POST'],
+  // DISPLAY-REPLICA (2026-10-13; server-account/src/service.js REPLICA_ROUTES): and the display reads
+  ['/v1/homes/town', 'POST'],
+  ['/v1/homes/mine', 'POST'],
+  ['/v1/homes/rooms', 'POST'],
+  ['/v1/homes/decor', 'POST'],
+  ['/v1/prof/pixels', 'POST'],
+  ['/v1/market/vendors', 'POST'],
+  ['/v1/marks/balance', 'POST'],
+  ['/v1/guilds/invites', 'POST'],
+  ['/v1/realm/lineages', 'POST'],
+  ['/v1/realm/unions', 'POST'],
+  ['/v1/saves', 'GET'],
+  ['/v1/arena/board', 'POST'],
 ]);
 let _d1Mark = { secret: null, mark: null };
 /** AUDIT SCALE II A-2: how many times the page's bookmark has been forgotten - a read's answer is kept only under the
@@ -810,7 +828,16 @@ export function noteD1Bookmark(/** @type {string|null} */ secret, /** @type {unk
  *  (systems/realmSaves.js realmAsk, systems/cloudSaves.js ask). */
 export function forgetD1Bookmark() { _d1Mark = { secret: null, mark: null }; _d1Era += 1; }
 
-export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = null, keepalive = false }, path, body = null) {
+/** BUSY-GATE (net/busyLaw.js): the page's word from the service on its load - the overload answers in a row (`n`) and
+ *  the moment the reads may be asked again (`until`, ms). One for the page: the database is one, whichever book asked. */
+let _busy = { n: 0, until: 0 };
+/** BUSY-GATE: the page's busy word let go (a test's fresh page). */
+export function _resetBusyForTests() { _busy = { n: 0, until: 0 }; }
+/** BUSY-GATE: the moment the reads may be asked again (ms; 0 when the service has said nothing). */
+export const busyUntil = () => _busy.until;
+const holdFor = (/** @type {number} */ ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
+
+export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = null, keepalive = false, now = Date.now, rand = Math.random, hold = holdFor }, path, body = null) {
   const headers = { accept: 'application/json' };
   if (body) headers['content-type'] = 'application/json';
   // THE ONE PLACE A CREDENTIAL IS SENT. There is no `?secret=` branch
@@ -818,6 +845,13 @@ export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = nul
   // that door on the service and this side does not get to reopen it.
   if (secret) headers.authorization = `Bearer ${secret}`;
   const method = body ? 'POST' : 'GET';
+  // BUSY-GATE: WHILE THE SERVICE SAYS IT IS OVERLOADED, ITS READS ARE NOT ASKED. A held read is answered as the service
+  // itself answers one then - `server`, 503, which every book asks again on its own schedule - without the request, and
+  // never at once (BUSY_HOLD_MS). Only the reads busyLaw.js names: a write, a sign-in or an act always goes.
+  if (busyRead(path, method) && now() < _busy.until) {
+    await hold(BUSY_HOLD_MS);
+    return { ok: false, error: 'server', status: 503, busy: true };
+  }
   // AUDIT SCALE II A-2: a bookmark read carries the page's bookmark; any other call forgets it, now and once answered
   const read = D1_BOOKMARK_READS.get(path) === method;
   if (!read) forgetD1Bookmark();
@@ -855,6 +889,14 @@ export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = nul
   try { data = await res.json(); parsed = true; } catch { data = null; }
 
   if (!res.ok) {
+    // BUSY-GATE: the service says it is overloaded - its reads stand back, the wait doubling with each such answer in a
+    // row, never shorter than the answer's own Retry-After
+    if (busyAnswer(res.status, typeof data?.error === 'string' ? data.error : 'server')) {
+      let after = null;
+      try { after = res.headers?.get?.('retry-after') ?? null; } catch { after = null; }
+      const n = _busy.n + 1;
+      _busy = { n, until: Math.max(_busy.until, now() + Math.max(busyWaitMs(n, rand()), retryAfterMs(after))) };
+    }
     // The service says `{ error: '<word>' }`. A proxy, a 502 or an
     // HTML error page says nothing we can read, and `server` is the
     // honest answer for that rather than a guess at which word it meant.
@@ -868,6 +910,7 @@ export async function call({ fetch, base = DEFAULT_ACCOUNT_SERVICE, secret = nul
   // with its own id (the service's `repeat` answers one that landed), a read shows the last good view. As `ok` with no
   // data it let a kept purchase go unminted and cached a blank market for a minute. A 204 says it has nothing to say.
   if (!parsed && res.status !== 204) { forgetD1Bookmark(); return { ok: false, error: 'offline', unknown: true, status: res.status }; }   // AUDIT SCALE II A-6: `offline`, as one never made
+  _busy = { n: 0, until: _busy.until };   // BUSY-GATE: an answer starts the count again; a hold already running runs out
   return { ok: true, data, status: res.status };
 }
 
@@ -890,17 +933,21 @@ export const openGuest = (io, label = null, accepted = null) => call(io, '/v1/au
 
 /** Fill in a handle and a password on the guest row THIS SESSION
  *  already owns - an upgrade in place, never a new account. Answers
- *  `{ recoveryCode, handle }`, and that code is readable exactly once.
+ *  `{ recoveryCodes, handle }` - RECOVERY-SET: this build asks for the
+ *  set (`set: true`; a service before acct131 answers `{ recoveryCode }`
+ *  and ignores the ask) - and they are readable exactly once.
  *  TERMS1: with the versions ticked on the form that names it. */
 export const register = (io, handle, password, accepted = null) =>
-  call(io, '/v1/auth/register', { handle, password, ...legalFields(accepted) });
+  call(io, '/v1/auth/register', { handle, password, ...legalFields(accepted), set: true });
 
 /** `{ id, name, kind, sessionId, secret }` for a new device. */
 export const login = (io, handle, password, label = null) => call(io, '/v1/auth/login', { handle, password, label });
 
-/** Spend the recovery code: a new password, a NEW code, and every
- *  device signed out including this one. */
-export const recover = (io, handle, code, password) => call(io, '/v1/auth/recover', { handle, code, password });
+/** Spend a recovery code: a new password, and every device signed out
+ *  including this one. RECOVERY-SET: this build asks for the set
+ *  (`set: true`); the answer's `codesLeft` counts the set's others, and a
+ *  single code, or the last, answers a fresh set (`recoveryCodes`). */
+export const recover = (io, handle, code, password) => call(io, '/v1/auth/recover', { handle, code, password, set: true });
 
 /** `{ account, devices }`. A GET, so the secret rides the header and
  *  there is no body at all. */
@@ -911,6 +958,11 @@ export const readAccount = (io) => call(io, '/v1/account');
  *  device; this one stays. */
 export const changePassword = (io, oldPassword, password) =>
   call(io, '/v1/account/password', { oldPassword, password });
+
+/** RECOVERY-SET: a NEW set of recovery codes, behind the password and
+ *  one current code (AUDIT RECOVERY-SET A1) - `{ recoveryCodes,
+ *  codesLeft }`, readable exactly once, the old set dead with it. */
+export const newRecoveryCodes = (io, password, code) => call(io, '/v1/account/recovery-codes', { password, code });
 
 /** Completely optional, and `null` takes it off again. */
 export const setEmail = (io, email) => call(io, '/v1/account/email', { email: email || null });
@@ -985,9 +1037,10 @@ export function storedSession(storage) {
   } catch { return null; }
 }
 
-/** Keep the session this device signed in with. The RECOVERY CODE IS
- *  NEVER PART OF THIS - `register` and `recover` hand one back and it
- *  is the screen's to show and the player's to write down. */
+/** Keep the session this device signed in with. The RECOVERY CODES ARE
+ *  NEVER PART OF THIS - `register`, `recover` and `newRecoveryCodes`
+ *  hand them back and they are the screen's to show and the player's to
+ *  write down. */
 export function keepSession(storage, { id, name, kind, sessionId, secret, glyphs, aura, nameAsAt }) {
   try {
     storage?.setItem?.(SESSION_KEY, JSON.stringify({ id, name, kind, sessionId, secret, glyphs, aura, nameAsAt }));   // SHADOW-FANG: `glyphs` when the service has stated them (adoptIdentity) - JSON leaves it out otherwise; WB9g: `aura` likewise; NAME-AS: `nameAsAt` likewise

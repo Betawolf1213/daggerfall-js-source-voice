@@ -8909,6 +8909,11 @@
   "tr": "fe37b04fb507",
   "by": "claude-in-session"
  },
+ "naval.yard.grogDrunk": {
+  "en": "c5d2a00c9e0e",
+  "tr": "2a015514f252",
+  "by": "claude-in-session"
+ },
  "net.mod.ambiguous": {
   "en": "fb38a201f710",
   "tr": "a43c91bbf2e0",
@@ -10582,6 +10587,11 @@
  "prof.page.rail.professions": {
   "en": "85fb53e4bc11",
   "tr": "6a504ee58567",
+  "by": "claude-in-session"
+ },
+ "rest.exhausted.fighting": {
+  "en": "37f9250e69af",
+  "tr": "a2cf3ef5b14f",
   "by": "claude-in-session"
  },
  "settings.language.machine": {

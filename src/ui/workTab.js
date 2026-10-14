@@ -130,15 +130,23 @@ const commissionSaid = (state) => (state === 'filled' ? t('prof.work.said.filled
  *  "114 struck, less 6 tax", which reads as 108. */
 export const paidText = (pay, tax) => (tax > 0 ? t('prof.work.paidTax', '{pay} struck to your account ({tax} tax taken)', { pay: marksText(pay), tax: marksText(tax) })
   : t('prof.work.paid', '{pay} struck to your account', { pay: marksText(pay) }));
+/** WRIT-WALL (FIELD BUGS 2026-10-13e, "Cant turn in writs": "Have the materials literally on hand. They don't accept
+ *  them"): what a writ's card says of the units held that no writ may spend (net/profBook.js `walled`) - law 3 and the
+ *  gold wall in UNCOUNTED's words, on the card and on its button's title alike: a Court or chapter writ's
+ *  (ui/noticeWindow.js writNode) and a guild writ's (guildWritCard). `material` its name, counted. */
+export const writWalledText = (n, material) => t('prof.work.writ.walled',
+  '{n, number} {material} you hold cannot fill a writ: only what you gathered, or bought with silver, counts - not what was looted, bought at a shop or with gold, or given by another player.',
+  { n: Number(n), material });
 
 /**
  * THE WORK TAB'S PROF6 SECTIONS.
  * @param {{
- *   writs: any, held: (material: string) => number, carrying?: () => boolean, region: number, regionName: string, regionNameOf: (r: number) => string,
+ *   writs: any, held: (material: string) => number, walled?: (material: string) => number, carrying?: () => boolean, region: number, regionName: string, regionNameOf: (r: number) => string,
  *   countName: (key: string, n: number) => string,
  *   pieces: (c: any) => Array<{ item: any, where: string, name: string, quality?: number|null, take: () => boolean, putBack: (item: any, where: string) => void }>,
  *   reload: () => void,
- * }} w `writs` - net/writBook.js; `held` - the Stores' count of a material (the professions' book) - BAG1: and what is carried, where `carrying`; `pieces` - the
+ * }} w `writs` - net/writBook.js; `held` - the Stores' count of a material (the professions' book) - BAG1: and what is carried, where `carrying`; `walled` -
+ *   WRIT-WALL: what is held of it that no writ may spend (the book's `walled`); `pieces` - the
  *   pieces in the save that answer a commission (the service's named ones where it named them, the least quality
  *   first); `reload` - the Work tab's list read again
  * @param {{ busy: () => boolean, run: (start: () => Promise<any>) => Promise<void>, rerender: () => void, nowS: () => number,
@@ -210,6 +218,9 @@ export function createWorkTab(w, ui) {
     // AUDIT 31 U10: no more than the guild Stores can still take of it
     const room = Number.isSafeInteger(x.room) ? x.room : Infinity;
     const most = Math.min(x.left, held, room);
+    // WRIT-WALL: what is held past `held` - looted, shop-bought, traded or gold-bought - named where it would fill more
+    const walled = x.state === 'open' && mayDeliver(data, x) && held < Math.min(x.left, room) ? Number(w.walled?.(x.material)) || 0 : 0;
+    const walledSaid = walled > 0 ? writWalledText(walled, w.countName(x.material, walled)) : null;
     const bar = el('div', 'writ-take');
     if (x.state === 'open' && !mayDeliver(data, x)) bar.append(el('span', 'work-none', t('prof.work.writ.ownGuild', 'Officers and the Guildmaster do not deliver to their own guild\'s writs.')));
     else if (x.state === 'open' && most > 0) {
@@ -226,13 +237,17 @@ export function createWorkTab(w, ui) {
       n.oninput = () => { st.supply[x.id] = intOf(n.value, 1, most); go.textContent = deliverWord(); };
       bar.append(labelled(t('prof.work.label.units', 'Units'), n), go);
     } else if (x.state === 'open') {
-      // AUDIT BAG1: a carrying book's count is the Stores' and what is carried - said as such
-      bar.append(el('span', 'work-none', held > 0 ? t('prof.work.writ.guildFull', 'The guild\'s Stores can take no more of it.')
-        : w.carrying?.() ? t('prof.work.writ.noneCarried', 'You have none - in your Stores, Materials Bag or pack.') : t('prof.work.writ.noneHeld', 'Your Stores hold none of it.')));
+      // AUDIT BAG1: a carrying book's count is the Stores' and what is carried - said as such. WRIT-WALL: never "You have
+      // none" beside units held and walled - the walled line under the bar says what they are
+      const none = held > 0 ? t('prof.work.writ.guildFull', 'The guild\'s Stores can take no more of it.') : walledSaid ? null
+        : w.carrying?.() ? t('prof.work.writ.noneCarried', 'You have none - in your Stores, Materials Bag or pack.') : t('prof.work.writ.noneHeld', 'Your Stores hold none of it.');
+      if (none) bar.append(el('span', 'work-none', none));
     }
     bar.append(el('span', null, w.carrying?.() ? t('prof.work.writ.heldCarried', '{n, number} held', { n: Number(held) }) : t('prof.work.writ.held', '{n, number} in your Stores', { n: Number(held) })));
     if (x.may) bar.append(withdrawWrit(x));
-    li.append(bar, el('span', 'notice-seal', ''));
+    li.append(bar);
+    if (walledSaid) li.append(el('p', 'writ-walled', walledSaid));   // WRIT-WALL: on the card - a phone has no hover
+    li.append(el('span', 'notice-seal', ''));
     return li;
   }
   const withdrawWrit = (x) => why(button('work-withdraw', t('prof.work.withdraw', 'Withdraw'), () => act(() => w.writs.withdraw(x.id), t('prof.work.withdrawnGuild', 'Withdrawn. The unpaid silver is back in the guild\'s treasury.'))),

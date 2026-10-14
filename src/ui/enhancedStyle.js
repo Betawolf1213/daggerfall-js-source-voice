@@ -1323,6 +1323,34 @@ ${badgeCss()}
   .card .acctcode { padding: 14px 8px; }
   .card .acctcode code { letter-spacing: 0.12em; }
 }
+/* RECOVERY-SET: EIGHT CODES ON THE ONE PLAQUE, numbered as the saved
+   file numbers them (accountFlow.js recoveryCodesText) - one column (the
+   window is never wide enough for two: AUDIT RECOVERY-SET B2), each code
+   still taken whole by one click (user-select: all above), never its
+   neighbour. */
+.card .acctcode ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.card .acctcode li { display: flex; gap: 10px; align-items: baseline; justify-content: center; }
+.card .acctcode .acctcodeno { color: var(--dim); font-size: 12px; min-width: 1.5em; text-align: right; }
+/* The phone: the number beside each code takes the width the single
+   code's plaque gave its tracking, and a code broke before its last
+   letter (the probe's phone sheet) - so the set's codes are set a size
+   smaller and tracked tighter there, and each keeps to one line. */
+@media (max-width: 420px) {
+  .card .acctcode li { gap: 6px; }
+  .card .acctcode li code { font-size: min(17px, 4.2vw); letter-spacing: 0.04em; white-space: nowrap; }
+}
+/* AUDIT RECOVERY-SET B2: AND ABOVE IT. The single code's 0.22em of
+   tracking at 23px, with the number beside it, broke a code before its
+   last letter on a 421-480px phone and on the desktop window (36 of 200
+   minted codes at 1280, every one in the fallback face) - so a set's code
+   is set tighter there too, and keeps to one line at every width. */
+@media (min-width: 421px) {
+  .card .acctcode li code { white-space: nowrap; letter-spacing: 0.06em; font-size: min(21px, 4.2vw); }
+}
+/* RECOVERY-SET: the codes' row in the Account section - the count beside
+   its press, as the Patreon row's state sits beside its. */
+.card .acctrecovery .acctwearrow { align-items: center; }
+.card .acctrecoverystate { display: inline-flex; align-items: center; font-size: 12.5px; color: var(--dim); }
 .goldfield .meta { flex: 1 0 100%; color: var(--dim); font-size: 11.5px; margin: 0; }
 
 /* THE LISTS STACK BELOW THE PACK'S OWN BREAKPOINT, not at it: two
@@ -2022,6 +2050,14 @@ ${badgeCss()}
 .px-mtag { color: #9c937d; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap; }
 .px-mtag.gold { color: #f0d77a; }
 .px-mbtn { min-height: 34px; min-width: 104px; }
+/* AUDIT SCHOOLS (L4 5): the Specialisation card - its two schools beside the name; on a phone each path's description
+   takes the card's width and its button or tag stands under it (a 132px side column left the words a 120px strip) */
+.px-spec .px-spec-schools { color: #9c937d; font-size: 12px; letter-spacing: 0.08em; white-space: normal; text-align: right; }
+@media (max-width: 560px) {
+  .px-spec .px-mrow2 { flex-direction: column; align-items: stretch; gap: 6px; }
+  .px-spec .px-mside { flex: none; justify-content: flex-start; }
+  .px-spec .px-mtop { flex-wrap: wrap; gap: 2px 10px; }
+}
 .px-master-foot { margin-top: 6px; }
 .px-master-ask { position: fixed; inset: 0; z-index: 35; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.55); }
 .px-master-ask .yesnobox { position: static; transform: none; }

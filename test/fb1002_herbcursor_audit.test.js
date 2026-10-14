@@ -206,6 +206,7 @@ test('AUDIT HERB-CURSOR A3/B1: an act\'s hold is let go at the next frame\'s sta
 test('AUDIT HERB-CURSOR A4/B4: a mine or a trace takes back a cursor the player freed, and asks the lock only where nothing holds the mouse - under the friends panel, the F-menu, a window or an overlay the flag goes and the surface\'s close relocks (mutant: the look branch ungated)', () => withLockDom((canvas) => {
   for (const [over, asks] of [[{}, 1], [{ pointerSurfaces: new Set(['friends']) }, 0], [{ gamePaused: () => true }, 0], [{ overlayOpen: () => true }, 0]]) {
     setCursorActive(true);
+    globalThis.document.pointerLockElement = null;   // CLICK-STUTTER: a cursor the player freed holds no lock - a held one is never asked again
     canvas.asked = 0;
     const out = worldSeam(seamScope(canvas, over))('look');
     assert.deepEqual([out, cursorActive(), canvas.asked], [null, false, asks], JSON.stringify(Object.keys(over)));

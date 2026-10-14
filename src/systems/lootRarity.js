@@ -547,7 +547,9 @@ export const AFFIX_KINDS = Object.freeze({
   elemental: Object.freeze({ slot: 'prefix', groups: Object.freeze(['Weapons']), params: PROC_ELEMENTS, proc: true,
     word: (band, p) => ELEMENTAL_PREFIX[p][band], label: (a) => `+${a.value} ${cap(a.param)} damage` }),
   leech:  Object.freeze({ slot: 'suffix', groups: Object.freeze(['Weapons']), params: null, proc: true,
-    word: (band) => LEECH_SUFFIX[band], label: (a) => `${a.value}% life leech` }),
+    // FIELD BUGS 2026-10-14 LEECH-HAND (Mac: "Keep per-hand"): the line says whose blows it heals on - an off-hand weapon's
+    // leech rides its own blows alone (lootPowers.js lootStrike), and a player read it as dead until they switched hands
+    word: (band) => LEECH_SUFFIX[band], label: (a) => `${a.value}% life leech on this weapon's own blows` }),
   thorns: Object.freeze({ slot: 'prefix', groups: Object.freeze(['Armor']), params: null, proc: true,
     word: (band) => THORNS_PREFIX[band], label: (a) => `${a.value} thorns` }),
   focus:  Object.freeze({ slot: 'prefix', groups: Object.freeze(['Jewellery']), params: null, proc: true,
@@ -1349,10 +1351,13 @@ export function wardrobePass(items, source, { rolls = Math.random, luck = 50, fi
 /** LOOT2 (bible/06-Systems/Loot-Arc.md section 4): A DOOR'S LAST PASS over the pieces it just laddered - LOOT4: each
  *  Magic's and Rare's chance at a line that does something, then each Legendary's one-in-ten Exalted - taken after
  *  every draw the door already makes, so a seeded door's earlier pieces are still its seed's (SET6's law: the gate's
- *  spoils, a town's thanks). The commoner draw first: an Exalted never moves a proc line's roll. */
-export function lastPass(pieces, rolls = Math.random) {
-  for (const it of pieces ?? []) if (it?.rarity === 'magic' || it?.rarity === 'rare') rollProcLine(it, rolls);
-  for (const it of pieces ?? []) if (it?.rarity === 'legendary') rollExalted(it, rolls);
+ *  spoils, a town's thanks). The commoner draw first: an Exalted never moves a proc line's roll. CRAFT-PROCS (FIELD BUGS
+ *  2026-10-13e): `on` the switch as the pass reads it - a door's is the ladder's own; a crafted piece's is on whatever
+ *  the switch (systems/smithItems.js mintPiece: the piece is its record's on every client, as its quality's roll is, and
+ *  the line's READER asks the switch - systems/lootPowers.js). */
+export function lastPass(pieces, rolls = Math.random, { on = lootRarityOn() } = {}) {
+  for (const it of pieces ?? []) if (it?.rarity === 'magic' || it?.rarity === 'rare') rollProcLine(it, rolls, on);
+  for (const it of pieces ?? []) if (it?.rarity === 'legendary') rollExalted(it, rolls, on);
 }
 
 // ── LOOT4: a line that does something ───────────────────────────────
@@ -1382,9 +1387,9 @@ export function addProcLine(item, rolls = Math.random) {
   return line;
 }
 /** The chance, for a Magic or a Rare just minted at a source: one roll, then the line - never a second on a piece that
- *  carries one. Answers the line, or null. */
-export function rollProcLine(item, rolls = Math.random) {
-  if (!lootRarityOn() || (item?.rarity !== 'magic' && item?.rarity !== 'rare') || !Array.isArray(item.affixes)) return null;
+ *  carries one. Answers the line, or null. `on` the switch (lastPass's). */
+export function rollProcLine(item, rolls = Math.random, on = lootRarityOn()) {
+  if (!on || (item?.rarity !== 'magic' && item?.rarity !== 'rare') || !Array.isArray(item.affixes)) return null;
   if (item.affixes.some((a) => AFFIX_KINDS[a?.id]?.proc)) return null;
   if (!(rolls() * 1000 < (_procPerMille[item.rarity] ?? 0))) return null;
   return addProcLine(item, rolls);
@@ -1541,9 +1546,9 @@ export function exaltLegendary(item, rolls = Math.random) {
   return true;
 }
 /** The one-in-ten, for a Legendary just minted at a source - taken AFTER every draw its door already makes, so a seed's
- *  earlier spoils stay what they were (SET6's law). Answers whether it was exalted. */
-export function rollExalted(item, rolls = Math.random) {
-  if (!lootRarityOn() || item?.rarity !== 'legendary' || item.exalted === true) return false;
+ *  earlier spoils stay what they were (SET6's law). Answers whether it was exalted. `on` the switch (lastPass's). */
+export function rollExalted(item, rolls = Math.random, on = lootRarityOn()) {
+  if (!on || item?.rarity !== 'legendary' || item.exalted === true) return false;
   if (!(rolls() * 1000 < _exaltedPerMille)) return false;
   return exaltLegendary(item, rolls);
 }

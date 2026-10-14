@@ -657,12 +657,13 @@
  {
   "name": "SEAT2a3-route-live-get",
   "file": "server-account/src/index.js",
-  "old": "      if (request.method !== 'GET') return no('method', 405, origin);\n      if (!env.DB) return no('no-database', 503, origin);\n      return json(await siegesLive(",
-  "new": "      if (!env.DB) return no('no-database', 503, origin);\n      return json(await siegesLive(",
+  "old": "      if (request.method !== 'GET') return no('method', 405, origin);\n      if (!env.DB) return no('no-database', 503, origin);\n      try {\n        return json(await siegesLive(",
+  "new": "      if (!env.DB) return no('no-database', 503, origin);\n      try {\n        return json(await siegesLive(",
   "tests": [
    "test/seat2a_siege_service.test.js",
    "test/seat2a_siege_client.test.js"
-  ]
+  ],
+  "note": "HOMES-SHED (PIN MOVED, re-aimed by content): the route's read stands inside its own try now - the mutant takes the GET check away before it, as before."
  },
  {
   "name": "SEAT2a3-status-unsettled",

@@ -82,6 +82,7 @@ on:
       - "src/world/ethericSea.js"
       - "src/net/skyLaw.js"
       - "src/net/kingdomLaw.js"
+      - "src/net/busyLaw.js"
       - "src/net/recipeLaw.js"
       - "src/net/productRecord.js"
       - "src/net/marketLaw.js"
@@ -202,6 +203,7 @@ on:
       - "src/systems/aetheric.js"
       - "src/systems/appRoot.js"
       - "src/systems/appStorage.js"
+      - "src/systems/arcanePaths.js"
       - "src/systems/armorMaterials.js"
       - "src/systems/artifactEffects.js"
       - "src/systems/ayleidStones.js"
@@ -322,6 +324,7 @@ on:
       - "vendor/foraging/ItemTemplates.json"
       - "vendor/iliac-puddle-no-more/ItemTemplates.json"
       - ".github/workflows/account-deploy.yml"
+      - "src/systems/legacy/revived.js"
   workflow_dispatch:
 
 permissions:

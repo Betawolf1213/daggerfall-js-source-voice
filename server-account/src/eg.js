@@ -7,7 +7,7 @@
 //
 // ═══ THE BALANCE IS THE ACCOUNT'S ══════════════════════════════════
 //
-// A Weir Key opens a real relay instance, so it is a count on the account's row (`players.eg_keys`, migration 0112) -
+// A Weir Key opens a real relay instance, so it is a count on the account's row (`players.eg_keys`, migration 0113) -
 // the item in the pack is its face, restacked by the client to every answer here that carries the count (`keys`). The
 // service rolls every key with its own die (`rand`), at a claim it already verifies: a recorded Dagon's Breach kill
 // (one in six, one in four for a fighter who broke the rite, the account's first kill certain, and the sixth kill after
@@ -37,7 +37,7 @@
 //
 // No relay witnesses an ordinary dungeon, so an elite foe's killer's client asks (`/v1/eg/find`, section 5) with the
 // dungeon's tier, and the service rolls the key with its own die - bounded, never believed: a handle and a proven account,
-// EG_FIND_PER_DAY asks a tier a real day, EG_FIND_KEYS_PER_WEEK keys a week from finds (`eg_finds`, migration 0112).
+// EG_FIND_PER_DAY asks a tier a real day, EG_FIND_KEYS_PER_WEEK keys a week from finds (`eg_finds`, migration 0113).
 //
 // ═══ THE FIRST-TIME LINES AND THE RECAP'S BOARD LINE (EG-ZF) ═══════
 //
@@ -128,7 +128,7 @@ export const EG_STAKE_POST_HELD = Object.freeze({
     `- ${POST_SENDER}`,
   ].join('\n'),
 });
-/** AUDIT EG IV (lane3 #4, lane9 #24; section 5, "The launch gift"): THE LAUNCH GIFT'S LETTER - the key migration 0112 adds
+/** AUDIT EG IV (lane3 #4, lane9 #24; section 5, "The launch gift"): THE LAUNCH GIFT'S LETTER - the key migration 0113 adds
  *  to every account with a recorded Dagon's Breach kill, worded in the mailbox by the same migration (server_post, batch
  *  `spire-launch`, HOURS-FIRST's send - 0094), its words these (test/egaudit4_net_service.test.js holds the migration's
  *  statement to them). It carries no item: the key is the balance's, already counted. */

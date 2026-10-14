@@ -171,6 +171,15 @@ test('EG-ZG THE FLOORS\' DRAWS THROUGH THE PASS (render/gateTelegraph.js drawFlo
   assert.deepEqual(courtR.slice(1, 3), [court.r, bal.r], 'each floor\'s own circle is its court');
   assert.equal(pass.vao, vao); assert.equal(pass.count, count, 'the quad given back');
   assert.equal(pass.floorDraws, 3);
+  // AOE-PERF, at the merge of main: a path's own strip is the gate's quad's, never a floor's - over a fight floor its
+  // triangles are its ground, and the strip's walkway quad read as a floor's triangle (uOnFloor) lies at the court's origin
+  const path = shapeOf({ kind: TELEGRAPH_KIND.lane, pool: TELEGRAPH_POOL.path, origin: [court.x - 2, court.z], end: [court.x + 2, court.z], halfW: 0.6 });
+  const pp = egFloorPlan([path], floors, null, null);
+  assert.ok(pp.draws.length > 0 && pp.draws.every((d) => d.f), 'the path lies on a fight floor');
+  calls.length = 0;
+  pass.drawFloors(pp, I4, I4, [0, 0, 0], 1, null, [0, 0, 0]);
+  assert.ok(!calls.some((c) => c[0] === 'uniform1i' && c[1] === 'uStrip' && c[2] === 1), 'no strip over a floor\'s triangles');
+  assert.deepEqual(calls.filter((c) => c[0] === 'drawArrays').map((c) => c[3]), pp.draws.map((d) => d.count), 'each floor\'s own triangles');
   const g = recordingGl(), gate = new GateTelegraphRenderer(g.gl);
   g.calls.length = 0; gate.drawFloors(plan, I4, I4, [0, 0, 0], 1);
   assert.equal(g.calls.length, 0, 'the gate\'s own pass: nothing');

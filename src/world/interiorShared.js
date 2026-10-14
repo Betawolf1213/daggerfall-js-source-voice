@@ -171,7 +171,7 @@ export function applyInteriorShared(ctx, shared, { locationKey, stamp, seen = ne
   if (!ctx || !shared || !locationKey || shared.locationKey !== locationKey || !shared.world || typeof shared.world !== 'object') return false;
   if (shared.stamp === stamp) return false;
   const acts = Array.isArray(shared.world.actions) ? shared.world.actions.map(validActionRecord).filter(Boolean) : [];
-  if (acts.length) ctx.actions?.restoreSaveData?.(acts);
+  if (acts.length) ctx.actions?.restoreSaveData?.(acts, { remote: true });   // SPELL-LOCK: a peer's word - no Lock spell's lock lands
   if (!home) applyInteriorLoot(ctx, shared.world.loot, { seen, openKey, today });   // HOME1: no word lands on a home's cupboards
   return true;
 }

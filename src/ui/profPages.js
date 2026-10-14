@@ -839,7 +839,14 @@ export function stationWorkable(node) {
   }
   return false;
 }
-const holdsHead = (node, id) => (node?.id === id || (node?.children ?? []).some((c) => holdsHead(c, id)));
+/** FIELD BUGS 2026-10-14 STORES-CRASH: walked by iteration, as stationWorkable walks - a browser's `children` is an
+ *  HTMLCollection, with no `.some`, so a station's press (the Joinery's bench) threw here, before the press was spent,
+ *  and every later Stores page threw with it. */
+const holdsHead = (node, id) => {
+  if (node?.id === id) return true;
+  for (const c of node?.children ?? []) if (holdsHead(c, id)) return true;
+  return false;
+};
 /**
  * MENU-ORDER: THE STATIONS, TILED. A row of tiles, one a station - its picture, its name, Here or Away - over the
  * stations. A station worked here stands below the tiles as it always has, and its tile takes the player to it; one the

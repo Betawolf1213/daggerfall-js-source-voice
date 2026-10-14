@@ -216,9 +216,10 @@ test('INSPECT1 the card is what their own sheet shows - the sheet\'s own produce
   assert.equal(card.attrs[0], 50, 'live: the disease\'s -5 shows, as it shows on their sheet');
   assert.deepEqual(card.vitals, [sheet.health.max, sheet.fatigue.max, sheet.magicka.max], 'the sheet\'s maxima - fatigue at its /64 figure');
   assert.deepEqual(card.look, composeLook(entity), 'the look they wear now');
-  // an attribute past the live clamp: the card says what the sheet says. Were the port ever to lift the clamp (DFU's
-  // ChangeStatMaxMod, recorded unported in statMods.js), the sheet would draw 140 and this would fail - and the wire's
-  // CARD_STAT_MAX must follow it, or the card would understate every fortified player.
+  // an attribute past the live clamp: the card says what the sheet says. A Fortify alone lifts no ceiling - only an
+  // effect's max mods do (MACE-MAX, FIELD BUGS 2026-10-13e: DFU's ChangeStatMaxMod, statMods.js liveStat), and the
+  // Mace of Molag Bal is their one writer; were a Fortify ever to lift it, the sheet would draw 140 and this would fail -
+  // and the wire's CARD_STAT_MAX must follow it, or the card would understate every fortified player.
   const fortified = { ...entity, stats: { ...entity.stats, strength: 90 }, activeEffects: [{ kind: 'fortifyAttribute', stat: 'strength', magnitude: 50 }] };
   assert.deepEqual(composeCard(fortified).attrs, sheetModel(fortified).attributes.map((a) => a.value), 'the sheet\'s live clamp, the card\'s');
   assert.equal(composeCard(fortified).attrs[0], MAX_STAT_VALUE);

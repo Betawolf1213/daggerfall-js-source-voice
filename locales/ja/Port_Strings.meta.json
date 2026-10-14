@@ -8244,6 +8244,11 @@
   "tr": "499ee15aafcf",
   "by": "claude-in-session"
  },
+ "naval.yard.grogDrunk": {
+  "en": "c5d2a00c9e0e",
+  "tr": "b206f9295b81",
+  "by": "claude-in-session"
+ },
  "net.mod.ambiguous": {
   "en": "fb38a201f710",
   "tr": "c30bc8c84e76",
@@ -11112,6 +11117,11 @@
  "prof.work.yours.writ": {
   "en": "ce32bc277933",
   "tr": "e9254d05e48b",
+  "by": "claude-in-session"
+ },
+ "rest.exhausted.fighting": {
+  "en": "37f9250e69af",
+  "tr": "156baa8d899a",
   "by": "claude-in-session"
  },
  "settings.language.machine": {

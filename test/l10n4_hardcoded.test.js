@@ -559,7 +559,7 @@ const HARDCODED = {
   'src/ui/brokerWindow.js': 42,
   'src/ui/captainPage.js': 13,
   'src/ui/cardBinderPage.js': 25,
-  'src/ui/cardTableHud.js': 84,
+  'src/ui/cardTableHud.js': 80,
   'src/ui/chapterRoll.js': 1,
   'src/ui/charSheetDoor.js': 2,
   'src/ui/chargen.js': 24,
@@ -589,14 +589,14 @@ const HARDCODED = {
   'src/ui/enhancedChunk.js': 2,
   'src/ui/enhancedControls.js': 20,
   'src/ui/enhancedDialog.js': 1,
-  'src/ui/enhancedFrame.js': 3,
+  'src/ui/enhancedFrame.js': 2,
   'src/ui/enhancedHelm.js': 16,
   'src/ui/enhancedHotbar.js': 13,
   'src/ui/enhancedHud.js': 6,
   'src/ui/enhancedInventory.js': 84,
   'src/ui/enhancedLevelUp.js': 17,
   'src/ui/enhancedLevelingChoice.js': 6,
-  'src/ui/enhancedMenu.js': 65,
+  'src/ui/enhancedMenu.js': 64,
   'src/ui/enhancedMerchantPanel.js': 1,
   'src/ui/enhancedNotice.js': 1,
   'src/ui/enhancedPlayerTrade.js': 14,
@@ -622,7 +622,7 @@ const HARDCODED = {
   'src/ui/gateGroundView.js': 3,
   'src/ui/gateMarksView.js': 18,
   'src/ui/gateTitleCard.js': 1,
-  'src/ui/grimoireDress.js': 14,
+  'src/ui/grimoireDress.js': 13,
   'src/ui/guildServiceWindow.js': 1,
   'src/ui/guildServiceWindows.js': 8,
   'src/ui/hallOfRecords.js': 4,
@@ -634,7 +634,7 @@ const HARDCODED = {
   'src/ui/howManyField.js': 1,
   'src/ui/hudLayout.js': 28,
   'src/ui/hudStatus.js': 1,
-  'src/ui/iliacTableHud.js': 69,
+  'src/ui/iliacTableHud.js': 63,
   'src/ui/inkDungeonGL.js': 1,
   'src/ui/inkDungeonSolid.js': 6,
   'src/ui/input.js': 2,
@@ -805,4 +805,17 @@ test('L10N4 the scan itself: prose counted; the text core\'s arguments, console 
   assert.equal(isProse('Resume'), false, 'one word is not counted (a known gap of the heuristic: a one-word label)');
   assert.equal(isProse('rgba(0, 0, 0, 0.5) solid'), false);
   assert.equal(isProse('1px solid black'), false, 'a CSS value with two words in it');
+  // CARDS-PLUS (bible/11-Multiplayer/Tavern-Cards.md section 38): a selector naming an id, an attribute or a pseudo-class
+  // is CSS - every part a compound of CSS identifiers, a class among them; English that only looks like one is English
+  assert.equal(isProse('body .dfiliac button[data-kind="warn"]'), false, 'a kit role naming an attribute');
+  assert.equal(isProse('#wp-menu input.wpm-name'), false, 'an id');
+  assert.equal(isProse(':scope > .px-tabs button'), false, 'a pseudo-class and a child combinator');
+  assert.equal(isProse('press #1 to win'), true, 'every word could be a selector\'s - but it reads as English');
+  assert.equal(isProse('Warning: gate shut'), true, 'a colon, and no selector in it');
+  assert.equal(isProse('click #menu .open to see the map'), true, 'a class and an id among English words');
+  // AUDIT CARDS-PLUS D1: no stopword to give them away, and still English - no class in them, or a digit where a name
+  // starts (`#1`, `#2` are no ids)
+  for (const s of ['rank #1 player wins', 'press [E] when ready', '[locked] needs more gold', 'item:sword equipped', '#general chat only', 'pay #2 .gold-coins now']) {
+    assert.equal(isProse(s), true, `${s} is English`);
+  }
 });

@@ -482,8 +482,8 @@
   {
     "name": "EG15-return-share",
     "file": "src/systems/sigilSetPowers.js",
-    "old": "if (v) gainMana(attacker, (_s.lastCost * v.refund) / 100);",
-    "new": "if (v) gainMana(attacker, (_s.lastCost * v.armed) / 100);",
+    "old": "if (v) manaMine(attacker, (_s.lastCost * v.refund) / 100);",
+    "new": "if (v) manaMine(attacker, (_s.lastCost * v.armed) / 100);",
     "why": "the wrong share returned",
     "tests": [
       "test/eg15_panoply.test.js"

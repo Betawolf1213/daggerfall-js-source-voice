@@ -33,7 +33,8 @@ Every one of these is a standing call of Mac's, and no slice moves it:
    answer my blows at a FOE and a foe's blows at me, and a duel's blows reach neither (SET2's damage door passes a
    duel's blow without asking the port, and every blow modifier here refuses a target that is a player).
 6. **Off is DFU exactly** (LR1). Every slice hangs off the one `loot-rarity` row: off, no field is written, no read
-   moves, no champion stands, no line of light is drawn, no shard is minted.
+   moves, no champion stands, no line of light is drawn for a tier, no shard is minted. (A find another arc marks draws
+   its own line, the row on or off - section 13.)
 7. **The Aetheric is never rolled** (SET6). The Exalted is a Legendary's variant, not a rung: the ladder keeps its six.
 
 ## 2. The shape, end to end
@@ -235,7 +236,9 @@ A body or a pile holding a Rare or better stands a thin line of its best tier's 
 the find's top, never a beam beside it) through the gate spoils' own renderer (`render/spoilsGlow.js`: additive,
 fogged, no light, no new program), a Legendary's and better pulsing. The nearest eight within 40 m, in the dungeon,
 the street and a building; gone the moment its best is taken below Rare. A peer's body in the street shows none: its
-list lives on its owner's side (the street's own law). Off, nothing draws.
+list lives on its owner's side (the street's own law). Off, nothing draws for a tier. A find that carries its own mark
+draws its own line, the row on or off, each kind under its own word (`lootLines.js setLootMarksLive(on, by)`): the open
+zone's remains (WILD1) and the house's fallen (`01-Overview/Field-Bugs-2026-10-13d.md` REMAINS-STAND; AUDIT FB1013d C13).
 
 ## 14. The slices
 
@@ -379,6 +382,12 @@ hundred at ONE such line (`rollProcLine`, `PROC_PER_MILLE`; `addProcLine` mints 
 does not, its tier's band, appended after its numbers, the price with it. Every proc in the pass is drawn before any
 Exalted, so neither moves the other's roll whatever a list's order. The gate's spoils and a town's thanks take them in
 the same pass, after every earlier draw.
+
+CRAFT-PROCS (FIELD BUGS 2026-10-13e): and a crafted Superior or Masterwork. The craft's mint (`systems/smithItems.js`
+mintPiece) took its quality's `applyRarity` and never this pass, so no crafted piece carried a line that does
+something - a jewel none of its four, the caster's lines. It takes the pass now, on its record's stream after the roll,
+with `lastPass`'s `on` set: the switch is not asked, because the piece is its record's on every client and the line's
+reader asks it. A record made before mints as it was (`Professions-Arc.md` 9.2, the record's `v`).
 
 **What they do** - `systems/lootPowers.js` (new, the kit), registered at import under one name (`lootPowers`) and
 imported by the game beside the sets' own (`scenes/world.js`, folded onto the sets' import line - line-neutral):
@@ -805,6 +814,11 @@ lean are one roll each; the Exalted's pool holds the proc kinds (section 6's Leg
 drought counted once at the take and none in a new game; the codex's silent backfill; `cp` bounded by
 `CHAMPION_TRAIT_MAX` (world139); the four item fields declared and the Broker's wares bound (no salvage); the guild
 popup's F free of DFU's four letters; the lines' finds never a peer's street body.
+
+CRAFT-PROCS (FIELD BUGS 2026-10-13e): "a Masterwork's roll never reach[es] it" was read for the doors' order, and was
+written when focus was a jewel's only proc line. No page kept crafted pieces from the proc lines on purpose. A crafted
+Superior's and Masterwork's roll takes the last pass since, on its own record's stream (the LOOT4 record's CRAFT-PROCS
+note, section 15); the Broker's `applyRarity` still never does.
 
 Pinned: `test/auditloot.test.js` (8), driven where it can be - F1 the fits, the choices and the wire; F2 a Masterwork's
 and a Superior's piece refused with nothing taken; F3 a reforge and an imprint off the market; F4 both hands, either

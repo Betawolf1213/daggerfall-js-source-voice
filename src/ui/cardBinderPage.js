@@ -55,8 +55,8 @@ export function disarmCardsPart() { _dropArmed = null; }
 
 export const CARD_BINDER_CSS = `
 .px-sys .binder-filters { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
-.px-sys .binder-filter { padding: 2px 10px; border-width: 1px; border-style: solid; font-size: 11px; color: #b8b0a0; background: transparent; cursor: pointer; }
-.px-sys .binder-filter.on { color: #f3cf86; border-color: #c08a3e; }
+.px-sys .binder-filter { padding: 1px 9px; border-width: 2px; border-style: solid; font-size: 11px; color: #b8b0a0; cursor: pointer; }
+.px-sys .binder-filter.on { color: #f3cf86; }
 .px-sys .binder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(${Math.round(TILE_H * ILIAC_CARD_ASPECT)}px, ${Math.round(TILE_H * ILIAC_CARD_ASPECT)}px)); justify-content: start; gap: 8px; margin: 4px 0 10px; }
 .px-sys .binder-tile { position: relative; padding: 0; border: none; background: transparent; cursor: pointer; }
 .px-sys .binder-tile canvas { display: block; width: ${Math.round(TILE_H * ILIAC_CARD_ASPECT)}px; height: ${TILE_H}px; }
@@ -70,14 +70,14 @@ export const CARD_BINDER_CSS = `
 .px-sys .binder-look-text { flex: 1 1 180px; min-width: 0; font-size: 13px; color: #e9e4d9; }
 .px-sys .binder-look-text .flavor { font-style: italic; color: #b8b0a0; margin-top: 6px; }
 .px-sys .binder-decks { display: flex; flex-direction: column; gap: 4px; margin: 4px 0 10px; }
-.px-sys .binder-deck { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 5px 9px; border-width: 1px; border-style: solid; }
+.px-sys .binder-deck { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 4px 8px; border-width: 2px; border-style: solid; }
 .px-sys .binder-deck .nm { flex: 1 1 120px; min-width: 0; font-size: 13px; color: #f3cf86; }
 .px-sys .binder-deck .why, .px-sys .binder-edit .why { font-size: 12px; color: #d0604f; }
 .px-sys .binder-deck .ok, .px-sys .binder-edit .ok { font-size: 12px; color: #9fc28a; }
 .px-sys .binder-edit { margin: 4px 0 10px; }
-.px-sys .binder-edit input { font: inherit; padding: 2px 6px; margin-right: 6px; }
+.px-sys .binder-edit input { font: inherit; padding: 2px 6px; margin-right: 6px; border-width: 2px; border-style: solid; color: #e9e4d9; }
 .px-sys .binder-deckcards { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0; }
-.px-sys .binder-chip { padding: 1px 6px; font-size: 11px; border: 1px solid #8a6a3a; color: #e9e4d9; background: transparent; cursor: pointer; }
+.px-sys .binder-chip { padding: 0 5px; font-size: 11px; border-width: 2px; border-style: solid; color: #e9e4d9; cursor: pointer; }
 .px-sys .binder-chip.short { border-color: #d0604f; color: #f0a090; }
 @media (pointer: coarse) { .px-sys .binder-filter, .px-sys .binder-chip, .px-sys .coll-part { min-height: 44px; } }
 `;
@@ -109,6 +109,17 @@ export function cardCanvas(/** @type {any} */ doc, /** @type {any} */ card, h = 
   }
   if (_faces.size >= FACE_CACHE_MAX) _faces.delete(_faces.keys().next().value);
   _faces.set(key, cv);
+  return cv;
+}
+/** CARDS-PLUS: a FRESH canvas holding a card's cached face (cardCanvas) - for a surface that shows one card in more than
+ *  one place at once (Iliac Hand's table panel: two Rats on the board, a pair in the hand), where the one cached node can
+ *  stand only once. The face is the same painting at the same size and pixel ratio; a host with no 2D context gets the
+ *  blank canvas, as cardCanvas does. */
+export function cardCanvasCopy(/** @type {any} */ doc, /** @type {any} */ card, h = TILE_H) {
+  const src = cardCanvas(doc, card, h);
+  const cv = doc.createElement('canvas');
+  cv.width = src.width; cv.height = src.height;
+  cv.getContext?.('2d')?.drawImage?.(src, 0, 0);
   return cv;
 }
 /** Tests: the faces painted afresh. */

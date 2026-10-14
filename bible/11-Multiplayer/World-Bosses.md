@@ -2112,6 +2112,12 @@ The hit law does not move except T2's ring: what lands is what the ground shows.
 - AUDIT WB9's shader harness takes every derivative the shader asks for (it took one).
 - Mutants: `tools/mutants/wb13a.json` (22).
 - Seven older records were re-aimed by content (the fuse's is gone with the fuse).
+- AOE-PERF (FIELD BUGS 2026-10-13e, 2026-10-13; `01-Overview/Field-Bugs-2026-10-13e.md`, `07-Rendering/Performance-Rig.md`
+  AOE-PERF): T14's quad per shape is the ground the shape can draw on. A blow's stays `TELEGRAPH_REACH` past it - its
+  glow, keyline and wave reach as far as the pixel is large. His mark's is its ring and chevron (`telegraphMarkReach`, a
+  third of the box it was) and a path's or a tether's is its own strip (`telegraphStrip`, the walkways' quad laid along
+  it): neither draws anything past its ground at any pixel's size. An AoE frame at a fighter's eye rasterised 3.4 screens
+  of the pass, 2.1 now. The fragment stage is unchanged, byte for byte.
 
 ### WB13b. The words
 

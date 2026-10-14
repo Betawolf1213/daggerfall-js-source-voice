@@ -93,7 +93,7 @@ import { frustumPlanes, aabbOutside, localAabb, transformedAabb, flatBatchAabb, 
 import { decorCullVerdict, DECOR_DRAW } from './decorRoom.js';   // PERF-WAGON: the street's verdict on a cart's, a wagon's and a tent's box
 import { withMoonAmbient } from '../render/enhancedSky.js';   // EV5: secunda rides the ambient
 import { drawCharacterSprite } from '../render/characterSprite.js';
-import { collectBlockFlats, billboardSize, mobileBillboardSize, centredBase, isNatureArchive, NATURE_FLATS_Y } from '../world/rmbFlats.js'; import { blockHillSeat, seatNatureFlat } from '../world/townStandIns.js';   // TREES-SEATED: a block's trees on the hills drawn under them
+import { collectBlockFlats, billboardSize, mobileBillboardSize, centredBase, isNatureArchive, NATURE_FLATS_Y } from '../world/rmbFlats.js'; import { blockHillSeat, seatNatureFlat, blockHillPatch } from '../world/townStandIns.js';   // TREES-SEATED: a block's trees on the hills drawn under them; FIELD BUGS 2026-10-13e HILL-SEAT: and the pads under what its author stood on them
 import { blockSolids } from '../world/flatFields.js';   // FIELD BUGS 2026-10-04d CROPS: a crop field keeps a metre off the block's solids
 import { modSetting, modSettingsOf } from '../systems/modSettings.js';
 import { timeScale as hccTimeScale } from '../systems/timeScale.js';   // AUDIT HCC: the runtime's Time.deltaTime rides Time.timeScale, as the motor's does   // SIB1: the mod's own switch; HCC: Horse Cart and Cargo's eight
@@ -190,7 +190,7 @@ import { tryMobileEnemyActivate } from '../player/mobileEnemyActivate.js';
 import { FOUND_NOTHING_VALUABLE_TEXT_ID } from '../systems/talk.js';   // GetRandomText(8999)
 import { preloadCharSheetArt } from '../ui/charsheet.js';   // AUDIT 44 (a11): a level-up opens the SHEET (dfuiOpenCharacterSheetWindow), through this host's makeCharSheetWindow
 import { createCharSheetWindow, charSheetDoorReady, warmLevelUpWindow } from '../ui/charSheetDoor.js';
-import { announceLevelUp, levelOwed } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
+import { announceLevelUp, levelOwed, announceQuestFoeSlain, questFoeName } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
 import { restDecision, getPreventedRestMessage } from '../systems/restSession.js';   // U48: the DISPATCH (DaggerfallUI.cs:651-688) above the rest window   // ROAD-B B5: GetPreventedRestMessage
 import { preloadQuestJournalArt } from '../ui/questJournal.js';   // U43: the LogBook and NoteBook doors   // QX1 dropped the unused `QuestJournalWindow` beside it - the classic window is reached through the chronicle door, never constructed here
 import { createChronicleWindow } from '../ui/chronicleDoor.js';   // QX1/PX24d: the chronicle's ONE door - the skin fork lives behind it, and its classic arm IS the art gate
@@ -833,6 +833,9 @@ export async function bootExterior(canvas, renderer, params, status) {
     // solids - the models this host drew and collided just above (IsOverlapping)
     const fieldSolids = blockSolids(b.layout.models, (m) => (m.enhancedOnly && !isEnhanced()) || !gpuMeshes.get(m.modelIdNum) ? null : cpuModels.get(m.modelIdNum));
     const blockFlats = collectBlockFlats(b.dfBlock, natureArchive, { climateIndex: locClimateIndex, solid: fieldSolids }), hillSeat = blockHillSeat(b.layout.models);   // TREES-SEATED: the block's hills as the port draws them, null for none of ours
+    // FIELD BUGS 2026-10-13e HILL-SEAT: the pads under what the author stood on those hills (laid into the seat, so the trees below stand on them too) - drawn and solid for the scene's life, as every model of this host's one location is (it never unloads it; the pipeline pins the fixed city for good)
+    const hillPatch = blockHillPatch(hillSeat, b.layout.models, (m) => ((m.enhancedOnly && !isEnhanced()) || !gpuMeshes.get(m.modelIdNum) ? null : cpuModels.get(m.modelIdNum)));
+    if (hillPatch) { drawList.push({ mesh: renderer.createMesh(hillPatch), matrix: originMatrix, order: -2, box: transformedAabb(localAabb(hillPatch.positions), originMatrix) }); collider.addMesh('world', hillPatch.positions, hillPatch.indices, originMatrix); colliderTris += hillPatch.indices.length / 3; }
     const _people = new Set(collectExteriorNpcs(blockFlats));   // AUDIT TACT B3: the street's people are no cover (the streamed world's never are)
     for (const flat of blockFlats) {
       // AUDIT 64 F12: an EDITOR flat (archive 199) is stood but never
@@ -1310,7 +1313,9 @@ export async function bootExterior(canvas, renderer, params, status) {
       });
       // SWIM-SPENT (rest.js): in the water a share of the health and a line - no box (world.js's twin)
       if (out.kind === 'drown') { townTalk.say(out.line); hurtPlayer(playerEntity, out.damage, { bypassShield: true }); return; }
-      // RSC 1071/1072 pend the reader in this host; classic strings fall back.
+      // SPENT-ASHORE (rest.js): on dry feet with foes about the same share and a line - no box (world.js's twin)
+      if (out.kind === 'spent') { townTalk.say(out.line); hurtPlayer(playerEntity, out.damage, { bypassShield: true }); return; }
+      // RSC 1071 pends the reader in this host; the classic string falls back.
       const lines = ['You collapse from exhaustion.'];
       // ROAD-B B5: a PUSH. PlayerEntity's OnExhausted handler is a plain
       // DaggerfallUI.MessageBox, and DaggerfallUI.MessageBox is
@@ -1333,8 +1338,6 @@ export async function bootExterior(canvas, renderer, params, status) {
         playerEntity.magicka = Math.min(playerEntity.maxMagicka ?? Infinity, (playerEntity.magicka ?? 0) + out.magicka);
         tallySkill(playerEntity, SKILLS.Medical);
         surfacePlayer();
-      } else {
-        hurtPlayer(playerEntity, playerEntity.health, { bypassShield: true });   // SetHealth(0) through the one damage door
       }
     } finally { _inExhaustion = false; }
   }
@@ -3989,7 +3992,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   const _liveQuestOverlay = (win) => (modes?.questOverlay ?? null) === win || (townTalk?.overlay ?? null) === win;
   const showQuestBox = (box) => {
     if (_questBoxWin && !_questBoxWin.done && _liveQuestOverlay(_questBoxWin)) { _questBoxWin.push([box]); return; }
-    const win = new ServiceFlowWindow([box], { onClose: () => { if (_questBoxWin === win) _questBoxWin = null; } });
+    const win = new ServiceFlowWindow([box], { graceMs: 600, onClose: () => { if (_questBoxWin === win) _questBoxWin = null; } });   // QUEST-NOTE: the press that raised it does not close it
     _questBoxWin = win;
     mountWindow(win);   // ENH-NOTICE3 (AUDIT F5): the one ladder, systems/notify.js's
   };
@@ -4206,6 +4209,9 @@ export async function bootExterior(canvas, renderer, params, status) {
     addHUDText: (t) => townTalk.say(t),
     // The tokens arrive ALREADY expanded and already chunked - Quest.cs:785.
     showPopup: (_q, tokens) => { const rows = tokensToRows(tokens); if (rows.length) showQuestBox({ rows }); },
+    // QUEST-NOTE: a quest's foe fell - the HUD strip's row (the classic skin's line), as the world host says it
+    questFoeKilled: (q, foe) => announceQuestFoeSlain({ who: questFoeName(foe), quest: q?.displayName || null,
+      done: Math.max(0, foe?.killCount | 0), of: Math.max(1, foe?.spawnCount | 0), key: `${q?.uid}|${foe?.symbol?.name ?? ''}` }, { say: (t) => townTalk.say(t) }),
     showPrompt: (q, message, respond) => showQuestBox({
       rows: tokensToRows(message.getTextTokens(-1, q.rolls)),
       buttons: 'YesNo',

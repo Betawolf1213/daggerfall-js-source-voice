@@ -260,20 +260,22 @@
   {
     "name": "HOME1-a-failure-forgets-the-town",
     "file": "src/systems/onlineHomes.js",
-    "old": "if (!Array.isArray(list)) { failed.set(id, now()); return towns.has(id); }",
-    "new": "if (!Array.isArray(list)) { failed.set(id, now()); towns.delete(id); return false; }",
+    "old": "if (!Array.isArray(list)) return fail(id);",
+    "new": "if (!Array.isArray(list)) { fail(id); towns.delete(id); return false; }",
     "tests": [
       "test/home1.test.js"
-    ]
+    ],
+    "note": "HOMES-SHED (PIN MOVED, re-aimed by content): an unanswered ask is counted by `fail`, which answers what was known - the mutant forgets the town after it, on the same branch."
   },
   {
     "name": "HOME1-no-wait-after-a-failure",
     "file": "src/systems/onlineHomes.js",
-    "old": "    if (!force && now() - (failed.get(id) ?? -Infinity) < HOME_RETRY_MS) return Promise.resolve(!!had);\n",
+    "old": "    if (!force && f && now() - f.at < homeRetryMs(f.n)) return Promise.resolve(!!had);\n",
     "new": "",
     "tests": [
       "test/home1.test.js"
-    ]
+    ],
+    "note": "HOMES-SHED (PIN MOVED, re-aimed by content): the wait is `homeRetryMs` of the failures in a row now - the mutant takes the gate that asks it away, as it took the flat one."
   },
   {
     "name": "HOME1-own-by-account",

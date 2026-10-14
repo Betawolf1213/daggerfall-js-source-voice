@@ -197,6 +197,16 @@ body .dfchat-form .dfchat-close { min-width: 32px; padding: 4px 8px; }
 .look-fontname { flex: 1 1 180px; min-width: 0; min-height: 32px; padding: 4px 8px; font-size: 15px; color: #1d150b;
   background: rgba(255,250,236,0.9); border: 2px solid rgba(125,116,96,0.6); }
 .look-fontname:focus { outline: none; border-color: #c08a3e; }
+/* FONT-PICK: the page's own list of installed fonts under the field - it scrolls (the wheel, the arrows, a finger) where the
+   browser's popup ran off the screen and took no wheel (FIELD BUGS 2026-10-13, Niri on Wayland) */
+.look-fontpick { flex: 1 1 100%; display: flex; flex-direction: column; max-height: 260px; overflow-y: auto; overscroll-behavior: contain;
+  background: rgba(12,14,18,0.96); border: 2px solid #c08a3e; }
+.look-fontpick[hidden] { display: none; }
+.look-fontcount { position: sticky; top: 0; z-index: 1; padding: 4px 8px; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--dim); background: rgba(12,14,18,0.98); border-bottom: 1px solid rgba(125,116,96,0.45); }
+.look-fontopt { flex: none; text-align: left; min-height: 30px; padding: 4px 10px; font-size: 15px; color: #d8cfae; cursor: pointer;
+  background: none; border: 0; border-bottom: 1px solid rgba(125,116,96,0.18); content-visibility: auto; contain-intrinsic-size: auto 30px; }
+.look-fontopt:hover, .look-fontopt[aria-selected="true"] { background: rgba(192,138,62,0.25); color: rgb(243,239,44); }
 .look-colour-chip { display: inline-block; width: 16px; height: 16px; box-shadow: 0 0 0 1px #050608, inset 0 0 0 1px rgba(255,255,255,0.15); }
 /* (PLUS1b's one status row under the vitals is gone - UI3: its effects and needs are the status widget's tiles,
    ui/hudStatus.js, on the quickslot block at the left edge.) */
@@ -1567,6 +1577,8 @@ export const PROF_CSS = `/* ── PROF1: THE PROFESSIONS ── */
 .notice-writ .writ-need { margin: 0; font-size: 15px; line-height: 1.3; color: #1d150b; }
 .notice-writ .writ-pay, .notice-writ .writ-left { margin: 0; font-size: 13px; color: #4a3a25; }
 .notice-writ .writ-take { display: flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 6px; font-size: 12px; color: #5a4630; }
+/* WRIT-WALL (FIELD BUGS 2026-10-13e): what is held and no writ may spend, and why - under the Take, in the card's ink */
+.notice-writ .writ-walled { margin: 0; font-size: 12px; line-height: 1.35; font-style: italic; color: #6b3a22; overflow-wrap: anywhere; }
 .notice-writ.done { opacity: 0.62; }
 /* BOARD-UI: the day's count over the cards, on its own dark strip */
 .notice-worktoday { margin: 0 4px 12px; padding: 6px 10px; font-size: 15px; letter-spacing: 0.04em; color: #e9e1cf;

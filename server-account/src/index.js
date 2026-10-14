@@ -191,13 +191,14 @@ import {
   createGuest, openSession, resolveSession, closeSession, closeAllSessions,
   devicesOf, accountView, displayName, accountKind,
   register, login, recover, changePassword, setEmail, overRate, overAccountRate,
+  newRecoveryCodes,   // RECOVERY-SET: a new set of codes from the profile
   accountWardrobe, equipTitle, equipAura, equipGlyph, buyInsignia, insigniaPurse, creditPlay, muteAccount, isMuted, mutedUntil,
   duelRecordOf, claimDuel, gateRecordOf, claimGate, legalRefusal,
   nameAsOf, wornNameOf, chooseNameAs,   // NAME-AS: the name the room reads - the account's or the character's
   ACCOUNT_MAX, ACCOUNT_WINDOW_S,
 } from './accounts.js';
 import { mintToken, mintOrder, mintRenownOrder, mintGuildOrder, mintGuildOutOrder, MAX_TTL_S, TOKEN_V, ID_RE, SEAT_TITLES, CHAPTER_TITLES, TOKEN_MAX_CHARS, TOKEN_BODY_MAX, tokenBodyOf } from '../../src/net/identityToken.js';
-import { ACCOUNT_VERSION, MAX_BODY_BYTES, ROUTES, OPEN_ROUTES, PATREON_OPEN_ROUTES, savePathOf, realmPathOf, SAVE_MAX_BYTES, SHOT_MAX_BYTES, maintaining, routeDb, d1BookmarkOf, D1_BOOKMARK_RE, d1Overloaded } from './service.js';   // SCALE4d: the routes a read replica may serve, and the session they are served on
+import { ACCOUNT_VERSION, MAX_BODY_BYTES, ROUTES, OPEN_ROUTES, PATREON_OPEN_ROUTES, savePathOf, realmPathOf, SAVE_MAX_BYTES, SHOT_MAX_BYTES, maintaining, routeDb, d1BookmarkOf, D1_BOOKMARK_RE, d1Overloaded, noteOverload, shedding } from './service.js';   // SCALE4d: the routes a read replica may serve, and the session they are served on
 import { listSaves, putCard, putBlob, getBlob, deleteSave, saveCardOf } from './saves.js';
 import { signingKey, gatePublicKey } from './signing.js';
 import { stakeCards, cashoutCards } from './cards.js';   // CARDS6: a card table's stakes, escrowed
@@ -205,6 +206,7 @@ import { deckOrderOf, claimIliac, iliacBoardOf, withIliacHonours } from './iliac
 import { titleWorn, glyphsOf, glyphsHidden, auraWorn } from './titles.js';
 import { claimArena, arenaAttempt, arenaBoardOf, arenaTeam, withArenaHonours, arenaRatingOf, ARENA_HONOUR_PATHS, ARENA_RENOWN_REGION } from './arena.js';   // ARENA4: the arena's records, its board, its banners, and the honours the mint reads
 import { arenaSeasonOf } from '../../src/net/arenaLaw.js';
+import { BUSY_RETRY_AFTER_S } from '../../src/net/busyLaw.js';   // BUSY-GATE: how long an overload answer tells a client to stand back
 import { sendLetter, inboxOf, readLetter, deleteLetter } from './letters.js';   // MAIL1: the letters' routes
 import { postBoxOf, readPost, claimPost, deletePost } from './post.js';   // SERVER-POST: the server's post
 import { reportRenownXp, renownTrackOf, renownTracksOf, renownCharacterOk } from './renownTracks.js';   // RENOWN1: Renown's track - RENOWN-CHAR: a character's again
@@ -303,6 +305,23 @@ const json = (body, status = 200, origin = '*') => new Response(JSON.stringify(b
 /** Every refusal is one word and the same shape. A client learns that
  *  it failed and not why somebody else's secret is wrong. */
 const no = (why, status, origin) => json({ error: why }, status, origin);
+/** AUDIT ONLINE A17's law, the service's one answer to a throw: LOGGED, not lost, and a player told nothing about it -
+ *  an overloaded D1 a 503 (SCALE4f: counted apart from a bug), any other a 500. HOMES-SHED (2026-10-13, the database
+ *  overloaded from 14:11 UTC): the try's catch below, and the one route above it that asks the database (the siege
+ *  blackout's question), whose throw had left the Worker as a bare 500 - no body, no log line, no metrics point. */
+const thrown = (path, e, origin) => {
+  console.error('[account]', path, e?.stack ?? String(e));
+  if (!d1Overloaded(e)) return no('server', 500, origin);
+  noteOverload(Date.now());   // BUSY-GATE: and this isolate sheds the reads a moment (service.js)
+  return overloaded(origin);
+};
+/** BUSY-GATE (net/busyLaw.js): THE OVERLOAD'S ANSWER - `server`, 503 (SCALE4f), and how long to stand back. The client's
+ *  gate holds its reads that long at least; a client from before the gate asks again on its own schedule. */
+const overloaded = (origin) => {
+  const res = no('server', 503, origin);
+  res.headers.set('retry-after', String(BUSY_RETRY_AFTER_S));
+  return res;
+};
 /** REALM P1: each realm refusal's status - a bad shape 400 (the default), a character that is not the caller's 404, a
  *  lease another tab holds or a sequence that is not the next 409 (the tab that lost it goes offline), the account's
  *  bound 409, customs refused 403/409, no storage 503. */
@@ -613,7 +632,11 @@ const service = {
     if (path === '/v1/seats/sieges/live') {
       if (request.method !== 'GET') return no('method', 405, origin);
       if (!env.DB) return no('no-database', 503, origin);
-      return json(await siegesLive(env.DB, Math.floor(Date.now() / 1000)), 200, origin);
+      try {
+        return json(await siegesLive(env.DB, Math.floor(Date.now() / 1000)), 200, origin);
+      } catch (e) {
+        return thrown(path, e, origin);   // HOMES-SHED: above the try below, so its own
+      }
     }
     if (path === '/v1/health') return json({ ok: true, v: env.ACCOUNT_VERSION || ACCOUNT_VERSION, ...(maintaining(env) ? { maintenance: true } : {}) }, 200, origin);   // RESTORE: and whether it is held for maintenance
 
@@ -676,6 +699,9 @@ const service = {
     const db = routeDb(env.DB, path, request.method, d1BookmarkOf(request));
     if (db !== env.DB) held.session = db;
     const ctx = { db, primary: env.DB, subtle, rand, nowS };   // SCALE4g: `primary` the binding, for a read-then-store a session must not make (board.js)
+    // BUSY-GATE (service.js shedding): A READ THIS ISOLATE SHEDS, having just met an overloaded database, is answered as
+    // the overload is - before the session's lookup or any statement of its own
+    if (shedding(path, request.method, Date.now())) return overloaded(origin);
 
     try {
       // PATREON-LINK: THE THREE DOORS A BROWSER AND PATREON KNOCK AT. No session: each is proven by what it carries
@@ -761,8 +787,8 @@ const service = {
           return r.error ? no(r.error, r.error === 'rate' ? 429 : 401, origin) : json(r, 200, origin);
         }
         // /v1/auth/recover
-        const r = await recover(ctx, { handle: body.handle, code: body.code, password: body.password });
-        return r.error ? no(r.error, r.error === 'rate' ? 429 : 401, origin) : json(r, 200, origin);
+        const r = await recover(ctx, { handle: body.handle, code: body.code, password: body.password, set: body.set === true });   // RECOVERY-SET: a set for a build that asks
+        return r.error ? no(r.error, r.error === 'rate' ? 429 : r.error === 'codes-moved' ? 409 : 401, origin) : json(r, 200, origin);   // AUDIT RECOVERY-SET A4
       }
 
       // EVERY ROUTE BELOW NEEDS A SECRET, and resolving it is the same
@@ -1753,13 +1779,20 @@ const service = {
         // where it becomes the account the request means.
         const refused = legalRefusal(body);
         if (refused) return no(refused.error, 400, origin);
-        const r = await register(ctx, who.player.id, { handle: body.handle, password: body.password, legal: { terms: body.terms, privacy: body.privacy } });
+        const r = await register(ctx, who.player.id, { handle: body.handle, password: body.password, legal: { terms: body.terms, privacy: body.privacy }, set: body.set === true });   // RECOVERY-SET: a set for a build that asks
         return r.error ? no(r.error, 400, origin) : json(r, 200, origin);
       }
 
       if (path === '/v1/account/password' && request.method === 'POST') {
         const r = await changePassword(ctx, who.player, who.session, { oldPassword: body.oldPassword, password: body.password });
         return r.error ? no(r.error, r.error === 'rate' ? 429 : r.error === 'bad-login' ? 401 : 400, origin) : json(r, 200, origin);
+      }
+
+      if (path === '/v1/account/recovery-codes' && request.method === 'POST') {
+        // RECOVERY-SET: a NEW set of recovery codes, behind the password and one current code (AUDIT RECOVERY-SET A1) -
+        // shown once, the old set dead with the write
+        const r = await newRecoveryCodes(ctx, who.player, { password: body.password, code: body.code });
+        return r.error ? no(r.error, r.error === 'rate' ? 429 : r.error === 'bad-login' || r.error === 'bad-code' ? 401 : r.error === 'codes-moved' ? 409 : 400, origin) : json(r, 200, origin);
       }
 
       if (path === '/v1/account/email' && request.method === 'POST') {
@@ -1998,10 +2031,7 @@ const service = {
       // a path this service serves, reached with a method it does not
       return no('method', 405, origin);
     } catch (e) {
-      // AUDIT ONLINE A17's law, on this side too: an uncaught error is
-      // LOGGED, not lost, and a player is told nothing about it.
-      console.error('[account]', path, e?.stack ?? String(e));
-      return no('server', d1Overloaded(e) ? 503 : 500, origin);   // SCALE4f: an overloaded primary counted apart
+      return thrown(path, e, origin);   // AUDIT ONLINE A17's law, on this side too; SCALE4f: an overloaded primary counted apart
     }
   },
 };
