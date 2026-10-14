@@ -1868,4 +1868,3 @@ export class LivingTown {
     return s === 'enemy' || s === 'hostile' ? fillLine(LIVING_REFUSAL, { a: firstNameOf(person.nameNPC) }) : null;
   }
 }
-

@@ -34,3 +34,21 @@ test('ROADS-MISS: an unready roads word is asked once a tick however many reside
   assert.ok(known.size > 0, 'the word asked once it was ready');
   for (const [d, n] of known) assert.equal(n, 1, `day ${d}: once known, kept by the day`);
 });
+
+test('ROADS-MISS: the miss is the tick\'s alone - a read outside a tick (peopleOf) asks the host again and is answered (mutant: the miss kept past its tick)', () => {
+  const { nav, buildings, doors } = synthTown();
+  const clock = { t: 100 * DAY_MIN + DAY_START_MIN + 10 * 60 };
+  let asks = 0, ready = false;
+  const town = new LivingTown(nav, {
+    town: { mapId: 12345, blocks: 9, region: 17, people: 3, port: false }, buildings, doors,
+    makePerson: (archive, guard) => new ResidentWalker(nav, { archive, guard, frameCount: () => 4, groundY: () => 0 }),
+    clock: () => clock.t, rate: () => CLASSIC_MINUTES_PER_SECOND, mpm: PERSON_MOVE_SPEED / CLASSIC_MINUTES_PER_SECOND,
+    tripsOf: () => { asks++; return ready ? { away: new Map(), visitors: [] } : undefined; },
+  });
+  town.update(0.3, [0, 0, 0], 0, [0, 1.6, 0], true);
+  const before = asks;
+  assert.ok(before >= 1, 'the tick asked');
+  ready = true;
+  town.peopleOf(town.dayOf(clock.t));
+  assert.equal(asks, before + 1, 'asked again outside the tick, not answered by the tick\'s miss');
+});
