@@ -190,7 +190,7 @@ import { tryMobileEnemyActivate } from '../player/mobileEnemyActivate.js';
 import { FOUND_NOTHING_VALUABLE_TEXT_ID } from '../systems/talk.js';   // GetRandomText(8999)
 import { preloadCharSheetArt } from '../ui/charsheet.js';   // AUDIT 44 (a11): a level-up opens the SHEET (dfuiOpenCharacterSheetWindow), through this host's makeCharSheetWindow
 import { createCharSheetWindow, charSheetDoorReady, warmLevelUpWindow } from '../ui/charSheetDoor.js';
-import { announceLevelUp, levelOwed } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
+import { announceLevelUp, levelOwed, announceQuestFoeSlain, questFoeName } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
 import { restDecision, getPreventedRestMessage } from '../systems/restSession.js';   // U48: the DISPATCH (DaggerfallUI.cs:651-688) above the rest window   // ROAD-B B5: GetPreventedRestMessage
 import { preloadQuestJournalArt } from '../ui/questJournal.js';   // U43: the LogBook and NoteBook doors   // QX1 dropped the unused `QuestJournalWindow` beside it - the classic window is reached through the chronicle door, never constructed here
 import { createChronicleWindow } from '../ui/chronicleDoor.js';   // QX1/PX24d: the chronicle's ONE door - the skin fork lives behind it, and its classic arm IS the art gate
@@ -3992,7 +3992,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   const _liveQuestOverlay = (win) => (modes?.questOverlay ?? null) === win || (townTalk?.overlay ?? null) === win;
   const showQuestBox = (box) => {
     if (_questBoxWin && !_questBoxWin.done && _liveQuestOverlay(_questBoxWin)) { _questBoxWin.push([box]); return; }
-    const win = new ServiceFlowWindow([box], { onClose: () => { if (_questBoxWin === win) _questBoxWin = null; } });
+    const win = new ServiceFlowWindow([box], { graceMs: 600, onClose: () => { if (_questBoxWin === win) _questBoxWin = null; } });   // QUEST-NOTE: the press that raised it does not close it
     _questBoxWin = win;
     mountWindow(win);   // ENH-NOTICE3 (AUDIT F5): the one ladder, systems/notify.js's
   };
@@ -4209,6 +4209,9 @@ export async function bootExterior(canvas, renderer, params, status) {
     addHUDText: (t) => townTalk.say(t),
     // The tokens arrive ALREADY expanded and already chunked - Quest.cs:785.
     showPopup: (_q, tokens) => { const rows = tokensToRows(tokens); if (rows.length) showQuestBox({ rows }); },
+    // QUEST-NOTE: a quest's foe fell - the HUD strip's row (the classic skin's line), as the world host says it
+    questFoeKilled: (q, foe) => announceQuestFoeSlain({ who: questFoeName(foe), quest: q?.displayName || null,
+      done: Math.max(0, foe?.killCount | 0), of: Math.max(1, foe?.spawnCount | 0), key: `${q?.uid}|${foe?.symbol?.name ?? ''}` }, { say: (t) => townTalk.say(t) }),
     showPrompt: (q, message, respond) => showQuestBox({
       rows: tokensToRows(message.getTextTokens(-1, q.rolls)),
       buttons: 'YesNo',

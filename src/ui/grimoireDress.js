@@ -1168,6 +1168,27 @@ ${G} .hud-compass[data-hm-turn] .hud-strip { top: var(--gcm); bottom: calc(2 * v
   background-position-y: calc(0.5 * var(--gcm)); }
 ${G} .hud-compass .hud-point { visibility: hidden; }
 ${G} .hud-needle { display: none; }
+/* GRIM-MARKS (2026-10-13, field video: "what are those colored edges, the blue and greenish ones"): the strip's marks
+   (ui/enhancedHud.js - Detect, the party, the professions' nodes, a ship, a boat, the gate, the quest) are laid by
+   left: 0..100% OF THE COMPASS BOX and stood on its foot. Here the box is the wooden frame, the parchment two --gcm in
+   from each side and one up from the foot, and the frame (::after, z 3) sits over all of it - so every mark ON the strip
+   was buried under the wood, and a mark clamped to an end (a node or a mate BEHIND you: compassMarkerLerp's clamp) hung
+   half out past the frame's corner as a stray coloured wedge - the Motherlode's teal, Logging's sap green. The box is
+   now the parchment's open span (less --gcm-mark each side: clear of the rim's corners, and the widest mark's half - the
+   boat's 7px - so an end mark stands whole) and the frame and the strip reach back out to where they always stood:
+   nothing on screen moves, and the marks' 0..100% is the strip's. The foot is the dome's curve ("you can't run the
+   markers on the bottom"), so the triangles hang from the box's FLAT side - its top, where the needle hangs, pointing
+   down at the bearing as the needle does - and turned over (dome up) they stand on its flat foot. A ship's bow rides
+   the row just under them. All over the frame's rim. */
+${G} .hud-compass { --gcm-mark: calc(3 * var(--gcm) + 7px); width: calc(69 * var(--gcm) - 2 * var(--gcm-mark)); margin-left: var(--gcm-mark); margin-right: var(--gcm-mark); }
+${G} .hud-compass::after { left: calc(-1 * var(--gcm-mark)); right: calc(-1 * var(--gcm-mark)); }
+${G} .hud-compass .hud-strip { left: calc(2 * var(--gcm) - var(--gcm-mark)); right: calc(2 * var(--gcm) - var(--gcm-mark)); }
+${G} .hud-compass > .hud-temp:not(.temp-hung) { margin-left: var(--gcm-mark); }
+${G} .hud-compass .hud-detect, ${G} .hud-compass .hud-party, ${G} .hud-compass .hud-node { top: calc(2 * var(--gcm)) !important; bottom: auto !important; z-index: 4; }
+${G} .hud-compass .hud-ship { top: calc(2 * var(--gcm) + 6px) !important; z-index: 4; }
+${G} .hud-compass .hud-boat, ${G} .hud-compass .hud-gate, ${G} .hud-compass .hud-serpent, ${G} .hud-compass .hud-sd, ${G} .hud-compass .hud-quest { z-index: 4; }
+${G} .hud-compass[data-hm-turn] .hud-detect, ${G} .hud-compass[data-hm-turn] .hud-party, ${G} .hud-compass[data-hm-turn] .hud-node { top: auto !important; bottom: calc(2 * var(--gcm)) !important; }
+${G} .hud-compass[data-hm-turn] .hud-ship { top: auto !important; bottom: calc(2 * var(--gcm) + 6px) !important; }
 
 /* THE HOTBAR - a row of the inventory's shelf boxes; the key in yellow on the lip, what is in hand framed in gold */
 ${G} .hb .hb-slot { background: rgba(14,8,3,0.82); border-image: ${v('cubby')} 5 5 7 6 fill / ${px(5, 'gq')} ${px(5, 'gq')} ${px(7, 'gq')} ${px(6, 'gq')} stretch;

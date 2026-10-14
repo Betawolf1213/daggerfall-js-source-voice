@@ -1783,6 +1783,7 @@ mods.worldEventsRaidingParties.Enabled.description,"Lovagok, banditák vagy orko
 mods.worldOfDaggerfall.Enabled.description,"Több felfedeznivaló a vadonban: banditatáborok és erődök, romok, szentélyek, hegyek és sziklamezők szerte az Iliac Bay vidékén, banditákkal, medvékkel és kincsekkel, valamint egy tábor a Privateer’s Hold előtt."
 mods.worldTooltips.Enabled.description,"Név a célkereszt alatt arról, amire nézel: személy, bolt és nyitvatartása, ajtó és zárja, hová vezet egy kijárat, kar, kerék, létra, könyvespolc, megidézésre váró daedra. Kikapcsolva is látod, mit rejt egy láda vagy egy test."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Bekapcsolva nem ad alapértelmezett jelzést azokon a használható tárgyakon, amelyeket titkosnak szántak, különösen a fősztori rejtvényeinél."
+naval.yard.grogDrunk,"A legénysége hangulata {spirits, select, roaring {harsány} high {emelkedett} steady {kiegyensúlyozott} low {lehangolt} other {komor}} - a mai kört már megkapták"
 net.mod.ambiguous,"{count} játékost hívnak {name} néven. Senkit sem némítottunk."
 net.mod.chatAgain,"Újra cseveghetsz."
 net.mod.muteRange,"A némítás 1–{max} perc (egy hét)."

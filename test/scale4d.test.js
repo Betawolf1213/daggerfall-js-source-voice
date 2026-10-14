@@ -84,8 +84,10 @@ test('SCALE4d every other route stays on the binding - no session opened (mutant
     const r = await S.call(path, body, who.secret);
     assert.equal(r.status, 200, `${path} answered (${JSON.stringify(r.body)})`);
   }
-  const lineages = await S.fetch('https://accounts.invalid/v1/realm/lineages', { method: 'POST', headers: { authorization: `Bearer ${who.secret}`, 'content-type': 'application/json' }, body: '{}' });
-  assert.equal(lineages.status, 200, 'the realm\'s lines answered');
+  // PIN MOVED (DISPLAY-REPLICA, 2026-10-13): the realm's lines ride a session now (test/display_replica.test.js) - a
+  // town's yards, which an isolate keeps for every caller, stay on the binding
+  const yards = await S.fetch('https://accounts.invalid/v1/homes/yards', { method: 'POST', headers: { authorization: `Bearer ${who.secret}`, 'content-type': 'application/json' }, body: '{"mapId":1}' });
+  assert.equal(yards.status, 200, 'a town\'s yards answered');
   assert.equal(raw._sessions.length, 0, 'no session for any of them');
 });
 

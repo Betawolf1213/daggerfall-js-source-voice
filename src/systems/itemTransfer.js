@@ -162,9 +162,16 @@ export function sendQuestItemClick(item, getQuest = null) {
  * THIS IS THE ONE RUNG THAT WRITES, which is why `planStore` and
  * `planTake` take a `dryRun` - see there.
  */
-export function questTransferRefused(item, { fromLocal, toWagon = false, getQuest = null } = {}) {
+export function questTransferRefused(item, { fromLocal, toWagon = false, getQuest = null, trade = false } = {}) {
   if (!item?.questItem) return false;
-  const questItem = getQuest?.(item.questUID)?.getItem?.(item.questSymbol) ?? null;
+  const quest = getQuest?.(item.questUID) ?? null;
+  const questItem = quest?.getItem?.(item.questSymbol) ?? null;
+  // QUEST-SHELF-DROP (2026-10-13, the lead dev: "when a player abandoned a quest he cant throw away the questitem for
+  // it"): A QUEST SET ASIDE HOLDS NO ITEM - its item may leave the pack (the ground, a chest, the wagon), and nothing is
+  // written to the quest, which is not running. Reclaimed, an item it had in the pack is handed back if it is gone
+  // (machine.js reclaimQuest). NEVER TO A COUNTER (`trade`): a shop would buy an item reclaiming hands back again; and
+  // never one the quest made permanent - that one outlives the quest, and a second copy would too.
+  if (!trade && fromLocal && quest?.shelvedAt != null && questItem && !questItem.madePermanent) return false;
   // "Player cannot drop most quest items unless enabled" (:1486-1494).
   // GUI/CanDropQuestItems ships False in both codebases.
   if (!getBool('GUI', 'CanDropQuestItems')) {

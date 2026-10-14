@@ -446,6 +446,9 @@ The code is minted at registration, shown **once**, and stored exactly
 as the password is: hashed, salted, unreadable on this side. Spending it
 sets a new password **and mints a new one**, because a player left with
 no way back in has simply had the same cliff moved one step away.
+(RECOVERY-SET, 2026-10-14, made the one code a set of eight for a build
+that asks, each spent alone, with a new set from the profile behind the
+password and one current code - the section of that name below.)
 
 **REGISTERING IS AN UPGRADE IN PLACE.** The guest row *is* the account —
 ACC0's wall again — so a handle and a password are two columns filling
@@ -1112,7 +1115,10 @@ and this side has no sentence for reddens. That is how `not-found` and
   completely optional, so there is no reset link and this code *is* the
   reset. It is never written to storage, the only way off that stage is
   an explicit *"I have written it down"*, and a second way off would be
-  a way to lose an account by taking it.
+  a way to lose an account by taking it. (RECOVERY-SET: a set of codes
+  now, with Copy and Save as a file beside it - neither leaves the stage;
+  AUDIT RECOVERY-SET B1: and the host's Close, Escape and a tap outside
+  no longer do.)
 - **A password is sent exactly as typed.** The handle is trimmed; a
   password is not. Trimming here while the service hashes what it was
   sent is a login that works from this client and fails from every other.
@@ -3868,8 +3874,8 @@ owner out. So the way back is the operator's, and it is the player's own recover
    Founder (`created_at`) are untouched. A handle that matches no account fails the run and changes nothing. It shares
    the deploy's queue, so it never runs beside a migration.
 4. **The player recovers.** In "Forgot password", the player enters the handle and the code, then picks a new password.
-   `recover` mints a new code that only the player sees, and signs every device out. That spends the code the operator
-   saw.
+   `recover` mints new codes that only the player sees - eight on a build that has the set, one on a build from before
+   it (RECOVERY-SET) - and signs every device out. That spends the code the operator saw.
 
 - The inputs reach the scripts as environment, never pasted into a `run:` line. The statement is the tool's own, and
   the tool refuses anything that is not a username or not a hash exactly as it wrote one. A quote in a username is
@@ -5540,3 +5546,111 @@ guild's tag after the name - the roster row's own order - and the title is worn 
 `net/remotePlayers.js`, the travel view's) and on the Inspect card (`ui/profileWindow.js`). A letter's sender line keeps
 its title: a letter is the letterbox's, not the chat. The record and its pins are `06-Systems/Chat-Roster-And-Names.md`
 TITLE-C.
+
+## RECOVERY-SET - eight recovery codes, each spent alone, and a new set from the profile (2026-10-14, acct131)
+
+The request: *"I want players to be able to click and see their account recovery code in their profile instead of it
+being a one off thing"*. The service keeps only a code's hash (ACC1c), so it cannot show a code again. Two ways were
+offered - a new code from the profile behind the password, or the code kept encrypted and shown again - and the first
+was chosen; then, asked whether a better system was wanted, three layers were offered (a set of codes in the profile,
+passkeys, an emailed reset for players who gave an address) and the answer was *"Lets just do #1"*. AUDIT RECOVERY-SET
+(below) found the first cut's new set needed only the password; asked, Mac chose *"Password + one code"*.
+
+**WHAT SHIPS.** A build that has the set asks for it (`set: true` on register and recover), and its registration
+mints a SET of eight codes. Each one opens the account once: a recovery spends the code typed, the set's others still
+work, and the answer says how many are left (`codesLeft`), which the card says as it lands signed in. The LAST code of
+a set, or a single code from before the set, mints a fresh eight in its place, shown on the `code` stage - the cliff
+ACC1c would not ship is still not shipped. The profile's Account section carries a **Recovery codes** row - how many
+are left (the account view's `recoveryLeft`, a count and never a code) and **Make new codes** beside it, offered only
+where the service counts them (a service before acct131 has no route to make them). That opens the `codes` stage: the
+current password AND one of the current codes, then a new set, shown once. The code typed is spent with the old set by
+the same write, and no device is signed out - nothing about who holds the account moved. A row holding no codes is
+asked the password alone, having nothing to kill. The `code` stage numbers the codes, each in its own `<code>` so one
+click takes one whole, one to a line at every width, and offers **Copy** and **Save as a file**
+(`dfo-recovery-codes-<username>.txt`, a code a line, numbered as the card numbers them) beside *"I have written them
+down"* - the one way off it: the window offers no Close there, and neither Escape nor a tap outside closes it.
+
+**A BUILD FROM BEFORE THE SET** asks for nothing and is answered as ACC1c answered it: registering, one code at the
+password's cost; recovering, one new code that replaces whatever the row held. It can show no other, and a set it
+cannot show is a set its player does not have.
+
+**THE SAME COLUMN, NO MIGRATION.** `recovery_hash` holds `codes,<hash>,<hash>,...`, each `<hash>` password.js's own
+self-describing PBKDF2 form (base64 and `$`, never a comma), or - written by a build from before the set, by ACC1c, or
+by RECOVER-OP (`tools/reissueRecoveryCode.mjs`) - one PBKDF2 string, which opens the account as the one code it is.
+The operator's reissue needs no change, and a player it is issued for comes back to a fresh set (or, on an old build,
+a fresh code).
+
+**AT THE CODE'S COST, NOT THE PASSWORD'S.** Each code of a set is salted and derived at `RECOVERY_CODE_ITERS` -
+10,000, the "typically at least 10,000" NIST SP 800-63B's KDF section names for a look-up secret under 112 bits - not
+the password's 100,000. The iterations slow a guess at something a person CHOSE; a minted code is 100 random bits, and
+nobody guesses 2^100 at any speed. Eight cost less than one password.
+
+**THE SAME WORK FOR EVERY ROW.** `matchRecoveryCode` always runs one derivation at the password's cost (the single
+code, or a throwaway) and eight at the code's (the set's, or throwaways), whatever the row holds and whether there is
+a row at all - ACC1c's law that a handle nobody holds costs what a wrong code costs, kept now that rows come in two
+shapes, and pinned where `recover` does it. `verifyPassword` takes the throwaway's cost so a stand-in costs what the
+row it stands for would. (Open: a single code written at another iteration count would cost differently from a stand
+-in; none is written today, but raising PBKDF2_ITERS must rehash such rows or cost their stand-ins as they do.)
+
+**THE PASSWORD AND A CODE GUARD THE NEW SET.** `newRecoveryCodes` is `changePassword`'s door - a stolen device must not
+mint itself the account's way back in, and a guess at the password through it spends LOGIN's bucket (AUDIT 68
+S01-changepw-unthrottled-oracle) - and a guess at the code spends RECOVER's, each forgiven by a right answer. **THE
+WRITE IS THE AUTHORITY** (AUDIT 68 S01-register-recover-lost-update): it lands only on the row as it was read
+(`recovery_hash IS ?`), so two presses racing cannot both answer a set while only the second's works, and two of a
+set's codes recovering at once cannot both spend - the loser hears `codes-moved` (409), a sentence of its own that
+does not call a right code wrong.
+
+**Not done, and offered:** passkeys (Face ID, a fingerprint, Windows Hello) as a second way in, and an emailed reset for
+the players who chose to give an address - each its own slice if it is wanted.
+
+Pinned by `test/recoveryset.test.js` (17), `test/audit_recoveryset.test.js` (15) and the moved pins of ACC1c, ACC1e
+and AUDIT 68 (`accountworker`, `accountflow`, `enhancedaccount`, `audit68_backend`) and of TERMS1 (`terms1`);
+`tools/mutants/recoveryset.json` (47: 44 dead, three recorded equivalent - guards no writer reaches) and
+`tools/mutants/audit_recoveryset.json` (47, all dead).
+
+## AUDIT RECOVERY-SET (2026-10-14, "Audit this")
+
+Three cold lanes over RECOVERY-SET as pushed (7ce77a95b7) - the service and its security; the client, its card and its
+host; the pins, the mutants and the records - each reading the tree only, nothing touched while they read, and every
+finding reproduced before it was paid.
+
+**Paid.**
+- **A1 (severe) - a stolen password took the account for good.** The new set needed only the password, so whoever had
+  it could kill the owner's codes, then change the password: the owner's every code refused, the thief signed in -
+  the one thing a recovery code exists to undo (before the set, the owner's code always took the account back). Asked,
+  Mac chose *"Password + one code"*: a row holding codes asks for one of them, spent by the same write; a row holding
+  none asks the password alone. A player who has lost every code is where they were before the set - their password,
+  and RECOVER-OP.
+- **B1 / C8 (severe) - a new set could be put away unseen.** The host passed a Close, drawn on every stage, so the
+  `code` stage had a second way off - after "Make new codes" had already killed the old set - and Escape, a tap outside
+  and a boot resize (every `render()` built the flow anew) did the same. The code stage offers no Close, Close is held
+  while a press is out, every door out of the window is `closeAccount` (which will not close over codes or a press),
+  and the flow is the window's: built when there is none, started once, kept across renders.
+- **A2 - an older build was left holding no code.** A desktop build from before the set read only `recoveryCode`: shown
+  one code of eight at registration, and after one recovery an empty code stage over seven codes it never saw. A build
+  that has the set asks for it; one that does not is answered as ACC1c answered it.
+- **B2 - codes broke before their last letter** on a 421-480px phone and in the desktop window (the single code's 0.22em
+  tracking, the number beside it): above a phone too each code keeps to one line, in one column. The probe now checks
+  every width from 320 to 1280 in the skin's face and the fallback.
+- **B3 - a fifth press in the window's foot** took the sticky foot to three rows (225px of a 667px phone). The codes'
+  row and its press stand in the Account section, as the Patreon row does.
+- **A3 (records the probe)** `npm run account` drove the old law and failed against the first cut; it passes again
+  (a build that asks for nothing is answered as before). **A4** - two of a set's codes recovering at once: the loser,
+  whose code was right, was told it was wrong; it hears `codes-moved`. **A5** - 1000 iterations was parseStored's floor,
+  not the NIST figure the record cited; 10,000. **B4** - "Copied." outlived the codes onto the next card, and a
+  clipboard answering late spoke there; `say` speaks only on `code`, and the acknowledgement clears it. **B5** - "I have
+  written it down" under a set: "them", in all thirteen languages. **B6** - the saved file named the account as typed;
+  it names it as the row does. **B7** - "Saved as" before anything was saved: "Saving as".
+- **C1-C5, C9-C11 (pins)** - the register path pinned only with the old answer's shape; `acknowledgeCode`'s drop
+  recorded equivalent and not (the codes stayed in memory while the account was read); LOGIN's bucket, a right
+  answer's forgiveness, the routes' 429 and 409, recover's same work for nobody, the card's numbering and refusals, the
+  file's URL and link, a guest's null - each claimed and none failed by a mutant. Each pinned now; dead guards recorded
+  equivalent or removed.
+- **C6, C7, C13-C15 (records)** - stale titles, two stale Testing.md rows, stale comments (password.js, accountClient's
+  docblocks, the card's, `tools/reissueRecoveryCode.mjs`'s words to the operator, the recovery workflow's, RECOVER-OP's
+  step 4), the version line's convention, a misattributed pin file and a misquote - each made true.
+
+**Open.** A6: a single code at another iteration count would cost differently from a stand-in (above). B8: the codes'
+press is hidden for a registered row with no codes - none exists. B9: `tools/accountCardProbe.mjs`'s three font checks
+fail on main as on this branch (they expect the launcher's faces; the skin is Pixelify since L10N3d). B10: on the
+`codes` stage a wrong password is told "That username and password do not match", as the `password` stage is.

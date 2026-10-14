@@ -56,20 +56,57 @@ const EDITOR_FLAT_ARCHIVE = 199;
 const SPAWN_MARKER_RECORD = 11;
 const ITEM_MARKER_RECORD = 18;
 
+/**
+ * QUEST-CAPS (2026-10-14, Dudey: "almost every quest has problems to spawn enemies inside dungeons ... since we have
+ * smaller, regular and large dungeons. Quest enemies being placed outside of the rooms and halls"): A RE-LAID DUNGEON'S
+ * QUEST MARKERS ARE ITS INTERIOR BLOCKS'. A border block (its name begins B - GetRandomBlock's own test) is a cap of
+ * rock Daggerfall closes a layout with, set where its one way in meets the dungeon; its other pockets no corridor
+ * reaches (SD-REACH, world/sdDungeon.js SD_BORDER_BLOCK_RE). The small plus and the medium size draw their caps at
+ * random round the interior (GenerateSmallerDungeon's law), so a cap's quest marker there is all but always sealed -
+ * and the caps are four blocks of five and six of eight, so most of a quest's markers were. On such a build (the clone
+ * says its size: `smaller`, `medium`) a dungeon Place enumerates its interior blocks' markers alone, while they hold
+ * any; a build whose interior holds none keeps every marker, as before. The whole dungeon (Daggerfall's own layout,
+ * its caps where its makers set them) is DFU's enumeration, untouched. A quest already standing a target in a cap is
+ * laid again at the dungeon's next mount by the net that exists for it (questRepair.js relayBuiltDungeon: a target on
+ * a marker the build's enumeration no longer yields). Not a DFU member.
+ */
+export const QUEST_CAP_BLOCK_RE = /^b/i;
+/** QUEST-CAPS: whether this location's quest markers leave its border blocks out - a re-laid build whose interior
+ *  blocks hold at least one quest marker (spawn or item). */
+export function questCapsSkipped(world, location) {
+  const d = location?.dungeon;
+  if (!d || (d.smaller !== true && d.medium !== true)) return false;
+  for (const b of d.blocks ?? []) {
+    if (QUEST_CAP_BLOCK_RE.test(b?.blockName ?? '')) continue;
+    const blockData = world?.getBlock?.(b.blockName);
+    for (const group of blockData?.rdbBlock?.objectRootList ?? []) {
+      for (const obj of group?.rdbObjects ?? []) {
+        if (obj?.type !== RDB_RESOURCE_TYPES.Flat) continue;
+        const flat = obj.resources?.flatResource;
+        if (flat?.textureArchive === EDITOR_FLAT_ARCHIVE && (flat.textureRecord === SPAWN_MARKER_RECORD || flat.textureRecord === ITEM_MARKER_RECORD)) return true;
+      }
+    }
+  }
+  return false;
+}
+
 /** FIELD BUGS 29h (BOUNTY-LAIR): WHERE DFU STANDS A DUNGEON QUEST'S FOE - every quest spawn marker (199.11, the records
  *  EnumerateDungeonQuestMarkers :1522 collects) of a laid-out dungeon, in its scene's frame: the marker's place under its
  *  block's origin, as markerScenePosition puts a mounted one and collectDungeonEnemies an enemy's. `blocks` is the
  *  dungeon context's own (world/rdbLayout.js markers - archive-199 flats carry no archive, a treasure flat carries its
  *  216). */
 export function dungeonQuestSpawnSpots(blocks) {
-  const spots = [];
+  const spots = [], inner = [];
   for (const b of blocks ?? []) {
+    const cap = QUEST_CAP_BLOCK_RE.test(b?.name ?? '');   // QUEST-CAPS: a border block's pockets are no lair
     for (const m of b?.layout?.markers ?? []) {
       if ((m.archive ?? EDITOR_FLAT_ARCHIVE) !== EDITOR_FLAT_ARCHIVE || m.record !== SPAWN_MARKER_RECORD) continue;
-      spots.push([m.x + b.originX, m.y, m.z + b.originZ]);
+      const p = [m.x + b.originX, m.y, m.z + b.originZ];
+      spots.push(p);
+      if (!cap) inner.push(p);
     }
   }
-  return spots;
+  return inner.length ? inner : spots;
 }
 
 // Place.cs:621-623 - the wildcard building-type sets (exported so the
@@ -1116,8 +1153,16 @@ export class Place extends QuestResource {
    *  markerID = block position + object position (the classic marker
    *  identity), block X/Z carried for layout. */
   _enumerateDungeonQuestMarkers(world, location) {
+    // QUEST-CAPS: a RE-LAID dungeon (the small plus, the medium size - world/smallerDungeons.js, the clone says its size)
+    // keeps its quest markers out of its border blocks while an interior block holds one (questCapsSkipped)
+    if (questCapsSkipped(world, location)) return this._enumerateDungeonQuestMarkersOf(world, location, true);
+    return this._enumerateDungeonQuestMarkersOf(world, location, false);
+  }
+  /** QUEST-CAPS: the enumeration's body; `interiorOnly` leaves the border blocks (names beginning B) out. */
+  _enumerateDungeonQuestMarkersOf(world, location, interiorOnly) {
     const spawn = [], item = [];
     for (const dungeonBlock of location.dungeon?.blocks ?? []) {
+      if (interiorOnly && QUEST_CAP_BLOCK_RE.test(dungeonBlock.blockName ?? '')) continue;
       const blockData = world.getBlock(dungeonBlock.blockName);
       if (!blockData) continue;
       for (const group of blockData.rdbBlock.objectRootList ?? []) {
@@ -1151,10 +1196,13 @@ export class Place extends QuestResource {
     const sd = this.siteDetails;
     if (sd.selectedMarker.targetResources !== null) {
       if (markerIndex > -1) {
+        // QUEST-CAPS: a re-laid dungeon enumerates fewer markers (its caps' left out) - an index past the list's end
+        // takes the list round (DFU's index is into the whole layout's list, and past its end it threw)
+        const nth = (list) => (list?.length && markerIndex >= list.length ? list[markerIndex % list.length] : list[markerIndex]);
         if (resource.isPerson || resource.isFoe || markerIndexPreference === MARKER_PREFERENCE.UseQuestMarker) {
-          assignResourceToMarker(resource.symbol.clone(), sd.questSpawnMarkers[markerIndex]);
+          assignResourceToMarker(resource.symbol.clone(), nth(sd.questSpawnMarkers));
         } else if (resource.isItem) {
-          assignResourceToMarker(resource.symbol.clone(), sd.questItemMarkers[markerIndex]);
+          assignResourceToMarker(resource.symbol.clone(), nth(sd.questItemMarkers));
         }
         return false;
       }

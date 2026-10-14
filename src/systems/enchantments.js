@@ -384,16 +384,24 @@ const mendsOnPool = (it) => it.group === 'Weapons' && !it.magic && !it.artifact;
  *  torch first in the pack was refuelled as it burned. An enchanted piece only under AllowMagicRepairs
  *  (RepairsObjects.cs:93). */
 export function repairsObjectsTarget(items, { allowMagicRepairs = false } = {}) {
-  let best = null;
+  let best = null, bestWears = false;
   for (const it of Array.isArray(items) ? items : []) {
     if (!it || !Number.isFinite(it.currentCondition) || !Number.isFinite(it.maxCondition) || !(it.currentCondition < it.maxCondition)) continue;
     if (templateByIndex(it.templateIndex)?.isNotRepairable) continue;
     if (isEnchantedItem(it) && !allowMagicRepairs) continue;
     if (it.templateIndex === TRANSPORT_SMALL_CART || it.templateIndex === TRANSPORT_HORSE) continue;   // AUDIT WAGONS4: a wagon's condition is its upkeep - a Wagon Yard's or a kit's, never a held enchantment's (DFU's wagon never wore)
-    if (!best || mendOrder(it, best) < 0) best = it;
+    // FIELD BUGS 2026-10-14 MEND-STARVE: a worn piece that wears itself on the round the tick mends (Cast When Held's
+    // degrade, Item Deteriorates) is mended last - first in the order it took every tick, +1 and -1 on the same round,
+    // and nothing else was ever mended
+    const wears = wearsItself(it);
+    if (!best || (wears ? 1 : 0) - (bestWears ? 1 : 0) < 0 || (wears === bestWears && mendOrder(it, best) < 0)) { best = it; bestWears = wears; }
   }
   return best;
 }
+/** MEND-STARVE: a WORN piece whose own held enchantment wears it a point on the rounds Repairs Objects mends - Cast When
+ *  Held (CastWhenHeld.cs:27, HELD_DEGRADE_RATE) and Item Deteriorates (ItemDeteriorates.cs:29). */
+const wearsItself = (it) => it.equipSlot != null
+  && !!itemEnchantments(it)?.some((e) => e.type === ENCHANTMENT_TYPES.CastWhenHeld || e.type === ENCHANTMENT_TYPES.ItemDeteriorates);
 
 // ---- the payload registry -------------------------------------------
 // One row per classic type: the payload flags VERBATIM from each

@@ -92,3 +92,18 @@ export async function installedFamilies(win = globalThis) {
   } catch { return []; }
 }
 export const canListFonts = (win = globalThis) => typeof win?.queryLocalFonts === 'function';
+
+/**
+ * FONT-PICK (FIELD BUGS 2026-10-13, a player on Gentoo / Niri, Wayland: "the font selector ... has no scrolling ability ...
+ * I have 376 fonts"): the families the picker shows for what is typed - every one whose name holds the typed text (case
+ * aside), those that BEGIN with it first, each group in the list's own order; the whole list for nothing typed, or for
+ * exactly the name already worn (the field opens on it).
+ * @param {string[]} families @param {string} typed
+ */
+export function fontMatches(families, typed) {
+  const q = String(typed ?? '').trim().toLowerCase();
+  if (!q || families.some((f) => f.toLowerCase() === q)) return [...families];
+  const starts = [], holds = [];
+  for (const f of families) { const n = f.toLowerCase(); if (n.startsWith(q)) starts.push(f); else if (n.includes(q)) holds.push(f); }
+  return [...starts, ...holds];
+}
