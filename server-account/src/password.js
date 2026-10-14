@@ -20,6 +20,8 @@
 // credential and it is treated as one. Using it sets a new password AND
 // MINTS A NEW CODE, because a player who spends their only way back in
 // and is left with none has simply moved the same cliff one step away.
+// (RECOVERY-SET, below: a build that has the set is given EIGHT, each
+// spent alone, and the last spent mints eight more.)
 //
 // ═══ WHAT THE HASHING IS AND WHY ═══════════════════════════════════
 //
@@ -331,13 +333,15 @@ export const codeForHashing = (code) => canonicalCode(code);
 // slow a guess at something a person CHOSE; a minted code is 100 random
 // bits (twenty characters of a 32-letter alphabet), and nobody guesses
 // 2^100 at any speed. So each is salted and derived as a password is -
-// NIST SP 800-63B's rule for a look-up secret under 112 bits - at the
-// floor `parseStored` takes, and eight cost less than one password.
+// NIST SP 800-63B's rule for a look-up secret under 112 bits, at the
+// "typically at least 10,000" its KDF section names (AUDIT RECOVERY-SET
+// A5: the first cut took parseStored's floor of 1000) - and eight cost
+// less than one password.
 
 /** How many codes a set holds. */
 export const RECOVERY_SET_SIZE = 8;
-/** What one code of a set costs to derive (`parseStored`'s floor). */
-export const RECOVERY_CODE_ITERS = 1000;
+/** What one code of a set costs to derive - NIST SP 800-63B's "typically at least 10,000". */
+export const RECOVERY_CODE_ITERS = 10_000;
 const SET_TAG = 'codes';
 
 /** A fresh set, as it is shown - the pretty form, dashes and all. */
@@ -359,8 +363,8 @@ export async function hashRecoverySet(codes, { subtle, rand }) {
  *  code's row, a guest's NULL). */
 export function parseRecoverySet(stored) {
   if (typeof stored !== 'string' || !stored.startsWith(`${SET_TAG},`)) return null;
-  const hashes = stored.split(',').slice(1);
-  return hashes.length > 0 && hashes.every((h) => parseStored(h)) ? hashes : null;
+  const hashes = stored.split(',').slice(1);   // never empty: 'codes,' splits to one '' that parseStored refuses
+  return hashes.every((h) => parseStored(h)) ? hashes : null;
 }
 
 /** How many codes this row still opens: the set's count, 1 for a single
@@ -391,6 +395,6 @@ export async function matchRecoveryCode(canon, stored, { subtle }) {
   ]);
   if (!canon) return { ok: false, rest: null };
   if (!set) return { ok: one, rest: null };
-  const i = each.findIndex((hit, j) => hit && slots[j] !== null);
+  const i = each.findIndex(Boolean);   // a throwaway slot never matches: verifyPassword answers false for a row it cannot parse
   return i < 0 ? { ok: false, rest: null } : { ok: true, rest: set.filter((_, j) => j !== i) };
 }

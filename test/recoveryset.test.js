@@ -53,7 +53,7 @@ const rowOf = (ctx, id) => ctx.db._raw.prepare('SELECT * FROM players WHERE id =
 async function registered(handle = 'Nystul', password = 'a good long one') {
   const ctx = ctxOf(d1());
   const g = await createGuest(ctx, {});
-  const reg = await register(ctx, g.id, { handle, password });
+  const reg = await register(ctx, g.id, { handle, password, set: true });   // a build that has the set asks for it
   return { ctx, id: g.id, codes: reg.recoveryCodes, reg, password };
 }
 
@@ -66,7 +66,7 @@ test('RECOVERY-SET: a set is eight minted codes, each salted on its own, and the
   assert.equal(new Set(codes).size, 8, 'a code twice');
   for (const c of codes) assert.ok(codeForHashing(c), `${c} is not a code`);
   const stored = await hashRecoverySet(codes, { subtle, rand });
-  assert.match(stored, /^codes,pbkdf2-sha256\$1000\$/, 'the column names what it holds, at the code\'s cost');
+  assert.match(stored, /^codes,pbkdf2-sha256\$10000\$/, 'the column names what it holds, at the code\'s cost');   // PIN MOVED: AUDIT RECOVERY-SET A5 - NIST's 10,000
   const set = parseRecoverySet(stored);
   assert.equal(set.length, 8);
   assert.equal(new Set(set.map((h) => h.split('$')[2])).size, 8, 'two codes share a salt');
@@ -129,10 +129,11 @@ test('RECOVERY-SET: THE SAME WORK FOR EVERY ROW - a set, a single code and no ro
 
 // ── THE SERVICE (accounts.js) ────────────────────────────────────────
 
-test('RECOVERY-SET: registering answers the set, and `recoveryCode` (its first) for a build from before it (mutants: no recoveryCode; a single code minted)', async () => {
+test('RECOVERY-SET: registering for a build that asks answers the set and the handle (mutants: a single code minted; PIN MOVED, AUDIT RECOVERY-SET A2: a build from before the set is answered as ACC1c answered it - test/audit_recoveryset.test.js)', async () => {
   const { ctx, id, reg } = await registered();
   assert.equal(reg.recoveryCodes.length, RECOVERY_SET_SIZE);
-  assert.equal(reg.recoveryCode, reg.recoveryCodes[0], 'a build from before the set shows a code that works');
+  assert.equal(reg.handle, 'Nystul');
+  assert.equal(reg.recoveryCode, undefined, 'a build that asked for the set was handed the old word too');
   assert.equal(recoveryLeft(rowOf(ctx, id).recovery_hash), RECOVERY_SET_SIZE);
   assert.equal(accountView(rowOf(ctx, id), NOW).recoveryLeft, RECOVERY_SET_SIZE, 'the profile\'s count');
 });
@@ -140,20 +141,20 @@ test('RECOVERY-SET: registering answers the set, and `recoveryCode` (its first) 
 test('RECOVERY-SET: each code is spent ALONE - seven left, six, ... - and the LAST mints a fresh eight, so a player is never left with none (mutants: every spend mints; the last leaves none; a spent code still opens)', async () => {
   const { ctx, id, codes } = await registered();
   for (let i = 0; i < codes.length - 1; i++) {
-    const back = await recover(ctx, { handle: 'nystul', code: codes[i], password: `password number ${i}` });
+    const back = await recover(ctx, { handle: 'nystul', code: codes[i], password: `password number ${i}`, set: true });
     assert.equal(back.id, id, `code ${i + 1} was refused`);
     assert.equal(back.codesLeft, codes.length - 1 - i);
     assert.equal(back.recoveryCodes, undefined, 'a set with codes left minted another');
     assert.equal(accountView(rowOf(ctx, id), NOW).recoveryLeft, codes.length - 1 - i);
-    assert.equal((await recover(ctx, { handle: 'Nystul', code: codes[i], password: 'a spent code here' })).error, 'bad-code', `code ${i + 1} opened it twice`);
+    assert.equal((await recover(ctx, { handle: 'Nystul', code: codes[i], password: 'a spent code here', set: true })).error, 'bad-code', `code ${i + 1} opened it twice`);
   }
-  const last = await recover(ctx, { handle: 'Nystul', code: codes.at(-1), password: 'the last code spent' });
+  const last = await recover(ctx, { handle: 'Nystul', code: codes.at(-1), password: 'the last code spent', set: true });
   assert.equal(last.codesLeft, RECOVERY_SET_SIZE);
   assert.equal(last.recoveryCodes.length, RECOVERY_SET_SIZE, 'the last code left the player with none');
-  assert.equal(last.recoveryCode, last.recoveryCodes[0]);
+  assert.equal(last.handle, 'Nystul', 'AUDIT RECOVERY-SET B6: the handle as the row holds it, not as it was typed');
   assert.equal(accountView(rowOf(ctx, id), NOW).recoveryLeft, RECOVERY_SET_SIZE);
-  for (const c of codes) assert.equal((await recover(ctx, { handle: 'Nystul', code: c, password: 'an old one here' })).error, 'bad-code');
-  assert.equal((await recover(ctx, { handle: 'Nystul', code: last.recoveryCodes[5], password: 'a fresh one works' })).codesLeft, RECOVERY_SET_SIZE - 1);
+  for (const c of codes) assert.equal((await recover(ctx, { handle: 'Nystul', code: c, password: 'an old one here', set: true })).error, 'bad-code');
+  assert.equal((await recover(ctx, { handle: 'Nystul', code: last.recoveryCodes[5], password: 'a fresh one works', set: true })).codesLeft, RECOVERY_SET_SIZE - 1);
 });
 
 test('RECOVERY-SET: a code from before the set (one PBKDF2 string - ACC1c, RECOVER-OP) opens the account as itself, and is replaced by a fresh set (mutants: the single code refused; no set minted for it)', async () => {
@@ -161,34 +162,33 @@ test('RECOVERY-SET: a code from before the set (one PBKDF2 string - ACC1c, RECOV
   const old = mintRecoverySet(rand, 1)[0];
   ctx.db._raw.prepare('UPDATE players SET recovery_hash = ? WHERE id = ?').run(await hashPassword(codeForHashing(old), { subtle, rand }), id);
   assert.equal(accountView(rowOf(ctx, id), NOW).recoveryLeft, 1);
-  const back = await recover(ctx, { handle: 'Nystul', code: old, password: 'from the old code' });
+  const back = await recover(ctx, { handle: 'Nystul', code: old, password: 'from the old code', set: true });
   assert.equal(back.id, id);
   assert.equal(back.recoveryCodes.length, RECOVERY_SET_SIZE);
-  assert.equal(back.recoveryCode, back.recoveryCodes[0], 'a build from before the set shows a code that works');
   assert.equal(recoveryLeft(rowOf(ctx, id).recovery_hash), RECOVERY_SET_SIZE);
 });
 
-test('RECOVERY-SET: a NEW set from the profile - the password first, the old set dead, the new one live, no device signed out (mutants: no password asked; the old set kept; a wrong password answered codes)', async () => {
+test('RECOVERY-SET: a NEW set from the profile - the password and one current code (AUDIT RECOVERY-SET A1), the old set dead, the new one live, no device signed out (mutants: no password asked; the old set kept; a wrong password answered codes)', async () => {
   const { ctx, id, codes, password } = await registered();
   const sessions = () => ctx.db._raw.prepare('SELECT COUNT(*) AS n FROM sessions WHERE player_id = ?').get(id).n;
   const before = sessions();
   const was = rowOf(ctx, id).recovery_hash;
-  assert.deepEqual(await newRecoveryCodes(ctx, rowOf(ctx, id), { password: 'not the password' }), { error: 'bad-login' });
+  assert.deepEqual(await newRecoveryCodes(ctx, rowOf(ctx, id), { password: 'not the password', code: codes[0] }), { error: 'bad-login' });
   assert.equal(rowOf(ctx, id).recovery_hash, was, 'a wrong password moved the set');
-  const made = await newRecoveryCodes(ctx, rowOf(ctx, id), { password });
+  const made = await newRecoveryCodes(ctx, rowOf(ctx, id), { password, code: codes[4] });
   assert.equal(made.recoveryCodes.length, RECOVERY_SET_SIZE);
   assert.equal(made.codesLeft, RECOVERY_SET_SIZE);
   assert.ok(made.recoveryCodes.every((c) => !codes.includes(c)), 'the new set repeats the old');
   assert.equal(sessions(), before, 'making codes signed a device out');
-  for (const c of codes) assert.equal((await recover(ctx, { handle: 'Nystul', code: c, password: 'an old code here' })).error, 'bad-code', 'the old set still opens it');
-  assert.equal((await recover(ctx, { handle: 'Nystul', code: made.recoveryCodes[2], password: 'a new code works' })).codesLeft, RECOVERY_SET_SIZE - 1);
+  for (const c of codes) assert.equal((await recover(ctx, { handle: 'Nystul', code: c, password: 'an old code here', set: true })).error, 'bad-code', 'the old set still opens it');
+  assert.equal((await recover(ctx, { handle: 'Nystul', code: made.recoveryCodes[2], password: 'a new code works', set: true })).codesLeft, RECOVERY_SET_SIZE - 1);
 });
 
 test('RECOVERY-SET: the password guess spends LOGIN\'s bucket, a guest has no codes to make, and two presses racing cannot both answer a set (mutants: no rate; the write unguarded)', async () => {
-  const { ctx, id, password } = await registered();
+  const { ctx, id, password, codes } = await registered();
   const stale = rowOf(ctx, id);
-  assert.ok((await newRecoveryCodes(ctx, stale, { password })).recoveryCodes);
-  assert.deepEqual(await newRecoveryCodes(ctx, stale, { password }), { error: 'codes-moved' }, 'the second press answered codes the first one\'s write already replaced');
+  assert.ok((await newRecoveryCodes(ctx, stale, { password, code: codes[0] })).recoveryCodes);
+  assert.deepEqual(await newRecoveryCodes(ctx, stale, { password, code: codes[1] }), { error: 'codes-moved' }, 'the second press answered codes the first one\'s write already replaced');
   assert.ok(accountRefusalText('codes-moved') && !/codes-moved/.test(accountRefusalText('codes-moved')), 'a player meets codes-moved as a sentence');
   for (let i = 0; i < LOGIN_MAX; i++) await newRecoveryCodes(ctx, rowOf(ctx, id), { password: `guess ${i}` });
   assert.deepEqual(await newRecoveryCodes(ctx, rowOf(ctx, id), { password }), { error: 'rate' }, 'the password ground through this door without limit');
@@ -209,11 +209,14 @@ test('RECOVERY-SET: the route - behind a session, 200 with the set, 401 on a wro
     return { status: res.status, body: await res.json().catch(() => null) };
   };
   const me = (await call('/v1/auth/guest', { ...ACCEPTED })).body;
-  await call('/v1/auth/register', { handle: 'Kithlan', password: 'the first one', ...ACCEPTED }, me.secret);
-  assert.equal((await call('/v1/account/recovery-codes', { password: 'the first one' })).status, 401, 'no session made codes');
-  const wrong = await call('/v1/account/recovery-codes', { password: 'the wrong one' }, me.secret);
+  const reg = (await call('/v1/auth/register', { handle: 'Kithlan', password: 'the first one', ...ACCEPTED, set: true }, me.secret)).body;
+  assert.equal(reg.recoveryCodes.length, RECOVERY_SET_SIZE, 'the route did not carry the ask for a set');
+  assert.equal((await call('/v1/account/recovery-codes', { password: 'the first one', code: reg.recoveryCodes[0] })).status, 401, 'no session made codes');
+  const wrong = await call('/v1/account/recovery-codes', { password: 'the wrong one', code: reg.recoveryCodes[0] }, me.secret);
   assert.deepEqual([wrong.status, wrong.body.error], [401, 'bad-login']);
-  const made = await call('/v1/account/recovery-codes', { password: 'the first one' }, me.secret);
+  const noCode = await call('/v1/account/recovery-codes', { password: 'the first one', code: 'NOT-A-CODE' }, me.secret);
+  assert.deepEqual([noCode.status, noCode.body.error], [401, 'bad-code'], 'AUDIT RECOVERY-SET A1: a password alone made a set');
+  const made = await call('/v1/account/recovery-codes', { password: 'the first one', code: reg.recoveryCodes[3] }, me.secret);
   assert.equal(made.status, 200);
   assert.equal(made.body.recoveryCodes.length, RECOVERY_SET_SIZE);
   const view = await worker.fetch(new Request('https://accounts.invalid/v1/account', { headers: { authorization: `Bearer ${me.secret}` } }), env);
@@ -253,9 +256,9 @@ test('RECOVERY-SET: the codes an answer carries - the set, or the one a service 
   assert.deepEqual(codesOf(null), []);
 });
 
-test('RECOVERY-SET: the profile\'s `codes` stage - the password first, the set shown once on `code` for whose it is, never written to storage (mutants: the stage gone; the password not sent; the codes kept)', async () => {
+test('RECOVERY-SET: the profile\'s `codes` stage - the password and a current code (AUDIT RECOVERY-SET A1), the set shown once on `code` for whose it is, never written to storage (mutants: the stage gone; the password not sent; the code not sent; the codes kept)', async () => {
   assert.ok(STAGES.includes('codes'));
-  assert.deepEqual(FIELDS.codes, ['oldPassword']);
+  assert.deepEqual(FIELDS.codes, ['oldPassword', 'code']);
   const { flow, calls, storage } = flowWith({ '/v1/account': { body: VIEW }, '/v1/account/recovery-codes': { body: { recoveryCodes: SET, codesLeft: 3 } } }, SIGNED);
   await flow.start();
   flow.go('codes');
@@ -265,7 +268,10 @@ test('RECOVERY-SET: the profile\'s `codes` stage - the password first, the set s
   assert.equal(calls.filter((c) => c.path === '/v1/account/recovery-codes').length, 0, 'asked the service without a password');
   flow.set('oldPassword', 'my password here');
   await flow.submit();
-  assert.deepEqual(calls.find((c) => c.path === '/v1/account/recovery-codes').body, { password: 'my password here' });
+  assert.equal(calls.filter((c) => c.path === '/v1/account/recovery-codes').length, 0, 'asked the service without a code');
+  flow.set('code', ' aaaaa-aaaaa-aaaaa-aaaa9 ');
+  await flow.submit();
+  assert.deepEqual(calls.find((c) => c.path === '/v1/account/recovery-codes').body, { password: 'my password here', code: 'aaaaa-aaaaa-aaaaa-aaaa9' });
   assert.equal(flow.stage, 'code');
   assert.deepEqual(flow.recoveryCodes, SET);
   assert.equal(flow.codesFor, 'Nystul', 'the saved file names nobody');
@@ -279,6 +285,7 @@ test('RECOVERY-SET: a wrong password stays on the stage and says so; the refusal
   await flow.start();
   flow.go('codes');
   flow.set('oldPassword', 'not my password');
+  flow.set('code', 'AAAAA-AAAAA-AAAAA-AAAA1');
   await flow.submit();
   assert.equal(flow.stage, 'codes');
   assert.equal(flow.error, accountRefusalText('bad-login'));
@@ -293,14 +300,14 @@ test('RECOVERY-SET: a recovery that leaves the set\'s others standing lands sign
   await left.flow.submit();
   assert.equal(left.flow.stage, 'in', 'an empty code stage');
   assert.match(left.flow.note, /6 recovery codes are left/);
-  const fresh = flowWith({ '/v1/auth/recover': { body: { ...SIGNED, codesLeft: 8, recoveryCodes: SET } }, '/v1/account': { body: VIEW } });
+  const fresh = flowWith({ '/v1/auth/recover': { body: { ...SIGNED, codesLeft: 8, recoveryCodes: SET, handle: 'Nystul' } }, '/v1/account': { body: VIEW } });
   await fresh.flow.start();
   fresh.flow.go('recover');
-  for (const [k, v] of [['handle', 'Nystul'], ['code', 'AAAAA-AAAAA-AAAAA-AAAA1'], ['password', 'brandnewpassword'], ['confirm', 'brandnewpassword']]) fresh.flow.set(k, v);
+  for (const [k, v] of [['handle', 'nystul'], ['code', 'AAAAA-AAAAA-AAAAA-AAAA1'], ['password', 'brandnewpassword'], ['confirm', 'brandnewpassword']]) fresh.flow.set(k, v);
   await fresh.flow.submit();
   assert.equal(fresh.flow.stage, 'code');
   assert.deepEqual(fresh.flow.recoveryCodes, SET);
-  assert.equal(fresh.flow.codesFor, 'Nystul');
+  assert.equal(fresh.flow.codesFor, 'Nystul', 'AUDIT RECOVERY-SET B6: the file names the account as the row does, not as it was typed');
 });
 
 test('RECOVERY-SET: the saved file - whose codes, the rule, a code a line numbered as the card numbers them; a name per account, nothing a path could hold (mutants: unnumbered; the name unsanitised)', () => {
@@ -340,25 +347,28 @@ const cardOf = () => {
 };
 const buttons = (card) => card.root.all.filter((n) => n.tag === 'button');
 
-test('RECOVERY-SET: the profile says how many codes are left and offers "Recovery codes", which opens the stage; a guest, or a service from before it, is offered neither (mutants: the row gone; the act gone; the row shown to a guest; the act offered an old service)', () => {
+test('RECOVERY-SET: the profile\'s Account section says how many codes are left and offers "Make new codes" beside it, which opens the stage - not in the window\'s foot (AUDIT RECOVERY-SET B3); a guest, or a service from before it, is offered neither (mutants: the row gone; the act gone; the row shown to a guest; the act offered an old service; the act in the foot)', () => {
   const { flow, card } = cardOf();
   flow.stage = 'in';
   flow.account = { name: 'Nystul', handle: 'Nystul', kind: 'linked', recoveryLeft: 5 };
   card.paint();
-  const rows = card.root.all.filter((n) => n.tag === 'li').map((li) => li.text);
-  assert.ok(rows.includes('Recovery codes 5 left'), `no count on the profile: ${rows.join(' | ')}`);
-  const open = buttons(card).find((b) => b.textContent === 'Recovery codes');
-  assert.ok(open, 'no way to a new set from the profile');
+  const box = card.root.all.find((n) => n.className === 'acctwear acctrecovery');
+  assert.ok(box, 'no codes row on the profile');
+  assert.equal(box.text, 'Recovery codes 5 left Make new codes');
+  const open = box.all.find((n) => n.tag === 'button');
+  assert.equal(open?.textContent, 'Make new codes', 'no way to a new set from the profile');
+  const foot = card.root.all.find((n) => n.className === 'acts');
+  assert.deepEqual(foot.children.map((b) => b.textContent), ['Change password', 'Sign out', 'Sign out everywhere'], 'the foot grew a fifth press');
   open.onclick();
   assert.equal(flow.stage, 'codes');
   assert.ok(STAGE_COPY.codes.title && STAGE_ACTS.codes.submit && STAGE_ACTS.codes.back === 'in');
-  assert.match(STAGE_COPY.codes.blurb, /old recovery codes will stop working/i, 'the one thing to know before pressing it, unsaid');
+  assert.match(STAGE_COPY.codes.blurb, /one of your current recovery codes\. Those codes will stop working/i, 'what to type, and the one thing to know before pressing it, unsaid');
 
   const guest = cardOf();
   guest.flow.stage = 'in';
   guest.flow.account = { name: 'A B', handle: null, guestName: 'A B', kind: 'guest', recoveryLeft: null };
   guest.card.paint();
-  assert.ok(!buttons(guest.card).some((b) => b.textContent === 'Recovery codes'), 'a guest was offered codes it has none of');
+  assert.ok(!buttons(guest.card).some((b) => b.textContent === 'Make new codes'), 'a guest was offered codes it has none of');
   assert.ok(!guest.card.root.text.includes('left'), 'a guest was told how many codes it has left');
 
   // a service from before acct131 counts no codes, and has no route to make them: no row, no act
@@ -366,7 +376,8 @@ test('RECOVERY-SET: the profile says how many codes are left and offers "Recover
   old.flow.stage = 'in';
   old.flow.account = { name: 'Nystul', handle: 'Nystul', kind: 'linked' };
   old.card.paint();
-  assert.ok(!buttons(old.card).some((b) => b.textContent === 'Recovery codes'), 'an old service was offered a route it does not have');
+  assert.ok(!buttons(old.card).some((b) => b.textContent === 'Make new codes'), 'an old service was offered a route it does not have');
+  assert.ok(!old.card.root.all.some((n) => n.className === 'acctwear acctrecovery'));
   assert.ok(buttons(old.card).some((b) => b.textContent === 'Change password'));
 });
 

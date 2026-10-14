@@ -108,7 +108,7 @@ export const STAGE_COPY = Object.freeze({   // L10N4: the words are getters, rea
   // account is"). A sign-in window is not a place to be taught what an
   // account is - the two buttons say it. What survives is only what a
   // player CANNOT guess and would be hurt by not knowing: that recovery
-  // signs every device out, and that the code is shown once.
+  // signs every device out, and that the codes are shown once.
   loading: { get tag() { return accountTag(); }, get title() { return t('account.card.title.loading', 'One moment'); }, blurb: '' },
   out: { get tag() { return accountTag(); }, get title() { return t('account.card.title.out', 'Your account'); }, blurb: '' },
   register: { get tag() { return accountTag(); }, get title() { return t('account.card.title.register', 'Create an account'); }, blurb: '' },
@@ -141,7 +141,8 @@ export const STAGE_COPY = Object.freeze({   // L10N4: the words are getters, rea
   codes: {
     get tag() { return accountTag(); },
     get title() { return t('account.card.title.codes', 'New recovery codes'); },
-    get blurb() { return t('account.card.blurb.codes', 'Your old recovery codes will stop working.'); },
+    // AUDIT RECOVERY-SET A1: a code the new set replaces is asked for too, and the card says so before the box does
+    get blurb() { return t('account.card.blurb.codes', 'Type your password and one of your current recovery codes. Those codes will stop working.'); },
   },
 });
 
@@ -499,6 +500,24 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
     host.append(box);
   }
 
+  /**
+   * RECOVERY-SET - THE CODES' ROW, in the Account section as the Patreon row is: how many recovery codes still open the
+   * account (a count, never a code - the service keeps only hashes), and the press that makes a new set. AUDIT
+   * RECOVERY-SET B3: in the section, not the window's foot - a fifth press there took the sticky foot to three rows (225px
+   * of a 667px phone, 193px of a landscape one's 390). None for a guest, nor where the service counts no codes (a
+   * service before acct131 has no route to make them).
+   */
+  function recoveryRow() {
+    if (!flow.account?.handle || !Number.isSafeInteger(flow.account.recoveryLeft)) return;
+    const box = el('div', 'acctwear acctrecovery');
+    box.append(el('span', 'fieldlabel', t('account.card.recoveryCodes', 'Recovery codes')));
+    const row = el('div', 'acctwearrow');
+    row.append(el('span', 'acctrecoverystate', t('account.card.codesLeft', '{n, plural, one {# left} other {# left}}', { n: flow.account.recoveryLeft })));
+    row.append(act(t('account.card.act.makeCodes', 'Make new codes'), () => flow.go('codes'), { disabled: !!flow.busy, key: 'codes' }));
+    box.append(row);
+    host.append(box);
+  }
+
   /** PATREON-LINK: BACK FROM THE BROWSER, the account is read again - a link that landed, or a pledge that moved, is on
    *  the card the player comes back to. One listener a card, gone on the first focus after the card is. */
   const win = doc.defaultView;
@@ -535,7 +554,7 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
     }
 
     // The tag earns its place only where it is NOT a restatement of the
-    // heading below it: "Write this down" over "Your recovery code" is
+    // heading below it: "Write these down" over "Your recovery codes" is
     // a different sentence; "Account" over "Your account" is the same
     // one twice.
     if (copy.tag !== accountTag()) root.append(el('span', 'tag', copy.tag));
@@ -660,13 +679,11 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
       const joined = registeredText(flow.account.registeredAt);
       if (joined) row(t('account.card.registered', 'Registered'), joined);
       row(t('account.card.played', 'Time played'), playedText(flow.account.playedS));
-      // RECOVERY-SET: how many recovery codes still open the account - a count, never a code (the service keeps only
-      // hashes); "Recovery codes" below makes a new set. None for a guest, or a service from before acct131.
-      if (flow.account.handle && Number.isSafeInteger(flow.account.recoveryLeft)) row(t('account.card.recoveryCodes', 'Recovery codes'), t('account.card.codesLeft', '{n, plural, one {# left} other {# left}}', { n: flow.account.recoveryLeft }));
       kept.append(account);
       host = account;
       nameAsRow();   // NAME-AS: the name the room reads - the account's own section, beside the name it goes by
       patreonRow();   // PATREON-LINK
+      recoveryRow();   // RECOVERY-SET
       if (!flow.account.handle) {
         account.append(el('p', 'meta', t('account.card.guestNote', 'Adding a username keeps everything this account already has.')));
       }
@@ -717,8 +734,6 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
     } else if (stage === 'in') {
       if (flow.account?.handle) {
         acts.append(act(t('account.card.act.changePassword', 'Change password'), () => flow.go('password'), { disabled: busy, key: 'password' }));
-        // RECOVERY-SET: a new set of codes - offered only where the service counts them (a service before acct131 says nothing)
-        if (Number.isSafeInteger(flow.account.recoveryLeft)) acts.append(act(t('account.card.act.recoveryCodes', 'Recovery codes'), () => flow.go('codes'), { disabled: busy, key: 'codes' }));
       } else {
         acts.append(act(t('account.card.act.giveUsername', 'Give it a username'), () => flow.go('register'), { primary: true, disabled: busy, key: 'username' }));
       }
@@ -733,7 +748,7 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
       // THE ONLY WAY OFF THIS STAGE. No cancel, no close, no second
       // route - the codes are dropped when this is pressed and nothing
       // anywhere can print them again.
-      acts.append(act(t('account.card.act.wroteIt', 'I have written it down'), () => flow.acknowledgeCode(), { primary: true, key: 'acknowledge' }));
+      acts.append(act(t('account.card.act.wroteIt', 'I have written them down'), () => flow.acknowledgeCode(), { primary: true, key: 'acknowledge' }));   // AUDIT RECOVERY-SET B5: a set
     } else if (stage === 'loading') {
       // nothing to press yet
     } else {
@@ -749,7 +764,10 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
     // buttons - two stacked rows where one would do, and on a form
     // that already had a Back it was a second way to do the same
     // thing. One row, centred, Close last.
-    if (onClose) acts.append(act(t('account.card.act.close', 'Close'), onClose, { key: 'close' }));
+    // AUDIT RECOVERY-SET B1: BUT NOT OVER THE CODES. The host passes a Close, and on `code` it was a second way off the
+    // stage the comment above calls the only one - after "Make new codes" had already killed the old set. Nor while a
+    // press is out: its answer may be codes.
+    if (onClose && stage !== 'code') acts.append(act(t('account.card.act.close', 'Close'), onClose, { key: 'close', disabled: busy }));
     if (acts.children.length) root.append(acts);
   }
 
@@ -772,7 +790,7 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
       link.href = url; link.download = name;
       doc.body.append(link); link.click(); link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      flow.say(t('account.codes.saved', 'Saved as {name}.', { name }));
+      flow.say(t('account.codes.saved', 'Saving as {name}.', { name }));   // AUDIT RECOVERY-SET B7: asked, not known - a save dialog can be cancelled
     } catch {
       flow.say(t('account.codes.saveRefused', 'The file could not be saved - copy them instead.'), true);
     }

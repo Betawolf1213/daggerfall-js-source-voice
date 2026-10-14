@@ -77,7 +77,7 @@ export const FIELDS = Object.freeze({
   login: ['handle', 'password'],
   recover: ['handle', 'code', 'password', 'confirm'],
   password: ['oldPassword', 'password', 'confirm'],
-  codes: ['oldPassword'],   // RECOVERY-SET: the password first, as changing it asks
+  codes: ['oldPassword', 'code'],   // RECOVERY-SET: the password, as changing it asks - AUDIT RECOVERY-SET A1: and a code the new set replaces
 });
 
 /** What each field is called and how it behaves. `secret: true` is the
@@ -632,7 +632,7 @@ export function AccountFlow({ io, storage, onChange = () => {}, now = () => Date
       return true;
     }
     self.recoveryCodes = codes;
-    self.codesFor = v('handle');
+    self.codesFor = typeof r.data.handle === 'string' ? r.data.handle : v('handle');   // AUDIT RECOVERY-SET B6: the row's own casing
     self.stage = 'code';
     self.values = {};
     self.error = '';
@@ -644,13 +644,14 @@ export function AccountFlow({ io, storage, onChange = () => {}, now = () => Date
    * RECOVERY-SET - A NEW SET, FROM THE PROFILE. The request: players
    * "click and see their account recovery code in their profile". The
    * service keeps only hashes, so what is shown is a NEW set, once, on
-   * `code` - the password asked first, as changing it asks, and the old
-   * set dead with the answer.
+   * `code` - the password asked first, as changing it asks, and (AUDIT
+   * RECOVERY-SET A1) one of the codes it replaces, so a stolen password
+   * alone cannot kill them; the old set dead with the answer.
    */
   async function doNewCodes() {
     const bad = localRefusal(FIELDS.codes);
     if (bad) return refuse(bad);
-    const r = await ask(() => newRecoveryCodes(door(), pw('oldPassword')));
+    const r = await ask(() => newRecoveryCodes(door(), pw('oldPassword'), v('code')));
     if (!r) return false;
     if (!r.ok) return refuse(accountRefusalText(r.error));
     const codes = codesOf(r.data);
@@ -683,11 +684,15 @@ export function AccountFlow({ io, storage, onChange = () => {}, now = () => Date
     if (self.stage !== 'code') return;
     self.recoveryCodes = null;
     self.codesFor = '';
+    self.note = ''; self.error = '';   // AUDIT RECOVERY-SET B4: "Copied." belonged to the codes, not to the card after them
     await self.start();
   };
 
-  /** RECOVERY-SET: a sentence the card says of its own act - the codes copied, or saved as a file, or why not. */
+  /** RECOVERY-SET: a sentence the card says of its own act - the codes copied, or saved as a file, or why not. AUDIT
+   *  RECOVERY-SET B4: said only while the codes are up - a clipboard that answers after "I have written it down" says
+   *  nothing on the card that follows. */
   self.say = (sentence, bad = false) => {
+    if (self.stage !== 'code') return;
     self.error = bad ? sentence : '';
     self.note = bad ? '' : sentence;
     changed();

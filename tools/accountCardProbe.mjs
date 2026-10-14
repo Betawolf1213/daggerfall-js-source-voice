@@ -294,6 +294,20 @@ const phoneOverflow = await page.evaluate(() => [...document.querySelectorAll('.
 check('nothing overflows at phone width either', !phoneOverflow);
 await page.screenshot({ path: `${shots}/acc1e-card-phone.png`, fullPage: true });
 
+// AUDIT RECOVERY-SET B2: EVERY CODE OF THE SET ON ONE LINE, at a phone, the 421-480px band where the single code's
+// tracking broke a code before its last letter, and the desktop window - in the fallback face as well as the skin's
+// (the probe's fonts are inlined, so the fallback is forced by naming a face nobody has).
+const wrapped = () => page.evaluate(() => [...document.querySelectorAll('.acctcode li code')].filter((c) => c.getClientRects().length > 1).length);
+const bands = [];
+for (const width of [320, 390, 421, 430, 480, 600, 1280]) {
+  await page.setViewportSize({ width, height: 1400 });
+  bands.push(`${width}:${await wrapped()}`);
+  await page.addStyleTag({ content: '.acctcode li code { font-family: nobody-has-this !important; }' });
+  bands.push(`${width}f:${await wrapped()}`);
+  await page.evaluate(() => { for (const t of document.querySelectorAll('style')) if (t.textContent.includes('nobody-has-this')) t.remove(); });
+}
+check('AUDIT RECOVERY-SET B2: no code of the set breaks across lines, at any width, in either face', bands.every((b) => b.endsWith(':0')), bands.join(' '));
+
 await browser.close();
 
 const failed = results.filter((r) => !r.ok);

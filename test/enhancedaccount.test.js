@@ -163,7 +163,7 @@ test('ACC1e: the recovery code is drawn on its plaque, and the ONLY way off that
   const buttons = card.root.all.filter((n) => n.tag === 'button');
   const off = buttons.filter((b) => !/^(Copy|Save as a file)$/.test(b.textContent));
   assert.equal(off.length, 1, 'the code stage offers a second way off, so the code can be lost by taking it');
-  assert.match(off[0].textContent, /written it down/i);
+  assert.match(off[0].textContent, /written them down/i);   // PIN MOVED: AUDIT RECOVERY-SET B5 - a set
   assert.equal(buttons.length, 3, 'Copy and Save as a file');
 });
 

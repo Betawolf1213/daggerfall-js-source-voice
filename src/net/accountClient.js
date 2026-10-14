@@ -915,19 +915,21 @@ export const openGuest = (io, label = null, accepted = null) => call(io, '/v1/au
 
 /** Fill in a handle and a password on the guest row THIS SESSION
  *  already owns - an upgrade in place, never a new account. Answers
- *  `{ recoveryCode, handle }`, and that code is readable exactly once.
+ *  `{ recoveryCodes, handle }` - RECOVERY-SET: this build asks for the
+ *  set (`set: true`; a service before acct131 answers `{ recoveryCode }`
+ *  and ignores the ask) - and they are readable exactly once.
  *  TERMS1: with the versions ticked on the form that names it. */
 export const register = (io, handle, password, accepted = null) =>
-  call(io, '/v1/auth/register', { handle, password, ...legalFields(accepted) });
+  call(io, '/v1/auth/register', { handle, password, ...legalFields(accepted), set: true });
 
 /** `{ id, name, kind, sessionId, secret }` for a new device. */
 export const login = (io, handle, password, label = null) => call(io, '/v1/auth/login', { handle, password, label });
 
 /** Spend a recovery code: a new password, and every device signed out
- *  including this one. RECOVERY-SET: the answer's `codesLeft` counts the
- *  set's others; a single code, or the last, answers a fresh set
- *  (`recoveryCodes`). */
-export const recover = (io, handle, code, password) => call(io, '/v1/auth/recover', { handle, code, password });
+ *  including this one. RECOVERY-SET: this build asks for the set
+ *  (`set: true`); the answer's `codesLeft` counts the set's others, and a
+ *  single code, or the last, answers a fresh set (`recoveryCodes`). */
+export const recover = (io, handle, code, password) => call(io, '/v1/auth/recover', { handle, code, password, set: true });
 
 /** `{ account, devices }`. A GET, so the secret rides the header and
  *  there is no body at all. */
@@ -939,10 +941,10 @@ export const readAccount = (io) => call(io, '/v1/account');
 export const changePassword = (io, oldPassword, password) =>
   call(io, '/v1/account/password', { oldPassword, password });
 
-/** RECOVERY-SET: a NEW set of recovery codes, behind the password -
- *  `{ recoveryCodes, codesLeft }`, readable exactly once, the old set
- *  dead with it. */
-export const newRecoveryCodes = (io, password) => call(io, '/v1/account/recovery-codes', { password });
+/** RECOVERY-SET: a NEW set of recovery codes, behind the password and
+ *  one current code (AUDIT RECOVERY-SET A1) - `{ recoveryCodes,
+ *  codesLeft }`, readable exactly once, the old set dead with it. */
+export const newRecoveryCodes = (io, password, code) => call(io, '/v1/account/recovery-codes', { password, code });
 
 /** Completely optional, and `null` takes it off again. */
 export const setEmail = (io, email) => call(io, '/v1/account/email', { email: email || null });
@@ -1017,9 +1019,10 @@ export function storedSession(storage) {
   } catch { return null; }
 }
 
-/** Keep the session this device signed in with. The RECOVERY CODE IS
- *  NEVER PART OF THIS - `register` and `recover` hand one back and it
- *  is the screen's to show and the player's to write down. */
+/** Keep the session this device signed in with. The RECOVERY CODES ARE
+ *  NEVER PART OF THIS - `register`, `recover` and `newRecoveryCodes`
+ *  hand them back and they are the screen's to show and the player's to
+ *  write down. */
 export function keepSession(storage, { id, name, kind, sessionId, secret, glyphs, aura, nameAsAt }) {
   try {
     storage?.setItem?.(SESSION_KEY, JSON.stringify({ id, name, kind, sessionId, secret, glyphs, aura, nameAsAt }));   // SHADOW-FANG: `glyphs` when the service has stated them (adoptIdentity) - JSON leaves it out otherwise; WB9g: `aura` likewise; NAME-AS: `nameAsAt` likewise

@@ -35,7 +35,6 @@ import banks from '../src/characters/nameGen.json' with { type: 'json' };
 import {
   hashPassword, verifyPassword, needsRehash, parseStored, passwordRefusal,
   mintRecoveryCode, canonicalCode, codeForHashing, timingSafeEqual, PBKDF2_ITERS, PBKDF2_CAP, CODE_ALPHABET,
-  parseRecoverySet, RECOVERY_SET_SIZE,   // RECOVERY-SET
 } from '../server-account/src/password.js';
 import { verifyToken, importPublicKeyB64, ID_RE, nameIsIssuable, TOKEN_V } from '../src/net/identityToken.js';
 import { ACCEPTED } from '../src/net/legalLaw.js';   // TERMS1: a request that makes an account carries the versions ticked
@@ -969,12 +968,6 @@ test('ACC1c: registering is an UPGRADE IN PLACE, and the code is shown exactly o
   const reg = await call('POST', '/v1/auth/register', { secret: guest.secret, handle: 'Nystul', password: 'a good long one', ...ACCEPTED });
   assert.equal(reg.status, 200);
   assert.match(reg.body.recoveryCode, /^[0-9A-Z]{5}(-[0-9A-Z]{5}){3}$/);
-  // PIN MOVED: RECOVERY-SET - a SET of eight, each of the minted shape and none twice; `recoveryCode` is its first, the
-  // word a build from before the set reads
-  assert.equal(reg.body.recoveryCodes.length, RECOVERY_SET_SIZE);
-  for (const c of reg.body.recoveryCodes) assert.match(c, /^[0-9A-Z]{5}(-[0-9A-Z]{5}){3}$/);
-  assert.equal(new Set(reg.body.recoveryCodes).size, RECOVERY_SET_SIZE);
-  assert.equal(reg.body.recoveryCode, reg.body.recoveryCodes[0]);
 
   // THE SAME ACCOUNT. Not a new row - the id a player already had, and
   // the friends and saves that will hang off it, are untouched.
@@ -992,11 +985,11 @@ test('ACC1c: registering is an UPGRADE IN PLACE, and the code is shown exactly o
 
   // THE CODE IS NEVER READABLE AGAIN - not from the account, not from
   // anywhere. It is a credential, not a hint.
-  for (const c of reg.body.recoveryCodes) assert.ok(!JSON.stringify(acct).includes(c));
-  // PIN MOVED: RECOVERY-SET - the ONE recovery fact the view carries is the count (the profile's "8 left"), never a code
-  // or its hash: past it, the view still says nothing of recovery
+  assert.ok(!JSON.stringify(acct).includes(reg.body.recoveryCode));
+  // PIN MOVED: RECOVERY-SET - the ONE recovery fact the view carries is the count (the profile's "1 left" for this
+  // build-from-before's single code), never a code or its hash: past it, the view still says nothing of recovery
   const { recoveryLeft, ...rest } = acct.account;
-  assert.equal(recoveryLeft, RECOVERY_SET_SIZE);
+  assert.equal(recoveryLeft, 1);
   assert.ok(!/recovery/i.test(JSON.stringify({ ...acct, account: rest })), `the account view mentions recovery: ${JSON.stringify(acct)}`);
 
   // registering twice is refused, and so is a taken name
@@ -1057,10 +1050,10 @@ test('ACC1c: the recovery code sets a new password, mints a NEW code, and signs 
   assert.equal(back.status, 200);
   assert.equal(back.body.id, guest.id);
 
-  // PIN MOVED: RECOVERY-SET - the code typed is SPENT and the set's others still work: seven left, and no new set
-  // (a single code, or the last of a set, mints one - test/recoveryset.test.js)
-  assert.equal(back.body.codesLeft, RECOVERY_SET_SIZE - 1);
-  assert.equal(back.body.recoveryCodes, undefined, 'a set with codes left minted another');
+  // A NEW CODE, because a player who spends their only way in and is
+  // left with none has simply had the same cliff moved one step away.
+  assert.ok(back.body.recoveryCode);
+  assert.notEqual(back.body.recoveryCode, reg.body.recoveryCode);
 
   // EVERY OTHER DEVICE IS SIGNED OUT - the reason somebody is standing
   // here may be that another person has their password.
@@ -1073,8 +1066,6 @@ test('ACC1c: the recovery code sets a new password, mints a NEW code, and signs 
   assert.equal((await call('POST', '/v1/auth/login', { handle: 'Kithlan', password: 'the new one here' })).status, 200);
   const reused = await call('POST', '/v1/auth/recover', { handle: 'Kithlan', code: reg.body.recoveryCode, password: 'another one here' });
   assert.equal(reused.status, 401, 'a spent recovery code still worked');
-  // ...and the next of the set opens it (RECOVERY-SET)
-  assert.equal((await call('POST', '/v1/auth/recover', { handle: 'Kithlan', code: reg.body.recoveryCodes[1], password: 'another one here' })).body.codesLeft, RECOVERY_SET_SIZE - 2);
 
   // and a code for a handle nobody holds is refused the same way
   assert.equal((await call('POST', '/v1/auth/recover', { handle: 'Nobody', code: reg.body.recoveryCode, password: 'another one here' })).body.error, 'bad-code');
@@ -1150,18 +1141,13 @@ test('ACC1c: no credential of any kind is stored in the clear, or shipped back',
 
   const dump = JSON.stringify(env.DB._raw.prepare('SELECT * FROM players').all());
   assert.ok(!dump.includes('a memorable phrase'), 'the password is in the database');
-  for (const c of reg.body.recoveryCodes) {
-    assert.ok(!dump.includes(c), 'the recovery code is in the database');
-    assert.ok(!dump.includes(canonicalCode(c)), 'the recovery code is in the database, canonicalised');
-  }
-  // ...and what IS there is the self-describing hash, for both (PIN MOVED: RECOVERY-SET - the codes' column a set of
-  // them, each one salted on its own)
+  assert.ok(!dump.includes(reg.body.recoveryCode), 'the recovery code is in the database');
+  assert.ok(!dump.includes(canonicalCode(reg.body.recoveryCode)), 'the recovery code is in the database, canonicalised');
+  // ...and what IS there is the self-describing hash, for both
   const row = env.DB._raw.prepare('SELECT * FROM players WHERE id = ?').get(guest.id);
-  assert.ok(parseStored(row.password), 'password is not a hash this service wrote');
-  const set = parseRecoverySet(row.recovery_hash);
-  assert.equal(set?.length, RECOVERY_SET_SIZE, 'recovery_hash is not a set this service wrote');
-  for (const h of set) assert.ok(parseStored(h), 'a code of the set is not a hash this service wrote');
-  assert.equal(new Set(set.map((h) => parseStored(h).salt.join())).size, RECOVERY_SET_SIZE, 'two codes share a salt');
+  for (const col of ['password', 'recovery_hash']) {
+    assert.ok(parseStored(row[col]), `${col} is not a hash this service wrote`);
+  }
   assert.notEqual(row.password, row.recovery_hash);
 
   const view = JSON.stringify((await call('GET', '/v1/account', undefined, guest.secret)).body);

@@ -1324,10 +1324,11 @@ ${badgeCss()}
   .card .acctcode code { letter-spacing: 0.12em; }
 }
 /* RECOVERY-SET: EIGHT CODES ON THE ONE PLAQUE, numbered as the saved
-   file numbers them (accountFlow.js recoveryCodesText) - two columns
-   where the card is wide, one on a phone, and each code still taken
-   whole by one click (user-select: all above), never its neighbour. */
-.card .acctcode ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(17em, 1fr)); gap: 8px 18px; }
+   file numbers them (accountFlow.js recoveryCodesText) - one column (the
+   window is never wide enough for two: AUDIT RECOVERY-SET B2), each code
+   still taken whole by one click (user-select: all above), never its
+   neighbour. */
+.card .acctcode ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .card .acctcode li { display: flex; gap: 10px; align-items: baseline; justify-content: center; }
 .card .acctcode .acctcodeno { color: var(--dim); font-size: 12px; min-width: 1.5em; text-align: right; }
 /* The phone: the number beside each code takes the width the single
@@ -1338,6 +1339,18 @@ ${badgeCss()}
   .card .acctcode li { gap: 6px; }
   .card .acctcode li code { font-size: min(17px, 4.2vw); letter-spacing: 0.04em; white-space: nowrap; }
 }
+/* AUDIT RECOVERY-SET B2: AND ABOVE IT. The single code's 0.22em of
+   tracking at 23px, with the number beside it, broke a code before its
+   last letter on a 421-480px phone and on the desktop window (36 of 200
+   minted codes at 1280, every one in the fallback face) - so a set's code
+   is set tighter there too, and keeps to one line at every width. */
+@media (min-width: 421px) {
+  .card .acctcode li code { white-space: nowrap; letter-spacing: 0.06em; font-size: min(21px, 4.2vw); }
+}
+/* RECOVERY-SET: the codes' row in the Account section - the count beside
+   its press, as the Patreon row's state sits beside its. */
+.card .acctrecovery .acctwearrow { align-items: center; }
+.card .acctrecoverystate { display: inline-flex; align-items: center; font-size: 12.5px; color: var(--dim); }
 .goldfield .meta { flex: 1 0 100%; color: var(--dim); font-size: 11.5px; margin: 0; }
 
 /* THE LISTS STACK BELOW THE PACK'S OWN BREAKPOINT, not at it: two

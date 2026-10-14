@@ -54,11 +54,6 @@
   "tr": "060f30c56cd9",
   "by": "claude-in-session"
  },
- "account.card.act.recoveryCodes": {
-  "en": "b3f5f8ca4dc4",
-  "tr": "bd6e20c17500",
-  "by": "claude-in-session"
- },
  "account.card.act.saveCodes": {
   "en": "780479f1a8e1",
   "tr": "587b8e7de8ee",
@@ -95,8 +90,8 @@
   "by": "claude-in-session"
  },
  "account.card.act.wroteIt": {
-  "en": "81e6cf08ece9",
-  "tr": "8cdf380c0da8",
+  "en": "efd02a3f214e",
+  "tr": "5e44a9f677bc",
   "by": "claude-in-session"
  },
  "account.card.agree": {
@@ -110,8 +105,8 @@
   "by": "claude-in-session"
  },
  "account.card.blurb.codes": {
-  "en": "515c3e8e38f0",
-  "tr": "120fc28fceb2",
+  "en": "7926b3476dfe",
+  "tr": "c8c5e3c7e4e9",
   "by": "claude-in-session"
  },
  "account.card.blurb.password": {
@@ -335,8 +330,8 @@
   "by": "claude-in-session"
  },
  "account.codes.saved": {
-  "en": "2479c19b932e",
-  "tr": "9e2bde5753d6",
+  "en": "4654a0144259",
+  "tr": "f891a7cb362f",
   "by": "claude-in-session"
  },
  "account.field.code": {
