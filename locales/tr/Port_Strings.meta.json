@@ -544,6 +544,16 @@
   "tr": "d157d3a6859e",
   "by": "claude-in-session"
  },
+ "menu.hud.piece.saddle": {
+  "en": "9695262a7229",
+  "tr": "bc181ebfb5c0",
+  "by": "claude-in-session"
+ },
+ "menu.hud.preview.saddle": {
+  "en": "cc8aa54bce2c",
+  "tr": "097532a5f018",
+  "by": "claude-in-session"
+ },
  "menu.rail.about": {
   "en": "6b21fb791ac0",
   "tr": "12a5d0914aa7",

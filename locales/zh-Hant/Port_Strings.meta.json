@@ -19,6 +19,16 @@
   "tr": "30160a21b92a",
   "by": "claude-in-session"
  },
+ "menu.hud.piece.saddle": {
+  "en": "9695262a7229",
+  "tr": "bf292d0db164",
+  "by": "claude-in-session"
+ },
+ "menu.hud.preview.saddle": {
+  "en": "cc8aa54bce2c",
+  "tr": "a830b64970c2",
+  "by": "claude-in-session"
+ },
  "menu.rail.about": {
   "en": "6b21fb791ac0",
   "tr": "9c67191a478a",

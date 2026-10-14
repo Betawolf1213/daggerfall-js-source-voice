@@ -214,6 +214,13 @@ Options' bar) hides it. It spends NO key of its own and adds no binding.
 - **The mouse** clicks it while the pointer is free; **a finger** taps it (44 px, the helm's own place clear of the
   stick and the corner); **a pad** keeps its d-pad for the quick slots (a rider's potions are on it) and presses the
   panel with its cursor (PADPLUS1). The classic skin keeps the grip bar's breath and the keys.
+- **It moves** (HUD-SADDLE, FIELD BUGS 2026-10-14, Discord: "Riding Window is not able to be edited in the HUD Editor
+  (Alt+U)" - `01-Overview/Field-Bugs-2026-10-14-riding-panel.md`): the bar is a HUD-MOVE piece, "Riding panel"
+  (`hudLayout.js:"{ id: 'saddle', sel: '.saddlepanel .saddlepanel-bar'"`) - Alt+U frames it, a drag moves it, its
+  corner sizes it, its X turns it off in play, and a double-click or Reset puts it back. A panel built at a mount stands
+  where the player put it from its first frame (`ui/hudPlacer.js` placeHudPieces, the notice stack's leaf), and while
+  the editor is open and nobody rides it stands as a preview of itself ("Riding panel (preview)", `buildSaddlePreview`).
+  The helm panel, its twin at the same place, is not a piece yet (the record says why).
 
 ## AUDIT KB1 (2026-09-24, Mac: "Audit this before we merge")
 

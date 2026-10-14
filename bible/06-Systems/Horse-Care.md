@@ -6,7 +6,10 @@ stamina, feeding them grows your bond and improves their stats. Every horse shou
 
 A departure of the port's own, the enhanced lane's alone: Features, World tab, Travel - **Horse care**
 (`systems/upkeepSwitch.js` horseCareOn, the `horseCare` pref), on by default and forced on online (every horse in a
-room under the one law). Off, a horse is DFU's: no stats, no walk or gallop of its own, nothing to feed.
+room under the one law). Off, a horse is DFU's: no stats, no walk or gallop of its own, nothing to feed - at once, at
+every door the switch governs (traced end to end and pinned for a player's "the horse care toggle in the settings menu
+doesn't seem to work", HORSE-CARE-SWITCH, `01-Overview/Field-Bugs-2026-10-14-riding-panel.md`). The saddle panel stays:
+it is the ride's, and shows the gait and its doors alone. Online the row is locked on and says so.
 
 ## The law (`systems/steedCare.js`)
 
@@ -202,7 +205,8 @@ quarter, or starving.
 On Enhanced Plus, astride or on a wagon's bench, the horse is on screen under the compass (`ui/enhancedSaddle.js`, off
 `upkeepRuntime.js` saddle): its breath, its hunger with its food's hours, its bond to the next word, the gait and the
 pace; and its doors - Feed oats, an Apple, the Stable page, Dismount. On a bench the hunger is the TEAM's (the
-hungriest horse in harness, `saddle`'s `feed` - the one its Feed goes to) and the bond the lead's.
+hungriest horse in harness, `saddle`'s `feed` - the one its Feed goes to) and the bond the lead's. It is a HUD-MOVE
+piece (HUD-SADDLE, 2026-10-14): Alt+U moves it, sizes it and turns it off (`10-UI/Controls.md`, THE SADDLE PANEL).
 
 The item: a horse's card says its four born stats and its bond (`systems/itemInfo.js` itemStatRows), so a Stable's
 horses say theirs before they are bought.
@@ -236,4 +240,5 @@ Pinned: `test/steed1_horsecare.test.js`; mutants `tools/mutants/steed1.json`, an
 `tools/mutants/wagonmend.json`. THE WALK: `test/horsewalk.test.js`; mutants `tools/mutants/horsewalk.json` (40, all
 dead - TOWN-GALLOP retired the town walk's two with their law) and TOWN-GALLOP's `tools/mutants/towngallop.json` (7,
 all dead). The saddle panel and the page's polish:
-`test/steedui_saddle.test.js`; mutants `tools/mutants/steedui.json`.
+`test/steedui_saddle.test.js`; mutants `tools/mutants/steedui.json`. The switch end to end and the panel as a HUD piece:
+`test/fb1014_ridingpanel.test.js`; mutants `tools/mutants/fb1014_ridingpanel.json`.

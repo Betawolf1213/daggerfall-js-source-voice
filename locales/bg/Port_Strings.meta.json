@@ -5149,6 +5149,16 @@
   "tr": "a8af8c95f1b7",
   "by": "claude-in-session"
  },
+ "menu.hud.piece.saddle": {
+  "en": "9695262a7229",
+  "tr": "a0f87aebd095",
+  "by": "claude-in-session"
+ },
+ "menu.hud.preview.saddle": {
+  "en": "cc8aa54bce2c",
+  "tr": "df21bd1f7f11",
+  "by": "claude-in-session"
+ },
  "menu.hud.reset": {
   "en": "8f5367054c72",
   "tr": "006ace4078f1",

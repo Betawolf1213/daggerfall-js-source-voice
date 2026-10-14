@@ -19,6 +19,7 @@
 import { getPref, setPref } from '../systems/uiPrefs.js';
 import { isEnhanced } from '../systems/uiSkin.js';   // ENHANCED PLUS ONLY: no other UI is customisable
 import { seatHudPlacer } from './hudPlacer.js';   // MOVED-NOTICE: a piece's builder places it at once, through the leaf
+import { t } from '../systems/textManager.js';   // L10N4: a piece's name in the player's language, read as it is read (HUD-SADDLE's the first)
 
 
 export const HUD_LOCK_PREF = 'hudLocked';
@@ -61,6 +62,11 @@ export const HUD_PIECES = Object.freeze([
   { id: 'boss', sel: '.wb-boss-bar', name: 'Boss bar', dummy: true, ghost: 'boss', len: true },   // HUD-LEN: and its length
   { id: 'revenant', sel: '.rvncard-stack', name: 'Revenant taunts', dummy: true, ghost: 'revenant' },   // REVENANT-CARD
   { id: 'loot', sel: '.lootbanner-stack', name: 'Loot banners', dummy: true, ghost: 'loot' },   // LOOT-BANNER
+  // HUD-SADDLE (FIELD BUGS 2026-10-14, Discord: "Riding Window is not able to be edited in the HUD Editor (Alt+U)"): the
+  // saddle panel's bar (ui/enhancedSaddle.js) - its layer is the whole screen, so the piece is the bar inside it; a
+  // preview while nobody rides (its stand-in is that layer, the bar inside it the piece - ghostOf). No `dummy`: the
+  // panel is built only when there is a ride to show, and a window over the HUD covers it as it covers the HUD
+  { id: 'saddle', sel: '.saddlepanel .saddlepanel-bar', get name() { return t('menu.hud.piece.saddle', 'Riding panel'); }, ghost: 'saddle' },
   { id: 'fps', sel: '#fps-counter', name: 'FPS counter' },
   { id: 'midtext', sel: '#enhanced-midtext, .hudmid[data-hm-ghost="midtext"]', name: 'Screen messages', dummy: true, ghost: 'midtext' },
   { id: 'netstatus', sel: '#enhanced-netstatus, .hudstatus[data-hm-ghost="netstatus"]', name: 'Online status', dummy: true, ghost: 'netstatus' },
@@ -275,12 +281,15 @@ let ghostDeps = null, ghostDepsLoading = false;
 function ensureGhostDeps() {
   if (ghostDeps || ghostDepsLoading) return;
   ghostDepsLoading = true;
-  Promise.all([import('./gateBossBar.js'), import('./partyPanel.js'), import('./revenantCard.js'), import('./lootBanner.js')])
-    .then(([boss, party, revenant, loot]) => { ghostDeps = { BOSS_BAR_CSS: boss.BOSS_BAR_CSS, BOSS_BAR_STYLE_ID: boss.BOSS_BAR_STYLE_ID, injectPartyStyle: party.injectPartyStyle, buildRevenantPreview: revenant.buildRevenantPreview, buildLootBannerPreview: loot.buildLootBannerPreview }; })
+  Promise.all([import('./gateBossBar.js'), import('./partyPanel.js'), import('./revenantCard.js'), import('./lootBanner.js'), import('./enhancedSaddle.js')])
+    .then(([boss, party, revenant, loot, saddle]) => { ghostDeps = { BOSS_BAR_CSS: boss.BOSS_BAR_CSS, BOSS_BAR_STYLE_ID: boss.BOSS_BAR_STYLE_ID, injectPartyStyle: party.injectPartyStyle, buildRevenantPreview: revenant.buildRevenantPreview, buildLootBannerPreview: loot.buildLootBannerPreview, buildSaddlePreview: saddle.buildSaddlePreview }; })
     .catch(() => { ghostDeps = {}; });
 }
+/** HUD-SADDLE: the stand-in a node belongs to - the node itself, or the layer it stands in (the saddle panel's bar is
+ *  its piece, its whole-screen layer the stand-in); null for a host's real node. */
+const ghostOf = (n) => (n?.hasAttribute?.('data-hm-ghost') ? n : n?.closest?.('[data-hm-ghost]') ?? null);
 function buildGhost(doc, kind) {
-  if ((kind === 'party' || kind === 'boss' || kind === 'revenant' || kind === 'loot') && !ghostDeps) { ensureGhostDeps(); return null; }   // next sweep
+  if ((kind === 'party' || kind === 'boss' || kind === 'revenant' || kind === 'loot' || kind === 'saddle') && !ghostDeps) { ensureGhostDeps(); return null; }   // next sweep
   const div = (cls, text) => { const n = doc.createElement('div'); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   let g = null;
   if (kind === 'notices') {
@@ -311,6 +320,8 @@ function buildGhost(doc, kind) {
     try { g = ghostDeps.buildRevenantPreview?.(doc) ?? null; } catch { g = null; }   // REVENANT-CARD: a card as one will stand
   } else if (kind === 'loot') {
     try { g = ghostDeps.buildLootBannerPreview?.(doc) ?? null; } catch { g = null; }   // LOOT-BANNER: a banner as one will stand
+  } else if (kind === 'saddle') {
+    try { g = ghostDeps.buildSaddlePreview?.(doc) ?? null; } catch { g = null; }   // HUD-SADDLE: the panel as it stands astride
   }
   if (g) { g.setAttribute('data-hm-ghost', kind); doc.body.append(g); }
   return g;
@@ -321,7 +332,7 @@ function syncGhosts(doc, edit) {
     if (!p.ghost) continue;
     let all = [];
     try { all = [...doc.querySelectorAll(p.sel)]; } catch { continue; }
-    const ghosts = all.filter((n) => n.hasAttribute?.('data-hm-ghost'));
+    const ghosts = all.map(ghostOf).filter(Boolean);
     const real = all.length - ghosts.length;
     if (!edit || real > 0) { for (const g of ghosts) g.remove(); continue; }   // locked, or the real one is here now
     if (!ghosts.length) buildGhost(doc, p.ghost);
@@ -354,7 +365,7 @@ export function sweepHudLayout(doc = docRef) {
     for (const n of nodes) {
       if (n.dataset.hm !== p.id) n.dataset.hm = p.id;
       if (!drag || drag.node !== n) paint(n, layout[p.id] || p.inside ? layoutOf(p.id) : null);
-      if (p.dummy && !n.hasAttribute('data-hm-ghost')) { if (edit) { if (!n.hasAttribute('data-hm-dummy')) n.setAttribute('data-hm-dummy', ''); } else if (n.hasAttribute('data-hm-dummy')) n.removeAttribute('data-hm-dummy'); }
+      if (p.dummy && !ghostOf(n)) { if (edit) { if (!n.hasAttribute('data-hm-dummy')) n.setAttribute('data-hm-dummy', ''); } else if (n.hasAttribute('data-hm-dummy')) n.removeAttribute('data-hm-dummy'); }
       if (edit && editable(p)) { if (!n.hasAttribute('data-hm-edit')) { n.setAttribute('data-hm-edit', ''); n.setAttribute('data-hm-name', p.name); } }
       else if (n.hasAttribute('data-hm-edit')) { n.removeAttribute('data-hm-edit'); n.removeAttribute('data-hm-drag'); }
     }
