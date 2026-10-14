@@ -2071,7 +2071,7 @@ export class HeldMapWindow {
     if (!leg) return;
     leg.innerHTML = '';
     const trav = this._trav.filter((t) => playerShown(t));   // OW-WHO: the legend speaks for the players the sheet draws
-    if (!this._party.length && !this._gate && !this._serpent && !this._sd && !this._bounties.length && !this._revenants.length && !this._raids.length && !trav.length && !this._quests.length && !this._vendor && !this._lodes.length && !this._pois.length) { leg.classList.toggle('open', false); leg.style.display = 'none'; return; }
+    if (!this._party.length && !this._gate && !this._serpent && !this._sd && !this._bounties.length && !this._revenants.length && !this._raids.length && !trav.length && !this._quests.length && !this._pois.length && !this._vendor && !this._lodes.length) { leg.classList.toggle('open', false); leg.style.display = 'none'; return; }
     if (this._party.length) {
       const dot = el('span', 'hmlegdot');
       dot.style.background = this._party.some((m) => m.online) ? PARTY_MARK_CSS : PARTY_OFFLINE_CSS;
