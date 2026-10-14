@@ -1840,6 +1840,7 @@ mods.worldEventsRaidingParties.Enabled.description,"Cavalieri, banditi o orchi r
 mods.worldOfDaggerfall.Enabled.description,"Più cose da trovare nelle terre selvagge: accampamenti e fortini di banditi, rovine, santuari, montagne e campi di rocce in tutta la Baia Iliaca, con banditi, orsi e tesori, e un accampamento fuori da Privateer’s Hold."
 mods.worldTooltips.Enabled.description,"Un nome sotto il mirino per ciò che stai guardando: una persona, un negozio e il suo orario, una porta e la sua serratura, dove porta un’uscita, una leva, una ruota, una scala, una libreria, un Daedra in attesa di essere evocato. Anche disattivato, vedi cosa contiene un forziere o un corpo."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Attivalo per non dare un’indicazione predefinita sugli oggetti interattivi che potrebbero essere pensati come segreti, in particolare riguardo agli enigmi della missione principale."
+naval.yard.grogDrunk,"Il morale del suo equipaggio è {spirits, select, roaring {alle stelle} high {alto} steady {saldo} low {basso} other {cupo}} - hanno già avuto il giro di oggi"
 net.mod.ambiguous,"{count} giocatori si chiamano {name}. Nessuno è stato silenziato."
 net.mod.chatAgain,"Puoi di nuovo usare la chat."
 net.mod.muteRange,"Un silenziamento dura da 1 a {max} minuti (una settimana)."

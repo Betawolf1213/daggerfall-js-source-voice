@@ -1840,6 +1840,7 @@ mods.worldEventsRaidingParties.Enabled.description,"Chevaliers, bandits ou orque
 mods.worldOfDaggerfall.Enabled.description,"Davantage à découvrir en pleine nature : camps et forts de bandits, ruines, autels, montagnes et champs de rochers dans toute la baie d’Iliac, avec bandits, ours et trésors, et un camp devant Privateer’s Hold."
 mods.worldTooltips.Enabled.description,"Un nom sous le réticule pour ce que vous regardez : une personne, une boutique et ses horaires, une porte et sa serrure, la destination d’une sortie, un levier, une roue, une échelle, une bibliothèque, un Daedra prêt à être invoqué. Désactivé, vous voyez toujours ce que contient un coffre ou un corps."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Activer pour ne pas donner d’indication par défaut sur les objets interactifs censés rester secrets, notamment les énigmes de la quête principale."
+naval.yard.grogDrunk,"Le moral de son équipage est {spirits, select, roaring {exubérant} high {haut} steady {stable} low {bas} other {sombre}} - ils ont déjà eu la tournée du jour"
 net.mod.ambiguous,"{count} joueurs s’appellent {name}. Personne n’a été réduit au silence."
 net.mod.chatAgain,"Vous pouvez de nouveau discuter."
 net.mod.muteRange,"Une mise en sourdine dure de 1 à {max} minutes (une semaine)."

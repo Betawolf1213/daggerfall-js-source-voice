@@ -1840,6 +1840,7 @@ mods.worldEventsRaidingParties.Enabled.description,"Caballeros, bandidos u orcos
 mods.worldOfDaggerfall.Enabled.description,"Más cosas que encontrar en las tierras salvajes: campamentos y fuertes de bandidos, ruinas, santuarios, montañas y pedregales por toda la Bahía Iliaca, con bandidos, osos y tesoros, y un campamento a las puertas de Privateer’s Hold."
 mods.worldTooltips.Enabled.description,"Un nombre bajo la mira para lo que estás mirando: una persona, una tienda y su horario, una puerta y su cerradura, adónde lleva una salida, una palanca, una rueda, una escalera, una estantería, un daedra a la espera de ser invocado. Con esto desactivado, sigues viendo lo que contiene un cofre o un cuerpo."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Actívalo para no dar una indicación por defecto en objetos interactivos que quizá debían ser secretos, sobre todo en los acertijos de la misión principal."
+naval.yard.grogDrunk,"El ánimo de su tripulación es {spirits, select, roaring {exultante} high {alto} steady {firme} low {bajo} other {sombrío}} - ya han tomado la ronda de hoy"
 net.mod.ambiguous,"Hay {count} jugadores llamados {name}. No se ha silenciado a nadie."
 net.mod.chatAgain,"Ya puedes volver a chatear."
 net.mod.muteRange,"Un silencio dura de 1 a {max} minutos (una semana)."

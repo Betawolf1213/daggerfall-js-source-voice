@@ -1840,6 +1840,7 @@ mods.worldEventsRaidingParties.Enabled.description,"Knights, bandits or orcs rai
 mods.worldOfDaggerfall.Enabled.description,"More to find in the wilderness: bandit camps and forts, ruins, shrines, mountains and rock fields across the Iliac Bay, with bandits, bears and treasure, and a camp outside Privateer’s Hold."
 mods.worldTooltips.Enabled.description,"A name under the crosshair for what you’re looking at: a person, a shop and its opening hours, a door and its lock, where an exit leads, a lever, a wheel, a ladder, a bookshelf, a Daedra waiting to be summoned. With it off, you still see what a chest or body holds."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Enable to not give a default indication on interactable objects that may have been intended to be secret, particularly regarding puzzles in the main quest."
+naval.yard.grogDrunk,"Her crew's spirits are {spirits, select, roaring {roaring} high {high} steady {steady} low {low} other {grim}} - they have had today's round"
 net.mod.ambiguous,"{count} players are called {name}. Nobody was muted."
 net.mod.chatAgain,"You can chat again."
 net.mod.muteRange,"A mute is 1 to {max} minutes (one week)."

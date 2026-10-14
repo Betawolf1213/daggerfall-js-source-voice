@@ -1840,6 +1840,7 @@ mods.worldEventsRaidingParties.Enabled.description,"Riddere, banditter eller ork
 mods.worldOfDaggerfall.Enabled.description,"Mer å finne i villmarken: banditteleirer og fort, ruiner, helligdommer, fjell og steinmarker rundt Iliac Bay, med banditter, bjørner og skatter, og en leir utenfor Privateer's Hold."
 mods.worldTooltips.Enabled.description,"Et navn under siktet for det du ser på: en person, en butikk og åpningstidene, en dør og låsen, hvor en utgang fører, en spak, et hjul, en stige, en bokhylle, en Daedra som venter på å bli påkalt. Med den av ser du fortsatt hva en kiste eller en kropp inneholder."
 mods.worldTooltips.HideDefaultInteractTooltip.description,"Slå på for ikke å gi en standardindikasjon på gjenstander du kan samhandle med som kan ha vært ment å være hemmelige, særlig gåter i hovedoppdraget."
+naval.yard.grogDrunk,"Mannskapets humør er {spirits, select, roaring {sprudlende} high {høyt} steady {stødig} low {lavt} other {dystert}} - de har fått dagens runde"
 net.mod.ambiguous,"{count} spillere heter {name}. Ingen ble dempet."
 net.mod.chatAgain,"Du kan chatte igjen."
 net.mod.muteRange,"En demping er 1 til {max} minutter (én uke)."
