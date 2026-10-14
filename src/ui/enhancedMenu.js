@@ -1033,27 +1033,52 @@ function paneTest(body) {
 // every skin switch, every Escape and every repaint, and a window
 // that reopened each time would be a window a player cannot get past.
 // `accountOffered` latches on the first offer.
+//
+// AUDIT RECOVERY-SET B1: THE FLOW IS THE WINDOW'S, NOT THE RENDER'S. A
+// flow built anew on every render dropped whatever it held on the next
+// one - and a boot resize, a skin switch or an Escape is a render. With
+// recovery codes that is an account lost: "Make new codes" has already
+// killed the old set when the new one is drawn, and a redraw (or a
+// Close, an Escape, a tap outside) put it away unseen. So the flow lives
+// while the window does (`acctFlow`, dropped by `closeAccount` and at
+// each visit's mount), and the window will not close while it shows
+// codes or while a press is out whose answer may be codes - "I have
+// written it down" is the one way off the `code` stage.
+let acctFlow = null;
+let acctPaint = null;
+const accountMayClose = () => !acctFlow || (acctFlow.stage !== 'code' && !acctFlow.busy);
+function closeAccount() {
+  if (!accountMayClose()) return;
+  accountOpen = false;
+  acctFlow = null;
+  acctPaint = null;
+  render();
+}
 function accountBody() {
   const host = el('div', 'acctmount');
-  let card = null;
-  const flow = AccountFlow({
-    io: { fetch: (...a) => globalThis.fetch(...a), base: serviceBase(appStorage()) },
-    storage: appStorage(),
-    onChange: () => card?.paint(),
-  });
+  const fresh = !acctFlow;
+  if (fresh) {
+    acctFlow = AccountFlow({
+      io: { fetch: (...a) => globalThis.fetch(...a), base: serviceBase(appStorage()) },
+      storage: appStorage(),
+      onChange: () => acctPaint?.(),
+    });
+  }
   // PROFILE-MENU: the card's plate wears the corner mark's portrait and says whose face it is - the same character
   // the mark shows (profileCharacter), its face asked for as a COPY (the mark and a save tile may draw this very face)
   const save = profileCharacter();
-  card = accountCard(document, flow, {
-    onClose: () => { accountOpen = false; render(); },
+  const card = accountCard(document, acctFlow, {
+    onClose: closeAccount,
     face: save ? loadFace(save, { scale: 2, copy: true }) : null,
     character: save ? `Playing ${characterLine(save)}` : null,
   });
+  acctPaint = card.paint;
   host.append(card.root);
   // Not awaited: the door must be on screen before the service is
   // asked anything, and `start` catches its own refusals. The guard is
   // the belt for a bug in it - a throw here would take the door with it.
-  Promise.resolve(flow.start()).catch(() => {});
+  // AUDIT RECOVERY-SET B1: asked once per window, not once per render.
+  if (fresh) Promise.resolve(acctFlow.start()).catch(() => {});
   return host;
 }
 
@@ -4231,7 +4256,7 @@ function renderHome() {
       const acct = el('div', 'px-stage px-acctstage');
       acct.append(accountWindow());
       home.append(acct);
-      closeOnOutsideTap(home, '.px-acctwin', () => { accountOpen = false; render(); });
+      closeOnOutsideTap(home, '.px-acctwin', closeAccount);   // AUDIT RECOVERY-SET B1: not over codes
       for (const n of [stage, mark, envelope]) n?.setAttribute?.('inert', '');   // AUDIT SERVER-POST: the face under the account window out of reach, as under the timers'
     }
     else if (timersOpen && hooks.timers?.()) {
@@ -4336,7 +4361,7 @@ function renderHome() {
     home.append(acct);
     // OT1, the same law the pause window lives under: a tap outside
     // closes it. The account is never a thing a player is stuck in.
-    closeOnOutsideTap(home, '.px-win', () => { accountOpen = false; render(); });
+    closeOnOutsideTap(home, '.px-win', closeAccount);   // AUDIT RECOVERY-SET B1: not over codes
   }
 
   appendPxFoot(home);
@@ -5724,7 +5749,7 @@ function onKey(e) {
   // ahead of the confirm card and the help sheet - it is a modal over
   // the door, so the one press that means "not that" must close IT
   // rather than walk the screen out from under it.
-  const back = accountOpen ? () => { accountOpen = false; render(); }
+  const back = accountOpen ? () => closeAccount()   // AUDIT RECOVERY-SET B1: Escape is held while the window shows codes
     : timersOpen && timersView ? () => { timersOpen = false; timersFocusBack = true; render(); }   // TIMERS1: the window first, ahead of the pause face's resume (AUDIT UI-11: a window that is drawn)
     : postOpen && postView ? () => { postOpen = false; postKeep = {}; postFocusBack = true; render(); }   // SERVER-POST: the mailbox's window, as the timers'
     // AUDIT 32 P12: an act under way on the Stores page is set down first (nothing spent, said) - never the window
@@ -5798,6 +5823,7 @@ export function mountEnhancedMenu(host, {
   // PROFILE2: and the profile window is a visit's too - the pause screen mounts this module again, and a window left
   // open on the door (or on the last pause) must not be standing over the next one before the player asks for it
   accountOpen = false;
+  acctFlow = null; acctPaint = null;
   timersOpen = false;   // TIMERS1: and the timers window the same
   timersFocusBack = false;
   postOpen = false;   // SERVER-POST: and the mailbox's

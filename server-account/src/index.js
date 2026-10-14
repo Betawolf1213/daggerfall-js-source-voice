@@ -182,6 +182,7 @@ import {
   createGuest, openSession, resolveSession, closeSession, closeAllSessions,
   devicesOf, accountView, displayName, accountKind,
   register, login, recover, changePassword, setEmail, overRate, overAccountRate,
+  newRecoveryCodes,   // RECOVERY-SET: a new set of codes from the profile
   accountWardrobe, equipTitle, equipAura, equipGlyph, buyInsignia, insigniaPurse, creditPlay, muteAccount, isMuted, mutedUntil,
   duelRecordOf, claimDuel, gateRecordOf, claimGate, legalRefusal,
   nameAsOf, wornNameOf, chooseNameAs,   // NAME-AS: the name the room reads - the account's or the character's
@@ -763,8 +764,8 @@ const service = {
           return r.error ? no(r.error, r.error === 'rate' ? 429 : 401, origin) : json(r, 200, origin);
         }
         // /v1/auth/recover
-        const r = await recover(ctx, { handle: body.handle, code: body.code, password: body.password });
-        return r.error ? no(r.error, r.error === 'rate' ? 429 : 401, origin) : json(r, 200, origin);
+        const r = await recover(ctx, { handle: body.handle, code: body.code, password: body.password, set: body.set === true });   // RECOVERY-SET: a set for a build that asks
+        return r.error ? no(r.error, r.error === 'rate' ? 429 : r.error === 'codes-moved' ? 409 : 401, origin) : json(r, 200, origin);   // AUDIT RECOVERY-SET A4
       }
 
       // EVERY ROUTE BELOW NEEDS A SECRET, and resolving it is the same
@@ -1723,13 +1724,20 @@ const service = {
         // where it becomes the account the request means.
         const refused = legalRefusal(body);
         if (refused) return no(refused.error, 400, origin);
-        const r = await register(ctx, who.player.id, { handle: body.handle, password: body.password, legal: { terms: body.terms, privacy: body.privacy } });
+        const r = await register(ctx, who.player.id, { handle: body.handle, password: body.password, legal: { terms: body.terms, privacy: body.privacy }, set: body.set === true });   // RECOVERY-SET: a set for a build that asks
         return r.error ? no(r.error, 400, origin) : json(r, 200, origin);
       }
 
       if (path === '/v1/account/password' && request.method === 'POST') {
         const r = await changePassword(ctx, who.player, who.session, { oldPassword: body.oldPassword, password: body.password });
         return r.error ? no(r.error, r.error === 'rate' ? 429 : r.error === 'bad-login' ? 401 : 400, origin) : json(r, 200, origin);
+      }
+
+      if (path === '/v1/account/recovery-codes' && request.method === 'POST') {
+        // RECOVERY-SET: a NEW set of recovery codes, behind the password and one current code (AUDIT RECOVERY-SET A1) -
+        // shown once, the old set dead with the write
+        const r = await newRecoveryCodes(ctx, who.player, { password: body.password, code: body.code });
+        return r.error ? no(r.error, r.error === 'rate' ? 429 : r.error === 'bad-login' || r.error === 'bad-code' ? 401 : r.error === 'codes-moved' ? 409 : 400, origin) : json(r, 200, origin);
       }
 
       if (path === '/v1/account/email' && request.method === 'POST') {
