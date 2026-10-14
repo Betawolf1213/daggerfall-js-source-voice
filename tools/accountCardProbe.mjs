@@ -108,10 +108,12 @@ const STAGES = [
   { stage: 'register', label: 'creating an account' },
   { stage: 'login', label: 'signing in' },
   { stage: 'recover', label: 'spending the recovery code' },
-  { stage: 'code', label: 'the recovery code', code: '7GEPQ-47BS9-AYK70-QMWYW' },
-  { stage: 'in', label: 'signed in', account: { name: 'Nystul', handle: 'Nystul', kind: 'linked', nameAs: 'account' } },   // NAME-AS: the account's name chosen
+  // RECOVERY-SET: the code stage shows a SET of eight, numbered, each its own <code>
+  { stage: 'code', label: 'the recovery codes', codes: ['7GEPQ-47BS9-AYK70-QMWYW', 'TJY8S-KEWD8-R12W3-TZTAX', 'A2B3C-D4E5F-G6H7J-K8M9N', 'P0Q1R-S2T3V-W4X5Y-Z6A7B', 'C8D9E-F0G1H-J2K3M-N4P5Q', 'R6S7T-V8W9X-Y0Z1A-B2C3D', 'E4F5G-H6J7K-M8N9P-Q0R1S', 'T2V3W-X4Y5Z-A6B7C-D8E9F'] },
+  { stage: 'in', label: 'signed in', account: { name: 'Nystul', handle: 'Nystul', kind: 'linked', nameAs: 'account', recoveryLeft: 8 } },   // NAME-AS: the account's name chosen; RECOVERY-SET: and the codes left
   { stage: 'in', label: 'a guest', account: { name: 'Mithriil Stormaire', guestName: 'Mithriil Stormaire', handle: null, kind: 'guest', nameAs: 'character' } },   // NAME-AS: and the character's
   { stage: 'password', label: 'changing the password' },
+  { stage: 'codes', label: 'new recovery codes' },   // RECOVERY-SET: the password before a new set
 ];
 
 const measured = await page.evaluate(async (stages) => {
@@ -123,7 +125,7 @@ const measured = await page.evaluate(async (stages) => {
   for (const s of stages) {
     const flow = AccountFlow({ io: { fetch: () => { throw new Error('the probe makes no requests'); } }, storage: null });
     flow.stage = s.stage;
-    if (s.code) flow.recoveryCode = s.code;
+    if (s.codes) flow.recoveryCodes = s.codes;   // RECOVERY-SET: a set
     if (s.account) flow.account = s.account;
     const card = accountCard(document, flow);
     app.append(card.root);

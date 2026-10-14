@@ -29,6 +29,11 @@
   "tr": "1949e048fcf8",
   "by": "claude-in-session"
  },
+ "account.card.act.copyCodes": {
+  "en": "af74f7c5362a",
+  "tr": "8fbf6fdb2204",
+  "by": "claude-in-session"
+ },
  "account.card.act.createAccount": {
   "en": "aaf374479756",
   "tr": "212964642e01",
@@ -42,6 +47,21 @@
  "account.card.act.lostPassword": {
   "en": "3183df6f9dc1",
   "tr": "dbdcf9f425e9",
+  "by": "claude-in-session"
+ },
+ "account.card.act.makeCodes": {
+  "en": "321c8b300bc5",
+  "tr": "5f3d529b6315",
+  "by": "claude-in-session"
+ },
+ "account.card.act.recoveryCodes": {
+  "en": "b3f5f8ca4dc4",
+  "tr": "577b6666172e",
+  "by": "claude-in-session"
+ },
+ "account.card.act.saveCodes": {
+  "en": "780479f1a8e1",
+  "tr": "ba1d4e561ec0",
   "by": "claude-in-session"
  },
  "account.card.act.setPassword": {
@@ -85,8 +105,13 @@
   "by": "claude-in-session"
  },
  "account.card.blurb.code": {
-  "en": "075e5345c2ae",
-  "tr": "2b5211c70524",
+  "en": "42ef4423d9f5",
+  "tr": "10920499407e",
+  "by": "claude-in-session"
+ },
+ "account.card.blurb.codes": {
+  "en": "515c3e8e38f0",
+  "tr": "e53ecedc912f",
   "by": "claude-in-session"
  },
  "account.card.blurb.password": {
@@ -102,6 +127,11 @@
  "account.card.characters": {
   "en": "b6f59f08fd6d",
   "tr": "706bf1bb8aab",
+  "by": "claude-in-session"
+ },
+ "account.card.codesLeft": {
+  "en": "b7d0dcf74a3e",
+  "tr": "d9e3eb489bb1",
   "by": "claude-in-session"
  },
  "account.card.duels": {
@@ -179,6 +209,11 @@
   "tr": "e566ab5b2a98",
   "by": "claude-in-session"
  },
+ "account.card.recoveryCodes": {
+  "en": "b3f5f8ca4dc4",
+  "tr": "577b6666172e",
+  "by": "claude-in-session"
+ },
  "account.card.registered": {
   "en": "a844fcf834e7",
   "tr": "0397e13f5fe9",
@@ -220,13 +255,18 @@
   "by": "claude-in-session"
  },
  "account.card.tag.code": {
-  "en": "a2daa6625b4d",
-  "tr": "295ca885f26b",
+  "en": "b51b76d5bed9",
+  "tr": "a4801323c561",
   "by": "claude-in-session"
  },
  "account.card.title.code": {
-  "en": "9164bb086b3f",
-  "tr": "6cac5472e844",
+  "en": "781e39b27338",
+  "tr": "1cec74af6ae3",
+  "by": "claude-in-session"
+ },
+ "account.card.title.codes": {
+  "en": "90b8afc8b2b7",
+  "tr": "8b56f19c1c4a",
   "by": "claude-in-session"
  },
  "account.card.title.in": {
@@ -269,14 +309,44 @@
   "tr": "0f8d04c27a49",
   "by": "claude-in-session"
  },
+ "account.codes.copied": {
+  "en": "0a8cad7387d1",
+  "tr": "c74dd5e6207f",
+  "by": "claude-in-session"
+ },
+ "account.codes.copyRefused": {
+  "en": "921e97a37dce",
+  "tr": "a24fd672dc95",
+  "by": "claude-in-session"
+ },
+ "account.codes.fileHead": {
+  "en": "0d73b3425a99",
+  "tr": "9c47026e57a1",
+  "by": "claude-in-session"
+ },
+ "account.codes.fileNote": {
+  "en": "d89574b9e9e2",
+  "tr": "003a27a11577",
+  "by": "claude-in-session"
+ },
+ "account.codes.saveRefused": {
+  "en": "567892c6bf26",
+  "tr": "fd66c70bd8d9",
+  "by": "claude-in-session"
+ },
+ "account.codes.saved": {
+  "en": "2479c19b932e",
+  "tr": "d7a34031dbdd",
+  "by": "claude-in-session"
+ },
  "account.field.code": {
   "en": "3cb5fd8e47c4",
   "tr": "05f7ff5e8cb9",
   "by": "claude-in-session"
  },
  "account.field.codeHint": {
-  "en": "4bfeb72154d2",
-  "tr": "bf1a7b1dd168",
+  "en": "5c8221388067",
+  "tr": "e48ad6b83706",
   "by": "claude-in-session"
  },
  "account.field.confirm": {
@@ -347,6 +417,11 @@
  "account.flow.patreonUnlinked": {
   "en": "8a19525a8f4e",
   "tr": "6c57abb21d3c",
+  "by": "claude-in-session"
+ },
+ "account.flow.recoveredLeft": {
+  "en": "fb322e4c0abc",
+  "tr": "0967c2738f40",
   "by": "claude-in-session"
  },
  "account.flow.signedOut": {
@@ -992,6 +1067,11 @@
  "account.refusal.closed": {
   "en": "bfeeefc0f824",
   "tr": "cb9399658b70",
+  "by": "claude-in-session"
+ },
+ "account.refusal.codesMoved": {
+  "en": "bfd229e00374",
+  "tr": "cb052efdb03a",
   "by": "claude-in-session"
  },
  "account.refusal.commissionCrafter": {

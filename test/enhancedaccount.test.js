@@ -68,7 +68,7 @@ test('ACC1e: EVERY stage draws - a card with a heading, words, and something to 
   for (const stage of STAGES) {
     const { flow, card } = build();
     flow.stage = stage;
-    if (stage === 'code') flow.recoveryCode = 'AAAAA-BBBBB-CCCCC-DDDDD';
+    if (stage === 'code') flow.recoveryCodes = ['AAAAA-BBBBB-CCCCC-DDDDD'];   // PIN MOVED: RECOVERY-SET - a set, a code each
     if (stage === 'in') flow.account = { name: 'Nystul', handle: 'Nystul', kind: 'linked' };
     card.paint();
 
@@ -146,18 +146,25 @@ test('ACC1e: a password box is never told to autofill the WRONG password', () =>
 test('ACC1e: the recovery code is drawn on its plaque, and the ONLY way off that stage acknowledges it', () => {
   const { flow, card } = build();
   flow.stage = 'code';
-  flow.recoveryCode = '7GEPQ-47BS9-AYK70-QMWYW';
+  flow.recoveryCodes = ['7GEPQ-47BS9-AYK70-QMWYW', 'TJY8S-KEWD8-R12W3-TZTAX'];   // PIN MOVED: RECOVERY-SET - a set
   card.paint();
 
   assert.ok(classesOf(card).includes('acctcode'), 'the code was drawn as ordinary text, not as the plaque');
-  assert.ok(card.root.text.includes('7GEPQ-47BS9-AYK70-QMWYW'), 'the code is not on the card at all');
-  assert.ok(tagsOf(card).includes('code'), 'the code is not in a <code> element');
-  // the strongest sentence on the card has to actually be there
-  assert.match(card.root.text, /only time/i, 'the card does not say this is the only time the code is shown');
+  for (const c of flow.recoveryCodes) assert.ok(card.root.text.includes(c), `${c} is not on the card at all`);
+  // RECOVERY-SET: each code its own <code>, so one click takes one whole and never its neighbour
+  assert.equal(tagsOf(card).filter((x) => x === 'code').length, 2, 'the codes are not each in a <code> element');
+  // the strongest sentence on the card has to actually be there (PIN MOVED: RECOVERY-SET - "shown only now", and the
+  // way to more named, since the profile can make a new set)
+  assert.match(card.root.text, /shown only now/i, 'the card does not say this is the only time the codes are shown');
+  assert.match(card.root.text, /new ones from your profile/i);
 
+  // PIN MOVED: RECOVERY-SET - Copy and Save as a file sit beside it, and neither leaves the stage; the one way OFF is
+  // still the acknowledgement
   const buttons = card.root.all.filter((n) => n.tag === 'button');
-  assert.equal(buttons.length, 1, 'the code stage offers a second way off, so the code can be lost by taking it');
-  assert.match(buttons[0].textContent, /written it down/i);
+  const off = buttons.filter((b) => !/^(Copy|Save as a file)$/.test(b.textContent));
+  assert.equal(off.length, 1, 'the code stage offers a second way off, so the code can be lost by taking it');
+  assert.match(off[0].textContent, /written it down/i);
+  assert.equal(buttons.length, 3, 'Copy and Save as a file');
 });
 
 test('ACC1e: a GUEST is offered a username, not nagged with an empty one', () => {
@@ -234,7 +241,7 @@ test('ACC1e: every class the card wears is one the enhanced skin defines', () =>
   for (const stage of STAGES) {
     const { flow, card } = build();
     flow.stage = stage;
-    if (stage === 'code') flow.recoveryCode = 'A-B';
+    if (stage === 'code') flow.recoveryCodes = ['A-B'];   // PIN MOVED: RECOVERY-SET
     if (stage === 'in') flow.account = { name: 'N', handle: null, guestName: 'A B', kind: 'guest', nameAs: 'account' };   // NAME-AS: and the name-in-game toggle's classes walked with the rest
     card.paint();
     for (const c of classesOf(card)) for (const one of c.split(/\s+/)) if (one) worn.add(one);

@@ -22,6 +22,10 @@
 // down it is gone - along with the account and the cloud saves behind
 // it, which are the only reason the account exists.
 //
+// RECOVERY-SET: a SET of eight now, each spent alone, and the profile
+// can mint a new set behind the password (the `codes` stage) - still
+// shown once, because the service keeps only their hashes.
+//
 // So `code` is a STAGE rather than a line in a corner. It is the only
 // stage with no way back to the game except an explicit "I have
 // written it down", the code is never handed to storage, and leaving
@@ -40,6 +44,7 @@
 
 import {
   openGuest, register, login, recover, readAccount, changePassword, logout, equipTitle, equipAura, equipGlyph, adoptIdentity, unlinkPatreon,
+  newRecoveryCodes,   // RECOVERY-SET: a new set of recovery codes, from the profile
   chooseNameAs,   // NAME-AS: which name the room reads
   storedSession, keepSession, forgetSession, accountRefusalText, handleShapeOk,
   PASSWORD_MIN_LEN,
@@ -61,6 +66,7 @@ export const STAGES = Object.freeze([
   'code',       // THE CODE, readable once, and the only way on is to acknowledge it
   'in',         // signed in
   'password',   // changing the password from inside a session
+  'codes',      // RECOVERY-SET: a new set of recovery codes, behind the password
 ]);
 
 /** The fields each stage asks for, in the order they are asked. The
@@ -71,6 +77,7 @@ export const FIELDS = Object.freeze({
   login: ['handle', 'password'],
   recover: ['handle', 'code', 'password', 'confirm'],
   password: ['oldPassword', 'password', 'confirm'],
+  codes: ['oldPassword'],   // RECOVERY-SET: the password first, as changing it asks
 });
 
 /** What each field is called and how it behaves. `secret: true` is the
@@ -81,7 +88,7 @@ export const FIELD_SPEC = Object.freeze({   // L10N4: the words are getters, rea
   password: { get label() { return t('account.field.password', 'Password'); }, secret: true, max: 200, get hint() { return t('account.field.passwordHint', 'At least {min} characters.', { min: PASSWORD_MIN_LEN }); } },
   confirm: { get label() { return t('account.field.confirm', 'Repeat password'); }, secret: true, max: 200, hint: '' },
   oldPassword: { get label() { return t('account.field.oldPassword', 'Current password'); }, secret: true, max: 200, hint: '' },
-  code: { get label() { return t('account.field.code', 'Recovery code'); }, secret: false, max: 40, get hint() { return t('account.field.codeHint', 'The code shown once when you registered.'); } },
+  code: { get label() { return t('account.field.code', 'Recovery code'); }, secret: false, max: 40, get hint() { return t('account.field.codeHint', 'One of the recovery codes you wrote down.'); } },   // RECOVERY-SET: one of a set
 });
 
 /** TERMS1 — WHAT EACH STAGE ASKS A PLAYER TO AGREE TO, in the order it
@@ -120,6 +127,28 @@ export const LOCAL_REFUSALS = localizedTable({   // L10N4: each a getter, read w
   'privacy-unticked': () => t('account.local.privacyUnticked', 'Read and agree to the Privacy Policy to create an account.'),
 });
 
+/** RECOVERY-SET: the codes an answer carries, as the card shows them - a set (`recoveryCodes`), or the one a service from
+ *  before the set answers (`recoveryCode`), or none (a recovery that left the set's others standing). */
+export function codesOf(d) {
+  if (Array.isArray(d?.recoveryCodes)) return d.recoveryCodes.filter((c) => typeof c === 'string' && c);
+  return typeof d?.recoveryCode === 'string' && d.recoveryCode ? [d.recoveryCode] : [];
+}
+
+/** RECOVERY-SET: the codes as a file the player keeps - "Save as a file" on the card. Plain text, a code a line,
+ *  numbered as the card numbers them. */
+export function recoveryCodesText(handle, codes) {
+  return [
+    t('account.codes.fileHead', 'DFO Online recovery codes for {name}', { name: handle || '?' }),
+    t('account.codes.fileNote', 'Each code works once, if you forget your password. Keep this file somewhere safe.'),
+    '',
+    ...codes.map((c, i) => `${i + 1}. ${c}`),
+    '',
+  ].join('\n');
+}
+
+/** RECOVERY-SET: the file's name - the account's username in it, so two accounts' files never overwrite each other. */
+export const recoveryCodesFileName = (handle) => `dfo-recovery-codes-${String(handle || 'account').replace(/[^\w-]+/g, '').toLowerCase() || 'account'}.txt`;
+
 /** NAME-AS: what the card says once the service has taken a choice of name - which name the room reads from now. */
 export const NAME_AS_NOTE = Object.freeze({
   account: 'Others now see your account name.',
@@ -156,8 +185,10 @@ export function AccountFlow({ io, storage, onChange = () => {}, now = () => Date
     error: '',
     /** a sentence that is NOT a failure - "your password was changed" */
     note: '',
-    /** readable once, held in memory only, never given to storage */
-    recoveryCode: /** @type {string|null} */ (null),
+    /** readable once, held in memory only, never given to storage - RECOVERY-SET: the set shown, a code each */
+    recoveryCodes: /** @type {string[]|null} */ (null),
+    /** RECOVERY-SET: whose they are - the username the saved file names */
+    codesFor: '',
     /** a submission is in flight; nothing else may start */
     busy: false,
     /** what the player has typed */
@@ -184,7 +215,7 @@ export function AccountFlow({ io, storage, onChange = () => {}, now = () => Date
     self.note = note;
     self.values = {};
     self.agreed = {};
-    if (stage !== 'code') self.recoveryCode = null;
+    if (stage !== 'code') { self.recoveryCodes = null; self.codesFor = ''; }
     changed();
   }
 
@@ -483,6 +514,7 @@ export function AccountFlow({ io, storage, onChange = () => {}, now = () => Date
       if (self.stage === 'login') return await doLogin();
       if (self.stage === 'recover') return await doRecover();
       if (self.stage === 'password') return await doPassword();
+      if (self.stage === 'codes') return await doNewCodes();
       return refuse('');
     } finally {
       // Whatever happened, the card is pressable again. A `busy` left
@@ -549,8 +581,9 @@ export function AccountFlow({ io, storage, onChange = () => {}, now = () => Date
     if (!r) return false;
     if (!r.ok) return refuse(accountRefusalText(r.error));
 
-    // THE ONE MOMENT THE CODE IS READABLE.
-    self.recoveryCode = r.data.recoveryCode;
+    // THE ONE MOMENT THE CODES ARE READABLE.
+    self.recoveryCodes = codesOf(r.data);
+    self.codesFor = typeof r.data.handle === 'string' ? r.data.handle : v('handle');
     self.stage = 'code';
     self.values = {};
     self.agreed = {};
@@ -574,8 +607,13 @@ export function AccountFlow({ io, storage, onChange = () => {}, now = () => Date
    * RECOVERY SIGNS EVERY DEVICE OUT, including this one - the reason
    * somebody is recovering may be that another person has their
    * password. The service opens a fresh session for the device that
-   * recovered and mints a NEW recovery code, because a player left
-   * with no way back in has had the same cliff moved one step.
+   * recovered.
+   *
+   * RECOVERY-SET: the code typed is spent and the set's others still
+   * work, so the card lands signed in and says how many are left. A
+   * single code from before the set, or the last of one, comes back as
+   * a NEW set - shown on `code`, because a player left with no way back
+   * in has had the same cliff moved one step.
    */
   async function doRecover() {
     const bad = localRefusal(FIELDS.recover);
@@ -584,7 +622,41 @@ export function AccountFlow({ io, storage, onChange = () => {}, now = () => Date
     if (!r) return false;
     if (!r.ok) return refuse(accountRefusalText(r.error));
     keepSession(storage, r.data);
-    self.recoveryCode = r.data.recoveryCode;
+    const codes = codesOf(r.data);
+    if (!codes.length) {
+      await self.start();
+      if (self.stage === 'in' && !self.error && Number.isSafeInteger(r.data.codesLeft)) {
+        self.note = t('account.flow.recoveredLeft', 'Your password was set. {n, plural, one {# recovery code is} other {# recovery codes are}} left.', { n: r.data.codesLeft });
+        changed();
+      }
+      return true;
+    }
+    self.recoveryCodes = codes;
+    self.codesFor = v('handle');
+    self.stage = 'code';
+    self.values = {};
+    self.error = '';
+    changed();
+    return true;
+  }
+
+  /**
+   * RECOVERY-SET - A NEW SET, FROM THE PROFILE. The request: players
+   * "click and see their account recovery code in their profile". The
+   * service keeps only hashes, so what is shown is a NEW set, once, on
+   * `code` - the password asked first, as changing it asks, and the old
+   * set dead with the answer.
+   */
+  async function doNewCodes() {
+    const bad = localRefusal(FIELDS.codes);
+    if (bad) return refuse(bad);
+    const r = await ask(() => newRecoveryCodes(door(), pw('oldPassword')));
+    if (!r) return false;
+    if (!r.ok) return refuse(accountRefusalText(r.error));
+    const codes = codesOf(r.data);
+    if (!codes.length) return refuse(accountRefusalText('server'));
+    self.recoveryCodes = codes;
+    self.codesFor = self.account?.handle ?? '';
     self.stage = 'code';
     self.values = {};
     self.error = '';
@@ -609,8 +681,16 @@ export function AccountFlow({ io, storage, onChange = () => {}, now = () => Date
    *  the code is dropped here and nothing anywhere can print it again. */
   self.acknowledgeCode = async () => {
     if (self.stage !== 'code') return;
-    self.recoveryCode = null;
+    self.recoveryCodes = null;
+    self.codesFor = '';
     await self.start();
+  };
+
+  /** RECOVERY-SET: a sentence the card says of its own act - the codes copied, or saved as a file, or why not. */
+  self.say = (sentence, bad = false) => {
+    self.error = bad ? sentence : '';
+    self.note = bad ? '' : sentence;
+    changed();
   };
 
   /** THIS device by default. `all` is separate and explicit, because

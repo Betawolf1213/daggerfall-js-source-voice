@@ -49,7 +49,8 @@ import { verifyDuelReceipt } from '../../src/net/duelReceipt.js';   // INT8: a d
 import { TERMS_VERSION, PRIVACY_VERSION, LEGAL_VERSION_RE } from '../../src/net/legalLaw.js';   // TERMS1: the documents a new account agrees to - one home both ends
 import {
   hashPassword, verifyPassword, needsRehash, passwordRefusal,
-  mintRecoveryCode, codeForHashing,
+  codeForHashing,
+  mintRecoverySet, hashRecoverySet, joinRecoverySet, matchRecoveryCode, recoveryLeft,   // RECOVERY-SET: eight codes, each spent alone
 } from './password.js';
 import { seatRegionOk } from '../../src/net/townSeatLaw.js';   // SEAT1b: a gate claim's region
 
@@ -430,6 +431,8 @@ export function accountView(player, nowS) {
     muted: isMuted(player, nowS),
     // NAME-AS: which name the room reads - the profile card's choice, as the row holds it
     nameAs: nameAsOf(player),
+    // RECOVERY-SET: how many recovery codes still open this account - a COUNT, never a code or its hash (null for a guest)
+    recoveryLeft: recoveryLeft(player.recovery_hash),
   };
 }
 
@@ -731,7 +734,10 @@ export async function clearRate({ db }, key) {
  * it and the saves that will hang off it are all already this player's,
  * which is the property ACC0 has been protecting since it opened.
  *
- * Returns `{ recoveryCode }` - THE ONLY TIME IT IS EVER READABLE.
+ * Returns `{ recoveryCodes }` - THE ONLY TIME THEY ARE EVER READABLE.
+ * RECOVERY-SET: a set of eight; `recoveryCode` (the first of them) is
+ * the word a build from before the set reads, so it shows a code that
+ * works rather than none.
  *
  * TERMS1: `legal` is the agreement ticked on the form that named it,
  * which the route has already required (`legalRefusal`) - written with
@@ -749,10 +755,10 @@ export async function register({ db, subtle, rand, nowS }, playerId, { handle, p
   if (!player) return { error: 'no-account' };
   if (player.handle) return { error: 'already-registered' };
 
-  const code = mintRecoveryCode(rand);
+  const codes = mintRecoverySet(rand);
   const [pw, rc] = await Promise.all([
     hashPassword(password, { subtle, rand }),
-    hashPassword(codeForHashing(code), { subtle, rand }),
+    hashRecoverySet(codes, { subtle, rand }),
   ]);
   let wrote;
   try {
@@ -772,7 +778,7 @@ export async function register({ db, subtle, rand, nowS }, playerId, { handle, p
     throw e;
   }
   if (!wrote.meta.changes) return { error: 'already-registered' };
-  return { recoveryCode: code, handle };
+  return { recoveryCodes: codes, recoveryCode: codes[0], handle };
 }
 
 /**
@@ -808,9 +814,15 @@ export async function login({ db, subtle, rand, nowS }, { handle, password, devi
 }
 
 /**
- * THE WAY BACK IN. The code sets a new password, mints a NEW code, and
- * SIGNS EVERY DEVICE OUT - because the reason somebody is standing here
- * may be that another person has their password.
+ * THE WAY BACK IN. The code sets a new password and SIGNS EVERY DEVICE
+ * OUT - because the reason somebody is standing here may be that another
+ * person has their password.
+ *
+ * RECOVERY-SET: the code typed is SPENT and the set's others still work
+ * (`codesLeft` says how many). A single code from before the set, or the
+ * last of one, mints a fresh set in its place (`recoveryCodes`, and
+ * `recoveryCode` for a build from before them) - a player who spends
+ * their only way in is never left with none.
  */
 export async function recover({ db, subtle, rand, nowS }, { handle, code, password }) {
   const lc = String(handle ?? '').toLowerCase();
@@ -820,15 +832,15 @@ export async function recover({ db, subtle, rand, nowS }, { handle, code, passwo
 
   const canon = codeForHashing(code);
   const player = lc ? await db.prepare('SELECT * FROM players WHERE handle_lc = ?').bind(lc).first() : null;
-  // Same shape as login: the derivation happens whether or not there is
-  // anything to compare it against.
-  const ok = await verifyPassword(canon ?? '', player?.recovery_hash ?? null, { subtle });
+  // Same shape as login: the derivations happen whether or not there is
+  // anything to compare them against (password.js matchRecoveryCode).
+  const { ok, rest } = await matchRecoveryCode(canon, player?.recovery_hash ?? null, { subtle });
   if (!player || !canon || !ok) return { error: 'bad-code' };
 
-  const next = mintRecoveryCode(rand);
+  const fresh = rest?.length ? null : mintRecoverySet(rand);
   const [pw, rc] = await Promise.all([
     hashPassword(password, { subtle, rand }),
-    hashPassword(codeForHashing(next), { subtle, rand }),
+    fresh ? hashRecoverySet(fresh, { subtle, rand }) : joinRecoverySet(rest),
   ]);
   // AUDIT 68 S01-register-recover-lost-update: the code is SPENT by the write that replaces it - two recoveries racing
   // on one code both verified it, and the first one's new code and session were dead on arrival
@@ -837,7 +849,8 @@ export async function recover({ db, subtle, rand, nowS }, { handle, code, passwo
   await closeAllSessions({ db }, player.id);
   await clearRate({ db }, `recover:${lc}`);
   const session = await openSession({ db, subtle, rand, nowS }, player.id, null);
-  return { id: player.id, name: displayName(player), recoveryCode: next, ...session };
+  const left = fresh ? { recoveryCodes: fresh, recoveryCode: fresh[0], codesLeft: fresh.length } : { codesLeft: rest.length };
+  return { id: player.id, name: displayName(player), ...left, ...session };
 }
 
 /** Change a password from inside a session, which needs the OLD one -
@@ -858,6 +871,34 @@ export async function changePassword({ db, subtle, rand, nowS }, player, session
   await db.prepare('UPDATE players SET password = ? WHERE id = ?').bind(pw, player.id).run();
   await db.prepare('DELETE FROM sessions WHERE player_id = ? AND id != ?').bind(player.id, session.id).run();
   return { ok: true };
+}
+
+/**
+ * RECOVERY-SET - A NEW SET OF RECOVERY CODES, from the profile. The
+ * request: players "click and see their account recovery code in their
+ * profile". A code is never readable again, so the profile asks for a
+ * NEW set - the PASSWORD first, as `changePassword` asks for the old one
+ * (a stolen device must not mint itself the account's way back in), and
+ * a guess at it spends LOGIN's bucket by that route's own law (AUDIT 68
+ * S01-changepw-unthrottled-oracle). The old set dies with the write, and
+ * no device is signed out: nothing about who holds the account moved.
+ *
+ * THE WRITE IS THE AUTHORITY (AUDIT 68 S01-register-recover-lost-update):
+ * it lands only on the row as it was read, so two presses racing (two
+ * tabs) cannot both answer a set while only the second's works - the
+ * loser is told `codes-moved`, and a code spent in between is noticed the
+ * same way.
+ */
+export async function newRecoveryCodes({ db, subtle, rand, nowS }, player, { password }) {
+  if (!player.password) return { error: 'not-registered' };
+  if (await overRate({ db, nowS }, `login:${player.handle_lc}`)) return { error: 'rate' };
+  if (!await verifyPassword(password, player.password, { subtle })) return { error: 'bad-login' };
+  await clearRate({ db }, `login:${player.handle_lc}`);
+  const codes = mintRecoverySet(rand);
+  const rc = await hashRecoverySet(codes, { subtle, rand });
+  const wrote = await db.prepare('UPDATE players SET recovery_hash = ? WHERE id = ? AND recovery_hash IS ?').bind(rc, player.id, player.recovery_hash ?? null).run();
+  if (!wrote.meta.changes) return { error: 'codes-moved' };
+  return { recoveryCodes: codes, codesLeft: codes.length };
 }
 
 /** An address, or none at all. COMPLETELY OPTIONAL (Mac) - nothing is

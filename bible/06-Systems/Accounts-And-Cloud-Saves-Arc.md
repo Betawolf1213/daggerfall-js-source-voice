@@ -446,6 +446,8 @@ The code is minted at registration, shown **once**, and stored exactly
 as the password is: hashed, salted, unreadable on this side. Spending it
 sets a new password **and mints a new one**, because a player left with
 no way back in has simply had the same cliff moved one step away.
+(RECOVERY-SET, 2026-10-14, made the one code a set of eight, each spent
+alone, with a new set from the profile - the section of that name below.)
 
 **REGISTERING IS AN UPGRADE IN PLACE.** The guest row *is* the account —
 ACC0's wall again — so a handle and a password are two columns filling
@@ -1112,7 +1114,8 @@ and this side has no sentence for reddens. That is how `not-found` and
   completely optional, so there is no reset link and this code *is* the
   reset. It is never written to storage, the only way off that stage is
   an explicit *"I have written it down"*, and a second way off would be
-  a way to lose an account by taking it.
+  a way to lose an account by taking it. (RECOVERY-SET: a set of codes
+  now, with Copy and Save as a file beside it - neither leaves the stage.)
 - **A password is sent exactly as typed.** The handle is trimmed; a
   password is not. Trimming here while the service hashes what it was
   sent is a login that works from this client and fails from every other.
@@ -5540,3 +5543,54 @@ guild's tag after the name - the roster row's own order - and the title is worn 
 `net/remotePlayers.js`, the travel view's) and on the Inspect card (`ui/profileWindow.js`). A letter's sender line keeps
 its title: a letter is the letterbox's, not the chat. The record and its pins are `06-Systems/Chat-Roster-And-Names.md`
 TITLE-C.
+
+## RECOVERY-SET - eight recovery codes, each spent alone, and a new set from the profile (2026-10-14, acct131)
+
+The request: *"Now I want players to be able to click and see their account recovery code in their profile instead of
+it being a one off thing"*. The service keeps only a code's hash (ACC1c), so it cannot show a code again. Two ways
+were offered - a new code from the profile behind the password, or the code kept encrypted and shown again - and the
+first was chosen; then, asked whether a better system was wanted, three layers were offered (a set of codes in the
+profile, passkeys, an emailed reset for players who gave an address) and the answer was *"Lets just do #1"*.
+
+**WHAT SHIPS.** A registration mints a SET of eight codes. Each one opens the account once: a recovery spends the code
+typed, the set's others still work, and the answer says how many are left (`codesLeft`), which the card says as it
+lands signed in. The LAST code of a set, or a single code from before the set, mints a fresh eight in its place, shown
+on the `code` stage - the cliff ACC1c would not ship is still not shipped. The profile's Account section says how many
+codes are left (the account view's `recoveryLeft`, a count and never a code), and **Recovery codes** (offered only
+where the service counts them - a service before acct131 has no route to make them) opens the
+`codes` stage: the current password, then a new set, shown once. The old set dies with the write and no device is
+signed out - nothing about who holds the account moved. The `code` stage numbers the codes, each in its own `<code>`
+so one click takes one whole, and offers **Copy** and **Save as a file** (`dfo-recovery-codes-<username>.txt`, a code
+a line, numbered as the card numbers them) beside *"I have written it down"*, which is still the one way off it.
+
+**THE SAME COLUMN, NO MIGRATION.** `recovery_hash` holds `codes,<hash>,<hash>,...`, each `<hash>` password.js's own
+self-describing PBKDF2 form (base64 and `$`, never a comma). A row from before keeps its one PBKDF2 string, as ACC1c
+and RECOVER-OP (`tools/reissueRecoveryCode.mjs`) write it, and that string still opens the account as the one code it
+is - so the operator's reissue needs no change, and a player it is issued for comes back to a fresh set.
+
+**AT THE CODE'S COST, NOT THE PASSWORD'S.** Each code of a set is salted and derived at `RECOVERY_CODE_ITERS` (1000,
+`parseStored`'s floor), not the password's 100,000. The iterations slow a guess at something a person CHOSE; a minted
+code is 100 random bits, and nobody guesses 2^100 at any speed. Salted and derived is NIST SP 800-63B's rule for a
+look-up secret under 112 bits, and eight such cost less than one password.
+
+**THE SAME WORK FOR EVERY ROW.** `matchRecoveryCode` always runs one derivation at the password's cost (the single
+code, or a throwaway) and eight at the code's (the set's, or throwaways), whatever the row holds and whether there is
+a row at all - ACC1c's law that a handle nobody holds costs what a wrong code costs, kept now that rows come in two
+shapes. `verifyPassword` takes the throwaway's cost so a stand-in costs what the row it stands for would.
+
+**THE PASSWORD GUARDS THE NEW SET, AND SPENDS LOGIN'S BUCKET** - `newRecoveryCodes` is `changePassword`'s door: a
+stolen device must not mint itself the account's way back in, and a guess at the password through it is a guess at the
+password (AUDIT 68 S01-changepw-unthrottled-oracle). **THE WRITE IS THE AUTHORITY** (AUDIT 68
+S01-register-recover-lost-update): it lands only on the row as it was read (`recovery_hash IS ?`), so two presses
+racing cannot both answer a set while only the second's works - the loser hears `codes-moved`, a sentence of its own.
+
+**A BUILD FROM BEFORE THE SET** reads `recoveryCode`, so registering and a fresh set also answer it - the set's first
+code, one that works. A build from before reads no `codesLeft`; after a recovery that left codes standing it shows an
+empty code stage, harmless, and the codes it did not show still work.
+
+**Not done, and offered:** passkeys (Face ID, a fingerprint, Windows Hello) as a second way in, and an emailed reset for
+the players who chose to give an address - each its own slice if it is wanted.
+
+Pinned by `test/recoveryset.test.js` (17) and the moved pins of ACC1c, ACC1e and AUDIT 68 (`accountworker`,
+`accountflow`, `enhancedaccount`, `audit68_backend`, `terms1`); `tools/mutants/recoveryset.json` (43: 42 dead, one
+recorded equivalent - `acknowledgeCode`'s own null of the codes, which every exit of the `start()` it calls also drops).

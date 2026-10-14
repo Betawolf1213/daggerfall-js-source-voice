@@ -182,6 +182,7 @@ import {
   createGuest, openSession, resolveSession, closeSession, closeAllSessions,
   devicesOf, accountView, displayName, accountKind,
   register, login, recover, changePassword, setEmail, overRate, overAccountRate,
+  newRecoveryCodes,   // RECOVERY-SET: a new set of codes from the profile
   accountWardrobe, equipTitle, equipAura, equipGlyph, buyInsignia, insigniaPurse, creditPlay, muteAccount, isMuted, mutedUntil,
   duelRecordOf, claimDuel, gateRecordOf, claimGate, legalRefusal,
   nameAsOf, wornNameOf, chooseNameAs,   // NAME-AS: the name the room reads - the account's or the character's
@@ -1730,6 +1731,12 @@ const service = {
       if (path === '/v1/account/password' && request.method === 'POST') {
         const r = await changePassword(ctx, who.player, who.session, { oldPassword: body.oldPassword, password: body.password });
         return r.error ? no(r.error, r.error === 'rate' ? 429 : r.error === 'bad-login' ? 401 : 400, origin) : json(r, 200, origin);
+      }
+
+      if (path === '/v1/account/recovery-codes' && request.method === 'POST') {
+        // RECOVERY-SET: a NEW set of recovery codes, behind the password - shown once, the old set dead with the write
+        const r = await newRecoveryCodes(ctx, who.player, { password: body.password });
+        return r.error ? no(r.error, r.error === 'rate' ? 429 : r.error === 'bad-login' ? 401 : r.error === 'codes-moved' ? 409 : 400, origin) : json(r, 200, origin);
       }
 
       if (path === '/v1/account/email' && request.method === 'POST') {

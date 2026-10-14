@@ -1323,6 +1323,21 @@ ${badgeCss()}
   .card .acctcode { padding: 14px 8px; }
   .card .acctcode code { letter-spacing: 0.12em; }
 }
+/* RECOVERY-SET: EIGHT CODES ON THE ONE PLAQUE, numbered as the saved
+   file numbers them (accountFlow.js recoveryCodesText) - two columns
+   where the card is wide, one on a phone, and each code still taken
+   whole by one click (user-select: all above), never its neighbour. */
+.card .acctcode ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(17em, 1fr)); gap: 8px 18px; }
+.card .acctcode li { display: flex; gap: 10px; align-items: baseline; justify-content: center; }
+.card .acctcode .acctcodeno { color: var(--dim); font-size: 12px; min-width: 1.5em; text-align: right; }
+/* The phone: the number beside each code takes the width the single
+   code's plaque gave its tracking, and a code broke before its last
+   letter (the probe's phone sheet) - so the set's codes are set a size
+   smaller and tracked tighter there, and each keeps to one line. */
+@media (max-width: 420px) {
+  .card .acctcode li { gap: 6px; }
+  .card .acctcode li code { font-size: min(17px, 4.2vw); letter-spacing: 0.04em; white-space: nowrap; }
+}
 .goldfield .meta { flex: 1 0 100%; color: var(--dim); font-size: 11.5px; margin: 0; }
 
 /* THE LISTS STACK BELOW THE PACK'S OWN BREAKPOINT, not at it: two

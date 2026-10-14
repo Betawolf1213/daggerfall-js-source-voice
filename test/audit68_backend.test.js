@@ -194,7 +194,7 @@ test('AUDIT 68 S01-register-recover-lost-update: one guest registered from two d
   assert.equal(won.length, 1, 'one recovery code handed out');
   assert.deepEqual(lost.map((x) => x.error), ['already-registered']);
   const back = await recover(ctx, { handle: won[0].handle, code: won[0].recoveryCode, password: 'password-three' });
-  assert.ok(back.id === g.id && back.recoveryCode, 'the code the winner was shown works');
+  assert.ok(back.id === g.id && back.codesLeft === 7, 'the code the winner was shown works');   // PIN MOVED: RECOVERY-SET - spent from a set of eight, seven left
 });
 
 test('AUDIT 68 S01-register-recover-lost-update: two recoveries racing on ONE code - one succeeds, the other hears bad-code, and the winner\'s new code and session are live', async () => {
@@ -209,7 +209,9 @@ test('AUDIT 68 S01-register-recover-lost-update: two recoveries racing on ONE co
   assert.equal(won.length, 1, 'a single-use code spent once');
   assert.deepEqual(both.filter((x) => x.error).map((x) => x.error), ['bad-code']);
   assert.ok(await resolveSession(ctx, won[0].secret), 'the winner\'s session is live');
-  assert.ok((await recover(ctx, { handle: 'Foo', code: won[0].recoveryCode, password: 'password-four' })).id, 'and so is its new code');
+  // PIN MOVED: RECOVERY-SET - and the set the winner left standing: its seven others still open the account
+  assert.equal(won[0].codesLeft, 7);
+  assert.ok((await recover(ctx, { handle: 'Foo', code: reg.recoveryCodes[1], password: 'password-four' })).id, 'and so does the set it left');
 });
 
 test('AUDIT 68 S01-changepw-unthrottled-oracle: a guess at the old password spends LOGIN\'s allowance - past LOGIN_MAX the change is refused `rate` (429), the session is not punished (X8-changepassword-no-rate-per-handle)', () => frozen(async () => {

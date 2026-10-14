@@ -30,8 +30,9 @@
 //
 // ═══ THE RECOVERY CODE IS READABLE ONCE, AND THIS FILE NEVER KEEPS IT
 //
-// `register` and `recover` are the only two answers that carry one,
-// and it is never written to storage here. The screen shows it and the
+// `register` and `recover` are the only two answers that carry one -
+// RECOVERY-SET: and `newRecoveryCodes`, the profile's new set - and it
+// is never written to storage here. The screen shows it and the
 // player writes it down; a copy in localStorage would be a copy in the
 // one place a stolen device reads first, and it would make "shown
 // once" a sentence rather than a fact.
@@ -134,6 +135,7 @@ const REFUSAL_WORDS = {
   'no-account': () => t('account.refusal.noAccount', 'That account no longer exists.'),
   'bad-login': () => t('account.refusal.badLogin', 'That username and password do not match.'),
   'bad-code': () => t('account.refusal.badCode', 'That username and recovery code do not match.'),
+  'codes-moved': () => t('account.refusal.codesMoved', 'Your recovery codes changed while that was asked. Try again.'),   // RECOVERY-SET: two presses raced (accounts.js newRecoveryCodes)
   email: () => t('account.refusal.email', 'That does not look like an email address.'),
   rate: () => t('account.refusal.rate', 'Too many attempts. Wait a few minutes and try again.'),
   auth: () => t('account.refusal.auth', 'You have been signed out. Sign in again.'),
@@ -921,8 +923,10 @@ export const register = (io, handle, password, accepted = null) =>
 /** `{ id, name, kind, sessionId, secret }` for a new device. */
 export const login = (io, handle, password, label = null) => call(io, '/v1/auth/login', { handle, password, label });
 
-/** Spend the recovery code: a new password, a NEW code, and every
- *  device signed out including this one. */
+/** Spend a recovery code: a new password, and every device signed out
+ *  including this one. RECOVERY-SET: the answer's `codesLeft` counts the
+ *  set's others; a single code, or the last, answers a fresh set
+ *  (`recoveryCodes`). */
 export const recover = (io, handle, code, password) => call(io, '/v1/auth/recover', { handle, code, password });
 
 /** `{ account, devices }`. A GET, so the secret rides the header and
@@ -934,6 +938,11 @@ export const readAccount = (io) => call(io, '/v1/account');
  *  device; this one stays. */
 export const changePassword = (io, oldPassword, password) =>
   call(io, '/v1/account/password', { oldPassword, password });
+
+/** RECOVERY-SET: a NEW set of recovery codes, behind the password -
+ *  `{ recoveryCodes, codesLeft }`, readable exactly once, the old set
+ *  dead with it. */
+export const newRecoveryCodes = (io, password) => call(io, '/v1/account/recovery-codes', { password });
 
 /** Completely optional, and `null` takes it off again. */
 export const setEmail = (io, email) => call(io, '/v1/account/email', { email: email || null });
