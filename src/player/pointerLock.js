@@ -347,6 +347,10 @@ export function requestLook(canvas) {
     document.addEventListener('pointerlockchange', () => { if ((_cursorActive || _cursorHolds.size) && document.pointerLockElement) releaseLook(); }, false);
     _errBound = true;
   }
+  // CLICK-STUTTER (2026-10-13): every world click lands here (the hosts' canvas pointerdown), and asking for a lock the
+  // canvas already holds is not free - the browser answers each one with a pointerlockchange (every listener on it runs)
+  // and, with unadjustedMovement, may re-take the lock, dropping that frame's mouse deltas. Held already: nothing to ask.
+  if (typeof document !== 'undefined' && document.pointerLockElement === canvas) return;
   try {
     // MAC1 (Mac, 2026-09-10: "camera turning being very jumpy"). The
     // bare request hands the look the OS pointer's ACCELERATED deltas

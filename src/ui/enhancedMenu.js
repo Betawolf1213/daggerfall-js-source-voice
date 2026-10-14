@@ -211,7 +211,7 @@ import { PLUS_THEMES } from './enhancedFrame.js';   // PLUS2: Enhanced Plus's co
 import { plusTheme, setPlusTheme } from './enhancedPlusStyle.js';
 import { plusCursorOn, setPlusCursor } from './plusCursor.js';   // OVH1: the three looks
 import { CHAT_LANGS } from '../net/wire.js';   // CHAT-LANG: the language channels, for the Chat rows
-import { TEXT_FONTS, textFont, textFontSystem, setTextFont, setTextFontSystem, cleanFamily, canListFonts, installedFamilies } from './textFont.js';   // TEXT-FONT: the words' face
+import { TEXT_FONTS, textFont, textFontSystem, setTextFont, setTextFontSystem, cleanFamily, canListFonts, installedFamilies, fontMatches } from './textFont.js';   // TEXT-FONT: the words' face
 import { GRIMOIRE_PAGES, GRIMOIRE_BACKDROPS, GRIMOIRE_VITALS, GRIMOIRE_SPELLBOOKS, GRIMOIRE_DIALS, grimoirePages, grimoireBackdrop, grimoireVitals, grimoireSpellbook, grimoireDial, setGrimoirePages, setGrimoireBackdrop, setGrimoireVitals, setGrimoireSpellbook, setGrimoireDial } from './grimoireDress.js';   // GRIM1: DFO Grimoire's own rows; GRIM3: and its spellbook
 import { UI_PACKS, packUrl } from '../systems/uiPack.js';   // OVH2: a pack's own picture on its card
 import { FEATURES, KINDS, KIND_ORDER, featureForControl, resolveControl, modModules, modDials, featureSearchText } from '../systems/features.js';   // FT14: each mod's curated keys (ORG2: the map places the rows, ui/settingsMap.js)
@@ -3734,7 +3734,17 @@ function overhaulPicture(p, o, inUse) {
   return pic;
 }
 /** TEXT-FONT: the installed font 'My font' writes in - typed (shown in its own face as it is typed), or picked from the
- *  machine's list where the browser offers one. Kept on Enter or on leaving the field. */
+ *  machine's list where the browser offers one. Kept on Enter or on leaving the field.
+ *  FONT-PICK (FIELD BUGS 2026-10-13, a player on Gentoo / Niri, Wayland: "the font selector is a bit buggy on my setup as
+ *  it has no scrolling ability ... I have 376 fonts"): the list was the browser's own `<datalist>` popup - a surface the
+ *  system draws outside the page, which ran off the screen and took no wheel under that compositor. It is the page's own
+ *  list now (`.look-fontpick`): under the field, a fixed height that scrolls by wheel, by the arrow keys and by touch, the
+ *  typed text filtering it (textFont.js fontMatches - those beginning with it first), each name in its own face; a click
+ *  or Enter picks, Escape closes. The machine's list is asked once a session (`fontFamiliesSeen`). */
+let fontFamiliesSeen = null;
+/** FONT-PICK: the list button's word once the machine has answered - how many, and where to pick (L10N4). */
+const fontsPickBelow = (n) => t('menu.font.pickBelow', '{n, plural, one {# font - pick below} other {# fonts - pick below}}', { n });
+let fontPickShut = false;   // a pick's own repaint hands the field its focus back: that focus does not reopen the list
 function systemFontRow(redraw) {
   const row = el('div', 'look-colours look-fontrow');
   row.setAttribute('role', 'group');
@@ -3747,31 +3757,79 @@ function systemFontRow(redraw) {
   input.placeholder = 'e.g. Verdana';
   input.value = textFontSystem();
   input.setAttribute('aria-label', 'Installed font name');
-  const list = document.createElement('datalist');
-  list.id = 'look-fontlist';
-  input.setAttribute('list', list.id);
+  input.setAttribute('role', 'combobox');
+  input.setAttribute('aria-autocomplete', 'list');
+  input.setAttribute('aria-expanded', 'false');
+  const pick = el('div', 'look-fontpick');
+  pick.id = 'look-fontpick';
+  pick.setAttribute('role', 'listbox');
+  pick.setAttribute('aria-label', t('menu.font.installed', 'Installed fonts'));
+  pick.hidden = true;
+  input.setAttribute('aria-controls', pick.id);
+  pick.addEventListener('wheel', (e) => e.stopPropagation(), { passive: true });   // the list's own scroll - no window under it takes the wheel
   const look = () => { const f = cleanFamily(input.value); if (f) input.style.setProperty('font-family', `'${f}', sans-serif`, 'important'); else input.style.removeProperty('font-family'); };   // important: over the words' own face
   look();
   const keep = () => { if (cleanFamily(input.value) !== textFontSystem()) { setTextFontSystem(input.value); redraw(); } };
-  input.oninput = look;
+  let hi = -1;
+  /** @type {string[]} */
+  let shown = [];
+  const close = () => { pick.hidden = true; input.setAttribute('aria-expanded', 'false'); hi = -1; };
+  const settle = () => { fontPickShut = true; try { keep(); } finally { fontPickShut = false; } };
+  const choose = (f) => { input.value = f; look(); close(); settle(); };
+  const paint = () => {
+    if (!fontFamiliesSeen?.length) { close(); return; }
+    shown = fontMatches(fontFamiliesSeen, input.value);
+    hi = Math.min(hi, shown.length - 1);
+    const all = fontFamiliesSeen.length;
+    pick.replaceChildren(el('div', 'look-fontcount', shown.length === all ? `${all} fonts` : `${shown.length} of ${all} fonts`));
+    shown.forEach((f, i) => {
+      const o = el('button', 'look-fontopt', f);
+      o.type = 'button';
+      o.setAttribute('role', 'option');
+      o.setAttribute('aria-selected', String(i === hi));
+      o.style.fontFamily = `'${f}', sans-serif`;
+      o.onmousedown = (e) => e.preventDefault();   // the field keeps its focus, so its blur never closes the list under the click
+      o.onclick = (e) => { e.stopPropagation(); choose(f); };
+      pick.append(o);
+    });
+    pick.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+  };
+  const move = (d) => {
+    if (pick.hidden) { paint(); if (pick.hidden) return; }
+    if (!shown.length) return;
+    hi = hi < 0 ? (d > 0 ? 0 : shown.length - 1) : (hi + d + shown.length) % shown.length;
+    const opts = pick.querySelectorAll('.look-fontopt');
+    opts.forEach((o, i) => o.setAttribute('aria-selected', String(i === hi)));
+    opts[hi]?.scrollIntoView?.({ block: 'nearest' });
+  };
+  input.oninput = () => { look(); hi = -1; if (fontFamiliesSeen?.length) { paint(); pick.scrollTop = 0; } };
+  input.onfocus = () => { if (fontFamiliesSeen?.length && !fontPickShut) paint(); };
+  input.onblur = () => close();
   input.onchange = keep;
-  input.onkeydown = (e) => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); keep(); } };
+  input.onkeydown = (e) => {
+    e.stopPropagation();
+    if (e.key === 'ArrowDown') { e.preventDefault(); move(1); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); move(-1); }
+    else if (e.key === 'Enter') { e.preventDefault(); if (!pick.hidden && hi >= 0 && shown[hi]) choose(shown[hi]); else { close(); settle(); } }
+    else if (e.key === 'Escape' && !pick.hidden) { e.preventDefault(); close(); }
+  };
   input.onkeyup = (e) => e.stopPropagation();
-  input.onclick = (e) => e.stopPropagation();
-  row.append(input, list);
+  input.onclick = (e) => { e.stopPropagation(); if (pick.hidden && fontFamiliesSeen?.length) paint(); };
+  row.append(input);
   if (canListFonts()) {
-    const b = el('button', 'look-colour', 'List my fonts');
+    const b = el('button', 'look-colour', fontFamiliesSeen?.length ? fontsPickBelow(fontFamiliesSeen.length) : 'List my fonts');
     b.type = 'button';
     b.onclick = async (e) => {
       e.stopPropagation();
-      const fams = await installedFamilies();
-      list.replaceChildren(...fams.map((f) => { const o = document.createElement('option'); o.value = f; return o; }));
-      b.textContent = fams.length ? `${fams.length} fonts - pick in the field` : 'No list given - type the name';
+      if (!fontFamiliesSeen?.length) fontFamiliesSeen = await installedFamilies();
+      b.textContent = fontFamiliesSeen.length ? fontsPickBelow(fontFamiliesSeen.length) : 'No list given - type the name';
       input.focus();
-      if (fams.length) input.showPicker?.();
+      paint();
     };
     row.append(b);
   }
+  row.append(pick);
   return row;
 }
 function overhaulPanel(p) {
@@ -5379,6 +5437,22 @@ function pauseQuests(body) {
           render();
         };
         acts.append(ab);
+      }
+      // QUEST-RESET (LostMyLeg: "an option that can fully reset a quest"): a running quest RESTARTS from its first step -
+      // twice, the same arming - where it may be (scenes/questBridge.js canRestart); the selection follows its new copy
+      if (!isShelvedRow && sel.entries && sel.id != null && clean.restart && clean.canRestart?.(sel.id)) {
+        const armed = journalCleanArmed === `rs:${sel.id}`;
+        const rs = el('button', 'act', armed ? t('pause.journal.restartArmed', 'Click again to restart') : t('pause.journal.restart', 'Restart quest'));
+        rs.title = t('pause.journal.restartTitle', 'Start this quest again from its first step - what it placed and gave is taken back');
+        rs.onclick = () => {
+          if (journalCleanArmed !== `rs:${sel.id}`) { journalCleanArmed = `rs:${sel.id}`; render(); return; }
+          journalCleanArmed = null;
+          const out = clean.restart(sel.id);
+          questShelfSaid = out?.text ?? null;
+          if (out?.ok) questSel = `a:${out.uid}`;
+          render();
+        };
+        acts.append(rs);
       }
       if (sel.entries && sel.id != null && !isShelvedRow) {
         const isHidden = hidden.some((q) => q.key === sel.key);

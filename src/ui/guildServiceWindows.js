@@ -61,10 +61,19 @@ export const CURED_DISEASE = 'You are cured.';
  *    { rows, field: { numeric, maxCharacters, initial, label? }, onInput(text) }   rows = the tokens ABOVE, label = the field's own (DFU sets one or the other)
  *    { picker: [labels], onPick(i) }
  */
+/** QUEST-NOTE: the grace's clock (ms). */
+const graceNow = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+
 export class ServiceFlowWindow {
-  constructor(boxes = [], { onClose = null } = {}) {
+  constructor(boxes = [], { onClose = null, graceMs = 0 } = {}) {
     this.boxes = [...boxes];
     this.onClose = onClose;
+    // QUEST-NOTE (2026-10-13, a player: "killed the mage in question, but DFO never popped up saying the mage was
+    // killed"): A BOX THAT JUST APPEARED IS NOT CLOSED BY THE PRESS ALREADY ON ITS WAY. Online the game does not stop for
+    // it, and the swing or the step that killed the foe closed the box the kill raised before a word of it was drawn.
+    // A plain click-anywhere box ignores clicks and keys for `graceMs` after each box comes up (0: DFU's own, at once).
+    this.graceMs = Math.max(0, Number(graceMs) || 0);
+    this._shownAt = graceNow();
     this.done = false;
     this.isChoiceWindow = true;
     this._input = null;     // CM11: the pushed DaggerfallInputMessageBox while the top box carries a field
@@ -122,6 +131,7 @@ export class ServiceFlowWindow {
    *  returns boxes pushes them to the FRONT, because DFU's handlers
    *  show their next box immediately rather than behind the rest. */
   _advance(next = null) {
+    this._shownAt = graceNow();
     this.boxes.shift();
     if (next?.length) this.boxes.unshift(...next);
     this._picker = null;
@@ -133,7 +143,7 @@ export class ServiceFlowWindow {
   _close() { this.done = true; noticeRelease(this); this.onClose?.(); }
 
   push(boxes) {
-    if (boxes?.length) this.boxes.unshift(...boxes);
+    if (boxes?.length) { this.boxes.unshift(...boxes); this._shownAt = graceNow(); }
     this._syncPicker();
     this._syncValue();
   }
@@ -166,8 +176,12 @@ export class ServiceFlowWindow {
       else if (code === 'KeyN' && t.buttonsMulti.includes(MB_BUTTONS.No)) this._advance(t.onButton?.(MB_BUTTONS.No) ?? null);
       return;
     }
+    if (this._inGrace()) return;   // QUEST-NOTE
     this._advance(t.onClick?.() ?? null);
   }
+
+  /** QUEST-NOTE: whether the top plain box came up too recently to be closed by a press. */
+  _inGrace() { return this.graceMs > 0 && graceNow() - this._shownAt < this.graceMs; }
 
   /** ROAD-A7: the picker's hover seam (ListBox.MouseMove's highlight
    *  and VerticalScrollBar.Update's drag) reaches it through here. */
@@ -197,6 +211,7 @@ export class ServiceFlowWindow {
       return true;
     }
     if (t.field) { this._input?.click(); return true; }   // modal, not click-anywhere
+    if (this._inGrace()) return true;   // QUEST-NOTE: the swing that raised it does not close it
     this._advance(t.onClick?.() ?? null);
     return true;
   }

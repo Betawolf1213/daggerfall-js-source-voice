@@ -310,3 +310,33 @@ test('QUEST-SHELF\'s audit: the same quest taken again runs ahead of the copy se
   log = { active: [row], ended: [] };
   assert.deepEqual(lens.look().events, [], 'reclaimed: its journal is no news');
 });
+
+test('QUEST-SHELF-DROP: a quest set aside holds no item - its item may be thrown away (never sold, never one made permanent), and reclaimed, the item it had in the pack comes back once (mutants: the drop refused; the counter let through; nothing handed back; handed back while still carried)', async () => {
+  const { questTransferRefused } = await import('../src/systems/itemTransfer.js');
+  const pack = [];
+  const carries = (res) => pack.some((it) => it.questItem && it.questUID === res.parentQuest?.uid && it.questSymbol?.name === res.symbol?.name);
+  const m = new QuestMachine({ nowSeconds: () => 100, world: makeWorld(), playerLevel: () => 1, giveItemToPlayer: (it) => pack.push(it), carriesQuestItem: carries, playerHasItem: () => false, forceTopicListsUpdate: () => {} });
+  const q = m.scheduleQuest(['Quest: __QI', 'QRC:', 'Message:  1011', ' x', '', 'QBN:', 'Item _it_ letter', '', ' get item _it_'], 0, { rolls: () => 0.5 });
+  m.tick(); m.tick();
+  assert.equal(pack.length, 1, 'the quest put its letter in the pack');
+  const letter = pack[0];
+  const getQuest = (uid) => m.getQuest(uid);
+  assert.equal(questTransferRefused(letter, { fromLocal: true, getQuest }), true, 'running: kept, as DFU keeps it');
+  assert.equal(m.shelveQuest(q.uid).ok, true);
+  assert.deepEqual(q.shelvedItems, ['it']);
+  assert.equal(questTransferRefused(letter, { fromLocal: true, getQuest }), false, 'set aside: it may be thrown away');
+  assert.equal(questTransferRefused(letter, { fromLocal: true, getQuest, trade: true }), true, 'never sold');
+  pack.length = 0;   // thrown away
+  const back = m.reclaimQuest(q.uid);
+  assert.deepEqual([back.ok, back.returned, pack.length], [true, 1, 1], 'reclaimed: handed back');
+  assert.deepEqual([pack[0].questItem, pack[0].questUID, pack[0].questSymbol?.name], [true, q.uid, 'it']);
+  assert.equal(questTransferRefused(pack[0], { fromLocal: true, getQuest }), true, 'running again: kept again');
+  // set aside and reclaimed with the letter still in the pack: nothing more is handed over
+  assert.equal(m.shelveQuest(q.uid).ok, true);
+  assert.equal(m.reclaimQuest(q.uid).returned, 0);
+  assert.equal(pack.length, 1);
+  // one the quest made permanent stays where it is
+  assert.equal(m.shelveQuest(q.uid).ok, true);
+  q.getItem({ name: 'it' }).madePermanent = true;
+  assert.equal(questTransferRefused(pack[0], { fromLocal: true, getQuest }), true);
+});

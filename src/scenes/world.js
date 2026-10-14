@@ -476,7 +476,7 @@ import { drawWildMarks, WILD_MARK_RANGE } from '../ui/wildMarks.js';   // WILD-A
 import { playerOnPathAt, pathsDataPoint } from '../systems/travelPaths.js';   // RATE-LAW: the traveller on a road's lane or off it
 import { threatCap, foePaced } from '../systems/travelThreat.js';   // OW6: the journey slows as enemies close; ENEMY-PACE's floor, fixed (RATE-LAW)
 import { farPlaces, settlementPixels, farDistanceText, PIXEL_KM, TV_FAR_RANGE } from '../systems/travelFarPlaces.js';   // TV5: the far places, held at the view's edge
-import { dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M } from '../systems/travelDungeons.js';   // TV6: the dungeons, discovered on approach; AUDIT OW3 D1/D3: off the map rows, and the spawns with them; AUDIT OW4 D4/D6: the far found spawns, the last leg's start
+import { TV_DUNGEON_TYPES, dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M } from '../systems/travelDungeons.js';   // TV6: the dungeons, discovered on approach; AUDIT OW3 D1/D3: off the map rows, and the spawns with them; AUDIT OW4 D4/D6: the far found spawns, the last leg's start
 import { routeGround, joinPoint, routeDrawPoints, TV_MOUNTAIN_CLIMATE } from '../systems/travelRoute.js';   // OW-MOUNTAINS, OW-ROADSIDE; AUDIT OW3 J4: the drawn route's points; AUDIT OW4 J3: the ground read once
 import { bandsNear, wanderAt, bandSight, bandChaseStep, bandLabel, bandMakeSeed, bandSizeOf, bandLevelOf, BAND_LIFE_MS, BAND_CONTACT_M, BAND_CHASE_MPS, BAND_STAND_M, BAND_STAND_MIN_M, BAND_STAND_RETRY_MS, BAND_STAND_TRIES } from '../systems/travelBands.js';   // TV7: the roaming bands; OW6: their number and their level
 import { bandWordOf, validBandWord, chaseYields, bandLifeOf, bandNearMe, bandPixelOf, BAND_WORD_MS, BANDS_WIRE_MAX } from '../systems/travelBands.js';   // TV7b: the chase, shared
@@ -509,7 +509,7 @@ import { FOUND_NOTHING_VALUABLE_TEXT_ID } from '../systems/talk.js';   // GetRan
 import { spellRecordOfIndex, DUNGEON_LOOT_KEYS, generateItems as generateLootItems, addPileLootExtras, shownSpellName } from '../systems/loot.js';   // QG1: CastSpellDo's classic-record read (the G4 registry); WOD3: LootTables.GenerateLoot for the camps' piles; L10N3e: a spell's name as shown
 import { preloadCharSheetArt } from '../ui/charsheet.js';   // U8a. AUDIT 44 (a11): no LevelUpScreen here - a level-up opens the SHEET, and the skin fork behind charSheetDoor decides which face it wears.
 import { createCharSheetWindow, charSheetDoorReady, warmLevelUpWindow } from '../ui/charSheetDoor.js';
-import { announceLevelUp, levelOwed } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
+import { announceLevelUp, levelOwed, announceQuestFoeSlain, questFoeName } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
 import { preloadQuestJournalArt } from '../ui/questJournal.js';   // U43: the LogBook and NoteBook doors
 import { createChronicleWindow } from '../ui/chronicleDoor.js';   // PX24d: the chronicle's one door
 import { openPixelDial, setDialOpenHook } from '../ui/pixelDial.js';   // PX15: the Tab compass rose
@@ -19894,6 +19894,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // (GivePc.cs:173, :189-196) - ONE deferred act armed by offerReward
   // and fired when the box the player is reading closes.
   let _onQuestBoxClosed = null;
+  /** QUEST-NOTE: a quest's words in the chat's tab, as a system line - online, with a chat up; nothing otherwise. */
+  const questChatLine = (text) => {
+    const line = String(text ?? '').replace(/\s+/g, ' ').trim();
+    if (!line) return;
+    // the chat is declared far below this: a box raised while the page is still building (the classic start's) finds it
+    // not yet made - read inside the try, it is a convenience either way
+    try { if (chatLog) chatLog.push(chatLog.active, { text: `Quest: ${line}`, system: true }); } catch { /* not yet, or none */ }
+  };
   const showQuestBox = (box) => {
     // FORAGE4 (FORAGE0 13.1): a quest's box waits behind Foraging's online wait - a bonus's line after the work
     if (foragingWait.holds()) { foragingWait.hold(() => showQuestBox(box), keptBox(box)); return; }   // AUDIT 28 F6: a box of words rides the save
@@ -19902,6 +19910,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       return;
     }
     const win = new ServiceFlowWindow([box], {
+      graceMs: 600,   // QUEST-NOTE: a press ignored this long after it comes up - online the game does not stop for it, and the swing that raised it closed it unread (ui/guildServiceWindows.js ServiceFlowWindow graceMs); inline, as CHOP-WAIT lifts this body whole
       onClose: () => {
         if (_questBoxWin === win) _questBoxWin = null;
         const fire = _onQuestBoxClosed; _onQuestBoxClosed = null; fire?.();
@@ -20909,7 +20918,18 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // read moved back to queue time where Quest.cs:785 does it.
     showPopup: (_q, tokens) => {
       const rows = tokensToRows(tokens);
-      if (rows.length) showQuestBox({ rows });
+      if (!rows.length) return;
+      showQuestBox({ rows });
+      questChatLine(rows.join(' '));   // QUEST-NOTE: the box's words kept in the chat, where a box closed too soon can be read again
+    },
+    // QUEST-NOTE (2026-10-13, a player: "killed the mage in question, but DFO never popped up saying the mage was killed"):
+    // a quest's foe fell - the HUD strip's row and a chat line, whatever the quest's script says
+    questFoeKilled: (q, foe) => {
+      const who = questFoeName(foe);
+      const quest = q?.displayName || null;
+      const of = Math.max(1, foe?.spawnCount | 0), done = Math.max(0, foe?.killCount | 0);
+      announceQuestFoeSlain({ who, quest, done, of, key: `${q?.uid}|${foe?.symbol?.name ?? who}` }, { say: (t) => townTalk.say(t) });
+      questChatLine(`${who} slain${of > 1 ? ` (${Math.min(done, of)}/${of})` : ''}.`);
     },
     showPrompt: (q, message, respond) => showQuestBox({
       rows: tokensToRows(message.getTextTokens(-1, q.rolls)),
@@ -32430,7 +32450,11 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     for (const p of travelViewPlaces()) {
       if (p.key === endKey) continue;
       const tier = params.has('online') ? tierPhrase(dungeonTierLabel(p.summary.loc)) : '';   // TIER1: a dungeon's tier and size under its name, online
-      marks.push({ key: p.key, at: tvSceneKept(p, p.x, p.z, TV_PLACE_LIFT), label: p.summary.name, ...(tier ? { sub: tier } : {}), kind: 'place', pick: true, hub: carriageTown(p.summary.mapId), tip: seatTipAt(p.summary.mapId) });   // OW-HUBS: a carriage town's wheel; SEAT-TIP: a seat's card
+      // OW-DUNGEON-DOT (2026-10-13, field: "some dungeons appear on the Overworld map as towns"): a found dungeon within the
+      // grid wears TV2's plate (travelViewDungeons leaves it to this list), and every plate here was kind 'place' - a
+      // town's brass dot, and the Towns switch's count. Its kind says so now: the dungeons' arch, the Dungeons switch.
+      const isDungeon = TV_DUNGEON_TYPES.has(p.summary.loc?.mapTableData?.locationType);
+      marks.push({ key: p.key, at: tvSceneKept(p, p.x, p.z, TV_PLACE_LIFT), label: p.summary.name, ...(tier ? { sub: tier } : {}), kind: isDungeon ? 'place dungeon' : 'place', pick: true, hub: carriageTown(p.summary.mapId), tip: seatTipAt(p.summary.mapId) });   // OW-HUBS: a carriage town's wheel; SEAT-TIP: a seat's card
     }
     // TV5: the far places, held at the edge with their distance (the journey's own end is the flag's)
     const farEnd = endKey ? `far:${tvTrip.plan.summary.mapId}` : null;
