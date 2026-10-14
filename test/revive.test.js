@@ -8,7 +8,10 @@
 //   - the workflow (.github/workflows/realm-revive.yml) holds the shape realm-restore.yml proved.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdtempSync, rmSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { d1 } from './accountDb.mjs';
 import { putLineage, realmDie } from '../server-account/src/legacy.js';
 import { inheritHome } from '../server-account/src/homes.js';
@@ -166,6 +169,52 @@ test('REVIVE: the operator\'s plan over the real death - the tombstone cleared, 
   for (const stmt of again.sql) raw.exec(stmt);
   assert.equal(JSON.stringify(raw.prepare('SELECT * FROM lineages').all()) + JSON.stringify(raw.prepare('SELECT * FROM item_uids').all()) + JSON.stringify(raw.prepare('SELECT * FROM guild_members').all()), before, 'a second run wrote again');
   assert.match(summaryOf({ handle: 'TheHalfinStream', found, plan, apply: false }), /A dry run: nothing was written/);
+});
+
+/**
+ * The tool's own command line, run as the workflow's own line writes it: the line read out of realm-revive.yml, its
+ * words split as bash splits them, `$HANDLE`, `$CHARACTER`, `$RUNNER_TEMP` and `$flags` put in as the step puts them.
+ * @param {string} mode @param {Record<string, string>} vars @param {string} cwd
+ */
+function runAsTheWorkflow(mode, vars, cwd) {
+  const line = src('.github/workflows/realm-revive.yml').split('\n').map((l) => l.trim()).find((l) => l.startsWith(`node $tool ${mode} `));
+  assert.ok(line, `the workflow no longer runs the tool's ${mode}`);
+  const words = line.slice('node $tool '.length).split(' > ')[0].trim().split(/\s+/)
+    .flatMap((w) => (w === '$flags' ? (vars.flags ? vars.flags.trim().split(/\s+/) : []) : [w.replace(/^"|"$/g, '').replace(/\$(HANDLE|CHARACTER|RUNNER_TEMP)/g, (_, k) => vars[k])]));
+  const out = spawnSync(process.execPath, [new URL('../tools/reviveRealmCharacter.mjs', import.meta.url).pathname, ...words], { cwd, encoding: 'utf8' });
+  assert.equal(out.status, 0, `the workflow's ${mode} line fails the tool: ${out.stderr}`);
+  return out.stdout;
+}
+
+test('REVIVE: the tool\'s command line as the workflow\'s lines run it - the find, then the plan (whose line carries --find too: the first run took it for a find and failed), as Mac ran it (keep_homes, apply) and as a dry run; the mode is the first word of every line (mutant: the mode any word)', async () => {
+  const { raw, ask, facts, then } = await theDeath({ master: false });
+  const dir = mkdtempSync(join(tmpdir(), 'revive-'));
+  try {
+    const vars = { HANDLE: 'TheHalfinStream', CHARACTER: '', RUNNER_TEMP: dir };
+    writeFileSync(join(dir, 'facts.json'), JSON.stringify(facts()));
+    writeFileSync(join(dir, 'found.json'), runAsTheWorkflow('--find', vars, dir));
+    const found = JSON.parse(readFileSync(join(dir, 'found.json'), 'utf8'));
+    assert.equal(found.fallen, F);
+    assert.equal(found.before, DEAD_S - BEFORE_DEATH_S, 'the moment the workflow rewinds to');
+    writeFileSync(join(dir, 'then.json'), JSON.stringify(then));
+    writeFileSync(join(dir, 'now.json'), JSON.stringify(nowFacts(ask, then.seat[0].guild_id, then)));
+    // the dry run
+    assert.match(runAsTheWorkflow('--plan', { ...vars, flags: '' }, dir), /^\d+ statement\(s\), 0 held\n$/);
+    assert.match(readFileSync(join(dir, 'summary.md'), 'utf8'), /A dry run: nothing was written/);
+    // as Mac ran it: the homes left with the heir, the revive written
+    runAsTheWorkflow('--plan', { ...vars, flags: ' --keep-homes --apply' }, dir);
+    assert.doesNotMatch(readFileSync(join(dir, 'summary.md'), 'utf8'), /A dry run/);
+    for (const stmt of readFileSync(join(dir, 'revive.sql'), 'utf8').split('\n').filter(Boolean)) raw.exec(stmt);
+    assert.equal(raw.prepare('SELECT dead_at FROM realm_characters WHERE id = ?').get(F).dead_at, null, 'the tombstone stands');
+    assert.deepEqual(JSON.parse(raw.prepare('SELECT record FROM lineages WHERE id = ?').get(LID).record).people[0].revived, [DIED_AT]);
+    assert.equal(raw.prepare('SELECT char_id FROM homes WHERE map_id = 4242').get().char_id, H, 'keep_homes moved the home anyway');
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+  // every line of the workflow names its mode first, and the tool reads its mode from the first word alone
+  const calls = [...src('.github/workflows/realm-revive.yml').matchAll(/node \$tool (--[a-z-]+)/g)].map((m) => m[1]);
+  assert.deepEqual([...new Set(calls)].sort(), ['--find', '--plan', '--player-query', '--query']);
+  assert.match(src('tools/reviveRealmCharacter.mjs'), /const mode = argv\[0\];/);
 });
 
 test('REVIVE: and it HOLDS - a stale device\'s copy (the death in it) written after the revival stores no death and entombs nobody; her checkpoint and her heir\'s then charge nobody a copy; a LATER real death is a death (mutants: putLineage deaf to the stored stamp)', async () => {
