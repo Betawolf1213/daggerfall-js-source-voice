@@ -537,6 +537,8 @@ export function readFamily(rec) {
     // PERMADEATH-HOUSES: the dead's deeds this member's save took up (household.js deedsDue), by house key
     p.deedsTaken = Array.isArray(raw.deedsTaken) ? [...new Set(raw.deedsTaken.filter((k) => typeof k === 'string' && /^-?\d+:\d+$/.test(k)))] : [];
     p.died = raw.died && typeof raw.died === 'object' ? { at: Number(raw.died.at) || 0, cause: String(raw.died.cause ?? 'unknown'), place: raw.died.place ?? null, by: raw.died.by ?? null } : null;
+    // REVIVE (revived.js): the deaths taken back on them, by `died.at` - held to its shape, never dropped
+    p.revived = Array.isArray(raw.revived) ? raw.revived.filter((n) => Number.isFinite(n)) : [];
     // LEGACY5: courtships, a wedding, children's clock, a minor, a spouse's own face - held to their shape
     p.courting = raw.courting && typeof raw.courting === 'object' && !Array.isArray(raw.courting)
       ? Object.fromEntries(Object.entries(raw.courting).filter(([k, c]) => typeof k === 'string' && c && typeof c === 'object')

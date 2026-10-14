@@ -693,6 +693,7 @@ world, locked to its own family.
 | AUDIT LEGACY III | the six-lens audit of the whole arc, server side too (`01-Overview/Audit-Legacy-III.md`) - character-bound weddings, the line's own route bound, the write made from what it read, two copies' persons kept apart, the news on the reader's clock | built |
 | FB1013d | REMAINS-STAND (the remains seen where they lie: a body over the record's own list), LIVE-FIGHT (the remains' fight is the place the heir stands in); ESTATE-WIDER planned - the wagon and the bank's balance, the owner's call (section 7; `01-Overview/Field-Bugs-2026-10-13d.md`) | built |
 | AUDIT FB1013d | the three-lane audit of REMAINS-STAND and LIVE-FIGHT (`01-Overview/Audit-FB1013d.md`) - the fallen's dungeon by its row, its pixel, its own key and the size it was built at; the height the death's to ask; a duel and a hostile ship a fight; a claim lapsed at the stand lays its bones at once; a load lets the bodies go and the tick waits out a world moved; the bones put back lie again | built |
+| REVIVE | a death taken back by the operator, and it holds: the `revived` stamp every copy and the realm's write honour; the "Realm revive" run (Time Travel read, guarded writes) - for TheHalfinStream, Mac: "Full revive" (section REVIVE) | built |
 
 ## WED-GATE - a character who may wed, weds (FIELD BUGS 2026-10-08)
 
@@ -713,3 +714,53 @@ LEGACY7W-partner-dead-or-lineless survives on main as well - not this change's, 
 ## PLAIN-UI - How it works (2026-10-12)
 
 The Family tab's fourth page, HOW IT WORKS (`src/ui/familyPages.js` `familyGuide`, `drawGuidePage`): the house, death in the house's own model and its toll, who carries on, what carries on (the estate to whoever takes the line; the blood and the hearth a newborn's, at birth), heirlooms and remains, marriage and children, playing another, and the tree's marks - every number the law's own - and the tab's type a step larger. AUDIT PLAIN-UI (`01-Overview/Audit-Plain-UI.md`) set its words against `family.js`, `heirloom.js`, `marriage.js` and `scenes/legacyHost.js`. A player: "Same issues with the project legacy system." The record: `10-UI/Plain-Words.md`.
+
+## REVIVE - a death taken back, and it holds (2026-10-14, acct132)
+
+Mac, of TheHalfinStream's Enduring elder - who died of her years in Castle Wayrest on 2026-10-13 while the remains bug
+(`01-Overview/Field-Bugs-2026-10-13d.md` REMAINS-STAND) hid what she lay with: *"I want to roll back this specific
+account"*; of three ways offered, *"Undo the death"*; told a plain undo would not stick, *"Full revive"*.
+
+WHY A PLAIN UNDO DOES NOT STICK. A death is a fact every copy of a line keeps (`store.js` mergeFacts: "a death is only
+ever added"), and every device that played the line holds a copy - its store, every member's save. Clear the death from
+the realm's copy alone and the first stale copy to meet it adds it back; the realm's write (`legacy.js` putLineage) then
+entombs her again (entombLineDead). So a death taken back is a fact of its own, carried the same way.
+
+THE LAW (`src/systems/legacy/revived.js`, pure, the client's and the service's): the person is stamped `revived:
+[diedAt]` - the `died.at` of each death taken back - and every copy that meets the stamp drops THAT death and what it
+laid: her `died`, the remains row (`of` her, `at` it) and the Succession it left waiting (`pending`, `fallenId` her,
+`at` it). A later death is another `at`, and stands. Three doors hear it: `store.js` mergeFacts (whichever copy carries
+the stamp), `legacyHost.js` mergeFamily (the save against the store, when the store is the base) and
+`server-account/src/legacy.js` putLineage, which takes the STORED copy's stamps into every copy sent before it is shaped,
+compared or entombed - so a device that never heard of the revival writes no death and entombs nobody. `family.js`
+readFamily keeps the stamp. No migration: the stamp rides the record, and putLineage already read it.
+
+THE OPERATOR'S RUN (`tools/reviveRealmCharacter.mjs`, `.github/workflows/realm-revive.yml` "Realm revive"), by hand,
+a dry run by default, its inputs as environment, RESTORE C's Time Travel pattern (`realm-restore.yml`): the fallen
+found first (her death in the window 2026-10-12T12Z-2026-10-14T12Z, or the `character` named), nothing held until
+then; the account service held for maintenance (~1 minute); the present bookmarked and counted; D1 rewound to two
+minutes before the death and read (her seat, her homes, the pieces she held, her unions); the present ALWAYS put back,
+proven by its counts; what stands now read and planned; the plan written only with `apply` on; the hold lifted, never
+over a rewound database. What it writes, each statement guarded on the row as the plan read it (a second run writes
+nothing twice; a run cut short is planned again):
+
+- the tombstone (`realm_characters.dead_at`, `dead_why`) cleared, only over the death the plan read and only while the
+  roster has room - her save, the last checkpoint before the death, is hers again with everything she carried;
+- the line's record stamped and her death dropped, the house rows her heir took up hers again (`from` back to `by`),
+  its rev moved `REV_MARGIN` (100) past every copy's, written only at the rev it read;
+- the homes her heir inherited (`homes.char_id`) hers again, where her heir still holds them (`keep_homes` leaves them);
+- her guild seat put back as she held it - HELD when she was the master and another was made master at her death, or
+  the guild is gone or full (`keep_guild` leaves it);
+- the ledger: the pieces she held that her heir holds now hers again, the heir's copies known copies (`item_dupes`) -
+  else her first checkpoint claims them and the heir's proves them copies charged to her; what nobody holds her
+  checkpoints register again; what another account holds is HELD;
+- her union with another player's character REPORTED, never reopened - their house heard she died.
+
+Her heir stays, a living member, theirs to keep or delete from the Online door. Her years stay spent: an Enduring
+elder's next death is final, as it was. `test/revive.test.js` (7) runs it over a real death on the real Worker's
+service - the plan applied and run again, a stale device's write after it, the held cases, the tombstone guard, the
+workflow's shape; `tools/mutants/revive.json` (26) all dead.
+
+UNVERIFIED until the dry run reads production: whether she played online at all (offline, nothing here applies - her
+device's own store holds the death), whether she held a guild seat or a union, and that Time Travel still reaches
+2026-10-13 (thirty days on the Paid plan, seven on the Free one).
