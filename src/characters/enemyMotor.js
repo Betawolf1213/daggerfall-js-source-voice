@@ -354,6 +354,9 @@ export const OBSTACLE_CAST_RADIUS = CAPSULE_RADIUS / 2;
  *  same ratio for the enemy"), p2 half a crouch-height above it. */
 export const OBSTACLE_P1_BELOW_CENTRE = 0.1388;
 export const DOOR_CROUCHING_HEIGHT = 1.65;      // :37, "how low enemies dive to pass thru doors"
+/** DOOR-JAM (FIELD BUGS 2026-10-14b): HeightAdjust's heightChangeTimer (:1462) - how long a foe that bumped something
+ *  on its sides keeps its controller at DOOR_CROUCHING_HEIGHT before it stands back up (_heightAdjust). */
+export const HEIGHT_CHANGE_SECONDS = 0.5;
 /** The upward-slope re-cast (:1182-1189): a capsule from 0.25 below
  *  the centre, 0.75 of the height tall, aimed at a point one unit
  *  ahead and one unit UP. Clear = a climbable slope, not an obstacle. */
@@ -436,6 +439,17 @@ export class EnemyAI {
     // below writes it from the move it makes; a step that makes none (a swimmer out of water, frozen) leaves it as the
     // last one left it. Come Sail Away's riders read it (world.js csaEnemies): a swimmer in open water is on nothing.
     this.isGrounded = false;
+    // DOOR-JAM (FIELD BUGS 2026-10-14b, the Discord: "Multiple enemies cannot pass through a doorway at the same time
+    // because their hitboxes collide"): EnemyMotor.HeightAdjust's state (:62-65). `height` is DFU's `originalHeight`
+    // (Start, :148) - every probe and aim below reads it, as every one of DFU's does (ObstacleCheck :1151-1152,
+    // FallCheck :1219, GetDestination :562) - and `controllerHeight` is the CharacterController's own, the one each
+    // Move sweeps: the same, until the foe bumps something on its sides; then DOOR_CROUCHING_HEIGHT for
+    // HEIGHT_CHANGE_SECONDS (_heightAdjust), so a body taller than a doorway's lintel ducks under it. `collidedSides`
+    // is the last Move's CollisionFlags.CollidedSides, kept until the next Move as isGrounded is (above).
+    this.controllerHeight = height;
+    this.collidedSides = false;
+    this._resetHeight = false;
+    this._heightChangeTimer = 0;
     // AUDIT 39: TakeAction re-derives `moveSpeed` from
     // `entity.Stats.LiveSpeed` EVERY FixedUpdate (:432), so a Drain or
     // Fortify Speed on a foe moves it. A number captured at spawn
@@ -1588,7 +1602,32 @@ export class EnemyAI {
     while (this._acc >= FIXED_DT) {
       this._acc -= FIXED_DT;
       this._step(FIXED_DT, playerFeet, senses, paralyzed, paused);
+      this._heightAdjust(FIXED_DT);   // DOOR-JAM: FixedUpdate's last call (EnemyMotor.cs:176), after every Move of the step
     }
+  }
+
+  /**
+   * EnemyMotor.HeightAdjust (:1448-1479), verbatim - DOOR-JAM (FIELD BUGS 2026-10-14b). "If enemy bumps into something,
+   * temporarily reduce their height to 1.65, which should be short enough to fit through most if not all doorways."
+   * A foe whose last Move met something on its sides (`collidedSides`, collider.js move's `sides`) and whose own height
+   * is over DOOR_CROUCHING_HEIGHT sweeps at that height for HEIGHT_CHANGE_SECONDS, then stands back up. The capsule is
+   * BOTTOM-justified in the port (feet + height), so DFU's centre shift that keeps the sprite out of the ground
+   * (`centerChange`, :1455-1458 and :1467-1469) is the feet staying where they are. Its absence left every foe taller
+   * than a doorway's lintel walking into it for good: the obstacle probe stops under DOOR_CROUCHING_HEIGHT by design
+   * (_obstacleCheck's p2 - "how low enemies dive to pass thru doors"), so it saw nothing and bought no detour, and the
+   * capsule's head met the lintel every step - and since the port's foes push apart softly (characters/foeSpacing.js)
+   * every one that followed it stood in the same doorway beside it.
+   */
+  _heightAdjust(dt) {
+    if (!this._resetHeight && this.collidedSides && this.height > DOOR_CROUCHING_HEIGHT) {
+      this.controllerHeight = DOOR_CROUCHING_HEIGHT;
+      this._resetHeight = true;
+      this._heightChangeTimer = HEIGHT_CHANGE_SECONDS;
+    } else if (this._resetHeight && this._heightChangeTimer <= 0) {
+      this.controllerHeight = this.height;
+      this._resetHeight = false;
+    }
+    if (this._resetHeight && this._heightChangeTimer > 0) this._heightChangeTimer -= dt;
   }
 
   /** C15 KnockbackMovement's motion, verbatim (the comment at its call in _step): one step of the shove along the
@@ -1606,8 +1645,9 @@ export class EnemyAI {
       if (waterY !== null && center < waterY) {
         let my = myRaw;
         if (my > 0 && center + WATER_HEAD_MARGIN >= waterY) my = 0;
-        const moveResult = this.collider.move(this.feet, mx, my, mz, this.height, true, FOE_KEEPS_FLOOR);
+        const moveResult = this.collider.move(this.feet, mx, my, mz, this.controllerHeight, true, FOE_KEEPS_FLOOR);
         this.isGrounded = moveResult.grounded;
+        this.collidedSides = !!moveResult.sides;   // DOOR-JAM: the Move's CollidedSides, for HeightAdjust
       }
     } else if (this.flies || this.levitating) {
       // :293-298 - `else if (flies || IsLevitating) controller.Move(...)`,
@@ -1619,14 +1659,16 @@ export class EnemyAI {
       // knocked-back levitator sails and does not drop.
       if (this.flies && !this.levitating) this.velY -= GRAVITY * dt;   // flyerFalls: a hit knocks them out of the air
       else this.velY = 0;   // no gravity arm claims a levitator: the port's accumulator must not carry one either
-      const r = this.collider.move(this.feet, mx, myRaw + this.velY * dt, mz, this.height, true, FOE_KEEPS_FLOOR);
+      const r = this.collider.move(this.feet, mx, myRaw + this.velY * dt, mz, this.controllerHeight, true, FOE_KEEPS_FLOOR);
       this.isGrounded = r.grounded;
+      this.collidedSides = !!r.sides;   // DOOR-JAM
       if (r.grounded) this.velY = 0;
       this._trackFall(r.grounded);   // CH3: a knocked-down flyer lands hard
     } else {
       this.velY -= GRAVITY * dt;   // SimpleMove: horizontal motion, gravity applies
-      const r = this.collider.move(this.feet, mx, this.velY * dt, mz, this.height, true, FOE_KEEPS_FLOOR);
+      const r = this.collider.move(this.feet, mx, this.velY * dt, mz, this.controllerHeight, true, FOE_KEEPS_FLOOR);
       this.isGrounded = r.grounded;
+      this.collidedSides = !!r.sides;   // DOOR-JAM
       if (r.grounded) this.velY = 0;
       this._trackFall(r.grounded);
     }
@@ -2059,8 +2101,9 @@ export class EnemyAI {
       if (this.fallDetected || this.obstacleDetected) { this._findDetour(d); return; }
       let my = d[1] * this.speed * dt;
       if (my > 0 && center + WATER_HEAD_MARGIN >= waterY) my = 0;
-      const moveResult = this.collider.move(this.feet, d[0] * this.speed * dt, my, d[2] * this.speed * dt, this.height, true, FOE_KEEPS_FLOOR);
+      const moveResult = this.collider.move(this.feet, d[0] * this.speed * dt, my, d[2] * this.speed * dt, this.controllerHeight, true, FOE_KEEPS_FLOOR);
       this.isGrounded = moveResult.grounded;
+      this.collidedSides = !!moveResult.sides;   // DOOR-JAM
       return;
     }
 
@@ -2117,8 +2160,9 @@ export class EnemyAI {
       this._obstacleCheck(d);
       this._fallCheck(d);
       if (this.fallDetected || this.obstacleDetected) { this._findDetour(d); this.lastGroundedY = this.feet[1]; return; }
-      const moveResult = this.collider.move(this.feet, d[0] * this.speed * dt, d[1] * this.speed * dt, d[2] * this.speed * dt, this.height, true, FOE_KEEPS_FLOOR);
+      const moveResult = this.collider.move(this.feet, d[0] * this.speed * dt, d[1] * this.speed * dt, d[2] * this.speed * dt, this.controllerHeight, true, FOE_KEEPS_FLOOR);
       this.isGrounded = moveResult.grounded;
+      this.collidedSides = !!moveResult.sides;   // DOOR-JAM
       this.lastGroundedY = this.feet[1];   // the altitude-control anchor, post-move
       return;
     }
@@ -2167,8 +2211,9 @@ export class EnemyAI {
         dzm = dir2d[2] * sp * dt;
       }
     }
-    const r = this.collider.move(this.feet, dxm, dy, dzm, this.height, true, FOE_KEEPS_FLOOR);
+    const r = this.collider.move(this.feet, dxm, dy, dzm, this.controllerHeight, true, FOE_KEEPS_FLOOR);
     this.isGrounded = r.grounded;
+    this.collidedSides = !!r.sides;   // DOOR-JAM: the Move's CollidedSides, for HeightAdjust
     if (r.grounded) this.velY = 0;
     this._trackFall(r.grounded);   // CH3 (characters-8): walkers and falling paralyzed flyers
     this._restGrounded = !this.moving && r.grounded;
@@ -2230,6 +2275,7 @@ export class EnemyAI {
     this._acc = 0; this.knockbackSpeed = 0; this.hurtKnock = false; this.moving = false;
     this._restGrounded = false;   // AUDIT WORLD2 B12: a foe that takes the seat standing still re-grounds on its first step, not its first move
     this._crumb = null; this._trailMode = null; this._trailT = 0;   // COMPANION-TRAIL: stood afresh, it looks afresh
+    this.controllerHeight = this.height; this.collidedSides = false; this._resetHeight = false; this._heightChangeTimer = 0;   // DOOR-JAM: it stands at its own height, as a fresh controller does
   }
 
   /** FALL-HOLD (FIELD BUGS 2026-09-30b, ReynBlackwinter: "constant fps drop in overworld ... Resets after

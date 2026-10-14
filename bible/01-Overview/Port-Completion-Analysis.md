@@ -287,14 +287,18 @@ The most complete subsystem measured. Residue only, but some of it bites:
 
 ### Enemy AI / spawning / population - ~1,245 loc
 Also close to 1:1 on the classic path. Gaps:
-- Every enemy uses one fixed 1.8m capsule; DFU sizes each foe's controller
-  from its sprite (~60).
+- ~~Every enemy uses one fixed 1.8m capsule; DFU sizes each foe's controller
+  from its sprite (~60).~~ SHIPPED (INCIDENT 2026-09-04: characters/enemyAnchor.js
+  enemyControllerHeight, SetupDemoEnemy's law - `04-Characters/Characters-Arc.md`).
 - No multi-target AI: `GetTargets`, `MobileTeams`, infighting, PlayerAlly
   and quest-foe targeting are all absent (~350).
 - ~~Daedra Seducer transformation unported~~ SHIPPED
   (characters/enemyAttack.js + enemyBasics carry it).
-- `HeightAdjust` unported - tall enemies cannot follow through doorways
-  (~35).
+- ~~`HeightAdjust` unported - tall enemies cannot follow through doorways
+  (~35).~~ SHIPPED (DOOR-JAM, FIELD BUGS 2026-10-14b: characters/enemyMotor.js
+  _heightAdjust and the collider's CollidedSides - `01-Overview/Field-Bugs-2026-10-14b.md`;
+  it bit once the capsule above was sized: 94% of the dungeons' doorways are lower than a
+  Mage stands).
 - ~~Interior people are always visible~~ SHIPPED
   (characters/interiorPeople.js gates on hours/ownership).
 - Mobile townspeople get no face record, so every talk portrait falls back
