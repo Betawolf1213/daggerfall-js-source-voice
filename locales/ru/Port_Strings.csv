@@ -870,7 +870,7 @@ features.moddedLighting.note,"Нужен мод Improved Interior Lighting. Ег
 features.moddedLighting.on,"Вкл."
 features.moddedLighting.shadows,"С тенями"
 features.moddedLighting.title,"Освещение из мода ({mod})"
-features.mwBillboardLook.note,"С телом Morrowind тела и лошади стоят прямо, как спрайты Daggerfall, и сверху кажутся ниже. Если выключено, они наклоняются к камере и сохраняют свой настоящий рост."
+features.mwBillboardLook.note,"С телом Morrowind тела и лошади стоят прямо, как классические спрайты, и сверху кажутся ниже. Если выключено, они наклоняются к камере и сохраняют свой настоящий рост."
 features.mwBillboardLook.title,"Вид билборда"
 features.navalCombat.aimCamera,"Камера бортового залпа"
 features.navalCombat.autoRepair,"Экипаж чинит сам"

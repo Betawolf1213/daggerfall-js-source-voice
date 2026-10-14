@@ -1167,7 +1167,7 @@ export const FEATURES = Object.freeze([
     id: 'mw-billboard-look',
     group: 'world',
     get title() { return t('features.mwBillboardLook.title', 'Billboard Look'); },
-    get note() { return t('features.mwBillboardLook.note', 'With the Morrowind body, bodies and horses stand upright like Daggerfall\u2019s sprites and '
+    get note() { return t('features.mwBillboardLook.note', 'With the Morrowind body, bodies and horses stand upright like the classic sprites and '
       + 'look shorter from above. Off, they lean to the camera and keep their true height.'); },
     get effect() { return t('features.effect.atOnce', 'Takes effect at once.'); },
     kinds: Object.freeze(['enhanced']),

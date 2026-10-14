@@ -870,7 +870,7 @@ features.moddedLighting.note,"Precisa do mod Improved Interior Lighting. As luze
 features.moddedLighting.on,"Ligado"
 features.moddedLighting.shadows,"Com sombras"
 features.moddedLighting.title,"Iluminação de mod ({mod})"
-features.mwBillboardLook.note,"Com o corpo de Morrowind, corpos e cavalos ficam eretos como os sprites de Daggerfall e parecem mais baixos vistos de cima. Desligado, eles se inclinam para a câmera e mantêm a altura real."
+features.mwBillboardLook.note,"Com o corpo de Morrowind, corpos e cavalos ficam eretos como os sprites clássicos e parecem mais baixos vistos de cima. Desligado, eles se inclinam para a câmera e mantêm a altura real."
 features.mwBillboardLook.title,"Visual de billboard"
 features.navalCombat.aimCamera,"Câmera de bordada"
 features.navalCombat.autoRepair,"A tripulação faz reparos sozinha"

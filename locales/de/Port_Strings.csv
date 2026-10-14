@@ -870,7 +870,7 @@ features.moddedLighting.note,"Braucht den Mod Improved Interior Lighting. Seine 
 features.moddedLighting.on,"An"
 features.moddedLighting.shadows,"Mit Schatten"
 features.moddedLighting.title,"Mod-Beleuchtung ({mod})"
-features.mwBillboardLook.note,"Mit dem Morrowind-Körper stehen Körper und Pferde aufrecht wie Daggerfalls Sprites und wirken von oben kleiner. Aus neigen sie sich zur Kamera und behalten ihre wahre Größe."
+features.mwBillboardLook.note,"Mit dem Morrowind-Körper stehen Körper und Pferde aufrecht wie die klassischen Sprites und wirken von oben kleiner. Aus neigen sie sich zur Kamera und behalten ihre wahre Größe."
 features.mwBillboardLook.title,"Billboard-Optik"
 features.navalCombat.aimCamera,"Breitseitenkamera"
 features.navalCombat.autoRepair,"Mannschaft repariert selbst"

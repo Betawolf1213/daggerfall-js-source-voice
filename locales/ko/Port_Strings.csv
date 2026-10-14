@@ -870,7 +870,7 @@ features.moddedLighting.note,"Improved Interior Lighting 모드가 필요합니�
 features.moddedLighting.on,"켜기"
 features.moddedLighting.shadows,"그림자 포함"
 features.moddedLighting.title,"모드 조명 ({mod})"
-features.mwBillboardLook.note,"Morrowind 몸을 쓰면 몸과 말이 Daggerfall의 스프라이트처럼 똑바로 서서 위에서 보면 더 작아 보입니다. 끄면 카메라 쪽으로 기울어져 원래 키를 유지합니다."
+features.mwBillboardLook.note,"Morrowind 몸을 쓰면 몸과 말이 클래식 스프라이트처럼 똑바로 서서 위에서 보면 더 작아 보입니다. 끄면 카메라 쪽으로 기울어져 원래 키를 유지합니다."
 features.mwBillboardLook.title,"빌보드 모습"
 features.navalCombat.aimCamera,"현측 카메라"
 features.navalCombat.autoRepair,"선원 자동 수리"

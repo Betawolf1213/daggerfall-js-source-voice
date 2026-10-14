@@ -794,7 +794,7 @@ features.moddedLighting.note,"Vereist de mod Improved Interior Lighting. De warm
 features.moddedLighting.on,"Aan"
 features.moddedLighting.shadows,"Met schaduwen"
 features.moddedLighting.title,"Belichting uit mod ({mod})"
-features.mwBillboardLook.note,"Met het Morrowind-lichaam staan lichamen en paarden rechtop zoals de sprites van Daggerfall en lijken ze van bovenaf kleiner. Uit leunen ze naar de camera en houden ze hun ware lengte."
+features.mwBillboardLook.note,"Met het Morrowind-lichaam staan lichamen en paarden rechtop zoals de klassieke sprites en lijken ze van bovenaf kleiner. Uit leunen ze naar de camera en houden ze hun ware lengte."
 features.mwBillboardLook.title,"Billboard-uiterlijk"
 features.navalCombat.aimCamera,"Breedzijdecamera"
 features.navalCombat.autoRepair,"Bemanning repareert zelf"
