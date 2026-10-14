@@ -30,8 +30,8 @@
   {
     "name": "BOUNTY-LAIR-the-block-origin-dropped",
     "file": "src/systems/quest/place.js",
-    "old": "      spots.push([m.x + b.originX, m.y, m.z + b.originZ]);",
-    "new": "      spots.push([m.x, m.y, m.z]);",
+    "old": "      const p = [m.x + b.originX, m.y, m.z + b.originZ];",
+    "new": "      const p = [m.x, m.y, m.z];",
     "tests": ["test/fb0929h_bountylair.test.js"]
   },
   {

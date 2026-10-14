@@ -508,8 +508,11 @@ test('AUDIT 64 F17: layoutInterior carries ObjectType, and 41409 climbs only as 
   const c = src('src/scenes/interiorContext.js');
   assert.ok(c.includes('if (p.modelIdNum === LADDER_MODEL_ID && p.objectType === PROP_MODEL_TYPE) {'),
     'DaggerfallInterior.cs:491-496 - :439 keeps EVERY 41409 standalone scenery, only the DaggerfallLadder is withheld');
-  assert.ok(c.includes('if (p.objectType !== PROP_MODEL_TYPE) continue;'),
+  // PIN MOVED (FIELD BUGS 2026-10-14 INN-BEDS): the gate lists a bed model before it skips - a bed is a mod's custom
+  // activation (RoleplayRealism.cs:126-128), not furniture's action - and skips everything else as it did
+  const gate = c.indexOf('if (p.objectType !== PROP_MODEL_TYPE) {');
+  assert.ok(gate >= 0 && /^if \(p\.objectType !== PROP_MODEL_TYPE\) \{\n\s*if \(isBedModel\(classicModelIdOf\(p\.modelIdNum\)\)\) beds\.push\(\{ cpu, matrix \}\);\n\s*continue;\n\s*\}/.test(c.slice(gate)),
     'DaggerfallInterior.cs:500 gates the whole AddFurnitureAction chain on the same clause');
-  assert.ok(c.indexOf('if (p.objectType !== PROP_MODEL_TYPE) continue;') < c.indexOf('if (isShopShelfModel(p.modelIdNum)) {'),
+  assert.ok(gate < c.indexOf('if (isShopShelfModel(p.modelIdNum)) {'),
     'and it sits ahead of the shelf/house-container chain it gates');
 });

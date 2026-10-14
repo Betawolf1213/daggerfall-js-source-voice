@@ -281,7 +281,7 @@ function refuseTransfer(item) {
     return true;
   }
   const refused = isSummoned(item) || questTransferRefused(item, {
-    fromLocal: true, toWagon: false, getQuest: deps.getQuest ?? null,
+    fromLocal: true, toWagon: false, getQuest: deps.getQuest ?? null, trade: true,   // QUEST-SHELF-DROP: never sold
   });
   if (!refused) return false;
   box = { rows: [{ text: cannotRemoveItemText(), center: true }], buttons: null };
@@ -664,7 +664,7 @@ function junkStages(item) {
     usingIdentifySpell: deps.usingIdentifySpell ?? false,
     ...sellGuardOf(deps.entity),   // WAGONS2 (FINAL AUDIT): the counter's own reading (no wagon is junk - the one law all the same)
   });
-  return d.kind === 'stage' && !isSummoned(item) && !questTransferRefused(item, { fromLocal: true, toWagon: false, getQuest: deps.getQuest ?? null });
+  return d.kind === 'stage' && !isSummoned(item) && !questTransferRefused(item, { fromLocal: true, toWagon: false, getQuest: deps.getQuest ?? null, trade: true });
 }
 /** LOOT18: SELL JUNK - every such piece onto the counter in one press, whole, each by the counter's own click law, and
  *  then the counter's own price and confirm: the footer's Sell, the YesNo box it always asks. Answers how many it laid. */

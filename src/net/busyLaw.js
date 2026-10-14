@@ -17,9 +17,11 @@
 // THE READS ARE ONLY READS. Each route below answers what stands and writes nothing (its handler checked statement by
 // statement), so a read held back loses nothing: its book keeps the last good view and asks again. Writes, sign-ins,
 // the heartbeat and every act are never held - each keeps its own retry, and an act is never dropped (`call` sends it).
-// Left out on purpose: a read that may settle something on its way (the market's read, the chapters' list, the arena's
-// board and its #1), and the reads a replica serves (service.js REPLICA_ROUTES), which an overloaded primary does not
-// slow. This file imports nothing: it is in the account Worker's bundle and the client's, and keeps both graphs flat.
+// Left out on purpose: a read that may settle something on its way (the market's read, the chapters' list), the arena's
+// board, and the mint, the heartbeat and the account's own state, whose sessions the primary's queue does not hold up
+// with the tab's bookmark. DISPLAY-REPLICA (2026-10-13): the reads below are replica routes too (service.js
+// REPLICA_ROUTES), and still stand back - a page with no bookmark asks the primary their first statement. This file
+// imports nothing: it is in the account Worker's bundle and the client's, and keeps both graphs flat.
 
 /** The reads that stand back while the service is overloaded - route -> its method. */
 export const BUSY_READS = new Map([

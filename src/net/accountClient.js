@@ -30,8 +30,9 @@
 //
 // ═══ THE RECOVERY CODE IS READABLE ONCE, AND THIS FILE NEVER KEEPS IT
 //
-// `register` and `recover` are the only two answers that carry one,
-// and it is never written to storage here. The screen shows it and the
+// `register` and `recover` are the only two answers that carry one -
+// RECOVERY-SET: and `newRecoveryCodes`, the profile's new set - and it
+// is never written to storage here. The screen shows it and the
 // player writes it down; a copy in localStorage would be a copy in the
 // one place a stolen device reads first, and it would make "shown
 // once" a sentence rather than a fact.
@@ -134,6 +135,7 @@ const REFUSAL_WORDS = {
   'no-account': () => t('account.refusal.noAccount', 'That account no longer exists.'),
   'bad-login': () => t('account.refusal.badLogin', 'That username and password do not match.'),
   'bad-code': () => t('account.refusal.badCode', 'That username and recovery code do not match.'),
+  'codes-moved': () => t('account.refusal.codesMoved', 'Your recovery codes changed while that was asked. Try again.'),   // RECOVERY-SET: two presses raced (accounts.js newRecoveryCodes)
   email: () => t('account.refusal.email', 'That does not look like an email address.'),
   rate: () => t('account.refusal.rate', 'Too many attempts. Wait a few minutes and try again.'),
   auth: () => t('account.refusal.auth', 'You have been signed out. Sign in again.'),
@@ -775,6 +777,19 @@ export const D1_BOOKMARK_READS = new Map([
   ['/v1/realm', 'GET'],
   ['/v1/prof/state', 'POST'],
   ['/v1/prof/motherlodes', 'POST'],
+  // DISPLAY-REPLICA (2026-10-13; server-account/src/service.js REPLICA_ROUTES): and the display reads
+  ['/v1/homes/town', 'POST'],
+  ['/v1/homes/mine', 'POST'],
+  ['/v1/homes/rooms', 'POST'],
+  ['/v1/homes/decor', 'POST'],
+  ['/v1/prof/pixels', 'POST'],
+  ['/v1/market/vendors', 'POST'],
+  ['/v1/marks/balance', 'POST'],
+  ['/v1/guilds/invites', 'POST'],
+  ['/v1/realm/lineages', 'POST'],
+  ['/v1/realm/unions', 'POST'],
+  ['/v1/saves', 'GET'],
+  ['/v1/arena/board', 'POST'],
 ]);
 let _d1Mark = { secret: null, mark: null };
 /** AUDIT SCALE II A-2: how many times the page's bookmark has been forgotten - a read's answer is kept only under the
@@ -900,17 +915,21 @@ export const openGuest = (io, label = null, accepted = null) => call(io, '/v1/au
 
 /** Fill in a handle and a password on the guest row THIS SESSION
  *  already owns - an upgrade in place, never a new account. Answers
- *  `{ recoveryCode, handle }`, and that code is readable exactly once.
+ *  `{ recoveryCodes, handle }` - RECOVERY-SET: this build asks for the
+ *  set (`set: true`; a service before acct131 answers `{ recoveryCode }`
+ *  and ignores the ask) - and they are readable exactly once.
  *  TERMS1: with the versions ticked on the form that names it. */
 export const register = (io, handle, password, accepted = null) =>
-  call(io, '/v1/auth/register', { handle, password, ...legalFields(accepted) });
+  call(io, '/v1/auth/register', { handle, password, ...legalFields(accepted), set: true });
 
 /** `{ id, name, kind, sessionId, secret }` for a new device. */
 export const login = (io, handle, password, label = null) => call(io, '/v1/auth/login', { handle, password, label });
 
-/** Spend the recovery code: a new password, a NEW code, and every
- *  device signed out including this one. */
-export const recover = (io, handle, code, password) => call(io, '/v1/auth/recover', { handle, code, password });
+/** Spend a recovery code: a new password, and every device signed out
+ *  including this one. RECOVERY-SET: this build asks for the set
+ *  (`set: true`); the answer's `codesLeft` counts the set's others, and a
+ *  single code, or the last, answers a fresh set (`recoveryCodes`). */
+export const recover = (io, handle, code, password) => call(io, '/v1/auth/recover', { handle, code, password, set: true });
 
 /** `{ account, devices }`. A GET, so the secret rides the header and
  *  there is no body at all. */
@@ -921,6 +940,11 @@ export const readAccount = (io) => call(io, '/v1/account');
  *  device; this one stays. */
 export const changePassword = (io, oldPassword, password) =>
   call(io, '/v1/account/password', { oldPassword, password });
+
+/** RECOVERY-SET: a NEW set of recovery codes, behind the password and
+ *  one current code (AUDIT RECOVERY-SET A1) - `{ recoveryCodes,
+ *  codesLeft }`, readable exactly once, the old set dead with it. */
+export const newRecoveryCodes = (io, password, code) => call(io, '/v1/account/recovery-codes', { password, code });
 
 /** Completely optional, and `null` takes it off again. */
 export const setEmail = (io, email) => call(io, '/v1/account/email', { email: email || null });
@@ -995,9 +1019,10 @@ export function storedSession(storage) {
   } catch { return null; }
 }
 
-/** Keep the session this device signed in with. The RECOVERY CODE IS
- *  NEVER PART OF THIS - `register` and `recover` hand one back and it
- *  is the screen's to show and the player's to write down. */
+/** Keep the session this device signed in with. The RECOVERY CODES ARE
+ *  NEVER PART OF THIS - `register`, `recover` and `newRecoveryCodes`
+ *  hand them back and they are the screen's to show and the player's to
+ *  write down. */
 export function keepSession(storage, { id, name, kind, sessionId, secret, glyphs, aura, nameAsAt }) {
   try {
     storage?.setItem?.(SESSION_KEY, JSON.stringify({ id, name, kind, sessionId, secret, glyphs, aura, nameAsAt }));   // SHADOW-FANG: `glyphs` when the service has stated them (adoptIdentity) - JSON leaves it out otherwise; WB9g: `aura` likewise; NAME-AS: `nameAsAt` likewise

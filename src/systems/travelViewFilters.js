@@ -8,7 +8,7 @@
 //   towns      - the places in the grid, their plates (kind 'place'); YARDS-FOUND: and the towns' Stables and Wagon Yards
 //                ('yard <kind>'), shown and hidden with them but never counted as a town
 //   distant    - the far places held at the edge with their distance (kind 'far', not a dungeon)
-//   dungeons   - the unfound lairs and the found dungeons far off ('lair', 'far dungeon')
+//   dungeons   - the unfound lairs and the found dungeons, far off or in the grid ('lair', 'far dungeon', 'place dungeon')
 //   enemies    - the roaming bands, the camps and packs, the raiders' sails ('band', 'camp', 'raider ...')
 //   travellers - the other players ('traveller ...')
 //   gathering  - GATHER-OW: each profession's group of nodes on the land near me ('gather <profession>')
@@ -51,6 +51,7 @@ export function markGroup(kind = '') {
   const words = String(kind).split(' ');
   const k = words[0];
   if (words.includes('chase')) return null;   // a threat coming at me stays on the screen
+  if (k === 'place' && words.includes('dungeon')) return 'dungeons';   // OW-DUNGEON-DOT: a found dungeon's plate within the grid
   if (k === 'place' || k === 'yard') return 'towns';   // YARDS-FOUND: a town's yards go with its plate
   if (k === 'far') return words.includes('dungeon') ? 'dungeons' : 'distant';
   if (k === 'lair') return 'dungeons';

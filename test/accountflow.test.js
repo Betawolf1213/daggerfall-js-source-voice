@@ -190,7 +190,7 @@ test('ACC1e: the recovery code is NEVER written to storage', async () => {
   await flow.submit();
 
   assert.equal(flow.stage, 'code');
-  assert.equal(flow.recoveryCode, '7GEPQ-47BS9-AYK70-QMWYW');
+  assert.deepEqual(flow.recoveryCodes, ['7GEPQ-47BS9-AYK70-QMWYW'], 'PIN MOVED: RECOVERY-SET - the set the card shows; a service from before it answers one code, and that one is shown');
   const dump = [...storage._map.values()].join('|');
   assert.ok(!dump.includes('7GEPQ'), 'the code readable once was written where a stolen device reads first');
 });
@@ -376,7 +376,7 @@ test('ACC1e: recovery mints a NEW code, keeps the fresh session, and lands on th
   flow.set('confirm', 'brandnewpassword');
   await flow.submit();
   assert.equal(flow.stage, 'code');
-  assert.equal(flow.recoveryCode, 'NEWC1-NEWC2', 'spending a code must hand back another');
+  assert.deepEqual(flow.recoveryCodes, ['NEWC1-NEWC2'], 'spending a code must hand back another (PIN MOVED: RECOVERY-SET - a service from before the set answers one)');
   assert.equal(JSON.parse(storage.getItem(SESSION_KEY)).secret, 'sec-nine',
     'recovery signs every device out, so the fresh session it returns is the only way this device stays in');
 });
@@ -394,10 +394,11 @@ test('ACC1e: the code stage is left only by acknowledging it, and the code is go
   flow.set('confirm', 'correcthorse');
   flow.agree('terms', true); flow.agree('privacy', true);   // TERMS1: a new account ticks both documents
   await flow.submit();
-  assert.equal(flow.recoveryCode, 'CODE1-CODE2');
+  assert.deepEqual(flow.recoveryCodes, ['CODE1-CODE2']);   // PIN MOVED: RECOVERY-SET - the set, a code each
   await flow.acknowledgeCode();
   assert.equal(flow.stage, 'in');
-  assert.equal(flow.recoveryCode, null, 'the code outlived the one stage that may show it');
+  assert.equal(flow.recoveryCodes, null, 'the code outlived the one stage that may show it');
+  assert.equal(flow.codesFor, '', 'and whose it was');
 });
 
 test('ACC1e: changing a password needs the old one, and says that other devices were signed out', async () => {

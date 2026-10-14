@@ -587,6 +587,23 @@ function render() {
           };
           top.append(ab);
         }
+        // QUEST-RESET (LostMyLeg: "an option that can fully reset a quest"): a running quest's Restart (twice, the same
+        // arming) - the quest started again from its first step (scenes/questBridge.js journalClean.restart), drawn where
+        // it may be (`canRestart` - the main story's steps among them; never one a questor gave, nor the world's own)
+        const reset = section === 'quests' && e.uid != null && !isHuntQuestId(e.uid) && !isBountyQuestId(e.uid) ? deps.shelfDoor?.() ?? null : null;
+        if (reset?.restart && reset.canRestart?.(e.uid)) {
+          const armed = bountyArmed === `r:${e.uid}`;
+          const rs = el('button', 'cr-rm cr-share', armed ? t('chronicle.quests.restartArmed', 'Click again') : t('chronicle.quests.restart', 'Restart'));
+          rs.title = t('chronicle.quests.restartTitle', 'Start this quest again from its first step - what it placed and gave is taken back');
+          rs.setAttribute('aria-label', armed ? t('chronicle.quests.restartArmedLabel', 'Click again to restart this quest') : t('chronicle.quests.restartLabel', 'Restart this quest'));
+          rs.onclick = () => {
+            if (bountyArmed !== `r:${e.uid}`) { bountyArmed = `r:${e.uid}`; render(); return; }
+            bountyArmed = null;
+            shelfWord = reset.restart(e.uid)?.text ?? '';
+            render();
+          };
+          top.append(rs);
+        }
         if (section === 'quests' && e.uid != null && !e.main && !isBountyQuestId(e.uid) && !isHuntQuestId(e.uid)
           && (deps.partyMembers?.() ?? []).length) {
           const share = el('button', 'cr-rm cr-share', 'Share');

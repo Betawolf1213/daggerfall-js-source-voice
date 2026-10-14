@@ -1476,6 +1476,7 @@ mods.handheldTorches.Throwing.Bounciness.description,"Hur mycket fart en kastad 
 mods.handheldTorches.Throwing.Chance.description,"% chans att elden tar sig på en träffad fiende."
 mods.handheldTorches.Throwing.Combustion.description,"En kastad fackla som träffar en fiende kan sätta eld på den."
 mods.handheldTorches.Throwing.Duration.description,"Antal rundor elden brinner på en träffad fiende."
+naval.yard.grogDrunk,"Hennes besättnings humör är {spirits, select, roaring {sprudlande} high {högt} steady {stadigt} low {lågt} other {dystert}} - de har redan fått dagens omgång"
 rest.exhausted.fighting,"Du är för utmattad för att slåss - ta dig undan och vila!"
 settings.language.machine,"Maskinöversatt"
 settings.language.name,"Språk"

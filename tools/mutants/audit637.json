@@ -112,7 +112,7 @@
   {
     "name": "AUDIT637-A1a-the-panel-short-circuit-gone",
     "file": "src/ui/chatPanel.js",
-    "old": "    if (all === whoRowsSeen && total === whoTotalSeen && label === whoLabelSeen && menuFor === whoMenuSeen && query === whoQuerySeen) return;\n",
+    "old": "    if (all === whoRowsSeen && everyone === whoAllSeen && total === whoTotalSeen && label === whoLabelSeen && menuFor === whoMenuSeen && query === whoQuerySeen) return;\n",
     "new": "",
     "tests": [
       "test/audit637_roster.test.js",
@@ -122,8 +122,8 @@
   {
     "name": "AUDIT637-A1b-the-list-seen-never-recorded",
     "file": "src/ui/chatPanel.js",
-    "old": "    whoRowsSeen = all; whoTotalSeen = total;",
-    "new": "    whoTotalSeen = total;",
+    "old": "    whoRowsSeen = all; whoAllSeen = everyone; whoTotalSeen = total;",
+    "new": "    whoAllSeen = everyone; whoTotalSeen = total;",
     "tests": [
       "test/audit637_roster.test.js",
       "test/perfon3.test.js"
@@ -192,8 +192,8 @@
   {
     "name": "AUDIT637-A6-the-listing-committed-before-its-answer",
     "file": "src/net/roster.js",
-    "old": "    const out = Object.freeze(rows.slice().sort(byNameThenTag).slice(0, ROSTER_ROWS_MAX));   // AUDIT 637 A6: the answer first, then the state that names it\n    _scratchIn = _lastIn;   // the old input becomes the next call's scratch; this call's list is kept as the new input\n    _lastIn = rows;\n    _lastOut = out;",
-    "new": "    _scratchIn = _lastIn;   // the old input becomes the next call's scratch; this call's list is kept as the new input\n    _lastIn = rows;\n    _lastOut = Object.freeze(rows.slice().sort(byNameThenTag).slice(0, ROSTER_ROWS_MAX));",
+    "old": "    const sorted = rows.slice().sort(byNameThenTag);\n    const out = Object.freeze(sorted.slice(0, ROSTER_ROWS_MAX));   // AUDIT 637 A6: the answer first, then the state that names it\n    _scratchIn = _lastIn;   // the old input becomes the next call's scratch; this call's list is kept as the new input\n    _lastIn = rows;\n    _lastOut = out;",
+    "new": "    _scratchIn = _lastIn;   // the old input becomes the next call's scratch; this call's list is kept as the new input\n    _lastIn = rows;\n    const sorted = rows.slice().sort(byNameThenTag);\n    const out = Object.freeze(sorted.slice(0, ROSTER_ROWS_MAX));\n    _lastOut = out;",
     "tests": [
       "test/audit637_roster.test.js",
       "test/perfon3.test.js"

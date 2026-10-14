@@ -547,7 +547,9 @@ export const AFFIX_KINDS = Object.freeze({
   elemental: Object.freeze({ slot: 'prefix', groups: Object.freeze(['Weapons']), params: PROC_ELEMENTS, proc: true,
     word: (band, p) => ELEMENTAL_PREFIX[p][band], label: (a) => `+${a.value} ${cap(a.param)} damage` }),
   leech:  Object.freeze({ slot: 'suffix', groups: Object.freeze(['Weapons']), params: null, proc: true,
-    word: (band) => LEECH_SUFFIX[band], label: (a) => `${a.value}% life leech` }),
+    // FIELD BUGS 2026-10-14 LEECH-HAND (Mac: "Keep per-hand"): the line says whose blows it heals on - an off-hand weapon's
+    // leech rides its own blows alone (lootPowers.js lootStrike), and a player read it as dead until they switched hands
+    word: (band) => LEECH_SUFFIX[band], label: (a) => `${a.value}% life leech on this weapon's own blows` }),
   thorns: Object.freeze({ slot: 'prefix', groups: Object.freeze(['Armor']), params: null, proc: true,
     word: (band) => THORNS_PREFIX[band], label: (a) => `${a.value} thorns` }),
   focus:  Object.freeze({ slot: 'prefix', groups: Object.freeze(['Jewellery']), params: null, proc: true,

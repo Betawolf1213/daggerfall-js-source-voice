@@ -76,7 +76,7 @@ test('LOOT4: the kinds - five that do things, banded, worded, valid; never in th
   assert.equal(LR.validAffix({ id: 'leech', param: 'fire', value: 3 }), false, 'a param a kind without one');
   assert.equal(LR.affixLabel({ id: 'elemental', param: 'fire', value: 5 }), '+5 Fire damage');
   assert.equal(LR.affixLabel({ id: 'slayer', param: 'undead', value: 15 }), '+15% damage vs the undead');
-  assert.equal(LR.affixLabel({ id: 'leech', value: 5 }), '5% life leech');
+  assert.equal(LR.affixLabel({ id: 'leech', value: 5 }), '5% life leech on this weapon\'s own blows');   // PIN MOVED: FIELD BUGS 2026-10-14 LEECH-HAND
   assert.equal(LR.affixLabel({ id: 'thorns', value: 4 }), '4 thorns');
   assert.equal(LR.affixLabel({ id: 'focus', value: 6 }), '-6% spell cost');
   // never in the ladder's own draw

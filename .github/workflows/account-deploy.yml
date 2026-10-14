@@ -316,6 +316,7 @@ on:
       - "vendor/foraging/ItemTemplates.json"
       - "vendor/iliac-puddle-no-more/ItemTemplates.json"
       - ".github/workflows/account-deploy.yml"
+      - "src/systems/legacy/revived.js"
   workflow_dispatch:
 
 permissions:

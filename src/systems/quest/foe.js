@@ -101,7 +101,13 @@ export class Foe extends QuestResource {
   clearRestrained() { this.isRestrained = false; }
 
   /** IncrementKills (Foe.cs:219-222). */
-  incrementKills(amount = 1) { this.killCount += amount; }
+  incrementKills(amount = 1) {
+    this.killCount += amount;
+    // QUEST-NOTE (2026-10-13, a player: "killed the mage in question, but DFO never popped up saying the mage was
+    // killed"): THE PORT'S OWN WORD - a quest's foe fell, told to the host (a notice and a chat line), whatever the
+    // quest's own script says or does not say. DFU tells nothing here; the script's `say` stays its own box.
+    this.parentQuest?.hooks?.questFoeKilled?.(this.parentQuest, this, amount);
+  }
 
   /** Kill (Foe.cs:224-227): flags every live instance to die; the
    *  behaviour mount zeroes entity health per instance (Q4). */

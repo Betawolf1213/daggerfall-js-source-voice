@@ -165,6 +165,7 @@ export class Quest {
     // Places whose site links it held then (their symbol names - the links stand again from them on its reclaim).
     this.shelvedAt = null;
     this.shelvedSites = null;
+    this.shelvedItems = null;   // QUEST-SHELF-DROP: its items the pack held as it was set aside, by symbol
   }
 
   // ---- Q1 structure ----
@@ -551,6 +552,7 @@ export class Quest {
       shareId: this.shareId ?? null,   // DISC22-F: the shared copy's identity - the port's own member, absent in DFU's saves
       shelvedAt: this.shelvedAt ?? null,   // QUEST-SHELF: the port's own, absent in DFU's saves (an older envelope: not set aside)
       shelvedSites: this.shelvedSites ? [...this.shelvedSites] : null,
+      shelvedItems: this.shelvedItems ? [...this.shelvedItems] : null,   // QUEST-SHELF-DROP
       // TIME3: the clock its countdowns stand on - the holder's own, as it read when this was taken. A party member's copy
       // moves them onto theirs by the distance (quest/questStamps.js); an envelope without it is from before TIME3.
       ownSecondsAt: Number.isFinite(this.nowSeconds?.()) ? Math.floor(this.nowSeconds()) : null,
@@ -571,6 +573,7 @@ export class Quest {
     this.shareId = typeof data.shareId === 'string' && data.shareId ? data.shareId : null;   // DISC22-F
     this.shelvedAt = Number.isFinite(data.shelvedAt) && data.shelvedAt !== 0 ? data.shelvedAt : null;   // QUEST-SHELF
     this.shelvedSites = this.shelvedAt != null && Array.isArray(data.shelvedSites) ? data.shelvedSites.filter((n) => typeof n === 'string') : null;
+    this.shelvedItems = this.shelvedAt != null && Array.isArray(data.shelvedItems) ? data.shelvedItems.filter((n) => typeof n === 'string') : null;   // QUEST-SHELF-DROP
     this.questComplete = data.questComplete;
     this.questSuccess = data.questSuccess;
     this.questName = data.questName;

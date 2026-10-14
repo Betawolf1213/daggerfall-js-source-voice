@@ -561,7 +561,7 @@ const HARDCODED = {
   'src/ui/enhancedInventory.js': 84,
   'src/ui/enhancedLevelUp.js': 17,
   'src/ui/enhancedLevelingChoice.js': 6,
-  'src/ui/enhancedMenu.js': 59,
+  'src/ui/enhancedMenu.js': 58,
   'src/ui/enhancedMerchantPanel.js': 1,
   'src/ui/enhancedNotice.js': 1,
   'src/ui/enhancedPlayerTrade.js': 14,

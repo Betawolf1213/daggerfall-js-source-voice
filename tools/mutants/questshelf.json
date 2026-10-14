@@ -520,5 +520,41 @@
     "tests": [
       "test/questshelf.test.js"
     ]
+  },
+  {
+    "name": "QSD-drop-refused",
+    "file": "src/systems/itemTransfer.js",
+    "old": "  if (!trade && fromLocal && quest?.shelvedAt != null && questItem && !questItem.madePermanent) return false;",
+    "new": "",
+    "tests": [
+      "test/questshelf.test.js"
+    ]
+  },
+  {
+    "name": "QSD-sold-too",
+    "file": "src/systems/itemTransfer.js",
+    "old": "  if (!trade && fromLocal && quest?.shelvedAt != null && questItem && !questItem.madePermanent) return false;",
+    "new": "  if (fromLocal && quest?.shelvedAt != null && questItem && !questItem.madePermanent) return false;",
+    "tests": [
+      "test/questshelf.test.js"
+    ]
+  },
+  {
+    "name": "QSD-nothing-handed-back",
+    "file": "src/systems/quest/machine.js",
+    "old": "      this.deps.giveItemToPlayer?.(structuredClone(res.daggerfallUnityItem));",
+    "new": "",
+    "tests": [
+      "test/questshelf.test.js"
+    ]
+  },
+  {
+    "name": "QSD-handed-back-while-carried",
+    "file": "src/systems/quest/machine.js",
+    "old": "      if (!res?.daggerfallUnityItem || this.deps.carriesQuestItem?.(res)) continue;",
+    "new": "      if (!res?.daggerfallUnityItem) continue;",
+    "tests": [
+      "test/questshelf.test.js"
+    ]
   }
 ]

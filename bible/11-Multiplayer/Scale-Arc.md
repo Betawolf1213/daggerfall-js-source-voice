@@ -2031,8 +2031,11 @@ What tipped the database at 14:11 is NOT found here (left, below). What kept it 
   other throw a 500, each logged with its path and counted. SCALE4f's two catch mutants follow it there.
 
 Left, each with its reason:
-- **What tipped the database at 14:11.** The run's minute rows before 14:09, its clock and its non-2xx answers would say
-  whether 13:28's relay deploy (world200: every player dropped and reconnected) began it; they were not read here.
+- **What tipped the database at 14:11.** NARROWED by SEAT-REPLICA, which read the minutes: from 13:56 to 14:10 the
+  service's asks held at 3,300-4,300 a minute and the primary's statements at 13,000-17,700, and the one burst was
+  14:09's - some 3.5 million rows read where the minutes beside it read 1.2-1.7 million, nearly all of them the arena's
+  standings - on a primary already near its ceiling. What kept it down is SEAT-REPLICA's (below); a single cause of the
+  tip is still not found, and whether 13:28's relay deploy (world200) had a part was not read.
 - **Every other caller that asks harder when the service fails.** Market, marks, notices, writs and the professions
   retry twice within 1.5 s; several others on a fixed 1-5 s. One rule in `accountClient.js` - an overload's 503, or no
   answer, backing every read off together, a write delayed and never dropped - is the fix for the class, and it
@@ -2083,6 +2086,151 @@ Left, each with its reason:
 
 Pins: `test/busy_gate.test.js` (3); `tools/mutants/busy_gate.json` (15 dead); SCALE4f's two catch mutants re-aimed at
 `thrown`'s guard (both dead).
+
+## SEAT-REPLICA: built (2026-10-13, this branch - no migration, no version, no drop)
+
+The owner, with the database still overloaded at 18:10 UTC, four hours on: "find out why the server isnt working
+properly", then "Do it". Read off D1's own query insights and the service's metrics (Analytics Engine) for the day.
+
+### Measured
+
+- **At 14:11 every route waited, and nothing it ran was slower.** The service's mean wall time went from some 0.2 s to
+  8.7 s at 14:11 and 32 s by 14:13, while the primary's statement p99 went from 4 ms to some 11 ms; past 14:15 it was
+  mostly 60-70 ms. The primary's statement time was 7-10% of each hour from 08:00 to 13:00 and 25-27% of each from 14:00 to
+  17:00, its statements fewer by a third and its rows answered 25-55 million an hour before and 105-117 million after.
+  The read replicas (WNAM) served some 15-20% of the reads throughout at a p99 of 2-3 ms; every other read was the
+  primary's - the binding is D1's always-primary session, and only `REPLICA_ROUTES` open one of their own.
+- **The seats' witness rows were most of it.** One read, `SELECT key, account, report, at FROM world_witness WHERE kind =
+  'seat'` (townSeats.js `allSeatRows`), was 15,899 rows on the day - 4,050 at STORM-SHED, the rows never trimmed. From
+  16:00 to 18:00 it ran 12,455 times, every one on the primary: 1,044 s of the primary's 1,894 s of statements (55%) and
+  197.9 million of the 213.7 million rows it answered (93%). From 13:40 to 14:10 it ran 972 times at 52 ms; from 14:10 to
+  14:40, 3,224 times at 76 ms - a slow database holds each request longer, Cloudflare stands more isolates for them, and
+  each new isolate's kept copy starts empty.
+- **The isolate's kept copy missed two lists in three before any of that.** From 12:00 to 14:00, 5,161 lists read 54.9
+  million rows - some 3,450 whole reads. STORM-SHED's minute is one isolate's, and the asks are spread over more
+  isolates than a minute brings each of them. And every counted witness's report let its isolate's copy go, though a
+  witness's first answer stands and the same report again writes nothing.
+- **The lists asked harder as they failed.** `/v1/seats/list` was asked some 44 times a minute before 14:10 and some 290
+  after, nine in ten of them answered 503 - BUSY-GATE's class, which the client's gate holds back at its next load.
+
+### Built
+
+- **The kept read is a replica's.** `server-account/src/townSeats.js:"export const SEAT_ROWS_FROM = 'first-unconstrained';"`:
+  seatRowsOf reads on a D1 session of its own (service.js `replicaDb`, counted on the request's point as the binding's
+  statements are) - the first any instance's, each one after a kept read from the bookmark that one ended at, so a
+  replica behind what this isolate already read never answers it; and the read after this isolate's own write (a
+  witness's new report, a strike) `first-primary`, which has it, then from its bookmark. A read that failed leaves its
+  bookmark, never a newer read's; a session D1 will not open is the request's database, as before. A developer's list and the Turning's still
+  read the binding, the table as it stands. The primary keeps only the read after an isolate's own write: at most some
+  200 an hour (2,005 seat reports from 08:00 to 18:00), where it ran some 6,000 an hour in the outage.
+- **A report the table already held lets nothing go.** `witnessSeat` lets the kept rows go only when its INSERT OR
+  IGNORE wrote a row (`meta.changes`); a harness or runtime that says nothing lets them go, as before.
+
+### Left, each with its reason
+
+- **A copy every isolate shares.** The kept copy is still one isolate's, so the read still runs once a minute in each
+  isolate a list reaches, now on a replica. One read a minute for the whole service needs a store the Worker does not
+  have (KV, or the minute's cron writing a compact copy the lists read) - a change of what the service keeps, not of
+  where it reads.
+- **`/v1/homes/town` on a replica.** The busiest route (some 1,500 asks a minute before the outage) is one batch on the
+  primary. A write route answers no bookmark (AUDIT SCALE II A-1), so a home claimed and read back could be read off a
+  replica from before the claim; it waits on the write routes answering bookmarks, and the client sending one for it.
+- **Trimming the seats' rows.** Each row is a witness's report a seat's confirmation rests on; trimming them moves which
+  seats stand and who is ignored (seatIgnoredAccounts) - the owner's call, not a load fix.
+- **The replica's own ceiling.** At the outage's rate the read is some 14% of one instance's time (1.8 reads a second at
+  76 ms); the replica took none of it before.
+
+Pins: `test/seat_replica.test.js` (3); `tools/mutants/seat_replica.json` (12 dead); STORM-SHED's
+`STORM-SHED-report-unforgotten` and `STORM-SHED-write-unasked` re-aimed at the new lines (both dead).
+
+## DISPLAY-REPLICA: built (2026-10-13, this branch - no migration, no version, no drop)
+
+The owner, with SEAT-REPLICA deployed at 18:59 and the service still slow ("the server is still insanely slow for
+people"): "1, 2 and 3" - the display reads on the replicas the first of them to ship.
+
+### Measured
+
+- **The primary has a ceiling since 14:11, and our statements are not what reach it.** At 02:00 the primary served
+  1.03 million batches an hour at a median wall time of 0.2 s. From 14:00 to 19:00 it served 490,000-550,000 an hour,
+  every route waiting on it, whatever the batches cost: after SEAT-REPLICA its answers fell from some 10 GB an hour to
+  1.5 GB, its batch p99 from 67 ms to 9 ms and its p999 from 119 ms to 34 ms, and from 19:15 the service's mean wall
+  time was still 11.4 s on `/v1/homes/town`, 9.3 s on the heartbeat and 9.0 s on the mint - nearly all of it D1's
+  wait. No deploy, cron or workflow ran at 14:11 (the last account deploy before it, #868's at 13:29, changed no
+  server code); what holds the primary to some 150 batches a second is not visible from here.
+- **Much of what asks it is display.** From 19:15 to 19:40, six of the reads moved here were among the sixteen busiest
+  routes - 37,800 of their 84,700 asks, 1.6-6.9 statements each (a town's homes 3.4), every one of them the primary's.
+
+### Built
+
+- **The display reads are replica routes.** `server-account/src/service.js:"export const REPLICA_ROUTES = new Map(["`
+  names them beside the mint and the heartbeat: a town's homes, the caller's homes, a home's rooms and pieces, a
+  pixel's nodes, a region's traders, the Marks held, the invitations waiting, the lineages, the unions, the saves' list
+  and the arena's board. Each writes nothing (BUSY-GATE checked them statement by statement; the board's #1 is stored
+  on the doors `ARENA_HONOUR_PATHS` names) and keeps nothing an isolate shares. With the bookmark a tab carries, every
+  statement is a replica's; with none - a page from before this, or the read after a write - the session's first
+  statement (the lookup) is the primary's and every one after it a replica's at least as new, so a caller reads its
+  own writes. The client mirrors the list (`D1_BOOKMARK_READS`, AUDIT SCALE II's pin), and already forgets its
+  bookmark on every other call (AUDIT SCALE II A-2). The page's display reads used to forget it too, on every ask; now
+  they keep it, so the heartbeat and the mint start from it more often.
+- **The three an isolate keeps stay on the binding.** A town's yards, every town's layouts and the seats' list keep
+  an answer for every caller of the isolate; a replica's answer kept there could be older than a write another caller
+  just made here.
+- **A seat read from a request on a session opens its own off the binding.** A market's or a pixel's read asks the
+  seats (a Market Hall's cap, a Levy's seat); SEAT-REPLICA's read opened its session from the request's database, and
+  a request already on a session has none to open - so the read after a write here would have ridden the request's
+  bookmark, not the primary.
+
+### Left, each with its reason
+
+- **What holds the primary to some 150 batches a second.** Not our statements' cost (above). It is Cloudflare's to
+  answer: the database's id, the hour it began (14:11 UTC) and the batch counts before and after are the report.
+- **The pages from before this.** Without a bookmark each display read still asks the primary its first statement;
+  a page takes the client half at its next load.
+- **The replica's ceiling.** The display reads are some 75 statements a second at this hour, on the one WNAM replica
+  the pinned Worker is nearest (D1-NEAR); a replica is one instance as the primary is.
+
+Pins: `test/display_replica.test.js` (3); `tools/mutants/display_replica.json` (4 dead); SCALE4g's route list,
+SCALE4d's example of a read on the binding (the yards, where it was the lineages) and BUSY-GATE's rule that a held read
+is never a replica's - each PIN MOVED.
+
+## SEAT-FACTS: built (2026-10-13, this branch - migration 0112, no version, no drop)
+
+The owner's "1, 2 and 3", the first of them: one read of the seats' rows a minute for the whole service.
+
+### Measured
+
+- **SEAT-REPLICA moved the read, not its count.** From 18:55 the seats' witness read ran on the replica - 408-572
+  reads every five minutes, 15,899 rows each - and the replica's batch p99 went from 2-4 ms to 47-60 ms with them; the
+  heartbeat and the mint read there after their first statement. Each read is one isolate's minute: the isolates are
+  many, and each asks its own.
+- **And every ask counted the facts again.** `seatFacts` walked every row on each list, Watch claim, witness's report
+  and every caller of `confirmedSeats` (a Levy's seat, a Tithe's, a Market Hall's cap, a siege, a pledge) - the kept
+  rows saved the read, never the count.
+
+### Built
+
+- **The clock keeps the facts.** `server-account/src/townSeats.js:"export async function keepSeatFacts("` - a minute's
+  job (`cron.js` `seat-facts`, while the seats are not `off`) reads every seat row on the binding and keeps what they
+  say in `seat_facts_kept`'s one row (migration 0112): the seats that stand (a disputed one too) by key, state and
+  report, and the accounts ignored - two statements a minute, where every isolate read the rows.
+- **The isolates read the row.** A player's list, `confirmedSeats` and a witness's standing ask `keptSeatFacts`: the
+  row, on a session of its own, kept SEAT_ROWS_KEPT_S as the rows were. It answers only while it is fresh
+  (SEAT_FACTS_FRESH_S, 180 s: a stopped clock is no answer) and newer than this isolate's last report or strike - its
+  own second is not after it; otherwise the rows are read as before (SEAT-REPLICA's law: the primary's after a write
+  here), and a row unfit to answer is not asked again for SEAT_ROWS_KEPT_S. Any text that is not the clock's is no row;
+  an overload is the overload's, never taken for no row. A developer's list and the Turning's read the table as it
+  stands.
+
+### Left, each with its reason
+
+- **The seats' rows still grow.** 4,050 at STORM-SHED, 15,899 on the day, now read twice a minute rather than in every
+  isolate; trimming them moves which seats stand - the owner's call.
+- **Another isolate's report reaches a list up to a minute and SEAT_ROWS_KEPT_S later** (the clock's minute, then the
+  isolate's keep), where it was SEAT_ROWS_KEPT_S - a confirmation is three witnesses' and the facts move by the week.
+
+Pins: `test/seat_facts.test.js` (3); `tools/mutants/seat_facts.json` (10 dead); AUDIT SCALE D7's quiet minute (eight
+statements, where it was six), SEAT-REPLICA's counted point (two statements, the row asked first) and ACC1b's tables
+(`seat_facts_kept`) - each PIN MOVED.
 
 ## THE PLAN PAST 2,000 (2026-10-10)
 
