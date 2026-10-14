@@ -15751,12 +15751,18 @@ the same close this slice gave `lootClosed` - not changed here.
   through lootOpened and lootClosed) and the harnesses that mount the kill door or the stream's door
   (`test/audit68_dungeonctx.test.js`, `test/loot7check.test.js`, `test/auditcards6_a.test.js`, `test/seatheal.test.js`,
   `test/survtiers3.test.js`, `test/corpsegold.test.js`).
-- **Played**: `tools/partyLootProbe.mjs` (a probe, run by hand - a browser, the game's data and minutes; its seams held to
-  the tree by `test/partyloot_probe.test.js`): two players in the real game in headless Chromium, both online in
-  Privateer's Hold against the real relay and account service in local workerd, the host killing six foes through the
-  game's own damage door and the joiner opening and closing a body through its own loot door. On this branch all six
-  bodies held one list on both copies and the joiner's open and close left the host's list whole. On main before it
-  (TREE=) the report itself: five of the six bodies held different lists (one the host's raw meat, the joiner's
-  "Empty"), and the joiner's open and close, taking nothing, turned the host's 16 gold into the joiner's 4.
+- **Played**: `tools/partyLootProbe.mjs` (a probe, run by hand - a browser, the game's data and minutes; its seams and the
+  pack it reads held to the tree by `test/partyloot_probe.test.js`): two players in the real game in headless Chromium,
+  both online in Privateer's Hold against the real relay and account service in local workerd. The host kills three
+  foes through the game's own damage door and the joiner three through its own (its blows ride to the host as hits);
+  each body is read on both copies, every item by template, material, count, condition and enchantments, and an
+  unreadable body fails the run. Then two windows through the press's own loot door and the enhanced pack's own row
+  click: the joiner opens a body and closes it taking nothing; and the joiner opens a body, the host takes a piece from
+  it, and the joiner closes taking nothing. On this branch: six of six bodies one list on both copies, the untouched
+  window left the host's list whole, and the 68 gold the host took stayed taken. On main before it (TREE=) the report
+  and its twin: five of six bodies apart (one the host's nothing, the joiner's raw meat), the untouched window turned
+  the host's 6 gold into the joiner's 1, and the joiner's stale close put 2 gold back on a body the host had emptied.
+  Not played there: the held press (a word late past the act bucket - a browser cannot be timed into the window it
+  holds); `test/partyloot_wire.test.js` pins it.
 
 ---

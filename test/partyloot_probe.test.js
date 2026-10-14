@@ -22,3 +22,13 @@ test('PARTY-LOOT probe: its needle stands once in the file it names, and its plu
   assert.match(dc, /\n    isAuthority: \(\) => _authority,\n/, 'the seat\'s word the seam reads is the context\'s own api');
   assert.match(dc, /\n    locationKey: \(\) => _locationKey,\n/, 'and the room\'s');
 });
+
+test('PARTY-LOOT probe: the pack it opens and clicks is where the probe looks - the enhanced pack\'s host by its id, and each row by the item and side it carries (a loot-side click takes)', () => {
+  assert.match(src('src/ui/inventoryDoor.js'), /\n  host\.id = 'enhanced-inventory';\n/, 'the pack the probe waits on and waits away');
+  const inv = src('src/ui/enhancedInventory.js');
+  assert.match(inv, /\n  row\._padItem = item; row\._padFrom = from;/, 'the row the probe clicks, by its side');
+  assert.match(inv, /if \(from === 'remote' && remote\.kind !== 'reward'\) \{ take\(item\); return; \}/, 'and a loot row\'s click takes (IG7)');
+  const probe = src('tools/partyLootProbe.mjs');
+  assert.match(probe, /document\.getElementById\('enhanced-inventory'\)/, 'the probe reads that id');
+  assert.match(probe, /e\._padFrom === 'remote'/, 'and that side');
+});

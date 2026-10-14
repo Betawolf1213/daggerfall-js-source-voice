@@ -4,12 +4,16 @@
 // relay and the REAL account service in local workerd (tools/loadHarness.mjs standServices). Each is a guest with a realm
 // character whose first save is the classic start's, composed by the world host (tools/onlineFrameProbe.mjs's own way
 // in - a save made inside the Hold enters it online, HOLD-ONCE). The first in holds the seat. The host kills foes through
-// the game's own damage door (`__damageFoe`); once the joiner's copy has laid each body, the probe reads what each copy's
-// body holds. Then the joiner opens a body through its own loot door (`__takeLoot`, the press's) and closes it (Escape),
-// and the probe reads the host's body again.
-//   PASS: every body holds one list on both copies, and the joiner's open and close leave the host's list whole.
-//   TREE=<a checkout before PARTY-LOOT> plays the report as it was: the copies' lists differ, and the joiner's open and
-//   close put its own roll on the host's body.
+// the game's own damage door (`__damageFoe`) and the joiner the rest through its own - its blows ride to the host as
+// hits, as a party member's do; once the joiner's copy has laid each body, the probe reads what each copy's body holds,
+// every item by its template, material, count, condition and enchantments. Then two windows, each through the game's
+// own loot door (`__takeLoot`, the press's) and the enhanced pack's own row click (online is the enhanced lane):
+//   the joiner opens a body and closes it (Escape) taking nothing - the host's list must stand;
+//   the joiner opens a body, the host opens it too and takes a piece, and the joiner closes taking nothing - the piece
+//   the host took must stay taken (the old close put the joiner's stale list back over the room's word).
+//   PASS: every body holds one list on both copies, both windows leave the host's list as the host left it, and no page
+//   threw. A body neither copy can read fails the run; so does a run whose bodies hold nothing to take.
+//   TREE=<a checkout before PARTY-LOOT> plays the report as it was.
 //
 //   ARENA2_PATH=/path/to/arena2 node tools/partyLootProbe.mjs       KILLS=6 the bodies; TREE=<dir> the page's tree (the
 //                                                                   relay and the account service are this tree's);
@@ -42,7 +46,7 @@ const sleep = (ms) => new Promise((r) => { setTimeout(r, ms); });
 /** This probe's seams beside the online probe's, the tree untouched: what a body holds, and who holds the seat. */
 export const PARTY_LOOT_PROBE_EDITS = Object.freeze([
   { file: 'src/scenes/worldModes.js', edits: [['    window.__takeLoot = (k) => (dungeonCtx ? dungeonCtx.takeLoot(k) : null);', `    window.__takeLoot = (k) => (dungeonCtx ? dungeonCtx.takeLoot(k) : null);
-    window.__bodyLoot = (i) => { const f = dungeonCtx?.foes?.[i]; return f?.dead && f.corpse ? JSON.stringify((f.entity?.items ?? []).map((it) => \`\${it.name} x\${it.stackCount ?? 1}\`)) : null; };
+    window.__bodyLoot = (i) => { const f = dungeonCtx?.foes?.[i]; return f?.dead && f.corpse ? JSON.stringify((f.entity?.items ?? []).map((it) => \`\${it.name} x\${it.stackCount ?? 1} [\${it.templateIndex}/\${it.material ?? '-'}/\${it.currentCondition ?? '-'}/\${(it.enchantments ?? []).length}]\`)) : null; };
     window.__seat = () => (dungeonCtx ? JSON.stringify({ authority: !!dungeonCtx.isAuthority?.(), location: dungeonCtx.locationKey?.() ?? null }) : null);`]] },
 ]);
 
@@ -139,47 +143,91 @@ async function main() {
 
     const foes = JSON.parse(await host.page.evaluate(() => window.__foes()));
     const targets = foes.filter((f) => !f.dead).slice(0, KILLS).map((f) => f.i);
-    if (!targets.length) throw new Error('no foe standing to kill');
-    console.log(`== the host kills ${targets.length}: ${targets.join(', ')}`);
-    for (const i of targets) await host.page.evaluate((n) => window.__damageFoe(n, 1e6), i);
+    if (targets.length < 2) throw new Error(`${targets.length} foes standing - the probe kills two at least, one by each player`);
+    const byHost = targets.filter((_, n) => n % 2 === 0), byJoiner = targets.filter((_, n) => n % 2 === 1);
+    console.log(`== the host kills ${byHost.join(', ')}; the joiner kills ${byJoiner.join(', ')} (its blows ride to the host as hits)`);
+    for (const i of byHost) await host.page.evaluate((n) => window.__damageFoe(n, 1e6), i);
+    for (const i of byJoiner) {
+      // a joiner's blow is the host's to apply (WORLD2): blows of the health the joiner's copy streams, until it falls
+      for (let n = 0; n < 20 && !JSON.parse(await joiner.page.evaluate(() => window.__foes()))[i]?.dead; n++) {
+        await joiner.page.evaluate((k) => window.__damageFoe(k), i);
+        await sleep(1500);
+      }
+    }
     await until(joiner.page, (ids) => { const f = JSON.parse(window.__foes() ?? '[]'); return ids.every((i) => f[i]?.dead && f[i]?.corpse); }, targets, { what: 'the joiner laying every body', timeout: 300000 });
+    await until(host.page, (ids) => { const f = JSON.parse(window.__foes() ?? '[]'); return ids.every((i) => f[i]?.dead && f[i]?.corpse); }, targets, { what: 'the host laying every body', timeout: 120000 });
     await sleep(4000);   // past LOOT_WORD_WAIT_MS, every word and heal landed
     await waitFrames(joiner.page, 5);
 
+    const read = (who, i) => who.page.evaluate((n) => window.__bodyLoot(n), i);
     const rows = [];
     for (const i of targets) {
-      const h = await host.page.evaluate((n) => window.__bodyLoot(n), i);
-      const j = await joiner.page.evaluate((n) => window.__bodyLoot(n), i);
-      rows.push({ i, host: JSON.parse(h ?? 'null'), joiner: JSON.parse(j ?? 'null'), same: h === j });
+      const h = await read(host, i), j = await read(joiner, i);
+      // a body each copy has laid reads as a list - an empty one included: an unread one is the seam's failure, never a match
+      if (h == null || j == null) throw new Error(`body ${i} unread (host ${h}, joiner ${j})`);
+      rows.push({ i, by: byHost.includes(i) ? 'host' : 'joiner', host: JSON.parse(h), joiner: JSON.parse(j), same: h === j });
     }
     console.log('== what each copy\'s body holds');
-    for (const r of rows) console.log(`   body ${r.i}: ${r.same ? 'SAME' : 'DIFFERENT'}  host ${JSON.stringify(r.host)}  joiner ${JSON.stringify(r.joiner)}`);
+    for (const r of rows) console.log(`   body ${r.i} (the ${r.by}'s kill): ${r.same ? 'SAME' : 'DIFFERENT'}  host ${JSON.stringify(r.host)}  joiner ${JSON.stringify(r.joiner)}`);
+    const full = rows.filter((r) => r.host.length);
+    if (!full.length) throw new Error('every body is empty - nothing for the windows to test (KILLS= more)');
 
-    const pick = rows.find((r) => r.host?.length) ?? rows[0];
-    console.log(`== the joiner opens body ${pick.i} and closes it without taking anything`);
-    const before = await host.page.evaluate((n) => window.__bodyLoot(n), pick.i);
-    for (let n = 0; n < 5 && (await joiner.page.evaluate(() => window.__overlayKind?.())); n++) { await joiner.page.keyboard.press('Escape'); await sleep(1000); }   // nothing up before the press: a press under a window opens nothing
-    const up = await joiner.page.evaluate(() => window.__overlayKind?.());
-    if (up) throw new Error(`a window stands over the joiner before the press (${up})`);
-    await joiner.page.evaluate((k) => window.__takeLoot(k), `corpse:${pick.i}`);
-    // the loot window: the enhanced skin's pack (ui/inventoryDoor.js mounts #enhanced-inventory - online is the enhanced
-    // lane, OL1) or the classic one
-    const kind = await until(joiner.page, () => (document.getElementById('enhanced-inventory') ? 'the enhanced pack' : /Inventory/.test(window.__overlayKind?.() ?? '') ? window.__overlayKind() : null), null, { what: 'the joiner\'s loot window', timeout: 60000 });
-    console.log(`   the window: ${kind}`);
+    const windowUp = (who) => who.page.evaluate(() => !!(window.__overlayKind?.() || document.getElementById('enhanced-inventory')));
+    const noWindow = async (who) => {
+      for (let n = 0; n < 5 && (await windowUp(who)); n++) { await who.page.keyboard.press('Escape'); await sleep(1000); }   // a press under a window opens nothing
+      if (await windowUp(who)) throw new Error(`a window stands over the ${who.label}`);
+    };
+    /** The press's own loot door, and the pack it opens - mounted (its rows in), so its keys are its own. */
+    const openBody = async (who, i) => {
+      await noWindow(who);
+      await who.page.evaluate((k) => window.__takeLoot(k), `corpse:${i}`);
+      return until(who.page, () => (document.getElementById('enhanced-inventory')?.querySelector('*') ? 'the enhanced pack' : /Inventory/.test(window.__overlayKind?.() ?? '') ? window.__overlayKind() : null), null, { what: `the ${who.label}'s loot window`, timeout: 60000 });
+    };
+    const closeWindow = async (who) => {
+      await who.page.keyboard.press('Escape');
+      await until(who.page, () => !document.getElementById('enhanced-inventory') && !window.__overlayKind?.(), null, { what: `the ${who.label}'s loot window closing`, timeout: 60000 });
+    };
+    /** The enhanced pack's own click on its first loot row - a loot-side click takes (IG7). */
+    const takeFirst = (who) => until(who.page, () => {
+      const row = [...document.querySelectorAll('#enhanced-inventory *')].find((e) => e._padFrom === 'remote');
+      if (!row) return null;
+      row.click();
+      return row._padItem?.name ?? '?';
+    }, null, { what: `a loot row in the ${who.label}'s pack`, timeout: 60000 });
+
+    const a = full[0];
+    console.log(`== the joiner opens body ${a.i} and closes it, taking nothing`);
+    const aBefore = await read(host, a.i);
+    console.log(`   the window: ${await openBody(joiner, a.i)}`);
     await waitFrames(joiner.page, 3);
-    await joiner.page.keyboard.press('Escape');
-    await until(joiner.page, () => !document.getElementById('enhanced-inventory') && !window.__overlayKind?.(), null, { what: 'the joiner\'s loot window closing', timeout: 60000 });
+    await closeWindow(joiner);
     await sleep(3000);
-    await waitFrames(host.page, 5);
-    const after = await host.page.evaluate((n) => window.__bodyLoot(n), pick.i);
-    console.log(`   the host's body ${pick.i} before ${before}, after ${after}`);
+    const aAfter = await read(host, a.i);
+    const keptA = aBefore === aAfter;
+    console.log(`   the host's body ${a.i}: before ${aBefore}, after ${aAfter}`);
+
+    const b = full[full.length > 1 ? 1 : 0];
+    console.log(`== the joiner opens body ${b.i}; the host opens it too, takes a piece and closes; the joiner closes, taking nothing`);
+    await openBody(joiner, b.i);
+    await openBody(host, b.i);
+    const took = await takeFirst(host);
+    await sleep(1000);
+    await closeWindow(host);
+    const left = await read(host, b.i);
+    console.log(`   the host took ${took}; its body ${b.i} holds ${left}`);
+    await sleep(3000);   // the host's word reaches the joiner, under its open window
+    await closeWindow(joiner);
+    await sleep(3000);
+    const bHost = await read(host, b.i), bJoiner = await read(joiner, b.i);
+    const keptB = bHost === left && bJoiner === left;
+    console.log(`   after the joiner's close: the host's body ${bHost}, the joiner's ${bJoiner}`);
 
     const errors = [...host.errors.map((e) => `host: ${e}`), ...joiner.errors.map((e) => `joiner: ${e}`)];
     if (errors.length) console.log(`== page errors: ${errors.slice(0, 6).join(' | ')}`);
     const differ = rows.filter((r) => !r.same).length;
-    const kept = before === after;
-    console.log(`\n${differ === 0 && kept ? 'PASS' : 'FAIL'}: ${rows.length - differ} of ${rows.length} bodies the same on both copies; the joiner's open and close ${kept ? 'left the host\'s list whole' : 'changed the host\'s list'}`);
-    return differ === 0 && kept;
+    const ok = differ === 0 && keptA && keptB && !errors.length;
+    console.log(`\n${ok ? 'PASS' : 'FAIL'}: ${rows.length - differ} of ${rows.length} bodies one list on both copies (${byHost.length} the host's kills, ${byJoiner.length} the joiner's); the untouched window ${keptA ? 'left the host\'s list whole' : 'changed the host\'s list'}; the window the host took from under ${keptB ? 'left the piece taken' : 'put the piece back or left the copies apart'}${errors.length ? `; ${errors.length} page errors` : ''}`);
+    return ok;
   } finally {
     try { await browser?.close(); } catch { /* gone */ }
     try { await server?.close(); } catch { /* gone */ }
