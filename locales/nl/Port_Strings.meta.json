@@ -3974,6 +3974,16 @@
   "tr": "a1cedeb8ab8d",
   "by": "claude-in-session"
  },
+ "features.mwBillboardLook.note": {
+  "en": "18fdad283d50",
+  "tr": "f7065174be25",
+  "by": "claude-in-session"
+ },
+ "features.mwBillboardLook.title": {
+  "en": "1ba578fcc93d",
+  "tr": "e64d956d6548",
+  "by": "claude-in-session"
+ },
  "features.navalCombat.aimCamera": {
   "en": "cfc12726e349",
   "tr": "86f42ea728a5",

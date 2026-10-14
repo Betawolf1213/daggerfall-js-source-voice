@@ -850,6 +850,8 @@ features.moddedLighting.note,"Vyžaduje mód Improved Interior Lighting. Jeho te
 features.moddedLighting.on,"Zapnuto"
 features.moddedLighting.shadows,"Se stíny"
 features.moddedLighting.title,"Osvětlení z módu ({mod})"
+features.mwBillboardLook.note,"S tělem Morrowindu stojí těla a koně vzpřímeně jako sprity Daggerfallu a shora vypadají menší. Vypnuto se naklánějí ke kameře a mají svou skutečnou výšku."
+features.mwBillboardLook.title,"Vzhled billboardu"
 features.navalCombat.aimCamera,"Kamera boční salvy"
 features.navalCombat.autoRepair,"Posádka opravuje sama"
 features.navalCombat.boarders,"Piráti tě abordují"

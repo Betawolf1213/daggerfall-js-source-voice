@@ -247,7 +247,8 @@ meshes in the one picture under one depth (`renderer.js` _renderCharacterSprite 
 quad would cut the horse's neck by the rider's plane), the window the union of the two boxes (`fpArm.js` spriteBoxUnion),
 the anchor the horse's middle. BODY-LEAN (2026-10-12, the owner: "depending on your camera position other sprites can
 shrink or grow, same goes for the horse"): the picture's quad leans by the picture's own up, so a horse no longer draws
-cos(pitch) of its height from a camera above it (`04-Characters/Morrowind-NPCs.md` section 7).
+cos(pitch) of its height from a camera above it (`04-Characters/Morrowind-NPCs.md` section 7). BODY-CARD (2026-10-14):
+the Billboard Look switch stands it upright again, the flats' way, for a player who asks for it (the same section).
 
 ### The look on the 3D horse
 

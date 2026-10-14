@@ -1,4 +1,6 @@
 Key,Value
+features.mwBillboardLook.note,"使用 Morrowind 身體時，人物和馬匹會像 Daggerfall 的精靈圖一樣直立，從上方看會顯得較矮。關閉時，它們會朝鏡頭傾斜，保持真實高度。"
+features.mwBillboardLook.title,"看板外觀"
 lang.offer,"使用繁體中文進行遊戲？"
 lang.offer.machine,"此翻譯為機器翻譯，仍在校對中。"
 lang.offer.no,"不，保持英文"

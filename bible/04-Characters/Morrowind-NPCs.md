@@ -290,6 +290,20 @@ view's (AUDIT OW4 J6), the flats' own - stands as handed. Classic
 billboards keep DFU's upright quad: they are flats, not pictures of a 3D
 figure. Pinned: `test/bodylean.test.js`; mutants `tools/mutants/bodylean.json`.
 
+BODY-CARD (2026-10-14, the owner: "Reimplement the billboard morrowind look as a toggle"; asked which look, the upright card BODY-LEAN
+replaced). THE BILLBOARD LOOK, a switch: Features > Combat > With Morrowind
+data, "Billboard Look" (`features.js` mw-billboard-look, pref
+`mwBillboardLook`, off by default, the viewer's own - it never reaches the
+wire). On, drawRigSpriteBox stands the card upright again (world up), as it
+stood before BODY-LEAN - every Morrowind body and 3D horse, the player's,
+a peer's, the people's, by the lone pass and the batch - so a figure draws
+cos(pitch) of its height, the flats' way, shorter as the camera rises over
+it. Off, the card leans and the figure keeps its true height. Read where
+the card is stood (`characterSprite.js:"const qUp = up ??"`), so it takes
+effect at once with no rebuild; a lean the host hands (the travel view's)
+stands as handed either way. Pinned: `test/bodycard.test.js`; mutants
+`tools/mutants/bodycard.json`.
+
 ONE-BAD-BODY (FIELD BUGS 2026-10-13b, `01-Overview/Field-Bugs-2026-10-13b.md`;
 the owner: "people are saying with norrowind models, people are invisable.
 Something in a recent commit borked it", online only). The packer places each tile after the last (`x += it.pw`),

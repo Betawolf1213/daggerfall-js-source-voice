@@ -850,6 +850,8 @@ features.moddedLighting.note,"Needs the Improved Interior Lighting mod. Its warm
 features.moddedLighting.on,"On"
 features.moddedLighting.shadows,"With shadows"
 features.moddedLighting.title,"Modded lighting ({mod})"
+features.mwBillboardLook.note,"With the Morrowind body, bodies and horses stand upright like Daggerfall’s sprites and look shorter from above. Off, they lean to the camera and keep their true height."
+features.mwBillboardLook.title,"Billboard Look"
 features.navalCombat.aimCamera,"Broadside camera"
 features.navalCombat.autoRepair,"Crew repairs on their own"
 features.navalCombat.boarders,"Pirates board you"

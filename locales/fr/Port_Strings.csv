@@ -850,6 +850,8 @@ features.moddedLighting.note,"Nécessite le mod Improved Interior Lighting. Ses 
 features.moddedLighting.on,"Activé"
 features.moddedLighting.shadows,"Avec ombres"
 features.moddedLighting.title,"Éclairage moddé ({mod})"
+features.mwBillboardLook.note,"Avec le corps de Morrowind, les corps et les chevaux se tiennent droits comme les sprites de Daggerfall et paraissent plus petits vus d’en haut. Désactivé, ils s’inclinent vers la caméra et gardent leur vraie taille."
+features.mwBillboardLook.title,"Aspect billboard"
 features.navalCombat.aimCamera,"Caméra de bordée"
 features.navalCombat.autoRepair,"L’équipage répare de lui-même"
 features.navalCombat.boarders,"Les pirates vous abordent"

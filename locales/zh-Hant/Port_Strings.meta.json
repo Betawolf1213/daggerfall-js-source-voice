@@ -1,4 +1,14 @@
 {
+ "features.mwBillboardLook.note": {
+  "en": "18fdad283d50",
+  "tr": "9c3db1eb3a6d",
+  "by": "claude-in-session"
+ },
+ "features.mwBillboardLook.title": {
+  "en": "1ba578fcc93d",
+  "tr": "b80e1db204be",
+  "by": "claude-in-session"
+ },
  "lang.offer": {
   "en": "4417f5798650",
   "tr": "c181d4ba4802",
