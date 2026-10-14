@@ -757,10 +757,19 @@ nothing twice; a run cut short is planned again):
 - her union with another player's character REPORTED, never reopened - their house heard she died.
 
 Her heir stays, a living member, theirs to keep or delete from the Online door. Her years stay spent: an Enduring
-elder's next death is final, as it was. `test/revive.test.js` (7) runs it over a real death on the real Worker's
+elder's next death is final, as it was. `test/revive.test.js` (8) runs it over a real death on the real Worker's
 service - the plan applied and run again, a stale device's write after it, the held cases, the tombstone guard, the
-workflow's shape; `tools/mutants/revive.json` (26) all dead.
+workflow's shape; `tools/mutants/revive.json` (27) all dead.
 
 UNVERIFIED until the dry run reads production: whether she played online at all (offline, nothing here applies - her
 device's own store holds the death), whether she held a guild seat or a union, and that Time Travel still reaches
 2026-10-13 (thirty days on the Paid plan, seven on the Free one).
+
+REVIVE-MODE (2026-10-14, the first run). Mac ran "Realm revive" for TheHalfinStream with `keep_homes` and `apply` on.
+It found her (`r72ba7934a8847d28597a`, read two minutes before her death, 2026-10-13T03:21:42Z), held the service,
+rewound, read, put the present back (proven by its counts) and failed at the plan: the tool chose its mode by asking
+whether `--find` was ANYWHERE in its words, before asking `--plan` - and the plan's own line carries `--find
+<found.json>`, so it ran as a find and read a facts file the line never named ("The "path" argument must be ... Received
+null"). Nothing was written; the hold lifted; acct132 answered. The mode is now the first word alone, and
+`test/revive.test.js` runs the tool's `--find` and `--plan` as the workflow's own lines write them (mutant
+REV-the-mode-any-word, dead). The run is to be made again.

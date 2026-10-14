@@ -241,13 +241,16 @@ if (isMain(import.meta.url)) {
   const argv = process.argv.slice(2);
   const arg = (k) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : null; };
   const has = (k) => argv.includes(k);
+  // THE MODE IS THE FIRST WORD, never any word: the plan's own line carries `--find <found.json>`, and asked "is
+  // --find anywhere?" first, the first run (2026-10-14) took the plan for a find and read a facts file it never named
+  const mode = argv[0];
   try {
-    if (has('--player-query')) {
+    if (mode === '--player-query') {
       process.stdout.write(playerQuery(arg('--handle')));
-    } else if (has('--query')) {
+    } else if (mode === '--query') {
       const uids = arg('--uids') ? rowsOf(readFileSync(arg('--uids'), 'utf8')).filter((r) => r.state === 'held').map((r) => r.uid) : [];
       process.stdout.write(query(arg('--query'), { player: arg('--player'), fallen: arg('--fallen') || null, line: arg('--line') || null, guild: arg('--guild') || null, uids }));
-    } else if (has('--find')) {
+    } else if (mode === '--find') {
       const handle = arg('--handle');
       if (!isHandleShaped(handle)) throw new Error('not a handle');
       const facts = JSON.parse(readFileSync(arg('--facts'), 'utf8'));
@@ -256,7 +259,7 @@ if (isMain(import.meta.url)) {
       const found = findFallen(facts, { character });
       if (found.error) throw new Error(found.error);
       process.stdout.write(JSON.stringify({ player: facts.player.id, ...found, before: found.deadAt != null ? found.deadAt - BEFORE_DEATH_S : null }));
-    } else if (has('--plan')) {
+    } else if (mode === '--plan') {
       const found = JSON.parse(readFileSync(arg('--find'), 'utf8'));
       const then = JSON.parse(readFileSync(arg('--then'), 'utf8'));
       const now = JSON.parse(readFileSync(arg('--now'), 'utf8'));
