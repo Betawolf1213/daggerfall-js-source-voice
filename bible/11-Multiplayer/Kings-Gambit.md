@@ -1395,6 +1395,15 @@ panel; the card panels' sheets and the chrome joined FONT3's floor (`test/font3_
   `systems/gamepad.js`), `pieceLines` (a crafted piece's, `net/recipeLaw.js`) and `pieceKey` (the grass lab's) were
   other modules' names, and the one-home ratchet (`test/audit24_onehome.test.js`) holds a name to one home. The board's
   are its own: `boardCursorStep`, `pieceInfoLines`, `pieceAtlasKey`.
+- THE BOARD'S KEYS ARE THE PANEL'S (found by CI's second shard on KG3's head): the cloth read bound keys raw in two
+  hosts - `scenes/gambitTableGame.js` keyed its cursor table on the arrows and `scenes/worldModes.js`'s cloth listener
+  tested `e.code` for Escape, Enter and Space - which KB1 law 5 (`test/kb1_keybinds.test.js`) and I2
+  (`test/inputmap.test.js`) refuse in a host; and that listener's `window.addEventListener('keydown'` stood above the
+  host's own, so V4 (`test/modalkeys.test.js`) and U43, which read the host's handler from its registration, read the
+  cloth's instead. The keys are a window's own (ui/input.js's overlayAction is the precedent): the table and its reader
+  live in the panel (`gambitTableHud.js:"export const gambitBoardKey = (code) =>"`), both hosts ask it, and the cloth's
+  three listeners are taken and let go as one list. The chat's claim is asked of every press key, not Enter's alone -
+  the claim answers per press by ActivateCursor's binding, so a rebound open key is yielded wherever it lands.
 
 ### 16.6 Pins and mutants
 

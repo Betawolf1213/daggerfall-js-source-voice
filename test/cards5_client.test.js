@@ -20,6 +20,7 @@ import { RemoteCardTable, CATCH_UP_MS } from '../src/systems/cardRemoteTable.js'
 import { cardPackPrice, buyCardPack } from '../src/systems/cardSources.js';   // CARDS9: the house's packs at the table
 import { openIliacTableGame } from '../src/scenes/iliacTableGame.js';   // CARDS10: the other game at the table
 import { openGambitTableGame, gambitTableOn } from '../src/scenes/gambitTableGame.js';   // KG3: the third game at the table
+import { gambitBoardKey } from '../src/ui/gambitTableHud.js';   // KG3: the board's own keys, the cloth's listener's
 import { regularLook } from '../src/world/cardRegulars.js';
 import { seatTopByte } from '../src/player/seatPose.js';
 import { iliacGrade } from '../src/systems/iliacPatrons.js';
@@ -173,7 +174,7 @@ function host(relay, id, name, { seats = 4, pos = [0, 0, 0] } = {}) {
     // PIN MOVED (CARDS9/10): the block prices a pack at the table and opens Iliac Hand on the seat - their names, real
     cardPackPrice, buyCardPack, openIliacTableGame: (o) => openIliacTableGame({ ...o, doc }), iliacGrade, skillValue, SKILLS, liveStat,
     // KG3: the block opens The King's Gambit on the seat too - its names, real (its cloth's listeners want a window)
-    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false, performance: { now: performanceNow },
+    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false, gambitBoardKey, performance: { now: performanceNow },
   };
   const state = { interiorCtx: { tables: [{ aabb: {} }, { aabb: {} }], collider: null }, interiorBuilding: { buildingKey: 7, quality: 10, regionIndex: 17, townMapId: 1 } };
   const api = new Function('S', ...Object.keys(scope), `let interiorCtx = S.interiorCtx, interiorBuilding = S.interiorBuilding;\n${BLOCK}\n

@@ -28,6 +28,7 @@ import { createPlayerTicker } from '../src/scenes/shared.js';
 import { startPoison, POISONS } from '../src/systems/poisons.js';
 import { openIliacTableGame, iliacTemperOf } from '../src/scenes/iliacTableGame.js';
 import { openGambitTableGame, gambitTableOn } from '../src/scenes/gambitTableGame.js';   // KG3: the third game at the table
+import { gambitBoardKey } from '../src/ui/gambitTableHud.js';   // KG3: the board's own keys, the cloth's listener's
 import { regularLook } from '../src/world/cardRegulars.js';
 import { seatTopByte } from '../src/player/seatPose.js';
 import { iliacGrade, patronDeck, patronPlays, seededUnit, ILIAC_TEMPER_NAMES, TEMPER_UPGRADES, ILIAC_THINK_TRIALS } from '../src/systems/iliacPatrons.js';
@@ -80,7 +81,7 @@ function host({ entity = null, building = { buildingKey: 7, quality: 10, regionI
     RemoteCardTable, mode: 'interior', regularsToStand, regularBark, BARK_MS, showdownWinners: hudm.showdownWinners, HOLDEM_REFUSALS: hudm.HOLDEM_REFUSALS,
     cardPackPrice, buyCardPack, openIliacTableGame: (o) => openIliacTableGame({ ...o, doc }), iliacGrade, skillValue, SKILLS, liveStat,
     // KG3: the block opens The King's Gambit on the seat too - its names, real (its cloth's listeners want a window)
-    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false,
+    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false, gambitBoardKey,
     tickInFlight,   // AUDIT CARDS-6 B4: the hurt listener's own question
   };
   const state = { interiorCtx: { tables: [{ aabb: {} }], collider: null }, interiorBuilding: building };

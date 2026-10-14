@@ -238,6 +238,7 @@ import { HOLDEM_STAKE_MAX_BB, HOLDEM_TOPUP_MIN_BB } from '../net/holdemTable.js'
 import { regularsToStand, regularBark, regularLook, BARK_MS } from '../world/cardRegulars.js';   // CARDS4b: the regulars in their chairs
 import { openIliacTableGame } from './iliacTableGame.js';   // CARDS10: Iliac Hand on the seat
 import { openGambitTableGame, gambitTableOn } from './gambitTableGame.js';   // KG3: The King's Gambit on the seat
+import { gambitBoardKey } from '../ui/gambitTableHud.js';   // KG3: the board's own keys (14.3)
 import { readIliacReceipt } from '../net/iliacReceipt.js';   // AUDIT CARDS-6 C1: a ranked result kept, its game said back to the relay
 import { iliacGrade } from '../systems/iliacPatrons.js';   // CARDS10: the tavern's grade - its regulars' decks and play
 import { cardPackPrice, buyCardPack } from '../systems/cardSources.js';   // CARDS9: the house sells packs at its card table
@@ -696,18 +697,20 @@ export function createWorldModes(host) {
     const mouseDown = (e) => { if (!swallowMouse) return; swallowMouse = false; e.stopImmediatePropagation?.(); e.preventDefault?.(); };
     const key = (e) => {
       if (!live()) return;
-      const cancel = e.code === 'Escape' || e.code === 'JoystickButton1';
+      const k = gambitBoardKey(e.code);   // the board's own keys, the panel's to name (KB1 law 5: no bound key read raw here)
+      const cancel = k === 'cancel';
       const el = e.target;
       if (!cancel && (el?.closest?.('.dfgambit') || /^(INPUT|TEXTAREA|SELECT)$/.test(el?.tagName ?? '') || el?.isContentEditable)) return;
-      if ((e.code === 'Enter' || e.code === 'NumpadEnter') && cursorKeyClaimed(e)) return;   // KB1: the chat's Enter online
-      if (e.repeat && (cancel || e.code === 'Enter' || e.code === 'NumpadEnter' || e.code === 'Space')) { if (gg.playing()) { e.stopImmediatePropagation?.(); e.preventDefault?.(); } return; }   // a held press presses once
+      if (k === 'press' && cursorKeyClaimed(e)) return;   // KB1: online, ActivateCursor's key (Enter) is the chat's when it takes this press
+      if (e.repeat && (cancel || k === 'press')) { if (gg.playing()) { e.stopImmediatePropagation?.(); e.preventDefault?.(); } return; }   // a held press presses once
       if (!gg.key(e.code)) return;
       e.stopImmediatePropagation?.(); e.preventDefault?.();
     };
-    window.addEventListener('pointerdown', down, true);
-    window.addEventListener('mousedown', mouseDown, true);
-    window.addEventListener('keydown', key, true);
-    return () => { window.removeEventListener('pointerdown', down, true); window.removeEventListener('mousedown', mouseDown, true); window.removeEventListener('keydown', key, true); };
+    // the cloth's three, taken and let go as one list - and the host's own keydown stays the one this file registers by
+    // name (test/modalkeys.test.js V4 and test/inputmap.test.js U43 read the host's handler from that registration)
+    const on = /** @type {[string, (e: any) => void][]} */ ([['pointerdown', down], ['mousedown', mouseDown], ['keydown', key]]);
+    for (const [type, fn] of on) window.addEventListener(type, fn, true);
+    return () => { for (const [type, fn] of on) window.removeEventListener(type, fn, true); };
   }
   /** CARDS10: the relay's Iliac table's frames (world.js online.onIliac): a ranked game's receipt is carried wherever the
    *  player is now; the rest is the open game's, at its table. */

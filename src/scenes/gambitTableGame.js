@@ -31,7 +31,7 @@
 import { GambitTableSession, gambitNightLeft, gambitPursesAfter, stakeOf, gambitCrownRestore, crownIndex, GAMBIT_CROWNS, GAMBIT_LOG_MAX, GAMBIT_STAKE_MULTS } from '../systems/gambitTableSession.js';
 import { tierFor, GAMBIT_TIERS } from '../systems/gambitPatrons.js';
 import { KG_POINT_BUDGET, KG_COLS, KG_ROWS, KG_KING_CELL, armyRefusal, armyCost, canRecruit, autoFill, rosterUnit, pieceById, pieceAt, reachable, foesInRange } from '../net/kingsGambit.js';
-import { gambitHudModel, createGambitTableHud, boardCursorStep } from '../ui/gambitTableHud.js';
+import { gambitHudModel, createGambitTableHud, boardCursorStep, gambitBoardKey } from '../ui/gambitTableHud.js';
 import {
   pieceName, unitJoined, unitLeft, unitTooDear, armyFull, refusalWords, logLine, resultGold,
   dealLine, barkInvite, barkEnd,
@@ -44,7 +44,6 @@ import { rayDirFromScreen, projectToScreen } from '../player/tapRay.js';
 import { goldAmount, deductGold, addGold } from '../systems/court.js';
 import { getPref, setPref } from '../systems/uiPrefs.js';
 import { KINGS_GAMBIT_KEY } from '../systems/features.js';
-import { DPAD_CODES } from '../ui/plusPad.js';
 
 /** THE FEATURES SWITCH (10.7): on by default; off, no card table offers the game. */
 export const gambitTableOn = () => !!getPref(KINGS_GAMBIT_KEY);
@@ -53,13 +52,6 @@ export const GAMBIT_ARM_MS = 4000;
 /** Under a finger a press snaps to the nearest of the player's pieces, the lit cells and the ringed foes within this
  *  many CSS px (14.3 - fifteen columns across a 390 px screen are 26 px a column at best). */
 export const GAMBIT_SNAP_PX = 22;
-/** The keys and the pad on the board's cursor (14.3): a code to its step, its press or its cancel. */
-export const GAMBIT_CURSOR_KEYS = Object.freeze({
-  ArrowLeft: 'ArrowLeft', ArrowRight: 'ArrowRight', ArrowUp: 'ArrowUp', ArrowDown: 'ArrowDown',
-  [DPAD_CODES.left]: 'ArrowLeft', [DPAD_CODES.right]: 'ArrowRight', [DPAD_CODES.up]: 'ArrowUp', [DPAD_CODES.down]: 'ArrowDown',
-});
-export const GAMBIT_PRESS_KEYS = Object.freeze(['Enter', 'NumpadEnter', 'Space', 'JoystickButton0']);
-export const GAMBIT_CANCEL_KEYS = Object.freeze(['Escape', 'JoystickButton1']);
 
 /** A REGULAR'S CROWN (10.4): the regular's seed's - the four in the deck's suit order, by the seed mod 4 - and the next
  *  round that order when it is the player's. @param {number} seed @param {string} mine the player's crown key */
@@ -378,22 +370,23 @@ export function openGambitTableGame(d) {
   function key(/** @type {string} */ code) {
     if (g.closed || g.phase !== 'battle' || !g.session) return false;
     const st = g.session.state;
-    if (Object.hasOwn(GAMBIT_CURSOR_KEYS, code)) {
-      g.cursor = boardCursorStep(g.cursor ?? KG_KING_CELL.slice(), GAMBIT_CURSOR_KEYS[code]);
+    const k = gambitBoardKey(code);
+    if (k?.startsWith('Arrow')) {
+      g.cursor = boardCursorStep(g.cursor ?? KG_KING_CELL.slice(), k);
       const pc = pieceAt(st, g.cursor[0], g.cursor[1]);
       g.info = pc ? { piece: pc.id } : { cell: g.cursor.slice() };
       g.armed = null;
       paint();
       return true;
     }
-    if (GAMBIT_PRESS_KEYS.includes(code)) {
+    if (k === 'press') {
       g.armed = null;
       g.why = null;
       if (g.staged) press(g.staged.kind === 'move' ? 'move' : 'strike');
       else { cellPress(g.cursor ?? KG_KING_CELL.slice(), false, d.now()); paint(); }
       return true;
     }
-    if (GAMBIT_CANCEL_KEYS.includes(code)) {
+    if (k === 'cancel') {
       if (g.staged || g.selected != null) press('cancel');
       else press('stand');   // nothing to cancel: the Stand up press - asked twice while a game is under way
       return true;

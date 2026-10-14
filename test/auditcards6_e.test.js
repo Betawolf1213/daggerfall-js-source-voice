@@ -28,6 +28,7 @@ import { fakeDoc, fakeWin } from './decorFakes.mjs';
 import { cardPackPrice, buyCardPack } from '../src/systems/cardSources.js';
 import { openIliacTableGame } from '../src/scenes/iliacTableGame.js';
 import { openGambitTableGame, gambitTableOn } from '../src/scenes/gambitTableGame.js';   // KG3: the third game at the table
+import { gambitBoardKey } from '../src/ui/gambitTableHud.js';   // KG3: the board's own keys, the cloth's listener's
 import { regularLook } from '../src/world/cardRegulars.js';
 import { seatTopByte } from '../src/player/seatPose.js';
 import { iliacGrade } from '../src/systems/iliacPatrons.js';
@@ -99,7 +100,7 @@ function host({ online = false, id = 'peer-me', geom = 'fake', at = [600, 560], 
     RemoteCardTable, mode: 'interior', regularsToStand, regularBark, BARK_MS, showdownWinners: hudm.showdownWinners, HOLDEM_REFUSALS: hudm.HOLDEM_REFUSALS,
     cardPackPrice, buyCardPack, openIliacTableGame: (o) => openIliacTableGame({ ...o, doc }), iliacGrade, skillValue, SKILLS, liveStat,
     // KG3: the block opens The King's Gambit on the seat too - its names, real (its cloth's listeners want a window)
-    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false,
+    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false, gambitBoardKey,
     // the cards' own: the gestures and the held hand, real; the screen's geometry the rig's or the frame's
     canvas, ...hand, CARD_W, CARD_L, chipDiscs, cardMatrix,
     worldViewportRect: () => null,

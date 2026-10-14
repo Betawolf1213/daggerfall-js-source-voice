@@ -8,7 +8,8 @@
 // finger snapped and staged), and every allocation freed at the close.
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
-import { openGambitTableGame, regularCrown, gambitRegulars, gambitTableOn, GAMBIT_ARM_MS, GAMBIT_SNAP_PX, GAMBIT_CURSOR_KEYS } from '../src/scenes/gambitTableGame.js';
+import { openGambitTableGame, regularCrown, gambitRegulars, gambitTableOn, GAMBIT_ARM_MS, GAMBIT_SNAP_PX } from '../src/scenes/gambitTableGame.js';
+import { GAMBIT_CURSOR_KEYS, gambitBoardKey } from '../src/ui/gambitTableHud.js';
 import { GAMBIT_TIERS, tierFor, regularAction } from '../src/systems/gambitPatrons.js';
 import { GAMBIT_RESULT_MS, GAMBIT_NIGHT_MULT, GAMBIT_CROWNS, gambitNightPaid, gambitCrownRestore } from '../src/systems/gambitTableSession.js';
 import { KG_POINT_BUDGET, KG_KING_CELL, pieceById, pieceAt, reachable } from '../src/net/kingsGambit.js';
@@ -456,7 +457,7 @@ function cardHost({ friendly = false } = {}) {
     isOnlinePage: () => false, mwViewFirstPerson: () => {}, homeTownOf: (b) => b?.townMapId || 0, worldMinutes: () => 0, MINUTES_PER_DAY: 1440,
     RemoteCardTable, mode: 'interior', regularsToStand, regularBark, BARK_MS, showdownWinners: hudm.showdownWinners, HOLDEM_REFUSALS: hudm.HOLDEM_REFUSALS,
     cardPackPrice, buyCardPack, openIliacTableGame: (o) => openIliacTableGame({ ...o, doc }), iliacGrade, skillValue, SKILLS, liveStat,
-    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false,
+    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false, gambitBoardKey,
     canvas: { clientWidth: W, clientHeight: H, getBoundingClientRect: () => ({ left: 0, top: 0 }), setPointerCapture() {} }, ...hand, CARD_W, CARD_L, chipDiscs, cardMatrix,
     worldViewportRect: () => null, rayDirFromScreen, projectToScreen, performance,
     // the cloth's listeners want a window: the page's own, faked - and the two things that silence them, quiet

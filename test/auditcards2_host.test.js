@@ -24,6 +24,7 @@ import { isCardPack } from '../src/systems/iliacItems.js';
 import { cardPackPrice, buyCardPack } from '../src/systems/cardSources.js';   // CARDS9: the house's packs at the table
 import { openIliacTableGame } from '../src/scenes/iliacTableGame.js';   // CARDS10: the other game at the table
 import { openGambitTableGame, gambitTableOn } from '../src/scenes/gambitTableGame.js';   // KG3: the third game at the table
+import { gambitBoardKey } from '../src/ui/gambitTableHud.js';   // KG3: the board's own keys, the cloth's listener's
 import { regularLook } from '../src/world/cardRegulars.js';
 import { seatTopByte } from '../src/player/seatPose.js';
 import { iliacGrade } from '../src/systems/iliacPatrons.js';
@@ -73,7 +74,7 @@ function host({ gold = 5000, online = false, realmAct = null, seats = 4, peers =
     // PIN MOVED (CARDS9/10): the block prices a pack at the table and opens Iliac Hand on the seat - their names, real
     cardPackPrice, buyCardPack, openIliacTableGame: (o) => openIliacTableGame({ ...o, doc }), iliacGrade, skillValue, SKILLS, liveStat,
     // KG3: the block opens The King's Gambit on the seat too - its names, real (its cloth's listeners want a window)
-    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false,
+    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false, gambitBoardKey,
   };
   const state = { interiorCtx: { tables: [{ aabb: {} }], collider: null }, interiorBuilding: building };
   const api = new Function('S', ...Object.keys(scope), `let interiorCtx = S.interiorCtx, interiorBuilding = S.interiorBuilding;\n${BLOCK}\n

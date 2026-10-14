@@ -954,7 +954,7 @@
  },
  {
   "name": "KG3-H-dpad",
-  "file": "src/scenes/gambitTableGame.js",
+  "file": "src/ui/gambitTableHud.js",
   "old": "  [DPAD_CODES.left]: 'ArrowLeft', [DPAD_CODES.right]: 'ArrowRight', [DPAD_CODES.up]: 'ArrowUp', [DPAD_CODES.down]: 'ArrowDown',\n",
   "new": "\n",
   "tests": [
@@ -963,7 +963,7 @@
  },
  {
   "name": "KG3-H-press-key",
-  "file": "src/scenes/gambitTableGame.js",
+  "file": "src/ui/gambitTableHud.js",
   "old": "export const GAMBIT_PRESS_KEYS = Object.freeze(['Enter', 'NumpadEnter', 'Space', 'JoystickButton0']);",
   "new": "export const GAMBIT_PRESS_KEYS = Object.freeze(['Enter', 'NumpadEnter', 'Space']);",
   "tests": [
@@ -972,7 +972,7 @@
  },
  {
   "name": "KG3-H-cancel-key",
-  "file": "src/scenes/gambitTableGame.js",
+  "file": "src/ui/gambitTableHud.js",
   "old": "export const GAMBIT_CANCEL_KEYS = Object.freeze(['Escape', 'JoystickButton1']);",
   "new": "export const GAMBIT_CANCEL_KEYS = Object.freeze(['Escape']);",
   "tests": [

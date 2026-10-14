@@ -36,6 +36,7 @@ import { cardCanvasCopy } from './cardBinderPage.js';
 import { cardPanelChromeCss, dressCardPanel, foldWords } from './cardPanelKit.js';
 import { PIXELIFY_FIVE_FACE } from './pixelifyFive.js';
 import { noteFirstUse } from '../systems/tutorials.js';
+import { DPAD_CODES } from './plusPad.js';
 import {
   unitName, kingName, pieceName, regularLines, stakeLabel, stakeWhat, stakePurse, stakeNight,
   kingLine, unitLine, unitCost, unitChips, pointsLeft, unitsHeld, armyKingLine, actionsLeft, refusalWords, cellWords,
@@ -618,6 +619,21 @@ export function createGambitTableHud({ onPress, doc = globalThis.document }) {
     destroy() { if (!alive) return; alive = false; root.remove?.(); },
   };
 }
+
+/** THE BOARD'S OWN KEYS (14.3): the arrows and the d-pad step the cell cursor, Enter, Space and the pad's A press its
+ *  cell, Escape and the pad's B cancel. They are the panel's keys while a battle is on - a window's own, as
+ *  ui/input.js's overlayAction reads a window's arrows and Enter - so the hosts ask `gambitBoardKey` and read no bound
+ *  key raw (KB1 law 5; test/inputmap.test.js I2). */
+export const GAMBIT_CURSOR_KEYS = Object.freeze({
+  ArrowLeft: 'ArrowLeft', ArrowRight: 'ArrowRight', ArrowUp: 'ArrowUp', ArrowDown: 'ArrowDown',
+  [DPAD_CODES.left]: 'ArrowLeft', [DPAD_CODES.right]: 'ArrowRight', [DPAD_CODES.up]: 'ArrowUp', [DPAD_CODES.down]: 'ArrowDown',
+});
+export const GAMBIT_PRESS_KEYS = Object.freeze(['Enter', 'NumpadEnter', 'Space', 'JoystickButton0']);
+export const GAMBIT_CANCEL_KEYS = Object.freeze(['Escape', 'JoystickButton1']);
+/** What a key's or a pad button's code does on the board: the arrow its cursor step is, 'press', 'cancel', or null.
+ *  @param {string} code @returns {string|null} */
+export const gambitBoardKey = (code) => (Object.hasOwn(GAMBIT_CURSOR_KEYS, code) ? GAMBIT_CURSOR_KEYS[code]
+  : GAMBIT_PRESS_KEYS.includes(code) ? 'press' : GAMBIT_CANCEL_KEYS.includes(code) ? 'cancel' : null);
 
 /** The cell a key moves the board's cursor to (14.3: the arrows or the d-pad; the board's edges hold it). */
 export const boardCursorStep = (/** @type {number[]} */ at, /** @type {string} */ key) => {
