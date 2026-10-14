@@ -239,5 +239,5 @@ test('ORG2 x MWNPC5b: the Morrowind People row stands on the one Settings screen
   const at = whereIs('feat:mw-npc-bodies');
   assert.equal(at?.tab.id, 'combat');
   assert.equal(at.section.id, 'morrowind');
-  assert.deepEqual(at.section.items, ['feat:mod-weapon-sheathing', 'feat:steel-helm', 'feat:mw-spell-effects', 'feat:mw-npc-bodies']);
+  assert.deepEqual(at.section.items, ['feat:mod-weapon-sheathing', 'feat:steel-helm', 'feat:mw-spell-effects', 'feat:mw-npc-bodies', 'feat:mw-billboard-look']);   // PIN MOVED (BODY-CARD): the Billboard Look beside Morrowind People
 });
