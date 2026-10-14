@@ -9554,6 +9554,21 @@
   "tr": "0d6285575c5a",
   "by": "claude-in-session"
  },
+ "spellbook.effect.chance": {
+  "en": "c79a79681a76",
+  "tr": "f7aa0c1d8b46",
+  "by": "claude-in-session"
+ },
+ "spellbook.effect.duration": {
+  "en": "b3b25905802d",
+  "tr": "2ade885d99ca",
+  "by": "claude-in-session"
+ },
+ "spellbook.effect.magnitude": {
+  "en": "032e12a22bdd",
+  "tr": "a71b65931ed1",
+  "by": "claude-in-session"
+ },
  "stats.attributes": {
   "en": "a6652617f2c7",
   "tr": "0887ff0fbbdb",

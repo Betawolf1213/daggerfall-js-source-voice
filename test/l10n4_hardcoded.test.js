@@ -571,7 +571,7 @@ const HARDCODED = {
   'src/ui/enhancedPost.js': 13,
   'src/ui/enhancedRest.js': 10,
   'src/ui/enhancedSaddle.js': 19,
-  'src/ui/enhancedSpellbook.js': 23,
+  'src/ui/enhancedSpellbook.js': 22,
   'src/ui/enhancedTalk.js': 8,
   'src/ui/enhancedTavern.js': 9,
   'src/ui/enhancedTimers.js': 6,

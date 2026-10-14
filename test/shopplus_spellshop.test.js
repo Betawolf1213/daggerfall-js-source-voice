@@ -53,7 +53,10 @@ test('SHOP-PLUS: choosing a row selects it; the chosen spell says its effects wi
   assert.equal(w.selected.name, 'Frostbite');
   const fx = find(v.blocks, (b) => b.type === 'rows' && b.key === 'fx');
   assert.deepEqual(fx.items.map((r) => r.label), ['Damage Health', 'Continuous Damage Fatigue']);
-  assert.match(fx.items[0].sub, /4-9/);
+  // SB-FX: MOVED with the book's reading (ui/enhancedSpellbook.js effectWords) - the component's header row of DFU's
+  // spellbook description, over ClassicEffectRecordToEffectSettings' settings, and Damage Health's magnitude alone
+  assert.equal(fx.items[0].sub, 'Magnitude: 4 - 9 + 0 - 0 per 1 level(s)');
+  assert.equal(fx.items[1].sub, 'Duration: 2 + 0 per 1 level(s) · Magnitude: 1 - 3 + 0 - 0 per 1 level(s)');
   const price = w.tradePrice();
   v.foot[0].act();
   assert.equal(w.top, 'trade', 'the haggle line and its Yes/No, as the classic Buy opens them');
