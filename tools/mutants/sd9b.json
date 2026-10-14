@@ -189,18 +189,18 @@
     ]
   },
   {
-    "name": "SD9B-the-title-unsaid",
+    "name": "{ announce('title', SD_HONOUR_KEYS.title); }SD9B-the-title-unsaid",
     "file": "src/net/sdClaims.js",
-    "old": "          if (answer.data.title === true) say(SD_CLAIM_TEXT.title);\n",
+    "old": "{ say(SD_CLAIM_TEXT.title); announce('title', SD_HONOUR_KEYS.title); }",
     "new": "",
     "tests": [
       "test/sd9b_claim.test.js"
     ]
   },
   {
-    "name": "SD9B-the-aura-unsaid",
+    "name": "{ announce('aura', SD_HONOUR_KEYS.aura); }SD9B-the-aura-unsaid",
     "file": "src/net/sdClaims.js",
-    "old": "          if (answer.data.aura === true) say(SD_CLAIM_TEXT.aura);\n",
+    "old": "{ say(SD_CLAIM_TEXT.aura); announce('aura', SD_HONOUR_KEYS.aura); }",
     "new": "",
     "tests": [
       "test/sd9b_claim.test.js"

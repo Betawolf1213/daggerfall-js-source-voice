@@ -1,16 +1,20 @@
 // @ts-check
 // LEFAY1 (2026-10-08, asked: "In the middle of gothway garden, I want to build and implement a monument to Julian LeFay,
 // one of the creators of daggerfall, with the ability of people to interact and throw flowers on it"): THE MONUMENT TO
-// JULIAN LEFAY, ITS LAW - where it stands in Gothway Garden, what it is made of, what its plaque says, and where a
-// flower thrown at it comes to rest. Pure: no renderer, no GL, no clock (scenes/lefayMonumentHost.js stands it).
+// JULIAN LEFAY, ITS LAW - where it stands outside Privateer's Hold, what it is made of, what its plaque says, and where
+// a flower thrown at it comes to rest. Pure: no renderer, no GL, no clock (scenes/lefayMonumentHost.js stands it).
 //
-// WHERE: Gothway Garden (the Daggerfall region's hamlet; test/audit18_hosts_outer.test.js reads its type off MAPS.BSA),
-// in every read of it - Daggerfall's own layout or a pack's - at the open ground nearest the middle of its block grid.
-// The town's own navgrid says what is open (world/cityNavigation.js: DFU's CityNavigation carve, every automap byte a
-// building, a tree or a lamp has drawn closed, the water closed): the spot is the nearest cell to the grid's middle
-// whose every cell centred within MONUMENT_CLEAR_M of it is open ground, a road counted against it (a monument stands on
-// a green, not across a street, where the town has one). A function of the layout alone, so every client stands it on one spot.
-// The spot is carved out of the wandering people's navgrid (carveLefay), so they walk round it.
+// WHERE (HOLD-MONUMENT, 2026-10-14, Mac: "Move julian monument to outside of privateers hold"; LEFAY1 stood it in the
+// middle of Gothway Garden): outside Privateer's Hold - the Daggerfall region's dungeon every new character climbs out
+// of, its exterior the one 1x1 block CUSTAA30.RMB - in every read of it, Daggerfall's own layout or a pack's. The
+// location's own navgrid says what is open (world/cityNavigation.js: DFU's CityNavigation carve, every automap byte a
+// building, a tree or a lamp has drawn closed, the water closed), and two things the automap does not draw are closed on
+// it first: the ground round the Hold's start marker (world/locationEntrance.js locationStartMarkers - where a
+// traveller arriving at the Hold is stood), and World of Daggerfall's camp round the Hold (world/wodPrivateersHold.js
+// HOLD_MODELS, which the hosts hand in), closed with the camp on or off. The spot is the cell nearest the start marker
+// (the block grid's middle, with none) whose every cell centred within MONUMENT_CLEAR_M of it is open ground, a road
+// counted against it. A function of the layout alone, so every client stands it on one spot. The Hold is no town
+// (locationType 4, no wandering people), so there is no people's navgrid to carve; carveLefay stays for one that has.
 //
 // WHAT: three octagonal granite steps, a marble pedestal with a bronze plaque on each face, and a marble obelisk
 // tipped in gilt - the port's own geometry in the monument's own frame (y up from the ground at its middle, its faces
@@ -26,11 +30,14 @@ import { REGION_NAMES } from '../formats/mapsTables.js';
 import { CityNavigation, NAV_CELL, HALF_CELL } from './cityNavigation.js';
 import { THROWN_FLOWERS } from '../systems/arenaCrowd.js';
 import { ROAD_WEIGHT } from '../systems/gothwayBoards.js';
+import { locationStartMarkers } from './locationEntrance.js';
+import { collectMiscFlats } from './rmbFlats.js';
 
-/** The town, by its region's name and its own (a pack's read of it keeps both). */
-export const LEFAY_TOWN = 'Gothway Garden';
+/** The place, by its region's name and its own (a pack's read of it keeps both) - HOLD-MONUMENT: Privateer's Hold
+ *  (it was Gothway Garden, LEFAY1). The name is still LEFAY_TOWN: every host and the save read it under that name. */
+export const LEFAY_TOWN = 'Privateer\'s Hold';
 export const LEFAY_REGION = REGION_NAMES.indexOf('Daggerfall');
-/** Is `loc` (a DFLocation, as MapsFile reads it) Gothway Garden? */
+/** Is `loc` (a DFLocation, as MapsFile reads it) Privateer's Hold? */
 export const isLefayTown = (loc) => !!loc && loc.regionIndex === LEFAY_REGION && loc.name === LEFAY_TOWN;
 
 /** The man, and what the plaque and the hover say of him. */
@@ -76,6 +83,14 @@ export const MONUMENT_ROAD_COST = 0.3;
  *  foot (AUDIT LEFAY1 A4: at 3.2 a walker's centre came within 3.58 m, its sprite over the ground ring's 3.3) - 21
  *  cells, so the nearest a walker's centre comes is 4.5 m; the ring of open cells round them is MONUMENT_CLEAR_M's. */
 export const MONUMENT_CARVE_M = 3.6;
+/** HOLD-MONUMENT: the ground kept clear round the Hold's start marker, metres - where a traveller arriving at the Hold is
+ *  stood, so the monument's middle stands at least this and MONUMENT_CLEAR_M from it, never on it. */
+export const MONUMENT_LANDING_M = 3.2;
+/** HOLD-MONUMENT: the ground closed round each model of World of Daggerfall's camp (HOLD_MODELS) - none of it is in the
+ *  block's automap. Its ruins (the 435xx records) stand wide; the tents, rocks, pillars, boxes, flag and wagon less so. */
+export const MONUMENT_CAMP_KEEP_M = 4;
+export const MONUMENT_RUIN_KEEP_M = 8;
+const isRuinModel = (modelId) => modelId >= 43500 && modelId < 43600;
 
 /** The cell offsets within `m` metres of a cell's centre, nearest first. Pure. */
 export function discCells(m) {
@@ -87,15 +102,17 @@ const CLEAR_DISC = discCells(MONUMENT_CLEAR_M);
 const CARVE_DISC = discCells(MONUMENT_CARVE_M);
 
 /**
- * WHERE IT STANDS on a navgrid: the cell nearest the grid's middle with every cell centred within MONUMENT_CLEAR_M of
+ * WHERE IT STANDS on a navgrid: the cell nearest the grid's middle - or HOLD-MONUMENT's `from` cell's centre, given one
+ * - with every cell centred within MONUMENT_CLEAR_M of
  * it open (weight over 0), each road cell under it MONUMENT_ROAD_COST further; ties to the lower row, then the lower column. Null when
  * no cell within MONUMENT_SEARCH_CELLS is open enough. `x`, `z` the cell's centre in the location's frame (metres
  * from its origin - navToWorld's). Pure.
  * @param {{width: number, height: number, weightAt: (gx: number, gy: number) => number}} nav
+ * @param {{gx: number, gy: number}|null} [from]
  */
-export function lefaySpot(nav) {
+export function lefaySpot(nav, from = null) {
   if (!nav || !(nav.width > 0) || !(nav.height > 0)) return null;
-  const mx = nav.width / 2, my = nav.height / 2;
+  const mx = from ? from.gx + 0.5 : nav.width / 2, my = from ? from.gy + 0.5 : nav.height / 2;
   let best = null, bestScore = Infinity;
   const y0 = Math.max(0, Math.floor(my - MONUMENT_SEARCH_CELLS)), y1 = Math.min(nav.height - 1, Math.ceil(my + MONUMENT_SEARCH_CELLS));
   const x0 = Math.max(0, Math.floor(mx - MONUMENT_SEARCH_CELLS)), x1 = Math.min(nav.width - 1, Math.ceil(mx + MONUMENT_SEARCH_CELLS));
@@ -117,14 +134,28 @@ export function lefaySpot(nav) {
   return best ? { gx: best.gx, gy: best.gy, x: best.gx * NAV_CELL + HALF_CELL, z: best.gy * NAV_CELL + HALF_CELL } : null;
 }
 
+/** HOLD-MONUMENT: close every cell of `nav` whose centre is within `m` metres of (`x`, `z`), the location's frame. */
+function closeRound(nav, x, z, m) {
+  const r = Math.ceil(m / NAV_CELL) + 1, [cx, cy] = [Math.floor(x / NAV_CELL), Math.floor(z / NAV_CELL)];
+  for (let gy = cy - r; gy <= cy + r; gy++) {
+    for (let gx = cx - r; gx <= cx + r; gx++) {
+      if (nav.inBounds(gx, gy) && Math.hypot(gx * NAV_CELL + HALF_CELL - x, gy * NAV_CELL + HALF_CELL - z) <= m) nav.grid[gy * nav.width + gx] = 0;
+    }
+  }
+}
+
 /**
  * The spot in a laid-out location (world/locationLayout.js layoutLocation's `{width, height, blocks}`): its navgrid
  * carved as the wandering people's is, then lefaySpot. AUDIT LEFAY1 A3: ALWAYS on the enhanced lane's water table
  * (cityNavigation.js WATER-NPC) - the classic table walks seven records the player wades in (8, 23, 33-36, 49), so on
- * it the monument could stand in the shallows, and a client on each lane would stand it in a different place. Pure.
+ * it the monument could stand in the shallows, and a client on each lane would stand it in a different place.
+ * HOLD-MONUMENT: `camp` - World of Daggerfall's camp (`{ block, models }`: wodPrivateersHold.js PRIVATEERS_HOLD_BLOCK
+ * and HOLD_MODELS, handed in by the host so this law reads none of the camp's foes) - is closed round each of its models
+ * in each block of its name, and the start marker's landing is closed; the search starts at the first start marker. Pure.
  * @param {{width: number, height: number, blocks: any[]}} loc
+ * @param {{camp?: {block: string, models: ReadonlyArray<{modelId: number, pos: ArrayLike<number>}>}|null}} [opts]
  */
-export function lefaySpotOf(loc) {
+export function lefaySpotOf(loc, { camp = null } = {}) {
   if (!loc?.blocks?.length || !(loc.width > 0) || !(loc.height > 0)) return null;
   const nav = new CityNavigation(loc.width, loc.height);
   for (const b of loc.blocks) {
@@ -133,7 +164,18 @@ export function lefaySpotOf(loc) {
     const tiles = fld.groundData.groundTiles;
     nav.setBlockData(b.x, b.y, fld.autoMapData, (tx, ty) => tiles[tx][ty].textureRecord, { enhancedWater: true });
   }
-  return lefaySpot(nav);
+  if (camp?.models?.length) {
+    for (const b of loc.blocks) {
+      if (b.blockName !== camp.block) continue;
+      for (const m of camp.models) closeRound(nav, (b.originX ?? 0) + m.pos[0], (b.originZ ?? 0) + m.pos[2], isRuinModel(m.modelId) ? MONUMENT_RUIN_KEEP_M : MONUMENT_CAMP_KEEP_M);
+    }
+  }
+  const markers = locationStartMarkers(loc.blocks.map((b) => ({
+    originX: b.originX, originZ: b.originZ, flats: b.dfBlock?.rmbBlock?.miscFlatObjectRecords ? collectMiscFlats(b.dfBlock) : [],   // the markers are misc flats (AddExteriorBlockFlats skips 199)
+  })));
+  for (const [x, , z] of markers) closeRound(nav, x, z, MONUMENT_LANDING_M);
+  const from = markers.length ? nav.worldToNav(markers[0][0], markers[0][2]) : null;
+  return lefaySpot(nav, from && { gx: from[0], gy: from[1] });
 }
 
 /** Close the monument's ground on a navgrid (the wandering people's): every cell within MONUMENT_CARVE_M of its

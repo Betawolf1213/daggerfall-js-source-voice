@@ -162,7 +162,7 @@ Either death, at the first dead frame, while the room is still the player's (`wi
   health, where it fell) before the service is asked, and again after, without what it dropped
   (`wildDeathCheckpoint`).
 - A DEATH IN A HALL (HALL-CROWS, the owner: "i dont see the crows circleling around the dungeon where i died on the
-  zone map"): always locks the hall for the hour and sets the crows over it, whether or not the pack had anything to
+  zone map"): always locks the hall for its half hour and sets the crows over it, whether or not the pack had anything to
   drop (`world.js:"if (modes?.mode === 'dungeon' && _wdunInside)"`; section 13).
 - THE WAIT: the death screen holds `WILD_DEATH_HOLD_S` (120 s) and takes no Enter; the killer's body lies as long.
 - THE RISE: the nearest town or temple outside the zone and its band (`wildRiseSite`,
@@ -405,8 +405,9 @@ What no client may decide the social hub keeps (`server/src/index.js` `_wdun*`, 
 pruned as it is read (`wdunPrune`, `wildLaw.js:"export function wdunPrune"`). The law is pure (`src/net/wildLaw.js`
 wdun*); the hub reads, calls it and writes.
 
-- THE LOCK: an account that leaves a hall - walks out, is unstuck, falls - may not go in again for `WDUN_LOCK_MS` (an
-  hour, `wdunLeave`, `wildLaw.js:"export function wdunLeave"`), UNLESS its own remains still lie in that hall: the way
+- THE LOCK: an account that leaves a hall - walks out, is unstuck, falls - may not go in again for `WDUN_LOCK_MS` (half
+  an hour - HALL-LOCK-30, 2026-10-14, Mac: "Reduce dungeon cooldown from 1 hour to 30 minutes"; it was an hour -
+  `wdunLeave`, `wildLaw.js:"export function wdunLeave"`), UNLESS its own remains still lie in that hall: the way
   back to them (`wdunEnter`, `wildLaw.js:"export function wdunEnter"`; `piles`). The client asks at the door and
   awaits the hub's `ok`/`no` (four seconds, then its own memory); HALL-LOCK: its own memory of the lock (set as it
   leaves, `wdunLeft`, `world.js:"const wdunLeft ="`) answers first, so a hub that never heard my way out (a word lost
@@ -605,7 +606,7 @@ country" (`travelPathMode.js:"tipFree:"`), neither "round the mountains" any mor
 `TEST_GODMODE` (`world.js:"const TEST_GODMODE"`), false as merged. True, every player is given the staff's /god, /fly,
 /heal and /tp (`isStaffT`), and god mode lifts the zone's travel law (`wildTravelGate` free, `wildTeleportRefused`
 never), makes a map journey instant (a teleport, from anywhere to anywhere), takes /unstuck at once with no cooldown,
-and walks into a sealed door - but never past a hall's hour (section 13). `/godmode` is `/god` for the staff either
+and walks into a sealed door - but never past a hall's half-hour lock (section 13). `/godmode` is `/god` for the staff either
 way (`world.js:"const staffCmd ="`).
 
 ## 21. Riding along (the same merge, outside the zone)

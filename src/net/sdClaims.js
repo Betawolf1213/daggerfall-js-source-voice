@@ -39,6 +39,10 @@ export const SD_CLAIM_TEXT = Object.freeze({
   guest: 'Hour not recorded. Add a username within a week to keep it.',
 });
 
+/** HONOUR-BANNER (2026-10-14, Mac: "The title/aura in the abyss dungeon should also have a loot popup"): the words
+ *  the Hour grants, in the vocabulary's spelling (net/identityToken.js TITLES / AURAS) - its popup's. */
+export const SD_HONOUR_KEYS = Object.freeze({ title: 'hourbreaker', aura: 'turninghour' });
+
 /** The refusals of a receipt the service can mend - kept for the receipt's week rather than let go (the gate's). */
 export const SD_CLAIM_MENDABLE = Object.freeze(['signature', 'verify-threw', 'future', 'clock']);
 
@@ -59,11 +63,12 @@ export function sdRecordText(rec) {
  *   claim: (receipt: string) => Promise<any>,
  *   store?: { get: (k: string) => any, set: (k: string, v: any) => void }|null,
  *   nowS?: () => (number|null), nowMs?: () => number, say?: (text: string) => void, onBroken?: (broken: number) => void,
- *   me?: () => (string|null),
+ *   me?: () => (string|null), announce?: (kind: 'title'|'aura', key: string) => any,
  * }} deps `claim` is net/accountClient.js accountSds' - `{ ok, data }` or `{ ok: false, error, why? }`, never a throw;
- *   `nowS` the relay's clock (null unheard); `me` the signed-in account's id, null for none
+ *   `nowS` the relay's clock (null unheard); `me` the signed-in account's id, null for none; `announce` HONOUR-BANNER's
+ *   popup for a grant (ui/lootBanner.js announceHonour), beside its chat line
  */
-export function createSdClaims({ claim, store = null, nowS = () => Math.floor(Date.now() / 1000), nowMs = () => Date.now(), say = () => {}, onBroken = () => {}, me = () => null }) {
+export function createSdClaims({ claim, store = null, nowS = () => Math.floor(Date.now() / 1000), nowMs = () => Date.now(), say = () => {}, onBroken = () => {}, me = () => null, announce = () => {} }) {
   let busy = false, again = false, lastAt = -Infinity;
   let lastMe, meAt = -Infinity;
   const settled = new Set(), guestSaid = new Set();
@@ -93,8 +98,8 @@ export function createSdClaims({ claim, store = null, nowS = () => Math.floor(Da
           recorded++;
           const n = Number.isSafeInteger(answer.data.broken) ? answer.data.broken : null;
           if (n != null) { onBroken(n); say(SD_CLAIM_TEXT.recorded(n)); }
-          if (answer.data.title === true) say(SD_CLAIM_TEXT.title);
-          if (answer.data.aura === true) say(SD_CLAIM_TEXT.aura);
+          if (answer.data.title === true) { say(SD_CLAIM_TEXT.title); announce('title', SD_HONOUR_KEYS.title); }   // HONOUR-BANNER: and its popup
+          if (answer.data.aura === true) { say(SD_CLAIM_TEXT.aura); announce('aura', SD_HONOUR_KEYS.aura); }
         } else if (answer?.ok && answer.data?.why === 'guest' && !guestSaid.has(r)) {
           guestSaid.add(r);
           say(SD_CLAIM_TEXT.guest);

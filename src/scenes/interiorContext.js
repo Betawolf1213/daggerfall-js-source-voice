@@ -27,6 +27,8 @@ import { remapSubMeshes, markRemapLaw } from '../world/texRemap.js';   // WM3: t
 import { unityMaterialName } from '../systems/immersiveFootsteps.js';   // IF1: MaterialReader's material name, for the mod's floor walk
 import { billboardSize } from '../world/rmbFlats.js';
 import { preloadTextureRecord } from '../systems/textureReplacement.js';   // LAMP-KEEPER: a re-materialised person's art, decoded before it is drawn
+import { LAMP_ARCHIVE, LAMP_CLASSIC } from '../systems/lampKeeper.js';   // LAMP-KEEPER II: a keeper standing as the lamp, on purpose
+import { isChairModel } from '../world/chairSeat.js';   // SIT1: the seats a player sits on
 import { Collider } from '../player/collider.js';
 import { isHouseContainerModel } from '../systems/containers.js';
 import { isShopShelfModel } from '../systems/shopStock.js';   // E2
@@ -327,6 +329,7 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
   const shelves = [];
   const tables = [];   // CARDS2: the room's card tables (world/cardTables.js) - TAVERN-TABLE: the props a tavern stands (below; TAVERN-TABLES: the chips table, then the gold); the host seats them
   const beds = [];   // RR1: models 41000-41002 (RoleplayRealism.cs:126-128), listed always, activated under bedSleeping
+  const chairs = [];   // SIT1 (world/chairSeat.js): the chairs, benches and thrones a player sits on - by model id, whatever its ObjectType
   // IF1: the combined mesh's materials, as Immersive Footsteps reads them
   // off `CombinedModels` (Main.cs:237-308) - one name per texture in
   // first-appearance order over the models' submeshes, through the
@@ -438,6 +441,14 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
     // model id alone (RoleplayRealism.cs:126-128), and DFU stands a custom-activation model on its own whatever its
     // ObjectType (the CombineRMB note above), so a bed written as scenery (ObjectType 0 or 4: a dormitory's, a ship's
     // bunks) rests as a prop's does. The furniture chain below stays the prop's alone.
+    // SIT1 (world/chairSeat.js; Mac: "Implement the ability to interact and sit on chairs"): a chair is the port's own
+    // activation, keyed on the model id alone as a bed is (INN-BEDS), a prop or scenery; taken out of a furnished room
+    // with its piece (BASE-HIDE - it is the piece's furniture)
+    if (isChairModel(classicModelIdOf(p.modelIdNum))) {
+      const chair = { cpu, matrix, modelId: classicModelIdOf(p.modelIdNum) };
+      chairs.push(chair);
+      if (baseKey) base.furnish(baseKey, chair);
+    }
     if (p.objectType !== PROP_MODEL_TYPE) {
       if (isBedModel(classicModelIdOf(p.modelIdNum))) beds.push({ cpu, matrix });
       continue;
@@ -570,7 +581,10 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
     // own two among them. Same door, same born identity.
     const [da, dr] = drawnFlat(v?.textureArchive ?? pn.textureArchive, v?.textureRecord ?? pn.textureRecord);
     const redrawn = v || da !== pn.textureArchive || dr !== pn.textureRecord;
-    return { ...pn, x, y, z, active: visible, questBehaviour: null, ...(redrawn ? { drawArchive: da, drawRecord: dr } : {}) };
+    // LAMP-KEEPER II (systems/lampKeeper.js): the host's pick - a shop's keeper standing as the lamp today keeps its born
+    // identity (its name, its shop) and stands as the lamp; no Morrowind body is read for it (MWNPC8a's look, null)
+    const lamp = !!opts.lampPerson?.(pn);
+    return { ...pn, x, y, z, active: visible, questBehaviour: null, ...(redrawn ? { drawArchive: da, drawRecord: dr } : {}), ...(lamp ? { lamp: true, _mwLook: null } : {}) };
   });
   // AUDIT 24 (wave 20): AddPeople's LAST act on every person it stands
   // is `QuestMachine.Instance.SetupIndividualStaticNPC(go, obj.FactionID)`
@@ -633,6 +647,7 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
   const standPerson = (pn) => {
     if (pn.stood) return null;
     pn.stood = true;
+    if (pn.lamp) return standLamp(pn);   // LAMP-KEEPER II: the lamp, whatever body the room's people wear
     if (_rigFor) {
       const rg = _rigFor(raceOfArchive(pn.textureArchive));
       // AUDIT 39 (#76): the person's FLOOR position rides with the draw
@@ -662,6 +677,22 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
       billboardBatches.push(pn.standBatch);
     })().catch((e) => console.error('[interior] person stand failed:', e));
   };
+  // LAMP-KEEPER II (systems/lampKeeper.js): THE LAMP - the classic TEXTURE.197 record 6 whatever a pack replaces it
+  // with (its own pixels, getColor32's, never the replacement's), uploaded under the port's own key so a keeper a mod
+  // draws on 197_6 is not touched, at the record's size through the one billboard-size door (with Roleplay & Realism's
+  // XML scale, the bug's own stretch). Uploaded at every stand: a hit answers at once, and a picture the place-LRU let go
+  // is put back.
+  const standLamp = (pn) => (async () => {
+    const t = await getTexture(LAMP_CLASSIC.archive);
+    if (!t || LAMP_CLASSIC.record >= t.recordCount) return;
+    const size = billboardSize(t, LAMP_CLASSIC.record);
+    pn.width = size.w;
+    pn.height = size.h;
+    if (!peopleBuilt || !pn.stood || pn.standBatch) return;
+    renderer.uploadTexture(LAMP_ARCHIVE, 0, t.getColor32(t.getDFBitmap(LAMP_CLASSIC.record, 0), 0));
+    pn.standBatch = renderer.createBillboardBatch(LAMP_ARCHIVE, 0, size, [[pn.x, pn.y, pn.z]]);
+    billboardBatches.push(pn.standBatch);
+  })().catch((e) => console.error('[interior] lamp stand failed:', e));
   // The mirror: any stood person can be taken back out.
   const unstandPerson = (pn) => {
     if (!pn.stood) return;
@@ -916,6 +947,7 @@ export async function buildInteriorContext(deps, dfBlock, blockIndex, recordInde
     shelves,   // E2: shop shelf models (stocked lazily by the mode host)
     tables,    // CARDS2: the card tables
     beds,      // RR1: the bed models
+    chairs,    // SIT1: the chairs, benches and thrones sat on (world/chairSeat.js)
     base,      // BASE-HIDE: a furnishable room's own pieces (scenes/decorBase.js), null in any other room
     enterMarkers,
     treasureMarkers,   // AUDIT 63 F22: AddFlats' RandomTreasure arm, gated by the host

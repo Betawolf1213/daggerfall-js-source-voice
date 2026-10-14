@@ -34,7 +34,8 @@ lane's water table as LEFAY1's monument reads it, and over it what the town's bl
 - a **palace's block** left whole (no yard in a castle's court - a palace read off the block's real buildings,
   `talkTopics.js` `blockBuildingCount`), the **colosseum's** block too (`world/arenaCity.js` `ARENA_BLOCK` - its model
   is built over the player's own, so it is never measured here), and LEFAY1's **monument** its own ground
-  (`MONUMENT_KEEP_M`).
+  (`MONUMENT_KEEP_M`) - kept for a town that stands it; since HOLD-MONUMENT (2026-10-14) it stands outside Privateer's
+  Hold, which has no yard, so no town's yards read it now.
 
 The measures are read off a layout laid out the same on every lane (the enhanced skin's, the mills stood - the pixel
 build's own where it is that one), so a classic client and an enhanced one stand each yard on one spot; the sites are

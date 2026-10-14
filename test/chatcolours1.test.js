@@ -106,7 +106,7 @@ test('CHAT-LANG wire: one channel per language, keyed by its code under its own 
   assert.equal(LANG_RELAY_MIN, 196);   // world192 on its branch, renumbered past main's world192-world195 at the port
   assert.equal(relaySupportsLang('world195'), false);
   assert.equal(relaySupportsLang('world196'), true);
-  assert.equal(RELAY_VERSION, 'world200');   // PIN MOVED: world200, PEER-ACTS (the pose carries a gathering act - the act, its beats and the throw of the net; world199 on its branch, renumbered past the AUDIT ETHER-OW world199 of main at the merge); PIN MOVED: world199, AUDIT ETHER-OW C2-1 (one home for the ground the Watch mints on - watchPixelOk, its answers as they were); PIN MOVED: world198, SPAWN-REBIRTH (a cell keeps the row of a spawned dungeon until it stands again, never sixty real days); PIN MOVED: world197, BAL8 (the PvP referee and its one harm ceiling) over world196, CHAT-LANG
+  assert.equal(RELAY_VERSION, 'world201');   // PIN MOVED: world201, FIVE-ASKS (the zone hall lock half an hour, I Love Lamp a title the relay knows) - before it world200, PEER-ACTS (the pose carries a gathering act - the act, its beats and the throw of the net; world199 on its branch, renumbered past the AUDIT ETHER-OW world199 of main at the merge); PIN MOVED: world199, AUDIT ETHER-OW C2-1 (one home for the ground the Watch mints on - watchPixelOk, its answers as they were); PIN MOVED: world198, SPAWN-REBIRTH (a cell keeps the row of a spawned dungeon until it stands again, never sixty real days); PIN MOVED: world197, BAL8 (the PvP referee and its one harm ceiling) over world196, CHAT-LANG
   assert.match(rd('src/net/online.js'), /if \(primary\) this\.langOk = relaySupportsLang\(relayV\);/);
 });
 

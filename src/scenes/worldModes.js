@@ -441,11 +441,14 @@ import { realWindowsMode, createViewOut, viewOutFrame } from '../render/realWind
 import { raiseContainerLootSpawned } from '../systems/containerLoot.js';   // FORAGE3: PlayerActivate.OnLootSpawned, one home - RRI2's shelf subscribers first (bandage stacks, store-quality wear, the alchemist's potions), then Foraging's
 import { bedSleepingOn, rrDouseOnDungeonExit, rrRefinedTrainingOn, rrSetting } from '../systems/rrRealism.js';   // RR1: the bed's activation gate, the douse on leaving a dungeon; RR2: the refined training window's switches
 import { rrVariantPerson } from '../systems/rrVariants.js';   // RR2: the variant keepers and residents
+import { chairSeatOf, CHAIR_KIND, CHAIR_PROBE_FROM } from '../world/chairSeat.js';   // SIT1: where on a chair the sitter's body goes
+import { isLampKeeper, lampLines, LAMP_TEXT, createLampTitle } from '../systems/lampKeeper.js';   // LAMP-KEEPER II: a shop's keeper standing as the lamp, its words and its title
+import { announceHonour } from '../ui/lootBanner.js';   // LAMP-KEEPER II: I Love Lamp, as a loot banner
 import { setRrHostSeams } from '../systems/rrInstall.js';   // RR1: the host's foe-spawner seam for the underworld guilds' squad
 import { createSwimMovement } from './deepWatersSwimMove.js';   // DW-D: Iliac Puddle No More's swim movement - the dungeon's water too (IsAnySwimming)
 import { deepWatersOn, deepWatersSwimSettings } from './deepWatersHost.js';
 import { loadGraceActive as dwLoadGraceActive } from '../world/deepWaterRuntime.js';
-import { localizedText, formatText, getLocalizedLocationName, getLocalizedFactionName, getLocalizedItemName } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: and the names shown
+import { localizedText, formatText, getLocalizedLocationName, getLocalizedFactionName, getLocalizedItemName, t } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: and the names shown
 import { livingWorldOn } from '../systems/livingWorld/livingSwitch.js';   // HALT-ONE: the living watch's lane, for a watch called into a building
 import { chapterHallFactor, chapterHallShelf, chapterHallShut, CHAPTER_HALL_SHUT_LINE, seatedBook } from '../net/npcChapterLaw.js';   // CHAP3c: a hall's chapter's band on its training, spells and shelf; CHAP4b: a seat's rank at its halls
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
@@ -572,6 +575,44 @@ export function createWorldModes(host) {
     cam.pos = player.eyeAt();   // EV1: back to the body's own eye
     closeCardGame({ cashOut });   // CARDS4: every road off the seat cashes the table out
     closeIliacGame({ concede: cashOut });   // CARDS10: and concedes an Iliac game under way (a load's road: the game the load threw away)
+  }
+  // SIT1 (world/chairSeat.js; Mac: "Implement the ability to interact and sit on chairs. Morrowind model should use the
+  // sitting animation we use for the card game"): A CHAIR SAT ON. A press on one of the room's chairs, benches or thrones
+  // seats the body on it as the card table's chair does - the same pose (player/seatPose.js through the climb rig), the
+  // same eye, the same roads up (a press, a step, a jump, the stick, the autorun latch, a swing, Escape, a hurt, death, a
+  // room left or a forced road out) - but no game opens, and the view is the player's own: first person from the seated
+  // eye, or third person round the chair, the body drawn on it (the rig's `camera().seat`, the motor's drawFeet and
+  // drawYaw - the wagon bench's way). Others see it seated through the wire's pose (`modes.seatPose`). The capsule stays
+  // where it stood (a chair is no floor to stand a capsule in - CARDS2b's law), and another player's chair is theirs.
+  // THE FOUR HOSTS: this host's interiors. world.js and exterior.js stand no room; dungeonContext.js's castles keep their
+  // chairs as geometry for now (named in bible/01-Overview/Five-Asks-2026-10-14.md).
+  let chairSeat = null;   // { key, feet, yaw, top, eye } while seated
+  /** The room's own probe for a chair: the height of the first surface straight down through (x, z) from over its top. */
+  const chairProbe = (aabb) => (x, z) => {
+    const c = interiorCtx?.collider;
+    const from = aabb.min[1] + CHAIR_PROBE_FROM;
+    const d = c?.raycast?.([x, from, z], [0, -1, 0], CHAIR_PROBE_FROM + 0.05);
+    return Number.isFinite(d) && d <= CHAIR_PROBE_FROM + 0.05 ? from - d : null;
+  };
+  function sitOnChair(i) {
+    const ch = interiorCtx?.chairs?.[i];
+    if (!ch || ch.hidden) return;
+    const aabb = worldAabb(ch.cpu.positions, ch.matrix);
+    const seat = chairSeatOf(aabb, ch.matrix, chairProbe(aabb), player.pos);
+    if (!seat) return;
+    if (takenSeats([{ x: seat.feet[0], z: seat.feet[2] }], host.seatedPeers?.() ?? []).length) { say(t('chair.taken', 'Someone is already sitting there.')); return; }
+    chairSeat = { key: i, feet: seat.feet, yaw: seat.yaw, top: seat.top, eye: seat.eye };
+    cam.yaw = seat.yaw;
+    cam.pitch = seat.pitch;
+  }
+  /** SIT1: a chair's name on the plaque, by its kind (world/chairSeat.js CHAIR_KIND). */
+  const chairName = (ch) => { const k = CHAIR_KIND[ch?.modelId]; return k === 'bench' ? t('chair.bench', 'Bench') : k === 'throne' ? t('chair.throne', 'Throne') : t('chair.chair', 'Chair'); };
+  function standFromChair() {
+    if (!chairSeat) return;
+    chairSeat = null;   // the slot first (THE SLOT IS EMPTIED BEFORE THE OCCUPANT IS TOLD)
+    player.drawFeet = null;
+    player.drawYaw = null;
+    cam.pos = player.eyeAt();   // back to the body's own eye
   }
   // CARDS4 (bible/11-Multiplayer/Tavern-Cards.md section 14; Mac: "Hold'em first", "Real gold", "Yes, patrons play"):
   // THE TABLE'S EVENING ON THE SEAT. Sitting down opens the table's panel (ui/cardTableHud.js - the port's own, not a
@@ -823,6 +864,7 @@ export function createWorldModes(host) {
   }
   /** CARDS4: the frame's turn of the table - the patrons' thought and the deal, the events into the log. */
   function cardGameFrame(now) {
+    if (chairSeat && !(playerEntity.health > 0)) standFromChair();   // SIT1: nor on chairs
     if (cardSeat && !(playerEntity.health > 0)) { standFromCardTable(); return; }   // AUDIT CARDS-2: the exhaustion's collapse sets health to 0 past every hurt listener - the dead do not sit at cards
     cardWatchFrame();
     cardStandsFrame();
@@ -1203,6 +1245,7 @@ export function createWorldModes(host) {
   // point of poison stood the player up and conceded a game for keeps with no press of his; one that kills still stands
   // him up (the dead do not sit at cards - cardGameFrame)
   registerPlayerHurtListener('cards-seat', (_e, hurt) => { if (cardSeat && hurt.after < hurt.before && !tickInFlight()) standFromCardTable(); });
+  registerPlayerHurtListener('chair-seat', (_e, hurt) => { if (chairSeat && hurt.after < hurt.before && !tickInFlight()) standFromChair(); });   // SIT1: a blow stands you off a chair, as off the card table's
   // AUDIT LIVED1b K1: DFU's popup guard - AUDIT C&C N2/H1: in both lanes (world.js onExhaustedExterior's twin says why)
   let _exhaustedBox = null;
   const exhaustedShowing = () => !!_exhaustedBox && !_exhaustedBox.done && interiorWindows.containsWindow(_exhaustedBox);
@@ -1724,6 +1767,7 @@ export function createWorldModes(host) {
     // dep is required so a missing one is a reason, never a wrong place.
     // MW-D10: rule 54's neck pitch; MW-D15: rule 32(a)'s sneak sink.
     camera: () => ({ pos: player.eyeAt(), yaw: cam.yaw, pitch: cam.pitch, sneaking: !!player.isSneaking, feet: player.pos, climbing: !!(player.climb?.isClimbing || player.mantling || player.onWall),   // HT1
+      seat: chairSeat ? { feet: chairSeat.feet, yaw: chairSeat.yaw, top: chairSeat.top } : null,   // SIT1: on a chair, the body seated (player/seatPose.js through the climb rig - the card seat's pose)
       bob: [0, player.bobOffset ? player.bobOffset[1] : 0],   // IG1: the bob's vertical feeds the first-person offset
       move: motionBagOf(player),   // MW-D26: the movement-settings vector, the reference's own selection source; MW-D39 added the jump-state inputs; WW2: the one bag (a partial copy left the bob's idle gate unsent)
       climb: climbRigInput(player, cam.yaw) }),   // CLIMB6: the climb's snapshot - the body's limbs on the stone (player/climbPose.js)
@@ -2374,7 +2418,7 @@ export function createWorldModes(host) {
   /** ARENA-FIX 2: A STOOD PERSON'S OFFICE - the arena gate's people (world/arenaCity.js arenaGatePersonName: "The Herald
    *  of the Arena", "Red Banner Recruiter", ...) and the undercroft's (the Pit Master, the Keeper of the Hall), or null:
    *  the plaque, the Info click and the talk door ask it before StaticNPC.DisplayName, so the three never disagree. */
-  const officeName = (pn) => arenaGatePersonName(pn) ?? (pn?.arenaRole ? ARENA_TEXT.undercroft.names[pn.arenaRole] ?? null : null);   // ARENA-FIX 4: the undercroft's people with an office
+  const officeName = (pn) => (pn?.lamp ? LAMP_TEXT.name() : null) ?? arenaGatePersonName(pn) ?? (pn?.arenaRole ? ARENA_TEXT.undercroft.names[pn.arenaRole] ?? null : null);   // ARENA-FIX 4: the undercroft's people with an office; LAMP-KEEPER II: a keeper standing as the lamp is the Lamp
   /** FIELD BUGS 2026-10-11g QUEST-NAME ("Quest NPCs are inactive": "not being able to interact with the quest NPCs"): a
    *  quest PERSON stand named on World Tooltips' plaque as the room's own people are. The mod asks its StaticNPC arm
    *  (Modded_HUDTooltipWindow.cs:325-393, `ret = npc.DisplayName`) before its quest-resource arm, and AddQuestNPC gives a
@@ -3123,6 +3167,10 @@ export function createWorldModes(host) {
       if (bd.hidden) return;   // BASE-HIDE
       targets.push({ key: `bed:${i}`, aabb: worldAabb(bd.cpu.positions, bd.matrix), distance: RAY_DISTANCE, reach: DEFAULT_ACTIVATION_DISTANCE, surface: true });   // WHERE-ROBES: the mattress, not the air under the headboard
     });
+    if (!cardSeat && !chairSeat) interiorCtx.chairs?.forEach((ch, i) => {   // SIT1: a chair, a bench, a throne - none while seated
+      if (ch.hidden) return;   // BASE-HIDE: taken out of the room
+      targets.push({ key: `chair:${i}`, aabb: worldAabb(ch.cpu.positions, ch.matrix), distance: RAY_DISTANCE, reach: DEFAULT_ACTIVATION_DISTANCE, surface: true });   // struck at its seat, as a bed is
+    });
     if (!cardSeat && inTavern()) interiorCtx.tables?.forEach((t, i) => {   // CARDS2: a tavern's card table, while it seats two
       if (cardSeatsOf(i).length) targets.push({ key: `cardtable:${i}`, aabb: t.aabb, distance: RAY_DISTANCE, reach: DEFAULT_ACTIVATION_DISTANCE, surface: true });   // struck at its top, as a bed is
     });
@@ -3226,6 +3274,7 @@ export function createWorldModes(host) {
     (key) => interiorTorches.hoverName?.(key) ?? null,   // HT1, through the mod's extension API
     (key) => interiorCamps.hoverName?.(key) ?? null,     // HEARTH1, likewise
     (key) => (typeof key === 'string' && key.startsWith('cardtable:') ? { title: 'Card table' } : null),   // CARDS2: the port's own family, ungated
+    (key) => (typeof key === 'string' && key.startsWith('chair:') ? { title: chairName(interiorCtx?.chairs?.[Number(key.split(':')[1])]) } : null),   // SIT1: the port's own, ungated
     // INTERIOR-BODIES: "<who> (dead)" for a body killed in this room -
     // `.cs:526`, the mod's own word, answered by the pool that STANDS
     // it exactly as both street hosts answer theirs. These sit with the
@@ -4125,6 +4174,7 @@ export function createWorldModes(host) {
     if ((gateRole === 'redRecruiter' || gateRole === 'blueRecruiter') && host.arenaRecruiter?.(gateRole)) return;
     if (gateRole === 'bookmaker' && host.arenaBookmaker?.()) return;   // ARENA3: the bookmaker's stall (scenes/arenaGate.js)
     // ARENA-FIX 4: THE FIGHTERS' HALL - the Pit Master offers the training pit, the Keeper of the Hall reads its wall
+    if (!info && pn?.lamp) { lampChoice(pn); return; }   // LAMP-KEEPER II: the lamp's own words, its shop, and its title
     if (!info && pn?.arenaRole === 'pitMaster') { pitMasterChoice(); return; }
     if (!info && pn?.arenaRole === 'hallKeeper' && host.arenaHall?.()) return;   // ARENA4b: online she reads the realm's wall (scenes/arenaGate.js hall)
     if (!info && pn?.arenaRole === 'hallKeeper') { townTalk?.showOverlay?.(new ActionTextBox(hallOfChampions(playerEntity.arenaLadder, playerEntity.name || 'You', rosterGrandChampions(playerEntity.arenaLeague, Math.floor(worldMinutes()))))); return; }   // ARENA3: and the banners' Grand Champions this save has seen
@@ -7085,7 +7135,7 @@ export function createWorldModes(host) {
     // the bench host stands none. The ray's distance, half a door's reach carried beside it.
     const graves = host.graveTargets?.() ?? [];
     graves.forEach((aabb, i) => targets.push({ key: `grave:${i}`, aabb, distance: RAY_DISTANCE, reach: SEARCH_REACH }));
-    // LEFAY1 (scenes/lefayMonumentHost.js): Gothway Garden's monument to Julian LeFay - both exterior hosts stand it
+    // LEFAY1 (scenes/lefayMonumentHost.js): the monument to Julian LeFay outside Privateer's Hold - both exterior hosts stand it
     // (their `monumentTargets`), its steps' box and its column's met at its stone, its reach a static NPC's beside the ray's
     for (const t of host.monumentTargets?.() ?? []) targets.push(t);
     // MERCHANT-YARDS (scenes/merchantYardsHost.js): every city's and town's Stable and Wagon Yard - the streaming host's
@@ -8438,6 +8488,12 @@ export function createWorldModes(host) {
           // tavern stands the card table's own prop - its one card table
           placeCardTable: isTavern(building?.buildingType ?? BUILDING_TYPES.None),
           // RR2: Roleplay & Realism's variant keepers and residents (RoleplayRealism.cs:775-932) - the decision per person, with StaticNPC's own name seed and the location's climate
+          // LAMP-KEEPER II (systems/lampKeeper.js): a shop's keeper standing as the lamp today - the town, the building, the
+          // person and the day, one answer for every client in the room
+          lampPerson: (pn) => isLampKeeper(pn, {
+            buildingType: building?.buildingType ?? -1, buildingKey: building?.buildingKey ?? 0,
+            mapId: hit.dfLocation?.mapTableData?.mapId ?? 0, day: Math.floor(worldMinutes() / MINUTES_PER_DAY),
+          }),
           variantPerson: (pn) => rrVariantPerson(pn, {
             buildingType: building?.buildingType ?? -1, quality: building?.quality ?? 0,
             nameSeed: staticNpcData(pn, { ...(questSceneCtx?.() ?? {}), buildingKey: building?.buildingKey ?? 0 }).nameSeed,
@@ -8483,6 +8539,7 @@ export function createWorldModes(host) {
       // AUDIT 68 S23-failed-entry-stale-building: the identity and the
       // three PlayerActivate.cs:1120-1122 latches, committed with the
       // context and not before it.
+      standFromChair();   // SIT1: nor on a chair
       standFromCardTable();   // CARDS2b (AUDIT CARDS B1): a new room seats nobody yet - CARDS4: and an old table's chips come home
       interiorBuilding = building;
       privateVisitRoom = restore?.privateRoom ?? null;
@@ -8608,6 +8665,7 @@ export function createWorldModes(host) {
 
   function tryExit({ pressCast = false, interact = false, actClick = false } = {}) {
     if (cardSeat) { standFromCardTable(); return true; }   // CARDS2: seated, the press stands you up and does nothing else
+    if (chairSeat) { standFromChair(); return true; }   // SIT1: and off a chair
     const eye = player.eye;
     const dir = eyeDir();
     // FIELD BUGS 2026-10-07 INDOOR-SKIN: a profession node under the look takes the press first - a body of this
@@ -8749,6 +8807,10 @@ export function createWorldModes(host) {
       }
       if (key.startsWith('cardtable:')) {
         sitAtCardTable(Number(key.split(':')[1]));   // CARDS2
+        return true;
+      }
+      if (key.startsWith('chair:')) {
+        sitOnChair(Number(key.split(':')[1]));   // SIT1
         return true;
       }
       if (key.startsWith('bed:')) {
@@ -8973,6 +9035,7 @@ export function createWorldModes(host) {
     interiorCamps.destroyAll(); interiorHearths.length = 0;   // HEARTH1: this room's fires are this room's - one building's hearth is not the next one's
     interiorCtx = null;
     interiorBuilding = null;   // E2: the identity + overlay leave with the interior
+    standFromChair();   // SIT1: nor on a chair
     standFromCardTable();   // CARDS2: and nobody stays seated in a room they left - CARDS4: the table cashed out
     interiorCabin = null;
     interiorHome = null;   // HOME1: and the visit's home with it
@@ -9151,6 +9214,26 @@ export function createWorldModes(host) {
     return _pitStage;
   }
   /** ARENA-FIX 4: THE PIT MASTER'S CHOICE - spar (a practice bout on the pit's stage, the host's), or leave. */
+  // LAMP-KEEPER II (systems/lampKeeper.js; Mac: "Anybody that interacts with the lamp model should earn the 'I Love
+  // Lamp' title. Implement exclusive dialogue and ensure there is a loot popup for obtaining the title"): A PRESS ON THE
+  // LAMP - its own words for the day, Trade (the keeper's own shop, as the bug's click opened it) or Leave; and the
+  // title asked of the account service at every press until it answers (the host's `lampClaim` - none is no account),
+  // its grant said and raised as a loot banner.
+  const lampTitle = createLampTitle({
+    claim: () => host.lampClaim?.() ?? Promise.resolve({ ok: false, error: 'no-session' }),
+    say: (l) => say(l),
+    announce: (kind, key) => announceHonour(kind, key),
+  });
+  function lampChoice(pn) {
+    const lines = lampLines(Math.floor(worldMinutes() / MINUTES_PER_DAY));
+    const options = [
+      { code: 'KeyT', label: `T - ${LAMP_TEXT.trade()}`, action: () => { Promise.resolve(townTalk?.ensureFactions?.()).then(() => openStaticNpc(pn)).catch(() => {}); } },
+      { code: 'KeyL', label: `L - ${LAMP_TEXT.leave()}`, action: () => {} },
+      { code: 'Escape', label: undefined, action: () => {} },   // the key alone, as the Herald's
+    ];
+    townTalk?.showOverlay?.(new ChoiceWindow({ lines, options }));
+    void lampTitle.speak();
+  }
   function pitMasterChoice() {
     const U = ARENA_TEXT.undercroft;
     const hurt = (playerEntity.health ?? 0) < 0.5 * Math.max(1, playerEntity.maxHealth ?? 1);
@@ -10289,6 +10372,7 @@ export function createWorldModes(host) {
     // applyFallLanding charged the damage, a swimmer kept sinking, and
     // the crouch edge still toggled. dungeon.js:"${JSON.stringify(ctx.startMarker)}," is this same gate
     // ("no movers, no motor").
+    if (chairSeat && !overlayHeld && leavesSeat(mv, jumpHeld || !!player.toggleAutorun || swingKey)) standFromChair();   // SIT1: whatever stands you up from the cards stands you up from a chair
     if (cardSeat && !overlayHeld && leavesSeat(mv, jumpHeld || !!player.toggleAutorun || swingKey)) standFromCardTable();   // CARDS2: a step, a jump, the stick or the autorun latch stands you up - so a seated body has nothing to walk with
     playerBlowFrame({ motor: player, entity: playerEntity, shake: (k) => betterAmbience.weaponKick(k), hurt: (n) => { hurtPlayer(playerEntity, n); flashPlayerDamage(n); surfacePlayer(); } });   // TELL6e: a landing's push, rattle, knockdown and bleed; AUDIT TELL L6: under a window too, as the street's hosts run it - a building's foes keep their clock there (WINFOE1), and a bleed its ticks, never all at once on the close
     if (!overlayHeld) {
@@ -10499,6 +10583,7 @@ export function createWorldModes(host) {
     if (interiorOverlay instanceof DeathScreen) interiorOverlay.tiltView(cam);
     if (mode === 'dungeon') dungeonCtx?.deathTilt?.(cam);
     if (mode === 'interior') decorTool.cameraOverride(cam);   // DECOR1d: the free camera's eye, while a piece is placed
+    if (mode === 'interior' && chairSeat && !(interiorOverlay instanceof DeathScreen)) { cam.pos = chairSeat.eye.slice(); player.drawFeet = chairSeat.feet; player.drawYaw = chairSeat.yaw; }   // SIT1: the seated eye, and the body drawn on the chair
     if (mode === 'interior' && cardSeat && !(interiorOverlay instanceof DeathScreen)) cam.pos = cardSeat.eye.slice();   // CARDS2: the seated eye - never over a death's sink and tilt (AUDIT CARDS B2): the dead fall from the body's own eye
     host.climbFeel?.frame(dt, overlayHeld);   // CLIMB4: the climb's camera, off this frame's motor (the world host's handle - one body) - AUDIT CLIMB-ARC F2/F4: held while the motor is
     // A8 - POINTER PARITY, THE FLAG AT THIS LINE RETIRED. Mouse0 is
@@ -10594,7 +10679,7 @@ export function createWorldModes(host) {
     // MW-D25: the modal hosts ride the same Morrowind camera machine as
     // the walk hosts - one eye law, this context's own collider.
     const mwv = mwViewFrame({
-      fpEye: cam.pos, feet: player.feetAt(), yaw: cam.yaw, pitch: cam.pitch,
+      fpEye: cam.pos, feet: chairSeat ? chairSeat.feet : player.feetAt(), yaw: cam.yaw, pitch: cam.pitch,   // SIT1: third person looks round the chair
       dt, riding: !!player.riding || !!cardSeat,   // AUDIT CARDS-2 L11: a seat holds the head as the saddle does; AUDIT-EOTB F3/F4: the host's own clock, and the one state only it has
       raycast: (o, d, m) => player.collider?.raycast?.(o, d, m) ?? null,
       spherecast: (o, r, d, m) => { const h = player.collider?.sphereCast?.(o, r, d, m)?.dist; return Number.isFinite(h) ? h : null; },   // MAC-A: castSphere's seam beside the ray - the camera's two obstacle guards are sphere casts (camera.cpp:186, :200)
@@ -11877,6 +11962,7 @@ export function createWorldModes(host) {
     // (UserInterfaceManager.cs:179-185), so the click never reaches
     // WeaponManager - and here it reached interceptAttack first, so a
     // readied spell was CAST by a right-click meant to remove an item.
+    if (chairSeat && isSwingButton(e.button) && !modalWindowUp()) { standFromChair(); return; }   // SIT1: the swing stands you up, and swings nothing
     if (cardSeat && isSwingButton(e.button) && !modalWindowUp()) { standFromCardTable(); return; }   // CARDS2b (AUDIT CARDS B5): seated, the swing stands you up - a blow from the capsule's eye, not the seat's, is no blow
     if (isSwingButton(e.button) && !modalWindowUp()) modalAttackSink()?.(0, 0, true);
   });
@@ -12441,6 +12527,7 @@ export function createWorldModes(host) {
     if (e.profActEnded) return;
     // CARDS2b: seated at a card table with no window up, Escape stands you up and is spent there - as a gathering act's
     // end spends it above - so the pause menu opens on the next one, standing
+    if (mode === 'interior' && chairSeat && actionOf(e, keys) === 'Escape' && !interiorKeyCtx.uiOverlayActive) { standFromChair(); e.preventDefault(); return; }   // SIT1: and off a chair
     if (mode === 'interior' && cardSeat && actionOf(e, keys) === 'Escape' && !interiorKeyCtx.uiOverlayActive) { standFromCardTable(); e.preventDefault(); return; }
     // U43: THE ONE DISPATCH. GameManager.Update (:509-557) is a single
     // flat chain with no scene gate at all - the window a key opens
@@ -12750,7 +12837,7 @@ export function createWorldModes(host) {
   // hudText. No unregister: the mode machine lives as long as the page.
   registerPresenter({ mount: (win) => showQuestOverlay(win), priority: 10 });
   registerPresenter({ holds: (win) => interiorWindows.containsWindow(win) });   // TUT1 audit: whether this host's stack still holds a window (systems/notify.js windowHeld) - a registration of its own, no `mount`, so the presenter above keeps its shape (the dungeon's answers for its own)
-  return {
+  const modesApi = {
     get mode() { return mode; },
     /**
      * LW11 (bible/06-Systems/Living-World-II.md): A CARAVAN'S COUNTER ON THE ROAD - the trade window on a shelf of the
@@ -13367,6 +13454,7 @@ export function createWorldModes(host) {
         // the stack holds (ROAD-B B1).
         interiorWindows.reconcile(interiorOverlay);
         interiorWindows.clear((w) => w.dispose?.());
+        standFromChair();   // SIT1: off a chair too
         standFromCardTable({ cashOut: !load });   // CARDS2b (AUDIT CARDS B1): the forced road out - a load, a quest teleport, Recall, a respawn, a sail - empties the seat as the door does; CARDS4: and cashes the table out
         interiorCtx = null; interiorBuilding = null; interiorCabin = null; interiorHome = null; interiorSeatHall = null; interiorOverlay = null; exteriorDoor = null; _seatHallVisit = false;   // HOME1: the visit's home with the identity
         _insideTavern = false;   // ROAD-B B4: PlayerEnterExit.cs:874, the same latch on the teleport/load arm
@@ -13981,4 +14069,9 @@ export function createWorldModes(host) {
     frame,
     installShotProbes,
   };
+  // SIT1: A CHAIR'S SEAT ON THE WIRE - the card seat's pose answers first (CARDS2b's own door, as it was), and a chair's
+  // seat where it has none, so others see this body seated on the chair (world.js reads `modes.seatPose`)
+  const cardSeatPose = modesApi.seatPose;
+  modesApi.seatPose = () => cardSeatPose() ?? (mode === 'interior' && chairSeat ? { feet: chairSeat.feet, yaw: chairSeat.yaw, st: seatTopByte(chairSeat.top) } : null);
+  return modesApi;
 }

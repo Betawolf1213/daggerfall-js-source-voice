@@ -223,7 +223,7 @@ export function wdunEnter(st, acct, h, now) {
 }
 /** A heartbeat from inside (one the hub never let in is ignored). */
 export function wdunHere(st, acct, h, now) { if (st.inside[h]?.[acct] != null) { st.inside[h][acct] = now; return true; } return false; }
-/** `acct` left hall `h` (walked out, or fell): its hour's lock starts; the hall, if now empty, starts its reset clock. */
+/** `acct` left hall `h` (walked out, or fell): its half-hour lock starts; the hall, if now empty, starts its reset clock. */
 export function wdunLeave(st, acct, h, now) {
   const halls = (st.locks[acct] ??= {});
   halls[h] = now + WDUN_LOCK_MS;

@@ -303,7 +303,7 @@ import { setHoldingsProvider, stableProviderFor } from '../ui/holdingsPages.js';
 import { fleetBook, fleetShip, titleDeed, knowShip, retitle, setShipPort, forgetShip, fleetSaveSlot, FLEET_SAVE_VENDOR } from '../systems/fleet.js';   // HOLDINGS: the Fleet's ledger and its book of titles
 import { createFleetHost } from './fleetHost.js';   // HOLDINGS: the Fleet page's host half
 import { createQuayPool } from './quayPool.js';   // QUAYS: a harbour's quays, stood off its berths, and the gangways
-import { createLefayMonument } from './lefayMonumentHost.js';   // LEFAY1: the monument to Julian LeFay in Gothway Garden, and the flowers laid at it
+import { createLefayMonument } from './lefayMonumentHost.js';   // LEFAY1: the monument to Julian LeFay outside Privateer's Hold (HOLD-MONUMENT), and the flowers laid at it
 import { isLefayTown, lefaySpotOf, carveLefay } from '../world/lefayMonument.js';   // LEFAY1: its town, its spot off the town's navgrid, and the people's navgrid carved round it
 import { createMerchantYards } from './merchantYardsHost.js';   // MERCHANT-YARDS: every city's and town's Stable and Wagon Yard, and their trade
 import { createPortHost, PORT_TEXT, stairRefusal, stairFeetY } from './portHost.js';   // SHIPYARDS: every port town's shipyard and lighthouse, their people, their press and the lamp - and the stair's refusals
@@ -404,6 +404,7 @@ import { playSerpentSound, SERPENT_VOICE_ROWS } from '../systems/serpentSounds.j
 import { serpentSpoilsList, serpentSpoilsDay, SERPENT_SPOILS_KEYS, SERPENT_SPOILS_TEXT, SERPENT_SPOILS_RECORDS_MAX } from '../systems/serpentSpoils.js';   // SERPENT1: the Old Coil's hoard
 import { createSerpentClaims } from '../net/serpentClaims.js';   // SERPENT1: its receipts carried to the account service
 import { createSdClaims } from '../net/sdClaims.js';   // SD9b: the Hour's receipts carried to the account service
+import { announceHonour } from '../ui/lootBanner.js';   // HONOUR-BANNER: a title or an aura granted, as a loot banner
 import { readSdReceipt } from '../net/sdReceipt.js';   // SD9e: my Hour receipt, read for its spoils
 import { SD_SPOILS_KEYS, SD_SPOILS_RECORDS_MAX, SD_SPOILS_TEXT, sdSpoilsDay, sdSpoilsSlot, sdSpoilsList } from '../systems/sdSpoils.js';   // SD9e: the Brass Remnant's spoils
 import { createSdSpoils, clearOfPillars } from './sdSpoils.js';   // SD9e: thrown from where it fell; AUDIT SD: the way home clear of the arena's pillars
@@ -751,7 +752,7 @@ import { createSeatLock, SEAT_NOTICE, SEAT_MID_TEXT, PLAY_HERE_LABEL } from '../
 import { readAccount, buyInsignia, equipTitle, equipAura, adoptIdentity as adoptSessionIdentity } from '../net/accountClient.js';   // WB9g: the Broker's insignia - the account's wardrobe, its sale and its wearing, and my own screen's word of it
 import { ownAura, ownNameAsAt } from '../systems/ownGlyphs.js';   // WB9g: the aura at my own feet - the service's last word, kept on the stored session; NAME-AS: and when this device last chose the name its player wears
 import { INSIGNIA, insigniaRefusal } from '../net/insignia.js';   // WB9g
-import { accountTokenMinter, storedSession, muteAccount, serviceBase, accountRefusalText, accountDuels, accountWild, accountRenown, accountRoll, accountHomes, accountDecor, accountGuilds, accountGates, accountMarks, accountCards, accountBoard, accountProf, accountRaids, accountMarket, accountWrits, accountSeats, accountSerpents, accountSds, nameWhyText } from '../net/accountClient.js';   // NAME-AS: nameWhyText, why my character's name stood aside   // ACC1d: the hello's signed word, minted per connection from the account session this device holds   // ACC4's beat knocks through the tab's heartbeat (SCALE4c), not from here
+import { accountTokenMinter, storedSession, muteAccount, serviceBase, accountRefusalText, accountDuels, accountWild, accountRenown, accountRoll, accountHomes, accountDecor, accountGuilds, accountGates, accountMarks, accountCards, accountBoard, accountProf, accountRaids, accountMarket, accountWrits, accountSeats, accountSerpents, accountSds, accountLamp, nameWhyText } from '../net/accountClient.js';   // NAME-AS: nameWhyText, why my character's name stood aside   // ACC1d: the hello's signed word, minted per connection from the account session this device holds   // ACC4's beat knocks through the tab's heartbeat (SCALE4c), not from here
 import { parseModCommand, runModCommand, mutedText, mutedNotices } from '../net/moderation.js';   // MOD1: /mute and /unmute, and the line a muted player reads
 import { createHeartbeat, whileLive } from '../net/heartbeat.js';   // SCALE4c: the beat, the letterbox and the town's board in one request
 import { startPlayClock } from '../net/playClock.js';   // ACC4: time played, knocked from here and measured by the account service's clock
@@ -5872,7 +5873,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     let arenaOrigin = null;   // ARENA2: the colosseum's block's origin (pixel-local) - the city floor's frame
     let population = null;   // T2 towns: this pixel's wandering pool
     let locOrigin = null;    // the location origin, pixel-local
-    let lefaySpot = null;    // LEFAY1: Gothway Garden's monument - its spot in the location frame (world/lefayMonument.js lefaySpot), null in any other town
+    let lefaySpot = null;    // LEFAY1: the monument - its spot in the location frame (world/lefayMonument.js lefaySpot), null anywhere but outside Privateer's Hold (HOLD-MONUMENT)
     let yardSites = null;    // MERCHANT-YARDS: a city's or a town's Stable and Wagon Yard - their sites in the location frame, null in any other place
     let portSites = null;    // SHIPYARDS: a port town's shipyard and lighthouse - their sites in the location frame, null in any other place
     let personBatches = null;
@@ -5893,7 +5894,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       setLastLocationKeyTo(dfLocation.regionIndex, dfLocation.locationIndex ?? 0);   // AUDIT-RR F32: WorldDataVariants' last key is THIS location's before its blocks are read - DFU reads the DFLocation right before RMBLayout (MapsFile.cs:999 sets it); the boot index here read every location and left the key on the last
       const loc = layoutLocation(dfLocation, maps, blocks, { enhanced: isEnhanced(), windmills: windmillsOn() });   // WM3: the pack's own switch
       locBlocks = loc.blocks;
-      if (isLefayTown(dfLocation)) lefaySpot = lefaySpotOf(loc);   // LEFAY1: the open ground nearest the town's middle, off its own navgrid
+      if (isLefayTown(dfLocation)) lefaySpot = lefaySpotOf(loc, { camp: { block: PRIVATEERS_HOLD_BLOCK, models: HOLD_MODELS } });   // HOLD-MONUMENT: the open ground nearest the Hold's start marker, off its own navgrid, clear of WoD's camp on or off
       // MERCHANT-YARDS: the town's open ground, clear of its buildings, roads and lots; SHIPYARDS: and a port town's seaward
       // ground, on what the yards left - one pass (AUDIT SHIPYARDS L3-3: the yards' and the port's each asked it whole)
       const yardTown = isYardTown(dfLocation), portTown = isPortTown(dfLocation, portByData(dfLocation));
@@ -6740,7 +6741,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       _bed: bed,   // WATER-NEXT 2: the bed, for the cap's re-index (dwWaterSurface) and its re-carve (dwRecarve)
       groundNormals: labGrass && stride === 1 ? normals : null,   // GRASS-LIT2: the near grid's vertex normals - the grass reads its slope off them; AUDIT B1: only where there is grass (200 KB a pixel)
       population, locOrigin, personBatches,   // T2 towns
-      lefay: lefaySpot,   // LEFAY1: the monument's spot, location frame (locOrigin + its x, z) - null off Gothway Garden
+      lefay: lefaySpot,   // LEFAY1: the monument's spot, location frame (locOrigin + its x, z) - null off Privateer's Hold (HOLD-MONUMENT)
       merchantYards: yardSites,   // MERCHANT-YARDS: the Stable's and the Wagon Yard's sites, location frame - null off a city or a town
       portSites,   // SHIPYARDS: the shipyard's and the lighthouse's sites, location frame - null off a port town
       wardenTown: dfLocation && isWardenTown(dfLocation.mapTableData?.locationType) ? (dfLocation.mapTableData?.mapId ?? 0) >>> 0 : null,   // WARDEN1: a city's, a hamlet's or a village's map id - its watch throws a wagon parked too long on its road, or past its fourth
@@ -14835,7 +14836,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     doorGeneration += 1;   // WORLD-HOVER: the origin was re-anchored, so every door's WORLD matrix moved with it
     bountyFarms?.destroyAll();   // BOUNTY-FARM: the frame moves under it - it stands again from the bounty, in the new one
     quays?.destroyAll();   // QUAYS: and the quays - stood again off the harbours found in the new one
-    lefay?.destroyAll();   // LEFAY1: and the monument - stood again the next frame that finds Gothway Garden built
+    lefay?.destroyAll();   // LEFAY1: and the monument - stood again the next frame that finds Privateer's Hold built
     merchantYards?.destroyAll();   // MERCHANT-YARDS: and the yards - stood again the next frame, in the new frame
     portHost?.destroyAll();   // SHIPYARDS: and the shipyards and lighthouses, the same
     wardenShows?.destroyAll();   // WARDEN1: and a throw in flight - its team set down where it landed
@@ -23567,7 +23568,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** May I fight in the zone now: a relay that carries it, standing in the zone, outdoors (the fights are the open
    *  country's - a building's and a dungeon's foes are the zone's danger there), alive. */
   // ── PVPDUNGEONS: THE ZONE'S OWN HALLS (systems/wildDungeons.js picks them; the hub keeps them - net/wildLaw.js) ──
-  // The day is the RELAY's (`st`), so every client stands the same halls; the hour's lock, who is inside, the empty hall's
+  // The day is the RELAY's (`st`), so every client stands the same halls; the half-hour lock, who is inside, the empty hall's
   // reset and the crows are the hub's word. With no hub to ask (an older relay, a lost socket) the day falls back to this
   // machine's clock and the lock to this session's own memory - the halls still stand, the rules still hold for me.
   let _wdunLink = null, _wdunHiAt = 0, _wdunHeard = false;   // (_wdunSkew, the hub's clock less mine, is declared above the pixel builder - BOOT-TDZ2)
@@ -23903,14 +23904,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const wildDungeonIsOpenHere = () => !!wildHallHere();
   const wdKey = () => { const p = playerTravelPixel(); return `${p.x},${p.y}`; };
   /** May I go down into the dungeon at this door. In the zone only the day's halls open, and the hub says whether my
-   *  hour's lock still holds (lifted while my own remains lie inside); with no hub, this session's own lock. */
+   *  half-hour lock still holds (lifted while my own remains lie inside); with no hub, this session's own lock. */
   const wildDungeonGate = async (hit, fromLoad = false) => {
     const mask = wildMapMask();
     if (!mask || fromLoad) return true;
     const p = playerTravelPixel();
     if (!wildInside(mask, p.x, p.y)) return true;
     const hall = wildHallHere();
-    // TESTBUILD: god mode walks into a sealed door - but a HALL keeps its hour's lock for god mode too (HALL-LOCK, the
+    // TESTBUILD: god mode walks into a sealed door - but a HALL keeps its half-hour lock for god mode too (HALL-LOCK, the
     // owner: "i can still leave and reenter the dungeon as much as i want in the zone" - god mode skipped the whole gate,
     // so no hall was ever marked as entered, and nothing locked behind it)
     if (!hall) {
@@ -23942,7 +23943,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     _wdunInside = { h: hall.key, hereAt: Date.now() };
     return true;
   };
-  /** I left the hall I stood in (walked out, unstuck, fell): the hub told, my hour's lock started here too. */
+  /** I left the hall I stood in (walked out, unstuck, fell): the hub told, my half-hour lock started here too. */
   const wdunLeft = (died = false) => {
     const h = _wdunInside?.h;
     if (!h) return;
@@ -24858,12 +24859,16 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   /** SD9b: THE HOUR'S RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/sdClaims.js) - each Brass Remnant's fall
    *  the relay signed for me, kept on the device until the service has counted it (the gate's own carrier, its store). */
   const _accountSds = accountSds({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() });
+  /** LAMP-KEEPER II: I Love Lamp, asked of the account service at a press on a lamp keeper (worldModes.js lampChoice) -
+   *  online alone; offline the host hands none, and the lamp says the title is an account's. */
+  const _accountLamp = params.has('online') ? accountLamp({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }) : null;
   const sdClaims = params.has('online') ? createSdClaims({
     claim: _accountSds.claim,
     me: _accountSds.me,
     nowS: relayNowS,
     store: _spoilsStore,
     say: (text) => chatNotice(text),
+    announce: (kind, key) => announceHonour(kind, key),   // HONOUR-BANNER (2026-10-14): Hourbreaker and The Turning Hour as a loot popup, beside the line
   }) : null;
   // SILVER-FINDS (bible/06-Systems/Professions-Arc.md 10.5): A LOOT FIND - every host's loot door rolls its container once
   // (systems/silverFinds.js: a body, a treasure pile, a search's find) and a find asks the marks book, whose service's
@@ -26199,7 +26204,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     open: openBroker,
     gone: () => closeBrokerDoor(),   // midnight took her from under her open window: it is shut, and she says so
   }) : null;
-  // LEFAY1: THE MONUMENT TO JULIAN LEFAY (scenes/lefayMonumentHost.js) - in the middle of Gothway Garden, where its
+  // LEFAY1: THE MONUMENT TO JULIAN LEFAY (scenes/lefayMonumentHost.js) - outside Privateer's Hold (HOLD-MONUMENT), where its
   // pixel's build found open ground (`p.lefay`, the location frame), carried by the live floating-origin translation;
   // the flowers a press throws there laid in the character's own pile (systems/save.js carries it)
   const _lefayT = [0, 0, 0], _lefaySite = [0, 0, 0];
@@ -30066,7 +30071,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     raiseFallen: (f) => raiseFallenDoor(f),
     plaquePeerAct: (eye, dir) => plaquePeerAct(eye ?? cam.pos, dir ?? socialFwd()),   // ACT-MENU: the building's and the dungeon's press on a player the plaque lit, on the press's own ray (AUDIT DISC7 A9)
     pointerSurfaceUp: () => pointerSurfaces.size > 0,   // AUDIT DROPS E1: the plaque comes down under the F-menu, the chat and the friends panel indoors and underground too (AUDIT-WH2 L3-F3's law, the street's own term)
-    wildDungeonGate: (hit, fromLoad) => wildDungeonGate(hit, fromLoad),   // PVPDUNGEONS: only the day's halls open, an hour's lock after leaving one
+    wildDungeonGate: (hit, fromLoad) => wildDungeonGate(hit, fromLoad),   // PVPDUNGEONS: only the day's halls open, a half-hour lock after leaving one
     wildDungeonElite: () => wildDungeonIsOpenHere(),   // PVPDUNGEONS: every open hall is an elite dungeon
     wildHallRing: () => wildHallHere()?.ring ?? 0,   // PVPDUNGEONS: its tier
     wildHallEpoch: () => { const h = wildHallHere(); return h ? (_wdunEpoch.get(h.key) ?? 0) : 0; },   // PVPDUNGEONS: its reset's epoch
@@ -30662,6 +30667,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       return out;
     },
     activateGrave: (g, mode) => activateGrave(g, mode),   // SEARCH1
+    lampClaim: _accountLamp ? () => _accountLamp.claim() : undefined,   // LAMP-KEEPER II: a lamp keeper spoken to - I Love Lamp, the account's
     monumentTargets: () => lefay?.targets() ?? [],   // LEFAY1: the monument to Julian LeFay, in the street's one ray
     activateMonument: (key, mode, verb) => lefay?.activate(key, mode, verb) ?? false,   // LEFAY1: read it, or throw it a flower
     yardTargets: () => merchantYards?.targets() ?? [],   // MERCHANT-YARDS: the yards' keepers, signs, horses and wagons on show, in the street's one ray
@@ -34853,7 +34859,7 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     try { if (_mode() === 'exterior' && !_loading) harbourBook.step(now / 1000); } catch (e) { console.warn('[harbours] book', e?.message ?? e); }   // HARBOUR-BOOK: the port near the player sounded, before its quays stand
     if (_mode() === 'exterior') camps.ride(dt);   // DECK-CAMP: the camps on a boat's deck posed off her - after she moved, before the lights (a fire's) and the world pass
     try { quays?.frame(); } catch (e) { console.warn('[quays] pool', e?.message ?? e); }   // QUAYS: the harbours' quays stood or taken down, before the lights (their lanterns) and the world pass
-    try { lefay?.frame(); } catch (e) { console.warn('[lefay] monument', e?.message ?? e); }   // LEFAY1: the monument stood where Gothway Garden is built, its flowers in flight and laid
+    try { lefay?.frame(); } catch (e) { console.warn('[lefay] monument', e?.message ?? e); }   // LEFAY1: the monument stood where Privateer's Hold is built, its flowers in flight and laid
     try { merchantYards?.frame(); } catch (e) { console.warn('[yards] the yards', e?.message ?? e); }   // MERCHANT-YARDS: each town's Stable and Wagon Yard stood where it is built
     portFrame();   // SHIPYARDS: each port town's shipyard and lighthouse stood where it is built, before the lights (its lamp)
     // Lanterns on 17:00-08:00, flickering verbatim; pixel-local lights

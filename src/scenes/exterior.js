@@ -165,7 +165,7 @@ import { getNameBankOfRegion } from '../characters/nameHelper.js';   // AUDIT 23
 import { createHitEffects } from './hitEffects.js';
 import { createTownScratch, createPersonTextureKeys } from './townScratch.js';   // PERF-TOWN1: the town loop's per-frame seats, and the memoised texture key
 import { createDroppedTorches } from './droppedTorches.js';
-import { createLefayMonument } from './lefayMonumentHost.js'; import { isLefayTown, lefaySpotOf, carveLefay } from '../world/lefayMonument.js';   // LEFAY1: the monument to Julian LeFay, when the city on the bench is Gothway Garden
+import { createLefayMonument } from './lefayMonumentHost.js'; import { isLefayTown, lefaySpotOf, carveLefay } from '../world/lefayMonument.js';   // LEFAY1: the monument to Julian LeFay, when the place on the bench is Privateer's Hold (HOLD-MONUMENT)
 import { createCamps } from './camps.js'; import { PORTAL_TEXT } from '../systems/portalStone.js';   // SURV3: the camps this host stands; PORTAL1: the street's own refusal
 import { drinkAtSource, isWaterSourceFlat, isDrySourceFlat, WATER_SOURCE_MODELS, DRY_SOURCE_TEXT } from '../systems/survival/items.js';   // SURV3: the mod's water sources
 import { survivalOn } from '../systems/survival/switch.js';   // HT1: Handheld Torches' dropped lights, thrown torches and burning foes   // AUDIT 24 (wave 39): EnemyBlood.ShowBloodSplash
@@ -702,7 +702,7 @@ export async function bootExterior(canvas, renderer, params, status) {
   const staticBuildings = [];
   const animalAmbience = createAnimalAmbience(audio, () => ambientAnimals);
   const cityNav = new CityNavigation(loc.width, loc.height);   // T1 towns
-  const lefaySpot = isLefayTown(dfLocation) ? lefaySpotOf(loc) : null;   // LEFAY1: world.js's spot - this host's frame is the location's own
+  const lefaySpot = isLefayTown(dfLocation) ? lefaySpotOf(loc, { camp: { block: PRIVATEERS_HOLD_BLOCK, models: HOLD_MODELS } }) : null;   // LEFAY1: world.js's spot - this host's frame is the location's own (HOLD-MONUMENT: outside Privateer's Hold)
   for (const b of loc.blocks) {
     const originMatrix = trs(b.originX, 0, b.originZ, 0, 0, 0);
     if (b.blockName === ARENA_BLOCK && isArenaCity(dfLocation)) arenaCityOrigin = [b.originX, 0, b.originZ];   // ARENA-FIX 12

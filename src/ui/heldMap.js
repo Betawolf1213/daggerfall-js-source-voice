@@ -1345,7 +1345,7 @@ export class HeldMapWindow {
         // and the zone's border alight while the pointer is on it - on the world map alone, never the zone's own
         const crows = this.deps.wildCrows?.();
         if (crows?.size) paintWildCrows(ctx, env.view, (this.deps.wildDungeons?.() ?? []).filter((h) => crows.has(h.key)), { t: this._clock, paperW: env.paperW, paperH: env.paperH });
-        const locked = this.deps.wildLocks?.();   // HALL-LOCK MARK: the halls my hour's lock still shuts, a padlock beside each
+        const locked = this.deps.wildLocks?.();   // HALL-LOCK MARK: the halls my half-hour lock still shuts, a padlock beside each
         if (locked?.size) paintWildLocks(ctx, env.view, (this.deps.wildDungeons?.() ?? []).filter((h) => locked.has(h.key)), { paperW: env.paperW, paperH: env.paperH });
         if (this._flamesUp()) { const fm = this.deps.wildMask?.(); const fi = fm ? wildInk(fm) : null; if (fi) paintWildFlames(ctx, env.view, fi, this._clock, { paperW: env.paperW, paperH: env.paperH }); }
         // WILD2: the rings' plaques over every mark, mine edged in gold

@@ -305,7 +305,7 @@ export function paintWildGiants(ctx, view, giants, { paperW = Infinity, paperH =
 }
 
 // HALL-LOCK MARK (2026-10-08, the owner: "It should also show locked dungeons for you with a tiny lock symbol next to it"):
-// a tiny padlock at the upper right of each hall whose hour's lock holds for ME - its shackle an arch, its body a dark
+// a tiny padlock at the upper right of each hall whose half-hour lock holds for ME - its shackle an arch, its body a dark
 // block with a light keyhole, a parchment halo round both so it reads over any ink. Paper pixels, the glyphs' own size.
 export function paintWildLocks(ctx, view, halls, { paperW = Infinity, paperH = Infinity } = {}) {
   if (!halls?.length || !view) return;

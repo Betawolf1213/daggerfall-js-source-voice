@@ -211,13 +211,13 @@ test('SD9b THE DEVICE\'S BOOK: a signed receipt the relay handed is kept (one a 
   const mine = await hour('acct-me-0001', 7, priv);
   const theirs = await hour('acct-them-0002', 7, priv);
   const bare = await hour('acct-me-0001', 8, null);
-  const said = [], asked = [];
+  const said = [], asked = [], popped = [];
   let answer = { ok: true, data: { recorded: true, slot: 7, title: true, aura: true, broken: 3 } };
   let me = 'acct-me-0001', ms = 0;
   const store = new Map();
   const book = createSdClaims({
     claim: async (r) => { asked.push(r); return answer; }, store: { get: (k) => store.get(k), set: (k, v) => store.set(k, v) },
-    nowS: () => T0, nowMs: () => ms, say: (t) => said.push(t), me: () => me,
+    nowS: () => T0, nowMs: () => ms, say: (t) => said.push(t), me: () => me, announce: (kind, key) => popped.push([kind, key]),
   });
   assert.equal(book.add(bare), false, 'unsigned: never kept');
   assert.equal(book.add(theirs), true);
@@ -226,6 +226,7 @@ test('SD9b THE DEVICE\'S BOOK: a signed receipt the relay handed is kept (one a 
   await book.flush();
   assert.deepEqual(asked, [mine]);
   assert.deepEqual(said, [SD_CLAIM_TEXT.recorded(3), SD_CLAIM_TEXT.title, SD_CLAIM_TEXT.aura]);
+  assert.deepEqual(popped, [['title', 'hourbreaker'], ['aura', 'turninghour']], 'HONOUR-BANNER: each grant its loot popup, beside its line');
   assert.deepEqual(store.get(SD_CLAIMS_KEY), [theirs], 'counted: let go');
   assert.equal(book.add(mine), false, 'settled this session: not again');
   // another account signs in: offered at once
@@ -233,6 +234,7 @@ test('SD9b THE DEVICE\'S BOOK: a signed receipt the relay handed is kept (one a 
   answer = { ok: true, data: { recorded: false, why: 'guest', broken: 0 } };
   assert.equal(book.tick(), true); await settle();
   assert.deepEqual([asked, said], [[theirs], [SD_CLAIM_TEXT.guest]]);
+  assert.equal(popped.length, 2, 'a guest\'s Hour pops nothing');
   assert.deepEqual(store.get(SD_CLAIMS_KEY), [theirs], 'a guest\'s kept');
   ms += 2000; assert.equal(book.tick(), false, 'not before the retry');
   ms += SD_CLAIM_RETRY_MS; asked.length = 0; said.length = 0;

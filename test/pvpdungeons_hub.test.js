@@ -30,14 +30,15 @@ test('PVPDUNGEONS wire: a hall is a pixel, its room a world room of its own lane
   assert.ok(!relaySupportsWdun('world175'));
 });
 
-test('PVPDUNGEONS law: a lock an hour, the way back while my remains lie there, the reset after twenty empty minutes, the crows', () => {
+test('PVPDUNGEONS law: a lock half an hour, the way back while my remains lie there, the reset after twenty empty minutes, the crows', () => {
+  assert.equal(WDUN_LOCK_MS, 30 * 60_000, 'HALL-LOCK-30: half an hour (Mac, 2026-10-14 - it was an hour)');
   const st = L.wdunEmpty(), t = 1e12;
   assert.equal(L.wdunEnter(st, 'A', '5,5', t).ok, true);
   L.wdunLeave(st, 'A', '5,5', t + 1000);
   const no = L.wdunEnter(st, 'A', '5,5', t + 2000);
   assert.equal(no.ok, false);
   assert.equal(no.left, WDUN_LOCK_MS - 1000);
-  assert.equal(L.wdunEnter(st, 'A', '5,5', t + 1000 + WDUN_LOCK_MS).ok, true, 'an hour on, open again');
+  assert.equal(L.wdunEnter(st, 'A', '5,5', t + 1000 + WDUN_LOCK_MS).ok, true, 'half an hour on, open again');
   L.wdunDie(st, 'B', '6,6', t, t + WILD_REMAINS_MS);
   assert.deepEqual(L.wdunCrows(st, t + 1), [['6,6', WILD_REMAINS_MS - 1]]);
   assert.equal(L.wdunEnter(st, 'B', '6,6', t + 60_000).ok, true, 'my remains there: my way back');
@@ -74,7 +75,7 @@ test('PVPDUNGEONS relay: the hub keeps the halls - day, locks, the reset wipes t
     assert.ok(validWdunOut(st), 'the client\'s door takes it');
     assert.equal(st.day, Math.floor(clock / WDUN_DAY_MS), 'the day is the relay\'s clock');
 
-    // a's way in and out: the hour's lock
+    // a's way in and out: the half-hour lock
     await wd(a, { k: 'in', h: '512,88' }); clock += 700;
     assert.deepEqual(got(a, 'ok').at(-1), { t: 'wdun', k: 'ok', h: '512,88', ep: 0 });
     await wd(a, { k: 'out', h: '512,88' }); clock += 700;
