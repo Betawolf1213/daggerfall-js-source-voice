@@ -92,14 +92,14 @@
     ]
   },
   {
-    "name": "GALLEON-glow-everywhere",
+    "name": "GALLEON-every-picture-a-cut-out",
     "file": "src/world/classicArt.js",
-    "old": "        if (glowRecs.includes(record)) glows.set(record, paneGlow(pic));",
-    "new": "        glows.set(record, paneGlow(pic));",
+    "old": "  return { entries, cut: (/** @type {number} */ record) => hasGlass(sources[record]) };",
+    "new": "  return { entries, cut: () => true };",
     "tests": [
       "test/galleon_model.test.js"
     ],
-    "why": "DF-ART (re-aimed to the stand-ins' glow): every picture of hers glowing by night"
+    "why": "DF-ART (re-aimed: her windows seen through, the glow gone): every picture of hers a cut-out"
   },
   {
     "name": "GALLEON-muzzle-inside",

@@ -10,8 +10,8 @@ import {
   WAGON_KINDS, WAGON_KIND_ORDER, SMALL_CART_KG, activeWagonItem, activeWagonKind, wagonKgFor, wagonKgLimitOf, wagonHitchOf,
   newWagonItem, wagonKindOf, isWagonItem, wagonKindCode, wagonKindOfCode, stableWagonName,
 } from '../src/systems/wagonKinds.js';
-import { WAGON_SOURCES, TEX, WAGON_ARCHIVE, BANDS, SIDE_Y0, SIDE_Y1, LEADED_WINDOW } from '../src/world/wagonArt.js';
-import { DF, classicPictures } from '../src/world/classicArt.js';
+import { WAGON_SOURCES, TEX, WAGON_ARCHIVE, BANDS, SIDE_Y0, SIDE_Y1 } from '../src/world/wagonArt.js';
+import { DF, classicPictures, SEE_THROUGH_WINDOW } from '../src/world/classicArt.js';
 import { setTextureDeriveContext } from '../src/systems/textureReplacement.js';
 import { fakeClassicRgba, texelOf, texel } from './classicArtFake.mjs';
 import {
@@ -75,7 +75,7 @@ test('WAGONS1 THE PICTURES (DF-ART, Mac: "use daggerfall textures instead of AI 
   assert.equal(Object.keys(WAGON_SOURCES).length, 21, 'the title\'s count (FINAL AUDIT: it said fifteen; PIN MOVED, WAGONS3: and the harness)');
   const sources = { floor: DF.deck, side: DF.hullPlanks, wheel: DF.wheel, iron: DF.iron, tilt: DF.sailcloth, harness: DF.leather };
   for (const [name, from] of Object.entries(sources)) assert.deepEqual(WAGON_SOURCES[TEX[name]], from, name);
-  for (const name of ['caravanSide', 'caravanFront', 'roomSide', 'roomFront']) assert.deepEqual(WAGON_SOURCES[TEX[name]].insets.map((i) => i.from), [LEADED_WINDOW.from], `${name}: Daggerfall's window in it`);
+  for (const name of ['caravanSide', 'caravanFront', 'roomSide', 'roomFront']) assert.deepEqual(WAGON_SOURCES[TEX[name]].insets.map((i) => i.from), [SEE_THROUGH_WINDOW.from], `${name}: Daggerfall's window in it`);
   for (const name of ['caravanRear', 'roomRear']) assert.deepEqual(WAGON_SOURCES[TEX[name]].insets.map((i) => i.from), [DF.door], `${name}: Daggerfall's door in it`);
   const art = await classicPictures(WAGON_SOURCES, fakeClassicRgba());
   assert.equal(art.length, 21);

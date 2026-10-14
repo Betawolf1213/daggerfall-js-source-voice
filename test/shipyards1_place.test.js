@@ -15,7 +15,7 @@ import { NAV_CELL, NAV_CELLS_PER_BLOCK } from '../src/world/cityNavigation.js';
 import { buildShipyardModel, SHIPYARD, shipsSignBox, hullBox, noticesBox, crewSignBox } from '../src/world/shipyardModel.js';
 import { buildLighthouseModel, LIGHTHOUSE, LIGHTHOUSE_POINTS, GALLERY_Y, guardBand, doorBox, hatchBox, lanternBox, towerR } from '../src/world/lighthouseModel.js';
 import { PORT_SOURCES, PORT_ARCHIVE, PORT_REC } from '../src/world/portArt.js';
-import { YARD_ARCHIVE, YARD_REC, YARD_SOURCES } from '../src/world/merchantYardArt.js';
+import { YARD_ARCHIVE, YARD_REC, YARD_SOURCES, wordCells, SIGN_PAINT } from '../src/world/merchantYardArt.js';
 import { DF, classicPictures } from '../src/world/classicArt.js';
 import { setTextureDeriveContext } from '../src/systems/textureReplacement.js';
 import { fakeClassicRgba } from './classicArtFake.mjs';
@@ -177,7 +177,7 @@ test('SHIPYARDS THE MODELS: the shipyard and the lighthouse under the port\'s ow
   assert.ok(lanternBox()[1] === GALLERY_Y);
 });
 
-test('SHIPYARDS THE ART (DF-ART, Mac: "use daggerfall textures instead of AI generated"): the port\'s own archive - the yards\' timber, straw, earth and iron at their own records and from the same Daggerfall records, the stone, whitewash, slate, glass, rope, canvas, tar, sawdust, hull, cobbles, door, notices and brass besides, each a Daggerfall record read from the player\'s own ARENA2; the two boards plain boards (Daggerfall has no shipyard\'s or crew hall\'s sign); and the beacon\'s flame and embers (BEACON-TOWER, PIN MOVED: the red band and the copper gone with the tower that wore them)', async () => {
+test('SHIPYARDS THE ART (DF-ART, Mac: "use daggerfall textures instead of AI generated"): the port\'s own archive - the yards\' timber, straw, earth and iron at their own records and from the same Daggerfall records, the stone, whitewash, slate, glass, rope, canvas, tar, sawdust, hull, cobbles, door, notices and brass besides, each a Daggerfall record read from the player\'s own ARENA2; the two boards Daggerfall\'s planks with SHIPS and CREW lettered on them (Mac: "Bring back the sign text"); and the beacon\'s flame and embers (BEACON-TOWER, PIN MOVED: the red band and the copper gone with the tower that wore them)', async () => {
   for (const [k, rec] of Object.entries(YARD_REC)) if (k in PORT_REC) {
     assert.equal(PORT_REC[k], rec, `${k} where the yards keep it`);
     assert.deepEqual(PORT_SOURCES[rec], YARD_SOURCES[rec], `${k} the yards' own Daggerfall record`);
@@ -190,7 +190,12 @@ test('SHIPYARDS THE ART (DF-ART, Mac: "use daggerfall textures instead of AI gen
     assert.equal(a.data.length, a.width * a.height * 4);
   }
   assert.equal(art.size, Object.keys(PORT_REC).length);
-  assert.deepEqual([PORT_SOURCES[PORT_REC.signShips], PORT_SOURCES[PORT_REC.signCrew]], [DF.board, DF.board], 'two plain boards');
+  for (const [rec, place] of [[PORT_REC.signShips, 'shipyard'], [PORT_REC.signCrew, 'crewhall']]) {
+    const img = art.get(rec), cells = wordCells(PORT_PLACES[place].sign);
+    assert.deepEqual([img.width, img.height], [224, 96], `${place}: the yards' board`);
+    for (const [x, y] of cells) assert.deepEqual([...img.data.slice((y * img.width + x) * 4, (y * img.width + x) * 4 + 3)], [...SIGN_PAINT], `${place}: ${PORT_PLACES[place].sign} lettered on it`);
+  }
+  assert.deepEqual([PORT_PLACES.shipyard.sign, PORT_PLACES.crewhall.sign], ['SHIPS', 'CREW']);
   assert.deepEqual([PORT_SOURCES[PORT_REC.hull], PORT_SOURCES[PORT_REC.canvas], PORT_SOURCES[PORT_REC.rope], PORT_SOURCES[PORT_REC.door]], [DF.hullPlanks, DF.sailcloth, DF.rope, DF.door], 'the hull, its canvas, rope and door Come Sail Away\'s');
 });
 

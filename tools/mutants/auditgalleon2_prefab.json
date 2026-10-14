@@ -2,22 +2,22 @@
   {
     "name": "AUDIT-GN2-PF3-her-pictures-at-her-first-draw",
     "file": "src/scenes/comeSailAwayPool.js",
-    "old": "        try { await pipeline.getTexture(art.archive); await preloadTextureArchive(art.archive); for (const r of art.glowRecs) art.glow(r); }",
-    "new": "        try { for (const r of art.glowRecs) art.glow(r); }",
+    "old": "        try { await pipeline.getTexture(art.archive); }",
+    "new": "        try { /* her archive left to her first mesh's ask */ }",
     "tests": [
       "test/auditgalleon2_prefab.test.js"
     ],
     "why": "her archive not asked at the preload: her twenty-three pictures built at her first mesh's ask, mid-voyage (DF-ART: re-aimed past the door's preload)"
   },
   {
-    "name": "AUDIT-GN2-PF3-her-glow-at-her-first-draw",
+    "name": "AUDIT-GN2-PF3-her-glass-whole",
     "file": "src/world/classicArt.js",
-    "old": "        if (glowRecs.includes(record)) glows.set(record, paneGlow(pic));",
-    "new": "",
+    "old": "  return spec.glass ? cutGlass(opaque(pic)) : opaque(pic);",
+    "new": "  return opaque(pic);",
     "tests": [
       "test/auditgalleon2_prefab.test.js"
     ],
-    "why": "DF-ART (re-aimed: the glow is cut as her window is built, at the preload): her glow never cut as her pictures are built - left to her first stern mesh's upload"
+    "why": "DF-ART (re-aimed: her windows seen through, the glow gone with their glass): her stern windows built whole - the glass never cut"
   },
   {
     "name": "AUDIT-GN2-PF4-her-model-after-the-five",
@@ -91,16 +91,6 @@
     "why": "the pool never says her stand-ins are classic art: her pictures and glow mip-mapped under Retro Mode"
   },
   {
-    "name": "AUDIT-GN2-PF5-her-glow-a-replacement",
-    "file": "src/scenes/comeSailAwayPool.js",
-    "old": "{ replacement: !pipeline.isClassicArt?.(sm.textureArchive) }",
-    "new": "{ replacement: true }",
-    "tests": [
-      "test/auditgalleon2_prefab.test.js"
-    ],
-    "why": "her glow uncapped under Retro Mode while her picture is capped: the shader's two samples off different levels"
-  },
-  {
     "name": "AUDIT-GN2-PF7-the-trigger-at-the-hub",
     "file": "src/world/galleonModel.js",
     "old": "export const DRIVE_TRIGGER_AT = Object.freeze([HELM.hub[0], HELM.hub[1], HELM.hub[2] + 0.25]);",
@@ -152,14 +142,14 @@
     "why": "the shut leaf moved forward with its hinge, off its doorway's middle"
   },
   {
-    "name": "AUDIT-GN2-TS7-the-whole-stern-glows",
+    "name": "AUDIT-GN2-TS7-the-whole-window-a-hole",
     "file": "src/world/classicArt.js",
-    "old": "    if (isPane(pic.data[i], pic.data[i + 1], pic.data[i + 2])) { data[i] = PANE_GLOW[0];",
-    "new": "    if (true) { data[i] = PANE_GLOW[0];",
+    "old": "  for (let i = 0; i < data.length; i += 4) if (isGlass(data[i], data[i + 1], data[i + 2])) data[i + 3] = 0;",
+    "new": "  for (let i = 0; i < data.length; i += 4) data[i + 3] = 0;",
     "tests": [
       "test/auditgalleon2_prefab.test.js"
     ],
-    "why": "DF-ART (re-aimed: the painted glass went with galleonArt.js's painters): both stern slices glowing on every pixel, the timber too"
+    "why": "DF-ART (re-aimed: her windows seen through): every texel of her window a hole, its leads and its frame too"
   },
   {
     "name": "AUDIT-GN2-TS7-the-panes-dark",

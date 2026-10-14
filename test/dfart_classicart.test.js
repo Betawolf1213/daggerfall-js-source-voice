@@ -2,15 +2,16 @@
 // use daggerfall textures instead of AI generated"): world/classicArt.js - the port's models' pictures read from the
 // player's own ARENA2: a record whole and opaque, a composed wall (a record with another laid in where the model's
 // window or door stands, the window's glass cut out between its leads), a cut record (cropped, mirrored, its clear
-// texels kept), the night glow of a window's panes, the stand-ins on the texture door, and a record the data lacks left
-// out. No game data here: test/classicArtFake.mjs answers every record with a picture that names it.
+// texels kept, or its window's glass cut - Mac: "windows should always be see through"), a lettered board (Mac: "Bring
+// back the sign text"), the stand-ins on the texture door and which of them are cut-outs, and a record the data lacks
+// left out. No game data here: test/classicArtFake.mjs answers every record with a picture that names it.
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
-  DF, opaque, isPane, isGlass, cutGlass, paneGlow, PANE_GLOW, LEAD_LIGHT, resample, crop, mirrored, composedPicture, cutPicture,
-  classicPicture, classicPictures, classicStandIns, asPortRows, COMPOSE,
+  DF, opaque, isPane, isGlass, cutGlass, LEAD_LIGHT, resample, crop, mirrored, tiled, composedPicture, cutPicture, hasGlass,
+  classicPicture, classicPictures, classicStandIns, asPortRows, COMPOSE, SEE_THROUGH_WINDOW,
 } from '../src/world/classicArt.js';
 import { fakeClassicRgba, texelOf, texel, PANE, LEAD, TIMBER } from './classicArtFake.mjs';
 
@@ -30,7 +31,7 @@ test('DF-ART A RECORD THE PLAYER\'S DATA LACKS IS LEFT OUT: classicPictures answ
   assert.deepEqual(out.map(([r]) => r), [1, 3]);
 });
 
-test('DF-ART THE GLASS OF DAGGERFALL\'S WINDOW: a pane is a texel no redder than it is blue and not black (isPane: the glow\'s glass); glass to see through a pane darker than its leading (isGlass, under LEAD_LIGHT) - so a window cut keeps its leads and its timber whole and opens its panes (mutants: the leads cut too, the timber cut, the panes kept)', () => {
+test('DF-ART THE GLASS OF DAGGERFALL\'S WINDOW: a pane is a texel no redder than it is blue and not black (isPane: its glass and its leading); glass to see through a pane darker than its leading (isGlass, under LEAD_LIGHT) - so a window cut keeps its leads and its timber whole and opens its panes (mutants: the leads cut too, the timber cut, the panes kept)', () => {
   assert.equal(isPane(...PANE), true); assert.equal(isPane(...LEAD), true); assert.equal(isPane(...TIMBER), false); assert.equal(isPane(0, 0, 0), false);
   assert.equal(isGlass(...PANE), true); assert.equal(isGlass(...LEAD), false, 'the leading stays'); assert.equal(isGlass(...TIMBER), false);
   assert.ok(PANE.reduce((a, b) => a + b) < LEAD_LIGHT && LEAD.reduce((a, b) => a + b) >= LEAD_LIGHT);
@@ -38,9 +39,31 @@ test('DF-ART THE GLASS OF DAGGERFALL\'S WINDOW: a pane is a texel no redder than
   assert.deepEqual([3, 7, 11].map((i) => w.data[i]), [0, 255, 255], 'the pane a hole, the lead and the timber whole');
 });
 
-test('DF-ART A WINDOW\'S NIGHT GLOW: its panes and their leads PANE_GLOW, everything else black, every texel whole (renderer.uploadEmissionTexture) (mutants: the whole window glowing, the panes dark)', () => {
-  const g = paneGlow(pic(3, 1, (x) => [...[PANE, LEAD, TIMBER][x], 255]));
-  assert.deepEqual([...g.data], [...PANE_GLOW, 255, ...PANE_GLOW, 255, 0, 0, 0, 255]);
+test('DF-ART A WINDOW SEEN THROUGH (Mac: "windows should always be see through"): SEE_THROUGH_WINDOW is Daggerfall\'s leaded window framed whole - cropped above its plaster, mirrored - its glass cut out and the rest whole; hasGlass names it, and a wall with it laid in, and nothing else (mutants: the glass left whole, a plain record taken for glass)', async () => {
+  const w = await cutPicture(SEE_THROUGH_WINDOW, fakeClassicRgba());
+  assert.deepEqual([w.width, w.height], [76, 58], 'its frame and its panes, the plaster under it left off');
+  let holes = 0;
+  for (let i = 0; i < w.data.length; i += 4) {
+    const pane = PANE.every((c, k) => c === w.data[i + k]);
+    assert.equal(w.data[i + 3], pane ? 0 : 255);
+    if (pane) holes++;
+  }
+  assert.ok(holes > 0, 'its glass open');
+  assert.deepEqual([texel(w, 0, 30), texel(w, 75, 30)], [[...TIMBER, 255], [...TIMBER, 255]], 'a post either side');
+  assert.equal(hasGlass(SEE_THROUGH_WINDOW), true);
+  assert.equal(hasGlass({ body: DF.paintGreen, insets: [{ ...SEE_THROUGH_WINDOW, at: { x0: 0, y0: 0, x1: 9, y1: 9 } }] }), true);
+  assert.equal(hasGlass(DF.window), false); assert.equal(hasGlass({ body: DF.paintGreen, insets: [{ from: DF.door, at: { x0: 0, y0: 0, x1: 9, y1: 9 } }] }), false); assert.equal(hasGlass(null), false);
+});
+
+test('DF-ART A LETTERED BOARD (Mac: "Bring back the sign text"): a body repeated at its own texel size over the size it is given (`tile`), a `clear` inset laid over it skipping its clear texels, and `paint` handed the picture last (mutants: the body stretched, the clear inset\'s holes laid too, the paint unasked)', async () => {
+  const read = async (a, r) => (a === 1 ? pic(2, 2, (x, y) => [x * 100, y * 100, 7, 255]) : pic(4, 4, (x) => [200, 0, 0, x < 2 ? 0 : 255]));
+  const painted = [];
+  const p = await composedPicture({ body: [1, 1], size: [6, 4], tile: true, insets: [{ from: [2, 2], px: { x0: 2, y0: 0, x1: 5, y1: 3 }, clear: true }], paint: (q) => painted.push(q.width) }, read);
+  assert.deepEqual([p.width, p.height], [6, 4]);
+  assert.deepEqual([texel(p, 0, 0), texel(p, 1, 1), texel(p, 2, 3), texel(p, 3, 0)].map((t) => t.slice(0, 2)), [[0, 0], [100, 100], [0, 100], [100, 0]], 'the body repeated, never stretched (and the inset\'s clear half shows it)');
+  assert.deepEqual(texel(p, 4, 1).slice(0, 3), [200, 0, 0], 'the inset\'s whole half laid over it');
+  assert.deepEqual(painted, [6], 'the paint handed the finished picture');
+  assert.deepEqual(tiled(pic(2, 1, (x) => [x, 0, 0, 255]), 5, 1).data.filter((_, i) => i % 4 === 0), Uint8Array.from([0, 1, 0, 1, 0]));
 });
 
 test('DF-ART A COMPOSED WALL: its body a record laid whole over COMPOSE x COMPOSE, each inset a record cropped, mirrored whole and its glass cut, laid over exactly the layout\'s columns and rows it names (a 64-texel layout, four texels to each) and nowhere else (mutants: the inset off its place, the mirror dropped, the glass kept)', async () => {
@@ -71,16 +94,14 @@ test('DF-ART A CUT RECORD: cropped to its rows and columns, its clear texels kep
   assert.equal(texel(solid, 0, 0)[3], 255);
 });
 
-test('DF-ART THE STAND-INS ON THE TEXTURE DOOR: each record of the model\'s archive an entry built from its source with the pipeline\'s reader; a record in `glowRecs` keeps its window\'s night glow once built, and no other record does (mutants: every record glowing)', async () => {
-  const art = classicStandIns({ archive: 38131, name: 't', sources: { 0: DF.hullPlanks, 6: DF.window }, glowRecs: [6] });
+test('DF-ART THE STAND-INS ON THE TEXTURE DOOR: each record of the model\'s archive an entry built from its source with the pipeline\'s reader; `cut` names the records that hold glass to see through - its host uploads them cut-outs - and no other (mutants: every record a cut-out)', async () => {
+  const art = classicStandIns({ archive: 38131, name: 't', sources: { 0: DF.hullPlanks, 6: SEE_THROUGH_WINDOW } });
   assert.deepEqual(art.entries.map((e) => [e.archive, e.record, e.frame, e.standIn, e.fileName]), [[38131, 0, 0, true, 't-38131_0'], [38131, 6, 0, true, 't-38131_6']]);
-  assert.equal(art.glow(6), null, 'no glow before its window is built');
+  assert.deepEqual([art.cut(0), art.cut(6), art.cut(7)], [false, true, false]);
   const ctx = { classicRgba: fakeClassicRgba() };
-  for (const e of art.entries) await e.build(ctx);
-  assert.ok(art.glow(6), 'the window glows');
-  assert.equal(art.glow(0), null, 'the planking does not');
-  art.reset();
-  assert.equal(art.glow(6), null);
+  const [plank, window] = await Promise.all(art.entries.map((e) => e.build(ctx)));
+  assert.ok(plank.data.every((v, i) => i % 4 !== 3 || v === 255), 'the planking whole');
+  assert.ok(window.data.some((v, i) => i % 4 === 3 && v === 0), 'the window\'s glass open');
 });
 
 test('DF-ART THE PORT\'S OWN ROWS: a picture for the yards\', the port\'s and the monument\'s faces handed over as they read it, row 0 its top (their models\' uvs lay it so), in the upload\'s shape (mutants: the rows flipped)', () => {

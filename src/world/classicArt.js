@@ -70,8 +70,6 @@ export const DF = Object.freeze({
   ironGrey: Object.freeze([0, 86]),      // CSA: anchors and lantern hooks
   gold: Object.freeze([449, 0]),         // gilding, worked in a pattern
   giltPlain: Object.freeze([0, 18]),     // plain gold - burnished gilt, a brass bell
-  bronze: Object.freeze([0, 29]),        // dull bronze
-  plate: Object.freeze([371, 11]),       // a riveted metal plate in its frame
   leather: Object.freeze([0, 75]),       // CSA: the Galleon's and the Carrack's brown
   tar: Object.freeze([1, 88]),           // CSA: the boarding planks' black
   // ── stone and ground ──
@@ -101,13 +99,19 @@ export const DF = Object.freeze({
   checker: Object.freeze([152, 1]),      // chequered tiles
   nightSky: Object.freeze([355, 0]),     // a starred night
   // ── glass, light, signs ──
-  window: Object.freeze([54, 43]),       // a timber-framed window, leaded panes over plaster - its panes alone read as glass (paneGlow)
+  window: Object.freeze([54, 43]),       // a timber-framed window, leaded panes over plaster - its panes alone read as glass (isGlass)
   lampGlass: Object.freeze([0, 1]),      // pale warm yellow - a lantern's lit pane
   fireFlat: Object.freeze([210, 0]),     // a brazier's fire (a flat: its flames on nothing, the bowl under them)
   embers: Object.freeze([356, 2]),       // banked fire
   notices: Object.freeze([86, 2]),       // a parchment notice
   toolsSign: Object.freeze([333, 18]),   // a shop's sign: an axe and a sword
 });
+
+/** DF-ART (Mac: "windows should always be see through"): Daggerfall's leaded window as a model's window - its frame
+ *  and its left half to the mullion (columns 0-37, rows 0-57: the plaster under it left off), made whole by its mirror,
+ *  its glass cut out between its leads, uploaded a cut-out, so whatever stands behind it is seen through it: the
+ *  caravan's (world/wagonArt.js, laid into its walls), the galleon's stern gallery, the carrack's transom. */
+export const SEE_THROUGH_WINDOW = Object.freeze({ from: DF.window, crop: Object.freeze([0, 0, 37, 57]), mirror: true, glass: true });
 
 /** A picture made opaque - a model's face, never a cutout. Returns a new picture. */
 export const opaque = (/** @type {{width:number,height:number,data:Uint8Array}} */ pic) => {
@@ -116,20 +120,9 @@ export const opaque = (/** @type {{width:number,height:number,data:Uint8Array}} 
   return { width: pic.width, height: pic.height, data };
 };
 
-/** The warm light lit glass gives off at night (the port's own window glow, unchanged from the painted panes'). */
-export const PANE_GLOW = Object.freeze([255, 186, 96]);
-/** Whether a texel of a classic window is its glass: Daggerfall's panes are cool greys and blues, its frames and walls
- *  warm - a texel no redder than it is blue, and not black. */
+/** Whether a texel of a classic window is its pane - its glass or its leading: Daggerfall's panes are cool greys and
+ *  blues, its frames and walls warm - a texel no redder than it is blue, and not black. */
 export const isPane = (r, g, b) => b >= r && r + g + b > 60;
-/** A window picture's night glow: its panes PANE_GLOW, everything else black (renderer.uploadEmissionTexture). */
-export function paneGlow(/** @type {{width:number,height:number,data:Uint8Array}} */ pic) {
-  const data = new Uint8Array(pic.data.length);
-  for (let i = 0; i < data.length; i += 4) {
-    if (isPane(pic.data[i], pic.data[i + 1], pic.data[i + 2])) { data[i] = PANE_GLOW[0]; data[i + 1] = PANE_GLOW[1]; data[i + 2] = PANE_GLOW[2]; }
-    data[i + 3] = 255;
-  }
-  return { width: pic.width, height: pic.height, data };
-}
 
 // ── COMPOSED pictures: a face that holds a window or a door where the model's own stands (the caravan's sides and
 // ends - world/wagonArt.js) is one Daggerfall record laid whole and another laid over it, nothing painted ──
@@ -179,44 +172,71 @@ export function cutGlass(/** @type {{width:number,height:number,data:Uint8Array}
   return { width: pic.width, height: pic.height, data };
 }
 
+/** A picture repeated at its own texel size over `w` x `h` - a tiling record laid on a face bigger than itself. */
+export function tiled(/** @type {{width:number,height:number,data:Uint8Array}} */ src, w, h) {
+  const data = new Uint8Array(w * h * 4);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const s = (((y % src.height) * src.width) + (x % src.width)) * 4, d = (y * w + x) * 4;
+    data[d] = src.data[s]; data[d + 1] = src.data[s + 1]; data[d + 2] = src.data[s + 2]; data[d + 3] = src.data[s + 3];
+  }
+  return { width: w, height: h, data };
+}
+
 /**
- * A COMPOSED picture: `body` (a Daggerfall record) laid whole over COMPOSE x COMPOSE, then each inset - a Daggerfall
- * record, `crop`ped, `mirror`ed whole, its `glass` cut out - laid over the layout's columns and rows `at`
- * ({x0, y0, x1, y1}, inclusive, in a 64-texel picture's texels).
- * @param {{ body: readonly number[], insets?: ReadonlyArray<{ from: readonly number[], at: {x0:number,y0:number,x1:number,y1:number}, crop?: readonly number[], mirror?: boolean, glass?: boolean }> }} spec
+ * A COMPOSED picture: `body` (a Daggerfall record) laid whole over `size` (COMPOSE x COMPOSE unless given) - or
+ * repeated at its own texel size (`tile`) - then each inset laid over it: a Daggerfall record, `crop`ped, `mirror`ed
+ * whole, its `glass` cut out, laid over the layout's columns and rows `at` ({x0, y0, x1, y1}, inclusive, in a
+ * 64-texel picture's texels) or over the picture's own texels `px`; a `clear` inset keeps its clear texels clear and
+ * lays the rest over the body (a flat's subject on a board). Last, `paint` (the picture, top-down) - a sign's word
+ * lettered on (world/merchantYardArt.js).
+ * @param {{ body: readonly number[], size?: readonly number[], tile?: boolean, paint?: (pic: {width:number,height:number,data:Uint8Array}) => void,
+ *   insets?: ReadonlyArray<{ from: readonly number[], at?: {x0:number,y0:number,x1:number,y1:number}, px?: {x0:number,y0:number,x1:number,y1:number}, crop?: readonly number[], mirror?: boolean, glass?: boolean, clear?: boolean }> }} spec
  * @param {(archive: number, record: number, frame?: number) => Promise<any>} classicRgba
  */
 export async function composedPicture(spec, classicRgba) {
-  const read = async (/** @type {readonly number[]} */ from) => {
+  const read = async (/** @type {readonly number[]} */ from, clear = false) => {
     const src = await classicRgba(from[0], from[1], 0);
     if (!src?.width) throw new Error(`classic art: ${from[0]}_${from[1]} is not in the player's data`);
-    return opaque(src);
+    return clear ? src : opaque(src);
   };
-  const pic = resample(await read(spec.body), COMPOSE, COMPOSE), k = COMPOSE / LAYOUT;
+  const [W, H] = spec.size ?? [COMPOSE, COMPOSE], body = await read(spec.body);
+  const pic = spec.tile ? tiled(body, W, H) : resample(body, W, H), kx = W / LAYOUT, ky = H / LAYOUT;
   for (const ins of spec.insets ?? []) {
-    let src = await read(ins.from);
+    let src = await read(ins.from, !!ins.clear);
     if (ins.crop) src = crop(src, ins.crop);
     if (ins.mirror) src = mirrored(src);
     if (ins.glass) src = cutGlass(src);
-    const x0 = ins.at.x0 * k, y0 = ins.at.y0 * k, w = (ins.at.x1 + 1) * k - x0, h = (ins.at.y1 + 1) * k - y0;
+    const r = ins.px ?? { x0: ins.at.x0 * kx, y0: ins.at.y0 * ky, x1: (ins.at.x1 + 1) * kx - 1, y1: (ins.at.y1 + 1) * ky - 1 };
+    const x0 = r.x0, y0 = r.y0, w = r.x1 + 1 - x0, h = r.y1 + 1 - y0;
     const laid = resample(src, w, h);
-    for (let y = 0; y < h; y++) pic.data.set(laid.data.subarray(y * w * 4, (y + 1) * w * 4), ((y0 + y) * COMPOSE + x0) * 4);
+    if (!ins.clear) { for (let y = 0; y < h; y++) pic.data.set(laid.data.subarray(y * w * 4, (y + 1) * w * 4), ((y0 + y) * W + x0) * 4); continue; }
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const s = (y * w + x) * 4;
+      if (laid.data[s + 3] >= 128) pic.data.set(laid.data.subarray(s, s + 3), ((y0 + y) * W + x0 + x) * 4);
+    }
   }
+  spec.paint?.(pic);
   return pic;
 }
 
 /**
  * A CUT picture: one Daggerfall record (`from`), `crop`ped and `mirror`ed whole - opaque, or with its clear texels
- * kept clear (`clear`: a cut-out, a flat's flames on nothing).
- * @param {{ from: readonly number[], crop?: readonly number[], mirror?: boolean, clear?: boolean }} spec
+ * kept clear (`clear`: a cut-out, a flat's flames on nothing), or with its window's `glass` cut out (a window seen
+ * through - Mac: "windows should always be see through").
+ * @param {{ from: readonly number[], crop?: readonly number[], mirror?: boolean, clear?: boolean, glass?: boolean }} spec
  * @param {(archive: number, record: number, frame?: number) => Promise<any>} classicRgba
  */
 export async function cutPicture(spec, classicRgba) {
   let pic = await buildDerivedPicture({ from: [spec.from[0], spec.from[1]] }, classicRgba);
   if (spec.crop) pic = crop(pic, spec.crop);
   if (spec.mirror) pic = mirrored(pic);
-  return spec.clear ? pic : opaque(pic);
+  if (spec.clear) return pic;
+  return spec.glass ? cutGlass(opaque(pic)) : opaque(pic);
 }
+
+/** Whether a source's picture holds glass to see through (a cut window, or a wall with one laid in) - uploaded as a
+ *  cut-out, so the eye sees through it. */
+export const hasGlass = (/** @type {any} */ from) => !!from && !Array.isArray(from) && !!(from.glass || from.insets?.some((/** @type {any} */ i) => i.glass));
 
 /** One record's picture from its Daggerfall source - a record (`[archive, record]`), opaque; a composed spec
  *  (`{ body, insets }` - composedPicture); or a cut one (`{ from, ... }` - cutPicture). `classicRgba` is the pipeline's
@@ -232,25 +252,17 @@ export const asPortRows = (/** @type {{width:number,height:number,data:Uint8Arra
 
 /**
  * A model's pictures as STAND-INS on the texture door (systems/textureReplacement.js addVendorTextures): each record of
- * `archive` built from the Daggerfall record `sources` names for it, the first time the archive is asked for. A record
- * in `glowRecs` keeps its night glow (`glow(record)`, null until built - the pool's preload builds it). A loose pack's
+ * `archive` built from the Daggerfall record `sources` names for it, the first time the archive is asked for; `cut`
+ * answers whether a record holds glass to see through (hasGlass - its host uploads it a cut-out). A loose pack's
  * `<archive>_<record>-0.png` still overrides a record, as it overrides any.
- * @param {{ archive: number, name: string, sources: Readonly<Record<number, readonly number[]>>, glowRecs?: readonly number[] }} o
+ * @param {{ archive: number, name: string, sources: Readonly<Record<number, any>> }} o
  */
-export function classicStandIns({ archive, name, sources, glowRecs = [] }) {
-  const glows = new Map();
-  const entries = Object.entries(sources).map(([rec, from]) => {
-    const record = Number(rec);
-    return {
-      archive, record, frame: 0, standIn: true, fileName: `${name}-${archive}_${record}`,
-      build: async (/** @type {any} */ ctx) => {
-        const pic = await classicPicture(from, ctx.classicRgba);
-        if (glowRecs.includes(record)) glows.set(record, paneGlow(pic));
-        return pic;
-      },
-    };
-  });
-  return { entries, glow: (/** @type {number} */ record) => glows.get(record) ?? null, reset: () => glows.clear() };
+export function classicStandIns({ archive, name, sources }) {
+  const entries = Object.entries(sources).map(([rec, from]) => ({
+    archive, record: Number(rec), frame: 0, standIn: true, fileName: `${name}-${archive}_${rec}`,
+    build: async (/** @type {any} */ ctx) => classicPicture(from, ctx.classicRgba),
+  }));
+  return { entries, cut: (/** @type {number} */ record) => hasGlass(sources[record]) };
 }
 
 /**

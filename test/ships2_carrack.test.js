@@ -15,7 +15,7 @@ import {
   CARRACK_BATTERIES, ANCHOR, sideAt, lidFitOf, ropeLadderGeometry,
 } from '../src/world/carrackModel.js';
 import { SAILS, CARRACK_RIG } from '../src/world/carrackRig.js';
-import { carrackGlow, registerCarrackArt, _resetCarrackArt, CARRACK_ARCHIVE, TEX, BANDS, CARRACK_SOURCES } from '../src/world/carrackArt.js';
+import { carrackCut, registerCarrackArt, _resetCarrackArt, CARRACK_ARCHIVE, TEX, BANDS, CARRACK_SOURCES } from '../src/world/carrackArt.js';
 import { GALLEON_SOURCES, TEX as GALLEON_TEX } from '../src/world/galleonArt.js';
 import { DF } from '../src/world/classicArt.js';
 import { fakeClassicRgba, texelOf, texel } from './classicArtFake.mjs';
@@ -309,7 +309,7 @@ test('SHIPS-2 CARRACK HULL_BUILDS\' CARRACK IS HERS: her box her MeshCollider\'s
 
 // ── her pictures ───────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('SHIPS-2 CARRACK HER PICTURES (DF-ART, Mac: "use daggerfall textures instead of AI generated"): a Daggerfall record a TEX record under CARRACK_ARCHIVE - the galleon\'s for the records she shares with her, Come Sail Away\'s planking for her sides - read from the player\'s own ARENA2 as a stand-in, opaque; registered with the vendor textures once; her stern windows\' slices alone glowing by night, once built; every face of hers drawn on a picture of hers (mutants: registered twice, the glow everywhere, a face on no picture)', async () => {
+test('SHIPS-2 CARRACK HER PICTURES (DF-ART, Mac: "use daggerfall textures instead of AI generated"): a Daggerfall record a TEX record under CARRACK_ARCHIVE - the galleon\'s for the records she shares with her, Come Sail Away\'s planking for her sides - read from the player\'s own ARENA2 as a stand-in, opaque; registered with the vendor textures once; her transom\'s window alone seen through (Mac: "windows should always be see through"); every face of hers drawn on a picture of hers (mutants: registered twice, every picture of hers a cut-out, a face on no picture)', async () => {
   const records = new Set(Object.keys(CARRACK_SOURCES).map(Number));
   assert.deepEqual([...records].sort((x, y) => x - y), [...new Set(Object.values(TEX))].sort((x, y) => x - y), 'a Daggerfall record a record');
   const shared = ['hullBottom', 'hullInner', 'deck', 'trim', 'spar', 'iron', 'canvas', 'rope', 'gilt', 'grate', 'lid', 'door', 'beams', 'dark', 'underDeck'].filter((n) => n in TEX);
@@ -329,11 +329,9 @@ test('SHIPS-2 CARRACK HER PICTURES (DF-ART, Mac: "use daggerfall textures instea
   const ctx = { classicRgba: fakeClassicRgba() };
   for (const e of added) {
     const pic = await e.build(ctx), from = CARRACK_SOURCES[e.record];
-    if (from !== DF.window) assert.deepEqual(texel(pic, 3, 3), [...texelOf(from[0], from[1]), 255], `record ${e.record}: read from ${from.join('_')}, opaque`);
+    if (Array.isArray(from)) assert.deepEqual(texel(pic, 3, 3), [...texelOf(from[0], from[1]), 255], `record ${e.record}: read from ${from.join('_')}, opaque`);
   }
-  const lit = (r) => !!carrackGlow(r)?.data.some((v, i) => i % 4 === 0 && v > 0);
-  assert.ok(BANDS.transom.recs.some(lit), 'her stern windows glow');
-  for (const r of new Set(Object.values(TEX))) if (!BANDS.transom.recs.includes(r)) assert.equal(carrackGlow(r), null, `nothing else (record ${r})`);
+  for (const r of new Set(Object.values(TEX))) assert.equal(carrackCut(r), r === TEX.transom0, `record ${r}: ${r === TEX.transom0 ? 'her transom\'s window seen through' : 'whole'}`);
   _resetCarrackArt();
 });
 

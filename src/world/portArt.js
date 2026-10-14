@@ -27,11 +27,12 @@
 //   flame     - BEACON-TOWER: the beacon's fire - Daggerfall's brazier fire (210), its flames cut from over its bowl, on
 //               nothing: a cutout (`PORT_HOW`), and its own light.
 //   embers    - BEACON-TOWER: the brazier's coals - banked fire (356), their own light.
-//   the SIGNBOARDS - plain boards: Daggerfall has no shipyard's or crew hall's sign (Mac chose: the painted name boards
-//   go).
+//   the SIGNBOARDS - the yards' boards (merchantYardArt.js signSource): Daggerfall's planks, SHIPS and CREW lettered
+//   on them (Mac: "Bring back the sign text").
 //
 // Not a DFU member. Ledger A (SHIPYARDS).
-import { YARD_REC, YARD_SOURCES } from './merchantYardArt.js';
+import { YARD_REC, YARD_SOURCES, signSource } from './merchantYardArt.js';
+import { PORT_PLACES } from '../systems/portPlaces.js';
 import { DF } from './classicArt.js';
 
 /** The pseudo-archive the port's pictures stand under (the yards' neighbour, world/merchantYardArt.js YARD_ARCHIVE). */
@@ -69,8 +70,8 @@ export const PORT_SOURCES = Object.freeze({
   [PORT_REC.door]: DF.door,
   [PORT_REC.notices]: DF.notices,
   [PORT_REC.brass]: DF.giltPlain,
-  [PORT_REC.signShips]: DF.board,
-  [PORT_REC.signCrew]: DF.board,
+  [PORT_REC.signShips]: signSource(PORT_PLACES.shipyard.sign),
+  [PORT_REC.signCrew]: signSource(PORT_PLACES.crewhall.sign),
   [PORT_REC.flame]: Object.freeze({ from: DF.fireFlat, crop: Object.freeze([0, 0, 39, 26]), clear: true }),   // the flames over the brazier's bowl (rows 27 on)
   [PORT_REC.embers]: DF.embers,
 });

@@ -15,7 +15,7 @@
 // is a Daggerfall picture too: a paint one of its flat colour swatches (TEXTURE.000/.001), a dyed tilt one of its woven
 // fabrics (TEXTURE.049), a floor its woods, rugs or chequered tiles, a ceiling its boards, plaster or night.
 // Not a DFU member. Ledger A (WAGONS1).
-import { DF } from './classicArt.js';
+import { DF, SEE_THROUGH_WINDOW } from './classicArt.js';
 
 /** The wagons' pseudo-archive: past the large boat's 38171 (38151 collided once - largeBoatArt.js). */
 export const WAGON_ARCHIVE = 38181;
@@ -65,16 +65,12 @@ export const CARAVAN_SIDE_WINDOW_U = (CARAVAN_SIDE_WINDOW.x0 + CARAVAN_SIDE_WIND
 export const CARAVAN_FRONT_WINDOW = Object.freeze({ y0: endRow(2.55) - 7, y1: endRow(2.55) + 6, x0: 23, x1: 40 });
 /** The rear's door, in the rear end's layout (and its room's): 0.86 m wide by 1.95 m, from its sill on the floor. */
 export const CARAVAN_DOOR = Object.freeze({ y0: endRow(2.9), y1: endRow(0.98), x0: 22, x1: 42 });
-/** Daggerfall's leaded window (DF.window - a timber-framed window over plaster) as a caravan's: its frame and its left
- *  half to the mullion (columns 0-37, rows 0-57: the plaster under it left off), made whole by its mirror, its glass a
- *  hole. */
-export const LEADED_WINDOW = Object.freeze({ from: DF.window, crop: Object.freeze([0, 0, 37, 57]), mirror: true, glass: true });
 /** A caravan wall's picture (classicArt.js composedPicture): `body` laid whole, the window or the door `rec` holds laid
  *  in where the caravan's stands. */
 export function caravanWall(rec, body) {
   const base = rec % LOOK_RECORD_STRIDE;
-  if (base === TEX.caravanSide || base === TEX.roomSide) return Object.freeze({ body, insets: Object.freeze([{ ...LEADED_WINDOW, at: CARAVAN_SIDE_WINDOW }]) });
-  if (base === TEX.caravanFront || base === TEX.roomFront) return Object.freeze({ body, insets: Object.freeze([{ ...LEADED_WINDOW, at: CARAVAN_FRONT_WINDOW }]) });
+  if (base === TEX.caravanSide || base === TEX.roomSide) return Object.freeze({ body, insets: Object.freeze([{ ...SEE_THROUGH_WINDOW, at: CARAVAN_SIDE_WINDOW }]) });
+  if (base === TEX.caravanFront || base === TEX.roomFront) return Object.freeze({ body, insets: Object.freeze([{ ...SEE_THROUGH_WINDOW, at: CARAVAN_FRONT_WINDOW }]) });
   return Object.freeze({ body, insets: Object.freeze([{ from: DF.door, at: CARAVAN_DOOR }]) });
 }
 /** Which of the wagons' pictures have glass in them - uploaded as cut-outs, so the eye sees through their windows

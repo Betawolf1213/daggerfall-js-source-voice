@@ -83,12 +83,12 @@
   {
     "name": "CARP-YARD-the-stables-board",
     "file": "src/world/merchantYardArt.js",
-    "old": "  [YARD_REC.signCarpenter]: DF.toolsSign,",
-    "new": "  [YARD_REC.signCarpenter]: DF.board,",
+    "old": "  [YARD_REC.signCarpenter]: signSource(YARD_KINDS.carpenter.sign, DF.toolsSign),",
+    "new": "  [YARD_REC.signCarpenter]: signSource(YARD_KINDS.stable.sign),",
     "tests": [
       "test/carpyard1.test.js"
     ],
-    "why": "DF-ART (re-aimed: the board is Daggerfall's shop sign now): the joinery's board a plain board, like the yards'"
+    "why": "DF-ART (re-aimed: the joinery's board Daggerfall's planks, its shop sign and JOINERY): the stable's board in its place"
   },
   {
     "name": "CARP-YARD-the-benchs-box-lost",
@@ -188,5 +188,15 @@
     "tests": [
       "test/carpyard1.test.js"
     ]
+  },
+  {
+    "name": "CARP-YARD-a-letter-lost",
+    "file": "src/world/merchantYardArt.js",
+    "old": "  J: ['..###', '....#', '....#', '....#', '#...#', '#...#', '.###.'],   // CARP-YARD: JOINERY's\n",
+    "new": "",
+    "tests": [
+      "test/carpyard1.test.js"
+    ],
+    "why": "DF-ART: restored with the sign's words (Mac: \"Bring back the sign text\")"
   }
 ]

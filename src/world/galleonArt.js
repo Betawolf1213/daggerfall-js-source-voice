@@ -7,9 +7,10 @@
 // the player's ARENA2 when the boats' preload asks for it (scenes/comeSailAwayPool.js), where it was painted here from
 // noise. Her records, her liveries' bands and her tiles are unchanged, so no face of her moves: a band (BANDS) is a whole
 // Daggerfall picture now, where it was a 64-row slice of one painted livery - the oxblood strake, the gilt pin-stripes
-// and the painted panels are gone, as Mac chose. Her stern gallery is a Daggerfall window, and its panes alone glow at
-// night (classicArt.js paneGlow). Not a DFU member. Ledger A (GALLEON).
-import { DF, classicStandIns } from './classicArt.js';
+// and the painted panels are gone, as Mac chose. Her stern gallery is Daggerfall's leaded window, its glass seen
+// through into her great cabin (Mac: "windows should always be see through" - classicArt.js SEE_THROUGH_WINDOW; the
+// panes' night glow went with the glass). Not a DFU member. Ledger A (GALLEON).
+import { DF, SEE_THROUGH_WINDOW, classicStandIns } from './classicArt.js';
 
 /** The galleon's pseudo-archive: past the gate's 38101, the court's 38111 and the spoils' 38121. */
 export const GALLEON_ARCHIVE = 38131;
@@ -48,16 +49,15 @@ export const GALLEON_TILE = Object.freeze({
 export const GALLEON_SOURCES = Object.freeze({
   [TEX.hullSide0]: DF.hullPlanks, [TEX.hullSide1]: DF.hullPlanks, [TEX.hullSide2]: DF.hullPlanks, [TEX.hullSide3]: DF.tarred,
   [TEX.hullBottom]: DF.tarred, [TEX.hullInner]: DF.oakPale, [TEX.deck]: DF.deck, [TEX.trim]: DF.oakDark,
-  [TEX.castle0]: DF.panel, [TEX.castle1]: DF.panel, [TEX.sternWindows0]: DF.window, [TEX.sternWindows1]: DF.window,
+  [TEX.castle0]: DF.panel, [TEX.castle1]: DF.panel, [TEX.sternWindows0]: SEE_THROUGH_WINDOW, [TEX.sternWindows1]: SEE_THROUGH_WINDOW,
   [TEX.spar]: DF.spar, [TEX.iron]: DF.iron, [TEX.canvas]: DF.sailcloth, [TEX.rope]: DF.rope, [TEX.gilt]: DF.gold,
   [TEX.grate]: DF.grating, [TEX.lid]: DF.hatch, [TEX.door]: DF.door, [TEX.beams]: DF.beam, [TEX.dark]: DF.tarred,
   [TEX.underDeck]: DF.underDeck,
 });
 
-const _art = classicStandIns({ archive: GALLEON_ARCHIVE, name: 'galleon', sources: GALLEON_SOURCES, glowRecs: BANDS.sternWindows.recs });
-/** A record's night glow (its emission mask, top-down like its picture), or null: the stern gallery's panes alone, cut
- *  from the Daggerfall window when her pictures are built (the pool's preload builds them - AUDIT GN2-PF3). */
-export const galleonGlow = (/** @type {number} */ record) => _art.glow(record);
+const _art = classicStandIns({ archive: GALLEON_ARCHIVE, name: 'galleon', sources: GALLEON_SOURCES });
+/** Whether a record of hers holds glass to see through - her stern gallery's (the pool uploads it a cut-out). */
+export const galleonCut = (/** @type {number} */ record) => _art.cut(record);
 
 let _registered = false;
 /**
@@ -72,7 +72,5 @@ export function registerGalleonArt(addVendorTextures) {
   _registered = true;
   return addVendorTextures(_art.entries);
 }
-/** Test seam: unregistered, her glow forgotten (AUDIT GN2-PF3). */
-export function _resetGalleonArt() { _registered = false; _art.reset(); }
-/** Test seam (AUDIT GN2-PF3): whether her glow is cut. */
-export const _galleonGlowMade = () => BANDS.sternWindows.recs.some((r) => _art.glow(r) != null);
+/** Test seam: unregistered (AUDIT GN2-PF3). */
+export function _resetGalleonArt() { _registered = false; }

@@ -43,6 +43,8 @@ export const LARGE_BOAT_SOURCES = Object.freeze({
 });
 
 const _art = classicStandIns({ archive: LARGE_BOAT_ARCHIVE, name: 'large-boat', sources: LARGE_BOAT_SOURCES });
+/** Whether a record of hers holds glass to see through - none (her transom is planked). */
+export const largeBoatCut = (/** @type {number} */ record) => _art.cut(record);
 
 let _registered = false;
 /** Once: every record on the texture door as a stand-in of LARGE_BOAT_ARCHIVE (world/galleonArt.js registerGalleonArt).

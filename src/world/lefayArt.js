@@ -3,36 +3,72 @@
 // under the pseudo-archive LEFAY_ARCHIVE.
 //
 // DF-ART (2026-10-14, Mac: "For all textures you implemented that are AI (Ships, wagons, caravans, etc) I want to
-// instead use daggerfall textures instead of AI generated"): DAGGERFALL'S OWN. They were painted here from noise; each
-// record now names the Daggerfall record it wears (world/classicArt.js DF), read from the player's own ARENA2 when the
-// host stands the monument (scenes/lefayMonumentHost.js):
+// instead use daggerfall textures instead of AI generated"): its stone is DAGGERFALL'S OWN - each record named here
+// (world/classicArt.js DF) is read from the player's own ARENA2 when the host stands the monument
+// (scenes/lefayMonumentHost.js):
 //
 //   granite - the steps: dark speckled stone (341).
 //   marble  - the pedestal and the obelisk: pale veined marble (341).
 //   gilt    - the obelisk's point: plain gold (000).
-//   plaque  - a riveted metal plate in its frame (371), resampled to the plaque's shape, the inscription
-//             (LEFAY_TEXT.plaque) cut into it in square capitals - the name and the years twice the size of the two
-//             lines under them. The letters are the memorial's words, not a picture of anything: they are cut into
-//             Daggerfall's own metal (each cut texel its plate's own, darkened; its lip lightened), nothing painted.
-//   bronze  - the plaque's edges: dull bronze (000).
+//
+// THE PLAQUE IS ITS OWN, AS IT WAS (Mac: "Bring back the old plaque texture"): bronze, its border bevelled, the
+// inscription (LEFAY_TEXT.plaque) cut into it in square capitals - the name and the years twice the size of the two
+// lines under them - and its edges the plate's own bronze, made here from noise the moment the host asks (no renderer,
+// no GL: pixels and numbers). Deterministic (its own mulberry32 on fixed seeds): every client's plaque is the same.
 //
 // Not a DFU member. Ledger A (LEFAY).
 import { LEFAY_GRANITE, LEFAY_MARBLE, LEFAY_GILT, LEFAY_PLAQUE, LEFAY_BRONZE, LEFAY_TEXT } from './lefayMonument.js';
-import { DF, classicPictures, resample } from './classicArt.js';
-
-/** DF-ART: the Daggerfall record each of the monument's records wears (world/classicArt.js DF) - what a host reads and
- *  uploads under LEFAY_ARCHIVE before it draws (world/classicArt.js classicPictures). */
-export const LEFAY_SOURCES = Object.freeze({
-  [LEFAY_GRANITE]: DF.granite,
-  [LEFAY_MARBLE]: DF.marble,
-  [LEFAY_GILT]: DF.giltPlain,
-  [LEFAY_PLAQUE]: DF.plate,
-  [LEFAY_BRONZE]: DF.bronze,
-});
+import { DF, classicPictures } from './classicArt.js';
 
 /** The plaque's picture, texels (its shape is the plaque's, world/lefayMonument.js PLAQUE: 1.0 m by 0.8). */
 export const LEFAY_PLAQUE_W = 160;
 export const LEFAY_PLAQUE_H = 128;
+/** A painted picture's side, texels (the plaque's edges). */
+export const LEFAY_ART_SIZE = 64;
+
+/** mulberry32, the port's seeded rng (world/gateArt.js's own), kept here so the art is the monument's alone. */
+function rng(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+/** Tileable value noise over an n x n lattice, sampled at (x, y) in texels of an S-texel tile. */
+function noiseField(seed, n, S = LEFAY_ART_SIZE) {
+  const r = rng(seed);
+  const lat = Float32Array.from({ length: n * n }, () => r());
+  const at = (i, j) => lat[((j % n + n) % n) * n + ((i % n + n) % n)];
+  const smooth = (t) => t * t * (3 - 2 * t);
+  return (x, y) => {
+    const fx = (x / S) * n, fy = (y / S) * n;
+    const i = Math.floor(fx), j = Math.floor(fy);
+    const tx = smooth(fx - i), ty = smooth(fy - j);
+    const a = at(i, j), b = at(i + 1, j), c = at(i, j + 1), d = at(i + 1, j + 1);
+    return a + (b - a) * tx + (c - a) * ty + (a - b - c + d) * tx * ty;
+  };
+}
+const image = (w, h = w) => ({ width: w, height: h, colors: new Uint8Array(w * h * 4) });
+/** @param {{width:number, height:number, colors:Uint8Array}} img @param {number} x @param {number} y @param {ArrayLike<number>} rgb */
+const put = (img, x, y, rgb) => {
+  const i = (y * img.width + x) * 4;
+  img.colors[i] = rgb[0]; img.colors[i + 1] = rgb[1]; img.colors[i + 2] = rgb[2]; img.colors[i + 3] = 255;
+};
+/** @param {ArrayLike<number>} a @param {ArrayLike<number>} b @param {number} t @returns {number[]} */
+const mix = (a, b, t) => { const k = Math.min(1, Math.max(0, t)); return [0, 1, 2].map((i) => Math.round(a[i] + (b[i] - a[i]) * k)); };
+
+/** The plaque's metal: a dark bronze, faintly mottled (the plate, and its plain edges). */
+const BRONZE_DARK = [70, 50, 26];
+const BRONZE_LIGHT = [128, 94, 48];
+export function lefayBronzeArt(seed = 0xb802) {
+  const S = 32, img = image(S);
+  const n = noiseField(seed, 4, S);
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) put(img, x, y, mix(BRONZE_DARK, BRONZE_LIGHT, 0.35 + 0.5 * n(x, y)));
+  return img;
+}
 
 /** THE PLAQUE'S LETTERS: square capitals five texels wide and seven high, one row a string, `#` cut. Only the glyphs
  *  an inscription here needs are drawn; lefayGlyph answers null for any other (the test holds the plaque to them). */
@@ -68,15 +104,27 @@ export const GLYPH_H = 7;
 export const lefayGlyph = (ch) => LEFAY_GLYPHS[ch] ?? null;
 /** A line's width in texels at `scale`: GLYPH_W + one texel between letters, each. */
 export const lineWidth = (text, scale) => (text.length * (GLYPH_W + 1) - 1) * scale;
+
 /** The plaque's lines: the first two at twice the size, the last two at the glyphs' own. */
 export const PLAQUE_SCALES = Object.freeze([2, 2, 1, 1]);
-/** How deep a cut reads: its floor its plate's own texel at this share of its light; its lip lifted this far toward white. */
-export const CUT_FLOOR = 0.3;
-export const CUT_LIP = 0.4;
 
-/** Which texels of a W x H plaque the inscription cuts: 1 a cut, each line centred, stacked down the middle with a gap
- *  of their height's half between them. */
-export function plaqueCuts(lines = LEFAY_TEXT.plaque, W = LEFAY_PLAQUE_W, H = LEFAY_PLAQUE_H) {
+/**
+ * THE PLAQUE: bronze, a bevelled border (light along its top and left, dark along its bottom and right), and the
+ * inscription cut into it, each line centred - a cut letter dark at its floor, its lower right lip catching the light.
+ * Row 0 is the plaque's top (world/lefayMonument.js maps its face so).
+ */
+export function lefayPlaqueArt(lines = LEFAY_TEXT.plaque, seed = 0x91a0) {
+  const W = LEFAY_PLAQUE_W, H = LEFAY_PLAQUE_H, img = image(W, H);
+  const n = noiseField(seed, 8, W);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) put(img, x, y, mix(BRONZE_DARK, BRONZE_LIGHT, 0.45 + 0.35 * n(x, y)));
+  const BEVEL = 4, LIT = [176, 138, 76], SHADOW = [44, 30, 14];
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const d = Math.min(x, y, W - 1 - x, H - 1 - y);
+    if (d >= BEVEL) continue;
+    const lit = x < BEVEL && x <= y && x <= H - 1 - y ? true : y < BEVEL && y <= x && y <= W - 1 - x;
+    put(img, x, y, lit ? LIT : SHADOW);
+  }
+  // the lines, stacked down the plaque's middle with a gap of their height's half between them
   const heights = lines.map((_, i) => GLYPH_H * (PLAQUE_SCALES[i] ?? 1));
   const gaps = heights.slice(1).map((h, i) => Math.round(Math.max(h, heights[i]) / 2) + 2);
   const total = heights.reduce((a, b) => a + b, 0) + gaps.reduce((a, b) => a + b, 0);
@@ -97,26 +145,28 @@ export function plaqueCuts(lines = LEFAY_TEXT.plaque, W = LEFAY_PLAQUE_W, H = LE
     });
     top += heights[i] + (gaps[i] ?? 0);
   });
-  return cut;
-}
-
-/** THE PLAQUE: Daggerfall's plate (`plate`, a top-down RGBA picture) laid whole over the plaque's shape and the
- *  inscription cut into it - a cut texel the plate's own darkened to its floor, the lip below and right of a cut lifted
- *  toward the light. Row 0 is the plaque's top (world/lefayMonument.js maps its face so). Returns a new picture. */
-export function engravePlaque(/** @type {{width:number,height:number,data:Uint8Array}} */ plate, lines = LEFAY_TEXT.plaque) {
-  const W = LEFAY_PLAQUE_W, H = LEFAY_PLAQUE_H, pic = resample(plate, W, H), cut = plaqueCuts(lines, W, H);
+  const FLOOR = [34, 22, 10], LIP = [196, 160, 92];
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
-    const i = (y * W + x) * 4, lip = !cut[y * W + x] && ((x > 0 && cut[y * W + x - 1]) || (y > 0 && cut[(y - 1) * W + x]));
-    for (let c = 0; c < 3; c++) {
-      if (cut[y * W + x]) pic.data[i + c] = Math.round(pic.data[i + c] * CUT_FLOOR);
-      else if (lip) pic.data[i + c] = Math.round(pic.data[i + c] + (255 - pic.data[i + c]) * CUT_LIP);
-    }
+    if (cut[y * W + x]) put(img, x, y, FLOOR);
+    else if ((x > 0 && cut[y * W + x - 1]) || (y > 0 && cut[(y - 1) * W + x])) put(img, x, y, LIP);   // the lip below and right of a cut
   }
-  return pic;
+  return img;
 }
 
-/** Every picture the monument wears, by record - `[record, picture]`, read from the player's own ARENA2 through
- *  `classicRgba` (world/classicArt.js classicPictures), the plaque engraved. What the host uploads under LEFAY_ARCHIVE. */
+/** DF-ART: the Daggerfall record each of the monument's stone records wears (world/classicArt.js DF). */
+export const LEFAY_SOURCES = Object.freeze({
+  [LEFAY_GRANITE]: DF.granite,
+  [LEFAY_MARBLE]: DF.marble,
+  [LEFAY_GILT]: DF.giltPlain,
+});
+/** A painted picture (`colors`, row 0 its top) as the top-down `data` picture the readers answer. */
+const asData = (/** @type {{width:number,height:number,colors:Uint8Array}} */ img) => ({ width: img.width, height: img.height, data: img.colors });
+
+/** Every picture the monument wears, by record - `[record, picture]` (top-down, `data`): its stone read from the
+ *  player's own ARENA2 through `classicRgba` (world/classicArt.js classicPictures), its plaque and the plaque's edges
+ *  its own bronze. What the host uploads under LEFAY_ARCHIVE. */
 export async function lefayPictures(/** @type {(archive: number, record: number, frame?: number) => Promise<any>} */ classicRgba) {
-  return (await classicPictures(LEFAY_SOURCES, classicRgba)).map(([rec, pic]) => /** @type {[number, any]} */ ([rec, rec === LEFAY_PLAQUE ? engravePlaque(pic) : pic]));
+  const out = await classicPictures(LEFAY_SOURCES, classicRgba);
+  out.push([LEFAY_PLAQUE, asData(lefayPlaqueArt())], [LEFAY_BRONZE, asData(lefayBronzeArt())]);
+  return out.sort((a, b) => a[0] - b[0]);
 }

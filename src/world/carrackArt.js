@@ -8,10 +8,10 @@
 // Her records, the galleon's numbers for every picture the fleet shares (world/galleonArt.js TEX), her liveries' bands
 // and her tiles are unchanged, so no face of her moves - a band is a whole Daggerfall picture where it was a slice of a
 // painted livery (the Bay blue strake, the ochre pin-stripes and the name board gone, as Mac chose). Her transom's
-// gallery is a Daggerfall window, its panes alone lit at night (classicArt.js paneGlow). Not a DFU member. Ledger A
+// gallery is Daggerfall's leaded window, seen through (classicArt.js SEE_THROUGH_WINDOW). Not a DFU member. Ledger A
 // (SHIPS-2).
 import { TEX as GALLEON_TEX, GALLEON_TILE, GALLEON_SOURCES } from './galleonArt.js';
-import { DF, classicStandIns } from './classicArt.js';
+import { DF, SEE_THROUGH_WINDOW, classicStandIns } from './classicArt.js';
 
 /** Her pseudo-archive: past the galleon's 38131. */
 export const CARRACK_ARCHIVE = 38141;
@@ -50,13 +50,13 @@ export const CARRACK_SOURCES = Object.freeze({
   ...Object.fromEntries(['hullBottom', 'hullInner', 'deck', 'trim', 'spar', 'iron', 'canvas', 'rope', 'gilt', 'grate', 'lid', 'door', 'beams', 'dark', 'underDeck']
     .map((k) => [TEX[k], GALLEON_SOURCES[GALLEON_TEX[k]]])),
   [TEX.hullSide0]: DF.hullPlanks, [TEX.hullSide1]: DF.hullPlanks, [TEX.hullSide2]: DF.hullPlanks, [TEX.hullSide3]: DF.hullPlanks,
-  [TEX.hullSide4]: DF.tarred, [TEX.transom0]: DF.window, [TEX.transom1]: DF.hullPlanks, [TEX.house0]: DF.panel,
+  [TEX.hullSide4]: DF.tarred, [TEX.transom0]: SEE_THROUGH_WINDOW, [TEX.transom1]: DF.hullPlanks, [TEX.house0]: DF.panel,
   [TEX.quarterRail0]: DF.oakDark, [TEX.roof]: DF.deck,
 });
 
-const _art = classicStandIns({ archive: CARRACK_ARCHIVE, name: 'carrack', sources: CARRACK_SOURCES, glowRecs: BANDS.transom.recs });
-/** A record's night glow, or null: her transom gallery's panes alone (`galleonGlow`'s law). */
-export const carrackGlow = (/** @type {number} */ record) => _art.glow(record);
+const _art = classicStandIns({ archive: CARRACK_ARCHIVE, name: 'carrack', sources: CARRACK_SOURCES });
+/** Whether a record of hers holds glass to see through - her transom gallery's (`galleonCut`'s law). */
+export const carrackCut = (/** @type {number} */ record) => _art.cut(record);
 
 let _registered = false;
 /** Once: every record on the texture door as a stand-in of CARRACK_ARCHIVE (world/galleonArt.js registerGalleonArt).
@@ -67,4 +67,4 @@ export function registerCarrackArt(addVendorTextures) {
   return addVendorTextures(_art.entries);
 }
 /** Test seam. */
-export function _resetCarrackArt() { _registered = false; _art.reset(); }
+export function _resetCarrackArt() { _registered = false; }
