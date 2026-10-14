@@ -29,6 +29,11 @@
   "tr": "7b2006fd7af8",
   "by": "claude-in-session"
  },
+ "account.card.act.copyCodes": {
+  "en": "af74f7c5362a",
+  "tr": "885410773340",
+  "by": "claude-in-session"
+ },
  "account.card.act.createAccount": {
   "en": "aaf374479756",
   "tr": "b03ff67468a3",
@@ -42,6 +47,16 @@
  "account.card.act.lostPassword": {
   "en": "3183df6f9dc1",
   "tr": "23fda141c5e3",
+  "by": "claude-in-session"
+ },
+ "account.card.act.makeCodes": {
+  "en": "321c8b300bc5",
+  "tr": "42ecbe5787e6",
+  "by": "claude-in-session"
+ },
+ "account.card.act.saveCodes": {
+  "en": "780479f1a8e1",
+  "tr": "ce3f92bdb438",
   "by": "claude-in-session"
  },
  "account.card.act.setPassword": {
@@ -75,7 +90,7 @@
   "by": "claude-in-session"
  },
  "account.card.act.wroteIt": {
-  "en": "81e6cf08ece9",
+  "en": "efd02a3f214e",
   "tr": "36e55a6bfee0",
   "by": "claude-in-session"
  },
@@ -85,8 +100,13 @@
   "by": "claude-in-session"
  },
  "account.card.blurb.code": {
-  "en": "075e5345c2ae",
-  "tr": "9e35e9e1d3b6",
+  "en": "42ef4423d9f5",
+  "tr": "d1fbebe4e671",
+  "by": "claude-in-session"
+ },
+ "account.card.blurb.codes": {
+  "en": "7926b3476dfe",
+  "tr": "bc6773844094",
   "by": "claude-in-session"
  },
  "account.card.blurb.password": {
@@ -102,6 +122,11 @@
  "account.card.characters": {
   "en": "b6f59f08fd6d",
   "tr": "792ba986413d",
+  "by": "claude-in-session"
+ },
+ "account.card.codesLeft": {
+  "en": "b7d0dcf74a3e",
+  "tr": "21ae3b8222b8",
   "by": "claude-in-session"
  },
  "account.card.duels": {
@@ -179,6 +204,11 @@
   "tr": "bea29e92ac2b",
   "by": "claude-in-session"
  },
+ "account.card.recoveryCodes": {
+  "en": "b3f5f8ca4dc4",
+  "tr": "7f878cf95789",
+  "by": "claude-in-session"
+ },
  "account.card.registered": {
   "en": "a844fcf834e7",
   "tr": "b6965e985137",
@@ -220,13 +250,18 @@
   "by": "claude-in-session"
  },
  "account.card.tag.code": {
-  "en": "a2daa6625b4d",
-  "tr": "c196af8526f9",
+  "en": "b51b76d5bed9",
+  "tr": "cd8f1723eb49",
   "by": "claude-in-session"
  },
  "account.card.title.code": {
-  "en": "9164bb086b3f",
-  "tr": "6aaf8144b71c",
+  "en": "781e39b27338",
+  "tr": "194a50472f28",
+  "by": "claude-in-session"
+ },
+ "account.card.title.codes": {
+  "en": "90b8afc8b2b7",
+  "tr": "f6d9c27699a8",
   "by": "claude-in-session"
  },
  "account.card.title.in": {
@@ -269,14 +304,44 @@
   "tr": "646c4acfe8bc",
   "by": "claude-in-session"
  },
+ "account.codes.copied": {
+  "en": "0a8cad7387d1",
+  "tr": "80fce137c1d0",
+  "by": "claude-in-session"
+ },
+ "account.codes.copyRefused": {
+  "en": "921e97a37dce",
+  "tr": "03676f03f908",
+  "by": "claude-in-session"
+ },
+ "account.codes.fileHead": {
+  "en": "0d73b3425a99",
+  "tr": "a085b71cdeb6",
+  "by": "claude-in-session"
+ },
+ "account.codes.fileNote": {
+  "en": "d89574b9e9e2",
+  "tr": "38f5a84f1705",
+  "by": "claude-in-session"
+ },
+ "account.codes.saveRefused": {
+  "en": "567892c6bf26",
+  "tr": "45e082425428",
+  "by": "claude-in-session"
+ },
+ "account.codes.saved": {
+  "en": "4654a0144259",
+  "tr": "ad8181b2235e",
+  "by": "claude-in-session"
+ },
  "account.field.code": {
   "en": "3cb5fd8e47c4",
   "tr": "9cf93bdd64f4",
   "by": "claude-in-session"
  },
  "account.field.codeHint": {
-  "en": "4bfeb72154d2",
-  "tr": "8244d14d3cdf",
+  "en": "5c8221388067",
+  "tr": "a5a4d506d888",
   "by": "claude-in-session"
  },
  "account.field.confirm": {
@@ -347,6 +412,11 @@
  "account.flow.patreonUnlinked": {
   "en": "8a19525a8f4e",
   "tr": "5eab01ed015c",
+  "by": "claude-in-session"
+ },
+ "account.flow.recoveredLeft": {
+  "en": "fb322e4c0abc",
+  "tr": "f4ffaafed8ef",
   "by": "claude-in-session"
  },
  "account.flow.signedOut": {
@@ -992,6 +1062,11 @@
  "account.refusal.closed": {
   "en": "bfeeefc0f824",
   "tr": "867b797e0033",
+  "by": "claude-in-session"
+ },
+ "account.refusal.codesMoved": {
+  "en": "bfd229e00374",
+  "tr": "f27fbf11d662",
   "by": "claude-in-session"
  },
  "account.refusal.commissionCrafter": {
@@ -9287,6 +9362,11 @@
  "mods.worldTooltips.HideDefaultInteractTooltip.description": {
   "en": "5e20f317eaf1",
   "tr": "8f957103f9f6",
+  "by": "claude-in-session"
+ },
+ "naval.yard.grogDrunk": {
+  "en": "c5d2a00c9e0e",
+  "tr": "4c7d529bd180",
   "by": "claude-in-session"
  },
  "net.mod.ambiguous": {

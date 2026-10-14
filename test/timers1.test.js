@@ -190,7 +190,7 @@ test('TIMERS1 wiring: the pause face carries the hourglass where the host hands 
   assert.match(menu, /for \(const n of \[stage, home\.querySelector\?\.\('\.px-profile'\), mark\]\) n\?\.setAttribute\?\.\('inert', ''\);/, 'AUDIT TIMERS1 UI-5/UI-7: the pause face under the window is out of reach');
   assert.match(menu, /read: \(\) => hooks\.timers\?\.\(\{ ask: true \}\) \?\? null/, 'AUDIT TIMERS1 UI-9: only the window read asks the service');
   assert.match(read('src/ui/plusPad.js'), /const visible = \(n\) => !!n && n\.isConnected !== false && !n\.closest\?\.\('\[inert\]'\)/, 'a bumper turns no inert tabs');
-  assert.match(menu, /const back = accountOpen \? \(\) => \{ accountOpen = false; render\(\); \}\n\s*: timersOpen && timersView \? \(\) => \{ timersOpen = false; timersFocusBack = true; render\(\); \}/, 'Escape closes a DRAWN window before it resumes (AUDIT TIMERS1 UI-11)');
+  assert.match(menu, /const back = accountOpen \? \(\) => closeAccount\(\)[^\n]*\n\s*: timersOpen && timersView \? \(\) => \{ timersOpen = false; timersFocusBack = true; render\(\); \}/, 'Escape closes a DRAWN window before it resumes (AUDIT TIMERS1 UI-11)');
   assert.match(menu, /stopTimers\(\);   \/\/ TIMERS1: a rebuild/, 'a rebuild stops the old tick');
   assert.match(menu, /timersOpen = false;   \/\/ TIMERS1: and the timers window the same/, 'a visit\'s window');
   const world = read('src/scenes/world.js');

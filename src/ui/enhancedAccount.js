@@ -26,7 +26,7 @@
 // plaque, the refusal line, and the signed-in fact list.
 // ═══════════════════════════════════════════════════════════════════
 
-import { STAGES, FIELDS, FIELD_SPEC, AGREEMENTS, AGREEMENT_SPEC } from './accountFlow.js';
+import { STAGES, FIELDS, FIELD_SPEC, AGREEMENTS, AGREEMENT_SPEC, recoveryCodesText, recoveryCodesFileName } from './accountFlow.js';   // RECOVERY-SET: the codes as the saved file says them
 import { TITLE_TEXT, AURA_TEXT, glyphBadges, glyphArtNode, badgeClass } from './playerBadge.js';   // ACC3c: the SAME table the name over a head reads, so the picker shows what a player will actually wear - the COLOUR is the skin's (this card may not style itself, and a pin holds that)
 import { duelRecordText } from '../net/duelRecord.js';   // DUEL1: the account card's K/D row
 import { renownText, renownProgressText, renownProgress } from '../net/renown.js';   // RENOWN1: Renown, left of the name and in its rows
@@ -108,7 +108,7 @@ export const STAGE_COPY = Object.freeze({   // L10N4: the words are getters, rea
   // account is"). A sign-in window is not a place to be taught what an
   // account is - the two buttons say it. What survives is only what a
   // player CANNOT guess and would be hurt by not knowing: that recovery
-  // signs every device out, and that the code is shown once.
+  // signs every device out, and that the codes are shown once.
   loading: { get tag() { return accountTag(); }, get title() { return t('account.card.title.loading', 'One moment'); }, blurb: '' },
   out: { get tag() { return accountTag(); }, get title() { return t('account.card.title.out', 'Your account'); }, blurb: '' },
   register: { get tag() { return accountTag(); }, get title() { return t('account.card.title.register', 'Create an account'); }, blurb: '' },
@@ -121,13 +121,14 @@ export const STAGE_COPY = Object.freeze({   // L10N4: the words are getters, rea
     get blurb() { return t('account.card.blurb.recover', 'This signs every device out, including this one.'); },
   },
   code: {
-    get tag() { return t('account.card.tag.code', 'Write this down'); },
-    get title() { return t('account.card.title.code', 'Your recovery code'); },
+    get tag() { return t('account.card.tag.code', 'Write these down'); },
+    get title() { return t('account.card.title.code', 'Your recovery codes'); },
     // KEPT, and it is the only long line left on the card. Email is
-    // optional, so this code IS the reset - a player who closes this
-    // without writing it down has a forgotten password away from
-    // losing the account.
-    get blurb() { return t('account.card.blurb.code', 'This is the only time this code is shown. Without it, a forgotten password means a lost account.'); },
+    // optional, so these codes ARE the reset - a player who closes this
+    // without writing them down has a forgotten password away from
+    // losing the account. RECOVERY-SET: and the way to more is named,
+    // because "only time" is no longer the whole truth.
+    get blurb() { return t('account.card.blurb.code', 'These codes are shown only now. Each works once if you forget your password. You can make new ones from your profile.'); },
   },
   in: { get tag() { return accountTag(); }, get title() { return t('account.card.title.in', 'Signed in'); }, blurb: '' },
   password: {
@@ -135,6 +136,13 @@ export const STAGE_COPY = Object.freeze({   // L10N4: the words are getters, rea
     get title() { return t('account.card.title.password', 'Change your password'); },
     // KEPT: same reason as recovery - an unexpected sign-out elsewhere.
     get blurb() { return t('account.card.blurb.password', 'Every other device will be signed out.'); },
+  },
+  // RECOVERY-SET: a new set from the profile - the one thing a player must know before pressing it
+  codes: {
+    get tag() { return accountTag(); },
+    get title() { return t('account.card.title.codes', 'New recovery codes'); },
+    // AUDIT RECOVERY-SET A1: a code the new set replaces is asked for too, and the card says so before the box does
+    get blurb() { return t('account.card.blurb.codes', 'Type your password and one of your current recovery codes. Those codes will stop working.'); },
   },
 });
 
@@ -146,6 +154,7 @@ export const STAGE_ACTS = Object.freeze({   // L10N4: the button's word a getter
   login: { get submit() { return t('account.card.act.signIn', 'Sign in'); }, back: 'out' },
   recover: { get submit() { return t('account.card.act.setPassword', 'Set a new password'); }, back: 'login' },
   password: { get submit() { return t('account.card.act.changePassword', 'Change password'); }, back: 'in' },
+  codes: { get submit() { return t('account.card.act.makeCodes', 'Make new codes'); }, back: 'in' },   // RECOVERY-SET
 });
 
 /**
@@ -491,6 +500,24 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
     host.append(box);
   }
 
+  /**
+   * RECOVERY-SET - THE CODES' ROW, in the Account section as the Patreon row is: how many recovery codes still open the
+   * account (a count, never a code - the service keeps only hashes), and the press that makes a new set. AUDIT
+   * RECOVERY-SET B3: in the section, not the window's foot - a fifth press there took the sticky foot to three rows (225px
+   * of a 667px phone, 193px of a landscape one's 390). None for a guest, nor where the service counts no codes (a
+   * service before acct131 has no route to make them).
+   */
+  function recoveryRow() {
+    if (!flow.account?.handle || !Number.isSafeInteger(flow.account.recoveryLeft)) return;
+    const box = el('div', 'acctwear acctrecovery');
+    box.append(el('span', 'fieldlabel', t('account.card.recoveryCodes', 'Recovery codes')));
+    const row = el('div', 'acctwearrow');
+    row.append(el('span', 'acctrecoverystate', t('account.card.codesLeft', '{n, plural, one {# left} other {# left}}', { n: flow.account.recoveryLeft })));
+    row.append(act(t('account.card.act.makeCodes', 'Make new codes'), () => flow.go('codes'), { disabled: !!flow.busy, key: 'codes' }));
+    box.append(row);
+    host.append(box);
+  }
+
   /** PATREON-LINK: BACK FROM THE BROWSER, the account is read again - a link that landed, or a pledge that moved, is on
    *  the card the player comes back to. One listener a card, gone on the first focus after the card is. */
   const win = doc.defaultView;
@@ -527,7 +554,7 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
     }
 
     // The tag earns its place only where it is NOT a restatement of the
-    // heading below it: "Write this down" over "Your recovery code" is
+    // heading below it: "Write these down" over "Your recovery codes" is
     // a different sentence; "Account" over "Your account" is the same
     // one twice.
     if (copy.tag !== accountTag()) root.append(el('span', 'tag', copy.tag));
@@ -656,6 +683,7 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
       host = account;
       nameAsRow();   // NAME-AS: the name the room reads - the account's own section, beside the name it goes by
       patreonRow();   // PATREON-LINK
+      recoveryRow();   // RECOVERY-SET
       if (!flow.account.handle) {
         account.append(el('p', 'meta', t('account.card.guestNote', 'Adding a username keeps everything this account already has.')));
       }
@@ -668,10 +696,18 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
       if (both) grid.append(deeds);
       grid.append(kept);
     }
-    // ── THE CODE, THE ONE TIME IT EXISTS ────────────────────────────
-    if (stage === 'code' && flow.recoveryCode) {
+    // ── THE CODES, THE ONE TIME THEY EXIST ──────────────────────────
+    // RECOVERY-SET: a set, numbered - a code a line, each its own <code>
+    // so one click takes one code whole.
+    if (stage === 'code' && flow.recoveryCodes?.length) {
       const plaque = el('div', 'acctcode');
-      plaque.append(el('code', null, flow.recoveryCode));
+      const list = el('ol');
+      flow.recoveryCodes.forEach((c, i) => {
+        const li = el('li');
+        li.append(el('span', 'acctcodeno', `${i + 1}.`), el('code', null, c));
+        list.append(li);
+      });
+      plaque.append(list);
       root.append(plaque);
     }
 
@@ -704,10 +740,15 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
       acts.append(act(busy ? t('account.card.act.signingOut', 'Signing out…') : t('account.card.act.signOut', 'Sign out'), () => flow.signOut(false), { disabled: busy, key: 'signout' }));
       acts.append(act(t('account.card.act.signOutAll', 'Sign out everywhere'), () => flow.signOut(true), { disabled: busy, key: 'signout-all' }));
     } else if (stage === 'code') {
+      // RECOVERY-SET: the codes kept another way than paper - copied, or
+      // saved as a text file (enhancedChargen.js's class export, the
+      // same two doors). Neither leaves the stage.
+      acts.append(act(t('account.card.act.copyCodes', 'Copy'), () => copyCodes(), { key: 'copy' }));
+      acts.append(act(t('account.card.act.saveCodes', 'Save as a file'), () => saveCodes(), { key: 'save' }));
       // THE ONLY WAY OFF THIS STAGE. No cancel, no close, no second
-      // route - the code is dropped when this is pressed and nothing
-      // anywhere can print it again.
-      acts.append(act(t('account.card.act.wroteIt', 'I have written it down'), () => flow.acknowledgeCode(), { primary: true, key: 'acknowledge' }));
+      // route - the codes are dropped when this is pressed and nothing
+      // anywhere can print them again.
+      acts.append(act(t('account.card.act.wroteIt', 'I have written them down'), () => flow.acknowledgeCode(), { primary: true, key: 'acknowledge' }));   // AUDIT RECOVERY-SET B5: a set
     } else if (stage === 'loading') {
       // nothing to press yet
     } else {
@@ -723,8 +764,36 @@ export function accountCard(doc, flow, { onClose = null, face = null, character 
     // buttons - two stacked rows where one would do, and on a form
     // that already had a Back it was a second way to do the same
     // thing. One row, centred, Close last.
-    if (onClose) acts.append(act(t('account.card.act.close', 'Close'), onClose, { key: 'close' }));
+    // AUDIT RECOVERY-SET B1: BUT NOT OVER THE CODES. The host passes a Close, and on `code` it was a second way off the
+    // stage the comment above calls the only one - after "Make new codes" had already killed the old set. Nor while a
+    // press is out: its answer may be codes.
+    if (onClose && stage !== 'code') acts.append(act(t('account.card.act.close', 'Close'), onClose, { key: 'close', disabled: busy }));
     if (acts.children.length) root.append(acts);
+  }
+
+  /** RECOVERY-SET: the codes on the clipboard - or, where the page may not write it, the sentence that says so. */
+  async function copyCodes() {
+    try {
+      await globalThis.navigator.clipboard.writeText(recoveryCodesText(flow.codesFor, flow.recoveryCodes ?? []));
+      flow.say(t('account.codes.copied', 'Copied. Paste them somewhere only you can read.'));
+    } catch {
+      flow.say(t('account.codes.copyRefused', 'This page may not write the clipboard - save them as a file instead.'), true);
+    }
+  }
+
+  /** RECOVERY-SET: the codes as a text file the player keeps, named for the account. */
+  function saveCodes() {
+    try {
+      const name = recoveryCodesFileName(flow.codesFor);
+      const url = URL.createObjectURL(new Blob([recoveryCodesText(flow.codesFor, flow.recoveryCodes ?? [])], { type: 'text/plain' }));
+      const link = doc.createElement('a');
+      link.href = url; link.download = name;
+      doc.body.append(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      flow.say(t('account.codes.saved', 'Saving as {name}.', { name }));   // AUDIT RECOVERY-SET B7: asked, not known - a save dialog can be cancelled
+    } catch {
+      flow.say(t('account.codes.saveRefused', 'The file could not be saved - copy them instead.'), true);
+    }
   }
 
   paint();

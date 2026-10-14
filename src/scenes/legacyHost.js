@@ -36,6 +36,7 @@ import {
 } from '../systems/legacy/family.js';
 import { houseWord } from '../systems/legacy/houseName.js';   // LEGACY-NAME: "the house of Sentinel", never "of of"
 import { loadFamily, storeFamily, leaveBirth, readBirth, clearBirth, listFamilies, mergeFacts, noteSeen, seenRevOf } from '../systems/legacy/store.js';
+import { takeRevived } from '../systems/legacy/revived.js';   // REVIVE: a death taken back, whichever copy says so
 import { birthSearch } from '../systems/legacy/places.js';
 import { payToll, tollLine, ageOf, isElder, isSpent } from '../systems/legacy/age.js';
 import { liveVampirism } from '../systems/racialLive.js';   // AGELESS-CURSE
@@ -140,6 +141,9 @@ export function mergeFamily(stored, saved, cid) {
   // AUDIT FB1007b T3: and the store's copy the newer, the save's LATER MOVE of the seat stands all the same (FAMILY-SEAT's
   // stamp, as every merge reads it) - a save that carries a move its store never took (another device's) lost it here
   else if (saved.seat && (Number(saved.seat.at) || 0) > (Number(out.seat?.at) || 0)) out.seat = { ...saved.seat };
+  // REVIVE: the store the base, a save's word that a death was taken back is heard all the same (mergeFacts hears it the
+  // other way) - the store's stale copy would otherwise play the revived member as the past
+  if (base === stored) takeRevived(out, saved);
   const me = cid ? out.people.find((p) => p.characterId === cid) : null;
   if (!me) return out;
   // the save's own word on them, by who they are - never by an id the store may have given another (store.js rekeyClashes)
