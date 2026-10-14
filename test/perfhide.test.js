@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { PNG } from 'pngjs';
-import { recolorHorse, recolorHorseTexels, horseHide, horseLookCode, texelPlanes, latticeNearest } from '../src/systems/horseCoats.js';
+import { recolorHorse, recolorHorseTexels, pictureHide, horseLookCode, texelPlanes, latticeNearest } from '../src/systems/horseCoats.js';
 import { toColor32 } from '../src/formats/color32Order.js';
 
 /** One of Horse Cart and Cargo's own pictures, as the pool keeps it (world rows, bottom first). */
@@ -48,24 +48,24 @@ test('PERF-HIDE: the 3D horse dyed byte for byte as COATS3D dyed it - the same h
 
 test('PERF-HIDE: a picture\'s hide is found once and kept - one a tack, never another picture\'s', () => {
   const p = picture('horse3.png');
-  const a = horseHide(p);
+  const a = pictureHide(p);
   assert.ok(a.at.length > 1000, `the hide is the horse's body: ${a.at.length} pixels`);
-  assert.equal(horseHide(p), a, 'asked again: the kept one');
+  assert.equal(pictureHide(p), a, 'asked again: the kept one');
   recolorHorse(p, look(1, 3, 1, 7));
-  assert.equal(horseHide(p), a, 'a dye finds no new one');
-  const bare = horseHide(p, { tack: false });
+  assert.equal(pictureHide(p), a, 'a dye finds no new one');
+  const bare = pictureHide(p, { tack: false });
   assert.notEqual(bare, a, 'without its tack: its own');
   assert.ok(bare.at.length > a.at.length, 'the saddle\'s leather is hide where no tack is spared');
-  assert.equal(horseHide(p, { tack: false }), bare);
+  assert.equal(pictureHide(p, { tack: false }), bare);
   // the same pixels in a new array are another picture to the keep - found again, the same hide
   const copy = { ...p, colors: p.colors.slice() };
-  const c = horseHide(copy);
+  const c = pictureHide(copy);
   assert.notEqual(c, a);
   assert.deepEqual([...c.at], [...a.at]);
   assert.deepEqual([c.x0, c.x1, c.r0, c.r1], [a.x0, a.x1, a.r0, a.r1]);
   // and a different picture never wears this one's
   const w = picture('Walk.0-3.png');
-  assert.notDeepEqual([...horseHide(w).at], [...a.at]);
+  assert.notDeepEqual([...pictureHide(w).at], [...a.at]);
 });
 
 test('PERF-HIDE: a dye is the same cold or warm - whatever picture, pattern or seed came between', () => {

@@ -495,8 +495,10 @@ function hideOf(colors, src, w, h, tack) {
 }
 
 /** PERF-HIDE: the hide `recolorHorse` dyes `image` by - the one it keeps for the picture (`tack` as recolorHorse's).
+ *  Named `pictureHide`, not `horseHide`: the 3D horse's measure is `world/horseModel.js` horseHide, and one name is one
+ *  module's (test/audit24_onehome.test.js's ratchet).
  *  @param {{ width: number, height: number, colors: ArrayLike<number> & { buffer: ArrayBufferLike, byteOffset: number, byteLength: number } }} image */
-export function horseHide(image, { tack = true } = {}) {
+export function pictureHide(image, { tack = true } = {}) {
   return hideOf(image.colors, new Uint8Array(image.colors.buffer, image.colors.byteOffset, image.colors.byteLength), image.width, image.height, tack);
 }
 
