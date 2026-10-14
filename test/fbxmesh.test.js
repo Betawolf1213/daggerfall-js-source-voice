@@ -9,71 +9,17 @@
 //
 // THE FIXTURE IS WRITTEN HERE, not recorded. A committed .fbx would be
 // a blob nobody can read in a diff, and - worse - a pin whose input
-// nobody can change to ask a new question. `writeFbx` below is forty
-// lines of the same container tools/fbxRead.mjs reads, so the pin
-// drives the reader against bytes this file's own reader wrote: if the
-// two ever disagree about the format, one of them is wrong and the
-// suite says so.
+// nobody can change to ask a new question. `writeFbx`
+// (test/fixtures/fbxWrite.mjs, this file's own writer until the MW-FOLK1
+// audit's cut pins needed it too) is forty lines of the same container
+// tools/fbxRead.mjs reads, so the pin drives the reader against bytes
+// the writer wrote: if the two ever disagree about the format, one of
+// them is wrong and the suite says so.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFbx, nodeAt, childNamed, objectName, property70, FBX_MAGIC } from '../tools/fbxRead.mjs';
-import { bakeMesh, polygonsOf, eulerXYZ, basisMap, axisVector, earClip, isConvexPolygon } from '../tools/fbxMesh.mjs';
-
-// ── a minimal binary-FBX writer, for fixtures only ───────────────────
-const S = (v) => ({ t: 'S', v });
-const D = (v) => ({ t: 'D', v });
-const I = (v) => ({ t: 'I', v });
-const dArr = (v) => ({ t: 'd', v });
-const iArr = (v) => ({ t: 'i', v });
-
-function encodeProp(p) {
-  const head = Buffer.from(p.t, 'latin1');
-  if (p.t === 'S') {
-    const s = Buffer.from(p.v, 'latin1');
-    const n = Buffer.alloc(4); n.writeUInt32LE(s.length);
-    return Buffer.concat([head, n, s]);
-  }
-  if (p.t === 'D') { const b = Buffer.alloc(8); b.writeDoubleLE(p.v); return Buffer.concat([head, b]); }
-  if (p.t === 'I') { const b = Buffer.alloc(4); b.writeInt32LE(p.v); return Buffer.concat([head, b]); }
-  const wide = p.t === 'd';
-  const body = Buffer.alloc(p.v.length * (wide ? 8 : 4));
-  p.v.forEach((x, i) => (wide ? body.writeDoubleLE(x, i * 8) : body.writeInt32LE(x, i * 4)));
-  const meta = Buffer.alloc(12);
-  meta.writeUInt32LE(p.v.length, 0); meta.writeUInt32LE(0, 4); meta.writeUInt32LE(body.length, 8);   // encoding 0 = raw
-  return Buffer.concat([head, meta, body]);
-}
-
-/** One node at a known absolute start offset; endOffset is absolute,
- *  which is why this cannot be built bottom-up without one. */
-function encodeNode(node, start) {
-  const name = Buffer.from(node.name, 'latin1');
-  const props = (node.props ?? []).map(encodeProp);
-  const propBytes = Buffer.concat(props);
-  const headLen = 13 + name.length;
-  let at = start + headLen + propBytes.length;
-  const kids = [];
-  for (const c of node.children ?? []) { const b = encodeNode(c, at); kids.push(b); at += b.length; }
-  if (kids.length) at += 13;   // the null record that closes a child list
-  const head = Buffer.alloc(headLen);
-  head.writeUInt32LE(at, 0);
-  head.writeUInt32LE(props.length, 4);
-  head.writeUInt32LE(propBytes.length, 8);
-  head.writeUInt8(name.length, 12);
-  name.copy(head, 13);
-  return Buffer.concat([head, propBytes, ...kids, ...(kids.length ? [Buffer.alloc(13)] : [])]);
-}
-
-function writeFbx(roots, version = 7400) {
-  const header = Buffer.alloc(27);
-  header.write(FBX_MAGIC, 0, 'latin1');
-  header.writeUInt8(0x1a, 20); header.writeUInt8(0x00, 21);
-  header.writeUInt32LE(version, 23);
-  const out = [header];
-  let at = header.length;
-  for (const r of roots) { const b = encodeNode(r, at); out.push(b); at += b.length; }
-  out.push(Buffer.alloc(13));
-  return Buffer.concat(out);
-}
+import { readFbx, nodeAt, childNamed, objectName, property70 } from '../tools/fbxRead.mjs';
+import { bakeMesh, objectMaterials, polygonsOf, eulerXYZ, basisMap, axisVector, earClip, isConvexPolygon } from '../tools/fbxMesh.mjs';
+import { S, D, I, dArr, iArr, writeFbx } from './fixtures/fbxWrite.mjs';   // the writer, one home
 
 // ── the fixture mesh ─────────────────────────────────────────────────
 //
@@ -114,7 +60,8 @@ const SCALE = [2, 3, 5];
 // `connections` (C rows) exist for the scene placement's questions.
 const P70 = (name, ...v) => ({ name: 'P', props: [S(name), S(name), S(''), S('A'), ...v.map((x) => (typeof x === 'number' ? D(x) : x))] });
 function fixture({ positions = VERTS, pvi = PVI, scale = SCALE, rotation = [10, 20, 30],
-  uvIndex = UVIDX, normalIndex = null, translation = [-179, -31, -31], modelProps = [], globals = null, connections = null } = {}) {
+  uvIndex = UVIDX, normalIndex = null, translation = [-179, -31, -31], modelProps = [], globals = null, connections = null,
+  materials = null, objects = [] } = {}) {   // MW-HEADS1 (AUDIT): `materials` { map, ids } a LayerElementMaterial; `objects` more records
   const nIdx = normalIndex ?? (pvi === PVI ? NORMIDX : pvi.map(() => 0));
   return writeFbx([
     ...(globals ? [{ name: 'GlobalSettings', children: [{ name: 'Properties70', children: globals.map(([k, v]) => ({ name: 'P', props: [S(k), S('int'), S('Integer'), S(''), Number.isInteger(v) ? I(v) : D(v)] })) }] }] : []),
@@ -141,6 +88,13 @@ function fixture({ positions = VERTS, pvi = PVI, scale = SCALE, rotation = [10, 
                 { name: 'UV', props: [dArr(UVS)] },
                 { name: 'UVIndex', props: [iArr(uvIndex)] },
               ] },
+            ...(materials ? [{ name: 'LayerElementMaterial',
+              props: [I(0)],
+              children: [
+                { name: 'MappingInformationType', props: [S(materials.map)] },
+                { name: 'ReferenceInformationType', props: [S('IndexToDirect')] },
+                { name: 'Materials', props: [iArr(materials.ids)] },
+              ] }] : []),
           ] },
         { name: 'Model',
           props: [I(2), S('Fixture\u0000\u0001Model'), S('Mesh')],
@@ -153,8 +107,9 @@ function fixture({ positions = VERTS, pvi = PVI, scale = SCALE, rotation = [10, 
                 ...modelProps,
               ] },
           ] },
+        ...objects,
       ] },
-    ...(connections ? [{ name: 'Connections', children: connections.map((c) => ({ name: 'C', props: [S(c[0]), I(c[1]), I(c[2])] })) }] : []),
+    ...(connections ? [{ name: 'Connections', children: connections.map((c) => ({ name: 'C', props: [S(c[0]), I(c[1]), I(c[2]), ...(c[3] ? [S(c[3])] : [])] })) }] : []),
   ]);
 }
 
@@ -493,4 +448,27 @@ test('FIELD-GUN-MW1: the bake refuses a SCENE, and refuses a mapping it cannot h
         { name: 'UV', props: [dArr(UVS)] }] },
     ] }] }]);
   assert.throws(() => bakeMesh(readFbx(odd)), /ByPolygon is not supported/);
+});
+
+test('MW-HEADS1 (AUDIT): a bake of ONE material takes its polygons alone - per polygon or the whole object; a Geometry with no materials, another mapping and a list that is not one index a polygon are refused; a material\'s picture is its base colour\'s', () => {
+  const mat = (map, ids) => readFbx(fixture({ materials: { map, ids } }));
+  const take = (t, material) => { const m = bakeMesh(t, { material }); return [m.bake.polygons, m.positions.length / 3, m.indices.length]; };
+  // the quad wears 1, the two triangles 0: the quad's four corners welded to four; the triangles' six to five (v2 split twice)
+  assert.deepEqual(take(mat('ByPolygon', [1, 0, 0]), 1), [1, 4, 6]);
+  assert.deepEqual(take(mat('ByPolygon', [1, 0, 0]), 0), [2, 5, 6]);
+  assert.deepEqual(take(mat('AllSame', [0]), 0), [3, 7, 12], 'one material for the whole object: every polygon');
+  assert.throws(() => bakeMesh(mat('AllSame', [0]), { material: 1 }), /no polygon of this object wears material 1/);
+  assert.throws(() => bakeMesh(readFbx(fixture()), { material: 0 }), /carries no LayerElementMaterial - there is no material to bake alone/);
+  assert.throws(() => bakeMesh(mat('ByVertice', [0, 0, 0, 0, 0]), { material: 0 }), /MappingInformationType ByVertice is not ByPolygon or AllSame/);
+  assert.throws(() => bakeMesh(mat('ByPolygon', []), { material: 0 }), /carries no Materials/);
+  // AUDIT MW-FOLK1 L1-F9: a short list read its missing polygons as no material's, dropped from every bake without a word
+  assert.throws(() => bakeMesh(mat('ByPolygon', [1, 0]), { material: 0 }), /2 material indices for 3 polygons/);
+  // the picture a material wears: its DiffuseColor texture, whatever else is connected first; its only one; none
+  const tex = (id, file) => ({ name: 'Texture', props: [I(id), S(`T${id}\u0000\u0001Texture`), S('')], children: [{ name: 'RelativeFilename', props: [S(file)] }] });
+  const material = (id) => ({ name: 'Material', props: [I(id), S(`M${id}\u0000\u0001Material`), S('')] });
+  const scene = readFbx(fixture({
+    objects: [material(10), material(11), material(12), tex(20, 'paint\\bump.png'), tex(21, 'paint\\colour.png'), tex(22, 'only.png')],
+    connections: [['OO', 1, 2], ['OO', 10, 2], ['OO', 11, 2], ['OO', 12, 2], ['OP', 20, 10, 'NormalMap'], ['OP', 21, 10, 'DiffuseColor'], ['OP', 22, 11, 'SpecularColor']],
+  }));
+  assert.deepEqual(objectMaterials(scene, 'Fixture'), ['paint/colour.png', 'only.png', null]);
 });

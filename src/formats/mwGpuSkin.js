@@ -247,8 +247,8 @@ function syncRigidRow(r) {
 
 /**
  * True when `layout` was laid out of exactly these drawable pieces, in order - packFpArm's sameRanges question - and
- * each skinned one still skins by the batch it was laid out from: a cloak seated swaps its batch for one whose thighs
- * weigh less (mwCloakFit.js seatCloak), and the stream carries the weights (AUDIT MW-CLOAK x MWNPC1).
+ * each skinned one still skins by the batch it was laid out from: a fit replaces a cloak's batch (mwCloakFit.js
+ * fitCloakOver), and the stream carries the weights (AUDIT MW-CLOAK x MWNPC1).
  */
 export function skinSamePieces(layout, pieces) {
   if (!layout || !layout.ok) return false;
