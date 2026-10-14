@@ -8,6 +8,7 @@ Discord threads from 2026-10-13 and 2026-10-14, handed over as screenshots, read
 | 1 | "Crash at Carpentry" - "Daggerfall: Newtower, cant interact. If try to access through Esc- Store get crash" (BioGud); "Same here, crashed trying to load the crafting bench" (a second player) | MENU-ORDER's station tiles asked each away station whether it held the pressed station's head with `children.some`; a browser's `children` is an HTMLCollection, with no `.some` - the press threw before it was spent, and every later Stores page threw with it | fixed (STORES-CRASH) |
 | 2 | "Inns with this room layout can't be used to sleep" - "No prompt to rest or loiter when clicking the beds" (Mona Polca) | the interior builder listed a bed only when its placement was a prop (ObjectType 3), furniture's gate; a bed written as scenery - a dormitory's, a ship's bunks - was never a click target | fixed (INN-BEDS) |
 | 3 | "Crew morale LIES sometimes between fleet window/shipwright and the helm!" - "Let me give them MORE grog!" (Cruor) | the yard's grog row wants no round once the day's is drunk, and the window read that as a crew at the top: "as high as they go", "No need", over a crew the helm called low | fixed (GROG-WORD) |
+| 4 | "Bugs envolving configuration and enchantments" - "my 'Repair items' enchantment is not repairing anything" (Arbeck; the same thread's lifesteal and Look Around are below) | MEND-WORN's order mends the worn piece with the lowest share first, and a worn piece that wears itself on the same round (Cast When Held, Item Deteriorates) took +1 and -1 every tick: it stayed first and nothing else was mended | fixed (MEND-STARVE) |
 
 ## STORES-CRASH: the Stores page walks a station's nodes as the browser mints them (1)
 
@@ -66,3 +67,23 @@ of that day the two said different things.
 FIXED. The row says why it wants none (`drunk`: below the top with the day's round drunk), and the window says the
 crew's own spirits and that they have had today's round, its press Tomorrow. One round a port day stands. Pinned by
 `test/fb1014_grogword.test.js` (`tools/mutants/fb1014_grogword.json`, 2, dead).
+
+## MEND-STARVE: a piece that wears itself is mended last (4)
+
+`src/systems/enchantments.js` repairsObjectsTarget, wearsItself.
+
+THE REPORT. "My 'Repair items' enchantment is not repairing anything" - in the same thread as an off-hand lifesteal and
+Look Around's secrets, all said to have stopped two days before.
+
+FOUND. Repairs Objects mends one piece every fourth magic round, MEND-WORN's order (`itemTemplates.js` mendOrder: worn
+first, the lowest share of its condition first). A worn Cast When Held piece loses a point on the same fourth round
+(CastWhenHeld.cs:27, HELD_DEGRADE_RATE) and a worn Item Deteriorates piece the same (ItemDeteriorates.cs:29). AllowMagicRepairs
+is the port's default and forced on online (DISC22-A), so such a piece, once it was the most worn, was mended +1 and worn
+-1 on every tick: its share never rose, it stayed first, and nothing else - worn or carried - was mended again.
+Reproduced through the round's payloads: a 20% Item Deteriorates helm beside a 99% cuirass, 400 rounds, nothing moved.
+It dates from MEND-WORN (2026-10-07). The one change to the target inside the reported two days, AUDIT WAGONS4's
+(the small cart and the horse are never mended by it), is intended.
+
+FIXED. A worn piece carrying either row is mended after every other damaged piece; once nothing else wants the tick, the
+tick holds it against its own wear, as before. Port-Ledger's MEND-WORN row records it. Pinned by
+`test/fb1014_mendstarve.test.js` (`tools/mutants/fb1014_mendstarve.json`, 3, dead).
