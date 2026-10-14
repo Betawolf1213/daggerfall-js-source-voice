@@ -15741,8 +15741,13 @@ the same close this slice gave `lootClosed` - not changed here.
 - **Pinned**: `test/partyloot.test.js` (11) - two clients over the real kill door, the host's stream, the joiner's stream
   doors (a layout body's and a rest encounter's), the room's loot with the heal's own re-read (actionRecords), takeLoot,
   the window's own onClose and the Physical Items bodies, the takes and stores through the real transfer
-  (itemTransfer.js), with the shared clock off and on; `tools/mutants/partyloot.json` (34: 31 killed, 3 recorded
-  equivalent - belt-and-braces lines whose job another check also does). PIN MOVED in `test/world4.test.js`, `test/auditworld4.test.js` (the open's claim, the close and C1
+  (itemTransfer.js), with the shared clock off and on; and `test/partyloot_wire.test.js` (2), the functional pin - the
+  same two clients with nothing between them standing in: world.js's own act door, heal and foes stream and its
+  session handlers, worldModes.js's dungeon arms, a real OnlineSession each and ONE real relay Room (`test/fakeRoom.mjs`),
+  the report end to end and a blast past the act bucket healed by actFlush (one rig for both, `test/partyLootRig.mjs`).
+  `tools/mutants/partyloot.json` (41: 38 killed, 3 recorded equivalent - belt-and-braces lines whose job another check
+  also does; the seven PARTY-LOOT-WIRE records name the functional pin alone, two of them in world.js's and
+  worldModes.js's own doors). PIN MOVED in `test/world4.test.js`, `test/auditworld4.test.js` (the open's claim, the close and C1
   through lootOpened and lootClosed) and the harnesses that mount the kill door or the stream's door
   (`test/audit68_dungeonctx.test.js`, `test/loot7check.test.js`, `test/auditcards6_a.test.js`, `test/seatheal.test.js`,
   `test/survtiers3.test.js`, `test/corpsegold.test.js`).

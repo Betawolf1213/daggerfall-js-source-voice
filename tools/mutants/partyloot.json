@@ -310,5 +310,68 @@
     "tests": [
       "test/partyloot.test.js"
     ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-no-word-at-the-death",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      sayBodyLoot(foe);   // PARTY-LOOT",
+    "new": "      void foe;   // PARTY-LOOT",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-an-early-word-dropped",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "      if (!lootHolder(canon)) { holdEarlyLoot(canon, rec); continue; }",
+    "new": "      if (!lootHolder(canon)) { continue; }",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-the-laid-body-never-handed-its-word",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    if (laid) streamLaidBody(f);   // PARTY-LOOT",
+    "new": "    if (laid) void f;   // PARTY-LOOT",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-no-wait",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "if (!_lootSeen.has(k)) f._lootDueAt = performance.now() + LOOT_WORD_WAIT_MS;",
+    "new": "if (!_lootSeen.has(k)) f._lootDueAt = null;",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-the-held-press-never-opened",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "    return api.takeLoot(h.key, h.mode, h.pileKeys) > 0;",
+    "new": "    return false;",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-the-heal-re-reads-nothing",
+    "file": "src/scenes/world.js",
+    "old": "    const data = modes?.placeActionRecords?.([..._actPend]);",
+    "new": "    const data = null;",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
+  },
+  {
+    "name": "PARTY-LOOT-WIRE-a-room-word-never-reaches-the-dungeon",
+    "file": "src/scenes/worldModes.js",
+    "old": "      if (mode === 'dungeon') return dungeonCtx ? !!dungeonCtx.applyActions?.(id, data) : false;",
+    "new": "      if (mode === 'dungeon') return false;",
+    "tests": [
+      "test/partyloot_wire.test.js"
+    ]
   }
 ]
