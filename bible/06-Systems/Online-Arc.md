@@ -15751,5 +15751,12 @@ the same close this slice gave `lootClosed` - not changed here.
   through lootOpened and lootClosed) and the harnesses that mount the kill door or the stream's door
   (`test/audit68_dungeonctx.test.js`, `test/loot7check.test.js`, `test/auditcards6_a.test.js`, `test/seatheal.test.js`,
   `test/survtiers3.test.js`, `test/corpsegold.test.js`).
+- **Played**: `tools/partyLootProbe.mjs` (a probe, run by hand - a browser, the game's data and minutes; its seams held to
+  the tree by `test/partyloot_probe.test.js`): two players in the real game in headless Chromium, both online in
+  Privateer's Hold against the real relay and account service in local workerd, the host killing six foes through the
+  game's own damage door and the joiner opening and closing a body through its own loot door. On this branch all six
+  bodies held one list on both copies and the joiner's open and close left the host's list whole. On main before it
+  (TREE=) the report itself: five of the six bodies held different lists (one the host's raw meat, the joiner's
+  "Empty"), and the joiner's open and close, taking nothing, turned the host's 16 gold into the joiner's 4.
 
 ---
