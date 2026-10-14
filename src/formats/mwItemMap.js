@@ -46,7 +46,8 @@
 import { WEAPONS, WEAPON_MATERIALS } from '../characters/weapons.js';
 import { OWN_MW_MODELS } from '../characters/ownWeaponModels.js';   // FIELD-GUN-MW2: the weapons Morrowind does not have
 import { OWN_MW_ARMOR, ownArmorModelFor, ownArmorParts } from '../characters/ownArmorModels.js';   // MW-BRIG1: the armour Morrowind does not have; MW-STEEL1: and its styles
-import { CLOAK_NAMES, CLOAK_PAINTINGS, cloakModel, ownCloakFor } from '../characters/ownClothingModels.js';   // MW-CLOAK1: and the clothing
+import { CLOAK_NAMES, CLOAK_PAINTINGS, cloakModel, ownCloakFor, ownOutfitFor } from '../characters/ownClothingModels.js';   // MW-CLOAK1: and the clothing; MW-FOLK1: and the townsfolk's outfits
+import { t } from '../systems/textManager.js';   // L10N4: MW-FOLK1's notes in the player's language
 import { ARMOR_MATERIAL } from '../systems/armorMaterials.js';
 import { ARMOR_ENUM } from '../combat/enemyEquipment.js';
 import templates from '../characters/itemTemplates.json' with { type: 'json' };
@@ -594,8 +595,10 @@ export function dfWornArmor(slots, EQUIP_SLOTS, ARMOR_ENUM) {
  * player's pieces, the parsed ARMO records, the BODY pool, and the
  * sex; answers what to ADD (part meshes on their sided bones), what
  * to SHADOW (skin slots or single sides the armor hides - `shadows`
- * the third person's, `fpShadows` the first person's, MW-FIT1), and
- * NOTES for everything that keeps its sprite instead. Never throws: a
+ * the third person's, `fpShadows` the first person's, MW-FIT1), what
+ * it COVERS without hiding (`covers`, MW-FOLK1 - an outfit's open
+ * bodice over the chest, read by the modesty weld), and NOTES for
+ * everything that keeps its sprite instead. Never throws: a
  * missing record, an unknown INDX, a ref with no id for this sex -
  * each is a note, the skin stands, the law is never-traps.
  */
@@ -626,7 +629,25 @@ export function composeWornArmor({ pieces, armors, clothes, bodyPool, female = f
   const ordered = [...(pieces ?? [])].sort((a, b) => wornOrder(a) - wornOrder(b));
   let hairHidden = 0;
   let cloakAdd = null; let cloakName = null;   // MW-CLOAK1: the cloak, which no slot holds
+  let outfitAdd = null;   // MW-FOLK1: a townsperson's whole outfit, which no slot holds either
+  const covers = new Set();
   for (const piece of ordered) {
+    // MW-FOLK1: A TOWNSPERSON'S OUTFIT IS THE PORT'S OWN (characters/ownClothingModels.js TOWNSFOLK_OUTFITS) - one
+    // skinned mesh of every garment their picture wears, claiming no slot (the cloak's door): the skin it covers all
+    // round is occupied with no mesh at clothing's priority (`hides` - MW-FIT1's occupation), the rest stays the body's.
+    // One is drawn; a second says so. An id the table does not hold is no outfit.
+    if (piece.kind === 'outfit') {
+      const o = ownOutfitFor(piece.id);
+      // each note opens with its piece's label, `outfit <id>:` - the card's rows find a piece's reason by it
+      // (fpArm.js wornVerdicts), so it stands outside the player's language as every label does; the rest is theirs
+      if (!o) { notes.push(`outfit ${piece.id}: ${t('body.outfit.unknown', 'no outfit the port carries')}`); continue; }
+      if (outfitAdd) { notes.push(`outfit ${o.id}: ${t('body.outfit.second', 'a second outfit - the first ({first}) is the one drawn', { first: outfitAdd.recordId })}`); continue; }
+      const prio = ((0 + 1) << 1) + 0;
+      outfitAdd = { slot: `outfit (${o.id})`, partName: 'outfit', bones: [], model: o.model, recordId: o.id, piece, hides: o.hides };
+      for (const h of o.hides) claim(ARMO_PART.findIndex((r) => r.name === h), prio, null, outfitAdd);
+      for (const c of o.covers) covers.add(c);
+      continue;
+    }
     // WEREWOLF1: A CLOT RECORD HANDED IN WHOLE - the one garment no Daggerfall item names, the werewolf's robe
     // (MechanicsManager::setWerewolf equips "werewolfrobe" in Slot_Robe, mechanicsmanagerimp.cpp:1896-1901). It is
     // claimed exactly as a named garment is: clothing's priority at its reserve's base, and the reserve beside it.
@@ -731,8 +752,9 @@ export function composeWornArmor({ pieces, armors, clothes, bodyPool, female = f
     // the skin's, not a hole. Every other occupation is the third person's and the first person's alike.
     if (key && !(slots[i2].under && !fpWornAdds([slots[i2].under]).length)) fpShadows.add(key);
   }
+  if (outfitAdd) adds.push(outfitAdd);   // MW-FOLK1
   if (cloakAdd) adds.push(cloakAdd);
-  return { adds, shadows: [...shadows], fpShadows: [...fpShadows], notes };
+  return { adds, shadows: [...shadows], fpShadows: [...fpShadows], covers: [...covers], notes };
 }
 
 /** NUDE-FLATS, THE MORROWIND BODY'S HALF: DFU's upper weld (PaperDollRenderer.BlitBody's `!IsUpperClothed()`, the
@@ -740,12 +762,13 @@ export function composeWornArmor({ pieces, armors, clothes, bodyPool, female = f
  *  its groin wears underwear, so a woman whose composition leaves the chest skin showing wears the plainest shirt
  *  while Show Nudity is off - resolved as a worn Short Shirt is (mwClothingRecord with no dye: the id-sorted first,
  *  retail's common_shirt_01). A man, and a chest anything already covers - a shirt, a dress, a robe, a
- *  cuirass - compose as they always did; a cloak hangs down the back and covers none of it (MW-CLOAK1). `show` is
- *  Show Nudity (ChildGuard/PlayerNudity). */
+ *  cuirass - compose as they always did; a cloak hangs down the back and covers none of it (MW-CLOAK1); an outfit
+ *  that dresses the chest without hiding its skin (MW-FOLK1 `covers` - the hooded Redguard woman's open bodice, her
+ *  midriff bare under it as her picture's is) is a chest covered. `show` is Show Nudity (ChildGuard/PlayerNudity). */
 export const MODESTY_SHIRT = Object.freeze({ kind: 'clothing', name: 'Short Shirt' });
 export function composeWornModest(args, show) {
   const worn = composeWornArmor(args);
-  if (show || !args.female || worn.shadows.includes('chest')) return worn;
+  if (show || !args.female || worn.shadows.includes('chest') || worn.covers.includes('chest')) return worn;   // MW-FOLK1: or an outfit dresses it
   return composeWornArmor({ ...args, pieces: [...(args.pieces ?? []), MODESTY_SHIRT] });
 }
 
@@ -805,6 +828,7 @@ function composeRefs(rec, prio, female, bodyById, claim, notes, piece = null) {
  *  gauntlets, shirt, pants, carried. Ties in priority go to the LATER
  *  rank, which this sort makes true by walking earlier ranks first. */
 function wornOrder(piece) {
+  if (piece.kind === 'outfit') return 0;   // MW-FOLK1: a whole outfit, first as a robe is
   if (piece.kind === 'record') return piece.reserve === 'robe' ? 0 : piece.reserve === 'skirt' ? 1 : 11;   // WEREWOLF1
   if (piece.kind === 'clothing') {
     const row = DF_CLOTHING_ROWS[piece.name ?? CLOTHING_NAME[piece.templateIndex]];

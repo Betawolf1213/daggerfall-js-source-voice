@@ -74,8 +74,8 @@
   {
     "name": "MWEBONY1-the-legs-in-the-joint-law",
     "file": "tools/skinWeights.mjs",
-    "old": "    for (let i = 0; i < d.length; i++) if (!legIndex?.has(i) && (k < 0 || d[i] < d[k])) k = i;",
-    "new": "    for (let i = 0; i < d.length; i++) if ((k < 0 || d[i] < d[k])) k = i;",
+    "old": "    for (let i = 0; i < d.length; i++) if (can[i] && (k < 0 || d[i] < d[k])) k = i;",
+    "new": "    for (let i = 0; i < d.length; i++) if ((can[i] || legIndex?.has(i)) && (k < 0 || d[i] < d[k])) k = i;",
     "tests": ["test/mwebony1.test.js", "test/mwcloak1.test.js"],
     "note": "The joint law picks a thigh outright for a plate over it."
   }
