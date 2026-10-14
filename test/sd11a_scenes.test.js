@@ -11,6 +11,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
 import { glslFunctions } from './glsl.mjs';
@@ -460,7 +461,7 @@ test('AUDIT SD II L2 F9: THE HOUR\'S FRAME MAKES NOTHING - measured in a child w
     out.blows = bytes(() => blows.frame());
     console.log(JSON.stringify(out));
   `;
-  const run = spawnSync(process.execPath, ['--expose-gc', '--min-semi-space-size=64', '--max-semi-space-size=64', '--input-type=module', '-e', script], { encoding: 'utf8' });
+  const run = spawnSync(process.execPath, [...ALLOC_CHILD_ARGS, '--input-type=module', '-e', script], { encoding: 'utf8' });
   assert.equal(run.status, 0, run.stderr);
   const m = JSON.parse(run.stdout.trim().split('\n').pop());
   assert.ok(m.control >= 40, `the control made ${m.control.toFixed(2)} bytes a frame - the measure is blind`);
@@ -562,6 +563,12 @@ test('AUDIT SD II L2 F10, F11: THE HOUR POSED BEFORE THE WORLD PASS, AND A HIDDE
   S = { ...S, ph: 1 };
   fought.frame(1 / 60, null);
   assert.deepEqual([fl[0].hidden, [...fl[0].object.matrix]], [false, [...standing]], 'back where it stood: drawn again');
+  // ALLOC1: and a body standing as it stood is not posed again - its matrix stays as the last pose wrote it. Held by
+  // what the frame does, not by its bytes: optimised code makes the matrix again without a byte, so the measure above
+  // only ever caught this while the compiler was late
+  fl[0].object.matrix[15] = 7;
+  fought.frame(1 / 60, null);
+  assert.equal(fl[0].object.matrix[15], 7, 'a still body posed again: its matrix made every frame');
 });
 
 // ── L2 F14: a lamp under every light ────────────────────────────────────

@@ -5,6 +5,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { join } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import {
@@ -486,7 +487,7 @@ test('SD-LOOK S8 THE FIGHT\'S FRAME MAKES NOTHING (AUDIT SD II L2 F9\'s measure)
   `;
   let paths = 0;
   for (const name of ['stomp', 'hand', 'pulse', 'stun', 'reset', 'window', 'echo', 'fall']) {
-    const run = spawnSync(process.execPath, ['--expose-gc', '--min-semi-space-size=64', '--max-semi-space-size=64', '--input-type=module', '-e', script], { encoding: 'utf8', env: { ...process.env, SD_FIGHT: name } });
+    const run = spawnSync(process.execPath, [...ALLOC_CHILD_ARGS, '--input-type=module', '-e', script], { encoding: 'utf8', env: { ...process.env, SD_FIGHT: name } });
     assert.equal(run.status, 0, run.stderr);
     const m = JSON.parse(run.stdout.trim().split('\n').pop());
     assert.ok(m.control >= 40, `the control made ${m.control.toFixed(2)} bytes a frame - the measure is blind`);
