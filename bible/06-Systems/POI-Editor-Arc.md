@@ -41,7 +41,7 @@ the glTF reader is the port's own and every model draws through `Renderer.create
 | POI-1 | The format (document, mesh, texture header) and the store: roles, content-addressed uploads, drafts, submissions, the approver's word, retirement, rollback, the live feed | built |
 | POI-2 | The game: the feed read and kept, POIs streamed with the pixels they stand on in the exterior hosts, drawn, collided, lit, marked on the map; a new approval picked up without a reload | built |
 | POI-3 | The editor mode: the role gate, a free camera, the map to fly to, place / move / rotate / scale with gizmos and ground snap, an outliner and inspector, undo and redo, drafts saved and submitted | built (POI-3a the core, POI-3b the world and the panel) |
-| POI-4 | The glTF 2.0 / GLB importer: accessors (sparse too), the node tree baked, materials, embedded and side-by-side images, samplers, KHR_texture_transform; the frame turned to the game's; the asset library | the reader built; the import and its upload built (POI-3b); a library shared between builders planned |
+| POI-4 | The glTF 2.0 / GLB importer: accessors (sparse too), the node tree baked, materials, embedded and side-by-side images, samplers, KHR_texture_transform; the frame turned to the game's; the asset library | built - the reader (POI-4), the import and its upload (POI-3b), the library shared between builders (POI-4b) |
 | POI-5 | The material editor and the full UV editor: selection by vertex, edge, face and island; move, rotate, scale; seams; LSCM unwrap; island packing; projections; texel density | built |
 | POI-6 | The approver's queue in the editor (before and after, at the place, with the law's report), history and rollback; export and import of a POI pack; a GLB back out for a round trip | planned |
 
@@ -94,6 +94,9 @@ approver is in `APPROVER_HANDLES` (Lattymoy); a builder is an approver, a develo
 - Reads: `GET /v1/poi/me` (the caller's roles), `/list` (every POI and its revisions' states), `/doc/<id>` (its history,
   documents and all), `/queue` (an approver's: every submission, oldest first, with the live document it would replace
   and whether it is STALE - made from a revision that is no longer the live one).
+- The library's shelf (POI-4b, below): `GET /v1/poi/shelf` (every entry, without its parts), `GET /v1/poi/shelf/<lib-id>`
+  (one, whole), `PUT /v1/poi/shelf { item }` (put new, or over one's own - an approver's, any), `POST /v1/poi/unshelve
+  { id }` (its maker or an approver).
 - The open reads, no session: `GET /v1/poi/live` (`{ v, pois: [{ id, rev, doc }] }`, an ETag of its version, 304 to a
   game that holds it - the preflight lets `if-none-match` through) and `GET /v1/poi/asset/<sha>` for an asset a live POI
   names (`public, max-age=31536000, immutable`). A draft's asset is a builder's alone (`private, no-store`). Bounded
@@ -264,6 +267,45 @@ the import, and the world's wiring by source; `tools/mutants/poi3b.json` 12, all
 
 Pinned by `test/poi4_gltf.test.js` (6); `tools/mutants/poi4.json` 11, all dead. The asset library, the upload and the
 editor's import dialog come with POI-3.
+
+## POI-4b - the library (2026-10-14)
+
+Mac: "Allowing not just the creation of POI's using models, but also the ability to import models ... a tool my
+developers can use without having to access the codebase". A model imported once is every builder's to stand again,
+without its file.
+
+- **THE ENTRY** (`src/poi/poiLaw.js` `poiShelfProblems`): a POI's parts and lights without a place - each part the law's
+  own (its mesh and materials by their hashes, its offset, turn and size from the model's origin, its solidity and
+  shadow) - a `lib-` id, a name, tags, words, and its picture (`thumb`, a texture by its hash, or none). The same law a
+  POI is read by, `place` and `marker` left out; the picture checked as a stored texture with the rest of its assets.
+- **THE SHELF** (`server-account/src/poi.js` listShelf / shelfEntry / shelve / unshelve; migration 0113's `poi_shelf`):
+  shared by every builder and read by no player. An entry put new, or over the builder's own (an approver's, any); taken
+  off the shelf by its maker or an approver - kept, as every record here is, but listed, read and put over no more. Its
+  triangles counted from its meshes' stored facts. A builder keeps at most `POI_SHELF_MAX` (2,000) entries at once. Its
+  assets stay a builder's until a live POI names them.
+- **ITS PICTURE** (`src/poi/poiThumb.js`): drawn in software as the entry is kept - no GL context borrowed, the same
+  numbers the same picture everywhere. Orthographic, from the model's front a little to its right and above (Unity's
+  frame: the model's right on the viewer's left), framed on what is drawn; a depth buffer; a face turned away culled
+  (its winding against the eye, a mirroring size turning it), a two-sided material lit from its own side; each pixel its
+  colour times its picture (wrapped, its UV transform applied - poiRuntime.js's order) under a key, a fill and an
+  ambient light; a cutout's clear texels dropped, a see-through material laid over what is behind. Drawn at twice the
+  size and averaged down. Written as a PNG (RGBA, filter None, zlib by `formats/rawDeflate.js` with its Adler-32, each
+  chunk's CRC by `systems/saveTransfer.js` crc32), uploaded as a texture by its name.
+- **KEEPING** (`src/poi/poiShelf.js`): the law asked first (nothing is uploaded for an entry it refuses), the picture
+  drawn and uploaded, then the entry put wearing it; a picture that will not draw leaves the entry without one - still
+  kept, and shown by its initial. The store's refusal brings the law's problems back to the dialog.
+- **THE LIBRARY** (`src/ui/poiLibraryPanel.js`; the bar's **Library**): every entry, newest change first - its picture,
+  name, tags, maker, parts and triangles - searched by any words of its name, tags or maker, or mine alone; **Place**
+  stands it where the next click meets the ground (or a model on it); **Change...** (its name, tags and words) and **Take
+  off the shelf** (asked twice) on mine, or on any for an approver. **Keep it in the library...** in a POI's inspector
+  (its parts and lights) and **Keep this part in the library...** in a part's (the part alone, at the entry's origin);
+  the import keeps what it places unless its box is cleared - its meshes as the import holds them, none fetched back.
+- **PLACING AN ENTRY** (`src/scenes/poiEditorHost.js`): its parts keep their own turn, size, solidity and shadow, each
+  where it stands from the entry's origin, and its lights come with it - all one step of the undo.
+
+It rides acct133 with POI-1's store - neither deployed before it - its table in migration 0113.
+
+Pinned by `test/poi4b_library.test.js` (7); `tools/mutants/poi4b.json` 23, all dead.
 
 ## POI-5 - the material editor and the UV editor (2026-10-14)
 

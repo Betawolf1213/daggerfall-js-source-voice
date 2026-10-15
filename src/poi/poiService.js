@@ -3,10 +3,11 @@
 // POI-3 (2026-10-14) - THE EDITOR'S DOOR TO THE POI STORE (server-account/src/poi.js; bible/06-Systems/POI-Editor-Arc.md).
 //
 // Every route the editor asks, by name, so no screen spells a path (net/accountClient.js's ladder's rule). The reads and
-// the acts - who am I, the list, a POI's history, the approver's queue; submit, withdraw, retire, review, roll back - go
+// the acts - who am I, the list, a POI's history, the approver's queue, the library's shelf; submit, withdraw, retire,
+// review, roll back, take off the shelf - go
 // through the account client's one door (`call`: the bearer, the busy gate, a network failure answered as `offline`).
-// The two that carry a BODY no JSON ladder takes - a draft (to 96 KiB of document) and an asset (a mesh or a picture,
-// to megabytes) - are PUTs of their own here, as the saves' blobs are (systems/cloudSaves.js), answered in the door's
+// The three that carry a BODY no JSON ladder takes - a draft (to 96 KiB of document), a shelf entry (the same) and an
+// asset (a mesh or a picture, to megabytes) - are PUTs of their own here, as the saves' blobs are (systems/cloudSaves.js), answered in the door's
 // own shape: `{ ok: true, data, status }` or `{ ok: false, error, status }`.
 //
 // An asset is named by its sha256 (the store refuses bytes that are not what they name), so an upload hashes first, and
@@ -37,7 +38,10 @@ async function put(io, path, body, contentType) {
   }
   let data = null;
   try { data = await res.json(); } catch { data = null; }
-  if (!res.ok) return { ok: false, error: typeof data?.error === 'string' ? data.error : 'server', ...(typeof data?.why === 'string' ? { why: data.why } : {}), status: res.status };
+  if (!res.ok) {
+    return { ok: false, error: typeof data?.error === 'string' ? data.error : 'server', ...(typeof data?.why === 'string' ? { why: data.why } : {}),
+      ...(Array.isArray(data?.problems) ? { problems: data.problems } : {}), status: res.status };   // the law's own word on a refusal
+  }
   if (!data) return { ok: false, error: 'offline', unknown: true, status: res.status };
   return { ok: true, data, status: res.status };
 }
@@ -64,6 +68,18 @@ export const poiRetire = (io, id) => call(io, '/v1/poi/retire', { id });
 export const poiReview = (io, id, rev, verdict, note = null) => call(io, '/v1/poi/review', { id, rev, verdict, note });
 /** The approver puts an earlier approved revision back in the world. @param {PoiIo} io */
 export const poiRollback = (io, id, rev) => call(io, '/v1/poi/rollback', { id, rev });
+
+// POI-4b: THE LIBRARY'S SHELF - the models builders keep to stand again
+/** Every entry on the shelf, newest change first, without its parts: `{ items: [{ id, name, tags, thumb, parts,
+ *  triangles, by, byId, at, updatedAt, updatedBy }] }`. @param {PoiIo} io */
+export const poiShelf = (io) => call(io, '/v1/poi/shelf');
+/** One entry, its parts and lights: `{ id, item, by, byId, at, updatedAt }`. @param {PoiIo} io @param {string} id */
+export const poiShelfEntry = (io, id) => call(io, `/v1/poi/shelf/${id}`);
+/** Put an entry on the shelf, or change one of the builder's own (an approver's, any): `{ id, at }`. A PUT of its own -
+ *  an entry is a POI's parts, past the ladder's bound. @param {PoiIo} io @param {any} item */
+export const poiShelve = (io, item) => put(io, '/v1/poi/shelf', JSON.stringify({ item }), 'application/json');
+/** Take an entry off the shelf (its author or an approver). @param {PoiIo} io @param {string} id */
+export const poiUnshelve = (io, id) => call(io, '/v1/poi/unshelve', { id });
 
 /**
  * Upload an asset: hashed, then put under its name - `{ ok, data: { sha, kind, meta, existed } }`.

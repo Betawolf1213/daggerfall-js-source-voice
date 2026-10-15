@@ -190,7 +190,7 @@ import {
 } from './accounts.js';
 import { mintToken, mintOrder, mintRenownOrder, mintGuildOrder, mintGuildOutOrder, MAX_TTL_S, TOKEN_V, ID_RE, SEAT_TITLES, CHAPTER_TITLES, TOKEN_MAX_CHARS, TOKEN_BODY_MAX, tokenBodyOf } from '../../src/net/identityToken.js';
 import { ACCOUNT_VERSION, MAX_BODY_BYTES, ROUTES, OPEN_ROUTES, PATREON_OPEN_ROUTES, savePathOf, realmPathOf, poiPathOf, SAVE_MAX_BYTES, SHOT_MAX_BYTES, maintaining, routeDb, d1BookmarkOf, D1_BOOKMARK_RE, d1Overloaded, noteOverload, shedding } from './service.js';   // SCALE4d: the routes a read replica may serve, and the session they are served on
-import { poiRolesOf, putPoiAsset, getPoiAsset, savePoiDraft, submitPoi, withdrawPoi, requestRetire, reviewPoi, rollbackPoi, listPoi, poiHistory, poiQueue, poiLiveFeed, POI_ASSET_MAX, POI_DRAFT_BODY_MAX } from './poi.js';   // POI-1: the POI store - builders draft, an approver decides, the feed is what is live
+import { poiRolesOf, putPoiAsset, getPoiAsset, savePoiDraft, submitPoi, withdrawPoi, requestRetire, reviewPoi, rollbackPoi, listPoi, poiHistory, poiQueue, poiLiveFeed, listShelf, shelfEntry, shelve, unshelve, POI_ASSET_MAX, POI_DRAFT_BODY_MAX } from './poi.js';   // POI-1: the POI store - builders draft, an approver decides, the feed is what is live; POI-4b: the library's shelf
 import { listSaves, putCard, putBlob, getBlob, deleteSave, saveCardOf } from './saves.js';
 import { signingKey, gatePublicKey } from './signing.js';
 import { stakeCards, cashoutCards } from './cards.js';   // CARDS6: a card table's stakes, escrowed
@@ -1866,6 +1866,15 @@ const service = {
         if (route === 'list' && request.method === 'GET') return answer(await listPoi(pctx, me, env));
         if (route === 'queue' && request.method === 'GET') return answer(await poiQueue(pctx, me, env));
         if (route === 'doc' && request.method === 'GET') return answer(await poiHistory(pctx, me, env, poiPath.id));
+        if (route === 'shelf' && request.method === 'GET') return answer(poiPath.id ? await shelfEntry(pctx, me, env, poiPath.id) : await listShelf(pctx, me, env));
+        if (route === 'shelf' && request.method === 'PUT' && !poiPath.id) {
+          // POI-4b: an entry on the library's shelf, read to a draft's own bound (an entry is a POI without its place)
+          if (!poiRolesOf(me, env).builder) return no('poi-not-builder', 403, origin);
+          const put = await readBody(request, POI_DRAFT_BODY_MAX);
+          if (put === undefined) return no('too-large', 413, origin);
+          if (!put) return no('body', 400, origin);
+          return answer(await shelve(pctx, me, env, { item: put.item }));
+        }
         if (route === 'asset' && request.method === 'GET') {
           const r = await getPoiAsset(pctx, poiPath.sha, poiRolesOf(me, env));
           return 'error' in r ? no(r.error, r.error === 'no-storage' ? 503 : 404, origin) : poiAssetResponse(r, origin);
@@ -1893,6 +1902,7 @@ const service = {
           if (route === 'retire') return answer(await requestRetire(pctx, me, env, { id: body.id }));
           if (route === 'review') return answer(await reviewPoi(pctx, me, env, { id: body.id, rev: body.rev, verdict: body.verdict, note: body.note ?? null }));
           if (route === 'rollback') return answer(await rollbackPoi(pctx, me, env, { id: body.id, rev: body.rev }));
+          if (route === 'unshelve') return answer(await unshelve(pctx, me, env, { id: body.id }));
         }
         return no('method', 405, origin);
       }

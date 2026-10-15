@@ -61,3 +61,24 @@ CREATE TABLE IF NOT EXISTS poi_feed (
   at          INTEGER NOT NULL
 );
 INSERT OR IGNORE INTO poi_feed (k, v, at) VALUES ('feed', 0, 0);
+
+-- THE LIBRARY'S SHELF (POI-4b): the models builders keep to stand again - an entry is a POI's parts and lights without a
+-- place (poiLaw.js poiShelfProblems), named and tagged, with a picture of it. Shared by every builder; changed only by its
+-- author or an approver; taken off the shelf, never deleted (a POI may stand its assets still).
+CREATE TABLE IF NOT EXISTS poi_shelf (
+  id          TEXT PRIMARY KEY,               -- lib-<12 hex> (poiLaw.js POI_SHELF_ID_RE)
+  item        TEXT NOT NULL,                  -- the entry as JSON
+  name        TEXT NOT NULL,                  -- its name and tags, beside it for the list
+  tags        TEXT NOT NULL,                  -- JSON array
+  thumb       TEXT,                           -- its picture's sha256 (a texture asset), or NULL
+  parts       INTEGER NOT NULL,
+  triangles   INTEGER NOT NULL,
+  by          TEXT NOT NULL,                  -- players.id of its author
+  by_name     TEXT NOT NULL,                  -- the handle, as it was
+  at          INTEGER NOT NULL,               -- first shelved
+  updated_at  INTEGER NOT NULL,
+  updated_by  TEXT NOT NULL,                  -- the handle of the last to change it (its author, or an approver)
+  gone_at     INTEGER,                        -- taken off the shelf
+  gone_by     TEXT
+);
+CREATE INDEX IF NOT EXISTS poi_shelf_by ON poi_shelf (by, gone_at);

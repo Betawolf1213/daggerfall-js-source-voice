@@ -16,7 +16,10 @@
 //     law's every problem in the builder's language, each said where it is (poi/poiText.js) - and the store's acts:
 //     save the draft, send it for approval, take it back, ask for a live POI's retirement, put back what was saved.
 //   - THE IMPORT (a dialog): a .glb, or a .gltf with its files; its parts, what was left out and why, what is past a
-//     limit; uploaded once each by name (poi/poiImport.js) and placed where the next click is.
+//     limit; uploaded once each by name (poi/poiImport.js) and placed where the next click is - and kept in the library
+//     too, unless the builder says not (POI-4b).
+//   - THE LIBRARY (POI-4b, ui/poiLibraryPanel.js): the bar's Library - every model the builders keep, to place again; a
+//     POI or a part kept in it from its inspector.
 //
 // A REFUSAL IS A SENTENCE: the store's word through the account client's own table (accountRefusalText); a problem
 // through the law's. TEXT, NEVER MARKUP: every name a builder typed is written with `textContent`. The panel takes no
@@ -34,6 +37,7 @@ import { problemText, problemWhere, gltfErrorText, gltfWarningText, meshErrorTex
 import { poiSaveDraft, poiSubmit, poiWithdraw, poiRetire, poiList, poiHistory, poiPutAsset } from '../poi/poiService.js';
 import { decodePoiMesh, encodePoiMesh } from '../poi/poiMesh.js';
 import { createPoiUvPanel } from './poiUvPanel.js';   // POI-5: the UV editor
+import { createPoiLibrary } from './poiLibraryPanel.js';   // POI-4b: the library's shelf
 import { poiImageMetaOf } from '../poi/poiImage.js';
 import { readGltf, bakeGltf } from '../poi/gltfImport.js';
 import { prepareImport, uploadImport } from '../poi/poiImport.js';
@@ -148,10 +152,12 @@ export function createAssetFacts(fetchAsset, onLearned = () => {}) {
  *   io: () => (import('../poi/poiService.js').PoiIo | null), me: { handle: string | null, builder: boolean, approver: boolean },
  *   onExit: (how: 'back' | 'here') => void, onEnter?: () => void, onJump?: () => void, readFile?: (f: any) => Promise<Uint8Array>,
  *   decodeImage?: ((bytes: Uint8Array) => Promise<{ width: number, height: number, data: Uint8Array | Uint8ClampedArray }>) | null,
+ *   rand?: (b: Uint8Array) => Uint8Array,
  * }} deps `onEnter` the launcher's press (the editor opened again after an exit); `decodeImage` a picture decoded (the UV
- *   editor draws the material's under its UVs - poi/poiImageDecode.js)
+ *   editor draws the material's under its UVs, the library a model's picture - poi/poiImageDecode.js); `rand` fills bytes
+ *   (a library entry's id)
  */
-export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, me, onExit, onEnter = () => {}, onJump = () => {}, readFile = async (f) => new Uint8Array(await f.arrayBuffer()), decodeImage = null }) {
+export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, me, onExit, onEnter = () => {}, onJump = () => {}, readFile = async (f) => new Uint8Array(await f.arrayBuffer()), decodeImage = null, rand = (b) => { globalThis.crypto.getRandomValues(/** @type {any} */ (b)); return b; } }) {
   injectPoiPanelStyle(doc);
   const el = (tag, cls = '', text = null) => { const n = doc.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   const btn = (text, onClick, cls = 'dfpoi-btn') => { const b = el('button', cls, text); b.type = 'button'; b.addEventListener('click', (e) => { e.stopPropagation?.(); onClick(); }); return b; };
@@ -174,6 +180,8 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
 
   const say = (text, kind = 'ok') => { status.textContent = text; status.dataset.kind = kind; };
   const refusal = (r) => (r?.error ? accountRefusalText(r.error) : t('poi.editor.failed', 'That did not go through.'));
+  // POI-4b: the library's dialogs, laid in the panel, through its own door to the store
+  const library = createPoiLibrary({ doc, host: root, io, feed, me, act: (fn) => act(fn), say, refusal, editor, decodeImage, rand });
 
   // ── RENDERING ────────────────────────────────────────────────────
   let queued = false;
@@ -218,6 +226,7 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
       el('span', 'dfpoi-sep'), undo, redo, el('span', 'dfpoi-sep'), speed, el('span', 'dfpoi-sep'),
       btn(t('poi.editor.newPoi', 'New POI'), () => { editor.placeNew(t('poi.editor.newName', 'New place')); say(t('poi.editor.placeHint', 'Click the ground where it stands. Esc to stop.')); }),
       btn(t('poi.editor.import', 'Import model'), () => openImport()),
+      btn(t('poi.library.title', 'Library'), () => { closeDialog(); library.open(); }),
       btn(t('poi.editor.map', 'Map'), () => onJump()),
       el('span', 'dfpoi-sep'), exitBack, exitHere,
     );
@@ -334,6 +343,8 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     out.push(field(t('poi.editor.markLabel', 'Label'), text(marker.label ?? '', (v) => change('mark', (x) => { const l = lawName(v, POI_LIMITS.label); x.marker = { ...(x.marker ?? { show: false }) }; if (l) x.marker.label = l; else delete x.marker.label; }), POI_LIMITS.label)));
     out.push(el('div', 'dfpoi-h', t('poi.editor.lights', 'Lights')));
     out.push(btn(t('poi.editor.addLight', 'Add a light'), () => edit.edit(d.id, 'light', (x) => { x.lights = [...(x.lights ?? []), newLight()]; }, { id: d.id, part: null, light: (d.lights?.length ?? 0) })));
+    // POI-4b: its parts and lights kept in the library, from the POI's own origin
+    if (d.parts.length) out.push(el('div', 'dfpoi-h', t('poi.library.title', 'Library')), btn(t('poi.library.keepPoi', 'Keep it in the library...'), () => { closeDialog(); library.keep({ name: d.name, parts: structuredClone(d.parts), lights: structuredClone(d.lights ?? []) }); }));
     return out;
   }
 
@@ -388,6 +399,8 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
       out.push(field(t('poi.editor.uvTurn', 'Picture turn (degrees)'), numberInput((m.uv.rotation * 180) / Math.PI, (deg) => change('material', mat((x) => { x.uv = { ...x.uv, rotation: (deg * Math.PI) / 180 }; })), { step: 1, min: -3600, max: 3600 })));
       out.push(btn(t('poi.editor.editUvs', 'Edit UVs...'), () => openUv(sel.id, part.key, k)));
     });
+    // POI-4b: the part alone kept in the library - its own turn and size, standing at the entry's origin
+    out.push(btn(t('poi.library.keepPart', 'Keep this part in the library...'), () => { closeDialog(); library.keep({ name: part.name || part.key, parts: [{ ...structuredClone(part), t: [0, 0, 0] }], lights: [] }); }));
     out.push(btn(t('poi.editor.removePart', 'Remove this part'), () => removeSelection()));
     return out;
   }
@@ -597,6 +610,7 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
 
   // ── THE IMPORT ───────────────────────────────────────────────────
   function openImport() {
+    closeDialog(); library.close();
     const box = el('div', 'dfpoi-dialog');
     for (const ty of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click', 'wheel', 'contextmenu', 'touchstart']) box.addEventListener(ty, swallow);
     const files = el('input');
@@ -610,7 +624,10 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     place.disabled = true;
     const acts = el('div', 'dfpoi-row');
     acts.append(place, cancel);
-    box.append(el('div', 'dfpoi-h', t('poi.editor.importTitle', 'Import a model (glTF 2.0)')), el('div', '', t('poi.editor.importHint', 'Choose a .glb, or a .gltf with its .bin and pictures.')), files, field(t('poi.editor.split', 'Make'), splitSel), body, acts);
+    // POI-4b: kept in the library as it is placed, unless the builder says not
+    const keepToo = check(true, () => {});
+    box.append(el('div', 'dfpoi-h', t('poi.editor.importTitle', 'Import a model (glTF 2.0)')), el('div', '', t('poi.editor.importHint', 'Choose a .glb, or a .gltf with its .bin and pictures.')), files, field(t('poi.editor.split', 'Make'), splitSel),
+      field(t('poi.library.keepImport', 'Keep it in the library too'), keepToo), body, acts);
     files.addEventListener('change', async () => {
       const list = [...(files.files ?? [])];
       const main = list.find((f) => /\.(glb|gltf)$/i.test(f.name));
@@ -644,6 +661,12 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
       closeDialog();
       editor.placeAsset(r.asset, t('poi.editor.newName', 'New place'));
       say(t('poi.editor.placeModel', 'Click where it stands. Esc to stop.'));
+      if (keepToo.checked) {
+        // its meshes as the import holds them - the picture is drawn from them, none fetched back
+        const meshes = new Map();
+        r.asset.parts.forEach((part, i) => { const d = decodePoiMesh(prep.parts[i].bytes); if (!('error' in d)) meshes.set(part.mesh, d.mesh); });
+        await library.keepNow({ name: r.asset.name, parts: r.asset.parts, lights: [], meshes });
+      }
     }
     dialog = box;
     root.append(box);
@@ -668,9 +691,11 @@ export function createPoiEditorPanel({ doc = document, edit, editor, feed, io, m
     uvDialog: () => uvDialog,
     takePicture: (bytes, use) => takePicture(bytes, use),
     refreshList: () => refreshList(),
+    /** POI-4b: the library's dialogs (the bar's button, the inspectors' and the import's keeping). */
+    library,
     /** Whether a press landed on the panel (the world leaves it alone). */
     owns: (target) => !!target && typeof root.contains === 'function' && root.contains(target),
-    destroy() { offEdit(); closeDialog(); uvDialog?.close(); root.remove?.(); },
+    destroy() { offEdit(); closeDialog(); library.close(); uvDialog?.close(); root.remove?.(); },
   };
 }
 

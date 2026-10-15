@@ -35,7 +35,7 @@
 // ═══════════════════════════════════════════════════════════════════
 
 import {
-  movePlace, rotatePlace, scalePlace, movePart, rotatePart, scalePart, partWorldQuat, worldToPlace, newPart,
+  movePlace, rotatePlace, scalePlace, movePart, rotatePart, scalePart, partWorldQuat, worldToPlace, newPart, newLight,
 } from '../poi/poiEdit.js';
 import { gizmoSize, gizmoShape, pickHandle, beginGizmoDrag, dragResult, POI_SNAP_DEFAULT, POI_GIZMO_PX } from '../poi/poiGizmo.js';
 import { quatRotate } from '../world/quat.js';
@@ -217,16 +217,25 @@ export function createPoiEditorHost({ edit, feed, host, view, translation, scene
       if (!tg) return;
       const local = worldToPlace(tg.doc.place, sub(at, tg.sel.part == null ? tg.c : originOf(tg)));
       // every part of the model at once - one step - each where it stands from the model's origin, in the POI's own frame
-      // (the model turns and sizes with its POI, as one thing)
+      // (the model turns and sizes with its POI, as one thing); a library entry's parts keep their own turn, size,
+      // solidity and shadow, and its lights come with it (POI-4b)
       const pieces = asset.parts ?? [asset];
       let key = null;
       edit.edit(tg.sel.id, pieces.length > 1 ? 'add parts' : 'add part', (doc) => {
         for (const piece of pieces) {
           const off = piece.t ?? [0, 0, 0];
-          const part = newPart(doc, { mesh: piece.mesh, submeshes: piece.submeshes, name: piece.name, materials: piece.materials ?? null, t: [local[0] + off[0], local[1] + off[1], local[2] + off[2]] });
+          const part = newPart(doc, {
+            mesh: piece.mesh, submeshes: piece.submeshes ?? piece.materials?.length ?? 1, name: piece.name, materials: piece.materials ?? null,
+            t: [local[0] + off[0], local[1] + off[1], local[2] + off[2]], r: piece.r, s: piece.s,
+          });
+          if (piece.collide) part.collide = piece.collide;
+          if (typeof piece.shadow === 'boolean') part.shadow = piece.shadow;
           key ??= part.key;
           doc.parts.push(part);
         }
+        if (asset.lights?.length) doc.lights ??= [];
+        // tidied as a new light's spot is (newLight), as a new part's is
+        for (const l of asset.lights ?? []) doc.lights.push({ ...structuredClone(l), t: newLight([local[0] + l.t[0], local[1] + l.t[1], local[2] + l.t[2]]).t });
       });
       if (key) edit.select({ id: tg.sel.id, part: pieces.length > 1 ? null : key });
     }

@@ -19,9 +19,14 @@
 //
 // NOTHING A BUILDER WRITES REACHES A PLAYER BEFORE AN APPROVER SAYS SO: the feed is live revisions only, and an asset no
 // live revision names is readable only by a builder.
+//
+// THE LIBRARY'S SHELF (POI-4b): the models builders keep to stand again, shared by them all - an entry is checked by the
+// same law a POI is (poiLaw.js poiShelfProblems, its assets stored), changed only by its author or an approver, taken off
+// the shelf and never deleted. A shelf is the builders' business: it reaches no player, and its assets stay a builder's
+// until a live POI names them.
 // ═══════════════════════════════════════════════════════════════════
 
-import { poiDocProblems, poiAssetProblems, poiAssetsOf, POI_ID_RE, POI_SHA_RE, POI_LIMITS } from '../../src/poi/poiLaw.js';
+import { poiDocProblems, poiShelfProblems, poiAssetProblems, poiAssetsOf, POI_ID_RE, POI_SHELF_ID_RE, POI_SHA_RE, POI_LIMITS } from '../../src/poi/poiLaw.js';
 import { decodePoiMesh, POI_MESH_LIMITS } from '../../src/poi/poiMesh.js';
 import { poiImageMetaOf, POI_IMAGE_LIMITS, POI_IMAGE_TYPES } from '../../src/poi/poiImage.js';
 import { developerHandles } from './titles.js';
@@ -306,6 +311,76 @@ export async function poiHistory(ctx, player, env, id) {
     id, liveRev: poi.live_rev, liveAt: poi.live_at, createdAt: poi.created_at,
     revs: revs.map((r) => ({ rev: r.rev, kind: r.kind, doc: parsed(r.doc), base: r.base_rev, author: r.author_name, authorId: r.author, at: r.at, state: r.state, submittedAt: r.submitted_at, reviewer: r.reviewer_name, reviewedAt: r.reviewed_at, note: r.note })),
   };
+}
+
+// ─── THE LIBRARY'S SHELF (POI-4b) ───────────────────────────────────
+
+/** The entries one builder may keep on the shelf at once - a bound on a slip, not on a builder's work. */
+export const POI_SHELF_MAX = 2000;
+/** The entries a list answers, newest first. */
+export const POI_SHELF_LIST = 5000;
+
+/** Every entry on the shelf, newest change first, without its parts - what a builder browses. `{ items }`. */
+export async function listShelf(ctx, player, env) {
+  if (!poiRolesOf(player, env).builder) return { error: 'poi-not-builder' };
+  const rows = (await ctx.db.prepare(`SELECT id, name, tags, thumb, parts, triangles, by, by_name, at, updated_at, updated_by FROM poi_shelf
+    WHERE gone_at IS NULL ORDER BY updated_at DESC, id LIMIT ${POI_SHELF_LIST}`).all()).results ?? [];
+  return {
+    items: rows.map((r) => ({ id: r.id, name: r.name, tags: parsed(r.tags) ?? [], thumb: r.thumb, parts: r.parts, triangles: r.triangles, by: r.by_name, byId: r.by, at: r.at, updatedAt: r.updated_at, updatedBy: r.updated_by })),
+  };
+}
+
+/** One entry, its parts and lights - what is stood when it is placed. */
+export async function shelfEntry(ctx, player, env, id) {
+  if (!poiRolesOf(player, env).builder) return { error: 'poi-not-builder' };
+  if (!POI_SHELF_ID_RE.test(String(id))) return { error: 'body' };
+  const r = await ctx.db.prepare('SELECT item, by, by_name, at, updated_at, gone_at FROM poi_shelf WHERE id = ?').bind(id).first();
+  if (!r || r.gone_at != null) return { error: 'not-found' };
+  return { id, item: parsed(r.item), by: r.by_name, byId: r.by, at: r.at, updatedAt: r.updated_at };
+}
+
+/**
+ * A builder puts an entry on the shelf, or changes one: checked whole (its shape and its assets, stored and of their
+ * kinds), new under its own id, or over an entry of the builder's own (an approver's, any entry). `{ id, at }`.
+ * @param {any} ctx @param {any} player @param {any} env @param {{ item: any }} body
+ */
+export async function shelve(ctx, player, env, { item }) {
+  const roles = poiRolesOf(player, env);
+  if (!roles.builder) return { error: 'poi-not-builder' };
+  const own = poiShelfProblems(item);
+  if (own.length) return { error: 'poi-doc', problems: own };
+  const { meshes, textures } = poiAssetsOf(item);
+  const facts = await assetFactsOf(ctx.db, [...meshes, ...textures]);
+  const problems = poiAssetProblems(item, (sha) => facts.get(sha) ?? null);
+  if (problems.length) return { error: 'poi-doc', problems };
+  const triangles = item.parts.reduce((n, part) => n + (Number(facts.get(part.mesh)?.triangles) || 0), 0);
+  const text = JSON.stringify(item), tags = JSON.stringify(item.tags ?? []);
+  const had = await ctx.db.prepare('SELECT by, gone_at FROM poi_shelf WHERE id = ?').bind(item.id).first();
+  if (had) {
+    if (had.gone_at != null) return { error: 'not-found' };
+    if (had.by !== player.id && !roles.approver) return { error: 'poi-not-author' };
+    await ctx.db.prepare('UPDATE poi_shelf SET item = ?, name = ?, tags = ?, thumb = ?, parts = ?, triangles = ?, updated_at = ?, updated_by = ? WHERE id = ? AND gone_at IS NULL')
+      .bind(text, item.name, tags, item.thumb, item.parts.length, triangles, ctx.nowS, player.handle, item.id).run();
+    return { id: item.id, at: ctx.nowS };
+  }
+  const kept = await ctx.db.prepare('SELECT COUNT(*) AS n FROM poi_shelf WHERE by = ? AND gone_at IS NULL').bind(player.id).first();
+  if (Number(kept?.n ?? 0) >= POI_SHELF_MAX) return { error: 'poi-quota' };
+  await ctx.db.prepare(`INSERT OR IGNORE INTO poi_shelf (id, item, name, tags, thumb, parts, triangles, by, by_name, at, updated_at, updated_by)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+    .bind(item.id, text, item.name, tags, item.thumb, item.parts.length, triangles, player.id, player.handle, ctx.nowS, ctx.nowS, player.handle).run();
+  return { id: item.id, at: ctx.nowS };
+}
+
+/** An entry taken off the shelf by its author or an approver - kept, as every record here is, but listed no more. */
+export async function unshelve(ctx, player, env, { id }) {
+  const roles = poiRolesOf(player, env);
+  if (!roles.builder) return { error: 'poi-not-builder' };
+  if (!POI_SHELF_ID_RE.test(String(id))) return { error: 'body' };
+  const r = await ctx.db.prepare('SELECT by, gone_at FROM poi_shelf WHERE id = ?').bind(id).first();
+  if (!r || r.gone_at != null) return { error: 'not-found' };
+  if (r.by !== player.id && !roles.approver) return { error: 'poi-not-author' };
+  await ctx.db.prepare('UPDATE poi_shelf SET gone_at = ?, gone_by = ? WHERE id = ? AND gone_at IS NULL').bind(ctx.nowS, player.handle, id).run();
+  return { id, gone: true };
 }
 
 /** The approver's queue: every submitted revision, oldest first, with the live document it would replace. */

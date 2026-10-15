@@ -11064,6 +11064,136 @@
   "tr": "bce726bbbae7",
   "by": "claude-in-session"
  },
+ "poi.library.change": {
+  "en": "687a7d62711f",
+  "tr": "2121cea75d62",
+  "by": "claude-in-session"
+ },
+ "poi.library.changed": {
+  "en": "a04f60352f26",
+  "tr": "978601e1c540",
+  "by": "claude-in-session"
+ },
+ "poi.library.drop": {
+  "en": "4c2adad68d14",
+  "tr": "49d59e8bd8dd",
+  "by": "claude-in-session"
+ },
+ "poi.library.dropSure": {
+  "en": "fe6dc2209757",
+  "tr": "09fe4c68f969",
+  "by": "claude-in-session"
+ },
+ "poi.library.dropped": {
+  "en": "fc2a064fcee0",
+  "tr": "7dfea6d7848e",
+  "by": "claude-in-session"
+ },
+ "poi.library.empty": {
+  "en": "90a3238b3308",
+  "tr": "9001c3183ca5",
+  "by": "claude-in-session"
+ },
+ "poi.library.facts": {
+  "en": "f8c0eed447fd",
+  "tr": "00ff90c65b34",
+  "by": "claude-in-session"
+ },
+ "poi.library.hint": {
+  "en": "fd50e93fbb4c",
+  "tr": "f322921dc69b",
+  "by": "claude-in-session"
+ },
+ "poi.library.keep": {
+  "en": "d9f369249799",
+  "tr": "2cf8cebc68d7",
+  "by": "claude-in-session"
+ },
+ "poi.library.keepHint": {
+  "en": "6329d2111dad",
+  "tr": "88d948e56186",
+  "by": "claude-in-session"
+ },
+ "poi.library.keepImport": {
+  "en": "de2b6c18f6c3",
+  "tr": "a03e43a401f2",
+  "by": "claude-in-session"
+ },
+ "poi.library.keepPart": {
+  "en": "ce4c4ec0581a",
+  "tr": "5c6909aef018",
+  "by": "claude-in-session"
+ },
+ "poi.library.keepPoi": {
+  "en": "2ac47f091b05",
+  "tr": "1cd2114cb141",
+  "by": "claude-in-session"
+ },
+ "poi.library.keepTitle": {
+  "en": "23f66db3ceb2",
+  "tr": "f99cc690c7df",
+  "by": "claude-in-session"
+ },
+ "poi.library.keepWhat": {
+  "en": "5c944bd02bc4",
+  "tr": "8ffe6a28bae3",
+  "by": "claude-in-session"
+ },
+ "poi.library.kept": {
+  "en": "557b441fd35e",
+  "tr": "f7b18e075c0a",
+  "by": "claude-in-session"
+ },
+ "poi.library.loading": {
+  "en": "f32ac1ec11a0",
+  "tr": "1d8081782632",
+  "by": "claude-in-session"
+ },
+ "poi.library.mine": {
+  "en": "d42af7968b5c",
+  "tr": "a80902682c4b",
+  "by": "claude-in-session"
+ },
+ "poi.library.more": {
+  "en": "4f661a939dc2",
+  "tr": "c433c8d1b779",
+  "by": "claude-in-session"
+ },
+ "poi.library.none": {
+  "en": "3c567b9e4ec6",
+  "tr": "3726e03132ee",
+  "by": "claude-in-session"
+ },
+ "poi.library.place": {
+  "en": "c32a0147f2e4",
+  "tr": "1a2d8a69dc54",
+  "by": "claude-in-session"
+ },
+ "poi.library.save": {
+  "en": "efc007a393f6",
+  "tr": "85e827296db0",
+  "by": "claude-in-session"
+ },
+ "poi.library.search": {
+  "en": "4a19c6ed8f8d",
+  "tr": "d0d8a8cb258d",
+  "by": "claude-in-session"
+ },
+ "poi.library.tagsHint": {
+  "en": "eece4e03e3e4",
+  "tr": "890a13b37793",
+  "by": "claude-in-session"
+ },
+ "poi.library.title": {
+  "en": "b8100f5ba8bd",
+  "tr": "1a64d0550ccf",
+  "by": "claude-in-session"
+ },
+ "poi.library.unnamed": {
+  "en": "259c4aa018bc",
+  "tr": "68c2cc7f0cea",
+  "by": "claude-in-session"
+ },
  "poi.map.legend": {
   "en": "3d892ed32429",
   "tr": "6cbb1630aa17",
@@ -11517,6 +11647,11 @@
  "poi.where.tag": {
   "en": "13c6dcbb40ee",
   "tr": "be4496ad45de",
+  "by": "claude-in-session"
+ },
+ "poi.where.thumb": {
+  "en": "78b203f1a581",
+  "tr": "9bd95c3c55df",
   "by": "claude-in-session"
  },
  "prof.lode.legend": {

@@ -19,12 +19,18 @@
 // corner (world/streamingWorld.js pixelTranslation: a pixel's origin, +x east, +z north). Heights in metres - `ground:
 // 'snap'` stands the place `y` above the ground beneath it, `ground: 'absolute'` at `y` itself. Rotations are unit
 // quaternions [x, y, z, w] in the game's frame (Unity's left-handed, +Y up).
+//
+// THE LIBRARY'S SHELF (POI-4b): a model the builders keep to stand again - its parts and lights as a POI holds them,
+// relative to its own origin, a name, tags, and a picture of it (`thumb`, a texture by its hash) - is a SHELF ENTRY,
+// read by the same law with `place` and `marker` left out (`poiShelfProblems`): what a POI may wear, an entry may hold.
 // ═══════════════════════════════════════════════════════════════════
 
 export const POI_DOC_VERSION = 1;
 /** A pixel's side in metres (world/terrainSampler.js TERRAIN_SIZE, held here so the law stands alone in the service). */
 export const POI_PIXEL_M = 819.2;
 export const POI_ID_RE = /^poi-[0-9a-f]{12}$/;
+/** A library shelf entry's id (POI-4b). */
+export const POI_SHELF_ID_RE = /^lib-[0-9a-f]{12}$/;
 export const POI_SHA_RE = /^[0-9a-f]{64}$/;
 export const POI_PART_KEY_RE = /^[a-z0-9][a-z0-9_-]{0,31}$/;
 
@@ -52,6 +58,8 @@ export const POI_GROUND = Object.freeze(['snap', 'absolute']);
 
 /** A fresh POI id - `rand` fills a Uint8Array (crypto.getRandomValues). @param {(b: Uint8Array) => Uint8Array} rand */
 export const mintPoiId = (rand) => `poi-${[...rand(new Uint8Array(6))].map((b) => b.toString(16).padStart(2, '0')).join('')}`;
+/** A fresh shelf entry id, the same way. @param {(b: Uint8Array) => Uint8Array} rand */
+export const mintShelfId = (rand) => `lib-${mintPoiId(rand).slice(4)}`;
 
 const finite = (v) => typeof v === 'number' && Number.isFinite(v);
 const vec = (v, n) => Array.isArray(v) && v.length === n && v.every(finite);
@@ -86,10 +94,11 @@ export const problemLine = (p) => `${p.path}: ${p.code}`;
 
 /**
  * Every way `raw` falls short of a POI document - empty for a good one. The editor shows them all; the service refuses
- * on any. Only the document's own shape: whether its assets exist is poiAssetProblems'.
- * @param {any} raw @returns {PoiProblem[]}
+ * on any. Only the document's own shape: whether its assets exist is poiAssetProblems'. With `shelf`, a library shelf
+ * entry's: a `lib-` id, no place and no marker, its picture (`thumb`) a texture's hash or null.
+ * @param {any} raw @param {{ shelf?: boolean }} [opts] @returns {PoiProblem[]}
  */
-export function poiDocProblems(raw) {
+export function poiDocProblems(raw, { shelf = false } = {}) {
   /** @type {PoiProblem[]} */
   const out = [];
   const say = (path, code, args = {}) => { if (out.length < 200) out.push({ path, code, ...args }); };
@@ -98,7 +107,7 @@ export function poiDocProblems(raw) {
   try { bytes = new TextEncoder().encode(JSON.stringify(raw)).byteLength; } catch { return [{ path: 'doc', code: 'not-json' }]; }
   if (bytes > POI_LIMITS.docBytes) say('doc', 'too-large', { bytes, max: POI_LIMITS.docBytes });
   if (raw.v !== POI_DOC_VERSION) say('v', 'version', { want: POI_DOC_VERSION });
-  if (typeof raw.id !== 'string' || !POI_ID_RE.test(raw.id)) say('id', 'id');
+  if (typeof raw.id !== 'string' || !(shelf ? POI_SHELF_ID_RE : POI_ID_RE).test(raw.id)) say('id', 'id');
   if (!textOk(raw.name, POI_LIMITS.name, 1)) say('name', 'name', { max: POI_LIMITS.name });
   // the one field written as prose: lines allowed, nothing else below a space
   if (raw.about !== undefined && !(typeof raw.about === 'string' && raw.about.length <= POI_LIMITS.about && !/[\u0000-\u0009\u000b-\u001f\u007f]/.test(raw.about))) say('about', 'about', { max: POI_LIMITS.about });
@@ -108,7 +117,8 @@ export function poiDocProblems(raw) {
   }
 
   const p = raw.place;
-  if (!p || typeof p !== 'object') say('place', 'missing');
+  if (shelf) { if (raw.thumb !== null && !(typeof raw.thumb === 'string' && POI_SHA_RE.test(raw.thumb))) say('thumb', 'texture-ref'); }
+  else if (!p || typeof p !== 'object') say('place', 'missing');
   else {
     if (!Number.isInteger(p.px) || p.px < 0 || p.px >= POI_MAP.w) say('place.px', 'px', { max: POI_MAP.w - 1 });
     if (!Number.isInteger(p.py) || p.py < 0 || p.py >= POI_MAP.h) say('place.py', 'py', { max: POI_MAP.h - 1 });
@@ -155,7 +165,7 @@ export function poiDocProblems(raw) {
     });
   }
 
-  if (raw.marker !== undefined) {
+  if (raw.marker !== undefined && !shelf) {
     const m = raw.marker;
     if (!m || typeof m !== 'object') say('marker', 'not-object');
     else {
@@ -164,10 +174,14 @@ export function poiDocProblems(raw) {
     }
   }
 
-  const known = new Set(['v', 'id', 'name', 'about', 'tags', 'place', 'parts', 'lights', 'marker']);
+  const known = new Set(shelf ? SHELF_KEYS : DOC_KEYS);
   for (const k of Object.keys(raw)) if (!known.has(k)) say(k, 'unknown');
   return out;
 }
+const DOC_KEYS = ['v', 'id', 'name', 'about', 'tags', 'place', 'parts', 'lights', 'marker'];
+const SHELF_KEYS = ['v', 'id', 'name', 'about', 'tags', 'parts', 'lights', 'thumb'];
+/** Every way `raw` falls short of a library shelf entry (POI-4b). @param {any} raw */
+export const poiShelfProblems = (raw) => poiDocProblems(raw, { shelf: true });
 
 function materialProblems(m, at, say) {
   if (!m || typeof m !== 'object') { say(at, 'not-object'); return; }
@@ -190,6 +204,7 @@ function materialProblems(m, at, say) {
 /** The assets a document names: `{ meshes, textures }`, each a Set of sha256. @param {any} doc */
 export function poiAssetsOf(doc) {
   const meshes = new Set(), textures = new Set();
+  if (typeof doc?.thumb === 'string') textures.add(doc.thumb);   // a shelf entry's picture
   for (const part of doc?.parts ?? []) {
     if (typeof part?.mesh === 'string') meshes.add(part.mesh);
     for (const m of part?.materials ?? []) {
@@ -208,6 +223,11 @@ export function poiAssetsOf(doc) {
 export function poiAssetProblems(doc, metaOf) {
   /** @type {PoiProblem[]} */
   const out = [];
+  if (doc?.thumb != null) {
+    const t = metaOf(doc.thumb);
+    if (!t) out.push({ path: 'thumb', code: 'not-uploaded' });
+    else if (t.kind !== 'texture') out.push({ path: 'thumb', code: 'not-a-texture' });
+  }
   (doc?.parts ?? []).forEach((part, i) => {
     const mesh = metaOf(part.mesh);
     if (!mesh) out.push({ path: `parts[${i}].mesh`, code: 'not-uploaded' });

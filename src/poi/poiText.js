@@ -153,5 +153,6 @@ export function problemWhere(path, doc = null) {
   if (light) bits.push(t('poi.where.light', 'Light {n}', { n: Number(light[1]) + 1 }));
   const tag = /^tags\[(\d+)\]/.exec(path);
   if (tag) bits.push(t('poi.where.tag', 'Tag {n}', { n: Number(tag[1]) + 1 }));
+  if (path === 'thumb') bits.push(t('poi.where.thumb', 'Its library picture'));
   return bits.join(' · ');
 }
