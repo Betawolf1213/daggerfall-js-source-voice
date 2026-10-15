@@ -427,7 +427,7 @@
  {
   "name": "AKG2-C2-mouse0",
   "file": "src/scenes/worldModes.js",
-  "old": "      if (e.code === 'Mouse0' && gg.playing()) { e.stopImmediatePropagation?.(); e.preventDefault?.(); return; }",
+  "old": "      if (gg.playing() && !e.isTrusted && actionOf(e, keys) === 'ActivateCenterObject') { e.stopImmediatePropagation?.(); e.preventDefault?.(); return; }",
   "new": "",
   "tests": [
    "test/auditkg2_board.test.js"

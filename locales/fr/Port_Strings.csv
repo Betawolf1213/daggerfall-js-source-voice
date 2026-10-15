@@ -1431,7 +1431,7 @@ features.mod.diverseWeapons.effect,"Prend effet la prochaine fois qu’une arme 
 features.mod.eyeOfTheBeholder.effect,"Prend effet immédiatement. Faites défiler vers l’arrière pour quitter la première personne."
 features.mod.foraging.effect,"Prend effet immédiatement ; ses quêtes au prochain chargement du jeu."
 features.mod.immersiveTravel.effect,"Prend effet au prochain démarrage du jeu (un Chargement en jeu garde ce qui était là au départ) ; ses tarifs et règles à la prochaine carte."
-features.mod.kingsGambit.note,"Une bataille d’armées et de rois sur la table de jeu d’une taverne - contre ses habitués, pour de l’or ou pour le plaisir, ou en ligne contre un autre joueur, avec un tableau de la saison. Désactivé, les tables ne proposent que Hold'em et Iliac Hand."
+features.mod.kingsGambit.note,"Des armées et des rois sur la table de jeu d’une taverne - contre un habitué ou un autre joueur, pour de l’or ou pour le plaisir. Désactivé, les tables ne proposent que Hold'em et Iliac Hand."
 features.mod.meanerMonsters.effect,"Prend effet sur les monstres qui apparaissent après le changement."
 features.mod.oblivionRemasterLeveling.effect,"Prend effet sur le prochain personnage que vous créez ; un personnage garde le système avec lequel il a été créé."
 features.mod.physicalItems.effect,"Prend effet immédiatement ; une nouvelle taille pour les objets qui tombent ensuite."

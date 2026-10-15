@@ -760,9 +760,10 @@ export function createWorldModes(host) {
       if (!cancel && (el?.closest?.('.dfgambit') || /^(INPUT|TEXTAREA|SELECT)$/.test(el?.tagName ?? '') || el?.isContentEditable)) return;
       if (k === 'press' && cursorKeyClaimed(e)) return;   // KB1: online, ActivateCursor's key (Enter) is the chat's when it takes this press
       if (e.repeat && (cancel || k === 'press')) { if (gg.playing()) { e.stopImmediatePropagation?.(); e.preventDefault?.(); } return; }   // a held press presses once
-      // AUDIT KG II C2: the pad's A is the board's press AND LeftClick's alias (Mouse0) - ActivateCenterObject, whose release
-      // stands the seat up; while a battle is on the alias is the board's too (a real mouse press is a pointerdown, decided above)
-      if (e.code === 'Mouse0' && gg.playing()) { e.stopImmediatePropagation?.(); e.preventDefault?.(); return; }
+      // AUDIT KG II C2: the pad's A is the board's press AND LeftClick's alias - ActivateCenterObject, whose release stands
+      // the seat up; while a battle is on, a pad-made activate (never the person's own key - a road off the seat) is the
+      // board's too (a real mouse press is a pointerdown, decided above)
+      if (gg.playing() && !e.isTrusted && actionOf(e, keys) === 'ActivateCenterObject') { e.stopImmediatePropagation?.(); e.preventDefault?.(); return; }
       if (!gg.key(e.code)) return;
       e.stopImmediatePropagation?.(); e.preventDefault?.();
     };

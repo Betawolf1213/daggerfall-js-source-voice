@@ -44,7 +44,7 @@ import {
   potionsChip, fallenChip, healthOf, nextStep, resultHead, kingFalls, resultGold, nightSpent, gambitWhat, gambitGuide,
   gambitWords, layoutName, GAMBIT_ONLINE_PRESS, onlineHead, onlineSeat, clockChip, onlineStep, onlineEnd, watchWin,
   pressReadyStake, stakeHead, stakePick, stakeOnline, stakeChoose, boardHead, boardRow, boardYou, boardChampion, boardNeeds,
-  boardReading, boardFailed, armyFull, actionsOf, watchGold, armyEmpty, armySpent, stakeWhileReady, stakingWait, boardHide,
+  boardReading, boardFailed, armyFull, actionsLeftOf, watchGold, armyEmpty, armySpent, stakeWhileReady, stakingWait, boardHide,
 } from './gambitTableWords.js';
 
 /** The card a unit stands as - its creature's or its calling's (systems/cardSources.js FOE_CARDS: every unit of the
@@ -232,7 +232,7 @@ export function gambitHudModel(p) {
         chips: [
           ...(online?.clock != null ? [{ key: 'clock', text: clockChip(online.clock) }] : []),   // KG5: the relay's turn clock
           watching
-            ? { key: 'actions', pips: st.actions, of: KG_ACTIONS_PER_TURN, text: actionsOf(online.names?.[st.turn] ?? '', st.actions) }
+            ? { key: 'actions', pips: st.actions, of: KG_ACTIONS_PER_TURN, text: actionsLeftOf(online.names?.[st.turn] ?? '', st.actions) }
             : { key: 'actions', pips: st.turn === 0 ? st.actions : 0, of: KG_ACTIONS_PER_TURN, text: actionsLeft(st.turn === 0 ? st.actions : 0) },
           // a watcher reads both sides by their players' names
           { key: 'potionsMine', more: true, text: watching ? potionsChip(false, st.potions[0], online.names?.[0] ?? '') : potionsChip(true, st.potions[0], name) },

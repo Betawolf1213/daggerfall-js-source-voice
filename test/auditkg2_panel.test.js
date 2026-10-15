@@ -8,7 +8,7 @@ import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import { gambitHudModel, createGambitTableHud } from '../src/ui/gambitTableHud.js';
 import {
-  onlineRefusal, seasonKept, seasonFoeGuest, watchGold, gambitGuide, gambitWords, refusalWords, actionsOf,
+  onlineRefusal, seasonKept, seasonFoeGuest, watchGold, gambitGuide, gambitWords, refusalWords, actionsLeftOf,
 } from '../src/ui/gambitTableWords.js';
 import { openGambitTableGame } from '../src/scenes/gambitTableGame.js';
 import { createIliacClaims } from '../src/net/iliacClaims.js';
@@ -41,7 +41,7 @@ test('AUDIT KG II D2 + D3 + D4 + D5 THE WATCHER\'S PANEL: its presses and More i
   assert.deepEqual(m.actions.filter((a) => a.strip).map((a) => a.id), ['regulars', 'stand', 'more'], 'the strip holds the watcher\'s presses and More');
   assert.deepEqual(m.battle.chips.map((c) => c.key), ['clock', 'actions', 'potionsMine', 'potionsTheirs', 'fallenMine', 'fallenTheirs']);
   assert.deepEqual(m.battle.chips.filter((c) => !c.more).map((c) => c.key), ['clock', 'actions'], 'the strip\'s two');
-  assert.equal(m.battle.chips[1].text, actionsOf('Ana', st.actions));
+  assert.equal(m.battle.chips[1].text, actionsLeftOf('Ana', st.actions));
   assert.equal(m.title, `Round ${st.round} - Ana's turn`, 'whose turn, never "your"');
   assert.ok(m.battle.info.lines.some((l) => /- Ana's$/.test(l)) && m.battle.info.lines.includes('If this king falls, Ana loses.'), m.battle.info.lines.join(' | '));
   const doc = fakeDoc();

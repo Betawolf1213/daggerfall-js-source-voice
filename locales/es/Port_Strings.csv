@@ -1431,7 +1431,7 @@ features.mod.diverseWeapons.effect,"Se aplica la próxima vez que desenvaines un
 features.mod.eyeOfTheBeholder.effect,"Se aplica al instante. Aleja la cámara con la rueda para salir de la primera persona."
 features.mod.foraging.effect,"Se aplica al instante; sus misiones, la próxima vez que se cargue el juego."
 features.mod.immersiveTravel.effect,"Se aplica la próxima vez que se inicie el juego (cargar dentro del juego mantiene lo que había al empezar); sus tarifas y reglas, en el próximo mapa."
-features.mod.kingsGambit.note,"Una batalla de ejércitos y reyes en la mesa de cartas de una taberna: contra sus parroquianos, por oro o por diversión, o en línea contra otro jugador, con una tabla de la temporada. Desactivado, las mesas solo ofrecen Hold'em e Iliac Hand."
+features.mod.kingsGambit.note,"Ejércitos y reyes en la mesa de cartas de una taberna: contra un parroquiano u otro jugador, por oro o por diversión. Desactivado, las mesas solo ofrecen Hold'em e Iliac Hand."
 features.mod.meanerMonsters.effect,"Se aplica a los monstruos que aparezcan después del cambio."
 features.mod.oblivionRemasterLeveling.effect,"Se aplica al próximo personaje que crees; un personaje conserva el sistema con el que se creó."
 features.mod.physicalItems.effect,"Se aplica al instante; un tamaño nuevo, en los objetos que caigan después."

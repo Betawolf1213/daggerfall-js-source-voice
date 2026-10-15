@@ -210,7 +210,7 @@ export const armyFull = () => t('cards.kingsGambit.army.full', 'Your army is ful
 /** The actions left, in words beside the pips. */
 export const actionsLeft = (/** @type {number} */ n) => t('cards.kingsGambit.turn.actions', '{n} of {max} actions left', { n, max: KG_ACTIONS_PER_TURN });
 /** AUDIT KG II D4: a watcher's - whose actions they are. @param {string} name @param {number} n */
-export const actionsOf = (name, n) => t('cards.kingsGambit.turn.actionsOf', '{name}: {n} of {max} actions left', { name, n, max: KG_ACTIONS_PER_TURN });
+export const actionsLeftOf = (name, n) => t('cards.kingsGambit.turn.actionsOf', '{name}: {n} of {max} actions left', { name, n, max: KG_ACTIONS_PER_TURN });
 
 /** THE LAW'S REFUSALS, IN WORDS (gambitRefusal's and armyRefusal's, 14.9): a word the law answers said to the player. */
 export function refusalWords(/** @type {string} */ word, /** @type {{piece?: string, target?: string}} */ a = {}) {
