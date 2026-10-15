@@ -386,16 +386,37 @@ export const EG_HAVENS_MAX = 8;
  * @param {any} spec @param {number[][]} base @param {number} aim
  */
 export function egHavenFloor(spec, base, aim) {
+  const havens = base.map((h) => [...h]), G = floorWalker(spec);
+  if (!G) return { havens, routeM: 0 };
+  const g = G.g;
+  for (const [hx, hz, hr] of havens) G.spread(hx, hz, hr);
+  let [far, worst] = G.farthest();
+  while (worst + g / Math.SQRT2 > aim && havens.length < EG_HAVENS_MAX && far >= 0) {
+    const [hx, hz] = egKeepOnFight(spec, G.x0 + (far % G.W) * g, G.z0 + Math.floor(far / G.W) * g, 3), h = [r2(hx), r2(hz), 3];
+    havens.push(h); G.spread(h[0], h[1], h[2]);
+    [far, worst] = G.farthest();
+  }
+  return { havens, routeM: worst + g / Math.SQRT2 };
+}
+/**
+ * THE FLOOR WALKED (AUDIT EG V lane1 #26's grid - h: one walker for the Haven Nova and the Examination): a grid of
+ * EG_HAVEN_GRID_M over every piece of hall `spec`'s fight floor (`spec.fl`, egOnFight), and each floor cell's walked distance
+ * from the discs `spread` was given - lowered where a disc is nearer (Dijkstra over the floor cells, eight neighbours, a
+ * diagonal x√2: never under the straight walk, never across the magma); `farthest()` the floor cell farthest from them
+ * `[cell, m]`, `at(x, z)` a point's (its nearest floor cell's), `clear()` every distance forgotten. Null on a floor of no
+ * pieces. Pure.
+ * @param {any} spec
+ */
+function floorWalker(spec) {
   const g = EG_HAVEN_GRID_M, fl = spec?.fl ?? [];
   let x0 = Infinity, z0 = Infinity, x1 = -Infinity, z1 = -Infinity;
   const box = (x, z, r) => { x0 = Math.min(x0, x - r); z0 = Math.min(z0, z - r); x1 = Math.max(x1, x + r); z1 = Math.max(z1, z + r); };
   for (const f of fl) { if (f.t === 'd') box(f.x, f.z, f.r); else if (f.t === 'l') { box(f.ax, f.az, f.hw); box(f.bx, f.bz, f.hw); } else for (const [px, pz] of f.poly ?? []) box(px, pz, 0); }
-  const havens = base.map((h) => [...h]);
-  if (!Number.isFinite(x0)) return { havens, routeM: 0 };
+  if (!Number.isFinite(x0)) return null;
   const W = Math.floor((x1 - x0) / g) + 1, H = Math.floor((z1 - z0) / g) + 1, N = W * H;
   const floor = new Uint8Array(N), D = new Float64Array(N).fill(Infinity);
   for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) if (egOnFight(spec, x0 + i * g, z0 + j * g)) floor[j * W + i] = 1;
-  // the walked distances from one haven, lowered where it is nearer (Dijkstra over the floor cells; a binary heap)
+  // the walked distances from one disc, lowered where it is nearer (Dijkstra over the floor cells; a binary heap)
   const spread = (hx, hz, hr) => {
     const heap = [], push = (d, c) => { heap.push([d, c]); let k = heap.length - 1; while (k > 0) { const p = (k - 1) >> 1; if (heap[p][0] <= heap[k][0]) break; [heap[p], heap[k]] = [heap[k], heap[p]]; k = p; } };
     const pop = () => { const top = heap[0], last = heap.pop(); if (heap.length && last) { heap[0] = last; let k = 0; for (;;) { const a = 2 * k + 1, b = a + 1; let m = k; if (a < heap.length && heap[a][0] < heap[m][0]) m = a; if (b < heap.length && heap[b][0] < heap[m][0]) m = b; if (m === k) break; [heap[m], heap[k]] = [heap[k], heap[m]]; k = m; } } return top; };
@@ -412,19 +433,59 @@ export function egHavenFloor(spec, base, aim) {
       }
     }
   };
-  for (const [hx, hz, hr] of havens) spread(hx, hz, hr);
   const farthest = () => { let best = -1, bd = -1; for (let c = 0; c < N; c++) if (floor[c] && Number.isFinite(D[c]) && D[c] > bd) { bd = D[c]; best = c; } return [best, Math.max(0, bd)]; };
-  let [far, worst] = farthest();
-  while (worst + g / Math.SQRT2 > aim && havens.length < EG_HAVENS_MAX && far >= 0) {
-    const [hx, hz] = egKeepOnFight(spec, x0 + (far % W) * g, z0 + Math.floor(far / W) * g, 3), h = [r2(hx), r2(hz), 3];
-    havens.push(h); spread(h[0], h[1], h[2]);
-    [far, worst] = farthest();
-  }
-  return { havens, routeM: worst + g / Math.SQRT2 };
+  // a point's walked distance: its nearest floor cell's, the step to it added (a ring of cells about it, a metre out at most)
+  const at = (x, z) => {
+    const ci = Math.round((x - x0) / g), cj = Math.round((z - z0) / g);
+    let best = Infinity;
+    for (let r = 0; r <= 2 && !Number.isFinite(best); r++) for (let dj = -r; dj <= r; dj++) for (let di = -r; di <= r; di++) {
+      const i = ci + di, j = cj + dj;
+      if (i >= 0 && j >= 0 && i < W && j < H && floor[j * W + i]) best = Math.min(best, D[j * W + i] + Math.hypot(di, dj) * g);
+    }
+    return best;
+  };
+  return { g, W, x0, z0, spread, farthest, at, clear: () => { D.fill(Infinity); } };
 }
-/** The fight floor's main disc (its first) - or one about the lord where a lord fights on another's ground (a Twin
- *  Court's, the Old Masters'). */
-const mainDisc = (spec, L) => spec.fl?.find((f) => f.t === 'd') ?? { x: L.x, z: L.z, r: 18 };
+/** THE EXAMINATION: a member stands a rune within this of its heart (m). */
+export const EG_RUNE_STAND_M = 1.8;
+/**
+ * AUDIT EG V (h; B NEW-3 - sections 13.2, THE ERRAND FLOOR, and 18, THE OLD MASTERS): THE EXAMINATION'S ROUTE, WALKED over the
+ * whole fight floor (floorWalker) for a company of `n`: with a member a rune (`n` at least the runes), the longest walk from any
+ * point of the floor to any rune of `runes` - each rune's member may stand anywhere; with fewer, a lone runner's - from the
+ * floor's farthest point to the first rune (in their order, `[x, z]`), then rune to rune. A rune is stood within
+ * EG_RUNE_STAND_M; the grid's half diagonal is added a leg (never under the truth). Its errand floor is the Examination's least
+ * window: on a court of its own it is under the 10 s the window keeps, and on another lord's ground of many pieces a company
+ * spread over Grath's islands or the Twins' far court meets the runes about the master's own floor in time. Pure; m.
+ * @param {any} spec @param {number[][]} runes @param {number} n
+ */
+export function egRuneRouteM(spec, runes, n) {
+  const G = runes.length ? floorWalker(spec) : null;
+  if (!G) return 0;
+  const half = G.g / Math.SQRT2;
+  if (n >= runes.length) {
+    let worst = 0;
+    for (const [x, z] of runes) { G.clear(); G.spread(x, z, EG_RUNE_STAND_M); worst = Math.max(worst, G.farthest()[1]); }
+    return worst + half;
+  }
+  G.spread(runes[0][0], runes[0][1], EG_RUNE_STAND_M);
+  let route = G.farthest()[1] + half;
+  for (let j = 1; j < runes.length; j++) { G.clear(); G.spread(runes[j][0], runes[j][1], EG_RUNE_STAND_M); route += G.at(runes[j - 1][0], runes[j - 1][1]) + half; }
+  return route;
+}
+/** The fight floor's main disc (its first) - or one about the lord where a lord fights on another's ground (a Twin Court's
+ *  second, an Old Master, a Kyn champion beside a Court's lord): AUDIT EG V (h; B NEW-3, section 18) the disc it stands on (the
+ *  nearest by its edge - the deepest inside, where two hold it), so its errands (the Examination's runes, the Last Lesson's ring, the
+ *  Cairn-Keeper's gems, the Mother of Dusk's anchors) and its court's blows (the Lattice, the Blink, the havens' first) stand
+ *  about its own floor - never about the ground's first island or court, where it may not be; a ground of no disc, one about
+ *  the lord. A Court's own lord, a ground of one disc and every hall but a Court keep the first. */
+function mainDisc(spec, L) {
+  const discs = (spec.fl ?? []).filter((f) => f.t === 'd');
+  if (!discs.length) return { x: L.x, z: L.z, r: 18 };
+  if (discs.length === 1 || spec.kind !== 'court' || L.key === spec.lord) return discs[0];
+  let best = discs[0], bd = Infinity;
+  for (const f of discs) { const d = dist(L.x, L.z, f.x, f.z) - f.r; if (d < bd) { bd = d; best = f; } }
+  return best;
+}
 /** A ground's spots of a role, or `k` laid on a ring `rr` out from the main disc's heart (a lord on another's ground). */
 function spotsOr(spec, L, role, k, rr, own = true) {
   const have = spec.spots?.[role];
@@ -904,7 +965,7 @@ const KITS = {
       { nm: 'Guard', wu: 600, rec: 200, p: 0, b: 0, range: 8, w: 1, cd: 9000, make: (F, spec, L, t, here, rng, now, out) => { L.guardUntil = now + 600; egSetFl(F, L, EG_FL.lit, true, out); return null; } },
     ],
     wake(F, spec, L, now) { L.duelAt = now + 15_000; },
-    phase(F, spec, L, ph, now) { if (ph === 3) { F.mem.lessonR = mainDisc(spec, L).r; F.mem.lessonAt = now + 6000; } },
+    phase(F, spec, L, ph, now) { if (ph === 3) { const f = mainDisc(spec, L); F.mem.lessonF = { x: f.x, z: f.z, r: f.r }; F.mem.lessonR = f.r; F.mem.lessonAt = now + 6000; } },   // AUDIT EG V (h): its court the one it turned on, kept
     hit(F, spec, L, sub, got, pose, now, here, out) {
       // THE RIPOSTE: a blow landed in the 0.6 s after his guard rises is answered - a cone at the striker
       if ((L.guardUntil ?? 0) > now && pose) {
@@ -916,11 +977,14 @@ const KITS = {
     tick(F, spec, L, now, here, rng, out, ctx) {
       if ((L.guardUntil ?? 0) && now >= L.guardUntil) { L.guardUntil = 0; egSetFl(F, L, EG_FL.lit, false, out); }
       challengeTick(F, spec, L, now, here, rng, out, ctx, 15_000);
-      if (L.ph >= 3 && F.mem.lessonR > (F.mem.lessonMin ?? 12) && now >= F.mem.lessonAt) {   // AUDIT EG IV (section 18): THE MASTERS' GROUND stops it at EG_MASTERS_LESSON_R
+      const last = F.mem.lessonMin ?? EG_LESSON_LAST_R;
+      if (L.ph >= 3 && F.mem.lessonR > last && now >= F.mem.lessonAt) {   // AUDIT EG IV (section 18): THE MASTERS' GROUND stops it at EG_MASTERS_LESSON_R
         F.mem.lessonR -= 1; F.mem.lessonAt = now + 6000;
-        const f = mainDisc(spec, L);
-        // AUDIT EG IV (lane1 #7): each ring burns until the next closes it; the last (r 12) stands to the fight's end
-        zoneOut(F, 'burn', shRing(f.x, f.z, F.mem.lessonR, f.r + 4), now, F.mem.lessonR > 12 ? now + 6000 : now + EG_ZONE_FIGHT_MS, out, { p: 0.08, b: 3, el: elOf(L, 'fire') });
+        const f = F.mem.lessonF ?? mainDisc(spec, L);   // AUDIT EG V (h; B NEW-3): about the master's own court, the one he turned on
+        // AUDIT EG IV (lane1 #7): each ring burns until the next closes it; the last stands to the fight's end - AUDIT EG V (h): the
+        // last its own (r 17 on THE MASTERS' GROUND burned 6 s and went out), kept whole (F NEW-3: egZonesKeep)
+        const end = F.mem.lessonR <= last;
+        zoneOut(F, 'burn', shRing(f.x, f.z, F.mem.lessonR, f.r + 4), now, end ? now + EG_ZONE_FIGHT_MS : now + 6000, out, { p: 0.08, b: 3, el: elOf(L, 'fire'), whole: end });
       }
     },
   },
@@ -1023,7 +1087,7 @@ const KITS = {
         F.mem.twinsBurn = 1;
         const courts = spec.lord === 'twins' ? spec.spots.court ?? [] : [];
         // AUDIT EG V (lane1 #17): "for the rest of the fight" - the module's own fight's end (EG_ZONE_FIGHT_MS), never ten minutes
-        if (courts.length === 2) for (const [k, c] of courts.entries()) { const toward = k === 0 ? 0 : Math.PI; zoneOut(F, 'burn', shCone(c.x, c.z, toward, 14.2, 120), now + 3000, now + EG_ZONE_FIGHT_MS, out, { p: 0.08, b: 3, el: k === 0 ? 'frost' : 'fire' }); }
+        if (courts.length === 2) for (const [k, c] of courts.entries()) { const toward = k === 0 ? 0 : Math.PI; zoneOut(F, 'burn', shCone(c.x, c.z, toward, 14.2, 120), now + 3000, now + EG_ZONE_FIGHT_MS, out, { p: 0.08, b: 3, el: k === 0 ? 'frost' : 'fire', whole: true }); }
       }
     },
     tick(F, spec, L, now, here, rng, out) {
@@ -1304,14 +1368,30 @@ const KITS = {
 /** AUDIT EG IV (lane1 #7): a zone that stands "to the fight's end" (the Last Lesson's last ring) - an hour, past any Court the
  *  count and the last word allow. */
 export const EG_ZONE_FIGHT_MS = 3_600_000;
+/** THE LAST LESSON's last ring on a court of its own (section 13.3: "to r 12") - a court no wider has nothing to close (m). */
+export const EG_LESSON_LAST_R = 12;
 /** A zone on the floor (`ez`): 'burn' (a pool - its share a tick), 'void' (the floor gone - a cast-back), 'soul' (a
- *  Soul-Pool), 'haven' - over `s` from `from` to `until`. */
+ *  Soul-Pool), 'haven' - over `s` from `from` to `until`. The fight keeps its last few; AUDIT EG V (h): one standing to the
+ *  fight's end (`o.whole`) is kept by egZonesKeep. */
 export function zoneOut(F, kind, s, from, until, out, o = {}) {
   const z = { i: ++F.bl, kind, s, from, until, p: o.p ?? 0, b: o.b ?? 0, el: o.el ?? null };
   (F.zones ??= []).push(z);
   F.zones = F.zones.filter((q) => q.until > from - 1000).slice(-24);
+  if (o.whole) (F.keep ??= []).push({ i: z.i, kind, s, from, until, p: z.p, b: z.b, el: z.el });
   out.push({ k: 'ez', ...z });
   return z;
+}
+/**
+ * AUDIT EG V (h; F's NEW-1 and NEW-3 - sections 13.3 and 18) - THE ZONES THAT STAND THE WHOLE FIGHT, KEPT: each zone laid to the
+ * fight's end (zoneOut's `whole` - the Molten Rim's magma and causeways, the Last Lesson's last ring, Both Courts Burn's thirds)
+ * zoned again, from `now` to its own end, whenever the fight's newest zones have pushed it out of the few zoneOut keeps - so
+ * it stands on the relay's union floor and is said again to every screen (whose list keeps a few more) before theirs lets it
+ * go. One keep for every such zone, stepped each beat of a Court (net/egBrain.js); the Molten Rim's alone was kept before, and
+ * a long third phase pushed the Lesson's last ring out.
+ * @param {any} F @param {number} now @param {any[]} out
+ */
+export function egZonesKeep(F, now, out) {
+  for (const q of F.keep ?? []) if (q.until > now && !(F.zones ?? []).some((z) => z.i === q.i)) q.i = zoneOut(F, q.kind, q.s, Math.max(now, q.from), q.until, out, q).i;
 }
 const segHit = (s, x, z) => { const dx = s[3] - s[1], dz = s[4] - s[2], L = dx * dx + dz * dz, t = L > 0 ? Math.max(0, Math.min(1, ((x - s[1]) * dx + (z - s[2]) * dz) / L)) : 0; return Math.hypot(x - (s[1] + dx * t), z - (s[2] + dz * t)) <= s[5] / 2; };
 /** Grath's island under a body (its object's number), or null. */
@@ -1346,7 +1426,10 @@ function examination(F, spec, L, now, here, rng, out, ctx) {
   const spots = (n < k ? [45, 135, 225, 315].map((d) => egKeepOnFight(spec, f.x + Math.sin((d * Math.PI) / 180) * 8, f.z + Math.cos((d * Math.PI) / 180) * 8, 1)) : spotsOr(spec, L, 'rune', 4, Math.min(F.mem.runeR ?? Infinity, f.r - 1.5), !F.mem.runeR)).slice(0, k);   // AUDIT EG IV (section 18): THE MASTERS' GROUND's ring (net/egBrain.js EG_MASTERS_RUNE_R)
   const order = spots.map((_, j) => j).sort(() => rng() - 0.5);
   spots.forEach((p, j) => obj(F, 'rune', p[0], p[1], 0, now, out, { r: 1.6, pt: order.indexOf(j) + 1 }));
-  F.mem.exam = { kind: 'runes', next: 1, k, until: now + (10 + 4 * Math.max(0, k - n)) * 1000 };
+  // AUDIT EG V (h; B NEW-3 - THE ERRAND FLOOR): the window never under the errand floor of its route walked over the whole floor
+  // (egRuneRouteM) - the 10 s keep it on a court of its own; on another lord's ground of many pieces it may need more
+  const wMs = Math.max((10 + 4 * Math.max(0, k - n)) * 1000, egErrandMs(egRuneRouteM(spec, order.map((j) => spots[j]), n)));
+  F.mem.exam = { kind: 'runes', next: 1, k, until: now + wMs };
   L.hold = PHASE_AT[1]; L.hpFloor = egHoldHp(L.max, L.hold);   // AUDIT EG IV (lane1 #2): strictly above the third phase's line, never at it
   say(out, 'examination');
 }
@@ -1368,7 +1451,7 @@ function errandTick(F, spec, L, now, here, rng, out) {
   if (E.kind === 'runes') {
     const runes = egObjsOf(F, 'rune'), cur = runes.find((r) => r.pt === E.next);
     if (cur && !(cur.st & 1)) { cur.st = 1; egObSay(cur, 1, now, out); }
-    if (cur && here.some((m) => dist(m.x, m.z, cur.x, cur.z) <= 1.8)) { cur.st = 2; egObSay(cur, 2, now, out); E.next++; }
+    if (cur && here.some((m) => dist(m.x, m.z, cur.x, cur.z) <= EG_RUNE_STAND_M)) { cur.st = 2; egObSay(cur, 2, now, out); E.next++; }
     if (E.next > E.k) { F.mem.exam = null; L.hpFloor = null; egGone(F, runes, EG_GONE.crumbled, '', now, out); egStun(F, L, STUN_MS, now, out); say(out, 'passed'); return; }
     if (now >= E.until) { F.mem.exam = null; L.hpFloor = null; egGone(F, runes, EG_GONE.crumbled, '', now, out); egAim(F, spec, { o: L.i, s: [shAll()], at: now + 2000, wu: 2000, p: 0.6, b: 0, el: elOf(L, 'shock'), nm: 'The Failed Examination', ch: 1 }, [], now, out); say(out, 'failed'); }
   } else {

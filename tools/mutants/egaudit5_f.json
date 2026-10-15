@@ -336,32 +336,35 @@
   {
     "name": "EGA5F-rim-ways-unzoned",
     "file": "src/net/egBrain.js",
-    "old": "F.rim = [...M.rings.map((s) => ({ k: 'void', s })), ...M.ways.map((s) => ({ k: 'haven', s }))];",
-    "new": "F.rim = [...M.rings.map((s) => ({ k: 'void', s }))];",
+    "old": "for (const [k, list] of [['void', M.rings], ['haven', M.ways]])",
+    "new": "for (const [k, list] of [['void', M.rings]])",
     "tests": [
       "test/egaudit5_f_rim.test.js"
     ],
-    "why": "L1-21: the causeways never zoned"
+    "why": "L1-21: the causeways never zoned",
+    "note": "AUDIT EG V (h): re-aimed by content - the Molten Rim laid as whole-fight zones the keep holds"
   },
   {
     "name": "EGA5F-rim-never-again",
     "file": "src/net/egBrain.js",
-    "old": "if (F.rim) moltenRimKeep(F, now, out);",
-    "new": "if (false) moltenRimKeep(F, now, out);",
+    "old": "    egZonesKeep(F, now, out);",
+    "new": "    if (false) egZonesKeep(F, now, out);",
     "tests": [
       "test/egaudit5_f_rim.test.js"
     ],
-    "why": "L1-21: the rim never stood again"
+    "why": "L1-21: the rim never stood again",
+    "note": "AUDIT EG V (h): re-aimed by content - the Molten Rim's keep is every whole-fight zone's (egZonesKeep)"
   },
   {
     "name": "EGA5F-rim-keep-live",
-    "file": "src/net/egBrain.js",
-    "old": "if (!(q.i > 0 && (F.zones ?? []).some((z) => z.i === q.i && z.until > now)))",
-    "new": "if (!(q.i > 0))",
+    "file": "src/net/egLords.js",
+    "old": "if (q.until > now && !(F.zones ?? []).some((z) => z.i === q.i)) q.i",
+    "new": "if (q.until > now && !q.i) q.i",
     "tests": [
       "test/egaudit5_f_rim.test.js"
     ],
-    "why": "L1-21: a rim zone pushed out read as standing"
+    "why": "L1-21: a rim zone pushed out read as standing",
+    "note": "AUDIT EG V (h): re-aimed by content - the Molten Rim's keep is every whole-fight zone's (egZonesKeep, net/egLords.js)"
   },
   {
     "name": "EGA5F-screen-any-void",

@@ -356,11 +356,12 @@
   {
     "name": "AUDIT EG V L1-10: the void ground to flee to",
     "file": "src/net/egBodies.js",
-    "old": "const onFloor = egFloorLess(egFloorTest(spec), F.zones, now, blow.at), pending",
-    "new": "const onFloor = egFloorTest(spec), pending",
+    "old": "const onFloor = egFloorLess(egFloorTest(spec), F.zones, now, blow.at), burns",
+    "new": "const onFloor = egFloorTest(spec), burns",
     "tests": [
       "test/egaudit5_b.test.js"
-    ]
+    ],
+    "note": "AUDIT EG V (h): re-aimed by content - the burns joined the union floor (L1-10's limit)"
   },
   {
     "name": "AUDIT EG V L1-10: the fight's zones out of the set",
@@ -374,11 +375,12 @@
   {
     "name": "AUDIT EG V L1-10: held whatever empties the set",
     "file": "src/net/egFloor.js",
-    "old": "  return !emptied(pending, px, pz, now, onFloor);",
-    "new": "  return true;",
+    "old": "return !emptied(burns.length ? [...pending, { s: [], at: next.at }] : pending, px, pz, now, onFloor, burns);",
+    "new": "return true;",
     "tests": [
       "test/egaudit5_b.test.js"
-    ]
+    ],
+    "note": "AUDIT EG V (h): re-aimed by content - the burns joined the union floor (L1-10's limit)"
   },
   {
     "name": "AUDIT EG V L1-10: a void that falls inside the window ground to flee to",

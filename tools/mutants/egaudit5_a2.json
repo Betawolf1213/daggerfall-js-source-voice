@@ -72,32 +72,35 @@
   {
     "name": "EGA5A2-squad-yard-unstood",
     "file": "src/net/egBrain.js",
-    "old": "if (spec.twist === 'squad') { egSquad(F, ringSpots(spec, spec.fight.x, spec.fight.z, EG_SQUAD_RING_M, 4, () => 0), now, out); F.waveAt = now + EG_SQUAD_HOLD_MS; }",
-    "new": "if (spec.twist === 'squad') { F.waveAt = now + EG_SQUAD_HOLD_MS; }",
+    "old": "if (spec.twist === 'squad') squadTwist(F, ringSpots(spec, spec.fight.x, spec.fight.z, EG_SQUAD_RING_M, 4, () => 0), now, still, out);",
+    "new": "if (spec.twist === 'squad') F.waveAt = now + EG_SQUAD_HOLD_MS + still;",
     "tests": [
       "test/egaudit5_a2.test.js"
     ],
-    "why": "L3-4: the yard's squad unstood"
+    "why": "L3-4: the yard's squad unstood",
+    "note": "AUDIT EG V (h): re-aimed by content - the Rift-Yard's squad stood through squadTwist"
   },
   {
     "name": "EGA5A2-squad-yard-wave",
     "file": "src/net/egBrain.js",
-    "old": "if (spec.twist === 'squad') { egSquad(F, ringSpots(spec, spec.fight.x, spec.fight.z, EG_SQUAD_RING_M, 4, () => 0), now, out); F.waveAt = now + EG_SQUAD_HOLD_MS; }",
-    "new": "if (spec.twist === 'squad') { egSquad(F, ringSpots(spec, spec.fight.x, spec.fight.z, EG_SQUAD_RING_M, 4, () => 0), now, out); }",
+    "old": "if (spec.twist === 'squad') squadTwist(F, ringSpots(spec, spec.fight.x, spec.fight.z, EG_SQUAD_RING_M, 4, () => 0), now, still, out);",
+    "new": "if (spec.twist === 'squad') egSquad(F, ringSpots(spec, spec.fight.x, spec.fight.z, EG_SQUAD_RING_M, 4, () => 0), now, out);",
     "tests": [
       "test/egaudit5_a2.test.js"
     ],
-    "why": "L3-4: the yard's first wave unheld"
+    "why": "L3-4: the yard's first wave unheld",
+    "note": "AUDIT EG V (h): re-aimed by content - the Rift-Yard's squad stood through squadTwist"
   },
   {
     "name": "EGA5A2-squad-yard-off-floor",
     "file": "src/net/egBrain.js",
-    "old": "egSquad(F, ringSpots(spec, spec.fight.x, spec.fight.z, EG_SQUAD_RING_M, 4, () => 0), now, out);",
-    "new": "egSquad(F, [[spec.fight.x, spec.fight.z + spec.fight.r + 8]], now, out);",
+    "old": "squadTwist(F, ringSpots(spec, spec.fight.x, spec.fight.z, EG_SQUAD_RING_M, 4, () => 0), now, still, out);",
+    "new": "squadTwist(F, [[spec.fight.x, spec.fight.z + spec.fight.r + 8]], now, still, out);",
     "tests": [
       "test/egaudit5_a2.test.js"
     ],
-    "why": "L3-4: the yard's squad off its floor"
+    "why": "L3-4: the yard's squad off its floor",
+    "note": "AUDIT EG V (h): re-aimed by content - the Rift-Yard's squad stood through squadTwist"
   },
   {
     "name": "EGA5A2-fair-no-here",

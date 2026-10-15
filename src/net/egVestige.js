@@ -266,7 +266,9 @@ export function egCardActs(key, n = 0, kinds = null) {
 /**
  * THE OFFER at a Redoubt for one member: three Vestiges from three different families (one held at III never shown),
  * at the breach's first Redoubt one of them from the family of their most-used blow kind (THE LEAN, `lean`: melee Blade, an
- * arrow Hunt, a spell Arcana); a Mastery as a fourth card at Redoubt 3 and every Valkynaz Redoubt; a bequest's card; at most
+ * arrow Hunt, a spell Arcana); a Mastery as a fourth card at the breach's third Redoubt (`w` the Redoubt's place in the breach,
+ * net/egRun.js egOffers - AUDIT EG V, h: a deeper start's third too, never Redoubt 3 alone) and every Valkynaz Redoubt; a
+ * bequest's card; at most
  * EG_OFFER_MAX. `extra` cards from a Surplus or shards. Under The Hollow Offer, two cards, one a Mastery.
  * AUDIT EG IV: (lane10 #15) every card one that acts for its member (egCardActs - `n` the living company, `kinds` its landed
  * blow kinds), the bequest's aside (the fallen's own); (lane10 #22) `rank` - THE SHARDS' CARD: one of the member's own Vestiges

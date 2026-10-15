@@ -788,10 +788,17 @@ law's own count, measured over 150 seeds).
 - **THE GOLD RUN**: if every living member is across, by either road, before the closing's 15th second, the count
   gains one real minute; past the cap, that minute counts toward a Surplus. A company of one is exempt: its own arrival
   opens the door. A pose-gated credit needs a fair trail from the last island (section 21).
-- **The trail**: once the door opens, the first across's route (from the relay's poses) draws as a faint gold ribbon
-  for the others. Not built (section 30).
+- **The trail**: once the door opens, the first across's route draws as a faint gold ribbon for the others. The door's
+  word names the member whose arrival opened it (`esay` door, its `s`). Each screen keeps every living member's route
+  over a span or a Brink, a point a metre at most and `EG_TRAIL.max` (240) points at most, a point on a moving piece kept
+  on that piece (`world/egLook.js` egTrailPush). In the closing it draws the first across's for the others in THE EDGE
+  LINE's gold at 40%, never pulsing (`render/egLinePass.js`, THE TRAIL kind, its own buffer); the first across never
+  sees their own (AUDIT EG V, L3-10).
 - **Members never block each other**: peers are not in the collider (`src/net/remotePlayers.js`). Allies draw at 60%
-  opacity on traversal ground, so an ally never hides an edge line - not built either (section 30).
+  opacity on traversal ground, so an ally never hides an edge line: the host's every-peer veil (`scenes/world.js`) asks
+  `scenes/egClient.js` allyVeil, which answers for a living companion of this hall standing off the fight floor, and
+  the ally is drawn in ECV1's plain blend at 60% with its name kept (a concealed peer's look still drops the name). Its
+  Sigil aura is not drawn there, as a concealed peer's is not (AUDIT EG V, L3-10).
 
 ### 8.3 The Rampart (`rampart`) - a walkway under fire
 
@@ -1672,12 +1679,13 @@ frame), and resisted by the Iron Footing Vestige. Near an edge it is a cast-back
   scaled by the depth `x (1 + 0.04(c-1))`.
 - **Size**: a wave counts the living company, as the gate's do, clamped by kind.
 - **Cadence and cap**: the hall's (section 8.1), the cadence quickening with depth (section 18). Every wave is held to
-  the room under the cap (`egLegionRoom`, `net/egLegion.js`): the hall's, a lord's fury's and its summons', Hunting
-  Pack's, and a Kynval squad (its first affixes kept). A friend (the Ghost, the Deserter) is no foe under it. AUDIT EG IV
+  the room under the cap (`egLegionRoom`, `net/egLegion.js`): the hall's, a lord's fury's and its summons', and Hunting
+  Pack's. A friend (the Ghost, the Deserter) is no foe under it. AUDIT EG IV
   (lane1 #6): a lord's summons (Moonfall's Divers, the Soul Burst's Wraiths, the Last Rites'), a Binder's raise and the
   Low Road's foes are held to it too (`egLegionSummon`); a summons a mechanic needs - Morvayn's odd member's Wraith, the
-  Night-Stalker's lone member's Blood Thrall, the Honour Horn's Kynval (section 11.2) - stands whatever the room, and
-  counts against it after. A dormant Lurker is no part of the legion until it wakes: a fragment's statue in its wall's
+  Night-Stalker's lone member's Blood Thrall, the Honour Horn's Kynval (section 11.2), a Kynval Squad's four elites
+  (section 8.7) - stands whatever the room, and counts against it after (AUDIT EG V: a squad held to the room stood
+  three of its four for a company of three). A dormant Lurker is no part of the legion until it wakes: a fragment's statue in its wall's
   shadow counts against the cap from its waking, an ambush that springs whatever the room. Counted asleep, three statues
   in a lone member's Deepway rift chamber (its cap halved to two) held every wave for good (AUDIT EG V).
 - **Fade** (section 15): every kind picks among the members it sees, never one in its Fade, but an Unshaken elite
@@ -1791,8 +1799,10 @@ byte. The Spire's lords are written to it. The gate's brain already exports the 
     burning bridge and the Last Charge's falling third are landings like any blow (no CHECK: each has an edge to run
     to); a burning or fallen ground told and not yet down (the Conquest's thirds, Both Courts Burn, a Last Lesson's ring)
     lands at its onset; and a floor gone (a fallen island, a fallen third, the Molten Rim) is no ground to flee to while
-    it stands (`net/egFloor.js` egZoneLandings, egFloorLess). A new blow is held only if it is what empties the set: a set
-    its landings empty without it (a court burning whole) holds nothing more.
+    it stands (`net/egFloor.js` egZoneLandings, egFloorLess). A ground burning as a landing comes - a `burn` zone
+    standing at that instant - is no ground to flee to either (`egBurnsIn`; AUDIT EG V: a member mid-bridge counted a
+    burning island as safe). A new blow is held only if it is what empties the set: a set its landings empty without it
+    (a court burning whole) holds nothing more.
   - The search lives in `net/egFloor.js` (section 9), the client's arrow beside it, both over the fight floor's polygon.
   - Pinned: the Arcane Lattice and Chained Blows are passable at *n* = 1.
 - **THE WIDTH RULE** (section 11.7): every aimed blow is at least 4 m across at its narrowest, or the relay's census
@@ -1984,7 +1994,7 @@ lord's errand rules are given for *n* = 1, and its numbers keep the floors.
     - Its vent-hearts, `4 + 2·floor(n/3)` (4 to 8, always even), are on its back, in pairs within 6 m of each other.
       **Rails rise along its flank every 15 s** for 8 s, drawn gold along its flanks on every screen; while they stand
       its hearts are open to blows. The climb they would carry members up is not built: the hearts are struck from the
-      floor beside it while the Rails stand.
+      floor beside it while the Rails stand (section 30 says why).
     - Break every heart before its Overload (every 75 s; 70% to all, a CHECK) and it is stunned 8 s, x1.5.
     - Chain lightning: a disc of r 2.5 on a member (1.2 s; floor 0.86 s) that leaps to the nearest member within 6 m.
       Spread.
@@ -2201,7 +2211,8 @@ as their save. Every Vestige that raises damage on a relay foe does so through t
 The Redoubt's card shows the circle's damage chart with the gate's Healed column (`src/ui/gateDamageChart.js`,
 GATE-HEAL), so a company of eight sees what its healer did.
 
-**Mastery Vestiges** change what their holder does, not a number. One is offered as a fourth card at Redoubt 3 and at
+**Mastery Vestiges** change what their holder does, not a number. One is offered as a fourth card at the breach's third
+Redoubt (a deeper start's too: the Redoubt's place counts from its own first, as THE LEAN does - AUDIT EG V) and at
 every Valkynaz Redoubt; a member holds one at a time, and taking another replaces it.
 
 | family | Mastery | what | applied by |
@@ -2585,6 +2596,12 @@ It is a departure from DFU, in the Ledger A row.
      of each other, or the survivor raises the other). Where both masters stand (THE MASTERS' GROUND), the Last Lesson stops at r 17
      (`EG_MASTERS_LESSON_R`), the havens keep their r 13 ring, and the Examination's runes stand on a ring of r 16
      (`EG_MASTERS_RUNE_R`) whatever the ground lays, so neither master's errand stands in the other's burning ground.
+     On another lord's ground of many pieces (Grath's islands, the Twins' far court) a master lays its errands and its
+     court's blows about the disc it stands on, never the ground's first (`net/egLords.js` mainDisc), and the
+     Examination's window is never under THE ERRAND FLOOR of its route walked over the fight floor (`egRuneRouteM`). The
+     Last Lesson keeps the court it turned on, and its last ring stands to the fight's end, stood again if the fight's
+     later zones push it out: one keep for every zone laid to the fight's end (`egZonesKeep`: the Molten Rim, the
+     Lesson's ring, Both Courts Burn) (AUDIT EG V).
      Each lord counts and tops up its own mirrors and images (Garoth's borrowed Mirrorcourt beside the Spellmaster's
      Mirror Images), and each its own duel (section 13.2). Holding the Twin Court as well, the master is the second;
    - **The Molten Rim**: the outer 3 m of every disc of a Court is magma, and 2 m past its edge (a fight hall's way in
@@ -3922,13 +3939,11 @@ all four, each wired or flagged.
   boards a race to scout it. The week's Proclamation (section 20) is a rule, not a seed.
 - **No pause.** The count holds by its own rules and the respite budget, never on a member's word.
 - **Nothing gets faster.** No depth, decree, tide, stratum or fury shortens a wind-up, a piece's timing or a crumble.
-- **No trail.** The first across's route as a gold ribbon (section 8.2) is not drawn: the room keeps one pose a member,
-  never a route, and a screen's own record of a peer's 10 Hz poses on moving pieces is not the fair trail the room judged;
-  THE EDGE LINE's pass (`render/egLinePass.js`) has no dynamic gold kind to draw one with (AUDIT EG V, L3-10).
-- **No translucent allies.** Allies on traversal ground draw whole, not at 60% (section 8.2): the remote bodies' draw
-  (`src/net/remotePlayers.js`, the Morrowind body's skinned pass) has no per-body translucency, and a translucent skinned
-  body wants its own sorted pass. THE QUIET COMPANY's 60% is their spell effects' alone (section 25.4) (AUDIT EG V,
-  L3-10).
+- **No climb on the Colossus's Rails.** Section 13.3's Bound Colossus raises its Rails, and its hearts open while they
+  stand, but no member rides them up its flank: the hearts are struck from the floor beside it. A ridden piece today is
+  a span's, laid by the hall's law on the fight's clock (`net/egFair.js` egRideAt, THE FAIR TRAIL); a Rail on a body
+  walking its own route is a new kind of piece the motor, the fair trail and the solver would each have to learn, more
+  than the followups that found it (AUDIT EG V, L1-13 and group H).
 
 ## 31. Slices and their records
 
@@ -4571,8 +4586,8 @@ none).
 **Pins.** `test/egeco_pay.test.js` (3), `test/egeco_spoils.test.js` (5), `test/egeco_hosts.test.js` (2);
 `tools/mutants/egeco.json` (25 today, with the feats', every one dead - none of them on the pay law itself: `net/egPay.js`'s
 mutants and `arenaWeekOf`'s are AUDIT EG V's, in `tools/mutants/egaudit5_d.json`). Records of other arcs re-aimed by content:
-`surv2`, `audit625`, `sd9e`, `cards9`. `RELAY_VERSION` `world197` re-hashed (unshipped) with `net/egPay.js` in its
-graph.
+`surv2`, `audit625`, `sd9e`, `cards9`. `RELAY_VERSION` `world197` re-hashed (unshipped). `net/egPay.js` is in no relay's
+graph: the account service (`server-account/src/eg.js`, `egEconomy.js`) and the client import it.
 
 ### EG-H1 - 2026-10-12 - INTEGRITY: WHAT THE RELAY JUDGES
 
@@ -5161,7 +5176,8 @@ re-aimed by content, every one dead.
   the stake, the opener who never entered is handed a `v`, and the Redoubts taken stay. A member's `spec` is answered
   with that hall in the breach's own law's bytes (this circle or the next). A client whose law is not its breach's asks
   each hall of its circle once and is told once. The halls given are read before any draw (net/egLaw.js `egSpecGive`),
-  and the circle standing is built again once all five have come.
+  and the circle standing is built again once all five have come. They are forgotten on every way out of the breach -
+  the walk out, the frame's way out and away (`egSpecForget`, `scenes/egClient.js` lawForget; AUDIT EG V).
 - **Secret, deterministic receipts.** The room draws `rs` (32 bytes) at the open and never sends it. A receipt's seed is
   HMAC-SHA-256(rs, sub|R|kind)'s first 32 bits, so a room woken before its save mints the same roll again. A breach opened
   before this keeps the CSPRNG's seed.

@@ -309,11 +309,12 @@
   {
     "name": "EGA3C-swap-drop-walkout-only",
     "file": "src/scenes/egClient.js",
-    "old": "        if (!swapping && !answering) { swapWaitAt = 0; modes()?.egSwapDrop?.(); }",
-    "new": "        if (false) { swapWaitAt = 0; modes()?.egSwapDrop?.(); }",
+    "old": "if (!swapping && !answering) { swapWaitAt = 0; modes()?.egSwapDrop?.(); lawForget(); }",
+    "new": "if (false) { swapWaitAt = 0; modes()?.egSwapDrop?.(); lawForget(); }",
     "tests": [
       "test/egaudit3_client.test.js"
-    ]
+    ],
+    "note": "AUDIT EG V (h): re-aimed by content - the halls given are forgotten beside the swap's drop"
   },
   {
     "name": "EGA3C-refusal-retry-said",

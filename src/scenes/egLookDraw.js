@@ -76,12 +76,12 @@ export function createEgLookDraw({ gl = null } = {}) {
      *  (lane4 #5): `pal` the danger palette they are drawn in (render/egLinePass.js palette). AUDIT EG V (L6-3): `vp` the
      *  world image's rect in pixels (the renderer's `_worldViewportPx` - Retro Picture Mode's 320x200 or 640x400; null: the
      *  canvas's) - the line's two pixels are the image's, as the spans' ghosts drawn in the same pass are (scenes/egSpan.js
-     *  drawPass). */
-    drawOver(proj, view, eye, ts, fog = null, pal = null, vp = null) {
+     *  drawPass). AUDIT EG V (h; section 8.2): `trail` THE TRAIL's `tn` segments (world/egLook.js egTrailSegs), or none. */
+    drawOver(proj, view, eye, ts, fog = null, pal = null, vp = null, trail = null, tn = 0) {
       if (!key || !lines) return false;
       lines.palette(pal);
       const n = sections.length ? egStreamersAt(sections, ts, streamers, alphas) : 0;
-      return lines.draw(proj, view, eye, ts, fog, streamers, n, alphas, vp?.[2] ?? 0, vp?.[3] ?? 0);
+      return lines.draw(proj, view, eye, ts, fog, streamers, n, alphas, vp?.[2] ?? 0, vp?.[3] ?? 0, trail, tn);
     },
     /** EG-ZE: THE LIGHTS, after the lines: `list` world/egLights.js egSpireLights's answer for this frame, `still` reduced
      *  motion. The pass is built the first time a light stands. */

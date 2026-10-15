@@ -875,7 +875,7 @@ export class RemotePlayers {
       const veil = conceal(peer.id) ?? null;
       // MWBODY1: a peer standing in a Morrowind body (net/peerBodies.js) draws no doll/mobile; its name still rides this pass, at the body's own head
       const bodyH = bodyHeight(peer.id);
-      if (bodyH > 0) { if (!veil) this._shown.push({ peer, height: bodyH }); continue; }
+      if (bodyH > 0) { if (!veil || /** @type {any} */ (veil).named) this._shown.push({ peer, height: bodyH }); continue; }   // AUDIT EG V (h): a veil that keeps the name (an ally drawn at 60% on the Spire's traversal ground - scenes/egClient.js allyVeil)
       live.add(peer.id);
       // 2026-09-17: a peer whose class maps onto a class-enemy sprite (classMobileType) is drawn as that sprite,
       // animated off their synced pose (_syncMobilePeer) - the same billboard a hostile Warrior/Mage/etc. already
@@ -1134,7 +1134,7 @@ export class RemotePlayers {
     entry.peer = peer;
     const g = this._growAt(f);
     if (entry.g !== g) { entry.g = g; this._sizeBatch(entry.batch, { w: entry.doll.w * g, h: entry.doll.h * g }, g); }   // OW-PEERS
-    if (!veil) this._shown.push({ peer, height: entry.doll.h * g - sink });
+    if (!veil || veil.named) this._shown.push({ peer, height: entry.doll.h * g - sink });
   }
 
   /** The class-enemy billboard path: `bundle.mobileUnit.update` is fed simple flags off the peer's OWN synced pose
@@ -1204,7 +1204,7 @@ export class RemotePlayers {
     const sink = seatedSink(shown);   // CARDS2c: seated, sunk by the seat's drop
     entry.batch.origin[0] = f[0]; entry.batch.origin[1] = f[1] - sink; entry.batch.origin[2] = f[2];
     entry.batch.conceal = veil;   // INVIS-LOOK
-    if (!veil) this._shown.push({ peer, height: entry.height - sink });
+    if (!veil || veil.named) this._shown.push({ peer, height: entry.height - sink });
   }
 
   /** OW-PEERS: the Overworld's grow at a peer's feet (1 off the view). */

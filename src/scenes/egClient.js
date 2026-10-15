@@ -131,7 +131,7 @@ import { egKeyRefusal } from './egArch.js';   // EG-F: the key's refusals, in th
 import { egCallPromptModel, soundEgHorn, EG_CALL_KEYS } from './egCall.js';   // EG-F: the call's prompt and horn
 import { importPublicKeyB64, ORDER_TTL_S } from '../net/identityToken.js';   // EG-F: the relay's public half, for a stranger's arch; AUDIT EG V: an order's life
 import { egHallOf, egCircleOfHall, egSlotOfHall, egSlotAt, egLocalX, egAtDoor, egPhase, egTimes, egCountText, egBandOfCircle, EG_TEXT, EG_CAST_BACK_LOSS, EG_CAST_BACK_FLOOR, EG_BAND_LORDS, EG_VALKYNAZ } from '../net/egLaw.js';
-import { egOnFight, egSpecGive, egSpecDigest, EG_SPEC } from '../net/egLaw.js';   // EG-H2 (section 10.7): the fight floor, and off it the Spire's traversal ground; (section 22) a hall given, the law I draw
+import { egOnFight, egSpecGive, egSpecDigest, egSpecForget, EG_SPEC } from '../net/egLaw.js';   // EG-H2 (section 10.7): the fight floor, and off it the Spire's traversal ground; (section 22) a hall given, the law I draw
 import { EG_TOLL_STEP } from '../net/egLaw.js';   // EG-ZI (section 10.6): the pull's toll, a quarter's share
 import { readEgReceipt } from '../net/egReceipt.js';
 import { EG_VOID_MAX_S } from '../net/egDurable.js';   // EG-ZA: how long a stake's void may be asked
@@ -167,6 +167,8 @@ import { isTouchDevice } from '../ui/touchDevice.js';
 import { getPref } from '../systems/uiPrefs.js';
 import { createEgLookDraw } from './egLookDraw.js';   // EG-G2: the Spire's sky, mist and lines (section 25)
 import { egQuietCompany } from '../world/egLook.js';
+import { egTrailPush, egTrailSegs, EG_TRAIL } from '../world/egLook.js';   // AUDIT EG V (h; section 8.2): THE TRAIL
+import { CONCEAL_MODE } from '../systems/combatVisuals.js';   // AUDIT EG V (h; section 8.2): an ally on traversal ground, ECV1's plain blend
 import { egStairStep, egSpireLights, egDoorCompass, egWitnessTwist, EG_LIGHTS_TEXT } from '../world/egLights.js';   // EG-ZE: the stair, the door and the lights
 import { egReducedMotion } from '../ui/egAccess.js';
 import { egStartHall, egFirstHallOf } from '../net/egLaw.js';
@@ -174,6 +176,7 @@ import { egStartHall, egFirstHallOf } from '../net/egLaw.js';
 import { egFallModel, drawEgFall, EG_FALL_MS, EG_FALL_TEXT } from '../ui/egSpireHud.js';
 import { egPingWait } from '../ui/egSpireHud.js';   // AUDIT EG V (c, L7-7): a ping inside its cooldown, said
 import { egSupportAt, EG_HOLD } from '../net/egFair.js';
+import { egFightFloorAt } from '../net/egFair.js';   // AUDIT EG V (h): traversal ground is no fight floor
 import { anchoredClock } from '../render/deadlands.js';
 import { createSpireMix } from '../systems/egMix.js';
 // EG-ZF (sections 27.6 and 27.7): the lord's fall's chart, the board's line, the heal word's bounds, the first bits over an account
@@ -1128,6 +1131,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     dropDoor();
     reverb.release(); clampAway();   // EG-ZH: the hall's reverb let go, the fragment's clamp off my motor
     swapWaitAt = 0; modes()?.egSwapDrop?.();   // EG-H3: the swap's build forgotten with the breach
+    lawForget();   // AUDIT EG V (h): and the halls given
     veil()?.flash?.('hourHome');
     if (text) say(text);
     if (!modes()?.egLeave?.()) leaving = false;
@@ -1812,6 +1816,49 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
   /** the halls asked (`b:h` -> when), the halls given, the breach told, the circle built again from its given halls */
   const lawAsked = new Map(), lawGot = new Set();
   let lawSaid = '', lawBuilt = '';
+  /** AUDIT EG V (h, E NEW-1; section 22, THE LAW PIN: "A few circles' worth are kept") - THE HALLS GIVEN FORGOTTEN WITH THE BREACH,
+   *  on every way out (walkOut, the frame's way out, away): the halls the room gave and the swap's build gave (net/egLaw.js
+   *  egSpecForget - kept for the session before, up to 32, against its own doc) and what I asked and was given of them, so a
+   *  way back into the breach asks again what it is not given. */
+  function lawForget() { egSpecForget(); lawGot.clear(); lawAsked.clear(); lawBuilt = ''; digestSeen.k = ''; trailForget(); }
+
+  // ── AUDIT EG V (h; lane3 L3-10 (b) and (c), section 8.2) - THE TRAIL, AND THE ALLIES ON TRAVERSAL GROUND ─────────────────
+  /** each living member's route through the span or Brink I stand in (`routes`: sub -> its points, world/egLook.js egTrailPush,
+   *  mine among them), the breach and hall they are of, the first across the room named as its door opened (`esay` door's
+   *  `s`), and THE TRAIL's segments this frame (one buffer, kept) */
+  const trail = { b: '', h: 0, first: '', routes: new Map(), segs: new Float32Array(EG_TRAIL.max * 6), n: 0 };
+  function trailForget() { trail.b = ''; trail.h = 0; trail.first = ''; trail.routes.clear(); trail.n = 0; }
+  /** THE TRAIL's frame: every living member's route through a span or a Brink kept while its trial and closing run (each one a
+   *  point a metre at most, a ridden one on its piece); once the room names the first across, its route drawn as a faint gold
+   *  ribbon for the others (drawPass) - from the poses this screen hears, never its own route to itself. A new hall forgets
+   *  the last one's. */
+  function trailFrame(E) {
+    if (trail.b !== E.b || trail.h !== E.h) { trailForget(); trail.b = E.b; trail.h = E.h; }
+    trail.n = 0;
+    if (!(E.h > 0) || (E.sg !== 'trial' && E.sg !== 'closing')) return;
+    const spec = egHallOf(E.seed, E.h, E.geo ?? 0);
+    if (spec.kind !== 'span' && spec.kind !== 'brink') return;
+    const tS = now() / 1000, slot = egSlotOfHall(E.h);
+    if (player?.pos && !witness) trailKeep(spec, slot, me(), player.pos, tS);
+    for (const q of peers()) if (q?.pos && livingOf(E, q.sub)) trailKeep(spec, slot, q.sub, q.pos, tS);
+    if (E.sg === 'closing' && trail.first && trail.first !== me()) trail.n = egTrailSegs(trail.routes.get(trail.first), spec, tS, trail.segs);
+  }
+  /** The realm's frame less the dungeon's (net/sdBrain.js dungeonToRealm's offset), read once. */
+  const R0 = dungeonToRealm(0, 0, 0);
+  /** Member `sub`'s feet at dungeon-frame `p` kept on its route through the hall in slot `slot` (spec `spec`). */
+  function trailKeep(spec, slot, sub, p, tS) {
+    const sx = p[0] + R0[0];
+    if (egSlotAt(sx) !== slot) return;
+    let route = trail.routes.get(sub);
+    if (!route) trail.routes.set(sub, (route = []));
+    egTrailPush(route, spec, egLocalX(spec, sx), p[1] + R0[1], p[2] + R0[2], tS);
+  }
+  /** Is `sub` a living, entered member of breach `E` (its company row)? */
+  function livingOf(E, sub) { for (const c of E.co ?? []) if (c[0] === sub) return c[3] === 1 && c[5] === 1; return false; }
+  /** AUDIT EG V (h; section 8.2: "Allies draw at 60% opacity on traversal ground, so an ally never hides an edge line") - an
+   *  ally's body on the Spire's traversal ground: ECV1's plain blend (CONCEAL_MODE.reveal - the opacity alone, no shimmer, no
+   *  shade) at 60%, its name still drawn (`named`, net/remotePlayers.js). One record, never made a frame. */
+  const ALLY_VEIL = Object.freeze({ mode: CONCEAL_MODE.reveal, alpha: 0.6, t: 0, phase: 0, named: true });
   /** AUDIT EG V (L3-12; section 9's safety net): the breaches a hall of which my own law drew otherwise than the room's
    *  digest says (`st`'s `dg`) - asked and built from the room's bytes for the rest of the breach, as another law's are */
   const lawOff = new Set();
@@ -1877,6 +1924,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       if (w.k === 'bd') { countFell(); return; }   // EG-H1: the relay's count's fall of me - the Spire's one life
       link.word(w);
       if (w.k === 'spec') { lawTook(w); return; }   // EG-H2: a hall of the breach's own law
+      if (w.k === 'esay' && w.w === 'door' && w.s?.[0]) { const E = link.state(); if (trail.b === E.b && trail.h === E.h) trail.first = w.s[0]; }   // AUDIT EG V (h): THE TRAIL's first across
       if (w.k === 'call') {
         if (opening && w.os === me()) opening = null;
         if (w.os === me()) stakeDrop((s) => s.b === w.b);   // EG-ZA: the room took it - its own receipts settle the stake
@@ -2041,6 +2089,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       this.callFrame(t);   // EG-F: the arch, the call's prompt and portal, the sight lines
       if (inSpire()) {
         spireFrame(E, t);
+        trailFrame(E);   // AUDIT EG V (h; section 8.2): THE TRAIL
         pushStep();
         fight ??= makeFight(link);
         fight?.frame();
@@ -2053,7 +2102,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
         if (look) { look.release(); look = null; }   // EG-G2: the look's passes, freed on every way out
         if (!swapping && !answering) reverb.release();   // EG-ZH: let go on every way out - held through a swap or an answer's step under way
         if (!swapping && !answering) modes()?.egBandsDown?.();   // EG-ZN (section 29): the band textures freed at the breach's end, every way out - never under a swap's or an answer's step (the next circle's stand uploads nothing)
-        if (!swapping && !answering) { swapWaitAt = 0; modes()?.egSwapDrop?.(); }   // AUDIT EG III (lane4 #7): and the swap's build and its worker with them, every way out (walkOut's alone did)
+        if (!swapping && !answering) { swapWaitAt = 0; modes()?.egSwapDrop?.(); lawForget(); }   // AUDIT EG III (lane4 #7): and the swap's build and its worker with them, every way out (walkOut's alone did); AUDIT EG V (h): and the halls given
         clampAway();   // EG-ZH
         if (leaving || (E.end && E.b)) { leaving = false; link.forget(); }
         if (door || portal) dropDoor();
@@ -2068,6 +2117,26 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     },
     /** The hall's fight driver (the dungeon host's seams), or null outside the Spire. */
     fight: () => (inSpire() ? fight : null),
+    /** AUDIT EG V (h): THE TRAIL drawn this frame - its first across and its segments (tests, stats). */
+    trail: () => ({ first: trail.first, n: trail.n, segs: trail.segs.subarray(0, trail.n * 6) }),
+    /**
+     * AUDIT EG V (h; lane3 L3-10 (c), section 8.2) - AN ALLY ON TRAVERSAL GROUND, DRAWN AT 60%: the draw for peer account `sub`'s
+     * body by its pose `shown` (its feet, the scene's frame through the host's `toScene` - asked only here, in the Spire; the
+     * host's every-peer veil, scenes/world.js `_veils`): ALLY_VEIL while it is a living member of my breach, in the hall I stand
+     * in, on no fight floor (net/egFair.js egFightFloorAt - a span's pieces, a passage, a ledge: the ground no blow is aimed at),
+     * else null.
+     * @param {string|null|undefined} sub @param {any} shown @param {(p: any) => number[]} toScene
+     */
+    allyVeil(sub, shown, toScene) {
+      if (!sub || !shown || sub === me() || !inSpire()) return null;
+      const E = link.state();
+      if (!(E.h > 0) || !livingOf(E, sub)) return null;
+      const pos = toScene(shown);
+      const sx = pos[0] + R0[0];
+      if (egSlotAt(sx) !== egSlotOfHall(E.h)) return null;
+      const spec = egHallOf(E.seed, E.h, E.geo ?? 0);
+      return egFightFloorAt(spec, egLocalX(spec, sx), pos[1] + R0[1], pos[2] + R0[2]) ? null : ALLY_VEIL;
+    },
     lights: () => (inSpire() ? fight?.lights() ?? [] : []),
     /** AUDIT EG III (lane4 #10): one list, refilled a frame (the host reads it at once), never a new one. */
     batches() {
@@ -2084,7 +2153,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
       const under = !!L?.drawUnder(proj, view, eye, ts, fog);
       const drew = !!fight?.drawPass(proj, view, eye, seconds, fog);
       const ghosts = !!modes()?.dungeonCtx?.egSpanDraw?.(proj, view, fog);   // EG-ZL (sections 10.3 and 10.8): the spans' ghosts and a peer's ghost slab (scenes/egSpan.js drawPass), under the lines
-      const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette, renderer?._worldViewportPx);   // AUDIT EG III (lane4 #5): THE EDGE LINE in the danger palette's safety; AUDIT EG V (L6-3): sized in the world image's pixels
+      const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette, renderer?._worldViewportPx, trail.n ? trail.segs : null, trail.n);   // AUDIT EG III (lane4 #5): THE EDGE LINE in the danger palette's safety; AUDIT EG V (L6-3): sized in the world image's pixels; (h) THE TRAIL with them
       const lit = !!L?.drawLights(proj, view, eye, ts, fog, lightsNow(), stillNow());   // EG-ZE: THE LIGHTS, added over the lines
       return under || drew || ghosts || over || lit;
     },
@@ -2196,7 +2265,7 @@ export function createEgClient({ modes, online, hub, account, now: hostNow, enti
     /** The pages of the Annals this breach has given me (their numbers). */
     annals: () => [...annals].sort((a, b) => a - b),
     /** Online gone: every piece put away (the call kept - it is the hub's). */
-    away() { fight?.leave(); if (look) { look.release(); look = null; } chartAway(); healOwed.clear(); dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } callPortal?.clear?.(); prompt?.draw?.(null); const sw = startWin; startWin = null; sw?.close?.(); seedFrame({ silent: true }); spireHolderStep(entity, null); },   // EG-F: and the call's portal, its prompt, the start window; EG-G2: the look released; EG-ZM: a way back's wait for the room's word given up; EG-ZR: the Vestiges I held let go; AUDIT EG V (c, L6-6): the start window's slot emptied before it is closed
+    away() { fight?.leave(); if (look) { look.release(); look = null; } lawForget(); chartAway(); healOwed.clear(); dropDoor(); drawEgHud(null); drawEgPanel(null); presAway(); witness = null; const o = online(); if (o) { o.poseRide = null; o.rideAt = null; } callPortal?.clear?.(); prompt?.draw?.(null); const sw = startWin; startWin = null; sw?.close?.(); seedFrame({ silent: true }); spireHolderStep(entity, null); },   // EG-F: and the call's portal, its prompt, the start window; EG-G2: the look released; EG-ZM: a way back's wait for the room's word given up; EG-ZR: the Vestiges I held let go; AUDIT EG V (c, L6-6): the start window's slot emptied before it is closed
     /** EG-H1: the breach's shared clock (relay ms) and its offset to this machine's wall clock (null before the room has
      *  answered a ping) - the host's spans and its fight read it (scenes/world.js's `egNow`, the spans' anchored clock). */
     sharedNow: () => now(),

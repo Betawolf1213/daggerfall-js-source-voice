@@ -721,20 +721,22 @@
   {
     "name": "EGLOOK-client-lines-dropped",
     "file": "src/scenes/egClient.js",
-    "old": "const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette, renderer?._worldViewportPx);",
+    "old": "const over = !!L?.drawOver(proj, view, eye, ts, fog, egAccessNow(win).palette, renderer?._worldViewportPx, trail.n ? trail.segs : null, trail.n);",
     "new": "const over = false;",
     "tests": [
       "test/eglook_hosts.test.js"
-    ]
+    ],
+    "note": "AUDIT EG V (h): re-aimed by content - the trail joined drawOver's arguments"
   },
   {
     "name": "EGLOOK-client-look-kept",
     "file": "src/scenes/egClient.js",
-    "old": "away() { fight?.leave(); if (look) { look.release(); look = null; } chartAway();",
-    "new": "away() { fight?.leave(); chartAway();",
+    "old": "away() { fight?.leave(); if (look) { look.release(); look = null; } lawForget(); chartAway();",
+    "new": "away() { fight?.leave(); lawForget(); chartAway();",
     "tests": [
       "test/eglook_hosts.test.js"
-    ]
+    ],
+    "note": "AUDIT EG V (h): re-aimed by content - the halls given forgotten beside it (lawForget)"
   },
   {
     "name": "EGLOOK-draw-remade-every-frame",

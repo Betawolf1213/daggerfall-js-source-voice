@@ -202,12 +202,13 @@
   {
     "name": "EGA3L-squad-cap",
     "file": "src/net/egLegion.js",
-    "old": "return EG_AFFIXES.slice(0, egLegionRoom(F)).map(",
-    "new": "return EG_AFFIXES.map(",
+    "old": "return EG_AFFIXES.map((af, j) => {",
+    "new": "return EG_AFFIXES.slice(0, egLegionRoom(F)).map((af, j) => {",
     "tests": [
       "test/egaudit3_legion.test.js"
     ],
-    "why": "a squad past the cap"
+    "why": "a squad past the cap",
+    "note": "AUDIT EG V (h): re-aimed by content - PIN MOVED: a Kynval Squad stands whole (A2 NEW-1, section 8.7) - the mutant now holds it to the room"
   },
   {
     "name": "EGA3L-fade-harriers-only",

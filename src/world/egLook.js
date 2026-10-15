@@ -28,7 +28,9 @@ import { SD_ISLAND_SIDES } from './sdRealm.js';
 import { SD_STEP_THICK, breathSeen } from './sdSteps.js';
 import { createMeshKit } from './meshKit.js';
 import { EG_DRESS, egBandArchive } from './egBandArt.js';
-import { EG_CVD } from '../ui/egAccess.js';   // the colour-vision matrices' one home (the shelf's pins and the lab check read the same)
+import { EG_CVD } from '../ui/egAccess.js';
+import { egRideOf } from '../net/egFair.js';   // AUDIT EG V (h): THE TRAIL's points on a ridden piece kept on it
+import { egPieceAt } from '../net/egSpanLaw.js';   // the colour-vision matrices' one home (the shelf's pins and the lab check read the same)
 
 // ── THE EDGE LINE ──────────────────────────────────────────────────────────────────────────────────────────────
 /** THE EDGE LINE (section 25.3): 2 px on a desktop, 3 on a phone (a screen this short or less); its gold's display
@@ -40,8 +42,8 @@ export const egEdgeLinePx = (h) => (h > 0 && h <= EG_EDGE_LINE.phoneH ? EG_EDGE_
  *  III (lane4 #5, sections 25.2 and 25.7): `pal` the danger palette (ui/egAccess.js) - the Standard keeps the line's own gold,
  *  any other its safety, at the same luminance. */
 export const egEdgeLineColor = (pal = null) => { const g = pal && pal.key !== 'standard' && Array.isArray(pal.safety) ? pal.safety : EG_EDGE_LINE.color, l = 0.2126 * g[0] + 0.7152 * g[1] + 0.0722 * g[2], k = EG_EDGE_LINE.luma / l; return [g[0] * k, g[1] * k, g[2] * k]; };
-/** A line segment's kinds (the pass's `aM.z`): the edge line, a track's dash, a streamer. */
-export const EG_LINE_KIND = Object.freeze({ edge: 0, track: 1, streamer: 2 });
+/** A line segment's kinds (the pass's `aM.z`): the edge line, a track's dash, a streamer; AUDIT EG V (h) THE TRAIL's ribbon. */
+export const EG_LINE_KIND = Object.freeze({ edge: 0, track: 1, streamer: 2, trail: 3 });
 /** A track's dash and its gap (m), and its depth under its piece's top. */
 export const EG_TRACK = Object.freeze({ dash: 0.5, under: SD_STEP_THICK + 0.12 });
 
@@ -152,6 +154,61 @@ export function buildEgLookModel(seed, c, geo = 0) {
   return kit.vertexCount ? kit.pack(egBandArchive(egBandOfCircle(c))) : null;
 }
 
+// ── THE TRAIL (section 8.2) ──────────────────────────────────────────────────────────────────────────────────────────
+/** AUDIT EG V (h; lane3 L3-10 (b), section 8.2) - THE TRAIL: once a span's door opens, the first across's route draws as a faint
+ *  gold ribbon for the others - a point each `step` m of its route, at most `max` a member a hall, at `alpha` of THE EDGE LINE's
+ *  gold, `width` times its width, `lift` over the feet. */
+export const EG_TRAIL = Object.freeze({ step: 1, max: 240, alpha: 0.4, width: 2, lift: 0.05 });
+/**
+ * A point of a member's route in hall `spec` (its frame - the feet at (x, y, z)) at shared second `tS`, kept in `route` (the
+ * member's list for the hall): a point on a ridden piece is kept on its piece (`{ pl }`, net/egFair.js egRideOf's `[i, dx, dy,
+ * dz]`), so the ribbon rides it as the route did; any other where it stood (`{ at }`). One each EG_TRAIL.step along the route
+ * at most, EG_TRAIL.max in all (the first kept). Answers whether it was kept.
+ * @param {any[]} route @param {any} spec @param {number} x @param {number} y @param {number} z @param {number} tS
+ */
+export function egTrailPush(route, spec, x, y, z, tS) {
+  if (route.length >= EG_TRAIL.max) return false;
+  const last = route.at(-1);
+  if (last && trailAt(spec, last, tS, _trailP) && Math.hypot(x - _trailP[0], y - _trailP[1], z - _trailP[2]) < EG_TRAIL.step) return false;
+  const ride = egRideOf(spec, x, y, z, tS);
+  route.push(ride ? { pl: ride } : { at: [x, y, z] });
+  return true;
+}
+const _trailP = [0, 0, 0], _trailQ = [0, 0, 0], _trailPiece = { dx: 0, dz: 0, solid: true };
+/** Where a trail point stands at `tS` (the hall's frame), into `o`: its piece's place on the clock plus its offset, or where it
+ *  was laid. False for a piece the hall has not. */
+function trailAt(spec, q, tS, o) {
+  if (!q.pl) { o[0] = q.at[0]; o[1] = q.at[1]; o[2] = q.at[2]; return true; }
+  const s = spec?.steps?.[q.pl[0]];
+  if (!s) return false;
+  egPieceAt(s, tS, _trailPiece);
+  o[0] = s.x + _trailPiece.dx + q.pl[1]; o[1] = s.y + q.pl[2]; o[2] = s.z + _trailPiece.dz + q.pl[3];
+  return true;
+}
+/**
+ * THE TRAIL's segments at shared second `tS`: each two points of `route` that stand (trailAt) a segment in the dungeon's frame
+ * (world/egHall.js egToDungeon), EG_TRAIL.lift over the feet, written into `out` (six floats a segment) - at most `out`'s room.
+ * Answers how many. Nothing is made but the hall's origin.
+ * @param {any[]} route @param {any} spec @param {number} tS @param {Float32Array} out
+ */
+export function egTrailSegs(route, spec, tS, out) {
+  if (!route?.length || !spec) return 0;
+  const o = egToDungeon(spec, 0, EG_TRAIL.lift, 0), room = Math.floor(out.length / 6);
+  let n = 0, had = false;
+  for (const q of route) {
+    if (n >= room) break;
+    const ok = trailAt(spec, q, tS, _trailQ);
+    if (ok && had) {
+      const k = n * 6;
+      out[k] = o[0] + _trailP[0]; out[k + 1] = o[1] + _trailP[1]; out[k + 2] = o[2] + _trailP[2];
+      out[k + 3] = o[0] + _trailQ[0]; out[k + 4] = o[1] + _trailQ[1]; out[k + 5] = o[2] + _trailQ[2];
+      n++;
+    }
+    if (ok) { _trailP[0] = _trailQ[0]; _trailP[1] = _trailQ[1]; _trailP[2] = _trailQ[2]; }
+    had = ok;
+  }
+  return n;
+}
 // ── THE MIST ───────────────────────────────────────────────────────────────────────────────────────────────────
 /** THE MIST (section 11.2): its top stops `below` metres under the landing it serves (the law's surge rises EG_MIST.rise
  *  over its floor, which lies that far under the landing - net/egFragLaw.js), its colour (linear - the Cairn's pale

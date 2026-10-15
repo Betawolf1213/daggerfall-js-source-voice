@@ -220,8 +220,9 @@ export function egLeanOf(kinds) {
   const k = [0, 1, 2].reduce((best, j) => ((kinds[j] ?? 0) > (kinds[best] ?? 0) ? j : best), 0);
   return (kinds[k] ?? 0) > 0 ? k : null;
 }
-/** THE OFFERS at a Redoubt's rest: one to every living member (net/egVestige.js egOfferOf) - the Lean at the first, a
- *  Mastery at Redoubt 3 and every Valkynaz, a fallen's bequest, shards' extra card. Answers the frames (each `s` its
+/** THE OFFERS at a Redoubt's rest: one to every living member (net/egVestige.js egOfferOf) - the Lean at the breach's first, a
+ *  Mastery at the breach's third (AUDIT EG V, h - A1 NEW-2: a deeper start's third too, as L2-13 decided the Lean) and every
+ *  Valkynaz, a fallen's bequest, shards' extra card. Answers the frames (each `s` its
  *  member's alone). AUDIT EG IV (lane10 #15): no card that cannot act for its member - the living company's size and the
  *  member's landed blow kinds over the breach (`m.kinds`) read; (lane10 #22): the shards' card one of the member's own
  *  Vestiges at its next rank; (lane1 #13): the offer's own law kept (`m.offerO`) for a Surplus's reroll. */
@@ -229,12 +230,13 @@ export function egOffers(B, w, valk, rng, now) {
   const out = [];
   const bequests = Object.values(B.mem).filter((m) => m.bequest != null).map((m) => m.bequest);
   const n = Object.values(B.mem).filter((m) => m.in && m.alive && !m.home && !m.forsaken).length;
-  const first = w === (B.ew ?? 0) + 1;   // AUDIT EG V (L2-13): THE LEAN at the breach's first Redoubt - a deeper start's too (section 16.6)
+  const nth = w - (B.ew ?? 0);   // the Redoubt's place in THIS breach (section 16.6: a deeper start counts from its own first)
+  const first = nth === 1;   // AUDIT EG V (L2-13): THE LEAN at the breach's first Redoubt - a deeper start's too
   for (const [sub, m] of Object.entries(B.mem)) {
     if (!m.in || !m.alive || m.home || m.forsaken) continue;
     const lean = first ? egLeanOf(m.kinds) : null;
     const shardPicks = Math.floor((m.shards ?? 0) / EG_SHARDS_PER);
-    m.offerO = { lean, w, valk, bequest: bequests.find((b) => b != null && !(m.vs ?? []).some((p) => p[0] === b)) ?? null, rank: shardPicks > 0 ? 1 : 0, hollow: (B.strata ?? []).includes('hollow'), n };
+    m.offerO = { lean, w: nth, valk, bequest: bequests.find((b) => b != null && !(m.vs ?? []).some((p) => p[0] === b)) ?? null, rank: shardPicks > 0 ? 1 : 0, hollow: (B.strata ?? []).includes('hollow'), n };
     const cards = egOfferOf(rng, { ...m.offerO, vs: m.vs, mast: m.mast, kinds: m.kinds });
     m.offer = cards; m.picks = 1 + shardPicks + (m.athFree ? 1 : 0); m.athFree = 0;
     out.push({ k: 'offer', to: sub, v: cards, n: m.picks });   // a member's own offer, to their sockets alone (the room's _egFan)

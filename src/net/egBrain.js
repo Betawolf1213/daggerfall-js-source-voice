@@ -71,7 +71,7 @@ import { EG_KIND, EG_LEGION_KINDS, EG_DIVER_WAIT_R, egIsleAhead, egAirY, egLegio
 import { egLegionRoom, egLegionCapOf, egEscortOf, egLurkerWake } from './egLegion.js';   // AUDIT EG III: the room under the legion's cap, a champion's escort, a struck Lurker's wake
 import { egLegionSummon, egBinderBroken, egSpotted } from './egLegion.js';   // AUDIT EG IV: a summons held to the room, a Binder's raise broken, a Spotter's arrow
 import { egShieldTurns, egShieldSoak } from './egLegion.js';   // AUDIT EG V (L2-7): a Shielded elite's shield, one law for every blow
-import { EG_OBJ, egLordsWake, egLordsAwake, egLordsFell, egLordsOf, egObjBroken, egObjsOf, zoneOut, egStun } from './egLords.js';
+import { EG_OBJ, egLordsWake, egLordsAwake, egLordsFell, egLordsOf, egObjBroken, egObjsOf, zoneOut, egStun, egZonesKeep, EG_ZONE_FIGHT_MS } from './egLords.js';
 import { EG_SEAM, egLordsFight } from './egLords.js';   // EG-ZK (section 13.1): every lord through THE BOSS SEAM, called inside the one beat
 import { egPieceIn, egPolyEdgeDist } from './egShape.js';   // AUDIT EG IV (lane1 #11): a champion's wake ring off its floor
 import { egAsk, egVote, egAskResult, egAsksDue, egDecreesAsk, egDecreesChosen, egDecreeRanks, egDecreesInForce, egBargainDecree, egTideOf, egStratumAt, egStrataTo, egOffers, egPick, egPicksClose, egSurplus,
@@ -577,6 +577,13 @@ function provingEscort(F, spec, rng, now, out) {
   const k = egEscortOf(F.n);
   egLegionRaise(F, egWaveKinds(F, rng, k), ringSpots(spec, spec.foe.x, spec.foe.z, 5, k, rng), now, out, { wave: 1 });
 }
+/** AUDIT EG V (h; sections 8.7 and 17.2) - A KYNVAL SQUAD'S TWIST STOOD, one law for a Rift-Yard's and a Rampart's: its four
+ *  elites at `spots` (net/egLegion.js egSquad - a mechanic's body, whole whatever the room), the hall's first wave held
+ *  EG_SQUAD_HOLD_MS and Stillness's `still` past it. The Rift-Yard's held no Stillness: spent at its wake, it bought nothing. */
+function squadTwist(F, spots, now, still, out) {
+  egSquad(F, spots, now, out);
+  F.waveAt = now + EG_SQUAD_HOLD_MS + still;
+}
 /** A wave's spots about (x, z), `r` out, kept to the fight floor. */
 function ringSpots(spec, x, z, r, k, rng) {
   const out = [];
@@ -640,7 +647,7 @@ function standFight(B, spec, now, rng, out) {
     if (spec.twist === 'deserter') { egLegionRaise(F, [EG_KIND.deserter], [[spec.fight.x, spec.fight.z - spec.fight.r + 3]], now, out); F.desClosed = 0; F.coClosed = 0; }
     // AUDIT EG V (L3-4; section 8.7 - a Kynval Squad "in place of a wave", on a Rift-Yard or a Rampart): its four elites about the
     // yard's heart on its floor, the rifts' first wave held as the Rampart's march is
-    if (spec.twist === 'squad') { egSquad(F, ringSpots(spec, spec.fight.x, spec.fight.z, EG_SQUAD_RING_M, 4, () => 0), now, out); F.waveAt = now + EG_SQUAD_HOLD_MS; }
+    if (spec.twist === 'squad') squadTwist(F, ringSpots(spec, spec.fight.x, spec.fight.z, EG_SQUAD_RING_M, 4, () => 0), now, still, out);
   } else if (spec.kind === 'rampart') {
     const pillars = spec.spots.pillar ?? [];
     const onPillar = (p) => [p.x, p.z, spec.discs.find((d) => d.role === 'pillar' && Math.hypot(d.x - p.x, d.z - p.z) < 0.01)?.y];   // EG-ZJ: a pinned Caster on its pillar's top, never the walkway its plan overlaps
@@ -656,7 +663,7 @@ function standFight(B, spec, now, rng, out) {
       F.waveAt = now + 6000 + still;
       if (v === 'winch') { F.winch = 0; P.obj = 'winch'; P.winch = 0; } else P.obj = 'wards';
     }
-    if (spec.twist === 'squad') { egSquad(F, [[spec.walk.x, spec.walk.z0 + 30], [spec.walk.x + 1.5, spec.walk.z0 + 32], [spec.walk.x - 1.5, spec.walk.z0 + 34], [spec.walk.x, spec.walk.z0 + 36]], now, out); F.waveAt = now + EG_SQUAD_HOLD_MS + still; }
+    if (spec.twist === 'squad') squadTwist(F, [[spec.walk.x, spec.walk.z0 + 30], [spec.walk.x + 1.5, spec.walk.z0 + 32], [spec.walk.x - 1.5, spec.walk.z0 + 34], [spec.walk.x, spec.walk.z0 + 36]], now, still, out);
   } else if (spec.kind === 'athenaeum') {
     const s = (egSeed(B.seed, 0x0a7e + spec.h) % 2147483646) + 1;
     // AUDIT EG V (L3-1): the range held to what six stones can need; (L2-10; sections 8.4 and 14): THE FRAYING in force sets
@@ -698,7 +705,7 @@ function standFight(B, spec, now, rng, out) {
     }
     F.sever = sev;
     F.ringAt = 0;
-    if ((B.strata ?? []).includes('moltenrim')) { const M = egMoltenRim(spec); F.rim = [...M.rings.map((s) => ({ k: 'void', s })), ...M.ways.map((s) => ({ k: 'haven', s }))]; moltenRimKeep(F, now, out); }   // THE MOLTEN RIM: a Court's discs (AUDIT EG IV: section 18 says so) - AUDIT EG V (lane1 #21): each way across it a causeway (net/egLaw.js egMoltenRim)
+    if ((B.strata ?? []).includes('moltenrim')) { const M = egMoltenRim(spec); for (const [k, list] of [['void', M.rings], ['haven', M.ways]]) for (const s of list) zoneOut(F, k, s, now, now + EG_ZONE_FIGHT_MS, out, { whole: true }); }   // THE MOLTEN RIM: a Court's discs (AUDIT EG IV: section 18 says so) - AUDIT EG V (lane1 #21): each way across it a causeway (net/egLaw.js egMoltenRim)
     P.obj = 'lord';
   }
   // THE TWISTS (section 8.7) at the wake
@@ -808,7 +815,7 @@ function engineWork(B, F, spec, e, mm, now, out) {
   const at = now + EG_ENGINE_TELL_MS;
   if (E.flood) zoneOut(F, 'burn', stamp, at, at + E.flood, out, { p: EG_ENGINE_PCT, b: 0, el: 'fire' });
   if (E.pct > 0) {
-    const here = living(B).map(([s2, m2]) => (m2.pose ? { sub: s2, x: m2.pose.x, z: m2.pose.z } : null)).filter(Boolean);
+    const here = egPosedHere(B);   // AUDIT EG V (h, A1 NEW-1; L2-2's root): the living company by its poses of THIS hall - never a pose an earlier hall left
     egAim(F, spec, { o: 0, s: [stamp], at, wu: EG_ENGINE_TELL_MS, p: E.flood ? 0 : EG_ENGINE_PCT, b: 0, el: E.flood ? 'fire' : null, nm: E.name }, here, now, out);
   }
   F.engHits.push({ at, until: E.flood ? at + E.flood : 0, kind: e.kind, s: stamp, i: e.i, got: [] });
@@ -920,13 +927,6 @@ function captiveStep(B, F, rng, out) {
   for (const [sub, m] of living(B)) { egGive(m, 'cant', 1, rng); out.push({ k: 'egot', to: sub, w: 'cant' }); }
   out.push({ k: 'esay', w: 'freed' });
 }
-/** THE MOLTEN RIM (section 18) kept: each of its zones (`F.rim` - its magma, `void`, and its causeways, `haven`: net/egLaw.js
- *  egMoltenRim) zoned while the fight's own list holds it no more - at the wake, and again whenever the fight's newest zones
- *  have pushed it out (net/egLords.js zoneOut keeps the last few), so the magma and its ways stand the whole fight on every
- *  screen. AUDIT EG V (lane1 #21). */
-function moltenRimKeep(F, now, out) {
-  for (const q of F.rim) if (!(q.i > 0 && (F.zones ?? []).some((z) => z.i === q.i && z.until > now))) q.i = zoneOut(F, q.k, q.s, now, now + 3_600_000, out).i;
-}
 /** THE RELIQUARY VAULT (section 8.7): its cache stood at the wake, wherever its hall's law laid it (AUDIT EG V, lane3 #18: a
  *  Span's, a Brink's and a Proving Walk's - spec law 8 lays one on a forked span too). */
 function vaultStand(F, spec, now, out) {
@@ -947,8 +947,10 @@ function egRaiseObj(F, t, x, z, hp, now, out, o = {}) {
   return b;
 }
 
-/** The door opens (section 7): the closing begins - a Rally's heal said, the cache's plaque, the legion crumbles. */
-function door(B, spec, now, out, inHall = []) {
+/** The door opens (section 7): the closing begins - a Rally's heal said, the cache's plaque, the legion crumbles. AUDIT EG V
+ *  (h; section 8.2, THE TRAIL): a crossing's door names the member whose fair arrival opened it (`by` - its word's `s`), whose
+ *  route every other screen then draws as the first across's. */
+function door(B, spec, now, out, inHall = [], by = '') {
   clearHall(B, now);
   if (B.F) { egGone(B.F, egBodiesOf(B.F, EG_ROLE.add), EG_GONE.crumbled, '', now, out); egGone(B.F, egObjsOf(B.F, 'spark'), EG_GONE.crumbled, '', now, out); }
   if (B.F?.marks?.some((q) => q[1] === 7)) { B.F.marks = B.F.marks.filter((q) => q[1] !== 7); egMarksOut(B.F, out); }   // EG-ZB: the hunt is over with the trial
@@ -960,7 +962,7 @@ function door(B, spec, now, out, inHall = []) {
   // Rally (and the Rallying Cry): the company heals when a hall's door opens - the strongest holder's
   const rally = Math.max(0, ...living(B).map(([, m]) => egVOf(m.vs, 'rally')));
   if (rally > 0) { out.push({ k: 'eheal', p: B.tide === 'hungering' ? rally / 3 : rally, why: 'rally' }); egHymnStep(B, now); }   // EG-ZR: and Shield-Hymn with it
-  out.push(egStageWord(B, now), { k: 'esay', w: 'door' });
+  out.push(egStageWord(B, now), { k: 'esay', w: 'door', ...(by ? { s: [by] } : {}) });
 }
 /**
  * EG-ZC - THE LOW ROAD'S CLOSING (section 11.4, as written): the High Road's closing begins at the door's opening; the Low
@@ -1398,7 +1400,8 @@ function trial(B, spec, now, inHall, rng, out) {
     if (span) spanLegion(F, view, now, inHall, egLegionRoom(F), out);
     if (egBodiesOf(F, EG_ROLE.add).length) egLegionStep(F, view, now, here, rng, out, span ? { ...legionCtx, span: 1, shadow: inHall, isles: view.fl.filter((f) => f.g === 'island' || f.g === 'plate') } : legionCtx);
     captiveStep(B, F, rng, out);   // AUDIT EG V (L3-19): a span's Captive freed
-    if (doorOpener(B, spec, inHall)) door(B, spec, now, out, inHall);   // EG-H1: a fair arrival opens it (section 21)
+    const first = doorOpener(B, spec, inHall);
+    if (first) door(B, spec, now, out, inHall, first.sub);   // EG-H1: a fair arrival opens it (section 21) - AUDIT EG V (h): and is named, THE TRAIL's
     if (span) { egBlowsStep(F, view, now, here, out, egWatchOf(B)); fightTail(F, now, out); }
     else egMovesOut(F, out);
     return;
@@ -1510,7 +1513,7 @@ function trial(B, spec, now, inHall, rng, out) {
     if (now >= F.quietUntil) { door(B, spec, now, out); return; }
   } else if (kind === 'court') {
     const lords = egLordsOf(F);
-    if (F.rim) moltenRimKeep(F, now, out);   // AUDIT EG V: THE MOLTEN RIM stood again where the fight's last zones pushed it out
+    egZonesKeep(F, now, out);   // AUDIT EG V: THE MOLTEN RIM stood again where the fight's last zones pushed it out - (h) and every zone laid to the fight's end (net/egLords.js egZonesKeep)
     if (egLordsFell(F)) { redoubt(B, now, rng, out); return; }
     if (!egLordsAwake(F)) {
       if (ringWake(F, spec, spec.ring, inHall, now, out, lordCtx)) { F.waveAt = now + EG_ESCORT_EVERY_MS + (F.still ?? 0); F.lordAt = now; }   // AUDIT EG V (L2-6): Stillness holds the first escort

@@ -157,20 +157,22 @@
   {
     "name": "EGA5E-edge-line-viewport-unpassed",
     "file": "src/scenes/egLookDraw.js",
-    "old": "return lines.draw(proj, view, eye, ts, fog, streamers, n, alphas, vp?.[2] ?? 0, vp?.[3] ?? 0);",
-    "new": "return lines.draw(proj, view, eye, ts, fog, streamers, n, alphas);",
+    "old": "return lines.draw(proj, view, eye, ts, fog, streamers, n, alphas, vp?.[2] ?? 0, vp?.[3] ?? 0, trail, tn);",
+    "new": "return lines.draw(proj, view, eye, ts, fog, streamers, n, alphas, 0, 0, trail, tn);",
     "tests": [
       "test/egaudit5_e.test.js"
-    ]
+    ],
+    "note": "AUDIT EG V (h): re-aimed by content - the trail joined the line pass's arguments"
   },
   {
     "name": "EGA5E-edge-line-client-unpassed",
     "file": "src/scenes/egClient.js",
-    "old": "egAccessNow(win).palette, renderer?._worldViewportPx);",
-    "new": "egAccessNow(win).palette);",
+    "old": "egAccessNow(win).palette, renderer?._worldViewportPx, trail.n ? trail.segs : null, trail.n);",
+    "new": "egAccessNow(win).palette, null, trail.n ? trail.segs : null, trail.n);",
     "tests": [
       "test/egaudit5_e.test.js"
-    ]
+    ],
+    "note": "AUDIT EG V (h): re-aimed by content - the trail joined drawOver's arguments"
   },
   {
     "name": "EGA5E-tether-chain-no-strip",

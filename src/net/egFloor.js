@@ -24,6 +24,11 @@
 //     Molten Rim) is no ground to flee to while it stands (egFloorLess); the lords' place blows (a Burning Bridge, the Floor
 //     Falls) are pending landings like any blow. A new blow is held only if IT empties the set: a set the landings already
 //     empty without it (a court burning whole) holds nothing more.
+//   AUDIT EG V (h; fix group B's limit on lane1 #10) - THE GROUND BURNING: a burn that stands as a landing comes (a pool
+//     burning already, a claimed third, Both Courts Burn, a Last Lesson's last ring) is no ground to flee to then - the set
+//     loses its cells at every landing it stands through (egBurnsIn, egUnionHolds' `burns`), as a told burn's at its onset.
+//     It is crossed between landings (a member in a pool runs out of it), never stood in as one lands; a void is no ground
+//     at all. Before, a burning court counted as ground, so a lord's blow could leave a member only the fire to stand in.
 //
 // Pure. In the relay bundle (net/egBodies.js imports it). Not a DFU member. Ledger A (ELITE-GATES).
 import { egInBlow, egInShape, segDist, EG_ESCAPE_MPS, EG_REACT_S } from './egShape.js';
@@ -43,15 +48,20 @@ export const EG_PLACE_STEP_MS = 100;
  * Would blow `next` - with the landings already pending on a member standing at (px, pz) at `now` - leave them no
  * floor? `onFloor(x, z)` the member's fight floor (its walls and open edges bound it). The set starts as the cells
  * reachable before the first landing, dilates by the escape build's reach less EG_REACT_S between landings, and loses
- * each landing's cells. True when it empties - hold the blow.
+ * each landing's cells - AUDIT EG V (h): and the cells of every burn of `burns` (egBurnsIn) standing as it lands. True when it
+ * empties - hold the blow.
  * @param {any[]} pending @param {any} next @param {number} px @param {number} pz @param {number} now @param {(x: number, z: number) => boolean} onFloor
+ * @param {any[]} [burns]
  */
-export function egUnionHolds(pending, next, px, pz, now, onFloor) {
-  if (!next || next.ch || !emptied([...pending, next], px, pz, now, onFloor)) return false;
-  return !emptied(pending, px, pz, now, onFloor);   // AUDIT EG V (lane1 #10): held only if the new blow is what empties it
+export function egUnionHolds(pending, next, px, pz, now, onFloor, burns = []) {
+  if (!next || next.ch || !emptied([...pending, next], px, pz, now, onFloor, burns)) return false;
+  // AUDIT EG V (lane1 #10): held only if the new blow is what empties it - (h) its landing judged without it too, where the
+  // ground burning may empty the set alone (a court burning whole holds nothing more)
+  return !emptied(burns.length ? [...pending, { s: [], at: next.at }] : pending, px, pz, now, onFloor, burns);
 }
-/** Does the set over landings `list` empty (egUnionHolds's search)? */
-function emptied(list, px, pz, now, onFloor) {
+/** Does the set over landings `list` empty (egUnionHolds's search)? AUDIT EG V (h): at each landing it loses the cells of every
+ *  burn (`burns`) standing then too. */
+function emptied(list, px, pz, now, onFloor, burns = []) {
   const blows = list.filter((b) => b && !b.ch && b.at > now).sort((a, b) => a.at - b.at);
   if (!blows.length) return false;
   const C = EG_UNION_CELL, R = Math.ceil(EG_UNION_R / C), side = 2 * R + 1;
@@ -81,10 +91,11 @@ function emptied(list, px, pz, now, onFloor) {
     grow(EG_ESCAPE_MPS * Math.max(0, (b.at - t) / 1000 - EG_REACT_S));
     t = b.at;
     let any = false;
+    const lit = burns.filter((z) => z.from <= b.at && z.until > b.at);   // AUDIT EG V (h): the ground burning as it lands
     for (let i = -R; i <= R; i++) for (let j = -R; j <= R; j++) {
       const q = ix(i, j);
       if (!set[q]) continue;
-      if (egInBlow(b, px + i * C, pz + j * C)) set[q] = 0; else any = true;
+      if (egInBlow(b, px + i * C, pz + j * C) || lit.some((z) => egInShape(z.s, px + i * C, pz + j * C))) set[q] = 0; else any = true;
     }
     if (!any) return true;
   }
@@ -108,6 +119,15 @@ export function egFloorLess(onFloor, zones, now, until) {
   const gone = (zones ?? []).filter((z) => z.kind === 'void' && z.from <= until && z.until > now);
   return gone.length ? (x, z) => onFloor(x, z) && !gone.some((q) => egInShape(q.s, x, z)) : onFloor;
 }
+
+/**
+ * AUDIT EG V (h; section 13.2) - THE GROUND BURNING: the fight's burning zones (`F.zones` - net/egLords.js zoneOut's `{ kind,
+ * s, from, until }`) that stand at some instant of (`now`, `until`] - a pool burning already, a claimed third, Both Courts Burn,
+ * a Last Lesson's ring, a flooded channel - each no ground to flee to while it burns: the union floor's set crosses one between
+ * landings and never stands in one as a landing comes (egUnionHolds' `burns`). Pure.
+ * @param {any[]|undefined} zones @param {number} now @param {number} until
+ */
+export const egBurnsIn = (zones, now, until) => (zones ?? []).filter((z) => z.kind === 'burn' && z.from <= until && z.until > now);
 
 // ── THE PLACE'S LANDINGS (section 13.2: "Pendulums, vents and the place's hazards are tested in the same set") ──
 /** A Rampart vent's lane as a stamp (its rectangle's capsule - a little wider at its ends: the set's favour). */
