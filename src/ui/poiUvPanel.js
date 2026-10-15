@@ -125,7 +125,8 @@ export function createPoiUvPanel({ doc = document, mesh, sub = 0, materials, tit
   const rot = el('input'); rot.type = 'checkbox'; rot.checked = rotate; rot.addEventListener('change', () => { rotate = !!rot.checked; });
   const densityOut = el('span', '');
   const densityIn = el('input'); densityIn.type = 'number'; densityIn.step = '1'; densityIn.min = '1'; densityIn.value = '256';
-  pack.append(btn(t('poi.uv.pack', 'Pack'), () => { ed.pack({ margin, rotate }); }), marginIn, el('label', '', t('poi.uv.packTurn', 'turn islands')), rot,
+  // AUDIT POI M9: a pack that cannot fit moves nothing and is no step (poi/uvMesh.js packIslands) - and says so
+  pack.append(btn(t('poi.uv.pack', 'Pack'), () => { if (!ed.pack({ margin, rotate })) say(t('poi.uv.packNoRoom', 'The islands do not fit in the square at that margin - nothing was moved. Try a smaller margin.')); }), marginIn, el('label', '', t('poi.uv.packTurn', 'turn islands')), rot,
     el('span', 'dfpoi-sep'), densityOut, densityIn,
     btn(t('poi.uv.setDensity', 'Set density'), () => { if (picW) ed.setDensity(Number(densityIn.value) || 256, picW, picH); else say(t('poi.uv.noPicture', 'This material has no picture: its density has no pixels to count.')); }));
   const acts = el('div', 'dfpoi-uv-row');

@@ -101,7 +101,7 @@
   {
     "name": "POI4B-the-cut-ignored",
     "file": "src/poi/poiThumb.js",
-    "old": "      if (mat.alpha === 'cutout' && a < (mat.cutoff ?? 0.5)) continue;\n",
+    "old": "    if (mat.alpha === 'cutout' && a < (mat.cutoff ?? 0.5)) return;\n",
     "new": "\n",
     "tests": [
       "test/poi4b_library.test.js"
