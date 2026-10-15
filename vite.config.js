@@ -161,12 +161,30 @@ export default defineConfig({
     // that returned `true` would force-inline REGARDLESS of size, the
     // opposite mistake and just as quiet.
     assetsInlineLimit: (filePath) => (/[\\/]vendor[\\/]/.test(filePath) ? false : undefined),
+    // BUILD-LEFTOVERS (2026-10-15): THE CHUNK-SIZE WARNING IS A LINE AGAIN.
+    // At Vite's 500 kB it fired on every build - the world chunk is
+    // bootWorld, 2,446 kB, and HOST-SPLIT (bible/01-Overview/Host-Split.md)
+    // is what takes it apart - so it said nothing. Set just over today's
+    // largest chunk, it speaks when a chunk grows past the world; lower it
+    // as HOST-SPLIT brings the world chunk down.
+    chunkSizeWarningLimit: 2_500,
     // EVERY ROOT PAGE: the game, the voxel editor (viewer.html), the labs
     // and the prototypes. None carries game data - a page that draws the
     // game's art asks for the user's own ARENA2. AUDIT 68: a root page
     // missing here works under `npm run dev` and silently never ships;
     // test/audit68_repo.test.js holds every tracked root *.html to a key.
     rollupOptions: {
+      // BUILD-LEFTOVERS: one warning is the design, not a fault. hudLayout.js
+      // loads revenantCard.js dynamically (the HUD preview's ghost) because
+      // revenantCard.js imports hudLayout.js statically - the dynamic edge
+      // keeps the two out of a cycle, it was never meant to split a chunk
+      // (hud.js imports revenantCard.js anyway). Only that pair is quiet;
+      // any other ineffective dynamic import still warns. (The paths are the
+      // working directory's: bare from the repo root, prefixed elsewhere.)
+      onLog(level, log, handler) {
+        if (log.code === 'INEFFECTIVE_DYNAMIC_IMPORT' && /(?:^|\/)src\/ui\/revenantCard\.js is dynamically imported by (?:\S*\/)?src\/ui\/hudLayout\.js\b/.test(log.message)) return;
+        handler(level, log);
+      },
       input: {
         // THE SITE, THEN THE GAME (U60). The root document is the landing
         // page - what this is, how to play, credits, Play - and the game
