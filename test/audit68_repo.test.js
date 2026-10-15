@@ -27,7 +27,10 @@ test('AUDIT 68 X2-release-red-suite-ships: the suite is a JOB every packaging le
     return end < 0 ? rest : rest.slice(0, end + 1);
   };
   const gate = job('gate'), build = job('build');
-  assert.match(gate, /\n {8}run: npm run check\n/, 'the gate job runs the whole house check');
+  // PIN MOVED (REL-FAST, Mac: "Yes, thats insanely slow"): the whole house check as verify.yml's parallel jobs - lint and
+  // the types, every shard, the build - on the commit the legs build, not `npm run check` in series
+  assert.match(gate, /\n {4}uses: \.\/\.github\/workflows\/verify\.yml\n {4}with:\n {6}ref: \$\{\{ github\.sha \}\}\n/, 'the gate job runs the whole house check');
+  assert.doesNotMatch(gate, /build: false/, 'the build is a part of it, as it was of `npm run check`');
   // REL4: and for the one number, which the `version` job resolves once
   assert.match(build, /^ {4}needs: \[version, gate\]$/m, 'every OS leg waits for the suite before it packages anything');
   assert.match(job('publish'), /^ {4}needs: \[version, build\]$/m, 'and nothing is attached before every leg has passed');
