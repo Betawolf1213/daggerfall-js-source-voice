@@ -1809,7 +1809,7 @@ them are"*; asked, "Groups nearby". One mark a profession a stood pixel (`gather
 profession's compass colour (`ui/nodeMarks.js`) at the middle of its nodes not yet worked today, its count beside it,
 the nearest twelve within 3 km, read again twice a second (`scenes/gatherHost.js` overworldGroups); a sixth filter,
 Gathering (`systems/travelViewFilters.js`); drawn by `ui/travelViewHud.js` (look `gather`, `m.color`); fed beside the
-camps in `scenes/world.js` travelViewMarks. Not pickable - a click there falls to the ground and walks to it. See
+camps in `scenes/travelViewMarks.js` travelViewMarks (HOST-SPLIT 1 moved it out of world.js). Not pickable - a click there falls to the ground and walks to it. See
 `06-Systems/Professions-Arc.md` (MORE-NODES, GATHER-OW). Pins `test/gatherow.test.js`.
 
 ## OW-CROWD - the region's travellers decluttered (2026-10-02, Mac)

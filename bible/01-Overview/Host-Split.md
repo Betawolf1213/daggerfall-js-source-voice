@@ -118,6 +118,13 @@ One group per slice, one pull request each, behaviour unchanged:
    its claim and names where the code now lives. A cite into the moved lines
    names the new file (`npm run cites -- --check`, then `citeanchor`).
 4. **Lower the ceiling** to the host's new length in code lines plus 250.
+`tools/hostMove.mjs` does 2 and the mechanical half of 3 (HOST-SPLIT 1): it
+decides every name by those rules (by value, live, import, refused), writes the
+module and the host's construction, drops the imports the host no longer reads,
+and points every mutant record and doc anchor that named the moved text at the
+module - in place, the records' own layout kept. The test pins are the half it
+leaves: their assertions are read and moved by hand (`PIN MOVED`).
+
 5. **Prove it**: lint, types, the bible's gates, every test that reads the host
    or the module, `tools/mutate.mjs` over the mutant lists that name the moved
    code - and, since CI has no ARENA2, Mac plays the slice and runs
@@ -132,6 +139,7 @@ CONSTRUCTION SEAM (`Home.md`) for all of them - the slice names all four hosts
 1. HOST-SPLIT 0 - this page, the ceiling, the map. SHIPPED with this page.
 2. HOST-SPLIT 1 (the pilot) - `travelViewMarks`: no writes, one user, three
    tests. It proves the method end to end before anything large moves.
+   SHIPPED - below.
 3. `buildPixelNow` (the world's pixel build, 1,232 lines, 3 writes), then
    `questWorld`, `worldQuickLoad`, and down the map by cost.
 4. `frame` by stage, then the online group's state, owned.
@@ -140,3 +148,63 @@ CONSTRUCTION SEAM (`Home.md`) for all of them - the slice names all four hosts
 
 Each slice records itself here: the group, its numbers before and after, the
 ceiling it lowered to.
+
+## HOST-SPLIT 1 - travelViewMarks (SHIPPED, 2026-10-15)
+
+The pilot. `tvBadgeOf`, `TV_PEER_HEAD_M` and `travelViewMarks` - the Overworld's
+marks, 229 lines, three contiguous members nothing else used - left `bootWorld`
+for `src/scenes/travelViewMarks.js` (`createTravelViewMarks(host)`), moved by
+`tools/hostMove.mjs`:
+
+- 46 names by value - `const`s above the group, never-written `let`s, function
+  declarations; 15 live, read as `host.<name>` - `let`s written elsewhere
+  (`_sharedOffsetMs`, `bountyHost`, `livingRoads`, `online`, `social`...) and one
+  `const` made 230 lines below the group, `navalRaidersOn`, which a copy at
+  construction would have read in its temporal dead zone and thrown at boot.
+- 28 imports came along; the host dropped the 9 it no longer read.
+- 35 mutant records over 20 lists and one doc anchor (`Wild-Zone.md`, PVPGIANT)
+  followed the code, by the tool; after it, `tools/mutate.mjs` over the 35:
+  35 dead.
+- The pins, by hand: 21 test files and the TIME1 census fixture. Most were text
+  pins that now read the module (a live name as `host.<name>`, and where the
+  host hands one over, a second pin that it does). Three were HOST RUNS - the
+  boat markers, the raiders, the party - that lift the marks' code out of the
+  file and run it against stubs; they lift it from the module now, with `host`
+  standing for the stubs, and they pass - the moved code still does what it
+  did. What they cannot see is the seam itself: a stub hands every name over
+  the same way, so a live name handed over as a copy passes them (AUDIT
+  HOST-SPLIT 1, below). Two pinned the host's own imports
+  (`NAME_RANGE`, `TV_DUNGEON_TYPES`) and follow their one reader.
+- `bootWorld` 21,589 -> 21,445 code lines (35,251 -> 35,042 raw); its ceiling
+  21,839 -> 21,695.
+- The full suite on the slice: 27,336 pass, 0 fail.
+
+WHAT THE PILOT MEASURED: the code moved itself, by rule; the pins did not. 229
+lines cost 22 files of pin moves, because the suite reads `world.js` as text
+(1,444 files read it, 523 slice it between anchors). That is the price of every
+slice, in proportion, and the order above stands on it: a group the map calls
+cheap is cheap to move; whether it is cheap to land is how many pins quote it.
+The next slice counts its pins first (the pins-to-lines ratio beside the map's
+numbers), and a group with many pins and few lines waits.
+
+AUDIT HOST-SPLIT 1 (2026-10-15) read the move against the original - the module
+equal to the moved lines but for the 19 rewrites of the 15 live names, every
+by-value name written nowhere in bootWorld, the construction reading exactly the
+46 it destructures - and found the move sound and two things around it not:
+
+- THE SEAM WAS UNPINNED. `host` is `any` to lint and types, so a live name
+  handed over as a copy (`get social()` -> `social,` - null at construction,
+  the party's marks gone for good) or a name dropped passed the whole suite.
+  `test/hostseam.test.js` now holds every module the tool moved, found by the
+  header it writes, to its construction: each settled name handed over, each
+  live read a getter, each write a setter, nothing handed over unread.
+- THE TOOL had holes the pilot did not fall into and a bigger move would: a
+  for-in/of head's write and a reassigned function or class declaration missed
+  (a stale copy), an inner binding named `host` capturing the rewrites, a
+  parameter default resolved in the body's scope, a host `var` in a block, a
+  shorthand with a default and `new.target` rewritten into syntax errors, an
+  import dropped with its neighbour on one line, a mutant record found by
+  position and an anchor matched inside a longer file name. Each is fixed and
+  is a fixture of `test/hostmove.test.js`: the fixture moved for real and both
+  versions run, the same answer. After the fixes the tool reproduces the
+  pilot's module and world.js byte for byte from the pre-move tree.

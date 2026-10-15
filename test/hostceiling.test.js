@@ -42,7 +42,7 @@ const METHOD = 'a Room method of its own (the SCALE5 arms\' shape)';
  *  second test makes it). Raise one only with the reason written beside it: the ceiling is the line between wiring a
  *  module in and growing the knot. */
 const CEILINGS = [
-  ['src/scenes/world.js', 'bootWorld', 21_839, MODULE],
+  ['src/scenes/world.js', 'bootWorld', 21_695, MODULE],   // HOST-SPLIT 1: travelViewMarks out (21,589 -> 21,445 code lines)
   ['src/scenes/worldModes.js', 'createWorldModes', 7_159, MODULE],
   ['src/scenes/dungeonContext.js', 'buildDungeonContext', 5_446, MODULE],
   ['src/scenes/exterior.js', 'bootExterior', 3_446, MODULE],

@@ -71,7 +71,7 @@
   },
   {
     "name": "TV5-journey-end-marked-twice",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "      if (f.key === farEnd) continue;",
     "new": "      if (f.key === '') continue;",
     "tests": [
@@ -562,7 +562,7 @@
   },
   {
     "name": "AUDIT-DEEP2-B1-the-end-unseen",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "label: e.label, kind: e.kind, edge: true, ...(place ? { pick: true, sub: farDistanceText(km) } : {}) });",
     "new": "label: e.label, kind: e.kind });",
     "tests": [

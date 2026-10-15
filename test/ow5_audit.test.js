@@ -15,6 +15,8 @@ import { AUTO_TOGGLE } from '../src/player/eotbBillboard.js';
 import { planRoute, routeLegs, crossesWater } from '../src/systems/travelRoute.js';
 
 const WORLD = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
+// PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js
+const TVM = readFileSync(new URL('../src/scenes/travelViewMarks.js', import.meta.url), 'utf8');
 
 /** One of world.js's functions, by name: a one-line declaration, or up to its closing brace at the host's indent. */
 function fnSource(name) {
@@ -196,7 +198,7 @@ test('AUDIT OW5 V3: a door\'s POV row that DECIDES (armed, first or third person
 });
 
 test('AUDIT OW5 P6: my party on the Overworld wherever they are - from the party\'s own poses, as the held map draws them - never twice (a member already marked by a body or the region\'s mark stands as that)', () => {
-  const m = /\n( {4}for \(const m of social\?\.others\(\) \?\? \[\]\) \{\n[\s\S]*?\n {4}\}\n)/.exec(WORLD);
+  const m = /\n( {4}for \(const m of host\.social\?\.others\(\) \?\? \[\]\) \{\n[\s\S]*?\n {4}\}\n)/.exec(TVM);   // PIN MOVED (HOST-SPLIT 1)
   assert.ok(m, 'the party\'s block');
   const marks = [];
   const env = {
@@ -208,9 +210,10 @@ test('AUDIT OW5 P6: my party on the Overworld wherever they are - from the party
     near: new Set(['p2']), marks, _tvPartyHold: new Map(),
     mapPixelToWorldCoords: (x, y) => ({ x: x * 32768, z: y * 32768 }), tvSceneKept: (h, x, z, lift) => [x, lift, z],
   };
+  env.host = { social: env.social };   // HOST-SPLIT 1: the party read live, as the module reads it
   mount(env, m[1]);
   assert.deepEqual(marks, [{ key: 'pty:a', at: [300 * 32768 + 16384, 2, 200 * 32768 + 16384], label: 'Far Ally', kind: 'party', edge: true }]);
-  assert.match(WORLD, /marks\.push\(\{ key: `trav:\$\{t\.id\}`[^\n]*\n\s*kin: travellerKin\([^\n]*\n\s*near\.add\(t\.id\);/, 'a region\'s mark counts as marked');   // FIELD BUGS 2026-10-04e: the mark's OW-KIN/OW-WHO fields on its own line
+  assert.match(TVM, /marks\.push\(\{ key: `trav:\$\{t\.id\}`[^\n]*\n\s*kin: travellerKin\([^\n]*\n\s*near\.add\(t\.id\);/, 'a region\'s mark counts as marked');   // FIELD BUGS 2026-10-04e: the mark's OW-KIN/OW-WHO fields on its own line
 });
 
 test('AUDIT OW5 G5: a first-person crossing keeps its journey\'s clock - Come Sail Away\'s own reset (the landfall\'s disembark) left x1 under a panel asking x10 with the view down; never over the Overworld\'s own hold, nor the helm\'s own time step', () => {

@@ -232,9 +232,11 @@ test('OWS3 host wiring by source: the open sea a raider is born on, the shared c
   assert.match(w, /raidFrame\(dt\);[^\n]*\n\s*travelViewGovern\(dt\);/, 'each walking frame, before the cap');
   // NAV-R (2026-09-28): a raider stood as a ship of the sea chases as her captain does - `chase` is the ship's word, or the
   // Overworld's own chase with no sea fight (test/nav_r_raiders.test.js pins which)
-  assert.match(w, /marks\.push\(\{ key: `raid:\$\{r\.id\}`, at: tvSceneKept\(c \?\? r, at\.x, at\.z, 2, true\), label: RAIDER_LABEL, kind: chase \? 'raider ship chase' : 'raider ship', edge: chase \}\);/);
-  assert.match(w, /if \(!chase && Math\.max\(Math\.abs\(px\.x - me\.x\), Math\.abs\(px\.y - me\.y\)\) > grid\) continue;/, 'the rest within the grid\'s reach');
-  assert.match(w, /if \(warmAshesOn\(\) && csaOn\(\)\) \{\n\s*const grid = Math\.max\(1, state\.terrainDistance \?\? 3\);/, 'the mod off, or no Come Sail Away to be at sea with: no raiders (AUDIT OW5b S8)');
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js
+  const tvm = rd('src/scenes/travelViewMarks.js');
+  assert.match(tvm, /marks\.push\(\{ key: `raid:\$\{r\.id\}`, at: tvSceneKept\(c \?\? r, at\.x, at\.z, 2, true\), label: RAIDER_LABEL, kind: chase \? 'raider ship chase' : 'raider ship', edge: chase \}\);/);
+  assert.match(tvm, /if \(!chase && Math\.max\(Math\.abs\(px\.x - me\.x\), Math\.abs\(px\.y - me\.y\)\) > grid\) continue;/, 'the rest within the grid\'s reach');
+  assert.match(tvm, /if \(warmAshesOn\(\) && csaOn\(\)\) \{\n\s*const grid = Math\.max\(1, state\.terrainDistance \?\? 3\);/, 'the mod off, or no Come Sail Away to be at sea with: no raiders (AUDIT OW5b S8)');
 });
 
 // ── AUDIT OW5b (S): THE HOST RUN ─────────────────────────────────────────────────────────────────────────────────────
@@ -254,9 +256,11 @@ const liftSea = () => {
     const end = w.slice(at, eol).trimEnd().endsWith('{') ? w.indexOf('\n  };\n', at) + 5 : eol;
     return w.slice(at, end);
   };
-  const a = w.indexOf('    // AUDIT OW5b S8: none drawn where none can come'), b = w.indexOf('\n    return marks;', a);
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js - lifted from there
+  const tvm = rd('src/scenes/travelViewMarks.js');
+  const a = tvm.indexOf('    // AUDIT OW5b S8: none drawn where none can come'), b = tvm.indexOf('\n    return marks;', a);
   assert.ok(a > 0 && b > a, 'the raiders\' marks lifted');
-  return { frame: fn('raidFrame'), contact: fn('raidContact'), quarry: arrow('raidQuarry'), open: arrow('tvRaidOpen'), sea: arrow('tvRaidSea'), marks: w.slice(a, b),
+  return { frame: fn('raidFrame'), contact: fn('raidContact'), quarry: arrow('raidQuarry'), open: arrow('tvRaidOpen'), sea: arrow('tvRaidSea'), marks: tvm.slice(a, b),
     spend: fn('seaRaidSpend'), peer: fn('seaRaidPeerChase'), hear: fn('seaRaidHear'), word: fn('seaRaidWord'),   // OW6: the chase, shared
     held: fn('seaRaidHeld') };   // THE MERGE (OW6, NAV-R): the raiders my word says I hold
 };
@@ -286,7 +290,7 @@ const seaHost = (over = {}) => {
   const names = Object.keys(d).filter((k) => /^[A-Za-z_$][\w$]*$/.test(k));
   const host = new Function('d', `const { ${names.join(', ')} } = d;
     ${src.open}\n${src.sea}\n${src.quarry}\n${src.contact}\n${src.spend}\n${src.peer}\n${src.hear}\n${src.held}\nlet _seaRaidWordKey = '';\n${src.word}\n${src.frame}
-    const drawRaiders = () => { ${src.marks} };
+    const drawRaiders = () => { const host = d; ${src.marks} };   // HOST-SPLIT 1: the marks read their live names through host
     return { raidFrame, raidContact, raidQuarry, tvRaidOpen, tvRaidSea, drawRaiders, seaRaidHear, seaRaidWord, seaRaidPeerChase };`)(d);
   return { d, order, ...host };
 };
