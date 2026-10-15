@@ -13,7 +13,28 @@ Each is traced on the real modules first; the fixes are pinned one to a tag, and
 
 <!-- WAGON-STABLED -->
 
-<!-- MEND-TIERS -->
+## MEND-TIERS: worn first, the piece that wears itself next, the pack last (2)
+
+`src/systems/enchantments.js` repairsObjectsTarget, mendTier.
+
+THE REPORT. "Repair Regression": a worn Cast When Held ring or Item Deteriorates armour, and twenty damaged axes, bows
+and shoes picked up to sell - the loot was mended and the ring was not.
+
+FOUND. MEND-STARVE (`Field-Bugs-2026-10-14.md`, 705af64180, the day before) ranked a worn piece that wears itself on the
+tick's own round (Cast When Held, CastWhenHeld.cs:27; Item Deteriorates, ItemDeteriorates.cs:29) after every damaged
+piece, the pack's included. Such a piece wears a point a tick, so the loot took every tick and the ring lost a point a
+tick: a 40% ring beside twenty pieces of loot, 400 rounds through the payloads, lost 100 while the loot mended.
+MEND-STARVE's own fault stands - first in the order, the piece took +1 and -1 forever and no other worn piece was
+mended.
+
+FIXED. Mac's three tiers (`mendTier`): what is worn, then a worn piece that wears itself, then the pack, with MEND-WORN's
+mendOrder inside each. Arbeck's other worn gear is still mended first. The accepted trade-off: while such a piece is
+below its condition the tick holds it and the pack waits - Cast When Held wears on every tick's round out of rest, so
+while one is worn and damaged nothing carried is mended, and two such pieces share the tick (the more worn is held).
+The repair kit (`smithItems.js` repairKitTargets) was already worn-first and is unchanged. Pinned by
+`test/fb1015_mendtiers.test.js` (`tools/mutants/fb1015_mendtiers.json`, 5: 4 dead, 1 equivalent as recorded); PIN MOVED
+in `test/fb1014_mendstarve.test.js` (the boots wait); re-aimed by content: MEND-STARVE-the-self-wearing-piece-first-again
+and MEND-WORN-pack-order (dead).
 
 <!-- KICK-AIR -->
 
