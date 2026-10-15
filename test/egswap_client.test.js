@@ -138,13 +138,14 @@ test('EG10 THE SWAP\'S BUILD ON THIS SCREEN (scenes/egSwap.js): one build at a t
 
 // ── THE SWAP IN PLACE, the mode machine's and the dungeon host's own source run ──────────────────────────────────────
 const WM = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
+const EC = readFileSync(new URL('../src/scenes/egCircleHost.js', import.meta.url), 'utf8');   // PIN MOVED (HOST-SPLIT, EG-LOOK): the circle's own module, its mode machine's names read live through `wm`
 const DC = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
 const between = (src, a, b) => { const i = src.indexOf(a), j = src.indexOf(b, i); assert.ok(i > 0 && j > i, `${a} .. ${b}`); return src.slice(i, j); };
 
 /** The mode machine's circle (standEgHall, the gates, THE SWAP) and the dungeon host's spans (their ride, egRecircle),
  *  each its own source, over a counting renderer and the real collider. */
 function swapRig({ workerFactory = () => syncWorker() } = {}) {
-  const wmSrc = between(WM, "  const EG_BUCKET = 'eg:hall';", '  // ── EG-H3 end');
+  const wmSrc = between(EC, "  const EG_BUCKET = 'eg:hall';", '  // ── EG-H3 end');
   const dcSrc = between(DC, '  let egSpan = _egHall ? createEgSpan(', '  // SD8c (Super-Dungeons.md section 10): THE BRASS REMNANT');
   const live = new Set();
   let made = 0, freed = 0, textures = 0;
@@ -163,7 +164,7 @@ function swapRig({ workerFactory = () => syncWorker() } = {}) {
   // PIN MOVED (EG-ZN): the circle's occluders' dither pass stands in the same source (scenes/egOcclude.js), and the band
   // dress's records it frees at the breach's end
   const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'egSpecGive', 'getState',
-    `let mode = 'dungeon', dungeonLoc = getState().loc, dungeonCtx = getState().ctx;\n${wmSrc.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap(getState().swapDeps);')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egGatesFrame, set mode(m) { mode = m; }, get lamps() { return _egLamps; }, get gates() { return _egGates; }, get meshKey() { return _egMeshKey; }, egSwap };`)(
+    `let mode = 'dungeon', dungeonLoc = getState().loc, dungeonCtx = getState().ctx;\nconst wm = { get mode() { return mode; }, get dungeonLoc() { return dungeonLoc; }, get dungeonCtx() { return dungeonCtx; } };\n${wmSrc.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap(getState().swapDeps);')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egGatesFrame, set mode(m) { mode = m; }, get lamps() { return _egLamps; }, get gates() { return _egGates; }, get meshKey() { return _egMeshKey; }, egSwap };`)(
     host, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, egSpecGive,
     () => ({ loc, ctx, swapDeps: { workerFactory } }));
   const body = { pos: realmToDungeon(0, 0.05, 1.5), grounded: true, height: 1.8 };
@@ -407,10 +408,11 @@ test('EG10 THE SWAP\'S FALLBACK, PLAYED: a build still in flight when the step i
 
 test('EG10 THE HOSTS WIRED: the mode machine builds the swap and hands the client its three doors; the stand of a portcullis is one function for the stand and the swap; the dungeon host stands a new circle\'s spans in the same level; the client asks the build at the rest and swaps before it falls back (mutants: any seam unwired)', () => {
   const E = readFileSync(new URL('../src/scenes/egClient.js', import.meta.url), 'utf8');
-  assert.match(WM, /const egSwap = createEgSwap\(\);/);
+  assert.match(EC, /const egSwap = createEgSwap\(\);/);   // PIN MOVED (HOST-SPLIT, EG-LOOK): the circle's own module, the host wires it
+  assert.match(WM, /const egCircle = createEgCircleHost\(\{ renderer, host, wm: \{ get mode\(\) \{ return mode; \}, get dungeonCtx\(\) \{ return dungeonCtx; \}, get dungeonLoc\(\) \{ return dungeonLoc; \} \} \}\);/);
   assert.match(WM, /egPrebuild, egSwapCircle, egSwapDrop: \(\) => egSwap\.drop\(\),/);
-  assert.match(WM, /if \(parts\) egGateStand\(ctx, spec\.h, parts\);/);
-  assert.match(WM, /for \(const g of parts\.gates\) egGateStand\(ctx, g\.h, g\);/);
+  assert.match(EC, /if \(parts\) egGateStand\(ctx, spec\.h, parts\);/);
+  assert.match(EC, /for \(const g of parts\.gates\) egGateStand\(ctx, g\.h, g\);/);
   assert.match(DC, /egRecircle\(r\) \{ return egRecircle\(r\); \},/);
   assert.match(E, /if \(E\.sg === 'rest' && c === M\.egHallCircle\?\.\(\)\) prebuild\(E, c \+ 1\);/);   // PIN MOVED (AUDIT EG V, E NEW-2): the rest's ask through prebuild, under another law from the halls the room gave (test/egaudit3_client.test.js pins it)
   assert.match(E, /return given === null \? null : modes\(\)\?\.egPrebuild\?\.\(\{ b: E\.b, seed: E\.seed, c, geo: E\.geo \?\? 0, given \}\) \?\? null;/);

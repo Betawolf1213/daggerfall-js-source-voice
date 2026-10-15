@@ -253,7 +253,7 @@
   },
   {
     "name": "EGA3C-tells-never-freed-by-owner",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    let n = egBeatTellDown(renderer);",
     "new": "    let n = 0;",
     "tests": [

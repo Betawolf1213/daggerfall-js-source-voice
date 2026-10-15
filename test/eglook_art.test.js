@@ -118,7 +118,7 @@ test('EG-G2 THE DRESS (layer three\'s "the dress is the Hour\'s records"): every
   span.stand({ dynamicDraws: [], collider: null });
   const slabs = made.filter((m) => m.subMeshes.some((sm) => sm.textureRecord === EG_DRESS.floor));
   assert.ok(slabs.length > 0 && slabs.every((m) => m.subMeshes.filter((sm) => EG_DRESS_RECORDS.includes(sm.textureRecord)).every((sm) => sm.textureArchive === EG_BAND_ARCHIVES[2])), 'the Shade\'s pieces in the Shade\'s dress');
-  const W = readFileSync(new URL('../src/scenes/worldModes.js', import.meta.url), 'utf8');
+  const W = readFileSync(new URL('../src/scenes/egCircleHost.js', import.meta.url), 'utf8');   // PIN MOVED (HOST-SPLIT, EG-LOOK): the circle's own module
   // PIN MOVED (merged with EG-H3's swap): one helper, its stand's and the swap's
   // PIN MOVED (AUDIT EG V, e: L6-9 - a band's dress goes up a record at a time, the swap's worker painting it: the helper
   // paints only a band not whole, and each record goes up once under the band's archive - egBandRec)

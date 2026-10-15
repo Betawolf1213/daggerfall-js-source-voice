@@ -58,14 +58,15 @@ test('EG-G2 THE WORLD HOST AND THE DUNGEON ARM (scenes/world.js, scenes/worldMod
   const M = read('src/scenes/worldModes.js');
   assert.match(M, /if \(isEgHall\(dungeonLoc\)\) host\.drawEgSky\?\.\(\{ proj, view, eye: mwv\.eye \}\);/);
   assert.ok(!/if \(isEgHall\(dungeonLoc\)\) host\.drawSdSky/.test(M), 'the Hour\'s sky no more over the Spire');
+  const EC = read('src/scenes/egCircleHost.js');   // PIN MOVED (HOST-SPLIT, EG-LOOK): the circle's own module
   // PIN MOVED (AUDIT EG V, e: L6-9 - a band's dress goes up a record at a time, the swap's worker painting it; once a
   // breach a record, painted here only for a band not whole - egBandRec, egBandWhole)
-  assert.match(M, /if \(egBandWhole\(band\) \|\| !renderer\?\.uploadTexture\) return;\n    try \{ for \(const \[rec, art\] of egBandArt\(band\)\) egBandRec\(band, rec, art\);/, 'a band\'s art painted and uploaded once a session');
-  assert.match(M, /if \(up\.has\(rec\) \|\| !renderer\?\.uploadTexture\) return;\n    _egBands\.add\(band\); up\.add\(rec\);/, 'each record once');
+  assert.match(EC, /if \(egBandWhole\(band\) \|\| !renderer\?\.uploadTexture\) return;\n    try \{ for \(const \[rec, art\] of egBandArt\(band\)\) egBandRec\(band, rec, art\);/, 'a band\'s art painted and uploaded once a session');
+  assert.match(EC, /if \(up\.has\(rec\) \|\| !renderer\?\.uploadTexture\) return;\n    _egBands\.add\(band\); up\.add\(rec\);/, 'each record once');
   // EG-H3 (merged): THE SWAP stands a new circle in place - its band's dress and its waystones go up with it
-  assert.match(M, /egBandUp\(r\.c\); _egLookMesh = egLookBuild\(r\.seed >>> 0, r\.c, \(r\.geo \?\? 0\) \| 0\);/);
-  assert.match(M, /gone = new Set\(\[mesh, _egLookMesh, \.\.\.gates\.map/, 'the old circle\'s waystones freed with it');
-  assert.match(M, /if \(_egLookMesh\) ctx\.dynamicDraws\.push\(\{ gpu: _egLookMesh, object: \{ matrix: identity\(\) \}, noShadow: true \}\);/);
+  assert.match(EC, /egBandUp\(r\.c\); _egLookMesh = egLookBuild\(r\.seed >>> 0, r\.c, \(r\.geo \?\? 0\) \| 0\);/);
+  assert.match(EC, /gone = new Set\(\[mesh, _egLookMesh, \.\.\.gates\.map/, 'the old circle\'s waystones freed with it');
+  assert.match(EC, /if \(_egLookMesh\) ctx\.dynamicDraws\.push\(\{ gpu: _egLookMesh, object: \{ matrix: identity\(\) \}, noShadow: true \}\);/);
 });
 
 test('EG-G2 THE LAB AND ITS PROBES (EG16\'s "the lab checks, frame-synced probes"): spire.html registered with Vite and loading src/tools/spireLab.js; the lab counts its frames for the probe and draws the dungeon arm\'s calls in the arm\'s order (the cull before the draws, the sky, the mist, the telegraphs, the lines); tools/spireLabProbe.mjs waits on the frame counter, never a sleep; tools/egScoreProbe.mjs measures the songs through the real player (mutants: the lab unregistered; the probe sleeping)', () => {

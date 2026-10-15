@@ -262,7 +262,7 @@ test('AUDIT EG III lane4 #4 THE BEATS\' PICTURES HAVE AN OWNER (section 29: "ban
   egBeatTellUp(r, 1, 'standard');
   assert.equal(r.tex.size, per + back, 'the next breach uploads again');
   const WM = rd('src/scenes/worldModes.js');
-  assert.match(between(WM, '  function egBandsDown() {', '  /** EG-G2: a circle\'s band\'s dress uploaded'), /let n = egBeatTellDown\(renderer\);/);
+  assert.match(between(rd('src/scenes/egCircleHost.js'), '  function egBandsDown() {', '  /** EG-G2: a circle\'s band\'s dress uploaded'), /let n = egBeatTellDown\(renderer\);/);
 });
 
 test('AUDIT EG III lane4 #5 THE EDGE LINE AND THE GHOSTS IN THE DANGER PALETTE (sections 25.2, 25.3 and 25.7): the Standard keeps the line\'s own gold and the Steps\' ghost gold; every other palette draws them in its safety - the edge line at the line\'s luminance - and the tracks and streamers in its hazard; the line pass\'s uniforms and the ghost pass\'s colour carry it, and the client hands the palette to the look (mutants: the palette ignored; the luminance unscaled; the hazard ignored; the ghosts\' colour fixed)', () => {

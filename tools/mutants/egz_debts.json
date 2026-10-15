@@ -381,7 +381,7 @@
   },
   {
     "name": "EGZP-teardown-unhanded",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    ctx.addTeardown?.(() => egCircleDown(ctx));",
     "new": "    void egCircleDown;",
     "tests": [
@@ -408,7 +408,7 @@
   },
   {
     "name": "EGZP-slot-emptied-after",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    _egMesh = null; _egMeshKey = ''; _egGates = []; _egLookMesh = null; _egLamps = [];",
     "new": "    _egMeshKey = ''; _egGates = []; _egLookMesh = null; _egLamps = [];",
     "tests": [
@@ -417,7 +417,7 @@
   },
   {
     "name": "EGZP-key-kept",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "_egMesh = null; _egMeshKey = ''; _egGates = []; _egLookMesh = null; _egLamps = [];",
     "new": "_egMesh = null; _egGates = []; _egLookMesh = null; _egLamps = [];",
     "tests": [
@@ -426,7 +426,7 @@
   },
   {
     "name": "EGZP-lamps-kept",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "_egGates = []; _egLookMesh = null; _egLamps = [];",
     "new": "_egGates = []; _egLookMesh = null;",
     "tests": [
@@ -435,7 +435,7 @@
   },
   {
     "name": "EGZP-count-unsaid",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    return gone.size;\n  }\n  /** EG-ZN (section 29",
     "new": "    return 0;\n  }\n  /** EG-ZN (section 29",
     "tests": [

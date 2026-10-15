@@ -119,15 +119,11 @@ import { applyFog, DUNGEON_FOG } from '../render/underwaterFog.js';
 import { gateArenaLocation, gateArenaBlocks, isGateArena, buildCourtModel, buildWalkSlabModel, walkSlabs, slabMatrix, courtFloorTris, courtLightsNear, withCourtLights, courtDoorAabb, COURT_ARCHIVE, COURT_FOG, COURT_TEXT } from '../world/gateArena.js';   // WB3b: the Burning Court - a level made in code on this host's dungeon arm
 import { isSdRealm, sdRealmLocation, sdRealmBlocks, buildRealmModel, realmColliderTris, realmLightsWith, realmLighting, SD_REALM_ARCHIVE, SD_REALM_FOG } from '../world/sdRealm.js';   // SD5a: the Shattered Hour, a made level as the court is
 import { realmArt } from '../world/sdRealmArt.js';   // SD5a: its art, made in code
-import { isEgHall, egHallLocation, egHallBlocks, buildEgCircleModel, egCircleColliderTris, egCircleLights, egLightsWith, egHallLighting, egGateParts, EG_HALL_FOG } from '../world/egHall.js';   // EG-PLAY: an Elite Breach's circle, a made level as the Hour is
-import { egRoomKey, egCircleSpecs, egBandOfCircle, egSpecGive, EG_TEXT } from '../net/egLaw.js';   // EG-PLAY: its room, its halls, its words
-import { createEgSwap } from './egSwap.js';   // EG-H3 (EG10): THE SWAP'S BUILD - the next circle's level made while the Court rests
-import { createEgOccluders, EG_OCCLUDE_CHEST_M } from './egOcclude.js';   // EG-ZN (section 11.8): the occluders between the camera and the body dithered out
-import { EG_DRESS_RECORDS } from '../world/egBandArt.js';   // EG-ZN (section 29): the band dress's records, freed at the breach's end
+import { isEgHall, egHallLocation, egHallBlocks, egLightsWith, egHallLighting, EG_HALL_FOG } from '../world/egHall.js';   // EG-PLAY: an Elite Breach's circle, a made level as the Hour is
+import { egRoomKey } from '../net/egLaw.js';   // EG-PLAY: its room, its halls, its words
+import { createEgCircleHost } from './egCircleHost.js';   // HOST-SPLIT (EG-LOOK): an Elite Breach's circle on this screen, moved out of this host
+import { EG_OCCLUDE_CHEST_M } from './egOcclude.js';   // EG-ZN (section 11.8): the occluders between the camera and the body dithered out
 import { madeLevelOf } from '../systems/madeLevel.js';   // EG-H2 (Elite-Gates.md section 24): which made level stands under the player - one law
-import { egBandArt, egBandArchive } from '../world/egBandArt.js';   // EG-G2: each band's own dress, painted in code
-import { egBeatTellDown } from './egSpan.js';   // AUDIT EG III (lane4 #4): the Beats' pictures, freed with the band dress
-import { buildEgLookModel } from '../world/egLook.js';   // EG-G2: the waystones lit (world/meshKit.js)
 import { SD_HOUR_GRADE } from '../world/sdLook.js';   // SD-LOOK: the Hour's grade on the lane
 /** SD-LOOK: the dungeon arm's two draw options for its dynamic draws (render/renderer.js drawMesh), made once - the hot
  *  loop makes nothing. */
@@ -9574,198 +9570,10 @@ export function createWorldModes(host) {
     ctx.addActivationTargets(() => (host.spoilTargets?.() ?? NO_TARGETS));
     ctx.addActivationNamer((key) => ((typeof key === 'string' && key.startsWith('spoil')) ? host.spoilName?.(key) ?? null : null));
   }
-  /** EG-PLAY: AN ELITE BREACH'S CIRCLE stood into its built context (world/egHall.js), the Hour's way: the Hour's art
-   *  uploaded once a session (the Steps' faces wear it) and the circle's band's own dress beside it (EG-G2 - world/
-   *  egBandArt.js, once a breach a band - EG-ZN), the circle's mesh made once a circle
-   *  and among the context's draws, its floors and walls on the collider (the spawn lands on its first plate), each
-   *  Rampart's portcullis its own draw and a moving bucket (sunk once its door opens - the outer host's word), and the
-   *  Redoubt's way home a target the press takes. EG-ZN: the circle's occluders handed to their dither pass with it.
-   *  EG-ZP: and the whole circle let go with the context it stands in (egCircleDown). */
-  const EG_BUCKET = 'eg:hall';
-  let _egMesh = null, _egMeshKey = '', _egArt = false, _egLamps = [], _egLookMesh = null;
-  const _egBands = new Set();   // EG-G2: the bands whose dress is up this breach (EG-ZN: freed at its end - egBandsDown)
-  /** AUDIT EG V (L6-9): the records of each band's dress up this breach, by band - a band is whole once every one of
-   *  EG_DRESS_RECORDS is (the swap's worker paints it, and the Court's rest puts it up a record a frame) */
-  const _egBandRecs = new Map();
-  /** @type {Array<{ h: number, gpu: any, T: number[], draw: any }>} */
-  let _egGates = [];
-  /** EG-ZN (section 11.8): THE OCCLUDERS DITHERED - the circle's rock a camera ray to my body crosses (scenes/egOcclude.js),
-   *  over the circle's own mesh and its one draw. */
-  const egOcc = createEgOccluders({ renderer });
-  /** EG-ZN: the circle's draw in the context's list - the one the dither pass hides while it draws the circle itself. */
-  let _egDraw = null;
-  /** EG-ZN: the circle's draw made and pushed, and the dither pass told (a stand's and a swap's alike). */
-  function egCircleDraw(ctx) {
-    _egDraw = _egMesh ? { gpu: _egMesh, object: { matrix: identity() } } : null;
-    if (_egDraw) ctx.dynamicDraws.push(_egDraw);
-    egOcc.stand(_egDraw);
-  }
-  /** EG-ZP (section 29 - EVERY ALLOCATION HAS AN OWNER: "every exit path ... frees the hall's meshes, colliders, riders"):
-   *  THE CIRCLE LET GO from context `ctx` - its mesh, its look's mesh (the waystones) and each Rampart's portcullis freed
-   *  from the renderer, their draws taken out of the context's list, and its floors' and walls' bucket and each portcullis's
-   *  moving one off its collider. Every slot is emptied first and the dither pass told next (it lets the circle's views go
-   *  before the mesh under them is freed); the meshes go last, so a second call frees nothing twice. THE SWAP lets the old
-   *  circle go through it, and the context's own end runs it - the stand hands it to the context (dungeonContext.js
-   *  addTeardown), so the way home, the tear, a fall's walk out, forsaking, a void, a load or a teleport out, an abandoned
-   *  build and the old step under the veil each free the circle once, before the band textures' owner frees the dress it
-   *  wore (egBandsDown, refused while a circle stands). Answers how many meshes it freed. */
-  function egCircleDown(ctx) {
-    const mesh = _egMesh, gates = _egGates, gone = new Set([mesh, _egLookMesh, ...gates.map((g) => g.gpu)].filter(Boolean));   // EG-G2: and the look's mesh
-    _egMesh = null; _egMeshKey = ''; _egGates = []; _egLookMesh = null; _egLamps = [];
-    egOcc.clear(); _egDraw = null;   // EG-ZN: the dither pass lets the old circle go - its views and its draw - before it is freed
-    for (let i = ctx.dynamicDraws.length - 1; i >= 0; i--) if (gone.has(ctx.dynamicDraws[i]?.gpu)) ctx.dynamicDraws.splice(i, 1);
-    ctx.collider.removeBucket(EG_BUCKET);
-    for (const g of gates) ctx.collider.removeBucket(`eg:gate:${g.h}`);
-    for (const m of gone) { try { renderer?.destroyMesh?.(m); } catch { /* gone */ } }
-    return gone.size;
-  }
-  /** EG-ZN (section 29 - EVERY ALLOCATION HAS AN OWNER: "band textures are cached per band and freed at the breach's end"):
-   *  every band's dress this breach put up (AUDIT EG III lane4 #4: and its Beats' pictures, scenes/egSpan.js egBeatTellDown),
-   *  freed - each record's albedo (every variant under it) and its emission - at the
-   *  breach's end: the client's word on the first frame out of the Spire that is no swap's or answer's step (scenes/
-   *  egClient.js), so a swap in place and the old step under the veil upload nothing. Refused while a circle stands (its
-   *  draws still wear them). Answers how many textures it freed. */
-  function egBandsDown() {
-    if (mode === 'dungeon' && isEgHall(dungeonLoc)) return 0;
-    let n = egBeatTellDown(renderer);   // AUDIT EG III (lane4 #4): every Beat's pictures the breach's spans put up (scenes/egSpan.js) - nothing held, nothing done
-    if (!_egBands.size) return n;
-    for (const band of _egBands) {
-      const arch = egBandArchive(band);
-      for (const rec of EG_DRESS_RECORDS) { if (renderer?.releaseTexture?.(arch, rec)) n++; if (renderer?.evictEmissionTexture?.(`${arch}_${rec}`)) n++; }
-    }
-    _egBands.clear(); _egBandRecs.clear();
-    return n;
-  }
-  /** EG-G2: a circle's band's dress uploaded under its own archive, once a breach a band (EG-ZN) - at a circle's stand,
-   *  under the veil, and at THE SWAP for whatever of it the Court's rest did not put up (AUDIT EG V L6-9: the swap's worker
-   *  paints it - egSwapFeed); painted here only where no worker built the circle. */
-  function egBandUp(c) {
-    const band = egBandOfCircle(c);
-    if (egBandWhole(band) || !renderer?.uploadTexture) return;
-    try { for (const [rec, art] of egBandArt(band)) egBandRec(band, rec, art); } catch (e) { console.warn('[eg] the band\'s art would not upload', e?.message ?? e); }
-  }
-  /** AUDIT EG V (L6-9): one record of band `band`'s dress up (its albedo and its emission), once a breach. */
-  function egBandRec(band, rec, art) {
-    let up = _egBandRecs.get(band);
-    if (!up) _egBandRecs.set(band, (up = new Set()));
-    if (up.has(rec) || !renderer?.uploadTexture) return;
-    _egBands.add(band); up.add(rec);
-    try { renderer.uploadTexture(egBandArchive(band), rec, art.albedo); renderer.uploadEmissionTexture?.(egBandArchive(band), rec, art.emission, { white: true }); } catch (e) { console.warn('[eg] the band\'s art would not upload', e?.message ?? e); }
-  }
-  /** AUDIT EG V (L6-9): is band `band`'s dress up whole this breach? */
-  const egBandWhole = (band) => (_egBandRecs.get(band)?.size ?? 0) >= EG_DRESS_RECORDS.length;
-  /** EG-G2: the look's own mesh for a circle (the waystones lit - world/egLook.js), or null. */
-  function egLookBuild(seed, c, geo) {
-    try { const lm = buildEgLookModel(seed, c, geo); return lm && renderer?.createMesh ? renderer.createMesh(lm) : null; } catch (e) { console.warn('[eg] the look would not build', e?.message ?? e); return null; }
-  }
-  function standEgHall(ctx, eh) {
-    const key = `${eh.seed}:${eh.c}:${eh.geo ?? 0}`;
-    if (!_egArt && renderer?.uploadTexture) {
-      _egArt = true;
-      const glow = { white: true };
-      try { for (const [rec, art] of realmArt()) { renderer.uploadTexture(SD_REALM_ARCHIVE, rec, art.albedo); renderer.uploadEmissionTexture?.(SD_REALM_ARCHIVE, rec, art.emission, glow); } } catch (e) { console.warn('[eg] the Spire\'s art would not upload', e?.message ?? e); }
-    }
-    egBandUp(eh.c);   // EG-G2 (section 25.1): the circle's band's dress under its own archive, once a breach a band (EG-ZN)
-    ctx.addTeardown?.(() => egCircleDown(ctx));   // EG-ZP (section 29): the circle let go with the context it stands in - every way that context ends
-    if (_egMeshKey !== key) {
-      egOcc.clear();   // EG-ZN: the dither pass lets the old circle go before it is freed
-      if (_egMesh) { try { renderer?.destroyMesh?.(_egMesh); } catch { /* gone */ } }
-      _egMesh = null; _egMeshKey = key;
-      try { const model = buildEgCircleModel(eh.seed, eh.c, eh.geo ?? 0); _egMesh = renderer?.createMesh ? renderer.createMesh(model) : null; if (_egMesh) egOcc.set(_egMesh, model); } catch (e) { console.warn('[eg] the circle would not build', e?.message ?? e); _egMesh = null; }   // EG-ZN: its occluders with it
-      if (_egLookMesh) { try { renderer?.destroyMesh?.(_egLookMesh); } catch { /* gone */ } }   // EG-G2: the look's own mesh (the waystones), once a circle
-      _egLookMesh = egLookBuild(eh.seed, eh.c, eh.geo ?? 0);
-      _egLamps = egCircleLights(eh.seed, eh.c, eh.geo ?? 0);
-    }
-    egCircleDraw(ctx);   // EG-ZN: the circle's one draw, the dither pass's to hide while it draws the circle itself
-    if (_egLookMesh) ctx.dynamicDraws.push({ gpu: _egLookMesh, object: { matrix: identity() }, noShadow: true });   // EG-G2
-    const tris = egCircleColliderTris(eh.seed, eh.c, eh.geo ?? 0), n = tris.length / 3;
-    const idx = n > 65535 ? new Uint32Array(n) : new Uint16Array(n);
-    for (let i = 0; i < n; i++) idx[i] = i;
-    ctx.collider.addMesh(EG_BUCKET, tris, idx, identity());
-    for (const g of _egGates) if (g.gpu) { try { renderer?.destroyMesh?.(g.gpu); } catch { /* gone */ } }
-    _egGates = [];
-    for (const spec of egCircleSpecs(eh.seed, eh.c, eh.geo ?? 0)) {
-      const parts = egGateParts(spec);
-      if (parts) egGateStand(ctx, spec.h, parts);   // EG-H3: the one gate stand (the swap's too)
-    }
-    ctx.addActivationNamer((key) => (typeof key === 'string' && key.startsWith('exit:') ? { title: EG_TEXT.wayHome } : null));   // the Redoubt's way home is the level's one exit door, stood by the outer host (before the dungeon exit's own namer)
-  }
-  /** EG-PLAY: each Rampart's portcullis stood or sunk as its hall's door stands (the outer host's word), every frame. */
-  function egGatesFrame() {
-    for (const g of _egGates) {
-      const open = !!host.egGateOpen?.(g.h);
-      g.T[1] = open ? -400 : 0;
-      if (g.draw) g.draw.hidden = open;
-    }
-  }
-  // ── EG-H3 (2026-10-12, Mac: "I said I want everything"; bible/11-Multiplayer/Elite-Gates.md sections 7 and 31, EG10):
-  // THE SWAP - a new circle stood IN PLACE from the level its rest built (scenes/egSwap.js, off the main thread - world/
-  // egCircleWorker.js): the old circle's mesh, portcullises, floors and spans freed, the new one's uploaded and laid, the
-  // circle renamed on the level. No exterior pixel, no landing, no world-cell hello, no new context: the presence socket
-  // stays the breach's (`{kind: 'eg', b}`). A build not ready when the step is due leaves the step the old way, out under
-  // the veil and in again (scenes/egClient.js swapTo). ─────────────────────────────────────────────────────────────────
-  const egSwap = createEgSwap();
-  /** A Rampart's portcullis stood into the context (`parts` world/egHall.js egGateParts's): its own draw and a moving
-   *  bucket, sunk once its door opens (egGatesFrame). */
-  function egGateStand(ctx, h, parts) {
-    let gpu = null;
-    try { gpu = renderer?.createMesh ? renderer.createMesh(parts.model) : null; } catch { gpu = null; }
-    const g = { h, gpu, T: [0, 0, 0], draw: gpu ? { gpu, object: { matrix: identity() } } : null };
-    if (g.draw) ctx.dynamicDraws.push(g.draw);
-    const gi = new Uint16Array(parts.tris.length / 3);
-    for (let i = 0; i < gi.length; i++) gi[i] = i;
-    ctx.collider.addMesh(`eg:gate:${h}`, parts.tris, gi, identity(), () => g.T);
-    _egGates.push(g);
-  }
-  /** The next circle's level asked of the swap's build (`r` { b, seed, c, geo, given } - AUDIT EG V, E NEW-2: `given` a breach
-   *  of another law's halls, the worker's to build from) - only inside that breach's circle; answers its state ('ready',
-   *  'building', or null: none offered - the step will be the old way). */
-  function egPrebuild(r) {
-    if (mode !== 'dungeon' || !isEgHall(dungeonLoc) || !r || r.b !== dungeonLoc.egBreach || !Number.isSafeInteger(r.c)) return null;
-    // EG-G2: the next circle's band's dress up while the Court rests. AUDIT EG V (L6-9): painted in the swap's worker with
-    // the circle (never here - a band's paint was a frame of 100-270 ms in the rest, its beacon and hymn running) and put up
-    // a record a frame; L6-8: then its halls' specs taken as the worker laid them, a hall a frame (egSwapFeed)
-    const band = egBandOfCircle(r.c), st = egSwap.want(r.seed, r.c, r.geo ?? 0, egBandWhole(band) ? -1 : band, r.given);
-    if (st === 'ready') egSwapFeed(egSwap.peek(r.seed, r.c, r.geo ?? 0), band, 1);
-    return st;
-  }
-  /** AUDIT EG V (L6-8, L6-9): a built circle's band dress and hall specs fed to the page, `n` of them - a rest frame's one,
-   *  THE SWAP's every one left: each record of the dress put up (egBandRec), then each hall's spec taken as given
-   *  (net/egLaw.js egSpecGive), so nothing under the veil paints a band or lays a hall again (it laid halls 2-5 there,
-   *  17-102 ms). */
-  function egSwapFeed(parts, band, n = Infinity) {
-    for (let k = 0; k < n && parts; k++) {
-      const a = parts.art?.shift?.();
-      if (a) { egBandRec(band, a[0], a[1]); continue; }
-      const s = parts.specs?.shift?.();
-      if (s) { egSpecGive(s); continue; }
-      break;
-    }
-  }
-  /** THE SWAP ITSELF (under the veil the client has closed): circle `r.c` stood in this same level from its built parts -
-   *  false (nothing touched) when it is not built, or this is not that breach's circle. The slot emptied before what was
-   *  in it is freed. */
-  function egSwapCircle(r) {
-    if (mode !== 'dungeon' || !isEgHall(dungeonLoc) || !dungeonCtx || !r || r.b !== dungeonLoc.egBreach || !Number.isSafeInteger(r.c)) return false;
-    const parts = egSwap.take(r.seed, r.c, r.geo ?? 0);
-    if (!parts) return false;
-    egSwapFeed(parts, egBandOfCircle(r.c));   // AUDIT EG V (L6-8, L6-9): what the rest left of its dress and its halls, before anything reads them
-    const ctx = dungeonCtx;
-    egCircleDown(ctx);   // EG-ZP: the old circle let go by the one teardown every way out takes - its slots emptied, the dither pass told, its draws, buckets and meshes freed
-    try { _egMesh = renderer?.createMesh ? renderer.createMesh(parts.model) : null; if (_egMesh) egOcc.set(_egMesh, parts.model); } catch (e) { console.warn('[eg] the circle would not build', e?.message ?? e); _egMesh = null; }   // EG-ZN: its occluders built with it, off the main thread
-    _egMeshKey = parts.key; _egLamps = parts.lamps;
-    egCircleDraw(ctx);   // EG-ZN: the circle's one draw, the dither pass's
-    egBandUp(r.c); _egLookMesh = egLookBuild(r.seed >>> 0, r.c, (r.geo ?? 0) | 0);   // EG-G2: the new circle's band's dress (up already from its build) and its waystones
-    if (_egLookMesh) ctx.dynamicDraws.push({ gpu: _egLookMesh, object: { matrix: identity() }, noShadow: true });
-    const n = parts.tris.length / 3, idx = n > 65535 ? new Uint32Array(n) : new Uint16Array(n);
-    for (let i = 0; i < n; i++) idx[i] = i;
-    ctx.collider.addMesh(EG_BUCKET, parts.tris, idx, identity());
-    for (const g of parts.gates) egGateStand(ctx, g.h, g);
-    ctx.egRecircle?.({ seed: r.seed >>> 0, c: r.c, geo: r.geo ?? 0 });   // the spans: the old circle's freed, the new one's stood at the next ride
-    dungeonLoc.egCircle = r.c; dungeonLoc.egGeo = (r.geo ?? 0) | 0;
-    return true;
-  }
-  // ── EG-H3 end ──────────────────────────────────────────────────────────────────────────────────────────────────────
+  /** EG-PLAY: AN ELITE BREACH'S CIRCLE on this screen - its mesh, its band's dress, its waystones, its portcullises, its
+   *  occluders and THE SWAP (scenes/egCircleHost.js - HOST-SPLIT, EG-LOOK: moved out of this host, its seams read here). */
+  const egCircle = createEgCircleHost({ renderer, host, wm: { get mode() { return mode; }, get dungeonCtx() { return dungeonCtx; }, get dungeonLoc() { return dungeonLoc; } } });
+  const { standEgHall, egGatesFrame, egPrebuild, egSwapCircle, egBandsDown, egOcc, egSwap } = egCircle;
   /** EG-ZN (2026-10-12, Elite-Gates.md section 11.8): THE OCCLUDERS DITHERED, this frame - after its beginFrame (the shadow
    *  record open) and before the dynamic draws: the circle's rock a ray from the third-person eye to my body (its pivot and
    *  its chest) crosses dithered out, the rest of the circle drawn whole (scenes/egOcclude.js). First person, a witness's
@@ -11254,7 +11062,7 @@ export function createWorldModes(host) {
       // cap drops a far court's fire, never him
       if (isGateArena(dungeonLoc)) { const _court = withCourtLights(_dgLit, [...(host.gateCourtLights?.() ?? []), ...courtLightsNear(cam.pos)]); renderer.setPointLights(_court.data, null, _court.colors); }
       if (isSdRealm(dungeonLoc)) { const _hour = realmLightsWith(_dgLit, host.sdRealmLights?.() ?? NO_LIGHTS, cam.pos, host.sdLampDim?.() ?? null); renderer.setPointLights(_hour.data, null, _hour.colors); }   // SD5a: the Hour's lamps, after the player's own lights, nearest first; SD9e: the spoils' light before them, as the court's; AUDIT SD II (L2 F9): into the realm's own arrays, made once; SD-LOOK S7: the arena's dimmed through the Reset
-      if (isEgHall(dungeonLoc)) { const _sp = egLightsWith(_dgLit, host.egLights?.() ?? NO_LIGHTS, _egLamps, cam.pos); renderer.setPointLights(_sp.data, null, _sp.colors); }   // EG-PLAY: the Spire's lamps after the player's own lights, the fight's glows before them
+      if (isEgHall(dungeonLoc)) { const _sp = egLightsWith(_dgLit, host.egLights?.() ?? NO_LIGHTS, egCircle.lamps(), cam.pos); renderer.setPointLights(_sp.data, null, _sp.colors); }   // EG-PLAY: the Spire's lamps after the player's own lights, the fight's glows before them
       renderer.everyLightCasts();   // LA-SHADOW3: the level is drawn whole below (no view cull) - every torch keeps a shadow map, none lights through the rock as the nearest eight change (DISC15's rooms)
       renderer.setClearColor(INTERIOR_CLEAR);   // REVIEW 2026-09-05 (PR #55 review): the world-hosted dungeon/interior frame is THIS one - the host's own setClearColor sits after its `modes.frame` return
       renderer.setWorldViewport(worldViewportRect(canvas.clientWidth, canvas.clientHeight));   // E5: ViewportChanger.Update, every frame

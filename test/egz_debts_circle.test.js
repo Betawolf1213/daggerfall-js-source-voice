@@ -25,6 +25,7 @@ const SEED = 12345;
 const B = '0123456789abcdef';
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const WM = rd('src/scenes/worldModes.js');
+const EC = rd('src/scenes/egCircleHost.js');   // PIN MOVED (HOST-SPLIT, EG-LOOK): the circle's own module, its mode machine's names read live through `wm`
 const DC = rd('src/scenes/dungeonContext.js');
 const between = (src, a, b) => { const i = src.indexOf(a), j = src.indexOf(b, i); assert.ok(i > 0 && j > i, `${a} .. ${b}`); return src.slice(i, j); };
 const lineOf = (src, pred, what) => { const l = src.split('\n').find(pred); assert.ok(l, what); return l; };
@@ -48,7 +49,7 @@ const contextOf = () => new Function('Collider', 'console', `${TD_DECL}\nconst d
 /** The mode machine's circle, its own source, over a counting renderer that logs every free and upload in order and
  *  checks, at each free, that the circle's slots are already empty. */
 function rig() {
-  const src = between(WM, "  const EG_BUCKET = 'eg:hall';", '  // ── EG-H3 end');
+  const src = between(EC, "  const EG_BUCKET = 'eg:hall';", '  // ── EG-H3 end');
   const live = new Set(), log = [];
   let made = 0, twice = 0, wm = null, heldAtFree = 0;
   const renderer = {
@@ -59,7 +60,7 @@ function rig() {
   };
   const st = { loc: { egBreach: B, egSeed: SEED, egCircle: 4, egGeo: 0 } };
   wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'egBeatTellDown', 'egSpecGive', 'st',
-    `let mode = 'dungeon', dungeonLoc = st.loc, dungeonCtx = null;\n${src.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap({ workerFactory: st.worker });')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egBandsDown, egCircleDown, egOcc, set ctx(c) { dungeonCtx = c; }, set mode(m) { mode = m; },
+    `let mode = 'dungeon', dungeonLoc = st.loc, dungeonCtx = null;\nconst wm = { get mode() { return mode; }, get dungeonLoc() { return dungeonLoc; }, get dungeonCtx() { return dungeonCtx; } };\n${src.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap({ workerFactory: st.worker });')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egBandsDown, egCircleDown, egOcc, set ctx(c) { dungeonCtx = c; }, set mode(m) { mode = m; },
       get mesh() { return _egMesh; }, get look() { return _egLookMesh; }, get gates() { return _egGates; }, get lamps() { return _egLamps; }, get key() { return _egMeshKey; }, get draw() { return _egDraw; } };`)(
     { egGateOpen: () => false }, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, egBeatTellDown, egSpecGive,   // PIN MOVED (AUDIT EG III lane4 #4): egBandsDown frees the Beats' pictures with the dress
     Object.assign(st, { worker: syncWorker }));
@@ -123,7 +124,7 @@ test('EG-ZP THE NEXT STAND BUILDS ANEW, THE SWAP THROUGH THE SAME TEARDOWN (scen
 });
 
 test('EG-ZP EVERY WAY OUT ENDS THE CONTEXT (scenes/worldModes.js, scenes/dungeonContext.js, by source): the stand hands its context the circle\'s teardown; the context runs its teardowns in its own destroy(); and every road that ends the Spire\'s context destroys it - the exit (the way home, the tear, a fall\'s walk out, forsaking, a void), the forced exit (a load, a teleport, a respawn) and the two abandoned builds after the stand (mutants: the teardown unhanded; the run lost from destroy())', () => {
-  const stand = between(WM, '  function standEgHall(ctx, eh) {', '  /** EG-PLAY: each Rampart\'s portcullis stood or sunk');
+  const stand = between(EC, '  function standEgHall(ctx, eh) {', '  /** EG-PLAY: each Rampart\'s portcullis stood or sunk');
   assert.match(stand, /ctx\.addTeardown\?\.\(\(\) => egCircleDown\(ctx\)\);/, 'the stand hands it over');
   assert.match(DESTROY, /for \(const fn of _teardowns\.splice\(0\)\) \{ try \{ fn\(\); \}/, 'destroy() runs each, once');
   assert.match(DC, /addTeardown\(fn\) \{ if \(typeof fn === 'function'\) _teardowns\.push\(fn\); \},/);

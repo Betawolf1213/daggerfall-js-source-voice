@@ -25,6 +25,7 @@ import { egBeatTellDown } from '../src/scenes/egSpan.js';   // AUDIT EG III (lan
 
 const rd = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const WM = rd('src/scenes/worldModes.js');
+const EC = rd('src/scenes/egCircleHost.js');   // PIN MOVED (HOST-SPLIT, EG-LOOK): the circle's own module, its mode machine's names read live through `wm`
 const between = (src, a, b) => { const i = src.indexOf(a), j = src.indexOf(b, i); assert.ok(i > 0 && j > i, `${a} .. ${b}`); return src.slice(i, j); };
 const I4 = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
 /** Every index a list of sub-mesh ranges covers, as one sorted list. */
@@ -72,7 +73,7 @@ function hostRig() {
   r.destroyMesh = (g) => { live--; return destroyMesh(g); };
   const shadows = [];
   if (r._shadows) { const rec = r._shadows.recordMesh.bind(r._shadows); r._shadows.recordMesh = (mesh, ...a) => { shadows.push(mesh); return rec(mesh, ...a); }; }
-  const region = between(WM, "  const EG_BUCKET = 'eg:hall';", '  // ── EG-H3 end');
+  const region = between(EC, "  const EG_BUCKET = 'eg:hall';", '  // ── EG-H3 end');
   const pass = between(WM, '  function egOccludeFrame(mwv, dt) {', '  /** EG-PLAY: A BODY STOOD ELSEWHERE IN THE CIRCLE');
   const loc = { egBreach: '0123456789abcdef', egSeed: STACKS.seed, egCircle: egCircleOfHall(STACKS.h), egGeo: 0, dungeon: { recordElement: { header: { locationId: 0x7ffff300 } } } };
   const ctx = { dynamicDraws: [], collider: new Collider(() => -Infinity), addActivationNamer() {}, texRemap: null };
@@ -80,7 +81,7 @@ function hostRig() {
   const host = { egGateOpen: () => false, egWitness: () => st.witness };
   const player = { bodyFeetAt: () => st.feet, feetAt: () => st.feet };
   const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'EG_OCCLUDE_CHEST_M', 'player', 'decorTool', 'egBeatTellDown', 'egSpecGive', 'st',
-    `let dungeonLoc = st.loc, dungeonCtx = st.ctx;\nObject.defineProperty(st, 'm', { get: () => mode });\nlet mode = 'dungeon';\nst.setMode = (m) => { mode = m; };\n${region.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap({ workerFactory: st.worker });')}\n${pass}\nreturn { standEgHall, egPrebuild, egSwapCircle, egBandsDown, egOccludeFrame, egOcc, get draw() { return _egDraw; }, get mesh() { return _egMesh; } };`)(
+    `let dungeonLoc = st.loc, dungeonCtx = st.ctx;\nObject.defineProperty(st, 'm', { get: () => mode });\nlet mode = 'dungeon';\nst.setMode = (m) => { mode = m; };\nconst wm = { get mode() { return mode; }, get dungeonLoc() { return dungeonLoc; }, get dungeonCtx() { return dungeonCtx; } };\n${region.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap({ workerFactory: st.worker });')}\n${pass}\nreturn { standEgHall, egPrebuild, egSwapCircle, egBandsDown, egOccludeFrame, egOcc, get draw() { return _egDraw; }, get mesh() { return _egMesh; } };`)(
     host, r, (l) => !!l?.egBreach && l.dungeon?.recordElement?.header?.locationId === 0x7ffff300, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, egBandArt, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, EG_OCCLUDE_CHEST_M, player, { flying: () => !!st.flying }, egBeatTellDown, egSpecGive,   // PIN MOVED (AUDIT EG III lane4 #4): egBandsDown frees the Beats' pictures with the dress (scenes/egSpan.js)
     Object.assign(st, { loc, ctx, worker: syncWorker }));
   return { r, calls, wm, ctx, loc, st, shadows, fail, get live() { return live; } };

@@ -605,7 +605,7 @@
   },
   {
     "name": "EGZN-stand-unhanded",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "renderer.createMesh(model) : null; if (_egMesh) egOcc.set(_egMesh, model); }",
     "new": "renderer.createMesh(model) : null; }",
     "tests": [
@@ -614,7 +614,7 @@
   },
   {
     "name": "EGZN-swap-unhanded",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "renderer.createMesh(parts.model) : null; if (_egMesh) egOcc.set(_egMesh, parts.model); }",
     "new": "renderer.createMesh(parts.model) : null; }",
     "tests": [
@@ -623,7 +623,7 @@
   },
   {
     "name": "EGZN-stand-keeps-the-old",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "      egOcc.clear();   // EG-ZN: the dither pass lets the old circle go before it is freed\n",
     "new": "\n",
     "tests": [
@@ -632,7 +632,7 @@
   },
   {
     "name": "EGZN-swap-keeps-the-old",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    egOcc.clear(); _egDraw = null;",
     "new": "    _egDraw = null;",
     "tests": [
@@ -641,7 +641,7 @@
   },
   {
     "name": "EGZN-circle-draw-untold",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    egOcc.stand(_egDraw);\n",
     "new": "\n",
     "tests": [
@@ -704,7 +704,7 @@
   },
   {
     "name": "EGZN-bands-emission-kept",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": " if (renderer?.evictEmissionTexture?.(`${arch}_${rec}`)) n++; }",
     "new": " }",
     "tests": [
@@ -713,7 +713,7 @@
   },
   {
     "name": "EGZN-bands-albedo-kept",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "      for (const rec of EG_DRESS_RECORDS) { if (renderer?.releaseTexture?.(arch, rec)) n++;",
     "new": "      for (const rec of EG_DRESS_RECORDS) { if (false) n++;",
     "tests": [
@@ -722,7 +722,7 @@
   },
   {
     "name": "EGZN-bands-never-forgotten",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    _egBands.clear(); _egBandRecs.clear();\n    return n;",
     "new": "    return n;",
     "tests": [
@@ -731,8 +731,8 @@
   },
   {
     "name": "EGZN-bands-freed-standing",
-    "file": "src/scenes/worldModes.js",
-    "old": "    if (mode === 'dungeon' && isEgHall(dungeonLoc)) return 0;\n    let n = egBeatTellDown",
+    "file": "src/scenes/egCircleHost.js",
+    "old": "    if (wm.mode === 'dungeon' && isEgHall(wm.dungeonLoc)) return 0;\n    let n = egBeatTellDown",
     "new": "    let n = egBeatTellDown",
     "tests": [
       "test/egz_camera_host.test.js"

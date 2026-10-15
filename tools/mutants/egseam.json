@@ -433,7 +433,7 @@
   },
   {
     "name": "EGSWAP-the-old-circle-kept",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    for (const m of gone) { try { renderer?.destroyMesh?.(m); } catch { /* gone */ } }\n",
     "new": "",
     "tests": [
@@ -442,7 +442,7 @@
   },
   {
     "name": "EGSWAP-the-old-floors-kept",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    ctx.collider.removeBucket(EG_BUCKET);\n    for (const g of gates)",
     "new": "    for (const g of gates)",
     "tests": [
@@ -451,7 +451,7 @@
   },
   {
     "name": "EGSWAP-the-old-gates-kept",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    for (const g of gates) ctx.collider.removeBucket(`eg:gate:${g.h}`);\n",
     "new": "",
     "tests": [
@@ -460,16 +460,16 @@
   },
   {
     "name": "EGSWAP-the-level-unrenamed",
-    "file": "src/scenes/worldModes.js",
-    "old": "    dungeonLoc.egCircle = r.c; dungeonLoc.egGeo",
-    "new": "    dungeonLoc.egGeo",
+    "file": "src/scenes/egCircleHost.js",
+    "old": "    wm.dungeonLoc.egCircle = r.c; wm.dungeonLoc.egGeo",
+    "new": "    wm.dungeonLoc.egGeo",
     "tests": [
       "test/egswap_client.test.js"
     ]
   },
   {
     "name": "EGSWAP-the-old-spans-kept",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    ctx.egRecircle?.({ seed: r.seed >>> 0, c: r.c, geo: r.geo ?? 0 });",
     "new": "    void 0;",
     "tests": [
@@ -478,7 +478,7 @@
   },
   {
     "name": "EGSWAP-a-freed-mesh-drawn",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    for (let i = ctx.dynamicDraws.length - 1; i >= 0; i--) if (gone.has(ctx.dynamicDraws[i]?.gpu)) ctx.dynamicDraws.splice(i, 1);\n",
     "new": "",
     "tests": [
@@ -487,7 +487,7 @@
   },
   {
     "name": "EGSWAP-the-old-lamps",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    _egMeshKey = parts.key; _egLamps = parts.lamps;",
     "new": "    _egMeshKey = parts.key;",
     "tests": [
@@ -496,18 +496,18 @@
   },
   {
     "name": "EGSWAP-another-breach-swapped",
-    "file": "src/scenes/worldModes.js",
-    "old": "    if (mode !== 'dungeon' || !isEgHall(dungeonLoc) || !dungeonCtx || !r || r.b !== dungeonLoc.egBreach || !Number.isSafeInteger(r.c)) return false;",
-    "new": "    if (mode !== 'dungeon' || !isEgHall(dungeonLoc) || !dungeonCtx || !r || !Number.isSafeInteger(r.c)) return false;",
+    "file": "src/scenes/egCircleHost.js",
+    "old": "    if (wm.mode !== 'dungeon' || !isEgHall(wm.dungeonLoc) || !wm.dungeonCtx || !r || r.b !== wm.dungeonLoc.egBreach || !Number.isSafeInteger(r.c)) return false;",
+    "new": "    if (wm.mode !== 'dungeon' || !isEgHall(wm.dungeonLoc) || !wm.dungeonCtx || !r || !Number.isSafeInteger(r.c)) return false;",
     "tests": [
       "test/egswap_client.test.js"
     ]
   },
   {
     "name": "EGSWAP-a-build-asked-outside",
-    "file": "src/scenes/worldModes.js",
-    "old": "    if (mode !== 'dungeon' || !isEgHall(dungeonLoc) || !r || r.b !== dungeonLoc.egBreach || !Number.isSafeInteger(r.c)) return null;",
-    "new": "    if (!isEgHall(dungeonLoc) || !r || r.b !== dungeonLoc.egBreach || !Number.isSafeInteger(r.c)) return null;",
+    "file": "src/scenes/egCircleHost.js",
+    "old": "    if (wm.mode !== 'dungeon' || !isEgHall(wm.dungeonLoc) || !r || r.b !== wm.dungeonLoc.egBreach || !Number.isSafeInteger(r.c)) return null;",
+    "new": "    if (!isEgHall(wm.dungeonLoc) || !r || r.b !== wm.dungeonLoc.egBreach || !Number.isSafeInteger(r.c)) return null;",
     "tests": [
       "test/egswap_client.test.js"
     ]

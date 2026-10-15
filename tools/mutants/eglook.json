@@ -711,7 +711,7 @@
   },
   {
     "name": "EGLOOK-arm-band-art-every-stand",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "if (egBandWhole(band) || !renderer?.uploadTexture) return;",
     "new": "if (!renderer?.uploadTexture) return;",
     "tests": [
@@ -749,7 +749,7 @@
   },
   {
     "name": "EGLOOK-swap-band-dress-under-the-veil",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    if (st === 'ready') egSwapFeed(egSwap.peek(r.seed, r.c, r.geo ?? 0), band, 1);\n",
     "new": "",
     "tests": [
@@ -758,7 +758,7 @@
   },
   {
     "name": "EGLOOK-swap-old-waystones-kept",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "gone = new Set([mesh, _egLookMesh, ...gates.map((g) => g.gpu)].filter(Boolean));",
     "new": "gone = new Set([mesh, ...gates.map((g) => g.gpu)].filter(Boolean));",
     "tests": [
@@ -767,7 +767,7 @@
   },
   {
     "name": "EGLOOK-swap-no-waystones",
-    "file": "src/scenes/worldModes.js",
+    "file": "src/scenes/egCircleHost.js",
     "old": "    if (_egLookMesh) ctx.dynamicDraws.push({ gpu: _egLookMesh, object: { matrix: identity() }, noShadow: true });\n    const n = parts.tris.length / 3",
     "new": "    const n = parts.tris.length / 3",
     "tests": [

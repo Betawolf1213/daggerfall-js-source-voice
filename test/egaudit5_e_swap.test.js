@@ -51,7 +51,7 @@ async function workerOf() {
 /** The mode machine's circle (its own source) over a counting renderer: each record of a band's dress put up, each paint of
  *  a band on this thread (`egBandArt`), each hall taken as given (`egSpecGive`), counted. */
 function rig(workerFactory) {
-  const WM = rd('src/scenes/worldModes.js');
+  const WM = rd('src/scenes/egCircleHost.js');   // PIN MOVED (HOST-SPLIT, EG-LOOK): the circle's own module
   const src = between(WM, "  const EG_BUCKET = 'eg:hall';", '  // ── EG-H3 end');
   const ups = [], painted = [], given = [], live = new Set();
   const renderer = {
@@ -63,7 +63,7 @@ function rig(workerFactory) {
   const paintSpy = (band) => { painted.push(band); return egBandArt(band); };
   const giveSpy = (s) => { given.push(s.h); return egSpecGive(s); };
   const wm = new Function('host', 'renderer', 'isEgHall', 'createEgSwap', 'identity', 'realmArt', 'SD_REALM_ARCHIVE', 'buildEgCircleModel', 'egCircleColliderTris', 'egCircleLights', 'egCircleSpecs', 'egGateParts', 'EG_TEXT', 'egBandOfCircle', 'egBandArt', 'egBandArchive', 'buildEgLookModel', 'createEgOccluders', 'EG_DRESS_RECORDS', 'egBeatTellDown', 'egSpecGive', 'st',
-    `let mode = 'dungeon', dungeonLoc = st.loc, dungeonCtx = null;\n${src.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap({ workerFactory: st.worker });')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egBandsDown, set ctx(c) { dungeonCtx = c; }, set mode(m) { mode = m; } };`)(
+    `let mode = 'dungeon', dungeonLoc = st.loc, dungeonCtx = null;\nconst wm = { get mode() { return mode; }, get dungeonLoc() { return dungeonLoc; }, get dungeonCtx() { return dungeonCtx; } };\n${src.replace('const egSwap = createEgSwap();', 'const egSwap = createEgSwap({ workerFactory: st.worker });')}\nreturn { standEgHall, egPrebuild, egSwapCircle, egBandsDown, set ctx(c) { dungeonCtx = c; }, set mode(m) { mode = m; } };`)(
     { egGateOpen: () => false }, renderer, (l) => !!l?.egBreach, createEgSwap, identity, realmArt, SD_REALM_ARCHIVE, buildEgCircleModel, egCircleColliderTris, egCircleLights, egCircleSpecs, egGateParts, EG_TEXT, egBandOfCircle, paintSpy, egBandArchive, buildEgLookModel, createEgOccluders, EG_DRESS_RECORDS, egBeatTellDown, giveSpy, st);
   const ctx = { dynamicDraws: [], collider: new Collider(() => -Infinity), addActivationNamer() {}, addTeardown() {}, egRecircle() {} };
   wm.ctx = ctx;
@@ -192,7 +192,7 @@ test('AUDIT EG V L6-8 THE NEW CIRCLE\'S HALLS COME WITH ITS BUILD (EG-H3\'s sixt
     R.given.length = 0;
     assert.equal(R.wm.egPrebuild(eh(4)), 'ready');
     assert.deepEqual(R.given, [egCircleSpecs(SEED, 4, 0)[0].h]);
-    const WM = rd('src/scenes/worldModes.js'), swap = between(WM, '  function egSwapCircle(r) {', '  // ── EG-H3 end');
+    const WM = rd('src/scenes/egCircleHost.js'), swap = between(WM, '  function egSwapCircle(r) {', '  // ── EG-H3 end');
     assert.ok(swap.indexOf('egSwapFeed(parts, egBandOfCircle(r.c));') < swap.indexOf('egLookBuild(') && swap.indexOf('egSwapFeed(parts, egBandOfCircle(r.c));') < swap.indexOf('ctx.egRecircle?.('), 'given before the waystones and the spans read them');
     assert.equal(R.wm.egSwapCircle(eh(4)), true);
     assert.deepEqual(R.given, egCircleSpecs(SEED, 4, 0).map((s) => s.h), 'the swap gave the four left');
