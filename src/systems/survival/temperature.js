@@ -232,7 +232,7 @@ export function weatherWetGain(weather, { cloak = false, hood = false, insideBui
   if (insideBuilding || insideDungeon || sheltered) return 0;
   const row = WEATHER_WET[weather];
   if (!row) return 0;
-  // WET-FALL (FIELD BUGS 2026-10-15b): a rain, a storm or a snow soaks by how hard it FALLS - `fall`, the front's level
+  // WET-FALL (FIELD BUGS 2026-10-15c): a rain, a storm or a snow soaks by how hard it FALLS - `fall`, the front's level
   // (weatherSim.js fallingWeather; 1 on the classic sky, as the mod's every-minute row) - so a sprinkle soaks as a
   // sprinkle and a word with nothing yet falling not at all. Fog is not falling: its row stands whole.
   const k = precipitationForWeather(weather) ? Math.max(0, Math.min(1, Number.isFinite(fall) ? fall : 1)) : 1;
