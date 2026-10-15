@@ -798,6 +798,8 @@ features.moddedLighting.note,"Improved Interior Lighting MODが必要です。�
 features.moddedLighting.on,"オン"
 features.moddedLighting.shadows,"影あり"
 features.moddedLighting.title,"MODのライティング（{mod}）"
+features.mwBillboardLook.note,"Morrowind の体を使っている場合、体や馬が クラシックのスプライトのようにまっすぐ立ち、上から見ると低く見えます。オフにすると、カメラの方へ傾き、本来の高さのままになります。"
+features.mwBillboardLook.title,"ビルボード表示"
 features.navalCombat.aimCamera,"舷側砲カメラ"
 features.navalCombat.autoRepair,"乗組員が自動で修理"
 features.navalCombat.boarders,"海賊が乗り込んでくる"

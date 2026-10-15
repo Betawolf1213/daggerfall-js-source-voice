@@ -1,5 +1,7 @@
 # The Monument to Julian LeFay (LEFAY1, HOLD-MONUMENT)
 
+> DF-ART (2026-10-14, `01-Overview/DF-Art.md`): the monument's stone is Daggerfall's own records now (`world/lefayArt.js` LEFAY_SOURCES); the plaque is its own painted bronze as it was, inscription and all (Mac: "Bring back the old plaque texture").
+
 THE PORT'S OWN (2026-10-08). Asked: *"In the middle of gothway garden, I want to build and implement a monument to
 Julian LeFay, one of the creators of daggerfall, with the ability of people to interact and throw flowers on it."*
 Moved (HOLD-MONUMENT, 2026-10-14, Mac: *"Move julian monument to outside of privateers hold"*): it stands outside

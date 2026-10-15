@@ -798,6 +798,8 @@ features.moddedLighting.note,"Vaatii Improved Interior Lighting -modin. Sen läm
 features.moddedLighting.on,"Päällä"
 features.moddedLighting.shadows,"Varjojen kanssa"
 features.moddedLighting.title,"Modattu valaistus ({mod})"
+features.mwBillboardLook.note,"Morrowind-kehon kanssa vartalot ja hevoset seisovat pystyssä kuin klassiset spritet ja näyttävät ylhäältä matalammilta. Pois päältä ne kallistuvat kameraa kohti ja säilyttävät todellisen korkeutensa."
+features.mwBillboardLook.title,"Billboard-ulkoasu"
 features.navalCombat.aimCamera,"Laitasalvon kamera"
 features.navalCombat.autoRepair,"Miehistö korjaa itsenäisesti"
 features.navalCombat.boarders,"Merirosvot valtaavat aluksesi"
