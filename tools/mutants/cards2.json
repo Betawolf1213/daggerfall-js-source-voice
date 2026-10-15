@@ -309,8 +309,8 @@
   {
     "name": "CS-host-autorun-walks-off",
     "file": "src/scenes/worldModes.js",
-    "old": "leavesSeat(mv, jumpHeld || !!player.toggleAutorun || swingKey)",
-    "new": "leavesSeat(mv, jumpHeld || swingKey)",
+    "old": "    if (cardSeat && !overlayHeld && leavesSeat(mv, jumpHeld || !!player.toggleAutorun || swingKey)) standFromCardTable();",
+    "new": "    if (cardSeat && !overlayHeld && leavesSeat(mv, jumpHeld || swingKey)) standFromCardTable();",
     "tests": [
       "test/cards2_seat.test.js"
     ]
@@ -318,8 +318,8 @@
   {
     "name": "CS-host-swing-key-sits-on",
     "file": "src/scenes/worldModes.js",
-    "old": "leavesSeat(mv, jumpHeld || !!player.toggleAutorun || swingKey)",
-    "new": "leavesSeat(mv, jumpHeld || !!player.toggleAutorun)",
+    "old": "    if (cardSeat && !overlayHeld && leavesSeat(mv, jumpHeld || !!player.toggleAutorun || swingKey)) standFromCardTable();",
+    "new": "    if (cardSeat && !overlayHeld && leavesSeat(mv, jumpHeld || !!player.toggleAutorun)) standFromCardTable();",
     "tests": [
       "test/cards2_seat.test.js"
     ]
