@@ -31,7 +31,7 @@ import { ONLINE_PLAYERS_OWN_PREFS } from '../src/systems/onlineLane.js';
 import { Renderer } from '../src/render/renderer.js';
 import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
-const rd = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8');
+const rd = (p) => hostText(p);   // HOST-SPLIT 2: a host whole
 const near = (a, b, eps = 1e-9) => Math.abs(a - b) < eps;
 const SUNNY = [0.010, 0.004];   // enhancedSky.js's sunny row - the lab's 70
 

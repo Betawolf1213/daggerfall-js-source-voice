@@ -103,9 +103,9 @@ const ALLOWED = {
   exteriorFoes: ['destroyPixel, and only under collectLoose', 'collectLoose: false', ['destroyPixel']],
   // BOOT-TDZ2: the playerTravelPixel() reads, behind the mod's own guard -
   // with no mod there is nothing to initialise and the call never happens.
-  walkMode: ['playerTravelPixel, behind the travelOptions guard', 'if (travelOptions && dfLocation) {', ['playerTravelPixel']],
-  player: ['playerTravelPixel, behind the travelOptions guard', 'if (travelOptions && dfLocation) {', ['playerTravelPixel']],
-  cam: ['playerTravelPixel, behind the travelOptions guard', 'if (travelOptions && dfLocation) {', ['playerTravelPixel']],
+  walkMode: ['playerTravelPixel, behind the travelOptions guard', 'if (host.travelOptions && dfLocation) {', ['playerTravelPixel']],
+  player: ['playerTravelPixel, behind the travelOptions guard', 'if (host.travelOptions && dfLocation) {', ['playerTravelPixel']],
+  cam: ['playerTravelPixel, behind the travelOptions guard', 'if (host.travelOptions && dfLocation) {', ['playerTravelPixel']],
 };
 
 test('BOOT-TDZ2: nothing the boot walk runs reads a binding the boot walk has not declared - the gate the two dead-zone crashes deserved (mutants: hook-asks-the-pixel-first, travel-options-declared-late)', () => {

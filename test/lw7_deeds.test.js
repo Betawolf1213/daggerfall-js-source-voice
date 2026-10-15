@@ -370,7 +370,7 @@ test('LW7 the streaming host: every resident\'s place by the lives (`livingCycle
   assert.match(w, /helped: won\.has\(n\.enc\) \}\)\) \};/);   // PIN MOVED (LW16): the town's news at any minute (livingRoadNewsAt), the word carried's too
   assert.match(w, /const res = livingPlaceOf\(c\.res, livingCycleOf\(c\.res, day\)\)\.holder;/);
   // PIN MOVED (LEGACY5): a townsperson wed into Project Legacy's line holds no census place (the line's resident now)
-  assert.match(w, /holderOf: \(res, day\) => \(legacyHost\?\.holdsResident\(res\.id\) \? null : livingPlaceOf\(res, livingCycleOf\(res, day\)\)\.holder\), deadAt: livingDeadAt, slay: livingSlay, killed: livingKilled,/);   // WATCH-FIX: PIN MOVED - and one of the watch another hand killed
+  assert.match(w, /holderOf: \(res, day\) => \(host\.legacyHost\?\.holdsResident\(res\.id\) \? null : livingPlaceOf\(res, livingCycleOf\(res, day\)\)\.holder\), deadAt: livingDeadAt, slay: livingSlay, killed: livingKilled,/);   // WATCH-FIX: PIN MOVED - and one of the watch another hand killed
   assert.match(w, /const hit = collider\.raycast\(\[a\[0\] \+ locOrigin\[0\] \+ tr\[0\], a\[1\] \+ tr\[1\], a\[2\] \+ locOrigin\[2\] \+ tr\[2\]\], \[d\[0\] \/ len, d\[1\] \/ len, d\[2\] \/ len\], len\);\n\s*return !\(Number\.isFinite\(hit\) && hit < len - 0\.25\);/, 'the town\'s line of sight, the collider\'s');
   // the street's seams
   assert.match(w, /pos, fwdYaw: person\.facingYaw, guard: person\.guard, person,/);

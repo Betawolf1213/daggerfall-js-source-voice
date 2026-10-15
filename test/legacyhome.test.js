@@ -410,7 +410,7 @@ test('LEGACY-HOME: the town reads the line beside its census - the same day\'s p
 test('LEGACY-HOME wiring: the town\'s extra people are the host\'s; a family house holds the line only; a kin slain is the record\'s; the talk door meets them first; their own head in the window', () => {
   const w = hostText('src/scenes/world.js');
   // PIN MOVED (LEGACY5): and the census's own record of a spouse who wed in
-  assert.match(w, /extraPeople: \(day, town\) => legacyHost\?\.residentsOf\(livingTown\.mapId, \(seed\) => town\.homeFor\(seed\), \(id\) => town\.residents\.find\(\(r\) => r\.id === id\) \?\? null\) \?\? null,/);
+  assert.match(w, /extraPeople: \(day, town\) => host\.legacyHost\?\.residentsOf\(livingTown\.mapId, \(seed\) => town\.homeFor\(seed\), \(id\) => town\.residents\.find\(\(r\) => r\.id === id\) \?\? null\) \?\? null,/);
   assert.match(w, /if \(legacyHost\?\.isFamilyHouse\(\{ mapId: b\.townMapId \?\? 0, buildingKey: b\.buildingKey \}\)\) return \{ key: b\.buildingKey, town, only: isFamilyRes \};/);
   assert.match(w, /return modes\?\.interiorCtx\?\.ownedRoom \? null : \{ key: b\.buildingKey, town \};/, 'AUDIT-E1 stands for every other room of the player\'s');
   assert.match(w, /if \(isFamilyRes\(res\)\) return false;   \/\/ LEGACY-HOME/);

@@ -18,7 +18,7 @@ import { setModSetting } from '../src/systems/modSettings.js';
 import { glslFunctions } from './glsl.mjs';
 import { hostText } from './hostText.mjs';   // HOST-SPLIT 2: the world host whole
 
-const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
+const read = (p) => hostText(p);   // HOST-SPLIT 2: a host whole
 const near = (a, b, eps, msg) => assert.ok(Math.abs(a - b) <= eps, `${msg ?? ''} ${a} vs ${b}`);
 /** a seeded 0..1 (UnityEngine.Random's stand-in) */
 const seeded = (s = 7) => () => { s = (Math.imul(s, 1103515245) + 12345) >>> 0; return (s >>> 8) / 16777216; };

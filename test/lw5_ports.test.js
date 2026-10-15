@@ -173,7 +173,7 @@ test('LW5 the town reads the ships: a sailor at sea or ashore abroad is in no st
   assert.match(w, /const livingPacketAt = \(b\) => \{ const way = livingLaneWay\(b\.lane\); return way \? packetAt\(b\.lane, way, raidNowMs\(\), b\.k, b\.count\) : null; \};/);
   assert.match(w, /return res \? \[\{ res: res\.id === c\.res\.id \? c\.res : res, berth: c\.berth, inT: t - Math\.max\(0, nowS - \(c\.until - LANE_DWELL_S\)\) \* rate, outT: t \+ Math\.max\(0, c\.until - nowS\) \* rate \}\] : \[\];/);
   assert.match(w, /ashore: \(res\) => livingAshore\(livingTown, res\), crews: \(\) => livingCrews\(livingTown\),/);
-  assert.match(w, /const b = harbourBook\.get\(`port:\$\{maskMapId\(livingTown\.mapId\)\}`\)\?\.harbour\?\.berths\?\.\[0\];/);
+  assert.match(w, /const b = host\.harbourBook\.get\(`port:\$\{maskMapId\(livingTown\.mapId\)\}`\)\?\.harbour\?\.berths\?\.\[0\];/);
   assert.match(w, /return \{ x: b\.pos\[0\] - locOrigin\[0\] - tr\[0\], z: b\.pos\[1\] - locOrigin\[2\] - tr\[2\] \};/);
   assert.match(w, /_livingTownByPort\.set\(maskMapId\(t\.mapId\), t\)/);
   assert.equal(LANE_DWELL_S, 600);

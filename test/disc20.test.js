@@ -521,9 +521,9 @@ test('DISC20-C: the world host asks the pool to re-stand over every pixel it bui
   const bind = s.indexOf('hccGroundMoved = hcc.groundMoved;');
   assert.ok(decl > 0 && decl < first && first < pool && pool < bind, 'declared before the first build, bound after the pool');
   const set = s.indexOf('built.set(key, {');
-  const call = s.indexOf('hccGroundMoved(t[0], t[2], t[0] + TERRAIN_SIZE, t[2] + TERRAIN_SIZE);');
+  const call = s.indexOf('host.hccGroundMoved(t[0], t[2], t[0] + TERRAIN_SIZE, t[2] + TERRAIN_SIZE);');   // HOST-SPLIT 2: the publish is the pixel build's, its live names read through host
   assert.ok(set > 0 && call > set && call - set < 10400, 'after the pixel is published, over its own bounds (THE MERGE: the entry grew by GATE-CLEAR\'s fields and the batch\'s; PROF4 by its forest; GRASS-LIT2 by the near grid\'s normals; ARENA2 by the sand\'s origin; LPT1 by its low-poly trees; VERGE1 by the road\'s question and ECOTONE1 by the border\'s sets; AUDIT LANDFORMS II H2 by the beach a gathering node asks; LEFAY1 by the monument\'s spot; MERCHANT-YARDS by the yards\' sites; WARDEN1 by its watch\'s town; MWNPC19 by its stand flats)');   // PIN MOVED (AUDIT LANDFORMS II H2): 9000 -> 9500, the entry's one new line; PIN MOVED (LEFAY1): 9500 -> 9700, its `lefay` line; PIN MOVED (WARDEN1): 9900 -> 10200, its `wardenTown` line; PIN MOVED (MWNPC19): 10200 -> 10400, its `standFlats` line
-  assert.match(s.slice(call - 200, call), /if \(hccGroundMoved\) \{\s+const t = state\.pixelTranslation\(px, py\);\s+$/);
+  assert.match(s.slice(call - 200, call), /if \(host\.hccGroundMoved\) \{\s+const t = host\.state\.pixelTranslation\(px, py\);\s+$/);
 });
 
 test('AUDIT pre-merge I-B executed: a concealed owner\'s team is concealed with it - the classic lane\'s hidden owner\'s following wagon rolls unseen and its parked one stays a wagon in the world; the enhanced lane\'s is drawn; the horse takes the owner\'s look (by source)', async () => {

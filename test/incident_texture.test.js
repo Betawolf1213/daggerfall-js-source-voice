@@ -64,7 +64,7 @@ test('incident: the terrain ground archive is DFU\'s own truth table, all ten cl
 });
 
 test('incident: both terrain hosts key the tileset on the TERRAIN member, not the ground plane\'s', () => {
-  assert.match(hostText('src/scenes/world.js'), /const groundArchive = getTerrainGroundArchive\(climate, season\);/);
+  assert.match(hostText('src/scenes/world.js'), /const groundArchive = getTerrainGroundArchive\(climate, host\.season\);/);
   assert.match(src('src/scenes/exterior.js'), /const groundArchive = getTerrainGroundArchive\(dfLocation\.climate, season\);/);
   for (const f of ['src/scenes/world.js', 'src/scenes/exterior.js']) {
     assert.ok(!/const groundArchive = getGroundArchive\(/.test(src(f)),

@@ -270,7 +270,8 @@ test('EV7: the world host rides the client and the pinned build contracts stand'
     'the file-object half stays on this thread and rides the job as data');
   // the publish stays atomic and main-side: built.set is still the
   // last act of the build, after the GL uploads and the collider
-  const bp = world.slice(world.indexOf('async function buildPixel'), world.indexOf('function restrideTerrain'));
+  // HOST-SPLIT 2: buildPixel and its door stand in world.js, the build they call (buildPixelNow) in src/scenes/pixelBuild.js
+  const bp = world.slice(world.indexOf('async function buildPixel'), world.indexOf('function restrideTerrain')) + hostText('src/scenes/pixelBuild.js');
   assert.ok(bp.lastIndexOf('built.set(key,') > bp.lastIndexOf('collider.addMesh'), 'publish follows the collider');
   assert.ok(bp.includes('renderer.createTerrainSurface(carved?.positions ?? positions, carved?.normals ?? normals'), 'GL consumes the reply on this thread');   // PIN MOVED (WATER-NEXT 2): the reply's grid, carved under the water for the eye - AUDIT WATER-NEXT P1: carved by the kernel, on the worker
   // AUDIT EV F-SIM1: one build per pixel, ever in flight - the cache
@@ -290,7 +291,7 @@ test('EV7: the world host rides the client and the pinned build contracts stand'
   // until its turn comes.
   assert.ok(bp.includes('if (wantStride !== entry._stride) {'),
     'a crossing during the round trip cannot leave a wrong-class chunk');
-  assert.ok(bp.includes('if (wantStride === 1) restridePending.set(key, entry);'), 'the dear direction queues');
+  assert.ok(bp.includes('if (wantStride === 1) host.restridePending.set(key, entry);'), 'the dear direction queues');
   assert.ok(bp.includes('else restrideTerrain(entry, wantStride);'), 'and the cheap one settles at once');
   // AUDIT EV F-SIM6: the probe's idle truth covers teleport builds too
   assert.ok(world.includes('queue.length === 0 && !building && inFlight.size === 0'),

@@ -228,7 +228,7 @@ test('LEGACY5 the wiring: the talk puts the host\'s rows first on Tell me about 
   assert.match(tt, /question: \(row\) => \(row\.legacy \? row\.legacy\.question\(tone\) :/);
   const w = hostText('src/scenes/world.js');
   assert.match(w, /legacyTopics: \(person\) => legacyTopicRows\(person\),/);
-  assert.match(w, /holderOf: \(res, day\) => \(legacyHost\?\.holdsResident\(res\.id\) \? null :/);
+  assert.match(w, /holderOf: \(res, day\) => \(host\.legacyHost\?\.holdsResident\(res\.id\) \? null :/);
   assert.match(w, /\(id\) => town\.residents\.find\(\(r\) => r\.id === id\) \?\? null\) \?\? null,/);
   assert.match(w, /templeOf: \(\) => \{ const b = [^\n]*TALK_BUILDING_TYPES\.Temple/);
   assert.match(w, /legacyHost\?\.residentDied\(res\.id\);   \/\/ LEGACY5/);

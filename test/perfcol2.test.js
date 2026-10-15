@@ -149,9 +149,10 @@ test('PERF-COL2: the world host marks every streamed pixel\'s bucket as riding i
   const w = hostText('src/scenes/world.js');
   assert.ok(w.includes("import { onFloatingFrame } from '../player/collider.js';"), 'the mark imported');
   const lines = w.split('\n');
-  const pix = lines.filter((l) => /\(\(o\) => \(\) => state\.pixelTranslation\(px, py, o\)\)\(\[0, 0, 0\]\)/.test(l) && !l.includes('collider.cover.add('));
+  // HOST-SPLIT 2: the pixel's buckets are laid by its build (src/scenes/pixelBuild.js), which reads the state live, host.state
+  const pix = lines.filter((l) => /\(\(o\) => \(\) => host\.state\.pixelTranslation\(px, py, o\)\)\(\[0, 0, 0\]\)/.test(l) && !l.includes('collider.cover.add('));
   assert.equal(pix.length, 7, 'the seven pixel-translation providers a bucket takes (the cover index is no bucket)');   // PIN MOVED (FIELD BUGS 2026-10-13e HILL-SEAT): the seventh is a block's hill pads, solid in the pixel's bucket
-  for (const l of pix) assert.ok(l.includes('onFloatingFrame(state, ((o) => () => state.pixelTranslation(px, py, o))([0, 0, 0]))'), `marked: ${l.trim().slice(0, 120)}`);
+  for (const l of pix) assert.ok(l.includes('onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0]))'), `marked: ${l.trim().slice(0, 120)}`);
   assert.ok(w.includes('collider.addMesh(h.bucket, pos, idx, _ohIdentity, onFloatingFrame(state, () => state.pixelTranslation(entry.px, entry.py, o)));'), 'the ocean holes\' bucket marked');
   const marks = (w.match(/onFloatingFrame\(/g) ?? []).length;
   assert.equal(marks, 7 + 1, 'and nothing else marked (a boat, a wagon, a gate\'s own mover ride no pixel)');   // PIN MOVED (FIELD BUGS 2026-10-13e HILL-SEAT): the pads' bucket provider

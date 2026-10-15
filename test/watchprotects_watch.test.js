@@ -322,7 +322,7 @@ test('WATCH-PROTECTS the hosts: the world host hands the monsters the street\'s 
   assert.match(w, /const livingQuarry = \(\) => \{\n\s+if \(!livingWorldOn\(\) \|\| _mode\(\) !== 'exterior'\) return \[\];/);
   assert.match(w, /if \(!living\?\.town \|\| p\.guard\) continue;/);
   assert.match(w, /q = makeQuarry\(p, \(body\) => body\.living\.town\.killed\(body\.person\)\)/);
-  assert.match(w, /dangers: \(\) => livingDangers\(px, py, locOrigin\),/);
+  assert.match(w, /dangers: \(\) => host\.livingDangers\(px, py, locOrigin\),/);
   assert.match(w, /if \(f\.dead \|\| !f\.ai\?\.isHostile \|\| f\.companion != null \|\| f\.entity\?\.team === 'PlayerAlly'\) continue;/);
   assert.doesNotMatch(rd('src/scenes/exterior.js'), /livingQuarry|makeQuarry/, 'the fixed-city page: DFU\'s');
 });

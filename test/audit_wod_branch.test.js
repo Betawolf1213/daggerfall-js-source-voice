@@ -315,7 +315,7 @@ test('AUDIT BRANCH (WoD) M2: a pack fetch is abandoned after a stall and tried t
 test('AUDIT BRANCH (WoD) M2: the build\'s pick can cost a pixel its site, never the pixel; with the mod off no frame walks the pixels for its lights', () => {
   const w = hostText('src/scenes/world.js');
   // PIN MOVED (AUDIT CAPTAIN'S SEA G8): the pick asked on the Bay alone - its sites are the Bay's
-  assert.match(w, /if \(wod && onTheBay\(px, py\) && await wodOpened\) \{[^\n]*\n[^\n]*\n[^\n]*\n      try \{\n        const here = state\.current \?\? \{ x: px, y: py \};[\s\S]{0,900}\} catch \(e\) \{\n        console\.warn\(`\[wod\] pixel \$\{key\}: the loader failed here[^\n]*\n        wodPicks = null;\n      \}/);
+  assert.match(w, /if \(wod && onTheBay\(px, py\) && await wodOpened\) \{[^\n]*\n[^\n]*\n[^\n]*\n      try \{\n        const here = host\.state\.current \?\? \{ x: px, y: py \};[\s\S]{0,900}\} catch \(e\) \{\n        console\.warn\(`\[wod\] pixel \$\{key\}: the loader failed here[^\n]*\n        wodPicks = null;\n      \}/);
   assert.match(w, /const wodLit = wod \? _wodLitCount\(\) : 0;/);
   assert.match(rd('src/world/worldOfDaggerfall.js'), /if \(!b\) return;\n[^\n]*\n[^\n]*\n      await new Promise\(\(r\) => setTimeout\(r, 0\)\);[\s\S]{0,400}decodeRegionPack\(b\)/, 'one decode a task');
 });
@@ -654,7 +654,7 @@ test('AUDIT BRANCH (WoD) m2: a rebuild of a pixel that had a site re-reads its g
   h.publish(100, 100, [[10, 5, 10]], { wodSite: { xMin: 1, xMax: 2, yMin: 1, yMax: 2 } });
   h.destroyPixel(100, 100, { collectLoose: false });   // a rebuild's teardown runs clean with nothing to remember
   assert.doesNotMatch(WORLD, /_wodSiteWas/, 'no teardown remembers the site');
-  assert.match(WORLD, /\n    if \(labGrassField\) \{   \/\/ WOD2[^\n]*m2[^\n]*\n      const t = state\.pixelTranslation\(px, py\);\n      labGrassField\.invalidate\(t\[0\], t\[2\], t\[0\] \+ TERRAIN_SIZE, t\[2\] \+ TERRAIN_SIZE\);/, 'and the publish re-reads the grass for it, whatever stood there');
+  assert.match(WORLD, /\n    if \(host\.labGrassField\) \{   \/\/ WOD2[^\n]*m2[^\n]*\n      const t = host\.state\.pixelTranslation\(px, py\);\n      host\.labGrassField\.invalidate\(t\[0\], t\[2\], t\[0\] \+ TERRAIN_SIZE, t\[2\] \+ TERRAIN_SIZE\);/, 'and the publish re-reads the grass for it, whatever stood there');
 });
 
 test('AUDIT BRANCH (WoD) L1-3: the host steps DFU\'s array on every crossing and at every world\'s start, and the Hold does not ride the pool', () => {
