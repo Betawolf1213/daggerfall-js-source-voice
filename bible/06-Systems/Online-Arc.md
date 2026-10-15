@@ -9485,20 +9485,24 @@ took: three town homes a character, no upkeep.
   (`world/interiorShared.js`, the bag's `home`): its memory names no cupboard, a peer's word about one never lands
   (a word about `container:3` would have overwritten the owner's chest, and then been published back as the room's),
   and a refused act's records name none.
-- **Quests** (`systems/quest/place.js`, a departure: Daggerfall has one player): no quest picks a player's home as
-  its residence, in any town. FIELD BUGS 2026-10-14 QUEST-HOME (`01-Overview/Field-Bugs-2026-10-14.md`): the rule read
-  the towns this page had asked, one at a time at a gate or a door, and a `remote` residence is picked in a town its
-  player has never walked into - so it held in the player's own town alone, and a farmstead's only house, a player's
-  home, was a quest's. The layouts read every online boot makes (WD3) names every town's homes by building now
-  (`server-account/src/homes.js` homeLayouts' `homes`, acct133), the registry keeps it beside the towns it asks
-  (`systems/onlineHomes.js` hearEveryTown, homeStands), and the quest machine's `isPlayerHome` asks it
-  (`scenes/world.js`).
+- **Quests** (`systems/quest/place.js`, a departure: Daggerfall has one player): no quest stands in a player's home -
+  Mac's decision (2026-10-15, "Close both"; FIELD BUGS 2026-10-14 QUEST-HOME, `01-Overview/Field-Bugs-2026-10-14.md`).
+  A quest never picks its residence in one, in any town: the layouts read every online boot makes (WD3) names every
+  town's homes by building (`server-account/src/homes.js` homeLayouts' `homes`, acct133), and every act that moves a
+  home - a claim, a deed held or sold, a hall bought or sold, an arena move, a sale, a character deleted - answers a
+  signed home order (`net/identityToken.js` kind `home`) that its client carries to the hub, which fans it to every page
+  online and holds it for a page that joins after (relay world201); the registry keeps every home as it stands
+  (`systems/onlineHomes.js` hearEveryTown, hearHome, homeStands), and the quest machine's `isPlayerHome` asks it. A
+  site its player has not reached whose building becomes a home is chosen again in its own town by the place's own law,
+  its links, its journal name and its map mark following (`Place.repickHomedSite`, `QuestMachine.reseatHomedSites`);
+  a site the player has stood in stays where they found it, and the quest rung opens the home to them.
 
-Offline nothing here exists and every door is Daggerfall's. **Known limits.** A house bought after this page's boot
-read, in a town it has not asked since, can still be picked - and a quest that chose its residence before the house
-was bought keeps it; the quest rung then lets its player in. The
+Offline nothing here exists and every door is Daggerfall's. **Known limits.** A site whose town holds no other
+building of its kind stays in the home, its quest rung letting its player in. An account deleted outright takes its
+homes by the database's cascade, which no client carries to the hub: the pages online keep them as homes until their
+next boot's read, and a quest passes over those houses meanwhile. The
 gold is the save's, as all of it is. What a home holds lives in its owner's own save, never on the service - the
-next slices' decor (DECOR1) is the first thing kept there. No relay change. Pinned: `test/home1.test.js` (11) - the
+next slices' decor (DECOR1) is the first thing kept there. No relay change (QUEST-HOME's home word, the hub's, came with world201). Pinned: `test/home1.test.js` (11) - the
 law, the service through the real Worker with every migration applied (one owner, the cap a character's, the repeat,
 entry, release, the cascade), the rate, the client's door to it, the client's law and registry, buying and selling,
 the room without loot, the bank online, the door's model, the wiring by source; re-aimed by content in `test/auditworld6a.test.js`,

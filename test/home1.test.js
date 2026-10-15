@@ -131,7 +131,9 @@ test('HOME1 the service: a town\'s homes are any session\'s to read (a guest\'s 
   // the claim
   const c = await buy(aldric, A);
   assert.equal(c.status, 200);
-  assert.deepEqual(c.body, { ok: true, home: { mapId: home().mapId, buildingKey: home().buildingKey, region: 17, character: A.id, entry: 'private', price: 42000, boughtAt: T0 }, refund: homeSaleRefund(42000), realm: { seq: 2 } });   // AUDIT HOME-PRICE C2: the claim says what its sale pays
+  // PIN MOVED (FIELD BUGS 2026-10-14 QUEST-HOME, test/fb1014_questhome.test.js): and the claim's home order, for every page online
+  assert.deepEqual({ ...c.body, homeOrders: undefined }, { ok: true, home: { mapId: home().mapId, buildingKey: home().buildingKey, region: 17, character: A.id, entry: 'private', price: 42000, boughtAt: T0 }, refund: homeSaleRefund(42000), realm: { seq: 2 }, homeOrders: undefined });   // AUDIT HOME-PRICE C2: the claim says what its sale pays
+  assert.equal(c.body.homeOrders?.length, 1);
   assert.deepEqual(await call('POST', '/v1/homes/claim', home({ buildingKey: 9 }), aldric), { status: 400, body: { error: 'realm-only' } }, 'no other id buys a house');
   // one owner a building
   const taken = await buy(mara, M);

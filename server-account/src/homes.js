@@ -40,6 +40,7 @@ import { payFromSave, creditSave } from '../../src/net/realmGoldLaw.js';   // RE
 import {
   HOME_CAP, HOME_ENTRY_DEFAULT, HOME_CLAIMS_MAX, HOME_CLAIMS_WINDOW_S, HOME_TOWN_MAX, HOME_LAYOUTS_MAX,
   HOME_KEYS_MAX,   // FIELD BUGS 2026-10-14 QUEST-HOME: the homes the layouts read names by building
+  homeMoved,   // QUEST-HOME (Mac, 2026-10-15: "Close both"): what an act moved, signed for every page online
   homeMapIdOk, homeBuildingKeyOk, homeRegionOk, homePriceOk, homeEntryOk, homeSaleRefund, homeLookOf, homeLayoutOk, homeLayoutsMatch,
   homeInArenaCell, RENT_ANCHOR_MOVED,   // ARENA4b: the arena's cell, and a tenancy's point the move carries
   homeDeedOf,   // FIELD BUGS 2026-10-04d KNIGHT-HOUSE: the deed a record holds to a building, as the door reads it
@@ -114,7 +115,7 @@ async function realmClaim(ctx, player, at, claim) {
   }
   await dropObjects(bucket, [prep.prev]);
   const row = await db.prepare('SELECT * FROM homes WHERE map_id = ? AND building_key = ?').bind(claim.mapId, claim.buildingKey).first();
-  return { ok: true, home: homeOf(row), ...realmSaleOf(row), realm: { seq: prep.seq } };   // AUDIT HOME-PRICE C2
+  return { ok: true, home: homeOf(row), ...realmSaleOf(row), realm: { seq: prep.seq }, moved: homeMoved(claim.mapId, [claim.buildingKey]) };   // AUDIT HOME-PRICE C2; QUEST-HOME: a home now, for every page online
 }
 
 /**
@@ -215,7 +216,7 @@ export async function holdDeed(ctx, player, body = {}) {
   if (!deed || !homeLayoutsMatch(deed.layout ?? null, layout ?? null)) return { error: 'no-deed' };
   await deedStatement(db, player, { mapId, buildingKey, region, character, layout: layout ?? null }, nowS).run();
   const row = await db.prepare('SELECT * FROM homes WHERE map_id = ? AND building_key = ?').bind(mapId, buildingKey).first();
-  if (row) return row.player === player.id && row.char_id === character ? { ok: true, home: homeOf(row) } : { error: 'home-taken' };   // a claim landed first
+  if (row) return row.player === player.id && row.char_id === character ? { ok: true, home: homeOf(row), moved: homeMoved(mapId, [buildingKey]) } : { error: 'home-taken' };   // a claim landed first; QUEST-HOME: held, a home to every page
   return (await townLayoutRefusal(db, mapId, layout ?? null)) ?? { error: 'home-taken' };   // a first home of the town, in another layout, landed first
 }
 
@@ -297,7 +298,7 @@ async function realmRelease(ctx, player, at, home) {
     return (await recordMovedOf(db, player.id, at)) || { error: 'no-home' };
   }
   await dropObjects(bucket, [prep.prev]);
-  return { ok: true, price: home.price, refund, decorCount, decorBack, ...(rentDue ? { rent: rentDue } : {}), realm: { seq: prep.seq } };
+  return { ok: true, price: home.price, refund, decorCount, decorBack, ...(rentDue ? { rent: rentDue } : {}), realm: { seq: prep.seq }, moved: homeMoved(home.map_id, [], [home.building_key]) };   // QUEST-HOME: sold, a house again
 }
 
 /**
@@ -315,7 +316,7 @@ export async function releaseHome(ctx, player, { mapId, buildingKey, realm = nul
   // (`deed`), never a home bought at a door; and a deed's row is never sold as a home (below: no record paid for it)
   if (deed === true) {
     const gone = await db.prepare('DELETE FROM homes WHERE map_id = ? AND building_key = ? AND player = ? AND deed = 1').bind(mapId, buildingKey, player.id).run();
-    return gone?.meta?.changes ? { ok: true, price: 0, decorCount: 0, decorBack: 0 } : { error: 'no-home' };
+    return gone?.meta?.changes ? { ok: true, price: 0, decorCount: 0, decorBack: 0, moved: homeMoved(mapId, [], [buildingKey]) } : { error: 'no-home' };   // QUEST-HOME: a house again
   }
   const at = realm != null ? realmAtOf(realm) : null;
   if (at) {
@@ -345,7 +346,7 @@ export async function releaseHome(ctx, player, { mapId, buildingKey, realm = nul
   const row = gone?.results?.[0];
   if (!row) return { error: 'no-home' };
   const d = pieces?.results?.[0];
-  return { ok: true, price: row.price, decorCount: Number(d?.n) || 0, decorBack: Math.max(0, Number(d?.back) || 0) };
+  return { ok: true, price: row.price, decorCount: Number(d?.n) || 0, decorBack: Math.max(0, Number(d?.back) || 0), moved: homeMoved(mapId, [], [buildingKey]) };   // QUEST-HOME
 }
 
 /**
@@ -678,6 +679,7 @@ export async function arenaMoveHome(ctx, player, { mapId, from, to, character, r
   return {
     ok: true, mapId, from, to, refund, pieces, items: n - pieces, tenancies, withdrawn, hidden,
     ...(gid != null ? { hall: true } : {}), ...(prep ? { realm: { seq: prep.seq } } : {}),
+    moved: homeMoved(mapId, [to], [from]),   // QUEST-HOME: the new house a home, the old one a house again
   };
 }
 

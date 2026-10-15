@@ -81,6 +81,7 @@ import { getBool } from '../systems/settings.js';
 import { noteOfferPending } from '../ui/pendingOffer.js';   // AUDIT 58: DaggerfallUI's GivePc.OnOfferPending subscription
 import { getTitle } from '../systems/guilds.js';
 import { addQuestResourceObjects } from '../systems/quest/sceneMount.js';
+import { SITE_TYPES } from '../systems/quest/place.js';   // QUEST-HOME: a building's mount marks its sites reached
 import { QuestLens } from '../ui/questLens.js';   // GUIDE1: the modern faces' one read-only picture of this machine
 import { questHerald, heraldOn } from '../ui/questHerald.js';   // GUIDE3: the news the lens sees, told
 import { questTracker, followOn } from '../ui/questTracker.js';   // GUIDE4: the quest the HUD follows (GUIDE5: the card's or the marks')
@@ -745,6 +746,9 @@ export function createQuestBridge(ctx, { label = 'host' } = {}) {
 
     /** The scene mount (Q4-iii's walk) over the host's adapter. */
     mountScene(adapter, siteType, buildingKey = 0) {
+      // QUEST-HOME (Mac, 2026-10-15: "Close both"): the player stands in this building - every quest's site here is
+      // reached, and never chosen again should it become a player's home (QuestMachine.noteSiteReached)
+      if (siteType === SITE_TYPES.Building) machine.noteSiteReached(adapter.currentMapId?.() ?? 0, buildingKey);
       addQuestResourceObjects(machine, adapter, siteType, buildingKey);
     },
 

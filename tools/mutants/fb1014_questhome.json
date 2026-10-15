@@ -52,5 +52,158 @@
     "tests": [
       "test/fb1014_questhome.test.js"
     ]
+  },
+  {
+    "name": "QUEST-HOME-the-claim-answers-no-order",
+    "file": "server-account/src/homes.js",
+    "old": ", moved: homeMoved(claim.mapId, [claim.buildingKey]) };",
+    "new": " };",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-sale-answers-no-order",
+    "file": "server-account/src/homes.js",
+    "old": ", moved: homeMoved(home.map_id, [], [home.building_key]) };",
+    "new": " };",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-route-signs-nothing",
+    "file": "server-account/src/index.js",
+    "old": "  return { ...answer, homeOrders };",
+    "new": "  return answer;",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-ear-unheard",
+    "file": "src/net/accountClient.js",
+    "old": "  heardHomeOrders(data);",
+    "new": "  void heardHomeOrders;",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-link-sends-nothing",
+    "file": "src/net/online.js",
+    "old": "if (primary) { this.homeOk = relaySupportsHome(relayV);",
+    "new": "if (primary) { this.homeOk = false;",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-hub-fans-nothing",
+    "file": "server/src/index.js",
+    "old": "      for (const [other, b] of [...this._all()]) if (b.id) this._send(other, said);   // everyone in the hub, the carrier included - that is the receipt",
+    "new": "      void said;",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-hub-holds-nothing",
+    "file": "server/src/index.js",
+    "old": "      await this.state.storage.put(HOME_WORDS_KEY, this._homeWords);",
+    "new": "",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-welcome-says-nothing",
+    "file": "server/src/index.js",
+    "old": "        if (l.length) this._send(ws, JSON.stringify({ t: 'home', l }));",
+    "new": "        void l;",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-word-not-delivered",
+    "file": "src/net/online.js",
+    "old": "      this._deliver('home', () => this.onHome?.(words));",
+    "new": "      void words;",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-word-not-taken",
+    "file": "src/systems/onlineHomes.js",
+    "old": "if (homeBuildingKeyOk(k) && !keys.has(k)) { keys.add(k); became = true; }",
+    "new": "if (homeBuildingKeyOk(k) && !keys.has(k)) { became = true; }",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-re-pick-never-asked",
+    "file": "src/systems/onlineHomes.js",
+    "old": "    if (became) told();",
+    "new": "",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-a-reached-site-moved",
+    "file": "src/systems/quest/place.js",
+    "old": "|| sd.unseated || sd.reached) return false;",
+    "new": "|| sd.unseated) return false;",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-reach-unmarked",
+    "file": "src/systems/quest/machine.js",
+    "old": "        sd.reached = true;\n",
+    "new": "",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-link-left-behind",
+    "file": "src/systems/quest/machine.js",
+    "old": "        this._followSite(quest, resource);\n",
+    "new": "",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-an-order-with-no-building",
+    "file": "src/net/identityToken.js",
+    "old": "return all.length > 0 && all.length <= HOME_ORDER_KEYS_MAX",
+    "new": "return all.length >= 0 && all.length <= HOME_ORDER_KEYS_MAX",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-a-mute-carrying-a-town",
+    "file": "src/net/identityToken.js",
+    "old": "  if (c.o !== 'home' && !noHome) return false;\n",
+    "new": "",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
+  },
+  {
+    "name": "QUEST-HOME-the-mount-marks-nothing",
+    "file": "src/scenes/questBridge.js",
+    "old": "      if (siteType === SITE_TYPES.Building) machine.noteSiteReached(adapter.currentMapId?.() ?? 0, buildingKey);\n",
+    "new": "",
+    "tests": [
+      "test/fb1014_questhome.test.js"
+    ]
   }
 ]

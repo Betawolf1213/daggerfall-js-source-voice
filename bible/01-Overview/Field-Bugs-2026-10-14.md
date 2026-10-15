@@ -172,10 +172,42 @@ guild's hall and a deed held - read beside the towns and kept with them under th
 (STORM-SHED 2's `homes_gen`); a town's homes were any session's to read already (homesInTown). The registry keeps it beside the towns
 it asks (`hearEveryTown`), and the quest machine's `isPlayerHome` asks `homeStands`: a player's home in any town. The
 service is acct133 (no migration); a client on an older service hears no `homes` and keeps what it knew. A quest made
-before the fix keeps its site - restarting it chooses again. HOME1's known limit narrows to what no client can know at
-the moment it chooses: a house bought after this page's boot read in a town it has not asked since, and a quest whose
-residence was chosen before its house was bought; the quest rung lets its player in, as before. Pinned by
-`test/fb1014_questhome.test.js` - the real Worker, the client's own door, the real registry, and the reporter's own quest
-taken by the real machine in a region whose farmstead's only house is a player's home (`tools/mutants/fb1014_questhome.json`,
-6, dead); PIN MOVED in `test/wd3_online.test.js` (the read's `homes`) and `test/home1.test.js` (the seam), and the
-account service's version pins (acct133).
+before the fix whose site is a home is chosen again (below) - restarting it chooses afresh.
+
+CLOSED BOTH (Mac, 2026-10-15: "Close both", of the two limits the boot's read left - a house bought after a page's read,
+and a quest whose residence was chosen before its house was bought). THE LIVE LIST: every act that moves a home - a
+claim, a deed held or sold, a hall bought or sold, an arena move, a sale, a character deleted - answers `homeOrders`
+(`server-account/src/index.js` homeOrdersOf over each act's `moved`, `src/net/homeLaw.js` homeMoved): a home order
+signed with the identity key (`src/net/identityToken.js` kind `home` - `bm` the town, `bu` its buildings homes now, `bd`
+homes no more). The client's one door hands every one to the page's ear (`src/net/accountClient.js` onHomeOrders), the
+page's hub link carries it (`src/net/online.js` sendHomeOrder, once the hub's welcome names world201), and the hub -
+the one room every online player holds a socket to - checks it with the key it holds and fans `{t:'home', l:[...]}` to
+every hub socket, a shard's by the bus, holding the words of the last ten minutes for a page whose boot read went out
+before them and whose link opened after (`server/src/index.js` the `home` arm, _hubHelloWords; HOME_WORDS_KEY). Every
+page's registry takes the word (`src/systems/onlineHomes.js` hearHome) beside the boot's read, and the quest machine's
+`isPlayerHome` reads both. No poll: a home's move is said once, by the act. THE RE-PICK: whenever a page learns of
+homes (the boot's read, a hub word, a town's answer, a load whose layouts stand), every building site the player has not
+reached whose building is a player's home now is chosen again in its own town by the place's own law (`src/systems/
+quest/place.js` repickHomedSite - SetupLocalSite's search, Place.cs:717-736: the declared P2/P3, a house kind's
+any-house fallback, a person's home its house; the collector keeping out every home and every building a quest holds),
+what was assigned to it carried onto the new building's markers, its site links following, its name drawn anew so the
+journal names the residence the quest stands in, and its map mark moved - the old house's quest stamp undiscovered, the
+new one discovered under the quest's name where the player had it on the map (`src/systems/quest/machine.js`
+reseatHomedSites; `src/scenes/world.js` questSiteMovedHere). A site the player has stood in is REACHED for good
+(`siteDetails.reached`, marked by the interior mount, `src/scenes/questBridge.js` mountScene ->
+QuestMachine.noteSiteReached, and saved with the site) and never moved; the quest rung opens the home to them, as before.
+A save from before the mark says nothing of where its player stood: its sites read as not reached.
+A Ledger A departure (`01-Overview/Port-Ledger.md`, the HOME1 row's A QUEST'S SITE IS NEVER ANOTHER PLAYER'S HOME): Daggerfall Unity
+never moves a quest site. What stays: a site whose town holds no other building of its kind stays in the home (its
+rung); a deleted account's homes go by the database's cascade, which no client carries, so the pages online keep them as
+homes until their next boot (a quest passes over them meanwhile).
+
+Pinned by `test/fb1014_questhome.test.js` (6) - the real Worker, the client's own door, the real registry, the real relay
+over a real hub room and the real client session on its hub link, and the reporter's own quest taken by the real machine:
+the boot's read; the reporter's region; the wiring; the home order and word; the live list (a house bought after a
+page's boot read never holds a quest picked after it, a page that joins later hears the held word, a sale says the
+house a house again); the re-pick (a site not reached chosen again in its own town, its link and name following; a
+reached one kept) - `tools/mutants/fb1014_questhome.json`, 23, all dead. PIN MOVED in `test/wd3_online.test.js` (the
+read's `homes`), `test/home1.test.js` (the seam; the claim's order), `test/arena4b_homes.test.js` (the move's order),
+`test/guild1c.test.js` and `test/renown1.test.js` (ORDER_KINDS), the account service's version pins (acct133) and the
+relay's (world201, `test/relayversion.test.js` its law row - `src/net/homeLaw.js` joins the relay's bundle).

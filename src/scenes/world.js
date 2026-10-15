@@ -54,7 +54,7 @@ import { arenaReplaysRestore } from '../systems/arenaReplay.js';   // ARENA5: yo
 import { createArenaGate, nearArenaGate } from './arenaGate.js';   // ARENA3; ARENA4b: the Herald's choice and the pause door's banner too
 import { createArenaOnline } from './arenaOnline.js';   // ARENA4: the arena online - the hall, a relay's bout, the boards and the receipts
 import { arenaFloorRoomOf } from '../net/arenaLaw.js';   // ARENA4: a bout's room (ARENA4b: or the hour's exhibition's)
-import { accountArena, accountIliac, iliacRefusalText } from '../net/accountClient.js';   // ARENA4: the arena's records on the account service; CARDS10: Iliac Hand's season board; AUDIT CARDS-6 E14: and its refusals' own words
+import { accountArena, accountIliac, iliacRefusalText, onHomeOrders } from '../net/accountClient.js';   // ARENA4: the arena's records on the account service; CARDS10: Iliac Hand's season board; AUDIT CARDS-6 E14: and its refusals' own words
 import { fighterIdentity } from '../systems/arenaFighters.js';   // ARENA4: the relay's fighters billed by the bout's seed
 import { bossStandIn } from '../world/gateBoss.js';   // ARENA4: my opponent's stand-in for the formulas
 import { closeArenaDoor, arenaDoorOpen } from '../ui/arenaDoor.js'; import { createArenaSessionButton } from '../ui/arenaSessionButton.js';   // HOTFIX 1003f: the session's button on the screen   // ARENA4: the window goes when a bout calls
@@ -953,7 +953,7 @@ const RACE_BY_NAME_BANK = Object.freeze(Object.fromEntries(
   Object.entries(BANK_TYPES).map(([race, bank]) => [bank, race])));
 import { startDisease, endDisease, diseaseCount } from '../systems/diseases.js';   // AUDIT 24: the quest bridge's MakePcDiseased / CurePcDisease seams; U41: the popup's diseased warning
 import { poisonCount } from '../systems/poisons.js';   // U41: the warning's other half
-import { discoverRandomLocation, discoverLocation, undiscoverBuilding, discoverBuilding, discoveredBuildings, hasDiscoveredLocationId, setDiscoveredBuildingCustomName, discoveryGeneration, restampQuestNames, pruneDiscoveryLayouts } from '../systems/discovery.js';   // G8 + TV: the guild map reveals + the entry writer; TK-ii: the quest-residence undiscover; AUDIT DISC28 QS-K2: the town map's re-stamp
+import { discoverRandomLocation, discoverLocation, undiscoverBuilding, discoverBuilding, discoveredBuildings, hasDiscoveredLocationId, setDiscoveredBuildingCustomName, getDiscoveredBuilding, discoveryGeneration, restampQuestNames, pruneDiscoveryLayouts } from '../systems/discovery.js';   // G8 + TV: the guild map reveals + the entry writer; TK-ii: the quest-residence undiscover; AUDIT DISC28 QS-K2: the town map's re-stamp
 import { scryRows } from '../systems/lootScry.js';   // LOOT19: the region a scrying reads
 import {
   WEATHER_TYPES, fogForWeather, scaleFogForDistance, skyOffsetForWeather, weatherSunlightScale,
@@ -1707,7 +1707,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // off `params`: `onlineOn` is declared far below, and a quest can be set up before it is.
   // HOME-RENT: the service's homes door itself, for a home's rooms - read at its door, rented, offered, collected
   const homesApi = params.has('online') ? accountHomes({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }) : null;
-  const onlineHomes = homesApi ? createOnlineHomes({ api: homesApi, character: () => characterIdOf(playerEntity), onWrote: () => legacyOnlineHomesRead() }) : null;   // LEGACY7 part five: a home of mine bought, sold or changed - the line's to learn again
+  const onlineHomes = homesApi ? createOnlineHomes({ api: homesApi, character: () => characterIdOf(playerEntity), onWrote: () => legacyOnlineHomesRead(), onHomes: () => homesLearned() }) : null;   // QUEST-HOME: and a home learned of, a quest site not yet reached in it chosen again   // LEGACY7 part five: a home of mine bought, sold or changed - the line's to learn again
   /** LEGACY7 part five: ONLINE, THE LINE'S HOUSES ARE ITS MEMBERS' ONLINE HOMES (Legacy-Arc 10b) - this realm character's
    *  rows of the account's homes (/v1/homes/mine; HOME1: a home is a realm character's), each named by its town. Read at
    *  the boot and after each home of mine changed (the registry's `onWrote`); the house's save takes the last read - null
@@ -7754,6 +7754,27 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  while the player is elsewhere is a no-op in DFU too. */
   const undiscoverBuildingHere = (buildingKey, buildingName) => undiscoverBuilding(
     `${_questLoc()?.regionIndex ?? -1}:${_questLoc()?.name ?? ''}`, buildingKey, true, buildingName ?? null);
+  /** QUEST-HOME (Mac, 2026-10-15: "Close both"): every quest site not yet reached whose building a player's home is now,
+   *  chosen again in its own town (QuestMachine.reseatHomedSites) - asked whenever the online homes learn of one (the
+   *  boot's read, the hub's word, a town's answer) and after a load's layouts stand. Before the quest machine stands it
+   *  asks nothing; the load's own ask finds the sites. */
+  function homesLearned() {
+    try {
+      const n = questBridge?.machine?.reseatHomedSites?.() ?? 0;
+      if (n) console.log(`[quest] ${n} quest site(s) chosen again: their building is a player's home now`);
+    } catch (e) { console.error('[quest] homed sites:', e?.message ?? e); }
+  }
+  /** QUEST-HOME: a homed site moved - its map mark with it. The old building's record is undiscovered when it bears the
+   *  quest's name (the tombstone's own undiscover, Quest.cs:655: residences only, the name matched), and where it did, the
+   *  new building is discovered under the quest's name in its town (a record the player's map had, moved). */
+  function questSiteMovedHere(place, was) {
+    const town = `${was?.regionIndex ?? -1}:${was?.locationName ?? ''}`;
+    const had = getDiscoveredBuilding(town, was?.buildingKey);
+    const marked = !!had && had.displayName === was.buildingName;
+    undiscoverBuilding(town, was?.buildingKey, true, was?.buildingName ?? null);
+    const b = marked ? place.siteBuilding?.(questBridge?.machine?.deps?.world ?? null) : null;
+    if (b) discoverBuilding(town, { ...b, name: '' }, place.siteDetails.buildingName, questBuildingSource);
+  }
   /** AUDIT 63 F49: PlayerGPS.DiscoverBuilding's quest name-override
    *  pair (PlayerGPS.cs:945-959) - CurrentMapID and
    *  TalkManager.IsBuildingQuestResource. Every DiscoverBuilding
@@ -16627,6 +16648,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // it (online, never before the service has said the towns' layouts)
     const reseated = homeLayoutsOnline && _serverLayoutRecords === null ? 0 : (questBridge?.machine?.reseatMovedSites?.() ?? 0);
     if (reseated) console.log(`[layout] ${reseated} quest site(s) chosen again where their town's layout moved`);
+    homesLearned();   // QUEST-HOME: and one a player's home now, not yet reached, chosen again in its own town (a load's sites included)
     if (pins.size || changed.size) console.log(`[layout] ${pins.size} town(s) kept in a save's layout (${[...pins.values()].map((p) => p.why).join(', ') || 'none'}); ${changed.size} read again, ${rebuilt} rebuilt${forgotten ? `; ${forgotten} discovered building(s) forgotten where a layout moved` : ''}`);
     else if (forgotten) console.log(`[layout] ${forgotten} discovered building(s) forgotten where a layout moved`);
     return true;
@@ -20042,6 +20064,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     isHouseOwned: (buildingKey) => isHouseOwned(playerEntity.houses ?? [], _questRegionIndex(), buildingKey),
     // HOME1: nor a player's online home - a quest must not send its player into a house its owner keeps shut. FIELD BUGS 2026-10-14 QUEST-HOME: in ANY town - the boot's read of every town's homes beside the towns this page has asked (systems/onlineHomes.js homeStands); the asked towns alone left every remote residence unguarded.
     isPlayerHome: (mapId, buildingKey) => onlineHomes?.homeStands(mapId, buildingKey) ?? false,
+    // QUEST-HOME (Mac, 2026-10-15: "Close both"): a site chosen again because its building became a player's home - its
+    // map mark moves with it: the old house's quest stamp undiscovered (Quest.cs:655's own undiscover), and where the
+    // player had it on the map, the new one discovered under the quest's name
+    questSiteMoved: (quest, place, was) => questSiteMovedHere(place, was),
     townLayoutsKnown: () => !homeLayoutsOnline || _homeLayoutsApplied,   // QUESTOR-MOVED: a shared quest is mended on arrival only once the towns' layouts are known (applyLayoutPins' own gate, AUDIT WD3 S5) - AUDIT QA2: and STAND, the pins and their held-back towns set (a share landing while the packs were fetched was chosen again unpinned); the load's own re-seat mends one that landed before
     // Place's _getBuildingName bag - townTalk's ONE name bag, so the
     // quest's generated names and the talk directory's cannot drift.
@@ -21349,6 +21375,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   let postBox = null;   // SERVER-POST: the server's post (net/serverPost.js PostBox), made beside the letterbox
   let guildBook = null;   // GUILD1b: the character's guild (net/guildBook.js GuildBook), made with the panel that draws it
   const socialLink = () => { const tab = chatLog?.tabs.find((t) => t.room === SOCIAL_ROOM); return tab ? (chatLinks?.get(tab.id) ?? null) : null; };
+  // QUEST-HOME (Mac, 2026-10-15: "Close both"): every answer of the service's that moved a home (net/accountClient.js
+  // onHomeOrders - a door's claim or sale, a deed, a hall, an arena move, a character deleted) carried to the hub, whose
+  // fan tells every page online; a page with no hub link says nothing, and the others read it at their next boot
+  if (homesApi) onHomeOrders((order) => { socialLink()?.sendHomeOrder?.(order); });
   /** RAID-ROLL: the hub asked for the towns table by its operator's pinned hash - this world's, when it hashes to it
    *  (net/raidLaw.js; a data-modded world's is its own and is never sent). The travel map's picker may still be loading
    *  at the hello, so a table not ready is asked for again a few times, ten seconds apart; once a session. */
@@ -22549,6 +22579,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // it shut for the page's life, with no Play online here to open it again
       link.onSuperseded = () => seatLostNow();
       if (tab.room === SOCIAL_ROOM) link.onEvent = (ev, o) => { dread.set(ev, o); sunbaby.set(ev, o); };   // SUNBABY1: and the sun baby   // EVENT1: the hub - the one room every online player holds - says the live event
+      if (tab.room === SOCIAL_ROOM) link.onHome = (words) => { onlineHomes?.hearHome(words); };   // QUEST-HOME: and a home that moved since the boot's read, every page told
     }
     // SRV-N: the PRESENCE session hears the relay too, and it is usually
     // the first back after a deploy. Both arms run the same detector,
