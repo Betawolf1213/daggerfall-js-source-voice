@@ -604,5 +604,149 @@
     "tests": [
       "test/egaudit5_e_alloc.test.js"
     ]
+  },
+  {
+    "name": "EGA5E-build-specs-left-out",
+    "file": "src/world/egCircleParts.js",
+    "old": "specs: egCircleSpecs(m.seed, m.c, geo), ",
+    "new": "",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-build-dress-left-out",
+    "file": "src/world/egCircleParts.js",
+    "old": "art: band >= 0 ? egBandArt(band) : null",
+    "new": "art: null",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-build-dress-another-band",
+    "file": "src/world/egCircleParts.js",
+    "old": "art: band >= 0 ? egBandArt(band) : null",
+    "new": "art: band >= 0 ? egBandArt((band + 1) % 4) : null",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-build-dress-copied",
+    "file": "src/world/egCircleParts.js",
+    "old": "  for (const [, art] of parts?.art ?? []) { take(art?.albedo?.colors); take(art?.emission?.colors); }\n",
+    "new": "",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-worker-band-dropped",
+    "file": "src/world/egCircleWorker.js",
+    "old": "const parts = egCircleBuild(m);",
+    "new": "const parts = egCircleBuild({ ...m, band: -1 });",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-swap-band-unposted",
+    "file": "src/scenes/egSwap.js",
+    "old": "geo: geo || 0, band });",
+    "new": "geo: geo || 0 });",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-swap-peek-blind",
+    "file": "src/scenes/egSwap.js",
+    "old": "=== 'ready' ? job.parts : null; },",
+    "new": "=== 'ready' ? null : null; },",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-prebuild-paints-here",
+    "file": "src/scenes/worldModes.js",
+    "old": "    const band = egBandOfCircle(r.c), st = egSwap.want(",
+    "new": "    egBandUp(r.c);\n    const band = egBandOfCircle(r.c), st = egSwap.want(",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-prebuild-whole-dress-a-frame",
+    "file": "src/scenes/worldModes.js",
+    "old": "egSwapFeed(egSwap.peek(r.seed, r.c, r.geo ?? 0), band, 1);",
+    "new": "egSwapFeed(egSwap.peek(r.seed, r.c, r.geo ?? 0), band);",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-prebuild-dress-asked-when-up",
+    "file": "src/scenes/worldModes.js",
+    "old": "egBandWhole(band) ? -1 : band);",
+    "new": "band);",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-swap-leaves-the-rest",
+    "file": "src/scenes/worldModes.js",
+    "old": "    egSwapFeed(parts, egBandOfCircle(r.c));   // AUDIT EG V",
+    "new": "    // AUDIT EG V",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-feed-specs-ungiven",
+    "file": "src/scenes/worldModes.js",
+    "old": "if (s) { egSpecGive(s); continue; }",
+    "new": "if (s) continue;",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-band-rec-unkept",
+    "file": "src/scenes/worldModes.js",
+    "old": "    _egBands.add(band); up.add(rec);",
+    "new": "    _egBands.add(band);",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-band-rec-twice",
+    "file": "src/scenes/worldModes.js",
+    "old": "if (up.has(rec) || !renderer?.uploadTexture) return;",
+    "new": "if (!renderer?.uploadTexture) return;",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-band-whole-at-first",
+    "file": "src/scenes/worldModes.js",
+    "old": "?.size ?? 0) >= EG_DRESS_RECORDS.length;",
+    "new": "?.size ?? 0) >= 1;",
+    "tests": [
+      "test/egaudit5_e_swap.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-band-recs-kept-past-the-breach",
+    "file": "src/scenes/worldModes.js",
+    "old": "    _egBands.clear(); _egBandRecs.clear();",
+    "new": "    _egBands.clear();",
+    "tests": [
+      "test/egz_camera_host.test.js"
+    ]
   }
 ]

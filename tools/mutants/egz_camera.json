@@ -723,7 +723,7 @@
   {
     "name": "EGZN-bands-never-forgotten",
     "file": "src/scenes/worldModes.js",
-    "old": "    _egBands.clear();\n    return n;",
+    "old": "    _egBands.clear(); _egBandRecs.clear();\n    return n;",
     "new": "    return n;",
     "tests": [
       "test/egz_camera_host.test.js"

@@ -228,7 +228,7 @@ const EG_FOG_FLOOR_ARR = Object.freeze([EG_FOG_FLOOR.floor, EG_FOG_FLOOR.within,
 /** EG-G2: two colours the same (a shape's colour is a table's - read by value, so a copy reads as its table's). */
 const sameRgb = (a, b) => !!a && a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
 /** AUDIT EG V (L6-4): no feet - THE TELEGRAPH BUDGET's order read from the hall's origin (kept, never made a frame). */
-const NO_FEET = Object.freeze([0, 0]);
+const NO_FEET = /** @type {number[]} */ (Object.freeze([0, 0]));   // read, never written (egShapeOrder)
 /** EG-G2: a rim brightened for the shape aimed at me (section 25.4). */
 const brighter = (c) => [c[0] + (1 - c[0]) * 0.3, c[1] + (1 - c[1]) * 0.3, c[2] + (1 - c[2]) * 0.3];
 const STYLE_OF = Object.freeze({ fire: TELEGRAPH_STYLE.fire, frost: TELEGRAPH_STYLE.frost, shock: TELEGRAPH_STYLE.shock, poison: TELEGRAPH_STYLE.poison });

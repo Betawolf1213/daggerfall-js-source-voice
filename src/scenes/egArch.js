@@ -218,13 +218,13 @@ const archLocal = (place, p) => { const [lx, ly, lz] = gateLocal(place, p); retu
 /** Whether feet at `p` are sealed in the arch's stone (the gate's inGateRoot, at the arch's scale). */
 export const egInArchRoot = (place, p) => { const [lx, ly, lz] = archLocal(place, p); return SEALED_AT.some((h) => insideGateStone([lx, ly + h / EG_ARCH_SCALE, lz])); };
 
+/** AUDIT EG V (L6-4): the arch pool's answers with no arch standing - one each, never made a frame. */
+const NO_CLEARS = Object.freeze([]), NO_LIST = Object.freeze([]);
 /**
  * @param {{ renderer?: any, collider?: () => any, pixelTranslation: (px: number, py: number) => number[], heightAt: (x: number, z: number) => number,
  *   now: () => number, feet?: () => (number[]|null), me?: () => (string|null), say?: (text: string) => void, onStep?: (b: string) => void,
  *   landAt?: (l: any) => boolean, verifyKey?: () => Promise<CryptoKey|null>, subtle?: SubtleCrypto }} deps
  */
-/** AUDIT EG V (L6-4): the arch pool's answers with no arch standing - one each, never made a frame. */
-const NO_CLEARS = Object.freeze([]), NO_LIST = Object.freeze([]);
 export function createEgArchPool({ renderer = null, collider = () => null, pixelTranslation, heightAt, now, feet = () => null, me = () => null,
   say = () => {}, onStep = () => {}, landAt = () => false, verifyKey = async () => null, subtle = globalThis.crypto?.subtle }) {
   const base = buildGateModel(), model = egArchModel(base), profile = gateArchProfile(base);
