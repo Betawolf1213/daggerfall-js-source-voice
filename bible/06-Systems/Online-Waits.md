@@ -268,7 +268,7 @@ Pins and mutants: `test/wavewait_quests.test.js` 8 (`wavewait.json` 19), `test/s
    The alternative: REP3's "~2.5 real days", said as sixty days of that calendar.
 5. **The cadences the relay keeps** - the serpent's four hours and fifteen-minute door, the gate's ten minutes'
    entry. Recommended: leave until a relay deploy happens for its own reason, then decide with it. The respawn is
-   decided: Mac halved it to half an hour (RESPAWN-30, relay world201 - `bible/01-Overview/Five-Asks-2026-10-14.md`).
+   decided: Mac halved it to half an hour (RESPAWN-30, relay world202 - `bible/01-Overview/Five-Asks-2026-10-14.md`).
 
 ## Record
 
