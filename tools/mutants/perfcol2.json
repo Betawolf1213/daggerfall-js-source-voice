@@ -36,9 +36,9 @@
   },
   {
     "name": "PERF-COL2-f-a-pixel-bucket-unmarked",
-    "file": "src/scenes/world.js",
-    "old": "      const wodBucket = onFloatingFrame(state, ((o) => () => state.pixelTranslation(px, py, o))([0, 0, 0]));",
-    "new": "      const wodBucket = ((o) => () => state.pixelTranslation(px, py, o))([0, 0, 0]);",
+    "file": "src/scenes/pixelBuild.js",
+    "old": "      const wodBucket = onFloatingFrame(host.state, ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0]));",
+    "new": "      const wodBucket = ((o) => () => host.state.pixelTranslation(px, py, o))([0, 0, 0]);",
     "tests": ["test/perfcol2.test.js"]
   },
   {
