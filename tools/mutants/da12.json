@@ -37,15 +37,15 @@
   {
     "name": "DA12-6-the-direct-start-never-checks",
     "file": "app/main.cjs",
-    "old": "  if (currentUpdateTransport() === 'updater') askUpdater().catch(() => {});\n  else noticeCheck().then(tellNotice, () => {});\n  startRechecks();\n",
+    "old": "  askGame().then((g) => { if (g === 'installer') askInstaller(); });\n  startRechecks();\n",
     "new": "  startRechecks();\n",
     "tests": ["test/da12_directplay.test.js"]
   },
   {
     "name": "DA12-7-the-checks-ignore-the-gates",
     "file": "app/main.cjs",
-    "old": "  if (!updateChecksEnabled()) return;\n  if (currentUpdateTransport() === 'updater') askUpdater()",
-    "new": "  if (currentUpdateTransport() === 'updater') askUpdater()",
+    "old": "  if (!updateChecksEnabled()) return;\n  // DA13: the game's own channel first; the installer's path, quietly, for what it cannot carry\n",
+    "new": "  // DA13: the game's own channel first; the installer's path, quietly, for what it cannot carry\n",
     "tests": ["test/da12_directplay.test.js"]
   },
   {

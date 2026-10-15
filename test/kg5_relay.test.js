@@ -10,7 +10,8 @@ import assert from 'node:assert/strict';
 import { fakeRoom } from './fakeRoom.mjs';
 import { validGambitOut, gambitTableValid, GAMBIT_FIRST_MS, GAMBIT_TURN_MS, GAMBIT_TURN_END_MS } from '../src/net/gambitTable.js';
 import { autoFill, KG_POINT_BUDGET, reachable, KG_TILE, KG_COLS } from '../src/net/kingsGambit.js';
-import { parseClient, relaySupportsGambit, GAMBIT_RELAY_MIN, GAMBIT_FRAME_MAX, RELAY_VERSION } from '../src/net/wire.js';
+import { parseClient, relaySupportsGambit, GAMBIT_RELAY_MIN, GAMBIT_FRAME_MAX } from '../src/net/wire.js';
+import { relayVersionAtLeast } from './relayVersion.mjs';
 import { STARTER_DECK } from '../src/net/iliacCards.js';
 import { xorshift } from '../tools/kgMeasure.mjs';
 
@@ -159,7 +160,7 @@ test('KG5 THE WIRE: the `gambit` arm named in parseClient\'s doc, after a hello 
   const ready = JSON.stringify({ t: 'gambit', op: 'ready', table: 15, army: new Array(12).fill(10), crown: 3 });
   assert.ok(ready.length <= GAMBIT_FRAME_MAX, 'a Ready at its longest fits');
   assert.equal(GAMBIT_RELAY_MIN, 204);   // PIN MOVED: world203 on its branch, renumbered past FIVE-ASKS's world202 at the merge
-  assert.equal(RELAY_VERSION, 'world205');   // PIN MOVED: world205, EG-PLAY (the room of an Elite Breach - the hub opening it and calling its company, its halls and their director, its own fight, its receipts; world195 on its branch, renumbered past COATS1, CHAT-LANG, BAL8, SPAWN-REBIRTH, AUDIT ETHER-OW, PEER-ACTS, CHAT-TRADE, FIVE-ASKS, KG-SET and KG5 at the merges); KG5 opened the gambit at world204
+  assert.ok(relayVersionAtLeast(GAMBIT_RELAY_MIN), 'the relay this tree builds runs it');   // was an equality pin on world204, which PVP-LOOT + QUEST-HOME's world205 left red on main (deploy 1438)
   assert.equal(relaySupportsGambit('world204'), true);
   assert.equal(relaySupportsGambit('world203'), false, 'KG-SET\'s relay closes the socket on a gambit frame');
 });

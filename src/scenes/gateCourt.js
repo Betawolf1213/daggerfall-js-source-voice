@@ -24,6 +24,7 @@ import { courtToDungeon, portalDoor, PORTAL_AFTER_MS, PORTAL_RISE_MS, PORTAL_DRO
 import { GateTelegraphRenderer, telegraphShape, markShape, poolShapes, telegraphEdge, TELEGRAPH_STYLE, TELEGRAPH_EDGE, TELEGRAPH_NOW_MS } from '../render/gateTelegraph.js';
 import { CourtCrystalRenderer, crystalGrowth, CRYSTAL_GROW_MS, CRYSTAL_SHATTER_MS, CRYSTAL_FLASH_MS, CRYSTALS_DRAW_MAX } from '../render/courtCrystals.js';   // WB9c: the crystals of Oblivion, drawn
 import { GateFxRenderer, fxBurstOf, meteorFall, FX_BURST_MS, FX_BURSTS_MAX, FX_KINDS, FX_LIGHT_MS } from '../render/gateFx.js';   // WB9e: his blows seen landing
+import { relight } from '../render/lightId.js';   // LIGHT-ID: a burst's slot handed to the next burst - its flash another light
 import { setBatchHitFlash } from '../systems/hitFlash.js';   // WB13d: his body struck flashes, as every foe's does
 import { tierColour } from '../render/spoilsGlow.js';   // WB9f: a piece's landing sparks in its tier's colour
 import { RARITIES } from '../systems/lootRarity.js';
@@ -373,7 +374,8 @@ export function createGateCourt({
   let groundName = '', groundColor = null, biteAt = -Infinity, biteColor = null;
   /** WB9e: his blows seen landing - the bursts' slots (each where it landed in the dungeon's frame, its moment on the
    *  relay's clock, its kind and colour), the frame's live ones and the meteor's fall; the pass (made the first time) */
-  const _bursts = [], _fxLive = [], _meteor = { at: [0, 0, 0], color: null }, _landLights = [];   // WB13d: a light a burst's slot
+  const _bursts = [], _fxLive = [], _meteor = { at: [0, 0, 0], color: null };   // WB13d: a light a burst's slot (its `light`, LIGHT-ID: relit when the slot is the next burst's)
+  const _glow = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] };   // LIGHT-ID: his glow, ONE light that follows him - refilled, never re-minted (render/lightId.js)
   /** WB13e: the fall's white and the Wrath's light - one each, refilled (AUDIT WB D10's law) */
   const _fallLight = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] }, _wrathLight = { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] };
   const flash = (L, at, c, k, range) => { L.x = at[0]; L.y = at[1]; L.z = at[2]; L.range = range; L.color[0] = c[0] * k; L.color[1] = c[1] * k; L.color[2] = c[2] * k; return L; };
@@ -624,7 +626,8 @@ export function createGateCourt({
    *  FX_BURSTS_MAX; `floor` the floor's height under it (WB9f: his spoils' gold bursts out of his chest), else its own. */
   function addBurst(p, at0, kind, color, floor = NaN) {
     let b = _bursts.length < FX_BURSTS_MAX ? null : _bursts.reduce((o, q) => (q.at0 < o.at0 ? q : o));
-    if (!b) { b = { at: [0, 0, 0], at0: 0, t: 0, kind, color, floor: NaN }; _bursts.push(b); }
+    if (!b) { b = { at: [0, 0, 0], at0: 0, t: 0, kind, color, floor: NaN, light: null }; _bursts.push(b); }
+    else if (b.light) relight(b.light);   // LIGHT-ID: the slot's flash is the next burst's light, not the last one's moved
     b.at[0] = p[0]; b.at[1] = p[1]; b.at[2] = p[2]; b.at0 = at0; b.kind = kind; b.color = color; b.floor = floor;
   }
   /** WB9f: A PIECE OF HIS SPOILS CAME TO REST (scenes/spoilsPool.js frame's `onRest`): its tier's sparks where it lies,
@@ -1034,7 +1037,7 @@ export function createGateCourt({
     },
     /** The glow on him and on the spoils, for the court's light channel (world/gateArena.js withCourtLights). */
     lights() {
-      const s = link.state(), t = now(); const g = s && s.day !== null ? bossGlow(s, t) : null;
+      const s = link.state(), t = now(); const g = s && s.day !== null ? bossGlow(s, t, _glow) : null;   // LIGHT-ID: his one kept record
       _lights.length = 0;
       if (g) _lights.push(g);
       if (s && s.day !== null) {
@@ -1063,7 +1066,7 @@ export function createGateCourt({
       for (let k = 0; k < _bursts.length; k++) {
         const b = _bursts[k], L0 = b.kind?.light, age = t - b.at0;
         if (!L0 || !(age >= 0) || age >= FX_LIGHT_MS) continue;
-        const L = (_landLights[k] ??= { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] }), kk = L0[0] * (1 - age / FX_LIGHT_MS);
+        const L = (b.light ??= { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] }), kk = L0[0] * (1 - age / FX_LIGHT_MS);
         L.x = b.at[0]; L.y = b.at[1] + LANDING_LIGHT_Y; L.z = b.at[2]; L.range = L0[1];
         L.color[0] = b.color[0] * kk; L.color[1] = b.color[1] * kk; L.color[2] = b.color[2] * kk;
         _lights.push(L);

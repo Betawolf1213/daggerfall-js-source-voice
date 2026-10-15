@@ -4024,12 +4024,12 @@ unique different version of the aura, a title named Hour's First, and each the g
   has 11 mutants, all dead.
 
 
-## EG-PLAY and after — the Elite Breach on the account service (2026-10-11 to 2026-10-13, acct136, migration 0117)
+## EG-PLAY and after — the Elite Breach on the account service (2026-10-11 to 2026-10-13, acct137, migration 0119)
 
 The Elite Breach's account half, each piece recorded in `bible/11-Multiplayer/Elite-Gates.md` section 31 (sections 19
 and 20 for EG-E1 to EG-E3) and listed here so this arc's page names every route it holds. The arc ships under one
-account version, EG-PLAY's: `acct116` to `acct122` on its branch, `acct136` since the merges of main (past BAL9, NAME-AS,
-HACKED-GOLD, ETHER-NODES, AUDIT ETHER-OW, MINE-PERKS, HOMES-SHED, BUSY-GATE, CRAFT-PROCS, SCHOOLS5, RECOVERY-SET, REVIVE, LAMP-KEEPER II, KG6 and POI-1's `acct135`), and one migration, `0117_elite_breach.sql` (0111, 0112, 0113, 0114 then 0116 on its branch, past NAME-AS's 0111, SEAT-FACTS' 0112, LAMP-KEEPER II's 0113, FIRMAMENT-ON's 0114, KG6's 0115 and POI-1's 0116).
+account version, EG-PLAY's: `acct116` to `acct122` on its branch, `acct137` since the merges of main (past BAL9, NAME-AS,
+HACKED-GOLD, ETHER-NODES, AUDIT ETHER-OW, MINE-PERKS, HOMES-SHED, BUSY-GATE, CRAFT-PROCS, SCHOOLS5, RECOVERY-SET, REVIVE, LAMP-KEEPER II, KG6, POI-1's `acct135` and SUMMON-REPAIR + PVP-ESCROW + QUEST-HOME's `acct136`), and one migration, `0119_elite_breach.sql` (0111, 0112, 0113, 0114, 0116 then 0117 on its branch, past NAME-AS's 0111, SEAT-FACTS' 0112, LAMP-KEEPER II's 0113, FIRMAMENT-ON's 0114, KG6's 0115, POI-1's 0116, SUMMON-REPAIR's 0117 and PVP-ESCROW's 0118).
 
 - **EG-PLAY** (`server-account/src/eg.js`): the Weir Keys (`players.eg_keys`, the rolls at gate and Hour claims, the
   launch gift), `/v1/eg/keys`, `/v1/eg/open` (a stake, idempotent on its request id; one live breach an account; the
@@ -4048,13 +4048,13 @@ HACKED-GOLD, ETHER-NODES, AUDIT ETHER-OW, MINE-PERKS, HOMES-SHED, BUSY-GATE, CRA
 - **AUDIT EG IV** (the net group, `01-Overview/Audit-EG-IV.md`):
   - an open whose answer was lost is asked again by its request id (`/v1/eg/open`'s `again`). The service answers with
     the stake it took, for its void, or with `none` (404) where it took none;
-  - the launch gift's letter is sent by migration 0117 beside its key (`EG_LAUNCH_POST`, batch `spire-launch`);
+  - the launch gift's letter is sent by migration 0119 beside its key (`EG_LAUNCH_POST`, batch `spire-launch`);
   - a stake the first breach's mercy held is spent by the clock with its own letter (`EG_STAKE_POST_HELD`);
   - a gate kill's Weir Key is rolled in its claim's own batch (`egGateWeir`);
   - the opener's `'empty'` end clears their `eg_live`;
   - Spire Champion is kept only once a season's late ends are claimed;
   - the routes' comment names what the open reads and what it and the admission refuse.
-- **AUDIT EG V** (fix group D, `01-Overview/Audit-EG-V.md`), in migration 0117:
+- **AUDIT EG V** (fix group D, `01-Overview/Audit-EG-V.md`), in migration 0119:
   - a stake's open order re-signed for a later open carries the stake's own issue, never a fresh one (L4-5);
   - a Redoubt's spoils seed mixes the receipt's seed with the service's own 8-byte draw kept on the row
     (`eg_redoubts.nonce`, `eg_runs.nonce`), answered by the claim, so a player holding several receipts cannot choose
@@ -4062,7 +4062,7 @@ HACKED-GOLD, ETHER-NODES, AUDIT ETHER-OW, MINE-PERKS, HOMES-SHED, BUSY-GATE, CRA
   - a circle's Reliquaries open once per account per arena week (`eg_reliqs`, `egReliquariesOf`) (L8-4);
   - an end keeps its Wager's decrees (`eg_runs.wgs`), and the Depths board names them (L8-9).
 
-## EG-E2 — the Spire's titles and auras (2026-10-12, under EG-PLAY's account version: acct121 then, acct136 since the merges; world197 then, world205 since)
+## EG-E2 — the Spire's titles and auras (2026-10-12, under EG-PLAY's account version: acct121 then, acct137 since the merges; world197 then, world206 since)
 
 The Elite Breach's honours (`bible/11-Multiplayer/Elite-Gates.md` section 19, THE HONOURS; its EG-E2 record at the end
 of section 20), added as every honour is: the ids last in `identityToken.js` `TITLES` and `AURAS` (the relay's bundle -

@@ -749,6 +749,28 @@ After the third merge, the two items this page left owed as small were built (20
   rest's ask (PIN MOVED). Mutants: eight new (four in `egaudit3_client.json`, four in `egaudit5_e.json`) and six re-aimed (two in each of
   those and in `egseam.json`), all dead; the six lists around the touched lines ran 418 dead and 1 equivalent as recorded.
 
+## At the fourth merge of main
+
+Main moved 49 commits more (FIELD BUGS 2026-10-14's PVP-LOOT + QUEST-HOME, SUMMON-REPAIR and PVP-ESCROW, PARTY-LOOT,
+LIGHT-ID, HORSE-TIERS and the rest) and took `world205`, `acct136` and migrations 0117 and 0118. The arc renumbered past
+them once more:
+
+- **Versions**: `RELAY_VERSION` `world206` (its law row re-hashed with `src/net/homeLaw.js` in the graph), `EG_RELAY_MIN`
+  206; `ACCOUNT_VERSION` `acct137` in `service.js` and `wrangler.toml`; the migration `0119_elite_breach.sql`. Every
+  relay and account pin chain took the arc's entry over main's, and the mutant records on the version lines moved. The
+  account history line (`renown_char`) keeps main's newest entry, as the earlier merges kept it.
+- **The orders**: `ORDER_KINDS` holds QUEST-HOME's `home` and the arc's `egopen` and `egadmit`; a home order carries no
+  breach's fields and a breach's order no home's.
+- **The account's clock**: PVP-ESCROW's sweep beside EG-ZM's stake clock - nine statements a minute and twenty-four an
+  hour on a quiet world (`auditscale` D7).
+- **The gate's lights**: LIGHT-ID adopts the gate's fire by its gate; EG-F's arches' lights stand beside it.
+- **The dungeon's find under PARTY-LOOT**: main made a dungeon body the room's base, its death raised inside the base on
+  every client in the room and not at the kill. Taken as it stood, an elite's Weir Key find would be asked by every client
+  in the room and thrown onto a copy nobody sees. The find now ignores the base's raise (marked `room`), the kill asks it
+  at the host (`egFindKill`) and the joiner's door as before, and a key found on a room's body goes to the pack whole.
+  Section 5 says so. Pinned in `egeco_find` (EG-E3 x PARTY-LOOT); 8 mutants in `egeco_relay.json`, and the 80 of that
+  list's EGECO3 family, all dead.
+
 ## Still owed
 
 - **EG-L10N**: the arc's own words through the text core, skipped at Mac's word (group L, above).

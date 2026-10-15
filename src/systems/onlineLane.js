@@ -519,10 +519,29 @@ export function onlineForcedModSetting(vendor, key, search) {
   if (!room || !Object.hasOwn(room, key)) return undefined;
   return isOnlinePage(search) ? room[key] : undefined;
 }
+/**
+ * PARTY-LOOT (2026-10-14, Mac: "Shared base + personal bonus"): A ROOM'S SHARED BASE IS ROLLED UNDER THE ROOM'S RULES.
+ * Every client in a dungeon room computes the same base list for a container (systems/roomLoot.js), and a take names
+ * a piece of it by its place in that list - so a draw that reads ONE player's switch is a different list on that
+ * player's machine, and the take lands on another piece. MODS-ONLINE-2 left a vendored mod's switches the player's
+ * (Foraging's, the Ocean Hole's, Unleveled Loot's dials apart from P0.2's), and several of them roll into a pile or a
+ * body. For the length of a base roll every key of every mod reads its SHIPPED default, as P0.2 reads a balance mod's
+ * online: `asTheRoom(fn)` raises the scope around the synchronous roll and lowers it in a `finally`, so no read outside
+ * the roll sees it and a throw cannot leave it raised. Nested calls nest. What the player's own switches decide stays
+ * theirs everywhere else - and in their own bonus layer, which is rolled outside this scope.
+ */
+let _roomRoll = 0;
+export function asTheRoom(fn) {
+  _roomRoll++;
+  try { return fn(); } finally { _roomRoll--; }
+}
+/** Whether a room's base is being rolled now (tests; the scope's own pin). */
+export const rollingAsTheRoom = () => _roomRoll > 0;
 /** REALM P0.2: a key the room owns WHOLE (ONLINE_WHOLE_MODS) - its value online is its shipped default, which
  *  modSettings.js onlineModSetting reads (this lane cannot read the table without a cycle). `offline` asks the table
  *  alone, for the offline sync's copy of the room's rules. */
 export function onlineWholeModKey(vendor, key, search, { offline = false } = {}) {
+  if (_roomRoll > 0) return true;   // PARTY-LOOT: while a room's base rolls, every mod is the room's whole (asTheRoom, below)
   const whole = Object.hasOwn(ONLINE_WHOLE_MODS, vendor) ? ONLINE_WHOLE_MODS[vendor] : null;
   return !!whole && !whole.includes(key) && (offline || isOnlinePage(search));
 }

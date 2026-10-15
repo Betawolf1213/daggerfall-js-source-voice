@@ -49,12 +49,19 @@ export function fakeDom({ w = 1280, h = 800 } = {}) {
     return n;
   };
   const all = (n) => { const out = []; const walk = (x) => { for (const c of x.children) { out.push(c); walk(c); } }; walk(n); return out; };
-  /** One selector, the shapes this pane actually writes: `.a`, `.a.b`, `tag`, and a comma list. */
+  /** One selector, the shapes this pane actually writes: `.a`, `.a.b`, `tag`, and a comma list - and an id and an
+   *  attribute (`#a`, `[b]`, `[b="v"]`), as a browser reads them. HUD-SADDLE (FIELD BUGS 2026-10-14): this read them
+   *  as nothing at all, so `#fps-counter` was every node and `closest('[data-hm-ghost]')` answered every node it was
+   *  asked about - the HUD editor's sweep, which the notice stack's builder runs, took the whole page for its stand-ins
+   *  and took it down. A fake that lies makes a pin pass that production would fail (AUDIT WORLD D10's lesson). */
   const matches = (n, sel) => String(sel).split(',').some((one) => {
     const s = one.trim();
     if (!s) return false;
     const tag = /^[a-zA-Z]+/.exec(s)?.[0];
     if (tag && n.tagName !== tag.toUpperCase()) return false;
+    const id = /#([\w-]+)/.exec(s)?.[1];
+    if (id && n.id !== id) return false;
+    for (const [, k, v] of s.matchAll(/\[([\w-]+)(?:="([^"]*)")?\]/g)) if (!(k in n.attrs) || (v != null && n.attrs[k] !== v)) return false;
     const cls = [...s.matchAll(/\.([\w-]+)/g)].map((m) => m[1]);
     return cls.every((c) => n.classList.contains(c));
   });

@@ -32,6 +32,7 @@
 import { COURT_CENTRE, COURT_R, BOSS_REACH_R, COURTS, WALKS, WALK_HALF_W, WALK_LEAD_MS, WALK_FORM_MS, clampToFloor } from '../net/gateBrain.js';
 import { faces, spike, GATE_ARCHIVE, GATE_STONE_RECORD, ARCH_Y0 } from './gateModel.js';
 import { gateYaw } from '../net/gateLaw.js';
+import { lightList, packLight, copyLights } from '../render/lightId.js';   // LIGHT-ID: the court's lights into the frame's list through the one seam
 
 /** The court's own textures (world/gateArt.js courtArt) - the gate's pseudo-archive's neighbour. */
 export const COURT_ARCHIVE = 38111;
@@ -335,13 +336,12 @@ let _courtLightsNear = null;
  */
 export function withCourtLights(lit, lights) {
   const n = lit.data.length / 4, k = lights.length;
-  /** @type {Float32Array & { carried?: Uint8Array }} */
-  const data = new Float32Array((n + k) * 4);
+  const data = lightList(n + k);   // LIGHT-ID: his glow, his flashes and the braziers each named by its own record
   const colors = new Float32Array((n + k) * 3), carried = new Uint8Array(n + k);
-  data.set(lit.data);
+  copyLights(data, 0, lit.data, 0, n);
   colors.set(lit.colors.subarray(0, n * 3));
   if (lit.data.carried) carried.set(lit.data.carried.subarray(0, n));
-  lights.forEach((l, i) => { data.set([l.x, l.y, l.z, l.range], (n + i) * 4); colors.set(l.color, (n + i) * 3); });
+  lights.forEach((l, i) => { packLight(data, n + i, l); colors.set(l.color, (n + i) * 3); });
   data.carried = carried;
   return { data, colors, carried };
 }

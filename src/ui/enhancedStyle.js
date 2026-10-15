@@ -5295,6 +5295,10 @@ ${paceControlsCss('tview')}
 .wplaque-row { display: flex; align-items: baseline; gap: 10px; font-size: 14px;
   line-height: 1.5; }
 .wplaque-count { margin-left: auto; color: var(--brass); font-size: 12px; }
+/* PARTY-LOOT: a row of this player's own bonus - the tag after the count, the rest of the list the room's */
+.wplaque-mine { color: var(--brass); font-size: 11px; font-style: italic; opacity: 0.85; }
+.wplaque-row.mine .wplaque-mine { margin-left: 6px; }
+.wplaque-row.mine:not(:has(.wplaque-count)) .wplaque-mine { margin-left: auto; }
 /* QUICK-LOOT B3: THE HIGHLIGHT. Negative margins with matching padding
    so the band reaches the plaque's inner edges without the row's own
    box moving - a highlight that reflowed the list would shift every

@@ -250,6 +250,30 @@ it traded with and what each gave - a trade is witnessed on both rows, so no fin
 among the character's findings with who did it, and moves the row's `judge_rev`. The cron sweeps findings past 90 days
 and the hours past 30.
 
+SUMMON-REPAIR (2026-10-15, acct136, migration 0117 - acct133 and 0113 on its branch, renumbered past LAMP-KEEPER II's at the merge, then acct134 and 0114 on the integration, renumbered past main's KG6 and POI-1 (acct134, acct135) and FIRMAMENT-ON's, KG6's and POI-1's 0114-0116 at the merge of main; Mac, asked how to mend the save FIELD BUGS 2026-10-14 SUMMON-OFFER
+left stuck: "Operator tool") added two. `realm-characters { name }` lists an account's realm characters by its handle -
+the id every act names, the dead said so. `realm-repair { id, ticket, faction, flag, gold, note? }` mends one: one of
+FactionFile's flag bits (`formats/factionFile.js` FACTION_FLAGS, moved there from `systems/factionRep.js`, which hands
+them on, so the Worker can read them) cleared on one faction of its record, and 0 to 1,000,000 gold given back as the
+game's letter of credit (`src/net/repairLaw.js`, the service's and the tool's one law: `repairOf`, `applyRepair`). The
+record says whether it can be done - a faction it does not hold is `repair-no-faction`, a bit its faction does not carry
+`repair-not-set` (an account holds up to six characters: one aimed at the wrong one mends and gives nothing). It is
+done ONCE A TICKET: `realm_repairs` (never swept) holds a row a character and ticket, written in the record's own batch,
+so the same repair asked again answers its row (`repeat`) and moves nothing, and two asked at once meet the key and one
+rolls back. The record is SEIZED as the rollback and INT9's death take it (`realm.js` seizeRealmRecord): read where it
+stands, written one sequence on, its seat taken from any tab - the tab playing it is refused at its next checkpoint, the
+copy its device keeps follows a sequence the record has left, and its next join plays the mended record - and the gold
+is witnessed (the judge charges no gain the service made) and counted as the service's own faucet, `repair`
+(FAUCET_KINDS, beside the patrons'). The act is written among the findings like every other. The tool:
+
+```sh
+node tools/realmReview.mjs characters <handle>
+node tools/realmReview.mjs repair <realm character id> <ticket> <faction id> <0x40 | 64 | Summoned> <gold> [note]
+```
+
+Pinned by `test/fb1014_summonrepair.test.js` over the real Worker and the playing tab's own session and join;
+`tools/mutants/fb1014_summonrepair.json` (16, dead).
+
 ### 4b. The audit (2026-10-09, Mac: "Lets do a comprehensive audit on this")
 
 Five reviews ran on lane 1 as first built: the service's correctness and races, a modified client's ways round it, the
@@ -349,8 +373,11 @@ receipt's carrier); `scenes/dungeonContext.js` and `scenes/worldModes.js` NO DUE
   `rc` and `ci` only for a character whose lease is held (`server-account/src/realm.js` realmCharacterHeld - a tab
   playing one character named a poor other, and its deaths dropped the other's record). A blow lands only where BOTH
   fighters said so, never on kin: a party member, one under the party's truce (the hub keeps the party a record left,
-  `partyWas`, for `WILD_REF.truceMs`, the client's `WILD_PARTY_TRUCE_MS`), or the fighter's own duel opponent - and a hub
-  that does not answer is kin, for `WDUN_KIN_SILENT_MS` (the room asks again then). A socket's close takes its fighter out
+  `partyWas`, for `WILD_REF.truceMs`, the client's `WILD_PARTY_TRUCE_MS`), the fighter's own duel opponent, or - MAC'S
+  DECISION (2026-10-14, "Guildmates are friends") - a member of its guild, read off the two sockets' verified guilds - and
+  a hub that does not answer is kin, for `WDUN_KIN_SILENT_MS` (the room asks again then). Kin is one law, the referee's
+  and every client door's (`wildRef.js:"export function wildKin"`); the guild was the client's alone, and a guildmate the
+  maps and nameplates counted a friend could kill. A socket's close takes its fighter out
   of the zone (`wildGone`).
 - **The fight.** The Royal Tourney's vitality; every blow and cast the referee's; `wref hp` to both, `wref fell` to the
   room. NO FREE BAR: a fighter is whole again only unstruck `WILD_REF.mendMs` AND in the zone as long (its vitality alone -
@@ -382,6 +409,17 @@ receipt's carrier); `scenes/dungeonContext.js` and `scenes/worldModes.js` NO DUE
   second asking is answered the first's records and THE SAME ORDER, issued at its first minting for its first room (`oi`,
   `wm`) and good its minute alone - and, for the fallen's own tab, where its record stands. A death to a foe has no
   receipt: the fallen's own act on its tab's nonce, its remains' id a digest of the character and the nonce.
+  THE TWO-PHASE HANDOFF (MAC'S DECISION, 2026-10-14, "Yes, build it"): the fallen loses the killer's piece only once the
+  killer has it. Where the tab says its room signs collects (`collect` 1), the piece leaves the record INTO ESCROW
+  (`wild_escrow`, in the fall's own batch - its ledger key the service's, `ledger.js` ledgerMoves `escrow`), never a fresh
+  id, its order saying so (`we`); it ends once, in one batch with the record it lands in, the escrow's row moved from
+  `held` and guarded to one (`server-account/src/wild.js` endEscrow): into the killer's record on the room's signed
+  collect (`/v1/wild/collect`), or back into the fallen's on its own tab's ask once a collect could no longer be signed
+  and one signed at its last moment is spent (`/v1/wild/reclaim`, escrowBackAt) - two windows that never meet. An end
+  asked twice is the first's answer, a batch that failed read for whether it landed (dropIfUnnamed, recordMovedOf); the
+  piece is in one record or the escrow, never two, never none, whichever host restarts. Before it, the service took the
+  piece off the record at the fall and the remains held it: a killer who never took it (gone before it was laid, refused -
+  PVP-LOOT) left it to nobody.
 - **The ledger.** Every piece the death could take is asked of the ledger before any is taken (`wildDropCandidates` -
   it asked of a dry run's fitted few); a piece it bars stays (`kept`). Each valuable piece dropped lies in the remains
   under a FRESH id, and the id it had is written down as the fallen's own copy (`ledger.js` knownCopySteps): a game that
@@ -390,16 +428,27 @@ receipt's carrier); `scenes/dungeonContext.js` and `scenes/worldModes.js` NO DUE
   act drops it.
 - **The room.** The service signs what it took for the room - a `remains` order (`wr`, the records' digest `wh` and
   count `wn`, the room `wm`, `wk`/`wi`: the killer's piece, theirs alone, `wg`: the fallen's guild) - and the relay keeps
-  a deposit only in the room the order names, its records digesting to it. An emptied remains is a TOMBSTONE while it
+  a deposit only in the room the order names, its records digesting to it. A piece the order says is in escrow (`we`)
+  the room never hands as a record: its killer's take is answered a signed COLLECT (`wildReceipt.js:"export async function mintWildCollect"`,
+  `g1` - the remains, the killer, its realm character), signed once and kept with the remains through a restart (`wc`),
+  the same collect said to every asking (`wildLaw.js:"export function collectAsk"`). An emptied remains is a TOMBSTONE while it
   lives: kept, said to nobody, never laid again (it was let go, and its order laid the same records twice), never let go
   for a newcomer younger than `WILD_TOMB_MIN_MS`. A second carrier's chunks are nothing, quietly - unless the first has
   stalled `WILD_STALL_MS`, when the second lays it afresh. The remains' guild is the order's (the killer carrying it wrote
   its own). The deposit goes in chunks bounded by the wire's frame. The killer's game asks for its piece the moment the
   room says the remains, and again until the ask leaves. The cron sweeps the falls after `WILD_FALLS_KEEP_S`.
+  PVP-LOOT (FIELD BUGS 2026-10-14, `01-Overview/Field-Bugs-2026-10-14.md`): the room's friend law (PVPDUNGEONS, a
+  fallen's party and guild take nothing of its remains) is the DROP's - the record the order names is its killer's
+  whoever the fallen's guild or party counts them (`wildLaw.js:"export const remainsNamedFor"`), and a collect is never
+  asked it. Read over that record too, it refused a guildmate's kill the piece the service had already taken off the
+  record. Guildmates are kin since; it still guards a room's old take (a tab whose room signs no collect) where a party or
+  a guild was joined between the fall and the take, or the hub is silent.
 - **Lane 1's freeze.** A record the judge holds still loses its drop, and the room is given none of it (`burnt`, no
-  order): a held character hands no value to another player.
+  order): a held character hands no value to another player. It keeps the killer's piece (Mac, 2026-10-14): that one
+  goes only to its killer, who can never have it from a held record.
 - **THE FOUR HOSTS.** `scenes/world.js` WIRED (the zone word, the blows, the referee's readout, the fall, the drop, the
-  deposit, the seizure); `scenes/dungeonContext.js` (the zone's halls) WIRED through world.js's own `wildStrike` and
+  deposit, the seizure, the escrow - the killer's collect carried, the fallen's piece taken back, both on the zone's
+  frame, `world.js:"const wildEscrowFrame = () =>"`); `scenes/dungeonContext.js` (the zone's halls) WIRED through world.js's own `wildStrike` and
   `wildSpellOut`, refereed alike, its pool holding the remains, its ghost leaving once its deposit has gone; `scenes/
   worldModes.js` (a building) no fight - the zone word is 0 indoors - its pool holding the remains;
   `scenes/exterior.js`, the offline fixed city, NOT WIRED on purpose: the zone is online's alone.
@@ -452,6 +501,16 @@ DORMANT: no caller sets it since INT8, kept as it stands and pinned so (`test/in
   families, a paralysis or a drain, do not land on another player).
 - The zone's membership is each socket's own word, and its receipts are the relay's to sign and the service's to settle.
 
+### Decisions (2026-10-14, FIELD BUGS PVP-LOOT)
+
+Mac, on "Equipped items Disappear after looting in PvP zone" (`01-Overview/Field-Bugs-2026-10-14.md` PVP-LOOT):
+
+1. **"Guildmates are friends."** The referee counts one guild kin, as a party, its truce and a duel are - one law
+   (`wildRef.js:"export function wildKin"`) at the relay and at every client door (INT9, who fights).
+2. **"Yes, build it" - the two-phase handoff.** The fallen loses the killer's worn piece only once the killer has it:
+   held by the service in escrow from the fall, the killer's when its collect lands, its fallen's again when nobody
+   collects (INT9, the drop and the room).
+
 ### What lane 2 leaves open
 
 - A client may OPT OUT of the zone's fights (never say `zone`): it fights nobody and drops nothing to a player. It cannot
@@ -465,7 +524,10 @@ DORMANT: no caller sets it since INT8, kept as it stands and pinned so (`test/in
 - A fighter's bar is its own cell's: a blow lands only between two that stand in the same cell (a fight across a seam
   waits for one of them to cross), and the bar crosses with it.
 - An order is good its minute: a deposit that never left inside it (the network gone for a minute) lays nothing, and the
-  drop is lost to everyone - the record lost it either way.
+  drop is lost to everyone - the record lost it either way, save the killer's piece in escrow, which comes back to its
+  fallen (INT9, the drop).
+- A piece in escrow comes back only when its fallen plays again: there is no clock that moves a record nobody plays. A
+  fallen character deleted or dead for good while one is held has no record to take it back into; it stays the escrow's.
 - A crafted piece the fallen takes back from its own remains is written down as its copy: it wears it, and never trades
   it (the craft's key cannot be minted afresh as an id is).
 - A pick at a piece the fallen no longer wears (it changed between the offer and the receipt) takes none.

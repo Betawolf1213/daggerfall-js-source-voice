@@ -93,11 +93,12 @@
   {
     "name": "AINT15-DEMOTED-WORD-LOST",
     "file": "src/net/online.js",
-    "old": "wildOk: this.wildOk, bossOk: this.bossOk };",
-    "new": "wildOk: this.wildOk };",
+    "old": "wildOk: this.wildOk, wildCollectOk: this.wildCollectOk, bossOk: this.bossOk };",
+    "new": "wildOk: this.wildOk, wildCollectOk: this.wildCollectOk };",
     "tests": [
       "test/int_lane3_audit.test.js"
-    ]
+    ],
+    "note": "MAC (2026-10-14, re-aimed by content): the halo swap carries the zone collect word too"
   },
   {
     "name": "AINT15-BODY-BUCKET-NOT-SPENT",

@@ -218,7 +218,7 @@
   {
     "name": "EGECO-the-joiners-door-unwired",
     "file": "src/scenes/dungeonContext.js",
-    "old": " egFindStruck(f.entity).catch(() => {});",
+    "old": " egFindStruck(f.entity, roomLootOn() && roomCanonOfFoe(f) != null).catch(() => {});",
     "new": " void 0;",
     "tests": [
       "test/egeco_hosts.test.js"

@@ -42,6 +42,7 @@ import { marksCardModel } from '../ui/gateMarksView.js';   // WB9a: tonight's ma
 import { trs } from '../world/mat4.js';
 import { RAY_DISTANCE } from '../player/activate.js';
 import { CAPSULE_RADIUS } from '../player/motor.js';
+import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: the gate's fire named by its gate
 
 /** The collider's bucket for the gate's stone. */
 export const GATE_BUCKET = 'wb:gate';
@@ -294,7 +295,7 @@ export function createGatePool({
     lights() {
       const al = arches?.lights?.() ?? NO_GATE;
       if (!place || place.coarse || place.fade <= 0) return al.length ? al : NO_GATE;
-      const gl1 = { x: place.origin[0], y: place.origin[1] + GATE_LIGHT_UP, z: place.origin[2], range: GATE_LIGHT_RANGE * place.fade * (0.5 + 0.5 * open) };
+      const gl1 = adoptLight({ x: place.origin[0], y: place.origin[1] + GATE_LIGHT_UP, z: place.origin[2], range: GATE_LIGHT_RANGE * place.fade * (0.5 + 0.5 * open) }, place);   // LIGHT-ID: the gate's fire, frame to frame
       return al.length ? [gl1, ...al] : [gl1];
     },
     /** The eye's box: the FIRE, not the stone - a player standing in the threshold is inside the gate's own bounds, and a

@@ -105,7 +105,10 @@ asks in its own words; its "Today is %dat, the day of summoning for %dae" would 
 vendored rows, `SUMMON_BY_NAME_ROWS`, for a record with no second sentence). The Yes is DFU's summoning of that prince,
 whole: the price off the summoner's regard (200,000 less a thousand a point), the chance off the prince's own regard and
 his weather - read at the Yes, the sky the summoning is made under (AUDIT WAITS S1) - Sheogorath's gatecrash, the prince
-met before, the gold gone before the roll, the quest he offers and his film.
+met before, the gold gone whatever the roll, the quest he offers and his film. (SUMMON-OFFER,
+`01-Overview/Field-Bugs-2026-10-14.md`: the gold and the Summoned flag are taken only once his quest is made - in a
+region where it cannot be, a palace it wants and the region lacks, the summoning spends and records nothing, and says
+so. DFU's own order left that hole; naming a prince from any region made it a common one.)
 
 A witches' coven keeps its own law - one prince a day, drawn (the event clock's day online, TIME1) - and Glenmoril its
 Hircine; they are told apart by the summoner's faction, as DFU's own service tells them (AUDIT WAITS S5), so a coven

@@ -443,8 +443,8 @@
   {
     "name": "EGECO3-owner-asks-a-joiners-kill",
     "file": "src/systems/egFind.js",
-    "old": "(by == null || by === selfId() ? find(entity) : Promise.resolve(false))",
-    "new": "find(entity)",
+    "old": "(by == null || by === selfId() ? find(entity, room) : Promise.resolve(false))",
+    "new": "find(entity, room)",
     "tests": [
       "test/egeco_find.test.js"
     ]
@@ -470,7 +470,7 @@
   {
     "name": "EGECO3-the-key-not-thrown",
     "file": "src/systems/egFind.js",
-    "old": "    throwKey(entity, d.keys);\n",
+    "old": "    throwKey(room ? null : entity, d.keys);\n",
     "new": "",
     "tests": [
       "test/egeco_find.test.js"
@@ -479,7 +479,7 @@
   {
     "name": "EGECO3-the-pack-the-whole-balance",
     "file": "src/systems/egFind.js",
-    "old": "restackWeirKeys(pack, Math.max(0, keys - 1));",
+    "old": "restackWeirKeys(pack, Math.max(0, keys - (onBody ? 1 : 0)));",
     "new": "restackWeirKeys(pack, keys);",
     "tests": [
       "test/egeco_find.test.js"
@@ -643,6 +643,78 @@
     "file": "server-account/src/index.js",
     "old": "rehearsed: 409, spent: 409, capped: 409,",
     "new": "rehearsed: 409, spent: 409,",
+    "tests": [
+      "test/egeco_find.test.js"
+    ]
+  },
+  {
+    "name": "EGECO3-PL-room-raise-answered",
+    "file": "src/systems/egFind.js",
+    "old": "{ if (opts.room) return; death(entity, opts.by ?? null)",
+    "new": "{ death(entity, opts.by ?? null)",
+    "tests": [
+      "test/egeco_find.test.js"
+    ]
+  },
+  {
+    "name": "EGECO3-PL-key-on-the-copy",
+    "file": "src/systems/egFind.js",
+    "old": "    throwKey(room ? null : entity, d.keys);\n",
+    "new": "    throwKey(entity, d.keys);\n",
+    "tests": [
+      "test/egeco_find.test.js"
+    ]
+  },
+  {
+    "name": "EGECO3-PL-kill-not-a-room",
+    "file": "src/systems/egFind.js",
+    "old": "_registered?.death(entity, by, true) ??",
+    "new": "_registered?.death(entity, by) ??",
+    "tests": [
+      "test/egeco_find.test.js"
+    ]
+  },
+  {
+    "name": "EGECO3-PL-joiner-room-lost",
+    "file": "src/systems/egFind.js",
+    "old": "_registered?.struck(entity, room) ??",
+    "new": "_registered?.struck(entity) ??",
+    "tests": [
+      "test/egeco_find.test.js"
+    ]
+  },
+  {
+    "name": "EGECO3-PL-pack-short",
+    "file": "src/systems/egFind.js",
+    "old": "restackWeirKeys(pack, Math.max(0, keys - (onBody ? 1 : 0)));",
+    "new": "restackWeirKeys(pack, Math.max(0, keys - 1));",
+    "tests": [
+      "test/egeco_find.test.js"
+    ]
+  },
+  {
+    "name": "EGECO3-PL-room-raise-unmarked",
+    "file": "src/scenes/roomLootHost.js",
+    "old": "raiseEnemyDeath(e, { ...o, level: terms.lv, room: true });",
+    "new": "raiseEnemyDeath(e, { ...o, level: terms.lv });",
+    "tests": [
+      "test/egeco_find.test.js"
+    ]
+  },
+  {
+    "name": "EGECO3-PL-host-kill-never-asks",
+    "file": "src/scenes/dungeonContext.js",
+    "old": " else egFindKill(foe.entity, foe._killedBy ?? null).catch(() => {});",
+    "new": ";",
+    "tests": [
+      "test/egeco_find.test.js"
+    ]
+  },
+  {
+    "name": "EGECO3-PL-joiner-door-unflagged",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "egFindStruck(f.entity, roomLootOn() && roomCanonOfFoe(f) != null)",
+    "new": "egFindStruck(f.entity)",
     "tests": [
       "test/egeco_find.test.js"
     ]

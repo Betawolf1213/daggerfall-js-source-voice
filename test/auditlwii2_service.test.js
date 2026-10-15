@@ -399,10 +399,12 @@ test('AUDIT LW-II-2 S6: THE PATRONS\' GOLD WHERE THE WEALTH MEASURE COUNTS IT - 
   const week = await s.call('/v1/mod/realm-budget', { days: 7 }, dev.secret);
   assert.equal(week.status, 200, JSON.stringify(week.body));
   const gold = sold.reduce((a, x) => a + x.gets, 0);
-  assert.deepEqual(week.body.faucets, [{ kind: 'patron', gold, n: sold.length }], 'the week\'s patron gold, named');
+  // SUMMON-REPAIR: staff's refunds are a faucet of their own, named though none was paid (test/fb1014_summonrepair.test.js)
+  const none = { kind: 'repair', gold: 0, n: 0 };
+  assert.deepEqual(week.body.faucets, [{ kind: 'patron', gold, n: sold.length }, none], 'the week\'s patron gold, named');
   const month = await s.call('/v1/mod/realm-budget', { days: 30 }, dev.secret);
-  assert.deepEqual(month.body.faucets, [{ kind: 'patron', gold: gold + 999, n: sold.length + 1 }], 'the month\'s');
-  assert.deepEqual(faucetLines(week.body), [`faucet patron: ${gold} gold in ${sold.length} payments over the last 7 days`], 'the tool says it');
+  assert.deepEqual(month.body.faucets, [{ kind: 'patron', gold: gold + 999, n: sold.length + 1 }, none], 'the month\'s');
+  assert.deepEqual(faucetLines(week.body), [`faucet patron: ${gold} gold in ${sold.length} payments over the last 7 days`, 'faucet repair: 0 gold in 0 payments over the last 7 days'], 'the tool says it');
   assert.deepEqual(faucetLines({}), []);
 });
 

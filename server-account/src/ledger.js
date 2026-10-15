@@ -238,8 +238,10 @@ export function chargeSteps(db, char, keys, nowS) {
  * the record - in the service's hands (`escrow`: a listing, a vault, a stake) or no one's (spent, destroyed) - and the
  * pieces come into it, this record's whoever held them (the service's word). A batch moving two records runs both
  * records' `left` before either's `entered` (realmTrade.js), so a piece passing between them lands where it went.
+ * MAC (2026-10-14, the two-phase handoff): `escrow` a Set of keys - those pieces alone into the service's hands (a
+ * killer's worn piece, held for its collect - server-account/src/wild.js), the rest let go.
  * @param {any} db @param {{ player: string, char: string, seq: number, nowS: number }} at
- * @param {{ key: string, fp: string }[]} before @param {{ key: string, fp: string }[]} after @param {{ escrow?: boolean }} [o]
+ * @param {{ key: string, fp: string }[]} before @param {{ key: string, fp: string }[]} after @param {{ escrow?: boolean | Set<string> }} [o]
  */
 export function ledgerMoves(db, at, before, after, { escrow = false } = {}) {
   const was = new Map(before.map((p) => [p.key, p.fp]));
@@ -247,9 +249,12 @@ export function ledgerMoves(db, at, before, after, { escrow = false } = {}) {
   const gone = [...was.keys()].filter((k) => !now.has(k));
   /** @type {[string, string][]} */
   const came = [...now].filter(([k]) => !was.has(k));
-  const left = escrow
-    ? overKeys(db, gone, [at.char, at.nowS], (m) => `UPDATE item_uids SET state = 'escrow', char_id = '', claim_char = NULL, claim_at = NULL, at = ?2 WHERE uid IN (${m}) AND char_id = ?1 AND state = 'held'`)
-    : letGoSteps(db, gone, at.char, at.nowS);
+  const held = escrow === true ? gone : escrow instanceof Set ? gone.filter((k) => escrow.has(k)) : [];
+  const freed = gone.filter((k) => !held.includes(k));
+  const left = [
+    ...overKeys(db, held, [at.char, at.nowS], (m) => `UPDATE item_uids SET state = 'escrow', char_id = '', claim_char = NULL, claim_at = NULL, at = ?2 WHERE uid IN (${m}) AND char_id = ?1 AND state = 'held'`),
+    ...letGoSteps(db, freed, at.char, at.nowS),
+  ];
   const entered = [
     ...insertSteps(db, at, came, `ON CONFLICT (uid) DO UPDATE SET player = excluded.player, char_id = excluded.char_id, seen_seq = excluded.seen_seq,
       state = 'held', fp = excluded.fp, claim_char = CASE WHEN item_uids.claim_char = excluded.char_id THEN NULL ELSE item_uids.claim_char END,

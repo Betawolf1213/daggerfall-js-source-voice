@@ -13,12 +13,13 @@
 //   foot()          the classic transport's foot (Horse Cart and Cargo off: no mount key to press)
 //
 // Each frame the host hands `motion` what its motor rolled (the upkeep's own metres - the odometer's, never a placement)
-// and `frame` whether the panel may stand: Enhanced Plus, walking, outdoors - and what covers it.
+// and the gait it took (HORSE-TIERS: the motor's own `rideWalking` - a gallop asked and refused rides DFU's pace in
+// Boons and walks in Hard, which only the motor knows), and `frame` whether the panel may stand: Enhanced Plus, walking,
+// outdoors - and what covers it.
 import { drawEnhancedSaddle, hideEnhancedSaddle, enhancedSaddleMounted, toggleSaddlePanel } from '../ui/enhancedSaddle.js';
 import { upkeepReach } from '../systems/upkeepRuntime.js';
 import { activeWagonItem } from '../systems/wagonKinds.js';
 import { wagonWord } from '../systems/wagonUpkeep.js';
-import { rideWalks } from '../systems/transport.js';   // HORSE-WALK: the walk the motor takes, the host's word (never on the road)
 
 /** The pace's smoothing, seconds (a frame's metres jitter with its length). */
 export const SADDLE_SPEED_TAU = 0.35;
@@ -31,7 +32,7 @@ export const SADDLE_MODES = Object.freeze(['Horse', 'Cart']);
  *   toggleView: () => void, foot: () => void }} deps
  */
 export function createSaddleHost({ upkeep, runtime, items, wagonKg, wagonLimit, say, pass, openStable, canView, toggleView, foot }) {
-  let speed = 0, galloping = false;
+  let speed = 0, galloping = false, walking = false;
   /** @type {any} the read the panel stands on now - the horse its Feed and its apple go to */
   let shown = null;
   /** The upkeep's reach for a press made in the saddle: the horse is under its rider, so it is always near. */
@@ -47,9 +48,11 @@ export function createSaddleHost({ upkeep, runtime, items, wagonKg, wagonLimit, 
     dismount: () => { const rt = runtime(); if (rt) rt.handleQuickMountOrDismount(); else foot(); },
   };
 
-  /** The frame's motion: `metres` rolled over `dt` seconds, `gallop` the run on a horse. A pause holds the pace. */
-  function motion(dt, metres, gallop) {
+  /** The frame's motion: `metres` rolled over `dt` seconds, `gallop` the run on a horse, `walk` the walk the motor took
+   *  (its `rideWalking`). A pause holds the pace. */
+  function motion(dt, metres, gallop, walk = false) {
     galloping = !!gallop;
+    walking = !!walk;
     if (!(dt > 0) || !Number.isFinite(metres)) return;
     speed += (metres / dt - speed) * Math.min(1, dt / SADDLE_SPEED_TAU);
   }
@@ -65,7 +68,7 @@ export function createSaddleHost({ upkeep, runtime, items, wagonKg, wagonLimit, 
     return {
       mode, name: rt?.hasHorseName ? rt.horseName : '', wagonName: w ? wagonWord(w) : '',
       speed, galloping: mode === 'Horse' && galloping,
-      walks: mode === 'Horse' && rideWalks(mode),   // HORSE-WALK: the ride's own pace a walk - the word the motor reads, so the panel says what it does
+      walks: mode === 'Horse' && walking,   // HORSE-WALK: the ride's own pace a walk - the word the motor took (HORSE-TIERS), so the panel says what it does
       horse: base.horse, wagon: cart ? base.wagon : null, oats: base.oats, apples: base.apples, kits: base.kits,
       load: cart && limit > 0 ? { kg: wagonKg(), limit } : null,
       near: true, wagonNear: r.wagonNear,
@@ -85,7 +88,7 @@ export function createSaddleHost({ upkeep, runtime, items, wagonKg, wagonLimit, 
     const s = show ? read(mode) : null;
     if (s && toggle && !covered) toggleSaddlePanel();
     shown = s;
-    if (!s) { speed = 0; galloping = false; if (enhancedSaddleMounted()) hideEnhancedSaddle(); return null; }
+    if (!s) { speed = 0; galloping = false; walking = false; if (enhancedSaddleMounted()) hideEnhancedSaddle(); return null; }
     return drawEnhancedSaddle({ saddle: s, covered, touch, mouseFree, freeKey, keyOf }, hooks);
   }
 

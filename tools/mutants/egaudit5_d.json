@@ -103,7 +103,7 @@
   {
     "name": "EG5D-L4-8-the-branchs-old-relay",
     "file": "src/net/wire.js",
-    "old": "export const EG_RELAY_MIN = 205;",
+    "old": "export const EG_RELAY_MIN = 206;",
     "new": "export const EG_RELAY_MIN = 197;",
     "tests": [
       "test/egaudit5_d_relay.test.js"
@@ -519,7 +519,7 @@
   },
   {
     "name": "EG5D-L8-4-the-table-keyed-by-the-end",
-    "file": "server-account/migrations/0117_elite_breach.sql",
+    "file": "server-account/migrations/0119_elite_breach.sql",
     "old": "  PRIMARY KEY (account, wk, w),\n  FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE\n);\nCREATE INDEX IF NOT EXISTS idx_eg_reliqs_b",
     "new": "  PRIMARY KEY (account, wk, w, b),\n  FOREIGN KEY (account) REFERENCES players(id) ON DELETE CASCADE\n);\nCREATE INDEX IF NOT EXISTS idx_eg_reliqs_b",
     "tests": [

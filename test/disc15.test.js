@@ -69,12 +69,12 @@ function tavern() {
     return L;
   };
   const lightDir = new Float32Array([0.45, 0.8, 0.35]);
-  const frame = (draw, lights, every = true, carried = null) => {
+  const frame = (draw, lights, every = true, carried = null, view = I) => {
     if (carried) lights.carried = carried;
     r.setPointLights(lights, new Float32Array([1, 1, 1]));
     if (every) r.everyLightCasts();
     calls.length = 0;
-    r.beginFrame(I, I, lightDir, WORLD_FRAME);
+    r.beginFrame(I, view, lightDir, WORLD_FRAME);   // LIGHT-ID: `view` - the eye elsewhere, so lamps leave and join the twelve
     const st = { ...sp.stats, casterOf: [...sp.casterOf], loCap: sp._loCap, storage: calls.filter((c) => c[0] === 'texStorage3D') };   // the table and the array as the frame's passes left them
     draw();
     r.drawScreenQuad({ id: 'ui' }, { x: 0, y: 0, w: 10, h: 10 });
@@ -83,17 +83,17 @@ function tavern() {
   return { r, sp, calls, room, crate, lamps, frame };
 }
 
-test('DISC15: past the eight, every lamp reads its own lo map through the caster table - SHADOW_POINT_CASTERS + its slot; the eight their 512 slots; the lo maps drawn once (six faces each, the room in every face) and then served with no draw (mutants: the lo slot never written to the table; the lo maps redrawn every frame; the eight left without a lo map)', () => {
+test('DISC15: past the twelve, every lamp reads its own lo map through the caster table - SHADOW_POINT_CASTERS + its slot; the twelve their 512 slots, and (LIGHT-ID, Mac 2026-10-14) no lo map drawn for them - no shader reads one while the slot is held; the lo maps drawn once (six faces each, the room in every face) and then served with no draw (mutants: the lo slot never written to the table; the lo maps redrawn every frame; the twelve drawing their lo maps too)', () => {
   const t = tavern();
   const L = t.lamps(20);
   const go = (every = true) => t.frame(() => t.r.drawMesh(t.room, I, null), L, every);
   go();   // the entry frame: records the room; the street's records dropped, no tier
   const first = go();
-  assert.equal(first.loSlots, 20, 'every lamp holds a lo slot, the eight included');
-  assert.equal(first.loFaces, 6 * 20, 'six faces a lamp, drawn at once');
+  assert.equal(first.loSlots, 20 - SHADOW_POINT_CASTERS, 'every lamp past the twelve holds a lo slot, and none of the twelve');
+  assert.equal(first.loFaces, 6 * (20 - SHADOW_POINT_CASTERS), 'six faces a lamp that reads one, drawn at once - none for a lamp reading its 512 map');
   const hi = first.casterOf.slice(0, 20).filter((k) => k >= 0 && k < SHADOW_POINT_CASTERS);
   const lo = first.casterOf.slice(0, 20).filter((k) => k >= SHADOW_POINT_CASTERS);
-  assert.equal(hi.length, SHADOW_POINT_CASTERS, 'the eight read their 512 maps');
+  assert.equal(hi.length, SHADOW_POINT_CASTERS, 'the twelve read their 512 maps');
   assert.equal(lo.length, 20 - SHADOW_POINT_CASTERS, 'every other lamp its lo map - none is left unshadowed');
   assert.equal(new Set(lo).size, lo.length, 'each its own slot');
   assert.ok(first.casterOf.slice(0, 20).every((k) => k >= 0), 'no lamp without a map (-1)');
@@ -105,42 +105,91 @@ test('DISC15: past the eight, every lamp reads its own lo map through the caster
   }
 });
 
+test('DISC15 (LIGHT-ID, Mac 2026-10-14): A LAMP THAT LEAVES THE TWELVE READS ITS LO MAP THAT FRAME - drawn at once if it had none; one that joins the twelve keeps the lo map it had, unminded, and asks its static signature at once the frame it leaves again, redrawing it then if the room changed under it - outside SHADOW_LO_REBUILDS, since it is read that frame (mutants: the newcomer to the lo tier deferred; a kept map dropped as its lamp joins; a kept map asked under the budget; a kept map served unasked)', () => {
+  const t = tavern();
+  const L = t.lamps(20);
+  const still = () => t.r.drawMesh(t.room, I, null);
+  const withCrate = () => { still(); t.r.drawMesh(t.crate, at(24, 0, 3), null); };
+  const home = I, away = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -28.5, 0, 0, 1]);   // the eye at the row's other end
+  t.frame(still, L, true, null, home);
+  const a = t.frame(still, L, true, null, home);
+  const hiOf = (st) => new Set([...Array(20).keys()].filter((k) => st.casterOf[k] >= 0 && st.casterOf[k] < SHADOW_POINT_CASTERS));
+  const loOf = (st) => new Set([...Array(20).keys()].filter((k) => st.casterOf[k] >= SHADOW_POINT_CASTERS));
+  const hadLo = loOf(a);
+  assert.equal(hadLo.size, 20 - SHADOW_POINT_CASTERS);
+  // the eye walks to the other end: the lamps that leave the twelve there had no lo map - each drawn the frame it leaves
+  const b = t.frame(still, L, true, null, away);
+  const left = [...hiOf(a)].filter((k) => !hiOf(b).has(k)), joined = [...hiOf(b)].filter((k) => !hiOf(a).has(k));
+  assert.ok(left.length >= 4 && joined.length === left.length, `lamps traded places in the twelve (${left.length} left)`);
+  for (const k of left) assert.ok(b.casterOf[k] >= SHADOW_POINT_CASTERS, `lamp ${k}, out of the twelve: its lo map, the frame it left`);
+  assert.equal(b.loFaces, 6 * left.length, 'each drawn at once - and nothing for the lamps that joined, whose kept maps stand');
+  assert.ok(b.casterOf.slice(0, 20).every((k) => k >= 0), 'no lamp without a map');
+  // home again, the room unchanged: each lamp that leaves the twelve reads the map it kept while it held its slot - none drawn
+  const h = t.frame(still, L, true, null, home);
+  const backStill = [...hiOf(b)].filter((k) => !hiOf(h).has(k));
+  assert.ok(backStill.length >= 4 && backStill.every((k) => hadLo.has(k)), `the lamps leaving the twelve at home had kept their maps (${backStill.length})`);
+  assert.equal(h.loFaces, 0, 'each served as it was kept - the room did not change under it');
+  for (const k of backStill) assert.ok(h.casterOf[k] >= SHADOW_POINT_CASTERS, `lamp ${k} reads its kept lo map`);
+  assert.equal(t.frame(still, L, true, null, away).loFaces, 0, 'and away again: the maps drawn there are kept too');
+  // the room changes while the joiners hold their 512 slots: their kept lo maps are not minded (none reads them)...
+  t.frame(withCrate, L, true, null, away);
+  for (let f = 0; f < 8; f++) t.frame(withCrate, L, true, null, away);   // the lo tier's own budget settles the maps read here
+  const settled = t.frame(withCrate, L, true, null, away);
+  assert.equal(settled.loFaces, 0, 'the maps read away are settled');
+  // ...and the eye walks home: each joiner leaves the twelve again and reads its kept map, asked at once
+  const c = t.frame(withCrate, L, true, null, home);
+  const back = [...hiOf(settled)].filter((k) => !hiOf(c).has(k));
+  const reached = (k) => Math.hypot(k * 1.5 - 24, 2 - 0.5, 0) <= shadowFarFor(15) + 0.8;
+  const stale = back.filter((k) => hadLo.has(k) && reached(k));
+  assert.ok(stale.length > SHADOW_LO_REBUILDS, `more kept maps the crate reached (${stale.length}) than the budget redraws in a frame`);
+  assert.equal(c.loFaces, 6 * back.filter((k) => !hadLo.has(k) || reached(k)).length, 'every kept map the room changed under redrawn the frame it is read, and none the crate did not reach');
+  for (const k of back) assert.ok(c.casterOf[k] >= SHADOW_POINT_CASTERS, `lamp ${k} reads its lo map home`);
+  // and still again: nothing
+  assert.equal(t.frame(withCrate, L, true, null, home).loFaces, 0, 'then nothing');
+});
+
 test('DISC15: lo slots STICK to their light across a re-sorted list (the hosts sort by distance every frame) - no map redrawn for a new order; a lamp gone frees its slot, a lamp arriving takes one and is drawn at once (mutants: matched by index; the newcomer deferred)', () => {
   const t = tavern();
   const draw = () => t.r.drawMesh(t.room, I, null);
-  const order = [...Array(12).keys()];
-  t.frame(draw, t.lamps(12, order)); const a = t.frame(draw, t.lamps(12, order));
+  const order = [...Array(16).keys()];   // LIGHT-ID (re-aimed): sixteen - the four past the twelve read lo maps
+  t.frame(draw, t.lamps(16, order)); const a = t.frame(draw, t.lamps(16, order));
   const slotOfLamp = (st, ord) => new Map(ord.map((k, i) => [k, st.casterOf[i]]));
   const before = slotOfLamp(a, order);
-  const shuffled = [5, 11, 0, 3, 9, 1, 7, 2, 10, 4, 8, 6];
-  const b = t.frame(draw, t.lamps(12, shuffled));
+  const shuffled = [5, 15, 11, 0, 13, 3, 9, 1, 12, 7, 2, 10, 14, 4, 8, 6];
+  const b = t.frame(draw, t.lamps(16, shuffled));
   assert.equal(b.loFaces, 0, 'a new order draws nothing');
   const after = slotOfLamp(b, shuffled);
-  for (const k of order) if (before.get(k) >= SHADOW_POINT_CASTERS && after.get(k) >= SHADOW_POINT_CASTERS) assert.equal(after.get(k), before.get(k), `lamp ${k} keeps its lo slot`);
-  // lamp 11 gone, lamp 12 arrives
-  const next = [...Array(11).keys(), 12];
-  const c = t.frame(draw, t.lamps(13, next));
+  const kept = order.filter((k) => before.get(k) >= SHADOW_POINT_CASTERS && after.get(k) >= SHADOW_POINT_CASTERS);
+  assert.deepEqual(kept, [12, 13, 14, 15], 'the four past the twelve read lo maps in either order');
+  for (const k of kept) assert.equal(after.get(k), before.get(k), `lamp ${k} keeps its lo slot`);
+  // lamp 15 gone, lamp 16 arrives - past the twelve
+  const next = [...Array(15).keys(), 16];
+  const c = t.frame(draw, t.lamps(17, next));
   assert.equal(c.loFaces, 6, 'the newcomer is drawn at once, and only it');
-  assert.equal(c.loSlots, 12);
+  assert.equal(c.loSlots, 16 - SHADOW_POINT_CASTERS);
 });
 
 test('DISC15: a changed static set redraws at most SHADOW_LO_REBUILDS lo maps a frame, the old map standing meanwhile - the same light\'s (mutant: every map at once, the hitch of a door coming to rest in a twenty-lamp room)', () => {
   const t = tavern();
-  const L = t.lamps(16);
+  // LIGHT-ID (re-aimed): twenty-four lamps and the crate among the twelve past the eye's twelve - the lamps that read lo maps
+  const L = t.lamps(24);
   const still = () => t.r.drawMesh(t.room, I, null);
-  const withCrate = () => { still(); t.r.drawMesh(t.crate, at(4, 0, 3), null); };
+  const withCrate = () => { still(); t.r.drawMesh(t.crate, at(24, 0, 3), null); };
   t.frame(still, L); t.frame(still, L);
   t.frame(withCrate, L);   // records the crate - a first sight is static
   const st = t.frame(withCrate, L);   // the static set in every lamp's reach changed
   assert.ok(st.loFaces <= 6 * SHADOW_LO_REBUILDS, `at most ${SHADOW_LO_REBUILDS} lo maps this frame (${st.loFaces / 6})`);
   assert.ok(st.loFaces > 0, 'but the redraw has begun');
-  assert.ok(st.casterOf.slice(0, 16).every((k) => k >= 0), 'every lamp keeps a map while it waits');
-  // the lamps whose reach the crate is in (its sphere against shadowFarFor of the range) - the two at the far end are not
-  const inReach = [...Array(16).keys()].filter((k) => Math.hypot(k * 1.5 - 4, 2 - 0.5, 0) <= shadowFarFor(15) + 0.8).length;
-  assert.equal(inReach, 14);
+  assert.ok(st.casterOf.slice(0, 24).every((k) => k >= 0), 'every lamp keeps a map while it waits');
+  // the lamps reading lo maps whose reach the crate is in (its sphere against shadowFarFor of the range) - all twelve;
+  // the twelve reading 512 maps keep no lo map to redraw
+  const loLamps = [...Array(24).keys()].filter((k) => st.casterOf[k] >= SHADOW_POINT_CASTERS);
+  assert.deepEqual(loLamps, [...Array(12).keys()].map((k) => k + 12), 'the twelve past the twelve read lo maps');
+  const inReach = loLamps.filter((k) => Math.hypot(k * 1.5 - 24, 2 - 0.5, 0) <= shadowFarFor(15) + 0.8).length;
+  assert.equal(inReach, 12);
   let frames = 1, total = st.loFaces;
   for (; frames < 20 && total < 6 * inReach; frames++) total += t.frame(withCrate, L).loFaces;
-  assert.equal(total, 6 * inReach, 'and in a few frames every lamp in the crate\'s reach has it - the two out of reach are never redrawn');
+  assert.equal(total, 6 * inReach, 'and in a few frames every lo map in the crate\'s reach has it - and no lamp reading its 512 map draws one');
   assert.equal(t.frame(withCrate, L).loFaces, 0, 'then nothing');
 });
 
@@ -158,7 +207,8 @@ test('DISC15: THE DOOR - the first frame through the door drops the street\'s re
   assert.equal(entry.records, 0, 'the entry frame replays nothing of the street');
   assert.equal(entry.loSlots, 0); assert.equal(entry.facesDrawn, 0);
   const second = t.frame(draw, L, true);
-  assert.equal(second.loSlots, 16, 'the second frame: every lamp, from the room\'s own records');
+  assert.equal(second.loSlots, 16 - SHADOW_POINT_CASTERS, 'the second frame: every lamp past the twelve, from the room\'s own records');
+  assert.ok(second.casterOf.slice(0, 16).every((k) => k >= 0), '...and every lamp a map, the twelve their 512 ones');
   // out again: the tier stops the frame the host stops asking
   const out = t.frame(draw, L, false);
   assert.equal(out.loSlots, 0);
@@ -168,15 +218,17 @@ test('DISC15: THE DOOR - the first frame through the door drops the street\'s re
 test('DISC15: the hand\'s light is -2 in either tier (MAC-T1), and the storm\'s flash takes no lo slot (F11) - the pick\'s own two laws (mutant: the lo tier handing the carried torch a map)', () => {
   const t = tavern();
   const draw = () => t.r.drawMesh(t.room, I, null);
-  const L = new Float32Array(4 * 11);
-  for (let i = 0; i < 10; i++) L.set([i * 1.5, 2, 3, 15], i * 4);
-  L.set([0, 1.7, 0, 600], 40);   // the flash
-  const carried = new Uint8Array(11); carried[0] = 1;
+  // LIGHT-ID (re-aimed): fifteen lamps, so two of those that may cast are past the twelve and read lo maps
+  const L = new Float32Array(4 * 16);
+  for (let i = 0; i < 15; i++) L.set([i * 1.5, 2, 3, 15], i * 4);
+  L.set([0, 1.7, 0, 600], 60);   // the flash
+  const carried = new Uint8Array(16); carried[0] = 1;
   t.frame(draw, L, true, carried);
   const st = t.frame(draw, L, true, carried);
   assert.equal(st.casterOf[0], -2, 'the torch in the hand: no map, no march');
-  assert.equal(st.casterOf[10], -1, 'the flash: no map');
-  assert.equal(st.loSlots, 9, 'the nine lamps that may cast');
+  assert.equal(st.casterOf[15], -1, 'the flash: no map');
+  assert.equal(st.loSlots, 14 - SHADOW_POINT_CASTERS, 'the lamps that may cast, past the twelve - the torch none');
+  assert.ok(st.casterOf.slice(1, 15).every((k) => k >= 0), 'every lamp that may cast a map');
 });
 
 test('DISC15: the array is made on the first room that asks, grown by SHADOW_LO_STEP, 256 square, compared - and a one-texel stand-in before, so the sampler always has a depth array under it (mutants: the array made with the lane; the stand-in missing)', () => {
@@ -191,7 +243,7 @@ test('DISC15: the array is made on the first room that asks, grown by SHADOW_LO_
   assert.ok(a.storage.some((c) => c[4] === SHADOW_LO_SIZE && c[6] === 6 * SHADOW_LO_STEP), 'six layers a slot at 256');
   const b = t.frame(draw, t.lamps(20));
   assert.equal(b.loCap, 3 * SHADOW_LO_STEP, 'grown to hold twenty');
-  assert.equal(b.loFaces, 6 * 20, 'a grown array draws every slot afresh');
+  assert.equal(b.loFaces, 6 * (20 - SHADOW_POINT_CASTERS), 'a grown array draws afresh every slot a lamp reads - none for the twelve');
   const c = t.frame(draw, t.lamps(5));
   assert.equal(c.loCap, 3 * SHADOW_LO_STEP, 'never shrunk');
 });

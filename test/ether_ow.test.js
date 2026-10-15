@@ -101,18 +101,24 @@ test('ETHER-OW, the door, the host: the chart is handed the door where the view 
 test('ETHER-OW, the load: the governor\'s ground is the stream\'s own law - past the Veil the land it has not raised holds the clock as the Bay\'s does, and where the world streams nothing nothing is owed (the host\'s line, run over the real stream law; mutant: off the map is built)', () => {
   const line = /\n {6}uc\.n = unbuiltAround\(px, radius, (\(x, y\) => [^\n]*)\);\n/.exec(W);
   assert.ok(line, 'the governor\'s ground');
+  // PIN MOVED (LOAD-OWED, test/ow_loadowed.test.js): what is owed is what the STREAM holds and has not built - its own
+  // books (`state.loaded`), which load nothing where the world streams nothing; so each place below is streamed (`init`)
+  // as the host streams the traveller's grid, and the count asked there
   const built = new Set();
-  const isBuilt = new Function('StreamingWorldState', 'built', `return ${line[1]};`)(StreamingWorldState, built);
+  const state = new StreamingWorldState(1);
+  const isBuilt = new Function('StreamingWorldState', 'built', 'state', `return ${line[1]};`)(StreamingWorldState, built, state);
+  const at = (x, y) => { state.init(x, y); return unbuiltAround({ x, y }, 1, isBuilt); };
   const was = StreamingWorldState.frames;
   try {
     StreamingWorldState.frames = [ES.etherFrame()];
-    assert.equal(unbuiltAround({ x: H.px, y: H.py }, 1, isBuilt), 9, 'Veilhaven\'s waters unraised: all nine owed');
+    assert.equal(at(H.px, H.py), 9, 'Veilhaven\'s waters unraised: all nine owed');
     for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) built.add(`${H.px + dx},${H.py + dy}`);
-    assert.equal(unbuiltAround({ x: H.px, y: H.py }, 1, isBuilt), 0, 'raised: free');
-    assert.equal(unbuiltAround({ x: 500, y: 250 }, 1, isBuilt), 9, 'the Bay as ever');
-    assert.equal(unbuiltAround({ x: 3000, y: 1500 }, 1, isBuilt), 0, 'where the world streams nothing, nothing is owed');
+    assert.equal(at(H.px, H.py), 0, 'raised: free');
+    assert.equal(at(500, 250), 9, 'the Bay as ever');
+    assert.equal(at(3000, 1500), 0, 'where the world streams nothing, nothing is owed');
     StreamingWorldState.frames = [];
-    assert.equal(unbuiltAround({ x: H.px, y: H.py }, 1, (x, y) => isBuilt(x, y)), 0, 'the sea switched off: nothing streams there');
+    built.clear();
+    assert.equal(at(H.px, H.py), 0, 'the sea switched off: nothing streams there');
   } finally {
     StreamingWorldState.frames = was;
   }

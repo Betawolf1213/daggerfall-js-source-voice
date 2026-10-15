@@ -34,6 +34,7 @@ import { blowClassOf } from '../src/ai/puppetBlows.js';   // AUDIT FEUD: the hit
 import { feudWeakBlow } from '../src/systems/feudLedger.js';   // AUDIT FEUD: ...asked of the real test (none registered here: no weakness)
 import { ARENA_PUPPET_OWNER } from '../src/net/arenaLaw.js';   // ARENA4: the kill door's puppet test, the real owner word (no puppet here)
 import { markOutCold } from '../src/systems/survival/needs.js';   // AUDIT C&C N2: the dungeon's collapse marks its hour
+import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
 
 const D = readFileSync(new URL('../src/scenes/dungeonContext.js', import.meta.url), 'utf8');
 const AST = acorn.parse(D, { ecmaVersion: 'latest', sourceType: 'module' });
@@ -99,6 +100,7 @@ const foeRec = (over = {}) => ({
 function killHarness({ foes, foeDeps = null, getTexture = async () => ({ recordCount: 99 }) } = {}) {
   const log = { deaths: 0, chimes: 0, freed: [], minted: 0, hud: [] };
   const state = {
+    ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
     foes, foeDeps, ARENA_PUPPET_OWNER, blowClassOf, feudWeakBlow, _authority: true, _layoutFoes: foes.length, opts: {}, lastPlayerFeet: [0, 0, 0], _ecvT: 0, _ctxDead: false,
     playerEntity: { isPlayer: true, items: [], luck: 50 },
     markFoeStruck: () => {}, markConcealedHit: () => {}, makeEnemiesHostile: () => {}, peerCandidate: () => null, renownFoeStruck, renownFoeDied, reportPlayerKill,   // RENOWN1: the kill door's two stamps, the real ones (no handler: nothing paid)
@@ -175,6 +177,7 @@ test('AUDIT 68 S19-damagefoe-dead-reentry: a corpse takes no blow - a second hur
 function exhaustionHarness() {
   const log = { collapses: 0 };
   const state = {
+    ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
     playerEntity: { fatigue: 100, health: 50, maxHealth: 50, magicka: 0, maxMagicka: 0, stats: { strength: 50, endurance: 50 } },   // AUDIT C&C N5: a body's stats - its pool is live
     surfacePlayer: () => {}, areEnemiesNearby: () => false, foes: [], _activity: { swimming: false },
     exhaustionOutcome: () => { log.collapses++; return { kind: 'rest', textId: 1, health: 0, fatigue: 0, magicka: 0 }; },
@@ -314,6 +317,7 @@ test('AUDIT 68 S19-removed-foe-lootable: every corpse door asks the one predicat
 /** retireMissile + ensureMissileBatch + the local sweep, over one archive that may still be warming. */
 function missileHarness(getTexture) {
   const state = {
+    ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
     missiles: [], _pendingCasts: [], billboardBatches: [], dynamicDraws: [], freed: [],
     flatAnims: { remove: () => {} }, getTexture, missileArchive: () => 375, ORB_RECORD: 0, uploadRecord: () => {},
     noteOrbColour: () => {}, billboardSize: () => ({ w: 1, h: 1 }), ORB_SCALE: 1, centredBase: (p) => p, armFlatAnim: () => {}, MISSILE_FPS: 5,
@@ -422,6 +426,7 @@ test('AUDIT 68 S19-rest-alert-decay-wrong-clock (LIVED1): the rest decays the al
   const rolled = [];
   let own = 5000 + ALERT_DECAY_MINUTES;   // the character's clock: eight hours of rested night since the alert
   const state = {
+    ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
     classicMinutesRef: { get value() { return own; }, set value(v) { own = v; } },   // the dungeon's clock view: the character's own
     advanceOwnMinutes: (n) => { own += n; },   // TIME3: the rest's minutes, a counted raise of the same clock
     playerEntity: { level: 1, restAsks: 1 },
@@ -493,6 +498,7 @@ test('AUDIT SET P-M3: a joiner\'s killing blow, applied at the host, is named on
   const joiner = (self) => {
     const foes = [foeRec(), foeRec()];
     const state = {
+    ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
       foes, _layoutFoes: 2, _retyping: new Set(), _authority: false, validFoeRecord, opts: { selfId: () => self },
       renownFoeDied: () => {}, reportPlayerKill: (e, info) => kills.push([self, e, info]), egFindStruck: async () => false,   // PIN MOVED (EG-E3): the joiner's door asks the dungeon's find beside the kill report (systems/egFind.js)
       rollCorpseKit: () => [], addCorpseFood: () => {}, stampWonWeapons: () => {}, capFoeLoot: () => [],

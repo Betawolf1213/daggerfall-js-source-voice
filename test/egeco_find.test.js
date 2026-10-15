@@ -11,7 +11,8 @@ import { standService, T0 } from './accountDb.mjs';
 import { findEg, EG_FIND_ODDS, EG_FIND_PER_DAY, EG_FIND_KEYS_PER_WEEK } from '../server-account/src/eg.js';
 import { ARENA_WEEK_S, ARENA_SEASON_EPOCH_S } from '../src/net/arenaLaw.js';
 import { DUNGEON_TIERS } from '../src/systems/dungeonTier.js';
-import { registerEgFind, egFindThrow, egFindAsks, EG_FIND_HANDLER, EG_FIND_TEXT } from '../src/systems/egFind.js';
+import { registerEgFind, egFindThrow, egFindAsks, egFindKill, egFindStruck, EG_FIND_HANDLER, EG_FIND_TEXT } from '../src/systems/egFind.js';
+import { readFileSync } from 'node:fs';
 import { raiseEnemyDeath, registerEnemyDeathHandler } from '../src/scenes/corpseMarker.js';
 import { weirKeys, weirKeysHeld, isWeirKey } from '../src/systems/weirKey.js';
 import { accountEg } from '../src/net/accountClient.js';
@@ -157,4 +158,43 @@ test('EG-E3 THE FIND ON THE CLIENT, WHO ASKS: an elite foe dying in a dungeon on
   assert.equal(asks.length, before, 'disposed: the handler gone');
   assert.equal(EG_FIND_HANDLER, 'eg-find');
   registerEnemyDeathHandler(EG_FIND_HANDLER, null);
+});
+
+test('EG-E3 x PARTY-LOOT A ROOM\'S BODY (the merge of main into PR #800; Elite-Gates.md section 5): online a dungeon body is the room\'s base, every client rolling its death on the room\'s dice - so the find never answers that raise (`room`), the kill asks it at the host (egFindKill: the owner for its own kill, never a joiner\'s) and the joiner\'s door as before, and a key found on a room\'s body goes to the pack whole - none on a copy nobody sees; the room\'s base marks its raise and the dungeon host asks at the kill and at the joiner\'s door (mutants: the room\'s raise answered; the key thrown on the copy; a joiner\'s kill asked by the owner; the joiner\'s room flag lost; the pack short a key; the room\'s raise unmarked; the host\'s kill never asks; the joiner\'s door unflagged)', async () => {
+  const asks = [], thrown = [];
+  const F = registerEgFind({
+    ask: async (tier) => { asks.push(tier); return { ok: true, data: { found: true, keys: 4, asks: 1 } }; },
+    tierNow: () => 'elite', selfId: () => 'peer-host', online: () => true, throwKey: (entity, keys) => thrown.push([entity, keys]),
+  });
+  const elite = () => ({ eliteFoe: true, items: [], mobileType: 1 });
+  const tick = () => new Promise((r) => setImmediate(r));
+  try {
+    // the room's base: every client's roll of the death - no ask
+    raiseEnemyDeath(elite(), { room: true, luck: 50, level: 20 });
+    await tick();
+    assert.deepEqual(asks, [], 'the room\'s raise asks nothing');
+    // the kill at the host: its own, and a joiner's left to the joiner
+    const mine = elite();
+    assert.equal(await egFindKill(mine, null), true);
+    assert.equal(await egFindKill(elite(), 'peer-joiner'), false, 'a joiner\'s kill is the joiner\'s');
+    assert.deepEqual(asks, ['elite']);
+    assert.deepEqual(thrown, [[null, 4]], 'its key to the pack, none on the copy');
+    assert.deepEqual(mine.items, []);
+    // the joiner's door, a room's body
+    const theirs = elite();
+    assert.equal(await egFindStruck(theirs, true), true);
+    assert.deepEqual(thrown.at(-1), [null, 4]);
+    assert.equal(await egFindStruck(elite()), true, 'a body of no room');
+    assert.equal(thrown.at(-1)[0] != null, true, 'thrown on its body as before');
+    // the pack whole
+    const pack = [];
+    egFindThrow(null, pack, 4);
+    assert.equal(weirKeysHeld(pack), 4);
+  } finally { F.dispose(); registerEnemyDeathHandler(EG_FIND_HANDLER, null); }
+  // the room's base marks its raise; the dungeon host asks at the kill and at the joiner's door
+  const rd = (f) => readFileSync(new URL(`../${f}`, import.meta.url), 'utf8');
+  assert.match(rd('src/scenes/roomLootHost.js'), /raiseEnemyDeath\(e, \{ \.\.\.o, level: terms\.lv, room: true \}\);/);
+  const DC = rd('src/scenes/dungeonContext.js');
+  assert.match(DC, /if \(!_roomBody\) raiseEnemyDeath\(foe\.entity, \{ luck: liveStat\(playerEntity, 'luck'\), by: foe\._killedBy \?\? null \}\); else egFindKill\(foe\.entity, foe\._killedBy \?\? null\)\.catch\(\(\) => \{\}\);/);
+  assert.match(DC, /egFindStruck\(f\.entity, roomLootOn\(\) && roomCanonOfFoe\(f\) != null\)\.catch\(\(\) => \{\}\);/);
 });

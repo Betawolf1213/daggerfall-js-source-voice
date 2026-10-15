@@ -290,8 +290,8 @@
   {
     "name": "WB3b-the-braziers-carried",
     "file": "src/world/gateArena.js",
-    "old": "  lights.forEach((l, i) => { data.set([l.x, l.y, l.z, l.range], (n + i) * 4); colors.set(l.color, (n + i) * 3); });",
-    "new": "  lights.forEach((l, i) => { data.set([l.x, l.y, l.z, l.range], (n + i) * 4); colors.set(l.color, (n + i) * 3); carried[n + i] = 1; });",
+    "old": "  lights.forEach((l, i) => { packLight(data, n + i, l); colors.set(l.color, (n + i) * 3); });",
+    "new": "  lights.forEach((l, i) => { packLight(data, n + i, l); colors.set(l.color, (n + i) * 3); carried[n + i] = 1; });",
     "tests": [
       "test/wb3b_gate_arena.test.js"
     ]

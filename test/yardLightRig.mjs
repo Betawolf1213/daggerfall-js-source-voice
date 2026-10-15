@@ -9,6 +9,7 @@ import { CITY_LIGHT_COLOR, fillLanternPool, nearestLights, rangesFor, capFadeCol
 import { withPlayerLights } from '../src/scenes/magicCandle.js';
 import { wodLightColors } from '../src/world/worldOfDaggerfall.js';
 import { yardLampRows } from '../src/scenes/homeYards.js';
+import { adoptLight } from '../src/render/lightId.js';
 
 const W = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
 /** The pool and its helpers (from the lantern pool's declaration to _wodSetLights' end) and the frame's composition
@@ -71,6 +72,7 @@ export function exteriorFrame({ lane, night, town, lamps, eye, ranges, tick = ()
     CITY_LIGHT_COLOR_F32: lanternColor(lane, new Float32Array(CITY_LIGHT_COLOR)),
     fillLanternPool, nearestLights, rangesFor, capFadeColors, capFadePairs, withPlayerLights, wodLightColors,
     meterFor: () => null,   // PIN MOVED (PERF-SIM3): the frame's CPU meter marks its spans inside this source - no meter in this rig
+    adoptLight,   // PIN MOVED (LIGHT-ID): the pools name each entry by its light, and a quay's lantern its own (render/lightId.js)
   };
   exteriorLightsSource()(scope);
   const L = renderer._pointLights, n = Math.min(L.length / 4, renderer.maxPointLights);

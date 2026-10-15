@@ -54,6 +54,7 @@ import { FIRE_WALLS_ARCHIVE } from './emissiveTextures.js';   // EG-ZH: the Cave
 import { egHeroFragInto, egHeroFragCollider, EG_HERO_FRAG_MESHES } from './egHeroFragModel.js';   // EG-HERO-LAY: a hall's hero, drawn and collided
 import { GATE_PART } from './gateModel.js';
 import { egPolyIn, segDist } from '../net/egShape.js';   // EG-HERO-LAY: the hero's clamp
+import { lightList, lightListView, packLight, copyLights } from '../render/lightId.js';   // LIGHT-ID (main's, at the merge into PR #800): the circle's lamps into the frame's list through the one seam (pure - the swap's worker may read it)
 
 /** The made location's id (the Hour's is 0x7ffff200, the court's 0x7ffff000), its one block's name and index. */
 export const EG_HALL_LOCATION_ID = 0x7ffff300;
@@ -631,7 +632,7 @@ export function egCircleLights(seed, c, geo = 0) {
 }
 /** The lamps nearest `eye` first, the arm's own lights before them, in kept arrays (world/sdRealm.js realmLightsWith's
  *  composition, over the circle's own lamps). */
-const _egLit = { cap: 0, data: new Float32Array(0), colors: new Float32Array(0), carried: new Uint8Array(0), views: new Map() };
+const _egLit = { cap: 0, data: lightList(0), colors: new Float32Array(0), carried: new Uint8Array(0), views: new Map() };
 export function egLightsWith(lit, extra, lamps, eye) {
   const n = lit.data.length / 4, H = _egLit;
   if (eye && lamps.length > 1) {
@@ -644,20 +645,20 @@ export function egLightsWith(lit, extra, lamps, eye) {
     }
   }
   const m = n + extra.length + Math.min(lamps.length, 24);
-  if (m > H.cap) { H.cap = Math.max(m, H.cap * 2, 32); H.data = new Float32Array(H.cap * 4); H.colors = new Float32Array(H.cap * 3); H.carried = new Uint8Array(H.cap); H.views.clear(); }
-  for (let j = 0; j < n * 4; j++) H.data[j] = lit.data[j];
+  if (m > H.cap) { H.cap = Math.max(m, H.cap * 2, 32); H.data = lightList(H.cap); H.colors = new Float32Array(H.cap * 3); H.carried = new Uint8Array(H.cap); H.views.clear(); }
+  copyLights(H.data, 0, lit.data, 0, n);   // LIGHT-ID: the arm's own lights, their identities with them (sdRealm.js realmLightsWith's shape)
   for (let j = 0; j < n * 3; j++) H.colors[j] = lit.colors[j];
   const lc = lit.data.carried;
   for (let j = 0; j < m; j++) H.carried[j] = j < n && lc ? lc[j] : 0;
   for (let i = n; i < m; i++) {
     const q = i - n, l = q < extra.length ? extra[q] : lamps[q - extra.length];
-    H.data[i * 4] = l.x; H.data[i * 4 + 1] = l.y; H.data[i * 4 + 2] = l.z; H.data[i * 4 + 3] = l.range;
+    packLight(H.data, i, l);   // LIGHT-ID: the one seam - a lamp is its record's light
     H.colors[i * 3] = l.color[0]; H.colors[i * 3 + 1] = l.color[1]; H.colors[i * 3 + 2] = l.color[2];
   }
   let v = H.views.get(m);
   if (!v) {
     /** @type {Float32Array & { carried?: Uint8Array }} */
-    const data = H.data.subarray(0, m * 4), carried = H.carried.subarray(0, m);
+    const data = lightListView(H.data, m), carried = H.carried.subarray(0, m);
     data.carried = carried;
     v = { data, colors: H.colors.subarray(0, m * 3), carried };
     H.views.set(m, v);

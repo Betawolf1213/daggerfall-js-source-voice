@@ -783,11 +783,12 @@
   {
     "name": "SERAPHWINGS-the-dungeon-tints-the-wings",
     "file": "src/scenes/worldModes.js",
-    "old": "const _dgTint = (l) => (l && !l.aura ? {",
-    "new": "const _dgTint = (l) => (l ? {",
+    "old": "const _dgTint = (l) => (l && !l.aura ? adoptLight({",
+    "new": "const _dgTint = (l) => (l ? adoptLight({",
     "tests": [
       "test/seraphwings.test.js"
-    ]
+    ],
+    "note": "LIGHT-ID (PIN MOVED): re-aimed by content - the tint's copy adopts its light's identity; its law the same."
   },
   {
     "name": "SERAPHWINGS-a-beasts-form-lost",

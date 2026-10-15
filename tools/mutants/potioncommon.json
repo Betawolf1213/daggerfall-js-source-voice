@@ -47,8 +47,8 @@
   {
     "name": "POTION-COMMON-every-pile",
     "file": "src/systems/healingSupply.js",
-    "old": "    if (i >= 10 && i <= 15) { const { pile } = healingSupplyChances();",
-    "new": "    { const { pile } = healingSupplyChances();",
+    "old": "    if (i >= 10 && i <= 15) { const { pile } = healingSupplyChances(quarters);",
+    "new": "    { const { pile } = healingSupplyChances(quarters);",
     "tests": [
       "test/potion_common.test.js"
     ],
@@ -112,8 +112,8 @@
   {
     "name": "POTION-COMMON-I-to-P",
     "file": "src/systems/healingSupply.js",
-    "old": "    if (i >= 10 && i <= 15) { const { pile } = healingSupplyChances(); maybeAddHealingPotion(",
-    "new": "    if (i >= 9 && i <= 16) { const { pile } = healingSupplyChances(); maybeAddHealingPotion(",
+    "old": "    if (i >= 10 && i <= 15) { const { pile } = healingSupplyChances(quarters); maybeAddHealingPotion(",
+    "new": "    if (i >= 9 && i <= 16) { const { pile } = healingSupplyChances(quarters); maybeAddHealingPotion(",
     "tests": [
       "test/potion_common.test.js"
     ],

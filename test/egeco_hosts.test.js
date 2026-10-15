@@ -34,7 +34,7 @@ test('EG-E THE HOSTS (sections 15, 19, 20, 25.4): the claim with its character a
 test('EG-E3 THE FIND\'S HOST DOORS (section 5): the owner\'s death names the striker the foes stream carries (`by: foe._killedBy`), so a joiner\'s kill is the joiner\'s ask; the joiner\'s record door asks through egFindStruck; the world host registers the find online with the dungeon\'s tier (mutants: the striker unnamed; the joiner\'s door unwired; the seam never registered)', async () => {
   const d = read('src/scenes/dungeonContext.js'), w = read('src/scenes/world.js');
   assert.match(d, /raiseEnemyDeath\(foe\.entity, \{ luck: liveStat\(playerEntity, 'luck'\), by: foe\._killedBy \?\? null \}\);/);
-  assert.match(d, /r\.v === \(opts\.selfId\?\.\(\) \?\? null\)\) egFindStruck\(f\.entity\)\.catch\(\(\) => \{\}\);/);
+  assert.match(d, /r\.v === \(opts\.selfId\?\.\(\) \?\? null\)\) egFindStruck\(f\.entity, roomLootOn\(\) && roomCanonOfFoe\(f\) != null\)\.catch\(\(\) => \{\}\);/);   // PIN MOVED (the merge of main into PR #800 - PARTY-LOOT): a room's body's key to the pack (test/egeco_find.test.js)
   assert.match(w, /registerEgFind\(\{\s*ask: \(t\) => _accountEg\.find\(t\)/);
   assert.match(w, /tierNow: \(\) => \(_mode\(\) === 'dungeon' && modes\?\.dungeonLocation \? dungeonTier\(modes\?\.dungeonLocation\) : null\)/);
   // the seam: the joiner's door reaches the registered find, and nothing once it is disposed
