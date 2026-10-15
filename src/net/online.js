@@ -3214,8 +3214,9 @@ export class OnlineSession {
       this._deliver('iliac', () => this.onIliac?.({ ...m, at: now }));
     } else if (m.t === 'gambit') {
       // KG5: THE RELAY'S KING'S GAMBIT TABLE - the room's events and the table (the whole board: nothing of a dealt game
-      // is hidden), or a refusal; checked by the table's own law, from the room the player stands in only
-      if (!primary || !validGambitOut(m)) return;
+      // is hidden), or a refusal; checked by the table's own law, from the room the player stands in only - KG6: and a
+      // rated game's receipt from the room just left too (it is a result on the board)
+      if (!validGambitOut(m) || (!primary && m.receipt === undefined)) return;
       this._deliver('gambit', () => this.onGambit?.({ ...m, at: now }));
     } else if (m.t === 'roll') {
       // DICE1: A ROLL THE RELAY MADE - checked by the dice's own law (n dice, each 1..m, the total their sum plus k):

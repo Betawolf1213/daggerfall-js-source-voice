@@ -54,6 +54,12 @@
 // board); a new welcome asks the table again; every road off the seat stands up from the board, forfeiting a game under
 // way (the mod's FORFEIT online).
 //
+// KG6 (2026-10-15, sections 10.7 and 19): GOLD AT THE RED TABLE, AND THE SEASON. Online at the realm's gold table
+// (`online.gold`), the army's panel offers the mod's online stakes - each the purse's to cover and the other player's
+// stake's to match - and Ready puts it down: the realm service holds it first (`online.stake`: CARDS6's escrow, the
+// record's own act), then the relay spends its order; the pot comes home in the relay's cash-outs, claimed by the
+// card tables' stake book. The season board is read from either table (`online.board`).
+//
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
 import { GambitTableSession, gambitNightLeft, gambitPursesAfter, stakeOf, gambitCrownRestore, crownIndex, GAMBIT_CROWNS, GAMBIT_LOG_MAX, GAMBIT_STAKE_MULTS, GAMBIT_RESULT_MS } from '../systems/gambitTableSession.js';
 import { tierFor, GAMBIT_TIERS } from '../systems/gambitPatrons.js';
@@ -64,6 +70,8 @@ import {
   dealLine, barkInvite, barkEnd, onlineRefusal,
 } from '../ui/gambitTableWords.js';
 import { RemoteGambitTable, RemoteGambitSession } from '../systems/gambitRemoteTable.js';
+import { GAMBIT_ONLINE_STAKES } from '../net/gambitStakes.js';
+import { stakeShort, stakeDiffers } from '../ui/gambitTableWords.js';
 import { gambitPlaces, gambitPressCell, gambitLean, gambitCardHeight, GAMBIT_CARD_FOOT } from '../world/gambitCloth.js';
 import { createGambitMotion } from '../world/gambitMotion.js';
 import { prefersReducedMotion } from '../systems/hitFlash.js';
@@ -132,8 +140,12 @@ export const gambitRegulars = (regulars) => regulars.map((r) => ({ ...r, tier: t
  *   regulars: {name: string, seed: number, chair: number}[], frame: any, mySeatFeet: number[], touch?: () => boolean,
  *   onHoldem: () => void, onIliac: () => void, onStand: () => void, play?: (clip: number, at: number[]) => void,
  *   online?: {send: (w: any) => boolean, myId: () => string|null, now: () => number, table: number, chairs: number,
- *     chair: number, chairFeet: (k: number) => number[]|null, welcomes?: () => number}|null}} d
- *   `online` KG5: the relay's King's Gambit table at this cloth (its index, its chairs, the player's chair), or null.
+ *     chair: number, chairFeet: (k: number) => number[]|null, welcomes?: () => number, gold?: boolean,
+ *     stake?: (amount: number) => Promise<any>, purse?: () => (number|null), seated?: (id: string) => void,
+ *     board?: () => Promise<any>}|null}} d
+ *   `online` KG5: the relay's King's Gambit table at this cloth (its index, its chairs, the player's chair), or null;
+ *   KG6: `gold` the realm's gold table - `stake` the service's hold on a stake, `purse` the record's gold, `seated` the
+ *   stake book told the relay sat it - and `board` the season's.
  */
 export function openGambitTableGame(d) {
   const today = () => (typeof d.day === 'function' ? d.day() : d.day);
@@ -154,6 +166,10 @@ export function openGambitTableGame(d) {
     mode: /** @type {'online'|'regulars'} */ (d.online ? 'online' : 'regulars'),
     remote: d.online ? new RemoteGambitTable({ myId: d.online.myId() }) : null, lastOp: /** @type {string|null} */ (null),
     welcomes: d.online?.welcomes?.() ?? 0, clockShown: /** @type {number|null} */ (null),
+    // KG6: the gold table's stake - its pick, the service asked, the stake book's id till the relay sits it - and the
+    // season board as read
+    stakePick: /** @type {number|null} */ (null), staking: false, stakeId: /** @type {string|null} */ (null),
+    board: /** @type {any} */ (null), boardOpen: false,
   };
   g.motion.lay(g.places.end);
   /** A sound of the table's own, now or `after` ms on, from the board's middle (the motion's clock plays it). */
@@ -189,16 +205,23 @@ export function openGambitTableGame(d) {
     const other = me >= 0 ? seats[1 - me] : null, ready = me >= 0 && !!seats[me]?.ready;
     const step = me < 0 ? (st?.game ? 'watch' : seats.every(Boolean) ? 'full' : 'sit')
       : ready ? (other ? (other.ready ? 'dealing' : 'readyWait') : 'aloneReady') : other ? (other.ready ? 'theirReady' : 'ready') : 'alone';
+    // KG6: the mod's online stakes - each the purse's to cover, the other player's to match once they put theirs down
+    const purse = d.online.purse?.() ?? 0, theirs = me >= 0 ? st?.seats?.[1 - me]?.stake ?? null : null;
+    const stakes = d.online.gold ? GAMBIT_ONLINE_STAKES.map((n) => {
+      const why = theirs !== null && theirs !== n ? stakeDiffers(other?.name ?? '', theirs) : (purse ?? 0) < n ? stakeShort(purse ?? 0) : null;
+      return { n, enabled: !why && !ready, chosen: g.stakePick === n, why };
+    }) : null;
     return {
-      seats, names: seats.map((x) => x?.name ?? ''), canSit: me < 0 && !st?.game && !seats.every(Boolean), ready, step,
+      seats: seats.map((x, k) => (x ? { ...x, stake: st?.seats?.[k]?.stake ?? null } : null)), names: seats.map((x) => x?.name ?? ''), canSit: me < 0 && !st?.game && !seats.every(Boolean), ready, step,
       stepArgs: { name: other?.name ?? '', a: seats[0]?.name ?? '', b: seats[1]?.name ?? '' }, watching: watching(),
       clock: g.session && st?.game ? g.remote.clockLeft(d.online.now()) : null,
+      gold: !!d.online.gold, stakes, staking: g.staking, canBoard: !!d.online.board,
     };
   };
   const model = () => {
     const s = g.session;
     return gambitHudModel({
-      online: onlineModel(), canOnline: !!d.online,
+      online: onlineModel(), canOnline: !!d.online, board: g.board, boardOpen: g.boardOpen,
       phase: g.phase, regulars: rows(), regular: g.regular, friendly: d.friendly, purse: purse(), stakeMult: g.stakeMult, crown: g.crown,
       army: g.army, pressed: g.pressed, said: g.said,
       game: s && g.game ? { state: s.state, crowns: g.game.crowns, name: g.game.name, stake: g.game.stake, over: s.shown ? s.over : null, dealt: g.game.dealt, nightSpent: g.game.nightSpent } : null,
@@ -443,6 +466,7 @@ export function openGambitTableGame(d) {
   function onlinePress(/** @type {string} */ id, /** @type {any} */ value, /** @type {number} */ now) {
     const me = mySeat();
     if (id === 'regulars') { toRegulars(); return true; }
+    if (id === 'board' && d.online.board) { readBoard(); return true; }   // KG6
     if (g.phase === 'setup') {
       if (id === 'sit') { if (me < 0) send({ op: 'sit', chair: d.online.chair, chairs: d.online.chairs, crown: crownIndex(g.crown) }); return true; }
       if (id === 'crown' && Number.isInteger(value) && GAMBIT_CROWNS[value]) { g.crown = GAMBIT_CROWNS[value]; d.entity.gambitCrown = g.crown; return true; }
@@ -454,7 +478,15 @@ export function openGambitTableGame(d) {
       if (id === 'ready') {
         const no = armyRefusal(g.army);
         if (no) { g.why = refusalWords(no); return true; }
-        if (me >= 0) send({ op: 'ready', army: g.army.slice(), crown: crownIndex(g.crown) });
+        if (me < 0 || g.staking) return true;
+        if (d.online.gold) { readyStaked(); return true; }   // KG6: the stake held by the service first
+        send({ op: 'ready', army: g.army.slice(), crown: crownIndex(g.crown) });
+        return true;
+      }
+      if (id === 'stake' && d.online.gold && GAMBIT_ONLINE_STAKES.includes(value)) {   // KG6: a pick, while not ready
+        const pick = onlineModel()?.stakes?.find((/** @type {any} */ x) => x.n === value);
+        if (pick && !pick.enabled) { g.why = pick.why; return true; }
+        g.stakePick = value;
         return true;
       }
       if (id === 'unready') { if (ready) send({ op: 'unready' }); return true; }
@@ -469,6 +501,35 @@ export function openGambitTableGame(d) {
       return id === 'army';
     }
     return false;
+  }
+  /** KG6: READY AT THE GOLD TABLE - the stake asked of the realm service (the record's own act: the purse checkpointed,
+   *  the gold held out of it while asked), then the relay's Ready with the service's order on it. A stake the relay
+   *  never spends (a refusal, a lost word, a panel closed) is the stake book's to void back (net/cardStakes.js voidable). */
+  async function readyStaked() {
+    const amount = g.stakePick;
+    if (amount === null || !d.online?.stake) { g.why = onlineRefusal('stake needed'); return; }
+    g.staking = true;
+    g.why = null;
+    paint();
+    let r;
+    try { r = await d.online.stake(amount); } catch { r = { ok: false, error: 'offline' }; }
+    g.staking = false;
+    if (g.closed) return;
+    if (!r?.ok) { g.why = onlineRefusal('stake refused'); paint(); return; }
+    g.stakeId = r.id ?? null;
+    if (mySeat() >= 0) send({ op: 'ready', army: g.army.slice(), crown: crownIndex(g.crown), stake: r.stake });
+    paint();
+  }
+  /** KG6: THE SEASON BOARD - read from the service, shown in its section; pressed again, folded. */
+  async function readBoard() {
+    if (g.boardOpen && g.board && g.board !== 'reading') { g.boardOpen = false; return; }
+    g.boardOpen = true;
+    g.board = 'reading';
+    let b;
+    try { b = await d.online?.board?.(); } catch { b = null; }
+    if (g.closed) return;
+    g.board = b?.ok ? (b.data ?? b) : 'failed';
+    paint();
   }
   /** Play a regular instead: up from the board (a game under way forfeited), the regulars' setup. */
   function toRegulars() {
@@ -504,7 +565,7 @@ export function openGambitTableGame(d) {
     g.session = /** @type {any} */ (session);
     g.settled = false;
     g.game = {
-      stake: 0, regular: name, name, tier: null, crowns,
+      stake: st.pot ? Math.floor(st.pot / 2) : 0, regular: name, name, tier: null, crowns,   // KG6: each player's stake in the pot
       dealt: [0, 1].map((k) => view.pieces.filter((p) => p.side === k).length),
       names: new Map(view.pieces.map((p) => [p.id, pieceName(p, crowns)])), nightSpent: false,
     };
@@ -531,6 +592,8 @@ export function openGambitTableGame(d) {
     if (!online()) return;   // playing the regulars: the board's frames are told, and wait for the online setup
     const st = g.remote.state;
     const me = mySeat();
+    // KG6: the relay spent my stake (my seat ready with it): the stake book keeps it as sat, owed its cash-out
+    if (g.stakeId && me >= 0 && st?.seats?.[me]?.stake) { d.online.seated?.(g.stakeId); g.stakeId = null; }
     const dealt = events.some((/** @type {any} */ e) => e.t === 'game');
     const s = g.session instanceof RemoteGambitSession ? g.session : null;
     if (st?.game && (dealt || !s || s.gameNo !== st.gameNo)) openOnline(st, now);

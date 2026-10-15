@@ -4699,6 +4699,51 @@
   "tr": "1627c4b5a68d",
   "by": "claude-in-session"
  },
+ "cards.kingsGambit.online.board.champion": {
+  "en": "c0bb59aca0e1",
+  "tr": "c99ce0f26c09",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.board.failed": {
+  "en": "8161c681279a",
+  "tr": "8a2600a1076a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.board.head": {
+  "en": "9a5f62c7bcee",
+  "tr": "cb143a8cec80",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.board.needs": {
+  "en": "097748ef7c92",
+  "tr": "78061b46e532",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.board.noChampion": {
+  "en": "a2902dfbdf68",
+  "tr": "cb0dfd1336b2",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.board.reading": {
+  "en": "701d9d9c1742",
+  "tr": "9229e9b48bce",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.board.row": {
+  "en": "e502bf85cbb5",
+  "tr": "d67c13f6269a",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.board.you": {
+  "en": "f02cea1d29bc",
+  "tr": "6e8dd549e5c2",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.board.youNone": {
+  "en": "4d710a8f588c",
+  "tr": "2ca186309e08",
+  "by": "claude-in-session"
+ },
  "cards.kingsGambit.online.clock": {
   "en": "7bc19cce26af",
   "tr": "d435c7598726",
@@ -4779,6 +4824,11 @@
   "tr": "cefccc31973b",
   "by": "claude-in-session"
  },
+ "cards.kingsGambit.online.press.board": {
+  "en": "aeddcf7fc615",
+  "tr": "52dd4a853584",
+  "by": "claude-in-session"
+ },
  "cards.kingsGambit.online.press.leave": {
   "en": "5654a31eacc6",
   "tr": "8995aaabb8a6",
@@ -4794,6 +4844,11 @@
   "tr": "91acde292c91",
   "by": "claude-in-session"
  },
+ "cards.kingsGambit.online.press.readyStake": {
+  "en": "c9dade3ad2ed",
+  "tr": "47488291b91d",
+  "by": "claude-in-session"
+ },
  "cards.kingsGambit.online.press.regulars": {
   "en": "a9a54481ae90",
   "tr": "d099b4c48355",
@@ -4802,6 +4857,11 @@
  "cards.kingsGambit.online.press.sit": {
   "en": "79736f23e000",
   "tr": "5d1aa1effa60",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.press.staking": {
+  "en": "f5a983c7aee8",
+  "tr": "c77df952d783",
   "by": "claude-in-session"
  },
  "cards.kingsGambit.online.press.unready": {
@@ -4817,6 +4877,11 @@
  "cards.kingsGambit.online.refuse.busy": {
   "en": "c73a3d9a98c9",
   "tr": "d3050a22fb09",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.refuse.friendly": {
+  "en": "55abbfc502e7",
+  "tr": "df61851bfe06",
   "by": "claude-in-session"
  },
  "cards.kingsGambit.online.refuse.full": {
@@ -4844,6 +4909,31 @@
   "tr": "4b09560ee765",
   "by": "claude-in-session"
  },
+ "cards.kingsGambit.online.refuse.ready": {
+  "en": "5c152094334f",
+  "tr": "c9548630af94",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.refuse.stake": {
+  "en": "44e29a2e8991",
+  "tr": "d4813ce29dbc",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.refuse.stakeDiffers": {
+  "en": "e96470678b9a",
+  "tr": "8667e94aca77",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.refuse.stakeNeeded": {
+  "en": "d8189c2ccecc",
+  "tr": "ccb7f3b87500",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.refuse.stakesClosed": {
+  "en": "b3c67ad0195a",
+  "tr": "0ea32beccca7",
+  "by": "claude-in-session"
+ },
  "cards.kingsGambit.online.refuse.taken": {
   "en": "45911b029988",
   "tr": "bb1a8c5a8ba7",
@@ -4862,6 +4952,41 @@
  "cards.kingsGambit.online.seatReady": {
   "en": "08ba03276338",
   "tr": "31e095773531",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.seatStake": {
+  "en": "ff197859d8c5",
+  "tr": "85f7ac37fb5f",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.stake.choose": {
+  "en": "37fdee6395b5",
+  "tr": "9cc5f08a3f1c",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.stake.differs": {
+  "en": "95337c6e4277",
+  "tr": "3ff057ea3018",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.stake.head": {
+  "en": "019f60dfc114",
+  "tr": "a066495429c8",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.stake.pick": {
+  "en": "e2da868f3994",
+  "tr": "2d124c2e7c44",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.stake.short": {
+  "en": "895f56f05dbd",
+  "tr": "9996cd40851e",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.online.stake.what": {
+  "en": "5490b21fe970",
+  "tr": "b3bf9fc75dd4",
   "by": "claude-in-session"
  },
  "cards.kingsGambit.online.watchWin": {
@@ -5157,6 +5282,21 @@
  "cards.kingsGambit.say.dealFun": {
   "en": "6da3d26d0e58",
   "tr": "1404a5216fde",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.season.counted": {
+  "en": "ee4a263868df",
+  "tr": "d220db39ed6e",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.season.guest": {
+  "en": "54b5498ea4f3",
+  "tr": "bcd62d10c626",
+  "by": "claude-in-session"
+ },
+ "cards.kingsGambit.season.kept": {
+  "en": "ae45de509057",
+  "tr": "2b7355dd25c7",
   "by": "claude-in-session"
  },
  "cards.kingsGambit.stake.night": {

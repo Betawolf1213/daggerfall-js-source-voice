@@ -42,6 +42,7 @@
 import { mintId, accountKind, displayName, isMuted, overRate } from './accounts.js';
 import { isDeveloper, canModerate, titleWorn, glyphsShown, SPROUT_S } from './titles.js';
 import { withIliacHonoursAll } from './iliac.js';   // CARDS10: and Iliac Hand's season #1's title
+import { withGambitHonoursAll } from './gambit.js';   // KG6: and The King's Gambit's GRANDMASTER
 import { withArenaHonoursAll } from './arena.js';   // AUDIT PRE-MERGE 1003 S8: the arena's honours on an author's badge
 import { guildActorOf } from './guilds.js';
 import { heraldryOfRow } from './halls.js';   // GUILD1e: a recruitment note's guild's banner
@@ -129,6 +130,7 @@ export async function readBoard({ db, nowS, primary = db }, reader, env, map) { 
     // SCALE4g: ON THE BINDING - a #1 found stale is counted again and STORED (arena.js championNow), never off a replica
     // (AUDIT SCALE4d A1's law, where the heartbeat's session reads the rest)
     for (const p of await withIliacHonoursAll({ db: primary }, await withArenaHonoursAll({ db: primary }, found, nowS), nowS)) rows.set(p.id, p);   // AUDIT PRE-MERGE 1003 S8: the Grand Champion's title, the #1's laurel
+    for (const p of await withGambitHonoursAll({ db: primary }, [...rows.values()], nowS)) rows.set(p.id, p);   // KG6: and The King's Gambit's GRANDMASTER
   }
   const live = await liveCount(db, reader.id, nowS);
   return {

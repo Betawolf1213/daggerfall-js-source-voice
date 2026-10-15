@@ -35,22 +35,24 @@ export function iliacClaimVerdict(answer) {
  *   store?: { get: (k: string) => any, set: (k: string, v: any) => void }|null,
  *   nowS?: () => (number|null), nowMs?: () => number, me?: () => (string|null),
  *   onCounted?: (data: any) => void, onGuest?: () => void,
+ *   read?: (r: unknown) => any, key?: string,
  * }} deps `claim` is net/accountClient.js accountIliac's - `{ ok, data }` or `{ ok: false, error, why? }`; `onCounted`
  *   told each answer that recorded a game (its result, its rating) - and each that found it recorded already with this
- *   account's rating on it (AUDIT CARDS-6 E18); `onGuest` once a receipt a guest carried
+ *   account's rating on it (AUDIT CARDS-6 E18); `onGuest` once a receipt a guest carried. KG6: `read` and `key` another
+ *   game's receipt and its own store (net/gambitClaims.js - The King's Gambit's season, the same carrier)
  */
-export function createIliacClaims({ claim, store = null, nowS = () => Math.floor(Date.now() / 1000), nowMs = () => Date.now(), me = () => null, onCounted = () => {}, onGuest = () => {} }) {
+export function createIliacClaims({ claim, store = null, nowS = () => Math.floor(Date.now() / 1000), nowMs = () => Date.now(), me = () => null, onCounted = () => {}, onGuest = () => {}, read = readIliacReceipt, key = ILIAC_CLAIMS_KEY }) {
   let running = null, again = false, lastAt = -Infinity, lastMe;
   const settled = new Set(), guestSaid = new Set();
-  const live = (r) => { const c = typeof r === 'string' ? readIliacReceipt(r) : null; const t = nowS(); return c && c.signed && (t == null || c.e > t) ? c : null; };
+  const live = (r) => { const c = typeof r === 'string' ? read(r) : null; const t = nowS(); return c && c.signed && (t == null || c.e > t) ? c : null; };
   const mineOf = (c, id) => !!c && !!id && c.f.includes(id);
   let memory = [];
   function kept() {
     let v;
-    try { v = store ? store.get(ILIAC_CLAIMS_KEY) : undefined; } catch { v = undefined; }
+    try { v = store ? store.get(key) : undefined; } catch { v = undefined; }
     return (Array.isArray(v) ? v : v === undefined ? memory : []).filter((r) => live(r));
   }
-  const keep = (list) => { memory = list; try { store?.set(ILIAC_CLAIMS_KEY, list); } catch { /* memory holds it */ } };
+  const keep = (list) => { memory = list; try { store?.set(key, list); } catch { /* memory holds it */ } };
   function flush() {
     if (running) { again = true; return running; }
     running = run().finally(() => { running = null; if (again) { again = false; void flush(); } });
@@ -83,7 +85,7 @@ export function createIliacClaims({ claim, store = null, nowS = () => Math.floor
       const c = live(r);
       if (!c || settled.has(r)) return false;
       const list = kept();
-      if (!list.some((k) => k === r || readIliacReceipt(k)?.j === c.j)) keep([...list, r].slice(-ILIAC_CLAIMS_MAX));
+      if (!list.some((k) => k === r || read(k)?.j === c.j)) keep([...list, r].slice(-ILIAC_CLAIMS_MAX));
       void flush();
       return true;
     },

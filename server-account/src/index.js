@@ -193,7 +193,8 @@ import { ACCOUNT_VERSION, MAX_BODY_BYTES, ROUTES, OPEN_ROUTES, PATREON_OPEN_ROUT
 import { listSaves, putCard, putBlob, getBlob, deleteSave, saveCardOf } from './saves.js';
 import { signingKey, gatePublicKey } from './signing.js';
 import { stakeCards, cashoutCards } from './cards.js';   // CARDS6: a card table's stakes, escrowed
-import { deckOrderOf, claimIliac, iliacBoardOf, withIliacHonours } from './iliac.js';   // CARDS10: a ranked seat's deck vouched for, Iliac Hand's season board and its title
+import { deckOrderOf, claimIliac, iliacBoardOf, withIliacHonours } from './iliac.js';
+import { claimGambit, gambitBoardOf, withGambitHonours } from './gambit.js';   // KG6: The King's Gambit's season board and its GRANDMASTER   // CARDS10: a ranked seat's deck vouched for, Iliac Hand's season board and its title
 import { titleWorn, glyphsOf, glyphsHidden, auraWorn } from './titles.js';
 import { claimArena, arenaAttempt, arenaBoardOf, arenaTeam, withArenaHonours, arenaRatingOf, ARENA_HONOUR_PATHS, ARENA_RENOWN_REGION } from './arena.js';   // ARENA4: the arena's records, its board, its banners, and the honours the mint reads
 import { arenaSeasonOf } from '../../src/net/arenaLaw.js';
@@ -841,6 +842,7 @@ const service = {
       const honoursCtx = { ...ctx, db: env.DB };
       if (ARENA_HONOUR_PATHS.has(path)) who.player = await withArenaHonours(honoursCtx, who.player, nowS);
       if (ARENA_HONOUR_PATHS.has(path)) who.player = await withIliacHonours(honoursCtx, who.player, nowS);   // CARDS10: and Iliac Hand's season #1 (iliac.js), on the same doors
+      if (ARENA_HONOUR_PATHS.has(path)) who.player = await withGambitHonours(honoursCtx, who.player, nowS);   // KG6: and The King's Gambit's (gambit.js)
 
       if (path === '/v1/auth/token' && request.method === 'POST') {
         const key = await signingKey(env, subtle);
@@ -1197,6 +1199,20 @@ const service = {
         // CARDS10: ILIAC HAND'S SEASON BOARD (Tavern-Cards section 6.4: "a season board, the Arena's way, with a title for
         // the top of it"), counted from the rows, and the caller's own.
         return json(await iliacBoardOf(ctx, who.player, env), 200, origin);
+      }
+
+      if (path === '/v1/gambit/claim' && request.method === 'POST') {
+        // KG6: A RATED KING'S GAMBIT'S RECEIPT, CARRIED HERE BY AN ACCOUNT IT NAMES - Iliac Hand's law (gambit.js
+        // claimGambit): the signature, the account, one row a game, both ratings. A refusal says its rung.
+        const r = await claimGambit(ctx, who.player, body.receipt, await gatePublicKey(env, subtle));
+        if (r.error) return json({ error: r.error, ...(r.why ? { why: r.why } : {}) }, r.error === 'no-gate-key' || r.error === 'busy' ? 503 : r.error === 'not-yours' ? 403 : 400, origin);
+        return json(r, 200, origin);
+      }
+
+      if (path === '/v1/gambit/board' && request.method === 'POST') {
+        // KG6: THE KING'S GAMBIT'S SEASON BOARD (Kings-Gambit.md 10.7: "a season board the Arena's way ... whose #1 over 10
+        // games against 5 foes wears GRANDMASTER"), counted from the rows, and the caller's own.
+        return json(await gambitBoardOf(ctx, who.player, env), 200, origin);
       }
 
       if (path === '/v1/arena/team' && request.method === 'POST') {

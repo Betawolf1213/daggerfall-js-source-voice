@@ -240,6 +240,8 @@ import { openIliacTableGame } from './iliacTableGame.js';   // CARDS10: Iliac Ha
 import { openGambitTableGame, gambitTableOn } from './gambitTableGame.js';   // KG3: The King's Gambit on the seat
 import { gambitBoardKey } from '../ui/gambitTableHud.js';   // KG3: the board's own keys (14.3)
 import { RemoteGambitTable } from '../systems/gambitRemoteTable.js';   // KG5: a watched King's Gambit table, as the relay tells it
+import { readGambitReceipt } from '../net/gambitReceipt.js';   // KG6: a rated game's result, acked by its id
+import { GAMBIT_STAKE_BB } from '../net/gambitStakes.js';   // KG6: a King's Gambit stake's mark in the escrow
 import { gambitPlaces } from '../world/gambitCloth.js';   // KG5: a watched board on its cloth
 import { createGambitTableDraw } from '../render/gambitTableDraw.js';   // KG5: and drawn there
 import { readIliacReceipt } from '../net/iliacReceipt.js';   // AUDIT CARDS-6 C1: a ranked result kept, its game said back to the relay
@@ -672,12 +674,17 @@ export function createWorldModes(host) {
       onIliac: () => openIliacGame(),
       onStand: () => standFromCardTable(),
       play: (clip, at) => audio?.play3d?.(clip, at, 1, { maxDistance: 16 }),   // KG4b: the table's sounds at the cloth - the room's 3D sound, never PEERFX1's observed one-shot (Kings-Gambit.md 5.6)
-      // KG5 (Kings-Gambit.md section 18): a relay that runs The King's Gambit - the room's board at this cloth, the
-      // friendly table only (10.7: the red one is the realm's gold table, KG6's)
-      online: host.gambitOnline?.ok?.() && !holdemGoldTable(cardSeat.table) ? {
+      // KG5 (Kings-Gambit.md section 18): a relay that runs The King's Gambit - the room's board at this cloth; KG6
+      // (section 19): at the red table for gold, a realm character's (CARDS6's escrow: the stake held by the service, its
+      // cash-out the relay's) - anyone else plays the regulars there - and the season's board from either
+      online: host.gambitOnline?.ok?.() && (!holdemGoldTable(cardSeat.table) || gambitGoldOk()) ? {
         send: (w) => !!host.gambitOnline.send(w), myId: () => host.gambitOnline.id(), now: () => host.gambitOnline.now(),
         table: cardSeat.table, chairs: seats.length, chair: cardSeat.seat, chairFeet: (k) => seats[k]?.feet ?? null,
         welcomes: () => host.gambitOnline.welcomes?.() ?? 0,
+        gold: holdemGoldTable(cardSeat.table),
+        stake: (amount) => host.cardStakes.stake({ room: host.cardOnline.room(), table: cardSeat.table, bb: GAMBIT_STAKE_BB, amount, place: cardPlaceName() }),
+        purse: () => host.cardStakes?.purse?.() ?? null, seated: (id) => host.cardStakes?.seated?.(id),
+        board: () => host.gambitSeason?.board?.() ?? Promise.resolve({ ok: false }),
       } : null,
     });
     closeGambitWatch(cardSeat.table);   // KG5: the cloth is the game's now, not a watcher's
@@ -728,6 +735,13 @@ export function createWorldModes(host) {
    *  other table's a watched board, laid on its cloth while the player stands near it (section 18: the room is told every
    *  event, so the tavern watches the board). */
   function gambitOnlineFrame(f) {
+    // KG6: a rated game's result is carried wherever the player is now - kept on the device, then the relay told it is
+    if (typeof f?.receipt === 'string') {
+      const j = readGambitReceipt(f.receipt)?.j;
+      host.gambitClaims?.add(f.receipt);
+      if (host.gambitClaims && j) host.gambitOnline?.send?.({ op: 'ack', table: f.table, j });   // Iliac Hand's AUDIT CARDS-6 C1: kept here (or settled, or never to count) - the relay owes it no longer
+      return;
+    }
     if (mode !== 'interior' || !interiorCtx || !Number.isInteger(f?.table)) return;
     if (cardSeat && f.table === cardSeat.table) { gambitGame?.relay?.(f); return; }   // this cloth is the seat's - its game's, or another game's
     if (typeof f.error === 'string' || !f.state) return;
@@ -739,6 +753,9 @@ export function createWorldModes(host) {
     }
     w.remote.apply(f, Date.now());
   }
+  /** KG6: whether this character plays for gold online - a realm character at a relay that deals Hold'em's escrow (its
+   *  cash-outs come on the card table's word). */
+  const gambitGoldOk = () => !!host.cardOnline?.ok?.() && !!host.cardStakes?.goldOk?.();
   const gambitWatches = new Map();   // KG5: table index -> { remote, draw, ctx }
   const gambitLooked = new Set();   // KG5: the near tables asked once each approach
   function closeGambitWatch(i) { const w = gambitWatches.get(i); if (!w) return; gambitWatches.delete(i); w.draw.destroy(); }

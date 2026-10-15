@@ -43,6 +43,8 @@ import {
   pieceInfoLines, gambitTitle, GAMBIT_HEADS, GAMBIT_PRESS, pressStart, pressForfeit, pressStandCost, pressDrink, pressStrike,
   potionsChip, fallenChip, healthOf, nextStep, resultHead, kingFalls, resultGold, nightSpent, gambitWhat, gambitGuide,
   gambitWords, layoutName, GAMBIT_ONLINE_PRESS, onlineHead, onlineSeat, clockChip, onlineStep, onlineEnd, watchWin,
+  pressReadyStake, stakeHead, stakePick, stakeOnline, stakeChoose, boardHead, boardRow, boardYou, boardChampion, boardNeeds,
+  boardReading, boardFailed,
 } from './gambitTableWords.js';
 
 /** The card a unit stands as - its creature's or its calling's (systems/cardSources.js FOE_CARDS: every unit of the
@@ -102,6 +104,9 @@ export function stakePicks(/** @type {{tier: any, nightLeft: number, name: strin
  *              two, names: [host's, guest's], canSit, ready (mine), step and stepArgs (the next step, onlineStep's),
  *              watching (a game under way, unseated), clock (the turn's seconds left, or null)}; null with the regulars
  *   canOnline  the regulars' setup offers the online board (a relay that runs the game, at the friendly table)
+ *              KG6 (section 19), on `online`: gold (the red table), stakes [{n, enabled, chosen, why}] (the mod's online
+ *              stakes, a pick), staking (the service asked), canBoard (the season board may be read)
+ *   board      KG6: the season board as read - 'reading', 'failed', or the service's answer; boardOpen its section shown
  * @param {any} p
  */
 export function gambitHudModel(p) {
@@ -136,6 +141,7 @@ export function gambitHudModel(p) {
     };
     line = onlineStep(online.step, online.stepArgs);
     out.actions.push({ id: 'sit', label: GAMBIT_ONLINE_PRESS.sit, enabled: !!online.canSit, kind: 'primary', why: online.canSit ? null : onlineStep('full') });
+    if (online.canBoard) out.actions.push({ id: 'board', label: GAMBIT_ONLINE_PRESS.board, enabled: true });   // KG6
     out.actions.push({ id: 'regulars', label: GAMBIT_ONLINE_PRESS.regulars, enabled: true });
     out.actions.push({ id: 'holdem', label: GAMBIT_PRESS.holdem, enabled: true }, { id: 'iliac', label: GAMBIT_PRESS.iliac, enabled: true });
     out.actions.push({ id: 'stand', label: GAMBIT_PRESS.stand, enabled: true, kind: 'quiet' });
@@ -184,10 +190,18 @@ export function gambitHudModel(p) {
     if (online) {
       // KG5: Ready says the army to the relay; a ready army is taken back by Not ready before it changes
       if (army.length || online.step === 'theirReady') line = onlineStep(online.step, online.stepArgs);   // the other ready: said first
+      // KG6: at the gold table the stake is picked here and put down with Ready - what it wins and loses said first
+      const pick = online.gold ? (online.stakes ?? []).find((/** @type {any} */ x) => x.chosen) ?? null : null;
+      if (online.gold) {
+        out.army.stakes = { head: stakeHead(), picks: (online.stakes ?? []).map((/** @type {any} */ x) => ({ n: x.n, label: stakePick(x.n), enabled: !!x.enabled, chosen: !!x.chosen, why: x.why ?? null })), line: pick ? stakeOnline(pick.n) : null };
+        if (army.length && !pick && !online.ready) line = stakeChoose();
+      }
       out.actions.push({ id: 'leave', label: GAMBIT_ONLINE_PRESS.leave, enabled: true });
+      const readyWhy = !army.length ? refusalWords('empty') : online.gold && !pick ? stakeChoose() : null;
       out.actions.push(online.ready
         ? { id: 'unready', label: GAMBIT_ONLINE_PRESS.unready, enabled: true, kind: 'primary' }
-        : { id: 'ready', label: GAMBIT_ONLINE_PRESS.ready, enabled: army.length > 0, kind: 'primary', why: army.length ? null : refusalWords('empty') });
+        : online.staking ? { id: 'ready', label: GAMBIT_ONLINE_PRESS.staking, enabled: false, kind: 'primary', why: null }
+        : { id: 'ready', label: pick ? pressReadyStake(pick.n) : GAMBIT_ONLINE_PRESS.ready, enabled: !readyWhy, kind: 'primary', why: readyWhy });
     } else {
       out.actions.push({ id: 'back', label: GAMBIT_PRESS.back, enabled: true });
       out.actions.push({ id: 'start', label: stake ? pressStart(stake) : GAMBIT_PRESS.startFun, enabled: army.length > 0, kind: 'primary', why: army.length ? null : refusalWords('empty') });
@@ -270,6 +284,7 @@ export function gambitHudModel(p) {
         // KG5: another game is the army built again and Ready said again; or the regulars
         if (!watching) { line = onlineStep('over'); out.actions.push({ id: 'again', label: GAMBIT_PRESS.again, enabled: true, kind: 'primary' }); }
         else line = onlineStep(online.step, online.stepArgs);
+        if (online.canBoard) out.actions.push({ id: 'board', label: GAMBIT_ONLINE_PRESS.board, enabled: true });   // KG6
         out.actions.push({ id: 'regulars', label: GAMBIT_ONLINE_PRESS.regulars, enabled: true });
       } else {
         out.actions.push({ id: 'again', label: GAMBIT_PRESS.again, enabled: true, kind: 'primary' });
@@ -278,6 +293,12 @@ export function gambitHudModel(p) {
       }
       out.actions.push({ id: 'stand', label: GAMBIT_PRESS.leave, enabled: true, kind: 'quiet' });
     }
+  }
+  // KG6: THE SEASON BOARD, as read - a top ten, the reader's own, its Grandmaster, what the title needs
+  if (online && p.boardOpen && p.board) {
+    const b = p.board;
+    out.board = b === 'reading' || b === 'failed' ? { head: GAMBIT_ONLINE_PRESS.board, rows: [], lines: [b === 'reading' ? boardReading() : boardFailed()] }
+      : { head: boardHead(b.season?.n ?? 0), rows: (b.rows ?? []).map((/** @type {any} */ r) => ({ line: boardRow(r), you: !!r.you })), lines: [boardYou(b.me && b.me.games ? { ...b.me, rank: (b.rows ?? []).concat(b.pinned ? [b.pinned] : []).find((/** @type {any} */ r) => r.you)?.rank ?? 0 } : null), boardChampion(b.champion?.name ?? null), boardNeeds(b.titleNeeds?.games ?? 0, b.titleNeeds?.foes ?? 0)] };
   }
   out.next = line ?? nextStep(next, nextArgs);
   out.message = p.why ?? out.next;
@@ -604,6 +625,22 @@ export function createGambitTableHud({ onPress, doc = globalThis.document }) {
           rows.append(row);
         }
         body.append(sec(a.heads.army, [rows, el('p', 'dfgambit-line', a.kingLine)]));
+        if (a.stakes) {   // KG6: the gold table's stake picks
+          const tiles = el('div', 'dfgambit-tiles', null);
+          for (const k of a.stakes.picks) {
+            const n = el('div', 'dfgambit-stake', k.label);
+            n.setAttribute('aria-pressed', String(!!k.chosen));
+            if (!k.enabled) n.setAttribute('aria-disabled', 'true');
+            pressable(n, `stake-${k.n}`, () => (k.enabled ? onPress('stake', k.n) : onPress('say', k.why)));
+            tiles.append(n);
+          }
+          body.append(sec(a.stakes.head, a.stakes.line ? [tiles, el('p', 'dfgambit-line', a.stakes.line)] : [tiles]));
+        }
+      }
+      if (m.board) {   // KG6: the season board
+        const list = el('div', 'dfgambit-list', null);
+        for (const r of m.board.rows) list.append(el('div', `dfgambit-regular${r.you ? ' on' : ''}`, r.line));
+        body.append(sec(m.board.head, [list, ...m.board.lines.map((/** @type {string} */ l) => el('p', 'dfgambit-line', l))]));
       }
       if (m.battle) {
         const b = m.battle;

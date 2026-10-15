@@ -54,7 +54,7 @@ import { arenaReplaysRestore } from '../systems/arenaReplay.js';   // ARENA5: yo
 import { createArenaGate, nearArenaGate } from './arenaGate.js';   // ARENA3; ARENA4b: the Herald's choice and the pause door's banner too
 import { createArenaOnline } from './arenaOnline.js';   // ARENA4: the arena online - the hall, a relay's bout, the boards and the receipts
 import { arenaFloorRoomOf } from '../net/arenaLaw.js';   // ARENA4: a bout's room (ARENA4b: or the hour's exhibition's)
-import { accountArena, accountIliac, iliacRefusalText } from '../net/accountClient.js';   // ARENA4: the arena's records on the account service; CARDS10: Iliac Hand's season board; AUDIT CARDS-6 E14: and its refusals' own words
+import { accountArena, accountIliac, iliacRefusalText, accountGambit } from '../net/accountClient.js';   // ARENA4: the arena's records on the account service; CARDS10: Iliac Hand's season board; AUDIT CARDS-6 E14: and its refusals' own words
 import { fighterIdentity } from '../systems/arenaFighters.js';   // ARENA4: the relay's fighters billed by the bout's seed
 import { bossStandIn } from '../world/gateBoss.js';   // ARENA4: my opponent's stand-in for the formulas
 import { closeArenaDoor, arenaDoorOpen } from '../ui/arenaDoor.js'; import { createArenaSessionButton } from '../ui/arenaSessionButton.js';   // HOTFIX 1003f: the session's button on the screen   // ARENA4: the window goes when a bout calls
@@ -327,6 +327,8 @@ import { refinedText, chainStopText } from '../net/chainLaw.js';   // CRAFT1: wh
 import { createMarketBook } from '../net/marketBook.js';   // PROF5: the market's book
 import { createCardStakes } from '../net/cardStakes.js';   // CARDS6: a realm character's card stakes
 import { createIliacClaims } from '../net/iliacClaims.js';   // CARDS10: the ranked games' results carried to the service
+import { createGambitClaims } from '../net/gambitClaims.js';   // KG6: and The King's Gambit's rated games'
+import { seasonCounted, seasonKept, seasonGuest } from '../ui/gambitTableWords.js';   // KG6: what the season's claims say
 import { createWritBook } from '../net/writBook.js';   // PROF6: guild writs, commissions, the guild Stores
 import { wearCondition, wearOf, WEAR_WHOLE } from '../net/marketLaw.js';   // PROF5: a bought piece's wear; PROF6: a commission's piece unworn
 import { commissionFilledBy } from '../net/writLaw.js';   // AUDIT 31 L8: a piece that answers a commission, the law's own test
@@ -1970,6 +1972,15 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       nowS: () => (_sharedClockHeard ? Math.floor((Date.now() + _sharedOffsetMs) / 1000) : null), nowMs: () => Date.now() + _sharedOffsetMs,
       onCounted: (a) => townTalk?.say?.(a.rated ? `Iliac Hand: the game is on the season's board - your rating ${a.rating} (${a.delta >= 0 ? '+' : ''}${a.delta}).` : 'Iliac Hand: the game is kept, but not counted - you have played that opponent often enough today.'),
       onGuest: () => townTalk?.say?.('Iliac Hand: register your account to keep your ranked games on the board.') })
+    : null;
+  // KG6 (bible/11-Multiplayer/Kings-Gambit.md section 19): THE KING'S GAMBIT'S SEASON BOARD - the service's door, and the
+  // rated games' signed results this device carries to it (net/gambitClaims.js), Iliac Hand's carrier on its own store
+  const gambitDoor = accountGambit({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() });
+  const gambitClaims = params.has('online')
+    ? createGambitClaims({ claim: (r) => gambitDoor.claim(r), store: { get: (k) => _spoilsStore.get(k), set: (k, v) => _spoilsStore.set(k, v) }, me: () => gambitDoor.me(),
+      nowMs: () => Date.now() + _sharedOffsetMs, nowS: () => (_sharedClockHeard ? Math.floor((Date.now() + _sharedOffsetMs) / 1000) : null),   // the relay's clock, as Iliac Hand's carrier reads it (AUDIT CARDS-6 D9)
+      onCounted: (a) => townTalk?.say?.(a.rated ? seasonCounted(a.rating, a.delta) : seasonKept()),
+      onGuest: () => townTalk?.say?.(seasonGuest()) })
     : null;
   // PROF6 (bible/06-Systems/Professions-Arc.md 28): the writs' book - a guild writ posted, supplied, withdrawn; a
   // commission posted, filled (the piece KEPT before it is asked), cancelled, declined; the guild Stores (net/writBook.js).
@@ -25372,6 +25383,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     serpentClaims?.tick();
     sdClaims?.tick();   // SD9b: what the account service has not counted yet, offered again on its own clock
     iliacClaims?.tick();   // CARDS10: and the ranked Iliac games', on theirs
+    gambitClaims?.tick();   // KG6: and The King's Gambit's rated games', on theirs
     _serpentFight = false;
     if (!serpentHost) return;
     const street = (modes?.mode ?? 'exterior') === 'exterior' && playerSpawned && playerEntity.health > 0 && !modes?.deathUp?.();
@@ -29970,6 +29982,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       board: () => iliacDoor.board(),   // the season's board (iliac.js iliacBoardOf)
     },
     iliacClaims,
+    gambitSeason: { board: () => gambitDoor.board() },   // KG6: The King's Gambit's season board (gambit.js gambitBoardOf)
+    gambitClaims,   // KG6: its rated results carried to the service
     sailingCabin: sailingCabins,
     caravanRoom: caravanRooms,   // WAGONS1
     linkedBankCabin: () => readBankCabinLink(playerEntity.boatCabinLink),

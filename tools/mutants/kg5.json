@@ -2,8 +2,8 @@
  {
   "name": "KG5-T-army-told",
   "file": "src/net/gambitTable.js",
-  "old": "const seatView = (/** @type {any} */ s) => (s ? { id: s.id, name: s.name, chair: s.chair, crown: s.crown, ...(s.ready ? { ready: true } : {}) } : null);",
-  "new": "const seatView = (/** @type {any} */ s) => (s ? { id: s.id, name: s.name, chair: s.chair, crown: s.crown, army: s.army, ...(s.ready ? { ready: true } : {}) } : null);",
+  "old": "const seatView = (/** @type {any} */ s) => (s ? { id: s.id, name: s.name, chair: s.chair, crown: s.crown, ...(s.ready",
+  "new": "const seatView = (/** @type {any} */ s) => (s ? { id: s.id, name: s.name, chair: s.chair, crown: s.crown, army: s.army, ...(s.ready",
   "tests": [
    "test/kg5_table.test.js",
    "test/kg5_relay.test.js"
@@ -188,15 +188,6 @@
   ]
  },
  {
-  "name": "KG5-R-gold-table",
-  "file": "server/src/index.js",
-  "old": "      if (holdemGoldTable(m.table)) { refuse('gold table'); return; }",
-  "new": "      // the gold table",
-  "tests": [
-   "test/kg5_relay.test.js"
-  ]
- },
- {
   "name": "KG5-R-stored-check",
   "file": "server/src/index.js",
   "old": "          if (gambitTableValid(v)) this._gambit.set(Number(k), v);",
@@ -290,7 +281,7 @@
  {
   "name": "KG5-C-room",
   "file": "src/net/online.js",
-  "old": "      if (!primary || !validGambitOut(m)) return;",
+  "old": "      if (!validGambitOut(m) || (!primary && m.receipt === undefined)) return;",
   "new": "      if (!validGambitOut(m)) return;",
   "tests": [
    "test/kg5_client.test.js"

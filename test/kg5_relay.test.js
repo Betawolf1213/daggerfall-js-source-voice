@@ -3,7 +3,7 @@
 // the armies at Ready, the alarm's deal, a command the law refuses said to its giver alone, the turn's end on the alarm,
 // the clock; a socket gone forfeits; the table kept across a hibernation and CHECKED when the room loads it (AUDIT KG A4);
 // one cloth one game - each of the three games refused at a cloth another holds, a sit standing the player up from the
-// others; the green table only (the red one's gold is KG6's); no table in a layer, none outside an interior; the room's
+// others; the gold table's Ready a stake (KG6); no table in a layer, none outside an interior; the room's
 // sweep; the wire's arm, its frame cap and the relay version that first runs it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -69,7 +69,7 @@ test('KG5 THE RELAY: two seated in a tavern\'s room and a third watching every e
   for (const m of kg(c)) assert.ok(validGambitOut(m));
 }));
 
-test('KG5 THE RELAY: a socket gone forfeits, its game the other\'s; a stand leaves the chair; the room forgets an empty table; nothing outside an interior; no table in a layer; the green table only (mutants: the leave; the gold table; the layer)', () => withRoom(async ({ r, tick }) => {
+test('KG5 THE RELAY: a socket gone forfeits, its game the other\'s; a stand leaves the chair; the room forgets an empty table; nothing outside an interior; no table in a layer; the gold table\'s Ready a stake (mutants: the leave; the layer)', () => withRoom(async ({ r, tick }) => {
   const a = await join(r, 'peer-a'), b = await join(r, 'peer-b');
   await sit(r, a, 0); await sit(r, b, 1);
   await word(r, a, { op: 'ready', table: 0, army: army(1) });
@@ -81,9 +81,11 @@ test('KG5 THE RELAY: a socket gone forfeits, its game the other\'s; a stand leav
   assert.equal(r.room._gambit.get(0).seats[1], null);
   await word(r, a, { op: 'stand', table: 0 });
   assert.equal(r.store.get('gambit'), undefined, 'the table forgotten');
-  // the red table is the realm's gold table: KG6's
+  // PIN MOVED (KG6): the red table is the realm's gold table - it seats, and its Ready carries a stake
   await word(r, a, { op: 'sit', table: 1, chair: 0, chairs: 4, crown: 0 });
-  assert.equal(kg(a).at(-1).error, 'gold table');
+  assert.equal(r.room._gambit.get(1).gold, true);
+  await word(r, a, { op: 'ready', table: 1, army: army(1) });
+  assert.equal(kg(a).at(-1).error, 'stake needed');
   // a hallway keeps no table
   await withRoom(async ({ r: h }) => {
     const x = await join(h, 'peer-x');

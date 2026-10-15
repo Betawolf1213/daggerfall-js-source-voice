@@ -417,12 +417,17 @@ export const GAMBIT_ONLINE_PRESS = Object.freeze({
   get leave() { return t('cards.kingsGambit.online.press.leave', 'Leave the board'); },
   get regulars() { return t('cards.kingsGambit.online.press.regulars', 'Play a regular instead'); },
   get online() { return t('cards.kingsGambit.online.press.online', 'Play another player'); },
+  get board() { return t('cards.kingsGambit.online.press.board', 'Season board'); },   // KG6
+  get staking() { return t('cards.kingsGambit.online.press.staking', 'Staking...'); },   // KG6
 });
+/** KG6: Ready at the gold table says its stake. @param {number} n */
+export const pressReadyStake = (n) => t('cards.kingsGambit.online.press.readyStake', 'Ready - stake {n, number} gold', { n });
 /** The board's two seats, as the setup lists them. */
 export const onlineHead = () => t('cards.kingsGambit.online.head', 'At this board');
-/** A seat, by its player: who sits, and whether they are ready; or an empty seat. @param {{name: string, ready?: boolean}|null} s */
+/** A seat, by its player: who sits, whether they are ready (KG6: and for what stake); or an empty seat. @param {{name: string, ready?: boolean, stake?: number|null}|null} s */
 export function onlineSeat(s) {
   if (!s) return t('cards.kingsGambit.online.seatEmpty', 'An empty seat');
+  if (s.ready && s.stake) return t('cards.kingsGambit.online.seatStake', '{name} - ready, {n, number} gold', { name: s.name, n: s.stake });   // KG6
   return s.ready ? t('cards.kingsGambit.online.seatReady', '{name} - ready', { name: s.name }) : t('cards.kingsGambit.online.seat', '{name}', { name: s.name });
 }
 /** The turn's clock, as a chip: the seconds the turn has left. @param {number} n */
@@ -465,6 +470,42 @@ export function onlineRefusal(word) {
     case 'account seated': return t('cards.kingsGambit.online.refuse.accountSeated', 'Your account already sits at a table here.');
     case 'gold table': return t('cards.kingsGambit.online.refuse.goldTable', 'This is the gold table: play another player at the other table.');
     case 'in a game': case 'stale': return t('cards.kingsGambit.online.refuse.inGame', 'A game is under way at this board.');
+    // KG6: the gold table's
+    case 'stake needed': return t('cards.kingsGambit.online.refuse.stakeNeeded', 'Choose your stake first.');
+    case 'stake differs': return t('cards.kingsGambit.online.refuse.stakeDiffers', 'The other player stakes another amount: stake the same to play.');
+    case 'stakes closed': return t('cards.kingsGambit.online.refuse.stakesClosed', 'Gold games are closed here right now.');
+    case 'stake refused': case 'stake elsewhere': case 'stake spent': return t('cards.kingsGambit.online.refuse.stake', 'The table would not take that stake - your gold comes home.');
+    case 'friendly table': return t('cards.kingsGambit.online.refuse.friendly', 'This table plays for no gold.');
+    case 'ready': return t('cards.kingsGambit.online.refuse.ready', 'You are ready already.');
     default: return refusalWords(word);
   }
 }
+
+// ── KG6: GOLD AT THE RED TABLE, AND THE SEASON (section 19) ───────────────────────────────────────────────────────
+
+/** The stake picks' head, and a pick. */
+export const stakeHead = () => t('cards.kingsGambit.online.stake.head', 'Your stake');
+export const stakePick = (/** @type {number} */ n) => t('cards.kingsGambit.online.stake.pick', '{n, number} gold', { n });
+/** What a stake wins and loses, said under the picks before it is put down (10.7). @param {number} n */
+export const stakeOnline = (n) => t('cards.kingsGambit.online.stake.what', 'Win, and you take the pot: {pot, number} gold. Lose, forfeit or leave mid-game, and the other player takes it.', { pot: n * 2 });
+/** Why a pick is closed: the purse short of it, or the other player's stake another. */
+export const stakeShort = (/** @type {number} */ gold) => t('cards.kingsGambit.online.stake.short', 'You have {gold, number} gold - too little for this stake.', { gold });
+export const stakeDiffers = (/** @type {string} */ name, /** @type {number} */ n) => t('cards.kingsGambit.online.stake.differs', '{name} stakes {n, number} gold: stake the same to play.', { name, n });
+/** The next step at the gold table with no stake chosen. */
+export const stakeChoose = () => t('cards.kingsGambit.online.stake.choose', 'Choose your stake, then press Ready.');
+/** THE SEASON BOARD'S words. */
+export const boardHead = (/** @type {number} */ n) => t('cards.kingsGambit.online.board.head', 'Season {n}: the board', { n });
+export const boardRow = (/** @type {{rank: number, name: string, rating: number, wins: number, losses: number}} */ r) => t('cards.kingsGambit.online.board.row', '{rank}. {name} - {rating} ({wins} won, {losses} lost)', r);
+export const boardYou = (/** @type {{rank: number, rating: number, wins: number, losses: number}|null} */ r) => (r
+  ? t('cards.kingsGambit.online.board.you', 'You: rank {rank}, rating {rating} ({wins} won, {losses} lost).', r)
+  : t('cards.kingsGambit.online.board.youNone', 'You have no rated game this season.'));
+export const boardChampion = (/** @type {string|null} */ name) => (name
+  ? t('cards.kingsGambit.online.board.champion', 'Grandmaster: {name}', { name })
+  : t('cards.kingsGambit.online.board.noChampion', 'Nobody wears the Grandmaster title yet.'));
+export const boardNeeds = (/** @type {number} */ games, /** @type {number} */ foes) => t('cards.kingsGambit.online.board.needs', 'The season\'s first wears the Grandmaster title after {games} rated games against {foes} different players. A game between two signed-in accounts is rated.', { games, foes });
+export const boardReading = () => t('cards.kingsGambit.online.board.reading', 'Reading the season board...');
+export const boardFailed = () => t('cards.kingsGambit.online.board.failed', 'The season board could not be read - try again.');
+/** What the season's claims say, in the town's talk (scenes/world.js gambitClaims). */
+export const seasonCounted = (/** @type {number} */ rating, /** @type {number} */ delta) => t('cards.kingsGambit.season.counted', 'The King\'s Gambit: the game is on the season board - your rating {rating} ({change}).', { rating, change: `${delta >= 0 ? '+' : ''}${delta}` });
+export const seasonKept = () => t('cards.kingsGambit.season.kept', 'The King\'s Gambit: the game is kept, but not counted - you have played that opponent often enough today.');
+export const seasonGuest = () => t('cards.kingsGambit.season.guest', 'The King\'s Gambit: register your account to keep your games on the season board.');

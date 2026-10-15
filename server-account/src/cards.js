@@ -24,7 +24,8 @@ import { payFromSave, creditSave } from '../../src/net/realmGoldLaw.js';
 import { regionOk } from '../../src/net/nodeLaw.js';
 import { mintStakeOrder, STAKE_ROOM_RE } from '../../src/net/identityToken.js';
 import { verifyCardReceipt, CARD_RECEIPT_TTL_S } from '../../src/net/cardReceipt.js';
-import { HOLDEM_BBS, HOLDEM_STAKE_MIN_BB, HOLDEM_STAKE_MAX_BB, HOLDEM_TABLES_MAX, HOLDEM_TOPUP_MIN_BB } from '../../src/net/holdemTable.js';
+import { HOLDEM_BBS, HOLDEM_STAKE_MIN_BB, HOLDEM_STAKE_MAX_BB, HOLDEM_TABLES_MAX, HOLDEM_TOPUP_MIN_BB, holdemGoldTable } from '../../src/net/holdemTable.js';
+import { GAMBIT_STAKE_BB, gambitStakeOk } from '../../src/net/gambitStakes.js';   // KG6: The King's Gambit's stakes, an arm of their own (AUDIT KG C24)
 
 /** A stake request's id - one asked twice is one stake. */
 export const CARDS_RID_RE = /^[A-Za-z0-9_-]{8,40}$/;
@@ -55,9 +56,17 @@ export async function stakeCards(ctx, player, env, { character, realm = null, re
   if (!regionOk(region)) return { error: 'bad-region' };
   if (typeof room !== 'string' || !STAKE_ROOM_RE.test(room)) return { error: 'bad-room' };
   if (!Number.isInteger(table) || table < 0 || table >= HOLDEM_TABLES_MAX) return { error: 'bad-table' };
-  if (!HOLDEM_BBS.includes(bb)) return { error: 'bad-stakes' };
-  // section 24: a top-up's stake is a seat's addition - from HOLDEM_TOPUP_MIN_BB (the relay keeps the seat within the most)
-  if (!Number.isSafeInteger(amount) || amount < (topup === true ? HOLDEM_TOPUP_MIN_BB : HOLDEM_STAKE_MIN_BB) * bb || amount > HOLDEM_STAKE_MAX_BB * bb) return { error: 'bad-buy-in' };
+  if (bb === GAMBIT_STAKE_BB) {
+    // KG6 (Kings-Gambit.md sections 10.7 and 19; AUDIT KG C24: "an arm of their own"): A KING'S GAMBIT STAKE - one of the
+    // mod's online stakes, at the room's gold table, never a top-up; its big blind no Hold'em table's, so its table's
+    // sum at a cash-out counts a pot's two stakes alone
+    if (!holdemGoldTable(table)) return { error: 'bad-table' };
+    if (topup === true || !gambitStakeOk(amount)) return { error: 'bad-buy-in' };
+  } else {
+    if (!HOLDEM_BBS.includes(bb)) return { error: 'bad-stakes' };
+    // section 24: a top-up's stake is a seat's addition - from HOLDEM_TOPUP_MIN_BB (the relay keeps the seat within the most)
+    if (!Number.isSafeInteger(amount) || amount < (topup === true ? HOLDEM_TOPUP_MIN_BB : HOLDEM_STAKE_MIN_BB) * bb || amount > HOLDEM_STAKE_MAX_BB * bb) return { error: 'bad-buy-in' };
+  }
   const id = stakeIdOf(rand);
   const prep = await prepareRealmRecord(ctx, player.id, side.at, (save) => (payFromSave(save, amount, region) ? null : 'realm-gold'), { outbound: true });   // INT3: a stake can be won by another player
   if (prep.error) return prep;

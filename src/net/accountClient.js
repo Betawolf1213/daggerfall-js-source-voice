@@ -1847,6 +1847,17 @@ export function accountIliac({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
   };
 }
 
+/** KG6 (bible/11-Multiplayer/Kings-Gambit.md section 19): THE KING'S GAMBIT'S SEASON - its rated results carried to the
+ *  service (server-account/src/gambit.js claimGambit) and its board read (gambitBoardOf). */
+export function accountGambit({ fetch, storage, waitMs = ACCOUNT_ACT_WAIT_MS }) {
+  const post = waitedPost({ fetch, storage }, waitMs);
+  return {
+    claim: (receipt) => post('/v1/gambit/claim', { receipt }),
+    board: () => post('/v1/gambit/board', {}),
+    me: () => storedSession(storage)?.id ?? null,
+  };
+}
+
 /** AUDIT CARDS-6 D8/E14: ILIAC HAND'S REFUSALS, IN ITS OWN WORDS. The deck order's and the claim's words are shared with
  *  other doors - the gold tables' (`cards-realm`, `cards-closed`), a backup's (`no-data`), the gate's (`receipt`,
  *  `not-yours`) - whose sentences in REFUSALS name a card table for gold, its stakes, a backup and a gate's receipt; and

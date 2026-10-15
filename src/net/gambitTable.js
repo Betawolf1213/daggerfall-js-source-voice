@@ -28,13 +28,22 @@
 // Every operation mutates the table it is handed and answers the messages it owes - `{to, frame}`, `to` null for the
 // room or a player's id for that player alone; the relay stamps each with `t: 'gambit'`, the table's index and its clock.
 //
+// KG6 (2026-10-15, sections 10.7 and 19): GOLD AT THE RED TABLE AND THE SEASON. A gold table's seat says its stake at
+// Ready - CARDS6's escrow, the realm service's order the relay checked and spent (net/gambitStakes.js: the mod's online
+// stakes, both seats the same) - and the deal takes both into the pot; the end hands it out in cash-outs the relay signs
+// (`cashouts`, net/cardReceipt.js): the whole pot the winner's, nothing the loser's, each stake its own player's when
+// nobody won or the game was never dealt. A game between two accounts is RATED: its result queued for the relay to sign
+// (`results`, net/gambitReceipt.js g1) and the season board to count.
+//
 // Not a DFU member: Daggerfall Unity has no such game - the mod does. Ledger A row (THE KING'S GAMBIT).
 import {
   newGambit, gambitAct, finishTurn, armyRefusal, KG_COLS, KG_ROWS, KG_TILE, KG_COMMANDS, KG_HAZARD_KINDS, KG_LAYOUTS,
   KG_OPEN_FIELD, KG_MAX_UNITS, KG_MAX_HAZARDS, KG_ACTIONS_PER_TURN, KG_POTIONS_MAX, rosterUnit, KG_KING_CLASSES,
 } from './kingsGambit.js';
 import { HOLDEM_SEATS_MIN, HOLDEM_SEATS_MAX } from './cardLaw.js';
-import { HOLDEM_TABLES_MAX, HOLDEM_NAME_MAX } from './holdemTable.js';
+import { HOLDEM_TABLES_MAX, HOLDEM_NAME_MAX, HOLDEM_STAKE_MAX } from './holdemTable.js';
+import { gambitStakeOk } from './gambitStakes.js';
+import { GAMBIT_GAME_ID_RE, GAMBIT_RECEIPT_MAX } from './gambitReceipt.js';
 
 /** MEASURE (KG5, 10.7): a turn's clock - first guess 60 s (Iliac Hand's is 45). */
 export const GAMBIT_TURN_MS = 60000;
@@ -52,20 +61,31 @@ export const GAMBIT_CROWN_COUNT = 4;
 export const GAMBIT_PIECES_MAX = 2 * (KG_MAX_UNITS + 1);
 /** The longest refusal word on the wire. */
 const WORD_MAX = 40;
+/** KG6: the most cash-outs and rated results a table keeps queued for the relay to sign. */
+export const GAMBIT_QUEUE_MAX = 16;
 
-/** A new table at a cloth of `chairs` (2..6), or null. */
-export function newGambitTable({ chairs }) {
+/** A new table at a cloth of `chairs` (2..6) - KG6: `gold` the realm's gold table, every Ready a stake - or null. */
+export function newGambitTable({ chairs, gold = false }) {
   if (!Number.isInteger(chairs) || chairs < HOLDEM_SEATS_MIN || chairs > HOLDEM_SEATS_MAX) return null;
   return {
-    chairs, gameNo: 0, nextDealAt: 0, clockAt: 0, endAt: /** @type {number|null} */ (null), dealtAt: 0,
+    chairs, gold: gold === true, gameNo: 0, nextDealAt: 0, clockAt: 0, endAt: /** @type {number|null} */ (null), dealtAt: 0,
     seats: /** @type {any[]} */ ([null, null]),
     game: /** @type {any} */ (null),
     last: /** @type {any} */ (null),
+    // KG6: the dealt game's stakes (each seat's `{j, sub, amount}`), its id and its two accounts (rated when both are
+    // accounts, and two), and what is owed: cash-outs and rated results, for the relay to sign
+    pot: /** @type {any[]|null} */ (null), id: /** @type {string|null} */ (null), subs: /** @type {any[]|null} */ (null),
+    cashouts: /** @type {any[]} */ ([]), results: /** @type {any[]} */ ([]),
   };
 }
 
-/** A seat in the room's frame: who, which chair, which crown, whether ready - never the army it said at Ready. */
-const seatView = (/** @type {any} */ s) => (s ? { id: s.id, name: s.name, chair: s.chair, crown: s.crown, ...(s.ready ? { ready: true } : {}) } : null);
+/** A seat in the room's frame: who, which chair, which crown, whether ready and for what stake - never the army it said
+ *  at Ready, nor its account. */
+const seatView = (/** @type {any} */ s) => (s ? { id: s.id, name: s.name, chair: s.chair, crown: s.crown, ...(s.ready ? { ready: true } : {}), ...(s.stake ? { stake: s.stake.amount } : {}) } : null);
+/** KG6: the pot's gold, both stakes. @param {any[]|null} pot */
+const potOf = (pot) => (pot ? pot.reduce((n, x) => n + (x?.amount ?? 0), 0) : 0);
+/** KG6: whether the dealt game is rated - two accounts, not one. @param {any} t */
+const ratedOf = (t) => !!t.subs && t.subs.every((/** @type {any} */ x) => typeof x === 'string') && t.subs[0] !== t.subs[1];
 
 /** The room's view of the table: the seats, the game whole (nothing in a dealt game is hidden), the clock, the last
  *  game's end. @param {any} t */
@@ -73,6 +93,7 @@ export function gambitPublicView(t) {
   return {
     chairs: t.chairs, gameNo: t.gameNo, seats: t.seats.map(seatView), game: t.game,
     clockAt: t.game ? t.clockAt : 0, ...(t.game && t.endAt !== null ? { endAt: t.endAt } : {}), last: t.last,
+    ...(t.gold ? { gold: true } : {}), ...(t.game && t.pot ? { pot: potOf(t.pot) } : {}), ...(t.game && ratedOf(t) ? { rated: true } : {}),
   };
 }
 
@@ -98,32 +119,54 @@ export function gambitSitRefusal(t, { id, chair, crown }) {
 }
 
 /**
- * A player sits in `chair` wearing `crown`. Answers the messages, or an error word (gambitSitRefusal's).
- * @param {any} t @param {{id: string, name: string, chair: number, crown: number, now: number}} p
+ * A player sits in `chair` wearing `crown` - KG6: `sub` its account, when it has one (a game between two is rated).
+ * Answers the messages, or an error word (gambitSitRefusal's).
+ * @param {any} t @param {{id: string, name: string, chair: number, crown: number, now: number, sub?: string|null}} p
  */
-export function gambitSit(t, { id, name, chair, crown, now }) {
+export function gambitSit(t, { id, name, chair, crown, now, sub = null }) {
   const no = gambitSitRefusal(t, { id, chair, crown });
   if (no) return no;
   const p = t.seats.findIndex((/** @type {any} */ s) => !s);
-  t.seats[p] = { id, name: String(name ?? '').slice(0, HOLDEM_NAME_MAX), chair, crown, ready: false, army: null, idle: 0 };
+  t.seats[p] = { id, name: String(name ?? '').slice(0, HOLDEM_NAME_MAX), chair, crown, ready: false, army: null, idle: 0, sub: typeof sub === 'string' && sub ? sub : null, stake: null };
   return [room(t, [{ t: 'sit', seat: p, chair, name: t.seats[p].name, crown, at: now }])];
 }
 
 /**
- * A seated player is READY with `army` (roster ids, lawful in KG_POINT_BUDGET - armyRefusal) and, again, the crown it
- * wears. The room hears only that it is; both ready, the deal waits GAMBIT_FIRST_MS. Answers the messages, or an error
- * word ('not seated', 'in a game', 'bad army', 'bad crown').
- * @param {any} t @param {{id: string, army: number[], crown?: number, now: number}} p
+ * Why `gambitReady` would refuse this Ready, or null - pure, so the relay asks it before it spends a stake's order
+ * ('not seated', 'in a game', 'ready' - said once; 'bad army', 'bad crown'; KG6: 'stake needed' at the gold table,
+ * 'friendly table' a stake anywhere else, 'stake differs' from the other seat's).
+ * @param {any} t @param {{id: string, army: number[], crown?: number, stake?: number|null}} p `stake` the amount
  */
-export function gambitReady(t, { id, army, crown, now }) {
+export function gambitReadyRefusal(t, { id, army, crown, stake = null }) {
   const p = gambitSeatOf(t, id);
   if (p < 0) return 'not seated';
   if (t.game) return 'in a game';
+  if (t.seats[p].ready) return 'ready';
   if (!Array.isArray(army) || armyRefusal(army) !== null) return 'bad army';
   if (crown !== undefined && (!Number.isInteger(crown) || crown < 0 || crown >= GAMBIT_CROWN_COUNT)) return 'bad crown';
+  if (t.gold && stake == null) return 'stake needed';
+  if (!t.gold && stake != null) return 'friendly table';
+  if (stake != null && !gambitStakeOk(stake)) return 'stake refused';
+  const other = t.seats[1 - p];
+  if (stake != null && other?.stake && other.stake.amount !== stake) return 'stake differs';
+  return null;
+}
+
+/**
+ * A seated player is READY with `army` (roster ids, lawful in KG_POINT_BUDGET - armyRefusal) and, again, the crown it
+ * wears - KG6: at the gold table with `stake`, the relay's spent order's `{j, sub, amount}`. The room hears only that it
+ * is (and for what stake); both ready, the deal waits GAMBIT_FIRST_MS. Answers the messages, or an error word
+ * (gambitReadyRefusal's).
+ * @param {any} t @param {{id: string, army: number[], crown?: number, now: number, stake?: any}} p
+ */
+export function gambitReady(t, { id, army, crown, now, stake = null }) {
+  const no = gambitReadyRefusal(t, { id, army, crown, stake: stake ? stake.amount : null });
+  if (no) return no;
+  const p = gambitSeatOf(t, id);
   const s = t.seats[p];
   s.army = army.slice();
   if (crown !== undefined) s.crown = crown;
+  s.stake = stake ? { j: stake.j, sub: stake.sub, amount: stake.amount } : null;
   s.ready = true;
   if (t.seats.every((/** @type {any} */ x) => x?.ready)) t.nextDealAt = now + GAMBIT_FIRST_MS;
   return [room(t, [{ t: 'ready', seat: p, at: now }])];
@@ -137,7 +180,19 @@ export function gambitUnready(t, { id, now }) {
   const s = t.seats[p];
   s.ready = false;
   s.army = null;
+  stakeBack(t, s, 'stood');
   return [room(t, [{ t: 'unready', seat: p, at: now }])];
+}
+
+/** KG6: a cash-out queued for the relay to sign - `r` gold home to stake `j`'s account (net/cardReceipt.js `w`'s word). */
+function owe(/** @type {any} */ t, /** @type {string|null} */ to, /** @type {any} */ x, /** @type {number} */ r, /** @type {string} */ w) {
+  t.cashouts.push({ to, j: x.j, s: x.sub, r, w });
+}
+/** KG6: a seat's stake, never dealt, handed back whole. */
+function stakeBack(/** @type {any} */ t, /** @type {any} */ s, /** @type {string} */ w) {
+  if (!s?.stake) return;
+  owe(t, s.id, s.stake, s.stake.amount, w);
+  s.stake = null;
 }
 
 /** The game decided (or forfeited by `left`, the seat that stood or gave it up): the end said, the seats to be ready
@@ -147,6 +202,19 @@ function finish(/** @type {any} */ t, /** @type {number} */ now, left = -1, how 
   const winner = how === 'void' ? null : left >= 0 ? 1 - left : t.game.over?.winner ?? null;
   const end = { t: 'result', gameNo: t.gameNo, winner, how, names: t.seats.map((/** @type {any} */ s) => s?.name ?? null), at: now };
   t.last = { gameNo: t.gameNo, winner, how, names: end.names, game: t.game };
+  // KG6: THE POT - the whole of it the winner's, nothing the loser's; each stake its own player's when nobody won
+  const ids = [0, 1].map((k) => t.seats[k]?.id ?? null);
+  if (t.pot) {
+    for (const k of [0, 1]) {
+      const x = t.pot[k];
+      if (!x) continue;
+      if (winner === null) owe(t, ids[k], x, x.amount, 'void');
+      else owe(t, ids[k], x, k === winner ? potOf(t.pot) : 0, k === winner ? 'stood' : 'broke');
+    }
+  }
+  // KG6: A RATED GAME'S RESULT - two accounts, somebody's win
+  if (winner !== null && ratedOf(t) && t.id) t.results.push({ j: t.id, f: t.subs.slice(), r: winner, h: how, to: ids });
+  t.pot = null; t.subs = null; t.id = null;
   t.game = null;
   t.endAt = null;
   t.clockAt = 0;
@@ -154,21 +222,29 @@ function finish(/** @type {any} */ t, /** @type {number} */ now, left = -1, how 
   return end;
 }
 
+/** KG6: a game's id - 16 hex from the relay's source (Iliac Hand's game id's shape). */
+const gameIdOf = (/** @type {() => number} */ rand32) => [rand32(), rand32()].map((v) => (v >>> 0).toString(16).padStart(8, '0')).join('');
+
 /** The deal: both armies on the relay's board - the host's at the foot, the guest's at the head. */
 function deal(/** @type {any} */ t, /** @type {number} */ now, /** @type {() => number} */ rand32) {
   const game = newGambit({ armies: t.seats.map((/** @type {any} */ s) => s.army), rand32 });
   if (!game) {
-    // a source that broke (or an army that slipped the check at Ready): nobody's game - both asked to be ready again
-    for (const s of t.seats) if (s) { s.ready = false; s.army = null; }
+    // a source that broke (or an army that slipped the check at Ready): nobody's game - both asked to be ready again,
+    // KG6: each stake handed back
+    for (const s of t.seats) if (s) { s.ready = false; s.army = null; stakeBack(t, s, 'void'); }
     return [room(t, [{ t: 'unready', seat: 0, why: 'deal', at: now }, { t: 'unready', seat: 1, why: 'deal', at: now }])];
   }
   t.game = game;
+  // KG6: the stakes into the pot, the game's id and its two accounts
+  t.pot = t.gold ? t.seats.map((/** @type {any} */ s) => s.stake) : null;
+  t.id = gameIdOf(rand32);
+  t.subs = t.seats.map((/** @type {any} */ s) => s.sub ?? null);
   t.gameNo++;
   t.last = null;
   t.endAt = null;
   t.clockAt = now + GAMBIT_TURN_MS;
   t.dealtAt = now;
-  for (const s of t.seats) { s.ready = false; s.army = null; s.idle = 0; }
+  for (const s of t.seats) { s.ready = false; s.army = null; s.idle = 0; s.stake = null; }
   return [room(t, [{ t: 'game', gameNo: t.gameNo, layout: game.layout, crowns: t.seats.map((/** @type {any} */ s) => s.crown), at: now }])];
 }
 
@@ -220,6 +296,7 @@ export function gambitStand(t, { id, now, idle = false }) {
   if (p < 0) return [];
   const events = [];
   if (t.game) events.push(finish(t, now, p, idle ? 'idle' : 'left'));
+  else stakeBack(t, t.seats[p], 'stood');   // KG6: a stake never dealt goes home whole
   const { name, chair } = t.seats[p];
   t.seats[p] = null;
   // the other seat's readiness is its own; a game no longer waits on a chair left empty
@@ -308,6 +385,11 @@ export function validGambitState(st) {
   return true;
 }
 
+/** KG6: a seat's stake as the relay spent it: its order's id, its account, one of the stakes. @param {any} x */
+const stakeOk = (x) => !!x && typeof x === 'object' && typeof x.j === 'string' && x.j.length > 0 && x.j.length <= 64 && typeof x.sub === 'string' && gambitStakeOk(x.amount);
+/** KG6: a queue of what is owed, each of its shape (absent on a table stored before KG6). @param {any} q @param {(x: any) => boolean} ok */
+const queueOk = (q, ok) => q === undefined || (Array.isArray(q) && q.length <= GAMBIT_QUEUE_MAX && q.every((x) => !!x && typeof x === 'object' && ok(x)));
+
 /**
  * A stored table, checked as the room loads it (AUDIT KG A4): its seats and its clock of their types, its game one the
  * law could have minted (validGambitState) or none. True or false - the relay drops a table this refuses.
@@ -321,7 +403,16 @@ export function gambitTableValid(t) {
     if (!s || typeof s !== 'object' || typeof s.id !== 'string' || typeof s.name !== 'string' || !intIn(s.chair, 0, t.chairs - 1) || !intIn(s.crown, 0, GAMBIT_CROWN_COUNT - 1)) return false;
     if (typeof s.ready !== 'boolean' || !intIn(s.idle ?? 0, 0, GAMBIT_IDLE_TURNS)) return false;
     if (s.army !== null && !(Array.isArray(s.army) && armyRefusal(s.army) === null)) return false;
+    if ((s.sub ?? null) !== null && typeof s.sub !== 'string') return false;   // KG6
+    if ((s.stake ?? null) !== null && !(t.gold === true && stakeOk(s.stake))) return false;
   }
+  // KG6: the pot (a gold game's two stakes), the game's id and accounts, the queues owed
+  if (t.gold !== undefined && typeof t.gold !== 'boolean') return false;
+  if ((t.pot ?? null) !== null && !(t.game && Array.isArray(t.pot) && t.pot.length === 2 && t.pot.every(stakeOk) && t.pot[0].amount === t.pot[1].amount)) return false;
+  if ((t.id ?? null) !== null && !(typeof t.id === 'string' && GAMBIT_GAME_ID_RE.test(t.id))) return false;
+  if ((t.subs ?? null) !== null && !(Array.isArray(t.subs) && t.subs.length === 2 && t.subs.every((/** @type {any} */ x) => x === null || typeof x === 'string'))) return false;
+  if (!queueOk(t.cashouts, (/** @type {any} */ x) => typeof x.j === 'string' && typeof x.s === 'string' && Number.isSafeInteger(x.r) && x.r >= 0 && typeof x.w === 'string')) return false;
+  if (!queueOk(t.results, (/** @type {any} */ x) => typeof x.j === 'string' && Array.isArray(x.f) && (x.r === 0 || x.r === 1) && typeof x.h === 'string')) return false;
   if (!Number.isFinite(t.nextDealAt) || !Number.isFinite(t.clockAt) || !(t.endAt === null || Number.isFinite(t.endAt))) return false;
   if (t.game !== null && !(validGambitState(t.game) && t.seats.every(Boolean))) return false;
   return true;
@@ -329,7 +420,7 @@ export function gambitTableValid(t) {
 
 // ── THE WIRE ─────────────────────────────────────────────────────────────────────────────────────────────────────
 
-const GAMBIT_OPS = Object.freeze(['sit', 'stand', 'ready', 'unready', 'act', 'forfeit', 'look']);
+const GAMBIT_OPS = Object.freeze(['sit', 'stand', 'ready', 'unready', 'act', 'forfeit', 'look', 'ack']);
 const gameNoOk = (/** @type {any} */ n) => Number.isSafeInteger(n) && n >= 0;
 /** A command as the law reads it, its numbers in range - or null. @param {any} c */
 function cmdOk(c) {
@@ -344,8 +435,9 @@ function cmdOk(c) {
 /**
  * A client's word to a King's Gambit table, checked: `{op, table, chair?, chairs?, crown?, army?, cmd?, gameNo?}` or null.
  * `sit` names the chair it takes, the cloth's chairs and its crown; `ready` its army (roster ids - the law checks them at
- * Ready) and its crown; `act` the law's command and the game it is for; `forfeit` and `stand` the game its panel showed;
- * `unready` and `look` the table alone.
+ * Ready), its crown and, at the gold table, its stake's order (KG6); `act` the law's command and the game it is for;
+ * `forfeit` and `stand` the game its panel showed; `ack` a rated result the device holds (KG6); `unready` and `look`
+ * the table alone.
  * @param {any} m
  */
 export function validGambitIn(m) {
@@ -358,8 +450,10 @@ export function validGambitIn(m) {
   if (m.op === 'ready') {
     if (!Array.isArray(m.army) || m.army.length > KG_MAX_UNITS || !m.army.every((/** @type {any} */ x) => intIn(x, 0, 10_000))) return null;
     if (m.crown !== undefined && !intIn(m.crown, 0, GAMBIT_CROWN_COUNT - 1)) return null;
-    return { op: 'ready', table: m.table, army: m.army.slice(), ...(m.crown !== undefined ? { crown: m.crown } : {}) };
+    if (m.stake !== undefined && !(typeof m.stake === 'string' && m.stake.length > 0 && m.stake.length <= HOLDEM_STAKE_MAX)) return null;   // KG6: the service's order on the stake
+    return { op: 'ready', table: m.table, army: m.army.slice(), ...(m.crown !== undefined ? { crown: m.crown } : {}), ...(m.stake !== undefined ? { stake: m.stake } : {}) };
   }
+  if (m.op === 'ack') return typeof m.j === 'string' && GAMBIT_GAME_ID_RE.test(m.j) ? { op: 'ack', table: m.table, j: m.j } : null;   // KG6: a rated result kept on the device
   if (m.op === 'act') {
     const cmd = cmdOk(m.cmd);
     return cmd && gameNoOk(m.gameNo) ? { op: 'act', table: m.table, gameNo: m.gameNo, cmd } : null;
@@ -396,10 +490,12 @@ function eventOk(e) {
 export function validGambitOut(m) {
   if (!m || typeof m !== 'object' || !Number.isInteger(m.table) || m.table < 0 || m.table >= HOLDEM_TABLES_MAX) return false;
   if (typeof m.error === 'string') return m.error.length <= WORD_MAX;
+  if (m.receipt !== undefined) return typeof m.receipt === 'string' && m.receipt.length <= GAMBIT_RECEIPT_MAX;   // KG6: a rated game's result
   if (!Array.isArray(m.events) || m.events.length > 64 || !m.events.every(eventOk)) return false;
   const s = m.state;
   if (!s || typeof s !== 'object' || !intIn(s.chairs, HOLDEM_SEATS_MIN, HOLDEM_SEATS_MAX)) return false;
-  if (!Array.isArray(s.seats) || s.seats.length !== 2 || !s.seats.every((/** @type {any} */ x) => x === null || (x && typeof x.id === 'string' && typeof x.name === 'string' && intIn(x.chair, 0, s.chairs - 1) && intIn(x.crown, 0, GAMBIT_CROWN_COUNT - 1)))) return false;
+  if (!Array.isArray(s.seats) || s.seats.length !== 2 || !s.seats.every((/** @type {any} */ x) => x === null || (x && typeof x.id === 'string' && typeof x.name === 'string' && intIn(x.chair, 0, s.chairs - 1) && intIn(x.crown, 0, GAMBIT_CROWN_COUNT - 1) && (x.stake === undefined || gambitStakeOk(x.stake))))) return false;
+  if (s.pot !== undefined && !(Number.isSafeInteger(s.pot) && s.pot > 0)) return false;   // KG6
   if (!gameNoOk(s.gameNo) || !Number.isFinite(s.clockAt) || (s.endAt !== undefined && !Number.isFinite(s.endAt))) return false;
   if (s.last != null && !(typeof s.last === 'object' && seatOr(s.last.winner, null) && typeof s.last.how === 'string' && (s.last.game == null || validGambitState(s.last.game)))) return false;
   return s.game === null || (validGambitState(s.game) && s.seats.every(Boolean));

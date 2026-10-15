@@ -460,6 +460,7 @@ structure ours.
   send, its welcome gate and its frames in `net/online.js` and `scenes/world.js`; the alarm, the socket's close and the
   room's sweep.
 - BUILT (KG5, section 18): every seam above, the table's law `net/gambitTable.js`, relay world203.
+- BUILT (KG6, section 19): the gold table through CARDS6's escrow, and the season board with its GRANDMASTER.
 - LATER (KG6, section 10.7): gold tables through the realm's escrow (CARDS6's stake orders and receipts - an arm of their
   own in `server-account/src/cards.js`, whose escrow checks Hold'em's buy-ins in big blinds; AUDIT KG C24) and a season
   board (CARDS10's, the Arena's way).
@@ -512,7 +513,7 @@ Each ships alone and is verifiable without the next.
 | **KG3** SHIPPED (section 16) | THE EVENING OFFLINE: the session (the mod's clock - the 0.9 s turn's end, the 1.2 s pauses, the 1.3 s result), the host's slot, the panel (setup, army, turn, result) to section 14 - in the card tables' kit (`ui/cardPanelKit.js`, CARDS-PLUS) and the roles, the face, the type, the finger, the keys, the four plain-words blocks, the phone - with its pins (14.9), the stake and the regulars' night's purse; the panel's words through the text core, `t(key, en)`, each new key with its drafts in the thirteen whole languages (L10N6's rule, the twelve drafting owing them - section 16.5; the law keeps keys, section 11); the board a flat mat with the pieces as their cards and the press as a cell, staged under a finger (14.3; AUDIT KG C13: the press had been KG4's alone, and the game cannot be played without it) - the first playable game. The mod vendored as it ships (its manifest, its IL, a README with its provenance and the owner's word - Q6) with its registry row, its credit and its Features row: the credits' test holds a credited mod to a Features row, which only the playable game has. |
 | **KG4** SHIPPED (section 17) | THE BOARD ON THE CLOTH: walls, pillars and water built; the hazards' drawn effects; the pieces' motion; the press on the built board (14.3); the cloth's marks in the house's coat (14.8); the lab (`cards.html` with a King's Gambit table) and its probes - the panel's at a desktop's and a phone's size (`tools/cardPanelsProbe.mjs`, the three panels' one probe - 14.9); the frame cost on the phone probe, as CARDS3c measured it. |
 | **KG5** SHIPPED (section 18) | ONLINE: the relay's table (a relay version), the wire, the client's mirror, spectators, the clock; friendly. |
-| **KG6** | Gold tables online (the realm's escrow) and a season board with its title (section 10.7). |
+| **KG6** SHIPPED (section 19) | Gold tables online (the realm's escrow) and a season board with its title (section 10.7). |
 
 ## 9. Questions for the owner (ANSWERED 2026-10-13 - section 10)
 
@@ -1659,5 +1660,77 @@ relay version (world203); `cards10_client` and `auditcards6_e`'s 'other game' wo
 49, all dead; `kg3.json`'s KG3-S-beat-turn-end (the beat's one home moved to the table's law), KG3-H-concession and
 KG3-H-loads-road, `kg4.json`'s KG4-G-lean-phase and `worldhover.json`'s setMode pair re-aimed by content, dead.
 
-- **Not yet:** gold online and the season board (KG6).
+- **Not yet:** gold online and the season board (KG6 - section 19).
 - **Ledger:** section A row THE KING'S GAMBIT - ONLINE.
+
+## 19. KG6 (2026-10-15): gold at the red table, and the season's Grandmaster
+
+The owner: "Fucking finish everything." Section 10.7's last two decisions, built: "gold online through CARDS6's escrow at
+the red table, at the mod's online stakes (10, 50, 200, 1,000 and 5,000 each), the winner's receipt carrying both stakes;
+and a season board the Arena's way, its Elo and its caps, whose #1 over 10 games against 5 foes (Iliac Hand's champion's
+floor) wears GRANDMASTER - the mod's highest tier's name."
+
+- THE STAKES' ONE HOME (`net/gambitStakes.js`, a leaf every end imports): GAMBIT_ONLINE_STAKES, the mod's five; and
+  GAMBIT_STAKE_BB, the big blind a King's Gambit stake is held at in CARDS6's escrow - 1, which no Hold'em table plays
+  (`holdemTable.js` HOLDEM_BBS 2, 10, 50) - so the escrow tells the games apart, and the service's bound on a cash-out
+  (`cashoutCards`: no more than every stake that came to the room, table and big blind) counts a pot's two stakes alone,
+  never a Hold'em buy-in at the same red table.
+- THE ESCROW'S ARM (`server-account/src/cards.js` stakeCards; AUDIT KG C24, "an arm of their own"): a stake at
+  GAMBIT_STAKE_BB is one of the five, at the room's gold table alone ('bad-table' elsewhere), never a top-up
+  ('bad-buy-in'); held off the realm record and answered with the service's stake order, as a Hold'em buy-in is.
+- THE TABLE'S LAW (`net/gambitTable.js`): a table made at the gold table is gold. Its Ready carries the stake - the
+  relay's spent order's `{j, sub, amount}` - and is refused 'stake needed' without one; a friendly table's refuses one
+  ('friendly table'); the second seat's must match the first's ('stake differs'); a seat says Ready once ('ready'), and
+  `gambitReadyRefusal` asks all of it before anything is spent. The room is told each seat's stake and, once dealt, the
+  pot - never an account. A stake never dealt goes home whole: Not ready, a stand before the deal, a deal the source
+  broke ('stood', 'void'). THE POT AT THE END: the whole of it the winner's ('stood', both stakes - the winner's receipt
+  carries them, 10.7), nothing the loser's ('broke', 0) - a king's fall, a forfeit, a seat the clock stood up or one
+  that left alike; no contest, each stake its own ('void'). The cash-outs queue on the table (`cashouts`) for the relay
+  to sign. A RATED GAME: two seats of two accounts (each seat keeps its sit's account), somebody's win - its result
+  queued (`results`) with the game's id (16 hex from the relay's source at the deal). A stored table's stakes, pot,
+  accounts and queues are checked as its game is (AUDIT KG A4).
+- THE RELAY (`server/src/index.js`): `_gambitReady` - the service's stake order verified (its kind, its account, this
+  room, this table, GAMBIT_STAKE_BB; 'stakes closed' in a layer or a room that cannot sign), the table read again after
+  its await, the Ready's own refusals asked BEFORE the order is spent (refused unspent: the device's stake book voids it
+  back through Hold'em's own `void`), then spent once (`cstake:`) - a refusal after the spend hands the whole stake back
+  in a 'refused' cash-out. `_gambitOwedOut` at every save: each cash-out by CARDS6's own `_holdemReceipt` (kept for its
+  account, sent on the card table's word - the client's stake book claims it), each rated result minted
+  (`net/gambitReceipt.js` g1) and kept owed to both accounts (`gowed:`, Iliac Hand's law) until the device acks it,
+  told again at a look, a sit and a hello; each off its queue only once kept; an empty table never forgotten with one
+  unsigned. The sweep lets expired `gowed:` go.
+- THE RECEIPT (`net/gambitReceipt.js`, `g1`): `{j, f, r, h, i, e}` - the game, the two accounts (the host's first), the
+  winning seat (no draw: a game nobody won is no receipt), how (`king`, `forfeit`, `idle`, `left`), a week's life; the
+  version inside the signed bytes, so an Iliac Hand receipt is never a King's Gambit one, nor the other way.
+- THE SEASON BOARD (`server-account/src/gambit.js`, migration `0113_gambit_ladder`): Iliac Hand's board's twin for a
+  game with no deck to vouch for - one row a game whichever seat carries it (`/v1/gambit/claim`), the arena's Elo and
+  season, a pair's day and season capped, a rating written only while both ratings stand as read; the board
+  (`/v1/gambit/board`) a top ten, the caller pinned, its #1 and what the title needs. GRANDMASTER (`grandmaster` in the
+  token's titles, `titles.js`, its badge `ui/playerBadge.js` in a king's purple): the season's #1 with
+  GAMBIT_CHAMPION_MIN_GAMES (10) rated games against GAMBIT_CHAMPION_MIN_FOES (5) foes, counted on the rows, kept for
+  every Worker (`gambit_champions`), counted by the minute clock (`cron.js` 'gambit-champion'), laid on the badge's
+  doors, letters and the notice board beside Iliac Hand's, lapsing when another takes the top. ACCOUNT acct133.
+- THE CLIENT: `net/online.js` takes a rated result from the room just left too; `scenes/worldModes.js` carries it
+  (`host.gambitClaims` - `net/gambitClaims.js`, Iliac Hand's carrier, `net/iliacClaims.js` taught another reader and
+  store) and acks it; `scenes/world.js` the door (`net/accountClient.js` accountGambit) and the town's word when a game
+  counts. AT THE RED TABLE: a realm character at a relay that deals Hold'em's escrow plays another player for gold
+  (anyone else plays the regulars there); the army's panel offers the five stakes - each the purse's to cover and the
+  other player's to match, what it wins said under the picks - and "Ready - stake {n} gold" asks the realm service
+  first (the card tables' stake book, the record's own act), then the relay with its order; the stake book is told once
+  the relay sat it, and the cash-outs come home by its claim. The result says the pot (the win's both stakes, the
+  loss's one), as a regular's game says its stake. The season board from either table (Season board).
+- 28 keys drafted in the thirteen whole languages; the game's name kept, as everywhere.
+
+### 19.1 Pins and mutants
+
+`test/kg6_gold.test.js` (5): the stakes' law; the gold table's Ready (needed, matched, refused at a friendly table, said
+once, refunded by Not ready and a stand, the pot dealt and stored); the pot at the end (a forfeit, a stand mid-game, no
+contest, one account twice no rated game; the wire's `ack` and staked Ready); the relay at the gold table (the order's
+checks, refused unspent, spent once, the forfeit's cash-outs and the rated result signed, owed until acked, told again
+at a look, a spent order refused, Not ready's stake home); the escrow's arm and a pot's cash-out bounded by the table's
+King's Gambit stakes alone. `test/kg6_season.test.js` (5): the receipt; the claim; the board and its Grandmaster (the
+mint, the minute clock, the lapse); the carrier; the gold table's panel (the picks' bounds, the staked Ready, the book
+told, the board shown). PINS MOVED: `kg5_relay`'s gold table (it seats now, its Ready a stake); every pin that names the
+account version (acct133); the relay's law row (world203, its bundle with gambitStakes.js and gambitReceipt.js).
+Mutants: `tools/mutants/kg6.json`, 44, all dead.
+
+- **Ledger:** section A row THE KING'S GAMBIT - GOLD AND THE SEASON.
