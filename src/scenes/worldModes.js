@@ -10567,6 +10567,7 @@ export function createWorldModes(host) {
     // door. `overlayHeld` is DFU's timeScale-0 pause, the same gate the
     // ticker above rides - a paused game runs no Update at all.
     if (!overlayHeld) host.encounterTick?.();
+    if (chairSeat && (decorTool.flying() || decorTool.panelOpen() || interiorCtx?.chairs?.[chairSeat.key]?.hidden)) standFromChair();   // SIT1 (AUDIT FIVE-ASKS C2): the decorator's panel or its free camera, or the chair taken out of the room, stands you up - before the eye is taken
     cam.pos = player.eyeAt();   // EV1: the interpolated render eye
     // DC1: PlayerDeath.Update's camera sink; the fresh eye array keeps
     // it per-frame, never cumulative. AUDIT 39 (#36) added the dungeon
@@ -10578,7 +10579,6 @@ export function createWorldModes(host) {
     // DEATH3: and the enhanced fall's pitch, from whichever slot holds the death
     if (interiorOverlay instanceof DeathScreen) interiorOverlay.tiltView(cam);
     if (mode === 'dungeon') dungeonCtx?.deathTilt?.(cam);
-    if (chairSeat && (decorTool.flying() || decorTool.panelOpen() || interiorCtx?.chairs?.[chairSeat.key]?.hidden)) standFromChair();   // SIT1 (AUDIT FIVE-ASKS C2): the decorator's panel or its free camera, or the chair taken out of the room, stands you up
     if (mode === 'interior') decorTool.cameraOverride(cam);   // DECOR1d: the free camera's eye, while a piece is placed
     if (mode === 'interior' && chairSeat && !(interiorOverlay instanceof DeathScreen)) { cam.pos = chairSeat.eye.slice(); player.drawFeet = chairSeat.feet; player.drawYaw = chairSeat.yaw; }   // SIT1: the seated eye, and the body drawn on the chair
     if (mode === 'interior' && cardSeat && !(interiorOverlay instanceof DeathScreen)) cam.pos = cardSeat.eye.slice();   // CARDS2: the seated eye - never over a death's sink and tilt (AUDIT CARDS B2): the dead fall from the body's own eye
