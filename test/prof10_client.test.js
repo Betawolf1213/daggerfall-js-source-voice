@@ -132,7 +132,7 @@ test('PROF10 DONE WHEN: a Gold Ruby Ring cut with a clean facet at a Gem Store\'
     page.recipe('Gold Ruby Ring').onclick();
     assert.match(page.text(), /Gold Ruby Ring - rank 25Gold 1 \/ 1 \(1 stored\)Ruby 1 \/ 1 \(1 stored\)/);
     assert.match(page.text(), /2,160 enchantment points \(\+20%\)\. The item maker spends them, beside a Masterwork's own enchantment\./);
-    // PIN MOVED (CRAFT-FIRST-SHOWN, FIELD BUGS 2026-10-15c): the XP its own line under the odds, the first's 500 with it
+    // PIN MOVED (CRAFT-FIRST-SHOWN, FIELD BUGS 2026-10-15d): the XP its own line under the odds, the first's 500 with it
     assert.match(page.text(), /Your rank 25, margin 0: Crude 20 \| Standard 60 \| Fine 20\. A clean facet is a step better\.60 Smithing XP, and 500 more the first time you make this piece at this tier\./);   // PIN MOVED (CRAFT3): a jewel's XP is Smithing's
     page.button('Craft').onclick();
     assert.equal(profActUnderWay(), true);

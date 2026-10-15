@@ -1,183 +1,182 @@
-# FIELD BUGS 2026-10-15c - five Discord threads, each fixed at its root
+# FIELD BUGS 2026-10-15c - eleven threads, one pull request
 
-Five threads from the Discord's bug reports, handed over by Mac with: "No band aids". Read on the code as it stands at
-main's `bd385fc6` (main's `3ffd1492` merged in before the first push), and the temples measured on the real ARENA2
-(the freeware DaggerfallGameFiles, `tools/fetch-data.sh`, outside the tree).
+Eleven Discord threads handed over by Mac on 2026-10-15 with: "Please tackle all bugs in ONE PR". Two of them are one
+bug (the market's bodies). Read on the code as it stands at main's `bd385fc6` (the FIELD BUGS 2026-10-14 roll-up merged).
+Two calls were Mac's, asked: "Store as loose" (LOOT-LOOSE) and "One body per account" (ONE-BODY).
 
 | | Report | What it was | Done |
 |---|---|---|---|
-| 1 | "exploit where you do easy quests for a guild and then ask to join it to farm 100 rep in 1 minute" | nothing mints reputation: a stranger's quests bank DFU's +5 a quest with the guild, and since PROMO-NOW the first review online turned it into every rank it covered at once | fixed (ROLL-PACE), Mac's call: "Pace ranks from joining" |
-| 2 | "True Invisibility not working inside dungeons" - "monsters still spot and attack me immediately while the spell is active" | the senses were right; a foe's melee START faced the target's live feet, where DFU's faces the last position it detected - so a foe that never saw the invisible player swung at the one in front of it | fixed (INVIS-SWING) |
-| 3 | "The entrance to The School of Julianos in Makehda is blocked" - "The Akatosh Chantry in Merdale also has some small issues" | TEMPLE-STEPS, below | fixed (TEMPLE-STEPS) |
-| 4 | "The first time craft bonus is not applying to the outfitting. I got somehow it once from...Fishing net?" | not a fault: AUDIT 32 S1 withholds the first-craft bonus from a pattern made only of the counter's cloth - 152 outfitting patterns, the Fishing Net among them - and nothing in the game said so | shown (CRAFT-FIRST-SHOWN), Mac's call: "Keep rule, show it" |
-| 5 | "Player is getting wet despite it not raining. Possibly an oversight in reducing the rain?" | the soak read the sim's word at the downpour's rate - RAIN-HEART made most rain a sprinkle, and the front holds a rain word dry before its first drop | fixed (WET-FALL) |
+| 1 | "Random encounter from box - Slaughter fish" | SEARCH1's crate foe drew from the dungeon's layout roster, swimmers and all | SLAUGHTER-BOX |
+| 2 | "Happened after a server restart ... friend who is a duplicate of them" | a cell's room kept two sockets of one account | ONE-BODY (relay world207) |
+| 3 | "the town of penbrugh every animal and food stand item turned into freaks" | a town mod's factioned market flats stood Morrowind bodies | STALL-FLATS |
+| 4 | "The NPC's are clustered into groups and all have their heads down and they just rotate" | the same | STALL-FLATS |
+| 5 | "No boots model on legendary boots" | chain boots have no imperial chain model; the figure stood bare skin | BARE-BOOTS |
+| 6 | "alchemy and some other ingredients when looted from a dungeon are unstorable" | law 3, as written - looted units are never counted | LOOT-LOOSE |
+| 7 | "Quest enemy spawned inside object" | a body inside a pillar to the ceiling read free | QUEST-FOE-WALL |
+| 8 | "Crafting arrows at the workbench is useless" | a mod's Arrow weight made a Twig five arrows, not two | BENCH-ARROWS |
+| 9 | "NONE are the Tambeth Hawkley Residence" | a residence picked in another player's home before QUEST-HOME | QUEST-RESIDENCE |
+| 10 | "Morrowind Axes Registered Wrong Due to Reversed Naming Convention" | DF_TO_MW_WEAPON matched the axes' names, not their hands | MW-AXES |
+| 11 | "Boulder's glint offset is way off" | a boulder's aim point was half its rock's height | BOULDER-GLINT |
 
-## ROLL-PACE: online, a review promotes no further than the Roll's pace since the membership began (1)
+The four hosts (THE FOUR HOSTS RULE): every fix sits in a module the hosts share, save three in-place edits - `world.js`'s
+Stores deposit hands the page's order through (LOOT-LOOSE), `worldModes.js`'s quest stand marks its person
+(STALL-FLATS) and its two home door titles read the quest's name (QUEST-RESIDENCE) - each the same line, none grown.
+`exterior.js` and `dungeonContext.js` take nothing new: the market bodies stand in `world.js` and `exterior.js` through
+the one `personLook`; the crate's foe in `dungeonContext.js` through `pickRosterFoe`; the pillar's free in every host
+through `freeLodgedFeet`. And PVP-ESCROW's handoff leaves `bootWorld` for `scenes/wildEscrowHost.js`, the host back
+under the ceiling it had before FB1015's raise (`01-Overview/Host-Split.md`).
 
-`src/net/npcChapterLaw.js` rollPaceDays, rollPromoteCeiling, rollPaceWait; `src/net/npcRollTracker.js` the tracker's
-`standing`, rollPaceOf; `src/systems/guildServiceFlow.js` rankNeedsLines; `src/scenes/worldModes.js` openGuildService;
-`src/scenes/world.js` the host's `rollPace`.
+## SLAUGHTER-BOX: a crate's foe stands on the floor, never a swimmer (1)
 
-THE REPORT. Do a guild's easy quests as a stranger, then join it, and the reputation is ranks at once.
+`src/systems/searchables.js` pickRosterFoe; `src/characters/dungeonEnemies.js` WATER_SPECIES (exported, the one home);
+`src/systems/wildDungeons.js` (its own `new Set([11, 41, 42])` retired for it).
 
-FOUND. Nothing mints reputation. A guild offers a stranger its non-member quests (`questLists.js` getGuildQuestPool,
-the 'N' rows) and a success pays DFU's +5 to the guild's own faction whatever the membership (`Quest.cs` EndQuest
-:382-386 over `GuildManager.GetGuildFactionId` - "used for non-member quests"). Online the Roll paces that at
-ROLL_GAIN_DAY_MAX, 15 a guild a day, a stranger's as a member's. DFU then lets the standing count whole: Join is rank 0
-(`Guild.cs` :309), and the next UpdateRank (:74-96) jumps to every rank the reputation covers - after its 28 days.
-PROMO-NOW took the 28 days off an online promotion on the word that "the Roll's paced reputation already paces the
-ranks". It paces the reputation; the stranger banked it before the membership began, and the hall's first review
-turned it into ranks at once. Driven on the real modules: four quests a day for five days (the Roll's 75, 25 owed), then
-a join, and the same day's review made the stranger rank 7. A second door stood beside it: the review read the page's
-own number, which holds what moved since the Roll's last word unclaimed for up to a minute (longer while claims fail).
-Before PROMO-NOW the 28 days ran on the character's own clock (LIVED1), which a fast travel crosses in a minute.
+FOUND. SEARCH1 (our own - DFU has no searchables) wakes two foes a third of the time a chest or a crate is searched, and
+a chest's or a crate's draws from the dungeon's layout roster (`collectDungeonEnemies`). That roster holds RDBLayout's
+Slaughterfish, Dreugh and Lamia for markers under water (RDBLayout.AddEnemy's water veto keeps them there and nowhere
+else), and nothing took them out before the pick: two Slaughterfish on the dry floor by the crates. The rest ambush reads
+ENCOUNTER_TABLES 0-18 (table 19 holds the swimmers) and the outdoor hosts roll nothing while swimming.
 
-CHANGED (Mac, asked of four shapes - pace ranks from joining, one promotion a day, stranger quests paying no
-reputation, the 28 days back - "Pace ranks from joining"):
+CHANGED. The pick leaves out WATER_SPECIES; a roster of swimmers alone wakes the grave's undead, as an empty one did.
+Pinned in `test/search1_searchables.test.js` (the Aquatic species of EnemyBasics are the layout's three, one home);
+`tools/mutants/fb1015c_slaughterbox.json` 3, all dead. Online: the search is rolled on the searcher's page and its foes
+are loose stands, so the fix holds for the room; no relay change. `06-Systems/Searchables.md`.
 
-- **The pace.** Online a review promotes no further than `rollPromoteCeiling`: the rank the Roll's OWN reputation
-  allows (never the page's unclaimed number), no more than its pace could have paid since the Roll saw the membership
-  begin - 15 a UTC day, that first day counted (`rollPaceDays`; the Roll's view carries the beginning as
-  `members[].since`, kept by the tracker and read as `standing(f)`) - and never a seat's (ROLL_BOOK_RANK_MAX). A
-  stranger with 75 is rank 1 the day they join, 3 the next, then 4, 6 and 7 - an honest member's own pace from
-  nothing. The standing still counts, whole; it is the RANK that waits. A rank already held is never taken
-  (updateRank's ceiling never demotes, CHAP4b's law), so a member the Roll was seeded with keeps its rank and is paced
-  from the seed for the next.
-- **No pace, no skipped wait.** PROMO-NOW's no-wait now stands only while the Roll paces (`rollPaceOf`: null offline,
-  or when a refusal ended the Roll); otherwise the review is DFU's whole, 28 days and all. Before the Roll's first word
-  on a page the ceiling is 0 - no promotion - where AUDIT CHAP4 C3's was the book's 7.
-- **The hall says it.** When the pace is what holds the next rank, the guild popup's line (PROMO-NOW's) ends "Earliest
-  promotion: tomorrow" / "in N days" (`rollPaceWait`; `guild.rankNeeds.paced`, drafted in-session in the thirteen whole
-  languages).
-- **The account service is unchanged.** Its Roll already bounds the rank it records by its own reputation (AUDIT CHAP
-  S5), and a rank moves only at the client's review - the door this pace now holds. No relay or account version moves.
+## ONE-BODY: a place stands one body an account (2)
 
-THE FOUR HOSTS: the guild popup is worldModes.js's alone (openGuildService) - WIRED; world.js hands it `rollPace`
-(its Roll tracker); exterior.js, the offline fixed city, has no Roll and constructs no GuildServiceWindow;
-dungeonContext.js stands no guild hall. Recorded in Port-Ledger section A (ROLL-PACE, beside PROMO-NOW's row). Pinned
-by `test/fb1015c_rollpace.test.js` (5, the end-to-end one over the real service's Roll and the real tracker);
-`tools/mutants/fb1015c_rollpace.json` (13, all dead). PINS MOVED: `test/audit_chap4.test.js` C3 and
-`test/chap4b_seats.test.js`'s host wiring read `rollPace`; `test/fb1015_promonow.test.js`'s host pin reads the paced
-no-wait; `tools/mutants/chap4b.json` CHAP4B-WM-CEILING and CHAP4B-W-CEILING, `audit_chap4.json` AUDIT-CHAP4-C3-CEILING
-and `fb1015_promonow.json` PROMO-NOW-the-host-offline re-aimed at the new lines.
+`server/src/index.js` the hello's one-socket law; `src/net/wire.js` RELAY_VERSION `world207` (`world206` on its branch, renumbered past main's SERPENT5 `world206` at the merge).
 
-What the reporter is owed: the exploit is closed. Reputation earned before joining still counts, but online a new
-member rises no faster than the Roll pays - about a rank and a half a day - and the guild hall says when the next rank
-can come.
+FOUND. A relay deploy restarts every room and drops every socket (`relay-deploy.yml`). Peers are kept by peer id, and
+a cell's room (`world:x,y` - the open country and the towns) or a world room (a dungeon, an interior) let one account
+stand under two ids: only a gate's court, a siege's field and a Super dungeon's realm closed an account's older socket
+on a new hello (PVP-REF, SD3), and the hub's one seat (ONESEAT) leaves a hung or half-open socket in its cells. So a tab
+that outlived the restart's gap stood beside the account's new one - frozen, clickable, and seen by the friend's own
+page, whose welcome named it (`rosterFor` carries no account, and since NAME-AS a name is not unique, so no client could
+tell them apart). The client's own staleness (80 s, four heartbeats) hides a silent peer, but a welcome names it again,
+and a socket still heartbeating stands for good. AUDIT ONESEAT R3 had recorded the gap, not fixed it.
 
-## INVIS-SWING: a foe swings only where it last knew its target stood (2)
+CHANGED (Mac, asked: "One body per account"). A cell's room and a world room close an account's older socket when it
+says hello again under another id (CLOSE_REPLACED, its leave sent to the room), as the gate's, the siege's and the Super
+dungeon's rooms already did. Two tabs of one account in a place are one player now - the older rule ("two players")
+reversed. Relay `world207`, its law row in `test/relayversion.test.js`; the deploy drops every player once. Pinned in
+`test/fb1015c_onebody.test.js`; five relay pins that modelled two tabs of one account in a place moved (PIN MOVED in
+each); `tools/mutants/fb1015c_onebody.json`.
 
-`src/characters/enemyAttack.js` update's melee start; `src/systems/wildAlert.js` noticeRoll, the step;
-`src/scenes/world.js` the wild gate's two checks.
+## STALL-FLATS: a body stands only for a person's picture (3, 4)
 
-THE REPORT. True Invisibility works outdoors; in dungeons monsters "spot and attack me immediately", with no attack,
-theft or offensive spell of the player's.
+`src/characters/peopleBodies.js` personLook; `src/scenes/worldModes.js` questStandLook (`questPerson`).
 
-FOUND. The senses were right, in every host: Invisibility (normal or true - they differ only in what breaks them) blocks
-every detection - sight, hearing and the stealth roll - of all but DFU's thirteen seers (`EnemySenses.cs`
-BlockedByIllusionEffect :659-683, :451-470; the port's `enemyMotor.js` blockedByIllusionEffect and `_classicPostTarget`,
-fed `playerInvisible` by `shared.js` sensesContext in all four hosts). A foe that never detected the player never wrote
-`lastKnownTargetPos`. But the melee START (`EnemyAttack.update`) tested the 22.5-degree yaw toward the target's LIVE
-feet, where DFU's MeleeAnimation tests it toward `senses.LastKnownTargetPos` (`EnemyAttack.cs` :155) - which holds
-ResetPlayerPos (float.MaxValue, :28) until a detection, and passes no yaw test. Target selection is not detection (an
-invisible player is still the target), so every foe a corridor put in front of the invisible player, inside its
-reach, swung - and the blow's own test (MeleeDamage, the live position) landed it. Driven on the real motor and attack:
-a foe a step and a half from an invisible player swung nine times in twenty seconds; DFU's swings none. Dungeons are
-where foes stand in reach without approaching (corridors, doorways) - and where DFU's seers live (26% of the dungeon
-encounter tables against 7% elsewhere: skeletons, ghosts, wraiths, mummies, liches, vampires, Daedra), which see
-through it by DFU's own law. The overworld's fast-travel gate (WILD-ALERT) had the same hole by another road: its
-notice roll was the stealth formula alone, with no illusion gate.
+FOUND. Beautiful Villages gives its market blocks' food, goods and animals a faction (TVRNAS02, TEMPASB0, TEMPBSB0,
+RESIAS02: faction 584, flags 6), and RMBLayout makes every factioned flat a StaticNPC - DFU's own rule, kept. MWNPC8b's
+people lane then stood a Morrowind body for each: in TVRNAS02 alone 101 of 112 bodies stood for scenery (TEXTURE.213,
+10021, 205, 204, 211, 214 and the rest), a heap of men at each stall, idle and turning to the eye (`PERSON_TURN_RATE`).
+DFU draws a person only of RDBLayout.NPCFlatArchives (FlatTypes.NPC) and the rest as their billboards; AUDIT WD3 G1 had
+carried that law into the click ray alone. The bowed heads in the second report are likely MW-HEADS1's backwards Breton
+heads (re-baked by MW-HEADS2) - not proven.
 
-CHANGED:
+CHANGED. `personLook` stands no body for a flat outside NPC_FLAT_ARCHIVES (`world/npcFlatArchives.js` isNpcFlat) - the
+editor's 199 with the rest, so MWNPC8b's own marker check folds into it. A quest's person keeps a body whatever FLATS.CFG
+pictures them with (`questPerson`). The StaticNPC list is DFU's still. Pinned in `test/mwnpc8b_streetdungeon.test.js` on
+the vendored pack's TVRNAS02 (113 StaticNPCs, 11 bodies, none for scenery); `fb1015c_stallflats.json` 2, dead;
+`mwnpc8b.json`'s MWNPC8b-marker-bodied re-aimed by content. `04-Characters/Morrowind-NPCs.md` 13b.
 
-- **The swing's bearing.** `EnemyAttack.update` faces `ai.lastKnownTargetPos` - the senses' own record, written on
-  detection - and with none, starts no swing. The blow's test is unchanged (DFU's MeleeDamage reads the live position).
-  One export every foe pool shares, so no host changes.
-- **The wild gate's notice.** `noticeRoll` passes BlockedByIllusionEffect before the stealth roll - an Invisibility
-  blocks without a die, a Chameleon or a Shadow rolls its own, a seer rolls as before - and both of world.js's checks
-  (the gate's frame and a placed wanderer's first) hand it the traveller's `concealmentFlags` and the enemy's
-  `seesThroughInvisibility`.
+## BARE-BOOTS: what imperial chain lacks, iron (5)
 
-FLAGGED, not taken: an online joiner's copy of a host's foe observes the joiner through the motor's no-senses path
-(`dungeonContext.js` the puppet's `_senses(_pf, null)`), which reads no concealment, so a host's foe that targets an
-invisible joiner can still raise the joiner's enemy alert (a refused rest). It strikes nobody: the host's foe decides
-on the host, under the host's concealment law.
+`src/formats/mwItemMap.js` DF_TO_MW_ARMOR_MATERIAL, mwArmorRecords.
 
-THE FOUR HOSTS: every foe pool runs the one `EnemyAttack.update` - dungeonContext.js's, exteriorFoes.js's (world.js's and
-exterior.js's streets and wilds, and worldModes.js's interiors, IF's one pool factory) and cityGuards.js's - all WIRED by
-the one change. The wild
-gate is world.js's alone (exterior.js has no fast travel). Pinned by `test/fb1015c_invisswing.test.js` (4, the first
-over the real motor, senses and a True Invisibility cast through the one spell door); `tools/mutants/
-fb1015c_invisswing.json` (8, all dead). PINS MOVED: the hand-built foes of `enemyattack.test.js`, `arrows.test.js`,
-`audit18_enemies.test.js`, `audit24_characters.test.js` and `audit68_enemies.test.js` that stand DETECTED now carry the
-position their senses would have written (TEST THE SHAPE THE PRODUCER MINTS); `encounterplace.test.js`,
-`wildalert.test.js` and `wildalertfix.test.js` hand the real `concealmentFlags`.
+FOUND. The Legendary was innocent: "The Wayrest Courier's Treads" is Boots (108) on whatever material the loot made it,
+and DFU's RandomArmorMaterial makes one boot in five Chain. Imperial chain is a cuirass, greaves and coif in Morrowind,
+and the figure's armour (`composeWornArmor`) answered "the classic sprite stands" for the rest - on a figure that has no
+sprite, so the skin stood. Every chain boot, gauntlet and pauldron, Legendary or not. And the material chain was walked
+by material, not by piece: Tribunal attached, Adamantium boots stopped at adamantium (no boots) and never reached ebony.
 
-What the reporter is owed: a monster that cannot see through Invisibility no longer swings at you because you walked in
-front of it. The undead, the vampires and the Daedra still can - they see through it in Daggerfall too.
+CHANGED. Chain's second token is iron (the NPCs' wardrobe's own stand-in, `wardrobe.js` CHAIN_PIECES), and the chain
+is walked by piece. A departure from MW-D28's recorded judgement ("instead of a wrong metal standing in"), named in
+`mwItemMap.js` and `04-Characters/Morrowind-NPCs.md`. Pinned in `test/fb1015c_bareboots.test.js` (every armour Legendary
+on every base and material, through `applyRarity` and the equip door); `fb1015c_bareboots.json` 2, dead.
 
-## CRAFT-FIRST-SHOWN: the first-time bonus said where it is earned (4)
+## LOOT-LOOSE: a looted material goes into the Stores as loose (6)
 
-`src/ui/craftXpWords.js` (new) craftXpLine, dishFirstLine, masonWorksFirstLine, craftXpText; `src/ui/profPages.js` the
-station boxes; `src/scenes/world.js` the craft's word (one call). The record of the design: `06-Systems/Professions-Arc.md`
-41.9.
+`src/ui/profPages.js` the Stores page's Put in and Put everything in; `src/scenes/world.js` the deposit's order.
 
-THE REPORT. The first-time craft bonus does not apply to Outfitting; it came once, from a Fishing Net perhaps, and never
-again.
+FOUND. Law 3 as written (`06-Systems/Materials-Bag.md` 5): the service counts only what it handed out, and a looted
+unit - rolled on the client - is held and never counted, so the page named it "unstorable" and Put in moved nothing.
+The third report of it (FIELD BUGS 2026-10-09c, 2026-10-09f, 2026-10-13e), each leaving the call to Mac.
 
-FOUND. Not a fault. AUDIT 32 S1 (`recipeLaw.js` firstCraftPays over `COUNTER_ONLY`; Mac: "Whatever you think is best")
-withholds the 500 (FIRST_CRAFT_XP) from a pattern made wholly of goods only a counter sells - the Weavers' Linen and
-Wool: 152 of the loom's patterns, every Linen or Wool garment but the boots, the rugs, the tapestries and the Fishing Net,
-which never paid (`audit32_law.test.js` lists it). A Linen boot (the bolt and Cured Leather), leather armour, Silk and
-the pelts pay. The account service decides and answers `first`, and nothing in the game said any of it: the anvil, the
-workbench, the loom and the mason's bench showed no XP, the jeweller's and the fire's showed theirs without the first,
-and the craft's word left `first` unread. What paid the reporter once was most likely another of the loom's first
-patterns (Rat skins open beside the net at rank 1). The client holds no record of past crafts (`professions.js`
-profState sends none), so a page can say what a first craft pays, never whether this one's is still owed.
+CHANGED (Mac, asked: "Store as loose"). Put in and Put everything in take what is held past the count as loose - BAG-
+CRAFT's origin, by its `work` order: the counted first by `all`, then the rest by `work`. Loose units serve every
+crafting station and never a writ, the guild Stores or a Drakes sale, so nothing past the count reaches the economy. The
+card says "N loose". No service change. Pinned in `test/fb1009c_uncounted.test.js` (PIN MOVED: Put in had been shut);
+`fb1009c_uncounted.json` 11, dead. `06-Systems/Materials-Bag.md` 4.
 
-CHANGED (Mac, asked: keep S1 and show it, or pay it - "Keep rule, show it"): every station box says the picked pattern's
-XP and what its first time lays on - or, for the Weavers' cloth, that it lays on none; the mason's works, the fire's
-dishes and a potion of the Apothecaries' goods say theirs; and the craft's word says "with the first-time bonus", or, for
-a first of the Weavers' cloth, why none came. Eight keys, drafted in-session in the thirteen whole languages (the
-alchemy page's `xp` key retired for `xpShop`). Client only: no account or relay version moves.
+## QUEST-FOE-WALL: a body inside a pillar to the ceiling is freed (7)
 
-Pinned by `test/fb1015c_firstcraft.test.js` (3, over the real recipe tables, the real Worker's craft answer read through
-the real profBook, and every station page drawn from it); `tools/mutants/fb1015c_firstcraft.json` (20, all dead). PINS
-MOVED: `craft1_chain` and `prof10_client` read the craft's word through `craftXpText`.
+`src/characters/foeSpacing.js` lodgedIn.
 
-What the reporter is owed: the stations now show each pattern's XP and its 500 first-time bonus, and say plainly that
-pieces made only of the Weavers' Linen and Wool - the Fishing Net among them - earn none.
+FOUND. B0B70Y16 Dragonslayer places its Dragonling at a random QuestSpawn marker, as DFU's GetSiteMarker does, and the
+port's stand is DFU's (GameObjectHelper.CreateEnemy at the marker; no free-spot search - DFU's controller pushes out
+of an overlap on its first move). CRATE-FREE (FIELD BUGS 2026-10-04d) frees a body stood inside a model, but asked a lid
+within LODGE_REACH over the knee: a pillar running to the ceiling (uncapped, or capped past the reach) holds a body for
+good - the collider's push is facing-blind - and measured, a flyer stood in a 1 m, 6 m pillar was still in it after ten
+seconds of chase. No ARENA2 here: whether the Elyrrya Tradition's marker stands in a pillar is not measured; the other
+reading (Meaner Monsters' 2.5x Dragonling sprite over a 0.35 m capsule, half the billboard behind a wall it stands by)
+is DFU's too and is not changed.
 
-## WET-FALL: the skin reads what falls, and how hard (5)
+CHANGED. With no lid in reach, a body is lodged when every bearing meets a face's back - inside a column. Pinned in
+`test/fb1004d_cratefree.test.js` (the column, the capped pillar, beside it, a sleeve open at both ends, the free, and a
+tall crate in a corner); `fb1004d_cratefree.json` 24, dead (two re-aimed by content, two new).
 
-`src/systems/weatherSim.js` fallingWeather; `src/systems/survival/temperature.js` weatherWetGain, feltTemperature;
-`src/systems/survival/env.js` ENV_DEFAULTS; `src/systems/survival/needs.js` the road's fair sky; `src/scenes/world.js`
-and `src/scenes/exterior.js` survivalEnvNow.
+## BENCH-ARROWS: a Twig fletches two arrows, as written (8)
 
-THE REPORT. Wet with no rain falling, and the reporter's guess - the rain's reduction - was right.
+`src/systems/fletching.js` fletchYield.
 
-FOUND. The soak (Climates & Calories' every-minute row, `WEATHER_WET`: rain 3 bare, 1 under a cloak, 0 under its hood)
-read the sim's WORD. RAIN-HOURS and RAIN-HEART (`07-Rendering/Weather-Arc.md`, 2026-10-13) made rain rarer and most of
-it a sprinkle - 63-71% of rain time under 0.15 of the profile - by the front's INTENSITY, which only the drawn drops,
-the look (RAIN-SPRINKLE's fallTerms) and the ear (DISC9/DISC11's heard word and level) read. A sprinkle the eye barely
-sees soaked at the downpour's three a minute - Wet in ten minutes, Soaked in thirty-four - and the front holds a new
-rain word dry until 55% of its arrival (three game minutes on a crossing, up to ninety-nine with the map off), soaking
-all the while. AUDIT C&C T2 (2026-10-12) had just made the row three times what SURV1 read, so the gap showed.
+FOUND. FLETCH's law is a piece's weight over the Arrow's 0.25 kg - Twigs two, a Pine Branch four, a Wood Bundle ten,
+"the workbench's twenty stay the better trade" (`05-Combat/Arrow-Supply.md` 3). `templateByIndex` answers a mod's patch
+first, and Roleplay & Realism: Items (on by default, forced online) makes the Arrow 0.1 kg: a Twig was five arrows, four
+the bench's twenty without its plank and its ingot. The suite never registered the mod's patches.
 
-CHANGED:
+CHANGED. The Arrow's weight is the classic Arrow's (`ITEM_TEMPLATES`). The bench is untouched. Pinned in
+`test/arrowsupply.test.js` with the mod's patches registered; `arrowsupply.json` 52, dead.
 
-- **One truth.** `fallingWeather(shown)` answers what falls on the player - the street's word and level as the
-  outdoor frame wrote them for the ear (`setHeardWeather`, the front's `soundWeather` and intensity; the classic sky's
-  word at 1) - and after a jump, or before the first frame, the host's own shown sky whole (world.js's: the Sun Baby's
-  clear day, AUDIT TEMP-UI E11).
-- **The soak.** `weatherWetGain` scales a rain, storm or snow row by the level (`fall`); fog is not falling and stays
-  whole. `feltTemperature` soaks on `env.falling` and keeps the sky's word for the air and the sun. Both open-world
-  hosts hand `falling`; a road the clock jumped over clears it with the weather (AUDIT C&C H3's fair sky).
-- **A departure from the mod**, recorded in `06-Systems/Climates-Calories.md`: Climates.cs Weather() soaks by the
-  word, as DFU's weather has no level. The classic sky keeps the mod's whole row.
+## QUEST-RESIDENCE: a home a quest names says the quest's name (9)
 
-THE FOUR HOSTS: world.js and exterior.js - WIRED; worldModes.js (interiors) and dungeonContext.js soak nothing (a roof,
-a dungeon: `weatherWetGain` answers 0 before the row). Pinned by `test/fb1015c_wetfall.test.js` (7, one over the
-real front's frames into the minute law); `tools/mutants/fb1015c_wetfall.json` (10, all dead).
+`src/systems/onlineHomes.js` homeDoorTitle; `src/scenes/worldModes.js` the door's plaque and the info click.
 
-What the reporter is owed: you get wet only when rain is actually falling on you, and a light shower soaks you slowly.
+FOUND. N0B00Y09 "Research Notes" sets its scholar in `Place _scholar_home_ remote house` - a nearby town's house, named
+"The <surname> Residence". Before QUEST-HOME (main, 2026-10-15) `isPlayerHome` asked `homeAt`, which knew no town the
+page had not asked, so the pick could land in another player's online home - whose door says its owner's name over the
+building's. No door in Tambeth said "The Hawkley Residence". QUEST-HOME's re-pick moves such a site on the next online
+boot (the residence takes a new name - the journal says it); it cannot move one in a town with no other house, or one
+the player has stood in. Not reproduced on the reporter's save.
+
+CHANGED. A home a quest still names says the quest's name first: "The Hawkley Residence (Aldric's home)". Pinned in
+`test/fb1015c_questresidence.test.js`; `fb1015c_questresidence.json` 3, dead; `home1.test.js`'s hover pin moved.
+
+## MW-AXES: the Morrowind axes cross Daggerfall's names (10)
+
+`src/formats/mwFirstPerson.js` DF_TO_MW_WEAPON, dfWeaponShape.
+
+FOUND. Daggerfall's Battle Axe is its one-hander and its War Axe its two-hander (DFU's ItemTemplates; WEAPON_HANDS 127
+'Either', 128 'Both') - the reverse of every later game. DF_TO_MW_WEAPON matched the names (War_Axe -> AxeOneHand,
+Battle_Axe -> AxeTwoHand), and the type picks the mesh, the icon, the clips, the grip and the sheath: a War Axe swung
+one-handed beside a torch, a Battle Axe took both hands.
+
+CHANGED. Battle_Axe -> AxeOneHand (Morrowind's war axes), War_Axe -> AxeTwoHand (its battle axes); the shape tie-break
+crosses the two names. Every row now holds the hands its weapon has, the Flail the one declared fudge. A material
+Morrowind has no two-handed axe in falls back to the type's first record (off-metal) - not measured without the
+retail data; the Wood-Axe (128) now swings two-handed on the Morrowind body, as its rule says. Pinned in
+`test/fb1015c_mwaxes.test.js`; `fb1015c_mwaxes.json` 3, dead; `fparm`, `daedric_model_shape` and `mwattackclip` pins
+moved. `Port-Ledger.md` MW-D9's row corrected.
+
+## BOULDER-GLINT: a boulder's glint stands on its stones (11)
+
+`src/scenes/mineHost.js` BOULDER_LIFT.
+
+FOUND. A node's act - its face and its glint (`ui/profReticle.js`) - stands at the node's aim point, its foot plus its
+`lift`. A boulder's lift was half its ROCK's height (to 1.2 m), set over the loose stones the player sees as the boulder:
+the face stood 30 degrees over the stones at a metre and a half, against 8.7 for a vein. Not changed, recorded: a
+boulder's stones stand off the rock's box (`rockFoot`), which for a turned rock can be far from the rock as it shows.
+
+CHANGED. A boulder's lift is BOULDER_LIFT, 0.4 m - the stones' scale against a vein's 0.5 over its ore. The look still
+meets the node up to its glow's top. Pinned in `test/fb1001_mining.test.js` (NODE-AIM's lift pin moved);
+`fb1015c_boulderglint.json` 1, dead.

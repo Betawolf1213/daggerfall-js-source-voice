@@ -1,10 +1,10 @@
-// INVIS-SWING (FIELD BUGS 2026-10-15c, a Discord report: "True Invisibility works properly in the overworld, but inside
+// INVIS-SWING (FIELD BUGS 2026-10-15d, a Discord report: "True Invisibility works properly in the overworld, but inside
 // dungeons, monsters still spot and attack me immediately while the spell is active"). The senses were right - an
 // Invisibility blinds every foe but DFU's thirteen seers (EnemySenses.BlockedByIllusionEffect) - but the melee START
 // faced the target's live feet, where DFU's MeleeAnimation faces senses.LastKnownTargetPos (EnemyAttack.cs:155), which
 // only a detection writes. A foe a corridor put in front of an invisible player swung, and the blow landed. And the
 // wild gate's notice roll (WILD-ALERT) ran the stealth formula with no illusion gate at all.
-// bible/01-Overview/Field-Bugs-2026-10-15c.md.
+// bible/01-Overview/Field-Bugs-2026-10-15d.md.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

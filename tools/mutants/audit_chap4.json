@@ -340,7 +340,7 @@
     "new": "  if (!tracker?.held || tracker.stopped) return null;\n  const standing",
     "tests": [
       "test/audit_chap4.test.js",
-      "test/fb1015c_rollpace.test.js"
+      "test/fb1015d_rollpace.test.js"
     ]
   },
   {

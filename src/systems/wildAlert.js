@@ -42,7 +42,7 @@ export function noticeChance(distM, reachM, stealth) {
 }
 
 /**
- * ONE CHECK: whether an enemy notices the traveller on this roll. INVIS-SWING (FIELD BUGS 2026-10-15c): the check is
+ * ONE CHECK: whether an enemy notices the traveller on this roll. INVIS-SWING (FIELD BUGS 2026-10-15d): the check is
  * EnemySenses' stealth roll, and DFU makes no detection of any kind past BlockedByIllusionEffect (EnemySenses.cs:451-470)
  * - an Invisibility always blinds, a Chameleon or a Shadow mostly - save for the thirteen that see through it. The wild
  * gate rolled the stealth formula alone, so an invisible traveller was noticed on the road as if seen. `concealment` the

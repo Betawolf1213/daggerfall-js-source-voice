@@ -2150,7 +2150,7 @@ found it:
 - **E11 - the Sun Baby's clear sky** soaked a body in the sim's rain; the
   needs feel the weather the land wears. (WET-FALL, 2026-10-15: and the
   soak reads what FALLS - `weatherSim.js` fallingWeather, the street's word
-  and level - with the shown sky the fallback; `01-Overview/Field-Bugs-2026-10-15c.md`.)
+  and level - with the shown sky the fallback; `01-Overview/Field-Bugs-2026-10-15d.md`.)
 - **E12 - a record with a counter that was no number** read NaN for the
   session and hid the chip; `survivalOf` mends it from the fresh record.
 - **E9, E13**: the plate reads live (above); the SURV1 temperature
@@ -2967,5 +2967,5 @@ body soaked at the downpour's rate under a sky that dropped next to nothing.
 A DEPARTURE FROM THE MOD: `weatherWetGain` scales a rain, storm or snow row by how hard it falls (`fall`, the level the
 street's frame wrote for the ear, DISC9/DISC11 - `weatherSim.js` fallingWeather), and `feltTemperature` soaks on
 `env.falling` while the air and the sun keep the sky's word. Fog is not falling and keeps its row. The classic sky's
-level is 1: the mod's row, whole. The record: `01-Overview/Field-Bugs-2026-10-15c.md`.
+level is 1: the mod's row, whole. The record: `01-Overview/Field-Bugs-2026-10-15d.md`.
 

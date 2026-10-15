@@ -148,7 +148,7 @@ import { t, localizedText, formatMessage, formatNumber } from '../systems/textMa
  *   CRAFT4: the pack's known Magic and Rare pieces an Enchanter reforges with Essence, each line it may roll
  * @property {(offer: { item: any, name: string, tier: string }, index: number) => Promise<{ ok: boolean, text: string }>} [essenceReforge]
  *   CRAFT4: a line rolled again for Arcane Essence
- * @property {(key: string, qty: number) => Promise<{ ok: boolean, text: string, kept?: boolean }>} [deposit]   BAG1: carried units of a
+ * @property {(key: string, qty: number, order?: string) => Promise<{ ok: boolean, text: string, kept?: boolean }>} [deposit]   BAG1: carried units of a
  *   material - out of the bag and the pack - into the Stores
  * @property {() => boolean} [inTown]   BAG1: whether the Stores are reached here - in a town, indoors or out
  * @property {(key: string) => number} [room]   BAG1: how many more units of a material the bag and the pack can take
@@ -251,8 +251,10 @@ export const BAG_PAGE_WORDS = Object.freeze({
   /** UNCOUNTED (FIELD BUGS 2026-10-09c, "Some ingredients won't let you store them": Troll's Blood and Orc's Blood from a
    *  dungeon, and what a friend was traded): units held that the service never handed out (law 3) - a card's split, and
    *  the picked bar's why. The page listed none of them and said nothing. */
-  uncountedSplit: (n) => `${n.toLocaleString('en-US')} unstorable`,
-  uncounted: 'Looted, bought at a shop or given by another player, a material stays an item in your pack: only what you gathered, or took out of your Stores, goes back in. A Mages Guild\'s potion maker and every crafting station use it as it is.',   // BAG-CRAFT: a station's put-in takes it, loose
+  uncountedSplit: (n) => `${n.toLocaleString('en-US')} loose`,
+  /** LOOT-LOOSE (FIELD BUGS 2026-10-15c, "a lot of alchemy and some other ingredients when looted from a dungeon are
+   *  unstorable"; Mac: "Store as loose"): Put in takes them now - as loose, a station's alone (BAG-CRAFT's origin). */
+  uncounted: 'Looted, bought at a shop or given by another player, a material goes into your Stores as loose: every crafting station uses it, but no writ, no guild Stores and no market sale takes it - only what you gathered does.',   // BAG-CRAFT: a station's put-in takes it, loose
 });
 /** AUDIT2 BAG1 U1: how many more units of a row's material the Stores take - their bound less what they hold, every
  *  origin (the deposit's own decision, server-account/src/professions.js depositStores). */
@@ -929,7 +931,7 @@ function drawCarryStores(detail, rerender, kit) {
   const rows = storesRows(all, _stores, p.name);
   // AUDIT BAG1: whatever the filter shows - the button puts in everything carried, and a search that hid the carried
   // materials hid the button with them
-  const carriedAny = [...all.values()].some((r) => r.carried > 0);
+  const carriedAny = [...all.values()].some((r) => r.carried + (r.uncounted | 0) > 0);   // LOOT-LOOSE: and the loose
   if (carriedAny) {
     const allIn = el('button', 'act', _stores.busy ? 'Sending...' : BAG_PAGE_WORDS.allIn);
     allIn.type = 'button';
@@ -942,15 +944,21 @@ function drawCarryStores(detail, rerender, kit) {
       // silent (a deposit kept) ends the run, its goods on their way
       let moved = 0, stop = null;
       const refused = [];
-      for (const r of storesRows(carryRows(book, p.carriedHeld), {}, p.name)) {
+      for (const r of storesRows(carryRows(book, p.carriedHeld, p.heldKeys), {}, p.name)) {
         // AUDIT2 BAG1 U1: as many as the Stores have room for - a material whose Stores are full is said, never asked
-        let left = Math.min(r.carried, storesRoomOf(book, r));
-        if (r.carried > 0 && left < 1) { refused.push({ name: r.name, text: BAG_PAGE_WORDS.storesFull }); continue; }
-        while (left > 0) {
-          const q = Math.min(left, DEPOSIT_MAX);
-          const res = await p.deposit(r.material, q);
-          if (!res?.ok) { if (res?.kept) stop = res.text ?? null; else refused.push({ name: r.name, text: res?.text ?? null }); break; }
-          moved += q; left -= q;
+        let room = storesRoomOf(book, r);
+        const held = r.carried + (r.uncounted | 0);
+        if (held > 0 && room < 1) { refused.push({ name: r.name, text: BAG_PAGE_WORDS.storesFull }); continue; }
+        // LOOT-LOOSE: what the service counts by `all` (every origin as it was), then the rest held as loose (`work`)
+        for (const [n, order] of /** @type {[number, string][]} */ ([[r.carried, 'all'], [r.uncounted | 0, 'work']])) {
+          let left = Math.min(n, room);
+          while (left > 0) {
+            const q = Math.min(left, DEPOSIT_MAX);
+            const res = await p.deposit(r.material, q, order);
+            if (!res?.ok) { if (res?.kept) stop = res.text ?? null; else refused.push({ name: r.name, text: res?.text ?? null }); left = -1; break; }
+            moved += q; left -= q; room -= q;
+          }
+          if (stop || left < 0) break;
         }
         if (stop) break;
       }
@@ -977,7 +985,7 @@ function drawCarryStores(detail, rerender, kit) {
     bar.append(el('span', 'prof-matline', `${pick.name} - ${pick.total} stored, ${pick.carried} carried - tier ${pick.tier} - ${pick.value} silver each`));
     const room = Math.max(0, p.room?.(pick.material) ?? 0);
     const outMost = Math.min(WITHDRAW_MAX, pick.total, room);
-    const inMost = Math.min(DEPOSIT_MAX, pick.carried, storesRoomOf(book, pick));   // AUDIT2 BAG1 U1: and the Stores' room
+    const inMost = Math.min(DEPOSIT_MAX, pick.carried + (pick.uncounted | 0), storesRoomOf(book, pick));   // AUDIT2 BAG1 U1: and the Stores' room; LOOT-LOOSE: and the loose
     const most = Math.max(1, outMost, inMost);
     const qty = el('input', 'prof-qty');
     qty.type = 'number'; qty.min = '1'; qty.max = String(most); qty.value = String(Math.min(_stores.qty, most));
@@ -999,16 +1007,25 @@ function drawCarryStores(detail, rerender, kit) {
     const put = el('button', 'act', _stores.busy ? 'Sending...' : 'Put in');
     put.type = 'button';
     put.disabled = _stores.busy || !town || inMost < 1 || !p.deposit;
-    put.title = !town ? BAG_WORDS.town : pick.carried > 0 && inMost < 1 ? BAG_PAGE_WORDS.storesFull : '';
-    put.onclick = run(() => p.deposit?.(pick.material, Math.max(1, Math.min(_stores.qty, inMost))));
+    put.title = !town ? BAG_WORDS.town : pick.carried + (pick.uncounted | 0) > 0 && inMost < 1 ? BAG_PAGE_WORDS.storesFull : '';
+    // LOOT-LOOSE: the counted units first, by `all` (a `work` order moves no gold's), then the loose by `work`
+    put.onclick = run(async () => {
+      const q = Math.max(1, Math.min(_stores.qty, inMost)), counted = Math.min(q, pick.carried);
+      let res = counted > 0 ? await p.deposit?.(pick.material, counted, 'all') : null;
+      if (q > counted && (!res || res.ok)) {
+        const loose = await p.deposit?.(pick.material, q - counted, 'work');
+        res = loose?.ok && res?.ok ? { ...loose, text: BAG_PAGE_WORDS.allInDone(q) } : loose;
+      }
+      return res;
+    });
     if (withdrawable(pick.material)) bar.append(qty, take, put);
     detail.append(bar);
     // AUDIT2 BAG1 U14: why Take out or Put in is shut, drawn - a title is no word on a touch screen
     if (town && withdrawable(pick.material)) {
-      const why = [pick.total > 0 && room < 1 ? BAG_WORDS.noRoom : null, pick.carried > 0 && inMost < 1 ? BAG_PAGE_WORDS.storesFull : null].filter(Boolean);
+      const why = [pick.total > 0 && room < 1 ? BAG_WORDS.noRoom : null, pick.carried + (pick.uncounted | 0) > 0 && inMost < 1 ? BAG_PAGE_WORDS.storesFull : null].filter(Boolean);
       if (why.length) detail.append(el('p', 'px-note prof-why', why.join(' ')));
     }
-    if (pick.uncounted > 0) detail.append(el('p', 'px-note prof-why', BAG_PAGE_WORDS.uncounted));   // UNCOUNTED: why Put in leaves them
+    if (pick.uncounted > 0) detail.append(el('p', 'px-note prof-why', BAG_PAGE_WORDS.uncounted));   // UNCOUNTED: what Put in makes of them (LOOT-LOOSE)
     detail.append(el('p', 'px-note', withdrawable(pick.material) ? BAG_PAGE_WORDS.takenNote
       : staysLine(pick)));
     if ((pick.gold | 0) > 0) detail.append(el('p', 'px-note', goldGoodsLine()));

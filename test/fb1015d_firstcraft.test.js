@@ -1,4 +1,4 @@
-// CRAFT-FIRST-SHOWN (FIELD BUGS 2026-10-15c; the Discord, 2026-10-13: "Outfitting xp (first-time craft bonus): The first
+// CRAFT-FIRST-SHOWN (FIELD BUGS 2026-10-15d; the Discord, 2026-10-13: "Outfitting xp (first-time craft bonus): The first
 // time craft bonus is not applying to the outfitting. I got somehow it once from...Fishing net? Then never after.") -
 // AUDIT 32 S1 KEPT, AND SAID. The +500 first-make XP (recipeLaw FIRST_CRAFT_XP) is withheld from a pattern made wholly of
 // goods only a counter sells (recipeLaw firstCraftPays over professionLaw COUNTER_ONLY - the Weavers' Linen and Wool),
