@@ -2594,6 +2594,16 @@
   "tr": "398deccff313",
   "by": "claude-in-session"
  },
+ "account.refusal.repairNoFaction": {
+  "en": "40e9bc6ef338",
+  "tr": "bfb1330c789b",
+  "by": "claude-in-session"
+ },
+ "account.refusal.repairNotSet": {
+  "en": "cc0bc29bd55f",
+  "tr": "29e286708816",
+  "by": "claude-in-session"
+ },
  "account.refusal.retired": {
   "en": "1f21826df490",
   "tr": "65f9f3e5bad1",
@@ -13617,6 +13627,11 @@
  "stats.weapon": {
   "en": "ead533685e26",
   "tr": "8c4dac1fcc53",
+  "by": "claude-in-session"
+ },
+ "summon.noQuest": {
+  "en": "056fe9b45bd2",
+  "tr": "19a3150a15bd",
   "by": "claude-in-session"
  },
  "trade.counter.cost.get": {

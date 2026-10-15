@@ -26,11 +26,11 @@ const NAMED = {
   'src/scenes/hostCombat.js': 1,
   'src/scenes/townTalk.js': 2,
   'src/scenes/world.js': 8,
-  'src/scenes/worldModes.js': 6,
+  'src/scenes/worldModes.js': 5,   // SUMMON-OFFER: the summoning's no-offer line moved to the law module (daedraSummoning.js noQuestText)
   'src/systems/affiliations.js': 1,
   'src/systems/answerPipeline.js': 3,
   'src/systems/banking.js': 2,
-  'src/systems/daedraSummoning.js': 1,
+  'src/systems/daedraSummoning.js': 2,   // SUMMON-OFFER: noQuestText's prince
   'src/systems/decorItems.js': 1,
   'src/systems/enchantmentCatalogue.js': 2,
   'src/systems/itemInfo.js': 4,

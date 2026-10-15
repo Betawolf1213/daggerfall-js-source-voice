@@ -1,4 +1,6 @@
 Key,Value
+account.refusal.repairNoFaction,"該角色的記錄中沒有這個派系，因此未作任何修復。"
+account.refusal.repairNotSet,"該角色的這個派系沒有那個標記，因此未作任何修復——是正確的角色嗎？"
 chair.bench,"長椅"
 chair.chair,"椅子"
 chair.taken,"那裡已經有人坐著了。"
@@ -124,3 +126,4 @@ stats.swings.shot,"射擊"
 stats.swings.title,"揮擊方向"
 stats.title,"戰鬥數據"
 stats.weapon,"武器"
+summon.noQuest,"{prince}回應了召喚，但在這個地區沒有可交給你的任務。你的金幣分文未取 - 請到其他地區嘗試召喚。"

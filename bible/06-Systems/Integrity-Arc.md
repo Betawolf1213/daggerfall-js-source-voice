@@ -250,6 +250,30 @@ it traded with and what each gave - a trade is witnessed on both rows, so no fin
 among the character's findings with who did it, and moves the row's `judge_rev`. The cron sweeps findings past 90 days
 and the hours past 30.
 
+SUMMON-REPAIR (2026-10-15, acct134, migration 0114 - acct133 and 0113 on its branch, renumbered past LAMP-KEEPER II's at the merge; Mac, asked how to mend the save FIELD BUGS 2026-10-14 SUMMON-OFFER
+left stuck: "Operator tool") added two. `realm-characters { name }` lists an account's realm characters by its handle -
+the id every act names, the dead said so. `realm-repair { id, ticket, faction, flag, gold, note? }` mends one: one of
+FactionFile's flag bits (`formats/factionFile.js` FACTION_FLAGS, moved there from `systems/factionRep.js`, which hands
+them on, so the Worker can read them) cleared on one faction of its record, and 0 to 1,000,000 gold given back as the
+game's letter of credit (`src/net/repairLaw.js`, the service's and the tool's one law: `repairOf`, `applyRepair`). The
+record says whether it can be done - a faction it does not hold is `repair-no-faction`, a bit its faction does not carry
+`repair-not-set` (an account holds up to six characters: one aimed at the wrong one mends and gives nothing). It is
+done ONCE A TICKET: `realm_repairs` (never swept) holds a row a character and ticket, written in the record's own batch,
+so the same repair asked again answers its row (`repeat`) and moves nothing, and two asked at once meet the key and one
+rolls back. The record is SEIZED as the rollback and INT9's death take it (`realm.js` seizeRealmRecord): read where it
+stands, written one sequence on, its seat taken from any tab - the tab playing it is refused at its next checkpoint, the
+copy its device keeps follows a sequence the record has left, and its next join plays the mended record - and the gold
+is witnessed (the judge charges no gain the service made) and counted as the service's own faucet, `repair`
+(FAUCET_KINDS, beside the patrons'). The act is written among the findings like every other. The tool:
+
+```sh
+node tools/realmReview.mjs characters <handle>
+node tools/realmReview.mjs repair <realm character id> <ticket> <faction id> <0x40 | 64 | Summoned> <gold> [note]
+```
+
+Pinned by `test/fb1014_summonrepair.test.js` over the real Worker and the playing tab's own session and join;
+`tools/mutants/fb1014_summonrepair.json` (16, dead).
+
 ### 4b. The audit (2026-10-09, Mac: "Lets do a comprehensive audit on this")
 
 Five reviews ran on lane 1 as first built: the service's correctness and races, a modified client's ways round it, the

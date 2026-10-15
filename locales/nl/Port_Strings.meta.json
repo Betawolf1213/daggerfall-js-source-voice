@@ -2519,6 +2519,16 @@
   "tr": "ebabca26edf3",
   "by": "claude-in-session"
  },
+ "account.refusal.repairNoFaction": {
+  "en": "40e9bc6ef338",
+  "tr": "7eb8188e601d",
+  "by": "claude-in-session"
+ },
+ "account.refusal.repairNotSet": {
+  "en": "cc0bc29bd55f",
+  "tr": "5167dd4d4f03",
+  "by": "claude-in-session"
+ },
  "account.refusal.retired": {
   "en": "1f21826df490",
   "tr": "4a49e6ee5f1f",
@@ -7797,6 +7807,11 @@
  "stats.weapon": {
   "en": "ead533685e26",
   "tr": "f5b6e14fcfdf",
+  "by": "claude-in-session"
+ },
+ "summon.noQuest": {
+  "en": "056fe9b45bd2",
+  "tr": "592904b2e422",
   "by": "claude-in-session"
  }
 }

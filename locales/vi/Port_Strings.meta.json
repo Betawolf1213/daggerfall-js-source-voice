@@ -1,4 +1,14 @@
 {
+ "account.refusal.repairNoFaction": {
+  "en": "40e9bc6ef338",
+  "tr": "ac4ec5b9de21",
+  "by": "claude-in-session"
+ },
+ "account.refusal.repairNotSet": {
+  "en": "cc0bc29bd55f",
+  "tr": "1189f1eee17c",
+  "by": "claude-in-session"
+ },
  "chair.bench": {
   "en": "931fa888a4a9",
   "tr": "a74c5029e1e4",
@@ -622,6 +632,11 @@
  "stats.weapon": {
   "en": "ead533685e26",
   "tr": "067623dc828b",
+  "by": "claude-in-session"
+ },
+ "summon.noQuest": {
+  "en": "056fe9b45bd2",
+  "tr": "40d7251b1c04",
   "by": "claude-in-session"
  }
 }

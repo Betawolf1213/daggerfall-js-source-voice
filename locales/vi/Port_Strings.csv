@@ -1,4 +1,6 @@
 Key,Value
+account.refusal.repairNoFaction,"Hồ sơ của nhân vật đó không có phe phái này, nên không có gì được sửa."
+account.refusal.repairNotSet,"Phe phái đó không mang cờ này ở nhân vật này, nên không có gì được sửa - có đúng nhân vật không?"
 chair.bench,"Ghế dài"
 chair.chair,"Ghế"
 chair.taken,"Đã có người ngồi ở đó rồi."
@@ -124,3 +126,4 @@ stats.swings.shot,"Phát bắn"
 stats.swings.title,"Hướng đòn đánh"
 stats.title,"Chỉ số chiến đấu"
 stats.weapon,"Vũ khí"
+summon.noQuest,"{prince} đáp lời, nhưng không có nhiệm vụ nào cho bạn ở vùng này. Bạn vẫn giữ vàng của mình - hãy thử triệu hồi ở một vùng khác."
