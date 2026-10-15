@@ -1,0 +1,175 @@
+[
+  {
+    "name": "EGA5E-plank-removeBucket-dropped",
+    "file": "src/scenes/egSpan.js",
+    "old": "    removeBucket: (k) => { const i = keys.indexOf(k); if (i >= 0) keys.splice(i, 1); return collider.removeBucket(k); },",
+    "new": "    removeBucket: () => {},",
+    "tests": [
+      "test/egaudit5_e.test.js",
+      "test/egaudit3_law_bridge.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-plank-key-kept",
+    "file": "src/scenes/egSpan.js",
+    "old": "const i = keys.indexOf(k); if (i >= 0) keys.splice(i, 1); return collider.removeBucket(k);",
+    "new": "return collider.removeBucket(k);",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-plank-host-literal-wrapper",
+    "file": "src/scenes/dungeonContext.js",
+    "old": "egSpan.stand({ dynamicDraws, collider: egSpanCollider(collider, keys) });",
+    "new": "egSpan.stand({ dynamicDraws, collider: { addMesh: (...a) => { keys.push(a[0]); return collider.addMesh(...a); } } });",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-beat-pictures-comment-stale",
+    "file": "src/scenes/egSpan.js",
+    "old": "the Beat's pictures are the breach's, freed at its end - egBeatTellDown",
+    "new": "the Beat's pictures are the session's - egBeatTellUp",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-shaders-kept",
+    "file": "src/render/glProgram.js",
+    "old": "  gl.deleteShader(vs); gl.deleteShader(fs);\n",
+    "new": "",
+    "tests": [
+      "test/egaudit5_e.test.js",
+      "test/audit68_render_b.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fragment-shader-kept",
+    "file": "src/render/glProgram.js",
+    "old": "  gl.deleteShader(vs); gl.deleteShader(fs);\n",
+    "new": "  gl.deleteShader(vs);\n",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-failed-program-kept",
+    "file": "src/render/glProgram.js",
+    "old": "if (fault != null) { gl.deleteProgram(prog); throw new Error(fault); }",
+    "new": "if (fault != null) { throw new Error(fault); }",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-telegraph-floor-buffer-kept",
+    "file": "src/render/gateTelegraph.js",
+    "old": "for (const b of [this.vbo, this.walkVbo, this.floorVbo]) if (b) gl.deleteBuffer(b);",
+    "new": "for (const b of [this.vbo, this.walkVbo]) if (b) gl.deleteBuffer(b);",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-telegraph-floor-vao-kept",
+    "file": "src/render/gateTelegraph.js",
+    "old": "for (const v of [this.vao, this.walkVao, this.floorVao]) if (v) gl.deleteVertexArray(v);",
+    "new": "for (const v of [this.vao, this.walkVao]) if (v) gl.deleteVertexArray(v);",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-telegraph-program-kept",
+    "file": "src/render/gateTelegraph.js",
+    "old": "    if (this.program) gl.deleteProgram(this.program);\n    this.vao = null; this.walkVao = null;",
+    "new": "    this.vao = null; this.walkVao = null;",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-telegraph-destroy-twice",
+    "file": "src/render/gateTelegraph.js",
+    "old": "    this.gl = null;\n    for (const v of [this.vao, this.walkVao, this.floorVao])",
+    "new": "    for (const v of [this.vao, this.walkVao, this.floorVao])",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-crystal-glow-vao-kept",
+    "file": "src/render/courtCrystals.js",
+    "old": "for (const v of [this.vao, this.glowVao]) if (v) gl.deleteVertexArray(v);",
+    "new": "for (const v of [this.vao]) if (v) gl.deleteVertexArray(v);",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-crystal-glow-buffer-kept",
+    "file": "src/render/courtCrystals.js",
+    "old": "for (const b of [...(this.bufs ?? []), this.glowBuf]) if (b) gl.deleteBuffer(b);",
+    "new": "for (const b of [...(this.bufs ?? [])]) if (b) gl.deleteBuffer(b);",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-crystal-glow-program-kept",
+    "file": "src/render/courtCrystals.js",
+    "old": "for (const p of [this.program, this.glowProgram]) if (p) gl.deleteProgram(p);",
+    "new": "for (const p of [this.program]) if (p) gl.deleteProgram(p);",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-crystal-destroyed-draws",
+    "file": "src/render/courtCrystals.js",
+    "old": "    if (!this.gl) return;   // AUDIT EG V (L6-5): a destroyed pass draws nothing",
+    "new": "",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fight-telegraph-pass-kept-at-leave",
+    "file": "src/scenes/egFight.js",
+    "old": "      try { p0?.destroy(); } catch { /* gone with its context */ }",
+    "new": "",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-fight-crystal-pass-kept-at-leave",
+    "file": "src/scenes/egFight.js",
+    "old": "      try { c0?.destroy(); } catch { /* gone with its context */ }",
+    "new": "",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-edge-line-viewport-unpassed",
+    "file": "src/scenes/egLookDraw.js",
+    "old": "return lines.draw(proj, view, eye, ts, fog, streamers, n, alphas, vp?.[2] ?? 0, vp?.[3] ?? 0);",
+    "new": "return lines.draw(proj, view, eye, ts, fog, streamers, n, alphas);",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  },
+  {
+    "name": "EGA5E-edge-line-client-unpassed",
+    "file": "src/scenes/egClient.js",
+    "old": "egAccessNow(win).palette, renderer?._worldViewportPx);",
+    "new": "egAccessNow(win).palette);",
+    "tests": [
+      "test/egaudit5_e.test.js"
+    ]
+  }
+]

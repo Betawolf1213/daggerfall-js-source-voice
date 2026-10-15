@@ -1079,9 +1079,15 @@ export function createEgFight({ renderer = null, gl = null, getTexture = null, u
     },
     /** The count's words for a tracker that asks. */
     countText: (ms) => egCountText(ms),
-    /** Out of the breach: everything put away - once (AUDIT EG III lane4 #2: again it is nothing). */
+    /** Out of the breach: everything put away - once (AUDIT EG III lane4 #2: again it is nothing). AUDIT EG V (L6-5): the
+     *  telegraph and crystal passes freed with it (built again the first frame of the next breach's draw). */
     leave() {
       if (!hall && !centre && !cardUp && !groundUp && !sigilsUp && !drawn.size && !fireBatches.size && !ll.length && !trail.length && !hymn) return;   // AUDIT EG III (lane4 #2): nothing held - asked every frame out of the Spire, it touches nothing (never the Burning Court's card)
+      // AUDIT EG V (L6-5; sections 11.9 and 29, EVERY ALLOCATION HAS AN OWNER): the passes' slots emptied before they are freed
+      const p0 = pass, c0 = crystalPass;
+      pass = null; crystalPass = null; passTried = false; crystalTried = false; floorBuf = null;
+      try { p0?.destroy(); } catch { /* gone with its context */ }
+      try { c0?.destroy(); } catch { /* gone with its context */ }
       for (const d of drawn.values()) destroy(d);
       drawn.clear(); crystalSlots.clear();
       dropFire(); toldHeard.clear(); mix.peers(false);   // EG-ZH: the flames freed, the peers as they were
