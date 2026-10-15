@@ -3700,12 +3700,8 @@ Versions), so a record's `world195`-`world200`, `acct116`-`acct127` and migratio
 0113 since the merges of main. EG-E1, EG-E2, EG-E3 and EG15's records stand in sections 19 and 20, beside the law they
 built.
 
-**EG-L10N, owed** (recorded by AUDIT EG V; named until then only in a merge's message and in
-`test/l10n4_hardcoded.test.js`'s comment). The arc's own words reach a player in English, whatever language they chose.
-The arc met the localization arc at the merge of main past it (0b9991ffc2, 2026-10-13). There its account refusals went
-through the text core (`account.refusal.*`), and the L10N4 ratchet (`test/l10n4_hardcoded.test.js`) counted every other
-file's prose as it arrived: 848 hard-coded literals across the 33 `eg*` files of `src/` at 9a862e8d. A slice that routes
-them through `t()` lowers those counts; until one does, every other word the breach says is English.
+**EG-L10N, owed**: the arc's own words reach a player in English, whatever language they chose - its record, below the
+slice table's last row, says what is routed and what is owed.
 
 | slice | what | moves |
 |---|---|---|
@@ -3747,9 +3743,11 @@ it opened or moved, and where it departs from this page.
 
 ### EG-L10N - owed (written at AUDIT EG V, 2026-10-15)
 
-The Elite Breach was built beside the localization arc (L10N4) and met its ratchet at the merge: every line it says
-reaches a player in English, whatever language they chose. `test/l10n4_hardcoded.test.js` counts its files' English as
-it arrived and holds each count from rising. Routed so far, each with the thirteen whole languages' rows drafted
+The Elite Breach was built beside the localization arc (L10N4) and met its ratchet at the merge of main past it
+(0b9991ffc2, 2026-10-13; until AUDIT EG V the debt was named only in that merge's message and in the ratchet's
+comment): every line it says reaches a player in English, whatever language they chose - 848 hard-coded literals across
+the 33 `eg*` files of `src/` at 9a862e8d. `test/l10n4_hardcoded.test.js` counts its files' English as it arrived and
+holds each count from rising. Routed so far, each with the thirteen whole languages' rows drafted
 in-session (`tools/l10nInSession.mjs`): the Accessibility tab's three Spire rows and the palettes' names
 (`ui/enhancedMenu.js` `spireAccessRows`, `ui/egAccess.js`), the refusals the account's catalog holds
 (`scenes/egClient.js` `egRefusalText` reads `net/accountClient.js` `REFUSALS`), and every line AUDIT EG V added (the
