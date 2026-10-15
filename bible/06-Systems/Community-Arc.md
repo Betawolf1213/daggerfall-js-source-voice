@@ -985,3 +985,82 @@ coloured name to the ink is gone; each is deepened by hand to keep its hue.
 with a bar at its edge, the mention itself in gold, its tab's dot and the Chat button's count gold until read, and it
 stands over the world from whichever tab it was said on. The enchanter's chime sounds once for a burst
 (`chatPingSound`).
+
+## CHAT-TRADE and CHAT-RP - the Trade and LFG channels, and a line of roleplay (2026-10-14)
+
+Mac: "I want to improve the player chat interface without introducing clutter and implement new commands into /help.
+/rp Italicizes and makes text color green. For roleplay purposes. New channels: 1. Trading 2. LFG".
+
+**Two channels, joined by choice.** Trade and LFG are the Language channel's shape twice over: a room each
+(`net/wire.js` `CHAT_TRADE_ROOM` `chat:trade`, `CHAT_LFG_ROOM` `chat:lfg`), whitelisted in `CHAT_ROOMS` and unsharded,
+the World channel's whole machinery with nothing new in it. The clutter is answered by the choice: each tab
+(`net/chat.js` `CHAT_TABS`, `trade` and `lfg`) stands on the bar only while the player has joined it (`chatTrade`,
+`chatLfg`, both off), and its link opens no socket until then - so a player who never joins sees the bar as it was,
+World, Region and Local. `/join trade`, `/join lfg` put a tab on the bar and bring it to the front; `/leave trade`,
+`/leave lfg` take it off (a bare `/leave` is still the battle's, `net/siegeSession.js` isBattleLeaveCommand); Settings >
+Other players > Chat has the same two switches. `/trade` (or `/tr`) and `/lfg` say a line on the channel - said to one
+not joined, they join it and keep the line in the field, to be said once it opens. Neither tab peeks over the world
+from behind another tab: a market's chatter is not said TO the player, as a party's line is. The host's frame is
+`scenes/world.js` chatOptFrame, beside the Language tab's; a relay from before them says so on the tab
+(`TRADE_CHAN_OLD_RELAY_TEXT`). The relay change is the whitelist alone: **deploy world201 before either tab can join**
+(an older relay refuses the room key). Words: Trade gold, LFG blue (`ui/chatColours.js` CHANNEL_COLOURS, each 4.5:1 or
+better on both grounds).
+
+**A line of roleplay.** `/rp <text>` says the text on the tab it was typed on wrapped in single asterisks -
+`*draws her blade*` - and a whole line so wrapped is drawn green and leaning on every tab (`net/chat.js` isRpText, the
+log's `rp` kind; `ui/chatColours.js` RP_COLOURS, a yellower green than the Region's, light on Plus's box and over the
+world, dark on Grimoire's page). It is the aside's kind of mark, the speaker's own and read off their words, never a
+field: no relay carries it, and an older client reads the line as the tabletop writes it. An action (`/me`) and an
+aside (`(( ))`) keep their own kinds ahead of it; a line the game says is never one. Being in character, it stands over
+the speaker's head as any said line does (`ui/nameLayer.js` bubbleLineOk).
+
+**The channel picker** (Mac: "There must be a better way to handle the new channels instead of a text command"). A
+`+` stands in the tab bar beside the tabs and before Social - the one thing a player who joins nothing sees of these
+channels - and opens a short list of them, each a row with its name, what it is for and a mark when joined; a click
+joins or leaves it, and the list stays open for the next (`ui/chatPanel.js` `channels`, the host's `{ list, set }` - its
+`set` is `scenes/world.js` optSet, the same door `/join`, `/leave` and a line said to a channel not joined go through).
+Escape in the field takes the list down before the chat, and the chat's close takes it with it (EMOTE1's picker law).
+Measured in Chromium (`tools/chatChanProbe.mjs`): the bar with its `+` stays inside the box with Social in it at every
+width down to the 292px box of a 320px phone, both skins. The probe's older checks of a four-tab bar fail on main as
+they do here (the Language and Guild tabs outgrew them) - for its next pass, not this slice's.
+
+**/help** lists `/trade`, `/lfg`, `/join` and `/leave`, and `/rp`.
+
+**In the player's language** (L10N4's ratchet): every new word goes through the text core (`net.chat.*`) and is READ
+WHEN SHOWN - the two tabs' hints and the four new /help rows are getters (`net/chatCommands.js` lazyLines, the text
+core's own localizedStrings law), the notices functions - because the world host is imported at the boot, behind the
+cinematic, before a player has chosen a language, and a string frozen there would be English whatever they chose.
+
+THE FOUR HOSTS: the chat is `scenes/world.js`'s alone (the log, the panel and the links are made in its chatStart) -
+`scenes/exterior.js`, `scenes/worldModes.js` and `scenes/dungeonContext.js` host no chat, and are FLAGGED as such here:
+nothing to wire.
+
+Not a DFU member: Daggerfall Unity has no chat. Ledger A row (ONLINE). Pinned by `test/chattrade1.test.js`.
+
+## AUDIT CHAT-TRADE - the Trade and LFG channels, the picker and /rp, read again (2026-10-15, Mac: "Audit this")
+
+The slice's diff read whole - the wire, the log, the commands, the host's doors, the panel, the colours and the
+sheets - against the relay it reaches. Six findings; five fixed and pinned, one flagged.
+
+- **A1 (flagged - a relay change, Mac's call).** A chat room holds at most CHAT_SOCKETS_MAX sockets (2048,
+  `server/src/index.js` `const cap = isChatRoom(key) ? CHAT_SOCKETS_MAX : SOCKETS_MAX;`), and the Trade and LFG rooms
+  are one room each, unsharded - so past 2048 players in either, the next is refused. The World channel shards sixteen
+  ways (SCALE5c) and each region four (part two) for this reason; the language channels share the limit today. The
+  choice keeps both rooms smaller than the World's, which is why they ship unsharded; sharding them is the region
+  rooms' machinery (`net/hubShards.js`) given two more buses, and a relay deploy.
+- **A2 (fixed).** The picker said `role="menu"` and its rows `menuitemcheckbox` - roles that promise a menu's arrow keys
+  and focus, which it never had. A group of toggle buttons now (`aria-pressed`), the emoji grid's own role.
+- **A3 (fixed).** `/rp *bows* deeply` read `*bows* deeply*`: the line's two ends were stripped of marks one at a time.
+  The whole line is the roleplay, so a mark inside it is taken out (`net/chat.js` rpText).
+- **A4 (fixed).** `/join`'s refusal was English in every language - the L10N4 ratchet's heuristic missed a template
+  without two plain words; it goes through the text core (`net.chat.badJoin`).
+- **A5 (fixed).** `/join trade` while in the Trade channel answered "Trade channel joined." - a join that did not
+  happen; it says the player is already in it, and how to leave (`net.chat.already`).
+- **A6 (fixed).** The Trade and LFG frame walked `Object.entries` - two arrays every frame, for two rows; it walks the
+  table's keys.
+
+Read and found sound: the relay gate on both ends (the World link's welcome, an older relay saying so and joining
+nothing); the room joined only while chosen and left when not; a bare `/leave` still the battle's; the roleplay mark
+never on a game line and behind an action's and an aside's; the colours at 4.5:1 on every ground; the picker's Escape
+and close. Known and kept as the emoji grid's: the picker is reached by the pointer and the touch, the field holding
+the keyboard's Tab (CHAT C7). Pinned in `test/chattrade1.test.js`; `tools/mutants/chattrade1.json` gains A2, A3, A5.
