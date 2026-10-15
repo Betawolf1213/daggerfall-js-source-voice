@@ -63,8 +63,15 @@ export const mintShelfId = (rand) => `lib-${mintPoiId(rand).slice(4)}`;
 
 const finite = (v) => typeof v === 'number' && Number.isFinite(v);
 const vec = (v, n) => Array.isArray(v) && v.length === n && v.every(finite);
-// printable text: no control characters, trimmed, bounded
-const textOk = (s, max, min = 0) => typeof s === 'string' && s.length >= min && s.length <= max && s === s.trim() && !/[\u0000-\u001f\u007f]/.test(s);
+// AUDIT POI S13: what no name, tag or label every player reads may hold - a control character (C0, DEL and C1 alike), a
+// line or paragraph separator, a bidi embedding, override or isolate (text that reads one way and is stored another),
+// or half of a surrogate pair (a string no encoder writes whole). `\p{Cs}` in a `u` pattern is a LONE surrogate: a pair
+// is one code point, and none of these.
+const UNSAID_RE = /[\p{Cc}\p{Cs}\u{2028}\u{2029}\u{202a}-\u{202e}\u{2066}-\u{2069}]/u;
+// the one field written as prose: lines allowed (U+000A), every other of UNSAID_RE refused
+const PROSE_UNSAID_RE = /[\u{0}-\u{9}\u{b}-\u{1f}\u{7f}-\u{9f}\p{Cs}\u{2028}\u{2029}\u{202a}-\u{202e}\u{2066}-\u{2069}]/u;
+// printable text: none of the above, trimmed, bounded
+const textOk = (s, max, min = 0) => typeof s === 'string' && s.length >= min && s.length <= max && s === s.trim() && !UNSAID_RE.test(s);
 const enumOk = (v, list) => typeof v === 'string' && list.includes(v);
 
 /** A quaternion as the law keeps it: four finite numbers whose length is 1 within a thousandth - renormalised - or null. */
@@ -109,8 +116,8 @@ export function poiDocProblems(raw, { shelf = false } = {}) {
   if (raw.v !== POI_DOC_VERSION) say('v', 'version', { want: POI_DOC_VERSION });
   if (typeof raw.id !== 'string' || !(shelf ? POI_SHELF_ID_RE : POI_ID_RE).test(raw.id)) say('id', 'id');
   if (!textOk(raw.name, POI_LIMITS.name, 1)) say('name', 'name', { max: POI_LIMITS.name });
-  // the one field written as prose: lines allowed, nothing else below a space
-  if (raw.about !== undefined && !(typeof raw.about === 'string' && raw.about.length <= POI_LIMITS.about && !/[\u0000-\u0009\u000b-\u001f\u007f]/.test(raw.about))) say('about', 'about', { max: POI_LIMITS.about });
+  // the one field written as prose: lines allowed, nothing else UNSAID_RE refuses (AUDIT POI S13)
+  if (raw.about !== undefined && !(typeof raw.about === 'string' && raw.about.length <= POI_LIMITS.about && !PROSE_UNSAID_RE.test(raw.about))) say('about', 'about', { max: POI_LIMITS.about });
   if (raw.tags !== undefined) {
     if (!Array.isArray(raw.tags) || raw.tags.length > POI_LIMITS.tags) say('tags', 'tags', { max: POI_LIMITS.tags });
     else raw.tags.forEach((t, i) => { if (!textOk(t, POI_LIMITS.tag, 1)) say(`tags[${i}]`, 'tag', { max: POI_LIMITS.tag }); });
@@ -128,6 +135,7 @@ export function poiDocProblems(raw, { shelf = false } = {}) {
     if (!enumOk(p.ground, POI_GROUND)) say('place.ground', 'ground');
     if (!unitQuat(p.r)) say('place.r', 'quat');
     if (!finite(p.s) || p.s < 0.01 || p.s > 100) say('place.s', 'size', { min: 0.01, max: 100 });
+    unknownProblems(p, PLACE_KEYS, 'place', say);
   }
 
   if (!Array.isArray(raw.parts) || !raw.parts.length) say('parts', 'parts-none');
@@ -149,6 +157,7 @@ export function poiDocProblems(raw, { shelf = false } = {}) {
       if (typeof part.shadow !== 'boolean') say(`${at}.shadow`, 'bool');
       if (!Array.isArray(part.materials) || !part.materials.length || part.materials.length > POI_LIMITS.materials) say(`${at}.materials`, 'materials', { max: POI_LIMITS.materials });
       else part.materials.forEach((m, k) => materialProblems(m, `${at}.materials[${k}]`, say));
+      unknownProblems(part, PART_KEYS, at, say);
     });
   }
 
@@ -162,6 +171,7 @@ export function poiDocProblems(raw, { shelf = false } = {}) {
       if (!finite(l.radius) || l.radius < 0.5 || l.radius > 100) say(`${at}.radius`, 'radius', { min: 0.5, max: 100 });
       if (!finite(l.intensity) || l.intensity < 0 || l.intensity > 10) say(`${at}.intensity`, 'intensity', { max: 10 });
       if (typeof l.flicker !== 'boolean') say(`${at}.flicker`, 'bool');
+      unknownProblems(l, LIGHT_KEYS, at, say);
     });
   }
 
@@ -171,6 +181,7 @@ export function poiDocProblems(raw, { shelf = false } = {}) {
     else {
       if (typeof m.show !== 'boolean') say('marker.show', 'bool');
       if (m.label !== undefined && !textOk(m.label, POI_LIMITS.label)) say('marker.label', 'label', { max: POI_LIMITS.label });
+      unknownProblems(m, MARKER_KEYS, 'marker', say);
     }
   }
 
@@ -180,6 +191,21 @@ export function poiDocProblems(raw, { shelf = false } = {}) {
 }
 const DOC_KEYS = ['v', 'id', 'name', 'about', 'tags', 'place', 'parts', 'lights', 'marker'];
 const SHELF_KEYS = ['v', 'id', 'name', 'about', 'tags', 'parts', 'lights', 'thumb'];
+// AUDIT POI S2: "A field the law does not know is a problem, not a passenger" - at EVERY level, not the top and a
+// material's alone. A place, a part, a light, the marker and a material's UVs carried anything past the law: stored,
+// approved and served to every player, unseen by the approver's diff (one 1,100-deep array in `place` broke every
+// builder's list, S3). Every value the law knows is now a checked shape, so the deepest document it takes is seven
+// levels (parts[i].materials[k].uv.offset[0]) - the nesting bounded by the shape itself.
+const PLACE_KEYS = new Set(['px', 'py', 'x', 'z', 'y', 'ground', 'r', 's']);
+const PART_KEYS = new Set(['key', 'name', 'mesh', 't', 'r', 's', 'collide', 'shadow', 'materials']);
+const LIGHT_KEYS = new Set(['t', 'color', 'radius', 'intensity', 'flicker']);
+const MARKER_KEYS = new Set(['show', 'label']);
+const MATERIAL_KEYS = new Set(['texture', 'color', 'emissive', 'emissiveColor', 'alpha', 'cutoff', 'twoSided', 'wrap', 'filter', 'uv']);
+const UV_KEYS = new Set(['offset', 'scale', 'rotation']);
+/** Every key of `o` the law does not know, a problem at its path. */
+function unknownProblems(o, known, at, say) {
+  for (const k of Object.keys(o)) if (!known.has(k)) say(`${at}.${k}`, 'unknown');
+}
 /** Every way `raw` falls short of a library shelf entry (POI-4b). @param {any} raw */
 export const poiShelfProblems = (raw) => poiDocProblems(raw, { shelf: true });
 
@@ -197,8 +223,8 @@ function materialProblems(m, at, say) {
   const uv = m.uv;
   if (!uv || typeof uv !== 'object' || !vec(uv.offset, 2) || !vec(uv.scale, 2) || !finite(uv.rotation)
     || uv.scale.some((c) => Math.abs(c) < 1e-4 || Math.abs(c) > 1e4) || uv.offset.some((c) => Math.abs(c) > 1e4)) say(`${at}.uv`, 'uv');
-  const known = new Set(['texture', 'color', 'emissive', 'emissiveColor', 'alpha', 'cutoff', 'twoSided', 'wrap', 'filter', 'uv']);
-  for (const k of Object.keys(m)) if (!known.has(k)) say(`${at}.${k}`, 'unknown');
+  if (uv && typeof uv === 'object') unknownProblems(uv, UV_KEYS, `${at}.uv`, say);
+  unknownProblems(m, MATERIAL_KEYS, at, say);
 }
 
 /** The assets a document names: `{ meshes, textures }`, each a Set of sha256. @param {any} doc */
@@ -216,32 +242,98 @@ export function poiAssetsOf(doc) {
 }
 
 /**
- * Every way a document's assets fall short - `metaOf(sha)` answers an asset's stored facts (`{ kind: 'mesh', submeshes }`
- * or `{ kind: 'texture', w, h }`) or null for one never stored. A part's materials are its mesh's submeshes, one each.
- * @param {any} doc @param {(sha: string) => any} metaOf @returns {PoiProblem[]}
+ * AUDIT POI S6: WHAT ONE POI MAY ASK OF A PLAYER'S MACHINE, AS A WHOLE. Every bound above is one asset's (a mesh at
+ * POI_MESH_LIMITS, a picture at 4096 a side), and nothing bounded their sum: 128 parts each naming its own mesh at its
+ * limit, with 256 distinct 4096-square pictures, passed - 7 GiB to fetch, 134 million triangles, 16 GiB of pictures, a
+ * reach of 204,800 km. Each budget is over the facts the store keeps of the assets (poi.js putPoiAsset):
+ *   - TRIANGLES and VERTICES as drawn - every part its mesh's (a model stood twice is drawn twice: the game makes a GPU
+ *     mesh a part, poiHost.js load) - a million each, one fortress-sized model's worth for the POI whole;
+ *   - BYTES as fetched - every distinct asset once - 64 MiB;
+ *   - PIXELS as held - every distinct picture once - two 4096-square pictures' worth (128 MiB as RGBA8);
+ *   - REACH - the farthest corner of any part's box from the place's origin, at the place's size - 2048 m, as far as
+ *     one model may reach from its own origin (POI_MESH_LIMITS.extent).
+ * A shelf entry is held to the same budgets (what a POI may wear, an entry may hold), its picture among its pictures.
+ */
+export const POI_BUDGET = Object.freeze({
+  triangles: 1_048_576,
+  vertices: 1_048_576,
+  bytes: 64 * 1024 * 1024,
+  pixels: 2 * 4096 * 4096,
+  reach: 2048,
+});
+
+/** `v` turned by the unit quaternion `q` ([x, y, z, w]): v + 2w(q x v) + 2 q x (q x v). */
+function turned(q, v) {
+  const [x, y, z, w] = q;
+  const cx = y * v[2] - z * v[1], cy = z * v[0] - x * v[2], cz = x * v[1] - y * v[0];
+  return [v[0] + 2 * (w * cx + y * cz - z * cy), v[1] + 2 * (w * cy + z * cx - x * cz), v[2] + 2 * (w * cz + x * cy - y * cx)];
+}
+
+/** How far a part's mesh box reaches from the POI's origin, before the place's size - its farthest corner, scaled,
+ *  turned and moved as the part is; 0 for a part whose transform or box the law has not taken. */
+function partReach(part, mesh) {
+  const r = unitQuat(part?.r);
+  if (!r || !vec(part.t, 3) || !vec(part.s, 3) || !vec(mesh?.min, 3) || !vec(mesh?.max, 3)) return 0;
+  let far = 0;
+  for (let c = 0; c < 8; c++) {
+    const corner = [0, 1, 2].map((k) => ((c >> k) & 1 ? mesh.max[k] : mesh.min[k]) * part.s[k]);
+    const p = turned(r, corner);
+    far = Math.max(far, Math.hypot(p[0] + part.t[0], p[1] + part.t[1], p[2] + part.t[2]));
+  }
+  return far;
+}
+
+/**
+ * Every way a document's assets fall short - `metaOf(sha)` answers an asset's stored facts (`{ kind: 'mesh', submeshes,
+ * vertices, triangles, min, max, bytes }` or `{ kind: 'texture', w, h, bytes }`) or null for one never stored. A part's
+ * materials are its mesh's submeshes, one each; the POI as a whole within POI_BUDGET (a fact without a number counts
+ * none). @param {any} doc @param {(sha: string) => any} metaOf @returns {PoiProblem[]}
  */
 export function poiAssetProblems(doc, metaOf) {
   /** @type {PoiProblem[]} */
   const out = [];
+  /** every distinct asset named, its facts - the bytes fetched and the pixels held, once each */
+  const distinct = new Map();
+  let triangles = 0, vertices = 0, reach = 0;
   if (doc?.thumb != null) {
     const t = metaOf(doc.thumb);
     if (!t) out.push({ path: 'thumb', code: 'not-uploaded' });
     else if (t.kind !== 'texture') out.push({ path: 'thumb', code: 'not-a-texture' });
+    else distinct.set(doc.thumb, t);
   }
   (doc?.parts ?? []).forEach((part, i) => {
-    const mesh = metaOf(part.mesh);
+    const mesh = metaOf(part?.mesh);
     if (!mesh) out.push({ path: `parts[${i}].mesh`, code: 'not-uploaded' });
     else if (mesh.kind !== 'mesh') out.push({ path: `parts[${i}].mesh`, code: 'not-a-mesh' });
-    else if (mesh.submeshes !== part.materials?.length) out.push({ path: `parts[${i}].materials`, code: 'material-count', have: part.materials?.length ?? 0, want: mesh.submeshes });
-    (part.materials ?? []).forEach((m, k) => {
+    else {
+      if (mesh.submeshes !== part.materials?.length) out.push({ path: `parts[${i}].materials`, code: 'material-count', have: part.materials?.length ?? 0, want: mesh.submeshes });
+      distinct.set(part.mesh, mesh);
+      triangles += Number(mesh.triangles) || 0;
+      vertices += Number(mesh.vertices) || 0;
+      reach = Math.max(reach, partReach(part, mesh));
+    }
+    (part?.materials ?? []).forEach((m, k) => {
       for (const field of ['texture', 'emissive']) {
-        if (m[field] == null) continue;
+        if (m?.[field] == null) continue;
         const t = metaOf(m[field]);
         if (!t) out.push({ path: `parts[${i}].materials[${k}].${field}`, code: 'not-uploaded' });
         else if (t.kind !== 'texture') out.push({ path: `parts[${i}].materials[${k}].${field}`, code: 'not-a-texture' });
+        else distinct.set(m[field], t);
       }
     });
   });
+  let bytes = 0, pixels = 0;
+  for (const f of distinct.values()) {
+    bytes += Number(f.bytes) || 0;
+    if (f.kind === 'texture') pixels += (Number(f.w) || 0) * (Number(f.h) || 0);
+  }
+  reach *= finite(doc?.place?.s) ? doc.place.s : 1;
+  const over = (code, have, max) => { if (have > max) out.push({ path: 'doc', code, have, max }); };
+  over('budget-triangles', triangles, POI_BUDGET.triangles);
+  over('budget-vertices', vertices, POI_BUDGET.vertices);
+  over('budget-bytes', bytes, POI_BUDGET.bytes);
+  over('budget-pixels', pixels, POI_BUDGET.pixels);
+  over('budget-reach', Math.ceil(reach), POI_BUDGET.reach);
   return out;
 }
 

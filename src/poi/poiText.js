@@ -64,6 +64,12 @@ const PROBLEM = {
   'not-a-mesh': () => t('poi.problem.notAMesh', 'It names a picture where a model belongs.'),
   'not-a-texture': () => t('poi.problem.notATexture', 'It names a model where a picture belongs.'),
   'material-count': (a) => t('poi.problem.materialCount', 'Its model has {want} materials; the part has {have}.', a),
+  // AUDIT POI S6: the POI as a whole (poiLaw.js POI_BUDGET)
+  'budget-triangles': (a) => t('poi.problem.budgetTriangles', 'It draws too many triangles ({have, number}; at most {max, number}). Simplify a model, or stand fewer parts.', a),
+  'budget-vertices': (a) => t('poi.problem.budgetVertices', 'Its parts hold too many vertices together ({have, number}; at most {max, number}). Simplify a model, or stand fewer parts.', a),
+  'budget-bytes': (a) => t('poi.problem.budgetBytes', 'Its models and pictures are too large together ({have, number} MB; at most {max, number} MB).', { have: Math.ceil(a.have / 1048576), max: Math.floor(a.max / 1048576) }),
+  'budget-pixels': (a) => t('poi.problem.budgetPixels', 'Its pictures are too large together ({have, number} megapixels; at most {max, number}). Use smaller pictures, or fewer.', { have: Math.ceil(a.have / 1e6), max: Math.floor(a.max / 1e6) }),
+  'budget-reach': (a) => t('poi.problem.budgetReach', 'It reaches too far from its place ({have, number} m; at most {max, number} m).', a),
 };
 
 /** @type {Record<string, (a: any) => string>} */

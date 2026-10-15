@@ -160,6 +160,13 @@ export function decodePoiMesh(input) {
   const why = poiMeshError(mesh);
   if (why) return { error: why };
   const [min, max] = meshBoxOf(positions);
-  for (let k = 0; k < 3; k++) if (Math.abs(min[k] - boundsMin[k]) > 1e-3 || Math.abs(max[k] - boundsMax[k]) > 1e-3) return { error: 'bounds' };
+  // AUDIT POI S5: written as the bounds AGREE, not as they differ - `|min - NaN| > 1e-3` is false, so a header of NaN
+  // bounds passed, and the game's box for the part was NaN (its "feet inside" hold never true, the collider filed on a
+  // player standing in it)
+  for (let k = 0; k < 3; k++) if (!(Math.abs(min[k] - boundsMin[k]) <= 1e-3 && Math.abs(max[k] - boundsMax[k]) <= 1e-3)) return { error: 'bounds' };
   return { mesh };
 }
+
+/** AUDIT POI S6: the facts a store keeps of a mesh, read off it decoded - what the law's asset check and its budgets
+ *  read (poiLaw.js poiAssetProblems), the store's and the editor's alike. @param {PoiMesh & { boundsMin: number[], boundsMax: number[] }} m */
+export const poiMeshFacts = (m) => ({ submeshes: m.submeshes.length, vertices: m.positions.length / 3, triangles: m.indices.length / 3, min: m.boundsMin, max: m.boundsMax });

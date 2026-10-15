@@ -13,7 +13,7 @@
 -- (APPROVER_HANDLES) approves or rejects it; an approved revision becomes the POI's LIVE one, and only live revisions are
 -- in the feed the game reads. Taking a POI out of the world is a revision too (`kind` 'retire'), approved the same way.
 -- Nothing is deleted: the history is the record of who changed what, and a rollback points `live_rev` at an earlier
--- approved revision.
+-- approved revision - a revision of its own beside it, its approver its author (AUDIT POI S14).
 
 CREATE TABLE IF NOT EXISTS poi_docs (
   id          TEXT PRIMARY KEY,               -- poi-<12 hex> (poiLaw.js POI_ID_RE)
@@ -27,21 +27,44 @@ CREATE TABLE IF NOT EXISTS poi_docs (
 CREATE TABLE IF NOT EXISTS poi_revs (
   poi_id      TEXT NOT NULL REFERENCES poi_docs(id),
   rev         INTEGER NOT NULL,               -- 1, 2, ... per POI
-  kind        TEXT NOT NULL DEFAULT 'doc',    -- 'doc' (stand this document) or 'retire' (take the POI out of the world)
-  doc         TEXT,                           -- the document as JSON (NULL for a retirement)
-  base_rev    INTEGER,                        -- the revision it was made from (NULL for a first draft)
+  kind        TEXT NOT NULL DEFAULT 'doc',    -- 'doc' (stand this document), 'retire' (take the POI out of the world) or
+                                              -- 'rollback' (AUDIT POI S14: an approver put `base_rev` back in the world - the record of it)
+  doc         TEXT,                           -- the document as JSON (NULL for a retirement and a rollback)
+  doc_sha     TEXT,                           -- AUDIT POI S1: sha256 hex of `doc` as stored, written with it - what an approver's word names
+  name        TEXT,                           -- AUDIT POI S3: the document's name and map pixel, written with it, for the list
+  px          INTEGER,
+  py          INTEGER,
+  base_rev    INTEGER,                        -- the revision it was made from (NULL for a first draft); a rollback's, the one put back
   author      TEXT NOT NULL,                  -- players.id
   author_name TEXT NOT NULL,                  -- the handle, as it was
   at          INTEGER NOT NULL,               -- last saved
-  state       TEXT NOT NULL,                  -- 'draft' | 'submitted' | 'approved' | 'rejected'
+  state       TEXT NOT NULL,                  -- 'draft' | 'submitted' | 'approved' | 'rejected' | 'withdrawn' (taken back by its author, AUDIT POI S14)
   submitted_at INTEGER,
   reviewer    TEXT,                           -- players.id of the approver who decided
   reviewer_name TEXT,
   reviewed_at INTEGER,
   note        TEXT,                           -- the reviewer's word
+  decision    TEXT,                           -- AUDIT POI S1: the deciding request's own mark - its batch's later writes are that decision's alone
   PRIMARY KEY (poi_id, rev)
 );
 CREATE INDEX IF NOT EXISTS poi_revs_state ON poi_revs (state, submitted_at);
+-- AUDIT POI S10: a builder's open revisions counted at every new one
+CREATE INDEX IF NOT EXISTS poi_revs_author ON poi_revs (author, state);
+-- AUDIT POI S8: ONE OPEN DRAFT PER AUTHOR PER POI and ONE RETIREMENT WAITING PER POI, held by the database - two saves or
+-- two asks at once meet here, and the second is told so, never stored beside the first
+CREATE UNIQUE INDEX IF NOT EXISTS poi_revs_one_draft ON poi_revs (poi_id, author) WHERE state = 'draft' AND kind = 'doc';
+CREATE UNIQUE INDEX IF NOT EXISTS poi_revs_one_retire ON poi_revs (poi_id) WHERE state = 'submitted' AND kind = 'retire';
+
+-- AUDIT POI S4: THE ASSETS EACH APPROVED REVISION NAMES, written as it is approved - so whether an asset is live (named by
+-- a POI's live revision) is asked of the database at every approval, retirement and rollback, and an asset no live
+-- revision names any more is a builder's again
+CREATE TABLE IF NOT EXISTS poi_rev_assets (
+  poi_id      TEXT NOT NULL,
+  rev         INTEGER NOT NULL,
+  sha         TEXT NOT NULL,
+  PRIMARY KEY (poi_id, rev, sha)
+);
+CREATE INDEX IF NOT EXISTS poi_rev_assets_sha ON poi_rev_assets (sha);
 
 CREATE TABLE IF NOT EXISTS poi_assets (
   sha         TEXT PRIMARY KEY,               -- sha256 of the bytes, hex
@@ -50,9 +73,17 @@ CREATE TABLE IF NOT EXISTS poi_assets (
   meta        TEXT NOT NULL,                  -- JSON: a mesh's { submeshes, vertices, triangles, min, max }; a texture's { format, w, h }
   by          TEXT NOT NULL,                  -- players.id of the first uploader
   at          INTEGER NOT NULL,
-  live        INTEGER NOT NULL DEFAULT 0      -- 1 once an approved revision names it: readable by anyone, the game included
+  live        INTEGER NOT NULL DEFAULT 0      -- 1 while a live revision names it: readable by anyone, the game included (AUDIT POI S4)
 );
-CREATE INDEX IF NOT EXISTS poi_assets_by ON poi_assets (by, at);
+
+-- AUDIT POI S9: THE BYTES EACH BUILDER HAS UPLOADED IN A UTC DAY - reserved in one statement before the bytes are stored,
+-- so uploads at once cannot all pass a bound each counted alone (poi.js POI_UPLOAD_DAY_BYTES)
+CREATE TABLE IF NOT EXISTS poi_upload_days (
+  by          TEXT NOT NULL,                  -- players.id
+  day         INTEGER NOT NULL,               -- floor(unix seconds / 86400)
+  bytes       INTEGER NOT NULL,
+  PRIMARY KEY (by, day)
+);
 
 -- THE FEED'S VERSION: one row, moved by every approval, rollback and retirement - the game's cheap "anything new?"
 CREATE TABLE IF NOT EXISTS poi_feed (
