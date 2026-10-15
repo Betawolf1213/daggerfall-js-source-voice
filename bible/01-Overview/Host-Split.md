@@ -86,7 +86,7 @@ tests are the test files that hold the name as a word, `git grep -lw`):
 |---|---|---|---|---|---|
 | `travelViewMarks` | 227 | 63 | 0 | 1 | 3 |
 | `questWorld` | 370 | 46 | 1 | 4 | 15 |
-| `buildPixelNow` | 1,232 | 111 | 3 | 1 | 11 |
+| `buildPixelNow` (HOST-SPLIT 2, moved) | 1,232 | 111 | 3 | 1 | 11 |
 | `worldQuickLoad` | 307 | 75 | 6 | 5 | 34 |
 | `onlineStart` + `chatStart` + `socialStart` + `onlineFrame` | 1,214 | 291 | **68** | 1 | 29 |
 | `frame` | 3,204 | 553 | 60 | 18 | (too common a word to count) |
@@ -140,8 +140,9 @@ CONSTRUCTION SEAM (`Home.md`) for all of them - the slice names all four hosts
 2. HOST-SPLIT 1 (the pilot) - `travelViewMarks`: no writes, one user, three
    tests. It proves the method end to end before anything large moves.
    SHIPPED - below.
-3. `buildPixelNow` (the world's pixel build, 1,232 lines, 3 writes), then
-   `questWorld`, `worldQuickLoad`, and down the map by cost.
+3. HOST-SPLIT 2 - `buildPixelNow` (the world's pixel build, 1,237 lines, 3
+   writes). SHIPPED - below. Then `questWorld`, `worldQuickLoad`, and down the
+   map by cost.
 4. `frame` by stage, then the online group's state, owned.
 5. The same for `createWorldModes`, `buildDungeonContext`, `bootExterior` and the
    relay's `_message`.
@@ -208,3 +209,60 @@ by-value name written nowhere in bootWorld, the construction reading exactly the
   is a fixture of `test/hostmove.test.js`: the fixture moved for real and both
   versions run, the same answer. After the fixes the tool reproduces the
   pilot's module and world.js byte for byte from the pre-move tree.
+
+## HOST-SPLIT 2 - buildPixelNow (2026-10-15)
+
+Mac: *"2, 3 and 5"* - 2 being this slice. `buildPixelNow`, the world's pixel
+build - one member, 1,237 lines - left `bootWorld` for
+`src/scenes/pixelBuild.js` (`createPixelBuild(host)`), constructed where it
+stood, by the tool:
+
+- 84 names by value; 22 live, read as `host.<name>` (`state`, `season`,
+  `woods`, `weather`, `travelOptions`, `legacyHost`...), three of them written
+  through setters (`_homeLookV`, `doorGeneration`, `millParts`). 166 imports
+  came along in 86 lines; the host dropped the 107 it no longer reads.
+- `buildPixel` above the group calls it, so the tool flagged it: a function
+  declaration was hoisted, and a destructured `const` is not. Read: nothing
+  calls a build before the construction runs - the boot's first build is 505
+  lines below it, and `bootWorld` awaits nothing between line 1,324 and the
+  construction, so no callback reaches a build early either.
+- 136 mutant records over their lists and 4 doc anchors followed the code, by
+  the tool. By hand: an anchor in a code comment (`exterior.js`, which the tool
+  does not read), a `citedrift` pin on a ledger citation the tool had moved, and
+  a TIME1 census row.
+- `bootWorld` 21,445 -> 20,706 code lines (35,114 -> 33,912 raw); its ceiling
+  21,695 -> 20,956.
+
+THE PINS READ THE HOST WHOLE. The move broke 143 tests in 130 files - the
+pilot's ratio (9.6 pins a hundred lines against 9.5), at five times the
+size, and every slice after it costs the same if each pin is moved by hand. So
+`test/hostText.mjs` gives a host's text WHOLE: its file, then each module moved
+out of it, found by the header the tool writes. A pin that quotes the world
+host reads it through `hostText('src/scenes/world.js')` and keeps quoting the
+code wherever a slice puts it; the next slice's module joins without anyone
+listing it. That carried most of the 130. What it cannot carry, each by its
+own law:
+
+- a quoted line with a live name quotes it as the module spells it,
+  `host.<name>` (one pattern read against both exterior hosts accepts either);
+- the HOST RUNS that lift moved code and run it over stubs stand `host` for
+  their stubs - under `with`, every name resolves to the scope, `scope` too, so
+  `host` goes into the scope itself;
+- a pin that PARSES the host parses each file as the module it is (two modules
+  joined declare their imports twice), and one about `bootWorld`'s own
+  statements reads world.js alone;
+- the censuses that walk `src/` name `pixelBuild.js`, and check its wiring
+  against its host whole; the import pins read the module's import lines
+  (the tool sorts them, and keeps only the names each file reads);
+- BOOT-TDZ2 (`test/bootorder.test.js`), the gate that walks the boot to its
+  first build and follows every call, now follows a call into a moved
+  module's functions too, reading `host.<name>` there as `<name>` - a read at
+  the use, as the getter makes it. Without that it stopped at
+  `buildPixelNow`; with it, it reaches every name it reached before, and its
+  allow-list - which fails on a name it can no longer reach - says so.
+- The citation gates read the real files: an anchor names a line of the file
+  it names.
+
+Proved, not supposed: `tools/mutate.mjs` over the 136 moved records and the
+523 world.js records whose tests changed - 659 dead, 0 survived. A rewritten
+pin that had gone blind would have let one live.
