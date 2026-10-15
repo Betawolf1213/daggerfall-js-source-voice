@@ -1,8 +1,16 @@
 # The Road to 1:1 - the closing campaign
 
+CLOSED 2026-10-14 by SCOPE1 (`Port-Doctrine.md`, Scope; Mac: "We now longer
+are trying to have DFU 1:1 parity, we are our own project at this point").
+Parity is no longer the goal, so no wave below is owed - but its standing
+watches (the pause architecture, the FLAGGED/INTERIM ledger) are not parity
+work, and they stand. The page stays as the record of the waves that ran, and its open items as a list of what DFU has
+that we do not - options a later slice may take, read with DFU as the
+reference.
+
 Opened 2026-09-01, straight off AUDIT 44's measurement
 (`Port-Status-2026-09.md`). Mac's call: get all of it done. This page
-is the campaign ledger - what remains between the port and a finished
+was the campaign ledger - what remains between the port and a finished
 1:1, organized into waves, each wave run as a worktree fleet with an
 adversarial review and its own merge to main. A struck item names the
 wave that closed it.

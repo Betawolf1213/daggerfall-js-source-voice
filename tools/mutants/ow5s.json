@@ -62,7 +62,7 @@
   },
   {
     "name": "OW5b-S3-chaser-unseen",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "        if (listed.some((r) => r.id === id)) continue;",
     "new": "        continue;",
     "tests": [
@@ -72,7 +72,7 @@
   },
   {
     "name": "OW5b-S8-drawn-without-boats",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "    if (warmAshesOn() && csaOn()) {",
     "new": "    if (warmAshesOn()) {",
     "tests": [

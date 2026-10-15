@@ -175,7 +175,8 @@ test('INT2/INT6: a staff hold landing between a checkpoint\'s read and its write
 
 test('INT3: EVERY ROUTE THAT HANDS A REALM CHARACTER\'S VALUE ON SAYS SO - no prepareRealmRecord that takes goods or gold out of a record without `outbound`, the sinks aside (a home and its decor bought from the realm, a guild founded); and the trade asks the hold of each side that gives', () => {
   const dir = new URL('../server-account/src/', import.meta.url);
-  const SINKS = { 'homes.js': 1, 'decor.js': 1, 'guilds.js': 1 };   // payFromSave into nobody's hands: the realm's own price
+  // payFromSave into nobody's hands: the realm's own price (FIRM1: the Firmament's respec, its gold burnt in the change's batch)
+  const SINKS = { 'homes.js': 1, 'decor.js': 1, 'guilds.js': 1, 'firmament.js': 1 };
   const found = {};
   for (const f of readdirSync(dir).filter((n) => n.endsWith('.js'))) {
     const src = readFileSync(new URL(f, dir), 'utf8');

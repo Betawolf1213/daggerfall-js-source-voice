@@ -196,7 +196,7 @@ test('TEMP-UI: the pack\'s live reading IS the minute law\'s - feltNow over the 
   assert.match(read('src/systems/survival/needs.js'), /const ctx = feltCtx\(entity, s, deps\.ctx\);/, 'the law builds its context through the seam');
 });
 
-test('TEMP-UI: the HUD plate, executed - at the compass\'s right end; hidden with the arc Off, with its part switched off, and before a reading; shown with the number, the word, the way it runs, the strip\'s level and the mark on the scale; written only when what it says changes', async () => {
+test('TEMP-UI: the HUD plate, executed - UI-CALM: in the bottom-left corner\'s caption, first; hidden with the arc Off, with its part switched off, and before a reading; shown with the number, the word, the way it runs, the strip\'s level and the mark on the scale; written only when what it says changes', async () => {
   const mk = (tag = 'div') => ({
     tag, className: '', textContent: '', src: '', alt: '', children: [], dataset: {}, attrs: {},
     style: { setProperty(k, v) { this[k] = v; }, removeProperty(k) { delete this[k]; } },
@@ -217,9 +217,9 @@ test('TEMP-UI: the HUD plate, executed - at the compass\'s right end; hidden wit
     setPref(SURVIVAL_PREF, 'casual');
     drawEnhancedHud(entity, 0, 0, {});
     const root = document.body.children.find((n) => n.className === 'hud');
-    const compass = find(root, 'hud-compass');
-    const plate = compass.children.find((c) => c.className === 'hud-temp');
-    assert.ok(plate, 'the plate hangs off the compass');
+    const cap = find(root, 'hud-qcap');   // UI-CALM: the corner's caption, the mode's word beside it
+    const plate = cap.children[0];
+    assert.ok(plate && plate.className === 'hud-temp', 'the plate is the corner caption\'s first word');
     assert.equal(plate.style.display, 'none', 'no reading yet: hidden');
     entity.survival.felt = -34;
     drawEnhancedHud(entity, 0, 0, {});
@@ -255,7 +255,10 @@ test('TEMP-UI: the HUD plate, executed - at the compass\'s right end; hidden wit
   }
   // the sheet and the kit
   const css = read('src/ui/enhancedStyle.js');
-  assert.match(css, /\n\.hud-temp \{ position: absolute; left: calc\(100% \+ 10px\); top: 50%;/, 'off the compass\'s right end, on its middle');
+  // UI-CALM: in the caption's flow, not hung off the compass; comfortable, the glyph and the number alone
+  const calm = read('src/ui/uiCalmStyle.js');
+  assert.match(calm, /\.hud \.hud-qcap \.hud-temp \{ position: relative; left: auto; top: auto; right: auto; transform: none;/);
+  assert.match(calm, /\.hud \.hud-temp\[data-level="ok"\] \.hud-tempword, \.hud \.hud-temp\[data-level="ok"\] \.hud-tempscale \{ display: none; \}/);
   assert.match(css, /\.hud-temp \.hud-tempword, \.hud-temp \.hud-tempscale \{ display: none; \}/, 'a phone keeps the glyph and the number');
   assert.ok(FRAME_ROLES.chip.includes('.hud-temp'), 'a chip of the kit, so every dress paints it');
 });
@@ -444,7 +447,7 @@ test('AUDIT TEMP-UI E11, E12: the needs feel the weather the land wears (the Sun
   assert.ok(Number.isFinite(t.felt), 'a reading, not NaN');
 });
 
-test('TEMP-UI: the HUD plate reads LIVE where the needs have run (AUDIT TEMP-UI E9: the record waits a game minute, so a door read the street\'s for five seconds), and steps down to the glyph and the number where the whole plate would run off the screen\'s edge', async () => {
+test('TEMP-UI: the HUD plate reads LIVE where the needs have run (AUDIT TEMP-UI E9: the record waits a game minute, so a door read the street\'s for five seconds), and (UI-CALM) stands in the corner, where no edge can meet it - TEMP-UI\'s fit retired with the place it measured', async () => {
   const mk = (tag = 'div') => ({
     tag, className: '', textContent: '', src: '', alt: '', children: [], dataset: {}, attrs: {},
     style: { setProperty(k, v) { this[k] = v; }, removeProperty(k) { delete this[k]; } },
@@ -473,20 +476,15 @@ test('TEMP-UI: the HUD plate reads LIVE where the needs have run (AUDIT TEMP-UI 
     const plate = find(root, 'hud-temp');
     assert.equal(find(plate, 'hud-tempnum').textContent, signedDegrees(feltNow(e).felt), 'the live reading');
     assert.notEqual(feltNow(e).felt, recorded, 'which is not the record\'s last minute');
-    // the fit: a plate whose whole width runs past the edge steps down; room again, and it stands whole
+    // UI-CALM: no fit to make in the corner - the plate is never stepped down, however it measures
     plate.getBoundingClientRect = () => ({ left: 1200, right: 1500, width: 300 });
-    e.survival.felt = undefined;
-    survivalFeed(e, { ...BLIZZARD, byFire: true });
-    drawEnhancedHud(e, 0, 0, {});
-    assert.ok(plate.classList.contains('compact'), 'no room: the glyph and the number');
-    plate.getBoundingClientRect = () => ({ left: 1200, right: 1270, width: 70 });
-    globalThis.innerWidth = 1600;
     for (let i = 0; i < 31; i++) drawEnhancedHud(e, 0, 0, {});
-    assert.equal(plate.classList.contains('compact'), false, 'a wider screen: whole again');
+    assert.equal(plate.classList.contains('compact'), false, 'never compact in the corner');
   } finally {
     destroyEnhancedHud();
     globalThis.document = prev; globalThis.innerWidth = prevW;
   }
-  assert.match(read('src/ui/enhancedStyle.js'), /\.hud-temp\.compact \.hud-tempword, \.hud-temp\.compact \.hud-tempscale \{ display: none; \}/);
+  // PIN MOVED (AUDIT UICALM-FIRM1 L5 M10): the compass's plate, its compact and hung kinds, are gone from every sheet
+  for (const f of ['src/ui/enhancedStyle.js', 'src/ui/grimoireDress.js', 'src/ui/uiCalmStyle.js']) assert.doesNotMatch(read(f), /hud-temp\.compact|temp-hung|temp-aside|\.hud-temp \{[^}]*calc\(100% \+/, f);
 });
 

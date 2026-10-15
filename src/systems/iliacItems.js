@@ -19,6 +19,7 @@ import { registerCustomTemplates, setItemFields, mintCondition, registerItemUseH
 import { validBinderDeck, BINDER_DECK_NAME_MAX } from './itemFields.js';
 import { addItem } from './inventory.js';
 import { cardById, STARTER_DECK } from '../net/iliacCards.js';
+import { cardRules, cardFlavor } from './iliacCardWords.js';   // KG-SET: a card's rules and flavor, in the player's language
 import { ILIAC_CARD_TEMPLATE, CARD_PACK_TEMPLATE, cardWorth } from '../net/cardWorthLaw.js';   // CARDS9: the card's worth, one home with the service; AUDIT CARDS-6 A1: and the pack's number
 
 /** The card's and the binder's templates - the port's own, beside the Wallet's 580 and below the professions' 600.
@@ -75,7 +76,8 @@ export function iliacCardLines(/** @type {any} */ item) {
   if (!c) return ['A card this build does not know.'];
   const kind = { unit: 'Unit', spell: 'Spell', prince: 'Prince', location: 'Location' }[c.kind] ?? c.kind;
   const tier = c.tier.charAt(0).toUpperCase() + c.tier.slice(1);
-  return [`${tier} ${kind}${c.kind === 'location' ? '' : ` - costs ${c.cost}`}${c.kind === 'unit' || c.kind === 'prince' ? `, power ${c.power}` : ''}`, c.text, ...(c.flavor ? [c.flavor] : [])];
+  const flavor = cardFlavor(c);
+  return [`${tier} ${kind}${c.kind === 'location' ? '' : ` - costs ${c.cost}`}${c.kind === 'unit' || c.kind === 'prince' ? `, power ${c.power}` : ''}`, cardRules(c), ...(flavor ? [flavor] : [])];
 }
 /** The binder's card lines: what a binder is for. */
 export const BINDER_CARD_LINES = Object.freeze([

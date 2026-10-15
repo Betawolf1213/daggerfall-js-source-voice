@@ -61,7 +61,7 @@
   },
   {
     "name": "OW6-R-peer-place-unused",
-    "file": "src/scenes/world.js",
+    "file": "src/scenes/travelViewMarks.js",
     "old": "        const at = ship ? state.worldCoords(ship.pos) : c ? c.pos : (seaRaidPeerChase(r.id) ?? r);   // OW6: one a peer's chase holds, where they say it sails",
     "new": "        const at = ship ? state.worldCoords(ship.pos) : c ? c.pos : r;",
     "tests": [

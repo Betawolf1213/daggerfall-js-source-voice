@@ -244,7 +244,7 @@
   },
   {
     "name": "AUDITPOI-S8-a-second-open-draft-stored",
-    "file": "server-account/migrations/0114_poi.sql",
+    "file": "server-account/migrations/0116_poi.sql",
     "old": "CREATE UNIQUE INDEX IF NOT EXISTS poi_revs_one_draft",
     "new": "CREATE INDEX IF NOT EXISTS poi_revs_one_draft",
     "tests": [
@@ -253,7 +253,7 @@
   },
   {
     "name": "AUDITPOI-S8-a-second-retirement-stored",
-    "file": "server-account/migrations/0114_poi.sql",
+    "file": "server-account/migrations/0116_poi.sql",
     "old": "CREATE UNIQUE INDEX IF NOT EXISTS poi_revs_one_retire",
     "new": "CREATE INDEX IF NOT EXISTS poi_revs_one_retire",
     "tests": [

@@ -229,7 +229,7 @@ whichever map the skin wears). The Arena's own law (ARENA-MAP), taken for the ya
 - the rows are copies: a block a yard touches has its bytes copied, never written in place. The block's own bytes are
   the navgrid's and the next build's.
 
-**The Overworld** (`scenes/merchantYardsHost.js` overworldMarks, pushed in `scenes/world.js` travelViewMarks). Each yard
+**The Overworld** (`scenes/merchantYardsHost.js` overworldMarks, pushed in `scenes/travelViewMarks.js` travelViewMarks - HOST-SPLIT 1 moved it out of world.js). Each yard
 standing is a mark: its name over its ground (YARD_MARK_LIFT, 4 m), and its kind is the look's (`yard stable`,
 `yard transport`). The HUD draws its signboard's emblem (`ui/travelViewHud.js` yardGlyph): the Wagon Yard's wheel and
 the Stable's horseshoe, opening up. The marks go with the Towns switch and are never counted as a town

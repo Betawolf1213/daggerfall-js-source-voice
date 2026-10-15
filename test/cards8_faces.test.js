@@ -14,6 +14,7 @@ import {
 } from '../src/render/iliacCardFaces.js';
 import { paintBack, STOCK } from '../src/render/cardFaces.js';
 import { RARITIES, RARITY_ORDER } from '../src/systems/lootRarity.js';
+import { cardWords } from '../src/systems/iliacCardWords.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 
@@ -23,13 +24,15 @@ const EMBLEMS_34 = ['beast', 'undead', 'ghost', 'vampire', 'lich', 'were', 'orc'
   'artifact', 'fire', 'frost', 'shock', 'heal', 'shadow', 'city', 'desert', 'fortress', 'dungeon', 'sea'];
 const EMBLEMS_NEW = ['razor', 'staff', 'book', 'claymore', 'rose', 'daedric', 'scorpion', 'bat', 'boar', 'tree', 'gargoyle', 'banish', 'recall', 'sun'];
 const EMBLEMS_CARDS9 = ['gate', 'serpent', 'gear'];   // CARDS9: the bosses' own
-const EMBLEMS = [...EMBLEMS_34, ...EMBLEMS_NEW, ...EMBLEMS_CARDS9];
+const EMBLEMS_KGSET = ['bear', 'cat', 'spider', 'fish', 'mummy', 'bow'];   // KG-SET: the nine The King's Gambit brought into the set
+const EMBLEMS = [...EMBLEMS_34, ...EMBLEMS_NEW, ...EMBLEMS_CARDS9, ...EMBLEMS_KGSET];
 const KINDS = ['unit', 'spell', 'prince', 'location'];
 /**
  * Each glyph's measure as drawn - its path segments / fills / strokes. A detail lost (the skull's sockets, the
  * crescent's bite) changes it; a deliberate redraw of a glyph updates its entry here, beside the picture it was looked at in.
  */
-const GLYPH_MEASURE = Object.freeze({beast: '14/1/0', undead: '23/1/0', ghost: '14/1/0', vampire: '16/4/0', lich: '30/2/0', were: '31/1/0', orc: '24/4/0', giant: '21/2/0', centaur: '33/2/1', harpy: '56/4/1', nymph: '12/4/0', dreugh: '22/4/1', daedra: '27/3/0', atronach: '26/2/2', dragon: '31/2/0', knight: '36/1/0', mage: '17/2/0', thief: '16/2/0', assassin: '17/5/0', priest: '21/1/1', warrior: '30/2/0', noble: '23/1/0', prince: '13/2/0', artifact: '28/2/1', fire: '14/1/0', frost: '60/0/1', shock: '7/1/0', heal: '17/1/1', shadow: '13/1/1', city: '35/1/0', desert: '26/3/1', fortress: '51/1/0', dungeon: '37/2/1', sea: '15/1/1', razor: '15/2/0', staff: '17/2/2', book: '47/3/2', claymore: '23/2/0', rose: '27/2/1', daedric: '23/3/1', scorpion: '56/5/1', bat: '25/1/0', boar: '45/3/0', tree: '42/2/2', gargoyle: '53/1/0', banish: '28/1/2', recall: '91/1/2', sun: '42/2/0', gate: '38/3/0', serpent: '35/3/1', gear: '68/2/0'});
+const GLYPH_MEASURE = Object.freeze({beast: '14/1/0', undead: '23/1/0', ghost: '14/1/0', vampire: '16/4/0', lich: '30/2/0', were: '31/1/0', orc: '24/4/0', giant: '21/2/0', centaur: '33/2/1', harpy: '56/4/1', nymph: '12/4/0', dreugh: '22/4/1', daedra: '27/3/0', atronach: '26/2/2', dragon: '31/2/0', knight: '36/1/0', mage: '17/2/0', thief: '16/2/0', assassin: '17/5/0', priest: '21/1/1', warrior: '30/2/0', noble: '23/1/0', prince: '13/2/0', artifact: '28/2/1', fire: '14/1/0', frost: '60/0/1', shock: '7/1/0', heal: '17/1/1', shadow: '13/1/1', city: '35/1/0', desert: '26/3/1', fortress: '51/1/0', dungeon: '37/2/1', sea: '15/1/1', razor: '15/2/0', staff: '17/2/2', book: '47/3/2', claymore: '23/2/0', rose: '27/2/1', daedric: '23/3/1', scorpion: '56/5/1', bat: '25/1/0', boar: '45/3/0', tree: '42/2/2', gargoyle: '53/1/0', banish: '28/1/2', recall: '91/1/2', sun: '42/2/0', gate: '38/3/0', serpent: '35/3/1', gear: '68/2/0',
+  bear: '28/3/0', cat: '36/3/0', spider: '36/1/2', fish: '35/2/0', mummy: '65/1/0', bow: '21/1/3'});   // KG-SET: the six, looked at in Chromium at the tile's and the large face's sizes
 const TILE = [78, 112], LARGE = [260, 371], FULL = [350, 500];
 const SIZES = [TILE, LARGE, FULL];
 
@@ -137,12 +140,20 @@ const inRoundRect = ([x, y], rx, ry, rw, rh, r, m = 0) => {
 /** A text's role by its font: a digit on a gem or shield, the name, the flavor, or the rules. */
 const role = (t) => (/^bold /.test(t.font) ? (/^\d+$/.test(t.t) ? 'digit' : 'name') : /^italic /.test(t.font) ? 'flavor' : 'rules');
 
-const sample = (kind, tier, extra = {}) => ({
-  id: `t-${kind}-${tier}`, name: `A ${tier} ${kind}`, kind, cost: 3, power: kind === 'unit' || kind === 'prince' ? 5 : null, tier,
-  tags: [], text: 'When played, add one power to every other unit you hold here.', emblem: kind === 'location' ? 'fortress' : 'undead',
-  flavor: 'The bones remember.', ...extra,
-});
-const paint = (card, w, h, opts) => { const r = recorder(opts); paintIliacCard(r.ctx, card, w, h); return { ...r, L: iliacLayout(KIND_ART[card.kind] ? card.kind : 'unit', RARITIES[card.tier] ? card.tier : 'common', w, h) }; };
+/** KG-SET: a fabricated card is the producer's shape (net/iliacCards.js - no words on it); the words a test sets on
+ *  its face go to the painter beside it, as a catalog card's own (systems/iliacCardWords.js) do. */
+const SAMPLED = new WeakMap();
+const sample = (kind, tier, { rules = 'When played, add one power to every other unit you hold here.', flavor = 'The bones remember.', ...extra } = {}) => {
+  const card = {
+    id: `t-${kind}-${tier}`, name: `A ${tier} ${kind}`, kind, cost: 3, power: kind === 'unit' || kind === 'prince' ? 5 : null, tier,
+    tags: [], emblem: kind === 'location' ? 'fortress' : 'undead', ...extra,
+  };
+  SAMPLED.set(card, { rules, flavor });
+  return card;
+};
+/** The words on a card's face: a fabricated card's own, else the catalog card's (the painter's default). */
+const wordsOf = (card) => SAMPLED.get(card) ?? cardWords(card);
+const paint = (card, w, h, opts) => { const r = recorder(opts); paintIliacCard(r.ctx, card, w, h, SAMPLED.get(card)); return { ...r, L: iliacLayout(KIND_ART[card.kind] ? card.kind : 'unit', RARITIES[card.tier] ? card.tier : 'common', w, h) }; };
 const catalog = async () => {
   if (!existsSync(new URL('../src/net/iliacCards.js', import.meta.url))) return [];
   const cat = await import('../src/net/iliacCards.js');
@@ -150,7 +161,7 @@ const catalog = async () => {
 };
 
 test('CARDS8 every emblem the catalog carries has its own glyph, traced from paths and filled or stroked', () => {
-  assert.deepEqual([...EMBLEM_KEYS], EMBLEMS, 'EMBLEM_KEYS: the first 34, then the fourteen of AUDIT CARDS-5, in order');
+  assert.deepEqual([...EMBLEM_KEYS], EMBLEMS, 'EMBLEM_KEYS: the first 34, the fourteen of AUDIT CARDS-5, CARDS9\'s three and KG-SET\'s six, in order');
   assert.ok(Object.isFrozen(EMBLEM_KEYS));
   assert.deepEqual(Object.keys(EMBLEM_PAINTERS), EMBLEMS, 'one painter per emblem, no more and no fewer');
   assert.ok(Object.isFrozen(EMBLEM_PAINTERS));
@@ -473,7 +484,7 @@ test('CARDS-5 B2: the rules stay in their box, the flavor beneath them, and only
         const end = rules.at(-1).y + rules.at(-1).px * 1.15;
         for (const f of flavor) assert.ok(f.y >= end - 1e-6, `${card.id}: the flavor "${f.t}" under the rules, not over them`);
         assert.ok(flavor[0].px <= rules[0].px, 'the flavor no larger than the rules');
-        assert.equal(flavor.map((t) => t.t).join(' ').replace(/\s+/g, ' '), String(card.flavor).replace(/\s+/g, ' '), 'the whole flavor, or none of it');
+        assert.equal(flavor.map((t) => t.t).join(' ').replace(/\s+/g, ' '), wordsOf(card).flavor.replace(/\s+/g, ' '), 'the whole flavor, or none of it');
       }
       // the box is cleared only at the shield's corner: a line above it runs the box's width
       if (sb) assert.ok(sb.y0 > box.y + box.h * 0.35, 'the shield takes the box\'s corner, not its whole height');
@@ -481,12 +492,12 @@ test('CARDS-5 B2: the rules stay in their box, the flavor beneath them, and only
     if (cards.length) assert.ok(shown >= cards.length - 4, `${w}x${h}: the flavor is shown on all but a handful (${shown}/${cards.length})`);
   }
   // a short rule and a long flavor: the flavor shrinks to stay
-  const long = paint(sample('unit', 'rare', { text: 'Reveal: draw a card.', flavor: 'They say the old roads of the Bay remember every traveller who ever walked them, and keep a toll.' }), ...LARGE, { k: 0.5 });
+  const long = paint(sample('unit', 'rare', { rules: 'Reveal: draw a card.', flavor: 'They say the old roads of the Bay remember every traveller who ever walked them, and keep a toll.' }), ...LARGE, { k: 0.5 });
   const lf = long.log.txt.filter((t) => role(t) === 'flavor'), lr = long.log.txt.filter((t) => role(t) === 'rules');
   assert.ok(lf.length >= 2 && lf[0].px < 4.6 * long.L.u - 1e-9, 'a long flavor is shrunk, not dropped');
   assert.ok(Math.abs(lr[0].px - 5.2 * long.L.u) < 1e-9, 'and it is the flavor that gives way, not the rules: they keep their size');
   // and the lines beside the shield are narrower than those above it
-  const many = paint(sample('unit', 'rare', { text: 'word '.repeat(30), flavor: '' }), ...LARGE, { k: 0.5 });
+  const many = paint(sample('unit', 'rare', { rules: 'word '.repeat(30), flavor: '' }), ...LARGE, { k: 0.5 });
   const mr = many.log.txt.filter((t) => role(t) === 'rules'), msb = bbox(many.log.shapes.find((s) => s.style === POWER_SHIELD));
   const above = mr.filter((t) => t.y + t.px * 1.15 <= msb.y0), beside = mr.filter((t) => t.y + t.px * 1.15 > msb.y0);
   assert.ok(above.length && beside.length, 'some lines above the shield, some beside it');
@@ -504,11 +515,12 @@ test('CARDS8 the rules wrap by the context\'s own measure; the flavor in italics
   assert.deepEqual(wrapCardText(ctx, 'aaa bbb ccc ddd', (i) => (i === 0 ? 70 : 30)), ['aaa bbb', 'ccc', 'ddd'], 'a line\'s width may be its own');
   for (const line of wrapCardText(ctx, 'The quick brown fox jumps over the lazy dog by the Iliac Bay', 90)) assert.ok(line.length * 10 <= 90, line);
   const roomy = recorder({ charW: 3 });
-  paintIliacCard(roomy.ctx, sample('spell', 'magic', { text: 'Deal two.', flavor: 'Short.' }), ...FULL);
+  const deal = sample('spell', 'magic', { rules: 'Deal two.', flavor: 'Short.' });
+  paintIliacCard(roomy.ctx, deal, ...FULL, wordsOf(deal));
   const fl = roomy.log.calls.filter((c) => c[0] === 'set' && c[1] === 'font').map((c) => c[2]);
   assert.ok(fl.some((f) => /^italic /.test(f)) && roomy.log.texts.some(([t]) => t === 'Short.'), 'room to spare: the flavor, in italics');
   for (const [w, h] of [LARGE, FULL]) {
-    const full = paint(sample('unit', 'magic', { text: 'word '.repeat(400), flavor: 'Never seen.' }), w, h, { charW: 3 });
+    const full = paint(sample('unit', 'magic', { rules: 'word '.repeat(400), flavor: 'Never seen.' }), w, h, { charW: 3 });
     assert.ok(!full.log.texts.some(([t]) => t === 'Never seen.'), 'a full box drops the flavor');
     const rules = full.log.txt.filter((t) => role(t) === 'rules');
     assert.ok(rules.at(-1).t.endsWith('…'), 'and cuts the rules off with an ellipsis');
@@ -578,7 +590,7 @@ test('CARDS8 the back is the Bay\'s compass rose - not the house deck\'s medalli
 test('CARDS8 the art is ours: the painter reads no game file', () => {
   const src = read('src/render/iliacCardFaces.js');
   const imports = [...src.matchAll(/^import .* from '([^']+)';/gm)].map((m) => m[1]);
-  assert.deepEqual(imports, ['../systems/lootRarity.js', './cardFaces.js'], 'the loot\'s tier colours and the house stock - nothing else');
+  assert.deepEqual(imports, ['../systems/lootRarity.js', '../systems/iliacCardWords.js', './cardFaces.js'], 'the loot\'s tier colours, the card\'s words and the house stock - nothing else');   // PIN MOVED (KG-SET): the words a face writes, in the player's language
   for (const spec of imports) assert.doesNotMatch(spec, /formats\/|texture|bsa|arena2|imgFile|cifRci|loader/i, `${spec} is no ARENA2 reader`);
   assert.doesNotMatch(src, /\b(drawImage|putImageData|createPattern|new Image)\b/, 'no raster is drawn - every face is paths');
   assert.doesNotMatch(src, /#[0-9a-f]{6}['"]?\s*,?\s*\/\/\s*(common|magic|rare|legendary|aetheric|artifact)\b/i, 'the tier colours are imported, never copied');

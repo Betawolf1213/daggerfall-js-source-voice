@@ -27,7 +27,7 @@ the glTF reader is the port's own and every model draws through `Renderer.create
   renderer's own shape in the game's frame, one binary layout) and textures (PNG, JPEG or WebP as imported,
   `src/poi/poiImage.js` reading their headers). One law, three readers: the editor before a save, the account service at
   every write, the game before it stands one.
-- **EVERY CHANGE IS A REVISION AND AN APPROVER DECIDES** (`server-account/src/poi.js`, migration 0114). Builders draft
+- **EVERY CHANGE IS A REVISION AND AN APPROVER DECIDES** (`server-account/src/poi.js`, migration 0116). Builders draft
   and submit; an approver (`APPROVER_HANDLES`, Lattymoy) approves, rejects with a word, approves a retirement, or rolls a
   POI back to an earlier approved revision. Only approved revisions are in the feed the game reads.
 - **LIVE, NOT DEPLOYED.** The game reads the feed (`GET /v1/poi/live`) and streams the assets it names
@@ -45,7 +45,7 @@ the glTF reader is the port's own and every model draws through `Renderer.create
 | POI-5 | The material editor and the full UV editor: selection by vertex, edge, face and island; move, rotate, scale; seams; LSCM unwrap; island packing; projections; texel density | built |
 | POI-6 | The approver's queue in the editor (before and after, at the place, with the law's report), history and rollback; export and import of a POI pack; a GLB back out for a round trip | built |
 
-## POI-1 - the format and the store (2026-10-14, acct134)
+## POI-1 - the format and the store (2026-10-14, acct135)
 
 **THE MESH** (`src/poi/poiMesh.js`). `POIM` v1, little-endian: a header (vertex and index counts, a u32-index flag, the
 submesh count, the bounds), the submesh runs (`{ start, count }`, contiguous, in order, whole triangles - one per
@@ -86,7 +86,7 @@ origin at its size; a shelf entry held to the same.
 approver is in `APPROVER_HANDLES` (Lattymoy); a builder is an approver, a developer (`DEVELOPER_HANDLES`) or in
 `BUILDER_HANDLES` (empty at the start). A guest is neither. A handle taken off a list loses the door at its next request.
 
-**THE STORE** (migration 0114: `poi_docs`, `poi_revs`, `poi_rev_assets`, `poi_assets`, `poi_upload_days`, `poi_feed`; R2
+**THE STORE** (migration 0116: `poi_docs`, `poi_revs`, `poi_rev_assets`, `poi_assets`, `poi_upload_days`, `poi_feed`; R2
 `poi/a/<sha>`).
 - An upload (`PUT /v1/poi/asset/<sha>?kind=mesh|texture`, a raw body to its kind's bound) is named by its own sha256 -
   checked against the bytes - and read whole as the kind it claims (a mesh decoded, a texture by its header). Stored
@@ -138,8 +138,8 @@ approver is in `APPROVER_HANDLES` (Lattymoy); a builder is an approver, a develo
 
 Pinned by `test/poi1_store.test.js` (10) on the real Worker over the real migrations; `tools/mutants/poi1.json` 16, all
 dead. AUDIT POI: `test/auditpoi_store.test.js` (21) on the same Worker, `tools/mutants/auditpoi_store.json` 52, all dead
-(`01-Overview/Audit-POI.md`). The account deploy's path filter carries the three shared law files. acct134 (acct133 on
-the branch, renumbered past LAMP-KEEPER II's at the merge).
+(`01-Overview/Audit-POI.md`). The account deploy's path filter carries the three shared law files. acct135 (acct133, then acct134, on
+the branch, renumbered past LAMP-KEEPER II's and KG6's at the merges).
 
 ## POI-2 - the game stands them (2026-10-14)
 
@@ -387,7 +387,7 @@ without its file.
   own (its mesh and materials by their hashes, its offset, turn and size from the model's origin, its solidity and
   shadow) - a `lib-` id, a name, tags, words, and its picture (`thumb`, a texture by its hash, or none). The same law a
   POI is read by, `place` and `marker` left out; the picture checked as a stored texture with the rest of its assets.
-- **THE SHELF** (`server-account/src/poi.js` listShelf / shelfEntry / shelve / unshelve; migration 0114's `poi_shelf`):
+- **THE SHELF** (`server-account/src/poi.js` listShelf / shelfEntry / shelve / unshelve; migration 0116's `poi_shelf`):
   shared by every builder and read by no player. An entry put new, or over the builder's own (an approver's, any); taken
   off the shelf by its maker or an approver - kept, as every record here is, but listed, read and put over no more, and
   said so (`poi-gone` - AUDIT POI U13). Its triangles counted from its meshes' stored facts. A builder keeps at most
@@ -419,7 +419,8 @@ without its file.
   it when none is held included (AUDIT POI E11: two steps); measured from the POI's own origin whatever of it is held
   (E6: a held light had offset every part).
 
-It rides acct134 with POI-1's store - neither deployed before it - its table in migration 0114 (acct133 and 0113 on the branch, renumbered past LAMP-KEEPER II's at the merge).
+It rides acct135 with POI-1's store - neither deployed before it - its table in migration 0116 (acct133, then acct134, and 0113, then
+0114, on the branch, renumbered past LAMP-KEEPER II's and KG6's at the merges).
 
 Pinned by `test/poi4b_library.test.js` (7); `tools/mutants/poi4b.json` 23, all dead. AUDIT POI: the shelf in
 `test/auditpoi_store.test.js` (S8, S10, U13), placing in `test/auditpoi_editor.test.js` (E6, E11), the picture in

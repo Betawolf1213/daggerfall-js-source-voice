@@ -13,7 +13,7 @@
 //
 // Two kinds of row, kept apart on the screen because they are owed
 // differently:
-//   - BUILT ON: the game itself and the source the port is a 1:1 of.
+//   - BUILT ON: the game itself and the source the game began as a 1:1 port of (SCOPE1: now its reference).
 //   - MODS: a modder's own work, carried with the author's permission
 //     (never without - the roads were removed whole for exactly that).
 //     `vendor` names the folder whose README records the permission.
@@ -44,7 +44,7 @@ export const CREDITS = Object.freeze({
     Object.freeze({
       title: 'Daggerfall Unity',
       get author() { return t('credits.author.andContributors', '{name} and contributors', { name: 'Gavin Clayton (Interkarma)' }); },
-      get what() { return t('credits.dfu.what', 'The source this port is a 1:1 translation of. Its quest scripts, book index, settings tables, TEXT.RSC string table, interaction-mode icons and mouse cursor are vendored verbatim (MIT License).'); },
+      get what() { return t('credits.dfu.what', 'The source this game began as a 1:1 translation of, and still reads as its reference. Its quest scripts, book index, settings tables, TEXT.RSC string table, interaction-mode icons and mouse cursor are vendored verbatim (MIT License).'); },
       vendor: Object.freeze(['dfu-quests', 'dfu-books', 'dfu-settings', 'dfu-text', 'dfu-icons', 'dfu-cursor']),
       link: 'https://github.com/Interkarma/daggerfall-unity',
     }),
@@ -552,6 +552,16 @@ export const CREDITS = Object.freeze({
       terms: 'Its pictures carried byte for byte on Mac\u2019s word of the author\u2019s permission (Port-Doctrine\u2019s second exception); the archive names no author - see vendor/sands-of-the-alikr/README.md for the permission record.',
       vendor: Object.freeze(['sands-of-the-alikr']),
       link: 'https://www.nexusmods.com/daggerfallunity/mods/1390',
+    }),
+    // KG3 (bible/11-Multiplayer/Kings-Gambit.md section 10.7): the bundle names no author - the credits' own unnamed form
+    // until the owner names them (CR1 asks every row for an author; AUDIT KG C17)
+    Object.freeze({
+      get title() { return t('credits.kingsGambit.title', 'The King\u2019s Gambit'); },   // the game's name as its table says it (L10N4)
+      version: '1',
+      get author() { return t('credits.author.unnamed', 'Unnamed ({source})', { source: 'thekingsgambit.dfmod' }); },
+      get what() { return t('credits.kingsGambit.what', 'A battle of armies and kings, played at a tavern\u2019s card table against its regulars or online against another player (KG): its rules and the innkeeper\u2019s play ported 1:1 off the compiled script, its units the Iliac Hand cards\u2019 pictures and its kings the Bay deck\u2019s.'); },
+      get terms() { return t('credits.kingsGambit.terms', 'Ported from the shipped bundle, read off its compiled script method by method, with the permission the owner recorded (2026-10-13); the bundle names no author - see vendor/kings-gambit/README.md for the permission record.'); },
+      vendor: Object.freeze(['kings-gambit']),
     }),
   ]),
 });

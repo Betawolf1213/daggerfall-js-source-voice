@@ -15,7 +15,7 @@ Worker over the real migrations, a surviving mutant, a measurement) and to end o
 
 | Lane | Over | How |
 |---|---|---|
-| A | the store and the shared law (`server-account/src/poi.js`, the POI block of `server-account/src/index.js`, `service.js` poiPathOf, migration 0114, `poiLaw.js`, `poiMesh.js`, `poiImage.js`) | S1-S14, thirteen reproduced on the real Worker over the real migrations (`test/accountDb.mjs`), S14 from reading |
+| A | the store and the shared law (`server-account/src/poi.js`, the POI block of `server-account/src/index.js`, `service.js` poiPathOf, migration 0116 (0114 at the frozen head), `poiLaw.js`, `poiMesh.js`, `poiImage.js`) | S1-S14, thirteen reproduced on the real Worker over the real migrations (`test/accountDb.mjs`), S14 from reading |
 | B | the game runtime (`poiFeed.js`, `poiRuntime.js`, `poiImageDecode.js`, `poiHost.js`, `meshAlpha.js`, `poiMapMark.js`, the branch's lines in `world.js` and the map windows) | R1-R15: R1-R3 and R5-R8 reproduced in node, R4 from the draw order, R9 from the canvas's law, R10 the specification's arithmetic |
 | C | the editor's core and its host (`poiEdit.js`, `poiGizmo.js`, `poiEditorHost.js`, `poiGizmoPass.js`, `onlineLane.js`, `world.js`'s editor lines) | E1-E18 - one high, five medium, twelve low - through the real modules; 200,000 random Euler round trips |
 | D | the panels, their async flows and their words (`poiEditorPanel.js`, `poiLibraryPanel.js`, `poiReviewPanel.js`, `poiUvPanel.js`, `poiText.js`, `poiService.js`, the branch's `accountClient.js`) | U1-U13 through the real panels over `test/chargenDom.mjs`: a browser focuses a pressed button, the fake document's `click()` does not - why U1 never showed; every locale's `poi.*` rows read at 0, 1, 2, 5, 21 and 1.5 |
@@ -262,7 +262,7 @@ equivalent as recorded.
 
 PIN MOVED, each with its note at the change: `test/poi1_store.test.js` - the approval naming `docSha` (S1), a live asset
 cached a day (S4), the list's revisions with the rollback's own (S14); `test/accountworker.test.js` ACC1b - two tables,
-`poi_rev_assets` and `poi_upload_days` (0114 grown in place, not yet deployed); `test/poi2_runtime.test.js` - settle
+`poi_rev_assets` and `poi_upload_days` (the POI migration grown in place, not yet deployed - 0116 since KG6 took 0115); `test/poi2_runtime.test.js` - settle
 runs twelve frames (R8); `test/poi3b_panel.test.js` - OPENING FROM THE STORE's revisions carry the store's `base` (P6,
 T7), and THE EDITOR IN THE WORLD's translucent line reads `mwv.eye` (R4, R14); `test/poi3_edit.test.js` WORDS -
 `index-range` in words of its own (L8); `test/poi4_gltf.test.js` - the GLB's colours through poiMaterialOf (R10),

@@ -6,6 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
@@ -355,7 +356,7 @@ test('SD-LOOK S11 THE FRAME MAKES NOTHING (AUDIT SD II L2 F9): the hang\'s frame
     const out = { control: bytes(() => { sink[0] = [k + 0.5, k + 1.5, k + 2.5]; }), hang: bytes(() => hang.frame()) };
     console.log(JSON.stringify(out));
   `;
-  const run = spawnSync(process.execPath, ['--expose-gc', '--min-semi-space-size=64', '--max-semi-space-size=64', '--input-type=module', '-e', script], { encoding: 'utf8' });
+  const run = spawnSync(process.execPath, [...ALLOC_CHILD_ARGS, '--input-type=module', '-e', script], { encoding: 'utf8' });
   assert.equal(run.status, 0, run.stderr);
   const m = JSON.parse(run.stdout.trim().split('\n').pop());
   assert.ok(m.control >= 40, `the control made ${m.control.toFixed(2)} bytes a frame - the measure is blind`);

@@ -54,7 +54,7 @@ import { arenaReplaysRestore } from '../systems/arenaReplay.js';   // ARENA5: yo
 import { createArenaGate, nearArenaGate } from './arenaGate.js';   // ARENA3; ARENA4b: the Herald's choice and the pause door's banner too
 import { createArenaOnline } from './arenaOnline.js';   // ARENA4: the arena online - the hall, a relay's bout, the boards and the receipts
 import { arenaFloorRoomOf } from '../net/arenaLaw.js';   // ARENA4: a bout's room (ARENA4b: or the hour's exhibition's)
-import { accountArena, accountIliac, iliacRefusalText } from '../net/accountClient.js';   // ARENA4: the arena's records on the account service; CARDS10: Iliac Hand's season board; AUDIT CARDS-6 E14: and its refusals' own words
+import { accountArena, accountIliac, iliacRefusalText, accountGambit } from '../net/accountClient.js';   // ARENA4: the arena's records on the account service; CARDS10: Iliac Hand's season board; AUDIT CARDS-6 E14: and its refusals' own words
 import { fighterIdentity } from '../systems/arenaFighters.js';   // ARENA4: the relay's fighters billed by the bout's seed
 import { bossStandIn } from '../world/gateBoss.js';   // ARENA4: my opponent's stand-in for the formulas
 import { closeArenaDoor, arenaDoorOpen } from '../ui/arenaDoor.js'; import { createArenaSessionButton } from '../ui/arenaSessionButton.js';   // HOTFIX 1003f: the session's button on the screen   // ARENA4: the window goes when a bout calls
@@ -327,6 +327,8 @@ import { refinedText, chainStopText } from '../net/chainLaw.js';   // CRAFT1: wh
 import { createMarketBook } from '../net/marketBook.js';   // PROF5: the market's book
 import { createCardStakes } from '../net/cardStakes.js';   // CARDS6: a realm character's card stakes
 import { createIliacClaims } from '../net/iliacClaims.js';   // CARDS10: the ranked games' results carried to the service
+import { createGambitClaims } from '../net/gambitClaims.js';   // KG6: and The King's Gambit's rated games'
+import { seasonCounted, seasonKept, seasonGuest, seasonFoeGuest } from '../ui/gambitTableWords.js';   // KG6: what the season's claims say
 import { createWritBook } from '../net/writBook.js';   // PROF6: guild writs, commissions, the guild Stores
 import { wearCondition, wearOf, WEAR_WHOLE } from '../net/marketLaw.js';   // PROF5: a bought piece's wear; PROF6: a commission's piece unworn
 import { commissionFilledBy } from '../net/writLaw.js';   // AUDIT 31 L8: a piece that answers a commission, the law's own test
@@ -472,23 +474,22 @@ import { groundHit, canvasPoint, classifyPick } from '../player/travelPick.js'; 
 import { planRoute, routeLegs, roadShare, crossesWater, dryLine, SEA_KINDS } from '../systems/travelRoute.js';   // TV2: the way by the roads; OWS2: and over the water
 import { createSeaHelm, seaHelmStep, seaHelmLook, headingOf as seaHeadingOf, squareOnly as seaSquareOnly } from '../systems/seaHelm.js';   // OWS2: the journey's hand on the helm
 import { createLoadGovernor, unbuiltAround } from '../systems/travelGovernor.js';   // TV2: "Cap it to what loads cleanly"
-import { createWildAlert, noticeChance, WILD_MARK, WILD_MARK_S } from '../systems/wildAlert.js';   // WILD-ALERT: the wilderness notices a fast traveller on a stealth check
+import { createWildAlert, noticeChance, WILD_MARK_S } from '../systems/wildAlert.js';   // WILD-ALERT: the wilderness notices a fast traveller on a stealth check
 import { drawWildMarks, WILD_MARK_RANGE } from '../ui/wildMarks.js';   // WILD-ALERT: the "!" over an alerted foe
 import { playerOnPathAt, pathsDataPoint } from '../systems/travelPaths.js';   // RATE-LAW: the traveller on a road's lane or off it
 import { threatCap, foePaced } from '../systems/travelThreat.js';   // OW6: the journey slows as enemies close; ENEMY-PACE's floor, fixed (RATE-LAW)
 import { farPlaces, settlementPixels, farDistanceText, PIXEL_KM, TV_FAR_RANGE } from '../systems/travelFarPlaces.js';   // TV5: the far places, held at the view's edge
-import { TV_DUNGEON_TYPES, dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M } from '../systems/travelDungeons.js';   // TV6: the dungeons, discovered on approach; AUDIT OW3 D1/D3: off the map rows, and the spawns with them; AUDIT OW4 D4/D6: the far found spawns, the last leg's start
+import { dungeonRows, spawnedPixels, filedSpawns, nearDungeons, dungeonApproach, pixelBox, lastLegStart, dungeonToFind, dungeonFoundText, NATIVE_PER_M } from '../systems/travelDungeons.js';   // TV6: the dungeons, discovered on approach; AUDIT OW3 D1/D3: off the map rows, and the spawns with them; AUDIT OW4 D4/D6: the far found spawns, the last leg's start
 import { routeGround, joinPoint, routeDrawPoints, TV_MOUNTAIN_CLIMATE } from '../systems/travelRoute.js';   // OW-MOUNTAINS, OW-ROADSIDE; AUDIT OW3 J4: the drawn route's points; AUDIT OW4 J3: the ground read once
-import { bandsNear, wanderAt, bandSight, bandChaseStep, bandLabel, bandMakeSeed, bandSizeOf, bandLevelOf, BAND_LIFE_MS, BAND_CONTACT_M, BAND_CHASE_MPS, BAND_STAND_M, BAND_STAND_MIN_M, BAND_STAND_RETRY_MS, BAND_STAND_TRIES } from '../systems/travelBands.js';   // TV7: the roaming bands; OW6: their number and their level
+import { bandsNear, wanderAt, bandSight, bandChaseStep, bandMakeSeed, bandSizeOf, bandLevelOf, BAND_LIFE_MS, BAND_CONTACT_M, BAND_CHASE_MPS, BAND_STAND_M, BAND_STAND_MIN_M, BAND_STAND_RETRY_MS, BAND_STAND_TRIES } from '../systems/travelBands.js';   // TV7: the roaming bands; OW6: their number and their level
 import { bandWordOf, validBandWord, chaseYields, bandLifeOf, bandNearMe, bandPixelOf, BAND_WORD_MS, BANDS_WIRE_MAX } from '../systems/travelBands.js';   // TV7b: the chase, shared
 import { walkBegin, leaderWalkStep, walkHeard, memberAnswer, memberFollowing, memberStopOf, memberWalkStep, walkAskStands, sameWalkDest, NO_WALK_ANSWER, PARTY_WALK_RADIUS_M } from '../systems/partyWalk.js';   // TV8: group travel, the leader drives (AUDIT OW3: the whole law, pure)
 import { rollGroupComposition, PACK_SPACING, PACK_ALERT_RADIUS } from '../systems/campEncounters.js';   // TV7: a band is a themed group
 import { seededRng } from '../systems/wind.js';   // TV7: a band's make, rolled from its own seed
 import { enemyDisplayName } from '../characters/enemyBasics.js';   // TV7: a band's words
 import { groupCamps } from '../world/campShared.js';   // OW6: the camps on the Overworld
-import { travellerMarkOf, travellerWorldOf, travellerDue, createTravellerBook, isShipMark } from '../systems/travellerMarks.js';   // TV3: the region's travellers; OWS1: at sea, a ship
+import { travellerMarkOf, travellerDue, createTravellerBook, isShipMark } from '../systems/travellerMarks.js';   // TV3: the region's travellers; OWS1: at sea, a ship
 import { RainCurtainsRenderer, curtainsOf, CURTAIN_FOOT_MARGIN_M } from '../render/rainCurtains.js';   // TV4: the weather's curtains, stood in the world for the view
-import { RANGE_PIXELS as TV_BODY_RANGE } from '../net/wire.js';   // TV3: within the pose range a traveller is their body, not a mark
 import { quickLootWheel, quickLootTake, quickLootArm, plaqueActionFor, plaqueActionSelection, plaqueLightFirst, plaqueStep } from '../systems/quickLoot.js'; import { showPickups, showHaul } from '../ui/pickupFeed.js'; import { claimHauls } from '../ui/haulCards.js';   // QUICK-LOOT B4: the wheel, the take, and the two keys that arm what the next activate means; PICKUP-FEED: what a take moved, as cards (the take's `took`)
 import { findHaul } from '../ui/haulCards.js'; import { setSilverFinder, silverFindAt } from '../systems/silverFinds.js';   // SILVER-FINDS: a loot find's card; the finder every host's loot door asks, and a headstone's find
 import { setWalletSilver } from '../systems/walletItem.js';   // WALLET1: the wallet counts the account's silver
@@ -510,7 +511,7 @@ import { FOUND_NOTHING_VALUABLE_TEXT_ID } from '../systems/talk.js';   // GetRan
 import { spellRecordOfIndex, DUNGEON_LOOT_KEYS, generateItems as generateLootItems, addPileLootExtras, shownSpellName } from '../systems/loot.js';   // QG1: CastSpellDo's classic-record read (the G4 registry); WOD3: LootTables.GenerateLoot for the camps' piles; L10N3e: a spell's name as shown
 import { preloadCharSheetArt } from '../ui/charsheet.js';   // U8a. AUDIT 44 (a11): no LevelUpScreen here - a level-up opens the SHEET, and the skin fork behind charSheetDoor decides which face it wears.
 import { createCharSheetWindow, charSheetDoorReady, warmLevelUpWindow } from '../ui/charSheetDoor.js';
-import { announceLevelUp, levelOwed, announceQuestFoeSlain, questFoeName } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
+import { announceLevelUp, levelOwed, announceRenownRise, announceQuestFoeSlain, questFoeName } from '../ui/levelNotice.js';   // LV2: the level-up notification, and the skin fork over whether the window opens itself   // U52: the sheet's ONE seam, and the skin fork in front of it
 import { preloadQuestJournalArt } from '../ui/questJournal.js';   // U43: the LogBook and NoteBook doors
 import { createChronicleWindow } from '../ui/chronicleDoor.js';   // PX24d: the chronicle's one door
 import { openPixelDial, setDialOpenHook } from '../ui/pixelDial.js';   // PX15: the Tab compass rose
@@ -583,7 +584,7 @@ import { facetBand } from '../net/recipeLaw.js';   // PROF10: the facet's attrib
 import { panBand, DISH_LEVEL } from '../net/recipeLaw.js';   // PROF9: the pan's attribute band; a feast's level at the table
 import { COOK_FIRE } from '../net/professionLaw.js';   // PROF9: the fire Cooking is done at - any lit one, no fee
 import { SURVEYOR } from '../net/professionLaw.js';   // MINE-PERKS: Mining 100's Surveyor, whose own word witnesses the ground
-import { lodeMapMarks, lodeLabel, LODE_COMPASS_CSS } from '../ui/lodeMapMark.js';   // MINE-PERKS: a Motherlode Sense's day's Motherlodes, on both maps and the Overworld
+import { lodeMapMarks } from '../ui/lodeMapMark.js';   // MINE-PERKS: a Motherlode Sense's day's Motherlodes, on both maps and the Overworld
 import { localWhenText } from '../systems/eventTimers.js';   // AUDIT MINE-PERKS: a Motherlode's hour as the timers say a moment - this machine's clock, its weekday where it is not today
 import { setFeastShare, takeFeastGift, shareFeastWith } from '../systems/cookItems.js';   // PROF9: a feast shared with the party at the table
 import { hasSkillet, packSavedFires, CAMP_TEXT } from '../systems/survival/camp.js';   // PROF9: C&C's Skillet widens the pan's window; AUDIT REST II H5: a dungeon save's fires carried out
@@ -654,7 +655,7 @@ import { raycastColliders, rayBoxEntry, colliderPoses, invertAffine, BUILTIN_COL
 import { DECK_STEP, DECK_HEADROOM, intoDeck, outOfDeck, mainLevel } from '../systems/naval/navalDeck.js';   // DECK-WALK: a body off her deck by more than a tread has left it; her deck's frame (AUDIT NAV2 F33: the headroom a deck point's ray starts under)
 import { warmAshesOn, LeaveShip, setWarmAshesHost, onPreFastTravel as warmAshesPreTravel, onPostFastTravel as warmAshesPostTravel, frame as warmAshesFrame, raidAtSea as warmAshesRaidAtSea, raidRefusal as warmAshesRaidRefusal, raidUnderWay as warmAshesRaidUnderWay, WA_RAID_QUESTS, WA_SEA_REGION } from '../systems/warmAshesShips.js';   // WA1: Warm Ashes - Ships, the ambush at sea; OWS3: its raid, seen coming; THE MERGE (NAV-D, OWS3): one raid at a time
 import { laneNetwork, laneWay, packetsAt, packetAt, LANE_PATH_PX, LANE_DWELL_S } from '../systems/naval/seaLanes.js';   // SEA-LANES: the Bay's packets; LW5: where one is, and her dwell
-import { raidersNear, raiderAt, raiderSight, chaseStep as raiderChaseStep, pixelOfNative, NATIVE_PIXEL as RAID_NATIVE_PIXEL, RAIDER_CONTACT_M, RAIDER_CONTACT_PLAY_M, RAIDER_CHASE_MPS, RAIDERS_WIRE_MAX, RAIDER_WORD_MS, raiderWordOf, validRaiderWord, raiderLifeOf, raiderNearMe, RAIDER_LABEL, RAIDER_LIFE_MS } from '../systems/seaRaiders.js';   // OWS3: Warm Ashes' raiders on the Overworld's sea
+import { raidersNear, raiderAt, raiderSight, chaseStep as raiderChaseStep, pixelOfNative, NATIVE_PIXEL as RAID_NATIVE_PIXEL, RAIDER_CONTACT_M, RAIDER_CONTACT_PLAY_M, RAIDER_CHASE_MPS, RAIDERS_WIRE_MAX, RAIDER_WORD_MS, raiderWordOf, validRaiderWord, raiderLifeOf, raiderNearMe, RAIDER_LIFE_MS } from '../systems/seaRaiders.js';   // OWS3: Warm Ashes' raiders on the Overworld's sea
 import { RAIDER_LEAD_S } from '../systems/naval/navalRaiders.js';   // NAV-R: a raider ship steers its seeded course this far on
 import { setRaidingPartiesHost, raidFrame as raidingPartiesFrame, raidState, raidingPartiesOn, raidTypeName as raidKindName, raidDefendingHere, outOfSight as raidOutOfSight, raidWireWord, raidPeerWord, raidRelayWord, raidTownsFor, raidPoolCleared, raidRelayState, RAID_SPAWN_MIN_DISTANCE, RAID_SPAWN_MAX_DISTANCE } from '../systems/raidingParties.js';   // RAID1: World Events - Raiding Parties, the towns' raids
 import { modSaveRecords, restoreModSaveRecords, newGameModSaveRecords, registerModSaveData } from '../systems/modSaveData.js';   // WA1: DFU's per-mod save slot, for the mods after HCC; OH-D: Ocean Holes' OceanHoleSaveData
@@ -762,7 +763,11 @@ import { createSeatLock, SEAT_NOTICE, SEAT_MID_TEXT, PLAY_HERE_LABEL } from '../
 import { readAccount, buyInsignia, equipTitle, equipAura, adoptIdentity as adoptSessionIdentity } from '../net/accountClient.js';   // WB9g: the Broker's insignia - the account's wardrobe, its sale and its wearing, and my own screen's word of it
 import { ownAura, ownNameAsAt } from '../systems/ownGlyphs.js';   // WB9g: the aura at my own feet - the service's last word, kept on the stored session; NAME-AS: and when this device last chose the name its player wears
 import { INSIGNIA, insigniaRefusal } from '../net/insignia.js';   // WB9g
-import { accountTokenMinter, storedSession, muteAccount, serviceBase, accountRefusalText, accountDuels, accountWild, accountRenown, accountRoll, accountHomes, accountDecor, accountGuilds, accountGates, accountMarks, accountCards, accountBoard, accountProf, accountRaids, accountMarket, accountWrits, accountSeats, accountSerpents, accountSds, accountLamp, nameWhyText } from '../net/accountClient.js';   // NAME-AS: nameWhyText, why my character's name stood aside   // ACC1d: the hello's signed word, minted per connection from the account session this device holds   // ACC4's beat knocks through the tab's heartbeat (SCALE4c), not from here
+import { createFirmamentBook, setFirmamentBook } from '../net/firmamentBook.js';   // FIRM1: the Firmament - this device's tree and purses
+import { setFirmamentTree, setFirmamentOnline, setFirmamentMentoring } from '../systems/firmamentLive.js';   // FIRM1: the tree in force, online alone
+import { starsFor } from '../net/firmamentLaw.js';   // FIRM1: the Stars a Renown level brings, said with it
+import { withoutFirmament } from '../systems/firmamentPowers.js';   // FIRM1: a strike or a spell at a player - a duel's, a siege's, the Wrothgarian zone's - is rolled with the sky off
+import { accountTokenMinter, storedSession, muteAccount, serviceBase, accountRefusalText, accountDuels, accountWild, accountRenown, accountRoll, accountHomes, accountDecor, accountGuilds, accountGates, accountMarks, accountCards, accountBoard, accountProf, accountRaids, accountMarket, accountWrits, accountSeats, accountSerpents, accountSds, accountLamp, accountFirmament, nameWhyText } from '../net/accountClient.js';   // NAME-AS: nameWhyText, why my character's name stood aside   // ACC1d: the hello's signed word, minted per connection from the account session this device holds   // ACC4's beat knocks through the tab's heartbeat (SCALE4c), not from here
 import { parseModCommand, runModCommand, mutedText, mutedNotices } from '../net/moderation.js';   // MOD1: /mute and /unmute, and the line a muted player reads
 import { createHeartbeat, whileLive } from '../net/heartbeat.js';   // SCALE4c: the beat, the letterbox and the town's board in one request
 import { startPlayClock } from '../net/playClock.js';   // ACC4: time played, knocked from here and measured by the account service's clock
@@ -819,11 +824,11 @@ import { POSE_STRIKES, isWorldRoom, isCellRoom, cellHaloFor, actFrameFits, share
 import { WILD_DATA_MAX, WILD_ITEMS_MAX, POSE_RIDE } from '../net/wire.js';   // INT9 (AUDIT): a deposit's chunks, bounded by the wire's frame; COATS3D: POSE_RIDE - a peer on a horse rides the 3D one
 import { hasDaggerfallArrows } from '../combat/fpArm.js';   // MAC7 #2: the arrow bit on the wire - weaponRig's own read
 import { drawText } from '../ui/text.js';   // ONLINE1: the session's status line
-import { RemotePlayers, composeLook, createSightCache, NAME_RANGE } from '../net/remotePlayers.js';   // ONLINE1: the others, drawn; NAME1: and the sight test their names take, cached and hysteresised (AUDIT NAME1 F2/F5)
+import { RemotePlayers, composeLook, createSightCache } from '../net/remotePlayers.js';   // ONLINE1: the others, drawn; NAME1: and the sight test their names take, cached and hysteresised (AUDIT NAME1 F2/F5)
 import { createNameLayer, nameLayerWanted } from '../ui/nameLayer.js';   // NAME1 + BUBBLE1: the names and the chat bubbles, in the enhanced face; AUDIT NAME1 F7: and who gets that face
 import { enhancedHudScale, setHudSetChips, enhancedHudBottom, enhancedHudQuick } from '../ui/enhancedHud.js';   // AUDIT NAME1 F3: the player's own HUD scale, which the names wear like every other enhanced surface; SET5: the set powers' chips
 import { makeHitPend } from '../net/hitPend.js';   // AUDIT FOES FOE2: a blow the wire refused waits and goes
-import { PeerBodies, peerIsWolf, BODY_BUILD_GATE } from '../net/peerBodies.js';   // MWBODY1: the others in the Morrowind body; WEREWOLF1: and in Bloodmoon's wolf
+import { PeerBodies, peerIsWolf, BODY_BUILD_GATE, playerBuildOpts } from '../net/peerBodies.js';   // MWBODY1: the others in the Morrowind body; WEREWOLF1: and in Bloodmoon's wolf; MW-HEADS2: a player's build
 import { ChatLog, CHAT_REJOIN_MS } from '../net/chat.js';   // CHAT1: the tabs and their lines
 import { LANG_OLD_RELAY_TEXT, NO_LANG_TEXT, langJoinedText } from '../net/chat.js';   // CHAT-LANG: the Language tab's words
 import { CHAT_LANGS, chatLangRoom } from '../net/wire.js';   // CHAT-LANG: the language channels
@@ -1080,6 +1085,7 @@ import { breathStep, setWaterBreathingRule } from '../systems/breath.js';   // D
 import { CLASSIC_UPDATE_INTERVAL } from '../characters/weaponStates.js';   // DW-D: PlayerEntity's classic cadence, the dungeon's import
 import { RACES } from '../systems/races.js';   // DW-D: ArgonianInfiniteBreath
 import { localizedStrings, localizedText, getLocalizedLocationName, getLocalizedRegionName, getLocalizedFactionName, t } from '../systems/textManager.js';   // L10N3d: DFU's Internal_Strings, read in the player's language; L10N3e: and the names shown
+import { stakedSaveRefusal } from '../ui/gambitTableWords.js';   // KG3: the save's refusal while gold is staked on The King's Gambit
 import { hallStepsFor, harbourPortFor, coastalAt } from '../net/fortLaw.js';   // SEAT2b part two: a seat's crafting halls, its members' Harbour, a coast
 import { isWaterPixel } from '../ui/overworldModel.js';   // SEAT2b part two: a coast is the sea beside the town (the port's one water law)
 import { createSiegeNpcs } from './siegeNpcs.js';   // SEAT2b part two (c): the Barracks' guards and a revolt's rising, drawn
@@ -1094,6 +1100,7 @@ import { createSiegeHerald } from '../net/siegeHerald.js';   // AUDIT-SEATS G1: 
 import { siegeBlowKind, siegeCastClamp, siegeSpellNumbers, siegeSpellBarred, SIEGE_SPELL_BARRED_TEXT, SIEGE_DISMOUNT_TEXT } from '../combat/siegeCombat.js';   // AUDIT-SEATS G5: a battle's shafts, spells and saddle
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import { startTutorialTour } from '../ui/tutorialPopup.js';   // TUT1: the welcome tour - and the popups' handler, registered by this host (the four hosts' rule)
+import { createTravelViewMarks } from './travelViewMarks.js';   // HOST-SPLIT
 
 /** Internal_Strings_en 654 / 655, the two guild map-reveal notes
  *  (ThievesGuild.cs:115, DarkBrotherhood.cs:108). %map is the
@@ -1225,6 +1232,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   if (params.has('online')) { setSharedClock(() => sharedClassicMinutes(Date.now() + _sharedOffsetMs), (m) => wallMsForClassicMinutes(m) - _sharedOffsetMs, { sky: () => skyClassicMinutes(Date.now() + _sharedOffsetMs), skyWall: (m) => wallMsForSkyMinutes(m) - _sharedOffsetMs }); setSharedWeather(true); }   // and the day picks the sky from here on (weatherSim); OL3: the inverse beside it, for the prices said in real time
   let _sharedClockHeard = false;   // AUDIT ONLINE2 F2: whether it has been - a receipt's life is the relay's, never this device's
   setSigilOnline(params.has('online'));   // SIGIL1: this session plays online - before any list is minted (a pile rolls at a dungeon's build)
+  setFirmamentOnline(params.has('online'));   // FIRM1: and the Firmament is in force online alone
   // SET3: THE SETS' VOICE - a power's line on the HUD (the default), and its sound: Unbroken's the parry's ring, the
   // Wrath's a fire cast (element 0), Eventide's a magic cast (element 4 - Chameleon's own, as its bundle carries)
   setSetsWearer(() => playerEntity);   // SET5: the classic tooltip's and a plaque's set lines read my worn sets
@@ -1934,6 +1942,25 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     ? createProfBook({ door: accountProf({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }), storage: appStorage(),
       character: () => characterIdOf(playerEntity), now: () => Date.now() + _sharedOffsetMs, carry: carryHands })
     : null;
+  // FIRM1 (bible/06-Systems/Firmament.md): THE FIRMAMENT'S BOOK - the character's passive tree and its purses as the account
+  // service keeps them (net/firmamentBook.js); what it hears is the tree in force (systems/firmamentLive.js), and the window
+  // (ui/firmamentWindow.js) reads the page's book where any door opens it. Online only: offline there is no sky.
+  const firmBook = params.has('online')
+    ? createFirmamentBook({ door: accountFirmament({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() }), storage: appStorage(),
+      character: () => characterIdOf(playerEntity),
+      // THE RESPEC's gold (FIRM_RESPEC_GOLD): a realm character's record pays it on the service in the respec's own batch,
+      // the purse checkpointed first (realmSaves.js realmGoldAct); the wallet is the purse, its letters, then the Empire's
+      // account (realmGoldLaw payFromSave; court.js payUndoable), as a guild's founding pays
+      realm: realmSession ? { act: (o) => realmGoldAct({ ...o, session: realmSession, checkpoint: () => onlineCheckpoint() }) } : null,
+      wallet: () => {
+        playerEntity.bankAccounts ??= createBankAccounts(BANK_REGION_COUNT);
+        const region = _questRegionIndex() ?? 0;
+        const bank = playerEntity.bankAccounts[goldRegion(playerEntity.bankAccounts, region)] ?? null;   // EMPIRE-ACCOUNT
+        return { gold: () => totalGoldAmount(playerEntity) + Math.max(0, bank?.accountGold ?? 0), pay: (n) => payUndoable(playerEntity, n, bank), credit: (n) => addGold(playerEntity, n), region: () => region };
+      } })
+    : null;
+  setFirmamentBook(firmBook);
+  firmBook?.onChange((st) => setFirmamentTree(st.tree));
   // PROF5 (bible/06-Systems/Professions-Arc.md 26): the market's book - the Market tab's reads through a minute's cache,
   // a piece listed, bought, cancelled back or collected KEPT before it is asked (net/marketBook.js). Its answers tell the
   // Marks book the balance. Online only.
@@ -1984,6 +2011,15 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       nowS: () => (_sharedClockHeard ? Math.floor((Date.now() + _sharedOffsetMs) / 1000) : null), nowMs: () => Date.now() + _sharedOffsetMs,
       onCounted: (a) => townTalk?.say?.(a.rated ? `Iliac Hand: the game is on the season's board - your rating ${a.rating} (${a.delta >= 0 ? '+' : ''}${a.delta}).` : 'Iliac Hand: the game is kept, but not counted - you have played that opponent often enough today.'),
       onGuest: () => townTalk?.say?.('Iliac Hand: register your account to keep your ranked games on the board.') })
+    : null;
+  // KG6 (bible/11-Multiplayer/Kings-Gambit.md section 19): THE KING'S GAMBIT'S SEASON BOARD - the service's door, and the
+  // rated games' signed results this device carries to it (net/gambitClaims.js), Iliac Hand's carrier on its own store
+  const gambitDoor = accountGambit({ fetch: (u, i) => globalThis.fetch(u, i), storage: appStorage() });
+  const gambitClaims = params.has('online')
+    ? createGambitClaims({ claim: (r) => gambitDoor.claim(r), store: { get: (k) => _spoilsStore.get(k), set: (k, v) => _spoilsStore.set(k, v) }, me: () => gambitDoor.me(),
+      nowMs: () => Date.now() + _sharedOffsetMs, nowS: () => (_sharedClockHeard ? Math.floor((Date.now() + _sharedOffsetMs) / 1000) : null),   // the relay's clock, as Iliac Hand's carrier reads it (AUDIT CARDS-6 D9)
+      onCounted: (a) => townTalk?.say?.(a.rated ? seasonCounted(a.rating, a.delta) : seasonKept(a.cap)),   // AUDIT KG II D11: which cap
+      onGuest: () => townTalk?.say?.(seasonGuest()), onFoeGuest: () => townTalk?.say?.(seasonFoeGuest()) })   // AUDIT KG II D10
     : null;
   // PROF6 (bible/06-Systems/Professions-Arc.md 28): the writs' book - a guild writ posted, supplied, withdrawn; a
   // commission posted, filled (the piece KEPT before it is asked), cancelled, declined; the guild Stores (net/writBook.js).
@@ -11435,6 +11471,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       covered: townTalk.hudCovered || (modes?.hudCovered ?? false) || gamePaused() || !hudRenderEnabled() || !!travelView?.active || !!_travelUIHolder.ui?.isShowing,
       touch: !!touch, mouseFree: show && (cursorActive() || pointerSurfaces.size > 0 || !document.pointerLockElement),
       freeKey: csaKeyLabel('FreeMouse'), keyOf: csaKeyLabel,
+      toggle: show && hccActionPressed('SaddlePanel'),   // UI-CALM: the panel's key (F2) - up and away
     });
   }
   /** CSA-L: THE HELM PANEL (ui/enhancedHelm.js) - Enhanced Plus, at the helm, or aboard another's boat (whose). Once a
@@ -16294,6 +16331,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (modes?.cardTableLive?.()) { if (!quiet) townTalk.say('You cannot save with chips on the table.'); return false; }
     // CARDS10: nor with a card staked on a game of Iliac Hand - the card it may cost is in no save
     if (modes?.iliacStaked?.()) { if (!quiet) townTalk.say('You cannot save with a card staked on the table.'); return false; }
+    if (modes?.gambitStaked?.()) { if (!quiet) townTalk.say(stakedSaveRefusal()); return false; }   // KG3: gold staked on The King's Gambit (Kings-Gambit.md 5.7)
     const pf = walkMode && playerSpawned ? player.pos : cam.pos;
     const wc = state.worldCoords(pf);
     // IS1 (AUDIT 26 F221): the inside-building half (SerializablePlayer
@@ -18311,7 +18349,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     quickSave: worldQuickSave,
     quickLoad: worldQuickLoad,
     relock: () => requestLook(canvas),   // MAC1: the pointer comes back with the resume gesture (ui/pauseDoor.js)
-    savingPrevented: () => !!naval?.saveRefused?.() || !!modes?.cardTableLive?.() || !!modes?.iliacStaked?.(),   // AUDIT NAV1 (B14): the pause's Save says why, as worldQuickSave refuses it; AUDIT CARDS-2 H1: and chips on a card table
+    savingPrevented: () => !!naval?.saveRefused?.() || !!modes?.cardTableLive?.() || !!modes?.gambitStaked?.() || !!modes?.iliacStaked?.(),   // AUDIT NAV1 (B14): the pause's Save says why, as worldQuickSave refuses it; AUDIT CARDS-2 H1: and chips on a card table
     // ONLINE-LOAD1: this host's own live-session flag (`online`,
     // not `onlineOn` - see worldQuickLoad's own header for why),
     // for the enhanced Load pane (enhancedMenu.js paneLoad) to
@@ -19279,6 +19317,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     paused: () => gamePaused(),
     cardTable: () => !!modes?.cardSeated?.(),   // CARDS-TOUCH: seated at a card table, the finger is the table's (ui/touch.js)
     cardHeld: () => !!modes?.cardPressHeld?.(),   // AUDIT CARDS-6 E1: a finger the cards took is never the stick (ui/touch.js)
+    board: { up: () => !!modes?.gambitBoardUp?.() },   // AUDIT KG II C4: at a King's Gambit battle the pad's d-pad is the board's cursor (ui/gamepadInput.js)
   };
   const touch = attachTouch(canvas, inputHooks);
   const gamepad = attachGamepad(canvas, inputHooks);   // GP1: null without the Gamepad API
@@ -21706,6 +21745,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (!onlineOn || !Number.isSafeInteger(level) || level < 1) return renownNow;
     if (renownNow !== null && level <= renownNow) return renownNow;
     renownNow = level;
+    firmBook?.read().catch(() => {});   // FIRM1: a Renown level is a Star - the purses read again (and the tree, the first time)
     if (!seatOut()) setRenownLayer(playerEntity, level);   // AUDIT ONESEAT H3: a tab out of the seat is offline - its layer waits for Play online here
     setSigilRenown(level);   // SIGIL1: my Renown wakes the sigils - offline, and online until it is known, they sleep
     computeEntityMods(playerEntity);   // SET3: a set's stat tier wakes, or rises a stage, with my Renown - now, not at the next round
@@ -22018,6 +22058,14 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   // speaks of that hour, whenever it arrives
   let _renownSentHour = null;
   let renownSaid = null;   // AUDIT RENOWN1 UI-5: the highest level the page has announced - a rise is said against this, never against renownNow
+  /** FIRM1: A RENOWN LEVEL, SAID AS AN ASCEND IS (the lead dev: "when leveling up a renown give the player the same
+   *  message as he would ascend") - the level's fanfare and the strip's gold row (ui/levelNotice.js announceRenownRise),
+   *  with the Stars it brought for the Firmament. */
+  const renownRose = (level) => {
+    const was = renownSaid ?? level - 1;
+    renownSaid = level;
+    announceRenownRise(level, { stars: starsFor(level) - starsFor(was), say: (t) => townTalk.say(t) });
+  };
   // SCALE4h: what the hour's bound still takes, as the last report's answer said it - with the hour and the total it was
   // said at, so another hour, or a total another door moved (a raid's, a serpent's, a writ's, a siege's), is a room not
   // known, and the next report goes at the minute's pace to learn it (net/renownTracker.js renownReportSoon)
@@ -22035,7 +22083,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (a.room !== null) _renownRoom = { room: a.room, hour: renownHour(), xp: renownXp };   // SCALE4h
       renownAdopt(a.level);
       if (a.order) online?.sendRenownOrder?.(a.order, a.level);   // the rooms I am in hear it now - and again until each answers
-      if (a.announce !== null) { renownSaid = a.announce; townTalk.say(`Your Renown is now ${a.announce}.`); }
+      if (a.announce !== null) renownRose(a.announce);   // FIRM1: said as a level is
       // AUDIT SCALE II C-3: THE CAP IS THE SENT HOUR'S. A report sent at 10:59:59.7 and answered capped at 11:00:00.3 spoke
       // of hour 10 - stamped with the hour it ARRIVED in, it marked hour 11 spent, and `earning` then kept nothing for the
       // whole of hour 11. A cap is kept only while the hour it was sent in is still the page's
@@ -22463,7 +22511,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     remotePlayers = new RemotePlayers({ renderer, deps: { fetchBytes, palette, getTexture, uploadRecordFrame, audio } });   // 2026-09-17: uploadRecordFrame added for the class-enemy billboard path (net/remotePlayers.js _buildMobile/_syncMobilePeer) - the doll path never touches it
     // MWBODY1: the enhanced skin with Morrowind data attached puts every peer in a body of its own; otherwise the doll
     const enhanced = isEnhanced();   // the skin cannot change without a reload (switchSkin), so it is read once, not per frame
-    peerBodies = new PeerBodies({ renderer, enabled: () => enhanced && morrowindDataCount() > 0, generation: morrowindDataGeneration, collider: () => collider, gate: BODY_BUILD_GATE, horses: () => horseRigFor(renderer) });   // MWA4: attached is on   // CLIMB6: the floor under a hanging peer   // COATS3D: and the 3D horse a rider sits
+    peerBodies = new PeerBodies({ renderer, enabled: () => enhanced && morrowindDataCount() > 0, generation: morrowindDataGeneration, collider: () => collider, gate: BODY_BUILD_GATE, horses: () => horseRigFor(renderer), buildOpts: playerBuildOpts });   // MW-HEADS2: a player's head   // MWA4: attached is on   // CLIMB6: the floor under a hanging peer   // COATS3D: and the 3D horse a rider sits
     const eotbArt = createEotbArt({ renderer });   // DISC23-B: one store for the riders' and the walkers' art
     peerRiders = createPeerRiders({ renderer, art: eotbArt });   // RIDE: the others in the saddle
     peerWalkers = createPeerWalkers({ renderer, art: eotbArt, enabled: () => getPref('peerClassSprites') !== false });   // DISC23-B: the others on foot, as the set they chose - the 'Other players' card's sprite side
@@ -22534,6 +22582,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     online.onChat = (line) => { if (localLineHeard(line, peersNear(), player.feetAt())) chatLog.push('local', line); };
     online.onRoll = (line) => { if (localLineHeard(line, peersNear(), player.feetAt())) chatLog.push('local', line); };   // DICE1: a roll at the table is heard as a line is
     online.onIliac = (f) => modes?.iliacOnlineFrame?.(f);   // CARDS10: the relay's Iliac table, to the room's host
+    online.onGambit = (f) => modes?.gambitOnlineFrame?.(f);   // KG5: the relay's King's Gambit table, to the room's host
     online.onHoldem = (f) => modes?.cardOnlineFrame?.({ ...f, at: performance.now() });   // CARDS5: the relay's card table, to the room's host - AUDIT CARDS-3 D1: on the cloth's clock (the session's own `now` is the epoch's)
     for (const tab of chatLog.tabs) {
       if (!tab.link) continue;   // CHAT-CHAN: the Party and Local tabs ride the hub's link and the presence session's room
@@ -23381,7 +23430,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  back as `duelHpIn`. */
   const duelStrikeOut = (by, weapon, swing, drawMs = 0, to = null) => {
     if (!duelMgr.fighting) return siegeStrikeOut(to, by, weapon, swing, drawMs);   // AUDIT-SEATS G5: outside a duel, my shaft on a battle's foe (`to`)
-    const a = duelAttackerOf(playerEntity, weapon), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
+    const a = withoutFirmament(playerEntity, () => duelAttackerOf(playerEntity, weapon)), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
     const at = drawMs > 0 ? { at: Math.min(60000, Math.trunc(drawMs)) } : {};
     const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at }, duelStandIn());
     if (!(r.dmg > 0)) { reportPlayerAttack({ hit: false, damage: 0, critical: false, backstab: false, ineffective: false }); return true; }
@@ -23394,7 +23443,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const duelSpellOut = (peerId, sp) => {
     if (!duelMgr.fighting) return siegeSpellOut(peerId, sp);   // AUDIT-SEATS G5: outside a duel, my spell on a siege's foe
     if (peerId !== duelMgr.opponent) return false;
-    const { harm } = siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity);
+    const { harm } = withoutFirmament(playerEntity, () => siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity));
     if (!(harm > 0)) return false;
     const n = duelMgr.blow('spell', { p: campToWire(player.feetAt()), d: siegeCastClamp(harm, false) });
     if (n) { _duelSent.set(n, { kind: 'spell', weapon: null }); if (_duelSent.size > 64) _duelSent.delete(_duelSent.keys().next().value); }
@@ -23449,7 +23498,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     const size = to === SIEGE_WORK_IDS.gate ? SIEGE_GATEHOUSE.sizeM : SIEGE_RAM.sizeM;
     if (Math.hypot(me[0] - at[0], me[2] - at[1]) / SIEGE_UNITS_PER_M > SIEGE_REACH.melee + size) return false;
     const weapon = weaponRig.playerWeapon.strikingWeapon;
-    const a = duelAttackerOf(playerEntity, weapon), w = duelWeaponOf(weapon), sw = duelSwingOf(weaponRig.playerWeapon.machine?.state);
+    const a = withoutFirmament(playerEntity, () => duelAttackerOf(playerEntity, weapon)), w = duelWeaponOf(weapon), sw = duelSwingOf(weaponRig.playerWeapon.machine?.state);
     const r = resolveDuelStrike({ by: 'melee', a, ...(w ? { w } : {}), ...(sw ? { sw } : {}) }, duelStandIn());
     if (r.dmg > 0) {
       const held = weapon ? (composeLook(playerEntity)?.items ?? []).find((i) => i?.group === 'Weapons' && i.templateIndex === weapon.templateIndex) ?? null : null;
@@ -23464,7 +23513,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const siegeStrikeOut = (to, by, weapon, swing, drawMs = 0) => {
     const battle = royalSession?.active() ? royalSession : siegeSession;
     if (!to || !battle?.active() || !battle.foes().includes(to)) return wildStrikeOut(to, by, weapon, swing, drawMs);   // WILD1: not the battle's - perhaps a fair player of the open zone's
-    const a = duelAttackerOf(playerEntity, weapon), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
+    const a = withoutFirmament(playerEntity, () => duelAttackerOf(playerEntity, weapon)), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
     const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...(drawMs > 0 ? { at: Math.min(60000, Math.trunc(drawMs)) } : {}) }, duelStandIn());
     if (r.dmg > 0) {
       const held = weapon ? (composeLook(playerEntity)?.items ?? []).find((i) => i?.group === 'Weapons' && i.templateIndex === weapon.templateIndex) ?? null : null;
@@ -23502,7 +23551,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  (combat/siegeCombat.js siegeSpellNumbers), to the referee as a cast (it clips, and bounds the rate). */
   const siegeSpellOut = (peerId, sp) => {
     if (!siegeSession?.isFoe(peerId)) return wildSpellOut(peerId, sp);   // WILD1: not the siege's - perhaps a fair player of the open zone's
-    const { harm } = siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity);
+    const { harm } = withoutFirmament(playerEntity, () => siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity));
     return harm > 0 && siegeSession.cast(peerId, siegeCastClamp(harm, false));
   };
   /** AUDIT-SEATS G5: A GIFT OF MINE ON A SIEGE'S SIDE-MATE - its Heal Health, counted as the mate's own client would land
@@ -24063,7 +24112,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  zone's. */
   const wildStrikeOut = (to, by, weapon, swing, drawMs = 0) => {
     if (!wildFair(to)) return false;
-    const a = duelAttackerOf(playerEntity, weapon), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
+    const a = withoutFirmament(playerEntity, () => duelAttackerOf(playerEntity, weapon)), w = duelWeaponOf(weapon), sw = duelSwingOf(swing);
     const at = drawMs > 0 ? { at: Math.min(60000, Math.trunc(drawMs)) } : {};
     const r = resolveDuelStrike({ by, a, ...(w ? { w } : {}), ...(sw ? { sw } : {}), ...at }, duelStandIn());
     if (!(r.dmg > 0)) { reportPlayerAttack({ hit: false, damage: 0, critical: false, backstab: false, ineffective: false }); zoneWatchCall(); return true; }
@@ -24075,7 +24124,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
    *  (combat/siegeCombat.js siegeSpellNumbers, a siege's way), to the referee as a cast (it clips, and bounds the rate). */
   const wildSpellOut = (peerId, sp) => {
     if (!wildFair(peerId)) return false;
-    const { harm } = siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity);
+    const { harm } = withoutFirmament(playerEntity, () => siegeSpellNumbers(sp, Math.max(1, Math.trunc(playerEntity.level || 1)), duelStandIn(), playerEntity));
     if (!(harm > 0)) return false;
     const n = wildFight.blow(peerId, 'spell', { p: campToWire(player.feetAt()), d: siegeCastClamp(harm, false) });
     if (n) zoneWatchCall();
@@ -24854,7 +24903,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (a.xp !== null) renownXpAdopt(a.xp);
       if (a.level !== null) renownAdopt(a.level);
       if (a.order) online?.sendRenownOrder?.(a.order, a.level);
-      if (a.announce !== null) { renownSaid = a.announce; townTalk.say(`Your Renown is now ${a.announce}.`); }
+      if (a.announce !== null) renownRose(a.announce);   // FIRM1: said as a level is
     },
     verdictHeard: () => arenaGate.settle(),   // ARENA4b: an exhibition's verdict asked of its room settles the book as it comes
   });
@@ -24898,7 +24947,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (a.xp !== null) renownXpAdopt(a.xp);
       if (a.level !== null) renownAdopt(a.level);
       if (a.order) online?.sendRenownOrder?.(a.order, a.level);
-      if (a.announce !== null) { renownSaid = a.announce; townTalk.say(`Your Renown is now ${a.announce}.`); }
+      if (a.announce !== null) renownRose(a.announce);   // FIRM1: said as a level is
     },
   }) : null;
   /** SERPENT1: THE SERPENT RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/serpentClaims.js) - each kill the
@@ -24919,7 +24968,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       if (a.xp !== null) renownXpAdopt(a.xp);
       if (a.level !== null) renownAdopt(a.level);
       if (a.order) online?.sendRenownOrder?.(a.order, a.level);
-      if (a.announce !== null) { renownSaid = a.announce; townTalk.say(`Your Renown is now ${a.announce}.`); }
+      if (a.announce !== null) renownRose(a.announce);   // FIRM1: said as a level is
     },
   }) : null;
   /** SD9b: THE HOUR'S RECEIPTS THIS DEVICE CARRIES TO THE ACCOUNT SERVICE (net/sdClaims.js) - each Brass Remnant's fall
@@ -25400,6 +25449,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     serpentClaims?.tick();
     sdClaims?.tick();   // SD9b: what the account service has not counted yet, offered again on its own clock
     iliacClaims?.tick();   // CARDS10: and the ranked Iliac games', on theirs
+    gambitClaims?.tick();   // KG6: and The King's Gambit's rated games', on theirs
     _serpentFight = false;
     if (!serpentHost) return;
     const street = (modes?.mode ?? 'exterior') === 'exterior' && playerSpawned && playerEntity.health > 0 && !modes?.deathUp?.();
@@ -28506,13 +28556,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const profWritTaken = (r) => {
     const d = r?.data ?? {};
     if (Number.isSafeInteger(d.balance)) marksBook?.set(d.balance);
-    let rose = '';
     if (d.renown) {
       const a = renownAnswer({ ...d.renown, order: d.order ?? null }, d.renown.credited ?? 0, renownSaid);
       if (a.xp !== null) renownXpAdopt(a.xp);
       if (a.level !== null) renownAdopt(a.level);
       if (a.order) online?.sendRenownOrder?.(a.order, a.level);
-      if (a.announce !== null) { renownSaid = a.announce; rose = ` Your Renown is now ${a.announce}.`; }
+      if (a.announce !== null) renownRose(a.announce);   // FIRM1: said as a level is (the fanfare and the strip's row), not tacked onto the writ's line
     }
     // PROF6 (FOUND): the XP is the writ's material's profession's - a metal writ's Mining, a wood writ's Logging - never
     // always Herbalism's, as this line said since PROF2 (the answer's track names it)
@@ -28525,7 +28574,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (isChapterWrit(d.writ?.kind)) rollTracker?.refresh();
     const hall = isChapterWrit(d.writ?.kind) && !d.repeat && rollTracker?.held ? hallPosterName(d.writ.faction) : null;
     const merit = hall && Number(d.merit) > 0 ? `, ${Number(d.merit).toLocaleString('en-US')} Merit to its chapter here` : '';
-    return `Writ filled: ${Number(d.pay ?? 0).toLocaleString('en-US')} silver struck to your account, ${Number(d.renown?.credited ?? 0).toLocaleString('en-US')} Renown and ${Number(d.pay ?? 0) * 2} ${prof} XP.${hall ? ` The ${hall} will remember it${merit}.` : ''}${rose}`;
+    return `Writ filled: ${Number(d.pay ?? 0).toLocaleString('en-US')} silver struck to your account, ${Number(d.renown?.credited ?? 0).toLocaleString('en-US')} Renown and ${Number(d.pay ?? 0) * 2} ${prof} XP.${hall ? ` The ${hall} will remember it${merit}.` : ''}`;
   };
   /** SD2c: the server's word on a found Super dungeon while it stands - the map's own mark, under the red seal. */
   const noticeSdCard = () => sdNoticeCard(sdHost?.mapMark() ?? null, sdHost?.hollow()?.site?.cityName ?? '');
@@ -28755,6 +28804,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     // leaving the group hands my real character back the same frame.
     const mentorLevels = social?.party ? social.others().filter((m) => m.online !== false && Number.isInteger(m.p?.cl)).map((m) => m.p.cl) : [];
     const mentorWord = refreshMentor(playerEntity, mentorLevels);
+    setFirmamentMentoring(!!playerEntity._mentor);   // AUDIT UICALM-FIRM1 L1 L2: the sky sleeps the frame mentoring starts, and wakes the frame it ends
     if (mentorWord) {
       const text = mentorWord === 'on' ? mentorStatusText(playerEntity) : 'Mentoring ended - your real level, skills, attributes and gear are back.';
       try { chatLog.push(chatLog.active, { text, system: true }); } catch { /* no chat yet: the sheet says it too */ }
@@ -29565,6 +29615,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     camps.sweepOwners(new Set(), now); hcc.pruneKept([], now);
     // AUDIT ONESEAT H3: offline now - the sigil in hand drinks nothing and a weapon won here is won offline (SIGIL1), and
     // the Renown layer is off, as it is for every offline character (RENOWN1); Play online here puts both back
+    setFirmamentOnline(false);   // FIRM1: the sky sleeps offline, as the sigils do
     setSigilOnline(false); setRenownLayer(playerEntity, null); computeEntityMods(playerEntity);   // SET3 (main's, at the merge): the sets sleep with the sigils - their stat tiers folded out now, as a Renown rise folds them in
     wagonRiders?.clear();   // WAGONS2 (FINAL AUDIT): offline, nobody rides with me nor I with anyone - my riders' seats were kept for the gone, my companions walking at heel and every journey waiting GO_LEAD_MS on them
     caravanVisitLink.close();   // WAGONS2-VISIT: and the visited caravan's listener goes with the seat
@@ -29582,6 +29633,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const takeSeat = () => {
     if (!seatOut()) return;
     _seatOut = false; _seatLeft = false; _seatSaid = false;
+    setFirmamentOnline(true);   // FIRM1: and the sky wakes with them
+    firmBook?.read().catch(() => {});   // AUDIT UICALM-FIRM1 L1 L3: as the service holds it now - another tab may have respecced or refunded while this one sat out
     setSigilOnline(true); setSigilRenown(renownNow); setRenownLayer(playerEntity, renownNow); computeEntityMods(playerEntity);   // AUDIT ONESEAT H3: online again (SET3: the sets' tiers with it)
     online?.resume();
     for (const [tabId, link] of chatLinks ?? []) {
@@ -30134,6 +30187,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     cardStakes,   // CARDS6: a realm character's stakes at a relay's gold table (null off the realm)
     // CARDS10: the relay that deals Iliac Hand - a word to the room's Iliac table, who I am at it; a ranked seat's deck
     // vouched for by the service (a realm character's own cards, the record checkpointed first); the results carried
+    gambitOnline: { ok: () => !!online?.gambitOk, send: (w) => !!online?.sendGambit(w), id: () => online?.id ?? null, now: () => Date.now() + _sharedOffsetMs, welcomes: () => online?.holdemWelcomes ?? 0 },   // KG5: the relay's King's Gambit table - Iliac Hand's hooks, its own send
     iliacOnline: { ok: () => !!online?.iliacOk, send: (w) => !!online?.sendIliac(w), id: () => online?.id ?? null, now: () => Date.now() + _sharedOffsetMs, welcomes: () => online?.holdemWelcomes ?? 0 },   // AUDIT CARDS-6 E5: my socket's welcomes (the card tables' one count)
     iliacRanked: {
       // AUDIT CARDS-6 E14: a guest's account is offered no ranked seat - it was, and every vouch it asked failed
@@ -30150,6 +30204,8 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       board: () => iliacDoor.board(),   // the season's board (iliac.js iliacBoardOf)
     },
     iliacClaims,
+    gambitSeason: { board: () => gambitDoor.board() },   // KG6: The King's Gambit's season board (gambit.js gambitBoardOf)
+    gambitClaims,   // KG6: its rated results carried to the service
     sailingCabin: sailingCabins,
     caravanRoom: caravanRooms,   // WAGONS1
     linkedBankCabin: () => readBankCabinLink(playerEntity.boatCabinLink),
@@ -32711,238 +32767,29 @@ const _pixelOrder = [];   // NEAR-FIRST: the frame's pixel walk, nearest first -
     }
     return holder._tvAt;
   }
-  /** OVERWORLD NAMES: a player's badge as their name wears it in play - the relay's stamps, never a frame's own words. */
-  const tvBadgeOf = (p) => ({ title: p.title ?? null, glyphs: Array.isArray(p.glyphs) ? p.glyphs : [], lv: p.lv ?? null, gt: p.gt ?? null, rb: p.rb ?? null });   // AUDIT-SEATS: and a Season's banner ribbon
-  const TV_PEER_HEAD_M = 1.8;   // m: a peer's head when no body layer knows their height
-  /** The readout's marks: the plates (the journey's own end hides its plate), and the end. World points - the view
-   *  projects them through the frame's matrices. */
-  function travelViewMarks() {
-    const live = tvTripLive();
-    if (!live) { tvTrip.plan = null; tvTrip.natives = []; tvTrip.end = null; tvTrip.line = ''; }
-    const endKey = live && tvTrip.plan.summary ? `place:${tvTrip.plan.summary.mapId}` : null;
-    const marks = [];
-    for (const p of travelViewPlaces()) {
-      if (p.key === endKey) continue;
-      const tier = params.has('online') ? tierPhrase(dungeonTierLabel(p.summary.loc)) : '';   // TIER1: a dungeon's tier and size under its name, online
-      // OW-DUNGEON-DOT (2026-10-13, field: "some dungeons appear on the Overworld map as towns"): a found dungeon within the
-      // grid wears TV2's plate (travelViewDungeons leaves it to this list), and every plate here was kind 'place' - a
-      // town's brass dot, and the Towns switch's count. Its kind says so now: the dungeons' arch, the Dungeons switch.
-      const isDungeon = TV_DUNGEON_TYPES.has(p.summary.loc?.mapTableData?.locationType);
-      marks.push({ key: p.key, at: tvSceneKept(p, p.x, p.z, TV_PLACE_LIFT), label: p.summary.name, ...(tier ? { sub: tier } : {}), kind: isDungeon ? 'place dungeon' : 'place', pick: true, hub: carriageTown(p.summary.mapId), tip: seatTipAt(p.summary.mapId) });   // OW-HUBS: a carriage town's wheel; SEAT-TIP: a seat's card
-    }
-    // TV5: the far places, held at the edge with their distance (the journey's own end is the flag's)
-    const farEnd = endKey ? `far:${tvTrip.plan.summary.mapId}` : null;
-    const here = state.worldCoords(player.pos);
-    for (const f of travelViewFarPlaces()) {
-      if (f.key === farEnd) continue;
-      const km = (Math.hypot(f.x - here.x, f.z - here.z) / 32768) * PIXEL_KM;   // native units a pixel (MapsFile.WorldMapTerrainDim)
-      marks.push({ key: f.key, at: tvSceneKept(f, f.x, f.z, TV_PLACE_LIFT), label: f.summary.name, sub: farDistanceText(km), kind: 'far', pick: true, edge: true, hub: carriageTown(f.summary.mapId), tip: seatTipAt(f.summary.mapId) });   // OW-HUBS; SEAT-TIP
-    }
-    // TV6: THE DUNGEONS - a found one past the grid a far plate (within it TV2's plate stands - AUDIT OW3 D3: the list
-    // leaves those out, so they spend none of its twelve), the rest unnamed lairs. AUDIT OW3 D1: a spawn the player has
-    // been told of the same way - named once filed, its plate a walk to its door (travelViewSpawnWalk)
-    for (const g of travelViewDungeons()) {
-      if (g.found) {
-        if (!g.spawn && `far:${g.row.mapID}` === farEnd) continue;
-        const km = (Math.hypot(g.x - here.x, g.z - here.z) / 32768) * PIXEL_KM;
-        const tier = params.has('online') ? tierPhrase(dungeonTierLabel(g.loc)) : '';   // TIER1: the tier and size before the distance, online
-        marks.push({ key: g.key, at: tvSceneKept(g, g.x, g.z, TV_PLACE_LIFT), label: g.loc.name, sub: tier ? `${tier} - ${farDistanceText(km)}` : farDistanceText(km), kind: 'far dungeon', pick: true, edge: true });   // OW-FILTER: 'dungeon' - the look is the first word's, the filter's group the second's
-      } else marks.push({ key: g.key, at: tvSceneKept(g, g.x, g.z, TV_PLACE_LIFT), label: '?', kind: 'lair' });
-    }
-    // LW3: THE ROAD'S PARTIES - a caravan, pilgrims, a pedlar, each where it is and where it is bound (scenes/livingRoads.js)
-    if (livingRoads && livingWorldOn()) {
-      for (const m of livingRoads.marks()) if (markShown({ kind: m.kind })) marks.push({ key: m.key, at: [m.at[0], m.at[1] + 2, m.at[2]], label: m.label, kind: m.kind });
-      // LW12: the hideouts of bands the character has heard of - rumoured, a ring
-      const hereN = state.worldCoords(cam.pos);
-      for (const m of livingHideoutsHostOf().marks(hereN.x, hereN.z, skyMinutes())) if (markShown({ kind: m.kind })) marks.push({ key: m.key, at: [m.at[0], m.at[1] + 2, m.at[2]], label: m.label, kind: m.kind });
-    }
-    // TV7: THE BANDS - each with its kind and number where it walks; one chasing me held at the edge, pointing
-    const bms = bandNowMs();
-    // AUDIT OW4 B6: none drawn where none can come - the camps' own switch off, or the enemy spawns held
-    const shown = getPref('wildernessCamps') === false || playerEntity.preventEnemySpawns ? [] : [...travelViewBands()];
-    for (const c of _bandChase.values()) if (!shown.some((o) => o.id === c.band.id)) shown.push(c.band);   // AUDIT OW3 T7-2: a chaser out of the list still seen
-    for (const b of shown) {
-      if (_bandSpent.has(b.id)) continue;
-      const mk = bandMake(b);
-      if (!mk) continue;
-      const chasing = _bandChase.has(b.id), p = bandPlace(b, bms);
-      marks.push({ key: `band:${b.id}`, at: tvSceneKept(b, p.x, p.z, 2), label: chasing ? `${WILD_MARK} ${bandLabel(mk.name, mk.mobileTypes.length)}` : bandLabel(mk.name, mk.mobileTypes.length), kind: chasing ? 'band chase' : 'band', edge: chasing, pick: true });   // OW6: the band's OWN number, the same for every player (a party it meets brings more - PSCALE1 - where it stands); WILD-ALERT: a chase is a band that noticed me - its mark
-    }
-    // OW6 (2026-09-29, the player: "If a camp is spawned, it should show in the overworld"): THE CAMPS - every group
-    // standing about, a camp, a pack or a band stood: mine, and each peer's by the tags their frames carry
-    // (world/campShared.js) - one mark where its living members stand, with its kind and its number; gone with its last
-    const wildCamps = wildCampKeys();   // WILD-ALERT: a camp a member of which has noticed me wears the mark
-    for (const c of travelViewCamps()) marks.push({ key: `camp:${c.key}`, at: [c.at[0], c.at[1] + 2, c.at[2]], label: wildCamps.has(c.key) ? `${WILD_MARK} ${c.label}` : c.label, kind: 'camp', pick: true }); for (const g of gatherHost?.overworldGroups(walkMode ? player.pos : cam.pos) ?? []) marks.push(g);   // OW-ATTACK: pressable; GATHER-OW: each profession's group of nodes near me, a glyph (scenes/gatherHost.js overworldGroups)
-    // YARDS-FOUND (from play: "The new stable and transport merchant shops dont show on town maps/overworld"): each town's
-    // Stable and Wagon Yard standing about me, its name over its ground and its signboard's emblem (scenes/merchantYardsHost.js
-    // overworldMarks) - with the towns on the Towns switch
-    for (const m of merchantYards?.overworldMarks() ?? []) marks.push(m);
-    // SHIPYARDS-FOUND (Mac: "Everything should show on the map/overworld"): each port town's shipyard and lighthouse
-    // standing about me (scenes/portHost.js overworldMarks), and its docks over the first quay laid (scenes/quayPool.js)
-    for (const m of portHost?.overworldMarks() ?? []) marks.push(m);
-    for (const m of quays?.overworldMarks() ?? []) marks.push(m);
-    // BOUNTY-OVERWORLD (the player: "can the bounties also be shown on the overworld map"): EVERY BOUNTY I HOLD - its
-    // hunt's pixel (the held map's black circle, scenes/bountyHost.js mapMarks), its foes and its distance, held at the
-    // edge off the picture as the journey's end is, so the way to it is always shown
-    const bountyIds = new Set();
-    for (const b of bountyHost?.mapMarks?.() ?? []) {
-      const px = Math.floor(b.cx), py = Math.floor(b.cy);
-      if (!Number.isInteger(px) || !Number.isInteger(py) || !b.id) continue;
-      bountyIds.add(b.id);
-      const o = mapPixelToWorldCoords(px, py);
-      const x = o.x + 16384, z = o.z + 16384;   // the pixel's middle, native units
-      let h = _tvBountyHold.get(b.id);
-      if (!h) { h = {}; _tvBountyHold.set(b.id, h); }
-      const km = (Math.hypot(x - here.x, z - here.z) / 32768) * PIXEL_KM;
-      h.snap = { px, py, x, z, place: !!b.place, farmKey: b.farmKey ?? null };   // BOUNTY-SNAP: where its click walks
-      marks.push({ key: `bounty:${b.id}`, at: tvSceneKept(h, x, z, TV_PLACE_LIFT), label: `Bounty: ${b.label}`, sub: farDistanceText(km), kind: 'bounty', edge: true, pick: true });   // BOUNTY-SNAP: pressable, on its ring alone (ui/travelViewHud.js pickBox)
-    }
-    for (const id of [..._tvBountyHold.keys()]) if (!bountyIds.has(id)) _tvBountyHold.delete(id);   // a bounty over lets its point go
-    // HOME-VENDOR: THE TRADER'S WAYPOINT - its town's pixel, in Travel Options' mark's own yellow (`target`), named for
-    // the house and held at the edge off the picture with its distance, as a bounty is
-    {
-      const wp = vendorWaypoint();
-      const t = wp ? _townOfMapId.get(wp.map) : null;
-      if (t) {
-        const o = mapPixelToWorldCoords(t.px, t.py);
-        const x = o.x + 16384, z = o.z + 16384;
-        const km = (Math.hypot(x - here.x, z - here.z) / 32768) * PIXEL_KM;
-        marks.push({ key: `vendor:${wp.map}:${wp.buildingKey}`, at: tvSceneKept(_tvVendorHold, x, z, TV_PLACE_LIFT), label: `Trader: ${wp.owner || 'a'}'s house`, sub: `${t.name} · ${farDistanceText(km)}`, kind: 'target', edge: true });
-      }
-    }
-    // AUDIT MINE-PERKS (the cold pass, A8 - the thread: "mark the motherlode spots with a waypoint on the travel map"): A
-    // MOTHERLODE SENSE'S MOTHERLODES on the Overworld too - each at its pixel's middle, its ore and its hour, held at the
-    // edge off the picture with its distance as a bounty is; Mining's glyph in the compass's aqua, under the Gathering
-    // switch, its distance never the nodes' reach (no `dist`)
-    {
-      const keep = new Set();
-      if (lodeSense()) {
-        const nowS = Math.floor((Date.now() + _sharedOffsetMs) / 1000);
-        for (const l of motherlodeBook.sensedAll(_lodesSensed)) {
-          keep.add(l.key);
-          const o = mapPixelToWorldCoords(l.x, l.y);
-          const x = o.x + 16384, z = o.z + 16384;   // the pixel's middle, native units
-          let h = _tvLodeHold.get(l.key);
-          if (!h) { h = {}; _tvLodeHold.set(l.key, h); }
-          const km = (Math.hypot(x - here.x, z - here.z) / 32768) * PIXEL_KM;
-          marks.push({ key: `lode:${l.key}`, at: tvSceneKept(h, x, z, TV_PLACE_LIFT), label: lodeLabel(l, nowS, lodeWords), sub: farDistanceText(km), kind: 'gather mining', color: LODE_COMPASS_CSS, edge: true });
-        }
-      }
-      for (const k of [..._tvLodeHold.keys()]) if (!keep.has(k)) _tvLodeHold.delete(k);   // a Motherlode gone lets its point go
-    }
-    // WAYPOINTS (2026-10-06): THE FLAGS - every waypoint the switches show, a small flag in its colour where it lies; a
-    // FOLLOWED one held at the screen's edge with its distance, as a bounty is (the rest only where they are in view).
-    // A click on one is a walk to it; a right-click its menu (onTravelViewContext)
-    {
-      const keep = new Set();
-      for (const w of shownWaypoints()) {
-        const n = mapPointToNative(w.mx, w.my);
-        let h = _tvWaypointHold.get(w.id);
-        if (!h) { h = {}; _tvWaypointHold.set(w.id, h); }
-        keep.add(w.id);
-        const followed = isWaypointFollowed(w.id);
-        const km = (Math.hypot(n.x - here.x, n.z - here.z) / 32768) * PIXEL_KM;
-        marks.push({ key: `wp:${w.id}`, at: tvSceneKept(h, n.x, n.z, 0), label: w.name, ...(followed ? { sub: farDistanceText(km) } : {}),
-          kind: `waypoint ${w.kind}`, color: w.color, wpKind: w.kind, followed, edge: followed, pick: true });
-      }
-      for (const id of [..._tvWaypointHold.keys()]) if (!keep.has(id)) _tvWaypointHold.delete(id);
-    }
-    // AUDIT DEEP2 B-1: THE JOURNEY'S END IS NEVER OFF THE SCREEN UNSEEN - held at the edge as a far place is (a far town's
-    // plate gave way to a flag drawn above the picture, and the destination was gone for the whole journey), a place's
-    // with its distance, and a click on a place's flag is its journey again (after a stop there is no ground to click)
-    if (live && tvTrip.end) {
-      const e = tvTrip.end, place = e.kind === 'dest';
-      const km = place ? (Math.hypot(e.x - here.x, e.z - here.z) / 32768) * PIXEL_KM : NaN;
-      marks.push({ key: 'dest', at: tvSceneKept(e, e.x, e.z, place ? TV_PLACE_LIFT : 0), label: e.label, kind: e.kind, edge: true, ...(place ? { pick: true, sub: farDistanceText(km) } : {}) });
-    }
-    // OVERWORLD NAMES (2026-09-28, Mac: "Full, like in play"): THE PLAYERS DRAWN HERE - within the pose range, their
-    // bodies standing - marked as the region's travellers are, over their heads, NAMED AS THEY ARE IN PLAY (the title
-    // above, the Renown, the name, the guild's tag, the glyphs; my party's in its green). From the view's eye the names
-    // over their heads were past NAME_RANGE (60 m) - the eye stands 40-780 m back (the height over the tilt's tangent;
-    // about 200 m as it opens) - so the players nearest (a party travelling together) went nameless; those names stand
-    // down under the view (drawPeerNames) and these stand for them
-    const near = new Set();
-    const book = travellerBook.live(Date.now());
-    const sharing = new Map();   // the region's travellers by id: the players who share where they are with it
-    for (const t of book) sharing.set(t.id, t);
-    const myGt = myGuildTag();   // OW-KIN: asked once a frame, not once a player
-    // the room's drawable peers, as this frame's onlineFrame sifted them (it runs before the readout): the concealed
-    // (`_hiddenPeers`) and the veiled (`_veils`) are never marked
-    // PVPGIANT: the zone's roaming giants on the Overworld, as the enemies they are (never more than two stand)
-    for (const gf of exteriorFoes.foes) { if (gf.entity?.wildGiant && !(gf.entity.health <= 0) && gf.ai?.feet) marks.push({ key: `giant:${gf.id ?? gf.entity.name ?? marks.length}`, at: [gf.ai.feet[0], gf.ai.feet[1] + 8, gf.ai.feet[2]], label: 'Giant', kind: 'stranger', edge: true }); }
-    for (const d of online?.drawable?.() ?? []) {
-      if (!d?.shown || _hiddenPeers.has(d.id) || _veils.has(d.id)) continue;
-      const f = onlineToScene(_peerMapPoses.get(d.id) ?? d.shown);
-      // WILD3 (the owner: "when other players are near you they are counted as enemies bright red and its called stranger
-      // when you near them Like 600m away"): in the open zone a stranger within WILD_STRANGER_M stands as an enemy
-      if (_wildStrangerIds.has(d.id)) {
-        near.add(d.id);
-        marks.push({ key: `peer:${d.id}`, at: [f[0], f[1] + TV_PEER_HEAD_M, f[2]], label: WILD_TEXT.stranger, kind: 'stranger', edge: true });
-        continue;
-      }
-      // AUDIT NAMES N2-2: THE SWITCH HOLDS - a player who shares nothing with the region ("Show me to travellers" off)
-      // and is not of my party is named only as close as play names them (NAME_RANGE from where I stand) and never held
-      // at the edge; my party, and a player whose mark the region already has, are named wherever they stand
-      const party = !!social?.isPartyPeer(d.id), t = sharing.get(d.id);
-      if (!party && !t && Math.hypot(f[0] - player.pos[0], f[2] - player.pos[2]) > NAME_RANGE) continue;
-      if (wildHidesPlayer({ kin: travellerKin({ friend: !!social?.isFriendPeer(d.id), gt: d.gt }, myGt), wire: [d.shown.x, 0, d.shown.z], party })) continue;   // WILD1: in or near the open zone, my party and my guild alone
-      const h = peerRiders.heightOf(d.id) || peerBodies.heightOf(d.id) || peerWalkers.heightOf(d.id) || TV_PEER_HEAD_M;
-      near.add(d.id);
-      // AUDIT NAMES: and one on a journey (their region mark's `tv`) keeps the arrow they wore from afar
-      marks.push({ key: `peer:${d.id}`, at: [f[0], f[1] + h, f[2]], label: d.name ?? '', kind: `${party ? 'party' : 'traveller'}${isShipMark(t?.p) ? ' ship' : ''}${t?.p.tv ? ' journey' : ''}`, edge: party || !!t, badge: tvBadgeOf(d),
-        kin: travellerKin({ friend: !!social?.isFriendPeer(d.id), gt: d.gt }, myGt), lv: d.lv ?? null });   // OWS1: at sea (their region mark says so), a ship; OW-KIN / OW-WHO: who they are to me, and their Renown
-    }
-    // TV3: THE REGION'S TRAVELLERS - their marks, beyond the pose range (inside it they are the players above); a party
-    // member's in the party's colour; one outside the picture held at its edge, pointing
-    const me = playerTravelPixel();
-    for (const t of book) {
-      if (near.has(t.id) || Math.max(Math.abs(t.p.px - me.x), Math.abs(t.p.py - me.y)) <= TV_BODY_RANGE) continue;
-      const w = (t._w ??= travellerWorldOf(t.p));   // PERF-TV: a book entry is made new by each mark heard, so it is kept on it
-      // AUDIT TV C3: the peer's id, asked of the party's seats (a token's subject is another id space) - AUDIT NAMES N1-10:
-      // as play's names ask it (colorOf), so my own other tab is never my party's green
-      const kind = social?.isPartyPeer(t.id) ? 'party' : 'traveller';
-      if (wildHidesPlayer({ kin: travellerKin({ friend: !!social?.isFriendPeer(t.id), gt: t.gt }, myGt), wire: [w.x, 0, w.z], party: kind === 'party' })) continue;   // WILD1: in or near the open zone, my party and my guild alone
-      const ship = isShipMark(t.p);   // OWS1: at sea, a ship - riding the sea's top
-      marks.push({ key: `trav:${t.id}`, at: tvSceneKept(t, w.x, w.z, 2, ship), label: t.name, kind: `${kind}${ship ? ' ship' : ''}${t.p.tv ? ' journey' : ''}`, edge: true, badge: tvBadgeOf(t),
-        kin: travellerKin({ friend: !!social?.isFriendPeer(t.id), gt: t.gt }, myGt), lv: t.lv ?? null });   // OW-KIN / OW-WHO
-      near.add(t.id);
-    }
-    // AUDIT OW5 P6: MY PARTY, WHEREVER THEY ARE - the held map draws them from the party's own poses (partyMarkers); here
-    // a member past the pose range with "Show me to travellers" off, or over a region's border, stood on no mark at all,
-    // and the one who fell behind a group journey vanished from the leader's view. Their pose's pixel, in the party's
-    // colour, held at the edge - never twice (one marked above, by a body or the region's mark, stands as that)
-    for (const m of social?.others() ?? []) {
-      if (!Number.isInteger(m.p?.px) || !Number.isInteger(m.p?.py) || (m.peers ?? []).some((id) => near.has(id))) continue;
-      const o = mapPixelToWorldCoords(m.p.px, m.p.py);
-      let h = _tvPartyHold.get(m.acct);
-      if (!h) { h = {}; _tvPartyHold.set(m.acct, h); }
-      marks.push({ key: `pty:${m.acct}`, at: tvSceneKept(h, o.x + 16384, o.z + 16384, 2), label: m.name ?? '', kind: 'party', edge: true });
-    }
-    // OWS3: WARM ASHES' RAIDERS - the sails within the grid's reach where they sail, and one giving chase wherever it is,
-    // held at the edge off the picture, pointing
-    // AUDIT OW5b S8: none drawn where none can come - no Come Sail Away, no boat to be at sea in (the bands' own B6)
-    if (warmAshesOn() && csaOn()) {
-      const grid = Math.max(1, state.terrainDistance ?? 3);
-      const listed = travelViewRaiders();
-      for (const r of listed) {
-        const c = tvRaid.chase.get(r.id);
-        const ship = navalRaidersOn() ? naval.raiderShipOf(r.seed) : null;   // NAV-R: stood as a ship of the sea - drawn where she sails
-        if (tvRaid.spent.has(r.id) && !c && !ship) continue;
-        const at = ship ? state.worldCoords(ship.pos) : c ? c.pos : (seaRaidPeerChase(r.id) ?? r);   // OW6: one a peer's chase holds, where they say it sails
-        const chase = ship ? ship.chase : !!c;
-        const px = pixelOfNative(at.x, at.z);
-        if (!chase && Math.max(Math.abs(px.x - me.x), Math.abs(px.y - me.y)) > grid) continue;
-        marks.push({ key: `raid:${r.id}`, at: tvSceneKept(c ?? r, at.x, at.z, 2, true), label: RAIDER_LABEL, kind: chase ? 'raider ship chase' : 'raider ship', edge: chase });
-      }
-      // AUDIT OW5b S3: A CHASE OUT OF THE LIST STILL SEEN - its raider's life turned over (the list is this life's), and it
-      // came alongside unseen: "one giving chase is marked wherever it is" (the bands' own T7-2)
-      for (const [id, c] of tvRaid.chase) {
-        if (listed.some((r) => r.id === id)) continue;
-        marks.push({ key: `raid:${id}`, at: tvSceneKept(c, c.pos.x, c.pos.z, 2, true), label: RAIDER_LABEL, kind: 'raider ship chase', edge: true });
-      }
-    }
-    return marks;
-  }
+  const { travelViewMarks } = createTravelViewMarks({   // HOST-SPLIT: src/scenes/travelViewMarks.js
+    TV_PLACE_LIFT, _bandChase, _bandSpent, _hiddenPeers, _lodesSensed, _peerMapPoses, _townOfMapId, _tvBountyHold,
+    _tvLodeHold, _tvPartyHold, _tvVendorHold, _tvWaypointHold, _veils, _wildStrangerIds, bandMake, bandNowMs,
+    bandPlace, cam, carriageTown, csaOn, exteriorFoes, livingHideoutsHostOf, lodeSense, lodeWords, motherlodeBook,
+    myGuildTag, params, player, playerTravelPixel, seaRaidPeerChase, seatTipAt, state, travelViewBands,
+    travelViewCamps, travelViewDungeons, travelViewFarPlaces, travelViewPlaces, travelViewRaiders, travellerBook,
+    tvRaid, tvSceneKept, tvTrip, tvTripLive, walkMode, wildCampKeys, wildHidesPlayer,
+    get _sharedOffsetMs() { return _sharedOffsetMs; },
+    get bountyHost() { return bountyHost; },
+    get gatherHost() { return gatherHost; },
+    get livingRoads() { return livingRoads; },
+    get merchantYards() { return merchantYards; },
+    get naval() { return naval; },
+    get navalRaidersOn() { return navalRaidersOn; },
+    get online() { return online; },
+    get onlineToScene() { return onlineToScene; },
+    get peerBodies() { return peerBodies; },
+    get peerRiders() { return peerRiders; },
+    get peerWalkers() { return peerWalkers; },
+    get portHost() { return portHost; },
+    get quays() { return quays; },
+    get social() { return social; },
+  });
   // OWS3 (2026-09-28, the player's ask: "The pirate quest system should work like how we're changing enemies and nearby
   // dungeons. Like mount and blade, being able to see other players sailing in the overworld and other enemy ships"):
   // WARM ASHES' RAIDERS, SEEN COMING (systems/seaRaiders.js). The mod's raid is a roll on a fast travel by sea the

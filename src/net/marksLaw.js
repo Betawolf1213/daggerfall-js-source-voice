@@ -155,6 +155,7 @@ export const MARKS_KINDS = Object.freeze({
   'patron-escrow': 'move',    // CHAP7a: a guild's bid for a chapter's patronage, from its treasury, held until the Season it bids for opens
   patron: 'burn',             // CHAP7a: the winning bid, burnt at the Turning that opens its Season (Chapters-Arc 8, CALL 6)
   'patron-return': 'move',    // CHAP7a: a losing bid, home to its guild at that Turning - burnt where the guild is gone or full
+  firmament: 'burn',          // FIRM1: the Firmament's refunds - silver a star taken back, at Renown 10 and past (firmamentLaw.js refundSilver)
 });
 
 /** The switch the service's config holds (MARKS_OPEN): off, dev (the developers alone), on. */

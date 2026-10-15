@@ -235,7 +235,7 @@ test('L10N1b by source: the boot loads the language behind a door before every o
   assert.equal(PREF_DEFAULTS.language, 'en');
   assert.equal(PREF_DEFAULTS.languageOffered, false);
   const menu = rd('src/ui/enhancedMenu.js');
-  assert.match(menu, /document\.createTextNode\(railLabel\(label\)\)/, 'the front door\'s buttons');
+  assert.match(menu, /menu\.append\(doorBtn\(id, railLabel\(label\), '', RAIL_ACTS/, 'the front door\'s buttons (UI-CALM: through the one door maker)');
   assert.match(menu, /b\.append\(el\('span', 'rk', railLabel\(label\)\)\);/, 'the shell rail');
   assert.match(menu, /if \(!pause\) out\.push\(languageRow\(\)\);/, 'the language row on the front door alone');
   assert.match(menu, /const offer = languageOffer\(\);\n\s+if \(offer\) home\.append\(offer\);/, 'the offer on the boot face');

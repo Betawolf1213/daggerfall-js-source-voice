@@ -17,7 +17,7 @@ import { createHash } from 'node:crypto';
 import { parseNif } from '../src/formats/mwNifFile.js';
 import { flattenNif } from '../src/formats/mwNifMesh.js';
 import { decodeTextureImage } from '../src/formats/mwTexture.js';
-import { assembleFirstPersonArm, poseAssembly, playerBodyRows } from '../src/formats/mwFirstPerson.js';
+import { assembleFirstPersonArm, poseAssembly, playerBodyRows, bodyParts } from '../src/formats/mwFirstPerson.js';
 import { composeWornArmor, composeWornModest, ARMO_PART } from '../src/formats/mwItemMap.js';
 import { PART_BONES } from '../src/formats/mwNpc.js';
 import { TOWNSFOLK_OUTFITS, townsfolkOutfitOf, ownOutfitFor, ownOutfitModelPaths, isOutfitSlot } from '../src/characters/ownClothingModels.js';
@@ -559,12 +559,16 @@ test('MW-FOLK1: a walker whose sprite has an outfit wears it - each of the eleve
   assert.deepEqual(all.filter((a) => townsfolkOutfitOf(a)).sort(), ARCHIVES, 'every outfit a walker\'s sprite');
   // AUDIT MW-FOLK1 (L3-F1): EVERY WALKER OF ONE PICTURE DRESSES ALIKE AND THEIR FACES DIFFER - a street of 385's Breton
   // men, read as the build reads them (the look's hint through peerBuildOpts to the walk), reaches every one of the
-  // port's own nine heads-and-hairs
+  // heads-and-hairs. PIN MOVED (MW-HEADS2 - the owner: "only the player Britons should recieve the new heads, not npcs"):
+  // the data's, four heads and four hairs - the port's own nine are a player's
+  const recs = [];
+  for (let i = 0; i < 4; i++) for (const [slot, part] of [['head', 0], ['hair', 1]]) recs.push(bodyRec(`b_n_breton_m_${slot}_0${i}`, `b\\b_n_breton_m_${slot}_0${i}.nif`, 'Breton', part));
+  const dataFaces = bodyParts(recs.reduce((a, b) => { const o = new Uint8Array(a.length + b.length); o.set(a); o.set(b, a.length); return o; }, new Uint8Array(0)));
   const street = new Set(Array.from({ length: 200 }, (_, i) => {
     const o = peerBuildOpts(folkLookOf({ archive: 385, gender: GENDERS.Male, personFaceRecordId: 3 }, 'Breton', (i + 1) * 2654435761 >>> 0));
-    return playerBodyRows([], 'Breton', false, { walk: o.npcFace }).filter((r) => r.slot === 'head' || r.slot === 'hair').map((r) => r.record.id).join();
+    return playerBodyRows(dataFaces, 'Breton', false, { walk: o.npcFace }).filter((r) => r.slot === 'head' || r.slot === 'hair').map((r) => r.record.id).join();
   }));
-  assert.equal(street.size, 9, 'three heads times three hairs');
+  assert.equal(street.size, 16, 'four heads times four hairs');
   // AUDIT MW-FOLK1 (L3-F18): EVERY DOOR THAT STANDS A PICTURE'S PERSON IN A BODY mints the look through folkLookOf - the
   // street's walkers (folkBodies.js spawnOf), the residents (rosterBodies.js residentLook), the shipyard's and the
   // lighthouse's people (portHost.js) and the stable and wagon yards' keepers (merchantYardsHost.js): an outfit's picture

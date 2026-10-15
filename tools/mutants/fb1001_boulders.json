@@ -377,8 +377,8 @@
   },
   {
     "name": "GATHER-OW-the-world-asks-none",
-    "file": "src/scenes/world.js",
-    "old": " for (const g of gatherHost?.overworldGroups(walkMode ? player.pos : cam.pos) ?? []) marks.push(g);",
+    "file": "src/scenes/travelViewMarks.js",
+    "old": " for (const g of host.gatherHost?.overworldGroups(walkMode ? player.pos : cam.pos) ?? []) marks.push(g);",
     "new": "",
     "tests": [
       "test/gatherow.test.js"

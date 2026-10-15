@@ -419,7 +419,7 @@ test('POI-4b PLACING AN ENTRY: its parts keep their own turn, size, solidity and
 });
 
 test('POI-4b RECORDS: the shelf in the migration and the routes in the service; the import keeps what it places unless told not; the inspectors keep a POI and a part', () => {
-  assert.match(src('server-account/migrations/0114_poi.sql'), /CREATE TABLE IF NOT EXISTS poi_shelf \(/);
+  assert.match(src('server-account/migrations/0116_poi.sql'), /CREATE TABLE IF NOT EXISTS poi_shelf \(/);
   const index = src('server-account/src/index.js');
   assert.match(index, /route === 'shelf' && request\.method === 'GET'\) return answer\(poiPath\.id \? await shelfEntry\(/);
   assert.match(index, /if \(route === 'unshelve'\) return answer\(await unshelve\(pctx, me, env, \{ id: body\.id \}\)\);/);

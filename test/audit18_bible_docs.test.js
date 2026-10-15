@@ -304,7 +304,7 @@ test('AUDIT 18: Systems-Arc only claims a spell-cost row that spellcost.js actua
 test('AUDIT 18: Home.md does not call the port desktop-only while the touch layer ships', () => {
   const hosts = ['src/scenes/world.js', 'src/scenes/exterior.js', 'src/scenes/dungeon.js', 'src/scenes/interior.js'];
   const wired = existsSync(join(root, 'src/ui/touch.js')) && hosts.every((h) => /attachTouch\(/.test(read(h)));
-  assert.ok(wired, 'the touch layer is no longer wired into all four hosts - re-read Port-Doctrine.md:19 before editing Home.md');
+  assert.ok(wired, 'the touch layer is no longer wired into all four hosts - re-read Port-Doctrine.md (Rebuilt on our stack, 3) before editing Home.md');
   const home = read('bible/Home.md');
   // Scoped to the ground rules themselves: the Audits section below quotes
   // the retired sentence on purpose, as the record of what was fixed.

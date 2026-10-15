@@ -62,257 +62,32 @@
   {
     "name": "AUDITCC-UI-S3-no-piece-of-its-own",
     "file": "src/ui/hudLayout.js",
-    "old": "  { id: 'temp', sel: '.hud .hud-temp', name: 'Temperature', inside: 'compass' },\n",
+    "old": "  { id: 'temp', sel: '.hud .hud-temp', name: 'Temperature', inside: 'quick' },\n",
     "new": "",
-    "why": "the plate the compass's: its X hides the plate, the plate has no X and no move of its own",
+    "why": "the plate the quick block's: its X hides the plate, the plate has no X and no move of its own",
     "tests": [
       "test/auditcc_ui.test.js"
     ]
   },
   {
-    "name": "AUDITCC-UI-S3-not-inside-the-compass",
+    "name": "AUDITCC-UI-S3-not-inside-the-quick-block",
     "file": "src/ui/hudLayout.js",
-    "old": "name: 'Temperature', inside: 'compass' }",
+    "old": "name: 'Temperature', inside: 'quick' }",
     "new": "name: 'Temperature' }",
-    "why": "the compass's move and size not undone on the plate: it moves twice",
+    "why": "the quick block's move and size not undone on the plate: it moves twice (UI-CALM: the corner's caption is its place)",
     "tests": [
       "test/auditcc_ui.test.js"
     ]
   },
   {
-    "name": "AUDITCC-UI-S3-the-compass-off-takes-it",
+    "name": "AUDITCC-UI-S3-the-quick-block-off-takes-it",
     "file": "src/ui/hudLayout.js",
-    "old": ".hud-compass[data-hm-off]:not([data-hm-edit]) .hud-temp[data-hm]:not([data-hm-off]) { visibility: visible !important; }\n",
+    "old": ".hud-quick[data-hm-off]:not([data-hm-edit]) .hud-temp[data-hm]:not([data-hm-off]) { visibility: visible !important; }",
     "new": "",
-    "why": "the compass switched off hides the plate with it while the plate's own part stands on",
+    "why": "the quick block switched off hides the plate with it while the plate's own part stands on (UI-CALM: the plate's outer piece)",
     "tests": [
       "test/auditcc_ui.test.js"
     ]
-  },
-  {
-    "name": "AUDITCC-UI-S12-a-foe-s-bar-waits",
-    "file": "src/ui/enhancedHud.js",
-    "old": "x${last.scale ?? 1}x${parts.foe?.classList?.contains('on') ? 1 : 0}`;",
-    "new": "x${last.scale ?? 1}`;",
-    "why": "a foe's bar come under the compass: the plate on it for up to thirty frames",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S10-a-scale-waits",
-    "file": "src/ui/enhancedHud.js",
-    "old": "x${globalThis.innerHeight}x${last.scale ?? 1}x${parts.foe",
-    "new": "x${globalThis.innerHeight}x${parts.foe",
-    "why": "a HUD scale changed: the plate measured up to thirty frames late",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S3-measured-under-the-hand",
-    "file": "src/ui/enhancedHud.js",
-    "old": " || t.el.hasAttribute?.('data-hm-drag')) return;",
-    "new": ") return;",
-    "why": "the plate moved about under the player's drag (the HUD editor)",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S10-compact-sticks",
-    "file": "src/ui/enhancedHud.js",
-    "old": "  t.el.classList.remove('compact', 'temp-hung', 'temp-aside');",
-    "new": "  t.el.classList.remove('temp-hung', 'temp-aside');",
-    "why": "measured from the compact plate once it is compact: it stays compact after a scale of 2 goes back to 1",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S3-the-whole-plate-to-the-edge",
-    "file": "src/ui/enhancedHud.js",
-    "old": "  if (clear(t.el.getBoundingClientRect(), vw - TEMP_EDGE)) return;",
-    "new": "  if (clear(t.el.getBoundingClientRect(), vw)) return;",
-    "why": "the whole plate kept no air from the screen's edge",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S3-the-compact-plate-kept-to-the-whole-air",
-    "file": "src/ui/enhancedHud.js",
-    "old": "  if (clear(t.el.getBoundingClientRect(), vw - TEMP_MARK)) return;\n  t.el.classList.add('temp-hung');",
-    "new": "  if (clear(t.el.getBoundingClientRect(), vw - TEMP_EDGE)) return;\n  t.el.classList.add('temp-hung');",
-    "why": "a phone at a HUD scale of 1: the compact plate, 7px from the edge, hung for one pixel",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S3-the-mark-past-the-edge",
-    "file": "src/ui/enhancedHud.js",
-    "old": "  if (clear(t.el.getBoundingClientRect(), vw - TEMP_MARK)) return;\n  t.el.classList.add('temp-hung');",
-    "new": "  if (clear(t.el.getBoundingClientRect(), vw)) return;\n  t.el.classList.add('temp-hung');",
-    "why": "a 360 phone: the compact plate a pixel from the edge, its costing mark past it",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S3-the-mark-s-reach-short",
-    "file": "src/ui/enhancedHud.js",
-    "old": "const TEMP_MARK = 5;",
-    "new": "const TEMP_MARK = 4;",
-    "why": "the mark's last pixel past the edge",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S3-the-mark-s-reach-long",
-    "file": "src/ui/enhancedHud.js",
-    "old": "const TEMP_MARK = 5;",
-    "new": "const TEMP_MARK = 6;",
-    "why": "a plate hung that had room beside the compass",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S3-never-hung",
-    "file": "src/ui/enhancedHud.js",
-    "old": "  t.el.classList.add('temp-hung');\n",
-    "new": "",
-    "why": "a phone at a HUD scale of 1.25 to 2: the plate past the screen's edge",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S3-hung-off-the-screen",
-    "file": "src/ui/enhancedHud.js",
-    "old": "  const dx = Math.max(0, r.right - (vw - TEMP_EDGE));",
-    "new": "  const dx = 0;",
-    "why": "hung under a compass's end past the screen's, the plate past it too",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S3-moved-in-by-screen-pixels",
-    "file": "src/ui/enhancedHud.js",
-    "old": "if (dx > 0) s.setProperty?.('--hud-temp-in', `${Math.ceil(dx / k)}px`);",
-    "new": "if (dx > 0) s.setProperty?.('--hud-temp-in', `${Math.ceil(dx)}px`);",
-    "why": "moved in by screen pixels in its own (scaled) pixels: twice too far at a scale of 2",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S3-the-scale-unread",
-    "file": "src/ui/enhancedHud.js",
-    "old": "const k = r.height > 0 && t.el.offsetHeight > 0 ? r.height / t.el.offsetHeight : 1;",
-    "new": "const k = 1;",
-    "why": "the plate's own pixels taken for the screen's",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S12-dropped-onto-the-foot",
-    "file": "src/ui/enhancedHud.js",
-    "old": "  const dy = Math.max(...under.map((o) => o.bottom)) + TEMP_EDGE - h.top;",
-    "new": "  const dy = Math.max(...under.map((o) => o.bottom)) - h.top;",
-    "why": "the plate dropped flush on the read-out's foot, without its air",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S12-dropped-by-screen-pixels",
-    "file": "src/ui/enhancedHud.js",
-    "old": "s.setProperty?.('--hud-temp-drop', `${Math.ceil(dy / k)}px`);",
-    "new": "s.setProperty?.('--hud-temp-drop', `${Math.ceil(dy)}px`);",
-    "why": "dropped by screen pixels in its own: twice too far at a scale of 2",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S12-never-aside",
-    "file": "src/ui/enhancedHud.js",
-    "old": "  if (!clear(h, vw)) t.el.classList.add('temp-aside');",
-    "new": "",
-    "why": "where even below meets something, the plate stands on it",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S12-the-fps-read-out-unseen",
-    "file": "src/ui/enhancedHud.js",
-    "old": "const TEMP_CLEAR_OF = '#fps-counter, .hud-foe.on, .qtrack, .dfparty, .arena-session-btn, #travel-pace-box';",
-    "new": "const TEMP_CLEAR_OF = '.hud-foe.on, .qtrack, .dfparty, .arena-session-btn, #travel-pace-box';",
-    "why": "the plate under the FPS read-out (1440, 1280, 1024)",
-    "note": "AUDIT C&C (lens S): re-aimed by content - the list also keeps clear of an arena session's button and a journey's pace box.",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S12-the-foe-s-bar-unseen",
-    "file": "src/ui/enhancedHud.js",
-    "old": "const TEMP_CLEAR_OF = '#fps-counter, .hud-foe.on, .qtrack, .dfparty, .arena-session-btn, #travel-pace-box';",
-    "new": "const TEMP_CLEAR_OF = '#fps-counter, .qtrack, .dfparty, .arena-session-btn, #travel-pace-box';",
-    "why": "the hung plate on a foe's bar",
-    "note": "AUDIT C&C (lens S): re-aimed by content - the list also keeps clear of an arena session's button and a journey's pace box.",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S12-the-quest-card-unseen",
-    "file": "src/ui/enhancedHud.js",
-    "old": "const TEMP_CLEAR_OF = '#fps-counter, .hud-foe.on, .qtrack, .dfparty, .arena-session-btn, #travel-pace-box';",
-    "new": "const TEMP_CLEAR_OF = '#fps-counter, .hud-foe.on, .dfparty, .arena-session-btn, #travel-pace-box';",
-    "why": "the hung plate on the quest card",
-    "note": "AUDIT C&C (lens S): re-aimed by content - the list also keeps clear of an arena session's button and a journey's pace box.",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S12-the-party-list-unseen",
-    "file": "src/ui/enhancedHud.js",
-    "old": "const TEMP_CLEAR_OF = '#fps-counter, .hud-foe.on, .qtrack, .dfparty, .arena-session-btn, #travel-pace-box';",
-    "new": "const TEMP_CLEAR_OF = '#fps-counter, .hud-foe.on, .qtrack, .arena-session-btn, #travel-pace-box';",
-    "why": "the hung plate on the party list",
-    "note": "AUDIT C&C (lens S): re-aimed by content - the list also keeps clear of an arena session's button and a journey's pace box.",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S12-a-piece-switched-off-in-the-way",
-    "file": "src/ui/enhancedHud.js",
-    "old": "    try { if (globalThis.getComputedStyle?.(n)?.visibility === 'hidden') return null; } catch { /* a stub's node: shown */ }\n",
-    "new": "",
-    "why": "a piece the player switched off (hidden, its box kept) still pushes the plate down or aside",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ]
-  },
-  {
-    "name": "AUDITCC-UI-S12-a-boxless-node-in-the-way",
-    "file": "src/ui/enhancedHud.js",
-    "old": "    if (!b || !(b.width > 0) || !(b.height > 0)) return null;   // display:none - no box",
-    "new": "    if (!b) return null;   // display:none - no box",
-    "why": "a node with no box (display: none) measures 0x0 at the screen's top-left corner, and the plate - right of the compass or hung under its right end - never stands within its eight pixels of air there; the guard says why such a node is no obstacle, it decides nothing",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ],
-    "equivalent": true
   },
   {
     "name": "AUDITCC-UI-S4-no-warn-frame",
@@ -955,26 +730,6 @@
       "test/auditcc_ui.test.js"
     ],
     "why": "lens S: every line of the status page's third box is held to the classic box's width - the felt line's 53"
-  },
-  {
-    "name": "AUDITCC-UI-S-the-arena-button-stood-on",
-    "file": "src/ui/enhancedHud.js",
-    "old": ".dfparty, .arena-session-btn, #travel-pace-box';",
-    "new": ".dfparty, #travel-pace-box';",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ],
-    "why": "lens S: the plate keeps clear of an arena session's button"
-  },
-  {
-    "name": "AUDITCC-UI-S-the-pace-box-stood-on",
-    "file": "src/ui/enhancedHud.js",
-    "old": ".dfparty, .arena-session-btn, #travel-pace-box';",
-    "new": ".dfparty, .arena-session-btn';",
-    "tests": [
-      "test/auditcc_ui.test.js"
-    ],
-    "why": "lens S: and of a journey's pace box"
   },
   {
     "name": "AUDITCC-UI-S-the-night-tile-named-rested",

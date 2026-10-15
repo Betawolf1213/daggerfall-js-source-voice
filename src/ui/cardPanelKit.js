@@ -37,7 +37,7 @@ import { t } from '../systems/textManager.js';
 /** The classic skin's copy of the kit, cut to the two panels. */
 export const CARD_KIT_STYLE_ID = 'dfcards-kit-style';
 /** A selector that dresses one of the two panels (or something in one). */
-export const isCardPanelSelector = (/** @type {string} */ sel) => /\.df(?:cards|iliac)(?![\w-])/.test(sel);
+export const isCardPanelSelector = (/** @type {string} */ sel) => /\.df(?:cards|iliac|gambit)(?![\w-])|\.dfgambit-[a-z]/.test(sel);   // KG3: the third panel, and its own parts
 /** The kit's rules cut to the panels' own selectors - the classic skin's copy of their Plus dress. */
 export const cardKitCss = () => scopeRules(frameCss(), isCardPanelSelector);
 

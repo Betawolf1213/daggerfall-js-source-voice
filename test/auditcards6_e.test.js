@@ -27,6 +27,10 @@ import { regularsToStand, regularBark, BARK_MS } from '../src/world/cardRegulars
 import { fakeDoc, fakeWin } from './decorFakes.mjs';
 import { cardPackPrice, buyCardPack } from '../src/systems/cardSources.js';
 import { openIliacTableGame } from '../src/scenes/iliacTableGame.js';
+import { openGambitTableGame, gambitTableOn } from '../src/scenes/gambitTableGame.js';   // KG3: the third game at the table
+import { gambitBoardKey } from '../src/ui/gambitTableHud.js';   // KG3: the board's own keys, the cloth's listener's
+import { regularLook } from '../src/world/cardRegulars.js';
+import { seatTopByte } from '../src/player/seatPose.js';
 import { iliacGrade } from '../src/systems/iliacPatrons.js';
 import { giveBinderAtChargen } from '../src/systems/iliacItems.js';
 import { skillValue, SKILLS } from '../src/systems/skills.js';
@@ -95,6 +99,8 @@ function host({ online = false, id = 'peer-me', geom = 'fake', at = [600, 560], 
     isOnlinePage: () => online, mwViewFirstPerson: () => {}, homeTownOf: (b) => b?.townMapId || 0, worldMinutes: () => 0, MINUTES_PER_DAY: 1440,
     RemoteCardTable, mode: 'interior', regularsToStand, regularBark, BARK_MS, showdownWinners: hudm.showdownWinners, HOLDEM_REFUSALS: hudm.HOLDEM_REFUSALS,
     cardPackPrice, buyCardPack, openIliacTableGame: (o) => openIliacTableGame({ ...o, doc }), iliacGrade, skillValue, SKILLS, liveStat,
+    // KG3: the block opens The King's Gambit on the seat too - its names, real (its cloth's listeners want a window)
+    gambitTableOn, openGambitTableGame: (o) => openGambitTableGame({ ...o, doc }), isTouchDevice: () => false, regularLook, seatTopByte, cursorKeyClaimed: () => false, gambitBoardKey, audio: null,
     // the cards' own: the gestures and the held hand, real; the screen's geometry the rig's or the frame's
     canvas, ...hand, CARD_W, CARD_L, chipDiscs, cardMatrix,
     worldViewportRect: () => null,
@@ -325,16 +331,17 @@ test('AUDIT CARDS-6 E8: a Hold\'em sit at a cloth that plays Iliac Hand - the re
   assert.deepEqual(c.sent.map((w) => w.op), ['sit'], 'the Hold\'em sit said');
   await c.pump();
   assert.ok(c.ws.sent.some((m) => m.t === 'holdem' && m.error === 'other game'), 'the relay\'s own word');
-  assert.ok(c.said.includes('Iliac Hand is being played at this table.'), `said: ${c.said}`);
+  assert.ok(c.said.includes('Another game is being played at this table.'), `said: ${c.said}`);
   for (let k = 1; k <= 4; k++) { local.ms += 1600; await c.pump(); }
   assert.deepEqual(c.sent, [], 'never asked again - it was every 1.5 s for as long as the game went on');
   assert.ok(!r.room._holdem?.get(0)?.seats.some((s) => s?.id === 'peer-c'), 'no seat at the relay');
-  assert.match(c.shown(), /Iliac Hand is being played at this table\./, 'the panel says it');
+  assert.match(c.shown(), /Another game is being played at this table\./, 'the panel says it');
   const offer = c.buttons();
-  assert.equal(offer.length, 3, `${offer}`);
+  assert.equal(offer.length, 4, `${offer}`);   // PIN MOVED (KG3): the third game offered beside the second
   assert.equal(offer[0], 'Play Iliac Hand', 'and offers the game played there');
-  assert.match(offer[1], /^Buy a card pack \(\d+ gold\)$/, 'the house\'s packs');
-  assert.equal(offer[2], 'Leave the table');
+  assert.equal(offer[1], 'Play The King\'s Gambit', 'and the third, the tavern\'s regulars\' - never the relay\'s table');
+  assert.match(offer[2], /^Buy a card pack \(\d+ gold\)$/, 'the house\'s packs');
+  assert.equal(offer[3], 'Leave the table');
   c.press('Play Iliac Hand');
   assert.ok(c.api.iliacGame, 'the Iliac panel open on the seat');
   await c.pump();

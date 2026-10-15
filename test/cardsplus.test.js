@@ -19,6 +19,7 @@ import { cardPanelChromeCss, cardKitCss, dressCardPanel, isCardPanelSelector, CA
 import { kitCss, G, SMALL_WINDOWS } from '../src/ui/grimoireDress.js';
 import { createCardTableHud, cardHudModel, CARD_TABLE_CSS } from '../src/ui/cardTableHud.js';
 import { createIliacTableHud, iliacHudModel, holdingLead, iliacOutcome, VERDICT_WORDS, stagedRefusal, ILIAC_TABLE_CSS, ILIAC_HAND_CARD_H, ILIAC_LANE_CARD_H, ILIAC_PLACE_CARD_H } from '../src/ui/iliacTableHud.js';
+import { createGambitTableHud, GAMBIT_TABLE_CSS } from '../src/ui/gambitTableHud.js';
 import { cardCanvas, cardCanvasCopy, _clearCardFacesForTests, CARD_BINDER_CSS } from '../src/ui/cardBinderPage.js';
 import { COLLECTION_PAGE_CSS } from '../src/ui/collectionsPage.js';
 import { ILIAC_TILE_MAX_H } from '../src/render/iliacCardFaces.js';
@@ -122,8 +123,8 @@ test('CARDS-PLUS the kit names the card UI: both table panels a carved window, a
   }
 });
 
-test('CARDS-PLUS the face: both panels\' sheets set the game\'s pixel face - the trio, its five - on their roots, and every press, slider and field takes it; no serif of their own anywhere in either module; the chrome is one home - a fixed panel bounded by the screen\'s height and scrolling inside it, its touch presses 44px, its dim words and its reds lifted on Stone\'s light ground (mutants: Georgia back on the root; a press left in the browser\'s face; the Stone words unset; a field in the browser\'s face; the height unbounded; the touch press short; the Stone red unset)', () => {
-  for (const [name, css, root] of [['Hold\'em', CARD_TABLE_CSS, '.dfcards'], ['Iliac Hand', ILIAC_TABLE_CSS, '.dfiliac']]) {
+test('CARDS-PLUS the face: every card panel\'s sheet (Hold\'em\'s, Iliac Hand\'s, The King\'s Gambit\'s - KG3) sets the game\'s pixel face - the trio, its five - on its root, and every press, slider and field takes it; no serif of their own anywhere in any of their modules; the chrome is one home - a fixed panel bounded by the screen\'s height and scrolling inside it, its touch presses 44px, its dim words and its reds lifted on Stone\'s light ground (mutants: Georgia back on the root; a press left in the browser\'s face; the Stone words unset; a field in the browser\'s face; the height unbounded; the touch press short; the Stone red unset)', () => {
+  for (const [name, css, root] of [['Hold\'em', CARD_TABLE_CSS, '.dfcards'], ['Iliac Hand', ILIAC_TABLE_CSS, '.dfiliac'], ['The King\'s Gambit', GAMBIT_TABLE_CSS, '.dfgambit']]) {
     assert.ok(css.startsWith(`\n${PIXELIFY_FIVE_FACE}`), `${name}: the five first`);
     const chrome = cardPanelChromeCss(root);
     assert.ok(css.includes(chrome), `${name}: the shared chrome, as built`);
@@ -144,18 +145,21 @@ test('CARDS-PLUS the face: both panels\' sheets set the game\'s pixel face - the
     assert.ok(rootRule.body.includes('--cp-red: #ff9a8a;') && r.some((x) => x.sels.includes(`:root[data-plus-theme="stone"] ${root}`) && x.body.includes(`--cp-red: ${STONE_RED};`)), `${name}: Stone's reds`);
     assert.doesNotMatch(css, /Georgia|serif/, `${name}: no serif of its own`);
   }
-  for (const f of ['src/ui/cardTableHud.js', 'src/ui/iliacTableHud.js', 'src/ui/cardPanelKit.js']) assert.doesNotMatch(read(f).replace(/^\s*\/\/.*$/gm, ''), /Georgia/, f);
+  for (const f of ['src/ui/cardTableHud.js', 'src/ui/iliacTableHud.js', 'src/ui/gambitTableHud.js', 'src/ui/cardPanelKit.js']) assert.doesNotMatch(read(f).replace(/^\s*\/\/.*$/gm, ''), /Georgia/, f);
 });
 
-test('CARDS-PLUS the classic skin: a panel lays the kit cut to the two panels (once, whichever panel comes first - each alone on its own page, and both in either order) and asks for the game\'s face; on Enhanced Plus it lays no cut - the Plus sheet carries the kit - and asks for the face itself (mutants: the cut never laid; the cut laid whole; the face never asked for; Iliac Hand never dressing; Hold\'em never dressing)', () => {
+test('CARDS-PLUS the classic skin: a panel lays the kit cut to the card panels (once, whichever panel comes first - each alone on its own page, and all three in either order: Hold\'em, Iliac Hand and since KG3 The King\'s Gambit) and asks for the game\'s face; on Enhanced Plus it lays no cut - the Plus sheet carries the kit - and asks for the face itself (mutants: the cut never laid; the cut laid whole; the face never asked for; Iliac Hand never dressing; Hold\'em never dressing; The King\'s Gambit never dressing)', () => {
   const cut = cardKitCss();
   const sels = rules(cut).flatMap((r) => r.sels).filter((s) => s && !/^(from|to|\d+%)$/.test(s));
-  assert.ok(cut.length < frameCss().length && rules(cut).length * 3 < rules(frameCss()).length, 'a cut, not the kit');
+  // under half the kit's rules: the third panel's own roles (its list rows, its meter's fill, its sections' heads) joined
+  // the cut with KG3 - the cut laid whole is the mutant this weighs
+  assert.ok(cut.length < frameCss().length && rules(cut).length * 2 < rules(frameCss()).length, 'a cut, not the kit');
   assert.ok(sels.length > 40 && sels.every(isCardPanelSelector), 'only the panels\' rules');
-  assert.match(cut, /body \.dfcards,\nbody \.dfiliac \{\n {2}border-image:/, 'the carved frame');
-  assert.match(cut, /body \.dfiliac button\[data-kind="warn"\] \{ border-color: #e0584a/, 'the blood edge');
+  assert.match(cut, /body \.dfcards,\nbody \.dfiliac,\nbody \.dfgambit \{\n {2}border-image:/, 'the carved frame');
+  assert.match(cut, /body \.dfiliac button\[data-kind="warn"\],\nbody \.dfgambit button\[data-kind="warn"\] \{ border-color: #e0584a/, 'the blood edge');
   const holdem = (doc) => createCardTableHud({ onPress: () => {}, doc });
   const iliac = (doc) => createIliacTableHud({ onPress: () => {}, doc });
+  const gambit = (doc) => createGambitTableHud({ onPress: () => {}, doc });
   const kitsOf = (doc) => doc.head.children.filter((c) => c.id === CARD_KIT_STYLE_ID);
   const facesOf = (doc) => doc.head.children.filter((c) => c.id === 'dagger-enhanced-fonts' && c.tag === 'link');
   resetPrefs();
@@ -163,7 +167,7 @@ test('CARDS-PLUS the classic skin: a panel lays the kit cut to the two panels (o
     setPref('skin', 'classic');
     // AUDIT CARDS-PLUS E1: each panel ALONE on its own page dresses itself - Hold'em laid both before, so Iliac Hand's own
     // call was never read; then both, in either order
-    for (const open of [[holdem], [iliac], [holdem, iliac], [iliac, holdem]]) {
+    for (const open of [[holdem], [iliac], [gambit], [holdem, iliac], [iliac, holdem], [holdem, iliac, gambit], [gambit, iliac, holdem]]) {
       const doc = fakeDoc();
       for (const make of open) make(doc);
       const kits = kitsOf(doc);
@@ -172,7 +176,7 @@ test('CARDS-PLUS the classic skin: a panel lays the kit cut to the two panels (o
       assert.equal(facesOf(doc).length, 1, `the face asked for, once (${open.map((f) => f.name).join(', ')})`);
     }
     setPref('skin', 'enhanced');
-    for (const make of [holdem, iliac]) {
+    for (const make of [holdem, iliac, gambit]) {
       const plus = fakeDoc();
       make(plus);
       assert.equal(kitsOf(plus).length, 0, `Plus: the kit is the Plus sheet's (${make.name})`);

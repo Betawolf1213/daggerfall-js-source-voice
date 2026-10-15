@@ -216,9 +216,11 @@ test('NAV-R the world host: with the sea fight on the raiders are its ships - th
   assert.match(ships, /const a = raiderAt\(r, ms \+ RAIDER_LEAD_S \* 1000, tvRaidSea\);/);
   assert.match(ships, /list\.push\(\{ id: r\.id, seed: r\.seed, pos: \[x, 0, z\], yaw: Math\.atan2\(ax - x, az - z\), ahead: \[ax, 0, az\] \}\);/);
   assert.match(ships, /naval\.raiders\(list, \{ sight: raiderSight\(isNight\(minuteNow\(\)\)\), spent: tvRaid\.spent, held \}\);/);
-  assert.match(w, /const ship = navalRaidersOn\(\) \? naval\.raiderShipOf\(r\.seed\) : null;/);
-  assert.match(w, /const at = ship \? state\.worldCoords\(ship\.pos\) : c \? c\.pos : \(seaRaidPeerChase\(r\.id\) \?\? r\);/);   // THE MERGE (OW6): else where a peer's chase says
-  assert.match(w, /const chase = ship \? ship\.chase : !!c;/);
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js
+  const tvm = src('scenes/travelViewMarks.js');
+  assert.match(tvm, /const ship = host\.navalRaidersOn\(\) \? host\.naval\.raiderShipOf\(r\.seed\) : null;/);
+  assert.match(tvm, /const at = ship \? state\.worldCoords\(ship\.pos\) : c \? c\.pos : \(seaRaidPeerChase\(r\.id\) \?\? r\);/);   // THE MERGE (OW6): else where a peer's chase says
+  assert.match(tvm, /const chase = ship \? ship\.chase : !!c;/);
   assert.match(w, /raiderSpent: \(id\) => \{ seaRaidSpend\(id\); tvRaid\.chase\.delete\(id\); \},/);   // THE MERGE (OW6): spent through the Overworld's own spend - said and owed
 });
 
@@ -270,7 +272,9 @@ test('THE MERGE (OW6) the world host, run: with the sea fight on my raider word 
   const fn = (name) => { const m = new RegExp(`\\n  function ${name}\\([^)]*\\) \\{\\n[\\s\\S]*?\\n  \\}\\n`).exec(w); assert.ok(m, `${name} lifted`); return m[0]; };
   const spent = /\n    raiderSpent: (\(id\) => \{[^\n]*?\}),/.exec(w);
   assert.ok(spent, 'the naval host\'s raiderSpent lifted');
-  const a = w.indexOf('    // AUDIT OW5b S8: none drawn where none can come'), b = w.indexOf('\n    return marks;', a);
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js - lifted from there, its live names through `host` (d carries them)
+  const tvm = src('scenes/travelViewMarks.js');
+  const a = tvm.indexOf('    // AUDIT OW5b S8: none drawn where none can come'), b = tvm.indexOf('\n    return marks;', a);
   assert.ok(a > 0 && b > a, 'the raiders\' marks lifted');
   const d = {
     tvRaid: { chase: new Map(), spent: new Set(), spentAt: [], peer: new Map(), list: [], at: -Infinity, life: 5, clock: 0 },
@@ -292,7 +296,7 @@ test('THE MERGE (OW6) the world host, run: with the sea fight on my raider word 
   const h = new Function('d', `const { ${names.join(', ')} } = d;
     ${fn('seaRaidSpend')}\n${fn('seaRaidPeerChase')}\n${fn('seaRaidHeld')}\nlet _seaRaidWordKey = '';\n${fn('seaRaidWord')}\nlet _raidShipsAt = -Infinity;\n${fn('raidShips')}\n${fn('journeyThreats')}
     const raiderSpent = ${spent[1]};
-    const drawRaiders = () => { ${w.slice(a, b)} };
+    const drawRaiders = () => { const host = d; ${tvm.slice(a, b)} };
     return { seaRaidWord, raiderSpent, raidShips, journeyThreats, drawRaiders };`)(d);
   // the ships my sea stands, said where they sail
   assert.equal(h.seaRaidWord(null, false), false, 'nothing held, nothing spent: nothing to say');

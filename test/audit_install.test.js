@@ -178,8 +178,12 @@ test('L1-3: "Leave the game?" is asked when the PLAYER leaves - a close, a quit,
 test('L1-1/L1-5/L3-2/L3-5/L3-6: the release workflow - no token left behind, a tag of digits, nothing re-cut in place, "latest" never by default', () => {
   const wf = rd('.github/workflows/release-desktop.yml');
   const checkouts = wf.match(/- uses: actions\/checkout@v4/g) ?? [];
-  assert.equal(checkouts.length, 4);
+  // PIN MOVED (REL-FAST): the gate's checkout is verify.yml's now - its three checkouts held to the same law
+  assert.equal(checkouts.length, 3);
   assert.equal((wf.match(/persist-credentials: false/g) ?? []).length, checkouts.length, 'EVERY checkout - nothing here pushes, and the publish job holds contents: write');
+  const v = rd('.github/workflows/verify.yml');
+  assert.equal((v.match(/- uses: actions\/checkout@v4/g) ?? []).length, 3);
+  assert.equal((v.match(/persist-credentials: false/g) ?? []).length, 3, 'and the gate\'s - verify.yml - leaves no token behind either');
   assert.doesNotMatch(wf, /\$\{\{ needs\.version\.outputs\.version \}\}"? --no-git-tag-version|run: .*\$\{\{ (inputs|github\.ref_name|needs\.version)/, 'no tag or input text is pasted into a script');
   const publish = wf.slice(wf.indexOf('\n  publish:'));
   const guard = publish.indexOf('- name: The tag has no published release'), stage = publish.indexOf('uses: softprops/action-gh-release@');
