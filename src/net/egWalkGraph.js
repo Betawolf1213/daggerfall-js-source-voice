@@ -35,6 +35,10 @@
 //     so within one a walk goes straight only where the way stays on it (egSeesIn) - else over its nodes; and its LAW's walk
 //     graph joins the hall's (`spec.heroes`): every node of it on its fight ground a node of the graph, every edge of it an
 //     edge, and a node at each of its sockets' feet, where the course comes in and goes on.
+//   AUDIT EG V (2026-10-15; section 11.7): A HERO'S STAIR JOINED AT ITS OWN EDGES - its foot and top read off the stair's own
+//     low and high edges (the points of them that stand on a floor of their height), not the middle of its low corners (which
+//     hangs off its floor where a stair runs along an open chord - the Eclipse Vault's galleries stood cut off). The graph is
+//     derived, not law: every hall walks it so, whatever law laid the hall.
 //
 // Pure, deterministic (no die), in the relay bundle (net/egLegion.js, net/egBrain.js). Not a DFU member. Ledger A
 // (ELITE-GATES).

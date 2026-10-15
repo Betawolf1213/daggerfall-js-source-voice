@@ -2,8 +2,8 @@
 // DIRECTOR'S HALVES of what spec law 8 lays, driven through the real director (net/egBrain.js egBreachNew, egEnter, egStep) over
 // the real hall law. Pins L1-21 (THE MOLTEN RIM keeps every way across it: the course's landing, Grath's bridges, the Wyrm's
 // stairs, the Twin Lords' bridge - each a causeway the screens never cast back on, net/egLaw.js egMoltenRim and egRimCastsBack;
-// its zones stood again when the fight's newest push them out) and L3-18 (the Reliquary Vault stood and taken in a Proving Walk
-// and on a forked span, in the trial and in the closing).
+// its zones stood again when the fight's newest push them out; a screen casting back only off every causeway, scenes/egFight.js)
+// and L3-18 (the Reliquary Vault stood and taken in a Proving Walk and on a forked span, in the trial and in the closing).
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { egHallOf, egMoltenRim, egRimCastsBack, egOnFight, EG_SEALED_MS, EG_LORDS, EG_RIM_IN_M, EG_RIM_OUT_M } from '../src/net/egLaw.js';
@@ -12,6 +12,9 @@ import { egSpanPairs, egJumpReach } from '../src/net/egSpanLaw.js';
 import { egObjsOf, zoneOut } from '../src/net/egLords.js';
 import { egInShape } from '../src/net/egShape.js';
 import { validEgOut } from '../src/net/wire.js';
+import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
+import { createEgFight } from '../src/scenes/egFight.js';
+import { realmToDungeon } from '../src/net/sdBrain.js';
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
@@ -82,6 +85,28 @@ test('AUDIT EG V L1-21 THE MOLTEN RIM KEEPS ITS WAYS (section 18: "the outer 3 m
   // a Yard keeps its edge (AUDIT EG IV's own): no rim
   const Y = hall({ seed: 1, h: 106, strata: ['moltenrim'] });
   assert.ok(!(Y.B.F.zones ?? []).some((z) => z.kind === 'void' || z.kind === 'haven'));
+});
+
+test('AUDIT EG V L1-21 THE SCREEN KEEPS THE CAUSEWAY (section 18, scenes/egFight.js): the director\'s rim said over the wire and folded as a screen folds it (net/egLink.js foldEg), a member standing on the course\'s landing inside the magma is never cast back, and one on the ring off every way is - once, then not again inside its 1.5 s (mutants: the screen casting back on any void, a causeway under it or not)', async () => {
+  const w = hall({ seed: 1, h: 115, strata: ['moltenrim'] }), spec = w.spec;
+  let s = { ...EG_STATE_EMPTY, h: 115 };
+  for (const o of w.frames) if (o.k === 'efs' || o.k === 'ez') { const v = validEgOut(JSON.parse(JSON.stringify(o))); if (v) s = foldEg(s, v, w.now()); }
+  assert.ok(s.fight.zones.some((z) => z.kind === 'void') && s.fight.zones.some((z) => z.kind === 'haven'), 'the rim and its causeways folded');
+  const last = egSpanPairs(spec).filter((p) => p.a && !p.b && (p.a.road ?? 0) === 0).pop(), M = egMoltenRim(spec), f0 = spec.fl.find((f) => f.t === 'd' && f.r > 8);
+  const mid = f0.r - (EG_RIM_IN_M - EG_RIM_OUT_M) / 2 - 0.5, off = [[f0.x + mid, f0.z], [f0.x - mid, f0.z]].find(([x, z]) => !M.ways.some((q) => egInShape(q, x, z)));
+  let t = w.now() + 100, at = [last.a.x, last.edge + 0.5], backs = 0;
+  const E = { b: w.B.b, h: 115, sg: 'trial', seed: 1, geo: egGeo(w.B), end: null, hw: t - 5000, fight: s.fight };
+  const renderer = { createBillboardBatch: (archive, record, size) => ({ archive, record, size, origin: [0, 0, 0], bounds: [0, 0, 0, 0] }), destroyBillboardBatch: () => {} };
+  const getTexture = async () => ({ getSize: () => ({ width: 40, height: 70 }), getScale: () => ({ width: 0, height: 0 }), getFrameCount: () => 1 });
+  const fight = createEgFight({ renderer, getTexture, audio: { play3d: () => {}, play3dId: () => {} }, link: { state: () => E }, now: () => t, feet: () => realmToDungeon(spec.x0 + at[0], 0, at[1]), player: () => ({ health: 100, maxHealth: 100 }), me: () => 'acct-0', castBack: () => { backs++; } });
+  fight.frame(); await new Promise((r) => setTimeout(r, 0));
+  assert.ok(egRimCastsBack(s.fight.zones.filter((z) => z.kind === 'void'), at[0], at[1], t), 'the landing inside the magma');
+  for (let k = 0; k < 4; k++) { t += 2000; fight.frame(); }
+  assert.equal(backs, 0, 'never cast back on the causeway');
+  at = off; t += 2000; fight.frame();
+  assert.equal(backs, 1, 'cast back on the ring off its ways');
+  t += 500; fight.frame();
+  assert.equal(backs, 1, 'once inside its 1.5 s');
 });
 
 test('AUDIT EG V L3-18 THE RELIQUARY VAULT STOOD AND TAKEN (section 8.7: "a side span to a cache: an extra Reliquary for each member who reaches it with a fair trail ... a Span or a Proving Walk"): the director stands the Vault\'s cache at the wake of every hall whose law laid one - a Proving Walk\'s (it stood none) and, from spec law 8, a forked span\'s - and a member who reaches it takes a Reliquary once, in the trial and in the closing; the one who never comes takes none (mutants: the Proving Walk\'s vault never stood; the take a span\'s alone; the closing\'s take dropped; twice a member)', () => {
