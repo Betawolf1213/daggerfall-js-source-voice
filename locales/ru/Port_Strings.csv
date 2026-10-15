@@ -1559,6 +1559,7 @@ firm.readFail.session,"Войдите онлайн, чтобы прочитат�
 guild.rankNeeds.high,"Навык гильдии на {bar}"
 guild.rankNeeds.highBest,"Навык гильдии на {bar} – ваш лучший, {skill}, на {value}"
 guild.rankNeeds.next,"Следующий ранг: {title}"
+guild.rankNeeds.paced,"{days, plural, =1 {Ближайшее повышение: завтра} one {Ближайшее повышение: через # день} few {Ближайшее повышение: через # дня} many {Ближайшее повышение: через # дней} other {Ближайшее повышение: через # дня}}"
 guild.rankNeeds.reputation,"Репутация {have} из {need}"
 guild.rankNeeds.second,"Второй навык гильдии на {bar}"
 guild.rankNeeds.skills,"Навыки гильдии: {skills}"

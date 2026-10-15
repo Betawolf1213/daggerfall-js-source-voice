@@ -778,8 +778,8 @@ import { setRenownLayer } from '../systems/renownLayer.js';   // RENOWN1: the le
 import { createHallBook, hallFactionsOf, chapterFactionOf, parseHallCommand, hallAuditLines } from '../net/npcHallBook.js';   // CHAP2a: a town's guild halls, witnessed as I walk in; AUDIT CHAP2 E1: a developer's /hall
 import { createChapterSheet } from '../net/chapterSheet.js';   // CHAP3c: the chapter sheet, for the halls' prices and shelves
 import { createChapterBanners } from './chapterBanners.js';   // CHAP7b: a patron's banners at its chapter's halls
-import { createRollTracker, rollEntityDoors } from '../net/npcRollTracker.js';   // CHAP1: the Roll - this realm character's standing with Daggerfall's guilds, the account service's
-import { rollCeilingLine, rollKeptOf, ROLL_KEPT_VENDOR, hallPosterName, hallRememberLine, isChapterWrit, bookCappedLine, seatLinesOf, seatRankAt, ROLL_BOOK_RANK_MAX, chapterRollTitle, chapterRollLines, chapterBandOf } from '../net/npcChapterLaw.js';   // AUDIT CHAP: the pace's line; the last adoption, kept in the save; CHAP2a: a hall writ's guild, named; CHAP3a: a member's own writ too; CHAP5a: the hall's roll; CHAP5b: a chapter's band, the living town's
+import { createRollTracker, rollEntityDoors, rollPaceOf } from '../net/npcRollTracker.js';   // CHAP1: the Roll - this realm character's standing with Daggerfall's guilds, the account service's
+import { rollCeilingLine, rollKeptOf, ROLL_KEPT_VENDOR, hallPosterName, hallRememberLine, isChapterWrit, bookCappedLine, seatLinesOf, seatRankAt, chapterRollTitle, chapterRollLines, chapterBandOf } from '../net/npcChapterLaw.js';   // AUDIT CHAP: the pace's line; the last adoption, kept in the save; CHAP2a: a hall writ's guild, named; CHAP3a: a member's own writ too; CHAP5a: the hall's roll; CHAP5b: a chapter's band, the living town's
 import { chapterSeasonLines } from '../net/chapterEvents.js';   // CHAP6c: a chapter's Season in words, its candidates named
 import { setHudRenown } from '../ui/hudRenown.js';   // RENOWN4: my own Renown and its bar, under the vitals
 import { pickRegionHubs, hubAtMapId, hubArrivalLine, hubClaim } from '../systems/regionHubs.js';   // HUB1: every region's main city, its hub; SD2b: a populated place's claim (the Hollow's cities)
@@ -30854,7 +30854,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       const title = c ? chapterRollTitle(faction, region) : null;
       return title ? { title, lines: [...chapterRollLines(faction, c), ...chapterSeasonLines(faction, /** @type {number} */ (region), c)] } : null;   // CHAP6c: and its Season
     },
-    rollRankCeiling: () => (rollTracker && !rollTracker.stopped ? ROLL_BOOK_RANK_MAX : null),   // AUDIT CHAP4 C3: from the page's first frame - before the Roll's first word DFU's review promoted to 8 and 9
+    rollPace: (f) => rollPaceOf(rollTracker, f, Math.floor(Date.now() / 1000)),   // ROLL-PACE: a review promotes no further than the Roll's pace since the membership began, nor to a seat; AUDIT CHAP4 C3: from the page's first frame (before the Roll's first word, no promotion)
     // SEASON1 part three (Seats-Arc 9.2): a seat's Hall of Records - whether a town is a seat while the seats are open, and
     // its Chronicle read as a book's window (null where it cannot be read)
     hallOfRecords: {

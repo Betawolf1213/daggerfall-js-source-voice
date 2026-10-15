@@ -1559,6 +1559,7 @@ firm.readFail.session,"Влезте онлайн, за да прочетете �
 guild.rankNeeds.high,"Умение на гилдията на {bar}"
 guild.rankNeeds.highBest,"Умение на гилдията на {bar} – най-доброто ви, {skill}, е {value}"
 guild.rankNeeds.next,"Следващ ранг: {title}"
+guild.rankNeeds.paced,"{days, plural, =1 {Най-ранно повишение: утре} other {Най-ранно повишение: след # дни}}"
 guild.rankNeeds.reputation,"Репутация {have} от {need}"
 guild.rankNeeds.second,"Второ умение на гилдията на {bar}"
 guild.rankNeeds.skills,"Умения на гилдията: {skills}"
