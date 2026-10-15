@@ -259,7 +259,7 @@ const egLordBarsOf = (E) => { const bars = egLordBars(E); return bars[0]?.court 
 export function egLordBars(E) {
   if (!E?.b || !(E.h > 0) || E.fight?.h !== E.h) return [];
   const spec = egHallOf(E.seed, E.h, E.geo ?? 0);
-  return (E.fight.bodies ?? []).filter((b) => b.role === EG_ROLE.lord && b.ph > 0 && (b.fl & (EG_FL.mirror | EG_FL.friend | EG_FL.fell)) === 0 && !b.fellAt && b.hp > 0).slice(0, EG_LORD_BARS_MAX)
+  return (E.fight.bodies ?? []).filter((b) => b.role === EG_ROLE.lord && b.ph > 0 && (b.fl & (EG_FL.mirror | EG_FL.friend)) === 0 && b.hp > 0).slice(0, EG_LORD_BARS_MAX)   // standing: a fall says its nought (`efell`, `ehp`), a raise its health
     .map((L) => ({ name: egBossName(EG_BOSS_KEYS[L.k] ?? '', L.pt), court: spec.kind === 'court', frac: L.max > 0 ? Math.round(Math.max(0, Math.min(1, L.hp / L.max)) * 1000) / 1000 : 0, phase: ['', 'I', 'II', 'III'][L.ph] ?? '' }));
 }
 

@@ -19,11 +19,11 @@ import { egHallOf, egOnFight, EG_SEALED_MS, EG_DECREE_BY_KEY, EG_LORDS } from '.
 import { egBreachNew, egEnter, egStep, egBlow, egCount, egFall, egStateOf, egStrataSecond, champRing, EG_CHAMP_RING_M, EG_CHAMP_RING_MIN_M } from '../src/net/egBrain.js';
 import { egLordsNew, egLordsWake, egLordsStep, egLordsOf, egLordsAwake, egLordsFell, egLordHit, egLordHitX, egLordAspect, egObjsOf, egObjBroken, egChainShared, egHavenRouteM, egHavenFloor,
   zoneOut, EG_HAVENS_MAX, EG_ZONE_FIGHT_MS, EG_UMBRA_MS, EG_UMBRA_GLINT_MS } from '../src/net/egLords.js';
-import { egFightNew, egHas, EG_FL, EG_ROLE, egBlowsStep, egAim, egBodyWire, egYawOf, egFightState, egPlace } from '../src/net/egBodies.js';
+import { egFightNew, egHas, EG_FL, EG_ROLE, egBlowsStep, egAim, egBodyWire, egYawOf, egFightState, egPlace, egWalk, egStop, egSetFl } from '../src/net/egBodies.js';
 import { egErrandMs, egInShape, shDisc, shLane, egChainGapMs, egBlowOutlineFrom, EG_ESCAPE_MPS, EG_OUTLINE_MAX_MS } from '../src/net/egShape.js';
 import { egUnionHolds, egZoneLandings, egFloorLess } from '../src/net/egFloor.js';
 import { egFightView } from '../src/net/egWalkGraph.js';
-import { egFromFront, egFromBehind } from '../src/net/egLegion.js';
+import { egFromFront, egFromBehind, egLegionRaise, egLegionStep, EG_KIND } from '../src/net/egLegion.js';
 import { egFeatBits } from '../src/net/egFeats.js';
 
 import { HIT_KINDS, dpsRef } from '../src/net/gateBrain.js';
@@ -31,6 +31,7 @@ import { gateAspectOf } from '../src/net/gateMods.js';
 import { validEgOut, EG_YAW_WIRE_MAX, EG_OUTLINE_WIRE_MAX } from '../src/net/wire.js';
 import { foldEg, EG_STATE_EMPTY } from '../src/net/egLink.js';
 import { egChainMates } from '../src/scenes/egFight.js';
+import { judgeShapes } from '../src/net/bossRef.js';
 
 const T0 = 1_800_000_000_000;
 const SITE = { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 };
@@ -298,6 +299,15 @@ test('AUDIT EG V L1-7 THE SHIELD-WALL ON THE FACING EVERY SCREEN DRAWS (sections
   const plain = egLordHitX(F, K, 'acct-0', null, HIT_KINDS.Melee, S.now());
   assert.ok(plain > 0);
   assert.deepEqual([egLordHitX(F, K, 'acct-0', front, HIT_KINDS.Melee, S.now()), egLordHitX(F, K, 'acct-0', back, HIT_KINDS.Melee, S.now())], [plain * 0.25, plain * 1.3], 'his Shield-Wall on the facing drawn');
+  // every walk and stand says it: a place, a walk's own way, a stop
+  egPlace(F, K, K.x, K.z, S.now());
+  assert.equal(F.moves.at(-1)[9], egYawOf(K), 'a place says its facing');
+  egWalk(F, K, K.x + 5, K.z, 0, 3, S.now(), S.spec);
+  const w = F.moves.at(-1);
+  assert.deepEqual([w[9], egYawOf(K)], [Math.round(Math.atan2(5, 0) * 100) / 100, Math.round(Math.atan2(5, 0) * 100) / 100], 'a walk faces its way');
+  egStop(F, K, S.now());
+  assert.equal(F.moves.at(-1)[9], egYawOf(K), 'a stop says its facing');
+  assert.equal(validEgOut({ k: 'emv', m: [[...w.slice(0, 9), EG_YAW_WIRE_MAX + 1]] }), null, 'a walk\'s facing past its bound');
   // the wire's bounds
   const row = egBodyWire(K);
   assert.equal(row.length, 19);
@@ -380,6 +390,11 @@ test('AUDIT EG V L1-9 THE CHAIN SNAPS COUNTED ON THE PAIR IT NAMES, BY THE CENSU
   assert.ok(got[pa] >= 1 && got[pb] >= 1, `the pair, wherever they ran (${JSON.stringify(got)})`);
   assert.equal(got[odd], 0, 'never the member standing in its marks it does not name');
   assert.ok((F.cg?.['The Chain Snaps'] ?? []).sort().join() === [pa, pb].sort().join(), 'its catch the pair\'s');
+  // the time law kept: a named member with no pose sent near the landing is not counted
+  const at = S.now() + 5000, b2 = egAim(F, S.spec, { o: snap.o, s: snap.s, at, wu: 400, p: 0.3, b: 0, el: null, nm: 'Test Snap', ch: 1, on: [pa, pb] }, [], at - 400, []);
+  const tr = (s, dts) => ({ sub: s, tr: dts.map((dt) => [at + dt, S.pos[s].sx - S.spec.x0, 0, S.pos[s].z, S.B.h]) });
+  const hits = judgeShapes(F, [tr(pa, [-3000, 3000]), tr(pb, [-100, 100]), tr(odd, [-100, 100])], at + 3100, egFightView(S.spec)).filter((x) => x.i === b2.i);
+  assert.deepEqual(hits.map((x) => x.sub), [pb], 'the one whose pose stood near its landing, of those it names');
 });
 
 // ── L1-10: THE LORDS' PLACE IN THE UNION FLOOR ─────────────────────────────────────────────────────────────────────────
@@ -408,6 +423,10 @@ test('AUDIT EG V L1-10 THE LORDS\' PLACE IN THE UNION FLOOR (section 13.2: "Pend
   for (const d of ends) zoneOut(F, 'void', shDisc(d.x, d.z, d.r), now - 1000, now + 15_000, out);
   assert.equal(egAim(F, spec, disc(), me, now, []), null, 'both its islands fallen: only the void beyond - held');
   assert.equal(F.held.length, 1);
+  // both islands told to burn before it lands: their onsets in the set - only the bridge left, under the disc: held
+  F.blows.length = 0; F.held = []; F.zones = [];
+  for (const d of ends) zoneOut(F, 'burn', shDisc(d.x, d.z, d.r), now + 2500, now + 30_000, out);
+  assert.equal(egAim(F, spec, disc(), me, now, []), null, 'its islands told to burn as it lands: held');
   // a told burn lands in the set at its onset; a court burning whole holds nothing more
   F.blows.length = 0; F.held = []; F.zones = [];
   const z = zoneOut(F, 'burn', shDisc(mx, mz, 40), now + 1500, now + 60_000, out);
@@ -582,6 +601,12 @@ test('AUDIT EG V L1-26 THE HAVEN NOVA OVER A FLOOR OF MANY PIECES (sections 13.2
     const base = havens.slice(0, 3), H = egHavenFloor(spec, base, egHavenRouteM(base, spec.fl.find((f) => f.t === 'd')));   // four members: three havens a court would lay, then the floor's
     assert.deepEqual([nova.wu, havens], [egErrandMs(H.routeM), H.havens], `${key}: the walked route's errand floor`);
   }
+  // the route WALKED: two courts 20 m apart joined only by a road round three sides (the fight floor's own pieces' shapes)
+  const U = { fl: [{ t: 'd', x: 0, z: 0, r: 5, y: 0 }, { t: 'd', x: 0, z: 20, r: 5, y: 0 }, { t: 'l', ax: 0, az: 0, bx: 30, bz: 0, hw: 2, y: 0 }, { t: 'l', ax: 30, az: 0, bx: 30, bz: 20, hw: 2, y: 0 }, { t: 'l', ax: 30, az: 20, bx: 0, bz: 20, hw: 2, y: 0 }] };
+  const walked = egHavenFloor(U, [[0, 0, 3]], Infinity);
+  assert.ok(walked.routeM > 60 && walked.havens.length === 1, `round the road (some 75 m), never across (some 22 m) (${walked.routeM.toFixed(1)} m)`);
+  const near = egHavenFloor(U, [[0, 0, 3]], 30);
+  assert.ok(near.havens.length > 1 && near.routeM <= 30 + 0.5, 'havens added until the route is a court\'s');
 });
 
 // ── L9-7: A CHAMPION'S RING ON NO FLOOR; NEW-1: A MEMBER INSIDE A LORD ─────────────────────────────────────────────────
@@ -598,4 +623,19 @@ test('AUDIT EG V NEW-1 A MEMBER INSIDE A LORD\'S BODY NEVER FREEZES IT (section 
   const G = egLordsOf(S.B.F)[0], f0 = S.frames.length;
   for (let k = 0; k < 4 * 20; k++) { S.at('acct-0', G.x + G.r * 0.6, G.z); S.at('acct-1', G.x - G.r * 0.6, G.z); S.step(); }
   assert.ok(S.frames.slice(f0).filter((f) => f.k === 'eb' && f.o === G.i).length >= 3, 'he strikes the members inside him');
+});
+
+// ── L1-7 and L1-18, THE LEGION'S HALVES ───────────────────────────────────────────────────────────────────────────────
+test('AUDIT EG V L1-7 and L1-18 THE LEGION\'S HALVES (sections 8.7, 13.2 and 14): an add turned to strike says its facing (a Shielded elite\'s back is judged by it); Chained Blows\' second shape is said with the first, its dim outline from the word, its fill THE CHAINED GAP from the first\'s landing (mutants: the add\'s turn unsaid; the chained fill from the word)', () => {
+  const spec = egHallOf(1, 1, 0), view = egFightView(spec);
+  const F = egFightNew(spec, T0, [40]), out = [];
+  const [a] = egLegionRaise(F, [EG_KIND.breaker], [[spec.fight.x, spec.fight.z]], T0 - 5000, []);
+  a.up = 0;
+  F.moves.length = 0;
+  egLegionStep(F, view, T0, [{ sub: 'm', x: a.x + 3, z: a.z }], seeded(3), out, { decrees: { chained: 1 } });
+  const [first, ch] = out.filter((f) => f.k === 'eb');
+  assert.ok(first && ch && ch.nm.endsWith('(chained)'), 'a Breaker\'s blow and its chained shape');
+  assert.deepEqual([ch.at - ch.wu, egBlowOutlineFrom(ch), ch.wu], [first.at, first.at - first.wu, egChainGapMs(first.wu, ch.s)], 'its outline from the word, its fill from the first\'s landing');
+  const turn = F.moves.filter((t) => t[0] === a.i).at(-1);
+  assert.ok(turn && turn[9] === egYawOf(a) && Math.abs(a.yaw - Math.PI / 2) < 0.05, 'its turn said with its facing');
 });

@@ -51,7 +51,7 @@ export const EG_FEAT_SIGNS = Object.freeze({
   garoth: Object.freeze({ name: 'Before the Covenant', what: 'Garoth felled before the Covenant pressed', test: (s, F, ctx) => !ctx.covenant }),
 });
 /** AUDIT EG V (lane1 #6; section 19, the Twin Lords' "Together"): did both twins fall, each at its own last fall's instant (a lord
- *  body's `fellAt`, net/egLords.js egLordHit - a raised twin's cleared), within EG_FEAT_TWINS_MS of each other - whatever lord of
+ *  body's `fellAt`, net/egLords.js egLordHit - set again at each fall), within EG_FEAT_TWINS_MS of each other - whatever lord of
  *  the fight outlived them? A lord body is known by its `key` (net/egLords.js stand). Pure. */
 export function egTwinsTogether(F) {
   const T = (F?.bodies ?? []).filter((b) => b.key === 'twins');

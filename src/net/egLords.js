@@ -659,7 +659,7 @@ function pairTick(F, L, now, out) {
   const P = egLordsPairOf(F);
   if (!P || !F.mem.twinFellAt || !(L.hp > 0) || (L.i !== P.a && L.i !== P.b) || now - F.mem.twinFellAt <= P.ms) return;
   const dead = egBodyById(F, L.i === P.a ? P.b : P.a);
-  if (dead && !(dead.hp > 0)) { dead.hp = Math.round(dead.max / 2); dead.fellAt = 0; egSaid(dead, dead.ph, now); egSetFl(F, dead, EG_FL.fell, false, out); F.mem.twinFellAt = 0; say(out, 'twinraised', { n: egBossName(dead.key, dead.pt) }); }   // AUDIT EG V (lane1 #6): raised, it has not fallen
+  if (dead && !(dead.hp > 0)) { dead.hp = Math.round(dead.max / 2); egSetFl(F, dead, EG_FL.fell, false, out); F.mem.twinFellAt = 0; say(out, 'twinraised', { n: egBossName(dead.key, dead.pt) }); }
 }
 
 /** A grounding's weight (the Mother of Dusk dragged down, the Wyrm landed), a Scorch's (Grath stunned on a burning bridge or a
