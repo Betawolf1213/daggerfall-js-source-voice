@@ -8,10 +8,10 @@
 // Her records, the galleon's numbers for every picture the fleet shares (world/galleonArt.js TEX), her liveries' bands
 // and her tiles are unchanged, so no face of her moves - a band is a whole Daggerfall picture where it was a slice of a
 // painted livery (the Bay blue strake, the ochre pin-stripes and the name board gone, as Mac chose). Her transom's
-// gallery is Daggerfall's leaded window, seen through (classicArt.js SEE_THROUGH_WINDOW). Not a DFU member. Ledger A
-// (SHIPS-2).
-import { TEX as GALLEON_TEX, GALLEON_TILE, GALLEON_SOURCES } from './galleonArt.js';
-import { DF, SEE_THROUGH_WINDOW, classicStandIns } from './classicArt.js';
+// gallery is Daggerfall's leaded window, seen through by day (classicArt.js SEE_THROUGH_WINDOW) and lit at night (its
+// night twin - galleonArt.js NIGHT_RECORD_OFFSET). Not a DFU member. Ledger A (SHIPS-2).
+import { TEX as GALLEON_TEX, GALLEON_TILE, GALLEON_SOURCES, NIGHT_RECORD_OFFSET } from './galleonArt.js';
+import { DF, SEE_THROUGH_WINDOW, LIT_WINDOW, classicStandIns } from './classicArt.js';
 
 /** Her pseudo-archive: past the galleon's 38131. */
 export const CARRACK_ARCHIVE = 38141;
@@ -54,9 +54,18 @@ export const CARRACK_SOURCES = Object.freeze({
   [TEX.quarterRail0]: DF.oakDark, [TEX.roof]: DF.deck,
 });
 
-const _art = classicStandIns({ archive: CARRACK_ARCHIVE, name: 'carrack', sources: CARRACK_SOURCES });
+/** Her see-through record's night twin (galleonArt.js GALLEON_NIGHT's law): the transom gallery's. */
+export const CARRACK_NIGHT = Object.freeze({ [TEX.transom0]: TEX.transom0 + NIGHT_RECORD_OFFSET });
+
+const _art = classicStandIns({
+  archive: CARRACK_ARCHIVE, name: 'carrack',
+  sources: { ...CARRACK_SOURCES, ...Object.fromEntries(Object.values(CARRACK_NIGHT).map((r) => [r, LIT_WINDOW])) },
+  glowRecs: Object.values(CARRACK_NIGHT),
+});
 /** Whether a record of hers holds glass to see through - her transom gallery's (`galleonCut`'s law). */
 export const carrackCut = (/** @type {number} */ record) => _art.cut(record);
+/** Her night twin's glow (`galleonGlow`'s law). */
+export const carrackGlow = (/** @type {number} */ record) => _art.glow(record);
 
 let _registered = false;
 /** Once: every record on the texture door as a stand-in of CARRACK_ARCHIVE (world/galleonArt.js registerGalleonArt).
@@ -66,5 +75,5 @@ export function registerCarrackArt(addVendorTextures) {
   _registered = true;
   return addVendorTextures(_art.entries);
 }
-/** Test seam. */
-export function _resetCarrackArt() { _registered = false; }
+/** Test seam: unregistered, her glow uncut. */
+export function _resetCarrackArt() { _registered = false; _art.reset(); }

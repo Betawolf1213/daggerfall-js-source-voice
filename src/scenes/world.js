@@ -826,6 +826,8 @@ import { ChatLog, CHAT_REJOIN_MS } from '../net/chat.js';   // CHAT1: the tabs a
 import { LANG_OLD_RELAY_TEXT, NO_LANG_TEXT, langJoinedText } from '../net/chat.js';   // CHAT-LANG: the Language tab's words
 import { CHAT_LANGS, chatLangRoom } from '../net/wire.js';   // CHAT-LANG: the language channels
 import { LANG_LINES, unknownLangText } from '../net/chatCommands.js';   // CHAT-LANG: /lang's list and refusal
+import { OPT_CHANNELS, tradeChanOldText, notJoinedText, optJoinedText, optJoinedSayText, optLeftText, optWaitText, alreadyJoinedText } from '../net/chat.js';   // CHAT-TRADE: the Trade and LFG tabs' words
+import { badJoinText } from '../net/chatCommands.js';   // CHAT-TRADE: /join's and /leave's refusal
 import { oocText, localLineHeard, nextRegionRoom, regionJoinedText, CHAN_OLD_RELAY_TEXT, ROLL_OLD_RELAY_TEXT, EMOTE_OLD_RELAY_TEXT, GUILD_OLD_RELAY_TEXT, NO_GUILD_TEXT, partyNoteTab } from '../net/chat.js';   // CHAT-CHAN: the channels' own laws (a second chat import: CHAT1's pin holds the first as it stands)
 import { parseChatLine, HELP_LINES, CHAT_GREETING_TEXT, unknownCommandText, emptyCommandText, hostMisuseText, badRollText, expandShortcodes, EMOTE_LINES, foundText, FIND_OFFLINE_TEXT, FIND_RELAY_TEXT } from '../net/chatCommands.js';   // CHAT-CHAN: what a typed line IS; DICE1: and a roll; EMOTE1: an action, a gesture, a shortcode
 import { partyRosterSource, localRosterSource, guildRosterSource } from '../net/roster.js';   // CHAT-CHAN: the Party and Local tabs' composed lists
@@ -22812,6 +22814,22 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
           if (!chatLog.tab('lang').room) chatLog.push('lang', { text: langOld() ? LANG_OLD_RELAY_TEXT : langJoinedText(CHAT_LANGS[cmd.code]), system: true });
           return 'read';
         }
+        // CHAT-TRADE: /join trade, /leave lfg - the choice is kept (`chatTrade`, `chatLfg`) and the frame moves the tab; a
+        // tab joined comes to the front with its line, and a tab left goes from the bar with the chat's front tab saying so
+        if (cmd.kind === 'join' || cmd.kind === 'leave') {
+          if (!cmd.chan) { note(badJoinText(cmd.kind)); return false; }
+          const on = cmd.kind === 'join';
+          if (optJoined(cmd.chan) === on) { note(on ? alreadyJoinedText(cmd.chan) : notJoinedText(cmd.chan)); return 'read'; }   // already so: the state, and the way out of it
+          optSet(cmd.chan, on);
+          return 'read';
+        }
+        // CHAT-TRADE: a line said to a channel not joined JOINS it - the tab to the front, the line kept in the field to be
+        // said once the channel opens (B2's false: nothing went)
+        if (cmd.kind === 'channel' && Object.hasOwn(OPT_CHANNELS, cmd.tab) && !optJoined(cmd.tab)) {
+          optSet(cmd.tab, true, { say: true });
+          return false;
+        }
+        if (cmd.kind === 'rp') return chatSend(tabId, cmd.text, tabId);   // CHAT-RP: a line of roleplay, on this tab - its *mark* is the drawing's
         if (cmd.kind === 'find') { findTab = tabId; const hub = chatLinks?.get('world'); if (!hub?.sendFind(cmd.q)) note(hub?.welcomed && !hub.findOk ? FIND_RELAY_TEXT : FIND_OFFLINE_TEXT); return 'read'; }   // SCALE5c: everyone online, by name - the hub's answer comes back to this tab. AUDIT SCALE II C-1: a hub online on a relay before the shards answers no search, and is never asked one (it closes the link on it) - said as that, not as offline
         if (cmd.kind === 'me') return chatSend(tabId, cmd.text, tabId, { me: true });   // EMOTE1: an action, on this tab
         if (cmd.kind === 'emote') return chatSend('local', cmd.text, tabId, { me: true });   // EMOTE1: a gesture - the body's, so those near see it
@@ -22849,7 +22867,10 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
       // wears the friend colour, which is the list's own mark carried into the conversation
       nameColor: (id) => social?.cssColorOf(id) ?? null,   // SOC7 integration: the picture answers (net/social.js cssColorOf - party green, friend blue, a stranger none); the host names no colour, which SOC4's pin holds it to
       rowActions: (peerId) => socialRowActions(peerId),
-      badgeOf: (id) => chatSessionOf(chatLog?.active)?.badgeOf?.(id) ?? null,   // CHAT-FIT: a chat line's author wears the badge the roster shows - the same session answers both, or the one name would say two things on one screen
+      badgeOf: (id) => chatSessionOf(chatLog?.active)?.badgeOf?.(id) ?? null,
+      // CHAT-TRADE (Mac: "There must be a better way to handle the new channels instead of a text command"): the + beside
+      // the tabs - the channels joined by choice, each with its mark; a click is optSet, /join's own door
+      channels: { list: () => Object.entries(OPT_CHANNELS).map(([id, c]) => ({ id, name: c.name, hint: chatLog?.tab(id)?.hint ?? '', joined: optJoined(id) })), set: (id, on) => optSet(id, on) },   // CHAT-FIT: a chat line's author wears the badge the roster shows - the same session answers both, or the one name would say two things on one screen
     });
     socialStart();   // SOC2: the picture over the hub's link, once the panel it lands beside exists
   };
@@ -28804,6 +28825,12 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
   const chatLangCode = () => (chatLangRoom(getPref('chatLang')) ? getPref('chatLang') : null);
   /** CHAT-LANG: the Language tab on a relay from before the language channels - the World link's welcome said so. */
   const langOld = () => { const world = chatLinks?.get('world'); return world?.status === 'open' && !world.langOk; };
+  /** CHAT-TRADE: the Trade and LFG tabs on a relay from before them - the World link's welcome said so. */
+  const tradeChanOld = () => { const world = chatLinks?.get('world'); return world?.status === 'open' && !world.tradeChanOk; };
+  /** CHAT-TRADE: has the player joined this channel (`chatTrade`, `chatLfg`) - false for a tab that is not one. */
+  const optJoined = (tabId) => (Object.hasOwn(OPT_CHANNELS, tabId) ? getPref(OPT_CHANNELS[tabId].pref) === true : false);
+  /** CHAT-TRADE: why a Trade or LFG tab cannot talk yet - not joined, or a relay from before them; null when it can. */
+  const optWhy = (tabId) => (!Object.hasOwn(OPT_CHANNELS, tabId) || chatLog?.tab(tabId)?.room ? null : tradeChanOld() ? tradeChanOldText() : optJoined(tabId) ? null : notJoinedText(tabId));
   /** CHAT-CHAN: the strip under the chat - why the ACTIVE tab cannot talk, when it cannot: the tab's own reason (a relay
    *  from before the channels, no party), else the socket it rides (connecting, reconnecting, refused: the session's
    *  own line, labelled with the tab - AUDIT CHAT B5). The Region tab before its first region reads the World link's,
@@ -28815,6 +28842,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (tabId === 'guild' && guildOld()) return GUILD_OLD_RELAY_TEXT;   // GUILD1c
     if (tabId === 'guild' && !myGuildTag()) return NO_GUILD_TEXT;
     if (tabId === 'lang' && !tab?.room) return langOld() ? LANG_OLD_RELAY_TEXT : chatLangCode() ? null : NO_LANG_TEXT;   // CHAT-LANG: before its channel
+    if ((tabId === 'trade' || tabId === 'lfg') && !tab?.room) return optWhy(tabId);   // CHAT-TRADE: before its channel
     const s = tabId === 'region' && !tab?.room ? chatLinks?.get('world') : chatSessionOf(tabId);
     return s?.statusLine(tab?.label ?? 'chat') ?? null;
   };
@@ -28831,6 +28859,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if ((tabId === 'party' || tabId === 'region') && chanOld()) return why(CHAN_OLD_RELAY_TEXT);
     if (tabId === 'guild' && guildOld()) return why(GUILD_OLD_RELAY_TEXT);   // GUILD1c
     if (tabId === 'lang' && !chatLog.tab('lang')?.room) return why(langOld() ? LANG_OLD_RELAY_TEXT : NO_LANG_TEXT);   // CHAT-LANG: no channel yet
+    if ((tabId === 'trade' || tabId === 'lfg') && !chatLog.tab(tabId)?.room) return why(optWhy(tabId) ?? optWaitText(tabId));   // CHAT-TRADE: not joined, an older relay, or the channel not open yet
     // EMOTE1: an action only down a session whose relay carries one - an older one would say the words bare
     const s = tabId === 'local' ? online : tabId === 'party' || tabId === 'guild' ? socialLink() : chatLinks.get(tabId);
     if (me && s?.status === 'open' && !s.emoteOk) return why(EMOTE_OLD_RELAY_TEXT);
@@ -28854,6 +28883,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if ((tabId === 'party' || tabId === 'region') && chanOld()) return why(CHAN_OLD_RELAY_TEXT);
     if (tabId === 'guild' && guildOld()) return why(GUILD_OLD_RELAY_TEXT);   // GUILD1c
     if (tabId === 'lang' && !chatLog.tab('lang')?.room) return why(langOld() ? LANG_OLD_RELAY_TEXT : NO_LANG_TEXT);   // CHAT-LANG
+    if ((tabId === 'trade' || tabId === 'lfg') && !chatLog.tab(tabId)?.room) return why(optWhy(tabId) ?? optWaitText(tabId));   // CHAT-TRADE
     const s = tabId === 'local' ? online : tabId === 'party' || tabId === 'guild' ? socialLink() : chatLinks.get(tabId);
     if (s?.status === 'open' && !s.rollOk) return why(ROLL_OLD_RELAY_TEXT);
     if (tabId === 'party' && !social?.party) return why(NO_PARTY_TEXT);
@@ -28896,6 +28926,38 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     chatLog.setRoom('lang', room, CHAT_LANGS[code]);
     link.join(room);
     chatLog.push('lang', { text: langJoinedText(CHAT_LANGS[code]), system: true });
+  };
+  /** CHAT-TRADE (2026-10-14, Mac: "New channels: Trading, LFG" - "without introducing clutter"): THE TRADE AND LFG TABS
+   *  FOLLOW THE PLAYER'S CHOICE - the Language tab's law twice over: on the bar while joined (`chatTrade`, `chatLfg`; /join,
+   *  /leave, the Settings' Chat card), each link in its channel once the World link's welcome says the relay opens them
+   *  (an older one refuses the key), out of it when the choice is taken back. A player who never joins holds no socket
+   *  for either and sees no tab. The join's line is the command's (a page load back into a channel says nothing). */
+  const chatOptFrame = () => {
+    if (seatOut()) return;   // ONE-SEAT: a tab out of the seat joins no channel
+    for (const id in OPT_CHANNELS) {   // AUDIT CHAT-TRADE A6: a frame's walk allocates nothing
+      const c = OPT_CHANNELS[id], link = chatLinks?.get(id);
+      if (!link) continue;
+      const joined = optJoined(id);
+      chatLog.setShown(id, joined);
+      const room = joined ? c.room : null;
+      if (room === chatLog.tab(id).room) continue;
+      if (!room) { chatLog.setRoom(id, null, null); link.leave(); continue; }
+      if (!chatLinks.get('world')?.tradeChanOk) continue;
+      chatLog.setRoom(id, room, c.name);
+      link.join(room);
+    }
+  };
+  /** CHAT-TRADE: A CHANNEL JOINED OR LEFT - the one door, for `/join` and `/leave`, a line said to a channel not joined
+   *  (`say`: its line waits in the field) and the chat's channel picker (ui/chatPanel.js `channels`). The choice is kept
+   *  (`chatTrade`, `chatLfg`) and the frame moves the tab at once; a tab joined comes to the front with its line, and a
+   *  tab left goes from the bar with the chat's front tab saying so. */
+  const optSet = (id, on, { say = false } = {}) => {
+    const c = OPT_CHANNELS[id];
+    if (!c || !chatLog) return;
+    setPref(c.pref, !!on);
+    chatOptFrame();
+    if (on) { chatLog.select(id); chatLog.push(id, { text: tradeChanOld() ? tradeChanOldText() : say ? optJoinedSayText(id) : optJoinedText(id), system: true }); }
+    else chatLog.push(chatLog.active, { text: optLeftText(id), system: true });
   };
   /** PING1 (2026-10-11, the players: "A unique color or alert for @name pings"): the log marks a line that names me
    *  (net/chat.js mentions - my name the presence session's); the alert is the enchanter's chime, once for a burst. */
@@ -28940,6 +29002,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     chatRegionFrame(performance.now());   // CHAT-CHAN: before the rejoin - a region crossed moves the link, a rejoin takes it back to where it is
     travellerFrame(performance.now());   // TV3: and my mark in it, when due
     chatLangFrame();   // CHAT-LANG: and the language channel chosen, or left - before the rejoin too
+    chatOptFrame();   // CHAT-TRADE: and the Trade and LFG channels joined, or left - before the rejoin too
     chatPingFrame(performance.now());   // PING1: a line naming me, chimed
     for (const [tabId, link] of chatLinks) {
       const room = chatLog.tab(tabId).room;   // CHAT-CHAN: a tab whose channel is not known yet (the Region tab, before its first region) has nothing to rejoin

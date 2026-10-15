@@ -112,6 +112,9 @@ export const DF = Object.freeze({
  *  its glass cut out between its leads, uploaded a cut-out, so whatever stands behind it is seen through it: the
  *  caravan's (world/wagonArt.js, laid into its walls), the galleon's stern gallery, the carrack's transom. */
 export const SEE_THROUGH_WINDOW = Object.freeze({ from: DF.window, crop: Object.freeze([0, 0, 37, 57]), mirror: true, glass: true });
+/** The same window LIT (Mac, of the ships: "See-through by day, lit at night"): framed whole as SEE_THROUGH_WINDOW is, its
+ *  glass whole - worn at night in its place, its panes glowing (`paneGlow`, the stand-ins' `glowRecs`). */
+export const LIT_WINDOW = Object.freeze({ from: DF.window, crop: Object.freeze([0, 0, 37, 57]), mirror: true });
 
 /** A picture made opaque - a model's face, never a cutout. Returns a new picture. */
 export const opaque = (/** @type {{width:number,height:number,data:Uint8Array}} */ pic) => {
@@ -123,6 +126,8 @@ export const opaque = (/** @type {{width:number,height:number,data:Uint8Array}} 
 /** Whether a texel of a classic window is its pane - its glass or its leading: Daggerfall's panes are cool greys and
  *  blues, its frames and walls warm - a texel no redder than it is blue, and not black. */
 export const isPane = (r, g, b) => b >= r && r + g + b > 60;
+/** The warm light lit glass gives off at night (the ships' backlit windows - the painted panes' glow, kept). */
+export const PANE_GLOW = Object.freeze([255, 186, 96]);
 
 // ── COMPOSED pictures: a face that holds a window or a door where the model's own stands (the caravan's sides and
 // ends - world/wagonArt.js) is one Daggerfall record laid whole and another laid over it, nothing painted ──
@@ -165,6 +170,16 @@ export function mirrored(/** @type {{width:number,height:number,data:Uint8Array}
 export const LEAD_LIGHT = 200;
 /** Whether a texel of a classic window is glass to be seen through: a pane, darker than its leading. */
 export const isGlass = (r, g, b) => isPane(r, g, b) && r + g + b < LEAD_LIGHT;
+/** A LIT window's night glow (renderer.uploadEmissionTexture): its glass PANE_GLOW (`isGlass` - the leads stand dark
+ *  against it, as a lit leaded window's do), everything else black, every texel whole. */
+export function paneGlow(/** @type {{width:number,height:number,data:Uint8Array}} */ pic) {
+  const data = new Uint8Array(pic.data.length);
+  for (let i = 0; i < data.length; i += 4) {
+    if (isGlass(pic.data[i], pic.data[i + 1], pic.data[i + 2])) { data[i] = PANE_GLOW[0]; data[i + 1] = PANE_GLOW[1]; data[i + 2] = PANE_GLOW[2]; }
+    data[i + 3] = 255;
+  }
+  return { width: pic.width, height: pic.height, data };
+}
 /** A window picture with its glass a hole (alpha 0 - uploaded as a cut-out, the eye sees through it). Returns a new one. */
 export function cutGlass(/** @type {{width:number,height:number,data:Uint8Array}} */ pic) {
   const data = pic.data.slice();
@@ -253,16 +268,28 @@ export const asPortRows = (/** @type {{width:number,height:number,data:Uint8Arra
 /**
  * A model's pictures as STAND-INS on the texture door (systems/textureReplacement.js addVendorTextures): each record of
  * `archive` built from the Daggerfall record `sources` names for it, the first time the archive is asked for; `cut`
- * answers whether a record holds glass to see through (hasGlass - its host uploads it a cut-out). A loose pack's
+ * answers whether a record holds glass to see through (hasGlass - its host uploads it a cut-out); a record in `glowRecs`
+ * (a LIT window) keeps its night glow (`glow(record)`, cut as it is built - null until then). A loose pack's
  * `<archive>_<record>-0.png` still overrides a record, as it overrides any.
- * @param {{ archive: number, name: string, sources: Readonly<Record<number, any>> }} o
+ * @param {{ archive: number, name: string, sources: Readonly<Record<number, any>>, glowRecs?: readonly number[] }} o
  */
-export function classicStandIns({ archive, name, sources }) {
-  const entries = Object.entries(sources).map(([rec, from]) => ({
-    archive, record: Number(rec), frame: 0, standIn: true, fileName: `${name}-${archive}_${rec}`,
-    build: async (/** @type {any} */ ctx) => classicPicture(from, ctx.classicRgba),
-  }));
-  return { entries, cut: (/** @type {number} */ record) => hasGlass(sources[record]) };
+export function classicStandIns({ archive, name, sources, glowRecs = [] }) {
+  const glows = new Map();
+  const entries = Object.entries(sources).map(([rec, from]) => {
+    const record = Number(rec);
+    return {
+      archive, record, frame: 0, standIn: true, fileName: `${name}-${archive}_${rec}`,
+      build: async (/** @type {any} */ ctx) => {
+        const pic = await classicPicture(from, ctx.classicRgba);
+        if (glowRecs.includes(record)) glows.set(record, paneGlow(pic));
+        return pic;
+      },
+    };
+  });
+  return {
+    entries, cut: (/** @type {number} */ record) => hasGlass(sources[record]),
+    glow: (/** @type {number} */ record) => glows.get(record) ?? null, reset: () => glows.clear(),
+  };
 }
 
 /**

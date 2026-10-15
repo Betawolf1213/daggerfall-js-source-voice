@@ -17,10 +17,10 @@ import { fileURLToPath } from 'node:url';
 
 import { createSeaShip, stepCaptain, windShare, WIND_RATED, CHASE_MARGIN, __boardCourse } from '../src/systems/naval/navalAI.js';
 import { HULL, hullBuild, classById } from '../src/systems/naval/navalShips.js';
-import { createComeSailAwayPool } from '../src/scenes/comeSailAwayPool.js';
+import { createComeSailAwayPool, NIGHT_REMAP } from '../src/scenes/comeSailAwayPool.js';
 import { Boat } from '../src/systems/comeSailAwayBoat.js';
-import { GALLEON_ARCHIVE, TEX, BANDS, _resetGalleonArt } from '../src/world/galleonArt.js';
-import { isVendorArchive, vendorRecordCount, clearVendorTextures, setTextureDeriveContext } from '../src/systems/textureReplacement.js';
+import { GALLEON_ARCHIVE, TEX, BANDS, GALLEON_NIGHT, _resetGalleonArt } from '../src/world/galleonArt.js';
+import { isVendorArchive, vendorRecordCount, clearVendorTextures, setTextureDeriveContext, preloadTextureArchive } from '../src/systems/textureReplacement.js';
 import { fakeClassicRgba } from './classicArtFake.mjs';
 import { findHarbour, createWaterGrid, stepErrand, STALL_S, DETOUR_M, ARRIVE_EASE_M, ARRIVE_SAILS } from '../src/systems/naval/shipLife.js';
 
@@ -117,21 +117,22 @@ test('AUDIT GALLEON T4(c): a boarding\'s last leg skips the lookout (`berthing`)
   assert.equal(__boardCourse(pirate({ pos: [600, 0, 0] }), boat(), WIND, open).berthing, false, 'beyond her lookout');
 });
 
-test('AUDIT GALLEON T4(b): the pool puts every picture of hers on the texture door as it loads her model - stand-ins of GALLEON_ARCHIVE before any mesh of hers asks (without them TEXTURE.38131 would not load and her every face drew nothing) - and her meshes made, uploads each stern-gallery slice a cut-out - its glass seen through (DF-ART, Mac: "windows should always be see through") - and nothing else of hers, and nothing of hers glows', async () => {
+test('AUDIT GALLEON T4(b): the pool puts every picture of hers on the texture door as it loads her model - stand-ins of GALLEON_ARCHIVE before any mesh of hers asks (without them TEXTURE.38131 would not load and her every face drew nothing) - and her meshes made, uploads each stern-gallery slice a cut-out - its glass seen through (DF-ART, Mac: "windows should always be see through") - and nothing else of hers; and with each its NIGHT TWIN, whole, its glow its emission, the one thing of hers that glows - drawn in its slice\'s place while the lanterns are lit and never by day (Mac: "See-through by day, lit at night"), one remap night after night, a host\'s own remap kept under it (mutants: the twin unglowing, the night remap dropped, worn by day)', async () => {
   const fileFetch = async (url) => {
     const bytes = readFileSync(fileURLToPath(url));
     return { ok: true, json: async () => JSON.parse(bytes.toString('utf8')), arrayBuffer: async () => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.length) };
   };
-  const glow = [];
+  const glow = [], draws = [];
   const renderer = {
     createMesh: (model) => ({ model, buffers: [{}, {}], bounds: [0, 0, 0, 0], subMeshes: model.subMeshes.map((x) => ({ ...x, _bounds: [0, 0, 0, 0] })) }),
-    drawMesh() {}, updateMeshVertices() {}, createBillboardBatch: (archive, record, size, centers, opts) => ({ archive, record, size, centers, opts }),
+    drawMesh: (gpu, m, remap) => draws.push(remap), updateMeshVertices() {}, createBillboardBatch: (archive, record, size, centers, opts) => ({ archive, record, size, centers, opts }),
     destroyBillboardBatch() {}, destroyMesh() {},
     uploadEmissionTexture: (archive, record, color32, opts) => glow.push({ archive, record, w: color32?.width, h: color32?.height, opts }),
   };
   const texture = () => ({ recordCount: 100, getSize: () => ({ width: 40, height: 64 }), getScale: () => ({ width: 0, height: 0 }) });
   const uploads = [];
-  const pipeline = { getTexture: async () => texture(), uploadRecord: (archive, record, opts) => uploads.push({ archive, record, opts }), getGpuMesh: async (id) => ({ classic: id }) };
+  // the real pipeline's vendor arm (scenes/dataPipeline.js getTexture): a stand-in archive's pictures built at its first ask
+  const pipeline = { getTexture: async (a) => { if (isVendorArchive(a)) await preloadTextureArchive(a); return texture(); }, uploadRecord: (archive, record, opts) => uploads.push({ archive, record, opts }), getGpuMesh: async (id) => ({ classic: id }) };
   // AUDIT GN2-TS10: as a process that never loaded her stands - a galleon pool loaded earlier in the process (any pool
   // test before this one) had put her on the door and spent the once of her registration
   clearVendorTextures();
@@ -141,7 +142,7 @@ test('AUDIT GALLEON T4(b): the pool puts every picture of hers on the texture do
   const pool = createComeSailAwayPool({ renderer, pipeline, fetchFn: fileFetch, log: { warn() {} } });
   assert.equal(await pool.preload(), true);
   assert.equal(isVendorArchive(GALLEON_ARCHIVE), true, 'her pictures stand in for GALLEON_ARCHIVE');
-  assert.equal(vendorRecordCount(GALLEON_ARCHIVE), Object.keys(TEX).length, 'every picture of hers');
+  assert.equal(vendorRecordCount(GALLEON_ARCHIVE), Math.max(...Object.values(GALLEON_NIGHT)) + 1, 'every picture of hers, her night twins the last');
   pool.spawnNow(new Boat(HULL.SmallShip, 0), { position: [0, 0, 0], rotation: [0, 0, 0, 1] });
   const hers = () => uploads.filter((u) => u.archive === GALLEON_ARCHIVE);
   for (let i = 0; i < 100 && !BANDS.sternWindows.recs.every((r) => hers().some((u) => u.record === r)); i++) { pool.draw(); await new Promise((r) => setTimeout(r, 10)); }
@@ -149,5 +150,21 @@ test('AUDIT GALLEON T4(b): the pool puts every picture of hers on the texture do
   const cut = [...new Set(hers().filter((u) => u.opts?.cutout).map((u) => u.record))].sort((x, y) => x - y);
   assert.deepEqual(cut, [...BANDS.sternWindows.recs].sort((x, y) => x - y), 'each slice of her stern windows a cut-out, nothing else of hers');
   assert.ok(hers().every((u) => u.opts?.opaque === true), 'every picture of hers a model\'s');
-  assert.deepEqual(glow, [], 'nothing of hers glows');
+  const twins = Object.values(GALLEON_NIGHT).sort((x, y) => x - y);
+  assert.deepEqual([...new Set(hers().filter((u) => twins.includes(u.record)).map((u) => u.record))].sort((x, y) => x - y), twins, 'each night twin uploaded with her');
+  assert.ok(hers().filter((u) => twins.includes(u.record)).every((u) => !u.opts.cutout), 'her night twins whole');
+  assert.deepEqual([...new Set(glow.map((g) => `${g.archive}_${g.record}`))].sort(), twins.map((n) => `${GALLEON_ARCHIVE}_${n}`).sort(), 'her night twins glow, nothing else of hers');
+  assert.ok(glow.every((g) => g.w > 0 && g.h > 0), 'each glow a picture');
+  // drawn: by day as she is, at night through her twins
+  const remapOf = (world, host = null) => { pool.frame(0, world); draws.length = 0; pool.draw(renderer, host); assert.ok(draws.length > 0, 'drawn'); return draws; };
+  assert.ok(remapOf({ cityLightsOn: false }).every((m) => m === null), 'by day: her glass open, no remap');
+  const night = remapOf({ cityLightsOn: true });
+  assert.ok(night.every((m) => m === NIGHT_REMAP), 'at night: one remap');
+  for (const [r, n] of Object.entries(GALLEON_NIGHT)) assert.equal(NIGHT_REMAP.get(`${GALLEON_ARCHIVE}_${r}`), `${GALLEON_ARCHIVE}_${n}`, `slice ${r} drawn as its twin ${n}`);
+  assert.equal(NIGHT_REMAP.size, 3, 'the galleon\'s two slices and the carrack\'s transom, nothing else');
+  const host = new Map([['1_2', '3_4']]);
+  const merged = remapOf({ cityLightsOn: true }, host)[0];
+  assert.ok(merged.get('1_2') === '3_4' && merged.get(`${GALLEON_ARCHIVE}_${TEX.sternWindows0}`) === `${GALLEON_ARCHIVE}_${GALLEON_NIGHT[TEX.sternWindows0]}`, 'a host\'s remap kept, her twins with it');
+  assert.equal(remapOf({ cityLightsOn: true }, host)[0], merged, 'the same remap night after night');
+  assert.ok(remapOf({ cityLightsOn: false }, host).every((m) => m === host), 'by day the host\'s own');
 });
