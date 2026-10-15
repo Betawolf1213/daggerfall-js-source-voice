@@ -20,7 +20,7 @@ import {
 import { mat4FromQuatPosScale } from '../src/world/quat.js';
 const trsQuat = (t, q, s) => mat4FromQuatPosScale(q, t, s);
 import { createPoiFeed, POI_FEED_POLL_MS, POI_FEED_CACHE_KEY } from '../src/poi/poiFeed.js';
-import { createPoiHost, sameBuild, POI_RETRY_MS } from '../src/scenes/poiHost.js';
+import { createPoiHost, sameBuild, POI_RETRY_MS, rayBox, rayTriangles } from '../src/scenes/poiHost.js';
 import { encodePoiMesh } from '../src/poi/poiMesh.js';
 import { DEFAULT_MATERIAL } from '../src/poi/poiLaw.js';
 
@@ -283,7 +283,7 @@ function fakeCollider() {
   return c;
 }
 
-async function hostOver(entries, { ground = 50, feetAt = null } = {}) {
+async function hostOver(entries, { ground = 50, feetAt = null, collideDrafts = undefined } = {}) {
   const meshBytes = encodePoiMesh(quad());
   const meshSha = await sha256(meshBytes);
   const assets = new Map([[meshSha, meshBytes]]);
@@ -303,6 +303,7 @@ async function hostOver(entries, { ground = 50, feetAt = null } = {}) {
     renderer, feed, decodeImage: async () => PIC,
     pixels: () => built, translation: (px, py, out = [0, 0, 0]) => { out[0] = (px - 10) * 819.2 + 1000; out[1] = 3; out[2] = -(py - 20) * 819.2 + 2000; return out; },
     groundAt: () => ground, collider: () => collider, riding: (px, py) => `ride:${px},${py}`, feet: () => feet, now: () => t, log: null,
+    ...(collideDrafts ? { collideDrafts } : {}),
   });
   const settle = async () => { host.frame(); for (let i = 0; i < 20; i++) await new Promise((res) => setImmediate(res)); host.frame(); };
   return { host, renderer, collider, feed, meshSha, assets, settle, setBuilt: (b) => { built = b; }, setFeet: (f) => { feet = f; }, setNow: (v) => { t = v; } };
@@ -382,4 +383,42 @@ test('POI-2 RECORDS: the POI archive owns its number - no other picture archive 
   walk('src');
   assert.deepEqual(owners, ['src/poi/poiRuntime.js']);
   assert.match(src('src/scenes/poiHost.js'), /scenes\/world\.js - WIRED[\s\S]*scenes\/worldModes\.js - its interiors stand no street[\s\S]*scenes\/exterior\.js - FLAGGED[\s\S]*scenes\/dungeonContext\.js - stands no street/);
+});
+
+test('POI-3 THE HOST\'S PICK: the part a ray meets, by its own triangles through its drawn matrix - the nearest of two, from either side, none past its reach or beside it; the box asked first; a draft\'s colliders held while the editor drags and stood once it ends (mutants: the nearest not kept; the matrix uninverted; the drag\'s hold unread)', async () => {
+  let dragging = false;
+  const H = await hostOver((sha) => [
+    { id: 'poi-000000000001', rev: 1, doc: doc('poi-000000000001', { mesh: sha }) },
+    { id: 'poi-000000000002', rev: 0, draft: true, doc: { ...doc('poi-000000000002', { mesh: sha }), place: { ...doc('x').place, z: 110 } } },
+  ], { collideDrafts: () => !dragging });
+  await H.settle();
+  // the quad: x and y 0 - 1 in its frame, at the scene's (1100, 50, 2100) and the draft's ten metres north of it
+  assert.deepEqual(H.host.pick([1100.5, 50.5, 2090], [0, 0, 1]), { id: 'poi-000000000001', key: 'body', dist: 10, draft: false });
+  assert.deepEqual(H.host.pick([1100.5, 50.5, 2120], [0, 0, -1]), { id: 'poi-000000000002', key: 'body', dist: 10, draft: true }, 'from the north, the draft is the nearer');
+  assert.equal(H.host.pick([1100.5, 55, 2090], [0, 0, 1]), null, 'above the quad: nothing');
+  assert.equal(H.host.pick([1100.5, 50.5, 2090], [0, 0, 1], 5), null, 'past the reach');
+  assert.equal(H.host.pick([1102.5, 50.5, 2090], [0, 0, 1]), null, 'beside it');
+  // a part whose BOX is met before the nearest hit but whose triangle lies past it: never taken for the nearer
+  const turned45 = [0, Math.sin(Math.PI / 8), 0, Math.cos(Math.PI / 8)];
+  const H2 = await hostOver((sha) => [
+    { id: 'poi-000000000001', rev: 1, doc: doc('poi-000000000001', { mesh: sha }) },
+    { id: 'poi-000000000003', rev: 1, doc: { ...doc('poi-000000000003', { mesh: sha }), place: { ...doc('x').place, z: 100.3, r: turned45 } } },
+  ]);
+  await H2.settle();
+  const near2 = H2.host.pick([1100.5, 50.5, 2120], [0, 0, -1]);
+  assert.equal(near2.id, 'poi-000000000001', 'the flat quad, twenty metres off, before the turned one\'s 20.2');
+  // the pure halves
+  assert.equal(rayBox([0, 0, -5], [0, 0, 1], [-1, -1, -1, 1, 1, 1], 100), true);
+  assert.equal(rayBox([0, 3, -5], [0, 0, 1], [-1, -1, -1, 1, 1, 1], 100), false);
+  assert.equal(rayTriangles([0.25, 0.25, -2], [0, 0, 1], new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0]), new Uint16Array([0, 1, 2]), 100), 2);
+  // a draft's colliders: stood while nothing is dragged, taken down by a drag's move and held until it ends
+  assert.ok(H.collider.buckets.has('poi:poi-000000000002:0'), 'stood');
+  dragging = true;
+  H.feed.set([H.feed.all()[0], { ...H.feed.all()[1], doc: { ...H.feed.all()[1].doc, place: { ...H.feed.all()[1].doc.place, x: 120 } } }]);
+  H.host.frame();
+  assert.ok(!H.collider.buckets.has('poi:poi-000000000002:0'), 'moved under a drag: no collider filed');
+  assert.ok(H.collider.buckets.has('poi:poi-000000000001:0'), 'the live POI keeps its own');
+  dragging = false;
+  H.host.frame();
+  assert.ok(H.collider.buckets.has('poi:poi-000000000002:0'), 'the drag over: stood where it was left');
 });

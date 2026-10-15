@@ -39,6 +39,7 @@ import {
 import { mat4FromQuatPosScale } from '../world/quat.js';
 import { samplerKey } from '../render/meshAlpha.js';
 import { drawSeen } from './decorRoom.js';
+import { invert4 } from '../player/tapRay.js';
 
 /** The ground under a standing POI is read again every this many frames. */
 export const POI_GROUND_EVERY = 30;
@@ -50,6 +51,45 @@ const DECODED_KEEP = 8;
 const FLICKER_HZ = 12, FLICKER_DEPTH = 0.25;
 
 const ID = new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+
+/** Does a ray (o + t d) meet a box [minX, minY, minZ, maxX, maxY, maxZ] before `max`? The slab test. */
+export function rayBox(o, d, b, max) {
+  let lo = 0, hi = max;
+  for (let a = 0; a < 3; a++) {
+    if (Math.abs(d[a]) < 1e-12) { if (o[a] < b[a] || o[a] > b[a + 3]) return false; continue; }
+    let t0 = (b[a] - o[a]) / d[a], t1 = (b[a + 3] - o[a]) / d[a];
+    if (t0 > t1) { const k = t0; t0 = t1; t1 = k; }
+    lo = Math.max(lo, t0); hi = Math.min(hi, t1);
+    if (lo > hi) return false;
+  }
+  return true;
+}
+/** The nearest of a mesh's triangles a ray meets (both faces) before `max` - its distance along `d`, or null.
+ *  Moller-Trumbore. Pure. */
+export function rayTriangles(o, d, pos, idx, max) {
+  let best = null;
+  for (let i = 0; i + 2 < idx.length; i += 3) {
+    const a = idx[i] * 3, b = idx[i + 1] * 3, c = idx[i + 2] * 3;
+    const e1x = pos[b] - pos[a], e1y = pos[b + 1] - pos[a + 1], e1z = pos[b + 2] - pos[a + 2];
+    const e2x = pos[c] - pos[a], e2y = pos[c + 1] - pos[a + 1], e2z = pos[c + 2] - pos[a + 2];
+    const px = d[1] * e2z - d[2] * e2y, py = d[2] * e2x - d[0] * e2z, pz = d[0] * e2y - d[1] * e2x;
+    const det = e1x * px + e1y * py + e1z * pz;
+    if (Math.abs(det) < 1e-12) continue;
+    const inv = 1 / det;
+    const tx = o[0] - pos[a], ty = o[1] - pos[a + 1], tz = o[2] - pos[a + 2];
+    const u = (tx * px + ty * py + tz * pz) * inv;
+    if (u < 0 || u > 1) continue;
+    const qx = ty * e1z - tz * e1y, qy = tz * e1x - tx * e1z, qz = tx * e1y - ty * e1x;
+    const v = (d[0] * qx + d[1] * qy + d[2] * qz) * inv;
+    if (v < 0 || u + v > 1) continue;
+    const t = (e2x * qx + e2y * qy + e2z * qz) * inv;
+    if (t > 1e-6 && t < (best ?? max)) best = t;
+  }
+  return best;
+}
+const xformPoint = (m, p) => [m[0] * p[0] + m[4] * p[1] + m[8] * p[2] + m[12], m[1] * p[0] + m[5] * p[1] + m[9] * p[2] + m[13], m[2] * p[0] + m[6] * p[1] + m[10] * p[2] + m[14]];
+const xformDir = (m, p) => [m[0] * p[0] + m[4] * p[1] + m[8] * p[2], m[1] * p[0] + m[5] * p[1] + m[9] * p[2], m[2] * p[0] + m[6] * p[1] + m[10] * p[2]];
+const _inv = new Float32Array(16);
 
 /** Do two documents stand the same build - the same parts' meshes, materials, colliders and shadows, in the same order -
  *  so that one is the other moved (its place, its parts' transforms, its lights, its name and marker)? Pure. */
@@ -66,13 +106,15 @@ export function sameBuild(a, b) {
  *   translation: (px: number, py: number, out?: number[]) => number[],
  *   groundAt: (x: number, z: number) => number,
  *   collider?: () => any, riding?: (px: number, py: number) => any,
- *   feet?: () => (number[] | null), auth?: () => (string | null),
+ *   feet?: () => (number[] | null), auth?: () => (string | null), collideDrafts?: () => boolean,
  *   now?: () => number, log?: any,
  * }} deps `pixels` the streamer's built pixels; `translation` its pixelTranslation; `riding` a pixel's floating
- *   translation provider for the collider; `auth` a builder's bearer (the editor's drafts' assets)
+ *   translation provider for the collider; `auth` a builder's bearer (the editor's drafts' assets); `collideDrafts`
+ *   false while the editor drags (a draft moved every frame would file its collider every frame - it is stood once the
+ *   drag ends)
  */
 export function createPoiHost({
-  renderer, feed, decodeImage, pixels, translation, groundAt, collider = () => null, riding = () => null,
+  renderer, feed, decodeImage, pixels, translation, groundAt, collider = () => null, riding = () => null, collideDrafts = () => true,
   feet = () => null, auth = () => null, now = () => Date.now(), log = console,
 }) {
   /** id -> the POI standing (or loading) */
@@ -226,7 +268,7 @@ export function createPoiHost({
       p.scene[12] += t[0]; p.scene[13] += t[1]; p.scene[14] += t[2];
       const lb = p.localBox;
       p.box = [lb[0] + t[0], lb[1] + t[1], lb[2] + t[2], lb[3] + t[0], lb[4] + t[1], lb[5] + t[2]];
-      if (p.collide && !p.stood && col?.addMesh && !inside(p.box, f)) {
+      if (p.collide && !p.stood && col?.addMesh && !inside(p.box, f) && (!s.draft || collideDrafts())) {
         col.addMesh(p.bucket, p.positions, p.indices, p.local, riding(s.px, s.py));
         p.stood = true;
       }
@@ -304,6 +346,26 @@ export function createPoiHost({
     },
     /** What stands, for the editor's outliner and a test: `[{ id, rev, status, visible, parts }]`. */
     standing() { return [...standing.values()].map((s) => ({ id: s.id, rev: s.rev, status: s.status, visible: !!s.visible, draft: s.draft, parts: s.parts.length })); },
+    /**
+     * POI-3: THE PART UNDER A RAY - the nearest standing part whose triangles the ray (scene frame: `o` the eye, `d` a
+     * direction) meets within `max` metres, its box asked first: `{ id, key, dist, draft }`, or null. Exact, over the
+     * part's own triangles through the inverse of its drawn matrix (a model with no collider is picked as one with).
+     */
+    pick(o, d, max = 6000) {
+      let best = null;
+      for (const s of standing.values()) {
+        if (s.status !== 'ready' || !s.visible) continue;
+        for (const p of s.parts) {
+          if (!p.box || !rayBox(o, d, p.box, best ? best.dist : max)) continue;
+          const inv = invert4(p.scene, _inv);
+          if (!inv) continue;
+          const lo = xformPoint(inv, o), ld = xformDir(inv, d);
+          const t = rayTriangles(lo, ld, p.positions, p.indices, best ? best.dist : max);
+          if (t !== null) best = { id: s.id, key: p.key, dist: t, draft: s.draft };   // nearer than any before: its reach was theirs
+        }
+      }
+      return best;
+    },
     /** A part's drawn matrix and box (the editor's gizmo and pick). */
     partOf(id, key) { const s = standing.get(id); const p = s?.parts.find((x) => x.key === key); return p ? { scene: p.scene, box: p.box, local: p.local } : null; },
     /** Everything down - a re-anchor, a load, a change of mode; the next frame stands what is still wanted. */

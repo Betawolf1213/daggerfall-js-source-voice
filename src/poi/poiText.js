@@ -1,0 +1,156 @@
+// @ts-check
+// ═══════════════════════════════════════════════════════════════════
+// POI-3 (2026-10-14) - WHAT THE EDITOR SAYS, IN THE BUILDER'S LANGUAGE.
+//
+// The law (poi/poiLaw.js), the glTF reader (poi/gltfImport.js), the mesh (poi/poiMesh.js) and the picture header
+// (poi/poiImage.js) speak in CODES - a stable word and the numbers it turns on - so the service, the game and the
+// editor share one law and no reader carries English (L10N4). Here each code is a sentence, through the text core
+// (systems/textManager.js t: the catalog's row in the player's language, the English as written here else), and a
+// problem's PATH (`parts[2].materials[0].alpha`) is where to look, said as the builder sees it - the part by its name.
+// A code this table has not heard of is still said, as itself: never a blank line in a list of what is wrong.
+//
+// Not a DFU member. Ledger A (POI).
+// ═══════════════════════════════════════════════════════════════════
+
+import { t } from '../systems/textManager.js';   // L10N4: the words through the text core
+import { POI_MESH_LIMITS } from './poiMesh.js';
+import { POI_IMAGE_LIMITS } from './poiImage.js';
+
+/** @type {Record<string, (a: any) => string>} */
+const PROBLEM = {
+  'not-object': () => t('poi.problem.notObject', 'This is not a POI document.'),
+  'not-json': () => t('poi.problem.notJson', 'The document cannot be written out.'),
+  'too-large': (a) => t('poi.problem.tooLarge', 'The document is too large ({bytes, number} bytes; at most {max, number}).', a),
+  version: () => t('poi.problem.version', 'Made for another version of the editor.'),
+  id: () => t('poi.problem.id', 'Its id is malformed.'),
+  name: (a) => t('poi.problem.name', 'Give it a name of up to {max} characters.', a),
+  about: (a) => t('poi.problem.about', 'The description is too long (at most {max} characters).', a),
+  tags: (a) => t('poi.problem.tags', 'At most {max} tags.', a),
+  tag: (a) => t('poi.problem.tag', 'A tag is 1 to {max} characters.', a),
+  missing: () => t('poi.problem.missing', 'Its place on the map is missing.'),
+  px: () => t('poi.problem.px', 'It stands off the map, east or west.'),
+  py: () => t('poi.problem.py', 'It stands off the map, north or south.'),
+  'in-pixel': () => t('poi.problem.inPixel', 'Its spot is outside its map square.'),
+  height: (a) => t('poi.problem.height', 'It stands too high or too low (at most {max} m).', a),
+  ground: () => t('poi.problem.ground', 'Choose how it stands: on the ground, or at a fixed height.'),
+  quat: () => t('poi.problem.quat', 'Its rotation is not a valid turn.'),
+  size: (a) => t('poi.problem.size', 'Its size is between {min} and {max}.', a),
+  'parts-none': () => t('poi.problem.partsNone', 'Add at least one part.'),
+  'parts-many': (a) => t('poi.problem.partsMany', 'At most {max} parts.', a),
+  key: () => t('poi.problem.key', 'A part\'s key is malformed.'),
+  'key-twice': (a) => t('poi.problem.keyTwice', 'Two parts share the key {key}.', a),
+  'part-name': (a) => t('poi.problem.partName', 'A part\'s name is too long (at most {max} characters).', a),
+  'mesh-ref': () => t('poi.problem.meshRef', 'A part names no model.'),
+  offset: (a) => t('poi.problem.offset', 'It is too far from the POI\'s origin (at most {max} m).', a),
+  scale: (a) => t('poi.problem.scale', 'Each side\'s scale is between {min} and {max}.', a),
+  collide: () => t('poi.problem.collide', 'Choose whether it is solid.'),
+  bool: () => t('poi.problem.bool', 'A switch is neither on nor off.'),
+  materials: (a) => t('poi.problem.materials', 'A part has 1 to {max} materials.', a),
+  'texture-ref': () => t('poi.problem.textureRef', 'A material names a picture wrongly.'),
+  color4: () => t('poi.problem.color4', 'A colour is out of range.'),
+  color3: () => t('poi.problem.color3', 'A light\'s colour is out of range.'),
+  'emissive-color': (a) => t('poi.problem.emissiveColor', 'A glow\'s colour is between 0 and {max}.', a),
+  alpha: () => t('poi.problem.alpha', 'Choose opaque, cutout or see-through.'),
+  cutoff: () => t('poi.problem.cutoff', 'A cutout\'s threshold is between 0 and 1.'),
+  wrap: () => t('poi.problem.wrap', 'Choose repeat, clamp or mirror for each side of a picture.'),
+  filter: () => t('poi.problem.filter', 'Choose smooth or pixelated.'),
+  uv: () => t('poi.problem.uv', 'A picture\'s placement is out of range.'),
+  unknown: () => t('poi.problem.unknown', 'It holds a field the editor does not know.'),
+  lights: (a) => t('poi.problem.lights', 'At most {max} lights.', a),
+  radius: (a) => t('poi.problem.radius', 'A light reaches between {min} and {max} m.', a),
+  intensity: (a) => t('poi.problem.intensity', 'A light\'s strength is between 0 and {max}.', a),
+  label: (a) => t('poi.problem.label', 'The map label is too long (at most {max} characters).', a),
+  'not-uploaded': () => t('poi.problem.notUploaded', 'A model or picture it names has not been uploaded.'),
+  'not-a-mesh': () => t('poi.problem.notAMesh', 'It names a picture where a model belongs.'),
+  'not-a-texture': () => t('poi.problem.notATexture', 'It names a model where a picture belongs.'),
+  'material-count': (a) => t('poi.problem.materialCount', 'Its model has {want} materials; the part has {have}.', a),
+};
+
+/** @type {Record<string, (a: any) => string>} */
+const GLTF = {
+  'not-gltf': () => t('poi.gltf.notGltf', 'This is not a glTF 2.0 file.'),
+  'glb-chunk': () => t('poi.gltf.glbChunk', 'This .glb file is damaged: a part of it is missing or cut short.'),
+  'glb-no-json': () => t('poi.gltf.glbNoJson', 'This .glb file has no scene in it.'),
+  'glb-no-bin': () => t('poi.gltf.glbNoBin', 'This .glb file is missing its binary data.'),
+  'data-uri': () => t('poi.gltf.dataUri', 'A file embedded in this model cannot be read.'),
+  compressed: (a) => t('poi.gltf.compressed', 'This model is compressed ({ext}). Export it again with compression off.', a),
+  extension: (a) => t('poi.gltf.extension', 'This model needs {ext}, which the editor does not support.', a),
+  'file-missing': (a) => t('poi.gltf.fileMissing', 'This model needs the file {uri}. Choose it together with the .gltf.', a),
+  missing: (a) => t('poi.gltf.missing', 'This model refers to a {what} that is not there.', a),
+  'past-end': (a) => t('poi.gltf.pastEnd', 'This model\'s data is cut short: a {what} runs past its end.', a),
+  'node-cycle': () => t('poi.gltf.nodeCycle', 'This model\'s node tree loops back on itself.'),
+  'accessor-type': () => t('poi.gltf.accessorType', 'This model stores a mesh attribute in a form glTF does not allow.'),
+};
+
+/** @type {Record<string, (a: any) => string>} */
+const GLTF_WARN = {
+  'points-lines': () => t('poi.gltfWarn.pointsLines', 'Points and lines were left out: only triangles are imported.'),
+  'no-positions': () => t('poi.gltfWarn.noPositions', 'A mesh with no positions was left out.'),
+  'vertex-colours': () => t('poi.gltfWarn.vertexColours', 'Vertex colours were not imported: bake them into a texture.'),
+  maps: () => t('poi.gltfWarn.maps', 'Normal, occlusion and metal/roughness maps were left out: the game does not draw them.'),
+  skin: () => t('poi.gltfWarn.skin', 'A skinned model was imported in its saved pose.'),
+  animation: () => t('poi.gltfWarn.animation', 'Animations were not imported.'),
+  'camera-light': () => t('poi.gltfWarn.cameraLight', 'Cameras and lights in the file were left out: add lights in the editor.'),
+  'no-uvs': () => t('poi.gltfWarn.noUvs', 'A textured material\'s mesh has no UVs: unwrap it in the UV editor.'),
+  'emission-uv-set': () => t('poi.gltfWarn.emissionUvSet', 'A glow map uses a second UV set; it is drawn with the first.'),
+  'image-format': () => t('poi.gltfWarn.imageFormat', 'A picture that is not PNG, JPEG or WebP was left out.'),
+};
+
+/** @type {Record<string, (a: any) => string>} */
+const MESH = {
+  'too-many-vertices': (a) => t('poi.mesh.tooManyVertices', 'A part has too many vertices (at most {max, number}). Split it, or simplify it.', a),
+  'too-many-indices': (a) => t('poi.mesh.tooManyIndices', 'A part has too many triangles (at most {max, number}). Split it, or simplify it.', a),
+  'too-many-submeshes': (a) => t('poi.mesh.tooManySubmeshes', 'A part has too many materials (at most {max}).', a),
+  'too-large': (a) => t('poi.mesh.tooLarge', 'A part is too large (at most {max} m from its origin).', a),
+  'too-many-bytes': () => t('poi.mesh.tooManyBytes', 'A part\'s model is too large a file.'),
+};
+
+/** @type {Record<string, (a: any) => string>} */
+const IMAGE = {
+  'not-an-image': () => t('poi.image.notAnImage', 'Not a PNG, JPEG or WebP picture.'),
+  size: () => t('poi.image.size', 'The picture has no width or height.'),
+  'too-large': (a) => t('poi.image.tooLarge', 'The picture is more than {max} pixels on a side.', a),
+  'too-many-bytes': () => t('poi.image.tooManyBytes', 'The picture is too large a file.'),
+  jpeg: () => t('poi.image.jpeg', 'The JPEG file is damaged.'),
+  webp: () => t('poi.image.webp', 'The WebP file is damaged.'),
+};
+
+const said = (table, fallback) => (code, args = {}) => {
+  const f = table[code];
+  return f ? f(args ?? {}) : fallback(code);
+};
+const unknownCode = (code) => t('poi.text.unknownCode', 'Something is wrong ({code}).', { code });
+
+/** A law problem's sentence. @param {{ code: string, [k: string]: any }} p */
+export const problemText = (p) => said(PROBLEM, unknownCode)(p.code, p);
+/** A glTF refusal's sentence (gltfImport.js GltfError's `code` and `args`). */
+export const gltfErrorText = said(GLTF, unknownCode);
+/** A glTF warning's sentence (bakeGltf's `warnings`). */
+export const gltfWarningText = said(GLTF_WARN, unknownCode);
+const MESH_MAX = { 'too-many-vertices': POI_MESH_LIMITS.vertices, 'too-many-indices': POI_MESH_LIMITS.indices / 3, 'too-many-submeshes': POI_MESH_LIMITS.submeshes, 'too-large': POI_MESH_LIMITS.extent };
+/** A mesh's refusal (poiMesh.js poiMeshError / decodePoiMesh's bare code): the limits by name, with their numbers;
+ *  every other a damaged model. @param {string} code */
+export const meshErrorText = (code) => said(MESH, () => t('poi.mesh.malformed', 'A part\'s model is malformed.'))(code, { max: MESH_MAX[code] });
+/** A picture's refusal (poiImage.js poiImageMetaOf's). @param {string} code */
+export const imageErrorText = (code) => said(IMAGE, unknownCode)(code, { max: POI_IMAGE_LIMITS.side });
+
+/**
+ * Where a problem is, as the builder sees it - "Part Roof · material 2", "Light 3" - or '' for the POI itself.
+ * @param {string} path @param {any} [doc] the document (a part is named by its name, else its key)
+ */
+export function problemWhere(path, doc = null) {
+  const bits = [];
+  const part = /^parts\[(\d+)\]/.exec(path);
+  if (part) {
+    const p = doc?.parts?.[Number(part[1])];
+    const name = (p?.name || p?.key) ?? null;
+    bits.push(name ? t('poi.where.partNamed', 'Part {name}', { name }) : t('poi.where.part', 'Part {n}', { n: Number(part[1]) + 1 }));
+    const mat = /\.materials\[(\d+)\]/.exec(path);
+    if (mat) bits.push(t('poi.where.material', 'material {n}', { n: Number(mat[1]) + 1 }));
+  }
+  const light = /^lights\[(\d+)\]/.exec(path);
+  if (light) bits.push(t('poi.where.light', 'Light {n}', { n: Number(light[1]) + 1 }));
+  const tag = /^tags\[(\d+)\]/.exec(path);
+  if (tag) bits.push(t('poi.where.tag', 'Tag {n}', { n: Number(tag[1]) + 1 }));
+  return bits.join(' · ');
+}

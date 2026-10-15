@@ -40,7 +40,7 @@ the glTF reader is the port's own and every model draws through `Renderer.create
 |---|---|---|
 | POI-1 | The format (document, mesh, texture header) and the store: roles, content-addressed uploads, drafts, submissions, the approver's word, retirement, rollback, the live feed | built |
 | POI-2 | The game: the feed read and kept, POIs streamed with the pixels they stand on in the exterior hosts, drawn, collided, lit, marked on the map; a new approval picked up without a reload | built |
-| POI-3 | The editor mode: the role gate, a free camera, the map to fly to, place / move / rotate / scale with gizmos and ground snap, an outliner and inspector, undo and redo, drafts saved and submitted | planned |
+| POI-3 | The editor mode: the role gate, a free camera, the map to fly to, place / move / rotate / scale with gizmos and ground snap, an outliner and inspector, undo and redo, drafts saved and submitted | the core built (POI-3a); the world's wiring and the panel next |
 | POI-4 | The glTF 2.0 / GLB importer: accessors (sparse too), the node tree baked, materials, embedded and side-by-side images, samplers, KHR_texture_transform; the frame turned to the game's; the asset library | the reader built; the library with POI-3 |
 | POI-5 | The material editor and the full UV editor: selection by vertex, edge, face and island; move, rotate, scale; seams; LSCM unwrap; island packing; projections; texel density | planned |
 | POI-6 | The approver's queue in the editor (before and after, at the place, with the law's report), history and rollback; export and import of a POI pack; a GLB back out for a round trip | planned |
@@ -146,6 +146,49 @@ dead. The account deploy's path filter carries the three shared law files. acct1
 Pinned by `test/poi2_runtime.test.js` (11) - the renderer on a recording GL, the shaders' text, the pictures, models
 and matrices, the feed and assets on a fake service, the host on a fake streamer, collider and renderer;
 `tools/mutants/poi2.json` 27, all dead.
+
+## POI-3a - the editor's core (2026-10-14)
+
+Pure where it can be, so the editor and the tests read it the same way:
+
+- **THE DOCUMENTS AND THEIR UNDO** (`src/poi/poiEdit.js` createPoiEdit): the working set - each POI being edited, beside
+  the document as last SAVED (unsaved is a comparison, never a flag). Every change is ONE step on one stack across the
+  set (the document before and after, and the selection each left); a change that changes nothing is no step. A drag
+  (`begin` / `preview` / `commit`) is one step however many frames it moved, each preview applied to the document as the
+  drag found it (absolute: no error gathered); `cancel` puts it back; an edit or an undo mid-drag ends it first. A
+  create undone is gone, a remove undone is back as it was saved; closing a POI takes its steps; `POI_UNDO_DEPTH` 200.
+  `overlay()` is the working set as the feed's overlay.
+- **THE TRANSFORMS**: a move in map metres, the place renormalised over a pixel's edge into the next pixel's frame (east
+  `px + 1`, north `py - 1`), the map's edge held; a turn about a world axis; a size held to the law's 0.01 - 100. A
+  part's move, turn and size carried into its POI's frame (under the place's turn and size). Unity's Euler angles both
+  ways (`eulerOfQuat`, `quatOfEuler`: Z, then X, then Y - Transform.eulerAngles, in [0, 360)). Numbers tidied (a tenth
+  of a millimetre; a quaternion to a millionth, `w >= 0`) so a review's before-and-after reads. A part's key the law's
+  spelling, unique in its document (`uniqueKey`).
+- **THE GIZMO** (`src/poi/poiGizmo.js`): move (an arrow an axis, a square a plane, the centre the screen's plane), turn
+  (a ring an axis, the outer ring the eye's), size (a box an axis, the centre all three), the same size on screen at any
+  distance (`gizmoSize`). An axis drag is read on the plane through the axis that faces the eye best; a turn is the
+  angle swept round the centre on the ring's plane (the grab point follows the cursor); a size the grab point's distance
+  now over at the grab. Snapped to a step (a quarter metre, fifteen degrees, a tenth). A handle that cannot be dragged
+  from the view - an arrow pointing at the eye, a square seen edge on - is `hidden`: neither drawn nor picked.
+- **THE WORDS** (`src/poi/poiText.js`): every code the law, the glTF reader, the mesh and the picture header say, as a
+  sentence through the text core, a problem's place said by its part's name; a code no table knows still said. In the
+  catalog's thirteen in-session languages.
+- **THE DOOR** (`src/poi/poiService.js`): the reads and acts through the account client's one door (`call`); the draft
+  and the asset as PUTs of their own (a body no JSON ladder takes), answered in the door's shape; an asset hashed and
+  put under its name.
+- **THE HOST'S PICK** (`src/scenes/poiHost.js` pick): the nearest part a ray meets, by its own triangles through the
+  inverse of its drawn matrix, its box asked first and each later part's reach the nearest so far. A draft's colliders
+  wait while the editor drags it (`collideDrafts`) - a draft moved every frame would file its collider every frame.
+- **THE LINES** (`src/render/poiGizmoPass.js`): the gizmo, a selection's boxes and the placing mark as screen-width
+  quads, feathered, a batch on top (untested) or in the world (tested), never writing depth, the state put back.
+- **THE EDITOR IN THE WORLD** (`src/scenes/poiEditorHost.js`, built and tested, wired with POI-3b): its own eye (the
+  right button held: look, WASD along the look, Q and E down and up, Shift and Ctrl, the wheel the speed; the middle
+  button pans; Alt orbits the selection; F frames it); a free cursor whose click is a pick - a handle first, then the part
+  under the ray (the first click on a POI takes the POI, the next its part), then nothing; Q W E R the tools, X the
+  space, Ctrl+Z / Ctrl+Y; placing a new POI or a library part where the click meets the ground.
+
+Pinned by `test/poi3_edit.test.js` (12) and `test/poi2_runtime.test.js`'s host pick; `tools/mutants/poi3.json` 31, all
+dead.
 
 ## POI-4 - the glTF 2.0 reader (2026-10-14)
 
