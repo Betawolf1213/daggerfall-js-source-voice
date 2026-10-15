@@ -169,7 +169,7 @@ export async function strikeMotherlode(ctx, player, env, body = {}) {
   // BAG1: a carrying client's ore lands in its bag or pack - the carried count, cut first to what it holds - as a vein's
   const carry = body?.carry === true;
   const heldNow = carry && heldOk(body?.held) ? body.held : null;
-  const T = 'prof_stores';
+  const T = carry ? 'prof_carried' : 'prof_stores';
   if (refused) return refused;
   const prior = await db.prepare('SELECT * FROM motherlode_strikes WHERE player = ?1 AND rid = ?2').bind(player.id, rid).first();
   if (prior) return strikeAnswer(ctx, player, env, prior, nowS, { repeat: true });   // before the switch: a strike made is a strike answered
