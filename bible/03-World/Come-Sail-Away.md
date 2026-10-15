@@ -1,5 +1,7 @@
 # Come Sail Away - Come Sail Away 2.1 (CSA-A to CSA-L, from 2026-09-27)
 
+> DF-ART (2026-10-14, `01-Overview/DF-Art.md`): the new galleon's, carrack's and large boat's pictures, painted here from noise, are Come Sail Away's own picks of Daggerfall's records now, read from the player's ARENA2 (`world/galleonArt.js` GALLEON_SOURCES and its two neighbours); their painted liveries gone, the stern windows Daggerfall's leaded window seen through (Mac: "windows should always be see through" - its glass cut, uploaded a cut-out; their night glow gone with the glass).
+
 RedRoryOTheGlen's **Come Sail Away 2.1** (Nexus 1131), ported 1:1 off the
 compiled assembly - Mac, 2026-09-25: "All mods attached are to be
 compatible and implemented 1:1." Provenance is

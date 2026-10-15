@@ -1,5 +1,7 @@
 # The three wagons (WAGONS1, 2026-10-09)
 
+> DF-ART (2026-10-14, `01-Overview/DF-Art.md`): the wagons' and the caravan's pictures, painted here from noise in WAGONS1-WAGONS3, are Daggerfall's own records now, read from the player's ARENA2 (`world/wagonArt.js` WAGON_SOURCES, LOOK_PICTURES); the caravan's walls a swatch with Daggerfall's leaded window and door laid in, the glass still cut so the room is seen through it; its painted livery gone.
+
 Mac, sending `Wagon_Cart_1.fbx`, `Wagon_1.fbx` and `Caravan_1-1.fbx`:
 "Here are 3 new models that will need to be textured 1. Is a replacement
 model for the current cart ingame 2. Theres an open wagon which I want to
