@@ -328,7 +328,7 @@ const asMoved = (text, live, handle) => {
 const count = (hay, needle) => hay.split(needle).length - 1;
 
 /** THE RECORDS MOVE WITH THE CODE: every mutant record (tools/mutants/*.json) and every doc anchor (bible/**, the
- *  `file.js:"quote"` CITE-ANCHOR form) that named moved text in the host is pointed at the module - verbatim where the
+ *  CITE-ANCHOR form - a file's name, a colon, the quoted line) that named moved text in the host is pointed at the module - verbatim where the
  *  text moved verbatim, through the handle where a live name was rewritten. What it cannot place once, it reports. */
 export function retargetRecords({ hostFile, toFile, handle = 'host', write = false, root = '.' }) {
   const host = readFileSync(`${root}/${hostFile}`, 'utf8'), mod = readFileSync(`${root}/${toFile}`, 'utf8');

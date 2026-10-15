@@ -144,6 +144,23 @@ for `src/scenes/travelViewMarks.js` (`createTravelViewMarks(host)`), moved by
   construction would have read in its temporal dead zone and thrown at boot.
 - 28 imports came along; the host dropped the 9 it no longer read.
 - 35 mutant records over 20 lists and one doc anchor (`Wild-Zone.md`, PVPGIANT)
-  followed the code; 2 test pins moved by hand (SHIPYARDS-FOUND, YARDS-FOUND -
-  the module's order, and the host handing the yards and the port over live).
+  followed the code, by the tool; after it, `tools/mutate.mjs` over the 35:
+  35 dead.
+- The pins, by hand: 21 test files and the TIME1 census fixture. Most were text
+  pins that now read the module (a live name as `host.<name>`, and where the
+  host hands one over, a second pin that it does). Three were HOST RUNS - the
+  boat markers, the raiders, the party - that lift the marks' code out of the
+  file and run it against stubs; they lift it from the module now, with `host`
+  standing for the stubs, and they pass: the move is proven by what the code
+  does, not only by how it reads. Two pinned the host's own imports
+  (`NAME_RANGE`, `TV_DUNGEON_TYPES`) and follow their one reader.
 - `bootWorld` 35,251 -> 35,042 lines; its ceiling 35,501 -> 35,292.
+- The full suite on the slice: 27,336 pass, 0 fail.
+
+WHAT THE PILOT MEASURED: the code moved itself, by rule; the pins did not. 229
+lines cost 22 files of pin moves, because the suite reads `world.js` as text
+(1,444 files read it, 523 slice it between anchors). That is the price of every
+slice, in proportion, and the order above stands on it: a group the map calls
+cheap is cheap to move; whether it is cheap to land is how many pins quote it.
+The next slice counts its pins first (the pins-to-lines ratio beside the map's
+numbers), and a group with many pins and few lines waits.
