@@ -70,9 +70,11 @@ test('TV5 host wiring: the far places are rebuilt on a pixel (or a reach) change
   // PIN MOVED (ETHER-OW, test/ether_ow.test.js): the map's settlements gathered once (never an isle's), and past the Veil the
   // port isles within the edge's range beside them
   assert.match(w, /const settlements = \(_tvSettlements \?\?= settlementPixels\(locationIndex\)\.filter\(\(t\) => !t\.loc\.ether\)\);\n\s*const list = farPlaces\(\{ at, near, settlements: etherSea && inEther\(at\.x, at\.y\) \? \[\.\.\.settlements, \.\.\.etherPlaceRows\(at, TV_FAR_RANGE, 'port'\)\] : settlements, summaryOf: tvPlaceSummary \}\)/);
-  assert.match(w, /marks\.push\(\{ key: f\.key, at: tvSceneKept\(f, f\.x, f\.z, TV_PLACE_LIFT\), label: f\.summary\.name, sub: farDistanceText\(km\), kind: 'far', pick: true, edge: true, hub: carriageTown\(f\.summary\.mapId\), tip: seatTipAt\(f\.summary\.mapId\) \}\);/);   // PIN MOVED (FIELD BUGS 2026-10-04e OW-HUBS, SEAT-TIP)
-  assert.match(w, /const farEnd = endKey \? `far:\$\{tvTrip\.plan\.summary\.mapId\}` : null;/, 'the journey\'s own end is the flag\'s, not a plate at the edge');
-  assert.match(w, /for \(const f of travelViewFarPlaces\(\)\) \{\n\s*if \(f\.key === farEnd\) continue;/);
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js
+  const tvm = rd('src/scenes/travelViewMarks.js');
+  assert.match(tvm, /marks\.push\(\{ key: f\.key, at: tvSceneKept\(f, f\.x, f\.z, TV_PLACE_LIFT\), label: f\.summary\.name, sub: farDistanceText\(km\), kind: 'far', pick: true, edge: true, hub: carriageTown\(f\.summary\.mapId\), tip: seatTipAt\(f\.summary\.mapId\) \}\);/);   // PIN MOVED (FIELD BUGS 2026-10-04e OW-HUBS, SEAT-TIP)
+  assert.match(tvm, /const farEnd = endKey \? `far:\$\{tvTrip\.plan\.summary\.mapId\}` : null;/, 'the journey\'s own end is the flag\'s, not a plate at the edge');
+  assert.match(tvm, /for \(const f of travelViewFarPlaces\(\)\) \{\n\s*if \(f\.key === farEnd\) continue;/);
   assert.match(w, /const plate = tvPlates\.list\.find\(\(p\) => p\.key === key\) \?\? tvFar\.list\.find\(\(p\) => p\.key === key\)( \?\? tvDng\.list\.find\(\(p\) => p\.key === key && p\.summary\))?;/);   // TV6: and a found dungeon's
   // PIN MOVED (AUDIT OW5 D1): the find's own list emptied beside the dungeons'
   assert.match(w, /tvFar = \{ at: null, near: -1, list: \[\] \};   \/\/ TV5: nor the far places\n\s*(tvDng = \{ at: null, dg: -1, list: \[\] \};   \/\/ TV6: nor the dungeons\n\s*tvFind = \{ at: null, dg: -1, n: -1, list: \[\] \};[^\n]*\n\s*)?(tvBandSeen = [^\n]*\n\s*)?travelView\?\.exit\('load', true\);/);
@@ -186,7 +188,7 @@ test('PERF-TV by source: the view asks the readout before it picks; the host kee
   assert.match(w, /hud: \{ show: showTravelViewHud, hide: hideTravelViewHud, update: updateTravelViewHud, pickAt: travelViewHudPickAt \},/);
   assert.match(w, /if \(k\[0\] !== built\.size \|\| k\[1\] !== state\.mapOrigin\.x \|\| k\[2\] !== state\.mapOrigin\.y \|\| k\[3\] !== c\[0\] \|\| k\[4\] !== c\[1\] \|\| k\[5\] !== c\[2\] \|\| t - k\[6\] > 500\) \{/, 'the ground moves on a build, a drop, a re-anchor - and every half second besides');
   assert.match(w, /if \(holder\._tvGen !== gen \|\| holder\._tvNx !== nx \|\| holder\._tvNz !== nz( \|\| holder\._tvSea !== onSea)?\) \{/);   // OWS1: and the sea's top asked
-  for (const re of [/at: tvSceneKept\(p, p\.x, p\.z, TV_PLACE_LIFT\)/, /at: tvSceneKept\(e, e\.x, e\.z, place \? TV_PLACE_LIFT : 0\)/, /at: tvSceneKept\(t, w\.x, w\.z, 2(, ship)?\)/]) assert.match(w, re);   // OWS1: a traveller at sea's on the sea's top
+  for (const re of [/at: tvSceneKept\(p, p\.x, p\.z, TV_PLACE_LIFT\)/, /at: tvSceneKept\(e, e\.x, e\.z, place \? TV_PLACE_LIFT : 0\)/, /at: tvSceneKept\(t, w\.x, w\.z, 2(, ship)?\)/]) assert.match(rd('src/scenes/travelViewMarks.js'), re);   // PIN MOVED (HOST-SPLIT 1): the marks left world.js;   // OWS1: a traveller at sea's on the sea's top
   const h = rd('src/ui/travelViewHud.js');
   assert.match(h, /const vw = win\?\.innerWidth \?\? 0, vh = win\?\.innerHeight \?\? 0, dpr = win\?\.devicePixelRatio \|\| 1;   \/\/ read ONCE, before any write/);
   assert.match(h, /if \(sig\.length === canvasSig\.length && sig\.every\(\(v, i\) => v === canvasSig\[i\]\)\) return;/);
@@ -435,7 +437,9 @@ test('AUDIT DEEP2 E5/E9/E11/E15 readout: the held arrow is notched; a far place 
 
 test('AUDIT DEEP2 B-1/B-3 by source: the journey\'s end is held at the edge with its distance and takes a click (its journey again); the place caches are keyed on what is discovered', () => {
   const w = rd('src/scenes/world.js');
-  assert.match(w, /marks\.push\(\{ key: 'dest', at: tvSceneKept\(e, e\.x, e\.z, place \? TV_PLACE_LIFT : 0\), label: e\.label, kind: e\.kind, edge: true, \.\.\.\(place \? \{ pick: true, sub: farDistanceText\(km\) \} : \{\}\) \}\);/);
+  // PIN MOVED (HOST-SPLIT 1, 2026-10-15): the Overworld's marks left world.js for scenes/travelViewMarks.js
+  const tvm = rd('src/scenes/travelViewMarks.js');
+  assert.match(tvm, /marks\.push\(\{ key: 'dest', at: tvSceneKept\(e, e\.x, e\.z, place \? TV_PLACE_LIFT : 0\), label: e\.label, kind: e\.kind, edge: true, \.\.\.\(place \? \{ pick: true, sub: farDistanceText\(km\) \} : \{\}\) \}\);/);
   assert.match(w, /if \(key === 'dest'\) \{ const summary = tvTripLive\(\) \? tvTrip\.plan\?\.summary : null; if \(summary && travelViewCanGo\(\)\) travelViewRouteTo\(summary\); return; \}/);
   assert.match(w, /tvPlates\.dg === dg\) return tvPlates\.list;/);
   assert.match(w, /tvFar = \{ at, near, dg, list \};/);
