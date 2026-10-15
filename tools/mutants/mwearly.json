@@ -201,8 +201,8 @@
   {
     "name": "MW-EARLY-the-form-dropped-from-the-build-under-way",
     "file": "src/combat/fpArm.js",
-    "old": "      return o ? { race: o.race ?? null, female: !!o.female, faceIndex: o.faceIndex | 0, werewolf: !!o.werewolf } : null;",
-    "new": "      return o ? { race: o.race ?? null, female: !!o.female, faceIndex: o.faceIndex | 0 } : null;",
+    "old": "      return o ? { race: o.race ?? null, female: !!o.female, faceIndex: o.faceIndex | 0, werewolf: !!o.werewolf, vampire: !!o.vampire } : null;",
+    "new": "      return o ? { race: o.race ?? null, female: !!o.female, faceIndex: o.faceIndex | 0, vampire: !!o.vampire } : null;",
     "tests": [
       "test/mwearly.test.js"
     ]
@@ -210,8 +210,8 @@
   {
     "name": "MW-EARLY-the-form-dropped-from-the-identity-compare",
     "file": "src/combat/weaponRig.js",
-    "old": "    && !!have.werewolf === want.werewolf;   // WEREWOLF1",
-    "new": "    ;",
+    "old": "    && !!have.werewolf === want.werewolf && !!have.vampire === want.vampire;   // WEREWOLF1",
+    "new": "    && !!have.vampire === want.vampire;   // WEREWOLF1",
     "tests": [
       "test/mwearly.test.js"
     ]

@@ -223,7 +223,8 @@ test('B7 seam gate: the static-NPC conversation opens the window instead of "You
   // PIN MOVED (LEGACY-HOME): both mobile doors take the portrait through `portraitOf` - TFAC00I0's record, or one of
   // Project Legacy's line's own chargen head (test/legacyhome.test.js)
   assert.match(town, /openTalkWindow\(t\.text, \{\n\s*npcSeed: _talkNpc\?\._talkSeed \?\? 0, npcName: _talkNpc\?\.nameNPC \?\? '',\n\s*portrait: portraitOf\(_talkNpc\),\n\s*\}\);/);
-  assert.match(town, /const portraitOf = \(person\) => person\?\.living\?\.res\?\.portrait \?\? \{ archive: 'CommonFaces', record: person\?\.personFaceRecordId \?\? 0 \};/);
+  // PIN MOVED (PORTRAIT3D): and the walker's look rides with the record - its face the head its body wears
+  assert.match(town, /const portraitOf = \(person\) => \(\{ \.\.\.\(person\?\.living\?\.res\?\.portrait \?\? \{ archive: 'CommonFaces', record: person\?\.personFaceRecordId \?\? 0 \}\), head: person\?\._mwRes\?\.look \?\? person\?\._mwFolk\?\.look \?\? person\?\.living\?\.res\?\.look \?\? null \}\);/);
   // and the Work answer rides the session's own pool flag
   assert.match(town, /workAvailable: eng\.session\?\.workAvailable \?\? false,/);
 });

@@ -93,10 +93,16 @@ export function portraitFeatures(bitmap, palette) {
  * assumes the face sits centred in UV space. Nothing in this repo has
  * seen a retail head texture's layout, so that was a guess wearing a
  * band - and a face unwrapped to one side would have measured the
- * back of the skull as skin. The mesh knows where the face is: the
- * head points +Y (Morrowind's forward), so the FRONT vertices are the
- * face, the lower front vertices the chin, and each vertex's UV says
- * exactly which texel is its skin. Layout-agnostic by construction.
+ * back of the skull as skin. The mesh knows where the face is: in the
+ * Head node's frame a head looks -Y, so the FRONT vertices (the least y)
+ * are the face, the lower front vertices the chin, and each vertex's UV
+ * says exactly which texel is its skin. Layout-agnostic by construction.
+ * MW-HEADS2 (2026-10-15): this read +Y as the front ("Morrowind's
+ * forward" - the actor's, not the Head node's frame), never seen on a
+ * retail head; the port's own heads, baked looking +Y in that frame, hung
+ * backwards on the body in game (the owner: "some of the ingame heads are
+ * backwards on the body") - so every head the match measured was read off
+ * the back of the skull.
  * `geometry` is [{positions, uvs}] from flattenNif; with no UVs the
  * old band read stands, named as such by the caller.
  */
@@ -121,7 +127,7 @@ export function headFeatures(rgba, w, h, geometry = null) {
     const cheeks = []; const chin = [];
     for (const g of shapes) {
       for (let i = 0, k = 0; i < g.positions.length; i += 3, k += 2) {
-        const fy = (g.positions[i + 1] - minY) / spanY;   // 1 = the front of the face
+        const fy = (maxY - g.positions[i + 1]) / spanY;   // 1 = the front of the face (MW-HEADS2: on -Y)
         const fz = (g.positions[i + 2] - minZ) / spanZ;   // 1 = the crown
         if (fy < 0.62) continue;                          // the back and the sides are not the face
         const c = texel(g.uvs[k], g.uvs[k + 1]);
@@ -177,7 +183,7 @@ export function hairFeatures(rgba, w, h, extentZ) {
  *  verdict in the derived store against the stored set and the
  *  identity; a change to how heads and hairs are measured or scored
  *  is a bump here, so an older verdict is re-measured, never read. */
-export const FACE_MATCH_VERSION = 1;
+export const FACE_MATCH_VERSION = 2;   // MW-HEADS2: the face read on -Y - every verdict kept was measured off the back of the skull
 
 export function matchFace(portrait, heads, hairs, { female = false } = {}) {
   const reasons = [];

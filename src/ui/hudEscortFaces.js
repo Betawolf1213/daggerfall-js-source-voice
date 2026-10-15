@@ -34,7 +34,8 @@
 import { CifRciFile } from '../formats/cifRciFile.js';
 import { GENDERS } from '../characters/nameHelper.js';
 import { RACES, raceArt } from '../systems/races.js';
-import { bitmapToColor32 } from '../formats/color32Order.js';
+import { bitmapToColor32, toScreenOrder } from '../formats/color32Order.js';
+import { playerHeadImage, headDataStamp, HEAD_RECORD } from '../characters/headPortraits.js';   // PORTRAIT3D
 import { hudScale } from './hud.js';   // AUDIT 64 F38: the ParentPanel scale every screen-anchored HUD member reads
 // FactionFile.FactionIDs.Children (514) - the one faction whose
 // Persons portrait as children; ONE home, characters/staticNpc.js.
@@ -147,11 +148,37 @@ export function layoutEscortFaces(sizes) {
 
 // ---- the one panel's state ----
 let _deps = null;     // { fetchBytes, palette, renderer, getFactionData }
+/** PORTRAIT3D (2026-10-15, the owner: "5. Do this" - the escorts' faces among those still Daggerfall's): with
+ *  Morrowind's data attached an adult's face of the race's heads is the Morrowind head of their own race and sex at
+ *  that face (characters/headPortraits.js playerHeadImage - the portrait's head, as a chargen face's, among the data's
+ *  heads: an NPC's, never the port's own - MW-HEADS2; every race, where the classic drew only Redguards and Bretons), at
+ *  a head record's size (HEAD_RECORD), its picture four times over.
+ *  A child's face (Morrowind has no children) and a fixed NPC's painted one keep theirs. The key, or null for theirs. */
+export function escortHeadKey(face) {
+  if (!face || face.isChild || face.factionFaceIndex >= 0) return null;
+  const g = headDataStamp();
+  const race = Object.keys(RACES).find((k) => RACES[k] === face.targetRace) ?? 'Breton';
+  return g ? `mwhead#escort#${race}|${face.gender === GENDERS.Female ? 'female' : 'male'}|${face.faceIndex | 0}|${g}` : null;
+}
+const ESCORT_HEAD_PX = 4;
+function escortHead(face, key) {
+  const race = Object.keys(RACES).find((k) => RACES[k] === face.targetRace) ?? 'Breton';
+  const gender = face.gender === GENDERS.Female ? 'female' : 'male';
+  // MW-HEADS2: an NPC - the data's heads
+  return playerHeadImage({ race, gender, faceIndex: face.faceIndex | 0, npc: true }, { px: HEAD_RECORD.w * ESCORT_HEAD_PX, ph: HEAD_RECORD.h * ESCORT_HEAD_PX, renderer: _deps.renderer })
+    .then((img) => {
+      if (!img || !_deps) return null;
+      if (!_textures.has(key)) _textures.set(key, { tex: _deps.renderer.uploadTexture('img', key, toScreenOrder(img)), w: HEAD_RECORD.w, h: HEAD_RECORD.h });
+      return _textures.get(key);
+    }, () => null);
+}
+
 let _faces = [];      // FaceDetails[] - the serializable truth
 let _panels = [];     // parallel to _faces: { special, img: {tex,w,h}|null }
 const _files = new Map();     // file -> Promise<CifRciFile>
 const _textures = new Map();  // `${file}#${record}` -> {tex,w,h}
 let _warned = false;
+let _headStamp = 0;   // PORTRAIT3D: the data's stamp the panels were resolved under
 
 function _loadFile(file) {
   let p = _files.get(file);
@@ -170,9 +197,12 @@ function _loadFile(file) {
  *  list and make sure every face's texture is loading. */
 function refreshFaces() {
   if (!_deps) { _panels = _faces.map(() => null); return; }
+  _headStamp = headDataStamp();
   _panels = _faces.map((face) => {
     const { file, record, special } = resolveFaceImage(face);
-    const panel = { special, img: _textures.get(`${file}#${record}`) ?? null };
+    const head = escortHeadKey(face);   // PORTRAIT3D: the Morrowind head first, the record until it lands
+    const panel = { special, img: (head && _textures.get(head)) || (_textures.get(`${file}#${record}`) ?? null) };
+    if (head && !_textures.has(head)) escortHead(face, head).then((img) => { if (img) panel.img = img; });
     if (!panel.img) {
       _loadFile(file).then((cif) => {
         const key = `${file}#${record}`;
@@ -183,7 +213,7 @@ function refreshFaces() {
             w: bmp.width, h: bmp.height,
           });
         }
-        panel.img = _textures.get(key);
+        if (!(head && _textures.has(head))) panel.img = _textures.get(key);
       }).catch((e) => {
         if (!_warned) { _warned = true; console.warn('[escortFaces] face art unavailable:', e?.message ?? e); }
       });
@@ -288,6 +318,7 @@ export function restoreEscortFacesSaveData(faces) {
  */
 export function drawEscortFaces(renderer, canvas) {
   if (!_panels.length) return;
+  if (headDataStamp() !== _headStamp) refreshFaces();   // PORTRAIT3D: the data came or went - the faces resolved again
   const m = { s: hudScale(canvas.width, canvas.height) };
   const sizes = _panels.map((p) => (p?.special
     ? { w: ESCORT_SPECIAL_FACE_SIZE, h: ESCORT_SPECIAL_FACE_SIZE }

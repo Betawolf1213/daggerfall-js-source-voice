@@ -91,8 +91,9 @@ test('MWA3 armsStandFor: a standing arm counts only when its race, sex and face 
   assert.equal(armsStandFor(argonian, { ready: () => true, builtFor: () => ({ ...forHer, race: 'breton' }) }), false, 'a human\'s arm is not hers - the report');
   assert.equal(armsStandFor(argonian, { ready: () => true, builtFor: () => ({ ...forHer, female: false }) }), false, 'the male skeleton is not hers');
   assert.equal(armsStandFor(argonian, { ready: () => true, builtFor: () => ({ ...forHer, faceIndex: 4 }) }), false, 'another face is not hers');
-  assert.deepEqual(armIdentityOf({ race: 'DarkElf', gender: 'male', faceIndex: 7 }), { race: 'dark elf', female: false, faceIndex: 7, werewolf: false }, 'the identity third of armBuildOptsOf, in the ESM\'s own race spelling');
-  assert.deepEqual(armIdentityOf(null), { race: null, female: false, faceIndex: 0, werewolf: false }, 'no entity, no identity - never a throw at a boot door');
+  // PIN MOVED (PORTRAIT3D): and the curse's face - a vampire's body wears the race's vampire head
+  assert.deepEqual(armIdentityOf({ race: 'DarkElf', gender: 'male', faceIndex: 7 }), { race: 'dark elf', female: false, faceIndex: 7, werewolf: false, vampire: false }, 'the identity third of armBuildOptsOf, in the ESM\'s own race spelling');
+  assert.deepEqual(armIdentityOf(null), { race: null, female: false, faceIndex: 0, werewolf: false, vampire: false }, 'no entity, no identity - never a throw at a boot door');
 });
 
 test('MWA3 autoBuildArms: an arm standing for ANOTHER identity is no longer a reason to stand down - the load\'s door rebuilds (mutant: the gate reads ready() again)', async () => {

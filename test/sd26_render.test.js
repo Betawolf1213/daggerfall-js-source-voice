@@ -8,6 +8,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
+import { ALLOC_CHILD_ARGS } from './allocChild.mjs';
 import { pathToFileURL } from 'node:url';
 import { realmArt } from '../src/world/sdRealmArt.js';
 import { hallArt } from '../src/world/sdHallArt.js';
@@ -263,7 +264,7 @@ test('AUDIT SD IV (R5): THE ARM\'S HOUR FOG AND TRILIGHT MAKE NOTHING, on both l
       out.lines = bytes(() => { ${lighting} ${fog} });
       console.log(JSON.stringify(out));
       `;
-      const child = spawnSync(process.execPath, ['--expose-gc', '--min-semi-space-size=64', '--max-semi-space-size=64', '--input-type=module', '-e', script], { encoding: 'utf8' });
+      const child = spawnSync(process.execPath, [...ALLOC_CHILD_ARGS, '--input-type=module', '-e', script], { encoding: 'utf8' });
       assert.equal(child.status, 0, child.stderr);
       const m = JSON.parse(child.stdout.trim().split('\n').pop());
       assert.ok(m.control >= 40, `the control made ${m.control.toFixed(2)} bytes a frame - the measure is blind`);
