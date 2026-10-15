@@ -36,7 +36,26 @@ The repair kit (`smithItems.js` repairKitTargets) was already worn-first and is 
 in `test/fb1014_mendstarve.test.js` (the boots wait); re-aimed by content: MEND-STARVE-the-self-wearing-piece-first-again
 and MEND-WORN-pack-order (dead).
 
-<!-- KICK-AIR -->
+## KICK-AIR: the Flying Kick goes from the air (3)
+
+`src/combat/techniqueRoster.js` kick (`airborne`); `src/combat/techniques.js` refusal; `src/player/motor.js`
+techniqueLaunch.
+
+THE REPORT. "Flying kick doesn't work": "tried doing it mid-air, off ledges, flat ground aiming up aiming down etc nothing
+works", the HUD saying "You cannot leap from here."; as a werewolf, "the beast knows no technique".
+
+FOUND. TECH1's design (`05-Combat/Weapon-Techniques.md`): one gate refused every leap and dash off the ground, on the
+press and again on the release - a jump, a fall, a ledge, or a press let go after takeoff - and the one line said it for
+eleven causes. On flat ground the kick launched on the real motor through the whole press, hold and release. The
+werewolf's line is TECH1's own and stays.
+
+CHANGED (Mac's call). The roster marks the kick `airborne` and the gate reads the mark; every other leap and dash stays
+grounded, and every other refusal - a climb, a wall, a vault, the water, a levitation, a slow fall, the saddle, a
+knockdown - is the kick's too. From the air it is the same kick, aimed from the airborne feet. A flight launched
+mid-fall keeps that fall's start: the launch had re-anchored it, so a kick near the ground would have cancelled a
+12 m fall's damage. THE FOUR HOSTS: none changed - exterior.js, world.js and worldModes.js each hand the one
+PlayerMotor to the runner, and dungeonContext.js reads worldModes' (or `dungeon.js`'s) through its technique door.
+Pinned by `test/fb1015_kickair.test.js` (`tools/mutants/fb1015_kickair.json`, 9, dead).
 
 ## The right arm: asked of the player (4)
 
