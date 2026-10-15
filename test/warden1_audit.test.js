@@ -164,7 +164,7 @@ test('AUDIT WARDEN1 C6/D8: the cell\'s word to the owner names whose team (`k`),
     const a1 = await join(X, 'ann1', 'acct-ann1'), bob = await join(X, 'bob1');
     const k = await parkKeyOf('acct-ann1', 'char-ann-0001');
     await park(X, a1, { c: 'char-ann-0001', a: [AX, AZ], r: { w: W(), ly: LY, tw: 77, rd: 1 } });
-    // PIN MOVED (ONE-BODY, FIELD BUGS 2026-10-15b): this stood her two characters' sockets in the cell at once - the first
+    // PIN MOVED (ONE-BODY, FIELD BUGS 2026-10-15c): this stood her two characters' sockets in the cell at once - the first
     // told of its team's throw, the second (her account, another character) not, and the first alone told again as it
     // re-said the spot. A cell stands one body an account now (server/src/index.js the hello's one-socket law): her
     // second tab's hello closes the first (CLOSE_REPLACED). The watch's word is still the socket's that speaks for the

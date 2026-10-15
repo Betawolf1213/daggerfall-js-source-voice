@@ -5,7 +5,7 @@
     "old": "  return questName ? `${questName} (${title})` : title;",
     "new": "  return title;",
     "tests": [
-      "test/fb1015b_questresidence.test.js"
+      "test/fb1015c_questresidence.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "        displayName: home ? homeDoorTitle(home, questSiteHere(bd) && db.isOverrideName ? db.displayName : null) : homeDoorName(",
     "new": "        displayName: home ? homeDoorTitle(home, null) : homeDoorName(",
     "tests": [
-      "test/fb1015b_questresidence.test.js"
+      "test/fb1015c_questresidence.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "    townTalk?.say?.(home ? homeDoorTitle(home, questSiteHere(bd) && db.isOverrideName ? db.displayName : null) : db.displayName);",
     "new": "    townTalk?.say?.(home ? homeDoorTitle(home) : db.displayName);",
     "tests": [
-      "test/fb1015b_questresidence.test.js"
+      "test/fb1015c_questresidence.test.js"
     ]
   }
 ]

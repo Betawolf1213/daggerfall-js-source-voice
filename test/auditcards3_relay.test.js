@@ -48,7 +48,7 @@ test('AUDIT CARDS-3 A1: a sit refused at another table stands nobody up - no fol
   assert.ok(r.store.get('holdem')[0].seats[0]?.leaving || !r.store.get('holdem')[0].seats[0], 'stood up there, saved');
 }));
 
-// PIN MOVED (ONE-BODY, FIELD BUGS 2026-10-15b): A2 held two tabs of one account standing side by side in a building's
+// PIN MOVED (ONE-BODY, FIELD BUGS 2026-10-15c): A2 held two tabs of one account standing side by side in a building's
 // room (`interior:m100.200`), the second's sit refused 'account seated' while the first sat. A building's room is a world
 // room, and a place stands one body an account now (server/src/index.js the hello's one-socket law): the second tab's
 // hello closes the first (CLOSE_REPLACED), whose seat goes with it (A3's law), so there the table never meets two. The

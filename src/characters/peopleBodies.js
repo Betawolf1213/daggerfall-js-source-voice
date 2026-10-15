@@ -70,7 +70,7 @@ export function personLook(pn, data, faction) {
   if (pn._mwLook !== undefined) return pn._mwLook;
   if (!data || isChildNPCData(data)) return (pn._mwLook = null);
   // MWNPC8b: an EDITOR flat (a marker DFU never renders, whatever faction it carries) is no one to stand a body for -
-  // STALL-FLATS (FIELD BUGS 2026-10-15b, "every animal and food stand item turned into freaks"; "The NPC's are clustered
+  // STALL-FLATS (FIELD BUGS 2026-10-15c, "every animal and food stand item turned into freaks"; "The NPC's are clustered
   // into groups and all have their heads down and they just rotate"): nor a flat whose picture is no person's - a town
   // mod's market food, goods and animals carry faction ids (Beautiful Villages' TVRNAS02, TEMPASB0, TEMPBSB0, RESIAS02:
   // faction 584), and RMBLayout makes each a StaticNPC, but DFU draws a person only of RDBLayout.NPCFlatArchives

@@ -59,7 +59,7 @@ test('UNCOUNTED: a looted Troll\'s Blood is the material - the same item the min
   assert.equal(carryRows(fb, (k) => heldOf(friend, k), () => heldKeysOf(friend)).get(TROLL).uncounted, n);
 });
 
-test('UNCOUNTED: the Stores page lists the looted blood and says what it is; LOOT-LOOSE (FIELD BUGS 2026-10-15b; Mac: "Store as loose" - PIN MOVED, it had offered no Put in): Put in takes it as loose (`work`, a station\'s alone), the counted by `all` first, and Put everything in moves both (mutants: the card silent; the why unsaid; the loose left out; the loose by `all`)', async () => {
+test('UNCOUNTED: the Stores page lists the looted blood and says what it is; LOOT-LOOSE (FIELD BUGS 2026-10-15c; Mac: "Store as loose" - PIN MOVED, it had offered no Put in): Put in takes it as loose (`work`, a station\'s alone), the counted by `all` first, and Put everything in moves both (mutants: the card silent; the why unsaid; the loose left out; the loose by `all`)', async () => {
   const e = body();
   e.items.push(...lootedTrollsBlood());
   mintCarried(e, HERB, 4);

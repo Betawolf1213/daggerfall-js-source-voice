@@ -393,7 +393,7 @@ test('THE HANDOFF\'S DOORS: a tab asks the escrow only for a room that signs col
   assert.equal(escrowRow(z.svc, d.r), undefined);
   const w = rd('src/scenes/world.js');
   assert.ok(w.includes("realm: at, room: lay, ...(online?.wildCollectAt?.(lay) ? { collect: 1 } : {}) }),"), 'my drop asks it for my room alone');
-  // PIN MOVED (HOST-SPLIT, FIELD BUGS 2026-10-15b): the handoff's two sides live in scenes/wildEscrowHost.js, the host wiring them
+  // PIN MOVED (HOST-SPLIT, FIELD BUGS 2026-10-15c): the handoff's two sides live in scenes/wildEscrowHost.js, the host wiring them
   const eh = rd('src/scenes/wildEscrowHost.js');
   assert.ok(w.includes('const wildEscrow = createWildEscrowHost({ townTalk, session: realmSession, modes: () => modes, wildAccount, checkpoint: () => onlineCheckpoint() });'), 'the host wires the handoff');
   assert.ok(w.includes('collect: (cr, at) => wildEscrow.collectHeard(cr, at),'), 'the book\'s collect to my tab');

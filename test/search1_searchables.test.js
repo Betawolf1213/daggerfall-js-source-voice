@@ -249,7 +249,7 @@ test('ELITE-RARE: an elite\'s extra Rare is half a champion\'s blue at its level
   assert.match(readFileSync('src/systems/eliteFoes.js', 'utf8'), /if \(rolls\(\) < eliteRareChance\(lv\)\)/);
 });
 
-test('SLAUGHTER-BOX (FIELD BUGS 2026-10-15b, the Discord: "Random encounter from box - Slaughter fish"): a chest\'s or a crate\'s foe is never one of the roster\'s water species - it stands on the dry floor beside the box; a roster of swimmers alone wakes the grave\'s undead; the species are RDBLayout\'s three, the Aquatic ones of EnemyBasics, one home (mutants: the filter dropped; one species out of the set; the wild halls\' own copy back)', () => {
+test('SLAUGHTER-BOX (FIELD BUGS 2026-10-15c, the Discord: "Random encounter from box - Slaughter fish"): a chest\'s or a crate\'s foe is never one of the roster\'s water species - it stands on the dry floor beside the box; a roster of swimmers alone wakes the grave\'s undead; the species are RDBLayout\'s three, the Aquatic ones of EnemyBasics, one home (mutants: the filter dropped; one species out of the set; the wild halls\' own copy back)', () => {
   const drawn = new Set();
   for (let r = 0; r < 1; r += 0.05) drawn.add(pickRosterFoe([0, 11, 41, 42], 5, () => r));
   assert.deepEqual([...drawn], [0], 'a rat beside the crate, never the pool\'s fish, Dreugh or Lamia');

@@ -24449,7 +24449,7 @@ export async function bootWorld(canvas, renderer, params, status) { handHeroGend
     if (held) wildEscrow.held(d.escrow, { killer: dd?.killer ?? null, name: claimed });
     if (d.order && n && body) wildDeposit({ r: d.r, items: d.items, o: d.order, p: body.p, room, mine: body });
   };
-  // PVP-ESCROW's two sides (scenes/wildEscrowHost.js - HOST-SPLIT, FIELD BUGS 2026-10-15b)
+  // PVP-ESCROW's two sides (scenes/wildEscrowHost.js - HOST-SPLIT, FIELD BUGS 2026-10-15c)
   const wildEscrow = createWildEscrowHost({ townTalk, session: realmSession, modes: () => modes, wildAccount, checkpoint: () => onlineCheckpoint() });
   /** THE DEPOSIT - the service's records to the room, chunk by chunk on the wild frames' own pace, each chunk carrying its
    *  order (the room keeps the remains only when the records digest to it: net/wildLaw.js). An order is good a minute. */

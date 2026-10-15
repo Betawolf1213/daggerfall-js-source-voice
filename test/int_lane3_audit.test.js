@@ -236,7 +236,7 @@ test('AUDIT INT11 A TRAIL A SOCKET\'S, A FIGHTER\'S, WHILE ITS FIGHT LIVES: a co
 test('AUDIT INT11 A SECOND SOCKET IS NO DECOY: a ship\'s body is judged on the trail of the socket that speaks for her (her newest here), however another of her sockets poses far off - and a volley from any but that socket lands nothing (mutants: the trail by account; a volley from any socket) - ONE-BODY (PIN MOVED): a second tab replaces the first in a place', async () => {
   await withSea(async ({ r, say, tick, now, set }) => {
     const { a, f, p, cruise } = await twoShips({ r, say, tick, now });
-    // PIN MOVED (ONE-BODY, FIELD BUGS 2026-10-15b): this stood three sockets of her account in the serpent's cell at once -
+    // PIN MOVED (ONE-BODY, FIELD BUGS 2026-10-15c): this stood three sockets of her account in the serpent's cell at once -
     // `a`, a decoy posing far off and the newest near - and judged her body on the newest's trail, the decoy's poses read
     // for nothing. A cell stands one body an account now (server/src/index.js the hello's one-socket law): each newer hello
     // of hers closes the one before it (CLOSE_REPLACED), so no decoy of hers poses beside the socket that speaks for her

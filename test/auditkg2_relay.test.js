@@ -293,7 +293,7 @@ test('AUDIT KG II E4 + E9 THE ROOM\'S OWN REFUSALS: a sit in a layer (busy), a s
   await word(r, lay, { op: 'sit', table: 1, chair: 0, chairs: 4, crown: 0 });
   assert.equal(kg(lay).at(-1).error, 'busy', 'no table in a layer');
   assert.equal(await r.room._gambitReady({ id: 'peer-l', ly: 3, sub: 'acct-peer-l', key: ROOM }, { table: 1, army: army(1), stake: 'x' }, Date.now()), 'stakes closed');
-  // PIN MOVED (ONE-BODY, FIELD BUGS 2026-10-15b): this stood one account's twin tab beside it in the building's room (ROOM)
+  // PIN MOVED (ONE-BODY, FIELD BUGS 2026-10-15c): this stood one account's twin tab beside it in the building's room (ROOM)
   // and refused its sit 'account seated'. ROOM is a world room, and a place stands one body an account now
   // (server/src/index.js the hello's one-socket law): the twin's hello closes the first tab (CLOSE_REPLACED) and is the
   // account's one body here, which sits and readies below. The refusal still guards an interior no world room names

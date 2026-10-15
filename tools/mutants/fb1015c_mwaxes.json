@@ -5,7 +5,7 @@
     "old": "  War_Axe: MW_WEAPON_TYPE.AxeTwoHand,",
     "new": "  War_Axe: MW_WEAPON_TYPE.AxeOneHand,",
     "tests": [
-      "test/fb1015b_mwaxes.test.js"
+      "test/fb1015c_mwaxes.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  Battle_Axe: MW_WEAPON_TYPE.AxeOneHand,",
     "new": "  Battle_Axe: MW_WEAPON_TYPE.AxeTwoHand,",
     "tests": [
-      "test/fb1015b_mwaxes.test.js"
+      "test/fb1015c_mwaxes.test.js"
     ]
   },
   {
@@ -23,7 +23,7 @@
     "old": "const DF_TO_MW_SHAPE = Object.freeze({ wakazashi: 'wakizashi', battleaxe: 'waraxe', waraxe: 'battleaxe' });",
     "new": "const DF_TO_MW_SHAPE = Object.freeze({ wakazashi: 'wakizashi' });",
     "tests": [
-      "test/fb1015b_mwaxes.test.js"
+      "test/fb1015c_mwaxes.test.js"
     ]
   }
 ]

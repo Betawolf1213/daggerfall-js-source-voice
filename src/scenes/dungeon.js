@@ -1150,7 +1150,7 @@ export async function bootDungeon(canvas, renderer, params, status) {
     renderer.drawFoeTelegraphs?.(drawableBlows(tacticsNow(), player.pos));   // TACT4: a foe's wind-up on the ground
     renderer.drawFoeTelegraphs?.(techniqueMarksNow());   // TECH1: and the player's own marks, after the foes' (bible/05-Combat/Weapon-Techniques.md)
     ctx.bloodMarks?.draw?.(camRight, UP_Y);   // BLOOD1 AUDIT 3: the context's ring, drawn by THIS host beside the level's flats and under them - it used to ride drawFoes' gate, so a cleared level drew no blood at all
-    if (ctx.uiOverlayActive) ctx.showBodyFlats?.();   // AUDIT MW-NPC C6: no body is drawn under a window - its corpse flat is
+    if (ctx.uiOverlayActive) ctx.drawWindowBodies?.(canvas, { proj, view, eye: cam.pos });   // AUDIT MW-NPC C6, FB1015 LOOT-BODY: under a window drawFoes' last bodies, frozen
     renderer.drawBillboards([...ctx.billboardBatches, ...ctx.campBatches(), ...ctx.torchBatches()], camRight, UP_Y);   // HT1: the dropped torches on the same pass
     // AUDIT 23 (hosts-9 = audio-3) - SongManager.cs:193: Update() runs
     // every frame, windows open or not - THE MUSIC CONTEXT IS FED

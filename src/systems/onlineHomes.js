@@ -164,7 +164,7 @@ export function homeDoorPrompt({ door, mode, price = 0, declined = false, asked 
 }
 
 /** The door's name for a home, over the building's own. GUILD1d: a hall's is its guild's - "Your guild's hall" to its
- *  members, "The Silver Hand's hall <SH>" to everyone else. QUEST-RESIDENCE (FIELD BUGS 2026-10-15b, "I've visited every
+ *  members, "The Silver Hand's hall <SH>" to everyone else. QUEST-RESIDENCE (FIELD BUGS 2026-10-15c, "I've visited every
  *  residence in Tambeth and NONE are the Tambeth Hawkley Residence"): a home a quest still names (`questName` - a site
  *  picked before QUEST-HOME, or one the re-pick could not move) says the quest's name first, so its door is findable. */
 export const homeDoorTitle = (home, questName = null) => {

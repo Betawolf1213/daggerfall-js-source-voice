@@ -67,7 +67,7 @@ test('AUDIT CARDS-4 M relay: a void of another room\'s or another account\'s ord
   assert.equal(r.room._holdem.get(1)?.seats[1]?.stack, 200, 'twenty big blinds sits');
 }));
 
-// PIN MOVED (ONE-BODY, FIELD BUGS 2026-10-15b): this held one player in two tabs in the building's room (ROOM), the
+// PIN MOVED (ONE-BODY, FIELD BUGS 2026-10-15c): this held one player in two tabs in the building's room (ROOM), the
 // first voiding and the second hearing the cash-out too. ROOM is a world room, and a place stands one body an account now
 // (server/src/index.js the hello's one-socket law): the second tab's hello closes the first (CLOSE_REPLACED), so here the
 // second is the account's one socket and the rest is said to it. A cash-out still goes to every socket of its account

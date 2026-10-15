@@ -5,7 +5,7 @@
     "old": "  Leather: ['netch'], Chain: ['chain', 'iron'], Chain2: ['chain', 'iron'],",
     "new": "  Leather: ['netch'], Chain: ['chain'], Chain2: ['chain'],",
     "tests": [
-      "test/fb1015b_bareboots.test.js"
+      "test/fb1015c_bareboots.test.js"
     ]
   },
   {
@@ -14,7 +14,7 @@
     "old": "  for (const tok of chain) { const hit = byPiece(byToken(tok)); if (hit.length) { token = tok; pool = hit; break; } }",
     "new": "  for (const tok of chain) { const all = byToken(tok); if (all.length) { token = tok; pool = byPiece(all); break; } }",
     "tests": [
-      "test/fb1015b_bareboots.test.js"
+      "test/fb1015c_bareboots.test.js"
     ]
   }
 ]

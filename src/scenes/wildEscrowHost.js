@@ -3,7 +3,7 @@
 // killer actually has it" - bible/11-Multiplayer/Wild-Zone.md section 4): server-account/src/wild.js holds the killer's
 // piece in ESCROW from the fall. Both sides of it on this page - my pieces held, asked back once my killer can no longer
 // collect them, and my collects carried to the service - moved out of bootWorld as they stood (HOST-SPLIT, FIELD BUGS
-// 2026-10-15b: the merge of main beside the 2026-10-14 roll-up had put bootWorld 55 code lines past its ceiling).
+// 2026-10-15c: the merge of main beside the 2026-10-14 roll-up had put bootWorld 55 code lines past its ceiling).
 // The host hands in what it holds: its talk, the realm's session, the modes, the zone's account door and the
 // checkpoint; it calls `held` from the drop's receipt, `collectHeard` from the room's collect, `frame` from the zone's.
 import { WILD_TEXT } from '../systems/wildZone.js';

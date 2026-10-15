@@ -282,7 +282,7 @@ export function bodyFits(collider, feet, height = CAPSULE_HEIGHT) {
  * own shell looks in at it, and a model whose faces look both ways holds it in DFU too. Whatever its height: a body in a
  * crate taller than itself (41833, a 2.1 m cube) is held by its walls all the same. A collider that cannot answer - no
  * raycastHit to read a face's side by, no sphereOverlaps for the free's fit (bodyFits) - holds nobody. QUEST-FOE-WALL
- * (FIELD BUGS 2026-10-15b, "Quest enemy spawned inside object"): and a COLUMN - a pillar to the ceiling has no lid in
+ * (FIELD BUGS 2026-10-15c, "Quest enemy spawned inside object"): and a COLUMN - a pillar to the ceiling has no lid in
  * reach (no cap, or one past LODGE_REACH), so without one a body is held only when every bearing meets a face's back.
  */
 export function lodgedIn(collider, feet) {

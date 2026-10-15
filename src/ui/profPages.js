@@ -251,7 +251,7 @@ export const BAG_PAGE_WORDS = Object.freeze({
    *  dungeon, and what a friend was traded): units held that the service never handed out (law 3) - a card's split, and
    *  the picked bar's why. The page listed none of them and said nothing. */
   uncountedSplit: (n) => `${n.toLocaleString('en-US')} loose`,
-  /** LOOT-LOOSE (FIELD BUGS 2026-10-15b, "a lot of alchemy and some other ingredients when looted from a dungeon are
+  /** LOOT-LOOSE (FIELD BUGS 2026-10-15c, "a lot of alchemy and some other ingredients when looted from a dungeon are
    *  unstorable"; Mac: "Store as loose"): Put in takes them now - as loose, a station's alone (BAG-CRAFT's origin). */
   uncounted: 'Looted, bought at a shop or given by another player, a material goes into your Stores as loose: every crafting station uses it, but no writ, no guild Stores and no market sale takes it - only what you gathered does.',   // BAG-CRAFT: a station's put-in takes it, loose
 });

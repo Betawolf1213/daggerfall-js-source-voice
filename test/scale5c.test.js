@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 
 import { fakeRooms } from './fakeRoom.mjs';
 import { fakeSocketClass } from './fakeSocket.mjs';
-import { OnlineSession } from '../src/net/online.js';
+import { OnlineSession, HUB_FIND_ASK_MS, HUB_FIND_FRESH_MS } from '../src/net/online.js';
 import { SOCIAL_ROOM, CHAT_ROOMS, isSocialRoom, isChatRoom, isRegionRoom, parseClient, RELAY_VERSION, CLOSE_REPLACED } from '../src/net/wire.js';
 import * as H from '../src/net/hubShards.js';
 
@@ -301,6 +301,52 @@ test('SCALE5c the session: a hub link offers the shards in its hello, goes where
   // PIN MOVED, AUDIT SCALE II C-2: the flag kept under the relay's own key (hubShardsSeenKey), and a relay without the
   // shards takes the links off them (test/auditscale2_client.test.js runs the host's own closures)
   assert.match(world, /const onRelayVersion = \(v\) => \{ const keeps = hubShardsSupported\(v\); try \{ appStorage\(\)\?\.setItem\?\.\(hubShardsSeenKey\(\), keeps \? '1' : '0'\); \}/);
+});
+
+test('CHAT-FIND-HUB the session: the search box asks the hub while this link knows fewer than are online - once a query moves, never closer than HUB_FIND_ASK_MS, never a tag, never twice in flight, again when its answer is stale - keeps the answer as `hubFound` and never says it as a line; a busy hub is asked again; /find of the same query is still a line; the box cleared lets the answer go (mutants: the box never asks; asked though everyone is known; no floor; the answer said as a line; a busy answer kept; the answer outliving the box)', async () => {
+  await quiet(() => {
+    const { FakeWS, sockets } = fakeSocketClass();
+    let t = 1_000_000;
+    const s = new OnlineSession({ url: 'wss://relay.test', name: 'Mac', id: 'mac-0001', secret: 'secret-of-mac-0001', WebSocketImpl: FakeWS, now: () => t, rand: () => 0, presence: false });
+    s.join('chat:world.7');
+    sockets[0].open();
+    const ws = sockets[0];
+    const finds = () => ws.sent.map((x) => JSON.parse(x)).filter((f) => f.t === 'find' && f.q !== undefined);
+    assert.equal(s.askFind('ald'), false, 'not before the welcome');
+    ws.receive({ t: 'welcome', id: 'mac-0001', peers: [{ id: 'peer-0003', name: 'Borgrim' }], n: 2, v: 'world192', now: t });
+    assert.equal(s.askFind('ald'), false, 'everyone online is known here: the box filters them');
+    ws.receive({ t: 'n', n: 600 });
+    let lines = 0;
+    s.onFound = () => { lines++; };
+    assert.equal(s.askFind('#ab'), false, 'a tag is not the hub\'s to search');
+    assert.equal(s.askFind('  Ald '), true);
+    assert.deepEqual(finds().at(-1), { t: 'find', q: 'ald' });
+    t += 100;
+    assert.equal(s.askFind('aldr'), false, 'the floor');
+    t += HUB_FIND_ASK_MS;
+    assert.equal(s.askFind('ald'), false, 'asked, the answer on its way');
+    ws.receive({ t: 'found', q: 'ald', l: [{ id: 'peer-0002', name: 'Aldric', sub: 'acct-x' }] });
+    assert.equal(lines, 0, 'the box\'s answer is never a line');
+    assert.deepEqual(s.hubFound.l.map((p) => [p.id, p.name]), [['peer-0002', 'Aldric']]);
+    assert.equal(s.hubFound.q, 'ald');
+    assert.equal(s.askFind('ald'), false, 'answered, and fresh');
+    assert.equal(s.askFind('aldr'), true, 'a query moved');
+    ws.receive({ t: 'found', q: 'aldr', l: [], busy: 1 });
+    assert.equal(s.hubFound.q, 'ald', 'a busy hub answered nothing');
+    t += HUB_FIND_ASK_MS;
+    assert.equal(s.askFind('aldr'), true, 'and is asked again');
+    ws.receive({ t: 'found', q: 'aldr', l: [{ id: 'peer-0002', name: 'Aldric' }] });
+    t += HUB_FIND_FRESH_MS;
+    assert.equal(s.askFind('aldr'), true, 'a stale answer is asked again');
+    assert.equal(s.sendFind('aldr'), true);
+    ws.receive({ t: 'found', q: 'aldr', l: [] });
+    assert.equal(lines, 1, '/find of the box\'s own query is still said as a line');
+    assert.equal(s.askFind(''), false);
+    assert.equal(s.hubFound, null, 'the box cleared lets the answer go');
+    const n = finds().length;
+    for (let i = 0; i < 50; i++) { t += 16; s.askFind(`q${i}`); }
+    assert.ok(finds().length - n <= Math.ceil((50 * 16) / HUB_FIND_ASK_MS) + 1, 'a typist at sixty frames a second stays under the relay\'s bucket');
+  });
 });
 
 test('SCALE5c the bus\'s fans: a world line is one entry a shard, never one a socket, in its batch\'s order; a guild\'s line reaches a guildmate on another shard and nobody else (off the guild\'s own sockets); my guild online from every shard, never me; a search past the hub\'s budget is answered busy (mutants: the line a socket each; the broadcast out of order; the guild a walk of nothing; the guild index unkept; the guild ask unanswered; the asker listed; the hub\'s budget unasked)', async () => {

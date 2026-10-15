@@ -105,7 +105,7 @@ move only the count. A realm trade moves save records and no count - so the rece
 counted, by the same law; letting the count travel with a trade is the owner's call. Pinned by
 `test/fb1009c_uncounted.test.js`; `tools/mutants/fb1009c_uncounted.json` (7, all dead; `bag1.json`'s B6 and
 `goldmarket.json`'s stores-total records re-aimed by content).
-**LOOT-LOOSE (FIELD BUGS 2026-10-15b, "a lot of alchemy and some other ingredients when looted from a dungeon are
+**LOOT-LOOSE (FIELD BUGS 2026-10-15c, "a lot of alchemy and some other ingredients when looted from a dungeon are
 unstorable", a second player confirming; Mac, asked: "Store as loose").** The page's Put in and Put everything in take
 the units past the count now, as **loose** - BAG-CRAFT's origin (section 15), by its `work` order: what the service counts
 goes first by `all`, every origin as it was, then the rest held by `work` (`src/ui/profPages.js`; the host hands the

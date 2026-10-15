@@ -1413,7 +1413,7 @@ export function sneakOffset(sneaking, delta) {
  *     calls the one-hander the war axe. So a Daggerfall Battle Axe draws
  *     Morrowind's AxeOneHand (its war axes) and a War Axe its AxeTwoHand
  *     (its battle axes), the grip and the clips following the hands the
- *     item really has (MW-AXES, FIELD BUGS 2026-10-15b: the rows had
+ *     item really has (MW-AXES, FIELD BUGS 2026-10-15c: the rows had
  *     matched the names, and a War Axe swung one-handed beside a torch
  *     while a Battle Axe took both hands). dfWeaponShape crosses the
  *     two names for the same reason.

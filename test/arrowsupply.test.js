@@ -291,7 +291,7 @@ test('FLETCH: Use a piece of wood and it is its own weight in arrows - Twigs two
   assert.equal(quest.length, 1);
 });
 
-test('BENCH-ARROWS (FIELD BUGS 2026-10-15b, the Discord: "Crafting arrows at the workbench is useless"): a piece of wood fletches its weight over the CLASSIC Arrow\'s, whatever a mod patches - under Roleplay & Realism: Items (on by default, forced online) a Twig is two arrows, a Pine Branch four, a Wood Bundle ten, so four Twigs are eight in the field and the workbench\'s twenty stay the better trade (mutants: the patched Arrow read)', () => {
+test('BENCH-ARROWS (FIELD BUGS 2026-10-15c, the Discord: "Crafting arrows at the workbench is useless"): a piece of wood fletches its weight over the CLASSIC Arrow\'s, whatever a mod patches - under Roleplay & Realism: Items (on by default, forced online) a Twig is two arrows, a Pine Branch four, a Wood Bundle ten, so four Twigs are eight in the field and the workbench\'s twenty stay the better trade (mutants: the patched Arrow read)', () => {
   registerTemplateOverrides(RRI_TEMPLATE_PATCHES);
   try {
     assert.equal(templateByIndex(ARROW_TEMPLATE).baseWeight, 0.1, 'the mod\'s Arrow stands');

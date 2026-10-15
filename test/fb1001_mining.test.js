@@ -305,7 +305,7 @@ test('ACT-CLICK: the act\'s strike is either button - the world host\'s input re
   keys.delete('Mouse0');
 });
 
-test('BOULDER-GLINT (FIELD BUGS 2026-10-15b, the Discord: "Boulder\'s glint offset is way off"): a boulder\'s glint stands on its loose stones - looking at the stones, the act\'s face no further over them than a vein\'s over its ore (mutant: the lift read off the rock again)', async () => {
+test('BOULDER-GLINT (FIELD BUGS 2026-10-15c, the Discord: "Boulder\'s glint offset is way off"): a boulder\'s glint stands on its loose stones - looking at the stones, the act\'s face no further over them than a vein\'s over its ore (mutant: the lift read off the rock again)', async () => {
   const s = await stage();
   try {
     const over = (n) => {

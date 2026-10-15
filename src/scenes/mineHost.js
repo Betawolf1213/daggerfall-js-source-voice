@@ -87,7 +87,7 @@ export const VEIN_SPREAD = 0.45;
 /** A boulder's loose stone at its foot: this many Lodestone lumps at this size. */
 export const STONE_FLATS = 3;
 export const STONE_SCALE = 1.8;
-/** BOULDER-GLINT (FIELD BUGS 2026-10-15b, "Boulder's glint offset is way off"): a boulder's aim point - where the act's
+/** BOULDER-GLINT (FIELD BUGS 2026-10-15c, "Boulder's glint offset is way off"): a boulder's aim point - where the act's
  *  face and its glint stand - over its loose stones, which are the boulder the player sees: the stones' scale against a
  *  vein's 0.5 over its VEIN_SCALE ore. It was half the ROCK's height (to 1.2 m), standing the face a third of the screen
  *  over the stones, in the air. The look still meets the node up to its glow's top (gatherHost findTarget). */

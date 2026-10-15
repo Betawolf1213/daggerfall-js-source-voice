@@ -1,9 +1,9 @@
-// FIELD BUGS 2026-10-15b - QUEST-RESIDENCE, the Discord's "Research Notes Quest bug": "I've visited every residence in
+// FIELD BUGS 2026-10-15c - QUEST-RESIDENCE, the Discord's "Research Notes Quest bug": "I've visited every residence in
 // Tambeth and NONE are the Tambeth Hawkley Residence". N0B00Y09's scholar lives in `Place _scholar_home_ remote house`;
 // picked before QUEST-HOME (main, 2026-10-15) the site could be another player's online home in a town the page had never
 // asked (`homeAt` knew no remote town), and a home's door says its owner's name over the building's - so no door in
 // Tambeth said "The Hawkley Residence". QUEST-HOME's re-pick moves such a site on the next online boot; a site it cannot
-// move (no other house, or one the player has stood in) now says the quest's name at the door. `01-Overview/Field-Bugs-2026-10-15b.md`.
+// move (no other house, or one the player has stood in) now says the quest's name at the door. `01-Overview/Field-Bugs-2026-10-15c.md`.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';

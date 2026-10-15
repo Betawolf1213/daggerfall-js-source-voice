@@ -727,7 +727,7 @@ test('CRATE-FREE real data: every building interior of BLOCKS.BSA - none of its 
   assert.deepEqual([buildings, markers, lodged], [6832, 1905, []]);
 });
 
-test('QUEST-FOE-WALL (FIELD BUGS 2026-10-15b, the Discord: "Quest enemy spawned inside object" - B0B70Y16 Dragonslayer\'s Dragonling in The Elyrrya Tradition): a body inside a PILLAR to the ceiling - no lid in reach, uncapped or capped past it - is lodged, and is freed beside it; beside the pillar, or in a sleeve open at both ends, nobody is (mutants: the column unheld; two walls enough with no lid; the lid\'s reach)', () => {
+test('QUEST-FOE-WALL (FIELD BUGS 2026-10-15c, the Discord: "Quest enemy spawned inside object" - B0B70Y16 Dragonslayer\'s Dragonling in The Elyrrya Tradition): a body inside a PILLAR to the ceiling - no lid in reach, uncapped or capped past it - is lodged, and is freed beside it; beside the pillar, or in a sleeve open at both ends, nobody is (mutants: the column unheld; two walls enough with no lid; the lid\'s reach)', () => {
   const columnAt = (x, z, s = 0.5, h = 4) => [boxFaces([x - s, 0, z - s], [x + s, h, z + s]).filter((f) => f.n[1] === 0)];
   const cappedAt = (x, z, s = 0.5, h = 6) => [boxFaces([x - s, 0, z - s], [x + s, h, z + s]).filter((f) => f.n[1] !== -1)];
   assert.equal(lodgedIn(room([columnAt(0, 0)]), [0.1, 0, 0.05]), true, 'inside a pillar running to the ceiling: no lid, every bearing in its skin');

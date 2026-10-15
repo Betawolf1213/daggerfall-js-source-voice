@@ -227,7 +227,7 @@
     "tests": [
       "test/fb1004d_cratefree.test.js"
     ],
-    "note": "no lid, nobody held: a body inside a pillar that runs to the ceiling stays in it (FIELD BUGS 2026-10-15b)"
+    "note": "no lid, nobody held: a body inside a pillar that runs to the ceiling stays in it (FIELD BUGS 2026-10-15c)"
   },
   {
     "name": "QUEST-FOE-WALL-the-open-room-held",

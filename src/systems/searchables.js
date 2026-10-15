@@ -119,7 +119,7 @@ export function pickSearchUndead(level = 1, rolls = Math.random) {
   return pool[Math.min(pool.length - 1, Math.floor(rolls() * pool.length))].type;
 }
 /** A chest's or a crate's foe: one of the kinds this dungeon already stands (its own roster, the layout's), else an
- *  undead. SLAUGHTER-BOX (FIELD BUGS 2026-10-15b): never one of the roster's water species - it stands on the dry floor
+ *  undead. SLAUGHTER-BOX (FIELD BUGS 2026-10-15c): never one of the roster's water species - it stands on the dry floor
  *  beside the box, and a Slaughterfish, a Dreugh or a Lamia stands in the roster only for a marker under water. */
 export function pickRosterFoe(roster, level = 1, rolls = Math.random) {
   const pool = [...new Set((roster ?? []).filter((t) => Number.isInteger(t) && t >= 0 && !WATER_SPECIES.has(t)))];

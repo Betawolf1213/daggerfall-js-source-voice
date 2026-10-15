@@ -42,7 +42,7 @@ const METHOD = 'a Room method of its own (the SCALE5 arms\' shape)';
  *  second test makes it). Raise one only with the reason written beside it: the ceiling is the line between wiring a
  *  module in and growing the knot. */
 const CEILINGS = [
-  ['src/scenes/world.js', 'bootWorld', 21_695, MODULE],   // HOST-SPLIT 1: travelViewMarks out (21,589 -> 21,445 code lines)
+  ['src/scenes/world.js', 'bootWorld', 21_695, MODULE],   // HOST-SPLIT 1: travelViewMarks out (21,589 -> 21,445 code lines). RAISED 21,695 -> 21,750 at FB1015's merge of main (2026-10-15): main itself stood at 21,750 - ten field-bug merges that each fit landed together (the header's own case) - and FB1015 adds no line to bootWorld; raised by the overflow alone, no room, so the next pull request that grows it moves code out LOWERED 21,750 -> 21,695 at FIELD BUGS 2026-10-15c: PVP-ESCROW's handoff out of bootWorld (scenes/wildEscrowHost.js; 21,750 -> 21,688 code lines) - the overflow taken back out, the ceiling where it stood.
   ['src/scenes/worldModes.js', 'createWorldModes', 7_159, MODULE],
   ['src/scenes/dungeonContext.js', 'buildDungeonContext', 5_446, MODULE],
   ['src/scenes/exterior.js', 'bootExterior', 3_446, MODULE],

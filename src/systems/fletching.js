@@ -20,7 +20,7 @@ import { FT } from './foragingLaw.js';   // Foraging's Wood Bundle (1604) - its 
 export const FLETCH_TEMPLATES = Object.freeze([8, 14, FT.WoodBundle]);
 
 /** How many arrows one piece of `item` makes: its template's weight over the Arrow's, whole arrows; 0 for anything else
- *  (and for a template the data does not carry - Foraging off). BENCH-ARROWS (FIELD BUGS 2026-10-15b): the Arrow's weight
+ *  (and for a template the data does not carry - Foraging off). BENCH-ARROWS (FIELD BUGS 2026-10-15c): the Arrow's weight
  *  is the classic Arrow's, 0.25 kg - never a mod's patch: Roleplay & Realism: Items' 0.1 (on by default, forced online)
  *  made a Twig five arrows, so four were the workbench's twenty without its plank and its ingot. */
 export function fletchYield(item) {

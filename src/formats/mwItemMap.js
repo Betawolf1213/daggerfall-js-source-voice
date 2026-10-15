@@ -35,7 +35,7 @@
 //     both tokens in order.
 //   - CHAIN -> imperial chain, which exists ONLY as cuirass and
 //     greaves on retail. ~~Every other chain piece will report a miss
-//     and keep its sprite~~ - BARE-BOOTS (FIELD BUGS 2026-10-15b, "No
+//     and keep its sprite~~ - BARE-BOOTS (FIELD BUGS 2026-10-15c, "No
 //     boots model on legendary boots"): the Morrowind figure has no
 //     sprite to keep, so a miss stood bare skin - chain boots, gauntlets
 //     and pauldrons drew bare feet, hands and shoulders. What imperial
