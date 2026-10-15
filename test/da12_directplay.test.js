@@ -51,13 +51,16 @@ test('DA12: the shell - the switch at boot, the folder judged first, the update 
   assert.match(run, /const r = folderAnswer\(await askArena2\(\{ op: 'judge', dir \}, \{ deadline: JUDGE_DEADLINE_MS \}\)\);\s*if \(!r\.dir\) \{ runLauncher\(\); return; \}\s*setArena2\(r\.dir\);/);
   assert.match(run, /\} else setArena2\(null\);/);
   // the version played kept, as Play keeps it (the launcher's NEW marks)
-  assert.match(run, /saveConfig\(\{ \.\.\.loadConfig\(\), lastPlayed: app\.getVersion\(\) \}\);\s*(\/\/[^\n]*\n\s*)*createWindow\(\)\.catch\(\(\) => \{\}\);/);
+  // PIN MOVED: DA13 - the GAME's version, which the channel moves past the install's own (gameVersion)
+  assert.match(run, /saveConfig\(\{ \.\.\.loadConfig\(\), lastPlayed: gameVersion\(\) \}\);\s*(\/\/[^\n]*\n\s*)*createWindow\(\)\.catch\(\(\) => \{\}\);/);
   // AUDIT DA12: the window stands from createWindow's first line - why the check need not wait on its load
   const cw = main.slice(main.indexOf('async function createWindow('));
   assert.match(cw, /^async function createWindow\(\{ onShown = null \} = \{\}\) \{\n  const win = new BrowserWindow\(\{/);
   assert.match(run, /\} finally \{ directStarting = false; \}/);
   // the check the launcher would have run, inside the same gates - its answer the game's, installed at quit
-  assert.match(run, /if \(!updateChecksEnabled\(\)\) return;\s*if \(currentUpdateTransport\(\) === 'updater'\) askUpdater\(\)\.catch\(\(\) => \{\}\);\s*else noticeCheck\(\)\.then\(tellNotice, \(\) => \{\}\);\s*startRechecks\(\);/);
+  // PIN MOVED: DA13 - the game's own channel first, and the installer's path, quietly, for what it cannot carry
+  assert.match(run, /if \(!updateChecksEnabled\(\)\) return;\s*(\/\/[^\n]*\n\s*)*askGame\(\)\.then\(\(g\) => \{ if \(g === 'installer'\) askInstaller\(\); \}\);\s*startRechecks\(\);/);
+  assert.match(main.slice(main.indexOf('function askInstaller()')), /^function askInstaller\(\) \{\s*if \(currentUpdateTransport\(\) === 'updater'\) askUpdater\(\)\.catch\(\(\) => \{\}\);\s*else noticeCheck\(\)\.then\(tellNotice, \(\) => \{\}\);\s*\}/);
   assert.match(main, /au\.autoInstallOnAppQuit = true;/, 'an update found while playing installs at quit - no reopen for a game manager to lose');
   assert.doesNotMatch(run, /installNow|quitAndInstall/, 'never an install before play');
 });

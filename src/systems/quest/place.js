@@ -329,6 +329,51 @@ export class Place extends QuestResource {
   }
 
   /**
+   * FIELD BUGS 2026-10-14 QUEST-HOME (Mac, 2026-10-15: "Close both" - a Ledger A departure: DFU has one player, and no
+   * house it can own is ever a quest's, GetHousesForSale keeping every quest building off the market): A BUILDING SITE
+   * THAT BECAME A PLAYER'S HOME BEFORE ITS PLAYER REACHED IT IS CHOSEN AGAIN. Another player may buy a house after this
+   * quest chose it - no service can know another page's quests - and the quest would send its player into a stranger's
+   * home. The site is chosen again IN ITS OWN TOWN by the place's own law, as SetupLocalSite searches a town (Place.cs:
+   * 717-736 - the declared P2/P3, a house kind's any-house fallback, a person's home its house), whose collector keeps
+   * out every player's home and every building a quest holds (this one's own among them); what was assigned to it is
+   * carried onto the new building's markers (_carryAssignments), and its name is drawn anew, as a site's is - the
+   * journal and the map name the building the quest stands in now. NEVER a site its player has reached (`reached`: stood
+   * inside it, machine.js noteSiteReached) - what they found there stays where they found it - nor one with no law to
+   * choose by (Scopes.None, a questor's own hall), nor one in a layout its town does not stand in (reseatMovedSite's
+   * case). Where the town holds no other building of its kind the site stays, and the quest's rung opens the home to its
+   * player, as before. A shared copy chooses by its share's one die (reseatMovedSite's SHARED-SEAT). Answers whether it
+   * moved.
+   */
+  repickHomedSite(world) {
+    const sd = this.siteDetails;
+    if (this.scope === Scopes.None || sd?.siteType !== SITE_TYPES.Building || !(sd.buildingKey > 0) || sd.unseated || sd.reached) return false;
+    if (!world?.isPlayerHome?.(sd.mapId, sd.buildingKey) || !recordStands(sd)) return false;
+    const shareId = this.parentQuest?.shareId;
+    if (!shareId || !this.parentQuest.hooks?.sharedCopy?.(this.parentQuest)) return this._repickHomedSite(world);
+    let n = 0;
+    this._die = () => seededFirst(stringHash(`${shareId}|homed|${this.symbol?.name ?? ''}|${sd.buildingKey}|${n++}`));
+    try { return this._repickHomedSite(world); } finally { this._die = null; }
+  }
+  /** repickHomedSite's law, under whichever die it was handed. */
+  _repickHomedSite(world) {
+    const sd = this.siteDetails;
+    const location = this.siteTown(world);
+    if (!location) return false;
+    let { p2, p3 } = this.declaredSiteLaw();   // RESEAT-DECLARED's law: the place's declared P2/P3, never its fallback's -1
+    let { found } = this._searchTownSites(world, location, p2, p3);
+    // Person.cs's own fallback for a person's home asked by its group's building: a house of its town
+    if (!found.length && this.isPersonHome() && !(p2 === -1 && p3 === 1)) {
+      [p2, p3] = [-1, 1];
+      ({ found } = this._searchTownSites(world, location, p2, p3));
+    }
+    const next = found.length ? this._carryAssignments(sd, found[this._range(found.length)]) : null;
+    if (!next) return false;
+    this.siteDetails = { ...next, questUID: sd.questUID ?? next.questUID, magicNumberIndex: sd.magicNumberIndex ?? 0, ...(sd.nearSite ? { nearSite: true } : {}) };
+    this._stampSiteLayout();
+    return true;
+  }
+
+  /**
    * KVAR-HOLD (FIELD BUGS 2026-10-08, Themicles: Lord K'avar Part 1 "assigned K'var's location to Privateers Hold ... I
    * can now not receive new Fighters Guild quests with this one still stuck"): A RANDOM DUNGEON THE MAIN STORY OWNS,
    * CHOSEN AGAIN. A save made before _collectDungeonIndicesOfType kept the main story's dungeons out holds a remote
@@ -965,6 +1010,24 @@ export class Place extends QuestResource {
     const index = world?.maps?.getRegion?.(sd?.regionIndex)?.mapNameLookup?.get?.(sd?.locationName);
     const location = index == null ? null : world.maps.getLocation(sd.regionIndex, index);
     return location?.exterior?.exteriorData ? location : null;
+  }
+
+  /** QUEST-HOME: the building this site names, as its town stands - the town directory's merged record of it (its type,
+   *  faction, quality and name seed: the walk the collector makes, _townBuildingsOfType's), or null for none. The record a
+   *  host discovers a moved site's building by (the world host's questSiteMovedHere). */
+  siteBuilding(world) {
+    const sd = this.siteDetails;
+    const location = sd?.siteType === SITE_TYPES.Building && sd.buildingKey > 0 ? this.siteTown(world) : null;
+    if (!location) return null;
+    const blocks = townBlockGrid(world, location);
+    const merged = mergeNamedBuildings(location.exterior.buildings, blocks.filter((b) => b.dfBlock), { locationIndex: location.locationIndex ?? 0 });
+    for (const b of blocks) {
+      if (!b.dfBlock) continue;
+      const list = merged.get(b) ?? [];
+      const count = Math.min(list.length, blockBuildingCount(b.dfBlock) ?? list.length);
+      for (let i = 0; i < count; i++) if (makeBuildingKey(b.x, b.y, i) === sd.buildingKey) return { ...list[i], buildingKey: sd.buildingKey };
+    }
+    return null;
   }
 
   /** CollectQuestSitesOfBuildingType (:1131-1250): the full block walk

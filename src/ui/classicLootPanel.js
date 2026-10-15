@@ -23,6 +23,7 @@ import { drawText, measureText } from './text.js';
 import { getString } from '../systems/settings.js';
 import { parseHexColor, DEFAULT_TOOLTIP_TEXT_BG, DEFAULT_TOOLTIP_TEXT_FG, TOOLTIP_MARGIN } from './toolTip.js';
 import { activeUiPack } from '../systems/uiPack.js';
+import { PLAQUE_MINE_TAG } from '../systems/roomLoot.js';   // PARTY-LOOT: a row of this player's own bonus says so
 
 /** Mac's sheet: its size, and the rows its two gold rules sit on (38 and 141, each with a shadow row beside it). */
 export const PARCHMENT = Object.freeze({
@@ -76,7 +77,7 @@ function fit(fnt, text, w) {
 /** The rows the panel lists: the frame's rows, their stacks, and "and N more" - LOOT-SCROLL: with the rows the plaque's
  *  window leaves above it in the same foot line (`above`; the panel's layout keeps its one foot line). */
 export function lootPanelLines(frame) {
-  const rows = (frame?.rows ?? []).map((r) => (r.stack > 1 ? `${r.name} (${r.stack})` : r.name));
+  const rows = (frame?.rows ?? []).map((r) => (r.stack > 1 ? `${r.name} (${r.stack})` : r.name) + (r.mine ? ` - ${PLAQUE_MINE_TAG}` : ''));   // PARTY-LOOT: this player's own bonus says so
   const above = frame?.above > 0 ? frame.above : 0;
   const more = above ? (frame.rest > 0 ? `${above} above, ${frame.rest} more` : `${above} more above`) : frame?.rest > 0 ? `and ${frame.rest} more` : null;
   return { title: frame?.title ?? '', rows, more };

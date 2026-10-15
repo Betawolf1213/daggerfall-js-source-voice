@@ -36,7 +36,8 @@ import {
   cannotDeleteVampText, cannotDeleteWereText, deleteSpellPrompt,
   VAMPIRE_SPELL_TAG, LYCANTHROPY_SPELL_TAG, editBookSpell,
 } from './spellbookWindow.js';
-import { effectByKey } from '../systems/spellEffects.js';   // the classic book's own source (spellbookWindow.js:"computed from the")
+import { effectByKey, classicEffectSettings } from '../systems/spellEffects.js';   // the classic book's own source (spellbookWindow.js:"computed from the"); SB-FX: and the settings its effect popup reads
+import { t } from '../systems/textManager.js';   // SB-FX: an effect's numbers in the player's language
 import { shownSpellName } from '../systems/loot.js';   // L10N3e: a stock spell's name in the player's language
 import { spellQuickslot, setSpellQuickslot, clearSpellQuickslot } from '../systems/quickslots.js';   // HOTSLOT: the book is where a spell is slotted
 import { TARGET_DESCRIPTIONS, ELEMENT_DESCRIPTIONS, SPELL_ICON_COUNT } from './spellIcons.js';
@@ -70,43 +71,61 @@ let deleting = null;   // AUDIT 39: DeleteButton's deleteSpellIndex - the row th
  * PX23b: AN EFFECT CARRIES NUMBERS, and the first draft read none.
  *
  * `spellEffects` hands back the effect RECORDS, not just their type -
- * every one carries `magnitudeBaseLow/High` with their per-level
- * step, `durationBase/Mod/PerLevel`, and `chanceBase/Mod/PerLevel`
- * (systems/effects.js:"X11b: CREATE ITEM (Mysticism 2,255)" reads exactly these). The first draft
- * printed the two NAMES and threw the rest away, which is the same
- * fault the chronicle's flattened date was: the data was already
- * there.
+ * every one carries the eleven classic settings fields, which the cast
+ * engine resolves (systems/effects.js:"X11b: CREATE ITEM (Mysticism 2,255)", systems/spellcast.js
+ * rollMagnitude). The first draft printed the two NAMES and threw the
+ * rest away, which is the same fault the chronicle's flattened date
+ * was: the data was already there.
  *
- * The words are DFU's own spell-maker phrasing, and each part appears
- * only when that effect HAS it - a Free Action has no magnitude, and
- * printing "0 to 0" would be worse than printing nothing.
+ * SB-FX (2026-10-14, a player on Discord: "shows placeholder values
+ * instead of what the spell actually does"): AND IT READ THEM WRONG.
+ * It decided a component was there when its field was not zero, and
+ * no producer writes a zero there: the Spell Maker inscribes a greyed
+ * spinner at its floor of 1 (systems/spellMaker.js blankEffectSettings,
+ * DefaultEffectSettings' "1 + 1 per level"), and every stock SPELLS.STD
+ * effect holds the same 1s - so a Damage Health read "1 +1/level
+ * rounds" and "1% +1/level", a duration and a chance it does not have.
+ * And it read `magnitudeLevelBase` - MagnitudePlusMin - as a per-level
+ * step, the Plus fields of duration and chance the same way, and never
+ * read Plus max or the three per-level divisors at all.
+ *
+ * So the book reads the effect the way DFU instantiates it: the
+ * settings are ClassicEffectRecordToEffectSettings' (the one port,
+ * systems/spellEffects.js classicEffectSettings), a component is shown
+ * only when the effect class SUPPORTS it (SupportDuration,
+ * SupportChance, SupportMagnitude - the template's three flags, the
+ * gates DaggerfallEffectSettingsEditorWindow.InitControlState greys the
+ * spinners by), and each part is that component's header row of DFU's
+ * own spellbook description (ShowEffectPopup's SpellBookDescription,
+ * TEXT.RSC 1202-1305 - 1212 for Damage Health: "Duration: %bdr + %adr
+ * per %cld level(s)", "Chance: %bch + %ach per %clc level(s)",
+ * "Magnitude: %1bm - %2bm + %1am - %2am per %clm level(s)"), in its
+ * order. The record prints a component the effect lacks as the
+ * defaults (or as "N/A", 1290 Shield's chance); this window prints
+ * nothing there, the spell maker's own reading (1512: "Duration:
+ * Instantaneous. Chance: N/A"). An effect with none - Teleport - reads
+ * its name alone.
  */
 export function effectWords(effect) {
   if (!effect) return null;
   const key = `${effect.type},${effect.subType & 0xff}`;
   const template = effectByKey(key);
-  const base = template
-    ? { group: template.group, subgroup: template.subgroup ?? '' }
-    : { group: effectNotFoundText(), subgroup: key };
-  const lo = effect.magnitudeBaseLow ?? 0;
-  const hi = effect.magnitudeBaseHigh ?? 0;
-  const perLevel = effect.magnitudeLevelBase ?? 0;
+  if (!template) return { group: effectNotFoundText(), subgroup: key, parts: [] };
+  const s = classicEffectSettings(effect);
   const parts = [];
-  if (lo || hi) {
-    const span = lo === hi ? `${lo}` : `${lo}-${hi}`;
-    parts.push(perLevel ? `${span} +${perLevel}/level` : span);
+  if (template.duration) {
+    parts.push(t('spellbook.effect.duration', 'Duration: {base} + {plus} per {per} level(s)',
+      { base: s.durationBase, plus: s.durationPlus, per: s.durationPerLevel }));
   }
-  const dur = effect.durationBase ?? 0;
-  if (dur) {
-    const per = effect.durationMod ?? 0;
-    parts.push(per ? `${dur} +${per}/level rounds` : `${dur} rounds`);
+  if (template.chance) {
+    parts.push(t('spellbook.effect.chance', 'Chance: {base} + {plus} per {per} level(s)',
+      { base: s.chanceBase, plus: s.chancePlus, per: s.chancePerLevel }));
   }
-  const ch = effect.chanceBase ?? 0;
-  if (ch) {
-    const per = effect.chanceMod ?? 0;
-    parts.push(per ? `${ch}% +${per}/level` : `${ch}%`);
+  if (template.magnitude) {
+    parts.push(t('spellbook.effect.magnitude', 'Magnitude: {baseMin} - {baseMax} + {plusMin} - {plusMax} per {per} level(s)',
+      { baseMin: s.magnitudeBaseMin, baseMax: s.magnitudeBaseMax, plusMin: s.magnitudePlusMin, plusMax: s.magnitudePlusMax, per: s.magnitudePerLevel }));
   }
-  return { ...base, parts };
+  return { group: template.group, subgroup: template.subgroup ?? '', parts };
 }
 
 /** The two words the classic shows as TOOLTIPS on the target and

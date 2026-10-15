@@ -94,8 +94,9 @@ test('G7b: sixteen princes, sixteen films, and the host mounts ONE consumer of t
   assert.ok(wm.includes("fetchBytes(r.daedra.video).then((bytes) => {"), 'the film fetches on a successful summons');
   assert.ok(wm.includes('if (!sw.flc.readyToPlay) { mountBoxes(); return; }'),
     'an unreadable FLC falls back to the box chain - never traps');
-  const offerIdx = wm.indexOf("if (offered?.kind === 'offer' && r.daedra.video)");
-  const boxIdx = wm.indexOf('if (offered) { mountBoxes(); return null; }');
+  // SUMMON-OFFER: the quest arm always holds its offer step now (no step is the 'noQuest' arm, answered before the gold)
+  const offerIdx = wm.indexOf('        if (r.daedra.video) {\n          fetchBytes(r.daedra.video)');
+  const boxIdx = wm.indexOf('        mountBoxes();\n        return null;\n      };');
   assert.ok(offerIdx > 0 && boxIdx > offerIdx,
     'the step has ONE consumer: the film window first, the boxes only when no film can');
   const fp = read('src/ui/daedraSummonedWindow.js');

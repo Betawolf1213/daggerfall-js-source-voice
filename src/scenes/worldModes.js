@@ -31,7 +31,7 @@ import { resurrectionSpell } from '../systems/resurrect.js';   // RESURRECT1
 import { sharedCartographySpell } from '../systems/partyMap.js';   // PARTY-MAP
 import { signatureOffers } from '../systems/signatureSpells.js';   // SCHOOLS3: a path's signature spell on the Buy Spells shelf
 import { isOnlinePage } from '../systems/onlineLane.js';   // RESURRECT1: the shelf's online arm
-import { horseCareOn } from '../systems/upkeepSwitch.js';   // STEED1: a Stable prices its horses by what they are while horses are cared for
+import { horseCareRules } from '../systems/upkeepSwitch.js';   // STEED1: a Stable prices its horses by what they are while horses are cared for (HORSE-TIERS: any tier but Off, through the one accessor)
 import { bloodDecalDeps } from '../combat/bloodSwitch.js';   // BLOOD1a
 import { createBloodMarks } from '../combat/bloodMarks.js';   // BLOOD1a
 import { doorWorldAabb, doorWorldPosition, doorWorldNormal, interiorLanding, exteriorLanding, dungeonEntranceLanding, climbLadder, floorLanding, repositionFeetY, standsOnFloor, interiorVoidRescue, standFromVoid, NOTHING_OF_VALUE_TEXT, INTERIOR_VOID_TEXT } from '../player/enterExit.js';   // FIELD BUGS 2026-10-04d VOID-ENTRY: the floor a landing stands on, the failsafe, and their two lines
@@ -313,7 +313,7 @@ import { goldAmount, totalGoldAmount, deductGold, addGold, payUndoable, setCrime
 import { getReputation, getFlag, setFlag, FACTION_FLAGS } from '../systems/factionRep.js';
 // G7: the last unbuilt guild service - the summoning calendar, the
 // cost, Sheogorath's hijack and the roll.
-import { daedraForSummoner, attemptSummoning, SUMMON_TEXT, DAEDRIC_FOES, summonMacroValues, summonsByName, summonByNameBoxes, summonQuestionRows } from '../systems/daedraSummoning.js';   // IF: the punishment table; DAEDRA1: %dae's one source
+import { daedraForSummoner, attemptSummoning, SUMMON_TEXT, DAEDRIC_FOES, summonMacroValues, summonsByName, summonByNameBoxes, summonQuestionRows, noQuestText } from '../systems/daedraSummoning.js';   // IF: the punishment table; DAEDRA1: %dae's one source; SUMMON-OFFER: the word when no quest can be made
 import { expandRowValues } from '../systems/quest/questMacros.js';   // DAEDRA1: MH1's one walk, with the shared context riding it
 import { currentWeather } from '../systems/weatherSim.js';   // AUDIT AT F3: the WORD; its flags come from weather.js's one derivation
 import { weatherFlags } from '../world/weather.js';   // AUDIT AT F3: WeatherManager's four public flags, derived once from SetWeather's switch
@@ -460,6 +460,7 @@ import { livingWorldOn } from '../systems/livingWorld/livingSwitch.js';   // HAL
 import { chapterHallFactor, chapterHallShelf, chapterHallShut, CHAPTER_HALL_SHUT_LINE, seatedBook } from '../net/npcChapterLaw.js';   // CHAP3c: a hall's chapter's band on its training, spells and shelf; CHAP4b: a seat's rank at its halls
 import { noteFirstUse } from '../systems/tutorials.js';   // TUT1: the first touch of a system pops its tutorial page
 import '../ui/tutorialPopup.js';   // TUT1: the popup's handler, registered by this host (the four hosts' rule)
+import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a tinted copy of a light is that light (the dungeon's flame tint, the abyss's candle)
 /** BOUNTY1: the plaque over a town's bounty board. */
 const BOUNTY_BOARD_TEXT = 'Bounty Board';
 const NOTICE_BOARD_TEXT = 'Notice Board';   // ONE-BOARD: a town's Notice Board, while it is open to this account
@@ -3732,7 +3733,7 @@ export function createWorldModes(host) {
   function openYardCounter(kind, regionIndex, tradeMode, name, mapId = 0) {
     const b = yardCounter(kind, regionIndex, name);
     const stock = () => yardStock(kind, {
-      mapId, day: Math.floor(worldMinutes() / 1440), online: isOnlinePage(), priced: horseCareOn(),
+      mapId, day: Math.floor(worldMinutes() / 1440), online: isOnlinePage(), priced: !!horseCareRules(),
       owned: (playerEntity.items ?? []).map((it) => it?.horseSeed).filter(Number.isInteger),
     });
     const win = openTradeWindow({ items: tradeMode === 'Sell' ? [] : stock() }, b, tradeMode === 'Sell' ? 'Sell' : 'Buy');
@@ -6460,8 +6461,9 @@ export function createWorldModes(host) {
     if (destination === 'guildServiceDaedraSummoning') {
       // G7 - the last of the twenty destinations. Two boxes: "is it a
       // summoning day" and, if it is, "are you REALLY sure" - and the
-      // answer to the second spends two hundred thousand gold before
-      // anything is rolled.
+      // answer to the second spends two hundred thousand gold whatever
+      // the roll, unless the prince who answers has no quest that can
+      // be made here (SUMMON-OFFER).
       const dict = townTalk?.factionDict ?? null;
       const summonerId = summonerFactionId ?? b?.factionId ?? 0;
       const summoner = dict?.get(summonerId) ?? null;
@@ -6527,13 +6529,20 @@ export function createWorldModes(host) {
           gold: totalGoldAmount(playerEntity),
           daedraRep: (fid) => getReputation(store, fid),
           hasSummoned: (fid) => getFlag(store, fid, FACTION_FLAGS.Summoned),
+          // SUMMON-OFFER (bible/01-Overview/Field-Bugs-2026-10-14.md): the prince's quest, asked for where DFU asks
+          // (GetQuest, after the roll) and BEFORE the gold is spent or the prince recorded - null where it cannot
+          // be made (a remote site the region does not have: W0C00Y00's palace)
+          offerQuest: (questName) => questBridge?.offerDaedricQuest?.(questName, summonerId) ?? null,
           ...weather,
         });
         if (r.kind === 'poor') {
           return { rows: [{ text: `The summoning would cost ${r.cost} gold.`, center: true }] };
         }
-        // The gold goes BEFORE the roll and is not refunded: you paid
-        // for the summoning, not for the prince turning up.
+        // SUMMON-OFFER: he answered and has no quest that can be made here - nothing spent, nothing recorded, and
+        // said (DFU took the gold, set the flag and showed nothing)
+        if (r.kind === 'noQuest') return { rows: [{ text: noQuestText(r.daedra), center: true }] };
+        // The gold is not refunded on a failure: you paid for the
+        // summoning, not for the prince turning up.
         deductGold(playerEntity, r.cost);
         surfacePlayer();
         if (r.kind === 'failed') {
@@ -6556,7 +6565,7 @@ export function createWorldModes(host) {
           return { rows: box(r.textId, r.daedra, `${getLocalizedFactionName(r.daedra.factionId, r.daedra.name)} has met you before.`) };   // L10N3e: the prince as %dae shows him (PersistentFactionData.cs:176)
         }
         setFlag(store, r.daedra.factionId, r.flag);
-        const offered = questBridge?.offerDaedricQuest?.(r.quest, summonerId) ?? null;
+        const offered = r.offered;   // SUMMON-OFFER: made before the gold went
         // G7b: the prince's own .FLC window carries the OFFER step -
         // DaggerfallDaedraSummonedWindow, the film with the offer
         // read over it in four-line chunks. The step has ONE
@@ -6568,7 +6577,7 @@ export function createWorldModes(host) {
         const mountBoxes = () => {
           // DAEDRA1: the prince's own offer is a TEXT.RSC record like
           // any other and was handed over raw here too
-          const boxes = offered ? questBridge.offerBoxes(offered, (id) => say(id, r.daedra)) : [];
+          const boxes = questBridge.offerBoxes(offered, (id) => say(id, r.daedra));
           if (!boxes.length || !guildServiceArtLoaded() || !_shopFont) return;
           let offerWin = null;
           offerWin = new ServiceFlowWindow(boxes, {
@@ -6576,7 +6585,7 @@ export function createWorldModes(host) {
           });
           mountServiceWindow(offerWin);
         };
-        if (offered?.kind === 'offer' && r.daedra.video) {
+        if (r.daedra.video) {
           fetchBytes(r.daedra.video).then((bytes) => {
             let sw = null;
             sw = new DaedraSummonedWindow({
@@ -6594,8 +6603,8 @@ export function createWorldModes(host) {
           }).catch(() => mountBoxes());
           return null;
         }
-        if (offered) { mountBoxes(); return null; }
-        return { rows: [{ text: `${getLocalizedFactionName(r.daedra.factionId, r.daedra.name)} answers your summons.`, center: true }] };   // L10N3e: the prince as %dae shows him (PersistentFactionData.cs:176)
+        mountBoxes();
+        return null;
       };
       if (byName) {
         // SUMMON-NAME: the sixteen by name, then DFU's question about the one named - a flow, whose boxes take a list.
@@ -9560,7 +9569,7 @@ export function createWorldModes(host) {
   }
   /** OH-E: SuppressAbyssLights' candle - the Light spell's light at half its intensity (the colour channel's white) and
    *  half its range while the abyss's presentation holds. */
-  const abyssCandle = (l, abyss) => (l && abyss ? { ...l, range: l.range * abyss.magicLightScale, color: (l.color ?? [1, 1, 1]).map((c) => c * abyss.magicLightScale) } : l);
+  const abyssCandle = (l, abyss) => (l && abyss ? adoptLight({ ...l, range: l.range * abyss.magicLightScale, color: (l.color ?? [1, 1, 1]).map((c) => c * abyss.magicLightScale) }, l) : l);   // LIGHT-ID: the candle's copy is the candle's light
   /** OH-E: ApplyAbyssAmbientLight's RenderSettings.ambientLight under a Trilight - its sky colour, the rest as given. */
   const abyssTrilight = (tri, abyss) => (tri && abyss ? { ...tri, sky: abyss.renderAmbient.slice(0, 3) } : tri);
   /** OH-D: There's a Hole in the Bottom of the Ocean's TransitionDungeonInterior(null, default(StaticDoor), clone, true) -
@@ -9815,6 +9824,8 @@ export function createWorldModes(host) {
           companionBodies: () => host.companionBodies?.() ?? null,   // COMPANION-KIT: my companions underground (the dungeon's own records)
           fates: !!host.openRevenantFate, shakeCamera: (k) => host.shakeCamera?.(k),   // REVENANT-FATE: the host opens a beaten revenant's choice; an execution's blow felt
           onLootClaimed: () => host.onLootClaimed?.(),   // AUDIT WORLD4 C2/D5: a claimed container makes the room's memory due this frame
+          partyLevels: () => host.partyLevels?.() ?? [],   // PARTY-LOOT: the party's levels, which a room container's base is minted at (the outer host's)
+          roomHost: () => host.roomHost?.() ?? null,   // PARTY-LOOT: the room's seat, whose word grants a take (the outer host's)
           // A10: the Recall prompt (Teleport.cs:81-98). The outer host
           // owns it - the plan's arms are its pixel teleport, its mode
           // teardown and its dungeon mount - so a cast underground in
@@ -10963,7 +10974,7 @@ export function createWorldModes(host) {
       iilSyncLane(renderer, true);   // IIL2: the mod's own shadows, on its classic-look lane, when the row asks
       const _iilOn = iilActive(renderer.lightingLane);
       const _iilDg = _iilOn ? iilDungeonLights(dungeonCtx.iilLightFlats ?? []) : null;
-      const _dgTint = (l) => (l && !l.aura ? { ...l, color: _iilOn ? iilTorch(l).color : _dgColor } : l);   // IIL1: the player's flames in the mod's torch colour; AUDIT 3 (SERAPH-WINGS): an aura's light (`aura`) keeps its own - the wings' gold is no flame
+      const _dgTint = (l) => (l && !l.aura ? adoptLight({ ...l, color: _iilOn ? iilTorch(l).color : _dgColor }, l) : l);   // IIL1: the player's flames in the mod's torch colour; AUDIT 3 (SERAPH-WINGS): an aura's light (`aura`) keeps its own - the wings' gold is no flame
       // LA-AUDIT A5: on the lane, one torch past the cap, for the cap's fade (capFadePairs; the court's braziers ride
       // after every light, so the gate's court keeps the cut)
       const _dgFade = !!renderer.lightingLane && !isGateArena(dungeonLoc);
@@ -11001,7 +11012,7 @@ export function createWorldModes(host) {
       renderer.drawFoeTelegraphs?.(drawableBlows(tacticsNow(), player.pos));   // TACT4: a foe's wind-up on the ground
       renderer.drawFoeTelegraphs?.(techniqueMarksNow());   // TECH1: and the player's own marks, after the foes' (bible/05-Combat/Weapon-Techniques.md)
       if (isGateArena(dungeonLoc)) host.drawGateBodies?.(canvas, proj, view, mwv.eye, dt);   // MWNPC10: the court's creatures in their bodies (their batches ride extraBillboards)
-      if (dungeonCtx.uiOverlayActive) dungeonCtx.showBodyFlats?.();   // AUDIT MW-NPC C6: no body is drawn under a window - its corpse flat is
+      if (dungeonCtx.uiOverlayActive) dungeonCtx.drawWindowBodies?.(canvas, { proj, view, eye: cam.pos });   // AUDIT MW-NPC C6, FB1015 LOOT-BODY: under a window drawFoes' last bodies, frozen
       dungeonCtx.bloodMarks?.draw?.(camRight, UP_Y);   // BLOOD1a: the dungeon's own marks, on this host's pass   // BLOOD1b: and its chunks, on this host's own basis
       dungeonCtx.drawPeople?.(canvas, proj, view, mwv.eye, dt, offerDungeonQuestStands);   // MWNPC8b: the people in their bodies - before the level's billboards draw; MWNPC8c: and the quest's
       renderer.drawBillboards([...dungeonCtx.billboardBatches, ...dungeonCtx.campBatches(), ...dungeonCtx.torchBatches(), ...(host.extraBillboards?.() ?? [])], camRight, UP_Y);   // ONLINE1: the peers on the dungeon's own pass; HT1 the dropped torches; SURV3 the campfires

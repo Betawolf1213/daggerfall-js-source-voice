@@ -63,7 +63,7 @@
     "old": "    saddleDrawPanel();   // STEED-UI", "new": "    void 0;   // STEED-UI",
     "tests": ["test/steedui_saddle.test.js"] },
   { "name": "STEEDUI-ext-unwired", "file": "src/scenes/exterior.js",
-    "old": "saddleHost.motion(gamePaused() ? 0 : dt, metres, galloping);", "new": "void 0;",
+    "old": "saddleHost.motion(gamePaused() ? 0 : dt, metres, galloping, player.rideWalking);", "new": "void 0;",
     "tests": ["test/steedui_saddle.test.js"] },
   { "name": "STEEDUI-stable-bond-to-go", "file": "src/ui/holdingsPages.js",
     "old": "h.next ? `${h.next.at - Math.floor(h.bond)} to ${h.next.name}` : 'Whole'", "new": "h.next ? `${h.next.at} to ${h.next.name}` : 'Whole'",

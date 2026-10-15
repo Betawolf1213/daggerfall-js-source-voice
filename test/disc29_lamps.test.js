@@ -154,6 +154,9 @@ test('DISC29-E: BB_VS faces the lamp per vertex - right = up x (lamp - flat) off
 test('DISC29-E: a flat idling in place is its own class - a mover to the eight, kept by the lo tier; a walker is not. AUDIT PRE-MERGE 0929 E1: and only a flat that cannot walk - a foe, a peer or the Warden standing a second is still the eight\'s, and its walking off rebuilds no lo map and leaves no silhouette behind (mutants: the class for an origin\'s flat; the class judged by stillness)', () => {
   const lamps = [];
   for (let i = 0; i < 12; i++) lamps.push(i * 1.5, 2, 3, 15);
+  // LIGHT-ID (re-aimed, Mac 2026-10-14): a lamp reading its 512 map keeps no lo map - two lamps past the twelve, within the
+  // mage's reach, are the lo maps he must be in
+  lamps.push(4, 2, 17.5, 15, 6, 2, 17.5, 15);
   const h = hall(lamps, { every: true });
   const mage = bakedIdler(4, 3), foe = idler(10, 3), feet = walker(7, 3);
   const draw = (rr) => rr.drawBillboards([mage, foe, feet], new Float32Array([1, 0, 0]), new Float32Array([0, 1, 0]));

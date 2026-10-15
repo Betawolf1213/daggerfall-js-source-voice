@@ -29,11 +29,12 @@
   {
     "name": "PARTY-TRUCE-wildFair-unasked",
     "file": "src/scenes/world.js",
-    "old": "    if (_wildTruce.holds(peerId, Date.now())) return false;   // PARTY-TRUCE",
-    "new": "    if (false) return false;   // PARTY-TRUCE",
+    "old": "party: !!social?.isPartyPeer(peerId) || _wildTruce.holds(peerId, Date.now()),",
+    "new": "party: !!social?.isPartyPeer(peerId),",
     "tests": [
       "test/fb1009b_partytruce.test.js"
-    ]
+    ],
+    "note": "MAC (2026-10-14, re-aimed by content): wildFair asks the truce inside its one kin law, net/wildRef.js wildKin"
   },
   {
     "name": "PARTY-TRUCE-the-walk-never-names-the-zone",

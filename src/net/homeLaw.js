@@ -153,6 +153,23 @@ export const HOME_LAYOUT_MODS = Object.freeze(['beautiful-villages', 'beautiful-
 export const HOME_LAYOUT_MAX = 96;
 /** The most towns the layouts read answers (a town per home at the very most). */
 export const HOME_LAYOUTS_MAX = 20000;
+/** FIELD BUGS 2026-10-14 QUEST-HOME: the most homes the layouts read names by building (`homes`) - three a town at the
+ *  towns' own bound. A home past it is known where its town is asked, as every home was before. */
+export const HOME_KEYS_MAX = 3 * HOME_LAYOUTS_MAX;
+/**
+ * FIELD BUGS 2026-10-14 QUEST-HOME (Mac, 2026-10-15: "Close both"): WHAT AN ACT MOVED, for every page online - town
+ * `mapId`'s buildings `on` homes now and `off` homes no more, as one act's answer says it (`moved`). The route signs it
+ * into a home order (server-account/src/index.js homeOrdersOf), which the acting client carries to the hub and the hub fans to everyone, so
+ * a page that read every town's homes at its boot (homeLayouts) hears a house bought after it - a quest's residence is
+ * never picked in it, and one already picked there and not yet reached is chosen again (src/systems/quest/place.js
+ * repickHomedSite).
+ * @param {number} mapId @param {number[]} [on] @param {number[]} [off]
+ */
+export const homeMoved = (mapId, on = [], off = []) => [{ mapId, on, off }];
+/** QUEST-HOME: the most buildings one home order (and one home word) names - a character holds three homes, and a
+ *  deletion is one order a town (src/net/identityToken.js homeOrderValid, src/net/wire.js validHomeWord). */
+export const HOME_ORDER_KEYS_MAX = 16;
+
 /** A home's layout stamp: null (Daggerfall's own town) or `vendor@version` of the layout mods, joined by '+', each
  *  named once. */
 export function homeLayoutOk(v) {

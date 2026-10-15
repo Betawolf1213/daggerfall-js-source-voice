@@ -1544,6 +1544,7 @@ import { WATER_BED_GLSL, waterBedMix } from './waterBedGlsl.js';   // WATER-NEXT
 import { packWaterMask, WATER_DRAW_MASK_TABLE } from '../world/waterCorners.js';   // MAC2: the corner table's one home; WATER-DRAW1: the PASS takes the draw's table, not the feet's
 import { pageParam } from '../systems/pageQuery.js';   // PERF-URL: the page's query, parsed once a search
 import { SKIN_PAL_ROW, SKIN_PALETTE_UNIT } from './skinPalette.js';   // MWNPC1: the GPU skin's palette shape
+import { lightIdsOf, lightList, packLight } from './lightId.js';   // LIGHT-ID: each light's identity, lifted off its list for the shadow pass (and the flash packed through the seam)
 import { ecotoneGlsl, ECO_UNITS } from './ecotoneGlsl.js';   // ECOTONE1: the ground's share of its neighbours - the chunk, and the units their tile sets bind on
 import { SNOW_VS, snowTerrainFs, SNOW_UNITS, SNOW_LAYER, snowSurfaceRise } from './snowfallGlsl.js';   // SNOWFALL1: the mod's snow surface, lit as the ground is
 const SNOW_UNIT_LIST = Object.entries(SNOW_UNITS);   // AUDIT ENVIRONS P1: the five pictures' units, listed once
@@ -1807,10 +1808,11 @@ export class Renderer {
     this._windowEmission = new Float32Array([0, 0, 0]);
     this._pointLights = new Float32Array(0); // vec4 per light [x,y,z,range]
     this._flashLight = null;   // DS1: the storm's flash, composed in by setFlashLight
-    this._flashLightScratch = new Float32Array(CLASSIC_MAX_LIGHTS * 4);
+    this._flashLightScratch = lightList(CLASSIC_MAX_LIGHTS);   // LIGHT-ID: a light list - the flash enters through the one seam, the identities beside it
     this._flashColorScratch = new Float32Array(CLASSIC_MAX_LIGHTS * 3);
     this._flashCarriedScratch = new Uint8Array(CLASSIC_MAX_LIGHTS);   // MAC-T1: the carried mask under the flash
     this._pointCarried = null;   // MAC-T1: per-light, 1 for the light in the player's hand (withPlayerLights' mask), else null
+    this._pointIds = null;   // LIGHT-ID: per-light, its producer's identity (render/lightId.js - the list's `ids`), else null (an anonymous list)
     this._everyLightNow = false;    // DISC15: this frame's host asked for the lo tier (everyLightCasts)
     this._everyLightPrev = false;   // DISC15: ...and the frame whose records the passes replay had asked too
     this._pointColor = new Float32Array([1, 1, 1]);
@@ -2536,7 +2538,7 @@ export class Renderer {
     this.maxPointLights = lane ? lane.maxLights : CLASSIC_MAX_LIGHTS;
     const n = this.maxPointLights;
     if (this._flashLightScratch.length < n * 4) {
-      this._flashLightScratch = new Float32Array(n * 4);
+      this._flashLightScratch = lightList(n);   // LIGHT-ID
       this._flashColorScratch = new Float32Array(n * 3);
       this._flashCarriedScratch = new Uint8Array(n);
       this._pointColorScratch = new Float32Array(n * 3);
@@ -3024,6 +3026,7 @@ export class Renderer {
     if (this._everyLightNow !== this._everyLightPrev) { this._air?.invalidatePrev(); } this._everyLightPrev = this._everyLightNow; this._everyLightNow = false;   // LA-POST6: a door crossed either way is a cut - the air's contact march has no previous frame of this room (its prepare is below)
     sp.render({
       eye: this._shadowEye(), lightDir, sunScale: this._sunScale, pointLights: this._pointLights, carried: this._pointCarried,   // MAC-T1; TV1: the cascades about the focus
+      ids: this._pointIds,   // LIGHT-ID: each light's identity - the pass knows a light that moved by it
       cascadeScale: this._focus[3] > 0.5 && this._focusWide ? SHADOW_VIEW_SCALE : 1,   // AUDIT DEEP R-3: and grown to the travel view's picture - AUDIT DEEP2 D7: once it is half risen (at the head the near cascade went from 1.2 cm texels to 4.7 in one frame, and back at the fall's end)
       textures: this.textures, isSpectral: isSpectralArchive, bindVao, everyLight, cut,
       holdSkin: this._holdSkinFn,   // MWNPC16: a body's palette for its replay (the unit's word kept - releaseCharacterSkin puts the identity back over one let go)
@@ -3754,16 +3757,28 @@ export class Renderer {
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      const rb = gl.createRenderbuffer();
-      gl.bindRenderbuffer(gl.RENDERBUFFER, rb);
-      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, CHAR_SPRITE_RT_SIZE, CHAR_SPRITE_RT_SIZE);
+      // BODY-DEPTH (2026-10-15, the owner: "The models also clip through geometry"): THE PICTURE'S DEPTH IS A TEXTURE,
+      // not a renderbuffer - the composite quad reads it back (drawCharacterSpriteQuad `depth`), so a body is tested
+      // against the world where each of its texels stands, never as one flat card through its middle
+      const depth = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, depth);
+      this._tex0Bound = null;   // PERF-TEX3: unit 0 again, this path's own
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT16, S, S, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       const fbo = gl.createFramebuffer();
       gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
       gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
-      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, rb);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.TEXTURE_2D, depth, 0);
       gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameFbo ?? null);   // EL4: minted mid-frame, the frame comes back
-      cs = this._csRT = { fbo, tex, rb };
+      cs = this._csRT = { fbo, tex, depth };
     }
+    // BODY-DEPTH: every caller draws INTO the target next - its depth texture may not stand on unit 1, where the quad
+    // left it, while it is drawn into (a program that samples unit 1 would read a texture its own framebuffer writes - a
+    // feedback loop, and WebGL refuses the draw), so unit 1 is let go and its shadow with it
+    if (this._depthOnUnit1) { this._activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, null); this._activeTexture(gl.TEXTURE0); this._tex1Bound = null; this._depthOnUnit1 = false; }
     return cs;
   }
 
@@ -3972,7 +3987,7 @@ export class Renderer {
         for (let i = at; i < at + n; i++) {
           const it = items[i], q = it.quad;
           this.drawCharacterSpriteQuad(tex, q.at, q.halfW, q.halfH, q.right, it.pw / CHAR_SPRITE_RT_SIZE, it.ph / CHAR_SPRITE_RT_SIZE,
-            q.hitFlash, q.conceal, q.up, [it.tx / CHAR_SPRITE_RT_SIZE, it.ty / CHAR_SPRITE_RT_SIZE], q.fx);   // MWNPC5: and its tells
+            q.hitFlash, q.conceal, q.up, [it.tx / CHAR_SPRITE_RT_SIZE, it.ty / CHAR_SPRITE_RT_SIZE], q.fx, q.depth);   // MWNPC5: and its tells; BODY-DEPTH: and where its texels stand
         }
         at += n;
       }
@@ -4086,7 +4101,11 @@ export class Renderer {
    *  drawRigSpriteBox); none, world up - every vertex exactly where it stood. */
   /** MWNPC5: `fx`, optional - a foe's tells on its body ({ glint: [r, g, b, a] | null, elite: pulse (0 none; negative a
    *  corpse's rim), time: seconds, dissolve: [share, r, g, b] | null }); none, the quad draws as it did. */
-  drawCharacterSpriteQuad(tex, center, halfW, halfH, right, u1 = 1, v1 = 1, hitFlash = 0, conceal = null, up = null, origin = null, fx = null) {
+  /** BODY-DEPTH: `depth`, optional - where the picture's texels stand ({ dir, near, range, base }, characterSprite.js
+   *  pictureDepth): each texel written at its own depth off the sprite target's depth texture, so a body lying on a floor
+   *  or standing at a wall is tested where it is, not as a card through its middle. None (a card of its own vertical - the
+   *  travel view's lean, the Billboard Look), the quad's own depth, as it always was. */
+  drawCharacterSpriteQuad(tex, center, halfW, halfH, right, u1 = 1, v1 = 1, hitFlash = 0, conceal = null, up = null, origin = null, fx = null, depth = null) {
     this._close2D();   // PERF-2D: the baseline back, before anything that needs it
     const gl = this.gl;
     this._ensureCharQuadProgram();
@@ -4113,6 +4132,14 @@ export class Renderer {
     gl.uniform4f(c.glint, g ? g[0] : 0, g ? g[1] : 0, g ? g[2] : 0, g ? g[3] : 0);
     gl.uniform2f(c.elite, fx?.elite || 0, fx?.time || 0);
     gl.uniform4f(c.dissolve, d ? d[0] : 0, d ? d[1] : 0, d ? d[2] : 0, d ? d[3] : 0);
+    // BODY-DEPTH: the target's depth on unit 1 whenever the target stands (unit 1's one door and its shadow - the sampler
+    // never reads a texture the frame is drawing into), read only when this picture says where its texels stand
+    const dtex = this._csRT?.depth ?? null;
+    if (dtex) { this._bindEmission(dtex); this._depthOnUnit1 = true; }   // let go before the target is drawn into (_charSpriteRT)
+    gl.uniform1i(c.depthTex, 1);
+    const dp = dtex && depth ? depth : null;
+    gl.uniform4f(c.depthK, dp ? dp.near : 0, dp ? dp.range : 0, dp ? dp.base : 0, dp ? 1 : 0);
+    gl.uniform3f(c.depthDir, dp ? dp.dir[0] : 0, dp ? dp.dir[1] : 0, dp ? dp.dir[2] : 0);
     this._bindVao(this._charQuadVAO);
     gl.bindBuffer(gl.ARRAY_BUFFER, this._charQuadVBO);
     gl.bufferSubData(gl.ARRAY_BUFFER, 0, v);
@@ -4159,6 +4186,12 @@ uniform float uHitFlash;   // HITFLASH1: a Morrowind body struck
 uniform vec4 uGlint;      // TELL2: rgb the blow's colour, a its strength (0 off)
 uniform vec2 uElite;      // ELITE FOES: x the glow's pulse (0 off; negative an elite's corpse - the rim alone), y seconds
 uniform vec4 uDissolve;   // DISSOLVE: x the share gone (0 whole, 1 gone), yzw the edge's colour
+// BODY-DEPTH: the picture's depth (the sprite target's own) and how to read it - x the ortho's near, y its far - near, z
+// the quad's own distance along the picture's ray, w 1 when this picture says where its texels stand (0: the quad's depth)
+uniform sampler2D uDepthTex;
+uniform vec4 uDepthK;
+uniform vec3 uDepthDir;   // the picture's ray, unit
+uniform mat4 uProj, uView;
 out vec4 outColor;
 ${FOG_GLSL}
 ${HIT_FLASH_GLSL}
@@ -4172,15 +4205,26 @@ float tileAlpha(ivec2 p) {
   if (p.x < lo.x || p.y < lo.y || p.x >= hi.x || p.y >= hi.y) return 0.0;
   return texelFetch(uTex, p, 0).a;
 }
-// eliteRim's twin: a texel within 2 of the silhouette (dx*dx + dy*dy <= 4)
+// BODY-DEPTH: the window depth of a texel whose picture depth is d - the quad's point moved along the picture's ray to
+// where the texel stands, as the world's camera sees it; the quad's own where the picture says nothing (or the point is
+// behind the eye)
+float bodyDepth(float d) {
+  if (uDepthK.w < 0.5) return gl_FragCoord.z;
+  vec4 c = uProj * uView * vec4(vWorld + uDepthDir * (uDepthK.x + d * uDepthK.y - uDepthK.z), 1.0);
+  return c.w > 1e-4 ? clamp(c.z / c.w * 0.5 + 0.5, 0.0, 1.0) : gl_FragCoord.z;
+}
+// eliteRim's twin: a texel within 2 of the silhouette (dx*dx + dy*dy <= 4) - BODY-DEPTH: answered as the nearest such
+// silhouette texel's picture depth, so the outline stands where the body does; -1.0 where there is none
 float bodyRim(ivec2 p) {
+  float best = -1.0;
   for (int dy = -2; dy <= 2; dy++) {
     for (int dx = -2; dx <= 2; dx++) {
       if ((dx == 0 && dy == 0) || dx * dx + dy * dy > 4) continue;
-      if (tileAlpha(p + ivec2(dx, dy)) >= 0.5) return 1.0;
+      ivec2 q = p + ivec2(dx, dy);
+      if (tileAlpha(q) >= 0.5) { float d = texelFetch(uDepthTex, q, 0).r; best = best < 0.0 ? d : min(best, d); }
     }
   }
-  return 0.0;
+  return best;
 }
 // eliteEmber's twin: its column the tile's own (a column of the picture, wherever the tile stands this frame)
 float bodyEmber(ivec2 p, float secs) {
@@ -4222,16 +4266,18 @@ void main() {
   if (t.a < (uConceal.x > 0.0 ? 0.1 : 0.5)) {
     // MWNPC5: the outline and the embers stand where the body does not - never on a concealed body nor one burning away
     if (uConceal.x == 0.0 && uDissolve.x <= 0.0) {
-      if (uGlint.a > 0.0 && bodyRim(bodyTexel(uv)) > 0.0) { outColor = bodyFogged(glintRimColor(uGlint)); return; }
+      float rim = uGlint.a > 0.0 || uElite.x != 0.0 ? bodyRim(bodyTexel(uv)) : -1.0;   // BODY-DEPTH: and where it stands
+      if (uGlint.a > 0.0 && rim >= 0.0) { gl_FragDepth = bodyDepth(rim); outColor = bodyFogged(glintRimColor(uGlint)); return; }
       if (uElite.x != 0.0) {
         ivec2 p = bodyTexel(uv);
-        if (bodyRim(p) > 0.0) { outColor = bodyFogged(eliteRimColor(eliteRimK(uElite.x, uElite.y))); return; }
+        if (rim >= 0.0) { gl_FragDepth = bodyDepth(rim); outColor = bodyFogged(eliteRimColor(eliteRimK(uElite.x, uElite.y))); return; }
         float em = uElite.x > 0.0 ? bodyEmber(p, uElite.y) : 0.0;
-        if (em > 0.0) { outColor = bodyFogged(eliteRimColor(uElite.x) * (0.55 + 0.6 * em)); return; }
+        if (em > 0.0) { gl_FragDepth = gl_FragCoord.z; outColor = bodyFogged(eliteRimColor(uElite.x) * (0.55 + 0.6 * em)); return; }
       }
     }
     discard;
   }
+  gl_FragDepth = uDepthK.w > 0.5 ? bodyDepth(texelFetch(uDepthTex, bodyTexel(uv), 0).r) : gl_FragCoord.z;   // BODY-DEPTH: the texel where it stands (no read for a card)
   float edge = 0.0;
   if (uDissolve.x > 0.0) {   // MWNPC5: burnt away, the feet first - and the edge it burns along (dissolveEdge)
     float g = bodyGrain(bodyTexel(uv), uv.y / max(uSpan.y, 1e-6)) - (uDissolve.x * 1.1 - 0.05);   // dissolveCutAt
@@ -4266,6 +4312,9 @@ void main() {
         glint: gl.getUniformLocation(P, 'uGlint'),   // MWNPC5: a foe's tells on its body
         elite: gl.getUniformLocation(P, 'uElite'),
         dissolve: gl.getUniformLocation(P, 'uDissolve'),
+        depthTex: gl.getUniformLocation(P, 'uDepthTex'),   // BODY-DEPTH: where the picture's texels stand
+        depthK: gl.getUniformLocation(P, 'uDepthK'),
+        depthDir: gl.getUniformLocation(P, 'uDepthDir'),
       };
       const vao = gl.createVertexArray();
       this._bindVao(vao);
@@ -5365,6 +5414,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       windowEmission: this._windowEmission,
       pointLights: this._pointLights,
       pointCarried: this._pointCarried,   // AUDIT LIGHT-NEAR1: the hand's mask rides with the lights (a subarray has no `.carried`)
+      pointIds: this._pointIds,   // LIGHT-ID: and their identities, for the same reason
       pointColor: this._pointColor,
       pointColors: this._pointColors,
       indirect: [this._indirect[0], this._indirect[1], this._indirect[2], this._indirect[3]],
@@ -5453,6 +5503,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     this.setWindowEmission(s.windowEmission);
     this.setPointLights(s.pointLights, s.pointColor, s.pointColors);
     this._pointCarried = s.pointCarried ?? null;   // AUDIT LIGHT-NEAR1: setPointLights read the mask off the array, and a snapshot's has none
+    this._pointIds = s.pointIds ?? null;   // LIGHT-ID: nor its identities
     this.setIndirectLight([s.indirect[0], s.indirect[1], s.indirect[2]], s.indirect[3], s.indirectColor);
     this._proj = s.proj; this._view = s.view; this._lightDir = s.lightDir;
     this._frameStamp++;   // PERF3: a restored state is a new frame to the terrain block
@@ -5730,6 +5781,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       this.setWindowEmission(was.windowEmission);
       this.setPointLights(was.pointLights, was.pointColor, was.pointColors);
       this._pointCarried = was.pointCarried ?? null;
+      this._pointIds = was.pointIds ?? null;   // LIGHT-ID
       this.setIndirectLight([was.indirect[0], was.indirect[1], was.indirect[2]], was.indirect[3], was.indirectColor);
       this.setClearColor(was.clearColor);
       this._proj = was.proj; this._view = was.view; this._lightDir = was.lightDir;
@@ -6162,6 +6214,10 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     const n = this.maxPointLights;   // EL1: the installed set's cap
     // MAC-T1: the carried mask is a property of the composed array, and `subarray` returns a fresh view without it -
     // so it is lifted FIRST, and cut to the same cap
+    // LIGHT-ID: and the identities its composer packed beside each light (render/lightId.js), for the shadow pass - lifted
+    // and cut as the mask is; an anonymous list (none) names its lights by their places, as the pass always had
+    const ids = lightIdsOf(data);
+    this._pointIds = ids ? ids.subarray(0, n) : null;
     const carried = data.carried ?? null;
     this._pointCarried = carried ? carried.subarray(0, n) : null;
     this._pointLights = data.subarray ? data.subarray(0, n * 4) : data;
@@ -6187,7 +6243,7 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
     const data = this._pointLights, colors = this._pointColors, f = light;
     const keep = Math.min(this.maxPointLights - 1, Math.floor(data.length / 4));   // EL1: one slot under the installed cap
     const out = this._flashLightScratch;
-    out[0] = f.x; out[1] = f.y; out[2] = f.z; out[3] = f.range;
+    packLight(out, 0, f);   // LIGHT-ID: the flash into the list through the one seam (its range is past every caster's)
     out.set(data.subarray ? data.subarray(0, keep * 4) : data.slice(0, keep * 4), 4);
     this._pointLights = out.subarray(0, (keep + 1) * 4);
     // MAC-T1: the mask shifts with the arrays - the flash takes slot 0 unmarked, the hand's light keeps its bit
@@ -6195,6 +6251,12 @@ void main() { vec4 t = texture(uTex, vUV); if (t.a < 0.5) discard; outColor = ve
       const m = this._flashCarriedScratch;
       m[0] = 0; m.set(this._pointCarried.subarray(0, keep), 1);
       this._pointCarried = m.subarray(0, keep + 1);
+    }
+    // LIGHT-ID: the identities shift with them, the flash's own in slot 0 - an anonymous list's stay none
+    if (this._pointIds) {
+      const m = out.ids;
+      m.set(this._pointIds.subarray(0, keep), 1);
+      this._pointIds = m.subarray(0, keep + 1);
     }
     const c = this._flashColorScratch;
     c[0] = f.color[0]; c[1] = f.color[1]; c[2] = f.color[2];

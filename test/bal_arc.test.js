@@ -52,6 +52,7 @@ import { isGateArena, GATE_ARENA_LOCATION_ID } from '../src/world/gateArena.js';
 import { isArenaFloor, ARENA_FLOOR_LOCATION_ID } from '../src/world/arenaFloor.js';
 import { withDom } from './invdrag.mjs';
 import * as acorn from 'acorn';
+import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
 
 _wearScaleForTests(1);   // the mod's wear verbatim (BALANCE1's scale is test/balance1.test.js's)
 
@@ -465,6 +466,7 @@ test('AUDIT BAL the saved dungeon\'s elites: the save writes each foe\'s word, a
     const mk = (i, elite) => ({ mobileType: 24, gender: 'male', entity: { eliteFoe: elite, health: 50 }, ai: { feet: [0, 0, 0] }, src: { mobileType: 24, ...(elite ? { eliteFoe: true } : {}) }, i });
     const foes = [mk(0, true), mk(1, false)];
     const st = {
+      ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
       foes, _layoutFoes: 2, _eliteOnline: online, renderer: { destroyBillboardBatch() {} }, freeCorpse() {}, dropCandidate() {}, _sharedById: new Map(),
       lootPiles: [], settleLootFlat() {}, droppedLoot: { restorePiles() {} }, droppedTorches: { restore() {} }, camps: { dropOwn() {}, restore() {} },
       actions: { restoreSaveData() {} }, playerEntity: {}, clearOwnPuppets() {}, questPoolOps: { removeFoe() {} }, respawnDue: () => false, _wallNow: () => null,

@@ -24,9 +24,19 @@ whole of it is a departure, Ledger A (SHIPYARDS, SHIPYARDS-FOUND, THE PIER'S DRE
 ## Where they stand
 
 **Which towns** (`systems/portPlaces.js` `isPortTown`). A city, a town or a village (`PORT_TOWN_TYPES`) that is a port
-by its own data: Travel Options' hand-written harbours (`systems/travelPorts.js` `hasPort`) or Daggerfall's
-PortTownAndUnknown byte - the host's `portByData`. A seat's members' harbour (`hasPortFor`) is one guild's word, so it
-stands no shipyard: every client stands the same one.
+by its own data - Travel Options' hand-written harbours (`systems/travelPorts.js` `hasPort`) or Daggerfall's
+PortTownAndUnknown byte (`portTownByData`) - AND that the open sea bears on (INLAND-PORTS,
+`01-Overview/Field-Bugs-2026-10-14-inland-ports.md`; `portSites.js:"export function portTownOnSea(loc, hasPort, isSea) {"`,
+the host's `portOnSea`): a pixel of the open sea within `SEA_RING` (2) of the town's, the ring the bearing below is read
+off, so every port town has a seaward edge. THE OPEN SEA is the map's water that reaches the map's border
+(`portSites.js:"export function openSeaOf(isWater, width, height) {"` - the one water law's pixels flooded eight-way from
+the map's edge, Deep Waters' own flood of the sea; past the Veil, the Eltheric Ocean's water round its isles). The data
+alone is no coast: the byte's 0x10 is the region capitals' mark and Travel Options' table copied the byte's list, so 36
+capitals in the hills and the deserts stood a shipyard and a lighthouse at their middle (Ilessan Hills beside its own
+ponds - the report); and the byte's low bits name a lake's side as the sea's. On the real map 106 of the 155 towns that
+are ports by their data stand them, and the harbour board's ports are the same 106 (`03-World/Captains-Sea.md` THE
+PORTS). A seat's members' harbour (`hasPortFor`) is one guild's word, so it stands no shipyard: every client stands the
+same one.
 
 **The ground** is the yards' (`world/merchantYardSites.js` `townGroundOf`): the town's navgrid on the enhanced lane's
 water table, its buildings `BUILDING_CLEAR_M` off, its props, flats, palace blocks and the monument - with the Stable and
@@ -38,10 +48,11 @@ always were (`townGroundOf`, then `yardSitesOn`), and the port's places go on wh
 ground tile of the water family on the enhanced table) in a body that reaches the block grid's edge with
 `SEA_CELLS_MIN` (48) cells at least, never a pond or a fountain (`townSeaOf`) - each cell's distance to it is walked
 four-way (`seaField`, kind `water`). Where they hold none, the sea's bearing off the map pixels round the town's
-(`seaBearing`: every pixel of sea within `SEA_RING` (2) - the port's one water law, `isWaterPixel` over CLIMATE.PAK and
-WOODS.WLD - two near, one far; the map's y runs south, the frame's z north), and a cell's distance is how far it stands
-in from the town's seaward edge, and `LATERAL_K` of its distance off that edge's middle (kind `bearing`). No sea either
-way: the town's middle, as the yards' (kind `middle`). A body of the town's own water whose middle lies against the map's
+(`seaBearing`: every pixel of the open sea within `SEA_RING` (2) - the port's one water law, `isWaterPixel` over
+CLIMATE.PAK and WOODS.WLD, flooded from the map's border (INLAND-PORTS: a lake behind the town never turns its yard) - two
+near, one far; the map's y runs south, the frame's z north), and a cell's distance is how far it stands in from the town's
+seaward edge, and `LATERAL_K` of its distance off that edge's middle (kind `bearing`). The bearing's sum nought - the sea
+all round evenly; a port town always has the sea within the ring - the town's middle, as the yards' (kind `middle`). A body of the town's own water whose middle lies against the map's
 bearing - on the far side of the town's middle from the sea the map shows - is a lake or a river's reach inland and no
 sea (`townSeaOf`'s `bearing`, AUDIT SHIPYARDS U2): the shipyard turned its back on the sea to face it.
 
@@ -307,7 +318,8 @@ piece's body out of the gangway's lane, the lanterns' light where the berth lies
   the frame hands the town's places again then, once (`townTalk.setPorts`), waiting on the harbour book's own test -
   `csaIsPortTown` (L3-2: the shipyard's test kept a seat's docks to a second visit and waited for ever on a harbour the
   book never sounds). The rows are `world/portSites.js` `portPlaceRows`'s, the berth's point `sceneToLocationXZ`'s, a port
-  by its data `systems/portPlaces.js` `portTownByData`'s - each executed by the tests, never read off world.js (L6-10).
+  by its data `systems/portPlaces.js` `portTownByData`'s and on the open sea `world/portSites.js` `portTownOnSea`'s
+  (INLAND-PORTS) - each executed by the tests, never read off world.js (L6-10).
 - **The town maps** (`world/merchantYardMap.js` `yardTownBlocks`, `ui/townMapDoor.js`): the shipyard's ground in a
   shop's byte, the lighthouse's in a house's (`PORT_MAP_TYPE`), each lettered by its own name. The docks lie out on the
   water past the town's blocks, which is all a town map draws.
@@ -374,8 +386,9 @@ page, the plaques, the lamp, the Overworld's marks. `test/shipyards1_found.test.
 the docks on the Overworld, the glyphs, the four hosts, the lamp reaching the renderer (`test/yardLightRig.mjs`, the host's
 own light composition), the tutorial's pages. `test/piers1.test.js` - the pier's dress. `test/shipyards1_audit.test.js` and
 `test/shipyards1_audit_port.test.js` - AUDIT SHIPYARDS's pins (below). `test/beacontower.test.js` - BEACON-TOWER's (above).
-Mutants: `tools/mutants/shipyards1.json` (76), `tools/mutants/shipyards1_audit.json` (72) and
-`tools/mutants/beacontower.json` (21), every one dead.
+`test/fb1014_inlandports.test.js` - INLAND-PORTS's: the open sea, the ring, the towns, the host's (and on the real map,
+the 106 and the 49). Mutants: `tools/mutants/shipyards1.json` (76), `tools/mutants/shipyards1_audit.json` (72),
+`tools/mutants/beacontower.json` (21) and `tools/mutants/fb1014_inlandports.json` (14), every one dead.
 
 ## AUDIT SHIPYARDS (2026-10-11, Mac: "Audit everything")
 
