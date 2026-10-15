@@ -226,6 +226,6 @@ export const ownArmorParts = (own, { helmStyle = STEEL_HELM_DEFAULT } = {}) =>
   (own?.styles?.[helmStyle] ?? own?.parts ?? []);
 
 /** Every mesh path this table can ask for, derived rather than typed out
- *  again - for a preload and a coverage walk alike. Every style's. */
+ *  again - the coverage walk's (each ships). Every style's. */
 export const ownArmorModelPaths = () =>
   [...new Set(OWN_MW_ARMOR.flatMap((a) => [a.parts, ...Object.values(a.styles ?? {})].flat().map((p) => `meshes/${p.model}`)))];

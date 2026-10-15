@@ -37,6 +37,7 @@ import { bindPart, attachmentTransform } from '../formats/mwCharacter.js';
 import { assembleFirstPersonArm, poseAssembly } from '../formats/mwFirstPerson.js';
 import { parseEsm } from '../formats/mwEsmFile.js';
 import { assembleNpc, indexSkins } from '../formats/mwNpc.js';
+import { ownFacePools } from '../characters/ownHeadModels.js';   // MW-HEADS1: the race and sex whose faces are the port's own
 
 const $ = (id) => document.getElementById(id);
 const canvas = $('c');
@@ -835,8 +836,10 @@ async function exportFaceSheet() {
   };
   const CELL = 112; const LABEL = 26; const PAD = 6;
   const rows = [];
+  const own = [];   // MW-HEADS1: a race and sex the port's own heads stand for - the archives' are not its pools
   for (const race of races) {
     for (const female of [false, true]) {
+      if (ownFacePools(race.id, female)) { own.push(`${race.id} ${female ? 'female' : 'male'}`); continue; }
       const heads = pool(race.id, female, 0); const hairs = pool(race.id, female, 1);
       if (!heads.length && !hairs.length) continue;
       rows.push({ title: `${race.id} ${female ? 'female' : 'male'}`, heads, hairs });
@@ -892,6 +895,7 @@ async function exportFaceSheet() {
   a.download = 'mw-face-sheet.png';
   a.href = sheet.toDataURL('image/png');
   a.click();
-  setStatus(`face sheet: ${rows.length} race/sex rows exported - upload it back and the table gets written by eye`);
+  setStatus(`face sheet: ${rows.length} race/sex rows exported - upload it back and the table gets written by eye`
+    + (own.length ? ` (the port's own heads stand for ${own.join(', ')} - characters/ownHeadModels.js)` : ''));
 }
 $('facesheet')?.addEventListener('click', () => { exportFaceSheet(); });

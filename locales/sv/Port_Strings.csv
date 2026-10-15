@@ -794,6 +794,8 @@ features.moddedLighting.note,"Kräver modden Improved Interior Lighting. Dess va
 features.moddedLighting.on,"På"
 features.moddedLighting.shadows,"Med skuggor"
 features.moddedLighting.title,"Moddat ljus ({mod})"
+features.mwBillboardLook.note,"Med Morrowind-kroppen står kroppar och hästar upprätt som de klassiska spritesen och ser lägre ut ovanifrån. Avstängt lutar de sig mot kameran och behåller sin sanna längd."
+features.mwBillboardLook.title,"Billboard-utseende"
 features.navalCombat.aimCamera,"Bredsideskamera"
 features.navalCombat.autoRepair,"Besättningen reparerar själv"
 features.navalCombat.boarders,"Pirater äntrar dig"

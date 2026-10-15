@@ -794,6 +794,8 @@ features.moddedLighting.note,"Wymaga moda Improved Interior Lighting. Jego ciep�
 features.moddedLighting.on,"Wł."
 features.moddedLighting.shadows,"Z cieniami"
 features.moddedLighting.title,"Oświetlenie z moda ({mod})"
+features.mwBillboardLook.note,"Z ciałem z Morrowinda ciała i konie stoją prosto jak klasyczne sprite’y i z góry wyglądają na niższe. Wyłączone pochylają się ku kamerze i zachowują swój prawdziwy wzrost."
+features.mwBillboardLook.title,"Wygląd billboardu"
 features.navalCombat.aimCamera,"Kamera burtowa"
 features.navalCombat.autoRepair,"Załoga sama naprawia"
 features.navalCombat.boarders,"Piraci abordażują"

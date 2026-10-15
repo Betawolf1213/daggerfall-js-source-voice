@@ -794,6 +794,8 @@ features.moddedLighting.note,"Χρειάζεται το mod Improved Interior Li
 features.moddedLighting.on,"Ενεργό"
 features.moddedLighting.shadows,"Με σκιές"
 features.moddedLighting.title,"Φωτισμός από mod ({mod})"
+features.mwBillboardLook.note,"Με το σώμα του Morrowind, σώματα και άλογα στέκονται όρθια όπως τα κλασικά sprites και φαίνονται κοντύτερα από ψηλά. Απενεργοποιημένο, γέρνουν προς την κάμερα και κρατούν το πραγματικό τους ύψος."
+features.mwBillboardLook.title,"Όψη billboard"
 features.navalCombat.aimCamera,"Κάμερα πλευρικών βολών"
 features.navalCombat.autoRepair,"Το πλήρωμα επισκευάζει μόνο του"
 features.navalCombat.boarders,"Οι πειρατές κάνουν ρεσάλτο"

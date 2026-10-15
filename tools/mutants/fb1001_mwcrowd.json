@@ -56,8 +56,8 @@
   {
     "name": "MW-CROWD-weapons-back-in-the-key",
     "file": "src/net/peerBodies.js",
-    "old": "    k = (items.some((it) => it?.group === 'Weapons') ? lookKey({ ...look, items: items.filter((it) => it?.group !== 'Weapons') }) : lookKey(look)) + npcKeyOf(look);",
-    "new": "    k = lookKey(look) + npcKeyOf(look);",
+    "old": "    k = (items.some((it) => it?.group === 'Weapons') ? lookKey({ ...look, items: items.filter((it) => it?.group !== 'Weapons') }) : lookKey(look)) + npcKeyOf(look) + outfitKeyOf(look);",
+    "new": "    k = lookKey(look) + npcKeyOf(look) + outfitKeyOf(look);",
     "tests": [
       "test/fb1001_mwcrowd.test.js"
     ]
