@@ -26,7 +26,7 @@ import { realmToDungeon } from '../src/net/sdBrain.js';
 import { egAim, egFightNew } from '../src/net/egBodies.js';
 import { shDisc } from '../src/net/egShape.js';
 import { egRideHolds, egRideOf, egRideAt, EG_TS_LAG_MAX_MS, EG_POSE_NEAR_MS, EG_SUPPORT_LAG_S } from '../src/net/egFair.js';
-import { egPieceAt } from '../src/net/egSpanLaw.js';
+import { egPieceAt, EG_BODY_R } from '../src/net/egSpanLaw.js';
 import { egBreachNew, egEnter, egStep, egCount, egHeal, egFightStateOf, EG_LIFELINE_UNDER } from '../src/net/egBrain.js';
 import { egResume, egRelease, egRcFold, egRcSpent, egRcLive, EG_RC_KEEP } from '../src/net/egDurable.js';
 import { egWispAt, EG_HAZARDS } from '../src/net/egFragLaw.js';
@@ -132,6 +132,28 @@ test('AUDIT EG V L4-1 A SILENT SOCKET\'S BODY IS HELD (sections 6.1 and 21): eac
   });
 });
 
+test('AUDIT EG V L4-1 A LINGERING FIELD READS THE WHOLE TRAIL (section 21, "a body that steps into it while it lasts"): a member out of a charge\'s run at its landing steps into it while it lasts - one pose, sent just before the room\'s beat and arriving after it (150 ms on its way, its clock\'s delay said) - and then stands still, saying nothing: the run catches it (mutant: the field read to now, past a pose still on its way and the stand-ins after it)', async () => {
+  await withSpire(async ({ eg, beat, rec, spec, socks, now }) => {
+    const cave = spec.fl[0], cz = (cave.az + cave.bz) / 2;
+    const [mac, ann] = SUBS;
+    await eg.raw(socks[mac], JSON.stringify({ t: 'eg', k: 'clk', c: 1, h: 150 }));
+    const q = [];
+    const send = (sub, x, z) => q.push([now() + 150, sub, poseAt(spec, x, z, 0, { ts: now() % POSE_TS_MOD })]);
+    const step = async (ms) => { for (let k = 0; k < ms; k += 10) { q.sort((a, b) => a[0] - b[0]); while (q.length && q[0][0] <= now()) { const [, sub, p] = q.shift(); await eg.pose(socks[sub], p); } await beat(10); } };
+    for (let k = 0; k < 16; k++) { send(mac, 0, cz + 7); await eg.pose(socks[ann], poseAt(spec, 7, cz + 7)); await step(100); }
+    const at = now() + 1500;
+    assert.ok(egAim(rec().F, spec, { o: 0, s: [shDisc(0, cz, 3)], at, wu: 1500, p: 0.4, b: 0, el: null, nm: 'Test Blow', sp: 4000 }, [], now(), []), 'a charge\'s run said');
+    let stepped = false;
+    while (now() < at + 6000) {
+      if (!stepped && now() >= at + 600 && eg.alarm.at - now() === 10) { send(mac, 0, cz); stepped = true; }   // into the run, just before a beat
+      await step(10);
+    }
+    assert.ok(stepped);
+    assert.equal(rec().mem[mac].bd?.v ?? 1, 0.6, 'caught by the run it stepped into');
+    assert.equal(rec().mem[ann].bd?.v ?? 1, 1);
+  }, { n: 2, h: 2 });
+});
+
 test('AUDIT EG V L4-1 THE DRAINS READ A HELD BODY (section 21): a soul-wisp\'s drain (seed 12345, hall 27) binds a member whose newest pose is the room\'s stand-in held EG_TS_LAG_MAX_MS short of the beat, as the held trail stands it - and one whose newest real pose is that old binds nothing (mutant: a stand-in read as a stale pose)', () => {
   const co = [['acct-0', 'M0', 1]];
   for (const held of [true, false]) {
@@ -169,11 +191,15 @@ test('AUDIT EG V L4-2 A RIDE ONLY WHERE THE POSE STANDS (section 10.8, "a pose c
   assert.ok(pl && egRideHolds(spec, pl, ...on, tS), 'feet on the piece: its ride');
   assert.equal(egRideHolds(spec, pl, on[0] + 30, on[1], on[2], tS), false, 'feet 30 m off: no ride');
   assert.equal(egRideHolds(spec, pl, on[0], on[1] - 4, on[2], tS), false, 'feet under it: no ride');
-  // the lag: feet where the piece stood EG_SUPPORT_LAG_S ago ride it; where it stands a second on, past its reach, not
-  const back = egPieceAt(s0, tS - EG_SUPPORT_LAG_S), far = egPieceAt(s0, tS + 1);
-  const atBack = [s0.x + back.dx, s0.y, s0.z + back.dz];
-  assert.ok(egRideHolds(spec, [pl[0], 0, 0, 0], ...atBack, tS), 'within the lag');
-  if (Math.hypot(far.dx - q.dx, far.dz - q.dz) > s0.w / 2 + 1) assert.equal(egRideHolds(spec, [pl[0], 0, 0, 0], s0.x + far.dx + s0.w, s0.y, s0.z + far.dz, tS), false);
+  // the lag: feet at the trailing edge of where the piece stood EG_SUPPORT_LAG_S ago ride it, though the piece has moved on
+  // past them at tS (a pose sent as the screen drew it); twice the lag back, they do not
+  const lagT = [1, 2, 3, 4, 5, 6, 7, 8].map((k) => k * 0.37).find((tt) => Math.abs(egPieceAt(s0, tt).dx - egPieceAt(s0, tt - EG_SUPPORT_LAG_S).dx) > 0.05 && Math.abs(egPieceAt(s0, tt).dx - egPieceAt(s0, tt - 2 * EG_SUPPORT_LAG_S).dx) > Math.abs(egPieceAt(s0, tt).dx - egPieceAt(s0, tt - EG_SUPPORT_LAG_S).dx) + 0.05);
+  assert.ok(lagT != null, 'a moment the piece moves along x');
+  const nowQ = egPieceAt(s0, lagT), dir = Math.sign(nowQ.dx - egPieceAt(s0, lagT - EG_SUPPORT_LAG_S).dx), reach = s0.w / 2 + EG_BODY_R - 0.01;
+  const trailing = (dt) => [s0.x + egPieceAt(s0, lagT - dt).dx - dir * reach, s0.y, s0.z + nowQ.dz];
+  assert.ok(Math.abs(trailing(EG_SUPPORT_LAG_S)[0] - (s0.x + nowQ.dx)) > s0.w / 2 + EG_BODY_R, 'off the piece where it stands now');
+  assert.ok(egRideHolds(spec, [pl[0], 0, 0, 0], ...trailing(EG_SUPPORT_LAG_S), lagT), 'within the lag: a ride');
+  assert.equal(egRideHolds(spec, [pl[0], 0, 0, 0], ...trailing(2 * EG_SUPPORT_LAG_S), lagT), false, 'twice the lag back: none');
   assert.ok(egRideAt(spec, pl, tS));
   await withSpire(async ({ eg, beat, rec, spec: sp, socks, now }) => {
     const cave = sp.fl[0], cz = (cave.az + cave.bz) / 2;
@@ -185,6 +211,11 @@ test('AUDIT EG V L4-2 A RIDE ONLY WHERE THE POSE STANDS (section 10.8, "a pose c
     const e = eg.room._egTrailsBy.get(mac).tr.at(-1);
     assert.ok(Math.abs(e[1] - 0) < 1e-6 && Math.abs(e[3] - cz) < 1e-6, 'the trail stands where the feet stood');
     assert.equal(rec().mem[mac].bd?.v ?? 1, 0.6, 'the blow on the cave floor counted');
+    // an honest rider: its feet on the piece a little off where its offset says (the screen drew it a frame apart) - the
+    // relay stands it at the piece's place on the clock plus its offset, as the room judges a ride
+    for (let k = 0; k < 6; k++) { const qq = egPieceAt(s0, now() / 1000); await eg.pose(socks[ann], poseAt(sp, s0.x + qq.dx + 0.3, s0.z + qq.dz, s0.y, { pl: [s0.i, 0.6, 0, 0] })); await beat(100); }
+    const ea = eg.room._egTrailsBy.get(ann).tr.at(-1), qa = egPieceAt(s0, ea[0] / 1000);
+    assert.ok(Math.abs(ea[1] - (s0.x + qa.dx + 0.6)) < 1e-6, 'a ride on its piece: the piece\'s place plus its offset, not the raw pose');
   }, { n: 2, h: 2 });
 });
 

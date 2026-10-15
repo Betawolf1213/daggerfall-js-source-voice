@@ -386,7 +386,7 @@ test('EG-H1 RIDDEN POSES (section 10.8): a body on a Drift, a Rail or a Drum rid
     // it, on the piece as it swings (a raw pose 40 m off claimed the ride, and the relay stood it there), its ride saying
     // where on it
     for (let z = spec.arrive.z + 0.6; z < s0.z - 1.2; z += 0.6) { await eg.pose(socks[mac], poseAt(spec, 0, z)); await beat(100); }
-    for (let k = 0; k < 30; k++) { const q1 = egPieceAt(s0, now() / 1000); await eg.pose(socks[mac], poseAt(spec, s0.x + q1.dx + 0.3, s0.z + q1.dz, s0.y, { pl: [0, 0.3, 0, 0] })); await beat(100); }
+    for (let k = 0; k < 30; k++) { const q1 = egPieceAt(s0, now() / 1000); await eg.pose(socks[mac], poseAt(spec, s0.x + q1.dx + 0.1, s0.z + q1.dz, s0.y, { pl: [0, 0.3, 0, 0] })); await beat(100); }   // the raw a little off its offset: the ride, not the raw, stands it
     const tr = eg.room._egTrailsBy.get(mac).tr, e = tr.at(-1), qe = egPieceAt(s0, e[0] / 1000);   // PIN MOVED (AUDIT EG III, lane3 #3): the trail is the account's
     assert.ok(Math.abs(e[1] - (s0.x + qe.dx + 0.3)) < 1e-6 && Math.abs(e[3] - s0.z) < 1e-6, 'its trail stands on the piece at its clock');
     assert.equal(rec().mem[mac].fair.why, '', 'its fair trail held aboard');

@@ -659,8 +659,8 @@
   {
     "name": "EGZS-whole-ally-heal",
     "file": "src/net/egBrain.js",
-    "old": "got / healRef(B.mem[sub].lv) / egCountWhole(B.mem[sub].vs)",
-    "new": "got / healRef(B.mem[sub].lv)",
+    "old": "backed / healRef(B.mem[sub].lv) / egCountWhole(B.mem[sub].vs)",
+    "new": "backed / healRef(B.mem[sub].lv)",
     "tests": [
       "test/egz_mastery.test.js"
     ],

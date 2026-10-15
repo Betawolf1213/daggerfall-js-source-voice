@@ -44,6 +44,7 @@ import { ARMOR_MATERIAL } from '../src/systems/armorMaterials.js';
 import { _resetPlayerHealForTests } from '../src/systems/playerHeal.js';
 import { setPref, _resetForTests as resetPrefs } from '../src/systems/uiPrefs.js';
 import { LOOT_RARITY_KEY } from '../src/systems/lootRarity.js';
+import { readFileSync } from 'node:fs';
 
 const { subtle } = globalThis.crypto;
 const T0 = 1_800_000_000_000, ME = 'acct-mac', Y = '0123456789abcdef', X = 'fedcba9876543210', SEED = 12345;
@@ -133,6 +134,10 @@ test('AUDIT EG V L4-3 IN MY HALL, A DEAD ORDER IS ASKED AGAIN (section 6.1, "The
   R.client.word(wire({ k: 'no', m: 'the order is not yours' }), `eg:${Y}`);
   for (let k = 0; k < 4; k++) { R.client.frame(); await settle(); }
   assert.equal(R.L.asks.length, 1 + EG_ADMIT_ASKS, 'at most EG_ADMIT_ASKS in the hall');
+  R.client.word(wire({ k: 'no', m: 'the order is not yours' }), `eg:${Y}`);
+  for (let k = 0; k < 4; k++) { R.client.frame(); await settle(); }
+  assert.equal(R.L.asks.length, 1 + EG_ADMIT_ASKS, 'refused again past the bound: no more asked');
+  assert.ok(R.L.said.includes('The order is not yours.'), 'and the refusal said, the asks spent');
 });
 
 // ── L4-4 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -144,6 +149,9 @@ test('AUDIT EG V L4-4 A CALL TO ANOTHER BREACH NEVER WIPES THE ONE I STAND IN (s
   s = foldEg(s, wire(egFightStateOf(B, t + 2000)), t + 2000);
   const held = { b: s.b, h: s.h, sg: s.sg, co: s.co.length, bodies: s.fight.bodies.length, blows: s.fight.blows.length };
   assert.ok(egLiveHeld(s) && held.bodies > 0 && held.blows > 0, 'the trial held');
+  // a call over a call (no room has spoken): the newer breach's call starts its state, as before
+  const Z = '00000000000000aa';
+  assert.equal(foldEg(foldEg(EG_STATE_EMPTY, callOf(X, t), t), callOf(Z, t), t).b, Z, 'a call replaces a call');
   s = foldEg(s, callOf(X, t), t + 2100);
   assert.deepEqual({ b: s.b, h: s.h, sg: s.sg, co: s.co.length, bodies: s.fight.bodies.length, blows: s.fight.blows.length }, held, 'Y stands');
   assert.equal(s.call.b, X, 'X\'s call kept beside it');
@@ -247,6 +255,12 @@ test('AUDIT EG V L8-1 THE SPIRE\'S BLOWS ARE A FOE\'S (section 15\'s death saves
   w = wearing(panoply);
   hurtPlayer(w.e, 85);
   assert.equal(P.setPowerStates(0).reprieve, 0, 'an unmarked hurt raises nothing');
+  // every body's blow the screen lands is marked - mine, and my part of a chained mate's (Morvayn's soul-chain)
+  const src = readFileSync(new URL('../src/scenes/egFight.js', import.meta.url), 'utf8');
+  const blows = src.match(/landShare\(bl\.p, bl\.b, bl\.el, bl\.nm, [^;]*?\)(?=[;\s])/g) ?? [];
+  assert.equal(blows.length, 2, 'two doors a body\'s blow lands by');
+  for (const call of blows) assert.match(call, /, true\)$/, `a foe's blow: ${call}`);
+  assert.equal((src.match(/landShare\([^)]*\)/g) ?? []).filter((c) => !c.startsWith('landShare(bl.')).filter((c) => /, true\)$/.test(c)).length, 0, 'no hazard, zone or drain marked');
   // the mark is the blow's alone: one set and never taken lies past BLOW_WINDOW_S
   w = wearing(panoply);
   P.setSpireStruck();
@@ -277,6 +291,12 @@ test('AUDIT EG V L8-2 / L8-5 THE SPOILS A CLAIM PAYS (sections 16.1, 16.3 and 19
   assert.deepEqual(g.roll().map((q) => q.kind), egReliquaryList(dx.seed, 20, [1, 2]).map((q) => q.kind));
   assert.deepEqual(JSON.stringify(g.roll().map((q) => q.item?.name ?? q.gold)), JSON.stringify(egReliquaryList(dx.seed, 20, [1, 2]).map((q) => q.item?.name ?? q.gold)), 'the claim\'s seed rolled');
   assert.notDeepEqual(JSON.stringify(g.roll().map((q) => q.gold ?? 0)), JSON.stringify(egReliquaryList(777, 20, [1, 2]).map((q) => q.gold ?? 0)), 'never the receipt\'s own');
+  // the host's half (scenes/world.js egSpoilsPaid): the claim's seed and its embers into the Redoubt's spoils
+  const host = readFileSync(new URL('../src/scenes/world.js', import.meta.url), 'utf8');
+  const fn = host.slice(host.indexOf('function egSpoilsPaid(c, d) {'), host.indexOf('function egSpoilsPaid(c, d) {') + 2200);
+  assert.match(fn, /embers: Number\.isSafeInteger\(d\?\.embers\) \? d\.embers : 0 \}/, 'the embers the claim paid');
+  assert.match(fn, /const seed = egSpoilsSeedOf\(c, d\), day = egSpoilsDay\(c\.b, c\.w\), roll = \(\) => egSpoilsList\(seed, level, c\.w, o\);/, 'rolled on the claim\'s seed');
+  assert.match(fn, /sdSpoilsPool\.spew\(\{ day, seed, level,/, 'thrown on it');
 });
 
 // ── L8-9 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -287,8 +307,8 @@ test('AUDIT EG V L8-9 THE DEPTHS\' ROW NAMES ITS WAGER (sections 18 and 20 - "wi
     { rank: 3, name: 'Bob', h: 20, ew: 0, wagered: false, wg: [] },
   ] } };
   const lines = egBoardLines(board, 'depths');
-  assert.equal(lines[2], `1. Mac - Hall 47 from Redoubt 10 - ${EG_BOARD_TEXT.wager(`${EG_DECREES[0].name}, ${EG_DECREES[9].name}`)}`);
-  assert.equal(lines[2], '1. Mac - Hall 47 from Redoubt 10 - the Wager: Chained Blows, Ashfall');
+  assert.equal(lines[2], `1. Mac - Hall 47 from Redoubt 10 - ${EG_TEXT.wager(`${EG_DECREES[0].name}, ${EG_DECREES[9].name}`)}`);
+  assert.equal(lines[2], '1. Mac - Hall 47 from Redoubt 10 - The Wager: Chained Blows, Ashfall', 'the start window\'s own words');
   assert.equal(lines[3], `2. Ann - Hall 31 - ${EG_BOARD_TEXT.wagered}`);
   assert.equal(lines[4], '3. Bob - Hall 20');
 });

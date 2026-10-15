@@ -16,7 +16,7 @@ import { mintEgReceipt, readEgReceipt } from '../src/net/egReceipt.js';
 import { mintReceipt } from '../src/net/gateReceipt.js';
 import { verifyOrder, verifyEgOpenAnyAge } from '../src/net/identityToken.js';
 import { ARENA_SEASON_EPOCH_S, ARENA_WEEK_S } from '../src/net/arenaLaw.js';
-import { egSpoilsSeed } from '../src/net/egPay.js';
+import { egSpoilsSeed, egLegendaryShare } from '../src/net/egPay.js';
 import { EG_KEY_ODDS, EG_KEY_ODDS_RITE, EG_KEY_ODDS_SD, EG_KEY_PITY, rollWeirKey } from '../server-account/src/eg.js';
 import { egSpoilsList, egSpoilsSeedOf, rollEgSpoils } from '../src/systems/egSpoils.js';
 import { stoneCount } from '../src/systems/sigilBroker.js';
@@ -118,6 +118,7 @@ test('AUDIT EG V L8-5 / L8-2 THE SPOILS ROLL ON THE CLAIM\'S SEED, AND ITS EMBER
   assert.match(eNonce, /^[0-9a-f]{16}$/);
   assert.equal(e1.seed, egSpoilsSeed(9, eNonce));
   assert.equal((await claim(me, x(me, b1, [10]))).seed, e1.seed, 'an end asked again: the same');
+  assert.notEqual((await claim(me, x(me, b2, [10]))).seed, e1.seed, 'another end of the same `c`: its own draw');
 });
 
 // ── L8-9 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -133,7 +134,12 @@ test('AUDIT EG V L8-9 AN END KEEPS ITS WAGER, AND THE DEPTHS\' ROW NAMES IT (sec
   const board = (await S.call('/v1/eg/board', {}, mac.secret)).body;
   const rows = board.depths.rows;
   assert.deepEqual(rows.map((r) => [r.name, r.h, r.wagered, r.wg]), [['Wagerer', 31, true, [0, 9]], ['Plain', 20, false, []]]);
-  assert.match(egBoardLines(board, 'depths')[2], / - the Wager: Chained Blows, Ashfall/);
+  assert.match(egBoardLines(board, 'depths')[2], / - The Wager: Chained Blows, Ashfall/);
+});
+
+// ── L9-5 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+test('AUDIT EG V L9-5 THE LEGENDARY\'S SHARE CLIMBS 3% A REDOUBT (section 19: "20% at Redoubt 1, +3% a Redoubt, to 65% (Redoubt 16)"): every Redoubt between its ends, not only the ends test/egeco_pay.test.js read (mutant: a steeper climb)', () => {
+  for (const [w, v] of [[1, 0.2], [2, 0.23], [5, 0.32], [10, 0.47], [15, 0.62], [16, 0.65], [17, 0.65]]) assert.ok(Math.abs(egLegendaryShare(w) - v) < 1e-9, `Redoubt ${w}: ${egLegendaryShare(w)}`);
 });
 
 // ── L9-6 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────

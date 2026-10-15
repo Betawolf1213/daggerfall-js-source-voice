@@ -394,15 +394,15 @@
   {
     "name": "EGZI-brain-lifeline-an-unbelieved-heal",
     "file": "src/net/egBrain.js",
-    "old": "if (q && (q.ht ?? 0) - had[i] >= min) v = Math.max(v, egVOf(q.vs, 'lifeline'));",
-    "new": "if (q) v = Math.max(v, egVOf(q.vs, 'lifeline'));",
+    "old": "if (q && (q.ht ?? 0) - had[i] >= min && cast(by)) v = Math.max(v, egVOf(q.vs, 'lifeline'));",
+    "new": "if (q && cast(by)) v = Math.max(v, egVOf(q.vs, 'lifeline'));",
     "tests": ["test/egz_rules.test.js"]
   },
   {
     "name": "EGZI-brain-lifeline-the-first-healer",
     "file": "src/net/egBrain.js",
-    "old": "if (q && (q.ht ?? 0) - had[i] >= min) v = Math.max(v, egVOf(q.vs, 'lifeline'));",
-    "new": "if (q && (q.ht ?? 0) - had[i] >= min && !v) v = egVOf(q.vs, 'lifeline');",
+    "old": "if (q && (q.ht ?? 0) - had[i] >= min && cast(by)) v = Math.max(v, egVOf(q.vs, 'lifeline'));",
+    "new": "if (q && (q.ht ?? 0) - had[i] >= min && cast(by) && !v) v = egVOf(q.vs, 'lifeline');",
     "tests": ["test/egz_rules.test.js"]
   },
   {

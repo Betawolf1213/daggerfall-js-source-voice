@@ -351,7 +351,7 @@
   {
     "name": "EGDUR-the-release-gives-nothing",
     "file": "src/net/egDurable.js",
-    "old": "  const gap = egGiveBack(B, Math.max(0, now - h.at), now, found ? (o, k, v) => found.get(o)?.get(k) === v : null);",
+    "old": "  const gap = egGiveBack(B, Math.max(0, now - h.at), now, found ? (_o, _k, v) => v <= h.at || found.has(v) : null);",
     "new": "  const gap = 0;",
     "tests": [
       "test/egdur_relay.test.js"

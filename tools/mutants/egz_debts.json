@@ -31,8 +31,8 @@
   {
     "name": "EGZP-blow-unshielded",
     "file": "src/scenes/egFight.js",
-    "old": "landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part * egTouchedX(F, bl, me(), t));",
-    "new": "landShare(bl.p, bl.b, bl.el, bl.nm, 0, part * egTouchedX(F, bl, me(), t));",
+    "old": "landShare(bl.p, bl.b, bl.el, bl.nm, spared(E, F, bl), part * egTouchedX(F, bl, me(), t), true);",
+    "new": "landShare(bl.p, bl.b, bl.el, bl.nm, 0, part * egTouchedX(F, bl, me(), t), true);",
     "tests": [
       "test/egz_debts.test.js"
     ]

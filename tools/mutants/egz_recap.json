@@ -263,7 +263,7 @@
   {
     "name": "EGZ-brain-the-count-unmended",
     "file": "src/net/egBrain.js",
-    "old": "if (got > 0) bodyHealed(B.mem[sub], got / healRef(B.mem[sub].lv) / egCountWhole(B.mem[sub].vs), now, line, { enforce });",
+    "old": "if (backed > 0) bodyHealed(B.mem[sub], backed / healRef(B.mem[sub].lv) / egCountWhole(B.mem[sub].vs), now, line, { enforce });",
     "new": "void healRef;",
     "tests": [
       "test/egz_recap.test.js"
@@ -794,8 +794,8 @@
   {
     "name": "EGZ-svc-no-standing-on-the-claim",
     "file": "server-account/src/eg.js",
-    "old": "...(await egReliquariesOf({ db, nowS }, player, c)), ...(await egStandingOf(db, player, c)) };",
-    "new": "...(await egReliquariesOf({ db, nowS }, player, c)) };",
+    "old": "...(await egReliquariesOf({ db, nowS }, player, c)), ...(await egStandingOf(db, player, c)), ...(await egEndSeedOf(db, player, c)) };",
+    "new": "...(await egReliquariesOf({ db, nowS }, player, c)), ...(await egEndSeedOf(db, player, c)) };",
     "tests": [
       "test/egz_recap.test.js"
     ]

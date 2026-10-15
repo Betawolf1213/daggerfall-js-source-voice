@@ -425,7 +425,10 @@ the Portal Stone's is. Its refusals, in order, each a line of `EG_TEXT`:
    water, or a boat;
 4. inside a location's own footprint (a town's walls, a farm's yard): *Not within <place>.*
 5. within 300 m of a standing Dagon's Breach, or 150 m of another Elite arch: *Another breach stands near.*
-6. the opener already in a breach, or with a stake unsettled: *You hold a breach already.*
+6. the opener already in a breach - the call they hold or the Spire they stand in, and the service's `eg_live` (section
+   23): *You hold a breach already.* A stake its opener's own end left held for the first breach's mercy, while the
+   company plays on, holds them back no longer: they are out of that breach, as AUDIT EG IV's empty end freed them
+   (AUDIT EG V).
 7. the hub at `EG_LIVE_MAX` live breaches, or a deploy's drain (section 22): *The Spire's road is shut. Try again
    soon.*
 8. no room for the arch: the Portal Stone's `portalPlace` law (ground probe, wall gap) at the arch's clearance,
@@ -472,14 +475,24 @@ The answer goes to `/v1/eg/open` (section 23), which stakes one key.
   - The member's hello to `eg:<b>` carries the order. The room spends it once, then checks the member is in the
     company, not forsaken, not gone home, the open window, and that the order's start is the breach's. A member it
     counts already returns without spending anything - a reload, and a fallen member as a witness (section 16.5).
+  - An order lives `ORDER_TTL_S` (a minute) from its signing, so the screen asks again for one it has kept past half of
+    it (`EG_ADMIT_FRESH_MS`, `scenes/egClient.js`) - at the answer, and in the hall before the hello's `in`, for a portal
+    stepped into late or a slow step under the veil outlives a minute - and lets a refused one go whole, asking again
+    (`EG_ADMIT_ASKS` times a breach in the hall). AUDIT EG V: a dead order was reused, and once refused never asked
+    again.
   - The level claim (`lv`, 1-60) is frozen at the first admission.
 - **Outside the company.** Touching the arch: *The breach answers only to <opener>'s company.*
-- **One breach at a time** for every account, opener or member, enforced by the service's `eg_live` (section 23).
+- **One breach at a time** for every account, opener or member, enforced by the service's `eg_live` (section 23). The hub
+  calls the opener's whole frozen company, a member still in another breach among them: that screen keeps the call
+  beside the breach it stands in, its hall and its fight untouched (`net/egLink.js` `egLiveHeld`), and the call is
+  answerable once that breach is behind it (AUDIT EG V: the call had wiped the breach the member stood in).
 - **The absent.** A member whose socket is gone keeps their body at its last pose (the socket flap rule, section 22).
   - They are counted fallen only after **180 s gone in a trial** (`EG_ABSENT_TRIAL_MS`), counted from the trial's wake.
     Absence on the stair or at a rest never counts. A reload, or a slow machine on the stair, is not a fall.
   - An absent body is never chosen as a target. A shape aimed at another member still lands on it, so a tab closed
-    before a blow is not a life saved.
+    before a blow is not a life saved. Nor is one whose socket stays open and says nothing - a member standing still,
+    a backgrounded tab, a client holding its poses back: the room holds every living member's body at its newest pose
+    (section 21, AUDIT EG V).
   - Their party row shows an amber ring draining the 180 s (section 27.4).
 - **Return.** A member whose page reloaded is offered *Return to the Spire* (section 22), into the current hall.
 
@@ -567,7 +580,10 @@ The gate's own model, `buildGateModel` in `src/world/gateModel.js` (Mac's Blende
   opener.
 - **How peers see it**: the hub's signed call travels on the opener's world cell (section 23) while the opener stands
   there. Peers stand only an arch whose call verifies, at most two a cell, so no client can stand a false arch under
-  another's name.
+  another's name. Its site is its opener's word - the hub signs the site the open frame says, its shape alone checked,
+  and the key's refusals 2-5 and 8 are the opener's own screen's - so a stranger's screen draws the arch but stands no
+  stone for it: no gate, road or door is shut by one, and no body is moved out of one. The company's screens, which
+  answer its call, stand it (AUDIT EG V).
 - **How long it stands**: through the rising, the sealed hour and the open window only. When the first hall wakes, the
   arch sinks behind the company. A breach is a door, not a monument, and nothing outside needs to stand for three hours.
 - **What the room keeps**: the arch's site in its state, so a cast-out member is landed at it with the arch gone.
@@ -582,8 +598,10 @@ CALL):
   apply), may answer. The Portal Stone's portal (`src/scenes/portalGates.js`, drawn with `src/scenes/portalFx.js`'s
   vortex) opens at their feet for `PORTAL_OPEN_MS` (30 s, `src/systems/portalStone.js`), and stepping into it is their
   admission.
-- **The word.** The hub tells the company `{t:'eg', k:'call', b, ew, site, riseAt, openAt, sg}` on the party channel,
-  `sg` being the hub's signature over the rest. Each member's client then:
+- **The word.** The hub tells the company `{t:'eg', k:'call', b, o, os, seed, op, rh, co, site, ew, wg, sg}` on the party
+  channel (section 23's table): the opener's name and account, the breach's public seed, its opening (`op` - the rise
+  and the open are the clock's off it, `egTimes`), a Rehearsal's, the company, the arch's site, the start Redoubt, the
+  Wager, and `sg`, the hub's signature over the arch's fields (`net/egCallSig.js`). Each member's client then:
   - sounds a horn and writes one chat line, *<opener> opens an Elite Breach.*;
   - shows a prompt that stays until answered or the window ends, *Answer the call - 4:12* (Enter, the pad's A, or a
     tap), and comes back after any window closes over it;
@@ -1109,7 +1127,10 @@ generator lays them all (`tools/egSpanSolve.mjs --sweep`, `.github/workflows/eg-
   local clock: a peer on a Drift swinging at 3.1 m/s would float 0.5-1.7 m beside it. So a pose on a moving piece
   carries `pl`, the piece's index, and its offset from that piece's top at the sender's time. A receiver draws
   `stepAt(piece, tDraw) + offset`. The field joins `validPose` (a relay version, EG8). A peer on a crumble the viewer
-  has seen fall is drawn on a ghost slab.
+  has seen fall is drawn on a ghost slab. The relay stands a ridden pose on its piece only where the pose's own feet
+  stand on it - its top as it stood within `EG_SUPPORT_LAG_S`, the capsule about it (`net/egFair.js` `egRideHolds`) -
+  and judges the raw pose otherwise (AUDIT EG V: a pose on a fight floor claiming a far Drift was stood on it, off
+  every floor, where no blow found it).
 - **The forgiveness.** DFU's grounded gate (`GROUNDED_JUMP_GATE_S` 0.1, `src/player/motor.js`) swallows a jump
   pressed just before landing, and the parkour's late press (`PARKOUR_COYOTE_S` 0.15) covers only the running leap.
   Chained Beats and Crumbles would eat presses. In `eg:` halls:
@@ -2109,7 +2130,11 @@ section 27.5), and the recap lists the capstones held (section 27.6).
 taken, and its chip reads *Redoubt*; so do the Ghost-King's Vigil, a low-health heal that never answers a killing
 blow (`lootHurt`), Shed Skin (Sethrakul's Coilscale, `src/systems/sigilSets.js`) and the Panoply's Battlemage's
 Reprieve. As timers they would hand out a fresh life every few minutes, and make the Brass of Numidium
-mandatory. **Stendarr's AvoidDeath** (`avoidDeath` in `src/systems/guildServices.js`, a rank-in-fifty roll the hosts
+mandatory. A lord's or the legion's blow lands through the dungeon context's door, never the attack formula's struck
+tail, so the fight marks it a foe's as it lands (`src/scenes/egFight.js` landShare, `src/systems/sigilSetPowers.js`
+`setSpireStruck`) and Shed Skin and the Reprieve answer it; a hazard, a zone or a drain is no foe's (AUDIT EG V: neither
+had ever answered a blow in the Spire, where the Panoply drops).
+**Stendarr's AvoidDeath** (`avoidDeath` in `src/systems/guildServices.js`, a rank-in-fifty roll the hosts
 consult through `setAvoidDeathHook`) is refused in an `eg:` room: every host's hook answers false there, or a temple
 rank would cancel a fall.
 
@@ -2139,9 +2164,10 @@ Walk) by a step through its door - which only a fair trail takes - or its end re
 fight hall's door is no part. A receipt banks:
 
 - **the depth**: the Redoubt joins the member's taken Redoubts, this season and all time;
-- **the week's spoils** of that Redoubt, rolled from the receipt's secret seed (section 22) and thrown at the beacon
-  like the gate's spew (section 19);
-- **Marks**, and the embers section 19 pays;
+- **the week's spoils** of that Redoubt, rolled from the seed its claim answers - the receipt's secret seed (section 22)
+  mixed with the account service's own draw, so no page rolls a receipt's spoils before the service has said which
+  receipt the week pays (AUDIT EG V) - and thrown at the beacon like the gate's spew (section 19);
+- **Marks**, and the embers section 19 pays, thrown among the spoils (AUDIT EG V);
 - **a sealed Reliquary**, when that Redoubt pays this week (section 16.3);
 - **the board's standing** (section 20).
 
@@ -2187,10 +2213,13 @@ knows which pay, so the relay seals one at every Redoubt, and the member's own c
 room when the service answered it paid already this week (`wkpaid`, AUDIT EG III): every Reliquary of that circle then
 gives `EG_REL_LUMEN` (20 lumen) instead, and the HUD's count falls with it. A word that lies only turns a Reliquary that
 would open into lumen. A circle whose Redoubt the member never claimed keeps its Reliquaries sealed, and the end opens
-none of them that do not pay (the service's `egReliquariesOf`).
+none of them that do not pay (the service's `egReliquariesOf`). A circle's Reliquaries open once an account an arena
+week: the first end whose claim opens them is the only one that week (`eg_reliqs` - AUDIT EG V: an end claimed before
+its Redoubt receipts opened every circle's, at every breach of the week).
 
 - It opens only at a good end: the end receipt with `why` `'home'`, `'seal'`, `'last'` or `'void'` (`EG_OPEN_ENDS`)
-  carries how many it opens, rolled from that receipt's secret seed - each circle the service opens one pass at its
+  carries how many it opens, rolled from the seed its claim answers (that receipt's secret seed mixed with the service's
+  own draw - AUDIT EG V) - each circle the service opens one pass at its
   depth on its own seed (`systems/egSpoils.js` `egReliquaryList`), its Panoply piece on its own stream at twice the
   Redoubt's odds and with no pity (the service never sees the roll), no lord's arm nor card; given through the pool a
   Redoubt's spoils use, once an end (`scenes/world.js` `egSpoilsPaid`). The recap's count is the service's once the
@@ -2455,11 +2484,11 @@ Redoubt daily (AUDIT EG0 G6).
 
 | what | how much | its law |
 |---|---|---|
-| **spoils** | rolled on the receipt's secret seed and thrown at the beacon: `rollEgSpoils(seed, level, R)` | below |
+| **spoils** | rolled on the seed the claim answers (`net/egPay.js` `egSpoilsSeed` - the receipt's secret seed mixed with the service's own draw, AUDIT EG V) and thrown at the beacon: `rollEgSpoils(seed, level, R)` | below |
 | **a Reliquary** | sealed; opens at the way home | section 16.3 |
 | **Marks** | 20 | a new faucet, `MARKS_FAUCETS.eg` (`eg` joins `MARKS_COMBAT.kinds`), inside `MARKS_COMBAT.perDay` (150), shared with the gate, the raids and the serpent (`src/net/marksLaw.js`) |
 | **a guild's deed** | 25 to the treasury, when three members of one guild, each 7 days in it (`tenureS`), take the same Redoubt | the gate's deed law, at most 4 a guild a day |
-| **Deadlands Embers** | at a Valkynaz's Redoubt, `1 + floor(R/10)`; and 1 for each Redoubt taken for the first time this season | the Broker's currency (`BROKER_PRICES`, `src/systems/sigilBroker.js`). The Spire's embers join `EMBERS_EARNED_SQL` (today gate and serpent embers alone), so the insignia and the sink spend them |
+| **Deadlands Embers** | at a Valkynaz's Redoubt, `1 + floor(R/10)`; and 1 for each Redoubt taken for the first time this season | the Broker's currency (`BROKER_PRICES`, `src/systems/sigilBroker.js`). The Spire's embers join `EMBERS_EARNED_SQL` (today gate and serpent embers alone), so the insignia and the sink spend them; a paid Redoubt throws them among its spoils, one stack (`systems/egSpoils.js` `egEmberStack` - AUDIT EG V: the purse counted them and no pack held them, and the Broker takes from the pack) |
 | **a Weir Key** | at a Valkynaz's Redoubt, 1 in 4, at most one a week | section 5 |
 
 Embers are paid where they are earned, not by the hour. A gate pays one or two. The insignia (30 and 50 embers, Mac's
@@ -2598,7 +2627,9 @@ the pay law `net/egPay.js`, and the Broker sells the Panoply's sink. File by fil
 - **The end's Reliquaries (section 16.3).** A Reliquary's roll is the client's, off the end receipt's seed, but only the
   service knows which circles pay this week. The `x` claim answers `rl`: those of the relay's circles, one entry a
   Reliquary, whose Redoubt this breach recorded paid. A circle whose Redoubt this breach never recorded opens when no
-  breach of the account was paid for it this week. A Rehearsal's end opens none.
+  breach of the account was paid for it this week. A Rehearsal's end opens none. AUDIT EG V: and a circle another end of
+  the account's opened this week opens none (`eg_reliqs`); the roll's seed is the claim's (`seed`, the receipt's mixed
+  with the row's own draw - `eg_runs.nonce`), as a Redoubt's is (`eg_redoubts.nonce`).
 - **The sink.** `POST /v1/eg/sink { piece }` (one of `EG_PANOPLY_IDS`) is one conditional UPDATE in the insignia's way:
   `insignia_spent + 20`, where the purse covers it and no `eg_sink` row stands this week. The week's row is written by
   that write alone. It answers `{ ok, piece, week, purse }`, or refuses `guest` 403, `piece` 400, `bought` 409 (which
@@ -2702,7 +2733,8 @@ an arm: its statements appended to the arm's batch, and a `w`'s new honours merg
   own kind (`render/auraRing.js`: 8 Beaconlight's beacons lit in turn and gold-white motes rising, 9 The Burning Stair's
   burning steps turning down and its embers falling, 10 Firstlight's dawn-white ring). No glyph.
 - **The boards**, `/v1/eg/board` (`egBoardOf`): the ends' rows carry `n`, `ew`, `wg`, `fl`, `td`, `rh` and the season of
-  the receipt's issue. The Descent's brackets, its company rows (the accounts that ended one breach, the same company's
+  the receipt's issue - and (AUDIT EG V) `wgs`, the Wager's decrees, which the Depths' row names (`ui/egBoardWindow.js`;
+  it had said "wagered"). The Descent's brackets, its company rows (the accounts that ended one breach, the same company's
   best breach alone, the flame when none fell), the Depths and the Deepest Redoubts, each `topWithMe` (now exported from
   `arena.js`, and taking a row's test where a row is a company); the week's Proclamation in words, each Descent row its
   breach's; the caller's best. Each bracket's top ten at a season's end are kept in `eg_champions` the first time a read
@@ -2828,6 +2860,13 @@ The gate's trust law, kept whole, and where it was not enough for one life, wide
     one-way delay its corrected clock said (section 10.8, the `clk` word);
   - the judge's pose after a blow is the first SENT after its `at`, waited for up to `EG_POSE_WAIT_MS` (800 ms); a body
     with no pose within `EG_POSE_NEAR_MS` (±300 ms) of `at` is not counted;
+  - A SILENT SOCKET'S BODY IS HELD (AUDIT EG V): a client says a pose when it moves, and every `HEARTBEAT_MS` standing
+    still (`src/net/online.js` sendPose), so a member standing still had no pose near any landing and took nothing.
+    Every living member's trail is held at its newest pose (`server/src/index.js` `_egTrails`): a closed socket's to
+    now, an open one's to now less `EG_TS_LAG_MAX_MS` - a pose is placed at most that before it arrives, so the trail up
+    to there is whole, the stand-ins never stand over a pose on its way, and a dodge in a landing's last round trip is
+    still never counted. The drains read a held body, and a lingering field (a charge's run, a burning bridge) reads
+    each trail to that edge (`net/bossRef.js` judgeShapes), never past a pose still on its way;
   - pinned (`test/egint_relay.test.js`): a dodge at the client's `at` less 50 ms, at a 300 ms round trip, is never
     counted.
 - **THE FAIR TRAIL** (`spanFair`, new, on every `eg:` pose). The relay's body trails (`BODY_TRAIL_MS` 2000,
@@ -2859,8 +2898,9 @@ The gate's trust law, kept whole, and where it was not enough for one life, wide
 - **A healer's part** (section 16.1): a heal word is the receiver's, so a healer is credited the hall's part only where
   the room relayed a cast from the healer's own socket to that receiver within `EG_HEAL_CAST_MS` (5 s) of the word (the
   room's memory of the casts it carried, `server/src/index.js` `_egCastSaw`). An idle account never casts, so no word
-  of a companion's can make it an earner (AUDIT EG IV). The recap's healing, the count's mend and Lifeline read the word
-  as before.
+  of a companion's can make it an earner (AUDIT EG IV). The count's mend and Lifeline read only the heals a relayed cast
+  backs (AUDIT EG V: a word naming a companion who cast nothing mended a modified client's count a third of a body a
+  second, and refused damage stood); the recap's healing reads the word as before.
 - **The census**: the relay's census applies Bastion, Challenger's Oath, Steadfast Line, Immovable and Lifeline itself,
   counts a Stoneskin holder's whole body (the cushion with it, so the holder falls where its screen falls), and the rest
   restores it, so holders do not drain their budgets or skew the measures staff read.
@@ -2883,7 +2923,9 @@ so:
   unauthenticated ask would let anyone freeze a breach). A held room freezes the count and gives the gap back, and waits until
   every living member has returned or 180 s have passed. A member who returns finds the hall where they left it. The gap
   goes back to what the hold found as it began (its deadlines however far into the hold they fell); a word its company
-  stamped while it held is relay time already, and stays (AUDIT EG III).
+  stamped while it held is relay time already, and stays (AUDIT EG III). The finding is kept in the record with the hold
+  (`B.hold.f` - every instant stamped before the room slept is at or before its last beat, and past it the hold keeps
+  the values it found), so a room woken again inside its hold gives back what the first wake found (AUDIT EG V).
 - **THE DRAIN** (an `EG_SPEC` change beyond `EG_LAWS` only): the deploy waits on `/v1/eg/live`, as it waits on
   `/v1/seats/sieges/live`. Opens are refused meanwhile (*The Spire's road is shut. Try again soon.*), and the deploy
   waits until no breach is live, or the last word of the longest has passed.
@@ -2905,10 +2947,12 @@ so:
   draws at the open, keeps in storage and never sends. The breach's `seed` is public in `st`, and a seed derived from
   it would let every client compute every future spoils, Reliquary and Panoply roll: the exact leak AUDIT SD III R4
   moved the Hour's honours off (section 5). A re-woken room sends the same receipt and never a second roll. Pinned: no
-  frame or receipt carries `rs`.
+  frame or receipt carries `rs`. The page does read its own receipt's seed, so what a receipt pays is rolled on that
+  seed mixed with the account service's own draw at its claim (section 19, AUDIT EG V).
 - **Storage, not memory**: offers, picks, spent order ids, the fallen, the witnesses, the Mementos, the Reliquaries,
-  the caches taken, the Cantrips, the lumen, the fair-trail accumulators and the Athenaeum's hall all live in storage
-  (hibernation keeps nothing else).
+  the caches taken, the Cantrips, the lumen, the fair-trail accumulators, the Athenaeum's hall and each member's newest
+  pose (`lp` - a room woken mid-trial holds a gone member's body from it, AUDIT EG V) all live in storage (hibernation
+  keeps nothing else).
 - **Time survives the restart**: a member's absence is counted from `max(lastSeen, wakeAt)`, and any tick gap over
   `EG_GAP_MS` (2 s) is given back: the count and the hall's timers do not run across it. In a room that never slept, an
   instant stamped inside the gap (a word heard while the alarm was late) is the gap's own and stays.
@@ -2916,7 +2960,8 @@ so:
 **A dropped socket.** A closed socket would drop its body from the census, and returning at the arrival plate would
 dodge a lord's blow. So the body stays at its last pose for the absence window and takes what lands there, though no
 blow is aimed at it (section 6.1): the room keeps each member's trail by its account, and a member with no socket in the
-room has its trail held at its last pose for `EG_ABSENT_TRIAL_MS` (AUDIT EG III). On a fight floor it resumes there. In
+room has its trail held at its last pose for `EG_ABSENT_TRIAL_MS` (AUDIT EG III), as is one whose socket stays open and
+says nothing (AUDIT EG V, section 21). On a fight floor it resumes there. In
 traversal it resumes at its last island or plate, with no cast-back's cost: a platform has moved on, and a reconnect is
 not a fall.
 
@@ -3003,7 +3048,9 @@ once. `ew` names the start Redoubt everywhere: orders, frames and receipts.
 - **Open** (`/v1/eg/open`) is idempotent on the client's request id `rq`. The client keeps `rq` on the device before it
   asks, and a client whose answer was lost asks again by it with `again` (AUDIT EG IV): the service answers the stake
   that request took, its order signed as of the stake's own issue (it opens nothing, and names the stake for its void),
-  or `none`, and never takes a key for it. One conditional `UPDATE ... RETURNING` (the insignia-spend pattern) takes one key, writes the stake
+  or `none`, and never takes a key for it. Asked again without `again` it answers the same order, signed as of the
+  stake's own issue too (AUDIT EG V: re-signed fresh until the stake's `until`, a request id asked again hours on
+  opened its breach past `eg_live`'s end). One conditional `UPDATE ... RETURNING` (the insignia-spend pattern) takes one key, writes the stake
   `eg_stakes(ez, account, b, until, state)` and sets `eg_live`.
 - **SPENT**: on the first `w` naming its `ez`, or the opener's own `x` whose `why` is not `'void'`; except an account's
   first opened breach that ends with no Redoubt taken (the first breach's mercy, section 5), whose stake is RETURNED, once
@@ -3034,10 +3081,11 @@ as its live one until its stake's `until` - the service cannot see the room, and
 never admitted (a departure, AUDIT EG III). The opener is no such member: an opener the first wake finds outside is owed
 their end then (`'empty'`), which clears theirs (AUDIT EG IV).
 
-**The arch on the cell.** The opener's client says the hub's signed call on its world cell (`{t:'eg', k:'arch', b,
-site, riseAt, openAt, o, sg}`) on full frames while it stands there, as `portalWire` rides a peer's frame. Peers check
-`sg` and stand only a verified arch, at most two a cell, until the open window ends. The relay reads none of it, and
-admission never depends on seeing it.
+**The arch on the cell.** The opener's client says its arch on its world cell as `ea` on its foes frame (`{b, o, os, op,
+ew, site, sg}` - the call's arch fields and the hub's signature over them, `scenes/egArch.js` `validEgArchWord`; EG-F's
+departure 3) while it stands within `EG_ARCH_SAY_M` of it, as `portalWire` rides a peer's frame. Peers check `sg` and
+stand only a verified arch near its opener's feet, at most two a cell, until the open window ends - drawn, never a
+stone (section 6.3, AUDIT EG V). The relay reads none of it, and admission never depends on seeing it.
 
 **Poses.** A pose on a moving piece carries `pl` and its offset (RIDDEN POSES, section 10.8); the field joins
 `validPose`, a relay version (EG8).
@@ -3114,7 +3162,7 @@ relay receipt is):
 | `/v1/eg/starts` | the start window's preflight: which starts each member of the opener's party may make |
 | `/v1/eg/open` | idempotent on `rq`: stakes one, signs `egopen`, sets `eg_live`; `again` asks only for the stake `rq` took (a lost answer's - its order as of the stake's own issue, for its void), `none` where it took none (AUDIT EG IV) |
 | `/v1/eg/admit` | checks the handle, the breach's stake (none: `breach`; settled, or its open window past: `spent`), the start Redoubt and `eg_live`; signs `egadmit`; sets `eg_live` to the stake's `until` |
-| `/v1/eg/claim` | `claimEg`: verifies `e1`, refuses another's, answers guests `guest`. For `w`: one row in `eg_redoubts (b, account, w)` with its embers, the week's pay, Marks, the deed, the depth, the honours, the pity, the Valkynaz's key roll. For `x`: `eg_runs (b, account)`, the board's row, the Reliquaries, settles the stake (the mercy on the breach's own end, `nr`), clears `eg_live`. For `v`, and an `x` whose `why` is `'void'`: returns the stake, held or spent |
+| `/v1/eg/claim` | `claimEg`: verifies `e1`, refuses another's, answers guests `guest`. For `w`: one row in `eg_redoubts (b, account, w)` with its embers, the week's pay, Marks, the deed, the depth, the honours, the pity, the Valkynaz's key roll. For `x`: `eg_runs (b, account)`, the board's row, the Reliquaries (a circle's once an account an arena week, `eg_reliqs`), settles the stake (the mercy on the breach's own end, `nr`), clears `eg_live`. Each `w` and `x` answers the seed its spoils roll on (`seed` - AUDIT EG V). For `v`, and an `x` whose `why` is `'void'`: returns the stake, held or spent |
 | `/v1/eg/board` | `egBoardOf` |
 | `/v1/eg/sink` | the Broker's Panoply piece, once an account a week (section 19) |
 | `/v1/eg/first` | the first-time lines shown, kept once an account (section 27.7) |
@@ -3126,7 +3174,8 @@ not the service's.
 **Migration 0113** (EG-PLAY's, unshipped; 0111 then 0112 on its branch, renumbered past NAME-AS's 0111 and SEAT-FACTS' 0112 at the merges) holds every
 table and column of the arc: the keys (`players.eg_keys`, `eg_key_miss`), `eg_live` (`players.eg_live_b`,
 `eg_live_until`), the Rehearsal's day, the mercy, `eg_stakes`, `eg_redoubts`, `eg_runs`, the feats, the champions, the
-honours, the Annals, the week's pay, the pity, the sink, `eg_finds` and the first-time lines.
+honours, the Annals, the week's pay, the pity, the sink, `eg_finds` and the first-time lines; and (AUDIT EG V) an end's
+own draw and its Wager's decrees (`eg_runs.nonce`, `wgs`) and the Reliquaries a week opened (`eg_reliqs`).
 
 **Versions.** Each slice that moves the relay bundle bumps `RELAY_VERSION` (`src/net/wire.js`) with its `LAW` row, and a
 game that does not know it is told to reload. Each that moves the service bumps `ACCOUNT_VERSION`
@@ -3134,6 +3183,8 @@ game that does not know it is told to reload. Each that moves the service bumps 
 while unshipped: `world201` (`world195` on its branch, renumbered past COATS1, CHAT-LANG, BAL8, SPAWN-REBIRTH, AUDIT
 ETHER-OW and PEER-ACTS at the merges) and `acct133` (`acct116` to `acct122` on its branch, `acct124`, `acct126` and `acct127` after earlier
 merges, renumbered past main's slices to REVIVE's `acct132` at the merges). The new titles and auras join `TITLES` and `AURAS` in `src/net/identityToken.js`.
+A client sends an `eg` frame only to a relay at or past the arc's own (`EG_RELAY_MIN` 201, `src/net/wire.js` - AUDIT EG
+V: it read 197, its branch's first, and main's world197 to world200 carry no breach).
 
 ## 24. The made level's rules
 
@@ -4218,7 +4269,8 @@ none).
 - `src/scenes/exterior.js` - FLAGGED: offline, no breach and no Broker.
 
 **Pins.** `test/egeco_pay.test.js` (3), `test/egeco_spoils.test.js` (5), `test/egeco_hosts.test.js` (2);
-`tools/mutants/egeco.json` (25 today, with the feats', every one dead). Records of other arcs re-aimed by content:
+`tools/mutants/egeco.json` (25 today, with the feats', every one dead - none of them on the pay law itself: `net/egPay.js`'s
+mutants and `arenaWeekOf`'s are AUDIT EG V's, in `tools/mutants/egaudit5_d.json`). Records of other arcs re-aimed by content:
 `surv2`, `audit625`, `sd9e`, `cards9`. `RELAY_VERSION` `world197` re-hashed (unshipped) with `net/egPay.js` in its
 graph.
 

@@ -202,8 +202,8 @@
   {
     "name": "EGA3S-the-census-of-the-sockets-alone",
     "file": "server/src/index.js",
-    "old": "      out.push({ sub, tr: egTrailHeld(k, now) });",
-    "new": "",
+    "old": "      out.push({ sub, tr: egTrailHeld(k, open ? now - EG_TS_LAG_MAX_MS : now) });",
+    "new": "      if (open) out.push({ sub, tr: egTrailHeld(k, now - EG_TS_LAG_MAX_MS) });",
     "why": "lane3 #3: a tab closed before a blow was a life saved",
     "tests": ["test/egaudit3_service_relay.test.js"]
   },
@@ -282,7 +282,7 @@
   {
     "name": "EGA3S-the-holds-finding-unread",
     "file": "src/net/egDurable.js",
-    "old": "found ? (o, k, v) => found.get(o)?.get(k) === v : null",
+    "old": "found ? (_o, _k, v) => v <= h.at || found.has(v) : null",
     "new": "null",
     "why": "lane3 #8: a ping stamped during the hold stood the whole gap in the future",
     "tests": ["test/egaudit3_service_relay.test.js"]
@@ -290,16 +290,16 @@
   {
     "name": "EGA3S-the-holds-finding-never-taken",
     "file": "src/net/egDurable.js",
-    "old": "  holdFind(B, now);   // AUDIT EG III (lane3 #8): what the hold found - its release moves those alone",
-    "new": "",
+    "old": "  B.hold = { at, until: now + EG_REJOIN_MS, ran, f: holdFind(B, at, now) };",
+    "new": "  B.hold = { at, until: now + EG_REJOIN_MS, ran };",
     "why": "lane3 #8: the hold's release moved every instant, its company's own with them",
     "tests": ["test/egaudit3_service_relay.test.js"]
   },
   {
     "name": "EGA3S-a-rewake-finds-nothing",
     "file": "src/net/egDurable.js",
-    "old": "  if (B.hold) { holdFind(B, now); return 'hold'; }",
-    "new": "  if (B.hold) return 'hold';",
+    "old": "  if (B.hold) return 'hold';",
+    "new": "  if (B.hold) { B.hold.f = null; return 'hold'; }",
     "why": "lane3 #8: a room woken again inside its hold moved its company's stamps at the release",
     "tests": ["test/egaudit3_service_relay.test.js"]
   },

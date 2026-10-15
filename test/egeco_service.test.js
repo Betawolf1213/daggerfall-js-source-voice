@@ -208,7 +208,8 @@ test('EG-E1 THE PANOPLY\'S PITY: ten passes in a row with no piece, and the elev
   const real = globalThis.crypto.getRandomValues.bind(globalThis.crypto);
   t.mock.method(globalThis.crypto, 'getRandomValues', (u) => (u.length === 8 ? u.fill(0) : real(u)));
   const on = (c) => egSpoilsSeed(c, '0'.repeat(16));
-  const c1 = [...Array(4096).keys()].find((c) => ws.every((w) => !egPanoplyHit(on(c), w, 0)) && !egPanoplyHit(on(c), 15, 0) && !egPanoplyHit(on(c), 15, 1) && !egPanoplyHit(on(c), 14, 0));
+  // a receipt whose own `c` WOULD hit somewhere among them, so a pity read off the receipt's seed would reset
+  const c1 = [...Array(65536).keys()].find((c) => ws.every((w) => !egPanoplyHit(on(c), w, 0)) && !egPanoplyHit(on(c), 15, 0) && !egPanoplyHit(on(c), 15, 1) && !egPanoplyHit(on(c), 14, 0) && ws.some((w) => egPanoplyHit(c, w, 0)));
   assert.ok(c1 != null);
   for (const w of ws) assert.equal(egPanoplyHit(on(c1), w, 0), false, `the claim's seed misses at Redoubt ${w}`);
   const forced = [];
@@ -218,7 +219,7 @@ test('EG-E1 THE PANOPLY\'S PITY: ten passes in a row with no piece, and the elev
   assert.equal((await claim(me, { b, w: 14, c: c1 })).body.pity.length, 0);
   assert.equal(player(me).eg_pity, 1);
   // a hit resets it
-  const hit = [...Array(64).keys()].find((c) => egPanoplyHit(on(c), 16, 0));
+  const hit = [...Array(4096).keys()].find((c) => egPanoplyHit(on(c), 16, 0) && !egPanoplyHit(c, 16, 0));   // a hit on the claim's seed alone
   assert.equal((await claim(me, { b, w: 16, c: hit })).body.pity.length, 0);
   assert.equal(player(me).eg_pity, 0, 'a piece by its own draw: the count to nothing');
   // a Valkynaz's two passes, in order

@@ -16,7 +16,7 @@
 // and its Back (the pad's, or Escape anywhere on the page - the enhanced doors' own `back`, ui/input.js overlayAction) closes it.
 //
 // Not a DFU member: Daggerfall Unity has no Elite Breach. Ledger A (ELITE-GATES).
-import { egBandOfHall, EG_BAND_NAMES, EG_DECREES } from '../net/egLaw.js';   // AUDIT EG V (L8-9): a Wager's decrees by name
+import { egBandOfHall, EG_BAND_NAMES, EG_DECREES, EG_TEXT } from '../net/egLaw.js';   // AUDIT EG V (L8-9): a Wager's decrees by name, in the start window's own words
 import { ListPickerWindow } from './listPicker.js';
 import { registerOverlay } from './enhancedOverlays.js';   // AUDIT EG III: on the enhanced doors' stack
 import { overlayAction } from './input.js';   // AUDIT EG III: the doors' own Back
@@ -42,7 +42,6 @@ export const EG_BOARD_TEXT = Object.freeze({
   noDeepest: 'No Redoubt has been taken yet.',
   unfallen: 'unfallen',
   wagered: 'wagered',
-  wager: (names) => `the Wager: ${names}`,   // AUDIT EG V (lane8 L8-9): a Depths row's Wager, its decrees named
   you: 'you',
   proclamation: (p) => `This week's Proclamation: ${p.name}${p.line ? ` - ${p.line}` : ''}`,
   best: (h, t) => `Your best: Hall ${h} - ${egBoardClock(t)}`,
@@ -82,7 +81,7 @@ export function egBoardLines(board, tab, { short = false } = {}) {
     b = board.depths; none = EG_BOARD_TEXT.noDepths;
     // AUDIT EG V (lane8 L8-9; sections 18 and 20 - "the Wager shown on the row"): its decrees by name; a row whose end kept
     // none of them (claimed before they were kept) says it was wagered
-    const wager = (r) => { const names = (Array.isArray(r.wg) ? r.wg : []).map((id) => EG_DECREES[id]?.name).filter(Boolean); return names.length ? ` - ${EG_BOARD_TEXT.wager(names.join(', '))}` : r.wagered ? ` - ${EG_BOARD_TEXT.wagered}` : ''; };
+    const wager = (r) => { const names = (Array.isArray(r.wg) ? r.wg : []).map((id) => EG_DECREES[id]?.name).filter(Boolean); return names.length ? ` - ${EG_TEXT.wager(names.join(', '))}` : r.wagered ? ` - ${EG_BOARD_TEXT.wagered}` : ''; };
     row = (r) => `${r.rank}. ${r.name ?? '?'} - Hall ${r.h}${r.ew > 0 ? ` from Redoubt ${r.ew}` : ''}${wager(r)}${you(r)}`;
   } else if (t === 'deepest') {
     b = board.deepest; none = EG_BOARD_TEXT.noDeepest;
