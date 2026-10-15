@@ -419,7 +419,7 @@
   {
     "name": "SIGIL1-dungeon-piles-unwired",
     "file": "src/scenes/dungeonContext.js",
-    "old": "    stampWonWeapons(items, 1);   // SIGIL1: a pile found online",
+    "old": "    stampWonWeapons(items, 1, { rolls });   // SIGIL1: a pile found online",
     "new": "    // SIGIL1: a pile found online",
     "tests": [
       "test/sigil1.test.js"

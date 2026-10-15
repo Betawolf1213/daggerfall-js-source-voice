@@ -435,8 +435,8 @@
   {
     "name": "WOD6-failed-build-stays-arrival",
     "file": "src/scenes/world.js",
-    "old": "      _wodArrival.keys.delete(`${next.px},${next.py}`);\n      state.release(next.px, next.py);",
-    "new": "      state.release(next.px, next.py);",
+    "old": "      _wodArrival.keys.delete(`${next.px},${next.py}`);\n      // BUILD-RETRY (bible/06-Systems/Travel-View.md LOAD-OWED): let go, and asked",
+    "new": "      // BUILD-RETRY (bible/06-Systems/Travel-View.md LOAD-OWED): let go, and asked",
     "tests": [
       "test/audit_wod_branch.test.js"
     ]

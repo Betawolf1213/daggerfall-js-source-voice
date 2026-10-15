@@ -132,7 +132,7 @@ export function createSerpentClaims({ claim, store = null, nowS = () => Math.flo
           try { lines = onMarks(answer.data); } catch (err) { console.warn('[serpent] silver lines', err?.message ?? err); }
           for (const line of Array.isArray(lines) ? lines : [lines]) if (typeof line === 'string' && line) say(line);
           // SERPENT5: THE OLD COIL'S GRANTS - said whenever this kill granted one, popped only when it is new (the Hour's law,
-          // net/sdClaims.js: a re-roll of a held one is said, never announced as "New"); a service from before acct135 says neither
+          // net/sdClaims.js: a re-roll of a held one is said, never announced as "New"); a service from before acct137 says neither
           if (answer.data.title === true) say(SERPENT_CLAIM_TEXT.title());
           if (answer.data.aura === true) say(SERPENT_CLAIM_TEXT.aura());
           if (answer.data.titleNew === true) hear(announce, 'title', SERPENT_HONOUR_KEYS.title);

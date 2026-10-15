@@ -868,20 +868,20 @@ for rung, in `server-account/src/serpents.js`:
   chance at them.
 - **Laid by THIS claim's row alone.** The grants ride the claim's own batch: the kill's row says what it granted
   (`serpent_kills.title`, `.aura`), and the renown statement that runs by the row's nonce ORs them onto the account's
-  `players.serpent_honours` (1 the title, 2 the aura) - migration `0116_serpent_honours.sql` - so a receipt claimed twice
+  `players.serpent_honours` (1 the title, 2 the aura) - migration `0119_serpent_honours.sql` - so a receipt claimed twice
   at once rolls once, and a claim that wrote no row lays nothing whatever its draw. A guest is never counted, so never
   granted.
 - **Held for good, read off the row** (`server-account/src/titles.js`): `titlesHeld` gives Coilbreaker off the first bit,
   `aurasHeld` The Maelstrom off the second, a registered account's alone - worn through the title's and the aura's own
   doors and signed into the token (`t`, `au`) as every one is.
-- **Answered** (`ACCOUNT_VERSION` acct135): a counted claim's answer carries `title`, `aura` (what THIS kill granted)
+- **Answered** (`ACCOUNT_VERSION` acct137 - acct135 on its branch, renumbered past main's acct135 and acct136 at the merge): a counted claim's answer carries `title`, `aura` (what THIS kill granted)
   and `titleNew`, `auraNew` (whether the account did not hold it before - the session's row, read before the write).
 
 **Said and popped** (`net/serpentClaims.js`): a counted kill that granted one says "The Bay names you Coilbreaker." /
 "The Maelstrom turns about you." in the chat - in the player's language (AUDIT WORLD-REWARDS C2: routed through the text
 core, `serpent.honour.title` / `.aura`, drafted in-session in the thirteen whole languages, as the lamp's lines are) - and - when it is new - hands the loot banner's honour door
 (`ui/lootBanner.js` `announceHonour`, HONOUR-BANNER) `SERPENT_HONOUR_KEYS`, wired by the world host beside the Hour's.
-A re-roll of a held one is said, never popped as "New"; a service from before acct135 says neither. THE FOUR HOSTS:
+A re-roll of a held one is said, never popped as "New"; a service from before acct137 says neither. THE FOUR HOSTS:
 the carrier is `scenes/world.js`'s alone, and so is its one new line - the serpent is fought at sea from the streaming
 world; `scenes/exterior.js` (the single-town bench), `scenes/worldModes.js` (interiors) and `scenes/dungeonContext.js`
 carry no serpent claims, before this or after.
@@ -911,14 +911,14 @@ symbols): the whirlpool Sethrakul raises about a ship, at the wearer's feet.
   lip from the side.
 
 **Versions and deploy order.** The two words join the token's closed lists last (`net/identityToken.js` `TITLES`,
-`AURAS`), and the relay reads them off every hello's token - so the RELAY deploys first (`world205`; its bundle's files
-unchanged, only identityToken.js's bytes), then the account service (acct135, with migration 0116). An account service
+`AURAS`), and the relay reads them off every hello's token - so the RELAY deploys first (`world206` - world205 on its branch, renumbered past main's PVP-LOOT + QUEST-HOME world205 at the merge; its bundle's files
+unchanged, only identityToken.js's bytes), then the account service (acct137, with migration 0119 - 0116 on its branch, renumbered past main's 0116-0118). An account service
 ahead of its relay would sign a word the relay refuses, and the token would be refused whole.
 
 **The pins.** `test/serpent5_honours.test.js` (9) - the roll, the claim (through the real migrations, node:sqlite; an aura
 held is never new, the kill's row each its own column), the ROUTE (AUDIT E9: the real Worker, the session's own row, a
 forced draw), held, the vocabulary and the badge, the carrier (an aura held, said and never popped; a service from
-before acct135 saying neither line), the look's law and the shader RUN (`test/glsl.mjs`: the arms at the clock's own
+before acct137 saying neither line), the look's law and the shader RUN (`test/glsl.mjs`: the arms at the clock's own
 turn, the eye, the lip and the surf running round it, the curl, every drop where `maelstromDropAt` says, the pow's
 guard by source). `tools/mutants/serpent5.json`: 30, all dead (the audit's nine among them). AUDIT C1: the Hour's own
 popup pin (`test/lootbanner.test.js`) is anchored to the Hour's carrier now - the Old Coil's door is the same text, and

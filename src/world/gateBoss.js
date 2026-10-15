@@ -284,14 +284,21 @@ export const GLOW_RANGE = Object.freeze({ ember: 7, windup: 12, landing: 18 });
  * stands higher) and in his aspect's colours. WB13d: the landing's flare on the floor where it lands, LANDING_LIGHT_Y
  * over it - at his feet for his own; a landing that falls away from him (its burst carries its own light,
  * render/gateFx.js FX_KINDS) leaves his ember.
+ * LIGHT-ID (2026-10-14): `out`, a kept record, is refilled in place and answered (the court's own - his glow is ONE light
+ * that follows him, and the shadow pass knows it moved by the record: render/lightId.js); none, a new record.
  */
-export function bossGlow(s, now) {
+export function bossGlow(s, now, out = null) {
   if (!s || s.day === null) return null;
   if (s.fell && now - s.fell.at >= FALL_MS) return null;
   const P = profileOf(s), ember = emberColor(P);
   const [cx, cz] = bossPlace(s, now);
   const [x, y, z] = courtToDungeon(cx, P.bossH * 0.55, cz);
-  const lit = (color, k, range, ly = y) => ({ x, y: ly, z, range, color: color.map((c) => c * k) });
+  const lit = (color, k, range, ly = y) => {
+    const o = out ?? { x: 0, y: 0, z: 0, range: 0, color: [0, 0, 0] };
+    o.x = x; o.y = ly; o.z = z; o.range = range;
+    o.color[0] = color[0] * k; o.color[1] = color[1] * k; o.color[2] = color[2] * k;
+    return o;
+  };
   if (s.fell) return lit(ember, 2.2 * (1 - (now - s.fell.at) / FALL_MS), GLOW_RANGE.landing);
   const atk = s.atk, A = atk ? ATTACK_BY_ID[atk.a] : null;
   if (A) {

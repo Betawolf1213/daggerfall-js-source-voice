@@ -210,10 +210,10 @@ export function rollCorpseKit(entity, opts = {}) {
   return kit;
 }
 /** The first arc's kit roll, whole: every piece of the kit but its garments. */
-function rollKitPieces(entity, { rolls = Math.random, luck = 50 } = {}) {
+function rollKitPieces(entity, { rolls = Math.random, luck = 50, quarters = undefined, find: findIn = undefined } = {}) {   // PARTY-LOOT: the roll's RENOWN-LOOT share and finders when named (a room's base), else the roller's
   if (!lootRarityOn() || !entity || !Array.isArray(entity.items) || entity.revenant) return [];
-  const source = { ...corpseSource(ENEMY_BASICS[entity.mobileType] ?? null, entity.level, entity.mobileType), boss: false, weights: plainFoeRarityWeights() };   // RENOWN-LOOT: the death's roller's Renown; AUDIT 625 L3: the plain ladder for every foe
-  const find = legendaryFindMult();
+  const source = { ...corpseSource(ENEMY_BASICS[entity.mobileType] ?? null, entity.level, entity.mobileType), boss: false, weights: plainFoeRarityWeights(quarters) };   // RENOWN-LOOT: the death's roller's Renown; AUDIT 625 L3: the plain ladder for every foe
+  const find = findIn ?? legendaryFindMult();
   const minted = [];
   entity.items.forEach((it, i) => {
     if (isGarment(it)) return;   // LOOT14: the kit's garments roll after all of this (rollKitGarments)
@@ -229,13 +229,13 @@ function rollKitPieces(entity, { rolls = Math.random, luck = 50 } = {}) {
 /** LOOT14 (the Loot arc II, bible/06-Systems/Loot-II-Arc.md section 6): THE KIT'S GARMENTS - the shirt, the breeches, the
  *  cloak a foe wore, on the same ladder and source as its kit (AUDIT 625's laws whole: unmarked is kit, a COPY laddered,
  *  every foe's, never a revenant's), each copy marked; then their own last pass. After every draw the kit made. */
-function rollKitGarments(entity, { rolls = Math.random, luck = 50 } = {}) {
+function rollKitGarments(entity, { rolls = Math.random, luck = 50, quarters = undefined, find: findIn = undefined } = {}) {   // PARTY-LOOT: as rollKitPieces
   if (!lootRarityOn() || entity?.revenant || !Array.isArray(entity?.items)) return [];
   // the kit's own source, as its pieces' (AUDIT 625 L3: the plain ladder at the roller's Renown, never a boss's)
   const kit = corpseSource(ENEMY_BASICS[entity.mobileType] ?? null, entity.level, entity.mobileType);
   kit.boss = false;
-  kit.weights = plainFoeRarityWeights();
-  const find = legendaryFindMult();
+  kit.weights = plainFoeRarityWeights(quarters);
+  const find = findIn ?? legendaryFindMult();
   const dressed = [];
   entity.items.forEach((g, i) => {
     if (!isGarment(g) || g.untaken === true || !rarityEligible(g)) return;

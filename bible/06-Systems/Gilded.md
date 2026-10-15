@@ -176,7 +176,7 @@ Hourlock keeps the gun's (`createThunderlock`), so its record and every gift alr
 migration 0094) are byte for byte what they were. Each a STATIC ROLL, as the Hourlock is: every line its record's, held
 exactly on the wire, no door alters it (section 2's list - the Reforge, the hone, the salvage, the item maker, the
 exalt, the curse, the heirloom, the temper, a socket, a technique; the audit walked every one of them with the real
-pieces). The item law moved with them: ITEM_LAW_VERSION 5, the account service's acct135 (TECH1's LAW_SERVICE), so a
+pieces). The item law moved with them: ITEM_LAW_VERSION 5, the account service's acct137 (TECH1's LAW_SERVICE), so a
 finding a law of 4 made against one - a piece found on a site that shipped ahead of its judge - is asked again.
 
 **Why these two.** Each answers its fight. The gate is Mehrunes Dagon's: the Oath is an Akaviri Dragonguard's blade
@@ -252,7 +252,7 @@ the ladder's records are routed as one, by the localization arc, never record by
   the measure is left to say what the drop is.
 - AUDIT A4: a build from before this one refuses a container or a lot holding either record whole (`systems/loot.js`
   `validLootList` - a Gilded piece's marks are the shape's, as SERPENT-SET's were): the hosts read it as "from a newer
-  version" and keep it, nothing is lost, and the relay's world205 brings every client to the new build at once.
+  version" and keep it, nothing is lost, and the relay's world206 brings every client to the new build at once.
 
 **Not done, and why.** The gold IN THE HAND is the Hourlock's alone: its gold sprite and its gold Morrowind twin are
 baked from the gun's own committed art (section 5), and a DFU weapon's art is the player's ARENA2 - no gilded frame of

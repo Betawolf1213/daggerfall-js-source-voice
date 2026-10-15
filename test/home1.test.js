@@ -131,7 +131,9 @@ test('HOME1 the service: a town\'s homes are any session\'s to read (a guest\'s 
   // the claim
   const c = await buy(aldric, A);
   assert.equal(c.status, 200);
-  assert.deepEqual(c.body, { ok: true, home: { mapId: home().mapId, buildingKey: home().buildingKey, region: 17, character: A.id, entry: 'private', price: 42000, boughtAt: T0 }, refund: homeSaleRefund(42000), realm: { seq: 2 } });   // AUDIT HOME-PRICE C2: the claim says what its sale pays
+  // PIN MOVED (FIELD BUGS 2026-10-14 QUEST-HOME, test/fb1014_questhome.test.js): and the claim's home order, for every page online
+  assert.deepEqual({ ...c.body, homeOrders: undefined }, { ok: true, home: { mapId: home().mapId, buildingKey: home().buildingKey, region: 17, character: A.id, entry: 'private', price: 42000, boughtAt: T0 }, refund: homeSaleRefund(42000), realm: { seq: 2 }, homeOrders: undefined });   // AUDIT HOME-PRICE C2: the claim says what its sale pays
+  assert.equal(c.body.homeOrders?.length, 1);
   assert.deepEqual(await call('POST', '/v1/homes/claim', home({ buildingKey: 9 }), aldric), { status: 400, body: { error: 'realm-only' } }, 'no other id buys a house');
   // one owner a building
   const taken = await buy(mara, M);
@@ -473,7 +475,8 @@ test('HOME1 the wiring by source: the home answers at the door BEFORE Daggerfall
   // registry where it stood - both online alone, both before any quest can ask
   const homesAt = w.indexOf("const homesApi = params.has('online') ? accountHomes(");
   assert.ok(homesAt > 0 && homesAt < w.indexOf("  status('loading data');") && homesAt < w.indexOf('const onlineHomes = homesApi ? createOnlineHomes('), 'online alone, and built before any quest can ask');   // HOME-RENT: the service's door kept for a home's rooms too
-  assert.ok(w.indexOf('const onlineHomes = ') < w.indexOf('isPlayerHome: (mapId, buildingKey) => !!onlineHomes?.homeAt(mapId, buildingKey),'));
+  // PIN MOVED (FIELD BUGS 2026-10-14 QUEST-HOME, test/fb1014_questhome.test.js): every town's homes, the boot's read beside the towns asked
+  assert.ok(w.indexOf('const onlineHomes = ') < w.indexOf('isPlayerHome: (mapId, buildingKey) => onlineHomes?.homeStands(mapId, buildingKey) ?? false,'));
   assert.match(w, /townMapId: \(dfLoc\.mapTableData\?\.mapId \?\? 0\) >>> 0,/, 'the door\'s own town');
   assert.match(w, /onlineHomes\?\.ensure\(_musicLoc\?\.mapTableData\?\.mapId\);/, 'the town asked on arrival');
   assert.match(w, /partyNames: \(\) => \(social\?\.others\?\.\(\) \?\? \[\]\)\.map\(\(m\) => m\.name\)/);

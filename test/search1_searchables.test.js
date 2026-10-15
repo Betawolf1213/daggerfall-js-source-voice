@@ -189,9 +189,9 @@ test('KIT-ROLL (LOOT-EASE): a foe\'s dropped kit rolls the plain ladder at its d
 
 test('KIT-ROLL: every body door a plain foe dies through rolls its kit before anything reads the body\'s tiers - the dungeon\'s kill, a joiner\'s copy and an arrival\'s, the street\'s kill and the watch\'s; the spawn never does (mutants: any door\'s call dropped or put after the sigils)', () => {
   const doors = [
-    ['src/scenes/dungeonContext.js', /rollCorpseKit\(foe\.entity, \{ luck: liveStat\(playerEntity, 'luck'\) \}\);[^\n]*\n\s*spawnCorpse\(foe\);\s*playRareDrop\(audio, foe\.ai\.feet, foe\.entity\.items\);[^\n]*\n\s*stampWonWeapons\(foe\.entity\.items/],
-    ['src/scenes/dungeonContext.js', /if \(r\.d === 1 && !f\.dead\) \{ rollCorpseKit\(f\.entity, [^}]*\}\); addCorpseFood\([^;]*; stampWonWeapons\(f\.entity\.items/],
-    ['src/scenes/dungeonContext.js', /if \(wire && sf\.dead && !f\.dead && sf\.items == null\) \{ rollCorpseKit\(f\.entity, [^}]*\}\); addCorpseFood\([^;]*; stampWonWeapons\(f\.entity\.items/],
+    ['src/scenes/dungeonContext.js', /(?:if \(!_roomBody\) )?rollCorpseKit\(foe\.entity, \{ luck: liveStat\(playerEntity, 'luck'\) \}\);[^\n]*\n\s*spawnCorpse\(foe\);\s*playRareDrop\(audio, foe\.ai\.feet, foe\.entity\.items\);[^\n]*\n\s*(?:if \(!_roomBody\) )?stampWonWeapons\(foe\.entity\.items/],   // PIN MOVED (PARTY-LOOT): a room's body rolls its kit inside its base
+    ['src/scenes/dungeonContext.js', /if \(r\.d === 1 && !f\.dead && !\(roomLootOn\(\) && roomCanonOfFoe\(f\) != null\)\) \{ rollCorpseKit\(f\.entity, [^}]*\}\); addCorpseFood\([^;]*; stampWonWeapons\(f\.entity\.items/],
+    ['src/scenes/dungeonContext.js', /if \(wire && sf\.dead && !f\.dead && sf\.items == null && !\(roomLootOn\(\) && roomCanonOfFoe\(f\) != null\)\) \{ rollCorpseKit\(f\.entity, [^}]*\}\); addCorpseFood\([^;]*; stampWonWeapons\(f\.entity\.items/],
     ['src/scenes/exteriorFoes.js', /rollCorpseKit\(f\.entity, \{ rolls, luck: liveStat\(playerEntity, 'luck'\) \}\);[^\n]*\n\s*stampWonWeapons\(f\.entity\.items/],
     ['src/scenes/cityGuards.js', /rollCorpseKit\(g\.entity, \{ rolls: rand, luck: liveStat\(playerEntity, 'luck'\) \}\);[^\n]*\n\s*stampWonWeapons\(g\.entity\.items/],
   ];

@@ -17,7 +17,7 @@ the fixed tree:
 |---|---|---|
 | A - the items, the law, the drops | `systems/gilded.js`, the spoils, every door a piece passes (the wire, the item law and the judge, saves, trade, the market, the vault, the crash records, every door that alters a piece), the floor's pictures, the budget | both trees imported in one process; 5,999 seeds base against new; the real judge, market and trade checks |
 | B - the powers in the real flow | `systems/lootPowers.js` Dragonfire and Undertow against the real call sites | the real `calculateAttackDamage` and `PlayerWeapon.resolveHit`, the gate court's real stand-ins (`bossStandIn`, `hostStandIn`, `crystalStandIn`) |
-| C - the serpent's honours | `server-account/src/serpents.js`, migration 0116, `titles.js`, the vocabulary and the relay, `net/serpentClaims.js`, the world host's door | the real Worker on node:sqlite with forced draws; a race of two claims; every statement's binds counted; 402 recorded mutants |
+| C - the serpent's honours | `server-account/src/serpents.js`, migration 0116 (0119 since the merge of main), `titles.js`, the vocabulary and the relay, `net/serpentClaims.js`, the world host's door | the real Worker on node:sqlite with forced draws; a race of two claims; every statement's binds counted; 402 recorded mutants |
 | D - the Maelstrom drawn | `render/auraRing.js`'s ninth look and every reader of an aura | the real `AuraRingRenderer` in headless Chromium (ANGLE's strict ES 3.00 translator), a float target, clipping measured over lit floors |
 | E - the record, the tests, the mutants | every sentence the slice wrote against the code; every moved pin; every re-aimed record | 39 recorded mutants run; seven new ones written; 87 records over the touched files run again |
 
@@ -35,9 +35,9 @@ The Maelstrom washed out to white (D1); and the Hour's popup pin had gone blind 
 | A1 | LOW | The Oath took a picture draw among the pieces, so in every spoils it came in the ember's, the gold's, the card's and the gems' floor pictures moved off what the seed gave them (51 of 5,999 seeds) - AUDIT CARDS-6 A8's law | FIXED: its picture drawn LAST (`scenes/spoilsPool.js` `spoilsList`); pinned against the look stream's own oracle (`gilded2_world` THE FLOOR), mutant |
 | A2 | LOW | Three pieces, a Regalia piece, the Oath and the card put the gold pile ninth - past the glow's eight, its line undrawn (7 in 20,000) | LEFT, its reason in `Gilded.md` section 7: the Oath is always inside the eight; the gold pile's line is the least of them |
 | A3 | LOW | The wealth budget's spoils grant is not sized for a 93,750 piece | LEFT, its reason in `Gilded.md` section 7: a measure today (`enforce: false`), its numbers the measure's to set; loosening it for every claim loosens what it catches |
-| A4 | LOW | An older build refuses a container or lot holding either record whole (`validLootList`) | LEFT, written: read as "from a newer version" and kept, nothing lost, and world205 brings every client to the new build (SERPENT-SET's own trade-off) |
+| A4 | LOW | An older build refuses a container or lot holding either record whole (`validLootList`) | LEFT, written: read as "from a newer version" and kept, nothing lost, and the relay's new version brings every client to the new build (SERPENT-SET's own trade-off) |
 | A5 | LOW | The Collections page's codex never showed the Gilded rung (GILDED1's gap; wider by two hints) though it says its rows are the Reforge's | FIXED: the rung first, each by its own hint, a found one opened whole in the Reforge's lines (`ui/collectionsPage.js`); `auditcards5_ui` pins it, mutant |
-| A6 | LOW | The acct135 note named SERPENT5 alone, not item law 5 | FIXED (`server-account/src/service.js`) |
+| A6 | LOW | The acct135 note (acct137 since the merge of main) named SERPENT5 alone, not item law 5 | FIXED (`server-account/src/service.js`) |
 
 Checked clean, with the real pieces: the mint byte-identical and drawless (the Hourlock's too); the wire, the item law,
 the judge (no findings, law 5), the market and the vault, realm trade (438 bytes), saves and the crash records; every
@@ -87,7 +87,7 @@ an aura generic; COIL_TIDE's distance from every title colour.
 | # | Sev | Finding | Verdict |
 |---|---|---|---|
 | E1 | MED | An aura held already was never pinned "never new", at the service or the carrier (two mutants SURVIVED) | FIXED: pinned at both; mutants |
-| E2 | LOW | "A service from before acct135 says neither" pinned for the title alone | FIXED |
+| E2 | LOW | "A service from before acct135 says neither" (acct137 since the merge of main) pinned for the title alone | FIXED |
 | E3 | LOW | The kill row's `aura` column unpinned but where both dropped | FIXED: a title-only and an aura-only row read |
 | E4 | LOW | Dragonfire's 3 m pinned only by a foe at 3.4 m | FIXED: one at 3.05 m; mutant |
 | E5 | LOW | The surf and the spray unpinned - and "carried round with the pool" false (a tenth of its pace, snapping back) | FIXED: the spray carried with the pool (`maelstromDropAt`, the shader's mirror); both pinned by the shader run; mutants |

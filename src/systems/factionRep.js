@@ -42,7 +42,7 @@
 // -5 / 2 is -2, not -3. Math.floor would drift on every negative
 // half-delta - a crime penalty, an enemy's share of a reward - so
 // every halving here is Math.trunc.
-import { GUILD_GROUPS, FACTION_TYPES } from '../formats/factionFile.js';
+import { GUILD_GROUPS, FACTION_TYPES, FACTION_FLAGS } from '../formats/factionFile.js';
 import { customFactions, relinkChildren } from '../formats/factionFile.js';   // RR3: AddCustomFactions' registry and the relink
 import { restoreFactionRep } from './save.js';   // AUDIT 23 C1: the stashed-load replay
 import { MIN_REPUTATION, MAX_REPUTATION } from './guildFactions.js';   // CHAP1: the bounds' one home, the leaf the Roll reads
@@ -52,8 +52,8 @@ export { MIN_REPUTATION, MAX_REPUTATION };
 export const MIN_POWER = 1;
 export const MAX_POWER = 100;
 
-/** FactionFile.Flags (:629-633) - the only two DFU names. */
-export const FACTION_FLAGS = Object.freeze({ RulerImmune: 0x10, Summoned: 0x40 });
+/** FactionFile.Flags (:629-633) - the only two DFU names; their one home is formats/factionFile.js (SUMMON-REPAIR). */
+export { FACTION_FLAGS };
 
 /** The faction ids the law names by hand (FactionFile.FactionIDs). */
 export const THE_THIEVES_GUILD = 42;   // FactionFile.cs:91

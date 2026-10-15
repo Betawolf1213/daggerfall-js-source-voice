@@ -82,6 +82,7 @@ import { billboardSize } from '../world/rmbFlats.js';
 import { SOUND } from '../systems/soundClips.js';
 import { CLIPS } from '../systems/handheldTorches.js';
 import { RAY_DISTANCE, TREASURE_ACTIVATION_DISTANCE } from '../player/activate.js';   // WB9f: a piece is pressed as a loot pile is
+import { adoptLight } from '../render/lightId.js';   // LIGHT-ID: a piece's light named by its piece
 
 /** WBX3: an item's picture stands this many metres a texel tall on the floor, and never taller than the most. */
 export const SPOILS_ICON_M_PER_PX = 0.022;
@@ -575,7 +576,7 @@ export function createSpoilsPool({
       for (const f of floor) {
         if (f.taken || !f.fly.rest || (RARITIES[f.piece.tier]?.rank ?? 0) < RARITIES.rare.rank) continue;
         const c = tierColour(f.piece.tier), k = SPOILS_LIGHT.k * Math.min(1, (now() - f.restAt) / SPOILS_RISE_MS);
-        out.push({ x: f.fly.pos[0], y: f.fly.pos[1] + SPOILS_LIGHT.up, z: f.fly.pos[2], range: SPOILS_LIGHT.range, color: c.map((v) => v * k) });
+        out.push(adoptLight({ x: f.fly.pos[0], y: f.fly.pos[1] + SPOILS_LIGHT.up, z: f.fly.pos[2], range: SPOILS_LIGHT.range, color: c.map((v) => v * k) }, f));   // LIGHT-ID: the piece's own light
       }
       return out;
     },

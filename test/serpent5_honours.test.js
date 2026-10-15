@@ -1,7 +1,7 @@
 // SERPENT5 (2026-10-15; bible/11-Multiplayer/Sea-Serpent.md section 17; Mac: "A gilded weapon to the serpent + a rare
 // chance of a title/aura drop") - THE OLD COIL'S HONOURS: the title COILBREAKER one dealing ship's serpent kill in twenty
 // and the aura THE MAELSTROM one in fifty, rolled by the account service on the kill's first write off its own draw (the
-// Hour's law, server-account/src/sds.js), laid on the row (`serpent_honours`, migration 0116) and held for good; said and
+// Hour's law, server-account/src/sds.js), laid on the row (`serpent_honours`, migration 0119) and held for good; said and
 // popped by the claim's carrier (net/serpentClaims.js); worn as every aura is, and drawn by the aura pass's ninth look
 // (render/auraRing.js): a whirlpool of tide and foam at the feet, its arms drawn IN, a lip of breaking foam, a curl at the
 // lip and spray thrown off it.
@@ -108,7 +108,7 @@ test('SERPENT5 THE CLAIM: a dealing ship\'s first write rolls the grants off its
   assert.deepEqual([stood.recorded, stood.title, stood.aura, rowOf(db, C.id).serpent_honours], [true, false, false, 0], 'a ship that stood: none, whatever its draw');
   const guest = await claim(db, both, G, await receipt(G.id, DAY, priv), pubKey);
   assert.deepEqual([guest.why, guest.title, rowOf(db, G.id).serpent_honours], ['guest', undefined, 0], 'a guest: never counted, never granted');
-  assert.match(src('server-account/migrations/0116_serpent_honours.sql'), /^ALTER TABLE players ADD COLUMN serpent_honours INTEGER NOT NULL DEFAULT 0;$/m);
+  assert.match(src('server-account/migrations/0119_serpent_honours.sql'), /^ALTER TABLE players ADD COLUMN serpent_honours INTEGER NOT NULL DEFAULT 0;$/m);
 });
 
 test('SERPENT5 HELD: Coilbreaker off the row\'s first bit, The Maelstrom off its second - a registered account\'s alone, each off its own bit; worn through the title\'s and the aura\'s doors (mutants: held off any bit; held by a guest)', () => {
@@ -165,7 +165,7 @@ test('SERPENT5 THE VOCABULARY: Coilbreaker last of TITLES, The Maelstrom last of
 
 // ── the carrier ───────────────────────────────────────────────────────
 
-test('SERPENT5 THE CARRIER: a counted kill\'s grants said whenever it granted one, popped (the loot banner\'s honour door) only when new - a service from before acct135 says neither; a hook that throws is the page\'s (mutants: popped when held; the keys)', async () => {
+test('SERPENT5 THE CARRIER: a counted kill\'s grants said whenever it granted one, popped (the loot banner\'s honour door) only when new - a service from before acct137 says neither; a hook that throws is the page\'s (mutants: popped when held; the keys)', async () => {
   const { priv } = await relayPair();
   const A = 'acct-0001';
   const run = async (data, announce) => {
@@ -192,7 +192,7 @@ test('SERPENT5 THE CARRIER: a counted kill\'s grants said whenever it granted on
   assert.ok(heldAura.said.includes(SERPENT_CLAIM_TEXT.aura()) && !heldAura.said.includes(SERPENT_CLAIM_TEXT.title()));
   assert.deepEqual(heldAura.popped, [], 'AUDIT WORLD-REWARDS E1: an aura held already - said, never popped');
   const old = await run({});
-  assert.ok(!old.said.includes(SERPENT_CLAIM_TEXT.title()) && !old.said.includes(SERPENT_CLAIM_TEXT.aura()) && old.popped.length === 0, 'a service from before acct135: nothing (AUDIT WORLD-REWARDS E2: the aura\'s line neither)');
+  assert.ok(!old.said.includes(SERPENT_CLAIM_TEXT.title()) && !old.said.includes(SERPENT_CLAIM_TEXT.aura()) && old.popped.length === 0, 'a service from before acct137: nothing (AUDIT WORLD-REWARDS E2: the aura\'s line neither)');
   await run({ titleNew: true }, () => { throw new Error('the page\'s'); });   // never the carrier's
   assert.match(src('src/scenes/world.js'), /createSerpentClaims\(\{[\s\S]{0,900}announce: \(kind, key\) => announceHonour\(kind, key\),   \/\/ SERPENT5/);
 });

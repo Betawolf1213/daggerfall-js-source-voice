@@ -60,6 +60,8 @@
 //        | realm-rollback { id, note? } | realm-budget { days?, set? }   INT6: the review of the judge's verdicts (review.js)
 //        | realm-bodies { days? }   INT14: the boss fights' count, measured (review.js bodiesMeasure)
 //        | realm-gains { days? } | realm-trades { id }   HACKED-GOLD: who gained past the bucket; a character's trades (review.js)
+//        | realm-characters { name } | realm-repair { id, ticket, faction, flag, gold, note? }   SUMMON-REPAIR: an account's
+//          realm characters by handle; one character mended by staff - a flag bit cleared, gold given back, once a ticket
 // DUEL1, the duelling record. The caller of `loss` is the loser:
 //   POST /v1/duel/loss   { winner }       -> { recorded, wins, losses }
 //   POST /v1/duel/record { id }           -> { id, wins, losses, gates }
@@ -195,8 +197,9 @@ import {
   nameAsOf, wornNameOf, chooseNameAs,   // NAME-AS: the name the room reads - the account's or the character's
   ACCOUNT_MAX, ACCOUNT_WINDOW_S,
 } from './accounts.js';
-import { mintToken, mintOrder, mintRenownOrder, mintGuildOrder, mintGuildOutOrder, MAX_TTL_S, TOKEN_V, ID_RE, SEAT_TITLES, CHAPTER_TITLES, TOKEN_MAX_CHARS, TOKEN_BODY_MAX, tokenBodyOf } from '../../src/net/identityToken.js';
-import { ACCOUNT_VERSION, MAX_BODY_BYTES, ROUTES, OPEN_ROUTES, PATREON_OPEN_ROUTES, savePathOf, realmPathOf, SAVE_MAX_BYTES, SHOT_MAX_BYTES, maintaining, routeDb, d1BookmarkOf, D1_BOOKMARK_RE, d1Overloaded, noteOverload, shedding } from './service.js';   // SCALE4d: the routes a read replica may serve, and the session they are served on
+import { mintToken, mintOrder, mintRenownOrder, mintGuildOrder, mintGuildOutOrder, mintHomeOrder, MAX_TTL_S, TOKEN_V, ID_RE, SEAT_TITLES, CHAPTER_TITLES, TOKEN_MAX_CHARS, TOKEN_BODY_MAX, tokenBodyOf } from '../../src/net/identityToken.js';
+import { ACCOUNT_VERSION, MAX_BODY_BYTES, ROUTES, OPEN_ROUTES, PATREON_OPEN_ROUTES, savePathOf, realmPathOf, poiPathOf, SAVE_MAX_BYTES, SHOT_MAX_BYTES, maintaining, routeDb, d1BookmarkOf, D1_BOOKMARK_RE, d1Overloaded, noteOverload, shedding } from './service.js';   // SCALE4d: the routes a read replica may serve, and the session they are served on
+import { poiRolesOf, putPoiAsset, getPoiAsset, savePoiDraft, submitPoi, withdrawPoi, requestRetire, reviewPoi, rollbackPoi, listPoi, poiHistory, poiQueue, poiLiveFeed, poiHeldVersion, poiFeedTag, listShelf, shelfEntry, shelve, unshelve, POI_ASSET_MAX, POI_DRAFT_BODY_MAX, POI_LIVE_ASSET_MAX_AGE_S } from './poi.js';   // POI-1: the POI store - builders draft, an approver decides, the feed is what is live; POI-4b: the library's shelf
 import { listSaves, putCard, putBlob, getBlob, deleteSave, saveCardOf } from './saves.js';
 import { signingKey, gatePublicKey } from './signing.js';
 import { stakeCards, cashoutCards } from './cards.js';   // CARDS6: a card table's stakes, escrowed
@@ -228,6 +231,7 @@ import {
   renameGuild,   // GUILD2a
 } from './guilds.js';   // GUILD1: the guilds' routes; GUILD1c: the guild a token carries
 import { vaultOf, vaultPut, vaultTake, vaultGrant } from './guildVault.js';   // GUILD2b: the guild's vault
+import { HOME_ORDER_KEYS_MAX } from '../../src/net/homeLaw.js';   // QUEST-HOME: the most buildings one home order names
 import { buyHall, sellHall, setHallEntry, setHeraldry } from './halls.js';   // GUILD1d: the guild hall and heraldry
 import { readGuildBoard, pinGuildNote, takeDownGuildNote } from './guildBoard.js';   // GUILD1e: a guild's own board
 import { listSeats, witnessSeat, strikeSeat, seatsOpenFor } from './townSeats.js';   // SEAT1a: the seats' witnessed registry
@@ -268,7 +272,7 @@ import { grantSpoils } from './budget.js';   // INT5: a signed win's spoils fill
 import { reviewAct } from './review.js';   // INT6: the review of the judge's verdicts
 import { isGzip, gzipSizeOf, gunzipText, REALM_TEXT_MAX_BYTES } from '../../src/net/realmSaveCodec.js';   // REALM-GZIP: a save rides packed
 import { tradeRealm, REALM_TRADE_BODY_MAX } from './realmTrade.js';   // REALM P2.1: a trade, settled here
-import { wildFall } from './wild.js';   // INT9: a death in the open zone's drop, taken off the record
+import { wildFall, wildCollect, wildReclaim, wildEscrows } from './wild.js';   // INT9: a death in the open zone's drop, taken off the record; MAC (2026-10-14): its killer's piece in escrow - collected, taken back, listed
 import { listLineages, putLineage, realmDie, realmWed, listUnions, LINEAGE_BODY_MAX, isTombstone } from './legacy.js';   // LEGACY7: Project Legacy's lines and the tombstone
 import { measured, heartbeatPartsOf } from './metrics.js';   // SCALE1: every request counted (Workers Analytics Engine); AUDIT SCALE II A-3: a heartbeat's parts, of the body the route read
 import { runCron } from './cron.js';   // SCALE4b: the service's own clock
@@ -302,6 +306,26 @@ const json = (body, status = 200, origin = '*') => new Response(JSON.stringify(b
 /** Every refusal is one word and the same shape. A client learns that
  *  it failed and not why somebody else's secret is wrong. */
 const no = (why, status, origin) => json({ error: why }, status, origin);
+/** POI-1: a POI store refusal's status - a role refused 403, a thing not there 404 (taken off the shelf, 410), a state
+ *  moved or a builder's holdings full 409, a full day 429. AUDIT POI: `poi-changed` (S1), `poi-drafts-full` (S10),
+ *  `poi-shelf-full` and `poi-shelf-spent` (S10), `poi-gone` (U13). */
+const POI_STATUS = {
+  'poi-not-builder': 403, 'poi-not-approver': 403, 'poi-not-author': 403, 'not-found': 404, 'poi-gone': 410, 'poi-state': 409, 'poi-changed': 409, 'poi-pending': 409, 'poi-not-live': 409,
+  'poi-drafts-full': 409, 'poi-shelf-full': 409, 'poi-shelf-spent': 409, 'poi-quota': 429, 'no-storage': 503,
+};
+/** POI-1: what one address may ask of the POI store's open reads in a window - a game streaming a town's models at once. */
+const POI_OPEN_MAX = 600;
+/** POI-1: AN ASSET'S BYTES, as stored - a live one cached a day (AUDIT POI S4: its name is its hash, so its bytes never
+ *  change, but it can stop being public - "immutable for a year" had made that impossible to take back), a draft's never
+ *  cached (a builder's business, and it may never go live). */
+const poiAssetResponse = (/** @type {any} */ r, /** @type {string} */ origin) => new Response(r.object.body, {
+  status: 200,
+  headers: {
+    'content-type': r.type,
+    'access-control-allow-origin': origin,
+    'cache-control': r.live ? `public, max-age=${POI_LIVE_ASSET_MAX_AGE_S}` : 'private, no-store',
+  },
+});
 /** AUDIT ONLINE A17's law, the service's one answer to a throw: LOGGED, not lost, and a player told nothing about it -
  *  an overloaded D1 a 503 (SCALE4f: counted apart from a bug), any other a 500. HOMES-SHED (2026-10-13, the database
  *  overloaded from 14:11 UTC): the try's catch below, and the one route above it that asks the database (the siege
@@ -328,7 +352,7 @@ const overloaded = (origin) => {
 const JUDGE_STATUS = Object.freeze({ 'trade-held': 409, 'record-unjudged': 409, 'piece-dupe': 409, 'piece-claimed': 409, 'piece-legacy': 409 });
 /** INT9: a death's drop's refusals - no key to verify or sign with 503, a receipt not the caller's 403, the fallen's own
  *  grace or the room's falls 409; the record's own (REALM_STATUS) after them, a bad shape 400 (the default). */
-const WILD_STATUS = Object.freeze({ 'no-gate-key': 503, 'no-signing-key': 503, 'not-yours': 403, grace: 409, nonce: 400 });
+const WILD_STATUS = Object.freeze({ 'no-gate-key': 503, 'no-signing-key': 503, 'not-yours': 403, grace: 409, nonce: 400, 'no-escrow': 404, 'escrow-wait': 409, 'escrow-late': 409, 'escrow-moved': 409, 'escrow-collected': 409, 'escrow-returned': 409 });   // MAC (2026-10-14): the escrow's
 /** HOME-RENT: a room's refusals - a bad shape 400 (the default). */
 const RENT_STATUS = Object.freeze({
   ...JUDGE_STATUS,
@@ -378,7 +402,7 @@ const ROLL_STATUS = Object.freeze({
   'no-season': 409, 'no-chapter': 404, 'patron-low': 409, 'guild-marks-short': 409,
 });
 /** INT6: the review's refusals - no developer 403, no such character 404, nothing clean to roll back to 409. */
-const REVIEW_STATUS = Object.freeze({ 'not-developer': 403, 'no-realm-character': 404, 'no-clean': 409, 'service-moved': 409, 'dead': 409 });
+const REVIEW_STATUS = Object.freeze({ 'not-developer': 403, 'no-realm-character': 404, 'no-clean': 409, 'service-moved': 409, 'dead': 409, 'no-player': 404, 'repair-no-faction': 409, 'repair-not-set': 409, seq: 409 });   // SUMMON-REPAIR: the last four
 /** GUILD1: each guild refusal's status - a bad shape 400 (the default), the wrong rank or too little Renown 403, a
  *  thing that is not there 404, a conflict with what is 409, the hour's writes spent 429. */
 const GUILD_STATUS = Object.freeze({
@@ -542,6 +566,28 @@ async function guildOrdersOf(r, s, env, subtle, nowS) {
   return answer;
 }
 
+/** FIELD BUGS 2026-10-14 QUEST-HOME (Mac, 2026-10-15: "Close both"): AN ACT'S ANSWER THAT MOVED A HOME, WITH ITS ORDERS
+ *  SIGNED in place of what it says (`moved`, src/net/homeLaw.js homeMoved) - `homeOrders`, each one town's
+ *  (HOME_ORDER_KEYS_MAX buildings at most), which the acting client carries to the hub, whose fan reaches every page
+ *  online: a quest never picks its residence in a house bought after a page's boot read, and one picked there and not yet
+ *  reached is chosen again. A service with no key still acts, answering none: the pages read the move at their next
+ *  boot (homes.js homeLayouts). */
+async function homeOrdersOf(r, s, env, subtle, nowS) {
+  const { moved, ...answer } = r ?? {};
+  if (!Array.isArray(moved) || !moved.length) return answer;
+  const key = await signingKey(env, subtle);
+  if (!key) return answer;
+  const homeOrders = [];
+  for (const { mapId, on = [], off = [] } of moved) {
+    const keys = [...on.map((k) => [k, 1]), ...off.map((k) => [k, 0])];
+    for (let at = 0; at < keys.length; at += HOME_ORDER_KEYS_MAX) {
+      const part = keys.slice(at, at + HOME_ORDER_KEYS_MAX);
+      homeOrders.push(await mintHomeOrder({ s, bm: mapId, bu: part.filter(([, u]) => u).map(([k]) => k), bd: part.filter(([, u]) => !u).map(([k]) => k) }, key, { subtle, nowS }));
+    }
+  }
+  return { ...answer, homeOrders };
+}
+
 /** A body's bytes, or null past `max` - refused on the length it
  *  ANNOUNCES before a byte is read, and on the bytes that ARRIVE as
  *  they arrive. AUDIT 68 X8-account-body-cap-not-enforced-without-content-length:
@@ -608,7 +654,7 @@ const service = {
         headers: {
           'access-control-allow-origin': origin,
           'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'access-control-allow-headers': 'content-type, authorization, x-realm-lease, x-realm-seq, x-realm-summary, x-d1-bookmark',   // REALM P1: a checkpoint's lease, sequence and tile; SCALE4g: the tab's D1 bookmark
+          'access-control-allow-headers': 'content-type, authorization, x-realm-lease, x-realm-seq, x-realm-summary, x-d1-bookmark, if-none-match',   // REALM P1: a checkpoint's lease, sequence and tile; SCALE4g: the tab's D1 bookmark; POI-1: the feed version a game holds
           'access-control-max-age': '86400',
         },
       });
@@ -664,7 +710,8 @@ const service = {
     // there is still exactly one place that decides a path is a 404.
     const slot = savePathOf(path);
     const realmSlot = realmPathOf(path);   // REALM P1: a realm character's save, matched as a save slot is
-    if (!ROUTES.has(path) && !slot && !realmSlot) return no('not-found', 404, origin);
+    const poiPath = poiPathOf(path);   // POI-1: the POI store's paths, matched the same way
+    if (!ROUTES.has(path) && !slot && !realmSlot && !poiPath) return no('not-found', 404, origin);
 
     if (!env.DB) return no('no-database', 503, origin);
     // ADMIT-LINE (admit.js): A SIGN-IN TAKES ITS PLACE IN THE LINE before it costs the database a statement - the open
@@ -796,6 +843,27 @@ const service = {
         if (overAccountRate(`yards:${ip}`, nowS, ACCOUNT_MAX, ACCOUNT_WINDOW_S)) return no('rate', 429, origin);
         const r = await yardsKept(ctx, body.mapId, nowS);
         return 'error' in r ? no(r.error, 400, origin) : json(r, 200, origin);
+      }
+      // POI-1: THE LIVE FEED AND A LIVE ASSET NEED NO SESSION - what every approved POI is, and the bytes it names, are
+      // every player's to read, the game's included (poi.js). Bounded per address in this isolate's memory, as the yards
+      // are; the feed kept in the isolate and answered 304 to a game that already holds its version; an asset by its
+      // hash, cached a day (AUDIT POI S4: it can stop being public). An asset no live POI names falls through to a builder's session below.
+      if (poiPath && request.method === 'GET' && (poiPath.route === 'live' || poiPath.route === 'asset')) {
+        const ip = request.headers.get('cf-connecting-ip') || 'unknown';
+        if (overAccountRate(`poi:${ip}`, nowS, POI_OPEN_MAX, ACCOUNT_WINDOW_S)) return no('rate', 429, origin);
+        // AUDIT POI S11: the version the game holds, read strong or weak - newer than this isolate's kept feed, the version is asked now
+        const held = poiPath.route === 'live' ? poiHeldVersion(request.headers.get('if-none-match')) : -1;
+        const feed = await poiLiveFeed(env.DB, Date.now(), held);
+        if (poiPath.route === 'live') {
+          const etag = poiFeedTag(feed.v);
+          const headers = { 'access-control-allow-origin': origin, 'access-control-expose-headers': 'etag', etag, 'cache-control': 'public, max-age=30' };
+          if (held === feed.v) return new Response(null, { status: 304, headers });
+          return new Response(feed.body, { status: 200, headers: { ...headers, 'content-type': 'application/json; charset=utf-8' } });
+        }
+        if (feed.live.has(poiPath.sha) || !request.headers.get('authorization')) {
+          const r = await getPoiAsset({ ...ctx, db: env.DB, bucket: env.SAVES }, poiPath.sha, { builder: false });
+          return 'error' in r ? no(r.error, r.error === 'no-storage' ? 503 : 404, origin) : poiAssetResponse(r, origin);
+        }
       }
       // ═══ AUDIT-ACC F13: A CREDENTIAL DOES NOT GO IN A URL ══════
       //
@@ -1048,6 +1116,18 @@ const service = {
         if (!('error' in r)) return json(r, 200, origin);
         if (r.error === 'seq') return json({ error: 'seq', seq: r.seq }, 409, origin);   // the record moved: its tab checkpoints and asks again
         return json({ error: r.error, ...(r.why ? { why: r.why } : {}) }, WILD_STATUS[r.error] ?? REALM_STATUS[r.error] ?? 400, origin);
+      }
+
+      if ((path === '/v1/wild/collect' || path === '/v1/wild/reclaim' || path === '/v1/wild/escrows') && request.method === 'POST') {
+        // MAC'S DECISION (2026-10-14, the two-phase handoff - wild.js): the killer's worn piece the fall put in ESCROW -
+        // collected into the killer's record against the room's signed collect (`g1`, the gate's key), taken back into the
+        // fallen's once its killer could no longer collect it, or listed for the fallen's tab
+        const wctx = { ...ctx, bucket: env.SAVES };
+        const r = path === '/v1/wild/collect' ? await wildCollect(wctx, who.player, body, { gateKey: await gatePublicKey(env, subtle) })
+          : path === '/v1/wild/reclaim' ? await wildReclaim(wctx, who.player, body) : await wildEscrows(wctx, who.player, body);
+        if (!('error' in r)) return json(r, 200, origin);
+        if (r.error === 'seq') return json({ error: 'seq', seq: r.seq }, 409, origin);
+        return json({ error: r.error, ...(r.why ? { why: r.why } : {}), ...(Number.isSafeInteger(r.wait) ? { wait: r.wait } : {}) }, WILD_STATUS[r.error] ?? REALM_STATUS[r.error] ?? 400, origin);
       }
 
       if (path === '/v1/duel/record' && request.method === 'POST') {
@@ -1377,7 +1457,7 @@ const service = {
           // ARENA4b: A HOME THE ARENA DISPLACED, MOVED to the house its owner's client picked (homes.js arenaMoveHome) - the
           // pieces' refund onto the owner's record in the move's own batch, a realm act's
           const r = await arenaMoveHome(hctx, who.player, body);
-          if (!('error' in r)) return json(r, 200, origin);
+          if (!('error' in r)) return json(await homeOrdersOf(r, who.player.id, env, subtle, nowS), 200, origin);   // QUEST-HOME
           const said = realmNo(r);
           if (said) return said;
           const status = r.error === 'home-taken' || r.error === 'home-changed' || r.error === 'guild-treasury-full' ? 409 : r.error === 'no-home' ? 404 : 400;
@@ -1395,7 +1475,7 @@ const service = {
           // FIELD BUGS 2026-10-04d KNIGHT-HOUSE: A DEED THE REALM GAVE, HELD - the building a realm character's record holds
           // Daggerfall's deed to (a Knightly Order's house) kept from anyone else's claim (homes.js holdDeed)
           const r = await holdDeed(hctx, who.player, body);
-          if (!('error' in r)) return json(r, 200, origin);
+          if (!('error' in r)) return json(await homeOrdersOf(r, who.player.id, env, subtle, nowS), 200, origin);   // QUEST-HOME
           if (r.error === 'home-layout') return json({ error: 'home-layout', layout: r.layout ?? null }, 409, origin);   // as /v1/homes/claim answers it
           const status = r.error === 'home-taken' || r.error === 'home-arena' ? 409 : r.error === 'home-rate' ? 429 : r.error === 'no-deed' || r.error === 'no-realm-character' ? 404 : 400;
           return no(r.error, status, origin);
@@ -1409,7 +1489,7 @@ const service = {
         }
         if (path === '/v1/homes/claim') {
           const r = await claimHome(hctx, who.player, body);
-          if (!('error' in r)) return json(r, 200, origin);
+          if (!('error' in r)) return json(await homeOrdersOf(r, who.player.id, env, subtle, nowS), 200, origin);   // QUEST-HOME: a home now, said to every page online
           const said = realmNo(r);
           if (said) return said;
           if (r.error === 'home-layout') return json({ error: 'home-layout', layout: r.layout ?? null }, 409, origin);   // WD3 (AUDIT WD3 O1): the layout the town keeps, for the client to hear
@@ -1418,7 +1498,7 @@ const service = {
         }
         const r = path === '/v1/homes/release' ? await releaseHome(hctx, who.player, body) : await setHomeEntry(hctx, who.player, body, env);   // AUDIT LW-II-2 S4: a door leaving public reckons its patrons, by the service's secret
         if ('error' in r) return realmNo(r) ?? no(r.error, r.error === 'bad-entry' || r.error === 'realm-needed' ? 400 : r.error === 'home-crossed' || r.error === 'home-tenants' || r.error === 'home-vendor-stocked' ? 409 : 404, origin);   // HOME-CROSSED; HOME-RENT: a sale waits for its tenants; HOME-VENDOR: and its stocked trader
-        return json(r, 200, origin);
+        return json(await homeOrdersOf(r, who.player.id, env, subtle, nowS), 200, origin);   // QUEST-HOME: a sale - a house again to every page online
       }
 
       // ═══ GUILD1: THE GUILDS ═════════════════════════════════════
@@ -1450,7 +1530,7 @@ const service = {
         }[path];
         if (!act) return no('not-found', 404, origin);
         const r = await act({ ...ctx, env, bucket: env.SAVES }, who.player, body);   // REALM P2.2: a realm character's record is in R2; AUDIT 28 M5: the switch says whether the Marks show
-        if (!('error' in r)) return json(await guildOrdersOf(r, who.player.id, env, subtle, nowS), 200, origin);
+        if (!('error' in r)) return json(await homeOrdersOf(await guildOrdersOf(r, who.player.id, env, subtle, nowS), who.player.id, env, subtle, nowS), 200, origin);   // QUEST-HOME: a hall bought or sold
         if (r.error === 'seq') return json({ error: 'seq', seq: r.seq }, 409, origin);   // REALM P2.2: the service's own, as a checkpoint's
         if (r.error === 'home-layout') return json({ error: 'home-layout', layout: r.layout ?? null }, 409, origin);   // AUDIT PRE-MERGE 1003 WD1: the town's layout, as /v1/homes/claim answers it
         // AUDIT2 GUILD2 S2/S7: the word the filter caught (`why`, the door's own field for a refusal's reason), and when the
@@ -1861,6 +1941,60 @@ const service = {
       // would tell a player at the backup button to sign in again,
       // which is not what they need to do. 403 rather than 401 because
       // the credential is GOOD; there is nothing to sign in again with.
+      // ═══ POI-1: THE POI STORE (poi.js) ═════════════════════════
+      //
+      // A builder's uploads, drafts and submissions; an approver's queue and word; the list and a POI's history. Every
+      // door asks the role itself (poi.js poiRolesOf), so a route here is never more than the roles say.
+      if (poiPath) {
+        const pctx = { ...ctx, bucket: env.SAVES };
+        const me = who.player;
+        const answer = (r) => ('error' in r ? json(r, POI_STATUS[r.error] ?? 400, origin) : json(r, 200, origin));
+        const { route } = poiPath;
+        if (route === 'me' && request.method === 'GET') return json({ handle: me.handle ?? null, ...poiRolesOf(me, env) }, 200, origin);
+        if (route === 'list' && request.method === 'GET') return answer(await listPoi(pctx, me, env));
+        if (route === 'queue' && request.method === 'GET') return answer(await poiQueue(pctx, me, env));
+        if (route === 'doc' && request.method === 'GET') return answer(await poiHistory(pctx, me, env, poiPath.id));
+        if (route === 'shelf' && request.method === 'GET') return answer(poiPath.id ? await shelfEntry(pctx, me, env, poiPath.id) : await listShelf(pctx, me, env));
+        if (route === 'shelf' && request.method === 'PUT' && !poiPath.id) {
+          // POI-4b: an entry on the library's shelf, read to a draft's own bound (an entry is a POI without its place)
+          if (!poiRolesOf(me, env).builder) return no('poi-not-builder', 403, origin);
+          const put = await readBody(request, POI_DRAFT_BODY_MAX);
+          if (put === undefined) return no('too-large', 413, origin);
+          if (!put) return no('body', 400, origin);
+          return answer(await shelve(pctx, me, env, { item: put.item }));
+        }
+        if (route === 'asset' && request.method === 'GET') {
+          const r = await getPoiAsset(pctx, poiPath.sha, poiRolesOf(me, env));
+          return 'error' in r ? no(r.error, r.error === 'no-storage' ? 503 : 404, origin) : poiAssetResponse(r, origin);
+        }
+        if (route === 'asset' && request.method === 'PUT') {
+          // A RAW BODY, against its kind's own bound (as a save's is), read only for a builder
+          if (!poiRolesOf(me, env).builder) return no('poi-not-builder', 403, origin);
+          const kind = url.searchParams.get('kind');
+          if (kind !== 'mesh' && kind !== 'texture') return no('poi-kind', 400, origin);
+          const raw = await readCapped(request, POI_ASSET_MAX[kind]);
+          if (!raw) return no('too-large', 413, origin);
+          if (!raw.byteLength) return no('body', 400, origin);
+          return answer(await putPoiAsset(pctx, me, env, { sha: poiPath.sha, kind, bytes: raw }));
+        }
+        if (route === 'draft' && request.method === 'PUT') {
+          if (!poiRolesOf(me, env).builder) return no('poi-not-builder', 403, origin);
+          const draft = await readBody(request, POI_DRAFT_BODY_MAX);
+          if (draft === undefined) return no('too-large', 413, origin);
+          if (!draft) return no('body', 400, origin);
+          return answer(await savePoiDraft(pctx, me, env, { doc: draft.doc, base: draft.base ?? null }));
+        }
+        if (request.method === 'POST') {
+          if (route === 'submit') return answer(await submitPoi(pctx, me, env, { id: body.id, rev: body.rev }));
+          if (route === 'withdraw') return answer(await withdrawPoi(pctx, me, env, { id: body.id, rev: body.rev }));
+          if (route === 'retire') return answer(await requestRetire(pctx, me, env, { id: body.id }));
+          if (route === 'review') return answer(await reviewPoi(pctx, me, env, { id: body.id, rev: body.rev, verdict: body.verdict, note: body.note ?? null, docSha: body.docSha ?? null }));   // AUDIT POI S1: what the approver saw
+          if (route === 'rollback') return answer(await rollbackPoi(pctx, me, env, { id: body.id, rev: body.rev }));
+          if (route === 'unshelve') return answer(await unshelve(pctx, me, env, { id: body.id }));
+        }
+        return no('method', 405, origin);
+      }
+
       if (path === '/v1/saves' || slot) {
         if (accountKind(who.player) !== 'linked') return no('saves-need-account', 403, origin);
         const me = who.player.id;
@@ -2013,7 +2147,7 @@ const service = {
         // AUDIT LEGACY III O1/O3: the other's character as the relay stamped it, and a half taken back
         if (path === '/v1/realm/wed') return answer(await realmWed(rctx, me, { id: body.id, lease: body.lease, sid: body.sid, partner: body.partner, partnerChar: body.partnerChar, withdraw: body.withdraw === true }));
         if (path === '/v1/realm/unions') return json({ unions: await listUnions(rctx, me) }, 200, origin);
-        return answer(await deleteRealm(rctx, me, body.id));   // /v1/realm/delete - HOUSE-LOSS: which undoes one too, for a door that asks a delete
+        return answer(await homeOrdersOf(await deleteRealm(rctx, me, body.id), me, env, subtle, nowS));   // QUEST-HOME: its homes a house again to every page online   // /v1/realm/delete - HOUSE-LOSS: which undoes one too, for a door that asks a delete
       }
 
       // a path this service serves, reached with a method it does not

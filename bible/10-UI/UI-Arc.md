@@ -9109,13 +9109,15 @@ SAME TWO FAULTS, FOUND AGAIN. The chronicle's lesson applied one
 window over, and both halves of it were here too.
 
 IT READ THE NAMES AND THREW AWAY THE NUMBERS. `spellEffects` hands
-back the effect RECORDS, and every one carries `magnitudeBaseLow/High`
-with its per-level step, `durationBase/Mod`, and `chanceBase/Mod` -
-the exact fields systems/effects.js:"X11b: CREATE ITEM (Mysticism 2,255)" reads to resolve a live
+back the effect RECORDS, and every one carries the eleven classic
+settings fields - the exact fields systems/effects.js:"X11b: CREATE ITEM (Mysticism 2,255)" reads to resolve a live
 effect. The first draft printed the two names and dropped the rest,
 which is the chronicle's flattened date wearing a different hat. Each
-part now appears only when the effect HAS it, because "0 to 0" is
-worse than nothing.
+part now appears only when the effect HAS it - by the effect's support
+flags, over the settings ClassicEffectRecordToEffectSettings gives it
+(SB-FX, below: this slice read the fields by VALUE and misread three of
+them, and printed a duration and a chance under every Damage Health in
+the game).
 
 AND IT COULD DO LESS THAN THE CLASSIC. The classic asks "Enter spell
 name : " (:934) and the first draft had no rename. It has one now,
@@ -9138,6 +9140,79 @@ Ready calls the engine with the free flag and closes the window, and
 Delete on a vampire spell answers "Cannot delete special vampire
 spells." Pins: 3 in a new test/enhancedSpellbook.test.js. 4
 mutations, 4 dead.
+
+SB-FX (2026-10-14, a player on Discord: "The spell details panel in
+the Spellbook shows placeholder values instead of what the spell
+actually does" - a made By Touch, Shock based Damage Health reading
+`1-8 +1/level`, `1 +1/level rounds`, `1% +1/level`, while its cost was
+right): THE BOOK READ ITS RECORD BY VALUE, AND NO PRODUCER WRITES THE
+VALUE IT READ FOR. effectWords took a component to be there when its
+field was not zero. The Spell Maker never writes a zero there: a
+greyed-out spinner takes no value
+(DaggerfallEffectSettingsEditorWindow.InitControlState) and keeps the
+maker's floor of 1 (spellMaker.js:"export function blankEffectSettings() {",
+DefaultEffectSettings' "1 + 1 per level"), and all 99 effect slots of
+the stock SPELLS.STD hold the same 1s in each component their effect
+does not support. So every Damage Health in the game, stock or made,
+printed a duration and a chance it does not have - the "rounds" and the
+"%" the player saw - and every Paralyze a magnitude. The numbers it did
+print were misread as well: `magnitudeLevelBase` is MagnitudePlusMin
+(EntityEffectBroker.ClassicEffectRecordToEffectSettings), not a
+per-level step; the duration's and the chance's `Mod` fields are their
+Plus, not a step either; and Plus max and the three per-level divisors
+were never read. So "+1/level" was a Plus min of 1 standing for a
+"+ min - max per N level(s)" the player had set - the "damage range is
+not the one I configured" (their Plus and divisor were not in the
+report; their base of 1-8 printed right). The cost was right because
+spellcost.js reads the same record the DFU way
+(FormulaHelper.CalculateEffectCosts, behind the same three support
+flags - all 93 rows of the cost table agree with them), and so does the
+cast (spellcast.js:"export function rollMagnitude(effect, casterLevel, rolls = Math.random) {"); the
+description alone misread it. The suite was green because PX23b's pin
+built its record by hand, with zeros where no producer writes one -
+TEST THE SHAPE THE PRODUCER MINTS, once more.
+
+FIXED WHERE IT READS. effectWords reads the effect the way DFU
+instantiates it (enhancedSpellbook.js:"const s = classicEffectSettings(effect);"): the settings are
+ClassicEffectRecordToEffectSettings' (spellEffects.js:"export function classicEffectSettings(e) {", MACRO-5's
+port - one DFU member, one export), a component is printed only when
+the effect class supports it (SupportDuration, SupportChance,
+SupportMagnitude - the template's three flags, the gates the settings
+editor greys its spinners by), and each part is that component's
+header row of DFU's own spellbook description - ShowEffectPopup's
+SpellBookDescription (DaggerfallSpellBookWindow.cs ShowEffectPopup),
+TEXT.RSC 1212 for Damage Health: "Duration: %bdr + %adr per %cld
+level(s)", "Chance: %bch + %ach per %clc level(s)", "Magnitude: %1bm -
+%2bm + %1am - %2am per %clm level(s)" - in its order. The player's
+spell reads its Magnitude row alone now, with its own Plus range and
+divisor. ONE DEPARTURE FROM THAT RECORD, and it is PX23b's own law: the
+record prints a component its effect lacks as DefaultEffectSettings'
+1s ("Duration: 1 + 1 per 1 level(s)" under every Damage Health - MACRO-5
+pins the classic popup doing exactly that, and it still does) or as
+"N/A" (1290, Shield's chance; 1302, Teleport's duration and magnitude),
+and this window prints nothing there, which is the spell maker's own
+description of the effect (1512: "Duration: Instantaneous. Chance:
+N/A"). The words go through the text core (`spellbook.effect.duration`,
+`.chance`, `.magnitude`, drafted in-session for every language), so the
+file's hard-coded count falls by one. The guild's Buy Spells in its
+Enhanced Plus face reads the same words (enhancedPorts.js:"function effectRowsOf(w, sp) {")
+and is fixed by the same change.
+
+THE OTHER READERS, checked: the hotbar's tip says a spell's name and
+range and nothing of its settings; the cost and the cast read the
+record the DFU way (above); and a made spell's record travels whole
+through a save (save.js snapshotPlayer, restored as the object it is) -
+pinned, settings and words alike, after a round trip.
+
+Pins: 2 more in test/enhancedSpellbook.test.js (9) - the player's spell
+made through the real SpellMakerWindow (its clicks, its typed spinner
+field, Buy) and read by the book before and after a save, and the real
+SPELLS.STD swept, every stock effect its supported components alone
+with Shock's `Magnitude: 1 - 20 + 1 - 4 per 1 level(s)` (it needs
+ARENA2_PATH, and skips without) - and PX23b's pin MOVED, deliberately:
+it asserted the misreading. shopplus_spellshop.test.js's effect row
+moved with it. Both new pins fail on the old reading with the player's
+own words. 13 mutations, 13 dead (`tools/mutants/sbfx.json`).
 
 PX24 (Mac: "with the logbook and history, I want them as one detailed
 UI"): THE CHRONICLE. Two classic windows built at four sites -

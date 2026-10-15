@@ -365,11 +365,15 @@ export const HOME_BANK_LINES = Object.freeze(['Online, a home is bought', 'at it
  * THE CLIENT'S REGISTRY over `api` (net/accountClient.js accountHomes: every answer `{ ok, data }` or
  * `{ ok: false, error }`, never a throw). `character()` is the character playing - a home is ONE character's
  * (`own`), though its account may always walk in (`mine`). Answers `{ ensure, waitFor, known, homeAt, claim,
- * release, setEntry, version }`; `version` moves on every change a door would show. LEGACY7 part five: `onWrote(mapId,
- * buildingKey)` told of each change of mine (a claim, a release, an entry) - the line's houses read again.
- * @param {{ api: any, character?: () => (string|null), now?: () => number, ttlMs?: number, onWrote?: ((mapId: number, buildingKey: number) => void) | null }} opts
+ * release, setEntry, version }` - and (QUEST-HOME) `hearEveryTown`/`homeStands`, the boot's word on every town's
+ * homes, and `hearHome`, the hub's word that one moved since; `version` moves on every change a door would show.
+ * LEGACY7 part five: `onWrote(mapId, buildingKey)` told of each change of mine (a claim, a release, an entry) - the
+ * line's houses read again. QUEST-HOME (Mac, 2026-10-15: "Close both"): `onHomes()` told whenever the registry learns of
+ * a building that is a home (the boot's read, a hub word, a town's answer) - a quest site not yet reached in one is
+ * chosen again (scenes/world.js).
+ * @param {{ api: any, character?: () => (string|null), now?: () => number, ttlMs?: number, onWrote?: ((mapId: number, buildingKey: number) => void) | null, onHomes?: (() => void) | null }} opts
  */
-export function createOnlineHomes({ api, character = () => null, now = () => Date.now(), ttlMs = HOME_TOWN_TTL_MS, onWrote = null }) {
+export function createOnlineHomes({ api, character = () => null, now = () => Date.now(), ttlMs = HOME_TOWN_TTL_MS, onWrote = null, onHomes = null }) {
   /** @type {Map<number, {at: number, homes: Map<number, any>}>} */
   const towns = new Map();
   /** @type {Map<number, Promise<boolean>>} */
@@ -443,6 +447,7 @@ export function createOnlineHomes({ api, character = () => null, now = () => Dat
         towns.set(id, { at: now(), homes });
         failed.delete(id);
         version++;
+        if (homes.size) told();   // QUEST-HOME: a town's homes, heard
         return true;
       }, () => fail(id))
       .finally(() => { asking.delete(id); askedAt.delete(id); forcedFlight.delete(id); });
@@ -484,6 +489,61 @@ export function createOnlineHomes({ api, character = () => null, now = () => Dat
     if (own && row.deed) return null;
     return Object.freeze({ ...row, own });
   }
+
+  /** @type {Map<number, Set<number>>} QUEST-HOME: every town's homes by building, as the boot's read of the towns said */
+  let everyTown = new Map();
+  /** QUEST-HOME: the host told the registry knows of homes it may not have known (onHomes) - a listener's fault is never
+   *  the registry's. */
+  const told = () => { try { onHomes?.(); } catch { /* a listener's fault is never the registry's */ } };
+  /**
+   * FIELD BUGS 2026-10-14 QUEST-HOME: THE BOOT'S READ OF EVERY TOWN'S HOMES (server-account/src/homes.js homeLayouts'
+   * `homes`, `[mapId, [buildingKey, ...]]` a town) - the buildings each is, nothing else of it - in place of the last
+   * read. An answer that names none (a service from before it) leaves what was known: the towns asked one at a time.
+   * Answers whether it was taken.
+   */
+  function hearEveryTown(rows) {
+    if (!Array.isArray(rows)) return false;
+    /** @type {Map<number, Set<number>>} */
+    const next = new Map();
+    for (const row of rows) {
+      const id = Array.isArray(row) && Array.isArray(row[1]) ? idOf(row[0]) : 0;
+      if (!homeMapIdOk(id)) continue;
+      const keys = new Set(row[1].filter(homeBuildingKeyOk));
+      if (keys.size) next.set(id, keys);
+    }
+    everyTown = next;
+    if (next.size) told();
+    return true;
+  }
+  /**
+   * QUEST-HOME (Mac, 2026-10-15: "Close both"): THE HUB'S WORD THAT HOMES MOVED SINCE THE BOOT'S READ - each `{m, u, d}`
+   * (net/wire.js validHomeWord, in the order the hub heard them): town `m`'s buildings `u` homes now, `d` homes no more.
+   * Kept beside the boot's read; a town this page has asked is asked again (its door says whose, and a home gone is gone
+   * from it at once). Answers whether any building became a home.
+   * @param {Array<{m: number, u: number[], d: number[]}>} words
+   */
+  function hearHome(words) {
+    let became = false;
+    for (const w of Array.isArray(words) ? words : []) {
+      const id = idOf(w?.m);
+      if (!homeMapIdOk(id)) continue;
+      const keys = new Set(everyTown.get(id) ?? []);
+      for (const k of w.u ?? []) if (homeBuildingKeyOk(k) && !keys.has(k)) { keys.add(k); became = true; }
+      for (const k of w.d ?? []) { keys.delete(k); towns.get(id)?.homes.delete(k); }
+      if (keys.size) everyTown.set(id, keys); else everyTown.delete(id);
+      if (towns.has(id)) { version++; ensure(id, { force: true }); }
+    }
+    if (became) told();
+    return became;
+  }
+  /**
+   * QUEST-HOME: WHETHER A BUILDING IS A PLAYER'S HOME - anyone's, a guild's hall, a deed the service holds - in ANY town:
+   * its town's own answer where the town was asked, and the boot's read of every town (hearEveryTown) beside it. The
+   * quest machine's `isPlayerHome` (scenes/world.js): a quest picks its residence in towns its player never walked into,
+   * where `homeAt` knows nothing. A home sold since the boot stays one here until the next read - a quest passes over a
+   * house it could have had, never sends its player into one its owner keeps.
+   */
+  const homeStands = (mapId, buildingKey) => !!towns.get(idOf(mapId))?.homes.has(buildingKey) || !!everyTown.get(idOf(mapId))?.has(buildingKey);
 
   /** A change I made, shown now and read back from the service after (the owner's name, the others' doors).
    *  LEGACY7 part five: and told (`onWrote`) - a home of mine bought, sold or changed is the line's to learn again.
@@ -615,7 +675,7 @@ export function createOnlineHomes({ api, character = () => null, now = () => Dat
   /** AUDIT GUILD1d A5: something a door shows moved outside the registry (the guild book's look - whether this character
    *  may buy a hall): the doors are read again. */
   const bump = () => { version++; };
-  return { ensure, waitFor, known, homeAt, claim, release, setEntry, setLook, vote, homesIn, bump, holdDeed, releaseDeed, version: () => version };
+  return { ensure, waitFor, known, homeAt, hearEveryTown, hearHome, homeStands, claim, release, setEntry, setLook, vote, homesIn, bump, holdDeed, releaseDeed, version: () => version };
 }
 
 // ═══ FIELD BUGS 2026-10-04d KNIGHT-HOUSE - A HOUSE THE REALM GAVE IS ITS KNIGHT'S, ON EVERY DOOR ═══════════════════════

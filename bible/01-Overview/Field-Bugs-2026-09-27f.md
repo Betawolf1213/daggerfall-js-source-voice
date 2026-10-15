@@ -31,16 +31,17 @@ wire's law) and `.filter(Boolean)` closing the gap renumbered every later record
 species on the wrong bodies, and each body the room had emptied a stranger to its own record. A refused record is now a
 hole at its own index, and applyWorld skips it.
 
-A body nobody has opened is still each copy's own roll, as WORLD4 says of every unopened container. The fix reaches
-only bodies the room has a word about. `06-Systems/Online-Arc.md` CORPSE-GOLD.
+The fix reaches only bodies the room has a word about; since PARTY-LOOT (2026-10-14) every room body has one, its
+terms minted at its death. `06-Systems/Online-Arc.md` CORPSE-GOLD.
 
 ## For Mac
 
 - **Still open: a word the memory has not caught up with.** Only the room's host publishes the memory: every 15 s
   (WORLD_PUBLISH_MS), and at once when the host leaves, dies or hides the page. A player who is not the host, takes from
-  a body, leaves and comes back before the host's next publish reads the older memory. If that body was unopened in it,
-  they get their own roll again, and opening it claims that roll for the room. While a host is playing, that is one
-  refill per take inside a 15-second window. A host whose tab is in the background publishes nothing (the frame loop
+  a body, leaves and comes back before the host's next publish reads the older memory. Since PARTY-LOOT (2026-10-14) the
+  body's base is the room's own computation and its takes merge, so the older memory hands back the room's base with
+  the takes it had heard, and the host's next publish brings the takes it missed (a later memory lands a room
+  container's takes, which only grow); in that window a piece taken since is back for that player. A host whose tab is in the background publishes nothing (the frame loop
   stops), so the window stays open until they return. Closing it is a design call, not taken here. The host could answer
   each arrival with its live loot words, or the relay could keep the loot words itself; the relay option means a relay
   deploy, which drops every connected player.

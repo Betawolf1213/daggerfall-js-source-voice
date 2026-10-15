@@ -46,7 +46,7 @@
 // rolled HERE, off a draw this service makes (never the receipt's seed,
 // which the page holds - AUDIT SD III R4), for a REGISTERED account whose
 // ship DEALT (a receipt earned by standing is paid none), and laid on the
-// account's `serpent_honours` (migration 0116) by THIS claim's row alone,
+// account's `serpent_honours` (migration 0119) by THIS claim's row alone,
 // in the row's own batch - so a receipt claimed twice at once rolls once.
 // Once held, held for good (titles.js reads it off the row).
 //
@@ -65,7 +65,7 @@ export const SERPENT_CID_RE = /^[0-9a-f]{16}$/;
  *  waters) is paid of a serpent's Renown - half; one whose guns dealt their share is paid it whole. */
 export const SERPENT_STOOD_RENOWN = 0.5;
 const HOUR_S = 3600;
-/** SERPENT5: the account's grants on its row (`players.serpent_honours`, migration 0116), bit by bit. */
+/** SERPENT5: the account's grants on its row (`players.serpent_honours`, migration 0119), bit by bit. */
 export const SERPENT_HONOUR_TITLE = 1;
 export const SERPENT_HONOUR_AURA = 2;
 /** SERPENT5: how often a dealing ship's kill's first write grants each - Coilbreaker one in twenty, The Maelstrom one in

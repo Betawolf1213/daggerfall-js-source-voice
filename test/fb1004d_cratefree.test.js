@@ -57,6 +57,7 @@ import { PlaceFoe } from '../src/systems/quest/actions.js';
 import { addQuestResourceObjects, markerScenePosition, siteMarkerSpots, standSpot, MARKER_FLOOR_REACH } from '../src/systems/quest/sceneMount.js';
 import { createExteriorFoes } from '../src/scenes/exteriorFoes.js';
 import { effectiveLevel } from '../src/systems/mentorMode.js';
+import { ROOM_LOOT_OFF } from './roomLootOff.mjs';   // PARTY-LOOT: the room's seams with no room
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const rd = (p) => readFileSync(join(ROOT, p), 'utf8').replace(/^﻿/, '');
@@ -203,6 +204,7 @@ function classCfg() {
 function context(collider, { idleH = 3.2, batH = 1, playerFeet = [25.6, 0, 22.4] } = {}) {
   const foes = [], bound = [];
   const state = {
+    ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
     ENEMY_BASICS, collider, foes, flyerStandFeet, enemyControllerHeight, keepRebuiltSpawn, freeLodgedFeet, clearPast, floorLanding,
     SEARCH_FOE_SPACING, SEARCH_DOOR_REACH_M, lastPlayerFeet: playerFeet, actions: { objects: new Map() }, objectAabb: () => null,
     MobileUnit: class { static resolveGender(g) { return g === 'female' ? 'female' : 'male'; } },
@@ -455,6 +457,7 @@ test('CRATE-FREE interior: a building\'s quest marker inside a house crate - wor
   // INTEGRATION (FIELD BUGS 2026-10-04d, PIN MOVED): QUEST-MARKERS' backstop runs in the same stand - the room's
   // collider (the host's own) and the backstop's spots join the scope; the marker has a floor under it, so it stands
   const state = {
+    ...ROOM_LOOT_OFF,   // PIN MOVED (PARTY-LOOT): the dungeon's room-loot seams, answering as an offline dungeon's (test/roomLootOff.mjs)
     interiorCtx: { parentPt: (x, y, z) => [x, y, z], collider: c }, interiorFoes: { spawnFoe: (...a) => pool.spawnFoe(...a).then((f) => { stood.push(f); return f; }) }, interiorFoeStands: [], console,
     markerScenePosition, siteMarkerSpots, standSpot, MARKER_FLOOR_REACH,
   };

@@ -92,8 +92,8 @@
   {
     "name": "LOOT6-the-pile-without-its-family",
     "file": "src/scenes/dungeonContext.js",
-    "old": ", family: dungeonFamily(dfLocation.mapTableData.dungeonType) }, { luck: liveStat(playerEntity, 'luck') });",
-    "new": " }, { luck: liveStat(playerEntity, 'luck') });",
+    "old": ", family: dungeonFamily(dfLocation.mapTableData.dungeonType) }, { luck, rolls, find });",
+    "new": " }, { luck, rolls, find });",
     "tests": [
       "test/loot6_signatures.test.js"
     ]
