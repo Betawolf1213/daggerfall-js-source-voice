@@ -317,7 +317,7 @@ test('AUDIT EG V L1-7 THE SHIELD-WALL ON THE FACING EVERY SCREEN DRAWS (sections
 });
 
 // ── L1-8, L1-15: MORVAYN'S CHAINS ──────────────────────────────────────────────────────────────────────────────────────
-test('AUDIT EG V L1-8 A FALLEN MEMBER UNCHAINED (section 13.4, the Chaining: "a blow on one is shared with the other"): four members bound in two pairs, one falls - its chain and its tether drop at the fall (the seam\'s join), and the census and the struck screen count the same part of a blow on its survivor: the whole; a chain of three that loses its first member is re-linked between the two left, each half; a mate the census does not hold counted none, the struck its own part (mutants: the chain kept past the fall; the tether kept; the three left unlinked; the census\'s mates by the living alone)', () => {
+test('AUDIT EG V L1-8 A FALLEN MEMBER UNCHAINED (section 13.4, the Chaining: "a blow on one is shared with the other"): four members bound in two pairs, one falls - its chain and its tether drop at the fall (the seam\'s join), and the census and the struck screen count the same part of a blow on its survivor: the whole; a chain of three that loses its first member is re-linked between the two left, each half; a mate the census does not hold counted none, the struck its own part; an odd member\'s Wraith link gone with its fall (mutants: the chain kept past the fall; the tether kept; the three left unlinked; the census\'s mates by the living alone)', () => {
   const S = breachAt(7, 50, { n: 4 });
   wakeCourt(S);
   const F = S.B.F, M = egLordsOf(F)[0];
@@ -355,6 +355,14 @@ test('AUDIT EG V L1-8 A FALLEN MEMBER UNCHAINED (section 13.4, the Chaining: "a 
   S.step();
   assert.deepEqual([F.mem.chains, F.tethers.filter((t) => t[2] === 2)], [[[c, d]], [[c, d, 2, 800]]], 'its first fallen: the three\'s two left chained to each other');
   assert.deepEqual([census(d, [c, d])[d], screen(d)], [200, 200]);
+  // an odd member chained to a Wraith falls: its link goes with it
+  const T = breachAt(7, 50, { n: 3 });
+  wakeCourt(T);
+  for (let k = 0; k < 4 * 20 && !(T.B.F.mem.chains ?? []).length; k++) T.step();
+  const odd = T.subs.find((x) => !T.B.F.mem.chains.flat().includes(x));
+  assert.ok(T.B.F.tethers.some((t) => t[2] === 2 && typeof t[0] === 'number' && t[1] === odd), 'the odd member chained to a Wraith');
+  egFall(T.B, odd, T.now(), T.frames);
+  assert.ok(!T.B.F.tethers.some((t) => t[1] === odd || t[0] === odd), 'fallen: its Wraith\'s link gone');
 });
 test('AUDIT EG V L1-15 EACH LINK ITS OWN SNAP (section 13.4: "A pair stretched past 8 m both take 30% (a CHECK)"): two pairs held 12 m apart for 6 s - each snaps every 3 s on its own clock, neither keeping the other from its CHECK (mutants: one clock for every chain)', () => {
   const C = court(7, 50, 'morvayn', { n: 4 });
@@ -423,6 +431,9 @@ test('AUDIT EG V L1-10 THE LORDS\' PLACE IN THE UNION FLOOR (section 13.2: "Pend
   for (const d of ends) zoneOut(F, 'void', shDisc(d.x, d.z, d.r), now - 1000, now + 15_000, out);
   assert.equal(egAim(F, spec, disc(), me, now, []), null, 'both its islands fallen: only the void beyond - held');
   assert.equal(F.held.length, 1);
+  F.blows.length = 0; F.held = []; F.zones = [];
+  for (const d of ends) zoneOut(F, 'void', shDisc(d.x, d.z, d.r), now + 1000, now + 16_000, out);
+  assert.equal(egAim(F, spec, disc(), me, now, []), null, 'its islands falling before it lands (a crack told): held too');
   // both islands told to burn before it lands: their onsets in the set - only the bridge left, under the disc: held
   F.blows.length = 0; F.held = []; F.zones = [];
   for (const d of ends) zoneOut(F, 'burn', shDisc(d.x, d.z, d.r), now + 2500, now + 30_000, out);
@@ -468,8 +479,9 @@ test('AUDIT EG V L1-12 THE THREE SHADOWS READ ONLY BY THEIR GLINT (section 13.2,
   assert.ok(real && Math.hypot(at[0] - real.x, at[1] - real.z) > 0.01 || umbras.length === 3, 'his row where he vanished');
   assert.ok(!C.frames.slice(f0).some((f) => f.k === 'emv' && f.m.some((t) => t[0] === C.L.i && Math.hypot(t[1] - real.x, t[2] - real.z) < 0.01)), 'never set on the true disc while he hides');
   const t0 = C.now();
-  let glint = null;
-  while (!glint && C.now() < t0 + EG_UMBRA_MS) glint = C.step(here).find((f) => f.k === 'eob' && f.st === 1) ?? null;
+  let glint = null, still = true;
+  while (!glint && C.now() < t0 + EG_UMBRA_MS) { glint = C.step(here).find((f) => f.k === 'eob' && f.st === 1) ?? null; still &&= C.L.x === at[0] && C.L.z === at[1]; }
+  assert.ok(still && Math.hypot(at[0] - real.x, at[1] - real.z) > 0.01, 'every beat he hides, his row where he vanished - never on the true disc');
   assert.ok(glint && glint.i === real.i, 'the true one glints');
   assert.ok(glint.at - (t0 - 250) >= EG_UMBRA_MS - EG_UMBRA_GLINT_MS - 250, `${EG_UMBRA_GLINT_MS} ms before he rises, never sooner`);
   while (egHas(C.L, EG_FL.hidden) && C.now() < t0 + EG_UMBRA_MS + 1000) C.step(here);
@@ -527,23 +539,22 @@ test('AUDIT EG V L1-23 PAIRED HEARTS IN THE COLOSSUS\'S OWN SECOND PHASE (sectio
   const p2 = breakOne();
   assert.ok(F.mem.pairBroke?.[p2] > 0, 'its own second phase: the pair\'s five seconds');
 });
-test('AUDIT EG V L1-25 THE TWINS\' TOUCH BY THE CENSUS\'S RECKONING AT THE LANDING (section 13.3: "A blow struck them when the relay\'s reckoning of the poses finds them in it as it lands (the census\'s)"): a Vael blow lands - the member in it at its landing who steps out before the next beat is Fire-touched; the one who steps in after it is not (mutants: the touch by the beat\'s poses)', () => {
-  const S = breachAt(1, 35, { n: 2 });
+test('AUDIT EG V L1-25 THE TWINS\' TOUCH BY THE CENSUS\'S RECKONING AT THE LANDING (section 13.3: "A blow struck them when the relay\'s reckoning of the poses finds them in it as it lands (the census\'s)"): a Vael blow lands - the member the census finds in it at its landing (its last pose before and its first after, both in) is Fire-touched; one who steps in only as it lands, or out as it lands, is not, whatever the beat\'s poses say (mutants: the touch by the beat\'s poses)', () => {
+  const S = breachAt(1, 35, { n: 3 });
   wakeCourt(S);
   const F = S.B.F, vael = egLordsOf(F).find((L) => L.key === 'twins' && L.pt === 0), cr = S.spec.fl.find((f) => f.t === 'd');
-  const [inn, late] = S.subs, x = cr.x + 3, z = cr.z + 3;
-  S.at(inn, x, z); S.at(late, x + 9, z);
+  const [inn, late, leaver] = S.subs, x = cr.x + 3, z = cr.z + 3;
+  S.at(inn, x, z); S.at(late, x + 9, z); S.at(leaver, x + 1, z);
   F.blows.length = 0; F.pend = []; F.held = [];
   const at = S.now() + 1700;
   assert.ok(egAim(F, S.spec, { o: vael.i, s: [shDisc(x, z, 3)], at, wu: 1500, p: 0.3, b: 0, el: 'fire', nm: 'Clan Bolt' }, [], at - 1500, []));
   while (S.now() + 250 < at) S.step();
-  S.step();   // the beat past its landing: the census holds the poses at it
-  S.at(inn, x + 9, z); S.at(late, x, z);   // the one in it steps out, the other in
+  S.at(late, x, z - 1); S.at(leaver, x + 9, z);   // as it lands: one steps in, one out
   for (let k = 0; k < 6; k++) S.step();
   const fire = (s) => !!F.marks.find((m) => m[0] === s && m[1] === 2 && m[2] === at + 12_000);
-  assert.deepEqual([fire(inn), fire(late)], [true, false], 'the touch where the census found them at its landing');
+  assert.deepEqual([fire(inn), fire(late), fire(leaver)], [true, false, false], 'the touch where the census found them as it landed');
 });
-test('AUDIT EG V L1-29 EACH LORD COUNTS ITS OWN MIRRORS (section 18, THE OLD MASTERS): at Redoubt 25 Garoth\'s borrowed Mirrorcourt beside the Last Spellmaster - his two mirrors rise while the Spellmaster\'s images stand, and the Spellmaster\'s images while his mirrors stand, each its own (mutants: every mirror counted by both)', () => {
+test('AUDIT EG V L1-29 EACH LORD COUNTS ITS OWN MIRRORS (section 18, THE OLD MASTERS): at Redoubt 25 Garoth\'s borrowed Mirrorcourt beside the Last Spellmaster - his two mirrors rise while the Spellmaster\'s images stand, and the Spellmaster\'s images while his mirrors stand, each its own and of its own lord\'s aspect (L1-2) (mutants: every mirror counted by both; a mirror\'s aspect not its lord\'s)', () => {
   const S = breachAt(7, 125, { n: 2, strata: ['oldmasters'] });
   wakeCourt(S);
   const F = S.B.F, G = egLordsOf(F).find((L) => L.key === 'garoth'), M = egLordsOf(F).find((L) => L.key === 'spellmaster');
@@ -558,6 +569,11 @@ test('AUDIT EG V L1-29 EACH LORD COUNTS ITS OWN MIRRORS (section 18, THE OLD MAS
   }
   assert.ok(both, `his two mirrors and its three images stand together (${mine(G).length}, ${mine(M).length})`);
   assert.ok(mine(G).every((x) => x.key === 'garoth') && mine(M).every((x) => x.key === 'spellmaster' && x.image), 'each its own lord\'s');
+  // and each its lord's aspect (L1-2): Garoth's mirrors Rime-Wrought, the Spellmaster's images Burning
+  assert.ok(mine(G).every((x) => x.asp === G.asp && G.asp === 'rime') && mine(M).every((x) => x.asp === M.asp && M.asp === 'burning'), 'its lord\'s aspect');
+  const els = new Set();
+  for (let k = 0; k < 4 * 20; k++) { for (const f of S.step()) if (f.k === 'eb' && f.el && mine(G).some((x) => x.i === f.o)) els.add(f.el); S.subs.forEach((sub, j) => { const L = j ? M : G; S.at(sub, L.x + L.r + 2, L.z); }); }
+  assert.ok(els.size && [...els].every((e) => e === 'frost'), `his mirrors throw his frost (${[...els]})`);
 });
 test('AUDIT EG V L1-30 SCORCHED ONLY ON A BRIDGE THAT BURNS (section 13.3: "Leading Grath onto a burning bridge ... leaves him Scorched"): a bridge told and not yet burning scorches no one; burning, it does (mutants: the tell\'s three seconds counted as burning)', () => {
   const C = court(1, 5, 'hound', { n: 2 }), F = C.F, G = C.L, far = { sub: 'acct-1', x: C.f.x, z: C.f.z - 8 };

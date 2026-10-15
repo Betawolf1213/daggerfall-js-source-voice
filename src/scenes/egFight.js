@@ -379,7 +379,7 @@ export function egPhaseCard(key, ph, c) {
 /** AUDIT EG V (lane1 #13; sections 13.3 and 25.6): how deep the place's dark lies (Gutterdark, the Long Night - `edark` until
  *  `until`) at `t`: the Eclipse's depth, eased in and out over EG_DARK_EASE_MS. Pure. */
 export const EG_DARK_EASE_MS = 600;
-export const egDarkAt = (until, t, from = -Infinity) => (t < until ? EG_ECLIPSE_LOOK.deep * Math.max(0, Math.min(1, (until - t) / EG_DARK_EASE_MS, (t - from) / EG_DARK_EASE_MS)) : 0);
+export const egDarkAt = (until, t, from = -Infinity) => EG_ECLIPSE_LOOK.deep * Math.max(0, Math.min(1, (until - t) / EG_DARK_EASE_MS, (t - from) / EG_DARK_EASE_MS));
 /** AUDIT EG V (lane1 #13; section 13.3, the Bound Colossus): THE RAILS while they stand - two gold lanes along its flanks, its
  *  hearts' sides, `[ax, az, bx, bz]` each (the hall's frame) about its feet (x, z). Pure. */
 export const EG_RAIL_SIDE_M = 3.6;

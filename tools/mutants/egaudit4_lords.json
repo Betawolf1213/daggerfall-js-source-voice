@@ -155,8 +155,8 @@
   {
     "name": "EGA4-lords-wire-drops-on",
     "file": "src/net/wire.js",
-    "old": "sp: m.sp, ...(m.on != null ? { on: [...m.on] } : {}) };",
-    "new": "sp: m.sp };",
+    "old": "sp: m.sp, ...(m.on != null ? { on: [...m.on] } : {}), ...(m.ol != null ? { ol: m.ol } : {}) };",
+    "new": "sp: m.sp, ...(m.ol != null ? { ol: m.ol } : {}) };",
     "tests": [
       "test/egaudit4_lords_errands.test.js"
     ]
@@ -256,8 +256,8 @@
   {
     "name": "EGA4-lords-garoth-old-card",
     "file": "src/net/egLords.js",
-    "old": "{ t: EG_GAROTH_SIG_CARDS[F.mem.garothSig] ?? '' }",
-    "new": "{ t: 'The older signature.' }",
+    "old": "return { name: EG_GAROTH_SIG_CARDS[g].replace(/\\.$/, ''), order: EG_GAROTH_SIG_ORDERS[g] }; }",
+    "new": "return { name: 'The older signature', order: EG_GAROTH_SIG_ORDERS[g] }; }",
     "tests": [
       "test/egaudit4_lords.test.js"
     ]
@@ -463,8 +463,8 @@
   {
     "name": "EGA4-lords-muster-late",
     "file": "src/net/egLords.js",
-    "old": "if (ctx.n >= 2) { F.mem.challengeAt = now; L.hold",
-    "new": "if (ctx.n >= 2) { F.mem.challengeAt = now + 3500; L.hold",
+    "old": "if (ctx.n >= 2) { L.duelAt = now; L.hold",
+    "new": "if (ctx.n >= 2) { L.duelAt = now + 3500; L.hold",
     "tests": [
       "test/egaudit4_lords.test.js"
     ]
@@ -499,8 +499,8 @@
   {
     "name": "EGA4-lords-rivalry-twice",
     "file": "src/net/egLords.js",
-    "old": "if (ph === 2 && !F.mem.twinsRivalry) { F.mem.twinsRivalry = 1; say(",
-    "new": "if (ph === 2) { say(",
+    "old": "  if (!P || (F.mem.phSaid ??= {})[k]) return;",
+    "new": "  if (!P) return;",
     "tests": [
       "test/egaudit4_lords.test.js"
     ]

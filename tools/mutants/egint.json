@@ -317,8 +317,8 @@
   {
     "name": "EGINT-the-place-left-out-of-the-hold",
     "file": "src/net/egBodies.js",
-    "old": "pending = [...F.blows.filter((b) => !b.ch && b.at > now), ...egPlaceLandings(spec, F.wokeAt, now, blow.at)];",
-    "new": "pending = [...F.blows.filter((b) => !b.ch && b.at > now)];",
+    "old": "pending = [...F.blows.filter((b) => !b.ch && b.at > now), ...egPlaceLandings(spec, F.wokeAt, now, blow.at), ...egZoneLandings(F.zones, now, blow.at)];",
+    "new": "pending = [...F.blows.filter((b) => !b.ch && b.at > now), ...egZoneLandings(F.zones, now, blow.at)];",
     "tests": [
       "test/egint_relay.test.js"
     ]
@@ -326,7 +326,7 @@
   {
     "name": "EGINT-the-wind-up-shortened",
     "file": "src/net/egBodies.js",
-    "old": "  blow.at = Math.max(blow.at, now + blow.wu);",
+    "old": "  blow.at = Math.max(blow.at, now + blow.wu + (blow.ol ?? 0));",
     "new": "  void 0;",
     "tests": [
       "test/egint_relay.test.js"

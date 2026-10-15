@@ -182,8 +182,8 @@
   {
     "name": "EGPRES-the-champion-on-the-lords-bar",
     "file": "src/ui/egSpireHud.js",
-    "old": "lord: egLordBar(E)?.court ? egLordBar(E) : null,",
-    "new": "lord: egLordBar(E),",
+    "old": "return bars[0]?.court ? { lord: bars[0], lord2: bars[1] ?? null } : { lord: null, lord2: null }; };",
+    "new": "return { lord: bars[0] ?? null, lord2: bars[1] ?? null }; };",
     "tests": [
       "test/egpres_hud.test.js"
     ]

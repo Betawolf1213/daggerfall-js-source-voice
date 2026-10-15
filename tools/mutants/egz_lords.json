@@ -110,8 +110,8 @@
   {
     "name": "EGZK-the-judge-off-the-ground",
     "file": "src/net/egLords.js",
-    "old": "judge: (f, bodies, now) => egChainShared(f.F, judgeShapes(f.F, bodies, now, f.spec), bodies),",
-    "new": "judge: (f, bodies, now) => egChainShared(f.F, judgeShapes(f.F, bodies, now, {}), bodies),",
+    "old": "const hits = judgeShapes(f.F, bodies, now, f.spec);",
+    "new": "const hits = judgeShapes(f.F, bodies, now, {});",
     "tests": [
       "test/egz_lords.test.js"
     ]

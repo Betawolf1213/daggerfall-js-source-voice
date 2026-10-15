@@ -152,8 +152,8 @@
   {
     "name": "EGA3L-legion-chain-old",
     "file": "src/net/egLegion.js",
-    "old": "at += egChainGapMs(first.wu, [s]);",
-    "new": "at += Math.max(first.wu, 1000);",
+    "old": "const gap = egChainGapMs(first.wu, [s]);",
+    "new": "const gap = Math.max(first.wu, 1000);",
     "tests": [
       "test/egaudit3_legion.test.js"
     ],

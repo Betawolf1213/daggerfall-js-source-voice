@@ -308,7 +308,7 @@
   {
     "name": "EGZ-tell-before-heard",
     "file": "src/scenes/egFight.js",
-    "old": "&& t >= Math.max(bl.heard ?? -Infinity, bl.at - bl.wu - (bl.sh ?? 0)) && t < bl.at) { toldHeard.add",
+    "old": "&& t >= Math.max(bl.heard ?? -Infinity, bl.at - bl.wu - (bl.ol ?? 0) - (bl.sh ?? 0)) && t < bl.at) { toldHeard.add",
     "new": "&& t < bl.at) { toldHeard.add",
     "tests": [
       "test/egz_sound.test.js"
