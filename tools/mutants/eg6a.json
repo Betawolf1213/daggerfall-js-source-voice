@@ -164,7 +164,7 @@
   {
     "name": "EG6A-no-wait-counted",
     "file": "src/net/egSpanLaw.js",
-    "old": "      while (w < EG_SOLVE_HORIZON_S && !jumpLands(leap, E[k] + w, FAST_BUILD)) w += EG_SOLVE_STEP_S;",
+    "old": "      while (w < EG_SOLVE_HORIZON_S && !jumpLands(leap, E[k] + w, B)) w += EG_SOLVE_STEP_S;",
     "new": "",
     "tests": [
       "test/eg6a_span.test.js"

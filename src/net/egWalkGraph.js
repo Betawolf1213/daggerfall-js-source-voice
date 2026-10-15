@@ -35,6 +35,10 @@
 //     so within one a walk goes straight only where the way stays on it (egSeesIn) - else over its nodes; and its LAW's walk
 //     graph joins the hall's (`spec.heroes`): every node of it on its fight ground a node of the graph, every edge of it an
 //     edge, and a node at each of its sockets' feet, where the course comes in and goes on.
+//   AUDIT EG V (2026-10-15; section 11.7): A HERO'S STAIR JOINED AT ITS OWN EDGES - its foot and top read off the stair's own
+//     low and high edges (the points of them that stand on a floor of their height), not the middle of its low corners (which
+//     hangs off its floor where a stair runs along an open chord - the Eclipse Vault's galleries stood cut off). The graph is
+//     derived, not law: every hall walks it so, whatever law laid the hall.
 //
 // Pure, deterministic (no die), in the relay bundle (net/egLegion.js, net/egBrain.js). Not a DFU member. Ledger A
 // (ELITE-GATES).
@@ -210,11 +214,29 @@ export function egWalkGraph(view) {
     else edge(dy > 0 ? na : nb, dy > 0 ? nb : na, 0.5, false);   // the higher stepped off onto the lower, never climbed
   }
   // a stair: its foot on the floor at its low end, its top on the floor at its high end
-  const at = (x, z, y) => { let k = -1; for (let i = 0; i < fl.length; i++) if (Math.abs((fl[i].y ?? 0) - y) <= EG_LEVEL_M && holds(fl[i], x, z, EG_PIECE_TOUCH_M + 0.3) && (k < 0 || (fl[i].y ?? 0) > (fl[k].y ?? 0))) k = i; return k; };
+  const at = (x, z, y, pad = EG_PIECE_TOUCH_M + 0.3) => { let k = -1; for (let i = 0; i < fl.length; i++) if (Math.abs((fl[i].y ?? 0) - y) <= EG_LEVEL_M && holds(fl[i], x, z, pad) && (k < 0 || (fl[i].y ?? 0) > (fl[k].y ?? 0))) k = i; return k; };
+  const inHero = (x, z) => (view?.heroes ?? []).some((h) => x >= h.box[0] && x <= h.box[3] && z >= h.box[2] && z <= h.box[5]);
   for (const q of view?.ramps ?? []) {
+    if (inHero((q.ax + q.bx) / 2, (q.az + q.bz) / 2)) continue;   // AUDIT EG V: a hero's stair is joined by its own corners (below)
     const lo = at(q.ax, q.az, q.y0), hi = at(q.bx, q.bz, q.y1);
     if (lo < 0 || hi < 0) continue;
     edge(node(q.ax, q.az, regionIn(lo, q.az)), node(q.bx, q.bz, regionIn(hi, q.bz)), Math.hypot(q.bx - q.ax, q.bz - q.az));
+  }
+  // AUDIT EG V (lane5 #1; section 11.7): A HERO'S STAIR JOINED AT ITS OWN EDGES - its foot the point of its low edge nearest the
+  // edge's middle that stands on a floor of its height (EG_PIECE_TOUCH_M about), its top the same of its high edge: the Eclipse
+  // Vault's stairs run along their floor's open chord, so the middle of their low corners (the spec's `ramps`) hangs 1.5 m off
+  // the floor, and its galleries stood cut off from every walker
+  const ALONG = [0.5, 0.4, 0.6, 0.3, 0.7, 0.2, 0.8, 0.1, 0.9, 0, 1];
+  const edgeFoot = (ps, y) => {
+    if (ps.length < 2) return null;
+    for (const t of ALONG) { const x = ps[0][0] + (ps[1][0] - ps[0][0]) * t, z = ps[0][2] + (ps[1][2] - ps[0][2]) * t, k = at(x, z, y, EG_PIECE_TOUCH_M); if (k >= 0) return [x, z, k]; }
+    return null;
+  };
+  for (const h of view?.heroes ?? []) for (const q of h.ramps ?? []) {
+    const ys = q.poly.map((p) => p[1]), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const lo = edgeFoot(q.poly.filter((p) => p[1] === y0), y0), hi = edgeFoot(q.poly.filter((p) => p[1] === y1), y1);
+    if (!lo || !hi) continue;
+    edge(node(lo[0], lo[1], regionIn(lo[2], lo[1])), node(hi[0], hi[1], regionIn(hi[2], hi[1])), Math.hypot(hi[0] - lo[0], hi[1] - lo[1]));
   }
   // an arch's gap: its two halves meet there alone
   for (let i = 0; i < fl.length; i++) if (archOf[i]) { const d = archOf[i]; edge(node(d.x, d.z - 0.8, rgOf[i][0]), node(d.x, d.z + 0.8, rgOf[i][1]), 1.6); }

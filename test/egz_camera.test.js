@@ -11,7 +11,7 @@
 import './modsOff.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildEgCircleModel, egToDungeon, egNicheBoxes, egHeroGroundYs } from '../src/world/egHall.js';
+import { buildEgCircleModel, egToDungeon, egNicheBoxes, egHeroGroundYs, egInHeroBox } from '../src/world/egHall.js';
 import { egCircleParts } from '../src/world/egCircleParts.js';
 import { egHallOf, egCircleSpecs, egCircleOfHall } from '../src/net/egLaw.js';
 import { createEgOccluders, egOccludersHit, egSegTri, egSegBox, egOccludeEase, egOccludeRanges, EG_OCCLUDE_KEEP, EG_OCCLUDE_FADE_S, EG_OCCLUDE_BODY_M, EG_OCCLUDE_CHEST_M, EG_OCCLUDE_VIEWS_MAX } from '../src/scenes/egOcclude.js';
@@ -111,7 +111,8 @@ test('EG-ZN THE OCCLUDERS MARKED (world/egHall.js, section 11.8): every circle\'
     for (const spec of egCircleSpecs(seed, c, 0)) {
       for (const q of spec.caves) if (q.kit === 'stacks') { const p = egToDungeon(spec, q.x - q.halfW + 0.2, q.y + 1.2, q.z0 + 0.2 + 1.1); if (pieceAt(m, p[0], p[1], p[2]) >= 0) kinds.stacks++; }
       // each niche: every triangle of its walls and lid an occluder's, every triangle of its floor none
-      for (const { b: [x0, y0, z0, x1, y1, z1] } of egNicheBoxes(spec)) {
+      for (const { b: [x0, y0, z0, x1, y1, z1], a } of egNicheBoxes(spec)) {
+        if (egInHeroBox(spec, a.x, a.z)) continue;   // PIN MOVED (AUDIT EG V, f): a hero's alcove is its own mesh's (its box at its hero's wall since - world/egHall.js egHeroDoor)
         const inBox = (j) => [0, 1, 2].every((v) => { const p = m.indices[j + v] * 3; return m.positions[p] >= x0 - 1e-4 && m.positions[p] <= x1 + 1e-4 && m.positions[p + 1] >= y0 - 1e-4 && m.positions[p + 1] <= y1 + 1e-4 && m.positions[p + 2] >= z0 - 1e-4 && m.positions[p + 2] <= z1 + 1e-4; });
         const ys = (j) => [0, 1, 2].map((v) => m.positions[m.indices[j + v] * 3 + 1]);
         for (let j = 0; j < m.indices.length; j += 3) {

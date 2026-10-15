@@ -218,8 +218,8 @@
   {
     "name": "EGZ-the-law-before-forgotten",
     "file": "src/net/egDurable.js",
-    "old": "export const EG_LAWS = Object.freeze({ 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13' });",
-    "new": "export const EG_LAWS = Object.freeze({ 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13' });",
+    "old": "export const EG_LAWS = Object.freeze({ 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15' });",
+    "new": "export const EG_LAWS = Object.freeze({ 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15' });",
     "tests": [
       "test/egz_frag.test.js"
     ]

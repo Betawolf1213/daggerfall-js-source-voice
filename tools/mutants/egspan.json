@@ -56,7 +56,7 @@
   {
     "name": "EGSPAN-a-wait-unbounded",
     "file": "src/net/egSpanLaw.js",
-    "old": "    else if (w.wait > EG_WAIT_MAX) why.push(",
+    "old": "    else if (w.wait > EG_WAIT_MAX / k) why.push(",
     "new": "    else if (false) why.push(",
     "tests": [
       "test/egfull_span.test.js"

@@ -290,6 +290,7 @@ test('AUDIT EG V L3-19 THE GHOST AND THE CAPTIVE ON EVERY HALL THEY ARE LAID ON 
     assert.equal(chains.length, EG_CHAINS, `${kind}: three chains`);
     assert.equal(new Set(chains.map((c) => `${c.x},${c.z}`)).size, EG_CHAINS, `${kind}: three places`);
     assert.ok(chains.every((c) => egGroundAt(view, c.x, NaN, c.z, 0.5)), `${kind}: each on the fight ground`);
+    if (kind === 'span') assert.ok(chains.every((c) => view.fl.some((d) => (d.g === 'island' || d.g === 'plate') && d.t === 'd' && Math.hypot(d.x - c.x, d.z - c.z) <= d.r)), 'span: on its islands (or its plates) along the course - never a passage\'s floor');   // the merge of fix group F: law 8's spans carry a trunk passage, whose chamber floor is fight ground too
     if (kind === 'yard') assert.deepEqual(egCaptiveSpots(sp), sp.spots.chain.map((q) => [q.x, q.z]), 'the law\'s three where it lays three');
     if (kind === 'deepway') { const hero = egHallOf(115, 52, 0); assert.equal(hero.spots.chain.length, EG_CHAINS); assert.deepEqual(egCaptiveSpots(hero), hero.spots.chain.map((q) => [q.x, q.z]), 'a hero chamber\'s three, as the law lays them'); }
     if (kind === 'rampart') assert.ok(chains.every((c) => Math.abs(c.x - sp.fl[0].ax) <= sp.fl[0].hw), 'along the walkway');
@@ -297,7 +298,7 @@ test('AUDIT EG V L3-19 THE GHOST AND THE CAPTIVE ON EVERY HALL THEY ARE LAID ON 
     // a span's freed: each chain broken from its island
     let q = 1;
     for (const c of chains) {
-      for (let k = 0; k < 400 && S.B.F.bodies.includes(c); k++) { S.tick(300); egBlow(S.B, 'acct-0', { k: 'hit', i: c.i, q: q++, d: 50, r: 0 }, { sx: sp.x0 + c.x + 0.8, y: 0, z: c.z }, S.now()); }
+      for (let k = 0; k < 400 && S.B.F.bodies.includes(c); k++) { S.tick(300); egBlow(S.B, 'acct-0', { k: 'hit', i: c.i, q: q++, d: 50, r: 0 }, { sx: sp.x0 + c.x + 0.8, y: c.y ?? 0, z: c.z }, S.now()); }   // PIN MOVED (AUDIT EG V, the merge of fix group F: spec law 8 lays this span's islands lower - the blow struck from the chain's own ground)
       assert.equal(S.B.F.bodies.includes(c), false, 'broken');
     }
     S.step();
@@ -314,7 +315,14 @@ test('AUDIT EG V L3-19 THE GHOST AND THE CAPTIVE ON EVERY HALL THEY ARE LAID ON 
   assert.ok(egHas(ghost(), EG_FL.friend), 'a friend');
   const view = egFightView(S.spec());
   let flew = false;
-  for (let k = 0; k < 4 * 30 && !flew; k++) { S.step(); const g = ghost(); if (g && !egGroundAt(view, g.x, NaN, g.z, 0.3)) flew = true; }
+  // PIN MOVED (AUDIT EG V, the merge of fix group F: spec law 8's first such span stands its company on the plate, where a
+  // ghost beside it hovers over ground - the company crosses the course, island by island, and the ghost flies with it)
+  const isles = view.fl.filter((f) => f.g === 'island').sort((a, b) => a.z - b.z);
+  for (const isle of isles) {
+    for (const sub of S.subs) S.put(sub, isle.x, isle.z);
+    for (let k = 0; k < 4 * 10 && !flew; k++) { S.step(); const g = ghost(); if (g && !egGroundAt(view, g.x, NaN, g.z, 0.3)) flew = true; }
+    if (flew) break;
+  }
   assert.ok(flew, 'off the islands - in the air with the company');
   assert.equal(S.bad(), 0);
 });

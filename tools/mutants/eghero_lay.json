@@ -2,7 +2,7 @@
   {
     "name": "EGHL-law-seven-not-the-law",
     "file": "src/net/egLaw.js",
-    "old": "export const EG_SPEC = 7;",
+    "old": "export const EG_SPEC = 8;",
     "new": "export const EG_SPEC = 6;",
     "tests": [
       "test/eghero_lay.test.js"
@@ -479,8 +479,8 @@
   {
     "name": "EGHL-after-hero-unread",
     "file": "src/net/egLaw.js",
-    "old": "if (Math.min(...xs) - s.w <= s.x && s.x <= Math.max(...xs) + s.w && z0 >= far - 1) best = Math.min(best, z0 - far);",
-    "new": "if (false) best = Math.min(best, z0 - far);",
+    "old": "if (Math.min(...xs) - s.w <= s.x && s.x <= Math.max(...xs) + s.w && z0 >= far - 1) take(z0 - far, q.y + g.y);",
+    "new": "if (false) take(z0 - far, q.y + g.y);",
     "tests": [
       "test/eghero_lay.test.js"
     ]
@@ -911,7 +911,7 @@
   {
     "name": "EGHL-landing-room-unread",
     "file": "src/net/egLaw.js",
-    "old": "  return egHeroLanding(rec);\n}",
+    "old": "  return egHeroLanding(rec, law);\n}",
     "new": "  return '';\n}",
     "tests": [
       "test/eghero_lay.test.js"
@@ -947,7 +947,7 @@
   {
     "name": "EGHL-landing-mover-judged",
     "file": "src/net/egLaw.js",
-    "old": "    if (q.amp > 0 && ['drift', 'rail', 'drum', 'pend'].includes(q.kind)) continue;",
+    "old": "    if (q.amp > 0 && (law >= EG_WAYS_LAW ? EG_HERO_ALONG : ['drift', 'rail', 'drum', 'pend']).includes(q.kind)) continue;",
     "new": "    void q.amp;",
     "tests": [
       "test/eghero_lay.test.js"

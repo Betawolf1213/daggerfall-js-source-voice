@@ -48,7 +48,7 @@ function courtOf(seed, h, { n = 2, strata = [], tide = null } = {}) {
   for (let k = 0; k < 40 && !egLordsOf(B.F).some((L) => L.up2); k++) step();
   assert.ok(egLordsOf(B.F).some((L) => L.up2), 'the lords woke');
   let q = 1;
-  const blow = (sub, i, d, [x, z]) => { now += 50; return egBlow(B, sub, { k: 'hit', i, q: q++, d, r: HIT_KINDS.Shaft }, { sx: spec.x0 + x, y: 0, z }, now); };
+  const blow = (sub, i, d, [x, z], y = 0) => { now += 50; return egBlow(B, sub, { k: 'hit', i, q: q++, d, r: HIT_KINDS.Shaft }, { sx: spec.x0 + x, y, z }, now); };
   return { B, spec, frames, step, at, blow, subs: co.map(([sub]) => sub), now: () => now };
 }
 /** My screen's hold of the breach at `t`: its state, the whole fight, then every word since `from` (an index of the frames). */
@@ -184,7 +184,7 @@ test('AUDIT EG V L1-22 THE LORD BAR IN A COURT OF TWO (sections 18 and 27.1): Cl
   const f0 = C.frames.length;
   W.ward = 0; W.fl &= ~EG_FL.ward; W.fl &= ~EG_FL.fly; W.hp = 1;
   C.at('acct-0', W.x + 2, W.z);
-  C.frames.push(...(C.blow('acct-0', W.i, 500, [W.x + 2, W.z]) ?? []));
+  C.frames.push(...(C.blow('acct-0', W.i, 500, [W.x + 2, W.z], W.y ?? 0) ?? []));   // PIN MOVED (AUDIT EG V, the merge of fix group F: spec law 8's perch has its sides and its stair - the Wyrm struck from its own height)
   C.step();
   assert.ok(!(W.hp > 0) && M.hp > 0, 'the Wyrm felled, the Markynaz standing');
   E = held(C, C.now(), f0);

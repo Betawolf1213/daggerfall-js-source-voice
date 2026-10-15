@@ -56,15 +56,16 @@ test('AUDIT EG V L3-7 THE LAW PIN\'S LOOK IS THE BREACH\'S OWN (section 22: "A c
   } finally { egSpecForget(); }
 });
 
-test('AUDIT EG V L3-7 THE LAW PIN\'S FIGHT IS THE BREACH\'S OWN HALL (section 22): the fight\'s hall, read when the company stands in it - before the room\'s answer for a circle\'s first hall - is read again once the room gives that hall in the breach\'s law: its fight floors (a Deepway of seed 7, Hall 17: seven under my law, five under the law before) are the given hall\'s, in the same hall (mutants: the given hall never read)', () => {
+test('AUDIT EG V L3-7 THE LAW PIN\'S FIGHT IS THE BREACH\'S OWN HALL (section 22): the fight\'s hall, read when the company stands in it - before the room\'s answer for a circle\'s first hall - is read again once the room gives that hall in the breach\'s law: its fight floors (a Deepway of seed 7, Hall 17: seven under my law, five under law 6) are the given hall\'s, in the same hall (mutants: the given hall never read)', () => {
   try {
-    const { B, t } = breachAt(7, 17, { egv: EG_SPEC - 1 });
+    const OLD = 6;   // PIN MOVED (AUDIT EG V, the merge of fix group F: spec law 8 lays this Deepway's floors as law 7 did - the law before them both, 6, still parts)
+    const { B, t } = breachAt(7, 17, { egv: OLD });
     const E = foldEg(EG_STATE_EMPTY, wire(egStateOf(B, t)), t);
     const fight = createEgFight({ link: { state: () => E, now: () => t }, now: () => t, me: () => ME });
     fight.frame();
     assert.equal(fight.state().hall, 17);
     assert.equal(fight.state().floors, egFightFloors(egHallOf(7, 17, 0)).length, 'drawn by my own law first');
-    const old = roomHall(7, 17, EG_SPEC - 1);
+    const old = roomHall(7, 17, OLD);
     assert.notEqual(egFightFloors(old).length, fight.state().floors, 'the two laws\' floors differ here');
     assert.equal(egSpecGive(old), true);
     fight.frame();

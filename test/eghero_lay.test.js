@@ -56,9 +56,11 @@ const hall = (k, law = EG_SPEC) => withHeroes(() => egHallOf(...H[k].slice(0, 2)
 const cm = (v) => Math.round(v * 100);
 
 test('EG-HERO-LAY THE LAW PIN (sections 9 and 22): spec law 7 is the law, laws 4, 5 and 6 kept beside it their seven days each, byte for byte (their 800 halls hashed whole, the existing pins); a hall of law 7 with no layable hero for its kits is law 6\'s hall but its number - so with the reference alone registered (which no hall lays) every law-7 hall is law 6\'s; with the ten heroes (the merge of the four bands\' authors) every one fits its slot (the Stacks\' chamber since its second shelf was deepened to leave THE LANDING ROOM), law 7\'s 800 halls are hashed whole, each with no hero laid is law 6\'s, and the heroes laid as counted; a breach opened records law 7; the law\'s copies of the wire\'s bound and the hang held equal (mutants: law 7 not in the table; the law before forgotten; the reference laid; a hall with no hero moved)', () => {
-  assert.deepEqual([EG_SPEC, EG_HERO_LAW, EG_DECREE_LAW], [7, 7, 6]);
-  assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13' });
-  assert.deepEqual([4, 5, 6, 7, 8].map(egLawKnown), [true, true, true, true, false]);
+  // PIN MOVED (AUDIT EG V, f): spec law 8 (the ways laid) is the build's law, law 7 kept beside it - this pin names law 7, whose
+  // laying it holds (test/egaudit5_f.test.js pins law 8's)
+  assert.deepEqual([EG_SPEC, EG_HERO_LAW, EG_DECREE_LAW], [8, 7, 6]);
+  assert.deepEqual({ ...EG_LAWS }, { 4: '2026-10-11', 5: '2026-10-12', 6: '2026-10-13', 7: '2026-10-13', 8: '2026-10-15' });
+  assert.deepEqual([4, 5, 6, 7, 8, 9].map(egLawKnown), [true, true, true, true, true, false]);
   assert.ok((Date.parse(EG_LAWS[7]) - Date.parse(EG_LAWS[4])) / 86_400_000 <= EG_LAW_KEEP_DAYS, 'every law before inside its keep');
   assert.deepEqual([hash(4), hash(5), hash(6)], [1228307904, 1301097644, 201408482], 'laws 4, 5 and 6, byte for byte');
   // the reference alone registered: no candidate anywhere, so law 7 is law 6 but its number
@@ -66,7 +68,7 @@ test('EG-HERO-LAY THE LAW PIN (sections 9 and 22): spec law 7 is the law, laws 4
   for (const kit of Object.keys(EG_FRAGS)) for (const cls of ['passage', 'chamber', 'shaft']) assert.deepEqual(egHeroCands(kit, cls, REF_ONLY), [], `${kit} ${cls}: no hero to lay`);
   withHeroes(() => {
     for (const [s, h, g] of LAW_HALLS.slice(0, 200)) {
-      const a = egHallOf(s, h, g, 6), b = egHallOf(s, h, g);
+      const a = egHallOf(s, h, g, 6), b = egHallOf(s, h, g, 7);
       assert.equal(JSON.stringify({ ...b, v: 6 }), JSON.stringify(a), `seed ${s} hall ${h} ground ${g}: law 7 with no hero is law 6's`);
       assert.equal(b.heroes, undefined);
     }
@@ -82,13 +84,13 @@ test('EG-HERO-LAY THE LAW PIN (sections 9 and 22): spec law 7 is the law, laws 4
   assert.equal(hash(7), 2018192008, 'law 7, as the ten heroes lay it');
   const laid = {};
   for (const [s, h, g] of LAW_HALLS) {
-    const a = egHallOf(s, h, g, 6), b = egHallOf(s, h, g);
+    const a = egHallOf(s, h, g, 6), b = egHallOf(s, h, g, 7);
     if (b.heroes) { assert.equal(b.heroes.length, 1, 'one hero a hall'); laid[b.heroes[0].id] = (laid[b.heroes[0].id] ?? 0) + 1; continue; }
     assert.equal(JSON.stringify({ ...b, v: 6 }), JSON.stringify(a), `seed ${s} hall ${h} ground ${g}: law 7 with no hero is law 6's`);
   }
   assert.deepEqual(laid, { egheroOssuary: 22, egheroGloam: 24, egheroEclipse: 3, egheroClanPit: 10, egheroForgeGut: 4, egheroColonnade: 3, egheroCaverns: 3, egheroStacks: 6, egheroDeepCaverns: 3 });
   const B = egBreachNew({ b: '0123456789abcdef', ez: 'z'.repeat(20), s: 'a', o: 'A', ew: 0, rh: 0, seed: 77, op: 1_800_000_000_000, co: [['a', 'A', 1]], site: { px: 1, py: 1, x: 0, y: 0, z: 0, yaw: 0 }, wg: [] });
-  assert.equal(B.egv, 7, 'a breach opened now is of law 7');
+  assert.equal(B.egv, 8, 'a breach opened now is of law 8 (PIN MOVED, AUDIT EG V)');
   assert.equal(EG_SPEC_SAID_MAX, EG_SPEC_WIRE_MAX, 'the law\'s bound on a spec said whole is the wire\'s');
   assert.equal(EG_HANG_CM, SD_ROOT_DEPTH * 100, 'the hanging underside is the Steps\' root');
   assert.equal(EG_HERO_WAY_CM, EG_STEP.ledge.w);
@@ -97,11 +99,12 @@ test('EG-HERO-LAY THE LAW PIN (sections 9 and 22): spec law 7 is the law, laws 4
 });
 
 test('EG-HERO-LAY THE ODDS (spec law 7): with heroes registered, each slot a code-built fragment of a hero\'s kit and class fills (never a set piece) gets a fair coin off the hall\'s own hero die, in the slots\' order; the first heads whose hero fits is laid at its slot - at most one a hall; tails, or a hero that does not fit, leaves law 6\'s hall but its number; over the pins\' halls the coins and the fits as counted (mutants: the coin unfair; every hall a hero; a second hero; a refused hero kept; the reference laid)', () => {
+  // PIN MOVED (AUDIT EG V, f): law 7's coins and fits, named (spec law 8 is the build's - test/egaudit5_f.test.js)
   withHeroes(() => {
     const tally = {};
     let halls = 0, heroes = 0;
     for (const seed of [77, 0xbeef, 3, 12345, 1, 2, 5, 8, 13]) for (let h = 1; h <= 100; h++) {
-      const trials = egHeroTrials(seed, h, 0), spec = egHallOf(seed, h, 0), law6 = egHallOf(seed, h, 0, 6);
+      const trials = egHeroTrials(seed, h, 0, 7), spec = egHallOf(seed, h, 0, 7), law6 = egHallOf(seed, h, 0, 6);
       if (!trials.length) { assert.equal(JSON.stringify({ ...spec, v: 6 }), JSON.stringify(law6), `seed ${seed} hall ${h}: no slot, law 6's hall`); continue; }
       halls++;
       for (const t of trials) { const k = `${t.cls} ${t.why === 'tails' ? 'tails' : t.why ? 'refused' : 'laid'}`; tally[k] = (tally[k] ?? 0) + 1; }
@@ -125,13 +128,13 @@ test('EG-HERO-LAY THE ODDS (spec law 7): with heroes registered, each slot a cod
     assert.deepEqual([halls, heroes], [49, 19]);
     // a refused hero: the Cairn's Brink (seed 77 hall 26), whose sinking stair's last gap the hero's hall widens past the
     // span build's jump - THE TIMED SOLVER refuses it, and law 6's hall stands
-    const [t] = egHeroTrials(77, 26, 0);
+    const [t] = egHeroTrials(77, 26, 0, 7);
     assert.match(t.why, /^THE TIMED SOLVER refuses the hall/);
-    assert.equal(JSON.stringify({ ...egHallOf(77, 26, 0), v: 6 }), JSON.stringify(egHallOf(77, 26, 0, 6)));
+    assert.equal(JSON.stringify({ ...egHallOf(77, 26, 0, 7), v: 6 }), JSON.stringify(egHallOf(77, 26, 0, 6)));
     // a hero whose slot comes after a fragment of its class (a Deepway's last passage, after a Broken Colonnade's): laid at
     // its own slot, never the first of its class - the colonnade, the chamber and the shaft before it law 6's
-    const dw = egHallOf(18, 22, 0), dw6 = egHallOf(18, 22, 0, 6);
-    assert.deepEqual(egHeroTrials(18, 22, 0).map((t) => [t.n, t.cls, t.why]), [[2, 'shaft', 'tails'], [3, 'passage', '']]);
+    const dw = egHallOf(18, 22, 0, 7), dw6 = egHallOf(18, 22, 0, 6);
+    assert.deepEqual(egHeroTrials(18, 22, 0, 7).map((t) => [t.n, t.cls, t.why]), [[2, 'shaft', 'tails'], [3, 'passage', '']]);
     assert.deepEqual([dw.heroes[0].f, dw.frags[3].hero], [3, 'egRefFrag']);
     assert.deepEqual(dw.frags.slice(0, 3), dw6.frags.slice(0, 3), 'the fragments before its slot law 6\'s');
   });
@@ -141,7 +144,7 @@ test('EG-HERO-LAY THE ODDS (spec law 7): with heroes registered, each slot a cod
   // two heroes of one kit and class: the coin's own draw picks between them (heads at u: the one at u x 2 x their count)
   const two = egHeroFragRegistry([{ ...REF, variant: 'test' }, { ...REF, id: 'egRefFragTwo', variant: 'test-two' }]), ids = {};
   withHeroes(() => {
-    for (const seed of [77, 0xbeef, 3, 12345, 1, 2, 5, 8, 13]) for (let h = 1; h <= 30; h++) for (const t of egHeroTrials(seed, h, 0)) if (t.id) {
+    for (const seed of [77, 0xbeef, 3, 12345, 1, 2, 5, 8, 13]) for (let h = 1; h <= 30; h++) for (const t of egHeroTrials(seed, h, 0, 7)) if (t.id) {
       assert.equal(t.id, t.u < 0.25 ? 'egRefFrag' : 'egRefFragTwo');
       ids[t.id] = (ids[t.id] ?? 0) + 1;
     }
@@ -199,7 +202,9 @@ test('EG-HERO-LAY THE FIT AT ITS SLOT (egHeroStatic, egHeroExit, egHeroCourtOf):
   assert.equal(egHeroLanding(edge(0, -100)), '', 'run off onto it');
   // a piece moving along the course is the solver's alone; every code-built landing a piece launches onto, over the law pin's
   // halls, leaves the room (0.44 m at worst) - only one launched from still ground after its run-up leaves less (0.24 m)
-  assert.equal(egHeroLanding({ ...T, course: T.course.map((c, i) => (i === 1 ? { ...c, d: 100, z: c.z - 120 } : c)) }), '', 'a Drift, its far edge 1.9 m back - judged, past it');
+  // PIN MOVED (AUDIT EG V, f): law 7's - spec law 8 judges a Drift as still ground (it swings across the course, never along it:
+  // test/egaudit5_f.test.js)
+  assert.equal(egHeroLanding({ ...T, course: T.course.map((c, i) => (i === 1 ? { ...c, d: 100, z: c.z - 120 } : c)) }, 7), '', 'a Drift, its far edge 1.9 m back - judged, past it');
   let worst = Infinity, ground = Infinity;
   for (const [sd, h, g] of LAW_HALLS) for (const p of egSpanPairs(egHallOf(sd, h, g, 6))) {
     const { a, b } = p;

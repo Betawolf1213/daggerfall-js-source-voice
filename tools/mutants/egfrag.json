@@ -113,8 +113,8 @@
   {
     "name": "EGFRAG-the-ground-after-unmeasured",
     "file": "src/net/egSpanLaw.js",
-    "old": "edge: s.z + s.d / 2 + (s.after ?? 0) });",
-    "new": "edge: s.z + s.d / 2 });",
+    "old": "edge: s.z + s.d / 2 + (s.after ?? 0), ...(s.ya",
+    "new": "edge: s.z + s.d / 2, ...(s.ya",
     "tests": [
       "test/egfrag_law.test.js"
     ]
@@ -150,8 +150,8 @@
   {
     "name": "EGFRAG-the-low-road-on-the-high-line",
     "file": "src/net/egLaw.js",
-    "old": "    xRoad = EG_LOW_X_CM;\n    if (L6 && extra > 0) decreeSections(); else run('still', 2);",
-    "new": "    xRoad = 0;\n    if (L6 && extra > 0) decreeSections(); else run('still', 2);",
+    "old": "    xRoad = EG_LOW_X_CM;\n    if (L6 && extra > 0) decreeSections();",
+    "new": "    xRoad = 0;\n    if (L6 && extra > 0) decreeSections();",
     "tests": [
       "test/egfrag_law.test.js"
     ]
@@ -357,8 +357,8 @@
   {
     "name": "EGFRAG-the-islands-in-the-static-floor",
     "file": "src/world/egHall.js",
-    "old": "    for (const d of spec.discs) {\n      if (egIsleDisc(spec, d)) continue;\n      for (let k = 0; k < SD_ISLAND_SIDES; k++) {",
-    "new": "    for (const d of spec.discs) {\n      for (let k = 0; k < SD_ISLAND_SIDES; k++) {",
+    "old": "      if (egIsleDisc(spec, d)) continue;\n      // AUDIT EG V (lane5 #15)",
+    "new": "      // AUDIT EG V (lane5 #15)",
     "tests": [
       "test/egfrag_client.test.js"
     ]

@@ -90,7 +90,7 @@ const HARDCODED = {
   'src/net/egLegion.js': 10,
   'src/net/egLords.js': 89,   // AUDIT EG V (the lords' group): +34, every lord's two phase cards, each its name and its one order (EG_LORD_PHASES, EG_GAROTH_SIG_ORDERS - section 13.2's card, drawn on every screen) - the arc's English, owed EG-L10N with the rest; AUDIT EG IV (the lords' group): +2, Garoth's third-phase card names the older signature he borrows (EG_GAROTH_SIG_CARDS - three names for the one 'The older signature.') - the arc's English, owed its localization wave with the rest
   'src/net/egRun.js': 18,
-  'src/net/egSpanLaw.js': 12,
+  'src/net/egSpanLaw.js': 16,   // PIN MOVED (AUDIT EG V, f: +4, THE TIMED SOLVER's law-8 refusals (egSpanProof's `why` - the set pieces' margin, the Collapsing Tube's, the Forge Line's hammers) - read by a test and the sweep's tool, never said to a player, kept as egLaw.js's hero refusals are)
   'src/net/egVestige.js': 60,
   'src/net/fortLaw.js': 21,
   'src/net/gateBrain.js': 9,

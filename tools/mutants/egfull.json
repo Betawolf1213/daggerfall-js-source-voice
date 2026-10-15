@@ -128,8 +128,8 @@
   {
     "name": "EGFULL-two-twists-running",
     "file": "src/net/egLaw.js",
-    "old": "    if (prev || sl.kind === 'brink' || roll >= 0.25) { prev = false; continue; }",
-    "new": "    if (sl.kind === 'brink' || roll >= 0.25) { prev = false; continue; }",
+    "old": "    if (prev || sl.kind === 'brink' || (law >= EG_WAYS_LAW ? roll * 3 >= 1 : roll >= 0.25)) { prev = false; continue; }",
+    "new": "    if (sl.kind === 'brink' || (law >= EG_WAYS_LAW ? roll * 3 >= 1 : roll >= 0.25)) { prev = false; continue; }",
     "tests": [
       "test/egfull_law.test.js"
     ]

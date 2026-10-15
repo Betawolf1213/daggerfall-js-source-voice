@@ -96,6 +96,7 @@ import { BUCKET_DEPTH_X, GATE_HIT_HZ_MAX, HIT_KINDS,  dpsRef, clampLv } from './
 import { HIT_CAP_X, spendPurse } from './gateBrain.js';   // AUDIT EG III: Spillover's carry, within its blow's cap and out of the purse
 import { SAP_HEAL, SAP_FEEDS_MAX } from './gateBrain.js';   // AUDIT EG IV (lane1 #17): a Sapper feeds a lord by the gate's law, its feedings capped
 import { EG_LORDS } from './egLaw.js';   // AUDIT EG IV (section 18's strata): a lord's band, for the Twin Court's second
+import { egMoltenRim } from './egLaw.js';   // AUDIT EG V (lane1 #21): THE MOLTEN RIM and its causeways
 // EG-H1 (EG8d): WHAT THE RELAY JUDGES - THE FAIR TRAIL and its time law (net/egFair.js), one judge for every shape and the
 // hall's own hazards (net/bossRef.js), and the body counted (net/bossBody.js) - the member's one life
 import { egFairNew, egFairPose, egFairOk, egFairRefuses, egFairCross, egRideHolds, egRideAt, egCrossMinMs, egFallenAt, egTrailAt, egFightFloorAt, EG_POSE_NEAR_MS, EG_SUPPORT_UP_M, EG_SUPPORT_DOWN_M, EG_TS_LAG_MAX_MS } from './egFair.js';
@@ -697,10 +698,11 @@ function standFight(B, spec, now, rng, out) {
     }
     F.sever = sev;
     F.ringAt = 0;
-    if ((B.strata ?? []).includes('moltenrim')) for (const f of spec.fl ?? []) if (f.t === 'd' && f.r > 8) zoneOut(F, 'void', ['r', f.x, f.z, f.r - 3, f.r + 2], now, now + 3_600_000, out);   // THE MOLTEN RIM: a Court's discs (AUDIT EG IV: section 18 says so)
+    if ((B.strata ?? []).includes('moltenrim')) { const M = egMoltenRim(spec); F.rim = [...M.rings.map((s) => ({ k: 'void', s })), ...M.ways.map((s) => ({ k: 'haven', s }))]; moltenRimKeep(F, now, out); }   // THE MOLTEN RIM: a Court's discs (AUDIT EG IV: section 18 says so) - AUDIT EG V (lane1 #21): each way across it a causeway (net/egLaw.js egMoltenRim)
     P.obj = 'lord';
   }
   // THE TWISTS (section 8.7) at the wake
+  if (spec.twist === 'vault') vaultStand(F, spec, now, out);   // AUDIT EG V (lane3 #18): a Proving Walk's Reliquary Vault, as a span's
   if (spec.twist === 'ghost' && spec.fight) egLegionRaise(F, [EG_KIND.ghost], [[spec.arrive.x + 2, spec.arrive.z + 2]], now, out);
   if (spec.twist === 'captive') captiveStand(F, spec, now, out);
   if (spec.twist === 'bargain' && egBargainOpen(B)) egAsk(B, 'bargain', [1], now, out);
@@ -873,7 +875,7 @@ function hornStep(B, F, spec, now, inHall, rng, out) {
  *  do), and the Captive Battlemage's three chains on the course's islands (egCaptiveSpots) - a span's fight returned before
  *  the twists of every other hall were stood, so neither ever stood on one. */
 function spanTwist(B, F, spec, now, out) {
-  if (spec.twist === 'vault') for (const q of spec.spots.vault ?? []) egRaiseObj(F, 'vault', q.x, q.z, 0, now, out, { r: 3 });
+  if (spec.twist === 'vault') vaultStand(F, spec, now, out);
   if (spec.twist === 'bargain' && egBargainOpen(B)) egAsk(B, 'bargain', [1], now, out);
   if (spec.twist === 'ghost' && spec.arrive) egLegionRaise(F, [EG_KIND.ghost], [[spec.arrive.x + 2, spec.arrive.z + 2]], now, out);
   if (spec.twist === 'captive') captiveStand(F, spec, now, out);
@@ -917,6 +919,24 @@ function captiveStep(B, F, rng, out) {
   F.captive = 0;
   for (const [sub, m] of living(B)) { egGive(m, 'cant', 1, rng); out.push({ k: 'egot', to: sub, w: 'cant' }); }
   out.push({ k: 'esay', w: 'freed' });
+}
+/** THE MOLTEN RIM (section 18) kept: each of its zones (`F.rim` - its magma, `void`, and its causeways, `haven`: net/egLaw.js
+ *  egMoltenRim) zoned while the fight's own list holds it no more - at the wake, and again whenever the fight's newest zones
+ *  have pushed it out (net/egLords.js zoneOut keeps the last few), so the magma and its ways stand the whole fight on every
+ *  screen. AUDIT EG V (lane1 #21). */
+function moltenRimKeep(F, now, out) {
+  for (const q of F.rim) if (!(q.i > 0 && (F.zones ?? []).some((z) => z.i === q.i && z.until > now))) q.i = zoneOut(F, q.k, q.s, now, now + 3_600_000, out).i;
+}
+/** THE RELIQUARY VAULT (section 8.7): its cache stood at the wake, wherever its hall's law laid it (AUDIT EG V, lane3 #18: a
+ *  Span's, a Brink's and a Proving Walk's - spec law 8 lays one on a forked span too). */
+function vaultStand(F, spec, now, out) {
+  for (const q of spec.spots.vault ?? []) egRaiseObj(F, 'vault', q.x, q.z, 0, now, out, { r: 3 });
+}
+/** THE RELIQUARY VAULT TAKEN: an extra Reliquary for each member who reaches it with a fair trail - in the trial of any hall
+ *  that stood one and in its closing (AUDIT EG V, lane3 #18: it was taken only in a span's trial). */
+function vaultStep(B, spec, inHall, out) {
+  if (spec.twist !== 'vault' || !B.F) return;
+  for (const b of inHall) for (const o of egObjsOf(B.F, 'vault')) if (dist(b.x, b.z, o.x, o.z) <= 3 && fairOf(B, b.sub) && !(o.took ??= {})[b.sub]) { o.took[b.sub] = 1; egGive(B.mem[b.sub], 'rel', egCircleOfHall(B.h)); out.push({ k: 'egot', to: b.sub, w: 'rel' }); }
 }
 /** An errand's object stood (net/egLords.js's law for its types). */
 function egRaiseObj(F, t, x, z, hp, now, out, o = {}) {
@@ -1253,6 +1273,7 @@ export function egStep(B, now, bodies, rng) {
     if (B.cnt.at > 0 && now >= B.dn + EG_CLOSING_COUNT_MS) { B.cnt = egCountHold(B.cnt, now); out.push(egStageWord(B, now)); }
     if (B.cnt.at > 0 && egCountLeft(B.cnt, now) <= 0) { egEnd(B, 'tear', now, out); return out; }
     cacheStep(B, spec, inHall, now, rng, out);
+    vaultStep(B, spec, inHall, out);   // AUDIT EG V (lane3 #18): a vault taken in the closing too
     if (B.F) fragStep(B, B.F, spec, now, inHall, inHall, rng, out);   // LAYER THREE: an alcove, a cache, a niche taken in the closing too
     if (spec.fork && forkClosing(B, spec, inHall, now)) out.push(egStageWord(B, now));   // EG-ZC: the Low Road's closing on either road
     goldRun(B, spec, now, out);
@@ -1370,8 +1391,8 @@ function trial(B, spec, now, inHall, rng, out) {
   Object.defineProperty(F, 'legionCtx', { value: legionCtx, enumerable: false, writable: true, configurable: true });
   // the Span, the Brink: the door opens on the first living member at the far plate; a fragment's Lurkers and the Low
   // Road's foes at their work meanwhile
+  vaultStep(B, spec, inHall, out);   // AUDIT EG V (lane3 #18): every kind's vault, a Proving Walk's too
   if (spec.kind === 'span' || spec.kind === 'brink') {
-    for (const b of inHall) for (const o of egObjsOf(F, 'vault')) if (dist(b.x, b.z, o.x, o.z) <= 3 && fairOf(B, b.sub) && !(o.took ??= {})[b.sub]) { o.took[b.sub] = 1; egGive(B.mem[b.sub], 'rel', egCircleOfHall(B.h)); out.push({ k: 'egot', to: b.sub, w: 'rel' }); }
     // EG-ZB (section 8.2): THE SPAN'S LEGION - the Harriers shadow every member in the hall and bite only those on its fight
     // ground; from the Shade the Divers wait at its islands
     if (span) spanLegion(F, view, now, inHall, egLegionRoom(F), out);
@@ -1489,6 +1510,7 @@ function trial(B, spec, now, inHall, rng, out) {
     if (now >= F.quietUntil) { door(B, spec, now, out); return; }
   } else if (kind === 'court') {
     const lords = egLordsOf(F);
+    if (F.rim) moltenRimKeep(F, now, out);   // AUDIT EG V: THE MOLTEN RIM stood again where the fight's last zones pushed it out
     if (egLordsFell(F)) { redoubt(B, now, rng, out); return; }
     if (!egLordsAwake(F)) {
       if (ringWake(F, spec, spec.ring, inHall, now, out, lordCtx)) { F.waveAt = now + EG_ESCORT_EVERY_MS + (F.still ?? 0); F.lordAt = now; }   // AUDIT EG V (L2-6): Stillness holds the first escort

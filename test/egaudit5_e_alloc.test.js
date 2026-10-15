@@ -160,12 +160,13 @@ test('AUDIT EG V L6-4 THE MIST, THE ARCHES, THE OCCLUDERS AND THE PANEL KEEP THE
   for (const seed of [1, 2, 3, 4, 5, 7]) for (let c = 6; c <= 10 && !sheets.length; c++) sheets = egMistSheets(egCircleSpecs(seed, c, 0));
   assert.ok(sheets.length);
   const kept = [];
-  let first = null, risen = 0;
+  let first = null, risen = 0, risenAt = /** @type {number|null} */ (null);
   for (let t = 0; t < 30; t += 0.25) {
     const at = egMistSheetsAt(sheets, t, kept);
     assert.equal(at, kept, 'the kept list');
     if (!at.length) continue;
     first ??= at[0];
+    risenAt ??= t;
     assert.equal(at[0], first, 'the same slot');
     const fresh = egMistSheetsAt(sheets, t);
     assert.deepEqual(at, fresh, 'what a fresh list says');
@@ -177,7 +178,7 @@ test('AUDIT EG V L6-4 THE MIST, THE ARCHES, THE OCCLUDERS AND THE PANEL KEEP THE
   // the mist pass reads the list in place, at most EG_MIST_MAX a frame - never sliced
   const gl = new Proxy({}, { get: (o, k) => (k in o ? o[k] : typeof k === 'string' && /^[A-Z_]+$/.test(k) ? 0 : () => ({})) });
   const mist = new EgMistPass(/** @type {any} */ (gl));
-  const lit = egMistSheetsAt(sheets, 12).filter((q) => q.alpha > 0);
+  const lit = egMistSheetsAt(sheets, risenAt ?? 12).filter((q) => q.alpha > 0);   // PIN MOVED (AUDIT EG V, the merge of fix group F: spec law 8's first misted circle rises at its own moment - the first the loop above saw)
   assert.ok(lit.length, 'a sheet risen');
   const many = Array.from({ length: EG_MIST_MAX + 3 }, (_, i) => lit[i % lit.length]);
   const slice = Array.prototype.slice;
