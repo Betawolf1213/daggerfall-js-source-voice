@@ -1396,10 +1396,17 @@ export function accountDuels({ fetch, storage }) {
  *  `{ n, realm, room }` (a death to a foe: the tab's nonce) - `room` where the remains will lie (AUDIT INT9: the order names
  *  it). Answers `{ r, order, items, kept, took, gold, wi, burnt?, realm? }`. */
 export const wildFallAsk = (io, body) => call(io, '/v1/wild/fall', body);
-/** INT9: the zone's one call, bound to this device's stored session (the duels' way). */
+/** MAC (2026-10-14, the two-phase handoff - server-account/src/wild.js): the killer's collect of its piece in escrow
+ *  (`{ receipt, realm }` - the room's `g1`, the killer's record's `at`), the fallen's taking it back (`{ r, realm }`), and
+ *  the fallen character's pieces still held (`{ character }`). */
+export const wildCollectAsk = (io, body) => call(io, '/v1/wild/collect', body);
+export const wildReclaimAsk = (io, body) => call(io, '/v1/wild/reclaim', body);
+export const wildEscrowsAsk = (io, body) => call(io, '/v1/wild/escrows', body);
+/** INT9: the zone's calls, bound to this device's stored session (the duels' way). */
 export function accountWild({ fetch, storage }) {
   const io = () => { const s = storedSession(storage); return s ? { fetch, base: serviceBase(storage), secret: s.secret } : null; };
-  return { fall: async (body) => { const i = io(); return i ? wildFallAsk(i, body) : { ok: false, error: 'no-session' }; } };
+  const on = (/** @type {(io: any, body: any) => Promise<any>} */ ask) => async (/** @type {any} */ body) => { const i = io(); return i ? ask(i, body) : { ok: false, error: 'no-session' }; };
+  return { fall: on(wildFallAsk), collect: on(wildCollectAsk), reclaim: on(wildReclaimAsk), escrows: on(wildEscrowsAsk) };
 }
 
 /** WB5b: the kill receipt the relay signed for this account, carried to

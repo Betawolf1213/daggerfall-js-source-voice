@@ -1369,7 +1369,8 @@ export const KEEPALIVE_FAN_MS = HEARTBEAT_MS / 2;
  *  is deployed by CI and the relay by hand, so a skew between them is the ordinary state of a release day, and until
  *  now nothing on either end could see it. */
 // Integrated Arena spectator visibility with staff teleport, stable boat identity and private ownership; deploy relay before clients.
-export const RELAY_VERSION = 'world202';   // FIVE-ASKS (2026-10-14, Mac's five asks - bible/01-Overview/Five-Asks-2026-10-14.md; NOT YET DEPLOYED; world201 on its branch, renumbered past main's CHAT-TRADE world201 at the merge): RESPAWN-30, the dungeons' chest and foe respawn half an hour (RESPAWN_MS - the zone's halls and an Abyss Dungeon), and LAMP-KEEPER II's I Love Lamp in the titles' vocabulary (net/identityToken.js TITLES) the relay's claims check reads.
+export const RELAY_VERSION = 'world203';   // PVP-LOOT (FIELD BUGS 2026-10-14, one pull request, one bump; NOT YET DEPLOYED - world201 on each branch, renumbered past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merge). PVP-LOOT (2026-10-14, the Discord's "Equipped items Disappear after looting in PvP zone" - bible/01-Overview/Field-Bugs-2026-10-14.md): THE FRIEND LAW IS THE DROP'S - a remains' take is refused a fallen's guildmate or party member only for a record of the drop; the record the service's order names (the killer's worn piece, net/wildLaw.js remainsNamedFor) is its killer's whoever the guilds and the hub count them, and takeFrom judges it alone. A guildmate's kill had the room refuse the killer the piece the service had already taken off the fallen's record. Then MAC'S TWO DECISIONS (2026-10-14; bible/11-Multiplayer/Wild-Zone.md sections 3 and 4): "Guildmates are friends" - the referee counts one guild kin, as a party, its truce and a duel (net/wildRef.js wildKin, at the relay and every client door); and "Yes, build it" - THE TWO-PHASE HANDOFF: a piece the service holds in escrow (the order's `we`) the room never hands as a record - its killer's take is answered a signed collect (`cr`, net/wildReceipt.js `g1`), kept with the remains (`wc`) and said again to every asking, which the killer's tab carries to the service; a tab asks the escrow only of a room at WILD_COLLECT_RELAY_MIN or later.
+// world202:   FIVE-ASKS (2026-10-14, Mac's five asks - bible/01-Overview/Five-Asks-2026-10-14.md; NOT YET DEPLOYED; world201 on its branch, renumbered past main's CHAT-TRADE world201 at the merge): RESPAWN-30, the dungeons' chest and foe respawn half an hour (RESPAWN_MS - the zone's halls and an Abyss Dungeon), and LAMP-KEEPER II's I Love Lamp in the titles' vocabulary (net/identityToken.js TITLES) the relay's claims check reads.
 // world201:   CHAT-TRADE (2026-10-14, Mac: "New channels: Trading, LFG"; bible/06-Systems/Community-Arc.md CHAT-TRADE; NOT YET DEPLOYED): the Trade and LFG channels, `chat:trade` and `chat:lfg`, joined CHAT_ROOMS - the relay opens them as it opens a language's; nothing else in the law moved. The client's Trade and LFG tabs wait for this relay (TRADE_CHAN_RELAY_MIN)
 // world200:   PEER-ACTS (2026-10-13, GATHER-FEEL II; Mac: "Do the not done" - bible/06-Systems/Professions-Arc.md 5.1 "Others see it" and section 45; NOT YET DEPLOYED; world199 on its branch, renumbered past main's AUDIT ETHER-OW world199 at the merge): THE POSE CARRIES A GATHERING ACT - `ga` the act (POSE_GATHER_ACTS: the axe at a trunk, the pick at a stone, a kneel by hand, with the sickle, with the Basket, with the knife, the net wound, flying, waiting, tugged, hauled) and `gm` the net's throw in whole metres, absent off an act; `gb` the beats (a count and the last beat's kind), on its own as `hk` is; validPose bounds them (a code past the table no act, a count of none no beat), poseChanged sends them at once. An older relay's validPose drops them: the others see and hear nothing of an act, as before.
 // world199:   AUDIT ETHER-OW C2-1 (2026-10-13, bible/01-Overview/Audit-Ether-OW.md; NOT YET DEPLOYED): THE WATCH'S GROUND, ONE HOME - the relay's mint asks net/watchReceipt.js watchPixelOk (the Bay's map, whole pixels) where it wrote the bounds itself; the account service's receipt check and the Motherlodes' site read the same law, so a Motherlode stands only where a receipt can name its pixel. The relay's answers are as they were: a new bundle, so a new name (SLAM8).
@@ -4000,8 +4001,18 @@ export const WILD_KINDS = Object.freeze(['strike', 'spell', 'worn', 'pick', 'zon
  *  the referee's, routed to nobody; `worn` alone is routed. */
 export const WILD_DIRECTED = Object.freeze(['strike', 'spell', 'worn']);
 /** What the room says back: a remains' records (`ri`, a chunk), a record taken (`rm`), a take won (`got`) or lost
- *  (`no`), a remains gone (`gone`). */
-export const WILD_OUT_KINDS = Object.freeze(['ri', 'rm', 'got', 'no', 'gone']);
+ *  (`no`), a remains gone (`gone`); MAC (2026-10-14, the two-phase handoff): a killer's COLLECT (`cr` - the room's signed
+ *  word that its killer took the piece the service holds in escrow, net/wildReceipt.js `g1`, for the killer's tab to
+ *  carry to the service; an older client drops the kind, so it never takes the room's record of a piece in escrow). */
+export const WILD_OUT_KINDS = Object.freeze(['ri', 'rm', 'got', 'no', 'gone', 'cr']);
+/** MAC (2026-10-14): the longest collect on the wire (net/wildReceipt.js WILD_RECEIPT_MAX, pinned equal). */
+export const WILD_COLLECT_MAX = 400;
+/** MAC (2026-10-14): the relay that signs a killer's collect of a piece in escrow - a client asks the service to escrow
+ *  its killer's piece only for a room on one (an older room hands the record, and the escrow would hand it twice).
+ *  world203, the relay that carries it (201 on its branch: main's world201 is CHAT-TRADE's and world202 FIVE-ASKS',
+ *  neither of which signs a collect - left at 201, a tab on either would ask the escrow of a room that hands the record). */
+export const WILD_COLLECT_RELAY_MIN = 203;
+export const relaySupportsWildCollect = (v) => { const m = /^world(\d+)$/.exec(typeof v === 'string' ? v : ''); return !!m && Number(m[1]) >= WILD_COLLECT_RELAY_MIN; };
 /** The widest wild frame - a deposit of WILD_ITEMS_MAX heavy records, the trade frame's own bound. */
 export const WILD_FRAME_MAX = 12 * 1024;
 export const WILD_DATA_MAX = WILD_FRAME_MAX - 96;
@@ -4214,6 +4225,7 @@ export function validWildOut(m) {
     case 'rm': return intIn(m.i, 0, WILD_REMAINS_ITEMS_MAX - 1) && intIn(m.n, 1, WILD_STACK_MAX) ? { k: 'rm', r, i: m.i, n: m.n } : null;
     case 'got': return intIn(m.i, 0, WILD_REMAINS_ITEMS_MAX - 1) && m.it && typeof m.it === 'object' && !Array.isArray(m.it) ? { k: 'got', r, i: m.i, it: m.it } : null;
     case 'no': return intIn(m.i, 0, WILD_REMAINS_ITEMS_MAX - 1) ? { k: 'no', r, i: m.i } : null;
+    case 'cr': return intIn(m.i, 0, WILD_REMAINS_ITEMS_MAX - 1) && typeof m.cr === 'string' && m.cr.length > 0 && m.cr.length <= WILD_COLLECT_MAX ? { k: 'cr', r, i: m.i, cr: m.cr } : null;   // MAC (2026-10-14): a killer's collect
     default: return { k: 'gone', r };
   }
 }

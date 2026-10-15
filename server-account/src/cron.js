@@ -184,6 +184,10 @@ export const HOUR_JOBS = Object.freeze([
   // INT9: a death in the zone's drop, kept past its receipt's hour (wild.js - a second asking is answered the first's)
   ['wild-falls', (ctx) => rounds(() => deleted(ctx.db,
     'DELETE FROM wild_falls WHERE r IN (SELECT r FROM wild_falls WHERE at < ?1 LIMIT ?2)', ctx.nowS - WILD_FALLS_KEEP_S), SWEEP_ROWS)],
+  // MAC (2026-10-14, the two-phase handoff): an escrow ENDED (collected, or back with its fallen) kept as long as a fall is -
+  // a held one never: its piece is in no record but it
+  ['wild-escrow', (ctx) => rounds(() => deleted(ctx.db,
+    "DELETE FROM wild_escrow WHERE r IN (SELECT r FROM wild_escrow WHERE state != 'held' AND ended_at < ?1 LIMIT ?2)", ctx.nowS - WILD_FALLS_KEEP_S), SWEEP_ROWS)],
   // LW15 (bible/06-Systems/Living-World-II.md): the towns' patrons at their traders, the towns waiting (a read reckons its
   // own). AUDIT LW-II P8: while the market is open to everyone (market.js marketOpenFor, no account's - every switch
   // `on`); shut, its every route answers 'market-closed', and the clock paid patrons' gold anyway. AUDIT LW-II-2 S3: and

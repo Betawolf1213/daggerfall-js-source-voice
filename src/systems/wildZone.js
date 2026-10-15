@@ -17,8 +17,10 @@
 // Daggerfall's own (the death penalty's law, systems/deathPenalty.js: "online mode only").
 //
 // THIS FILE IS A LEAF: the region test, the mask the maps paint and hide by, the numbers, and the one live flag the
-// pools read at a spawn (`wildHere`, set by the world host each frame). It imports nothing, so every pool can read it.
+// pools read at a spawn (`wildHere`, set by the world host each frame). It imports nothing but the text core (itself a
+// leaf - MAC, 2026-10-14: the escrow's words are the player's language's, L10N4), so every pool can read it.
 // ═══════════════════════════════════════════════════════════════════
+import { t } from './textManager.js';
 
 /** The Wrothgarian Mountains - MapsFile's region index (mapsTables.js REGION_NAMES[16]). */
 export const WILD_REGION = 16;
@@ -446,6 +448,20 @@ export const WILD_TEXT = Object.freeze({
   deathPvp: (name) => `${name || 'Another player'} may claim one piece of your worn gear.`,
   deathDrop: (n) => (n > 0 ? `${n} ${n === 1 ? 'thing you carried lies' : 'things you carried lie'} where you fell, for ten minutes.` : ''),
   deathClaim: (name, item) => `${name || 'Another player'} took your ${item || 'gear'}.`,
+  // MAC (2026-10-14, the two-phase handoff): the piece claimed is held in escrow until its killer collects it - its words
+  // through the text core (L10N4), read when they are said
+  deathHeld: (name, item) => (name
+    ? t('wild.escrow.deathHeld', '{name} claimed your {item} - it is held until they collect it, and comes back to you if they do not.', { name, item: item || t('wild.escrow.gear', 'gear') })
+    : t('wild.escrow.deathHeldAnon', 'Another player claimed your {item} - it is held until they collect it, and comes back to you if they do not.', { item: item || t('wild.escrow.gear', 'gear') })),
+  heldNote: (name, item, min) => (name
+    ? t('wild.escrow.heldNote', 'Your {item} is held for {name} - if they do not collect it within {min, plural, one {# minute} other {# minutes}}, it comes back to you.', { name, item: item || t('wild.escrow.gear', 'gear'), min })
+    : t('wild.escrow.heldNoteAnon', 'Your {item} is held for your killer - if they do not collect it within {min, plural, one {# minute} other {# minutes}}, it comes back to you.', { item: item || t('wild.escrow.gear', 'gear'), min })),
+  heldBack: (item) => t('wild.escrow.heldBack', 'Your {item} has come back to you - it was never collected.', { item: item || t('wild.escrow.gear', 'gear') }),
+  heldTaken: (name, item) => (name
+    ? t('wild.escrow.heldTaken', '{name} collected your {item}.', { name, item: item || t('wild.escrow.gear', 'gear') })
+    : t('wild.escrow.heldTakenAnon', 'Your killer collected your {item}.', { item: item || t('wild.escrow.gear', 'gear') })),
+  collected: (item) => t('wild.escrow.collected', 'You take {item}.', { item }),
+  collectLate: () => t('wild.escrow.collectLate', 'That piece was no longer held for you.'),
   deathHold: 'In the mountains the dead wait two minutes.',
   remainsName: (name) => (name ? `${name}'s remains` : 'Remains'),
   mine: 'Your remains',
@@ -524,15 +540,16 @@ export function applyWildFoe(entity, { own = true, ring = WILD_RINGS } = {}) {
 
 // ── a death in the zone, as the death screen reads it ─────────────────────────────────────────────────────────────────
 let _death = null;
-/** The world host's word at a death in the zone - `{ killer, dropped, claimed }` (the killer's name or null, how many
- *  things were left where the body fell, the worn piece the killer took) - or null when the death screen goes. The screen holds WILD_DEATH_HOLD_S and takes
+/** The world host's word at a death in the zone - `{ killer, dropped, claimed, held }` (the killer's name or null, how many
+ *  things were left where the body fell, the worn piece the killer took - `held`: MAC (2026-10-14), held in escrow until
+ *  they collect it) - or null when the death screen goes. The screen holds WILD_DEATH_HOLD_S and takes
  *  no Enter while it stands (ui/deathScreen.js). */
 export function setWildDeath(d) {
-  _death = d ? { killer: typeof d.killer === 'string' && d.killer ? d.killer : null, dropped: Math.max(0, d.dropped | 0), claimed: typeof d.claimed === 'string' && d.claimed ? d.claimed : null } : null;
+  _death = d ? { killer: typeof d.killer === 'string' && d.killer ? d.killer : null, dropped: Math.max(0, d.dropped | 0), claimed: typeof d.claimed === 'string' && d.claimed ? d.claimed : null, held: d.held === true } : null;
 }
 export const wildDeath = () => _death;
 /** The death screen's lines for a death in the zone (empty for any other). */
 export function wildDeathLines(d = _death) {
   if (!d) return [];
-  return [d.killer ? (d.claimed ? WILD_TEXT.deathClaim(d.killer, d.claimed) : WILD_TEXT.deathPvp(d.killer)) : '', WILD_TEXT.deathDrop(d.dropped), WILD_TEXT.deathHold].filter(Boolean);
+  return [d.killer ? (d.claimed ? (d.held ? WILD_TEXT.deathHeld : WILD_TEXT.deathClaim)(d.killer, d.claimed) : WILD_TEXT.deathPvp(d.killer)) : '', WILD_TEXT.deathDrop(d.dropped), WILD_TEXT.deathHold].filter(Boolean);
 }

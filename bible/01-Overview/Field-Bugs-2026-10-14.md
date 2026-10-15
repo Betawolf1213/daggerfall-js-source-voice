@@ -15,6 +15,7 @@ Discord threads from 2026-10-13 and 2026-10-14, handed over as screenshots, read
 | 8 | "Gold appears when I'm trading but not in my inventory" - "After I went to sleep my character lost 5000 of gold" (Soda_do_macaco...) | not reproduced: the trade window's figure, its refusal and its payment read one count (coins and letters of credit); the inventory's footer counts coins alone, and a payment spends letters first, so a 5000 letter spent leaves the coin figure where it was | asked of the player |
 | 9 | "Mountain clipping and invisible" - "Mountain is invisible and you can go through it and get stuck" (BigOOF) | a video, no place named | asked of the player |
 | 10 | "Daedra Summoning bugged" - "Summoned Hermaeus Mora at the Mages Guild online, paid 100k. No video, no offer, no message. The save now has Hermaeus Mora (faction 8) flags = 65 (Summoned set), and quest W0C00Y00 is not among the active quests"; then "trying to summon Mora in the Dak'Fron region - which does not meet the requirements for the quest" | DFU's own order: the gold spent and the Summoned flag set BEFORE the prince's quest is made, and a quest that cannot be made there (W0C00Y00 wants a palace in the region) offered nothing and said nothing | fixed (SUMMON-OFFER); the stuck save mended by staff (SUMMON-REPAIR) |
+| 11 | "Equipped items Disappear after looting in PvP zone" - "When you kill a player in a PvP zone and loot an item they have equipped, the item disappears from the player's inventory but does not appear in yours" | the room judged the killer's take of the piece by the drop's friend law (PVPDUNGEONS): a killer the fallen's guild counted a friend (or one sharing a party with them by the take) was refused the piece the account service had already taken off the fallen's record for them | fixed (PVP-LOOT); then Mac's two decisions - guildmates are kin in the zone, and the fallen loses the piece only once the killer has it (the two-phase handoff) |
 
 ## STORES-CRASH: the Stores page walks a station's nodes as the browser mints them (1)
 
@@ -197,3 +198,72 @@ the character's id for the second:
 node tools/realmReview.mjs characters sucean
 node tools/realmReview.mjs repair <the id it names> fb1014-summon-offer 8 0x40 100000 "SUMMON-OFFER: Hermaeus Mora summoned in Dak'fron, W0C00Y00 could not be made"
 ```
+
+## PVP-LOOT: the killer's worn piece is the order's, never the friend law's (11)
+
+`src/net/wildLaw.js` remainsNamedFor, takeFrom; `server/src/index.js` `_wildWord` (relay world203, world201 on its branch); then Mac's two
+decisions: `src/net/wildRef.js` wildKin, the escrow (`server-account/src/wild.js`, acct134, acct133 on its branch). Read on main's `7c291d36`.
+
+THE REPORT. A player killed another in the open zone (`11-Multiplayer/Wild-Zone.md`), searched the body and chose one of
+its worn pieces: it left the fallen and never came to the killer.
+
+FOUND. An equipped piece followed through the whole chain on the real modules, with the game's own pieces (the starting
+kit's worn clothes, a Magic longsword as the ladder rolls one, worn through `equip.js` equipItem, the record as the save
+writes it): the body's offer and the pick (`world.js` wildBodyArrived, wildBodyChosen), the relay's signed fall (`f1`, the
+pick's place and what it showed), the account service's take (`wildDropLaw.js` takeWildDeath - the piece off the record
+first, `wildRecord` stripping the receiver's marks, `equipSlot` among them), the fallen's game taking out exactly that
+(wildTakeTook, unequipped first), the remains laid on the service's order (`wk`, `wi`: the killer's), the killer's own
+book asking for it (`wildRemains.js:"const askMine = "`) and the room's `got` minted into the pack (`loot.js`
+validLootList, the receiver's marks stripped again). For a killer who is a stranger every step holds: the piece lands,
+unequipped. The break was the room's take. `_wildWord` asked the PVPDUNGEONS friend law ("Party/guildmembers cant pick it
+up" - a fallen's remains are theirs and their foes', never their party's or their guild's) before takeFrom, of EVERY
+record - the killer's piece too. INT9 had moved that piece from the fallen's own hand (WILD1's `gave`) into the remains,
+under a law written for the drop. The referee counted a guildmate a fair foe - only a party, its truce and a duel were
+kin (`world.js:"const wildFair = (peerId) => {"`, and the relay's `_wildBlow`) - so a guildmate's kill was signed, the service
+took the piece off the fallen's record and named it the killer's, the fallen's game took it out of the pack, and the room
+answered the killer "Someone took that first." The piece lay in the remains for nobody (its fallen is not its named taker
+either) until they went, and the killer's book asked again every frame. The same for a killer and a fallen who come to
+share a party before the take, and for a take asked while the hub is silent (kin until it answers).
+
+FIXED. The friend law is the drop's. `remainsNamedFor` (`wildLaw.js:"export const remainsNamedFor"`) names the account a
+record is for - the killer's worn piece its order's killer, every other record nobody in particular - and the room asks
+the friend law only of a record named for nobody (`server/src/index.js:"if (rec && !remainsNamedFor(rec, d.i) && rec.os"`);
+takeFrom keeps the named piece its killer's alone, by the same member. The drop stays the fallen's and her foes': a
+guildmate or a party member of hers is refused every record of it. Relay world203 (world201 on its branch, one bump past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merge; the deploy drops every player once). Pinned by `test/fb1014_pvploot.test.js`, end to end through the real account service, the real
+relay room and the killer's own book, over the game's own pieces: a stranger, a guildmate and a party member each get the
+longsword unequipped, as it was minted, under the service's fresh id; the drop is refused to her friends and taken by a
+stranger; a stranger asking first for the named piece is refused (`tools/mutants/fb1014_pvploot.json`, 5, dead - the
+first is the take as it shipped). PIN MOVED: `tools/mutants/int_lane2.json` INT9-THE-KILLERS-PIECE-ANYONES, re-aimed by
+content at takeFrom's gate.
+
+THE FOUR HOSTS. The take is the relay's, so every host reads it unchanged: `scenes/world.js` (the open country, the one
+place a body offers a worn piece and an order names one) WIRED as it stood - its book asks, the room now answers;
+`scenes/dungeonContext.js` and `scenes/worldModes.js` hold remains in their pools but no record in them is ever named (a
+hall's fall offers no worn piece, a building has no player fight); `scenes/exterior.js`, offline, NOT WIRED on purpose.
+
+DECIDED (Mac, 2026-10-14), asked what this fix left open:
+- "GUILDMATES ARE FRIENDS." The referee made kin of a party, its truce and a duel alone, while everything else the zone
+  does counted a guildmate a friend - the maps, the nameplates, never a "stranger", the drop barred. A guildmate is kin
+  now, by one law at the relay and every client door (`wildRef.js:"export function wildKin"`; `11-Multiplayer/Wild-Zone.md`
+  section 3). remainsNamedFor stays: it guards the room's old take (a tab whose room signs no collect) where a guild or a
+  party was joined between the fall and the take, or the hub is silent - a guildmate-killer that is still reachable.
+- "YES, BUILD IT" - THE TWO-PHASE HANDOFF. The fallen's record lost the piece when the service took it, and a killer
+  gone before the remains were laid, refused, or never back inside their life left it to nobody. The service holds it
+  in escrow from the fall (`wild_escrow`, in the fall's batch); the room signs the killer's take a collect (`g1`), which
+  the killer's tab carries into its own record; nobody collecting, the fallen's tab takes it back once no collect can be
+  signed - each end once, guarded to one row, whichever host restarts (`11-Multiplayer/Wild-Zone.md` section 4,
+  `06-Systems/Integrity-Arc.md` INT9). Pinned end to end through the real relay room, account service and clients by
+  `test/fb1014_pvpescrow.test.js` - a guildmate's blow lands nothing; the piece commits to its killer only on the
+  collect; uncollected, it comes back to its fallen; a collect carried three times hands one piece; a room woken
+  mid-escrow, a batch that failed either side of its landing and a game closed while one was held each end with exactly
+  one owner (`tools/mutants/fb1014_pvpescrow.json`, 17, dead). Relay world203 (world201 on its branch, re-hashed in place
+  undeployed, then one bump past main's CHAT-TRADE world201 and FIVE-ASKS world202 at the merge); `ACCOUNT_VERSION`
+  acct134, migration 0115 (acct133 and 0113 on its branch, renumbered past LAMP-KEEPER II's 0113_lamp_title and
+  SUMMON-REPAIR's 0114_realm_repairs at the merge). Deploy the relay before the account service: a tab asks the escrow
+  only of a room whose relay says world203 or later (`relaySupportsWildCollect`; WILD_COLLECT_RELAY_MIN moved 201 -> 203
+  at the merge, since main's world201 and world202 hand the record - pinned, and its mutant dead).
+
+THE FOUR HOSTS, the escrow. `scenes/world.js` WIRED - the fall's and the seizure's `collect`, the killer's collect
+carried and the fallen's piece taken back on the zone's frame (`world.js:"const wildEscrowFrame = () =>"`), the death
+screen's word on it; `scenes/dungeonContext.js` and `scenes/worldModes.js` name no piece (above), so they hold none in
+escrow; `scenes/exterior.js`, offline, NOT WIRED on purpose.
