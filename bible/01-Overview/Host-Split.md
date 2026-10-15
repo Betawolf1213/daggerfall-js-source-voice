@@ -294,3 +294,19 @@ seam's pin short of its own law:
   0.1 ms against a 6 ms slice. Recorded, not fixed: the next slice that moves a
   per-frame reader should copy the handle's live names into locals per call, or
   hand over a plain object whose fields the host updates.
+
+AUDIT HOST-SPLIT 2, THE SECOND READ (2026-10-15, Mac: *"Pick it up and audit
+it"*) read what the first left: `test/hostText.mjs`, the boot walk's reach into
+moved modules, and the rewritten pins. The move is verbatim against main's build
+(the 1,237 lines equal but for the `host.` rewrites), and main has not touched
+the build since. Found:
+
+- A DESTRUCTURED BINDING HAS A DEAD ZONE TOO. BOOT-TDZ2 (`test/bootorder.test.js`)
+  indexed only the declarators that are a bare name, and the slice made the
+  build one that is not: `const { buildPixelNow } = createPixelBuild(...)`. A
+  build reached above its construction read a binding the gate did not know was
+  declared there. Today the build's own reads of `state` and `restridePending`,
+  declared lower still, fail such a call by luck; with the construction moved
+  below `state`, an early build passed the gate. Every slice turns a hoisted
+  function into such a binding, so the walk now indexes every name a
+  declaration binds. It finds nothing new on the tree. One mutant, dead.

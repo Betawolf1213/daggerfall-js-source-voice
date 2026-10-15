@@ -43,5 +43,14 @@
     "tests": [
       "test/hostseam.test.js"
     ]
+  },
+  {
+    "name": "BOOT-TDZ2-the-build-taken-before-its-construction",
+    "file": "src/scenes/world.js",
+    "old": "  const { buildPixelNow } = createPixelBuild({   // HOST-SPLIT: src/scenes/pixelBuild.js\n",
+    "new": "  const prewarm = buildPixelNow.bind(null, 0, 0);   // the build's handle, taken before it is made\n  const { buildPixelNow } = createPixelBuild({   // HOST-SPLIT: src/scenes/pixelBuild.js\n",
+    "tests": [
+      "test/bootorder.test.js"
+    ]
   }
 ]

@@ -126,13 +126,21 @@ test('BOOT-TDZ2: nothing the boot walk runs reads a binding the boot walk has no
   assert.ok(boot, 'world.js no longer declares bootWorld');
   const body = boot.body.body;
 
+  // AUDIT HOST-SPLIT 2 (the second read): A DESTRUCTURED BINDING HAS A DEAD ZONE TOO. Every slice turns a hoisted
+  // function into `const { buildPixelNow } = createPixelBuild(...)`, and the walk skipped every declarator that was
+  // not a bare name - so a build reached above its construction read a binding the gate never knew was declared there
+  // (mutant: BOOT-TDZ2-the-build-taken-before-its-construction)
+  const bound = (p) => (p.type === 'Identifier' ? [p.name]
+    : p.type === 'ObjectPattern' ? p.properties.flatMap((q) => bound(q.type === 'RestElement' ? q.argument : q.value))
+    : p.type === 'ArrayPattern' ? p.elements.filter(Boolean).flatMap(bound)
+    : p.type === 'AssignmentPattern' ? bound(p.left)
+    : p.type === 'RestElement' ? bound(p.argument) : []);
   const decl = new Map(), fns = new Map(), arrows = new Map();
   body.forEach((n, i) => {
     if (n.type === 'VariableDeclaration' && n.kind !== 'var') {
       for (const d of n.declarations) {
-        if (d.id.type !== 'Identifier') continue;
-        if (!decl.has(d.id.name)) decl.set(d.id.name, i);
-        if (d.init && isFn(d.init)) arrows.set(d.id.name, d.init);
+        for (const nm of bound(d.id)) if (!decl.has(nm)) decl.set(nm, i);
+        if (d.id.type === 'Identifier' && d.init && isFn(d.init)) arrows.set(d.id.name, d.init);
       }
     } else if (n.type === 'FunctionDeclaration' && n.id) fns.set(n.id.name, n);
   });
