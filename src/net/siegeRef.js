@@ -81,8 +81,7 @@ export const SIEGE_HARM = Object.freeze({ max: SIEGE_CASTS.max * SIEGE_CASTS.dam
  * "the fastest legal run the motor allows with every Speed buff ... the ceiling 25% above it"): player/motor.js runSpeed
  * at live Speed's cap (statMods.js MAX_STAT_VALUE 100 - a Fortify past it reads 100), Running at the softcap's top
  * (skillSoftcap.js EFFECTIVE_SKILL_MAX 140, a mastered 200) with the lycanthrope's +30 and an Enhances Skill item's +15 -
- * (100 + 150) / 39.5 x (1.35 + 185 / 200) = 14.4 m/s; x 1.25 = 18 (FIRM-MAX, 2026-10-15: the Firmament's Speed, +15 at
- * most, now lifts that cap - 115 runs 15.3 m/s, still under it). The design's starting 12.5 would have pulled back
+ * (100 + 150) / 39.5 x (1.35 + 185 / 200) = 14.4 m/s; x 1.25 = 18. The design's starting 12.5 would have pulled back
  * every mastered runner (13.0 m/s); 18 still holds a stack of eight Running items, and refuses any teleport or doubled
  * run. A horse is dismounted on entry (SEAT2a's client).
  */

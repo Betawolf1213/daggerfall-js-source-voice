@@ -434,8 +434,8 @@
   {
     "name": "AUF-L5M3-charge-spell-price-30",
     "file": "src/net/firmamentTree.js",
-    "old": "{ meleeDmg: 15, speed: 5, blowTaken: 5 }",
-    "new": "{ meleeDmg: 15, speed: 5, spellTaken: 30 }",
+    "old": "{ meleeDmg: 9, speed: 3, blowTaken: 5 }",
+    "new": "{ meleeDmg: 9, speed: 3, spellTaken: 30 }",
     "tests": [
       "test/audit_uicalm_firm1.test.js"
     ]

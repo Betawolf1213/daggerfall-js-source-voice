@@ -103,7 +103,7 @@ export function firmamentFold(entity) {
   // - AUDIT UICALM-FIRM1 L1 H1: the two TOGETHER held to the channel's budget (an attribute +15, a combat skill +15):
   // capped apart they made +21 Strength and a mastered Stealth +53
   // FIRM-MAX (2026-10-15, asked of the port: "all nodes should also work on maxed out stats"): a gain lifts the attribute's
-  // live ceiling by itself too, so +6% Speed on a 100 reads 106 - liveStat had held it at MAX_STAT_VALUE, and a star
+  // live ceiling by itself too, so +2% Speed on a 100 reads 102 - liveStat had held it at MAX_STAT_VALUE, and a star
   // did nothing for a maxed stat. A departure from GetLiveStatValue's ceiling for the sky's gains alone.
   for (const a of ATTRIBUTES) {
     const v = capAt(a, read(a) + pctOf(entity.stats?.[a], read(`pct.${a}`)));
