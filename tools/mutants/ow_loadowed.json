@@ -33,8 +33,8 @@
   {
     "name": "LOAD-OWED-failed-kept-on-the-books",
     "file": "src/scenes/world.js",
-    "old": "      _wodArrival.keys.delete(`${next.px},${next.py}`);\n      state.release(next.px, next.py);",
-    "new": "      _wodArrival.keys.delete(`${next.px},${next.py}`);",
+    "old": "      state.fail(next.px, next.py, performance.now());",
+    "new": "      state.failed.set(`${next.px},${next.py}`, { px: next.px, py: next.py, tries: 1, at: Infinity });",
     "tests": [
       "test/ow_loadowed.test.js"
     ],

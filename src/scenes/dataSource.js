@@ -232,8 +232,27 @@ async function idbPutAll(db, entries, onProgress) {
 
 let db = null;
 async function getDb() {
-  if (!db) db = await openDb();
+  if (!db) {
+    const d = await openDb();
+    // BUILD-RETRY (bible/06-Systems/Travel-View.md LOAD-OWED): A CONNECTION THE BROWSER CLOSES IS NEVER ASKED AGAIN. It
+    // was kept for the page, and once the browser closed it under the game (its `close`: the storage failing, or the
+    // site's data cleared) every read threw on it and fell through to the server - which on the deployed site holds no
+    // game data - so every file not read yet failed for the rest of the session, a pixel build with it. The next read
+    // opens another (getBytes, idbRead)
+    d.onclose = () => { if (db === d) db = null; };
+    db = d;
+  }
   return db;
+}
+
+/** BUILD-RETRY: one stored file's bytes - asked again once on a fresh connection when the one in hand is closing (an
+ *  InvalidStateError, raised before its `close` is heard). */
+async function idbRead(key) {
+  try { return await idbGet(await getDb(), key); } catch (e) {
+    if (e?.name !== 'InvalidStateError') throw e;
+    db = null;
+    return idbGet(await getDb(), key);
+  }
 }
 
 async function idbPut(db, key, val) {
@@ -1313,7 +1332,7 @@ export async function getBytes(name) {
   const hit = mem.get(key);
   if (hit) return hit;
   try {
-    const stored = await idbGet(await getDb(), key);
+    const stored = await idbRead(key);
     if (stored) { const u8 = new Uint8Array(stored); mem.set(key, u8); return u8; }
   } catch { /* no IDB (private mode etc.) - fall through to network */ }
   const res = await fetch(`./arena2/${name}`);

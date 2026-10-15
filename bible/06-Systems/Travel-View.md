@@ -2081,7 +2081,7 @@ player's confirmation).
 the near-enemies pace, a stranger's and Travel Options' stop the journey, and the view down is the ground's. And the
 land's hold outlived its cause. The count (world.js:"uc.n = unbuiltAround") asked whether the world streams a pixel and whether it is
 built. A build that THROWS is let go by the stream - the pump's catch frees what it made and takes the key off the
-stream's books (world.js:"state.release(next.px, next.py)", AUDIT 49faf853 B1) - and the stream asks for a pixel only when the traveller crosses
+stream's books (it called `state.release`, AUDIT 49faf853 B1; `state.fail` since BUILD-RETRY, below) - and the stream asked for a pixel only when the traveller crosses
 into a new map pixel (streamingWorld.js:"load = this._loadList"). So the pixel read "loading" with nothing building it: the governor halved
 the clock to x1 in about eight seconds and held it there, the journey crept at walking pace toward the crossing that
 would ask for the pixel again - minutes away on foot - and a build that threw again held it again. A restart forgot the
@@ -2101,17 +2101,11 @@ Recorded, not changed.
 
 **FIXED.** The count is the stream's own books: a pixel is owed while the stream holds it (`state.loaded`, built or
 building) and has not built it. ETHER-OW's law stands inside that (the stream loads nothing where the world streams
-nothing). A hold for the land ends when its build does, whichever way it ends; the pixel is still asked for again at
-the next crossing, as before, and is a hole until it builds.
+nothing). A hold for the land ends when its build does, whichever way it ends. The failed pixel itself: BUILD-RETRY, below.
 
 **The four hosts.** `scenes/world.js` wired - it alone streams the world and raises the Overworld. `scenes/exterior.js`
 streams nothing (one fixed city) and has no Overworld, so no governor; `scenes/worldModes.js` (a building) and
 `scenes/dungeonContext.js` (a dungeon) run no journey - a door ends one (AUDIT-TO1 G2).
-
-**Open, for Mac.** Why the players' builds threw is not known here: the pump says `pixel X,Y failed:` on the console,
-and that line from a player who meets the slowdown names the build to mend. Whether the stream should ask for a failed
-pixel again before the next crossing - it stands a hole in the view until then - is a streaming call, left as BUILD-FAIL1
-and AUDIT 49faf853 B1 made it.
 
 `test/ow_loadowed.test.js` (2), `tools/mutants/ow_loadowed.json` (4, all dead). PIN MOVED: `ether_ow` (the count's line
 run over a real stream), `tv2_click_to_move` (the line's text) and `tv_wasd` (its rig's grid on the stream's books);
@@ -2120,3 +2114,83 @@ ether_ow, ow2, ow3j, ow4j, ow4x, ow5, ow5d, ow6s, ratelaw, tv2, tv3, tv5, tv_was
 that live (OW6-S-reason-unshown, EDGE-FURNITURE-stale-on-show, AUDIT-DEEP2-E6-bands-unshared, -E7-corner-piece-ignored and
 -E8-foot-ends-overlap) live on main's tree as well,
 untouched here.
+
+## BUILD-RETRY - the build that threw, and the hole it left (2026-10-15, after LOAD-OWED)
+
+*"Under NO BAND AIDS the failing build itself is still the bug: a hole in the world until the next crossing"* (the
+lead, on Mac's rule). LOAD-OWED let the clock go when a pixel's build threw; this is the throw, and the pixel it left
+unbuilt.
+
+**THE SWEEP** (`tools/pixelBuildSweep.mjs`, on a player's own ARENA2 - nothing of it kept, nothing of it rendered to a
+file: Port-Doctrine). The world host booted in headless Chromium (SwiftShader) in shot mode, its frame held so nothing
+else runs, and the pump's own build driven pixel by pixel through the host's probe door
+(world.js:"window.__pixelBuild = async"): the stream re-centred on the pixel as a teleport re-centres it, then
+`buildPixel`, a throw caught as the pump's catch catches it and kept with its stack. The places: every town of the
+location index (city, town, village, hamlet, a mod's row) and every fourth other place, the Bay's wilderness on a
+ten-pixel lattice (every region, every climate) and its sea on every other point of it, the land past the Bay in
+TAMRIEL2's frame, and the Eltheric Ocean's isles and open sea past the Veil.
+- **Every pixel, once, as the stream builds it:** 12,792 - 8,031 places, 3,158 of the Bay's wilderness and 460 of its
+  sea (all ten climates; 45 of the 46 regions on the map, and the 46th's two pixels after), 523 past the Bay in
+  TAMRIEL2's frame, 481 Eltheric isles and 139 of its open sea. All stood: none threw, none timed out, no page error
+  (builds on SwiftShader: half under 144 ms, 99 in 100 under 3.4 s, the slowest 83 s).
+- **Rebuilt after release** (`--again`: built, torn down and built again, as a re-skin or a return rebuilds), 1,348 of
+  every kind: all stood. **Under winter's sets** (`--query season=winter`), the same 1,348: all stood. **The season's
+  flip in one session** (`--swap`: the rebuild under the other season, both seasons' sets in the caches), 450: all
+  stood.
+- **A journey in the browser** (`--journey`: the frame running, its draws stubbed, the Overworld raised and the
+  movement key held): not drivable on this box. One run raised the view and lost its renderer to the box's
+  out-of-memory killer at once (the sandbox's memory at its limit under four browsers); on every other the view came
+  down by its own law inside two seconds - SwiftShader's frames on a shared box ran one to three seconds apart, and two
+  silent 600 ms heartbeats lower it (travelView.js:"function stalled", AUDIT DEEP X-9). The journey's own path - the
+  stream, the pump, the frame's re-ask and the governor at x100 - is run on the host's own code in Node instead
+  (`test/ow_loadowed.test.js`, `test/ow_buildretry.test.js`).
+- **A read refused** (`--fail TEXTURE.002 --fail-count 1`: the first read of the desert's ground archive dropped, as a
+  dropped fetch drops it), six desert pixels: all six threw `Failed to fetch` (getBytes, under loadGroundSet) - the
+  five after the first without reading at all. Now the first throws and the five after it read again and stand.
+
+So no pixel's build throws on whole data, in any season, built once or again: there is no deterministic failure to fix.
+What throws is a READ that failed - and the port kept such a failure as its answer for the session, so one dropped read
+made every later build that needed the file throw. Three such keeps stood on a pixel's build path, each the
+cached-rejection shape AUDIT VE R12 took out of the tile sets:
+- **The texture** (dataPipeline.js:"texturePromises.set(archive, asked)"): an archive's ask stood as its answer when it
+  rejected - every later pixel of that climate, every town wearing that picture, threw without reading. A failed ask is
+  forgotten now and the next one reads (the law of getGpuMesh's in-flight map). The one door every host reads its
+  textures through (`createDataPipeline`: the world, the city, the interior, the dungeon).
+- **The people's pictures** (world.js:"const ensurePersonTex = () =>"): one load of every person archive, which every
+  populated pixel's build waits on, kept by `??=` - one failed archive and every town threw for the session. A failed
+  load is forgotten; the next town loads again.
+- **The store's connection** (dataSource.js:"d.onclose = () =>"): the IndexedDB connection was opened once and kept.
+  Once the browser closed it under the game (its storage failing, the site's data cleared) every read threw on it and
+  fell through to the server - on the deployed site, no game data: a 404 - so every file not yet in memory failed. Its
+  close is heard now and the next read opens another; a read that meets the connection closing before its close is
+  heard asks once more on a fresh one (dataSource.js:"async function idbRead(key)").
+
+**THE RETRY LAW.** Those failures are transient - the next read would not have them - so the stream asks for a failed
+pixel again by its own law, not at the next crossing alone. The pump's catch lets the pixel go through `state.fail`
+(streamingWorld.js:"fail(px, py, now) {") where it called `release`, and the frame asks
+(world.js:"queue.push(...state.retryDue(performance.now()))") for the pixels whose wait is over
+(streamingWorld.js:"retryDue(now) {"): still in the grid, not listed again by a crossing meanwhile, taken back on the
+stream's books and queued nearest first. The waits are BUILD_RETRY_MS (streamingWorld.js:"export const BUILD_RETRY_MS"):
+2, 4, 8, 16 and 32 real seconds after each failure, five asks in about a minute; past the fifth the pixel waits for a
+crossing that lists it, as every failed pixel waited before. A pixel that stands forgets its failures
+(world.js:"else state.stood(next.px, next.py)"), one that leaves the grid is forgotten, and a new grid (`init`, a
+teleport) forgets them all. The port's own: DFU's builds read local files and do not fail.
+
+A re-ask is owed while it builds (LOAD-OWED's count: on the stream's books, not built), so TV2's governor holds for it as
+it holds for a crossing's row - bounded with it. Measured on the governor alone (a journey otherwise built, x100 asked):
+a pixel whose read failed once costs one build's hold; one that could never be built, each build a second long, keeps the
+clock under x100 for about two minutes (at x20 lowest, the halvings and the climb's +5 a step) and holds nothing after
+its fifth ask.
+
+Recorded, not changed: loads that keep a failure but throw in no build - Low Poly Trees (lowPolyTreesAssets.js:"failed = true;":
+the trees stay flats), the snowfall's masks (snowfallHost.js:"failed = true; console.warn": no snow) and the helm's
+art (world.js `_csa*Load ??=`) - a session's look lost, not a hole in the world.
+
+**The four hosts.** `scenes/world.js` wired - it alone streams pixels (the pump, the frame's re-ask, the person
+pictures). `scenes/exterior.js` (one fixed city, built once), `scenes/worldModes.js` (a building) and
+`scenes/dungeonContext.js` (a dungeon) stream no pixels; the texture and the store are the shared pipeline's and the
+data source's, every host's.
+
+`test/ow_buildretry.test.js` (5), `tools/mutants/ow_buildretry.json` (11, all dead). PIN MOVED: `audit_wod_branch` (WOD6: the
+catch's last line is `state.fail`), `tools/mutants/auditwod.json` WOD6-failed-build-stays-arrival and
+`tools/mutants/ow_loadowed.json` LOAD-OWED-failed-kept-on-the-books re-aimed by content.
