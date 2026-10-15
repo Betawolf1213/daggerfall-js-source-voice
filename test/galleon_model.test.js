@@ -15,10 +15,9 @@ import {
   WHEEL_TURNS, RUDDER_DEG, faceSkin, companionGeometry, DRIVE_TRIGGER_AT,
 } from '../src/world/galleonModel.js';
 import { SAILS } from '../src/world/galleonRig.js';
-import {
-  galleonArt, galleonGlow, registerGalleonArt, _resetGalleonArt, GALLEON_ARCHIVE, TEX, BANDS, GALLEON_TEX_SIZE,
-  hullSideLivery, castleLivery, sternWindowsLivery,
-} from '../src/world/galleonArt.js';
+import { galleonCut, registerGalleonArt, _resetGalleonArt, GALLEON_ARCHIVE, TEX, BANDS, GALLEON_SOURCES } from '../src/world/galleonArt.js';
+import { DF, SEE_THROUGH_WINDOW } from '../src/world/classicArt.js';
+import { fakeClassicRgba, texelOf, texel, TIMBER } from './classicArtFake.mjs';
 import { newell, norm } from '../src/world/galleonMesh.js';
 import { createGalleonGunDeck, recoilAt, HOLD_S, RUN_IN_X, RUN_OUT_X, RECOIL, KICK_S, HAUL_S } from '../src/systems/naval/galleonGunDeck.js';
 import { loadComeSailAwayModels, CSA_MODEL_URLS, GALLEON_MODEL_URL } from '../src/systems/comeSailAwayModels.js';
@@ -349,36 +348,35 @@ test('GALLEON HER RIG: five sails by Come Sail Away\'s names - three square (two
 
 // ── her pictures ────────────────────────────────────────────────────────────────────────────────────────────────────
 
-test('GALLEON HER PICTURES: painted at load from numbers alone - the same bytes every time - a record a TEX entry under GALLEON_ARCHIVE, each 64 x 64 (GALLEON-2, Mac: "textures should be 64x64"); registered with the vendor textures once (twenty-three stand-ins), her stern windows\' two slices alone glowing by night (mutants: a picture seeded off the clock, registered twice, the glow everywhere, a picture off 64)', async () => {
-  const hash = (art) => createHash('sha256').update(JSON.stringify(art.map(([r, p]) => [r, p.width, p.height, Buffer.from(p.data).toString('base64')]))).digest('hex');
-  const a = galleonArt(), b = galleonArt();
-  assert.equal(hash(a), hash(b), 'the same bytes');
-  assert.deepEqual(a.map(([r]) => r), Object.values(TEX), 'a picture a record, in record order');
-  assert.equal(GALLEON_TEX_SIZE, 64);
-  for (const [r, p] of a) {
-    assert.deepEqual([p.width, p.height], [64, 64], `record ${r}: 64 x 64`);
-    assert.equal(p.data.length, p.width * p.height * 4);
-  }
-  for (const r of BANDS.sternWindows.recs) assert.ok(galleonGlow(r)?.data.some((v, i) => i % 4 === 0 && v > 0), `her stern windows glow (record ${r})`);
-  for (const r of [TEX.hullSide0, TEX.castle0, TEX.castle1, TEX.deck]) assert.equal(galleonGlow(r), null, 'nothing else');
+test('GALLEON HER PICTURES (DF-ART, Mac: "use daggerfall textures instead of AI generated"): each record a TEX entry under GALLEON_ARCHIVE names the Daggerfall record she wears - Come Sail Away\'s own picks for its hulls (its planking, decks, sails, masts, rope, doors and iron) - read from the player\'s own ARENA2 as a stand-in on the vendor door, opaque; registered once (twenty-three stand-ins); her stern windows\' two slices alone SEEN THROUGH - Daggerfall\'s leaded window, its glass cut out between its leads (Mac: "windows should always be see through") (mutants: registered twice, a picture read from the wrong record, the glass left whole)', async () => {
+  assert.deepEqual(Object.keys(GALLEON_SOURCES).map(Number), Object.values(TEX), 'a Daggerfall record for every record of hers');
+  const csa = { hullSide0: DF.hullPlanks, deck: DF.deck, canvas: DF.sailcloth, spar: DF.spar, rope: DF.rope, door: DF.door, iron: DF.iron };
+  for (const [name, from] of Object.entries(csa)) assert.deepEqual(GALLEON_SOURCES[TEX[name]], from, `${name}: Come Sail Away's own record`);
+  assert.deepEqual(DF.hullPlanks, [50, 6], 'her planking the mod\'s hulls\' (vendor/come-sail-away/Models/prefabs.json 050_6)');
   _resetGalleonArt();
   const added = [];
   const add = (entries) => { added.push(...entries); return entries.length; };
   assert.equal(registerGalleonArt(add), Object.keys(TEX).length);
   assert.equal(registerGalleonArt(add), 0, 'once');
   assert.ok(added.every((e) => e.archive === GALLEON_ARCHIVE && e.standIn === true && e.frame === 0 && typeof e.build === 'function'), 'stand-ins under her own archive');
-  const built = await added.find((e) => e.record === TEX.castle0).build();
-  assert.ok(Buffer.from(built.data).equals(Buffer.from(a.find(([r]) => r === TEX.castle0)[1].data)), 'built as painted');
+  const ctx = { classicRgba: fakeClassicRgba() };
+  for (const e of added) {
+    const pic = await e.build(ctx), from = GALLEON_SOURCES[e.record];
+    if (BANDS.sternWindows.recs.includes(e.record)) {
+      assert.equal(from, SEE_THROUGH_WINDOW, `record ${e.record}: the window seen through`);
+      let holes = 0; for (let i = 3; i < pic.data.length; i += 4) if (pic.data[i] === 0) holes++;
+      assert.deepEqual(texel(pic, 2, 2), [...TIMBER, 255], 'its frame whole');
+      assert.ok(holes > 0 && holes < pic.width * pic.height * 0.8, `record ${e.record}: its glass a hole (${holes}), its frame and leads whole`);
+      continue;
+    }
+    assert.deepEqual(texel(pic, 3, 3), [...texelOf(from[0], from[1]), 255], `record ${e.record}: read from ${from.join('_')}, opaque`);
+  }
+  for (const r of Object.values(TEX)) assert.equal(galleonCut(r), BANDS.sternWindows.recs.includes(r), `record ${r}: ${galleonCut(r) ? 'a cut-out' : 'whole'}`);
   _resetGalleonArt();
 });
 
-test('GALLEON-2 HER LIVERY IN SLICES (Mac: "textures should be 64x64"): her side\'s, her castle\'s and her stern\'s liveries each cut into 64-texel slices by height, the slices her livery again stacked top down; every face of hers that wears one lies inside its band, and is drawn as pieces cut at its slices - each on the slice whose heights hold it, its v that height up the slice; every picture she draws one of hers (mutants: the cut unmade, a slice\'s v off its height, the slices out of order)', () => {
-  const art = new Map(galleonArt());
-  for (const [name, livery] of [['hullSide', hullSideLivery()], ['castle', castleLivery()], ['sternWindows', sternWindowsLivery()]]) {
-    assert.equal(livery.height, 64 * BANDS[name].recs.length, `${name}: 64 rows a slice`);
-    const stacked = Buffer.concat(BANDS[name].recs.map((r) => Buffer.from(art.get(r).data)));
-    assert.ok(stacked.equals(Buffer.from(livery.data)), `${name}: its slices are its livery, top down`);
-  }
+test('GALLEON-2 HER LIVERY IN SLICES (Mac: "textures should be 64x64"): her side\'s, her castle\'s and her stern\'s bands each cut into slices by height, each slice its own record (DF-ART: each wearing a Daggerfall record whole); every face of hers that wears one lies inside its band, and is drawn as pieces cut at its slices - each on the slice whose heights hold it, its v that height up the slice; every picture she draws one of hers (mutants: a slice\'s v off its height)', () => {
+  for (const name of ['hullSide', 'castle', 'sternWindows']) for (const r of BANDS[name].recs) assert.ok(GALLEON_SOURCES[r], `${name}: slice ${r} wears a Daggerfall record`);
   // her faces inside their bands - none needs the outer slices' clamp
   let worn = 0;
   for (const p of bakeJson.parts) {
