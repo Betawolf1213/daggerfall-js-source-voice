@@ -5,8 +5,9 @@
 > `01-Overview/Audit-EG0.md`), widened by EG0b (the fragments), and polished by AUDIT EG II (six cold lanes on
 > 14b3b172f, 282 findings: `01-Overview/Audit-EG-II.md`). EG-PLAY (section 31) then built the first playable Elite
 > Breach - a vertical slice through the slices below, its departures from this page listed in its record. AUDIT EG III
-> audited the arc as built (six cold lanes on 6b86b534, 112 findings: `01-Overview/Audit-EG-III.md`). The code's
-> comments cite this page by section number;
+> audited the arc as built (six cold lanes on 6b86b534, 112 findings: `01-Overview/Audit-EG-III.md`), AUDIT EG IV
+> through its ten heroes (`01-Overview/Audit-EG-IV.md`), and AUDIT EG V the whole arc again (nine cold lanes on
+> 9a862e8d, 158 findings: `01-Overview/Audit-EG-V.md`). The code's comments cite this page by section number;
 > where the page and a pin disagree, the pin is what runs. Each slice adds its record under section 31. A path that
 > exists today is written from the repository root (`src/net/gateBrain.js`); a path this arc will create is written
 > without `src/` (`net/egLaw.js`).
@@ -3960,7 +3961,9 @@ by layer one (the legion is `net/egLegion.js`, the lords `net/egLords.js`). `sce
 never built (the circle is built by `world/egHall.js` and its worker, section 9). **The arc's audits as built** have
 pages of their own, not records here: AUDIT EG III (`01-Overview/Audit-EG-III.md`) and AUDIT EG IV
 (`01-Overview/Audit-EG-IV.md`, 2026-10-13: the Fallen Stacks laid and the legion, lords and net groups). AUDIT EG V
-wrote EG IV's page on 2026-10-15, because EG IV left no record and its lanes' findings list was never saved. **A record
+wrote EG IV's page on 2026-10-15, because EG IV left no record and its lanes' findings list was never saved, and its own
+(`01-Overview/Audit-EG-V.md`, 2026-10-15: nine cold lanes, 158 findings, eight fix groups, the followups and the merge
+of main past the host split). **A record
 names another record's departure by its number when it closed**: a list renumbered later keeps the pointer to the
 departure as it then stood, so read such a pointer against the record's own date. **Versions** are
 named as they stood too: the arc ships under one relay version, one account version and one migration (section 23's

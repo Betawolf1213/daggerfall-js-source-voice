@@ -4054,6 +4054,13 @@ HACKED-GOLD, ETHER-NODES, AUDIT ETHER-OW, MINE-PERKS, HOMES-SHED, BUSY-GATE, CRA
   - the opener's `'empty'` end clears their `eg_live`;
   - Spire Champion is kept only once a season's late ends are claimed;
   - the routes' comment names what the open reads and what it and the admission refuse.
+- **AUDIT EG V** (fix group D, `01-Overview/Audit-EG-V.md`), in migration 0114:
+  - a stake's open order re-signed for a later open carries the stake's own issue, never a fresh one (L4-5);
+  - a Redoubt's spoils seed mixes the receipt's seed with the service's own 8-byte draw kept on the row
+    (`eg_redoubts.nonce`, `eg_runs.nonce`), answered by the claim, so a player holding several receipts cannot choose
+    which the week pays (L8-5);
+  - a circle's Reliquaries open once per account per arena week (`eg_reliqs`, `egReliquariesOf`) (L8-4);
+  - an end keeps its Wager's decrees (`eg_runs.wgs`), and the Depths board names them (L8-9).
 
 ## EG-E2 — the Spire's titles and auras (2026-10-12, under EG-PLAY's account version: acct121 then, acct134 since the merges; world197 then, world203 since)
 
