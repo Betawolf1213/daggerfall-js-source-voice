@@ -255,9 +255,12 @@ export const hasGlass = (/** @type {any} */ from) => !!from && !Array.isArray(fr
 
 /** One record's picture from its Daggerfall source - a record (`[archive, record]`), opaque; a composed spec
  *  (`{ body, insets }` - composedPicture); or a cut one (`{ from, ... }` - cutPicture). `classicRgba` is the pipeline's
- *  reader (systems/textureReplacement.js's `ctx.classicRgba`, or `classicRgbaOf` for a host that uploads its own). */
+ *  reader (systems/textureReplacement.js's `ctx.classicRgba`, or `classicRgbaOf` for a host that uploads its own).
+ *  DF-ART IV: or the port's own picture Mac asked back (`{ painted }` - world/wagonWheelArt.js's wheels), its `painted()`
+ *  the picture in these readers' shape, read from no data. */
 export async function classicPicture(/** @type {any} */ from, /** @type {any} */ classicRgba) {
   if (Array.isArray(from)) return opaque(await buildDerivedPicture({ from: [from[0], from[1]] }, classicRgba));
+  if (typeof from?.painted === 'function') return from.painted();
   return from.body ? composedPicture(from, classicRgba) : cutPicture(from, classicRgba);
 }
 
