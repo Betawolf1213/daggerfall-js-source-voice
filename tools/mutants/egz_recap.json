@@ -560,8 +560,8 @@
   {
     "name": "EGZ-first-the-device-over-the-account",
     "file": "src/ui/egBeats.js",
-    "old": "(Number.isSafeInteger(account) && account >= 0 ? account : device | 0)",
-    "new": "(device | 0)",
+    "old": "(Number.isSafeInteger(account) && account >= 0 ? account : 0) | (device | 0) | (shown | 0));",
+    "new": "(device | 0) | (shown | 0));",
     "tests": [
       "test/egz_recap.test.js"
     ]
@@ -569,8 +569,8 @@
   {
     "name": "EGZ-first-the-shown-forgotten",
     "file": "src/ui/egBeats.js",
-    "old": "account : device | 0) | (shown | 0));",
-    "new": "account : device | 0) | 0);",
+    "old": "account : 0) | (device | 0) | (shown | 0));",
+    "new": "account : 0) | (device | 0) | 0);",
     "tests": [
       "test/egz_recap.test.js"
     ]
@@ -722,8 +722,8 @@
   {
     "name": "EGZ-client-the-device-unkept",
     "file": "src/scenes/egClient.js",
-    "old": "    egFirstWrite(store, egFirstRead(store) | fresh);",
-    "new": "    egFirstWrite(store, egFirstRead(store));",
+    "old": "egFirstWrite(store, firstDevice() | fresh, egFirstKey(me()));",
+    "new": "egFirstWrite(store, firstDevice(), egFirstKey(me()));",
     "tests": [
       "test/egz_recap.test.js"
     ]
@@ -740,8 +740,8 @@
   {
     "name": "EGZ-client-first-bits-the-devices",
     "file": "src/scenes/egClient.js",
-    "old": "const firstBits = () => egFirstOver(egFirstRead(store), pres.acct, pres.shown);",
-    "new": "const firstBits = () => egFirstOver(egFirstRead(store), null, pres.shown);",
+    "old": "const firstBits = () => egFirstOver(firstDevice(), pres.acct, pres.shown);",
+    "new": "const firstBits = () => egFirstOver(firstDevice(), null, pres.shown);",
     "tests": [
       "test/egz_recap.test.js"
     ]

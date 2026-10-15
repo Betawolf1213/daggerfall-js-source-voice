@@ -544,8 +544,8 @@
   {
     "name": "EGA3C-tonic-magicka-uncapped",
     "file": "src/scenes/egClient.js",
-    "old": "entity.magicka = Math.min(entity.maxMagicka, (entity.magicka ?? 0) + Math.round(p * entity.maxMagicka));",
-    "new": "entity.magicka = (entity.magicka ?? 0) + Math.round(p * entity.maxMagicka);",
+    "old": "if (why === 'tonic' && p > 0 && entity.maxMagicka > 0) entity.magicka = Math.min(entity.maxMagicka, (entity.magicka ?? 0) + Math.round(p * entity.maxMagicka));",
+    "new": "if (why === 'tonic' && p > 0 && entity.maxMagicka > 0) entity.magicka = (entity.magicka ?? 0) + Math.round(p * entity.maxMagicka);",
     "tests": [
       "test/egaudit3_client_tonic.test.js"
     ]

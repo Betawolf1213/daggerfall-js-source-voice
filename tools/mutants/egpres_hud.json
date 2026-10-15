@@ -281,8 +281,8 @@
   {
     "name": "EGPRES-the-ring-outside-a-trial",
     "file": "src/ui/egParty.js",
-    "old": "const since = trial && state === 'alive' ? absent.get(sub) : undefined;",
-    "new": "const since = state === 'alive' ? absent.get(sub) : undefined;",
+    "old": "const since0 = trial && state === 'alive' ? absent.get(sub) : undefined;",
+    "new": "const since0 = state === 'alive' ? absent.get(sub) : undefined;",
     "tests": [
       "test/egpres_hud.test.js"
     ]
@@ -556,8 +556,8 @@
   {
     "name": "EGPRES-a-yes-or-no-one-option",
     "file": "src/scenes/egClient.js",
-    "old": "n: egAskText(a[0], a[1]).opts.length, cards: 0, ask: a }",
-    "new": "n: a[1].length, cards: 0, ask: a }",
+    "old": "egAskText(a[0], a[1]).opts.forEach((_, y) => items.push({ k: 'opt', q: a[0], y }));",
+    "new": "a[1].forEach((_, y) => items.push({ k: 'opt', q: a[0], y }));",
     "tests": [
       "test/egpres_hud.test.js"
     ]

@@ -317,8 +317,8 @@
   {
     "name": "EGZ-surplus-unreachable",
     "file": "src/scenes/egClient.js",
-    "old": "n: E.offer.v.length + ((E.sp ?? 0) > 0 ? 2 : 0)",
-    "new": "n: E.offer.v.length",
+    "old": "if ((E.sp ?? 0) > 0) items.push({ k: 'surplus', use: 0 }, { k: 'surplus', use: 1 }); }",
+    "new": " }",
     "tests": [
       "test/egz_return.test.js"
     ]
@@ -326,8 +326,8 @@
   {
     "name": "EGZ-surplus-off-by-one",
     "file": "src/scenes/egClient.js",
-    "old": "&& pres.focus >= P.cards) {",
-    "new": "&& pres.focus > P.cards) {",
+    "old": "items.push({ k: 'surplus', use: 0 }, { k: 'surplus', use: 1 });",
+    "new": "items.push({ k: 'surplus', use: 1 }, { k: 'surplus', use: 2 });",
     "tests": [
       "test/egz_return.test.js"
     ]
@@ -335,7 +335,7 @@
   {
     "name": "EGZ-surplus-one-button",
     "file": "src/scenes/egClient.js",
-    "old": "o?.sendEg?.('surplus', { use: pres.focus - P.cards }); return true; }",
+    "old": "o?.sendEg?.('surplus', { use: it.use }); return true; }",
     "new": "o?.sendEg?.('surplus', { use: 0 }); return true; }",
     "tests": [
       "test/egz_return.test.js"
@@ -389,8 +389,8 @@
   {
     "name": "EGZ-card-rises-when-still",
     "file": "src/ui/egSpireHud.js",
-    "old": "fresh: m.fresh && !still }",
-    "new": "fresh: m.fresh }",
+    "old": "fresh: m.fresh && !still, still: !!still }",
+    "new": "fresh: m.fresh, still: !!still }",
     "tests": [
       "test/egz_return.test.js"
     ]
