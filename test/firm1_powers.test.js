@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { setFirmamentTree, setFirmamentOnline, firmamentInForce, firmActMult, _resetFirmamentLiveForTests } from '../src/systems/firmamentLive.js';
 import { firmamentAwake, firmamentDamage, firmamentLayer, firmamentCastCost, firmamentFold, withoutFirmament, _resetFirmamentPowersForTests } from '../src/systems/firmamentPowers.js';
 import { FIRM_NODES } from '../src/net/firmamentTree.js';
-import { pathTo, treeStats, blowPct } from '../src/net/firmamentLaw.js';
+import { pathTo, treeStats, blowPct, pctOf } from '../src/net/firmamentLaw.js';
 import { createCharacter } from '../src/systems/chargen.js';
 import { buildCustomCareer } from '../src/systems/customClass.js';
 import { SKILLS, skillValue, permanentSkillValue } from '../src/systems/skills.js';
@@ -49,13 +49,13 @@ beforeEach(() => { _resetFirmamentLiveForTests(); _resetFirmamentPowersForTests(
 test('FIRM1 powers: OFFLINE THERE IS NO SKY - a tree handed in folds nothing until the page plays online; with no sign, nothing at all', () => {
   const p = hero();
   const base = liveStat(p, 'strength');
-  setFirmamentTree(walk('wr.start', 'wr.s1'));   // +1 Strength (the sign), +3 (the spoke)
+  setFirmamentTree(walk('wr.start', 'wr.s1'));   // +1 Strength (the sign), +3% of the hero's own (the spoke; FIRM2: one for one)
   computeEntityMods(p);
   assert.equal(firmamentInForce(), false);
   assert.equal(liveStat(p, 'strength'), base);
   setFirmamentOnline(true);
   computeEntityMods(p);
-  assert.equal(liveStat(p, 'strength'), base + 4);
+  assert.equal(liveStat(p, 'strength'), base + 1 + pctOf(base, 3));
   setFirmamentTree(null);
   computeEntityMods(p);
   assert.equal(liveStat(p, 'strength'), base);
@@ -96,6 +96,29 @@ test('FIRM1 powers: RAW ON THE KEY STARS, PERCENT ON THE SMALL - a small star\'s
   assert.ok(liveStat(p, 'strength') - before < 40 * c['pct.strength'] / 100 + 1);
 });
 
+test('FIRM-MAX: A STAR LANDS ON A MAXED STAT - its gain lifts the attribute\'s live ceiling by itself, so +2% Speed on a 100 reads past 100; a Fortify still stops at the lifted ceiling, and with the sky off the ceiling is DFU\'s again (mutants: the fold writes no statMax; liveStat leaves it out of the ceiling)', () => {
+  const p = hero();
+  p.stats.speed = 100;
+  setFirmamentOnline(true);
+  const t = walk('st.start', 'st.s1');   // The Steed's +2 Speed, the Path of the Sign's +2% (FIRM2: one for one)
+  const c = treeStats(t);
+  assert.deepEqual([c.speed, c['pct.speed']], [2, 2]);
+  setFirmamentTree(t);
+  computeEntityMods(p);
+  assert.equal(liveStat(p, 'speed'), 104, '100 + 2 + 2% of 100');
+  p.activeEffects.push({ kind: 'fortifyAttribute', stat: 'speed', magnitude: 20, roundsRemaining: 5 });
+  assert.equal(liveStat(p, 'speed'), 104, 'a Fortify fills the lift, never past it');
+  p.stats.speed = 95;
+  computeEntityMods(p);
+  assert.equal(liveStat(p, 'speed'), 103, 'the ceiling is 100 + the gain, whatever the stat under it (95 x 2% floors to 1: 100 + 2 + 1)');
+  p.activeEffects.length = 0;
+  p.stats.speed = 100;
+  setFirmamentOnline(false);
+  computeEntityMods(p);
+  p.activeEffects.push({ kind: 'fortifyAttribute', stat: 'speed', magnitude: 20, roundsRemaining: 5 });
+  assert.equal(liveStat(p, 'speed'), 100, 'offline: no sky, DFU\'s MaxStatValue');
+});
+
 test('FIRM1 powers: A REFEREED FIGHT AND A MENTOR - the combat channels sleep, the life channels stay', () => {
   const p = hero();
   setFirmamentOnline(true);
@@ -120,16 +143,16 @@ test('FIRM1 powers: THE WROTHGARIAN ZONE - the sky fights its beasts; a strike a
   const p = hero();
   const base = liveStat(p, 'strength');
   setFirmamentOnline(true);
-  setFirmamentTree(walk('wr.start', 'wr.s1'));   // +4 Strength
+  setFirmamentTree(walk('wr.start', 'wr.s1'));   // +1 and 3% of the hero's Strength
   computeEntityMods(p);
   assert.equal(firmamentAwake(p), true, 'no refereed fight: the zone\'s beasts meet the sky');
-  assert.equal(liveStat(p, 'strength'), base + 4);
+  assert.equal(liveStat(p, 'strength'), base + 1 + pctOf(base, 3));
   const kept = p._mods;
   assert.equal(withoutFirmament(p, () => liveStat(p, 'strength')), base, 'the sheet a player is struck from');
   assert.equal(p._mods, kept, 'put back as it was');
-  assert.equal(liveStat(p, 'strength'), base + 4);
+  assert.equal(liveStat(p, 'strength'), base + 1 + pctOf(base, 3));
   assert.throws(() => withoutFirmament(p, () => { throw new Error('x'); }));
-  assert.equal(liveStat(p, 'strength'), base + 4, 'put back whatever the roll did');
+  assert.equal(liveStat(p, 'strength'), base + 1 + pctOf(base, 3), 'put back whatever the roll did');
 });
 
 test('FIRM1 powers: A BLOW - my fists at a foe the law\'s percent more (the fraction carried); never at a player, never asleep', () => {
