@@ -109,10 +109,16 @@ const outermost = (ast, raw) => {
   return out;
 };
 
-test('HOST-SPLIT NAVAL A MODULE THAT BECOMES A HOST GETS A CEILING: every function in src/ past KNOT code lines - a module the host wires that grew into one scope of its own, as navalHost\'s createNavalHost did unnoticed to 4,865 lines and Come Sail Away\'s runtime to 2,065 code lines - stands in CEILINGS; found by walking src/ and reading every outermost function, whatever its name or shape, not by a list (mutants: the naval ceiling dropped; the knot never reached; the walk by the first create* export alone)', { skip: SKIP }, () => {
+test('HOST-SPLIT NAVAL A MODULE THAT BECOMES A HOST GETS A CEILING: every function in src/ and the relay\'s server/src/ past KNOT code lines - a module the host wires that grew into one scope of its own, as navalHost\'s createNavalHost did unnoticed to 4,865 lines and Come Sail Away\'s runtime to 2,065 code lines - stands in CEILINGS; found by walking src/ and reading every outermost function, whatever its name or shape, not by a list (mutants: the naval ceiling dropped; the sail runtime\'s ceiling dropped; the knot never reached; the walk by the first create* export alone; the walk by declarations alone)', { skip: SKIP }, () => {
+  // AUDIT HOST-SPLIT NAVAL, the second read: every shape the walk claims to read, read - the held knots are all
+  // declarations, so a walk narrowed to declarations passed on them; a fixture of each shape holds the rest
+  const shapes = 'function decl() {\n\n}\nasync function* gen() {\n\n}\nexport const arrow = async () => {\n\n};\nconst expr = function () {\n\n};\n'
+    + 'class C {\n  method() {\n\n  }\n  field = () => {\n\n  };\n  #hidden() {\n\n  }\n}\nexport const o = {\n  objMethod() {\n\n  },\n  prop: function () {\n\n  },\n};\n'
+    + 'export default function named() {\n\n}\n';
+  assert.deepEqual(outermost(parseModuleWithComments(shapes).ast, 2).map((x) => x.name), ['decl', 'gen', 'arrow', 'expr', 'method', 'field', 'hidden', 'objMethod', 'prop', 'named'], 'the walk reads every shape a function takes');
   const held = new Set(CEILINGS.map(([file, fn]) => `${file}#${fn}`));
   const loose = [], knots = [];
-  const files = sources('src');
+  const files = [...sources('src'), ...sources('server/src')];   // the relay's Room too (AUDIT HOST-SPLIT NAVAL, the second read)
   for (const file of files) {
     const src = readFileSync(join(ROOT, file), 'utf8');
     if (src.split('\n').length <= KNOT) continue;   // shorter than the line: no function in it can reach it
@@ -121,16 +127,18 @@ test('HOST-SPLIT NAVAL A MODULE THAT BECOMES A HOST GETS A CEILING: every functi
       const n = codeLines(src, fn, comments);
       if (n <= KNOT) continue;
       knots.push(`${file}#${name}`);
-      if (!held.has(`${file}#${name}`)) loose.push(`${file} ${name}: ${n} code lines and no ceiling - add ['${file}', '${name}', ${n + ROOM}, MODULE] to CEILINGS in test/hostceiling.test.js`);
+      if (!name) loose.push(`${file}: an unnamed function at line ${fn.loc.start.line}, ${n} code lines - name it (a declaration or a const) and give it a ceiling in CEILINGS`);
+      else if (!held.has(`${file}#${name}`)) loose.push(`${file} ${name}: ${n} code lines and no ceiling - add ['${file}', '${name}', ${n + ROOM}, MODULE] to CEILINGS in test/hostceiling.test.js`);
     }
   }
   assert.ok(files.length >= 1000, `only ${files.length} source files under src/ - the walk is reading the wrong tree`);
+  assert.ok(files.includes('server/src/index.js'), 'the walk reads the relay, whose Room is the next knot\'s home');
   // and the line reaches a function in the tree: a KNOT so high it reached none would hold nothing (when the last knot
   // is taken apart, this is the assertion to drop - say so in the change that does it)
   assert.ok(knots.length > 0, `KNOT (${KNOT}) reaches no function in src/ - drop this assertion if the last knot was taken apart`);
   // and the walk sees every knot the ceilings already hold, whatever its shape (an async declaration, a const arrow) -
   // a walk that read only one shape would pass on the knots it never met
-  const unseen = CEILINGS.filter(([file, fn]) => file.startsWith('src/') && measure(file, fn) > KNOT && !knots.includes(`${file}#${fn}`)).map(([file, fn]) => `${file}#${fn}`);
+  const unseen = CEILINGS.filter(([file, fn]) => (file.startsWith('src/') || file.startsWith('server/src/')) && measure(file, fn) > KNOT && !knots.includes(`${file}#${fn}`)).map(([file, fn]) => `${file}#${fn}`);
   assert.deepEqual(unseen, [], 'a held knot the walk did not reach');
   assert.deepEqual(loose, []);
 });

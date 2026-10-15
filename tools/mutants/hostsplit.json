@@ -61,5 +61,23 @@
     "tests": [
       "test/hostceiling.test.js"
     ]
+  },
+  {
+    "name": "HOST-SPLIT-the-walk-by-declarations-alone",
+    "file": "test/hostceiling.test.js",
+    "old": "  const isFn = (n) => /^(FunctionDeclaration|FunctionExpression|ArrowFunctionExpression)$/.test(n.type) && n.body?.type === 'BlockStatement';",
+    "new": "  const isFn = (n) => /^(FunctionDeclaration)$/.test(n.type) && n.body?.type === 'BlockStatement';",
+    "tests": [
+      "test/hostceiling.test.js"
+    ]
+  },
+  {
+    "name": "HOST-SPLIT-the-relay-not-walked",
+    "file": "test/hostceiling.test.js",
+    "old": "  const files = [...sources('src'), ...sources('server/src')];",
+    "new": "  const files = sources('src');",
+    "tests": [
+      "test/hostceiling.test.js"
+    ]
   }
 ]

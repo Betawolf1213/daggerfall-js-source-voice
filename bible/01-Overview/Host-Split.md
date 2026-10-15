@@ -42,15 +42,24 @@ the one that stops the growth.
 New behaviour goes into a module the host wires - `fishHost.js` and
 `merchantYardsHost.js` are the shape: the module owns its state and its frame,
 the host constructs it once and calls it. The host's own function gains the
-wiring, not the feature. (Not every one of the 28 `*Host.js` modules is that
+wiring, not the feature. (Not every `*Host.js` module is that
 shape: `navalHost.js`'s `createNavalHost` is itself a single scope of 4,865
 lines - the same knot, one size down. HOST-SPLIT NAVAL (2026-10-15) gave it a
-ceiling of its own, and any function in `src/` that grows past 2,000 code lines
-is now held to one too: the suite walks `src/` and reads every outermost
-function, whatever its name or shape. AUDIT HOST-SPLIT NAVAL found the first walk
+ceiling of its own, and any function in `src/` or the relay's `server/src/` that
+grows past 2,000 code lines is now held to one too: the suite walks both and
+reads every outermost function, whatever its name or shape. AUDIT HOST-SPLIT NAVAL found the first walk
 read only each `*Host.js`'s first `export function create...` - five hosts never
 measured - and a knot outside the folder already standing: Come Sail Away's
-runtime, `createComeSailAwayRuntime`, 2,065 code lines, held now too.) On the
+runtime, `createComeSailAwayRuntime`, 2,065 code lines, held now too. AUDIT
+HOST-SPLIT NAVAL, the second read: "whatever its shape" was held by nothing -
+every held knot is a declaration, so a walk narrowed to declarations passed - and
+the walk never read the relay, where a 2,100-line Room method passed too. A
+fixture of every shape a function takes is read by the walk now, the relay is
+walked, and an unnamed knot is told to take a name, not handed a ceiling row
+for `undefined`. Two mutants, dead. Left as found: three classes past the
+line - `Renderer` 4,173 code lines, `HeldMapWindow` 2,291, `OnlineSession`
+2,080 - whose state is `this`, not one function's scope; whether that is a
+knot is the doctrine's call.) On the
 relay the new code goes into a Room method of its own, as the SCALE5 arms did.
 
 `test/hostceiling.test.js` holds it: each host function - the four hosts, the
